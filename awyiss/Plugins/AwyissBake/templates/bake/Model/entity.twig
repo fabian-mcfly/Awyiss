@@ -40,13 +40,7 @@ class {{ name }} extends Entity{{ fileBuilder.classBuilder.implements ? ' implem
 {% if accessible and fieldMap %}
 
 {% endif %}
-{% if fieldMap %}
-{%- set generatedProperties = generatedProperties|merge(['fieldMap']) %}
-	/**
-	* @inheritDoc
-	*/
-	protected static array $fieldMap = {{ Bake.exportVar(fieldMap, 1)|raw }};
-{% endif %}
+
 {%- if hidden %}
 {%- set generatedProperties = generatedProperties|merge(['_hidden']) %}
 	/**
@@ -54,12 +48,30 @@ class {{ name }} extends Entity{{ fileBuilder.classBuilder.implements ? ' implem
 	*/
 	protected array $_hidden = {{ Bake.exportVar(hidden, 1)|raw }};
 {% endif %}
+{% if fieldMap %}
+{%- set generatedProperties = generatedProperties|merge(['fieldMap']) %}
+	/**
+	* @inheritDoc
+	*/
+	protected static array $fieldMap = {{ Bake.exportVar(fieldMap, 1)|raw }};
+{% endif %}
 {% set userProperties = fileBuilder.classBuilder.userProperties(generatedProperties) %}
 {% if userProperties %}
 
 	{{~ Bake.concat('\n\n', userProperties) }}
 {% endif %}
-{% set userFunctions = fileBuilder.classBuilder.userFunctions([]) %}
+{%- set generatedMethods = [] %}
+	public function setEntity (?Entity $ao_entity = NULL): static {
+		$this->entity = $ao_entity;
+
+		return $this;
+	}
+{%- set generatedMethods = generatedMethods|merge(['setEntity']) %}
+	public function getEntity (): ?Entity {
+		return $this->entity;
+	}
+{%- set generatedMethods = generatedMethods|merge(['getEntity']) %}
+{% set userFunctions = fileBuilder.classBuilder.userFunctions(generatedMethods) %}
 {% if userFunctions %}
 
 	{{~ Bake.concat('\n\n', userFunctions) }}

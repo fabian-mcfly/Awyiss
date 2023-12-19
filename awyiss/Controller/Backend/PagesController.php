@@ -28,7 +28,8 @@ use Cake\View\Exception\MissingTemplateException;
  *
  * @property PagesTable $Pages
  */
-#[AllowDynamicProperties] class PagesController extends Controller {
+#[AllowDynamicProperties]
+class PagesController extends Controller {
 	/**
 	 * @var int
 	 */
@@ -108,7 +109,8 @@ use Cake\View\Exception\MissingTemplateException;
 		$this->Authorization->ensure('update');
 
 		/** @var Page $lo_page */
-		$lo_page = $this->Pages->findById((int) $this->request->getParam('id'))->first();
+		$lo_page = $this->Pages->findById((int) $this->request->getParam('id'))->find('translations')->first();
+
 		if ( ! $lo_page) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -147,7 +149,7 @@ use Cake\View\Exception\MissingTemplateException;
 		$this->request->allowMethod(['get', 'delete']);
 
 		/** @var Page $lo_page */
-		$lo_page = $this->Pages->findById((int) $this->request->getParam('id'))->first();
+		$lo_page = $this->Pages->findById((int) $this->request->getParam('id'))->find('translations')->first();
 		if ( ! $lo_page) {
 			$this->Flash->error(__('record_not_found'));
 			return $this->redirect(['action' => 'overview']);
@@ -171,11 +173,13 @@ use Cake\View\Exception\MissingTemplateException;
 	 * @return void
 	 */
 	protected function save (Page $ao_page, string $as_method = 'add'): void {
+		$la_associated = [];
 		if ($this->Pages->hasAttributes()) {
+			$la_associated[] = $this->Pages->getAttributesTable(TRUE);
 			$ao_page->setAccess('attributes', TRUE);
 		}
 
-		$this->Pages->patchEntity($ao_page, ['page_role_id' => $this->getPageRoleId()] + $this->request->getData());
+		$this->Pages->patchEntity($ao_page, ['page_role_id' => $this->getPageRoleId()] + $this->request->getData(), ['associated' => $la_associated]);
 
 		if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
 			if ($this->Pages->save($ao_page)) {

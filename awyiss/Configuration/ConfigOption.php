@@ -102,7 +102,7 @@ class ConfigOption {
 			}
 		}
 
-		$this->setType($aa_settings['type'] ?? ConfigOptionType::TYPE_STRING);
+		$this->setType($aa_settings['type'] ?? ConfigOptionType::STRING);
 	}
 
 

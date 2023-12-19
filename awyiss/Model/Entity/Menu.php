@@ -30,9 +30,9 @@ class Menu extends Entity {
 	 * @inheritDoc
 	 */
 	protected array $_accessible = [
-        'title' => true,
-        'identifier' => true,
-        'active' => true,
+        'title' => TRUE,
+        'identifier' => TRUE,
+        'active' => TRUE,
     ];
 	/**
 	 * @inheritDoc

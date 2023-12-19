@@ -3,6 +3,7 @@
 
 namespace Awyiss\Authorization\Permission;
 
+
 use Awyiss\Authorization\AuthorizationService;
 use Awyiss\Model\Entity\UsergroupPermission;
 use Cake\Event\EventDispatcherTrait;
@@ -34,7 +35,7 @@ class PermissionCollection {
 
 
 	/**
-	 * @param null|AuthorizationService                                                                           $ao_authorizationService
+	 * @param null|AuthorizationService $ao_authorizationService
 	 * @param array<UsergroupPermission|array{scope: string, identifier: string, access: mixed, settings: mixed}> $aa_permissions
 	 */
 	public function __construct (?AuthorizationService $ao_authorizationService, array $aa_permissions = []) {
@@ -53,7 +54,10 @@ class PermissionCollection {
 				$this->add(Permission::createFromArray(...$lx_permission));
 			}
 			else {
-				throw new RuntimeException(sprintf('Permission must be of type `array|%s` in `%s`. `%s` given', PermissionInterface::class, static::class, gettype($lx_permission)));
+				throw new RuntimeException(sprintf('Permission must be of type `array|%s` in `%s`. `%s` given',
+					PermissionInterface::class,
+					static::class,
+					gettype($lx_permission)));
 			}
 		}
 	}
@@ -116,6 +120,7 @@ class PermissionCollection {
 
 		if ($as_identifier) {
 			$ls_identifier = AuthorizationService::sanitizeIdentifier($as_identifier);
+
 			return $this->permissions[ $ls_scope ][ $ls_identifier ] ?? NULL;
 		}
 
@@ -227,7 +232,7 @@ class PermissionCollection {
 	protected function permissionsAreAccessible (array $aa_permissions, array $aa_additionalData = []): ?bool {
 		$la_accessible = [];
 
-		foreach ($aa_permissions AS $lo_permission) {
+		foreach ($aa_permissions as $lo_permission) {
 			if ( ! ($lo_permission instanceof Permission)) {
 				throw new RuntimeException(sprintf('The permission is invalid. Expected instance of `%s`, `%s` given', Permission::class, gettype($lo_permission)));
 			}

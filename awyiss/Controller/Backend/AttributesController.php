@@ -74,7 +74,6 @@ class AttributesController extends Controller {
 		}
 
 		$this->set([
-			'ao_attributes' => $lo_attributes,
 			'aa_attributesGroupedByFieldset' => $la_attributesGroupedByFieldset,
 			'aa_availableFieldsets' => $la_availableFieldsets,
 		]);
@@ -99,12 +98,18 @@ class AttributesController extends Controller {
 			$this->save($lo_attribute);
 		}
 
-		$this->ensurePossibleFieldset($lo_attribute, $this->Attributes->getAvailableFieldsets());
+		$la_availableFieldsets = $this->Attributes->getAvailableFieldsets($lo_attribute->scope);
+		$this->ensurePossibleFieldset($lo_attribute, $la_availableFieldsets);
+
+		$la_pageRoles = array_keys(array_filter($this->attributeScopes, function($ax_table) {
+			return !is_string($ax_table);
+		}));
 
 		$this->set([
 			'ao_attribute' => $lo_attribute,
-			'aa_availableFieldsets' => $this->Attributes->getAvailableFieldsets($lo_attribute->scope),
+			'aa_availableFieldsets' => $la_availableFieldsets,
 			'aa_availableInputTypes' => $this->Attributes->getAvailableInputTypes(),
+			'aa_pageRoles' => $la_pageRoles,
 		]);
 	}
 
@@ -120,7 +125,7 @@ class AttributesController extends Controller {
 		$this->Authorization->ensure('update');
 
 		/** @var Attribute $lo_attribute */
-		$lo_attribute = $this->Attributes->findById((int) $this->request->getParam('id'))->first();
+		$lo_attribute = $this->Attributes->findById((int) $this->request->getParam('id'))->find('translations')->first();
 		if ( ! $lo_attribute) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -131,12 +136,18 @@ class AttributesController extends Controller {
 			$this->save($lo_attribute, 'edit');
 		}
 
-		$this->ensurePossibleFieldset($lo_attribute, $this->Attributes->getAvailableFieldsets());
+		$la_availableFieldsets = $this->Attributes->getAvailableFieldsets($lo_attribute->scope);
+		$this->ensurePossibleFieldset($lo_attribute, $la_availableFieldsets);
+
+		$la_pageRoles = array_keys(array_filter($this->attributeScopes, function($ax_table) {
+			return ! is_string($ax_table);
+		}));
 
 		$this->set([
 			'ao_attribute' => $lo_attribute,
-			'aa_availableFieldsets' => $this->Attributes->getAvailableFieldsets($lo_attribute->scope),
+			'aa_availableFieldsets' => $la_availableFieldsets,
 			'aa_availableInputTypes' => $this->Attributes->getAvailableInputTypes(),
+			'aa_pageRoles' => $la_pageRoles,
 		]);
 	}
 
@@ -154,7 +165,7 @@ class AttributesController extends Controller {
 		$this->request->allowMethod(['get', 'delete']);
 
 		/** @var Attribute $lo_attribute */
-		$lo_attribute = $this->Attributes->findById((int) $this->request->getParam('id'))->first();
+		$lo_attribute = $this->Attributes->findById((int) $this->request->getParam('id'))->find('translations')->first();
 		if ( ! $lo_attribute) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -179,11 +190,13 @@ class AttributesController extends Controller {
 	 * @return void
 	 */
 	protected function save (Attribute $ao_attribute, string $as_method = 'add'): void {
+		$la_associated = [];
 		if ($this->Attributes->hasAttributes()) {
+			$la_associated[] = $this->Attributes->getAttributesTable(TRUE);
 			$ao_attribute->setAccess('attributes', TRUE);
 		}
 
-		$this->Attributes->patchEntity($ao_attribute, $this->request->getData());
+		$this->Attributes->patchEntity($ao_attribute, $this->request->getData(), ['associated' => $la_associated]);
 
 		if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
 			if ($this->Attributes->save($ao_attribute)) {

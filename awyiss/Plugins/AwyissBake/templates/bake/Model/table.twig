@@ -30,7 +30,7 @@ class {{ name }}Table extends Table{{ fileBuilder.classBuilder.implements ? ' im
 	 */
 	protected array $_defaultConfig = [
 		'authorize' => [
-			'scope' => ['{{ table|substr(11)  }}'],
+			'scope' => '{{ table|substr(11) }}',
 		],
 	];
 {% endif %}

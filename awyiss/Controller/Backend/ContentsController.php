@@ -164,14 +164,8 @@ class ContentsController extends Controller {
 	 * @throws \Exception
 	 */
 	public function edit () {
-		$li_pageId = (int) $this->request->getParam('id');
-		if ($this->request->is(['patch', 'post', 'put'])) {
-			$li_pageId = (int) $this->request->getData('page_id');
-		}
-
-
 		/** @var Content $lo_content */
-		$lo_content = $this->Contents->findById($li_pageId)->applyOptions([
+		$lo_content = $this->Contents->findById((int) $this->request->getParam('id'))->find('translations')->applyOptions([
 			'authorize' => ['skip' => TRUE],
 		])->first();
 		if ( ! $lo_content) {
@@ -181,6 +175,7 @@ class ContentsController extends Controller {
 		}
 
 		$lo_page = $this->forPage($lo_content->pageId);
+
 		$this->Authorization->ensure('update');
 
 		if ($this->request->is(['patch', 'post', 'put'])) {
@@ -233,7 +228,7 @@ class ContentsController extends Controller {
 		$this->request->allowMethod(['get', 'delete']);
 
 		/** @var Content $lo_content */
-		$lo_content = $this->Contents->findById((int) $this->request->getParam('id'))->applyOptions([
+		$lo_content = $this->Contents->findById((int) $this->request->getParam('id'))->find('translations')->applyOptions([
 			'authorize' => ['skip' => TRUE],
 		])->first();
 		if ( ! $lo_content) {
@@ -265,11 +260,36 @@ class ContentsController extends Controller {
 	 * @throws \Exception
 	 */
 	protected function save (Content $ao_content, string $as_method = 'add'): void {
+		$la_associated = [];
 		if ($this->Contents->hasAttributes()) {
+			$la_associated[] = $this->Contents->getAttributesTable(TRUE);
 			$ao_content->setAccess('attributes', TRUE);
 		}
 
-		$this->Contents->patchEntity($ao_content, $this->request->getData());
+		$la_data = $this->request->getData();
+
+		if (isset($la_data['data'])) {
+			$la_dataSet = [];
+
+			foreach ((array) $la_data['data'] as $lx_key => $lx_value) {
+				if ( ! is_numeric($lx_key)) {
+					if (empty($lx_value)) {
+						continue;
+					}
+
+					$la_dataSet[ $lx_key ] = $lx_value;
+					continue;
+				}
+
+				if (isset($lx_value['key']) && $lx_value['key'] !== '' && isset($lx_value['value']) && $lx_value['value'] !== '') {
+					$la_dataSet[ $lx_value['key'] ] = $lx_value['value'];
+				}
+			}
+
+			$la_data['data'] = $la_dataSet;
+		}
+
+		$this->Contents->patchEntity($ao_content, $la_data, ['associated' => $la_associated]);
 
 		//Make sure the new page role of the new page id is accessible (could have changed)
 		$this->page = $this->forPage($ao_content->pageId);

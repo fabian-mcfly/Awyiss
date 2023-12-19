@@ -651,3 +651,9 @@ table.PageTemplates .InputType-Checkbox:first-child {
 	display:inline-block;
 	color:#00FFA6;
 }
+
+.Fieldset-Data {
+	display:grid;
+	grid-template-columns:repeat(2, 1fr);
+	gap:25px;
+}

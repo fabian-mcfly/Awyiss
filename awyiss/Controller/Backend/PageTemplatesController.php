@@ -59,7 +59,9 @@ class PageTemplatesController extends Controller {
 	public function add (): void {
 		$this->Authorization->ensure('create');
 
-		$lo_pageTemplate = $this->PageTemplates->newDefaultEntity();
+		$lo_pageTemplate = $this->PageTemplates->newDefaultEntity([
+			'pageRoleId' => $this->Categories->getSelectedCategory(),
+		]);
 
 		if ($this->request->is('post')) {
 			$this->save($lo_pageTemplate);
@@ -88,7 +90,7 @@ class PageTemplatesController extends Controller {
 		$this->Authorization->ensure('update');
 
 		/** @var PageTemplate $lo_pageTemplate */
-		$lo_pageTemplate = $this->PageTemplates->findById((int) $this->request->getParam('id'))->contain(['ContentAreas'])->first();
+		$lo_pageTemplate = $this->PageTemplates->findById((int) $this->request->getParam('id'))->find('translations')->contain(['ContentAreas'])->first();
 		if ( ! $lo_pageTemplate) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -124,7 +126,7 @@ class PageTemplatesController extends Controller {
 		$this->request->allowMethod(['get', 'delete']);
 
 		/** @var PageTemplate $lo_pageTemplate */
-		$lo_pageTemplate = $this->PageTemplates->findById((int) $this->request->getParam('id'))->first();
+		$lo_pageTemplate = $this->PageTemplates->findById((int) $this->request->getParam('id'))->find('translations')->first();
 		if ( ! $lo_pageTemplate) {
 			$this->Flash->error(__('record_not_found'));
 			return $this->redirect(['action' => 'overview']);
@@ -148,7 +150,9 @@ class PageTemplatesController extends Controller {
 	 * @return void
 	 */
 	protected function save (PageTemplate $ao_pageTemplate, string $as_method = 'add'): void {
+		$la_associated = [];
 		if ($this->PageTemplates->hasAttributes()) {
+			$la_associated[] = $this->PageTemplates->getAttributesTable(TRUE);
 			$ao_pageTemplate->setAccess('attributes', TRUE);
 		}
 
@@ -164,14 +168,14 @@ class PageTemplatesController extends Controller {
 		}
 
 		$this->PageTemplates->patchEntity($ao_pageTemplate, $la_requestData, [
-			'associated' => [
+			'associated' => array_merge($la_associated, [
 				'ContentAreas' => [
 					'fields' => ['_joinData'],
 					'associated' => [
 						'_joinData',
 					],
 				],
-			],
+			]),
 		]);
 
 		$this->Categories->ensurePossibleCategorySelection($ao_pageTemplate);

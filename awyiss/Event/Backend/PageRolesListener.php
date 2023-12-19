@@ -6,10 +6,14 @@ namespace Awyiss\Event\Backend;
 
 use Awyiss\Awyiss;
 use Awyiss\Event\EventListenerTrait;
+use Awyiss\Model\Entity;
 use Awyiss\Model\Entity\PageRole;
+use Awyiss\Model\Table\BackendMenuEntriesTable;
+use Cake\Core\Configure;
 use Cake\Datasource\FactoryLocator;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
+use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Utility\Inflector;
 use Queue\Model\Table\QueuedJobsTable;
 
@@ -19,6 +23,7 @@ use Queue\Model\Table\QueuedJobsTable;
  */
 class PageRolesListener implements EventListenerInterface {
 	use EventListenerTrait;
+	use LocatorAwareTrait;
 
 
 	/**
@@ -32,9 +37,24 @@ class PageRolesListener implements EventListenerInterface {
 	 */
 	public function implementedEvents (): array {
 		return [
+			'Model.PageRoles.afterSave' => 'afterSave',
 			'Model.PageRoles.afterSaveCommit' => 'afterSaveCommit',
 			'Model.PageRoles.afterDelete' => 'afterDelete',
 		];
+	}
+
+
+	/**
+	 * @param Event $ao_event
+	 * @param PageRole $ao_entity
+	 *
+	 * @return void
+	 *
+	 * @noinspection PhpUnusedParameterInspection
+	 */
+	public function afterSave (Event $ao_event, PageRole $ao_entity): void {
+		//Create backend menu entries for the new page role
+		$this->createBackendMenuEntries($ao_entity);
 	}
 
 
@@ -99,6 +119,73 @@ class PageRolesListener implements EventListenerInterface {
 		}
 
 		Awyiss::loadConstants(FALSE);
+	}
+
+
+	/**
+	 * @param PageRole $ao_entity
+	 *
+	 * @return void
+	 */
+	protected function createBackendMenuEntries (PageRole $ao_entity): void {
+		if ( ! Configure::read('Awyiss.PageRoles.Backend.autoCreateMenuEntries') || ! $ao_entity->isNew()) {
+			return;
+		}
+
+		/** @var BackendMenuEntriesTable $lo_menuEntriesTable */
+		$lo_menuEntriesTable = $this->fetchTable('BackendMenuEntries');
+
+		$la_data = [
+			'title' => $ao_entity->title,
+			'insert_after_id' => 'pages',
+			'link' => Inflector::camelize(Inflector::pluralize($ao_entity->identifier)) . '::overview',
+			'access' => [
+				'scope' => Inflector::pluralize($ao_entity->identifier),
+				'identifier' => 'read',
+			],
+			'child_backend_menu_entries' => [
+				[
+					'title' => Inflector::pluralize($ao_entity->identifier) . '::menu_overview',
+					'link' => Inflector::camelize(Inflector::pluralize($ao_entity->identifier)) . '::overview',
+					'access' => [
+						'scope' => Inflector::pluralize($ao_entity->identifier),
+						'identifier' => 'read',
+					],
+					'system_order' => 1,
+				],
+				[
+					'title' => Inflector::pluralize($ao_entity->identifier) . '::menu_add',
+					'link' => Inflector::camelize(Inflector::pluralize($ao_entity->identifier)) . '::add',
+					'access' => [
+						'scope' => Inflector::pluralize($ao_entity->identifier),
+						'identifier' => 'create',
+					],
+					'system_order' => 2,
+				],
+			],
+		];
+
+		if (isset($ao_entity->_translations)) {
+			/** @var Entity $lo_translation */
+			foreach ($ao_entity->_translations as $ls_shortcode => $lo_translation) {
+				$la_data['_translations'][ $ls_shortcode ] = $lo_translation->extract([], FALSE, FALSE);
+			}
+		}
+
+		$lo_menuEntry = $lo_menuEntriesTable->patchEntity($lo_menuEntriesTable->newDefaultEntity(), $la_data, [
+			'associated' => [
+				'ChildBackendMenuEntries' => [
+					'validate' => FALSE,
+				],
+			],
+			'validate' => FALSE,
+		]);
+
+		$lo_menuEntriesTable->save($lo_menuEntry, [
+			'authorize' => [
+				'skip' => TRUE,
+			],
+		]);
 	}
 
 

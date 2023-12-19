@@ -117,7 +117,7 @@ class UsersController extends Controller {
 		$this->Users->Usergroups->skipAuthorizationCheck();
 
 		/** @var User $lo_user */
-		$lo_user = $this->Users->findById((int) $this->request->getParam('id'))->contain(['Usergroups'])->first();
+		$lo_user = $this->Users->findById((int) $this->request->getParam('id'))->find('translations')->contain(['Usergroups'])->first();
 		if ( ! $lo_user) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -153,7 +153,7 @@ class UsersController extends Controller {
 
 		$this->request->allowMethod(['get', 'delete']);
 
-		$lo_user = $this->Users->findById((int) $this->request->getParam('id'))->first();
+		$lo_user = $this->Users->findById((int) $this->request->getParam('id'))->find('translations')->first();
 		if ( ! $lo_user) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -313,7 +313,7 @@ class UsersController extends Controller {
 
 		/** @var Session $lo_session */
 		$lo_session = $this->getRequest()->getAttribute('session');
-		$lo_session->delete('unauthenticatedRedirectUrl');
+		$lo_session->destroy();
 
 		return $this->redirect(Router::url([
 			'_name' => Awyiss::REALM_BACKEND,

@@ -33,10 +33,13 @@ class SoftDeleteBehavior extends Behavior {
 	protected array $_defaultConfig = [
 		'enabled' => TRUE,
 		'implementedEvents' => [
-			'Model.buildRules' => 'buildRules',
-			'Model.beforeFind' => 'beforeFind',
-			'Model.beforeDelete' => 'beforeDelete',
-			'Model.afterDeleteCommit' => 'afterDeleteCommit',
+			'buildRules',
+			'beforeFind',
+			'beforeDelete',
+			'afterDeleteCommit',
+			'beforeSoftDelete',
+			'afterSoftDelete',
+			'afterSoftDeleteCommit',
 		],
 		'implementedMethods' => [
 			'softDelete' => 'softDelete',
@@ -181,9 +184,9 @@ class SoftDeleteBehavior extends Behavior {
 	/**
 	 * Intercept the deletion of entities and call `softDelete()`
 	 *
-	 * @param EventInterface  $ao_event
+	 * @param EventInterface $ao_event
 	 * @param EntityInterface $ao_entity
-	 * @param ArrayObject     $ao_options
+	 * @param ArrayObject $ao_options
 	 *
 	 * @return NULL
 	 * @noinspection PhpUnused
@@ -226,9 +229,9 @@ class SoftDeleteBehavior extends Behavior {
 
 
 	/**
-	 * @param EventInterface  $ao_event
+	 * @param EventInterface $ao_event
 	 * @param EntityInterface $ao_entity
-	 * @param ArrayObject     $ao_options
+	 * @param ArrayObject $ao_options
 	 *
 	 * @return void
 	 * @noinspection PhpUnused
@@ -260,8 +263,8 @@ class SoftDeleteBehavior extends Behavior {
 	/**
 	 * Set the `delete`-column to TRUE and call `Model.beforeSoftDelete` and `Model.afterSoftDelete` events
 	 *
-	 * @param EntityInterface     $ao_entity
-	 * @param ArrayObject|array   $ao_options
+	 * @param EntityInterface $ao_entity
+	 * @param ArrayObject|array $ao_options
 	 * @param NULL|EventInterface $ao_event
 	 *
 	 * @return bool
@@ -329,7 +332,7 @@ class SoftDeleteBehavior extends Behavior {
 		if ($lo_table->save($ao_entity, $la_options)) {
 			$lo_table->dispatchEvent('Model.afterSoftDelete', [
 				'entity' => $ao_entity,
-				'options' => $lo_options,
+				'options' => new ArrayObject(['systemOrder' => []] + $la_options),
 			]);
 
 			//Clean the entity because it's saved and therefore no longer dirty.

@@ -64,7 +64,7 @@ class AuthorizeBehavior extends Behavior {
 	protected array $_defaultConfig = [
 		'additionalData' => [],
 		'enabled' => TRUE,
-		'failSilently' => !TRUE, //if TRUE, a ForbiddenException will be thrown for inaccessible scopes
+		'failSilently' => ! TRUE, //if TRUE, a ForbiddenException will be thrown for inaccessible scopes
 		'implementedEvents' => [
 			'Model.buildRules' => 'buildRules',
 			'Model.beforeFind' => 'handleEvent',
@@ -254,7 +254,7 @@ class AuthorizeBehavior extends Behavior {
 	 * Called when building the rules for each table class
 	 *
 	 * @param EventInterface $ao_event
-	 * @param RulesChecker   $ao_rules
+	 * @param RulesChecker $ao_rules
 	 *
 	 * @return RulesChecker
 	 */
@@ -325,12 +325,18 @@ class AuthorizeBehavior extends Behavior {
 		if ($la_options['skip'] === TRUE || $la_options['skipOnce'] === TRUE) {
 			$this->setConfig('skipOnce', FALSE);
 
-			if (!($ao_subject instanceof SelectQuery)) {
+			if ( ! ($ao_subject instanceof SelectQuery)) {
 				return;
 			}
 
 			//Disable
-			foreach ($ao_subject->getRepository()->associations() AS $lo_association) {
+			foreach ($ao_subject->getRepository()->associations() as $lo_association) {
+				if ( ! in_array($lo_association->getAlias(), $ao_subject->getContain())) {
+					continue;
+				}
+
+				dd($lo_association, __LINE__, __FILE__);
+
 				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 				if ($lo_association->type() !== Association::MANY_TO_MANY || ! $lo_association->hasThrough()) {
 					continue;
@@ -341,8 +347,8 @@ class AuthorizeBehavior extends Behavior {
 				 * @var Table $lo_junctionTable
 				 */
 				$lo_junctionTable = $lo_association->junction();
-				if (! $lo_junctionTable->hasBehavior('Authorize')) {
-					return;
+				if ( ! $lo_junctionTable->hasBehavior('Authorize')) {
+					continue;
 				}
 
 				//Disable the authorization check for junction tables once
@@ -388,7 +394,6 @@ class AuthorizeBehavior extends Behavior {
 			if ($ao_subject instanceof SelectQuery || $ao_subject instanceof DeleteQuery) {
 				$ao_subject->setResult(new ResultSetDecorator([]));
 			}
-
 		}
 	}
 
@@ -420,9 +425,10 @@ class AuthorizeBehavior extends Behavior {
 			'subject' => $ao_subject,
 		];
 
-		//if (!$this->scopeIsAccessible($ls_scope, $la_additionalData, ...$lx_identifier)) {
+		/*if (!$this->scopeIsAccessible($ls_scope, $la_additionalData, ...$lx_identifier)) {
 			//dd(__LINE__, __FILE__, $ao_subject, $ls_scope, debug_backtrace(2));
-		//}
+			dd($aa_options['identifiers']);
+		}*/
 
 		return $this->scopeIsAccessible($ls_scope, $la_additionalData, ...$lx_identifier);
 	}
@@ -439,7 +445,7 @@ class AuthorizeBehavior extends Behavior {
 	 * @return bool
 	 * @throws \Exception
 	 *
-	 * @see \Awyiss\Authorization\Permission\PermissionCollection::scopeIsAccessible()
+	 * @see          \Awyiss\Authorization\Permission\PermissionCollection::scopeIsAccessible()
 	 *
 	 * @noinspection PhpUnused
 	 */
@@ -454,8 +460,8 @@ class AuthorizeBehavior extends Behavior {
 	 *
 	 * See \Awyiss\Authorization\Permission\PermissionCollection::scopeIsAccessible() how $ax_identifier is used.
 	 *
-	 * @param string       $as_scope
-	 * @param null|array   $aa_additionalData
+	 * @param string $as_scope
+	 * @param null|array $aa_additionalData
 	 * @param string|array ...$ax_identifier
 	 *
 	 * @return bool
@@ -465,15 +471,12 @@ class AuthorizeBehavior extends Behavior {
 	public function scopeIsAccessible (string $as_scope, ?array $aa_additionalData = NULL, string|array ...$ax_identifier): bool {
 		//Get the currently assigned permissions from the identity object, resp. their permission collection
 		$lo_identity = $this->getIdentity();
-		$lo_permissionCollection = $lo_identity?->getPermissionCollection();
 
-		if ( ! $lo_permissionCollection) {
+		if ( ! $lo_identity) {
 			return FALSE;
 		}
 
-		$la_additionalData = $aa_additionalData ?? $this->getConfig('additionalData');
-
-		return $lo_permissionCollection->scopeIsAccessible($as_scope, $la_additionalData, ...$ax_identifier);
+		return $lo_identity->scopeIsAccessible($as_scope, $aa_additionalData ?? $this->getConfig('additionalData'), ...$ax_identifier);
 	}
 
 

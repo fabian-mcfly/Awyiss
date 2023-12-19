@@ -133,7 +133,7 @@ class EventTriggerBehavior extends Behavior {
 			return TRUE;
 		}
 
-		$ls_name = match (true) {
+		$ls_name = match (TRUE) {
 			$as_name == 'beforeSave' && $ao_entity->isNew() => 'beforeCreate',
 			$as_name == 'beforeSave' && !$ao_entity->isNew() => 'beforeUpdate',
 			$as_name == 'afterSave' && $ao_entity->isNew() => 'afterCreate',

@@ -23,7 +23,7 @@ class AutoPrefixBehavior extends Behavior {
 	protected array $_defaultConfig = [
 		'enabled' => TRUE,
 		'implementedEvents' => [
-			'Model.beforeFind' => 'beforeFind',
+			'beforeFind',
 		]
 	];
 	protected string $alias;

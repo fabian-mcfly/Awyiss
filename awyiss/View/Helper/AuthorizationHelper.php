@@ -4,7 +4,6 @@
 namespace Awyiss\View\Helper;
 
 
-use Awyiss\Authorization\AuthorizationService;
 use Awyiss\Authorization\IdentityPermissionsInterface;
 use Awyiss\Authorization\PermissionOption\PermissionOptionInterface;
 use Awyiss\Model\Entity;
@@ -171,7 +170,7 @@ class AuthorizationHelper extends Helper {
 	 * @return bool
 	 * @throws \Exception
 	 *
-	 * @see \Awyiss\Authorization\Permission\PermissionCollection::scopeIsAccessible()
+	 * @see          \Awyiss\Authorization\Permission\PermissionCollection::scopeIsAccessible()
 	 *
 	 * @noinspection PhpUnused
 	 */
@@ -193,11 +192,10 @@ class AuthorizationHelper extends Helper {
 	public function scopeIsAccessible (string $as_scope, ?array $aa_additionalData = NULL, string|array ...$ax_identifier): ?bool {
 		//Get the currently assigned permissions from the identity object, resp. their permission collection
 		$lo_identity = $this->getIdentity();
-		$lo_permissionCollection = $lo_identity->getPermissionCollection();
 
 		$la_additionalData = $aa_additionalData ?? $this->getConfig('additionalData');
 
-		return $lo_permissionCollection->scopeIsAccessible($as_scope, $la_additionalData, ...$ax_identifier);
+		return $lo_identity->scopeIsAccessible($as_scope, $la_additionalData, ...$ax_identifier);
 	}
 
 
@@ -208,9 +206,9 @@ class AuthorizationHelper extends Helper {
 	 * For example `element\authorization\permission\simple_radio`
 	 *
 	 * @param PermissionOptionInterface $ao_permission
-	 * @param null|Entity               $ao_entity
-	 * @param null|string               $as_fileName
-	 * @param null|string               $as_subDir
+	 * @param null|Entity $ao_entity
+	 * @param null|string $as_fileName
+	 * @param null|string $as_subDir
 	 *
 	 * @return string
 	 *

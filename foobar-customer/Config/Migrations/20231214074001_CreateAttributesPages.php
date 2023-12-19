@@ -4,7 +4,7 @@
 use Migrations\AbstractMigration;
 
 
-class CreateAttributesContents extends AbstractMigration {
+class CreateAttributesPages extends AbstractMigration {
 	/**
 	 * Change Method.
 	 *
@@ -13,15 +13,14 @@ class CreateAttributesContents extends AbstractMigration {
 	 * @return void
 	 */
 	public function change(): void {
-		$table = $this->table('attributes_contents');
-		$table->addColumn('content_id', 'integer', [
+		$table = $this->table('attributes_pages');
+		$table->addColumn('page_id', 'integer', [
             'default' => null,
             'limit' => 11,
             'null' => false,
         ]);
-		$table->addColumn('background_color', 'string', [
-            'default' => '',
-            'limit' => 50,
+		$table->addColumn('testdate', 'datetime', [
+            'default' => null,
             'null' => true,
         ]);
 		$table->create();

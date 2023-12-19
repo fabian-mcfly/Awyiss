@@ -4,7 +4,6 @@
 namespace Awyiss\Controller\Component;
 
 
-use Awyiss\Authorization\AuthorizationService;
 use Awyiss\Authorization\IdentityPermissionsInterface;
 use Awyiss\Model\Entity\User;
 use Awyiss\Model\Entity\UsersExternal;
@@ -47,6 +46,7 @@ class AuthorizationComponent extends Component {
 	];
 	/**
 	 * The default scope to be used by `getScope()`.
+	 *
 	 * @var NULL|string
 	 */
 	protected ?string $defaultScope = NULL;
@@ -60,7 +60,7 @@ class AuthorizationComponent extends Component {
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function initialize (array $aa_config): void {
-		if (!empty($aa_config['scope'])) {
+		if ( ! empty($aa_config['scope'])) {
 			$this->defaultScope = $aa_config['scope'];
 		}
 	}
@@ -120,7 +120,6 @@ class AuthorizationComponent extends Component {
 
 		return $lo_new;
 	}
-
 
 
 	/**
@@ -349,7 +348,7 @@ class AuthorizationComponent extends Component {
 	 * @return bool
 	 * @throws \Exception
 	 *
-	 * @see \Awyiss\Authorization\Permission\PermissionCollection::scopeIsAccessible()
+	 * @see          \Awyiss\Authorization\Permission\PermissionCollection::scopeIsAccessible()
 	 *
 	 * @noinspection PhpUnused
 	 */
@@ -375,11 +374,10 @@ class AuthorizationComponent extends Component {
 	public function scopeIsAccessible (string $as_scope, ?array $aa_additionalData = NULL, string|array ...$ax_identifier): bool {
 		//Get the currently assigned permissions from the identity object, resp. their permissions collection
 		$lo_identity = $this->getIdentity();
-		$lo_permissionCollection = $lo_identity->getPermissionCollection();
 
 		$la_additionalData = $aa_additionalData ?? $this->getConfig('additionalData');
 
-		return $lo_permissionCollection->scopeIsAccessible($as_scope, $la_additionalData, ...$ax_identifier);
+		return $lo_identity->scopeIsAccessible($as_scope, $la_additionalData, ...$ax_identifier);
 	}
 
 

@@ -51,7 +51,7 @@ class AttributesListener implements EventListenerInterface {
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function afterSaveCommit (Event $ao_event, Entity $ao_entity): void {
-		$la_relevantColumns = ['scope', 'identifier', 'type', 'hasIndex', 'required', 'defaultValue'];
+		$la_relevantColumns = ['scope', 'identifier', 'type', 'hasIndex', 'required', 'defaultValue', 'deleted'];
 
 		$la_oldData = $ao_entity->isNew() ? array_fill_keys($la_relevantColumns, NULL) : $ao_entity->extractOriginal($la_relevantColumns, FALSE);
 		$la_newData = $ao_entity->extract($la_relevantColumns, FALSE, FALSE);

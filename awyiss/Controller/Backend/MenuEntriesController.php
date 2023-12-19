@@ -11,7 +11,6 @@ use Awyiss\Model\Entity\MenuEntry;
 use Awyiss\Model\Table\MenuEntriesTable;
 use Cake\Collection\Collection;
 use Cake\Collection\CollectionInterface;
-use Cake\Datasource\ResultSetInterface;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
 use Awyiss\Routing\Router;
@@ -101,8 +100,8 @@ class MenuEntriesController extends Controller {
 		$this->Authorization->ensure('update');
 
 		/** @var MenuEntry $lo_menuEntry */
-		$lo_menuEntry = $this->MenuEntries->findById((int) $this->request->getParam('id'))->first();
-		if (! $lo_menuEntry) {
+		$lo_menuEntry = $this->MenuEntries->findById((int) $this->request->getParam('id'))->find('translations')->first();
+		if ( ! $lo_menuEntry) {
 			$this->Flash->error(__('record_not_found'));
 
 			return $this->redirect(['action' => 'overview']);
@@ -141,7 +140,7 @@ class MenuEntriesController extends Controller {
 		$this->request->allowMethod(['get', 'delete']);
 
 		/** @var MenuEntry $lo_menuEntry */
-		$lo_menuEntry = $this->MenuEntries->findById((int) $this->request->getParam('id'))->first();
+		$lo_menuEntry = $this->MenuEntries->findById((int) $this->request->getParam('id'))->find('translations')->first();
 		if (! $lo_menuEntry) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -168,11 +167,13 @@ class MenuEntriesController extends Controller {
 	* @throws RedirectException
 	*/
 	protected function save (MenuEntry $ao_menuEntry, string $as_method = 'add'): void {
+		$la_associated = [];
 		if ($this->MenuEntries->hasAttributes()) {
+			$la_associated[] = $this->MenuEntries->getAttributesTable(TRUE);
 			$ao_menuEntry->setAccess('attributes', TRUE);
 		}
 
-		$this->MenuEntries->patchEntity($ao_menuEntry, $this->request->getData());
+		$this->MenuEntries->patchEntity($ao_menuEntry, $this->request->getData(), ['associated' => $la_associated]);
 
 		if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
 			if ($this->MenuEntries->save($ao_menuEntry)) {

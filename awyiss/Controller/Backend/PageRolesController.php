@@ -67,7 +67,7 @@ class PageRolesController extends Controller {
 		$this->Authorization->ensure('update');
 
 		/** @var PageRole $lo_pageRole */
-		$lo_pageRole = $this->PageRoles->findById((int) $this->request->getParam('id'))->first();
+		$lo_pageRole = $this->PageRoles->findById((int) $this->request->getParam('id'))->find('translations')->first();
 		if ( ! $lo_pageRole) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -97,7 +97,7 @@ class PageRolesController extends Controller {
 		$this->request->allowMethod(['get', 'delete']);
 
 		/** @var PageRole $lo_pageRole */
-		$lo_pageRole = $this->PageRoles->findById((int) $this->request->getParam('id'))->first();
+		$lo_pageRole = $this->PageRoles->findById((int) $this->request->getParam('id'))->find('translations')->first();
 		if ( ! $lo_pageRole) {
 			$this->Flash->error(__('record_not_found'));
 			return $this->redirect(['action' => 'overview']);
@@ -121,11 +121,13 @@ class PageRolesController extends Controller {
 	 * @return void
 	 */
 	protected function save (PageRole $ao_pageRole, string $as_method = 'add'): void {
+		$la_associated = [];
 		if ($this->PageRoles->hasAttributes()) {
+			$la_associated[] = $this->PageRoles->getAttributesTable(TRUE);
 			$ao_pageRole->setAccess('attributes', TRUE);
 		}
 
-		$this->PageRoles->patchEntity($ao_pageRole, $this->request->getData());
+		$this->PageRoles->patchEntity($ao_pageRole, $this->request->getData(), ['associated' => $la_associated]);
 
 		if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
 			if ($this->PageRoles->save($ao_pageRole)) {

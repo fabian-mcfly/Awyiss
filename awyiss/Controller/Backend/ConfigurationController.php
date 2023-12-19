@@ -51,6 +51,8 @@ class ConfigurationController extends Controller {
 			$this->configScopes[ Inflector::underscore($ls_scope) ] = $ls_configOptionsClass;
 		}
 
+
+		//TODO: rebuild using categories-component
 		//Remember an identifier that will be used to save the selected scope in the session
 		$this->selectedScopeSessionIdentifier = 'categories.' . ($this->request->getParam('lang') ?? 'global') . '.' . Inflector::underscore($this->getName()) . '.scope';
 		$this->selectedRealmSessionIdentifier = 'categories.' . ($this->request->getParam('lang') ?? 'global') . '.' . Inflector::underscore($this->getName()) . '.realm';
@@ -186,7 +188,7 @@ class ConfigurationController extends Controller {
 		])->ensure('update');
 
 			/** @var Configuration $lo_configuration */
-		$lo_configuration = $this->Configuration->findById((int) $this->request->getParam('id'))->first();
+		$lo_configuration = $this->Configuration->findById((int) $this->request->getParam('id'))->find('translations')->first();
 		if ( ! $lo_configuration) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -233,7 +235,7 @@ class ConfigurationController extends Controller {
 		$this->request->allowMethod(['get', 'delete']);
 
 			/** @var Configuration $lo_configuration */
-		$lo_configuration = $this->Configuration->findById((int) $this->request->getParam('id'))->first();
+		$lo_configuration = $this->Configuration->findById((int) $this->request->getParam('id'))->find('translations')->first();
 		if ( ! $lo_configuration) {
 			$this->Flash->error(__('record_not_found'));
 			return $this->redirect(['action' => 'overview']);
@@ -258,13 +260,15 @@ class ConfigurationController extends Controller {
 	 * @throws \Exception
 	 */
 	protected function save (Configuration $ao_configuration, string $as_method = 'add'): void {
+		$la_associated = [];
 		if ($this->Configuration->hasAttributes()) {
+			$la_associated[] = $this->Configuration->getAttributesTable(TRUE);
 			$ao_configuration->setAccess('attributes', TRUE);
 		}
 
-		$this->Configuration->patchEntity($ao_configuration, $this->request->getData());
+		$this->Configuration->patchEntity($ao_configuration, $this->request->getData(), ['associated' => $la_associated]);
 
-		if (! $this->Authorization->withAdditionalData([
+		if ( ! $this->Authorization->withAdditionalData([
 			'scope' => $ao_configuration->scope,
 		])->isAccessible('read')) {
 			$this->Flash->error(__('scope_not_accessible'));

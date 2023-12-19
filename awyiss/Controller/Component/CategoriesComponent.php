@@ -525,8 +525,7 @@ class CategoriesComponent extends Component {
 		$ao_query->orderByAsc($ao_query->newExpr($ao_query->func()->FIND_IN_SET([
 			$ls_prefixedColumn => 'identifier',
 			implode(',', $la_categoryIdentifiers)
-		])),
-			TRUE);
+		])), TRUE);
 
 		/*
 		 * Set the order by-clause but reset existing order-clauses, so records will be sorted

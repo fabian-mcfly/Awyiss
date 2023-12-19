@@ -93,7 +93,7 @@ class UsergroupsController extends Controller {
 		if ($lb_usersScopeIsAccessible) {
 			$la_contain[] = 'Users';
 		}
-		$lo_usergroup = $this->Usergroups->findById((int) $this->request->getParam('id'))->contain($la_contain)->first();
+		$lo_usergroup = $this->Usergroups->findById((int) $this->request->getParam('id'))->find('translations')->contain($la_contain)->first();
 		if ( ! $lo_usergroup) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -132,7 +132,7 @@ class UsergroupsController extends Controller {
 		$this->request->allowMethod(['get', 'delete']);
 
 		/** @var Usergroup $lo_usergroup */
-		$lo_usergroup = $this->Usergroups->findById((int) $this->request->getParam('id'))->first();
+		$lo_usergroup = $this->Usergroups->findById((int) $this->request->getParam('id'))->find('translations')->first();
 		if ( ! $lo_usergroup) {
 			$this->Flash->error(__('record_not_found'));
 			return $this->redirect(['action' => 'overview']);

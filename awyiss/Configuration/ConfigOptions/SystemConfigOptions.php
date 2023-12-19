@@ -30,7 +30,7 @@ class SystemConfigOptions extends AbstractConfigOptions {
 				'identifier' => 'editlinks',
 				'localizable' => FALSE,
 				'nullable' => FALSE,
-				'type' => ConfigOptionType::TYPE_BOOL,
+				'type' => ConfigOptionType::BOOL,
 			]),
 			'meta' => [
 				new ConfigOption([
@@ -51,7 +51,7 @@ class SystemConfigOptions extends AbstractConfigOptions {
 				'identifier' => 'lockTimeout',
 				'localizable' => FALSE,
 				'nullable' => FALSE,
-				'type' => ConfigOptionType::TYPE_INTEGER,
+				'type' => ConfigOptionType::INTEGER,
 			]),
 			'meta' => [
 				new ConfigOption([

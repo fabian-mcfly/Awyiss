@@ -58,7 +58,7 @@ class Behavior extends \Cake\ORM\Behavior {
 	/**
 	 * @inheritDoc
 	 *
-	 * This variation will use the class' "defaultEvents"-property instead of a hardcoded array of events names
+	 * This variation will use the class's "defaultEvents"-property instead of a hardcoded array of events names
 	 */
 	public function implementedEvents (): array {
 		$li_priority = $this->getConfig('priority');

@@ -204,7 +204,7 @@ class AttributesHelper extends Helper {
 				break;*/
 		}
 
-		if ( ! isset($la_options['timezone'])) {
+		if ( ! isset($la_options['timezone']) && in_array($la_options['type'], ['datetime'])) {
 			$la_options['timezone'] = $lo_language->timezone;
 		}
 
@@ -227,7 +227,11 @@ class AttributesHelper extends Helper {
 			if (empty($lo_language) || !($lo_language instanceof Language)) {
 				throw new \RuntimeException(sprintf('Missing language for translation of `%s`', $as_fieldName));
 			}
-			$la_options['timezone'] = $lo_language->timezone;
+
+			if ( ! isset($la_options['timezone']) && ! isset($la_options['timezone']) && in_array($la_options['type'], ['datetime'])) {
+				$la_options['timezone'] = $lo_language->timezone;
+			}
+
 			$ls_field = '_translations.' . $lo_language->shortcode . '.' . $ls_field;
 		}
 		unset($la_options['isTranslation'], $la_options['language']);

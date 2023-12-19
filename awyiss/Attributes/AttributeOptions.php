@@ -32,6 +32,7 @@ class AttributeOptions {
 		'identifier' => 'string',
 		'options' => 'array|callable',
 		'readonly' => 'bool|callable',
+		'toScalar' => 'callable|null',
 		'validate' => 'mixed|callable',
 		'value' => 'mixed|callable',
 	];
@@ -54,6 +55,10 @@ class AttributeOptions {
 	 */
 	protected mixed $readonly = NULL;
 	/**
+	 * @var ?callable
+	 */
+	protected mixed $toScalar = NULL;
+	/**
 	 * @var mixed|callable
 	 */
 	protected mixed $validate = NULL;
@@ -68,19 +73,27 @@ class AttributeOptions {
 	 *                                             array|callable, value: mixed|callable} $aa_settings
 	 */
 	public function __construct (#[ArrayShape(self::SETTINGS_SHAPE)] array $aa_settings = []) {
-		foreach ([
-			'disabled',
-			'identifier',
-			'options',
-			'readonly',
-			'validate',
-			'value',
-		] as $ls_key) {
+		foreach (
+			[
+				'disabled',
+				'identifier',
+				'options',
+				'readonly',
+				'toScalar',
+				'validate',
+				'value',
+			] as $ls_key
+		) {
 			if ( ! isset($aa_settings[ $ls_key ])) {
 				continue;
 			}
 
-			if (method_exists($this, $ls_method = ('set' . Inflector::camelize($ls_key)))) {
+			$ls_method = Inflector::camelize($ls_key);
+			if ($ls_method === 'ToScalar') {
+				$ls_method = 'Scalar';
+			}
+
+			if (method_exists($this, $ls_method = ('set' . $ls_method))) {
 				$this->{$ls_method}($aa_settings[ $ls_key ]);
 			}
 		}
@@ -113,18 +126,18 @@ class AttributeOptions {
 
 
 	/**
-	 * @param array            $aa_currentOptions
-	 * @param ContextInterface $ao_context
+	 * @param array $aa_currentOptions
+	 * @param ContextInterface $ao_entity
 	 *
 	 * @return array
 	 */
-	public function buildOptions (array $aa_currentOptions, ContextInterface $ao_context): array {
+	public function buildOptions (array $aa_currentOptions, Entity $ao_entity): array {
 		$la_currentOptions = $aa_currentOptions;
 
-		$lx_disabled = $this->getDisabled(TRUE, $ao_context, $la_currentOptions);
-		$lx_options = $this->getOptions(TRUE, $ao_context, $la_currentOptions);
-		$lx_readonly = $this->getReadonly(TRUE, $ao_context, $la_currentOptions);
-		$lx_value = $this->getValue(TRUE, $ao_context, $la_currentOptions);
+		$lx_disabled = $this->getDisabled(TRUE, $ao_entity, $la_currentOptions);
+		$lx_options = $this->getOptions(TRUE, $ao_entity, $la_currentOptions);
+		$lx_readonly = $this->getReadonly(TRUE, $ao_entity, $la_currentOptions);
+		$lx_value = $this->getValue(TRUE, $ao_entity, $la_currentOptions);
 
 		if ($lx_disabled !== NULL) {
 			$la_currentOptions['disabled'] = $lx_disabled;
@@ -150,9 +163,9 @@ class AttributeOptions {
 	 * @return array|bool|callable
 	 * @noinspection PhpUnused
 	 */
-	public function getDisabled (bool $ab_evaluate = FALSE, ContextInterface|Entity $ao_context = NULL, array &$aa_currentOptions = []): mixed {
+	public function getDisabled (bool $ab_evaluate = FALSE, Entity $ao_entity = NULL, array &$aa_currentOptions = []): mixed {
 		if ($ab_evaluate && is_callable($this->disabled)) {
-			return call_user_func_array($this->disabled, [&$aa_currentOptions, $ao_context]);
+			return call_user_func_array($this->disabled, [$ao_entity, &$aa_currentOptions]);
 		}
 
 		return $this->disabled;
@@ -177,9 +190,9 @@ class AttributeOptions {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function getOptions (bool $ab_evaluate = FALSE, ContextInterface|Entity $ao_context = NULL, array &$aa_currentOptions = []): mixed {
+	public function getOptions (bool $ab_evaluate = FALSE, Entity $ao_entity = NULL, array &$aa_currentOptions = []): mixed {
 		if ($ab_evaluate && is_callable($this->options)) {
-			return call_user_func_array($this->options, [&$aa_currentOptions, $ao_context]);
+			return call_user_func_array($this->options, [$ao_entity, &$aa_currentOptions]);
 		}
 
 		return $this->options;
@@ -203,9 +216,9 @@ class AttributeOptions {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function getReadonly (bool $ab_evaluate = FALSE, ContextInterface|Entity $ao_context = NULL, array &$aa_currentOptions = []): mixed {
+	public function getReadonly (bool $ab_evaluate = FALSE, Entity $ao_entity = NULL, array &$aa_currentOptions = []): mixed {
 		if ($ab_evaluate && is_callable($this->readonly)) {
-			return call_user_func_array($this->readonly, [&$aa_currentOptions, $ao_context]);
+			return call_user_func_array($this->readonly, [$ao_entity, &$aa_currentOptions]);
 		}
 
 		return $this->readonly;
@@ -226,13 +239,37 @@ class AttributeOptions {
 
 
 	/**
+	 * @return mixed
+	 */
+	public function getScalar (bool $ab_evaluate = FALSE, mixed $ax_value = NULL, Entity $ao_entity = NULL, array &$aa_currentOptions = []): mixed {
+		if ($ab_evaluate && is_callable($this->toScalar)) {
+			return call_user_func_array($this->toScalar, [$ax_value, $ao_entity, &$aa_currentOptions]);
+		}
+
+		return $this->toScalar;
+	}
+
+
+	/**
+	 * @param mixed $toScalar
+	 *
+	 * @return $this
+	 */
+	public function setScalar (?callable $toScalar = NULL): static {
+		$this->toScalar = $toScalar;
+
+		return $this;
+	}
+
+
+	/**
 	 * @return bool|callable
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function getValue (bool $ab_evaluate = FALSE, ContextInterface|Entity $ao_context = NULL, array &$aa_currentOptions = []): mixed {
+	public function getValue (bool $ab_evaluate = FALSE, Entity $ao_entity = NULL, array &$aa_currentOptions = []): mixed {
 		if ($ab_evaluate && is_callable($this->value)) {
-			return call_user_func_array($this->value, [&$aa_currentOptions, $ao_context]);
+			return call_user_func_array($this->value, [$ao_entity, &$aa_currentOptions]);
 		}
 
 		return $this->value;
@@ -252,7 +289,7 @@ class AttributeOptions {
 
 
 	/**
-	 * @param array       $ax_value
+	 * @param array $ax_value
 	 * @param NULL|Entity $ao_entity
 	 *
 	 * @return bool|string
@@ -272,8 +309,13 @@ class AttributeOptions {
 				return FALSE;
 			}
 
-			$lb_inOptions = array_key_exists($ax_value, $this->getOptions(TRUE, $ao_entity));
-			$lb_inDisabled = is_array($lx_disabled) && in_array($ax_value, $lx_disabled) ? $lx_disabled : FALSE;
+			$lx_value = $ax_value;
+			if ( ! is_scalar($lx_value) && $lx_value !== NULL) {
+				$lx_value = $this->getScalar(TRUE, $lx_value, $ao_entity);
+			}
+
+			$lb_inOptions = array_key_exists($lx_value, $this->getOptions(TRUE, $ao_entity));
+			$lb_inDisabled = is_array($lx_disabled) && in_array($lx_value, $lx_disabled) ? $lx_disabled : FALSE;
 
 			return $lb_inOptions && ! $lb_inDisabled;
 		}

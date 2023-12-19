@@ -4,6 +4,7 @@
 namespace Awyiss\Model\Table;
 
 
+use Awyiss\Authorization\Permission\PermissionAccess;
 use Awyiss\Model\Entity\UsergroupPermission;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
@@ -156,7 +157,7 @@ class UsergroupPermissionsTable extends Table {
 		parent::initializeSchema($ao_schema);;
 
 		//$ao_schema->setColumnType('access', 'integer');
-		$ao_schema->setColumnType('access', EnumType::from(\Awyiss\Authorization\Permission\PermissionAccess::class));
+		$ao_schema->setColumnType('access', EnumType::from(PermissionAccess::class));
 		$ao_schema->setColumnType('settings', 'json');
 	}
 }

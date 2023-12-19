@@ -4,6 +4,7 @@
 namespace Awyiss\Model\Behavior\Translate;
 
 
+use ArrayObject;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
 use Cake\ORM\Entity;
@@ -14,18 +15,18 @@ use Cake\Utility\Inflector;
  * @inheritDoc
  */
 class EavStrategy extends \Cake\ORM\Behavior\Translate\EavStrategy {
-	/*
+	/**
 	 * {@inheritDoc}
 	 *
 	 * Implemented here nearly 1:1 without removing the dirty flag on translatable fields
 	 *
-	 * @param EventInterface  $ao_event   The beforeSave event that was fired
-	 * @param EntityInterface $ao_entity  The entity that is going to be saved
-	 * @param ArrayObject     $ao_options the options passed to the save method
+	 * @param EventInterface $ao_event The beforeSave event that was fired
+	 * @param EntityInterface $ao_entity The entity that is going to be saved
+	 * @param ArrayObject $ao_options the options passed to the save method
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	/*public function beforeSave (EventInterface $ao_event, EntityInterface $ao_entity, ArrayObject $ao_options): void {
+	public function beforeSave (EventInterface $ao_event, EntityInterface $ao_entity, ArrayObject $ao_options): void {
 		$ls_locale = $ao_entity->get('_locale') ?: $this->getLocale();
 		$ao_options['associated'] = [$this->translationTable->getAlias() => ['validate' => FALSE]] + $ao_options['associated'];
 
@@ -109,10 +110,12 @@ class EavStrategy extends \Cake\ORM\Behavior\Translate\EavStrategy {
 		$ao_entity->set('_locale', $ls_locale, ['setter' => FALSE]);
 		$ao_entity->setDirty('_locale', FALSE);
 
+		/* With those lines, the main language would not find its way in the db
 		foreach ($la_fields as $ls_field) {
 			$ao_entity->setDirty($ls_field, FALSE);
 		}
-	}*/
+		*/
+	}
 
 
 	/**
@@ -139,10 +142,9 @@ class EavStrategy extends \Cake\ORM\Behavior\Translate\EavStrategy {
 			])->execute();
 		}
 
-
 		//Check if there are keys in the translation entities that aren't set in the config
 		$la_unusedKeys = [];
-		foreach ($ao_entity->get('_translations') AS $lo_translation) {
+		foreach ($ao_entity->get('_translations') ?? [] AS $lo_translation) {
 			$la_keys = array_diff(array_keys($lo_translation->extract()), $this->getConfig('fields'), ['locale']);
 			if ($la_keys) {
 				$lo_translation->unset($la_keys);

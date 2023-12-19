@@ -71,7 +71,7 @@ class LanguagesController extends Controller {
 		$this->Authorization->ensure('update');
 
 		/** @var Language $lo_language */
-		$lo_language = $this->Languages->findById((int) $this->request->getParam('id'))->first();
+		$lo_language = $this->Languages->findById((int) $this->request->getParam('id'))->find('translations')->first();
 		if ( ! $lo_language) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -102,7 +102,7 @@ class LanguagesController extends Controller {
 		$this->request->allowMethod(['get', 'delete']);
 
 		/** @var Language $lo_language */
-		$lo_language = $this->Languages->findById((int) $this->request->getParam('id'))->first();
+		$lo_language = $this->Languages->findById((int) $this->request->getParam('id'))->find('translations')->first();
 		if ( ! $lo_language) {
 			$this->Flash->error(__('record_not_found'));
 			return $this->redirect(['action' => 'overview']);
@@ -126,11 +126,13 @@ class LanguagesController extends Controller {
 	 * @return void
 	 */
 	protected function save (Language $ao_language, string $as_method = 'add'): void {
+		$la_associated = [];
 		if ($this->Languages->hasAttributes()) {
+			$la_associated[] = $this->Languages->getAttributesTable(TRUE);
 			$ao_language->setAccess('attributes', TRUE);
 		}
 
-		$this->Languages->patchEntity($ao_language, $this->request->getData());
+		$this->Languages->patchEntity($ao_language, $this->request->getData(), ['associated' => $la_associated]);
 
 		if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
 			if ($this->Languages->save($ao_language)) {

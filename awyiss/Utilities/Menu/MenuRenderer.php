@@ -17,13 +17,7 @@ class MenuRenderer {
 	use InstanceConfigTrait;
 
 	protected $_defaultConfig = [
-		'templates' => [
-			'menu' => '<nav id="Menu-{{identifier}}">' . PHP_EOL . '{{list}}</nav>' . PHP_EOL,
-			'list' => '<ul class="Level{{level}}">' . PHP_EOL . '{{content}}</ul>' . PHP_EOL,
-			'item' => '<li class="Level{{level}}">' . PHP_EOL . '{{link}}{{children}}</li>' . PHP_EOL,
-			'link' => '<a href="{{url}}" class="Level{{level}}" {{attributes}}>{{title}}</a>' . PHP_EOL,
-			'noLink' => '<span class="Level{{level}}">{{title}}</span>' . PHP_EOL,
-		],
+		'activeOnly' => TRUE,
 		'formatters' => [
 			'list' => NULL,
 			'item' => NULL,
@@ -31,6 +25,13 @@ class MenuRenderer {
 			'noLink' => NULL,
 		],
 		'maxLevel' => PHP_INT_MAX,
+		'templates' => [
+			'menu' => '<nav id="Menu-{{identifier}}">' . PHP_EOL . '{{list}}</nav>' . PHP_EOL,
+			'list' => '<ul class="Level{{level}}">' . PHP_EOL . '{{content}}</ul>' . PHP_EOL,
+			'item' => '<li class="Level{{level}}">' . PHP_EOL . '{{link}}{{children}}</li>' . PHP_EOL,
+			'link' => '<a href="{{url}}" class="Level{{level}}" {{attributes}}>{{title}}</a>' . PHP_EOL,
+			'noLink' => '<span class="Level{{level}}">{{title}}</span>' . PHP_EOL,
+		],
 	];
 	protected Menu $menu;
 	protected StringTemplate $templates;
@@ -131,6 +132,10 @@ class MenuRenderer {
 		}
 
 		if ( ! $item->isVisible()) {
+			return '';
+		}
+
+		if ($this->getConfig('activeOnly') && ! $item->getActive()) {
 			return '';
 		}
 

@@ -60,7 +60,7 @@ class GeneralEventsListener implements EventListenerInterface {
 		}
 
 		/** @var Table $lo_model */
-		foreach ($this->initializedModels AS $lo_model) {
+		foreach ($this->initializedModels as $lo_model) {
 			EventListenersProvider::loadListener($lo_model->getAlias(), $this->realm);
 		}
 	}

@@ -15,7 +15,7 @@
 		$this->Authorization->ensure('update');
 
 		/** @var {{ entityClassName }} $lo_{{ singularName }} */
-		$lo_{{ singularName }} = $this->{{ currentModelName }}->findById((int) $this->request->getParam('id'))->first();
+		$lo_{{ singularName }} = $this->{{ currentModelName }}->findById((int) $this->request->getParam('id'))->find('translations')->first();
 		if (! $lo_{{ singularName }}) {
 			$this->Flash->error(__('record_not_found'));
 

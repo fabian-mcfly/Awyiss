@@ -4,13 +4,13 @@
 namespace Awyiss\Model\Behavior;
 
 
+use ArrayObject;
 use Awyiss\Attributes\AttributeOptionsInterface;
 use Awyiss\Attributes\AttributeOptionsProvider;
 use Awyiss\Core\App;
 use Awyiss\Model\Entity;
 use Awyiss\Model\Entity\Attribute;
 use Awyiss\Model\Table;
-use Awyiss\Model\Table\AttributesTable;
 use Awyiss\ORM\Association\HasOne;
 use Awyiss\ORM\Behavior;
 use Awyiss\ORM\RulesChecker;
@@ -22,7 +22,9 @@ use Cake\Event\EventInterface;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
+use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
+use RuntimeException;
 
 
 /**
@@ -38,7 +40,7 @@ class AttributesBehavior extends Behavior {
 	 */
 	protected static array $attributeOptions;
 	/**
-	 * @var array<int, Attribute>
+	 * @var array<string, array<string, Attribute>>
 	 */
 	protected array $attributes;
 	/**
@@ -58,10 +60,9 @@ class AttributesBehavior extends Behavior {
 		'attributeOptionsProviderClass' => AttributeOptionsProvider::class,
 		'foreignKey' => NULL,
 		'implementedEvents' => [
-			'Model.buildRules' => 'buildRules',
-			'Model.beforeFind' => 'beforeFind',
-			//'Model.beforeSave' => 'beforeSave',
-			'Model.afterSave' => 'afterSave',
+			'buildRules',
+			'beforeFind',
+			'afterSave',
 		],
 		'implementedMethods' => [
 			'getAttributes' => 'getAttributes',
@@ -69,6 +70,7 @@ class AttributesBehavior extends Behavior {
 			'hasAttributes' => 'hasAttributes',
 		],
 		'isAttributesTable' => FALSE,
+		'skip' => FALSE,
 		'sourceTable' => NULL,
 	];
 	/**
@@ -142,14 +144,16 @@ class AttributesBehavior extends Behavior {
 	 * @return array
 	 */
 	public function getAttributes (): array {
+		$ls_scope = substr($this->table()->getTable(), 11);
+
 		if (isset($this->attributes)) {
-			return $this->attributes;
+			return $this->attributes[ $ls_scope ] ?? [];
 		}
 
-		if (!$this->getConfig('isAttributesTable')) {
+		if ( ! $this->getConfig('isAttributesTable')) {
 			$ls_assocatiation = Inflector::camelize($this->attributesTable);
 
-			if (! $this->table()->hasAssociation($ls_assocatiation)) {
+			if ( ! $this->table()->hasAssociation($ls_assocatiation)) {
 				return [];
 			}
 
@@ -159,28 +163,26 @@ class AttributesBehavior extends Behavior {
 			return $lo_association->getAttributes();
 		}
 
-		$ls_scope = substr($this->table()->getTable(), 11);
 
-		$lo_tableLocator = FactoryLocator::get('Table');
+		$lo_attributesTable = FactoryLocator::get('Table')->get('Attributes');
+		$lo_attributesQuery = $lo_attributesTable->find('all', authorize: [
+			'skip' => TRUE
+		]);
 
-		/** @var AttributesTable $lo_attributesTable */
-		$lo_attributesTable = $lo_tableLocator->get('Attributes');
+		/**
+		 * @noinspection PhpPossiblePolymorphicInvocationInspection
+		 * @noinspection PhpUndefinedMethodInspection
+		*/
+		$lo_attributesQuery = $lo_attributesQuery->orderByAsc($lo_attributesQuery->newExpr($lo_attributesQuery->func()->FIELD([
+			'fieldset' => 'identifier',
+			...$lo_attributesTable->getAvailableFieldsets()
+		])));
 
-		$lo_query = $lo_attributesTable->find();
-		/** @noinspection PhpUndefinedMethodInspection */
-		$this->attributes = $lo_query->where([
-			'scope' => $ls_scope,
-		])
-		->applyOptions([
-			'authorize' => [
-				'skip' => TRUE,
-			],
-		])
-		->orderByAsc($lo_query->newExpr(
-			$lo_query->func()->FIELD(['fieldset' => 'identifier', ...$lo_attributesTable->getAvailableFieldsets()])
-		))->all()->indexBy('identifier')->toArray();
+		$this->attributes = $lo_attributesQuery->all()->groupBy('scope')->map(function($aa_attributes) {
+			return collection($aa_attributes)->indexBy('identifier')->toArray();
+		})->toArray();
 
-		return $this->attributes;
+		return $this->attributes[ $ls_scope ] ?? [];
 	}
 
 
@@ -193,7 +195,7 @@ class AttributesBehavior extends Behavior {
 
 		$la_translatableFields = $lo_table->getConfig('translate.fields');
 		foreach ($this->getAttributes() AS $lo_attribute) {
-			if (!$lo_attribute->translatable) {
+			if ( ! $lo_attribute->translatable) {
 				continue;
 			}
 
@@ -240,7 +242,8 @@ class AttributesBehavior extends Behavior {
 			}
 
 			$ao_rules->add(function(Entity $ao_entity/*, array $aa_options*/) use ($lo_attribute, $lo_attributeOptions): bool|string {
-				return $lo_attributeOptions->validateValue($lo_attribute->identifier, $ao_entity->get($lo_attribute->identifier), $ao_entity);
+				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+				return $lo_attributeOptions->validateValue($lo_attribute->identifier, $ao_entity->get($lo_attribute->identifier), $ao_entity->getEntity());
 			}, 'validValue', [
 				'errorField' => $lo_attribute->identifier,
 				'message' => __d('attributes', 'error_valid_value'),
@@ -254,15 +257,29 @@ class AttributesBehavior extends Behavior {
 	/**
 	 * @param EventInterface $ao_event
 	 * @param SelectQuery $ao_query
-	 * @param \ArrayObject $ao_options
+	 * @param ArrayObject $ao_options
 	 * @param bool $ab_primary
 	 *
 	 * @return void
 	 *
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function beforeFind (EventInterface $ao_event, SelectQuery $ao_query, \ArrayObject $ao_options, bool $ab_primary): void {
+	public function beforeFind (EventInterface $ao_event, SelectQuery $ao_query, ArrayObject $ao_options, bool $ab_primary): void {
 		if ($this->getConfig('isAttributesTable') || ! $this->hasAttributes()) {
+			return;
+		}
+
+		$la_options = Hash::merge($this->getConfig(), Hash::get($ao_options, 'attributes'));
+
+		if ($la_options['skip'] === TRUE) {
+			return;
+		}
+
+		if ($ao_query->isEagerLoaded()) {
+			throw new RuntimeException('Eager loaded associations should skip the attributes behavior');
+		}
+
+		if ($ao_query->clause('select') === ['system_order']) {
 			return;
 		}
 
@@ -279,7 +296,7 @@ class AttributesBehavior extends Behavior {
 		]);
 
 		$ao_query->mapReduce(function(array|Entity $ao_entity, int $ai_key, MapReduce $ao_mapReduce) use ($ao_query): void {
-			if (!is_a($ao_entity, Entity::class)) {
+			if ( ! is_a($ao_entity, Entity::class)) {
 				$ao_mapReduce->emit($ao_entity);
 				return;
 			}
@@ -298,6 +315,12 @@ class AttributesBehavior extends Behavior {
 				$ls_foreignKey = $ls_associationEntityClass::mapField($lo_association->getForeignKey());
 
 				$ao_entity->initAttributesField($lo_association, $ls_foreignKey);
+			}
+
+			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+			if (isset($ao_entity->attributes) && ! $ao_entity->attributes->getEntity()) {
+				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+				$ao_entity->attributes->setEntity($ao_entity);
 			}
 
 			$ao_mapReduce->emit($ao_entity);
@@ -333,7 +356,7 @@ class AttributesBehavior extends Behavior {
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function afterSave (EventInterface $ao_event, Entity|\Cake\ORM\Entity $ao_entity/*, ArrayObject $ao_options*/): void {
-		if (!$this->hasAttributes()) {
+		if ( ! $this->hasAttributes()) {
 			return;
 		}
 

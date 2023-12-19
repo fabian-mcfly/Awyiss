@@ -1,10 +1,10 @@
 <?php declare(strict_types=1);
 
 
-use Authentication\Middleware\AuthenticationMiddleware;
 use Awyiss\Awyiss;
 use Awyiss\Authentication\Authentication;
 use Awyiss\Authorization\Authorization;
+use Awyiss\Middleware\AuthenticationMiddleware;
 use Awyiss\Middleware\AuthorizationMiddleware;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Middleware\EventListenersMiddleware;

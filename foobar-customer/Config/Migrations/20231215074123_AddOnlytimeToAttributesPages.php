@@ -4,7 +4,7 @@
 use Migrations\AbstractMigration;
 
 
-class AlterBackgroundColor2OnAttributesContentsV2 extends AbstractMigration {
+class AddOnlytimeToAttributesPages extends AbstractMigration {
 	/**
 	 * Change Method.
 	 *
@@ -13,10 +13,9 @@ class AlterBackgroundColor2OnAttributesContentsV2 extends AbstractMigration {
 	 * @return void
 	 */
 	public function change(): void {
-		$table = $this->table('attributes_contents');
-		$table->changeColumn('background_color2', 'string', [
-            'default' => '',
-            'limit' => 50,
+		$table = $this->table('attributes_pages');
+		$table->addColumn('onlytime', 'time', [
+            'default' => null,
             'null' => true,
         ]);
 		$table->update();

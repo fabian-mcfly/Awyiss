@@ -77,7 +77,7 @@ class ColumnParser extends \Migrations\Util\ColumnParser {
 				],
 			];
 
-			if ($lx_length !== NULL) {
+			if ( ! empty($lx_length)) {
 				if (is_array($lx_length)) {
 					[$la_fields[ $ls_field ]['options']['precision'], $la_fields[ $ls_field ]['options']['scale']] = $lx_length;
 				}
@@ -123,13 +123,13 @@ class ColumnParser extends \Migrations\Util\ColumnParser {
 				$la_matches[2] = explode(',', $la_matches[2]);
 			}
 
-			return [$la_matches[1], $la_matches[2], $la_matches[3] ?? NULL];
+			return [$la_matches[1], $la_matches[2] ?: NULL, $la_matches[3] ?: NULL];
 		}
 
 		/** @var string $ls_fieldType */
 		$ls_fieldType = $this->getType($as_field, $as_type);
 		$li_length = $this->getLength($ls_fieldType);
 
-		return [$ls_fieldType, $li_length];
+		return [$ls_fieldType, $li_length, NULL];
 	}
 }

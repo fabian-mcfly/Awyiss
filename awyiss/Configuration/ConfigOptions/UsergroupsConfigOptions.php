@@ -29,7 +29,7 @@ class UsergroupsConfigOptions extends AbstractConfigOptions {
 				'defaultValue' => TRUE,
 				'identifier' => 'search',
 				'localizable' => FALSE,
-				'type' => ConfigOptionType::TYPE_BOOL,
+				'type' => ConfigOptionType::BOOL,
 			]),
 			'paginate' => [
 				new ConfigOption([
@@ -37,7 +37,7 @@ class UsergroupsConfigOptions extends AbstractConfigOptions {
 					'identifier' => 'limit',
 					'localizable' => FALSE,
 					'nullable' => FALSE,
-					'type' => ConfigOptionType::TYPE_INTEGER,
+					'type' => ConfigOptionType::INTEGER,
 				]),
 			],
 		]);

@@ -7,7 +7,6 @@ namespace Awyiss\Model\Behavior;
 use ArrayObject;
 use Awyiss\Middleware\LocaleMiddleware;
 use Cake\Event\EventInterface;
-use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\Table;
 use Cake\Utility\Inflector;
 
@@ -52,50 +51,18 @@ class TranslateBehavior extends \Cake\ORM\Behavior\TranslateBehavior {
 
 
 	/**
-	 * Gets the Model callbacks this behavior is interested in.
-	 *
-	 * @return array<string, mixed>
-	 */
-	public function implementedEvents (): array {
-		return [
-			'Model.beforeMarshal' => 'beforeMarshal',
-			'Model.beforeFind' => 'beforeFind',
-			'Model.beforeSave' => 'beforeSave',
-			'Model.afterSave' => 'afterSave',
-		];
-	}
-
-
-	/**
-	 * @param EventInterface $ao_event
-	 * @param SelectQuery $ao_query
-	 * @param ArrayObject $ao_options
-	 * @param bool $ab_primary
-	 *
-	 * @return void
-	 * @noinspection PhpUnusedParameterInspection
-	 */
-	public function beforeFind (EventInterface $ao_event, SelectQuery $ao_query, ArrayObject $ao_options, bool $ab_primary): void {
-		$ao_query->find('translations');
-
-		$this->strategy->beforeFind($ao_event, $ao_query, $ao_options);
-	}
-
-
-	/**
 	 * @param EventInterface $ao_event
 	 * @param ArrayObject $ao_data
 	 * @param ArrayObject $ao_options
 	 *
 	 * @return void
 	 *
-	 * @noinspection PhpUnusedParameterInspection
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function beforeMarshal (EventInterface $ao_event, ArrayObject $ao_data, ArrayObject $ao_options): void {
 		$ls_firstLanguageShortcode = array_key_first($this->languages);
 
-		if (!isset($ao_data['_translations'])) {
+		if (empty($ao_data['_translations'])) {
 			return;
 		}
 
@@ -108,6 +75,8 @@ class TranslateBehavior extends \Cake\ORM\Behavior\TranslateBehavior {
 
 	/**
 	 * @inheritDoc
+	 *
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	protected function referenceName (Table $ao_table): string {
 		$ls_name = namespaceSplit($ao_table::class);

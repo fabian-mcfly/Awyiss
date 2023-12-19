@@ -75,6 +75,7 @@ class AuthorizationService implements AuthorizationServiceInterface {
 
 		//if (!isset($this->policies[ $ls_realm ])) {
 		$this->policies[ $ls_realm ] = $this->findPolicy('*', $ls_realm);
+
 		//}
 
 		return $this->policies[ $ls_realm ] ?? [];
@@ -90,7 +91,7 @@ class AuthorizationService implements AuthorizationServiceInterface {
 		$ls_realm = $as_realm ?: $this->realm;
 		$ls_scope = static::sanitizeScope($as_scope);
 
-		if (!isset($this->policies[ $ls_realm ])) {
+		if ( ! isset($this->policies[ $ls_realm ])) {
 			$this->policies[ $ls_realm ] = [];
 		}
 
@@ -113,7 +114,8 @@ class AuthorizationService implements AuthorizationServiceInterface {
 		$la_policies = [];
 
 		$la_paths = [
-			'\\' . CUSTOM_NAMESPACE . '\Authorization\Policy\\' . $as_realm . '\\' => implode(DS, [ROOT, CUSTOM_DIR, 'Authorization', 'Policy', $as_realm, $as_scope . 'Policy.php',]),
+			'\\' . CUSTOM_NAMESPACE . '\Authorization\Policy\\' . $as_realm . '\\' => implode(DS,
+				[ROOT, CUSTOM_DIR, 'Authorization', 'Policy', $as_realm, $as_scope . 'Policy.php',]),
 			'\Awyiss\Authorization\Policy\\' . $as_realm . '\\' => implode(DS, [ROOT, APP_DIR, 'Authorization', 'Policy', $as_realm, $as_scope . 'Policy.php']),
 		];
 

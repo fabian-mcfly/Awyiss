@@ -1,7 +1,5 @@
 {#
-@var ao_menu \Awyiss\Utilities\Menu
-@var aa_menu \Awyiss\Utilities\MenuEntries[]
-@var ao_menuEntries \Awyiss\Model\Entity\BackendMenuEntry[]
+@var ao_menu \Awyiss\Utilities\Menu\BackendMenu
 @var _view \Awyiss\View\BackendView
 #}
 
@@ -23,19 +21,22 @@
 				</tr>
 			</thead>
 			<tbody>
-				{% for lo_menuEntry in aa_menu %}
+				{# @var lo_menuEntry \Awyiss\Utilities\Menu\MenuEntry #}
+				{% for lx_identifier, lo_menuEntry in ao_menu.getDynamicMenu().toArray() %}
 				<tr>
-					<td>{{ lo_menuEntry.id }}<br>
-						level {{ lo_menuEntry.level }} - order {{ lo_menuEntry.systemOrder }}</td>
+					<td>{{ lx_identifier }}<br>
+						level {{ lo_menuEntry.level }} - active {{ lo_menuEntry.active }}</td>
 					<td>{{ lo_menuEntry.title }}</td>
 					<td>{{ lo_menuEntry.link is defined ? lo_menuEntry.link.url : '' }}</td>
 					<td class="actions">
-						{#% if helper_Authorization_isAccessible('update') %}
-							{{ helper_Html_link(__('edit'), {action: 'edit', id: lo_menuEntry.id}) }}
+						{% if lx_identifier is numeric %}
+							{% if helper_Authorization_isAccessible('update') %}
+								{{ helper_Html_link(__('edit'), {action: 'edit', id: lx_identifier}) }}
+							{% endif %}
+							{% if helper_Authorization_isAccessible('delete') %}
+								{{ helper_Html_link(__('delete'), {action: 'delete', id: lx_identifier}, {confirm: __('confirm_delete', lx_identifier) }) }}
+							{% endif %}
 						{% endif %}
-						{% if helper_Authorization_isAccessible('delete') %}
-							{{ helper_Html_link(__('delete'), {action: 'delete', id: lo_menuEntry.id}, {confirm: __('confirm_delete', lo_menuEntry.id) }) }}
-						{% endif %#}
 					</td>
 				</tr>
 				{% endfor %}

@@ -109,7 +109,8 @@ abstract class AttributeOptionsCollection extends ArrayIterator implements Attri
 			return $aa_currentOptions;
 		}
 
-		return $lo_attributeOptions->buildOptions($aa_currentOptions, $ao_context);
+		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+		return $lo_attributeOptions->buildOptions($aa_currentOptions, $ao_context->entity());
 	}
 
 

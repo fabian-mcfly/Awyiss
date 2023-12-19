@@ -5,7 +5,7 @@ return [
 
 	'DebugKit' => [
 		'forceEnable' => function() {
-			return $_SERVER['REMOTE_ADDR'] === '';
+			return $_SERVER['REMOTE_ADDR'] === '192.168.2.20';
 		},
 		'ignoreAuthentication' => TRUE,
 		'panels' => [

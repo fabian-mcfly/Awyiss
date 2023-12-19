@@ -64,7 +64,7 @@ class EventListenersProvider {
 	public static function getListener (string $as_scope, string $as_realm): ?string {
 		$ls_scope = static::sanitizeScope($as_scope);
 
-		if (!isset(static::$eventListeners[ $as_realm ])) {
+		if ( ! isset(static::$eventListeners[ $as_realm ])) {
 			static::$eventListeners[ $as_realm ] = [];
 		}
 
@@ -86,7 +86,7 @@ class EventListenersProvider {
 	public static function loadListener (string $as_scope, string $as_realm): void {
 		$ls_scope = static::sanitizeScope($as_scope);
 
-		if (!isset(static::$loadedListeners[ $as_realm ])) {
+		if ( ! isset(static::$loadedListeners[ $as_realm ])) {
 			static::$loadedListeners[ $as_realm ] = [];
 		}
 
@@ -97,6 +97,7 @@ class EventListenersProvider {
 		$ls_listenerClass = static::getListener($ls_scope, $as_realm);
 		if ( ! $ls_listenerClass) {
 			static::$loadedListeners[ $as_realm ][ $ls_scope ] = FALSE;
+
 			return;
 		}
 

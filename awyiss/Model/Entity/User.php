@@ -42,6 +42,7 @@ use RuntimeException;
 class User extends Entity implements IdentityPermissionsInterface, IdentityInterface {
 	use EventDispatcherTrait;
 
+
 	/**
 	 * @inheritDoc
 	 */
@@ -106,6 +107,7 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 			$lo_event = $this->dispatchEvent('Authorization.requestAuthorizationService', [], $this);
 			/** @var ?AuthorizationService $lo_authorizationService */
 			$lo_authorizationService = $lo_event->getResult();
+
 			if ( ! $lo_authorizationService) {
 				throw new RuntimeException(sprintf('Could not retreive `AuthorizationService` in `%s`.', static::class));
 			}
@@ -116,21 +118,21 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 			 * This little magic trick flattens all usergroup_permissions in all usergroups into one array we can iterate.
 			 *
 			 * $la_usergroups = [
-			 * 	'usergroup1' => [
-			 * 		...
-			 * 		'usergroup_permissions' => [permission1.1, permission1.2, permission1.3, permission1.4],
-			 * 	 ...
-			 * 	],
-			 * 	'usergroup2' => [
-			 * 		...
-			 * 		'usergroup_permissions' => [permission2.1, permission2.2],
-			 * 		...
-			 * 	],
-			 * 	'usergroup3' => [
-			 * 		...
-			 * 		'usergroup_permissions' => [permission3.1, permission3.2, permission3.3],
-			 * 		...
-			 * 	],
+			 *    'usergroup1' => [
+			 *        ...
+			 *        'usergroup_permissions' => [permission1.1, permission1.2, permission1.3, permission1.4],
+			 *     ...
+			 *    ],
+			 *    'usergroup2' => [
+			 *        ...
+			 *        'usergroup_permissions' => [permission2.1, permission2.2],
+			 *        ...
+			 *    ],
+			 *    'usergroup3' => [
+			 *        ...
+			 *        'usergroup_permissions' => [permission3.1, permission3.2, permission3.3],
+			 *        ...
+			 *    ],
 			 * ];
 			 *
 			 * The call of array_column returns all values for 'usergroup_permissions' in all elements of $la_usergroups:
@@ -143,10 +145,7 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 			 *
 			 * @var UsergroupPermission $lo_usergrousPermissions
 			 */
-			$this->permissionCollection = new PermissionCollection(
-				$lo_authorizationService,
-				array_merge(...array_column($la_usergroups, 'usergroup_permissions'))
-			);
+			$this->permissionCollection = new PermissionCollection($lo_authorizationService, array_merge(...array_column($la_usergroups, 'usergroup_permissions')));
 		}
 
 		return $this->permissionCollection;
@@ -179,6 +178,16 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 		}
 
 		return $this->usergroups;
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public function scopeIsAccessible (string $as_scope, ?array $aa_additionalData = NULL, array|string ...$ax_identifier): bool {
+		$lo_permissionCollection = $this->getPermissionCollection();
+
+		return $lo_permissionCollection->scopeIsAccessible($as_scope, $aa_additionalData, ...$ax_identifier);
 	}
 
 
@@ -219,19 +228,5 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 		}
 
 		return NULL;
-	}
-
-
-	/**
-	 * When using unserialize() on a serialized instance of this entity, unset the usergroups and the permission collection
-	 * so that they will be fetched from the database.
-	 *
-	 * This avoids having a user with outdated permissions.
-	 *
-	 * @return void
-	 */
-	public function __wakeup () {
-		//$this->usergroups = NULL;
-		//$this->permissionCollection = NULL;
 	}
 }

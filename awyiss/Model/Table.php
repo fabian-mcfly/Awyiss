@@ -10,18 +10,15 @@ use Awyiss\Core\App;
 use Awyiss\Model\Behavior\AuthorizeBehavior;
 use Awyiss\Model\Behavior\DefaultValuesBehavior;
 use Awyiss\Model\Behavior\Translate\EavStrategy;
-use Awyiss\Model\Entity\Attribute;
 use Awyiss\ORM\Association\BelongsTo;
 use Awyiss\ORM\Association\BelongsToMany;
 use Awyiss\ORM\Association\HasMany;
 use Awyiss\ORM\Association\HasOne;
 use Awyiss\ORM\Behavior;
 use Awyiss\ORM\RulesChecker;
-use Cake\Collection\Collection;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Database\Schema\TableSchemaInterface;
 use Cake\Datasource\EntityInterface;
-use Cake\Datasource\FactoryLocator;
 use Cake\ORM\Exception\MissingEntityException;
 use Cake\ORM\Query;
 use Cake\ORM\Query\SelectQuery;
@@ -98,9 +95,6 @@ class Table extends \Cake\ORM\Table {
 		'beforeDelete',
 		'afterDelete',
 		'afterDeleteCommit',
-		'beforeSoftDelete',
-		'afterSoftDelete',
-		'afterSoftDeleteCommit',
 	];
 	/**
 	 * Validator class.
@@ -136,14 +130,13 @@ class Table extends \Cake\ORM\Table {
 			$this->setTable(static::TABLE);
 		}
 
-		if (!$this->_table) {
+		if ( ! $this->getTable()) {
 			return;
 		}
 
 		$this->setPrimaryKey('id');
 
 		$lb_isAttributesTable = str_starts_with($this->getTable(), 'attributes_');
-
 
 		if ($lb_isAttributesTable) {
 			$this->addBehavior('Attributes', ['isAttributesTable' => TRUE] + $this->getConfig('attributes', []));
@@ -169,13 +162,19 @@ class Table extends \Cake\ORM\Table {
 		$this->addBehavior('Authorize', $this->getConfig('authorize', []) + ['priority' => 1]);
 		$this->addBehavior('AutoPrefix', $this->getConfig('autoPrefix', []) + ['priority' => 99999]);
 		$this->addBehavior('DefaultValues', $this->getConfig('defaultValues', []));
+
+		//if ($this->getTable() !== 'dates') {
+		if ($this->getTable() === 'menus') {
+			$this->addBehavior('Date', $this->getConfig('date', []));
+		}
+
 		$this->addBehavior('EventTrigger', $this->getConfig('eventTrigger', []));
 
 		/*if ($lb_isAttributesTable) {
 			dd($aa_config['translateLanguage'], $this->getConfig('translate', []));
 		}*/
 
-		if (!empty($aa_config['translateLanguage']) && $this->getConfig('translate', [])) {
+		if (0 && ! empty($aa_config['translateLanguage']) && $this->getConfig('translate', [])) {
 			$this->addBehavior('Translate',
 				$this->getConfig('translate') +
 				[
@@ -230,6 +229,23 @@ class Table extends \Cake\ORM\Table {
 
 		return $ao_query;
 	}*/
+
+
+	/**
+	 * @param SelectQuery $ao_query
+	 *
+	 * @return SelectQuery
+	 *
+	 * @noinspection PhpUnused
+	 */
+	public function findTranslations (SelectQuery $ao_query): SelectQuery {
+		if ($this->hasBehavior('Translate')) {
+			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+			return $this->getBehavior('Translate')->findTranslations($ao_query);
+		}
+
+		return $ao_query;
+	}
 
 
 	/**
@@ -400,9 +416,11 @@ class Table extends \Cake\ORM\Table {
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function exists ($aa_conditions, array $aa_options = []): bool {
+		$la_options = array_merge(['authorize' => ['skip' => TRUE]], $aa_options);
+
 		return (bool)count(
 			$this->find()
-				->applyOptions($aa_options)
+				->applyOptions($la_options)
 				->select(['existing' => 1])
 				->where($aa_conditions)
 				->limit(1)
@@ -457,6 +475,7 @@ class Table extends \Cake\ORM\Table {
 	public function buildEventMap (Table|Behavior $ao_instance, array $aa_eventMap, int $ai_priority = NULL): array {
 		$la_eventMap = [];
 		$li_priority = $ai_priority;
+
 		foreach ($aa_eventMap as $ls_event => $lx_callable) {
 			if (is_array($lx_callable)) {
 				if (isset($lx_callable['priority'])) {
@@ -466,7 +485,8 @@ class Table extends \Cake\ORM\Table {
 				$lx_callable = $lx_callable['callable'] ?? NULL;
 			}
 
-			if ((is_string($lx_callable) && ! method_exists($ao_instance, $lx_callable)) || ( ! is_string($lx_callable) && ! is_callable($lx_callable))) {
+			if ((is_string($lx_callable) && ! method_exists($ao_instance, $lx_callable)) ||
+				( ! is_string($lx_callable) && ! is_callable($lx_callable))) {
 				continue;
 			}
 
@@ -496,35 +516,16 @@ class Table extends \Cake\ORM\Table {
 	 * Sets specific column types for attributes
 	 */
 	protected function initializeSchema (TableSchemaInterface $ao_schema): void {
-		/** @var Collection $lo_attributes */
-		static $lo_attributes;
-
 		if (str_starts_with($this->getTable(), 'attributes_')) {
-			if ( ! $lo_attributes) {
-				$lo_attributesTable = FactoryLocator::get('Table')->get('Attributes');
-				$lo_attributes = $lo_attributesTable->find('all',
-					authorize: [
-						'skip' => TRUE
-					],
-				)->all()->groupBy('scope');
-			}
+			foreach ($this->getAttributes() AS $lo_attribute) {
+				$la_column = $ao_schema->getColumn($lo_attribute->identifier);
+				if ($lo_attribute->type === 'json') {
+					$ao_schema->setColumnType($lo_attribute->identifier, 'json');
+				}
 
-			/** @noinspection PhpUndefinedMethodInspection */
-			if ($lo_attributes->offsetExists($ls_offset = substr($this->getTable(), 11))) {
-				/**
-				 * @var Attribute $lo_attribute
-				 * @noinspection PhpUndefinedMethodInspection
-				*/
-				foreach ($lo_attributes->offsetGet($ls_offset) AS $lo_attribute) {
-					$la_column = $ao_schema->getColumn($lo_attribute->identifier);
-					if ($lo_attribute->type === 'json') {
-						$ao_schema->setColumnType($lo_attribute->identifier, 'json');
-					}
-
-					if ($la_column && $la_column['default'] !== $lo_attribute->defaultValue) {
-						$la_column['default'] = $lo_attribute->defaultValue;
-						$ao_schema->addColumn($lo_attribute->identifier, $la_column);
-					}
+				if ($la_column && $la_column['default'] !== $lo_attribute->defaultValue) {
+					$la_column['default'] = $lo_attribute->defaultValue;
+					$ao_schema->addColumn($lo_attribute->identifier, $la_column);
 				}
 			}
 		}

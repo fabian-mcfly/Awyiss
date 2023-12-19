@@ -6,13 +6,10 @@ namespace Awyiss\Queue\Task;
 
 use Awyiss\Model\Table\AttributesTable;
 use Cake\Collection\Collection;
-use Cake\Database\Schema\TableSchemaInterface;
 use Cake\Datasource\ConnectionManager;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 use Phinx\Db\Adapter\AdapterInterface;
-use Psr\Log\LoggerInterface;
-use Queue\Console\Io;
 use Queue\Model\QueueException;
 use Queue\Queue\Task;
 use ReflectionClass;
@@ -53,7 +50,7 @@ class AttributesTask extends Task/* implements AddInterface*/ {
 		$ls_column = $aa_data['new']['identifier'];
 		[$ls_type, $lx_length] = $this->getTypeAndLength($aa_data['new']['type'] ?? NULL);
 
-		//Type needs to be in the format of ':string?[50]', where ? marks the field as nullable and [50] sets the length
+		//Type needs to be in the format of ':string?[50]', where ? marks the field as nullable and [50] sets the length.
 		$ls_column .= ':' . $ls_type;
 		if (empty($aa_data['new']['required'])) {
 			$ls_column .= '?';
@@ -73,68 +70,9 @@ class AttributesTask extends Task/* implements AddInterface*/ {
 		$ls_folder = ' --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations';
 
 
-		$lb_bakeOldModel = FALSE;
-		$ls_oldAttributesTable = NULL;
-
-		//The scope of the attribute has changed.
-		if ($lb_changedScope = isset($la_diff['scope'])) {
-			//We not only need to add the attribute to the new table but also remove it from the old one
-			$ls_oldAttributesTable = 'attributes_' . $aa_data['old']['scope'];
-
-			/** @var TableSchemaInterface $lo_schema */
-			$lo_schema = ConnectionManager::get('default')->getSchemaCollection()->describe($ls_oldAttributesTable);
-
-			$ls_oldTableFile = ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Table' . DS . Inflector::camelize($ls_oldAttributesTable) . 'Table.php';
-			$ls_oldEntityFile = ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Entity' . DS . Inflector::classify($ls_oldAttributesTable) . '.php';
-
-			/*
-			 * If there are three or fewer columns in the table, the old attributes-table is no longer required.
-			 *
-			 * Why 3, you ask?
-			 * One is the attribute that's getting changed and the other two are the `id`- and the `(parent)_id`-column.
-			 */
-			if (count($lo_schema->columns()) <= 3) {
-				//Bake a `drop`-migration
-				$la_commands[] = 'bin/cake bake migration drop_' . $ls_oldAttributesTable . $ls_folder;
-
-				//Remove both the table and the entity files from the custom directory.
-				if (file_exists($ls_oldTableFile)) {
-					$la_commands[] = 'unlink ' . $ls_oldTableFile;
-				}
-				if (file_exists($ls_oldEntityFile)) {
-					$la_commands[] = 'unlink ' . $ls_oldEntityFile;
-				}
-			}
-			else {
-				if (file_exists($ls_oldTableFile)) {
-					if (posix_getuid() != fileowner($ls_oldTableFile)) {
-						throw new QueueException(sprintf('Cannot migrate `%s` in `%s`. Make sure all files have the same owner the cronjob runs with.', $ls_oldTableFile, self::class));
-					}
-				}
-
-				if (file_exists($ls_oldEntityFile)) {
-					if (posix_getuid() != fileowner($ls_oldEntityFile)) {
-						throw new QueueException(sprintf('Cannot migrate `%s` in `%s`. Make sure all files have the same owner the cronjob runs with.', $ls_oldEntityFile, self::class));
-					}
-				}
-
-				//Bake a `remove`-migration
-				$la_commands[] = 'bin/cake bake migration remove_' . $aa_data['new']['identifier'] . '_from_' . $ls_oldAttributesTable . ' ' . $aa_data['old']['identifier'] . $ls_folder;
-				$lb_bakeOldModel = TRUE;
-			}
-
-			/*
-			 * Sleep for one second. Otherwise, the migration that removes the column from the old table
-			 * has the same "version" as the migration that adds the column to the new table.
-			*/
-			$la_commands[] = 'sleep 1';
-		}
-
-
 		$ls_attributesTable = 'attributes_' . $aa_data['new']['scope'];
-		$la_tables = ConnectionManager::get('default')->getSchemaCollection()->listTables();
-		$lb_tableExists = in_array($ls_attributesTable, $la_tables);
-
+		$lb_bakeOldModel = FALSE;
+		$la_commands = [];
 		$ls_foreignKey = Inflector::singularize($aa_data['new']['scope']);
 		$lb_scopeIsPageRole = FALSE;
 		if (defined('PAGEROLE_' . strtoupper($ls_foreignKey))) {
@@ -144,105 +82,45 @@ class AttributesTask extends Task/* implements AddInterface*/ {
 			}
 		}
 		$ls_foreignKey .= '_id';
+		$la_tables = ConnectionManager::get('default')->getSchemaCollection()->listTables();
+		$lb_tableExists = in_array($ls_attributesTable, $la_tables);
 
+		if (isset($la_diff['deleted'])) {
+			//For now, the sheer existence of the deleted key is enough since there's no undelete-method
+			if ( ! $lb_tableExists) {
+				//If the table does not exist, there's nothing to do.
+				return;
+			}
 
-		//The target attributes-table does not exist
-		if ( ! $lb_tableExists) {
-			//Bake a `create`-migration that also adds the parent id-column and the column for the attribute-entity
-			$la_commands[] = 'bin/cake bake migration create_' . $ls_attributesTable . ' ' . $ls_foreignKey . ':integer[11] ' . $ls_column . $ls_folder;
+			$lb_bakeOldModel = $this->buildAlterOldTableCommands($la_commands, $aa_data, $ls_folder);
 		}
 		else {
-			$ls_tableFile = ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Table' . DS . Inflector::camelize($ls_attributesTable) . 'Table.php';
-			$ls_entityFile = ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Entity' . DS . Inflector::classify($ls_attributesTable) . '.php';
-
-			if (file_exists($ls_tableFile)) {
-				if (posix_getuid() != fileowner($ls_tableFile)) {
-					throw new QueueException(
-						sprintf(
-							'Cannot migrate `%s` in `%s`. Make sure all files have the same owner the cronjob runs with.',
-							$ls_tableFile,
-							self::class
-						)
-					);
-				}
+			//The scope of the attribute has changed.
+			if ($lb_changedScope = isset($la_diff['scope'])) {
+				//We not only need to add the attribute to the new table, but also remove it from the old one.
+				$lb_bakeOldModel = $this->buildAlterOldTableCommands($la_commands, $aa_data, $ls_folder);
 			}
 
-			if (file_exists($ls_entityFile)) {
-				if (posix_getuid() != fileowner($ls_entityFile)) {
-					/** @noinspection PhpUndefinedVariableInspection */
-					throw new QueueException(
-						sprintf(
-							'Cannot migrate `%s` in `%s`. Make sure all files have the same owner the cronjob runs with.',
-							$ls_oldEntityFile,
-							self::class
-						)
-					);
-				}
-			}
-
-
-			//Column is renamed but only if the scope is still the same.
-			if (!$lb_changedScope && isset($la_diff['identifier'])) {
-				//The scope has not changed, but the identifier has: alter the column
-				$la_commands[] = 'bin/cake bake migration alter_' . $aa_data['old']['identifier']. '_on_' . $ls_attributesTable . ' ' . $ls_column . $ls_folder;
+			//The target attributes-table does not exist
+			if ( ! $lb_tableExists) {
+				//Bake a `create`-migration that also adds the parent id-column and the column for the attribute-entity
+				$la_commands[] = 'bin/cake bake migration create_' . $ls_attributesTable . ' ' . $ls_foreignKey . ':integer[11] ' . $ls_column . $ls_folder;
 			}
 			else {
-				/** @var TableSchemaInterface $lo_schema */
-				$lo_schema = ConnectionManager::get('default')->getSchemaCollection()->describe($ls_attributesTable);
-				$lb_columnExists = $lo_schema->hasColumn($aa_data['new']['identifier']);
-
-				if (!$lb_columnExists) {
-					//The column does not exist in the target table? Add it.
-					$la_commands[] = 'bin/cake bake migration add_' . $aa_data['new']['identifier'] . '_to_' . $ls_attributesTable . ' ' . $ls_column . $ls_folder;
-				}
-				else {
-					//The column does exist in the target table? Alter it.
-					$la_commands[] = 'bin/cake bake migration alter_' . $aa_data['new']['identifier'] . '_on_' . $ls_attributesTable . ' ' . $ls_column . $ls_folder;
-				}
+				$this->buildAlterTableCommands($la_commands, $aa_data, $la_diff, $lb_changedScope, $ls_column, $ls_folder);
 			}
 		}
 
 
-		if (!empty($la_commands)) {
-			//Migrate all the newly baked migrations
-			$la_commands[] = 'bin/cake migrations migrate --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations --no-lock';
-			//Clear the database schema
-			$la_commands[] = 'bin/cake schema_cache clear';
-
-			//And bake the model
-			$ls_forPageRole = $lb_scopeIsPageRole ? (' --for-pagerole ' . $aa_data['new']['scope']) : NULL;
-			$la_commands[] = 'bin/cake bake model ' . $ls_attributesTable . ' --namespace ' . CUSTOM_DIR . ' --no-fixture --no-test --update --force' . $ls_forPageRole;
-
-			if ($lb_bakeOldModel && $ls_oldAttributesTable) {
-				//If the old table was changed but still exists, bake the model for the old table as well.
-				$ls_forPageRole = NULL;
-				if (defined('PAGEROLE_' . strtoupper(Inflector::singularize($aa_data['old']['scope'])))) {
-					$ls_forPageRole = ' --for-pagerole ' . $aa_data['old']['scope'];
-				}
-				$la_commands[] = 'bin/cake bake model ' . $ls_oldAttributesTable . ' --namespace ' . CUSTOM_DIR . ' --no-fixture --no-test --update --force' . $ls_forPageRole;
-			}
-
-			$la_commands[] = 'bin/cake bake seed --data Attributes --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Seeds --truncate';
-
-			//Queue the job.
-			$this->QueuedJobs->createJob('Queue.Execute', [
-				'command' => '(' . implode(' && ', array_map('escapeshellcmd', $la_commands)) . ')',
-				'escape' => FALSE,
-				'log' => TRUE,
-			], [
-				'group' => 'general',
-				'priority' => 1,
-				'reference' => 'attributes::table_changes',
-			]);
-		}
+		$this->createJob($la_commands, $aa_data, $lb_scopeIsPageRole, $lb_bakeOldModel);
 	}
 
 
 	/**
 	 * Splits strings into valid phinx column types and length
-	 *        "varchar(255)" => ['string', 255]
-	 *        "int(10,4)" => ['integer', '10,4']
-	 *        "tinyint" => ['tinyint', NULL]
+	 *   "varchar(255)" => ['string', 255]
+	 *   "int(10,4)" => ['integer', '10,4']
+	 *   "tinyint" => ['tinyint', NULL]
 	 *
 	 * If no valid type is found, 'string' is returned
 	 *
@@ -277,5 +155,184 @@ class AttributesTask extends Task/* implements AddInterface*/ {
 		}
 
 		return [$la_typeMatches[1], $la_typeMatches[2] ?: NULL];
+	}
+
+
+	/**
+	 * @param string $ls_oldAttributesTable
+	 * @param string $as_folder
+	 * @param array $la_commands
+	 * @param array $aa_data
+	 *
+	 * @return bool
+	 */
+	protected function buildAlterOldTableCommands (array &$aa_commands, array $aa_data, string $as_folder): bool {
+		$ls_oldAttributesTable = 'attributes_' . $aa_data['old']['scope'];
+
+		$lo_schema = ConnectionManager::get('default')->getSchemaCollection()->describe($ls_oldAttributesTable);
+
+		$ls_oldTableFile = ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Table' . DS . Inflector::camelize($ls_oldAttributesTable) . 'Table.php';
+		$ls_oldEntityFile = ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Entity' . DS . Inflector::classify($ls_oldAttributesTable) . '.php';
+
+		$lb_bakeOldModel = TRUE;
+
+		/*
+		 * If there are three or fewer columns in the table, the old attributes-table is no longer required.
+		 *
+		 * Why 3, you ask?
+		 * One is the attribute that's getting changed and the other two are the `id`- and the `(parent)_id`-column.
+		 */
+		if (count($lo_schema->columns()) <= 3) {
+			//Bake a `drop`-migration
+			$aa_commands[] = 'bin/cake bake migration drop_' . $ls_oldAttributesTable . $as_folder;
+
+			//Remove both the table and the entity files from the custom directory.
+			if (file_exists($ls_oldTableFile)) {
+				$aa_commands[] = 'unlink ' . $ls_oldTableFile;
+			}
+			if (file_exists($ls_oldEntityFile)) {
+				$aa_commands[] = 'unlink ' . $ls_oldEntityFile;
+			}
+
+			$lb_bakeOldModel = FALSE;
+		}
+		else {
+			if (file_exists($ls_oldTableFile)) {
+				if (posix_getuid() != fileowner($ls_oldTableFile)) {
+					throw new QueueException(sprintf('Cannot migrate `%s` in `%s`. Make sure all files have the same owner the cronjob runs with.',
+						$ls_oldTableFile,
+						self::class));
+				}
+			}
+
+			if (file_exists($ls_oldEntityFile)) {
+				if (posix_getuid() != fileowner($ls_oldEntityFile)) {
+					throw new QueueException(sprintf('Cannot migrate `%s` in `%s`. Make sure all files have the same owner the cronjob runs with.',
+						$ls_oldEntityFile,
+						self::class));
+				}
+			}
+
+			//Bake a `remove`-migration
+			$aa_commands[] = 'bin/cake bake migration remove_' . $aa_data['new']['identifier'] . '_from_' . $ls_oldAttributesTable .
+							 ' ' . $aa_data['old']['identifier'] . $as_folder;
+		}
+
+		/*
+		 * Sleep for one second. Otherwise, the migration that removes the column from the old table
+		 * has the same "version" as the migration that adds the column to the new table.
+		*/
+		$aa_commands[] = 'sleep 1';
+
+		return $lb_bakeOldModel;
+	}
+
+
+	/**
+	 * @param array $aa_commands
+	 * @param bool $ab_scopeIsPageRole
+	 * @param array $aa_data
+	 * @param string $as_attributesTable
+	 * @param bool $ab_bakeOldModel
+	 *
+	 * @return array
+	 */
+	protected function createJob (array $aa_commands, array $aa_data, bool $ab_scopeIsPageRole, bool $ab_bakeOldModel): void {
+		if (empty($aa_commands)) {
+			return;
+		}
+
+		$ls_attributesTable = 'attributes_' . $aa_data['new']['scope'];
+
+		//Migrate all the newly baked migrations
+		$aa_commands[] = 'bin/cake migrations migrate --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations --no-lock';
+		//Clear the database schema
+		$aa_commands[] = 'bin/cake schema_cache clear';
+
+		//And bake the model
+		$ls_forPageRole = $ab_scopeIsPageRole ? (' --for-pagerole ' . $aa_data['new']['scope']) : NULL;
+
+		if (empty($aa_data['new']['deleted'])) {
+			$aa_commands[] = 'bin/cake bake model ' . $ls_attributesTable . ' --namespace ' . CUSTOM_DIR . ' --no-fixture --no-test --update --force' . $ls_forPageRole;
+		}
+
+		if ($ab_bakeOldModel) {
+			//If the old table was changed but still exists, bake the model for the old table as well.
+			$ls_forPageRole = NULL;
+			if (defined('PAGEROLE_' . strtoupper(Inflector::singularize($aa_data['old']['scope'])))) {
+				$ls_forPageRole = ' --for-pagerole ' . $aa_data['old']['scope'];
+			}
+
+			$ls_oldAttributesTable = 'attributes_' . $aa_data['old']['scope'];
+
+			$aa_commands[] = 'bin/cake bake model ' . $ls_oldAttributesTable . ' --namespace ' . CUSTOM_DIR . ' --no-fixture --no-test --update --force' . $ls_forPageRole;
+		}
+
+		$aa_commands[] = 'bin/cake bake seed --data Attributes --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Seeds --truncate';
+
+		//Queue the job.
+		$this->QueuedJobs->createJob('Queue.Execute', [
+			'command' => '(' . implode(' && ', array_map('escapeshellcmd', $aa_commands)) . ')',
+			'escape' => FALSE,
+			'log' => TRUE,
+		], [
+			'group' => 'general',
+			'priority' => 1,
+			'reference' => 'attributes::table_changes',
+		]);
+	}
+
+
+	/**
+	 * @param array &$aa_commands
+	 * @param array $aa_data
+	 * @param array $aa_diff
+	 * @param bool $ab_changedScope
+	 * @param string $as_column
+	 * @param string $as_folder
+	 *
+	 * @return void
+	 */
+	protected function buildAlterTableCommands (array &$aa_commands, array $aa_data, array $aa_diff, bool $ab_changedScope, string $as_column, string $as_folder): void {
+		$ls_attributesTable = 'attributes_' . $aa_data['new']['scope'];
+
+		$ls_tableFile = ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Table' . DS . Inflector::camelize($ls_attributesTable) . 'Table.php';
+		$ls_entityFile = ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Entity' . DS . Inflector::classify($ls_attributesTable) . '.php';
+
+		if (file_exists($ls_tableFile)) {
+			if (posix_getuid() != fileowner($ls_tableFile)) {
+				throw new QueueException(sprintf('Cannot migrate `%s` in `%s`. Make sure all files have the same owner the cronjob runs with.',
+						$ls_tableFile,
+						self::class));
+			}
+		}
+
+		if (file_exists($ls_entityFile)) {
+			if (posix_getuid() != fileowner($ls_entityFile)) {
+				throw new QueueException(sprintf('Cannot migrate `%s` in `%s`. Make sure all files have the same owner the cronjob runs with.',
+						$ls_entityFile,
+						self::class));
+			}
+		}
+
+
+		//Column is renamed but only if the scope is still the same.
+		if ( ! $ab_changedScope && isset($aa_diff['identifier'])) {
+			//The scope has not changed, but the identifier has: alter the column
+			$aa_commands[] = 'bin/cake bake migration alter_' . $aa_data['old']['identifier'] . '_on_' . $ls_attributesTable . ' ' . $as_column . $as_folder;
+		}
+		else {
+			$lo_schema = ConnectionManager::get('default')->getSchemaCollection()->describe($ls_attributesTable);
+			$lb_columnExists = $lo_schema->hasColumn($aa_data['new']['identifier']);
+
+			if ( ! $lb_columnExists) {
+				//The column does not exist in the target table? Add it.
+				$aa_commands[] = 'bin/cake bake migration add_' . $aa_data['new']['identifier'] . '_to_' . $ls_attributesTable . ' ' . $as_column . $as_folder;
+			}
+			else {
+				//The column does exist in the target table? Alter it.
+				$aa_commands[] = 'bin/cake bake migration alter_' . $aa_data['new']['identifier'] . '_on_' . $ls_attributesTable . ' ' . $as_column . $as_folder;
+			}
+		}
 	}
 }

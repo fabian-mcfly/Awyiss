@@ -31,7 +31,7 @@ class PageTemplatesConfigOptions extends AbstractConfigOptions {
 					'identifier' => 'limit',
 					'localizable' => FALSE,
 					'nullable' => FALSE,
-					'type' => ConfigOptionType::TYPE_INTEGER,
+					'type' => ConfigOptionType::INTEGER,
 				]),
 			],
 		]);

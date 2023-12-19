@@ -18,12 +18,12 @@ use Cake\Utility\Inflector;
 
 
 /**
-* Events Model
+* Publications Model
 *
-* @property EventsTable&BelongsTo $ParentEvents
-* @property EventsTable&HasMany $ChildEvents
-* @property EventsTable&HasMany $DuplicateEvents
-* @property EventsTable&BelongsTo $DuplicateOfEvents
+* @property PublicationsTable&BelongsTo $ParentPublications
+* @property PublicationsTable&HasMany $ChildPublications
+* @property PublicationsTable&HasMany $DuplicatePublications
+* @property PublicationsTable&BelongsTo $DuplicateOfPublications
 * @property ContentsTable&HasMany $Contents
 * @property LanguagesTable&BelongsTo $Languages
 * @property PageRolesTable&BelongsTo $PageRoles
@@ -35,10 +35,10 @@ use Cake\Utility\Inflector;
 * @method Page getParent(EntityInterface $ao_entity)
 * @method CollectionInterface|NULL getParents(EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
 */
-class EventsTable extends PagesTable {
+class PublicationsTable extends PagesTable {
 	/**
 	* @inheritDoc
 	*/
-	protected string $pageRole = 'event';
+	protected string $pageRole = 'publication';
 
 }

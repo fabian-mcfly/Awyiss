@@ -7,6 +7,7 @@ namespace Awyiss\Controller\Backend;
 use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Utilities\Menu\MenuLoader;
 use Awyiss\Utilities\Menu\MenuRenderer;
+use Cake\Collection\Collection;
 
 
 /**
@@ -23,6 +24,5 @@ class DashboardController extends Controller {
 	 * @return void
 	 */
 	public function overview (): void {
-
 	}
 }

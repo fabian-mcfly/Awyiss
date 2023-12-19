@@ -181,15 +181,22 @@ class ConfigurationTable extends Table {
 		]);
 
 
-		$ao_rules->add($ao_rules->existsIn([
-			'realm',
-			'languageShortcode',
-		], 'Languages', ['authorize' => ['skip' => TRUE]]),
-			'languageExists',
-			[
+		$ao_rules->add(function(Configuration $ao_entity, array $aa_options) use ($ao_rules): bool {
+			if ( ! $ao_entity->get('languageShortcode')) {
+				return TRUE;
+			}
+
+			$lo_existsIn = $ao_rules->existsIn([
+				'realm',
+				'languageShortcode',
+			], 'Languages', [
+				'authorize' => ['skip' => TRUE],
 				'errorField' => 'languageShortcode',
 				'message' => __dfx($this->getI18nDomain(), 'validation', 'configuration', 'error_language_exists'),
 			]);
+
+			return $lo_existsIn($ao_entity, $aa_options);
+		}, 'languageExists');
 
 
 		return $ao_rules;

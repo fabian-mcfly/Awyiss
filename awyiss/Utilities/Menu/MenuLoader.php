@@ -4,16 +4,23 @@
 namespace Awyiss\Utilities\Menu;
 
 
+use JsonSchema\Constraints\Factory;
+use JsonSchema\SchemaStorage;
 use JsonSchema\Validator;
 use RuntimeException;
 
 
 class MenuLoader {
 	public static function validateData (object $data, array $config): bool {
+		$factory = NULL;
 		$schema = $config['schema'] ?? NULL;
 		$schemaPath = $config['schemaPath'] ?? NULL;
 		if ($schemaPath) {
 			$schema = static::loadJsonFile($schemaPath);
+
+			$schemaStorage = new SchemaStorage();
+			$schemaStorage->addSchema('file://' . $schemaPath, $schema);
+			new Factory($schemaStorage);
 		}
 
 		if (is_string($schema)) {
@@ -21,7 +28,7 @@ class MenuLoader {
 		}
 
 		// Validate
-		$validator = new Validator();
+		$validator = new Validator($factory);
 		$validator->validate($data, $schema);
 
 		if ( ! $validator->isValid()) {
@@ -38,7 +45,7 @@ class MenuLoader {
 		if (isset($config['validate'])) {
 			$valid = static::validateData($data, $config['validate']);
 			if ( ! $valid) {
-				throw new RuntimeException('The data is not valid according to the specified scheme');
+				throw new RuntimeException('The data is not valid according to the specified schema');
 			}
 		}
 

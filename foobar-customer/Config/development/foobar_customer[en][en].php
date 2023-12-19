@@ -4,7 +4,7 @@ return [
 	'Awyiss' => [
 		'ContentTemplates' => [
 			'Frontend' => [
-				'contentrowExcludedContentTemplateIds' => '12',
+				'contentrowExcludedContentTemplateIds' => '13',
 			],
 			'Backend' => [
 				'paginate' => [
@@ -42,21 +42,25 @@ return [
 		],
 		'News' => [
 			'Backend' => [
-				'starttime' => '0',
+				'starttime' => '2',
+			],
+		],
+		'PageRoles' => [
+			'Backend' => [
+				'autoCreateMenuEntries' => true,
 			],
 		],
 		'System' => [
 			'Backend' => [
 				'lockTimeout' => 600,
 				'meta' => [
-					'titleAppendix' => 'Bueackeand',
+					'titleAppendix' => 'Bäckänd auf änglisch',
 					'titleSeparator' => ' | ',
 				],
 			],
 			'Frontend' => [
-				'foobar123' => '123 test',
 				'meta' => [
-					'titleAppendix' => 'Würzburger Kickers auf Deutsch',
+					'titleAppendix' => 'Würzburger Kickers Football',
 					'titleSeparator' => ' | ',
 				],
 				'editlinks' => true,

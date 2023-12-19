@@ -47,8 +47,8 @@ class NestBehavior extends Behavior {
 		],
 		'enabled' => TRUE,
 		'implementedEvents' => [
-			'Model.buildRules' => 'buildRules',
-			'Model.afterSaveCommit' => 'afterSaveCommit',
+			'buildRules',
+			'afterSaveCommit',
 		],
 		'implementedMethods' => [
 			'getNestedChildren' => 'getNestedChildren',
@@ -110,7 +110,7 @@ class NestBehavior extends Behavior {
 
 			$la_foreignKeys = array_merge((array) $this->getConfig('children.foreignKey'), $this->getConfig('relatedColumns'));
 			$la_foreignKeys = $ls_entityClass::unmapFields($la_foreignKeys);
-			Log::write('error', $ls_alias, 'NestBehavior::buildAssociations');
+
 			$this->table()->hasMany($ls_associationName, [
 				'bindingKey' => $la_bindingKeys,
 				'cascadeCallbacks' => TRUE,

@@ -71,7 +71,7 @@ class MenusController extends Controller {
 		$this->Authorization->ensure('update');
 
 		/** @var Menu $lo_menu */
-		$lo_menu = $this->Menus->findById((int) $this->request->getParam('id'))->first();
+		$lo_menu = $this->Menus->findById((int) $this->request->getParam('id'))->find('translations')->first();
 		if (! $lo_menu) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -102,7 +102,7 @@ class MenusController extends Controller {
 		$this->request->allowMethod(['get', 'delete']);
 
 		/** @var Menu $lo_menu */
-		$lo_menu = $this->Menus->findById((int) $this->request->getParam('id'))->first();
+		$lo_menu = $this->Menus->findById((int) $this->request->getParam('id'))->find('translations')->first();
 		if (! $lo_menu) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -129,11 +129,13 @@ class MenusController extends Controller {
 	* @throws RedirectException
 	*/
 	protected function save (Menu $ao_menu, string $as_method = 'add'): void {
+		$la_associated = [];
 		if ($this->Menus->hasAttributes()) {
+			$la_associated[] = $this->Menus->getAttributesTable(TRUE);
 			$ao_menu->setAccess('attributes', TRUE);
 		}
 
-		$this->Menus->patchEntity($ao_menu, $this->request->getData());
+		$this->Menus->patchEntity($ao_menu, $this->request->getData(), ['associated' => $la_associated]);
 
 		if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
 			if ($this->Menus->save($ao_menu)) {

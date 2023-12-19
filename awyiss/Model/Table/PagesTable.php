@@ -76,7 +76,7 @@ class PagesTable extends Table {
 		}
 
 		if (!$this->getConfig('authorize.scope')) {
-			$this->setConfig('authorize.scope', $this->pageRole);
+			$this->setConfig('authorize.scope', Inflector::pluralize($this->pageRole));
 		}
 
 		if (!$this->getConfig('attributes.foreignKey')) {

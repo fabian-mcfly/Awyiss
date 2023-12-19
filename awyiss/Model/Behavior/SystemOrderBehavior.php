@@ -5,6 +5,7 @@ namespace Awyiss\Model\Behavior;
 
 
 use ArrayObject;
+use Awyiss\Model\Entity;
 use Awyiss\ORM\Behavior;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
@@ -44,13 +45,13 @@ class SystemOrderBehavior extends Behavior {
 	protected array $_defaultConfig = [
 		'enabled' => TRUE,
 		'implementedEvents' => [
-			'Model.beforeFind' => 'beforeFind',
-			'Model.beforeMarshal' => 'beforeMarshal',
-			'Model.beforeSave' => 'beforeSave',
-			'Model.afterSave' => 'afterSave',
-			'Model.beforeSoftDelete' => 'beforeSoftDelete',
-			'Model.afterSoftDelete' => 'afterSoftDelete',
-			'Model.afterSoftDeleteCommit' => 'afterSoftDeleteCommit',
+			'beforeFind',
+			'beforeMarshal',
+			'beforeSave',
+			'afterSave',
+			'beforeSoftDelete',
+			'afterSoftDelete',
+			'afterSoftDeleteCommit',
 		],
 		'implementedMethods' => [
 			'addSystemOrderQueryConditions' => 'addQueryConditions',
@@ -344,20 +345,17 @@ class SystemOrderBehavior extends Behavior {
 			}
 
 			//If we move an item forwards, me move all items one to the back
-			if ($li_systemOrderNew < $li_systemOrderOld) {
-				$lo_records->each(function(EntityInterface $ao_record) {
-					$ao_record->systemOrder++;
-				});
-			}
-			//And if we move an item backwards, me move all items one to the front
-			else {
-				$lo_records->each(function(EntityInterface $ao_record) {
-					$ao_record->systemOrder--;
-				});
-			}
+			$lb_forward = $li_systemOrderNew < $li_systemOrderOld;
+
+			$la_records = $lo_records->toArray();
+			//Increase/decrease the system order of all records
+			array_walk($la_records, function(EntityInterface $ao_record) use ($lb_forward) {
+				/** @var Entity $ao_record */
+				$ao_record->systemOrder += $lb_forward ? 1 : -1;
+			});
 
 			//Save all found records, but skip the authorization check, the audit and the system order behavior on those to avoid recursion.
-			$lo_table->saveMany($lo_records, [
+			$lo_table->saveMany($la_records, [
 				'audit' => ['skip' => TRUE],
 				'authorize' => ['skip' => TRUE],
 				'checkRules' => FALSE,
@@ -422,6 +420,7 @@ class SystemOrderBehavior extends Behavior {
 			 * This will make sure that the update will not run on entities that will be deleted inside the same transaction
 			 */
 			$this->rememberedFields[ $ao_entity->id ] = $ao_entity->extractOriginalChanged($this->getConfig('relatedColumns'));
+
 			return;
 		}
 
@@ -510,7 +509,7 @@ class SystemOrderBehavior extends Behavior {
 
 
 	/**
-	 * Retreive the highest possible system order for the scope of the provided entity
+	 * Retreive the current highest system order for the scope of the provided entity
 	 *
 	 * @param EntityInterface $ao_entity
 	 *
@@ -526,6 +525,7 @@ class SystemOrderBehavior extends Behavior {
 		$lo_table = $this->table();
 
 		$lo_query = $this->addQueryConditions($lo_table->find(), $ao_entity);
+		//$lo_query->applyOptions(['authorize' => ['skip' => TRUE]]);
 
 		$lo_record = $lo_query->select('system_order')->orderByDesc('system_order')->first();
 
@@ -585,13 +585,15 @@ class SystemOrderBehavior extends Behavior {
 			return;
 		}
 
+		$la_records = $lo_records->toArray();
 		//Increase the system order of all records
-		$lo_records->each(function(EntityInterface $ao_record) {
+		array_walk($la_records, function(EntityInterface $ao_record) {
+			/** @var Entity $ao_record */
 			$ao_record->systemOrder++;
 		});
 
 		//Save all found records, but skip the authorization check, the audit and the system order behavior on those to avoid recursion.
-		$lo_table->saveMany($lo_records, [
+		$lo_table->saveMany($la_records, [
 			'audit' => ['skip' => TRUE],
 			'authorize' => ['skip' => TRUE],
 			'checkRules' => FALSE,
@@ -631,14 +633,15 @@ class SystemOrderBehavior extends Behavior {
 			return;
 		}
 
-		//Decrease the system order of all records
-		$lo_records->each(function(EntityInterface $ao_record) {
-			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+		$la_records = $lo_records->toArray();
+		//Increase the system order of all records
+		array_walk($la_records, function(EntityInterface $ao_record) {
+			/** @var Entity $ao_record */
 			$ao_record->systemOrder--;
 		});
 
 		//Save all found records, but skip the authorization check, the audit and the system order behavior on those to avoid recursion.
-		$lo_table->saveMany($lo_records, [
+		$lo_table->saveMany($la_records, [
 			'audit' => ['skip' => TRUE],
 			'authorize' => ['skip' => TRUE],
 			'checkRules' => FALSE,

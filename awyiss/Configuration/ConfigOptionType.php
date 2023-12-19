@@ -12,10 +12,10 @@ use TypeError;
  * Valid data types for values used in `ConfigOption`
  */
 enum ConfigOptionType: string {
-	case TYPE_JSON = 'json';
-	case TYPE_BOOL = 'bool';
-	case TYPE_STRING = 'string';
-	case TYPE_INTEGER = 'integer';
+	case JSON = 'json';
+	case BOOL = 'bool';
+	case STRING = 'string';
+	case INTEGER = 'integer';
 
 
 	/**
@@ -28,10 +28,10 @@ enum ConfigOptionType: string {
 	 */
 	public function validateType (mixed $value, bool $ab_isNullable = FALSE): bool|string {
 		switch ($this) {
-			case self::TYPE_INTEGER:
+			case self::INTEGER:
 				return is_int($value) || (is_string($value) && ctype_digit($value));
 
-			case self::TYPE_BOOL:
+			case self::BOOL:
 				/*
 				 * Type bool consideres everything boolish to be a valid value
 				 * since the \Model\Entity\Configuration saves everything as a string
@@ -39,7 +39,7 @@ enum ConfigOptionType: string {
 				 */
 				 return is_bool($value) || in_array($value, [1, 0, '1', '0'], TRUE);
 
-			case self::TYPE_JSON:
+			case self::JSON:
 				try {
 					$la_value = json_decode($value, TRUE, 16, JSON_THROW_ON_ERROR);
 
@@ -53,7 +53,7 @@ enum ConfigOptionType: string {
 					return FALSE;
 				}
 
-			case self::TYPE_STRING:
+			case self::STRING:
 				return is_string($value);
 		}
 
@@ -70,10 +70,10 @@ enum ConfigOptionType: string {
 	 */
 	public function typeCast (mixed $ax_value): mixed {
 		return match ($this) {
-			self::TYPE_INTEGER => intval($ax_value),
-			self::TYPE_BOOL => boolval($ax_value),
-			self::TYPE_JSON => json_decode($ax_value),
-			self::TYPE_STRING => strval($ax_value),
+			self::INTEGER => intval($ax_value),
+			self::BOOL => boolval($ax_value),
+			self::JSON => json_decode($ax_value),
+			self::STRING => strval($ax_value),
 		};
 	}
 }

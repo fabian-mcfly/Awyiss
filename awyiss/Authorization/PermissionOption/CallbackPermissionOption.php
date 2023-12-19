@@ -28,7 +28,7 @@ class CallbackPermissionOption extends SimplePermissionOption {
 
 
 	/**
-	 * @param array                      $aa_config
+	 * @param array $aa_config
 	 * @param PermissionOptionCollection $ao_permissionOptionCollection
 	 */
 	public function __construct (array $aa_config, PermissionOptionCollection $ao_permissionOptionCollection) {
@@ -84,7 +84,7 @@ class CallbackPermissionOption extends SimplePermissionOption {
 	 * @return $this
 	 */
 	public function setCallbacks (array $aa_callbacks): static {
-		foreach ($aa_callbacks AS $ls_event => $lc_callback) {
+		foreach ($aa_callbacks as $ls_event => $lc_callback) {
 			$this->setCallback($ls_event, $lc_callback);
 		}
 
@@ -116,7 +116,6 @@ class CallbackPermissionOption extends SimplePermissionOption {
 		}
 
 		return $lb_accessible;
-
 		//throw new RuntimeException(sprintf('`%s` is not implemented in `%s` yet.', __FUNCTION__, static::class));
 	}
 }

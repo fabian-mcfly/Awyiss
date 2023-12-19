@@ -90,6 +90,15 @@ class Content extends Entity {
 	];
 
 
+	protected function _setData (array $aa_data) {
+		if (empty($aa_data)) {
+			return NULL;
+		}
+
+		return $aa_data;
+	}
+
+
 	/**
 	 * Get all direct children of the current entity
 	 *

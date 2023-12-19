@@ -5,6 +5,7 @@ namespace Awyiss\Utilities\Menu;
 
 
 use Awyiss\Authorization\IdentityPermissionsInterface;
+use Awyiss\Model\Entity\BackendMenuEntry;
 use Awyiss\Routing\Router;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Utility\Inflector;
@@ -18,6 +19,7 @@ class MenuItem {
 
 	protected mixed $access = NULL;
 	protected ?bool $accessible = NULL;
+	protected bool $active = TRUE;
 	/**
 	 * @var array<string|int, MenuItem>
 	 */
@@ -32,10 +34,19 @@ class MenuItem {
 
 	public function __construct ($data, $config = [], $level = 1) {
 		$this->access = $data->access ?? NULL;
+		$this->active = $data->active ?? TRUE;
 		$this->identity = $config['identity'] ?? NULL;
 		$this->level = $level;
 		$this->link = $data->link;
 		$this->title = $data->title;
+
+		if ($data instanceof BackendMenuEntry) {
+			if ($this->access) {
+				$this->access = (object) $this->access;
+			}
+
+			$this->convertEntityLink($data);
+		}
 
 		if ( ! empty($data->children)) {
 			$this->setChildren($data->children, $config);
@@ -57,23 +68,22 @@ class MenuItem {
 	}
 
 
-	public function isAccessibleBy (?IdentityPermissionsInterface $identity = NULL) {
+	public function isAccessibleBy (?IdentityPermissionsInterface $ao_identity = NULL) {
 		//No access settings means the item is always accessible
 		if ( ! isset($this->access)) {
 			return TRUE;
 		}
 
-		if ( ! isset($this->identity) && ! $identity) {
+		if ( ! isset($this->identity) && ! $ao_identity) {
 			return NULL;
 		}
 
-		if ( ! $identity) {
-			$identity = $this->identity;
+		$lo_identity = $ao_identity;
+		if ( ! $lo_identity) {
+			$lo_identity = $this->identity;
 		}
 
-		$lo_permissionCollection = $identity->getPermissionCollection();
-
-		return $lo_permissionCollection->scopeIsAccessible($this->access->scope, (array) ($this->access->additionalData ?? []), $this->access->identifier);
+		return $lo_identity->scopeIsAccessible($this->access->scope, (array) ($this->access->additionalData ?? []), $this->access->identifier);
 	}
 
 
@@ -84,8 +94,13 @@ class MenuItem {
 	}
 
 
+	public function getActive (): bool {
+		return $this->active;
+	}
+
+
 	/**
-	 * @return Generator
+	 * @return Generator|MenuItem
 	 */
 	public function children (int $maxLevel = -1): Generator {
 		if ($this->children === NULL) {
@@ -111,6 +126,10 @@ class MenuItem {
 	public function setChildren (iterable|object $children, array $config = NULL) {
 		if ($config === NULL) {
 			$config = $this->getConfig();
+		}
+
+		if ( ! array_key_exists('identity', $config)) {
+			$config['identity'] = $this->identity;
 		}
 
 		$this->children = new Menu($children, $config, $this->level + 1);
@@ -182,7 +201,7 @@ class MenuItem {
 	}
 
 
-	public function determineVisibility (bool $reset = FALSE): bool {
+	public function determineVisibility (bool $reset = FALSE): ?bool {
 		// If reset is false and visible property is not null, use the current visibility
 		if ( ! $reset && $this->visible !== NULL) {
 			return $this->visible;
@@ -229,5 +248,39 @@ class MenuItem {
 		}
 
 		throw new RuntimeException(sprintf('Unknown field `%s` in `%s`', $as_field, static::class));
+	}
+
+
+	protected function convertEntityLink (BackendMenuEntry $data) {
+		$la_parts = explode('::', $this->link);
+
+		$ls_controller = array_shift($la_parts);
+		$ls_action = array_shift($la_parts);
+
+		$la_params = [];
+		if ( ! empty($la_parts)) {
+			foreach ($la_parts as $lx_value) {
+				$la_innerParts = explode(':', $lx_value);
+				$la_params[ $la_innerParts[0] ] = $la_innerParts[1] ?? NULL;
+			}
+			$la_params = array_filter($la_params, function ($ax_value) {
+				return $ax_value !== NULL;
+			});
+		}
+
+		$la_linkData = [
+			'url' => [
+				'controller' => $ls_controller,
+				'action' => $ls_action,
+			] + $la_params,
+		];
+
+		if ($data->external) {
+			$la_linkData['attributes'] = [
+				'target' => '_blank',
+			];
+		}
+
+		$this->link = json_decode(json_encode($la_linkData));
 	}
 }

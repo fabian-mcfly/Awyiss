@@ -8,6 +8,7 @@ use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Model\Entity\BackendMenuEntry;
 use Awyiss\Model\Table\BackendMenuEntriesTable;
 use Awyiss\Routing\Router;
+use Awyiss\Utilities\Menu\BackendMenu;
 use Awyiss\Utilities\Menu\Menu;
 use Awyiss\Utilities\Menu\MenuLoader;
 use Cake\Collection\Collection;
@@ -36,15 +37,10 @@ class BackendMenuEntriesController extends Controller {
 	public function overview (): void {
 		$this->Authorization->ensure('read');
 
-		$lo_menuEntries = $this->BackendMenuEntries->find()->where($this->getOverviewWhere());
-		$lo_menuEntries = $this->BackendMenuEntries->listNested($lo_menuEntries);
-
-		$lo_menu = $this->getMenu();
+		$lo_menu = new BackendMenu();
 
 		$this->set([
 			'ao_menu' => $lo_menu,
-			'aa_menu' => $lo_menu->toArray(),
-			'ao_menuEntries' => $lo_menuEntries,
 		]);
 	}
 	
@@ -65,27 +61,11 @@ class BackendMenuEntriesController extends Controller {
 			$this->save($lo_menuEntry);
 		}
 
-		$lo_menu = $this->getMenu();
+		$lo_menu = new BackendMenu();
 
-		$la_menuEntries = $this->BackendMenuEntries->find('threaded')->all()->groupBy(function(BackendMenuEntry $ao_entity) {
-			return $ao_entity->parentId ? 'appendTo' : 'insertAfter';
-		})->map(function(array $aa_menuEntries) {
-			return collection($aa_menuEntries)->groupBy(function(BackendMenuEntry $ao_entity) {
-				return $ao_entity->parentId ?? $ao_entity->insertAfterId ?? '';
-			})->toArray();
-		})->toArray();
+		$la_parentIdOptions = $this->generateMenuSelectOptions($lo_menu->getDynamicMenu());
 
-		$la_insertAfterOptions = $this->generateMenuSelectOptions($lo_menu);
-
-		foreach ($la_menuEntries['appendTo'] ?? [] AS $ls_identifier => $la_entries) {
-			$lo_menu->appendEntries($la_entries, $ls_identifier);
-		}
-
-		foreach ($la_menuEntries['insertAfter'] ?? [] AS $ls_identifier => $la_entries) {
-			$lo_menu->insertEntriesAfter($la_entries, $ls_identifier);
-		}
-
-		$la_parentIdOptions = $this->generateMenuSelectOptions($lo_menu);
+		$la_insertAfterOptions = $this->generateMenuSelectOptions($lo_menu->getCustomMenu() ?? $lo_menu->getMenu());
 
 		$lo_threadedMenuEntries = $this->getThreadedMenuEntries($lo_menuEntry);
 
@@ -110,7 +90,7 @@ class BackendMenuEntriesController extends Controller {
 		$this->Authorization->ensure('update');
 
 		/** @var BackendMenuEntry $lo_menuEntry */
-		$lo_menuEntry = $this->BackendMenuEntries->findById((int) $this->request->getParam('id'))->first();
+		$lo_menuEntry = $this->BackendMenuEntries->findById((int) $this->request->getParam('id'))->find('translations')->first();
 		if (! $lo_menuEntry) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -121,27 +101,11 @@ class BackendMenuEntriesController extends Controller {
 			$this->save($lo_menuEntry, 'edit');
 		}
 
-		$lo_menu = $this->getMenu();
+		$lo_menu = new BackendMenu();
 
-		$la_menuEntries = $this->BackendMenuEntries->find('threaded')->all()->groupBy(function(BackendMenuEntry $ao_entity) {
-			return $ao_entity->parentId ? 'appendTo' : 'insertAfter';
-		})->map(function(array $aa_menuEntries) {
-			return collection($aa_menuEntries)->groupBy(function(BackendMenuEntry $ao_entity) {
-				return $ao_entity->parentId ?? $ao_entity->insertAfterId ?? '';
-			})->toArray();
-		})->toArray();
+		$la_parentIdOptions = $this->generateMenuSelectOptions($lo_menu->getDynamicMenu());
 
-		$la_insertAfterOptions = $this->generateMenuSelectOptions($lo_menu);
-
-		foreach ($la_menuEntries['appendTo'] ?? [] as $ls_identifier => $la_entries) {
-			$lo_menu->appendEntries($la_entries, $ls_identifier);
-		}
-
-		foreach ($la_menuEntries['insertAfter'] ?? [] as $ls_identifier => $la_entries) {
-			$lo_menu->insertEntriesAfter($la_entries, $ls_identifier);
-		}
-
-		$la_parentIdOptions = $this->generateMenuSelectOptions($lo_menu);
+		$la_insertAfterOptions = $this->generateMenuSelectOptions($lo_menu->getCustomMenu() ?? $lo_menu->getMenu());
 
 		$lo_threadedMenuEntries = $this->getThreadedMenuEntries($lo_menuEntry);
 
@@ -168,7 +132,7 @@ class BackendMenuEntriesController extends Controller {
 		$this->request->allowMethod(['get', 'delete']);
 
 		/** @var BackendMenuEntry $lo_menuEntry */
-		$lo_menuEntry = $this->BackendMenuEntries->findById((int) $this->request->getParam('id'))->first();
+		$lo_menuEntry = $this->BackendMenuEntries->findById((int) $this->request->getParam('id'))->find('translations')->first();
 		if (! $lo_menuEntry) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -195,11 +159,13 @@ class BackendMenuEntriesController extends Controller {
 	* @throws RedirectException
 	*/
 	protected function save (BackendMenuEntry $ao_menuEntry, string $as_method = 'add'): void {
+		$la_associated = [];
 		if ($this->BackendMenuEntries->hasAttributes()) {
+			$la_associated[] = $this->BackendMenuEntries->getAttributesTable(TRUE);
 			$ao_menuEntry->setAccess('attributes', TRUE);
 		}
 
-		$this->BackendMenuEntries->patchEntity($ao_menuEntry, $this->request->getData());
+		$this->BackendMenuEntries->patchEntity($ao_menuEntry, $this->request->getData(), ['associated' => $la_associated]);
 
 		if ( ! empty($ao_menuEntry->parentId)) {
 			$ao_menuEntry->insertAfterId = NULL;
@@ -293,20 +259,6 @@ class BackendMenuEntriesController extends Controller {
 		$this->overviewWhere = [
 
 		];
-	}
-
-
-	protected function getMenu (): Menu {
-		$la_config = [
-			'validate' => [
-				'schemaPath' => CONFIG . DS . 'menu.schema.json',
-				'uniqueIdentifiers' => TRUE,
-			],
-		];
-
-		$ls_filePath = realpath(CONFIG . DS . 'menu.json');
-
-		return MenuLoader::fromJsonFile($ls_filePath, $la_config);
 	}
 
 

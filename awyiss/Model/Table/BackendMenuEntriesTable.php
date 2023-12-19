@@ -9,7 +9,9 @@ use Awyiss\Model\Table;
 use Awyiss\ORM\Association\BelongsTo;
 use Awyiss\ORM\Association\HasMany;
 use Awyiss\ORM\RulesChecker;
+use Awyiss\Utilities\Menu\BackendMenu;
 use Cake\Collection\CollectionInterface;
+use Cake\Database\Schema\TableSchemaInterface;
 use Cake\Datasource\EntityInterface;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
@@ -41,10 +43,13 @@ class BackendMenuEntriesTable extends Table {
 
 	protected array $_defaultConfig = [
 		'nest' => [
-			'relatedColumns' => ['parentId', 'insertAfterId'],
+			'relatedColumns' => [],
 		],
 		'systemOrder' => [
 			'relatedColumns' => ['parentId', 'insertAfterId'],
+		],
+		'translate' => [
+			'fields' => ['title'],
 		],
 	];
 
@@ -188,12 +193,22 @@ class BackendMenuEntriesTable extends Table {
 	 */
 	public function buildRules (RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
 		$ao_rules->add(function(BackendMenuEntry $ao_entity, array $aa_options) use ($ao_rules): bool {
+			static $lo_menu;
+
 			if ( ! $aa_options['checkRules']) {
 				dd(__FILE__, __LINE__);
 			}
 
-			if ( ! $ao_entity->get('parentId')) {
+			if ( ! ($lx_parentId = $ao_entity->get('parentId'))) {
 				return TRUE;
+			}
+
+			if ( ! is_numeric($lx_parentId)) {
+				if ( ! isset($lo_menu)) {
+					$lo_menu = new BackendMenu();
+				}
+
+				return (bool) ($lo_menu->getCustomMenu() ?? $lo_menu->getMenu())->getItem($lx_parentId);
 			}
 
 			$lo_existsIn = $ao_rules->existsIn(['parentId'], 'ParentBackendMenuEntries', [
@@ -226,5 +241,15 @@ class BackendMenuEntriesTable extends Table {
 		}
 
 		return $lo_menuEntries;
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	protected function initializeSchema (TableSchemaInterface $ao_schema): void {
+		parent::initializeSchema($ao_schema);;
+
+		$ao_schema->setColumnType('access', 'json');
 	}
 }

@@ -50,7 +50,7 @@ class UsersExternalTable extends Table {
 		//$ao_validator->integer('id')->allowEmptyString('id', NULL, 'create');
 		$ao_validator->scalar('provider')->maxLength('provider', 50)->requirePresence('provider', 'create')->notEmptyString('provider');
 		$ao_validator->scalar('username')->maxLength('username', 50)->requirePresence('username', 'create')->notEmptyString('username');
-		$ao_validator->dateTime('last_login')->notEmptyDateTime('last_login');
+		$ao_validator->dateTime('lastLogin')->notEmptyDateTime('lastLogin');
 
 		return $ao_validator;
 	}

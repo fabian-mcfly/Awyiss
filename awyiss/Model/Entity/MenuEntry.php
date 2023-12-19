@@ -36,14 +36,14 @@ class MenuEntry extends Entity {
 	 * @inheritDoc
 	 */
 	protected array $_accessible = [
-        'menuId' => true,
-        'languageShortcode' => true,
-        'parentId' => true,
-        'title' => true,
-        'link' => true,
-        'external' => true,
-        'systemOrder' => true,
-        'active' => true,
+        'menuId' => TRUE,
+        'languageShortcode' => TRUE,
+        'parentId' => TRUE,
+        'title' => TRUE,
+        'link' => TRUE,
+        'external' => TRUE,
+        'systemOrder' => TRUE,
+        'active' => TRUE,
     ];
 	/**
 	 * @inheritDoc

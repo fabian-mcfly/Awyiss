@@ -4,7 +4,7 @@
 use Migrations\AbstractMigration;
 
 
-class AddAlterToAttributesContents extends AbstractMigration {
+class AddTestdate2ToAttributesPages extends AbstractMigration {
 	/**
 	 * Change Method.
 	 *
@@ -13,10 +13,9 @@ class AddAlterToAttributesContents extends AbstractMigration {
 	 * @return void
 	 */
 	public function change(): void {
-		$table = $this->table('attributes_contents');
-		$table->addColumn('alter', 'string', [
-            'default' => '',
-            'limit' => 255,
+		$table = $this->table('attributes_pages');
+		$table->addColumn('testdate2', 'datetime', [
+            'default' => null,
             'null' => true,
         ]);
 		$table->update();

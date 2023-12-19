@@ -122,7 +122,15 @@
 
 			{% block fieldsetDataInner %}
 				{% block formControlData %}
-					{{ helper_Form_control('data') }}
+					{% set li_counter = 0 %}
+					{% for ls_key, lx_value in ao_content.data %}
+						{{ helper_Form_control('data.' ~ li_counter ~ '.key', {val: ls_key}) }}
+						{{ helper_Form_control('data.' ~ li_counter ~ '.value', {val: lx_value}) }}
+						{% set li_counter = li_counter + 1 %}
+					{% endfor %}
+
+					{{ helper_Form_control('data.' ~ li_counter ~ '.key') }}
+					{{ helper_Form_control('data.' ~ li_counter ~ '.value') }}
 				{% endblock %}
 
 				{{ _self.renderFormControls(aa_contentElementsByFieldset.data ?? [], ao_threadedContents) }}

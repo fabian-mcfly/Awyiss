@@ -28,9 +28,10 @@ class PageTemplateContentAreasTable extends Table {
 	 * @var array|array[]
 	 */
 	protected array $_defaultConfig = [
+		'audit' => [
+			'enabled' => FALSE,
+		],
 		'authorize' => [
-			//'enabled' => FALSE,
-			'failSilently' => FALSE, //as long as through-associations cannot be stopped in beforeFind, throwing an exception is a must
 			'identifiers' => [
 				//We use the page templates-scope, creating an association will occur when creating or updating a page template
 				'Entity.create' => [['create', 'update']],
@@ -50,9 +51,7 @@ class PageTemplateContentAreasTable extends Table {
 	public function initialize (array $aa_config): void {
 		parent::initialize($aa_config);
 
-
 		$this->belongsTo('ContentAreas');
-
 
 		$this->belongsTo('PageTemplates');
 	}

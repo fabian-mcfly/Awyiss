@@ -7,6 +7,9 @@ namespace Awyiss\Model\Behavior;
 use Awyiss\Model\Table;
 use Awyiss\ORM\Behavior;
 use Cake\Datasource\EntityInterface;
+use Cake\I18n\Date;
+use Cake\I18n\DateTime;
+use Cake\I18n\Time;
 use Cake\ORM\Association;
 use RuntimeException;
 use UnhandledMatchError;
@@ -68,10 +71,13 @@ class DefaultValuesBehavior extends Behavior {
 			try {
 				$lx_default = match ($la_typeMap[ $ls_column ]) {
 					'boolean' => boolval($lx_default),
+					'date' => $lx_default ? new Date($lx_default) : NULL,
+					'datetime' => $lx_default ? new DateTime($lx_default) : NULL,
 					'float' => floatval($lx_default),
 					'integer' => intval($lx_default),
 					'json' => json_decode(trim($lx_default, '\'')),
 					'string', 'text' => strval($lx_default),
+					'time' => $lx_default ? new Time($lx_default) : NULL,
 				};
 			}
 			catch (UnhandledMatchError) {

@@ -85,7 +85,7 @@ class ContentTemplatesController extends Controller {
 		$this->Authorization->ensure('update');
 
 		/** @var ContentTemplate $lo_contentTemplate */
-		$lo_contentTemplate = $this->ContentTemplates->findById((int) $this->request->getParam('id'))->contain([
+		$lo_contentTemplate = $this->ContentTemplates->findById((int) $this->request->getParam('id'))->find('translations')->contain([
 			'ContentTemplateContentAreas',
 			'ContentTemplateElements'
 		])->first();
@@ -135,7 +135,7 @@ class ContentTemplatesController extends Controller {
 		$this->request->allowMethod(['get', 'delete']);
 
 		/** @var ContentTemplate $lo_contentTemplate */
-		$lo_contentTemplate = $this->ContentTemplates->findById((int) $this->request->getParam('id'))->first();
+		$lo_contentTemplate = $this->ContentTemplates->findById((int) $this->request->getParam('id'))->find('translations')->first();
 		if ( ! $lo_contentTemplate) {
 			$this->Flash->error(__('record_not_found'));
 			return $this->redirect(['action' => 'overview']);
@@ -159,7 +159,9 @@ class ContentTemplatesController extends Controller {
 	 * @return void
 	 */
 	protected function save (ContentTemplate $ao_contentTemplate, string $as_method = 'add'): void {
+		$la_associated = [];
 		if ($this->ContentTemplates->hasAttributes()) {
+			$la_associated[] = $this->ContentTemplates->getAttributesTable(TRUE);
 			$ao_contentTemplate->setAccess('attributes', TRUE);
 		}
 
@@ -170,24 +172,21 @@ class ContentTemplatesController extends Controller {
 				return ! empty($aa_element['content_area_id']);
 			});
 			unset($la_requestData['content_areas']);
+			$la_associated[] = 'ContentTemplateContentAreas';
 		}
 
 		if (!empty($la_requestData['content_template_elements'])) {
 			$la_requestData['content_template_elements'] = array_filter($la_requestData['content_template_elements'], function($aa_element) {
 				return !empty($aa_element['identifier']);
 			});
+
+			$la_associated[] = 'ContentTemplateElements';
 		}
 
-		$this->ContentTemplates->patchEntity($ao_contentTemplate, $la_requestData, [
-			'associated' => [
-				'ContentTemplateContentAreas',
-				'ContentTemplateElements',
-			]
-		]);
+		$this->ContentTemplates->patchEntity($ao_contentTemplate, $la_requestData, ['associated' => $la_associated]);
 
 		if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
 			if ($this->ContentTemplates->save($ao_contentTemplate)) {
-			//dd($ao_contentTemplate);
 				$this->Flash->success(__($as_method . '_succeeded'));
 
 				if ($this->request->getData('submit') == 'submit_close') {
@@ -209,33 +208,9 @@ class ContentTemplatesController extends Controller {
 	 * @return array
 	 */
 	protected function getPageTemplates (): array {
-		$lo_pageTemplates = $this->fetchTable('PageTemplates')->find()
-		->contain([
-			'ContentAreas' => [
-				'finder' => [
-					'all' => [
-						'authorize' => [
-							'skip' => TRUE,
-						]
-					],
-				],
-			],
-			'PageRoles' => [
-				'finder' => [
-					'all' => [
-						'authorize' => [
-							'skip' => TRUE,
-						]
-					],
-				],
-			],
-		])
-		->applyOptions([
-			'authorize' => [
-				'skip' => TRUE,
-			],
-		])
-		->all();
+		$this->dispatchEvent('Authorization.disableBehavior');
+		$lo_pageTemplates = $this->fetchTable('PageTemplates')->find()->contain(['ContentAreas', 'PageRoles'])->all();
+		$this->dispatchEvent('Authorization.enableBehavior');
 
 		$lo_pageTemplates = $lo_pageTemplates
 		->sortBy('pageRole.systemOrder', SORT_ASC)

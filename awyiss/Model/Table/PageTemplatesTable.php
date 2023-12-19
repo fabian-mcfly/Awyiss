@@ -47,13 +47,13 @@ class PageTemplatesTable extends Table {
 	public function initialize (array $aa_config): void {
 		parent::initialize($aa_config);
 
-		$this->belongsTo('PageRoles', [
-			'joinType' => 'INNER',
-		]);
-
 		$this->belongsToMany('ContentAreas', [
 			'sort' => ['system_order' => 'ASC'],
 			'through' => 'PageTemplateContentAreas',
+		]);
+
+		$this->belongsTo('PageRoles', [
+			'joinType' => 'INNER',
 		]);
 
 		$this->hasMany('Pages', [
@@ -76,16 +76,16 @@ class PageTemplatesTable extends Table {
 			->select([
 				'usedForPages' => $ao_query->func()->count('Pages.id')
 			])
-			->leftJoinWith('Pages', function (SelectQuery $ao_query) {
-				//$this->getAssociation('Pages')->skipAuthorizationCheckOnce();
-				$ao_query->applyOptions([
+			->leftJoinWith('Pages', function(SelectQuery $ao_query) {
+				return $ao_query->applyOptions([
+					'attributes' => [
+						'skip' => TRUE,
+					],
 					'authorize' => [
 						'skip' => TRUE,
 					],
 					'skipPageRoleCheck' => TRUE,
 				]);
-
-				return $ao_query;
 			})
 			->groupBy('PageTemplates.id');
 	}

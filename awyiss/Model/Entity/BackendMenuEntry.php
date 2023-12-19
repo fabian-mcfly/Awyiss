@@ -19,6 +19,7 @@ use Cake\I18n\FrozenTime;
  * @property string $insertAfterId
  * @property string $title
  * @property string $link
+ * @property array $access
  * @property bool $external
  * @property int $systemOrder
  * @property bool $active
@@ -35,13 +36,15 @@ class BackendMenuEntry extends Entity {
 	 * @inheritDoc
 	 */
 	protected array $_accessible = [
-        'parentId' => true,
-        'insertAfterId' => true,
-        'title' => true,
-        'link' => true,
-        'external' => true,
-        'systemOrder' => true,
-        'active' => true,
+        'parentId' => TRUE,
+        'insertAfterId' => TRUE,
+        'title' => TRUE,
+        'link' => TRUE,
+        'access' => TRUE,
+        'external' => TRUE,
+        'systemOrder' => TRUE,
+        'active' => TRUE,
+        'childBackendMenuEntries' => TRUE,
     ];
 	protected array $defaults = [
 		'parentId' => NULL,
@@ -60,6 +63,8 @@ class BackendMenuEntry extends Entity {
 		'changed_on' => 'changedOn',
 		'deleted_by' => 'deletedBy',
 		'deleted_on' => 'deletedOn',
+		'child_backend_menu_entries' => 'childBackendMenuEntries',
+		'parent_backend_menu_entries' => 'parentBackendMenuEntries',
 	];
 
 
@@ -78,6 +83,15 @@ class BackendMenuEntry extends Entity {
 		}
 
 		return $ax_value;
+	}
+
+
+	public function _setAccess (mixed $ax_value) {
+		if (empty($ax_value)) {
+			return NULL;
+		}
+
+		return is_string($ax_value) ? json_decode($ax_value) : $ax_value;
 	}
 
 

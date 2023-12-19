@@ -160,7 +160,15 @@ class SystemOrderHelper extends Helper {
 			 * - no system order related columns are dirty AND
 			 * - the `system order`-property of the option equals the entity's original
 			 */
-			$lb_isOriginalSystemOrder = ! $lb_isNew && ! $la_dirtyRelatedColumns && $ao_entity->hasOriginal('systemOrder') && ($lo_option->systemOrder == $ao_entity->getOriginal('systemOrder'));
+			$lb_isOriginalSystemOrder = FALSE;
+			if ( ! $lb_isNew && ! $la_dirtyRelatedColumns) {
+				if ($ao_entity->hasOriginal('systemOrder') && ($lo_option->systemOrder == $ao_entity->getOriginal('systemOrder'))) {
+					$lb_isOriginalSystemOrder = TRUE;
+				}
+				elseif ( ! $ao_entity->hasOriginal('systemOrder') && ($lo_option->systemOrder == $ao_entity->get('systemOrder'))) {
+					$lb_isOriginalSystemOrder = TRUE;
+				}
+			}
 
 			//Remember that we reached the original position
 			if ($lb_isOriginalSystemOrder/* && ! $lb_reachedOriginalSystemOrder*/) {
@@ -200,7 +208,8 @@ class SystemOrderHelper extends Helper {
 
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 			//Append a new option with the system_order as its value.
-			$la_options[ $li_systemOrder ] = $this->formatTitle($lo_option, $aa_attributes + [
+			$la_options[ $li_systemOrder ] = $this->formatTitle($lo_option,
+				$aa_attributes + [
 					'isOriginalSystemOrder' => $lb_isOriginalSystemOrder,
 					'isSelectedSystemOrder' => $li_systemOrder == $ao_entity->systemOrder,
 				]);

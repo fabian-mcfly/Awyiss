@@ -68,7 +68,12 @@ class RulesChecker extends \Cake\ORM\RulesChecker {
 		$ls_message = ($la_options['message'] ?? NULL) ?: __d('validation', 'error_exists_in');
 		unset($la_options['message']);
 
-		$ls_errorField = is_string($ax_fields) ? $ax_fields : current($ax_fields);
+		if (!empty($ax_options['errorField'])) {
+			$ls_errorField = $ax_options['errorField'];
+		}
+		else {
+			$ls_errorField = is_string($ax_fields) ? $ax_fields : current($ax_fields);
+		}
 
 		//return parent::existsIn($ax_fields, $ax_table, $la_options);
 		return $this->_addError(new ExistsIn($ax_fields, $ax_table, $la_options), '_existsIn', ['errorField' => $ls_errorField, 'message' => $ls_message]);

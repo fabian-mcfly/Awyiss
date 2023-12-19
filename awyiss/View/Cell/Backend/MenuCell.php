@@ -9,11 +9,16 @@ use Awyiss\Model\Entity\User;
 use Awyiss\Model\Entity\UsersExternal;
 use Awyiss\Utilities\Menu\BackendMenu;
 use Awyiss\Utilities\Menu\MenuRenderer;
+use Cake\I18n\DateTime;
+use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\View\Cell;
 use RuntimeException;
 
 
 class MenuCell extends Cell {
+	use LocatorAwareTrait;
+
+
 	/**
 	 * Generate the menu and load templates/Backend/cell/menu/menu
 	 *
@@ -21,13 +26,54 @@ class MenuCell extends Cell {
 	 */
 	public function display (): void {
 		$lo_identity = $this->_getIdentity();
+		$lo_session = $this->request->getSession();
+		//$lo_session->delete('backend_menu');
 
-		$lo_menu = new BackendMenu($lo_identity);
-		$lo_renderer = new MenuRenderer($lo_menu);
+		$la_menuData = [];
+		$ls_menu = $lo_session->read('backend_menu');
+		if ($ls_menu) {
+			$la_menuData = json_decode($ls_menu, TRUE);
+			$lo_time = new DateTime($la_menuData['time']);
+
+			if ($lo_time >= $lo_identity->changedOn) {
+				$lo_table = $this->fetchTable('BackendMenuEntries');
+				$lo_entity = $lo_table->find()->select('id')->applyOptions([
+					'authorize' => [
+						'skip' => TRUE,
+					],
+					'softDelete' => [
+						'includeDeleted' => TRUE,
+					],
+				])->where([
+					'OR' => [
+						'created_on >' => $lo_time,
+						'changed_on >' => $lo_time,
+						'deleted_on >' => $lo_time,
+					],
+				])->first();
+
+				if ($lo_entity) {
+					$la_menuData = [];
+				}
+			}
+		}
+
+		if ( ! $la_menuData || $lo_time < $lo_identity->changedOn) {
+			$lo_menu = new BackendMenu($lo_identity);
+			$lo_renderer = new MenuRenderer($lo_menu->getDynamicMenu());
+			$ls_menu = $lo_renderer->render('System');
+
+			$lo_session->write('backend_menu', json_encode([
+				'menu' => $ls_menu,
+				'time' => new DateTime()
+			]));
+		}
+		else {
+			$ls_menu = $la_menuData['menu'];
+		}
 
 		$this->set([
-			'ao_menu' => $lo_menu,
-			'ao_renderer' => $lo_renderer,
+			'as_menu' => $ls_menu,
 		]);
 
 		$this->viewBuilder()

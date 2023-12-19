@@ -30,7 +30,7 @@ class MediaConfigOptions extends AbstractConfigOptions {
 				'identifier' => 'defaultBreakpoints',
 				'localizable' => FALSE,
 				'nullable' => FALSE,
-				'type' => ConfigOptionType::TYPE_JSON,
+				'type' => ConfigOptionType::JSON,
 			]),
 		]);
 	}

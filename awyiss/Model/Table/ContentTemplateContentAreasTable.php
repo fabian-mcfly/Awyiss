@@ -33,7 +33,6 @@ class ContentTemplateContentAreasTable extends Table {
 			'enabled' => FALSE,
 		],
 		'authorize' => [
-			//'enabled' => FALSE,
 			'identifiers' => [
 				//We use the content templates-scope, creating an association will occur when creating or updating a content template
 				'Entity.create' => [['create', 'update']],
@@ -45,6 +44,7 @@ class ContentTemplateContentAreasTable extends Table {
 			'scope' => 'content_templates',
 		],
 	];
+
 
 	/**
 	 * @inheritDoc

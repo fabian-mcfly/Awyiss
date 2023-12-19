@@ -6,8 +6,6 @@
 @var _view \Awyiss\View\BackendView
 #}
 
-{{ dump(ao_backendMenuEntry) }}
-
 {% block fieldsetPresentation %}
 	<fieldset>
 		<legend>{{ __('fieldset_presentation') }}</legend>
@@ -65,6 +63,10 @@
 
 			{% block formControlLink %}
 				{{ helper_Form_control('link') }}
+			{% endblock %}
+
+			{% block formControlAccess %}
+				{{ helper_Form_control('access', {val: ao_backendMenuEntry.access|json_encode}) }}
 			{% endblock %}
 
 			{% block fieldsetGeneralAttributes %}

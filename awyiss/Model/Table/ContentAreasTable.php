@@ -33,6 +33,15 @@ class ContentAreasTable extends Table {
 	 */
 	protected array $_defaultConfig = [
 		'authorize' => [
+			'identifiers' => [
+				//We use the page templates-scope, creating an association will occur when creating or updating a page template
+				'Entity.create' => [['create', 'update']],
+				//We use the page templates-scope, updating an association will occur when creating or updating a page template
+				'Entity.update' => [['create', 'update']],
+				'Model.beforeFind' => [['read', 'create', 'update', 'delete']],
+				//We use the page templates-scope, deleting an association will occur when updating or deleting a page template
+				'Model.beforeDelete' => [['update', 'delete']],
+			],
 			'scope' => 'page_templates',
 		],
 	];

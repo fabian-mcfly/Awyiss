@@ -8,7 +8,7 @@ use Awyiss\Model\Entity\Page;
 
 
 /**
- * Event Entity
+ * Publication Entity
  *
  * @property int $id
  * @property int $pageRoleId
@@ -34,7 +34,7 @@ use Awyiss\Model\Entity\Page;
  * @property int|null $deletedBy
  * @property \Cake\I18n\DateTime|null $deletedOn
  */
-class Event extends Page {
+class Publication extends Page {
 	/**
 	 * @inheritDoc
 	 */
@@ -61,6 +61,14 @@ class Event extends Page {
 		'changedOn' => true,
 		'deletedBy' => true,
 		'deletedOn' => true,
+		'duplicatePublications' => true,
+		'duplicateOfPublication' => true,
+		'childPublications' => true,
+		'parentPublication' => true,
+		'contents' => true,
+		'language' => true,
+		'pageRole' => true,
+		'pageTemplate' => true,
 	];
 
 	/**
@@ -85,10 +93,16 @@ class Event extends Page {
 		'changed_on' => 'changedOn',
 		'deleted_by' => 'deletedBy',
 		'deleted_on' => 'deletedOn',
+		'duplicate_publications' => 'duplicatePublications',
+		'duplicate_of_publication' => 'duplicateOfPublication',
+		'child_publications' => 'childPublications',
+		'parent_publication' => 'parentPublication',
+		'page_role' => 'pageRole',
+		'page_template' => 'pageTemplate',
 	];
 	/**
 	* @inheritDoc
 	*/
 	protected array $defaults = [
-		'pageRoleId' => PAGEROLE_EVENT,
+		'pageRoleId' => PAGEROLE_PUBLICATION,
 	];}

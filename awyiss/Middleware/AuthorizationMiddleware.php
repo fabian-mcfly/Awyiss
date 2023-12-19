@@ -6,6 +6,7 @@ namespace Awyiss\Middleware;
 
 use Awyiss\Authorization\AuthorizationServiceInterface;
 use Awyiss\Authorization\AuthorizationServiceProviderInterface;
+use Awyiss\Event\EventListenersProvider;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Event\EventDispatcherTrait;
 use Awyiss\Routing\Router;
@@ -45,6 +46,8 @@ class AuthorizationMiddleware implements MiddlewareInterface {
 		$this->setConfig($aa_config ?? []);
 
 		$this->subject = $ao_subject;
+
+		EventListenersProvider::loadListener('authorization', 'Global');
 	}
 
 
@@ -61,7 +64,7 @@ class AuthorizationMiddleware implements MiddlewareInterface {
 		/** @noinspection PhpParamsInspection */
 		Router::setRequest($lo_request);
 
-		$this->dispatchEvent('AuthorizationMiddleware.afterProcess', [
+		$this->dispatchEvent('Authorization.afterMiddlewareProcess', [
 			'authorizationService' => $lo_service,
 		], $this);
 

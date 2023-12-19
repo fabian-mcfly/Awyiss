@@ -4,10 +4,10 @@
 namespace Awyiss\Model;
 
 
-use Awyiss\Model\Entity\Attribute;
 use Awyiss\Model\Trait\EntityAttributesTrait;
 use Awyiss\Model\Trait\EntityFieldMapTrait;
 use Awyiss\ORM\Association\HasOne;
+use Cake\Datasource\EntityInterface;
 use Cake\Datasource\FactoryLocator;
 use Cake\ORM\Behavior\Translate\TranslateTrait;
 use Cake\Utility\Inflector;
@@ -17,7 +17,7 @@ use Cake\Utility\Inflector;
  * Page Entity
  *
  * @property string $label
- * @property ?Attribute $attributes
+ * @property ?EntityInterface $attributes
  */
 class Entity extends \Cake\ORM\Entity {
 	use EntityAttributesTrait {
@@ -68,10 +68,8 @@ class Entity extends \Cake\ORM\Entity {
 				/** @var static $ls_associationEntityClass */
 				$ls_associationEntityClass = $lo_association->getEntityClass();
 
-				/** @noinspection PhpUndefinedMethodInspection */
 				$ls_foreignKey = $ls_associationEntityClass::mapField($lo_association->getForeignKey());
 
-				/** @noinspection PhpUndefinedMethodInspection */
 				$this->initAttributesField($lo_association, $ls_foreignKey);
 			}
 		}
@@ -135,6 +133,8 @@ class Entity extends \Cake\ORM\Entity {
 	 * @param bool $ab_audit
 	 *
 	 * @return $this
+	 *
+	 * @noinspection PhpUnused
 	 */
 	public function enableAudit (bool $ab_audit = TRUE): static {
 		$this->_audit = $ab_audit;
