@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 
 namespace Awyiss\Controller\Backend;
@@ -13,11 +11,9 @@ use Awyiss\Controller\BackendController as Controller;
  * SystemConfiguration Controller
  *
  * @property \Awyiss\Model\Table\SystemConfigurationTable $SystemConfiguration
- * @method \Awyiss\Model\Entity\SystemConfiguration[]|\Cake\Datasource\ResultSetInterface paginate($object = NULL, array $settings = [])
+ * @method \Awyiss\Model\Entity\SystemConfiguration[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
  */
 class SystemConfigurationController extends Controller {
-	use \Awyiss\Authorization\Trait\BasicCrudPermissionsTrait;
-
 	/**
 	 * Overview method
 	 *

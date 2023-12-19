@@ -1,55 +1,70 @@
-<?php
-/**
- * @var \{{ namespace }}\View\BackendView $this
- * @var \{{ entityClass }}[]|\Cake\Collection\CollectionInterface ${{ pluralVar }}
- */
-?>
-<div class="{{ pluralVar }} overview content">
+{{ '{#' }}
+
+@var ao_{{ singularVar }} {{ entityClass }}[]
+@var _view \{{ namespace }}\View\BackendView
+
+{{ '#}' }}
+
+<div class="{{ pluralVar[:1]|upper ~ pluralVar[1:] }} Overview">
 {% set fields = Bake.filterFields(fields, schema, modelObject, indexColumns, ['binary', 'text']) %}
-	<?=$this->Html->link(__('New {{ singularHumanName }}'), ['action' => 'add'], ['class' => 'button float-right'])?>
+	{% verbatim %}{{ helper_Html_link(__('::create'), {'action' : 'add'}, {'class' : 'Button' }) }}{% endverbatim %}
 {% set done = [] %}
-	<h3><?=__('{{ pluralHumanName }}')?></h3>
+	<h3>{% verbatim %}{{ __('headline_overview') }}{% endverbatim %}</h3>
 	<div class="table-responsive">
 		<table>
 			<thead>
 				<tr>
 {% for field in fields %}
-					<th><?=$this->Paginator->sort('{{ field }}')?></th>
+{% if field not in ['system_order', 'deleted', 'created_on', 'created_by', 'changed_on', 'changed_by', 'deleted_on', 'deleted_by'] %}
+					<th>{% verbatim %}{{ helper_Paginator_sort('{% endverbatim %}{{ field }}{% verbatim %}') }}{% endverbatim %}</th>
+{% endif %}
 {% endfor %}
-					<th class="actions"><?=__('Actions')?></th>
+					<th class="actions"></th>
 				</tr>
 			</thead>
 			<tbody>
-				<?php foreach (${{ pluralVar }} as ${{ singularVar }}):?>
+				{% verbatim %}{% for lo_{% endverbatim %}{{ singularVar }}{% verbatim %} in ao_{% endverbatim %}{{ pluralVar }}{% verbatim %} %}{% endverbatim %}
 				<tr>
 {% for field in fields %}
+{% if field not in ['system_order', 'deleted', 'created_on', 'created_by', 'changed_on', 'changed_by', 'deleted_on', 'deleted_by'] %}
 {% set isKey = false %}
 {% if associations.BelongsTo is defined %}
 {% for alias, details in associations.BelongsTo %}
 {% if field == details.foreignKey %}
 {% set isKey = true %}
-					<td><?=${{ singularVar }}->has('{{ details.property }}') ? $this->Html->link(${{ singularVar }}->{{ details.property }}->{{ details.displayField }}, ['controller' => '{{ details.controller }}', 'action' => 'view', ${{ singularVar }}->{{ details.property }}->{{ details.primaryKey[0] }}]) : ''?></td>
+					<td>
+						{% verbatim %}{% if lo_{% endverbatim %}{{ singularVar }}{% verbatim %}.has('{% endverbatim %}{{ details.property }}{% verbatim %}') %}{% endverbatim %}
+							{% verbatim %}{{ helper_Html_link({% endverbatim %}lo_{{ singularVar ~ '.' ~ details.property ~ '.' ~ details.displayField }}{% verbatim %}, {'controller': '{% endverbatim %}{{ details.controller }}{% verbatim %}', 'action': 'view', 'id': lo_{% endverbatim %}{{ singularVar ~ '.' ~ details.property ~ '.' ~ details.primaryKey[0] }}{% verbatim %}}) }}{% endverbatim %}
+						{% verbatim %}{% endif %}{% endverbatim %}
+					</td>
 {% endif %}
 {% endfor %}
 {% endif %}
 {% if isKey is not same as(true) %}
 {% set columnData = Bake.columnData(field, schema) %}
-{% if columnData.type not in ['integer', 'float', 'decimal', 'biginteger', 'smallinteger', 'tinyinteger'] %}
-					<td><?=h(${{ singularVar }}->{{ field }})?></td>
+{% if columnData.type in ['integer', 'float', 'decimal', 'biginteger', 'smallinteger', 'tinyinteger'] %}
+					<td>{% verbatim %}{{ helper_Number_format(lo_{% endverbatim %}{{ singularVar ~ '.' ~ field }}{% verbatim %}) }}{% endverbatim %}</td>
+{% elseif columnData.type in ['json'] %}
+					<td>{% verbatim %}{{ lo_{% endverbatim %}{{ singularVar }}.{{ field }}{% verbatim %}|join(', ') }}{% endverbatim %}</td>
 {% else %}
-					<td><?=$this->Number->format(${{ singularVar }}->{{ field }})?></td>
+					<td>{% verbatim %}{{ lo_{% endverbatim %}{{ singularVar }}.{{ field }} {% verbatim %}}}{% endverbatim %}</td>
+{% endif %}
 {% endif %}
 {% endif %}
 {% endfor %}
-{% set pk = '$' ~ singularVar ~ '->' ~ primaryKey[0] %}
+{% set pk = 'lo_' ~ singularVar ~ '.' ~ primaryKey[0] %}
 					<td class="actions">
-						<?=$this->Html->link(__('Edit'), ['action' => 'edit', 'id' => {{ pk|raw }}])?>
-						<?=$this->Form->postLink(__('Delete'), ['action' => 'delete', {{ pk|raw }}], ['confirm' => __('Are you sure you want to delete # {0}?', {{ pk|raw }})])?>
+						{% verbatim %}{% if helper_Access_isAccessible('update') %}
+							{{ helper_Html_link(__('::edit'), {'action': 'edit', 'id': {% endverbatim %}{{ pk }}{% verbatim %}}) }}
+						{% endif %}
+						{% if helper_Access_isAccessible('delete') %}
+							{{ helper_Html_link(__('::delete'), {'action': 'delete', 'id': {% endverbatim %}{{ pk }}{% verbatim %}}, {'confirm': __('::confirm_delete', {% endverbatim %}{{ pk }}{% verbatim %}) }) }}
+						{% endif %}{% endverbatim %}
 					</td>
 				</tr>
-				<?php endforeach;?>
+				{{ '{% endfor %}' }}
 			</tbody>
 		</table>
 	</div>
-	<?=$this->Paginator?>
+	{{ '{{ helper_Paginator_render() }}' }}
 </div>

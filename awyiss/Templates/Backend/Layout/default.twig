@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		{{ helper_Html_charset() }}
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>
+			{{ fetch('title') }}
+		</title>
+		{{ helper_Html_meta('icon') }}
+
+		<link href="https://fonts.googleapis.com/css?family=Lato:400,700" rel="stylesheet">
+
+		{{ helper_Html_css(['normalize.min', 'milligram.min', 'cake']) }}
+
+		{{ fetch('meta') }}
+		{{ fetch('css') }}
+		{{ fetch('script') }}
+	</head>
+	<body>
+		<nav class="top-nav">
+			<div class="top-nav-title">
+				<a href="{{ helper_Url_build('/') }}"><span>Aw</span>yiss</a>
+			</div>
+		</nav>
+		<main class="main">
+			<div class="container">
+				{{ helper_Flash_render() }}
+				{{ fetch('content') }}
+			</div>
+		</main>
+		<footer>
+		</footer>
+	</body>
+</html>

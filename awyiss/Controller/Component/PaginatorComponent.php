@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 
 namespace Awyiss\Controller\Component;
@@ -16,6 +14,7 @@ namespace Awyiss\Controller\Component;
  *
  * @link https://book.cakephp.org/4/en/controllers/components/pagination.html
  * @mixin \Cake\Datasource\Paginator
+ * @method \Awyiss\Controller\AppController getController()
  */
 class PaginatorComponent extends \Cake\Controller\Component\PaginatorComponent {
 	/**
@@ -54,10 +53,10 @@ class PaginatorComponent extends \Cake\Controller\Component\PaginatorComponent {
 
 			$this->_setPagingParams();
 		}
-		catch (\Cake\Datasource\Exception\PageOutOfBoundsException $e) {
+		catch (\Cake\Datasource\Exception\PageOutOfBoundsException $ex) {
 			$this->_setPagingParams();
 
-			throw new \Cake\Http\Exception\NotFoundException(NULL, NULL, $e);
+			throw new \Cake\Http\Exception\NotFoundException(NULL, NULL, $ex);
 		}
 
 		return $results;

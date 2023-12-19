@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 
 namespace Awyiss\Model\Entity;
@@ -14,7 +12,7 @@ namespace Awyiss\Model\Entity;
  * @property string $scope
  * @property string $identifier
  * @property int $access
- * @property array $settings
+ * @property array|null $settings
  *
  * @property \Awyiss\Model\Entity\Usergroup $usergroup
  */

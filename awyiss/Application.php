@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 
 namespace Awyiss;
@@ -135,8 +133,8 @@ class Application extends BaseApplication {
 			$this->addPlugin('Bake');
 			$this->addPlugin('AwyissBake');
 		}
-		catch (MissingPluginException $e) {
-			exit($e->getMessage());
+		catch (MissingPluginException $ex) {
+			exit($ex->getMessage());
 			// Do not halt if the plugin is missing
 		}
 

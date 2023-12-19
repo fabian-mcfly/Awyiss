@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 return [
 	'nextActive' => '<li class="Sort-Next"><a rel="next" href="{{url}}">{{text}}</a></li>',

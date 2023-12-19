@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 
 namespace Awyiss\Controller\Backend;
@@ -16,8 +14,6 @@ use Awyiss\Controller\BackendController as Controller;
  * @method \Awyiss\Model\Entity\ContentTemplate[]|\Cake\Datasource\ResultSetInterface paginate($object = NULL, array $settings = [])
  */
 class ContentTemplatesController extends Controller {
-	use \Awyiss\Authorization\Trait\BasicCrudPermissionsTrait;
-
 	/**
 	 * Overview method
 	 *

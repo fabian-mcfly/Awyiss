@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 
 namespace Awyiss\Model;
@@ -20,6 +18,7 @@ use Cake\ORM\Query;
 abstract class Table extends \Cake\ORM\Table {
 	private array $la_auditData = [];
 	private array $la_defaultConfig = [
+		'includeDeleted' => FALSE,
 		'setTimeOnNew' => TRUE,
 		'setTimeOnUpdate' => TRUE,
 		'saveAudit' => TRUE,
@@ -39,6 +38,9 @@ abstract class Table extends \Cake\ORM\Table {
 		parent::initialize($aa_config);
 
 		$this->_validatorClass = \Awyiss\Validation\Validator::class;
+
+		$lo_validator = $this->getValidator();
+		$lo_validator->setI18nDomain($this->getAlias());
 
 		if (substr($this->getTable(), 0, 11) != '_attributes' && $this->getTable() != 'attri') { //$this->getTable() != 'attri' <- ?? Whatever CakePHP does, this is needed
 			$this->ls_attributesTable = '_attributes_' . $this->getTable();
@@ -108,8 +110,21 @@ abstract class Table extends \Cake\ORM\Table {
 	 */
 	public function beforeFind (EventInterface $ao_event, Query $ao_query, \ArrayObject $ao_options, $ab_primary) {
 		$lo_schema = $this->getSchema();
+		$la_options = \Cake\Utility\Hash::merge($this->la_defaultConfig, $ao_query->getOptions());
+
+		if ($lo_schema->getColumn('system_order')) {
+			$lx_order = $ao_query->clause('order');
+			if ($lx_order === null || !count($lx_order)) {
+				$ao_query->orderAsc($this->getAlias() . '.system_order');
+			}
+		}
+
 		if ($lo_schema->getColumn('deleted')) {
-			$ls_column = 'deleted';
+			if (empty($la_options['includeDeleted']) || $la_options['includeDeleted'] !== TRUE) {
+				$ao_query->andWhere([$this->getAlias() . '.deleted' => 0]);
+			}
+
+			/*$ls_column = 'deleted';
 			$lb_addCondition = TRUE;
 
 			$ao_query->traverseExpressions(function($expression) use (&$lb_addCondition, $ls_column) {
@@ -128,11 +143,9 @@ abstract class Table extends \Cake\ORM\Table {
 				}
 			});
 
-			$la_options = $ao_query->getOptions();
-
-			if ($lb_addCondition && empty($la_options['skipDeletedCondition'])) {
+			if ($lb_addCondition) {
 				$ao_query->andWhere([$ls_column => 0]);
-			}
+			}*/
 		}
 	}
 

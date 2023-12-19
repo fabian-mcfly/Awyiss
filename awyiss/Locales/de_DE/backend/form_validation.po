@@ -1,0 +1,59 @@
+msgid "minLengthError"
+msgstr "Das Feld &bdquo;{field}&ldquo; muss aus mind. {minLength} Zeichen bestehen."
+
+msgid "sameAsError"
+msgstr "Das Feld &bdquo;{field}&ldquo; entspricht nicht dem Feld &bdquo;{sameAs}&ldquo;."
+
+
+#$lang['form_validation_required'] = 'Das Feld &bdquo;{field}&ldquo; muss ausgefüllt werden.';
+#$lang['form_validation_isset'] = 'Das Feld &bdquo;{field}&ldquo; muss ausgefüllt werden.';
+#$lang['form_validation_valid_email'] = 'Das Feld &bdquo;{field}&ldquo; muss eine gültige E-Mail-Adresse enthalten.';
+#$lang['form_validation_valid_emails'] = 'Das Feld &bdquo;{field}&ldquo; muss gültige E-Mail-Adressen enthalten.';
+#$lang['form_validation_valid_url'] = 'Das Feld &bdquo;{field}&ldquo; muss eine gültige URL enthalten.';
+#$lang['form_validation_valid_ip'] = 'Das Feld &bdquo;{field}&ldquo; muss eine gültige IP-Adresse enthalten.';
+#$lang['form_validation_min_length'] = 'Das Feld &bdquo;{field}&ldquo; muss aus mind. {param} Zeichen bestehen.';
+#$lang['form_validation_max_length'] = 'Das Feld &bdquo;{field}&ldquo; darf aus maximal {param} Zeichen bestehen.';
+#$lang['form_validation_exact_length'] = 'Das Feld &bdquo;{field}&ldquo; muss {param} Zeichen lang sein.';
+#$lang['form_validation_alpha'] = 'Das Feld &bdquo;{field}&ldquo; darf nur Buchstaben enthalten.';
+#$lang['form_validation_alpha_numeric'] = 'Das Feld &bdquo;{field}&ldquo; darf nur Buchstaben und Zahlen enthalten.';
+#$lang['form_validation_alpha_dash'] = 'Das Feld &bdquo;{field}&ldquo; darf nur Buchstaben und Zahlen, Unter- und Bindestriche enthalten.';
+#$lang['form_validation_numeric'] = 'Das Feld &bdquo;{field}&ldquo; darf nur aus Zahlen bestehen.';
+#$lang['form_validation_is_numeric'] = 'Das Feld &bdquo;{field}&ldquo; darf nur aus Zahlen bestehen.';
+#$lang['form_validation_integer'] = 'Das Feld &bdquo;{field}&ldquo; darf nur aus Zahlen bestehen.';
+#$lang['form_validation_regex_match'] = 'Das Feld &bdquo;{field}&ldquo; entspricht nicht dem vorgegebenen Format.';
+#$lang['form_validation_matches'] = 'Das Feld &bdquo;{field}&ldquo; entspricht nicht dem Feld &bdquo;{param}&ldquo;.';
+#$lang['form_validation_is_unique'] = 'Das Feld &bdquo;{field}&ldquo; muss aus einem einmaligen Wert bestehen.';
+#$lang['form_validation_is_natural'] = 'Das Feld &bdquo;{field}&ldquo; darf nur aus positiven Zahlen bestehen';
+#$lang['form_validation_is_natural_no_zero'] = 'Das Feld &bdquo;{field}&ldquo; darf nur aus Zahlen größer Null bestehen';
+#$lang['form_validation_decimal'] = 'Das Feld &bdquo;{field}&ldquo; muss eine Dezimalzahl enthalten';
+#$lang['form_validation_less_than'] = 'Das Feld &bdquo;{field}&ldquo; muss kleiner als &bdquo;{param}&ldquo; sein.';
+#$lang['form_validation_greater_than'] = 'Das Feld &bdquo;{field}&ldquo; muss größer als &bdquo;{param}&ldquo; sein.';
+#$lang['form_validation_recaptcha'] = 'Das reCAPTCHA muss ausgefüllt werden.';
+#$lang['form_validation_in_list'] = 'Das Feld &bdquo;{field}&ldquo; muss eins dieser Elemente enthalten: {param}.';
+#$lang['form_validation_valid_iban'] = 'Das Feld &bdquo;%s&ldquo; hat nicht das korrekte Format (ungültige IBAN)';
+#$lang['form_validation_isset_exclusive'] = 'Es muss genau eines der markierte Felder ausgefüllt werden.';
+#$lang['form_validation_valid_date'] = 'Das Feld &bdquo;%s&ldquo; muss ein gültiges Datum sein.';
+#
+#$lang['form_validation_file_type_not_allowed'] = 'Das Feld &bdquo;%s&ldquo; enthält ein nicht erlaubtes Dateiformat.';
+#$lang['form_validation_file_UPLOAD_ERR_INI_SIZE'] = 'Die Datei ist zu groß.';
+#$lang['form_validation_file_UPLOAD_ERR_FORM_SIZE'] = 'Die Datei ist zu groß.';
+#$lang['form_validation_file_UPLOAD_ERR_PARTIAL'] = 'Die Datei konnte nicht vollständig hochgeladen werden.';
+#$lang['form_validation_file_UPLOAD_ERR_NO_FILE'] = 'Das Feld &bdquo;%s&ldquo; enthält keine Datei.';
+#$lang['form_validation_file_UPLOAD_ERR_NO_TMP_DIR'] = 'Der tmp-Ordner fehlt.';
+#$lang['form_validation_file_UPLOAD_ERR_CANT_WRITE'] = 'Die Datei konnte nicht geschrieben werden.';
+#$lang['form_validation_file_UPLOAD_ERR_EXTENSION'] = 'Die Datei ist ein nicht erlaubtes Dateiformat.';
+#$lang['form_validation_error_message_not_set'] = 'Fehlermeldung fehlt.';
+#
+#
+#$lang['form_validation_file_required'] = 'Für Feld &bdquo;%s&ldquo; muss eine Datei ausgewählt werden.';
+#$lang['form_validation_file_size_max'] = 'Die Datei in &bdquo;%s&ldquo; ist zu groß.';
+#$lang['form_validation_file_size_min'] = 'Die Datei in &bdquo;%s&ldquo; ist zu klein.';
+#
+#$lang['form_validation_file_image_maxdim_wrong_dimension_rule'] = '';
+#$lang['form_validation_file_image_maxdim_unknown_dimensions'] = '';
+#$lang['form_validation_file_image_maxdim'] = '';
+#$lang['form_validation_file_image_mindim_wrong_dimension_rule'] = '';
+#$lang['form_validation_file_image_mindim_unknown_dimensions'] = '';
+#$lang['form_validation_file_image_mindim'] = '';
+#
+#$lang['form_validation_checkbox_required'] = 'Die Checkbox &bdquo;%s&ldquo;  muss ausgewählt werden.';

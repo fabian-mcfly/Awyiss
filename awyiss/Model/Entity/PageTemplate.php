@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 
 namespace Awyiss\Model\Entity;
@@ -12,7 +10,7 @@ namespace Awyiss\Model\Entity;
  * @property int $id
  * @property string $title
  * @property string $filename
- * @property string|null $contentareas
+ * @property array $contentareas
  * @property int $page_roles_id
  * @property bool $active
  * @property bool $deleted

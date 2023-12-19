@@ -1,22 +1,12 @@
 <?php
 /**
- * @var \Awyiss\View\BackendView $this
+ * @var \Cake\View\View $this
  * @var \Awyiss\Model\Entity\User $user
  * @var \Awyiss\Model\Entity\Usergroup[] $usergroups
  */
 
 ?>
 <div class="row">
-	<aside class="column">
-		<div class="side-nav">
-			<h4 class="heading"><?=__('Actions')?></h4>
-			<?=$this->Form->postLink(__('Delete'), ['action' => 'delete', $user->id], [
-					'confirm' => __('Are you sure you want to delete # {0}?', $user->id),
-					'class' => 'side-nav-item',
-				])?>
-			<?=$this->Html->link(__('List Users'), ['action' => 'overview'], ['class' => 'side-nav-item'])?>
-		</div>
-	</aside>
 	<div class="column-responsive column-80">
 		<div class="users form content">
 			<?=$this->Form->create($user)?>
@@ -34,8 +24,8 @@
 
 			<fieldset>
 				<legend><?=__('::fieldset_usergroups')?></legend>
-				<ul>
-					<?php foreach ($usergroups AS $lo_usergroup) : ?>
+				<ul class="NoList">
+					<?php foreach ($usergroups as $lo_usergroup) : ?>
 						<li>
 							<?=$this->Form->control('usergroups._ids.' . $lo_usergroup->id, [
 								'hiddenField' => FALSE,

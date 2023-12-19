@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 
 namespace AwyissBake\Command\Bake;
@@ -17,7 +15,7 @@ class AllCommand extends \Bake\Command\AllCommand {
 	 */
 	protected $commands = [
 		\Bake\Command\ModelCommand::class,
-		\Bake\Command\ControllerCommand::class,
+		ControllerCommand::class,
 		TemplateCommand::class,
 	];
 }

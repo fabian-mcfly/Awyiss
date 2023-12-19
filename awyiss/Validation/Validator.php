@@ -8,6 +8,13 @@ use Cake\Validation\ValidationSet;
 
 
 class Validator extends \Cake\Validation\Validator {
+	private string $ls_i18nDomain = '';
+
+
+	public function setI18nDomain (string $as_domain) {
+		$this->ls_i18nDomain = \Cake\Utility\Inflector::underscore($as_domain);
+	}
+
 	/**
 	 * @param string $as_field
 	 * @param \Cake\Validation\ValidationSet $ao_rules
@@ -34,7 +41,28 @@ class Validator extends \Cake\Validation\Validator {
 			]);
 
 			if ($this->_useI18n) {
-				$ls_message = __('form_validation::' . $ls_name, $lo_rule->get('pass'));
+				$la_pass = [
+					'field' => __($this->ls_i18nDomain . '::' . $as_field),
+				];
+
+				if ($lx_pass = ($lo_rule->get('pass')[0] ?? [])) {
+					if ($ls_name == 'sameAs' || $ls_name == 'notSameAs') {
+						$lx_pass = __($this->ls_i18nDomain . '::' . $lx_pass);
+					}
+					elseif ($ls_name == 'dateTime') {
+						$lx_pass = $lx_pass[0] ?? 'Ymd';
+					}
+					$la_pass[ $ls_name ] = $lx_pass;
+
+				}
+
+				//try {
+					$ls_message = __d('cake', 'form_validation::' . $ls_name . 'Error', $la_pass);
+				//}
+				//catch (\Exception $e) {
+				//	dump($ls_name, $lx_pass);
+				//	dd($this->ls_i18nDomain, $ls_name, $la_pass, $e->getMessage());
+				//}
 			}
 
 			if ($lx_result === TRUE) {
@@ -59,45 +87,45 @@ class Validator extends \Cake\Validation\Validator {
 
 
 	/**
-	 * @param string $field
+	 * @param string $as_field
 	 *
 	 * @return null|string
 	 */
-	public function getRequiredMessage (string $field): ?string {
-		if ( ! isset($this->_fields[ $field ])) {
+	public function getRequiredMessage (string $as_field): ?string {
+		if ( ! isset($this->_fields[ $as_field ])) {
 			return NULL;
 		}
 
-		$defaultMessage = 'This field is required';
+		$ls_defaultMessage = 'This field is required';
 		if ($this->_useI18n) {
-			$defaultMessage = __d('cake', 'This field is required');
+			$ls_defaultMessage = __d('cake', 'This field is required');
 		}
 
-		return $this->_presenceMessages[ $field ] ?? $defaultMessage;
+		return $this->_presenceMessages[ $as_field ] ?? $ls_defaultMessage;
 	}
 
 
 	/**
-	 * @param string $field
+	 * @param string $as_field
 	 *
 	 * @return null|string
 	 */
-	public function getNotEmptyMessage (string $field): ?string {
-		if ( ! isset($this->_fields[ $field ])) {
+	public function getNotEmptyMessage (string $as_field): ?string {
+		if ( ! isset($this->_fields[ $as_field ])) {
 			return NULL;
 		}
 
-		$defaultMessage = 'This field cannot be left empty';
+		$ls_defaultMessage = 'This field cannot be left empty';
 		if ($this->_useI18n) {
-			$defaultMessage = __d('cake', 'This field cannot be left empty');
+			$ls_defaultMessage = __d('cake', 'This field cannot be left empty');
 		}
 
-		foreach ($this->_fields[ $field ] as $rule) {
+		foreach ($this->_fields[ $as_field ] as $rule) {
 			if ($rule->get('rule') === 'notBlank' && $rule->get('message')) {
 				return $rule->get('message');
 			}
 		}
 
-		return $this->_allowEmptyMessages[ $field ] ?? $defaultMessage;
+		return $this->_allowEmptyMessages[ $as_field ] ?? $ls_defaultMessage;
 	}
 }

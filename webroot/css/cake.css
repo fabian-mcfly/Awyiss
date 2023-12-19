@@ -1,18 +1,53 @@
 /* Miligram overrides */
+html {
+    font-family:Lato, Helvetica Neue, Helvetica, Arial, sans-serif;
+    font-size:16px;
+    font-weight: 400;
+    letter-spacing:0;
+}
+
 body {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-weight: 400;
-}
-
-.top-nav-links,
-.side-nav,
-h1, h2, h3, h4, h5, h6 {
-    font-family: "Raleway", sans-serif;
+    font-family:inherit;
+    font-size:inherit;
+    font-weight:400;
+    letter-spacing:inherit;
 }
 
 h1, h2, h3, h4, h5, h6 {
-    font-weight: 400;
     color: #363637;
+}
+
+input, select, textarea {
+    margin-bottom:0;
+}
+
+fieldset {
+    border:1px solid rgba(0, 0, 0, .1);
+    border-radius:3px;
+    padding:40px 20px 20px;
+    position:relative;
+}
+
+legend {
+    margin:0;
+    background-color:teal;
+    padding:2px 5px;
+    color:#FFF;
+    font-size:.75rem;
+    line-height:inherit;
+    position:absolute;
+    top:0;
+    left:0;
+}
+
+label {
+    margin:0;
+    font-size:1rem;
+    line-height:inherit;
+}
+
+label input[type="checkbox"] {
+    margin-right:5px;
 }
 
 a {
@@ -25,7 +60,7 @@ a:hover,
 a:focus,
 a:active  {
     color:#2a6496;
-    -webkit-transition:all 0.2s easeout;
+    -webkit-transition:all 0.2s ease-out;
     transition:all 0.2s ease-out;
 }
 
@@ -71,6 +106,10 @@ th {
     white-space: nowrap;
 }
 
+li:last-child {
+    margin-bottom:0;
+}
+
 /* Nav bar */
 .top-nav {
     display: flex;
@@ -82,7 +121,7 @@ th {
 }
 .top-nav-title a {
     font-size: 2.4rem;
-    color: #d33c43;
+    color: teal;
 }
 .top-nav-title span {
     color: #404041;
@@ -191,6 +230,50 @@ th {
     flex-direction: column;
     height: 100vh;
     justify-content: center;
+}
+
+.usergroups.form li.Permission {
+    font-size:1rem;
+}
+
+.usergroups.form li.Permission input {
+    position:absolute;
+    visibility:hidden;
+}
+
+.usergroups.form li.Permission label {
+    display:inline-block;
+    width:20px;
+    height:20px;
+    margin:0 0 0 10px;
+    border:1px solid teal;
+    font-size:0;
+    line-height:0;
+    vertical-align:middle;
+}
+
+.usergroups.form li.Permission label:nth-of-type(2) {
+    border-color:rgba(0, 0, 0, .1);
+
+}
+.usergroups.form li.Permission label:nth-of-type(3) {
+    border-color:rgb(128, 0, 0);
+}
+
+.usergroups.form li.Permission input:nth-of-type(1):checked ~ label:nth-of-type(1) {
+    background-color:teal;
+}
+
+.usergroups.form li.Permission input:nth-of-type(2):checked ~ label:nth-of-type(2) {
+    background-color:rgba(0, 0, 0, .1);
+}
+
+.usergroups.form li.Permission input:nth-of-type(3):checked ~ label:nth-of-type(3) {
+     background-color:rgb(128, 0, 0);
+}
+
+ul.NoList > li {
+    list-style-type:none;
 }
 
 @media screen and (max-width: 640px) {

@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 
 namespace Awyiss\Model\Table;
@@ -27,6 +25,8 @@ use Cake\Validation\Validator;
  * @method \Awyiss\Model\Entity\User[]|\Cake\Datasource\ResultSetInterface saveManyOrFail(iterable $entities, $options = [])
  * @method \Awyiss\Model\Entity\User[]|\Cake\Datasource\ResultSetInterface|false deleteMany(iterable $entities, $options = [])
  * @method \Awyiss\Model\Entity\User[]|\Cake\Datasource\ResultSetInterface deleteManyOrFail(iterable $entities, $options = [])
+ * @property \Awyiss\Model\Table\UsergroupsTable&\Cake\ORM\Association\BelongsToMany $Usergroups
+ * @property \Awyiss\Model\Table\UsergroupsUsersTable&\Cake\ORM\Association\HasMany $UsergroupsUsers
  */
 class UsersTable extends \Awyiss\Model\Table {
 	/**
@@ -47,7 +47,7 @@ class UsersTable extends \Awyiss\Model\Table {
 	}
 
 
-	public function findActive (Query $ao_query, array $aa_options): Query {
+	/*public function findActive (Query $ao_query, array $aa_options): Query {
 		$ao_query->where([
 			'active' => 1,
 			'deleted' => 0,
@@ -58,15 +58,29 @@ class UsersTable extends \Awyiss\Model\Table {
 		]);
 
 		return $ao_query;
+	}*/
+
+
+	public function findActiveWithUsergroups (Query $ao_query, array $aa_options): Query {
+		/*$ao_query->where([
+			'active' => 1,
+			'deleted' => 0,
+			'OR' => [
+				'failed_attempts <' => 5,
+				'last_login <=' => \Cake\I18n\Time::now()->subMinutes(10),
+			]
+		])->contain(['Usergroups.UsergroupsPermissions']);*/
+
+		return $ao_query;
 	}
 
 
 	/**
 	 * Default validation rules.
 	 *
-	 * @param \Cake\Validation\Validator $ao_validator Validator instance.
+	 * @param \Awyiss\Validation\Validator $ao_validator Validator instance.
 	 *
-	 * @return \Cake\Validation\Validator
+	 * @return \Awyiss\Validation\Validator
 	 */
 	public function validationDefault (Validator $ao_validator): Validator {
 		$ao_validator->integer('id')->allowEmptyString('id', NULL, 'create');
@@ -75,7 +89,7 @@ class UsersTable extends \Awyiss\Model\Table {
 
 		$ao_validator->scalar('password')->maxLength('password', 255)->requirePresence('password', 'create')->allowEmptyString('password')->minLength('password', 8);
 
-		$ao_validator->sameAs('password_confirm', 'password');
+		$ao_validator->sameAs('password', 'password_confirm');
 
 		$ao_validator->scalar('firstname')->maxLength('firstname', 50)->allowEmptyString('firstname');
 

@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 
 namespace Awyiss\Model\Entity;
@@ -10,9 +8,11 @@ namespace Awyiss\Model\Entity;
  * SystemConfiguration Entity
  *
  * @property int $id
+ * @property string $scope
  * @property string $key
  * @property string|null $value
  * @property string|null $languages_shortcode
+ * @property \Awyiss\Model\Entity\Language|null $language
  */
 class SystemConfiguration extends \Awyiss\Model\Entity {
 	/**
@@ -25,6 +25,7 @@ class SystemConfiguration extends \Awyiss\Model\Entity {
 	 * @var array
 	 */
 	protected $_accessible = [
+		'scope' => TRUE,
 		'key' => TRUE,
 		'value' => TRUE,
 		'languages_shortcode' => TRUE,

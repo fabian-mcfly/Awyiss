@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 
 namespace Awyiss\Controller\Backend;
@@ -16,9 +14,6 @@ use Awyiss\Controller\BackendController as Controller;
  * @method \Awyiss\Model\Entity\Language[]|\Cake\Datasource\ResultSetInterface paginate($ao_object = NULL, array $aa_settings = [])
  */
 class LanguagesController extends Controller {
-	use \Awyiss\Authorization\Trait\BasicCrudPermissionsTrait;
-
-
 	private array $la_overviewWhere = ['type' => 'frontend'];
 
 

@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 
 namespace Awyiss\Middleware;
@@ -18,55 +16,55 @@ use ReflectionClass;
 
 
 class CustomControllerMiddleware implements MiddlewareInterface {
-	private $lo_application;
+	private object $lo_application;
 
 
-	public function __construct ($lo_application) {
-		$this->lo_application = $lo_application;
+	public function __construct ($ao_application) {
+		$this->lo_application = $ao_application;
 	}
 
 
-	public function process (ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface {
+	public function process (ServerRequestInterface $ao_request, RequestHandlerInterface $ao_handler): ResponseInterface {
 		try {
 			$lo_controllerFactory = new class ($this->lo_application->getContainer()) extends ControllerFactory {
 				/**
 				 * {@inheritDoc}
 				 * @noinspection PhpParamsInspection
 				 */
-				public function create (ServerRequestInterface $request): Controller {
+				public function create (ServerRequestInterface $ao_request): Controller {
 					$ls_defaultNamespace = Configure::read('App.namespace');
 					Configure::write('App.namespace', CUSTOM_NAMESPACE);
 
-					$className = $this->getControllerClass($request);
+					$ls_className = $this->getControllerClass($ao_request);
 
 					Configure::write('App.namespace', $ls_defaultNamespace);
 
-					if ($className === NULL) {
-						throw $this->missingController($request);
+					if ($ls_className === NULL) {
+						throw $this->missingController($ao_request);
 					}
 
-					$reflection = new ReflectionClass($className);
+					$reflection = new ReflectionClass($ls_className);
 					if ($reflection->isAbstract()) {
-						throw $this->missingController($request);
+						throw $this->missingController($ao_request);
 					}
 
 					// If the controller has a container definition
 					// add the request as a service.
-					if ($this->container->has($className)) {
-						$this->container->add(ServerRequest::class, $request);
-						$controller = $this->container->get($className);
+					if ($this->container->has($ls_className)) {
+						$this->container->add(ServerRequest::class, $ao_request);
+						$controller = $this->container->get($ls_className);
 					}
 					else {
-						$controller = $reflection->newInstance($request);
+						$controller = $reflection->newInstance($ao_request);
 					}
 
 					return $controller;
 				}
 			};
-			$lo_controller = $lo_controllerFactory->create($request);
+			$lo_controller = $lo_controllerFactory->create($ao_request);
 		}
-		catch (\Cake\Http\Exception\MissingControllerException $lo_ex) {
-			return $handler->handle($request);
+		catch (\Cake\Http\Exception\MissingControllerException $ex) {
+			return $ao_handler->handle($ao_request);
 		}
 
 		return $lo_controllerFactory->invoke($lo_controller);

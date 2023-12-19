@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 
 use Cake\I18n\I18n;
@@ -38,7 +36,6 @@ if ( ! function_exists('__')) {
 		else {
 			$ls_string = $as_string;
 		}
-
 
 		$lx_return = I18n::getTranslator($ls_domain)->translate($ls_string, $aa_args);
 

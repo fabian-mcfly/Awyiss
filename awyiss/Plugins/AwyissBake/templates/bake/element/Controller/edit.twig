@@ -5,16 +5,21 @@
 	/**
 	 * Edit method
 	 *
-	 * @return \Cake\Http\Response|NULL|void Redirects on successful edit, renders view otherwise.
+	 * @return void|?Response Redirects on successful edit, renders view otherwise.
 	 * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
 	 * @noinspection PhpReturnDocTypeMismatchInspection
-	 * @noinspection RedundantSuppression
 	 */
 	public function edit () {
+		$this->Access->assure('update');
+
 		$li_id = $this->request->getParam('id');
-		$lo_{{ singularName }} = $this->{{ currentModelName }}->get($li_id, [
-			'contain' => {{ Bake.exportArray(belongsToMany)|raw }},
-		]);
+		$lo_{{ singularName }} = $this->{{ currentModelName }}->find()->where(['id' => $li_id])->first();
+
+		if (!$lo_{{ singularName }}) {
+			$this->Flash->error(__('::record_not_found'));
+			return $this->redirect(['action' => 'overview']);
+		}
+
 		if ($this->request->is(['patch', 'post', 'put'])) {
 			$lo_{{ singularName }} = $this->{{ currentModelName }}->patchEntity($lo_{{ singularName }}, $this->request->getData());
 			if ($this->{{ currentModelName }}->save($lo_{{ singularName }})) {
@@ -30,11 +35,11 @@
 		}
 
 		$this->set([
-			'{{ singularName }}' => $lo_{{ singularName }},
+			'ao_{{ singularName }}' => $lo_{{ singularName }},
 {% for assoc in belongsTo|merge(belongsToMany) %}
 {%- set otherName = Bake.getAssociatedTableAlias(modelObj, assoc) %}
 {%- set otherPlural = otherName|variable %}
-			'${{ otherPlural }}' => $this->{{ currentModelName }}->{{ otherName }}->find('list', ['limit' => 200]),
+			'ao_{{ otherPlural }}' => $this->{{ currentModelName }}->{{ otherName }}->find('list', ['limit' => 200]),
 {{- "\n" }}
 {%- set compact = compact|merge(["'#{otherPlural}'"]) %}
 {% endfor %}

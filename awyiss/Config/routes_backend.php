@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 
 use Authentication\Identifier\IdentifierInterface;
@@ -13,9 +11,13 @@ $routes->prefix('Backend', function(RouteBuilder $ao_routeBuilder) {
 	$ao_routeBuilder->setRouteClass(AwyissRoute::class);
 
 	$lo_authentication = new \Awyiss\Authentication\Authentication('Backend');
+	$lo_authorization = new \Awyiss\Authorization\Authorization('Backend');
 
 	$ao_routeBuilder->registerMiddleware('authentication', new \Authentication\Middleware\AuthenticationMiddleware($lo_authentication));
 	$ao_routeBuilder->applyMiddleware('authentication');
+
+	$ao_routeBuilder->registerMiddleware('authorization', new \Awyiss\Middleware\AuthorizationMiddleware($lo_authorization));
+	$ao_routeBuilder->applyMiddleware('authorization');
 
 	$ao_routeBuilder->registerMiddleware('customController', new \Awyiss\Middleware\CustomControllerMiddleware($this));
 	$ao_routeBuilder->applyMiddleware('customController');

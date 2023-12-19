@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 /*
  * Configure paths required to find CakePHP + general filepath constants
@@ -46,8 +44,8 @@ try {
 	Configure::config('default', new PhpConfig());
 	Configure::load('awyiss', 'default', FALSE);
 }
-catch (\Exception $e) {
-	exit($e->getMessage() . "\n");
+catch (\Exception $ex) {
+	exit($ex->getMessage() . "\n");
 }
 
 

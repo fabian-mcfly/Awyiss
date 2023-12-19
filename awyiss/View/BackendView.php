@@ -1,39 +1,26 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 
 namespace Awyiss\View;
 
 
-use Cake\View\View;
+use Cake\TwigView\View\TwigView;
 
 
 /**
  * Application View
  *
+ * @property \Awyiss\View\Helper\PermissionHelper $Authorization
  * @property \Awyiss\View\Helper\FlashHelper $Flash
  * @property \Awyiss\View\Helper\PaginatorHelper $Paginator
  */
-class BackendView extends View {
-	/**
-	 * Constant for view file type 'element'
-	 *
-	 * @var string
-	 */
-	public const TYPE_ELEMENT = 'Element';
-	/**
-	 * Constant for view file type 'layout'
-	 *
-	 * @var string
-	 */
-	public const TYPE_LAYOUT = 'Layout';
-
-
+class BackendView extends AppView {
 	public function initialize (): void {
-		$this->loadHelper('Authentication.Identity');
+		parent::initialize();
 
-		$this->loadHelper('Paginator', ['templates' => 'paginator-templates']);
+		$this->loadHelper('Access');
+		$this->loadHelper('Authentication.Identity');
+		$this->loadHelper('Paginator', ['templates' => 'paginator_templates']);
 
 		/*
 		 * TODO: change this to use the language saved in the session (saved after login)
@@ -45,8 +32,8 @@ class BackendView extends View {
 
 		$this->loadHelper('Form', [
 			'autoSetCustomValidity' => FALSE,
-			//'templates' => ,
-			'type' => 'file',
+			'errorClass' => 'Error',
+			'templates' => 'form_templates_backend',
 		]);
 	}
 }

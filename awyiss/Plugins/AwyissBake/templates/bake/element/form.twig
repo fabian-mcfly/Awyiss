@@ -1,45 +1,43 @@
 {% set fields = Bake.filterFields(fields, schema, modelObject) %}
-<div class="row">
-	<div class="column-responsive column-80">
-		<div class="{{ pluralVar }} form content">
-			<?=$this->Form->create(${{ singularVar }})?>
-			<fieldset>
-				<legend><?=__('{{ action|humanize }} {{ singularHumanName }}')?></legend>
-				<?php
+<div class="{{ pluralVar[:1]|upper ~ pluralVar[1:] }} Form {{ action|capitalize }}">
+	{% verbatim %}{{ helper_Form_create(ao_{% endverbatim %}{{ singularVar }}{% verbatim %}, {'method': 'post', 'idPrefix': '{% endverbatim %}{{ singularVar }}{% verbatim %}'}) }}
+	{% endverbatim %}
+	<fieldset>
+		<legend>{% verbatim %}{{ __('::headline_{% endverbatim %}{{ action }}{% verbatim %}') }}{% endverbatim %}</legend>
 {% for field in fields %}
 {%- if field not in primaryKey %}
-	{%- if keyFields[field] is defined %}
+{%- if keyFields[field] is defined %}
+{%- set fieldData = Bake.columnData(field, schema) %}
+{%- if fieldData.null %}
+		{% verbatim %}{{ helper_Form_control('{% endverbatim %}{{ field }}{% verbatim %}', {'options': ao_{% endverbatim %}{{ keyFields[field] }}{% verbatim %}, 'empty': true}) }}{% endverbatim %}
+	{{- "\n" }}
+{%- else %}
+		{% verbatim %}{{ helper_Form_control('{% endverbatim %}{{ field }}{% verbatim %}', {'options': ao_{% endverbatim %}{{ keyFields[field] }}{% verbatim %}}) }}{% endverbatim %}
+		{{- "\n" }}
+{%- endif %}
+{%- elseif field not in ['deleted', 'created_on', 'created_by', 'changed_on', 'changed_by', 'deleted_on', 'deleted_by'] %}
 		{%- set fieldData = Bake.columnData(field, schema) %}
-		{%- if fieldData.null %}
-					echo $this->Form->control('{{ field }}', ['options' => ${{ keyFields[field] }}, 'empty' => true]);
-				{{- "\n" }}
-				{%- else %}
-					echo $this->Form->control('{{ field }}', ['options' => ${{ keyFields[field] }}]);
-					{{- "\n" }}
-				{%- endif %}
-				{%- elseif field not in ['created', 'modified', 'updated'] %}
-					{%- set fieldData = Bake.columnData(field, schema) %}
-					{%- if fieldData.type in ['date', 'datetime', 'time'] and fieldData.null %}
-						echo $this->Form->control('{{ field }}', ['empty' => true]);
-						{{- "\n" }}
-					{%- else %}
-						echo $this->Form->control('{{ field }}');
-						{{- "\n" }}
-					{%- endif %}
-				{%- endif %}
-				{%- endif %}
-				{%- endfor %}
+		{%- if fieldData.type in ['date', 'datetime', 'time'] and fieldData.null %}
+		{% verbatim %}{{ helper_Form_control('{% endverbatim %}{{ field }}{% verbatim %}', {'empty': true}) }}{% endverbatim %}
+			{{- "\n" }}
+		{%- else %}
+		{% verbatim %}{{ helper_Form_control('{% endverbatim %}{{ field }}{% verbatim %}') }}{% endverbatim %}
+			{{- "\n" }}
+		{%- endif %}
+{%- endif %}
+{%- endif %}
+{%- endfor %}
 
-				{%- if associations.BelongsToMany is defined %}
-					{%- for assocName, assocData in associations.BelongsToMany %}
-						echo $this->Form->control('{{ assocData.property }}._ids', ['options' => ${{ assocData.variable }}]);
-						{{- "\n" }}
-					{%- endfor %}
-				{% endif %}
-				?>
-			</fieldset>
-			<?=$this->Form->button(__('Submit'))?>
-			<?=$this->Form->end()?>
-		</div>
-	</div>
+{%- if associations.BelongsToMany is defined %}
+	{%- for assocName, assocData in associations.BelongsToMany %}
+		{% verbatim %}{{ helper_Form_control('{% endverbatim %}{{ assocData.property }}{% verbatim %}._ids', {'options': ao_{% endverbatim %}{{ assocData.variable }}{% verbatim %}}) }}{% endverbatim %}
+		{{- "\n" }}
+	{%- endfor %}
+{% endif %}
+	</fieldset>
+	{% verbatim %}
+	{{ helper_Form_button(__('::save')) }}
+	{{ helper_Form_button(__('::save_close')) }}
+	{{ helper_Form_end() }}
+	{% endverbatim %}
 </div>

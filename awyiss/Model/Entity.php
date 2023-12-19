@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 
 namespace Awyiss\Model;
@@ -28,8 +26,10 @@ abstract class Entity extends \Cake\ORM\Entity {
 		$ls_method = static::_accessor($as_field, 'get');
 
 		//Awyiss!
-		if ( ! $lx_value && ! array_key_exists($as_field, $this->_fields) && ! $ls_method && in_array($as_field, $this->getVirtual())) {
-			$lx_value = $this->_fields['attributes']->get($as_field);
+		if ($this->_fields) {
+			if ( ! $lx_value && ! array_key_exists($as_field, $this->_fields) && ! $ls_method && in_array($as_field, $this->getVirtual())) {
+				$lx_value = $this->_fields['attributes']->get($as_field);
+			}
 		}
 
 		return $lx_value;

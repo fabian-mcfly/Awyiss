@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 
 namespace Awyiss\Authentication\Identifier;
@@ -23,7 +21,7 @@ class ProxyIdentifier extends AbstractIdentifier {
 			self::CREDENTIAL_PASSWORD => 'password',
 
 		],
-		'resolver' => NULL,
+		'remoteResolver' => NULL,
 		'localResolver' => 'Authentication.Orm',
 	];
 
@@ -32,6 +30,7 @@ class ProxyIdentifier extends AbstractIdentifier {
 	 * {@inheritDoc}
 	 */
 	public function identify (array $credentials) {
+		$this->setConfig('resolver', $this->getConfig('remoteResolver'));
 		$identity = $this->getResolver()->find($credentials);
 
 		return $identity;

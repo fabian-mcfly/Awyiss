@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 
 namespace Awyiss\Model\Table;
@@ -25,6 +23,7 @@ use Cake\Validation\Validator;
  * @method \Awyiss\Model\Entity\SystemConfiguration[]|\Cake\Datasource\ResultSetInterface saveManyOrFail(iterable $entities, $options = [])
  * @method \Awyiss\Model\Entity\SystemConfiguration[]|\Cake\Datasource\ResultSetInterface|false deleteMany(iterable $entities, $options = [])
  * @method \Awyiss\Model\Entity\SystemConfiguration[]|\Cake\Datasource\ResultSetInterface deleteManyOrFail(iterable $entities, $options = [])
+ * @property \Awyiss\Model\Table\LanguagesTable&\Cake\ORM\Association\BelongsTo $Languages
  */
 class SystemConfigurationTable extends \Awyiss\Model\Table {
 	/**
@@ -40,6 +39,11 @@ class SystemConfigurationTable extends \Awyiss\Model\Table {
 		$this->setTable('system_configuration');
 		$this->setDisplayField('id');
 		$this->setPrimaryKey('id');
+
+		$this->belongsTo('Languages', [
+			'foreignKey' => 'languages_shortcode',
+			'joinType' => 'INNER',
+		]);
 	}
 
 
@@ -52,6 +56,8 @@ class SystemConfigurationTable extends \Awyiss\Model\Table {
 	 */
 	public function validationDefault (Validator $ao_validator): Validator {
 		$ao_validator->integer('id')->allowEmptyString('id', NULL, 'create');
+
+		$ao_validator->scalar('scope')->maxLength('scope', 50)->notEmptyString('scope');
 
 		$ao_validator->scalar('key')->maxLength('key', 50)->requirePresence('key', 'create')->notEmptyString('key');
 

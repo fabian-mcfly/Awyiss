@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 
 namespace Awyiss\I18n;
@@ -51,7 +49,6 @@ class MessagesFileLoader extends \Cake\I18n\MessagesFileLoader {
 
 		foreach (array_reverse($la_folders) as $ls_folder) {
 			$ls_path = $ls_folder . $ls_subfolder . $ls_fileName . '.' . $ls_extension;
-			dump($ls_path);
 			if (is_file($ls_path)) {
 				$ls_filePath = $ls_path;
 				$la_messages = $lo_parser->parse($ls_filePath);

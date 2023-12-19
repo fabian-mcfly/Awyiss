@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 
 namespace Awyiss\Model\Table;
@@ -12,13 +10,13 @@ use Cake\Validation\Validator;
 /**
  * Usergroups Model
  *
- * @property \Awyiss\Model\Table\UsergroupsPermissionsTable $UsergroupsPermissions
+ * @property \Awyiss\Model\Table\UsergroupsPermissionsTable&\Cake\ORM\Association\HasMany $UsergroupsPermissions
  *
  * @method \Awyiss\Model\Entity\Usergroup newEmptyEntity()
  * @method \Awyiss\Model\Entity\Usergroup newEntity(array $data, array $options = [])
  * @method \Awyiss\Model\Entity\Usergroup[] newEntities(array $data, array $options = [])
  * @method \Awyiss\Model\Entity\Usergroup get($primaryKey, $options = [])
- * @method \Awyiss\Model\Entity\Usergroup findOrCreate($search, ?callable $callback = NULL, $options = [])
+ * @method \Awyiss\Model\Entity\Usergroup findOrCreate($search, ?callable $callback = null, $options = [])
  * @method \Awyiss\Model\Entity\Usergroup patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
  * @method \Awyiss\Model\Entity\Usergroup[] patchEntities(iterable $entities, array $data, array $options = [])
  * @method \Awyiss\Model\Entity\Usergroup|false save(\Cake\Datasource\EntityInterface $entity, $options = [])
@@ -27,6 +25,8 @@ use Cake\Validation\Validator;
  * @method \Awyiss\Model\Entity\Usergroup[]|\Cake\Datasource\ResultSetInterface saveManyOrFail(iterable $entities, $options = [])
  * @method \Awyiss\Model\Entity\Usergroup[]|\Cake\Datasource\ResultSetInterface|false deleteMany(iterable $entities, $options = [])
  * @method \Awyiss\Model\Entity\Usergroup[]|\Cake\Datasource\ResultSetInterface deleteManyOrFail(iterable $entities, $options = [])
+ * @property \Awyiss\Model\Table\UsergroupsUsersTable&\Cake\ORM\Association\HasMany $UsergroupsUsers
+ * @property \Awyiss\Model\Table\UsersTable&\Cake\ORM\Association\BelongsToMany $Users
  */
 class UsergroupsTable extends \Awyiss\Model\Table {
 	/**
@@ -43,7 +43,9 @@ class UsergroupsTable extends \Awyiss\Model\Table {
 		$this->setDisplayField('title');
 		$this->setPrimaryKey('id');
 
-		$this->hasMany('UsergroupsPermissions')->setSaveStrategy('replace');
+		$this->hasMany('UsergroupsPermissions')
+			->setSaveStrategy('replace')
+			->setDependent(TRUE);
 
 		$this->belongsToMany('Users');
 	}

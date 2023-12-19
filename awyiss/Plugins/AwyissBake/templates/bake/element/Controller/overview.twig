@@ -2,10 +2,12 @@
 	/**
 	 * Overview method
 	 *
-	 * @return \Cake\Http\Response|NULL|void Renders view
+	 * @return void|?Response Renders view
 	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
 	public function overview () {
+		$this->Access->assureOne('create', 'update', 'delete');
+
 {% set belongsTo = Bake.aliasExtractor(modelObj, 'BelongsTo') %}
 {% if belongsTo %}
 		$this->paginate = [
@@ -15,6 +17,6 @@
 		$lo_{{ pluralName }} = $this->paginate($this->{{ currentModelName }}->find('withAttributes'));
 
 		$this->set([
-			'{{ pluralName }}' => $lo_{{ pluralName }},
+			'ao_{{ pluralName }}' => $lo_{{ pluralName }},
 		]);
 	}

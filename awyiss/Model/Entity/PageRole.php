@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 
 namespace Awyiss\Model\Entity;
@@ -34,17 +32,11 @@ class PageRole extends \Awyiss\Model\Entity {
 	 * @var array
 	 */
 	protected $_accessible = [
-        'title' => true,
-        'identifier' => true,
-        'include_in_linklist' => true,
-        'system_order' => true,
-        'active' => true,
-        'deleted' => true,
-        'created_by' => true,
-        'created_on' => true,
-        'changed_by' => true,
-        'changed_on' => true,
-        'deleted_by' => true,
-        'deleted_on' => true,
-    ];
+		'title' => TRUE,
+		'identifier' => TRUE,
+		'include_in_linklist' => TRUE,
+		'system_order' => TRUE,
+		'active' => TRUE,
+		'deleted' => TRUE,
+	];
 }

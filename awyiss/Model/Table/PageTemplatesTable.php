@@ -1,12 +1,10 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 
 namespace Awyiss\Model\Table;
 
 
-use Cake\ORM\Query;
+use Cake\Database\Schema\TableSchemaInterface;
 use Cake\ORM\RulesChecker;
 use Cake\Validation\Validator;
 
@@ -73,9 +71,8 @@ class PageTemplatesTable extends \Awyiss\Model\Table {
 			->notEmptyFile('filename');
 
 		$ao_validator
-			->scalar('contentareas')
-			->maxLength('contentareas', 100)
-			->allowEmptyString('contentareas');
+			->requirePresence('contentareas', 'create')
+			->notEmptyString('contentareas');
 
 		$ao_validator
 			->boolean('active')
@@ -127,5 +124,14 @@ class PageTemplatesTable extends \Awyiss\Model\Table {
 		$rules->add($rules->existsIn(['page_roles_id'], 'PageRoles'), ['errorField' => 'page_roles_id']);
 
 		return $rules;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	protected function _initializeSchema (TableSchemaInterface $schema): TableSchemaInterface {
+		$schema->setColumnType('contentareas', 'json');
+
+		return $schema;
 	}
 }

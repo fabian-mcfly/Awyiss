@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 
 namespace Awyiss\Authentication\Identifier\Resolver;
@@ -13,10 +11,7 @@ class CurlResolver implements \Authentication\Identifier\Resolver\ResolverInterf
 
 	public const TYPE_GET = 'GET';
 	public const TYPE_POST = 'POST';
-
 	public const ACCEPT_JSON = 'application/json';
-
-
 	protected array $_defaultConfig = [
 		'url' => NULL,
 		'requestType' => self::TYPE_GET,
@@ -26,8 +21,7 @@ class CurlResolver implements \Authentication\Identifier\Resolver\ResolverInterf
 	];
 
 
-	public function __construct(array $config = [])
-	{
+	public function __construct (array $config = []) {
 		$this->setConfig($config);
 	}
 
@@ -54,7 +48,7 @@ class CurlResolver implements \Authentication\Identifier\Resolver\ResolverInterf
 		switch ($this->_config['requestType']) {
 			case self::TYPE_GET:
 
-			break;
+				break;
 			case self::TYPE_POST:
 				$lx_requestData = $this->_config['requestData'];
 				if (is_callable($lx_requestData)) {
@@ -63,7 +57,7 @@ class CurlResolver implements \Authentication\Identifier\Resolver\ResolverInterf
 
 				curl_setopt($lo_curl_handle, CURLOPT_POST, TRUE);
 				curl_setopt($lo_curl_handle, CURLOPT_POSTFIELDS, $lx_requestData);
-			break;
+				break;
 			default:
 				throw new \Exception(__('::resolver_unknown_request_type'));
 		}
@@ -76,9 +70,10 @@ class CurlResolver implements \Authentication\Identifier\Resolver\ResolverInterf
 
 		if ($this->_config['acceptType'] === self::ACCEPT_JSON) {
 			$lx_result = json_decode($lx_result, TRUE);
-			if (is_callable($this->_config['modifyResult'])) {
-				$lx_result = $this->_config['modifyResult']($lx_result);
-			}
+		}
+
+		if (is_callable($this->_config['modifyResult'])) {
+			$lx_result = $this->_config['modifyResult']($lx_result);
 		}
 
 		if ($lx_result) {

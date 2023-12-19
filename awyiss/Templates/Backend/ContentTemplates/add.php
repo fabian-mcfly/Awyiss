@@ -1,6 +1,6 @@
 <?php
 /**
- * @var \Awyiss\View\BackendView $this
+ * @var \Cake\View\View $this
  * @var \Awyiss\Model\Entity\ContentTemplate $contentTemplate
  */
 

@@ -1,12 +1,11 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 
 namespace Awyiss\Model\Table;
 
 
 use Cake\ORM\RulesChecker;
+use Cake\ORM\Query;
 use Cake\Validation\Validator;
 
 
@@ -41,6 +40,21 @@ class UsersExternalTable extends \Awyiss\Model\Table {
 		$this->setTable('users_external');
 		$this->setDisplayField('id');
 		$this->setPrimaryKey('id');
+	}
+
+
+	public function findActiveWithUsergroups (Query $ao_query, array $aa_options): Query {
+		//TODO: fix this
+		/*$ao_query->where([
+			'active' => 1,
+			'deleted' => 0,
+			'OR' => [
+				'failed_attempts <' => 5,
+				'last_login <=' => \Cake\I18n\Time::now()->subMinutes(10),
+			]
+		])->contain('Usergroups');*/
+
+		return $ao_query;
 	}
 
 

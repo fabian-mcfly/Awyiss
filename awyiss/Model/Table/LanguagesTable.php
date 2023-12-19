@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 
 namespace Awyiss\Model\Table;
@@ -26,6 +24,7 @@ use Cake\Validation\Validator;
  * @method \Awyiss\Model\Entity\Language[]|\Cake\Datasource\ResultSetInterface saveManyOrFail(iterable $entities, $options = [])
  * @method \Awyiss\Model\Entity\Language[]|\Cake\Datasource\ResultSetInterface|false deleteMany(iterable $entities, $options = [])
  * @method \Awyiss\Model\Entity\Language[]|\Cake\Datasource\ResultSetInterface deleteManyOrFail(iterable $entities, $options = [])
+ * @property \Awyiss\Model\Table\SystemConfigurationTable&\Cake\ORM\Association\HasMany $SystemConfiguration
  */
 class LanguagesTable extends \Awyiss\Model\Table {
 	/**
@@ -41,6 +40,12 @@ class LanguagesTable extends \Awyiss\Model\Table {
 		$this->setTable('languages');
 		$this->setDisplayField('title');
 		$this->setPrimaryKey('id');
+
+		$this->hasMany('SystemConfiguration')
+			->setBindingKey('shortcode')
+			->setForeignKey('languages_shortcode')
+			->setSaveStrategy('replace')
+			->setDependent(FALSE);
 	}
 
 

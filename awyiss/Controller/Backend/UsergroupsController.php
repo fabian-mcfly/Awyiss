@@ -1,12 +1,11 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 
 namespace Awyiss\Controller\Backend;
 
 
 use Awyiss\Controller\BackendController as Controller;
+use Cake\Utility\Hash;
 
 
 /**
@@ -16,9 +15,6 @@ use Awyiss\Controller\BackendController as Controller;
  * @method \Awyiss\Model\Entity\Usergroup[]|\Cake\Datasource\ResultSetInterface paginate($ao_object = NULL, array $aa_settings = [])
  */
 class UsergroupsController extends Controller {
-	use \Awyiss\Authorization\Trait\BasicCrudPermissionsTrait;
-
-	
 	/**
 	 * Overview method
 	 *
@@ -42,9 +38,14 @@ class UsergroupsController extends Controller {
 	 * @noinspection RedundantSuppression
 	 */
 	public function add () {
+		$la_authorizationPolicies = $this->_getAuthorizationPolicies();
+
 		$lo_usergroup = $this->Usergroups->newEmptyEntity();
 		if ($this->request->is('post')) {
-			$lo_usergroup = $this->Usergroups->patchEntity($lo_usergroup, $this->request->getData());
+			$la_data = $this->request->getData();
+			$la_data['usergroups_permissions'] = $this->_reformatPermissionsData($la_authorizationPolicies, $la_data);
+
+			$lo_usergroup = $this->Usergroups->patchEntity($lo_usergroup, $la_data, ['associated' => ['UsergroupsPermissions', 'Users']]);
 			if ($this->Usergroups->save($lo_usergroup)) {
 				$this->Flash->success(__('::add_succeeded'));
 
@@ -57,8 +58,23 @@ class UsergroupsController extends Controller {
 			$this->Flash->error(__('::add_failed'));
 		}
 
+		$la_currentPermissions = [];
+		foreach ($lo_usergroup->usergroups_permissions ?? [] AS $lo_usergroupPermission) {
+			if (!isset($la_currentPermissions[ $lo_usergroupPermission->scope ])) {
+				$la_currentPermissions[ $lo_usergroupPermission->scope ] = [];
+			}
+
+			$la_currentPermissions[ $lo_usergroupPermission->scope ][ $lo_usergroupPermission->identifier ] = [
+				'access' => $lo_usergroupPermission->access,
+				'settings' => json_decode($lo_usergroupPermission->settings ?? "", TRUE),
+			];
+		}
+		$lo_usergroup->usergroups_permissions = $la_currentPermissions;
+
 		$this->set([
 			'usergroup' => $lo_usergroup,
+			'users' => $this->Usergroups->Users->find()->all(),
+			'authorizationPolicies' => $la_authorizationPolicies,
 		]);
 	}
 	
@@ -72,18 +88,18 @@ class UsergroupsController extends Controller {
 	 * @noinspection RedundantSuppression
 	 */
 	public function edit () {
-		$la_controllerPermissions = $this->_getControllerPermissions();
+		$la_authorizationPolicies = $this->_getAuthorizationPolicies();
 
 		$li_id = $this->request->getParam('id');
 		$lo_usergroup = $this->Usergroups->get($li_id, [
-			'contain' => ['UsergroupsPermissions'],
+			'contain' => ['UsergroupsPermissions', 'Users'],
 		]);
 
 		if ($this->request->is(['patch', 'post', 'put'])) {
 			$la_data = $this->request->getData();
-			$la_data['usergroups_permissions'] = $this->_reformatPermissionsData($la_controllerPermissions, $la_data);
+			$la_data['usergroups_permissions'] = $this->_reformatPermissionsData($la_authorizationPolicies, $la_data);
 
-			$lo_usergroup = $this->Usergroups->patchEntity($lo_usergroup, $la_data, ['associated' => ['UsergroupsPermissions']]);
+			$lo_usergroup = $this->Usergroups->patchEntity($lo_usergroup, $la_data, ['associated' => ['UsergroupsPermissions', 'Users']]);
 
 			if ($this->Usergroups->save($lo_usergroup)) {
 				$this->Flash->success(__('::edit_succeeded'));
@@ -98,21 +114,22 @@ class UsergroupsController extends Controller {
 		}
 
 		$la_currentPermissions = [];
-		foreach ($lo_usergroup->usergroups_permissions AS $lo_usergroupPermission) {
+		foreach ($lo_usergroup->usergroups_permissions ?? [] AS $lo_usergroupPermission) {
 			if (!isset($la_currentPermissions[ $lo_usergroupPermission->scope ])) {
 				$la_currentPermissions[ $lo_usergroupPermission->scope ] = [];
 			}
 
-			$la_currentPermissions[ $lo_usergroupPermission->scope ][ $lo_usergroupPermission->identifier ] = [
+			$la_currentPermissions[ $lo_usergroupPermission->scope ][ $lo_usergroupPermission->identifier ] = (object)[
 				'access' => $lo_usergroupPermission->access,
 				'settings' => json_decode($lo_usergroupPermission->settings ?? "", TRUE),
 			];
 		}
+		$lo_usergroup->usergroups_permissions = $la_currentPermissions;
 
 		$this->set([
 			'usergroup' => $lo_usergroup,
-			'currentPermissions' => $la_currentPermissions,
-			'controllerPermissions' => $la_controllerPermissions,
+			'users' => $this->Usergroups->Users->find()->all(),
+			'authorizationPolicies' => $la_authorizationPolicies,
 		]);
 	}
 	
@@ -140,53 +157,40 @@ class UsergroupsController extends Controller {
 	}
 
 
-	private function _getControllerPermissions (): array {
-		$la_paths = [
-			CUSTOM_NAMESPACE . '\Controller\Backend\\' => ROOT . DS . CUSTOM_DIR . DS . 'Controller' . DS . 'Backend/*Controller.php',
-			'Awyiss\Controller\Backend\\' => ROOT . DS . APP_DIR . DS . 'Controller' . DS . 'Backend/*Controller.php',
-		];
+	private function _getAuthorizationPolicies (): array {
+		/** @var \Awyiss\Authorization\AuthorizationService $lo_authorizationService */
+		$lo_authorizationService = $this->getRequest()->getAttribute('authorization');
+		$la_policies = $lo_authorizationService->getPolicies();
 
-		$la_controllers = [];
+		ksort($la_policies);
 
-		foreach ($la_paths AS $ls_namespace => $ls_path) {
-			foreach (glob($ls_path) as $ls_filePath) {
-				$ls_controllerName = substr($ls_filePath, strrpos($ls_filePath, DS) + 1, -4);
-				$ls_title = \Cake\Utility\Inflector::underscore(substr($ls_controllerName, 0, -10));
-				$ls_controller = $ls_namespace . $ls_controllerName;
-
-				if (isset($la_controllers[ $ls_title ])) continue;
-
-				/** @var \Awyiss\Controller\BackendController $ls_controller */
-				$la_controllers[ $ls_title ] = [
-					'title' => $ls_title,
-					'namespace' => $ls_namespace,
-					'permissions' => $ls_controller::getPermissions(),
-				];
-			}
-		}
-
-		ksort($la_controllers);
-
-		return $la_controllers;
+		return $la_policies;
 	}
 
 
-	private function _reformatPermissionsData (array $aa_controllerPermissions, array $aa_data = []): array {
+	private function _reformatPermissionsData (array $aa_authorizationPolicies, array $aa_data = []): array {
 		$la_permissions = [];
 
-		foreach (array_column($aa_controllerPermissions, 'permissions') AS $la_controllerPermissions) {
+		/** @var \Awyiss\Authorization\Policy\PolicyInterface $lo_authorizationPolicy */
+		foreach ($aa_authorizationPolicies AS $lo_authorizationPolicy) {
 			/** @var \Awyiss\Authorization\Permission\PermissionInterface $lo_permission */
-			foreach ($la_controllerPermissions AS $lo_permission) {
-				$la_permissionData = [
-					'scope' => $lo_permission->getScope(),
-					'identifier' => $lo_permission->getIdentifier(),
-					'access' => $lo_permission->getAccessFromData($aa_data),
-					'settings' => $lo_permission->getSettingsFromData($aa_data),
-				];
+			foreach ($lo_authorizationPolicy::getPermissions() AS $lo_permission) {
+				$ls_scope = $lo_authorizationPolicy::getScope();
+				$ls_identifier = $lo_permission->getConfig('identifier');
 
-				if (!empty($la_permissionData['access'])) {
-					$la_permissions[] = $la_permissionData;
-				}
+				$lx_access = Hash::get($aa_data, 'permissions.' . $ls_scope . '.' . $ls_identifier);
+				$lx_access = $lo_permission->harmonizeOptionValue($lx_access);
+
+				if (is_null($lx_access)) continue;
+
+				$lx_settings = Hash::get($aa_data, 'permission_settings.' . $ls_scope . '.' . $ls_identifier);
+
+				$la_permissions[] = [
+					'scope' => $lo_authorizationPolicy::getScope(),
+					'identifier' => $lo_permission->getConfig('identifier'),
+					'access' => $lx_access,
+					'settings' => $lx_settings,
+				];
 			}
 		}
 

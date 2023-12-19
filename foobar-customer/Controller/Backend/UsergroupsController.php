@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+//declare(strict_types=1);
 
 
 namespace FoobarCustomer\Controller\Backend;
@@ -19,8 +19,8 @@ class UsergroupsController extends \Awyiss\Controller\Backend\UsergroupsControll
 	 * @return \Cake\Http\Response|NULL|void Renders view
 	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
-	public function overview () {
-		dd('foobar');
-	}
+	/*public function overview () {
+
+	}*/
 }
 

@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 /*
  * You can empty out this file, if you are certain that you match all requirements.

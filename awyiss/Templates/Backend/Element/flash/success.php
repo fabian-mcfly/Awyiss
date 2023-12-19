@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @var \Awyiss\View\BackendView $this
+ * @var \Cake\View\View $this
  * @var array $params
  * @var string $message
  */

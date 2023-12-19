@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 
 namespace Awyiss\Controller\Backend;
@@ -19,9 +17,6 @@ use Awyiss\Controller\BackendController as Controller;
  * @method \Awyiss\Model\Entity\User[]|\Cake\Datasource\ResultSetInterface paginate($object = NULL, array $settings = [])
  */
 class UsersController extends Controller {
-	use \Awyiss\Authorization\Trait\BasicCrudPermissionsTrait;
-
-
 	/**
 	 * {@inheritDoc}
 	 */
@@ -164,10 +159,10 @@ class UsersController extends Controller {
 			}
 
 			$target = $this->Authentication->getLoginRedirect() ?? \Cake\Routing\Router::url([
-					'_name' => 'backend',
-					'controller' => 'Dashboard',
-					'action' => 'overview',
-				]);
+				'_name' => 'backend',
+				'controller' => 'Dashboard',
+				'action' => 'overview',
+			]);
 
 			return $this->redirect($target);
 		}

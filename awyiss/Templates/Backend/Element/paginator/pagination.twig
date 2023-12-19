@@ -1,0 +1,13 @@
+{% block paginator %}
+	<div class="paginator">
+		{% block pagination %}
+			<ul class="pagination">
+				{{ helper_Paginator_first(__('pagination::first')) }}
+				{{ helper_Paginator_prev(__('pagination::previous')) }}
+				{{ helper_Paginator_numbers() }}
+				{{ helper_Paginator_next(__('pagination::next')) }}
+				{{ helper_Paginator_last(__('pagination::last')) }}
+			</ul>
+		{% endblock %}
+	</div>
+{% endblock %}

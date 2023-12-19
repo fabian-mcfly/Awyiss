@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 
 namespace Awyiss\View\Helper;
@@ -64,12 +62,14 @@ class PaginatorHelper extends \Cake\View\Helper\PaginatorHelper {
 	}
 
 
-	public function __toString (): string {
-		return $this->renderPagination();
+	public function render (): string {
+		if (!$this->params) return '';
+
+		return $this->_View->element('paginator/pagination');
 	}
 
 
-	public function renderPagination (): string {
-		return $this->_View->element('paginator/pagination');
+	public function __toString (): string {
+		return $this->render();
 	}
 }

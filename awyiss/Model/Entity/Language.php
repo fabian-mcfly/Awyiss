@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 
 namespace Awyiss\Model\Entity;
@@ -24,6 +22,7 @@ namespace Awyiss\Model\Entity;
  * @property \Cake\I18n\FrozenTime|null $changed_on
  * @property int|null $deleted_by
  * @property \Cake\I18n\FrozenTime|null $deleted_on
+ * @property \Awyiss\Model\Entity\SystemConfiguration[] $system_configuration
  */
 class Language extends \Awyiss\Model\Entity {
 	/**

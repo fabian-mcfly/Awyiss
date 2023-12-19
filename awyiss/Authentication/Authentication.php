@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 
 namespace Awyiss\Authentication;
@@ -207,7 +205,7 @@ final class Authentication implements AuthenticationServiceProviderInterface {
 		$this->addIdentifier(\Authentication\Identifier\PasswordIdentifier::class, [
 			'resolver' => [
 				'className' => \Authentication\Identifier\Resolver\OrmResolver::class,
-				'finder' => 'active',
+				'finder' => 'activeWithUsergroups',
 			],
 		]);
 	}
@@ -247,7 +245,7 @@ final class Authentication implements AuthenticationServiceProviderInterface {
 	public function getBackendAuthenticationService (ServerRequestInterface $ao_request): AuthenticationServiceInterface {
 		$lo_service = new \Awyiss\Authentication\AuthenticationService();
 
-		$lb_isLogoutPage = Router::getRequest()->getParam('controller') . '/' . Router::getRequest()->getParam('action') === 'Users/logout';
+		$lb_isLogoutPage = strtolower(Router::getRequest()->getParam('controller') . '/' . Router::getRequest()->getParam('action')) === 'users/logout';
 		// Define where users should be redirected to when they are not authenticated
 		$lo_service->setConfig([
 			'unauthenticatedRedirect' => Router::url([

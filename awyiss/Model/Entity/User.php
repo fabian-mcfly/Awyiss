@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 
 namespace Awyiss\Model\Entity;
@@ -8,6 +6,8 @@ namespace Awyiss\Model\Entity;
 
 use Authentication\IdentityInterface;
 use Authentication\PasswordHasher\DefaultPasswordHasher;
+use Awyiss\Authorization\AccessCollection;
+use Awyiss\Authorization\IdentityPermissionsInterface;
 
 
 /**
@@ -31,7 +31,7 @@ use Authentication\PasswordHasher\DefaultPasswordHasher;
  * @property \Cake\I18n\FrozenTime|null $deleted_on
  * @property \Awyiss\Model\Entity\Usergroup[] $usergroups
  */
-class User extends \Awyiss\Model\Entity implements IdentityInterface {
+class User extends \Awyiss\Model\Entity implements IdentityPermissionsInterface, IdentityInterface {
 	/**
 	 * Fields that can be mass assigned using newEntity() or patchEntity().
 	 *
@@ -57,6 +57,7 @@ class User extends \Awyiss\Model\Entity implements IdentityInterface {
 	protected $_hidden = [
 		'password',
 	];
+	private ?AccessCollection $lo_accesses = NULL;
 
 
 	/**
@@ -72,6 +73,34 @@ class User extends \Awyiss\Model\Entity implements IdentityInterface {
 	 */
 	public function getOriginalData () {
 		return $this;
+	}
+
+
+	public function getUsergroups (): ?array {
+		//if (!$this->usergroups)  {
+		if ($this->usergroups === NULL)  {
+			/** @var self $lo_self */
+			$lo_self = \Cake\Datasource\FactoryLocator::get('Table')->get($this->getSource())->get($this->id, ['contain' => ['Usergroups.UsergroupsPermissions']]);
+			$this->usergroups = $lo_self->usergroups;
+		}
+
+		return $this->usergroups;
+	}
+
+
+	public function getAccess (): AccessCollection {
+		$this->lo_accesses = NULL;
+		if ($this->lo_accesses === NULL) {
+			$this->lo_accesses = new AccessCollection();
+
+			$la_usergroups = $this->getUsergroups();
+			/** @var \Awyiss\Model\Entity\UsergroupsPermission $lo_usergrousPermissions */
+			foreach (array_merge(...array_column($la_usergroups, 'usergroups_permissions')) as $lo_usergrousPermissions) {
+				$this->lo_accesses->add($lo_usergrousPermissions->scope, $lo_usergrousPermissions->identifier, $lo_usergrousPermissions->access, $lo_usergrousPermissions->settings);
+			}
+		}
+
+		return $this->lo_accesses;
 	}
 
 

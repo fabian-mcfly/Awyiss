@@ -1,32 +1,54 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 
 namespace Awyiss\Authorization\Permission;
 
 
 interface PermissionInterface {
-	public function __construct (array $aa_config, PermissionCollection $ao_permissionCollection);
+	public function __construct (array $aa_config, ?PermissionCollection $ao_permissionCollection = NULL);
 
 
-	public function setScope (string $as_scope): self;
+	public function getPermissionCollection (): ?PermissionCollection;
 
 
-	public function getScope (): string;
+	public function getConfig(?string $as_key = NULL, $ax_default = NULL);
 
 
-	public function setIdentifier (string $as_identifier): self;
+	public function setConfig($as_key, $ax_value = NULL, $ab_merge = TRUE);
 
 
-	public function getIdentifier (): string;
+	public function getType(): string;
 
 
-	public function getAccessFromData (array $aa_data): int|string;
+	/**
+	 * @return string
+	 */
+	public function getOptions (): array;
 
 
-	public function getSettingsFromData (array $aa_data): ?array;
+	/**
+	 * @param array $aa_options
+	 *
+	 * @return $this
+	 */
+	public function setOptions (array $aa_options): self;
 
 
-	public function getFormElements (\Cake\View\View $ao_view, array $aa_currentData = []): string;
+	/**
+	 * @return bool
+	 */
+	public function hasSettings (): bool;
+
+
+	public function harmonizeOptionValue (mixed $ax_value): mixed;
+
+
+	/**
+	 * @param null|array $aa_access
+	 *
+	 * @return null|bool
+	 *
+	 * TODO: additional parameters
+	 */
+	public function isAccessible (?array $aa_access): ?bool;
 }

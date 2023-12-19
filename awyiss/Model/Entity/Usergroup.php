@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 
 namespace Awyiss\Model\Entity;
@@ -19,7 +17,7 @@ namespace Awyiss\Model\Entity;
  * @property \Cake\I18n\FrozenTime|null $changed_on
  * @property int|null $deleted_by
  * @property \Cake\I18n\FrozenTime|null $deleted_on
- * @property \Awyiss\Model\Entity\UsergroupsPermission[]|null $usergroups_permissions
+ * @property \Awyiss\Model\Entity\UsergroupsPermission[] $usergroups_permissions
  * @property \Awyiss\Model\Entity\User[] $users
  */
 class Usergroup extends \Awyiss\Model\Entity {

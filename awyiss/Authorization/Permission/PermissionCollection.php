@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 
 namespace Awyiss\Authorization\Permission;
@@ -13,6 +11,7 @@ use RuntimeException;
 
 class PermissionCollection extends ObjectRegistry {
 	private string $ls_scope;
+
 
 	/**
 	 * Constructor
@@ -32,10 +31,22 @@ class PermissionCollection extends ObjectRegistry {
 	}
 
 
+	public function getScope (): string {
+		return $this->ls_scope;
+	}
+
+
+	public function add (string $as_identifier, array $aa_config = []): self {
+		$this->load($as_identifier, $aa_config);
+
+		return $this;
+	}
+
+
 	/**
 	 * {@inheritDoc}
 	 */
-	public function load (string $as_identifier, array $aa_config = []) {
+	public function load (string $as_identifier, array $aa_config = []): PermissionInterface {
 		if ( ! isset($aa_config['className'])) {
 			throw new RuntimeException('Missing config key `className`');
 		}
@@ -43,7 +54,6 @@ class PermissionCollection extends ObjectRegistry {
 		if ( ! isset($la_config['identifier'])) {
 			$la_config['identifier'] = $as_identifier;
 		}
-		$ls_objectName = $aa_config['className'];
 
 		$lb_loaded = isset($this->_loaded[ $as_identifier ]);
 		if ($lb_loaded && ! empty($aa_config)) {
@@ -53,7 +63,7 @@ class PermissionCollection extends ObjectRegistry {
 			return $this->_loaded[ $as_identifier ];
 		}
 
-		$ls_className = $ls_objectName;
+		$ls_objectName = $ls_className = $aa_config['className'];
 		if (is_string($ls_objectName)) {
 			$ls_className = $this->_resolveClassName($ls_objectName);
 			if ($ls_className === NULL) {
@@ -82,7 +92,7 @@ class PermissionCollection extends ObjectRegistry {
 	/**
 	 * Creates Permission instance.
 	 *
-	 * @param string $as_class Permission class.
+	 * @param PermissionInterface $as_class Permission class.
 	 * @param string $as_alias Permission alias.
 	 * @param array $aa_config Config array.
 	 *
@@ -90,7 +100,8 @@ class PermissionCollection extends ObjectRegistry {
 	 * @throws \RuntimeException
 	 */
 	protected function _create ($as_class, string $as_alias, array $aa_config): PermissionInterface {
-		$lo_permission = new $as_class(['scope' => $this->ls_scope] + $aa_config, $this);
+		/** @var \Awyiss\Authorization\Permission\PermissionInterface $as_class */
+		$lo_permission = new $as_class($aa_config, $this);
 		if ( ! ($lo_permission instanceof PermissionInterface)) {
 			throw new RuntimeException(sprintf('Permission class `%s` must implement `%s`.', $as_class, PermissionInterface::class));
 		}
@@ -108,7 +119,7 @@ class PermissionCollection extends ObjectRegistry {
 	 * @psalm-return class-string|null
 	 */
 	protected function _resolveClassName ($as_class): ?string {
-		$ls_className = App::className($as_class, 'Authorization');
+		$ls_className = App::className($as_class);
 
 		return is_string($ls_className) ? $ls_className : NULL;
 	}

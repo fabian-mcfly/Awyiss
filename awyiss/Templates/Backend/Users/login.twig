@@ -1,0 +1,10 @@
+<div class="users form content">
+	{{ helper_Form_create() }}
+	<fieldset>
+		<legend>{{ __('Please enter your username and password') }}</legend>
+		{{ helper_Form_control('username') }}
+		{{ helper_Form_control('password') }}
+	</fieldset>
+	{{ helper_Form_button(__('Login')) }}
+	{{ helper_Form_end() }}
+</div>

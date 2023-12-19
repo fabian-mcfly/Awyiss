@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 
 use Cake\Cache\Engine\FileEngine;
@@ -427,6 +425,6 @@ return [
 			'session.gc_maxlifetime' => 86400,
 			'session.gc_probability' => 1,
 		],
-		'timeout' => 86400
+		'timeout' => 1440
 	],
 ];

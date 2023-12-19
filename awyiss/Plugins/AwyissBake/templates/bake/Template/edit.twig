@@ -1,7 +1,8 @@
-<?php
-/**
- * @var \{{ namespace }}\View\BackendView $this
- * @var \{{ entityClass }} ${{ singularVar }}
- */
-?>
+{{ '{#' }}
+
+@var ao_{{ singularVar }} {{ entityClass }}
+@var _view \{{ namespace }}\View\BackendView
+
+{{ '#}' }}
+
 {{ element('Bake.form') }}

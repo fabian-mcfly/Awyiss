@@ -1,20 +1,14 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 
 namespace Awyiss\Controller;
 
 
-use Awyiss\Authorization\AuthorizationInterface;
-
-
 /**
- * @property \Awyiss\Model\Table\LanguagesTable $Languages
- * @property \Awyiss\Model\Table\SystemConfigurationTable $SystemConfiguration
  * @property \Authentication\Controller\Component\AuthenticationComponent $Authentication
+ * @property \Awyiss\Controller\Component\AccessComponent $Access
  */
-abstract class BackendController extends AppController implements AuthorizationInterface {
+abstract class BackendController extends AppController {
 	public $paginate = [
 		'limit' => 20,
 	];
@@ -40,6 +34,7 @@ abstract class BackendController extends AppController implements AuthorizationI
 			ini_set('intl.default_locale', $lo_language->locale);
 
 			$this->loadComponent('Authentication.Authentication');
+			$this->loadComponent('Access');
 
 			$ls_controller = \Cake\Utility\Inflector::underscore($this->getRequest()->getParam('controller'));
 			$this->loadComponent('Flash', ['key' => $ls_controller]);
@@ -48,10 +43,9 @@ abstract class BackendController extends AppController implements AuthorizationI
 		$this->loadComponent('RequestHandler');
 
 		$this->viewBuilder()->setClassName('Backend');
-
-		$lo_permissions = static::getPermissions();
-
 	}
+
+
 	/*public function beforeFilter (\Cake\Event\EventInterface $event) {
 		parent::beforeFilter($event);
 	}*/

@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 
 namespace Awyiss\Model\Table;
@@ -20,7 +18,7 @@ use Cake\Validation\Validator;
  * @method \Awyiss\Model\Entity\UsergroupsPermission newEntity(array $data, array $options = [])
  * @method \Awyiss\Model\Entity\UsergroupsPermission[] newEntities(array $data, array $options = [])
  * @method \Awyiss\Model\Entity\UsergroupsPermission get($primaryKey, $options = [])
- * @method \Awyiss\Model\Entity\UsergroupsPermission findOrCreate($search, ?callable $callback = NULL, $options = [])
+ * @method \Awyiss\Model\Entity\UsergroupsPermission findOrCreate($search, ?callable $callback = null, $options = [])
  * @method \Awyiss\Model\Entity\UsergroupsPermission patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
  * @method \Awyiss\Model\Entity\UsergroupsPermission[] patchEntities(iterable $entities, array $data, array $options = [])
  * @method \Awyiss\Model\Entity\UsergroupsPermission|false save(\Cake\Datasource\EntityInterface $entity, $options = [])

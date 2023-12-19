@@ -1,0 +1,51 @@
+{#
+
+@var ao_pageTemplate Awyiss\Model\Entity\PageTemplate[]
+@var _view \Awyiss\View\BackendView
+
+#}
+
+<div class="PageTemplates Overview">
+	{{ helper_Html_link(__('::create'), {'action' : 'add'}, {'class' : 'Button' }) }}
+	<h3>{{ __('headline_overview') }}</h3>
+	<div class="table-responsive">
+		<table>
+			<thead>
+				<tr>
+					<th>{{ helper_Paginator_sort('id') }}</th>
+					<th>{{ helper_Paginator_sort('title') }}</th>
+					<th>{{ helper_Paginator_sort('filename') }}</th>
+					<th>{{ helper_Paginator_sort('contentareas') }}</th>
+					<th>{{ helper_Paginator_sort('page_roles_id') }}</th>
+					<th>{{ helper_Paginator_sort('active') }}</th>
+					<th class="actions"></th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for lo_pageTemplate in ao_pageTemplates %}
+				<tr>
+					<td>{{ helper_Number_format(lo_pageTemplate.id) }}</td>
+					<td>{{ lo_pageTemplate.title }}</td>
+					<td>{{ lo_pageTemplate.filename }}</td>
+					<td>{{ lo_pageTemplate.contentareas|join(', ') }}</td>
+					<td>
+						{% if lo_pageTemplate.has('page_role') %}
+							{{ helper_Html_link(lo_pageTemplate.page_role.title, {'controller': 'PageRoles', 'action': 'view', 'id': lo_pageTemplate.page_role.id}) }}
+						{% endif %}
+					</td>
+					<td>{{ lo_pageTemplate.active }}</td>
+					<td class="actions">
+						{% if helper_Access_isAccessible('update') %}
+							{{ helper_Html_link(__('::edit'), {'action': 'edit', 'id': lo_pageTemplate.id}) }}
+						{% endif %}
+						{% if helper_Access_isAccessible('delete') %}
+							{{ helper_Html_link(__('::delete'), {'action': 'delete', 'id': lo_pageTemplate.id}, {'confirm': __('::confirm_delete', lo_pageTemplate.id) }) }}
+						{% endif %}
+					</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+	{{ helper_Paginator_render() }}
+</div>
