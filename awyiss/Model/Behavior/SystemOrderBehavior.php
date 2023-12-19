@@ -317,10 +317,10 @@ class SystemOrderBehavior extends Behavior {
 				});
 			}
 
-			//Save all found records, but skip the access check, the audit and the system order behavior on those to avoid recursion.
+			//Save all found records, but skip the authorization check, the audit and the system order behavior on those to avoid recursion.
 			$lo_table->saveMany($lo_records, [
-				'access' => ['skip' => TRUE],
 				'audit' => ['skip' => TRUE],
+				'authorization' => ['skip' => TRUE],
 				'systemOrder' => ['skip' => TRUE],
 			]);
 		}
@@ -494,10 +494,10 @@ class SystemOrderBehavior extends Behavior {
 			$ao_record->system_order++;
 		});
 
-		//Save all found records, but skip the access check, the audit and the system order behavior on those to avoid recursion.
+		//Save all found records, but skip the authorization check, the audit and the system order behavior on those to avoid recursion.
 		$lo_table->saveMany($lo_records, [
-			'access' => ['skip' => TRUE],
 			'audit' => ['skip' => TRUE],
+			'authorization' => ['skip' => TRUE],
 			'systemOrder' => ['skip' => TRUE],
 		]);
 	}
@@ -535,10 +535,10 @@ class SystemOrderBehavior extends Behavior {
 			$ao_record->system_order--;
 		});
 
-		//Save all found records, but skip the access check, the audit and the system order behavior on those to avoid recursion.
+		//Save all found records, but skip the authorization check, the audit and the system order behavior on those to avoid recursion.
 		$lo_table->saveMany($lo_records, [
-			'access' => ['skip' => TRUE],
 			'audit' => ['skip' => TRUE],
+			'authorization' => ['skip' => TRUE],
 			'systemOrder' => ['skip' => TRUE],
 		]);
 	}

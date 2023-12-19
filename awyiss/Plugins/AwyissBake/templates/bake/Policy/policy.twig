@@ -1,0 +1,17 @@
+<?php declare(strict_types=1);
+
+
+namespace {{ namespace }}\Authorization\Policy{{ prefix }};
+
+
+use Awyiss\Authorization\PermissionOption\PermissionOptionCollection;
+use Awyiss\Authorization\Policy\AbstractPolicy;
+
+
+/**
+ * Permission for the {{ name }} scope
+ */
+class {{ name }}Policy extends AbstractPolicy {
+	protected static PermissionOptionCollection $permissionOptionCollection;
+	protected static string $scope;
+}

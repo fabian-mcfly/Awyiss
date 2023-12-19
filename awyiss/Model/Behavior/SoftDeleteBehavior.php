@@ -260,8 +260,8 @@ class SoftDeleteBehavior extends Behavior {
 		 */
 		$ao_entity->deleted = TRUE;
 
-		//Save the entity but skip both the access and the system order behavior
-		if ($lo_table->save($ao_entity, $lo_options->getArrayCopy() + ['_cleanOnSuccess' => FALSE, 'access' => ['skip' => TRUE], 'systemOrder' => ['skip' => TRUE]])) {
+		//Save the entity but skip both the authorization and the system order behavior
+		if ($lo_table->save($ao_entity, $lo_options->getArrayCopy() + ['_cleanOnSuccess' => FALSE, 'authorization' => ['skip' => TRUE], 'systemOrder' => ['skip' => TRUE]])) {
 			$lo_table->dispatchEvent('Model.afterSoftDelete', [
 				'entity' => $ao_entity,
 				'options' => $lo_options,

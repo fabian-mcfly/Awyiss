@@ -2,13 +2,13 @@
 {# @var _view \Awyiss\View\BackendView #}
 
 <div class="Users Overview">
-	{% if helper_Access_isAccessible('create') %}
+	{% if helper_Authorization_isAccessible('create') %}
 		{{ helper_Html_link(__('::create'), {action: 'add'}, {class: 'Button'}) }}
 	{% endif %}
 
 	<h1>{{ __('::headline_overview') }}</h1>
 
-	{#{% if helper_Access_scopeIsAccessible('usergroups', NULL, ['read']) %}#}
+	{#{% if helper_Authorization_scopeIsAccessible('usergroups', NULL, ['read']) %}#}
 		{{ helper_Categories_filter('usergroup', [], {includeUnassigned: TRUE}) }}
 	{#{% endif %}#}
 
@@ -33,10 +33,10 @@
 						<td>{{ lo_user.lastname }}</td>
 						<td>{{ lo_user.email }}</td>
 						<td class="actions">
-							{% if helper_Access_isAccessible('update') %}
+							{% if helper_Authorization_isAccessible('update') %}
 								{{ helper_Html_link(__('::edit'), {action: 'edit', id: lo_user.id}) }}
 							{% endif %}
-							{% if helper_Access_isAccessible('delete') %}
+							{% if helper_Authorization_isAccessible('delete') %}
 								{{ helper_Html_link(__('::delete'), {action: 'delete', id: lo_user.id}) }}
 							{% endif %}
 						</td>

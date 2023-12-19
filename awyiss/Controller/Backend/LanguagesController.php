@@ -23,7 +23,7 @@ class LanguagesController extends Controller {
 	 * @throws \Exception
 	 */
 	public function overview (): void {
-		$this->Access->ensure('read');
+		$this->Authorization->ensure('read');
 
 		$lo_languages = $this->Languages->find('withAttributes')->where($this->getOverviewWhere());
 		$lo_languages = $lo_languages->all()->groupBy('type');
@@ -42,7 +42,7 @@ class LanguagesController extends Controller {
 	 * @throws \Exception
 	 */
 	public function add (): void {
-		$this->Access->ensure('create');
+		$this->Authorization->ensure('create');
 
 		$lo_language = $this->Languages->newDefaultEntity();
 		if ($this->request->is('post')) {
@@ -63,7 +63,7 @@ class LanguagesController extends Controller {
 	 * @throws \Exception
 	 */
 	public function edit () {
-		$this->Access->ensure('update');
+		$this->Authorization->ensure('update');
 
 		/** @var Language $lo_language */
 		$lo_language = $this->Languages->findById((int) $this->request->getParam('id'))->first();
@@ -91,7 +91,7 @@ class LanguagesController extends Controller {
 	 * @throws \Exception
 	 */
 	public function delete (): Response {
-		$this->Access->ensure('delete');
+		$this->Authorization->ensure('delete');
 
 		$this->request->allowMethod(['get', 'delete']);
 

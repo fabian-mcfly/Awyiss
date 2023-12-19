@@ -14,7 +14,7 @@ use Twig\Loader\LoaderInterface;
 /**
  * Application View
  *
- * @property \Awyiss\View\Helper\AccessHelper $Access
+ * @property \Awyiss\View\Helper\AuthorizationHelper $Authorization
  * @property \Awyiss\View\Helper\CategoriesHelper $Categories
  * @property \Awyiss\View\Helper\FlashHelper $Flash
  * @property \Awyiss\View\Helper\FormHelper $Form

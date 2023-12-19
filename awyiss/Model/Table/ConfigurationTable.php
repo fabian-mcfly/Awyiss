@@ -85,9 +85,9 @@ class ConfigurationTable extends Table {
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function buildRules (RulesChecker|\Cake\ORM\RulesChecker $ao_rules): RulesChecker {
-		$ao_rules->add($ao_rules->isUnique(['scope', 'name', 'language_shortcode'], ['access' => ['skip' => TRUE]]), ['errorField' => 'name']);
+		$ao_rules->add($ao_rules->isUnique(['scope', 'name', 'language_shortcode'], ['authorization' => ['skip' => TRUE]]), ['errorField' => 'name']);
 
-		$ao_rules->add($ao_rules->existsIn('language_shortcode', 'Languages', ['access' => ['skip' => TRUE]]), ['errorField' => 'language_shortcode']);
+		$ao_rules->add($ao_rules->existsIn('language_shortcode', 'Languages', ['authorization' => ['skip' => TRUE]]), ['errorField' => 'language_shortcode']);
 
 		$ao_rules->add(function(Configuration $ao_entity/*, array $aa_options*/): bool|string {
 			$la_configScopes = ConfigOptionsProvider::getConfigurationFiles();
@@ -122,7 +122,7 @@ class ConfigurationTable extends Table {
 
 			foreach (ConfigOptionsProvider::getConfigurationFiles() as $ls_scope => $ls_className) {
 				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-				if ($ls_scope === 'system' || $this->getBehavior('Access')->scopeIsAccessible($ls_scope, NULL, NULL, 'configure')) {
+				if ($this->getBehavior('Authorization')->scopeIsAccessible($this->getTable(), ['scope' => $ls_scope], 'read')) {
 					$this->configScopes[ $ls_scope ] = $ls_className;
 				}
 			}

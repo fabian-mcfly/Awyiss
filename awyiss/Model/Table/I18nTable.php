@@ -25,7 +25,7 @@ class I18nTable extends Table {
 	 * @inheritDoc
 	 */
 	protected array $_defaultConfig = [
-		'access' => [
+		'authorization' => [
 			'enabled' => FALSE,
 		],
 	];

@@ -154,7 +154,7 @@ class ContentsTable extends Table {
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function buildRules (RulesChecker|\Cake\ORM\RulesChecker $ao_rules): RulesChecker {
-		$ao_rules->add($ao_rules->existsIn(['content_template_id'], 'ContentTemplates', ['access' => ['skip' => TRUE]]), ['errorField' => 'content_template_id']);
+		$ao_rules->add($ao_rules->existsIn(['content_template_id'], 'ContentTemplates', ['authorization' => ['skip' => TRUE]]), ['errorField' => 'content_template_id']);
 
 		$ao_rules->add($ao_rules->existsIn(['parent_id'], 'Parent'), ['errorField' => 'parent_id']);
 
@@ -179,16 +179,16 @@ class ContentsTable extends Table {
 				$lo_table = FactoryLocator::get('Table')->get('Contents');
 				/** @var Page $lo_page */
 				$lo_page = $lo_table->Pages->get($ao_entity->page_id, [
-					'access' => ['skip' => TRUE],
+					'authorization' => ['skip' => TRUE],
 					'contain' => [
 						'PageTemplates' => [
-							'finder' => ['all' => ['access' => ['skip' => TRUE]]],
+							'finder' => ['all' => ['authorization' => ['skip' => TRUE]]],
 						],
 					]
 				]);
 
 				$lo_contentTemplate = $lo_table->ContentTemplates->get($ao_entity->content_template_id, [
-					'access' => ['skip' => TRUE],
+					'authorization' => ['skip' => TRUE],
 				]);
 			}
 			catch (RecordNotFoundException|InvalidPrimaryKeyException) {
@@ -210,7 +210,7 @@ class ContentsTable extends Table {
 			try {
 				/** @var \Awyiss\Model\Entity\ContentTemplate $lo_contentTemplate */
 				$lo_contentTemplate = $this->ContentTemplates->get($ao_entity->content_template_id, [
-					'access' => ['skip' => TRUE],
+					'authorization' => ['skip' => TRUE],
 				]);
 			}
 			catch (RecordNotFoundException|InvalidPrimaryKeyException) {
@@ -324,16 +324,16 @@ class ContentsTable extends Table {
 	public function forPage (int $ai_page_id): Page {
 		/** @var Page $lo_page */
 		$lo_page = $this->Pages->get($ai_page_id, [
-			'access' => [
+			'authorization' => [
 				//'failSilently' => FALSE,
 				'skip' => TRUE,
 			],
 			'contain' => [
 				'PageRoles' => [
-					'finder' => ['all' => ['access' => ['skip' => TRUE]]],
+					'finder' => ['all' => ['authorization' => ['skip' => TRUE]]],
 				],
 				'PageTemplates' => [
-					'finder' => ['all' => ['access' => ['skip' => TRUE]]],
+					'finder' => ['all' => ['authorization' => ['skip' => TRUE]]],
 				],
 			],
 		]);
@@ -377,12 +377,12 @@ class ContentsTable extends Table {
 		//Set a new table object in the BelongsTo relation, using the page role identifier
 		$this->Pages->setTarget($lo_newTable)->setForeignKey($ls_foreignKey);
 
-		if ($lo_newTable->hasBehavior('Access')) {
-			/** @var \Awyiss\Model\Behavior\AccessBehavior $lo_access */
-			$lo_access = $lo_newTable->getBehavior('Access');
+		if ($lo_newTable->hasBehavior('Authorization')) {
+			/** @var \Awyiss\Model\Behavior\AuthorizationBehavior $lo_authorization */
+			$lo_authorization = $lo_newTable->getBehavior('Authorization');
 
 			//TODO: think about switching from 'read' to something like 'contents', so read access to a page doesn't automatically allow modifying contents
-			if ( ! $lo_access->isAccessible('read')) {
+			if ( ! $lo_authorization->isAccessible('read')) {
 				throw new ForbiddenException(sprintf('Access to page role `%s` is forbidden', $as_identifier));
 			}
 		}

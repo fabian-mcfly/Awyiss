@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 
-namespace Awyiss\Authorization\Permission\Setting;
+namespace Awyiss\Authorization\PermissionOption\Setting;
 
 
 /**

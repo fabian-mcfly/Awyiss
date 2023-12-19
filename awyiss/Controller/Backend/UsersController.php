@@ -57,7 +57,7 @@ class UsersController extends Controller {
 	 * @throws \Exception
 	 */
 	public function overview (): void {
-		$this->Access->ensure('read');
+		$this->Authorization->ensure('read');
 
 		$lo_users = $this->Users->find('withAttributes')->where($this->getOverviewWhere());
 		$lo_users = $this->Categories->filterQuery($lo_users);
@@ -76,7 +76,7 @@ class UsersController extends Controller {
 	 * @throws \Exception
 	 */
 	public function add (): void {
-		$this->Access->ensure('create');
+		$this->Authorization->ensure('create');
 
 		$lo_user = $this->Users->newDefaultEntity();
 
@@ -90,7 +90,7 @@ class UsersController extends Controller {
 
 		$this->set([
 			'ao_user' => $lo_user,
-			'ao_usergroups' => $this->Users->Usergroups->find()->applyOptions(['access' => ['skip' => TRUE]]),
+			'ao_usergroups' => $this->Users->Usergroups->find()->applyOptions(['authorization' => ['skip' => TRUE]]),
 		]);
 	}
 
@@ -103,13 +103,13 @@ class UsersController extends Controller {
 	 * @throws \Exception
 	 */
 	public function edit () {
-		$this->Access->ensure('update');
+		$this->Authorization->ensure('update');
 
 		/*
-		 * Skip Access Check for Usergroups. Even without access to the scope "Usergroups"
+		 * Skip Authorization Check for Usergroups. Even without access to the scope "Usergroups"
 		 * the current user can modify the affiliation(s) of users
 		 */
-		$this->Users->Usergroups->skipAccessCheck();
+		$this->Users->Usergroups->skipAuthorizationCheck();
 
 		/** @var User $lo_user */
 		$lo_user = $this->Users->findById((int) $this->request->getParam('id'))->contain(['Usergroups'])->first();
@@ -119,7 +119,7 @@ class UsersController extends Controller {
 			return $this->redirect(['action' => 'overview']);
 		}
 
-		$this->Users->Usergroups->skipAccessCheck(FALSE);
+		$this->Users->Usergroups->skipAuthorizationCheck(FALSE);
 
 		if ($this->request->is(['patch', 'post', 'put'])) {
 			$this->save($lo_user, 'edit');
@@ -131,7 +131,7 @@ class UsersController extends Controller {
 
 		$this->set([
 			'ao_user' => $lo_user,
-			'ao_usergroups' => $this->Users->Usergroups->find()->applyOptions(['access' => ['skip' => TRUE]]),
+			'ao_usergroups' => $this->Users->Usergroups->find()->applyOptions(['authorization' => ['skip' => TRUE]]),
 		]);
 	}
 
@@ -144,7 +144,7 @@ class UsersController extends Controller {
 	 * @throws \Exception
 	 */
 	public function delete (): Response {
-		$this->Access->ensure('delete');
+		$this->Authorization->ensure('delete');
 
 		$this->request->allowMethod(['get', 'delete']);
 
@@ -174,10 +174,10 @@ class UsersController extends Controller {
 	 */
 	protected function save (User $ao_user, string $as_method = 'add'): void {
 		/*
-		 * Skip Access Check for Usergroups. Even without access to the scope "Usergroups"
+		 * Skip Authorization Check for Usergroups. Even without access to the scope "Usergroups"
 		 * the current user can modify the affiliation(s) of users
 		 */
-		$this->Users->Usergroups->skipAccessCheck();
+		$this->Users->Usergroups->skipAuthorizationCheck();
 
 		$la_data = $this->request->getData();
 
@@ -204,8 +204,8 @@ class UsersController extends Controller {
 			$this->Flash->error(implode('<br>' . PHP_EOL, $ao_user->getError('_general')));
 		}
 
-		//Enable Access Check for Usergroups
-		$this->Users->Usergroups->skipAccessCheck(FALSE);
+		//Enable Authorization Check for Usergroups
+		$this->Users->Usergroups->skipAuthorizationCheck(FALSE);
 	}
 
 
@@ -230,14 +230,14 @@ class UsersController extends Controller {
 						'last_login' => FrozenTime::now(),
 					], ['guard' => FALSE]);
 
-					$this->Users->save($lo_user, ['access' => ['skip' => TRUE], 'audit' => ['skip' => TRUE]]);
+					$this->Users->save($lo_user, ['authorization' => ['skip' => TRUE], 'audit' => ['skip' => TRUE]]);
 				}
 				elseif ($lo_user instanceof UsersExternal) {
 					$lo_usersExternal = $this->fetchTable('UsersExternal');
 					//Track last_login
 					$lo_user->set('last_login', FrozenTime::now());
 
-					$lo_usersExternal->save($lo_user, ['access' => ['skip' => TRUE], 'audit' => ['skip' => TRUE]]);
+					$lo_usersExternal->save($lo_user, ['authorization' => ['skip' => TRUE], 'audit' => ['skip' => TRUE]]);
 				}
 
 				/** @var \Cake\Http\Session $lo_session */
@@ -256,12 +256,12 @@ class UsersController extends Controller {
 
 		if ($this->request->is('post') && ! $lo_result->isValid()) {
 			/** @var User $lo_user */
-			if (($ls_username = $this->request->getData('username')) && ($lo_user = $this->Users->find()->applyOptions(['access' => ['skip' => TRUE]])->where(['username' => $ls_username])->first())) {
+			if (($ls_username = $this->request->getData('username')) && ($lo_user = $this->Users->find()->applyOptions(['authorization' => ['skip' => TRUE]])->where(['username' => $ls_username])->first())) {
 				$lo_user->set([
 					'failed_attempts' => $lo_user->failed_attempts + 1,
 					'last_login' => FrozenTime::now(),
 				], ['guard' => FALSE]);
-				$this->Users->save($lo_user, ['access' => ['skip' => TRUE], 'audit' => ['skip' => TRUE]]);
+				$this->Users->save($lo_user, ['authorization' => ['skip' => TRUE], 'audit' => ['skip' => TRUE]]);
 			}
 
 			$this->request = $this->request->withoutData('password');

@@ -15,7 +15,7 @@
 		{{ helper_Form_control('title') }}
 	</fieldset>
 
-	{% if helper_Access_scopeIsAccessible('Users', NULL, NULL, ['read']) %}
+	{% if helper_Authorization_scopeIsAccessible('Users', NULL, ['read']) %}
 		<fieldset>
 			<legend>{{ __('::users') }}</legend>
 			{{ helper_Form_hidden('users._ids', {value: ''}) }}
@@ -38,11 +38,12 @@
 	<fieldset>
 		<legend>{{ __('::permissions') }}</legend>
 
-		{% for ls_policyClass in aa_authorizationPolicies %}
+
+		{% for lx_policyClass in aa_authorizationPolicies %}
 			<fieldset>
 				<legend>{{ lx_policyClass is string ? staticCall(lx_policyClass, 'getScope') : lx_policyClass.getScope }}</legend>
 				<ul class="NoList Permissions">
-					{% set lo_permissions = lx_policyClass is string ? staticCall(lx_policyClass, 'getPermissions') : lx_policyClass.getPermissions %}
+					{% set lo_permissions = lx_policyClass is string ? staticCall(lx_policyClass, 'getPermissionOptions') : lx_policyClass.getPermissionOptions %}
 					{% for ls_identifier,lo_permission in lo_permissions %}
 						{# @var lo_permission \Awyiss\Authorization\Permission\PermissionInterface #}
 						<li class="Permission">

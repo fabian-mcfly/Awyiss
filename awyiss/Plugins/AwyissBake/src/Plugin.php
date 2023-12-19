@@ -28,7 +28,6 @@ class Plugin extends BasePlugin {
 
 		$la_commands = $ao_commands->discoverPlugin($this->getName());
 
-
 		return $ao_commands->addMany($la_commands);
 	}
 }

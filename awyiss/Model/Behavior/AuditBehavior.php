@@ -145,7 +145,7 @@ class AuditBehavior extends Behavior {
 
 		//Save the audit entity and skip the access check
 		$lo_auditModel->save($lo_audit, [
-			'access' => ['skip' => TRUE],
+			'authorization' => ['skip' => TRUE],
 		]);
 	}
 

@@ -3,155 +3,240 @@
 
 namespace Awyiss\Authorization\Permission;
 
-
-use Awyiss\Core\App;
-use Cake\Core\ObjectRegistry;
-use Exception;
+use Awyiss\Authorization\AuthorizationService;
+use Cake\Event\EventDispatcherTrait;
+use Cake\Utility\Inflector;
 use RuntimeException;
 
 
 /**
- * Holds a collection of permissions for a single scope
+ * @todo Think about making $access not an array but a \Cake\Collection\Collection::class instance or extending \ArrayObject
  */
-class PermissionCollection extends ObjectRegistry {
-	protected string $scope;
+class PermissionCollection {
+	use EventDispatcherTrait;
 
 
 	/**
-	 * Constructor
-	 *
-	 * @param array $aa_config Configuration
-	 *
-	 * @throws \Exception
+	 * @var array<string, array<string, Permission[]>>
 	 */
-	public function __construct (string $as_scope, array $aa_config = []) {
-		$this->scope = $as_scope;
+	protected array $permissions = [];
+	protected string $type = 'backend';
+	protected ?AuthorizationService $authorizationService;
 
-		foreach ($aa_config as $lx_key => $lx_value) {
-			if (is_int($lx_key)) {
-				$this->load($lx_value);
-				continue;
+
+	/**
+	 * @param null|\Awyiss\Authorization\AuthorizationService $ao_authorizationService
+	 * @param array<\Awyiss\Model\Entity\UsergroupPermission|array{scope: string, identifier: string, access: mixed, settings: mixed}> $aa_permissions
+	 */
+	public function __construct (?AuthorizationService $ao_authorizationService, array $aa_permissions = []) {
+		$this->authorizationService = $ao_authorizationService;
+
+		foreach ($aa_permissions as $lx_permission) {
+			if ($lx_permission instanceof Permission) {
+				$this->add($lx_permission);
 			}
-			$this->load($lx_key, $lx_value);
+			elseif ($lx_permission instanceof PermissionInterface) {
+				//$this->add($lx_permission);
+				$this->add(Permission::createFromInterface($lx_permission));
+			}
+			elseif (is_array($lx_permission)) {
+				//$this->add(...$lx_permission);
+				$this->add(Permission::createFromArray(...$lx_permission));
+			}
+			else {
+				throw new RuntimeException(sprintf('Permission must be of type `array|%s` in `%s`. `%s` given', PermissionInterface::class, static::class, gettype($lx_permission)));
+			}
 		}
 	}
 
 
 	/**
-	 * Returns the scope the instance was created with
+	 * Adds a new permission to the collection of permission.
 	 *
-	 * @return string
+	 * If `$ax_scope` is a string, `$as_identifier` needs to be provided
+	 *
+	 * @param \Awyiss\Authorization\Permission\Permission $ao_permission
+	 *
+	 * @return $this
+	 *
 	 */
-	public function getScope (): string {
-		return $this->scope;
-	}
+	public function add (Permission $ao_permission): static {
+		$ao_permission->setAuthorizationService($this->authorizationService);
 
-
-	/**
-	 * Adds a permission to the collection.
-	 *
-	 * This is a convenient proxy method for `static::load` that returns `$this` instead of the permission instance
-	 *
-	 * @throws \Exception
-	 *
-	 * @see load()
-	 */
-	public function add (string $as_identifier, array $aa_config = []): static {
-		$this->load($as_identifier, $aa_config);
+		$this->permissions[ $ao_permission->getScope() ][ $ao_permission->getIdentifier() ][] = $ao_permission;
 
 		return $this;
 	}
 
 
 	/**
-	 * {@inheritDoc}
+	 * Returns the whole collection of permission
 	 *
-	 * Extended to make the config item 'className' mandatory.
-	 *
-	 * @param string $as_identifier The name/class of the object to load.
-	 * @param array<string, mixed> $aa_config Additional settings to use when loading the object.
-	 *
-	 * @return mixed
-	 *
-	 * @throws Exception
-	 * @throws RuntimeException
-	 *
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 * @return array<string, array<string, Permission[]>>
 	 */
-	public function load (string $as_identifier, array $aa_config = []): PermissionInterface {
-		if ( ! isset($aa_config['className'])) {
-			throw new RuntimeException('Missing config key `className`');
-		}
-
-		$la_config = $aa_config;
-		if ( ! isset($la_config['identifier'])) {
-			$la_config['identifier'] = $as_identifier;
-		}
-
-		return parent::load($as_identifier, $la_config);
+	public function get (): array {
+		return $this->permissions;
 	}
 
 
 	/**
-	 * Returns true if a collection is empty.
+	 * Returns TRUE or FALSE, whether a scope (and optional identifier) exists in the collection of permission
+	 *
+	 * @noinspection PhpUnused
+	 *
+	 * @param string $as_scope
+	 * @param null|string $as_identifier
 	 *
 	 * @return bool
 	 */
-	public function isEmpty (): bool {
-		return empty($this->_loaded);
+	public function hasPermissions (string $as_scope, string $as_identifier = NULL): bool {
+		return $this->getPermissions($as_scope, $as_identifier) !== NULL;
 	}
 
 
 	/**
-	 * Creates a Permission instance.
+	 * Returns the permission for the given scope (and optional identifier)
 	 *
-	 * @param class-string<PermissionInterface> $as_class Permission class.
-	 * @param string $as_alias Permission alias.
-	 * @param array $aa_config Config array.
+	 * @param string $as_scope
+	 * @param null|string $as_identifier
 	 *
-	 * @return \Awyiss\Authorization\Permission\PermissionInterface
-	 *
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 * @return NULL|array<array<string, Permission[]>>|array<string, Permission[]>
 	 */
-	protected function _create ($as_class, string $as_alias, array $aa_config): PermissionInterface {
-		$lo_permission = new $as_class($aa_config, $this);
+	public function getPermissions (string $as_scope, string $as_identifier = NULL): ?array {
+		$ls_scope = Inflector::underscore($as_scope);
 
-		if ( ! ($lo_permission instanceof PermissionInterface)) {
-			throw new RuntimeException(sprintf('Permission class `%s` must implement `%s`.', $as_class, PermissionInterface::class));
+		if ($as_identifier) {
+			return $this->permissions[ $ls_scope ][ $as_identifier ] ?? NULL;
 		}
 
-		return $lo_permission;
+		return $this->permissions[ $ls_scope ] ?? NULL;
 	}
 
 
 	/**
-	 * Resolves permission class name.
+	 * Checks if the provided identifiers are accessible by the provided identity for the provided scope
 	 *
-	 * @param string $as_class Class name to be resolved.
+	 * A policy is
+	 * - accessible if it returns TRUE
+	 * - forbidden if it returns FALSE
+	 * - indifferent if it returns NULL
 	 *
-	 * @return string|NULL
-	 * @psalm-return class-string|NULL
+	 * `$ax_identifier` captures all remaining arguments provided to `scopeIsAccessible`,
+	 * which are then used to checked accesibility.
 	 *
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 * - Providing a list of arguments, for example `scopeIsAccessible(..., 'read', 'create', 'update', 'delete')` means
+	 * that every one of those identifiers must be accessible for this method to return TRUE.
+	 *
+	 * - Providing an array of arguments, for example `scopeIsAccessible(..., ['read', 'create', 'update', 'delete'])` means
+	 * that at least one of those identifiers must be accessible for this method to return TRUE.
+	 *
+	 * It's possible to combine the two methods above.
+	 *
+	 * For example `scopeIsAccessible(..., ['read', 'create'], ['update', 'delete'])` will return TRUE when either `read` or `create`
+	 * AND either `update` OR `delete` is accessible.
+	 *
+	 * @param string $as_scope
+	 * @param array $aa_additionalData
+	 * @param string|array ...$ax_identifier
+	 *
+	 * @return bool
 	 */
-	protected function _resolveClassName (string $as_class): ?string {
-		$ls_className = App::className($as_class);
+	public function scopeIsAccessible (string $as_scope, array $aa_additionalData = [], string|array ...$ax_identifier): bool {
+		/*
+		 * Traverse the provided identifiers and remember the accessibility in $lx_policyClass,
+		 * using the identity's currently assigned permissions.
+		 *
+		 */
+		$la_accessible = [];
+		foreach ($ax_identifier as $lx_identifier) {
+			if ( ! is_array($lx_identifier)) {
+				$lx_identifier = [$lx_identifier];
+			}
 
-		return is_string($ls_className) ? $ls_className : NULL;
+			$la_accessible[] = $this->identifierIsAccessible($as_scope, $aa_additionalData, ...$lx_identifier);
+		}
+
+		//If TRUE is part of the result, and the result is only TRUE, and nothing but TRUE, access is granted.
+		if (array_unique($la_accessible) === [TRUE]) {
+			return TRUE;
+		}
+
+		//I am sorry Dave. I'm afraid I can't do that.
+		return FALSE;
 	}
 
 
 	/**
-	 * @param string $as_class Missing class.
-	 * @param NULL|string $as_plugin Class plugin.
+	 * Return TRUE or FALSE depending on whether one of the provided identifiers is accessible
 	 *
-	 * @return void
+	 * @param string $as_scope
+	 * @param array $aa_additionalData
+	 * @param array|string[] $aa_identifier
 	 *
-	 * @throws Exception
-	 *
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 * @return NULL|bool
 	 */
-	protected function _throwMissingClassError (string $as_class, ?string $as_plugin): void {
-		throw new Exception(sprintf('Permission class `%s` was not found.', $as_class));
+	protected function identifierIsAccessible (string $as_scope, array $aa_additionalData = [], ...$aa_identifier): ?bool {
+		$la_accessible = [];
+
+		//Traverse the identifiers and check if it's accessible, given the collection of permissions for `$as_scope`
+		foreach ($aa_identifier as $ls_identifier) {
+			if ( ! is_string($ls_identifier)) {
+				throw new RuntimeException(sprintf('The identifier is invalid. Expected `string`, `%s` given', gettype($ls_identifier)));
+			}
+
+			$la_permissions = $this->getPermissions($as_scope, $ls_identifier);
+			if ( ! $la_permissions) {
+				continue;
+			}
+
+			$la_accessible[] = $this->permissionsIsAccessible($la_permissions, $aa_additionalData);
+		}
+
+		//If TRUE is part of the result access is granted.
+		if (in_array(TRUE, $la_accessible, TRUE)) {
+			return TRUE;
+		}
+
+		//Otherwise the access depends on the default accessible. FALSE makes sense as a fallback.
+		return Permission::DEFAULT_PERMISSION;
+	}
+
+
+	/**
+	 * @param Permission[] $aa_permissions
+	 * @param array $aa_additionalData
+	 *
+	 * @return null|bool
+	 */
+	protected function permissionsIsAccessible (array $aa_permissions, array $aa_additionalData = []): ?bool {
+		$la_accessible = [];
+
+		foreach ($aa_permissions AS $lo_permission) {
+			if ( ! ($lo_permission instanceof Permission)) {
+				throw new RuntimeException(sprintf('The permission is invalid. Expected instance of `%s`, `%s` given', Permission::class, gettype($lo_permission)));
+			}
+
+			$la_accessible[] = $lo_permission->isAccessible($aa_additionalData, $this);
+		}
+
+		if (in_array(FALSE, $la_accessible, TRUE)) {
+			return FALSE;
+		}
+		elseif (in_array(TRUE, $la_accessible, TRUE)) {
+			return TRUE;
+		}
+
+		return NULL;
+	}
+
+
+	/**
+	 * When sleeping, don't allow serialization since a PermissionCollection can contain policies with CallbackPermissionOption.
+	 * Having a closure inside them means serialization of the collection fails.
+	 *
+	 * @return array
+	 */
+	public function __sleep() {
+		return [];
 	}
 }

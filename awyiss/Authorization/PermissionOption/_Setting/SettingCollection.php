@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 
-namespace Awyiss\Authorization\Permission\Setting;
+namespace Awyiss\Authorization\PermissionOption\Setting;
 
 
 use Awyiss\Core\App;
@@ -39,7 +39,7 @@ class SettingCollection extends ObjectRegistry {
 	 * @param string $as_alias Setting alias.
 	 * @param array $aa_config Config array.
 	 *
-	 * @return \Awyiss\Authorization\Permission\Setting\SettingInterface
+	 * @return \Awyiss\Authorization\PermissionOption\Setting\SettingInterface
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */

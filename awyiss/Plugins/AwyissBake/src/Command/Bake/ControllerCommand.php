@@ -51,6 +51,7 @@ class ControllerCommand extends \Bake\Command\ControllerCommand {
 			$la_actions = array_map('trim', explode(',', $ao_args->getOption('actions')));
 			$la_actions = array_filter($la_actions);
 		}
+
 		$la_helpers = $this->getHelpers($ao_args);
 		$la_components = $this->getComponents($ao_args);
 

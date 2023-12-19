@@ -17,7 +17,7 @@ use RuntimeException;
 
 
 /**
- * This component provides and handles access-specific logic.
+ * This component provides and handles Authorization-specific logic.
  * It provides methods to set and retreive an identity, the scope and the policyClass that's used to check for access.
  *
  * - `ensureOne(string ...$as_identifier)`
@@ -36,7 +36,7 @@ use RuntimeException;
  * - `scopeIsAccessible(string $as_scope, ?IdentityPermissionsInterface $ao_identity = NULL, ?array $aa_additionalData = NULL, string|array ...$ax_identifier)`
  *   Returns TRUE or FALSE, depending on the accessibility of the provided identifier(s) for the provided scope and identity
  */
-class AccessComponent extends Component {
+class AuthorizationComponent extends Component {
 	/**
 	 * @inheritDoc
 	 *
@@ -106,7 +106,7 @@ class AccessComponent extends Component {
 
 
 	/**
-	 * Returns a new instance of the AccessComponent with the data in `$aa_data` set.
+	 * Returns a new instance of the AuthorizationComponent with the data in `$aa_data` set.
 	 *
 	 * With this clone it's possible to check access with a different settings than the currently set ones,
 	 * without the need to reset the settings after the check.
@@ -236,7 +236,7 @@ class AccessComponent extends Component {
 
 
 	/**
-	 * Returns the currently set scope for checking accesses.
+	 * Returns the currently set scope for checking permissions.
 	 *
 	 * If empty, the scope the component was loaded with will be used.
 	 *
@@ -258,7 +258,7 @@ class AccessComponent extends Component {
 
 
 	/**
-	 * Set the scope to be used for checking accesses.
+	 * Set the scope to be used for checking permissions.
 	 *
 	 * @param string $as_scope
 	 *
@@ -360,7 +360,7 @@ class AccessComponent extends Component {
 	 *
 	 * No access results in an exception.
 	 *
-	 * See \Awyiss\Authorization\AccessCollection::scopeIsAccessible() how $ax_identifier is used.
+	 * See \Awyiss\Authorization\Permission\PermissionCollection::scopeIsAccessible() how $ax_identifier is used.
 	 *
 	 * @param string|array ...$ax_identifier
 	 *
@@ -369,12 +369,12 @@ class AccessComponent extends Component {
 	 * @throws \Cake\Http\Exception\ForbiddenException
 	 * @throws \Exception
 	 *
-	 * @see \Awyiss\Authorization\AccessCollection::scopeIsAccessible()
+	 * @see \Awyiss\Authorization\Permission\PermissionCollection::scopeIsAccessible()
 	 */
 	public function ensure (string|array ...$ax_identifier): void {
 		$ls_scope = $this->getScope();
 
-		$ls_isAccessible = $this->scopeIsAccessible($ls_scope, NULL, NULL, ...$ax_identifier);
+		$ls_isAccessible = $this->scopeIsAccessible($ls_scope, NULL, ...$ax_identifier);
 		if ( ! $ls_isAccessible) {
 			throw new ForbiddenException();
 		}
@@ -385,47 +385,44 @@ class AccessComponent extends Component {
 	 * For a list of given identifiers, return TRUE or FALSE whether they're accessible inside the current scope
 	 * for the current identity.
 	 *
-	 * See \Awyiss\Authorization\AccessCollection::scopeIsAccessible() how $ax_identifier is used.
+	 * See \Awyiss\Authorization\Permission\PermissionCollection::scopeIsAccessible() how $ax_identifier is used.
 	 *
 	 * @param string|array ...$ax_identifier
 	 *
 	 * @return bool
 	 * @throws \Exception
 	 *
-	 * @see \Awyiss\Authorization\AccessCollection::scopeIsAccessible()
+	 * @see \Awyiss\Authorization\Permission\PermissionCollection::scopeIsAccessible()
 	 *
 	 * @noinspection PhpUnused
 	 */
 	public function isAccessible (string|array ...$ax_identifier): bool {
-		$ls_scope = $this->getScope();
-
-		return $this->scopeIsAccessible($ls_scope, NULL, NULL, ...$ax_identifier);
+		return $this->scopeIsAccessible($this->getScope(), NULL, ...$ax_identifier);
 	}
 
 
 	/**
 	 * Checks if the provided identifiers are accessible by the provided identity for the provided scope.
 	 *
-	 * See \Awyiss\Authorization\AccessCollection::scopeIsAccessible() how $ax_identifier is used.
+	 * See \Awyiss\Authorization\Permission\PermissionCollection::scopeIsAccessible() how $ax_identifier is used.
 	 *
 	 * @param string $as_scope
-	 * @param NULL|\Awyiss\Authorization\IdentityPermissionsInterface $ao_identity
 	 * @param null|array $aa_additionalData
 	 * @param string|array ...$ax_identifier
 	 *
 	 * @return bool
 	 *
 	 * @throws \Exception
-	 * @see \Awyiss\Authorization\AccessCollection::scopeIsAccessible()
+	 * @see \Awyiss\Authorization\Permission\PermissionCollection::scopeIsAccessible()
 	 */
-	public function scopeIsAccessible (string $as_scope, ?IdentityPermissionsInterface $ao_identity = NULL, ?array $aa_additionalData = NULL, string|array ...$ax_identifier): bool {
-		//Get the currently assigned accesses from the identity object, resp. their access collection
-		$lo_identity = $ao_identity ?? $this->getIdentity();
-		$lo_accessCollection = $lo_identity->getAccess();
+	public function scopeIsAccessible (string $as_scope, ?array $aa_additionalData = NULL, string|array ...$ax_identifier): bool {
+		//Get the currently assigned permissions from the identity object, resp. their permissions collection
+		$lo_identity = $this->getIdentity();
+		$lo_permissionCollection = $lo_identity->getPermissionCollection();
 
 		$la_additionalData = $aa_additionalData ?? $this->getConfig('additionalData');
 
-		return $lo_accessCollection->scopeIsAccessible($as_scope, $this->getPolicyClass(), $la_additionalData, ...$ax_identifier);
+		return $lo_permissionCollection->scopeIsAccessible($as_scope, $la_additionalData, ...$ax_identifier);
 	}
 
 

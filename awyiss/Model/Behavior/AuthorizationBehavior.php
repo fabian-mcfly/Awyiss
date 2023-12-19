@@ -6,12 +6,12 @@ namespace Awyiss\Model\Behavior;
 
 use ArrayObject;
 use Awyiss\Authorization\AuthorizationServiceInterface;
+use Awyiss\Authorization\IdentityPermissionsInterface;
 use Awyiss\Authorization\Policy\AnonymousPolicy;
 use Awyiss\Authorization\Policy\PolicyInterface;
 use Awyiss\Model\Entity\User;
 use Awyiss\Model\Entity\UsersExternal;
 use Awyiss\ORM\Behavior;
-use Awyiss\Authorization\IdentityPermissionsInterface;
 use Awyiss\ORM\RulesChecker;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\ResultSetDecorator;
@@ -27,7 +27,7 @@ use RuntimeException;
 /**
  * @todo describe everything
  *
- * Access related behavior.
+ * Authorization related behavior.
  *
  * Uses the following config items:
  *
@@ -40,16 +40,16 @@ use RuntimeException;
  * - `implementedMethods` An array of methods that can be accessed as methods inside the table.
  * Format `[externalMethodName1 => internalMethodName1, externalMethodName2 => internalMethodName2]`
  * - `identifiers` An array of EventNames and which identifiers this behavior must check.
- * The identifiers can be a string or an array. See \Awyiss\Authorization\AccessCollection::scopeIsAccessible() how the identifier is used.
+ * The identifiers can be a string or an array. See \Awyiss\Authorization\Permission\PermissionCollection::scopeIsAccessible() how the identifier is used.
  * Format `[EventName1 => identifier1, EventName2 => [identifier2, identifier3]]`
- * - `identity` The identity used to retreive the accesses from
- * - `policyClass` The policy class that's used to check the accesses with
- * - `scope` The scope to check the accesses for
- * - `skip` Skip the access check until manually turned back on (by settings this flag to `FALSE`)
- * - `skipOnce` Skip the access check once and turning it right back on
+ * - `identity` The identity used to retreive the permissions from
+ * - `policyClass` The policy class that's used to check the permissions with
+ * - `scope` The scope to check the permissions for
+ * - `skip` Skip the authorization check until manually turned back on (by settings this flag to `FALSE`)
+ * - `skipOnce` Skip the authorization check once and turning it right back on
  *
  */
-class AccessBehavior extends Behavior {
+class AuthorizationBehavior extends Behavior {
 	protected ?AuthorizationServiceInterface $authorizationService = NULL;
 	/**
 	 * Default configuration
@@ -70,8 +70,8 @@ class AccessBehavior extends Behavior {
 			'Model.beforeDelete' => 'handleEvent',
 		],
 		'implementedMethods' => [
-			'skipAccessCheck' => 'skip',
-			'skipAccessCheckOnce' => 'skipOnce',
+			'skipAuthorizationCheck' => 'skip',
+			'skipAuthorizationCheckOnce' => 'skipOnce',
 		],
 		'identifiers' => [
 			'Entity.create' => 'create',
@@ -145,7 +145,7 @@ class AccessBehavior extends Behavior {
 	 */
 	public function getAuthorizationService (): ?AuthorizationServiceInterface {
 		if ( ! isset($this->authorizationService)) {
-			$lo_event = $this->table()->dispatchEvent('Access.requestAuthorizationService');
+			$lo_event = $this->table()->dispatchEvent('Authorization.requestAuthorizationService');
 			$this->authorizationService = $lo_event->getResult();
 		}
 
@@ -227,7 +227,7 @@ class AccessBehavior extends Behavior {
 
 
 	/**
-	 * Sets the scope to check the access for
+	 * Sets the scope to check the authorization for
 	 *
 	 * @return string
 	 */
@@ -258,7 +258,7 @@ class AccessBehavior extends Behavior {
 
 
 	/**
-	 * Calling this method with `TRUE`, the access check will be skipped until turned back on by passing `FALSE`
+	 * Calling this method with `TRUE`, the authorization check will be skipped until turned back on by passing `FALSE`
 	 *
 	 * @param bool $ab_skip
 	 *
@@ -274,7 +274,7 @@ class AccessBehavior extends Behavior {
 
 
 	/**
-	 * Calling this method will skip the next access check
+	 * Calling this method will skip the next authorization check
 	 *
 	 * @param bool $ab_skip
 	 *
@@ -311,7 +311,7 @@ class AccessBehavior extends Behavior {
 
 		//Add a rule that returns TRUE or FALSE whether the entity can be created resp. updated
 		$ao_rules->add(function(EntityInterface $ao_entity, array $aa_options) use ($lx_call): ?bool {
-			$la_options = Hash::merge($this->getConfig(), Hash::get($aa_options, 'access'));
+			$la_options = Hash::merge($this->getConfig(), Hash::get($aa_options, 'authorization'));
 
 			//Skipping the check means the rule returns TRUE.
 			if ($la_options['skip'] === TRUE || $la_options['skipOnce'] === TRUE) {
@@ -320,7 +320,7 @@ class AccessBehavior extends Behavior {
 				return TRUE;
 			}
 
-			//Call the access check, depending on whether the entity is new
+			//Call the authorization check, depending on whether the entity is new
 			$lb_accessible = $this->handle($ao_entity->isNew() ? 'Entity.create' : 'Entity.update', $ao_entity, $la_options);
 
 			//If the event name is a callable config item, call it and set the return value as the accessible status
@@ -328,13 +328,13 @@ class AccessBehavior extends Behavior {
 				$lb_accessible = call_user_func($lx_call, $ao_entity, $la_options, $this, $lb_accessible);
 			}
 
-			//TODO: check if it's possible to get defaultAccessible from AccessCollection
+			//TODO: check if it's possible to get defaultAccessible from PermissionCollection
 			if ($lb_accessible === FALSE || ($lb_accessible === NULL && $this->getConfig('defaultAccessible') === FALSE)) {
 				return FALSE;
 			}
 
 			return TRUE;
-		}, 'access', [
+		}, 'authorization', [
 			'errorField' => '_general',
 			'message' => __('::scope_not_accessible'),
 		]);
@@ -358,7 +358,7 @@ class AccessBehavior extends Behavior {
 			return;
 		}
 
-		$la_options = Hash::merge($this->getConfig(), Hash::get($ao_options, 'access'));
+		$la_options = Hash::merge($this->getConfig(), Hash::get($ao_options, 'authorization'));
 
 		//Skipping the check means the event does nothing.
 		if ($la_options['skip'] === TRUE || $la_options['skipOnce'] === TRUE) {
@@ -379,7 +379,7 @@ class AccessBehavior extends Behavior {
 			$lb_accessible = call_user_func($lx_call, $ao_event, $ao_subject, new ArrayObject($la_options), $this, $lb_accessible);
 		}
 
-		//TODO: check if it's possible to get defaultAccessible from AccessCollection
+		//TODO: check if it's possible to get defaultAccessible from PermissionCollection
 		if ($lb_accessible === FALSE || ($lb_accessible === NULL && $this->getConfig('defaultAccessible') === FALSE)) {
 			if ($la_options['failSilently'] === FALSE) {
 				throw new ForbiddenException();
@@ -422,7 +422,7 @@ class AccessBehavior extends Behavior {
 			'subject' => $ao_subject,
 		];
 
-		return $this->scopeIsAccessible($ls_scope, NULL, $la_additionalData, ...$lx_identifier);
+		return $this->scopeIsAccessible($ls_scope, $la_additionalData, ...$lx_identifier);
 	}
 
 
@@ -430,21 +430,19 @@ class AccessBehavior extends Behavior {
 	 * For a list of given identifiers, return TRUE or FALSE whether they're accessible inside the current scope
 	 * for the current identity.
 	 *
-	 * See \Awyiss\Authorization\AccessCollection::scopeIsAccessible() how $ax_identifier is used.
+	 * See \Awyiss\Authorization\Permission\PermissionCollection::scopeIsAccessible() how $ax_identifier is used.
 	 *
 	 * @param string|array ...$ax_identifier
 	 *
 	 * @return bool
 	 * @throws \Exception
 	 *
-	 * @see \Awyiss\Authorization\AccessCollection::scopeIsAccessible()
+	 * @see \Awyiss\Authorization\Permission\PermissionCollection::scopeIsAccessible()
 	 *
 	 * @noinspection PhpUnused
 	 */
 	public function isAccessible (string|array ...$ax_identifier): bool {
-		$ls_scope = $this->getScope();
-
-		return $this->scopeIsAccessible($ls_scope, NULL, NULL, ...$ax_identifier);
+		return $this->scopeIsAccessible($this->getScope(), NULL, ...$ax_identifier);
 	}
 
 
@@ -452,25 +450,24 @@ class AccessBehavior extends Behavior {
 	 * For a list of given identifiers, return TRUE or FALSE whether they're accessible inside the given scope
 	 * for the given identity.
 	 *
-	 * See \Awyiss\Authorization\AccessCollection::scopeIsAccessible() how $ax_identifier is used.
+	 * See \Awyiss\Authorization\Permission\PermissionCollection::scopeIsAccessible() how $ax_identifier is used.
 	 *
 	 * @param string $as_scope
-	 * @param null|\Awyiss\Authorization\IdentityPermissionsInterface $ao_identity
 	 * @param null|array $aa_additionalData
 	 * @param string|array ...$ax_identifier
 	 *
 	 * @return null|bool
 	 * @throws \Exception
-	 * @see \Awyiss\Authorization\AccessCollection::scopeIsAccessible()
+	 * @see \Awyiss\Authorization\Permission\PermissionCollection::scopeIsAccessible()
 	 */
-	public function scopeIsAccessible (string $as_scope, ?IdentityPermissionsInterface $ao_identity = NULL, array $aa_additionalData = NULL, string|array ...$ax_identifier): ?bool {
-		//Get the currently assigned accesses from the identity object, resp. their access collection
-		$lo_identity = $ao_identity ?? $this->getIdentity();
-		$lo_accessCollection = $lo_identity->getAccess();
+	public function scopeIsAccessible (string $as_scope, ?array $aa_additionalData = NULL, string|array ...$ax_identifier): ?bool {
+		//Get the currently assigned permissions from the identity object, resp. their permission collection
+		$lo_identity = $this->getIdentity();
+		$lo_permissionCollection = $lo_identity->getPermissionCollection();
 
 		$la_additionalData = $aa_additionalData ?? $this->getConfig('additionalData');
 
-		return $lo_accessCollection->scopeIsAccessible($as_scope, $this->getPolicyClass(), $la_additionalData, ...$ax_identifier);
+		return $lo_permissionCollection->scopeIsAccessible($as_scope, $la_additionalData, ...$ax_identifier);
 	}
 
 

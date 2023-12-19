@@ -28,7 +28,7 @@ class UsergroupsUsersTable extends Table {
 	 */
 	public const TABLE = 'usergroups_users';
 	protected array $_defaultConfig = [
-		'access' => [
+		'authorization' => [
 			'identifiers' => [
 				//We use the users-scope, creating an association will occur when creating or updating a user
 				'Entity.create' => [['create', 'update']],

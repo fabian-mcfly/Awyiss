@@ -43,7 +43,7 @@ class PagesController extends Controller {
 	 * @throws \Exception
 	 */
 	public function overview (): void {
-		$this->Access->ensure('read');
+		$this->Authorization->ensure(['read', 'create']);
 
 		$lo_pages = $this->Pages->find('withAttributes')->where($this->getOverviewWhere());
 		$lo_pages = $this->Pages->listNested($lo_pages);
@@ -65,7 +65,7 @@ class PagesController extends Controller {
 	 * @throws \Exception
 	 */
 	public function add (): void {
-		$this->Access->ensure('create');
+		$this->Authorization->ensure('create');
 
 		$lo_page = $this->Pages->newDefaultEntity([
 			'language_shortcode' => $this->getOverviewWhere('language_shortcode'),
@@ -95,7 +95,7 @@ class PagesController extends Controller {
 	 * @throws \Exception
 	 */
 	public function edit () {
-		$this->Access->ensure('update');
+		$this->Authorization->ensure('update');
 
 		/** @var Page $lo_page */
 		$lo_page = $this->Pages->findById((int) $this->request->getParam('id'))->first();
@@ -128,7 +128,7 @@ class PagesController extends Controller {
 	 * @throws \Exception
 	 */
 	public function delete (): Response {
-		$this->Access->ensure('delete');
+		$this->Authorization->ensure('delete');
 
 		$this->request->allowMethod(['get', 'delete']);
 
@@ -203,7 +203,7 @@ class PagesController extends Controller {
 	 */
 	public function getPageTemplates (): ResultSetInterface {
 		if (!isset($this->pageTemplates)) {
-			$this->pageTemplates = $this->Pages->PageTemplates->find('list', ['access' => ['skip' => TRUE]])->where([
+			$this->pageTemplates = $this->Pages->PageTemplates->find('list', ['authorization' => ['skip' => TRUE]])->where([
 				'page_role_id' => $this->getPageRoleId(),
 			])->all();
 		}
@@ -272,17 +272,17 @@ class PagesController extends Controller {
 
 		/** @var \Awyiss\Authorization\AuthorizationService $lo_authorizationService */
 		$lo_authorizationService = $this->getRequest()->getAttribute('authorization');
-		$ls_policyClass = $lo_authorizationService->getPolicy($this->Access->getScope(), $this->Access->getConfig('policiesType'));
+		$ls_policyClass = $lo_authorizationService->getPolicy($this->Authorization->getScope(), $this->Authorization->getConfig('policiesType'));
 		if ( ! $ls_policyClass) {
-			$lo_policyClass = new AnonymousPolicy($this->Access->getScope());
+			$lo_policyClass = new AnonymousPolicy($this->Authorization->getScope());
 		}
 
-		if ($this->Pages->hasBehavior('Access')) {
+		if ($this->Pages->hasBehavior('Authorization')) {
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-			$this->Pages->getBehavior('Access')->setPolicyClass($ls_policyClass ?: $lo_policyClass);
+			$this->Pages->getBehavior('Authorization')->setPolicyClass($ls_policyClass ?: $lo_policyClass);
 		}
 
-		$this->Access->setScope($ls_scope)->setPolicyClass($ls_policyClass ?: $lo_policyClass);
+		$this->Authorization->setScope($ls_scope)->setPolicyClass($ls_policyClass ?: $lo_policyClass);
 
 		$this->SystemOrder->setConfig('entityName', Inflector::variable(Inflector::singularize($as_identifier)));
 

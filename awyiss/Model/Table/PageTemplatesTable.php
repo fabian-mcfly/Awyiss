@@ -90,7 +90,7 @@ class PageTemplatesTable extends Table {
 	 */
 	public function buildRules (RulesChecker|\Cake\ORM\RulesChecker $ao_rules): RulesChecker {
 		$ao_rules->add($ao_rules->isUnique(['filename']), ['errorField' => 'filename']);
-		$ao_rules->add($ao_rules->existsIn(['page_role_id'], 'PageRoles', ['access' => ['skip' => TRUE]]), ['errorField' => 'page_role_id']);
+		$ao_rules->add($ao_rules->existsIn(['page_role_id'], 'PageRoles', ['authorization' => ['skip' => TRUE]]), ['errorField' => 'page_role_id']);
 
 		return $ao_rules;
 	}

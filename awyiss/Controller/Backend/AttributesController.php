@@ -88,7 +88,7 @@ class AttributesController extends Controller {
 	 * @throws \Exception
 	 */
 	public function overview (): void {
-		$this->Access->ensure('read');
+		$this->Authorization->ensure('read');
 
 		$lo_attributes = $this->paginate($this->Attributes->find('withAttributes')->where($this->getOverviewWhere()));
 
@@ -108,7 +108,7 @@ class AttributesController extends Controller {
 	 * @throws \Exception
 	 */
 	public function add (): void {
-		$this->Access->ensure('create');
+		$this->Authorization->ensure('create');
 
 		$lo_attribute = $this->Attributes->newDefaultEntity();
 		if ($this->request->is('post')) {
@@ -130,7 +130,7 @@ class AttributesController extends Controller {
 	 * @throws \Exception
 	 */
 	public function edit () {
-		$this->Access->ensure('update');
+		$this->Authorization->ensure('update');
 
 		/** @var Attribute $lo_attribute */
 		$lo_attribute = $this->Attributes->findById((int) $this->request->getParam('id'))->first();
@@ -159,7 +159,7 @@ class AttributesController extends Controller {
 	 * @throws \Exception
 	 */
 	public function delete (): Response {
-		$this->Access->ensure('delete');
+		$this->Authorization->ensure('delete');
 
 		$this->request->allowMethod(['get', 'delete']);
 

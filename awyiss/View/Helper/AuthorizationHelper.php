@@ -16,9 +16,9 @@ use RuntimeException;
 
 
 /**
- * Helper class that provides methods related to the Access-logic in the views
+ * Helper class that provides methods related to the Authorization-logic in the views
  */
-class AccessHelper extends Helper {
+class AuthorizationHelper extends Helper {
 	protected $_defaultConfig = [
 		'additionalData' => [],
 		'defaultAccessible' => FALSE,
@@ -153,7 +153,7 @@ class AccessHelper extends Helper {
 
 
 	/**
-	 * Sets the scope to check the access for
+	 * Sets the scope to check the authorization for
 	 *
 	 * @return string
 	 */
@@ -203,21 +203,19 @@ class AccessHelper extends Helper {
 	 * For a list of given identifiers, return TRUE or FALSE whether they're accessible inside the current scope
 	 * for the current identity.
 	 *
-	 * See \Awyiss\Authorization\AccessCollection::scopeIsAccessible() how $ax_identifier is used.
+	 * See \Awyiss\Authorization\Permission\PermissionCollection::scopeIsAccessible() how $ax_identifier is used.
 	 *
 	 * @param string|array ...$ax_identifier
 	 *
 	 * @return bool
 	 * @throws \Exception
 	 *
-	 * @see \Awyiss\Authorization\AccessCollection::scopeIsAccessible()
+	 * @see \Awyiss\Authorization\Permission\PermissionCollection::scopeIsAccessible()
 	 *
 	 * @noinspection PhpUnused
 	 */
 	public function isAccessible (string|array ...$ax_identifier): bool {
-		$ls_scope = $this->getScope();
-
-		return $this->scopeIsAccessible($ls_scope, NULL, NULL, ...$ax_identifier);
+		return $this->scopeIsAccessible($this->getScope(), NULL, ...$ax_identifier);
 	}
 
 
@@ -225,20 +223,20 @@ class AccessHelper extends Helper {
 	 * For a list of given identifiers, return TRUE or FALSE whether they're accessible inside the given scope
 	 * for the given identity.
 	 *
-	 * See \Awyiss\Authorization\AccessCollection::scopeIsAccessible() how $ax_identifier is used.
+	 * See \Awyiss\Authorization\Permission\PermissionCollection::scopeIsAccessible() how $ax_identifier is used.
 	 *
 	 * @throws \Exception
 	 *
-	 * @see \Awyiss\Authorization\AccessCollection::scopeIsAccessible()
+	 * @see \Awyiss\Authorization\Permission\PermissionCollection::scopeIsAccessible()
 	 */
-	public function scopeIsAccessible (string $as_scope, ?IdentityPermissionsInterface $ao_identity = NULL, array $aa_additionalData = NULL, string|array ...$ax_identifier): ?bool {
-		//Get the currently assigned accesses from the identity object, resp. their access collection
-		$lo_identity = $ao_identity ?? $this->getIdentity();
-		$lo_accessCollection = $lo_identity->getAccess();
+	public function scopeIsAccessible (string $as_scope, ?array $aa_additionalData = NULL, string|array ...$ax_identifier): ?bool {
+		//Get the currently assigned permissions from the identity object, resp. their permission collection
+		$lo_identity = $this->getIdentity();
+		$lo_permissionCollection = $lo_identity->getPermissionCollection();
 
 		$la_additionalData = $aa_additionalData ?? $this->getConfig('additionalData');
 
-		return $lo_accessCollection->scopeIsAccessible($as_scope, $this->getPolicyClass(), $la_additionalData, ...$ax_identifier);
+		return $lo_permissionCollection->scopeIsAccessible($as_scope, $la_additionalData, ...$ax_identifier);
 	}
 
 

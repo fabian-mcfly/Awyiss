@@ -4,7 +4,7 @@
 {# {{ helper_Categories_filter() }} #}
 
 <div class="PageRoles Overview">
-	{% if helper_Access_isAccessible('create') %}
+	{% if helper_Authorization_isAccessible('create') %}
 		{{ helper_Html_link(__('::create'), {action: 'add'}, {class: 'Button'}) }}
 	{% endif %}
 	<h1>{{ __('::headline_overview') }}</h1>
@@ -27,10 +27,10 @@
 						<td>{{ lo_pageRole.include_in_linklist }}</td>
 						<td>{{ lo_pageRole.active }}</td>
 						<td class="actions">
-							{% if helper_Access_isAccessible('update') %}
+							{% if helper_Authorization_isAccessible('update') %}
 								{{ helper_Html_link(__('::edit'), {action: 'edit', id: lo_pageRole.id}) }}
 							{% endif %}
-							{% if helper_Access_isAccessible('delete') %}
+							{% if helper_Authorization_isAccessible('delete') %}
 								{{ helper_Html_link(__('::delete'), {action: 'delete', id: lo_pageRole.id}, {confirm: __('::confirm_delete', lo_pageRole.id) }) }}
 							{% endif %}
 						</td>

@@ -4,8 +4,8 @@
 namespace Awyiss\Authorization\Policy;
 
 
-use Awyiss\Authorization\Permission\PermissionCollection;
-use Awyiss\Authorization\Permission\PermissionInterface;
+use Awyiss\Authorization\PermissionOption\PermissionOptionCollection;
+use Awyiss\Authorization\PermissionOption\PermissionOptionInterface;
 
 
 /**
@@ -21,19 +21,19 @@ interface PolicyInterface {
 
 
 	/**
-	 * Returns the complete `PermissionCollection`
+	 * Returns the complete `PermissionOptionCollection`
 	 *
-	 * @return \Awyiss\Authorization\Permission\PermissionCollection
+	 * @return \Awyiss\Authorization\PermissionOption\PermissionOptionCollection
 	 */
-	public static function getPermissions (): PermissionCollection;
+	public static function getPermissionOptions (): PermissionOptionCollection;
 
 
 	/**
-	 * Returns one `PermissionInterface` for the provided `$as_identifier`, otherwise NULL
+	 * Returns one `PermissionOptionInterface` for the provided `$as_identifier`, otherwise NULL
 	 *
 	 * @param string $as_identifier
 	 *
-	 * @return NULL|\Awyiss\Authorization\Permission\PermissionInterface
+	 * @return NULL|\Awyiss\Authorization\PermissionOption\PermissionOptionInterface
 	 */
-	public static function getPermission (string $as_identifier): ?PermissionInterface;
+	public static function getPermissionOption (string $as_identifier): ?PermissionOptionInterface;
 }

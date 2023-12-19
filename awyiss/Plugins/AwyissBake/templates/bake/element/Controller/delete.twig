@@ -9,7 +9,7 @@
 	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
 	public function delete (): \Cake\Http\Response {
-		$this->Access->ensure('delete');
+		$this->Authorization->ensure('delete');
 
 		$this->request->allowMethod(['get', 'delete']);
 

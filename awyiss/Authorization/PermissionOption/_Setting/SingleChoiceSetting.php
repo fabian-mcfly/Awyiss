@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 
-namespace Awyiss\Authorization\Permission\Setting;
+namespace Awyiss\Authorization\PermissionOption\Setting;
 
 
 use Cake\Core\InstanceConfigTrait;
@@ -52,7 +52,7 @@ class SingleChoiceSetting implements SettingInterface {
 	/**
 	 * @param string $as_type
 	 *
-	 * @return \Awyiss\Authorization\Permission\Setting\SettingInterface
+	 * @return \Awyiss\Authorization\PermissionOption\Setting\SettingInterface
 	 */
 	public function setType (string $as_type): static {
 		$this->setConfig('type', Inflector::underscore($as_type));
@@ -72,7 +72,7 @@ class SingleChoiceSetting implements SettingInterface {
 	/**
 	 * @param array $aa_options
 	 *
-	 * @return \Awyiss\Authorization\Permission\Setting\SettingInterface
+	 * @return \Awyiss\Authorization\PermissionOption\Setting\SettingInterface
 	 */
 	public function setOptions (array $aa_options): static {
 		$this->setConfig('options', $aa_options);

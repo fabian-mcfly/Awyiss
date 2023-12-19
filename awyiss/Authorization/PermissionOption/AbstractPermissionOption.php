@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 
-namespace Awyiss\Authorization\Permission;
+namespace Awyiss\Authorization\PermissionOption;
 
 
 use Cake\Core\InstanceConfigTrait;
@@ -12,12 +12,12 @@ use RuntimeException;
 /**
  * Abstract Permission class that offers some required methods, as defined in `PermissionInterface`
  */
-abstract class AbstractPermission implements PermissionInterface {
+abstract class AbstractPermissionOption implements PermissionOptionInterface {
 	use InstanceConfigTrait;
 
 
 	protected array $options = [];
-	protected PermissionCollection $permissionCollection;
+	protected PermissionOptionCollection $permissionOptionCollection;
 	protected string $type;
 	/**
 	 * Default config for this object.
@@ -27,7 +27,7 @@ abstract class AbstractPermission implements PermissionInterface {
 	 * @var array<string, mixed>
 	 */
 	protected array $_defaultConfig = [
-		'preferredInput' => PermissionTypes::TYPE_RADIO,
+		'preferredInput' => PermissionOptionTypes::TYPE_RADIO,
 		'identifier' => NULL,
 	];
 
@@ -35,8 +35,8 @@ abstract class AbstractPermission implements PermissionInterface {
 	/**
 	 * @inheritDoc
 	 */
-	public function __construct (array $aa_config, PermissionCollection $ao_permissionCollection) {
-		$this->permissionCollection = $ao_permissionCollection;
+	public function __construct (array $aa_config, PermissionOptionCollection $ao_permissionOptionCollection) {
+		$this->permissionOptionCollection = $ao_permissionOptionCollection;
 
 		$this->setConfig($aa_config);
 	}
@@ -45,8 +45,8 @@ abstract class AbstractPermission implements PermissionInterface {
 	/**
 	 * @inheritDoc
 	 */
-	public function getPermissionCollection (): PermissionCollection {
-		return $this->permissionCollection;
+	public function getPermissionOptionCollection (): PermissionOptionCollection {
+		return $this->permissionOptionCollection;
 	}
 
 
@@ -79,7 +79,7 @@ abstract class AbstractPermission implements PermissionInterface {
 	 * @throws \RuntimeException
 	 */
 	public function setOptions (array $aa_options): static {
-		throw new RuntimeException(sprintf('`%s` does not allow setting options. Use `%s` instead.', static::class, CallbackPermission::class));
+		throw new RuntimeException(sprintf('`%s` does not allow setting options. Use `%s` instead.', static::class, CallbackPermissionOption::class));
 	}
 
 

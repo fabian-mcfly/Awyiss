@@ -4,14 +4,14 @@
 namespace Awyiss\Authorization\Policy;
 
 
-use Awyiss\Authorization\Permission\PermissionCollection;
-use Awyiss\Authorization\Permission\PermissionInterface;
+use Awyiss\Authorization\PermissionOption\PermissionOptionCollection;
+use Awyiss\Authorization\PermissionOption\PermissionOptionInterface;
 use Cake\Utility\Inflector;
 
 
 /**
  * Classes that extend this one need to define
- * - `protected static PermissionCollection $permissionCollection;`
+ * - `protected static PermissionOptionCollection $permissionOptionCollection;`
  * - `protected static string $scope;`
  */
 abstract class AbstractPolicy implements PolicyInterface {
@@ -22,7 +22,7 @@ abstract class AbstractPolicy implements PolicyInterface {
 	 * @inheritDoc
 	 */
 	public static function getScope (): string {
-		if (!isset(static::$scope)) {
+		if ( ! isset(static::$scope)) {
 			$la_parts = explode('\\', static::class);
 			static::$scope = array_pop($la_parts);
 			static::$scope = substr(static::$scope, 0, -6);
@@ -38,12 +38,12 @@ abstract class AbstractPolicy implements PolicyInterface {
 	 *
 	 * @throws \Exception
 	 */
-	public static function getPermissions (): PermissionCollection {
-		if (!isset(static::$permissionCollection)) {
-			static::$permissionCollection = static::loadPermissions();
+	public static function getPermissionOptions (): PermissionOptionCollection {
+		if ( ! isset(static::$permissionOptionCollection)) {
+			static::$permissionOptionCollection = static::loadPermissionOptions();
 		}
 
-		return static::$permissionCollection;
+		return static::$permissionOptionCollection;
 	}
 
 
@@ -52,13 +52,13 @@ abstract class AbstractPolicy implements PolicyInterface {
 	 *
 	 * @throws \Exception
 	 */
-	public static function getPermission (string $as_identifier): ?PermissionInterface {
-		if (!isset(static::$permissionCollection)) {
-			static::$permissionCollection = static::loadPermissions();
+	public static function getPermissionOption (string $as_identifier): ?PermissionOptionInterface {
+		if (!isset(static::$permissionOptionCollection)) {
+			static::$permissionOptionCollection = static::loadPermissionOptions();
 		}
 
-		if (static::$permissionCollection->has($as_identifier)) {
-			return static::$permissionCollection->get($as_identifier);
+		if (static::$permissionOptionCollection->has($as_identifier)) {
+			return static::$permissionOptionCollection->get($as_identifier);
 		}
 
 		return NULL;

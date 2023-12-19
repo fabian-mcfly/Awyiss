@@ -109,7 +109,7 @@ class LocaleMiddleware implements MiddlewareInterface {
 		$lo_tableLocator = FactoryLocator::get('Table');
 
 		$lo_result = $lo_tableLocator->get('Languages')->find('all', [
-			'access' => ['skip' => TRUE]
+			'authorization' => ['skip' => TRUE]
 		])->order(['system_order' => 'ASC']);
 
 		/** @var Language $lo_language */

@@ -12,7 +12,7 @@
 	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
 	public function edit () {
-		$this->Access->ensure('update');
+		$this->Authorization->ensure('update');
 
 		/** @var {{ entityClassName }} $lo_{{ singularName }} */
 		$lo_{{ singularName }} = $this->{{ currentModelName }}->findById((int) $this->request->getParam('id'))->first();

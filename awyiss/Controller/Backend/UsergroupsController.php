@@ -28,7 +28,7 @@ class UsergroupsController extends Controller {
 	 * @throws \Exception
 	 */
 	public function overview (): void {
-		$this->Access->ensure('read');
+		$this->Authorization->ensure('read');
 
 		$lo_usergroups = $this->Usergroups->find('withAttributes')->where($this->getOverviewWhere());
 		$lo_usergroups = $this->paginate($lo_usergroups);
@@ -47,9 +47,9 @@ class UsergroupsController extends Controller {
 	 * @throws \Exception
 	 */
 	public function add (): void {
-		$this->Access->ensure('create');
+		$this->Authorization->ensure('create');
 
-		$lb_usersScopeIsAccessible = $this->Access->scopeIsAccessible('Users', NULL, ['create', 'update']);
+		$lb_usersScopeIsAccessible = $this->Authorization->scopeIsAccessible('Users', ['create', 'update']);
 
 		$lo_usergroup = $this->Usergroups->newDefaultEntity();
 
@@ -80,9 +80,9 @@ class UsergroupsController extends Controller {
 	 * @throws \Exception
 	 */
 	public function edit () {
-		$this->Access->ensure('update');
+		$this->Authorization->ensure('update');
 
-		$lb_usersScopeIsAccessible = $this->Access->scopeIsAccessible('Users', NULL, ['create', 'update']);
+		$lb_usersScopeIsAccessible = $this->Authorization->scopeIsAccessible('Users', NULL, ['create', 'update']);
 
 		$la_contain = ['UsergroupPermissions'];
 		if ($lb_usersScopeIsAccessible) {
@@ -122,7 +122,7 @@ class UsergroupsController extends Controller {
 	 * @throws \Exception
 	 */
 	public function delete (): Response {
-		$this->Access->ensure('delete');
+		$this->Authorization->ensure('delete');
 
 		$this->request->allowMethod(['get', 'delete']);
 
@@ -202,7 +202,7 @@ class UsergroupsController extends Controller {
 
 		//Get all page roles from the database because we want them to have policies too
 		$lo_pageRoles = $this->fetchTable('PageRoles')->find('active', [
-			'access' => ['skip' => TRUE],
+			'authorization' => ['skip' => TRUE],
 		])->all();
 
 		/** @var \Awyiss\Model\Entity\PageRole $lo_pageRole */
@@ -265,13 +265,13 @@ class UsergroupsController extends Controller {
 
 		/** @var class-string<\Awyiss\Authorization\Policy\PolicyInterface>|\Awyiss\Authorization\Policy\AnonymousPolicy $lo_authorizationPolicy */
 		foreach ($la_authorizationPolicies AS $lo_authorizationPolicy) {
-			/** @var \Awyiss\Authorization\Permission\PermissionInterface $lo_permission */
-			foreach ((!is_object($lo_authorizationPolicy) ? $lo_authorizationPolicy::getPermissions() : $lo_authorizationPolicy->getPermissions()) AS $lo_permission) {
+			/** @var \Awyiss\Authorization\PermissionOption\PermissionOptionInterface $lo_permission */
+			foreach ((!is_object($lo_authorizationPolicy) ? $lo_authorizationPolicy::getPermissionOptions() : $lo_authorizationPolicy->getPermissionOptions()) AS $lo_permission) {
 				$ls_scope = !is_object($lo_authorizationPolicy) ? $lo_authorizationPolicy::getScope() : $lo_authorizationPolicy->getScope();
 				$ls_identifier = $lo_permission->getConfig('identifier');
 
 				$lx_access = Hash::get($aa_data, ['permissions', $ls_scope, $ls_identifier]);
-				$lx_access = $lo_permission->harmonizeOptionValue($lx_access);
+				$lx_access = $lo_permission->harmonizeOptionValue($lx_access)->databaseValue();
 
 				if (is_null($lx_access)) {
 					continue;

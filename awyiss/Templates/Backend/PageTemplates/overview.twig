@@ -4,9 +4,10 @@
 {# {{ helper_Categories_filter() }} #}
 
 <div class="PageTemplates Overview">
-	{% if helper_Access_isAccessible('create') %}
+	{% if helper_Authorization_isAccessible('create') %}
 		{{ helper_Html_link(__('::create'), {action: 'add'}, {class: 'Button'}) }}
 	{% endif %}
+
 	<h1>{{ __('::headline_overview') }}</h1>
 	<div class="table-responsive">
 		<table>
@@ -30,10 +31,10 @@
 							<td>{{ lo_pageTemplate.filename }}</td>
 							<td>{{ lo_pageTemplate.template_positions|join(', ') }}</td>
 							<td class="actions">
-								{% if helper_Access_isAccessible('update') %}
+								{% if helper_Authorization_isAccessible('update') %}
 									{{ helper_Html_link(__('::edit'), {action: 'edit', id: lo_pageTemplate.id}) }}
 								{% endif %}
-								{% if helper_Access_isAccessible('delete') %}
+								{% if helper_Authorization_isAccessible('delete') %}
 									{{ helper_Html_link(__('::delete'), {action: 'delete', id: lo_pageTemplate.id}, {confirm: __('::confirm_delete', lo_pageTemplate.id) }) }}
 								{% endif %}
 							</td>

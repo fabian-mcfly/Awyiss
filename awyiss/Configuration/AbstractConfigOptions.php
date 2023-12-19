@@ -13,7 +13,7 @@ use Cake\Utility\Inflector;
  *
  * @see \Awyiss\Configuration\ConfigOptionsInterface
  */
-abstract class AbstractConfigOptions extends ConfigOptionsCollection implements ConfigOptionsInterface {
+abstract class AbstractConfigOptions extends ConfigOptionCollection implements ConfigOptionsInterface {
 	/** @noinspection PhpMissingParentConstructorInspection */
 	public function __construct () {
 		$this->name = static::getScope();

@@ -6,11 +6,14 @@ namespace Awyiss\Model\Entity;
 
 use Authentication\IdentityInterface;
 use Authentication\PasswordHasher\DefaultPasswordHasher;
-use Awyiss\Authorization\AccessCollection;
 use Awyiss\Authorization\IdentityPermissionsInterface;
+use Awyiss\Authorization\Permission\PermissionCollection;
 use Awyiss\Model\Entity;
 use Cake\Datasource\FactoryLocator;
-use Cake\ORM\Locator\LocatorAwareTrait;
+use Cake\Event\Event;
+use Cake\Event\EventDispatcherTrait;
+use Cake\Event\EventManager;
+use RuntimeException;
 
 
 /**
@@ -35,8 +38,7 @@ use Cake\ORM\Locator\LocatorAwareTrait;
  * @property \Awyiss\Model\Entity\Usergroup[] $usergroups
  */
 class User extends Entity implements IdentityPermissionsInterface, IdentityInterface {
-	use LocatorAwareTrait;
-
+	use EventDispatcherTrait;
 
 	/**
 	 * @inheritDoc
@@ -56,7 +58,7 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 	protected $_hidden = [
 		'password',
 	];
-	protected ?AccessCollection $accesCollection;
+	protected ?PermissionCollection $permissionCollection;
 
 
 	/**
@@ -80,12 +82,20 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 
 
 	/**
-	 * Returns the AccessCollection that contains all set permissions for this user
+	 * Returns the PermissionCollection that contains all set permissions for this user
 	 *
-	 * @return \Awyiss\Authorization\AccessCollection
+	 * @return \Awyiss\Authorization\Permission\PermissionCollection
 	 */
-	public function getAccess (): AccessCollection {
-		if ( ! isset($this->accesCollection)) {
+	public function getPermissionCollection (): PermissionCollection {
+		if ( ! isset($this->permissionCollection)) {
+			$lo_event = $this->dispatchEvent('Authorization.requestAuthorizationService', [], $this);
+
+			/** @var ?\Awyiss\Authorization\AuthorizationService $lo_authorizationService */
+			$lo_authorizationService = $lo_event->getResult();
+			if ( ! $lo_authorizationService) {
+				throw new RuntimeException(sprintf('Could not retreive `AuthorizationService` in `%s`.', static::class));
+			}
+
 			$la_usergroups = $this->getUsergroups() ?? [];
 			/**
 			 * This little magic trick flattens all usergroup_permissions in all usergroups into one array we can iterate.
@@ -118,10 +128,10 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 			 *
 			 * @var \Awyiss\Model\Entity\UsergroupPermission $lo_usergrousPermissions
 			 */
-			$this->accesCollection = new AccessCollection(array_merge(...array_column($la_usergroups, 'usergroup_permissions')));
+			$this->permissionCollection = new PermissionCollection($lo_authorizationService, array_merge(...array_column($la_usergroups, 'usergroup_permissions')));
 		}
 
-		return $this->accesCollection;
+		return $this->permissionCollection;
 	}
 
 
@@ -134,17 +144,17 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 		if ( ! isset($this->usergroups)) {
 			/** @var \Awyiss\Model\Table\UsergroupsUsersTable $lo_usergroupsUsers */
 			$lo_usergroupsUsers = FactoryLocator::get('Table')->get('UsergroupsUsers');
-			$lo_usergroupsUsers->skipAccessCheckOnce();
+			$lo_usergroupsUsers->skipAuthorizationCheckOnce();
 
 			/** @var self $lo_self */
 			$lo_self = FactoryLocator::get('Table')->get($this->getSource())->get($this->id, [
-				'access' => ['skip' => TRUE],
+				'authorization' => ['skip' => TRUE],
 				'contain' => [
 					'Usergroups' => [
 						'UsergroupPermissions' => [
-							'finder' => ['all' => ['access' => ['skip' => TRUE]]],
+							'finder' => ['all' => ['authorization' => ['skip' => TRUE]]],
 						],
-						'finder' => ['active' => ['access' => ['skip' => TRUE]]], //Only find active groups.
+						'finder' => ['active' => ['authorization' => ['skip' => TRUE]]], //Only find active groups.
 					],
 				],
 				'finder' => 'active',
@@ -190,7 +200,7 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 
 
 	/**
-	 * When using unserialize() on a serialized instance of this entity, unset the usergroups and the access collection
+	 * When using unserialize() on a serialized instance of this entity, unset the usergroups and the permission collection
 	 * so that they will be fetched from the database.
 	 *
 	 * This avoids having a user with outdated permissions.
@@ -199,6 +209,6 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 	 */
 	public function __wakeup () {
 		$this->usergroups = NULL;
-		$this->accesCollection = NULL;
+		$this->permissionCollection = NULL;
 	}
 }

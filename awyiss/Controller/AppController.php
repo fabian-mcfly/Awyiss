@@ -60,7 +60,7 @@ abstract class AppController extends Controller {
 		}
 
 		if (IS_BACKEND) {
-			$lo_query = $lo_configurationTable->find()->applyOptions(['access' => ['skip' => TRUE]])->enableHydration(FALSE);
+			$lo_query = $lo_configurationTable->find()->applyOptions(['authorization' => ['skip' => TRUE]])->enableHydration(FALSE);
 
 			if (!$lo_locale) {
 				$lo_query->where(['language_shortcode IS' => NULL]);

@@ -12,17 +12,17 @@ use Cake\Utility\Inflector;
 
 /**
  * @property \Authentication\Controller\Component\AuthenticationComponent $Authentication
- * @property \Awyiss\Controller\Component\AccessComponent $Access
+ * @property \Awyiss\Controller\Component\AuthorizationComponent $Authorization
  * @property \Awyiss\Controller\Component\CategoriesComponent $Categories
  * @property \Awyiss\Controller\Component\SystemOrderComponent $SystemOrder
  */
 abstract class BackendController extends AppController {
 	/**
-	 * @var array Settings for the AccessComponent
+	 * @var array Settings for the AuthorizationComponent
 	 *
-	 * @see \Awyiss\Controller\Component\AccessComponent
+	 * @see \Awyiss\Controller\Component\AuthorizationComponent
 	 */
-	public array $access = [];
+	public array $authorization = [];
 	/**
 	 * @var array Settings for the CategoriesComponent
 	 *
@@ -86,7 +86,7 @@ abstract class BackendController extends AppController {
 			}
 
 			$this->loadComponent('Authentication.Authentication');
-			$this->loadComponent('Access', $this->access);
+			$this->loadComponent('Authorization', $this->authorization);
 			$this->loadComponent('Categories', $this->categorize + [
 				//Load with the defaultTable if present, otherwise with the name of the controller
 				'tableName' => $this->defaultTable ?? $this->getName()

@@ -4,7 +4,7 @@
 {# {{ helper_Categories_filter() }} #}
 
 <div class="ContentTemplates Overview">
-	{% if helper_Access_isAccessible('create') %}
+	{% if helper_Authorization_isAccessible('create') %}
 		{{ helper_Html_link(__('::create'), {action: 'add'}, {class: 'Button'}) }}
 	{% endif %}
 	<h1>{{ __('::headline_overview') }}</h1>
@@ -23,10 +23,10 @@
 						<td>{{ lo_contentTemplate.title }} ({{ lo_contentTemplate.system_order }})</td>
 						<td>{{ lo_contentTemplate.filename }}</td>
 						<td class="actions">
-							{% if helper_Access_isAccessible('update') %}
+							{% if helper_Authorization_isAccessible('update') %}
 								{{ helper_Html_link(__('::edit'), {action: 'edit', id: lo_contentTemplate.id}) }}
 							{% endif %}
-							{% if helper_Access_isAccessible('delete') %}
+							{% if helper_Authorization_isAccessible('delete') %}
 								{{ helper_Html_link(__('::delete'), {action: 'delete', id: lo_contentTemplate.id}, {confirm: __('::confirm_delete', lo_contentTemplate.id) }) }}
 							{% endif %}
 						</td>

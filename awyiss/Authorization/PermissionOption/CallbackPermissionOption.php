@@ -1,17 +1,19 @@
 <?php declare(strict_types=1);
 
 
-namespace Awyiss\Authorization\Permission;
+namespace Awyiss\Authorization\PermissionOption;
 
 
-use Awyiss\Authorization\AccessCollection;
+use Awyiss\Authorization\Permission\PermissionCollection;
+
+
 //use RuntimeException;
 
 
 /**
  * A permission class that uses a defined callback to define the accessibility
  */
-class CallbackPermission extends SimplePermission {
+class CallbackPermissionOption extends SimplePermissionOption {
 	/**
 	 * @var array
 	 */
@@ -27,10 +29,10 @@ class CallbackPermission extends SimplePermission {
 
 	/**
 	 * @param array $aa_config
-	 * @param \Awyiss\Authorization\Permission\PermissionCollection $ao_permissionCollection
+	 * @param \Awyiss\Authorization\PermissionOption\PermissionOptionCollection $ao_permissionOptionCollection
 	 */
-	public function __construct (array $aa_config, PermissionCollection $ao_permissionCollection) {
-		parent::__construct($aa_config, $ao_permissionCollection);
+	public function __construct (array $aa_config, PermissionOptionCollection $ao_permissionOptionCollection) {
+		parent::__construct($aa_config, $ao_permissionOptionCollection);
 
 		if (isset($aa_config['callbacks'])) {
 			$this->setCallbacks($aa_config['callbacks']);
@@ -96,8 +98,8 @@ class CallbackPermission extends SimplePermission {
 	 * Additionally, get a callable from the configuration and call it.
 	 * This allows the callback to define additional logic for the accessibility of the permission
 	 */
-	public function isAccessible (array $aa_access, array $aa_additionalData, AccessCollection $ao_accessCollection): ?bool {
-		$lb_accessible = parent::isAccessible($aa_access, $aa_additionalData, $ao_accessCollection);
+	public function isAccessible (mixed $ax_access, mixed $ax_settings, array $aa_additionalData, PermissionCollection $ao_permissionCollection): ?bool {
+		$lb_accessible = parent::isAccessible($ax_access, $ax_settings, $aa_additionalData, $ao_permissionCollection);
 
 		$lc_callback = NULL;
 		if ( ! empty($aa_additionalData['event'])) {
@@ -110,7 +112,7 @@ class CallbackPermission extends SimplePermission {
 		}
 
 		if ($lc_callback) {
-			$lb_accessible = call_user_func($lc_callback, $lb_accessible, $aa_access, $aa_additionalData, $ao_accessCollection);
+			$lb_accessible = call_user_func($lc_callback, $lb_accessible, $ax_access, $ax_settings, $aa_additionalData, $ao_permissionCollection);
 		}
 
 		return $lb_accessible;

@@ -23,7 +23,7 @@ class PageRolesController extends Controller {
 	 * @throws \Exception
 	 */
 	public function overview (): void {
-		$this->Access->ensure('read');
+		$this->Authorization->ensure('read');
 
 		$lo_pageRoles = $this->PageRoles->find('withAttributes')->where($this->getOverviewWhere());
 
@@ -41,7 +41,7 @@ class PageRolesController extends Controller {
 	 * @throws \Exception
 	 */
 	public function add (): void {
-		$this->Access->ensure('create');
+		$this->Authorization->ensure('create');
 
 		$lo_pageRole = $this->PageRoles->newDefaultEntity();
 		if ($this->request->is('post')) {
@@ -62,7 +62,7 @@ class PageRolesController extends Controller {
 	 * @throws \Exception
 	 */
 	public function edit () {
-		$this->Access->ensure('update');
+		$this->Authorization->ensure('update');
 
 		/** @var \Awyiss\Model\Entity\PageRole $lo_pageRole */
 		$lo_pageRole = $this->PageRoles->findById((int) $this->request->getParam('id'))->first();
@@ -90,7 +90,7 @@ class PageRolesController extends Controller {
 	 * @throws \Exception
 	 */
 	public function delete (): Response {
-		$this->Access->ensure('delete');
+		$this->Authorization->ensure('delete');
 
 		$this->request->allowMethod(['get', 'delete']);
 

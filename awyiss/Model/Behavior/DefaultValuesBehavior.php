@@ -72,7 +72,7 @@ class DefaultValuesBehavior extends Behavior {
 				};
 			}
 			catch (UnhandledMatchError) {
-				dd($la_typeMap[ $ls_column ]);
+				dd($la_typeMap[ $ls_column ], __FILE__, __LINE__);
 			}
 		}
 		unset($lx_default);

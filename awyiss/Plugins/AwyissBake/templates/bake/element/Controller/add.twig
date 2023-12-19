@@ -8,7 +8,7 @@
 	 * @throws \Exception
 	 */
 	public function add (): void {
-		$this->Access->ensure('create');
+		$this->Authorization->ensure('create');
 
 		$lo_{{ singularName }} = $this->{{ currentModelName }}->newDefaultEntity();
 		if ($this->request->is('post')) {

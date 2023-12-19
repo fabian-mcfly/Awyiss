@@ -34,7 +34,7 @@ class ContentsController extends Controller {
 		'name' => 'page_id',
 		'paginate' => FALSE,
 		'queryOptions' => [
-			'access' => ['skip' => FALSE],
+			'authorization' => ['skip' => FALSE],
 		],
 		'threaded' => TRUE,
 	];
@@ -56,7 +56,7 @@ class ContentsController extends Controller {
 	 * @throws \Exception
 	 */
 	public function overview (): void {
-		$this->Access->ensure('read');
+		$this->Authorization->ensure('read');
 
 		$lo_page = $this->getPage(intval($this->request->getParam('page-id')));
 
@@ -89,7 +89,7 @@ class ContentsController extends Controller {
 	 * @throws \Exception
 	 */
 	public function add (): void {
-		$this->Access->ensure('create');
+		$this->Authorization->ensure('create');
 
 		$lo_content = $this->Contents->newDefaultEntity([
 			'page_id' => $this->request->getParam('page-id'),
@@ -122,7 +122,7 @@ class ContentsController extends Controller {
 	 * @throws \Exception
 	 */
 	public function edit () {
-		$this->Access->ensure('update');
+		$this->Authorization->ensure('update');
 
 		/** @var Content $lo_content */
 		$lo_content = $this->Contents->findById((int) $this->request->getParam('id'))->first();
@@ -159,7 +159,7 @@ class ContentsController extends Controller {
 	 * @throws \Exception
 	 */
 	public function delete (): Response {
-		$this->Access->ensure('delete');
+		$this->Authorization->ensure('delete');
 
 		$this->request->allowMethod(['get', 'delete']);
 
@@ -231,7 +231,7 @@ class ContentsController extends Controller {
 	public function getContentTemplates (): ResultSetInterface {
 		if (!isset($this->contentTemplates)) {
 			$this->contentTemplates = $this->Contents->ContentTemplates->find('list')->find('active', [
-				'access' => ['skip' => TRUE],
+				'authorization' => ['skip' => TRUE],
 			])->all();
 		}
 
@@ -368,10 +368,10 @@ class ContentsController extends Controller {
 
 		$la_errors = $ao_content->getError('content_template_id');
 		try {
-			$lo_content_template = $this->Contents->ContentTemplates->get($ao_content->content_template_id, ['access' => ['skip' => TRUE]]);
+			$lo_content_template = $this->Contents->ContentTemplates->get($ao_content->content_template_id, ['authorization' => ['skip' => TRUE]]);
 		}
 		catch (RecordNotFoundException|InvalidPrimaryKeyException) {
-			$lo_content_template = $this->Contents->ContentTemplates->find('all', ['access' => ['skip' => TRUE]])->first();
+			$lo_content_template = $this->Contents->ContentTemplates->find('all', ['authorization' => ['skip' => TRUE]])->first();
 			$ao_content->content_template_id = $lo_content_template->id;
 
 			if ($la_errors) {

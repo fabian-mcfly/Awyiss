@@ -309,7 +309,7 @@ class Application extends BaseApplication {
 
 		$lo_pageRolesTable = FactoryLocator::get('Table')->get('PageRoles');
 		/** @var \Awyiss\Model\Entity\PageRole $lo_pageRole */
-		foreach ($lo_pageRolesTable->find('all')->applyOptions(['access' => ['skip' => TRUE]]) as $lo_pageRole) {
+		foreach ($lo_pageRolesTable->find('all')->applyOptions(['authorization' => ['skip' => TRUE]]) as $lo_pageRole) {
 			$ls_constant = 'PAGEROLE_' . strtoupper($lo_pageRole->identifier);
 			defined($ls_constant) || define($ls_constant, $lo_pageRole->id);
 		}

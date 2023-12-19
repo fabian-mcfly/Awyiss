@@ -10,7 +10,7 @@ use Awyiss\Authorization\Policy\AnonymousPolicy;
 use Awyiss\Core\App;
 use Awyiss\Event\EventListenersProvider;
 use Awyiss\Middleware\LocaleMiddleware;
-use Awyiss\Model\Behavior\AccessBehavior;
+use Awyiss\Model\Behavior\AuthorizationBehavior;
 use Awyiss\Model\Behavior\Translate\EavStrategy;
 use Awyiss\ORM\Association\BelongsTo;
 use Awyiss\ORM\Association\BelongsToMany;
@@ -36,10 +36,10 @@ use RuntimeException;
  * @method bool|int getHighestSystemOrder(EntityInterface $ao_entity)
  * @method string|AnonymousPolicy|NULL getPolicyClass()
  * @method array getSystemOrderRelatedColumns(?EntityInterface $ao_entity = NULL)
- * @method AccessBehavior setAuthorizationService(AuthorizationServiceInterface $ao_authorizationService)
- * @method AccessBehavior setPolicyClass(string|AnonymousPolicy|NULL $ax_policyClass)
- * @method AccessBehavior skipAccessCheck(bool $ab_skip = TRUE)
- * @method AccessBehavior skipAccessCheckOnce(bool $ab_skip = TRUE)
+ * @method AuthorizationBehavior setAuthorizationService(AuthorizationServiceInterface $ao_authorizationService)
+ * @method AuthorizationBehavior setPolicyClass(string|AnonymousPolicy|NULL $ax_policyClass)
+ * @method AuthorizationBehavior skipAuthorizationCheck(bool $ab_skip = TRUE)
+ * @method AuthorizationBehavior skipAuthorizationCheckOnce(bool $ab_skip = TRUE)
  */
 class Table extends \Cake\ORM\Table {
 	use InstanceConfigTrait;
@@ -128,8 +128,8 @@ class Table extends \Cake\ORM\Table {
 		EventListenersProvider::loadListener($this->getAlias(), defined('IS_BACKEND') && IS_BACKEND ? 'backend' : 'frontend');
 
 
-		$this->addBehavior('Access', $this->getConfig('access', []) + ['priority' => 1]);
 		$this->addBehavior('Audit', $this->getConfig('audit', []) + ['priority' => 99999]);
+		$this->addBehavior('Authorization', $this->getConfig('authorization', []) + ['priority' => 1]);
 		$this->addBehavior('AutoPrefix', $this->getConfig('autoPrefix', []) + ['priority' => 99999]);
 		$this->addBehavior('DefaultValues', $this->getConfig('defaultValues', []));
 		$this->addBehavior('EventTrigger', $this->getConfig('eventTrigger', []));
@@ -449,7 +449,7 @@ class Table extends \Cake\ORM\Table {
 			if ( ! $lo_attributes) {
 				$lo_attributesTable = FactoryLocator::get('Table')->get('Attributes');
 				$lo_attributes = $lo_attributesTable->find('all', [
-					'access' => [
+					'authorization' => [
 						'skip' => TRUE
 					],
 				])->all()->groupBy('scope');

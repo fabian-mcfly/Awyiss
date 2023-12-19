@@ -4,9 +4,9 @@
 namespace Awyiss\Authorization\Policy\Backend;
 
 
-use Awyiss\Authorization\AccessCollection;
-use Awyiss\Authorization\Permission\CallbackPermission;
 use Awyiss\Authorization\Permission\PermissionCollection;
+use Awyiss\Authorization\PermissionOption\CallbackPermissionOption;
+use Awyiss\Authorization\PermissionOption\PermissionOptionCollection;
 use Awyiss\Authorization\Policy\AbstractPolicy;
 use Awyiss\Model\Entity\Configuration;
 use Cake\Collection\Iterator\MapReduce;
@@ -15,23 +15,21 @@ use RuntimeException;
 
 
 /**
- * @todo convert this to a policy that uses CallbackPermission instead of SimplePermission since it's much more convenient to check for the "system" scope in a callback instead of multiple places (controller, model, helper, component)
- *
  * Permission for the Configuration scope of the backend
  */
 class ConfigurationPolicy extends AbstractPolicy {
-	protected static PermissionCollection $permissionCollection;
+	protected static PermissionOptionCollection $permissionOptionCollection;
 	protected static string $scope;
 
 	/**
-	 * Creates a `PermissionCollection` and four `CallbackPermission`
+	 * Creates a `PermissionOptionCollection` and four `CallbackPermission`
 	 * for the identifiers 'read', 'create', 'update' and 'delete' (CRUD).
 	 *
-	 * @return \Awyiss\Authorization\Permission\PermissionCollection
+	 * @return \Awyiss\Authorization\PermissionOption\PermissionOptionCollection
 	 * @throws \Exception
 	 */
-	protected static function loadPermissions (): PermissionCollection {
-		$lo_permissions = new PermissionCollection(static::getScope());
+	protected static function loadPermissionOptions (): PermissionOptionCollection {
+		$lo_permissions = new PermissionOptionCollection(static::getScope());
 
 		$la_callbacks = [
 			'general' => [static::class, 'callback'],
@@ -43,22 +41,22 @@ class ConfigurationPolicy extends AbstractPolicy {
 		];
 
 		$lo_permissions->load('read', [
-			'className' => CallbackPermission::class,
+			'className' => CallbackPermissionOption::class,
 			'callbacks' => $la_callbacks,
 		]);
 
 		$lo_permissions->load('create', [
-			'className' => CallbackPermission::class,
+			'className' => CallbackPermissionOption::class,
 			'callbacks' => $la_callbacks,
 		]);
 
 		$lo_permissions->load('update', [
-			'className' => CallbackPermission::class,
+			'className' => CallbackPermissionOption::class,
 			'callbacks' => $la_callbacks,
 		]);
 
 		$lo_permissions->load('delete', [
-			'className' => CallbackPermission::class,
+			'className' => CallbackPermissionOption::class,
 			'callbacks' => $la_callbacks,
 		]);
 
@@ -70,14 +68,14 @@ class ConfigurationPolicy extends AbstractPolicy {
 	 * @param null|bool $ab_accessible
 	 * @param array $aa_access
 	 * @param array $aa_additionalData
-	 * @param \Awyiss\Authorization\AccessCollection $ao_accessCollection
+	 * @param \Awyiss\Authorization\Permission\PermissionCollection $ao_permissionCollection
 	 *
 	 * @return null|bool
 	 * @throws \Exception
 	 *
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public static function callback (?bool $ab_accessible, array $aa_access, array $aa_additionalData, AccessCollection $ao_accessCollection): ?bool {
+	public static function callback (?bool $ab_accessible, mixed $ax_access, mixed $ax_settings, array $aa_additionalData, PermissionCollection $ao_permissionCollection): ?bool {
 		$lb_accessible = $ab_accessible;
 		//Only if the identifier itself is accessible, we must check the scope. So exit here already if it's not accessible.
 		if (! $lb_accessible) {
@@ -88,13 +86,14 @@ class ConfigurationPolicy extends AbstractPolicy {
 			throw new RuntimeException(sprintf('CallbackPermission in `%s` requires additional data (`scope`)', static::class));
 		}
 
+
 		$ls_scope = $aa_additionalData['scope'];
 		if ( ! $ls_scope) {
 			return $lb_accessible;
 		}
 
 		if ($ls_scope !== 'system') {
-			$lb_accessible = $ao_accessCollection->scopeIsAccessible($ls_scope, NULL, [], 'configure');
+			$lb_accessible = $ao_permissionCollection->scopeIsAccessible($ls_scope, [], 'configure');
 		}
 
 		return $lb_accessible;
@@ -105,7 +104,7 @@ class ConfigurationPolicy extends AbstractPolicy {
 	 * @param null|bool $ab_accessible
 	 * @param array $aa_access
 	 * @param array $aa_additionalData
-	 * @param \Awyiss\Authorization\AccessCollection $ao_accessCollection
+	 * @param \Awyiss\Authorization\Permission\PermissionCollection $ao_permissionCollection
 	 *
 	 * @return null|bool
 	 *
@@ -113,7 +112,7 @@ class ConfigurationPolicy extends AbstractPolicy {
 	 *
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public static function callbackForEntity (?bool $ab_accessible, array $aa_access, array $aa_additionalData, AccessCollection $ao_accessCollection): ?bool {
+	public static function callbackForEntity (?bool $ab_accessible, mixed $ax_access, mixed $ax_settings, array $aa_additionalData, PermissionCollection $ao_permissionCollection): ?bool {
 		$lb_accessible = $ab_accessible;
 		//Only if the identifier itself is accessible, we must check the scope. So exit here already if it's not accessible.
 		if (! $lb_accessible) {
@@ -127,7 +126,7 @@ class ConfigurationPolicy extends AbstractPolicy {
 
 		$ls_scope = $lo_entity->scope;
 		if ($ls_scope !== 'system') {
-			$lb_accessible = $ao_accessCollection->scopeIsAccessible($ls_scope, NULL, [], 'configure');
+			$lb_accessible = $ao_permissionCollection->scopeIsAccessible($ls_scope, [], 'configure');
 		}
 
 		return $lb_accessible;
@@ -138,13 +137,13 @@ class ConfigurationPolicy extends AbstractPolicy {
 	 * @param null|bool $ab_accessible
 	 * @param array $aa_access
 	 * @param array $aa_additionalData
-	 * @param \Awyiss\Authorization\AccessCollection $ao_accessCollection
+	 * @param \Awyiss\Authorization\Permission\PermissionCollection $ao_permissionCollection
 	 *
 	 * @return null|bool
 	 *
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public static function callbackForFind (?bool $ab_accessible, array $aa_access, array $aa_additionalData, AccessCollection $ao_accessCollection): ?bool {
+	public static function callbackForFind (?bool $ab_accessible, mixed $ax_access, mixed $ax_settings, array $aa_additionalData, PermissionCollection $ao_permissionCollection): ?bool {
 		//Only if the identifier itself is accessible, we must check the scope. So exit here already if it's not accessible.
 		if (! $ab_accessible) {
 			return $ab_accessible;
@@ -156,8 +155,8 @@ class ConfigurationPolicy extends AbstractPolicy {
 		}
 
 		//Apply a mapReduce call that'll remove all entities from the query, except those that are re-added using the `emit()`-method
-		$lo_query->mapReduce(function(Configuration|array $ao_entity, int $ai_key, MapReduce $ao_mapReduce) use ($ao_accessCollection) {
-			if ( ! $ao_entity instanceof Configuration) {
+		$lo_query->mapReduce(function(Configuration|array $ao_entity, int $ai_key, MapReduce $ao_mapReduce) use ($ao_permissionCollection) {
+			if ( ! $ao_entity instanceof Configuration || $ao_entity->scope === 'system') {
 				$ao_mapReduce->emit($ao_entity);
 				return;
 			}
@@ -165,11 +164,11 @@ class ConfigurationPolicy extends AbstractPolicy {
 			static $la_checkedScopes = [];
 
 			if ( ! array_key_exists($ao_entity->scope, $la_checkedScopes)) {
-				$la_checkedScopes[ $ao_entity->scope ] = $ao_accessCollection->scopeIsAccessible($ao_entity->scope, NULL, [], 'configure');
+				$la_checkedScopes[ $ao_entity->scope ] = $ao_permissionCollection->scopeIsAccessible($ao_entity->scope, [], 'configure');
 			}
 
 			//If the scope 'system' or if it's accessible, append it to the final list of results
-			if ($ao_entity->scope === 'system' || $la_checkedScopes[ $ao_entity->scope ]) {
+			if ($la_checkedScopes[ $ao_entity->scope ]) {
 				$ao_mapReduce->emit($ao_entity);
 			}
 		});

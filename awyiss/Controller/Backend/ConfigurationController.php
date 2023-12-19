@@ -67,7 +67,7 @@ class ConfigurationController extends Controller {
 			}
 
 			//If the selected scope is not inside the available configuration scopes, reset it to the first available one.
-			/*if (! array_key_exists($ls_scope, $this->configScopes)) {
+			if (! array_key_exists($ls_scope, $this->configScopes)) {
 				$ls_scope = array_key_first($this->configScopes);
 
 				if ($lo_session->started()) {
@@ -76,7 +76,7 @@ class ConfigurationController extends Controller {
 
 				//Redirect to remove the invalid scope parameter from the URL
 				$this->redirect(['action' => 'overview']);
-			}*/
+			}
 
 			$this->setOverviewWhere('scope', $ls_scope);
 		}
@@ -91,11 +91,11 @@ class ConfigurationController extends Controller {
 	 * @throws \Exception
 	 */
 	public function overview () {
-		$this->Access->setAdditionalData([
+		$this->Authorization->setAdditionalData([
 			'scope' => '',
 		])->ensure('read');
 
-		if (! $this->Access->withAdditionalData([
+		if (! $this->Authorization->withAdditionalData([
 			'scope' => $this->getOverviewWhere('scope'),
 		])->isAccessible('read')) {
 			$this->Flash->error(__('::scope_not_accessible'));
@@ -103,7 +103,7 @@ class ConfigurationController extends Controller {
 			return $this->redirect(['action' => 'overview', 'scope' => 'system']);
 		}
 
-		$lo_configuration = $this->Configuration->find('withAttributes')//->where($this->getOverviewWhere())
+		$lo_configuration = $this->Configuration->find('withAttributes')->where($this->getOverviewWhere())
 		->order([
 			'name' => 'ASC',
 			'language_shortcode' => 'ASC',
@@ -129,7 +129,7 @@ class ConfigurationController extends Controller {
 	 * @throws \Exception
 	 */
 	public function add (): void {
-		$this->Access->setAdditionalData([
+		$this->Authorization->setAdditionalData([
 			'scope' => '',
 		])->ensure('create');
 
@@ -161,7 +161,7 @@ class ConfigurationController extends Controller {
 	 * @throws \Exception
 	 */
 	public function edit () {
-		$this->Access->setAdditionalData([
+		$this->Authorization->setAdditionalData([
 			'scope' => '',
 		])->ensure('update');
 
@@ -177,7 +177,7 @@ class ConfigurationController extends Controller {
 			$this->save($lo_configuration, 'edit');
 		}
 		else {
-			if (! $this->Access->withAdditionalData([
+			if (! $this->Authorization->withAdditionalData([
 				'scope' => $lo_configuration->scope,
 			])->isAccessible('read')) {
 				$this->Flash->error(__('::scope_not_accessible'));
@@ -204,7 +204,7 @@ class ConfigurationController extends Controller {
 	 * @throws \Exception
 	 */
 	public function delete (): Response {
-		$this->Access->setAdditionalData([
+		$this->Authorization->setAdditionalData([
 			'scope' => '',
 		])->ensure('delete');
 
@@ -238,7 +238,7 @@ class ConfigurationController extends Controller {
 	protected function save (Configuration $ao_configuration, string $as_method = 'add'): void {
 		$this->Configuration->patchEntity($ao_configuration, $this->request->getData());
 
-		if (! $this->Access->withAdditionalData([
+		if (! $this->Authorization->withAdditionalData([
 			'scope' => $ao_configuration->scope,
 		])->isAccessible('read')) {
 			$this->Flash->error(__('::scope_not_accessible'));

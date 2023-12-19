@@ -7,7 +7,7 @@
 	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
 	public function overview (): void {
-		$this->Access->ensure('read');
+		$this->Authorization->ensure('read');
 
 {% set belongsTo = Bake.aliasExtractor(modelObj, 'BelongsTo') %}
 {% if belongsTo %}

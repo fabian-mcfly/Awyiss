@@ -2,7 +2,10 @@
 {#@var _view \Awyiss\View\BackendView #}
 
 <div class="Pages Overview">
-	{{ helper_Html_link(__('::create'), {action : 'add'}, {class : 'Button' }) }}
+	{% if helper_Authorization_isAccessible('create') %}
+		{{ helper_Html_link(__('::create'), {action : 'add'}, {class : 'Button' }) }}
+	{% endif %}
+
 	<h1>{{ __('::headline_overview') }}</h1>
 	<div class="table-responsive">
 		<table>
@@ -29,21 +32,21 @@
 						<td>{{ lo_page.duplicate_of }}</td>
 						<td>{{ lo_page.active }}</td>
 						<td class="actions">
-							{% if helper_Access_scopeIsAccessible('Contents', NULL, NULL, ['read']) %}
+							{% if helper_Authorization_scopeIsAccessible('Contents', NULL, ['read']) %}
 								{{ helper_Html_link(__('::view_contents'), {controller: 'contents', action: 'overview', page_id: lo_page.id}) }}
 							{% endif %}
 
-							{% do helper_Access_setPolicyClass(policyClass) %}
+							{% do helper_Authorization_setPolicyClass(policyClass) %}
 
-							{% if helper_Access_isAccessible('update') %}
+							{% if helper_Authorization_isAccessible('update') %}
 								{{ helper_Html_link(__('::edit'), {action: 'edit', id: lo_page.id}) }}
 							{% endif %}
 
-							{% if helper_Access_isAccessible('delete') %}
+							{% if helper_Authorization_isAccessible('delete') %}
 								{{ helper_Html_link(__('::delete'), {action: 'delete', id: lo_page.id}, {confirm: __('::confirm_delete', lo_page.id) }) }}
 							{% endif %}
 
-							{% do helper_Access_setPolicyClass(NULL) %}
+							{% do helper_Authorization_setPolicyClass(NULL) %}
 						</td>
 					</tr>
 				{% endfor %}

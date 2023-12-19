@@ -16,7 +16,6 @@ namespace AwyissBake\Command\Bake;
  * 		\AwyissBake\Command\Bake\ModelCommand
  * 		\AwyissBake\Command\Bake\TemplateCommand
  *
- * @todo Bake Policy
  */
 class AllCommand extends \Bake\Command\AllCommand {
 	/**
@@ -25,6 +24,7 @@ class AllCommand extends \Bake\Command\AllCommand {
 	protected $commands = [
 		ModelCommand::class,
 		ControllerCommand::class,
+		PolicyCommand::class,
 		TemplateCommand::class,
 	];
 }

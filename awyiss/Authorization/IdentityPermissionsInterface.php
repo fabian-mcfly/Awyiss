@@ -4,14 +4,17 @@
 namespace Awyiss\Authorization;
 
 
+use Awyiss\Authorization\Permission\PermissionCollection;
+
+
 /**
  * Identity interface
  */
 interface IdentityPermissionsInterface {
 	/**
-	 * Return the AccessCollection that's saved for this identity
+	 * Return the PermissionCollection that's saved for this identity
 	 *
-	 * @return \Awyiss\Authorization\AccessCollection
+	 * @return \Awyiss\Authorization\Permission\PermissionCollection
 	 */
-	public function getAccess (): AccessCollection;
+	public function getPermissionCollection (): PermissionCollection;
 }

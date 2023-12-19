@@ -10,7 +10,7 @@ use RuntimeException;
 
 
 /**
- * Provide access to all ConfigOptions classes in both the Awyiss and the custom namespace.
+ * Provides access to all ConfigOptions classes in both the Awyiss and the custom namespace.
  */
 class ConfigOptionsProvider {
 	/**

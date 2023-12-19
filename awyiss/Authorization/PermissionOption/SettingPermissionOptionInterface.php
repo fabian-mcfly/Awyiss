@@ -1,20 +1,20 @@
 <?php declare(strict_types=1);
 
 
-namespace Awyiss\Authorization\Permission;
+namespace Awyiss\Authorization\PermissionOption;
 
 
-use Awyiss\Authorization\Permission\Setting\SettingCollection;
+use Awyiss\Authorization\PermissionOption\Setting\SettingCollection;
 
 
 /**
  * Interface with method signatures for a Permission that offers additional settings.
  */
-interface SettingPermissionInterface {
+interface SettingPermissionOptionInterface {
 	/**
 	 * Returns the `SettingCollection` that was set for this Permission
 	 *
-	 * @return \Awyiss\Authorization\Permission\Setting\SettingCollection
+	 * @return \Awyiss\Authorization\PermissionOption\Setting\SettingCollection
 	 * @noinspection PhpUnused
 	 */
 	public function getSettings (): SettingCollection;
@@ -23,7 +23,7 @@ interface SettingPermissionInterface {
 	/**
 	 * Sets the `SettingCollection` for this Permission
 	 *
-	 * @param \Awyiss\Authorization\Permission\Setting\SettingCollection $ao_settings
+	 * @param \Awyiss\Authorization\PermissionOption\Setting\SettingCollection $ao_settings
 	 *
 	 * @return $this
 	 * @noinspection PhpUnused

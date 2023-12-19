@@ -3,8 +3,8 @@
 {# @var _view \Awyiss\View\BackendView #}
 
 <div class="Contents Overview">
-	{% if helper_Access_isAccessible('create') %}
-		{{ helper_Html_link(__('::create'), {action : 'add', page_id: ao_page.id}, {class : 'Button'}) }}
+	{% if helper_Authorization_isAccessible('create') %}
+		{{ helper_Html_link(__('::create'), {action: 'add', page_id: ao_page.id}, {class : 'Button'}) }}
 	{% endif %}
 
 	<h1>{{ __('::headline_overview') }}</h1>
@@ -44,10 +44,10 @@
 								<td>{{ lo_content.subtitle }}</td>
 								<td>{{ helper_Number_format(lo_content.columnwidth) }}</td>
 								<td class="actions">
-									{% if helper_Access_isAccessible('update') %}
+									{% if helper_Authorization_isAccessible('update') %}
 										{{ helper_Html_link(__('::edit'), {action: 'edit', id: lo_content.id}) }}
 									{% endif %}
-									{% if helper_Access_isAccessible('delete') %}
+									{% if helper_Authorization_isAccessible('delete') %}
 										{{ helper_Html_link(__('::delete'), {action: 'delete', id: lo_content.id}, {confirm: __('::confirm_delete', lo_content.id) }) }}
 									{% endif %}
 								</td>

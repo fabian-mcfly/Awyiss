@@ -14,7 +14,7 @@ use RuntimeException;
 /**
  * Provides access to an instance of `AuthenticationService` and allows retreiving policies
  *
- * @see \Authentication\AuthenticationServiceInterface
+ * @see AuthorizationServiceInterface
  */
 class AuthorizationService implements AuthorizationServiceInterface {
 	protected array $policies = [];

@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 /**
- * @var \Awyiss\Authorization\Permission\SimplePermission $ao_permission
+ * @var \Awyiss\Authorization\PermissionOption\SimplePermissionOption $ao_permission
  * @var \Awyiss\Model\Entity|NULL $ao_entity
  * @var string $as_identifier
  * @var string $as_scope

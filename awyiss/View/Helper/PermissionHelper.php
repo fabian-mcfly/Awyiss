@@ -4,7 +4,7 @@
 namespace Awyiss\View\Helper;
 
 
-use Awyiss\Authorization\Permission\PermissionInterface;
+use Awyiss\Authorization\PermissionOption\PermissionOptionInterface;
 use Awyiss\Model\Entity;
 use Cake\View\Helper;
 use RuntimeException;
@@ -20,15 +20,15 @@ class PermissionHelper extends Helper {
 	 * If no filename was provided, use the type and the preferred input of the permission.
 	 * For example `element\authorization\permission\simple_radio`
 	 *
-	 * @param \Awyiss\Authorization\Permission\PermissionInterface $ao_permission
+	 * @param \Awyiss\Authorization\PermissionOption\PermissionOptionInterface $ao_permission
 	 * @param null|\Awyiss\Model\Entity $ao_entity
 	 * @param null|string $as_fileName
 	 * @param null|string $as_subDir
 	 *
 	 * @return string
 	 */
-	public function options (PermissionInterface $ao_permission, ?Entity $ao_entity = NULL, ?string $as_fileName = NULL, ?string $as_subDir = NULL): string {
-		$ls_subDir = 'authorization' . DS . 'permission';
+	public function options (PermissionOptionInterface $ao_permission, ?Entity $ao_entity = NULL, ?string $as_fileName = NULL, ?string $as_subDir = NULL): string {
+		$ls_subDir = 'authorization' . DS . 'permission_option';
 		if ( ! empty($as_subDir)) {
 			$ls_subDir = trim($as_subDir, DS) . DS . $ls_subDir;
 		}
@@ -47,7 +47,7 @@ class PermissionHelper extends Helper {
 		$la_viewData = [
 			'ao_permission' => $ao_permission,
 			'ao_entity' => $ao_entity,
-			'as_scope' => $ao_permission->getPermissionCollection()->getScope(),
+			'as_scope' => $ao_permission->getPermissionOptionCollection()->getScope(),
 			'as_identifier' => $ao_permission->getConfig('identifier'),
 		];
 

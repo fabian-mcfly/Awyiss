@@ -51,7 +51,7 @@ class CategoriesComponent extends Component {
 		'paginate' => TRUE,
 		'queryConditions' => [],
 		'queryOptions' => [
-			'access' => ['skip' => TRUE],
+			'authorization' => ['skip' => TRUE],
 		],
 		'selectedCategory' => NULL,
 		'tableName' => NULL,

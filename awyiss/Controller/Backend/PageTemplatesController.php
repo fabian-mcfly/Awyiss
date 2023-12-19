@@ -32,7 +32,7 @@ class PageTemplatesController extends Controller {
 	 * @throws \Exception
 	 */
 	public function overview (): void {
-		$this->Access->ensure('read');
+		$this->Authorization->ensure('read');
 
 		//$lo_pageTemplates = $this->Categories->filterQuery($this->PageTemplates->find('withAttributes'));
 		$lo_pageTemplates = $this->PageTemplates->find('withAttributes')->where($this->getOverviewWhere());
@@ -52,7 +52,7 @@ class PageTemplatesController extends Controller {
 	 * @throws \Exception
 	 */
 	public function add (): void {
-		$this->Access->ensure('create');
+		$this->Authorization->ensure('create');
 
 		$lo_pageTemplate = $this->PageTemplates->newDefaultEntity();
 		if ($this->request->is('post')) {
@@ -76,7 +76,7 @@ class PageTemplatesController extends Controller {
 	 * @throws \Exception
 	 */
 	public function edit () {
-		$this->Access->ensure('update');
+		$this->Authorization->ensure('update');
 
 		/** @var PageTemplate $lo_pageTemplate */
 		$lo_pageTemplate = $this->PageTemplates->findById((int) $this->request->getParam('id'))->first();
@@ -107,7 +107,7 @@ class PageTemplatesController extends Controller {
 	 * @throws \Exception
 	 */
 	public function delete (): Response {
-		$this->Access->ensure('delete');
+		$this->Authorization->ensure('delete');
 
 		$this->request->allowMethod(['get', 'delete']);
 

@@ -160,7 +160,7 @@ class Authentication implements AuthenticationServiceProviderInterface {
 			],
 			'loginUrl' => $this->dispatchEvent('Authentication.requestLoginUrl', [
 				'lang' => $ls_lang,
-			], $this),
+			], $this)->getResult(),
 		], 20);
 	}
 
@@ -256,7 +256,7 @@ class Authentication implements AuthenticationServiceProviderInterface {
 		$this->addIdentifier(PasswordIdentifier::class, [
 			'resolver' => [
 				'className' => OrmResolver::class,
-				'finder' => ['active' => ['access' => ['skip' => TRUE]]],
+				'finder' => ['active' => ['authorization' => ['skip' => TRUE]]],
 			],
 		]);
 	}

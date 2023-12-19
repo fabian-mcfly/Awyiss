@@ -4,7 +4,7 @@
 namespace Awyiss\Authorization\Policy\Backend;
 
 
-use Awyiss\Authorization\Permission\PermissionCollection;
+use Awyiss\Authorization\PermissionOption\PermissionOptionCollection;
 use Awyiss\Authorization\Policy\AbstractPolicy;
 
 
@@ -12,6 +12,6 @@ use Awyiss\Authorization\Policy\AbstractPolicy;
  * Permission for the PageTemplates scope of the backend
  */
 class PageTemplatesPolicy extends AbstractPolicy {
-	protected static PermissionCollection $permissionCollection;
+	protected static PermissionOptionCollection $permissionOptionCollection;
 	protected static string $scope;
 }

@@ -60,9 +60,9 @@ class TableLocator extends BaseTableLocator {
 				$lo_table->setPageRoleId(constant($ls_constant));
 
 				$ls_identifier = Inflector::pluralize($ls_singular);
-				if ($lo_table->hasBehavior('Access')) {
+				if ($lo_table->hasBehavior('Authorization')) {
 					/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-					$lo_table->getBehavior('Access')->setScope($ls_identifier);
+					$lo_table->getBehavior('Authorization')->setScope($ls_identifier);
 				}
 			}
 			else {

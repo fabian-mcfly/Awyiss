@@ -31,7 +31,7 @@ class UsergroupPermissionsTable extends Table {
 	 * @inheritDoc
 	 */
 	protected array $_defaultConfig = [
-		'access' => [
+		'authorization' => [
 			'identifiers' => [
 				//We use the usergroups-scope, creating a permission will occur when creating or updating a usergroup
 				'Entity.create' => [['create', 'update']],

@@ -22,8 +22,8 @@ class BackendView extends AppView {
 	public function initialize (): void {
 		parent::initialize();
 
-		$this->loadHelper('Access');
 		$this->loadHelper('Authentication.Identity');
+		$this->loadHelper('Authorization');
 		$this->loadHelper('Paginator', ['templates' => 'paginator_templates']);
 		$this->loadHelper('SystemOrder', [
 			'templates' => [

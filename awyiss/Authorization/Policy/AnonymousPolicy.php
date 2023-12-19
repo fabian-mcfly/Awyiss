@@ -4,9 +4,9 @@
 namespace Awyiss\Authorization\Policy;
 
 
-use Awyiss\Authorization\Permission\PermissionCollection;
-use Awyiss\Authorization\Permission\PermissionInterface;
-use Awyiss\Authorization\Permission\SimplePermission;
+use Awyiss\Authorization\PermissionOption\PermissionOptionCollection;
+use Awyiss\Authorization\PermissionOption\PermissionOptionInterface;
+use Awyiss\Authorization\PermissionOption\SimplePermissionOption;
 use Awyiss\Configuration\ConfigOptionsProvider;
 
 
@@ -17,10 +17,10 @@ use Awyiss\Configuration\ConfigOptionsProvider;
  *
  * It needs to provide non-static methods so itcan be used for multiple pages/page roles at the same time.
  *
- * @see \Awyiss\Authorization\Permission\SimplePermission
+ * @see \Awyiss\Authorization\PermissionOption\SimplePermissionOption
  */
 class AnonymousPolicy {
-	protected PermissionCollection $permissionCollection;
+	protected PermissionOptionCollection $permissionOptionCollection;
 	protected string $scope;
 
 
@@ -45,17 +45,17 @@ class AnonymousPolicy {
 
 
 	/**
-	 * Returns the complete `PermissionCollection`
+	 * Returns the complete `PermissionOptionCollection`
 	 *
-	 * @return \Awyiss\Authorization\Permission\PermissionCollection
+	 * @return \Awyiss\Authorization\PermissionOption\PermissionOptionCollection
 	 * @throws \Exception
 	 */
-	public function getPermissions (): PermissionCollection {
-		if (!isset($this->permissionCollection)) {
-			$this->permissionCollection = static::loadPermissions();
+	public function getPermissionOptions (): PermissionOptionCollection {
+		if (!isset($this->permissionOptionCollection)) {
+			$this->permissionOptionCollection = static::loadPermissionOptions();
 		}
 
-		return $this->permissionCollection;
+		return $this->permissionOptionCollection;
 	}
 
 
@@ -64,18 +64,18 @@ class AnonymousPolicy {
 	 *
 	 * @param string $as_identifier
 	 *
-	 * @return NULL|\Awyiss\Authorization\Permission\PermissionInterface
+	 * @return NULL|\Awyiss\Authorization\PermissionOption\PermissionOptionInterface
 	 *
 	 * @throws \Exception
 	 * @throws \RuntimeException
 	 */
-	public function getPermission (string $as_identifier): ?PermissionInterface {
-		if (!isset($this->permissionCollection)) {
-			$this->permissionCollection = $this->loadPermissions();
+	public function getPermissionOption (string $as_identifier): ?PermissionOptionInterface {
+		if (!isset($this->permissionOptionCollection)) {
+			$this->permissionOptionCollection = $this->loadPermissionOptions();
 		}
 
-		if ($this->permissionCollection->has($as_identifier)) {
-			return $this->permissionCollection->get($as_identifier);
+		if ($this->permissionOptionCollection->has($as_identifier)) {
+			return $this->permissionOptionCollection->get($as_identifier);
 		}
 
 		return NULL;
@@ -83,36 +83,36 @@ class AnonymousPolicy {
 
 
 	/**
-	 * Creates a `PermissionCollection` and four `SimplePermission`
+	 * Creates a `PermissionOptionCollection` and four `SimplePermission`
 	 * for the identifiers 'read', 'create', 'update' and 'delete' (CRUD).
 	 *
-	 * @return \Awyiss\Authorization\Permission\PermissionCollection
+	 * @return \Awyiss\Authorization\PermissionOption\PermissionOptionCollection
 	 *
 	 * @throws \Exception
 	 * @throws \RuntimeException
 	 */
-	protected function loadPermissions (): PermissionCollection {
-		$lo_permissions = new PermissionCollection($this->getScope());
+	protected function loadPermissionOptions (): PermissionOptionCollection {
+		$lo_permissions = new PermissionOptionCollection($this->getScope());
 
 		$lo_permissions->load('read', [
-			'className' => SimplePermission::class,
+			'className' => SimplePermissionOption::class,
 		]);
 
 		$lo_permissions->load('create', [
-			'className' => SimplePermission::class,
+			'className' => SimplePermissionOption::class,
 		]);
 
 		$lo_permissions->load('update', [
-			'className' => SimplePermission::class,
+			'className' => SimplePermissionOption::class,
 		]);
 
 		$lo_permissions->load('delete', [
-			'className' => SimplePermission::class,
+			'className' => SimplePermissionOption::class,
 		]);
 
 		if (ConfigOptionsProvider::getConfigurationFile($this->getScope())) {
 			$lo_permissions->load('configure', [
-				'className' => SimplePermission::class,
+				'className' => SimplePermissionOption::class,
 			]);
 		}
 

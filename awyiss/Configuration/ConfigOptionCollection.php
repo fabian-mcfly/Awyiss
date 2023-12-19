@@ -12,11 +12,11 @@ use RuntimeException;
 /**
  * A class to collect multiple ConfigOptions instances or nested ConfigOptionsCollection instances
  */
-class ConfigOptionsCollection extends ArrayObject {
+class ConfigOptionCollection extends ArrayObject {
 	/**
-	 * @var NULL|\Awyiss\Configuration\ConfigOptionsCollection
+	 * @var NULL|\Awyiss\Configuration\ConfigOptionCollection
 	 */
-	protected ?ConfigOptionsCollection $parentConfigOptionsCollections = NULL;
+	protected ?ConfigOptionCollection $parentConfigOptionsCollections = NULL;
 	/**
 	 * @var string
 	 */
@@ -38,7 +38,7 @@ class ConfigOptionsCollection extends ArrayObject {
 	/**
 	 * Adds a ConfigOption or a set of elements, containing nested ConfigOptions or ConfigOptionsCollection to this collection
 	 *
-	 * @param array<int|string, \Awyiss\Configuration\ConfigOptionsCollection|\Awyiss\Configuration\ConfigOption|array>|\Awyiss\Configuration\ConfigOption $ax_configOption
+	 * @param array<int|string, \Awyiss\Configuration\ConfigOptionCollection|\Awyiss\Configuration\ConfigOption|array>|\Awyiss\Configuration\ConfigOption $ax_configOption
 	 *
 	 * @return $this
 	 */
@@ -64,7 +64,7 @@ class ConfigOptionsCollection extends ArrayObject {
 		foreach ($ax_configOption as $lx_key => $lx_configOption) {
 			//If the key is a string, add a new sub-collection with that given name, containing everything in $lx_configOption
 			if (is_string($lx_key)) {
-				$lo_collection = new ConfigOptionsCollection($lx_key);
+				$lo_collection = new ConfigOptionCollection($lx_key);
 				$lo_collection->add($lx_configOption);
 
 				$this->addCollection($lo_collection);
@@ -73,7 +73,7 @@ class ConfigOptionsCollection extends ArrayObject {
 			}
 
 			//If the current value is an instance of ConfigOptionsCollection, add it as a new sub-collection
-			if ($lx_configOption instanceof ConfigOptionsCollection) {
+			if ($lx_configOption instanceof ConfigOptionCollection) {
 				$this->addCollection($lx_configOption);
 			}
 			//If the current value is an instance of ConfigOption, add it as is
@@ -97,13 +97,13 @@ class ConfigOptionsCollection extends ArrayObject {
 	 * Adds the given ConfigOptionsCollection as a sub-collection to the current one.
 	 * If the name of the ConfigOptionsCollection already exists in the current one, a `RuntimeException` is thrown.
 	 *
-	 * @param \Awyiss\Configuration\ConfigOptionsCollection $ao_configOptionsCollection
+	 * @param \Awyiss\Configuration\ConfigOptionCollection $ao_configOptionsCollection
 	 *
 	 * @return $this
 	 *
 	 * @throws \RuntimeException
 	 */
-	public function addCollection (ConfigOptionsCollection $ao_configOptionsCollection): static {
+	public function addCollection (ConfigOptionCollection $ao_configOptionsCollection): static {
 		$ls_name = $ao_configOptionsCollection->getName();
 
 		if ($this->offsetExists($ls_name)) {
@@ -124,11 +124,11 @@ class ConfigOptionsCollection extends ArrayObject {
 	 * This allows not only traversing from the uppermost level into the depths of all collections, but also
 	 * from the deepest one. Useful to the surface to retreive all names of the parent collections to form an identifier
 	 *
-	 * @param \Awyiss\Configuration\ConfigOptionsCollection $ao_configOptionsCollection
+	 * @param \Awyiss\Configuration\ConfigOptionCollection $ao_configOptionsCollection
 	 *
 	 * @return $this
 	 */
-	public function setParentCollection (ConfigOptionsCollection $ao_configOptionsCollection): static {
+	public function setParentCollection (ConfigOptionCollection $ao_configOptionsCollection): static {
 		$this->parentConfigOptionsCollections = $ao_configOptionsCollection;
 
 		return $this;

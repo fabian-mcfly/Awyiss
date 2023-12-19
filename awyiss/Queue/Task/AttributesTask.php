@@ -195,7 +195,7 @@ class AttributesTask extends Task/* implements AddInterface*/ {
 
 			$lo_table = $this->getTableLocator()->get('Attributes');
 			$lo_entity = $lo_table->get($li_id, [
-				'access' => [
+				'authorization' => [
 					'skip' => TRUE
 				],
 			]);
