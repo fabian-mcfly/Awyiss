@@ -5,9 +5,15 @@ namespace Awyiss\Controller\Backend;
 
 
 use Awyiss\Controller\BackendController as Controller;
-use Cake\Datasource\Exception\InvalidPrimaryKeyException;
-use Cake\Datasource\Exception\RecordNotFoundException;
+use Awyiss\Model\Entity\User;
+use Awyiss\Model\Entity\UsersExternal;
 use Cake\Event\EventInterface;
+use Cake\Http\Exception\RedirectException;
+use Cake\Http\Response;
+use Cake\I18n\FrozenTime;
+use Cake\Routing\Router;
+use Cake\Utility\Security;
+
 
 //awyiss: $2y$10$B1IWA5ic5yFJCbxB7kvKD.hnfrA3M34LPtOH5y.zrK0b6PpAHj.Eu
 
@@ -16,9 +22,11 @@ use Cake\Event\EventInterface;
  * Users Controller
  *
  * @property \Awyiss\Model\Table\UsersTable $Users
- * @method \Awyiss\Model\Entity\User[]|\Cake\Datasource\ResultSetInterface paginate($object = NULL, array $settings = [])
  */
 class UsersController extends Controller {
+	/**
+	 * @inheritDoc
+	 */
 	public array $categorize = [
 		'allowUnassigned' => TRUE,
 		'associationName' => 'Usergroups',
@@ -45,19 +53,11 @@ class UsersController extends Controller {
 	/**
 	 * Overview method
 	 *
-	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
-	 *
+	 * @return void
 	 * @throws \Exception
-	 *
-	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
-	public function overview () {
+	public function overview (): void {
 		$this->Access->ensure('read');
-
-		/*$lo_users = $this->Users->find('withAttributes');
-		if ($this->Access->scopeIsAccessible($this->categorize['associationName'], NULL, ['read'])) {
-			$lo_users = $this->Categories->filterQuery($lo_users);
-		}*/
 
 		$lo_users = $this->Users->find('withAttributes')->where($this->getOverviewWhere());
 		$lo_users = $this->Categories->filterQuery($lo_users);
@@ -72,43 +72,16 @@ class UsersController extends Controller {
 	/**
 	 * Add method
 	 *
-	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
-	 *
+	 * @return void
 	 * @throws \Exception
-	 *
-	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
-	public function add () {
+	public function add (): void {
 		$this->Access->ensure('create');
 
 		$lo_user = $this->Users->newDefaultEntity();
+
 		if ($this->request->is('post')) {
-
-			/*
-			 * Skip Access Check for Usergroups. Even without access to the scope "Usergroups"
-			 * the current user can modify the affiliation(s) of users
-			 */
-			$this->Users->Usergroups->skipAccessCheck();
-
-			$this->Users->patchEntity($lo_user, $this->request->getData(), ['associated' => ['Usergroups' => ['onlyIds' => TRUE]]]);
-
-			if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-				if ($this->Users->save($lo_user)) {
-					$this->Flash->success(__('::add_succeeded'));
-
-					if ($this->request->getData('submit') == 'submit_close') {
-						return $this->redirect(['action' => 'overview']);
-					}
-
-					return $this->redirect(['action' => 'edit', 'id' => $lo_user->id]);
-				}
-
-				$this->Flash->error(__('::add_failed'));
-				$this->Flash->error(implode('<br>' . PHP_EOL, $lo_user->getError('_general')));
-			}
-
-			//Enable Access Check for Usergroups
-			$this->Users->Usergroups->skipAccessCheck(FALSE);
+			$this->save($lo_user);
 		}
 
 		if (empty($lo_user->usergroups)) {
@@ -125,11 +98,9 @@ class UsersController extends Controller {
 	/**
 	 * Edit method
 	 *
-	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
+	 * @return void|?\Cake\Http\Response
 	 *
 	 * @throws \Exception
-	 *
-	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
 	public function edit () {
 		$this->Access->ensure('update');
@@ -140,44 +111,23 @@ class UsersController extends Controller {
 		 */
 		$this->Users->Usergroups->skipAccessCheck();
 
-		try {
-			$li_id = $this->request->getParam('id');
-			/** @var \Awyiss\Model\Entity\User $lo_user */
-			$lo_user = $this->Users->get($li_id, ['contain' => ['Usergroups']]);
-		}
-		catch (RecordNotFoundException|InvalidPrimaryKeyException) {
+		/** @var User $lo_user */
+		$lo_user = $this->Users->findById((int) $this->request->getParam('id'))->contain(['Usergroups'])->first();
+		if ( ! $lo_user) {
 			$this->Flash->error(__('::record_not_found'));
 
 			return $this->redirect(['action' => 'overview']);
 		}
 
+		$this->Users->Usergroups->skipAccessCheck(FALSE);
+
 		if ($this->request->is(['patch', 'post', 'put'])) {
-			$la_data = $this->request->getData();
-			if (empty($la_data['password'])) {
-				unset($la_data['password']);
-			}
-
-			$this->Users->patchEntity($lo_user, $la_data, [
-				'associated' => ['Usergroups' => ['onlyIds' => TRUE]]
-			]);
-
-			if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-				if ($this->Users->save($lo_user)) {
-					$this->Flash->success(__('::edit_succeeded'));
-
-					if ($this->request->getData('submit') == 'submit_close') {
-						return $this->redirect(['action' => 'overview']);
-					}
-
-					return $this->redirect(['action' => 'edit', 'id' => $lo_user->id]);
-				}
-
-				$this->Flash->error(__('::edit_failed'));
-				$this->Flash->error(implode('<br>' . PHP_EOL, $lo_user->getError('_general')));
-			}
+			$this->save($lo_user, 'edit');
 		}
 
-		$this->Users->Usergroups->skipAccessCheck(FALSE);
+		if (empty($lo_user->usergroups)) {
+			$lo_user->usergroups = [];
+		}
 
 		$this->set([
 			'ao_user' => $lo_user,
@@ -189,24 +139,19 @@ class UsersController extends Controller {
 	/**
 	 * Delete method
 	 *
-	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
+	 * @return \Cake\Http\Response
 	 *
 	 * @throws \Exception
-	 *
-	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
-	public function delete () {
+	public function delete (): Response {
 		$this->Access->ensure('delete');
 
 		$this->request->allowMethod(['get', 'delete']);
 
-		try {
-			$li_id = $this->request->getParam('id');
-			/** @var \Awyiss\Model\Entity\User $lo_user */
-			$lo_user = $this->Users->get($li_id);
-		}
-		catch (RecordNotFoundException|InvalidPrimaryKeyException) {
+		$lo_user = $this->Users->findById((int) $this->request->getParam('id'))->first();
+		if ( ! $lo_user) {
 			$this->Flash->error(__('::record_not_found'));
+
 			return $this->redirect(['action' => 'overview']);
 		}
 
@@ -222,42 +167,85 @@ class UsersController extends Controller {
 
 
 	/**
+	 * @param User $ao_user
+	 * @param string $as_method
+	 *
+	 * @return void
+	 */
+	protected function save (User $ao_user, string $as_method = 'add'): void {
+		/*
+		 * Skip Access Check for Usergroups. Even without access to the scope "Usergroups"
+		 * the current user can modify the affiliation(s) of users
+		 */
+		$this->Users->Usergroups->skipAccessCheck();
+
+		$la_data = $this->request->getData();
+
+		if (empty($la_data['password'])) {
+			unset ($la_data['password']);
+		}
+
+		$this->Users->patchEntity($ao_user, $la_data, [
+			'associated' => ['Usergroups' => ['onlyIds' => TRUE]]
+		]);
+
+		if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
+			if ($this->Users->save($ao_user)) {
+				$this->Flash->success(__('::' . $as_method . '_succeeded'));
+
+				if ($this->request->getData('submit') == 'submit_close') {
+					throw new RedirectException(Router::url(['action' => 'overview'], TRUE), 302);
+				}
+
+				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $ao_user->id], TRUE), 302);
+			}
+
+			$this->Flash->error(__('::' . $as_method .  '_failed'));
+			$this->Flash->error(implode('<br>' . PHP_EOL, $ao_user->getError('_general')));
+		}
+
+		//Enable Access Check for Usergroups
+		$this->Users->Usergroups->skipAccessCheck(FALSE);
+	}
+
+
+	/**
 	 * Login method
 	 *
-	 * @return \Cake\Http\Response|null|void Redirects on successful login, renders view otherwise.
+	 * @return void|?\Cake\Http\Response
 	 */
 	public function login () {
 		$lo_result = $this->Authentication->getResult();
 
 		// If the user is logged in send them away.
 		if ($lo_result->isValid()) {
-			/** @var \Awyiss\Model\Entity\User $lo_user */
+			/** @var User $lo_user */
 			if ($this->request->is('post')) {
 				$lo_user = $this->Authentication->getIdentity()->getOriginalData();
 
-				if ($lo_user instanceof \Awyiss\Model\Entity\User) {
+				if ($lo_user instanceof User) {
 					//Track last_login and reset the failed login attempts
 					$lo_user->set([
 						'failed_attempts' => 0,
-						'last_login' => \Cake\I18n\FrozenTime::now(),
+						'last_login' => FrozenTime::now(),
 					], ['guard' => FALSE]);
 
 					$this->Users->save($lo_user, ['access' => ['skip' => TRUE], 'audit' => ['skip' => TRUE]]);
 				}
-				elseif ($lo_user instanceof \Awyiss\Model\Entity\UsersExternal) {
-					$lo_usersExternal = $this->getTableLocator()->get('UsersExternal');
+				elseif ($lo_user instanceof UsersExternal) {
+					$lo_usersExternal = $this->fetchTable('UsersExternal');
 					//Track last_login
-					$lo_user->set('last_login', \Cake\I18n\FrozenTime::now());
+					$lo_user->set('last_login', FrozenTime::now());
 
 					$lo_usersExternal->save($lo_user, ['access' => ['skip' => TRUE], 'audit' => ['skip' => TRUE]]);
 				}
 
 				/** @var \Cake\Http\Session $lo_session */
 				$lo_session = $this->request->getAttribute('session');
-				$lo_session->write('backend.languageShortcode', $this->request->getData('languages_shortcode'));
+				$lo_session->write('backend.languageShortcode', $this->request->getData('language_shortcode'));
 			}
 
-			$ls_redirectUri = $this->Authentication->getLoginRedirect() ?? \Cake\Routing\Router::url([
+			$ls_redirectUri = $this->Authentication->getLoginRedirect() ?? Router::url([
 				'_name' => 'backend',
 				'controller' => 'Dashboard',
 				'action' => 'overview',
@@ -267,22 +255,20 @@ class UsersController extends Controller {
 		}
 
 		if ($this->request->is('post') && ! $lo_result->isValid()) {
-			/** @var \Awyiss\Model\Entity\User $lo_user */
+			/** @var User $lo_user */
 			if (($ls_username = $this->request->getData('username')) && ($lo_user = $this->Users->find()->applyOptions(['access' => ['skip' => TRUE]])->where(['username' => $ls_username])->first())) {
 				$lo_user->set([
 					'failed_attempts' => $lo_user->failed_attempts + 1,
-					'last_login' => \Cake\I18n\FrozenTime::now(),
+					'last_login' => FrozenTime::now(),
 				], ['guard' => FALSE]);
 				$this->Users->save($lo_user, ['access' => ['skip' => TRUE], 'audit' => ['skip' => TRUE]]);
 			}
-
-			//dump($lo_result->getErrors());
 
 			$this->request = $this->request->withoutData('password');
 			$this->Flash->error('Invalid username or password');
 
 			//Do something to slow down the process
-			password_hash(md5(\Cake\Utility\Security::randomString()), PASSWORD_BCRYPT, ['cost' => 16]);
+			password_hash(md5(Security::randomString()), PASSWORD_BCRYPT, ['cost' => 16]);
 		}
 
 		/** @var \Awyiss\Middleware\LocaleMiddleware $lo_locale */
@@ -300,17 +286,20 @@ class UsersController extends Controller {
 
 
 	/**
-	 * @noinspection PhpMissingReturnTypeInspection
+	 * Logout method
+	 *
+	 * @return NULL|\Cake\Http\Response Redirects on logout
+	 *
 	 * @noinspection PhpUnused
 	 */
-	public function logout () {
+	public function logout (): ?Response {
 		$this->Authentication->logout();
 
 		/** @var \Cake\Http\Session $lo_session */
 		$lo_session = $this->getRequest()->getAttribute('session');
 		$lo_session->delete('unauthenticatedRedirectUrl');
 
-		return $this->redirect(\Cake\Routing\Router::url([
+		return $this->redirect(Router::url([
 			'_name' => 'backend',
 			'controller' => 'Users',
 			'action' => 'login',

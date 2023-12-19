@@ -4,25 +4,39 @@
 namespace Awyiss\Authorization\Permission;
 
 
-class SimplePermission extends AbstractPermission {
-	public const OPTION_GRANTED = 1;
-	public const OPTION_DENIED = 0;
-	public const OPTION_INDIFFERENT = NULL;
+use Awyiss\Authorization\AccessCollection;
 
+
+/**
+ * A simple permission that offers access, depending on three options:
+ * - granted
+ * - denied
+ * - indifferent
+ */
+class SimplePermission extends AbstractPermission {
+	final public const OPTION_GRANTED = 1;
+	final public const OPTION_DENIED = 0;
+	final public const OPTION_INDIFFERENT = NULL;
 	protected string $type = 'simple';
 
 
+	/**
+	 * @inheritDoc
+	 */
 	public function __construct (array $aa_config, PermissionCollection $ao_permissionCollection) {
-		$this->options = [
-			static::OPTION_GRANTED => __('permissions::simple_permission_option_granted'),
-			static::OPTION_DENIED => __('permissions::simple_permission_option_denied'),
-			static::OPTION_INDIFFERENT => __('permissions::simple_permission_option_indifferent'),
-		];
-
 		parent::__construct($aa_config, $ao_permissionCollection);
+
+		$this->options = [
+			static::OPTION_GRANTED,
+			static::OPTION_DENIED,
+			static::OPTION_INDIFFERENT,
+		];
 	}
 
 
+	/**
+	 * @inheritDoc
+	 */
 	public function harmonizeOptionValue (mixed $ax_value): ?int {
 		$lx_value = ($ax_value !== '' && $ax_value !== NULL) ? (int)$ax_value : NULL;
 
@@ -33,11 +47,14 @@ class SimplePermission extends AbstractPermission {
 			return static::OPTION_DENIED;
 		}
 
-		return NULL;
+		return static::OPTION_INDIFFERENT;
 	}
 
 
-	public function isAccessible (?array $aa_access): ?bool {
+	/**
+	 * @inheritDoc
+	 */
+	public function isAccessible (array $aa_access, array $aa_additionalData, AccessCollection $ao_accessCollection): ?bool {
 		$ls_identifier = $this->getConfig('identifier');
 
 		$la_accesses = [];

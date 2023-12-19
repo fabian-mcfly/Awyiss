@@ -6,12 +6,22 @@ namespace Awyiss\Configuration\ConfigOptions;
 
 use Awyiss\Configuration\AbstractConfigOptions;
 use Awyiss\Configuration\ConfigOption;
+use Awyiss\Configuration\ConfigOptionTypes;
 
 
+/**
+ * Provides all configuration options for the System scope
+ */
 class SystemConfigOptions extends AbstractConfigOptions {
+	/**
+	 * @var string Scope of these options
+	 */
 	protected static string $scope = 'system';
 
 
+	/**
+	 * @inheritDoc
+	 */
 	public function initializeConfigOptions (): void {
 		$this->add([
 			'frontend' => [
@@ -20,7 +30,7 @@ class SystemConfigOptions extends AbstractConfigOptions {
 					'localizable' => FALSE,
 					'name' => 'editlinks',
 					'nullable' => FALSE,
-					'type' => ConfigOption::TYPE_BOOL,
+					'type' => ConfigOptionTypes::TYPE_BOOL,
 				]),
 				'meta' => [
 					new ConfigOption([
@@ -43,7 +53,7 @@ class SystemConfigOptions extends AbstractConfigOptions {
 					'localizable' => FALSE,
 					'name' => 'lock_timeout',
 					'nullable' => FALSE,
-					'type' => ConfigOption::TYPE_INTEGER,
+					'type' => ConfigOptionTypes::TYPE_INTEGER,
 				]),
 				'meta' => [
 					new ConfigOption([

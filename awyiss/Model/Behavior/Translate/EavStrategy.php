@@ -10,11 +10,20 @@ use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
 
 
+/**
+ * @inheritDoc
+ */
 class EavStrategy extends \Cake\ORM\Behavior\Translate\EavStrategy {
 	/**
-	 * @inheritDoc
+	 * {@inheritDoc}
 	 *
 	 * Implemented here nearly 1:1 without removing the dirty flag on translatable fields
+	 *
+	 * @param \Cake\Event\EventInterface $ao_event The beforeSave event that was fired
+	 * @param \Cake\Datasource\EntityInterface $ao_entity The entity that is going to be saved
+	 * @param \ArrayObject $ao_options the options passed to the save method
+	 *
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function beforeSave (EventInterface $ao_event, EntityInterface $ao_entity, ArrayObject $ao_options) {
 		$ls_locale = $ao_entity->get('_locale') ?: $this->getLocale();
@@ -43,7 +52,7 @@ class EavStrategy extends \Cake\ORM\Behavior\Translate\EavStrategy {
 
 		// If there are no fields and no bundled translations, or both fields
 		// in the default locale and bundled translations we can
-		// skip the remaining logic as its not necessary.
+		// skip the remaining logic as it's not necessary.
 		if ($lb_noFields && $lb_noBundled || ($la_fields && $la_bundled)) {
 			return;
 		}
@@ -56,7 +65,7 @@ class EavStrategy extends \Cake\ORM\Behavior\Translate\EavStrategy {
 		// entity persists.
 		if ($lb_noFields && $la_bundled && ! $li_key) {
 			foreach ($this->_config['fields'] as $ls_field) {
-				$ao_entity->setDirty($ls_field, TRUE);
+				$ao_entity->setDirty($ls_field);
 			}
 
 			return;

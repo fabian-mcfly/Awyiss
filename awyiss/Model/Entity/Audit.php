@@ -4,20 +4,23 @@
 namespace Awyiss\Model\Entity;
 
 
+use Awyiss\Model\Entity;
+
+
 /**
  * Audit Entity
  *
  * @property int $id
  * @property string $type
  * @property string $scope
- * @property array|null $data_old
- * @property array|null $data_new
- * @property array|null $diff
+ * @property array|NULL $data_old
+ * @property array|NULL $data_new
+ * @property array|NULL $diff
  * @property int $parent_id
- * @property int|null $created_by
- * @property \Cake\I18n\FrozenTime|null $created_on
+ * @property int|NULL $created_by
+ * @property \Cake\I18n\FrozenTime|NULL $created_on
  */
-class Audit extends \Awyiss\Model\Entity {
+class Audit extends Entity {
 	/**
 	 * @inheritDoc
 	 */
@@ -31,52 +34,4 @@ class Audit extends \Awyiss\Model\Entity {
 		'created_by' => TRUE,
 		'created_on' => TRUE,
 	];
-
-
-	/**
-	 * @param mixed $ax_value
-	 *
-	 * @return null|array
-	 *
-	 * @noinspection PhpUnused
-	 */
-	/*protected function _setDataOld (mixed $ax_value): ?array {
-		if (empty($ax_value)) {
-			return NULL;
-		}
-
-		return is_array($ax_value) ? $ax_value : [$ax_value];
-	}*/
-
-
-	/**
-	 * @param mixed $ax_value
-	 *
-	 * @return null|array
-	 *
-	 * @noinspection PhpUnused
-	 */
-	/*protected function _setDataNew (mixed $ax_value): ?array {
-		if (empty($ax_value)) {
-			return NULL;
-		}
-
-		return is_array($ax_value) ? $ax_value : [$ax_value];
-	}*/
-
-
-	/**
-	 * @param mixed $ax_value
-	 *
-	 * @return null|array
-	 *
-	 * @noinspection PhpUnused
-	 */
-	/*protected function _setDiff (mixed $ax_value): ?array {
-		if (empty($ax_value)) {
-			return NULL;
-		}
-
-		return is_array($ax_value) ? $ax_value : [$ax_value];
-	}*/
 }

@@ -2,23 +2,22 @@
 	/**
 	 * Delete method
 	 *
-	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
+	 * @return \Cake\Http\Response
 	 *
 	 * @throws \Exception
 	 *
 	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
-	public function delete () {
+	public function delete (): \Cake\Http\Response {
 		$this->Access->ensure('delete');
 
 		$this->request->allowMethod(['get', 'delete']);
 
-		try {
-			$li_id = $this->request->getParam('id');
-			$lo_{{ singularName }} = $this->{{ currentModelName }}->get($li_id);
-		}
-		catch (RecordNotFoundException|InvalidPrimaryKeyException) {
+		/** @var {{ entityClassName }} $lo_{{ singularName }} */
+		$lo_{{ singularName }} = $this->{{ currentModelName }}->findById((int) $this->request->getParam('id'))->first();
+		if (! $lo_{{ singularName }}) {
 			$this->Flash->error(__('::record_not_found'));
+
 			return $this->redirect(['action' => 'overview']);
 		}
 

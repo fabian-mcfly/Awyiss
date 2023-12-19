@@ -6,10 +6,13 @@ namespace Awyiss\Controller\Backend;
 
 use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Model\Entity\Attribute;
-//use Cake\Datasource\ConnectionManager;
-use Cake\Datasource\Exception\InvalidPrimaryKeyException;
-use Cake\Datasource\Exception\RecordNotFoundException;
+use Cake\Http\Exception\RedirectException;
+use Cake\Http\Response;
+use Cake\Routing\Router;
 use Cake\Utility\Inflector;
+
+
+//use Cake\Datasource\ConnectionManager;
 
 
 /**
@@ -18,34 +21,59 @@ use Cake\Utility\Inflector;
  * @property \Awyiss\Model\Table\AttributesTable $Attributes
  */
 class AttributesController extends Controller {
+	/**
+	 * @var array
+	 */
 	protected array $attributeScopes;
+	/**
+	 * @var string
+	 */
 	protected string $selectedScopeSessionIdentifier = '';
 
 
+	/**
+	 * Called after the `__construct()` method
+	 *
+	 * @throws \ReflectionException
+	 * @throws \Exception
+	 */
 	public function initialize (): void {
 		parent::initialize();
 
 		$this->attributeScopes = $this->Attributes->getScopes();
 
+		//Remember an identifier that will be used to save the selected scope in the session
 		$this->selectedScopeSessionIdentifier = 'categories.' . ($this->request->getParam('lang') ?? 'global') . '.' . Inflector::underscore($this->getName()) . '.scope';
 
 		if ($this->request->getParam('action') === 'overview') {
 			$lo_session = $this->request->getSession();
 
+			//Is there a request parameter with the name 'scope'?
 			if ($ls_scope = $this->request->getParam('scope')) {
-				$lo_session->write($this->selectedScopeSessionIdentifier, $ls_scope);
+				if ($lo_session->started()) {
+					//Session started? Save the scope that's inside the url parameter in the session
+					$lo_session->write($this->selectedScopeSessionIdentifier, $ls_scope);
+				}
 			}
+			//Session not started OR there's no scope saved in the session
 			elseif ( ! $lo_session->started() || ! ($ls_scope = $lo_session->read($this->selectedScopeSessionIdentifier))) {
+				//Default to scope to the first available item
 				$ls_scope = array_key_first($this->attributeScopes);
 
-				$lo_session->write($this->selectedScopeSessionIdentifier, $ls_scope);
+				if ($lo_session->started()) {
+					$lo_session->write($this->selectedScopeSessionIdentifier, $ls_scope);
+				}
 			}
 
+			//If the selected scope is not inside the available attribute scopes, reset it to the first available one.
 			if (! array_key_exists($ls_scope, $this->attributeScopes)) {
 				$ls_scope = array_key_first($this->attributeScopes);
 
-				$lo_session->write($this->selectedScopeSessionIdentifier, $ls_scope);
+				if ($lo_session->started()) {
+					$lo_session->write($this->selectedScopeSessionIdentifier, $ls_scope);
+				}
 
+				//Redirect to remove the invalid scope parameter from the URL
 				$this->redirect(['action' => 'overview']);
 			}
 
@@ -53,24 +81,13 @@ class AttributesController extends Controller {
 		}
 	}
 
-
-	protected function initializeOverviewWhere () {
-		$this->overviewWhere = [
-			'scope' => array_key_first($this->attributeScopes),
-		];
-	}
-
 	
 	/**
 	 * Overview method
 	 *
-	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
-	 *
 	 * @throws \Exception
-	 *
-	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
-	public function overview () {
+	public function overview (): void {
 		$this->Access->ensure('read');
 
 		$lo_attributes = $this->paginate($this->Attributes->find('withAttributes')->where($this->getOverviewWhere()));
@@ -86,36 +103,16 @@ class AttributesController extends Controller {
 	/**
 	 * Add method
 	 *
-	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
+	 * @return void
 	 *
 	 * @throws \Exception
-	 *
-	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
-	public function add () {
+	public function add (): void {
 		$this->Access->ensure('create');
 
 		$lo_attribute = $this->Attributes->newDefaultEntity();
 		if ($this->request->is('post')) {
-			$this->Attributes->patchEntity($lo_attribute, $this->request->getData());
-
-			$lo_session = $this->request->getSession();
-			$lo_session->write($this->selectedScopeSessionIdentifier, $lo_attribute->scope);
-
-			if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-				if ($this->Attributes->save($lo_attribute)) {
-					$this->Flash->success(__('::add_succeeded'));
-
-					if ($this->request->getData('submit') == 'submit_close') {
-						return $this->redirect(['action' => 'overview']);
-					}
-
-					return $this->redirect(['action' => 'edit', 'id' => $lo_attribute->id]);
-				}
-
-				$this->Flash->error(__('::add_failed'));
-				$this->Flash->error(implode('<br>' . PHP_EOL, $lo_attribute->getError('_general')));
-			}
+			$this->save($lo_attribute);
 		}
 
 		$this->set([
@@ -128,43 +125,23 @@ class AttributesController extends Controller {
 	/**
 	 * Edit method
 	 *
-	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
+	 * @return void|?\Cake\Http\Response
 	 *
 	 * @throws \Exception
-	 *
-	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
 	public function edit () {
 		$this->Access->ensure('update');
 
-		try {
-			$li_id = $this->request->getParam('id');
-			/** @var Attribute $lo_attribute */
-			$lo_attribute = $this->Attributes->get($li_id);
-		}
-		catch (RecordNotFoundException|InvalidPrimaryKeyException) {
+		/** @var Attribute $lo_attribute */
+		$lo_attribute = $this->Attributes->findById((int) $this->request->getParam('id'))->first();
+		if ( ! $lo_attribute) {
 			$this->Flash->error(__('::record_not_found'));
 
 			return $this->redirect(['action' => 'overview']);
 		}
 
 		if ($this->request->is(['patch', 'post', 'put'])) {
-			$this->Attributes->patchEntity($lo_attribute, $this->request->getData());
-
-			if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-				if ($this->Attributes->save($lo_attribute)) {
-					$this->Flash->success(__('::edit_succeeded'));
-
-					if ($this->request->getData('submit') == 'submit_close') {
-						return $this->redirect(['action' => 'overview']);
-					}
-
-					return $this->redirect(['action' => 'edit', 'id' => $lo_attribute->id]);
-				}
-
-				$this->Flash->error(__('::edit_failed'));
-				$this->Flash->error(implode('<br>' . PHP_EOL, $lo_attribute->getError('_general')));
-			}
+			$this->save($lo_attribute, 'edit');
 		}
 
 		$this->set([
@@ -172,29 +149,25 @@ class AttributesController extends Controller {
 			'aa_attributeScopes' => $this->attributeScopes,
 		]);
 	}
-	
+
 
 	/**
 	 * Delete method
 	 *
-	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
+	 * @return \Cake\Http\Response
 	 *
 	 * @throws \Exception
-	 *
-	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
-	public function delete () {
+	public function delete (): Response {
 		$this->Access->ensure('delete');
 
 		$this->request->allowMethod(['get', 'delete']);
 
-		try {
-			$li_id = $this->request->getParam('id');
-			/** @var Attribute $lo_attribute */
-			$lo_attribute = $this->Attributes->get($li_id);
-		}
-		catch (RecordNotFoundException|InvalidPrimaryKeyException) {
+		/** @var Attribute $lo_attribute */
+		$lo_attribute = $this->Attributes->findById((int) $this->request->getParam('id'))->first();
+		if ( ! $lo_attribute) {
 			$this->Flash->error(__('::record_not_found'));
+
 			return $this->redirect(['action' => 'overview']);
 		}
 
@@ -206,6 +179,45 @@ class AttributesController extends Controller {
 		}
 
 		return $this->redirect(['action' => 'overview']);
+	}
+
+
+	/**
+	 * @param Attribute $ao_attribute
+	 * @param string $as_method
+	 *
+	 * @return void
+	 */
+	protected function save (Attribute $ao_attribute, string $as_method = 'add'): void {
+		$this->Attributes->patchEntity($ao_attribute, $this->request->getData());
+
+		$lo_session = $this->request->getSession();
+		$lo_session->write($this->selectedScopeSessionIdentifier, $ao_attribute->scope);
+
+		if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
+			if ($this->Attributes->save($ao_attribute)) {
+				$this->Flash->success(__('::' . $as_method . '_succeeded'));
+
+				if ($this->request->getData('submit') == 'submit_close') {
+					throw new RedirectException(Router::url(['action' => 'overview'], TRUE), 302);
+				}
+
+				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $ao_attribute->id], TRUE), 302);
+			}
+
+			$this->Flash->error(__('::' . $as_method . '_failed'));
+			$this->Flash->error(implode('<br>' . PHP_EOL, $ao_attribute->getError('_general')));
+		}
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	protected function initializeOverviewWhere (): void {
+		$this->overviewWhere = [
+			'scope' => array_key_first($this->attributeScopes),
+		];
 	}
 }
 

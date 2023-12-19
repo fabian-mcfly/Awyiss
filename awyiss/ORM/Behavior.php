@@ -7,10 +7,13 @@ namespace Awyiss\ORM;
 use Cake\ORM\Table;
 
 
+/**
+ * General overwrite of the default Behavior class
+ */
 class Behavior extends \Cake\ORM\Behavior {
 	/**
 	 * This array contains all implemented events and their corresponding method names
-	 * that whill get called when the event is fired
+	 * that will get called when the event is fired.
 	 *
 	 * @var array
 	 */

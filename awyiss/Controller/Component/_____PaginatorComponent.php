@@ -1,12 +1,20 @@
-<?php declare(strict_types=1);
+<?php /** @noinspection PhpDeprecationInspection */
+
+declare(strict_types=1);
 
 
 namespace Awyiss\Controller\Component;
 
 
+use Awyiss\Controller\AppController;
+use Cake\Datasource\Exception\PageOutOfBoundsException;
+use Cake\Datasource\ResultSetInterface;
+use Cake\Http\Exception\NotFoundException;
+
+
 /**
  * This component is used to handle automatic model data pagination. The primary way to use this
- * component is to call the paginate() method. There is a convenience wrapper on Controller as well.
+ * component is to call the `paginate()`-method. There is a convenience wrapper on Controller as well.
  *
  * ### Configuring pagination
  *
@@ -14,9 +22,9 @@ namespace Awyiss\Controller\Component;
  *
  * @link https://book.cakephp.org/4/en/controllers/components/pagination.html
  * @mixin \Cake\Datasource\Paginator
- * @method \Awyiss\Controller\AppController getController()
+ * @method AppController getController()
  *
- * TODO: add a method to retrieve the page a certain entity is on
+ * @todo add a method to retrieve the page a certain entity is on
  */
 class PaginatorComponent extends \Cake\Controller\Component\PaginatorComponent {
 	/**
@@ -35,7 +43,7 @@ class PaginatorComponent extends \Cake\Controller\Component\PaginatorComponent {
 	/**
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function paginate (object $ao_object, array $aa_settings = []): \Cake\Datasource\ResultSetInterface {
+	public function paginate (object $ao_object, array $aa_settings = []): ResultSetInterface {
 		$lo_request = $this->getController()->getRequest();
 
 		try {
@@ -48,7 +56,7 @@ class PaginatorComponent extends \Cake\Controller\Component\PaginatorComponent {
 
 			$this->_setPagingParams();
 		}
-		catch (\Cake\Datasource\Exception\PageOutOfBoundsException $ex) {
+		catch (PageOutOfBoundsException $ex) {
 			//try {
 			//	$lo_results = $this->_paginator->paginate($ao_object, ['page' => 1] + $la_params, $aa_settings);
 			//
@@ -57,7 +65,7 @@ class PaginatorComponent extends \Cake\Controller\Component\PaginatorComponent {
 			//catch (\Cake\Datasource\Exception\PageOutOfBoundsException $ex) {
 			$this->_setPagingParams();
 
-			throw new \Cake\Http\Exception\NotFoundException(NULL, NULL, $ex);
+			throw new NotFoundException(NULL, NULL, $ex);
 			//}
 		}
 

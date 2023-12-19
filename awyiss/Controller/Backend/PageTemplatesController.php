@@ -5,8 +5,10 @@ namespace Awyiss\Controller\Backend;
 
 
 use Awyiss\Controller\BackendController as Controller;
-use Cake\Datasource\Exception\InvalidPrimaryKeyException;
-use Cake\Datasource\Exception\RecordNotFoundException;
+use Awyiss\Model\Entity\PageTemplate;
+use Cake\Http\Exception\RedirectException;
+use Cake\Http\Response;
+use Cake\Routing\Router;
 
 
 /**
@@ -15,6 +17,9 @@ use Cake\Datasource\Exception\RecordNotFoundException;
  * @property \Awyiss\Model\Table\PageTemplatesTable $PageTemplates
  */
 class PageTemplatesController extends Controller {
+	/**
+	 * @inheritDoc
+	 */
 	public array $categorize = [
 		'associationName' => 'PageRoles',
 		'enabled' => TRUE,
@@ -24,13 +29,9 @@ class PageTemplatesController extends Controller {
 	/**
 	 * Overview method
 	 *
-	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
-	 *
 	 * @throws \Exception
-	 *
-	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
-	public function overview () {
+	public function overview (): void {
 		$this->Access->ensure('read');
 
 		//$lo_pageTemplates = $this->Categories->filterQuery($this->PageTemplates->find('withAttributes'));
@@ -46,38 +47,16 @@ class PageTemplatesController extends Controller {
 	/**
 	 * Add method
 	 *
-	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
+	 * @return void
 	 *
 	 * @throws \Exception
-	 *
-	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
-	public function add () {
+	public function add (): void {
 		$this->Access->ensure('create');
 
 		$lo_pageTemplate = $this->PageTemplates->newDefaultEntity();
 		if ($this->request->is('post')) {
-			$this->PageTemplates->patchEntity($lo_pageTemplate, $this->request->getData());
-
-			$this->Categories->ensurePossibleCategorySelection($lo_pageTemplate);
-
-			if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-				if ($this->PageTemplates->save($lo_pageTemplate)) {
-					$this->Flash->success(__('::add_succeeded'));
-
-					if ($this->request->getData('submit') == 'submit_close') {
-						return $this->redirect(['action' => 'overview']);
-					}
-
-					return $this->redirect(['action' => 'edit', 'id' => $lo_pageTemplate->id]);
-				}
-
-				$this->Flash->error(__('::add_failed'));
-				$this->Flash->error(implode('<br>' . PHP_EOL, $lo_pageTemplate->getError('_general')));
-			}
-			else {
-				$lo_pageTemplate->system_order = NULL;
-			}
+			$this->save($lo_pageTemplate);
 		}
 		else {
 			$this->Categories->ensurePossibleCategorySelection($lo_pageTemplate);
@@ -92,48 +71,23 @@ class PageTemplatesController extends Controller {
 	/**
 	 * Edit method
 	 *
-	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
+	 * @return void|?\Cake\Http\Response
 	 *
 	 * @throws \Exception
-	 *
-	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
 	public function edit () {
 		$this->Access->ensure('update');
 
-		try {
-			$li_id = $this->request->getParam('id');
-			/** @var \Awyiss\Model\Entity\PageTemplate $lo_pageTemplate */
-			$lo_pageTemplate = $this->PageTemplates->get($li_id);
-		}
-		catch (RecordNotFoundException|InvalidPrimaryKeyException) {
+		/** @var PageTemplate $lo_pageTemplate */
+		$lo_pageTemplate = $this->PageTemplates->findById((int) $this->request->getParam('id'))->first();
+		if ( ! $lo_pageTemplate) {
 			$this->Flash->error(__('::record_not_found'));
 
 			return $this->redirect(['action' => 'overview']);
 		}
 
 		if ($this->request->is(['patch', 'post', 'put'])) {
-			$this->PageTemplates->patchEntity($lo_pageTemplate, $this->request->getData());
-
-			$this->Categories->ensurePossibleCategorySelection($lo_pageTemplate);
-
-			if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-				if ($this->PageTemplates->save($lo_pageTemplate)) {
-					$this->Flash->success(__('::edit_succeeded'));
-
-					if ($this->request->getData('submit') == 'submit_close') {
-						return $this->redirect(['action' => 'overview']);
-					}
-
-					return $this->redirect(['action' => 'edit', 'id' => $lo_pageTemplate->id]);
-				}
-
-				$this->Flash->error(__('::edit_failed'));
-				$this->Flash->error(implode('<br>' . PHP_EOL, $lo_pageTemplate->getError('_general')));
-			}
-			else {
-				$lo_pageTemplate->system_order = NULL;
-			}
+			$this->save($lo_pageTemplate, 'edit');
 		}
 		else {
 			$this->Categories->ensurePossibleCategorySelection($lo_pageTemplate);
@@ -148,23 +102,18 @@ class PageTemplatesController extends Controller {
 	/**
 	 * Delete method
 	 *
-	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
+	 * @return \Cake\Http\Response
 	 *
 	 * @throws \Exception
-	 *
-	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
-	public function delete () {
+	public function delete (): Response {
 		$this->Access->ensure('delete');
 
 		$this->request->allowMethod(['get', 'delete']);
 
-		try {
-			$li_id = $this->request->getParam('id');
-			/** @var \Awyiss\Model\Entity\PageTemplate $lo_pageTemplate */
-			$lo_pageTemplate = $this->PageTemplates->get($li_id);
-		}
-		catch (RecordNotFoundException|InvalidPrimaryKeyException) {
+		/** @var PageTemplate $lo_pageTemplate */
+		$lo_pageTemplate = $this->PageTemplates->findById((int) $this->request->getParam('id'))->first();
+		if ( ! $lo_pageTemplate) {
 			$this->Flash->error(__('::record_not_found'));
 			return $this->redirect(['action' => 'overview']);
 		}
@@ -177,6 +126,37 @@ class PageTemplatesController extends Controller {
 		}
 
 		return $this->redirect(['action' => 'overview']);
+	}
+
+
+	/**
+	 * @param PageTemplate $ao_pageTemplate
+	 * @param string $as_method
+	 *
+	 * @return void
+	 */
+	protected function save (PageTemplate $ao_pageTemplate, string $as_method = 'add'): void {
+		$this->PageTemplates->patchEntity($ao_pageTemplate, $this->request->getData());
+
+		$this->Categories->ensurePossibleCategorySelection($ao_pageTemplate);
+
+		if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
+			if ($this->PageTemplates->save($ao_pageTemplate)) {
+				$this->Flash->success(__('::' . $as_method . '_succeeded'));
+
+				if ($this->request->getData('submit') == 'submit_close') {
+					throw new RedirectException(Router::url(['action' => 'overview'], TRUE), 302);
+				}
+
+				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $ao_pageTemplate->id], TRUE), 302);
+			}
+
+			$this->Flash->error(__('::' . $as_method . '_failed'));
+			$this->Flash->error(implode('<br>' . PHP_EOL, $ao_pageTemplate->getError('_general')));
+		}
+		else {
+			$ao_pageTemplate->system_order = NULL;
+		}
 	}
 }
 

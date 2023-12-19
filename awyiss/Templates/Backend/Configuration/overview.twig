@@ -4,6 +4,7 @@
 {# @var _view \Awyiss\View\BackendView #}
 
 <div class="Configuration Overview">
+	{% do helper_Access_setAdditionalData({scope: as_selectedScope}) %}
 	{% if helper_Access_isAccessible('create') %}
 		{{ helper_Html_link(__('::create'), {action: 'add'}, {class: 'Button'}) }}
 	{% endif %}
@@ -21,7 +22,7 @@
 				<tr>
 					<th>{{ helper_Paginator_sort('name') }}</th>
 					<th>{{ helper_Paginator_sort('value') }}</th>
-					<th>{{ helper_Paginator_sort('languages_shortcode') }}</th>
+					<th>{{ helper_Paginator_sort('language_shortcode') }}</th>
 					<th class="actions"></th>
 				</tr>
 			</thead>
@@ -30,6 +31,8 @@
 			</tbody>
 		</table>
 	</div>
+
+	{% do helper_Access_resetAdditionalData() %}
 	{# { helper_Paginator_render() } #}
 </div>
 
@@ -59,7 +62,7 @@
 						{% endif %}
 					</td>
 					<td>{{ lo_configuration.value }}</td>
-					<td>{{ helper_Locale_languageTitle(lo_configuration.languages_shortcode) }}</td>
+					<td>{{ helper_Locale_languageTitle(lo_configuration.language_shortcode) }}</td>
 					<td class="actions">
 						{% if helper_Access_isAccessible('update') %}
 							{{ helper_Html_link(__('::edit'), {action: 'edit', id: lo_configuration.id}) }}

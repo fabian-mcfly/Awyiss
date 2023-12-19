@@ -6,43 +6,62 @@ namespace Awyiss\Authorization;
 
 use Authentication\AuthenticationServiceInterface;
 use Awyiss\Authorization\Policy\PolicyInterface;
+use Cake\Utility\Inflector;
+use ReflectionClass;
 use RuntimeException;
 
 
+/**
+ * Provides access to an instance of `AuthenticationService` and allows retreiving policies
+ *
+ * @see \Authentication\AuthenticationServiceInterface
+ */
 class AuthorizationService implements AuthorizationServiceInterface {
 	protected array $policies = [];
 	protected ?AuthenticationServiceInterface $authenticationService = NULL;
-	//protected string $permissionsPropertyName = 'usergroup_permissions';
 	protected string $type;
 
 
+	/**
+	 * @inheritDoc
+	 */
 	public function __construct (string $as_type) {
-		$this->type = \Cake\Utility\Inflector::camelize($as_type);
+		$this->type = Inflector::camelize($as_type);
 	}
 
 
+	/**
+	 * @inheritDoc
+	 */
 	public function getAuthenticationService (): ?AuthenticationServiceInterface {
 		return $this->authenticationService;
 	}
 
 
-	public function setAuthenticationService (AuthenticationServiceInterface $ao_authenticationService) {
+	/**
+	 * @inheritDoc
+	 */
+	public function setAuthenticationService (AuthenticationServiceInterface $ao_authenticationService): static {
 		$this->authenticationService = $ao_authenticationService;
+
+		return $this;
 	}
 
 
+	/**
+	 * @inheritDoc
+	 */
 	public function getType (): string {
 		return $this->type;
 	}
 
 
 	/**
-	 * @param null|string $as_type
-	 *
-	 * @return PolicyInterface[]
+	 * @inheritDoc
+	 * @throws \ReflectionException
 	 */
 	public function getPolicies (string $as_type = NULL): array {
-		$ls_type = $as_type ? \Cake\Utility\Inflector::camelize($as_type) : $this->type;
+		$ls_type = $as_type ? Inflector::camelize($as_type) : $this->type;
 
 		//if (!isset($this->policies[ $ls_type ])) {
 		$this->policies[ $ls_type ] = $this->findPolicy('*', $ls_type);
@@ -52,25 +71,37 @@ class AuthorizationService implements AuthorizationServiceInterface {
 	}
 
 
-	public function getPolicy (string $as_scope, ?string $as_type = NULL): ?string {
-		$ls_type = $as_type ? \Cake\Utility\Inflector::camelize($as_type) : $this->type;
+	/**
+	 * @inheritDoc
+	 *
+	 * @throws \ReflectionException
+	 */
+	public function getPolicy (string $as_name, ?string $as_type = NULL): ?string {
+		$ls_type = $as_type ? Inflector::camelize($as_type) : $this->type;
 
 		if (!isset($this->policies[ $ls_type ])) {
 			$this->policies[ $ls_type ] = [];
 		}
 
-		if (empty($this->policies[ $ls_type ][ $as_scope ])) {
-			$this->policies[ $ls_type ] += $this->findPolicy($as_scope, $ls_type);
+		if (empty($this->policies[ $ls_type ][ $as_name ])) {
+			$this->policies[ $ls_type ] += $this->findPolicy($as_name, $ls_type);
 		}
 
-		return $this->policies[ $ls_type ][ $as_scope ] ?? NULL;
+		return $this->policies[ $ls_type ][ $as_name ] ?? NULL;
 	}
 
 
+	/**
+	 * @param string $as_name
+	 * @param string $as_type
+	 *
+	 * @return array<string, class-string<\Awyiss\Authorization\Policy\PolicyInterface>>
+	 * @throws \ReflectionException
+	 */
 	protected function findPolicy (string $as_name, string $as_type): array {
 		$la_policies = [];
-		$ls_name = \Cake\Utility\Inflector::camelize($as_name);
-		$ls_type = \Cake\Utility\Inflector::camelize($as_type);
+		$ls_name = Inflector::camelize($as_name);
+		$ls_type = Inflector::camelize($as_type);
 
 		$la_paths = [
 			'\\' . CUSTOM_NAMESPACE . '\Authorization\Policy\\' . $ls_type . '\\' => implode(DS, [ROOT, CUSTOM_DIR, 'Authorization', 'Policy', $ls_type, $ls_name . 'Policy.php',]),
@@ -88,7 +119,7 @@ class AuthorizationService implements AuthorizationServiceInterface {
 					continue;
 				}
 
-				$lo_reflection = new \ReflectionClass($ls_policyClass);
+				$lo_reflection = new ReflectionClass($ls_policyClass);
 
 				if ( ! $lo_reflection->implementsInterface(PolicyInterface::class)) {
 					throw new RuntimeException(sprintf('The provided Policy class `%s` does not implement the `%s` interface.', $ls_policyClass, PolicyInterface::class));

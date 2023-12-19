@@ -4,10 +4,13 @@
 namespace Awyiss\Controller;
 
 
-use Cake\Core\Configure;
-use Cake\Routing\Router;
+//use Cake\Core\Configure;
+//use Cake\Routing\Router;
 
 
+/**
+ * Frontend Controller that handles all page requests
+ */
 class FrontendController extends AppController {
 	/**
 	 * @throws \Exception
@@ -21,18 +24,22 @@ class FrontendController extends AppController {
 	}
 
 
-	public function index () {
+	/**
+	 * @return void
+	 */
+	public function index (): void {
 	}
 
 
-	/**
+	/*
 	 * No language (first two-letter part of the url) found
 	 *
 	 * @return \Cake\Http\Response
 	 * @throws \Exception
 	 * @noinspection PhpUnused
+	 * @noinspection PhpFullyQualifiedNameUsageInspection
 	 */
-	public function noLanguageFound (): \Cake\Http\Response {
+	/*public function noLanguageFound (): \Cake\Http\Response {
 		//TODO: Multi-domain: get and set default language of current domain
 
 		//Get the first language and redirect
@@ -47,5 +54,5 @@ class FrontendController extends AppController {
 		$li_redirectStatus = Configure::read('debug') ? 307 : 308;
 
 		return $this->redirect(['lang' => $lo_firstLanguage->shortcode, '_name' => 'frontend'] + $la_requestParams, $li_redirectStatus);
-	}
+	}*/
 }

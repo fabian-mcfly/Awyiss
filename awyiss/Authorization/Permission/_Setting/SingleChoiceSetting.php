@@ -5,14 +5,19 @@ namespace Awyiss\Authorization\Permission\Setting;
 
 
 use Cake\Core\InstanceConfigTrait;
+use Cake\Utility\Inflector;
 
 
+/**
+ * Simple single choice setting class.
+ * The possible choices are stored in the config with the key `options`.
+ *
+ * This class provides two possible options how the setting can be displayed:
+ * - radio button
+ * - select dropdown
+ */
 class SingleChoiceSetting implements SettingInterface {
 	use InstanceConfigTrait;
-
-
-	public const TYPE_RADIO = 'radio';
-	public const TYPE_SELECT = 'select';
 
 
 	/**
@@ -49,8 +54,8 @@ class SingleChoiceSetting implements SettingInterface {
 	 *
 	 * @return \Awyiss\Authorization\Permission\Setting\SettingInterface
 	 */
-	public function setType (string $as_type): SettingInterface {
-		$this->setConfig('type', \Cake\Utility\Inflector::underscore($as_type));
+	public function setType (string $as_type): static {
+		$this->setConfig('type', Inflector::underscore($as_type));
 
 		return $this;
 	}
@@ -69,43 +74,9 @@ class SingleChoiceSetting implements SettingInterface {
 	 *
 	 * @return \Awyiss\Authorization\Permission\Setting\SettingInterface
 	 */
-	public function setOptions (array $aa_options): SettingInterface {
+	public function setOptions (array $aa_options): static {
 		$this->setConfig('options', $aa_options);
 
 		return $this;
 	}
-
-
-	/**
-	 * @param \Cake\View\View $ao_view
-	 * @param null|string $as_prePath
-	 *
-	 * @return string
-	 * @throws \Exception
-	 */
-	/*public function render (\Cake\View\View $ao_view, ?string $as_prePath = NULL): string {
-		$ls_prePath = trim($as_prePath ?? '', '/');
-		if (!empty($ls_prePath)) $ls_prePath .= '/';
-
-		$la_viewData = [
-			'setting' => $this,
-		];
-
-		try {
-			return $ao_view->element($ls_prePath . 'permissions/settings/' . $this->getConfig('type'), $la_viewData);
-		}
-		catch (\Exception $ex) {
-			if (!empty($ls_prePath)) {
-				try {
-					return $ao_view->element('permissions/settings/' . $this->getConfig('type'), $la_viewData);
-				}
-				catch (\Exception $ex2) {
-					throw $ex;
-				}
-			}
-			else {
-				throw $ex;
-			}
-		}
-	}*/
 }

@@ -1,22 +1,19 @@
-<?php /** @noinspection PhpUnused */
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 
 namespace Awyiss\Authorization\Permission;
 
 
 use Cake\Core\InstanceConfigTrait;
+use Cake\Utility\Inflector;
+use RuntimeException;
 
 
+/**
+ * Abstract Permission class that offers some required methods, as defined in `PermissionInterface`
+ */
 abstract class AbstractPermission implements PermissionInterface {
 	use InstanceConfigTrait;
-
-
-	public const TYPE_CHECKBOX = 'checkbox';
-	public const TYPE_RADIO = 'radio';
-	public const TYPE_SELECT = 'select';
-	public const TYPE_MULTISELECT = 'select_multi';
 
 
 	protected array $options = [];
@@ -24,17 +21,20 @@ abstract class AbstractPermission implements PermissionInterface {
 	protected string $type;
 	/**
 	 * Default config for this object.
-	 * - `fields` The fields to use to identify a user by.
+	 * - `preferredInput` The preferred form input to display when showing the permission-selection
+	 * - `identifier` The identifier used by this permission
 	 *
-	 * @var array
+	 * @var array<string, mixed>
 	 */
 	protected array $_defaultConfig = [
-		'preferredInput' => self::TYPE_RADIO,
+		'preferredInput' => PermissionTypes::TYPE_RADIO,
 		'identifier' => NULL,
 	];
 
 
-
+	/**
+	 * @inheritDoc
+	 */
 	public function __construct (array $aa_config, PermissionCollection $ao_permissionCollection) {
 		$this->permissionCollection = $ao_permissionCollection;
 
@@ -42,20 +42,23 @@ abstract class AbstractPermission implements PermissionInterface {
 	}
 
 
+	/**
+	 * @inheritDoc
+	 */
 	public function getPermissionCollection (): PermissionCollection {
 		return $this->permissionCollection;
 	}
 
 
 	/**
-	 * @return string
+	 * @inheritDoc
 	 */
 	public function getType (): string {
 		if (!isset($this->type)) {
 			$la_parts = explode('\\', static::class);
 			$this->type = array_pop($la_parts) ?? '';
 			$this->type = substr($this->type, 0, -10);
-			$this->type = \Cake\Utility\Inflector::underscore($this->type);
+			$this->type = Inflector::underscore($this->type);
 		}
 
 		return $this->type;
@@ -63,7 +66,7 @@ abstract class AbstractPermission implements PermissionInterface {
 
 
 	/**
-	 * @return array
+	 * @inheritDoc
 	 */
 	public function getOptions (): array {
 		return $this->options;
@@ -71,17 +74,17 @@ abstract class AbstractPermission implements PermissionInterface {
 
 
 	/**
-	 * @param array $aa_options
+	 * @inheritDoc
 	 *
-	 * @return \Awyiss\Authorization\Permission\PermissionInterface
+	 * @throws \RuntimeException
 	 */
-	public function setOptions (array $aa_options): PermissionInterface {
-		throw new \RuntimeException(sprintf('`%s` does not allow setting options. Use `%s` instead.', static::class, CallbackPermission::class));
+	public function setOptions (array $aa_options): static {
+		throw new RuntimeException(sprintf('`%s` does not allow setting options. Use `%s` instead.', static::class, CallbackPermission::class));
 	}
 
 
 	/**
-	 * @return bool
+	 * @inheritDoc
 	 */
 	public function hasSettings (): bool {
 		return FALSE;

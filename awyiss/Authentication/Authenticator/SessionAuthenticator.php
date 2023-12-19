@@ -4,15 +4,25 @@
 namespace Awyiss\Authentication\Authenticator;
 
 
+use ArrayAccess;
+use ArrayObject;
 use Authentication\Authenticator\Result;
 use Authentication\Authenticator\ResultInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 
+/**
+ * Session Authenticator
+ */
 class SessionAuthenticator extends \Authentication\Authenticator\SessionAuthenticator {
 	/**
-	 * @inheritDoc
+	 * {@inheritDoc}
+	 *
+	 * Extended to call the config setting `identify` if it's a callable
+	 * and to use `reidentify`-method on `\Awyiss\Authentication\Identifier\IdentifierCollection::reidentify()`
+	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 * @noinspection PhpMissingParentCallCommonInspection
 	 */
 	public function authenticate (ServerRequestInterface $ao_request): ResultInterface {
 		$ls_sessionKey = $this->getConfig('sessionKey');
@@ -33,8 +43,8 @@ class SessionAuthenticator extends \Authentication\Authenticator\SessionAuthenti
 			$la_credentials = $lx_identify;
 			if ($lx_identify === TRUE) {
 				$la_credentials = [];
-				foreach ($this->getConfig('fields') as $key => $field) {
-					$la_credentials[ $key ] = $lo_user[ $field ];
+				foreach ($this->getConfig('fields') as $lx_key => $lx_field) {
+					$la_credentials[ $lx_key ] = $lo_user[ $lx_field ];
 				}
 			}
 
@@ -46,11 +56,9 @@ class SessionAuthenticator extends \Authentication\Authenticator\SessionAuthenti
 			}
 		}
 
-		if ( ! ($lo_user instanceof \ArrayAccess)) {
-			$lo_user = new \ArrayObject($lo_user);
+		if ( ! ($lo_user instanceof ArrayAccess)) {
+			$lo_user = new ArrayObject($lo_user);
 		}
-
-		//dd(debug_backtrace());
 
 		return new Result($lo_user, ResultInterface::SUCCESS);
 	}

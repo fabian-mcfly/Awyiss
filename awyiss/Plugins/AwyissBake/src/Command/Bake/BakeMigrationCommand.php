@@ -7,27 +7,55 @@ namespace AwyissBake\Command\Bake;
 use Bake\Utility\TemplateRenderer;
 use Cake\Console\Arguments;
 use Cake\Console\ConsoleIo;
+use Cake\Console\ConsoleOptionParser;
 use Cake\Event\Event;
 use Cake\Event\EventManager;
+use Cake\Utility\Inflector;
 
 
 /**
  * Command class for generating migration snapshot files.
  */
 class BakeMigrationCommand extends \Migrations\Command\BakeMigrationCommand {
+	/**
+	 * @inheritDoc
+	 */
 	public function template (): string {
 		return 'AwyissBake.migrations/config/skeleton';
 	}
 
 
+	/**
+	 * @inheritDoc
+	 *
+	 * @param \Cake\Console\Arguments $ao_arguments
+	 *
+	 * @return array
+	 *
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 */
 	public function templateData (Arguments $ao_arguments): array {
 		$la_templateData = parent::templateData($ao_arguments);
 
+		//If the requested action is to alter a column,
 		if ($la_templateData['action'] === 'alter_field') {
+			//Extract the name of the column from the migration name
 			if (preg_match('/^Alter(.+?)On(.*)/', $la_templateData['name'], $la_matches)) {
-				$ls_fieldName = \Cake\Utility\Inflector::underscore($la_matches[1]);
+				//Get the field name of the column from inside the migration
 				$ls_key = array_key_first($la_templateData['columns']['fields']);
+
+				$ls_fieldName = Inflector::underscore($la_matches[1]);
 				if ($ls_key != $ls_fieldName) {
+					/**
+					 * If the column name in the migration name and the one inside the migration differ,
+					 * we want to rename the column. This is something the normal CakePHP-migration does not offer.
+					 *
+					 * This way, we can check for the `originalName`-key of the field inside the `skeleton.twig`-file
+					 * and call the `rename`-method of the migration
+					 *
+					 * @see awyiss/plugins/AwyissBake/templates/bake/migrations/config/skeleton.twig:53
+					 * @link awyiss/plugins/AwyissBake/templates/bake/migrations/config/skeleton.twig:53
+					 */
 					$la_templateData['columns']['fields'][ $ls_key ]['originalName'] = $ls_fieldName;
 				}
 			}
@@ -38,7 +66,19 @@ class BakeMigrationCommand extends \Migrations\Command\BakeMigrationCommand {
 
 
 	/**
-	 * @inheritDoc
+	 * {@inheritDoc}
+	 *
+	 * Re-implemented `\Migrations\Command\BakeSimpleMigrationCommand::bake()` because it's not possible to call a parent's parent.
+	 *
+	 * @param string $as_name
+	 * @param \Cake\Console\Arguments $ao_arguments
+	 * @param \Cake\Console\ConsoleIo $ao_io
+	 *
+	 * @return void
+	 *
+	 * @see \Migrations\Command\BakeSimpleMigrationCommand::bake()
+	 *
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function bake (string $as_name, Arguments $ao_arguments, ConsoleIo $ao_io): void {
 		EventManager::instance()->on('Bake.initialize', function (Event $event) {
@@ -49,13 +89,17 @@ class BakeMigrationCommand extends \Migrations\Command\BakeMigrationCommand {
 		$this->_name = $as_name;
 		$ls_path = $this->getPath($ao_arguments);
 
+		//Remember the name of the table
 		[, $ls_table] = $this->detectAction($this->_name);
 
 		$this->io = $ao_io;
+
+		//If migration(s) with the same name already exist(s)
 		$la_migrationWithSameName = glob($ls_path . '*_' . $this->_name . '.php');
 		if ( ! empty($la_migrationWithSameName)) {
-			$lb_force = $ao_arguments->getOption('force');
-			if ($lb_force) {
+			//Shell the migration be overwritten?
+			if ($ao_arguments->getOption('force')) {
+				//If so, delete all existing migrations
 				$ao_io->info(sprintf('A migration with the name `%s` already exists, it will be deleted.', $this->_name));
 				foreach ($la_migrationWithSameName as $ls_migration) {
 					$ao_io->info(sprintf('Deleting migration file `%s`...', $ls_migration));
@@ -68,6 +112,10 @@ class BakeMigrationCommand extends \Migrations\Command\BakeMigrationCommand {
 				}
 			}
 			else {
+				/*
+				 * No "--force" option provided means we will neither overwrite nor delete existing migrations
+				 * but we will append a version number to the filename.
+				 */
 				$li_version = 2;
 				while (glob($ls_path . '*_' . $this->_name . 'V' . $li_version . '.php')) {
 					$li_version++;
@@ -77,11 +125,18 @@ class BakeMigrationCommand extends \Migrations\Command\BakeMigrationCommand {
 			}
 		}
 
-
 		$lo_renderer = new TemplateRenderer($this->theme);
 		$lo_renderer->set('name', $this->_name);
 		$lo_renderer->set($this->templateData($ao_arguments));
+
+		/*
+		 * Manually set the remembered name of the table as a view variable, since versionizing a migration will
+		 * result in a wrong table name.
+		 *
+		 * For example, a migration 'CreateAttributesContentsV2' would create a table named 'attributes_contents_v2'
+		 */
 		$lo_renderer->set('tables', [$ls_table]);
+
 		$ls_contents = $lo_renderer->generate($this->template());
 
 		$ls_filename = $ls_path . $this->fileName($this->_name);
@@ -93,11 +148,17 @@ class BakeMigrationCommand extends \Migrations\Command\BakeMigrationCommand {
 
 
 	/**
-	 * @inheritDoc
+	 * {@inheritDoc}
+	 *
+	 * Adds the `folder`-option
+	 *
+	 * @param \Cake\Console\ConsoleOptionParser $ao_parser
+	 *
+	 * @return \Cake\Console\ConsoleOptionParser
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildOptionParser (\Cake\Console\ConsoleOptionParser $ao_parser): \Cake\Console\ConsoleOptionParser {
+	public function buildOptionParser (ConsoleOptionParser $ao_parser): ConsoleOptionParser {
 		$lo_parser = parent::buildOptionParser($ao_parser);
 
 		$lo_parser->addOption('folder', [
@@ -109,7 +170,13 @@ class BakeMigrationCommand extends \Migrations\Command\BakeMigrationCommand {
 
 
 	/**
-	 * @inheritDoc
+	 * {@inheritDoc}
+	 *
+	 * Honors the `folder`-option
+	 *
+	 * @param \Cake\Console\Arguments $ao_args
+	 *
+	 * @return string
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */

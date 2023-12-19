@@ -19,7 +19,7 @@ class Plugin extends BasePlugin {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function console(CommandCollection $ao_commands): CommandCollection {
+	public function console (CommandCollection $ao_commands): CommandCollection {
 		//Required because otherwise bake doesn't overwrite the "migrations migrate" command and I don't know why.
 		$ao_commands->remove('migrations');
 		$ao_commands->remove('migrations.migrations');

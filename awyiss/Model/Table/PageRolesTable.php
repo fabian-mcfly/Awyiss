@@ -4,21 +4,32 @@
 namespace Awyiss\Model\Table;
 
 
-use Cake\Datasource\EntityInterface;
+use Awyiss\Model\Entity\PageRole;
+use Awyiss\Model\Table;
+use Awyiss\ORM\RulesChecker;
 use Cake\Validation\Validator;
 
 
 /**
  * PageRoles Model
  *
- * @method \Awyiss\Model\Entity\PageRole newDefaultEntity(array $aa_additionalData = [])
- * @method \Awyiss\Model\Entity\PageRole patchEntity(EntityInterface $ao_entity, array $aa_data, array $aa_options = [])
+ * @method PageRole newDefaultEntity(array $aa_additionalData = [])
  */
-class PageRolesTable extends \Awyiss\Model\Table {
+class PageRolesTable extends Table {
 	protected array $_defaultConfig = [
 		'translate' => [
 			'fields' => ['title'],
 		],
+	];
+	/**
+	 * @var array|string[] A list of identifiers a page role can't have, since they're used by the system
+	 * or because they are template folder names
+	 */
+	protected array $blacklistedIdentifiers = [
+		'cell',
+		'element',
+		'generic_pages',
+		'layout',
 	];
 	public const TABLE = 'page_roles';
 
@@ -35,7 +46,12 @@ class PageRolesTable extends \Awyiss\Model\Table {
 
 
 	/**
-	 * @inheritDoc
+	 * Returns the default validator object.
+	 *
+	 * @param \Cake\Validation\Validator $ao_validator The validator that can be modified to
+	 * add some rules to it.
+	 *
+	 * @return \Cake\Validation\Validator
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
@@ -55,5 +71,24 @@ class PageRolesTable extends \Awyiss\Model\Table {
 		$ao_validator->boolean('deleted')->notEmptyString('deleted');
 
 		return $ao_validator;
+	}
+
+
+	/**
+	 * @todo add a rule for the identifier. it must not be a blacklisted one
+	 *
+	 * Returns a RulesChecker object after modifying the one that was supplied.
+	 *
+	 * @param \Awyiss\ORM\RulesChecker|\Cake\ORM\RulesChecker $ao_rules The rules object to be modified.
+	 *
+	 * @return \Awyiss\ORM\RulesChecker
+	 *
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 */
+	public function buildRules (RulesChecker|\Cake\ORM\RulesChecker $ao_rules): RulesChecker {
+
+
+
+		return $ao_rules;
 	}
 }

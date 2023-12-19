@@ -8,7 +8,9 @@ use Authentication\IdentityInterface;
 use Authentication\PasswordHasher\DefaultPasswordHasher;
 use Awyiss\Authorization\AccessCollection;
 use Awyiss\Authorization\IdentityPermissionsInterface;
+use Awyiss\Model\Entity;
 use Cake\Datasource\FactoryLocator;
+use Cake\ORM\Locator\LocatorAwareTrait;
 
 
 /**
@@ -16,24 +18,24 @@ use Cake\Datasource\FactoryLocator;
  *
  * @property int $id
  * @property string $username
- * @property string|null $password
+ * @property string|NULL $password
  * @property int $failed_attempts
- * @property \Cake\I18n\FrozenTime|null $last_login
- * @property string|null $firstname
- * @property string|null $lastname
- * @property string|null $email
+ * @property \Cake\I18n\FrozenTime|NULL $last_login
+ * @property string|NULL $firstname
+ * @property string|NULL $lastname
+ * @property string|NULL $email
  * @property bool $active
  * @property bool $deleted
- * @property int|null $created_by
- * @property \Cake\I18n\FrozenTime|null $created_on
- * @property int|null $changed_by
- * @property \Cake\I18n\FrozenTime|null $changed_on
- * @property int|null $deleted_by
- * @property \Cake\I18n\FrozenTime|null $deleted_on
+ * @property int|NULL $created_by
+ * @property \Cake\I18n\FrozenTime|NULL $created_on
+ * @property int|NULL $changed_by
+ * @property \Cake\I18n\FrozenTime|NULL $changed_on
+ * @property int|NULL $deleted_by
+ * @property \Cake\I18n\FrozenTime|NULL $deleted_on
  * @property \Awyiss\Model\Entity\Usergroup[] $usergroups
  */
-class User extends \Awyiss\Model\Entity implements IdentityPermissionsInterface, IdentityInterface {
-	use \Cake\ORM\Locator\LocatorAwareTrait;
+class User extends Entity implements IdentityPermissionsInterface, IdentityInterface {
+	use LocatorAwareTrait;
 
 
 	/**
@@ -58,7 +60,9 @@ class User extends \Awyiss\Model\Entity implements IdentityPermissionsInterface,
 
 
 	/**
-	 * Authentication\IdentityInterface method
+	 * Retreives the unique identifier of this identity
+	 *
+	 * @see \Authentication\IdentityInterface::getIdentifier()
 	 */
 	public function getIdentifier (): ?int {
 		return $this->id;
@@ -66,9 +70,11 @@ class User extends \Awyiss\Model\Entity implements IdentityPermissionsInterface,
 
 
 	/**
-	 * Authentication\IdentityInterface method
+	 * Retreive the data of this identity. Required by IdentityInterface
+	 *
+	 * @see \Authentication\IdentityInterface::getOriginalData()
 	 */
-	public function getOriginalData (): self {
+	public function getOriginalData (): static {
 		return $this;
 	}
 
@@ -80,12 +86,39 @@ class User extends \Awyiss\Model\Entity implements IdentityPermissionsInterface,
 	 */
 	public function getAccess (): AccessCollection {
 		if ( ! isset($this->accesCollection)) {
-			$this->accesCollection = new AccessCollection();
 			$la_usergroups = $this->getUsergroups() ?? [];
-			/** @var \Awyiss\Model\Entity\UsergroupPermission $lo_usergrousPermissions */
-			foreach (array_merge(...array_column($la_usergroups, 'usergroup_permissions')) as $lo_usergrousPermissions) {
-				$this->accesCollection->add($lo_usergrousPermissions->scope, $lo_usergrousPermissions->identifier, $lo_usergrousPermissions->access, $lo_usergrousPermissions->settings);
-			}
+			/**
+			 * This little magic trick flattens all usergroup_permissions in all usergroups into one array we can iterate.
+			 *
+			 * $la_usergroups = [
+			 * 	'usergroup1' => [
+			 * 		...
+			 * 		'usergroup_permissions' => [permission1.1, permission1.2, permission1.3, permission1.4],
+			 * 	 ...
+			 * 	],
+			 * 	'usergroup2' => [
+			 * 		...
+			 * 		'usergroup_permissions' => [permission2.1, permission2.2],
+			 * 		...
+			 * 	],
+			 * 	'usergroup3' => [
+			 * 		...
+			 * 		'usergroup_permissions' => [permission3.1, permission3.2, permission3.3],
+			 * 		...
+			 * 	],
+			 * ];
+			 *
+			 * The call of array_column returns all values for 'usergroup_permissions' in all elements of $la_usergroups:
+			 * [[permission1.1, permission1.2, permission1.3, permission1.4], [permission2.1, permission2.2], [permission3.1, permission3.2, permission3.3]]
+			 *
+			 * Calling array_merge with ... expands each child array and then flattens all.
+			 * [permission1.1, permission1.2, permission1.3, permission1.4, permission2.1, permission2.2, permission3.1, permission3.2, permission3.3]
+			 *
+			 * This line saves one foreach. Another foreach would save the comment above, though.
+			 *
+			 * @var \Awyiss\Model\Entity\UsergroupPermission $lo_usergrousPermissions
+			 */
+			$this->accesCollection = new AccessCollection(array_merge(...array_column($la_usergroups, 'usergroup_permissions')));
 		}
 
 		return $this->accesCollection;
@@ -98,7 +131,6 @@ class User extends \Awyiss\Model\Entity implements IdentityPermissionsInterface,
 	 * @return \Awyiss\Model\Entity\Usergroup[]
 	 */
 	public function getUsergroups (): array {
-		//if (!$this->usergroups)  {
 		if ( ! isset($this->usergroups)) {
 			/** @var \Awyiss\Model\Table\UsergroupsUsersTable $lo_usergroupsUsers */
 			$lo_usergroupsUsers = FactoryLocator::get('Table')->get('UsergroupsUsers');
@@ -106,15 +138,16 @@ class User extends \Awyiss\Model\Entity implements IdentityPermissionsInterface,
 
 			/** @var self $lo_self */
 			$lo_self = FactoryLocator::get('Table')->get($this->getSource())->get($this->id, [
+				'access' => ['skip' => TRUE],
 				'contain' => [
 					'Usergroups' => [
 						'UsergroupPermissions' => [
 							'finder' => ['all' => ['access' => ['skip' => TRUE]]],
 						],
-						'finder' => ['all' => ['access' => ['skip' => TRUE]]],
+						'finder' => ['active' => ['access' => ['skip' => TRUE]]], //Only find active groups.
 					],
 				],
-				'access' => ['skip' => TRUE],
+				'finder' => 'active',
 			]);
 
 			$this->usergroups = $lo_self->usergroups ?? [];
@@ -125,6 +158,8 @@ class User extends \Awyiss\Model\Entity implements IdentityPermissionsInterface,
 
 
 	/**
+	 * If the provided email is an empty string, set the email property to NULL.
+	 *
 	 * @noinspection PhpUnused
 	 */
 	protected function _setEmail (string $ax_email): ?string {
@@ -137,10 +172,13 @@ class User extends \Awyiss\Model\Entity implements IdentityPermissionsInterface,
 
 
 	/**
+	 * If the provided password is not an empty string, hash it.
+	 * Otherwise, set it to NULL
+	 *
 	 * @noinspection PhpUnused
 	 */
 	protected function _setPassword (string $as_password): ?string {
-		// Automatically hash passwords when they are changed.
+		//Automatically hash passwords when they are changed.
 		if ( ! empty($as_password)) {
 			$lo_hasher = new DefaultPasswordHasher();
 
@@ -151,10 +189,15 @@ class User extends \Awyiss\Model\Entity implements IdentityPermissionsInterface,
 	}
 
 
+	/**
+	 * When using unserialize() on a serialized instance of this entity, unset the usergroups and the access collection
+	 * so that they will be fetched from the database.
+	 *
+	 * This avoids having a user with outdated permissions.
+	 *
+	 * @return void
+	 */
 	public function __wakeup () {
-		/*if ($this->get('last_login') < \Cake\I18n\FrozenTime::now()->subMinutes(2)) {
-			$this->usergroups = NULL;
-		}*/
 		$this->usergroups = NULL;
 		$this->accesCollection = NULL;
 	}

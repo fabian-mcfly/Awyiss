@@ -178,6 +178,7 @@ return [
 			'file' => 'debug',
 			'levels' => ['notice', 'info', 'debug'],
 			'path' => LOGS,
+			'size' => 2097152,
 			'scopes' => FALSE,
 		],
 		'error' => [
@@ -185,12 +186,14 @@ return [
 			'file' => 'error',
 			'levels' => ['warning', 'error', 'critical', 'alert', 'emergency'],
 			'path' => LOGS,
+			'size' => 2097152,
 			'scopes' => FALSE,
 		],
 		'queries' => [
 			'className' => FileLog::class,
 			'file' => 'queries',
 			'path' => LOGS,
+			'size' => 2097152,
 			'scopes' => ['queriesLog'],
 		],
 	],

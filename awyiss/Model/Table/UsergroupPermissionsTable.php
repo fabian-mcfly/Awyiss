@@ -4,9 +4,10 @@
 namespace Awyiss\Model\Table;
 
 
+use Awyiss\Model\Entity\UsergroupPermission;
+use Awyiss\Model\Table;
 use Cake\Database\Schema\TableSchemaInterface;
-use Cake\Datasource\EntityInterface;
-use Cake\ORM\RulesChecker;
+use Awyiss\ORM\RulesChecker;
 use Cake\Validation\Validator;
 
 
@@ -15,10 +16,9 @@ use Cake\Validation\Validator;
  *
  * @property \Awyiss\Model\Table\UsergroupsTable&\Cake\ORM\Association\BelongsTo $Usergroups
  *
- * @method \Awyiss\Model\Entity\UsergroupPermission newDefaultEntity(array $aa_additionalData = [])
- * @method \Awyiss\Model\Entity\UsergroupPermission patchEntity(EntityInterface $ao_entity, array $aa_data, array $aa_options = [])
+ * @method UsergroupPermission newDefaultEntity(array $aa_additionalData = [])
  */
-class UsergroupPermissionsTable extends \Awyiss\Model\Table {
+class UsergroupPermissionsTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
@@ -34,11 +34,11 @@ class UsergroupPermissionsTable extends \Awyiss\Model\Table {
 		'access' => [
 			'identifiers' => [
 				//We use the usergroups-scope, creating a permission will occur when creating or updating a usergroup
-				'Entity.create' => ['create', 'update'],
+				'Entity.create' => [['create', 'update']],
 				'Entity.update' => 'update',
-				'Model.beforeFind' => ['read', 'create', 'update', 'delete'],
+				'Model.beforeFind' => [['read', 'create', 'update', 'delete']],
 				//We use the usergroups-scope, deleting a permission will occur when updating or deleting a usergroup
-				'Model.beforeDelete' => ['update', 'delete'],
+				'Model.beforeDelete' => [['update', 'delete']],
 			],
 			'scope' => 'usergroups',
 		],
@@ -62,7 +62,12 @@ class UsergroupPermissionsTable extends \Awyiss\Model\Table {
 
 
 	/**
-	 * @inheritDoc
+	 * Returns the default validator object.
+	 *
+	 * @param \Cake\Validation\Validator $ao_validator The validator that can be modified to
+	 * add some rules to it.
+	 *
+	 * @return \Cake\Validation\Validator
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
@@ -82,11 +87,15 @@ class UsergroupPermissionsTable extends \Awyiss\Model\Table {
 
 
 	/**
-	 * @inheritDoc
+	 * Returns a RulesChecker object after modifying the one that was supplied.
+	 *
+	 * @param \Awyiss\ORM\RulesChecker|\Cake\ORM\RulesChecker $ao_rules The rules object to be modified.
+	 *
+	 * @return \Awyiss\ORM\RulesChecker
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildRules (RulesChecker $ao_rules): RulesChecker {
+	public function buildRules (RulesChecker|\Cake\ORM\RulesChecker $ao_rules): RulesChecker {
 		$ao_rules->add($ao_rules->existsIn(['usergroup_id'], 'Usergroups'), ['errorField' => 'usergroup_id']);
 
 		return $ao_rules;

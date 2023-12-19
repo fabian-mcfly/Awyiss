@@ -8,13 +8,21 @@ use Awyiss\Event\EventListenerTrait;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
+use Cake\Utility\Inflector;
 
 
+/**
+ * Event listeners for the Configuration scope of the backend
+ */
 class ConfigurationListener implements EventListenerInterface {
 	use EventListenerTrait;
 
+
+	protected static string $scope;
+
+
 	/**
-	 * @noinspection PhpArrayShapeAttributeCanBeAddedInspection
+	 * @inheritDoc
 	 */
 	public function implementedEvents (): array {
 		return [
@@ -33,10 +41,12 @@ class ConfigurationListener implements EventListenerInterface {
 	 * @param \Awyiss\Model\Entity\ContentTemplate $ao_entity
 	 *
 	 * @noinspection PhpUnused
+	 *
+	 * @todo check if we want to have this inside a queue task, so it can be run with www-user privileges
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function removeCustomConfigFile (Event $ao_event, EntityInterface $ao_entity): void {
-		$ls_fileName = \Cake\Utility\Inflector::underscore(CUSTOM_NAMESPACE);
+		$ls_fileName = Inflector::underscore(CUSTOM_NAMESPACE);
 		$ls_fileName .= '\[??\]\[??\].*';
 
 		foreach (glob(ENV_CUSTOM_CONFIG . $ls_fileName) as $ls_filePath) {

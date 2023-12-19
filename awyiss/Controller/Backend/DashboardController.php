@@ -5,13 +5,19 @@ namespace Awyiss\Controller\Backend;
 
 
 use Awyiss\Controller\BackendController as Controller;
-use Cake\Core\PluginApplicationInterface;
 
 
+/**
+ * Handles the dashboard of the backend
+ */
 class DashboardController extends Controller {
 	public $defaultTable = '';
 
-	public function overview () {
+
+	/**
+	 * @return void
+	 */
+	public function overview (): void {
 
 	}
 }

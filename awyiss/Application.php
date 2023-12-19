@@ -7,6 +7,8 @@ namespace Awyiss;
 
 
 use Awyiss\Controller\ControllerFactory;
+use Awyiss\Event\EventListenersProvider;
+use Awyiss\Model\Table;
 use Awyiss\ORM\Locator\TableLocator;
 use Cake\Core\Configure;
 use Cake\Core\ContainerInterface;
@@ -28,16 +30,19 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 
+/**
+ * @inheritDoc
+ */
 class Application extends BaseApplication {
 	protected ClassLoader $classLoader;
 
 
 	/**
-	 * Constructor
+	 * @inheritDoc
 	 *
 	 * @param \Composer\Autoload\ClassLoader $ao_loader
-	 * @param null|\Cake\Event\EventManagerInterface $ao_eventManager Application event manager instance.
-	 * @param null|\Cake\Http\ControllerFactoryInterface $ao_controllerFactory Controller factory.
+	 * @param NULL|\Cake\Event\EventManagerInterface $ao_eventManager Application event manager instance.
+	 * @param NULL|\Cake\Http\ControllerFactoryInterface $ao_controllerFactory Controller factory.
 	 *
 	 * @noinspection PhpMissingParentConstructorInspection
 	 */
@@ -69,7 +74,7 @@ class Application extends BaseApplication {
 
 
 	/**
-	 * Load all the application configuration and bootstrap logic.
+	 * @inheritDoc
 	 *
 	 * @return void
 	 * @throws \ReflectionException
@@ -96,7 +101,7 @@ class Application extends BaseApplication {
 		if (PHP_SAPI === 'cli') {
 			$this->addPlugin('IdeHelper');
 			$this->bootstrapCli();
-			FactoryLocator::add('Table', (new TableLocator())->allowFallbackClass(TRUE)->setFallbackClassName(\Awyiss\Model\Table::class));
+			FactoryLocator::add('Table', (new TableLocator())->allowFallbackClass(TRUE)->setFallbackClassName(Table::class));
 		}
 		else {
 			FactoryLocator::add('Table', (new TableLocator())->allowFallbackClass(FALSE));
@@ -144,15 +149,11 @@ class Application extends BaseApplication {
 
 			$this->addPlugin('AwyissBake');
 
-			\Awyiss\Event\EventListenersProvider::loadListener('general_events', 'bake');
-
+			EventListenersProvider::loadListener('general_events', 'bake');
 		}
 		catch (MissingPluginException $ex) {
 			exit($ex->getMessage());
 		}
-
-
-
 		/*$lo_onsoleOptionParser = new ConsoleOptionParser('');
 		$lo_onsoleOptionParser->addOption('prefix', [
 			'help' => 'The namespace prefix to use.',
@@ -163,7 +164,7 @@ class Application extends BaseApplication {
 
 
 	/**
-	 * Setup the middleware queue
+	 * @inheritDoc
 	 *
 	 * @param \Cake\Http\MiddlewareQueue $ao_middlewareQueue The middleware queue to set up.
 	 *
@@ -242,11 +243,12 @@ class Application extends BaseApplication {
 
 
 	/**
-	 * Register application container services.
+	 * @inheritDoc
 	 *
 	 * @param \Cake\Core\ContainerInterface $ao_container The Container to update.
 	 *
 	 * @return void
+	 *
 	 * @link https://book.cakephp.org/4/en/development/dependency-injection.html#dependency-injection
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
@@ -263,11 +265,7 @@ class Application extends BaseApplication {
 
 
 	/**
-	 * Invoke the application.
-	 *
-	 * - Convert the PSR response into CakePHP equivalents.
-	 * - Create the controller that will handle this request.
-	 * - Invoke the controller.
+	 * @inheritDoc
 	 *
 	 * @param \Psr\Http\Message\ServerRequestInterface $ao_request The request
 	 *
@@ -288,34 +286,32 @@ class Application extends BaseApplication {
 			Router::setRequest($ao_request);
 		}
 
-		$controller = $this->controllerFactory->create($ao_request);
+		$lo_controller = $this->controllerFactory->create($ao_request);
 
-		return $this->controllerFactory->invoke($controller);
+		return $this->controllerFactory->invoke($lo_controller);
 	}
 
 
-	public static function loadConstants () {
+	/**
+	 *
+	 * @param bool $ab_useFile
+	 *
+	 * @return void
+	 */
+	public static function loadConstants (bool $ab_useFile = TRUE): void {
 		$ls_filePath = ENV_CUSTOM_CONFIG . 'constants.php';
 
-		//dd(FactoryLocator::get('Table'));
-
-		if (file_exists($ls_filePath)) {
+		if (file_exists($ls_filePath) && $ab_useFile) {
 			require_once $ls_filePath;
+
 			return;
 		}
 
-		$ls_constantsContents = '<?php declare(strict_types=1);' . PHP_EOL . PHP_EOL;
-
-		$lo_PageRolesTable = FactoryLocator::get('Table')->get('PageRoles');
+		$lo_pageRolesTable = FactoryLocator::get('Table')->get('PageRoles');
 		/** @var \Awyiss\Model\Entity\PageRole $lo_pageRole */
-		foreach ($lo_PageRolesTable->find('all')->applyOptions(['access' => ['skip' => TRUE]]) AS $lo_pageRole) {
+		foreach ($lo_pageRolesTable->find('all')->applyOptions(['access' => ['skip' => TRUE]]) as $lo_pageRole) {
 			$ls_constant = 'PAGEROLE_' . strtoupper($lo_pageRole->identifier);
-			$ls_constantsContents .= 'defined(\'' . $ls_constant . '\') || define(\'' . $ls_constant . '\', ' . $lo_pageRole->id . ');' . PHP_EOL;
 			defined($ls_constant) || define($ls_constant, $lo_pageRole->id);
-		}
-
-		if (file_put_contents($ls_filePath, $ls_constantsContents) > 0) {
-			chmod($ls_filePath, fileperms($ls_filePath) | 128 + 16 + 2);
 		}
 	}
 }

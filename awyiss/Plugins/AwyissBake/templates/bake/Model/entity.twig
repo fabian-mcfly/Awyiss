@@ -11,15 +11,15 @@
 
 {%- set generatedProperties = [] %}
 {{ element('Bake.file_header', {
-    namespace: fileBuilder.namespace,
-    classImports: fileBuilder.classImports(['Awyiss\\Model\\Entity']),
+	namespace: fileBuilder.namespace,
+	classImports: fileBuilder.classImports(['Awyiss\\Model\\Entity']),
 }) }}
 
 {{ DocBlock.classDescription(name, 'Entity', annotations)|raw }}
 class {{ name }} extends Entity{{ fileBuilder.classBuilder.implements ? ' implements ' ~ fileBuilder.classBuilder.implements|join(', ') : '' }} {
 {% set userConstants = fileBuilder.classBuilder.userConstants([]) %}
 {% if userConstants %}
-    {{~ Bake.concat('\n\n', userConstants) }}
+	{{~ Bake.concat('\n\n', userConstants) }}
 
 {% endif %}
 {% if accessible %}
@@ -42,11 +42,11 @@ class {{ name }} extends Entity{{ fileBuilder.classBuilder.implements ? ' implem
 {% set userProperties = fileBuilder.classBuilder.userProperties(generatedProperties) %}
 {% if userProperties %}
 
-    {{~ Bake.concat('\n\n', userProperties) }}
+	{{~ Bake.concat('\n\n', userProperties) }}
 {% endif %}
 {% set userFunctions = fileBuilder.classBuilder.userFunctions([]) %}
 {% if userFunctions %}
 
-    {{~ Bake.concat('\n\n', userFunctions) }}
+	{{~ Bake.concat('\n\n', userFunctions) }}
 {% endif %}
 }

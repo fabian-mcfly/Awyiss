@@ -3,6 +3,7 @@
 
 namespace FoobarCustomer\Model\Table;
 
+
 /**
  * @inheritDoc
  */

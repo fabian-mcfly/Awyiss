@@ -4,7 +4,16 @@
 namespace Awyiss\Configuration;
 
 
-abstract class AbstractConfigOptions extends ConfigOptionsCollection {
+use Cake\Utility\Hash;
+use Cake\Utility\Inflector;
+
+
+/**
+ * Default implementation of the method signatures of `ConfigOptionsInterface`
+ *
+ * @see \Awyiss\Configuration\ConfigOptionsInterface
+ */
+abstract class AbstractConfigOptions extends ConfigOptionsCollection implements ConfigOptionsInterface {
 	/** @noinspection PhpMissingParentConstructorInspection */
 	public function __construct () {
 		$this->name = static::getScope();
@@ -13,15 +22,15 @@ abstract class AbstractConfigOptions extends ConfigOptionsCollection {
 	}
 
 
-	abstract public function initializeConfigOptions (): void;
-
-
+	/**
+	 * @inheritDoc
+	 */
 	public static function getScope (): string {
 		if (!isset(static::$scope)) {
 			$la_parts = explode('\\', static::class);
 			static::$scope = array_pop($la_parts);
 			static::$scope = substr(static::$scope, 0, -13);
-			static::$scope = \Cake\Utility\Inflector::underscore(static::$scope);
+			static::$scope = Inflector::underscore(static::$scope);
 		}
 
 		return static::$scope;
@@ -29,17 +38,20 @@ abstract class AbstractConfigOptions extends ConfigOptionsCollection {
 
 
 	/**
-	 * @noinspection PhpUnused
+	 * @inheritDoc
 	 */
-	public function getConfigOption (string $as_path) {
-		return \Cake\Utility\Hash::get($this, $as_path);
+	public function getConfigOption (string|array $ax_path): ?ConfigOption {
+		return Hash::get($this, $ax_path);
 	}
 
 
-	public function validateConfigValue (string $as_configOptionName, mixed $ax_value, ?string $as_languagesShortcode = NULL, bool $ab_fallbackValidity = TRUE): bool|string {
+	/**
+	 * @inheritDoc
+	 */
+	public function validateConfigValue (string $as_configOptionName, mixed $ax_value, ?string $as_languageShortcode = NULL, bool $ab_fallbackValidity = TRUE): bool|string {
 		$lo_configOption = $this->getConfigOption($as_configOptionName);
 
-		if (!($lo_configOption instanceof ConfigOption)) {
+		if ( ! ($lo_configOption instanceof ConfigOption)) {
 			/*
 			 * If there is no config option for the given name, we cannot define what's valid and what's not
 			 * This means that we need to return the default validity that the call can specify (default: TRUE)
@@ -49,10 +61,13 @@ abstract class AbstractConfigOptions extends ConfigOptionsCollection {
 			return $ab_fallbackValidity;
 		}
 
-		return $lo_configOption->validateConfigValue($ax_value, $as_languagesShortcode);
+		return $lo_configOption->validateConfigValue($ax_value, $as_languageShortcode);
 	}
 
 
+	/**
+	 * @inheritDoc
+	 */
 	public function typecastConfigValue (string $as_configOptionName, mixed $ax_value): mixed {
 		$lo_configOption = $this->getConfigOption($as_configOptionName);
 

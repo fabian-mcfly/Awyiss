@@ -4,10 +4,33 @@
 namespace Awyiss\Routing\Route;
 
 
+use Cake\Routing\Route\DashedRoute;
 use Cake\Utility\Inflector;
+use InvalidArgumentException;
 
 
-class AwyissRoute extends \Cake\Routing\Route\DashedRoute {
+/**
+ * @todo comment this class, lol
+ *
+ * {@inheritDoc}
+ *
+ * It also handles parameters and their values by appending them after the action.
+ * - param-value pairs are separated by '/'
+ * - each param and its value are separated by ':'
+ *
+ * The URI `/my-controller/my-action/param1:value1/param2:value2` is parsed as
+ *
+ * ```
+ * [
+ * 	'controller' => 'MyController',
+ * 	'action' => 'myAction',
+ * 	'param1' => 'value1',
+ * 	'param2' => 'value2',
+ * ]
+ * ```
+ *
+ */
+class AwyissRoute extends DashedRoute {
 	/**
 	 * @inheritDoc
 	 *
@@ -64,6 +87,113 @@ class AwyissRoute extends \Cake\Routing\Route\DashedRoute {
 			$la_route[ $lx_key ] = $lx_value;
 		}
 
+
+		if ( ! empty($ls_ext)) {
+			$la_route['_ext'] = $ls_ext;
+		}
+
+		$la_route = $this->setRouteArguments($la_route);
+
+		//for now, we disable passing url parameters to method calls
+		unset($la_route['pass']);
+
+		return $la_route;
+	}
+
+
+	/**
+	 * @inheritDoc
+	 *
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 */
+	public function match (array $aa_url, array $aa_context = []): ?string {
+		if (empty($this->_compiledRoute)) {
+			$this->compile();
+		}
+
+		$la_url = $this->_dasherize($aa_url);
+		if ( ! $this->_inflectedDefaults) {
+			$this->_inflectedDefaults = TRUE;
+			$this->defaults = $this->_dasherize($this->defaults);
+		}
+		$la_context = $aa_context + ['params' => [], '_port' => NULL, '_scheme' => NULL, '_host' => NULL];
+		if ( ! empty($this->options['persist']) && is_array($this->options['persist'])) {
+			$la_url = $this->_persistParams($la_url, $this->_dasherize($la_context['params']));
+		}
+		unset($la_context['params']);
+		$la_hostOptions = array_intersect_key($la_url, $la_context);
+
+
+		return $this->_match($la_url, $la_hostOptions, $la_context);
+	}
+
+
+	/**
+	 * Converts a matching route array into a URL string.
+	 *
+	 * Composes the string URL using the template
+	 * used to create the route.
+	 *
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 */
+	protected function buildUrl (array $aa_params, array $aa_pass = [], array $aa_query = []): string {
+		$ls_pass = implode('/', array_map(function($ax_value, $ax_key) {
+			if (is_numeric($ax_key) || $ax_value === FALSE) {
+				return NULL;
+			}
+
+			return rawurlencode((string) $ax_key) . ':' . rawurlencode(Inflector::dasherize((string) $ax_value));
+		}, $aa_pass, array_keys($aa_pass)));
+		$ls_url = $this->template;
+
+		$la_search = $la_replace = [];
+		foreach ($this->keys as $ls_key) {
+
+			if ($ls_key == 'params') {
+				continue;
+			}
+
+			if ( ! array_key_exists($ls_key, $aa_params)) {
+				throw new InvalidArgumentException(sprintf('Missing required route key `%s`', $ls_key));
+			}
+			$lx_value = $aa_params[ $ls_key ];
+			if ($this->braceKeys) {
+				$la_search[] = '{' . $ls_key . '}';
+			}
+			else {
+				$la_search[] = ':' . $ls_key;
+			}
+			$la_replace[] = $lx_value;
+		}
+
+		if (str_contains($this->template, '**')) {
+			array_push($la_search, '**', '%2F');
+			array_push($la_replace, $ls_pass, '/');
+		}
+		elseif (str_contains($this->template, '*')) {
+			$la_search[] = '*';
+			if ( ! empty($aa_params['slug'])) {
+				$la_replace[] = $aa_params['slug'] . (! empty($aa_pass) ? '/' . $ls_pass : NULL);
+			}
+			else {
+				$la_replace[] = $ls_pass;
+			}
+		}
+
+		$ls_url = str_replace($la_search, $la_replace, $ls_url);
+
+		return $this->completeUrlScheme($ls_url, $aa_params, $aa_query);
+	}
+
+
+	/**
+	 * @param array $aa_route
+	 *
+	 * @return array
+	 */
+	protected function setRouteArguments (array $aa_route): array {
+		$la_route = $aa_route;
+
 		if (isset($la_route['_args_'])) {
 			/** @psalm-suppress PossiblyInvalidArgument */
 			$la_pass = [];
@@ -98,10 +228,6 @@ class AwyissRoute extends \Cake\Routing\Route\DashedRoute {
 			unset($la_route['_args_']);
 		}
 
-		if ( ! empty($ls_ext)) {
-			$la_route['_ext'] = $ls_ext;
-		}
-
 		// pass the name if set
 		if (isset($this->options['_name'])) {
 			$la_route['_name'] = $this->options['_name'];
@@ -127,35 +253,18 @@ class AwyissRoute extends \Cake\Routing\Route\DashedRoute {
 			$la_route['action'] = Inflector::variable(str_replace('-', '_', $la_route['action']));
 		}
 
-		//for now, we disable passing url parameters to method calls
-		unset($la_route['pass']);
-
 		return $la_route;
 	}
 
 
 	/**
-	 * @inheritDoc
+	 * @param array $aa_hostOptions
+	 * @param array $aa_context
 	 *
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 * @return NULL|array
 	 */
-	public function match (array $aa_url, array $aa_context = []): ?string {
-		if (empty($this->_compiledRoute)) {
-			$this->compile();
-		}
-
-		$la_url = $this->_dasherize($aa_url);
-		if ( ! $this->_inflectedDefaults) {
-			$this->_inflectedDefaults = TRUE;
-			$this->defaults = $this->_dasherize($this->defaults);
-		}
-		$la_context = $aa_context + ['params' => [], '_port' => NULL, '_scheme' => NULL, '_host' => NULL];
-		if ( ! empty($this->options['persist']) && is_array($this->options['persist'])) {
-			$la_url = $this->_persistParams($la_url, $this->_dasherize($la_context['params']));
-		}
-		unset($la_context['params']);
-		$la_hostOptions = array_intersect_key($la_url, $la_context);
-
+	protected function applyHostOptions (array $aa_hostOptions, array $aa_context): ?array {
+		$la_hostOptions = $aa_hostOptions;
 
 		// Apply the _host option if possible
 		if (isset($this->options['_host'])) {
@@ -163,7 +272,7 @@ class AwyissRoute extends \Cake\Routing\Route\DashedRoute {
 				$la_hostOptions['_host'] = $this->options['_host'];
 			}
 			if ( ! isset($la_hostOptions['_host'])) {
-				$la_hostOptions['_host'] = $la_context['_host'];
+				$la_hostOptions['_host'] = $aa_context['_host'];
 			}
 
 			// The host did not match the route preferences
@@ -171,10 +280,11 @@ class AwyissRoute extends \Cake\Routing\Route\DashedRoute {
 				return NULL;
 			}
 		}
+
 		// Check for properties that will cause an
 		// absolute url. Copy the other properties over.
 		if (isset($la_hostOptions['_scheme']) || isset($la_hostOptions['_port']) || isset($la_hostOptions['_host'])) {
-			$la_hostOptions += $la_context;
+			$la_hostOptions += $aa_context;
 
 			if ($la_hostOptions['_scheme'] && getservbyname($la_hostOptions['_scheme'], 'tcp') === $la_hostOptions['_port']) {
 				unset($la_hostOptions['_port']);
@@ -182,8 +292,150 @@ class AwyissRoute extends \Cake\Routing\Route\DashedRoute {
 		}
 
 		// If no base is set, copy one in.
-		if ( ! isset($la_hostOptions['_base']) && isset($la_context['_base'])) {
-			$la_hostOptions['_base'] = $la_context['_base'];
+		if ( ! isset($la_hostOptions['_base']) && isset($aa_context['_base'])) {
+			$la_hostOptions['_base'] = $aa_context['_base'];
+		}
+
+		return $la_hostOptions;
+	}
+
+
+	/**
+	 * @param string $as_url
+	 * @param array $aa_params
+	 * @param array $aa_query
+	 *
+	 * @return array|string|string[]
+	 */
+	protected function completeUrlScheme (string $as_url, array $aa_params, array $aa_query): string|array {
+		$ls_url = $as_url;
+
+		// add base url if applicable.
+		if (isset($aa_params['_base'])) {
+			$ls_url = $aa_params['_base'] . $ls_url;
+			unset($aa_params['_base']);
+		}
+
+		$ls_url = str_replace('//', '/', $ls_url);
+		if (isset($aa_params['_scheme']) || isset($aa_params['_host']) || isset($aa_params['_port'])) {
+			$ls_host = $aa_params['_host'];
+
+			// append the port & scheme if they exist.
+			if (isset($aa_params['_port'])) {
+				$ls_host .= ':' . $aa_params['_port'];
+			}
+			$ls_scheme = $aa_params['_scheme'] ?? 'http';
+			$ls_url = $ls_scheme . '://' . $ls_host . $ls_url;
+		}
+		if ( ! empty($aa_params['_ext']) || ! empty($aa_query)) {
+			$ls_url = rtrim($ls_url, '/');
+		}
+		if ( ! empty($aa_params['_ext'])) {
+			$ls_url .= '.' . $aa_params['_ext'];
+		}
+		if ( ! empty($aa_query)) {
+			$ls_url .= rtrim('?' . http_build_query($aa_query), '?');
+		}
+
+		return $ls_url;
+	}
+
+
+	/**
+	 * If this route uses pass option, and the passed elements are not set, rekey elements.
+	 *
+	 * If not all named arguments are present in the url, return NULL so that match() can return NULL as well.
+	 *
+	 * @param array $aa_url
+	 * @param array $aa_keyNames
+	 *
+	 * @return null|array
+	 */
+	protected function rekeyParameters (array $aa_url, array &$aa_keyNames = []): ?array {
+		$la_url = $aa_url;
+
+
+		if (isset($this->options['pass'])) {
+			foreach ($this->options['pass'] as $li_i => $ls_name) {
+				if (isset($la_url[ $li_i ]) && ! isset($la_url[ $ls_name ])) {
+					$la_url[ $ls_name ] = $la_url[ $li_i ];
+					unset($la_url[ $li_i ]);
+				}
+			}
+		}
+
+		if (array_intersect_key($aa_keyNames, $la_url) !== $aa_keyNames) {
+			return NULL;
+		}
+
+		if (($this->defaults['prefix'] ?? NULL) != 'Backend') {
+			if ( ! in_array('slug', $this->keys)) {
+				$this->keys[] = 'slug';
+				$aa_keyNames['slug'] = 0;
+			}
+
+			if ( ! in_array('params', $this->keys)) {
+				$this->keys[] = 'params';
+				$aa_keyNames['params'] = 0;
+			}
+
+			unset($this->defaults['controller'], $this->defaults['action']);
+		}
+
+		return $la_url;
+	}
+
+
+	/**
+	 * @param array $aa_url
+	 * @param array $aa_keyNames
+	 *
+	 * @return array
+	 */
+	protected function handlePassedParameters (array $aa_url, array $aa_keyNames): array {
+		$la_url = $aa_url;
+		$la_keyNames = $aa_keyNames;
+
+		$la_pass = [];
+		foreach ($la_url as $lx_key => $lx_value) {
+			// If the key is a routed key, it's not different yet.
+			if (array_key_exists($lx_key, $la_keyNames)) {
+				continue;
+			}
+
+			// pull out passed args
+			$lb_unknownKey = ! in_array($lx_key, ['controller', 'action', 'plugin', '#', 'parts', 'pass', 'fullSlug', '_matchedRoute', '_ext']);
+			if ($lb_unknownKey && isset($this->defaults[ $lx_key ]) && $this->defaults[ $lx_key ] === $lx_value) {
+				continue;
+			}
+			if ($lb_unknownKey) {
+				if (is_numeric($lx_key)) {
+					$la_pass[] = is_array($lx_value) ? implode(',', $lx_value) : $lx_value;
+				}
+				else {
+					$la_pass[ Inflector::dasherize($lx_key) ] = is_array($lx_value) ? implode(',', $lx_value) : $lx_value;
+				}
+				unset($la_url[ $lx_key ]);
+			}
+		}
+
+		return [$la_url, $la_pass];
+	}
+
+
+	/**
+	 * @param array $aa_url
+	 * @param array $aa_hostOptions
+	 * @param array $aa_context
+	 *
+	 * @return null|string
+	 */
+	protected function _match (array $aa_url, array $aa_hostOptions, array $aa_context): ?string {
+		$la_url = $aa_url;
+
+		$la_hostOptions = $this->applyHostOptions($aa_hostOptions, $aa_context);
+		if ( ! $la_hostOptions) {
+			return NULL;
 		}
 
 		$ls_query = ! empty($la_url['?']) ? (array) $la_url['?'] : [];
@@ -212,63 +464,20 @@ class AwyissRoute extends \Cake\Routing\Route\DashedRoute {
 			return NULL;
 		}*/
 
-		// If this route uses pass option, and the passed elements are
-		// not set, rekey elements.
-		if (isset($this->options['pass'])) {
-			foreach ($this->options['pass'] as $i => $name) {
-				if (isset($la_url[ $i ]) && ! isset($la_url[ $name ])) {
-					$la_url[ $name ] = $la_url[ $i ];
-					unset($la_url[ $i ]);
-				}
-			}
-		}
-
 		// check that all the key names are in the url
 		$la_keyNames = array_flip($this->keys);
-		if (array_intersect_key($la_keyNames, $la_url) !== $la_keyNames) {
+		$la_url = $this->rekeyParameters($la_url, $la_keyNames);
+
+		if ( ! $la_url) {
 			return NULL;
 		}
 
-		if (($this->defaults['prefix'] ?? NULL) != 'Backend') {
-			if ( ! in_array('slug', $this->keys)) {
-				$this->keys[] = 'slug';
-				$la_keyNames['slug'] = 0;
-			}
-
-			if ( ! in_array('params', $this->keys)) {
-				$this->keys[] = 'params';
-				$la_keyNames['params'] = 0;
-			}
-
-			unset($this->defaults['controller'], $this->defaults['action']);
-		}
-
-		$la_pass = [];
-		foreach ($la_url as $lx_key => $lx_value) {
-			// If the key is a routed key, it's not different yet.
-			if (array_key_exists($lx_key, $la_keyNames)) {
-				continue;
-			}
-
-			// pull out passed args
-			$lb_unknownKey = ! in_array($lx_key, ['controller', 'action', 'plugin', '#', 'parts', 'pass', 'fullSlug', '_matchedRoute', '_ext']);
-			if ($lb_unknownKey && isset($this->defaults[ $lx_key ]) && $this->defaults[ $lx_key ] === $lx_value) {
-				continue;
-			}
-			if ($lb_unknownKey) {
-				if (is_numeric($lx_key)) {
-					$la_pass[] = is_array($lx_value) ? implode(',', $lx_value) : $lx_value;
-				}
-				else {
-					$la_pass[ Inflector::dasherize($lx_key) ] = is_array($lx_value) ? implode(',', $lx_value) : $lx_value;
-				}
-				unset($la_url[ $lx_key ]);
-			}
-		}
+		[$la_url, $la_pass] = $this->handlePassedParameters($la_url, $la_keyNames);
 		// if not a greedy route, no extra params are allowed.
 		if ( ! $this->_greedy && ! empty($la_pass)) {
 			return NULL;
 		}
+
 		// check patterns for routed params
 		if ( ! empty($this->options)) {
 			foreach ($this->options as $lx_key => $ls_pattern) {
@@ -280,93 +489,11 @@ class AwyissRoute extends \Cake\Routing\Route\DashedRoute {
 
 		$la_url += $la_hostOptions;
 
-		// Ensure controller/action keys are not null.
+		// Ensure controller/action keys are not NULL.
 		if ((isset($la_keyNames['controller']) && ! isset($la_url['controller'])) || (isset($la_keyNames['action']) && ! isset($la_url['action'])) || (isset($la_keyNames['slug']) && ! isset($la_url['slug']))) {
 			return NULL;
 		}
 
-		return $this->_writeUrl($la_url, $la_pass, $ls_query);
-	}
-
-
-	/**
-	 * @inheritDoc
-	 *
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
-	 */
-	protected function _writeUrl (array $aa_params, array $aa_pass = [], array $aa_query = []): string {
-		$ls_pass = implode('/', array_map(function($ax_value, $ax_key) {
-			if (is_numeric($ax_key) || $ax_value === FALSE) {
-				return NULL;
-			}
-
-			return rawurlencode((string) $ax_key) . ':' . rawurlencode(Inflector::dasherize((string) $ax_value));
-		}, $aa_pass, array_keys($aa_pass)));
-		$ls_out = $this->template;
-
-		$la_search = $la_replace = [];
-		foreach ($this->keys as $ls_key) {
-
-			if ($ls_key == 'params') {
-				continue;
-			}
-
-			if ( ! array_key_exists($ls_key, $aa_params)) {
-				throw new \InvalidArgumentException(sprintf('Missing required route key `%s`', $ls_key));
-			}
-			$lx_value = $aa_params[ $ls_key ];
-			if ($this->braceKeys) {
-				$la_search[] = '{' . $ls_key . '}';
-			}
-			else {
-				$la_search[] = ':' . $ls_key;
-			}
-			$la_replace[] = $lx_value;
-		}
-
-		if (str_contains($this->template, '**')) {
-			array_push($la_search, '**', '%2F');
-			array_push($la_replace, $ls_pass, '/');
-		}
-		elseif (str_contains($this->template, '*')) {
-			$la_search[] = '*';
-			if ( ! empty($aa_params['slug'])) {
-				$la_replace[] = $aa_params['slug'] . (! empty($aa_pass) ? '/' . $ls_pass : NULL);
-			}
-			else {
-				$la_replace[] = $ls_pass;
-			}
-		}
-
-		$ls_out = str_replace($la_search, $la_replace, $ls_out);
-
-		// add base url if applicable.
-		if (isset($aa_params['_base'])) {
-			$ls_out = $aa_params['_base'] . $ls_out;
-			unset($aa_params['_base']);
-		}
-
-		$ls_out = str_replace('//', '/', $ls_out);
-		if (isset($aa_params['_scheme']) || isset($aa_params['_host']) || isset($aa_params['_port'])) {
-			$ls_host = $aa_params['_host'];
-
-			// append the port & scheme if they exist.
-			if (isset($aa_params['_port'])) {
-				$ls_host .= ':' . $aa_params['_port'];
-			}
-			$ls_scheme = $aa_params['_scheme'] ?? 'http';
-			$ls_out = $ls_scheme . '://' . $ls_host . $ls_out;
-		}
-		if ( ! empty($aa_params['_ext']) || ! empty($aa_query)) {
-			$ls_out = rtrim($ls_out, '/');
-		}
-		if ( ! empty($aa_params['_ext'])) {
-			$ls_out .= '.' . $aa_params['_ext'];
-		}
-		if ( ! empty($aa_query)) {
-			$ls_out .= rtrim('?' . http_build_query($aa_query), '?');
-		}
-
-		return $ls_out;
+		return $this->buildUrl($la_url, $la_pass, $ls_query);
 	}
 }

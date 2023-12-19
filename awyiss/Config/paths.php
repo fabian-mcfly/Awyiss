@@ -5,6 +5,11 @@ declare(strict_types=1);
 /*
  * Use the DS to separate the directories in other defines
  */
+
+
+use Cake\Utility\Inflector;
+
+
 if ( ! defined('DS')) {
 	define('DS', DIRECTORY_SEPARATOR);
 }
@@ -31,9 +36,9 @@ define('CONFIG', ROOT . DS . APP_DIR . DS . 'config' . DS);
 
 define('CUSTOM_CONFIG', ROOT . DS . CUSTOM_DIR . DS . 'config' . DS);
 
-define('CUSTOM_NAMESPACE', \Cake\Utility\Inflector::camelize(str_replace('_', '-', CUSTOM_DIR), '-'));
+define('CUSTOM_NAMESPACE', Inflector::camelize(str_replace('_', '-', CUSTOM_DIR), '-'));
 
-define('ENV_CUSTOM_CONFIG', ROOT . DS . CUSTOM_DIR . DS . 'config' . DS . CONFIG_ENV . DS);
+define('ENV_CUSTOM_CONFIG', CUSTOM_CONFIG . CONFIG_ENV . DS);
 
 /*
  * File path to the webroot directory.
@@ -60,7 +65,7 @@ define('TMP', ROOT . DS . 'tmp' . DS);
 define('LOGS', ROOT . DS . 'logs' . DS);
 
 /*
- * Path to the cache files directory. It can be shared between hosts in a multi-server setup.
+ * Path to the cache files directory. It can be shared between hosts in a multiserver setup.
  */
 define('CACHE', TMP . 'cache' . DS);
 

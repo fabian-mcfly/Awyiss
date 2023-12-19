@@ -5,6 +5,7 @@ namespace Awyiss\Model\Entity;
 
 
 use Authentication\IdentityInterface;
+use Awyiss\Model\Entity;
 
 
 /**
@@ -16,7 +17,7 @@ use Authentication\IdentityInterface;
  * @property \Cake\I18n\FrozenTime $last_login
  * @property string $provider
  */
-class UsersExternal extends \Awyiss\Model\Entity implements IdentityInterface {
+class UsersExternal extends Entity implements IdentityInterface {
 	/**
 	 * @inheritDoc
 	 */
@@ -30,7 +31,9 @@ class UsersExternal extends \Awyiss\Model\Entity implements IdentityInterface {
 
 
 	/**
-	 * Authentication\IdentityInterface method
+	 * Retreives the unique identifier of this identity
+	 *
+	 * @see \Authentication\IdentityInterface::getIdentifier()
 	 */
 	public function getIdentifier (): ?int {
 		return $this->id;
@@ -38,9 +41,11 @@ class UsersExternal extends \Awyiss\Model\Entity implements IdentityInterface {
 
 
 	/**
-	 * Authentication\IdentityInterface method
+	 * Retreive the data of this identity. Required by IdentityInterface
+	 *
+	 * @see \Authentication\IdentityInterface::getOriginalData()
 	 */
-	public function getOriginalData (): self {
+	public function getOriginalData (): static {
 		return $this;
 	}
 }

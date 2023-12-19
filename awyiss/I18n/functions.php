@@ -2,6 +2,8 @@
 
 
 use Cake\I18n\I18n;
+use Cake\Routing\Router;
+use Cake\Utility\Inflector;
 
 
 if ( ! function_exists('__')) {
@@ -13,6 +15,8 @@ if ( ! function_exists('__')) {
 	 *
 	 * @return string The translated text.
 	 * @link https://book.cakephp.org/4/en/core-libraries/global-constants-and-functions.html#__
+	 *
+	 * @noinspection PhpFunctionNamingConventionInspection
 	 */
 	function __ (string $as_string, ...$aa_args): string {
 		if ( ! $as_string) {
@@ -28,7 +32,7 @@ if ( ! function_exists('__')) {
 			$ls_string = array_pop($la_parts);
 
 			if (empty($la_parts[0])) {
-				$la_parts[0] = \Cake\Utility\Inflector::underscore(\Cake\Routing\Router::getRequest()->getParam('controller'));
+				$la_parts[0] = Inflector::underscore(Router::getRequest()->getParam('controller'));
 			}
 
 			$ls_domain = implode('/', $la_parts);

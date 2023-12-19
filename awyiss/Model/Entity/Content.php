@@ -4,6 +4,7 @@
 namespace Awyiss\Model\Entity;
 
 
+use Awyiss\Model\Entity;
 use Cake\Collection\CollectionInterface;
 use Cake\Datasource\FactoryLocator;
 
@@ -12,39 +13,39 @@ use Cake\Datasource\FactoryLocator;
  * Content Entity
  *
  * @property int $id
- * @property string|null $title
- * @property string|null $subtitle
- * @property string|null $text
- * @property int|null $media_id
- * @property int|null $media_alt_id
- * @property int|null $media_folders_id
- * @property string|null $link
- * @property \Cake\I18n\FrozenTime|null $publishdate_start
- * @property \Cake\I18n\FrozenTime|null $publishdate_end
- * @property string|null $template_position
+ * @property string|NULL $title
+ * @property string|NULL $subtitle
+ * @property string|NULL $text
+ * @property int|NULL $media_id
+ * @property int|NULL $media_alt_id
+ * @property int|NULL $media_folders_id
+ * @property string|NULL $link
+ * @property \Cake\I18n\FrozenTime|NULL $publishdate_start
+ * @property \Cake\I18n\FrozenTime|NULL $publishdate_end
+ * @property string|NULL $template_position
  * @property int $content_template_id
  * @property float $columnwidth
- * @property string|null $css_class
- * @property int|null $forms_id
- * @property int|null $duplicate_of
- * @property string|null $data
+ * @property string|NULL $css_class
+ * @property int|NULL $forms_id
+ * @property int|NULL $duplicate_of
+ * @property string|NULL $data
  * @property int $system_order
  * @property bool $active
  * @property bool $deleted
  * @property int $parent_id
  * @property int $page_id
- * @property int|null $created_by
- * @property \Cake\I18n\FrozenTime|null $created_on
- * @property int|null $changed_by
- * @property \Cake\I18n\FrozenTime|null $changed_on
- * @property int|null $deleted_by
- * @property \Cake\I18n\FrozenTime|null $deleted_on
+ * @property int|NULL $created_by
+ * @property \Cake\I18n\FrozenTime|NULL $created_on
+ * @property int|NULL $changed_by
+ * @property \Cake\I18n\FrozenTime|NULL $changed_on
+ * @property int|NULL $deleted_by
+ * @property \Cake\I18n\FrozenTime|NULL $deleted_on
  * @property \Awyiss\Model\Entity\ContentTemplate $content_template
  * @property \Awyiss\Model\Entity\Content $parent_content
  * @property \Awyiss\Model\Entity\Page $page
  * @property \Awyiss\Model\Entity\Content[] $child_contents
  */
-class Content extends \Awyiss\Model\Entity {
+class Content extends Entity {
 	/**
 	 * @inheritDoc
 	 */
@@ -69,42 +70,8 @@ class Content extends \Awyiss\Model\Entity {
 
 
 	/**
-	 * @noinspection PhpUnused
-	 */
-	/*protected function _getCssClass (?array $aa_cssClass = NULL): ?array {
-		return $aa_cssClass ? array_combine($aa_cssClass, $aa_cssClass) : NULL;
-	}*/
-
-
-	/**
-	 * @noinspection PhpUnused
-	 */
-	/*protected function _setCssClass (mixed $ax_value): array {
-		if (empty($ax_value)) {
-			return [];
-		}
-
-		if (is_array($ax_value)) {
-			return $ax_value;
-		}
-
-		return array_unique(array_map('trim', explode(',', trim($ax_value, ', '))));
-	}*/
-
-
-	/**
-	 * @noinspection PhpUnused
-	 */
-	/*protected function _setData (mixed $ax_value): ?array {
-		if (empty($ax_value)) {
-			return NULL;
-		}
-
-		return is_array($ax_value) ? $ax_value : [$ax_value];
-	}*/
-
-
-	/**
+	 * Get all direct children of the current entity
+	 *
 	 * @noinspection PhpUnused
 	 */
 	public function getDirectChildren (): ?CollectionInterface {
@@ -116,6 +83,8 @@ class Content extends \Awyiss\Model\Entity {
 
 
 	/**
+	 * Get all children, and their children, and their children, and their children of the current entity. And its children.
+	 *
 	 * @noinspection PhpUnused
 	 */
 	public function getChildren (array $aa_options = [], int $ai_currentLevel = 0): ?CollectionInterface {
@@ -127,6 +96,8 @@ class Content extends \Awyiss\Model\Entity {
 
 
 	/**
+	 * Get the parent page of the current entity
+	 *
 	 * @noinspection PhpUnused
 	 */
 	public function getParent (): ?self {
@@ -138,6 +109,8 @@ class Content extends \Awyiss\Model\Entity {
 
 
 	/**
+	 * Get all the parent page and all of its parents pages of the current entity
+	 *
 	 * @noinspection PhpUnused
 	 */
 	public function getParents (array $aa_options = [], int $ai_currentLevel = 0): ?CollectionInterface {

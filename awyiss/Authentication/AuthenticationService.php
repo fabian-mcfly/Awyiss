@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 
 namespace Awyiss\Authentication;
@@ -12,6 +12,9 @@ use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
 
 
+/**
+ * @inheritDoc
+ */
 class AuthenticationService extends \Authentication\AuthenticationService {
 	use EventDispatcherTrait;
 
@@ -19,6 +22,7 @@ class AuthenticationService extends \Authentication\AuthenticationService {
 	 * @inheritDoc
 	 *
 	 * @uses \Awyiss\Authentication\Identifier\IdentifierCollection
+	 * @noinspection PhpMissingParentCallCommonInspection
 	 */
 	public function identifiers (): IdentifierCollection {
 		if ($this->_identifiers === NULL) {
@@ -30,7 +34,12 @@ class AuthenticationService extends \Authentication\AuthenticationService {
 
 
 	/**
+	 * @inheritDoc
+	 *
+	 * @param \Psr\Http\Message\ServerRequestInterface $ao_request The request.
+	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 * @noinspection PhpMissingParentCallCommonInspection
 	 */
 	public function authenticate (ServerRequestInterface $ao_request): ResultInterface {
 		$lx_result = NULL;
@@ -67,13 +76,16 @@ class AuthenticationService extends \Authentication\AuthenticationService {
 
 	/**
 	 * @inheritDoc
+	 *
+	 * @param \Psr\Http\Message\ServerRequestInterface $ao_request The request
+	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function getUnauthenticatedRedirectUrl (ServerRequestInterface $ao_request): ?string {
-		/**
+		/*
 		 * This one's hacky and needs a serious rework but works for now
 		 * We write the current Uri to the session since we don't like having an uri-encoded
-		 * paramter containing the old path. That looks amateurish
+		 * paramter containing the old path. That looks amateurish.
 		 */
 
 		$lo_uri = $ao_request->getUri();
@@ -89,7 +101,11 @@ class AuthenticationService extends \Authentication\AuthenticationService {
 
 	/**
 	 * @inheritDoc
+	 *
+	 * @param \Psr\Http\Message\ServerRequestInterface $ao_request The request
+	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 * @noinspection PhpMissingParentCallCommonInspection
 	 */
 	public function getLoginRedirect (ServerRequestInterface $ao_request): ?string {
 		/** @var \Cake\Http\Session $lo_session */

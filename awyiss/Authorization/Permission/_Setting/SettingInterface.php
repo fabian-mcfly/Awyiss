@@ -4,7 +4,14 @@
 namespace Awyiss\Authorization\Permission\Setting;
 
 
+/**
+ * Interface to be used by a Setting-class that offers
+ * additional settings for a permission.
+ */
 interface SettingInterface {
+	final public const TYPE_RADIO = 'radio';
+	final public const TYPE_SELECT = 'select';
+
 	/**
 	 * @return string
 	 */
@@ -16,7 +23,7 @@ interface SettingInterface {
 	 *
 	 * @return $this
 	 */
-	public function setType (string $as_type): self;
+	public function setType (string $as_type): static;
 
 
 	/**
@@ -30,14 +37,5 @@ interface SettingInterface {
 	 *
 	 * @return $this
 	 */
-	public function setOptions (array $aa_options): self;
-
-
-	/**
-	 * @param \Cake\View\View $ao_view
-	 * @param null|string $as_prePath
-	 *
-	 * @return string
-	 */
-	//public function render (\Cake\View\View $ao_view, ?string $as_prePath = NULL): string;
+	public function setOptions (array $aa_options): static;
 }

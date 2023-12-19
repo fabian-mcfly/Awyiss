@@ -5,8 +5,10 @@ namespace Awyiss\Controller\Backend;
 
 
 use Awyiss\Controller\BackendController as Controller;
-use Cake\Datasource\Exception\InvalidPrimaryKeyException;
-use Cake\Datasource\Exception\RecordNotFoundException;
+use Awyiss\Model\Entity\Language;
+use Cake\Http\Exception\RedirectException;
+use Cake\Http\Response;
+use Cake\Routing\Router;
 
 
 /**
@@ -18,13 +20,9 @@ class LanguagesController extends Controller {
 	/**
 	 * Overview method
 	 *
-	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
-	 *
 	 * @throws \Exception
-	 *
-	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
-	public function overview () {
+	public function overview (): void {
 		$this->Access->ensure('read');
 
 		$lo_languages = $this->Languages->find('withAttributes')->where($this->getOverviewWhere());
@@ -39,36 +37,16 @@ class LanguagesController extends Controller {
 	/**
 	 * Add method
 	 *
-	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
+	 * @return void
 	 *
 	 * @throws \Exception
-	 *
-	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
-	public function add () {
+	public function add (): void {
 		$this->Access->ensure('create');
 
 		$lo_language = $this->Languages->newDefaultEntity();
 		if ($this->request->is('post')) {
-			$this->Languages->patchEntity($lo_language, $this->request->getData());
-
-			if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-				if ($this->Languages->save($lo_language)) {
-					$this->Flash->success(__('::add_succeeded'));
-
-					if ($this->request->getData('submit') == 'submit_close') {
-						return $this->redirect(['action' => 'overview']);
-					}
-
-					return $this->redirect(['action' => 'edit', 'id' => $lo_language->id]);
-				}
-
-				$this->Flash->error(__('::add_failed'));
-				$this->Flash->error(implode('<br>' . PHP_EOL, $lo_language->getError('_general')));
-			}
-			else {
-				$lo_language->system_order = NULL;
-			}
+			$this->save($lo_language);
 		}
 
 		$this->set([
@@ -80,51 +58,23 @@ class LanguagesController extends Controller {
 	/**
 	 * Edit method
 	 *
-	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
+	 * @return void|?\Cake\Http\Response
 	 *
 	 * @throws \Exception
-	 *
-	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
 	public function edit () {
 		$this->Access->ensure('update');
 
-		try {
-			$li_id = $this->request->getParam('id');
-			/** @var \Awyiss\Model\Entity\Language $lo_language */
-			$lo_language = $this->Languages->get($li_id);
-		}
-		catch (RecordNotFoundException|InvalidPrimaryKeyException) {
+		/** @var Language $lo_language */
+		$lo_language = $this->Languages->findById((int) $this->request->getParam('id'))->first();
+		if ( ! $lo_language) {
 			$this->Flash->error(__('::record_not_found'));
 
 			return $this->redirect(['action' => 'overview']);
 		}
 
 		if ($this->request->is(['patch', 'post', 'put'])) {
-			$this->Languages->patchEntity($lo_language, $this->request->getData());
-
-			if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-				if ($this->Languages->save($lo_language)) {
-					$this->Flash->success(__('::edit_succeeded'));
-
-					if ($this->request->getData('submit') == 'submit_close') {
-						return $this->redirect(['action' => 'overview']);
-					}
-
-					return $this->redirect(['action' => 'edit', 'id' => $lo_language->id]);
-				}
-
-				$this->Flash->error(__('::edit_failed'));
-				$this->Flash->error(implode('<br>' . PHP_EOL, $lo_language->getError('_general')));
-			}
-			else {
-				if ($this->Languages->getSystemOrderRelatedColumns($lo_language)) {
-					$lo_language->system_order = NULL;
-				}
-				else {
-					$lo_language->system_order = $lo_language->getOriginal('system_order');
-				}
-			}
+			$this->save($lo_language, 'edit');
 		}
 
 		$this->set([
@@ -136,23 +86,18 @@ class LanguagesController extends Controller {
 	/**
 	 * Delete method
 	 *
-	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
+	 * @return \Cake\Http\Response
 	 *
 	 * @throws \Exception
-	 *
-	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
-	public function delete () {
+	public function delete (): Response {
 		$this->Access->ensure('delete');
 
 		$this->request->allowMethod(['get', 'delete']);
 
-		try {
-			$li_id = $this->request->getParam('id');
-			/** @var \Awyiss\Model\Entity\Language $lo_language */
-			$lo_language = $this->Languages->get($li_id);
-		}
-		catch (RecordNotFoundException|InvalidPrimaryKeyException) {
+		/** @var Language $lo_language */
+		$lo_language = $this->Languages->findById((int) $this->request->getParam('id'))->first();
+		if ( ! $lo_language) {
 			$this->Flash->error(__('::record_not_found'));
 			return $this->redirect(['action' => 'overview']);
 		}
@@ -165,6 +110,40 @@ class LanguagesController extends Controller {
 		}
 
 		return $this->redirect(['action' => 'overview']);
+	}
+
+
+	/**
+	 * @param Language $ao_language
+	 * @param string $as_method
+	 *
+	 * @return void
+	 */
+	protected function save (Language $ao_language, string $as_method = 'add'): void {
+		$this->Languages->patchEntity($ao_language, $this->request->getData());
+
+		if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
+			if ($this->Languages->save($ao_language)) {
+				$this->Flash->success(__('::' . $as_method . '_succeeded'));
+
+				if ($this->request->getData('submit') == 'submit_close') {
+					throw new RedirectException(Router::url(['action' => 'overview'], TRUE), 302);
+				}
+
+				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $ao_language->id], TRUE), 302);
+			}
+
+			$this->Flash->error(__('::' . $as_method . '_failed'));
+			$this->Flash->error(implode('<br>' . PHP_EOL, $ao_language->getError('_general')));
+		}
+		else {
+			if ($this->Languages->getSystemOrderRelatedColumns($ao_language)) {
+				$ao_language->system_order = NULL;
+			}
+			else {
+				$ao_language->system_order = $ao_language->getOriginal('system_order');
+			}
+		}
 	}
 }
 

@@ -4,16 +4,45 @@
 namespace Awyiss\View\Helper;
 
 
-class FlashHelper extends \Cake\View\Helper {
+use Cake\View\Helper;
+
+
+/**
+ * FlashHelper class to render flash messages.
+ *
+ * After setting messages in your controllers with FlashComponent, you can use
+ * this class to output your flash messages in your views.
+ *
+ * @see \Cake\View\Helper\FlashHelper
+ */
+class FlashHelper extends Helper {
+	/**
+	 * When calling this method with '*' as `as_key`, it will return all flash messages, no matter they key they
+	 * have been set with.
+	 *
+	 * This allows the backend to display messages after redirecting to a different controller.
+	 *
+	 * @param string $as_key
+	 * @param array $aa_options
+	 *
+	 * @return null|string
+	 *
+	 * @see \Cake\View\Helper\FlashHelper::render()
+	 */
 	public function render (string $as_key = '*', array $aa_options = []): ?string {
+		$lo_flash = $this->_View->getRequest()->getFlash();
+
 		if ($as_key === '*') {
-			$ls_key = $this->_View->getRequest()->getFlash()->getConfig('key');
-			$la_controllerMessage = $this->_View->getRequest()->getFlash()->consume($ls_key);
-			$la_globalMessages = $this->_View->getRequest()->getFlash()->consume($as_key);
-			$la_messages = array_merge($la_controllerMessage ?? [], $la_globalMessages ?? []);
+			$la_controllerMessage = [];
+			foreach (($this->_View->getRequest()->getSession()->read('Flash') ?? []) as $ls_key => $la_messages) {
+				$la_controllerMessage += $lo_flash->consume($ls_key);
+			}
+
+			$la_globalMessages = $lo_flash->consume($as_key) ?? [];
+			$la_messages = array_merge($la_controllerMessage, $la_globalMessages);
 		}
 		else {
-			$la_messages = $this->_View->getRequest()->getFlash()->consume($as_key);
+			$la_messages = $lo_flash->consume($as_key);
 		}
 
 		if ( ! $la_messages) {

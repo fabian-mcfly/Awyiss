@@ -4,40 +4,39 @@
 namespace Awyiss\View;
 
 
+use Awyiss\Twig\Extension\AwyissExtension;
+use Awyiss\Twig\FileLoader;
+use Cake\Core\Configure;
 use Cake\TwigView\View\TwigView;
+use Twig\Loader\LoaderInterface;
 
 
 /**
  * Application View
  *
- * @property \Awyiss\View\Helper\PermissionHelper $Authorization
+ * @property \Awyiss\View\Helper\AccessHelper $Access
+ * @property \Awyiss\View\Helper\CategoriesHelper $Categories
  * @property \Awyiss\View\Helper\FlashHelper $Flash
+ * @property \Awyiss\View\Helper\FormHelper $Form
+ * @property \Awyiss\View\Helper\LocaleHelper $Locale
  * @property \Awyiss\View\Helper\PaginatorHelper $Paginator
+ * @property \Awyiss\View\Helper\PermissionHelper $Permission
+ * @property \Awyiss\View\Helper\SystemOrderHelper $SystemOrder
+ * @property \Awyiss\View\Helper\UrlHelper $Url
  */
 class AppView extends TwigView {
 	/**
-	 * Constant for view file type 'element'
+	 * @inheritDoc
 	 *
-	 * @var string
-	 */
-	//public const TYPE_ELEMENT = 'Element';
-
-	/**
-	 * Constant for view file type 'layout'
+	 * @return void
 	 *
-	 * @var string
-	 */
-	//public const TYPE_LAYOUT = 'Layout';
-
-
-	/**
 	 * @throws \Twig\Error\LoaderError
 	 */
 	public function initialize (): void {
 		$this->setConfig('environment', [
 			'auto_reload' => TRUE,
 			'cache' => FALSE,
-			'debug' => \Cake\Core\Configure::read('debug'),
+			'debug' => Configure::read('debug'),
 			'strict_variables' => FALSE,
 		]);
 
@@ -50,14 +49,14 @@ class AppView extends TwigView {
 			$lo_loader = $lo_twig->getLoader();
 
 			$lo_loader->addPath(ROOT . DS . CUSTOM_DIR . DS . 'templates' . DS, CUSTOM_NAMESPACE);
-			$lo_loader->addPath(ROOT . DS . APP_DIR . DS . 'templates' . DS, \Cake\Core\Configure::read('App.namespace'));
+			$lo_loader->addPath(ROOT . DS . APP_DIR . DS . 'templates' . DS, Configure::read('App.namespace'));
 
 			$lo_loader->setPaths([
 				ROOT . DS . CUSTOM_DIR . DS . 'templates' . DS . 'Backend' . DS,
-				ROOT . DS . APP_DIR . DS . 'templates' . DS . 'Backend' . DS
+				ROOT . DS . APP_DIR . DS . 'templates' . DS . 'Backend' . DS,
 			], 'Backend');
 
-			$lo_twig->addExtension(new \Awyiss\Twig\Extension\AwyissExtension());
+			$lo_twig->addExtension(new AwyissExtension());
 
 			//This looks for a custom Twig Extension class in \<custom namespace>\Twig\Extension\<CustomNamespace>Extension.php and adds it
 			$ls_customExtensionClass = '\\' . CUSTOM_NAMESPACE . '\Twig\Extension\\' . CUSTOM_NAMESPACE . 'Extension';
@@ -70,7 +69,12 @@ class AppView extends TwigView {
 	}
 
 
-	protected function createLoader(): \Twig\Loader\LoaderInterface {
-		return new \Awyiss\Twig\FileLoader($this->extensions);
+	/**
+	 * @inheritDoc
+	 *
+	 * @return \Twig\Loader\LoaderInterface
+	 */
+	protected function createLoader (): LoaderInterface {
+		return new FileLoader($this->extensions);
 	}
 }

@@ -12,7 +12,6 @@ if ( ! extension_loaded('intl')) {
 	trigger_error('You must enable the intl extension to use Awyiss.', E_USER_ERROR);
 }
 
-/** @noinspection PhpUndefinedConstantInspection */
 if (version_compare(INTL_ICU_VERSION, '50.1', '<')) {
 	trigger_error('ICU >= 50.1 is needed to use Awyiss. Please update the `libicu` package of your system.' . PHP_EOL, E_USER_ERROR);
 }

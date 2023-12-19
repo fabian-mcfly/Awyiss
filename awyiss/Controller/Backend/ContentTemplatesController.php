@@ -5,8 +5,11 @@ namespace Awyiss\Controller\Backend;
 
 
 use Awyiss\Controller\BackendController as Controller;
-use Cake\Datasource\Exception\InvalidPrimaryKeyException;
-use Cake\Datasource\Exception\RecordNotFoundException;
+use Awyiss\Model\Entity\ContentTemplate;
+use Cake\Datasource\ResultSetInterface;
+use Cake\Http\Exception\RedirectException;
+use Cake\Http\Response;
+use Cake\Routing\Router;
 
 
 /**
@@ -15,6 +18,9 @@ use Cake\Datasource\Exception\RecordNotFoundException;
  * @property \Awyiss\Model\Table\ContentTemplatesTable $ContentTemplates
  */
 class ContentTemplatesController extends Controller {
+	/**
+	 * @var array<int, string>
+	 */
 	protected array $availableElements = [
 		'parent_id',
 		'columnwidth',
@@ -34,13 +40,9 @@ class ContentTemplatesController extends Controller {
 	/**
 	 * Overview method
 	 *
-	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
-	 *
 	 * @throws \Exception
-	 *
-	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
-	public function overview () {
+	public function overview (): void {
 		$this->Access->ensure('read');
 
 		$lo_contentTemplates = $this->ContentTemplates->find('withAttributes')->where($this->getOverviewWhere());
@@ -54,39 +56,16 @@ class ContentTemplatesController extends Controller {
 	/**
 	 * Add method
 	 *
-	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
+	 * @return void
 	 *
 	 * @throws \Exception
-	 *
-	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
-	public function add () {
+	public function add (): void {
 		$this->Access->ensure('create');
 
 		$lo_contentTemplate = $this->ContentTemplates->newDefaultEntity();
 		if ($this->request->is('post')) {
-			$la_requestData = $this->request->getData() + ['assigned_template_positions' => []];
-			if (isset($la_requestData['available_elements'])) {
-				$la_requestData['available_elements'] = array_filter($la_requestData['available_elements'], function($aa_element) {
-					return ! is_numeric($aa_element['name']);
-				});
-			}
-			$this->ContentTemplates->patchEntity($lo_contentTemplate, $la_requestData);
-
-			if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-				if ($this->ContentTemplates->save($lo_contentTemplate)) {
-					$this->Flash->success(__('::add_succeeded'));
-
-					if ($this->request->getData('submit') == 'submit_close') {
-						return $this->redirect(['action' => 'overview']);
-					}
-
-					return $this->redirect(['action' => 'edit', 'id' => $lo_contentTemplate->id]);
-				}
-
-				$this->Flash->error(__('::add_failed'));
-				$this->Flash->error(implode('<br>' . PHP_EOL, $lo_contentTemplate->getError('_general')));
-			}
+			$this->save($lo_contentTemplate);
 		}
 
 		$this->set([
@@ -100,26 +79,15 @@ class ContentTemplatesController extends Controller {
 	/**
 	 * Edit method
 	 *
-	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
+	 * @return void|?\Cake\Http\Response
 	 *
 	 * @throws \Exception
-	 *
-	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
 	public function edit () {
 		$this->Access->ensure('update');
 
-		try {
-			$li_id = $this->request->getParam('id');
-			/** @var \Awyiss\Model\Entity\ContentTemplate $lo_contentTemplate */
-			$lo_contentTemplate = $this->ContentTemplates->get($li_id);
-		}
-		catch (RecordNotFoundException|InvalidPrimaryKeyException) {
-			$this->Flash->error(__('::record_not_found'));
-
-			return $this->redirect(['action' => 'overview']);
-		}
-
+		/** @var ContentTemplate $lo_contentTemplate */
+		$lo_contentTemplate = $this->ContentTemplates->findById((int) $this->request->getParam('id'))->first();
 		if ( ! $lo_contentTemplate) {
 			$this->Flash->error(__('::record_not_found'));
 
@@ -127,28 +95,7 @@ class ContentTemplatesController extends Controller {
 		}
 
 		if ($this->request->is(['patch', 'post', 'put'])) {
-			$la_requestData = $this->request->getData() + ['assigned_template_positions' => []];
-			if (isset($la_requestData['available_elements'])) {
-				$la_requestData['available_elements'] = array_filter($la_requestData['available_elements'], function($aa_element) {
-					return ! is_numeric($aa_element['name']);
-				});
-			}
-			$this->ContentTemplates->patchEntity($lo_contentTemplate, $la_requestData);
-
-			if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-				if ($this->ContentTemplates->save($lo_contentTemplate)) {
-					$this->Flash->success(__('::edit_succeeded'));
-
-					if ($this->request->getData('submit') == 'submit_close') {
-						return $this->redirect(['action' => 'overview']);
-					}
-
-					return $this->redirect(['action' => 'edit', 'id' => $lo_contentTemplate->id]);
-				}
-
-				$this->Flash->error(__('::edit_failed'));
-				$this->Flash->error(implode('<br>' . PHP_EOL, $lo_contentTemplate->getError('_general')));
-			}
+			$this->save($lo_contentTemplate, 'edit');
 		}
 
 		$this->set([
@@ -162,23 +109,18 @@ class ContentTemplatesController extends Controller {
 	/**
 	 * Delete method
 	 *
-	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
+	 * @return \Cake\Http\Response
 	 *
 	 * @throws \Exception
-	 *
-	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
-	public function delete () {
+	public function delete (): Response {
 		$this->Access->ensure('delete');
 
 		$this->request->allowMethod(['get', 'delete']);
 
-		try {
-			$li_id = $this->request->getParam('id');
-			/** @var \Awyiss\Model\Entity\ContentTemplate $lo_contentTemplate */
-			$lo_contentTemplate = $this->ContentTemplates->get($li_id);
-		}
-		catch (RecordNotFoundException|InvalidPrimaryKeyException) {
+		/** @var ContentTemplate $lo_contentTemplate */
+		$lo_contentTemplate = $this->ContentTemplates->findById((int) $this->request->getParam('id'))->first();
+		if ( ! $lo_contentTemplate) {
 			$this->Flash->error(__('::record_not_found'));
 			return $this->redirect(['action' => 'overview']);
 		}
@@ -194,7 +136,42 @@ class ContentTemplatesController extends Controller {
 	}
 
 
-	protected function getPageTemplates (): \Cake\ORM\Query {
-		return $this->getTableLocator()->get('PageTemplates')->find('withAttributes');
+	/**
+	 * @return \Cake\Datasource\ResultSetInterface
+	 */
+	protected function getPageTemplates (): ResultSetInterface {
+		return $this->fetchTable('PageTemplates')->find('withAttributes')->all();
+	}
+
+
+	/**
+	 * @param ContentTemplate $ao_contentTemplate
+	 * @param string $as_method
+	 *
+	 * @return void
+	 */
+	protected function save (ContentTemplate $ao_contentTemplate, string $as_method = 'add'): void {
+		$la_requestData = $this->request->getData() + ['assigned_template_positions' => []];
+		if (isset($la_requestData['available_elements'])) {
+			$la_requestData['available_elements'] = array_filter($la_requestData['available_elements'], function($aa_element) {
+				return ! is_numeric($aa_element['name']);
+			});
+		}
+		$this->ContentTemplates->patchEntity($ao_contentTemplate, $la_requestData);
+
+		if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
+			if ($this->ContentTemplates->save($ao_contentTemplate)) {
+				$this->Flash->success(__('::' . $as_method . '_succeeded'));
+
+				if ($this->request->getData('submit') == 'submit_close') {
+					throw new RedirectException(Router::url(['action' => 'overview'], TRUE), 302);
+				}
+
+				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $ao_contentTemplate->id], TRUE), 302);
+			}
+
+			$this->Flash->error(__('::' . $as_method . '_failed'));
+			$this->Flash->error(implode('<br>' . PHP_EOL, $ao_contentTemplate->getError('_general')));
+		}
 	}
 }

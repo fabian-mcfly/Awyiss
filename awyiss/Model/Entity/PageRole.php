@@ -4,6 +4,10 @@
 namespace Awyiss\Model\Entity;
 
 
+use Awyiss\Model\Entity;
+use Cake\Utility\Text;
+
+
 /**
  * PageRole Entity
  *
@@ -14,14 +18,14 @@ namespace Awyiss\Model\Entity;
  * @property int $system_order
  * @property bool $active
  * @property bool $deleted
- * @property int|null $created_by
- * @property \Cake\I18n\FrozenTime|null $created_on
- * @property int|null $changed_by
- * @property \Cake\I18n\FrozenTime|null $changed_on
- * @property int|null $deleted_by
- * @property \Cake\I18n\FrozenTime|null $deleted_on
+ * @property int|NULL $created_by
+ * @property \Cake\I18n\FrozenTime|NULL $created_on
+ * @property int|NULL $changed_by
+ * @property \Cake\I18n\FrozenTime|NULL $changed_on
+ * @property int|NULL $deleted_by
+ * @property \Cake\I18n\FrozenTime|NULL $deleted_on
  */
-class PageRole extends \Awyiss\Model\Entity {
+class PageRole extends Entity {
 	/**
 	 * @inheritDoc
 	 */
@@ -35,10 +39,12 @@ class PageRole extends \Awyiss\Model\Entity {
 
 
 	/**
+	 * Make sure the identifier is always lowercase, underscored and free of special characters
+	 *
 	 * @noinspection PhpUnused
 	 */
 	protected function _setIdentifier (string $as_identifier): string {
-		$ls_identifier = \Cake\Utility\Text::slug($as_identifier, ['replacement' => '_']);
+		$ls_identifier = Text::slug($as_identifier, ['replacement' => '_']);
 
 		return mb_strtolower($ls_identifier);
 	}

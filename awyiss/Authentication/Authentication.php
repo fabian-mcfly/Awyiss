@@ -6,12 +6,29 @@ namespace Awyiss\Authentication;
 
 use Authentication\AuthenticationServiceInterface;
 use Authentication\AuthenticationServiceProviderInterface;
+use Authentication\Authenticator\FormAuthenticator;
 use Authentication\Identifier\IdentifierInterface;
+use Authentication\Identifier\PasswordIdentifier;
+use Authentication\Identifier\Resolver\OrmResolver;
+use Awyiss\Authentication\Authenticator\SessionAuthenticator;
+use Awyiss\Model\Entity\User;
+use Awyiss\Model\Entity\UsersExternal;
+use Cake\Event\EventDispatcherTrait;
+use Cake\I18n\FrozenTime;
 use Cake\Routing\Router;
+use Exception;
 use Psr\Http\Message\ServerRequestInterface;
 
 
+/**
+ * Authentication class that registers and provides access to instances of
+ * - AuthenticatorInterface
+ * - IdentifierInterface
+ */
 class Authentication implements AuthenticationServiceProviderInterface {
+	use EventDispatcherTrait;
+
+
 	protected AuthenticationServiceInterface $service;
 	protected string $type;
 	protected static bool $disableDefaultAuthenticators = FALSE;
@@ -20,12 +37,17 @@ class Authentication implements AuthenticationServiceProviderInterface {
 	protected static array $identifiers = [];
 
 
+	/**
+	 * @param string $as_type
+	 */
 	public function __construct (string $as_type) {
 		$this->type = $as_type;
 	}
 
 
 	/**
+	 * Registers an Authenticators to the list of available Authenticators.
+	 *
 	 * @param string|callable $ax_authenticator
 	 * @param array $aa_config
 	 * @param int $ai_priority
@@ -50,10 +72,14 @@ class Authentication implements AuthenticationServiceProviderInterface {
 
 
 	/**
+	 * Registers default Authenticators if not disabled, sorts all Authenticators by priority and adds them to the `AuthenticationServiceInterface`
+	 *
 	 * @param \Authentication\AuthenticationServiceInterface $ao_service
 	 * @param \Psr\Http\Message\ServerRequestInterface $ao_request
 	 *
 	 * @throws \Exception
+	 *
+	 * @see \Authentication\AuthenticationServiceInterface::loadAuthenticator()
 	 */
 	protected function loadAuthenticators (AuthenticationServiceInterface $ao_service, ServerRequestInterface $ao_request): void {
 		if ( ! static::$disableDefaultAuthenticators) {
@@ -67,17 +93,23 @@ class Authentication implements AuthenticationServiceProviderInterface {
 
 		foreach ($la_authenticators as $la_authenticator) {
 			$lx_authenticator = $la_authenticator['authenticator'];
+
+			/*
+			 * If $la_authenticator is not callable, the `addAuthenticator`-method set the `name` and `config` keys
+			 * If it's a callable, we need to check those keys here.
+			 */
 			if (is_callable($lx_authenticator)) {
 				$lx_authenticator = $lx_authenticator();
 				if ( ! isset($lx_authenticator['name'])) {
-					throw new \Exception(__('::authenticator_name_missing'));
+					throw new Exception(__('::authenticator_name_missing'));
 				}
 
 				if ( ! isset($lx_authenticator['config'])) {
 					$lx_authenticator['config'] = [];
 				}
+
 				if ( ! is_array($lx_authenticator['config'])) {
-					throw new \Exception(__('::authenticator_config_not_array'));
+					throw new Exception(__('::authenticator_config_not_array'));
 				}
 			}
 
@@ -93,15 +125,15 @@ class Authentication implements AuthenticationServiceProviderInterface {
 	 * @throws \Exception
 	 */
 	protected function addDefaultAuthenticators (AuthenticationServiceInterface $ao_service, ServerRequestInterface $ao_request): void {
-		$this->addAuthenticator(\Awyiss\Authentication\Authenticator\SessionAuthenticator::class, [
+		$this->addAuthenticator(SessionAuthenticator::class, [
 			'identify' => function($lx_user) {
-				if ($lx_user instanceof \Awyiss\Model\Entity\User || $lx_user instanceof \Awyiss\Model\Entity\UsersExternal) {
+				if ($lx_user instanceof User || $lx_user instanceof UsersExternal) {
 					//Set last_login
-					$lo_check = \Cake\I18n\FrozenTime::now()->subMinutes(10);
+					$lo_check = FrozenTime::now()->subMinutes(10);
 					if ($lo_check > $lx_user->last_login) {
-						$lx_user->set('last_login', \Cake\I18n\FrozenTime::now());
+						$lx_user->set('last_login', FrozenTime::now());
 
-						if ($lx_user instanceof \Awyiss\Model\Entity\UsersExternal) {
+						if ($lx_user instanceof UsersExternal) {
 							return [
 								'id' => $lx_user->id,
 								'provider_id' => $lx_user->provider_id,
@@ -121,18 +153,14 @@ class Authentication implements AuthenticationServiceProviderInterface {
 		$lo_locale = $ao_request->getAttribute('locale');
 		$ls_lang = $lo_locale->getLanguageFromUrl(TRUE)?->shortcode ?? NULL;
 
-		$this->addAuthenticator(\Authentication\Authenticator\FormAuthenticator::class, [
+		$this->addAuthenticator(FormAuthenticator::class, [
 			'fields' => [
 				IdentifierInterface::CREDENTIAL_USERNAME => 'username',
 				IdentifierInterface::CREDENTIAL_PASSWORD => 'password',
 			],
-			'loginUrl' => Router::url([
-				'_name' => 'backend',
+			'loginUrl' => $this->dispatchEvent('Authentication.requestLoginUrl', [
 				'lang' => $ls_lang,
-				'controller' => 'Users',
-				'action' => 'login',
-			]),/**/
-			/*'loginUrl' => '/backend/de/users/login/',*/
+			], $this),
 		], 20);
 	}
 
@@ -150,6 +178,8 @@ class Authentication implements AuthenticationServiceProviderInterface {
 
 
 	/**
+	 * Registers an identifier
+	 *
 	 * @param string|callable $ax_identifier
 	 * @param array $aa_config
 	 * @param int $ai_priority
@@ -174,6 +204,8 @@ class Authentication implements AuthenticationServiceProviderInterface {
 
 
 	/**
+	 * Registers the default identifiers if not disabled, sorts all Identifiers by priority and adds them to the `AuthenticationServiceInterface`
+	 *
 	 * @param \Authentication\AuthenticationServiceInterface $ao_service
 	 * @param \Psr\Http\Message\ServerRequestInterface $ao_request
 	 *
@@ -191,17 +223,22 @@ class Authentication implements AuthenticationServiceProviderInterface {
 
 		foreach ($la_identifiers as $la_identifier) {
 			$lx_identifier = $la_identifier['identifier'];
+
+			/*
+			 * If $lx_identifier is not callable, the `addIdentifier`-method set the `name` and `config` keys
+			 * If it's a callable, we need to check those keys here.
+			 */
 			if (is_callable($lx_identifier)) {
 				$lx_identifier = $lx_identifier();
 				if ( ! isset($lx_identifier['name'])) {
-					throw new \Exception(__('::identifier_name_missing'));
+					throw new Exception(__('::identifier_name_missing'));
 				}
 
 				if ( ! isset($lx_identifier['config'])) {
 					$lx_identifier['config'] = [];
 				}
 				if ( ! is_array($lx_identifier['config'])) {
-					throw new \Exception(__('::identifier_config_not_array'));
+					throw new Exception(__('::identifier_config_not_array'));
 				}
 			}
 
@@ -216,17 +253,17 @@ class Authentication implements AuthenticationServiceProviderInterface {
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	protected function addDefaultIdentifiers (AuthenticationServiceInterface $ao_service, ServerRequestInterface $ao_request): void {
-		$this->addIdentifier(\Authentication\Identifier\PasswordIdentifier::class, [
+		$this->addIdentifier(PasswordIdentifier::class, [
 			'resolver' => [
-				'className' => \Authentication\Identifier\Resolver\OrmResolver::class,
-				'finder' => ['activeWithUsergroups' => ['access' => ['skip' => TRUE]]],
+				'className' => OrmResolver::class,
+				'finder' => ['active' => ['access' => ['skip' => TRUE]]],
 			],
 		]);
 	}
 
 
 	/**
-	 * Disable the default identifiers for Session and Form
+	 * Disable the default identifier (PasswordIdentifier)
 	 *
 	 * @param bool $ab_disableDefaultIdentifiers
 	 *
@@ -251,18 +288,20 @@ class Authentication implements AuthenticationServiceProviderInterface {
 		}*/
 
 		if ($this->type === 'backend') {
-			if ( !isset($this->service)) {
+			if ( ! isset($this->service)) {
 				$this->service = $this->getBackendAuthenticationService($ao_request);
 			}
 
 			return $this->service;
 		}
 
-		throw new \Exception(__('::unknown_authentication'));
+		throw new Exception(__('::unknown_authentication'));
 	}
 
 
 	/**
+	 * Returns a backend-specific AuthenticationServiceInterface
+	 *
 	 * @param \Psr\Http\Message\ServerRequestInterface $ao_request
 	 *
 	 * @return \Authentication\AuthenticationServiceInterface
@@ -271,7 +310,7 @@ class Authentication implements AuthenticationServiceProviderInterface {
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	protected function getBackendAuthenticationService (ServerRequestInterface $ao_request): AuthenticationServiceInterface {
-		$lo_service = new \Awyiss\Authentication\AuthenticationService();
+		$lo_service = new AuthenticationService();
 
 		/** @var \Awyiss\Middleware\LocaleMiddleware $lo_locale */
 		$lo_locale = $ao_request->getAttribute('locale');

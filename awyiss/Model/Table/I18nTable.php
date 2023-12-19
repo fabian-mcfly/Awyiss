@@ -4,7 +4,13 @@
 namespace Awyiss\Model\Table;
 
 
-class I18nTable extends \Awyiss\Model\Table {
+use Awyiss\Model\Table;
+
+
+/**
+ * Translation table
+ */
+class I18nTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
@@ -22,9 +28,6 @@ class I18nTable extends \Awyiss\Model\Table {
 		'access' => [
 			'enabled' => FALSE,
 		],
-		/*'audit' => [
-			'enabled' => FALSE,
-		],*/
 	];
 
 

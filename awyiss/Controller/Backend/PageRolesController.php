@@ -5,8 +5,10 @@ namespace Awyiss\Controller\Backend;
 
 
 use Awyiss\Controller\BackendController as Controller;
-use Cake\Datasource\Exception\InvalidPrimaryKeyException;
-use Cake\Datasource\Exception\RecordNotFoundException;
+use Awyiss\Model\Entity\PageRole;
+use Cake\Http\Exception\RedirectException;
+use Cake\Http\Response;
+use Cake\Routing\Router;
 
 
 /**
@@ -18,13 +20,9 @@ class PageRolesController extends Controller {
 	/**
 	 * Overview method
 	 *
-	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
-	 *
 	 * @throws \Exception
-	 *
-	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
-	public function overview () {
+	public function overview (): void {
 		$this->Access->ensure('read');
 
 		$lo_pageRoles = $this->PageRoles->find('withAttributes')->where($this->getOverviewWhere());
@@ -38,32 +36,16 @@ class PageRolesController extends Controller {
 	/**
 	 * Add method
 	 *
-	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
+	 * @return void
 	 *
 	 * @throws \Exception
-	 *
-	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
-	public function add () {
+	public function add (): void {
 		$this->Access->ensure('create');
 
 		$lo_pageRole = $this->PageRoles->newDefaultEntity();
 		if ($this->request->is('post')) {
-			$this->PageRoles->patchEntity($lo_pageRole, $this->request->getData());
-
-			if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-				if ($this->PageRoles->save($lo_pageRole)) {
-					$this->Flash->success(__('::add_succeeded'));
-
-					if ($this->request->getData('submit') == 'submit_close') {
-						return $this->redirect(['action' => 'overview']);
-					}
-
-					return $this->redirect(['action' => 'edit', 'id' => $lo_pageRole->id]);
-				}
-				$this->Flash->error(__('::add_failed'));
-				$this->Flash->error(implode('<br>' . PHP_EOL, $lo_pageRole->getError('_general')));
-			}
+			$this->save($lo_pageRole);
 		}
 
 		$this->set([
@@ -75,43 +57,23 @@ class PageRolesController extends Controller {
 	/**
 	 * Edit method
 	 *
-	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
+	 * @return void|?\Cake\Http\Response
 	 *
 	 * @throws \Exception
-	 *
-	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
 	public function edit () {
 		$this->Access->ensure('update');
 
-		try {
-			$li_id = $this->request->getParam('id');
-			/** @var \Awyiss\Model\Entity\PageRole $lo_pageRole */
-			$lo_pageRole = $this->PageRoles->get($li_id);
-		}
-		catch (RecordNotFoundException|InvalidPrimaryKeyException) {
+		/** @var \Awyiss\Model\Entity\PageRole $lo_pageRole */
+		$lo_pageRole = $this->PageRoles->findById((int) $this->request->getParam('id'))->first();
+		if ( ! $lo_pageRole) {
 			$this->Flash->error(__('::record_not_found'));
 
 			return $this->redirect(['action' => 'overview']);
 		}
 
 		if ($this->request->is(['patch', 'post', 'put'])) {
-			$this->PageRoles->patchEntity($lo_pageRole, $this->request->getData());
-
-			if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-				if ($this->PageRoles->save($lo_pageRole)) {
-					$this->Flash->success(__('::edit_succeeded'));
-
-					if ($this->request->getData('submit') == 'submit_close') {
-						return $this->redirect(['action' => 'overview']);
-					}
-
-					return $this->redirect(['action' => 'edit', 'id' => $lo_pageRole->id]);
-				}
-
-				$this->Flash->error(__('::edit_failed'));
-				$this->Flash->error(implode('<br>' . PHP_EOL, $lo_pageRole->getError('_general')));
-			}
+			$this->save($lo_pageRole, 'edit');
 		}
 
 		$this->set([
@@ -123,23 +85,18 @@ class PageRolesController extends Controller {
 	/**
 	 * Delete method
 	 *
-	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
+	 * @return \Cake\Http\Response
 	 *
 	 * @throws \Exception
-	 *
-	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
-	public function delete () {
+	public function delete (): Response {
 		$this->Access->ensure('delete');
 
 		$this->request->allowMethod(['get', 'delete']);
 
-		try {
-			$li_id = $this->request->getParam('id');
-			/** @var \Awyiss\Model\Entity\PageRole $lo_pageRole */
-			$lo_pageRole = $this->PageRoles->get($li_id);
-		}
-		catch (RecordNotFoundException|InvalidPrimaryKeyException) {
+		/** @var \Awyiss\Model\Entity\PageRole $lo_pageRole */
+		$lo_pageRole = $this->PageRoles->findById((int) $this->request->getParam('id'))->first();
+		if ( ! $lo_pageRole) {
 			$this->Flash->error(__('::record_not_found'));
 			return $this->redirect(['action' => 'overview']);
 		}
@@ -152,6 +109,32 @@ class PageRolesController extends Controller {
 		}
 
 		return $this->redirect(['action' => 'overview']);
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Entity\PageRole $ao_pageRole
+	 * @param string $as_method
+	 *
+	 * @return void
+	 */
+	protected function save (PageRole $ao_pageRole, string $as_method = 'add'): void {
+		$this->PageRoles->patchEntity($ao_pageRole, $this->request->getData());
+
+		if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
+			if ($this->PageRoles->save($ao_pageRole)) {
+				$this->Flash->success(__('::' . $as_method . '_succeeded'));
+
+				if ($this->request->getData('submit') == 'submit_close') {
+					throw new RedirectException(Router::url(['action' => 'overview'], TRUE), 302);
+				}
+
+				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $ao_pageRole->id], TRUE), 302);
+			}
+
+			$this->Flash->error(__('::' . $as_method . '_failed'));
+			$this->Flash->error(implode('<br>' . PHP_EOL, $ao_pageRole->getError('_general')));
+		}
 	}
 }
 

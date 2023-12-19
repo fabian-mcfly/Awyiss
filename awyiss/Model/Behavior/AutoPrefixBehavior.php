@@ -4,6 +4,7 @@
 namespace Awyiss\Model\Behavior;
 
 
+use ArrayObject;
 use Awyiss\ORM\Behavior;
 use Cake\Database\Expression\ComparisonExpression;
 use Cake\Database\Expression\IdentifierExpression;
@@ -14,6 +15,10 @@ use Cake\Event\EventInterface;
 use Cake\ORM\Query;
 
 
+/**
+ * This behavior automatically prefixes database columns with the name of their table.
+ * This makes writing out the table name obsolete when using joins.
+ */
 class AutoPrefixBehavior extends Behavior {
 	protected $_defaultConfig = [
 		'enabled' => TRUE,
@@ -24,57 +29,97 @@ class AutoPrefixBehavior extends Behavior {
 	protected string $alias;
 
 
-	public function initialize (array $config): void {
+	/**
+	 * Constructor hook method.
+	 *
+	 * @param array<string, mixed> $aa_config The configuration settings provided to this behavior.
+	 *
+	 * @return void
+	 *
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 */
+	public function initialize (array $aa_config): void {
 		$this->alias = $this->table()->getAlias();
 	}
 
 
-	public function beforeFind (EventInterface $ao_event, Query $ao_query, \ArrayObject $ao_options, $ab_primary): void {
+	/**
+	 * @param \Cake\Event\EventInterface $ao_event
+	 * @param \Cake\ORM\Query $ao_query
+	 * @param \ArrayObject $ao_options
+	 * @param $ab_primary
+	 *
+	 * @return void
+	 *
+	 * @noinspection PhpUnusedParameterInspection
+	 */
+	public function beforeFind (EventInterface $ao_event, Query $ao_query, ArrayObject $ao_options, $ab_primary): void {
 		if ( ! $this->getConfig('enabled')) {
 			return;
 		}
 
+		//For all parts of the query, call `expressionVisitor`
 		$ao_query->traverseParts(function(?QueryExpression $ao_expression) {
-			if (is_null($ao_expression)) return;
+			if (is_null($ao_expression)) {
+				return;
+			}
 
 			$this->expressionVisitor($ao_expression);
 		}, ['where']);
 	}
 
 
+	/**
+	 * @param \Cake\Database\Expression\QueryExpression|\Cake\Database\Expression\UnaryExpression $ao_expression
+	 *
+	 * @return void
+	 */
 	protected function expressionVisitor (QueryExpression|UnaryExpression $ao_expression): void {
+		/**
+		 * An expression object that represents an expression with only a single operand.
+		 *
+		 * @see \Cake\Database\Expression\UnaryExpression
+		 */
 		if ($ao_expression instanceof UnaryExpression) {
+			//Traverse all parts of this expression
 			$ao_expression->traverse(function(IdentifierExpression|QueryExpression|ComparisonExpression $ao_expression) {
+				//If the expression is an instance of ComparisonExpression, set the prefixed field if it does not contain '.'
 				if ($ao_expression instanceof ComparisonExpression) {
 					$ls_field = $ao_expression->getField();
-					if (strpos($ls_field, '.') === FALSE) {
+					if ( ! str_contains($ls_field, '.')) {
 						$ao_expression->setField($this->alias . '.' . $ls_field);
 					}
 				}
+				//If the expression is an instance of IdentifierExpression, set the prefixed identifier if it does not contain '.'
 				elseif ($ao_expression instanceof IdentifierExpression) {
 					$ls_field = $ao_expression->getIdentifier();
-					if (strpos($ls_field, '.') === FALSE) {
+					if ( ! str_contains($ls_field, '.')) {
 						$ao_expression->setIdentifier($this->alias . '.' . $ls_field);
 					}
 				}
 
+				//Return the modified expression
 				return $ao_expression;
 			});
 
+			//That's all there is to do for this type of expression
 			return;
 		}
 
+		//The expression is an instance of QueryExpression. So iterate all parts
 		$ao_expression->iterateParts(function(ExpressionInterface $ao_expression) {
+			//If the expression is an instance of ComparisonExpression, set the prefixed field if it does not contain '.'
 			if ($ao_expression instanceof ComparisonExpression) {
 				$ls_field = $ao_expression->getField();
-				if (strpos($ls_field, '.') === FALSE) {
+				if ( ! str_contains($ls_field, '.')) {
 					$ao_expression->setField($this->alias . '.' . $ls_field);
 				}
 			}
-			elseif ($ao_expression instanceof QueryExpression) {
-				$this->expressionVisitor($ao_expression);
-			}
-			elseif ($ao_expression instanceof UnaryExpression) {
+			/*
+			 * If the expression is an instance of either QueryExpression or UnaryExpression,
+			 * call expressionVisitor again with this sub-expression. Kind of a recursive function here.
+			 */
+			elseif ($ao_expression instanceof QueryExpression || $ao_expression instanceof UnaryExpression) {
 				$this->expressionVisitor($ao_expression);
 			}
 			else {

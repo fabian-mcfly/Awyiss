@@ -4,10 +4,12 @@
 namespace Awyiss\Controller;
 
 
+use Awyiss\Configuration\ConfigOptionsProvider;
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Database\Expression\QueryExpression;
 use Cake\ORM\Query;
+use Cake\Utility\Inflector;
 
 
 /**
@@ -15,9 +17,6 @@ use Cake\ORM\Query;
  * @property \Awyiss\Model\Table\ConfigurationTable $Configuration
  */
 abstract class AppController extends Controller {
-	//protected static array $Configuration = [];
-
-
 	/**
 	 * @throws \Exception
 	 */
@@ -29,6 +28,15 @@ abstract class AppController extends Controller {
 
 
 	/**
+	 * Loads the Awyiss configuration from either the database or a config file inside the custom namespace.
+	 * When loaded from the database, the configuration is dumped into a php config file.
+	 *
+	 * The filename is the underscored name of the custom namespace,
+	 * followed by the frontend language and the backend language, both in square brackets.
+	 *
+	 * For example:
+	 * `example_customer[de][en].php`
+	 *
 	 * @throws \Exception
 	 */
 	protected function loadConfiguration (): void {
@@ -37,13 +45,10 @@ abstract class AppController extends Controller {
 		/** @var \Awyiss\Middleware\LocaleMiddleware $lo_locale */
 		$lo_locale = $this->request->getAttribute('locale');
 
-		$ls_fileNameSuffix = NULL;
+		$ls_fileName = Inflector::underscore(CUSTOM_NAMESPACE);
 		if (IS_BACKEND && $lo_locale) {
-			$ls_fileNameSuffix = '[' . $lo_locale->getLanguageFromUrl()->shortcode . '][' . ($lo_locale->getLanguageFromSession() ?? $lo_locale->getLanguageFromUrl())->shortcode . ']';
+			$ls_fileName .= '[' . $lo_locale->getLanguageFromUrl()->shortcode . '][' . ($lo_locale->getLanguageFromSession() ?? $lo_locale->getLanguageFromUrl())->shortcode . ']';
 		}
-
-		$ls_fileName = \Cake\Utility\Inflector::underscore(CUSTOM_NAMESPACE);
-		$ls_fileName .= $ls_fileNameSuffix;
 
 		/*
 		 * If the config path `Awyiss` is not empty, we do have a config file
@@ -58,17 +63,17 @@ abstract class AppController extends Controller {
 			$lo_query = $lo_configurationTable->find()->applyOptions(['access' => ['skip' => TRUE]])->enableHydration(FALSE);
 
 			if (!$lo_locale) {
-				$lo_query->where(['languages_shortcode IS' => NULL]);
+				$lo_query->where(['language_shortcode IS' => NULL]);
 			}
 			else {
 				$lo_query->where(function(QueryExpression $ao_exp, Query $lo_query) use ($lo_locale) {
 					$lo_scopeNegated = $lo_query->newExpr()->and(['name NOT LIKE' => 'frontend.%'])->add(['name NOT LIKE' => 'backend.%']);
 
 					return $ao_exp->or([
-						['languages_shortcode IS' => NULL],
-						$ao_exp->and([['name LIKE' => 'backend.%'], ['languages_shortcode' => $lo_locale->getLanguageFromSession()->shortcode]]),
-						$ao_exp->and([['name LIKE' => 'frontend.%'], ['languages_shortcode' => $lo_locale->getLanguageFromUrl()->shortcode]]),
-						$ao_exp->and([$lo_scopeNegated, ['languages_shortcode IS NOT' => NULL]]),
+						['language_shortcode IS' => NULL],
+						$ao_exp->and([['name LIKE' => 'backend.%'], ['language_shortcode' => $lo_locale->getLanguageFromSession()->shortcode]]),
+						$ao_exp->and([['name LIKE' => 'frontend.%'], ['language_shortcode' => $lo_locale->getLanguageFromUrl()->shortcode]]),
+						$ao_exp->and([$lo_scopeNegated, ['language_shortcode IS NOT' => NULL]]),
 					]);
 				});
 			}
@@ -76,8 +81,8 @@ abstract class AppController extends Controller {
 			$lo_query->order([
 				'scope' => 'ASC',
 				'name' => 'ASC',
-				'languages_shortcode IS NULL' => 'ASC',
-				'languages_shortcode' => 'ASC',
+				'language_shortcode IS NULL' => 'ASC',
+				'language_shortcode' => 'ASC',
 			]);
 
 		}
@@ -87,9 +92,9 @@ abstract class AppController extends Controller {
 
 		$la_config = [];
 		foreach ($lo_query->all() AS $la_item) {
-			$ls_path = 'Awyiss.' . \Cake\Utility\Inflector::camelize($la_item['scope']) . '.' . $la_item['name'];
+			$ls_path = 'Awyiss.' . Inflector::camelize($la_item['scope']) . '.' . $la_item['name'];
 
-			$la_item['value'] = \Awyiss\Configuration\ConfigOptionsProvider::typecastConfigValue($la_item['scope'], $la_item['name'], $la_item['value']);
+			$la_item['value'] = ConfigOptionsProvider::typecastConfigValue($la_item['scope'], $la_item['name'], $la_item['value']);
 
 			if (!isset($la_config[ $ls_path ])) {
 				$la_config[ $ls_path ] = $la_item['value'];
@@ -97,6 +102,8 @@ abstract class AppController extends Controller {
 		}
 
 		Configure::write($la_config);
+
+		//TODO: check if we want to have this inside a queue task, so it can be run with www-user privileges
 		Configure::dump($ls_fileName, 'default', ['Awyiss']);
 	}
 }

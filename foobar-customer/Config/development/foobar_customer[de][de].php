@@ -3,7 +3,7 @@
 return [
 	'Awyiss' => [
 		'ContentTemplates' => [
-			'contentrow_excluded_content_template_ids' => '12',
+			'contentrow_excluded_content_templates_ids' => '12',
 		],
 		'Designer' => [
 			'page_fullwidth' => '1350',
@@ -44,6 +44,7 @@ return [
 					'title_separator' => ' | ',
 				],
 			],
+			'fooooo1' => 'FALSE',
 			'frontend' => [
 				'editlinks' => true,
 				'meta' => [

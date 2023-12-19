@@ -4,20 +4,23 @@
 namespace Awyiss\Model\Entity;
 
 
+use Awyiss\Model\Entity;
+
+
 /**
  * Audit Entity
  *
  * @property int $id
  * @property string $type
  * @property string $model
- * @property array|null $data_old
- * @property array|null $data_new
- * @property array|null $diff
+ * @property array|NULL $data_old
+ * @property array|NULL $data_new
+ * @property array|NULL $diff
  * @property int $parent_id
- * @property int|null $created_by
- * @property \Cake\I18n\FrozenTime|null $created_on
+ * @property int|NULL $created_by
+ * @property \Cake\I18n\FrozenTime|NULL $created_on
  */
-class I18n extends \Awyiss\Model\Entity {
+class I18n extends Entity {
 	/**
 	 * @inheritDoc
 	 */

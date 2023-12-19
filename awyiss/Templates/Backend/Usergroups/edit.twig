@@ -15,7 +15,7 @@
 		{{ helper_Form_control('title') }}
 	</fieldset>
 
-	{% if helper_Access_scopeIsAccessible('Users', NULL, ['read']) %}
+	{% if helper_Access_scopeIsAccessible('Users', NULL, NULL, ['read']) %}
 		<fieldset>
 			<legend>{{ __('::users') }}</legend>
 			{{ helper_Form_hidden('users._ids', {value: ''}) }}

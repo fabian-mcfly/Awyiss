@@ -4,7 +4,9 @@
 namespace Awyiss\Model\Entity;
 
 
+use Awyiss\Model\Entity;
 use Cake\ORM\Behavior\Translate\TranslateTrait;
+use Cake\Utility\Text;
 
 
 /**
@@ -13,19 +15,19 @@ use Cake\ORM\Behavior\Translate\TranslateTrait;
  * @property int $id
  * @property string $title
  * @property string $filename
- * @property array|null $available_elements
- * @property array|null $assigned_template_positions
+ * @property array|NULL $available_elements
+ * @property array|NULL $assigned_template_positions
  * @property int $system_order
  * @property bool $active
  * @property bool $deleted
- * @property int|null $created_by
- * @property \Cake\I18n\FrozenTime|null $created_on
- * @property int|null $changed_by
- * @property \Cake\I18n\FrozenTime|null $changed_on
- * @property int|null $deleted_by
- * @property \Cake\I18n\FrozenTime|null $deleted_on
+ * @property int|NULL $created_by
+ * @property \Cake\I18n\FrozenTime|NULL $created_on
+ * @property int|NULL $changed_by
+ * @property \Cake\I18n\FrozenTime|NULL $changed_on
+ * @property int|NULL $deleted_by
+ * @property \Cake\I18n\FrozenTime|NULL $deleted_on
  */
-class ContentTemplate extends \Awyiss\Model\Entity {
+class ContentTemplate extends Entity {
 	use TranslateTrait;
 
 
@@ -43,6 +45,8 @@ class ContentTemplate extends \Awyiss\Model\Entity {
 
 
 	/**
+	 * Make sure the available elements are an array and the 'required'-key is always a boolean value
+	 *
 	 * @noinspection PhpUnused
 	 */
 	protected function _setAvailableElements (?array $aa_availableElements = NULL): ?array {
@@ -60,35 +64,12 @@ class ContentTemplate extends \Awyiss\Model\Entity {
 
 
 	/**
-	 * @noinspection PhpUnused
-	 */
-	/*protected function _setAvailableElements (mixed $ax_value): array {
-		if (empty($ax_value)) {
-			return [];
-		}
-
-		return is_array($ax_value) ? $ax_value : [$ax_value];
-	}*/
-
-
-	/**
-	 * @noinspection PhpUnused
-	 */
-	/*protected function _setAssignedTemplatePositions (mixed $ax_value): array {
-		if (empty($ax_value)) {
-			return [];
-		}
-
-		return is_array($ax_value) ? $ax_value : [$ax_value];
-	}*/
-
-
-
-	/**
+	 * Make sure the filename is always lowercase, underscored and free of special characters
+	 *
 	 * @noinspection PhpUnused
 	 */
 	protected function _setFilename (string $as_filename): string {
-		$ls_filename = \Cake\Utility\Text::slug($as_filename, ['replacement' => '_']);
+		$ls_filename = Text::slug($as_filename, ['replacement' => '_']);
 
 		return mb_strtolower($ls_filename);
 	}

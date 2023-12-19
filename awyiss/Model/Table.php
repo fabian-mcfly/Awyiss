@@ -8,11 +8,20 @@ use ArrayObject;
 use Awyiss\Authorization\AuthorizationServiceInterface;
 use Awyiss\Authorization\Policy\AnonymousPolicy;
 use Awyiss\Core\App;
+use Awyiss\Event\EventListenersProvider;
+use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Behavior\AccessBehavior;
+use Awyiss\Model\Behavior\Translate\EavStrategy;
+use Awyiss\ORM\Association\BelongsTo;
+use Awyiss\ORM\Association\BelongsToMany;
+use Awyiss\ORM\Association\HasMany;
+use Awyiss\ORM\Association\HasOne;
 use Awyiss\ORM\RulesChecker;
 use Awyiss\Validation\Validator;
+use Cake\Core\InstanceConfigTrait;
 use Cake\Database\Schema\TableSchemaInterface;
 use Cake\Datasource\EntityInterface;
+use Cake\Datasource\FactoryLocator;
 use Cake\Event\EventInterface;
 use Cake\ORM\Exception\MissingEntityException;
 use Cake\ORM\Query;
@@ -21,6 +30,7 @@ use RuntimeException;
 
 
 /**
+ * @method Query findById(int $ai_id)
  * @method Query addSystemOrderQueryConditions(?Query $ao_query, EntityInterface $ao_entity)
  * @method AuthorizationServiceInterface getAuthorizationService()
  * @method bool|int getHighestSystemOrder(EntityInterface $ao_entity)
@@ -32,7 +42,7 @@ use RuntimeException;
  * @method AccessBehavior skipAccessCheckOnce(bool $ab_skip = TRUE)
  */
 class Table extends \Cake\ORM\Table {
-	use \Cake\Core\InstanceConfigTrait;
+	use InstanceConfigTrait;
 
 
 	/**
@@ -46,7 +56,10 @@ class Table extends \Cake\ORM\Table {
 	 */
 	public const RULES_CLASS = RulesChecker::class;
 	/**
-	 * Name of the database table. Used in static::initialize() ($this->setTable(static::TABLE));
+	 * Name of the database table. Used in static::initialize() ($this->setTable(static::TABLE)) and in
+	 * \Awyiss\Model\Table\AttributesTable::getScopes()
+	 *
+	 * @see \Awyiss\Model\Table\AttributesTable::getScopes();
 	 *
 	 * @var string
 	 */
@@ -94,8 +107,6 @@ class Table extends \Cake\ORM\Table {
 
 
 		if (str_starts_with($this->getTable(), 'attributes_')/* || $this->getTable() == 'attributes'*/) {
-			$this->addBehavior('AttributesDataTypes');
-
 			return;
 		}
 
@@ -114,7 +125,7 @@ class Table extends \Cake\ORM\Table {
 		}
 
 
-		\Awyiss\Event\EventListenersProvider::loadListener($this->getAlias(), defined('IS_BACKEND') && IS_BACKEND ? 'backend' : 'frontend');
+		EventListenersProvider::loadListener($this->getAlias(), defined('IS_BACKEND') && IS_BACKEND ? 'backend' : 'frontend');
 
 
 		$this->addBehavior('Access', $this->getConfig('access', []) + ['priority' => 1]);
@@ -127,13 +138,13 @@ class Table extends \Cake\ORM\Table {
 
 
 		if ($this->getConfig('translate', []) && $this->getTable() != 'languages') {
-			$lo_defaultLanguage = \Awyiss\Middleware\LocaleMiddleware::getDefaultLanguage(defined('IS_BACKEND') && IS_BACKEND ? 'backend' : 'frontend');
+			$lo_defaultLanguage = LocaleMiddleware::getDefaultLanguage(defined('IS_BACKEND') && IS_BACKEND ? 'backend' : 'frontend');
 
 			$this->addBehavior('Translate', $this->getConfig('translate', []) + [
 				'allowEmptyTranslations' => FALSE,
 				//'defaultLocale' => $lo_defaultLanguage?->shortcode ?? NULL,
 				'defaultLocale' => '',
-				'strategyClass' => \Awyiss\Model\Behavior\Translate\EavStrategy::class,
+				'strategyClass' => EavStrategy::class,
 			]);
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 			$this->getBehavior('Translate')->setLocale($lo_defaultLanguage?->shortcode ?? NULL);
@@ -233,7 +244,7 @@ class Table extends \Cake\ORM\Table {
 				return $this->_entityClass = $ls_default;
 			}*/
 
-			/** @var class-string<\Cake\Datasource\EntityInterface>|null $ls_class */
+			/** @var class-string<\Cake\Datasource\EntityInterface>|NULL $ls_class */
 			$ls_class = App::className($ls_name, 'Model/Entity');
 			if ( ! $ls_class) {
 				$ls_class = App::className($ls_alias, 'Model/Entity');
@@ -251,7 +262,127 @@ class Table extends \Cake\ORM\Table {
 
 
 	/**
+	 * {@inheritDoc}
+	 *
+	 * Re-implemented 1:1 so it'll use \Awyiss\ORM\Association\BelongsTo
+	 *
+	 * @param string $as_associated
+	 * @param array $aa_options
+	 *
+	 * @return \Awyiss\ORM\Association\BelongsTo
+	 *
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 */
+	public function belongsTo (string $as_associated, array $aa_options = []): BelongsTo {
+		$aa_options += ['sourceTable' => $this];
+
+		/** @var \Awyiss\ORM\Association\BelongsTo $lo_association */
+		$lo_association = $this->_associations->load(BelongsTo::class, $as_associated, $aa_options);
+
+		return $lo_association;
+	}
+
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * Re-implemented 1:1 so it'll use \Awyiss\ORM\Association\hasOne
+	 *
+	 * @param string $as_associated
+	 * @param array $aa_options
+	 *
+	 * @return \Awyiss\ORM\Association\HasOne
+	 *
+	 * * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 */
+	public function hasOne (string $as_associated, array $aa_options = []): HasOne {
+		$aa_options += ['sourceTable' => $this];
+
+		/** @var \Awyiss\ORM\Association\HasOne $lo_association */
+		$lo_association = $this->_associations->load(HasOne::class, $as_associated, $aa_options);
+
+		return $lo_association;
+	}
+
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * Re-implemented 1:1 so it'll use \Awyiss\ORM\Association\HasMany
+	 *
+	 * @param string $as_associated
+	 * @param array $aa_options
+	 *
+	 * @return \Awyiss\ORM\Association\HasOne
+	 *
+	 * * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 */
+	public function hasMany (string $as_associated, array $aa_options = []): HasMany {
+		$aa_options += ['sourceTable' => $this];
+
+		/** @var \Awyiss\ORM\Association\HasMany $lo_association */
+		$lo_association = $this->_associations->load(HasMany::class, $as_associated, $aa_options);
+
+		return $lo_association;
+	}
+
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * Re-implemented 1:1 so it'll use \Awyiss\ORM\Association\BelongsToMany
+	 *
+	 * @param string $as_associated
+	 * @param array $aa_options
+	 *
+	 * @return \Awyiss\ORM\Association\HasOne
+	 *
+	 * * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 */
+	public function belongsToMany (string $as_associated, array $aa_options = []): BelongsToMany {
+		$aa_options += ['sourceTable' => $this];
+
+		/** @var \Awyiss\ORM\Association\BelongsToMany $lo_association */
+		$lo_association = $this->_associations->load(BelongsToMany::class, $as_associated, $aa_options);
+
+		return $lo_association;
+	}
+
+
+
+	/**
+	 * Returns true if there is any record in this repository matching the specified conditions.
+	 *
+	 * Does the same as \Cake\ORM\Table::exists but accepts an array of options as the second parameter
+	 *
+	 * @param $aa_conditions
+	 * @param array $aa_options
+	 *
+	 * @return bool
+	 *
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 */
+	public function exists ($aa_conditions, array $aa_options = []): bool {
+		return (bool)count(
+			$this->find('all')
+				->applyOptions($aa_options)
+				->select(['existing' => 1])
+				->where($aa_conditions)
+				->limit(1)
+				->disableHydration()
+				->toArray()
+		);
+	}
+
+
+	/**
+	 * Before save, dispatch events beforeCreate or beforeUpdate, depending on whether the entity is new.
+	 *
 	 * @noinspection PhpUnusedParameterInspection
+	 *
+	 * @param \Cake\Event\EventInterface $ao_event
+	 * @param \Cake\Datasource\EntityInterface $ao_entity
+	 * @param \ArrayObject $ao_options
 	 */
 	public function beforeSave (EventInterface $ao_event, EntityInterface $ao_entity, ArrayObject $ao_options): void {
 		$lo_event = $this->dispatchEvent($ao_entity->isNew() ? 'Model.beforeCreate' : 'Model.beforeUpdate', ['entity' => $ao_entity, 'options' => $ao_options]);
@@ -276,13 +407,27 @@ class Table extends \Cake\ORM\Table {
 	}
 
 
-	/** @noinspection PhpUnusedParameterInspection */
+	/**
+	 * After save, dispatch events afterCreate or afterUpdate, depending on whether the entity is new.
+	 *
+	 * @param \Cake\Event\EventInterface $ao_event
+	 * @param \Cake\Datasource\EntityInterface $ao_entity
+	 * @param \ArrayObject $ao_options
+	 *
+	 * @noinspection PhpUnusedParameterInspection
+	 */
 	public function afterSave (EventInterface $ao_event, EntityInterface $ao_entity, ArrayObject $ao_options): void {
 		$this->dispatchEvent($ao_entity->isNew() ? 'Model.afterCreate' : 'Model.afterUpdate', ['entity' => $ao_entity, 'options' => $ao_options]);
 	}
 
 
 	/**
+	 * After save, dispatch events afterCreateCommit or afterUpdateCommit, depending on whether the entity is new.
+	 *
+	 * @param \Cake\Event\EventInterface $ao_event
+	 * @param \Cake\Datasource\EntityInterface $ao_entity
+	 * @param \ArrayObject $ao_options
+	 *
 	 * @noinspection PhpUnusedParameterInspection
 	 * @noinspection PhpUnused
 	 */
@@ -292,6 +437,8 @@ class Table extends \Cake\ORM\Table {
 
 
 	/**
+	 * @inheritDoc
+	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	protected function _initializeSchema (TableSchemaInterface $ao_schema): TableSchemaInterface {
@@ -299,8 +446,8 @@ class Table extends \Cake\ORM\Table {
 		static $lo_attributes;
 
 		if (str_starts_with($this->getTable(), 'attributes_')) {
-			if (!$lo_attributes) {
-				$lo_attributesTable = \Cake\Datasource\FactoryLocator::get('Table')->get('Attributes');
+			if ( ! $lo_attributes) {
+				$lo_attributesTable = FactoryLocator::get('Table')->get('Attributes');
 				$lo_attributes = $lo_attributesTable->find('all', [
 					'access' => [
 						'skip' => TRUE

@@ -1,8 +1,8 @@
 {% set annotations = DocBlock.buildTableAnnotations(associations, associationInfo, behaviors, entity, namespace) %}
 {% set generatedFunctions = ['initialize'] %}
 {{ element('Bake.file_header', {
-    namespace: fileBuilder.namespace,
-    classImports: fileBuilder.classImports(['Awyiss\\Model\\Table', 'Cake\\ORM\\RulesChecker', 'Cake\\Validation\\Validator']),
+	namespace: fileBuilder.namespace,
+	classImports: fileBuilder.classImports(['Awyiss\\Model\\Table', 'Awyiss\\ORM\\RulesChecker', 'Cake\\Validation\\Validator']),
 }) }}
 
 {{ DocBlock.classDescription(name, 'Model', annotations)|raw }}
@@ -88,7 +88,12 @@ class {{ name }}Table extends Table{{ fileBuilder.classBuilder.implements ? ' im
 
 
 	/**
-	 * @inheritDoc
+	 * Returns the default validator object.
+	 *
+	 * @param \Cake\Validation\Validator $ao_validator The validator that can be modified to
+	 * add some rules to it.
+	 *
+	 * @return \Cake\Validation\Validator
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
@@ -115,11 +120,15 @@ class {{ name }}Table extends Table{{ fileBuilder.classBuilder.implements ? ' im
 
 
 	/**
-	 * @inheritDoc
+	 * Returns a RulesChecker object after modifying the one that was supplied.
+	 *
+	 * @param \Cake\ORM\RulesChecker $ao_rules The rules object to be modified.
+	 *
+	 * @param \Awyiss\ORM\RulesChecker|\Cake\ORM\RulesChecker $ao_rules The rules object to be modified.
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildRules (RulesChecker $ao_rules): RulesChecker {
+	public function buildRules (RulesChecker|\Cake\ORM\RulesChecker $ao_rules): RulesChecker {
 {% for field, rule in rulesChecker %}
 {% set fields = rule.fields is defined ? Bake.exportArray(rule.fields) : Bake.exportVar(field) %}
 {% set options = '' %}

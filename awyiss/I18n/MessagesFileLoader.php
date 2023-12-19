@@ -24,7 +24,7 @@ class MessagesFileLoader extends \Cake\I18n\MessagesFileLoader {
 	 * @throws \RuntimeException if no file parser class could be found for the specified
 	 * file extension.
 	 */
-	public function __invoke (): \Cake\I18n\Package|false {
+	public function __invoke (): Package|false {
 		$la_folders = $this->translationsFolders();
 		$ls_extension = $this->_extension;
 

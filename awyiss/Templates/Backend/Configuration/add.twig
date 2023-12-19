@@ -1,6 +1,6 @@
 {# @var ao_configuration \Awyiss\Model\Entity\Configuration #}
 {# @var aa_configScopes array #}
-{# @var ao_configOptions \Awyiss\ConfigOptions\AbstractConfigOptions #}
+{# @var ao_configOptions \Awyiss\ConfigOptions\ConfigOptionsInterface #}
 {# @var _view \Awyiss\View\BackendView #}
 
 <div class="Configuration Form Add">
@@ -21,7 +21,7 @@
 		</label>
 
 		{{ helper_Form_control('value') }}
-		{{ helper_Locale_control('languages_shortcode') }}
+		{{ helper_Locale_control('language_shortcode') }}
 	</fieldset>
 
 	{{ helper_Form_hidden('reload_form', {val: 0}) }}

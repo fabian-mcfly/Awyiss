@@ -4,6 +4,9 @@
 namespace Awyiss\Model\Entity;
 
 
+use Awyiss\Model\Entity;
+
+
 /**
  * Language Entity
  *
@@ -16,15 +19,15 @@ namespace Awyiss\Model\Entity;
  * @property int $system_order
  * @property bool $active
  * @property bool $deleted
- * @property int|null $created_by
- * @property \Cake\I18n\FrozenTime|null $created_on
- * @property int|null $changed_by
- * @property \Cake\I18n\FrozenTime|null $changed_on
- * @property int|null $deleted_by
- * @property \Cake\I18n\FrozenTime|null $deleted_on
+ * @property int|NULL $created_by
+ * @property \Cake\I18n\FrozenTime|NULL $created_on
+ * @property int|NULL $changed_by
+ * @property \Cake\I18n\FrozenTime|NULL $changed_on
+ * @property int|NULL $deleted_by
+ * @property \Cake\I18n\FrozenTime|NULL $deleted_on
  * @property \Awyiss\Model\Entity\Configuration[] $configuration
  */
-class Language extends \Awyiss\Model\Entity {
+class Language extends Entity {
 	/**
 	 * @inheritDoc
 	 */

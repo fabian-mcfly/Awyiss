@@ -8,11 +8,14 @@ use Awyiss\Core\Configure\Engine\PhpConfig;
 use Cake\Core\Exception\CakeException;
 
 
+/**
+ * @inheritDoc
+ */
 class StringTemplate extends \Cake\View\StringTemplate {
 	/**
-	 * @inheritDoc
+	 * {@inheritDoc}
 	 *
-	 * Used to load Awyiss\Core\Configure\Engine\PhpConfig instead of the CakePHP one
+	 * Used to load \Awyiss\Core\Configure\Engine\PhpConfig instead of the CakePHP one
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */

@@ -1,0 +1,24 @@
+<a href="#" class="toggle-link toggle-vendor-frames">Toggle Vendor Stack Frames</a>
+
+<ul class="stack-trace">
+	{% for i, stack in trace %}
+		{% set class = (stack.file and constant('APP') not in stack.file ? 'vendor-frame' : 'app-frame') %}
+		{% set class = class ~ (i == 0 ? ' active' : '') %}
+		<li class="stack-frame {{ class }}">
+			<a href="#" data-target="stack-frame-{{ i }}">
+				{% if stack.class %}
+					<span class="stack-function">{{ (stack.class ~ stack.type ~ stack.function)|escape }}</span>
+				{% elseif stack.function %}
+					<span class="stack-function">{{ stack.function|escape }}</span>
+				{% endif %}
+				<span class="stack-file">
+					{% if stack.file and stack.line %}
+						{{ staticCall('\\Cake\\Error\\Debugger', 'trimPath', stack.file) }}: {{ stack.line }}
+					{% else %}
+						[internal function]
+					{% endif %}
+				</span>
+			</a>
+		</li>
+	{% endfor %}
+</ul>

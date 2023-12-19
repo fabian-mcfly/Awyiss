@@ -9,8 +9,18 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 
 
+/**
+ *
+ */
 class Migrate extends \Migrations\Command\Phinx\Migrate {
-	protected function configure () {
+	/**
+	 * {@inheritDoc}
+	 *
+	 * Adds the `folder`-option
+	 *
+	 * @return void
+	 */
+	protected function configure (): void {
 		parent::configure();
 
 		$this->addOption('--folder', NULL, InputOption::VALUE_REQUIRED, 'The folder where migrations are in');
@@ -18,14 +28,18 @@ class Migrate extends \Migrations\Command\Phinx\Migrate {
 
 
 	/**
-	 * Get the migrations or seeds files path based on the current InputInterface
+	 * {@inheritDoc}
+	 *
+	 * Added a logic that honors the `folder`-option and modifies the path accordingly.
 	 *
 	 * @param \Symfony\Component\Console\Input\InputInterface $ao_input Input of the current command.
 	 * @param string $as_default Default folder to set if no source option is found in the $ao_input param
 	 *
 	 * @return string
+	 *
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	protected function getOperationsPath (InputInterface $ao_input, $as_default = 'Migrations') {
+	protected function getOperationsPath (InputInterface $ao_input, $as_default = 'Migrations'): string {
 		$ls_path = APP . 'config' . DS . $as_default;
 
 		$ls_plugin = $this->getPlugin($ao_input);

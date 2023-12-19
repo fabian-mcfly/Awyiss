@@ -4,6 +4,9 @@
 namespace Awyiss\Model\Entity;
 
 
+use Awyiss\Model\Entity;
+
+
 /**
  * UsergroupsUser Entity
  *
@@ -13,7 +16,7 @@ namespace Awyiss\Model\Entity;
  * @property \Awyiss\Model\Entity\Usergroup $usergroup
  * @property \Awyiss\Model\Entity\User $user
  */
-class UsergroupsUser extends \Awyiss\Model\Entity {
+class UsergroupsUser extends Entity {
 	/**
 	 * @inheritDoc
 	 */

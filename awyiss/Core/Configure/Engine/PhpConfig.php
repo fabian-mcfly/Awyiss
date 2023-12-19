@@ -9,6 +9,9 @@ use Cake\Core\Exception\CakeException;
 use Cake\Utility\Hash;
 
 
+/**
+ * @inheritDoc
+ */
 class PhpConfig extends BasePhpConfig {
 	protected array $paths = [
 		CONFIG,
@@ -20,7 +23,7 @@ class PhpConfig extends BasePhpConfig {
 	/**
 	 * Constructor for PHP Config file reading.
 	 *
-	 * @param string|null $as_path The path to read config files from.
+	 * @param string|NULL $as_path The path to read config files from.
 	 *
 	 * @noinspection PhpMissingParentConstructorInspection
 	 * @noinspection PhpUnusedParameterInspection
@@ -51,12 +54,12 @@ class PhpConfig extends BasePhpConfig {
 			try {
 				$ls_filePath = $this->_getFilePath($as_key, TRUE);
 			}
-			catch (\Cake\Core\Exception\CakeException $ex) {
+			catch (CakeException $ex) {
 				continue;
 			}
 
 			//Reset $config in case the file does something with $config internally
-			$config = NULL;
+			//$config = NULL;
 
 			$la_fileReturn = include $ls_filePath;
 			if (is_array($la_fileReturn)) {
@@ -89,7 +92,7 @@ class PhpConfig extends BasePhpConfig {
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function dump (string $as_key, array $aa_data): bool {
-		$ls_contents = '<?php declare(strict_types=1);' . PHP_EOL . PHP_EOL . 'return ' . static::var_export($aa_data, TRUE) . ';';
+		$ls_contents = '<?php declare(strict_types=1);' . PHP_EOL . PHP_EOL . 'return ' . static::varExport($aa_data, TRUE) . ';';
 
 		$ls_filename = ENV_CUSTOM_CONFIG . $as_key . $this->_extension;
 
@@ -110,7 +113,7 @@ class PhpConfig extends BasePhpConfig {
 	 * @link https://www.php.net/manual/en/function.var-export.php
 	 * @copyright steven at nevvix dot com
 	 */
-	public static function var_export($ax_data, bool $ab_return = FALSE): ?string {
+	public static function varExport ($ax_data, bool $ab_return = FALSE): ?string {
 		$ls_export = var_export($ax_data, TRUE);
 		$la_patterns = [
 			"/array \(/" => '[',

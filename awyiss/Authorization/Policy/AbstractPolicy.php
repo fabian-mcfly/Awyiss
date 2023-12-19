@@ -6,20 +6,27 @@ namespace Awyiss\Authorization\Policy;
 
 use Awyiss\Authorization\Permission\PermissionCollection;
 use Awyiss\Authorization\Permission\PermissionInterface;
+use Cake\Utility\Inflector;
 
 
 /**
  * Classes that extend this one need to define
- *		protected static PermissionCollection $permissionCollection;
- * 		protected static string $scope;
+ * - `protected static PermissionCollection $permissionCollection;`
+ * - `protected static string $scope;`
  */
 abstract class AbstractPolicy implements PolicyInterface {
+	use Trait\BasicCrudPermissionsTrait;
+
+
+	/**
+	 * @inheritDoc
+	 */
 	public static function getScope (): string {
 		if (!isset(static::$scope)) {
 			$la_parts = explode('\\', static::class);
 			static::$scope = array_pop($la_parts);
 			static::$scope = substr(static::$scope, 0, -6);
-			static::$scope = \Cake\Utility\Inflector::underscore(static::$scope);
+			static::$scope = Inflector::underscore(static::$scope);
 		}
 
 		return static::$scope;
@@ -27,9 +34,9 @@ abstract class AbstractPolicy implements PolicyInterface {
 
 
 	/**
-	 * @throws \Exception
+	 * @inheritDoc
 	 *
-	 * @noinspection PhpUnused
+	 * @throws \Exception
 	 */
 	public static function getPermissions (): PermissionCollection {
 		if (!isset(static::$permissionCollection)) {
@@ -41,9 +48,9 @@ abstract class AbstractPolicy implements PolicyInterface {
 
 
 	/**
-	 * @throws \Exception
+	 * @inheritDoc
 	 *
-	 * @noinspection PhpUnused
+	 * @throws \Exception
 	 */
 	public static function getPermission (string $as_identifier): ?PermissionInterface {
 		if (!isset(static::$permissionCollection)) {

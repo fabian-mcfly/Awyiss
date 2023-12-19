@@ -6,12 +6,22 @@ namespace Awyiss\Configuration\ConfigOptions;
 
 use Awyiss\Configuration\AbstractConfigOptions;
 use Awyiss\Configuration\ConfigOption;
+use Awyiss\Configuration\ConfigOptionTypes;
 
 
+/**
+ * Provides all configuration options for the Usergroups scope
+ */
 class UsergroupsConfigOptions extends AbstractConfigOptions {
+	/**
+	 * @var string Scope of these options
+	 */
 	protected static string $scope = 'usergroups';
 
 
+	/**
+	 * @inheritDoc
+	 */
 	public function initializeConfigOptions (): void {
 		$this->add([
 			'backend' => [
@@ -19,7 +29,7 @@ class UsergroupsConfigOptions extends AbstractConfigOptions {
 					'defaultValue' => TRUE,
 					'localizable' => FALSE,
 					'name' => 'search',
-					'type' => ConfigOption::TYPE_BOOL,
+					'type' => ConfigOptionTypes::TYPE_BOOL,
 				]),
 				'pagination' => [
 					new ConfigOption([
@@ -27,7 +37,7 @@ class UsergroupsConfigOptions extends AbstractConfigOptions {
 						'localizable' => FALSE,
 						'name' => 'limit',
 						'nullable' => FALSE,
-						'type' => ConfigOption::TYPE_INTEGER,
+						'type' => ConfigOptionTypes::TYPE_INTEGER,
 					]),
 				]
 			]

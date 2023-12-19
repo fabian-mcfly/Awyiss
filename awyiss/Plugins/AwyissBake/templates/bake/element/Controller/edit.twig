@@ -5,7 +5,7 @@
 	/**
 	 * Edit method
 	 *
-	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
+	 * @return void|?\Cake\Http\Response
 	 *
 	 * @throws \Exception
 	 *
@@ -14,33 +14,16 @@
 	public function edit () {
 		$this->Access->ensure('update');
 
-		try {
-			$li_id = $this->request->getParam('id');
-			$lo_{{ singularName }} = $this->{{ currentModelName }}->get($li_id);
-		}
-		catch (RecordNotFoundException|InvalidPrimaryKeyException) {
+		/** @var {{ entityClassName }} $lo_{{ singularName }} */
+		$lo_{{ singularName }} = $this->{{ currentModelName }}->findById((int) $this->request->getParam('id'))->first();
+		if (! $lo_{{ singularName }}) {
 			$this->Flash->error(__('::record_not_found'));
 
 			return $this->redirect(['action' => 'overview']);
 		}
 
 		if ($this->request->is(['patch', 'post', 'put'])) {
-			$this->{{ currentModelName }}->patchEntity($lo_{{ singularName }}, $this->request->getData());
-
-			if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-				if ($this->{{ currentModelName }}->save($lo_{{ singularName }})) {
-					$this->Flash->success(__('::edit_succeeded'));
-
-					if ($this->request->getData('submit') == 'submit_close') {
-						return $this->redirect(['action' => 'overview']);
-					}
-
-					return $this->redirect(['action' => 'edit', 'id' => $lo_{{ singularName }}->id]);
-				}
-
-				$this->Flash->error(__('::edit_failed'));
-				$this->Flash->error(implode('<br>' . PHP_EOL, $lo_{{ singularName }}->getError('_general')));
-			}
+			$this->save($lo_{{ singularName }}, 'edit');
 		}
 
 		$this->set([

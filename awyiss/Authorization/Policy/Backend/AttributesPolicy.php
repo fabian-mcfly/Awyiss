@@ -8,10 +8,10 @@ use Awyiss\Authorization\Permission\PermissionCollection;
 use Awyiss\Authorization\Policy\AbstractPolicy;
 
 
+/**
+ * Permission for the Attribute scope of the backend
+ */
 class AttributesPolicy extends AbstractPolicy {
-	use \Awyiss\Authorization\Policy\Trait\BasicCrudPermissionsTrait;
-
-
 	protected static PermissionCollection $permissionCollection;
 	protected static string $scope;
 }

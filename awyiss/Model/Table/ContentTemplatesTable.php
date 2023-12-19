@@ -4,19 +4,22 @@
 namespace Awyiss\Model\Table;
 
 
+use ArrayObject;
+use Awyiss\Model\Entity\ContentTemplate;
+use Awyiss\Model\Table;
 use Cake\Database\Schema\TableSchemaInterface;
 use Cake\Datasource\EntityInterface;
-use Cake\ORM\RulesChecker;
+use Cake\Event\EventInterface;
+use Awyiss\ORM\RulesChecker;
 use Cake\Validation\Validator;
 
 
 /**
  * ContentTemplates Model
  *
- * @method \Awyiss\Model\Entity\ContentTemplate newDefaultEntity(array $aa_additionalData = [])
- * @method \Awyiss\Model\Entity\ContentTemplate patchEntity(EntityInterface $ao_entity, array $aa_data, array $aa_options = [])
+ * @method ContentTemplate newDefaultEntity(array $aa_additionalData = [])
  */
-class ContentTemplatesTable extends \Awyiss\Model\Table {
+class ContentTemplatesTable extends Table {
 	protected array $_defaultConfig = [
 		'translate' => [
 			'fields' => ['title'],
@@ -37,7 +40,12 @@ class ContentTemplatesTable extends \Awyiss\Model\Table {
 
 
 	/**
-	 * @inheritDoc
+	 * Returns the default validator object.
+	 *
+	 * @param \Cake\Validation\Validator $ao_validator The validator that can be modified to
+	 * add some rules to it.
+	 *
+	 * @return \Cake\Validation\Validator
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
@@ -63,11 +71,15 @@ class ContentTemplatesTable extends \Awyiss\Model\Table {
 
 
 	/**
-	 * @inheritDoc
+	 * Returns a RulesChecker object after modifying the one that was supplied.
+	 *
+	 * @param \Awyiss\ORM\RulesChecker|\Cake\ORM\RulesChecker $ao_rules The rules object to be modified.
+	 *
+	 * @return \Awyiss\ORM\RulesChecker
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildRules (RulesChecker $ao_rules): RulesChecker {
+	public function buildRules (RulesChecker|\Cake\ORM\RulesChecker $ao_rules): RulesChecker {
 		$ao_rules->add($ao_rules->isUnique(['filename']), ['errorField' => 'filename']);
 
 		return $ao_rules;
@@ -75,9 +87,18 @@ class ContentTemplatesTable extends \Awyiss\Model\Table {
 
 
 	/**
-	 * @inheritDoc
+	 * Before saving an entity, make sure the `available_elements` and `assigned_template_positions`-properties really have
+	 * changed, since CakePHP will always mark a property containing an array as dirty.
+	 *
+	 * @param \Cake\Event\EventInterface $ao_event
+	 * @param \Awyiss\Model\Entity\ContentTemplate|\Cake\Datasource\EntityInterface $ao_entity
+	 * @param \ArrayObject $ao_options
+	 *
+	 * @return void
 	 */
-	public function beforeSave (\Cake\Event\EventInterface $ao_event, EntityInterface $ao_entity, \ArrayObject $ao_options): void {
+	public function beforeSave (EventInterface $ao_event, ContentTemplate|EntityInterface $ao_entity, ArrayObject $ao_options): void {
+		parent::beforeSave($ao_event, $ao_entity, $ao_options);
+
 		if ($ao_entity->available_elements === $ao_entity->getOriginal('available_elements')) {
 			$ao_entity->setDirty('available_elements', FALSE);
 		}
@@ -85,8 +106,6 @@ class ContentTemplatesTable extends \Awyiss\Model\Table {
 		if ($ao_entity->assigned_template_positions === $ao_entity->getOriginal('assigned_template_positions')) {
 			$ao_entity->setDirty('assigned_template_positions', FALSE);
 		}
-
-		parent::beforeSave($ao_event, $ao_entity, $ao_options);
 	}
 
 

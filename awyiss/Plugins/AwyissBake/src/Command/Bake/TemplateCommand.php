@@ -6,6 +6,7 @@ namespace AwyissBake\Command\Bake;
 
 use Cake\Console\Arguments;
 //use Cake\Console\ConsoleIo;
+use Cake\Console\ConsoleOptionParser;
 use Cake\Core\Configure;
 //use Cake\Utility\Inflector;
 use InvalidArgumentException;
@@ -37,6 +38,15 @@ class TemplateCommand extends \Bake\Command\TemplateCommand {
 
 	/**
 	 * @inheritDoc
+	 *
+	 * Combines `\Bake\Command\TemplateCommand::getTemplatePath` and `\Bake\Command\BakeCommand::getTemplatePath`,
+	 * but honors the `folder`-option.
+	 *
+	 * @param \Cake\Console\Arguments $ao_args The arguments
+	 * @param string|null $as_container
+	 *
+	 * @see \Bake\Command\BakeCommand::getTemplatePath()
+	 * @see \Bake\Command\TemplateCommand::getTemplatePath()
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
@@ -110,9 +120,13 @@ class TemplateCommand extends \Bake\Command\TemplateCommand {
 
 
 	/**
+	 * {@inheritDoc}
+	 *
+	 * Adds the `folder`-option.
+	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildOptionParser (\Cake\Console\ConsoleOptionParser $ao_parser): \Cake\Console\ConsoleOptionParser {
+	public function buildOptionParser (ConsoleOptionParser $ao_parser): ConsoleOptionParser {
 		$lo_parser = parent::buildOptionParser($ao_parser);
 
 		$lo_parser->addOption('folder', [

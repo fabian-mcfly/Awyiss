@@ -12,7 +12,7 @@ class CreateAttributesContentTemplates extends AbstractMigration
      * https://book.cakephp.org/phinx/0/en/migrations.html#the-change-method
      * @return void
      */
-    public function change()
+    public function change(): void
     {
         $table = $this->table('attributes_content_templates');
         $table->addColumn('content_template_id', 'integer', [

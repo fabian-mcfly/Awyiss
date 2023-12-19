@@ -1,6 +1,10 @@
 <?php declare(strict_types=1);
 
 
+use Authentication\Middleware\AuthenticationMiddleware;
+use Awyiss\Authentication\Authentication;
+use Awyiss\Authorization\Authorization;
+use Awyiss\Middleware\AuthorizationMiddleware;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Middleware\EventListenersMiddleware;
 use Awyiss\Routing\Route\AwyissRoute;
@@ -16,12 +20,12 @@ $ao_routes->prefix('Backend', function(RouteBuilder $ao_routeBuilder) {
 	$ao_routeBuilder->registerMiddleware('eventListeners', new EventListenersMiddleware('backend'));
 	$ao_routeBuilder->applyMiddleware('eventListeners');
 
-	$lo_authentication = new \Awyiss\Authentication\Authentication('backend');
-	$ao_routeBuilder->registerMiddleware('authentication', new \Authentication\Middleware\AuthenticationMiddleware($lo_authentication));
+	$lo_authentication = new Authentication('backend');
+	$ao_routeBuilder->registerMiddleware('authentication', new AuthenticationMiddleware($lo_authentication));
 	$ao_routeBuilder->applyMiddleware('authentication');
 
-	$lo_authorization = new \Awyiss\Authorization\Authorization('backend');
-	$ao_routeBuilder->registerMiddleware('authorization', new \Awyiss\Middleware\AuthorizationMiddleware($lo_authorization));
+	$lo_authorization = new Authorization('backend');
+	$ao_routeBuilder->registerMiddleware('authorization', new AuthorizationMiddleware($lo_authorization));
 	$ao_routeBuilder->applyMiddleware('authorization');
 
 	$ao_routeBuilder->connect('/{lang}/{controller}/{action}/*', ['action' => 'overview'], ['_name' => 'backend'])->setPatterns([

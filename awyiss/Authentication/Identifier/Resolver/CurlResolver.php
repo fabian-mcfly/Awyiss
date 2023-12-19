@@ -4,45 +4,70 @@
 namespace Awyiss\Authentication\Identifier\Resolver;
 
 
-class CurlResolver implements \Authentication\Identifier\Resolver\ResolverInterface {
-	use \Cake\Core\InstanceConfigTrait;
-	use \Cake\ORM\Locator\LocatorAwareTrait;
+use Authentication\Identifier\Resolver\ResolverInterface;
+use Cake\Core\InstanceConfigTrait;
+use Cake\ORM\Locator\LocatorAwareTrait;
+use Exception;
 
 
-	public const TYPE_GET = 'GET';
-	public const TYPE_POST = 'POST';
-	public const ACCEPT_JSON = 'application/json';
+/**
+ * Resolves an identity by makeing a curl-based request to a specific remote URL
+ */
+class CurlResolver implements ResolverInterface {
+	use InstanceConfigTrait;
+	use LocatorAwareTrait;
 
-
+	/**
+	 * Default configuration.
+	 * - `acceptType` The content type to use for the request
+	 * - `modifyResult` A callable that modifies the result after fetching it from the remote URL
+	 * - `requestData` An array or callable of additional request data to sent to the remote URL
+	 * - `requestType` The type of request. Either `CurlResolver::TYPE_GET` or `CurlResolver::TYPE_POST`
+	 * - `url` The URL to call
+	 *
+	 * @var array
+	 */
 	protected array $_defaultConfig = [
-		'url' => NULL,
-		'requestType' => self::TYPE_GET,
-		'requestData' => [],
 		'acceptType' => self::ACCEPT_JSON,
 		'modifyResult' => NULL,
+		'requestData' => [],
+		'requestType' => self::TYPE_GET,
+		'url' => NULL,
 	];
 
 
+	final public const TYPE_GET = 'GET';
+	final public const TYPE_POST = 'POST';
+	final public const ACCEPT_JSON = 'application/json';
+
+
+	/**
+	 * @param array $aa_config
+	 */
 	public function __construct (array $aa_config = []) {
 		$this->setConfig($aa_config);
 	}
 
 
 	/**
-	 * @inheritDoc
+	 * Create a cURL request to the URL in the config and returns the data provided by the remote URL.
 	 *
+	 * @param array $aa_credentials Find conditions.
+	 * @param string $as_type Condition type. Can be `AND` or `OR`.
+	 *
+	 * @return mixed
 	 * @throws \Exception
+	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
-	 * @noinspection PhpUndefinedFunctionInspection
 	 */
-	public function find (array $aa_credentials, string $as_type = self::TYPE_AND) {
+	public function find (array $aa_credentials, string $as_type = self::TYPE_AND): mixed {
 		$lx_url = $this->_config['url'] ?? NULL;
 		if (is_callable($lx_url)) {
 			$lx_url = $lx_url($aa_credentials);
 		}
 
 		if (empty($lx_url)) {
-			throw new \Exception(__('::resolver_missing_url'));
+			throw new Exception(__('::resolver_missing_url'));
 		}
 
 		$lo_curl_handle = curl_init();
@@ -57,20 +82,15 @@ class CurlResolver implements \Authentication\Identifier\Resolver\ResolverInterf
 					$lx_requestData = $lx_requestData($aa_credentials);
 				}
 
-				/** @noinspection PhpUndefinedConstantInspection */
 				curl_setopt($lo_curl_handle, CURLOPT_POST, TRUE);
-				/** @noinspection PhpUndefinedConstantInspection */
 				curl_setopt($lo_curl_handle, CURLOPT_POSTFIELDS, $lx_requestData);
 				break;
 			default:
-				throw new \Exception(__('::resolver_unknown_request_type'));
+				throw new Exception(__('::resolver_unknown_request_type'));
 		}
 
-		/** @noinspection PhpUndefinedConstantInspection */
 		curl_setopt($lo_curl_handle, CURLOPT_HTTPHEADER, ['Accept: ' . $this->_config['acceptType']]);
-		/** @noinspection PhpUndefinedConstantInspection */
 		curl_setopt($lo_curl_handle, CURLOPT_URL, $lx_url);
-		/** @noinspection PhpUndefinedConstantInspection */
 		curl_setopt($lo_curl_handle, CURLOPT_RETURNTRANSFER, 1);
 		$lx_result = curl_exec($lo_curl_handle);
 		curl_close($lo_curl_handle);

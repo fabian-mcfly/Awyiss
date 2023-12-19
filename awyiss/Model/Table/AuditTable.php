@@ -4,18 +4,18 @@
 namespace Awyiss\Model\Table;
 
 
+use Awyiss\Model\Entity\Audit;
+use Awyiss\Model\Table;
 use Cake\Database\Schema\TableSchemaInterface;
-use Cake\Datasource\EntityInterface;
 use Cake\Validation\Validator;
 
 
 /**
  * Audit Model
  *
- * @method \Awyiss\Model\Entity\Audit newDefaultEntity(array $aa_additionalData = [])
- * @method \Awyiss\Model\Entity\Audit patchEntity(EntityInterface $ao_entity, array $aa_data, array $aa_options = [])
+ * @method Audit newDefaultEntity(array $aa_additionalData = [])
  */
-class AuditTable extends \Awyiss\Model\Table {
+class AuditTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
@@ -47,7 +47,12 @@ class AuditTable extends \Awyiss\Model\Table {
 
 
 	/**
-	 * @inheritDoc
+	 * Returns the default validator object.
+	 *
+	 * @param \Cake\Validation\Validator $ao_validator The validator that can be modified to
+	 * add some rules to it.
+	 *
+	 * @return \Cake\Validation\Validator
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */

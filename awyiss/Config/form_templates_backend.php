@@ -1,7 +1,9 @@
 <?php declare(strict_types=1);
 
-/** @noinspection HtmlUnknownAttribute */
-
+/**
+ * @noinspection HtmlUnknownAttribute
+ * @noinspection HtmlWrongAttributeValue
+ */
 return [
 	// Wrapper container for checkboxes.
 	'checkboxWrapper' => '<div class="Input InputType-Checkbox">{{label}}</div>',
@@ -16,7 +18,7 @@ return [
 	// Wrapper content used to hide other content.
 	'hiddenBlock' => '<div class="Hidden">{{content}}</div>',
 	// Generic input element.
-	'input' => '<input type="{{type}}" name="{{name}}"{{attrs}}>',
+	'input' => '<input type="{{type}}" name="{{name}}" {{attrs}}>',
 	// Container element used by control().
 	'inputContainer' => '<div class="Input InputType-{{type}}{{required}}">{{content}}</div>',
 	// Container element used by control() when a field has an error.
@@ -28,7 +30,7 @@ return [
 	// Wrapping container for radio input/label,
 	'radioWrapper' => '{{label}}',
 	// Textarea input element,
-	'textarea' => '<textarea name="{{name}}"{{attrs}}>{{value}}</textarea>',
+	'textarea' => '<textarea name="{{name}}" {{attrs}}>{{value}}</textarea>',
 	// Container for submit buttons.
 	'submitContainer' => '<div class="Submit">{{content}}</div>',
 	// selected class

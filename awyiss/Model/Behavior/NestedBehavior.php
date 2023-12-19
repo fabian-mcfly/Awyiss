@@ -4,6 +4,7 @@
 namespace Awyiss\Model\Behavior;
 
 
+use ArrayObject;
 use Awyiss\ORM\Behavior;
 use Cake\Collection\Collection;
 use Cake\Collection\CollectionInterface;
@@ -16,6 +17,7 @@ use RuntimeException;
 /**
  * The NestedBehavior exposes four methods on the table object:
  * `getChildren()`, `getDirectChildren()`, `getParent()` and `getParents()`
+ *
  * For this, it uses the config options `children`/`parent` with the following options
  * 	- associationName: the alias of a valid hasMany/belongsTo-association, set on the table
  * 	- finder: the finder that's being used to get all children/parent(s)
@@ -26,7 +28,7 @@ use RuntimeException;
 class NestedBehavior extends Behavior {
 	/**
 	 * Default configuration
-	 *
+	 * 	 *
 	 * These are merged with user-provided configuration when the behavior is used.
 	 *
 	 * @var array
@@ -51,8 +53,10 @@ class NestedBehavior extends Behavior {
 
 	/**
 	 * Returns a collection containing all nested children of the given entity.
+	 *
 	 * The depth can be limited using the `maxLevel` option in either the `children`-config array or
 	 * in the second parameter of the method call.
+	 *
 	 * Calling `$Comments->getChildren($comment, ['maxLevel' => 2]);` returns all direct children of $comment as well as
 	 * all direct children of those.
 	 *
@@ -100,7 +104,9 @@ class NestedBehavior extends Behavior {
 			}
 
 			$lo_children = $this->getChildren($lo_entity, $aa_options, $ai_currentLevel + 1);
-			if (!$lo_children->count()) continue;
+			if (!$lo_children->count()) {
+				continue;
+			}
 
 			$lo_collection = $lo_collection->append($lo_children);
 		}
@@ -140,8 +146,10 @@ class NestedBehavior extends Behavior {
 
 	/**
 	 * Returns a collection containing all parents of the given entity.
+	 *
 	 * The depth can be limited using the `maxLevel` option in either the `parent`-config array or
 	 * in the second parameter of the method call.
+	 *
 	 * Calling `$Comments->getParents($comment, ['maxLevel' => 2]);` returns the direct parent of $comment as well as
 	 * all direct parent of this.
 	 *
@@ -185,7 +193,7 @@ class NestedBehavior extends Behavior {
 	 *
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function afterSaveCommit (EventInterface $ao_event, EntityInterface $ao_entity, \ArrayObject $ao_options): void {
+	public function afterSaveCommit (EventInterface $ao_event, EntityInterface $ao_entity, ArrayObject $ao_options): void {
 		if ( ! $this->getConfig('enabled') || ! $this->getConfig('relatedColumns')) {
 			return;
 		}
@@ -199,10 +207,14 @@ class NestedBehavior extends Behavior {
 		$la_relatedColumns = $this->getConfig('relatedColumns');
 		$la_dirtyRelatedColumns = array_intersect($ao_entity->getDirty(), $la_relatedColumns);
 
-		if (!$la_dirtyRelatedColumns) return;
+		if (!$la_dirtyRelatedColumns) {
+			return;
+		}
 
 		$lo_children = $this->getChildren($ao_entity);
-		if ($lo_children->isEmpty()) return;
+		if ($lo_children->isEmpty()) {
+			return;
+		}
 
 		$la_data = array_combine($la_dirtyRelatedColumns, array_intersect_key($ao_entity->toArray(), array_flip($la_dirtyRelatedColumns)));
 

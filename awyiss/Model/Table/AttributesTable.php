@@ -4,9 +4,10 @@
 namespace Awyiss\Model\Table;
 
 
+use Awyiss\Model\Entity\Attribute;
 use Awyiss\Model\Table;
 use Cake\Collection\Collection;
-use Cake\ORM\RulesChecker;
+use Awyiss\ORM\RulesChecker;
 use Cake\Validation\Validator;
 use Phinx\Db\Adapter\AdapterInterface;
 use ReflectionClass;
@@ -15,10 +16,9 @@ use ReflectionClass;
 /**
  * Attributes Model
  *
- * @method \Awyiss\Model\Entity\Configuration newDefaultEntity(array $aa_additionalData = [])
- * @method \Awyiss\Model\Entity\Attribute patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
+ * @method Attribute newDefaultEntity(array $aa_additionalData = [])
  */
-class AttributesTable extends \Awyiss\Model\Table {
+class AttributesTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
@@ -51,7 +51,12 @@ class AttributesTable extends \Awyiss\Model\Table {
 
 
 	/**
-	 * @inheritDoc
+	 * Returns the default validator object.
+	 *
+	 * @param \Cake\Validation\Validator $ao_validator The validator that can be modified to
+	 * add some rules to it.
+	 *
+	 * @return \Cake\Validation\Validator
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
@@ -83,44 +88,60 @@ class AttributesTable extends \Awyiss\Model\Table {
 
 
 	/**
-	 * @inheritDoc
+	 * Returns a RulesChecker object after modifying the one that was supplied.
+	 *
+	 * @param \Awyiss\ORM\RulesChecker|\Cake\ORM\RulesChecker $ao_rules The rules object to be modified.
+	 *
+	 * @return \Awyiss\ORM\RulesChecker
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildRules (RulesChecker $ao_rules): RulesChecker {
+	public function buildRules (RulesChecker|\Cake\ORM\RulesChecker $ao_rules): RulesChecker {
 		$ao_rules->add($ao_rules->isUnique(['name', 'scope']), ['errorField' => 'filename']);
 
-		//TODO: check if scope exists
-		//TODO: check if type is valid
+		$ao_rules->add(function(Attribute $ao_entity/*, array $aa_options*/): bool|string {
+			$la_attributeScopes = $this->getScopes();
+
+			//Check if the provided scope can have attributes
+			return in_array($ao_entity->scope, array_keys($la_attributeScopes));
+		}, 'validScope', [
+			'errorField' => 'scope',
+			'message' => __('attributes::error_invalid_scope'),
+		]);
 
 		return $ao_rules;
 	}
 
 
 	/**
+	 * Returns all available scopes that can have attributes.
+	 *
 	 * @throws \ReflectionException
 	 */
 	public function getScopes (): array {
-		$la_paths = [
-			'\\' . CUSTOM_NAMESPACE . '\Model\Table\\' => implode(DS, [ROOT, CUSTOM_DIR, 'Model', 'Table', '*Table.php',]),
-			'\Awyiss\Model\Table\\' => implode(DS, [ROOT, APP_DIR, 'Model', 'Table', '*Table.php']),
-		];
-
 		if ( ! isset($this->attributeScopes)) {
 			$this->attributeScopes = [];
 
+			$la_paths = [
+				'\\' . CUSTOM_NAMESPACE . '\Model\Table\\' => implode(DS, [ROOT, CUSTOM_DIR, 'Model', 'Table', '*Table.php',]),
+				'\Awyiss\Model\Table\\' => implode(DS, [ROOT, APP_DIR, 'Model', 'Table', '*Table.php']),
+			];
+
+			//Traverse both namespaces
 			foreach ($la_paths as $ls_namespace => $ls_path) {
+				//Look for files with name "*Table.php"
 				foreach (glob($ls_path) as $ls_filePath) {
 					$ls_tableName = substr($ls_filePath, strrpos($ls_filePath, DS) + 1, -4);
 					/** @var Table::class $ls_tableClass */
 					$ls_tableClass = $ls_namespace . $ls_tableName;
 
+					//If an entry exists or if the table does not allow attributes, skip it
 					if (isset($this->attributeScopes[ $ls_tableClass::TABLE ]) || ! $ls_tableClass::ATTRIBUTABLE) {
 						continue;
 					}
 
-					$lo_reflection = new \ReflectionClass($ls_tableClass);
-
+					//If the given table is not a subclass of \Awyiss\Model\Table, skip it
+					$lo_reflection = new ReflectionClass($ls_tableClass);
 					if ( ! $lo_reflection->isSubclassOf(Table::class)) {
 						continue;
 					}
@@ -142,7 +163,7 @@ class AttributesTable extends \Awyiss\Model\Table {
 	 *
 	 * If no valid type is found, 'string' is returned
 	 *
-	 * @param null|string $as_type
+	 * @param NULL|string $as_type
 	 *
 	 * @return array
 	 */

@@ -4,7 +4,14 @@
 namespace Awyiss\View\Helper;
 
 
+use Awyiss\View\StringTemplate;
+use Cake\Utility\Inflector;
+use Cake\View\View;
+
+
 /**
+ * @inheritDoc
+ *
  * @property \Cake\View\Helper\UrlHelper $Url
  * @property \Cake\View\Helper\HtmlHelper $Html
  */
@@ -12,13 +19,15 @@ class FormHelper extends \Cake\View\Helper\FormHelper {
 	/**
 	 * @inheritDoc
 	 */
-	public function __construct (\Cake\View\View $view, array $config = []) {
-		parent::__construct($view, $config + ['templateClass' => \Awyiss\View\StringTemplate::class,]);
+	public function __construct (View $view, array $config = []) {
+		parent::__construct($view, $config + ['templateClass' => StringTemplate::class,]);
 	}
 
 
 	/**
-	 * @inheritDoc
+	 * {@inheritDoc}
+	 *
+	 * Extended version that uses a different default value for the label text, if none was provided.
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
@@ -30,8 +39,8 @@ class FormHelper extends \Cake\View\Helper\FormHelper {
 				$ls_text = substr($ls_text, 0, -5);
 			}
 			if (str_contains($ls_text, '.')) {
-				$fieldElements = explode('.', $ls_text);
-				$ls_text = array_pop($fieldElements);
+				$ls_fieldElements = explode('.', $ls_text);
+				$ls_text = array_pop($ls_fieldElements);
 			}
 			if (str_ends_with($ls_text, '_id')) {
 				$ls_text = substr($ls_text, 0, -3);
@@ -44,17 +53,24 @@ class FormHelper extends \Cake\View\Helper\FormHelper {
 
 
 	/**
-	 * @inheritDoc
+	 * {@inheritDoc}
+	 *
+	 * Change the default behavior to not escape by default
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function error (string $as_field, $as_text = NULL, array $aa_options = []): string {
-		return parent::error($as_field, $as_text, $aa_options + ['escape' => FALSE]);
+		return parent::error($as_field, $as_text, $aa_options);
+		//return parent::error($as_field, $as_text, $aa_options + ['escape' => FALSE]);
 	}
 
 
 	/**
-	 * @inheritDoc
+	 * {@inheritDoc}
+	 *
+	 * Re-implemented 1:1 but
+	 * - uses 'Required' instead of 'required' as a class name for required elements. We like our classes uppercase.
+	 * - uses `ucfirst` for the `type`-option
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
@@ -84,10 +100,10 @@ class FormHelper extends \Cake\View\Helper\FormHelper {
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	protected function _domId (string $as_value): string {
-		$ls_domId = \Cake\Utility\Inflector::camelize($as_value);
+		$ls_domId = Inflector::camelize($as_value);
 
 		if ($this->_idPrefix) {
-			$ls_domId = \Cake\Utility\Inflector::camelize($this->_idPrefix) . '-' . $ls_domId;
+			$ls_domId = Inflector::camelize($this->_idPrefix) . '-' . $ls_domId;
 		}
 
 		return $ls_domId;

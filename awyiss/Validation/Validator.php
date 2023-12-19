@@ -1,10 +1,4 @@
-<?php
-
-/**
- * @noinspection PhpParameterNameChangedDuringInheritanceInspection
- */
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 
 namespace Awyiss\Validation;
@@ -12,13 +6,25 @@ namespace Awyiss\Validation;
 
 use Cake\Utility\Inflector;
 use Cake\Validation\ValidationSet;
+use RuntimeException;
 
 
+/**
+ * {@inheritDoc}
+ *
+ * Extended version that makes use of the `i18nDomain`-property to make validation errors translatable
+ * per scope/domain/model.
+ */
 class Validator extends \Cake\Validation\Validator {
 	protected string $i18nDomain = '';
 
 
-	public function setI18nDomain (string $as_domain) {
+	/**
+	 * @param string $as_domain
+	 *
+	 * @return void
+	 */
+	public function setI18nDomain (string $as_domain): void {
 		$this->i18nDomain = Inflector::underscore($as_domain);
 	}
 
@@ -30,6 +36,7 @@ class Validator extends \Cake\Validation\Validator {
 	 * @param bool $ab_newRecord
 	 *
 	 * @return array
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	protected function _processRules (string $as_field, ValidationSet $ao_rules, array $aa_data, bool $ab_newRecord): array {
 		$la_errors = [];
@@ -78,7 +85,7 @@ class Validator extends \Cake\Validation\Validator {
 					$lx_pass = implode(',', $lx_pass);
 				}
 				elseif (!is_scalar($lx_pass)) {
-					throw new \RuntimeException(sprintf('Missing translation informations for `%s`, passed arguments: `%s`', $ls_name, print_r($lx_pass, TRUE)));
+					throw new RuntimeException(sprintf('Missing translation informations for `%s`, passed arguments: `%s`', $ls_name, print_r($lx_pass, TRUE)));
 				}
 				$la_pass[ $ls_name ] = $lx_pass;
 			}
@@ -105,7 +112,8 @@ class Validator extends \Cake\Validation\Validator {
 	/**
 	 * @param string $as_field
 	 *
-	 * @return null|string
+	 * @return NULL|string
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function getRequiredMessage (string $as_field): ?string {
 		if ( ! isset($this->_fields[ $as_field ])) {
@@ -121,7 +129,8 @@ class Validator extends \Cake\Validation\Validator {
 	/**
 	 * @param string $as_field
 	 *
-	 * @return null|string
+	 * @return NULL|string
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function getNotEmptyMessage (string $as_field): ?string {
 		if ( ! isset($this->_fields[ $as_field ])) {
@@ -130,9 +139,9 @@ class Validator extends \Cake\Validation\Validator {
 
 		$ls_defaultMessage = __('validation::error_not_empty');
 
-		foreach ($this->_fields[ $as_field ] as $rule) {
-			if ($rule->get('rule') === 'notBlank' && $rule->get('message')) {
-				return $rule->get('message');
+		foreach ($this->_fields[ $as_field ] as $lo_rule) {
+			if ($lo_rule->get('rule') === 'notBlank' && $lo_rule->get('message')) {
+				return $lo_rule->get('message');
 			}
 		}
 

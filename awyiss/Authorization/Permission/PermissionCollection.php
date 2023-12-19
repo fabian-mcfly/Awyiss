@@ -6,9 +6,13 @@ namespace Awyiss\Authorization\Permission;
 
 use Awyiss\Core\App;
 use Cake\Core\ObjectRegistry;
+use Exception;
 use RuntimeException;
 
 
+/**
+ * Holds a collection of permissions for a single scope
+ */
 class PermissionCollection extends ObjectRegistry {
 	protected string $scope;
 
@@ -23,25 +27,36 @@ class PermissionCollection extends ObjectRegistry {
 	public function __construct (string $as_scope, array $aa_config = []) {
 		$this->scope = $as_scope;
 
-		foreach ($aa_config as $key => $value) {
-			if (is_int($key)) {
-				$this->load($value);
+		foreach ($aa_config as $lx_key => $lx_value) {
+			if (is_int($lx_key)) {
+				$this->load($lx_value);
 				continue;
 			}
-			$this->load($key, $value);
+			$this->load($lx_key, $lx_value);
 		}
 	}
 
 
+	/**
+	 * Returns the scope the instance was created with
+	 *
+	 * @return string
+	 */
 	public function getScope (): string {
 		return $this->scope;
 	}
 
 
 	/**
+	 * Adds a permission to the collection.
+	 *
+	 * This is a convenient proxy method for `static::load` that returns `$this` instead of the permission instance
+	 *
 	 * @throws \Exception
+	 *
+	 * @see load()
 	 */
-	public function add (string $as_identifier, array $aa_config = []): self {
+	public function add (string $as_identifier, array $aa_config = []): static {
 		$this->load($as_identifier, $aa_config);
 
 		return $this;
@@ -49,7 +64,17 @@ class PermissionCollection extends ObjectRegistry {
 
 
 	/**
-	 * @inheritDoc
+	 * {@inheritDoc}
+	 *
+	 * Extended to make the config item 'className' mandatory.
+	 *
+	 * @param string $as_identifier The name/class of the object to load.
+	 * @param array<string, mixed> $aa_config Additional settings to use when loading the object.
+	 *
+	 * @return mixed
+	 *
+	 * @throws Exception
+	 * @throws RuntimeException
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
@@ -57,32 +82,13 @@ class PermissionCollection extends ObjectRegistry {
 		if ( ! isset($aa_config['className'])) {
 			throw new RuntimeException('Missing config key `className`');
 		}
+
 		$la_config = $aa_config;
 		if ( ! isset($la_config['identifier'])) {
 			$la_config['identifier'] = $as_identifier;
 		}
 
-		$lb_loaded = isset($this->_loaded[ $as_identifier ]);
-		if ($lb_loaded && ! empty($aa_config)) {
-			$this->_checkDuplicate($as_identifier, $aa_config);
-		}
-		if ($lb_loaded) {
-			return $this->_loaded[ $as_identifier ];
-		}
-
-		$ls_objectName = $ls_className = $aa_config['className'];
-		if (is_string($ls_objectName)) {
-			$ls_className = $this->_resolveClassName($ls_objectName);
-			if ($ls_className === NULL) {
-				[$ls_plugin, $ls_objectName] = pluginSplit($ls_objectName);
-				$this->_throwMissingClassError($ls_objectName, $ls_plugin);
-			}
-		}
-
-		$lo_instance = $this->_create($ls_className, $as_identifier, $la_config);
-		$this->_loaded[ $as_identifier ] = $lo_instance;
-
-		return $lo_instance;
+		return parent::load($as_identifier, $la_config);
 	}
 
 
@@ -97,9 +103,9 @@ class PermissionCollection extends ObjectRegistry {
 
 
 	/**
-	 * Creates Permission instance.
+	 * Creates a Permission instance.
 	 *
-	 * @param PermissionInterface $as_class Permission class.
+	 * @param class-string<PermissionInterface> $as_class Permission class.
 	 * @param string $as_alias Permission alias.
 	 * @param array $aa_config Config array.
 	 *
@@ -109,6 +115,7 @@ class PermissionCollection extends ObjectRegistry {
 	 */
 	protected function _create ($as_class, string $as_alias, array $aa_config): PermissionInterface {
 		$lo_permission = new $as_class($aa_config, $this);
+
 		if ( ! ($lo_permission instanceof PermissionInterface)) {
 			throw new RuntimeException(sprintf('Permission class `%s` must implement `%s`.', $as_class, PermissionInterface::class));
 		}
@@ -122,8 +129,8 @@ class PermissionCollection extends ObjectRegistry {
 	 *
 	 * @param string $as_class Class name to be resolved.
 	 *
-	 * @return string|null
-	 * @psalm-return class-string|null
+	 * @return string|NULL
+	 * @psalm-return class-string|NULL
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
@@ -136,14 +143,15 @@ class PermissionCollection extends ObjectRegistry {
 
 	/**
 	 * @param string $as_class Missing class.
-	 * @param null|string $as_plugin Class plugin.
+	 * @param NULL|string $as_plugin Class plugin.
 	 *
 	 * @return void
+	 *
+	 * @throws Exception
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	protected function _throwMissingClassError (string $as_class, ?string $as_plugin): void {
-		$message = sprintf('Permission class `%s` was not found.', $as_class);
-		throw new RuntimeException($message);
+		throw new Exception(sprintf('Permission class `%s` was not found.', $as_class));
 	}
 }

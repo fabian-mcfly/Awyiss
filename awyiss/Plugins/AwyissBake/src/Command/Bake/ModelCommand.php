@@ -4,6 +4,7 @@
 namespace AwyissBake\Command\Bake;
 
 
+use AwyissBake\UtilTrait;
 use Bake\CodeGen\FileBuilder;
 use Cake\Console\Arguments;
 use Cake\Console\ConsoleIo;
@@ -14,9 +15,21 @@ use Cake\ORM\Table;
 use Cake\Utility\Inflector;
 
 
+/**
+ * Command for generating model files.
+ */
 class ModelCommand extends \Bake\Command\ModelCommand {
+	/*
+	 * Use UtilTrait so that every call of `$this->getPath()` will use the one provided by this trait,
+	 * honoring the `namespace`-option
+	 */
+	use UtilTrait;
+
+
 	/**
-	 * Bake an entity class.
+	 * {@inheritDoc}
+	 *
+	 * Re-implemented 1:1 but honors the `namespace`-option
 	 *
 	 * @param \Cake\ORM\Table $ao_model Model name or object
 	 * @param array $aa_data An array to use to generate the Table
@@ -73,7 +86,9 @@ class ModelCommand extends \Bake\Command\ModelCommand {
 
 
 	/**
-	 * Bake a table class.
+	 * {@inheritDoc}
+	 *
+	 * Re-implemented 1:1 but honors the `namespace`-option
 	 *
 	 * @param \Cake\ORM\Table $ao_model Model name or object
 	 * @param array $aa_data An array to use to generate the Table
@@ -134,7 +149,7 @@ class ModelCommand extends \Bake\Command\ModelCommand {
 
 		$ls_contents = $this->createTemplateRenderer()->set($la_data)->generate('Bake.Model/table');
 
-		$this->writefile($ao_io, $ls_filename, $ls_contents, $this->force);
+		$this->writeFile($ao_io, $ls_filename, $ls_contents, $this->force);
 
 		// Work around composer caching that classes/files do not exist.
 		// Check for the file as it might not exist in tests.
@@ -149,7 +164,9 @@ class ModelCommand extends \Bake\Command\ModelCommand {
 
 
 	/**
-	 * @inheritDoc
+	 * {@inheritDoc}
+	 *
+	 * Extends the parent-method with a check for column type 'json'.
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
@@ -158,17 +175,18 @@ class ModelCommand extends \Bake\Command\ModelCommand {
 			return $as_prefix . 'EmptyArray';
 		}
 
-
 		return parent::getEmptyMethod($as_fieldName, $aa_metaData, $as_prefix);
 	}
 
 
 	/**
-	 * @inheritDoc
+	 * {@inheritDoc}
+	 *
+	 * Extends the parent-method with a check for column type 'json'.
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function fieldValidation(TableSchemaInterface $ao_schema, string $as_fieldName, array $aa_metaData, array $aa_primaryKey): array {
+	public function fieldValidation (TableSchemaInterface $ao_schema, string $as_fieldName, array $aa_metaData, array $aa_primaryKey): array {
 		$la_validations = parent::fieldValidation($ao_schema, $as_fieldName, $aa_metaData, $aa_primaryKey);
 
 		if ($aa_metaData['type'] === 'json') {
@@ -185,43 +203,23 @@ class ModelCommand extends \Bake\Command\ModelCommand {
 
 
 	/**
+	 * We do not want to automatically add behaviors.
+	 *
 	 * @param \Cake\ORM\Table $ao_model
 	 *
 	 * @return array
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function getBehaviors(Table $ao_model): array {
+	public function getBehaviors (Table $ao_model): array {
 		return [];
 	}
 
 
 	/**
-	 * @inheritDoc
+	 * {@inheritDoc}
 	 *
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
-	 */
-	public function getPath (Arguments $ao_args): string {
-		$ls_path = APP . $this->pathFragment;
-		if ($this->plugin) {
-			$ls_path = $this->_pluginPath($this->plugin) . 'src/' . $this->pathFragment;
-		}
-		elseif ($ao_args->getOption('namespace')) {
-			$ls_namespace = Inflector::dasherize($ao_args->getOption('namespace'));
-			$ls_path = ROOT . DS . $ls_namespace . DS . $this->pathFragment;
-		}
-
-		$ls_prefix = $this->getPrefix($ao_args);
-		if ($ls_prefix) {
-			$ls_path .= $ls_prefix . DIRECTORY_SEPARATOR;
-		}
-
-		return str_replace('/', DIRECTORY_SEPARATOR, $ls_path);
-	}
-
-
-	/**
-	 * @inheritDoc
+	 * Adds the `namespace`-option.
 	 *
 	 * @param \Cake\Console\ConsoleOptionParser $ao_parser
 	 *

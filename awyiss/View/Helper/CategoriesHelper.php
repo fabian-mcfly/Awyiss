@@ -6,7 +6,10 @@ declare(strict_types=1);
 namespace Awyiss\View\Helper;
 
 
+use Awyiss\View\StringTemplate;
+use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
+use Cake\View\Helper;
 use Cake\View\Helper\IdGeneratorTrait;
 use Cake\View\StringTemplateTrait;
 use Cake\View\View;
@@ -14,16 +17,19 @@ use Cake\View\Widget\WidgetLocator;
 
 
 /**
+ * Helper class that provides methods related to the Categories-logic in the views
+ *
  * @property \Awyiss\View\Helper\FormHelper $Form
  * @property \Awyiss\View\Helper\PaginatorHelper $Paginator
  * @property \Awyiss\View\Helper\UrlHelper $Url
  */
-class CategoriesHelper extends \Cake\View\Helper {
+class CategoriesHelper extends Helper {
 	use IdGeneratorTrait;
 	use StringTemplateTrait;
 
+
 	protected $_defaultConfig = [
-		'templateClass' => \Awyiss\View\StringTemplate::class,
+		'templateClass' => StringTemplate::class,
 		'templates' => [
 			'aggregationOption' => '<li{{attrs}}><a href="{{link}}">{{title}}</a></li>',
 			'unassignedOption' => '<li{{attrs}}><a href="{{link}}">{{title}}</a></li>',
@@ -35,14 +41,17 @@ class CategoriesHelper extends \Cake\View\Helper {
 		'linkSelect' => ['LinkSelect'],
 	];
 	protected WidgetLocator $widgetLocator;
-
-
 	public $helpers = ['Form', 'Paginator', 'Url'];
 
 
+	/**
+	 * @param \Cake\View\View $ao_view
+	 * @param array $aa_config
+	 */
 	public function __construct (View $ao_view, array $aa_config = []) {
 		$la_config = $aa_config;
 
+		//Add the default widgets to those that may be present in the provided config
 		$la_widgets = $this->defaultWidgets;
 		if (isset($la_config['widgets'])) {
 			if (is_string($la_config['widgets'])) {
@@ -63,9 +72,10 @@ class CategoriesHelper extends \Cake\View\Helper {
 	 * Set the widget locator the helper will use.
 	 *
 	 * @param \Cake\View\Widget\WidgetLocator $ao_widgetLocator The locator instance to set.
+	 *
 	 * @return $this
 	 */
-	public function setWidgetLocator(WidgetLocator $ao_widgetLocator): self {
+	public function setWidgetLocator (WidgetLocator $ao_widgetLocator): static {
 		$this->widgetLocator = $ao_widgetLocator;
 
 		return $this;
@@ -76,99 +86,194 @@ class CategoriesHelper extends \Cake\View\Helper {
 	 * Render a named widget.
 	 *
 	 * This is a lower level method. For built-in widgets, you should be using
-	 * methods like `text`, `hidden`, and `radio`. If you are using additional
-	 * widgets you should use this method render the widget without the label
-	 * or wrapping div.
+	 * methods like `control`, `select`, and `filter`.
 	 *
-	 * @param string $as_name The name of the widget. e.g. 'text'.
+	 * @param string $as_name The name of the widget. e.g. 'control'.
 	 * @param array $aa_data The data to render.
+	 *
 	 * @return string
 	 */
-	public function widget(string $as_name, array $aa_data = []): string {
+	public function widget (string $as_name, array $aa_data = []): string {
 		$la_data = $aa_data;
 
 		$lo_widget = $this->widgetLocator->get($as_name);
 
 		/**
-		 * This call with $this->>Form->context() is hacky but since the WidgetInterface requires a ContextInterface,
-		 * there's no way around it except setting an own context which is total overkill since this Helper doesn't require one itself.
+		 * This call with $this->Form->context() is hacky but since the WidgetInterface requires a ContextInterface,
+		 * there's no way around it; except setting an own context which is total overkill since this Helper doesn't require one itself.
 		 * But hey, we're using the FormHelper and this has a context, so we don't care
 		 *
-		 * 		¯\_(ツ)_/¯
+		 *
+		 *        ¯\_(ツ)_/¯
+		 *
 		 *
 		 */
 		return $lo_widget->render($la_data, $this->Form->context());
 	}
 
 
+	/**
+	 * Generates a form control element complete with label and wrapper div.
+	 *
+	 * ### Options
+	 *
+	 * See each field type method for more information. Any options that are part of
+	 * $attributes or $options for the different **type** methods can be included in `$options` for control().
+	 * Additionally, any unknown keys that are not in the list below, or part of the selected type's options
+	 * will be treated as a regular HTML attribute for the generated input.
+	 *
+	 * - `type` - Force the type of widget you want. e.g. `type => 'select'`
+	 * - `label` - Either a string label, or an array of options for the label. See FormHelper::label().
+	 * - `options` - For widgets that take options e.g. radio, select.
+	 * - `error` - Control the error message that is produced. Set to `false` to disable any kind of error reporting
+	 *   (field error and error messages).
+	 * - `empty` - String or boolean to enable empty select box options.
+	 * - `nestedInput` - Used with checkbox and radio inputs. Set FALSE to render inputs outside of label
+	 *   elements. Can be set to true on any input to force the input inside the label. If you
+	 *   enable this option for radio buttons you will also need to modify the default `radioWrapper` template.
+	 * - `templates` - The templates you want to use for this input. Any templates will be merged on top of
+	 *   the already loaded templates. This option can either be a filename in /config that contains
+	 *   the templates you want to load, or an array of templates to use.
+	 * - `labelOptions` - Either `false` to disable label around nestedWidgets e.g. radio, multicheckbox or an array
+	 *   of attributes for the label tag. `selected` will be added to any classes e.g. `class => 'myclass'` where
+	 *   widget is checked
+	 *
+	 * @param NULL|string $as_fieldName
+	 * @param array $aa_attributes
+	 *
+	 * @return string
+	 *
+	 * @see \Cake\View\Helper\FormHelper::control()
+	 */
 	public function control (?string $as_fieldName = NULL, array $aa_attributes = []): string {
 		$ls_fieldName = $as_fieldName ?? 'category';
-		$la_attributes = $aa_attributes + [
-			'empty' => TRUE,
-		];
+		$la_attributes = $aa_attributes + ['empty' => TRUE, 'type' => 'select'];
 
 		if (empty($la_attributes['options'])) {
-			$la_attributes['options'] = $this->getCategoriesFromRequest($ls_fieldName, $la_attributes['categoriesName'] ?? 'category');
-		}
-
-		if ( ! array_key_exists('empty', $la_attributes)) {
-			$la_attributes['empty'] = TRUE;
-		}
-
-		if ( ! array_key_exists('type', $la_attributes)) {
-			$la_attributes['type'] = 'select';
+			$la_attributes['options'] = $this->getCategoriesFromRequest($ls_fieldName, $la_attributes['categoriesName'] ?? 'category') ?? [];
 		}
 
 		return $this->Form->control($ls_fieldName, $la_attributes);
 	}
 
 
+	/**
+	 * Returns a formatted SELECT element.
+	 *
+	 * ### Attributes:
+	 *
+	 * - `multiple` - show a multiple select box. If set to 'checkbox' multiple checkboxes will be
+	 *   created instead.
+	 * - `empty` - If true, the empty select option is shown. If a string,
+	 *   that string is displayed as the empty element.
+	 * - `escape` - If true contents of options will be HTML entity encoded. Defaults to true.
+	 * - `val` The selected value of the input.
+	 * - `disabled` - Control the disabled attribute. When creating a select box, set to true to disable the
+	 *   select box. Set to an array to disable specific option elements.
+	 *
+	 * ### Using options
+	 *
+	 * A simple array will create normal options:
+	 *
+	 * ```
+	 * $options = [1 => 'one', 2 => 'two'];
+	 * $this->Form->select('Model.field', $options));
+	 * ```
+	 *
+	 * While a nested options array will create optgroups with options inside them.
+	 * ```
+	 * $options = [
+	 *  1 => 'bill',
+	 *     'fred' => [
+	 *         2 => 'fred',
+	 *         3 => 'fred jr.'
+	 *     ]
+	 * ];
+	 * $this->Form->select('Model.field', $options);
+	 * ```
+	 *
+	 * If you have multiple options that need to have the same value attribute, you can
+	 * use an array of arrays to express this:
+	 *
+	 * ```
+	 * $options = [
+	 *     ['text' => 'United states', 'value' => 'USA'],
+	 *     ['text' => 'USA', 'value' => 'USA'],
+	 * ];
+	 * ```
+	 *
+	 * @param NULL|string $as_fieldName
+	 * @param iterable $ax_options
+	 * @param array $aa_attributes
+	 *
+	 * @return string
+	 *
+	 * @see \Cake\View\Helper\FormHelper::select();
+	 */
 	public function select (?string $as_fieldName = NULL, iterable $ax_options = [], array $aa_attributes = []): string {
 		$ls_fieldName = $as_fieldName ?? 'category';
-		$la_attributes = $aa_attributes + [
-			'empty' => TRUE,
-		];
+		$la_attributes = $aa_attributes + ['empty' => TRUE];
 
 		$lx_categories = $ax_options;
 		if (empty($la_attributes['options'])) {
-			$la_attributes['options'] = $this->getCategoriesFromRequest($ls_fieldName, $la_attributes['categoriesName'] ?? 'category');
-		}
-
-		if ( ! array_key_exists('empty', $la_attributes)) {
-			$la_attributes['empty'] = TRUE;
+			$la_attributes['options'] = $this->getCategoriesFromRequest($ls_fieldName, $la_attributes['categoriesName'] ?? 'category') ?? [];
 		}
 
 		return $this->Form->select($ls_fieldName, $lx_categories, $la_attributes);
 	}
 
 
-	public function filter (?string $as_fieldName = NULL, iterable $ax_options = [], array $aa_attributes = []): ?string {
+	/**
+	 * Returns a filter element, using the `linkSelect`-template.
+	 *
+	 * ### Options:
+	 *
+	 * - `aggregationLabel` The label of an additional option that's displayed when the `includeAggregation`-option is TRUE.
+	 * - `aggregationKey` The value of an additional option that's used for showing the aggregation of all categories.
+	 * - `disabled` Boolean value or an array containing the values that should be disabled in the filter.
+	 * - `escape` Boolean value whether to escape html entities.
+	 * - `includeAggregation` Boolean value whether to include the aggregation of all categories.
+	 * - `includeUnassigned` Boolean value whether to include an option to show items without any category.
+	 * - `label` The label to display in the filter.
+	 * - `name` The name to be used as a parameter in the resulting filter urls.
+	 * - `templateVars` Additional template variables.
+	 * - `unassignedLabel` The label of an additional option that's displayed when the `includeUnassigned`-option is TRUE.
+	 * - `unassignedKey` The value of an additional option that's used for showing items without any category.
+	 * - `val` The value of the currently selected category.
+	 *
+	 * @param NULL|string $as_fieldName
+	 * @param iterable $ax_options
+	 * @param array $aa_attributes
+	 *
+	 * @return string
+	 */
+	public function filter (?string $as_fieldName = NULL, iterable $ax_options = [], array $aa_attributes = []): string {
 		$ls_fieldName = $as_fieldName ?? 'category';
 		$la_attributes = $aa_attributes + [
-			'aggregationLabel' => _('::' . $ls_fieldName . '_filter_all'),
-			'aggregationKey' => 'all',
-			'disabled' => FALSE,
-			'escape' => TRUE,
-			'label' => _('::' . Inflector::underscore($ls_fieldName) . '_filter_label'),
-			'name' => Inflector::dasherize($ls_fieldName),
-			'unassignedLabel' => _('::' . $ls_fieldName . '_filter_unassigned'),
-			'unassignedKey' => 'unassigned',
-			'val' => NULL,
-		];
+				'aggregationLabel' => _('::' . $ls_fieldName . '_filter_all'),
+				'aggregationKey' => 'all',
+				'disabled' => FALSE,
+				'escape' => TRUE,
+				'label' => _('::' . Inflector::underscore($ls_fieldName) . '_filter_label'),
+				'name' => Inflector::dasherize($ls_fieldName),
+				'unassignedLabel' => _('::' . $ls_fieldName . '_filter_unassigned'),
+				'unassignedKey' => 'unassigned',
+				'val' => $this->getSelectedCategoryFromRequest($ls_fieldName),
+			];
 
-		if (isset($la_attributes['id']) && $la_attributes['id'] === true) {
+		if (isset($la_attributes['id']) && $la_attributes['id'] === TRUE) {
 			$la_attributes['id'] = $this->_domId($ls_fieldName);
 		}
 
 		$la_attributes['options'] = $ax_options;
 		if (empty($la_attributes['options'])) {
-			$la_attributes['options'] = $this->getCategoriesFromRequest($ls_fieldName);
+			$la_attributes['options'] = $this->getCategoriesFromRequest($ls_fieldName) ?? [];
 		}
 
-		foreach ($la_attributes['options'] AS $lx_key => &$lx_value) {
-			if (!is_array($lx_value)) {
+		foreach ($la_attributes['options'] as $lx_key => &$lx_value) {
+			if ( ! is_array($lx_value)) {
 				$lx_value = [
-					'title' => $lx_value
+					'title' => $lx_value,
 				];
 			}
 
@@ -176,38 +281,46 @@ class CategoriesHelper extends \Cake\View\Helper {
 		}
 		unset($lx_value);
 
-		if (empty($la_attributes['val'])) {
-			$la_attributes['val'] = $this->getSelectedCategoryFromRequest($ls_fieldName);
-		}
-
 		return $this->widget('linkSelect', $la_attributes);
 	}
 
 
+	/**
+	 * For a list of given names, return the first found `categories.simple`-value in the `categorization`-attribute of the request
+	 *
+	 * @param ...$aa_names
+	 *
+	 * @return NULL|iterable
+	 */
 	protected function getCategoriesFromRequest (...$aa_names): ?iterable {
-		$lx_return = [];
 		$la_categorization = $this->getView()->getRequest()->getAttribute('categorization', []);
 
+		foreach ($aa_names as $ls_name) {
+			$lx_return = Hash::get($la_categorization, $ls_name . '.categories.simple', []);
 
-		foreach ($aa_names AS $ls_name) {
-			$lx_return = \Cake\Utility\Hash::get($la_categorization, $ls_name . '.categories.simple', []);
-
-			if (!empty($lx_return)) {
+			if ( ! empty($lx_return)) {
 				return $lx_return;
 			}
 		}
 
-		return $lx_return;
+		return NULL;
 	}
 
 
+	/**
+	 * For a list of given names, return the first found `selectedCategory`-value in the `categorization`-attribute of the request
+	 *
+	 * @param ...$aa_names
+	 *
+	 * @return mixed
+	 */
 	protected function getSelectedCategoryFromRequest (...$aa_names): mixed {
 		$la_categorization = $this->getView()->getRequest()->getAttribute('categorization', []);
 
-		foreach ($aa_names AS $ls_name) {
-			$lx_return = \Cake\Utility\Hash::get($la_categorization, $ls_name . '.selectedCategory');
+		foreach ($aa_names as $ls_name) {
+			$lx_return = Hash::get($la_categorization, $ls_name . '.selectedCategory');
 
-			if (!is_null($lx_return)) {
+			if ( ! is_null($lx_return)) {
 				return $lx_return;
 			}
 		}

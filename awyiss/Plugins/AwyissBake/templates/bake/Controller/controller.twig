@@ -6,17 +6,17 @@ namespace {{ namespace }}\Controller{{ prefix }};
 
 {% if prefix and prefix == '\\Backend' %}
 use {{ baseNamespace }}\Controller\BackendController as Controller;
-
 {% elseif plugin %}
 use {{ baseNamespace }}\Controller\AppController as Controller;
-
 {% else %}
 use {{ baseNamespace }}\Controller\FrontendController as Controller;
-
 {% endif %}
+use {{ baseNamespace }}\Model\Entity\{{ entityClassName }};
 use Cake\Datasource\Exception\InvalidPrimaryKeyException;
 use Cake\Datasource\Exception\RecordNotFoundException;
-use Cake\Http\Response;
+use Cake\Http\Exception\RedirectException;
+use Cake\Routing\Router;
+
 
 /**
  * {{ name }} Controller
@@ -31,7 +31,7 @@ use Cake\Http\Response;
 {% endfor %}
 
 {%- if 'overview' in actions %}
- * @method \{{ namespace }}\Model\Entity\{{ entityClassName }}[]|\Cake\Datasource\ResultSetInterface paginate($ao_object = NULL, array $aa_settings = [])
+ * @method {{ entityClassName }}[]|\Cake\Datasource\ResultSetInterface paginate($ao_object = NULL, array $aa_settings = [])
 {% endif %}
  */
 class {{ name }}Controller extends Controller {
@@ -48,7 +48,7 @@ class {{ name }}Controller extends Controller {
 		$this->loadComponent('{{ component }}');
 {% endfor %}
 {% if helpers %}
-	$this->viewBuilder()->setHelpers({{ Bake.exportArray(helpers)|raw }});
+		$this->viewBuilder()->setHelpers({{ Bake.exportArray(helpers)|raw }});
 {% endif %}
 	}
 {% if actions|length %}{{ "\n" }}{% endif %}

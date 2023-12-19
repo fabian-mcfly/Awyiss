@@ -4,36 +4,40 @@
 namespace Awyiss\Model\Entity;
 
 
+use Awyiss\Model\Entity;
+use Cake\Utility\Text;
+
+
 /**
  * Page Entity
  *
  * @property int $id
- * @property string|null $slug
- * @property string|null $languages_shortcode
- * @property string|null $title
- * @property string|null $redirect_link
- * @property \Cake\I18n\FrozenTime|null $eventdate_start
- * @property \Cake\I18n\FrozenTime|null $eventdate_end
- * @property \Cake\I18n\FrozenTime|null $publishdate_start
- * @property \Cake\I18n\FrozenTime|null $publishdate_end
- * @property string|null $meta_title
- * @property string|null $meta_description
+ * @property string|NULL $slug
+ * @property string|NULL $language_shortcode
+ * @property string|NULL $title
+ * @property string|NULL $redirect_link
+ * @property \Cake\I18n\FrozenTime|NULL $eventdate_start
+ * @property \Cake\I18n\FrozenTime|NULL $eventdate_end
+ * @property \Cake\I18n\FrozenTime|NULL $publishdate_start
+ * @property \Cake\I18n\FrozenTime|NULL $publishdate_end
+ * @property string|NULL $meta_title
+ * @property string|NULL $meta_description
  * @property bool $robots_index
  * @property bool $robots_follow
  * @property int $page_role_id
  * @property int $page_template_id
- * @property int|null $duplicate_of
+ * @property int|NULL $duplicate_of
  * @property int $system_order
  * @property bool $active
  * @property bool $parents_active
  * @property bool $deleted
  * @property int $parent_id
- * @property int|null $created_by
- * @property \Cake\I18n\FrozenTime|null $created_on
- * @property int|null $changed_by
- * @property \Cake\I18n\FrozenTime|null $changed_on
- * @property int|null $deleted_by
- * @property \Cake\I18n\FrozenTime|null $deleted_on
+ * @property int|NULL $created_by
+ * @property \Cake\I18n\FrozenTime|NULL $created_on
+ * @property int|NULL $changed_by
+ * @property \Cake\I18n\FrozenTime|NULL $changed_on
+ * @property int|NULL $deleted_by
+ * @property \Cake\I18n\FrozenTime|NULL $deleted_on
  * @property \Awyiss\Model\Entity\Attribute $attributes
  * @property \Awyiss\Model\Entity\PageRole $page_role
  * @property \Awyiss\Model\Entity\PageTemplate $page_template
@@ -41,13 +45,13 @@ namespace Awyiss\Model\Entity;
  * @property \Awyiss\Model\Entity\Page $duplicate
  * @property \Awyiss\Model\Entity\Page[] $children
  */
-class Page extends \Awyiss\Model\Entity {
+class Page extends Entity {
 	/**
 	 * @inheritDoc
 	 */
 	protected $_accessible = [
 		'slug' => TRUE,
-		'languages_shortcode' => TRUE,
+		'language_shortcode' => TRUE,
 		'title' => TRUE,
 		'redirect_link' => TRUE,
 		'eventdate_start' => TRUE,
@@ -80,10 +84,17 @@ class Page extends \Awyiss\Model\Entity {
 
 
 	/**
+	 * Make sure the slug is always lowercase, dashed and free of special characters
+	 *
 	 * @noinspection PhpUnused
 	 */
 	protected function _setSlug (string $as_slug): string {
-		$ls_slug = \Cake\Utility\Text::slug($as_slug);
+		$ls_slug = Text::slug($as_slug, ['preserve' => '/']);
+		$ls_slug = trim($ls_slug, '/');
+
+		if (str_contains($ls_slug, '/')) {
+			$ls_slug = substr($ls_slug, strrpos($ls_slug, '/') + 1);
+		}
 
 		return mb_strtolower($ls_slug);
 	}

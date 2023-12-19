@@ -4,6 +4,7 @@
 namespace Awyiss\Model\Entity;
 
 
+use Awyiss\Model\Entity;
 use Cake\Utility\Text;
 
 
@@ -13,11 +14,11 @@ use Cake\Utility\Text;
  * @property int $id
  * @property string $scope
  * @property string $name
- * @property string|null $value
- * @property string|null $languages_shortcode
+ * @property string|NULL $value
+ * @property string|NULL $language_shortcode
  * @property \Awyiss\Model\Entity\Language $language
  */
-class Configuration extends \Awyiss\Model\Entity {
+class Configuration extends Entity {
 	/**
 	 * @inheritDoc
 	 */
@@ -25,7 +26,7 @@ class Configuration extends \Awyiss\Model\Entity {
 		'scope' => TRUE,
 		'name' => TRUE,
 		'value' => TRUE,
-		'languages_shortcode' => TRUE,
+		'language_shortcode' => TRUE,
 	];
 
 	/**
@@ -37,6 +38,8 @@ class Configuration extends \Awyiss\Model\Entity {
 
 
 	/**
+	 * Make sure the scope is always lowercase, underscored and free of special characters
+	 *
 	 * @noinspection PhpUnused
 	 */
 	protected function _setScope (string $as_scope): string {
@@ -45,17 +48,21 @@ class Configuration extends \Awyiss\Model\Entity {
 
 
 	/**
+	 * If the provided value is NULL or FALSE, set the value to an empty string
+	 *
 	 * @noinspection PhpUnused
 	 */
-	protected function _setValue (string $as_value): ?string {
-		return $as_value ?: '';
+	protected function _setValue (mixed $ax_value): mixed {
+		return $ax_value ?: '';
 	}
 
 
 	/**
+	 * If the provided shortcode is an empty string, set it to NULL
+	 *
 	 * @noinspection PhpUnused
 	 */
-	protected function _setLanguagesShortcode (?string $as_languagesShortcode): ?string {
-		return $as_languagesShortcode ?: NULL;
+	protected function _setLanguageShortcode (?string $as_languageShortcode): ?string {
+		return $as_languageShortcode ?: NULL;
 	}
 }

@@ -4,24 +4,23 @@
 namespace Awyiss\Model\Table;
 
 
+#use ArrayObject;
 use Awyiss\Configuration\ConfigOptionsProvider;
-use Awyiss\Model\Behavior\AccessBehavior;
 use Awyiss\Model\Entity\Configuration;
-use Cake\Collection\Iterator\MapReduce;
-use Cake\Datasource\EntityInterface;
-use Cake\Event\EventInterface;
-use Cake\ORM\Query;
-use Cake\ORM\RulesChecker;
+use Awyiss\Model\Table;
+#use Cake\Collection\Iterator\MapReduce;
+#use Cake\Event\EventInterface;
+#use Cake\ORM\Query;
+use Awyiss\ORM\RulesChecker;
 use Cake\Validation\Validator;
 
 
 /**
  * Configuration Model
  *
- * @method \Awyiss\Model\Entity\Configuration newDefaultEntity(array $aa_additionalData = [])
- * @method \Awyiss\Model\Entity\Configuration patchEntity(EntityInterface $ao_entity, array $aa_data, array $aa_options = [])
+ * @method Configuration newDefaultEntity(array $aa_additionalData = [])
  */
-class ConfigurationTable extends \Awyiss\Model\Table {
+class ConfigurationTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
@@ -45,48 +44,19 @@ class ConfigurationTable extends \Awyiss\Model\Table {
 
 		$this->belongsTo('Languages', [
 			'bindingKey' => 'shortcode',
-			'foreignKey' => 'languages_shortcode',
+			'foreignKey' => 'language_shortcode',
 			'joinType' => 'LEFT',
 		]);
-
-
-		/** @var AccessBehavior $lo_accessBehavior */
-		$lo_accessBehavior = $this->getBehavior('Access');
-
-		if ( ! $lo_accessBehavior->getConfig('Model.buildRules')) {
-			$lo_accessBehavior->setConfig('Model.buildRules', function(Configuration $ao_entity, array $aa_options, AccessBehavior $ao_behavior, ?bool $ab_accessible): ?bool {
-				if ( ! $ab_accessible || $ao_entity->scope === 'system') {
-					return $ab_accessible;
-				}
-
-				return $ao_behavior->isAccessible($ao_entity->scope, NULL, 'configure');
-			});
-		}
-
-		if ( ! $lo_accessBehavior->getConfig('Model.beforeFind')) {
-			$lo_accessBehavior->setConfig('Model.beforeFind', function(EventInterface $ao_event, Query $ao_subject, array $aa_options, AccessBehavior $ao_behavior, ?bool $ab_accessible): ?bool {
-				if ( ! $ab_accessible) {
-					return $ab_accessible;
-				}
-
-				$ao_subject->mapReduce(function(Configuration|array $ao_entity, int $ai_key, MapReduce $ao_mapReduce) use ($ao_behavior) {
-					if ( ! $ao_entity instanceof Configuration) {
-						return;
-					}
-
-					if ($ao_entity->scope === 'system' || $ao_behavior->isAccessible($ao_entity->scope, NULL, 'configure')) {
-						$ao_mapReduce->emit($ao_entity);
-					}
-				});
-
-				return TRUE;
-			});
-		}
 	}
 
 
 	/**
-	 * @inheritDoc
+	 * Returns the default validator object.
+	 *
+	 * @param \Cake\Validation\Validator $ao_validator The validator that can be modified to
+	 * add some rules to it.
+	 *
+	 * @return \Cake\Validation\Validator
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
@@ -99,35 +69,39 @@ class ConfigurationTable extends \Awyiss\Model\Table {
 
 		$ao_validator->scalar('value')->maxLength('value', 255)->allowEmptyString('value');
 
-		$ao_validator->allowEmptyString('languages_shortcode');
+		$ao_validator->allowEmptyString('language_shortcode');
 
 		return $ao_validator;
 	}
 
 
 	/**
-	 * @inheritDoc
+	 * Returns a RulesChecker object after modifying the one that was supplied.
+	 *
+	 * @param \Awyiss\ORM\RulesChecker|\Cake\ORM\RulesChecker $ao_rules The rules object to be modified.
+	 *
+	 * @return \Awyiss\ORM\RulesChecker
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildRules (RulesChecker $ao_rules): RulesChecker {
-		$ao_rules->add($ao_rules->isUnique(['name', 'languages_shortcode']), ['errorField' => 'name']);
+	public function buildRules (RulesChecker|\Cake\ORM\RulesChecker $ao_rules): RulesChecker {
+		$ao_rules->add($ao_rules->isUnique(['scope', 'name', 'language_shortcode'], ['access' => ['skip' => TRUE]]), ['errorField' => 'name']);
 
-		$ao_rules->add($ao_rules->existsIn('languages_shortcode', 'Languages'), ['errorField' => 'languages_shortcode']);
+		$ao_rules->add($ao_rules->existsIn('language_shortcode', 'Languages', ['access' => ['skip' => TRUE]]), ['errorField' => 'language_shortcode']);
 
-		$ao_rules->add(function(EntityInterface $ao_entity/*, array $aa_options*/): bool|string {
-			$la_configScopes = \Awyiss\Configuration\ConfigOptionsProvider::getConfigurationFiles();
+		$ao_rules->add(function(Configuration $ao_entity/*, array $aa_options*/): bool|string {
+			$la_configScopes = ConfigOptionsProvider::getConfigurationFiles();
 
-			/** @var \Awyiss\Model\Entity\Configuration $ao_entity */
+			//Check if the provided scope is configurable (having a ConfigOptions-class)
 			return in_array($ao_entity->scope, array_keys($la_configScopes));
 		}, 'validScope', [
 			'errorField' => 'scope',
 			'message' => __('configuration::error_invalid_scope'),
 		]);
 
-		$ao_rules->add(function(EntityInterface $ao_entity/*, array $aa_options*/): bool|string {
-			/** @var Configuration $ao_entity */
-			return ConfigOptionsProvider::validateConfigValue($ao_entity->scope, $ao_entity->name, $ao_entity->value, $ao_entity->languages_shortcode);
+		$ao_rules->add(function(Configuration $ao_entity/*, array $aa_options*/): bool|string {
+			//Validate the provided value for the scope, name and language.
+			return ConfigOptionsProvider::validateConfigValue($ao_entity->scope, $ao_entity->name, $ao_entity->value, $ao_entity->language_shortcode);
 		}, 'validValue', [
 			'errorField' => 'value',
 			'message' => __('configuration::error_invalid_value'),
@@ -138,15 +112,17 @@ class ConfigurationTable extends \Awyiss\Model\Table {
 
 
 	/**
+	 * Returns all configurable and accessible scopes
+	 *
 	 * @throws \ReflectionException
 	 */
 	public function getScopes (): array {
 		if ( ! isset($this->configScopes)) {
 			$this->configScopes = [];
 
-			foreach (\Awyiss\Configuration\ConfigOptionsProvider::getConfigurationFiles() as $ls_scope => $ls_className) {
+			foreach (ConfigOptionsProvider::getConfigurationFiles() as $ls_scope => $ls_className) {
 				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-				if ($ls_scope === 'system' || $this->getBehavior('Access')->isAccessible($ls_scope, NULL, 'configure')) {
+				if ($ls_scope === 'system' || $this->getBehavior('Access')->scopeIsAccessible($ls_scope, NULL, NULL, 'configure')) {
 					$this->configScopes[ $ls_scope ] = $ls_className;
 				}
 			}

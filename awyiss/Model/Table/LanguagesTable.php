@@ -5,10 +5,11 @@ namespace Awyiss\Model\Table;
 
 
 use Awyiss\Model\Entity\Language;
-use Cake\Datasource\EntityInterface;
-use Cake\ORM\RulesChecker;
+use Awyiss\Model\Table;
+use Awyiss\ORM\RulesChecker;
 use Cake\Validation\Validator;
 use DateTimeZone;
+use ResourceBundle;
 
 
 /**
@@ -17,9 +18,8 @@ use DateTimeZone;
  * @property \Awyiss\Model\Table\ConfigurationTable&\Cake\ORM\Association\HasMany $Configuration
  *
  * @method Language newDefaultEntity(array $aa_additionalData = [])
- * @method Language patchEntity(EntityInterface $ao_entity, array $aa_data, array $aa_options = [])
  */
-class LanguagesTable extends \Awyiss\Model\Table {
+class LanguagesTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
@@ -45,14 +45,19 @@ class LanguagesTable extends \Awyiss\Model\Table {
 
 		$this->hasMany('Configuration')
 			->setBindingKey('shortcode')
-			->setForeignKey('languages_shortcode')
+			->setForeignKey('language_shortcode')
 			->setSaveStrategy('replace')
 			->setDependent(FALSE);
 	}
 
 
 	/**
-	 * @inheritDoc
+	 * Returns the default validator object.
+	 *
+	 * @param \Cake\Validation\Validator $ao_validator The validator that can be modified to
+	 * add some rules to it.
+	 *
+	 * @return \Cake\Validation\Validator
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
@@ -84,11 +89,15 @@ class LanguagesTable extends \Awyiss\Model\Table {
 
 
 	/**
-	 * @inheritDoc
+	 * Returns a RulesChecker object after modifying the one that was supplied.
+	 *
+	 * @param \Awyiss\ORM\RulesChecker|\Cake\ORM\RulesChecker $ao_rules The rules object to be modified.
+	 *
+	 * @return \Awyiss\ORM\RulesChecker
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildRules (RulesChecker $ao_rules): RulesChecker {
+	public function buildRules (RulesChecker|\Cake\ORM\RulesChecker $ao_rules): RulesChecker {
 		$ao_rules->add($ao_rules->isUnique(['shortcode', 'type'], __('validation::shortcode_not_unique')));
 
 		$ao_rules->add(function(Language $ao_entity) {
@@ -99,8 +108,7 @@ class LanguagesTable extends \Awyiss\Model\Table {
 		]);
 
 		$ao_rules->add(function(Language $ao_entity) {
-			/** @noinspection PhpUndefinedClassInspection */
-			return in_array($ao_entity->locale, \ResourceBundle::getLocales(''));
+			return in_array($ao_entity->locale, ResourceBundle::getLocales(''));
 		}, [
 			'errorField' => 'locale',
 			'message' => __('::unknown_locale'),

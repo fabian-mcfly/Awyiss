@@ -11,6 +11,17 @@ use ReflectionClass;
 use RuntimeException;
 
 
+/**
+ * Provider of EventListeners
+ *
+ * This is used to retreive or load the EventListeners for a specific scope and area
+ *
+ * Controller:
+ * - `EventListenersProvider::loadListener($this->getName(), 'backend');`
+ *
+ * CLI:
+ * - `EventListenersProvider::loadListener('general_events', 'bake');`
+ */
 class EventListenersProvider {
 	protected static array $eventListeners = [];
 	protected static array $loadedListeners = [];
@@ -22,6 +33,9 @@ class EventListenersProvider {
 
 
 	/**
+	 * @param string $as_type
+	 *
+	 * @return array
 	 * @throws \ReflectionException
 	 *
 	 * @noinspection PhpUnused
@@ -36,6 +50,10 @@ class EventListenersProvider {
 
 
 	/**
+	 * @param string $as_name
+	 * @param string $as_type
+	 *
+	 * @return null|string
 	 * @throws \ReflectionException
 	 */
 	public static function getListener (string $as_name, string $as_type): ?string {
@@ -55,6 +73,10 @@ class EventListenersProvider {
 
 
 	/**
+	 * @param string $as_name
+	 * @param string $as_type
+	 *
+	 * @return void
 	 * @throws \ReflectionException
 	 */
 	public static function loadListener (string $as_name, string $as_type): void {
@@ -70,7 +92,7 @@ class EventListenersProvider {
 		}
 
 		$ls_listenerClass = static::getListener($ls_name, $as_type);
-		if (!$ls_listenerClass) {
+		if ( ! $ls_listenerClass) {
 			static::$loadedListeners[ $ls_type ][ $ls_name ] = FALSE;
 			return;
 		}
@@ -82,6 +104,10 @@ class EventListenersProvider {
 
 
 	/**
+	 * @param string $as_name
+	 * @param string $as_type
+	 *
+	 * @return array
 	 * @throws \ReflectionException
 	 */
 	protected static function findListener (string $as_name, string $as_type): array {

@@ -1,5 +1,6 @@
 <?php declare(strict_types=1);
 
+/** @noinspection HtmlUnknownTarget */
 return [
 	'nextActive' => '<li class="Sort-Next"><a rel="next" href="{{url}}">{{text}}</a></li>',
 	'nextDisabled' => '<li class="Sort-Next Disabled"><span>{{text}}</span></li>',

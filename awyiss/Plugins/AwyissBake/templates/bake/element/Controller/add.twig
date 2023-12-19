@@ -3,33 +3,16 @@
 	/**
 	 * Add method
 	 *
-	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
+	 * @return void
 	 *
 	 * @throws \Exception
-	 *
-	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
-	public function add () {
+	public function add (): void {
 		$this->Access->ensure('create');
 
 		$lo_{{ singularName }} = $this->{{ currentModelName }}->newDefaultEntity();
 		if ($this->request->is('post')) {
-			$this->{{ currentModelName }}->patchEntity($lo_{{ singularName }}, $this->request->getData());
-
-			if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-				if ($this->{{ currentModelName }}->save($lo_{{ singularName }})) {
-					$this->Flash->success(__('::add_succeeded'));
-
-					if ($this->request->getData('submit') == 'submit_close') {
-						return $this->redirect(['action' => 'overview']);
-					}
-
-					return $this->redirect(['action' => 'edit', 'id' => $lo_{{ singularName }}->id]);
-				}
-
-				$this->Flash->error(__('::add_failed'));
-				$this->Flash->error(implode('<br>' . PHP_EOL, $lo_{{ singularName }}->getError('_general')));
-			}
+			$this->save($lo_{{ singularName }});
 		}
 
 		$this->set([

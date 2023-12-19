@@ -4,73 +4,117 @@
 namespace Awyiss\Authorization\Permission;
 
 
-use Awyiss\Authorization\Permission\Setting\SettingCollection;
-use RuntimeException;
+use Awyiss\Authorization\AccessCollection;
+//use RuntimeException;
 
 
-class CallbackPermission extends SimplePermission implements SettingPermissionInterface {
-	protected mixed $callback = NULL;
-	protected SettingCollection $settingCollection;
+/**
+ * A permission class that uses a defined callback to define the accessibility
+ */
+class CallbackPermission extends SimplePermission {
+	/**
+	 * @var array
+	 */
+	protected array $callbacks = [
+		'general' => NULL,
+		'Entity.create' => NULL,
+		'Entity.update' => NULL,
+		'Model.beforeFind' => NULL,
+		'Model.beforeSoftDelete' => NULL,
+		'Model.beforeDelete' => NULL,
+	];
 
 
+	/**
+	 * @param array $aa_config
+	 * @param \Awyiss\Authorization\Permission\PermissionCollection $ao_permissionCollection
+	 */
 	public function __construct (array $aa_config, PermissionCollection $ao_permissionCollection) {
 		parent::__construct($aa_config, $ao_permissionCollection);
 
-		if (isset($aa_config['callback'])) {
-			$this->setCallback($aa_config['callback']);
+		if (isset($aa_config['callbacks'])) {
+			$this->setCallbacks($aa_config['callbacks']);
 		}
 	}
 
 
 	/**
+	 * @param string $as_event
+	 *
+	 * @return NULL|callable
+	 *
 	 * @noinspection PhpUnused
 	 */
-	public function getCallback (): mixed {
-		return $this->callback;
+	public function getCallback (string $as_event): ?callable {
+		return $this->callbacks[ $as_event ] ?? NULL;
 	}
 
 
-	public function setCallback (mixed $ax_callback): CallbackPermission {
-		if (!is_callable($ax_callback)) {
-			throw new RuntimeException('Config `callback` must be callable');
-		}
-
-		$this->callback = $ax_callback;
+	/**
+	 * Sets the callback to be used by the permission
+	 *
+	 * @param mixed $ax_callback
+	 *
+	 * @return $this
+	 */
+	public function setCallback (string $as_event, callable $ax_callback): static {
+		$this->callbacks[ $as_event ] = $ax_callback;
 
 		return $this;
 	}
 
 
 	/**
-	 * @throws \Exception
+	 * @return mixed
+	 *
+	 * @noinspection PhpUnused
 	 */
-	public function getSettings (): SettingCollection {
-		if (!isset($this->settingCollection)) {
-			$this->settingCollection = $this->defaultSettings();
-		}
-
-		return $this->settingCollection;
+	public function getCallbacks (): array {
+		return $this->callbacks;
 	}
 
 
-	public function setSettings (SettingCollection $ao_settings): CallbackPermission {
-		$this->settingCollection = $ao_settings;
+	/**
+	 * Sets the callback to be used by the permission
+	 *
+	 * @param mixed $aa_callbacks
+	 *
+	 * @return $this
+	 */
+	public function setCallbacks (array $aa_callbacks): static {
+		foreach ($aa_callbacks AS $ls_event => $lc_callback) {
+			$this->setCallback($ls_event, $lc_callback);
+		}
 
 		return $this;
 	}
 
 
 	/**
-	 * @throws \Exception
+	 * {@inheritDoc]
+	 *
+	 * Additionally, get a callable from the configuration and call it.
+	 * This allows the callback to define additional logic for the accessibility of the permission
 	 */
-	protected function defaultSettings (): SettingCollection {
-		$lo_settingCollection = new SettingCollection();
+	public function isAccessible (array $aa_access, array $aa_additionalData, AccessCollection $ao_accessCollection): ?bool {
+		$lb_accessible = parent::isAccessible($aa_access, $aa_additionalData, $ao_accessCollection);
 
-		$lo_settingCollection->load(\Awyiss\Authorization\Permission\Setting\SingleChoiceSetting::class, [
-			'options' => [0, 1],
-			'type' => \Awyiss\Authorization\Permission\Setting\SingleChoiceSetting::TYPE_SELECT,
-		]);
+		$lc_callback = NULL;
+		if ( ! empty($aa_additionalData['event'])) {
+			$lc_callback = $this->getCallback($aa_additionalData['event']);
+		}
 
-		return $lo_settingCollection;
+		//If the callback for the given event is not set, fall back to the general one. To disable one event completely, its callback needs to be FALSE
+		if ($lc_callback === NULL) {
+			$lc_callback = $this->getCallback('general');
+		}
+
+		if ($lc_callback) {
+			$lb_accessible = call_user_func($lc_callback, $lb_accessible, $aa_access, $aa_additionalData, $ao_accessCollection);
+		}
+
+		return $lb_accessible;
+
+		//throw new RuntimeException(sprintf('`%s` is not implemented in `%s` yet.', __FUNCTION__, static::class));
 	}
 }

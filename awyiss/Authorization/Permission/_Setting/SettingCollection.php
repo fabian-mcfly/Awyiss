@@ -9,6 +9,9 @@ use Cake\Core\ObjectRegistry;
 use RuntimeException;
 
 
+/**
+ *
+ */
 class SettingCollection extends ObjectRegistry {
 	/**
 	 * Map of loaded objects.
@@ -55,8 +58,8 @@ class SettingCollection extends ObjectRegistry {
 	 *
 	 * @param string $as_class Class name to be resolved.
 	 *
-	 * @return string|null
-	 * @psalm-return class-string|null
+	 * @return string|NULL
+	 * @psalm-return class-string|NULL
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
@@ -69,7 +72,7 @@ class SettingCollection extends ObjectRegistry {
 
 	/**
 	 * @param string $as_class Missing class.
-	 * @param null|string $as_plugin Class plugin.
+	 * @param NULL|string $as_plugin Class plugin.
 	 *
 	 * @return void
 	 *

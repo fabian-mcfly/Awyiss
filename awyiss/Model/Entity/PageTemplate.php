@@ -4,6 +4,10 @@
 namespace Awyiss\Model\Entity;
 
 
+use Awyiss\Model\Entity;
+use Cake\Utility\Text;
+
+
 /**
  * PageTemplate Entity
  *
@@ -15,15 +19,15 @@ namespace Awyiss\Model\Entity;
  * @property int $system_order
  * @property bool $active
  * @property bool $deleted
- * @property int|null $created_by
- * @property \Cake\I18n\FrozenTime|null $created_on
- * @property int|null $changed_by
- * @property \Cake\I18n\FrozenTime|null $changed_on
- * @property int|null $deleted_by
- * @property \Cake\I18n\FrozenTime|null $deleted_on
+ * @property int|NULL $created_by
+ * @property \Cake\I18n\FrozenTime|NULL $created_on
+ * @property int|NULL $changed_by
+ * @property \Cake\I18n\FrozenTime|NULL $changed_on
+ * @property int|NULL $deleted_by
+ * @property \Cake\I18n\FrozenTime|NULL $deleted_on
  * @property \Awyiss\Model\Entity\PageRole $page_role
  */
-class PageTemplate extends \Awyiss\Model\Entity {
+class PageTemplate extends Entity {
 	/**
 	 * @inheritDoc
 	 */
@@ -38,14 +42,10 @@ class PageTemplate extends \Awyiss\Model\Entity {
 
 
 	/**
-	 * @noinspection PhpUnused
-	 */
-	/*protected function _getTemplatePositions (?array $aa_templatePositions = NULL): ?array {
-		return $aa_templatePositions ? array_combine($aa_templatePositions, $aa_templatePositions) : NULL;
-	}*/
-
-
-	/**
+	 * Make sure the template position property contains an array.
+	 * If a string is provides, trim it, removing leading and trailing commas, explode it at ',', trim the values
+	 * and remove duplicate values from the array.
+	 *
 	 * @noinspection PhpUnused
 	 */
 	protected function _setTemplatePositions (mixed $ax_value): array {
@@ -61,12 +61,13 @@ class PageTemplate extends \Awyiss\Model\Entity {
 	}
 
 
-
 	/**
+	 * Make sure the filename is always lowercase, underscored and free of special characters
+	 *
 	 * @noinspection PhpUnused
 	 */
 	protected function _setFilename (string $as_filename): string {
-		$ls_filename = \Cake\Utility\Text::slug($as_filename, ['replacement' => '_']);
+		$ls_filename = Text::slug($as_filename, ['replacement' => '_']);
 
 		return mb_strtolower($ls_filename);
 	}

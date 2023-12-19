@@ -4,24 +4,64 @@
 namespace Awyiss\Configuration;
 
 
+use Cake\Utility\Inflector;
+use JetBrains\PhpStorm\ArrayShape;
+
+
+/**
+ * @todo add a description property
+ *
+ * This class represents a single configuration item with the following properties:
+ * - a name
+ * - a type of the value, e.g. 'string' or 'integer'
+ * - a default value in case none is set
+ * - the `localizable`-attribute (boolean) to indicate whether the value can be set independently per language
+ * - the `nullable` to indicate whether the value can be empty
+ *
+ * It's used in classes that implement `ConfigOptionsInterface`
+ *
+ * @see \Awyiss\Configuration\ConfigOptionsInterface::initializeConfigOptions()
+ */
 class ConfigOption {
+	/**
+	 * @var null|mixed
+	 */
 	protected mixed $defaultValue = NULL;
+	/**
+	 * @var bool Can the config value be set independently per language
+	 */
 	protected bool $localizable = TRUE;
+	/**
+	 * @var string
+	 */
 	protected string $name;
+	/**
+	 * @var array{global: bool, localized: bool} Can the config value be empty or is it required?
+	 */
 	protected array $nullable = [
 		'global' => TRUE,
 		'localized' => FALSE,
 	];
-	protected string $type = self::TYPE_STRING;
+	/**
+	 * @var \Awyiss\Configuration\ConfigOptionTypes
+	 */
+	protected ConfigOptionTypes $type;
+	/**
+	 * Holds the array definition for `\JetBrains\PhpStorm\ArrayShape` used in `__construct`
+	 */
+	protected const SETTINGS_SHAPE = [
+		'defaultValue' => 'mixed',
+		'localizable' => 'bool',
+		'name' => 'string',
+		'nullable' => 'bool|array',
+		'type' => 'string',
+	];
 
 
-	public const TYPE_STRING = 'string';
-	public const TYPE_INTEGER = 'integer';
-	public const TYPE_BOOL = 'bool';
-	public const TYPE_JSON = 'json';
-
-
-	public function __construct (array $aa_settings = []) {
+	/**
+	 * @param array{defaultValue: mixed, localizable: bool, name: string, nullable: bool|array, type: string} $aa_settings
+	 */
+	public function __construct (#[ArrayShape(self::SETTINGS_SHAPE)] array $aa_settings = []) {
 		if (isset($aa_settings['defaultValue'])) {
 			$this->setDefaultValue($aa_settings['defaultValue']);
 		}
@@ -30,11 +70,9 @@ class ConfigOption {
 			$this->setLocalizable($aa_settings['localizable']);
 		}
 
-
 		if (isset($aa_settings['name'])) {
 			$this->setName($aa_settings['name']);
 		}
-
 
 		if (isset($aa_settings['nullable'])) {
 			if (is_bool($aa_settings['nullable'])) {
@@ -52,9 +90,7 @@ class ConfigOption {
 			}
 		}
 
-		if (isset($aa_settings['type'])) {
-			$this->setType($aa_settings['type']);
-		}
+		$this->setType($aa_settings['type'] ?? ConfigOptionTypes::TYPE_STRING);
 	}
 
 
@@ -71,7 +107,7 @@ class ConfigOption {
 	 *
 	 * @return self
 	 */
-	public function setDefaultValue (mixed $ax_defaultValue): self {
+	public function setDefaultValue (mixed $ax_defaultValue): static {
 		$this->defaultValue = $ax_defaultValue;
 
 		return $this;
@@ -91,39 +127,32 @@ class ConfigOption {
 	 *
 	 * @return self
 	 */
-	public function setName (string $as_name): self {
-		$this->name = \Cake\Utility\Inflector::underscore($as_name);
+	public function setName (string $as_name): static {
+		$this->name = Inflector::underscore($as_name);
 
 		return $this;
 	}
 
 
 	/**
-	 * @return string
+	 * @return \Awyiss\Configuration\ConfigOptionTypes
 	 */
-	public function getType (): string {
+	public function getType (): ConfigOptionTypes {
 		return $this->type;
 	}
 
 
 	/**
-	 * @param string $as_type
+	 * @param \Awyiss\Configuration\ConfigOptionTypes $ae_type
 	 *
 	 * @return self
 	 */
-	public function setType (string $as_type): self {
-		if (!in_array($as_type, [
-			static::TYPE_STRING,
-			static::TYPE_INTEGER,
-			static::TYPE_BOOL,
-			static::TYPE_JSON,
-		])) {
-			throw new \RuntimeException(sprintf('The given type `%s` is not a valid ConfigOption type', $as_type));
-		}
-
-		$this->type = $as_type;
+	public function setType (ConfigOptionTypes $ae_type): static {
+		$this->type = $ae_type;
 
 		return $this;
+
+
 	}
 
 
@@ -162,69 +191,44 @@ class ConfigOption {
 	}
 
 
-	public function validateConfigValue (mixed $ax_value, ?string $as_languagesShortcode = NULL): bool|string {
-		if ($as_languagesShortcode !== NULL && !$this->isLocalizable()) {
+	/**
+	 * Validates the provided `$ax_value` to match the type stored in `self::$type`.
+	 *
+	 * Returns
+	 * - TRUE for a valid value or
+	 * - FALSE for invalid ones or
+	 * - an error message string if a value is not localizable or empty but not nullable
+	 *
+	 * @param mixed $ax_value
+	 * @param null|string $as_languageShortcode
+	 *
+	 * @return bool|string
+	 */
+	public function validateConfigValue (mixed $ax_value, ?string $as_languageShortcode = NULL): bool|string {
+		if ($as_languageShortcode !== NULL && !$this->isLocalizable()) {
 			return __('validation::error_option_not_localizable');
 		}
 
 		if ($ax_value === NULL) {
-			if (!$this->isNullable($as_languagesShortcode !== NULL)) {
+			if (!$this->isNullable($as_languageShortcode !== NULL)) {
 				return __('validation::error_option_not_nullable');
 			}
 
 			return TRUE;
 		}
 
-		switch ($this->getType()) {
-			case static::TYPE_INTEGER:
-				return is_int($ax_value) || (is_string($ax_value) && ctype_digit($ax_value));
-
-			case static::TYPE_BOOL:
-				/*
-				 * Type bool consideres everything boolish to be a valid value
-				 * since the \Awyiss\Model\Entity\Configuration saves everything as a string
-				 * and does not differentiate between the type here.
-				 */
-				return is_bool($ax_value) || in_array($ax_value, [1, 0, '1', '0'], TRUE);
-
-			case static::TYPE_JSON:
-				try {
-					$la_value = json_decode($ax_value, TRUE, 16, JSON_THROW_ON_ERROR);
-
-					if (empty($la_value) && !$this->isNullable($as_languagesShortcode !== NULL)) {
-						return __('validation::error_option_not_nullable');
-					}
-
-					return TRUE;
-				}
-				/** @noinspection PhpMultipleClassDeclarationsInspection */
-				catch (\JsonException) {
-					return FALSE;
-				}
-
-			case static::TYPE_STRING:
-				//ceck the type string last because everything's supposed to be a string
-				return is_string($ax_value);
-		}
-
-		return FALSE;
+		return $this->getType()->validateType($ax_value, $this->isNullable($as_languageShortcode !== NULL));
 	}
 
 
+	/**
+	 * Casts the provided `$ax_value` to a type, specified in `self::$type`
+	 *
+	 * @param mixed $ax_value
+	 *
+	 * @return mixed
+	 */
 	public function typecastConfigValue (mixed $ax_value): mixed {
-		/** @noinspection PhpSwitchCanBeReplacedWithMatchExpressionInspection */
-		switch ($this->getType()) {
-			case static::TYPE_INTEGER:
-				return intval($ax_value);
-
-			case static::TYPE_BOOL:
-				return boolval($ax_value);
-
-			case static::TYPE_JSON:
-				return json_decode($ax_value);
-		}
-
-
-		return $ax_value;
+		return $this->getType()->typeCast($ax_value);
 	}
 }

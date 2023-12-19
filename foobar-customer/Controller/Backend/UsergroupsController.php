@@ -4,17 +4,15 @@
 namespace FoobarCustomer\Controller\Backend;
 
 
+use Awyiss\Controller\Backend\UsergroupsController as Controller;
+
+
 /**
  * Usergroups Controller
  *
  * @property \Awyiss\Model\Table\UsergroupsTable $Usergroups
- * @method \Awyiss\Model\Entity\Usergroup[]|\Cake\Datasource\ResultSetInterface paginate($ao_object = NULL, array $aa_settings = [])
  */
-class UsergroupsController extends \Awyiss\Controller\Backend\UsergroupsController {
-	/**
-	 * @inheritDoc
-	 */
-	/*public function overview () {
-		dd($this);
-	}*/
+class UsergroupsController extends Controller {
+
 }
+

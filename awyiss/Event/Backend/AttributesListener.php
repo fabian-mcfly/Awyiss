@@ -5,28 +5,40 @@ namespace Awyiss\Event\Backend;
 
 
 use Awyiss\Event\EventListenerTrait;
+use Awyiss\Model\Entity;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
 use Cake\ORM\TableRegistry;
+use Cake\Utility\Hash;
 
 
+/**
+ * Event listeners for the Attributes scope of the backend
+ */
 class AttributesListener implements EventListenerInterface {
 	use EventListenerTrait;
 
 
+	protected static string $scope;
+
+
 	/**
-	 * @noinspection PhpArrayShapeAttributeCanBeAddedInspection
+	 * @inheritDoc
 	 */
 	public function implementedEvents (): array {
 		return [
 			//'Model.Attributes.beforeSave' => 'beforeSave',
-			'Model.Attributes.afterSave' => 'afterSave',
+			'Model.Attributes.afterSaveCommit' => 'afterSaveCommit',
 		];
 	}
 
 
 	/**
+	 * Check the QueuedJobs table for jobs with the identifier 'attributes::table_changes_in_progress'.
+	 * If such an active job exists, stop the save event and return an error.
+	 * This is neccesary since a second migration job could interfere with the first one.
+	 *
 	 * @param \Cake\Event\Event $ao_event
 	 * @param \Cake\Datasource\EntityInterface $ao_entity
 	 *
@@ -36,7 +48,7 @@ class AttributesListener implements EventListenerInterface {
 		/** @var \Queue\Model\Table\QueuedJobsTable $lo_queue */
 		$lo_queue = TableRegistry::getTableLocator()->get('Queue.QueuedJobs');
 
-		if ($lo_queue->isQueued('attributes::table_changes', 'Queue.Execute')) {
+		if ($lo_queue->isQueued('attributes::table_changes')) {
 			$ao_event->stopPropagation();
 			$ao_entity->setError('_general', __('attributes::table_changes_in_progress'));
 		}
@@ -44,20 +56,26 @@ class AttributesListener implements EventListenerInterface {
 
 
 	/**
+	 * After saving an attribute entity, create a job in the queue that handles the entity's new data
+	 * and bakes migrations accordingly.
+	 *
 	 * @param \Cake\Event\Event $ao_event
 	 * @param \Awyiss\Model\Entity\Attribute $ao_entity
 	 *
 	 * @return void
 	 *
+	 * @see \Awyiss\Queue\Task\AttributesTask
+	 *
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function afterSave (Event $ao_event, \Awyiss\Model\Entity $ao_entity): void {
+	public function afterSaveCommit (Event $ao_event, Entity $ao_entity): void {
 		$la_relevantColumns = ['scope', 'name', 'type', 'has_index', 'required'];
 
 		$la_oldData = $ao_entity->isNew() ? array_fill_keys($la_relevantColumns, NULL) : $ao_entity->extractOriginal($la_relevantColumns);
 		$la_newData = $ao_entity->extract($la_relevantColumns);
-		$la_diff = \Cake\Utility\Hash::diff($la_newData, $la_oldData);
+		$la_diff = Hash::diff($la_newData, $la_oldData);
 
+		//No changes found in columns, relevant to the migrations?
 		if (empty($la_diff)) {
 			return;
 		}
@@ -72,27 +90,5 @@ class AttributesListener implements EventListenerInterface {
 			'reference' => 'attributes::table_changes',
 			'priority' => 1,
 		]);
-
-		/*The first approach used to clear the schema_ceach before doing the migration.
-		But we just assume it's up to date now. Yay.
-		$la_commands = [
-			'bin/cake schema_cache clear',
-			'bin/cake queue add Attributes ' . base64_encode(json_encode([
-				'id' => $ao_entity->id,
-				'old' => $la_oldData,
-				'new' => $la_newData,
-			])),
-		];
-
-		$la_data = [
-			'command' => implode(' && ', $la_commands),
-			'escape' => FALSE,
-		];
-
-
-		#** @var \Queue\Model\Table\QueuedJobsTable $lo_queue *#
-		$lo_queue = TableRegistry::getTableLocator()->get('Queue.QueuedJobs');
-		//$lo_queue->createJob('Queue.Execute', $la_data, ['reference' => 'attributes::table_changes', 'priority' => 1]);
-		$lo_queue->createJob('Queue.Execute', $la_data, ['priority' => 1]);*/
 	}
 }

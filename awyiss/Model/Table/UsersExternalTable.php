@@ -4,18 +4,17 @@
 namespace Awyiss\Model\Table;
 
 
-use Cake\Datasource\EntityInterface;
-use Cake\ORM\Query;
+use Awyiss\Model\Entity\UsersExternal;
+use Awyiss\Model\Table;
 use Cake\Validation\Validator;
 
 
 /**
  * UsersExternal Model
  *
- * @method \Awyiss\Model\Entity\UsersExternal newDefaultEntity(array $aa_additionalData = [])
- * @method \Awyiss\Model\Entity\UsersExternal patchEntity(EntityInterface $ao_entity, array $aa_data, array $aa_options = [])
+ * @method UsersExternal newDefaultEntity(array $aa_additionalData = [])
  */
-class UsersExternalTable extends \Awyiss\Model\Table {
+class UsersExternalTable extends Table {
 	public const TABLE = 'users_external';
 
 
@@ -32,26 +31,12 @@ class UsersExternalTable extends \Awyiss\Model\Table {
 
 
 	/**
-	 * @noinspection PhpUnused
-	 * @noinspection PhpUnusedParameterInspection
-	 */
-	public function findActiveWithUsergroups (Query $ao_query, array $aa_options): Query {
-		//TODO: fix this
-		/*$ao_query->where([
-			'active' => 1,
-			'deleted' => 0,
-			'OR' => [
-				'failed_attempts <' => 5,
-				'last_login <=' => \Cake\I18n\Time::now()->subMinutes(10),
-			]
-		])->contain('Usergroups');*/
-
-		return $ao_query;
-	}
-
-
-	/**
-	 * @inheritDoc
+	 * Returns the default validator object.
+	 *
+	 * @param \Cake\Validation\Validator $ao_validator The validator that can be modified to
+	 * add some rules to it.
+	 *
+	 * @return \Cake\Validation\Validator
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */

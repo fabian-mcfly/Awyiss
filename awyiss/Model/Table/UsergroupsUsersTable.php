@@ -4,8 +4,9 @@
 namespace Awyiss\Model\Table;
 
 
-use Cake\Datasource\EntityInterface;
-use Cake\ORM\RulesChecker;
+use Awyiss\Model\Entity\UsergroupsUser;
+use Awyiss\Model\Table;
+use Awyiss\ORM\RulesChecker;
 use Cake\Validation\Validator;
 
 
@@ -15,10 +16,9 @@ use Cake\Validation\Validator;
  * @property \Awyiss\Model\Table\UsergroupsTable&\Cake\ORM\Association\BelongsTo $Usergroups
  * @property \Awyiss\Model\Table\UsersTable&\Cake\ORM\Association\BelongsTo $Users
  *
- * @method \Awyiss\Model\Entity\UsergroupsUser newDefaultEntity(array $aa_additionalData = [])
- * @method \Awyiss\Model\Entity\UsergroupsUser patchEntity(EntityInterface $ao_entity, array $aa_data, array $aa_options = [])
+ * @method UsergroupsUser newDefaultEntity(array $aa_additionalData = [])
  */
-class UsergroupsUsersTable extends \Awyiss\Model\Table {
+class UsergroupsUsersTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
@@ -31,11 +31,11 @@ class UsergroupsUsersTable extends \Awyiss\Model\Table {
 		'access' => [
 			'identifiers' => [
 				//We use the users-scope, creating an association will occur when creating or updating a user
-				'Entity.create' => ['create', 'update'],
+				'Entity.create' => [['create', 'update']],
 				'Entity.update' => 'update',
-				'Model.beforeFind' => ['read', 'create', 'update', 'delete'],
+				'Model.beforeFind' => [['read', 'create', 'update', 'delete']],
 				//We use the users-scope, deleting an association will occur when updating or deleting a user
-				'Model.beforeDelete' => ['update', 'delete'],
+				'Model.beforeDelete' => [['update', 'delete']],
 			],
 			'scope' => 'users',
 		],
@@ -65,7 +65,12 @@ class UsergroupsUsersTable extends \Awyiss\Model\Table {
 
 
 	/**
-	 * @inheritDoc
+	 * Returns the default validator object.
+	 *
+	 * @param \Cake\Validation\Validator $ao_validator The validator that can be modified to
+	 * add some rules to it.
+	 *
+	 * @return \Cake\Validation\Validator
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
@@ -77,11 +82,15 @@ class UsergroupsUsersTable extends \Awyiss\Model\Table {
 
 
 	/**
-	 * @inheritDoc
+	 * Returns a RulesChecker object after modifying the one that was supplied.
+	 *
+	 * @param \Awyiss\ORM\RulesChecker|\Cake\ORM\RulesChecker $ao_rules The rules object to be modified.
+	 *
+	 * @return \Awyiss\ORM\RulesChecker
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildRules (RulesChecker $ao_rules): RulesChecker {
+	public function buildRules (RulesChecker|\Cake\ORM\RulesChecker $ao_rules): RulesChecker {
 		$ao_rules->add($ao_rules->existsIn(['usergroup_id'], 'Usergroups'), ['errorField' => 'usergroup_id']);
 		$ao_rules->add($ao_rules->existsIn(['user_id'], 'Users'), ['errorField' => 'user_id']);
 

@@ -1,47 +1,38 @@
-backend 500<?php
-/**
- * @var \Cake\View\View $this
- * @var \Cake\Database\StatementInterface $error
- * @var string $message
- * @var string $url
- */
+{% layout 'error' %}
 
+{% if staticCall('\\Cake\\Core\\Configure', 'read', 'debug') %}
+	{% layout 'dev_error' %}
 
-use Cake\Core\Configure;
-use Cake\Error\Debugger;
+	{% do _view.assign('title', message) %}
+	{% do _view.assign('templateName', 'Backend/error500.twig') %}
 
-$this->layout = 'error';
+	{% do _view.start('file') %}
 
-if (Configure::read('debug')) :
-	$this->layout = 'dev_error';
+	{% if error.queryString %}
+		<p class="notice">
+			<strong>SQL Query: </strong>
+			{{ error.queryString|escape }}
+		</p>
+	{% endif %}
 
-	$this->assign('title', $message);
-	$this->assign('templateName', 'error500.php');
+	{% if error.params %}
+		<strong>SQL Query Params: </strong>
+		{{ staticCall('\\Cake\\Error\\Debugger', 'dump', error.params)|raw }}
+	{% endif %}
 
-	$this->start('file');
-	?>
-	<?php if ( ! empty($error->queryString)) :?>
-	<p class="notice">
-		<strong>SQL Query: </strong>
-		<?=h($error->queryString)?>
-	</p>
-<?php endif;?>
-	<?php if ( ! empty($error->params)) :?>
-	<strong>SQL Query Params: </strong>
-	<?php Debugger::dump($error->params)?>
-<?php endif;?>
-	<?php if ($error instanceof Error) :?>
-	<strong>Error in: </strong>
-	<?=sprintf('%s, line %s', str_replace(ROOT, 'ROOT', $error->getFile()), $error->getLine())?>
-<?php endif;?>
-	<?php
-	echo $this->element('auto_table_warning');
+	{% if error is instanceOf('Error') or error is instanceOf('Exception') %}
+		<strong>Error in: </strong>
+		{{ '%s, line %s'|format(error.getFile|replace({(constant('ROOT')): 'ROOT'}), error.getLine) }}
+	{% endif %}
 
-	$this->end();
-endif;
-?>
-<h2><?=__d('cake', 'An Internal Error Has Occurred')?></h2>
+	{{ element('auto_table_warning') }}
+
+	{% do _view.end()%}
+
+{% endif %}
+
+<h2>{{ __('An Internal Error Has Occurred') }}</h2>
 <p class="error">
-	<strong><?=__d('cake', 'Error')?>: </strong>
-	<?=h($message)?>
+	<strong>{{ __('Error') }}: </strong>
+	{{ message|escape }}
 </p>

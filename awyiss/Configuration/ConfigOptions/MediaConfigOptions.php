@@ -6,12 +6,22 @@ namespace Awyiss\Configuration\ConfigOptions;
 
 use Awyiss\Configuration\AbstractConfigOptions;
 use Awyiss\Configuration\ConfigOption;
+use Awyiss\Configuration\ConfigOptionTypes;
 
 
+/**
+ * Provides all configuration options for the Media scope
+ */
 class MediaConfigOptions extends AbstractConfigOptions {
+	/**
+	 * @var string Scope of these options
+	 */
 	protected static string $scope = 'media';
 
 
+	/**
+	 * @inheritDoc
+	 */
 	public function initializeConfigOptions (): void {
 		$this->add([
 			'frontend' => [
@@ -20,7 +30,7 @@ class MediaConfigOptions extends AbstractConfigOptions {
 					'localizable' => FALSE,
 					'name' => 'default_breakpoints',
 					'nullable' => FALSE,
-					'type' => ConfigOption::TYPE_JSON,
+					'type' => ConfigOptionTypes::TYPE_JSON,
 				]),
 			]
 		]);

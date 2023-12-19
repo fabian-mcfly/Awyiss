@@ -52,11 +52,11 @@ class Entity extends \Cake\ORM\Entity {
 	 * @noinspection PhpUnused
 	 */
 	protected function _getLabel (): string {
-		$ls_scope = \Cake\Utility\Inflector::variable($this->getSource());
+		$ls_scope = Inflector::variable($this->getSource());
 
 		$ls_identifier = $this->identifier ?? $this->filename ?? $this->title ?? ($this->getSource() . $this->id);
 
-		$ls_translationKey = $ls_scope . '::title' . \Cake\Utility\Inflector::camelize($ls_identifier);
+		$ls_translationKey = $ls_scope . '::title' . Inflector::camelize($ls_identifier);
 		if ($ls_translationKey == ($ls_title = __($ls_translationKey))) {
 			$ls_title = $ls_identifier;
 		}
@@ -75,11 +75,11 @@ class Entity extends \Cake\ORM\Entity {
 
 
 	/**
-	 * TODO: reconsider if this is a good idea.
+	 * @todo reconsider if this is a good idea.
 	 * Not being able to set or modify virtual avoids confusion when values aren't persisted after saving an entity
 	 * BUT it removes the ability to modify values "on the fly" that never need to make it to the database
 	 *
-	public function set($as_field, $ax_value = null, array $aa_options = []): self {
+	public function set($as_field, $ax_value = NULL, array $aa_options = []): static {
 		if ($as_field === 'jason_test') {
 			if (in_array($as_field, $this->getVirtual())) {
 				throw new \RuntimeException('Cannot modify virtual elements');

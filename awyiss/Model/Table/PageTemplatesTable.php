@@ -4,9 +4,10 @@
 namespace Awyiss\Model\Table;
 
 
+use Awyiss\Model\Entity\PageTemplate;
+use Awyiss\Model\Table;
 use Cake\Database\Schema\TableSchemaInterface;
-use Cake\Datasource\EntityInterface;
-use Cake\ORM\RulesChecker;
+use Awyiss\ORM\RulesChecker;
 use Cake\Validation\Validator;
 
 
@@ -15,10 +16,9 @@ use Cake\Validation\Validator;
  *
  * @property \Awyiss\Model\Table\PageRolesTable&\Cake\ORM\Association\BelongsTo $PageRoles
  *
- * @method \Awyiss\Model\Entity\PageTemplate newDefaultEntity(array $aa_additionalData = [])
- * @method \Awyiss\Model\Entity\PageTemplate patchEntity(EntityInterface $ao_entity, array $aa_data, array $aa_options = [])
+ * @method PageTemplate newDefaultEntity(array $aa_additionalData = [])
  */
-class PageTemplatesTable extends \Awyiss\Model\Table {
+class PageTemplatesTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
@@ -49,7 +49,12 @@ class PageTemplatesTable extends \Awyiss\Model\Table {
 
 
 	/**
-	 * @inheritDoc
+	 * Returns the default validator object.
+	 *
+	 * @param \Cake\Validation\Validator $ao_validator The validator that can be modified to
+	 * add some rules to it.
+	 *
+	 * @return \Cake\Validation\Validator
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
@@ -60,7 +65,7 @@ class PageTemplatesTable extends \Awyiss\Model\Table {
 
 		$ao_validator->scalar('filename')->maxLength('filename', 100)->requirePresence('filename', 'create')->notEmptyString('filename');
 
-		//$ao_validator->isArray('template_positions')->allowEmptyArray('template_positions');
+		$ao_validator->isArray('template_positions')->allowEmptyArray('template_positions');
 
 		$ao_validator->integer('page_role_id')->requirePresence('page_role_id', 'create')->notEmptyString('page_role_id');
 
@@ -75,13 +80,17 @@ class PageTemplatesTable extends \Awyiss\Model\Table {
 
 
 	/**
-	 * @inheritDoc
+	 * Returns a RulesChecker object after modifying the one that was supplied.
+	 *
+	 * @param \Awyiss\ORM\RulesChecker|\Cake\ORM\RulesChecker $ao_rules The rules object to be modified.
+	 *
+	 * @return \Awyiss\ORM\RulesChecker
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildRules (RulesChecker $ao_rules): RulesChecker {
+	public function buildRules (RulesChecker|\Cake\ORM\RulesChecker $ao_rules): RulesChecker {
 		$ao_rules->add($ao_rules->isUnique(['filename']), ['errorField' => 'filename']);
-		$ao_rules->add($ao_rules->existsIn(['page_role_id'], 'PageRoles'), ['errorField' => 'page_role_id']);
+		$ao_rules->add($ao_rules->existsIn(['page_role_id'], 'PageRoles', ['access' => ['skip' => TRUE]]), ['errorField' => 'page_role_id']);
 
 		return $ao_rules;
 	}

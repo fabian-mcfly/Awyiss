@@ -4,9 +4,16 @@
 namespace AwyissBake;
 
 
+/**
+ * @inheritDoc
+ */
 class MigrationsDispatcher extends \Migrations\MigrationsDispatcher {
     /**
+	 * Uses \AwyissBake\Command\Phinx\Migrate
+	 *
      * @var array
+	 *
+	 * @see \AwyissBake\Command\Phinx\Migrate
      */
     public static $phinxCommands = [
         //'Create' => Phinx\Create::class,

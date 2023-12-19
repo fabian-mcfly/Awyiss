@@ -19,7 +19,7 @@
 		<div class="error-container">
 			{{ helper_Flash_render() }}
 			{{ fetch('content') }}
-			{{ helper_Flash_render(__('Back'), 'javascript:history.back()') }}
+			{{ helper_Html_link(__('Back'), 'javascript:history.back()') }}
 		</div>
 	</body>
 </html>

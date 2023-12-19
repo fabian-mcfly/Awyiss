@@ -28,6 +28,7 @@ use Cake\Log\Log;
 use Cake\Mailer\Mailer;
 use Cake\Mailer\TransportFactory;
 use Cake\Routing\Router;
+use Cake\Utility\Inflector;
 use Cake\Utility\Security;
 
 
@@ -38,7 +39,7 @@ try {
 	Configure::config('default', new PhpConfig());
 	Configure::load('awyiss', 'default', FALSE);
 }
-catch (\Exception $ex) {
+catch (Exception $ex) {
 	exit($ex->getMessage() . "\n");
 }
 
@@ -95,16 +96,16 @@ if (PHP_SAPI === 'cli') {
  */
 $ls_fullBaseUrl = Configure::read('App.fullBaseUrl');
 if ( ! $ls_fullBaseUrl) {
-	$s = NULL;
+	$ls_https = NULL;
 	if (env('HTTPS')) {
-		$s = 's';
+		$ls_https = 's';
 	}
 
 	$ls_httpHost = env('HTTP_HOST');
 	if (isset($ls_httpHost)) {
-		$ls_fullBaseUrl = 'http' . $s . '://' . $ls_httpHost;
+		$ls_fullBaseUrl = 'http' . $ls_https . '://' . $ls_httpHost;
 	}
-	unset($ls_httpHost, $s);
+	unset($ls_httpHost, $ls_https);
 }
 if ($ls_fullBaseUrl) {
 	Router::fullBaseUrl($ls_fullBaseUrl);
@@ -127,4 +128,4 @@ TransportFactory::setConfig(Configure::consume('EmailTransport'));
  */
 //\Cake\Utility\Inflector::rules('plural', ['/^(inflect)or$/i' => '\1ables']);
 //\Cake\Utility\Inflector::rules('irregular', ['red' => 'redlings']);
-\Cake\Utility\Inflector::rules('uninflected', ['media']);
+Inflector::rules('uninflected', ['media']);

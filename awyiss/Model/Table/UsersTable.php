@@ -4,9 +4,11 @@
 namespace Awyiss\Model\Table;
 
 
-use Cake\Datasource\EntityInterface;
+use Awyiss\Model\Entity\User;
+use Awyiss\Model\Table;
+use Cake\I18n\FrozenTime;
 use Cake\ORM\Query;
-use Cake\ORM\RulesChecker;
+use Awyiss\ORM\RulesChecker;
 use Cake\Validation\Validator;
 
 
@@ -16,10 +18,9 @@ use Cake\Validation\Validator;
  * @property \Awyiss\Model\Table\UsergroupsTable&\Cake\ORM\Association\BelongsToMany $Usergroups
  * @property \Awyiss\Model\Table\UsergroupsUsersTable&\Cake\ORM\Association\HasMany $UsergroupsUsers
  *
- * @method \Awyiss\Model\Entity\User newDefaultEntity(array $aa_additionalData = [])
- * @method \Awyiss\Model\Entity\User patchEntity(EntityInterface $ao_entity, array $aa_data, array $aa_options = [])
+ * @method User newDefaultEntity(array $aa_additionalData = [])
  */
-class UsersTable extends \Awyiss\Model\Table {
+class UsersTable extends Table {
 	public const TABLE = 'users';
 
 
@@ -38,15 +39,16 @@ class UsersTable extends \Awyiss\Model\Table {
 
 
 	/**
+	 * Finder that will only find users that are both active and with no more than 4 failed login attemps in the last ten minutes.
+	 *
 	 * @noinspection PhpUnused
-	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function findActive (Query $ao_query, array $aa_options): Query {
 		$ao_query->where([
 			'active' => 1,
 			'OR' => [
 				'failed_attempts <' => 5,
-				'last_login <=' => \Cake\I18n\FrozenTime::now()->subMinutes(10),
+				'last_login <=' => FrozenTime::now()->subMinutes(10),
 			],
 		]);
 
@@ -55,25 +57,12 @@ class UsersTable extends \Awyiss\Model\Table {
 
 
 	/**
-	 * @noinspection PhpUnused
-	 * @noinspection PhpUnusedParameterInspection
-	 */
-	public function findActiveWithUsergroups (Query $ao_query, array $aa_options): Query {
-		$ao_query->where([
-			'active' => 1,
-			'OR' => [
-				'failed_attempts <' => 5,
-				'last_login <=' => \Cake\I18n\FrozenTime::now()->subMinutes(10),
-			],
-		])/*->contain(['Usergroups.UsergroupPermissions'])*/
-		;
-
-		return $ao_query;
-	}
-
-
-	/**
-	 * @inheritDoc
+	 * Returns the default validator object.
+	 *
+	 * @param \Cake\Validation\Validator $ao_validator The validator that can be modified to
+	 * add some rules to it.
+	 *
+	 * @return \Cake\Validation\Validator
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
@@ -105,11 +94,15 @@ class UsersTable extends \Awyiss\Model\Table {
 
 
 	/**
-	 * @inheritDoc
+	 * Returns a RulesChecker object after modifying the one that was supplied.
+	 *
+	 * @param \Awyiss\ORM\RulesChecker|\Cake\ORM\RulesChecker $ao_rules The rules object to be modified.
+	 *
+	 * @return \Awyiss\ORM\RulesChecker
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildRules (RulesChecker $ao_rules): RulesChecker {
+	public function buildRules (RulesChecker|\Cake\ORM\RulesChecker $ao_rules): RulesChecker {
 		$ao_rules->add($ao_rules->isUnique(['username']), ['errorField' => 'username']);
 		$ao_rules->add($ao_rules->isUnique(['email']), ['errorField' => 'email']);
 
