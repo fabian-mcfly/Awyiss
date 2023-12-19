@@ -1,0 +1,38 @@
+{% block formControlColumnwidth %}
+	{{ helper_Form_control('columnwidth', {required: lo_contentTemplateElement.required}) }}
+{% endblock %}
+
+
+{% block formControlParentId %}
+	{{ helper_Form_control('parent_id', {options: ao_threadedContents.printer('label', 'id', '- '), required: lo_contentTemplateElement.required}) }}
+{% endblock %}
+
+
+{% block formControlTitle %}
+	{{ helper_Form_control('title', {required: lo_contentTemplateElement.required}) }}
+{% endblock %}
+
+
+{% block formControlSubtitle %}
+	{{ helper_Form_control('subtitle', {required: lo_contentTemplateElement.required}) }}
+{% endblock %}
+
+
+{% block formControlText %}
+	{{ helper_Form_control('text', {required: lo_contentTemplateElement.required}) }}
+{% endblock %}
+
+
+{% block formControlDuplicateOf %}
+	{{ helper_Form_control('duplicate_of', {required: lo_contentTemplateElement.required}) }}
+{% endblock %}
+
+
+{% block formControlLink %}
+	{{ helper_Form_control('link', {required: lo_contentTemplateElement.required}) }}
+{% endblock %}
+
+
+{% block formControlCssClass %}
+	{{ helper_Form_control('css_class', {required: lo_contentTemplateElement.required}) }}
+{% endblock %}

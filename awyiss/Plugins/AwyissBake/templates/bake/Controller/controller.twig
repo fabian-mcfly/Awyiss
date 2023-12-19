@@ -12,10 +12,10 @@ use {{ baseNamespace }}\Controller\AppController as Controller;
 use {{ baseNamespace }}\Controller\FrontendController as Controller;
 {% endif %}
 use {{ baseNamespace }}\Model\Entity\{{ entityClassName }};
+use Awyiss\Routing\Router;
 use Cake\Datasource\Exception\InvalidPrimaryKeyException;
 use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Http\Exception\RedirectException;
-use Cake\Routing\Router;
 
 
 /**

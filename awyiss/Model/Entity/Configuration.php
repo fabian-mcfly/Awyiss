@@ -4,36 +4,42 @@
 namespace Awyiss\Model\Entity;
 
 
+use Awyiss\Awyiss;
 use Awyiss\Model\Entity;
-use Cake\Utility\Text;
+use Cake\Utility\Inflector;
 
 
 /**
  * Configuration Entity
  *
- * @property int $id
- * @property string $scope
- * @property string $name
+ * @property int         $id
+ * @property string      $realm
+ * @property string      $scope
+ * @property string      $identifier
  * @property string|NULL $value
- * @property string|NULL $language_shortcode
- * @property \Awyiss\Model\Entity\Language $language
+ * @property string|NULL $languageShortcode
+ * @property Language    $language
  */
 class Configuration extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	 protected $_accessible = [
+	 protected array $_accessible = [
+		'realm' => TRUE,
 		'scope' => TRUE,
-		'name' => TRUE,
+		'identifier' => TRUE,
 		'value' => TRUE,
-		'language_shortcode' => TRUE,
+		'languageShortcode' => TRUE,
 	];
-
 	/**
 	 * @inheritDoc
 	 */
 	protected array $defaults = [
+		'realm' => Awyiss::REALM_FRONTEND,
 		'scope' => 'system',
+	];
+	protected static array $fieldMap = [
+		'language_shortcode' => 'languageShortcode',
 	];
 
 
@@ -43,7 +49,17 @@ class Configuration extends Entity {
 	 * @noinspection PhpUnused
 	 */
 	protected function _setScope (string $as_scope): string {
-		return mb_strtolower(Text::slug($as_scope, ['replacement' => '_']));
+		return Inflector::underscore(Inflector::pluralize($as_scope));
+	}
+
+
+	/**
+	 * Make sure the scope is always camelBacked
+	 *
+	 * @noinspection PhpUnused
+	 */
+	protected function _setIdentifier (string $as_identifier): string {
+		return Inflector::variable($as_identifier);
 	}
 
 

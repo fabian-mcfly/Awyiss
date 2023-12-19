@@ -1,33 +1,37 @@
-{# @var ao_contentTemplates \Awyiss\Model\Entity\ContentTemplate[] #}
-{# @var _view \Awyiss\View\BackendView #}
+{#
+@var ao_contentTemplates \Awyiss\Model\Entity\ContentTemplate[]
+@var _view \Awyiss\View\BackendView
+#}
 
 {# {{ helper_Categories_filter() }} #}
 
 <div class="ContentTemplates Overview">
 	{% if helper_Authorization_isAccessible('create') %}
-		{{ helper_Html_link(__('::create'), {action: 'add'}, {class: 'Button'}) }}
+		{{ helper_Html_link(__('create'), {action: 'add'}, {class: 'Button'}) }}
 	{% endif %}
-	<h1>{{ __('::headline_overview') }}</h1>
+
+	<h1>{{ __('headline_overview') }}</h1>
+
 	<div class="table-responsive">
 		<table>
 			<thead>
 				<tr>
-					<th>{{ helper_Paginator_sort('title') }}</th>
-					<th>{{ helper_Paginator_sort('filename') }}</th>
+					<th>{{ __('title') }}</th>
+					<th>{{ __('filename') }}</th>
 					<th class="actions"></th>
 				</tr>
 			</thead>
 			<tbody>
 				{% for lo_contentTemplate in ao_contentTemplates %}
 					<tr>
-						<td>{{ lo_contentTemplate.title }} ({{ lo_contentTemplate.system_order }})</td>
+						<td>{{ lo_contentTemplate.title }} ({{ lo_contentTemplate.systemOrder }})</td>
 						<td>{{ lo_contentTemplate.filename }}</td>
 						<td class="actions">
 							{% if helper_Authorization_isAccessible('update') %}
-								{{ helper_Html_link(__('::edit'), {action: 'edit', id: lo_contentTemplate.id}) }}
+								{{ helper_Html_link(__('edit'), {action: 'edit', id: lo_contentTemplate.id}) }}
 							{% endif %}
 							{% if helper_Authorization_isAccessible('delete') %}
-								{{ helper_Html_link(__('::delete'), {action: 'delete', id: lo_contentTemplate.id}, {confirm: __('::confirm_delete', lo_contentTemplate.id) }) }}
+								{{ helper_Html_link(__('delete'), {action: 'delete', id: lo_contentTemplate.id}, {confirm: __('confirm_delete', lo_contentTemplate.id) }) }}
 							{% endif %}
 						</td>
 					</tr>
@@ -35,5 +39,4 @@
 			</tbody>
 		</table>
 	</div>
-	{# { helper_Paginator_render() } #}
 </div>

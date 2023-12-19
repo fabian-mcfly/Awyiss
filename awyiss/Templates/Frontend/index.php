@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 /**
- * @var \Cake\View\View $this
+ * @var View $this
  */
 
 
@@ -10,6 +10,7 @@ use Cake\Core\Plugin;
 use Cake\Datasource\ConnectionManager;
 use Cake\Error\Debugger;
 use Cake\Http\Exception\NotFoundException;
+use Cake\View\View;
 
 
 $this->disableAutoLayout();

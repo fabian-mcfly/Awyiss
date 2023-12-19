@@ -4,11 +4,18 @@
 namespace Awyiss\Queue\Task;
 
 
+use Awyiss\Model\Table\AttributesTable;
+use Cake\Collection\Collection;
 use Cake\Database\Schema\TableSchemaInterface;
 use Cake\Datasource\ConnectionManager;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
+use Phinx\Db\Adapter\AdapterInterface;
+use Psr\Log\LoggerInterface;
+use Queue\Console\Io;
+use Queue\Model\QueueException;
 use Queue\Queue\Task;
+use ReflectionClass;
 
 
 /**
@@ -27,25 +34,24 @@ class AttributesTask extends Task/* implements AddInterface*/ {
 	/**
 	 * @inheritDoc
 	 */
-	public $retries = 1;
+	public ?int $timeout = 5;
+	/**
+	 * @inheritDoc
+	 */
+	public ?int $retries = 0;
+
 
 	/**
-	 * @param array<string, mixed> $aa_data The array passed to QueuedJobsTable::createJob()
-	 * @param int $ai_jobId The id of the QueuedJob entity
-	 *
-	 * @return void
+	 * @inheritDoc
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function run (array $aa_data, int $ai_jobId): void {
-		/** @var \Awyiss\Model\Table\AttributesTable $lo_table */
-		$lo_table = $this->getTableLocator()->get('Attributes');
-
 		//$la_diff holds the entity's old values that differ from the new ones
 		$la_diff = Hash::diff($aa_data['old'], $aa_data['new']);
 
-		$ls_column = $aa_data['new']['name'];
-		[$ls_type, $lx_length] = $lo_table->getTypeAndLength($aa_data['new']['type'] ?? NULL);
+		$ls_column = $aa_data['new']['identifier'];
+		[$ls_type, $lx_length] = $this->getTypeAndLength($aa_data['new']['type'] ?? NULL);
 
 		//Type needs to be in the format of ':string?[50]', where ? marks the field as nullable and [50] sets the length
 		$ls_column .= ':' . $ls_type;
@@ -55,12 +61,15 @@ class AttributesTask extends Task/* implements AddInterface*/ {
 		if (!empty($lx_length)) {
 			$ls_column .= '[' . $lx_length . ']';
 		}
-		if (!empty($aa_data['new']['has_index'])) {
+		if (array_key_exists('defaultValue', $aa_data['new'])) {
+			$ls_column .= '(' . $aa_data['new']['defaultValue'] . ')';
+		}
+		if (!empty($aa_data['new']['hasIndex'])) {
 			$ls_column .= ':index';
 		}
 
 
-		//Force migrations for attributes to be stored in the custom directory, to not fuck up the Awyiss migrations.
+		//Force migrations for attributes to be stored in the custom directory, to not mess with the Awyiss migrations.
 		$ls_folder = ' --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations';
 
 
@@ -74,27 +83,43 @@ class AttributesTask extends Task/* implements AddInterface*/ {
 
 			/** @var TableSchemaInterface $lo_schema */
 			$lo_schema = ConnectionManager::get('default')->getSchemaCollection()->describe($ls_oldAttributesTable);
+
+			$ls_oldTableFile = ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Table' . DS . Inflector::camelize($ls_oldAttributesTable) . 'Table.php';
+			$ls_oldEntityFile = ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Entity' . DS . Inflector::classify($ls_oldAttributesTable) . '.php';
+
 			/*
 			 * If there are three or fewer columns in the table, the old attributes-table is no longer required.
 			 *
 			 * Why 3, you ask?
-			 * One is the attribute that's getting changed and the other two are the `id`- and the parent id-column.
+			 * One is the attribute that's getting changed and the other two are the `id`- and the `(parent)_id`-column.
 			 */
 			if (count($lo_schema->columns()) <= 3) {
 				//Bake a `drop`-migration
 				$la_commands[] = 'bin/cake bake migration drop_' . $ls_oldAttributesTable . $ls_folder;
 
 				//Remove both the table and the entity files from the custom directory.
-				if (file_exists($ls_tableFile = ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Table' . DS . Inflector::camelize($ls_oldAttributesTable) . 'Table.php')) {
-					$la_commands[] = 'unlink ' . $ls_tableFile;
+				if (file_exists($ls_oldTableFile)) {
+					$la_commands[] = 'unlink ' . $ls_oldTableFile;
 				}
-				if (file_exists($ls_entityFile = ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Entity' . DS . Inflector::classify($ls_oldAttributesTable) . '.php')) {
-					$la_commands[] = 'unlink ' . $ls_entityFile;
+				if (file_exists($ls_oldEntityFile)) {
+					$la_commands[] = 'unlink ' . $ls_oldEntityFile;
 				}
 			}
 			else {
+				if (file_exists($ls_oldTableFile)) {
+					if (posix_getuid() != fileowner($ls_oldTableFile)) {
+						throw new QueueException(sprintf('Cannot migrate `%s` in `%s`. Make sure all files have the same owner the cronjob runs with.', $ls_oldTableFile, self::class));
+					}
+				}
+
+				if (file_exists($ls_oldEntityFile)) {
+					if (posix_getuid() != fileowner($ls_oldEntityFile)) {
+						throw new QueueException(sprintf('Cannot migrate `%s` in `%s`. Make sure all files have the same owner the cronjob runs with.', $ls_oldEntityFile, self::class));
+					}
+				}
+
 				//Bake a `remove`-migration
-				$la_commands[] = 'bin/cake bake migration remove_' . $aa_data['new']['name'] . '_from_' . $ls_oldAttributesTable . ' ' . $aa_data['old']['name'] . $ls_folder;
+				$la_commands[] = 'bin/cake bake migration remove_' . $aa_data['new']['identifier'] . '_from_' . $ls_oldAttributesTable . ' ' . $aa_data['old']['identifier'] . $ls_folder;
 				$lb_bakeOldModel = TRUE;
 			}
 
@@ -110,29 +135,69 @@ class AttributesTask extends Task/* implements AddInterface*/ {
 		$la_tables = ConnectionManager::get('default')->getSchemaCollection()->listTables();
 		$lb_tableExists = in_array($ls_attributesTable, $la_tables);
 
+		$ls_foreignKey = Inflector::singularize($aa_data['new']['scope']);
+		$lb_scopeIsPageRole = FALSE;
+		if (defined('PAGEROLE_' . strtoupper($ls_foreignKey))) {
+			if ($ls_foreignKey !== 'page') {
+				$ls_foreignKey = 'page';
+				$lb_scopeIsPageRole = TRUE;
+			}
+		}
+		$ls_foreignKey .= '_id';
+
+
 		//The target attributes-table does not exist
-		if (!$lb_tableExists) {
+		if ( ! $lb_tableExists) {
 			//Bake a `create`-migration that also adds the parent id-column and the column for the attribute-entity
-			$la_commands[] = 'bin/cake bake migration create_' . $ls_attributesTable . ' ' . Inflector::singularize($aa_data['new']['scope']) . '_id:integer[11] ' . $ls_column . $ls_folder;
+			$la_commands[] = 'bin/cake bake migration create_' . $ls_attributesTable . ' ' . $ls_foreignKey . ':integer[11] ' . $ls_column . $ls_folder;
 		}
 		else {
+			$ls_tableFile = ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Table' . DS . Inflector::camelize($ls_attributesTable) . 'Table.php';
+			$ls_entityFile = ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Entity' . DS . Inflector::classify($ls_attributesTable) . '.php';
+
+			if (file_exists($ls_tableFile)) {
+				if (posix_getuid() != fileowner($ls_tableFile)) {
+					throw new QueueException(
+						sprintf(
+							'Cannot migrate `%s` in `%s`. Make sure all files have the same owner the cronjob runs with.',
+							$ls_tableFile,
+							self::class
+						)
+					);
+				}
+			}
+
+			if (file_exists($ls_entityFile)) {
+				if (posix_getuid() != fileowner($ls_entityFile)) {
+					/** @noinspection PhpUndefinedVariableInspection */
+					throw new QueueException(
+						sprintf(
+							'Cannot migrate `%s` in `%s`. Make sure all files have the same owner the cronjob runs with.',
+							$ls_oldEntityFile,
+							self::class
+						)
+					);
+				}
+			}
+
+
 			//Column is renamed but only if the scope is still the same.
-			if (!$lb_changedScope && isset($la_diff['name'])) {
-				//The scope has not changed, but the name has: alter the column
-				$la_commands[] = 'bin/cake bake migration alter_' . $aa_data['old']['name']. '_on_' . $ls_attributesTable . ' ' . $ls_column . $ls_folder;
+			if (!$lb_changedScope && isset($la_diff['identifier'])) {
+				//The scope has not changed, but the identifier has: alter the column
+				$la_commands[] = 'bin/cake bake migration alter_' . $aa_data['old']['identifier']. '_on_' . $ls_attributesTable . ' ' . $ls_column . $ls_folder;
 			}
 			else {
 				/** @var TableSchemaInterface $lo_schema */
 				$lo_schema = ConnectionManager::get('default')->getSchemaCollection()->describe($ls_attributesTable);
-				$lb_columnExists = $lo_schema->hasColumn($aa_data['new']['name']);
+				$lb_columnExists = $lo_schema->hasColumn($aa_data['new']['identifier']);
 
 				if (!$lb_columnExists) {
 					//The column does not exist in the target table? Add it.
-					$la_commands[] = 'bin/cake bake migration add_' . $aa_data['new']['name'] . '_to_' . $ls_attributesTable . ' ' . $ls_column . $ls_folder;
+					$la_commands[] = 'bin/cake bake migration add_' . $aa_data['new']['identifier'] . '_to_' . $ls_attributesTable . ' ' . $ls_column . $ls_folder;
 				}
 				else {
 					//The column does exist in the target table? Alter it.
-					$la_commands[] = 'bin/cake bake migration alter_' . $aa_data['new']['name'] . '_on_' . $ls_attributesTable . ' ' . $ls_column . $ls_folder;
+					$la_commands[] = 'bin/cake bake migration alter_' . $aa_data['new']['identifier'] . '_on_' . $ls_attributesTable . ' ' . $ls_column . $ls_folder;
 				}
 			}
 		}
@@ -143,77 +208,74 @@ class AttributesTask extends Task/* implements AddInterface*/ {
 			$la_commands[] = 'bin/cake migrations migrate --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations --no-lock';
 			//Clear the database schema
 			$la_commands[] = 'bin/cake schema_cache clear';
+
 			//And bake the model
-			$la_commands[] = 'bin/cake bake model ' . $ls_attributesTable . ' --namespace ' . CUSTOM_DIR . ' --no-fixture --no-test --update --force';
+			$ls_forPageRole = $lb_scopeIsPageRole ? (' --for-pagerole ' . $aa_data['new']['scope']) : NULL;
+			$la_commands[] = 'bin/cake bake model ' . $ls_attributesTable . ' --namespace ' . CUSTOM_DIR . ' --no-fixture --no-test --update --force' . $ls_forPageRole;
 
 			if ($lb_bakeOldModel && $ls_oldAttributesTable) {
 				//If the old table was changed but still exists, bake the model for the old table as well.
-				$la_commands[] = 'bin/cake bake model ' . $ls_oldAttributesTable . ' --namespace ' . CUSTOM_DIR . ' --no-fixture --no-test --update --force';
+				$ls_forPageRole = NULL;
+				if (defined('PAGEROLE_' . strtoupper(Inflector::singularize($aa_data['old']['scope'])))) {
+					$ls_forPageRole = ' --for-pagerole ' . $aa_data['old']['scope'];
+				}
+				$la_commands[] = 'bin/cake bake model ' . $ls_oldAttributesTable . ' --namespace ' . CUSTOM_DIR . ' --no-fixture --no-test --update --force' . $ls_forPageRole;
 			}
+
+			$la_commands[] = 'bin/cake bake seed --data Attributes --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Seeds --truncate';
 
 			//Queue the job.
 			$this->QueuedJobs->createJob('Queue.Execute', [
-				'command' => implode(' && ', array_map('escapeshellcmd', $la_commands)),
+				'command' => '(' . implode(' && ', array_map('escapeshellcmd', $la_commands)) . ')',
 				'escape' => FALSE,
+				'log' => TRUE,
 			], [
+				'group' => 'general',
+				'priority' => 1,
 				'reference' => 'attributes::table_changes',
-				'priority' => 1
 			]);
 		}
 	}
 
 
 	/**
-	 * @param NULL|string $as_data
+	 * Splits strings into valid phinx column types and length
+	 *        "varchar(255)" => ['string', 255]
+	 *        "int(10,4)" => ['integer', '10,4']
+	 *        "tinyint" => ['tinyint', NULL]
 	 *
-	 * @return void
+	 * If no valid type is found, 'string' is returned
 	 *
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 * @param NULL|string $as_type
+	 *
+	 * @return array
 	 */
-	/*public function add (?string $as_data): void {
-		$this->io->out('Awyiss Attributes task.');
-		$this->io->hr();
+	public function getTypeAndLength (?string $as_type): array {
+		$ls_type = $as_type ?: 'varchar(255)';
 
-		if (!$as_data) {
-			$this->io->out('This will run attribute-related migrations');
-			$this->io->out('It requires the id of an Attributes-entity to perform changes');
-			$this->io->out('to the database, depending on it\'s settings');
-			$this->io->out(' ');
-			$this->io->out('Call like this:');
-			$this->io->out('    bin/cake queue add Attributes *base64-encoded array[id,old,new]*');
-			$this->io->out(' ');
-
-			return;
+		if ( ! preg_match(AttributesTable::TYPE_PATTERN, $ls_type, $la_typeMatches, PREG_UNMATCHED_AS_NULL)) {
+			return ['string', 255];
 		}
 
-		try {
-			['id' => $li_id, 'old' => $la_oldValues, 'new' => $la_newValues] = json_decode(base64_decode($as_data), TRUE);
+		$lo_reflector = new ReflectionClass(AdapterInterface::class);
+		$lo_collection = new Collection($lo_reflector->getConstants());
 
-			if (empty($li_id)) {
-				throw new \Exception('Invalid id');
+		$la_validTypes = $lo_collection->filter(function($value, $constant) {
+			return str_starts_with($constant, 'PHINX_TYPE_');
+		})->toArray();
+
+		if (empty($la_typeMatches[1]) || ! in_array($la_typeMatches[1], $la_validTypes)) {
+			if ($la_typeMatches[1] == 'int') {
+				$la_typeMatches[1] = 'integer';
 			}
-
-			$lo_table = $this->getTableLocator()->get('Attributes');
-			$lo_entity = $lo_table->get($li_id, [
-				'authorization' => [
-					'skip' => TRUE
-				],
-			]);
-		}
-		catch (\Exception $lo_exception) {
-			$this->io->err($lo_exception->getMessage());
-
-			return;
+			elseif ($la_typeMatches[1] == 'tinyint') {
+				$la_typeMatches[1] = 'tinyinteger';
+			}
+			else {
+				$la_typeMatches[1] = 'string';
+			}
 		}
 
-		$this->QueuedJobs->createJob('Attributes', [
-			'id' => $lo_entity->id,
-			'old' => $la_oldValues,
-			'new' => $la_newValues
-		], [
-			'reference' => 'attributes::table_changes',
-			'priority' => 1,
-		]);
-		$this->io->success('OK, job created for Attribute `' . $lo_entity->id . '`, now run the worker');
-	}*/
+		return [$la_typeMatches[1], $la_typeMatches[2] ?: NULL];
+	}
 }

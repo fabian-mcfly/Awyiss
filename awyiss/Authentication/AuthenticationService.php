@@ -4,10 +4,12 @@
 namespace Awyiss\Authentication;
 
 
+use Authentication\Authenticator\AuthenticatorInterface;
 use Authentication\Authenticator\ResultInterface;
 use Authentication\Authenticator\StatelessInterface;
 use Awyiss\Authentication\Identifier\IdentifierCollection;
 use Cake\Event\EventDispatcherTrait;
+use Cake\Http\Session;
 use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
 
@@ -18,10 +20,11 @@ use RuntimeException;
 class AuthenticationService extends \Authentication\AuthenticationService {
 	use EventDispatcherTrait;
 
+
 	/**
 	 * @inheritDoc
 	 *
-	 * @uses \Awyiss\Authentication\Identifier\IdentifierCollection
+	 * @uses IdentifierCollection
 	 * @noinspection PhpMissingParentCallCommonInspection
 	 */
 	public function identifiers (): IdentifierCollection {
@@ -36,14 +39,14 @@ class AuthenticationService extends \Authentication\AuthenticationService {
 	/**
 	 * @inheritDoc
 	 *
-	 * @param \Psr\Http\Message\ServerRequestInterface $ao_request The request.
+	 * @param ServerRequestInterface $ao_request The request.
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 * @noinspection PhpMissingParentCallCommonInspection
 	 */
 	public function authenticate (ServerRequestInterface $ao_request): ResultInterface {
 		$lx_result = NULL;
-		/** @var \Authentication\Authenticator\AuthenticatorInterface $lo_authenticator */
+		/** @var AuthenticatorInterface $lo_authenticator */
 		foreach ($this->authenticators() as $lo_authenticator) {
 			$lx_result = $lo_authenticator->authenticate($ao_request);
 			if ($lx_result->isValid()) {
@@ -77,7 +80,7 @@ class AuthenticationService extends \Authentication\AuthenticationService {
 	/**
 	 * @inheritDoc
 	 *
-	 * @param \Psr\Http\Message\ServerRequestInterface $ao_request The request
+	 * @param ServerRequestInterface $ao_request The request
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
@@ -91,7 +94,7 @@ class AuthenticationService extends \Authentication\AuthenticationService {
 		$lo_uri = $ao_request->getUri();
 		$ls_redirectUri = $lo_uri->getPath();
 
-		/** @var \Cake\Http\Session $lo_session */
+		/** @var Session $lo_session */
 		$lo_session = $ao_request->getAttribute('session');
 		$lo_session->write('unauthenticatedRedirectUrl', $ls_redirectUri);
 
@@ -102,15 +105,26 @@ class AuthenticationService extends \Authentication\AuthenticationService {
 	/**
 	 * @inheritDoc
 	 *
-	 * @param \Psr\Http\Message\ServerRequestInterface $ao_request The request
+	 * @param ServerRequestInterface $ao_request The request
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 * @noinspection PhpMissingParentCallCommonInspection
 	 */
 	public function getLoginRedirect (ServerRequestInterface $ao_request): ?string {
-		/** @var \Cake\Http\Session $lo_session */
+		/** @var Session $lo_session */
 		$lo_session = $ao_request->getAttribute('session');
 
 		return $lo_session->read('unauthenticatedRedirectUrl');
+	}
+
+
+	/**
+	 * When sleeping, don't allow serialization since $_result can contain a resultset
+	 * Having a resultset means serialization of the object fails.
+	 *
+	 * @return array
+	 */
+	public function __sleep () {
+		return [];
 	}
 }

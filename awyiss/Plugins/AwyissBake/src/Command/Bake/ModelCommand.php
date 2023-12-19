@@ -4,7 +4,7 @@
 namespace AwyissBake\Command\Bake;
 
 
-use AwyissBake\UtilTrait;
+use AwyissBake\Util\UtilTrait;
 use Bake\CodeGen\FileBuilder;
 use Cake\Console\Arguments;
 use Cake\Console\ConsoleIo;
@@ -31,10 +31,10 @@ class ModelCommand extends \Bake\Command\ModelCommand {
 	 *
 	 * Re-implemented 1:1 but honors the `namespace`-option
 	 *
-	 * @param \Cake\ORM\Table $ao_model Model name or object
-	 * @param array $aa_data An array to use to generate the Table
-	 * @param \Cake\Console\Arguments $ao_args CLI Arguments
-	 * @param \Cake\Console\ConsoleIo $ao_io CLI ao_io
+	 * @param Table     $ao_model Model name or object
+	 * @param array     $aa_data  An array to use to generate the Table
+	 * @param Arguments $ao_args  CLI Arguments
+	 * @param ConsoleIo $ao_io    CLI ao_io
 	 *
 	 * @return void
 	 *
@@ -68,6 +68,7 @@ class ModelCommand extends \Bake\Command\ModelCommand {
 		}
 
 		$la_data = $aa_data + [
+			'fieldMap' => [],
 			'name' => $ls_name,
 			'namespace' => $ls_namespace,
 			'plugin' => $this->plugin,
@@ -76,7 +77,29 @@ class ModelCommand extends \Bake\Command\ModelCommand {
 			'fileBuilder' => new FileBuilder($ao_io, $ls_namespace . '\Model\Entity', $lo_parsedFile),
 		];
 
-		$ls_contents = $this->createTemplateRenderer()->set($la_data)->generate('Bake.Model/entity');
+		foreach ($la_data['fields'] AS &$ls_field) {
+			$ls_variable = Inflector::variable($ls_field);
+
+			if ($ls_variable !== $ls_field) {
+				$la_data['fieldMap'][ $ls_field ] = $ls_variable;
+			}
+
+			$ls_field = $ls_variable;
+		}
+		unset($ls_field);
+
+		foreach ($la_data['hidden'] AS &$ls_field) {
+			$ls_field = Inflector::variable($ls_field);
+		}
+		unset($ls_field);
+
+		$ls_template = 'Bake.Model/entity';
+		if ($ao_args->getOption('is-pagerole')) {
+			$ls_template = 'Bake.Model/pagerole_entity';
+		}
+
+		$ls_contents = $this->createTemplateRenderer()->set($la_data)->generate($ls_template);
+		$ls_contents = str_replace('    ', "\t", $ls_contents);
 
 		$this->writeFile($ao_io, $ls_filename, $ls_contents, $this->force);
 
@@ -90,10 +113,10 @@ class ModelCommand extends \Bake\Command\ModelCommand {
 	 *
 	 * Re-implemented 1:1 but honors the `namespace`-option
 	 *
-	 * @param \Cake\ORM\Table $ao_model Model name or object
-	 * @param array $aa_data An array to use to generate the Table
-	 * @param \Cake\Console\Arguments $ao_args CLI Arguments
-	 * @param \Cake\Console\ConsoleIo $ao_io CLI Arguments
+	 * @param Table     $ao_model Model name or object
+	 * @param array     $aa_data  An array to use to generate the Table
+	 * @param Arguments $ao_args  CLI Arguments
+	 * @param ConsoleIo $ao_io    CLI Arguments
 	 *
 	 * @return void
 	 *
@@ -130,6 +153,10 @@ class ModelCommand extends \Bake\Command\ModelCommand {
 		}
 
 		$ls_entity = $this->_entityName($ao_model->getAlias());
+		if ($ao_args->getOption('is-pagerole')) {
+			$ls_entity = 'Page';
+		}
+
 		$la_data = $aa_data + [
 			'plugin' => $this->plugin,
 			'pluginPath' => $ls_pluginPath,
@@ -144,10 +171,16 @@ class ModelCommand extends \Bake\Command\ModelCommand {
 			'rulesChecker' => [],
 			'behaviors' => [],
 			'connection' => $this->connection,
-			'fileBuilder' => new FileBuilder($ao_io, $ls_namespace. '\Model\Table', $lo_parsedFile),
+			'fileBuilder' => new FileBuilder($ao_io, $ls_namespace . '\Model\Table', $lo_parsedFile),
 		];
 
-		$ls_contents = $this->createTemplateRenderer()->set($la_data)->generate('Bake.Model/table');
+		$ls_template = 'Bake.Model/table';
+		if ($ao_args->getOption('is-pagerole')) {
+			$ls_template = 'Bake.Model/pagerole_table';
+		}
+
+		$ls_contents = $this->createTemplateRenderer()->set($la_data)->generate($ls_template);
+		$ls_contents = str_replace('    ', "\t", $ls_contents);
 
 		$this->writeFile($ao_io, $ls_filename, $ls_contents, $this->force);
 
@@ -164,6 +197,59 @@ class ModelCommand extends \Bake\Command\ModelCommand {
 
 
 	/**
+	 * @inheritDoc
+	 *
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 */
+	public function getAssociations (Table $ao_table, Arguments $ao_args, ConsoleIo $ao_io): array {
+		$la_allAssociations = parent::getAssociations($ao_table, $ao_args, $ao_io);
+
+		if (
+			$ao_args->getOption('for-pagerole') &&
+			defined('PAGEROLE_' . strtoupper(Inflector::singularize($ao_args->getOption('for-pagerole')))) &&
+			! empty($la_allAssociations['belongsTo'])
+		) {
+			foreach ($la_allAssociations['belongsTo'] as &$la_association) {
+				if ($la_association['alias'] === 'Pages') {
+					$la_association['alias'] = Inflector::camelize($ao_args->getOption('for-pagerole'));
+				}
+			}
+			unset ($la_associations);
+		}
+
+		foreach ($la_allAssociations as &$la_associations) {
+			$this->camelbackAssociationKeys($la_associations);
+		}
+		unset($la_associations);
+
+		return $la_allAssociations;
+	}
+
+
+	/**
+	 * @param array $aa_associations
+	 *
+	 * @return void
+	 */
+	protected function camelbackAssociationKeys (array &$aa_associations): void {
+		foreach ($aa_associations AS &$la_association) {
+			if ( ! empty($la_association['foreignKey'])) {
+				if (is_string($la_association['foreignKey'])) {
+					$la_association['foreignKey'] = Inflector::variable($la_association['foreignKey']);
+				}
+				elseif (is_array($la_association['foreignKey'])) {
+					array_walk($la_association['foreignKey'], function(&$as_field) {
+						$as_field = Inflector::variable($as_field);
+					});
+				}
+			}
+		}
+		unset($la_association);
+	}
+
+
+
+	/**
 	 * {@inheritDoc}
 	 *
 	 * Extends the parent-method with a check for column type 'json'.
@@ -176,6 +262,49 @@ class ModelCommand extends \Bake\Command\ModelCommand {
 		}
 
 		return parent::getEmptyMethod($as_fieldName, $aa_metaData, $as_prefix);
+	}
+
+
+	/**
+	 * @inheritDoc
+	 *
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 */
+	public function getValidation (Table $ao_model, array $aa_associations, Arguments $ao_args): array|false {
+		if ($ao_args->getOption('no-validation')) {
+			return [];
+		}
+
+		$lo_schema = $ao_model->getSchema();
+		$la_fields = $lo_schema->columns();
+		if ( ! $la_fields) {
+			return FALSE;
+		}
+
+		$la_validate = [];
+		$ls_primaryKey = $lo_schema->getPrimaryKey();
+		$lx_foreignKeys = [];
+
+		if (isset($aa_associations['belongsTo'])) {
+			foreach ($aa_associations['belongsTo'] as $la_association) {
+				$lx_foreignKeys[] = $la_association['foreignKey'];
+			}
+		}
+
+		foreach ($la_fields as $ls_fieldName) {
+			// Skip primary key
+			if (in_array($ls_fieldName, $ls_primaryKey, TRUE)) {
+				continue;
+			}
+			$la_field = $lo_schema->getColumn($ls_fieldName);
+			$la_field['isForeignKey'] = in_array(Inflector::variable($ls_fieldName), $lx_foreignKeys, TRUE);
+			$la_validation = $this->fieldValidation($lo_schema, $ls_fieldName, $la_field, $ls_primaryKey);
+			if ($la_validation) {
+				$la_validate[ Inflector::variable($ls_fieldName) ] = $la_validation;
+			}
+		}
+
+		return $la_validate;
 	}
 
 
@@ -203,9 +332,25 @@ class ModelCommand extends \Bake\Command\ModelCommand {
 
 
 	/**
+	 * @inheritDoc
+	 *
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 */
+	public function getRules (Table $ao_model, array $aa_associations, Arguments $aa_args): array	{
+		$la_rules = parent::getRules($ao_model, $aa_associations, $aa_args);
+
+		if (str_starts_with($ao_model->getTable(), 'attributes_') && isset($la_rules['page_id'])) {
+			$la_rules['page_id']['options']['skipPageRoleCheck'] = TRUE;
+		}
+
+		return $la_rules;
+	}
+
+
+	/**
 	 * We do not want to automatically add behaviors.
 	 *
-	 * @param \Cake\ORM\Table $ao_model
+	 * @param Table $ao_model
 	 *
 	 * @return array
 	 *
@@ -221,9 +366,9 @@ class ModelCommand extends \Bake\Command\ModelCommand {
 	 *
 	 * Adds the `namespace`-option.
 	 *
-	 * @param \Cake\Console\ConsoleOptionParser $ao_parser
+	 * @param ConsoleOptionParser $ao_parser
 	 *
-	 * @return \Cake\Console\ConsoleOptionParser
+	 * @return ConsoleOptionParser
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
@@ -232,6 +377,11 @@ class ModelCommand extends \Bake\Command\ModelCommand {
 
 		$lo_parser->addOption('namespace', [
 			'help' => 'The namespace for the model. Should be either "Awyiss" or <CUSTOM_NAMESPACE>',
+		])->addOption('is-pagerole', [
+			'boolean' => TRUE,
+			'help' => 'Does the model reflect a pagerole? Will extend PagesTable and use db table `pages`.',
+		])->addOption('for-pagerole', [
+			'help' => 'Should the table be associated with a pagerole? Will remove a Page association if present.',
 		]);
 
 		return $lo_parser;

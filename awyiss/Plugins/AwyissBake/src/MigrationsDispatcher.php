@@ -15,13 +15,13 @@ class MigrationsDispatcher extends \Migrations\MigrationsDispatcher {
 	 *
 	 * @see \AwyissBake\Command\Phinx\Migrate
      */
-    public static $phinxCommands = [
+    public static array $phinxCommands = [
         //'Create' => Phinx\Create::class,
         //'Dump' => Phinx\Dump::class,
         //'MarkMigrated' => Phinx\MarkMigrated::class,
         'Migrate' => Command\Phinx\Migrate::class,
         //'Rollback' => Phinx\Rollback::class,
-        //'Seed' => Phinx\Seed::class,
+        'Seed' => Command\Phinx\Seed::class,
         //'Status' => Phinx\Status::class,
         //'CacheBuild' => Phinx\CacheBuild::class,
         //'CacheClear' => Phinx\CacheClear::class,

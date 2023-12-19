@@ -1,48 +1,67 @@
-{# @var ao_pageTemplates \Cake\Collection\Collection #}
-{# @var _view \Awyiss\View\BackendView #}
+{#
+@var ao_pageTemplates \Cake\Datasource\ResultSetDecorator
+@var aa_pageTemplates array
+@var _view \Awyiss\View\BackendView
+#}
 
 {# {{ helper_Categories_filter() }} #}
 
+{% set lx_selectedPageRoleId = helper_Categories_getSelectedCategoryFromRequest('pageRole') %}
+
 <div class="PageTemplates Overview">
 	{% if helper_Authorization_isAccessible('create') %}
-		{{ helper_Html_link(__('::create'), {action: 'add'}, {class: 'Button'}) }}
+		{{ helper_Html_link(__('create'), {action: 'add'}, {class: 'Button'}) }}
 	{% endif %}
 
-	<h1>{{ __('::headline_overview') }}</h1>
-	<div class="table-responsive">
-		<table>
-			<thead>
-				<tr>
-					<th>{{ helper_Paginator_sort('title') }}</th>
-					<th>{{ helper_Paginator_sort('filename') }}</th>
-					<th>{{ helper_Paginator_sort('template_positions') }}</th>
-					<th class="actions"></th>
-				</tr>
-			</thead>
-			{% for li_key,lo_templates in ao_pageTemplates %}
-				<tbody>
-					<tr>
-						<th colspan="7"><strong>{{ helper_Html_link(aa_categories.simple[ li_key ], {controller: 'PageRoles', action: 'edit', id: li_key}) }}</strong></th>
-					</tr>
-					{% for lo_pageTemplate in lo_templates %}
-						{# @var lo_pageTemplate \Awyiss\Model\Entity\PageTemplate #}
+	<h1>{{ __dx('page_templates', 'overview', 'headline') }}</h1>
+
+	{{ helper_Categories_filter('pageRole', [], {
+		uriParam: 'page-role-id'
+	}) }}
+
+	{% for li_pageRoleId, ls_pageRole in aa_pageRoles.simple %}
+		{% if aa_pageTemplates[ li_pageRoleId ] is defined or lx_selectedPageRoleId == 'all' or lx_selectedPageRoleId == li_pageRoleId %}
+			<fieldset>
+				<legend>
+					{% if helper_Authorization_scopeIsAccessible('PageRoles', NULL, ['read']) %}
+						{{ helper_Html_link(ls_pageRole, {controller: 'PageRoles', action: 'edit', id: li_key}) }}
+					{% else %}
+						{{ ls_pageRole }}
+					{% endif %}
+				</legend>
+
+				<table>
+					<thead>
 						<tr>
-							<td>{{ lo_pageTemplate.title }} ({{ lo_pageTemplate.system_order }})</td>
-							<td>{{ lo_pageTemplate.filename }}</td>
-							<td>{{ lo_pageTemplate.template_positions|join(', ') }}</td>
-							<td class="actions">
-								{% if helper_Authorization_isAccessible('update') %}
-									{{ helper_Html_link(__('::edit'), {action: 'edit', id: lo_pageTemplate.id}) }}
-								{% endif %}
-								{% if helper_Authorization_isAccessible('delete') %}
-									{{ helper_Html_link(__('::delete'), {action: 'delete', id: lo_pageTemplate.id}, {confirm: __('::confirm_delete', lo_pageTemplate.id) }) }}
-								{% endif %}
-							</td>
+							<th>{{ __('title') }}</th>
+							<th>{{ __('filename') }}</th>
+							<th>{{ __('content_areas') }}</th>
+							<th>{{ __('used_for_pages') }}</th>
+							<th class="actions"></th>
 						</tr>
-					{% endfor %}
-				</tbody>
-			{% endfor %}
-		</table>
-	</div>
-	{# { helper_Paginator_render() } #}
+					</thead>
+						<tbody>
+							{% set la_templates = aa_pageTemplates[ li_pageRoleId ] %}
+							{% for lo_pageTemplate in la_templates %}
+								{# @var lo_pageTemplate \Awyiss\Model\Entity\PageTemplate #}
+								<tr>
+									<td>{{ lo_pageTemplate.title }} ({{ lo_pageTemplate.systemOrder }})</td>
+									<td>{{ lo_pageTemplate.filename }}</td>
+									<td>{{ lo_pageTemplate.contentAreas|column('label')|join(',<br>')|raw }}</td>
+									<td>{{ lo_pageTemplate.usedForPages }}</td>
+									<td class="actions">
+										{% if helper_Authorization_isAccessible('update') %}
+											{{ helper_Html_link(__('edit'), {action: 'edit', id: lo_pageTemplate.id}) }}
+										{% endif %}
+										{% if helper_Authorization_isAccessible('delete') %}
+											{{ helper_Html_link(__('delete'), {action: 'delete', id: lo_pageTemplate.id}, {confirm: __('confirm_delete', lo_pageTemplate.id) }) }}
+										{% endif %}
+									</td>
+								</tr>
+							{% endfor %}
+						</tbody>
+				</table>
+			</fieldset>
+		{% endif %}
+	{% endfor %}
 </div>

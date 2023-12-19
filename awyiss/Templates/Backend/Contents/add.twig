@@ -1,38 +1,32 @@
-{# @var ao_content Awyiss\Model\Entity\Content #}
-{# @var _view \Awyiss\View\BackendView #}
+{#
+@var ao_content \Awyiss\Model\Entity\Content
+@var ao_contentTemplates \Cake\Collection\CollectionInterface
+@var ao_threadedContents \Cake\Collection\CollectionInterface
+@var ao_page \Awyiss\Model\Entity\Page
+@var aa_assignedAttributes array
+@var aa_contentAreas array
+@var aa_contentElementsByFieldset ContentTemplateElement[]
+@var as_forScope string
+@var as_languageRealm string
+@var as_languageShortcode string
+@var _view \Awyiss\View\BackendView
+#}
 
 <div class="Contents Form Add">
 	{{ helper_Form_create(ao_content, {method: 'post', idPrefix: 'content'}) }}
-	
-	<h1>{{ __('::headline_add') }}</h1>
-	<fieldset>
-		<legend>{{ __('::fieldset_general') }}</legend>
-		{{ helper_Form_control('active') }}
-		{{ helper_Categories_control('page_id', {empty: FALSE, val: ao_content.page_id}) }}
-		{{ helper_Form_control('parent_id', {options: ao_threadedContents.printer('label', 'id')}) }}
-		{{ helper_SystemOrder_control('system_order', {entity: ao_content}) }}
-		{{ helper_Form_control('title') }}
-		{{ helper_Form_control('subtitle') }}
-		{{ helper_Form_control('text') }}
-		{{ helper_Form_control('media_id') }}
-		{{ helper_Form_control('media_alt_id') }}
-		{{ helper_Form_control('media_folders_id') }}
-		{{ helper_Form_control('link') }}
-		{{ helper_Form_control('publishdate_start') }}
-		{{ helper_Form_control('publishdate_end') }}
-		{{ helper_Form_control('template_position', {empty: FALSE, options: combine(aa_availableTemplatePositions, aa_availableTemplatePositions)}) }}
-		{{ helper_Form_control('content_template_id', {empty: FALSE, options: ao_contentTemplates}) }}
-		{{ helper_Form_control('columnwidth') }}
-		{{ helper_Form_control('css_class') }}
-		{{ helper_Form_control('forms_id') }}
-		{{ helper_Form_control('duplicate_of') }}
-		{{ helper_Form_control('data') }}
-	</fieldset>
-	
-	{{- helper_Form_hidden('reload_form', {val: 0}) }}
 
-	{{ helper_Form_button(__('::save')) }}
-	{{ helper_Form_button(__('::save_close'), {name: 'submit', value: 'submit_close'}) }}
+	<h1>{{ __('headline_add') }}</h1>
+
+	{% block formButtons %}
+		{{ helper_Form_button(__('save')) }}
+		{{ helper_Form_button(__('save_close'), {name: 'submit', value: 'submit_close'}) }}
+	{% endblock %}
+
+	{% block form %}
+		{% include('@Backend/Contents/form.twig') %}
+	{% endblock %}
+
+	{{ block('formButtons') }}
+
 	{{ helper_Form_end() -}}
-	
 </div>

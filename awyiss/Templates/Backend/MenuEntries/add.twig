@@ -1,0 +1,24 @@
+{#
+@var ao_menuEntry \Awyiss\Model\Entity\MenuEntry
+@var ao_threadedMenuEntries \Cake\Collection\Iterator\TreeIterator
+@var as_languageRealm string
+@var _view \Awyiss\View\BackendView
+#}
+
+<div class="MenuEntries Form Add">
+	<h1>{{ __('headline_add') }}</h1>
+
+	{{ helper_Form_create(ao_menuEntry, {method: 'post', idPrefix: 'menuEntry'}) }}
+
+	{% block formButtons %}
+		{{ helper_Form_button(__('save')) }}
+		{{ helper_Form_button(__('save_close'), {name: 'submit', value: 'submit_close'}) }}
+	{% endblock %}
+
+	{% include('@Backend/MenuEntries/form.twig') %}
+
+	{{ block('formButtons') }}
+
+	{{ helper_Form_end() -}}
+
+</div>

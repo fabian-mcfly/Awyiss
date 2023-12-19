@@ -11,7 +11,7 @@ use Awyiss\Authorization\Policy\AbstractPolicy;
 /**
  * Permission for the {{ name }} scope
  */
-class {{ name }}Policy extends AbstractPolicy {
+class {{ name }}Policy extends AbstractPolicy {{ verbatim }}{{{ endverbatim }}
 	protected static PermissionOptionCollection $permissionOptionCollection;
 	protected static string $scope;
-}
+{{ verbatim }}}{{ endverbatim }}

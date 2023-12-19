@@ -53,12 +53,12 @@ class FileLoader extends \Cake\TwigView\Twig\FileLoader {
 
 
 	/**
-	 * Sets the paths and removes existing ones
+	 * Sets the paths and removes existing ones for a given namespace
 	 *
 	 * @param $ax_paths
 	 * @param string $as_namespace
 	 *
-	 * @throws \Twig\Error\LoaderError
+	 * @throws LoaderError
 	 */
 	public function setPaths ($ax_paths, string $as_namespace = self::MAIN_NAMESPACE): void {
 		$la_paths = !is_array($ax_paths) ? [$ax_paths] : $ax_paths;
@@ -78,7 +78,7 @@ class FileLoader extends \Cake\TwigView\Twig\FileLoader {
 	 * @param bool $ab_prepend
 	 *
 	 * @return void
-	 * @throws \Twig\Error\LoaderError
+	 * @throws LoaderError
 	 */
 	public function addPath (string $as_path, string $as_namespace = self::MAIN_NAMESPACE, bool $ab_prepend = FALSE): void {
 		$ls_checkPath = $this->isAbsolutePath($as_path) ? $as_path : $this->rootPath . $as_path;
@@ -117,7 +117,7 @@ class FileLoader extends \Cake\TwigView\Twig\FileLoader {
 	 * @param string $as_namespace
 	 *
 	 * @return void
-	 * @throws \Twig\Error\LoaderError
+	 * @throws LoaderError
 	 *
 	 * @noinspection PhpUnused
 	 */
@@ -132,7 +132,7 @@ class FileLoader extends \Cake\TwigView\Twig\FileLoader {
 	 * @param string $as_name Template as_name
 	 *
 	 * @return string
-	 * @throws \Twig\Error\LoaderError
+	 * @throws LoaderError
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
@@ -195,7 +195,7 @@ class FileLoader extends \Cake\TwigView\Twig\FileLoader {
 	 *
 	 * @return array|string[]
 	 *
-	 * @throws \Twig\Error\LoaderError
+	 * @throws LoaderError
 	 */
 	private function parseName (string $as_name): array {
 		if (isset($as_name[0]) && '@' == $as_name[0]) {
@@ -218,7 +218,7 @@ class FileLoader extends \Cake\TwigView\Twig\FileLoader {
 	 * - it must not contain a NUL byte
 	 * - it must not try to reach a file or a directory outside the configured paths
 	 *
-	 * @throws \Twig\Error\LoaderError
+	 * @throws LoaderError
 	 */
 	private function validateName (string $as_name): void {
 		if (str_contains($as_name, "\0")) {

@@ -1,0 +1,134 @@
+<?php declare(strict_types=1);
+
+
+namespace Awyiss\Model\Trait;
+
+
+use Awyiss\Model\Entity;
+use Awyiss\Model\Table;
+use Awyiss\ORM\Association\HasOne;
+use Cake\Datasource\EntityInterface;
+use Cake\Datasource\FactoryLocator;
+use InvalidArgumentException;
+
+
+/**
+ * Adds attribute-specific logic to entities
+ */
+trait EntityAttributesTrait {
+	/**
+	 * Constructor
+	 *
+	 * @param array $aa_properties
+	 * @param array $aa_options
+	 */
+	public function __construct (array $aa_properties = [], array $aa_options = []) {
+		parent::__construct($aa_properties, $aa_options);
+
+		/** @var Table $lo_table */
+		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
+		if ($lo_table->hasAttributes()) {
+			/** @var HasOne $lo_association */
+			$lo_association = $lo_table->getAssociation($lo_table->getAttributesTable(TRUE));
+
+			$this->initAttributesField($lo_association, $lo_association->getForeignKey());
+		}
+	}
+
+
+	/**
+	 * Sets each of the attribute's values as
+	 *
+	 * @return void
+	 */
+	public function initAttributesField (HasOne $ao_attributesTable, string $as_foreignKey): void {
+		$lo_attributes = $this->_fields['attributes'] ?? NULL;
+
+		if (!$lo_attributes || ! is_a($lo_attributes, Entity::class)) {
+			return;
+		}
+
+		$la_translatableFields = $ao_attributesTable->getConfig('translate.fields', []);
+		/** @var EntityInterface $lo_attributes */
+		foreach ($lo_attributes->_fields as $ls_key => $lx_value) {
+			if (in_array($ls_key, ['id', $as_foreignKey, '_i18n', '_translations'])) {
+				continue;
+			}
+
+			if (str_ends_with($ls_key, '_translation') && in_array(substr($ls_key, 0, -12), $la_translatableFields)) {
+				continue;
+			}
+
+			$this->setVirtual([$ls_key], TRUE);
+		}
+		//$this->setHidden(['attributes'], TRUE);
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public function &get (string $as_field) {
+		if ($as_field === '') {
+			throw new InvalidArgumentException('Cannot get an empty field');
+		}
+
+		$lx_value = NULL;
+
+		if (isset($this->_fields[ $as_field ])) {
+			$lx_value = &$this->_fields[ $as_field ];
+		}
+
+		$ls_method = static::_accessor($as_field, 'get');
+		if ($ls_method) {
+			$lx_value = $this->{$ls_method}($lx_value);
+		}
+
+		//Return a value if found or if an accessor exists.
+		if (!is_null($lx_value) || $ls_method) {
+			return $lx_value;
+		}
+
+		/**
+		 * @noinspection PhpUnnecessaryLocalVariableInspection Does this sound _unnecessary_ to you?
+		 * 	Uncaught ParseError: syntax error, unexpected token "&", expecting ";"
+		*/
+		$lx_value = &$this->getFromAttribute($as_field);
+
+		return $lx_value;
+	}
+
+
+	/**
+	 * Return the value of a field of the attached attribute entity (or null)
+	 *
+	 * @param string $as_field
+	 *
+	 * @return mixed
+	 */
+	public function &getFromAttribute (string $as_field): mixed {
+		$lx_value = NULL;
+
+		if (
+			// No attributes field = no value to fetch from there
+			empty($this->_fields['attributes']) ||
+			! ($this->_fields['attributes'] instanceof Entity)
+		) {
+			return $lx_value;
+		}
+		/*if ( ! array_key_exists($as_field, $this->_fields) && in_array($as_field, $this->getVirtual())) {
+			$lx_value = ;
+		}*/
+
+		/** @var EntityInterface $lo_attributesEntity */
+		$lo_attributesEntity = $this->_fields['attributes'];
+
+		/**
+		 * @noinspection PhpUnnecessaryLocalVariableInspection Does this sound _unnecessary_ to you?
+		 *    Uncaught ParseError: syntax error, unexpected token "&", expecting ";"
+		 */
+		$lx_value = &$lo_attributesEntity->get($as_field);
+
+		return $lx_value;
+	}
+}

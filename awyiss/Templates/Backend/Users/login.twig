@@ -1,14 +1,32 @@
-{# @var aa_languages \Awyiss\Model\Entity\Language[] #}
-{# @var _view \Awyiss\View\BackendView #}
+{#
+@var aa_languages \Awyiss\Model\Entity\Language[]
+@var _view \Awyiss\View\BackendView
+#}
 
 <div class="Users Form">
 	{{ helper_Form_create() }}
-	<fieldset>
-		<legend>{{ __('::legend_login') }}</legend>
-		{{ helper_Form_control('username') }}
-		{{ helper_Form_control('password') }}
-		{{ helper_Form_control('language_shortcode', {options: aa_languages}) }}
-	</fieldset>
-	{{ helper_Form_button(__('::login')) }}
+
+	{% block fieldsetLogin %}
+		<fieldset>
+			<legend>{{ __('legend_login') }}</legend>
+
+			{% block fieldsetLoginInner %}
+				{% block formControlUsername %}
+					{{ helper_Form_control('username') }}
+				{% endblock %}
+
+				{% block formControlPassword %}
+					{{ helper_Form_control('password') }}
+				{% endblock %}
+
+				{% block formControlLanguageShortcode %}
+					{{ helper_Locale_control('language_shortcode', {empty: false, realm: as_languageRealm}) }}
+				{% endblock %}
+			{% endblock %}
+		</fieldset>
+	{% endblock %}
+
+	{{ helper_Form_button(__('login')) }}
+
 	{{ helper_Form_end() }}
 </div>

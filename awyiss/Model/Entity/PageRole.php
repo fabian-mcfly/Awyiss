@@ -5,6 +5,8 @@ namespace Awyiss\Model\Entity;
 
 
 use Awyiss\Model\Entity;
+use Cake\I18n\FrozenTime;
+use Cake\Utility\Inflector;
 use Cake\Utility\Text;
 
 
@@ -14,27 +16,40 @@ use Cake\Utility\Text;
  * @property int $id
  * @property string $title
  * @property string $identifier
- * @property bool $include_in_linklist
- * @property int $system_order
+ * @property bool $includeInLinklist
+ * @property int $systemOrder
  * @property bool $active
  * @property bool $deleted
- * @property int|NULL $created_by
- * @property \Cake\I18n\FrozenTime|NULL $created_on
- * @property int|NULL $changed_by
- * @property \Cake\I18n\FrozenTime|NULL $changed_on
- * @property int|NULL $deleted_by
- * @property \Cake\I18n\FrozenTime|NULL $deleted_on
+ * @property int|NULL $createdBy
+ * @property FrozenTime|NULL $createdOn
+ * @property int|NULL $changedBy
+ * @property FrozenTime|NULL $changedOn
+ * @property int|NULL $deletedBy
+ * @property FrozenTime|NULL $deletedOn
  */
 class PageRole extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected $_accessible = [
+	protected array $_accessible = [
 		'title' => TRUE,
 		'identifier' => TRUE,
-		'include_in_linklist' => TRUE,
-		'system_order' => TRUE,
+		'includeInLinklist' => TRUE,
+		'systemOrder' => TRUE,
 		'active' => TRUE,
+	];
+	/**
+	 * @inheritDoc
+	 */
+	protected static array $fieldMap = [
+		'include_in_linklist' => 'includeInLinklist',
+		'system_order' => 'systemOrder',
+		'created_by' => 'createdBy',
+		'created_on' => 'createdOn',
+		'changed_by' => 'changedBy',
+		'changed_on' => 'changedOn',
+		'deleted_by' => 'deletedBy',
+		'deleted_on' => 'deletedOn',
 	];
 
 
@@ -44,8 +59,12 @@ class PageRole extends Entity {
 	 * @noinspection PhpUnused
 	 */
 	protected function _setIdentifier (string $as_identifier): string {
-		$ls_identifier = Text::slug($as_identifier, ['replacement' => '_']);
+		$ls_identifier = preg_replace('/\d/', '', $as_identifier);
 
-		return mb_strtolower($ls_identifier);
+		$ls_identifier = Text::slug($ls_identifier, ['replacement' => '_']);
+
+		$ls_identifier = Inflector::singularize($ls_identifier);
+
+		return strtolower($ls_identifier);
 	}
 }

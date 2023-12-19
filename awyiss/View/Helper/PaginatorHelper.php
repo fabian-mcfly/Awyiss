@@ -16,17 +16,17 @@ class PaginatorHelper extends \Cake\View\Helper\PaginatorHelper {
 	/**
 	 * Constructor. Overridden to merge passed args with URL aa_options.
 	 *
-	 * @param \Cake\View\View $view The View this helper is being attached to.
-	 * @param array<string, mixed> $config Configuration settings for the helper.
+	 * @param View                 $ao_view   The View this helper is being attached to.
+	 * @param array<string, mixed> $aa_config Configuration settings for the helper.
 	 */
-	public function __construct (View $view, array $config = []) {
-		parent::__construct($view, $config + ['templateClass' => StringTemplate::class,]);
+	public function __construct (View $ao_view, array $aa_config = []) {
+		parent::__construct($ao_view, $aa_config + ['templateClass' => StringTemplate::class,]);
 
-		$la_query = $this->_View->getRequest()->getParam('parts');
+		$la_query = $this->_View->getRequest()->getParam('parts', []);
 
-		unset($la_query['page'], $la_query['limit'], $la_query['sort'], $la_query['direction']);
+		$la_query['page'] = $la_query['limit'] = $la_query['sort'] = $la_query['direction'] = FALSE;
 
-		$this->setConfig('aa_options.aa_url', array_merge($this->_View->getRequest()->getParam('parts', []), $la_query));
+		$this->setConfig('aa_options.aa_url', array_merge($this->_View->getRequest()->getParam('pass', []), $la_query));
 	}
 
 
@@ -44,7 +44,7 @@ class PaginatorHelper extends \Cake\View\Helper\PaginatorHelper {
 	public function sort (string $as_key, $ax_title = NULL, array $aa_options = []): string {
 		$ls_title = $ax_title;
 		if (empty($ls_title)) {
-			$ls_title = _('::' . $as_key);
+			$ls_title = __($as_key);
 		}
 
 		return parent::sort($as_key, $ls_title, $aa_options);
@@ -55,14 +55,13 @@ class PaginatorHelper extends \Cake\View\Helper\PaginatorHelper {
 	 * @inheritDoc
 	 *
 	 * @param array $aa_options
-	 * @param null|string $as_modelName
 	 * @param array $aa_url
 	 *
 	 * @return array
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function generateUrlParams (array $aa_options = [], ?string $as_modelName = NULL, array $aa_url = []): array {
+	public function generateUrlParams (array $aa_options = [], array $aa_url = []): array {
 		$la_params = $this->_View->getRequest()->getParam('parts');
 
 		foreach ($aa_options as $lx_key => $lx_value) {

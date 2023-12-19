@@ -5,7 +5,7 @@ namespace FoobarCustomer\Model\Table;
 
 
 use Awyiss\Model\Table;
-use Cake\ORM\RulesChecker;
+use Awyiss\ORM\RulesChecker;
 use Cake\Validation\Validator;
 
 
@@ -16,27 +16,35 @@ use Cake\Validation\Validator;
  *
  * @method \FoobarCustomer\Model\Entity\AttributesContent newEmptyEntity()
  * @method \FoobarCustomer\Model\Entity\AttributesContent newEntity(array $data, array $options = [])
- * @method \FoobarCustomer\Model\Entity\AttributesContent[] newEntities(array $data, array $options = [])
- * @method \FoobarCustomer\Model\Entity\AttributesContent get($primaryKey, $options = [])
- * @method \FoobarCustomer\Model\Entity\AttributesContent findOrCreate($search, ?callable $callback = null, $options = [])
+ * @method array<\FoobarCustomer\Model\Entity\AttributesContent> newEntities(array $data, array $options = [])
+ * @method \FoobarCustomer\Model\Entity\AttributesContent get(mixed $primaryKey, array|string $finder = 'all', \Psr\SimpleCache\CacheInterface|string|null $cache = null, \Closure|string|null $cacheKey = null, mixed ...$args)
+ * @method \FoobarCustomer\Model\Entity\AttributesContent findOrCreate($search, ?callable $callback = null, array $options = [])
  * @method \FoobarCustomer\Model\Entity\AttributesContent patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
- * @method \FoobarCustomer\Model\Entity\AttributesContent[] patchEntities(iterable $entities, array $data, array $options = [])
- * @method \FoobarCustomer\Model\Entity\AttributesContent|false save(\Cake\Datasource\EntityInterface $entity, $options = [])
- * @method \FoobarCustomer\Model\Entity\AttributesContent saveOrFail(\Cake\Datasource\EntityInterface $entity, $options = [])
- * @method \FoobarCustomer\Model\Entity\AttributesContent[]|\Cake\Datasource\ResultSetInterface|false saveMany(iterable $entities, $options = [])
- * @method \FoobarCustomer\Model\Entity\AttributesContent[]|\Cake\Datasource\ResultSetInterface saveManyOrFail(iterable $entities, $options = [])
- * @method \FoobarCustomer\Model\Entity\AttributesContent[]|\Cake\Datasource\ResultSetInterface|false deleteMany(iterable $entities, $options = [])
- * @method \FoobarCustomer\Model\Entity\AttributesContent[]|\Cake\Datasource\ResultSetInterface deleteManyOrFail(iterable $entities, $options = [])
+ * @method array<\FoobarCustomer\Model\Entity\AttributesContent> patchEntities(iterable $entities, array $data, array $options = [])
+ * @method \FoobarCustomer\Model\Entity\AttributesContent|false save(\Cake\Datasource\EntityInterface $entity, array $options = [])
+ * @method \FoobarCustomer\Model\Entity\AttributesContent saveOrFail(\Cake\Datasource\EntityInterface $entity, array $options = [])
+ * @method iterable<\FoobarCustomer\Model\Entity\AttributesContent>|\Cake\Datasource\ResultSetInterface<\FoobarCustomer\Model\Entity\AttributesContent>|false saveMany(iterable $entities, array $options = [])
+ * @method iterable<\FoobarCustomer\Model\Entity\AttributesContent>|\Cake\Datasource\ResultSetInterface<\FoobarCustomer\Model\Entity\AttributesContent> saveManyOrFail(iterable $entities, array $options = [])
+ * @method iterable<\FoobarCustomer\Model\Entity\AttributesContent>|\Cake\Datasource\ResultSetInterface<\FoobarCustomer\Model\Entity\AttributesContent>|false deleteMany(iterable $entities, array $options = [])
+ * @method iterable<\FoobarCustomer\Model\Entity\AttributesContent>|\Cake\Datasource\ResultSetInterface<\FoobarCustomer\Model\Entity\AttributesContent> deleteManyOrFail(iterable $entities, array $options = [])
  */
 class AttributesContentsTable extends Table {
 	/**
-	* @inheritDoc
-	*/
+	 * @inheritDoc
+	 */
 	public const ATTRIBUTABLE = FALSE;
 	/**
-	* @inheritDoc
-	*/
+	 * @inheritDoc
+	 */
 	public const TABLE = 'attributes_contents';
+	/**
+	 * @inheritDoc
+	 */
+	protected array $_defaultConfig = [
+		'authorize' => [
+			'scope' => ['contents'],
+		],
+	];
 
 
 	/**
@@ -45,49 +53,55 @@ class AttributesContentsTable extends Table {
 	public function initialize (array $aa_config): void {
 		parent::initialize($aa_config);
 
-		$this->setTable(static::TABLE);
-		$this->setDisplayField('id');
-		$this->setPrimaryKey('id');
-
 		$this->belongsTo('Contents', [
-            'foreignKey' => 'content_id',
-            'joinType' => 'INNER',
-        ]);
+			'foreignKey' => 'contentId',
+			'joinType' => 'INNER',
+		]);
 	}
 
 
 	/**
-	 * @inheritDoc
+	 * Returns the default validator object.
+	 *
+	 * @param \Cake\Validation\Validator $ao_validator The validator that can be modified to
+	 * add some rules to it.
+	 *
+	 * @return \Cake\Validation\Validator
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function validationDefault (Validator $ao_validator): Validator {
-		$ao_validator
-			->integer('content_id')
-			->notEmptyString('content_id');
+		parent::validationDefault($ao_validator);
 
 		$ao_validator
-			->scalar('background_color')
-			->maxLength('background_color', 30)
-			->requirePresence('background_color', 'create')
-			->notEmptyString('background_color');
+			->integer('contentId')
+			->notEmptyString('contentId');
 
 		$ao_validator
-			->isArray('jason_test')
-			->requirePresence('jason_test', 'create')
-			->notEmptyArray('jason_test');
+			->scalar('backgroundColor')
+			->maxLength('backgroundColor', 50)
+			->allowEmptyString('backgroundColor');
+
+		$ao_validator
+			->scalar('alter2')
+			->maxLength('alter2', 255)
+			->allowEmptyString('alter2');
 
 		return $ao_validator;
 	}
 
 
 	/**
-	 * @inheritDoc
+	 * Returns a RulesChecker object after modifying the one that was supplied.
+	 *
+	 * @param \Cake\ORM\RulesChecker $ao_rules The rules object to be modified.
+	 *
+	 * @param \Awyiss\ORM\RulesChecker|\Cake\ORM\RulesChecker $ao_rules The rules object to be modified.
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildRules (RulesChecker $ao_rules): RulesChecker {
-		$ao_rules->add($ao_rules->existsIn('content_id', 'Contents'), ['errorField' => 'content_id']);
+	public function buildRules (RulesChecker|\Cake\ORM\RulesChecker $ao_rules): RulesChecker {
+		$ao_rules->add($ao_rules->existsIn('contentId', 'Contents'), ['errorField' => 'contentId']);
 
 		return $ao_rules;
 	}

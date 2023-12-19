@@ -6,17 +6,21 @@ namespace Awyiss\Model\Table;
 
 use Awyiss\Model\Entity\User;
 use Awyiss\Model\Table;
-use Cake\I18n\FrozenTime;
-use Cake\ORM\Query;
 use Awyiss\ORM\RulesChecker;
+use Cake\I18n\FrozenTime;
+use Cake\ORM\Association\BelongsToMany;
+use Cake\ORM\Association\HasMany;
+use Cake\ORM\Query;
+use Cake\ORM\Query\SelectQuery;
+use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Validation\Validator;
 
 
 /**
  * Users Model
  *
- * @property \Awyiss\Model\Table\UsergroupsTable&\Cake\ORM\Association\BelongsToMany $Usergroups
- * @property \Awyiss\Model\Table\UsergroupsUsersTable&\Cake\ORM\Association\HasMany $UsergroupsUsers
+ * @property UsergroupsTable&BelongsToMany $Usergroups
+ * @property UsergroupsUsersTable&HasMany  $UsergroupsUsers
  *
  * @method User newDefaultEntity(array $aa_additionalData = [])
  */
@@ -30,10 +34,6 @@ class UsersTable extends Table {
 	public function initialize (array $aa_config): void {
 		parent::initialize($aa_config);
 
-		$this->setTable(static::TABLE);
-		$this->setDisplayField('id');
-		$this->setPrimaryKey('id');
-
 		$this->belongsToMany('Usergroups');
 	}
 
@@ -43,7 +43,7 @@ class UsersTable extends Table {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function findActive (Query $ao_query, array $aa_options): Query {
+	public function findActive (SelectQuery $ao_query): SelectQuery {
 		$ao_query->where([
 			'active' => 1,
 			'OR' => [
@@ -59,35 +59,82 @@ class UsersTable extends Table {
 	/**
 	 * Returns the default validator object.
 	 *
-	 * @param \Cake\Validation\Validator $ao_validator The validator that can be modified to
+	 * @param Validator $ao_validator The validator that can be modified to
 	 * add some rules to it.
 	 *
-	 * @return \Cake\Validation\Validator
-	 *
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 * @return Validator
 	 */
 	public function validationDefault (Validator $ao_validator): Validator {
-		$ao_validator->integer('id')->allowEmptyString('id', NULL, 'create');
+		parent::validationDefault($ao_validator);
 
-		$ao_validator->scalar('username')->maxLength('username', 50)->requirePresence('username', 'create')->notEmptyString('username');
 
-		$ao_validator->scalar('password')
-			->maxLength('password', 255)
-			->requirePresence('password', 'create')
-			->allowEmptyString('password', NULL, 'update')
-			->minLength('password', 8);
+		$ao_validator->requirePresence([
+			'username',
+			'password',
+		], 'create');
 
-		$ao_validator->sameAs('password', 'password_confirm');
 
-		$ao_validator->scalar('firstname')->maxLength('firstname', 50)->allowEmptyString('firstname');
+		$ao_validator->add('id', [
+			'isInteger' => ['rule' => 'isInteger'],
+			'maxLength' => ['rule' => ['maxLength', 11]],
+		]);
 
-		$ao_validator->scalar('lastname')->maxLength('lastname', 50)->allowEmptyString('lastname');
 
-		$ao_validator->email('email')->allowEmptyString('email');
+		$ao_validator->notEmptyString('username');
+		$ao_validator->add('username', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'maxLength' => ['rule' => ['maxLength', 50]],
+		]);
 
-		$ao_validator->boolean('active')->notEmptyString('active');
 
-		$ao_validator->boolean('deleted')->notEmptyString('deleted');
+		$ao_validator->allowEmptyString('password', NULL, 'update');
+		$ao_validator->add('password', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'minLength' => ['rule' => ['minLength', 8]],
+			'maxLength' => ['rule' => ['maxLength', 100]],
+			'compareWith' => ['rule' => ['compareWith', 'password_confirm']],
+		]);
+
+
+		$ao_validator->add('failedAttempts', [
+			'isInteger' => ['rule' => 'isInteger'],
+			'maxLength' => ['rule' => ['maxLength', 1]],
+		]);
+
+
+		$ao_validator->allowEmptyDateTime('lastLogin');
+		$ao_validator->add('lastLogin', [
+			'dateTime' => ['rule' => 'dateTime'],
+		]);
+
+
+		$ao_validator->add('firstname', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'maxLength' => ['rule' => ['maxLength', 50]],
+		]);
+
+
+		$ao_validator->add('lastname', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'maxLength' => ['rule' => ['maxLength', 50]],
+		]);
+
+
+		$ao_validator->add('email', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'maxLength' => ['rule' => ['maxLength', 50]],
+		]);
+
+
+		$ao_validator->add('active', [
+			'boolean' => ['rule' => 'boolean'],
+		]);
+
+
+		$ao_validator->add('deleted', [
+			'boolean' => ['rule' => 'boolean'],
+		]);
+
 
 		return $ao_validator;
 	}
@@ -96,15 +143,24 @@ class UsersTable extends Table {
 	/**
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 *
-	 * @param \Awyiss\ORM\RulesChecker|\Cake\ORM\RulesChecker $ao_rules The rules object to be modified.
+	 * @param RulesChecker|BaseRulesChecker $ao_rules The rules object to be modified.
 	 *
-	 * @return \Awyiss\ORM\RulesChecker
+	 * @return RulesChecker
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildRules (RulesChecker|\Cake\ORM\RulesChecker $ao_rules): RulesChecker {
-		$ao_rules->add($ao_rules->isUnique(['username']), ['errorField' => 'username']);
-		$ao_rules->add($ao_rules->isUnique(['email']), ['errorField' => 'email']);
+	public function buildRules (RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
+		$ao_rules->add($ao_rules->isUnique(['username']), [
+			'errorField' => 'username',
+			'message' => __dfx($this->getI18nDomain(), 'validation', 'username', 'error_unique'),
+		]);
+
+
+		$ao_rules->add($ao_rules->isUnique(['email'], ['allowMultipleNulls' => TRUE]), [
+			'errorField' => 'email',
+			'message' => __df($this->getI18nDomain(), 'validation', 'error_invalid'),
+		]);
+
 
 		return $ao_rules;
 	}

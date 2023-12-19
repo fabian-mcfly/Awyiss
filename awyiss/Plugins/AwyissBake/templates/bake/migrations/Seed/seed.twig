@@ -1,0 +1,40 @@
+{#
+/**
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ *
+ * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
+ * @since         0.1.0
+ * @license       https://www.opensource.org/licenses/mit-license.php MIT License
+ */
+#}
+<?php declare(strict_types=1);
+
+use Migrations\AbstractSeed;
+
+/**
+ * {{ name }} seed.
+ */
+class {{ name }}Seed extends AbstractSeed {
+	/**
+	 * {@inheritDoc}
+	 */
+	public function run(): void {
+{% if records %}
+		$la_data = {{ records | raw }};
+{% else %}
+		$la_data = [];
+{% endif %}
+
+		$lo_table = $this->table('{{ table }}');
+{% if truncate %}
+		$lo_table->truncate();
+{% endif %}
+		$lo_table->insert($la_data)->save();
+	}
+}

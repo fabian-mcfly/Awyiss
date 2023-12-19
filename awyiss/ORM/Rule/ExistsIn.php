@@ -4,6 +4,7 @@
 namespace Awyiss\ORM\Rule;
 
 
+use Awyiss\Model\Table;
 use Cake\Datasource\EntityInterface;
 use Cake\ORM\Association;
 use RuntimeException;
@@ -17,22 +18,21 @@ class ExistsIn extends \Cake\ORM\Rule\ExistsIn {
 	/**
 	 * The repository where the field will be looked for
 	 *
-	 * @var \Awyiss\Model\Table|\Cake\ORM\Table|\Cake\ORM\Association|string
+	 * @var string|\Cake\ORM\Table|Association|Table
 	 */
-	protected $_repository;
+	protected string|Association|Table|\Cake\ORM\Table $_repository;
 
 	/**
 	 * Performs the existence check
 	 *
 	 * Implemented from parent class 1:1 but pass the initial options to the `exists`-method
 	 *
-	 * @param \Cake\Datasource\EntityInterface $ao_entity The entity from where to extract the fields
+	 * @param EntityInterface      $ao_entity  The entity from where to extract the fields
 	 * @param array<string, mixed> $aa_options Options passed to the check,
 	 * where the `repository` key is required.
 	 *
 	 * @return bool
-	 * @throws \RuntimeException When the rule refers to an undefined association.
-	 *
+	 * @throws RuntimeException When the rule refers to an undefined association.
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function __invoke (EntityInterface $ao_entity, array $aa_options): bool {
@@ -83,9 +83,11 @@ class ExistsIn extends \Cake\ORM\Rule\ExistsIn {
 			}
 		}
 
-		$la_primary = array_map(function($key) use ($lo_target) {
-			return $lo_target->aliasField($key) . ' IS';
+		$la_primary = array_map(function($as_key) use ($lo_target) {
+			return $lo_target->aliasField($as_key) . ' IS';
 		}, $la_bindingKey);
+
+
 		$la_conditions = array_combine($la_primary, $ao_entity->extract($la_fields));
 
 		$la_options = array_diff_key($this->_options, ['allowNullableNulls' => NULL]);

@@ -4,9 +4,10 @@
 namespace Awyiss\Configuration\ConfigOptions;
 
 
+use Awyiss\Awyiss;
 use Awyiss\Configuration\AbstractConfigOptions;
 use Awyiss\Configuration\ConfigOption;
-use Awyiss\Configuration\ConfigOptionTypes;
+use Awyiss\Configuration\ConfigOptionType;
 
 
 /**
@@ -16,25 +17,23 @@ class ContentTemplatesConfigOptions extends AbstractConfigOptions {
 	/**
 	 * @var string Scope of these options
 	 */
-	protected static string $scope = 'content_templates';
+	protected static string $scope = 'ContentTemplates';
 
 
 	/**
 	 * @inheritDoc
 	 */
 	public function initializeConfigOptions (): void {
-		$this->add([
-			'backend' => [
-				'pagination' => [
-					new ConfigOption([
-						'defaultValue' => 20,
-						'localizable' => FALSE,
-						'name' => 'limit',
-						'nullable' => FALSE,
-						'type' => ConfigOptionTypes::TYPE_INTEGER,
-					]),
-				]
-			]
+		$this->add(Awyiss::REALM_BACKEND, [
+			'paginate' => [
+				new ConfigOption([
+					'defaultValue' => 20,
+					'identifier' => 'limit',
+					'localizable' => FALSE,
+					'nullable' => FALSE,
+					'type' => ConfigOptionType::TYPE_INTEGER,
+				]),
+			],
 		]);
 	}
 }

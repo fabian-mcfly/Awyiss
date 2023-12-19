@@ -14,7 +14,7 @@ interface IdentityPermissionsInterface {
 	/**
 	 * Return the PermissionCollection that's saved for this identity
 	 *
-	 * @return \Awyiss\Authorization\Permission\PermissionCollection
+	 * @return PermissionCollection
 	 */
 	public function getPermissionCollection (): PermissionCollection;
 }

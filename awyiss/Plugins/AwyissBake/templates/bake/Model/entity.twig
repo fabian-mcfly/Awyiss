@@ -1,6 +1,14 @@
-{% set propertyHintMap = DocBlock.buildEntityPropertyHintTypeMap(propertySchema ?: []) %}
-{% set associationHintMap = DocBlock.buildEntityAssociationHintTypeMap(propertySchema ?: []) %}
-{% set annotations = DocBlock.propertyHints(propertyHintMap) %}
+{% set propertyHintMap = [] %}
+{%- for property, propertyType in DocBlock.buildEntityPropertyHintTypeMap(propertySchema ?: []) %}
+	{%- set propertyHintMap = propertyHintMap|merge({(property|variable): propertyType}) %}
+{% endfor %}
+
+{%- set associationHintMap = [] %}
+{%- for association, associationType in DocBlock.buildEntityAssociationHintTypeMap(associationSchema ?: []) %}
+	{%- set associationHintMap = associationHintMap|merge({(association|variable): associationType}) %}
+{% endfor %}
+
+{%- set annotations = DocBlock.propertyHints(propertyHintMap) %}
 
 {%- if associationHintMap %}
 	{%- set annotations = annotations|merge(['']) %}
@@ -27,17 +35,24 @@ class {{ name }} extends Entity{{ fileBuilder.classBuilder.implements ? ' implem
 	/**
 	 * @inheritDoc
 	 */
-	protected $_accessible = {{ Bake.exportVar(accessible, 1)|raw }};
+	protected array $_accessible = {{ Bake.exportVar(accessible, 1)|raw }};
 {% endif %}
-{% if accessible and hidden %}
+{% if accessible and fieldMap %}
 
+{% endif %}
+{% if fieldMap %}
+{%- set generatedProperties = generatedProperties|merge(['fieldMap']) %}
+	/**
+	* @inheritDoc
+	*/
+	protected static array $fieldMap = {{ Bake.exportVar(fieldMap, 1)|raw }};
 {% endif %}
 {%- if hidden %}
 {%- set generatedProperties = generatedProperties|merge(['_hidden']) %}
 	/**
 	* @inheritDoc
 	*/
-	protected $_hidden = {{ Bake.exportVar(hidden, 1)|raw }};
+	protected array $_hidden = {{ Bake.exportVar(hidden, 1)|raw }};
 {% endif %}
 {% set userProperties = fileBuilder.classBuilder.userProperties(generatedProperties) %}
 {% if userProperties %}

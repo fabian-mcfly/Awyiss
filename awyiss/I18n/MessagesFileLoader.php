@@ -20,8 +20,8 @@ class MessagesFileLoader extends \Cake\I18n\MessagesFileLoader {
 	 * Loads the translation file and parses it. Returns an instance of a translations
 	 * package containing the messages loaded from the file.
 	 *
-	 * @return \Cake\I18n\Package|false
-	 * @throws \RuntimeException if no file parser class could be found for the specified
+	 * @return Package|false
+	 * @throws RuntimeException if no file parser class could be found for the specified
 	 * file extension.
 	 */
 	public function __invoke (): Package|false {
@@ -36,6 +36,7 @@ class MessagesFileLoader extends \Cake\I18n\MessagesFileLoader {
 			$ls_fileName = substr($ls_fileName, $li_strpos + 1);
 		}
 
+
 		$ls_parserName = ucfirst($ls_extension);
 		$ls_parserClass = App::className($ls_parserName, 'I18n\Parser', 'FileParser');
 
@@ -46,11 +47,11 @@ class MessagesFileLoader extends \Cake\I18n\MessagesFileLoader {
 		$lo_package = new Package('default');
 		$lo_parser = new $ls_parserClass();
 
+
 		foreach (array_reverse($la_folders) as $ls_folder) {
 			$ls_path = $ls_folder . $ls_subfolder . $ls_fileName . '.' . $ls_extension;
 			if (is_file($ls_path)) {
-				$ls_filePath = $ls_path;
-				$la_messages = $lo_parser->parse($ls_filePath);
+				$la_messages = $lo_parser->parse($ls_path);
 				if ($la_messages) {
 					$lo_package->addMessages($la_messages);
 				}

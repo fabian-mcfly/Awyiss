@@ -36,16 +36,21 @@ class RulesChecker extends \Cake\ORM\RulesChecker {
 	 * @param array $aa_fields
 	 * @param $ax_options
 	 *
-	 * @return \Cake\Datasource\RuleInvoker
+	 * @return RuleInvoker
 	 */
 	public function isUnique (array $aa_fields, $ax_options = NULL): RuleInvoker {
 		$la_options = is_array($ax_options) ? $ax_options : ['message' => $ax_options];
 
 		if (empty($la_options['message'])) {
-			$la_options['message'] = __('validation::error_unique');
+			$la_options['message'] = __d('validation', 'error_unique');
 		}
 
-		return parent::isUnique($aa_fields, $la_options);
+		$la_fields = $aa_fields;
+		if (($this->_options['repository'] ?? NULL) && $ls_entityClass = ($this->_options['repository']->getEntityClass() ?? NULL)) {
+			$la_fields = $ls_entityClass::unmapFields($la_fields);
+		}
+
+		return parent::isUnique($la_fields, $la_options);
 	}
 
 
@@ -56,11 +61,11 @@ class RulesChecker extends \Cake\ORM\RulesChecker {
 	 * @param $ax_table
 	 * @param $ax_options
 	 *
-	 * @return \Cake\Datasource\RuleInvoker
+	 * @return RuleInvoker
 	 */
 	public function existsIn ($ax_fields, $ax_table, $ax_options = NULL): RuleInvoker {
 		$la_options = is_array($ax_options) ? $ax_options : ['message' => $ax_options];
-		$ls_message = ($la_options['message'] ?? NULL) ?: __('validation::error_exists_in');
+		$ls_message = ($la_options['message'] ?? NULL) ?: __d('validation', 'error_exists_in');
 		unset($la_options['message']);
 
 		$ls_errorField = is_string($ax_fields) ? $ax_fields : current($ax_fields);
@@ -79,7 +84,7 @@ class RulesChecker extends \Cake\ORM\RulesChecker {
 	 * @param string $as_linkStatus
 	 * @param string $as_ruleName
 	 *
-	 * @return \Cake\Datasource\RuleInvoker
+	 * @return RuleInvoker
 	 */
 	protected function _addLinkConstraintRule ($ax_association, ?string $as_errorField, ?string $as_message, string $as_linkStatus, string $as_ruleName): RuleInvoker {
 		$ls_errorField = $as_errorField;
@@ -102,6 +107,7 @@ class RulesChecker extends \Cake\ORM\RulesChecker {
 					$ls_errorField = $lx_association->getProperty();
 				}
 				else {
+					dd(__FILE__, __LINE__);
 					$ls_errorField = Inflector::underscore($lx_association);
 				}
 			}
@@ -112,7 +118,7 @@ class RulesChecker extends \Cake\ORM\RulesChecker {
 
 		$ls_message = $as_message;
 		if ( ! $ls_message) {
-			$ls_message = __('validation::error_link_constraint_rule', $ls_associationAlias);
+			$ls_message = __d('validation', 'error_link_constraint_rule', $ls_associationAlias);
 		}
 
 		return parent::_addLinkConstraintRule($lx_association, $ls_errorField, $ls_message, $as_linkStatus, $as_ruleName);
@@ -127,12 +133,12 @@ class RulesChecker extends \Cake\ORM\RulesChecker {
 	 * @param string $as_operator
 	 * @param null|string $as_message
 	 *
-	 * @return \Cake\Datasource\RuleInvoker
+	 * @return RuleInvoker
 	 */
 	public function validCount (string $as_field, int $ai_count = 0, string $as_operator = '>', ?string $as_message = NULL): RuleInvoker {
 		$ls_message = $as_message;
 		if ( ! $ls_message) {
-			$ls_message = __('validation::error_valid_count', [$as_operator, $ai_count]);
+			$ls_message = __d('validation', 'error_valid_count', [$as_operator, $ai_count]);
 		}
 
 		return parent::validCount($as_field, $ai_count, $as_operator, $ls_message);

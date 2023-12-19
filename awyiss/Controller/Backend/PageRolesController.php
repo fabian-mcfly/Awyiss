@@ -6,15 +6,16 @@ namespace Awyiss\Controller\Backend;
 
 use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Model\Entity\PageRole;
+use Awyiss\Model\Table\PageRolesTable;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
-use Cake\Routing\Router;
+use Awyiss\Routing\Router;
 
 
 /**
  * PageRoles Controller
  *
- * @property \Awyiss\Model\Table\PageRolesTable $PageRoles
+ * @property PageRolesTable $PageRoles
  */
 class PageRolesController extends Controller {
 	/**
@@ -25,7 +26,7 @@ class PageRolesController extends Controller {
 	public function overview (): void {
 		$this->Authorization->ensure('read');
 
-		$lo_pageRoles = $this->PageRoles->find('withAttributes')->where($this->getOverviewWhere());
+		$lo_pageRoles = $this->PageRoles->find()->where($this->getOverviewWhere());
 
 		$this->set([
 			'ao_pageRoles' => $lo_pageRoles,
@@ -44,6 +45,7 @@ class PageRolesController extends Controller {
 		$this->Authorization->ensure('create');
 
 		$lo_pageRole = $this->PageRoles->newDefaultEntity();
+
 		if ($this->request->is('post')) {
 			$this->save($lo_pageRole);
 		}
@@ -57,17 +59,17 @@ class PageRolesController extends Controller {
 	/**
 	 * Edit method
 	 *
-	 * @return void|?\Cake\Http\Response
+	 * @return void|?Response
 	 *
 	 * @throws \Exception
 	 */
 	public function edit () {
 		$this->Authorization->ensure('update');
 
-		/** @var \Awyiss\Model\Entity\PageRole $lo_pageRole */
+		/** @var PageRole $lo_pageRole */
 		$lo_pageRole = $this->PageRoles->findById((int) $this->request->getParam('id'))->first();
 		if ( ! $lo_pageRole) {
-			$this->Flash->error(__('::record_not_found'));
+			$this->Flash->error(__('record_not_found'));
 
 			return $this->redirect(['action' => 'overview']);
 		}
@@ -85,7 +87,7 @@ class PageRolesController extends Controller {
 	/**
 	 * Delete method
 	 *
-	 * @return \Cake\Http\Response
+	 * @return Response
 	 *
 	 * @throws \Exception
 	 */
@@ -94,18 +96,18 @@ class PageRolesController extends Controller {
 
 		$this->request->allowMethod(['get', 'delete']);
 
-		/** @var \Awyiss\Model\Entity\PageRole $lo_pageRole */
+		/** @var PageRole $lo_pageRole */
 		$lo_pageRole = $this->PageRoles->findById((int) $this->request->getParam('id'))->first();
 		if ( ! $lo_pageRole) {
-			$this->Flash->error(__('::record_not_found'));
+			$this->Flash->error(__('record_not_found'));
 			return $this->redirect(['action' => 'overview']);
 		}
 
 		if ($this->PageRoles->delete($lo_pageRole)) {
-			$this->Flash->success(__('::delete_succeeded'));
+			$this->Flash->success(__('delete_succeeded'));
 		}
 		else {
-			$this->Flash->error(__('::delete_failed'));
+			$this->Flash->error(__('delete_failed'));
 		}
 
 		return $this->redirect(['action' => 'overview']);
@@ -113,17 +115,21 @@ class PageRolesController extends Controller {
 
 
 	/**
-	 * @param \Awyiss\Model\Entity\PageRole $ao_pageRole
-	 * @param string $as_method
+	 * @param PageRole $ao_pageRole
+	 * @param string   $as_method
 	 *
 	 * @return void
 	 */
 	protected function save (PageRole $ao_pageRole, string $as_method = 'add'): void {
+		if ($this->PageRoles->hasAttributes()) {
+			$ao_pageRole->setAccess('attributes', TRUE);
+		}
+
 		$this->PageRoles->patchEntity($ao_pageRole, $this->request->getData());
 
 		if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
 			if ($this->PageRoles->save($ao_pageRole)) {
-				$this->Flash->success(__('::' . $as_method . '_succeeded'));
+				$this->Flash->success(__($as_method . '_succeeded'));
 
 				if ($this->request->getData('submit') == 'submit_close') {
 					throw new RedirectException(Router::url(['action' => 'overview'], TRUE), 302);
@@ -132,8 +138,10 @@ class PageRolesController extends Controller {
 				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $ao_pageRole->id], TRUE), 302);
 			}
 
-			$this->Flash->error(__('::' . $as_method . '_failed'));
-			$this->Flash->error(implode('<br>' . PHP_EOL, $ao_pageRole->getError('_general')));
+			$this->Flash->error(__($as_method . '_failed'));
+			foreach ($ao_pageRole->getError('_general') as $ls_error) {
+				$this->Flash->error($ls_error);
+			}
 		}
 	}
 }

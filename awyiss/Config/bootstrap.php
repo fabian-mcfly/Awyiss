@@ -27,10 +27,41 @@ use Cake\Error\ExceptionTrap;
 use Cake\Log\Log;
 use Cake\Mailer\Mailer;
 use Cake\Mailer\TransportFactory;
-use Cake\Routing\Router;
+use Awyiss\Routing\Router;
 use Cake\Utility\Inflector;
 use Cake\Utility\Security;
+use josegonzalez\Dotenv\Loader;
 
+/**
+ * Load global functions.
+ */
+require CAKE . 'functions.php';
+
+
+if ( ! env('CONFIG_ENV') && file_exists(ROOT . DS . '.env')) {
+	$lo_dotenv = new Loader([ROOT . DS . '.env']);
+	$lo_dotenv->parse()->putenv()->toEnv()->toServer();
+}
+
+//Might be set in awyiss/bin/cake.php
+if ( ! defined('CONFIG_ENV')) {
+	define('CONFIG_ENV', env('CONFIG_ENV', 'production'));
+}
+
+//Might be set in awyiss/bin/cake.php
+if ( ! defined('CUSTOM_DIR')) {
+	if ( ! $ls_customDir = env('CUSTOM_DIR')) {
+		exit('Environment Variable CUSTOM_DIR is not set.');
+	}
+	define('CUSTOM_DIR', $ls_customDir);
+}
+
+
+define('CUSTOM_CONFIG', ROOT . DS . CUSTOM_DIR . DS . 'config' . DS);
+
+define('CUSTOM_NAMESPACE', Inflector::camelize(str_replace('_', '-', CUSTOM_DIR), '-'));
+
+define('ENV_CUSTOM_CONFIG', CUSTOM_CONFIG . CONFIG_ENV . DS);
 
 /*
  * Read configuration file
@@ -51,13 +82,12 @@ catch (Exception $ex) {
 if (Configure::read('debug')) {
 	Configure::write('Cache._cake_model_.duration', '+60 seconds');
 	Configure::write('Cache._cake_core_.duration', '+60 seconds');
-	Configure::write('Cache._cake_routes_.duration', '+60 seconds');
 }
 
 
 /*
  * Set the default server timezone. Using UTC makes time calculations / conversions easier.
- * Check http://php.net/manual/en/timezones.php for list of valid timezone strings.
+ * Check https://php.net/manual/en/timezones.php for list of valid timezone strings.
  */
 date_default_timezone_set(Configure::read('App.defaultTimezone'));
 
@@ -112,7 +142,6 @@ if ($ls_fullBaseUrl) {
 }
 unset($ls_fullBaseUrl);
 
-
 Cache::setConfig(Configure::consume('Cache'));
 ConnectionManager::setConfig(Configure::consume('Datasources'));
 Mailer::setConfig(Configure::consume('Email'));
@@ -126,6 +155,12 @@ TransportFactory::setConfig(Configure::consume('EmailTransport'));
  * table, model, controller names or whatever other string is passed to the
  * inflection functions.
  */
-//\Cake\Utility\Inflector::rules('plural', ['/^(inflect)or$/i' => '\1ables']);
+Inflector::rules('plural', ['/^(menu)s$/i' => '\1s']);
 //\Cake\Utility\Inflector::rules('irregular', ['red' => 'redlings']);
-Inflector::rules('uninflected', ['media']);
+Inflector::rules('uninflected', ['configuration', 'media', 'system']);
+
+// set a custom date and time format
+// see https://book.cakephp.org/4/en/core-libraries/time.html#setting-the-default-locale-and-format-string
+// and https://unicode-org.github.io/icu/userguide/format_parse/datetime/#datetime-format-syntax
+//\Cake\I18n\FrozenDate::setToStringFormat('dd.MM.yyyy');
+//\Cake\I18n\FrozenTime::setToStringFormat('dd.MM.yyyy HH:mm');

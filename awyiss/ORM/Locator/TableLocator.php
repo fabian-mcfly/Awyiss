@@ -5,11 +5,11 @@ namespace Awyiss\ORM\Locator;
 
 
 use Awyiss\Core\App;
+use Awyiss\Event\EventListenersProvider;
+use Awyiss\Model\Entity\Language;
 use Awyiss\Model\Table;
-use Cake\ORM\Exception\MissingTableClassException;
 use Cake\ORM\Table as BaseTable;
 use Cake\ORM\Locator\TableLocator as BaseTableLocator;
-use Cake\Utility\Inflector;
 
 
 /**
@@ -19,58 +19,94 @@ class TableLocator extends BaseTableLocator {
 	/**
 	 * Fallback class to use
 	 *
-	 * @var class-string<\Awyiss\Model\Table>
+	 * @var class-string<Table>
 	 */
-	protected $fallbackClassName = Table::class;
+	protected string $fallbackClassName = Table::class;
+	protected ?Language $translateLanguage = NULL;
 
 
-	/**
+	/*
 	 * {@inheritDoc}
 	 *
 	 * ---
 	 *
-	 * This variation might return an anonymous class that extends either
-	 * 		\<CUSTOM_NAMESPACE>\Model\Table\PagesTable
+	 * This variation might return a class that extends either
+	 *        \<CUSTOM_NAMESPACE>\Model\Table\PagesTable
 	 * or
-	 * 		\Awyiss\Model\Table\PagesTable
+	 *        \Awyiss\Model\Table\PagesTable
 	 * in case no matching table was found and the alias is a known pagerole (constant "PAGEROLE_<ALIAS>" exists).
 	 *
-	 * @param string $as_alias The alias name you want to get. Should be in CamelCase format.
+	 * @param string               $as_alias   The alias name you want to get. Should be in CamelCase format.
 	 * @param array<string, mixed> $aa_options The options you want to build the table with.
-	 *   If a table has already been loaded the options will be ignored.
-	 * @return \Cake\ORM\Table
-	 * @throws \RuntimeException When you try to configure an alias that already exists.
+	 *                                         If a table has already been loaded the options will be ignored.
+	 *
+	 * @return BaseTable
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 * @throws \Exception
 	 */
-	public function get (string $as_alias, array $aa_options = []): BaseTable {
+	/*public function get (string $as_alias, array $aa_options = []): BaseTable {
 		try {
 			$lo_table = parent::get($as_alias, $aa_options);
 		}
 		catch (MissingTableClassException $ex) {
-			$ls_singular = Inflector::singularize($as_alias);
-			$ls_alias = Inflector::pluralize($ls_singular);
+			$ls_alias = ($aa_options['forPageRole'] ?? NULL) ? $aa_options['forPageRole'] : $as_alias;
+			$ls_singular = Inflector::singularize(Inflector::underscore($ls_alias));
 
 			$ls_constant = 'PAGEROLE_' . strtoupper($ls_singular);
-			if (defined($ls_constant)) {
-				/** @var \Awyiss\Model\Table\PagesTable $lo_table */
-				$lo_table = parent::get($ls_alias, [
-						'className' => App::className('PagesTable', 'Model/Table'),
-					] + $aa_options);
-				$lo_table->setPageRoleId(constant($ls_constant));
-
-				$ls_identifier = Inflector::pluralize($ls_singular);
-				if ($lo_table->hasBehavior('Authorization')) {
-					/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-					$lo_table->getBehavior('Authorization')->setScope($ls_identifier);
-				}
-			}
-			else {
+			if (!defined($ls_constant)) {
 				throw $ex;
+			}
+
+			$ls_alias = Inflector::camelize(Inflector::tableize($as_alias));
+			#@var PagesTable $lo_table
+			$lo_table = parent::get($ls_alias, [
+					'className' => App::className('PagesTable', 'Model/Table'),
+					'forPageRole' => $ls_singular,
+				] + $aa_options);
+			//$lo_table->setPageRole($ls_singular, constant($ls_constant));
+			$lo_table->initializeAttributable($ls_alias, 'page_id');
+
+			if ($lo_table->hasBehavior('Authorization')) {
+				#@noinspection PhpPossiblePolymorphicInvocationInspection
+				$lo_table->getBehavior('Authorization')->setScope($ls_alias);
 			}
 		}
 
 		return $lo_table;
+	}*/
+
+
+	/**
+	 * @inheritDoc
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 * @throws \ReflectionException
+	 */
+	protected function createInstance (string $as_alias, array $aa_options): BaseTable {
+		EventListenersProvider::loadListener($as_alias, 'Global');
+		/*if (Awyiss::getRealm()) {
+		}*/
+		return parent::createInstance($as_alias, $aa_options + ['translateLanguage' => $this->getTranslateLanguage()]);
+	}
+
+
+	/**
+	 * @return null|Language
+	 */
+	public function getTranslateLanguage (): ?Language {
+		return $this->translateLanguage;
+	}
+
+
+	/**
+	 * @param null|Language $ao_language
+	 *
+	 * @return TableLocator
+	 */
+	public function setTranslateLanguage (?Language $ao_language): static {
+		$this->translateLanguage = $ao_language;
+
+		return $this;
 	}
 
 

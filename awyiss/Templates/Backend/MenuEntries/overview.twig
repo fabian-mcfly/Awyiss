@@ -1,0 +1,46 @@
+{#
+@var ao_menuEntries \Awyiss\Model\Entity\MenuEntry[]
+@var _view \Awyiss\View\BackendView
+#}
+
+<div class="MenuEntries Overview">
+	{% if helper_Authorization_isAccessible('create') %}
+		{{ helper_Html_link(__('create'), {action: 'add', menu_id: ax_selectedMenuId}, {class : 'Button'}) }}
+	{% endif %}
+
+	<h1>{{ __('headline_overview') }}</h1>
+
+	{{ helper_Categories_filter('menu_id', [], {includeAggregation: FALSE}) }}
+
+	<div class="table-responsive">
+		<table>
+			<thead>
+				<tr>
+					<th>{{ __('title') }}</th>
+					<th>{{ __('link') }}</th>
+					<th>{{ __('external') }}</th>
+					<th>{{ __('system_order') }}</th>
+					<th class="actions"></th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for lo_menuEntry in ao_menuEntries %}
+				<tr>
+					<td>{{ lo_menuEntry.title }}</td>
+					<td>{{ lo_menuEntry.link }}</td>
+					<td>{{ lo_menuEntry.external }}</td>
+					<td>level {{ lo_menuEntry.level }} - order {{ lo_menuEntry.systemOrder }}</td>
+					<td class="actions">
+						{% if helper_Authorization_isAccessible('update') %}
+							{{ helper_Html_link(__('edit'), {action: 'edit', id: lo_menuEntry.id}) }}
+						{% endif %}
+						{% if helper_Authorization_isAccessible('delete') %}
+							{{ helper_Html_link(__('delete'), {action: 'delete', id: lo_menuEntry.id}, {confirm: __('confirm_delete', lo_menuEntry.id) }) }}
+						{% endif %}
+					</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+</div>

@@ -6,34 +6,42 @@ namespace Awyiss\Model\Entity;
 
 use Authentication\IdentityInterface;
 use Awyiss\Model\Entity;
+use Cake\I18n\FrozenTime;
 
 
 /**
  * UsersExternal Entity
  *
  * @property int $id
- * @property string $provider_id
+ * @property string $providerId
  * @property string $username
- * @property \Cake\I18n\FrozenTime $last_login
+ * @property FrozenTime $lastLogin
  * @property string $provider
  */
 class UsersExternal extends Entity implements IdentityInterface {
 	/**
 	 * @inheritDoc
 	 */
-	protected $_accessible = [
+	protected array $_accessible = [
 		'provider' => TRUE,
-		'provider_id' => TRUE,
+		'providerId' => TRUE,
 		'username' => TRUE,
-		'last_login' => TRUE,
 		'usergroups' => TRUE,
+	];
+
+	/**
+	 * @inheritDoc
+	 */
+	protected static array $fieldMap = [
+		'provider_id' => 'providerId',
+		'last_login' => 'lastLogin',
 	];
 
 
 	/**
 	 * Retreives the unique identifier of this identity
 	 *
-	 * @see \Authentication\IdentityInterface::getIdentifier()
+	 * @see IdentityInterface::getIdentifier
 	 */
 	public function getIdentifier (): ?int {
 		return $this->id;
@@ -43,7 +51,7 @@ class UsersExternal extends Entity implements IdentityInterface {
 	/**
 	 * Retreive the data of this identity. Required by IdentityInterface
 	 *
-	 * @see \Authentication\IdentityInterface::getOriginalData()
+	 * @see IdentityInterface::getOriginalData
 	 */
 	public function getOriginalData (): static {
 		return $this;

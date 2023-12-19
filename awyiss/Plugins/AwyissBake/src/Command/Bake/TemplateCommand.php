@@ -19,13 +19,13 @@ class TemplateCommand extends \Bake\Command\TemplateCommand {
 	/**
 	 * @inheritDoc
 	 */
-	public $scaffoldActions = ['overview', 'add', 'edit'];
+	public array $scaffoldActions = ['overview', 'add', 'edit', 'form'];
 
 
 	/**
 	 * @inheritDoc
 	 */
-	public $ext = 'twig';
+	public string $ext = 'twig';
 
 
 	/**
@@ -42,7 +42,7 @@ class TemplateCommand extends \Bake\Command\TemplateCommand {
 	 * Combines `\Bake\Command\TemplateCommand::getTemplatePath` and `\Bake\Command\BakeCommand::getTemplatePath`,
 	 * but honors the `folder`-option.
 	 *
-	 * @param \Cake\Console\Arguments $ao_args The arguments
+	 * @param Arguments   $ao_args The arguments
 	 * @param string|null $as_container
 	 *
 	 * @see \Bake\Command\BakeCommand::getTemplatePath()

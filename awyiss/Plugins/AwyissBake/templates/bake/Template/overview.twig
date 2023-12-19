@@ -1,11 +1,16 @@
-{{ '{# ' }}@var ao_{{ pluralVar }} {{ entityClass }}[]{{ ' #}' }}
-{{ '{# ' }}@var _view \{{ namespace }}\View\BackendView{{ ' #}' }}
+{{ '{# ' }}
+@var ao_{{ pluralVar }} {{ entityClass }}[]
+@var _view \{{ namespace }}\View\BackendView
+{{ ' #}' }}
 
 <div class="{{ pluralVar[:1]|upper ~ pluralVar[1:] }} Overview">
 {% set fields = Bake.filterFields(fields, schema, modelObject, indexColumns, ['binary', 'text']) %}
-	{% verbatim %}{{ helper_Html_link(__('::create'), {action : 'add'}, {class : 'Button'}) }}{% endverbatim %}
 {% set done = [] %}
-	<h1>{% verbatim %}{{ __('::headline_overview') }}{% endverbatim %}</h1>
+	{% verbatim %}{% if helper_Authorization_isAccessible('create') %}
+		{{ helper_Html_link(__('create'), {action: 'add'}, {class: 'Button'}) }}
+	{% endif %}
+	{% endverbatim %}
+	<h1>{% verbatim %}{{ __('headline_overview') }}{% endverbatim %}</h1>
 	<div class="table-responsive">
 		<table>
 			<thead>
@@ -51,10 +56,10 @@
 {% set pk = 'lo_' ~ singularVar ~ '.' ~ primaryKey[0] %}
 					<td class="actions">
 						{% verbatim %}{% if helper_Authorization_isAccessible('update') %}
-							{{ helper_Html_link(__('::edit'), {action: 'edit', id: {% endverbatim %}{{ pk }}{% verbatim %}}) }}
+							{{ helper_Html_link(__('edit'), {action: 'edit', id: {% endverbatim %}{{ pk }}{% verbatim %}}) }}
 						{% endif %}
 						{% if helper_Authorization_isAccessible('delete') %}
-							{{ helper_Html_link(__('::delete'), {action: 'delete', id: {% endverbatim %}{{ pk }}{% verbatim %}}, {confirm: __('::confirm_delete', {% endverbatim %}{{ pk }}{% verbatim %}) }) }}
+							{{ helper_Html_link(__('delete'), {action: 'delete', id: {% endverbatim %}{{ pk }}{% verbatim %}}, {confirm: __('confirm_delete', {% endverbatim %}{{ pk }}{% verbatim %}) }) }}
 						{% endif %}{% endverbatim %}
 					</td>
 				</tr>
@@ -62,5 +67,6 @@
 			</tbody>
 		</table>
 	</div>
+
 	{{ '{{ helper_Paginator_render() }}' }}
 </div>

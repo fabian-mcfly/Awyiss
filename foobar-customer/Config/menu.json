@@ -1,0 +1,87 @@
+{
+	"appendTo": {
+		"languages": {
+			"languages_overview": {
+				"title": {
+					"translate": ["languages", "menu_title"]
+				},
+				"link": {
+					"url": {
+						"controller": "Languages",
+						"action": "overview"
+					}
+				},
+				"access": {
+					"scope": "languages",
+					"identifier": ["read"]
+				}
+			},
+			"languages_add": {
+				"title": {
+					"translate": ["languages", "menu_add"]
+				},
+				"link": {
+					"url": {
+						"controller": "Languages",
+						"action": "add"
+					}
+				},
+				"access": {
+					"scope": "languages",
+					"identifier": ["create"]
+				}
+			}
+		},
+		"attributes": {
+			"attributes_overview": {
+				"title": {
+					"translate": ["attributes", "menu_title"]
+				},
+				"link": {
+					"url": {
+						"controller": "Attributes",
+						"action": "overview"
+					}
+				},
+				"access": {
+					"scope": "attributes",
+					"identifier": ["read"]
+				}
+			},
+			"attributes_add": {
+				"title": {
+					"translate": ["attributes", "menu_add"]
+				},
+				"link": {
+					"url": {
+						"controller": "Attributes",
+						"action": "add"
+					}
+				},
+				"access": {
+					"scope": "attributes",
+					"identifier": ["create"]
+				}
+			}
+		}
+	},
+	"insertAfter": {
+		"attributes": {
+			"designer": {
+				"title": {
+					"translate": ["designer", "menu_add"]
+				},
+				"link": {
+					"url": {
+						"controller": "Designer",
+						"action": "overview"
+					}
+				},
+				"access": {
+					"scope": "designer",
+					"identifier": ["overview"]
+				}
+			}
+		}
+	}
+}

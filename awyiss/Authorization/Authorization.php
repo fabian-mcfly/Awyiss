@@ -10,19 +10,22 @@ use Psr\Http\Message\ServerRequestInterface;
 /**
  * Provides access to an instance of `\Awyiss\Authorization\AuthorizationService`
  *
- * @see \Awyiss\Authorization\AuthorizationService
+ * @see AuthorizationService
  */
 class Authorization implements AuthorizationServiceProviderInterface  {
-	protected string $type;
+	/**
+	 * @var string
+	 */
+	protected string $realm;
 
 
 	/**
-	 * Set the type only when creating a class instance
+	 * Set the realm only when creating a class instance
 	 *
-	 * @param string $as_type
+	 * @param string $as_realm
 	 */
-	public function __construct (string $as_type) {
-		$this->type = $as_type;
+	public function __construct (string $as_realm) {
+		$this->realm = $as_realm;
 	}
 
 
@@ -30,6 +33,6 @@ class Authorization implements AuthorizationServiceProviderInterface  {
 	 * @inheritDoc
 	 */
 	public function getAuthorizationService (ServerRequestInterface $ao_request): AuthorizationServiceInterface {
-		return new AuthorizationService($this->type);
+		return new AuthorizationService($this->realm);
 	}
 }

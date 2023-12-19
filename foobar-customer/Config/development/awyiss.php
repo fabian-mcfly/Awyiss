@@ -3,6 +3,16 @@
 return [
 	'debug' => filter_var(env('DEBUG', TRUE), FILTER_VALIDATE_BOOLEAN),
 
+	'DebugKit' => [
+		'forceEnable' => function() {
+			return $_SERVER['REMOTE_ADDR'] === '';
+		},
+		'ignoreAuthentication' => TRUE,
+		'panels' => [
+			'DebugKit.Mail' => FALSE,
+		],
+	],
+
 	'Datasources' => [
 		'default' => [
 			'log' => TRUE,

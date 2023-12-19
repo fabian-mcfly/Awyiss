@@ -4,6 +4,7 @@
 namespace Awyiss\Authorization\PermissionOption;
 
 
+use Awyiss\Authorization\AuthorizationService;
 use Awyiss\Core\App;
 use Cake\Core\ObjectRegistry;
 use Exception;
@@ -14,6 +15,9 @@ use RuntimeException;
  * Holds a collection of permissions for a single scope
  */
 class PermissionOptionCollection extends ObjectRegistry {
+	/**
+	 * @var string
+	 */
 	protected string $scope;
 
 
@@ -22,10 +26,10 @@ class PermissionOptionCollection extends ObjectRegistry {
 	 *
 	 * @param array $aa_config Configuration
 	 *
-	 * @throws \Exception
+	 * @throws Exception
 	 */
 	public function __construct (string $as_scope, array $aa_config = []) {
-		$this->scope = $as_scope;
+		$this->scope = AuthorizationService::sanitizeScope($as_scope);
 
 		foreach ($aa_config as $lx_key => $lx_value) {
 			if (is_int($lx_key)) {
@@ -52,7 +56,7 @@ class PermissionOptionCollection extends ObjectRegistry {
 	 *
 	 * This is a convenient proxy method for `static::load` that returns `$this` instead of the permission instance
 	 *
-	 * @throws \Exception
+	 * @throws Exception
 	 *
 	 * @see load()
 	 */
@@ -83,12 +87,18 @@ class PermissionOptionCollection extends ObjectRegistry {
 			throw new RuntimeException('Missing config key `className`');
 		}
 
-		$la_config = $aa_config;
-		if ( ! isset($la_config['identifier'])) {
-			$la_config['identifier'] = $as_identifier;
+		$ls_identifier = AuthorizationService::sanitizeIdentifier($as_identifier);
+		if ($ls_identifier !== $as_identifier) {
+			throw new RuntimeException(sprintf('The provided identifier should be written camelBacked (`%s`). `%s` given.', $ls_identifier, $as_identifier));
 		}
 
-		return parent::load($as_identifier, $la_config);
+		$la_config = $aa_config;
+		//if ( ! isset($la_config['identifier'])) {
+		//	$la_config['identifier'] = $as_identifier;
+		//}
+		$la_config['identifier'] = $ls_identifier;
+
+		return parent::load($ls_identifier, $la_config);
 	}
 
 
@@ -109,7 +119,7 @@ class PermissionOptionCollection extends ObjectRegistry {
 	 * @param string $as_alias Permission alias.
 	 * @param array $aa_config Config array.
 	 *
-	 * @return \Awyiss\Authorization\PermissionOption\PermissionOptionInterface
+	 * @return PermissionOptionInterface
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */

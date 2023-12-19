@@ -11,20 +11,26 @@ use Awyiss\Model\Entity;
  * AttributesContent Entity
  *
  * @property int $id
- * @property int $content_id
- * @property string $background_color
- * @property array $jason_test
- *
- * @property \Awyiss\Model\Entity\Content $content
+ * @property int $contentId
+ * @property string|null $backgroundColor
+ * @property string|null $alter2
  */
 class AttributesContent extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected $_accessible = [
-        'content_id' => true,
-        'background_color' => true,
-        'jason_test' => true,
-        'content' => true,
-    ];
+	protected array $_accessible = [
+		'contentId' => true,
+		'backgroundColor' => true,
+		'alter2' => true,
+		'content' => true,
+	];
+
+	/**
+	* @inheritDoc
+	*/
+	protected static array $fieldMap = [
+		'content_id' => 'contentId',
+		'background_color' => 'backgroundColor',
+	];
 }

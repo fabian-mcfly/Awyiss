@@ -5,6 +5,7 @@ namespace Awyiss\Model\Entity;
 
 
 use Awyiss\Model\Entity;
+use Cake\I18n\FrozenTime;
 
 
 /**
@@ -14,23 +15,35 @@ use Awyiss\Model\Entity;
  * @property string $title
  * @property bool $active
  * @property bool $deleted
- * @property int|NULL $created_by
- * @property \Cake\I18n\FrozenTime|NULL $created_on
- * @property int|NULL $changed_by
- * @property \Cake\I18n\FrozenTime|NULL $changed_on
- * @property int|NULL $deleted_by
- * @property \Cake\I18n\FrozenTime|NULL $deleted_on
- * @property \Awyiss\Model\Entity\UsergroupPermission[] $usergroup_permissions
- * @property \Awyiss\Model\Entity\User[] $users
+ * @property int|NULL $createdBy
+ * @property FrozenTime|NULL $createdOn
+ * @property int|NULL $changedBy
+ * @property FrozenTime|NULL $changedOn
+ * @property int|NULL $deletedBy
+ * @property FrozenTime|NULL $deletedOn
+ * @property UsergroupPermission[] $usergroupPermissions
+ * @property User[] $users
  */
 class Usergroup extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected $_accessible = [
+	protected array $_accessible = [
 		'title' => TRUE,
 		'active' => TRUE,
-		'usergroup_permissions' => TRUE,
-		'users' => TRUE,
+		'usergroupPermissions' => FALSE,
+		'users' => FALSE,
+	];
+	/**
+	 * @inheritDoc
+	 */
+	protected static array $fieldMap = [
+		'usergroup_permissions' => 'usergroupPermissions',
+		'created_by' => 'createdBy',
+		'created_on' => 'createdOn',
+		'changed_by' => 'changedBy',
+		'changed_on' => 'changedOn',
+		'deleted_by' => 'deletedBy',
+		'deleted_on' => 'deletedOn',
 	];
 }

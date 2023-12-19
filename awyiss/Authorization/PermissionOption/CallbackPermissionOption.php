@@ -28,8 +28,8 @@ class CallbackPermissionOption extends SimplePermissionOption {
 
 
 	/**
-	 * @param array $aa_config
-	 * @param \Awyiss\Authorization\PermissionOption\PermissionOptionCollection $ao_permissionOptionCollection
+	 * @param array                      $aa_config
+	 * @param PermissionOptionCollection $ao_permissionOptionCollection
 	 */
 	public function __construct (array $aa_config, PermissionOptionCollection $ao_permissionOptionCollection) {
 		parent::__construct($aa_config, $ao_permissionOptionCollection);

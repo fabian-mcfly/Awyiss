@@ -4,8 +4,10 @@
 namespace Awyiss\View\Helper;
 
 
-use Cake\Routing\Router;
+use Awyiss\Awyiss;
+use Awyiss\Routing\Router;
 use Cake\Utility\Hash;
+use Cake\Utility\Inflector;
 
 
 /**
@@ -30,9 +32,9 @@ class UrlHelper extends \Cake\View\Helper\UrlHelper {
 	public function build ($ax_url = NULL, array $aa_options = []): string {
 		$lx_url = $ax_url;
 		$la_options = $aa_options + [
-				'fullBase' => FALSE,
-				'escape' => TRUE,
-			];
+			'fullBase' => FALSE,
+			'escape' => TRUE,
+		];
 
 		$la_params = [];
 		if ( ! is_string($lx_url) && ( ! empty($la_options['withParams']) || ! empty($la_options['withoutParams']))) {
@@ -46,13 +48,13 @@ class UrlHelper extends \Cake\View\Helper\UrlHelper {
 		if (is_array($lx_url)) {
 			$lx_url += $la_params;
 
-			if (isset($lx_url['controller']) && ! array_key_exists('_name', $lx_url) && defined('IS_BACKEND') && IS_BACKEND) {
-				$lx_url['_name'] = 'backend';
-
-				if ( ! array_key_exists('action', $lx_url)) {
-					$lx_url['action'] = 'overview';
-				}
+			if (! array_key_exists('_name', $lx_url) && empty($lx_url['plugin'])) {
+				$lx_url['_name'] = Awyiss::getRealm();
 			}
+
+			/*if (Awyiss::getRealm() === Awyiss::REALM_BACKEND && empty($lx_url['action'])) {
+				$lx_url['action'] = 'overview';
+			}*/
 
 			if (empty($lx_url['_name'])) {
 				unset($lx_url['_name']);
@@ -79,7 +81,14 @@ class UrlHelper extends \Cake\View\Helper\UrlHelper {
 		$la_options = $aa_options;
 		$la_params = $aa_params;
 
-		$la_currentParts = $this->_View->getRequest()->getParam('parts');
+		$la_currentParts = [];
+		foreach (($this->_View->getRequest()->getParam('parts') ?: []) AS $lx_key => $lx_value) {
+			if (is_numeric($lx_key)) {
+				continue;
+			}
+
+			$la_currentParts[ Inflector::dasherize($lx_key) ] = $lx_value;
+		}
 
 		if ($la_withParams = ($la_options['withParams'] ?? [])) {
 			if ( ! is_array($la_withParams)) {

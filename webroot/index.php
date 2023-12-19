@@ -1,5 +1,4 @@
 <?php
-
 /**
  * The Front Controller for handling every request
  *
@@ -16,12 +15,9 @@
  * @license       MIT License (https://opensource.org/licenses/mit-license.php)
  */
 
-$ls_dir = dirname(__DIR__);
+putenv('CAKE_DISABLE_GLOBAL_FUNCS=1');
 
-// Check platform requirements
-if (file_exists($ls_file = $ls_dir . '/awyiss/config/requirements.php')) {
-	require $ls_file;
-}
+$ls_dir = dirname(__DIR__);
 
 require $ls_dir . '/awyiss/I18n/functions.php';
 
@@ -38,13 +34,11 @@ if (PHP_SAPI === 'cli-server') {
 
 $lo_loader = require $ls_dir . '/vendor/autoload.php';
 
-
-use Awyiss\Application;
+use Awyiss\Awyiss;
 use Cake\Http\Server;
 
-
 // Bind your application to the server.
-$lo_server = new Server(new Application($lo_loader));
+$lo_server = new Server(new Awyiss($lo_loader));
 
 // Run the request/response through the application and emit the response.
 $lo_server->emit($lo_server->run());

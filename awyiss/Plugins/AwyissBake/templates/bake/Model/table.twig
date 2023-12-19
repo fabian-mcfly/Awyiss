@@ -10,23 +10,30 @@ class {{ name }}Table extends Table{{ fileBuilder.classBuilder.implements ? ' im
 {% set userConstants = fileBuilder.classBuilder.userConstants([]) %}
 {% if userConstants.ATTRIBUTABLE is not defined %}
 	/**
-	* @inheritDoc
-	*/
+	 * @inheritDoc
+	 */
 	public const ATTRIBUTABLE = FALSE;
 {% endif %}
 {% if userConstants.TABLE is not defined %}
 	/**
-	* @inheritDoc
-	*/
+	 * @inheritDoc
+	 */
 	public const TABLE = '{{ table }}';
 {% endif %}
 {% if userConstants %}
 	{{~ Bake.concat('\n\n\n', userConstants) }}
-
-{% else %}
-
 {% endif %}
 {% set userProperties = fileBuilder.classBuilder.userProperties([]) %}
+{% if userProperties._defaultConfig is not defined and table[:11] == 'attributes_'%}
+	/**
+	 * @inheritDoc
+	 */
+	protected array $_defaultConfig = [
+		'authorize' => [
+			'scope' => ['{{ table|substr(11)  }}'],
+		],
+	];
+{% endif %}
 {% if userProperties %}
 	{{~ Bake.concat('\n\n\n', userProperties) }}
 
@@ -37,20 +44,15 @@ class {{ name }}Table extends Table{{ fileBuilder.classBuilder.implements ? ' im
 	 */
 	public function initialize (array $aa_config): void {
 		parent::initialize($aa_config);
-
-{% if table %}
-		$this->setTable(static::TABLE);
-{% endif %}
-
-{%- if displayField %}
+{% if displayField != 'id' %}
 		$this->setDisplayField({{ (displayField is iterable ? Bake.exportArray(displayField) : Bake.exportVar(displayField))|raw }});
-{% endif %}
 
+{% endif %}
 {%- if primaryKey %}
 	{%- if primaryKey is iterable and primaryKey|length > 1 %}
 		$this->setPrimaryKey({{ Bake.exportArray(primaryKey)|raw }});
 		{{- "\n" }}
-	{%- else %}
+	{%- elseif primaryKey|as_array|first != 'id' %}
 		$this->setPrimaryKey('{{ primaryKey|as_array|first }}');
 		{{- "\n" }}
 	{%- endif %}
@@ -98,6 +100,8 @@ class {{ name }}Table extends Table{{ fileBuilder.classBuilder.implements ? ' im
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function validationDefault (Validator $ao_validator): Validator {
+		parent::validationDefault($ao_validator);
+
 {% for field, rules in validation %}
 {% set validationMethods = Bake.getValidationMethods(field, rules) %}
 {% if validationMethods %}
@@ -135,7 +139,7 @@ class {{ name }}Table extends Table{{ fileBuilder.classBuilder.implements ? ' im
 {% for optionName, optionValue in rule.options %}
 	{%~ set options = (loop.first ? '[' : options) ~ "'#{optionName}' => " ~ Bake.exportVar(optionValue) ~ (loop.last ? ']' : ', ') %}
 {% endfor %}
-		$ao_rules->add($ao_rules->{{ rule.name }}({{ fields|raw }}{{ (rule.extra|default ? ", '#{rule.extra}'" : '')|raw }}{{ (options ? ', ' ~ options : '')|raw }}), ['errorField' => '{{ field }}']);
+		$ao_rules->add($ao_rules->{{ rule.name }}({{ fields|raw }}{{ (rule.extra|default ? ", '#{rule.extra}'" : '')|raw }}{{ (options ? ', ' ~ options : '')|raw }}), ['errorField' => '{{ field|variable }}']);
 {% endfor %}
 
 		return $ao_rules;

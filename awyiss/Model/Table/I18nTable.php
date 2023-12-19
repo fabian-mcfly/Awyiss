@@ -25,20 +25,23 @@ class I18nTable extends Table {
 	 * @inheritDoc
 	 */
 	protected array $_defaultConfig = [
-		'authorization' => [
+		'audit' => [
+			'enabled' => FALSE,
+		],
+		'authorize' => [
 			'enabled' => FALSE,
 		],
 	];
 
 
-	/**
+	/*
 	 * @inheritDoc
-	 */
+	 *
 	public function initialize (array $aa_config): void {
+		$this->setTable(static::TABLE);
+
 		parent::initialize($aa_config);
 
-		$this->setTable(static::TABLE);
-		$this->setDisplayField('id');
 		$this->setPrimaryKey('id');
-	}
+	}*/
 }

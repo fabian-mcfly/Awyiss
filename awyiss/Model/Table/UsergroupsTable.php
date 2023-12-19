@@ -4,16 +4,28 @@
 namespace Awyiss\Model\Table;
 
 
+use ArrayObject;
+use Awyiss\Model\Entity\User;
 use Awyiss\Model\Entity\Usergroup;
+use Awyiss\Model\Entity\UsersExternal;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
+use Cake\Datasource\EntityInterface;
+use Cake\Event\EventInterface;
+use Cake\Http\Session;
+use Cake\I18n\FrozenTime;
+use Cake\ORM\Association\HasMany;
+use Cake\ORM\Query\SelectQuery;
+use Cake\ORM\RulesChecker as BaseRulesChecker;
+use Awyiss\Routing\Router;
 use Cake\Validation\Validator;
 
 
 /**
  * Usergroups Model
  *
- * @property \Awyiss\Model\Table\UsergroupPermissionsTable&\Cake\ORM\Association\HasMany $UsergroupPermissions
+ * @property UsergroupPermissionsTable&HasMany $UsergroupPermissions
+ * @property \Awyiss\ORM\Association\BelongsToMany $Users
  *
  * @method Usergroup newDefaultEntity(array $aa_additionalData = [])
  */
@@ -32,10 +44,11 @@ class UsergroupsTable extends Table {
 	public function initialize (array $aa_config): void {
 		parent::initialize($aa_config);
 
-		$this->setTable(static::TABLE);
-		$this->setPrimaryKey('id');
-
-		$this->hasMany('UsergroupPermissions')->setSaveStrategy('replace')->setDependent(TRUE);
+		$this->hasMany('UsergroupPermissions', [
+			'cascadeCallbacks' => TRUE,
+			'dependent' => TRUE,
+			'saveStrategy' => 'replace',
+		]);
 
 		$this->belongsToMany('Users');
 	}
@@ -44,21 +57,43 @@ class UsergroupsTable extends Table {
 	/**
 	 * Returns the default validator object.
 	 *
-	 * @param \Cake\Validation\Validator $ao_validator The validator that can be modified to
+	 * @param Validator $ao_validator The validator that can be modified to
 	 * add some rules to it.
 	 *
-	 * @return \Cake\Validation\Validator
-	 *
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 * @return Validator
 	 */
 	public function validationDefault (Validator $ao_validator): Validator {
-		$ao_validator->integer('id')->allowEmptyString('id', NULL, 'create');
+		parent::validationDefault($ao_validator);
 
-		$ao_validator->scalar('title')->maxLength('title', 255)->requirePresence('title', 'create')->notEmptyString('title');
 
-		$ao_validator->boolean('active')->notEmptyString('active');
+		$ao_validator->requirePresence([
+			'title',
+		], 'create');
 
-		$ao_validator->boolean('deleted')->notEmptyString('deleted');
+
+		$ao_validator->add('id', [
+			'isInteger' => ['rule' => 'isInteger'],
+			'maxLength' => ['rule' => ['maxLength', 11]],
+		]);
+
+
+		$ao_validator->notEmptyString('title');
+		$ao_validator->add('title', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'maxLength' => ['rule' => ['maxLength', 100]],
+			'notBlank' => ['rule' => 'notBlank'],
+		]);
+
+
+		$ao_validator->add('active', [
+			'boolean' => ['rule' => 'boolean'],
+		]);
+
+
+		$ao_validator->add('deleted', [
+			'boolean' => ['rule' => 'boolean'],
+		]);
+
 
 		return $ao_validator;
 	}
@@ -67,15 +102,71 @@ class UsergroupsTable extends Table {
 	/**
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 *
-	 * @param \Awyiss\ORM\RulesChecker|\Cake\ORM\RulesChecker $ao_rules The rules object to be modified.
+	 * @param RulesChecker|BaseRulesChecker $ao_rules The rules object to be modified.
 	 *
-	 * @return \Awyiss\ORM\RulesChecker
+	 * @return RulesChecker
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildRules (RulesChecker|\Cake\ORM\RulesChecker $ao_rules): RulesChecker {
-		$ao_rules->add($ao_rules->isUnique(['title']), ['errorField' => 'title']);
+	public function buildRules (RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
+		$ao_rules->add($ao_rules->isUnique(['title']), 'titleUnique', [
+			'errorField' => 'title',
+			'message' => __d($this->getI18nDomain(), 'error_title_unique'),
+		]);
+
 
 		return $ao_rules;
+	}
+
+
+	/**
+	 * Set the `changedOn`-field for all associated users.
+	 * This will allow the SessionAuthenticator to reset the usergroups for every logged-in user on the next page request
+	 *
+	 * @param EventInterface $ao_event
+	 * @param EntityInterface $ao_entity
+	 * @param ArrayObject $ao_options
+	 *
+	 * @return void
+	 * @throws \Exception
+	 */
+	public function afterSave (EventInterface $ao_event, EntityInterface $ao_entity, ArrayObject $ao_options) {
+		$lo_query = $this->Users->find()->applyOptions(['authorize' => ['skip' => TRUE]])->matching('UsergroupsUsers', function(SelectQuery $ao_query) use ($ao_entity) {
+			return $ao_query->where(['UsergroupsUsers.usergroup_id' => $ao_entity->id])->applyOptions(['authorize' => ['skip' => TRUE]]);
+		});
+
+		$lo_users = $lo_query->all();
+
+		if ( ! $lo_users->count()) {
+			//No records found? The item is alone in its scope.
+			return;
+		}
+
+		$lo_currentUser = NULL;
+		$lo_request = Router::getRequest();
+		if ($lo_request) {
+			/** @var Session $lo_session */
+			$lo_session = $lo_request->getAttribute('session');
+			/** @var User|UsersExternal $lo_currentUser */
+			$lo_currentUser = $lo_session->read('Auth');
+		}
+
+		$lo_now = FrozenTime::now();
+		//Decrease the system order of all records
+		$lo_users->each(function(User $ao_user) use ($lo_now, $lo_currentUser) {
+			$ao_user->changedOn = $lo_now;
+
+			if ($ao_user->id === $lo_currentUser->id) {
+				$lo_currentUser->usergroups = NULL;
+			}
+		});
+
+		//Save all found records, but skip the authorization check, the audit and the system order behavior on those to avoid recursion.
+		$this->Users->saveMany($lo_users, [
+			'audit' => ['skip' => TRUE],
+			'authorize' => ['skip' => TRUE],
+			'checkRules' => FALSE,
+			'systemOrder' => ['skip' => TRUE],
+		]);
 	}
 }

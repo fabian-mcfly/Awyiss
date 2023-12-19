@@ -4,11 +4,15 @@
 namespace Awyiss\Event\Backend;
 
 
+use Awyiss\Awyiss;
 use Awyiss\Event\EventListenerTrait;
+use Awyiss\Middleware\LocaleMiddleware;
+use Awyiss\Model\Entity\ContentTemplate;
 use Cake\Datasource\EntityInterface;
+use Cake\Datasource\FactoryLocator;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
-use Cake\Utility\Inflector;
+use Queue\Model\Table\QueuedJobsTable;
 
 
 /**
@@ -18,6 +22,9 @@ class ConfigurationListener implements EventListenerInterface {
 	use EventListenerTrait;
 
 
+	/**
+	 * @var string
+	 */
 	protected static string $scope;
 
 
@@ -37,20 +44,32 @@ class ConfigurationListener implements EventListenerInterface {
 	 * We are too lazy to delete only those of the current language.
 	 * It's easier and doesn't affect performance that much to recreate the file once.
 	 *
-	 * @param \Cake\Event\Event $ao_event
-	 * @param \Awyiss\Model\Entity\ContentTemplate $ao_entity
+	 * @param Event           $ao_event
+	 * @param ContentTemplate $ao_entity
 	 *
 	 * @noinspection PhpUnused
-	 *
-	 * @todo check if we want to have this inside a queue task, so it can be run with www-user privileges
 	 * @noinspection PhpUnusedParameterInspection
+	 *
+	 * @throws \Exception
 	 */
 	public function removeCustomConfigFile (Event $ao_event, EntityInterface $ao_entity): void {
-		$ls_fileName = Inflector::underscore(CUSTOM_NAMESPACE);
-		$ls_fileName .= '\[??\]\[??\].*';
-
-		foreach (glob(ENV_CUSTOM_CONFIG . $ls_fileName) as $ls_filePath) {
-			unlink($ls_filePath);
+		/** @var QueuedJobsTable $lo_queue */
+		$lo_queue = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
+		if ($lo_queue->isQueued('create_custom_configuration')) {
+			return;
 		}
+
+		$la_languageShortcodes = [
+			LocaleMiddleware::getLanguage()->shortcode,
+			LocaleMiddleware::getLanguage(Awyiss::REALM_BACKEND)->shortcode,
+		];
+
+		$lo_queue->createJob('CreateCustomConfiguration', [
+			'languageShortcodes' => $la_languageShortcodes
+		], [
+			'group' => 'general',
+			'priority' => 1,
+			'reference' => 'create_custom_configuration',
+		]);
 	}
 }

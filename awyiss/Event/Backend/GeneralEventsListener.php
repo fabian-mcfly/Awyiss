@@ -7,14 +7,14 @@ namespace Awyiss\Event\Backend;
 use Authentication\Authenticator\AuthenticatorInterface;
 use Authentication\IdentityInterface;
 use Awyiss\Authorization\AuthorizationServiceInterface;
-use Awyiss\Authorization\Policy\AnonymousPolicy;
-//use Awyiss\Controller\Component\AuthorizationComponent;
+use Awyiss\Authorization\Policy\GenericPagePolicy;
+use Awyiss\Awyiss;
 use Awyiss\Event\EventListenerTrait;
+use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Table;
-//use Cake\Datasource\EntityInterface;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
-use Cake\Routing\Router;
+use Awyiss\Routing\Router;
 use Cake\Utility\Inflector;
 
 
@@ -25,14 +25,26 @@ class GeneralEventsListener implements EventListenerInterface {
 	use EventListenerTrait;
 
 
+	/**
+	 * @var string
+	 */
 	protected static string $scope;
 
 
+	/**
+	 * @var array|array[]
+	 */
 	protected array $initializedModels = [
 		'authorizationService' => [],
 		'identity' => [],
 	];
+	/**
+	 * @var AuthorizationServiceInterface
+	 */
 	protected AuthorizationServiceInterface $authorizationService;
+	/**
+	 * @var IdentityInterface
+	 */
 	protected IdentityInterface $identity;
 
 
@@ -48,25 +60,15 @@ class GeneralEventsListener implements EventListenerInterface {
 			'AuthorizationMiddleware.afterProcess' => 'authorizationMiddlewareAfterProcess',
 			'Model.initialize' => 'modelInitialize',
 			'Model.requestPolicyClass' => 'requestPolicyClass',
-			#'View.beforeRender' => 'test',
 		];
 	}
-
-
-	/*public function test ($ao_event, $as_filename) {
-		if ($as_filename === '/var/www/cms/awyiss/templates/Backend/Configuration/overview.twig') {
-			return;
-		}
-
-		dd(debug_backtrace(2), $as_filename);
-	}*/
 
 
 	/**
 	 * After the authorization middleware was processed, set the AuthorizationService in every model's AuthorizationBehavior
 	 *
-	 * @param \Cake\Event\Event $ao_event
-	 * @param \Awyiss\Authorization\AuthorizationServiceInterface $ao_authorizationService
+	 * @param Event                         $ao_event
+	 * @param AuthorizationServiceInterface $ao_authorizationService
 	 *
 	 * @noinspection PhpUnused
 	 * @noinspection PhpUnusedParameterInspection
@@ -76,9 +78,9 @@ class GeneralEventsListener implements EventListenerInterface {
 
 		/** @var Table $lo_model */
 		foreach ($this->initializedModels['authorizationService'] as $lo_model) {
-			if ($lo_model->hasBehavior('Authorization')) {
+			if ($lo_model->hasBehavior('Authorize')) {
 				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-				$lo_model->getBehavior('Authorization')->setAuthorizationService($this->authorizationService);
+				$lo_model->getBehavior('Authorize')->setAuthorizationService($this->authorizationService);
 			}
 		}
 	}
@@ -87,9 +89,9 @@ class GeneralEventsListener implements EventListenerInterface {
 	/**
 	 * After authentication, set the Identity in every model's AuditBehavior
 	 *
-	 * @param \Cake\Event\Event $ao_event
-	 * @param \Authentication\Authenticator\AuthenticatorInterface $ao_authenticator
-	 * @param \Authentication\IdentityInterface $ao_identity
+	 * @param Event                  $ao_event
+	 * @param AuthenticatorInterface $ao_authenticator
+	 * @param IdentityInterface      $ao_identity
 	 *
 	 * @noinspection PhpUnused
 	 * @noinspection PhpUnusedParameterInspection
@@ -112,18 +114,19 @@ class GeneralEventsListener implements EventListenerInterface {
 	 *
 	 * For example, the `FormAuthenticator::class` requires one to work.
 	 *
-	 * @param \Cake\Event\Event $ao_event
-	 * @param string $as_languageShortcode
+	 * @param Event $ao_event
 	 *
 	 * @return void
 	 *
+	 * @throws \Exception
 	 * @noinspection PhpUnused
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function authenticationRequestLoginUrl (Event $ao_event, string $as_languageShortcode = ''): void {
+	public function authenticationRequestLoginUrl (Event $ao_event): void {
+		/** @noinspection PhpUnhandledExceptionInspection */
 		$ao_event->setResult(Router::url([
-			'_name' => 'backend',
-			'lang' => $as_languageShortcode,
+			'_name' => Awyiss::REALM_BACKEND,
+			'lang' => LocaleMiddleware::getLanguage()->shortcode,
 			'controller' => 'Users',
 			'action' => 'login',
 		]));
@@ -134,12 +137,12 @@ class GeneralEventsListener implements EventListenerInterface {
 	 * For every model that is loaded, set
 	 *
 	 * - the AuthorizationService in every model's AuthorizationBehavior, if the Identity is AuthorizationService.
-	 * If not, save the model to be handled in authorizationMiddlewareAfterProcess
+	 * If not, save the model to be handled in `authorizationMiddlewareAfterProcess`.
 	 *
 	 * - the Identity in the AuditBehavior, if the Identity is known
-	 * If not, save the model to be handled in authenticationAfterAuthenticate.
+	 * If not, save the model to be handled in `authenticationAfterAuthenticate`.
 	 *
-	 * @param \Cake\Event\Event $ao_event
+	 * @param Event $ao_event
 	 *
 	 * @return void
 	 *
@@ -154,9 +157,9 @@ class GeneralEventsListener implements EventListenerInterface {
 			if ( ! isset($this->authorizationService)) {
 				$this->initializedModels['authorizationService'][] = $lo_model;
 			}
-			elseif ($lo_model->hasBehavior('Authorization')) {
+			elseif ($lo_model->hasBehavior('Authorize')) {
 				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-				$lo_model->getBehavior('Authorization')->setAuthorizationService($this->authorizationService);
+				$lo_model->getBehavior('Authorize')->setAuthorizationService($this->authorizationService);
 			}
 
 			if ( ! isset($this->identity)) {
@@ -174,41 +177,34 @@ class GeneralEventsListener implements EventListenerInterface {
 	 * The event `Authorization.requestAuthorizationService` asks for an AuthorizationService instance.
 	 * Return it, in case it is set.
 	 *
-	 * @param \Cake\Event\Event $ao_event
-	 *
-	 * @return NULL|\Awyiss\Authorization\AuthorizationServiceInterface
+	 * @param Event $ao_event
 	 *
 	 * @noinspection PhpUnused
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function requestAuthorizationService (Event $ao_event): ?AuthorizationServiceInterface {
+	public function requestAuthorizationService (Event $ao_event): void {
 		if (isset($this->authorizationService)) {
-			return $this->authorizationService;
+			$ao_event->setResult($this->authorizationService);
 		}
-
-		return NULL;
 	}
 
 
 
 	/**
 	 * The events `Authorization.requestPolicyClass` and `Model.requestPolicyClass` ask for a Policy.
-	 * Return an instance of AnonymousPolicy, in case the event has a data-field 'scope' and it holds
+	 * Return an instance of GenericPagePolicy, in case the event has a data-field 'scope' and it holds
 	 * the name of a page role.
 	 *
-	 * @param \Cake\Event\Event $ao_event
-	 *
-	 * @return NULL|\Awyiss\Authorization\Policy\AnonymousPolicy
+	 * @param Event $ao_event
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function requestPolicyClass (Event $ao_event): ?AnonymousPolicy {
-		$ls_singular = Inflector::singularize($ao_event->getData('scope'));
+	public function requestPolicyClass (Event $ao_event): void {
+		$ls_singular = Inflector::singularize(Inflector::underscore($ao_event->getData('scope')));
 		$ls_constant = 'PAGEROLE_' . strtoupper($ls_singular);
 		if (defined($ls_constant)) {
-			return new AnonymousPolicy($ao_event->getData('scope'));
+			$lo_policy = new GenericPagePolicy($ao_event->getData('scope'));
+			$ao_event->setResult($lo_policy);
 		}
-
-		return NULL;
 	}
 }

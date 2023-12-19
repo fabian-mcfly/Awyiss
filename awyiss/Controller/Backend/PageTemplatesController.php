@@ -6,23 +6,26 @@ namespace Awyiss\Controller\Backend;
 
 use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Model\Entity\PageTemplate;
+use Awyiss\Model\Table\PageTemplatesTable;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
-use Cake\Routing\Router;
+use Awyiss\Routing\Router;
 
 
 /**
  * PageTemplates Controller
  *
- * @property \Awyiss\Model\Table\PageTemplatesTable $PageTemplates
+ * @property PageTemplatesTable $PageTemplates
  */
 class PageTemplatesController extends Controller {
 	/**
 	 * @inheritDoc
 	 */
-	public array $categorize = [
+	protected array $categorize = [
 		'associationName' => 'PageRoles',
 		'enabled' => TRUE,
+		'identifier' => 'pageRole',
+		'uriParam' => 'page-role-id',
 	];
 
 
@@ -34,12 +37,14 @@ class PageTemplatesController extends Controller {
 	public function overview (): void {
 		$this->Authorization->ensure('read');
 
-		//$lo_pageTemplates = $this->Categories->filterQuery($this->PageTemplates->find('withAttributes'));
-		$lo_pageTemplates = $this->PageTemplates->find('withAttributes')->where($this->getOverviewWhere());
-		$lo_pageTemplates = $this->Categories->groupQuery($lo_pageTemplates);
+		$lo_pageTemplateQuery = $this->PageTemplates->find('withUsages')->where($this->getOverviewWhere())->contain(['ContentAreas']);
+		$this->Categories->filterQuery($lo_pageTemplateQuery);
+		$this->Categories->groupResult($lo_pageTemplateQuery);
+		$lo_pageTemplates = $lo_pageTemplateQuery->all();
 
 		$this->set([
 			'ao_pageTemplates' => $lo_pageTemplates,
+			'aa_pageTemplates' => $lo_pageTemplates->toArray(),
 		]);
 	}
 
@@ -55,6 +60,7 @@ class PageTemplatesController extends Controller {
 		$this->Authorization->ensure('create');
 
 		$lo_pageTemplate = $this->PageTemplates->newDefaultEntity();
+
 		if ($this->request->is('post')) {
 			$this->save($lo_pageTemplate);
 		}
@@ -62,8 +68,11 @@ class PageTemplatesController extends Controller {
 			$this->Categories->ensurePossibleCategorySelection($lo_pageTemplate);
 		}
 
+		$la_contentAreas = $this->PageTemplates->ContentAreas->find()->all()->toArray();
+
 		$this->set([
 			'ao_pageTemplate' => $lo_pageTemplate,
+			'aa_contentAreas' => $la_contentAreas,
 		]);
 	}
 
@@ -71,7 +80,7 @@ class PageTemplatesController extends Controller {
 	/**
 	 * Edit method
 	 *
-	 * @return void|?\Cake\Http\Response
+	 * @return void|?Response
 	 *
 	 * @throws \Exception
 	 */
@@ -79,9 +88,9 @@ class PageTemplatesController extends Controller {
 		$this->Authorization->ensure('update');
 
 		/** @var PageTemplate $lo_pageTemplate */
-		$lo_pageTemplate = $this->PageTemplates->findById((int) $this->request->getParam('id'))->first();
+		$lo_pageTemplate = $this->PageTemplates->findById((int) $this->request->getParam('id'))->contain(['ContentAreas'])->first();
 		if ( ! $lo_pageTemplate) {
-			$this->Flash->error(__('::record_not_found'));
+			$this->Flash->error(__('record_not_found'));
 
 			return $this->redirect(['action' => 'overview']);
 		}
@@ -93,8 +102,11 @@ class PageTemplatesController extends Controller {
 			$this->Categories->ensurePossibleCategorySelection($lo_pageTemplate);
 		}
 
+		$la_contentAreas = $this->PageTemplates->ContentAreas->find()->all()->toArray();
+
 		$this->set([
 			'ao_pageTemplate' => $lo_pageTemplate,
+			'aa_contentAreas' => $la_contentAreas,
 		]);
 	}
 
@@ -102,7 +114,7 @@ class PageTemplatesController extends Controller {
 	/**
 	 * Delete method
 	 *
-	 * @return \Cake\Http\Response
+	 * @return Response
 	 *
 	 * @throws \Exception
 	 */
@@ -114,15 +126,15 @@ class PageTemplatesController extends Controller {
 		/** @var PageTemplate $lo_pageTemplate */
 		$lo_pageTemplate = $this->PageTemplates->findById((int) $this->request->getParam('id'))->first();
 		if ( ! $lo_pageTemplate) {
-			$this->Flash->error(__('::record_not_found'));
+			$this->Flash->error(__('record_not_found'));
 			return $this->redirect(['action' => 'overview']);
 		}
 
 		if ($this->PageTemplates->delete($lo_pageTemplate)) {
-			$this->Flash->success(__('::delete_succeeded'));
+			$this->Flash->success(__('delete_succeeded'));
 		}
 		else {
-			$this->Flash->error(__('::delete_failed'));
+			$this->Flash->error(__('delete_failed'));
 		}
 
 		return $this->redirect(['action' => 'overview']);
@@ -136,26 +148,52 @@ class PageTemplatesController extends Controller {
 	 * @return void
 	 */
 	protected function save (PageTemplate $ao_pageTemplate, string $as_method = 'add'): void {
-		$this->PageTemplates->patchEntity($ao_pageTemplate, $this->request->getData());
+		if ($this->PageTemplates->hasAttributes()) {
+			$ao_pageTemplate->setAccess('attributes', TRUE);
+		}
+
+		$la_requestData = $this->request->getData();
+		if ( ! empty($la_requestData['content_areas'])) {
+			$la_requestData['content_areas'] = array_values(array_filter($la_requestData['content_areas'], function(array $aa_element) {
+				return ! empty($aa_element['id']);
+			}));
+
+			array_walk($la_requestData['content_areas'], function(array &$aa_contentArea, int $ai_index) {
+				$aa_contentArea['_joinData']['system_order'] = $ai_index + 1;
+			});
+		}
+
+		$this->PageTemplates->patchEntity($ao_pageTemplate, $la_requestData, [
+			'associated' => [
+				'ContentAreas' => [
+					'fields' => ['_joinData'],
+					'associated' => [
+						'_joinData',
+					],
+				],
+			],
+		]);
 
 		$this->Categories->ensurePossibleCategorySelection($ao_pageTemplate);
 
 		if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
 			if ($this->PageTemplates->save($ao_pageTemplate)) {
-				$this->Flash->success(__('::' . $as_method . '_succeeded'));
+				$this->Flash->success(__($as_method . '_succeeded'));
 
 				if ($this->request->getData('submit') == 'submit_close') {
-					throw new RedirectException(Router::url(['action' => 'overview'], TRUE), 302);
+					throw new RedirectException(Router::url(['action' => 'overview', 'pageRoleId' => $ao_pageTemplate->pageRoleId], TRUE), 302);
 				}
 
 				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $ao_pageTemplate->id], TRUE), 302);
 			}
 
-			$this->Flash->error(__('::' . $as_method . '_failed'));
-			$this->Flash->error(implode('<br>' . PHP_EOL, $ao_pageTemplate->getError('_general')));
+			$this->Flash->error(__($as_method . '_failed'));
+			foreach ($ao_pageTemplate->getError('_general') as $ls_error) {
+				$this->Flash->error($ls_error);
+			}
 		}
 		else {
-			$ao_pageTemplate->system_order = NULL;
+			$ao_pageTemplate->systemOrder = NULL;
 		}
 	}
 }

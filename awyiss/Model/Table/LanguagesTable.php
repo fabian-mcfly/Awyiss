@@ -4,9 +4,12 @@
 namespace Awyiss\Model\Table;
 
 
+use Awyiss\Awyiss;
 use Awyiss\Model\Entity\Language;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
+use Cake\ORM\Association\HasMany;
+use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Validation\Validator;
 use DateTimeZone;
 use ResourceBundle;
@@ -15,7 +18,7 @@ use ResourceBundle;
 /**
  * Languages Model
  *
- * @property \Awyiss\Model\Table\ConfigurationTable&\Cake\ORM\Association\HasMany $Configuration
+ * @property ConfigurationTable&HasMany $Configuration
  *
  * @method Language newDefaultEntity(array $aa_additionalData = [])
  */
@@ -23,15 +26,16 @@ class LanguagesTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
+	public const TABLE = 'languages';
+	/**
+	 * @inheritDoc
+	 */
 	protected array $_defaultConfig = [
 		'systemOrder' => [
-			'relatedColumns' => ['type'],
+			'relatedColumns' => ['realm'],
 		],
-		'translate' => [
-			'fields' => ['title'],
-		],
+		'translate' => FALSE,
 	];
-	public const TABLE = 'languages';
 
 
 	/**
@@ -40,49 +44,110 @@ class LanguagesTable extends Table {
 	public function initialize (array $aa_config): void {
 		parent::initialize($aa_config);
 
-		$this->setTable(static::TABLE);
-		$this->setPrimaryKey('id');
+		$this->hasMany('Configuration', [
+			'bindingKey' => [
+				'realm',
+				'shortcode'
+			],
+			'cascadeCallbacks' => TRUE,
+			'dependent' => TRUE,
+			'foreignKey' => [
+				'realm',
+				'languageShortcode'
+			],
+		]);
 
-		$this->hasMany('Configuration')
-			->setBindingKey('shortcode')
-			->setForeignKey('language_shortcode')
-			->setSaveStrategy('replace')
-			->setDependent(FALSE);
+		$this->hasMany('MenuEntries', [
+			'bindingKey' => 'shortcode',
+			'cascadeCallbacks' => TRUE,
+			'dependent' => TRUE,
+			'foreignKey' => 'language_shortcode',
+		]);
 	}
 
 
 	/**
 	 * Returns the default validator object.
 	 *
-	 * @param \Cake\Validation\Validator $ao_validator The validator that can be modified to
+	 * @param Validator $ao_validator The validator that can be modified to
 	 * add some rules to it.
 	 *
-	 * @return \Cake\Validation\Validator
-	 *
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 * @return Validator
 	 */
 	public function validationDefault (Validator $ao_validator): Validator {
-		$ao_validator->integer('id')->allowEmptyString('id', NULL, 'create');
+		parent::validationDefault($ao_validator);
 
-		$ao_validator->ascii('shortcode')
-			->minLength('shortcode', 2, __('validation::not_exact_length'))
-			->maxLength('shortcode', 2, __('validation::not_exact_length'))
-			->requirePresence('shortcode')
-			->notEmptyString('shortcode');
 
-		$ao_validator->scalar('title')->maxLength('title', 32)->requirePresence('title')->notEmptyString('title');
+		$ao_validator->requirePresence([
+			'shortcode',
+			'title',
+			'timezone',
+			'locale',
+		], 'create');
 
-		$ao_validator->scalar('timezone')->maxLength('timezone', 32)->requirePresence('timezone')->notEmptyString('timezone');
 
-		$ao_validator->scalar('locale')->maxLength('locale', 5)->requirePresence('locale')->notEmptyString('locale');
+		$ao_validator->add('id', [
+			'isInteger' => ['rule' => 'isInteger'],
+			'maxLength' => ['rule' => ['maxLength', 11]],
+		]);
 
-		$ao_validator->scalar('type')->notEmptyString('type');
 
-		$ao_validator->integer('system_order')->requirePresence('system_order')->notEmptyString('system_order');
+		$ao_validator->notEmptyString('shortcode');
+		$ao_validator->add('shortcode', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'ascii' => ['rule' => 'ascii'],
+			'exactLength' => [
+				'rule' => function($as_shortcode) {
+					return strlen($as_shortcode) == 2;
+				},
+			],
+		]);
 
-		$ao_validator->boolean('active')->notEmptyString('active');
 
-		$ao_validator->boolean('deleted')->notEmptyString('deleted');
+		$ao_validator->notEmptyString('title');
+		$ao_validator->add('title', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'maxLength' => ['rule' => ['maxLength', 50]],
+			'notBlank' => ['rule' => 'notBlank'],
+		]);
+
+
+		$ao_validator->notEmptyString('timezone');
+		$ao_validator->add('timezone', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'maxLength' => ['rule' => ['maxLength', 50]],
+			'notBlank' => ['rule' => 'notBlank'],
+		]);
+
+
+		$ao_validator->notEmptyString('locale');
+		$ao_validator->add('locale', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'maxLength' => ['rule' => ['maxLength', 5]],
+			'notBlank' => ['rule' => 'notBlank'],
+		]);
+
+
+		$ao_validator->add('realm', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'inList' => ['rule' => ['inList', Awyiss::getRealms()]],
+			'maxLength' => ['rule' => ['maxLength', 20]],
+		]);
+
+
+		$ao_validator->add('systemOrder', [
+			'isInteger' => ['rule' => 'isInteger'],
+		]);
+
+
+		$ao_validator->add('active', [
+			'boolean' => ['rule' => 'boolean'],
+		]);
+
+
+		$ao_validator->add('deleted', [
+			'boolean' => ['rule' => 'boolean'],
+		]);
 
 		return $ao_validator;
 	}
@@ -91,28 +156,42 @@ class LanguagesTable extends Table {
 	/**
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 *
-	 * @param \Awyiss\ORM\RulesChecker|\Cake\ORM\RulesChecker $ao_rules The rules object to be modified.
+	 * @param RulesChecker|BaseRulesChecker $ao_rules The rules object to be modified.
 	 *
-	 * @return \Awyiss\ORM\RulesChecker
+	 * @return RulesChecker
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildRules (RulesChecker|\Cake\ORM\RulesChecker $ao_rules): RulesChecker {
-		$ao_rules->add($ao_rules->isUnique(['shortcode', 'type'], __('validation::shortcode_not_unique')));
+	public function buildRules (RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
+		$ao_rules->add($ao_rules->isUnique(['shortcode', 'realm']), [
+			'errorField' => 'shortcode',
+			'message' => __dfx($this->getI18nDomain(), 'validation', 'shortcode', 'error_unique'),
+		]);
 
-		$ao_rules->add(function(Language $ao_entity) {
+
+		$ao_rules->add(function(Language $ao_entity): bool {
+			return in_array($ao_entity->realm, Awyiss::getRealms());
+		}, 'validRealm', [
+			'errorField' => 'realm',
+			'message' => __d($this->getI18nDomain(), 'error_valid_realm'),
+		]);
+
+
+		$ao_rules->add(function(Language $ao_entity): bool {
 			return in_array($ao_entity->timezone, DateTimeZone::listIdentifiers());
-		}, [
+		}, 'validTimezone', [
 			'errorField' => 'timezone',
-			'message' => __('::unknown_timezone'),
+			'message' => __d($this->getI18nDomain(), 'error_valid_timezone'),
 		]);
 
-		$ao_rules->add(function(Language $ao_entity) {
+
+		$ao_rules->add(function(Language $ao_entity): bool {
 			return in_array($ao_entity->locale, ResourceBundle::getLocales(''));
-		}, [
+		}, 'validLocale', [
 			'errorField' => 'locale',
-			'message' => __('::unknown_locale'),
+			'message' => __d($this->getI18nDomain(), 'error_valid_locale'),
 		]);
+
 
 		return $ao_rules;
 	}

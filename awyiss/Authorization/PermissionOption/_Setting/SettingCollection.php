@@ -39,7 +39,7 @@ class SettingCollection extends ObjectRegistry {
 	 * @param string $as_alias Setting alias.
 	 * @param array $aa_config Config array.
 	 *
-	 * @return \Awyiss\Authorization\PermissionOption\Setting\SettingInterface
+	 * @return SettingInterface
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */

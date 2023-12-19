@@ -6,15 +6,18 @@ namespace Awyiss\Model\Table;
 
 use Awyiss\Model\Entity\UsergroupPermission;
 use Awyiss\Model\Table;
-use Cake\Database\Schema\TableSchemaInterface;
 use Awyiss\ORM\RulesChecker;
+use Cake\Database\Schema\TableSchemaInterface;
+use Cake\Database\Type\EnumType;
+use Cake\ORM\Association\BelongsTo;
+use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Validation\Validator;
 
 
 /**
  * UsergroupPermissions Model
  *
- * @property \Awyiss\Model\Table\UsergroupsTable&\Cake\ORM\Association\BelongsTo $Usergroups
+ * @property UsergroupsTable&BelongsTo $Usergroups
  *
  * @method UsergroupPermission newDefaultEntity(array $aa_additionalData = [])
  */
@@ -31,7 +34,7 @@ class UsergroupPermissionsTable extends Table {
 	 * @inheritDoc
 	 */
 	protected array $_defaultConfig = [
-		'authorization' => [
+		'authorize' => [
 			'identifiers' => [
 				//We use the usergroups-scope, creating a permission will occur when creating or updating a usergroup
 				'Entity.create' => [['create', 'update']],
@@ -51,10 +54,6 @@ class UsergroupPermissionsTable extends Table {
 	public function initialize (array $aa_config): void {
 		parent::initialize($aa_config);
 
-		$this->setTable(static::TABLE);
-		$this->setDisplayField('id');
-		$this->setPrimaryKey('id');
-
 		$this->belongsTo('Usergroups', [
 			'joinType' => 'INNER',
 		]);
@@ -64,23 +63,65 @@ class UsergroupPermissionsTable extends Table {
 	/**
 	 * Returns the default validator object.
 	 *
-	 * @param \Cake\Validation\Validator $ao_validator The validator that can be modified to
+	 * @param Validator $ao_validator The validator that can be modified to
 	 * add some rules to it.
 	 *
-	 * @return \Cake\Validation\Validator
-	 *
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 * @return Validator
 	 */
 	public function validationDefault (Validator $ao_validator): Validator {
-		$ao_validator->integer('id')->allowEmptyString('id', NULL, 'create');
+		parent::validationDefault($ao_validator);
 
-		$ao_validator->scalar('scope')->maxLength('scope', 50)->requirePresence('scope', 'create')->notEmptyString('scope');
 
-		$ao_validator->scalar('identifier')->maxLength('identifier', 50)->requirePresence('identifier', 'create')->notEmptyString('identifier');
+		$ao_validator->requirePresence([
+			'scope',
+			'identifier',
+		], 'create');
 
-		$ao_validator->integer('access');
 
-		$ao_validator->isArray('settings')->allowEmptyArray('settings');
+		$ao_validator->add('id', [
+			'isInteger' => ['rule' => 'isInteger'],
+			'maxLength' => ['rule' => ['maxLength', 11]],
+		]);
+
+
+		$ao_validator->add('usergroupId', [
+			'isInteger' => ['rule' => 'isInteger'],
+			'maxLength' => ['rule' => ['maxLength', 11]],
+		]);
+
+
+		$ao_validator->notEmptyString('scope');
+		$ao_validator->add('scope', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'maxLength' => ['rule' => ['maxLength', 50]],
+			'notBlank' => ['rule' => 'notBlank'],
+		]);
+
+
+		$ao_validator->notEmptyString('identifier');
+		$ao_validator->add('identifier', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'maxLength' => ['rule' => ['maxLength', 50]],
+			'notBlank' => ['rule' => 'notBlank'],
+		]);
+
+
+		$ao_validator->add('access', [
+			'isInteger' => ['rule' => 'isInteger'],
+			'maxLength' => ['rule' => ['maxLength', 1]],
+		]);
+
+
+		$ao_validator->allowEmptyArray('settings');
+		$ao_validator->add('settings', [
+			'isArray' => ['rule' => 'isArray'],
+			'maxLengthBytes' => [
+				'rule' => function($ax_value) {
+					return strlen(json_encode($ax_value)) <= 65535;
+				},
+			],
+		]);
+
 
 		return $ao_validator;
 	}
@@ -89,14 +130,20 @@ class UsergroupPermissionsTable extends Table {
 	/**
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 *
-	 * @param \Awyiss\ORM\RulesChecker|\Cake\ORM\RulesChecker $ao_rules The rules object to be modified.
+	 * @param RulesChecker|BaseRulesChecker $ao_rules The rules object to be modified.
 	 *
-	 * @return \Awyiss\ORM\RulesChecker
+	 * @return RulesChecker
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildRules (RulesChecker|\Cake\ORM\RulesChecker $ao_rules): RulesChecker {
-		$ao_rules->add($ao_rules->existsIn(['usergroup_id'], 'Usergroups'), ['errorField' => 'usergroup_id']);
+	public function buildRules (RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
+		$ao_rules->add($ao_rules->existsIn(['usergroupId'], 'Usergroups'), 'usergroupExists',
+			[
+				'errorField' => 'usergroupId',
+				'message' => __d($this->getI18nDomain(), 'error_usergroup_exists'),
+			]
+		);
+
 
 		return $ao_rules;
 	}
@@ -104,13 +151,12 @@ class UsergroupPermissionsTable extends Table {
 
 	/**
 	 * @inheritDoc
-	 *
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	protected function _initializeSchema (TableSchemaInterface $ao_schema): TableSchemaInterface {
-		$ao_schema->setColumnType('access', 'integer');
-		$ao_schema->setColumnType('settings', 'json');
+	protected function initializeSchema (TableSchemaInterface $ao_schema): void {
+		parent::initializeSchema($ao_schema);;
 
-		return $ao_schema;
+		//$ao_schema->setColumnType('access', 'integer');
+		$ao_schema->setColumnType('access', EnumType::from(\Awyiss\Authorization\Permission\PermissionAccess::class));
+		$ao_schema->setColumnType('settings', 'json');
 	}
 }

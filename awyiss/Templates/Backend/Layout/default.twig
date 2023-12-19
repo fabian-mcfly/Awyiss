@@ -8,7 +8,7 @@
 		</title>
 		{{ helper_Html_meta('icon') }}
 
-		<link href="https://fonts.googleapis.com/css?family=Lato:400,700" rel="stylesheet">
+		<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
 
 		{{ helper_Html_css(['normalize.min', 'milligram.min', 'cake']) }}
 
@@ -19,45 +19,66 @@
 	<body>
 		{% block sidebar %}
 			<aside id="Sidebar">
-				<a href="{{ helper_Url_build({controller: 'dashboard'}) }}" class="Title">Aw<span>Yiss</span></a>
+				<a href="{{ helper_Url_build({controller: 'dashboard', action: 'overview'}) }}" class="Title">Aw<span>Yiss</span></a>
 
 				{% block systemMenu %}
+					{{ cell('Backend/Menu') }}
+
+					{#
 					<ul class="Menu-System">
 						{% if helper_Authorization_scopeIsAccessible('Pages', NULL, ['read']) %}
-							<li>{{ helper_Html_link(__('pages::titleMenu'), {controller: 'Pages'}) }}</li>
+							<li>{{ helper_Html_link(__d('pages', 'title_menu'), {controller: 'Pages', action: 'overview'}) }}</li>
 						{% endif %}
+
+						{% if helper_Authorization_scopeIsAccessible('Matches', NULL, ['read']) %}
+							<li>{{ helper_Html_link(__d('matches', 'title_menu'), {controller: 'Matches', action: 'overview'}) }}</li>
+						{% endif %}
+
+						{% if helper_Authorization_scopeIsAccessible('Promotions', NULL, ['read']) %}
+							<li>{{ helper_Html_link(__d('promotions', 'title_menu'), {controller: 'Promotions', action: 'overview'}) }}</li>
+						{% endif %}
+
+						{% if helper_Authorization_scopeIsAccessible('PromotionTests', NULL, ['read']) %}
+							<li>{{ helper_Html_link(__d('promotion_tests', 'title_menu'), {controller: 'PromotionTests', action: 'overview'}) }}</li>
+						{% endif %}
+
 						{% if helper_Authorization_scopeIsAccessible('ContentTemplates', NULL, ['read']) %}
-							<li>{{ helper_Html_link(__('contentTemplates::titleMenu'), {controller: 'ContentTemplates'}) }}</li>
+							<li>{{ helper_Html_link(__d('content_templates', 'title_menu'), {controller: 'ContentTemplates', action: 'overview'}) }}</li>
 						{% endif %}
 
 						{% if helper_Authorization_scopeIsAccessible('Languages', NULL, ['read']) %}
-							<li>{{ helper_Html_link(__('languages::titleMenu'), {controller: 'Languages'}) }}</li>
+							<li>{{ helper_Html_link(__d('languages', 'title_menu'), {controller: 'Languages', action: 'overview'}) }}</li>
 						{% endif %}
 
 						{% if helper_Authorization_scopeIsAccessible('PageRoles', NULL, ['read']) %}
-							<li>{{ helper_Html_link(__('pageRoles::titleMenu'), {controller: 'PageRoles'}) }}</li>
+							<li>{{ helper_Html_link(__d('page_roles', 'title_menu'), {controller: 'PageRoles', action: 'overview'}) }}</li>
 						{% endif %}
 
 						{% if helper_Authorization_scopeIsAccessible('PageTemplates', NULL, ['read']) %}
-							<li>{{ helper_Html_link(__('pageTemplates::titleMenu'), {controller: 'PageTemplates'}) }}</li>
+							<li>{{ helper_Html_link(__dx('page_templates', 'menu', 'title'), {controller: 'PageTemplates', action: 'overview'}) }}</li>
 						{% endif %}
 
 						{% if helper_Authorization_scopeIsAccessible('Configuration', {scope: ''}, ['read']) %}
-							<li>{{ helper_Html_link(__('configuration::titleMenu'), {controller: 'Configuration'}) }}</li>
+							<li>{{ helper_Html_link(__d('configuration', 'title_menu'), {controller: 'Configuration', action: 'overview'}) }}</li>
 						{% endif %}
 
 						{% if helper_Authorization_scopeIsAccessible('Users', NULL, ['read']) %}
-							<li>{{ helper_Html_link(__('users::titleMenu'), {controller: 'Users'}) }}</li>
+							<li>{{ helper_Html_link(__d('users', 'title_menu'), {controller: 'Users', action: 'overview'}) }}</li>
 						{% endif %}
 
 						{% if helper_Authorization_scopeIsAccessible('Usergroups', NULL, ['read']) %}
-							<li>{{ helper_Html_link(__('usergroups::titleMenu'), {controller: 'Usergroups'}) }}</li>
+							<li>{{ helper_Html_link(__d('usergroups', 'title_menu'), {controller: 'Usergroups', action: 'overview'}) }}</li>
 						{% endif %}
 
 						{% if helper_Authorization_scopeIsAccessible('Attributes', NULL, ['read']) %}
-							<li>{{ helper_Html_link(__('attributes::titleMenu'), {controller: 'Attributes'}) }}</li>
+							<li>{{ helper_Html_link(__d('attributes', 'title_menu'), {controller: 'Attributes', action: 'overview'}) }}</li>
+						{% endif %}
+
+						{% if helper_Authorization_scopeIsAccessible('Menus', NULL, ['read']) %}
+							<li>{{ helper_Html_link(__d('menus', 'title_menu'), {controller: 'Menus', action: 'overview'}) }}</li>
 						{% endif %}
 					</ul>
+					#}
 				{% endblock %}
 			</aside>
 		{% endblock %}
@@ -71,7 +92,7 @@
 				{% endblock %}
 				{% block footer %}
 					<footer>
-						{{ helper_Html_link(__('users::logout'), {controller: 'users', action: 'logout'}) }}
+						{{ helper_Html_link(__d('users', 'logout'), {controller: 'users', action: 'logout'}) }}
 					</footer>
 				{% endblock %}
 			</div>

@@ -58,13 +58,24 @@ class AwyissExtension extends AbstractExtension {
 				dump(...func_get_args());
 			}),
 
+			new TwigFunction('__', '__'),
+			new TwigFunction('__n', '__n'),
+			new TwigFunction('__d', '__d'),
+			new TwigFunction('__dn', '__dn'),
+			new TwigFunction('__x', '__x'),
+			new TwigFunction('__xn', '__xn'),
+			new TwigFunction('__dx', '__dx'),
+			new TwigFunction('__dxn', '__dxn'),
+			new TwigFunction('__df', '__df'),
+			new TwigFunction('__dfx', '__dfx'),
+
 			new TwigFunction('naturalSort', function(array $aa_data, int|string $as_key = NULL): array {
 				uasort($aa_data, function($a, $b) use ($as_key) {
 					if (!empty($as_key)) {
-						return strnatcmp($a[ $as_key ], $b[ $as_key ]);
+						return strnatcasecmp($a[ $as_key ], $b[ $as_key ]);
 					}
 
-					return strnatcmp($a, $b);
+					return strnatcasecmp($a, $b);
 				});
 
 				return $aa_data;

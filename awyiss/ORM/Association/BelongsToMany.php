@@ -11,4 +11,14 @@ namespace Awyiss\ORM\Association;
  */
 class BelongsToMany extends \Cake\ORM\Association\BelongsToMany {
 	use ExistsTrait;
+
+
+	/**
+	 * Gets the current join table, either the name of the Table instance or the instance itself.
+	 *
+	 * @return bool
+	 */
+	public function hasThrough (): bool {
+		return isset($this->_through);
+	}
 }

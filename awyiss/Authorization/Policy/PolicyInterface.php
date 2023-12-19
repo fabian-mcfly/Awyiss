@@ -10,6 +10,8 @@ use Awyiss\Authorization\PermissionOption\PermissionOptionInterface;
 
 /**
  * Interface with method signatures for regular policies
+ *
+ * @property PermissionOptionCollection $permissionOptionCollection
  */
 interface PolicyInterface {
 	/**
@@ -23,7 +25,7 @@ interface PolicyInterface {
 	/**
 	 * Returns the complete `PermissionOptionCollection`
 	 *
-	 * @return \Awyiss\Authorization\PermissionOption\PermissionOptionCollection
+	 * @return PermissionOptionCollection
 	 */
 	public static function getPermissionOptions (): PermissionOptionCollection;
 
@@ -33,7 +35,7 @@ interface PolicyInterface {
 	 *
 	 * @param string $as_identifier
 	 *
-	 * @return NULL|\Awyiss\Authorization\PermissionOption\PermissionOptionInterface
+	 * @return NULL|PermissionOptionInterface
 	 */
 	public static function getPermissionOption (string $as_identifier): ?PermissionOptionInterface;
 }

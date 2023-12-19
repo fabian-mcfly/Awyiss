@@ -34,12 +34,6 @@ define('APP', ROOT . DS . APP_DIR . DS);
  */
 define('CONFIG', ROOT . DS . APP_DIR . DS . 'config' . DS);
 
-define('CUSTOM_CONFIG', ROOT . DS . CUSTOM_DIR . DS . 'config' . DS);
-
-define('CUSTOM_NAMESPACE', Inflector::camelize(str_replace('_', '-', CUSTOM_DIR), '-'));
-
-define('ENV_CUSTOM_CONFIG', CUSTOM_CONFIG . CONFIG_ENV . DS);
-
 /*
  * File path to the webroot directory.
  *

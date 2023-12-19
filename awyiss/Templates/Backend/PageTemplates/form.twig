@@ -1,0 +1,146 @@
+{#
+@var ao_pageTemplate \Awyiss\Model\Entity\PageTemplate
+@var aa_contentAreas \Awyiss\Model\Entity\ContentArea[]
+@var _view \Awyiss\View\BackendView
+#}
+
+{{ dump(ao_pageTemplate) }}
+
+{% block fieldsetPresentation %}
+	<fieldset>
+		<legend>{{ __('fieldset_presentation') }}</legend>
+
+		{% block fieldsetPresentationInner %}
+			{% block formControlActive %}
+				{{ helper_Form_control('active') }}
+			{% endblock %}
+
+			{% block fieldsetPresentationAttributes %}
+				{{ helper_Attributes_allControls('presentation') }}
+			{% endblock %}
+		{% endblock %}
+	</fieldset>
+{% endblock %}
+
+{% block fieldsetConditions %}
+	<fieldset>
+		<legend>{{ __('fieldset_conditions') }}</legend>
+
+		{% block fieldsetConditionsInner %}
+			{% block formControlPageRoleId %}
+				{{ helper_Categories_control('page_role_id', {
+					categoriesIdentifier: 'pageRole',
+					empty: FALSE,
+					val: ao_pageTemplate.pageRoleId,
+				}) }}
+			{% endblock %}
+
+			{% block formControlSystemOrder %}
+				{{ helper_SystemOrder_control('system_order', {entity: ao_pageTemplate}) }}
+			{% endblock %}
+
+			{% block fieldsetConditionsAttributes %}
+				{{ helper_Attributes_allControls('conditions') }}
+			{% endblock %}
+		{% endblock %}
+	</fieldset>
+{% endblock %}
+
+{% block fieldsetGeneral %}
+	<fieldset>
+		<legend>{{ __('fieldset_general') }}</legend>
+
+		{% block fieldsetGeneralInner %}
+			{% block formControlTitle %}
+				{{ helper_Form_control('title') }}
+			{% endblock %}
+
+			{% block formControlFilename %}
+				{{ helper_Form_control('filename') }}
+			{% endblock %}
+
+			{% block fieldsetGeneralAttributes %}
+				{{ helper_Attributes_allControls('general') }}
+			{% endblock %}
+		{% endblock %}
+	</fieldset>
+{% endblock %}
+
+{% block fieldsetContentAreas %}
+	<fieldset>
+		<legend>{{ __('fieldset_content_areas') }}</legend>
+
+		{% block fieldsetContentAreasInner %}
+			{% block formControlContentAreas %}
+				{% set la_assignedContentAreas = ao_pageTemplate.contentAreas ? ao_pageTemplate.contentAreas|column('id') : [] %}
+
+				<ul class="NoList ContentAreas">
+					{% for li_key, lo_contentArea in aa_contentAreas %}
+						{% block formControlContentArea %}
+							<li>
+								<label for="ContentTemplate-ContentElements-{{ lo_contentArea.identifier|camelize }}">
+									{{ helper_Form_checkbox('content_areas[' ~ li_key ~'][id]', {
+										checked: lo_contentArea.id in la_assignedContentAreas,
+										hiddenField: FALSE,
+										id: 'ContentTemplate-ContentElements-' ~ lo_contentArea.identifier|camelize,
+										value: lo_contentArea.id,
+									}) }}
+
+									{{ helper_Form_hidden('content_areas[' ~ li_key ~'][_joinData][system_order]', {
+										value: li_key + 1
+									}) }}
+
+									{{ lo_contentArea.label }}
+								</label>
+							</li>
+						{% endblock %}
+					{% endfor %}
+				</ul>
+
+				{% block fieldsetContentElementsErrors %}
+					{% if ao_contentTemplate.error('contentAreas') %}
+						{{ helper_Form_error('contentAreas') }}
+					{% endif %}
+				{% endblock %}
+			{% endblock %}
+		{% endblock %}
+	</fieldset>
+{% endblock %}
+
+{% block fieldsetContent %}
+	<fieldset>
+		<legend>{{ __('fieldset_content') }}</legend>
+
+		{% block fieldsetContentInner %}
+			{% block fieldsetContentAttributes %}
+				{{ helper_Attributes_allControls('content') }}
+			{% endblock %}
+		{% endblock %}
+	</fieldset>
+{% endblock %}
+
+{% block fieldsetMedia %}
+	<fieldset>
+		<legend>{{ __('fieldset_media') }}</legend>
+
+		{% block fieldsetMediaInner %}
+			{% block fieldsetMediaAttributes %}
+				{{ helper_Attributes_allControls('media') }}
+			{% endblock %}
+		{% endblock %}
+	</fieldset>
+{% endblock %}
+
+{% block fieldsetAttributes %}
+	<fieldset>
+		<legend>{{ __('fieldset_attributes') }}</legend>
+
+		{% block fieldsetAttributesInner %}
+			{% block fieldsetAttributesAttributes %}
+				{{ helper_Attributes_allControls('attributes') }}
+			{% endblock %}
+		{% endblock %}
+	</fieldset>
+{% endblock %}
+
+{{- helper_Form_hidden('reload_form', {val: 0}) }}

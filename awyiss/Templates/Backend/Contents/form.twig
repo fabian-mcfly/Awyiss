@@ -1,0 +1,144 @@
+{#
+@var ao_content \Awyiss\Model\Entity\Content
+@var ao_contentTemplates \Cake\Collection\CollectionInterface
+@var ao_threadedContents \Cake\Collection\CollectionInterface
+@var ao_page \Awyiss\Model\Entity\Page
+@var aa_assignedAttributes array
+@var aa_contentAreas array
+@var aa_contentElementsByFieldset ContentTemplateElement[]
+@var as_forScope string
+@var as_languageRealm string
+@var as_languageShortcode string
+@var _view \Awyiss\View\BackendView
+#}
+
+{% use '@Backend/Contents/blocks.twig' %}
+
+{% macro renderFormControls(aa_assignedContentTemplateElements = [], ao_threadedContents = {}) %}
+	{% for lo_contentTemplateElement in aa_assignedContentTemplateElements %}
+		{% if lo_contentTemplateElement.identifier[:11] == 'attributes.' %}
+			{{ helper_Attributes_control(lo_contentTemplateElement.identifier[11:], {required: lo_contentTemplateElement.required}) }}
+		{% else %}
+			{{ block('formControl' ~ lo_contentTemplateElement.identifier|camelize) }}
+		{% endif %}
+	{% endfor %}
+{% endmacro %}
+
+<div class="Fieldsets">
+	{% block fieldsetPresentation %}
+		<fieldset class="Fieldset-Presentation">
+			<legend>{{ __('fieldset_presentation') }}</legend>
+
+			{% block fieldsetPresentationInner %}
+				{% block formControlActive %}
+					{{ helper_Form_control('active') }}
+				{% endblock %}
+
+				{% block formControlContentTemplateId %}
+					{{ helper_Form_control('content_template_id', {
+						empty: FALSE,
+						options: ao_contentTemplates.combine('id', 'title')
+					}) }}
+				{% endblock %}
+
+				{{ _self.renderFormControls(aa_contentElementsByFieldset.presentation ?? [], ao_threadedContents) }}
+			{% endblock %}
+		</fieldset>
+	{% endblock %}
+
+	{% block fieldsetConditions %}
+		<fieldset class="Fieldset-Conditions">
+			<legend>{{ __('fieldset_conditions') }}</legend>
+
+			{% block fieldsetConditionsInner %}
+				{% block formControlLanguageShortcode %}
+					{{ helper_Locale_control('language_shortcode', {languageRealm: as_languageRealm, val: as_languageShortcode}) }}
+				{% endblock %}
+
+				{% block formControlPageId %}
+					{{ helper_Categories_control('page_id', {empty: FALSE, val: ao_content.page_id}) }}
+				{% endblock %}
+
+				{% block formControlContentArea %}
+					{{ helper_Form_control('content_area_id', {
+						disabled: aa_contentAreas.unavailable|column('id'),
+						empty: FALSE,
+						options: combine(aa_contentAreas.all|column('id'), aa_contentAreas.all|column('label'))
+					}) }}
+				{% endblock %}
+
+				{% block formControlSystemOrder %}
+					{{ helper_SystemOrder_control('system_order', {entity: ao_content}) }}
+				{% endblock %}
+
+				{{ _self.renderFormControls(aa_contentElementsByFieldset.conditions ?? [], ao_threadedContents) }}
+			{% endblock %}
+		</fieldset>
+	{% endblock %}
+
+	{% block fieldsetGeneral %}
+		<fieldset class="Fieldset-General">
+			<legend>{{ __('fieldset_general') }}</legend>
+
+			{% block fieldsetGeneralInner %}
+				{{ _self.renderFormControls(aa_contentElementsByFieldset.general ?? [], ao_threadedContents) }}
+			{% endblock %}
+		</fieldset>
+	{% endblock %}
+
+	{% block fieldsetContent %}
+		<fieldset class="Fieldset-Content">
+			<legend>{{ __('fieldset_content') }}</legend>
+
+			{% block fieldsetContentInner %}
+				{{ _self.renderFormControls(aa_contentElementsByFieldset.content ?? [], ao_threadedContents) }}
+			{% endblock %}
+		</fieldset>
+	{% endblock %}
+
+	{% block fieldsetMedia %}
+		<fieldset class="Fieldset-Media">
+			<legend>{{ __('fieldset_media') }}</legend>
+
+			{% block fieldsetMediaInner %}
+				{{ _self.renderFormControls(aa_contentElementsByFieldset.media ?? [], ao_threadedContents) }}
+			{% endblock %}
+		</fieldset>
+	{% endblock %}
+
+	{% block fieldsetAttributes %}
+		<fieldset class="Fieldset-Attributes">
+			<legend>{{ __('fieldset_attributes') }}</legend>
+
+			{% block fieldsetAttributesInner %}
+				{{ _self.renderFormControls(aa_contentElementsByFieldset.attributes ?? [], ao_threadedContents) }}
+			{% endblock %}
+		</fieldset>
+	{% endblock %}
+
+	{% block fieldsetData %}
+		<fieldset class="Fieldset-Data">
+			<legend>{{ __('fieldset_data') }}</legend>
+
+			{% block fieldsetDataInner %}
+				{% block formControlData %}
+					{{ helper_Form_control('data') }}
+				{% endblock %}
+
+				{{ _self.renderFormControls(aa_contentElementsByFieldset.data ?? [], ao_threadedContents) }}
+			{% endblock %}
+		</fieldset>
+	{% endblock %}
+
+	{% block fieldsetPublication %}
+		<fieldset class="Fieldset-Publication">
+			<legend>{{ __('fieldset_publication') }}</legend>
+
+			{% block fieldsetPublicationInner %}
+				{{ _self.renderFormControls(aa_contentElementsByFieldset.publication ?? [], ao_threadedContents) }}
+			{% endblock %}
+		</fieldset>
+	{% endblock %}
+</div>
+
+{{- helper_Form_hidden('reload_form', {val: 0}) }}

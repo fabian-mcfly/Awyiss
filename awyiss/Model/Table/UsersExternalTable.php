@@ -18,35 +18,38 @@ class UsersExternalTable extends Table {
 	public const TABLE = 'users_external';
 
 
-	/**
+	/*
 	 * @inheritDoc
-	 */
+	 *
 	public function initialize (array $aa_config): void {
+		$this->setTable(static::TABLE);
+
 		parent::initialize($aa_config);
 
-		$this->setTable(static::TABLE);
-		$this->setDisplayField('id');
 		$this->setPrimaryKey('id');
-	}
+	}*/
 
 
 	/**
 	 * Returns the default validator object.
 	 *
-	 * @param \Cake\Validation\Validator $ao_validator The validator that can be modified to
+	 * @param Validator $ao_validator The validator that can be modified to
 	 * add some rules to it.
 	 *
-	 * @return \Cake\Validation\Validator
-	 *
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 * @return Validator
 	 */
 	public function validationDefault (Validator $ao_validator): Validator {
-		$ao_validator->integer('id')->allowEmptyString('id', NULL, 'create');
+		parent::validationDefault($ao_validator);
 
+
+		$ao_validator->add('id', [
+			'isInteger' => ['rule' => 'isInteger'],
+			'maxLength' => ['rule' => ['maxLength', 11]],
+		]);
+
+		//$ao_validator->integer('id')->allowEmptyString('id', NULL, 'create');
 		$ao_validator->scalar('provider')->maxLength('provider', 50)->requirePresence('provider', 'create')->notEmptyString('provider');
-
 		$ao_validator->scalar('username')->maxLength('username', 50)->requirePresence('username', 'create')->notEmptyString('username');
-
 		$ao_validator->dateTime('last_login')->notEmptyDateTime('last_login');
 
 		return $ao_validator;

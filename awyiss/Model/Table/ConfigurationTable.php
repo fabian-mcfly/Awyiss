@@ -4,14 +4,12 @@
 namespace Awyiss\Model\Table;
 
 
-#use ArrayObject;
+use Awyiss\Awyiss;
 use Awyiss\Configuration\ConfigOptionsProvider;
 use Awyiss\Model\Entity\Configuration;
 use Awyiss\Model\Table;
-#use Cake\Collection\Iterator\MapReduce;
-#use Cake\Event\EventInterface;
-#use Cake\ORM\Query;
 use Awyiss\ORM\RulesChecker;
+use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Validation\Validator;
 
 
@@ -29,6 +27,9 @@ class ConfigurationTable extends Table {
 	 * @inheritDoc
 	 */
 	public const TABLE = 'configuration';
+	/**
+	 * @var array
+	 */
 	protected array $configScopes;
 
 
@@ -38,13 +39,15 @@ class ConfigurationTable extends Table {
 	public function initialize (array $aa_config): void {
 		parent::initialize($aa_config);
 
-		$this->setTable(static::TABLE);
-		$this->setDisplayField('id');
-		$this->setPrimaryKey('id');
-
 		$this->belongsTo('Languages', [
-			'bindingKey' => 'shortcode',
-			'foreignKey' => 'language_shortcode',
+			'bindingKey' => [
+				'realm',
+				'shortcode',
+			],
+			'foreignKey' => [
+				'realm',
+				'language_shortcode',
+			],
 			'joinType' => 'LEFT',
 		]);
 	}
@@ -53,23 +56,67 @@ class ConfigurationTable extends Table {
 	/**
 	 * Returns the default validator object.
 	 *
-	 * @param \Cake\Validation\Validator $ao_validator The validator that can be modified to
+	 * @param Validator $ao_validator The validator that can be modified to
 	 * add some rules to it.
 	 *
-	 * @return \Cake\Validation\Validator
-	 *
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 * @return Validator
 	 */
 	public function validationDefault (Validator $ao_validator): Validator {
-		$ao_validator->integer('id')->allowEmptyString('id', NULL, 'create');
+		parent::validationDefault($ao_validator);
 
-		$ao_validator->scalar('scope')->maxLength('scope', 50)->requirePresence('scope')->notEmptyString('scope');
+		$ao_validator->requirePresence([
+			'realm',
+			'identifier',
+		], 'create');
 
-		$ao_validator->scalar('name')->maxLength('name', 255)->requirePresence('name', 'create')->notEmptyString('name');
 
-		$ao_validator->scalar('value')->maxLength('value', 255)->allowEmptyString('value');
+		$ao_validator->add('id', [
+			'isInteger' => ['rule' => 'isInteger'],
+			'maxLength' => ['rule' => ['maxLength', 11]],
+		]);
 
-		$ao_validator->allowEmptyString('language_shortcode');
+
+		$ao_validator->notEmptyString('realm');
+		$ao_validator->add('realm', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'inList' => ['rule' => ['inList', Awyiss::getRealms()]],
+			'maxLength' => ['rule' => ['maxLength', 20]],
+		]);
+
+
+		$ao_validator->add('scope', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'maxLength' => ['rule' => ['maxLength', 50]],
+			'notBlank' => ['rule' => 'notBlank'],
+		]);
+
+
+		$ao_validator->notEmptyString('identifier');
+		$ao_validator->add('identifier', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'maxLength' => ['rule' => ['maxLength', 50]],
+			'notBlank' => ['rule' => 'notBlank'],
+		]);
+
+
+		$ao_validator->add('value', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'maxLength' => ['rule' => ['maxLength', 255]],
+		]);
+
+
+		$ao_validator->add('languageShortcode', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'maxLength' => ['rule' => ['maxLength', 2]],
+			'notBlank' => ['rule' => 'notBlank'],
+		]);
+
+		//$ao_validator->integer('id')->allowEmptyString('id', NULL, 'create');
+		//$ao_validator->scalar('realm')->maxLength('realm', 20)->requirePresence('realm')->notEmptyString('realm');
+		//$ao_validator->scalar('scope')->maxLength('scope', 50)->requirePresence('scope')->notEmptyString('scope');
+		//$ao_validator->scalar('identifier')->maxLength('identifier', 255)->requirePresence('identifier', 'create')->notEmptyString('identifier');
+		//$ao_validator->scalar('value')->maxLength('value', 255)->allowEmptyString('value');
+		//$ao_validator->allowEmptyString('language_shortcode');
 
 		return $ao_validator;
 	}
@@ -78,34 +125,72 @@ class ConfigurationTable extends Table {
 	/**
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 *
-	 * @param \Awyiss\ORM\RulesChecker|\Cake\ORM\RulesChecker $ao_rules The rules object to be modified.
+	 * @param RulesChecker|BaseRulesChecker $ao_rules The rules object to be modified.
 	 *
-	 * @return \Awyiss\ORM\RulesChecker
+	 * @return RulesChecker
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildRules (RulesChecker|\Cake\ORM\RulesChecker $ao_rules): RulesChecker {
-		$ao_rules->add($ao_rules->isUnique(['scope', 'name', 'language_shortcode'], ['authorization' => ['skip' => TRUE]]), ['errorField' => 'name']);
+	public function buildRules (RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
+		$ao_rules->add($ao_rules->isUnique([
+			'realm',
+			'scope',
+			'identifier',
+			'languageShortcode',
+		], ['authorize' => ['skip' => TRUE]]),
+			'identifierUniqueForScope',
+			[
+				'errorField' => 'identifier',
+				'message' => __dfx($this->getI18nDomain(), 'validation', 'configuration', 'error_identifier_unique'),
+			]);
 
-		$ao_rules->add($ao_rules->existsIn('language_shortcode', 'Languages', ['authorization' => ['skip' => TRUE]]), ['errorField' => 'language_shortcode']);
 
-		$ao_rules->add(function(Configuration $ao_entity/*, array $aa_options*/): bool|string {
-			$la_configScopes = ConfigOptionsProvider::getConfigurationFiles();
+		$ao_rules->add(function(Configuration $ao_entity): bool {
+			return in_array($ao_entity->realm, Awyiss::getRealms(), TRUE);
+		}, 'validRealm', [
+			'errorField' => 'realm',
+			'message' => __d($this->getI18nDomain(), 'error_valid_realm'),
+		]);
+
+
+		$ao_rules->add(function(Configuration $ao_entity/*, array $aa_options*/): bool {
+			$la_configScopes = ConfigOptionsProvider::getConfigOptionsFiles();
 
 			//Check if the provided scope is configurable (having a ConfigOptions-class)
-			return in_array($ao_entity->scope, array_keys($la_configScopes));
+			return in_array(ConfigOptionsProvider::sanitizeScope($ao_entity->scope), array_keys($la_configScopes));
 		}, 'validScope', [
 			'errorField' => 'scope',
-			'message' => __('configuration::error_invalid_scope'),
+			'message' => __d($this->getI18nDomain(), 'error_valid_scope'),
 		]);
 
+
 		$ao_rules->add(function(Configuration $ao_entity/*, array $aa_options*/): bool|string {
-			//Validate the provided value for the scope, name and language.
-			return ConfigOptionsProvider::validateConfigValue($ao_entity->scope, $ao_entity->name, $ao_entity->value, $ao_entity->language_shortcode);
+			if ($ao_entity->getError('scope') || $ao_entity->getError('realm')) {
+				return FALSE;
+			}
+
+			//Validate the provided value for the scope, identifier and language.
+			return ConfigOptionsProvider::validateConfigValue($ao_entity->scope,
+				$ao_entity->realm,
+				$ao_entity->identifier,
+				$ao_entity->value,
+				$ao_entity->languageShortcode);
 		}, 'validValue', [
 			'errorField' => 'value',
-			'message' => __('configuration::error_invalid_value'),
+			'message' => __d($this->getI18nDomain(), 'error_valid_value'),
 		]);
+
+
+		$ao_rules->add($ao_rules->existsIn([
+			'realm',
+			'languageShortcode',
+		], 'Languages', ['authorize' => ['skip' => TRUE]]),
+			'languageExists',
+			[
+				'errorField' => 'languageShortcode',
+				'message' => __dfx($this->getI18nDomain(), 'validation', 'configuration', 'error_language_exists'),
+			]);
+
 
 		return $ao_rules;
 	}
@@ -120,9 +205,9 @@ class ConfigurationTable extends Table {
 		if ( ! isset($this->configScopes)) {
 			$this->configScopes = [];
 
-			foreach (ConfigOptionsProvider::getConfigurationFiles() as $ls_scope => $ls_className) {
+			foreach (ConfigOptionsProvider::getConfigOptionsFiles() as $ls_scope => $ls_className) {
 				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-				if ($this->getBehavior('Authorization')->scopeIsAccessible($this->getTable(), ['scope' => $ls_scope], 'read')) {
+				if ($this->getBehavior('Authorize')->scopeIsAccessible($this->getTable(), ['scope' => $ls_scope], 'read')) {
 					$this->configScopes[ $ls_scope ] = $ls_className;
 				}
 			}

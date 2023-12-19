@@ -6,37 +6,19 @@ namespace Awyiss\Controller\Backend;
 
 use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Model\Entity\ContentTemplate;
-use Cake\Datasource\ResultSetInterface;
+use Awyiss\Model\Entity\PageTemplate;
+use Awyiss\Model\Table\ContentTemplatesTable;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
-use Cake\Routing\Router;
+use Awyiss\Routing\Router;
 
 
 /**
  * ContentTemplates Controller
  *
- * @property \Awyiss\Model\Table\ContentTemplatesTable $ContentTemplates
+ * @property ContentTemplatesTable $ContentTemplates
  */
 class ContentTemplatesController extends Controller {
-	/**
-	 * @var array<int, string>
-	 */
-	protected array $availableElements = [
-		'parent_id',
-		'columnwidth',
-		'title',
-		'subtitle',
-		'text',
-		'link',
-		'media_id',
-		'media_alt_id',
-		'media_folders_id',
-		'duplicate_of',
-		'forms_id',
-		'tags',
-	];
-
-
 	/**
 	 * Overview method
 	 *
@@ -45,7 +27,7 @@ class ContentTemplatesController extends Controller {
 	public function overview (): void {
 		$this->Authorization->ensure('read');
 
-		$lo_contentTemplates = $this->ContentTemplates->find('withAttributes')->where($this->getOverviewWhere());
+		$lo_contentTemplates = $this->ContentTemplates->find()->where($this->getOverviewWhere())->contain(['ContentTemplateElements'])->all();
 
 		$this->set([
 			'ao_contentTemplates' => $lo_contentTemplates,
@@ -64,14 +46,30 @@ class ContentTemplatesController extends Controller {
 		$this->Authorization->ensure('create');
 
 		$lo_contentTemplate = $this->ContentTemplates->newDefaultEntity();
+
 		if ($this->request->is('post')) {
 			$this->save($lo_contentTemplate);
 		}
 
+		$la_pageTemplates = $this->getPageTemplates();
+
+		$la_assignedContentAreas = [];
+		foreach (($lo_contentTemplate->contentAreas ?? []) AS $lo_contentArea) {
+			$la_assignedContentAreas[ $lo_contentArea->_joinData->pageTemplateId ][] = $lo_contentArea->id;
+		}
+
+		$la_availableFieldset = [];
+		foreach ($this->ContentTemplates->getAvailableFieldsets() AS $ls_fieldset) {
+			$la_availableFieldset[ $ls_fieldset ] = __d('contents', 'fieldset_' . $ls_fieldset);
+		}
+
 		$this->set([
 			'ao_contentTemplate' => $lo_contentTemplate,
-			'aa_availableElements' => $this->availableElements,
-			'ao_pageTemplates' => $this->getPageTemplates(),
+			'aa_availableContentElements' => $this->ContentTemplates->getAvailableContentElements(),
+			'aa_availableContentAttributes' => $this->ContentTemplates->getAvailableContentAttributes(),
+			'aa_availableFieldsets' => $la_availableFieldset,
+			'aa_assignedContentAreas' => $la_assignedContentAreas,
+			'aa_pageTemplates' => $la_pageTemplates,
 		]);
 	}
 
@@ -79,7 +77,7 @@ class ContentTemplatesController extends Controller {
 	/**
 	 * Edit method
 	 *
-	 * @return void|?\Cake\Http\Response
+	 * @return void|?Response
 	 *
 	 * @throws \Exception
 	 */
@@ -87,9 +85,12 @@ class ContentTemplatesController extends Controller {
 		$this->Authorization->ensure('update');
 
 		/** @var ContentTemplate $lo_contentTemplate */
-		$lo_contentTemplate = $this->ContentTemplates->findById((int) $this->request->getParam('id'))->first();
+		$lo_contentTemplate = $this->ContentTemplates->findById((int) $this->request->getParam('id'))->contain([
+			'ContentTemplateContentAreas',
+			'ContentTemplateElements'
+		])->first();
 		if ( ! $lo_contentTemplate) {
-			$this->Flash->error(__('::record_not_found'));
+			$this->Flash->error(__('record_not_found'));
 
 			return $this->redirect(['action' => 'overview']);
 		}
@@ -98,10 +99,25 @@ class ContentTemplatesController extends Controller {
 			$this->save($lo_contentTemplate, 'edit');
 		}
 
+		$la_pageTemplates = $this->getPageTemplates();
+
+		$la_assignedContentAreas = [];
+		foreach ($lo_contentTemplate->contentTemplateContentAreas as $lo_contentArea) {
+			$la_assignedContentAreas[ $lo_contentArea->pageTemplateId ][] = $lo_contentArea->contentAreaId;
+		}
+
+		$la_availableFieldset = [];
+		foreach ($this->ContentTemplates->getAvailableFieldsets() AS $ls_fieldset) {
+			$la_availableFieldset[ $ls_fieldset ] = __d('contents', 'fieldset_' . $ls_fieldset);
+		}
+
 		$this->set([
 			'ao_contentTemplate' => $lo_contentTemplate,
-			'aa_availableElements' => $this->availableElements,
-			'ao_pageTemplates' => $this->getPageTemplates(),
+			'aa_availableContentElements' => $this->ContentTemplates->getAvailableContentElements(),
+			'aa_availableContentAttributes' => $this->ContentTemplates->getAvailableContentAttributes(),
+			'aa_availableFieldsets' => $la_availableFieldset,
+			'aa_assignedContentAreas' => $la_assignedContentAreas,
+			'aa_pageTemplates' => $la_pageTemplates,
 		]);
 	}
 
@@ -109,7 +125,7 @@ class ContentTemplatesController extends Controller {
 	/**
 	 * Delete method
 	 *
-	 * @return \Cake\Http\Response
+	 * @return Response
 	 *
 	 * @throws \Exception
 	 */
@@ -121,26 +137,18 @@ class ContentTemplatesController extends Controller {
 		/** @var ContentTemplate $lo_contentTemplate */
 		$lo_contentTemplate = $this->ContentTemplates->findById((int) $this->request->getParam('id'))->first();
 		if ( ! $lo_contentTemplate) {
-			$this->Flash->error(__('::record_not_found'));
+			$this->Flash->error(__('record_not_found'));
 			return $this->redirect(['action' => 'overview']);
 		}
 
 		if ($this->ContentTemplates->delete($lo_contentTemplate)) {
-			$this->Flash->success(__('::delete_succeeded'));
+			$this->Flash->success(__('delete_succeeded'));
 		}
 		else {
-			$this->Flash->error(__('::delete_failed'));
+			$this->Flash->error(__('delete_failed'));
 		}
 
 		return $this->redirect(['action' => 'overview']);
-	}
-
-
-	/**
-	 * @return \Cake\Datasource\ResultSetInterface
-	 */
-	protected function getPageTemplates (): ResultSetInterface {
-		return $this->fetchTable('PageTemplates')->find('withAttributes')->all();
 	}
 
 
@@ -151,17 +159,36 @@ class ContentTemplatesController extends Controller {
 	 * @return void
 	 */
 	protected function save (ContentTemplate $ao_contentTemplate, string $as_method = 'add'): void {
-		$la_requestData = $this->request->getData() + ['assigned_template_positions' => []];
-		if (isset($la_requestData['available_elements'])) {
-			$la_requestData['available_elements'] = array_filter($la_requestData['available_elements'], function($aa_element) {
-				return ! is_numeric($aa_element['name']);
+		if ($this->ContentTemplates->hasAttributes()) {
+			$ao_contentTemplate->setAccess('attributes', TRUE);
+		}
+
+		$la_requestData = $this->request->getData() + ['content_template_elements' => []];
+
+		if ( ! empty($la_requestData['content_areas'])) {
+			$la_requestData['content_template_content_areas'] = array_filter($la_requestData['content_areas'], function(array $aa_element) {
+				return ! empty($aa_element['content_area_id']);
+			});
+			unset($la_requestData['content_areas']);
+		}
+
+		if (!empty($la_requestData['content_template_elements'])) {
+			$la_requestData['content_template_elements'] = array_filter($la_requestData['content_template_elements'], function($aa_element) {
+				return !empty($aa_element['identifier']);
 			});
 		}
-		$this->ContentTemplates->patchEntity($ao_contentTemplate, $la_requestData);
+
+		$this->ContentTemplates->patchEntity($ao_contentTemplate, $la_requestData, [
+			'associated' => [
+				'ContentTemplateContentAreas',
+				'ContentTemplateElements',
+			]
+		]);
 
 		if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
 			if ($this->ContentTemplates->save($ao_contentTemplate)) {
-				$this->Flash->success(__('::' . $as_method . '_succeeded'));
+			//dd($ao_contentTemplate);
+				$this->Flash->success(__($as_method . '_succeeded'));
 
 				if ($this->request->getData('submit') == 'submit_close') {
 					throw new RedirectException(Router::url(['action' => 'overview'], TRUE), 302);
@@ -170,8 +197,55 @@ class ContentTemplatesController extends Controller {
 				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $ao_contentTemplate->id], TRUE), 302);
 			}
 
-			$this->Flash->error(__('::' . $as_method . '_failed'));
-			$this->Flash->error(implode('<br>' . PHP_EOL, $ao_contentTemplate->getError('_general')));
+			$this->Flash->error(__($as_method . '_failed'));
+			foreach ($ao_contentTemplate->getError('_general') as $ls_error) {
+				$this->Flash->error($ls_error);
+			}
 		}
+	}
+
+
+	/**
+	 * @return array
+	 */
+	protected function getPageTemplates (): array {
+		$lo_pageTemplates = $this->fetchTable('PageTemplates')->find()
+		->contain([
+			'ContentAreas' => [
+				'finder' => [
+					'all' => [
+						'authorize' => [
+							'skip' => TRUE,
+						]
+					],
+				],
+			],
+			'PageRoles' => [
+				'finder' => [
+					'all' => [
+						'authorize' => [
+							'skip' => TRUE,
+						]
+					],
+				],
+			],
+		])
+		->applyOptions([
+			'authorize' => [
+				'skip' => TRUE,
+			],
+		])
+		->all();
+
+		$lo_pageTemplates = $lo_pageTemplates
+		->sortBy('pageRole.systemOrder', SORT_ASC)
+		->filter(function(PageTemplate $ao_entity) {
+			return !empty($ao_entity->contentAreas);
+		})
+		->groupBy(function(PageTemplate $ao_entity) {
+			return $ao_entity->pageRole->label;
+		});
+
+		return $lo_pageTemplates->toArray();
 	}
 }

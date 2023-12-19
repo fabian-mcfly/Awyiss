@@ -4,14 +4,19 @@
 namespace Awyiss\Controller\Backend;
 
 
+use Awyiss\Awyiss;
 use Awyiss\Controller\BackendController as Controller;
+use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity\User;
 use Awyiss\Model\Entity\UsersExternal;
+use Awyiss\Model\Table\UsersTable;
 use Cake\Event\EventInterface;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
+use Cake\Http\Session;
 use Cake\I18n\FrozenTime;
-use Cake\Routing\Router;
+use Awyiss\Routing\Router;
+use Cake\Utility\Hash;
 use Cake\Utility\Security;
 
 
@@ -21,17 +26,17 @@ use Cake\Utility\Security;
 /**
  * Users Controller
  *
- * @property \Awyiss\Model\Table\UsersTable $Users
+ * @property UsersTable $Users
  */
 class UsersController extends Controller {
 	/**
 	 * @inheritDoc
 	 */
-	public array $categorize = [
+	protected array $categorize = [
 		'allowUnassigned' => TRUE,
 		'associationName' => 'Usergroups',
 		'enabled' => TRUE,
-		'name' => 'usergroup',
+		'identifier' => 'usergroupId',
 	];
 
 
@@ -40,7 +45,7 @@ class UsersController extends Controller {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function beforeFilter (EventInterface $ao_event) {
+	public function beforeFilter (EventInterface $ao_event): void {
 		parent::beforeFilter($ao_event);
 		$this->Authentication->allowUnauthenticated(['login', 'logout']);
 
@@ -59,7 +64,7 @@ class UsersController extends Controller {
 	public function overview (): void {
 		$this->Authorization->ensure('read');
 
-		$lo_users = $this->Users->find('withAttributes')->where($this->getOverviewWhere());
+		$lo_users = $this->Users->find()->where($this->getOverviewWhere());
 		$lo_users = $this->Categories->filterQuery($lo_users);
 		$lo_users = $this->paginate($lo_users);
 
@@ -90,7 +95,7 @@ class UsersController extends Controller {
 
 		$this->set([
 			'ao_user' => $lo_user,
-			'ao_usergroups' => $this->Users->Usergroups->find()->applyOptions(['authorization' => ['skip' => TRUE]]),
+			'ao_usergroups' => $this->Users->Usergroups->find()->applyOptions(['authorize' => ['skip' => TRUE]]),
 		]);
 	}
 
@@ -98,7 +103,7 @@ class UsersController extends Controller {
 	/**
 	 * Edit method
 	 *
-	 * @return void|?\Cake\Http\Response
+	 * @return void|?Response
 	 *
 	 * @throws \Exception
 	 */
@@ -114,7 +119,7 @@ class UsersController extends Controller {
 		/** @var User $lo_user */
 		$lo_user = $this->Users->findById((int) $this->request->getParam('id'))->contain(['Usergroups'])->first();
 		if ( ! $lo_user) {
-			$this->Flash->error(__('::record_not_found'));
+			$this->Flash->error(__('record_not_found'));
 
 			return $this->redirect(['action' => 'overview']);
 		}
@@ -131,7 +136,7 @@ class UsersController extends Controller {
 
 		$this->set([
 			'ao_user' => $lo_user,
-			'ao_usergroups' => $this->Users->Usergroups->find()->applyOptions(['authorization' => ['skip' => TRUE]]),
+			'ao_usergroups' => $this->Users->Usergroups->find()->applyOptions(['authorize' => ['skip' => TRUE]]),
 		]);
 	}
 
@@ -139,7 +144,7 @@ class UsersController extends Controller {
 	/**
 	 * Delete method
 	 *
-	 * @return \Cake\Http\Response
+	 * @return Response
 	 *
 	 * @throws \Exception
 	 */
@@ -150,16 +155,16 @@ class UsersController extends Controller {
 
 		$lo_user = $this->Users->findById((int) $this->request->getParam('id'))->first();
 		if ( ! $lo_user) {
-			$this->Flash->error(__('::record_not_found'));
+			$this->Flash->error(__('record_not_found'));
 
 			return $this->redirect(['action' => 'overview']);
 		}
 
 		if ($this->Users->delete($lo_user)) {
-			$this->Flash->success(__('::delete_succeeded'));
+			$this->Flash->success(__('delete_succeeded'));
 		}
 		else {
-			$this->Flash->error(__('::delete_failed'));
+			$this->Flash->error(__('delete_failed'));
 		}
 
 		return $this->redirect(['action' => 'overview']);
@@ -173,6 +178,12 @@ class UsersController extends Controller {
 	 * @return void
 	 */
 	protected function save (User $ao_user, string $as_method = 'add'): void {
+		$la_associated = [];
+		if ($this->Users->hasAttributes()) {
+			$la_associated[] = $this->Users->getAttributesTable(TRUE);
+			$ao_user->setAccess('attributes', TRUE);
+		}
+
 		/*
 		 * Skip Authorization Check for Usergroups. Even without access to the scope "Usergroups"
 		 * the current user can modify the affiliation(s) of users
@@ -185,23 +196,34 @@ class UsersController extends Controller {
 			unset ($la_data['password']);
 		}
 
-		$this->Users->patchEntity($ao_user, $la_data, [
-			'associated' => ['Usergroups' => ['onlyIds' => TRUE]]
-		]);
+		$la_associated['Usergroups'] = ['onlyIds' => TRUE];
+
+		$this->Users->patchEntity($ao_user, $la_data, ['associated' => $la_associated]);
 
 		if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
 			if ($this->Users->save($ao_user)) {
-				$this->Flash->success(__('::' . $as_method . '_succeeded'));
+				$this->Flash->success(__($as_method . '_succeeded'));
 
 				if ($this->request->getData('submit') == 'submit_close') {
+					if ($ao_user->usergroups) {
+						$la_usergroups = Hash::combine($ao_user->usergroups, '{n}.id', '{n}.label');
+					}
+					/*
+					 * Make sure the currently selected category is still part of the categories assigned to the user, otherwise the overview.
+					 * Otherwise a redirect would show a site without the modified user, which could be a bit confusing.
+					 */
+					$this->Categories->verifySelection(NULL, $la_usergroups ?? []);
+
 					throw new RedirectException(Router::url(['action' => 'overview'], TRUE), 302);
 				}
 
 				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $ao_user->id], TRUE), 302);
 			}
 
-			$this->Flash->error(__('::' . $as_method .  '_failed'));
-			$this->Flash->error(implode('<br>' . PHP_EOL, $ao_user->getError('_general')));
+			$this->Flash->error(__($as_method .  '_failed'));
+			foreach ($ao_user->getError('_general') as $ls_error) {
+				$this->Flash->error($ls_error);
+			}
 		}
 
 		//Enable Authorization Check for Usergroups
@@ -212,7 +234,7 @@ class UsersController extends Controller {
 	/**
 	 * Login method
 	 *
-	 * @return void|?\Cake\Http\Response
+	 * @return void|?Response
 	 */
 	public function login () {
 		$lo_result = $this->Authentication->getResult();
@@ -224,29 +246,29 @@ class UsersController extends Controller {
 				$lo_user = $this->Authentication->getIdentity()->getOriginalData();
 
 				if ($lo_user instanceof User) {
-					//Track last_login and reset the failed login attempts
+					//Track lastLogin and reset the failed login attempts
 					$lo_user->set([
-						'failed_attempts' => 0,
-						'last_login' => FrozenTime::now(),
+						'failedAttempts' => 0,
+						'lastLogin' => FrozenTime::now(),
 					], ['guard' => FALSE]);
 
-					$this->Users->save($lo_user, ['authorization' => ['skip' => TRUE], 'audit' => ['skip' => TRUE]]);
+					$this->Users->save($lo_user, ['authorize' => ['skip' => TRUE], 'audit' => ['skip' => TRUE]]);
 				}
 				elseif ($lo_user instanceof UsersExternal) {
 					$lo_usersExternal = $this->fetchTable('UsersExternal');
-					//Track last_login
-					$lo_user->set('last_login', FrozenTime::now());
+					//Track lastLogin
+					$lo_user->set('lastLogin', FrozenTime::now());
 
-					$lo_usersExternal->save($lo_user, ['authorization' => ['skip' => TRUE], 'audit' => ['skip' => TRUE]]);
+					$lo_usersExternal->save($lo_user, ['authorize' => ['skip' => TRUE], 'audit' => ['skip' => TRUE]]);
 				}
 
-				/** @var \Cake\Http\Session $lo_session */
+				/** @var Session $lo_session */
 				$lo_session = $this->request->getAttribute('session');
-				$lo_session->write('backend.languageShortcode', $this->request->getData('language_shortcode'));
+				$lo_session->write(LocaleMiddleware::getSessionIdentifier(), $this->request->getData('language_shortcode'));
 			}
 
 			$ls_redirectUri = $this->Authentication->getLoginRedirect() ?? Router::url([
-				'_name' => 'backend',
+				'_name' => Awyiss::REALM_BACKEND,
 				'controller' => 'Dashboard',
 				'action' => 'overview',
 			]);
@@ -256,12 +278,12 @@ class UsersController extends Controller {
 
 		if ($this->request->is('post') && ! $lo_result->isValid()) {
 			/** @var User $lo_user */
-			if (($ls_username = $this->request->getData('username')) && ($lo_user = $this->Users->find()->applyOptions(['authorization' => ['skip' => TRUE]])->where(['username' => $ls_username])->first())) {
+			if (($ls_username = $this->request->getData('username')) && ($lo_user = $this->Users->find()->applyOptions(['authorize' => ['skip' => TRUE]])->where(['username' => $ls_username])->first())) {
 				$lo_user->set([
-					'failed_attempts' => $lo_user->failed_attempts + 1,
-					'last_login' => FrozenTime::now(),
+					'failedAttempts' => $lo_user->failedAttempts + 1,
+					'lastLogin' => FrozenTime::now(),
 				], ['guard' => FALSE]);
-				$this->Users->save($lo_user, ['authorization' => ['skip' => TRUE], 'audit' => ['skip' => TRUE]]);
+				$this->Users->save($lo_user, ['authorize' => ['skip' => TRUE], 'audit' => ['skip' => TRUE]]);
 			}
 
 			$this->request = $this->request->withoutData('password');
@@ -271,36 +293,30 @@ class UsersController extends Controller {
 			password_hash(md5(Security::randomString()), PASSWORD_BCRYPT, ['cost' => 16]);
 		}
 
-		/** @var \Awyiss\Middleware\LocaleMiddleware $lo_locale */
-		$lo_locale = $this->request->getAttribute('locale');
-		$la_languages = $lo_locale->getLanguages('backend');
-
-		$la_languages = array_combine(array_column($la_languages, 'shortcode'), array_column($la_languages, 'title'));
+		$this->viewBuilder()->setLayout('login');
 
 		$this->set([
-			'aa_languages' => $la_languages,
+			'as_languageRealm' => Awyiss::REALM_BACKEND,
 		]);
-
-		$this->viewBuilder()->setLayout('login');
 	}
 
 
 	/**
 	 * Logout method
 	 *
-	 * @return NULL|\Cake\Http\Response Redirects on logout
+	 * @return NULL|Response Redirects on logout
 	 *
 	 * @noinspection PhpUnused
 	 */
 	public function logout (): ?Response {
 		$this->Authentication->logout();
 
-		/** @var \Cake\Http\Session $lo_session */
+		/** @var Session $lo_session */
 		$lo_session = $this->getRequest()->getAttribute('session');
 		$lo_session->delete('unauthenticatedRedirectUrl');
 
 		return $this->redirect(Router::url([
-			'_name' => 'backend',
+			'_name' => Awyiss::REALM_BACKEND,
 			'controller' => 'Users',
 			'action' => 'login',
 		]));

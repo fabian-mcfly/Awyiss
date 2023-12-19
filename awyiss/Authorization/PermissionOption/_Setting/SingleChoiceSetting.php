@@ -52,7 +52,7 @@ class SingleChoiceSetting implements SettingInterface {
 	/**
 	 * @param string $as_type
 	 *
-	 * @return \Awyiss\Authorization\PermissionOption\Setting\SettingInterface
+	 * @return SettingInterface
 	 */
 	public function setType (string $as_type): static {
 		$this->setConfig('type', Inflector::underscore($as_type));
@@ -72,7 +72,7 @@ class SingleChoiceSetting implements SettingInterface {
 	/**
 	 * @param array $aa_options
 	 *
-	 * @return \Awyiss\Authorization\PermissionOption\Setting\SettingInterface
+	 * @return SettingInterface
 	 */
 	public function setOptions (array $aa_options): static {
 		$this->setConfig('options', $aa_options);

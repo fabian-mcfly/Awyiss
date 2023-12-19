@@ -15,7 +15,7 @@
 			'contain' => {{ Bake.exportArray(belongsTo)|raw }},
 		];
 {% endif %}
-		$lo_{{ pluralName }} = $this->paginate($this->{{ currentModelName }}->find('withAttributes'));
+		$lo_{{ pluralName }} = $this->paginate($this->{{ currentModelName }}->find());
 
 		$this->set([
 			'ao_{{ pluralName }}' => $lo_{{ pluralName }},

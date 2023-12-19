@@ -4,50 +4,61 @@
 namespace Awyiss\Controller\Backend;
 
 
+use Awyiss\Awyiss;
 use Awyiss\Controller\BackendController as Controller;
+use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity\Content;
+use Awyiss\Model\Entity\ContentTemplate;
 use Awyiss\Model\Entity\Page;
+use Awyiss\Model\Table\ContentsTable;
 use Cake\Collection\Collection;
 use Cake\Collection\CollectionInterface;
+use Cake\Database\Expression\QueryExpression;
 use Cake\Datasource\Exception\InvalidPrimaryKeyException;
 use Cake\Datasource\Exception\RecordNotFoundException;
-use Cake\Datasource\ResultSetInterface;
 use Cake\Http\Exception\ForbiddenException;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
-use Cake\Routing\Router;
+use Cake\ORM\Query\SelectQuery;
+use Awyiss\Routing\Router;
+use Cake\Utility\Inflector;
 
 
 /**
  * Contents Controller
  *
- * @property \Awyiss\Model\Table\ContentsTable $Contents
+ * @property ContentsTable $Contents
  */
 class ContentsController extends Controller {
 	/**
 	 * @inheritDoc
 	 */
-	public array $categorize = [
+	protected array $categorize = [
 		'allowAggregation' => FALSE,
 		'associationName' => 'Pages',
 		'enabled' => TRUE,
-		'name' => 'page_id',
-		'paginate' => FALSE,
-		'queryOptions' => [
-			'authorization' => ['skip' => FALSE],
-		],
+		//'finder' => 'forCurrentLanguage',
+		'identifier' => 'pageId',
 		'threaded' => TRUE,
 	];
 	/**
-	 * @var \Cake\Datasource\ResultSetInterface
+	 * @var CollectionInterface
 	 */
-	protected ResultSetInterface $contentTemplates;
+	protected CollectionInterface $contentTemplates;
 	/** @var Page[] */
 	protected array $pages;
 	/**
-	 * @var \Cake\Collection\CollectionInterface
+	 * @var Page
+	 */
+	protected Page $page;
+	/**
+	 * @var CollectionInterface
 	 */
 	protected CollectionInterface $threadedContents;
+	/**
+	 * @var string
+	 */
+	protected string $pageRoleName;
 
 
 	/**
@@ -56,27 +67,32 @@ class ContentsController extends Controller {
 	 * @throws \Exception
 	 */
 	public function overview (): void {
+		$lo_page = $this->forPage((int) $this->request->getParam('pageId'));
+
 		$this->Authorization->ensure('read');
 
-		$lo_page = $this->getPage(intval($this->request->getParam('page-id')));
+		/**
+		 * Using `$this->Contents->find()` instead of
+		 * `$this->Contents->Pages->loadInto($lo_page, ['Contents'])->contents, $lo_contents->count();`
+		 * because `nestedByContentArea()` works with a Query, not an array.
+		 * This could be changed, but I fail to see any benefits
+		 */
+		$lo_contents = $this->Contents->find()->where($this->getOverviewWhere());
+		$this->Categories->filterQuery($lo_contents);
+		$la_contents = $this->Contents->nestedByContentArea($lo_contents)->toArray();
 
-		/*$lo_contents = $this->Categories->filterQuery($this->Contents->find('withAttributes')->where($this->getOverviewWhere()));
-		$ao_content = $lo_contents->where(['id' => 4360])->first();
-
-		$ao_content->attributes->jason_test = 'foobar';
-		dd($ao_content);*/
-
-		/*$this->Categories->setConfig('queryConditions', [
-			'page_role_id' => $lo_page->page_role_id,
-		]);*/
-
-		$lo_contents = $this->Categories->filterQuery($this->Contents->find('withAttributes')->where($this->getOverviewWhere()));
-		$la_contents = $this->Contents->nestedByTemplatePosition($lo_contents)->toArray();
+		$la_contentAreas = array_combine(array_column($lo_page->pageTemplate->contentAreas, 'id'), array_column($lo_page->pageTemplate->contentAreas, 'label'));
+		$la_unknownContentAreas = array_diff_key($la_contents, $la_contentAreas);
+		foreach ($la_unknownContentAreas AS $li_contentAreaId => $lo_contents) {
+			$la_contentAreas[ $li_contentAreaId ] = NULL;
+		}
 
 		$this->set([
 			'aa_contents' => $la_contents,
-			'ao_contentTemplates' => $this->getContentTemplates(),
+			'aa_contentAreas' => $la_contentAreas,
+			'aa_unknownContentAreas' => $la_unknownContentAreas,
 			'ao_page' => $lo_page,
+			'as_forScope' => $this->Contents->getForScope(),
 		]);
 	}
 
@@ -89,27 +105,53 @@ class ContentsController extends Controller {
 	 * @throws \Exception
 	 */
 	public function add (): void {
+		$li_pageId = (int) $this->request->getParam('pageId');
+		$lo_page = $this->forPage($li_pageId);
+
 		$this->Authorization->ensure('create');
 
 		$lo_content = $this->Contents->newDefaultEntity([
-			'page_id' => $this->request->getParam('page-id'),
+			'pageId' => $li_pageId,
 		]);
 
 		if ($this->request->is('post')) {
 			$this->save($lo_content);
+
+			//Calling save() might change the page, so use this instead
+			$lo_page = $this->page;
 		}
 
-		$lo_page = $this->getPage($lo_content->page_id);
+		$lo_contentTemplates = $this->getContentTemplates();
+		$this->ensurePossibleTemplate($lo_content, $lo_contentTemplates);
 
-		$la_availableTemplatePositions = $this->getAvailableTemplatePositions($lo_content, $lo_page);
-		$this->ensurePossibleTemplatePosition($lo_content, $la_availableTemplatePositions);
+		$la_contentAreas = $this->getContentAreas($lo_content, $lo_page);
+		$this->ensurePossibleContentArea($lo_content, $la_contentAreas);
+
+		$lo_threadedContents = $this->getThreadedContents($lo_content);
+		$this->ensurePossibleParentId($lo_content, $lo_threadedContents);
+
+		$la_assignedAttributes = $this->getAssignedAttributes($lo_content);
+
+		$ls_languageShortcode = $this->request->getData('languageShortcode') ?: $this->page->languageShortcode;
+
+		/** @var ContentTemplate $lo_selectedContentTemplate */
+		$lo_selectedContentTemplate = $lo_contentTemplates->firstMatch(['id' => $lo_content->contentTemplateId]);
+		$la_contentElementsByFieldset = [];
+		if (!empty($lo_selectedContentTemplate->contentTemplateElements)) {
+			$la_contentElementsByFieldset = collection($lo_selectedContentTemplate->contentTemplateElements)->groupBy('fieldset')->toArray();
+		}
 
 		$this->set([
 			'ao_content' => $lo_content,
-			'ao_contentTemplates' => $this->getContentTemplates(),
-			'ao_threadedContents' => $this->getThreadedContents($lo_content),
+			'ao_contentTemplates' => $lo_contentTemplates,
+			'ao_threadedContents' => $lo_threadedContents,
 			'ao_page' => $lo_page,
-			'aa_availableTemplatePositions' => $la_availableTemplatePositions,
+			'aa_assignedAttributes' => $la_assignedAttributes,
+			'aa_contentAreas' => $la_contentAreas,
+			'aa_contentElementsByFieldset' => $la_contentElementsByFieldset,
+			'as_forScope' => $this->Contents->getForScope(),
+			'as_languageRealm' => Awyiss::REALM_FRONTEND,
+			'as_languageShortcode' => $ls_languageShortcode,
 		]);
 	}
 
@@ -117,36 +159,65 @@ class ContentsController extends Controller {
 	/**
 	 * Edit method
 	 *
-	 * @return void|?\Cake\Http\Response
+	 * @return void|?Response
 	 *
 	 * @throws \Exception
 	 */
 	public function edit () {
-		$this->Authorization->ensure('update');
+		$li_pageId = (int) $this->request->getParam('id');
+		if ($this->request->is(['patch', 'post', 'put'])) {
+			$li_pageId = (int) $this->request->getData('page_id');
+		}
+
 
 		/** @var Content $lo_content */
-		$lo_content = $this->Contents->findById((int) $this->request->getParam('id'))->first();
+		$lo_content = $this->Contents->findById($li_pageId)->applyOptions([
+			'authorize' => ['skip' => TRUE],
+		])->first();
 		if ( ! $lo_content) {
-			$this->Flash->error(__('::record_not_found'));
+			$this->Flash->error(__('record_not_found'));
 
 			return $this->redirect(['action' => 'overview']);
 		}
+
+		$lo_page = $this->forPage($lo_content->pageId);
+		$this->Authorization->ensure('update');
 
 		if ($this->request->is(['patch', 'post', 'put'])) {
 			$this->save($lo_content, 'edit');
 		}
 
-		$lo_page = $this->getPage($lo_content->page_id);
+		$lo_contentTemplates = $this->getContentTemplates();
+		$this->ensurePossibleTemplate($lo_content, $lo_contentTemplates);
 
-		$la_availableTemplatePositions = $this->getAvailableTemplatePositions($lo_content, $lo_page);
-		$this->ensurePossibleTemplatePosition($lo_content, $la_availableTemplatePositions);
+		$la_contentAreas = $this->getContentAreas($lo_content, $lo_page);
+		$this->ensurePossibleContentArea($lo_content, $la_contentAreas);
+
+		$lo_threadedContents = $this->getThreadedContents($lo_content);
+		$this->ensurePossibleParentId($lo_content, $lo_threadedContents);
+
+		$la_assignedAttributes = $this->getAssignedAttributes($lo_content);
+
+		$ls_languageShortcode = $this->request->getData('language_shortcode') ?: $this->page->languageShortcode;
+
+		/** @var ContentTemplate $lo_selectedContentTemplate */
+		$lo_selectedContentTemplate = $lo_contentTemplates->firstMatch(['id' => $lo_content->contentTemplateId]);
+		$la_contentElementsByFieldset = [];
+		if (!empty($lo_selectedContentTemplate->contentTemplateElements)) {
+			$la_contentElementsByFieldset = collection($lo_selectedContentTemplate->contentTemplateElements)->groupBy('fieldset')->toArray();
+		}
 
 		$this->set([
 			'ao_content' => $lo_content,
-			'ao_contentTemplates' => $this->getContentTemplates(),
-			'ao_threadedContents' => $this->getThreadedContents($lo_content),
+			'ao_contentTemplates' => $lo_contentTemplates,
+			'ao_threadedContents' => $lo_threadedContents,
 			'ao_page' => $lo_page,
-			'aa_availableTemplatePositions' => $la_availableTemplatePositions,
+			'aa_assignedAttributes' => $la_assignedAttributes,
+			'aa_contentAreas' => $la_contentAreas,
+			'aa_contentElementsByFieldset' => $la_contentElementsByFieldset,
+			'as_forScope' => $this->Contents->getForScope(),
+			'as_languageRealm' => Awyiss::REALM_FRONTEND,
+			'as_languageShortcode' => $ls_languageShortcode,
 		]);
 	}
 
@@ -154,33 +225,35 @@ class ContentsController extends Controller {
 	/**
 	 * Delete method
 	 *
-	 * @return \Cake\Http\Response
+	 * @return Response
 	 *
 	 * @throws \Exception
 	 */
 	public function delete (): Response {
-		$this->Authorization->ensure('delete');
-
 		$this->request->allowMethod(['get', 'delete']);
 
 		/** @var Content $lo_content */
-		$lo_content = $this->Contents->findById((int) $this->request->getParam('id'))->first();
+		$lo_content = $this->Contents->findById((int) $this->request->getParam('id'))->applyOptions([
+			'authorize' => ['skip' => TRUE],
+		])->first();
 		if ( ! $lo_content) {
-			$this->Flash->error(__('::record_not_found'));
+			$this->Flash->error(__('record_not_found'));
+
 			return $this->redirect(['action' => 'overview']);
 		}
 
-		//Calling this ensures access to the page_id/it's scope resp. the page role.
-		$this->getPage($lo_content->page_id);
+		//Calling this ensures access to the pageId/it's scope resp. the page role.
+		$this->forPage($lo_content->pageId);
+		$this->Authorization->ensure('delete');
 
 		if ($this->Contents->delete($lo_content)) {
-			$this->Flash->success(__('::delete_succeeded'));
+			$this->Flash->success(__('delete_succeeded'));
 		}
 		else {
-			$this->Flash->error(__('::delete_failed'));
+			$this->Flash->error(__('delete_failed'));
 		}
 
-		return $this->redirect(['action' => 'overview']);
+		return $this->redirect(['action' => 'overview', 'pageId' => $lo_content->pageId]);
 	}
 
 
@@ -192,47 +265,94 @@ class ContentsController extends Controller {
 	 * @throws \Exception
 	 */
 	protected function save (Content $ao_content, string $as_method = 'add'): void {
+		if ($this->Contents->hasAttributes()) {
+			$ao_content->setAccess('attributes', TRUE);
+		}
+
 		$this->Contents->patchEntity($ao_content, $this->request->getData());
 
-		if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-			$this->Contents->forPage($ao_content->page_id);
+		//Make sure the new page role of the new page id is accessible (could have changed)
+		$this->page = $this->forPage($ao_content->pageId);
 
+		if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
 			if ($this->Contents->save($ao_content)) {
-				$this->Flash->success(__('::' . $as_method . '_succeeded'));
+				$this->Flash->success(__($as_method . '_succeeded'));
 
 				if ($this->request->getData('submit') == 'submit_close') {
-					throw new RedirectException(Router::url(['action' => 'overview', 'page-id' => $ao_content->page_id], TRUE), 302);
+					throw new RedirectException(Router::url(['action' => 'overview', 'lang' => $this->page->languageShortcode, 'pageId' => $ao_content->pageId], TRUE), 302);
 				}
 
-				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $ao_content->id], TRUE), 302);
+				throw new RedirectException(Router::url(['action' => 'edit',	'lang' => $this->page->languageShortcode, 'id' => $ao_content->id], TRUE), 302);
 			}
 
-			$this->Flash->error(__('::' . $as_method . '_failed'));
-			$this->Flash->error(implode('<br>' . PHP_EOL, $ao_content->getError('_general')));
+			$this->Flash->error(__($as_method . '_failed'));
+			foreach ($ao_content->getError('_general') as $ls_error) {
+				$this->Flash->error($ls_error);
+			}
 		}
 		else {
 			if ($this->Contents->getSystemOrderRelatedColumns($ao_content)) {
-				$ao_content->system_order = NULL;
+				$ao_content->systemOrder = NULL;
 			}
 			else {
-				$ao_content->system_order = $ao_content->getOriginal('system_order');
+				$ao_content->systemOrder = $ao_content->hasOriginal('systemOrder') ? $ao_content->getOriginal('systemOrder') : $ao_content->get('systemOrder');
 			}
 		}
 	}
 
 
 	/**
-	 * Returns a Resultset of all available ContentTemplates using the `findList()` finder
+	 * @param Content $ao_content
 	 *
-	 * @return \Cake\Datasource\ResultSetInterface
-	 *
-	 * @see \Cake\ORM\Table::findList()
+	 * @return array
 	 */
-	public function getContentTemplates (): ResultSetInterface {
+	protected function getAssignedAttributes (Content $ao_content): array {
+		if (empty($ao_content->contentTemplate)) {
+			return [];
+		}
+
+		return $this->Contents->ContentTemplates->getAssignedContentAttributes($ao_content->contentTemplate);
+	}
+
+
+	/**
+	 * Returns a collection of all available ContentTemplates
+	 *
+	 * @return CollectionInterface
+	 */
+	protected function getContentTemplates (): CollectionInterface {
 		if (!isset($this->contentTemplates)) {
-			$this->contentTemplates = $this->Contents->ContentTemplates->find('list')->find('active', [
-				'authorization' => ['skip' => TRUE],
-			])->all();
+			$li_pageTemplateId = $this->page->pageTemplateId;
+
+			$lo_query = $this->Contents->ContentTemplates->find('active',
+				authorize: ['skip' => TRUE],
+			)
+			->select([
+				'id',
+				'title',
+				'active',
+			])
+			->matching('ContentTemplateContentAreas', function(SelectQuery $ao_query) use ($li_pageTemplateId) {
+				return $ao_query->where(['ContentTemplateContentAreas.page_template_id' => $li_pageTemplateId])->applyOptions(['authorize' => ['skip' => TRUE]]);
+			})
+			->contain([
+				'ContentTemplateContentAreas' => [
+					'finder' => [
+						'all' => [
+							'authorize' => ['skip' => TRUE],
+						],
+					],
+				],
+				'ContentTemplateElements' => [
+					'finder' => [
+						'all' => [
+							'authorize' => ['skip' => TRUE],
+						],
+					],
+				],
+			]);
+
+			$this->contentTemplates = $lo_query->all()->indexBy('id');
 		}
 
 		return $this->contentTemplates;
@@ -240,113 +360,171 @@ class ContentsController extends Controller {
 
 
 	/**
-	 * Returns a Collection of all available contents that exist within the same page and the same `template_position`
-	 * as the entity, provided via `$ao_content`
+	 * Returns a Collection of all available contents that exist within the same page and the same `contentArea`
+	 * as the entity `$ao_content`
 	 *
-	 * @param \Awyiss\Model\Entity\Content $ao_content
+	 * @param Content $ao_content
 	 *
-	 * @return \Cake\Collection\CollectionInterface
+	 * @return CollectionInterface
 	 */
-	public function getThreadedContents (Content $ao_content): CollectionInterface {
+	protected function getThreadedContents (Content $ao_content): CollectionInterface {
 		if (!isset($this->threadedContents)) {
-			$lo_query = $this->Contents->find('withAttributes')->where([
-				'page_id' => $ao_content->page_id,
-				'template_position' => $ao_content->template_position,
+			if (empty($ao_content->contentAreaId)) {
+				return new Collection([]);
+			}
+
+			$lo_query = $this->Contents->find()->where([
+				'page_id' => $ao_content->pageId,
+				'content_area_id' => $ao_content->contentAreaId,
 			]);
 
 			$this->threadedContents = $this->Contents->listNested($lo_query);
 		}
 
 		//Single "=". We only want to find threaded contents for an existing entity (id equals not NULL)
-		if ($li_originalId = $ao_content->getOriginal('id')) {
-			/*$li_foundAtLevel = NULL;
-			$la_threadedContents = [];
-			foreach ($this->threadedContents AS $ao_content) {
-				dump($ao_content->getOriginal('id') . ' == ' . $li_originalId);
-				if ($ao_content->getOriginal('id') === $li_originalId) {
-					$li_foundAtLevel = $ao_content->level;
-					$la_threadedContents[] = $ao_content;
-					continue;
-				}
-				elseif ($ao_content->level > $li_foundAtLevel) {
-					continue;
-				}
-				elseif ($ao_content->level > $li_foundAtLevel) {
-					$li_foundAtLevel = NULL;
-				}
-			}*/
-
-			$li_foundAtLevel = NULL;
-			$lo_threadedContents = new Collection($this->threadedContents->toList());
-			$lo_threadedContents = $lo_threadedContents->filter(function($ao_content) use ($li_originalId, &$li_foundAtLevel) {
-				if ($ao_content->getOriginal('id') === $li_originalId) {
-					$li_foundAtLevel = $ao_content->level;
-				}
-				elseif (is_null($li_foundAtLevel) || $ao_content->level <= $li_foundAtLevel) {
-					$li_foundAtLevel = NULL;
-					return TRUE;
-				}
-
-				return FALSE;
-			});
-
-			$lo_threadedContents = $lo_threadedContents->nest('id', 'parent_id');
-
-			return $lo_threadedContents->listNested();
+		if (!($li_originalId = $ao_content->get('id'))) {
+			return $this->threadedContents;
 		}
 
-		return $this->threadedContents;
+		$li_foundAtLevel = NULL;
+		$lo_threadedContents = new Collection($this->threadedContents->toList());
+		$lo_threadedContents = $lo_threadedContents->filter(function($ao_content) use ($li_originalId, &$li_foundAtLevel) {
+			if ($ao_content->get('id') === $li_originalId) {
+				$li_foundAtLevel = $ao_content->level;
+			}
+			elseif (is_null($li_foundAtLevel) || $ao_content->level <= $li_foundAtLevel) {
+				$li_foundAtLevel = NULL;
+				return TRUE;
+			}
+
+			return FALSE;
+		});
+
+		$lo_threadedContents = $lo_threadedContents->nest('id', 'parentId');
+
+		return $lo_threadedContents->listNested();
 	}
 
 
 	/**
 	 * Returns and caches a Page object.
+	 *
+	 * @throws ForbiddenException
+	 * @throws \Exception
+	 * @throws \RuntimeException
+	 *@see Page
+	 *
+	 */
+	protected function getPage (int $ai_pageId): Page {
+		if (! isset($this->pages[ $ai_pageId ])) {
+			$this->pages[ $ai_pageId ] = $this->Contents->getPage($ai_pageId);
+		}
+
+		return $this->pages[ $ai_pageId ];
+	}
+
+
+	/**
+	 * Sets the Contents table to use the page role of a page with the given id
 	 * Requesting a page that does not exist or without having read access to the scope of the page (page role),
 	 * a redirect exception is thrown.
 	 *
-	 * @see \Awyiss\Model\Entity\Page
+	 * @param int $ai_pageId
 	 *
-	 * @throws \Cake\Http\Exception\ForbiddenException
+	 * @return Page
 	 * @throws \Exception
-	 * @throws \RuntimeException
 	 */
-	protected function getPage (int $ai_page_id): Page {
-		if (isset($this->pages[ $ai_page_id ])) {
-			return $this->pages[ $ai_page_id ];
-		}
-
+	protected function forPage (int $ai_pageId): Page {
 		try {
-			$lo_page = $this->Contents->forPage($ai_page_id);
+			$lo_page = $this->getPage($ai_pageId);
 		}
-		catch (RecordNotFoundException|InvalidPrimaryKeyException|ForbiddenException) {
-			$this->Flash->error(__('::record_not_found'));
+		catch (RecordNotFoundException|InvalidPrimaryKeyException) {
+			$this->Flash->error(__('record_not_found'));
 			throw new RedirectException(Router::url(['controller' => 'dashboard', 'action' => 'overview'], TRUE), 404);
 		}
+		catch (ForbiddenException) {
+			throw new ForbiddenException();
+		}
 
-		return $this->pages[ $ai_page_id ] = $lo_page;
+		$this->page = $lo_page;
+
+		$this->Contents->forPageRole($lo_page->pageRole->identifier);
+
+		$this->pageRoleName = $this->Contents->getPageRoleName();
+
+		if ($this->request->is(['patch', 'post', 'put']) && in_array($this->request->getParam('action'), ['add', 'edit'])) {
+			$this->Categories->setConfig([
+				'associationName' => Inflector::camelize($this->Contents->getForScope()),
+				'queryConditions' => function(QueryExpression $ao_expression/*, Query $ao_query*/) {
+					return $ao_expression->eq('language_shortcode', $this->request->getData('language_shortcode'))->eq('page_role_id', $this->page->pageRoleId);
+				},
+				'redirectOnInvalidSelection' => FALSE,
+			]);
+		}
+		else {
+			if ($lo_page->language_shortcode != LocaleMiddleware::getLanguage()->shortcode) {
+				dd(Router::url([
+					'lang' => $lo_page->languageShortcode,
+				] + $this->request->getParam('parts'), TRUE), __LINE__, __FILE__);
+
+				throw new RedirectException(Router::url([
+					'lang' => $lo_page->languageShortcode,
+				], TRUE), 302);
+			}
+
+			$this->Categories->setConfig([
+				'associationName' => Inflector::camelize($this->Contents->getForScope()),
+				'queryConditions' => function(QueryExpression $ao_expression/*, Query $ao_query*/) {
+					return $ao_expression->eq('language_shortcode', $this->page->languageShortcode)->eq('page_role_id', $this->page->pageRoleId);
+				}
+			]);
+		}
+
+		$this->Authorization->setScope($this->Contents->getForScope());
+
+		return $lo_page;
 	}
 
 
 	/**
-	 * @param \Awyiss\Model\Entity\Content $ao_content
-	 * @param array $aa_availableTemplatePositions
+	 * @param Content $ao_content
+	 * @param CollectionInterface $ao_threadedContents
 	 *
 	 * @return void
 	 */
-	protected function ensurePossibleTemplatePosition (Content $ao_content, array $aa_availableTemplatePositions = []): void {
-		if (empty($ao_content->template_position) || !in_array($ao_content->template_position, $aa_availableTemplatePositions)) {
-			$la_errors = $ao_content->getError('template_position');
+	protected function ensurePossibleParentId (Content $ao_content, CollectionInterface $ao_threadedContents): void {
+		$la_possibleParentIds = $ao_threadedContents->extract('id')->toList();
+		$la_contentTemplates = $this->getContentTemplates()->toArray();
 
-			$ao_content->template_position = reset($aa_availableTemplatePositions);
+		if (!empty($ao_content->parentId) && !in_array($ao_content->parentId, $la_possibleParentIds)) {
+			$la_errors = $ao_content->getError('parentId');
+
+			/** @var ContentTemplate $lo_contentTemplate */
+			$lo_contentTemplate = $la_contentTemplates[ $ao_content->contentTemplateId ] ?? NULL;
+			if ( ! $lo_contentTemplate) {
+				//macht diese if überhaupt sinn?
+				dd(__FILE__, __LINE__);
+				$ao_content->parentId = reset($la_possibleParentIds) ?: NULL;
+			}
+			else {
+				$la_assignedContentElements = collection($lo_contentTemplate->contentTemplateElements)->indexBy('identifier')->toArray();
+
+				if (($la_assignedContentElements['parent_id'] ?? NULL)?->required === TRUE && $la_possibleParentIds) {
+					$ao_content->parentId = reset($la_possibleParentIds);
+				}
+				else {
+					$ao_content->parentId = NULL;
+				}
+			}
 
 			if ($la_errors) {
-				$ao_content->setError('template_position', $la_errors);
+				$ao_content->setError('parentId', $la_errors);
 			}
 
 			$lo_request = $this->getRequest();
-			//When template_position is part of the request data, overwrite it since it might be outdated
-			if ($lo_request->getData('template_position') !== NULL) {
-				$lo_request = $lo_request->withData('template_position', $ao_content->template_position);
+			//When parent_id is part of the request data, overwrite it since it might be outdated
+			if ($lo_request->getData('parent_id') !== NULL) {
+				$lo_request = $lo_request->withData('parent_id', $ao_content->parentId);
 				$this->setRequest($lo_request);
 			}
 		}
@@ -354,39 +532,110 @@ class ContentsController extends Controller {
 
 
 	/**
-	 * @param \Awyiss\Model\Entity\Content $ao_content
-	 * @param NULL|\Awyiss\Model\Entity\Page $ao_page
+	 * @param Content $ao_content
+	 * @param CollectionInterface $ao_contentTemplates
 	 *
-	 * @return array
-	 *
-	 * @throws \Cake\Http\Exception\ForbiddenException
-	 * @throws \Exception
-	 * @throws \RuntimeException
+	 * @return void
 	 */
-	protected function getAvailableTemplatePositions (Content $ao_content, ?Page $ao_page = NULL): array {
-		$lo_page = $ao_page ?? $this->getPage($ao_content->page_id);
+	protected function ensurePossibleTemplate (Content $ao_content, CollectionInterface $ao_contentTemplates): void {
+		if (!$ao_content->contentTemplateId || !$ao_contentTemplates->firstMatch(['id' => $ao_content->contentTemplateId])) {
+			$la_errors = $ao_content->getError('contentTemplateId');
 
-		$la_errors = $ao_content->getError('content_template_id');
-		try {
-			$lo_content_template = $this->Contents->ContentTemplates->get($ao_content->content_template_id, ['authorization' => ['skip' => TRUE]]);
-		}
-		catch (RecordNotFoundException|InvalidPrimaryKeyException) {
-			$lo_content_template = $this->Contents->ContentTemplates->find('all', ['authorization' => ['skip' => TRUE]])->first();
-			$ao_content->content_template_id = $lo_content_template->id;
+			$ao_content->contentTemplate = $ao_contentTemplates->first();
+			$ao_content->contentTemplateId = $ao_content->contentTemplate?->id;
 
 			if ($la_errors) {
-				$ao_content->setError('content_template_id', $la_errors);
+				$ao_content->setError('contentTemplateId', $la_errors);
+			}
+		}
+		elseif (empty($ao_content->contentTemplate)) {
+			$ao_content->contentTemplate = $ao_contentTemplates->firstMatch(['id' => $ao_content->contentTemplateId]);
+			$ao_content->contentTemplateId = $ao_content->contentTemplate?->id;
+		}
+
+		$lo_request = $this->getRequest();
+		//When content_template_id is part of the request data, overwrite it since it might be outdated
+		if ($lo_request->getData('content_template_id') !== NULL) {
+			$lo_request = $lo_request->withData('content_template_id', $ao_content->contentTemplateId);
+			$this->setRequest($lo_request);
+		}
+	}
+
+
+	/**
+	 * @param Content $ao_content
+	 * @param array $aa_availableContentAreas
+	 *
+	 * @return void
+	 */
+	protected function ensurePossibleContentArea (Content $ao_content, array $aa_availableContentAreas = []): void {
+		if (empty($ao_content->contentAreaId) || !in_array($ao_content->contentAreaId, array_column($aa_availableContentAreas['all'], 'id'))) {
+			$la_errors = $ao_content->getError('contentAreaId');
+
+			if (! $aa_availableContentAreas['available']) {
+				return;
+			}
+
+			$ao_content->contentArea = reset($aa_availableContentAreas['available']);
+			$ao_content->contentAreaId = $ao_content->contentArea->id;
+
+			if ($la_errors) {
+				$ao_content->setError('contentAreaId', $la_errors);
 			}
 
 			$lo_request = $this->getRequest();
-			//When content_template_id is part of the request data, overwrite it since it might be outdated
-			if ($lo_request->getData('content_template_id') !== NULL) {
-				$lo_request = $lo_request->withData('content_template_id', $ao_content->content_template_id);
+			//When content_area_id is part of the request data, overwrite it since it might be outdated
+			if ($lo_request->getData('content_area_id') !== NULL) {
+				$lo_request = $lo_request->withData('content_area_id', $ao_content->contentAreaId);
 				$this->setRequest($lo_request);
 			}
 		}
+	}
 
-		return $lo_content_template->assigned_template_positions[ $lo_page->page_template_id ] ?? [];
+
+	/**
+	 * @param Content $ao_content
+	 * @param NULL|Page $ao_page
+	 *
+	 * @return array
+	 *
+	 * @throws ForbiddenException
+	 * @throws \Exception
+	 * @throws \RuntimeException
+	 */
+	protected function getContentAreas (Content $ao_content, ?Page $ao_page = NULL): array {
+		$lo_page = $ao_page ?? $this->getPage($ao_content->pageId);
+
+		/** @var ContentTemplate $lo_contentTemplate */
+		$lo_contentTemplate = $this->contentTemplates->firstMatch(['id' => $ao_content->contentTemplateId]);
+		if (! $lo_contentTemplate) {
+			return [
+				'available' => [],
+				'unavailable' => [],
+				'all' => [],
+			];
+		}
+
+		$la_unavailableContentAreas = $la_contentAreas = collection($lo_page->pageTemplate->contentAreas)->indexBy('id')->toArray();
+
+		$la_availableContentAreas = [];
+
+		foreach ($lo_contentTemplate->contentTemplateContentAreas ?? [] AS $lo_contentTemplateContentArea) {
+			if ($lo_contentTemplateContentArea->pageTemplateId != $lo_page->pageTemplateId) {
+				continue;
+			}
+
+			if (isset($la_unavailableContentAreas[ $lo_contentTemplateContentArea->contentAreaId ])) {
+				$la_availableContentAreas[ $lo_contentTemplateContentArea->contentAreaId ] = $la_unavailableContentAreas[ $lo_contentTemplateContentArea->contentAreaId ];
+				unset($la_unavailableContentAreas[ $lo_contentTemplateContentArea->contentAreaId ]);
+			}
+		}
+
+		return [
+			'available' => $la_availableContentAreas,
+			'unavailable' => $la_unavailableContentAreas,
+			'all' => $la_contentAreas,
+		];
 	}
 }
 

@@ -5,30 +5,36 @@ namespace Awyiss\Model\Table;
 
 
 use ArrayObject;
-use Awyiss\Model\Behavior\AuthorizationBehavior;
+use Awyiss\Awyiss;
+use Awyiss\Model\Behavior\AuthorizeBehavior;
 use Awyiss\Model\Entity\Page;
 use Awyiss\Model\Table;
+use Awyiss\ORM\Association\BelongsTo;
+use Awyiss\ORM\Association\HasMany;
+use Awyiss\ORM\RulesChecker;
 use Cake\Collection\CollectionInterface;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
-use Cake\ORM\Query;
-use Awyiss\ORM\RulesChecker;
+use Cake\ORM\Query\SelectQuery;
+use Cake\ORM\RulesChecker as BaseRulesChecker;
+use Cake\Utility\Inflector;
 use Cake\Validation\Validator;
 
 
 /**
  * Pages Model
  *
- * @property \Awyiss\Model\Table\PageRolesTable&\Cake\ORM\Association\BelongsTo $PageRoles
- * @property \Awyiss\Model\Table\PageTemplatesTable&\Cake\ORM\Association\BelongsTo $PageTemplates
- * @property \Awyiss\Model\Table\PagesTable&\Cake\ORM\Association\BelongsTo $Duplicate
- * @property \Awyiss\Model\Table\PagesTable&\Cake\ORM\Association\BelongsTo $Parent
- * @property \Awyiss\Model\Table\PagesTable&\Cake\ORM\Association\HasMany $Children
+ * @property PageRolesTable&BelongsTo     $PageRoles
+ * @property PageTemplatesTable&BelongsTo $PageTemplates
+ * @property PagesTable&BelongsTo         $Duplicate
+ * @property PagesTable&BelongsTo         $ParentPages
+ * @property PagesTable&HasMany           $ChildPages
+ * @property ContentsTable&HasMany        $Contents
  *
  * @method Page newDefaultEntity(array $aa_additionalData = [])
- * @method CollectionInterface|NULL getChildren(EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
- * @method CollectionInterface|NULL getDirectChildren(EntityInterface $ao_entity)
+ * @method CollectionInterface|NULL getNestedChildren(EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
+ * @method CollectionInterface|NULL getChildren(EntityInterface $ao_entity)
  * @method Page getParent(EntityInterface $ao_entity)
  * @method CollectionInterface|NULL getParents(EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
  */
@@ -36,43 +42,65 @@ class PagesTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
+	public const TABLE = 'pages';
+	/**
+	 * @inheritDoc
+	 */
 	protected array $_defaultConfig = [
-		'nested' => [
-			'children' => [
-				'associationName' => 'Children',
-			],
-			'parent' => [
-				'associationName' => 'Parent',
-			],
-			'relatedColumns' => ['language_shortcode', 'page_role_id'],
+		'nest' => [
+			'relatedColumns' => ['languageShortcode', 'pageRoleId'],
 		],
 		'systemOrder' => [
-			'relatedColumns' => ['language_shortcode', 'page_role_id', 'parent_id'],
+			'relatedColumns' => ['languageShortcode', 'pageRoleId', 'parentId'],
 		],
 	];
+	protected string $pageRole = 'page';
 	/**
 	 * Integer identifier of the used page role.
 	 *
-	 * @var NULL|int
+	 * @var int
 	 */
-	protected ?int $pageRoleId = PAGEROLE_PAGE;
-	public const TABLE = 'pages';
+	protected int $pageRoleId;
 
 
 	/**
 	 * @inheritDoc
+	 * @throws \Exception
 	 */
 	public function initialize (array $aa_config): void {
+		$this->pageRoleId = constant('PAGEROLE_' . strtoupper($this->pageRole));
+		$ls_alias = Inflector::pluralize($this->pageRole);
+
+		if ( ! $this->getConfig('nest.alias')) {
+			$this->setConfig('nest.alias', Inflector::camelize($ls_alias));
+		}
+
+		if (!$this->getConfig('authorize.scope')) {
+			$this->setConfig('authorize.scope', $this->pageRole);
+		}
+
+		if (!$this->getConfig('attributes.foreignKey')) {
+			$this->setConfig('attributes.foreignKey', 'page_id');
+		}
+
+		if (!$this->getConfig('attributes.sourceTable')) {
+			$this->setConfig('attributes.sourceTable', $ls_alias);
+		}
+
 		parent::initialize($aa_config);
 
-		$this->addBehavior('Nested', $this->getConfig('nested', []));
+		$this->buildPagesAssociations();
 
-		$this->setTable(static::TABLE);
-		$this->setPrimaryKey('id');
+		$this->hasMany('Contents', [
+			'cascadeCallbacks' => TRUE,
+			'className' => 'Contents',
+			'dependent' => TRUE,
+			'foreignKey' => 'page_id',
+		]);
 
 		$this->belongsTo('Languages', [
 			'bindingKey' => 'shortcode',
-			'conditions' => ['type' => 'frontend'],
+			'conditions' => ['realm' => Awyiss::REALM_FRONTEND],
 			'foreignKey' => 'language_shortcode',
 			'joinType' => 'INNER',
 		]);
@@ -82,32 +110,24 @@ class PagesTable extends Table {
 		]);
 
 		$this->belongsTo('PageTemplates', [
+			'bindingKey' => [
+				'id',
+  				'page_role_id',
+			],
 			'joinType' => 'INNER',
-		]);
-
-		$this->belongsTo('Duplicate', [
-			'bindingKey' => 'duplicate_of',
-			'className' => 'Pages',
-			'foreignKey' => 'id',
-		]);
-
-		$this->belongsTo('Parent', [
-			'className' => 'Pages',
-			'foreignKey' => 'parent_id',
-		]);
-
-		$this->hasMany('Children', [
-			'className' => 'Pages',
-			'foreignKey' => 'parent_id',
+			'foreignKey' => [
+				'page_template_id',
+				'page_role_id',
+			],
 		]);
 
 
-		/** @var AuthorizationBehavior $lo_authorizationBehavior */
-		$lo_authorizationBehavior = $this->getBehavior('Authorization');
+		/** @var AuthorizeBehavior $lo_authorizationBehavior */
+		$lo_authorizationBehavior = $this->getBehavior('Authorize');
 
 		if ( ! $lo_authorizationBehavior->getConfig('Model.buildRules')) {
 			//Set a default callable for the `Model.buildRules`-event
-			$lo_authorizationBehavior->setConfig('Model.buildRules', function(Page $ao_entity, array $aa_options, AuthorizationBehavior $ao_behavior, ?bool $ab_accessible): ?bool {
+			$lo_authorizationBehavior->setConfig('Model.buildRules', function(Page $ao_entity, array $aa_options, AuthorizeBehavior $ao_behavior, ?bool $ab_accessible): ?bool {
 				if ( ! $ab_accessible) {
 					return FALSE;
 				}
@@ -130,6 +150,38 @@ class PagesTable extends Table {
 				return TRUE;
 			});
 		}*/
+
+		/*if ($aa_config['forPageRole'] ?? NULL) {
+			$this->setPageRole($aa_config['forPageRole']);
+		}*/
+	}
+
+
+	/**
+	 * @return void
+	 */
+	protected function buildPagesAssociations (): void {
+		$ls_pageRole = Inflector::camelize(Inflector::pluralize($this->pageRole));
+
+		$this->hasMany('Duplicate' . $ls_pageRole, [
+			'bindingKey' => 'duplicate_of',
+			'className' => $ls_pageRole,
+			'cascadeCallbacks' => TRUE,
+			'dependent' => TRUE,
+			'foreignKey' => 'id',
+		]);
+
+		$this->belongsTo('DuplicateOf' . $ls_pageRole, [
+			'bindingKey' => 'id',
+			'className' => $ls_pageRole,
+			'foreignKey' => 'duplicate_of',
+		]);
+
+		if ($this->hasBehavior('Nest')) {
+			$this->removeBehavior('Nest');
+		}
+
+		$this->addBehavior('Nest', $this->getConfig('nest', []));
 	}
 
 
@@ -143,73 +195,136 @@ class PagesTable extends Table {
 
 
 	/**
-	 * @param NULL|int $ai_pageRoleId
-	 *
-	 * @return \Awyiss\Model\Table\PagesTable
-	 */
-	public function setPageRoleId (?int $ai_pageRoleId = NULL): static {
-		$this->pageRoleId = $ai_pageRoleId;
-
-		return $this;
-	}
-
-
-	/**
 	 * Returns the default validator object.
 	 *
-	 * @param \Cake\Validation\Validator $ao_validator The validator that can be modified to
+	 * @param Validator $ao_validator The validator that can be modified to
 	 * add some rules to it.
 	 *
-	 * @return \Cake\Validation\Validator
-	 *
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 * @return Validator
 	 */
 	public function validationDefault (Validator $ao_validator): Validator {
-		$ao_validator->integer('id')->allowEmptyString('id', NULL, 'create');
+		parent::validationDefault($ao_validator);
 
-		$ao_validator->scalar('slug')->maxLength('slug', 255);
 
-		$ao_validator->scalar('language_shortcode')
-			->requirePresence('language_shortcode', 'create')
-			->minLength('shortcode', 2, __('validation::not_exact_length'))
-			->maxLength('shortcode', 2, __('validation::not_exact_length'))
-			->notEmptyString('language_shortcode');
+		$ao_validator->requirePresence([
+			'languageShortcode',
+			'slug',
+			'title',
+			'pageRoleId',
+			'pageTemplateId',
+		], 'create');
 
-		$ao_validator->scalar('title')->requirePresence('title', 'create')->maxLength('title', 255)->notEmptyString('title');
 
-		$ao_validator->scalar('redirect_link')->maxLength('redirect_link', 255)->allowEmptyString('redirect_link');
+		$ao_validator->add('id', [
+			'isInteger' => ['rule' => 'isInteger'],
+			'maxLength' => ['rule' => ['maxLength', 11]],
+		]);
 
-		$ao_validator->dateTime('eventdate_start')->allowEmptyDateTime('eventdate_start');
 
-		$ao_validator->dateTime('eventdate_end')->allowEmptyDateTime('eventdate_end');
+		$ao_validator->add('parentId', [
+			'isInteger' => ['rule' => 'isInteger'],
+			'maxLength' => ['rule' => ['maxLength', 11]],
+		]);
 
-		$ao_validator->dateTime('publishdate_start')->allowEmptyDateTime('publishdate_start');
 
-		$ao_validator->dateTime('publishdate_end')->allowEmptyDateTime('publishdate_end');
+		$ao_validator->notEmptyString('languageShortcode');
+		$ao_validator->add('languageShortcode', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'ascii' => ['rule' => 'ascii'],
+			'exactLength' => [
+				'rule' => function($as_shortcode) {
+					return strlen($as_shortcode) == 2;
+				},
+			],
+		]);
 
-		$ao_validator->scalar('meta_title')->maxLength('meta_title', 100)->allowEmptyString('meta_title');
 
-		$ao_validator->scalar('meta_description')->allowEmptyString('meta_description');
+		$ao_validator->notEmptyString('slug');
+		$ao_validator->add('slug', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'maxLength' => ['rule' => ['maxLength', 255]],
+			'notBlank' => ['rule' => 'notBlank'],
+		]);
 
-		$ao_validator->boolean('robots_index')->notEmptyString('robots_index');
 
-		$ao_validator->boolean('robots_follow')->notEmptyString('robots_follow');
+		$ao_validator->notEmptyString('title');
+		$ao_validator->add('title', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'maxLength' => ['rule' => ['maxLength', 255]],
+			'notBlank' => ['rule' => 'notBlank'],
+		]);
 
-		$ao_validator->integer('page_role_id')->notEmptyString('page_role_id');
 
-		$ao_validator->integer('page_template_id')->notEmptyString('page_template_id');
+		$ao_validator->add('redirectLink', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'maxLength' => ['rule' => ['maxLength', 255]],
+			'notBlank' => ['rule' => 'notBlank'],
+			'url' => ['rule' => ['url', TRUE]],
+		]);
 
-		$ao_validator->integer('duplicate_of')->allowEmptyString('duplicate_of');
 
-		$ao_validator->integer('parent_id')->allowEmptyString('parent_id');
+		$ao_validator->add('metaTitle', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'maxLength' => ['rule' => ['maxLength', 100]],
+			'notBlank' => ['rule' => 'notBlank'],
+		]);
 
-		$ao_validator->integer('system_order')->notEmptyString('system_order');
 
-		$ao_validator->boolean('active')->notEmptyString('active');
+		$ao_validator->add('metaDescription', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'maxLengthBytes' => ['rule' => ['maxLengthBytes', 65535]],
+			'notBlank' => ['rule' => 'notBlank'],
+		]);
 
-		$ao_validator->boolean('parents_active')->notEmptyString('parents_active');
 
-		$ao_validator->boolean('deleted')->notEmptyString('deleted');
+		$ao_validator->add('robotsIndex', [
+			'boolean' => ['rule' => 'boolean'],
+		]);
+
+
+		$ao_validator->add('robotsFollow', [
+			'boolean' => ['rule' => 'boolean'],
+		]);
+
+
+		$ao_validator->notEmptyString('pageRoleId');
+		$ao_validator->add('pageRoleId', [
+			'isInteger' => ['rule' => 'isInteger'],
+			'maxLength' => ['rule' => ['maxLength', 11]],
+		]);
+
+
+		$ao_validator->notEmptyString('pageTemplateId');
+		$ao_validator->add('pageTemplateId', [
+			'isInteger' => ['rule' => 'isInteger'],
+			'maxLength' => ['rule' => ['maxLength', 11]],
+		]);
+
+
+		$ao_validator->add('duplicateOf', [
+			'isInteger' => ['rule' => 'isInteger'],
+			'maxLength' => ['rule' => ['maxLength', 11]],
+		]);
+
+
+		$ao_validator->add('systemOrder', [
+			'isInteger' => ['rule' => 'isInteger'],
+		]);
+
+
+		$ao_validator->add('active', [
+			'boolean' => ['rule' => 'boolean'],
+		]);
+
+
+		$ao_validator->add('parentsActive', [
+			'boolean' => ['rule' => 'boolean'],
+		]);
+
+
+		$ao_validator->add('deleted', [
+			'boolean' => ['rule' => 'boolean'],
+		]);
 
 		return $ao_validator;
 	}
@@ -218,22 +333,85 @@ class PagesTable extends Table {
 	/**
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 *
-	 * @param \Awyiss\ORM\RulesChecker|\Cake\ORM\RulesChecker $ao_rules The rules object to be modified.
+	 * @param RulesChecker|BaseRulesChecker $ao_rules The rules object to be modified.
 	 *
-	 * @return \Awyiss\ORM\RulesChecker
+	 * @return RulesChecker
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildRules (RulesChecker|\Cake\ORM\RulesChecker $ao_rules): RulesChecker {
-		$ao_rules->add($ao_rules->existsIn(['language_shortcode'], 'Languages', ['authorization' => ['skip' => TRUE]]), ['errorField' => 'language_shortcode']);
+	public function buildRules (RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
+		$ls_pageRole = Inflector::camelize(Inflector::pluralize($this->pageRole));
 
-		$ao_rules->add($ao_rules->existsIn(['page_role_id'], 'PageRoles', ['authorization' => ['skip' => TRUE]]), ['errorField' => 'page_role_id']);
 
-		$ao_rules->add($ao_rules->existsIn(['page_template_id'], 'PageTemplates', ['authorization' => ['skip' => TRUE]]), ['errorField' => 'page_template_id']);
+		$ao_rules->add(
+			$ao_rules->existsIn(['languageShortcode'], 'Languages', ['authorize' => ['skip' => TRUE]]),
+			'languageExists',
+			[
+				'errorField' => 'languageShortcode',
+				'message' => __dfx($this->getI18nDomain(), 'validation', 'pages', 'error_language_exists'),
+			]
+		);
 
-		$ao_rules->add($ao_rules->existsIn(['duplicate_of'], 'Duplicate', ['authorization' => ['skip' => TRUE]]), ['errorField' => 'duplicate_of']);
 
-		$ao_rules->add($ao_rules->existsIn(['parent_id'], 'Parent', ['authorization' => ['skip' => TRUE], 'skipPageRoleCheck' => TRUE]), ['errorField' => 'parent_id']);
+		$ao_rules->add(
+			$ao_rules->existsIn(['pageRoleId'], 'PageRoles', ['authorize' => ['skip' => TRUE]]),
+			'validPageRole',
+			[
+				'errorField' => 'pageRoleId',
+				'message' => __d($this->getI18nDomain(), 'error_valid_page_role'),
+			]
+		);
+
+
+		$ao_rules->add(
+			$ao_rules->existsIn(['pageTemplateId', 'pageRoleId'], 'PageTemplates', ['authorize' => ['skip' => TRUE]]),
+			'validPageTemplate',
+			[
+				'errorField' => 'pageTemplateId',
+				'message' => __d($this->getI18nDomain(), 'error_valid_page_template'),
+			]
+		);
+
+
+		$ao_rules->add(
+			$ao_rules->existsIn(['duplicateOf'], 'Duplicate' . $ls_pageRole, ['authorize' => ['skip' => TRUE]]),
+			'validDuplicateOf',
+			[
+				'errorField' => 'duplicateOf',
+				'message' => __d($this->getI18nDomain(), 'error_valid_duplicate_of'),
+			]
+		);
+
+
+		$ao_rules->add(function(Page $ao_entity, array $aa_options) use ($ao_rules, $ls_pageRole): bool {
+			if ( ! $aa_options['checkRules']) {
+				dd(__FILE__, __LINE__);
+			}
+
+			if ( ! $ao_entity->get('parentId')) {
+				return TRUE;
+			}
+
+			$lo_existsIn = $ao_rules->existsIn(
+				['parentId', 'languageShortcode', 'pageRoleId'],
+				'Parent' . $ls_pageRole,
+				[
+					'authorize' => ['skip' => TRUE],
+					'errorField' => 'parentId',
+					'message' => __dfx($this->getI18nDomain(), 'validation', 'pages', 'error_valid_parent_id'),
+					'skipPageRoleCheck' => TRUE,
+				],
+			);
+
+			return $lo_existsIn($ao_entity, $aa_options);
+		}, 'validParentId');
+
+
+		//$ao_rules->addDelete(function() {
+		//	//TODO: make sure no pages with other page_role_ids exists as subpages
+		//	dd(__FILE__, __LINE__);
+		//});
+
 
 		return $ao_rules;
 	}
@@ -242,18 +420,18 @@ class PagesTable extends Table {
 	/**
 	 * Add a where-condition that limits all results to the page role set for this model
 	 *
-	 * @param \Cake\Event\EventInterface $ao_event
-	 * @param \Cake\ORM\Query $ao_query
-	 * @param \ArrayObject $ao_options
+	 * @param EventInterface $ao_event
+	 * @param SelectQuery $ao_query
+	 * @param ArrayObject $ao_options
 	 *
 	 * @return void
 	 */
-	public function beforeFind (EventInterface $ao_event, Query $ao_query, ArrayObject $ao_options): void {
+	public function beforeFind (EventInterface $ao_event, SelectQuery $ao_query, ArrayObject $ao_options): void {
 		if ($ao_event->isStopped()) {
 			return;
 		}
 
-		if ( ! $ao_options->offsetExists('skipPageRoleCheck') || ! $ao_options->offsetGet('skipPageRoleCheck')) {
+		if ( ! ($ao_options['skipPageRoleCheck'] ?? FALSE)) {
 			$ao_query->where(['page_role_id' => $this->getPageRoleId()]);
 		}
 	}
@@ -262,13 +440,13 @@ class PagesTable extends Table {
 	/**
 	 * Before saving a page, make sure its slug is unique.
 	 *
-	 * @param \Cake\Event\EventInterface $ao_event
+	 * @param EventInterface $ao_event
 	 * @param Page $ao_entity
-	 * @param \ArrayObject $ao_options
+	 * @param ArrayObject $ao_options
+	 *
+	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function beforeSave (EventInterface $ao_event, EntityInterface $ao_entity, ArrayObject $ao_options): void {
-		parent::beforeSave($ao_event, $ao_entity, $ao_options);
-
 		if ($ao_event->isStopped()) {
 			return;
 		}
@@ -291,7 +469,7 @@ class PagesTable extends Table {
 
 		$ls_preSlug = '';
 		/** @var Page $lo_parentPage */
-		if ( ! empty($ao_entity->parent_id) && $lo_parentPage = $this->get($ao_entity->parent_id, ['authorization' => ['skip' => TRUE], 'skipPageRoleCheck' => TRUE])) {
+		if ( ! empty($ao_entity->parentId) && $lo_parentPage = $this->get($ao_entity->parentId, authorize: ['skip' => TRUE], skipPageRoleCheck: TRUE)) {
 			//If there's a parent page, add its slug the one of the current page
 			$ls_preSlug = trim($lo_parentPage->slug, '/') . '/';
 		}
@@ -299,14 +477,14 @@ class PagesTable extends Table {
 		$ls_slug = $ls_preSlug . $ao_entity->slug;
 
 
-		$ls_originalSlug = $ao_entity->getOriginal('slug');
+		$ls_originalSlug = $ao_entity->hasOriginal('slug') ? $ao_entity->getOriginal('slug') : NULL;
 		//When the slug has changed
 		if ($ls_slug != $ls_originalSlug) {
 			$ls_field = $this->getAlias() . '.slug';
 
 			$la_conditions = [
 				$ls_field => $ls_slug,
-				'language_shortcode' => $ao_entity->language_shortcode,
+				'language_shortcode' => $ao_entity->languageShortcode,
 			];
 
 			$ls_primaryKey = $this->getPrimaryKey();
@@ -335,7 +513,7 @@ class PagesTable extends Table {
 			$ls_suffix = '';
 
 			//As long as a page with the same slug exists, append an increasing number to the slug and try again
-			while ($this->exists($la_conditions, ['authorization' => ['skip' => TRUE], 'skipPageRoleCheck' => TRUE])) {
+			while ($this->exists($la_conditions, ['authorize' => ['skip' => TRUE], 'skipPageRoleCheck' => TRUE])) {
 				$li_i++;
 				$ls_suffix = '-' . $li_i;
 
@@ -353,57 +531,108 @@ class PagesTable extends Table {
 		}
 
 		$ao_entity->set('slug', $ls_slug, ['setter' => FALSE]);
-		if ($ls_slug === $ls_originalSlug) {
+		if ( ! $ao_entity->isNew() && $ls_slug === $ls_originalSlug) {
 			$ao_entity->setDirty('slug', FALSE);
 		}
 	}
 
 
 	/**
-	 * @param \Cake\Event\EventInterface $ao_event
-	 * @param Page $ao_entity
-	 * @param \ArrayObject $ao_options
+	 * @return void
+	 * @noinspection PhpUnused
 	 */
-	public function afterSave (EventInterface $ao_event, EntityInterface $ao_entity, ArrayObject $ao_options): void {
-		parent::afterSaveCommit($ao_event, $ao_entity, $ao_options);
+	public function beforeSoftDelete (): void {
+		$this->Contents->disableCascadeCallbacks();
+		$this->Contents->forPageRole($this->pageRole, FALSE);
+	}
 
+
+	/**
+	 * @return void
+	 * @noinspection PhpUnused
+	 */
+	public function beforeDelete (): void {
+		$this->Contents->disableCascadeCallbacks();
+		$this->Contents->forPageRole($this->pageRole, FALSE);
+	}
+
+
+	/**
+	 * @return void
+	 * @noinspection PhpUnused
+	 */
+	public function afterSoftDelete (): void {
+		$this->Contents->enableCascadeCallbacks();
+	}
+
+
+	/**
+	 * @return void
+	 * @noinspection PhpUnused
+	 */
+	public function afterDelete (): void {
+		$this->Contents->enableCascadeCallbacks();
+	}
+
+
+	/**
+	 * @param EventInterface $ao_event
+	 * @param Page           $ao_entity
+	 * @param ArrayObject    $ao_options
+	 *
+	 * @noinspection PhpUnusedParameterInspection*/
+	public function afterSaveCommit (EventInterface $ao_event, EntityInterface $ao_entity, ArrayObject $ao_options): void {
 		if ($ao_event->isStopped()) {
 			return;
 		}
 
-		if ($ao_entity->slug != $ao_entity->getOriginal('slug')) {
-			$lo_query = $this->query();
+		$ls_originalSlug = $ao_entity->hasOriginal('slug') ? $ao_entity->getOriginal('slug') : NULL;
+		if ($ls_originalSlug && $ao_entity->slug != $ls_originalSlug) {
+			$lo_query = $this->updateQuery();
 
 			/**
 			 * UPDATE pages SET slug = (CONCAT('newslug', substr(slug, '8'))) WHERE slug LIKE 'oldslug/%'
 			 *
 			 * @noinspection PhpUndefinedMethodInspection
 			 */
-			$lo_query->update()->set('slug', $lo_query->newExpr($lo_query->func()->concat([
+			$lo_query->update($this->getTable())->set('slug', $lo_query->newExpr($lo_query->func()->concat([
 				$ao_entity->slug,
 				$lo_query->func()->substr([
 					'slug' => 'identifier',
-					mb_strlen($ao_entity->getOriginal('slug')) + 1,
+					mb_strlen($ls_originalSlug) + 1,
 				], [
 					NULL,
 					'integer',
 				]),
-			])))->where(function(QueryExpression $ao_expression/*, Query $ao_query*/) use ($ao_entity) {
-				return $ao_expression->like('slug', $ao_entity->getOriginal('slug') . '/%');
+			])))->where(function(QueryExpression $ao_expression/*, Query $ao_query*/) use ($ls_originalSlug) {
+				return $ao_expression->like('slug', $ls_originalSlug . '/%');
 			})->execute();
 		}
 	}
+
+
+	/*
+	 * @param Query $ao_query
+	 *
+	 * @return Query
+	 * @throws \Exception
+	 *
+	public function findForCurrentLanguage (Query $ao_query): Query {
+		return $ao_query->where([
+			'languageShortcode' => LocaleMiddleware::getLanguage()->shortcode,
+		]);
+	}*/
 
 
 	/**
 	 * Creates a threaded list of pages from a query, adding the `level`-property to each page and returns
 	 * a collection
 	 *
-	 * @param \Cake\ORM\Query $ao_query
+	 * @param SelectQuery $ao_query
 	 *
-	 * @return \Cake\Collection\CollectionInterface
+	 * @return CollectionInterface
 	 */
-	public function listNested (Query $ao_query): CollectionInterface {
+	public function listNested (SelectQuery $ao_query): CollectionInterface {
 		$lo_pages = $ao_query->find('threaded')->all()->listNested();
 
 		/** @var Page $lo_page */

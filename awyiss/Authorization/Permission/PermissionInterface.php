@@ -5,7 +5,7 @@ namespace Awyiss\Authorization\Permission;
 
 
 /**
- * Interface with method signatures that
+ * Interface with method signatures that are required for a complete permission
  */
 interface PermissionInterface {
 	/**
@@ -13,7 +13,7 @@ interface PermissionInterface {
 	 *
 	 * @return mixed
 	 */
-	public function getAccess(): mixed;
+	public function getAccess (): mixed;
 
 
 	/**
@@ -21,7 +21,7 @@ interface PermissionInterface {
 	 *
 	 * @return string
 	 */
-	public function getIdentifier(): string;
+	public function getIdentifier (): string;
 
 
 	/**
@@ -29,7 +29,7 @@ interface PermissionInterface {
 	 *
 	 * @return string
 	 */
-	public function getScope(): string;
+	public function getScope (): string;
 
 
 	/**
@@ -37,5 +37,5 @@ interface PermissionInterface {
 	 *
 	 * @return mixed
 	 */
-	public function getSettings(): mixed;
+	public function getSettings (): mixed;
 }

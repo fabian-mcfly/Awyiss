@@ -12,7 +12,7 @@ use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\UnaryExpression;
 use Cake\Database\ExpressionInterface;
 use Cake\Event\EventInterface;
-use Cake\ORM\Query;
+use Cake\ORM\Query\SelectQuery;
 
 
 /**
@@ -20,7 +20,7 @@ use Cake\ORM\Query;
  * This makes writing out the table name obsolete when using joins.
  */
 class AutoPrefixBehavior extends Behavior {
-	protected $_defaultConfig = [
+	protected array $_defaultConfig = [
 		'enabled' => TRUE,
 		'implementedEvents' => [
 			'Model.beforeFind' => 'beforeFind',
@@ -44,16 +44,16 @@ class AutoPrefixBehavior extends Behavior {
 
 
 	/**
-	 * @param \Cake\Event\EventInterface $ao_event
-	 * @param \Cake\ORM\Query $ao_query
-	 * @param \ArrayObject $ao_options
+	 * @param EventInterface $ao_event
+	 * @param SelectQuery $ao_query
+	 * @param ArrayObject $ao_options
 	 * @param $ab_primary
 	 *
 	 * @return void
 	 *
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function beforeFind (EventInterface $ao_event, Query $ao_query, ArrayObject $ao_options, $ab_primary): void {
+	public function beforeFind (EventInterface $ao_event, SelectQuery $ao_query, ArrayObject $ao_options, $ab_primary): void {
 		if ( ! $this->getConfig('enabled')) {
 			return;
 		}
@@ -70,7 +70,7 @@ class AutoPrefixBehavior extends Behavior {
 
 
 	/**
-	 * @param \Cake\Database\Expression\QueryExpression|\Cake\Database\Expression\UnaryExpression $ao_expression
+	 * @param QueryExpression|UnaryExpression $ao_expression
 	 *
 	 * @return void
 	 */
@@ -78,7 +78,7 @@ class AutoPrefixBehavior extends Behavior {
 		/**
 		 * An expression object that represents an expression with only a single operand.
 		 *
-		 * @see \Cake\Database\Expression\UnaryExpression
+		 * @see UnaryExpression
 		 */
 		if ($ao_expression instanceof UnaryExpression) {
 			//Traverse all parts of this expression
@@ -110,9 +110,15 @@ class AutoPrefixBehavior extends Behavior {
 		$ao_expression->iterateParts(function(ExpressionInterface $ao_expression) {
 			//If the expression is an instance of ComparisonExpression, set the prefixed field if it does not contain '.'
 			if ($ao_expression instanceof ComparisonExpression) {
-				$ls_field = $ao_expression->getField();
-				if ( ! str_contains($ls_field, '.')) {
-					$ao_expression->setField($this->alias . '.' . $ls_field);
+				$la_field = $ao_expression->getField();
+				if (!is_array($la_field)) {
+					$la_field = [$la_field];
+				}
+
+				foreach ($la_field AS $ls_field) {
+					if ( ! str_contains($ls_field, '.')) {
+						$ao_expression->setField($this->alias . '.' . $ls_field);
+					}
 				}
 			}
 			/*

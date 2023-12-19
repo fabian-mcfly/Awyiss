@@ -56,7 +56,7 @@ class AwyissRoute extends DashedRoute {
 			return NULL;
 		}
 
-		if (($this->defaults['prefix'] ?? NULL) != 'Backend') {
+		/*if (($this->defaults['prefix'] ?? NULL) != 'Backend') {
 			if ( ! in_array('slug', $this->keys)) {
 				$this->keys[] = 'slug';
 			}
@@ -65,7 +65,7 @@ class AwyissRoute extends DashedRoute {
 				$this->keys[] = 'params';
 			}
 			//unset($this->defaults['action'], $this->defaults['controller']);
-		}
+		}*/
 
 		foreach ($la_route AS $lx_key => $lx_value) {
 			if (is_numeric($lx_key)) {
@@ -113,8 +113,7 @@ class AwyissRoute extends DashedRoute {
 
 		$la_url = $this->_dasherize($aa_url);
 		if ( ! $this->_inflectedDefaults) {
-			$this->_inflectedDefaults = TRUE;
-			$this->defaults = $this->_dasherize($this->defaults);
+			$this->_inflectedDefaults = $this->_dasherize($this->defaults);
 		}
 		$la_context = $aa_context + ['params' => [], '_port' => NULL, '_scheme' => NULL, '_host' => NULL];
 		if ( ! empty($this->options['persist']) && is_array($this->options['persist'])) {
@@ -122,7 +121,6 @@ class AwyissRoute extends DashedRoute {
 		}
 		unset($la_context['params']);
 		$la_hostOptions = array_intersect_key($la_url, $la_context);
-
 
 		return $this->_match($la_url, $la_hostOptions, $la_context);
 	}
@@ -142,7 +140,7 @@ class AwyissRoute extends DashedRoute {
 				return NULL;
 			}
 
-			return rawurlencode((string) $ax_key) . ':' . rawurlencode(Inflector::dasherize((string) $ax_value));
+			return rawurlencode(Inflector::dasherize((string) $ax_key)) . ':' . rawurlencode(Inflector::dasherize((string) $ax_value));
 		}, $aa_pass, array_keys($aa_pass)));
 		$ls_url = $this->template;
 
@@ -156,14 +154,8 @@ class AwyissRoute extends DashedRoute {
 			if ( ! array_key_exists($ls_key, $aa_params)) {
 				throw new InvalidArgumentException(sprintf('Missing required route key `%s`', $ls_key));
 			}
-			$lx_value = $aa_params[ $ls_key ];
-			if ($this->braceKeys) {
-				$la_search[] = '{' . $ls_key . '}';
-			}
-			else {
-				$la_search[] = ':' . $ls_key;
-			}
-			$la_replace[] = $lx_value;
+			$la_search[] = '{' . $ls_key . '}';
+			$la_replace[] = $aa_params[ $ls_key ];
 		}
 
 		if (str_contains($this->template, '**')) {
@@ -173,7 +165,7 @@ class AwyissRoute extends DashedRoute {
 		elseif (str_contains($this->template, '*')) {
 			$la_search[] = '*';
 			if ( ! empty($aa_params['slug'])) {
-				$la_replace[] = $aa_params['slug'] . (! empty($aa_pass) ? '/' . $ls_pass : NULL);
+				$la_replace[] = $aa_params['slug'] . (! empty($ls_pass) ? '/' . $ls_pass : NULL);
 			}
 			else {
 				$la_replace[] = $ls_pass;
@@ -204,9 +196,11 @@ class AwyissRoute extends DashedRoute {
 					[$ls_key, $ls_value] = explode(':', $ls_part);
 					$ls_value = Inflector::underscore($ls_value);
 
+					$ls_key = Inflector::variable(Inflector::underscore($ls_key));
+
 					$la_route[ $ls_key ] = $ls_value;
 
-					$la_pass[ $ls_key = Inflector::dasherize($ls_key) ] = $ls_value;
+					$la_pass[ $ls_key ] = $ls_value;
 					$la_route['parts'][ $ls_key ] = $ls_value;
 				}
 				elseif ( ! $lb_foundParams) {
@@ -250,7 +244,7 @@ class AwyissRoute extends DashedRoute {
 			$la_route['plugin'] = $this->_camelizePlugin($la_route['plugin']);
 		}
 		if ( ! empty($la_route['action'])) {
-			$la_route['action'] = Inflector::variable(str_replace('-', '_', $la_route['action']));
+			$la_route['action'] = Inflector::variable(Inflector::underscore($la_route['action']));
 		}
 
 		return $la_route;
@@ -368,7 +362,7 @@ class AwyissRoute extends DashedRoute {
 			return NULL;
 		}
 
-		if (($this->defaults['prefix'] ?? NULL) != 'Backend') {
+		/*if (($this->defaults['prefix'] ?? NULL) != 'Backend') {
 			if ( ! in_array('slug', $this->keys)) {
 				$this->keys[] = 'slug';
 				$aa_keyNames['slug'] = 0;
@@ -378,9 +372,8 @@ class AwyissRoute extends DashedRoute {
 				$this->keys[] = 'params';
 				$aa_keyNames['params'] = 0;
 			}
-
-			unset($this->defaults['controller'], $this->defaults['action']);
-		}
+			//unset($this->defaults['controller'], $this->defaults['action']);
+		}*/
 
 		return $la_url;
 	}
@@ -408,6 +401,7 @@ class AwyissRoute extends DashedRoute {
 			if ($lb_unknownKey && isset($this->defaults[ $lx_key ]) && $this->defaults[ $lx_key ] === $lx_value) {
 				continue;
 			}
+
 			if ($lb_unknownKey) {
 				if (is_numeric($lx_key)) {
 					$la_pass[] = is_array($lx_value) ? implode(',', $lx_value) : $lx_value;

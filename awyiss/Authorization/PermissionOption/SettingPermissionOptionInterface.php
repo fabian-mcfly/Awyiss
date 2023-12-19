@@ -14,7 +14,7 @@ interface SettingPermissionOptionInterface {
 	/**
 	 * Returns the `SettingCollection` that was set for this Permission
 	 *
-	 * @return \Awyiss\Authorization\PermissionOption\Setting\SettingCollection
+	 * @return SettingCollection
 	 * @noinspection PhpUnused
 	 */
 	public function getSettings (): SettingCollection;
@@ -23,7 +23,7 @@ interface SettingPermissionOptionInterface {
 	/**
 	 * Sets the `SettingCollection` for this Permission
 	 *
-	 * @param \Awyiss\Authorization\PermissionOption\Setting\SettingCollection $ao_settings
+	 * @param SettingCollection $ao_settings
 	 *
 	 * @return $this
 	 * @noinspection PhpUnused

@@ -1,24 +1,27 @@
 <?php declare(strict_types=1);
 
 
+//TODO: move to own plugin
 namespace AwyissBake\Command;
 
 
 use AwyissBake\MigrationsDispatcher;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Utility\Inflector;
-use RuntimeException;
+use Phinx\Console\Command\Migrate;
 
 
 /**
  * @inheritDoc
+ *
+ * Everything's here only to use \AwyissBake\MigrationsDispatcher
  */
 class MigrationsCommand extends \Migrations\Command\MigrationsCommand {
 	/**
 	 * {@inheritDoc}
 	 *
-	 * Re-implemented to use `AwyissBake\MigrationsDispatcher`
-	 * This requires calling `self::_defaultName()`, instead of `parent::_defaultName()`
+	 * Re-implemented to use `\AwyissBake\MigrationsDispatcher`
+	 * This requires calling `self::_defaultName()`, instead of `parent::defaultName()`
 	 */
 	public static function defaultName (): string {
 		if (self::_defaultName() === 'migrations') {
@@ -36,7 +39,7 @@ class MigrationsCommand extends \Migrations\Command\MigrationsCommand {
 	 * {@inheritDoc}
 	 *
 	 * Re-implemented to use `AwyissBake\MigrationsDispatcher`,
-	 * `self::_defaultName()` instead of `parent::_defaultName()`,
+	 * `self::_defaultName()` instead of `parent::defaultName()`,
 	 * and `self::_getOptionParser()` instead of `parent::getOptionParser()`
 	 */
 	public function getOptionParser (): ConsoleOptionParser {
@@ -45,7 +48,7 @@ class MigrationsCommand extends \Migrations\Command\MigrationsCommand {
 		}
 
 		$lo_parser = self::_getOptionParser();
-		/** @var \Phinx\Console\Command\Migrate $lo_command */
+		/** @var Migrate $lo_command */
 		$lo_command = new MigrationsDispatcher::$phinxCommands[ static::$commandName ]();
 		$lo_parser->setDescription($lo_command->getDescription());
 		$lo_definition = $lo_command->getDefinition();
@@ -69,7 +72,7 @@ class MigrationsCommand extends \Migrations\Command\MigrationsCommand {
 	/**
 	 * @inheritDoc
 	 */
-	protected function getApp (): \Migrations\MigrationsDispatcher|MigrationsDispatcher {
+	protected function getApp (): MigrationsDispatcher {
 		return new MigrationsDispatcher(PHINX_VERSION);
 	}
 
@@ -78,7 +81,7 @@ class MigrationsCommand extends \Migrations\Command\MigrationsCommand {
 	 * 1:1 re-implementation of `\Cake\Console\BaseCommand::getOptionParser` since `getOptionParser` cannot call
 	 * its parent's parent.
 	 *
-	 * @return \Cake\Console\ConsoleOptionParser
+	 * @return ConsoleOptionParser
 	 *
 	 * @see \Cake\Console\BaseCommand::getOptionParser()
 	 */
@@ -89,14 +92,8 @@ class MigrationsCommand extends \Migrations\Command\MigrationsCommand {
 		$lo_parser->setRootName($ls_root);
 		$lo_parser->setDescription(static::getDescription());
 
-		$lo_parser = $this->buildOptionParser($lo_parser);
-		if ($lo_parser->subcommands()) {
-			throw new RuntimeException(
-				'You cannot add sub-commands to `Command` sub-classes. Instead make a separate command.'
-			);
-		}
 
-		return $lo_parser;
+		return $this->buildOptionParser($lo_parser);
 	}
 
 
@@ -104,9 +101,13 @@ class MigrationsCommand extends \Migrations\Command\MigrationsCommand {
 	 * Re-implemented `\Cake\Console\BaseCommand::defaultName` 1:1 so that `defaultName`
 	 * can retreive the name of the correct class (this one here)
 	 *
+	 * It's required to use this one since calling parent::defaultName() will return the one from MigrationsCommand,
+	 * not BaseCommand
+	 *
 	 * @return string
 	 *
 	 * @see \Cake\Console\BaseCommand::defaultName()
+	 * @see \Migrations\Command\MigrationsCommand::defaultName()
 	 */
 	protected static function _defaultName (): string {
 		$li_pos = strrpos(static::class, '\\');

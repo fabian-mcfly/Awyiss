@@ -4,7 +4,7 @@
 namespace AwyissBake\Command\Phinx;
 
 
-use Cake\Core\Plugin as CorePlugin;
+use Cake\Core\Plugin;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 
@@ -21,9 +21,31 @@ class Migrate extends \Migrations\Command\Phinx\Migrate {
 	 * @return void
 	 */
 	protected function configure (): void {
-		parent::configure();
+		$this->setName('migrate')
+			->setDescription('Migrate the database')
+			->setHelp('runs all available migrations, optionally up to a specific version')
+			->addOption('--target', '-t', InputOption::VALUE_REQUIRED, 'The version number to migrate to')
+			->addOption('--date', '-d', InputOption::VALUE_REQUIRED, 'The date to migrate to')
+			->addOption('--dry-run',
+				'-x',
+				InputOption::VALUE_NONE,
+				'Dump queries to standard output instead of executing it')
+			->addOption('--plugin',
+				'-p',
+				InputOption::VALUE_REQUIRED,
+				'The plugin containing the migrations')
+			->addOption('--connection', '-c', InputOption::VALUE_REQUIRED, 'The datasource connection to use')
+			//->addOption('--source', '-s', InputOption::VALUE_REQUIRED, 'The folder where migrations are in')
+			->addOption('--folder', NULL, InputOption::VALUE_REQUIRED, 'The folder where migrations are in')
+			->addOption('--fake',
+				NULL,
+				InputOption::VALUE_NONE,
+				"Mark any migrations selected as run, but don't actually execute them")
+			->addOption('--no-lock',
+				NULL,
+				InputOption::VALUE_NONE,
+				'If present, no lock file will be generated after migrating');
 
-		$this->addOption('--folder', NULL, InputOption::VALUE_REQUIRED, 'The folder where migrations are in');
 	}
 
 
@@ -32,19 +54,19 @@ class Migrate extends \Migrations\Command\Phinx\Migrate {
 	 *
 	 * Added a logic that honors the `folder`-option and modifies the path accordingly.
 	 *
-	 * @param \Symfony\Component\Console\Input\InputInterface $ao_input Input of the current command.
-	 * @param string $as_default Default folder to set if no source option is found in the $ao_input param
+	 * @param InputInterface $ao_input Input of the current command.
+	 * @param string $as_default Default folder to set if no folder option is found in the $ao_input param
 	 *
 	 * @return string
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	protected function getOperationsPath (InputInterface $ao_input, $as_default = 'Migrations'): string {
+	protected function getOperationsPath (InputInterface $ao_input, string $as_default = 'Migrations'): string {
 		$ls_path = APP . 'config' . DS . $as_default;
 
 		$ls_plugin = $this->getPlugin($ao_input);
 		if ($ls_plugin !== NULL) {
-			$ls_path = CorePlugin::path($ls_plugin) . 'config' . DS . $as_default;
+			$ls_path = Plugin::path($ls_plugin) . 'config' . DS . $as_default;
 		}
 		elseif ($ao_input->getOption('folder')) {
 			$ls_path = $ao_input->getOption('folder');

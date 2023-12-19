@@ -4,17 +4,19 @@
 namespace Awyiss\Controller\Backend;
 
 
+use Awyiss\Awyiss;
 use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Model\Entity\Language;
+use Awyiss\Model\Table\LanguagesTable;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
-use Cake\Routing\Router;
+use Awyiss\Routing\Router;
 
 
 /**
  * Languages Controller
  *
- * @property \Awyiss\Model\Table\LanguagesTable $Languages
+ * @property LanguagesTable $Languages
  */
 class LanguagesController extends Controller {
 	/**
@@ -25,11 +27,12 @@ class LanguagesController extends Controller {
 	public function overview (): void {
 		$this->Authorization->ensure('read');
 
-		$lo_languages = $this->Languages->find('withAttributes')->where($this->getOverviewWhere());
-		$lo_languages = $lo_languages->all()->groupBy('type');
+		$lo_languages = $this->Languages->find()->where($this->getOverviewWhere());
+		$lo_languages = $lo_languages->all()->groupBy('realm');
 
 		$this->set([
 			'ao_languages' => $lo_languages,
+			'aa_realms' => Awyiss::getRealms(),
 		]);
 	}
 
@@ -45,12 +48,14 @@ class LanguagesController extends Controller {
 		$this->Authorization->ensure('create');
 
 		$lo_language = $this->Languages->newDefaultEntity();
+
 		if ($this->request->is('post')) {
 			$this->save($lo_language);
 		}
 
 		$this->set([
 			'ao_language' => $lo_language,
+			'aa_realms' => Awyiss::getRealms(),
 		]);
 	}
 
@@ -58,7 +63,7 @@ class LanguagesController extends Controller {
 	/**
 	 * Edit method
 	 *
-	 * @return void|?\Cake\Http\Response
+	 * @return void|?Response
 	 *
 	 * @throws \Exception
 	 */
@@ -68,7 +73,7 @@ class LanguagesController extends Controller {
 		/** @var Language $lo_language */
 		$lo_language = $this->Languages->findById((int) $this->request->getParam('id'))->first();
 		if ( ! $lo_language) {
-			$this->Flash->error(__('::record_not_found'));
+			$this->Flash->error(__('record_not_found'));
 
 			return $this->redirect(['action' => 'overview']);
 		}
@@ -79,6 +84,7 @@ class LanguagesController extends Controller {
 
 		$this->set([
 			'ao_language' => $lo_language,
+			'aa_realms' => Awyiss::getRealms(),
 		]);
 	}
 
@@ -86,7 +92,7 @@ class LanguagesController extends Controller {
 	/**
 	 * Delete method
 	 *
-	 * @return \Cake\Http\Response
+	 * @return Response
 	 *
 	 * @throws \Exception
 	 */
@@ -98,15 +104,15 @@ class LanguagesController extends Controller {
 		/** @var Language $lo_language */
 		$lo_language = $this->Languages->findById((int) $this->request->getParam('id'))->first();
 		if ( ! $lo_language) {
-			$this->Flash->error(__('::record_not_found'));
+			$this->Flash->error(__('record_not_found'));
 			return $this->redirect(['action' => 'overview']);
 		}
 
 		if ($this->Languages->delete($lo_language)) {
-			$this->Flash->success(__('::delete_succeeded'));
+			$this->Flash->success(__('delete_succeeded'));
 		}
 		else {
-			$this->Flash->error(__('::delete_failed'));
+			$this->Flash->error(__('delete_failed'));
 		}
 
 		return $this->redirect(['action' => 'overview']);
@@ -120,11 +126,15 @@ class LanguagesController extends Controller {
 	 * @return void
 	 */
 	protected function save (Language $ao_language, string $as_method = 'add'): void {
+		if ($this->Languages->hasAttributes()) {
+			$ao_language->setAccess('attributes', TRUE);
+		}
+
 		$this->Languages->patchEntity($ao_language, $this->request->getData());
 
 		if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
 			if ($this->Languages->save($ao_language)) {
-				$this->Flash->success(__('::' . $as_method . '_succeeded'));
+				$this->Flash->success(__($as_method . '_succeeded'));
 
 				if ($this->request->getData('submit') == 'submit_close') {
 					throw new RedirectException(Router::url(['action' => 'overview'], TRUE), 302);
@@ -133,15 +143,17 @@ class LanguagesController extends Controller {
 				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $ao_language->id], TRUE), 302);
 			}
 
-			$this->Flash->error(__('::' . $as_method . '_failed'));
-			$this->Flash->error(implode('<br>' . PHP_EOL, $ao_language->getError('_general')));
+			$this->Flash->error(__($as_method . '_failed'));
+			foreach ($ao_language->getError('_general') as $ls_error) {
+				$this->Flash->error($ls_error);
+			}
 		}
 		else {
 			if ($this->Languages->getSystemOrderRelatedColumns($ao_language)) {
-				$ao_language->system_order = NULL;
+				$ao_language->systemOrder = NULL;
 			}
 			else {
-				$ao_language->system_order = $ao_language->getOriginal('system_order');
+				$ao_language->systemOrder = $ao_language->getOriginal('systemOrder');
 			}
 		}
 	}

@@ -19,34 +19,34 @@ trait BasicCrudPermissionsTrait {
 	 *
 	 * If a config options file for the current scope is available, create another permission for the `configure`-identifier
 	 *
-	 * @return \Awyiss\Authorization\PermissionOption\PermissionOptionCollection
+	 * @return PermissionOptionCollection
 	 * @throws \Exception
 	 */
 	protected static function loadPermissionOptions (): PermissionOptionCollection {
-		$lo_permissions = new PermissionOptionCollection(static::getScope());
+		$lo_permissionOptions = new PermissionOptionCollection(static::getScope());
 
-		$lo_permissions->load('read', [
+		$lo_permissionOptions->load('read', [
 			'className' => SimplePermissionOption::class,
 		]);
 
-		$lo_permissions->load('create', [
+		$lo_permissionOptions->load('create', [
 			'className' => SimplePermissionOption::class,
 		]);
 
-		$lo_permissions->load('update', [
+		$lo_permissionOptions->load('update', [
 			'className' => SimplePermissionOption::class,
 		]);
 
-		$lo_permissions->load('delete', [
+		$lo_permissionOptions->load('delete', [
 			'className' => SimplePermissionOption::class,
 		]);
 
-		if (ConfigOptionsProvider::getConfigurationFile(static::getScope())) {
-			$lo_permissions->load('configure', [
+		if (ConfigOptionsProvider::getConfigOptionsFile(static::getScope())) {
+			$lo_permissionOptions->load('configure', [
 				'className' => SimplePermissionOption::class,
 			]);
 		}
 
-		return $lo_permissions;
+		return $lo_permissionOptions;
 	}
 }

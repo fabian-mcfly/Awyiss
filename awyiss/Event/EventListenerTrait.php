@@ -21,7 +21,7 @@ trait EventListenerTrait {
 			$la_parts = explode('\\', static::class);
 			static::$scope = array_pop($la_parts);
 			static::$scope = substr(static::$scope, 0, -8);
-			static::$scope = Inflector::underscore(static::$scope);
+			static::$scope = EventListenersProvider::sanitizeScope(static::$scope);
 		}
 
 		return static::$scope;

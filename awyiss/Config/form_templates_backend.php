@@ -6,9 +6,9 @@
  */
 return [
 	// Wrapper container for checkboxes.
-	'checkboxWrapper' => '<div class="Input InputType-Checkbox">{{label}}</div>',
+	'checkboxWrapper' => '<div class="Input InputType-Checkbox InputName-{{identifier}}">{{label}}</div>',
 	// Error message wrapper elements.
-	'error' => '{{content}}',
+	'error' => '<div class="Error">{{content}}</div>',
 	// Container for error items.
 	'errorList' => '<ul class="ErrorMessages">{{content}}</ul>',
 	// Error item wrapper.
@@ -20,9 +20,9 @@ return [
 	// Generic input element.
 	'input' => '<input type="{{type}}" name="{{name}}" {{attrs}}>',
 	// Container element used by control().
-	'inputContainer' => '<div class="Input InputType-{{type}}{{required}}">{{content}}</div>',
+	'inputContainer' => '<div class="Input InputType-{{type}} InputName-{{identifier}}{{required}}">{{content}}</div>',
 	// Container element used by control() when a field has an error.
-	'inputContainerError' => '<div class="Input InputType-{{type}}{{required}} Error">{{content}}{{error}}</div>',
+	'inputContainerError' => '<div class="Input InputType-{{type}} InputName-{{identifier}}{{required}} Error">{{content}}{{error}}</div>',
 	// Legends created by allControls()
 	'legend' => '<legend class="Legend">{{text}}</legend>',
 	// Multi-Checkbox input set title element.
@@ -31,6 +31,7 @@ return [
 	'radioWrapper' => '{{label}}',
 	// Textarea input element,
 	'textarea' => '<textarea name="{{name}}" {{attrs}}>{{value}}</textarea>',
+	'translatableText' => '{{input}}<div class="TranslatableTexts">{{controls}}</div>',
 	// Container for submit buttons.
 	'submitContainer' => '<div class="Submit">{{content}}</div>',
 	// selected class

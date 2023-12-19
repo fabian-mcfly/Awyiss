@@ -4,14 +4,21 @@
 namespace Awyiss\Controller\Backend;
 
 
-use Awyiss\Authorization\Policy\AnonymousPolicy;
+use AllowDynamicProperties;
+use Awyiss\Authorization\AuthorizationService;
+use Awyiss\Authorization\Policy\GenericPagePolicy;
+use Awyiss\Awyiss;
 use Awyiss\Controller\BackendController as Controller;
+use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity\Page;
+use Awyiss\Model\Table\PagesTable;
+use Cake\Collection\Collection;
+use Cake\Collection\CollectionInterface;
 use Cake\Collection\Iterator\TreeIterator;
 use Cake\Datasource\ResultSetInterface;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
-use Cake\Routing\Router;
+use Awyiss\Routing\Router;
 use Cake\Utility\Inflector;
 use Cake\View\Exception\MissingTemplateException;
 
@@ -19,22 +26,21 @@ use Cake\View\Exception\MissingTemplateException;
 /**
  * Pages Controller
  *
- * @property \Awyiss\Model\Table\PagesTable $Pages
- * @method Page[]|ResultSetInterface paginate($ao_object = NULL, array $aa_settings = [])
+ * @property PagesTable $Pages
  */
-class PagesController extends Controller {
+#[AllowDynamicProperties] class PagesController extends Controller {
 	/**
 	 * @var int
 	 */
 	protected int $pageRoleId = PAGEROLE_PAGE;
 	/**
-	 * @var \Cake\Datasource\ResultSetInterface
+	 * @var ResultSetInterface
 	 */
-	protected ResultSetInterface $pageTemplates;
+	protected CollectionInterface $pageTemplates;
 	/**
-	 * @var \Cake\Collection\Iterator\TreeIterator
+	 * @var TreeIterator
 	 */
-	protected TreeIterator $threadedPages;
+	protected CollectionInterface $threadedPages;
 
 
 	/**
@@ -45,7 +51,7 @@ class PagesController extends Controller {
 	public function overview (): void {
 		$this->Authorization->ensure(['read', 'create']);
 
-		$lo_pages = $this->Pages->find('withAttributes')->where($this->getOverviewWhere());
+		$lo_pages = $this->Pages->find()->where($this->getOverviewWhere());
 		$lo_pages = $this->Pages->listNested($lo_pages);
 
 		$ls_entitiesName = Inflector::variable($this->getName());
@@ -79,10 +85,14 @@ class PagesController extends Controller {
 		$ls_entityName = Inflector::variable(Inflector::singularize($this->getName()));
 		$ls_threadedName = Inflector::variable('threaded ' . $this->getName());
 
+		$lo_threadedPages = $this->getThreadedPages($lo_page);
+		$this->ensurePossibleParentId($lo_page, $lo_threadedPages);
+
 		$this->set([
 			'ao_' . $ls_entityName => $lo_page,
 			'ao_pageTemplates' => $this->getPageTemplates(),
-			'ao_' . $ls_threadedName => $this->getThreadedPages(),
+			'ao_' . $ls_threadedName => $lo_threadedPages,
+			'as_languageRealm' => Awyiss::REALM_FRONTEND,
 		]);
 	}
 
@@ -90,7 +100,7 @@ class PagesController extends Controller {
 	/**
 	 * Edit method
 	 *
-	 * @return void|?\Cake\Http\Response
+	 * @return void|?Response
 	 *
 	 * @throws \Exception
 	 */
@@ -100,7 +110,7 @@ class PagesController extends Controller {
 		/** @var Page $lo_page */
 		$lo_page = $this->Pages->findById((int) $this->request->getParam('id'))->first();
 		if ( ! $lo_page) {
-			$this->Flash->error(__('::record_not_found'));
+			$this->Flash->error(__('record_not_found'));
 
 			return $this->redirect(['action' => 'overview']);
 		}
@@ -112,10 +122,14 @@ class PagesController extends Controller {
 		$ls_entityName = Inflector::variable(Inflector::singularize($this->getName()));
 		$ls_threadedName = Inflector::variable('threaded ' . $this->getName());
 
+		$lo_threadedPages = $this->getThreadedPages($lo_page);
+		$this->ensurePossibleParentId($lo_page, $lo_threadedPages);
+
 		$this->set([
 			'ao_' . $ls_entityName => $lo_page,
 			'ao_pageTemplates' => $this->getPageTemplates(),
-			'ao_' . $ls_threadedName => $this->getThreadedPages(),
+			'ao_' . $ls_threadedName => $lo_threadedPages,
+			'as_languageRealm' => Awyiss::REALM_FRONTEND,
 		]);
 	}
 
@@ -123,7 +137,7 @@ class PagesController extends Controller {
 	/**
 	 * Delete method
 	 *
-	 * @return \Cake\Http\Response
+	 * @return Response
 	 *
 	 * @throws \Exception
 	 */
@@ -135,15 +149,15 @@ class PagesController extends Controller {
 		/** @var Page $lo_page */
 		$lo_page = $this->Pages->findById((int) $this->request->getParam('id'))->first();
 		if ( ! $lo_page) {
-			$this->Flash->error(__('::record_not_found'));
+			$this->Flash->error(__('record_not_found'));
 			return $this->redirect(['action' => 'overview']);
 		}
 
 		if ($this->Pages->delete($lo_page)) {
-			$this->Flash->success(__('::delete_succeeded'));
+			$this->Flash->success(__('delete_succeeded'));
 		}
 		else {
-			$this->Flash->error(__('::delete_failed'));
+			$this->Flash->error(__('delete_failed'));
 		}
 
 		return $this->redirect(['action' => 'overview']);
@@ -157,21 +171,27 @@ class PagesController extends Controller {
 	 * @return void
 	 */
 	protected function save (Page $ao_page, string $as_method = 'add'): void {
+		if ($this->Pages->hasAttributes()) {
+			$ao_page->setAccess('attributes', TRUE);
+		}
+
 		$this->Pages->patchEntity($ao_page, ['page_role_id' => $this->getPageRoleId()] + $this->request->getData());
 
 		if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
 			if ($this->Pages->save($ao_page)) {
-				$this->Flash->success(__('::' . $as_method . '_succeeded'));
+				$this->Flash->success(__($as_method . '_succeeded'));
 
 				if ($this->request->getData('submit') == 'submit_close') {
-					throw new RedirectException(Router::url(['action' => 'overview'], TRUE), 302);
+					throw new RedirectException(Router::url(['action' => 'overview',	'lang' => $ao_page->languageShortcode], TRUE), 302);
 				}
 
-				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $ao_page->id], TRUE), 302);
+				throw new RedirectException(Router::url(['action' => 'edit', 'lang' => $ao_page->languageShortcode, 'id' => $ao_page->id], TRUE), 302);
 			}
 
-			$this->Flash->error(__('::' . $as_method . '_failed'));
-			$this->Flash->error(implode('<br>' . PHP_EOL, $ao_page->getError('_general')));
+			$this->Flash->error(__($as_method . '_failed'));
+			foreach ($ao_page->getError('_general') as $ls_error) {
+				$this->Flash->error($ls_error);
+			}
 		}
 	}
 
@@ -182,13 +202,33 @@ class PagesController extends Controller {
 	 * @throws \Exception
 	 */
 	protected function initializeOverviewWhere (): void {
-		/** @var \Awyiss\Middleware\LocaleMiddleware $lo_locale */
-		$lo_locale = $this->getRequest()->getAttribute('locale');
-		$ls_languageShortcode = $lo_locale->getLanguageFromUrl()->shortcode;
+		$ls_languageShortcode = LocaleMiddleware::getLanguage()->shortcode;
 
 		$this->overviewWhere = [
 			'language_shortcode' => $ls_languageShortcode,
+			'page_role_id' => $this->getPageRoleId(),
 		];
+	}
+
+
+	/**
+	 * @param Page $ao_page
+	 * @param CollectionInterface $ao_threadedContents
+	 *
+	 * @return void
+	 */
+	protected function ensurePossibleParentId (Page $ao_page, CollectionInterface $ao_threadedPages): void {
+		$la_possibleParentIds = $ao_threadedPages->extract('id')->toArray();
+
+		if ( ! empty($ao_page->parentId) && ! in_array($ao_page->parentId, $la_possibleParentIds)) {
+			$la_errors = $ao_page->getError('parentId');
+
+			$ao_page->parentId = reset($la_possibleParentIds);
+
+			if ($la_errors) {
+				$ao_page->setError('parentId', $la_errors);
+			}
+		}
 	}
 
 
@@ -196,16 +236,16 @@ class PagesController extends Controller {
 	 * Returns a ResultSet of all `\Awyiss\Model\Entity\PageTemplate` records available
 	 * for the current page_role_id, formatted as a list using `\Cake\ORM\Table::findList()`
 	 *
-	 * @return \Cake\Datasource\ResultSetInterface
+	 * @return CollectionInterface
 	 *
 	 * @see \Awyiss\Model\Entity\PageTemplate
 	 * @see \Cake\ORM\Table::findList()
 	 */
-	public function getPageTemplates (): ResultSetInterface {
+	public function getPageTemplates (): CollectionInterface {
 		if (!isset($this->pageTemplates)) {
-			$this->pageTemplates = $this->Pages->PageTemplates->find('list', ['authorization' => ['skip' => TRUE]])->where([
+			$this->pageTemplates = $this->Pages->PageTemplates->find('active', authorize: ['skip' => TRUE])->where([
 				'page_role_id' => $this->getPageRoleId(),
-			])->all();
+			])->all()->indexBy('id');
 		}
 
 		return $this->pageTemplates;
@@ -216,15 +256,41 @@ class PagesController extends Controller {
 	 * Return a collection of pages for the currently set language_shortcode,
 	 * using `\Cake\Collection\CollectionTrait::listNested()` to be used in a form-select
 	 *
-	 * @return \Cake\Collection\Iterator\TreeIterator
+	 * @param Page $ao_page
+	 *
+	 * @return CollectionInterface
 	 *
 	 * @see \Cake\Collection\CollectionTrait::listNested()
 	 */
-	public function getThreadedPages (): TreeIterator {
+	public function getThreadedPages (Page $ao_page): CollectionInterface {
 		if (!isset($this->threadedPages)) {
-			$this->threadedPages = $this->Pages->find('withAttributes')->where([
+			$lo_query = $this->Pages->find()->where([
 				'language_shortcode' => $this->getOverviewWhere('language_shortcode'),
-			])->find('threaded')->all()->listNested();
+				'page_role_id' => $this->getPageRoleId(),
+			]);
+
+			$this->threadedPages = $this->Pages->listNested($lo_query);
+		}
+
+		//Single "=". We only want to find threaded contents for an existing entity (id equals not NULL)
+		if ($li_originalId = $ao_page->get('id')) {
+			$li_foundAtLevel = NULL;
+			$lo_threadedPages = new Collection($this->threadedPages->toList());
+			$lo_threadedPages = $lo_threadedPages->filter(function($ao_page) use ($li_originalId, &$li_foundAtLevel) {
+				if ($ao_page->get('id') === $li_originalId) {
+					$li_foundAtLevel = $ao_page->level;
+				}
+				elseif (is_null($li_foundAtLevel) || $ao_page->level <= $li_foundAtLevel) {
+					$li_foundAtLevel = NULL;
+					return TRUE;
+				}
+
+				return FALSE;
+			});
+
+			$lo_threadedPages = $lo_threadedPages->nest('id', 'parentId');
+
+			return $lo_threadedPages->listNested();
 		}
 
 		return $this->threadedPages;
@@ -242,7 +308,7 @@ class PagesController extends Controller {
 	/**
 	 * @param int $ai_pageRoleId
 	 *
-	 * @return \Awyiss\Controller\Backend\PagesController
+	 * @return PagesController
 	 *
 	 * @noinspection PhpUnused
 	 */
@@ -267,22 +333,18 @@ class PagesController extends Controller {
 		$this->setPageRoleId($ai_pageRoleId);
 		$this->Pages = $this->{$as_identifier} = $this->fetchTable($as_identifier);
 
-		$ls_identifier = Inflector::pluralize($as_identifier);
-		$ls_scope = strtolower($ls_identifier);
-
-		/** @var \Awyiss\Authorization\AuthorizationService $lo_authorizationService */
+		/** @var AuthorizationService $lo_authorizationService */
 		$lo_authorizationService = $this->getRequest()->getAttribute('authorization');
-		$ls_policyClass = $lo_authorizationService->getPolicy($this->Authorization->getScope(), $this->Authorization->getConfig('policiesType'));
+		$ls_policyClass = $lo_authorizationService->getPolicy($this->Authorization->getScope(), $this->Authorization->getConfig('policiesRealm'));
 		if ( ! $ls_policyClass) {
-			$lo_policyClass = new AnonymousPolicy($this->Authorization->getScope());
+			$lo_policyClass = new GenericPagePolicy($this->Authorization->getScope());
 		}
 
-		if ($this->Pages->hasBehavior('Authorization')) {
-			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-			$this->Pages->getBehavior('Authorization')->setPolicyClass($ls_policyClass ?: $lo_policyClass);
+		if ($this->Pages->hasBehavior('Authorize')) {
+			$this->Pages->getBehavior('Authorize')/*->setPolicyClass($ls_policyClass ?: $lo_policyClass)*/;
 		}
 
-		$this->Authorization->setScope($ls_scope)->setPolicyClass($ls_policyClass ?: $lo_policyClass);
+		$this->Authorization->setScope($as_identifier)/*->setPolicyClass($ls_policyClass ?: $lo_policyClass)*/;
 
 		$this->SystemOrder->setConfig('entityName', Inflector::variable(Inflector::singularize($as_identifier)));
 

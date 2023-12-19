@@ -1,0 +1,144 @@
+{% block fieldsetPresentation %}
+	<fieldset>
+		<legend>{{ __('fieldset_presentation') }}</legend>
+
+		{% block fieldsetPresentationInner %}
+			{% block formControlActive %}
+				{{ helper_Form_control('active') }}
+			{% endblock %}
+
+			{% block fieldsetPresentationAttributes %}
+				{{ helper_Attributes_allControls('presentation') }}
+			{% endblock %}
+		{% endblock %}
+	</fieldset>
+{% endblock %}
+
+{% block fieldsetConditions %}
+	<fieldset>
+		<legend>{{ __('fieldset_conditions') }}</legend>
+
+		{% block fieldsetConditionsInner %}
+			{% block fieldsetConditionsAttributes %}
+				{{ helper_Attributes_allControls('conditions') }}
+			{% endblock %}
+		{% endblock %}
+	</fieldset>
+{% endblock %}
+
+{% block fieldsetGeneral %}
+	<fieldset>
+		<legend>{{ __('fieldset_general') }}</legend>
+
+		{% block fieldsetGeneralInner %}
+			{% block formControlTitle %}
+				{{ helper_Form_control('title') }}
+			{% endblock %}
+
+			{% block fieldsetGeneralAttributes %}
+				{{ helper_Attributes_allControls('general') }}
+			{% endblock %}
+		{% endblock %}
+	</fieldset>
+{% endblock %}
+
+{% if helper_Authorization_scopeIsAccessible('Users', NULL, ['read']) %}
+	{% block fieldsetUsers %}
+		<fieldset>
+			<legend>{{ __('users') }}</legend>
+
+			{% block fieldsetUsersInner %}
+				{{ helper_Form_hidden('users._ids', {value: ''}) }}
+				{% block usergroupsUsers %}
+					<ul class="NoList">
+						{% for lo_user in ao_users %}
+							{% block usergroupsUser %}
+								<li>
+									{{ helper_Form_control('users._ids.' ~ lo_user.id, {
+										hiddenField: FALSE,
+										type: 'checkbox',
+										value: lo_user.id,
+										label: lo_user.username,
+										checked: lo_user.id in (ao_usergroup.users ?? [])|column('id'),
+									}) }}
+								</li>
+							{% endblock %}
+						{% endfor %}
+					</ul>
+				{% endblock %}
+			{% endblock %}
+		</fieldset>
+	{% endblock %}
+{% endif %}
+
+{% block fieldsetPermissions %}
+	<fieldset>
+		<legend>{{ __('permissions') }}</legend>
+
+		{% block fieldsetPermissionsInner %}
+			{% block usergroupPolicies %}
+				{% for lx_policyClass in aa_authorizationPolicies %}
+					{% block usergroupPolicy %}
+						<fieldset>
+							<legend>{{ (lx_policyClass is string ? staticCall(lx_policyClass, 'getScope') : lx_policyClass.getScope)|underscore }}</legend>
+
+							<ul class="NoList Permissions">
+								{% block usergroupPermissions %}
+									{% set lo_permissions = lx_policyClass is string ? staticCall(lx_policyClass, 'getPermissionOptions') : lx_policyClass.getPermissionOptions %}
+									{% for ls_identifier,lo_permission in lo_permissions %}
+										{# @var lo_permission \Awyiss\Authorization\Permission\PermissionInterface #}
+										{% block usergroupPermission %}
+											<li class="Permission">
+												{{ __(ls_identifier) }}
+												{{ helper_Authorization_permissionOptions(lo_permission, ao_usergroup, NULL, 'Usergroups') }}
+												{# $lo_permissions->getSettings()->render($this, 'usergroups') #}
+											</li>
+										{% endblock %}
+									{% endfor %}
+								{% endblock %}
+							</ul>
+						</fieldset>
+					{% endblock %}
+				{% endfor %}
+			{% endblock %}
+		{% endblock %}
+	</fieldset>
+{% endblock %}
+
+{% block fieldsetContent %}
+	<fieldset>
+		<legend>{{ __('fieldset_content') }}</legend>
+
+		{% block fieldsetContentInner %}
+			{% block fieldsetContentAttributes %}
+				{{ helper_Attributes_allControls('content') }}
+			{% endblock %}
+		{% endblock %}
+	</fieldset>
+{% endblock %}
+
+{% block fieldsetMedia %}
+	<fieldset>
+		<legend>{{ __('fieldset_media') }}</legend>
+
+		{% block fieldsetMediaInner %}
+			{% block fieldsetMediaAttributes %}
+				{{ helper_Attributes_allControls('media') }}
+			{% endblock %}
+		{% endblock %}
+	</fieldset>
+{% endblock %}
+
+{% block fieldsetAttributes %}
+	<fieldset>
+		<legend>{{ __('fieldset_attributes') }}</legend>
+
+		{% block fieldsetAttributesInner %}
+			{% block fieldsetAttributesAttributes %}
+				{{ helper_Attributes_allControls('attributes') }}
+			{% endblock %}
+		{% endblock %}
+	</fieldset>
+{% endblock %}
+
+{{- helper_Form_hidden('reload_form', {val: 0}) }}

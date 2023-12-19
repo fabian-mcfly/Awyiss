@@ -1,36 +1,42 @@
-{# @var ao_configuration \Awyiss\Model\Entity\Configuration[] #}
-{# @var aa_configuration array #}
-{# @var aa_configScopes array #}
-{# @var _view \Awyiss\View\BackendView #}
+{#
+@var ao_configuration \Awyiss\Model\Entity\Configuration[]
+@var aa_configuration array
+@var aa_configScopes array
+@var as_realms array
+@var _view \Awyiss\View\BackendView
+#}
 
 <div class="Configuration Overview">
 	{% do helper_Authorization_setAdditionalData({scope: as_selectedScope}) %}
 	{% if helper_Authorization_isAccessible('create') %}
-		{{ helper_Html_link(__('::create'), {action: 'add'}, {class: 'Button'}) }}
+		{{ helper_Html_link(__('create'), {action: 'add'}, {class: 'Button'}) }}
 	{% endif %}
 
-	<h1>{{ __('::headline_overview') }}</h1>
+	<h1>{{ __('headline_overview') }}</h1>
 
-	{{ helper_Categories_filter('scope', naturalSort(aa_configScopes|map((value,key) => __(key ~ '::title'))), {
+	{{ helper_Categories_filter('scope', naturalSort(aa_configScopes|map((value,key) => __d(key, 'title'))), {
 		includeAggregation: FALSE,
 		val: as_selectedScope
 	}) }}
 
-	<div class="table-responsive">
-		<table>
-			<thead>
-				<tr>
-					<th>{{ helper_Paginator_sort('name') }}</th>
-					<th>{{ helper_Paginator_sort('value') }}</th>
-					<th>{{ helper_Paginator_sort('language_shortcode') }}</th>
-					<th class="actions"></th>
-				</tr>
-			</thead>
-			<tbody>
-				{{ _self.recursiveConfigurationListing(aa_configuration) }}
-			</tbody>
-		</table>
-	</div>
+	{% for ls_realm in aa_realms %}
+		<fieldset class="table-responsive">
+			<legend>{{ __('fieldset_' ~ ls_realm|underscore ) }}</legend>
+			<table>
+				<thead>
+					<tr>
+						<th>{{ __('identifier') }}</th>
+						<th>{{ __('value') }}</th>
+						<th>{{ __('language_shortcode') }}</th>
+						<th class="actions"></th>
+					</tr>
+				</thead>
+				<tbody>
+					{{ _self.recursiveConfigurationListing(aa_configuration[ ls_realm ]) }}
+				</tbody>
+			</table>
+		</fieldset>
+	{% endfor %}
 
 	{% do helper_Authorization_resetAdditionalData() %}
 	{# { helper_Paginator_render() } #}
@@ -58,17 +64,17 @@
 								{%- for i in range(0, ai_level - 1) %}&ndash; {% endfor -%}
 							{% endif %}
 
-							{{ lo_configuration.name|split('.')|slice(-1)|join() }}
+							{{ lo_configuration.identifier|split('.')|slice(-1)|join() }}
 						{% endif %}
 					</td>
 					<td>{{ lo_configuration.value }}</td>
-					<td>{{ helper_Locale_languageTitle(lo_configuration.language_shortcode) }}</td>
+					<td>{{ lo_configuration.language_shortcode is defined ? helper_Locale_languageTitle(lo_configuration.language_shortcode) : '' }}</td>
 					<td class="actions">
 						{% if helper_Authorization_isAccessible('update') %}
-							{{ helper_Html_link(__('::edit'), {action: 'edit', id: lo_configuration.id}) }}
+							{{ helper_Html_link(__('edit'), {action: 'edit', id: lo_configuration.id}) }}
 						{% endif %}
 						{% if helper_Authorization_isAccessible('delete') %}
-							{{ helper_Html_link(__('::delete'), {action: 'delete', id: lo_configuration.id}, {confirm: __('::confirm_delete', lo_configuration.id) }) }}
+							{{ helper_Html_link(__('delete'), {action: 'delete', id: lo_configuration.id}, {confirm: __('confirm_delete', lo_configuration.id) }) }}
 						{% endif %}
 					</td>
 				</tr>

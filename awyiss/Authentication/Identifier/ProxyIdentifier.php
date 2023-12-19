@@ -19,7 +19,7 @@ class ProxyIdentifier extends AbstractIdentifier {
 	/**
 	 * @inheritDoc
 	 */
-	protected $_defaultConfig = [
+	protected array $_defaultConfig = [
 		'fields' => [
 			self::CREDENTIAL_USERNAME => 'username',
 			self::CREDENTIAL_PASSWORD => 'password',
@@ -35,7 +35,7 @@ class ProxyIdentifier extends AbstractIdentifier {
 	 *
 	 * @param array $aa_credentials Authentication credentials
 	 *
-	 * @return \ArrayAccess|array|null
+	 * @return ArrayAccess|array|null
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
@@ -51,12 +51,14 @@ class ProxyIdentifier extends AbstractIdentifier {
 	 *
 	 * @param array $aa_credentials Authentication credentials
 	 *
-	 * @return \ArrayAccess|array|null
+	 * @return ArrayAccess|array|null
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function reidentify (array $aa_credentials): ArrayAccess|array|NULL {
 		$this->setConfig('resolver', $this->getConfig('localResolver'));
+
+		dump($this->getConfig('localResolver'));
 
 		return $this->getResolver()->find($aa_credentials);
 	}

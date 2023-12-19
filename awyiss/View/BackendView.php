@@ -4,12 +4,12 @@
 namespace Awyiss\View;
 
 
+use Awyiss\Middleware\LocaleMiddleware;
+use Twig\Error\LoaderError;
+
+
 /**
- * Application View
- *
- * @property \Awyiss\View\Helper\PermissionHelper $Permission
- * @property \Awyiss\View\Helper\FlashHelper $Flash
- * @property \Awyiss\View\Helper\PaginatorHelper $Paginator
+ * Backend View
  */
 class BackendView extends AppView {
 	/**
@@ -17,50 +17,36 @@ class BackendView extends AppView {
 	 *
 	 * @return void
 	 *
-	 * @throws \Twig\Error\LoaderError
+	 * @throws LoaderError
 	 */
 	public function initialize (): void {
 		parent::initialize();
 
-		$this->loadHelper('Authentication.Identity');
-		$this->loadHelper('Authorization');
-		$this->loadHelper('Paginator', ['templates' => 'paginator_templates']);
-		$this->loadHelper('SystemOrder', [
+		$this->addHelper('Attributes');
+		$this->addHelper('Authentication.Identity');
+		$this->addHelper('Authorization');
+		$this->addHelper('Locale');
+		$this->addHelper('Paginator', ['templates' => 'paginator_templates']);
+		$this->addHelper('SystemOrder', [
 			'templates' => [
 				'titleOption' => function(mixed $ax_option): string {
-					$ls_inactive = '';
-					if (empty($ax_option->active ?? TRUE)) {
-						$ls_inactive = '(' . __('::system_order_inactive') . ') ';
-					}
-
-					return __('::system_order_after') . ' ' . $ls_inactive . $ax_option->title;
+					return __('system_order_after') . ' ' . $ax_option->label;
 				},
 				'titleOptionCurrent' => function(mixed $ax_option): string {
-					$ls_inactive = '';
-					if (empty($ax_option->active ?? TRUE)) {
-						$ls_inactive = '(' . __('::system_order_inactive') . ') ';
-					}
-
-					return $ls_inactive . $ax_option->title;
+					return $ax_option->label;
 				},
 				'titleOptionSelected' => function(mixed $ax_option): string {
-					$ls_inactive = '';
-					if (empty($ax_option->active ?? TRUE)) {
-						$ls_inactive = '(' . __('::system_order_inactive') . ') ';
-					}
-
-					return '-> ' . __('::system_order_after') . ' ' . $ls_inactive . $ax_option->title;
+					return '-> ' . __('system_order_after') . ' ' . $ax_option->label;
 				},
 			],
 		]);
 
-		/** @var \Awyiss\Middleware\LocaleMiddleware $lo_locale */
-		$lo_locale = $this->request->getAttribute('locale');
-		if ($lo_language = $lo_locale->getLanguageFromSession()) {
-			$this->loadHelper('Time', ['outputTimezone' => $lo_language->timezone]);
+		/** @noinspection PhpUnhandledExceptionInspection */
+		if ($lo_language = LocaleMiddleware::getLanguage(NULL)) {
+			$this->addHelper('Time', ['outputTimezone' => $lo_language->timezone]);
 		}
 
-		$this->loadHelper('Form', [
+		$this->addHelper('Form', [
 			'autoSetCustomValidity' => FALSE,
 			'errorClass' => 'Error',
 			'templates' => 'form_templates_backend',

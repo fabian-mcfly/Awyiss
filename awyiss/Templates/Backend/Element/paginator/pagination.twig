@@ -2,11 +2,11 @@
 	<div class="paginator">
 		{% block pagination %}
 			<ul class="pagination">
-				{{ helper_Paginator_first(__('pagination::first')) }}
-				{{ helper_Paginator_prev(__('pagination::previous')) }}
+				{{ helper_Paginator_first(__d('pagination', 'first')) }}
+				{{ helper_Paginator_prev(__d('pagination', 'previous')) }}
 				{{ helper_Paginator_numbers() }}
-				{{ helper_Paginator_next(__('pagination::next')) }}
-				{{ helper_Paginator_last(__('pagination::last')) }}
+				{{ helper_Paginator_next(__d('pagination', 'next')) }}
+				{{ helper_Paginator_last(__d('pagination', 'last')) }}
 			</ul>
 		{% endblock %}
 	</div>

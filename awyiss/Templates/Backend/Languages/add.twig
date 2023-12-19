@@ -1,28 +1,26 @@
-{# @var ao_language \Awyiss\Model\Entity\Language #}
-{# @var _view \Awyiss\View\BackendView #}
+{#
+@var ao_language \Awyiss\Model\Entity\Language
+@var _view \Awyiss\View\BackendView
+#}
+
+{% set la_realms = [] %}
+{% for as_realm in aa_realms %}
+	{% set la_realms = la_realms|merge({(as_realm): __('realm_' ~ as_realm|underscore)}) %}
+{% endfor %}
 
 <div class="Languages Form Add">
 	{{ helper_Form_create(ao_language, {method: 'post', idPrefix: 'Language'}) }}
 
-	<fieldset>
-		<legend>{{ __('::headline_add') }}</legend>
-		{{ helper_Form_control('title') }}
-		{{ helper_Form_control('shortcode') }}
-		{{ helper_Form_control('timezone') }}
-		{{ helper_Form_control('locale') }}
-		{{ helper_Form_control('type',  {
-			options: {
-				frontend: __('::type_frontend'),
-				backend: __('::type_backend'),
-			}
-		}) }}
-		{{ helper_Form_control('active') }}
-		{{ helper_SystemOrder_control('system_order', {entity: ao_language}) }}
-	</fieldset>
+	<h1>{{ __('headline_add') }}</h1>
 
-	{{ helper_Form_hidden('reload_form', {val: 0}) }}
+	{% block formButtons %}
+		{{ helper_Form_button(__('save')) }}
+		{{ helper_Form_button(__('save_close'), {name: 'submit', value: 'submit_close'}) }}
+	{% endblock %}
 
-	{{ helper_Form_button(__('::save')) }}
-	{{ helper_Form_button(__('::save_close'), {name: 'submit', value: 'submit_close'}) }}
-	{{ helper_Form_end() }}
+	{% include('@Backend/Languages/form.twig') %}
+
+	{{ block('formButtons') }}
+
+	{{ helper_Form_end() -}}
 </div>

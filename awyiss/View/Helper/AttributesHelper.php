@@ -1,0 +1,377 @@
+<?php declare(strict_types=1);
+
+
+namespace Awyiss\View\Helper;
+
+
+use Awyiss\Attributes\AttributeOptionsInterface;
+use Awyiss\Attributes\AttributeOptionsProvider;
+use Awyiss\Middleware\LocaleMiddleware;
+use Awyiss\Model\Entity\Attribute;
+use Awyiss\Model\Entity\Language;
+use Awyiss\Model\Table\AttributesTable;
+use Cake\Collection\Collection;
+use Cake\ORM\Query;
+use Cake\Utility\Hash;
+use Cake\View\Form\EntityContext;
+use Cake\View\Helper;
+use Exception;
+use ReflectionException;
+
+
+/**
+ * Helper class that provides methods related to the Authorization-logic in the views
+ *
+ * @property FormHelper $Form
+ */
+class AttributesHelper extends Helper {
+	/**
+	 * Default config for this helper.
+	 *
+	 * @var array<string, mixed>
+	 */
+	protected array $_defaultConfig = [
+		'attributeOptionsProviderClass' => AttributeOptionsProvider::class
+	];
+	/**
+	 * @inheritDoc
+	 */
+	protected array $helpers = ['Form'];
+	protected static array $attributes;
+	protected static array $attributesByFieldset;
+	protected static array $initiatedSources = [];
+	protected static array $attributeOptions = [];
+
+
+	/**
+	 * Generate a set of controls for `$aa_fields`.
+	 *
+	 * You can customize individual controls through `$aa_fields`.
+	 * ```
+	 * $this->Attributes->allControls([
+	 *   'title' => ['label' => 'custom label']
+	 * ]);
+	 * ```
+	 *
+	 * You can exclude fields by specifying them as `false`:
+	 *
+	 * ```
+	 * $this->Attributes->allControls(['title' => false]);
+	 * ```
+	 *
+	 * In the above example, no field would be generated for the title field.
+	 *
+	 * @param string $as_fieldset The fieldset
+	 * @param array $aa_fields An array of customizations for the fields that will be generated.
+	 *  This array allows you to set custom types, labels, or other options.
+	 * @param array<string, mixed> $aa_options A list of options. Valid keys are:
+	 *
+	 *  - `fieldset` Set to `false` to disable the fieldset. You can also pass an
+	 *     array of params to be applied as HTML attributes to the fieldset tag.
+	 *     If you pass an empty array, the fieldset will be enabled.
+	 *  - `legend` Set to `false` to disable the legend for the generated input set.
+	 *     Or supply a string to customize the legend text.
+	 *  - `onlyProvided` Set to true to only output fields that are present in the `$aa_fields`-paramter.
+	 *     Otherwise, fields will get merged.
+	 *
+	 * @return string Completed form controls.
+	 * @throws ReflectionException
+	 * @throws Exception
+	 *
+	 * @noinspection PhpUnused
+	 */
+	public function allControls (string $as_fieldset, array $aa_fields = [], array $aa_options = []): string {
+		/** @var EntityContext $lo_context */
+		$lo_context = $this->Form->context();
+		$ls_source = $aa_options['source'] ?? $lo_context->entity()?->getSource();
+
+		if (!isset(static::$attributesByFieldset)) {
+			$this->buildAttributesGroupedByFieldset($ls_source);
+		}
+
+		$ls_emptyField = '';
+		if ( ! isset(static::$initiatedSources[ $ls_source ])) {
+			static::$initiatedSources[ $ls_source ] = TRUE;
+			$ls_emptyField = $this->Form->hidden('attributes', [
+				'val' => [],
+			]);
+
+			/** @var AttributeOptionsProvider $ls_attributeOptionsProvider */
+			$ls_attributeOptionsProvider = $this->getConfig('attributeOptionsProviderClass');
+			static::$attributeOptions[ $ls_source ] = $ls_attributeOptionsProvider::getAttributeOptionsFile($ls_source, TRUE);
+
+			$this->initializeTranslate();
+		}
+
+		if (empty(static::$attributesByFieldset[ $as_fieldset ])) {
+			return $ls_emptyField;
+		}
+
+		$la_attributeFields = static::$attributesByFieldset[ $as_fieldset ];
+
+		$la_fields = array_merge(Hash::normalize(array_keys($la_attributeFields)), Hash::normalize($aa_fields));
+		$la_fields = array_filter($la_fields, function($ax_value) {
+			return $ax_value !== FALSE;
+		});
+
+		if (!empty($aa_options['onlyProvided'])) {
+			$la_fields = array_intersect_key($la_fields, Hash::normalize($aa_fields));
+		}
+
+		if (empty($la_fields)) {
+			return $ls_emptyField;
+		}
+
+		$la_fields = $this->prepareFields($la_fields,
+			static::$attributesByFieldset[ $as_fieldset ],
+			static::$attributeOptions[ $ls_source ]);
+
+		return $ls_emptyField . $this->Form->controls($la_fields, $aa_options + ['fieldset' => FALSE]);
+	}
+
+
+	public function control (string $as_fieldName, array $aa_options = []): string {
+		/** @var EntityContext $lo_context */
+		$lo_context = $this->Form->context();
+		$ls_source = $aa_options['source'] ?? $lo_context->entity()->getSource();
+
+		if ( ! isset(static::$attributes)) {
+			$this->buildAttributes($ls_source);
+		}
+
+		$ls_emptyField = '';
+		if ( ! isset(static::$initiatedSources[ $ls_source ])) {
+			static::$initiatedSources[ $ls_source ] = TRUE;
+			$ls_emptyField = $this->Form->hidden('attributes', [
+				'val' => [],
+			]);
+
+			/** @var AttributeOptionsProvider $ls_attributeOptionsProvider */
+			$ls_attributeOptionsProvider = $this->getConfig('attributeOptionsProviderClass');
+			static::$attributeOptions[ $ls_source ] = $ls_attributeOptionsProvider::getAttributeOptionsFile($ls_source, TRUE);
+
+			$this->initializeTranslate();
+		}
+
+		if (empty(static::$attributes[ $as_fieldName ])) {
+			return $ls_emptyField;
+		}
+
+		[$ls_fieldName, $la_options] = $this->prepareField($as_fieldName,
+			$aa_options,
+			static::$attributes,
+			static::$attributeOptions[ $ls_source ]);
+
+		return $ls_emptyField . $this->Form->control($ls_fieldName, $la_options);
+	}
+
+
+	/**
+	 * @param string $as_fieldName
+	 * @param array $aa_attributeFields
+	 * @param AttributeOptionsInterface|NULL $ao_attributeOptions
+	 *
+	 * @return array
+	 *
+	 * @throws Exception
+	 */
+	protected function prepareField (string $as_fieldName, array $aa_options, array $aa_attributeFields, AttributeOptionsInterface|NULL $ao_attributeOptions): array {
+		if ( ! array_key_exists($as_fieldName, $aa_attributeFields)) {
+			return [];
+		}
+
+		$la_options = $aa_options;
+		$lo_language = $la_options['language'] ?? LocaleMiddleware::getLanguage(NULL);
+
+		if ( ! isset($la_options['type'])) {
+			$la_options['type'] = $aa_attributeFields[ $as_fieldName ]->inputType;
+		}
+
+		switch ($aa_attributeFields[ $as_fieldName ]->inputType) {
+			case 'select':
+				$la_options['empty'] ??= TRUE;
+				break;
+			case 'select_multiple':
+				$la_options['type'] = 'select';
+				$la_options['multiple'] = TRUE;
+				break;
+			case 'textarea_plain':
+				$la_options['type'] = 'textarea';
+				$la_options['data-plain'] = TRUE;
+				break;
+			/*case 'time':
+			case 'datetime':
+				break;*/
+		}
+
+		if ( ! isset($la_options['timezone'])) {
+			$la_options['timezone'] = $lo_language->timezone;
+		}
+
+		if (!isset($la_options['required']) || $la_options['required'] !== FALSE) {
+			if ($aa_attributeFields[ $as_fieldName ]->required) {
+				$la_options['required'] = TRUE;
+			}
+		}
+
+		$this->prepareValue($as_fieldName, $la_options);
+
+		if ($ao_attributeOptions) {
+			$la_options = $ao_attributeOptions->getAttributeOptions($as_fieldName, $la_options, $this->Form->context());
+		}
+
+		$ls_field = $as_fieldName;
+
+		if (($la_options['isTranslation'] ?? FALSE) === TRUE) {
+			$lo_language = $la_options['language'] ?? NULL;
+			if (empty($lo_language) || !($lo_language instanceof Language)) {
+				throw new \RuntimeException(sprintf('Missing language for translation of `%s`', $as_fieldName));
+			}
+			$la_options['timezone'] = $lo_language->timezone;
+			$ls_field = '_translations.' . $lo_language->shortcode . '.' . $ls_field;
+		}
+		unset($la_options['isTranslation'], $la_options['language']);
+
+		if ( ! str_starts_with($ls_field, 'attributes.')) {
+			$ls_field = 'attributes.' . $ls_field;
+		}
+
+		return [
+			$ls_field,
+			$la_options,
+		];
+	}
+
+
+	/**
+	 * @param array $aa_fields
+	 * @param array $aa_attributeFields
+	 * @param AttributeOptionsInterface|NULL $ao_attributeOptions
+	 *
+	 * @return array
+	 *
+	 * @throws Exception
+	 */
+	protected function prepareFields (array $aa_fields, array $aa_attributeFields, AttributeOptionsInterface|NULL $ao_attributeOptions): array {
+		$la_fields = [];
+		foreach ($aa_fields as $ls_fieldName => $la_options) {
+			[$ls_fieldName, $la_options] = $this->prepareField($ls_fieldName, $la_options ?? [], $aa_attributeFields, $ao_attributeOptions);
+			$la_fields[ $ls_fieldName ] = $la_options;
+		}
+		unset($la_options);
+
+		return $la_fields;
+	}
+
+
+	/**
+	 * @param string $as_field
+	 * @param mixed $aa_options
+	 *
+	 * @return void
+	 */
+	protected function prepareValue (string $as_field, mixed &$aa_options): void {
+		$la_valOptions = [
+			'default' => $lx_options['default'] ?? NULL,
+			'schemaDefault' => $lx_options['schemaDefault'] ?? TRUE,
+		];
+
+		if ( ! array_key_exists('val', $aa_options)) {
+			$aa_options['val'] = $this->Form->getSourceValue($as_field, $la_valOptions);
+		}
+
+		if ( ! empty($aa_options['val'])) {
+			$this->harmonizeValue($aa_options['val'], $aa_options['type']);
+		}
+	}
+
+
+	/**
+	 * @param mixed $ax_value
+	 * @param string $as_type
+	 *
+	 * @return void
+	 */
+	protected function harmonizeValue (mixed &$ax_value, string $as_type): void {
+		if (is_array($ax_value)) {
+			if ($as_type != 'multiinput') {
+				$ax_value = json_encode($ax_value);
+			}
+		}
+	}
+
+
+	/**
+	 * @param string $as_source
+	 *
+	 * @return Query|array
+	 */
+	protected function buildAttributes (string $as_source, $ab_returnQuery = FALSE): array {
+		/** @var EntityContext $lo_context */
+		$lo_context = $this->Form->context();
+		$lo_table = $lo_context->fetchTable($as_source);
+
+		static::$attributes = $lo_table->getAttributes();
+
+		return static::$attributes;
+	}
+
+
+	/**
+	 * @param string $as_source
+	 *
+	 * @return void
+	 */
+	protected function buildAttributesGroupedByFieldset (string $as_source): void {
+		$la_attributes = $this->buildAttributes($as_source);
+
+		if (! $la_attributes) {
+			static::$attributesByFieldset = [];
+			return;
+		}
+
+		$la_groupedByFieldset = (new Collection($la_attributes))->combine(
+			'identifier',
+			function(Attribute $ao_entity) {
+				return $ao_entity;
+			},
+			function(Attribute $ao_entity) {
+				return $ao_entity->fieldset;
+			}
+		)->toArray();
+
+		static::$attributesByFieldset = $la_groupedByFieldset;
+	}
+
+
+	/**
+	 * @return void
+	 */
+	protected function initializeTranslate (): void {
+		/** @var EntityContext $lo_context */
+		$lo_context = $this->Form->context();
+		$lo_table = $lo_context->fetchTable($lo_context->entity()->getSource());
+
+		if ( ! $lo_table->hasAssociation($ls_associationAlias = $lo_table->getAttributesTable(TRUE))) {
+			return;
+		}
+
+		$lo_attributesTable = $lo_context->fetchTable($ls_associationAlias);
+
+		if (! $lo_attributesTable->hasBehavior('Translate')) {
+			return;
+		}
+
+		$la_translatableAttributes = $lo_attributesTable->getBehavior('Translate')->getConfig('fields', []);
+
+		if (! $la_translatableAttributes) {
+			return;
+		}
+
+		$la_translatableAttributes = array_map(function($as_field) {
+			return 'attributes.' . $as_field;
+		}, $la_translatableAttributes);
+
+		$this->Form->setTranslatableField($la_translatableAttributes);
+	}
+}

@@ -5,7 +5,7 @@ namespace AwyissBake\Command\Bake;
 
 
 use Awyiss\Core\App;
-use AwyissBake\UtilTrait;
+use AwyissBake\Util\UtilTrait;
 use Cake\Console\Arguments;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
@@ -32,9 +32,9 @@ class ControllerCommand extends \Bake\Command\ControllerCommand {
 	 *
 	 * It also changes the default actions: No 'index'- and 'view'-, but 'overview'- and 'save'-method.
 	 *
-	 * @param string $as_controllerName Controller name already pluralized and correctly cased.
-	 * @param \Cake\Console\Arguments $ao_args The console arguments
-	 * @param \Cake\Console\ConsoleIo $ao_io The console io
+	 * @param string    $as_controllerName Controller name already pluralized and correctly cased.
+	 * @param Arguments $ao_args           The console arguments
+	 * @param ConsoleIo $ao_io             The console io
 	 *
 	 * @return void
 	 *
@@ -60,7 +60,7 @@ class ControllerCommand extends \Bake\Command\ControllerCommand {
 			$ls_prefix = '\\' . str_replace('/', '\\', $ls_prefix);
 		}
 
-		// Controllers default to importing AppController from `App`
+		// Controllers default to importing AppController from `Awyiss`
 		$ls_baseNamespace = 'Awyiss';
 		$ls_namespace = Inflector::camelize($ao_args->getOption('namespace') ?: Configure::read('App.namespace'));
 		if ($this->plugin) {
@@ -128,7 +128,7 @@ class ControllerCommand extends \Bake\Command\ControllerCommand {
 	 *
 	 * Adds the `namespace`-option.
 	 *
-	 * @param \Cake\Console\ConsoleOptionParser $ao_parser The console option parser
+	 * @param ConsoleOptionParser $ao_parser The console option parser
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */

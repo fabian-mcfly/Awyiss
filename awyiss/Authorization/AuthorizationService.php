@@ -7,6 +7,7 @@ namespace Awyiss\Authorization;
 use Authentication\AuthenticationServiceInterface;
 use Awyiss\Authorization\Policy\PolicyInterface;
 use Cake\Utility\Inflector;
+use Cake\Utility\Text;
 use ReflectionClass;
 use RuntimeException;
 
@@ -17,16 +18,25 @@ use RuntimeException;
  * @see AuthorizationServiceInterface
  */
 class AuthorizationService implements AuthorizationServiceInterface {
+	/**
+	 * @var array
+	 */
 	protected array $policies = [];
+	/**
+	 * @var null|AuthenticationServiceInterface
+	 */
 	protected ?AuthenticationServiceInterface $authenticationService = NULL;
-	protected string $type;
+	/**
+	 * @var string
+	 */
+	protected string $realm;
 
 
 	/**
 	 * @inheritDoc
 	 */
-	public function __construct (string $as_type) {
-		$this->type = Inflector::camelize($as_type);
+	public function __construct (string $as_realm) {
+		$this->realm = $as_realm;
 	}
 
 
@@ -51,8 +61,8 @@ class AuthorizationService implements AuthorizationServiceInterface {
 	/**
 	 * @inheritDoc
 	 */
-	public function getType (): string {
-		return $this->type;
+	public function getRealm (): string {
+		return $this->realm;
 	}
 
 
@@ -60,14 +70,14 @@ class AuthorizationService implements AuthorizationServiceInterface {
 	 * @inheritDoc
 	 * @throws \ReflectionException
 	 */
-	public function getPolicies (string $as_type = NULL): array {
-		$ls_type = $as_type ? Inflector::camelize($as_type) : $this->type;
+	public function getPolicies (string $as_realm = NULL): array {
+		$ls_realm = $as_realm ?: $this->realm;
 
-		//if (!isset($this->policies[ $ls_type ])) {
-		$this->policies[ $ls_type ] = $this->findPolicy('*', $ls_type);
+		//if (!isset($this->policies[ $ls_realm ])) {
+		$this->policies[ $ls_realm ] = $this->findPolicy('*', $ls_realm);
 		//}
 
-		return $this->policies[ $ls_type ] ?? [];
+		return $this->policies[ $ls_realm ] ?? [];
 	}
 
 
@@ -76,41 +86,44 @@ class AuthorizationService implements AuthorizationServiceInterface {
 	 *
 	 * @throws \ReflectionException
 	 */
-	public function getPolicy (string $as_name, ?string $as_type = NULL): ?string {
-		$ls_type = $as_type ? Inflector::camelize($as_type) : $this->type;
+	public function getPolicy (string $as_scope, ?string $as_realm = NULL): ?string {
+		$ls_realm = $as_realm ?: $this->realm;
+		$ls_scope = static::sanitizeScope($as_scope);
 
-		if (!isset($this->policies[ $ls_type ])) {
-			$this->policies[ $ls_type ] = [];
+		if (!isset($this->policies[ $ls_realm ])) {
+			$this->policies[ $ls_realm ] = [];
 		}
 
-		if (empty($this->policies[ $ls_type ][ $as_name ])) {
-			$this->policies[ $ls_type ] += $this->findPolicy($as_name, $ls_type);
+		if (empty($this->policies[ $ls_realm ][ $ls_scope ])) {
+			$this->policies[ $ls_realm ] += $this->findPolicy($ls_scope, $ls_realm);
 		}
 
-		return $this->policies[ $ls_type ][ $as_name ] ?? NULL;
+		return $this->policies[ $ls_realm ][ $ls_scope ] ?? NULL;
 	}
 
 
 	/**
-	 * @param string $as_name
-	 * @param string $as_type
+	 * @param string $as_scope
+	 * @param string $as_realm
 	 *
-	 * @return array<string, class-string<\Awyiss\Authorization\Policy\PolicyInterface>>
+	 * @return array<string, class-string<PolicyInterface>>
 	 * @throws \ReflectionException
 	 */
-	protected function findPolicy (string $as_name, string $as_type): array {
+	protected function findPolicy (string $as_scope, string $as_realm): array {
 		$la_policies = [];
-		$ls_name = Inflector::camelize($as_name);
-		$ls_type = Inflector::camelize($as_type);
 
 		$la_paths = [
-			'\\' . CUSTOM_NAMESPACE . '\Authorization\Policy\\' . $ls_type . '\\' => implode(DS, [ROOT, CUSTOM_DIR, 'Authorization', 'Policy', $ls_type, $ls_name . 'Policy.php',]),
-			'\Awyiss\Authorization\Policy\\' . $ls_type . '\\' => implode(DS, [ROOT, APP_DIR, 'Authorization', 'Policy', $ls_type, $ls_name . 'Policy.php']),
+			'\\' . CUSTOM_NAMESPACE . '\Authorization\Policy\\' . $as_realm . '\\' => implode(DS, [ROOT, CUSTOM_DIR, 'Authorization', 'Policy', $as_realm, $as_scope . 'Policy.php',]),
+			'\Awyiss\Authorization\Policy\\' . $as_realm . '\\' => implode(DS, [ROOT, APP_DIR, 'Authorization', 'Policy', $as_realm, $as_scope . 'Policy.php']),
 		];
 
 		foreach ($la_paths as $ls_namespace => $ls_path) {
 			foreach (glob($ls_path) as $ls_filePath) {
 				$ls_policyName = substr($ls_filePath, strrpos($ls_filePath, DS) + 1, -4);
+				if (str_starts_with($ls_policyName, '_')) {
+					continue;
+				}
+
 				$ls_policyClass = $ls_namespace . $ls_policyName;
 				/** @var PolicyInterface $ls_policyClass */
 				$ls_scope = $ls_policyClass::getScope();
@@ -130,5 +143,31 @@ class AuthorizationService implements AuthorizationServiceInterface {
 		}
 
 		return $la_policies;
+	}
+
+
+	/**
+	 * Sanitize the provided scope by removing all non-ascii characters
+	 * Returns a camelBacked string
+	 *
+	 * @param string $as_scope
+	 *
+	 * @return string
+	 */
+	public static function sanitizeScope (string $as_scope): string {
+		return Inflector::camelize(Inflector::pluralize(Text::slug($as_scope, '_')));
+	}
+
+
+	/**
+	 * Sanitize the provided identifier by removing all non-ascii characters
+	 * Returns a camelBacked string
+	 *
+	 * @param string $as_identifier
+	 *
+	 * @return string
+	 */
+	public static function sanitizeIdentifier (string $as_identifier): string {
+		return Inflector::variable(Text::slug($as_identifier, '_'));
 	}
 }

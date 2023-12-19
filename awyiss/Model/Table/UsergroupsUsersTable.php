@@ -7,14 +7,16 @@ namespace Awyiss\Model\Table;
 use Awyiss\Model\Entity\UsergroupsUser;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
+use Cake\ORM\Association\BelongsTo;
+use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Validation\Validator;
 
 
 /**
  * UsergroupsUsers Model
  *
- * @property \Awyiss\Model\Table\UsergroupsTable&\Cake\ORM\Association\BelongsTo $Usergroups
- * @property \Awyiss\Model\Table\UsersTable&\Cake\ORM\Association\BelongsTo $Users
+ * @property UsergroupsTable&BelongsTo $Usergroups
+ * @property UsersTable&BelongsTo      $Users
  *
  * @method UsergroupsUser newDefaultEntity(array $aa_additionalData = [])
  */
@@ -27,8 +29,11 @@ class UsergroupsUsersTable extends Table {
 	 * @inheritDoc
 	 */
 	public const TABLE = 'usergroups_users';
+	/**
+	 * @var array|array[]
+	 */
 	protected array $_defaultConfig = [
-		'authorization' => [
+		'authorize' => [
 			'identifiers' => [
 				//We use the users-scope, creating an association will occur when creating or updating a user
 				'Entity.create' => [['create', 'update']],
@@ -48,17 +53,11 @@ class UsergroupsUsersTable extends Table {
 	public function initialize (array $aa_config): void {
 		parent::initialize($aa_config);
 
-		$this->setTable(static::TABLE);
-		$this->setDisplayField('id');
-		$this->setPrimaryKey('id');
-
 		$this->belongsTo('Usergroups', [
-			//'foreignKey' => 'usergroup_id',
 			'joinType' => 'INNER',
 		]);
 
 		$this->belongsTo('Users', [
-			//'foreignKey' => 'user_id',
 			'joinType' => 'INNER',
 		]);
 	}
@@ -67,15 +66,32 @@ class UsergroupsUsersTable extends Table {
 	/**
 	 * Returns the default validator object.
 	 *
-	 * @param \Cake\Validation\Validator $ao_validator The validator that can be modified to
+	 * @param Validator $ao_validator The validator that can be modified to
 	 * add some rules to it.
 	 *
-	 * @return \Cake\Validation\Validator
-	 *
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 * @return Validator
 	 */
 	public function validationDefault (Validator $ao_validator): Validator {
-		$ao_validator->integer('id')->allowEmptyString('id', NULL, 'create');
+		parent::validationDefault($ao_validator);
+
+
+		$ao_validator->add('id', [
+			'isInteger' => ['rule' => 'isInteger'],
+			'maxLength' => ['rule' => ['maxLength', 11]],
+		]);
+
+
+		$ao_validator->add('usergroupId', [
+			'isInteger' => ['rule' => 'isInteger'],
+			'maxLength' => ['rule' => ['maxLength', 11]],
+		]);
+
+
+		$ao_validator->add('userId', [
+			'isInteger' => ['rule' => 'isInteger'],
+			'maxLength' => ['rule' => ['maxLength', 11]],
+		]);
+
 
 		return $ao_validator;
 	}
@@ -84,15 +100,24 @@ class UsergroupsUsersTable extends Table {
 	/**
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 *
-	 * @param \Awyiss\ORM\RulesChecker|\Cake\ORM\RulesChecker $ao_rules The rules object to be modified.
+	 * @param RulesChecker|BaseRulesChecker $ao_rules The rules object to be modified.
 	 *
-	 * @return \Awyiss\ORM\RulesChecker
+	 * @return RulesChecker
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildRules (RulesChecker|\Cake\ORM\RulesChecker $ao_rules): RulesChecker {
-		$ao_rules->add($ao_rules->existsIn(['usergroup_id'], 'Usergroups'), ['errorField' => 'usergroup_id']);
-		$ao_rules->add($ao_rules->existsIn(['user_id'], 'Users'), ['errorField' => 'user_id']);
+	public function buildRules (RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
+		$ao_rules->add($ao_rules->existsIn(['usergroupId'], 'Usergroups'), 'usergroupExists', [
+			'errorField' => 'usergroupId',
+			'message' => __d($this->getI18nDomain(), 'error_usergroup_exists'),
+		]);
+
+
+		$ao_rules->add($ao_rules->existsIn(['userId'], 'Users'), 'userExists', [
+			'errorField' => 'userId',
+			'message' => __d($this->getI18nDomain(), 'error_user_exists'),
+		]);
+
 
 		return $ao_rules;
 	}

@@ -5,6 +5,10 @@ namespace Awyiss\Model\Entity;
 
 
 use Awyiss\Model\Entity;
+use Awyiss\Model\Table\PagesTable;
+use Cake\Collection\CollectionInterface;
+use Cake\Datasource\FactoryLocator;
+use Cake\I18n\FrozenTime;
 use Cake\Utility\Text;
 
 
@@ -12,75 +16,147 @@ use Cake\Utility\Text;
  * Page Entity
  *
  * @property int $id
+ * @property int $parentId
  * @property string|NULL $slug
- * @property string|NULL $language_shortcode
+ * @property string|NULL $languageShortcode
  * @property string|NULL $title
- * @property string|NULL $redirect_link
- * @property \Cake\I18n\FrozenTime|NULL $eventdate_start
- * @property \Cake\I18n\FrozenTime|NULL $eventdate_end
- * @property \Cake\I18n\FrozenTime|NULL $publishdate_start
- * @property \Cake\I18n\FrozenTime|NULL $publishdate_end
- * @property string|NULL $meta_title
- * @property string|NULL $meta_description
- * @property bool $robots_index
- * @property bool $robots_follow
- * @property int $page_role_id
- * @property int $page_template_id
- * @property int|NULL $duplicate_of
- * @property int $system_order
+ * @property string|NULL $redirectLink
+ * @property string|NULL $metaTitle
+ * @property string|NULL $metaDescription
+ * @property bool $robotsIndex
+ * @property bool $robotsFollow
+ * @property int $pageRoleId
+ * @property int $pageTemplateId
+ * @property int|NULL $duplicateOf
+ * @property int $systemOrder
  * @property bool $active
- * @property bool $parents_active
+ * @property bool $parentsActive
  * @property bool $deleted
- * @property int $parent_id
- * @property int|NULL $created_by
- * @property \Cake\I18n\FrozenTime|NULL $created_on
- * @property int|NULL $changed_by
- * @property \Cake\I18n\FrozenTime|NULL $changed_on
- * @property int|NULL $deleted_by
- * @property \Cake\I18n\FrozenTime|NULL $deleted_on
- * @property \Awyiss\Model\Entity\Attribute $attributes
- * @property \Awyiss\Model\Entity\PageRole $page_role
- * @property \Awyiss\Model\Entity\PageTemplate $page_template
- * @property \Awyiss\Model\Entity\Page $parent_page
- * @property \Awyiss\Model\Entity\Page $duplicate
- * @property \Awyiss\Model\Entity\Page[] $children
+ * @property int|NULL $createdBy
+ * @property FrozenTime|NULL $createdOn
+ * @property int|NULL $changedBy
+ * @property FrozenTime|NULL $changedOn
+ * @property int|NULL $deletedBy
+ * @property FrozenTime|NULL $deletedOn
+ * @property Attribute $attributes
+ * @property PageRole $pageRole
+ * @property PageTemplate $pageTemplate
+ * @property Page $parentPage
+ * @property Page $duplicate
+ * @property Page[] $children
+ * @property Content[] $contents
  */
 class Page extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected $_accessible = [
+	protected array $_accessible = [
+		'parentId' => TRUE,
 		'slug' => TRUE,
-		'language_shortcode' => TRUE,
+		'languageShortcode' => TRUE,
 		'title' => TRUE,
-		'redirect_link' => TRUE,
-		'eventdate_start' => TRUE,
-		'eventdate_end' => TRUE,
-		'publishdate_start' => TRUE,
-		'publishdate_end' => TRUE,
-		'meta_title' => TRUE,
-		'meta_description' => TRUE,
-		'robots_index' => TRUE,
-		'robots_follow' => TRUE,
-		'page_role_id' => TRUE,
-		'page_template_id' => TRUE,
-		'duplicate_of' => TRUE,
-		'system_order' => TRUE,
+		'redirectLink' => TRUE,
+		'metaTitle' => TRUE,
+		'metaDescription' => TRUE,
+		'robotsIndex' => TRUE,
+		'robotsFollow' => TRUE,
+		'pageRoleId' => TRUE,
+		'pageTemplateId' => TRUE,
+		'duplicateOf' => TRUE,
+		'systemOrder' => TRUE,
 		'active' => TRUE,
-		'parents_active' => TRUE,
-		'parent_id' => TRUE,
-		'attributes' => TRUE,
-		'page_role' => TRUE,
-		'page_template' => TRUE,
-		'parent_page' => TRUE,
-		'child_pages' => TRUE,
+		'parentsActive' => TRUE,
+		'pageRole' => TRUE,
+		'pageTemplate' => TRUE,
+		'contents' => TRUE,
 	];
 	/**
 	 * @inheritDoc
 	 */
 	protected array $defaults = [
-		'page_role_id' => PAGEROLE_PAGE,
+		'pageRoleId' => PAGEROLE_PAGE,
 	];
+	/**
+	 * @inheritDoc
+	 */
+	protected static array $fieldMap = [
+		'parent_id' => 'parentId',
+		'language_shortcode' => 'languageShortcode',
+		'redirect_link' => 'redirectLink',
+		'meta_title' => 'metaTitle',
+		'meta_description' => 'metaDescription',
+		'robots_index' => 'robotsIndex',
+		'robots_follow' => 'robotsFollow',
+		'page_role_id' => 'pageRoleId',
+		'page_template_id' => 'pageTemplateId',
+		'duplicate_of' => 'duplicateOf',
+		'system_order' => 'systemOrder',
+		'parents_active' => 'parentsActive',
+		'created_by' => 'createdBy',
+		'created_on' => 'createdOn',
+		'changed_by' => 'changedBy',
+		'changed_on' => 'changedOn',
+		'deleted_by' => 'deletedBy',
+		'deleted_on' => 'deletedOn',
+		'duplicate_pages' => 'duplicatePages',
+		'duplicate_of_page' => 'duplicateOfPage',
+		'child_pages' => 'childPages',
+		'parent_page' => 'parentPage',
+		'page_role' => 'pageRole',
+		'page_template' => 'pageTemplate',
+	];
+
+
+	/**
+	 * Get all direct children of the current entity
+	 *
+	 * @noinspection PhpUnused
+	 */
+	public function getChildren (): ?CollectionInterface {
+		/** @var PagesTable $lo_table */
+		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
+
+		return $lo_table->getChildren($this);
+	}
+
+
+	/**
+	 * Get all children, and their children, and their children, and their children of the current entity. And its children.
+	 *
+	 * @noinspection PhpUnused
+	 */
+	public function getNestedChildren (array $aa_options = [], int $ai_currentLevel = 0): ?CollectionInterface {
+		/** @var PagesTable $lo_table */
+		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
+
+		return $lo_table->getNestedChildren($this, $aa_options, $ai_currentLevel);
+	}
+
+
+	/**
+	 * Get the parent page of the current entity
+	 *
+	 * @noinspection PhpUnused
+	 */
+	public function getParent (): ?self {
+		/** @var PagesTable $lo_table */
+		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
+
+		return $lo_table->getParent($this);
+	}
+
+
+	/**
+	 * Get all the parent page and all of its parents pages of the current entity
+	 *
+	 * @noinspection PhpUnused
+	 */
+	public function getParents (array $aa_options = [], int $ai_currentLevel = 0): ?CollectionInterface {
+		/** @var PagesTable $lo_table */
+		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
+
+		return $lo_table->getParents($this, $aa_options, $ai_currentLevel);
+	}
 
 
 	/**

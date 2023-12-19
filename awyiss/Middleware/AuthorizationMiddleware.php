@@ -8,6 +8,7 @@ use Awyiss\Authorization\AuthorizationServiceInterface;
 use Awyiss\Authorization\AuthorizationServiceProviderInterface;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Event\EventDispatcherTrait;
+use Awyiss\Routing\Router;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -18,7 +19,7 @@ use RuntimeException;
 /**
  * Middleware that adds an `AuthorizationServiceInterface` to the request
  *
- * @see \Awyiss\Authorization\AuthorizationServiceInterface
+ * @see AuthorizationServiceInterface
  */
 class AuthorizationMiddleware implements MiddlewareInterface {
 	use EventDispatcherTrait;
@@ -41,7 +42,7 @@ class AuthorizationMiddleware implements MiddlewareInterface {
 	 * @throws \InvalidArgumentException When invalid subject has been passed.
 	 */
 	public function __construct (AuthorizationServiceProviderInterface|AuthorizationServiceInterface $ao_subject, array $aa_config = NULL) {
-		$this->setConfig($aa_config);
+		$this->setConfig($aa_config ?? []);
 
 		$this->subject = $ao_subject;
 	}
@@ -57,6 +58,8 @@ class AuthorizationMiddleware implements MiddlewareInterface {
 		$lo_service->setAuthenticationService($ao_request->getAttribute('authentication'));
 
 		$lo_request = $ao_request->withAttribute('authorization', $lo_service);
+		/** @noinspection PhpParamsInspection */
+		Router::setRequest($lo_request);
 
 		$this->dispatchEvent('AuthorizationMiddleware.afterProcess', [
 			'authorizationService' => $lo_service,
@@ -69,9 +72,9 @@ class AuthorizationMiddleware implements MiddlewareInterface {
 	/**
 	 * Returns AuthorizationServiceInterface instance.
 	 *
-	 * @param \Psr\Http\Message\ServerRequestInterface $ao_request Server request.
+	 * @param ServerRequestInterface $ao_request Server request.
 	 * @return AuthorizationServiceInterface
-	 * @throws \RuntimeException When authentication method has not been defined.
+	 * @throws RuntimeException When authentication method has not been defined.
 	 */
 	protected function getAuthorizationService(ServerRequestInterface $ao_request): AuthorizationServiceInterface {
 		$lo_subject = $this->subject;

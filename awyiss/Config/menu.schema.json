@@ -1,0 +1,134 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"type": "object",
+	"patternProperties": {
+		"^[a-z][a-z0-9_]{1,49}+$": {
+			"$ref": "#/definitions/menuItem"
+		}
+	},
+	"additionalProperties": false,
+	"definitions": {
+		"menuItem": {
+			"type": "object",
+			"properties": {
+				"title": {
+					"oneOf": [
+						{
+							"type": "string"
+						},
+						{
+							"type": "object",
+							"properties": {
+								"translate": {
+									"type": "array",
+									"items": {
+										"type": "string"
+									}
+								}
+							},
+							"required": ["translate"],
+							"additionalProperties": false
+						}
+					]
+				},
+				"link": {
+					"oneOf": [
+						{"type": "null"},
+						{"type": "string", "format": "uri"},
+						{
+							"type": "object",
+							"properties": {
+								"url": {
+									"oneOf": [
+										{"type": "string", "format": "uri"},
+										{
+											"type": "object",
+											"properties": {
+												"controller": {
+													"type": "string",
+													"pattern": "^[A-Z][a-zA-Z0-9]+$"
+												},
+												"action": {
+													"type": "string",
+													"pattern": "^[a-z][a-z0-9-]+$"
+												}
+											},
+											"patternProperties": {
+												"^((?!^(controller|action|_name)))[a-z][a-z0-9-]+$": {
+													"pattern": "^[a-z0-9-]+$"
+												}
+											},
+											"required": ["controller", "action"],
+											"additionalProperties": false
+										}
+									]
+								},
+								"attributes": {
+									"oneOf": [
+										{"type": "null"},
+										{
+											"type": "object",
+											"properties": {
+												"target": {"type": "string"},
+												"rel": {"type": "string"}
+											},
+											"patternProperties": {
+												"^[a-zA-Z0-9-_]*$": {"type": "string"}
+											},
+											"additionalProperties": false
+										}
+									]
+								}
+							},
+							"additionalProperties": false
+						}
+					]
+				},
+				"access": {
+					"oneOf": [
+						{
+							"type": "null"
+						},
+						{
+							"type": "object",
+							"properties": {
+								"scope": {"type": "string"},
+								"additionalData": {
+									"oneOf": [
+										{"type": "object"},
+										{"type": "array"},
+										{"type": "null"}
+									]
+								},
+								"identifier": {
+									"type": "array",
+									"items": {"type": "string"}
+								}
+							},
+							"required": ["scope", "identifier"],
+							"additionalProperties": false
+						}
+					]
+				},
+				"children": {
+					"oneOf": [
+						{
+							"type": "null"
+						},
+						{
+							"type": "object",
+							"patternProperties": {
+								"^[a-z][a-z0-9_]+$": {
+									"$ref": "#/definitions/menuItem"
+								}
+							},
+							"additionalProperties": false
+						}
+					]
+				}
+			},
+			"required": ["title", "link"],
+			"additionalProperties": false
+		}
+	}
+}

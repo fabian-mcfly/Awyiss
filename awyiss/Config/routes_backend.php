@@ -2,6 +2,7 @@
 
 
 use Authentication\Middleware\AuthenticationMiddleware;
+use Awyiss\Awyiss;
 use Awyiss\Authentication\Authentication;
 use Awyiss\Authorization\Authorization;
 use Awyiss\Middleware\AuthorizationMiddleware;
@@ -14,27 +15,29 @@ use Cake\Routing\RouteBuilder;
 $ao_routes->prefix('Backend', function(RouteBuilder $ao_routeBuilder) {
 	$ao_routeBuilder->setRouteClass(AwyissRoute::class);
 
-	$ao_routeBuilder->registerMiddleware('requestLocale', new LocaleMiddleware('backend', LocaleMiddleware::SOURCE_SESSION));
-	$ao_routeBuilder->applyMiddleware('requestLocale');
+	Awyiss::setRealm(Awyiss::REALM_BACKEND);
 
-	$ao_routeBuilder->registerMiddleware('eventListeners', new EventListenersMiddleware('backend'));
+	$ao_routeBuilder->registerMiddleware('eventListeners', new EventListenersMiddleware(Awyiss::getRealm()));
 	$ao_routeBuilder->applyMiddleware('eventListeners');
 
-	$lo_authentication = new Authentication('backend');
+	$ao_routeBuilder->registerMiddleware('requestLocale', new LocaleMiddleware(Awyiss::getRealm()));
+	$ao_routeBuilder->applyMiddleware('requestLocale');
+
+	$lo_authentication = new Authentication(Awyiss::REALM_BACKEND);
 	$ao_routeBuilder->registerMiddleware('authentication', new AuthenticationMiddleware($lo_authentication));
 	$ao_routeBuilder->applyMiddleware('authentication');
 
-	$lo_authorization = new Authorization('backend');
+	$lo_authorization = new Authorization(Awyiss::REALM_BACKEND);
 	$ao_routeBuilder->registerMiddleware('authorization', new AuthorizationMiddleware($lo_authorization));
 	$ao_routeBuilder->applyMiddleware('authorization');
 
-	$ao_routeBuilder->connect('/{lang}/{controller}/{action}/*', ['action' => 'overview'], ['_name' => 'backend'])->setPatterns([
+	$ao_routeBuilder->connect('/{lang}/{controller}/{action}/*', ['action' => 'overview'], ['_name' => Awyiss::REALM_BACKEND])->setPatterns([
 		'lang' => '[a-zA-Z]{2}',
 		'controller' => '[a-zA-Z0-9-_]+',
 		'action' => '[a-zA-Z0-9-_]+',
 	])->setPersist(['lang', 'controller', 'action']);
 
-	$ao_routeBuilder->connect('/{lang}/{controller}/*', ['controller' => 'dashboard', 'action' => 'overview'])->setPatterns([
+	$ao_routeBuilder->connect('/{lang}/{controller}/*', ['action' => 'overview'])->setPatterns([
 		'lang' => '[a-zA-Z]{2}',
 		'controller' => '[a-zA-Z0-9-_]+',
 	])->setPersist(['lang', 'controller']);
@@ -43,9 +46,14 @@ $ao_routes->prefix('Backend', function(RouteBuilder $ao_routeBuilder) {
 		'lang' => '[a-zA-Z]{2}',
 	])->setPersist(['lang']);
 
-	/** @var \Awyiss\Middleware\LocaleMiddleware $lo_locale */
-	//$lo_locale = $this->request->getAttribute('locale');
-	//$la_languages = $lo_locale->getLanguages('backend');
-
 	$ao_routeBuilder->connect('/*', ['controller' => 'dashboard', 'action' => 'overview']);
 });
+
+/*$ao_routes->scope('/rest', function(RouteBuilder $ao_routeBuilder) {
+	$ao_routeBuilder->setRouteClass(AwyissRoute::class);
+
+	$ao_routeBuilder->connect('/{controller}/{action}/*', ['prefix' => 'Backend', 'action' => 'overview'], ['_name' => 'rest'])->setPatterns([
+		'controller' => '[a-zA-Z0-9-_]+',
+		'action' => '[a-zA-Z0-9-_]+',
+	])->setPersist(['controller', 'action']);
+});*/

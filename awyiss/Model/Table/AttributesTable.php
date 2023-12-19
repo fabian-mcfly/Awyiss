@@ -5,11 +5,18 @@ namespace Awyiss\Model\Table;
 
 
 use Awyiss\Model\Entity\Attribute;
+use Awyiss\Model\Entity\PageRole;
 use Awyiss\Model\Table;
-use Cake\Collection\Collection;
 use Awyiss\ORM\RulesChecker;
+use Cake\Database\Driver\Mysql;
+use Cake\Datasource\ConnectionManager;
+use Cake\Datasource\EntityInterface;
+use Cake\Datasource\FactoryLocator;
+use Cake\Event\EventInterface;
+use Cake\ORM\RulesChecker as BaseRulesChecker;
+use Cake\Utility\Inflector;
+use Cake\Utility\Text;
 use Cake\Validation\Validator;
-use Phinx\Db\Adapter\AdapterInterface;
 use ReflectionClass;
 
 
@@ -31,57 +38,175 @@ class AttributesTable extends Table {
 	 * @var string Regex that matches "type(length)", like "varchar(255)" or "int(10,4)" or "tinyint"
 	 * https://regex101.com/r/0h9ziN/1
 	 */
-	protected const TYPE_PATTERN = '/^(\w*)(?:\((\d+(?:,\d+)*)+\)+)?$/';
+	public const TYPE_PATTERN = '/^(\w*)(?:\((\d+(?:,\d+)*)+\)+)?$/';
+
+
+	protected array $_defaultConfig = [
+		'systemOrder' => [
+			'relatedColumns' => ['scope', 'fieldset'],
+		],
+		'translate' => [
+			'fields' => ['title'],
+		],
+	];
+	/**
+	 * @todo change this from a protected property to something that can be extended. Maybe even different fieldsets per controller
+	 * @var array
+	 */
+	protected array $availableFieldsets = [
+		'presentation',
+		'conditions',
+		'general',
+		'content',
+		'media',
+		'attributes'
+	];
+	/**
+	 * @todo change this from a protected property to something that can be extended.
+	 * @var array
+	 */
+	protected array $availableInputTypes = [
+		'text',
+		'date',
+		'datetime',
+		'time',
+		'media',
+		'checkbox',
+		'multicheckbox',
+		'select',
+		'select_multiple',
+		'custom_select',
+		'custom_select_multiple',
+		'textarea',
+		'textarea_plain',
+		'password',
+		'hidden',
+	];
 	/**
 	 * @var array
 	 */
 	protected array $attributeScopes;
 
 
-	/**
+	/*
 	 * @inheritDoc
-	 */
+	 *
 	public function initialize (array $aa_config): void {
+		$this->setTable(static::TABLE);
+
 		parent::initialize($aa_config);
 
-		$this->setTable(static::TABLE);
-		$this->setDisplayField('id');
 		$this->setPrimaryKey('id');
-	}
+	}*/
 
 
 	/**
 	 * Returns the default validator object.
 	 *
-	 * @param \Cake\Validation\Validator $ao_validator The validator that can be modified to
+	 * @param Validator $ao_validator The validator that can be modified to
 	 * add some rules to it.
 	 *
-	 * @return \Cake\Validation\Validator
-	 *
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 * @return Validator
 	 */
 	public function validationDefault (Validator $ao_validator): Validator {
-		$ao_validator->scalar('name')->maxLength('name', 50)->requirePresence('name', 'create')->notEmptyString('name');
+		parent::validationDefault($ao_validator);
 
-		$ao_validator->scalar('default_value')->maxLength('default_value', 100)->allowEmptyString('default_value');
 
-		$ao_validator->scalar('scope')->maxLength('scope', 40)->requirePresence('scope', 'create')->notEmptyString('scope');
+		$ao_validator->requirePresence([
+			'scope',
+			'title',
+			'identifier',
+		], 'create');
 
-		$ao_validator->scalar('fieldset')->maxLength('fieldset', 30)->allowEmptyString('fieldset');
 
-		$ao_validator->scalar('input_type')->maxLength('input_type', 30)->notEmptyString('input_type');
+		$ao_validator->add('id', [
+			'isInteger' => ['rule' => 'isInteger'],
+			'maxLength' => ['rule' => ['maxLength', 11]],
+		]);
 
-		$ao_validator->scalar('type')->maxLength('type', 20)->notEmptyString('type')->regex('type', static::TYPE_PATTERN);
 
-		$ao_validator->boolean('has_index')->notEmptyString('has_index');
+		$ao_validator->notEmptyString('scope');
+		$ao_validator->add('scope', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'maxLength' => ['rule' => ['maxLength', 50]],
+			'notBlank' => ['rule' => 'notBlank'],
+		]);
 
-		$ao_validator->boolean('required')->notEmptyString('required');
 
-		$ao_validator->integer('system_order')->requirePresence('system_order')->notEmptyString('system_order');
+		$ao_validator->notEmptyString('title');
+		$ao_validator->add('title', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'maxLength' => ['rule' => ['maxLength', 100]],
+			'notBlank' => ['rule' => 'notBlank'],
+		]);
 
-		$ao_validator->boolean('active')->notEmptyString('active');
 
-		$ao_validator->boolean('deleted')->notEmptyString('deleted');
+		$ao_validator->notEmptyString('identifier');
+		$ao_validator->add('identifier', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'maxLength' => ['rule' => ['maxLength', 50]],
+			'notBlank' => ['rule' => 'notBlank'],
+		]);
+
+
+		$ao_validator->add('type', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'maxLength' => ['rule' => ['maxLength', 20]],
+			'notBlank' => ['rule' => 'notBlank'],
+			'typeRegex' => ['rule' => ['custom', static::TYPE_PATTERN]],
+		]);
+
+
+		$ao_validator->add('hasIndex', [
+			'boolean' => ['rule' => 'boolean'],
+		]);
+
+
+		$ao_validator->notEmptyString('fieldset');
+		$ao_validator->add('fieldset', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'maxLength' => ['rule' => ['maxLength', 20]],
+			'notBlank' => ['rule' => 'notBlank'],
+		]);
+
+
+		$ao_validator->add('inputType', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'maxLength' => ['rule' => ['maxLength', 30]],
+			'notBlank' => ['rule' => 'notBlank'],
+		]);
+
+
+		$ao_validator->add('defaultValue', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'maxLength' => ['rule' => ['maxLength', 100]],
+		]);
+
+
+		$ao_validator->add('required', [
+			'boolean' => ['rule' => 'boolean'],
+		]);
+
+
+		$ao_validator->add('translatable', [
+			'boolean' => ['rule' => 'boolean'],
+		]);
+
+
+		$ao_validator->add('systemOrder', [
+			'isInteger' => ['rule' => 'isInteger'],
+		]);
+
+
+		$ao_validator->add('active', [
+			'boolean' => ['rule' => 'boolean'],
+		]);
+
+
+		$ao_validator->add('deleted', [
+			'boolean' => ['rule' => 'boolean'],
+		]);
+
 
 		return $ao_validator;
 	}
@@ -90,26 +215,120 @@ class AttributesTable extends Table {
 	/**
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 *
-	 * @param \Awyiss\ORM\RulesChecker|\Cake\ORM\RulesChecker $ao_rules The rules object to be modified.
+	 * @param RulesChecker|BaseRulesChecker $ao_rules The rules object to be modified.
 	 *
-	 * @return \Awyiss\ORM\RulesChecker
+	 * @return RulesChecker
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildRules (RulesChecker|\Cake\ORM\RulesChecker $ao_rules): RulesChecker {
-		$ao_rules->add($ao_rules->isUnique(['name', 'scope']), ['errorField' => 'filename']);
-
-		$ao_rules->add(function(Attribute $ao_entity/*, array $aa_options*/): bool|string {
-			$la_attributeScopes = $this->getScopes();
-
+	public function buildRules (RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
+		$ao_rules->add(function(Attribute $ao_entity/*, array $aa_options*/): bool {
 			//Check if the provided scope can have attributes
-			return in_array($ao_entity->scope, array_keys($la_attributeScopes));
+			return in_array($ao_entity->scope, array_keys($this->getAvailableScopes()));
 		}, 'validScope', [
 			'errorField' => 'scope',
-			'message' => __('attributes::error_invalid_scope'),
+			'message' => __d($this->getI18nDomain(), 'error_valid_scope'),
 		]);
 
+
+		$ao_rules->add(function(Attribute $ao_entity) {
+			if ( ! $ao_entity->getError('scope')) {
+				/** @var Table $lo_table */
+				$lo_table = FactoryLocator::get('Table')->get($this->getAvailableScopes()[ $ao_entity->scope ]);
+				if ($lo_table->getSchema()->getColumn($ao_entity->identifier)) {
+					return FALSE;
+				}
+			}
+
+			$la_reservedWords = [];
+
+			$lo_connection = ConnectionManager::get('default');
+			if ($lo_connection->getDriver() instanceof Mysql) {
+				/** @noinspection SqlDialectInspection */
+				$la_result = $lo_connection->execute('SELECT * FROM INFORMATION_SCHEMA.KEYWORDS')->fetchAll();
+				$la_reservedWords = array_column($la_result, 0);
+				array_walk($la_reservedWords, function(&$as_word) {
+					$as_word = mb_strtolower(Text::slug($as_word, ['replacement' => '_']));
+				});
+			}
+
+			return !in_array($ao_entity->identifier, $la_reservedWords);
+		}, 'validIdentifier', [
+			'errorField' => 'identifier',
+			'message' => __dfx($this->getI18nDomain(), 'validation', 'attributes', 'error_reserved_identifier'),
+		]);
+
+
+		$ao_rules->add($ao_rules->isUnique([
+			'identifier',
+			'scope'
+		]), 'identifierUniqueForScope', [
+			'errorField' => 'identifier',
+			'message' => __dfx($this->getI18nDomain(), 'validation', 'attributes', 'error_identifier_unique'),
+		]);
+
+
+		$ao_rules->add(function(Attribute $ao_entity/*, array $aa_options*/): bool {
+			$la_availableFieldsets = $this->getAvailableFieldsets();
+
+			//Check if the provided fieldset is valid. For scope `contents`, always return true
+			return in_array($ao_entity->fieldset, $la_availableFieldsets) || $ao_entity->scope === 'contents';
+		}, 'validFieldset', [
+			'errorField' => 'fieldset',
+			'message' => __d($this->getI18nDomain(), 'error_valid_fieldset'),
+		]);
+
+
+		$ao_rules->add(function(Attribute $ao_entity/*, array $aa_options*/): bool {
+			$la_availableInputTypes = $this->getAvailableInputTypes();
+
+			//Check if the provided scope can have attributes
+			return in_array($ao_entity->inputType, $la_availableInputTypes);
+		}, 'validInputType', [
+			'errorField' => 'inputType',
+			'message' => __d($this->getI18nDomain(), 'error_valid_input_type'),
+		]);
+
+
 		return $ao_rules;
+	}
+
+
+	/**
+	 * @param EventInterface $ao_event
+	 * @param Attribute|EntityInterface $ao_entity
+	 * @param \ArrayObject $ao_options
+	 *
+	 * @return void
+	 *
+	 * @noinspection PhpUnusedParameterInspection
+	 */
+	public function beforeSave (EventInterface $ao_event, Attribute|EntityInterface $ao_entity, \ArrayObject $ao_options): void {
+		if ($ao_entity->scope === 'contents') {
+			//For contents, the content template decides where an attribute will go
+			$ao_entity->fieldset = '';
+			//For contents, the content template decides whether an attribute is required
+			$ao_entity->required = FALSE;
+		}
+	}
+
+
+	/**
+	 * @param NULL|string $as_scope A scope to specify the available fieldsets.
+	 *
+	 * @return array
+	 * @noinspection PhpUnusedParameterInspection
+	 */
+	public function getAvailableFieldsets (string $as_scope = NULL): array {
+		return $this->availableFieldsets;
+	}
+
+
+	/**
+	 * @return array
+	 */
+	public function getAvailableInputTypes (): array {
+		return $this->availableInputTypes;
 	}
 
 
@@ -118,7 +337,7 @@ class AttributesTable extends Table {
 	 *
 	 * @throws \ReflectionException
 	 */
-	public function getScopes (): array {
+	public function getAvailableScopes (): array {
 		if ( ! isset($this->attributeScopes)) {
 			$this->attributeScopes = [];
 
@@ -134,6 +353,8 @@ class AttributesTable extends Table {
 					$ls_tableName = substr($ls_filePath, strrpos($ls_filePath, DS) + 1, -4);
 					/** @var Table::class $ls_tableClass */
 					$ls_tableClass = $ls_namespace . $ls_tableName;
+
+					//dump($ls_tableClass, $ls_tableClass::TABLE, $ls_tableClass::ATTRIBUTABLE);
 
 					//If an entry exists or if the table does not allow attributes, skip it
 					if (isset($this->attributeScopes[ $ls_tableClass::TABLE ]) || ! $ls_tableClass::ATTRIBUTABLE) {
@@ -151,48 +372,28 @@ class AttributesTable extends Table {
 			}
 		}
 
+
+		//Get all page roles from the database because we want them to have policies too
+		$lo_pageRoles = FactoryLocator::get('Table')->get('PageRoles')->find('active',
+			authorize: ['skip' => TRUE],
+		)->all();
+
+		/** @var PageRole $lo_pageRole */
+		foreach ($lo_pageRoles as $lo_pageRole) {
+			$ls_identifier = Inflector::pluralize($lo_pageRole->identifier);
+			/** @var PagesTable $lo_newTable */
+			$lo_newTable = FactoryLocator::get('Table')->get($ls_identifier);
+
+			//If an entry exists or if the table does not allow attributes, skip it
+			if (isset($this->attributeScopes[ $ls_identifier ]) || ! $lo_newTable::ATTRIBUTABLE) {
+				continue;
+			}
+
+			$this->attributeScopes[ $ls_identifier ] = $lo_newTable;
+		}
+
+		ksort($this->attributeScopes);
+
 		return $this->attributeScopes;
-	}
-
-
-	/**
-	 * Splits strings into valid phinx column types and length
-	 * 		"varchar(255)" => ['string', 255]
- 	 * 		"int(10,4)" => ['integer', '10,4']
-	 * 		"tinyint" => ['tinyint', NULL]
-	 *
-	 * If no valid type is found, 'string' is returned
-	 *
-	 * @param NULL|string $as_type
-	 *
-	 * @return array
-	 */
-	public function getTypeAndLength (?string $as_type): array {
-		$ls_type = $as_type ?: 'varchar(255)';
-
-		if (!preg_match(static::TYPE_PATTERN, $ls_type, $la_typeMatches, PREG_UNMATCHED_AS_NULL)) {
-			return ['string', 255];
-		}
-
-		$lo_reflector = new ReflectionClass(AdapterInterface::class);
-		$lo_collection = new Collection($lo_reflector->getConstants());
-
-		$la_validTypes = $lo_collection->filter(function ($value, $constant) {
-			return str_starts_with($constant, 'PHINX_TYPE_');
-		})->toArray();
-
-		if (empty($la_typeMatches[1]) || !in_array($la_typeMatches[1], $la_validTypes)) {
-			if ($la_typeMatches[1] == 'int') {
-				$la_typeMatches[1] = 'integer';
-			}
-			elseif ($la_typeMatches[1] == 'tinyint') {
-				$la_typeMatches[1] = 'tinyinteger';
-			}
-			else {
-				$la_typeMatches[1] = 'string';
-			}
-		}
-
-		return [$la_typeMatches[1], $la_typeMatches[2] ?: NULL];
 	}
 }

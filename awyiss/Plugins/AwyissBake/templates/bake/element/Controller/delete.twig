@@ -16,16 +16,16 @@
 		/** @var {{ entityClassName }} $lo_{{ singularName }} */
 		$lo_{{ singularName }} = $this->{{ currentModelName }}->findById((int) $this->request->getParam('id'))->first();
 		if (! $lo_{{ singularName }}) {
-			$this->Flash->error(__('::record_not_found'));
+			$this->Flash->error(__('record_not_found'));
 
 			return $this->redirect(['action' => 'overview']);
 		}
 
 		if ($this->{{ currentModelName }}->delete($lo_{{ singularName }})) {
-			$this->Flash->success(__('::delete_succeeded'));
+			$this->Flash->success(__('delete_succeeded'));
 		}
 		else {
-			$this->Flash->error(__('::delete_failed'));
+			$this->Flash->error(__('delete_failed'));
 		}
 
 		return $this->redirect(['action' => 'overview']);

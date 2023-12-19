@@ -4,9 +4,6 @@
 #    RequestHeader unset Proxy
 #</IfModule>
 
-SetEnv CONFIG_ENV 'development'
-SetEnv CUSTOM_DIR 'foobar-customer'
-
 <IfModule mod_rewrite.c>
 	RewriteEngine on
 	RewriteRule ^(\.well-known/.*)$ $1 [L]

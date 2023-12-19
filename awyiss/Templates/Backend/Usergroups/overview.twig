@@ -1,12 +1,14 @@
-{# @var ao_usergroups \Awyiss\Model\Entity\Usergroup[] #}
-{# @var _view \Awyiss\View\BackendView #}
+{#
+@var ao_usergroups \Awyiss\Model\Entity\Usergroup[]
+@var _view \Awyiss\View\BackendView
+#}
 
 <div class="Usergroups Overview">
 	{% if helper_Authorization_isAccessible('create') %}
-		{{ helper_Html_link(__('::create'), {action: 'add'}, {class: 'Button'}) }}
+		{{ helper_Html_link(__('create'), {action: 'add'}, {class: 'Button'}) }}
 	{% endif %}
 
-	<h1>{{ __('::headline_overview') }}</h1>
+	<h1>{{ __('headline_overview') }}</h1>
 
 	<div class="table-responsive">
 		<table>
@@ -22,10 +24,10 @@
 						<td>{{ lo_usergroup.title }}</td>
 						<td class="actions">
 							{% if helper_Authorization_isAccessible('update') %}
-								{{ helper_Html_link(__('::edit'), {action: 'edit', id: lo_usergroup.id}) }}
+								{{ helper_Html_link(__('edit'), {action: 'edit', id: lo_usergroup.id}) }}
 							{% endif %}
 							{% if helper_Authorization_isAccessible('delete') %}
-								{{ helper_Html_link(__('::delete'), {action: 'delete', id: lo_usergroup.id}) }}
+								{{ helper_Html_link(__('delete'), {action: 'delete', id: lo_usergroup.id}) }}
 							{% endif %}
 						</td>
 					</tr>

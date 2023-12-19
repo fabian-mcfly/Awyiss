@@ -1,0 +1,43 @@
+{# 
+@var ao_comments Cake\Datasource\EntityInterface[]
+@var _view \Awyiss\View\BackendView
+ #}
+
+<div class="Comments Overview">
+	{% if helper_Authorization_isAccessible('create') %}
+		{{ helper_Html_link(__('create'), {action: 'add'}, {class: 'Button'}) }}
+	{% endif %}
+	
+	<h1>{{ __('headline_overview') }}</h1>
+	<div class="table-responsive">
+		<table>
+			<thead>
+				<tr>
+					<th>{{ helper_Paginator_sort('id') }}</th>
+					<th>{{ helper_Paginator_sort('article_id') }}</th>
+					<th>{{ helper_Paginator_sort('parent_id') }}</th>
+					<th class="actions"></th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for lo_comment in ao_comments %}
+				<tr>
+					<td>{{ helper_Number_format(lo_comment.id) }}</td>
+					<td>{{ helper_Number_format(lo_comment.article_id) }}</td>
+					<td>{{ helper_Number_format(lo_comment.parent_id) }}</td>
+					<td class="actions">
+						{% if helper_Authorization_isAccessible('update') %}
+							{{ helper_Html_link(__('edit'), {action: 'edit', id: lo_comment.id}) }}
+						{% endif %}
+						{% if helper_Authorization_isAccessible('delete') %}
+							{{ helper_Html_link(__('delete'), {action: 'delete', id: lo_comment.id}, {confirm: __('confirm_delete', lo_comment.id) }) }}
+						{% endif %}
+					</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+
+	{{ helper_Paginator_render() }}
+</div>

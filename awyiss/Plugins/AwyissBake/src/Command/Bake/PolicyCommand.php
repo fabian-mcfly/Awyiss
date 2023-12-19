@@ -4,13 +4,14 @@
 namespace AwyissBake\Command\Bake;
 
 
-use AwyissBake\UtilTrait;
-use Bake\Utility\TableScanner;
+use AwyissBake\Util\UtilTrait;
 use Bake\Command\BakeCommand;
+use Bake\Utility\TableScanner;
 use Cake\Console\Arguments;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Core\Configure;
+use Cake\Database\Connection;
 use Cake\Datasource\ConnectionManager;
 use Cake\Utility\Inflector;
 
@@ -28,22 +29,23 @@ class PolicyCommand extends BakeCommand {
 	/**
 	 * @var array|string[] Table names that must never have permissions
 	 */
-	private array $blacklistedNames = ['audit', 'queue_processes', 'queued_jobs', 'usergroup_permissions', 'usergroups_users'];
+	private array $blocklistedNames = ['audit', 'queue_processes', 'queued_jobs', 'usergroup_permissions', 'usergroups_users'];
 	/**
 	 * Path fragment for generated code.
 	 *
 	 * @var string
 	 */
-	public $pathFragment = 'Authorization/Policy/';
+	public string $pathFragment = 'Authorization/Policy/';
 
 
 	/**
 	 * Execute the command.
 	 *
-	 * @param \Cake\Console\Arguments $ao_args The command arguments.
-	 * @param \Cake\Console\ConsoleIo $ao_io The console io
+	 * @param Arguments $ao_args The command arguments.
+	 * @param ConsoleIo $ao_io   The console io
 	 *
 	 * @return int|null The exit code or null for success
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function execute(Arguments $ao_args, ConsoleIo $ao_io): ?int
 	{
@@ -52,12 +54,12 @@ class PolicyCommand extends BakeCommand {
 		$ls_name = $this->_getName($ls_name);
 
 		if (empty($ls_name)) {
-			/** @var \Cake\Database\Connection $lo_connection */
+			/** @var Connection $lo_connection */
 			$lo_connection = ConnectionManager::get($this->connection);
 			$lo_scanner = new TableScanner($lo_connection);
 			$ao_io->out('Possible policies based on your current database:');
 			foreach ($lo_scanner->listUnskipped() as $ls_table) {
-				if (str_starts_with($ls_table, 'attributes_') || in_array($ls_table, $this->blacklistedNames)) {
+				if (str_starts_with($ls_table, 'attributes_') || in_array($ls_table, $this->blocklistedNames)) {
 					continue;
 				}
 
@@ -67,7 +69,7 @@ class PolicyCommand extends BakeCommand {
 			return static::CODE_SUCCESS;
 		}
 
-		if (in_array($ls_name, $this->blacklistedNames)) {
+		if (in_array($ls_name, $this->blocklistedNames)) {
 			$ao_io->err('Error: Name not allowed');
 
 			return static::CODE_ERROR;
@@ -84,9 +86,9 @@ class PolicyCommand extends BakeCommand {
 	/**
 	 * Assembles and writes a Policy file
 	 *
-	 * @param string $as_policyName Policy name already pluralized and correctly cased.
-	 * @param \Cake\Console\Arguments $ao_args The console arguments
-	 * @param \Cake\Console\ConsoleIo $ao_io The console io
+	 * @param string    $as_policyName Policy name already pluralized and correctly cased.
+	 * @param Arguments $ao_args       The console arguments
+	 * @param ConsoleIo $ao_io         The console io
 	 *
 	 * @return void
 	 */
@@ -121,9 +123,10 @@ class PolicyCommand extends BakeCommand {
 	/**
 	 * Gets the option parser instance and configures it.
 	 *
-	 * @param \Cake\Console\ConsoleOptionParser $ao_parser The option parser to update.
-	 * @return \Cake\Console\ConsoleOptionParser
-	 */
+	 * @param ConsoleOptionParser $ao_parser The option parser to update.
+	 *
+	 * @return ConsoleOptionParser
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection*/
 	public function buildOptionParser(ConsoleOptionParser $ao_parser): ConsoleOptionParser {
 		$lo_parser = $this->_setCommonOptions($ao_parser);
 
@@ -132,7 +135,7 @@ class PolicyCommand extends BakeCommand {
 		)->addArgument('name', [
 			'help' => 'Name of the policy to bake (without the `Policy` suffix).',
 		])->addOption('namespace', [
-			'help' => 'The namespace for the model. Should be either "Awyiss" or <CUSTOM_NAMESPACE>',
+			'help' => 'The namespace for the policy. Should be either "Awyiss" or <CUSTOM_NAMESPACE>',
 		])->addOption('prefix', [
 			'help' => 'The routing prefix to use.',
 		]);

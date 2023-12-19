@@ -1,4 +1,24 @@
-{{ '{# ' }}@var ao_{{ singularVar }} {{ entityClass }}{{ ' #}' }}
-{{ '{# ' }}@var _view \{{ namespace }}\View\BackendView{{ ' #}' }}
+{{ '{#' }}
+@var ao_{{ singularVar }} {{ entityClass }}
+@var _view \{{ namespace }}\View\BackendView
+{{ '#}' }}
 
-{{ element('Bake.form') }}
+{% set fields = Bake.filterFields(fields, schema, modelObject) %}
+<div class="{{ pluralVar[:1]|upper ~ pluralVar[1:] }} Form {{ action|capitalize }}">
+	<h1>{% verbatim %}{{ __('headline_{% endverbatim %}{{ action }}{% verbatim %}') }}{% endverbatim %}</h1>
+
+	{% verbatim %}{{{% endverbatim %} helper_Form_create(ao_{{ singularVar }}, {method: 'post', idPrefix: '{{ singularVar }}'}) {% verbatim %}}}{% endverbatim %}
+
+	{% verbatim %}{% block formButtons %}
+		{{ helper_Form_button(__('save')) }}
+		{{ helper_Form_button(__('save_close'), {name: 'submit', value: 'submit_close'}) }}
+	{% endblock %}{% endverbatim %}
+
+	{% verbatim %}{% block form %}
+		{% include('@Backend/{% endverbatim %}{{ modelClass }}{% verbatim %}/form.twig') %}
+	{% endblock %}
+
+	{{ block('formButtons') }}
+
+	{{ helper_Form_end() -}}{% endverbatim %}
+</div>

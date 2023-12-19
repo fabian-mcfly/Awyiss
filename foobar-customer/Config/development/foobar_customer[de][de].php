@@ -3,53 +3,85 @@
 return [
 	'Awyiss' => [
 		'ContentTemplates' => [
-			'contentrow_excluded_content_templates_ids' => '12',
+			'Frontend' => [
+				'contentrowExcludedContentTemplateIds' => '12',
+			],
+			'Backend' => [
+				'paginate' => [
+					'limit' => 20,
+				],
+			],
 		],
-		'Designer' => [
-			'page_fullwidth' => '1350',
-			'singlecolumn_breakpoint' => '860',
+		'Designers' => [
+			'Frontend' => [
+				'pageFullwidth' => '1350',
+				'singlecolumnBreakpoint' => '860',
+			],
 		],
 		'Matches' => [
-			'backend' => [
+			'Backend' => [
 				'enddate' => '1',
 				'endtime' => '0',
 				'starttime' => '1',
 			],
 		],
 		'Media' => [
-			'frontend' => [
-				'default_breakpoints' => [
-					0 => 2560,
-					1 => 1920,
-					2 => 1680,
-					3 => 1280,
-					4 => 1024,
-					5 => 768,
-					6 => 640,
-					7 => 480,
-					8 => 360,
+			'Frontend' => [
+				'defaultBreakpoints' => [
+					2560,
+					1920,
+					1680,
+					1280,
+					1024,
+					768,
+					640,
+					480,
+					360,
 				],
 			],
 		],
 		'News' => [
-			'backend' => [
+			'Backend' => [
 				'starttime' => '0',
 			],
 		],
 		'System' => [
-			'backend' => [
-				'lock_timeout' => 600,
+			'Backend' => [
+				'lockTimeout' => 600,
 				'meta' => [
-					'title_appendix' => 'Bueackeand',
-					'title_separator' => ' | ',
+					'titleAppendix' => 'Bueackeand',
+					'titleSeparator' => ' | ',
 				],
 			],
-			'fooooo1' => 'FALSE',
-			'frontend' => [
-				'editlinks' => true,
+			'Frontend' => [
+				'foobar123' => '123 test',
 				'meta' => [
-					'title_appendix' => 'Würzburger Kickers auf Deutsch',
-					'title_separator' => ' | ',
+					'titleAppendix' => 'Würzburger Kickers auf Deutsch',
+					'titleSeparator' => ' | ',
+				],
+				'editlinks' => true,
+			],
+		],
+		'Usergroups' => [
+			'Backend' => [
+				'paginate' => [
+					'limit' => 10,
+				],
+				'search' => true,
+			],
+		],
+		'PageTemplates' => [
+			'Backend' => [
+				'paginate' => [
+					'limit' => 20,
+				],
+			],
+		],
+		'Users' => [
+			'Backend' => [
+				'search' => true,
+				'paginate' => [
+					'limit' => 20,
 				],
 			],
 		],

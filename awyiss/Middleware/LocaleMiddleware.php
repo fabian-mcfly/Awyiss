@@ -4,18 +4,22 @@
 namespace Awyiss\Middleware;
 
 
+use Awyiss\Awyiss;
 use Awyiss\I18n\MessagesFileLoader;
 use Awyiss\Model\Entity\Language;
+use Cake\Database\TypeFactory;
 use Cake\Datasource\FactoryLocator;
+use Cake\Http\Session;
 use Cake\I18n\I18n;
 use Cake\I18n\Package;
 use Cake\ORM\Locator\LocatorAwareTrait;
-use Cake\Routing\Router;
+use Awyiss\Routing\Router;
 use Exception;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use RuntimeException;
 
 
 /**
@@ -30,49 +34,72 @@ class LocaleMiddleware implements MiddlewareInterface {
 	/**
 	 * @var array{frontend: ?Language, backend: ?Language}
 	 */
-	protected static array $defaultLanguages = ['frontend' => NULL, 'backend' => NULL];
+	protected static array $defaultLanguages = [
+		Awyiss::REALM_FRONTEND => NULL,
+		Awyiss::REALM_BACKEND => NULL,
+	];
 	/**
 	 * @var array{frontend: array<string, Language[]>, backend: array<string, Language[]>}
 	 */
-	protected static array $languages = ['frontend' => [], 'backend' => []];
+	protected static array $languages = [
+		Awyiss::REALM_FRONTEND => [],
+		Awyiss::REALM_BACKEND => [],
+	];
 	protected static bool $languagesLoaded = FALSE;
 	/**
 	 * @var array<string, array{frontend: ?Language[], backend: ?Language[]}>
 	 */
 	protected static array $languagesByShortcode = [];
-	protected static string $source;
-	protected static string $type;
+	protected static ?string $realm = NULL;
+	protected static array $retrievalStrategy = [
+		Awyiss::REALM_FRONTEND => self::SOURCE_URL,
+		Awyiss::REALM_BACKEND => self::SOURCE_SESSION,
+	];
 
 
+	/**
+	 * Auto-detect language
+	 */
+	final public const SOURCE_AUTO = '__AUTO__';
+	/**
+	 * Use URL param for language
+	 */
 	final public const SOURCE_URL = '__URL__';
+	/**
+	 * Use Session for language
+	 */
 	final public const SOURCE_SESSION = '__SESSION__';
 
 
 	/**
-	 * @param string $as_type
-	 * @param string $as_source
+	 * @param null|string $as_realm
 	 */
-	public function __construct (string $as_type, string $as_source = self::SOURCE_URL) {
-		static::$source = $as_source;
-		static::$type = $as_type;
+	public function __construct (?string $as_realm = NULL) {
+		static::$realm = $as_realm;
 	}
 
 
 	/**
-	 * @param \Psr\Http\Message\ServerRequestInterface $ao_request
-	 * @param \Psr\Http\Server\RequestHandlerInterface $ao_handler
+	 * @param ServerRequestInterface  $ao_request
+	 * @param RequestHandlerInterface $ao_handler
 	 *
-	 * @return \Psr\Http\Message\ResponseInterface
+	 * @return ResponseInterface
+	 *
+	 * @throws Exception
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function process (ServerRequestInterface $ao_request, RequestHandlerInterface $ao_handler): ResponseInterface {
+		if ( ! in_array(static::$realm, Awyiss::getRealms())) {
+			throw new RuntimeException(sprintf('Unknown realm set in `%s`. `%s` given.', static::class, static::$realm ?? 'NULL'));
+		}
+
 		static::loadLanguages();
 
 		I18n::config('_fallback', function($as_domain, $as_locale) {
 			$ls_domain = $as_domain;
 			if ( ! str_contains($ls_domain, '/')) {
-				$ls_domain = (defined('IS_BACKEND') && IS_BACKEND ? 'backend' : 'frontend') . DS . $ls_domain;
+				$ls_domain = static::getRealm() . DS . $ls_domain;
 			}
 
 			$lo_fileLoader = new MessagesFileLoader($ls_domain, $as_locale, 'po');
@@ -81,117 +108,123 @@ class LocaleMiddleware implements MiddlewareInterface {
 			return new Package('default', NULL, $lo_default->getMessages());
 		});
 
-		$lo_request = $ao_request;
 		$lo_language = NULL;
-
-		if (static::$source === static::SOURCE_SESSION) {
-			$lo_language = static::getLanguageFromSession(static::$type, $lo_request);
+		if (static::$retrievalStrategy[ static::getRealm() ] === self::SOURCE_URL) {
+			$lo_language = static::getLanguageFromUrl(static::getRealm());
 		}
-		else {
-			dd(static::$source, __FILE__, __LINE__);
+		elseif (static::$retrievalStrategy[ static::getRealm() ] === self::SOURCE_SESSION) {
+			$lo_language = static::getLanguageFromSession(static::getRealm());
 		}
 
 		if ($lo_language) {
 			ini_set('intl.default_locale', $lo_language->locale);
 			I18n::setLocale($lo_language->locale);
+			TypeFactory::build('datetime')->setUserTimezone($lo_language->timezone);
+
+			$lo_tableLocator = FactoryLocator::get('Table');
+			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+			$lo_tableLocator->setTranslateLanguage($lo_language);
 		}
 
-		$lo_request = $lo_request->withAttribute('locale', $this);
+		$lo_request = $ao_request->withAttribute('locale', $this);
 
 		return $ao_handler->handle($lo_request);
 	}
 
 
 	/**
-	 * @return void
-	 */
-	protected static function loadLanguages (): void {
-		$lo_tableLocator = FactoryLocator::get('Table');
-
-		$lo_result = $lo_tableLocator->get('Languages')->find('all', [
-			'authorization' => ['skip' => TRUE]
-		])->order(['system_order' => 'ASC']);
-
-		/** @var Language $lo_language */
-		foreach ($lo_result->all() as $lo_language) {
-			/** @var Language $lo_language */
-			static::$languages[ $lo_language['type'] ][ $lo_language['shortcode'] ] = $lo_language;
-
-			if (!isset(static::$defaultLanguages[ $lo_language['type'] ])) {
-				static::$defaultLanguages[ $lo_language['type'] ] = $lo_language;
-			}
-
-			if (!isset(static::$languagesByShortcode[ $lo_language['shortcode'] ])) {
-				static::$languagesByShortcode[ $lo_language['shortcode'] ] = [
-					'frontend' => NULL,
-					'backend' => NULL,
-				];
-			}
-
-			static::$languagesByShortcode[ $lo_language['shortcode'] ][ $lo_language['type'] ] = $lo_language;
-		}
-
-		static::$languagesLoaded = TRUE;
-	}
-
-
-	/**
-	 * @param NULL|string $as_type
+	 * @param string|null $as_realm
+	 * @param bool        $ab_fallback
+	 * @param string      $as_retrievalStategy
 	 *
-	 * @return array|\Awyiss\Model\Entity\Language[]
+	 * @return Language|null
+	 * @throws Exception
 	 */
-	public static function getLanguages (?string $as_type = NULL): array {
+	public static function getLanguage (?string $as_realm = Awyiss::REALM_FRONTEND, bool $ab_fallback = TRUE, string $as_retrievalStategy = self::SOURCE_AUTO): ?Language {
 		if (!static::$languagesLoaded) {
 			static::loadLanguages();
 		}
 
-		if (empty($as_type)) {
+		$ls_realm = $as_realm;
+		if (!$ls_realm) {
+			$ls_realm = static::$realm;
+		}
+
+		$ls_retrievalStategy = $as_retrievalStategy;
+		if ($ls_retrievalStategy === static::SOURCE_AUTO) {
+			if (!isset(static::$retrievalStrategy[ $ls_realm ])) {
+				throw new RuntimeException(sprintf('Cannot use auto-detection of the retrievel strategy. No retrievel strategy defined for realm `%s`.', $ls_realm));
+			}
+
+			$ls_retrievalStategy = static::$retrievalStrategy[ $ls_realm ];
+		}
+
+		if ($ls_retrievalStategy === static::SOURCE_SESSION) {
+			$lo_language = static::getLanguageFromSession($ls_realm);
+		}
+		elseif ($ls_retrievalStategy === static::SOURCE_URL) {
+			$lo_language = static::getLanguageFromUrl($ls_realm);
+		}
+
+		return $lo_language ?? ($ab_fallback ? static::getDefaultLanguage($ls_realm ?? static::$realm) : NULL);
+	}
+
+
+	/**
+	 * @param NULL|string $as_realm
+	 *
+	 * @return array|Language[]
+	 */
+	public static function getLanguages (?string $as_realm = NULL): array {
+		if (!static::$languagesLoaded) {
+			static::loadLanguages();
+		}
+
+		if (empty($as_realm)) {
 			return static::$languages;
 		}
 
-		return static::$languages[ $as_type ] ?? [];
+		return static::$languages[ $as_realm ] ?? [];
 	}
 
 
 	/**
-	 * @param string $as_type
+	 * @param NULL|string $as_realm
 	 *
-	 * @return ?\Awyiss\Model\Entity\Language
+	 * @return ?Language
 	 */
-	public static function getDefaultLanguage (string $as_type): ?Language {
+	public static function getDefaultLanguage (?string $as_realm = NULL): ?Language {
 		if (!static::$languagesLoaded) {
 			static::loadLanguages();
 		}
 
-		return static::$defaultLanguages[ $as_type ] ?? NULL;
+		return static::$defaultLanguages[ $as_realm ?? static::getRealm() ] ?? NULL;
 	}
 
 
 	/**
-	 * If `$as_type` is NULL, the type the middleware was loaded with will be used.
+	 * If `$as_realm` is NULL, the realm the middleware was loaded with will be used.
 	 *
-	 * @param string $as_shortcode
-	 * @param NULL|string $as_type
+	 * @param string      $as_shortcode
+	 * @param NULL|string $as_realm
 	 *
-	 * @return ?\Awyiss\Model\Entity\Language
+	 * @return ?Language
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public static function getLanguageByShortcode (string $as_shortcode, ?string $as_type = NULL): ?Language {
+	public static function getLanguageByShortcode (string $as_shortcode, ?string $as_realm = NULL): ?Language {
 		if (!static::$languagesLoaded) {
 			static::loadLanguages();
 		}
 
-		$ls_type = $as_type ?? static::$type;
-
-		return static::$languages[ $ls_type ][ $as_shortcode ] ?? NULL;
+		return static::$languages[ $as_realm ?? static::getRealm() ][ $as_shortcode ] ?? NULL;
 	}
 
 
 	/**
 	 * @param NULL|string $as_shortcode
 	 *
-	 * @return NULL|array|\Awyiss\Model\Entity\Language
+	 * @return NULL|array|Language
 	 */
 	public static function getLanguagesByShortcode (?string $as_shortcode = NULL): array|Language|NULL {
 		if (!static::$languagesLoaded) {
@@ -207,27 +240,79 @@ class LocaleMiddleware implements MiddlewareInterface {
 
 
 	/**
-	 * @throws \Exception
+	 * @return null|string
+	 */
+	public static function getRealm (): ?string {
+		return static::$realm;
+	}
+
+
+	/**
+	 * @param string $realm
+	 *
+	 * @return void
 	 *
 	 * @noinspection PhpUnused
-	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public static function getLanguageFromUrl ($ab_fallback = FALSE, ?string $as_type = NULL): ?Language {
+	public static function setRealm (string $realm): void {
+		static::$realm = $realm;
+	}
+
+
+	/**
+	 * @return void
+	 */
+	protected static function loadLanguages (): void {
+		$lo_tableLocator = FactoryLocator::get('Table');
+
+		$lo_result = $lo_tableLocator->get('Languages')->find('all', authorize: [
+			'skip' => TRUE
+		]);
+
+		/** @var Language $lo_language */
+		foreach ($lo_result->all() as $lo_language) {
+			/** @var Language $lo_language */
+			static::$languages[ $lo_language->realm ][ $lo_language->shortcode ] = $lo_language;
+
+			if (!isset(static::$defaultLanguages[ $lo_language->realm ])) {
+				static::$defaultLanguages[ $lo_language->realm ] = $lo_language;
+			}
+
+			if (!isset(static::$languagesByShortcode[ $lo_language->shortcode ])) {
+				static::$languagesByShortcode[ $lo_language->shortcode ] = [
+					Awyiss::REALM_FRONTEND => NULL,
+					Awyiss::REALM_BACKEND  => NULL,
+				];
+			}
+
+			static::$languagesByShortcode[ $lo_language->shortcode ][ $lo_language->realm ] = $lo_language;
+		}
+
+		static::$languagesLoaded = TRUE;
+	}
+
+
+	/**
+	 * @throws Exception
+	 *
+	 * @noinspection PhpUnused
+	 */
+	protected static function getLanguageFromUrl (?string $as_realm = NULL): ?Language {
 		if (!static::$languagesLoaded) {
 			static::loadLanguages();
 		}
 
-		$ls_type = $as_type ?? static::$type;
+		$ls_realm = $as_realm ?? static::getRealm();
 
 		$ls_langShortcode = Router::getRequest()->getParam('lang');
-		$lo_language = static::getLanguages($ls_type)[ $ls_langShortcode ] ?? NULL;
+		$lo_language = static::getLanguages($ls_realm)[ $ls_langShortcode ] ?? NULL;
 
 		if ( ! $lo_language) {
-			$lo_language = current(static::getLanguages($ls_type)) ?? NULL;
+			$lo_language = current(static::getLanguages($ls_realm)) ?? NULL;
 		}
 
 		if ( ! $lo_language) {
-			throw new Exception(__('::language_shortcode_not_found'), 404);
+			throw new Exception(__d('languages', 'language_shortcode_not_found'), 404);
 		}
 
 		return $lo_language;
@@ -235,20 +320,30 @@ class LocaleMiddleware implements MiddlewareInterface {
 
 
 	/**
-	 * @param NULL|string $as_type
-	 * @param NULL|\Psr\Http\Message\ServerRequestInterface $ao_request
+	 * @param null|string                 $as_realm
+	 * @param NULL|ServerRequestInterface $ao_request
 	 *
-	 * @return NULL|\Awyiss\Model\Entity\Language
+	 * @return NULL|Language
 	 */
-	public static function getLanguageFromSession (?string $as_type = NULL, ?ServerRequestInterface $ao_request = NULL): ?Language {
+	protected static function getLanguageFromSession (?string $as_realm = NULL, ?ServerRequestInterface $ao_request = NULL): ?Language {
 		if (!static::$languagesLoaded) {
 			static::loadLanguages();
 		}
 
-		/** @var \Cake\Http\Session $lo_session */
-		$lo_session = ($ao_request ?? Router::getRequest())->getAttribute('session');
-		$ls_languageShortcode = $lo_session->read(($as_type ?? static::$type) . '.languageShortcode');
+		$ls_realm = $as_realm ?? static::getRealm();
 
-		return static::$languages[ static::$type ][ $ls_languageShortcode ] ?? NULL;
+		/** @var Session $lo_session */
+		$lo_session = ($ao_request ?? Router::getRequest())->getAttribute('session');
+		$ls_languageShortcode = $lo_session->read(static::getSessionIdentifier());
+
+		return static::$languages[ $ls_realm ][ $ls_languageShortcode ] ?? NULL;
+	}
+
+
+	/**
+	 * @return string
+	 */
+	public static function getSessionIdentifier (): string {
+		return static::$realm . '.languageShortcode';
 	}
 }

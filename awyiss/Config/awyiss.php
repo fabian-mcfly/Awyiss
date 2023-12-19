@@ -26,7 +26,7 @@ return [
 	'App' => [
 		'base' => FALSE,
 		'cssBaseUrl' => 'css/',
-		'defaultLocale' => env('APP_DEFAULT_LOCALE', 'de_DE'),
+		'defaultLocale' => env('APP_DEFAULT_LOCALE', ''),
 		'defaultTimezone' => env('APP_DEFAULT_TIMEZONE', 'UTC'),
 		'dir' => 'awyiss',
 		'encoding' => env('APP_ENCODING', 'UTF-8'),
@@ -77,15 +77,6 @@ return [
 			'prefix' => 'awyiss_model_',
 			'serialize' => TRUE,
 			'url' => env('CACHE_CAKEMODEL_URL'),
-		],
-
-		'_cake_routes_' => [
-			'className' => FileEngine::class,
-			'duration' => '+1 years',
-			'path' => CACHE,
-			'prefix' => 'awyiss_routes_',
-			'serialize' => TRUE,
-			'url' => env('CACHE_CAKEROUTES_URL'),
 		],
 	],
 
@@ -155,7 +146,9 @@ return [
 		'errorLevel' => 0,
 		'exceptionRenderer' => WebExceptionRenderer::class,
 		//'extraFatalErrorMemory' => 4,
-		'ignoredDeprecationPaths' => [],
+		'ignoredDeprecationPaths' => [
+			'vendor/cakephp/cakephp/src/Controller/ComponentRegistry.php',
+		],
 		'log' => TRUE,
 		'skipLog' => [],
 		'trace' => TRUE,
@@ -179,7 +172,7 @@ return [
 			'levels' => ['notice', 'info', 'debug'],
 			'path' => LOGS,
 			'size' => 2097152,
-			'scopes' => FALSE,
+			'scopes' => NULL,
 		],
 		'error' => [
 			'className' => FileLog::class,
@@ -187,22 +180,29 @@ return [
 			'levels' => ['warning', 'error', 'critical', 'alert', 'emergency'],
 			'path' => LOGS,
 			'size' => 2097152,
-			'scopes' => FALSE,
+			'scopes' => NULL,
+		],
+		'queue' => [
+			'className' => FileLog::class,
+			'file' => 'queue',
+			'levels' => ['error', 'info'],
+			'scopes' => ['queue'],
+			'type' => 'queue',
 		],
 		'queries' => [
 			'className' => FileLog::class,
 			'file' => 'queries',
 			'path' => LOGS,
 			'size' => 2097152,
-			'scopes' => ['queriesLog'],
+			'scopes' => ['cake.database.queries'],
 		],
 	],
 
 
 	'Queue' => [
+		'defaultworkertimeout' => 600,
 		'maxworkers' => 3,
-		'workermaxruntime' => 900,
-		'workertimeout' => 900,
+		'workermaxruntime' => 300,
 	],
 
 

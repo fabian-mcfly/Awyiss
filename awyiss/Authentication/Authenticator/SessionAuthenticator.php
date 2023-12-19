@@ -8,6 +8,11 @@ use ArrayAccess;
 use ArrayObject;
 use Authentication\Authenticator\Result;
 use Authentication\Authenticator\ResultInterface;
+use Authentication\Identifier\IdentifierInterface;
+use Awyiss\Authentication\Identifier\IdentifierCollection;
+use Awyiss\Model\Entity\User;
+use Awyiss\Model\Entity\UsersExternal;
+use Cake\Http\Session;
 use Psr\Http\Message\ServerRequestInterface;
 
 
@@ -15,6 +20,14 @@ use Psr\Http\Message\ServerRequestInterface;
  * Session Authenticator
  */
 class SessionAuthenticator extends \Authentication\Authenticator\SessionAuthenticator {
+	/**
+	 * Identifier or identifiers collection.
+	 *
+	 * @var IdentifierCollection
+	 */
+	protected IdentifierInterface $_identifier;
+
+
 	/**
 	 * {@inheritDoc}
 	 *
@@ -26,8 +39,9 @@ class SessionAuthenticator extends \Authentication\Authenticator\SessionAuthenti
 	 */
 	public function authenticate (ServerRequestInterface $ao_request): ResultInterface {
 		$ls_sessionKey = $this->getConfig('sessionKey');
-		/** @var \Cake\Http\Session $lo_session */
+		/** @var Session $lo_session */
 		$lo_session = $ao_request->getAttribute('session');
+		/** @var User|UsersExternal $lo_user */
 		$lo_user = $lo_session->read($ls_sessionKey);
 
 		if (empty($lo_user)) {
@@ -48,11 +62,17 @@ class SessionAuthenticator extends \Authentication\Authenticator\SessionAuthenti
 				}
 			}
 
-			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-			$lo_user = $this->_identifier->reidentify($la_credentials);
+			/** @var User|UsersExternal $lo_reidentifiedUser */
+			$lo_reidentifiedUser = $this->_identifier->reidentify($la_credentials);
 
-			if (empty($lo_user)) {
+			if (empty($lo_reidentifiedUser)) {
 				return new Result(NULL, ResultInterface::FAILURE_CREDENTIALS_INVALID);
+			}
+
+			//If the db entry of the user changed,
+			if ($lo_reidentifiedUser->changedOn->notEquals($lo_user->changedOn)) {
+				$lo_user->usergroups = NULL;
+				$lo_user->changedOn = $lo_reidentifiedUser->changedOn;
 			}
 		}
 
@@ -61,5 +81,16 @@ class SessionAuthenticator extends \Authentication\Authenticator\SessionAuthenti
 		}
 
 		return new Result($lo_user, ResultInterface::SUCCESS);
+	}
+
+
+	/**
+	 * When sleeping, don't allow serialization since the config can contain a callable
+	 * Having a closure inside them means serialization of the collection fails.
+	 *
+	 * @return array
+	 */
+	public function __sleep () {
+		return [];
 	}
 }

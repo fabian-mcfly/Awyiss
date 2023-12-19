@@ -5,6 +5,7 @@ namespace Awyiss\Configuration;
 
 
 use Cake\Utility\Inflector;
+use Cake\Utility\Text;
 use ReflectionClass;
 use RuntimeException;
 
@@ -14,13 +15,17 @@ use RuntimeException;
  */
 class ConfigOptionsProvider {
 	/**
-	 * @var array<string, class-string<\Awyiss\Configuration\ConfigOptionsInterface>>
+	 * @var array<string, class-string<ConfigOptionsInterface>>
 	 */
-	protected static array $configurations = [];
+	protected static array $configOptions = [];
 	/**
-	 * @var array<string, \Awyiss\Configuration\ConfigOptionsInterface>
+	 * @var array<string, ConfigOptionsInterface>
 	 */
-	protected static array $loadedConfigurations = [];
+	protected static array $loadedConfigOptions = [];
+	/**
+	 * @var bool
+	 */
+	protected static bool $foundAll = FALSE;
 
 
 	private function __construct () {
@@ -31,77 +36,98 @@ class ConfigOptionsProvider {
 	/**
 	 * Returns all found ConfigOptions classes in both the Awyiss and the custom namespace
 	 *
-	 * @return array<string, class-string<\Awyiss\Configuration\ConfigOptionsInterface>>
+	 * @return array<string, class-string<ConfigOptionsInterface>>
 	 * @throws \ReflectionException
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public static function getConfigurationFiles (): array {
-		if (empty(static::$configurations)) {
-			static::$configurations = static::findConfiguration('*');
+	public static function getConfigOptionsFiles (bool $ab_returnLoaded = FALSE): array {
+		if ( ! static::$foundAll) {
+			static::$configOptions = static::findConfigOptionsFile('*', $ab_returnLoaded);
+			static::$foundAll = TRUE;
 		}
 
-		return static::$configurations;
+		if ($ab_returnLoaded) {
+			return static::$loadedConfigOptions;
+		}
+
+		return static::$configOptions;
 	}
 
 
 	/**
-	 * Returns the found ConfigOptions class for the provided name or NULL
+	 * Returns the found ConfigOptions class for the provided scope or NULL
 	 *
-	 * @param string $as_name
+	 * @param string $as_scope
+	 * @param bool $ab_returnLoaded
 	 *
-	 * @return NULL|class-string<\Awyiss\Configuration\ConfigOptionsInterface>
+	 * @return NULL|string|ConfigOptionsInterface
 	 * @throws \ReflectionException
 	 */
-	public static function getConfigurationFile (string $as_name): ?string {
-		$ls_name = Inflector::underscore($as_name);
+	public static function getConfigOptionsFile (string $as_scope, bool $ab_returnLoaded = FALSE): string|ConfigOptionsInterface|NULL {
+		$ls_scope = static::sanitizeScope($as_scope);
 
-		if (empty(static::$configurations[ $ls_name ])) {
-			static::$configurations += static::findConfiguration($ls_name);
+		if (empty(static::$configOptions[ $ls_scope ])) {
+			static::$configOptions += static::findConfigOptionsFile($ls_scope, $ab_returnLoaded);
 		}
 
-		return static::$configurations[ $ls_name ] ?? NULL;
+		if ($ab_returnLoaded) {
+			return static::$loadedConfigOptions[ $ls_scope ] ?? NULL;
+		}
+
+		return static::$configOptions[ $ls_scope ] ?? NULL;
 	}
 
 
 	/**
-	 * Returns an instance of a ConfigOptions class with the provided name or NULL
+	 * Returns an instance of a ConfigOptions class with the provided scope or NULL
 	 *
-	 * @param string $as_name
+	 * @param string|class-string<ConfigOptionsInterface> $as_scope
 	 *
-	 * @return NULL|\Awyiss\Configuration\ConfigOptionsInterface
+	 * @return NULL|ConfigOptionsInterface
+	 *
 	 * @throws \ReflectionException
-	 * @noinspection PhpUnused
 	 */
-	public static function loadConfiguration (string $as_name): ?ConfigOptionsInterface {
-		$ls_name = Inflector::underscore($as_name);
+	public static function loadConfigOptions (string $as_scope): ?ConfigOptionsInterface {
+		$ls_scope = static::sanitizeScope($as_scope);
 
-		if (array_key_exists($ls_name, static::$loadedConfigurations)) {
-			return static::$loadedConfigurations[ $ls_name ];
+		if (array_key_exists($ls_scope, static::$loadedConfigOptions)) {
+			return static::$loadedConfigOptions[ $ls_scope ];
 		}
 
-		/** @var NULL|class-string<\Awyiss\Configuration\ConfigOptionsInterface> $ls_configurationClass */
-		$ls_configurationClass = static::getConfigurationFile($ls_name);
-		if ( ! $ls_configurationClass) {
-			static::$loadedConfigurations[ $ls_name ] = NULL;
+		if (class_exists($as_scope)) {
+			$ls_scope = $as_scope::getScope();
+			$ls_configurationClass = $as_scope;
 
-			return NULL;
+			if (array_key_exists($ls_scope, static::$loadedConfigOptions)) {
+				return static::$loadedConfigOptions[ $ls_scope ];
+			}
+		}
+		else {
+			/** @var NULL|class-string<ConfigOptionsInterface> $ls_configurationClass */
+			$ls_configurationClass = static::getConfigOptionsFile($ls_scope);
+			if ( ! $ls_configurationClass) {
+				static::$loadedConfigOptions[ $ls_scope ] = NULL;
+
+				return NULL;
+			}
 		}
 
-		static::$loadedConfigurations[ $ls_name ] = new $ls_configurationClass();
+		static::$loadedConfigOptions[ $ls_scope ] = new $ls_configurationClass();
 
-		return static::$loadedConfigurations[ $ls_name ];
+		return static::$loadedConfigOptions[ $ls_scope ];
 	}
 
 
 	/**
-	 * Loads a configuration class and validates the provided value for the given configOptionName
+	 * Loads a configuration class for the given scope and validates the provided value for the given identifier
 	 *
 	 * Returns a string with an error message if the value is not valid.
 	 *
-	 * @param string $as_scopeName
-	 * @param string $as_configOptionName
-	 * @param mixed $ax_value
+	 * @param string      $as_scope
+	 * @param string      $as_realm
+	 * @param string      $as_identifier
+	 * @param mixed       $ax_value
 	 * @param null|string $as_languageShortcode
 	 *
 	 * @return bool|string
@@ -109,65 +135,70 @@ class ConfigOptionsProvider {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public static function validateConfigValue (string $as_scopeName, string $as_configOptionName, mixed $ax_value, ?string $as_languageShortcode = NULL): bool|string {
-		$lo_configuration = static::loadConfiguration($as_scopeName);
+	public static function validateConfigValue (string $as_scope, string $as_realm, string $as_identifier, mixed $ax_value, ?string $as_languageShortcode = NULL): bool|string {
+		$lo_configuration = static::loadConfigOptions($as_scope);
 
 		if ( ! $lo_configuration) {
 			return FALSE;
 		}
 
-		return $lo_configuration->validateConfigValue($as_configOptionName, $ax_value, $as_languageShortcode);
+		return $lo_configuration->validateConfigValue($as_realm, $as_identifier, $ax_value, $as_languageShortcode);
 	}
 
 
 	/**
-	 * Loads a configuration class and cast the provided value to it's correct type for the given configOptionName
+	 * Loads a configuration class for the given scope and  cast the provided value to it's correct type for the given identifier
 	 *
-	 * @param string $as_scopeName
-	 * @param string $as_configOptionName
-	 * @param mixed $ax_value
+	 * @param string $as_scope
+	 * @param string $as_realm
+	 * @param string $as_identifier
+	 * @param mixed  $ax_value
 	 *
 	 * @return mixed
 	 * @throws \ReflectionException
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public static function typecastConfigValue (string $as_scopeName, string $as_configOptionName, mixed $ax_value): mixed {
-		$lo_configuration = static::loadConfiguration($as_scopeName);
+	public static function typecastConfigValue (string $as_scope, string $as_realm, string $as_identifier, mixed $ax_value): mixed {
+		$lo_configuration = static::loadConfigOptions($as_scope);
 
 		if ( ! $lo_configuration) {
 			return $ax_value;
 		}
 
-		return $lo_configuration->typecastConfigValue($as_configOptionName, $ax_value);
+		return $lo_configuration->typecastConfigValue($as_realm, $as_identifier, $ax_value);
 	}
 
 
 	/**
-	 * Finds all ConfigOptions classes in both the Awyiss and the custom namespace for a given name.
+	 * Finds all ConfigOptions classes in both the Awyiss and the custom namespace for a given identifier.
 	 *
-	 * `$as_name` can be "*" to return all files.
+	 * `$as_scope` can be "*" to return all files.
 	 *
 	 * If a ConfigOptions class exists in both namespaces, the one from the custom namespace is returned,
 	 * the Awyiss one is ignored.
 	 *
-	 * @param string $as_name
+	 * @param string $as_scope
+	 * @param bool   $ab_load
 	 *
-	 * @return array<string, class-string<\Awyiss\Configuration\ConfigOptionsInterface>>
+	 * @return array<string, class-string<ConfigOptionsInterface>>
 	 * @throws \ReflectionException
 	 */
-	protected static function findConfiguration (string $as_name): array {
+	protected static function findConfigOptionsFile (string $as_scope, bool $ab_load = FALSE): array {
 		$la_configurations = [];
-		$ls_name = Inflector::camelize($as_name);
 
 		$la_paths = [
-			'\\' . CUSTOM_NAMESPACE . '\Configuration\ConfigOptions\\' => implode(DS, [ROOT, CUSTOM_DIR, 'Configuration', 'ConfigOptions', $ls_name . 'ConfigOptions.php',]),
-			'\Awyiss\Configuration\ConfigOptions\\' => implode(DS, [ROOT, APP_DIR, 'Configuration', 'ConfigOptions', $ls_name . 'ConfigOptions.php']),
+			'\\' . CUSTOM_NAMESPACE . '\Configuration\ConfigOptions\\' => implode(DS, [ROOT, CUSTOM_DIR, 'Configuration', 'ConfigOptions', $as_scope . 'ConfigOptions.php',]),
+			'\Awyiss\Configuration\ConfigOptions\\' => implode(DS, [ROOT, APP_DIR, 'Configuration', 'ConfigOptions', $as_scope . 'ConfigOptions.php']),
 		];
 
 		foreach ($la_paths as $ls_namespace => $ls_path) {
 			foreach (glob($ls_path) as $ls_filePath) {
 				$ls_configurationName = substr($ls_filePath, strrpos($ls_filePath, DS) + 1, -4);
+				if (str_starts_with($ls_configurationName, '_')) {
+					continue;
+				}
+
 				$ls_configurationClass = $ls_namespace . $ls_configurationName;
 
 				$lo_reflection = new ReflectionClass($ls_configurationClass);
@@ -179,10 +210,14 @@ class ConfigOptionsProvider {
 				/**
 				 * @var ConfigOptionsInterface $ls_configurationClass
 				 */
-				$ls_scope = Inflector::underscore($ls_configurationClass::getScope());
+				$ls_scope = $ls_configurationClass::getScope();
 
 				if (isset($la_configurations[ $ls_scope ])) {
 					continue;
+				}
+
+				if ($ab_load) {
+					static::loadConfigOptions($ls_configurationClass);
 				}
 
 				$la_configurations[ $ls_scope ] = $ls_configurationClass;
@@ -190,5 +225,31 @@ class ConfigOptionsProvider {
 		}
 
 		return $la_configurations;
+	}
+
+
+	/**
+	 * Sanitize the provided scope by removing all non-ascii characters
+	 * Returns a camelBacked string
+	 *
+	 * @param string $as_scope
+	 *
+	 * @return string
+	 */
+	public static function sanitizeScope (string $as_scope): string {
+		return Inflector::camelize(Inflector::pluralize(Text::slug($as_scope, '_')));
+	}
+
+
+	/**
+	 * Sanitize the provided identifier by removing all non-ascii characters
+	 * Returns a camelBacked string
+	 *
+	 * @param string $as_identifier
+	 *
+	 * @return string
+	 */
+	public static function sanitizeIdentifier (string $as_identifier): string {
+		return Inflector::variable(Text::slug($as_identifier, '_'));
 	}
 }

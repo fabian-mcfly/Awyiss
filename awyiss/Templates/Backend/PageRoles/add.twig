@@ -1,21 +1,21 @@
-{# @var ao_pageRole \Awyiss\Model\Entity\PageRole #}
-{# @var _view \Awyiss\View\BackendView #}
+{#
+@var ao_pageRole \Awyiss\Model\Entity\PageRole
+@var _view \Awyiss\View\BackendView
+#}
 
 <div class="PageRoles Form Add">
 	{{ helper_Form_create(ao_pageRole, {method: 'post', idPrefix: 'PageRole'}) }}
 
-	<fieldset>
-		<legend>{{ __('::headline_add') }}</legend>
-		{{ helper_Form_control('active') }}
-		{{ helper_Form_control('title') }}
-		{{ helper_Form_control('identifier') }}
-		{{ helper_Form_control('include_in_linklist') }}
-		{{ helper_SystemOrder_control('system_order', {entity: ao_pageRole}) }}
-	</fieldset>
+	<h1>{{ __('headline_add') }}</h1>
 
-	{{ helper_Form_hidden('reload_form', {val: 0}) }}
+	{% block formButtons %}
+		{{ helper_Form_button(__('save')) }}
+		{{ helper_Form_button(__('save_close'), {name: 'submit', value: 'submit_close'}) }}
+	{% endblock %}
 
-	{{ helper_Form_button(__('::save')) }}
-	{{ helper_Form_button(__('::save_close'), {name: 'submit', value: 'submit_close'}) }}
-	{{ helper_Form_end() }}
+	{% include('@Backend/PageRoles/form.twig') %}
+
+	{{ block('formButtons') }}
+
+	{{ helper_Form_end() -}}
 </div>

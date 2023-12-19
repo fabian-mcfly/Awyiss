@@ -6,8 +6,11 @@ namespace Awyiss\Controller;
 
 use Awyiss\Core\App;
 use Cake\Controller\Controller;
+use Cake\Http\ControllerFactoryInterface;
 use Cake\Http\ServerRequest;
 use Cake\Utility\Inflector;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use ReflectionClass;
 
@@ -15,18 +18,18 @@ use ReflectionClass;
 /**
  * Factory method for building controllers for request.
  *
- * @implements \Cake\Http\ControllerFactoryInterface<\Cake\Controller\Controller>
+ * @implements ControllerFactoryInterface<Controller>
  */
 class ControllerFactory extends \Cake\Controller\ControllerFactory {
 	/**
 	 * Create a controller for a given request.
 	 *
-	 * @param \Psr\Http\Message\ServerRequestInterface $ao_request The request to build a controller for.
+	 * @param ServerRequestInterface $ao_request The request to build a controller for.
 	 *
-	 * @return \Cake\Controller\Controller
+	 * @return Controller
 	 *
-	 * @throws \Psr\Container\ContainerExceptionInterface
-	 * @throws \Psr\Container\NotFoundExceptionInterface
+	 * @throws ContainerExceptionInterface
+	 * @throws NotFoundExceptionInterface
 	 * @throws \ReflectionException
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
@@ -77,34 +80,13 @@ class ControllerFactory extends \Cake\Controller\ControllerFactory {
 		$ls_pluginPath = '';
 		$ls_namespace = 'Controller';
 		$ls_controller = $ao_request->getParam('controller', '');
-
 		if ($ao_request->getParam('plugin')) {
 			$ls_pluginPath = $ao_request->getParam('plugin') . '.';
 		}
-
 		if ($ao_request->getParam('prefix')) {
-			$ls_prefix = $ao_request->getParam('prefix');
-
-			$ls_firstChar = substr($ls_prefix, 0, 1);
-			if ($ls_firstChar !== strtoupper($ls_firstChar)) {
-				deprecationWarning(sprintf("The `%s` prefix did not start with an upper case character. " . 'Routing prefixes should be defined as CamelCase values. ' . 'Prefix inflection will be removed in 5.0', $ls_prefix));
-
-				if ( ! str_contains($ls_prefix, '/')) {
-					$ls_namespace .= '/' . Inflector::camelize($ls_prefix);
-				}
-				else {
-					$ls_prefixes = array_map(function($val) {
-						return Inflector::camelize($val);
-					}, explode('/', $ls_prefix));
-					$ls_namespace .= '/' . implode('/', $ls_prefixes);
-				}
-			}
-			else {
-				$ls_namespace .= '/' . $ls_prefix;
-			}
+			$ls_namespace .= '/' . $ao_request->getParam('prefix');
 		}
 		$ls_firstChar = substr($ls_controller, 0, 1);
-
 
 		// Disallow plugin short forms, / and \\ from
 		// controller names as they allow direct references to
@@ -113,14 +95,12 @@ class ControllerFactory extends \Cake\Controller\ControllerFactory {
 			throw $this->missingController($ao_request);
 		}
 
-		/** @var class-string<\Cake\Controller\Controller>|NULL */
+		/** @var class-string<Controller>|NULL */
 		return App::className($ls_pluginPath . $ls_controller, $ls_namespace, 'Controller');
 	}
 
 
 	/**
-	 * @todo check if we need to make this only work in the backend-prefix.
-	 *
 	 * Tries to create an instance of a controller based on either a class named "GenericPagesBase" or "Pages"
 	 * in the given namespace, e.g. "Backend".
 	 *
@@ -143,10 +123,9 @@ class ControllerFactory extends \Cake\Controller\ControllerFactory {
 			$ls_namespace .= '\\' . $ls_prefix;
 		}
 
-		$ls_singular = Inflector::singularize($ls_controller);
-
+		$ls_singular = Inflector::singularize(Inflector::underscore($ls_controller));
 		//Disallow calling the singular form of the controller, e.g. /backend/de/page instead of /backend/de/pages
-		if ($ls_singular == $ls_controller) {
+		if ($ls_singular == Inflector::underscore($ls_controller) && $ls_singular != Inflector::pluralize(Inflector::underscore($ls_controller))) {
 			return NULL;
 		}
 

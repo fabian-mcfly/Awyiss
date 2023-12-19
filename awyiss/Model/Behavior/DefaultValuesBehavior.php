@@ -4,8 +4,10 @@
 namespace Awyiss\Model\Behavior;
 
 
+use Awyiss\Model\Table;
 use Awyiss\ORM\Behavior;
 use Cake\Datasource\EntityInterface;
+use Cake\ORM\Association;
 use RuntimeException;
 use UnhandledMatchError;
 
@@ -13,7 +15,7 @@ use UnhandledMatchError;
 /**
  * This behavior offers a `newDefaultEntity`-method on the table object which will
  * - create an entity
- * - load the table scheme
+ * - load the table schema
  * - set the entity properties to the database default values
  */
 class DefaultValuesBehavior extends Behavior {
@@ -24,7 +26,7 @@ class DefaultValuesBehavior extends Behavior {
 	 *
 	 * @var array
 	 */
-	protected $_defaultConfig = [
+	protected array $_defaultConfig = [
 		'enabled' => TRUE,
 		'implementedEvents' => [],
 		'implementedMethods' => [
@@ -39,7 +41,7 @@ class DefaultValuesBehavior extends Behavior {
 	 *
 	 * @param array $aa_additionalData
 	 *
-	 * @return \Cake\Datasource\EntityInterface
+	 * @return EntityInterface
 	 */
 	public function newDefaultEntity (array $aa_additionalData = []): EntityInterface {
 		if ( ! $this->getConfig('enabled')) {
@@ -49,7 +51,7 @@ class DefaultValuesBehavior extends Behavior {
 
 		//Retreive the class that's used by the table for the creation of new entities
 		$ls_entityClass = $this->table()->getEntityClass();
-		/** @var \Cake\Datasource\EntityInterface $lo_entity */
+		/** @var EntityInterface $lo_entity */
 		$lo_entity = new $ls_entityClass([], ['source' => $this->table()->getRegistryAlias()]);
 
 		//Get the default values
@@ -66,9 +68,10 @@ class DefaultValuesBehavior extends Behavior {
 			try {
 				$lx_default = match ($la_typeMap[ $ls_column ]) {
 					'boolean' => boolval($lx_default),
+					'float' => floatval($lx_default),
 					'integer' => intval($lx_default),
 					'json' => json_decode(trim($lx_default, '\'')),
-					'string' => strval($lx_default),
+					'string', 'text' => strval($lx_default),
 				};
 			}
 			catch (UnhandledMatchError) {
@@ -77,6 +80,14 @@ class DefaultValuesBehavior extends Behavior {
 		}
 		unset($lx_default);
 
+		/** @var Table $lo_table */
+		$lo_table = $this->table();
+		if ($lo_table->hasAttributes()) {
+			/** @var Association&Table $lo_attributes */
+			$lo_attributes = $lo_table->getAssociation($lo_table->getAttributesTable(TRUE));
+			$la_defaults[ $lo_attributes->getProperty() ] = $lo_attributes->newDefaultEntity();
+		}
+
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 		$la_defaults = $aa_additionalData + $lo_entity->defaultValues() + $la_defaults;
 
@@ -84,7 +95,8 @@ class DefaultValuesBehavior extends Behavior {
 			'fields' => array_keys($la_defaults),
 			'validate' => FALSE,
 		];
-		$lo_marshaller = $this->table()->marshaller();
+		$lo_marshaller = $lo_table->marshaller();
+
 
 		return $lo_marshaller->merge($lo_entity, $la_defaults, $la_options);
 	}

@@ -5,7 +5,7 @@ namespace Awyiss\Model\Entity;
 
 
 use Awyiss\Model\Entity;
-use Cake\ORM\Behavior\Translate\TranslateTrait;
+use Cake\I18n\FrozenTime;
 use Cake\Utility\Text;
 
 
@@ -15,52 +15,45 @@ use Cake\Utility\Text;
  * @property int $id
  * @property string $title
  * @property string $filename
- * @property array|NULL $available_elements
- * @property array|NULL $assigned_template_positions
- * @property int $system_order
+ * @property int $systemOrder
  * @property bool $active
  * @property bool $deleted
- * @property int|NULL $created_by
- * @property \Cake\I18n\FrozenTime|NULL $created_on
- * @property int|NULL $changed_by
- * @property \Cake\I18n\FrozenTime|NULL $changed_on
- * @property int|NULL $deleted_by
- * @property \Cake\I18n\FrozenTime|NULL $deleted_on
+ * @property int|NULL $createdBy
+ * @property FrozenTime|NULL $createdOn
+ * @property int|NULL $changedBy
+ * @property FrozenTime|NULL $changedOn
+ * @property int|NULL $deletedBy
+ * @property FrozenTime|NULL $deletedOn
+ * @property Content[] $contents
+ * @property ContentTemplateElement[] $contentTemplateElements
+ * @property ContentTemplateContentArea[] $contentTemplateContentAreas
  */
 class ContentTemplate extends Entity {
-	use TranslateTrait;
-
-
 	/**
 	 * @inheritDoc
 	 */
-	protected $_accessible = [
+	protected array $_accessible = [
 		'title' => TRUE,
 		'filename' => TRUE,
-		'available_elements' => TRUE,
-		'assigned_template_positions' => TRUE,
-		'system_order' => TRUE,
+		'systemOrder' => TRUE,
 		'active' => TRUE,
+		'contentTemplateElements' => TRUE,
+		'contentTemplateContentAreas' => TRUE,
 	];
-
-
 	/**
-	 * Make sure the available elements are an array and the 'required'-key is always a boolean value
-	 *
-	 * @noinspection PhpUnused
+	 * @inheritDoc
 	 */
-	protected function _setAvailableElements (?array $aa_availableElements = NULL): ?array {
-		if (empty($aa_availableElements)) {
-			return [];
-		}
-
-		foreach ($aa_availableElements AS &$la_element) {
-			$la_element['required'] = (bool)$la_element['required'];
-		}
-		unset($la_element);
-
-		return $aa_availableElements;
-	}
+	protected static array $fieldMap = [
+		'content_template_elements' => 'contentTemplateElements',
+		'content_template_content_areas' => 'contentTemplateContentAreas',
+		'system_order' => 'systemOrder',
+		'created_by' => 'createdBy',
+		'created_on' => 'createdOn',
+		'changed_by' => 'changedBy',
+		'changed_on' => 'changedOn',
+		'deleted_by' => 'deletedBy',
+		'deleted_on' => 'deletedOn',
+	];
 
 
 	/**

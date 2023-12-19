@@ -1,18 +1,22 @@
 <?php declare(strict_types=1);
 /**
- * @var \Awyiss\Authorization\PermissionOption\SimplePermissionOption $ao_permission
- * @var \Awyiss\Model\Entity|NULL $ao_entity
+ * @var SimplePermissionOption $ao_permission
+ * @var Entity|NULL $ao_entity
  * @var string $as_identifier
  * @var string $as_scope
- * @var \Cake\View\View $this
+ * @var View $this
  */
 
-$ls_scope = NULL;
+
+use Awyiss\Authorization\PermissionOption\SimplePermissionOption;
+use Awyiss\Model\Entity;
+use Cake\View\View;
+
 $lx_value = $ao_entity->permissions[ $as_identifier ]?->access ?? NULL;
 
 if (!empty($as_scope)) {
-	$ls_scope = '[' . $as_scope . ']';
+
 	$lx_value = $ao_entity->permissions[ $as_scope ][ $as_identifier ]?->access ?? NULL;
 }
 
-echo $this->Form->radio('permissions' . $ls_scope . '[' . $as_identifier . ']', $ao_permission->getOptions(), ['value' => $lx_value ?? '']);
+echo $this->Form->radio('permissions[' . $as_scope . '][' . $as_identifier . ']', $ao_permission->getOptions(), ['value' => $lx_value ?? '']);

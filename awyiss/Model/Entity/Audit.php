@@ -5,33 +5,47 @@ namespace Awyiss\Model\Entity;
 
 
 use Awyiss\Model\Entity;
+use Cake\I18n\FrozenTime;
 
 
 /**
  * Audit Entity
  *
  * @property int $id
- * @property string $type
  * @property string $scope
- * @property array|NULL $data_old
- * @property array|NULL $data_new
+ * @property int $parentId
+ * @property string $transactionId
+ * @property string $type
+ * @property array|NULL $dataOld
+ * @property array|NULL $dataNew
  * @property array|NULL $diff
- * @property int $parent_id
- * @property int|NULL $created_by
- * @property \Cake\I18n\FrozenTime|NULL $created_on
+ * @property int|NULL $createdBy
+ * @property FrozenTime|NULL $createdOn
  */
 class Audit extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	 protected $_accessible = [
-		'type' => TRUE,
+	 protected array $_accessible = [
 		'scope' => TRUE,
-		'parent_id' => TRUE,
-		'data_old' => TRUE,
-		'data_new' => TRUE,
+		'parentId' => TRUE,
+	 	'transactionId' => TRUE,
+		'type' => TRUE,
+		'dataOld' => TRUE,
+		'dataNew' => TRUE,
 		'diff' => TRUE,
-		'created_by' => TRUE,
-		'created_on' => TRUE,
+		'createdBy' => TRUE,
+		'createdOn' => TRUE,
+	];
+	/**
+	 * @inheritDoc
+	 */
+	protected static array $fieldMap = [
+		'transaction_id' => 'transactionId',
+		'parent_id' => 'parentId',
+		'data_old' => 'dataOld',
+		'data_new' => 'dataNew',
+		'created_by' => 'createdBy',
+		'created_on' => 'createdOn',
 	];
 }

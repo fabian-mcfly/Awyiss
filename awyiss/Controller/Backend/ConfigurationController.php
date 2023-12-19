@@ -4,32 +4,38 @@
 namespace Awyiss\Controller\Backend;
 
 
+use Awyiss\Awyiss;
 use Awyiss\Configuration\ConfigOptionsProvider;
 use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Model\Entity\Configuration;
+use Awyiss\Model\Table\ConfigurationTable;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
-use Cake\Routing\Router;
+use Awyiss\Routing\Router;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 
 
 /**
- * @todo modify inputs in add/edit, based on option type
+ * TODO: modify inputs in add/edit, based on option type
  *
  * Configuration Controller
  *
- * @property \Awyiss\Model\Table\ConfigurationTable $Configuration
+ * @property ConfigurationTable $Configuration
  */
 class ConfigurationController extends Controller {
 	/**
 	 * @var array
 	 */
-	protected array $configScopes;
+	protected array $configScopes = [];
 	/**
 	 * @var string
 	 */
 	protected string $selectedScopeSessionIdentifier = '';
+	/**
+	 * @var string
+	 */
+	protected string $selectedRealmSessionIdentifier = '';
 
 
 	/**
@@ -41,10 +47,13 @@ class ConfigurationController extends Controller {
 	public function initialize (): void {
 		parent::initialize();
 
-		$this->configScopes = $this->Configuration->getScopes();
+		foreach ($this->Configuration->getScopes() AS $ls_scope => $ls_configOptionsClass) {
+			$this->configScopes[ Inflector::underscore($ls_scope) ] = $ls_configOptionsClass;
+		}
 
 		//Remember an identifier that will be used to save the selected scope in the session
 		$this->selectedScopeSessionIdentifier = 'categories.' . ($this->request->getParam('lang') ?? 'global') . '.' . Inflector::underscore($this->getName()) . '.scope';
+		$this->selectedRealmSessionIdentifier = 'categories.' . ($this->request->getParam('lang') ?? 'global') . '.' . Inflector::underscore($this->getName()) . '.realm';
 
 		if ($this->request->getParam('action') === 'overview') {
 			$lo_session = $this->request->getSession();
@@ -86,7 +95,7 @@ class ConfigurationController extends Controller {
 	/**
 	 * Overview method
 	 *
-	 * @return void|?\Cake\Http\Response
+	 * @return void|?Response
 	 *
 	 * @throws \Exception
 	 */
@@ -98,23 +107,26 @@ class ConfigurationController extends Controller {
 		if (! $this->Authorization->withAdditionalData([
 			'scope' => $this->getOverviewWhere('scope'),
 		])->isAccessible('read')) {
-			$this->Flash->error(__('::scope_not_accessible'));
+			$this->Flash->error(__('scope_not_accessible'));
 
 			return $this->redirect(['action' => 'overview', 'scope' => 'system']);
 		}
 
-		$lo_configuration = $this->Configuration->find('withAttributes')->where($this->getOverviewWhere())
-		->order([
-			'name' => 'ASC',
+		$lo_configuration = $this->Configuration->find()->where($this->getOverviewWhere())
+		->orderBy([
+			'identifier' => 'ASC',
 			'language_shortcode' => 'ASC',
 		]);
 
-		$la_configuration = Hash::expand($lo_configuration->all()->groupBy('name')->toArray());
+		$la_configuration = $lo_configuration->all()->groupBy('realm')->map(function($aa_data) {
+			return Hash::expand(collection($aa_data)->groupBy('identifier')->toArray());
+		})->toArray();
 
 		$this->set([
 			'ao_configuration' => $lo_configuration,
 			'aa_configuration' => $la_configuration,
 			'aa_configScopes' => $this->configScopes,
+			'aa_realms' => Awyiss::getRealms(),
 			'as_selectedScope' => $this->getOverviewWhere('scope'),
 		]);
 	}
@@ -133,21 +145,29 @@ class ConfigurationController extends Controller {
 			'scope' => '',
 		])->ensure('create');
 
-		$lo_configuration = $this->Configuration->newDefaultEntity();
+		$lo_configuration = $this->Configuration->newDefaultEntity([
+			'scope' => $this->request->getSession()->read($this->selectedScopeSessionIdentifier),
+		]);
+
 		if ($this->request->is('post')) {
 			$this->save($lo_configuration);
 		}
 		else {
 			$lo_session = $this->request->getSession();
-			$lo_configuration->scope = $lo_session->read($this->selectedScopeSessionIdentifier);
+			//$lo_configuration->scope = $lo_session->read($this->selectedScopeSessionIdentifier);
+			if ($lo_session->read($this->selectedRealmSessionIdentifier)) {
+				$lo_configuration->realm = $lo_session->read($this->selectedRealmSessionIdentifier);
+			}
 		}
 
-		$lo_configOptions = ConfigOptionsProvider::loadConfiguration($lo_configuration->scope);
+		$lo_configOptions = ConfigOptionsProvider::loadConfigOptions($lo_configuration->scope);
+		$la_configOptions = $lo_configOptions->getConfigOptions($lo_configuration->realm);
 
 		$this->set([
 			'ao_configuration' => $lo_configuration,
 			'aa_configScopes' => $this->configScopes,
-			'ao_configOptions' => $lo_configOptions,
+			'aa_configOptions' => $la_configOptions,
+			'aa_realms' => Awyiss::getRealms(),
 		]);
 	}
 
@@ -155,7 +175,7 @@ class ConfigurationController extends Controller {
 	/**
 	 * Edit method
 	 *
-	 * @return void|?\Cake\Http\Response
+	 * @return void|?Response
 	 *
 	 * @throws \ReflectionException
 	 * @throws \Exception
@@ -168,7 +188,7 @@ class ConfigurationController extends Controller {
 			/** @var Configuration $lo_configuration */
 		$lo_configuration = $this->Configuration->findById((int) $this->request->getParam('id'))->first();
 		if ( ! $lo_configuration) {
-			$this->Flash->error(__('::record_not_found'));
+			$this->Flash->error(__('record_not_found'));
 
 			return $this->redirect(['action' => 'overview']);
 		}
@@ -180,18 +200,20 @@ class ConfigurationController extends Controller {
 			if (! $this->Authorization->withAdditionalData([
 				'scope' => $lo_configuration->scope,
 			])->isAccessible('read')) {
-				$this->Flash->error(__('::scope_not_accessible'));
+				$this->Flash->error(__('scope_not_accessible'));
 
 				return $this->redirect(['action' => 'overview']);
 			}
 		}
 
-		$lo_configOptions = ConfigOptionsProvider::loadConfiguration($lo_configuration->scope);
+		$lo_configOptions = ConfigOptionsProvider::loadConfigOptions($lo_configuration->scope);
+		$la_configOptions = $lo_configOptions->getConfigOptions($lo_configuration->realm);
 
 		$this->set([
 			'ao_configuration' => $lo_configuration,
 			'aa_configScopes' => $this->configScopes,
-			'ao_configOptions' => $lo_configOptions,
+			'aa_configOptions' => $la_configOptions,
+			'aa_realms' => Awyiss::getRealms(),
 		]);
 	}
 
@@ -199,7 +221,7 @@ class ConfigurationController extends Controller {
 	/**
 	 * Delete method
 	 *
-	 * @return \Cake\Http\Response
+	 * @return Response
 	 *
 	 * @throws \Exception
 	 */
@@ -213,15 +235,15 @@ class ConfigurationController extends Controller {
 			/** @var Configuration $lo_configuration */
 		$lo_configuration = $this->Configuration->findById((int) $this->request->getParam('id'))->first();
 		if ( ! $lo_configuration) {
-			$this->Flash->error(__('::record_not_found'));
+			$this->Flash->error(__('record_not_found'));
 			return $this->redirect(['action' => 'overview']);
 		}
 
 		if ($this->Configuration->delete($lo_configuration)) {
-			$this->Flash->success(__('::delete_succeeded'));
+			$this->Flash->success(__('delete_succeeded'));
 		}
 		else {
-			$this->Flash->error(__('::delete_failed'));
+			$this->Flash->error(__('delete_failed'));
 		}
 
 		return $this->redirect(['action' => 'overview']);
@@ -236,32 +258,39 @@ class ConfigurationController extends Controller {
 	 * @throws \Exception
 	 */
 	protected function save (Configuration $ao_configuration, string $as_method = 'add'): void {
+		if ($this->Configuration->hasAttributes()) {
+			$ao_configuration->setAccess('attributes', TRUE);
+		}
+
 		$this->Configuration->patchEntity($ao_configuration, $this->request->getData());
 
 		if (! $this->Authorization->withAdditionalData([
 			'scope' => $ao_configuration->scope,
 		])->isAccessible('read')) {
-			$this->Flash->error(__('::scope_not_accessible'));
+			$this->Flash->error(__('scope_not_accessible'));
 
 			throw new RedirectException(Router::url(['action' => 'overview'], TRUE), 302);
 		}
 
 		$lo_session = $this->request->getSession();
 		$lo_session->write($this->selectedScopeSessionIdentifier, $ao_configuration->scope);
+		$lo_session->write($this->selectedRealmSessionIdentifier, $ao_configuration->realm);
 
 		if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
 			if ($this->Configuration->save($ao_configuration)) {
-				$this->Flash->success(__('::' . $as_method . '_succeeded'));
+				$this->Flash->success(__($as_method . '_succeeded'));
 
 				if ($this->request->getData('submit') == 'submit_close') {
-					throw new RedirectException(Router::url(['action' => 'overview'], TRUE), 302);
+					throw new RedirectException(Router::url(['action' => 'overview', 'scope' => $ao_configuration->scope], TRUE), 302);
 				}
 
 				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $ao_configuration->id], TRUE), 302);
 			}
 
-			$this->Flash->error(__('::' . $as_method . '_failed'));
-			$this->Flash->error(implode('<br>' . PHP_EOL, $ao_configuration->getError('_general')));
+			$this->Flash->error(__($as_method . '_failed'));
+			foreach ($ao_configuration->getError('_general') as $ls_error) {
+				$this->Flash->error($ls_error);
+			}
 		}
 	}
 

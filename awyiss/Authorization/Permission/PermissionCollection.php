@@ -4,29 +4,38 @@
 namespace Awyiss\Authorization\Permission;
 
 use Awyiss\Authorization\AuthorizationService;
+use Awyiss\Model\Entity\UsergroupPermission;
 use Cake\Event\EventDispatcherTrait;
-use Cake\Utility\Inflector;
 use RuntimeException;
 
 
 /**
- * @todo Think about making $access not an array but a \Cake\Collection\Collection::class instance or extending \ArrayObject
+ * A collection that can hold multiple permissions for different scopes.
+ * Allows retreiving permissions for a specific scope or for a specific scope and a specific identifier.
+ *
+ * This also offers the scopeIsAccessible()-method, used in AuthorizationComponent, AuthorizationBehavior and AuthorizationHelper
  */
 class PermissionCollection {
 	use EventDispatcherTrait;
 
 
 	/**
+	 * @var null|AuthorizationService
+	 */
+	protected ?AuthorizationService $authorizationService;
+	/**
 	 * @var array<string, array<string, Permission[]>>
 	 */
 	protected array $permissions = [];
-	protected string $type = 'backend';
-	protected ?AuthorizationService $authorizationService;
+	/**
+	 * @var string
+	 */
+	protected string $realm = 'Backend';
 
 
 	/**
-	 * @param null|\Awyiss\Authorization\AuthorizationService $ao_authorizationService
-	 * @param array<\Awyiss\Model\Entity\UsergroupPermission|array{scope: string, identifier: string, access: mixed, settings: mixed}> $aa_permissions
+	 * @param null|AuthorizationService                                                                           $ao_authorizationService
+	 * @param array<UsergroupPermission|array{scope: string, identifier: string, access: mixed, settings: mixed}> $aa_permissions
 	 */
 	public function __construct (?AuthorizationService $ao_authorizationService, array $aa_permissions = []) {
 		$this->authorizationService = $ao_authorizationService;
@@ -37,7 +46,7 @@ class PermissionCollection {
 			}
 			elseif ($lx_permission instanceof PermissionInterface) {
 				//$this->add($lx_permission);
-				$this->add(Permission::createFromInterface($lx_permission));
+				$this->add(Permission::createFromObject($lx_permission));
 			}
 			elseif (is_array($lx_permission)) {
 				//$this->add(...$lx_permission);
@@ -55,7 +64,7 @@ class PermissionCollection {
 	 *
 	 * If `$ax_scope` is a string, `$as_identifier` needs to be provided
 	 *
-	 * @param \Awyiss\Authorization\Permission\Permission $ao_permission
+	 * @param Permission $ao_permission
 	 *
 	 * @return $this
 	 *
@@ -103,10 +112,11 @@ class PermissionCollection {
 	 * @return NULL|array<array<string, Permission[]>>|array<string, Permission[]>
 	 */
 	public function getPermissions (string $as_scope, string $as_identifier = NULL): ?array {
-		$ls_scope = Inflector::underscore($as_scope);
+		$ls_scope = AuthorizationService::sanitizeScope($as_scope);
 
 		if ($as_identifier) {
-			return $this->permissions[ $ls_scope ][ $as_identifier ] ?? NULL;
+			$ls_identifier = AuthorizationService::sanitizeIdentifier($as_identifier);
+			return $this->permissions[ $ls_scope ][ $ls_identifier ] ?? NULL;
 		}
 
 		return $this->permissions[ $ls_scope ] ?? NULL;
@@ -140,6 +150,8 @@ class PermissionCollection {
 	 * @param string|array ...$ax_identifier
 	 *
 	 * @return bool
+	 *
+	 * @throws \ReflectionException
 	 */
 	public function scopeIsAccessible (string $as_scope, array $aa_additionalData = [], string|array ...$ax_identifier): bool {
 		/*
@@ -174,6 +186,8 @@ class PermissionCollection {
 	 * @param array|string[] $aa_identifier
 	 *
 	 * @return NULL|bool
+	 *
+	 * @throws \ReflectionException
 	 */
 	protected function identifierIsAccessible (string $as_scope, array $aa_additionalData = [], ...$aa_identifier): ?bool {
 		$la_accessible = [];
@@ -189,7 +203,7 @@ class PermissionCollection {
 				continue;
 			}
 
-			$la_accessible[] = $this->permissionsIsAccessible($la_permissions, $aa_additionalData);
+			$la_accessible[] = $this->permissionsAreAccessible($la_permissions, $aa_additionalData);
 		}
 
 		//If TRUE is part of the result access is granted.
@@ -207,8 +221,10 @@ class PermissionCollection {
 	 * @param array $aa_additionalData
 	 *
 	 * @return null|bool
+	 *
+	 * @throws \ReflectionException
 	 */
-	protected function permissionsIsAccessible (array $aa_permissions, array $aa_additionalData = []): ?bool {
+	protected function permissionsAreAccessible (array $aa_permissions, array $aa_additionalData = []): ?bool {
 		$la_accessible = [];
 
 		foreach ($aa_permissions AS $lo_permission) {
@@ -227,16 +243,5 @@ class PermissionCollection {
 		}
 
 		return NULL;
-	}
-
-
-	/**
-	 * When sleeping, don't allow serialization since a PermissionCollection can contain policies with CallbackPermissionOption.
-	 * Having a closure inside them means serialization of the collection fails.
-	 *
-	 * @return array
-	 */
-	public function __sleep() {
-		return [];
 	}
 }

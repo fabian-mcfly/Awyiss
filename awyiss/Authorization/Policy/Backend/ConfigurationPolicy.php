@@ -4,13 +4,14 @@
 namespace Awyiss\Authorization\Policy\Backend;
 
 
+use Awyiss\Authorization\AuthorizationService;
 use Awyiss\Authorization\Permission\PermissionCollection;
 use Awyiss\Authorization\PermissionOption\CallbackPermissionOption;
 use Awyiss\Authorization\PermissionOption\PermissionOptionCollection;
 use Awyiss\Authorization\Policy\AbstractPolicy;
 use Awyiss\Model\Entity\Configuration;
 use Cake\Collection\Iterator\MapReduce;
-use Cake\ORM\Query;
+use Cake\ORM\Query\SelectQuery;
 use RuntimeException;
 
 
@@ -18,26 +19,32 @@ use RuntimeException;
  * Permission for the Configuration scope of the backend
  */
 class ConfigurationPolicy extends AbstractPolicy {
+	/**
+	 * @var PermissionOptionCollection
+	 */
 	protected static PermissionOptionCollection $permissionOptionCollection;
+	/**
+	 * @var string
+	 */
 	protected static string $scope;
 
 	/**
 	 * Creates a `PermissionOptionCollection` and four `CallbackPermission`
 	 * for the identifiers 'read', 'create', 'update' and 'delete' (CRUD).
 	 *
-	 * @return \Awyiss\Authorization\PermissionOption\PermissionOptionCollection
+	 * @return PermissionOptionCollection
 	 * @throws \Exception
 	 */
 	protected static function loadPermissionOptions (): PermissionOptionCollection {
 		$lo_permissions = new PermissionOptionCollection(static::getScope());
 
 		$la_callbacks = [
-			'general' => [static::class, 'callback'],
-			'Entity.create' => [static::class, 'callbackForEntity'],
-			'Entity.update' => [static::class, 'callbackForEntity'],
-			'Model.beforeFind' => [static::class, 'callbackForFind'],
-			'Model.beforeSoftDelete' => [static::class, 'callbackForEntity'],
-			'Model.beforeDelete' => [static::class, 'callbackForEntity'],
+			'general' => static::callback(...),
+			'Entity.create' => static::callbackForEntity(...),
+			'Entity.update' => static::callbackForEntity(...),
+			'Model.beforeFind' => static::callbackForFind(...),
+			'Model.beforeSoftDelete' => static::callbackForEntity(...),
+			'Model.beforeDelete' => static::callbackForEntity(...),
 		];
 
 		$lo_permissions->load('read', [
@@ -65,13 +72,15 @@ class ConfigurationPolicy extends AbstractPolicy {
 
 
 	/**
-	 * @param null|bool $ab_accessible
-	 * @param array $aa_access
-	 * @param array $aa_additionalData
-	 * @param \Awyiss\Authorization\Permission\PermissionCollection $ao_permissionCollection
+	 * @param null|bool            $ab_accessible
+	 * @param mixed                $ax_access
+	 * @param mixed                $ax_settings
+	 * @param array                $aa_additionalData
+	 * @param PermissionCollection $ao_permissionCollection
 	 *
 	 * @return null|bool
-	 * @throws \Exception
+	 *
+	 * @throws \ReflectionException
 	 *
 	 * @noinspection PhpUnusedParameterInspection
 	 */
@@ -86,13 +95,12 @@ class ConfigurationPolicy extends AbstractPolicy {
 			throw new RuntimeException(sprintf('CallbackPermission in `%s` requires additional data (`scope`)', static::class));
 		}
 
-
 		$ls_scope = $aa_additionalData['scope'];
 		if ( ! $ls_scope) {
 			return $lb_accessible;
 		}
 
-		if ($ls_scope !== 'system') {
+		if (strtolower($ls_scope) !== 'system') {
 			$lb_accessible = $ao_permissionCollection->scopeIsAccessible($ls_scope, [], 'configure');
 		}
 
@@ -101,14 +109,15 @@ class ConfigurationPolicy extends AbstractPolicy {
 
 
 	/**
-	 * @param null|bool $ab_accessible
-	 * @param array $aa_access
-	 * @param array $aa_additionalData
-	 * @param \Awyiss\Authorization\Permission\PermissionCollection $ao_permissionCollection
+	 * @param null|bool            $ab_accessible
+	 * @param mixed                $ax_access
+	 * @param mixed                $ax_settings
+	 * @param array                $aa_additionalData
+	 * @param PermissionCollection $ao_permissionCollection
 	 *
 	 * @return null|bool
 	 *
-	 * @throws \Exception
+	 * @throws \ReflectionException
 	 *
 	 * @noinspection PhpUnusedParameterInspection
 	 */
@@ -125,7 +134,7 @@ class ConfigurationPolicy extends AbstractPolicy {
 		}
 
 		$ls_scope = $lo_entity->scope;
-		if ($ls_scope !== 'system') {
+		if (strtolower($ls_scope) !== 'system') {
 			$lb_accessible = $ao_permissionCollection->scopeIsAccessible($ls_scope, [], 'configure');
 		}
 
@@ -134,10 +143,11 @@ class ConfigurationPolicy extends AbstractPolicy {
 
 
 	/**
-	 * @param null|bool $ab_accessible
-	 * @param array $aa_access
-	 * @param array $aa_additionalData
-	 * @param \Awyiss\Authorization\Permission\PermissionCollection $ao_permissionCollection
+	 * @param null|bool            $ab_accessible
+	 * @param mixed                $ax_access
+	 * @param mixed                $ax_settings
+	 * @param array                $aa_additionalData
+	 * @param PermissionCollection $ao_permissionCollection
 	 *
 	 * @return null|bool
 	 *
@@ -150,25 +160,27 @@ class ConfigurationPolicy extends AbstractPolicy {
 		}
 
 		$lo_query = $aa_additionalData['subject'] ?? NULL;
-		if (empty($lo_query) || ! ($lo_query instanceof Query)) {
-			throw new RuntimeException(sprintf('Callback `callbackForFind` in `%s` requires a subject of type `%s`. `%s` given.', static::class, Query::class, is_object($lo_query) ? get_class($lo_query) : gettype($lo_query)));
+		if (empty($lo_query) || ! ($lo_query instanceof SelectQuery)) {
+			throw new RuntimeException(sprintf('Callback `callbackForFind` in `%s` requires a subject of type `%s`. `%s` given.', static::class, SelectQuery::class, is_object($lo_query) ? get_class($lo_query) : gettype($lo_query)));
 		}
 
 		//Apply a mapReduce call that'll remove all entities from the query, except those that are re-added using the `emit()`-method
 		$lo_query->mapReduce(function(Configuration|array $ao_entity, int $ai_key, MapReduce $ao_mapReduce) use ($ao_permissionCollection) {
-			if ( ! $ao_entity instanceof Configuration || $ao_entity->scope === 'system') {
+			if ( ! $ao_entity instanceof Configuration || strtolower($ao_entity->scope) === 'system') {
 				$ao_mapReduce->emit($ao_entity);
 				return;
 			}
 
 			static $la_checkedScopes = [];
 
-			if ( ! array_key_exists($ao_entity->scope, $la_checkedScopes)) {
-				$la_checkedScopes[ $ao_entity->scope ] = $ao_permissionCollection->scopeIsAccessible($ao_entity->scope, [], 'configure');
+			$ls_scope = AuthorizationService::sanitizeScope($ao_entity->scope);
+
+			if ( ! array_key_exists($ls_scope, $la_checkedScopes)) {
+				$la_checkedScopes[ $ls_scope ] = $ao_permissionCollection->scopeIsAccessible($ao_entity->scope, [], 'configure');
 			}
 
-			//If the scope 'system' or if it's accessible, append it to the final list of results
-			if ($la_checkedScopes[ $ao_entity->scope ]) {
+			//If the scope is accessible, append it to the final list of results
+			if ($la_checkedScopes[ $ls_scope ]) {
 				$ao_mapReduce->emit($ao_entity);
 			}
 		});

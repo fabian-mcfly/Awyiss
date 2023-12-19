@@ -7,6 +7,7 @@ namespace Awyiss\Event\Bake;
 use Awyiss\Event\EventListenerTrait;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
+use Cake\View\View;
 
 
 /**
@@ -16,6 +17,9 @@ class GeneralEventsListener implements EventListenerInterface {
 	use EventListenerTrait;
 
 
+	/**
+	 * @var string
+	 */
 	protected static string $scope;
 
 
@@ -36,8 +40,8 @@ class GeneralEventsListener implements EventListenerInterface {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function beforeRenderControllerController (Event $ao_event) {
-		/** @var \Cake\View\View $ao_view */
+	public function beforeRenderControllerController (Event $ao_event): void {
+		/** @var View $ao_view */
 		$ao_view = $ao_event->getSubject();
 
 		if ($ao_view->get('actions') == ['index', 'view', 'add', 'edit', 'delete']) {

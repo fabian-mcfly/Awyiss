@@ -6,37 +6,47 @@ namespace Awyiss\View;
 
 use Awyiss\Twig\Extension\AwyissExtension;
 use Awyiss\Twig\FileLoader;
+use Awyiss\View\Helper\AuthorizationHelper;
+use Awyiss\View\Helper\CategoriesHelper;
+use Awyiss\View\Helper\FlashHelper;
+use Awyiss\View\Helper\FormHelper;
+use Awyiss\View\Helper\LocaleHelper;
+use Awyiss\View\Helper\PaginatorHelper;
+use Awyiss\View\Helper\SystemOrderHelper;
+use Awyiss\View\Helper\UrlHelper;
 use Cake\Core\Configure;
 use Cake\TwigView\View\TwigView;
+use Twig\Error\LoaderError;
 use Twig\Loader\LoaderInterface;
 
 
 /**
  * Application View
  *
- * @property \Awyiss\View\Helper\AuthorizationHelper $Authorization
- * @property \Awyiss\View\Helper\CategoriesHelper $Categories
- * @property \Awyiss\View\Helper\FlashHelper $Flash
- * @property \Awyiss\View\Helper\FormHelper $Form
- * @property \Awyiss\View\Helper\LocaleHelper $Locale
- * @property \Awyiss\View\Helper\PaginatorHelper $Paginator
- * @property \Awyiss\View\Helper\PermissionHelper $Permission
- * @property \Awyiss\View\Helper\SystemOrderHelper $SystemOrder
- * @property \Awyiss\View\Helper\UrlHelper $Url
+ * @property AuthorizationHelper $Authorization
+ * @property CategoriesHelper $Categories
+ * @property FlashHelper $Flash
+ * @property FormHelper $Form
+ * @property LocaleHelper $Locale
+ * @property PaginatorHelper $Paginator
+ * @property SystemOrderHelper $SystemOrder
+ * @property UrlHelper $Url
  */
 class AppView extends TwigView {
+	protected static bool $initialized = FALSE;
+
 	/**
 	 * @inheritDoc
 	 *
 	 * @return void
 	 *
-	 * @throws \Twig\Error\LoaderError
+	 * @throws LoaderError
 	 */
 	public function initialize (): void {
 		$this->setConfig('environment', [
 			'auto_reload' => TRUE,
-			'cache' => FALSE,
-			'debug' => Configure::read('debug'),
+			//'cache' => FALSE,
+			//'debug' => Configure::read('debug'),
 			'strict_variables' => FALSE,
 		]);
 
@@ -44,8 +54,8 @@ class AppView extends TwigView {
 
 		$lo_twig = $this->getTwig();
 
-		if (empty($lo_twig->initialized)) {
-			/** @var \Awyiss\Twig\FileLoader $lo_loader */
+		if (!static::$initialized) {
+			/** @var FileLoader $lo_loader */
 			$lo_loader = $lo_twig->getLoader();
 
 			$lo_loader->addPath(ROOT . DS . CUSTOM_DIR . DS . 'templates' . DS, CUSTOM_NAMESPACE);
@@ -64,7 +74,7 @@ class AppView extends TwigView {
 				$lo_twig->addExtension(new $ls_customExtensionClass());
 			}
 
-			$lo_twig->initialized = TRUE;
+			static::$initialized = TRUE;
 		}
 	}
 
@@ -72,7 +82,7 @@ class AppView extends TwigView {
 	/**
 	 * @inheritDoc
 	 *
-	 * @return \Twig\Loader\LoaderInterface
+	 * @return LoaderInterface
 	 */
 	protected function createLoader (): LoaderInterface {
 		return new FileLoader($this->extensions);

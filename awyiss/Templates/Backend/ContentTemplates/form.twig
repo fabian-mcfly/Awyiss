@@ -1,0 +1,289 @@
+{#
+@var ao_contentTemplate \Awyiss\Model\Entity\ContentTemplate
+@var aa_availableContentElements array
+@var aa_availableContentAttributes array
+@var aa_assignedContentAreas array
+@var aa_availableFieldsets array
+@var aa_pageTemplates
+@var _view \Awyiss\View\BackendView
+#}
+
+{% block fieldsetPresentation %}
+	<fieldset>
+		<legend>{{ __('fieldset_presentation') }}</legend>
+
+		{% block fieldsetPresentationInner %}
+			{% block formControlActive %}
+				{{ helper_Form_control('active') }}
+			{% endblock %}
+
+			{% block fieldsetPresentationAttributes %}
+				{{ helper_Attributes_allControls('presentation') }}
+			{% endblock %}
+		{% endblock %}
+	</fieldset>
+{% endblock %}
+
+{% block fieldsetConditions %}
+	<fieldset>
+		<legend>{{ __('fieldset_conditions') }}</legend>
+
+		{% block fieldsetConditionsInner %}
+			{% block formControlSystemOrder %}
+				{{ helper_SystemOrder_control('system_order', {entity: ao_contentTemplate}) }}
+			{% endblock %}
+
+			{% block fieldsetConditionsAttributes %}
+				{{ helper_Attributes_allControls('conditions') }}
+			{% endblock %}
+		{% endblock %}
+	</fieldset>
+{% endblock %}
+
+{% block fieldsetGeneral %}
+	<fieldset>
+		<legend>{{ __('fieldset_general') }}</legend>
+
+		{% block fieldsetGeneralInner %}
+			{% block formControlTitle %}
+				{{ helper_Form_control('title') }}
+			{% endblock %}
+
+			{% block formControlFilename %}
+				{{ helper_Form_control('filename') }}
+			{% endblock %}
+
+			{% block fieldsetGeneralAttributes %}
+				{{ helper_Attributes_allControls('general') }}
+			{% endblock %}
+		{% endblock %}
+	</fieldset>
+{% endblock %}
+
+{% block fieldsetContentElements %}
+	<fieldset>
+		<legend>{{ __('content_elements') }}</legend>
+
+		{% block fieldsetContentElementsInner %}
+			{% block formControlContentElements %}
+				{% set la_assignedContentElements = (ao_contentTemplate.contentTemplateElements ?? [])|column('identifier') %}
+
+				<ul class="NoList ContentElements">
+					{% set li_elementCounter = 0 %}
+					{% for ls_availableElement in aa_availableContentElements %}
+						{% set lo_contentTemplateElement = ls_availableElement in la_assignedContentElements ? ao_contentTemplate.contentTemplateElements[ li_elementCounter ] : NULL %}
+
+						{% block formControlContentElement %}
+							<li>
+								<label for="ContentTemplate-ContentElements-{{ ls_availableElement|camelize }}">
+									{{ helper_Form_checkbox('content_template_elements[' ~ loop.index0 ~ '][identifier]', {
+										checked: ls_availableElement in la_assignedContentElements,
+										hiddenField: FALSE,
+										id: 'ContentTemplate-ContentElements-' ~ ls_availableElement|camelize,
+										value: ls_availableElement,
+									}) }}
+
+									{{ __d('contents', ls_availableElement) }}
+								</label>
+
+								<label for="ContentTemplate-ContentElements-{{ ls_availableElement|camelize }}-Fieldset">
+									Fieldset
+									{{ helper_Form_select('content_template_elements[' ~ loop.index0 ~ '][fieldset]', aa_availableFieldsets, {
+										id: 'ContentTemplate-ContentElements-' ~ ls_availableElement|camelize ~ '-Fieldset',
+										val: lo_contentTemplateElement ? lo_contentTemplateElement.fieldset : NULL,
+									}) }}
+
+									{% if (lo_contentTemplateElement) %}
+										{% block contentElementFieldsetError %}
+											{{ helper_Form_error('content_template_elements.' ~ li_elementCounter ~ '.fieldset') }}
+										{% endblock %}
+									{% endif %}
+								</label>
+
+								{% if ls_availableElement != 'duplicate_of' %}
+									<label for="ContentTemplate-ContentElements-{{ ls_availableElement|camelize }}-Required">
+										{{ helper_Form_checkbox('content_template_elements[' ~ loop.index0 ~ '][required]', {
+											checked: lo_contentTemplateElement ? lo_contentTemplateElement.required : FALSE,
+											hiddenField: TRUE,
+											id: 'ContentTemplate-ContentElements-' ~ ls_availableElement|camelize ~ '-Required',
+											value: TRUE,
+										}) }}
+
+										solls auch pflichtfeld sein?
+									</label>
+								{% endif %}
+							</li>
+						{% endblock %}
+
+						{% if ls_availableElement in la_assignedContentElements %}
+							{% set li_elementCounter = li_elementCounter + 1 %}
+						{% endif %}
+					{% endfor %}
+
+					{% for la_contentAttribute in aa_availableContentAttributes %}
+						{% set lo_contentTemplateElement = 'attributes.' ~ la_contentAttribute.identifier in la_assignedContentElements ? ao_contentTemplate.contentTemplateElements[ li_elementCounter ] : NULL %}
+
+						{% block formControlContentAttribute %}
+							<li>
+								<label for="ContentTemplate-ContentAttribute-{{ la_contentAttribute.identifier|camelize }}">
+									{{ helper_Form_checkbox('content_template_elements[' ~ (loop.index0 + aa_availableContentElements|length) ~ '][identifier]', {
+										checked: 'attributes.' ~ la_contentAttribute.identifier in la_assignedContentElements,
+										hiddenField: FALSE,
+										id: 'ContentTemplate-ContentAttribute-' ~ la_contentAttribute.identifier|camelize,
+										value: 'attributes.' ~ la_contentAttribute.identifier,
+									}) }}
+
+									{{ la_contentAttribute.label }}
+								</label>
+
+								<label for="ContentTemplate-ContentAttribute-{{ la_contentAttribute.identifier|camelize }}-Fieldset">
+									Fieldset
+
+									{{ helper_Form_select('content_template_elements[' ~ (loop.index0 + aa_availableContentElements|length) ~ '][fieldset]', aa_availableFieldsets, {
+										id: 'ContentTemplate-ContentAttribute-' ~ la_contentAttribute.identifier|camelize ~ '-Fieldset',
+										required: TRUE,
+										val: lo_contentTemplateElement ? lo_contentTemplateElement.fieldset : NULL,
+									}) }}
+
+									{% if lo_contentTemplateElement %}
+										{% block contentAttributeFieldsetError %}
+											{{ helper_Form_error('content_template_elements.' ~ li_elementCounter ~ '.fieldset') }}
+										{% endblock %}
+									{% endif %}
+								</label>
+
+								{% if la_contentAttribute.active %}
+									<label for="ContentTemplate-ContentAttribute-{{ la_contentAttribute.identifier|camelize }}-Required">
+										{{ helper_Form_checkbox('content_template_elements[' ~ (loop.index0 + aa_availableContentElements|length) ~ '][required]', {
+											checked: lo_contentTemplateElement ? lo_contentTemplateElement.required : FALSE,
+											hiddenField: TRUE,
+											id: 'ContentTemplate-ContentAttribute-' ~ la_contentAttribute.identifier|camelize ~ '-Required',
+											value: TRUE,
+										}) }}
+
+										solls auch pflichtfeld sein?
+									</label>
+								{% endif %}
+							</li>
+						{% endblock %}
+
+						{% if ls_availableElement in la_assignedContentElements %}
+							{% set li_elementCounter = li_elementCounter + 1 %}
+						{% endif %}
+					{% endfor %}
+				</ul>
+			{% endblock %}
+		{% endblock %}
+	</fieldset>
+{% endblock %}
+
+{% block fieldsetContentAreas %}
+	<fieldset>
+		<legend>{{ __('page_templates') }}</legend>
+
+		{% block fieldsetContentAreasErrors %}
+			{% if ao_contentTemplate.error('contentTemplateContentAreas') %}
+				{% for li_key, lo_contentTemplateContentArea in ao_contentTemplate.contentTemplateContentAreas %}
+					{% for ls_key, ls_error in lo_contentTemplateContentArea.errors %}
+						{{ helper_Form_error('contentTemplateContentAreas.' ~ li_key ~ '.' ~ ls_key) }}
+					{% endfor %}
+				{% endfor %}
+			{% endif %}
+		{% endblock %}
+
+		{% block fieldsetContentAreaInner %}
+			{% for ls_pageRole, la_pageTemplates in aa_pageTemplates %}
+				{% block fieldsetPageRole %}
+					<fieldset>
+						{% block fieldsetPageRoleInner %}
+							<legend>{{ ls_pageRole }}</legend>
+
+							{% block formControlPageTemplates %}
+								<table class="PageTemplates">
+									<thead>
+										<tr>
+											<th>
+												{{ __d('page_templates', 'title') }}
+											</th>
+											<th>
+												{{ __d('page_templates', 'content_areas') }}
+											</th>
+										</tr>
+									</thead>
+									<tbody>
+										{# @var lo_pageTemplate \Awyiss\Model\Entity\PageTemplate #}
+										{% for lo_pageTemplate in la_pageTemplates %}
+											{% block formControlPageTemplate %}
+												<tr>
+													<td>
+														<strong>{{ lo_pageTemplate.label  }}</strong>
+													</td>
+													<td>
+														{% for li_key, lo_contentArea in lo_pageTemplate.contentAreas %}
+															{% set li_key = loop.parent.loop.parent.loop.index0 ~ loop.parent.loop.index0 ~ li_key %}
+
+															{{ helper_Form_control('content_areas[' ~ li_key ~ '][content_area_id]', {
+																checked: lo_contentArea.id in (aa_assignedContentAreas[ lo_pageTemplate.id ] ?? []),
+																hiddenField: FALSE,
+																id: 'ContentTemplate-ContentAreas-' ~ lo_pageTemplate.filename|camelize ~'-' ~ lo_contentArea.identifier|camelize,
+																label: lo_contentArea.label,
+																type: 'checkbox',
+																value: lo_contentArea.id,
+															}) }}
+
+															{{ helper_Form_hidden('content_areas[' ~ li_key ~'][page_template_id]', {
+																value: lo_pageTemplate.id
+															}) }}
+														{% endfor %}
+													</td>
+												</tr>
+											{% endblock %}
+										{% endfor %}
+									</tbody>
+								</table>
+							{% endblock %}
+						{% endblock %}
+					</fieldset>
+				{% endblock %}
+			{% endfor %}
+		{% endblock %}
+	</fieldset>
+{% endblock %}
+
+{% block fieldsetContent %}
+	<fieldset>
+		<legend>{{ __('fieldset_content') }}</legend>
+
+		{% block fieldsetContentInner %}
+			{% block fieldsetContentAttributes %}
+				{{ helper_Attributes_allControls('content') }}
+			{% endblock %}
+		{% endblock %}
+	</fieldset>
+{% endblock %}
+
+{% block fieldsetMedia %}
+	<fieldset>
+		<legend>{{ __('fieldset_media') }}</legend>
+
+		{% block fieldsetMediaInner %}
+			{% block fieldsetMediaAttributes %}
+				{{ helper_Attributes_allControls('media') }}
+			{% endblock %}
+		{% endblock %}
+	</fieldset>
+{% endblock %}
+
+{% block fieldsetAttributes %}
+	<fieldset>
+		<legend>{{ __('fieldset_attributes') }}</legend>
+
+		{% block fieldsetAttributesInner %}
+			{% block fieldsetAttributesAttributes %}
+				{{ helper_Attributes_allControls('attributes') }}
+			{% endblock %}
+		{% endblock %}
+	</fieldset>
+{% endblock %}
+
+{{- helper_Form_hidden('reload_form', {val: 0}) }}

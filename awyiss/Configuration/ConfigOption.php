@@ -9,10 +9,8 @@ use JetBrains\PhpStorm\ArrayShape;
 
 
 /**
- * @todo add a description property
- *
  * This class represents a single configuration item with the following properties:
- * - a name
+ * - an identifier
  * - a type of the value, e.g. 'string' or 'integer'
  * - a default value in case none is set
  * - the `localizable`-attribute (boolean) to indicate whether the value can be set independently per language
@@ -20,13 +18,30 @@ use JetBrains\PhpStorm\ArrayShape;
  *
  * It's used in classes that implement `ConfigOptionsInterface`
  *
- * @see \Awyiss\Configuration\ConfigOptionsInterface::initializeConfigOptions()
+ * @see ConfigOptionsInterface::initializeConfigOptions
  */
 class ConfigOption {
+	/**
+	 * Holds the array definition for `\JetBrains\PhpStorm\ArrayShape` used in `__construct`
+	 */
+	protected const SETTINGS_SHAPE = [
+		'defaultValue' => 'mixed',
+		'description' => 'string',
+		'localizable' => 'bool',
+		'identifier' => 'string',
+		'nullable' => 'bool|array',
+		'type' => 'string',
+	];
+
+
 	/**
 	 * @var null|mixed
 	 */
 	protected mixed $defaultValue = NULL;
+	/**
+	 * @var string
+	 */
+	protected string $description = '';
 	/**
 	 * @var bool Can the config value be set independently per language
 	 */
@@ -34,7 +49,7 @@ class ConfigOption {
 	/**
 	 * @var string
 	 */
-	protected string $name;
+	protected string $identifier;
 	/**
 	 * @var array{global: bool, localized: bool} Can the config value be empty or is it required?
 	 */
@@ -43,35 +58,32 @@ class ConfigOption {
 		'localized' => FALSE,
 	];
 	/**
-	 * @var \Awyiss\Configuration\ConfigOptionTypes
+	 * @var ConfigOptionType
 	 */
-	protected ConfigOptionTypes $type;
-	/**
-	 * Holds the array definition for `\JetBrains\PhpStorm\ArrayShape` used in `__construct`
-	 */
-	protected const SETTINGS_SHAPE = [
-		'defaultValue' => 'mixed',
-		'localizable' => 'bool',
-		'name' => 'string',
-		'nullable' => 'bool|array',
-		'type' => 'string',
-	];
+	protected ConfigOptionType $type;
 
 
 	/**
-	 * @param array{defaultValue: mixed, localizable: bool, name: string, nullable: bool|array, type: string} $aa_settings
+	 * @param array{defaultValue: mixed, localizable: bool, identifier: string, nullable: bool|array, type: string} $aa_settings
 	 */
 	public function __construct (#[ArrayShape(self::SETTINGS_SHAPE)] array $aa_settings = []) {
 		if (isset($aa_settings['defaultValue'])) {
 			$this->setDefaultValue($aa_settings['defaultValue']);
 		}
 
+		if (isset($aa_settings['description'])) {
+			$this->setDescription($aa_settings['description']);
+		}
+
 		if (isset($aa_settings['localizable']) && is_bool($aa_settings['localizable'])) {
 			$this->setLocalizable($aa_settings['localizable']);
 		}
 
-		if (isset($aa_settings['name'])) {
-			$this->setName($aa_settings['name']);
+		if (isset($aa_settings['identifier'])) {
+			$this->setIdentifier($aa_settings['identifier']);
+		}
+		else {
+			throw new \RuntimeException(sprintf('Missing identifier in `%s`', static::class));
 		}
 
 		if (isset($aa_settings['nullable'])) {
@@ -90,7 +102,7 @@ class ConfigOption {
 			}
 		}
 
-		$this->setType($aa_settings['type'] ?? ConfigOptionTypes::TYPE_STRING);
+		$this->setType($aa_settings['type'] ?? ConfigOptionType::TYPE_STRING);
 	}
 
 
@@ -117,42 +129,60 @@ class ConfigOption {
 	/**
 	 * @return string
 	 */
-	public function getName (): string {
-		return $this->name;
+	public function getDescription (): string {
+		return $this->description;
 	}
 
 
 	/**
-	 * @param string $as_name
+	 * @param string $as_description
 	 *
-	 * @return self
+	 * @return ConfigOption
 	 */
-	public function setName (string $as_name): static {
-		$this->name = Inflector::underscore($as_name);
+	public function setDescription (string $as_description): static {
+		$this->description = $as_description;
 
 		return $this;
 	}
 
 
 	/**
-	 * @return \Awyiss\Configuration\ConfigOptionTypes
+	 * @return string
 	 */
-	public function getType (): ConfigOptionTypes {
+	public function getIdentifier (): string {
+		return $this->identifier;
+	}
+
+
+	/**
+	 * @param string $as_identifier
+	 *
+	 * @return self
+	 */
+	public function setIdentifier (string $as_identifier): static {
+		$this->identifier = Inflector::variable($as_identifier);
+
+		return $this;
+	}
+
+
+	/**
+	 * @return ConfigOptionType
+	 */
+	public function getType (): ConfigOptionType {
 		return $this->type;
 	}
 
 
 	/**
-	 * @param \Awyiss\Configuration\ConfigOptionTypes $ae_type
+	 * @param ConfigOptionType $ae_type
 	 *
 	 * @return self
 	 */
-	public function setType (ConfigOptionTypes $ae_type): static {
+	public function setType (ConfigOptionType $ae_type): static {
 		$this->type = $ae_type;
 
 		return $this;
-
-
 	}
 
 
@@ -206,12 +236,12 @@ class ConfigOption {
 	 */
 	public function validateConfigValue (mixed $ax_value, ?string $as_languageShortcode = NULL): bool|string {
 		if ($as_languageShortcode !== NULL && !$this->isLocalizable()) {
-			return __('validation::error_option_not_localizable');
+			return __d('configuration', 'error_option_not_localizable');
 		}
 
 		if ($ax_value === NULL) {
 			if (!$this->isNullable($as_languageShortcode !== NULL)) {
-				return __('validation::error_option_not_nullable');
+				return __d('configuration', 'error_option_not_nullable');
 			}
 
 			return TRUE;

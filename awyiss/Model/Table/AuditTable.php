@@ -33,47 +33,104 @@ class AuditTable extends Table {
 		],
 	];
 
-
-	/**
-	 * @inheritDoc
-	 */
-	public function initialize (array $aa_config): void {
-		parent::initialize($aa_config);
-
-		$this->setTable(static::TABLE);
-		$this->setDisplayField('id');
-		$this->setPrimaryKey('id');
-	}
-
-
 	/**
 	 * Returns the default validator object.
 	 *
-	 * @param \Cake\Validation\Validator $ao_validator The validator that can be modified to
+	 * @param Validator $ao_validator The validator that can be modified to
 	 * add some rules to it.
 	 *
-	 * @return \Cake\Validation\Validator
-	 *
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 * @return Validator
 	 */
 	public function validationDefault (Validator $ao_validator): Validator {
-		$ao_validator->integer('id')->allowEmptyString('id', NULL, 'create');
+		parent::validationDefault($ao_validator);
 
-		$ao_validator->scalar('type')->requirePresence('type', 'create')->notEmptyString('type');
 
-		$ao_validator->scalar('scope')->maxLength('model', 50)->requirePresence('scope', 'create')->notEmptyString('scope');
+		$ao_validator->requirePresence([
+			'scope',
+			'parentId',
+			'transactionId',
+			'type',
+			'createdOn',
+			'createdBy',
+		], 'create');
 
-		$ao_validator->allowEmptyArray('data_old');
 
-		$ao_validator->allowEmptyArray('data_new');
+		$ao_validator->add('id', [
+			'isInteger' => ['rule' => 'isInteger'],
+			'maxLength' => ['rule' => ['maxLength', 11]],
+		]);
 
-		$ao_validator->allowEmptyArray('diff');
 
-		$ao_validator->integer('parent_id')->requirePresence('parent_id')->notEmptyString('parent_id');
+		$ao_validator->notEmptyString('scope');
+		$ao_validator->add('scope', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'maxLength' => ['rule' => ['maxLength', 50]],
+			'notBlank' => ['rule' => 'notBlank'],
+		]);
 
-		$ao_validator->integer('created_by')->notEmptyString('created_by');
 
-		$ao_validator->dateTime('created_on')->requirePresence('created_on', 'create')->notEmptyDateTime('created_on');
+		$ao_validator->add('parentId', [
+			'isInteger' => ['rule' => 'isInteger'],
+		]);
+
+
+		$ao_validator->notEmptyString('transactionId');
+		$ao_validator->add('transactionId', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'maxLength' => ['rule' => ['maxLength', 36]],
+			'notBlank' => ['rule' => 'notBlank'],
+		]);
+
+
+		$ao_validator->notEmptyString('type');
+		$ao_validator->add('type', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'inList' => ['rule' => ['inList', ['u', 'd']]],
+			'notBlank' => ['rule' => 'notBlank'],
+		]);
+
+
+		$ao_validator->add('dataOld', [
+			'isArray' => ['rule' => 'isArray'],
+			'maxLengthBytes' => [
+				'rule' => function($ax_value) {
+					return strlen(json_encode($ax_value)) <= 16777215;
+				},
+			],
+		]);
+
+
+		$ao_validator->add('dataNew', [
+			'isArray' => ['rule' => 'isArray'],
+			'maxLengthBytes' => [
+				'rule' => function($ax_value) {
+					return strlen(json_encode($ax_value)) <= 16777215;
+				},
+			],
+		]);
+
+
+		$ao_validator->add('diff', [
+			'isArray' => ['rule' => 'isArray'],
+			'maxLengthBytes' => [
+				'rule' => function($ax_value) {
+					return strlen(json_encode($ax_value)) <= 16777215;
+				},
+			],
+		]);
+
+
+		$ao_validator->notEmptyDateTime('createdOn');
+		$ao_validator->add('createdOn', [
+			'dateTime' => ['rule' => 'dateTime'],
+		]);
+
+
+		$ao_validator->notEmptyString('createdBy');
+		$ao_validator->add('createdBy', [
+			'isInteger' => ['rule' => 'isInteger'],
+		]);
+
 
 		return $ao_validator;
 	}
@@ -81,14 +138,12 @@ class AuditTable extends Table {
 
 	/**
 	 * @inheritDoc
-	 *
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	protected function _initializeSchema (TableSchemaInterface $ao_schema): TableSchemaInterface {
+	protected function initializeSchema (TableSchemaInterface $ao_schema): void {
+		parent::initializeSchema($ao_schema);;
+
 		$ao_schema->setColumnType('data_old', 'json');
 		$ao_schema->setColumnType('data_new', 'json');
 		$ao_schema->setColumnType('diff', 'json');
-
-		return $ao_schema;
 	}
 }

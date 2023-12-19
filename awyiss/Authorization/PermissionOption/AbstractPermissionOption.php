@@ -6,6 +6,7 @@ namespace Awyiss\Authorization\PermissionOption;
 
 use Cake\Core\InstanceConfigTrait;
 use Cake\Utility\Inflector;
+use Cake\Utility\Text;
 use RuntimeException;
 
 
@@ -16,8 +17,17 @@ abstract class AbstractPermissionOption implements PermissionOptionInterface {
 	use InstanceConfigTrait;
 
 
+	/**
+	 * @var array
+	 */
 	protected array $options = [];
+	/**
+	 * @var PermissionOptionCollection
+	 */
 	protected PermissionOptionCollection $permissionOptionCollection;
+	/**
+	 * @var string
+	 */
 	protected string $type;
 	/**
 	 * Default config for this object.
@@ -27,7 +37,7 @@ abstract class AbstractPermissionOption implements PermissionOptionInterface {
 	 * @var array<string, mixed>
 	 */
 	protected array $_defaultConfig = [
-		'preferredInput' => PermissionOptionTypes::TYPE_RADIO,
+		'preferredInput' => PermissionOptionType::TYPE_RADIO,
 		'identifier' => NULL,
 	];
 
@@ -36,6 +46,15 @@ abstract class AbstractPermissionOption implements PermissionOptionInterface {
 	 * @inheritDoc
 	 */
 	public function __construct (array $aa_config, PermissionOptionCollection $ao_permissionOptionCollection) {
+		$ls_type = static::getType();
+		$ls_testType = strtolower(Text::slug($ls_type, '_'));
+
+		if ($ls_testType !== $ls_type) {
+			throw new RuntimeException(sprintf('The provided type should be written underscored (`%s`). `%s` given.',
+				$ls_testType,
+				$ls_type));
+		}
+
 		$this->permissionOptionCollection = $ao_permissionOptionCollection;
 
 		$this->setConfig($aa_config);
@@ -76,7 +95,7 @@ abstract class AbstractPermissionOption implements PermissionOptionInterface {
 	/**
 	 * @inheritDoc
 	 *
-	 * @throws \RuntimeException
+	 * @throws RuntimeException
 	 */
 	public function setOptions (array $aa_options): static {
 		throw new RuntimeException(sprintf('`%s` does not allow setting options. Use `%s` instead.', static::class, CallbackPermissionOption::class));

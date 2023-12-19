@@ -4,21 +4,19 @@
 namespace Awyiss\Controller\Component;
 
 
+use Awyiss\Authorization\AuthorizationService;
 use Awyiss\Authorization\IdentityPermissionsInterface;
-use Awyiss\Authorization\Policy\AnonymousPolicy;
-use Awyiss\Authorization\Policy\PolicyInterface;
 use Awyiss\Model\Entity\User;
 use Awyiss\Model\Entity\UsersExternal;
 use Cake\Controller\Component;
 use Cake\Http\Exception\ForbiddenException;
 use Cake\Utility\Inflector;
-use ReflectionClass;
 use RuntimeException;
 
 
 /**
  * This component provides and handles Authorization-specific logic.
- * It provides methods to set and retreive an identity, the scope and the policyClass that's used to check for access.
+ * It provides methods to set and retreive an identity nad the scope that will be used to check for access.
  *
  * - `ensureOne(string ...$as_identifier)`
  *   Called to ensure one of the provided identifiers is accessible
@@ -42,10 +40,9 @@ class AuthorizationComponent extends Component {
 	 *
 	 * @var array<string, mixed>
 	 */
-	protected $_defaultConfig = [
+	protected array $_defaultConfig = [
 		'additionalData' => [],
 		'identity' => NULL,
-		'policyClass' => NULL,
 		'scope' => NULL,
 	];
 	/**
@@ -129,7 +126,7 @@ class AuthorizationComponent extends Component {
 	/**
 	 * Returns the identity set in the config
 	 *
-	 * @return \Awyiss\Authorization\IdentityPermissionsInterface
+	 * @return IdentityPermissionsInterface
 	 */
 	public function getIdentity (): IdentityPermissionsInterface {
 		$lo_identity = $this->getConfig('identity');
@@ -146,7 +143,7 @@ class AuthorizationComponent extends Component {
 	/**
 	 * Save the given identity to the config
 	 *
-	 * @param \Awyiss\Authorization\IdentityPermissionsInterface $ao_identity
+	 * @param IdentityPermissionsInterface $ao_identity
 	 *
 	 * @return $this
 	 *
@@ -165,7 +162,7 @@ class AuthorizationComponent extends Component {
 	 * With this clone it's possible to check access for a different identity than the default one provided by _getIdentity(),
 	 * without the need to reset the identity after checking the access for a different one.
 	 *
-	 * @param \Awyiss\Authorization\IdentityPermissionsInterface $ao_identity
+	 * @param IdentityPermissionsInterface $ao_identity
 	 *
 	 * @return $this
 	 *
@@ -190,46 +187,6 @@ class AuthorizationComponent extends Component {
 	 */
 	public function resetIdentity (): static {
 		$this->setConfig('identity');
-
-		return $this;
-	}
-
-
-	/**
-	 * Returns the name of the policy class set in the config
-	 *
-	 * @return NULL|string|\Awyiss\Authorization\Policy\PolicyInterface|\Awyiss\Authorization\Policy\AnonymousPolicy
-	 */
-	public function getPolicyClass (): string|PolicyInterface|AnonymousPolicy|NULL {
-		return $this->getConfig('policyClass');
-	}
-
-
-	/**
-	 * Saves the given value as policyClass config item
-	 *
-	 * If $ax_policyClass is a string, it needs to be the name of a class that implements PolicyInterface
-	 *
-	 * @param string|\Awyiss\Authorization\Policy\PolicyInterface|\Awyiss\Authorization\Policy\AnonymousPolicy $ax_policyClass
-	 *
-	 * @return $this
-	 *
-	 * @throws \ReflectionException
-	 * @throws \RuntimeException
-	 *
-	 * @see \Awyiss\Authorization\Policy\PolicyInterface::class
-	 * @see \Awyiss\Authorization\Policy\AnonymousPolicy::class
-	 */
-	public function setPolicyClass (string|PolicyInterface|AnonymousPolicy $ax_policyClass): static {
-		if (is_string($ax_policyClass)) {
-			$lo_reflection = new ReflectionClass($ax_policyClass);
-
-			if ( ! $lo_reflection->implementsInterface(PolicyInterface::class)) {
-				throw new RuntimeException(sprintf('The provided Policy class `%s` does not implement the `%s` interface.', $ax_policyClass, PolicyInterface::class));
-			}
-		}
-
-		$this->setConfig('policyClass', $ax_policyClass);
 
 		return $this;
 	}
@@ -265,7 +222,7 @@ class AuthorizationComponent extends Component {
 	 * @return $this
 	 */
 	public function setScope (string $as_scope): static {
-		$this->setConfig('scope', $as_scope);
+		$this->setConfig('scope', Inflector::pluralize(Inflector::underscore($as_scope)));
 
 		return $this;
 	}
@@ -293,7 +250,7 @@ class AuthorizationComponent extends Component {
 
 		//Clone the current instance and set the scope to the provided value
 		$lo_new = clone $this;
-		$lo_new->setConfig('scope', $as_scope);
+		$lo_new->setScope($as_scope);
 
 		//Reset the defaultScope for the current instance
 		$this->defaultScope = $ls_defaultScope;
@@ -324,7 +281,7 @@ class AuthorizationComponent extends Component {
 	 *
 	 * @return void
 	 *
-	 * @throws \Cake\Http\Exception\ForbiddenException
+	 * @throws ForbiddenException
 	 * @throws \Exception
 	 *
 	 * @noinspection PhpUnused
@@ -344,7 +301,7 @@ class AuthorizationComponent extends Component {
 	 *
 	 * @return void
 	 *
-	 * @throws \Cake\Http\Exception\ForbiddenException
+	 * @throws ForbiddenException
 	 * @throws \Exception
 	 *
 	 * @noinspection PhpUnused
@@ -366,7 +323,7 @@ class AuthorizationComponent extends Component {
 	 *
 	 * @return void
 	 *
-	 * @throws \Cake\Http\Exception\ForbiddenException
+	 * @throws ForbiddenException
 	 * @throws \Exception
 	 *
 	 * @see \Awyiss\Authorization\Permission\PermissionCollection::scopeIsAccessible()
@@ -427,25 +384,11 @@ class AuthorizationComponent extends Component {
 
 
 	/**
-	 * Retreive the AuthorizationServiceInterface from the request.
-	 *
-	 * Then retreive the AuthenticationServiceInterface from the AuthorizationServiceInterface
-	 *
-	 * Then retreive the IdentityInterface from AuthenticationServiceInterface.
+	 * Retreive the IdentityInterface from the request.
 	 */
 	protected function _getIdentity (): IdentityPermissionsInterface {
-		/** @var \Awyiss\Authorization\AuthorizationService $lo_authorizationService */
-		$lo_authorizationService = $this->getController()->getRequest()->getAttribute('authorization');
-		if ( ! $lo_authorizationService) {
-			throw new RuntimeException(sprintf('Object `%s` does not use the authorization middleware.', $this->getController()->getName()));
-		}
-
-		$lo_authenticationService = $lo_authorizationService->getAuthenticationService();
-		if ( ! $lo_authenticationService) {
-			throw new RuntimeException(sprintf('Object `%s` does not have an authentication service set.', get_class($lo_authorizationService)));
-		}
 		/** @var IdentityPermissionsInterface|User|UsersExternal $lo_identity */
-		$lo_identity = $lo_authenticationService->getIdentity();
+		$lo_identity = $this->getController()->getRequest()->getAttribute('identity');
 		if ( ! ($lo_identity instanceof IdentityPermissionsInterface)) {
 			throw new RuntimeException(sprintf('Object `%s` does not implement `%s`', get_class($lo_identity), IdentityPermissionsInterface::class));
 		}

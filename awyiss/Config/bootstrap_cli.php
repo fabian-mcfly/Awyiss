@@ -1,7 +1,5 @@
 <?php declare(strict_types=1);
 
-
-use Cake\Cache\Engine\NullEngine;
 use Cake\Core\Configure;
 
 
@@ -15,6 +13,11 @@ use Cake\Core\Configure;
 //Configure::write('App.fullBaseUrl', php_uname('n'));
 
 // Set logs to different files, so they don't have permission conflicts.
+Configure::write('Datasources.default.log', FALSE);
 Configure::write('Log.debug.file', 'cli-debug');
 Configure::write('Log.error.file', 'cli-error');
-Configure::write('Cache._cake_model_.className', NullEngine::class);
+
+//Don't log queries from the shell
+Configure::delete('Log.queries');
+
+//Configure::write('Cache._cake_model_.className', NullEngine::class);

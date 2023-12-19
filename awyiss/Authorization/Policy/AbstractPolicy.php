@@ -4,9 +4,9 @@
 namespace Awyiss\Authorization\Policy;
 
 
+use Awyiss\Authorization\AuthorizationService;
 use Awyiss\Authorization\PermissionOption\PermissionOptionCollection;
 use Awyiss\Authorization\PermissionOption\PermissionOptionInterface;
-use Cake\Utility\Inflector;
 
 
 /**
@@ -26,7 +26,7 @@ abstract class AbstractPolicy implements PolicyInterface {
 			$la_parts = explode('\\', static::class);
 			static::$scope = array_pop($la_parts);
 			static::$scope = substr(static::$scope, 0, -6);
-			static::$scope = Inflector::underscore(static::$scope);
+			static::$scope = AuthorizationService::sanitizeScope(static::$scope);
 		}
 
 		return static::$scope;
@@ -57,8 +57,10 @@ abstract class AbstractPolicy implements PolicyInterface {
 			static::$permissionOptionCollection = static::loadPermissionOptions();
 		}
 
-		if (static::$permissionOptionCollection->has($as_identifier)) {
-			return static::$permissionOptionCollection->get($as_identifier);
+		$ls_identifier = AuthorizationService::sanitizeIdentifier($as_identifier);
+
+		if (static::$permissionOptionCollection->has($ls_identifier)) {
+			return static::$permissionOptionCollection->get($ls_identifier);
 		}
 
 		return NULL;

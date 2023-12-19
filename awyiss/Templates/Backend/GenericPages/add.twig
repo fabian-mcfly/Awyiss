@@ -1,40 +1,25 @@
-{# @var ao_page Awyiss\Model\Entity\Page #}
-{# @var _view \Awyiss\View\BackendView #}
+{#
+@var ao_page \Awyiss\Model\Entity\Page
+@var ao_pageTemplates \Cake\Datasource\ResultSetDecorator
+@var ao_threadedPages \Cake\Collection\Iterator\TreeIterator
+@var as_languageRealm string
+@var _view \Awyiss\View\BackendView
+#}
 
 <div class="Pages Form Add">
 	{{ helper_Form_create(ao_page, {method: 'post', idPrefix: 'page'}) }}
-	
-	<h1>{{ __('::headline_add') }}</h1>
-	<fieldset>
-		<legend>{{ __('::fieldset_general') }}</legend>
-		{{ helper_Form_control('active') }}
-		{{ helper_Form_control('title') }}
-		{{ helper_Form_control('slug', {required: false}) }}
-		{{ helper_Form_control('language_shortcode') }}
-		{{ helper_Form_control('parent_id', {options: ao_threadedPages.printer('label', 'id')}) }}
-		{{ helper_SystemOrder_control('system_order', {entity: ao_page}) }}
-		{{ helper_Form_control('page_template_id', {options: ao_pageTemplates}) }}
 
+	<h1>{{ __('headline_add') }}</h1>
 
-		{{ helper_Form_control('eventdate_start', {empty: true}) }}
-		{{ helper_Form_control('eventdate_end', {empty: true}) }}
+	{% block formButtons %}
+		{{ helper_Form_button(__('save')) }}
+		{{ helper_Form_button(__('save_close'), {name: 'submit', value: 'submit_close'}) }}
+	{% endblock %}
 
-		{{ helper_Form_control('publishdate_start', {empty: true}) }}
-		{{ helper_Form_control('publishdate_end', {empty: true}) }}
+	{% include('@Backend/GenericPages/form.twig') %}
 
-		{{ helper_Form_control('meta_title') }}
-		{{ helper_Form_control('meta_description') }}
-		{{ helper_Form_control('robots_index') }}
-		{{ helper_Form_control('robots_follow') }}
+	{{ block('formButtons') }}
 
-		{{ helper_Form_control('redirect_link') }}
-		{{ helper_Form_control('duplicate_of') }}
-	</fieldset>
-	
-	{{- helper_Form_hidden('reload_form', {val: 0}) }}
-
-	{{ helper_Form_button(__('::save')) }}
-	{{ helper_Form_button(__('::save_close'), {name: 'submit', value: 'submit_close'}) }}
 	{{ helper_Form_end() -}}
 	
 </div>

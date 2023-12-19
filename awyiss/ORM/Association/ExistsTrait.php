@@ -4,6 +4,9 @@
 namespace Awyiss\ORM\Association;
 
 
+use Awyiss\Model\Table;
+
+
 /**
  * Offers a simple overwrite of the exists() method found in `\Cake\ORM\Association`
  *
@@ -22,12 +25,12 @@ trait ExistsTrait {
 	 *
 	 * @return bool
 	 *
-	 * @see \Awyiss\Model\Table::exists()
+	 * @see Table::exists
 	 */
 	public function exists ($aa_conditions, array $aa_options = []): bool {
 		$la_conditions = $this->find()->where($aa_conditions)->clause('where');
 
-		/** @var \Awyiss\Model\Table $lo_table */
+		/** @var Table $lo_table */
 		$lo_table = $this->getTarget();
 
 		return $lo_table->exists($la_conditions, $aa_options);

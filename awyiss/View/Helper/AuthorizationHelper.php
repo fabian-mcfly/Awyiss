@@ -4,14 +4,14 @@
 namespace Awyiss\View\Helper;
 
 
+use Awyiss\Authorization\AuthorizationService;
 use Awyiss\Authorization\IdentityPermissionsInterface;
-use Awyiss\Authorization\Policy\AnonymousPolicy;
-use Awyiss\Authorization\Policy\PolicyInterface;
+use Awyiss\Authorization\PermissionOption\PermissionOptionInterface;
+use Awyiss\Model\Entity;
 use Awyiss\Model\Entity\User;
 use Awyiss\Model\Entity\UsersExternal;
 use Cake\Utility\Inflector;
 use Cake\View\Helper;
-use ReflectionClass;
 use RuntimeException;
 
 
@@ -19,12 +19,13 @@ use RuntimeException;
  * Helper class that provides methods related to the Authorization-logic in the views
  */
 class AuthorizationHelper extends Helper {
-	protected $_defaultConfig = [
+	/**
+	 * @inheritDoc
+	 */
+	protected array $_defaultConfig = [
 		'additionalData' => [],
-		'defaultAccessible' => FALSE,
 		'identity' => NULL,
-		'policyClass' => NULL,
-		'policiesType' => NULL,
+		'policiesRealm' => NULL,
 		'scope' => NULL,
 	];
 
@@ -68,7 +69,7 @@ class AuthorizationHelper extends Helper {
 	/**
 	 * Returns the identity set in the config
 	 *
-	 * @return \Awyiss\Authorization\IdentityPermissionsInterface
+	 * @return IdentityPermissionsInterface
 	 */
 	public function getIdentity (): IdentityPermissionsInterface {
 		$lo_identity = $this->getConfig('identity');
@@ -85,7 +86,7 @@ class AuthorizationHelper extends Helper {
 	/**
 	 * Save the given identity to the config
 	 *
-	 * @param \Awyiss\Authorization\IdentityPermissionsInterface $ao_identity
+	 * @param IdentityPermissionsInterface $ao_identity
 	 *
 	 * @return $this
 	 *
@@ -107,46 +108,6 @@ class AuthorizationHelper extends Helper {
 	 */
 	public function resetIdentity (): static {
 		$this->setConfig('identity');
-
-		return $this;
-	}
-
-
-	/**
-	 * Returns the name of the policy class set in the config
-	 *
-	 * @return NULL|string|\Awyiss\Authorization\Policy\PolicyInterface|\Awyiss\Authorization\Policy\AnonymousPolicy
-	 */
-	public function getPolicyClass (): string|PolicyInterface|AnonymousPolicy|null {
-		return $this->getConfig('policyClass');
-	}
-
-
-	/**
-	 * Saves the given value as policyClass config item
-	 * If $ax_policyClass is a string, it needs to be the name of a class that implements PolicyInterface
-	 *
-	 * @param string|\Awyiss\Authorization\Policy\AnonymousPolicy|\Awyiss\Authorization\Policy\PolicyInterface|NULL $ax_policyClass
-	 *
-	 * @return $this
-	 *
-	 * @throws \ReflectionException
-	 *
-	 * @see PolicyInterface::class
-	 * @see AnonymousPolicy::class
-	 *
-	 * @noinspection PhpUnused
-	 */
-	public function setPolicyClass (string|AnonymousPolicy|PolicyInterface $ax_policyClass = NULL): static {
-		if (is_string($ax_policyClass)) {
-			$lo_reflection = new ReflectionClass($ax_policyClass);
-
-			if ( ! $lo_reflection->implementsInterface(PolicyInterface::class)) {
-				throw new RuntimeException(sprintf('The provided Policy class `%s` does not implement the `%s` interface.', $ax_policyClass, PolicyInterface::class));
-			}
-		}
-
-		$this->setConfig('policyClass', $ax_policyClass);
 
 		return $this;
 	}
@@ -179,7 +140,7 @@ class AuthorizationHelper extends Helper {
 	 * @noinspection PhpUnused
 	 */
 	public function setScope (string $as_scope): static {
-		$this->setConfig('scope', $as_scope);
+		$this->setConfig('scope', Inflector::pluralize(Inflector::underscore($as_scope)));
 
 		return $this;
 	}
@@ -241,23 +202,54 @@ class AuthorizationHelper extends Helper {
 
 
 	/**
-	 * Retreive the AuthorizationServiceInterface using getAuthorizationService.
-	 * Then retreive the AuthenticationServiceInterface from the AuthorizationServiceInterface
-	 * Then retreive the IdentityInterface from AuthenticationServiceInterface.
+	 * Renders an element containing all options for a specific permission.
+	 *
+	 * If no filename was provided, use the type and the preferred input of the permission.
+	 * For example `element\authorization\permission\simple_radio`
+	 *
+	 * @param PermissionOptionInterface $ao_permission
+	 * @param null|Entity               $ao_entity
+	 * @param null|string               $as_fileName
+	 * @param null|string               $as_subDir
+	 *
+	 * @return string
+	 *
+	 * @noinspection PhpUnused
 	 */
-	protected function _getIdentity (): IdentityPermissionsInterface {
-		/** @var \Awyiss\Authorization\AuthorizationService $lo_authorizationService */
-		$lo_authorizationService = $this->getView()->getRequest()->getAttribute('authorization');
-		if ( ! $lo_authorizationService) {
-			throw new RuntimeException(sprintf('Object `%s` does not use the authorization middleware.', static::class));
+	public function permissionOptions (PermissionOptionInterface $ao_permission, ?Entity $ao_entity = NULL, ?string $as_fileName = NULL, ?string $as_subDir = NULL): string {
+		$ls_subDir = 'authorization' . DS . 'permission_option';
+		if ( ! empty($as_subDir)) {
+			$ls_subDir = trim($as_subDir, DS) . DS . $ls_subDir;
 		}
 
-		$lo_authenticationService = $lo_authorizationService->getAuthenticationService();
-		if ( ! $lo_authenticationService) {
-			throw new RuntimeException(sprintf('Object `%s` does not have an authentication service set.', get_class($lo_authorizationService)));
+		$ls_fileName = $as_fileName;
+		if (empty($ls_fileName)) {
+			$ls_fileName = $ao_permission->getType();
+			$ls_fileName .= '_' . $ao_permission->getConfig('preferredInput')->value;
 		}
+
+		//This should never happen, but you never know.
+		if ( ! $ao_permission->getConfig('identifier')) {
+			throw new RuntimeException(sprintf('Permission `%s` requires an identifier to be representable.', $ao_permission::class));
+		}
+
+		$la_viewData = [
+			'ao_permission' => $ao_permission,
+			'ao_entity' => $ao_entity,
+			'as_scope' => Inflector::underscore($ao_permission->getPermissionOptionCollection()->getScope()),
+			'as_identifier' => Inflector::underscore($ao_permission->getConfig('identifier')),
+		];
+
+		return $this->getView()->element($ls_subDir . DS . $ls_fileName, $la_viewData);
+	}
+
+
+	/**
+	 * Retreive the identity attribute from the current request
+	 */
+	protected function _getIdentity (): IdentityPermissionsInterface {
 		/** @var IdentityPermissionsInterface|User|UsersExternal $lo_identity */
-		$lo_identity = $lo_authenticationService->getIdentity();
+		$lo_identity = $this->getView()->getRequest()->getAttribute('identity');
 		if ( ! ($lo_identity instanceof IdentityPermissionsInterface)) {
 			throw new RuntimeException(sprintf('Object `%s` does not implement `%s`', get_class($lo_identity), IdentityPermissionsInterface::class));
 		}

@@ -6,17 +6,25 @@ namespace Awyiss\Model\Table;
 
 use Awyiss\Model\Entity\PageTemplate;
 use Awyiss\Model\Table;
-use Cake\Database\Schema\TableSchemaInterface;
+use Awyiss\ORM\Association\BelongsToMany;
 use Awyiss\ORM\RulesChecker;
+use Cake\Database\Schema\TableSchemaInterface;
+use Cake\ORM\Association\BelongsTo;
+use Cake\ORM\Query;
+use Cake\ORM\Query\SelectQuery;
+use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Validation\Validator;
 
 
 /**
  * PageTemplates Model
  *
- * @property \Awyiss\Model\Table\PageRolesTable&\Cake\ORM\Association\BelongsTo $PageRoles
+ * @property ContentAreasTable&BelongsToMany $ContentAreas
+ * @property PageRolesTable&BelongsTo $PageRoles
  *
  * @method PageTemplate newDefaultEntity(array $aa_additionalData = [])
+ *
+ * TODO Or: disallow deletion if a page with that templates exits
  */
 class PageTemplatesTable extends Table {
 	/**
@@ -24,7 +32,7 @@ class PageTemplatesTable extends Table {
 	 */
 	protected array $_defaultConfig = [
 		'systemOrder' => [
-			'relatedColumns' => ['page_role_id'],
+			'relatedColumns' => ['pageRoleId'],
 		],
 		'translate' => [
 			'fields' => ['title'],
@@ -39,41 +47,113 @@ class PageTemplatesTable extends Table {
 	public function initialize (array $aa_config): void {
 		parent::initialize($aa_config);
 
-		$this->setTable(static::TABLE);
-		$this->setPrimaryKey('id');
-
 		$this->belongsTo('PageRoles', [
 			'joinType' => 'INNER',
+		]);
+
+		$this->belongsToMany('ContentAreas', [
+			'sort' => ['system_order' => 'ASC'],
+			'through' => 'PageTemplateContentAreas',
+		]);
+
+		$this->hasMany('Pages', [
+			'cascadeCallbacks' => TRUE,
+			'dependent' => TRUE,
 		]);
 	}
 
 
 	/**
+	 * @param SelectQuery $ao_query
+	 * @param array $aa_options
+	 *
+	 * @return Query
+	 *
+	 * @noinspection PhpUnused
+	 */
+	public function findWithUsages (SelectQuery $ao_query): SelectQuery {
+		return $ao_query->enableAutoFields()
+			->select([
+				'usedForPages' => $ao_query->func()->count('Pages.id')
+			])
+			->leftJoinWith('Pages', function (SelectQuery $ao_query) {
+				//$this->getAssociation('Pages')->skipAuthorizationCheckOnce();
+				$ao_query->applyOptions([
+					'authorize' => [
+						'skip' => TRUE,
+					],
+					'skipPageRoleCheck' => TRUE,
+				]);
+
+				return $ao_query;
+			})
+			->groupBy('PageTemplates.id');
+	}
+
+
+
+	/**
 	 * Returns the default validator object.
 	 *
-	 * @param \Cake\Validation\Validator $ao_validator The validator that can be modified to
+	 * @param Validator $ao_validator The validator that can be modified to
 	 * add some rules to it.
 	 *
-	 * @return \Cake\Validation\Validator
-	 *
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 * @return Validator
 	 */
 	public function validationDefault (Validator $ao_validator): Validator {
-		$ao_validator->integer('id')->allowEmptyString('id', NULL, 'create');
+		parent::validationDefault($ao_validator);
 
-		$ao_validator->scalar('title')->maxLength('title', 100)->requirePresence('title', 'create')->notEmptyString('title');
 
-		$ao_validator->scalar('filename')->maxLength('filename', 100)->requirePresence('filename', 'create')->notEmptyString('filename');
+		$ao_validator->requirePresence([
+			'pageRoleId',
+			'title',
+			'filename',
+		], 'create');
 
-		$ao_validator->isArray('template_positions')->allowEmptyArray('template_positions');
 
-		$ao_validator->integer('page_role_id')->requirePresence('page_role_id', 'create')->notEmptyString('page_role_id');
+		$ao_validator->add('id', [
+			'isInteger' => ['rule' => 'isInteger'],
+			'maxLength' => ['rule' => ['maxLength', 11]],
+		]);
 
-		$ao_validator->integer('system_order')->requirePresence('system_order')->notEmptyString('system_order');
 
-		$ao_validator->boolean('active')->notEmptyString('active');
+		$ao_validator->notEmptyString('pageRoleId');
+		$ao_validator->add('pageRoleId', [
+			'isInteger' => ['rule' => 'isInteger'],
+			'maxLength' => ['rule' => ['maxLength', 11]],
+		]);
 
-		$ao_validator->boolean('deleted')->notEmptyString('deleted');
+
+		$ao_validator->notEmptyString('title');
+		$ao_validator->add('title', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'maxLength' => ['rule' => ['maxLength', 100]],
+			'notBlank' => ['rule' => 'notBlank'],
+		]);
+
+
+		$ao_validator->notEmptyString('filename');
+		$ao_validator->add('filename', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'maxLength' => ['rule' => ['maxLength', 100]],
+			'notBlank' => ['rule' => 'notBlank'],
+		]);
+
+
+		$ao_validator->add('systemOrder', [
+			'isInteger' => ['rule' => 'isInteger'],
+		]);
+
+
+		$ao_validator->add('active', [
+			'boolean' => ['rule' => 'boolean'],
+		]);
+
+
+		$ao_validator->add('deleted', [
+			'boolean' => ['rule' => 'boolean'],
+		]);
+
 
 		return $ao_validator;
 	}
@@ -82,28 +162,38 @@ class PageTemplatesTable extends Table {
 	/**
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 *
-	 * @param \Awyiss\ORM\RulesChecker|\Cake\ORM\RulesChecker $ao_rules The rules object to be modified.
+	 * @param RulesChecker|BaseRulesChecker $ao_rules The rules object to be modified.
 	 *
-	 * @return \Awyiss\ORM\RulesChecker
+	 * @return RulesChecker
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildRules (RulesChecker|\Cake\ORM\RulesChecker $ao_rules): RulesChecker {
-		$ao_rules->add($ao_rules->isUnique(['filename']), ['errorField' => 'filename']);
-		$ao_rules->add($ao_rules->existsIn(['page_role_id'], 'PageRoles', ['authorization' => ['skip' => TRUE]]), ['errorField' => 'page_role_id']);
+	public function buildRules (RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
+		$ao_rules->add($ao_rules->isUnique(['filename']), 'uniqueFilename', [
+			'errorField' => 'filename',
+			'message' => __dfx($this->getI18nDomain(), 'validation', 'page_templates', 'error_unique_filename'),
+		]);
+
+
+		$ao_rules->add($ao_rules->existsIn(['contentAreaId'], 'ContentAreas'), 'validContentAreas', [
+			'errorField' => 'contentAreas',
+			'message' => __d($this->getI18nDomain(), 'error_valid_content_areas'),
+		]);
+
+
+		$ao_rules->add($ao_rules->existsIn(['pageRoleId'], 'PageRoles', ['authorize' => ['skip' => TRUE]]), 'validPageRole', [
+			'errorField' => 'pageRoleId',
+			'message' => __d($this->getI18nDomain(), 'error_valid_page_role'),
+		]);
+
+
+		//TODO: check if pages with the template still exist
+		$ao_rules->addDelete(function(PageTemplate $ao_entity): bool {
+			dump($ao_entity);
+			dd(__FILE__, __LINE__);
+		});
+
 
 		return $ao_rules;
-	}
-
-
-	/**
-	 * @inheritDoc
-	 *
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
-	 */
-	protected function _initializeSchema (TableSchemaInterface $ao_schema): TableSchemaInterface {
-		$ao_schema->setColumnType('template_positions', 'json');
-
-		return $ao_schema;
 	}
 }

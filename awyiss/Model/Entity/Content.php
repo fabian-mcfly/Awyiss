@@ -5,67 +5,88 @@ namespace Awyiss\Model\Entity;
 
 
 use Awyiss\Model\Entity;
+use Awyiss\Model\Table\ContentsTable;
 use Cake\Collection\CollectionInterface;
 use Cake\Datasource\FactoryLocator;
+use Cake\I18n\FrozenTime;
 
 
 /**
  * Content Entity
  *
  * @property int $id
+ * @property int $pageId
+ * @property int $parentId
  * @property string|NULL $title
  * @property string|NULL $subtitle
  * @property string|NULL $text
- * @property int|NULL $media_id
- * @property int|NULL $media_alt_id
- * @property int|NULL $media_folders_id
  * @property string|NULL $link
- * @property \Cake\I18n\FrozenTime|NULL $publishdate_start
- * @property \Cake\I18n\FrozenTime|NULL $publishdate_end
- * @property string|NULL $template_position
- * @property int $content_template_id
+ * @property int $contentAreaId
+ * @property ContentArea $contentArea
+ * @property int $contentTemplateId
  * @property float $columnwidth
- * @property string|NULL $css_class
- * @property int|NULL $forms_id
- * @property int|NULL $duplicate_of
+ * @property string|NULL $cssClass
+ * @property int|NULL $duplicateOf
  * @property string|NULL $data
- * @property int $system_order
+ * @property int $systemOrder
  * @property bool $active
  * @property bool $deleted
- * @property int $parent_id
- * @property int $page_id
- * @property int|NULL $created_by
- * @property \Cake\I18n\FrozenTime|NULL $created_on
- * @property int|NULL $changed_by
- * @property \Cake\I18n\FrozenTime|NULL $changed_on
- * @property int|NULL $deleted_by
- * @property \Cake\I18n\FrozenTime|NULL $deleted_on
- * @property \Awyiss\Model\Entity\ContentTemplate $content_template
- * @property \Awyiss\Model\Entity\Content $parent_content
- * @property \Awyiss\Model\Entity\Page $page
- * @property \Awyiss\Model\Entity\Content[] $child_contents
+ * @property int|NULL $createdBy
+ * @property FrozenTime|NULL $createdOn
+ * @property int|NULL $changedBy
+ * @property FrozenTime|NULL $changedOn
+ * @property int|NULL $deletedBy
+ * @property FrozenTime|NULL $deletedOn
+ * @property ContentTemplate $contentTemplate
+ * @property Content $parentContent
+ * @property Page $page
+ * @property Content[] $childContents
+ * @property Content[] $duplicateContents
+ * @property Content $duplicateOfContent
  */
 class Content extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected $_accessible = [
+	protected array $_accessible = [
+		'pageId' => TRUE,
+		'parentId' => TRUE,
 		'title' => TRUE,
 		'subtitle' => TRUE,
 		'text' => TRUE,
 		'link' => TRUE,
-		'publishdate_start' => TRUE,
-		'publishdate_end' => TRUE,
-		'template_position' => TRUE,
-		'content_template_id' => TRUE,
+		'contentAreaId' => TRUE,
+		'contentTemplateId' => TRUE,
 		'columnwidth' => TRUE,
-		'css_class' => TRUE,
-		'duplicate_of' => TRUE,
+		'cssClass' => TRUE,
+		'duplicateOf' => TRUE,
 		'data' => TRUE,
-		'system_order' => TRUE,
+		'systemOrder' => TRUE,
 		'active' => TRUE,
-		'parent_id' => TRUE,
-		'page_id' => TRUE,
+	];
+	/**
+	 * @inheritdoc
+	 */
+	protected static array $fieldMap = [
+		'page_id' => 'pageId',
+		'parent_id' => 'parentId',
+		'content_area_id' => 'contentAreaId',
+		'content_template_id' => 'contentTemplateId',
+		'css_class' => 'cssClass',
+		'duplicate_of' => 'duplicateOf',
+		'system_order' => 'systemOrder',
+		'created_by' => 'createdBy',
+		'created_on' => 'createdOn',
+		'changed_by' => 'changedBy',
+		'changed_on' => 'changedOn',
+		'deleted_by' => 'deletedBy',
+		'deleted_on' => 'deletedOn',
+		'content_area' => 'contentArea',
+		'content_template' => 'contentTemplate',
+		'child_contents' => 'childContents',
+		'parent_content' => 'parentContent',
+		'duplicate_contents' => 'duplicateContents',
+		'duplicate_of_content' => 'duplicateOfContent',
 	];
 
 
@@ -74,11 +95,11 @@ class Content extends Entity {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function getDirectChildren (): ?CollectionInterface {
-		/** @var \Awyiss\Model\Table\ContentsTable $lo_table */
+	public function getChildren (): ?CollectionInterface {
+		/** @var ContentsTable $lo_table */
 		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
 
-		return $lo_table->getDirectChildren($this);
+		return $lo_table->getChildren($this);
 	}
 
 
@@ -87,11 +108,11 @@ class Content extends Entity {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function getChildren (array $aa_options = [], int $ai_currentLevel = 0): ?CollectionInterface {
-		/** @var \Awyiss\Model\Table\ContentsTable $lo_table */
+	public function getNestedChildren (array $aa_options = [], int $ai_currentLevel = 0): ?CollectionInterface {
+		/** @var ContentsTable $lo_table */
 		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
 
-		return $lo_table->getChildren($this, $aa_options, $ai_currentLevel);
+		return $lo_table->getNestedChildren($this, $aa_options, $ai_currentLevel);
 	}
 
 
@@ -101,7 +122,7 @@ class Content extends Entity {
 	 * @noinspection PhpUnused
 	 */
 	public function getParent (): ?self {
-		/** @var \Awyiss\Model\Table\ContentsTable $lo_table */
+		/** @var ContentsTable $lo_table */
 		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
 
 		return $lo_table->getParent($this);
@@ -114,7 +135,7 @@ class Content extends Entity {
 	 * @noinspection PhpUnused
 	 */
 	public function getParents (array $aa_options = [], int $ai_currentLevel = 0): ?CollectionInterface {
-		/** @var \Awyiss\Model\Table\ContentsTable $lo_table */
+		/** @var ContentsTable $lo_table */
 		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
 
 		return $lo_table->getParents($this, $aa_options, $ai_currentLevel);

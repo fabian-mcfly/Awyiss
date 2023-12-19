@@ -14,9 +14,9 @@ interface AuthorizationServiceProviderInterface {
 	/**
 	 * Returns an authorization service instance.
 	 *
-	 * @param \Psr\Http\Message\ServerRequestInterface $ao_request Request
+	 * @param ServerRequestInterface $ao_request Request
 	 *
-	 * @return \Awyiss\Authorization\AuthorizationServiceInterface
+	 * @return AuthorizationServiceInterface
 	 */
 	public function getAuthorizationService (ServerRequestInterface $ao_request): AuthorizationServiceInterface;
 }

@@ -5,6 +5,7 @@ namespace Awyiss\Model\Entity;
 
 
 use Awyiss\Model\Entity;
+use Cake\I18n\FrozenTime;
 use Cake\Utility\Text;
 
 
@@ -12,53 +13,49 @@ use Cake\Utility\Text;
  * PageTemplate Entity
  *
  * @property int $id
+ * @property int $pageRoleId
  * @property string $title
  * @property string $filename
- * @property array $template_positions
- * @property int $page_role_id
- * @property int $system_order
+ * @property int $systemOrder
  * @property bool $active
  * @property bool $deleted
- * @property int|NULL $created_by
- * @property \Cake\I18n\FrozenTime|NULL $created_on
- * @property int|NULL $changed_by
- * @property \Cake\I18n\FrozenTime|NULL $changed_on
- * @property int|NULL $deleted_by
- * @property \Cake\I18n\FrozenTime|NULL $deleted_on
- * @property \Awyiss\Model\Entity\PageRole $page_role
+ * @property int|NULL $createdBy
+ * @property FrozenTime|NULL $createdOn
+ * @property int|NULL $changedBy
+ * @property FrozenTime|NULL $changedOn
+ * @property int|NULL $deletedBy
+ * @property FrozenTime|NULL $deletedOn
+ * @property PageRole $pageRole
+ * @property ContentArea[] $contentAreas
+ * @property PageTemplateContentArea[] $_joinData
  */
 class PageTemplate extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected $_accessible = [
+	protected array $_accessible = [
+		'pageRoleId' => TRUE,
 		'title' => TRUE,
 		'filename' => TRUE,
-		'template_positions' => TRUE,
-		'page_role_id' => TRUE,
-		'system_order' => TRUE,
+		'systemOrder' => TRUE,
 		'active' => TRUE,
+		'contentAreas' => TRUE,
 	];
-
-
 	/**
-	 * Make sure the template position property contains an array.
-	 * If a string is provides, trim it, removing leading and trailing commas, explode it at ',', trim the values
-	 * and remove duplicate values from the array.
-	 *
-	 * @noinspection PhpUnused
+	 * @inheritDoc
 	 */
-	protected function _setTemplatePositions (mixed $ax_value): array {
-		if (empty($ax_value)) {
-			return [];
-		}
-
-		if (is_array($ax_value)) {
-			return array_values($ax_value);
-		}
-
-		return array_unique(array_map('trim', explode(',', trim($ax_value, ', '))));
-	}
+	protected static array $fieldMap = [
+		'page_role_id' => 'pageRoleId',
+		'system_order' => 'systemOrder',
+		'created_by' => 'createdBy',
+		'created_on' => 'createdOn',
+		'changed_by' => 'changedBy',
+		'changed_on' => 'changedOn',
+		'deleted_by' => 'deletedBy',
+		'deleted_on' => 'deletedOn',
+		'page_role' => 'pageRole',
+		'content_areas' => 'contentAreas',
+	];
 
 
 	/**

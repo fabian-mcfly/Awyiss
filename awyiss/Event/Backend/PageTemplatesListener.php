@@ -7,11 +7,12 @@ namespace Awyiss\Event\Backend;
 use Awyiss\Event\EventListenerTrait;
 use Awyiss\Model\Entity\PageTemplate;
 use Cake\Core\Configure;
+use Cake\Datasource\FactoryLocator;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
 use Cake\I18n\FrozenTime;
-use Cake\ORM\TableRegistry;
 use Cake\Utility\Text;
+use Queue\Model\Table\QueuedJobsTable;
 
 
 /**
@@ -21,6 +22,9 @@ class PageTemplatesListener implements EventListenerInterface {
 	use EventListenerTrait;
 
 
+	/**
+	 * @var string
+	 */
 	protected static string $scope;
 
 
@@ -44,19 +48,19 @@ class PageTemplatesListener implements EventListenerInterface {
 	 *
 	 * This is neccesary since a second file rename job could interfere with the first one.
 	 *
-	 * @param \Cake\Event\Event $ao_event
-	 * @param \Awyiss\Model\Entity\PageTemplate $ao_entity
+	 * @param Event        $ao_event
+	 * @param PageTemplate $ao_entity
 	 *
 	 * @return void
 	 */
 	public function beforeSave (Event $ao_event, PageTemplate $ao_entity): void {
-		if ($ao_entity->filename != $ao_entity->getOriginal('filename')) {
-			/** @var \Queue\Model\Table\QueuedJobsTable $lo_queue */
-			$lo_queue = TableRegistry::getTableLocator()->get('Queue.QueuedJobs');
+		if ($ao_entity->hasOriginal('filename') && $ao_entity->filename != $ao_entity->getOriginal('filename')) {
+			/** @var QueuedJobsTable $lo_queue */
+			$lo_queue = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
 
 			if ($lo_queue->isQueued('page_templates::file_changes')) {
 				$ao_event->stopPropagation();
-				$ao_entity->setError('_general', __('page_templates::file_changes_in_progress'));
+				$ao_entity->setError('_general', __d('page_templates', 'file_changes_in_progress'));
 			}
 		}
 	}
@@ -68,8 +72,8 @@ class PageTemplatesListener implements EventListenerInterface {
 	 * - create a template if it's new
 	 * - rename the template if it already exists
 	 *
-	 * @param \Cake\Event\Event $ao_event
-	 * @param \Awyiss\Model\Entity\PageTemplate $ao_entity
+	 * @param Event        $ao_event
+	 * @param PageTemplate $ao_entity
 	 *
 	 * @noinspection PhpUnusedParameterInspection
 	 */
@@ -81,10 +85,7 @@ class PageTemplatesListener implements EventListenerInterface {
 		$la_templatePaths = Configure::read('App.paths.templates');
 		$ls_folderPath = $la_templatePaths['customer'] . 'Frontend' . DS . 'pages' . DS;
 
-
 		$la_commands = [];
-		$lb_fileExists = FALSE;
-
 
 		if ( ! file_exists($ls_folderPath)) {
 			$la_commands[] = 'mkdir -m 777 -p ' . $ls_folderPath;
@@ -92,29 +93,38 @@ class PageTemplatesListener implements EventListenerInterface {
 
 		$ls_filePath = $ls_folderPath . $ls_fileName . $ls_extension;
 
-		if ($ao_entity->filename != $ao_entity->getOriginal('filename')) {
+		if ($ao_entity->hasOriginal('filename') && $ao_entity->filename != $ao_entity->getOriginal('filename')) {
 			//After changing the filename in the database, we also need to move (read: rename) the existing file
 			$ls_currentFilename = Text::slug($ao_entity->getOriginal('filename'), ['replacement' => '_']);
 			$ls_currentFilePath = $ls_folderPath . $ls_currentFilename . $ls_extension;
 			if ($lb_fileExists = file_exists($ls_currentFilePath)) {
-				$la_commands[] = 'mv ' . $ls_currentFilePath . ' ' . $ls_filePath . ' --forcef';
+				$la_commands[] = 'mv ' . $ls_currentFilePath . ' ' . $ls_filePath . ' --force';
 			}
+		}
+		else {
+			$lb_fileExists = file_exists($ls_filePath);
 		}
 
 		//If the file does not exist, we create one based on a twig-template for frontent page templates
 		if ( ! $lb_fileExists) {
-			$la_commands[] = 'bin/cake bake template pages page_template ' . $ls_fileName . ' --prefix Frontend --controller pages && chmod 0777 ' . $ls_filePath;
+			$la_commands[] = 'bin/cake bake template page_templates page_template ' . $ls_fileName . ' --prefix Frontend --controller pages';
+			$la_commands[] = 'chmod 0777 ' . $ls_filePath;
 		}
 
 		if (!empty($la_commands)) {
 			$la_data = [
 				'command' => implode(' && ', array_map('escapeshellcmd', $la_commands)),
 				'escape' => FALSE,
+				'log' => TRUE,
 			];
 
-			/** @var \Queue\Model\Table\QueuedJobsTable $lo_queue */
-			$lo_queue = TableRegistry::getTableLocator()->get('Queue.QueuedJobs');
-			$lo_queue->createJob('Queue.Execute', $la_data, ['reference' => 'page_templates::file_changes', 'priority' => 1]);
+			/** @var QueuedJobsTable $lo_queue */
+			$lo_queue = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
+			$lo_queue->createJob('Queue.Execute', $la_data, [
+				'group' => 'general',
+				'priority' => 1,
+				'reference' => 'page_templates::file_changes',
+			]);
 		}
 	}
 
@@ -124,8 +134,8 @@ class PageTemplatesListener implements EventListenerInterface {
 	 * - prepend '_deleted-'
 	 * - append '-' and the current timestamp
 	 *
-	 * @param \Cake\Event\Event $ao_event
-	 * @param \Awyiss\Model\Entity\PageTemplate $ao_entity
+	 * @param Event        $ao_event
+	 * @param PageTemplate $ao_entity
 	 *
 	 * @noinspection PhpUnused
 	 * @noinspection PhpUnusedParameterInspection
@@ -146,11 +156,16 @@ class PageTemplatesListener implements EventListenerInterface {
 				$ls_newFilePath = $ls_folderPath . '_deleted-' . $ls_fileName . '-' . (new FrozenTime())->getTimestamp() . $ls_extension;
 			}
 
-			/** @var \Queue\Model\Table\QueuedJobsTable $lo_queue */
-			$lo_queue = TableRegistry::getTableLocator()->get('Queue.QueuedJobs');
+			/** @var QueuedJobsTable $lo_queue */
+			$lo_queue = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
 			$lo_queue->createJob('Queue.Execute', [
 				'command' => 'mv ' . $ls_filePath . ' ' . $ls_newFilePath,
-			], ['reference' => 'page_templates::file_changes', 'priority' => 1]);
+				'log' => TRUE,
+			], [
+				'group' => 'general',
+				'priority' => 1,
+				'reference' => 'page_templates::file_changes',
+			]);
 		}
 	}
 }

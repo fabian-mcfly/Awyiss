@@ -7,8 +7,8 @@ namespace Awyiss\Configuration;
 /**
  * Signature of all neccessary methods to connect `ConfigOption` with `ConfigOptionsProvider`
  *
- * @see \Awyiss\Configuration\ConfigOption
- * @see \Awyiss\Configuration\ConfigOptionsProvider
+ * @see ConfigOption
+ * @see ConfigOptionsProvider
  */
 interface ConfigOptionsInterface {
 	/**
@@ -20,7 +20,7 @@ interface ConfigOptionsInterface {
 
 	/**
 	 * Return the scope of the options-collection.
-	 * If none is set, use the name of the class that extends this one
+	 * If none is set, use the identifier of the class that extends this one
 	 *
 	 * @return string
 	 */
@@ -28,39 +28,54 @@ interface ConfigOptionsInterface {
 
 
 	/**
-	 * Return the config option found under the path provided.
+	 * Return all config options as flattened array
 	 *
-	 * @param string|string[] $ax_path
+	 * @param null|string $as_realm
 	 *
-	 * @see \Awyiss\Configuration\ConfigOption
-	 * @see \Cake\Utility\Hash::get()
+	 * @return ConfigOptionCollection|array
+	 * @see ConfigOption
 	 */
-	public function getConfigOption (string|array $ax_path): ?ConfigOption;
+	public function getConfigOptions (string $as_realm = NULL): ConfigOptionCollection|array;
 
 
 	/**
-	 * Retreives a configuration class and validates the provided value for the given configOptionName
+	 * Return the config option found under the path provided.
+	 *
+	 * @param string          $as_realm
+	 * @param string|string[] $ax_path
+	 *
+	 * @return null|ConfigOption
+	 * @see ConfigOption
+	 * @see \Cake\Utility\Hash::get()
+	 */
+	public function getConfigOption (string $as_realm, string|array $ax_path): ?ConfigOption;
+
+
+	/**
+	 * Retreives a configuration class and validates the provided value for the given configOptionIdentifier
 	 *
 	 * Returns a string with an error message if the value is not valid.
 	 *
-	 * @param string $as_configOptionName
-	 * @param mixed $ax_value
+	 * @param string      $as_realm
+	 * @param string      $as_identifier
+	 * @param mixed       $ax_value
 	 * @param null|string $as_languageShortcode
-	 * @param bool $ab_fallbackValidity
+	 * @param bool        $ab_fallbackValidity
 	 *
 	 * @return bool|string
 	 */
-	public function validateConfigValue (string $as_configOptionName, mixed $ax_value, ?string $as_languageShortcode = NULL, bool $ab_fallbackValidity = TRUE): bool|string;
+	public function validateConfigValue (string $as_realm, string $as_identifier, mixed $ax_value, ?string $as_languageShortcode = NULL, bool $ab_fallbackValidity = TRUE): bool|string;
 
 
 	/**
-	 * Retreives a configuration class and cast the provided value to it's correct type for the given configOptionName
+	 * Retreives a configuration class and cast the provided value to it's correct type for the given configOptionIdentifier
 	 *
-	 * @param string $as_configOptionName
-	 * @param mixed $ax_value
+	 * @param string $as_realm
+	 * @param string $as_identifier
+	 * @param mixed  $ax_value
 	 *
 	 * @return mixed
 	 * @throws \ReflectionException
 	 */
-	public function typecastConfigValue (string $as_configOptionName, mixed $ax_value): mixed;
+	public function typecastConfigValue (string $as_realm, string $as_identifier, mixed $ax_value): mixed;
 }

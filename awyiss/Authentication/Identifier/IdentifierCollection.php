@@ -5,6 +5,7 @@ namespace Awyiss\Authentication\Identifier;
 
 
 use ArrayAccess;
+use Authentication\Identifier\IdentifierInterface;
 
 
 /**
@@ -16,11 +17,12 @@ class IdentifierCollection extends \Authentication\Identifier\IdentifierCollecti
 	 *
 	 * @param array $aa_credentials Authentication credentials
 	 *
-	 * @return \ArrayAccess|array|NULL
+	 * @return ArrayAccess|array|NULL
+	 * @noinspection PhpUnused
 	 */
 	public function reidentify (array $aa_credentials): ArrayAccess|array|NULL {
-		/** @var \Authentication\Identifier\IdentifierInterface $lo_identifier */
-		foreach ($this->_loaded as $ls_name => $lo_identifier) {
+		/** @var IdentifierInterface|ProxyIdentifier $lo_identifier */
+		foreach ($this->_loaded as $ls_identifier => $lo_identifier) {
 			if (is_callable([$lo_identifier, 'reidentify'])) {
 				$lx_result = $lo_identifier->reidentify($aa_credentials);
 			}
@@ -33,7 +35,7 @@ class IdentifierCollection extends \Authentication\Identifier\IdentifierCollecti
 
 				return $lx_result;
 			}
-			$this->_errors[ $ls_name ] = $lo_identifier->getErrors();
+			$this->_errors[ $ls_identifier ] = $lo_identifier->getErrors();
 		}
 
 		$this->_successfulIdentifier = NULL;

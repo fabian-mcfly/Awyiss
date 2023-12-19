@@ -13,7 +13,7 @@ use Cake\View\Helper;
  * After setting messages in your controllers with FlashComponent, you can use
  * this class to output your flash messages in your views.
  *
- * @see \Cake\View\Helper\FlashHelper
+ * @see Helper\FlashHelper
  */
 class FlashHelper extends Helper {
 	/**
@@ -27,7 +27,7 @@ class FlashHelper extends Helper {
 	 *
 	 * @return null|string
 	 *
-	 * @see \Cake\View\Helper\FlashHelper::render()
+	 * @see Helper\FlashHelper::render
 	 */
 	public function render (string $as_key = '*', array $aa_options = []): ?string {
 		$lo_flash = $this->_View->getRequest()->getFlash();
@@ -39,7 +39,7 @@ class FlashHelper extends Helper {
 			}
 
 			$la_globalMessages = $lo_flash->consume($as_key) ?? [];
-			$la_messages = array_merge($la_controllerMessage, $la_globalMessages);
+			$la_messages = array_filter(array_merge($la_controllerMessage, $la_globalMessages));
 		}
 		else {
 			$la_messages = $lo_flash->consume($as_key);

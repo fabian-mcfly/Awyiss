@@ -4,9 +4,10 @@
 namespace Awyiss\Configuration\ConfigOptions;
 
 
+use Awyiss\Awyiss;
 use Awyiss\Configuration\AbstractConfigOptions;
 use Awyiss\Configuration\ConfigOption;
-use Awyiss\Configuration\ConfigOptionTypes;
+use Awyiss\Configuration\ConfigOptionType;
 
 
 /**
@@ -16,55 +17,51 @@ class SystemConfigOptions extends AbstractConfigOptions {
 	/**
 	 * @var string Scope of these options
 	 */
-	protected static string $scope = 'system';
+	protected static string $scope = 'System';
 
 
 	/**
 	 * @inheritDoc
 	 */
 	public function initializeConfigOptions (): void {
-		$this->add([
-			'frontend' => [
+		$this->add(Awyiss::REALM_FRONTEND, [
+			new ConfigOption([
+				'defaultValue' => TRUE,
+				'identifier' => 'editlinks',
+				'localizable' => FALSE,
+				'nullable' => FALSE,
+				'type' => ConfigOptionType::TYPE_BOOL,
+			]),
+			'meta' => [
 				new ConfigOption([
-					'defaultValue' => TRUE,
-					'localizable' => FALSE,
-					'name' => 'editlinks',
-					'nullable' => FALSE,
-					'type' => ConfigOptionTypes::TYPE_BOOL,
+					'defaultValue' => 'Firma',
+					'identifier' => 'titleAppendix',
 				]),
-				'meta' => [
-					new ConfigOption([
-						'defaultValue' => 'Firma',
-						'name' => 'title_appendix',
-					]),
-					new ConfigOption([
-						'defaultValue' => ' | ',
-						'name' => 'title_separator',
-					]),
-				]
+				new ConfigOption([
+					'defaultValue' => ' | ',
+					'identifier' => 'titleSeparator',
+				]),
 			]
 		]);
 
 
-		$this->add([
-			'backend' => [
+		$this->add(Awyiss::REALM_BACKEND, [
+			new ConfigOption([
+				'defaultValue' => 600,
+				'identifier' => 'lockTimeout',
+				'localizable' => FALSE,
+				'nullable' => FALSE,
+				'type' => ConfigOptionType::TYPE_INTEGER,
+			]),
+			'meta' => [
 				new ConfigOption([
-					'defaultValue' => 600,
-					'localizable' => FALSE,
-					'name' => 'lock_timeout',
-					'nullable' => FALSE,
-					'type' => ConfigOptionTypes::TYPE_INTEGER,
+					'defaultValue' => 'Firma',
+					'identifier' => 'titleAppendix',
 				]),
-				'meta' => [
-					new ConfigOption([
-						'defaultValue' => 'Firma',
-						'name' => 'title_appendix',
-					]),
-					new ConfigOption([
-						'defaultValue' => ' | ',
-						'name' => 'title_separator',
-					]),
-				]
+				new ConfigOption([
+					'defaultValue' => ' | ',
+					'identifier' => 'titleSeparator',
+				]),
 			]
 		]);
 	}

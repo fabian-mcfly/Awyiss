@@ -1,0 +1,25 @@
+{#
+@var ao_menu \Awyiss\Utilities\Menu
+@var aa_parentIdOptions array
+@var aa_insertAfterOptions array
+@var ao_backendMenuEntry \Awyiss\Model\Entity\BackendMenuEntry
+@var _view \Awyiss\View\BackendView
+#}
+
+<div class="BackendMenuEntries Form Edit">
+	<h1>{{ __('headline_edit') }}</h1>
+
+	{{ helper_Form_create(ao_backendMenuEntry, {method: 'post', idPrefix: 'menuEntry'}) }}
+
+	{% block formButtons %}
+		{{ helper_Form_button(__('save')) }}
+		{{ helper_Form_button(__('save_close'), {name: 'submit', value: 'submit_close'}) }}
+	{% endblock %}
+
+	{% include('@Backend/BackendMenuEntries/form.twig') %}
+
+	{{ block('formButtons') }}
+
+	{{ helper_Form_end() -}}
+
+</div>

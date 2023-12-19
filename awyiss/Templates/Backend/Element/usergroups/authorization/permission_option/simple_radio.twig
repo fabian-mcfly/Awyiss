@@ -1,30 +1,58 @@
-{# @var ao_permission \Awyiss\Authorization\PermissionOptions\SimplePermissionOption #}
-{# @var ao_entity \Awyiss\Model\Entity\Usergroup|NULL #}
-{# @var as_identifier string #}
-{# @var as_scope string #}
-{# @var _view \Awyiss\View\BackendView #}
+{#
+@var ao_permission \Awyiss\Authorization\PermissionOptions\SimplePermissionOption
+@var ao_entity \Awyiss\Model\Entity\Usergroup|NULL
+@var as_identifier string
+@var as_scope string
+@var _view \Awyiss\View\BackendView
+#}
 
-{% set ls_fieldName = 'permissions[' ~ as_scope ~ '][' ~ as_identifier ~ ']' %}
-{% set ls_label = 'Permissions-' ~ as_scope|camelize ~ '-' ~ as_identifier|camelize %}
-{% set lx_value = ao_entity.usergroup_permissions[ as_scope ][ as_identifier ].access ?? NULL %}
-{% set la_options = ao_permission.getOptions %}
+{% block permissionOptions %}
+	{% set ls_fieldName = 'permissions[' ~ as_scope ~ '][' ~ as_identifier ~ ']' %}
+	{% set ls_label = 'Permissions-' ~ as_scope|camelize ~ '-' ~ as_identifier|camelize %}
+	{% set lx_value = ao_entity.usergroup_permissions[ as_scope ][ as_identifier ].access ?? NULL %}
+	{% set la_options = ao_permission.getOptions %}
 
-<span class="Options SimpleRadio">
-	<input type="radio" name="{{ ls_fieldName }}" value="{{ la_options.granted }}"
-		{{ lx_value is same as (la_options.granted) ? 'checked="checked"' : '' }}
-		id="{{ ls_label ~ '-' ~ la_options.granted }}">
+	<span class="Options SimpleRadio">
+		{% block optionGranted %}
+			<input type="radio" name="{{ ls_fieldName }}" value="{{ la_options.granted.value }}"
+				{{ lx_value is same as (la_options.granted) ? 'checked="checked"' : '' }}
+				id="{{ ls_label ~ '-' ~ la_options.granted.value }}">
+		{% endblock %}
 
-	<input type="radio" name="{{ ls_fieldName }}" value="{{ la_options.indifferent }}"
-		{{ lx_value is same as (la_options.indifferent) ? 'checked="checked"' : '' }}
-		id="{{ ls_label }}">
+		{% block optionIndifferent %}
+			<input type="radio" name="{{ ls_fieldName }}" value="{{ la_options.indifferent }}"
+				{{ lx_value is same as (la_options.indifferent) ? 'checked="checked"' : '' }}
+				id="{{ ls_label }}">
+		{% endblock %}
 
-	<input type="radio" name="{{ ls_fieldName }}" value="{{ la_options.denied }}"
-		{{ lx_value is same as (la_options.denied) ? 'checked="checked"' : '' }}
-		id="{{ ls_label ~ '-' ~ la_options.denied }}">
+		{% block optionDenied %}
+			<input type="radio" name="{{ ls_fieldName }}" value="{{ la_options.denied.value }}"
+				{{ lx_value is same as (la_options.denied) ? 'checked="checked"' : '' }}
+				id="{{ ls_label ~ '-' ~ la_options.denied.value }}">
+		{% endblock %}
 
-	<span class="Labels">
-		<label for="{{ ls_label ~ '-' ~ la_options.granted }}">{{ __('::simple_permission_option_granted') }}</label>
-		<label for="{{ ls_label }}">{{ __('::simple_permission_option_indifferent') }}</label>
-		<label for="{{ ls_label ~ '-' ~ la_options.denied }}">{{ __('::simple_permission_option_denied') }}</label>
+		{% block optionsLabels %}
+			<span class="Labels">
+				{% block optionsLabelsInner %}
+					{% block optionGrantedLabel %}
+						<label for="{{ ls_label ~ '-' ~ la_options.granted.value }}">
+							{{ __d('authorization', 'simple_permission_option_granted') }}
+						</label>
+					{% endblock %}
+
+					{% block optionIndifferentLabel %}
+						<label for="{{ ls_label }}">
+							{{ __d('authorization', 'simple_permission_option_indifferent') }}
+						</label>
+					{% endblock %}
+
+					{% block optionDeniedLabel %}
+						<label for="{{ ls_label ~ '-' ~ la_options.denied.value }}">
+							{{ __d('authorization', 'simple_permission_option_denied') }}
+						</label>
+					{% endblock %}
+				{% endblock %}
+			</span>
+		{% endblock %}
 	</span>
-</span>
+{% endblock %}

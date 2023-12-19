@@ -6,6 +6,7 @@ namespace Awyiss\Controller\Backend;
 
 use Awyiss\Controller\BackendController as Controller;
 use Cake\Event\EventInterface;
+use Cake\Http\Response;
 
 
 /**
@@ -26,9 +27,9 @@ class ErrorController extends Controller {
 	/**
 	 * beforeRender callback.
 	 *
-	 * @param \Cake\Event\EventInterface $ao_event Event.
+	 * @param EventInterface<\Cake\Controller\Controller> $ao_event Event.
 	 *
-	 * @return NULL|void
+	 * @return Response|NULL|void
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */

@@ -5,7 +5,7 @@ namespace Awyiss\Authorization\PermissionOption;
 
 
 use Awyiss\Authorization\Permission\PermissionCollection;
-use Awyiss\Authorization\Permission\PermissionTypes;
+use Awyiss\Authorization\Permission\PermissionAccess;
 
 
 /**
@@ -15,9 +15,9 @@ use Awyiss\Authorization\Permission\PermissionTypes;
  * - indifferent
  */
 class SimplePermissionOption extends AbstractPermissionOption {
-	//final public const OPTION_GRANTED = PermissionTypes::OPTION_GRANTED;
-	//final public const OPTION_DENIED = PermissionTypes::OPTION_DENIED;
-	//final public const OPTION_INDIFFERENT = PermissionTypes::OPTION_INDIFFERENT;
+	/**
+	 * @var string
+	 */
 	protected string $type = 'simple';
 
 
@@ -28,9 +28,9 @@ class SimplePermissionOption extends AbstractPermissionOption {
 		parent::__construct($aa_config, $ao_permissionOptionCollection);
 
 		$this->options = [
-			'granted' => PermissionTypes::OPTION_GRANTED->databaseValue(),
-			'denied' => PermissionTypes::OPTION_DENIED->databaseValue(),
-			'indifferent' => PermissionTypes::OPTION_INDIFFERENT->databaseValue(),
+			'granted' => PermissionAccess::OPTION_GRANTED,
+			'denied' => PermissionAccess::OPTION_DENIED,
+			'indifferent' => NULL,
 		];
 	}
 
@@ -38,10 +38,14 @@ class SimplePermissionOption extends AbstractPermissionOption {
 	/**
 	 * @inheritDoc
 	 */
-	public function harmonizeOptionValue (mixed $ax_value): PermissionTypes {
+	public function harmonizeOptionValue (mixed $ax_value): ?PermissionAccess {
 		$lx_value = ($ax_value !== '' && $ax_value !== NULL) ? (int)$ax_value : NULL;
 
-		return PermissionTypes::from($lx_value);
+		if ($lx_value === NULL) {
+			return NULL;
+		}
+
+		return PermissionAccess::tryFrom($lx_value);
 	}
 
 
@@ -49,12 +53,16 @@ class SimplePermissionOption extends AbstractPermissionOption {
 	 * @inheritDoc
 	 */
 	public function isAccessible (mixed $ax_access, mixed $ax_settings, array $aa_additionalData, PermissionCollection $ao_permissionCollection): ?bool {
-		$lx_access = $this->harmonizeOptionValue($ax_access);
+		$lx_access = $ax_access;
 
-		if ($lx_access === PermissionTypes::OPTION_GRANTED) {
+		if (! $lx_access instanceof PermissionAccess) {
+			$lx_access = $this->harmonizeOptionValue($ax_access);
+		}
+
+		if ($lx_access === PermissionAccess::OPTION_GRANTED) {
 			return TRUE;
 		}
-		elseif ($lx_access === PermissionTypes::OPTION_DENIED) {
+		elseif ($lx_access === PermissionAccess::OPTION_DENIED) {
 			return FALSE;
 		}
 

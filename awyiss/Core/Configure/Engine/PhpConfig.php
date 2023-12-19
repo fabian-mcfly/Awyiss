@@ -4,6 +4,8 @@
 namespace Awyiss\Core\Configure\Engine;
 
 
+use Brick\VarExporter\ExportException;
+use Brick\VarExporter\VarExporter;
 use Cake\Core\Configure\Engine\PhpConfig as BasePhpConfig;
 use Cake\Core\Exception\CakeException;
 use Cake\Utility\Hash;
@@ -29,7 +31,7 @@ class PhpConfig extends BasePhpConfig {
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function __construct (?string $as_path = NULL) {
-		$this->_path = NULL;
+		$this->_path = NULL ?? CONFIG;
 	}
 
 
@@ -84,15 +86,20 @@ class PhpConfig extends BasePhpConfig {
 	 * Converts the provided $aa_data into a string of PHP code that can
 	 * be used saved into a file and loaded later.
 	 *
-	 * @param string $as_key The identifier to write to. If the as_key has a "." it will be treated as a plugin prefix.
+	 * @param string $as_key The identifier to write to.
 	 * @param array $aa_data Data to dump.
 	 *
 	 * @return bool Success
 	 *
+	 * @throws ExportException
+	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function dump (string $as_key, array $aa_data): bool {
-		$ls_contents = '<?php declare(strict_types=1);' . PHP_EOL . PHP_EOL . 'return ' . static::varExport($aa_data, TRUE) . ';';
+		$ls_contents = '<?php declare(strict_types=1);' . PHP_EOL . PHP_EOL . 'return ';
+		$ls_contents .= VarExporter::export($aa_data, VarExporter::TRAILING_COMMA_IN_ARRAY);
+		$ls_contents .= ';';
+		$ls_contents = str_replace('    ', "\t", $ls_contents);
 
 		$ls_filename = ENV_CUSTOM_CONFIG . $as_key . $this->_extension;
 
@@ -102,33 +109,5 @@ class PhpConfig extends BasePhpConfig {
 		}
 
 		return FALSE;
-	}
-
-
-	/**
-	 * PHP var_export() with short array syntax (square brackets) indented 2 spaces.
-	 *
-	 * NOTE: The only issue is when a string value has `=>\n[`, it will get converted to `=> [`
-	 *
-	 * @link https://www.php.net/manual/en/function.var-export.php
-	 * @copyright steven at nevvix dot com
-	 */
-	public static function varExport ($ax_data, bool $ab_return = FALSE): ?string {
-		$ls_export = var_export($ax_data, TRUE);
-		$la_patterns = [
-			"/array \(/" => '[',
-			"/^([ ]*)\)(,?)$/m" => '$1]$2',
-			"/=>[ ]?\n[ ]+\[/" => '=> [',
-			"/([ ]*)(\'[^\']+\') => ([\[\'])/" => '$1$2 => $3',
-			"/  /" => '	',
-		];
-		$ls_export = preg_replace(array_keys($la_patterns), array_values($la_patterns), $ls_export);
-
-		if ($ab_return) {
-			return $ls_export;
-		}
-
-		echo $ls_export;
-		return NULL;
 	}
 }

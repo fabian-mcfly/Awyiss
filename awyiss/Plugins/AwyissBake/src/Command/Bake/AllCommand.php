@@ -21,7 +21,7 @@ class AllCommand extends \Bake\Command\AllCommand {
 	/**
 	 * @inheritDoc
 	 */
-	protected $commands = [
+	protected array $commands = [
 		ModelCommand::class,
 		ControllerCommand::class,
 		PolicyCommand::class,

@@ -5,6 +5,7 @@ namespace Awyiss\Authorization;
 
 
 use Authentication\AuthenticationServiceInterface;
+use Awyiss\Authorization\Policy\PolicyInterface;
 
 
 /**
@@ -14,17 +15,17 @@ use Authentication\AuthenticationServiceInterface;
  */
 interface AuthorizationServiceInterface {
 	/**
-	 * Set the type only when creating a class instance
+	 * Set the realm only when creating a class instance
 	 *
-	 * @param string $as_type
+	 * @param string $as_realm
 	 */
-	public function __construct (string $as_type);
+	public function __construct (string $as_realm);
 
 
 	/**
 	 * Return the AuthenticationServiceInterface
 	 *
-	 * @return null|\Authentication\AuthenticationServiceInterface
+	 * @return null|AuthenticationServiceInterface
 	 */
 	public function getAuthenticationService (): ?AuthenticationServiceInterface;
 
@@ -32,7 +33,7 @@ interface AuthorizationServiceInterface {
 	/**
 	 * Set the AuthenticationServiceInterface
 	 *
-	 * @param \Authentication\AuthenticationServiceInterface $ao_authenticationService
+	 * @param AuthenticationServiceInterface $ao_authenticationService
 	 *
 	 * @return $this
 	 */
@@ -40,36 +41,36 @@ interface AuthorizationServiceInterface {
 
 
 	/**
-	 * Returns the type the class was loaded with
+	 * Returns the realm the class was loaded with
 	 *
 	 * @return string
 	 */
-	public function getType (): string;
+	public function getRealm (): string;
 
 
 	/**
-	 * Returns an array containing all Policies found for the given type (sub-namespace)
+	 * Returns an array containing all Policies found for the given realm (sub-namespace)
 	 *
-	 * @param string|NULL $as_type
+	 * @param string|NULL $as_realm
 	 *
-	 * @return array<string, class-string<\Awyiss\Authorization\Policy\PolicyInterface>>
+	 * @return array<string, class-string<PolicyInterface>>
 	 */
-	public function getPolicies (string $as_type = NULL): array;
+	public function getPolicies (string $as_realm = NULL): array;
 
 
 	/**
-	 * Returns the FQCN of the Policy with the given name for the given type (sub-namespace), if it exists.
+	 * Returns the FQCN of the Policy with the given scope for the given realm (sub-namespace), if it exists.
 	 *
 	 * It looks for such a policy in the custom_namespace before trying the Awyiss namespace:
 	 *
-	 * - \\`CUSTOM_NAMESPACE`\Authorization\Policy\\`$as_type`\\`$as_name`Policy
+	 * - \\`CUSTOM_NAMESPACE`\Authorization\Policy\\`$as_realm`\\`$as_scope`Policy
 	 *
-	 * - \Awyiss\Authorization\Policy\\`$as_type`\\`$as_name`Policy
+	 * - \Awyiss\Authorization\Policy\\`$as_realm`\\`$as_scope`Policy
 	 *
-	 * @param string $as_name
-	 * @param null|string $as_type
+	 * @param string      $as_scope
+	 * @param null|string $as_realm
 	 *
-	 * @return null|class-string<\Awyiss\Authorization\Policy\PolicyInterface>
+	 * @return null|class-string<PolicyInterface>
 	 */
-	public function getPolicy (string $as_name, ?string $as_type = NULL): ?string;
+	public function getPolicy (string $as_scope, ?string $as_realm = NULL): ?string;
 }

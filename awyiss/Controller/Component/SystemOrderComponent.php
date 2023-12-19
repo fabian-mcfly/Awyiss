@@ -4,6 +4,7 @@
 namespace Awyiss\Controller\Component;
 
 
+use Awyiss\Model\Table;
 use Cake\Controller\Component;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\ResultSetInterface;
@@ -24,7 +25,7 @@ class SystemOrderComponent extends Component {
 	 *
 	 * @var array<string, mixed>
 	 */
-	protected $_defaultConfig = [
+	protected array $_defaultConfig = [
 		'autoload' => ['add', 'edit'], //can be a boolean value or an array containing all action names for which the records should get autoloaded
 		'entityName' => NULL, //singlularized variable name of the entity that's used to autoload records
 		'records' => NULL,
@@ -73,12 +74,17 @@ class SystemOrderComponent extends Component {
 		}
 
 		$lo_records = $this->getConfig('records');
-		if (!$lo_records) {
+
+		if ( ! $lo_records) {
 			$ls_action = $lo_controller->getRequest()->getParam('action');
 			$lx_autoload = $this->getConfig('autoload');
 
 			//Shall we autoload the records?
-			if ($lx_autoload === TRUE || (is_array($lx_autoload) && in_array($ls_action, $lx_autoload))) {
+			if (
+				$lx_autoload === TRUE ||
+				(is_array($lx_autoload) && in_array($ls_action, $lx_autoload)) ||
+				(is_string($lx_autoload) && $ls_action === $lx_autoload)
+			) {
 				$ls_varName = 'ao_' . $this->getConfig('entityName');
 				if ($lo_entity = $lo_view->getVar($ls_varName)) {
 					//Get the records from the database
@@ -90,7 +96,7 @@ class SystemOrderComponent extends Component {
 					$lo_request = $lo_controller->getRequest();
 					//When system_order is part of the request data, overwrite it since it might be outdated
 					if ($lo_request->getData('system_order')) {
-						$lo_request = $lo_request->withData('system_order', $lo_entity->system_order);
+						$lo_request = $lo_request->withData('system_order', $lo_entity->systemOrder);
 						$lo_controller->setRequest($lo_request);
 					}
 				}
@@ -110,7 +116,7 @@ class SystemOrderComponent extends Component {
 		 */
 
 		//Set view vars if they don't already exist
-		if ( ! $lo_view->getVar('ao_systemOrderRecords') && $lo_records) {
+		if ( ! $lo_view->getVar('ao_systemOrderRecords')) {
 			$lo_view->setVar('ao_systemOrderRecords', $lo_records);
 		}
 
@@ -131,18 +137,18 @@ class SystemOrderComponent extends Component {
 	 * Load records from the same table as the entity's, limited to specified conditions provided by the
 	 * `SystemOrderBehavior::addQueryConditions()` method.
 	 *
-	 * @param \Cake\Datasource\EntityInterface $ao_entity
+	 * @param EntityInterface $ao_entity
 	 *
-	 * @return NULL|\Cake\Datasource\ResultSetInterface
+	 * @return NULL|ResultSetInterface
 	 *
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::addQueryConditions() method
 	 */
 	public function getRecords (EntityInterface $ao_entity): ?ResultSetInterface {
 		$lo_controller = $this->getController();
-		/** @var \Awyiss\Model\Table $lo_table */
+		/** @var Table $lo_table */
 		$lo_table = $lo_controller->{$this->getConfig('tableName')};
 
-		if (!$lo_table) {
+		if ( ! $lo_table) {
 			return NULL;
 		}
 
@@ -169,22 +175,28 @@ class SystemOrderComponent extends Component {
 	 *
 	 * For example: for 4 existing records, a new entity can have system_order of [1-5]
 	 *
-	 * @param \Cake\Datasource\EntityInterface $ao_entity
-	 * @param NULL|\Cake\ORM\ResultSet $ao_records
+	 * @param EntityInterface $ao_entity
+	 * @param NULL|ResultSet  $ao_records
 	 *
 	 * @return void
 	 *
 	 * @noinspection PhpPossiblePolymorphicInvocationInspection
 	 */
 	public function ensurePossibleSystemOrder (EntityInterface $ao_entity, ?ResultSet $ao_records = NULL): void {
+		if ( ! $ao_entity->has('systemOrder')) {
+			return;
+		}
+
 		$lo_records = $ao_records ?? $this->getConfig('records') ?? $this->getRecords($ao_entity);
 
-		$li_highestSystemOrder = $lo_records->max('system_order')?->system_order ?? 1;
-		if (empty($ao_entity->system_order)) {
-			$ao_entity->system_order = $li_highestSystemOrder + 1;
+		$li_highestSystemOrder = $lo_records->max('systemOrder')?->systemOrder ?? 0;
+
+		if (empty($ao_entity->systemOrder)) {
+			/** @noinspection PhpDynamicFieldDeclarationInspection */
+			$ao_entity->systemOrder = $li_highestSystemOrder + 1;
 		}
-		elseif ($ao_entity->system_order > $li_highestSystemOrder) {
-			$ao_entity->system_order = $li_highestSystemOrder;
+		elseif ($ao_entity->systemOrder > $li_highestSystemOrder) {
+			$ao_entity->systemOrder = $li_highestSystemOrder;
 		}
 	}
 }
