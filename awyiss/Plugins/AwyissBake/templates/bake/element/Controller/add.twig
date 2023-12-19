@@ -1,0 +1,38 @@
+
+{% set compact = [] %}
+	/**
+	 * Add method
+	 *
+	 * @return \Cake\Http\Response|NULL|void Redirects on successful add, renders view otherwise.
+	 * @noinspection PhpReturnDocTypeMismatchInspection
+	 * @noinspection RedundantSuppression
+	 */
+	public function add () {
+		$lo_{{ singularName }} = $this->{{ currentModelName }}->newEmptyEntity();
+		if ($this->request->is('post')) {
+			$lo_{{ singularName }} = $this->{{ currentModelName }}->patchEntity($lo_{{ singularName }}, $this->request->getData());
+			if ($this->{{ currentModelName }}->save($lo_{{ singularName }})) {
+				$this->Flash->success(__('::add_succeeded'));
+
+				if ($this->request->getData('submit') == 'submit_close') {
+					return $this->redirect(['action' => 'overview']);
+				}
+
+				return $this->redirect(['action' => 'edit', 'id' => $lo_{{ singularName }}->id]);
+			}
+			$this->Flash->error(__('::add_failed'));
+		}
+
+		$this->set([
+			'{{ singularName }}' => $lo_{{ singularName }},
+{% set associations = Bake.aliasExtractor(modelObj, 'BelongsTo') %}
+{% set associations = associations|merge(Bake.aliasExtractor(modelObj, 'BelongsToMany')) %}
+{%- for assoc in associations %}
+{%- set otherName = Bake.getAssociatedTableAlias(modelObj, assoc) %}
+{%- set otherPlural = otherName|variable %}
+			'{{ otherPlural }}' => $this->{{ currentModelName }}->{{ otherName }}->find('list', ['limit' => 200]),
+{{- "\n" }}
+{%- set compact = compact|merge(["'#{otherPlural}'"]) %}
+{% endfor %}
+		]);
+	}

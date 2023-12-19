@@ -1,0 +1,20 @@
+
+	/**
+	 * Overview method
+	 *
+	 * @return \Cake\Http\Response|NULL|void Renders view
+	 * @noinspection PhpReturnDocTypeMismatchInspection
+	 */
+	public function overview () {
+{% set belongsTo = Bake.aliasExtractor(modelObj, 'BelongsTo') %}
+{% if belongsTo %}
+		$this->paginate = [
+			'contain' => {{ Bake.exportArray(belongsTo)|raw }},
+		];
+{% endif %}
+		$lo_{{ pluralName }} = $this->paginate($this->{{ currentModelName }}->find('withAttributes'));
+
+		$this->set([
+			'{{ pluralName }}' => $lo_{{ pluralName }},
+		]);
+	}

@@ -1,0 +1,5 @@
+msgid "headline"
+msgstr "Sprachen aus Awyiss' languages.po"
+
+msgid "headline3"
+msgstr "Sprachen3 aus Awyiss' languages.po"

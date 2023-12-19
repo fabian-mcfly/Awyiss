@@ -1,0 +1,42 @@
+
+{% set belongsTo = Bake.aliasExtractor(modelObj, 'BelongsTo') %}
+{% set belongsToMany = Bake.aliasExtractor(modelObj, 'belongsToMany') %}
+{% set compact = [] %}
+	/**
+	 * Edit method
+	 *
+	 * @return \Cake\Http\Response|NULL|void Redirects on successful edit, renders view otherwise.
+	 * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+	 * @noinspection PhpReturnDocTypeMismatchInspection
+	 * @noinspection RedundantSuppression
+	 */
+	public function edit () {
+		$li_id = $this->request->getParam('id');
+		$lo_{{ singularName }} = $this->{{ currentModelName }}->get($li_id, [
+			'contain' => {{ Bake.exportArray(belongsToMany)|raw }},
+		]);
+		if ($this->request->is(['patch', 'post', 'put'])) {
+			$lo_{{ singularName }} = $this->{{ currentModelName }}->patchEntity($lo_{{ singularName }}, $this->request->getData());
+			if ($this->{{ currentModelName }}->save($lo_{{ singularName }})) {
+				$this->Flash->success(__('::edit_succeeded'));
+
+				if ($this->request->getData('submit') == 'submit_close') {
+					return $this->redirect(['action' => 'overview']);
+				}
+
+				return $this->redirect(['action' => 'edit', 'id' => $lo_{{ singularName }}->id]);
+			}
+			$this->Flash->error(__('::edit_failed'));
+		}
+
+		$this->set([
+			'{{ singularName }}' => $lo_{{ singularName }},
+{% for assoc in belongsTo|merge(belongsToMany) %}
+{%- set otherName = Bake.getAssociatedTableAlias(modelObj, assoc) %}
+{%- set otherPlural = otherName|variable %}
+			'${{ otherPlural }}' => $this->{{ currentModelName }}->{{ otherName }}->find('list', ['limit' => 200]),
+{{- "\n" }}
+{%- set compact = compact|merge(["'#{otherPlural}'"]) %}
+{% endfor %}
+		]);
+	}

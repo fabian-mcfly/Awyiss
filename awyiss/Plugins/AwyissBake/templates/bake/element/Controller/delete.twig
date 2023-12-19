@@ -1,0 +1,22 @@
+
+	/**
+	 * Delete method
+	 *
+	 * @return \Cake\Http\Response|NULL|void Redirects to overview.
+	 * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+	 * @noinspection PhpReturnDocTypeMismatchInspection
+	 * @noinspection RedundantSuppression
+	 */
+	public function delete () {
+		$this->request->allowMethod(['get', 'delete']);
+		$li_id = $this->request->getParam('id');
+		$lo_{{ singularName }} = $this->{{ currentModelName }}->get($li_id);
+		if ($this->{{ currentModelName }}->delete($lo_{{ singularName }})) {
+			$this->Flash->success(__('::delete_succeeded'));
+		}
+		else {
+			$this->Flash->error(__('::delete_failed'));
+		}
+
+		return $this->redirect(['action' => 'overview']);
+	}

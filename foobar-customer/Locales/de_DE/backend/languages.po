@@ -1,0 +1,2 @@
+msgid "_headline"
+msgstr "Sprachen-Headline aus der Customer-Datei"
