@@ -20,6 +20,7 @@ class PageRolesTable extends \Awyiss\Model\Table {
 			'fields' => ['title'],
 		],
 	];
+	public const TABLE = 'page_roles';
 
 
 	/**
@@ -28,7 +29,7 @@ class PageRolesTable extends \Awyiss\Model\Table {
 	public function initialize (array $aa_config): void {
 		parent::initialize($aa_config);
 
-		$this->setTable('page_roles');
+		$this->setTable(static::TABLE);
 		$this->setPrimaryKey('id');
 	}
 

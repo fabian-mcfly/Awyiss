@@ -60,8 +60,6 @@ abstract class BackendController extends AppController {
 			$this->loadComponent('Flash', ['key' => $ls_controller]);
 		}
 
-		$this->loadComponent('RequestHandler');
-
 		$this->viewBuilder()->setClassName('Backend');
 	}
 

@@ -16,7 +16,7 @@ class ErrorController extends Controller {
 	 * @throws \Exception
 	 */
 	public function initialize (): void {
-		$this->loadComponent('RequestHandler');
+		//$this->loadComponent('RequestHandler');
 	}
 
 

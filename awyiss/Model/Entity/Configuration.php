@@ -4,6 +4,9 @@
 namespace Awyiss\Model\Entity;
 
 
+use Cake\Utility\Text;
+
+
 /**
  * Configuration Entity
  *
@@ -36,8 +39,8 @@ class Configuration extends \Awyiss\Model\Entity {
 	/**
 	 * @noinspection PhpUnused
 	 */
-	protected function _setLanguagesShortcode (string $as_languagesShortcode): ?string {
-		return $as_languagesShortcode ?: NULL;
+	protected function _setScope (string $as_scope): string {
+		return mb_strtolower(Text::slug($as_scope, ['replacement' => '_']));
 	}
 
 
@@ -46,5 +49,13 @@ class Configuration extends \Awyiss\Model\Entity {
 	 */
 	protected function _setValue (string $as_value): ?string {
 		return $as_value ?: '';
+	}
+
+
+	/**
+	 * @noinspection PhpUnused
+	 */
+	protected function _setLanguagesShortcode (?string $as_languagesShortcode): ?string {
+		return $as_languagesShortcode ?: NULL;
 	}
 }

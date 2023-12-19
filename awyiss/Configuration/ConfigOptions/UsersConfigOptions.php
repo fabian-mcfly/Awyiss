@@ -23,7 +23,7 @@ class UsersConfigOptions extends AbstractConfigOptions {
 				]),
 				'pagination' => [
 					new ConfigOption([
-						'defaultValue' => 99,
+						'defaultValue' => 20,
 						'localizable' => FALSE,
 						'name' => 'limit',
 						'nullable' => FALSE,

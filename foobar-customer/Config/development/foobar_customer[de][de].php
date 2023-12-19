@@ -3,7 +3,7 @@
 return [
 	'Awyiss' => [
 		'ContentTemplates' => [
-			'contentrow_excluded_content_templates_ids' => '11',
+			'contentrow_excluded_content_template_ids' => '12',
 		],
 		'Designer' => [
 			'page_fullwidth' => '1350',
@@ -51,12 +51,6 @@ return [
 					'title_separator' => ' | ',
 				],
 			],
-			'meta' => [
-				'appendix' => '',
-			],
-		],
-		'Usergroups' => [
-			'asdf' => 'asfd',
 		],
 	],
 ];

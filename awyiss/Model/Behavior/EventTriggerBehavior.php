@@ -65,7 +65,7 @@ class EventTriggerBehavior extends Behavior {
 
 		$ls_alias = $this->table()->getAlias();
 		$lo_event = new Event('Model.' . $ls_alias . '.' . $as_name, $this->table(), $la_arguments);
-		$lo_event = $this->table()->getEventManager()->dispatch($lo_event);
+		$this->table()->getEventManager()->dispatch($lo_event);
 
 		if ($lo_event->isStopped()) {
 			$aa_arguments[0]->stopPropagation();

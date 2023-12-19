@@ -28,6 +28,7 @@
 				}
 
 				$this->Flash->error(__('::add_failed'));
+				$this->Flash->error(implode('<br>' . PHP_EOL, $lo_{{ singularName }}->getError('_general')));
 			}
 		}
 

@@ -61,6 +61,10 @@ class AnonymousPolicy {
 	protected function loadPermissions (): PermissionCollection {
 		$lo_permissions = new PermissionCollection($this->getScope());
 
+		$lo_permissions->load('read', [
+			'className' => \Awyiss\Authorization\Permission\SimplePermission::class,
+		]);
+
 		$lo_permissions->load('create', [
 			'className' => \Awyiss\Authorization\Permission\SimplePermission::class,
 		]);

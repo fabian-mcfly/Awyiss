@@ -75,7 +75,6 @@ class Application extends BaseApplication {
 	 * @throws \ReflectionException
 	 */
 	public function bootstrap (): void {
-		/** @noinspection PhpIncludeInspection */
 		require_once $this->configDir . 'bootstrap.php';
 
 
@@ -97,6 +96,7 @@ class Application extends BaseApplication {
 		if (PHP_SAPI === 'cli') {
 			$this->addPlugin('IdeHelper');
 			$this->bootstrapCli();
+			FactoryLocator::add('Table', (new TableLocator())->allowFallbackClass(TRUE)->setFallbackClassName(\Awyiss\Model\Table::class));
 		}
 		else {
 			FactoryLocator::add('Table', (new TableLocator())->allowFallbackClass(FALSE));
@@ -104,7 +104,7 @@ class Application extends BaseApplication {
 
 
 		$this->addPlugin('Authentication');
-
+		$this->addPlugin('Queue');
 
 		/*
 		 * Only try to load DebugKit in development mode
@@ -137,14 +137,21 @@ class Application extends BaseApplication {
 	protected function bootstrapCli (): void {
 		try {
 			Configure::write('Bake.theme', 'AwyissBake');
+
+
 			$this->addPlugin('Bake');
+			$this->addPlugin('Migrations');
+
 			$this->addPlugin('AwyissBake');
 
 			\Awyiss\Event\EventListenersProvider::loadListener('general_events', 'bake');
+
 		}
 		catch (MissingPluginException $ex) {
 			exit($ex->getMessage());
 		}
+
+
 
 		/*$lo_onsoleOptionParser = new ConsoleOptionParser('');
 		$lo_onsoleOptionParser->addOption('prefix', [
@@ -152,8 +159,6 @@ class Application extends BaseApplication {
 			'default' => false,
 		]);
 		dd($lo_onsoleOptionParser->parse($_SERVER['argv']));*/
-
-		$this->addPlugin('Migrations');
 	}
 
 
@@ -205,7 +210,6 @@ class Application extends BaseApplication {
 				require_once $ls_file;
 			}
 
-			/** @noinspection PhpIncludeInspection */
 			require $this->configDir . 'routes_backend.php';
 
 			/**
@@ -223,7 +227,6 @@ class Application extends BaseApplication {
 				require_once $ls_file;
 			}
 
-			/** @noinspection PhpIncludeInspection */
 			require $this->configDir . 'routes.php';
 			/**
 			 * The reason we're doing this is that a custom config might overwrite routes for the frontend using the * placeholder

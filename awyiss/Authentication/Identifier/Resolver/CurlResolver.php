@@ -23,8 +23,8 @@ class CurlResolver implements \Authentication\Identifier\Resolver\ResolverInterf
 	];
 
 
-	public function __construct (array $config = []) {
-		$this->setConfig($config);
+	public function __construct (array $aa_config = []) {
+		$this->setConfig($aa_config);
 	}
 
 
@@ -35,10 +35,10 @@ class CurlResolver implements \Authentication\Identifier\Resolver\ResolverInterf
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 * @noinspection PhpUndefinedFunctionInspection
 	 */
-	public function find (array $credentials, string $type = self::TYPE_AND) {
+	public function find (array $aa_credentials, string $as_type = self::TYPE_AND) {
 		$lx_url = $this->_config['url'] ?? NULL;
 		if (is_callable($lx_url)) {
-			$lx_url = $lx_url($credentials);
+			$lx_url = $lx_url($aa_credentials);
 		}
 
 		if (empty($lx_url)) {
@@ -54,7 +54,7 @@ class CurlResolver implements \Authentication\Identifier\Resolver\ResolverInterf
 			case self::TYPE_POST:
 				$lx_requestData = $this->_config['requestData'];
 				if (is_callable($lx_requestData)) {
-					$lx_requestData = $lx_requestData($credentials);
+					$lx_requestData = $lx_requestData($aa_credentials);
 				}
 
 				/** @noinspection PhpUndefinedConstantInspection */

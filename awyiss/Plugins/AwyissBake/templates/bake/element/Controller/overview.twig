@@ -9,7 +9,7 @@
 	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
 	public function overview () {
-		$this->Access->ensureOne('create', 'update', 'delete');
+		$this->Access->ensure('read');
 
 {% set belongsTo = Bake.aliasExtractor(modelObj, 'BelongsTo') %}
 {% if belongsTo %}

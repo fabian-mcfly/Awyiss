@@ -5,6 +5,8 @@ namespace Awyiss\Controller\Backend;
 
 
 use Awyiss\Controller\BackendController as Controller;
+use Cake\Datasource\Exception\InvalidPrimaryKeyException;
+use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Utility\Inflector;
 
 
@@ -13,22 +15,17 @@ use Cake\Utility\Inflector;
  *
  * @property \Awyiss\Model\Table\ConfigurationTable $Configuration
  *
- * TODO: check access based on chosen scope.
  * TODO: modify inputs in add/edit, based on option type
  */
 class ConfigurationController extends Controller {
-	protected array $configScopes = [];
+	protected array $configScopes;
 	protected string $selectedScopeSessionIdentifier = '';
 
 
 	public function initialize (): void {
 		parent::initialize();
 
-		foreach (\Awyiss\Configuration\ConfigOptionsProvider::getConfigurationFiles() AS $ls_scope => $ls_className) {
-			if ($ls_scope === 'system' || $this->Access->scopeIsAccessible($ls_scope, NULL, 'configure')) {
-				$this->configScopes[ $ls_scope ] = $ls_className;
-			}
-		}
+		$this->configScopes = $this->Configuration->getScopes();
 
 		$this->selectedScopeSessionIdentifier = 'categories.' . ($this->request->getParam('lang') ?? 'global') . '.' . Inflector::underscore($this->getName()) . '.scope';
 
@@ -74,7 +71,7 @@ class ConfigurationController extends Controller {
 	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
 	public function overview () {
-		$this->Access->ensureOne('create', 'update', 'delete');
+		$this->Access->ensure('read');
 
 		if ($this->getOverviewWhere('scope') !== 'system') {
 			if (!$this->Access->scopeIsAccessible($this->getOverviewWhere('scope'), NULL, 'configure')) {
@@ -134,6 +131,7 @@ class ConfigurationController extends Controller {
 				}
 
 				$this->Flash->error(__('::add_failed'));
+				$this->Flash->error(implode('<br>' . PHP_EOL, $lo_configuration->getError('_general')));
 			}
 		}
 		else {
@@ -141,6 +139,7 @@ class ConfigurationController extends Controller {
 			$lo_configuration->scope = $lo_session->read($this->selectedScopeSessionIdentifier);
 		}
 
+		/** @noinspection DuplicatedCode */
 		if ($lo_configuration->scope !== 'system') {
 			if (!$this->Access->scopeIsAccessible($lo_configuration->scope, NULL, 'configure')) {
 				$this->Flash->error(__('::scope_not_accessible'));
@@ -172,10 +171,12 @@ class ConfigurationController extends Controller {
 	public function edit () {
 		$this->Access->ensure('update');
 
-		$li_id = $this->request->getParam('id');
-		$lo_configuration = $this->Configuration->find()->where(['id' => $li_id])->first();
-
-		if ( ! $lo_configuration) {
+		try {
+			$li_id = $this->request->getParam('id');
+			/** @var \Awyiss\Model\Entity\Configuration $lo_configuration */
+			$lo_configuration = $this->Configuration->get($li_id);
+		}
+		catch (RecordNotFoundException|InvalidPrimaryKeyException) {
 			$this->Flash->error(__('::record_not_found'));
 
 			return $this->redirect(['action' => 'overview']);
@@ -200,9 +201,11 @@ class ConfigurationController extends Controller {
 				}
 
 				$this->Flash->error(__('::edit_failed'));
+				$this->Flash->error(implode('<br>' . PHP_EOL, $lo_configuration->getError('_general')));
 			}
 		}
 
+		/** @noinspection DuplicatedCode */
 		if ($lo_configuration->scope !== 'system') {
 			if (!$this->Access->scopeIsAccessible($lo_configuration->scope, NULL, 'configure')) {
 				$this->Flash->error(__('::scope_not_accessible'));
@@ -234,12 +237,14 @@ class ConfigurationController extends Controller {
 		$this->Access->ensure('delete');
 
 		$this->request->allowMethod(['get', 'delete']);
-		$li_id = $this->request->getParam('id');
-		$lo_configuration = $this->Configuration->find()->where(['id' => $li_id])->first();
 
-		if ( ! $lo_configuration) {
+		try {
+			$li_id = $this->request->getParam('id');
+			/** @var \Awyiss\Model\Entity\Configuration $lo_configuration */
+			$lo_configuration = $this->Configuration->get($li_id);
+		}
+		catch (RecordNotFoundException|InvalidPrimaryKeyException) {
 			$this->Flash->error(__('::record_not_found'));
-
 			return $this->redirect(['action' => 'overview']);
 		}
 

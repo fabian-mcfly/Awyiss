@@ -5,13 +5,13 @@ namespace AwyissBake\Command\Bake;
 
 
 use Bake\Command\ControllerCommand;
-use Bake\Command\ModelCommand;
+#use Bake\Command\ModelCommand;
 
 
 /**
  * Command for `bake all`
  *
- * This one overwrites the default bake AllCommand to use both
+ * This one overwrites the default bake AllCommand to use
  * 		\AwyissBake\Command\Bake\TemplateCommand
  *
  * TODO: Bake Policy

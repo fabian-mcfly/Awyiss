@@ -56,7 +56,9 @@ class LinkSelectWidget implements \Cake\View\Widget\WidgetInterface {
 
 		$ls_selectedOption = '-';
 		if (array_key_exists($la_data['val'], $la_data['options'])) {
-			$ls_selectedOption = $la_data['escape'] ? h($la_data['options'][ $la_data['val'] ]) : $la_data['options'][ $la_data['val'] ];
+			$lx_selectedOption = $la_data['options'][ $la_data['val'] ];
+			if (is_array($lx_selectedOption) && isset($lx_selectedOption['title'])) $lx_selectedOption = $lx_selectedOption['title'];
+			$ls_selectedOption = $la_data['escape'] ? h($lx_selectedOption) : $lx_selectedOption;
 		}
 		elseif ($la_data['includeUnassigned'] && $this->isSelected((string) $la_data['unassignedKey'], $la_data['val'])) {
 			$ls_selectedOption = $la_data['unassignedLabel'];
@@ -69,7 +71,7 @@ class LinkSelectWidget implements \Cake\View\Widget\WidgetInterface {
 			$la_data['templateVars']['label'] = $la_data['label'];
 		}
 
-		unset($la_data['name'], $la_data['options'], $la_data['escape'], $la_data['disabled'], $la_data['label'], $la_data['val'], $la_data['baseUrl'],
+		unset($la_data['name'], $la_data['options'], $la_data['escape'], $la_data['disabled'], $la_data['label'], $la_data['val'],
 			$la_data['aggregationLabel'], $la_data['aggregationKey'], $la_data['unassignedLabel'], $la_data['unassignedKey']);
 		if (isset($la_data['disabled']) && is_array($la_data['disabled'])) {
 			unset($la_data['disabled']);
@@ -150,7 +152,6 @@ class LinkSelectWidget implements \Cake\View\Widget\WidgetInterface {
 			'class' => 'Item',
 			'templateVars' => [
 				'name' => $la_data['name'],
-				'baseUrl' => $la_data['baseUrl'],
 			]
 		];
 
@@ -162,7 +163,7 @@ class LinkSelectWidget implements \Cake\View\Widget\WidgetInterface {
 		return $this->templates->format('unassignedOption', [
 			'attrs' => $this->templates->formatAttributes($la_attributes),
 			'templateVars' => $la_attributes['templateVars'],
-			'text' => $lx_escape ? h($la_data['unassignedLabel']) : $la_data['unassignedLabel'],
+			'title' => $lx_escape ? h($la_data['unassignedLabel']) : $la_data['unassignedLabel'],
 			'value' => $lx_escape ? h($la_data['unassignedKey']) : $la_data['unassignedKey'],
 		]);
 	}
@@ -177,7 +178,6 @@ class LinkSelectWidget implements \Cake\View\Widget\WidgetInterface {
 			'class' => 'Item',
 			'templateVars' => [
 				'name' => $la_data['name'],
-				'baseUrl' => $la_data['baseUrl'],
 			]
 		];
 
@@ -189,7 +189,7 @@ class LinkSelectWidget implements \Cake\View\Widget\WidgetInterface {
 		return $this->templates->format('aggregationOption', [
 			'attrs' => $this->templates->formatAttributes($la_attributes),
 			'templateVars' => $la_attributes['templateVars'],
-			'text' => $lx_escape ? h($la_data['aggregationLabel']) : $la_data['aggregationLabel'],
+			'title' => $lx_escape ? h($la_data['aggregationLabel']) : $la_data['aggregationLabel'],
 			'value' => $lx_escape ? h($la_data['aggregationKey']) : $la_data['aggregationKey'],
 		]);
 	}
@@ -218,20 +218,25 @@ class LinkSelectWidget implements \Cake\View\Widget\WidgetInterface {
 			// Basic options
 			$la_optionAttributes = [
 				'templateVars' => [],
-				'text' => $lx_value,
+				'title' => $lx_value,
 				'value' => $lx_key,
 			];
 
-			if (is_array($lx_value) && isset($lx_value['text'], $lx_value['value'])) {
+			if (is_array($lx_value) && isset($lx_value['title'])) {
 				$la_optionAttributes = $lx_value;
-				$lx_key = $la_optionAttributes['value'];
+
+				if (isset($lx_value['value'])) {
+					$lx_key = $la_optionAttributes['value'];
+				}
+				else {
+					$la_optionAttributes['value'] = $lx_key;
+				}
 			}
 
 			if (!isset($la_optionAttributes['templateVars'])) {
 				$la_optionAttributes['templateVars'] = [];
 			}
 			$la_optionAttributes['templateVars']['name'] = $la_data['name'];
-			$la_optionAttributes['templateVars']['baseUrl'] = $la_data['baseUrl'];
 
 			$la_optionAttributes = $this->templates->addClass($la_optionAttributes, 'Item');
 			if ($this->isSelected((string) $lx_key, $lx_selected)) {
@@ -245,10 +250,11 @@ class LinkSelectWidget implements \Cake\View\Widget\WidgetInterface {
 			}
 
 			$la_options[] = $this->templates->format($ls_template, [
-				'attrs' => $this->templates->formatAttributes($la_optionAttributes, ['text', 'value']),
+				'attrs' => $this->templates->formatAttributes($la_optionAttributes, ['title', 'value', 'link']),
 				'templateVars' => $la_optionAttributes['templateVars'],
-				'text' => $lx_escape ? h($la_optionAttributes['text']) : $la_optionAttributes['text'],
+				'title' => $lx_escape ? h($la_optionAttributes['title']) : $la_optionAttributes['title'],
 				'value' => $lx_escape ? h($la_optionAttributes['value']) : $la_optionAttributes['value'],
+				'link' => $la_optionAttributes['link'],
 			]);
 		}
 

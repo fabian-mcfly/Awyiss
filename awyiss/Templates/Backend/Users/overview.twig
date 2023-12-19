@@ -8,7 +8,7 @@
 
 	<h1>{{ __('::headline_overview') }}</h1>
 
-	{#{% if helper_Access_scopeIsAccessible('usergroups', NULL, ['create', 'update', 'delete']) %}#}
+	{#{% if helper_Access_scopeIsAccessible('usergroups', NULL, ['read']) %}#}
 		{{ helper_Categories_filter('usergroup', [], {includeUnassigned: TRUE}) }}
 	{#{% endif %}#}
 

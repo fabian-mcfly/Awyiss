@@ -6,7 +6,8 @@ namespace Awyiss\Controller\Backend;
 
 use Awyiss\Authorization\Policy\AnonymousPolicy;
 use Awyiss\Controller\BackendController as Controller;
-
+use Cake\Datasource\Exception\InvalidPrimaryKeyException;
+use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Datasource\FactoryLocator;
 use Cake\Datasource\ResultSetInterface;
 use Cake\Collection\Iterator\TreeIterator;
@@ -26,7 +27,7 @@ class PagesController extends Controller {
 	protected ResultSetInterface $pageTemplates;
 	protected TreeIterator $threadedPages;
 	/*protected array $overviewWhere = [
-		'page_roles_id' => static::$pageRoleId,
+		'page_role_id' => static::$pageRoleId,
 	];*/
 
 
@@ -53,7 +54,16 @@ class PagesController extends Controller {
 	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
 	public function overview () {
-		$this->Access->ensureOne('create', 'update', 'delete');
+		/*$migrations = new \Migrations\Migrations();
+
+		// Will return an array of all migrations and their status
+		$status = $migrations->status(['source' => '../../' . CUSTOM_DIR . '/config/MyMigrationsFolder']);
+		dd($status);
+
+		$lo_migration = new \Migrations\Table('_attributes_pages');
+		dd($lo_migration);*/
+
+		$this->Access->ensure('read');
 
 		$lo_pages = $this->Pages->find('withAttributes')->where($this->getOverviewWhere());
 		$lo_pages = $this->Pages->listNested($lo_pages);
@@ -81,11 +91,11 @@ class PagesController extends Controller {
 
 		$lo_page = $this->Pages->newDefaultEntity([
 			'languages_shortcode' => $this->getOverviewWhere('languages_shortcode'),
-			'page_roles_id' => $this->getPageRoleId(),
+			'page_role_id' => $this->getPageRoleId(),
 		]);
 
 		if ($this->request->is('post')) {
-			$this->Pages->patchEntity($lo_page, ['page_roles_id' => $this->getPageRoleId()] + $this->request->getData());
+			$this->Pages->patchEntity($lo_page, ['page_role_id' => $this->getPageRoleId()] + $this->request->getData());
 
 			if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
 				if ($this->Pages->save($lo_page)) {
@@ -99,6 +109,7 @@ class PagesController extends Controller {
 				}
 
 				$this->Flash->error(__('::add_failed'));
+				$this->Flash->error(implode('<br>' . PHP_EOL, $lo_page->getError('_general')));
 			}
 		}
 
@@ -125,16 +136,19 @@ class PagesController extends Controller {
 	public function edit () {
 		$this->Access->ensure('update');
 
-		$li_id = $this->request->getParam('id');
-		$lo_page = $this->Pages->find()->where(['id' => $li_id])->first();
-
-		if (!$lo_page) {
+		try {
+			$li_id = $this->request->getParam('id');
+			/** @var \Awyiss\Model\Entity\Page $lo_page */
+			$lo_page = $this->Pages->get($li_id);
+		}
+		catch (RecordNotFoundException|InvalidPrimaryKeyException) {
 			$this->Flash->error(__('::record_not_found'));
+
 			return $this->redirect(['action' => 'overview']);
 		}
 
 		if ($this->request->is(['patch', 'post', 'put'])) {
-			$this->Pages->patchEntity($lo_page, ['page_roles_id' => $this->getPageRoleId()] + $this->request->getData());
+			$this->Pages->patchEntity($lo_page, ['page_role_id' => $this->getPageRoleId()] + $this->request->getData());
 
 			if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
 				if ($this->Pages->save($lo_page)) {
@@ -148,6 +162,7 @@ class PagesController extends Controller {
 				}
 
 				$this->Flash->error(__('::edit_failed'));
+				$this->Flash->error(implode('<br>' . PHP_EOL, $lo_page->getError('_general')));
 			}
 		}
 
@@ -175,10 +190,13 @@ class PagesController extends Controller {
 		$this->Access->ensure('delete');
 
 		$this->request->allowMethod(['get', 'delete']);
-		$li_id = $this->request->getParam('id');
-		$lo_page = $this->Pages->find()->where(['id' => $li_id])->first();
 
-		if (!$lo_page) {
+		try {
+			$li_id = $this->request->getParam('id');
+			/** @var \Awyiss\Model\Entity\Page $lo_page */
+			$lo_page = $this->Pages->get($li_id);
+		}
+		catch (RecordNotFoundException|InvalidPrimaryKeyException) {
 			$this->Flash->error(__('::record_not_found'));
 			return $this->redirect(['action' => 'overview']);
 		}
@@ -197,7 +215,7 @@ class PagesController extends Controller {
 	public function getPageTemplates (): ResultSetInterface {
 		if (!isset($this->pageTemplates)) {
 			$this->pageTemplates = $this->Pages->PageTemplates->find('list')->where([
-				'page_roles_id' => $this->getPageRoleId(),
+				'page_role_id' => $this->getPageRoleId(),
 			])->all();
 		}
 

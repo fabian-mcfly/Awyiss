@@ -5,8 +5,8 @@ namespace FoobarCustomer\Event\Backend;
 
 
 class PageTemplatesListener extends \Awyiss\Event\Backend\PageTemplatesListener  {
-	public function implementedEvents (): array {
+	/*public function implementedEvents (): array {
 		dd('foo');
 		return [];
-	}
+	}*/
 }

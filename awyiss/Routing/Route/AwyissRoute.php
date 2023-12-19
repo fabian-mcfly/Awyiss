@@ -72,6 +72,8 @@ class AwyissRoute extends \Cake\Routing\Route\DashedRoute {
 				if (str_contains($ls_part, ':')) {
 					$lb_foundParams = TRUE;
 					[$ls_key, $ls_value] = explode(':', $ls_part);
+					$ls_value = Inflector::underscore($ls_value);
+
 					$la_route[ $ls_key ] = $ls_value;
 
 					$la_pass[ $ls_key = Inflector::dasherize($ls_key) ] = $ls_value;
@@ -109,6 +111,7 @@ class AwyissRoute extends \Cake\Routing\Route\DashedRoute {
 		/*if (isset($this->options['pass'])) {
 		}*/
 
+		$la_route['_route'] = $this;
 		$la_route['_matchedRoute'] = $this->template;
 		if (count($this->middleware) > 0) {
 			$la_route['_middleware'] = $this->middleware;
@@ -297,12 +300,13 @@ class AwyissRoute extends \Cake\Routing\Route\DashedRoute {
 				return NULL;
 			}
 
-			return rawurlencode((string) $ax_key) . ':' . rawurlencode((string) $ax_value);
+			return rawurlencode((string) $ax_key) . ':' . rawurlencode(Inflector::dasherize((string) $ax_value));
 		}, $aa_pass, array_keys($aa_pass)));
 		$ls_out = $this->template;
 
 		$la_search = $la_replace = [];
 		foreach ($this->keys as $ls_key) {
+
 			if ($ls_key == 'params') {
 				continue;
 			}
@@ -333,7 +337,6 @@ class AwyissRoute extends \Cake\Routing\Route\DashedRoute {
 				$la_replace[] = $ls_pass;
 			}
 		}
-
 
 		$ls_out = str_replace($la_search, $la_replace, $ls_out);
 

@@ -23,6 +23,7 @@ class UsergroupsTable extends \Awyiss\Model\Table {
 			'fields' => ['title'],
 		],
 	];
+	public const TABLE = 'usergroups';
 
 
 	/**
@@ -31,7 +32,7 @@ class UsergroupsTable extends \Awyiss\Model\Table {
 	public function initialize (array $aa_config): void {
 		parent::initialize($aa_config);
 
-		$this->setTable('usergroups');
+		$this->setTable(static::TABLE);
 		$this->setPrimaryKey('id');
 
 		$this->hasMany('UsergroupPermissions')->setSaveStrategy('replace')->setDependent(TRUE);

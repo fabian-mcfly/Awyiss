@@ -25,7 +25,7 @@ class ContentsController extends Controller {
 	public array $categorize = [
 		'associationName' => 'Pages',
 		'enabled' => TRUE,
-		'name' => 'pages_id',
+		'name' => 'page_id',
 		'paginate' => FALSE,
 		'threaded' => TRUE,
 	];
@@ -34,8 +34,8 @@ class ContentsController extends Controller {
 	protected CollectionInterface $threadedContents;
 
 
-	public function initialize (): void {
-		parent::initialize();
+	//public function initialize (): void {
+		//parent::initialize();
 
 		/*$ls_action = $this->getRequest()->getParam('action');
 		if (in_array($ls_action, ['overview', 'add'])) {
@@ -55,7 +55,7 @@ class ContentsController extends Controller {
 			}
 			else {
 				$this->Categories->setConfig('queryConditions', [
-					'page_roles_id' => $this->page->page_roles_id,
+					'page_role_id' => $this->page->page_role_id,
 				]);
 			}
 		}
@@ -76,10 +76,10 @@ class ContentsController extends Controller {
 			$this->page = $lo_content->page;
 
 			$this->Categories->setConfig('queryConditions', [
-				'page_roles_id' => $this->page->page_roles_id,
+				'page_role_id' => $this->page->page_role_id,
 			]);
 		}*/
-	}
+	//}
 
 
 	/**
@@ -94,9 +94,14 @@ class ContentsController extends Controller {
 	public function overview () {
 		$this->ensurePageAccess($this->request->getParam('pages-id'));
 
-		$this->Access->ensureOne('create', 'update', 'delete');
+		$this->Access->ensure('read');
 
 		$lo_contents = $this->Categories->filterQuery($this->Contents->find('withAttributes')->where($this->getOverviewWhere()));
+		$lo_content = $lo_contents->where(['id' => 4360])->first();
+
+		$lo_content->attributes->jason_test = 'foobar';
+		dd($lo_content);
+
 		$la_contents = $this->Contents->nestedByTemplatePosition($lo_contents)->toArray();
 
 		$this->set([
@@ -120,13 +125,13 @@ class ContentsController extends Controller {
 		$this->Access->ensure('create');
 
 		$lo_content = $this->Contents->newDefaultEntity([
-			'pages_id' => $this->request->getParam('pages-id'),
+			'page_id' => $this->request->getParam('page-id'),
 		]);
 
 		if ($this->request->is('post')) {
 			$this->Contents->patchEntity($lo_content, $this->request->getData());
 
-			$this->ensurePageAccess($lo_content->pages_id);
+			$this->ensurePageAccess($lo_content->page_id);
 			$this->ensurePossibleTemplatePosition($lo_content);
 			//$this->Categories->ensurePossibleCategorySelection($lo_content);
 
@@ -135,17 +140,18 @@ class ContentsController extends Controller {
 					$this->Flash->success(__('::add_succeeded'));
 
 					if ($this->request->getData('submit') == 'submit_close') {
-						return $this->redirect(['action' => 'overview', 'pages_id' => $lo_content->pages_id]);
+						return $this->redirect(['action' => 'overview', 'page_id' => $lo_content->page_id]);
 					}
 
 					return $this->redirect(['action' => 'edit', 'id' => $lo_content->id]);
 				}
 
 				$this->Flash->error(__('::add_failed'));
+				$this->Flash->error(implode('<br>' . PHP_EOL, $lo_content->getError('_general')));
 			}
 		}
 		else {
-			$this->ensurePageAccess($lo_content->pages_id);
+			$this->ensurePageAccess($lo_content->page_id);
 			$this->ensurePossibleTemplatePosition($lo_content);
 			//$this->Categories->ensurePossibleCategorySelection($lo_content);
 		}
@@ -178,13 +184,15 @@ class ContentsController extends Controller {
 		}
 		catch (RecordNotFoundException|InvalidPrimaryKeyException) {
 			$this->Flash->error(__('::record_not_found'));
+
 			return $this->redirect(['action' => 'overview']);
 		}
+
 
 		if ($this->request->is(['patch', 'post', 'put'])) {
 			$this->Contents->patchEntity($lo_content, $this->request->getData());
 
-			$this->ensurePageAccess($lo_content->pages_id);
+			$this->ensurePageAccess($lo_content->page_id);
 			$this->ensurePossibleTemplatePosition($lo_content);
 			//$this->Categories->ensurePossibleCategorySelection($lo_content);
 
@@ -193,13 +201,14 @@ class ContentsController extends Controller {
 					$this->Flash->success(__('::edit_succeeded'));
 
 					if ($this->request->getData('submit') == 'submit_close') {
-						return $this->redirect(['action' => 'overview', 'pages_id' => $lo_content->pages_id]);
+						return $this->redirect(['action' => 'overview', 'page_id' => $lo_content->page_id]);
 					}
 
 					return $this->redirect(['action' => 'edit', 'id' => $lo_content->id]);
 				}
 
 				$this->Flash->error(__('::edit_failed'));
+				$this->Flash->error(implode('<br>' . PHP_EOL, $lo_content->getError('_general')));
 			}
 			else {
 				if ($this->Contents->getSystemOrderRelatedColumns($lo_content)) {
@@ -211,7 +220,7 @@ class ContentsController extends Controller {
 			}
 		}
 		else {
-			$this->ensurePageAccess($lo_content->pages_id);
+			$this->ensurePageAccess($lo_content->page_id);
 			$this->ensurePossibleTemplatePosition($lo_content);
 			//$this->Categories->ensurePossibleCategorySelection($lo_content);
 		}
@@ -241,6 +250,7 @@ class ContentsController extends Controller {
 
 		try {
 			$li_id = $this->request->getParam('id');
+			/** @var Content $lo_content */
 			$lo_content = $this->Contents->get($li_id);
 		}
 		catch (RecordNotFoundException|InvalidPrimaryKeyException) {
@@ -271,7 +281,7 @@ class ContentsController extends Controller {
 	public function getThreadedContents (Content $ao_content): CollectionInterface {
 		if (!isset($this->threadedContents)) {
 			$lo_query = $this->Contents->find('withAttributes')->where([
-				'pages_id' => $this->page->id,
+				'page_id' => $this->page->id,
 				'template_position' => $ao_content->template_position,
 			]);
 
@@ -338,11 +348,11 @@ class ContentsController extends Controller {
 			]);
 
 			$this->Categories->setConfig('queryConditions', [
-				'page_roles_id' => $this->page->page_roles_id,
+				'page_role_id' => $this->page->page_role_id,
 			]);
 
 			$ls_scope = \Cake\Utility\Inflector::pluralize($this->page->page_role->identifier);
-			$this->Access->forScope($ls_scope)->ensureOne('create', 'update', 'delete');
+			$this->Access->forScope($ls_scope)->ensureOne('read');
 		}
 		catch (RecordNotFoundException|InvalidPrimaryKeyException) {
 			$this->Flash->error(__('::page_not_found'));

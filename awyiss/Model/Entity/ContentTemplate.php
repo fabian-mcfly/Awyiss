@@ -13,8 +13,8 @@ use Cake\ORM\Behavior\Translate\TranslateTrait;
  * @property int $id
  * @property string $title
  * @property string $filename
- * @property array $available_elements
- * @property array $assigned_template_positions
+ * @property array|null $available_elements
+ * @property array|null $assigned_template_positions
  * @property int $system_order
  * @property bool $active
  * @property bool $deleted
@@ -24,7 +24,6 @@ use Cake\ORM\Behavior\Translate\TranslateTrait;
  * @property \Cake\I18n\FrozenTime|null $changed_on
  * @property int|null $deleted_by
  * @property \Cake\I18n\FrozenTime|null $deleted_on
- * @property \Awyiss\Model\Entity\Attribute|null $attributes
  */
 class ContentTemplate extends \Awyiss\Model\Entity {
 	use TranslateTrait;
@@ -38,22 +37,23 @@ class ContentTemplate extends \Awyiss\Model\Entity {
 		'filename' => TRUE,
 		'available_elements' => TRUE,
 		'assigned_template_positions' => TRUE,
-		'active' => TRUE,
 		'system_order' => TRUE,
+		'active' => TRUE,
 	];
 
 
 	/**
 	 * @noinspection PhpUnused
 	 */
-	protected function _getAvailableElements (?array $aa_availableElements = NULL): ?array {
+	protected function _setAvailableElements (?array $aa_availableElements = NULL): ?array {
 		if (empty($aa_availableElements)) {
-			return NULL;
+			return [];
 		}
 
 		foreach ($aa_availableElements AS &$la_element) {
 			$la_element['required'] = (bool)$la_element['required'];
 		}
+		unset($la_element);
 
 		return $aa_availableElements;
 	}
@@ -62,25 +62,25 @@ class ContentTemplate extends \Awyiss\Model\Entity {
 	/**
 	 * @noinspection PhpUnused
 	 */
-	protected function _setAvailableElements (mixed $ax_value): array {
+	/*protected function _setAvailableElements (mixed $ax_value): array {
 		if (empty($ax_value)) {
 			return [];
 		}
 
 		return is_array($ax_value) ? $ax_value : [$ax_value];
-	}
+	}*/
 
 
 	/**
 	 * @noinspection PhpUnused
 	 */
-	protected function _setAssignedTemplatePositions (mixed $ax_value): array {
+	/*protected function _setAssignedTemplatePositions (mixed $ax_value): array {
 		if (empty($ax_value)) {
 			return [];
 		}
 
 		return is_array($ax_value) ? $ax_value : [$ax_value];
-	}
+	}*/
 
 
 

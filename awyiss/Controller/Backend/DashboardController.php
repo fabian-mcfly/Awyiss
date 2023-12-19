@@ -5,6 +5,7 @@ namespace Awyiss\Controller\Backend;
 
 
 use Awyiss\Controller\BackendController as Controller;
+use Cake\Core\PluginApplicationInterface;
 
 
 class DashboardController extends Controller {

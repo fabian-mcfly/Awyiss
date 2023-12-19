@@ -1,7 +1,8 @@
 {% set fields = Bake.filterFields(fields, schema, modelObject) %}
 <div class="{{ pluralVar[:1]|upper ~ pluralVar[1:] }} Form {{ action|capitalize }}">
-	{% verbatim %}{{ helper_Form_create(ao_{% endverbatim %}{{ singularVar }}{% verbatim %}, {method: 'post', idPrefix: '{% endverbatim %}{{ singularVar }}{% verbatim %}'}) }}
-	{% endverbatim %}
+	{% verbatim %}{% if helper_Access_isAccessible('create') %}
+		{{ helper_Html_link(__('::create'), {action: '{% endverbatim %}{{ action }}{% verbatim %}'}, {class: 'Button'}) }}
+	{% endif %}{% endverbatim %}
 	<h1>{% verbatim %}{{ __('::headline_{% endverbatim %}{{ action }}{% verbatim %}') }}{% endverbatim %}</h1>
 	<fieldset>
 		<legend>{% verbatim %}{{ __('::fieldset_general') }}{% endverbatim %}</legend>

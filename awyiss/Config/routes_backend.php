@@ -30,10 +30,10 @@ $ao_routes->prefix('Backend', function(RouteBuilder $ao_routeBuilder) {
 		'action' => '[a-zA-Z0-9-_]+',
 	])->setPersist(['lang', 'controller', 'action']);
 
-	/*$ao_routeBuilder->connect('/{lang}/{controller}/*', ['controller' => 'Dashboard', 'action' => 'overview'])->setPatterns([
+	$ao_routeBuilder->connect('/{lang}/{controller}/*', ['controller' => 'dashboard', 'action' => 'overview'])->setPatterns([
 		'lang' => '[a-zA-Z]{2}',
 		'controller' => '[a-zA-Z0-9-_]+',
-	])->setPersist(['lang', 'controller']);*/
+	])->setPersist(['lang', 'controller']);
 
 	$ao_routeBuilder->connect('/{lang}/*', ['controller' => 'dashboard', 'action' => 'overview'])->setPatterns([
 		'lang' => '[a-zA-Z]{2}',

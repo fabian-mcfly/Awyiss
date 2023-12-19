@@ -29,8 +29,8 @@
 						<td>{{ lo_page.duplicate_of }}</td>
 						<td>{{ lo_page.active }}</td>
 						<td class="actions">
-							{% if helper_Access_scopeIsAccessible('Contents', NULL, ['create', 'update', 'delete']) %}
-								{{ helper_Html_link(__('::view_contents'), {controller: 'contents', action: 'overview', pages_id: lo_page.id}) }}
+							{% if helper_Access_scopeIsAccessible('Contents', NULL, ['read']) %}
+								{{ helper_Html_link(__('::view_contents'), {controller: 'contents', action: 'overview', page_id: lo_page.id}) }}
 							{% endif %}
 
 							{{ helper_Access_setPolicyClass(policyClass) }}

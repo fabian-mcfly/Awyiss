@@ -4,11 +4,10 @@
 namespace AwyissBake\Command\Bake;
 
 
-use Awyiss\Core\App;
 use Cake\Console\Arguments;
-use Cake\Console\ConsoleIo;
+//use Cake\Console\ConsoleIo;
 use Cake\Core\Configure;
-use Cake\Utility\Inflector;
+//use Cake\Utility\Inflector;
 use InvalidArgumentException;
 
 
@@ -18,8 +17,6 @@ use InvalidArgumentException;
 class TemplateCommand extends \Bake\Command\TemplateCommand {
 	/**
 	 * @inheritDoc
-	 *
-	 * @var string[]
 	 */
 	public $scaffoldActions = ['overview', 'add', 'edit'];
 
@@ -27,56 +24,26 @@ class TemplateCommand extends \Bake\Command\TemplateCommand {
 	/**
 	 * @inheritDoc
 	 */
-	public function initialize(): void {
-		//$la_paths = App::path('templates');
-		//$this->path = 'FOOBAR';
-	}
+	public $ext = 'twig';
 
 
 	/**
-	 * Get a list of actions that can / should have view templates baked for them.
-	 *
-	 * @return string[] Array of action names that should be baked
+	 * @inheritDoc
 	 */
-	/*protected function _methodsToBake (): array {
-		$ls_base = Configure::read('App.namespace');
-
-		$la_methods = [];
-		if (class_exists($this->controllerClass)) {
-			$la_methods = array_diff(
-				array_map('Cake\Utility\Inflector::underscore', get_class_methods($this->controllerClass)),
-				array_map('Cake\Utility\Inflector::underscore', get_class_methods($ls_base . '\Controller\AppController'))
-			);
-		}
-
-		if (empty($la_methods)) {
-			$la_methods = $this->scaffoldActions;
-		}
-
-		foreach ($la_methods as $i => $ls_method) {
-			if ($ls_method[0] === '_') {
-				unset($la_methods[ $i ]);
-			}
-		}
-
-		return $la_methods;
-	}*/
+	public function initialize (): void {
+		//Do not call parent's initialize
+	}
 
 
 	/**
 	 * @inheritDoc
 	 *
-	 *
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function getTemplatePath (Arguments $ao_args, ?string $as_container = null): string {
-		$la_paths = (array)Configure::read('App.paths.templates');
+	public function getTemplatePath (Arguments $ao_args, ?string $as_container = NULL): string {
+		$la_paths = (array) Configure::read('App.paths.templates');
 		if (empty($la_paths)) {
-			throw new InvalidArgumentException(
-				'Could not read template paths. ' .
-				'Ensure `App.paths.templates` is defined in your application configuration.'
-			);
+			throw new InvalidArgumentException('Could not read template paths. ' . 'Ensure `App.paths.templates` is defined in your application configuration.');
 		}
 
 		$ls_path = reset($la_paths);
@@ -97,7 +64,7 @@ class TemplateCommand extends \Bake\Command\TemplateCommand {
 			$ls_path .= $as_container . DS;
 		}
 
-		if (!$lb_pathFound && $ls_folder) {
+		if ( ! $lb_pathFound && $ls_folder) {
 			$ls_path = $ls_folder . DS;
 		}
 
@@ -114,16 +81,10 @@ class TemplateCommand extends \Bake\Command\TemplateCommand {
 
 
 	/**
-	 * @inheritDoc
-	 *
 	 * This variation is required so the bake command outputs a .twig template file
 	 * instead of the default .php extension
-	 *
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function bake (
-		Arguments $ao_args, ConsoleIo $ao_io, string $as_template, $ax_content = '', ?string $as_outputFile = NULL
-	): void {
+	/*public function bake (Arguments $ao_args, ConsoleIo $ao_io, string $as_template, $ax_content = '', ?string $as_outputFile = NULL): void {
 		$ls_outputFile = $as_outputFile;
 		if ($ls_outputFile === NULL) {
 			$ls_outputFile = $as_template;
@@ -145,7 +106,7 @@ class TemplateCommand extends \Bake\Command\TemplateCommand {
 
 		$ao_io->out("\n" . sprintf('Baking `%s` view template file...', $ls_outputFile), 1, ConsoleIo::QUIET);
 		$ao_io->createFile($ls_filename, $lx_content, $ao_args->getOption('force'));
-	}
+	}*/
 
 
 	/**
@@ -155,7 +116,7 @@ class TemplateCommand extends \Bake\Command\TemplateCommand {
 		$lo_parser = parent::buildOptionParser($ao_parser);
 
 		$lo_parser->addOption('folder', [
-			'help' => 'The folder to save the views in. Can be either a custom path or an item set in config `App.paths.templates`. Defaults to the the first item in config `App.paths.templates`.',
+			'help' => 'The folder to save the views in. Can be either a custom path or they key of an item set in config `App.paths.templates`. Defaults to the the first item in config `App.paths.templates`.',
 		]);
 
 		return $lo_parser;

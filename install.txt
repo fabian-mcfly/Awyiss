@@ -1,0 +1,10 @@
+chmod +x bin/cake
+
+
+
+
+sudo crontab -e -u www-data
+*/10 * * * * cd /var/www/cms && bin/cake queue run -q >> /var/www/cms/logs/cron.log 2>&1
+
+
+

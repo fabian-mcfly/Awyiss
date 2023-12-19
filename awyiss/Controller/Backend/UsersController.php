@@ -5,6 +5,8 @@ namespace Awyiss\Controller\Backend;
 
 
 use Awyiss\Controller\BackendController as Controller;
+use Cake\Datasource\Exception\InvalidPrimaryKeyException;
+use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Event\EventInterface;
 
 //awyiss: $2y$10$B1IWA5ic5yFJCbxB7kvKD.hnfrA3M34LPtOH5y.zrK0b6PpAHj.Eu
@@ -50,10 +52,10 @@ class UsersController extends Controller {
 	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
 	public function overview () {
-		$this->Access->ensureOne('create', 'update', 'delete');
+		$this->Access->ensure('read');
 
 		/*$lo_users = $this->Users->find('withAttributes');
-		if ($this->Access->scopeIsAccessible($this->categorize['associationName'], NULL, ['create', 'update', 'delete'])) {
+		if ($this->Access->scopeIsAccessible($this->categorize['associationName'], NULL, ['read'])) {
 			$lo_users = $this->Categories->filterQuery($lo_users);
 		}*/
 
@@ -82,9 +84,13 @@ class UsersController extends Controller {
 		$lo_user = $this->Users->newDefaultEntity();
 		if ($this->request->is('post')) {
 
+			/*
+			 * Skip Access Check for Usergroups. Even without access to the scope "Usergroups"
+			 * the current user can modify the affiliation(s) of users
+			 */
 			$this->Users->Usergroups->skipAccessCheck();
 
-			$this->Users->patchEntity($lo_user, $this->request->getData(), ['associated' => ['Usergroups']]);
+			$this->Users->patchEntity($lo_user, $this->request->getData(), ['associated' => ['Usergroups' => ['onlyIds' => TRUE]]]);
 
 			if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
 				if ($this->Users->save($lo_user)) {
@@ -98,8 +104,10 @@ class UsersController extends Controller {
 				}
 
 				$this->Flash->error(__('::add_failed'));
+				$this->Flash->error(implode('<br>' . PHP_EOL, $lo_user->getError('_general')));
 			}
 
+			//Enable Access Check for Usergroups
 			$this->Users->Usergroups->skipAccessCheck(FALSE);
 		}
 
@@ -126,12 +134,18 @@ class UsersController extends Controller {
 	public function edit () {
 		$this->Access->ensure('update');
 
+		/*
+		 * Skip Access Check for Usergroups. Even without access to the scope "Usergroups"
+		 * the current user can modify the affiliation(s) of users
+		 */
 		$this->Users->Usergroups->skipAccessCheck();
 
-		$li_id = $this->request->getParam('id');
-		$lo_user = $this->Users->find()->contain(['Usergroups'])->where(['id' => $li_id])->first();
-
-		if ( ! $lo_user) {
+		try {
+			$li_id = $this->request->getParam('id');
+			/** @var \Awyiss\Model\Entity\User $lo_user */
+			$lo_user = $this->Users->get($li_id, ['contain' => ['Usergroups']]);
+		}
+		catch (RecordNotFoundException|InvalidPrimaryKeyException) {
 			$this->Flash->error(__('::record_not_found'));
 
 			return $this->redirect(['action' => 'overview']);
@@ -143,10 +157,8 @@ class UsersController extends Controller {
 				unset($la_data['password']);
 			}
 
-
-
 			$this->Users->patchEntity($lo_user, $la_data, [
-				'associated' => ['Usergroups']
+				'associated' => ['Usergroups' => ['onlyIds' => TRUE]]
 			]);
 
 			if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
@@ -161,6 +173,7 @@ class UsersController extends Controller {
 				}
 
 				$this->Flash->error(__('::edit_failed'));
+				$this->Flash->error(implode('<br>' . PHP_EOL, $lo_user->getError('_general')));
 			}
 		}
 
@@ -186,12 +199,14 @@ class UsersController extends Controller {
 		$this->Access->ensure('delete');
 
 		$this->request->allowMethod(['get', 'delete']);
-		$li_id = $this->request->getParam('id');
-		$lo_user = $this->Users->get($li_id);
 
-		if ( ! $lo_user) {
+		try {
+			$li_id = $this->request->getParam('id');
+			/** @var \Awyiss\Model\Entity\User $lo_user */
+			$lo_user = $this->Users->get($li_id);
+		}
+		catch (RecordNotFoundException|InvalidPrimaryKeyException) {
 			$this->Flash->error(__('::record_not_found'));
-
 			return $this->redirect(['action' => 'overview']);
 		}
 

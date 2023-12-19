@@ -5,6 +5,8 @@ namespace Awyiss\Controller\Backend;
 
 
 use Awyiss\Controller\BackendController as Controller;
+use Cake\Datasource\Exception\InvalidPrimaryKeyException;
+use Cake\Datasource\Exception\RecordNotFoundException;
 
 
 /**
@@ -29,7 +31,7 @@ class PageTemplatesController extends Controller {
 	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
 	public function overview () {
-		$this->Access->ensureOne('create', 'update', 'delete');
+		$this->Access->ensure('read');
 
 		//$lo_pageTemplates = $this->Categories->filterQuery($this->PageTemplates->find('withAttributes'));
 		$lo_pageTemplates = $this->PageTemplates->find('withAttributes')->where($this->getOverviewWhere());
@@ -71,6 +73,7 @@ class PageTemplatesController extends Controller {
 				}
 
 				$this->Flash->error(__('::add_failed'));
+				$this->Flash->error(implode('<br>' . PHP_EOL, $lo_pageTemplate->getError('_general')));
 			}
 			else {
 				$lo_pageTemplate->system_order = NULL;
@@ -98,10 +101,12 @@ class PageTemplatesController extends Controller {
 	public function edit () {
 		$this->Access->ensure('update');
 
-		$li_id = $this->request->getParam('id');
-		$lo_pageTemplate = $this->PageTemplates->find()->where(['id' => $li_id])->first();
-
-		if ( ! $lo_pageTemplate) {
+		try {
+			$li_id = $this->request->getParam('id');
+			/** @var \Awyiss\Model\Entity\PageTemplate $lo_pageTemplate */
+			$lo_pageTemplate = $this->PageTemplates->get($li_id);
+		}
+		catch (RecordNotFoundException|InvalidPrimaryKeyException) {
 			$this->Flash->error(__('::record_not_found'));
 
 			return $this->redirect(['action' => 'overview']);
@@ -124,6 +129,7 @@ class PageTemplatesController extends Controller {
 				}
 
 				$this->Flash->error(__('::edit_failed'));
+				$this->Flash->error(implode('<br>' . PHP_EOL, $lo_pageTemplate->getError('_general')));
 			}
 			else {
 				$lo_pageTemplate->system_order = NULL;
@@ -152,12 +158,14 @@ class PageTemplatesController extends Controller {
 		$this->Access->ensure('delete');
 
 		$this->request->allowMethod(['get', 'delete']);
-		$li_id = $this->request->getParam('id');
-		$lo_pageTemplate = $this->PageTemplates->get($li_id);
 
-		if ( ! $lo_pageTemplate) {
+		try {
+			$li_id = $this->request->getParam('id');
+			/** @var \Awyiss\Model\Entity\PageTemplate $lo_pageTemplate */
+			$lo_pageTemplate = $this->PageTemplates->get($li_id);
+		}
+		catch (RecordNotFoundException|InvalidPrimaryKeyException) {
 			$this->Flash->error(__('::record_not_found'));
-
 			return $this->redirect(['action' => 'overview']);
 		}
 

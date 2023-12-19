@@ -35,8 +35,29 @@ class DefaultValuesBehavior extends Behavior {
 		/** @var \Cake\Datasource\EntityInterface $lo_entity */
 		$lo_entity = new $ls_entityClass([], ['source' => $this->table()->getRegistryAlias()]);
 
+		$la_defaults = $this->table()->getSchema()->defaultValues();
+		$la_typeMap = $this->table()->getSchema()->typeMap();
+		foreach ($la_defaults AS $ls_column => &$lx_default) {
+			if (is_null($lx_default)) continue;
+
+			switch ($la_typeMap[ $ls_column ]) {
+				case 'boolean':
+					$lx_default = boolval($lx_default);
+					break;
+
+				case 'integer':
+					$lx_default = intval($lx_default);
+					break;
+
+				case 'json':
+					$lx_default = json_decode(trim($lx_default, '\''));
+					break;
+			}
+		}
+		unset($lx_default);
+
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		$la_defaults = $aa_additionalData + $lo_entity->defaultValues() + $this->table()->getSchema()->defaultValues();
+		$la_defaults = $aa_additionalData + $lo_entity->defaultValues() + $la_defaults;
 
 		$la_options = [
 			'fields' => array_keys($la_defaults),

@@ -9,7 +9,7 @@ namespace Awyiss\Model\Entity;
  *
  * @property int $id
  * @property string $type
- * @property string $model
+ * @property string $scope
  * @property array|null $data_old
  * @property array|null $data_new
  * @property array|null $diff
@@ -23,7 +23,7 @@ class Audit extends \Awyiss\Model\Entity {
 	 */
 	 protected $_accessible = [
 		'type' => TRUE,
-		'model' => TRUE,
+		'scope' => TRUE,
 		'parent_id' => TRUE,
 		'data_old' => TRUE,
 		'data_new' => TRUE,
@@ -40,13 +40,13 @@ class Audit extends \Awyiss\Model\Entity {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	protected function _setDataOld (mixed $ax_value): ?array {
+	/*protected function _setDataOld (mixed $ax_value): ?array {
 		if (empty($ax_value)) {
 			return NULL;
 		}
 
 		return is_array($ax_value) ? $ax_value : [$ax_value];
-	}
+	}*/
 
 
 	/**
@@ -56,13 +56,13 @@ class Audit extends \Awyiss\Model\Entity {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	protected function _setDataNew (mixed $ax_value): ?array {
+	/*protected function _setDataNew (mixed $ax_value): ?array {
 		if (empty($ax_value)) {
 			return NULL;
 		}
 
 		return is_array($ax_value) ? $ax_value : [$ax_value];
-	}
+	}*/
 
 
 	/**
@@ -72,11 +72,11 @@ class Audit extends \Awyiss\Model\Entity {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	protected function _setDiff (mixed $ax_value): ?array {
+	/*protected function _setDiff (mixed $ax_value): ?array {
 		if (empty($ax_value)) {
 			return NULL;
 		}
 
 		return is_array($ax_value) ? $ax_value : [$ax_value];
-	}
+	}*/
 }

@@ -7,12 +7,16 @@ namespace Awyiss\Model;
 use ArrayObject;
 use Awyiss\Authorization\AuthorizationServiceInterface;
 use Awyiss\Authorization\Policy\AnonymousPolicy;
+use Awyiss\Core\App;
 use Awyiss\Model\Behavior\AccessBehavior;
 use Awyiss\ORM\RulesChecker;
 use Awyiss\Validation\Validator;
+use Cake\Database\Schema\TableSchemaInterface;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
+use Cake\ORM\Exception\MissingEntityException;
 use Cake\ORM\Query;
+use Cake\Utility\Inflector;
 use RuntimeException;
 
 
@@ -32,11 +36,23 @@ class Table extends \Cake\ORM\Table {
 
 
 	/**
+	 * Allows \Awyiss\Model\Table\AttributesTable to set attributes for this table.
+	 *
+	 * @var bool
+	 */
+	public const ATTRIBUTABLE = TRUE;
+	/**
 	 * @inheritDoc
 	 */
 	public const RULES_CLASS = RulesChecker::class;
 	/**
-	 * The attributes table is name "_attributes_<name>" with <name> being the current table's name.
+	 * Name of the database table. Used in static::initialize() ($this->setTable(static::TABLE));
+	 *
+	 * @var string
+	 */
+	public const TABLE = '';
+	/**
+	 * The attributes table is name "attributes_<name>" with <name> being the current table's name.
 	 *
 	 * @var string
 	 */
@@ -50,9 +66,9 @@ class Table extends \Cake\ORM\Table {
 	/**
 	 * A boolean value, indicating if the table has a corresponding attributes table.
 	 *
-	 * @var null|bool
+	 * @var bool
 	 */
-	protected ?bool $hasAttributes = NULL;
+	protected bool $hasAttributes = FALSE;
 	/**
 	 * Validator class.
 	 *
@@ -77,21 +93,23 @@ class Table extends \Cake\ORM\Table {
 		$lo_validator->setI18nDomain($this->getAlias());
 
 
-		if (str_starts_with($this->getTable(), '_attributes') || $this->getTable() == 'attributes') {
+		if (str_starts_with($this->getTable(), 'attributes_')/* || $this->getTable() == 'attributes'*/) {
+			$this->addBehavior('AttributesDataTypes');
+
 			return;
 		}
 
-		$this->attributesTable = '_attributes_' . $this->getTable();
-		if (is_null($this->hasAttributes)) {
-			$this->hasAttributes = count($this->getConnection()->execute('SHOW TABLES LIKE \'' . $this->attributesTable . '\'')->fetchAll('assoc')) == 1;
+		$this->attributesTable = 'attributes_' . $this->getTable();
+		if (!$this->hasAttributes) {
+			if (/*$ls_attributesClass = */App::className(Inflector::camelize($this->attributesTable), 'Model\Table', 'Table')) {
+				$this->hasAttributes = TRUE;
 
-			if ($this->hasAttributes) {
-				$lo_assoc = $this->hasOne('Attributes')
-					->setClassName(Table\AttributesTable::class)
-					->setForeignKey('parent_id')
+				$this->hasOne(Inflector::camelize($this->attributesTable))
+					//->setClassName($ls_attributesClass)
+					//->setForeignKey($this->getTable() . '_id')
 					->setProperty('attributes')
 					->setDependent(TRUE);
-				$lo_assoc->setTable($this->attributesTable);
+				//$lo_assoc->setTable($this->attributesTable);
 			}
 		}
 
@@ -107,7 +125,8 @@ class Table extends \Cake\ORM\Table {
 		$this->addBehavior('SoftDelete', $this->getConfig('softDelete', []));
 		$this->addBehavior('SystemOrder', $this->getConfig('systemOrder', []));
 
-		if ($this->getConfig('translate', []) && !in_array($this->getTable(), ['languages'])) {
+
+		if ($this->getConfig('translate', []) && $this->getTable() != 'languages') {
 			$lo_defaultLanguage = \Awyiss\Middleware\LocaleMiddleware::getDefaultLanguage(defined('IS_BACKEND') && IS_BACKEND ? 'backend' : 'frontend');
 
 			$this->addBehavior('Translate', $this->getConfig('translate', []) + [
@@ -116,6 +135,7 @@ class Table extends \Cake\ORM\Table {
 				'defaultLocale' => '',
 				'strategyClass' => \Awyiss\Model\Behavior\Translate\EavStrategy::class,
 			]);
+			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 			$this->getBehavior('Translate')->setLocale($lo_defaultLanguage?->shortcode ?? NULL);
 		}
 	}
@@ -155,7 +175,7 @@ class Table extends \Cake\ORM\Table {
 	 */
 	public function findWithAttributes (Query $ao_query, array $aa_options): Query {
 		if ($this->hasAttributes) {
-			$ao_query->contain('Attributes');
+			$ao_query->contain(Inflector::camelize($this->attributesTable));
 			//dd($ao_query->order(['background_color DESC NULLS FIRST']));
 		}
 
@@ -193,7 +213,46 @@ class Table extends \Cake\ORM\Table {
 	}*/
 
 
-	/** @noinspection PhpUnusedParameterInspection */
+	/**
+	 * @inheritDoc
+	 */
+	public function getEntityClass (): string {
+		if ( ! $this->_entityClass) {
+			$ls_default = Entity::class;
+			$ls_self = static::class;
+			$la_parts = explode('\\', $ls_self);
+
+			if ($ls_self === self::class || count($la_parts) < 3) {
+				return $this->_entityClass = $ls_default;
+			}
+
+			$ls_alias = Inflector::classify(Inflector::underscore(substr(array_pop($la_parts), 0, -5)));
+			$ls_name = implode('\\', array_slice($la_parts, 0, -1)) . '\\Entity\\' . $ls_alias;
+			/*if ( ! class_exists($ls_name)) {
+			var_dump($ls_name, $ls_default);
+				return $this->_entityClass = $ls_default;
+			}*/
+
+			/** @var class-string<\Cake\Datasource\EntityInterface>|null $ls_class */
+			$ls_class = App::className($ls_name, 'Model/Entity');
+			if ( ! $ls_class) {
+				$ls_class = App::className($ls_alias, 'Model/Entity');
+			}
+
+			if ( ! $ls_class) {
+				throw new MissingEntityException([$ls_name]);
+			}
+
+			$this->_entityClass = $ls_class;
+		}
+
+		return $this->_entityClass;
+	}
+
+
+	/**
+	 * @noinspection PhpUnusedParameterInspection
+	 */
 	public function beforeSave (EventInterface $ao_event, EntityInterface $ao_entity, ArrayObject $ao_options): void {
 		$lo_event = $this->dispatchEvent($ao_entity->isNew() ? 'Model.beforeCreate' : 'Model.beforeUpdate', ['entity' => $ao_entity, 'options' => $ao_options]);
 
@@ -201,7 +260,7 @@ class Table extends \Cake\ORM\Table {
 			$ao_event->stopPropagation();
 			$ao_event->setResult($lo_event->getResult());
 
-			return;
+			//return;
 		}
 
 		/*if ($this->hasBehavior('Translate')) {
@@ -229,5 +288,40 @@ class Table extends \Cake\ORM\Table {
 	 */
 	public function afterSaveCommit (EventInterface $ao_event, EntityInterface $ao_entity, ArrayObject $ao_options): void {
 		$this->dispatchEvent($ao_entity->isNew() ? 'Model.afterCreateCommit' : 'Model.afterUpdateCommit', ['entity' => $ao_entity, 'options' => $ao_options]);
+	}
+
+
+	/**
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 */
+	protected function _initializeSchema (TableSchemaInterface $ao_schema): TableSchemaInterface {
+		/** @var \Cake\Collection\Collection $lo_attributes */
+		static $lo_attributes;
+
+		if (str_starts_with($this->getTable(), 'attributes_')) {
+			if (!$lo_attributes) {
+				$lo_attributesTable = \Cake\Datasource\FactoryLocator::get('Table')->get('Attributes');
+				$lo_attributes = $lo_attributesTable->find('all', [
+					'access' => [
+						'skip' => TRUE
+					],
+				])->all()->groupBy('scope');
+			}
+
+			/** @noinspection PhpUndefinedMethodInspection */
+			if ($lo_attributes->offsetExists($ls_offset = substr($this->getTable(), 11))) {
+				/**
+				 * @var \Awyiss\Model\Entity\Attribute $lo_attribute
+				 * @noinspection PhpUndefinedMethodInspection
+				*/
+				foreach ($lo_attributes->offsetGet($ls_offset) AS $lo_attribute) {
+					if ($lo_attribute->type === 'json') {
+						$ao_schema->setColumnType($lo_attribute->name, 'json');
+					}
+				}
+			}
+		}
+
+		return $ao_schema;
 	}
 }

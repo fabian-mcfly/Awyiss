@@ -24,6 +24,7 @@ class ControllerFactory extends \Cake\Controller\ControllerFactory {
 	 * @param \Psr\Http\Message\ServerRequestInterface $ao_request The request to build a controller for.
 	 *
 	 * @return \Cake\Controller\Controller
+	 *
 	 * @throws \Psr\Container\ContainerExceptionInterface
 	 * @throws \Psr\Container\NotFoundExceptionInterface
 	 * @throws \ReflectionException
@@ -32,11 +33,7 @@ class ControllerFactory extends \Cake\Controller\ControllerFactory {
 	 * @noinspection PhpParamsInspection //somehow PhpStorm does not realize that ServerRequest extends ServerRequestInterface
 	 */
 	public function create (ServerRequestInterface $ao_request): Controller {
-		$ls_className = NULL;
-
-		if ($ls_className === NULL) {
-			$ls_className = $this->getControllerClass($ao_request);
-		}
+		$ls_className = $this->getControllerClass($ao_request);
 
 		if ($ls_className === NULL) {
 			if ($lo_controller = $this->tryGenericPagesController($ao_request)) {
@@ -71,7 +68,7 @@ class ControllerFactory extends \Cake\Controller\ControllerFactory {
 	 * @inheritDoc
 	 *
 	 * Reimplemented this method 1:1 from \Cake\Controller\ControllerFactory::getControllerClass,
-	 * so it'll use \Awyiss\Core\App::className
+	 * so it'll use \Awyiss\Core\App::className in the return-statement
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */

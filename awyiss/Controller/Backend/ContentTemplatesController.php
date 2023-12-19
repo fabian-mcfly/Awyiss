@@ -5,6 +5,8 @@ namespace Awyiss\Controller\Backend;
 
 
 use Awyiss\Controller\BackendController as Controller;
+use Cake\Datasource\Exception\InvalidPrimaryKeyException;
+use Cake\Datasource\Exception\RecordNotFoundException;
 
 
 /**
@@ -39,7 +41,7 @@ class ContentTemplatesController extends Controller {
 	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
 	public function overview () {
-		$this->Access->ensureOne('create', 'update', 'delete');
+		$this->Access->ensure('read');
 
 		$lo_contentTemplates = $this->ContentTemplates->find('withAttributes')->where($this->getOverviewWhere());
 
@@ -63,18 +65,13 @@ class ContentTemplatesController extends Controller {
 
 		$lo_contentTemplate = $this->ContentTemplates->newDefaultEntity();
 		if ($this->request->is('post')) {
-			if ($la_available_elements = $this->request->getData('available_elements', [])) {
-				$la_available_elements = array_filter($la_available_elements, function($aa_element) {
+			$la_requestData = $this->request->getData() + ['assigned_template_positions' => []];
+			if (isset($la_requestData['available_elements'])) {
+				$la_requestData['available_elements'] = array_filter($la_requestData['available_elements'], function($aa_element) {
 					return ! is_numeric($aa_element['name']);
 				});
 			}
-
-			$la_assignedTemplatePositions = $this->request->getData('assigned_template_positions', []);
-
-			$this->ContentTemplates->patchEntity($lo_contentTemplate, [
-					'available_elements' => $la_available_elements,
-					'assigned_template_positions' => $la_assignedTemplatePositions,
-				] + $this->request->getData());
+			$this->ContentTemplates->patchEntity($lo_contentTemplate, $la_requestData);
 
 			if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
 				if ($this->ContentTemplates->save($lo_contentTemplate)) {
@@ -88,6 +85,7 @@ class ContentTemplatesController extends Controller {
 				}
 
 				$this->Flash->error(__('::add_failed'));
+				$this->Flash->error(implode('<br>' . PHP_EOL, $lo_contentTemplate->getError('_general')));
 			}
 		}
 
@@ -111,12 +109,15 @@ class ContentTemplatesController extends Controller {
 	public function edit () {
 		$this->Access->ensure('update');
 
-		$li_id = $this->request->getParam('id');
 		try {
-			$lo_contentTemplate = $this->ContentTemplates->find()->find('translations')->where(['ContentTemplates.id' => $li_id])->first();
+			$li_id = $this->request->getParam('id');
+			/** @var \Awyiss\Model\Entity\ContentTemplate $lo_contentTemplate */
+			$lo_contentTemplate = $this->ContentTemplates->get($li_id);
 		}
-		catch (\Exception) {
-			exit;
+		catch (RecordNotFoundException|InvalidPrimaryKeyException) {
+			$this->Flash->error(__('::record_not_found'));
+
+			return $this->redirect(['action' => 'overview']);
 		}
 
 		if ( ! $lo_contentTemplate) {
@@ -126,26 +127,13 @@ class ContentTemplatesController extends Controller {
 		}
 
 		if ($this->request->is(['patch', 'post', 'put'])) {
-			if ($la_availableElements = $this->request->getData('available_elements', [])) {
-				$la_availableElements = array_filter($la_availableElements, function($aa_element) {
+			$la_requestData = $this->request->getData() + ['assigned_template_positions' => []];
+			if (isset($la_requestData['available_elements'])) {
+				$la_requestData['available_elements'] = array_filter($la_requestData['available_elements'], function($aa_element) {
 					return ! is_numeric($aa_element['name']);
 				});
 			}
-
-			$la_assignedTemplatePositions = $this->request->getData('assigned_template_positions', []);
-
-			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-			$lb_availableElementsDirty = ! ($lo_contentTemplate->available_elements == $la_availableElements);
-			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-			$lb_assignedTemplatePositionsDirty = ! ($lo_contentTemplate->assigned_template_positions == $la_assignedTemplatePositions);
-
-			$this->ContentTemplates->patchEntity($lo_contentTemplate, [
-					'available_elements' => $la_availableElements,
-					'assigned_template_positions' => $la_assignedTemplatePositions,
-				] + $this->request->getData());
-
-			$lo_contentTemplate->setDirty('available_elements', $lb_availableElementsDirty);
-			$lo_contentTemplate->setDirty('assigned_template_positions', $lb_assignedTemplatePositionsDirty);
+			$this->ContentTemplates->patchEntity($lo_contentTemplate, $la_requestData);
 
 			if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
 				if ($this->ContentTemplates->save($lo_contentTemplate)) {
@@ -159,7 +147,7 @@ class ContentTemplatesController extends Controller {
 				}
 
 				$this->Flash->error(__('::edit_failed'));
-				$this->Flash->error(json_encode($lo_contentTemplate->getErrors()));
+				$this->Flash->error(implode('<br>' . PHP_EOL, $lo_contentTemplate->getError('_general')));
 			}
 		}
 
@@ -184,12 +172,14 @@ class ContentTemplatesController extends Controller {
 		$this->Access->ensure('delete');
 
 		$this->request->allowMethod(['get', 'delete']);
-		$li_id = $this->request->getParam('id');
-		$lo_contentTemplate = $this->ContentTemplates->find()->where(['id' => $li_id])->first();
 
-		if ( ! $lo_contentTemplate) {
+		try {
+			$li_id = $this->request->getParam('id');
+			/** @var \Awyiss\Model\Entity\ContentTemplate $lo_contentTemplate */
+			$lo_contentTemplate = $this->ContentTemplates->get($li_id);
+		}
+		catch (RecordNotFoundException|InvalidPrimaryKeyException) {
 			$this->Flash->error(__('::record_not_found'));
-
 			return $this->redirect(['action' => 'overview']);
 		}
 

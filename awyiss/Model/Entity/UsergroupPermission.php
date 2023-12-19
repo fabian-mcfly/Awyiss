@@ -31,11 +31,11 @@ class UsergroupPermission extends \Awyiss\Model\Entity {
 	/**
 	 * @noinspection PhpUnused
 	 */
-	protected function _setSettings (mixed $ax_value): ?array {
+	/*protected function _setSettings (mixed $ax_value): ?array {
 		if (empty($ax_value)) {
 			return NULL;
 		}
 
 		return is_array($ax_value) ? $ax_value : [$ax_value];
-	}
+	}*/
 }

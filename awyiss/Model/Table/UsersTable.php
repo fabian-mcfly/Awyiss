@@ -20,13 +20,16 @@ use Cake\Validation\Validator;
  * @method \Awyiss\Model\Entity\User patchEntity(EntityInterface $ao_entity, array $aa_data, array $aa_options = [])
  */
 class UsersTable extends \Awyiss\Model\Table {
+	public const TABLE = 'users';
+
+
 	/**
 	 * @inheritDoc
 	 */
 	public function initialize (array $aa_config): void {
 		parent::initialize($aa_config);
 
-		$this->setTable('users');
+		$this->setTable(static::TABLE);
 		$this->setDisplayField('id');
 		$this->setPrimaryKey('id');
 

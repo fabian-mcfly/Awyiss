@@ -7,6 +7,8 @@ namespace Awyiss\Controller\Backend;
 use Awyiss\Authorization\Policy\AnonymousPolicy;
 use Awyiss\Authorization\Policy\PolicyInterface;
 use Awyiss\Controller\BackendController as Controller;
+use Cake\Datasource\Exception\InvalidPrimaryKeyException;
+use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Utility\Hash;
 
 
@@ -27,7 +29,7 @@ class UsergroupsController extends Controller {
 	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
 	public function overview () {
-		$this->Access->ensureOne('create', 'update', 'delete');
+		$this->Access->ensure('read');
 
 		$lo_usergroups = $this->Usergroups->find('withAttributes')->where($this->getOverviewWhere());
 		$lo_usergroups = $this->paginate($lo_usergroups);
@@ -61,7 +63,7 @@ class UsergroupsController extends Controller {
 
 			$la_associated = ['UsergroupPermissions'];
 			if ($lb_usersScopeIsAccessible) {
-				$la_associated[] = 'Users';
+				$la_associated['Users'] = ['onlyIds' => TRUE];
 			}
 
 			$this->Usergroups->patchEntity($lo_usergroup, $la_data, ['associated' => $la_associated]);
@@ -77,6 +79,7 @@ class UsergroupsController extends Controller {
 					return $this->redirect(['action' => 'edit', 'id' => $lo_usergroup->id]);
 				}
 				$this->Flash->error(__('::add_failed'));
+				$this->Flash->error(implode('<br>' . PHP_EOL, $lo_usergroup->getError('_general')));
 			}
 		}
 
@@ -120,23 +123,23 @@ class UsergroupsController extends Controller {
 
 		$lb_usersScopeIsAccessible = $this->Access->scopeIsAccessible('Users', NULL, ['create', 'update']);
 
-		$la_authorizationPolicies = $this->getAuthorizationPolicies();
+		try {
+			$la_contain = ['UsergroupPermissions'];
+			if ($lb_usersScopeIsAccessible) {
+				$la_contain[] = 'Users';
+			}
 
-		$li_id = $this->request->getParam('id');
-
-		$la_contain = ['UsergroupPermissions'];
-		if ($lb_usersScopeIsAccessible) {
-			$la_contain[] = 'Users';
+			$li_id = $this->request->getParam('id');
+			/** @var \Awyiss\Model\Entity\Usergroup $lo_usergroup */
+			$lo_usergroup = $this->Usergroups->get($li_id, ['contain' => $la_contain]);
 		}
-		/** @var \Awyiss\Model\Entity\Usergroup $lo_usergroup */
-		$lo_usergroup = $this->Usergroups->find()->contain($la_contain)->where(['id' => $li_id])->first();
-
-		if ( ! $lo_usergroup) {
+		catch (RecordNotFoundException|InvalidPrimaryKeyException) {
 			$this->Flash->error(__('::record_not_found'));
 
 			return $this->redirect(['action' => 'overview']);
 		}
 
+		$la_authorizationPolicies = $this->getAuthorizationPolicies();
 		//dd($lo_usergroup->usergroup_permissions);
 
 		if ($this->request->is(['patch', 'post', 'put'])) {
@@ -145,7 +148,7 @@ class UsergroupsController extends Controller {
 
 			$la_associated = ['UsergroupPermissions'];
 			if ($lb_usersScopeIsAccessible) {
-				$la_associated[] = 'Users';
+				$la_associated['Users'] = ['onlyIds' => TRUE];
 			}
 			$this->Usergroups->patchEntity($lo_usergroup, $la_data, ['associated' => $la_associated]);
 
@@ -161,6 +164,7 @@ class UsergroupsController extends Controller {
 				}
 
 				$this->Flash->error(__('::edit_failed'));
+				$this->Flash->error(implode('<br>' . PHP_EOL, $lo_usergroup->getError('_general')));
 			}
 		}
 
@@ -203,12 +207,14 @@ class UsergroupsController extends Controller {
 		$this->Access->ensure('delete');
 
 		$this->request->allowMethod(['get', 'delete']);
-		$li_id = $this->request->getParam('id');
-		$lo_usergroup = $this->Usergroups->get($li_id);
 
-		if ( ! $lo_usergroup) {
+		try {
+			$li_id = $this->request->getParam('id');
+			/** @var \Awyiss\Model\Entity\Usergroup $lo_usergroup */
+			$lo_usergroup = $this->Usergroups->get($li_id);
+		}
+		catch (RecordNotFoundException|InvalidPrimaryKeyException) {
 			$this->Flash->error(__('::record_not_found'));
-
 			return $this->redirect(['action' => 'overview']);
 		}
 

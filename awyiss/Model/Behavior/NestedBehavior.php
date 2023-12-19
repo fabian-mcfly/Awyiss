@@ -202,10 +202,11 @@ class NestedBehavior extends Behavior {
 		if (!$la_dirtyRelatedColumns) return;
 
 		$lo_children = $this->getChildren($ao_entity);
-		if (!$lo_children) return;
+		if ($lo_children->isEmpty()) return;
 
 		$la_data = array_combine($la_dirtyRelatedColumns, array_intersect_key($ao_entity->toArray(), array_flip($la_dirtyRelatedColumns)));
 
-		$this->table()->updateAll($la_data, ['id IN' => $lo_children->extract('id')->toArray()]);
+		$la_ids = $lo_children->extract('id')->toArray();
+		$this->table()->updateAll($la_data, ['id IN' => $la_ids]);
 	}
 }

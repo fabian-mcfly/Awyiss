@@ -13,8 +13,6 @@ use Cake\Validation\Validator;
 /**
  * ContentTemplates Model
  *
- * @property \Awyiss\Model\Table\AttributesTable&\Cake\ORM\Association\HasOne $Attributes
- *
  * @method \Awyiss\Model\Entity\ContentTemplate newDefaultEntity(array $aa_additionalData = [])
  * @method \Awyiss\Model\Entity\ContentTemplate patchEntity(EntityInterface $ao_entity, array $aa_data, array $aa_options = [])
  */
@@ -24,6 +22,8 @@ class ContentTemplatesTable extends \Awyiss\Model\Table {
 			'fields' => ['title'],
 		],
 	];
+	public const TABLE = 'content_templates';
+
 
 	/**
 	 * @inheritDoc
@@ -31,7 +31,7 @@ class ContentTemplatesTable extends \Awyiss\Model\Table {
 	public function initialize (array $aa_config): void {
 		parent::initialize($aa_config);
 
-		$this->setTable('content_templates');
+		$this->setTable(static::TABLE);
 		$this->setPrimaryKey('id');
 	}
 
@@ -71,6 +71,22 @@ class ContentTemplatesTable extends \Awyiss\Model\Table {
 		$ao_rules->add($ao_rules->isUnique(['filename']), ['errorField' => 'filename']);
 
 		return $ao_rules;
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public function beforeSave (\Cake\Event\EventInterface $ao_event, EntityInterface $ao_entity, \ArrayObject $ao_options): void {
+		if ($ao_entity->available_elements === $ao_entity->getOriginal('available_elements')) {
+			$ao_entity->setDirty('available_elements', FALSE);
+		}
+
+		if ($ao_entity->assigned_template_positions === $ao_entity->getOriginal('assigned_template_positions')) {
+			$ao_entity->setDirty('assigned_template_positions', FALSE);
+		}
+
+		parent::beforeSave($ao_event, $ao_entity, $ao_options);
 	}
 
 

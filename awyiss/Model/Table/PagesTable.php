@@ -43,10 +43,10 @@ class PagesTable extends \Awyiss\Model\Table {
 			'parent' => [
 				'associationName' => 'Parent',
 			],
-			'relatedColumns' => ['languages_shortcode', 'page_roles_id'],
+			'relatedColumns' => ['languages_shortcode', 'page_role_id'],
 		],
 		'systemOrder' => [
-			'relatedColumns' => ['languages_shortcode', 'page_roles_id', 'parent_id'],
+			'relatedColumns' => ['languages_shortcode', 'page_role_id', 'parent_id'],
 		],
 	];
 	/**
@@ -55,6 +55,7 @@ class PagesTable extends \Awyiss\Model\Table {
 	 * @var null|int
 	 */
 	protected ?int $pageRoleId = PAGEROLE_PAGE;
+	public const TABLE = 'pages';
 
 
 	/**
@@ -65,20 +66,19 @@ class PagesTable extends \Awyiss\Model\Table {
 
 		$this->addBehavior('Nested', $this->getConfig('nested', []));
 
-		$this->setTable('pages');
+		$this->setTable(static::TABLE);
 		$this->setPrimaryKey('id');
 
 		$this->belongsTo('PageRoles', [
-			'foreignKey' => 'page_roles_id',
 			'joinType' => 'INNER',
 		]);
 
 		$this->belongsTo('PageTemplates', [
-			'foreignKey' => 'page_templates_id',
 			'joinType' => 'INNER',
 		]);
 
 		$this->belongsTo('Duplicate', [
+			'bindingKey' => 'duplicate_of',
 			'className' => 'Pages',
 			'foreignKey' => 'id',
 		]);
@@ -103,7 +103,7 @@ class PagesTable extends \Awyiss\Model\Table {
 					return $ab_accessible;
 				}
 
-				return $ao_entity->page_roles_id === $this->getPageRoleId();
+				return $ao_entity->page_role_id === $this->getPageRoleId();
 			});
 		}
 
@@ -113,10 +113,10 @@ class PagesTable extends \Awyiss\Model\Table {
 					return $ab_accessible;
 				}
 
-				$ao_subject->where(['page_roles_id' => $this->getPageRoleId()]);
+				$ao_subject->where(['page_role_id' => $this->getPageRoleId()]);
 
 				/*$ao_subject->mapReduce(function(Page $ao_entity, int $ai_key, MapReduce $ao_mapReduce){
-					if ($ao_entity->page_roles_id === $this->getPageRoleId()) {
+					if ($ao_entity->page_role_id === $this->getPageRoleId()) {
 						$ao_mapReduce->emit($ao_entity);
 					}
 				});*/
@@ -160,7 +160,8 @@ class PagesTable extends \Awyiss\Model\Table {
 
 		$ao_validator->scalar('languages_shortcode')
 			->requirePresence('languages_shortcode', 'create')
-			->maxLength('languages_shortcode', 2)
+			->minLength('shortcode', 2, __('validation::not_exact_length'))
+			->maxLength('shortcode', 2, __('validation::not_exact_length'))
 			->notEmptyString('languages_shortcode');
 
 		$ao_validator->scalar('title')->requirePresence('title', 'create')->maxLength('title', 255)->notEmptyString('title');
@@ -183,9 +184,9 @@ class PagesTable extends \Awyiss\Model\Table {
 
 		$ao_validator->boolean('robots_follow')->notEmptyString('robots_follow');
 
-		$ao_validator->integer('page_roles_id')->notEmptyString('page_roles_id');
+		$ao_validator->integer('page_role_id')->notEmptyString('page_role_id');
 
-		$ao_validator->integer('page_templates_id')->notEmptyString('page_templates_id');
+		$ao_validator->integer('page_template_id')->notEmptyString('page_template_id');
 
 		$ao_validator->integer('duplicate_of')->allowEmptyString('duplicate_of');
 
@@ -212,15 +213,17 @@ class PagesTable extends \Awyiss\Model\Table {
 		//$ao_rules->add($ao_rules->isUnique(['slug']), ['errorField' => 'slug']);
 
 		/*$ao_rules->add(function(Page $ao_entity, array $aa_options) {
-			return $ao_entity->page_roles_id === $this->pageRoleId;
+			return $ao_entity->page_role_id === $this->pageRoleId;
 		}, [
 			'errorField' => '_general',
 			'message' => __('::cant_modify_page_role'),
 		]);*/
 
-		$ao_rules->add($ao_rules->existsIn(['page_roles_id'], 'PageRoles'), ['errorField' => 'page_roles_id']);
+		//TODO: check for the existence of language_shortcode
 
-		$ao_rules->add($ao_rules->existsIn(['page_templates_id'], 'PageTemplates'), ['errorField' => 'page_templates_id']);
+		$ao_rules->add($ao_rules->existsIn(['page_role_id'], 'PageRoles'), ['errorField' => 'page_role_id']);
+
+		$ao_rules->add($ao_rules->existsIn(['page_template_id'], 'PageTemplates'), ['errorField' => 'page_template_id']);
 
 		$ao_rules->add($ao_rules->existsIn(['duplicate_of'], 'Duplicate'), ['errorField' => 'duplicate_of']);
 
@@ -238,7 +241,7 @@ class PagesTable extends \Awyiss\Model\Table {
 
 
 	/*public function beforeFind (EventInterface $ao_event, Query $ao_query, \ArrayObject $ao_options, bool $ab_primary) {
-		$ao_query->where(['page_roles_id' => $this->pageRoleId]);
+		$ao_query->where(['page_role_id' => $this->pageRoleId]);
 		dd($ao_query);
 	}*/
 

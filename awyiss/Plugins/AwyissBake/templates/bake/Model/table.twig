@@ -1,15 +1,37 @@
 {% set annotations = DocBlock.buildTableAnnotations(associations, associationInfo, behaviors, entity, namespace) %}
-<?php declare(strict_types=1);
-
-
-namespace {{ namespace }}\Model\Table;
-
-
-{% set uses = ['use Cake\\ORM\\Query;', 'use Cake\\ORM\\RulesChecker;', 'use Cake\\Validation\\Validator;'] %}
-{{ uses|join('\n')|raw }}
+{% set generatedFunctions = ['initialize'] %}
+{{ element('Bake.file_header', {
+    namespace: fileBuilder.namespace,
+    classImports: fileBuilder.classImports(['Awyiss\\Model\\Table', 'Cake\\ORM\\RulesChecker', 'Cake\\Validation\\Validator']),
+}) }}
 
 {{ DocBlock.classDescription(name, 'Model', annotations)|raw }}
-class {{ name }}Table extends \{{ namespace }}\Model\Table {
+class {{ name }}Table extends Table{{ fileBuilder.classBuilder.implements ? ' implements ' ~ fileBuilder.classBuilder.implements|join(', ') : '' }} {
+{% set userConstants = fileBuilder.classBuilder.userConstants([]) %}
+{% if userConstants.ATTRIBUTABLE is not defined %}
+	/**
+	* @inheritDoc
+	*/
+	public const ATTRIBUTABLE = FALSE;
+{% endif %}
+{% if userConstants.TABLE is not defined %}
+	/**
+	* @inheritDoc
+	*/
+	public const TABLE = '{{ table }}';
+{% endif %}
+{% if userConstants %}
+	{{~ Bake.concat('\n\n\n', userConstants) }}
+
+{% else %}
+
+{% endif %}
+{% set userProperties = fileBuilder.classBuilder.userProperties([]) %}
+{% if userProperties %}
+	{{~ Bake.concat('\n\n\n', userProperties) }}
+
+{% endif %}
+
 	/**
 	 * @inheritDoc
 	 */
@@ -17,11 +39,11 @@ class {{ name }}Table extends \{{ namespace }}\Model\Table {
 		parent::initialize($aa_config);
 
 {% if table %}
-		$this->setTable('{{ table }}');
+		$this->setTable(static::TABLE);
 {% endif %}
 
 {%- if displayField %}
-		$this->setDisplayField('{{ displayField }}');
+		$this->setDisplayField({{ (displayField is iterable ? Bake.exportArray(displayField) : Bake.exportVar(displayField))|raw }});
 {% endif %}
 
 {%- if primaryKey %}
@@ -62,6 +84,8 @@ class {{ name }}Table extends \{{ namespace }}\Model\Table {
 {{- "\n" }}
 
 {%- if validation %}
+{% set generatedFunctions = generatedFunctions|merge(['validationDefault']) %}
+
 
 	/**
 	 * @inheritDoc
@@ -87,6 +111,8 @@ class {{ name }}Table extends \{{ namespace }}\Model\Table {
 {% endif %}
 
 {%- if rulesChecker %}
+{% set generatedFunctions = generatedFunctions|merge(['buildRules']) %}
+
 
 	/**
 	 * @inheritDoc
@@ -95,7 +121,12 @@ class {{ name }}Table extends \{{ namespace }}\Model\Table {
 	 */
 	public function buildRules (RulesChecker $ao_rules): RulesChecker {
 {% for field, rule in rulesChecker %}
-		$ao_rules->add($ao_rules->{{ rule.name }}(['{{ field }}']{{ (rule.extra is defined and rule.extra ? (", '#{rule.extra}'") : '')|raw }}), ['errorField' => '{{ field }}']);
+{% set fields = rule.fields is defined ? Bake.exportArray(rule.fields) : Bake.exportVar(field) %}
+{% set options = '' %}
+{% for optionName, optionValue in rule.options %}
+	{%~ set options = (loop.first ? '[' : options) ~ "'#{optionName}' => " ~ Bake.exportVar(optionValue) ~ (loop.last ? ']' : ', ') %}
+{% endfor %}
+		$ao_rules->add($ao_rules->{{ rule.name }}({{ fields|raw }}{{ (rule.extra|default ? ", '#{rule.extra}'" : '')|raw }}{{ (options ? ', ' ~ options : '')|raw }}), ['errorField' => '{{ field }}']);
 {% endfor %}
 
 		return $ao_rules;
@@ -103,12 +134,19 @@ class {{ name }}Table extends \{{ namespace }}\Model\Table {
 {% endif %}
 
 {%- if connection is not same as('default') %}
+{% set generatedFunctions = generatedFunctions|merge(['defaultConnectionName']) %}
+
 
 	/**
 	 * @inheritDoc
 	 */
-	public static function defaultConnectionName (): string {
+	public static function defaultConnectionName(): string {
 		return '{{ connection }}';
 	}
+{% endif %}
+{% set userFunctions = fileBuilder.classBuilder.userFunctions(generatedFunctions) %}
+{% if userFunctions %}
+
+	{{~ Bake.concat('\n\n\n', userFunctions) }}
 {% endif %}
 }

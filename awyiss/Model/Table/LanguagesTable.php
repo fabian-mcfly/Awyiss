@@ -31,6 +31,7 @@ class LanguagesTable extends \Awyiss\Model\Table {
 			'fields' => ['title'],
 		],
 	];
+	public const TABLE = 'languages';
 
 
 	/**
@@ -39,7 +40,7 @@ class LanguagesTable extends \Awyiss\Model\Table {
 	public function initialize (array $aa_config): void {
 		parent::initialize($aa_config);
 
-		$this->setTable('languages');
+		$this->setTable(static::TABLE);
 		$this->setPrimaryKey('id');
 
 		$this->hasMany('Configuration')

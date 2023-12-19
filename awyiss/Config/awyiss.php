@@ -4,9 +4,10 @@
 use Cake\Cache\Engine\FileEngine;
 use Cake\Database\Connection;
 use Cake\Database\Driver\Mysql;
-use Cake\Error\ExceptionRenderer;
+use Cake\Error\Renderer\WebExceptionRenderer;
 use Cake\Log\Engine\FileLog;
 use Cake\Mailer\Transport\MailTransport;
+use Queue\Generator\Task\QueuedJobTask;
 
 
 return [
@@ -94,6 +95,7 @@ return [
 			'className' => Connection::class,
 			'driver' => Mysql::class,
 			'flags' => [],
+			'host' => 'localhost',
 			'log' => FALSE,
 			'persistent' => FALSE,
 			'quoteIdentifiers' => FALSE,
@@ -121,8 +123,9 @@ return [
 	 */
 	'Email' => [
 		'default' => [
-			'transport' => 'default',
+			'emailPattern' => NULL,
 			'from' => 'awyiss@localhost',
+			'transport' => 'default',
 		],
 	],
 
@@ -150,13 +153,21 @@ return [
 	 */
 	'Error' => [
 		'errorLevel' => 0,
-		'exceptionRenderer' => ExceptionRenderer::class,
+		'exceptionRenderer' => WebExceptionRenderer::class,
 		//'extraFatalErrorMemory' => 4,
 		'ignoredDeprecationPaths' => [],
 		'log' => TRUE,
 		'skipLog' => [],
 		'trace' => TRUE,
 	],
+
+
+	'IdeHelper' => [
+		'generatorTasks' => [
+			QueuedJobTask::class,
+		],
+	],
+
 
 	/*
 	 * Configures logging options
@@ -182,6 +193,13 @@ return [
 			'path' => LOGS,
 			'scopes' => ['queriesLog'],
 		],
+	],
+
+
+	'Queue' => [
+		'maxworkers' => 3,
+		'workermaxruntime' => 900,
+		'workertimeout' => 900,
 	],
 
 

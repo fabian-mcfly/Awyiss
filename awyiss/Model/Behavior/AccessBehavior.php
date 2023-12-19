@@ -17,7 +17,7 @@ use Cake\Utility\Hash;
 use RuntimeException;
 
 
-class AccessBehavior extends Behavior  {
+class AccessBehavior extends Behavior {
 	/**
 	 * Default configuration
 	 *
@@ -48,7 +48,7 @@ class AccessBehavior extends Behavior  {
 		'identifiers' => [
 			'Entity.create' => 'create',
 			'Entity.update' => 'update',
-			'Model.beforeFind' => ['create', 'update', 'delete'],
+			'Model.beforeFind' => ['read', 'create', 'update', 'delete'],
 			'Model.beforeSoftDelete' => 'delete',
 			'Model.beforeDelete' => 'delete',
 		],
@@ -98,7 +98,7 @@ class AccessBehavior extends Behavior  {
 	}
 
 
-	public function getPolicyClass (): string|AnonymousPolicy|NULL {
+	public function getPolicyClass (): string|AnonymousPolicy|null {
 		return $this->getConfig('policyClass');
 	}
 
@@ -108,7 +108,7 @@ class AccessBehavior extends Behavior  {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function setPolicyClass (string|AnonymousPolicy|NULL $ax_policyClass): self {
+	public function setPolicyClass (string|AnonymousPolicy|null $ax_policyClass): self {
 		if (is_string($ax_policyClass)) {
 			$lo_reflection = new \ReflectionClass($ax_policyClass);
 
@@ -149,9 +149,7 @@ class AccessBehavior extends Behavior  {
 			return $ao_rules;
 		}
 
-		$lx_call = NULL;
-		if ($this->getConfig($ao_event->getName())) {
-			$lx_call = $this->getConfig($ao_event->getName());
+		if ($lx_call = $this->getConfig($ao_event->getName())) {
 			if ( ! is_callable($lx_call)) {
 				throw new RuntimeException(sprintf('Expected option for `%s` to be `callable`, `%s` given', $ao_event->getName(), gettype($lx_call)));
 			}
@@ -160,12 +158,9 @@ class AccessBehavior extends Behavior  {
 		$ao_rules->add(function(EntityInterface $ao_entity, array $aa_options) use ($lx_call): ?bool {
 			$la_options = Hash::merge($this->getConfig(), Hash::get($aa_options, 'access'));
 
-			if ($la_options['skip'] === TRUE) {
-				return TRUE;
-			}
-
-			if ($this->getConfig('skipOnce')) {
+			if ($la_options['skip'] === TRUE || $la_options['skipOnce'] === TRUE) {
 				$this->setConfig('skipOnce', FALSE);
+
 				return TRUE;
 			}
 
@@ -188,6 +183,7 @@ class AccessBehavior extends Behavior  {
 		return $ao_rules;
 	}
 
+
 	/**
 	 * @throws \Exception
 	 *
@@ -200,20 +196,16 @@ class AccessBehavior extends Behavior  {
 
 		$la_options = Hash::merge($this->getConfig(), Hash::get($ao_options, 'access'));
 
-		if ($la_options['skip'] === TRUE) {
-			return;
-		}
-
-		if ($this->getConfig('skipOnce')) {
+		if ($la_options['skip'] === TRUE || $la_options['skipOnce'] === TRUE) {
 			$this->setConfig('skipOnce', FALSE);
+
 			return;
 		}
 
 		$lb_accessible = $this->handle($ao_event->getName(), $ao_subject, $la_options);
 
-		if ($this->getConfig($ao_event->getName())) {
-			$lx_call = $this->getConfig($ao_event->getName());
-			if (!is_callable($lx_call)) {
+		if ($lx_call = $this->getConfig($ao_event->getName())) {
+			if ( ! is_callable($lx_call)) {
 				throw new RuntimeException(sprintf('Expected option for `%s` to be `callable`, `%s` given', $ao_event->getName(), gettype($lx_call)));
 			}
 
@@ -244,11 +236,11 @@ class AccessBehavior extends Behavior  {
 		$ls_scope = $aa_options['scope'] ?? $this->table()->getTable();
 
 		$lx_identifier = $aa_options['identifiers'][ $as_identifier ] ?? NULL;
-		if (!is_string($lx_identifier) && !is_array($lx_identifier)) {
+		if ( ! is_string($lx_identifier) && ! is_array($lx_identifier)) {
 			throw new RuntimeException(sprintf('The identifier for `%s` is invalid. Expected `string|array`, `%s` given', $as_identifier, gettype($lx_identifier)));
 		}
 
-		if (!is_array($lx_identifier)) {
+		if ( ! is_array($lx_identifier)) {
 			$lx_identifier = [$lx_identifier];
 		}
 
@@ -269,11 +261,11 @@ class AccessBehavior extends Behavior  {
 
 		//The policyClass set in the config has the highest priority
 		$lx_policyClass = $this->getPolicyClass();
-		if (!$lx_policyClass) {
+		if ( ! $lx_policyClass) {
 			//No policyClass set in config? Try the \Awyiss\Authorization\AuthorizationService
-			$lx_policyClass = $lo_authorizationService?->getPolicy($ls_scope, $this->getConfig('policiesType'));
+			$lx_policyClass = $lo_authorizationService->getPolicy($ls_scope, $this->getConfig('policiesType'));
 
-			if (!$lx_policyClass) {
+			if ( ! $lx_policyClass) {
 				//Still no policyClass found? Dispatch an event.
 				$this->table()->dispatchEvent('Model.requestPolicyClass', [
 					'authorizationService' => $lo_authorizationService,
@@ -321,10 +313,10 @@ class AccessBehavior extends Behavior  {
 	 * @noinspection DuplicatedCode
 	 */
 	protected function getAccess (string|AnonymousPolicy $ax_policyClass, string|array $ax_identifier, ?array $aa_access): ?bool {
-
 		/** @var PolicyInterface|AnonymousPolicy $ax_policyClass */
 		if (is_string($ax_identifier)) {
 			$lo_permission = is_string($ax_policyClass) ? $ax_policyClass::getPermission($ax_identifier) : $ax_policyClass->getPermission($ax_identifier);
+
 			return $lo_permission?->isAccessible($aa_access) ?? $this->getConfig('defaultAccessible', FALSE);
 		}
 

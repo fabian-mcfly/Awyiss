@@ -1,7 +1,7 @@
 <?php
 
 
-namespace awyiss\Core;
+namespace Awyiss\Core;
 
 
 use Cake\Core\Configure;

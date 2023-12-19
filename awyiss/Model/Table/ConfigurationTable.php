@@ -25,10 +25,21 @@ class ConfigurationTable extends \Awyiss\Model\Table {
 	/**
 	 * @inheritDoc
 	 */
+	public const ATTRIBUTABLE = FALSE;
+	/**
+	 * @inheritDoc
+	 */
+	public const TABLE = 'configuration';
+	protected array $configScopes;
+
+
+	/**
+	 * @inheritDoc
+	 */
 	public function initialize (array $aa_config): void {
 		parent::initialize($aa_config);
 
-		$this->setTable('configuration');
+		$this->setTable(static::TABLE);
 		$this->setDisplayField('id');
 		$this->setPrimaryKey('id');
 
@@ -42,7 +53,7 @@ class ConfigurationTable extends \Awyiss\Model\Table {
 		/** @var AccessBehavior $lo_accessBehavior */
 		$lo_accessBehavior = $this->getBehavior('Access');
 
-		if (!$lo_accessBehavior->getConfig('Model.buildRules')) {
+		if ( ! $lo_accessBehavior->getConfig('Model.buildRules')) {
 			$lo_accessBehavior->setConfig('Model.buildRules', function(Configuration $ao_entity, array $aa_options, AccessBehavior $ao_behavior, ?bool $ab_accessible): ?bool {
 				if ( ! $ab_accessible || $ao_entity->scope === 'system') {
 					return $ab_accessible;
@@ -52,14 +63,14 @@ class ConfigurationTable extends \Awyiss\Model\Table {
 			});
 		}
 
-		if (!$lo_accessBehavior->getConfig('Model.beforeFind')) {
+		if ( ! $lo_accessBehavior->getConfig('Model.beforeFind')) {
 			$lo_accessBehavior->setConfig('Model.beforeFind', function(EventInterface $ao_event, Query $ao_subject, array $aa_options, AccessBehavior $ao_behavior, ?bool $ab_accessible): ?bool {
 				if ( ! $ab_accessible) {
 					return $ab_accessible;
 				}
 
 				$ao_subject->mapReduce(function(Configuration|array $ao_entity, int $ai_key, MapReduce $ao_mapReduce) use ($ao_behavior) {
-					if (!$ao_entity instanceof Configuration) {
+					if ( ! $ao_entity instanceof Configuration) {
 						return;
 					}
 
@@ -82,10 +93,7 @@ class ConfigurationTable extends \Awyiss\Model\Table {
 	public function validationDefault (Validator $ao_validator): Validator {
 		$ao_validator->integer('id')->allowEmptyString('id', NULL, 'create');
 
-		$ao_validator->scalar('scope')
-			->maxLength('scope', 50)
-			->requirePresence('scope')
-			->notEmptyString('scope');
+		$ao_validator->scalar('scope')->maxLength('scope', 50)->requirePresence('scope')->notEmptyString('scope');
 
 		$ao_validator->scalar('name')->maxLength('name', 255)->requirePresence('name', 'create')->notEmptyString('name');
 
@@ -126,5 +134,24 @@ class ConfigurationTable extends \Awyiss\Model\Table {
 		]);
 
 		return $ao_rules;
+	}
+
+
+	/**
+	 * @throws \ReflectionException
+	 */
+	public function getScopes (): array {
+		if ( ! isset($this->configScopes)) {
+			$this->configScopes = [];
+
+			foreach (\Awyiss\Configuration\ConfigOptionsProvider::getConfigurationFiles() as $ls_scope => $ls_className) {
+				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+				if ($ls_scope === 'system' || $this->getBehavior('Access')->isAccessible($ls_scope, NULL, 'configure')) {
+					$this->configScopes[ $ls_scope ] = $ls_className;
+				}
+			}
+		}
+
+		return $this->configScopes;
 	}
 }

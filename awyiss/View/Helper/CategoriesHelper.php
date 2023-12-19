@@ -25,10 +25,10 @@ class CategoriesHelper extends \Cake\View\Helper {
 	protected $_defaultConfig = [
 		'templateClass' => \Awyiss\View\StringTemplate::class,
 		'templates' => [
-			'aggregationOption' => '<li{{attrs}}><a href="{{baseUrl}}/{{name}}:{{value}}">{{text}}</a></li>',
-			'unassignedOption' => '<li{{attrs}}><a href="{{baseUrl}}/{{name}}:{{value}}">{{text}}</a></li>',
+			'aggregationOption' => '<li{{attrs}}><a href="{{link}}">{{title}}</a></li>',
+			'unassignedOption' => '<li{{attrs}}><a href="{{link}}">{{title}}</a></li>',
 			'linkSelect' => '<div{{attrs}}><label class="Label">{{label}}: {{selectedOption}}</label><ul class="List">{{options}}</ul></div>',
-			'option' => '<li{{attrs}}><a href="{{baseUrl}}/{{name}}:{{value}}">{{text}}</a></li>',
+			'option' => '<li{{attrs}}><a href="{{link}}">{{title}}</a></li>',
 		],
 	];
 	protected array $defaultWidgets = [
@@ -147,7 +147,6 @@ class CategoriesHelper extends \Cake\View\Helper {
 		$la_attributes = $aa_attributes + [
 			'aggregationLabel' => _('::' . $ls_fieldName . '_filter_all'),
 			'aggregationKey' => 'all',
-			'baseUrl' => NULL,
 			'disabled' => FALSE,
 			'escape' => TRUE,
 			'label' => _('::' . Inflector::underscore($ls_fieldName) . '_filter_label'),
@@ -161,17 +160,21 @@ class CategoriesHelper extends \Cake\View\Helper {
 			$la_attributes['id'] = $this->_domId($ls_fieldName);
 		}
 
-		if (empty($la_attributes['baseUrl'])) {
-			//$la_attributes['baseUrl'] = $this->Url->build(NULL, ['withoutParams' => ['page', 'category']]);
-			//$la_attributes['baseUrl'] = $this->Paginator->generateUrl([$la_attributes['name'] => FALSE, 'page' => FALSE]);
-			$la_attributes['baseUrl'] = $this->Url->build(NULL, ['withoutParams' => ['page', $la_attributes['name']]]);
-		}
-		$la_attributes['baseUrl'] = rtrim($la_attributes['baseUrl'], '/');
-
 		$la_attributes['options'] = $ax_options;
 		if (empty($la_attributes['options'])) {
 			$la_attributes['options'] = $this->getCategoriesFromRequest($ls_fieldName);
 		}
+
+		foreach ($la_attributes['options'] AS $lx_key => &$lx_value) {
+			if (!is_array($lx_value)) {
+				$lx_value = [
+					'title' => $lx_value
+				];
+			}
+
+			$lx_value['link'] = $this->Url->build([$la_attributes['name'] => $lx_key], ['withoutParams' => ['page']]);
+		}
+		unset($lx_value);
 
 		if (empty($la_attributes['val'])) {
 			$la_attributes['val'] = $this->getSelectedCategoryFromRequest($ls_fieldName);

@@ -20,8 +20,8 @@ namespace Awyiss\Model\Entity;
  * @property string|null $meta_description
  * @property bool $robots_index
  * @property bool $robots_follow
- * @property int $page_roles_id
- * @property int $page_templates_id
+ * @property int $page_role_id
+ * @property int $page_template_id
  * @property int|null $duplicate_of
  * @property int $system_order
  * @property bool $active
@@ -58,8 +58,8 @@ class Page extends \Awyiss\Model\Entity {
 		'meta_description' => TRUE,
 		'robots_index' => TRUE,
 		'robots_follow' => TRUE,
-		'page_roles_id' => TRUE,
-		'page_templates_id' => TRUE,
+		'page_role_id' => TRUE,
+		'page_template_id' => TRUE,
 		'duplicate_of' => TRUE,
 		'system_order' => TRUE,
 		'active' => TRUE,
@@ -75,7 +75,7 @@ class Page extends \Awyiss\Model\Entity {
 	 * @inheritDoc
 	 */
 	protected array $defaults = [
-		'page_roles_id' => PAGEROLE_PAGE,
+		'page_role_id' => PAGEROLE_PAGE,
 	];
 
 

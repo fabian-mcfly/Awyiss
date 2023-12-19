@@ -4,12 +4,12 @@
 
 <div class="Contents Overview">
 	{% if helper_Access_isAccessible('create') %}
-		{{ helper_Html_link(__('::create'), {action : 'add', pages_id: ao_page.id}, {class : 'Button'}) }}
+		{{ helper_Html_link(__('::create'), {action : 'add', page_id: ao_page.id}, {class : 'Button'}) }}
 	{% endif %}
 
 	<h1>{{ __('::headline_overview') }}</h1>
 
-	{{ helper_Categories_filter('pages_id', [], {includeAggregation: false}) }}
+	{{ helper_Categories_filter('page_id', [], {includeAggregation: false}) }}
 
 	<div class="table-responsive">
 		{% for ls_templatePosition in ao_page.page_template.template_positions %}

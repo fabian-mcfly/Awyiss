@@ -5,6 +5,8 @@ namespace Awyiss\Controller\Backend;
 
 
 use Awyiss\Controller\BackendController as Controller;
+use Cake\Datasource\Exception\InvalidPrimaryKeyException;
+use Cake\Datasource\Exception\RecordNotFoundException;
 
 
 /**
@@ -23,7 +25,7 @@ class LanguagesController extends Controller {
 	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
 	public function overview () {
-		$this->Access->ensureOne('create', 'update', 'delete');
+		$this->Access->ensure('read');
 
 		$lo_languages = $this->Languages->find('withAttributes')->where($this->getOverviewWhere());
 		$lo_languages = $lo_languages->all()->groupBy('type');
@@ -62,6 +64,7 @@ class LanguagesController extends Controller {
 				}
 
 				$this->Flash->error(__('::add_failed'));
+				$this->Flash->error(implode('<br>' . PHP_EOL, $lo_language->getError('_general')));
 			}
 			else {
 				$lo_language->system_order = NULL;
@@ -86,10 +89,12 @@ class LanguagesController extends Controller {
 	public function edit () {
 		$this->Access->ensure('update');
 
-		$li_id = $this->request->getParam('id');
-		$lo_language = $this->Languages->find()->where(['id' => $li_id])->first();
-
-		if ( ! $lo_language) {
+		try {
+			$li_id = $this->request->getParam('id');
+			/** @var \Awyiss\Model\Entity\Language $lo_language */
+			$lo_language = $this->Languages->get($li_id);
+		}
+		catch (RecordNotFoundException|InvalidPrimaryKeyException) {
 			$this->Flash->error(__('::record_not_found'));
 
 			return $this->redirect(['action' => 'overview']);
@@ -110,6 +115,7 @@ class LanguagesController extends Controller {
 				}
 
 				$this->Flash->error(__('::edit_failed'));
+				$this->Flash->error(implode('<br>' . PHP_EOL, $lo_language->getError('_general')));
 			}
 			else {
 				if ($this->Languages->getSystemOrderRelatedColumns($lo_language)) {
@@ -140,12 +146,14 @@ class LanguagesController extends Controller {
 		$this->Access->ensure('delete');
 
 		$this->request->allowMethod(['get', 'delete']);
-		$li_id = $this->request->getParam('id');
-		$lo_language = $this->Languages->find()->where(['id' => $li_id])->first();
 
-		if ( ! $lo_language) {
+		try {
+			$li_id = $this->request->getParam('id');
+			/** @var \Awyiss\Model\Entity\Language $lo_language */
+			$lo_language = $this->Languages->get($li_id);
+		}
+		catch (RecordNotFoundException|InvalidPrimaryKeyException) {
 			$this->Flash->error(__('::record_not_found'));
-
 			return $this->redirect(['action' => 'overview']);
 		}
 

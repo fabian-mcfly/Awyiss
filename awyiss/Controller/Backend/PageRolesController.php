@@ -5,6 +5,8 @@ namespace Awyiss\Controller\Backend;
 
 
 use Awyiss\Controller\BackendController as Controller;
+use Cake\Datasource\Exception\InvalidPrimaryKeyException;
+use Cake\Datasource\Exception\RecordNotFoundException;
 
 
 /**
@@ -23,7 +25,7 @@ class PageRolesController extends Controller {
 	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
 	public function overview () {
-		$this->Access->ensureOne('create', 'update', 'delete');
+		$this->Access->ensure('read');
 
 		$lo_pageRoles = $this->PageRoles->find('withAttributes')->where($this->getOverviewWhere());
 
@@ -60,6 +62,7 @@ class PageRolesController extends Controller {
 					return $this->redirect(['action' => 'edit', 'id' => $lo_pageRole->id]);
 				}
 				$this->Flash->error(__('::add_failed'));
+				$this->Flash->error(implode('<br>' . PHP_EOL, $lo_pageRole->getError('_general')));
 			}
 		}
 
@@ -81,10 +84,12 @@ class PageRolesController extends Controller {
 	public function edit () {
 		$this->Access->ensure('update');
 
-		$li_id = $this->request->getParam('id');
-		$lo_pageRole = $this->PageRoles->find()->where(['id' => $li_id])->first();
-
-		if ( ! $lo_pageRole) {
+		try {
+			$li_id = $this->request->getParam('id');
+			/** @var \Awyiss\Model\Entity\PageRole $lo_pageRole */
+			$lo_pageRole = $this->PageRoles->get($li_id);
+		}
+		catch (RecordNotFoundException|InvalidPrimaryKeyException) {
 			$this->Flash->error(__('::record_not_found'));
 
 			return $this->redirect(['action' => 'overview']);
@@ -105,6 +110,7 @@ class PageRolesController extends Controller {
 				}
 
 				$this->Flash->error(__('::edit_failed'));
+				$this->Flash->error(implode('<br>' . PHP_EOL, $lo_pageRole->getError('_general')));
 			}
 		}
 
@@ -127,12 +133,14 @@ class PageRolesController extends Controller {
 		$this->Access->ensure('delete');
 
 		$this->request->allowMethod(['get', 'delete']);
-		$li_id = $this->request->getParam('id');
-		$lo_pageRole = $this->PageRoles->find()->where(['id' => $li_id])->first();
 
-		if ( ! $lo_pageRole) {
+		try {
+			$li_id = $this->request->getParam('id');
+			/** @var \Awyiss\Model\Entity\PageRole $lo_pageRole */
+			$lo_pageRole = $this->PageRoles->get($li_id);
+		}
+		catch (RecordNotFoundException|InvalidPrimaryKeyException) {
 			$this->Flash->error(__('::record_not_found'));
-
 			return $this->redirect(['action' => 'overview']);
 		}
 

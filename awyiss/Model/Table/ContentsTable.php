@@ -40,12 +40,13 @@ class ContentsTable extends \Awyiss\Model\Table {
 			'parent' => [
 				'associationName' => 'Parent',
 			],
-			'relatedColumns' => ['pages_id', 'template_position'],
+			'relatedColumns' => ['page_id', 'template_position'],
 		],
 		'systemOrder' => [
-			'relatedColumns' => ['pages_id', 'template_position', 'parent_id'],
+			'relatedColumns' => ['page_id', 'template_position', 'parent_id'],
 		],
 	];
+	public const TABLE = 'contents';
 
 
 	/**
@@ -56,16 +57,14 @@ class ContentsTable extends \Awyiss\Model\Table {
 
 		$this->addBehavior('Nested', $this->getConfig('nested', []));
 
-		$this->setTable('contents');
+		$this->setTable(static::TABLE);
 		$this->setPrimaryKey('id');
 
 		$this->belongsTo('ContentTemplates', [
-			'foreignKey' => 'content_templates_id',
 			'joinType' => 'INNER',
 		]);
 
 		$this->belongsTo('Pages', [
-			'foreignKey' => 'pages_id',
 			'joinType' => 'INNER',
 		]);
 
@@ -80,6 +79,7 @@ class ContentsTable extends \Awyiss\Model\Table {
 		]);
 
 		$this->hasMany('Duplicate', [
+			'bindingKey' => 'duplicate_of',
 			'className' => 'Contents',
 			'foreignKey' => 'id',
 		]);
@@ -106,7 +106,7 @@ class ContentsTable extends \Awyiss\Model\Table {
 
 		$ao_validator->scalar('template_position')->maxLength('template_position', 100)->allowEmptyString('template_position');
 
-		$ao_validator->integer('content_templates_id')->requirePresence('content_templates_id', 'create')->notEmptyString('content_templates_id');
+		$ao_validator->integer('content_template_id')->requirePresence('content_template_id', 'create')->notEmptyString('content_template_id');
 
 		$ao_validator->numeric('columnwidth')->notEmptyString('columnwidth');
 
@@ -124,7 +124,7 @@ class ContentsTable extends \Awyiss\Model\Table {
 
 		$ao_validator->integer('parent_id')->allowEmptyString('parent_id');
 
-		$ao_validator->integer('pages_id')->requirePresence('pages_id')->notEmptyString('pages_id');
+		$ao_validator->integer('page_id')->requirePresence('page_id')->notEmptyString('page_id');
 
 		return $ao_validator;
 	}
@@ -136,24 +136,25 @@ class ContentsTable extends \Awyiss\Model\Table {
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function buildRules (RulesChecker $ao_rules): RulesChecker {
-		$ao_rules->add($ao_rules->existsIn(['content_templates_id'], 'ContentTemplates'), ['errorField' => 'content_templates_id']);
+		$ao_rules->add($ao_rules->existsIn(['content_template_id'], 'ContentTemplates'), ['errorField' => 'content_template_id']);
 
 		$ao_rules->add($ao_rules->existsIn(['parent_id'], 'Parent'), ['errorField' => 'parent_id']);
 
-		$ao_rules->add($ao_rules->existsIn(['pages_id'], 'Pages'), ['errorField' => 'pages_id']);
+		$ao_rules->add($ao_rules->existsIn(['page_id'], 'Pages'), ['errorField' => 'page_id']);
 
 		$ao_rules->add($ao_rules->existsIn(['duplicate_of'], 'Duplicate'), ['errorField' => 'duplicate_of']);
 
 		$ao_rules->add(function(Content $ao_entity) {
-			$lo_contentTemplate = $this->ContentTemplates->get($ao_entity->content_templates_id);
+			$lo_contentTemplate = $this->ContentTemplates->get($ao_entity->content_template_id);
 
-			$la_data = $ao_entity->extract($this->getSchema()->columns(), TRUE);
+			$la_data = $ao_entity->extract($this->getSchema()->columns());
 
 			/** @var \Awyiss\Validation\Validator $lo_validator */
 			$lo_validator = new $this->_validatorClass();
+			//TODO: check why I did this.
 			$lo_validator->setI18nDomain($this->getAlias());
 
-			foreach ($lo_contentTemplate->available_elements AS $la_element) {
+			foreach ($lo_contentTemplate->available_elements as $la_element) {
 				if (($la_element['required'] ?? NULL) === TRUE) {
 					$lo_validator->requirePresence($la_element['name'])->notEmptyString($la_element['name']);
 				}
@@ -227,6 +228,7 @@ class ContentsTable extends \Awyiss\Model\Table {
 		});
 	}
 
+
 	/*$validator
             ->add('role', 'validRole', [
                 'rule' => 'isValidRole',
@@ -239,6 +241,5 @@ class ContentsTable extends \Awyiss\Model\Table {
     public function isValidRole($value, array $context): bool
     {
         return in_array($value, ['admin', 'editor', 'author'], true);
-    }
-	*/
+    }*/
 }

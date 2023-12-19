@@ -17,8 +17,6 @@ class FrontendController extends AppController {
 
 		parent::initialize();
 
-		$this->loadComponent('RequestHandler');
-
 		$this->viewBuilder()->setClassName('Frontend');
 	}
 

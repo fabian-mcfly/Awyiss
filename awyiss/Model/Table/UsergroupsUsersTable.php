@@ -19,13 +19,23 @@ use Cake\Validation\Validator;
  * @method \Awyiss\Model\Entity\UsergroupsUser patchEntity(EntityInterface $ao_entity, array $aa_data, array $aa_options = [])
  */
 class UsergroupsUsersTable extends \Awyiss\Model\Table {
+	/**
+	 * @inheritDoc
+	 */
+	public const ATTRIBUTABLE = FALSE;
+	/**
+	 * @inheritDoc
+	 */
+	public const TABLE = 'usergroups_users';
 	protected array $_defaultConfig = [
 		'access' => [
 			'identifiers' => [
-				'Entity.create' => ['create', 'update'], //Since we use the users-scope, creating an association will occur when creating or updating a user
+				//We use the users-scope, creating an association will occur when creating or updating a user
+				'Entity.create' => ['create', 'update'],
 				'Entity.update' => 'update',
-				'Model.beforeFind' => ['create', 'update', 'delete'],
-				'Model.beforeDelete' => ['update', 'delete'], //Since we use the users-scope, deleting an association will occur when updating or deleting a user
+				'Model.beforeFind' => ['read', 'create', 'update', 'delete'],
+				//We use the users-scope, deleting an association will occur when updating or deleting a user
+				'Model.beforeDelete' => ['update', 'delete'],
 			],
 			'scope' => 'users',
 		],
@@ -38,17 +48,17 @@ class UsergroupsUsersTable extends \Awyiss\Model\Table {
 	public function initialize (array $aa_config): void {
 		parent::initialize($aa_config);
 
-		$this->setTable('usergroups_users');
+		$this->setTable(static::TABLE);
 		$this->setDisplayField('id');
 		$this->setPrimaryKey('id');
 
 		$this->belongsTo('Usergroups', [
-			'foreignKey' => 'usergroup_id',
+			//'foreignKey' => 'usergroup_id',
 			'joinType' => 'INNER',
 		]);
 
 		$this->belongsTo('Users', [
-			'foreignKey' => 'user_id',
+			//'foreignKey' => 'user_id',
 			'joinType' => 'INNER',
 		]);
 	}

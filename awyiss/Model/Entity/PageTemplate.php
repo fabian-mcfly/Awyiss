@@ -11,7 +11,7 @@ namespace Awyiss\Model\Entity;
  * @property string $title
  * @property string $filename
  * @property array $template_positions
- * @property int $page_roles_id
+ * @property int $page_role_id
  * @property int $system_order
  * @property bool $active
  * @property bool $deleted
@@ -31,7 +31,7 @@ class PageTemplate extends \Awyiss\Model\Entity {
 		'title' => TRUE,
 		'filename' => TRUE,
 		'template_positions' => TRUE,
-		'page_roles_id' => TRUE,
+		'page_role_id' => TRUE,
 		'system_order' => TRUE,
 		'active' => TRUE,
 	];
@@ -40,9 +40,9 @@ class PageTemplate extends \Awyiss\Model\Entity {
 	/**
 	 * @noinspection PhpUnused
 	 */
-	protected function _getTemplatePositions (?array $aa_templatePositions = NULL): ?array {
+	/*protected function _getTemplatePositions (?array $aa_templatePositions = NULL): ?array {
 		return $aa_templatePositions ? array_combine($aa_templatePositions, $aa_templatePositions) : NULL;
-	}
+	}*/
 
 
 	/**
@@ -54,7 +54,7 @@ class PageTemplate extends \Awyiss\Model\Entity {
 		}
 
 		if (is_array($ax_value)) {
-			return $ax_value;
+			return array_values($ax_value);
 		}
 
 		return array_unique(array_map('trim', explode(',', trim($ax_value, ', '))));

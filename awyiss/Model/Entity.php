@@ -4,6 +4,9 @@
 namespace Awyiss\Model;
 
 
+use Cake\Utility\Inflector;
+
+
 /**
  * Page Entity
  *
@@ -24,15 +27,17 @@ class Entity extends \Cake\ORM\Entity {
 	public function __construct (array $aa_properties = [], array $aa_options = []) {
 		parent::__construct($aa_properties, $aa_options);
 
-		if (($lo_attributes = ($this->_fields['attributes'] ?? NULL)) && is_a($lo_attributes, \Cake\ORM\Entity::class)) {
-			/** @var \Cake\ORM\Entity $lo_attributes */
+		if (($lo_attributes = ($this->_fields['attributes'] ?? NULL)) && is_a($lo_attributes, Entity::class)) {
+			$ls_foreignKey = Inflector::singularize(Inflector::underscore($this->getSource())) . '_id';
+
+			/** @var Entity $lo_attributes */
 			foreach ($lo_attributes->_fields as $ls_key => $lx_value) {
-				if ($ls_key == 'parent_id') {
+				if (in_array($ls_key, ['id', $ls_foreignKey])) {
 					continue;
 				}
 				$this->setVirtual([$ls_key], TRUE);
 			}
-			$this->setHidden(['attributes']);
+			$this->setHidden(['attributes'], TRUE);
 		}
 	}
 
@@ -67,6 +72,24 @@ class Entity extends \Cake\ORM\Entity {
 
 		return $ls_inactive . $ls_title;
 	}
+
+
+	/**
+	 * TODO: reconsider if this is a good idea.
+	 * Not being able to set or modify virtual avoids confusion when values aren't persisted after saving an entity
+	 * BUT it removes the ability to modify values "on the fly" that never need to make it to the database
+	 *
+	public function set($as_field, $ax_value = null, array $aa_options = []): self {
+		if ($as_field === 'jason_test') {
+			if (in_array($as_field, $this->getVirtual())) {
+				throw new \RuntimeException('Cannot modify virtual elements');
+			}
+		}
+
+		parent::set($as_field, $ax_value, $aa_options);
+
+		return $this;
+	}*/
 
 
 	/**

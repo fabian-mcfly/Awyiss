@@ -112,6 +112,7 @@ class AuditBehavior extends Behavior {
 		$la_newData = $ao_entity->extract(array_keys($la_oldData));
 		$la_diff = \Cake\Utility\Hash::diff($la_oldData, $la_newData);
 		$la_diff = array_diff_key($la_diff, array_flip($this->getConfig('ignoredColumns')));
+		if (empty($la_diff)) return;
 
 		$li_identityId = NULL;
 		if ($lo_identity = $this->getIdentity()) {
@@ -123,7 +124,7 @@ class AuditBehavior extends Behavior {
 
 		$la_auditData = [
 			'type' => ! empty($ao_entity->deleted) ? 'd' : 'u',
-			'model' => '\\' . $ao_event->getSubject()::class,
+			'scope' => $ao_event->getSubject()->getTable(),
 			'parent_id' => $ao_entity->get('id'),
 			'data_old' => $la_oldData,
 			'data_new' => $la_newData,

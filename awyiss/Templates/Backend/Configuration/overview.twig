@@ -1,11 +1,13 @@
 {# @var ao_configuration \Awyiss\Model\Entity\Configuration[] #}
 {# @var aa_configuration array #}
+{# @var aa_configScopes array #}
 {# @var _view \Awyiss\View\BackendView #}
 
 <div class="Configuration Overview">
 	{% if helper_Access_isAccessible('create') %}
 		{{ helper_Html_link(__('::create'), {action: 'add'}, {class: 'Button'}) }}
 	{% endif %}
+
 	<h1>{{ __('::headline_overview') }}</h1>
 
 	{{ helper_Categories_filter('scope', naturalSort(aa_configScopes|map((value,key) => __(key ~ '::title'))), {

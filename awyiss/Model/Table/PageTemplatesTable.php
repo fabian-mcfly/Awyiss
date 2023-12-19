@@ -24,12 +24,13 @@ class PageTemplatesTable extends \Awyiss\Model\Table {
 	 */
 	protected array $_defaultConfig = [
 		'systemOrder' => [
-			'relatedColumns' => ['page_roles_id'],
+			'relatedColumns' => ['page_role_id'],
 		],
 		'translate' => [
 			'fields' => ['title'],
 		],
 	];
+	public const TABLE = 'page_templates';
 
 
 	/**
@@ -38,11 +39,10 @@ class PageTemplatesTable extends \Awyiss\Model\Table {
 	public function initialize (array $aa_config): void {
 		parent::initialize($aa_config);
 
-		$this->setTable('page_templates');
+		$this->setTable(static::TABLE);
 		$this->setPrimaryKey('id');
 
 		$this->belongsTo('PageRoles', [
-			'foreignKey' => 'page_roles_id',
 			'joinType' => 'INNER',
 		]);
 	}
@@ -60,9 +60,9 @@ class PageTemplatesTable extends \Awyiss\Model\Table {
 
 		$ao_validator->scalar('filename')->maxLength('filename', 100)->requirePresence('filename', 'create')->notEmptyString('filename');
 
-		$ao_validator->isArray('template_positions')->allowEmptyArray('template_positions');
+		//$ao_validator->isArray('template_positions')->allowEmptyArray('template_positions');
 
-		$ao_validator->integer('page_roles_id')->requirePresence('page_roles_id', 'create')->notEmptyString('page_roles_id');
+		$ao_validator->integer('page_role_id')->requirePresence('page_role_id', 'create')->notEmptyString('page_role_id');
 
 		$ao_validator->integer('system_order')->requirePresence('system_order')->notEmptyString('system_order');
 
@@ -76,9 +76,12 @@ class PageTemplatesTable extends \Awyiss\Model\Table {
 
 	/**
 	 * @inheritDoc
+	 *
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function buildRules (RulesChecker $ao_rules): RulesChecker {
-		$ao_rules->add($ao_rules->existsIn(['page_roles_id'], 'PageRoles'), ['errorField' => 'page_roles_id']);
+		$ao_rules->add($ao_rules->isUnique(['filename']), ['errorField' => 'filename']);
+		$ao_rules->add($ao_rules->existsIn(['page_role_id'], 'PageRoles'), ['errorField' => 'page_role_id']);
 
 		return $ao_rules;
 	}

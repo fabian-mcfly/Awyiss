@@ -20,6 +20,7 @@
 		}
 		catch (RecordNotFoundException|InvalidPrimaryKeyException) {
 			$this->Flash->error(__('::record_not_found'));
+
 			return $this->redirect(['action' => 'overview']);
 		}
 
@@ -38,6 +39,7 @@
 				}
 
 				$this->Flash->error(__('::edit_failed'));
+				$this->Flash->error(implode('<br>' . PHP_EOL, $lo_{{ singularName }}->getError('_general')));
 			}
 		}
 

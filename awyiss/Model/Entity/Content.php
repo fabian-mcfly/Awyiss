@@ -22,7 +22,7 @@ use Cake\Datasource\FactoryLocator;
  * @property \Cake\I18n\FrozenTime|null $publishdate_start
  * @property \Cake\I18n\FrozenTime|null $publishdate_end
  * @property string|null $template_position
- * @property int $content_templates_id
+ * @property int $content_template_id
  * @property float $columnwidth
  * @property string|null $css_class
  * @property int|null $forms_id
@@ -32,7 +32,7 @@ use Cake\Datasource\FactoryLocator;
  * @property bool $active
  * @property bool $deleted
  * @property int $parent_id
- * @property int $pages_id
+ * @property int $page_id
  * @property int|null $created_by
  * @property \Cake\I18n\FrozenTime|null $created_on
  * @property int|null $changed_by
@@ -56,7 +56,7 @@ class Content extends \Awyiss\Model\Entity {
 		'publishdate_start' => TRUE,
 		'publishdate_end' => TRUE,
 		'template_position' => TRUE,
-		'content_templates_id' => TRUE,
+		'content_template_id' => TRUE,
 		'columnwidth' => TRUE,
 		'css_class' => TRUE,
 		'duplicate_of' => TRUE,
@@ -64,22 +64,22 @@ class Content extends \Awyiss\Model\Entity {
 		'system_order' => TRUE,
 		'active' => TRUE,
 		'parent_id' => TRUE,
-		'pages_id' => TRUE,
+		'page_id' => TRUE,
 	];
 
 
 	/**
 	 * @noinspection PhpUnused
 	 */
-	protected function _getCssClass (?array $aa_cssClass = NULL): ?array {
+	/*protected function _getCssClass (?array $aa_cssClass = NULL): ?array {
 		return $aa_cssClass ? array_combine($aa_cssClass, $aa_cssClass) : NULL;
-	}
+	}*/
 
 
 	/**
 	 * @noinspection PhpUnused
 	 */
-	protected function _setCssClass (mixed $ax_value): array {
+	/*protected function _setCssClass (mixed $ax_value): array {
 		if (empty($ax_value)) {
 			return [];
 		}
@@ -89,19 +89,19 @@ class Content extends \Awyiss\Model\Entity {
 		}
 
 		return array_unique(array_map('trim', explode(',', trim($ax_value, ', '))));
-	}
+	}*/
 
 
 	/**
 	 * @noinspection PhpUnused
 	 */
-	protected function _setData (mixed $ax_value): ?array {
+	/*protected function _setData (mixed $ax_value): ?array {
 		if (empty($ax_value)) {
 			return NULL;
 		}
 
 		return is_array($ax_value) ? $ax_value : [$ax_value];
-	}
+	}*/
 
 
 	/**

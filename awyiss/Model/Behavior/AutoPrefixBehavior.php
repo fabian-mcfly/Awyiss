@@ -34,7 +34,9 @@ class AutoPrefixBehavior extends Behavior {
 			return;
 		}
 
-		$ao_query->traverseParts(function(QueryExpression $ao_expression) {
+		$ao_query->traverseParts(function(?QueryExpression $ao_expression) {
+			if (is_null($ao_expression)) return;
+
 			$this->expressionVisitor($ao_expression);
 		}, ['where']);
 	}
@@ -42,10 +44,18 @@ class AutoPrefixBehavior extends Behavior {
 
 	protected function expressionVisitor (QueryExpression|UnaryExpression $ao_expression): void {
 		if ($ao_expression instanceof UnaryExpression) {
-			$ao_expression->traverse(function(IdentifierExpression $ao_expression) {
-				$ls_field = $ao_expression->getIdentifier();
-				if (strpos($ls_field, '.') === FALSE) {
-					$ao_expression->setIdentifier($this->alias . '.' . $ls_field);
+			$ao_expression->traverse(function(IdentifierExpression|QueryExpression|ComparisonExpression $ao_expression) {
+				if ($ao_expression instanceof ComparisonExpression) {
+					$ls_field = $ao_expression->getField();
+					if (strpos($ls_field, '.') === FALSE) {
+						$ao_expression->setField($this->alias . '.' . $ls_field);
+					}
+				}
+				elseif ($ao_expression instanceof IdentifierExpression) {
+					$ls_field = $ao_expression->getIdentifier();
+					if (strpos($ls_field, '.') === FALSE) {
+						$ao_expression->setIdentifier($this->alias . '.' . $ls_field);
+					}
 				}
 
 				return $ao_expression;

@@ -19,6 +19,14 @@ class AuditTable extends \Awyiss\Model\Table {
 	/**
 	 * @inheritDoc
 	 */
+	public const ATTRIBUTABLE = FALSE;
+	/**
+	 * @inheritDoc
+	 */
+	public const TABLE = 'audit';
+	/**
+	 * @inheritDoc
+	 */
 	protected array $_defaultConfig = [
 		'audit' => [
 			'enabled' => FALSE,
@@ -32,7 +40,7 @@ class AuditTable extends \Awyiss\Model\Table {
 	public function initialize (array $aa_config): void {
 		parent::initialize($aa_config);
 
-		$this->setTable('audit');
+		$this->setTable(static::TABLE);
 		$this->setDisplayField('id');
 		$this->setPrimaryKey('id');
 	}
@@ -48,7 +56,7 @@ class AuditTable extends \Awyiss\Model\Table {
 
 		$ao_validator->scalar('type')->requirePresence('type', 'create')->notEmptyString('type');
 
-		$ao_validator->scalar('model')->maxLength('model', 50)->requirePresence('model', 'create')->notEmptyString('model');
+		$ao_validator->scalar('scope')->maxLength('model', 50)->requirePresence('scope', 'create')->notEmptyString('scope');
 
 		$ao_validator->allowEmptyArray('data_old');
 

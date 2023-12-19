@@ -8,7 +8,7 @@
 	<fieldset>
 		<legend>{{ __('::fieldset_general') }}</legend>
 		{{ helper_Form_control('active') }}
-		{{ helper_Categories_control('pages_id', {val: ao_content.pages_id, empty: FALSE}) }}
+		{{ helper_Categories_control('page_id', {val: ao_content.page_id, empty: FALSE}) }}
 		{{ helper_Form_control('parent_id', {options: ao_threadedContents.printer('label', 'id')}) }}
 		{{ helper_SystemOrder_control('system_order', {entity: ao_content}) }}
 		{{ helper_Form_control('title') }}
@@ -21,7 +21,7 @@
 		{{ helper_Form_control('publishdate_start') }}
 		{{ helper_Form_control('publishdate_end') }}
 		{{ helper_Form_control('template_position', {options: ao_page.page_template.template_positions}) }}
-		{{ helper_Form_control('content_templates_id', {options: ao_contentTemplates}) }}
+		{{ helper_Form_control('content_template_id', {options: ao_contentTemplates}) }}
 		{{ helper_Form_control('columnwidth') }}
 		{{ helper_Form_control('css_class') }}
 		{{ helper_Form_control('forms_id') }}

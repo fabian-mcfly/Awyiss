@@ -22,13 +22,23 @@ class UsergroupPermissionsTable extends \Awyiss\Model\Table {
 	/**
 	 * @inheritDoc
 	 */
+	public const ATTRIBUTABLE = FALSE;
+	/**
+	 * @inheritDoc
+	 */
+	public const TABLE = 'usergroup_permissions';
+	/**
+	 * @inheritDoc
+	 */
 	protected array $_defaultConfig = [
 		'access' => [
 			'identifiers' => [
-				'Entity.create' => ['create', 'update'], //Since we use the usergroups-scope, creating a permission will occur when creating or updating a usergroup
+				//We use the usergroups-scope, creating a permission will occur when creating or updating a usergroup
+				'Entity.create' => ['create', 'update'],
 				'Entity.update' => 'update',
-				'Model.beforeFind' => ['create', 'update', 'delete'],
-				'Model.beforeDelete' => ['update', 'delete'], //Since we use the usergroups-scope, deleting a permission will occur when updating or deleting a usergroup
+				'Model.beforeFind' => ['read', 'create', 'update', 'delete'],
+				//We use the usergroups-scope, deleting a permission will occur when updating or deleting a usergroup
+				'Model.beforeDelete' => ['update', 'delete'],
 			],
 			'scope' => 'usergroups',
 		],
@@ -41,12 +51,11 @@ class UsergroupPermissionsTable extends \Awyiss\Model\Table {
 	public function initialize (array $aa_config): void {
 		parent::initialize($aa_config);
 
-		$this->setTable('usergroup_permissions');
+		$this->setTable(static::TABLE);
 		$this->setDisplayField('id');
 		$this->setPrimaryKey('id');
 
 		$this->belongsTo('Usergroups', [
-			'foreignKey' => 'usergroup_id',
 			'joinType' => 'INNER',
 		]);
 	}
