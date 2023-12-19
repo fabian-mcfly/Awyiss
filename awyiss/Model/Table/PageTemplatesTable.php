@@ -5,6 +5,7 @@ namespace Awyiss\Model\Table;
 
 
 use Cake\Database\Schema\TableSchemaInterface;
+use Cake\Datasource\EntityInterface;
 use Cake\ORM\RulesChecker;
 use Cake\Validation\Validator;
 
@@ -14,40 +15,30 @@ use Cake\Validation\Validator;
  *
  * @property \Awyiss\Model\Table\PageRolesTable&\Cake\ORM\Association\BelongsTo $PageRoles
  *
- * @method \Awyiss\Model\Entity\PageTemplate newDefaultEntity()
- * @method \Awyiss\Model\Entity\PageTemplate newEmptyEntity()
- * @method \Awyiss\Model\Entity\PageTemplate newEntity(array $data, array $options = [])
- * @method \Awyiss\Model\Entity\PageTemplate[] newEntities(array $data, array $options = [])
- * @method \Awyiss\Model\Entity\PageTemplate get($primaryKey, $options = [])
- * @method \Awyiss\Model\Entity\PageTemplate findOrCreate($search, ?callable $callback = NULL, $options = [])
- * @method \Awyiss\Model\Entity\PageTemplate patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
- * @method \Awyiss\Model\Entity\PageTemplate[] patchEntities(iterable $entities, array $data, array $options = [])
- * @method \Awyiss\Model\Entity\PageTemplate|false save(\Cake\Datasource\EntityInterface $entity, $options = [])
- * @method \Awyiss\Model\Entity\PageTemplate saveOrFail(\Cake\Datasource\EntityInterface $entity, $options = [])
- * @method \Awyiss\Model\Entity\PageTemplate[]|\Cake\Datasource\ResultSetInterface|false saveMany(iterable $entities, $options = [])
- * @method \Awyiss\Model\Entity\PageTemplate[]|\Cake\Datasource\ResultSetInterface saveManyOrFail(iterable $entities, $options = [])
- * @method \Awyiss\Model\Entity\PageTemplate[]|\Cake\Datasource\ResultSetInterface|false deleteMany(iterable $entities, $options = [])
- * @method \Awyiss\Model\Entity\PageTemplate[]|\Cake\Datasource\ResultSetInterface deleteManyOrFail(iterable $entities, $options = [])
+ * @method \Awyiss\Model\Entity\PageTemplate newDefaultEntity(array $aa_additionalData = [])
+ * @method \Awyiss\Model\Entity\PageTemplate patchEntity(EntityInterface $ao_entity, array $aa_data, array $aa_options = [])
  */
 class PageTemplatesTable extends \Awyiss\Model\Table {
+	/**
+	 * @inheritDoc
+	 */
 	protected array $_defaultConfig = [
 		'systemOrder' => [
 			'relatedColumns' => ['page_roles_id'],
 		],
+		'translate' => [
+			'fields' => ['title'],
+		],
 	];
 
+
 	/**
-	 * Initialize method
-	 *
-	 * @param array $aa_config The configuration for the Table.
-	 *
-	 * @return void
+	 * @inheritDoc
 	 */
 	public function initialize (array $aa_config): void {
 		parent::initialize($aa_config);
 
 		$this->setTable('page_templates');
-		$this->setDisplayField('title');
 		$this->setPrimaryKey('id');
 
 		$this->belongsTo('PageRoles', [
@@ -58,69 +49,49 @@ class PageTemplatesTable extends \Awyiss\Model\Table {
 
 
 	/**
-	 * Default validation rules.
-	 *
-	 * @param \Cake\Validation\Validator $ao_validator Validator instance.
-	 *
-	 * @return \Cake\Validation\Validator
+	 * @inheritDoc
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
-	 * @noinspection DuplicatedCode
 	 */
 	public function validationDefault (Validator $ao_validator): Validator {
 		$ao_validator->integer('id')->allowEmptyString('id', NULL, 'create');
 
 		$ao_validator->scalar('title')->maxLength('title', 100)->requirePresence('title', 'create')->notEmptyString('title');
 
-		$ao_validator->scalar('filename')->maxLength('filename', 100)->requirePresence('filename', 'create')->notEmptyFile('filename');
+		$ao_validator->scalar('filename')->maxLength('filename', 100)->requirePresence('filename', 'create')->notEmptyString('filename');
 
-		$ao_validator->requirePresence('content_areas', 'create')->notEmptyString('content_areas');
+		$ao_validator->isArray('template_positions')->allowEmptyArray('template_positions');
 
-		$ao_validator->requirePresence('page_roles_id', 'create')->notEmptyString('page_roles_id');
+		$ao_validator->integer('page_roles_id')->requirePresence('page_roles_id', 'create')->notEmptyString('page_roles_id');
+
+		$ao_validator->integer('system_order')->requirePresence('system_order')->notEmptyString('system_order');
 
 		$ao_validator->boolean('active')->notEmptyString('active');
 
 		$ao_validator->boolean('deleted')->notEmptyString('deleted');
-
-		$ao_validator->integer('system_order')->notEmptyString('system_order');
-
-		$ao_validator->integer('created_by')->allowEmptyString('created_by');
-
-		$ao_validator->dateTime('created_on')->allowEmptyDateTime('created_on');
-
-		$ao_validator->integer('changed_by')->allowEmptyString('changed_by');
-
-		$ao_validator->dateTime('changed_on')->allowEmptyDateTime('changed_on');
-
-		$ao_validator->integer('deleted_by')->allowEmptyString('deleted_by');
-
-		$ao_validator->dateTime('deleted_on')->allowEmptyDateTime('deleted_on');
 
 		return $ao_validator;
 	}
 
 
 	/**
-	 * Returns a rules checker object that will be used for validating
-	 * application integrity.
-	 *
-	 * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
-	 *
-	 * @return \Cake\ORM\RulesChecker
+	 * @inheritDoc
 	 */
-	public function buildRules (RulesChecker $rules): RulesChecker {
-		$rules->add($rules->existsIn(['page_roles_id'], 'PageRoles'), ['errorField' => 'page_roles_id']);
+	public function buildRules (RulesChecker $ao_rules): RulesChecker {
+		$ao_rules->add($ao_rules->existsIn(['page_roles_id'], 'PageRoles'), ['errorField' => 'page_roles_id']);
 
-		return $rules;
+		return $ao_rules;
 	}
 
 
 	/**
-	 * {@inheritDoc}
+	 * @inheritDoc
+	 *
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	protected function _initializeSchema (TableSchemaInterface $schema): TableSchemaInterface {
-		$schema->setColumnType('content_areas', 'json');
+	protected function _initializeSchema (TableSchemaInterface $ao_schema): TableSchemaInterface {
+		$ao_schema->setColumnType('template_positions', 'json');
 
-		return $schema;
+		return $ao_schema;
 	}
 }

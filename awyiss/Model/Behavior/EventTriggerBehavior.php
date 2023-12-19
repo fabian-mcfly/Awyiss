@@ -4,8 +4,8 @@
 namespace Awyiss\Model\Behavior;
 
 
+use Awyiss\ORM\Behavior;
 use Cake\Event\Event;
-use Cake\ORM\Behavior;
 
 
 class EventTriggerBehavior extends Behavior {
@@ -27,6 +27,8 @@ class EventTriggerBehavior extends Behavior {
 			'beforeRules',
 			'afterRules',
 			'beforeSave',
+			'beforeCreate',
+			'beforeUpdate',
 			'afterSave',
 			'afterSaveCommit',
 			'beforeDelete',
@@ -35,6 +37,7 @@ class EventTriggerBehavior extends Behavior {
 			'beforeSoftDelete',
 			'afterSoftDelete',
 		],
+		'implementedMethods' => [],
 	];
 
 
@@ -60,8 +63,13 @@ class EventTriggerBehavior extends Behavior {
 		$la_arguments = $aa_arguments;
 		unset($la_arguments[0]);
 
-		$ls_alias = \Cake\Utility\Inflector::singularize($this->table()->getAlias());
+		$ls_alias = $this->table()->getAlias();
 		$lo_event = new Event('Model.' . $ls_alias . '.' . $as_name, $this->table(), $la_arguments);
-		$this->table()->getEventManager()->dispatch($lo_event);
+		$lo_event = $this->table()->getEventManager()->dispatch($lo_event);
+
+		if ($lo_event->isStopped()) {
+			$aa_arguments[0]->stopPropagation();
+			$aa_arguments[0]->setResult($lo_event->getResult());
+		}
 	}
 }

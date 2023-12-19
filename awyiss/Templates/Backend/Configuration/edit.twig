@@ -1,5 +1,6 @@
 {# @var ao_configuration \Awyiss\Model\Entity\Configuration #}
 {# @var aa_configScopes array #}
+{# @var ao_configOptions \Awyiss\ConfigOptions\AbstractConfigOptions #}
 {# @var _view \Awyiss\View\BackendView #}
 
 <div class="Configuration Form Edit">
@@ -11,6 +12,14 @@
 		<legend>{{ __('::fieldset_general') }}</legend>
 		{{ helper_Form_control('scope', {options: naturalSort(aa_configScopes|map((value,key) => __(key ~ '::title')))}) }}
 		{{ helper_Form_control('name') }}
+
+		<label>
+			<select name="">
+				<option value=""></option>
+				{{ _self.recursiveConfigOptions(ao_configOptions) }}
+			</select>
+		</label>
+
 		{{ helper_Form_control('value') }}
 		{{ helper_Locale_control('languages_shortcode') }}
 	</fieldset>
@@ -21,3 +30,19 @@
 	{{ helper_Form_button(__('::save_close'), {name: 'submit', value: 'submit_close'}) }}
 	{{ helper_Form_end() }}
 </div>
+
+{% macro recursiveConfigOptions(aa_items, ai_level = 0, aa_parent = []) %}
+	{% for ls_key, lx_configuration in aa_items %}
+		{% if lx_configuration is iterable %}
+			{% if ai_level == 0 %}
+				<optgroup label="{{ ls_key }}">
+					{{ _self.recursiveConfigOptions(lx_configuration, ai_level + 1, aa_parent|merge([ls_key])) }}
+				</optgroup>
+			{% else %}
+				{{ _self.recursiveConfigOptions(lx_configuration, ai_level + 1, aa_parent|merge([ls_key])) }}
+			{% endif %}
+		{% else %}
+			<option>{{ aa_parent|length > 1 ? aa_parent|slice(-1)|join('.') ~ '.' : '' }}{{ ls_key }}</option>
+		{% endif %}
+	{% endfor %}
+{% endmacro %}

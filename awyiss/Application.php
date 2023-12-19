@@ -6,6 +6,8 @@ declare(strict_types=1);
 namespace Awyiss;
 
 
+use Awyiss\Controller\ControllerFactory;
+use Awyiss\ORM\Locator\TableLocator;
 use Cake\Core\Configure;
 use Cake\Core\ContainerInterface;
 use Cake\Core\Exception\MissingPluginException;
@@ -18,11 +20,12 @@ use Cake\Http\BaseApplication;
 use Cake\Http\ControllerFactoryInterface;
 use Cake\Http\Middleware\BodyParserMiddleware;
 use Cake\Http\MiddlewareQueue;
-use Cake\ORM\Locator\TableLocator;
 use Cake\Routing\Middleware\RoutingMiddleware;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\Router;
 use Composer\Autoload\ClassLoader;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 
 class Application extends BaseApplication {
@@ -56,7 +59,7 @@ class Application extends BaseApplication {
 			if ( ! $ls_customDir = env('CUSTOM_DIR')) {
 				$ls_cliHint = NULL;
 				if (PHP_SAPI === 'cli') {
-					$ls_cliHint = 'Set it in awyiss/bin/cake.php ' . PHP_EOL;
+					$ls_cliHint = 'Set it in bin/cake.php ' . PHP_EOL;
 				}
 				exit('Environment Variable CUSTOM_DIR is not set.' . PHP_EOL . $ls_cliHint);
 			}
@@ -69,6 +72,7 @@ class Application extends BaseApplication {
 	 * Load all the application configuration and bootstrap logic.
 	 *
 	 * @return void
+	 * @throws \ReflectionException
 	 */
 	public function bootstrap (): void {
 		/** @noinspection PhpIncludeInspection */
@@ -85,10 +89,8 @@ class Application extends BaseApplication {
 
 		/*
 		 * At this point we know where the customer-specific files will be.
-		 * so we add the path to the autoloader for both the \Awyiss
-		 * and the customer-specific namespace
+		 * so we add the path to the autoloader for the customer-specific namespace
 		 */
-		//$this->lo_loader->addPsr4('Awyiss\\', [ROOT . DS . CUSTOM_DIR], TRUE);
 		$this->classLoader->addPsr4(CUSTOM_NAMESPACE . '\\', [ROOT . DS . CUSTOM_DIR], TRUE);
 
 
@@ -119,6 +121,8 @@ class Application extends BaseApplication {
 		if (is_file($ls_file = ENV_CUSTOM_CONFIG . 'plugins.php')) {
 			require_once $ls_file;
 		}
+
+		static::loadConstants();
 	}
 
 
@@ -128,17 +132,26 @@ class Application extends BaseApplication {
 	 * That is when running commands.
 	 *
 	 * @return void
+	 * @throws \ReflectionException
 	 */
 	protected function bootstrapCli (): void {
 		try {
 			Configure::write('Bake.theme', 'AwyissBake');
 			$this->addPlugin('Bake');
 			$this->addPlugin('AwyissBake');
+
+			\Awyiss\Event\EventListenersProvider::loadListener('general_events', 'bake');
 		}
 		catch (MissingPluginException $ex) {
 			exit($ex->getMessage());
-			// Do not halt if the plugin is missing
 		}
+
+		/*$lo_onsoleOptionParser = new ConsoleOptionParser('');
+		$lo_onsoleOptionParser->addOption('prefix', [
+			'help' => 'The namespace prefix to use.',
+			'default' => false,
+		]);
+		dd($lo_onsoleOptionParser->parse($_SERVER['argv']));*/
 
 		$this->addPlugin('Migrations');
 	}
@@ -147,7 +160,7 @@ class Application extends BaseApplication {
 	/**
 	 * Setup the middleware queue
 	 *
-	 * @param \Cake\Http\MiddlewareQueue $ao_middlewareQueue The middleware queue to setup.
+	 * @param \Cake\Http\MiddlewareQueue $ao_middlewareQueue The middleware queue to set up.
 	 *
 	 * @return \Cake\Http\MiddlewareQueue The updated middleware queue.
 	 *
@@ -166,7 +179,7 @@ class Application extends BaseApplication {
 
 
 	/**
-	 * {@inheritDoc}
+	 * @inheritDoc
 	 *
 	 * @param \Cake\Routing\RouteBuilder $ao_routes A route builder to add routes into.
 	 *
@@ -213,7 +226,7 @@ class Application extends BaseApplication {
 			/** @noinspection PhpIncludeInspection */
 			require $this->configDir . 'routes.php';
 			/**
-			 * The reason we're doing this is because a custom config might overwrite routes for the frontend using the * placeholder
+			 * The reason we're doing this is that a custom config might overwrite routes for the frontend using the * placeholder
 			 * which are required for the Awyiss backend
 			 *
 			 * But since we want to be able to set custom backend routes in the custom config as well,
@@ -242,6 +255,64 @@ class Application extends BaseApplication {
 
 		if (is_file($ls_file = ENV_CUSTOM_CONFIG . 'services.php')) {
 			require_once $ls_file;
+		}
+	}
+
+
+	/**
+	 * Invoke the application.
+	 *
+	 * - Convert the PSR response into CakePHP equivalents.
+	 * - Create the controller that will handle this request.
+	 * - Invoke the controller.
+	 *
+	 * @param \Psr\Http\Message\ServerRequestInterface $ao_request The request
+	 *
+	 * @return \Psr\Http\Message\ResponseInterface
+	 * @throws \Psr\Container\ContainerExceptionInterface
+	 * @throws \Psr\Container\NotFoundExceptionInterface
+	 * @throws \ReflectionException
+	 *
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 */
+	public function handle (ServerRequestInterface $ao_request): ResponseInterface {
+		if ($this->controllerFactory === NULL) {
+			$this->controllerFactory = new ControllerFactory($this->getContainer());
+		}
+
+		if (Router::getRequest() !== $ao_request) {
+			/** @noinspection PhpParamsInspection */
+			Router::setRequest($ao_request);
+		}
+
+		$controller = $this->controllerFactory->create($ao_request);
+
+		return $this->controllerFactory->invoke($controller);
+	}
+
+
+	public static function loadConstants () {
+		$ls_filePath = ENV_CUSTOM_CONFIG . 'constants.php';
+
+		//dd(FactoryLocator::get('Table'));
+
+		if (file_exists($ls_filePath)) {
+			require_once $ls_filePath;
+			return;
+		}
+
+		$ls_constantsContents = '<?php declare(strict_types=1);' . PHP_EOL . PHP_EOL;
+
+		$lo_PageRolesTable = FactoryLocator::get('Table')->get('PageRoles');
+		/** @var \Awyiss\Model\Entity\PageRole $lo_pageRole */
+		foreach ($lo_PageRolesTable->find('all')->applyOptions(['access' => ['skip' => TRUE]]) AS $lo_pageRole) {
+			$ls_constant = 'PAGEROLE_' . strtoupper($lo_pageRole->identifier);
+			$ls_constantsContents .= 'defined(\'' . $ls_constant . '\') || define(\'' . $ls_constant . '\', ' . $lo_pageRole->id . ');' . PHP_EOL;
+			defined($ls_constant) || define($ls_constant, $lo_pageRole->id);
+		}
+
+		if (file_put_contents($ls_filePath, $ls_constantsContents) > 0) {
+			chmod($ls_filePath, fileperms($ls_filePath) | 128 + 16 + 2);
 		}
 	}
 }

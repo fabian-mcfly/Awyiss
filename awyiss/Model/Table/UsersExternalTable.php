@@ -4,6 +4,7 @@
 namespace Awyiss\Model\Table;
 
 
+use Cake\Datasource\EntityInterface;
 use Cake\ORM\Query;
 use Cake\Validation\Validator;
 
@@ -11,28 +12,12 @@ use Cake\Validation\Validator;
 /**
  * UsersExternal Model
  *
- * @method \Awyiss\Model\Entity\UsersExternal newDefaultEntity()
- * @method \Awyiss\Model\Entity\UsersExternal newEmptyEntity()
- * @method \Awyiss\Model\Entity\UsersExternal newEntity(array $data, array $options = [])
- * @method \Awyiss\Model\Entity\UsersExternal[] newEntities(array $data, array $options = [])
- * @method \Awyiss\Model\Entity\UsersExternal get($primaryKey, $options = [])
- * @method \Awyiss\Model\Entity\UsersExternal findOrCreate($search, ?callable $callback = NULL, $options = [])
- * @method \Awyiss\Model\Entity\UsersExternal patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
- * @method \Awyiss\Model\Entity\UsersExternal[] patchEntities(iterable $entities, array $data, array $options = [])
- * @method \Awyiss\Model\Entity\UsersExternal|false save(\Cake\Datasource\EntityInterface $entity, $options = [])
- * @method \Awyiss\Model\Entity\UsersExternal saveOrFail(\Cake\Datasource\EntityInterface $entity, $options = [])
- * @method \Awyiss\Model\Entity\UsersExternal[]|\Cake\Datasource\ResultSetInterface|false saveMany(iterable $entities, $options = [])
- * @method \Awyiss\Model\Entity\UsersExternal[]|\Cake\Datasource\ResultSetInterface saveManyOrFail(iterable $entities, $options = [])
- * @method \Awyiss\Model\Entity\UsersExternal[]|\Cake\Datasource\ResultSetInterface|false deleteMany(iterable $entities, $options = [])
- * @method \Awyiss\Model\Entity\UsersExternal[]|\Cake\Datasource\ResultSetInterface deleteManyOrFail(iterable $entities, $options = [])
+ * @method \Awyiss\Model\Entity\UsersExternal newDefaultEntity(array $aa_additionalData = [])
+ * @method \Awyiss\Model\Entity\UsersExternal patchEntity(EntityInterface $ao_entity, array $aa_data, array $aa_options = [])
  */
 class UsersExternalTable extends \Awyiss\Model\Table {
 	/**
-	 * Initialize method
-	 *
-	 * @param array $aa_config The configuration for the Table.
-	 *
-	 * @return void
+	 * @inheritDoc
 	 */
 	public function initialize (array $aa_config): void {
 		parent::initialize($aa_config);
@@ -63,11 +48,7 @@ class UsersExternalTable extends \Awyiss\Model\Table {
 
 
 	/**
-	 * Default validation rules.
-	 *
-	 * @param \Cake\Validation\Validator $ao_validator Validator instance.
-	 *
-	 * @return \Cake\Validation\Validator
+	 * @inheritDoc
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */

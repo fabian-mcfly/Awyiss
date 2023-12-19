@@ -9,21 +9,13 @@ use Cake\Utility\Inflector;
 
 class AwyissRoute extends \Cake\Routing\Route\DashedRoute {
 	/**
-	 * Checks to see if the given URL can be parsed by this route.
-	 *
-	 * If the route can be parsed an array of parameters will be returned; if not
-	 * false will be returned. String URLs are parsed if they match a routes regular expression.
-	 *
-	 * @param string $as_url
-	 * @param string $as_method The HTTP method of the request being parsed.
-	 *
-	 * @return array|null An array of request parameters, or null on failure.
+	 * @inheritDoc
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function parse (string $as_url, string $as_method = ''): ?array {
 		/**
-		 * Stupid workaround since _writeRoute() unset defaults;
+		 * Stupid workaround since _writeRoute() unsets defaults;
 		 */
 		$la_defaults = $this->defaults;
 
@@ -82,7 +74,7 @@ class AwyissRoute extends \Cake\Routing\Route\DashedRoute {
 					[$ls_key, $ls_value] = explode(':', $ls_part);
 					$la_route[ $ls_key ] = $ls_value;
 
-					$la_pass[ $ls_key = Inflector::variable(str_replace('-', '_', $ls_key)) ] = $ls_value;
+					$la_pass[ $ls_key = Inflector::dasherize($ls_key) ] = $ls_value;
 					$la_route['parts'][ $ls_key ] = $ls_value;
 				}
 				elseif ( ! $lb_foundParams) {
@@ -140,18 +132,7 @@ class AwyissRoute extends \Cake\Routing\Route\DashedRoute {
 
 
 	/**
-	 * Check if a URL array matches this route instance.
-	 *
-	 * If the URL matches the route parameters and settings, then
-	 * return a generated string URL. If the URL doesn't match the route parameters, false will be returned.
-	 * This method handles the reverse routing or conversion of URL arrays into string URLs.
-	 *
-	 * @param array $aa_url An array of parameters to check matching with.
-	 * @param array $aa_context An array of the current request context.
-	 *   Contains information such as the current host, scheme, port, base
-	 *   directory and other url params.
-	 *
-	 * @return string|null Either a string URL for the parameters if they match or null.
+	 * @inheritDoc
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
@@ -206,8 +187,7 @@ class AwyissRoute extends \Cake\Routing\Route\DashedRoute {
 
 		unset($la_url['_host'], $la_url['_scheme'], $la_url['_port'], $la_url['_base'], $la_url['?']);
 
-		// Move extension into the hostOptions so its not part of
-		// reverse matches.
+		// Move extension into the hostOptions, so it's not part of reverse matches.
 		if (isset($la_url['_ext'])) {
 			$la_hostOptions['_ext'] = $la_url['_ext'];
 			unset($la_url['_ext']);
@@ -277,7 +257,7 @@ class AwyissRoute extends \Cake\Routing\Route\DashedRoute {
 					$la_pass[] = is_array($lx_value) ? implode(',', $lx_value) : $lx_value;
 				}
 				else {
-					$la_pass[ $lx_key ] = is_array($lx_value) ? implode(',', $lx_value) : $lx_value;
+					$la_pass[ Inflector::dasherize($lx_key) ] = is_array($lx_value) ? implode(',', $lx_value) : $lx_value;
 				}
 				unset($la_url[ $lx_key ]);
 			}
@@ -302,23 +282,13 @@ class AwyissRoute extends \Cake\Routing\Route\DashedRoute {
 			return NULL;
 		}
 
-		dump($this->_writeUrl($la_url, $la_pass, $ls_query));
-
 		return $this->_writeUrl($la_url, $la_pass, $ls_query);
 	}
 
 
 	/**
-	 * Converts a matching route array into a URL string.
+	 * @inheritDoc
 	 *
-	 * Composes the string URL using the template
-	 * used to create the route.
-	 *
-	 * @param array $aa_params The params to convert to a string url
-	 * @param array $aa_pass
-	 * @param array $aa_query An array of parameters
-	 *
-	 * @return string Composed route string.
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	protected function _writeUrl (array $aa_params, array $aa_pass = [], array $aa_query = []): string {
@@ -377,7 +347,7 @@ class AwyissRoute extends \Cake\Routing\Route\DashedRoute {
 		if (isset($aa_params['_scheme']) || isset($aa_params['_host']) || isset($aa_params['_port'])) {
 			$ls_host = $aa_params['_host'];
 
-			// append the port & scheme if they exists.
+			// append the port & scheme if they exist.
 			if (isset($aa_params['_port'])) {
 				$ls_host .= ':' . $aa_params['_port'];
 			}

@@ -5,10 +5,10 @@ namespace Awyiss\Authorization\Permission;
 
 
 interface PermissionInterface {
-	public function __construct (array $aa_config, ?PermissionCollection $ao_permissionCollection = NULL);
+	public function __construct (array $aa_config, PermissionCollection $ao_permissionCollection);
 
 
-	public function getPermissionCollection (): ?PermissionCollection;
+	public function getPermissionCollection (): PermissionCollection;
 
 
 	public function getConfig(?string $as_key = NULL, $ax_default = NULL);

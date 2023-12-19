@@ -21,13 +21,13 @@ class AuthorizationService implements AuthorizationServiceInterface {
 	}
 
 
-	public function setAuthenticationService (AuthenticationServiceInterface $ao_authenticationService) {
-		$this->authenticationService = $ao_authenticationService;
+	public function getAuthenticationService (): ?AuthenticationServiceInterface {
+		return $this->authenticationService;
 	}
 
 
-	public function getAuthenticationService (): ?AuthenticationServiceInterface {
-		return $this->authenticationService;
+	public function setAuthenticationService (AuthenticationServiceInterface $ao_authenticationService) {
+		$this->authenticationService = $ao_authenticationService;
 	}
 
 
@@ -36,6 +36,11 @@ class AuthorizationService implements AuthorizationServiceInterface {
 	}
 
 
+	/**
+	 * @param null|string $as_type
+	 *
+	 * @return PolicyInterface[]
+	 */
 	public function getPolicies (string $as_type = NULL): array {
 		$ls_type = $as_type ? \Cake\Utility\Inflector::camelize($as_type) : $this->type;
 

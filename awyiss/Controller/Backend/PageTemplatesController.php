@@ -23,13 +23,17 @@ class PageTemplatesController extends Controller {
 	 * Overview method
 	 *
 	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
+	 *
+	 * @throws \Exception
+	 *
 	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
 	public function overview () {
 		$this->Access->ensureOne('create', 'update', 'delete');
 
 		//$lo_pageTemplates = $this->Categories->filterQuery($this->PageTemplates->find('withAttributes'));
-		$lo_pageTemplates = $this->Categories->groupQuery($this->PageTemplates->find('withAttributes'));
+		$lo_pageTemplates = $this->PageTemplates->find('withAttributes')->where($this->getOverviewWhere());
+		$lo_pageTemplates = $this->Categories->groupQuery($lo_pageTemplates);
 
 		$this->set([
 			'ao_pageTemplates' => $lo_pageTemplates,
@@ -41,6 +45,9 @@ class PageTemplatesController extends Controller {
 	 * Add method
 	 *
 	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
+	 *
+	 * @throws \Exception
+	 *
 	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
 	public function add () {
@@ -48,7 +55,7 @@ class PageTemplatesController extends Controller {
 
 		$lo_pageTemplate = $this->PageTemplates->newDefaultEntity();
 		if ($this->request->is('post')) {
-			$lo_pageTemplate = $this->PageTemplates->patchEntity($lo_pageTemplate, $this->request->getData());
+			$this->PageTemplates->patchEntity($lo_pageTemplate, $this->request->getData());
 
 			$this->Categories->ensurePossibleCategorySelection($lo_pageTemplate);
 
@@ -83,6 +90,9 @@ class PageTemplatesController extends Controller {
 	 * Edit method
 	 *
 	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
+	 *
+	 * @throws \Exception
+	 *
 	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
 	public function edit () {
@@ -98,7 +108,7 @@ class PageTemplatesController extends Controller {
 		}
 
 		if ($this->request->is(['patch', 'post', 'put'])) {
-			$lo_pageTemplate = $this->PageTemplates->patchEntity($lo_pageTemplate, $this->request->getData());
+			$this->PageTemplates->patchEntity($lo_pageTemplate, $this->request->getData());
 
 			$this->Categories->ensurePossibleCategorySelection($lo_pageTemplate);
 
@@ -133,6 +143,9 @@ class PageTemplatesController extends Controller {
 	 * Delete method
 	 *
 	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
+	 *
+	 * @throws \Exception
+	 *
 	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
 	public function delete () {

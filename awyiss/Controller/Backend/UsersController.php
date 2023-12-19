@@ -26,13 +26,17 @@ class UsersController extends Controller {
 
 
 	/**
-	 * {@inheritDoc}
+	 * @inheritDoc
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function beforeFilter (EventInterface $ao_event) {
 		parent::beforeFilter($ao_event);
-		$this->Authentication->allowUnauthenticated(['login']);
+		$this->Authentication->allowUnauthenticated(['login', 'logout']);
+
+		if (in_array($this->getRequest()->getParam('action'), ['login', 'logout'])) {
+			$this->Categories->disable();
+		}
 	}
 
 
@@ -40,12 +44,21 @@ class UsersController extends Controller {
 	 * Overview method
 	 *
 	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
+	 *
+	 * @throws \Exception
+	 *
 	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
 	public function overview () {
 		$this->Access->ensureOne('create', 'update', 'delete');
 
-		$lo_users = $this->Categories->filterQuery($this->Users->find('withAttributes'));
+		/*$lo_users = $this->Users->find('withAttributes');
+		if ($this->Access->scopeIsAccessible($this->categorize['associationName'], NULL, ['create', 'update', 'delete'])) {
+			$lo_users = $this->Categories->filterQuery($lo_users);
+		}*/
+
+		$lo_users = $this->Users->find('withAttributes')->where($this->getOverviewWhere());
+		$lo_users = $this->Categories->filterQuery($lo_users);
 		$lo_users = $this->paginate($lo_users);
 
 		$this->set([
@@ -58,6 +71,9 @@ class UsersController extends Controller {
 	 * Add method
 	 *
 	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
+	 *
+	 * @throws \Exception
+	 *
 	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
 	public function add () {
@@ -65,7 +81,10 @@ class UsersController extends Controller {
 
 		$lo_user = $this->Users->newDefaultEntity();
 		if ($this->request->is('post')) {
-			$lo_user = $this->Users->patchEntity($lo_user, $this->request->getData(), ['associated' => ['Usergroups']]);
+
+			$this->Users->Usergroups->skipAccessCheck();
+
+			$this->Users->patchEntity($lo_user, $this->request->getData(), ['associated' => ['Usergroups']]);
 
 			if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
 				if ($this->Users->save($lo_user)) {
@@ -80,6 +99,8 @@ class UsersController extends Controller {
 
 				$this->Flash->error(__('::add_failed'));
 			}
+
+			$this->Users->Usergroups->skipAccessCheck(FALSE);
 		}
 
 		if (empty($lo_user->usergroups)) {
@@ -88,7 +109,7 @@ class UsersController extends Controller {
 
 		$this->set([
 			'ao_user' => $lo_user,
-			'ao_usergroups' => $this->Users->Usergroups->find()->all(),
+			'ao_usergroups' => $this->Users->Usergroups->find()->applyOptions(['access' => ['skip' => TRUE]]),
 		]);
 	}
 
@@ -97,16 +118,18 @@ class UsersController extends Controller {
 	 * Edit method
 	 *
 	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
+	 *
+	 * @throws \Exception
+	 *
 	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
 	public function edit () {
 		$this->Access->ensure('update');
 
-		$li_id = $this->request->getParam('id');
+		$this->Users->Usergroups->skipAccessCheck();
 
-		$lo_user = $this->Users->find()->contain([
-			'Usergroups',
-		])->where(['id' => $li_id])->first();
+		$li_id = $this->request->getParam('id');
+		$lo_user = $this->Users->find()->contain(['Usergroups'])->where(['id' => $li_id])->first();
 
 		if ( ! $lo_user) {
 			$this->Flash->error(__('::record_not_found'));
@@ -120,7 +143,11 @@ class UsersController extends Controller {
 				unset($la_data['password']);
 			}
 
-			$lo_user = $this->Users->patchEntity($lo_user, $la_data, ['associated' => ['Usergroups']]);
+
+
+			$this->Users->patchEntity($lo_user, $la_data, [
+				'associated' => ['Usergroups']
+			]);
 
 			if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
 				if ($this->Users->save($lo_user)) {
@@ -137,9 +164,11 @@ class UsersController extends Controller {
 			}
 		}
 
+		$this->Users->Usergroups->skipAccessCheck(FALSE);
+
 		$this->set([
 			'ao_user' => $lo_user,
-			'ao_usergroups' => $this->Users->Usergroups->find()->all(),
+			'ao_usergroups' => $this->Users->Usergroups->find()->applyOptions(['access' => ['skip' => TRUE]]),
 		]);
 	}
 
@@ -148,6 +177,9 @@ class UsersController extends Controller {
 	 * Delete method
 	 *
 	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
+	 *
+	 * @throws \Exception
+	 *
 	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
 	public function delete () {
@@ -195,14 +227,14 @@ class UsersController extends Controller {
 						'last_login' => \Cake\I18n\FrozenTime::now(),
 					], ['guard' => FALSE]);
 
-					$this->Users->save($lo_user, ['skipAuditBehavior' => TRUE, 'setTimeOnUpdate' => FALSE]);
+					$this->Users->save($lo_user, ['access' => ['skip' => TRUE], 'audit' => ['skip' => TRUE]]);
 				}
 				elseif ($lo_user instanceof \Awyiss\Model\Entity\UsersExternal) {
 					$lo_usersExternal = $this->getTableLocator()->get('UsersExternal');
 					//Track last_login
 					$lo_user->set('last_login', \Cake\I18n\FrozenTime::now());
 
-					$lo_usersExternal->save($lo_user, ['skipAuditBehavior' => TRUE]);
+					$lo_usersExternal->save($lo_user, ['access' => ['skip' => TRUE], 'audit' => ['skip' => TRUE]]);
 				}
 
 				/** @var \Cake\Http\Session $lo_session */
@@ -221,15 +253,15 @@ class UsersController extends Controller {
 
 		if ($this->request->is('post') && ! $lo_result->isValid()) {
 			/** @var \Awyiss\Model\Entity\User $lo_user */
-			if (($ls_username = $this->request->getData('username')) && ($lo_user = $this->Users->find()->where(['username' => $ls_username])->first())) {
+			if (($ls_username = $this->request->getData('username')) && ($lo_user = $this->Users->find()->applyOptions(['access' => ['skip' => TRUE]])->where(['username' => $ls_username])->first())) {
 				$lo_user->set([
 					'failed_attempts' => $lo_user->failed_attempts + 1,
 					'last_login' => \Cake\I18n\FrozenTime::now(),
 				], ['guard' => FALSE]);
-				$this->Users->save($lo_user, ['skipAuditBehavior' => TRUE, 'setTimeOnUpdate' => FALSE]);
+				$this->Users->save($lo_user, ['access' => ['skip' => TRUE], 'audit' => ['skip' => TRUE]]);
 			}
 
-			dump($lo_result->getErrors());
+			//dump($lo_result->getErrors());
 
 			$this->request = $this->request->withoutData('password');
 			$this->Flash->error('Invalid username or password');

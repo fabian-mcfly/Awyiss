@@ -11,10 +11,10 @@ interface AuthorizationServiceInterface {
 	public function __construct (string $as_type);
 
 
-	public function setAuthenticationService (AuthenticationServiceInterface $ao_authenticationService);
-
-
 	public function getAuthenticationService (): ?AuthenticationServiceInterface;
+
+
+	public function setAuthenticationService (AuthenticationServiceInterface $ao_authenticationService);
 
 
 	public function getType (): string;

@@ -30,7 +30,7 @@ require_once $root . '/vendor/autoload.php';
 
 /**
  * Define fallback values for required constants and configuration.
- * To customize constants and configuration remove this require
+ * To customize constants and configuration remove this require_once
  * and define the data required by your plugin here.
  */
 /** @noinspection PhpIncludeInspection */

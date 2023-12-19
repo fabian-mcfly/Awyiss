@@ -21,34 +21,37 @@
 			<aside id="Sidebar">
 				<a href="{{ helper_Url_build({controller: 'dashboard'}) }}" class="Title">Aw<span>Yiss</span></a>
 
-				{% block system_menu %}
+				{% block systemMenu %}
 					<ul class="Menu-System">
+						{% if helper_Access_scopeIsAccessible('Pages', NULL, ['create', 'update', 'delete']) %}
+							<li>{{ helper_Html_link(__('pages::titleMenu'), {controller: 'Pages'}) }}</li>
+						{% endif %}
 						{% if helper_Access_scopeIsAccessible('ContentTemplates', NULL, ['create', 'update', 'delete']) %}
-							<li>{{ helper_Html_link(__('contentTemplates::title_menu'), {controller: 'ContentTemplates'}) }}</li>
+							<li>{{ helper_Html_link(__('contentTemplates::titleMenu'), {controller: 'ContentTemplates'}) }}</li>
 						{% endif %}
 
 						{% if helper_Access_scopeIsAccessible('Languages', NULL, ['create', 'update', 'delete']) %}
-							<li>{{ helper_Html_link(__('languages::title_menu'), {controller: 'Languages'}) }}</li>
+							<li>{{ helper_Html_link(__('languages::titleMenu'), {controller: 'Languages'}) }}</li>
 						{% endif %}
 
 						{% if helper_Access_scopeIsAccessible('PageRoles', NULL, ['create', 'update', 'delete']) %}
-							<li>{{ helper_Html_link(__('pageRoles::title_menu'), {controller: 'PageRoles'}) }}</li>
+							<li>{{ helper_Html_link(__('pageRoles::titleMenu'), {controller: 'PageRoles'}) }}</li>
 						{% endif %}
 
 						{% if helper_Access_scopeIsAccessible('PageTemplates', NULL, ['create', 'update', 'delete']) %}
-							<li>{{ helper_Html_link(__('pageTemplates::title_menu'), {controller: 'PageTemplates'}) }}</li>
+							<li>{{ helper_Html_link(__('pageTemplates::titleMenu'), {controller: 'PageTemplates'}) }}</li>
 						{% endif %}
 
 						{% if helper_Access_scopeIsAccessible('Configuration', NULL, ['create', 'update', 'delete']) %}
-							<li>{{ helper_Html_link(__('configuration::title_menu'), {controller: 'Configuration'}) }}</li>
+							<li>{{ helper_Html_link(__('configuration::titleMenu'), {controller: 'Configuration'}) }}</li>
 						{% endif %}
 
 						{% if helper_Access_scopeIsAccessible('Users', NULL, ['create', 'update', 'delete']) %}
-							<li>{{ helper_Html_link(__('users::title_menu'), {controller: 'Users'}) }}</li>
+							<li>{{ helper_Html_link(__('users::titleMenu'), {controller: 'Users'}) }}</li>
 						{% endif %}
 
 						{% if helper_Access_scopeIsAccessible('Usergroups', NULL, ['create', 'update', 'delete']) %}
-							<li>{{ helper_Html_link(__('usergroups::title_menu'), {controller: 'Usergroups'}) }}</li>
+							<li>{{ helper_Html_link(__('usergroups::titleMenu'), {controller: 'Usergroups'}) }}</li>
 						{% endif %}
 					</ul>
 				{% endblock %}

@@ -4,8 +4,8 @@
 namespace Awyiss\Model\Behavior;
 
 
+use Awyiss\ORM\Behavior;
 use Cake\Datasource\EntityInterface;
-use Cake\ORM\Behavior;
 use RuntimeException;
 
 
@@ -19,13 +19,14 @@ class DefaultValuesBehavior extends Behavior {
 	 */
 	protected $_defaultConfig = [
 		'enabled' => TRUE,
+		'implementedEvents' => [],
 		'implementedMethods' => [
 			'newDefaultEntity' => 'newDefaultEntity',
 		],
 	];
 
 
-	public function newDefaultEntity (): EntityInterface {
+	public function newDefaultEntity (array $aa_additionalData = []): EntityInterface {
 		if ( ! $this->getConfig('enabled')) {
 			throw new RuntimeException(sprintf('The method `newDefaultEntity()` is not available since the `%s` Behavior is not enabled', static::class));
 		}
@@ -35,7 +36,7 @@ class DefaultValuesBehavior extends Behavior {
 		$lo_entity = new $ls_entityClass([], ['source' => $this->table()->getRegistryAlias()]);
 
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		$la_defaults = $lo_entity->defaultValues() + $this->table()->getSchema()->defaultValues();
+		$la_defaults = $aa_additionalData + $lo_entity->defaultValues() + $this->table()->getSchema()->defaultValues();
 
 		$la_options = [
 			'fields' => array_keys($la_defaults),

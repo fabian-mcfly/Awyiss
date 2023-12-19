@@ -21,6 +21,7 @@ class SystemOrderHelper extends \Cake\View\Helper {
 		'after' => NULL,
 		'first' => NULL,
 		'includeFirst' => TRUE,
+		'templateClass' => \Awyiss\View\StringTemplate::class,
 		'templates' => [
 			'titleOption' => '{{after}} {{title}}',
 			'titleOptionCurrent' => '{{title}}',
@@ -65,6 +66,10 @@ class SystemOrderHelper extends \Cake\View\Helper {
 			$la_attributes['options'] = $this->getView()->get('ao_systemOrderRecords') ?? [];
 		}
 
+		if (empty($la_attributes['relatedColumns'])) {
+			$la_attributes['relatedColumns'] = $this->getView()->get('aa_systemOrderRelatedColumns') ?? [];
+		}
+
 		if ( ! is_array($la_attributes['options'])) {
 			$la_attributes['options'] = $this->buildSystemOrderOptions($la_attributes['options'], $la_attributes, $lo_entity);
 		}
@@ -73,7 +78,7 @@ class SystemOrderHelper extends \Cake\View\Helper {
 			$la_attributes['type'] = 'select';
 		}
 
-		unset($la_attributes['entity'], $la_attributes['includeFirst'], $la_attributes['templates'], $la_attributes['titleFirst']);
+		unset($la_attributes['entity'], $la_attributes['includeFirst'], $la_attributes['relatedColumns'], $la_attributes['templateClass'], $la_attributes['templates'], $la_attributes['titleFirst']);
 
 		$this->setConfig($la_cachedConfig, NULL, FALSE);
 
@@ -87,18 +92,20 @@ class SystemOrderHelper extends \Cake\View\Helper {
 
 	protected function buildSystemOrderOptions (iterable $ax_options, array $aa_attributes, EntityInterface $ao_entity): array {
 		$la_options = [];
+		$lb_isNew = $ao_entity->isNew();
+		$la_dirtyRelatedColumns = array_intersect($ao_entity->getDirty(), $aa_attributes['relatedColumns']);
 
 		if ($aa_attributes['includeFirst']) {
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 			$la_options[1] = $this->formatFirst( $aa_attributes + [
-					'isCurrentSystemOrder' => ! $ao_entity->isNew() && 1 === $ao_entity->getOriginal('system_order'),
+					'isCurrentSystemOrder' => ! $lb_isNew && 1 === $ao_entity->getOriginal('system_order'),
 					'isSelectedSystemOrder' => 1 === $ao_entity->system_order,
 				]);
 		}
 
 		$lb_reachedCurrent = FALSE;
 		foreach ($ax_options as $lx_option) {
-			$lb_isCurrentSystemOrder = ! $ao_entity->isNew() && $lx_option->system_order == $ao_entity->getOriginal('system_order');
+			$lb_isCurrentSystemOrder = ! $lb_isNew && ! $la_dirtyRelatedColumns && $lx_option->system_order == $ao_entity->getOriginal('system_order');
 
 			if ($lb_isCurrentSystemOrder && ! $lb_reachedCurrent) {
 				$lb_reachedCurrent = TRUE;

@@ -45,17 +45,17 @@ define('ENV_CUSTOM_CONFIG', ROOT . DS . CUSTOM_DIR . DS . 'config' . DS . CONFIG
 define('WWW_ROOT', ROOT . DS . 'webroot' . DS);
 
 /*
- * Path to the tests directory.
+ * Path to the tests' directory.
  */
 define('TESTS', ROOT . DS . 'tests' . DS);
 
 /*
- * Path to the temporary files directory.
+ * Path to the temporary files' directory.
  */
 define('TMP', ROOT . DS . 'tmp' . DS);
 
 /*
- * Path to the logs directory.
+ * Path to the logs' directory.
  */
 define('LOGS', ROOT . DS . 'logs' . DS);
 
@@ -65,7 +65,7 @@ define('LOGS', ROOT . DS . 'logs' . DS);
 define('CACHE', TMP . 'cache' . DS);
 
 /*
- * Path to the resources directory.
+ * Path to the resources' directory.
  */
 define('RESOURCES', ROOT . DS . 'resources' . DS);
 

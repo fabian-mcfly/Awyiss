@@ -6,7 +6,7 @@ namespace Awyiss\Authentication\Identifier;
 
 class IdentifierCollection extends \Authentication\Identifier\IdentifierCollection {
 	/**
-	 * Re-Identifies an user or service by the passed credentials
+	 * Re-Identifies a user or service by the passed credentials
 	 *
 	 * @param array $credentials Authentication credentials
 	 *

@@ -8,12 +8,12 @@ use Awyiss\Authorization\Permission\PermissionCollection;
 
 
 trait FullPermissionsTrait {
-	protected static ?PermissionCollection $permissionCollection = NULL;
+	protected static PermissionCollection $permissionCollection;
 	protected static string $scope;
 
 
 	public static function getScope (): string {
-		if (static::$scope === NULL) {
+		if (!isset(static::$scope)) {
 			$la_parts = explode('\\', static::class);
 			static::$scope = array_pop($la_parts);
 			static::$scope = substr(static::$scope, 0, -6);
@@ -30,7 +30,7 @@ trait FullPermissionsTrait {
 	 * @noinspection PhpUnused
 	 */
 	public static function getPermissions (): PermissionCollection {
-		if (static::$permissionCollection === NULL) {
+		if (!isset(static::$permissionCollection)) {
 			static::$permissionCollection = new PermissionCollection(static::getScope());
 		}
 

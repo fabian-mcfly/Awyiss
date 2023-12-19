@@ -5,6 +5,8 @@ namespace Awyiss\View\Helper;
 
 
 use Awyiss\Authorization\IdentityPermissionsInterface;
+use Awyiss\Authorization\Policy\AnonymousPolicy;
+use Awyiss\Authorization\Policy\PolicyInterface;
 use Awyiss\Model\Entity\User;
 use Awyiss\Model\Entity\UsersExternal;
 
@@ -13,6 +15,7 @@ class AccessHelper extends \Cake\View\Helper {
 	protected $_defaultConfig = [
 		'defaultAccessible' => FALSE,
 		'identity' => NULL,
+		'policyClass' => NULL,
 		'policiesType' => NULL,
 		'scope' => NULL,
 	];
@@ -21,11 +24,10 @@ class AccessHelper extends \Cake\View\Helper {
 	public function getScope (): string {
 		$ls_scope = $this->getConfig('scope');
 
-		if (!$ls_scope) {
+		if ( ! $ls_scope) {
 			$ls_scope = \Cake\Utility\Inflector::underscore($this->getView()->getName());
 			$this->setConfig('scope', $ls_scope);
 		}
-
 		return $ls_scope;
 	}
 
@@ -47,10 +49,36 @@ class AccessHelper extends \Cake\View\Helper {
 	}
 
 
+	public function getPolicyClass (): string|AnonymousPolicy|NULL {
+		return $this->getConfig('policyClass');
+	}
+
+
+	/**
+	 * @throws \ReflectionException
+	 *
+	 * @noinspection PhpUnused
+	 */
+	public function setPolicyClass (string|AnonymousPolicy|NULL $ax_policyClass): void {
+		if (is_string($ax_policyClass)) {
+			$lo_reflection = new \ReflectionClass($ax_policyClass);
+
+			if ( ! $lo_reflection->implementsInterface(AnonymousPolicy::class)) {
+				throw new \RuntimeException(sprintf('The provided Policy class `%s` does not implement the `%s` interface.', $ax_policyClass, AnonymousPolicy::class));
+			}
+		}
+
+
+		$this->setConfig('policyClass', $ax_policyClass);
+
+
+	}
+
+
 	public function getIdentity (): IdentityPermissionsInterface {
 		$lo_identity = $this->getConfig('identity');
 
-		if (!$lo_identity) {
+		if ( ! $lo_identity) {
 			$lo_identity = $this->_getIdentity();
 			$this->setConfig('identity', $lo_identity);
 		}
@@ -59,9 +87,6 @@ class AccessHelper extends \Cake\View\Helper {
 	}
 
 
-	/**
-	 * @noinspection PhpUnused
-	 */
 	public function setIdentity (IdentityPermissionsInterface $ao_identity): self {
 		$this->setConfig('identity', $ao_identity);
 
@@ -72,7 +97,7 @@ class AccessHelper extends \Cake\View\Helper {
 	/**
 	 * @noinspection PhpUnused
 	 */
-	 public function resetIdentity (): self {
+	public function resetIdentity (): self {
 		$this->setConfig('identity');
 
 		return $this;
@@ -80,43 +105,45 @@ class AccessHelper extends \Cake\View\Helper {
 
 
 	/**
+	 * @throws \Exception
+	 *
 	 * @noinspection PhpUnused
 	 */
-	public function isAccessible (string|array ...$ax_identifier): bool {
+	public function isAccessible (string|array ...$aa_identifier): bool {
 		$ls_scope = $this->getScope();
 		$lo_identity = $this->getIdentity();
 
-		return $this->scopeIsAccessible($ls_scope, $lo_identity, $ax_identifier);
+		return $this->scopeIsAccessible($ls_scope, $lo_identity, $aa_identifier);
 	}
 
 
-	public function scopeIsAccessible (?string $as_scope = NULL, ?IdentityPermissionsInterface $ao_identity = NULL, string|array ...$ax_identifier): bool {
-		$ls_scope = $as_scope;
-		if (!empty($ls_scope)) {
-			$ls_scope = \Cake\Utility\Inflector::underscore($ls_scope);
-		}
-		else {
-			$ls_scope = $this->getScope();
-		}
+	/**
+	 * @throws \Exception
+	 *
+	 * @noinspection DuplicatedCode
+	 */
+	public function scopeIsAccessible (string $as_scope, ?IdentityPermissionsInterface $ao_identity = NULL, string|array ...$aa_identifier): bool {
+		$ls_scope = \Cake\Utility\Inflector::underscore($as_scope);
 
-		/** @var \Awyiss\Authorization\AuthorizationService $lo_authorizationService */
-		$lo_authorizationService = $this->getView()->getRequest()->getAttribute('authorization');
-		$ls_policyClass = $lo_authorizationService->getPolicy($ls_scope, $this->getConfig('policiesType'));
+		$lx_policyClass = $this->getPolicyClass();
+		if (!$lx_policyClass) {
+			/** @var \Awyiss\Authorization\AuthorizationService $lo_authorizationService */
+			$lo_authorizationService = $this->getView()->getRequest()->getAttribute('authorization');
+			$lx_policyClass = $lo_authorizationService->getPolicy($ls_scope, $this->getConfig('policiesType'));
+		}
 
 		//No policy found means we cannot continue
-		if (!$ls_policyClass) {
+		if ( ! $lx_policyClass) {
 			return (bool) $this->getConfig('defaultAccessible', FALSE);
 		}
 
 		$lo_identity = $ao_identity ?? $this->getIdentity();
 		$la_accesses = [];
-		foreach ($ax_identifier AS $lx_identifier) {
-			$la_accesses[] = $this->getAccess($ls_policyClass, $lx_identifier, $lo_identity->getAccess()->getScope($ls_scope));
+		foreach ($aa_identifier as $lx_identifier) {
+			$la_accesses[] = $this->getAccess($lx_policyClass, $lx_identifier, $lo_identity->getAccess()->getScope($ls_scope));
 		}
 
-		if (in_array(FALSE, $la_accesses, TRUE) ||
-			(!in_array(TRUE, $la_accesses, TRUE) && !$this->getConfig('defaultAccessible', FALSE))) {
-
+		if (in_array(FALSE, $la_accesses, TRUE) || ( ! in_array(TRUE, $la_accesses, TRUE) && ! $this->getConfig('defaultAccessible', FALSE))) {
 			return FALSE;
 		}
 
@@ -126,29 +153,36 @@ class AccessHelper extends \Cake\View\Helper {
 
 	/**
 	 *
-	 * @param string $as_policyClass
+	 * @param string|AnonymousPolicy $as_policyClass
 	 * @param string|array $ax_identifier
 	 * @param null|array $aa_access
 	 *
 	 * @return null|bool
+	 *
+	 * @throws \Exception
+	 *
+	 * @noinspection DuplicatedCode
 	 */
-	protected function getAccess (string $as_policyClass, string|array $ax_identifier, ?array $aa_access): ?bool {
+	protected function getAccess (string|AnonymousPolicy $as_policyClass, string|array $ax_identifier, ?array $aa_access): ?bool {
 		if (is_string($ax_identifier)) {
-			/** @var \Awyiss\Authorization\Policy\PolicyInterface $as_policyClass */
-			return $as_policyClass::getPermission($ax_identifier)?->isAccessible($aa_access);
+			/** @var PolicyInterface|AnonymousPolicy $as_policyClass */
+			$lo_permission = is_string($as_policyClass) ? $as_policyClass::getPermission($ax_identifier) : $as_policyClass->getPermission($ax_identifier);
+
+			return $lo_permission?->isAccessible($aa_access) ?? $this->getConfig('defaultAccessible', FALSE);
 		}
 
 		$la_accesses = [];
-		foreach ($ax_identifier AS $ls_identifier) {
-			/** @var \Awyiss\Authorization\Policy\PolicyInterface $as_policyClass */
-			$la_accesses[] = $as_policyClass::getPermission($ls_identifier)?->isAccessible($aa_access);
+		foreach ($ax_identifier as $ls_identifier) {
+			/** @var PolicyInterface|AnonymousPolicy $as_policyClass */
+			$lo_permission = is_string($as_policyClass) ? $as_policyClass::getPermission($ls_identifier) : $as_policyClass->getPermission($ls_identifier);
+			$la_accesses[] = $lo_permission?->isAccessible($aa_access);
 		}
 
 		if (in_array(TRUE, $la_accesses, TRUE)) {
 			return TRUE;
 		}
 
-		return NULL;
+		return $this->getConfig('defaultAccessible', FALSE);
 	}
 
 

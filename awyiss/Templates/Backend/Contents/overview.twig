@@ -1,0 +1,62 @@
+{# @var aa_contents Collection[] #}
+{# @var ao_page Awyiss\Model\Entity\Page #}
+{# @var _view \Awyiss\View\BackendView #}
+
+<div class="Contents Overview">
+	{% if helper_Access_isAccessible('create') %}
+		{{ helper_Html_link(__('::create'), {action : 'add', pages_id: ao_page.id}, {class : 'Button'}) }}
+	{% endif %}
+
+	<h1>{{ __('::headline_overview') }}</h1>
+
+	{{ helper_Categories_filter('pages_id', [], {includeAggregation: false}) }}
+
+	<div class="table-responsive">
+		{% for ls_templatePosition in ao_page.page_template.template_positions %}
+			<fieldset>
+				<legend>{{ ls_templatePosition }}</legend>
+				<table>
+					<thead>
+						<tr>
+							<th>{{ helper_Paginator_sort('id') }}</th>
+							<th>{{ helper_Paginator_sort('parent_id') }}</th>
+							<th>{{ helper_Paginator_sort('system_order') }}</th>
+							<th>{{ helper_Paginator_sort('title') }}</th>
+							<th>{{ helper_Paginator_sort('subtitle') }}</th>
+							<th>{{ helper_Paginator_sort('columnwidth') }}</th>
+							<th class="actions"></th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for lo_content in aa_contents[ ls_templatePosition ] %}
+							<tr>
+								<td>{{ lo_content.id }} {{ lo_content.level }}</td>
+								<td>{{ lo_content.parent_id }}</td>
+								<td>
+									{%- if lo_content.level > 0 %}
+										{%- for i in range(1, lo_content.level) -%}
+											&mdash;&nbsp;&nbsp;&nbsp;&nbsp;
+										{%- endfor %}
+									{%- endif -%}
+									{{ lo_content.system_order -}}
+								</td>
+								<td>{{ lo_content.title }}</td>
+								<td>{{ lo_content.subtitle }}</td>
+								<td>{{ helper_Number_format(lo_content.columnwidth) }}</td>
+								<td class="actions">
+									{% if helper_Access_isAccessible('update') %}
+										{{ helper_Html_link(__('::edit'), {action: 'edit', id: lo_content.id}) }}
+									{% endif %}
+									{% if helper_Access_isAccessible('delete') %}
+										{{ helper_Html_link(__('::delete'), {action: 'delete', id: lo_content.id}, {confirm: __('::confirm_delete', lo_content.id) }) }}
+									{% endif %}
+								</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</fieldset>
+		{% endfor %}
+	</div>
+	{{ helper_Paginator_render() }}
+</div>

@@ -7,15 +7,12 @@ namespace Awyiss\Authentication;
 use Authentication\AuthenticationServiceInterface;
 use Authentication\AuthenticationServiceProviderInterface;
 use Authentication\Identifier\IdentifierInterface;
-use Cake\Datasource\EntityInterface;
-use Cake\Event\Event;
-use Cake\Event\EventManager;
 use Cake\Routing\Router;
 use Psr\Http\Message\ServerRequestInterface;
 
 
 class Authentication implements AuthenticationServiceProviderInterface {
-	protected ?AuthenticationServiceInterface $service = NULL;
+	protected AuthenticationServiceInterface $service;
 	protected string $type;
 	protected static bool $disableDefaultAuthenticators = FALSE;
 	protected static bool $disableDefaultIdentifiers = FALSE;
@@ -53,13 +50,14 @@ class Authentication implements AuthenticationServiceProviderInterface {
 
 
 	/**
-	 * @param \Authentication\AuthenticationServiceInterface $ao_servce
+	 * @param \Authentication\AuthenticationServiceInterface $ao_service
+	 * @param \Psr\Http\Message\ServerRequestInterface $ao_request
 	 *
 	 * @throws \Exception
 	 */
-	protected function loadAuthenticators (AuthenticationServiceInterface $ao_servce): void {
+	protected function loadAuthenticators (AuthenticationServiceInterface $ao_service, ServerRequestInterface $ao_request): void {
 		if ( ! static::$disableDefaultAuthenticators) {
-			$this->addDefaultAuthenticators();
+			$this->addDefaultAuthenticators($ao_service, $ao_request);
 		}
 
 		$la_authenticators = static::$authenticators;
@@ -83,18 +81,21 @@ class Authentication implements AuthenticationServiceProviderInterface {
 				}
 			}
 
-			$ao_servce->loadAuthenticator($lx_authenticator['name'], $lx_authenticator['config']);
+			$ao_service->loadAuthenticator($lx_authenticator['name'], $lx_authenticator['config']);
 		}
 	}
 
 
 	/**
 	 * Register the default authenticators for Session and Form
+	 *
+	 * @noinspection PhpUnusedParameterInspection
+	 * @throws \Exception
 	 */
-	protected function addDefaultAuthenticators (): void {
+	protected function addDefaultAuthenticators (AuthenticationServiceInterface $ao_service, ServerRequestInterface $ao_request): void {
 		$this->addAuthenticator(\Awyiss\Authentication\Authenticator\SessionAuthenticator::class, [
 			'identify' => function($lx_user) {
-				if (($lx_user instanceof \Awyiss\Model\Entity\User || $lx_user instanceof \Awyiss\Model\Entity\UsersExternal)) {
+				if ($lx_user instanceof \Awyiss\Model\Entity\User || $lx_user instanceof \Awyiss\Model\Entity\UsersExternal) {
 					//Set last_login
 					$lo_check = \Cake\I18n\FrozenTime::now()->subMinutes(10);
 					if ($lo_check > $lx_user->last_login) {
@@ -116,17 +117,22 @@ class Authentication implements AuthenticationServiceProviderInterface {
 			},
 		], 10);
 
+		/** @var \Awyiss\Middleware\LocaleMiddleware $lo_locale */
+		$lo_locale = $ao_request->getAttribute('locale');
+		$ls_lang = $lo_locale->getLanguageFromUrl(TRUE)?->shortcode ?? NULL;
+
 		$this->addAuthenticator(\Authentication\Authenticator\FormAuthenticator::class, [
 			'fields' => [
 				IdentifierInterface::CREDENTIAL_USERNAME => 'username',
 				IdentifierInterface::CREDENTIAL_PASSWORD => 'password',
 			],
-			/*'loginUrl' => Router::url([
+			'loginUrl' => Router::url([
 				'_name' => 'backend',
+				'lang' => $ls_lang,
 				'controller' => 'Users',
 				'action' => 'login',
-			]),*/
-			'loginUrl' => '/backend/de/users/login/',/**/
+			]),/**/
+			/*'loginUrl' => '/backend/de/users/login/',*/
 		], 20);
 	}
 
@@ -168,13 +174,14 @@ class Authentication implements AuthenticationServiceProviderInterface {
 
 
 	/**
-	 * @param \Authentication\AuthenticationServiceInterface $ao_servce
+	 * @param \Authentication\AuthenticationServiceInterface $ao_service
+	 * @param \Psr\Http\Message\ServerRequestInterface $ao_request
 	 *
 	 * @throws \Exception
 	 */
-	protected function loadIdentifiers (AuthenticationServiceInterface $ao_servce): void {
+	protected function loadIdentifiers (AuthenticationServiceInterface $ao_service, ServerRequestInterface $ao_request): void {
 		if ( ! static::$disableDefaultIdentifiers) {
-			$this->addDefaultIdentifiers();
+			$this->addDefaultIdentifiers($ao_service, $ao_request);
 		}
 
 		$la_identifiers = static::$identifiers;
@@ -198,19 +205,21 @@ class Authentication implements AuthenticationServiceProviderInterface {
 				}
 			}
 
-			$ao_servce->loadIdentifier($lx_identifier['name'], $lx_identifier['config']);
+			$ao_service->loadIdentifier($lx_identifier['name'], $lx_identifier['config']);
 		}
 	}
 
 
 	/**
 	 * Register the default identifiers for backend users
+	 *
+	 * @noinspection PhpUnusedParameterInspection
 	 */
-	protected function addDefaultIdentifiers (): void {
+	protected function addDefaultIdentifiers (AuthenticationServiceInterface $ao_service, ServerRequestInterface $ao_request): void {
 		$this->addIdentifier(\Authentication\Identifier\PasswordIdentifier::class, [
 			'resolver' => [
 				'className' => \Authentication\Identifier\Resolver\OrmResolver::class,
-				'finder' => 'activeWithUsergroups',
+				'finder' => ['activeWithUsergroups' => ['access' => ['skip' => TRUE]]],
 			],
 		]);
 	}
@@ -242,7 +251,7 @@ class Authentication implements AuthenticationServiceProviderInterface {
 		}*/
 
 		if ($this->type === 'backend') {
-			if ( ! $this->service) {
+			if ( !isset($this->service)) {
 				$this->service = $this->getBackendAuthenticationService($ao_request);
 			}
 
@@ -264,21 +273,9 @@ class Authentication implements AuthenticationServiceProviderInterface {
 	protected function getBackendAuthenticationService (ServerRequestInterface $ao_request): AuthenticationServiceInterface {
 		$lo_service = new \Awyiss\Authentication\AuthenticationService();
 
-		try {
-			/** @var \Awyiss\Middleware\LocaleMiddleware $lo_locale */
-			$lo_locale = $ao_request->getAttribute('locale');
-			$ls_lang = $lo_locale->getLanguageFromUrl();
-		}
-		catch (\Exception $lo_exception) {
-			if ($lo_exception->getCode() == 404) {
-				$la_languages = $lo_locale->getLanguages('backend');
-				$ls_lang = key($la_languages) ?? NULL;
-			}
-
-			if (empty($ls_lang)) {
-				throw $lo_exception;
-			}
-		}
+		/** @var \Awyiss\Middleware\LocaleMiddleware $lo_locale */
+		$lo_locale = $ao_request->getAttribute('locale');
+		$ls_lang = $lo_locale->getLanguageFromUrl(TRUE)?->shortcode ?? NULL;
 
 		//$lb_isLogoutPage = strtolower(Router::getRequest()->getParam('controller') . '/' . Router::getRequest()->getParam('action')) === 'users/logout';
 		// Define where users should be redirected to when they are not authenticated
@@ -293,29 +290,9 @@ class Authentication implements AuthenticationServiceProviderInterface {
 			'queryParam' => NULL,
 		]);
 
-		$this->loadAuthenticators($lo_service);
-		$this->loadIdentifiers($lo_service);
-
-		EventManager::instance()->on('Behavior.TimeTracker.beforeSave', function() use ($lo_service) {
-			$this->fillIdentityColumn($lo_service, ...func_get_args());
-		});
-
-		EventManager::instance()->on('Behavior.Audit.beforeSave', function() use ($lo_service) {
-			$this->fillIdentityColumn($lo_service, ...func_get_args());
-		});
+		$this->loadAuthenticators($lo_service, $ao_request);
+		$this->loadIdentifiers($lo_service, $ao_request);
 
 		return $lo_service;
-	}
-
-	/**
-	 * @noinspection PhpUnusedParameterInspection
-	 */
-	protected function fillIdentityColumn (AuthenticationService $ao_authenticationService, Event $ao_event, EntityInterface $ao_entity, string $as_identityColumn): void {
-		$lo_identity = $ao_authenticationService->getIdentity();
-		$ao_entity->$as_identityColumn = $lo_identity->getIdentifier();
-
-		if ($lo_identity instanceof \Awyiss\Model\Entity\UsersExternal) {
-			$ao_entity->$as_identityColumn *= -1;
-		}
 	}
 }

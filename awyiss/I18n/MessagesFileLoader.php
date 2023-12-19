@@ -4,7 +4,7 @@
 namespace Awyiss\I18n;
 
 
-use Cake\Core\App;
+use Awyiss\Core\App;
 use Cake\I18n\Package;
 use RuntimeException;
 

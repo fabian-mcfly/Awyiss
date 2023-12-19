@@ -4,6 +4,9 @@
 	 * Add method
 	 *
 	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
+	 *
+	 * @throws \Exception
+	 *
 	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
 	public function add () {
@@ -11,7 +14,8 @@
 
 		$lo_{{ singularName }} = $this->{{ currentModelName }}->newDefaultEntity();
 		if ($this->request->is('post')) {
-			$lo_{{ singularName }} = $this->{{ currentModelName }}->patchEntity($lo_{{ singularName }}, $this->request->getData());
+			$this->{{ currentModelName }}->patchEntity($lo_{{ singularName }}, $this->request->getData());
+
 			if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
 				if ($this->{{ currentModelName }}->save($lo_{{ singularName }})) {
 					$this->Flash->success(__('::add_succeeded'));

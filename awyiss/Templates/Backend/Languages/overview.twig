@@ -3,6 +3,7 @@
 {# @var _view \Awyiss\View\BackendView #}
 
 {% set la_languages = ao_languages.toArray() %}
+{% set la_types = ['frontend', 'backend'] %}
 
 {# {{ helper_Categories_filter() }} #}
 
@@ -23,9 +24,9 @@
 				</tr>
 			</thead>
 			<tbody>
-				{% for ls_type,ls_title in aa_types %}
+				{% for ls_type in la_types %}
 					<tr>
-						<th colspan="5">{{ ls_title }}</th>
+						<th colspan="5">{{ __('::' ~ ls_type) }}</th>
 					</tr>
 					{% for lo_language in la_languages[ ls_type ] %}
 						{# @var lo_language \Awyiss\Model\Entity\Language #}

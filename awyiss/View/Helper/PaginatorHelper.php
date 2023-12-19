@@ -4,16 +4,12 @@
 namespace Awyiss\View\Helper;
 
 
-use Awyiss\View\StringTemplateTrait;
 use Cake\Utility\Hash;
 
 
 class PaginatorHelper extends \Cake\View\Helper\PaginatorHelper {
-	use StringTemplateTrait;
-
-
 	public function __construct (\Cake\View\View $view, array $config = []) {
-		parent::__construct($view, $config);
+		parent::__construct($view, $config + ['templateClass' => \Awyiss\View\StringTemplate::class,]);
 
 		$la_query = $this->_View->getRequest()->getParam('parts');
 
@@ -24,7 +20,7 @@ class PaginatorHelper extends \Cake\View\Helper\PaginatorHelper {
 
 
 	/**
-	 * {@inheritDoc}
+	 * @inheritDoc
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */

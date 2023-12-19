@@ -4,8 +4,12 @@
 namespace Awyiss\View\Helper;
 
 
+use Awyiss\Authorization\Permission\PermissionInterface;
+use Awyiss\Model\Entity;
+
+
 class PermissionHelper extends \Cake\View\Helper {
-	public function options (\Awyiss\Authorization\Permission\PermissionInterface $ao_permission, ?\Awyiss\Model\Entity $ao_entity = NULL, ?string $as_fileName = NULL, ?string $as_subDir = NULL): string {
+	public function options (PermissionInterface $ao_permission, ?Entity $ao_entity = NULL, ?string $as_fileName = NULL, ?string $as_subDir = NULL): string {
 		$ls_subDir = 'authorization';
 		if (!empty($as_subDir)) {
 			$ls_subDir = trim($as_subDir, DS) . DS . 'authorization';

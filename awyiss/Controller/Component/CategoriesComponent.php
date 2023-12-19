@@ -23,87 +23,48 @@ class CategoriesComponent extends Component {
 		'associationName' => NULL,
 		'combinator' => [
 			'id',
-			'title',
+			'label',
 			NULL,
 		],
 		'defaultVal' => NULL,
 		'enabled' => NULL,
+		'finder' => NULL,
 		'foreignKey' => NULL,
 		'name' => 'category',
 		'paginate' => TRUE,
+		'queryConditions' => [],
+		'queryOptions' => [
+			'access' => ['skip' => TRUE],
+		],
 		'selectedCategory' => NULL,
 		'tableName' => NULL,
+		'threaded' => FALSE,
 		'unassignedKey' => 'unassigned',
 		'verifySelection' => TRUE,
 	];
+	protected bool $started = FALSE;
+
+
+	public function enable () {
+		$this->setConfig('enabled', TRUE);
+	}
+
+
+	public function disable () {
+		$this->setConfig('enabled', FALSE);
+	}
 
 
 	public function startup () {
 		if ( ! $this->getConfig('name')) {
 			throw new \RuntimeException(sprintf('`%s` is missing the name attribute.', static::class));
 		}
-
-		if ( ! $this->getConfig('enabled') || ! $this->getConfig('associationName')) {
-			return;
-		}
-
-		$ls_name = $this->getConfig('name');
-		$ls_uriKey = Inflector::dasherize($ls_name);
-		$ls_tableName = $this->getConfig('tableName');
-		if ( ! $ls_tableName) {
-			$ls_tableName = $this->getController()->defaultTable ?? $this->getController()->getName();
-			$this->setConfig('tableName', $ls_tableName);
-		}
-
-		$lo_request = $this->getController()->getRequest();
-		$lo_session = $lo_request->getSession();
-		$ls_sessionIdentifier = 'categories.' . ($lo_request->getParam('lang') ?? 'global') . '.' . Inflector::underscore($ls_tableName) . '.' . Inflector::underscore($ls_name) . '_id';
-
-		$lo_categories = $this->getCategories($ls_tableName);
-		$la_categories = $lo_categories->combine(...$this->getConfig('combinator'))->toArray();
-		$this->setConfig('categories.raw', $lo_categories);
-		$this->setConfig('categories.simple', $la_categories);
-
-		if ($lx_category_id = $lo_request->getParam($ls_uriKey)) {
-			if ($lo_session->started()) {
-				$lo_session->write($ls_sessionIdentifier, $lx_category_id);
-			}
-		}
-		elseif ( ! $lo_session->started() || ! ($lx_category_id = $lo_session->read($ls_sessionIdentifier))) {
-			if (($lx_category_id = $this->getConfig('defaultVal')) === NULL) {
-				$lx_category_id = $this->getConfig('allowAggregation') ? $this->getConfig('aggregationKey') : array_key_first($la_categories);
-			}
-
-			if ($lo_session->started()) {
-				$lo_session->write($ls_sessionIdentifier, $lx_category_id);
-			}
-		}
-
-		if ($this->getConfig('verifySelection') && ! array_key_exists($lx_category_id, $la_categories)) {
-			if ((!$this->getConfig('allowUnassigned') || $lx_category_id != $this->getConfig('unassignedKey')) &&
-				($lx_category_id = $this->getConfig('defaultVal')) === NULL) {
-				$lx_category_id = $this->getConfig('allowAggregation') ? $this->getConfig('aggregationKey') : array_key_first($la_categories);
-			}
-
-			if ($lo_session->started()) {
-				$lo_session->write($ls_sessionIdentifier, $lx_category_id);
-			}
-		}
-
-		$this->setConfig('selectedCategory', $lx_category_id);
-
-		$la_categorization = $lo_request->getAttribute('categorization', []);
-		if ( ! is_array($la_categorization)) {
-			$la_categorization = [];
-		}
-		$la_categorization[ $ls_name ] = $this->getConfig();
-
-		$lo_request = $lo_request->withAttribute('categorization', $la_categorization);
-		$this->getController()->setRequest($lo_request);
 	}
 
 
 	public function beforeRender (): void {
+		$this->_startup();
+
 		$lo_view = $this->getController()->viewBuilder();
 
 		$ls_dashedName = Inflector::dasherize($this->getConfig('name'));
@@ -121,13 +82,12 @@ class CategoriesComponent extends Component {
 
 
 	public function getCategories (?string $as_tableName = NULL, ?string $as_associationName = NULL): ?ResultSetInterface {
-		$ls_tableName = $as_tableName ?? $this->getConfig('tableName', $this->getController()->defaultTable ?? $this->getController()->getName());
-		if ( ! $ls_tableName) {
-			$ls_tableName = $this->getController()->defaultTable ?? $this->getController()->getName();
+		$ls_tableName = $as_tableName ?? $this->getConfig('tableName', $this->getController()->getName());
+		if ($ls_tableName === NULL) {
+			$ls_tableName = $this->getController()->getName();
 		}
 
-		$lo_table = $this->getController()->$ls_tableName;
-		if ( ! $lo_table) {
+		if ( !$ls_tableName || !($lo_table = $this->getController()->{$ls_tableName})) {
 			return NULL;
 		}
 
@@ -136,7 +96,7 @@ class CategoriesComponent extends Component {
 			return NULL;
 		}
 
-		$lo_association = $lo_table->$ls_associationName;
+		$lo_association = $lo_table->{$ls_associationName};
 		if ( ! $lo_association) {
 			return NULL;
 		}
@@ -145,11 +105,19 @@ class CategoriesComponent extends Component {
 			$this->setConfig('foreignKey', $lo_association->getForeignKey());
 		}
 
-		return $lo_association->find()->all();
+		$lo_query = $lo_association->find($this->getConfig('finder'))->where($this->getConfig('queryConditions'))->applyOptions($this->getConfig('queryOptions'));
+
+		if ($this->getConfig('threaded')) {
+			$lo_query->find('threaded');
+		}
+
+		return $lo_query->all();
 	}
 
 
 	public function filterQuery (Query $ao_query, $ax_selectedCategory = NULL, ?string $as_column = NULL): Query {
+		$this->_startup();
+
 		$ls_column = $as_column;
 
 		$lo_table = $ao_query->getRepository();
@@ -178,9 +146,11 @@ class CategoriesComponent extends Component {
 					$ao_query->leftJoinWith($ls_associationName)->where([$lo_junction->getAlias() . '.' . $ls_column => NULL]);
 				}
 				else {
-					$ao_query->matching($ls_associationName, function($ao_query) use ($lo_association, $lx_selectedCategory) {
+					$ao_query->matching($ls_associationName, function(Query $ao_query) use ($lo_association, $lx_selectedCategory) {
 						$lo_junction = $lo_association->junction();
 						$ls_column = $lo_junction->associations()->get($lo_association->getName())->getForeignKey();
+
+						$ao_query->applyOptions(['access' => ['skip' => TRUE]]);
 
 						return $ao_query->where([$lo_junction->getAlias() . '.' . $ls_column => $lx_selectedCategory]);
 					});
@@ -197,6 +167,8 @@ class CategoriesComponent extends Component {
 
 
 	public function groupQuery (Query $ao_query, array $aa_associationOptions = [], ?string $as_associationName = NULL, ?string $as_column = NULL): Query|CollectionInterface {
+		$this->_startup();
+
 		$ls_column = $as_column;
 		$ls_associationName = $as_associationName ?? $this->getConfig('associationName');
 		$la_associationOptions = $aa_associationOptions;
@@ -226,6 +198,7 @@ class CategoriesComponent extends Component {
 					$ao_query->orderAsc($lo_association->getAlias() . '.system_order', TRUE);
 
 					if (!empty($lo_order)) {
+						dd($lo_order, __FILE__, __LINE__);
 						//Re-add remembered orders
 						$lo_order->traverse(function($ao_clause) use ($ao_query) {
 							$ao_query->order($ao_clause);
@@ -248,6 +221,8 @@ class CategoriesComponent extends Component {
 
 
 	public function ensurePossibleCategorySelection (EntityInterface $ao_entity, ?ResultSetInterface $ao_records = NULL, string $as_column = NULL): void {
+		$this->_startup();
+
 		$lo_records = $ao_records ?? $this->getConfig('categories.raw') ?? $this->getCategories();
 		if (!$lo_records) {
 			throw new \RuntimeException(sprintf('Method `ensurePossibleCategory` in `%s` Component requires a valid set of records to ensure a possible category selection', static::class));
@@ -261,5 +236,86 @@ class CategoriesComponent extends Component {
 		if (is_null($ao_entity->$ls_column) || !$lo_records->firstMatch(['id' => $ao_entity->$ls_column])) {
 			$ao_entity->$ls_column = $lo_records->first()->id;
 		}
+	}
+
+
+	/**
+	 *
+	 */
+	protected function _startup (): void {
+		if ($this->started) {
+			return;
+		}
+
+		$ls_name = $this->getConfig('name');
+		$ls_uriKey = Inflector::dasherize($ls_name);
+		$ls_tableName = $this->getConfig('tableName');
+		if ($ls_tableName === NULL) {
+			$ls_tableName = $this->getController()->getName();
+			$this->setConfig('tableName', $ls_tableName);
+		}
+
+		$lo_request = $this->getController()->getRequest();
+		$lo_session = $lo_request->getSession();
+		$ls_sessionIdentifier = 'categories.' . ($lo_request->getParam('lang') ?? 'global') . '.' . Inflector::underscore($ls_tableName) . '.' . Inflector::underscore($ls_name) . '_id';
+
+		$lo_categories = $this->getCategories($ls_tableName) ?? new \Cake\Datasource\ResultSetDecorator([]);
+
+		if ($this->getConfig('threaded')) {
+			$lo_categories = $lo_categories->listNested();
+
+			/** @var \Awyiss\Model\Entity $lo_category */
+			foreach ($lo_categories as $lo_category) {
+				$lo_category->setVirtual(['level']);
+				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+				$lo_category->level = $lo_categories->getDepth();
+			}
+
+			$la_categories = $lo_categories->printer(...($this->getConfig('threaded.printer', []) + ['label', 'id', '– ']))->toArray();
+		}
+		else {
+			$la_categories = $lo_categories->combine(...$this->getConfig('combinator'))->toArray();
+		}
+
+		$this->setConfig('categories.raw', $lo_categories);
+		$this->setConfig('categories.simple', $la_categories);
+
+		if ($lx_category_id = $lo_request->getParam($ls_uriKey)) {
+			if ($lo_session->started()) {
+				$lo_session->write($ls_sessionIdentifier, $lx_category_id);
+			}
+		}
+		elseif ( ! $lo_session->started() || ! ($lx_category_id = $lo_session->read($ls_sessionIdentifier))) {
+			if (($lx_category_id = $this->getConfig('defaultVal')) === NULL) {
+				$lx_category_id = $this->getConfig('allowAggregation') ? $this->getConfig('aggregationKey') : array_key_first($la_categories);
+			}
+
+			if ($lo_session->started()) {
+				$lo_session->write($ls_sessionIdentifier, $lx_category_id);
+			}
+		}
+
+		if ($this->getConfig('verifySelection') && ! array_key_exists($lx_category_id, $la_categories)) {
+			if (( ! $this->getConfig('allowUnassigned') || $lx_category_id != $this->getConfig('unassignedKey')) && ($lx_category_id = $this->getConfig('defaultVal')) === NULL) {
+				$lx_category_id = $this->getConfig('allowAggregation') ? $this->getConfig('aggregationKey') : array_key_first($la_categories);
+			}
+
+			if ($lo_session->started()) {
+				$lo_session->write($ls_sessionIdentifier, $lx_category_id);
+			}
+		}
+
+		$this->setConfig('selectedCategory', $lx_category_id);
+
+		$la_categorization = $lo_request->getAttribute('categorization', []);
+		if ( ! is_array($la_categorization)) {
+			$la_categorization = [];
+		}
+		$la_categorization[ $ls_name ] = $this->getConfig();
+
+		$lo_request = $lo_request->withAttribute('categorization', $la_categorization);
+		$this->getController()->setRequest($lo_request);
+
+		$this->started = TRUE;
 	}
 }

@@ -12,9 +12,13 @@ use Cake\ORM\Entity;
  *
  * @property int $parent_id
  */
-abstract class Attribute extends Entity {
+class Attribute extends Entity {
+	/**
+	 * @inheritDoc
+	 */
 	protected $_accessible = [
 		'*' => TRUE,
+		'id' => FALSE,
 	];
 	/*public function getFields () {
 

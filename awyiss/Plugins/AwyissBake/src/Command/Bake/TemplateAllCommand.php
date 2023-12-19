@@ -9,9 +9,7 @@ namespace AwyissBake\Command\Bake;
  */
 class TemplateAllCommand extends \Bake\Command\TemplateAllCommand {
 	/**
-	 * initialize
-	 *
-	 * @return void
+	 * @inheritDoc
 	 */
 	public function initialize (): void {
 		parent::initialize();

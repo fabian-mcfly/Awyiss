@@ -10,10 +10,10 @@ use RuntimeException;
 
 class CallbackPermission extends SimplePermission implements SettingPermissionInterface {
 	protected mixed $callback = NULL;
-	protected ?SettingCollection $settingCollection = NULL;
+	protected SettingCollection $settingCollection;
 
 
-	public function __construct (array $aa_config, ?PermissionCollection $ao_permissionCollection = NULL) {
+	public function __construct (array $aa_config, PermissionCollection $ao_permissionCollection) {
 		parent::__construct($aa_config, $ao_permissionCollection);
 
 		if (isset($aa_config['callback'])) {
@@ -45,7 +45,7 @@ class CallbackPermission extends SimplePermission implements SettingPermissionIn
 	 * @throws \Exception
 	 */
 	public function getSettings (): SettingCollection {
-		if ($this->settingCollection === NULL) {
+		if (!isset($this->settingCollection)) {
 			$this->settingCollection = $this->defaultSettings();
 		}
 

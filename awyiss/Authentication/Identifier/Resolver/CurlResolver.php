@@ -29,7 +29,7 @@ class CurlResolver implements \Authentication\Identifier\Resolver\ResolverInterf
 
 
 	/**
-	 * {@inheritDoc}
+	 * @inheritDoc
 	 *
 	 * @throws \Exception
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection

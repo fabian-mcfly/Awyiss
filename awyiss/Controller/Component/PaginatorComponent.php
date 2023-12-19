@@ -15,6 +15,8 @@ namespace Awyiss\Controller\Component;
  * @link https://book.cakephp.org/4/en/controllers/components/pagination.html
  * @mixin \Cake\Datasource\Paginator
  * @method \Awyiss\Controller\AppController getController()
+ *
+ * TODO: add a method to retrieve the page a certain entity is on
  */
 class PaginatorComponent extends \Cake\Controller\Component\PaginatorComponent {
 	/**
@@ -23,7 +25,7 @@ class PaginatorComponent extends \Cake\Controller\Component\PaginatorComponent {
 	public function initialize (array $aa_config): void {
 		$this->setConfig($aa_config + $this->getController()->paginate + [
 			'page' => 1,
-			'limit' => 20,
+			'limit' => 5,
 			'maxLimit' => 99999,
 			'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
 		], NULL, FALSE);

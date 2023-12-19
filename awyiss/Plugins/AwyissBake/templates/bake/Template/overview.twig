@@ -1,9 +1,9 @@
-{{ '{#' }}@var ao_{{ singularVar }} {{ entityClass }}[]{{ '#}' }}
-{{ '{#' }}@var _view \{{ namespace }}\View\BackendView{{ '#}' }}
+{{ '{# ' }}@var ao_{{ pluralVar }} {{ entityClass }}[]{{ ' #}' }}
+{{ '{# ' }}@var _view \{{ namespace }}\View\BackendView{{ ' #}' }}
 
 <div class="{{ pluralVar[:1]|upper ~ pluralVar[1:] }} Overview">
 {% set fields = Bake.filterFields(fields, schema, modelObject, indexColumns, ['binary', 'text']) %}
-	{% verbatim %}{{ helper_Html_link(__('::create'), {'action' : 'add'}, {'class' : 'Button' }) }}{% endverbatim %}
+	{% verbatim %}{{ helper_Html_link(__('::create'), {action : 'add'}, {class : 'Button'}) }}{% endverbatim %}
 {% set done = [] %}
 	<h1>{% verbatim %}{{ __('::headline_overview') }}{% endverbatim %}</h1>
 	<div class="table-responsive">
@@ -30,7 +30,7 @@
 {% set isKey = true %}
 					<td>
 						{% verbatim %}{% if lo_{% endverbatim %}{{ singularVar }}{% verbatim %}.has('{% endverbatim %}{{ details.property }}{% verbatim %}') %}{% endverbatim %}
-							{% verbatim %}{{ helper_Html_link({% endverbatim %}lo_{{ singularVar ~ '.' ~ details.property ~ '.' ~ details.displayField }}{% verbatim %}, {'controller': '{% endverbatim %}{{ details.controller }}{% verbatim %}', 'action': 'view', 'id': lo_{% endverbatim %}{{ singularVar ~ '.' ~ details.property ~ '.' ~ details.primaryKey[0] }}{% verbatim %}}) }}{% endverbatim %}
+							{% verbatim %}{{ helper_Html_link({% endverbatim %}lo_{{ singularVar ~ '.' ~ details.property ~ '.' ~ details.displayField }}{% verbatim %}, {controller: '{% endverbatim %}{{ details.controller }}{% verbatim %}', action: 'view', id: lo_{% endverbatim %}{{ singularVar ~ '.' ~ details.property ~ '.' ~ details.primaryKey[0] }}{% verbatim %}}) }}{% endverbatim %}
 						{% verbatim %}{% endif %}{% endverbatim %}
 					</td>
 {% endif %}

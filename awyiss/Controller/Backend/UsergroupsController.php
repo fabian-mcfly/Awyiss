@@ -4,6 +4,8 @@
 namespace Awyiss\Controller\Backend;
 
 
+use Awyiss\Authorization\Policy\AnonymousPolicy;
+use Awyiss\Authorization\Policy\PolicyInterface;
 use Awyiss\Controller\BackendController as Controller;
 use Cake\Utility\Hash;
 
@@ -19,27 +21,36 @@ class UsergroupsController extends Controller {
 	 * Overview method
 	 *
 	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
+	 *
+	 * @throws \Exception
+	 *
 	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
 	public function overview () {
 		$this->Access->ensureOne('create', 'update', 'delete');
 
-		$lo_usergroups = $this->paginate($this->Usergroups->find('withAttributes'));
+		$lo_usergroups = $this->Usergroups->find('withAttributes')->where($this->getOverviewWhere());
+		$lo_usergroups = $this->paginate($lo_usergroups);
 
 		$this->set([
 			'ao_usergroups' => $lo_usergroups,
 		]);
 	}
-	
+
 
 	/**
 	 * Add method
 	 *
 	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
+	 *
+	 * @throws \Exception
+	 *
 	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
 	public function add () {
 		$this->Access->ensure('create');
+
+		$lb_usersScopeIsAccessible = $this->Access->scopeIsAccessible('Users', NULL, ['create', 'update']);
 
 		$la_authorizationPolicies = $this->getAuthorizationPolicies();
 
@@ -47,7 +58,13 @@ class UsergroupsController extends Controller {
 		if ($this->request->is('post')) {
 			$la_data = $this->request->getData();
 			$la_data['usergroup_permissions'] = $this->reformatPermissionsData($la_authorizationPolicies, $la_data);
-			$lo_usergroup = $this->Usergroups->patchEntity($lo_usergroup, $la_data, ['associated' => ['UsergroupPermissions', 'Users']]);
+
+			$la_associated = ['UsergroupPermissions'];
+			if ($lb_usersScopeIsAccessible) {
+				$la_associated[] = 'Users';
+			}
+
+			$this->Usergroups->patchEntity($lo_usergroup, $la_data, ['associated' => $la_associated]);
 
 			if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
 				if ($this->Usergroups->save($lo_usergroup)) {
@@ -76,27 +93,43 @@ class UsergroupsController extends Controller {
 		}
 		$lo_usergroup->usergroup_permissions = $la_currentPermissions;
 
+		$lo_users = NULL;
+		if ($lb_usersScopeIsAccessible) {
+			$lo_users = $this->Usergroups->Users->find();
+		}
+
 		$this->set([
 			'ao_usergroup' => $lo_usergroup,
-			'ao_users' => $this->Usergroups->Users->find()->all(),
+			'ao_users' => $lo_users,
 			'aa_authorizationPolicies' => $la_authorizationPolicies,
 		]);
 	}
-	
+
 
 	/**
 	 * Edit method
 	 *
 	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
+	 *
+	 * @throws \Exception
+	 *
 	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
 	public function edit () {
 		$this->Access->ensure('update');
 
+		$lb_usersScopeIsAccessible = $this->Access->scopeIsAccessible('Users', NULL, ['create', 'update']);
+
 		$la_authorizationPolicies = $this->getAuthorizationPolicies();
 
 		$li_id = $this->request->getParam('id');
-		$lo_usergroup = $this->Usergroups->find()->contain(['UsergroupPermissions', 'Users'])->where(['id' => $li_id])->first();
+
+		$la_contain = ['UsergroupPermissions'];
+		if ($lb_usersScopeIsAccessible) {
+			$la_contain[] = 'Users';
+		}
+		/** @var \Awyiss\Model\Entity\Usergroup $lo_usergroup */
+		$lo_usergroup = $this->Usergroups->find()->contain($la_contain)->where(['id' => $li_id])->first();
 
 		if ( ! $lo_usergroup) {
 			$this->Flash->error(__('::record_not_found'));
@@ -104,11 +137,17 @@ class UsergroupsController extends Controller {
 			return $this->redirect(['action' => 'overview']);
 		}
 
+		//dd($lo_usergroup->usergroup_permissions);
+
 		if ($this->request->is(['patch', 'post', 'put'])) {
 			$la_data = $this->request->getData();
 			$la_data['usergroup_permissions'] = $this->reformatPermissionsData($la_authorizationPolicies, $la_data);
 
-			$lo_usergroup = $this->Usergroups->patchEntity($lo_usergroup, $la_data, ['associated' => ['UsergroupPermissions', 'Users']]);
+			$la_associated = ['UsergroupPermissions'];
+			if ($lb_usersScopeIsAccessible) {
+				$la_associated[] = 'Users';
+			}
+			$this->Usergroups->patchEntity($lo_usergroup, $la_data, ['associated' => $la_associated]);
 
 			if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
 				if ($this->Usergroups->save($lo_usergroup)) {
@@ -120,6 +159,7 @@ class UsergroupsController extends Controller {
 
 					return $this->redirect(['action' => 'edit', 'id' => $lo_usergroup->id]);
 				}
+
 				$this->Flash->error(__('::edit_failed'));
 			}
 		}
@@ -132,23 +172,31 @@ class UsergroupsController extends Controller {
 
 			$la_currentPermissions[ $lo_usergroupPermission->scope ][ $lo_usergroupPermission->identifier ] = (object)[
 				'access' => $lo_usergroupPermission->access,
-				'settings' => json_decode($lo_usergroupPermission->settings ?? "", TRUE),
+				//'settings' => json_decode($lo_usergroupPermission->settings ?? "", TRUE),
 			];
 		}
 		$lo_usergroup->usergroup_permissions = $la_currentPermissions;
 
+		$lo_users = NULL;
+		if ($this->Access->scopeIsAccessible('Users', NULL, ['create', 'update'])) {
+			$lo_users = $this->Usergroups->Users->find();
+		}
+
 		$this->set([
 			'ao_usergroup' => $lo_usergroup,
-			'ao_users' => $this->Usergroups->Users->find()->all(),
+			'ao_users' => $lo_users,
 			'aa_authorizationPolicies' => $la_authorizationPolicies,
 		]);
 	}
-	
+
 
 	/**
 	 * Delete method
 	 *
 	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
+	 *
+	 * @throws \Exception
+	 *
 	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
 	public function delete () {
@@ -180,20 +228,38 @@ class UsergroupsController extends Controller {
 		$lo_authorizationService = $this->getRequest()->getAttribute('authorization');
 		$la_policies = $lo_authorizationService->getPolicies();
 
+
+		$lo_pageRolesTable = $this->getTableLocator()->get('PageRoles');
+		$lo_pageRoles = $lo_pageRolesTable->find('active', [
+			'access' => ['skip' => TRUE]
+		])->all();
+		/** @var \Awyiss\Model\Entity\PageRole $lo_pageRole */
+		foreach ($lo_pageRoles AS $lo_pageRole) {
+			$ls_identifier = \Cake\Utility\Inflector::pluralize($lo_pageRole->identifier);
+			if (!isset($la_policies[ $ls_identifier ])) {
+				$la_policies[ $ls_identifier ] = new AnonymousPolicy($ls_identifier);
+			}
+		}
+
+
 		ksort($la_policies);
 
 		return $la_policies;
 	}
 
 
+	/**
+	 * @param PolicyInterface[] $aa_authorizationPolicies
+	 * @param array $aa_data
+	 *
+	 * @return array
+	 */
 	protected function reformatPermissionsData (array $aa_authorizationPolicies, array $aa_data = []): array {
 		$la_permissions = [];
 
-		/** @var \Awyiss\Authorization\Policy\PolicyInterface $lo_authorizationPolicy */
 		foreach ($aa_authorizationPolicies AS $lo_authorizationPolicy) {
-			/** @var \Awyiss\Authorization\Permission\PermissionInterface $lo_permission */
-			foreach ($lo_authorizationPolicy::getPermissions() AS $lo_permission) {
-				$ls_scope = $lo_authorizationPolicy::getScope();
+			foreach ((!is_object($lo_authorizationPolicy) ? $lo_authorizationPolicy::getPermissions() : $lo_authorizationPolicy->getPermissions()) AS $lo_permission) {
+				$ls_scope = !is_object($lo_authorizationPolicy) ? $lo_authorizationPolicy::getScope() : $lo_authorizationPolicy->getScope();
 				$ls_identifier = $lo_permission->getConfig('identifier');
 
 				$lx_access = Hash::get($aa_data, 'permissions.' . $ls_scope . '.' . $ls_identifier);
@@ -204,7 +270,7 @@ class UsergroupsController extends Controller {
 				$lx_settings = Hash::get($aa_data, 'permission_settings.' . $ls_scope . '.' . $ls_identifier);
 
 				$la_permissions[] = [
-					'scope' => $lo_authorizationPolicy::getScope(),
+					'scope' => $ls_scope,
 					'identifier' => $lo_permission->getConfig('identifier'),
 					'access' => $lx_access,
 					'settings' => $lx_settings,

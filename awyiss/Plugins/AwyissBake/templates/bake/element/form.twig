@@ -16,11 +16,11 @@
 		{% verbatim %}{{ helper_Form_control('{% endverbatim %}{{ field }}{% verbatim %}', {options: ao_{% endverbatim %}{{ keyFields[field] }}{% verbatim %}}) }}{% endverbatim %}
 		{{- "\n" }}
 {%- endif %}
-{%- elseif field is 'parent_id' %}
+{%- elseif field == 'parent_id' %}
 		{% verbatim %}{{ helper_Categories_control('{% endverbatim %}{{ field }}{% verbatim %}') }}{% endverbatim %}
 			{{- "\n" }}
-{%- elseif field is 'system_order' %}
-		{% verbatim %}{{ helper_SystemOrder_control('{% endverbatim %}{{ field }}{% verbatim %}') }}{% endverbatim %}
+{%- elseif field == 'system_order' %}
+		{% verbatim %}{{ helper_SystemOrder_control('{% endverbatim %}{{ field }}{% verbatim %}', {entity: ao_{% endverbatim %}{{ singularVar }}{% verbatim %}}) }}{% endverbatim %}
 			{{- "\n" }}
 {%- elseif field not in ['deleted', 'created_on', 'created_by', 'changed_on', 'changed_by', 'deleted_on', 'deleted_by'] %}
 		{%- set fieldData = Bake.columnData(field, schema) %}

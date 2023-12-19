@@ -5,28 +5,20 @@ namespace Awyiss\Model\Table;
 
 
 use Cake\Database\Schema\TableSchemaInterface;
+use Cake\Datasource\EntityInterface;
 use Cake\Validation\Validator;
 
 
 /**
  * Audit Model
  *
- * @method \Awyiss\Model\Entity\Audit newDefaultEntity()
- * @method \Awyiss\Model\Entity\Audit newEmptyEntity()
- * @method \Awyiss\Model\Entity\Audit newEntity(array $data, array $options = [])
- * @method \Awyiss\Model\Entity\Audit[] newEntities(array $data, array $options = [])
- * @method \Awyiss\Model\Entity\Audit get($primaryKey, $options = [])
- * @method \Awyiss\Model\Entity\Audit findOrCreate($search, ?callable $callback = NULL, $options = [])
- * @method \Awyiss\Model\Entity\Audit patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
- * @method \Awyiss\Model\Entity\Audit[] patchEntities(iterable $entities, array $data, array $options = [])
- * @method \Awyiss\Model\Entity\Audit|false save(\Cake\Datasource\EntityInterface $entity, $options = [])
- * @method \Awyiss\Model\Entity\Audit saveOrFail(\Cake\Datasource\EntityInterface $entity, $options = [])
- * @method \Awyiss\Model\Entity\Audit[]|\Cake\Datasource\ResultSetInterface|false saveMany(iterable $entities, $options = [])
- * @method \Awyiss\Model\Entity\Audit[]|\Cake\Datasource\ResultSetInterface saveManyOrFail(iterable $entities, $options = [])
- * @method \Awyiss\Model\Entity\Audit[]|\Cake\Datasource\ResultSetInterface|false deleteMany(iterable $entities, $options = [])
- * @method \Awyiss\Model\Entity\Audit[]|\Cake\Datasource\ResultSetInterface deleteManyOrFail(iterable $entities, $options = [])
+ * @method \Awyiss\Model\Entity\Audit newDefaultEntity(array $aa_additionalData = [])
+ * @method \Awyiss\Model\Entity\Audit patchEntity(EntityInterface $ao_entity, array $aa_data, array $aa_options = [])
  */
 class AuditTable extends \Awyiss\Model\Table {
+	/**
+	 * @inheritDoc
+	 */
 	protected array $_defaultConfig = [
 		'audit' => [
 			'enabled' => FALSE,
@@ -35,7 +27,7 @@ class AuditTable extends \Awyiss\Model\Table {
 
 
 	/**
-	 * {@inheritDoc}
+	 * @inheritDoc
 	 */
 	public function initialize (array $aa_config): void {
 		parent::initialize($aa_config);
@@ -47,7 +39,7 @@ class AuditTable extends \Awyiss\Model\Table {
 
 
 	/**
-	 * {@inheritDoc}
+	 * @inheritDoc
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
@@ -58,11 +50,13 @@ class AuditTable extends \Awyiss\Model\Table {
 
 		$ao_validator->scalar('model')->maxLength('model', 50)->requirePresence('model', 'create')->notEmptyString('model');
 
-		$ao_validator->allowEmptyString('data_old');
+		$ao_validator->allowEmptyArray('data_old');
 
-		$ao_validator->allowEmptyString('data_new');
+		$ao_validator->allowEmptyArray('data_new');
 
-		$ao_validator->allowEmptyString('diff');
+		$ao_validator->allowEmptyArray('diff');
+
+		$ao_validator->integer('parent_id')->requirePresence('parent_id')->notEmptyString('parent_id');
 
 		$ao_validator->integer('created_by')->notEmptyString('created_by');
 
@@ -73,13 +67,15 @@ class AuditTable extends \Awyiss\Model\Table {
 
 
 	/**
-	 * {@inheritDoc}
+	 * @inheritDoc
+	 *
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	protected function _initializeSchema (TableSchemaInterface $schema): TableSchemaInterface {
-		$schema->setColumnType('data_old', 'json');
-		$schema->setColumnType('data_new', 'json');
-		$schema->setColumnType('diff', 'json');
+	protected function _initializeSchema (TableSchemaInterface $ao_schema): TableSchemaInterface {
+		$ao_schema->setColumnType('data_old', 'json');
+		$ao_schema->setColumnType('data_new', 'json');
+		$ao_schema->setColumnType('diff', 'json');
 
-		return $schema;
+		return $ao_schema;
 	}
 }

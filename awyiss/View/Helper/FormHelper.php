@@ -10,6 +10,16 @@ namespace Awyiss\View\Helper;
  */
 class FormHelper extends \Cake\View\Helper\FormHelper {
 	/**
+	 * @inheritDoc
+	 */
+	public function __construct (\Cake\View\View $view, array $config = []) {
+		parent::__construct($view, $config + ['templateClass' => \Awyiss\View\StringTemplate::class,]);
+	}
+
+
+	/**
+	 * @inheritDoc
+	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function label (string $as_fieldName, ?string $as_text = NULL, array $aa_options = []): string {
@@ -34,7 +44,7 @@ class FormHelper extends \Cake\View\Helper\FormHelper {
 
 
 	/**
-	 * {@inheritDoc}
+	 * @inheritDoc
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
@@ -44,7 +54,7 @@ class FormHelper extends \Cake\View\Helper\FormHelper {
 
 
 	/**
-	 * {@inheritDoc}
+	 * @inheritDoc
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */

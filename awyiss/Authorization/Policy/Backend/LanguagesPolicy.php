@@ -4,9 +4,14 @@
 namespace Awyiss\Authorization\Policy\Backend;
 
 
-use Awyiss\Authorization\Policy\PolicyInterface;
+use Awyiss\Authorization\Permission\PermissionCollection;
+use Awyiss\Authorization\Policy\AbstractPolicy;
 
 
-class LanguagesPolicy implements PolicyInterface {
+class LanguagesPolicy extends AbstractPolicy {
 	use \Awyiss\Authorization\Policy\Trait\BasicCrudPermissionsTrait;
+
+
+	protected static PermissionCollection $permissionCollection;
+	protected static string $scope;
 }

@@ -9,11 +9,10 @@ class SimplePermission extends AbstractPermission {
 	public const OPTION_DENIED = 0;
 	public const OPTION_INDIFFERENT = NULL;
 
-	protected ?array $options;
-	protected ?string $type = 'simple';
+	protected string $type = 'simple';
 
 
-	public function __construct (array $aa_config, ?PermissionCollection $ao_permissionCollection = NULL) {
+	public function __construct (array $aa_config, PermissionCollection $ao_permissionCollection) {
 		$this->options = [
 			static::OPTION_GRANTED => __('permissions::simple_permission_option_granted'),
 			static::OPTION_DENIED => __('permissions::simple_permission_option_denied'),

@@ -4,6 +4,8 @@
 namespace Awyiss\Model\Table;
 
 
+use Cake\Datasource\EntityInterface;
+use Cake\ORM\RulesChecker;
 use Cake\Validation\Validator;
 
 
@@ -12,36 +14,24 @@ use Cake\Validation\Validator;
  *
  * @property \Awyiss\Model\Table\UsergroupPermissionsTable&\Cake\ORM\Association\HasMany $UsergroupPermissions
  *
- * @method \Awyiss\Model\Entity\Usergroup newDefaultEntity()
- * @method \Awyiss\Model\Entity\Usergroup newEmptyEntity()
- * @method \Awyiss\Model\Entity\Usergroup newEntity(array $data, array $options = [])
- * @method \Awyiss\Model\Entity\Usergroup[] newEntities(array $data, array $options = [])
- * @method \Awyiss\Model\Entity\Usergroup get($primaryKey, $options = [])
- * @method \Awyiss\Model\Entity\Usergroup findOrCreate($search, ?callable $callback = NULL, $options = [])
- * @method \Awyiss\Model\Entity\Usergroup patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
- * @method \Awyiss\Model\Entity\Usergroup[] patchEntities(iterable $entities, array $data, array $options = [])
- * @method \Awyiss\Model\Entity\Usergroup|false save(\Cake\Datasource\EntityInterface $entity, $options = [])
- * @method \Awyiss\Model\Entity\Usergroup saveOrFail(\Cake\Datasource\EntityInterface $entity, $options = [])
- * @method \Awyiss\Model\Entity\Usergroup[]|\Cake\Datasource\ResultSetInterface|false saveMany(iterable $entities, $options = [])
- * @method \Awyiss\Model\Entity\Usergroup[]|\Cake\Datasource\ResultSetInterface saveManyOrFail(iterable $entities, $options = [])
- * @method \Awyiss\Model\Entity\Usergroup[]|\Cake\Datasource\ResultSetInterface|false deleteMany(iterable $entities, $options = [])
- * @method \Awyiss\Model\Entity\Usergroup[]|\Cake\Datasource\ResultSetInterface deleteManyOrFail(iterable $entities, $options = [])
- * @property \Awyiss\Model\Table\UsergroupsUsersTable&\Cake\ORM\Association\HasMany $UsergroupsUsers
- * @property \Awyiss\Model\Table\UsersTable&\Cake\ORM\Association\BelongsToMany $Users
+ * @method \Awyiss\Model\Entity\Usergroup newDefaultEntity(array $aa_additionalData = [])
+ * @method \Awyiss\Model\Entity\Usergroup patchEntity(EntityInterface $ao_entity, array $aa_data, array $aa_options = [])
  */
 class UsergroupsTable extends \Awyiss\Model\Table {
+	protected array $_defaultConfig = [
+		'translate' => [
+			'fields' => ['title'],
+		],
+	];
+
+
 	/**
-	 * Initialize method
-	 *
-	 * @param array $aa_config The configuration for the Table.
-	 *
-	 * @return void
+	 * @inheritDoc
 	 */
 	public function initialize (array $aa_config): void {
 		parent::initialize($aa_config);
 
 		$this->setTable('usergroups');
-		$this->setDisplayField('title');
 		$this->setPrimaryKey('id');
 
 		$this->hasMany('UsergroupPermissions')->setSaveStrategy('replace')->setDependent(TRUE);
@@ -51,11 +41,7 @@ class UsergroupsTable extends \Awyiss\Model\Table {
 
 
 	/**
-	 * Default validation rules.
-	 *
-	 * @param \Cake\Validation\Validator $ao_validator Validator instance.
-	 *
-	 * @return \Cake\Validation\Validator
+	 * @inheritDoc
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
@@ -66,6 +52,20 @@ class UsergroupsTable extends \Awyiss\Model\Table {
 
 		$ao_validator->boolean('active')->notEmptyString('active');
 
+		$ao_validator->boolean('deleted')->notEmptyString('deleted');
+
 		return $ao_validator;
+	}
+
+
+	/**
+	 * @inheritDoc
+	 *
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 */
+	public function buildRules (RulesChecker $ao_rules): RulesChecker {
+		$ao_rules->add($ao_rules->isUnique(['title']), ['errorField' => 'title']);
+
+		return $ao_rules;
 	}
 }

@@ -10,44 +10,64 @@ namespace Awyiss\Model\Entity;
  * @property int $id
  * @property string $title
  * @property string $filename
- * @property array $content_areas
+ * @property array $template_positions
  * @property int $page_roles_id
+ * @property int $system_order
  * @property bool $active
  * @property bool $deleted
- * @property int $system_order
  * @property int|null $created_by
  * @property \Cake\I18n\FrozenTime|null $created_on
  * @property int|null $changed_by
  * @property \Cake\I18n\FrozenTime|null $changed_on
  * @property int|null $deleted_by
  * @property \Cake\I18n\FrozenTime|null $deleted_on
- *
  * @property \Awyiss\Model\Entity\PageRole $page_role
  */
 class PageTemplate extends \Awyiss\Model\Entity {
 	/**
-	 * Fields that can be mass assigned using newEntity() or patchEntity().
-	 *
-	 * Note that when '*' is set to true, this allows all unspecified fields to
-	 * be mass assigned. For security purposes, it is advised to set '*' to false
-	 * (or remove it), and explicitly make individual fields accessible as needed.
-	 *
-	 * @var array
+	 * @inheritDoc
 	 */
 	protected $_accessible = [
 		'title' => TRUE,
 		'filename' => TRUE,
-		'content_areas' => TRUE,
+		'template_positions' => TRUE,
 		'page_roles_id' => TRUE,
-		'active' => TRUE,
 		'system_order' => TRUE,
+		'active' => TRUE,
 	];
 
 
 	/**
 	 * @noinspection PhpUnused
 	 */
-	public function _setContentAreas (mixed $ax_value): array {
-		return is_array($ax_value) ? $ax_value : [$ax_value];
+	protected function _getTemplatePositions (?array $aa_templatePositions = NULL): ?array {
+		return $aa_templatePositions ? array_combine($aa_templatePositions, $aa_templatePositions) : NULL;
+	}
+
+
+	/**
+	 * @noinspection PhpUnused
+	 */
+	protected function _setTemplatePositions (mixed $ax_value): array {
+		if (empty($ax_value)) {
+			return [];
+		}
+
+		if (is_array($ax_value)) {
+			return $ax_value;
+		}
+
+		return array_unique(array_map('trim', explode(',', trim($ax_value, ', '))));
+	}
+
+
+
+	/**
+	 * @noinspection PhpUnused
+	 */
+	protected function _setFilename (string $as_filename): string {
+		$ls_filename = \Cake\Utility\Text::slug($as_filename, ['replacement' => '_']);
+
+		return mb_strtolower($ls_filename);
 	}
 }

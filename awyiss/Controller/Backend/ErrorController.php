@@ -26,6 +26,8 @@ class ErrorController extends Controller {
 	 * @param \Cake\Event\EventInterface $ao_event Event.
 	 *
 	 * @return null|void
+	 *
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function beforeRender (EventInterface $ao_event) {
 		$lo_builder = $this->viewBuilder();
@@ -37,7 +39,6 @@ class ErrorController extends Controller {
 		}
 
 		//dd('layout: ' . $lo_builder->getLayout(), 'layout-path: ' . $lo_builder->getLayoutPath(), 'theme: ' . $lo_builder->getTheme(), 'options: ', $lo_builder->getOptions(), 'name: ' . $lo_builder->getName(), 'classname: ' . $lo_builder->getClassName(), 'template: ' . $lo_builder->getTemplate(), 'templatePath: ' . $lo_builder->getTemplatePath(), $ls_templatePath);
-
 		$lo_builder->setTemplatePath($ls_templatePath);
 	}
 }

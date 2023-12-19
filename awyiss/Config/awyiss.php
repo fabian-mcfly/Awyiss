@@ -34,9 +34,18 @@ return [
 		'jsBaseUrl' => 'js/',
 		'namespace' => 'Awyiss',
 		'paths' => [
-			'plugins' => [ROOT . DS . CUSTOM_DIR . DS . 'plugins' . DS, ROOT . DS . APP_DIR . DS . 'plugins' . DS],
-			'templates' => [ROOT . DS . CUSTOM_DIR . DS . 'templates' . DS, ROOT . DS . APP_DIR . DS . 'templates' . DS],
-			'locales' => [ROOT . DS . CUSTOM_DIR . DS . 'locales' . DS, ROOT . DS . APP_DIR . DS . 'locales' . DS],
+			'plugins' => [
+				'customer' => ROOT . DS . CUSTOM_DIR . DS . 'plugins' . DS,
+				'awyiss' => ROOT . DS . APP_DIR . DS . 'plugins' . DS,
+			],
+			'templates' => [
+				'customer' => ROOT . DS . CUSTOM_DIR . DS . 'templates' . DS,
+				'awyiss' => ROOT . DS . APP_DIR . DS . 'templates' . DS,
+			],
+			'locales' => [
+				'customer' => ROOT . DS . CUSTOM_DIR . DS . 'locales' . DS,
+				'awyiss' => ROOT . DS . APP_DIR . DS . 'locales' . DS,
+			],
 		],
 		'webroot' => 'webroot',
 		'wwwRoot' => WWW_ROOT,
@@ -76,6 +85,30 @@ return [
 			'prefix' => 'awyiss_routes_',
 			'serialize' => TRUE,
 			'url' => env('CACHE_CAKEROUTES_URL'),
+		],
+	],
+
+	'Datasources' => [
+		'default' => [
+			'cacheMetadata' => TRUE,
+			'className' => Connection::class,
+			'driver' => Mysql::class,
+			'flags' => [],
+			'log' => FALSE,
+			'persistent' => FALSE,
+			'quoteIdentifiers' => FALSE,
+			'timezone' => 'UTC',
+		],
+
+		'test' => [
+			'cacheMetadata' => TRUE,
+			'className' => Connection::class,
+			'driver' => Mysql::class,
+			'flags' => [],
+			'log' => FALSE,
+			'persistent' => FALSE,
+			'quoteIdentifiers' => FALSE,
+			'timezone' => 'UTC',
 		],
 	],
 
@@ -125,30 +158,6 @@ return [
 		'trace' => TRUE,
 	],
 
-	'Datasources' => [
-		'default' => [
-			'cacheMetadata' => TRUE,
-			'className' => Connection::class,
-			'driver' => Mysql::class,
-			'flags' => [],
-			'log' => FALSE,
-			'persistent' => FALSE,
-			'quoteIdentifiers' => FALSE,
-			'timezone' => 'UTC',
-		],
-
-		'test' => [
-			'cacheMetadata' => TRUE,
-			'className' => Connection::class,
-			'driver' => Mysql::class,
-			'flags' => [],
-			'log' => FALSE,
-			'persistent' => FALSE,
-			'quoteIdentifiers' => FALSE,
-			'timezone' => 'UTC',
-		],
-	],
-
 	/*
 	 * Configures logging options
 	 */
@@ -159,7 +168,6 @@ return [
 			'levels' => ['notice', 'info', 'debug'],
 			'path' => LOGS,
 			'scopes' => FALSE,
-			'url' => env('LOG_DEBUG_URL'),
 		],
 		'error' => [
 			'className' => FileLog::class,
@@ -167,14 +175,12 @@ return [
 			'levels' => ['warning', 'error', 'critical', 'alert', 'emergency'],
 			'path' => LOGS,
 			'scopes' => FALSE,
-			'url' => env('LOG_ERROR_URL'),
 		],
 		'queries' => [
 			'className' => FileLog::class,
 			'file' => 'queries',
 			'path' => LOGS,
 			'scopes' => ['queriesLog'],
-			'url' => env('LOG_QUERIES_URL'),
 		],
 	],
 

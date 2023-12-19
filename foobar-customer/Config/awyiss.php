@@ -2,7 +2,7 @@
 
 /*
  * Local configuration file to provide any overrides to our awyiss.php configuration
- * Note: It is not recommended to commit files with credentials into source code version control.
+ * Note: It is not recommended committing files with credentials into source code version control.
  */
 return [
 	'debug' => filter_var(env('DEBUG', FALSE), FILTER_VALIDATE_BOOLEAN),
@@ -63,6 +63,14 @@ return [
 			'username' => NULL,
 		],
 	],
+
+	/*'Log' => [
+		'error' => [
+			'className' => \Cake\Log\Engine\SyslogLog::class,
+			'levels' => ['warning', 'error', 'critical', 'alert', 'emergency'],
+			'scopes' => FALSE,
+		],
+	],*/
 
 	/*
 	 * Security and encryption configuration

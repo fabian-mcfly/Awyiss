@@ -1,0 +1,38 @@
+{# @var ao_content Awyiss\Model\Entity\Content #}
+{# @var _view \Awyiss\View\BackendView #}
+
+<div class="Contents Form Edit">
+	{{ helper_Form_create(ao_content, {method: 'post', idPrefix: 'content'}) }}
+	
+	<h1>{{ __('::headline_edit') }}</h1>
+	<fieldset>
+		<legend>{{ __('::fieldset_general') }}</legend>
+		{{ helper_Form_control('active') }}
+		{{ helper_Categories_control('pages_id', {val: ao_content.pages_id, empty: FALSE}) }}
+		{{ helper_Form_control('parent_id', {options: ao_threadedContents.printer('label', 'id')}) }}
+		{{ helper_SystemOrder_control('system_order', {entity: ao_content}) }}
+		{{ helper_Form_control('title') }}
+		{{ helper_Form_control('subtitle') }}
+		{{ helper_Form_control('text') }}
+		{{ helper_Form_control('media_id') }}
+		{{ helper_Form_control('media_alt_id') }}
+		{{ helper_Form_control('media_folders_id') }}
+		{{ helper_Form_control('link') }}
+		{{ helper_Form_control('publishdate_start') }}
+		{{ helper_Form_control('publishdate_end') }}
+		{{ helper_Form_control('template_position', {options: ao_page.page_template.template_positions}) }}
+		{{ helper_Form_control('content_templates_id', {options: ao_contentTemplates}) }}
+		{{ helper_Form_control('columnwidth') }}
+		{{ helper_Form_control('css_class') }}
+		{{ helper_Form_control('forms_id') }}
+		{{ helper_Form_control('duplicate_of') }}
+		{{ helper_Form_control('data') }}
+	</fieldset>
+	
+	{{- helper_Form_hidden('reload_form', {val: 0}) }}
+
+	{{ helper_Form_button(__('::save')) }}
+	{{ helper_Form_button(__('::save_close'), {name: 'submit', value: 'submit_close'}) }}
+	{{ helper_Form_end() -}}
+	
+</div>

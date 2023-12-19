@@ -4,6 +4,9 @@
 namespace Awyiss\Model\Entity;
 
 
+use Cake\ORM\Behavior\Translate\TranslateTrait;
+
+
 /**
  * ContentTemplate Entity
  *
@@ -11,10 +14,10 @@ namespace Awyiss\Model\Entity;
  * @property string $title
  * @property string $filename
  * @property array $available_elements
- * @property array $assigned_content_areas
+ * @property array $assigned_template_positions
+ * @property int $system_order
  * @property bool $active
  * @property bool $deleted
- * @property int $system_order
  * @property int|null $created_by
  * @property \Cake\I18n\FrozenTime|null $created_on
  * @property int|null $changed_by
@@ -24,20 +27,17 @@ namespace Awyiss\Model\Entity;
  * @property \Awyiss\Model\Entity\Attribute|null $attributes
  */
 class ContentTemplate extends \Awyiss\Model\Entity {
+	use TranslateTrait;
+
+
 	/**
-	 * Fields that can be mass assigned using newEntity() or patchEntity().
-	 *
-	 * Note that when '*' is set to true, this allows all unspecified fields to
-	 * be mass assigned. For security purposes, it is advised to set '*' to false
-	 * (or remove it), and explicitly make individual fields accessible as needed.
-	 *
-	 * @var array
+	 * @inheritDoc
 	 */
 	protected $_accessible = [
 		'title' => TRUE,
 		'filename' => TRUE,
 		'available_elements' => TRUE,
-		'assigned_content_areas' => TRUE,
+		'assigned_template_positions' => TRUE,
 		'active' => TRUE,
 		'system_order' => TRUE,
 	];
@@ -46,7 +46,27 @@ class ContentTemplate extends \Awyiss\Model\Entity {
 	/**
 	 * @noinspection PhpUnused
 	 */
-	public function _setAvailableElements (mixed $ax_value): array {
+	protected function _getAvailableElements (?array $aa_availableElements = NULL): ?array {
+		if (empty($aa_availableElements)) {
+			return NULL;
+		}
+
+		foreach ($aa_availableElements AS &$la_element) {
+			$la_element['required'] = (bool)$la_element['required'];
+		}
+
+		return $aa_availableElements;
+	}
+
+
+	/**
+	 * @noinspection PhpUnused
+	 */
+	protected function _setAvailableElements (mixed $ax_value): array {
+		if (empty($ax_value)) {
+			return [];
+		}
+
 		return is_array($ax_value) ? $ax_value : [$ax_value];
 	}
 
@@ -54,7 +74,22 @@ class ContentTemplate extends \Awyiss\Model\Entity {
 	/**
 	 * @noinspection PhpUnused
 	 */
-	public function _setAssignedContentAreas (mixed $ax_value): array {
+	protected function _setAssignedTemplatePositions (mixed $ax_value): array {
+		if (empty($ax_value)) {
+			return [];
+		}
+
 		return is_array($ax_value) ? $ax_value : [$ax_value];
+	}
+
+
+
+	/**
+	 * @noinspection PhpUnused
+	 */
+	protected function _setFilename (string $as_filename): string {
+		$ls_filename = \Cake\Utility\Text::slug($as_filename, ['replacement' => '_']);
+
+		return mb_strtolower($ls_filename);
 	}
 }

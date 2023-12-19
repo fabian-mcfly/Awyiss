@@ -13,18 +13,11 @@ namespace Awyiss\Model\Entity;
  * @property string $identifier
  * @property int $access
  * @property array|null $settings
- *
  * @property \Awyiss\Model\Entity\Usergroup $usergroup
  */
 class UsergroupPermission extends \Awyiss\Model\Entity {
 	/**
-	 * Fields that can be mass assigned using newEntity() or patchEntity().
-	 *
-	 * Note that when '*' is set to true, this allows all unspecified fields to
-	 * be mass assigned. For security purposes, it is advised to set '*' to false
-	 * (or remove it), and explicitly make individual fields accessible as needed.
-	 *
-	 * @var array
+	 * @inheritDoc
 	 */
 	protected $_accessible = [
 		'usergroup_id' => TRUE,
@@ -38,7 +31,11 @@ class UsergroupPermission extends \Awyiss\Model\Entity {
 	/**
 	 * @noinspection PhpUnused
 	 */
-	public function _setSettings (mixed $ax_value): array {
+	protected function _setSettings (mixed $ax_value): ?array {
+		if (empty($ax_value)) {
+			return NULL;
+		}
+
 		return is_array($ax_value) ? $ax_value : [$ax_value];
 	}
 }

@@ -10,5 +10,5 @@ use Cake\Console\CommandRunner;
 define('CUSTOM_DIR', env('CUSTOM_DIR', 'foobar-customer'));
 
 // Build the runner with an application and root executable name.
-$runner = new CommandRunner(new \Awyiss\Application($lo_loader), 'cake');
-exit($runner->run($argv));
+$lo_runner = new CommandRunner(new \Awyiss\Application($lo_loader), 'cake');
+exit($lo_runner->run($argv));

@@ -4,9 +4,9 @@
 namespace AwyissBake\Command\Bake;
 
 
+use Awyiss\Core\App;
 use Cake\Console\Arguments;
 use Cake\Console\ConsoleIo;
-use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Utility\Inflector;
 use InvalidArgumentException;
@@ -16,12 +16,20 @@ use InvalidArgumentException;
  * Task class for creating view template files.
  */
 class TemplateCommand extends \Bake\Command\TemplateCommand {
+	/**
+	 * @inheritDoc
+	 *
+	 * @var string[]
+	 */
 	public $scaffoldActions = ['overview', 'add', 'edit'];
 
 
+	/**
+	 * @inheritDoc
+	 */
 	public function initialize(): void {
-		$la_paths = App::path('templates');
-		$this->path = end($la_paths);
+		//$la_paths = App::path('templates');
+		//$this->path = 'FOOBAR';
 	}
 
 
@@ -30,12 +38,15 @@ class TemplateCommand extends \Bake\Command\TemplateCommand {
 	 *
 	 * @return string[] Array of action names that should be baked
 	 */
-	protected function _methodsToBake (): array {
+	/*protected function _methodsToBake (): array {
 		$ls_base = Configure::read('App.namespace');
 
 		$la_methods = [];
 		if (class_exists($this->controllerClass)) {
-			$la_methods = array_diff(array_map('Cake\Utility\Inflector::underscore', get_class_methods($this->controllerClass)), array_map('Cake\Utility\Inflector::underscore', get_class_methods($ls_base . '\Controller\AppController')));
+			$la_methods = array_diff(
+				array_map('Cake\Utility\Inflector::underscore', get_class_methods($this->controllerClass)),
+				array_map('Cake\Utility\Inflector::underscore', get_class_methods($ls_base . '\Controller\AppController'))
+			);
 		}
 
 		if (empty($la_methods)) {
@@ -46,27 +57,20 @@ class TemplateCommand extends \Bake\Command\TemplateCommand {
 			if ($ls_method[0] === '_') {
 				unset($la_methods[ $i ]);
 			}
-
-			if ($ls_method == 'index' && str_starts_with($this->controllerClass, $ls_base . '\Controller\Backend')) {
-				unset($la_methods[ $i ]);
-			}
 		}
 
 		return $la_methods;
-	}
+	}*/
 
 
 	/**
-	 * Get the path base for view templates.
+	 * @inheritDoc
 	 *
-	 * @param \Cake\Console\Arguments $aa_args The arguments
-	 * @param string|null $as_container Unused.
 	 *
-	 * @return string
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function getTemplatePath (Arguments $aa_args, ?string $as_container = null): string {
+	public function getTemplatePath (Arguments $ao_args, ?string $as_container = null): string {
 		$la_paths = (array)Configure::read('App.paths.templates');
 		if (empty($la_paths)) {
 			throw new InvalidArgumentException(
@@ -75,7 +79,16 @@ class TemplateCommand extends \Bake\Command\TemplateCommand {
 			);
 		}
 
-		$ls_path = end($la_paths);
+		$ls_path = reset($la_paths);
+
+		$lb_pathFound = FALSE;
+		if ($ls_folder = $ao_args->getOption('folder')) {
+			if (isset($la_paths[ $ls_folder ])) {
+				$ls_path = $la_paths[ $ls_folder ];
+				$lb_pathFound = TRUE;
+			}
+		}
+
 		if ($this->plugin) {
 			$ls_path = $this->_pluginPath($this->plugin) . 'templates' . DS;
 		}
@@ -84,7 +97,11 @@ class TemplateCommand extends \Bake\Command\TemplateCommand {
 			$ls_path .= $as_container . DS;
 		}
 
-		$ls_prefix = $this->getPrefix($aa_args);
+		if (!$lb_pathFound && $ls_folder) {
+			$ls_path = $ls_folder . DS;
+		}
+
+		$ls_prefix = $this->getPrefix($ao_args);
 		if ($ls_prefix) {
 			$ls_path .= $ls_prefix . DS;
 		}
@@ -97,19 +114,15 @@ class TemplateCommand extends \Bake\Command\TemplateCommand {
 
 
 	/**
-	 * Assembles and writes bakes the view file.
+	 * @inheritDoc
 	 *
-	 * @param \Cake\Console\Arguments $aa_args CLI arguments
-	 * @param \Cake\Console\ConsoleIo $ao_io Console io
-	 * @param string $as_template Template file to use.
-	 * @param string|bool $ax_content Content to write.
-	 * @param null|string $as_outputFile The output file to create. If null will use `$as_template`
+	 * This variation is required so the bake command outputs a .twig template file
+	 * instead of the default .php extension
 	 *
-	 * @return void
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function bake (
-		Arguments $aa_args, ConsoleIo $ao_io, string $as_template, $ax_content = '', ?string $as_outputFile = NULL
+		Arguments $ao_args, ConsoleIo $ao_io, string $as_template, $ax_content = '', ?string $as_outputFile = NULL
 	): void {
 		$ls_outputFile = $as_outputFile;
 		if ($ls_outputFile === NULL) {
@@ -118,7 +131,7 @@ class TemplateCommand extends \Bake\Command\TemplateCommand {
 
 		$lx_content = $ax_content;
 		if ($lx_content === TRUE) {
-			$lx_content = $this->getContent($aa_args, $ao_io, $as_template);
+			$lx_content = $this->getContent($ao_args, $ao_io, $as_template);
 		}
 
 		if (empty($lx_content)) {
@@ -127,10 +140,24 @@ class TemplateCommand extends \Bake\Command\TemplateCommand {
 			return;
 		}
 
-		$ls_path = $this->getTemplatePath($aa_args);
+		$ls_path = $this->getTemplatePath($ao_args);
 		$ls_filename = $ls_path . Inflector::underscore($ls_outputFile) . '.twig';
 
 		$ao_io->out("\n" . sprintf('Baking `%s` view template file...', $ls_outputFile), 1, ConsoleIo::QUIET);
-		$ao_io->createFile($ls_filename, $lx_content, $aa_args->getOption('force'));
+		$ao_io->createFile($ls_filename, $lx_content, $ao_args->getOption('force'));
+	}
+
+
+	/**
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 */
+	public function buildOptionParser (\Cake\Console\ConsoleOptionParser $ao_parser): \Cake\Console\ConsoleOptionParser {
+		$lo_parser = parent::buildOptionParser($ao_parser);
+
+		$lo_parser->addOption('folder', [
+			'help' => 'The folder to save the views in. Can be either a custom path or an item set in config `App.paths.templates`. Defaults to the the first item in config `App.paths.templates`.',
+		]);
+
+		return $lo_parser;
 	}
 }

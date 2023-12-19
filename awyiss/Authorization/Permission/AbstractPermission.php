@@ -19,9 +19,9 @@ abstract class AbstractPermission implements PermissionInterface {
 	public const TYPE_MULTISELECT = 'select_multi';
 
 
-	protected ?array $options = NULL;
-	protected ?PermissionCollection $permissionCollection;
-	protected ?string $type = NULL;
+	protected array $options = [];
+	protected PermissionCollection $permissionCollection;
+	protected string $type;
 	/**
 	 * Default config for this object.
 	 * - `fields` The fields to use to identify a user by.
@@ -35,14 +35,14 @@ abstract class AbstractPermission implements PermissionInterface {
 
 
 
-	public function __construct (array $aa_config, ?PermissionCollection $ao_permissionCollection = NULL) {
+	public function __construct (array $aa_config, PermissionCollection $ao_permissionCollection) {
 		$this->permissionCollection = $ao_permissionCollection;
 
 		$this->setConfig($aa_config);
 	}
 
 
-	public function getPermissionCollection (): ?PermissionCollection {
+	public function getPermissionCollection (): PermissionCollection {
 		return $this->permissionCollection;
 	}
 
@@ -51,7 +51,7 @@ abstract class AbstractPermission implements PermissionInterface {
 	 * @return string
 	 */
 	public function getType (): string {
-		if ($this->type === NULL) {
+		if (!isset($this->type)) {
 			$la_parts = explode('\\', static::class);
 			$this->type = array_pop($la_parts) ?? '';
 			$this->type = substr($this->type, 0, -10);

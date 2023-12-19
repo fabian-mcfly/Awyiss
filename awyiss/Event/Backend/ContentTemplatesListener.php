@@ -4,19 +4,23 @@
 namespace Awyiss\Event\Backend;
 
 
-use Awyiss\Event\AbstractListener;
+use Awyiss\Event\EventListenerTrait;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\Event;
+use Cake\Event\EventListenerInterface;
 
 
-class ContentTemplatesListener extends AbstractListener {
+class ContentTemplatesListener implements EventListenerInterface {
+	use EventListenerTrait;
+
+
 	/**
 	 * @noinspection PhpArrayShapeAttributeCanBeAddedInspection
 	 */
 	public function implementedEvents (): array {
 		return [
-			'Model.ContentTemplate.afterSaveCommit' => 'afterSaveCommit',
-			'Model.ContentTemplate.afterSoftDelete' => 'afterSoftDelete',
+			'Model.ContentTemplates.afterSaveCommit' => 'afterSaveCommit',
+			'Model.ContentTemplates.afterSoftDelete' => 'afterSoftDelete',
 		];
 	}
 
@@ -28,13 +32,13 @@ class ContentTemplatesListener extends AbstractListener {
 	 * @noinspection PhpUnused
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function afterSoftDelete (Event $ao_event, EntityInterface $ao_entity) {
+	public function afterSoftDelete (Event $ao_event, EntityInterface $ao_entity): void {
 		$ls_fileName = \Cake\Utility\Inflector::underscore($ao_entity->filename);
 		$ls_fileName = trim($ls_fileName, '_');
 		$ls_extension = '.twig';
 
 		$la_templatePaths = \Cake\Core\Configure::read('App.paths.templates');
-		$ls_folderPath = $la_templatePaths[0] . 'Frontend' . DS . 'contents' . DS;
+		$ls_folderPath = $la_templatePaths['customer'] . 'Frontend' . DS . 'contents' . DS;
 
 		$ls_filePath = $ls_folderPath . $ls_fileName . $ls_extension;
 
@@ -54,14 +58,15 @@ class ContentTemplatesListener extends AbstractListener {
 	 *
 	 * @noinspection PhpUnused
 	 * @noinspection PhpUnusedParameterInspection
+	 * @noinspection DuplicatedCode
 	 */
-	public function afterSaveCommit (Event $ao_event, EntityInterface $ao_entity) {
+	public function afterSaveCommit (Event $ao_event, EntityInterface $ao_entity): void {
 		$ls_fileName = \Cake\Utility\Inflector::underscore($ao_entity->filename);
 		$ls_fileName = trim($ls_fileName, '_');
 		$ls_extension = '.twig';
 
 		$la_templatePaths = \Cake\Core\Configure::read('App.paths.templates');
-		$ls_folderPath = $la_templatePaths[0] . 'Frontend' . DS . 'contents' . DS;
+		$ls_folderPath = $la_templatePaths['customer'] . 'Frontend' . DS . 'contents' . DS;
 
 		if (!file_exists($ls_folderPath)) {
 			mkdir($ls_folderPath, 0777, TRUE);

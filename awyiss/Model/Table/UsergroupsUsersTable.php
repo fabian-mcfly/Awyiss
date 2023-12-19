@@ -4,6 +4,7 @@
 namespace Awyiss\Model\Table;
 
 
+use Cake\Datasource\EntityInterface;
 use Cake\ORM\RulesChecker;
 use Cake\Validation\Validator;
 
@@ -14,28 +15,25 @@ use Cake\Validation\Validator;
  * @property \Awyiss\Model\Table\UsergroupsTable&\Cake\ORM\Association\BelongsTo $Usergroups
  * @property \Awyiss\Model\Table\UsersTable&\Cake\ORM\Association\BelongsTo $Users
  *
- * @method \Awyiss\Model\Entity\UsergroupsUser newDefaultEntity()
- * @method \Awyiss\Model\Entity\UsergroupsUser newEmptyEntity()
- * @method \Awyiss\Model\Entity\UsergroupsUser newEntity(array $data, array $options = [])
- * @method \Awyiss\Model\Entity\UsergroupsUser[] newEntities(array $data, array $options = [])
- * @method \Awyiss\Model\Entity\UsergroupsUser get($primaryKey, $options = [])
- * @method \Awyiss\Model\Entity\UsergroupsUser findOrCreate($search, ?callable $callback = NULL, $options = [])
- * @method \Awyiss\Model\Entity\UsergroupsUser patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
- * @method \Awyiss\Model\Entity\UsergroupsUser[] patchEntities(iterable $entities, array $data, array $options = [])
- * @method \Awyiss\Model\Entity\UsergroupsUser|false save(\Cake\Datasource\EntityInterface $entity, $options = [])
- * @method \Awyiss\Model\Entity\UsergroupsUser saveOrFail(\Cake\Datasource\EntityInterface $entity, $options = [])
- * @method \Awyiss\Model\Entity\UsergroupsUser[]|\Cake\Datasource\ResultSetInterface|false saveMany(iterable $entities, $options = [])
- * @method \Awyiss\Model\Entity\UsergroupsUser[]|\Cake\Datasource\ResultSetInterface saveManyOrFail(iterable $entities, $options = [])
- * @method \Awyiss\Model\Entity\UsergroupsUser[]|\Cake\Datasource\ResultSetInterface|false deleteMany(iterable $entities, $options = [])
- * @method \Awyiss\Model\Entity\UsergroupsUser[]|\Cake\Datasource\ResultSetInterface deleteManyOrFail(iterable $entities, $options = [])
+ * @method \Awyiss\Model\Entity\UsergroupsUser newDefaultEntity(array $aa_additionalData = [])
+ * @method \Awyiss\Model\Entity\UsergroupsUser patchEntity(EntityInterface $ao_entity, array $aa_data, array $aa_options = [])
  */
 class UsergroupsUsersTable extends \Awyiss\Model\Table {
+	protected array $_defaultConfig = [
+		'access' => [
+			'identifiers' => [
+				'Entity.create' => ['create', 'update'], //Since we use the users-scope, creating an association will occur when creating or updating a user
+				'Entity.update' => 'update',
+				'Model.beforeFind' => ['create', 'update', 'delete'],
+				'Model.beforeDelete' => ['update', 'delete'], //Since we use the users-scope, deleting an association will occur when updating or deleting a user
+			],
+			'scope' => 'users',
+		],
+	];
+
+
 	/**
-	 * Initialize method
-	 *
-	 * @param array $aa_config The configuration for the Table.
-	 *
-	 * @return void
+	 * @inheritDoc
 	 */
 	public function initialize (array $aa_config): void {
 		parent::initialize($aa_config);
@@ -48,6 +46,7 @@ class UsergroupsUsersTable extends \Awyiss\Model\Table {
 			'foreignKey' => 'usergroup_id',
 			'joinType' => 'INNER',
 		]);
+
 		$this->belongsTo('Users', [
 			'foreignKey' => 'user_id',
 			'joinType' => 'INNER',
@@ -56,11 +55,7 @@ class UsergroupsUsersTable extends \Awyiss\Model\Table {
 
 
 	/**
-	 * Default validation rules.
-	 *
-	 * @param \Cake\Validation\Validator $ao_validator Validator instance.
-	 *
-	 * @return \Cake\Validation\Validator
+	 * @inheritDoc
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
@@ -72,17 +67,14 @@ class UsergroupsUsersTable extends \Awyiss\Model\Table {
 
 
 	/**
-	 * Returns a rules checker object that will be used for validating
-	 * application integrity.
+	 * @inheritDoc
 	 *
-	 * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
-	 *
-	 * @return \Cake\ORM\RulesChecker
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildRules (RulesChecker $rules): RulesChecker {
-		$rules->add($rules->existsIn(['usergroup_id'], 'Usergroups'), ['errorField' => 'usergroup_id']);
-		$rules->add($rules->existsIn(['user_id'], 'Users'), ['errorField' => 'user_id']);
+	public function buildRules (RulesChecker $ao_rules): RulesChecker {
+		$ao_rules->add($ao_rules->existsIn(['usergroup_id'], 'Usergroups'), ['errorField' => 'usergroup_id']);
+		$ao_rules->add($ao_rules->existsIn(['user_id'], 'Users'), ['errorField' => 'user_id']);
 
-		return $rules;
+		return $ao_rules;
 	}
 }

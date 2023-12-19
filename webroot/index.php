@@ -23,7 +23,7 @@ if (PHP_SAPI === 'cli-server') {
 
 	$la_url = parse_url(urldecode($_SERVER['REQUEST_URI']));
 	$ls_file = __DIR__ . $la_url['path'];
-	if (strpos($la_url['path'], '..') === FALSE && strpos($la_url['path'], '.') !== FALSE && is_file($ls_file)) {
+	if ( ! str_contains($la_url['path'], '..') && str_contains($la_url['path'], '.') && is_file($ls_file)) {
 		return FALSE;
 	}
 }

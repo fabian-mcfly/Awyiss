@@ -17,26 +17,19 @@ class LanguagesController extends Controller {
 	 * Overview method
 	 *
 	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
+	 *
+	 * @throws \Exception
+	 *
 	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
 	public function overview () {
 		$this->Access->ensureOne('create', 'update', 'delete');
 
-		$lo_languages = $this->Languages->find('withAttributes')->where($this->overviewWhere)->all();
-		$lo_languages = $lo_languages->groupBy('type');
-
-		$la_types = [];
-		foreach (array_keys($lo_languages->toArray()) as $ls_type) {
-			$la_types[ $ls_type ] = __('::' . $ls_type);
-		}
-		krsort($la_types);
-		/*uasort($la_types, function($a, $b) {
-			return strnatcmp($a, $b);
-		});*/
+		$lo_languages = $this->Languages->find('withAttributes')->where($this->getOverviewWhere());
+		$lo_languages = $lo_languages->all()->groupBy('type');
 
 		$this->set([
 			'ao_languages' => $lo_languages,
-			'aa_types' => $la_types,
 		]);
 	}
 
@@ -45,6 +38,9 @@ class LanguagesController extends Controller {
 	 * Add method
 	 *
 	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
+	 *
+	 * @throws \Exception
+	 *
 	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
 	public function add () {
@@ -52,7 +48,7 @@ class LanguagesController extends Controller {
 
 		$lo_language = $this->Languages->newDefaultEntity();
 		if ($this->request->is('post')) {
-			$lo_language = $this->Languages->patchEntity($lo_language, $this->request->getData());
+			$this->Languages->patchEntity($lo_language, $this->request->getData());
 
 			if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
 				if ($this->Languages->save($lo_language)) {
@@ -82,6 +78,9 @@ class LanguagesController extends Controller {
 	 * Edit method
 	 *
 	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
+	 *
+	 * @throws \Exception
+	 *
 	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
 	public function edit () {
@@ -97,7 +96,7 @@ class LanguagesController extends Controller {
 		}
 
 		if ($this->request->is(['patch', 'post', 'put'])) {
-			$lo_language = $this->Languages->patchEntity($lo_language, $this->request->getData());
+			$this->Languages->patchEntity($lo_language, $this->request->getData());
 
 			if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
 				if ($this->Languages->save($lo_language)) {
@@ -113,7 +112,12 @@ class LanguagesController extends Controller {
 				$this->Flash->error(__('::edit_failed'));
 			}
 			else {
-				$lo_language->system_order = NULL;
+				if ($this->Languages->getSystemOrderRelatedColumns($lo_language)) {
+					$lo_language->system_order = NULL;
+				}
+				else {
+					$lo_language->system_order = $lo_language->getOriginal('system_order');
+				}
 			}
 		}
 
@@ -127,6 +131,9 @@ class LanguagesController extends Controller {
 	 * Delete method
 	 *
 	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
+	 *
+	 * @throws \Exception
+	 *
 	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
 	public function delete () {

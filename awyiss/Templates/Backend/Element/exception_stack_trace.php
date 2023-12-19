@@ -30,11 +30,7 @@ foreach ($trace as $i => $stack):
 		$excerpt = Debugger::excerpt($stack['file'], $line, 4);
 	endif;
 
-	if (isset($stack['file'])):
-		$file = $stack['file'];
-	else:
-		$file = '[internal function]';
-	endif;
+	$file = $stack['file'] ?? '[internal function]';
 
 	if (isset($stack['function'])):
 		if ( ! empty($stack['args'])):

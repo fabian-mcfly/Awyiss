@@ -50,6 +50,8 @@ class SessionAuthenticator extends \Authentication\Authenticator\SessionAuthenti
 			$lo_user = new \ArrayObject($lo_user);
 		}
 
+		//dd(debug_backtrace());
+
 		return new Result($lo_user, ResultInterface::SUCCESS);
 	}
 }

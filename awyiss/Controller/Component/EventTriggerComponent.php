@@ -19,6 +19,16 @@ class EventTriggerComponent extends Component {
 	];
 
 
+	public function enable () {
+		$this->setConfig('enabled', TRUE);
+	}
+
+
+	public function disable () {
+		$this->setConfig('enabled', FALSE);
+	}
+
+
 	/**
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
@@ -29,6 +39,8 @@ class EventTriggerComponent extends Component {
 
 	/**
 	 * Is called before the controller’s beforeFilter method, but after the controller’s initialize() method.
+	 *
+	 * @noinspection PhpUnused
 	 */
 	public function beforeFilter (EventInterface $ao_event) {
 		$this->dispatchEvent('beforeFilter', $ao_event);
@@ -83,5 +95,10 @@ class EventTriggerComponent extends Component {
 
 		$lo_event = new Event('Controller.' . $ls_controllerName . '.' . $as_name, $lo_controller, ($ao_event?->getData() ?? []) + $aa_arguments);
 		$lo_controller->getEventManager()->dispatch($lo_event);
+
+		if ($lo_event->isStopped()) {
+			$ao_event->stopPropagation();
+			$ao_event->setResult($lo_event->getResult());
+		}
 	}
 }

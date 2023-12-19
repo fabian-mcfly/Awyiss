@@ -8,7 +8,7 @@
 		<legend>{{ __('::headline_add') }}</legend>
 		{{ helper_Form_control('title') }}
 		{{ helper_Form_control('filename') }}
-		{{ helper_Form_control('content_areas') }}
+		{{ helper_Form_control('template_positions', {val: ao_pageTemplate.template_positions|join(', ')}) }}
 		{{ helper_Categories_control('page_roles_id', {val: ao_pageTemplate.page_roles_id, empty: FALSE}) }}
 		{{ helper_Form_control('active') }}
 		{{ helper_SystemOrder_control('system_order', {entity: ao_pageTemplate}) }}

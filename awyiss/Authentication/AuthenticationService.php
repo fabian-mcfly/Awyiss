@@ -4,13 +4,19 @@
 namespace Awyiss\Authentication;
 
 
+use Authentication\Authenticator\ResultInterface;
+use Authentication\Authenticator\StatelessInterface;
 use Awyiss\Authentication\Identifier\IdentifierCollection;
+use Cake\Event\EventDispatcherTrait;
 use Psr\Http\Message\ServerRequestInterface;
+use RuntimeException;
 
 
 class AuthenticationService extends \Authentication\AuthenticationService {
+	use EventDispatcherTrait;
+
 	/**
-	 * {@inheritDoc}
+	 * @inheritDoc
 	 *
 	 * @uses \Awyiss\Authentication\Identifier\IdentifierCollection
 	 */
@@ -24,7 +30,43 @@ class AuthenticationService extends \Authentication\AuthenticationService {
 
 
 	/**
-	 * {@inheritDoc}
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 */
+	public function authenticate (ServerRequestInterface $ao_request): ResultInterface {
+		$lx_result = NULL;
+		/** @var \Authentication\Authenticator\AuthenticatorInterface $lo_authenticator */
+		foreach ($this->authenticators() as $lo_authenticator) {
+			$lx_result = $lo_authenticator->authenticate($ao_request);
+			if ($lx_result->isValid()) {
+				$this->_successfulAuthenticator = $lo_authenticator;
+
+				$this->_result = $lx_result;
+
+				$this->dispatchEvent('Authentication.afterAuthenticate', [
+					'authenticator' => $lo_authenticator,
+					'identity' => $this->getIdentity(),
+				], $this);
+
+				return $this->_result;
+			}
+
+			if ($lo_authenticator instanceof StatelessInterface) {
+				$lo_authenticator->unauthorizedChallenge($ao_request);
+			}
+		}
+
+		if ($lx_result === NULL) {
+			throw new RuntimeException('No authenticators loaded. You need to load at least one authenticator.');
+		}
+
+		$this->_successfulAuthenticator = NULL;
+
+		return $this->_result = $lx_result;
+	}
+
+
+	/**
+	 * @inheritDoc
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function getUnauthenticatedRedirectUrl (ServerRequestInterface $ao_request): ?string {
@@ -46,7 +88,7 @@ class AuthenticationService extends \Authentication\AuthenticationService {
 
 
 	/**
-	 * {@inheritDoc}
+	 * @inheritDoc
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function getLoginRedirect (ServerRequestInterface $ao_request): ?string {

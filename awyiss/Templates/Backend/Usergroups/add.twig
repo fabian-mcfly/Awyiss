@@ -4,40 +4,46 @@
 {# @var _view \Awyiss\View\BackendView #}
 
 <div class="Usergroups Form Add">
-	{{ helper_Form_create(ao_usergroup, {'method': 'post', 'idPrefix': 'usergroup'}) }}
+	{{ helper_Form_create(ao_usergroup, {method: 'post', idPrefix: 'Usergroup'}) }}
+
+	<h1>{{ __('::headline_add') }}</h1>
 
 	<fieldset>
 		<legend>{{ __('::headline_add') }}</legend>
-		{{ helper_Form_control('title') }}
 		{{ helper_Form_control('active') }}
+
+		{{ helper_Form_control('title') }}
 	</fieldset>
 
-	<fieldset>
-		<legend>{{ __('::users') }}</legend>
-		{{ helper_Form_hidden('users._ids', {value: ''}) }}
-		<ul class="NoList">
-			{% for lo_user in ao_users %}
-				<li>
-					{{ helper_Form_control('users._ids.' ~ lo_user.id, {
-						hiddenField: FALSE,
-						type: 'checkbox',
-						value: lo_user.id,
-						label: lo_user.username,
-						checked: lo_user.id in (ao_usergroup.users ?? [])|column('id'),
-					}) }}
-				</li>
-			{% endfor %}
-		</ul>
-	</fieldset>
+	{% if helper_Access_scopeIsAccessible('Users', NULL, ['create', 'update', 'delete']) %}
+		<fieldset>
+			<legend>{{ __('::users') }}</legend>
+			{{ helper_Form_hidden('users._ids', {value: ''}) }}
+			<ul class="NoList">
+				{% for lo_user in ao_users %}
+					<li>
+						{{ helper_Form_control('users._ids.' ~ lo_user.id, {
+							hiddenField: FALSE,
+							type: 'checkbox',
+							value: lo_user.id,
+							label: lo_user.username,
+							checked: lo_user.id in (ao_usergroup.users ?? [])|column('id'),
+						}) }}
+					</li>
+				{% endfor %}
+			</ul>
+		</fieldset>
+	{% endif %}
 
 	<fieldset>
 		<legend>{{ __('::permissions') }}</legend>
 
 		{% for ls_policyClass in aa_authorizationPolicies %}
 			<fieldset>
-				<legend>{{ staticCall(ls_policyClass, 'getScope') }}</legend>
+				<legend>{{ lx_policyClass is string ? staticCall(lx_policyClass, 'getScope') : lx_policyClass.getScope }}</legend>
 				<ul class="NoList Permissions">
-					{% for ls_identifier,lo_permission in staticCall(ls_policyClass, 'getPermissions') %}
+					{% set lo_permissions = lx_policyClass is string ? staticCall(lx_policyClass, 'getPermissions') : lx_policyClass.getPermissions %}
+					{% for ls_identifier,lo_permission in lo_permissions %}
 						{# @var lo_permission \Awyiss\Authorization\Permission\PermissionInterface #}
 						<li class="Permission">
 							{{ __('::' ~ ls_identifier) }}

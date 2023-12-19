@@ -14,50 +14,53 @@ use Cake\Utility\Inflector;
  * @property \Awyiss\Model\Table\ConfigurationTable $Configuration
  *
  * TODO: check access based on chosen scope.
+ * TODO: modify inputs in add/edit, based on option type
  */
 class ConfigurationController extends Controller {
 	protected array $configScopes = [];
-	protected array $overviewWhere = [
-		'scope' => 'system',
-	];
+	protected string $selectedScopeSessionIdentifier = '';
 
 
 	public function initialize (): void {
 		parent::initialize();
 
-		$this->configScopes = \Awyiss\ConfigOptions\ConfigOptionsProvider::getConfigurationFiles();
-
-		$lo_request = $this->getRequest();
-
-		if ($lo_request->getParam('action') === 'overview') {
-			$lo_session = $lo_request->getSession();
-			$ls_sessionIdentifier = 'categories.' . ($lo_request->getParam('lang') ?? 'global') . '.' . Inflector::underscore($this->getName()) . '.scope';
-
-			if ($ls_scope = $lo_request->getParam('scope')) {
-				if ($lo_session->started()) {
-					$lo_session->write($ls_sessionIdentifier, $ls_scope);
-				}
+		foreach (\Awyiss\Configuration\ConfigOptionsProvider::getConfigurationFiles() AS $ls_scope => $ls_className) {
+			if ($ls_scope === 'system' || $this->Access->scopeIsAccessible($ls_scope, NULL, 'configure')) {
+				$this->configScopes[ $ls_scope ] = $ls_className;
 			}
-			elseif ( ! $lo_session->started() || ! ($ls_scope = $lo_session->read($ls_sessionIdentifier))) {
+		}
+
+		$this->selectedScopeSessionIdentifier = 'categories.' . ($this->request->getParam('lang') ?? 'global') . '.' . Inflector::underscore($this->getName()) . '.scope';
+
+		if ($this->request->getParam('action') === 'overview') {
+			$lo_session = $this->request->getSession();
+
+			if ($ls_scope = $this->request->getParam('scope')) {
+				$lo_session->write($this->selectedScopeSessionIdentifier, $ls_scope);
+			}
+			elseif ( ! $lo_session->started() || ! ($ls_scope = $lo_session->read($this->selectedScopeSessionIdentifier))) {
 				$ls_scope = 'system';
 
-				if ($lo_session->started()) {
-					$lo_session->write($ls_sessionIdentifier, $ls_scope);
-				}
+				$lo_session->write($this->selectedScopeSessionIdentifier, $ls_scope);
 			}
-
 
 			if (! array_key_exists($ls_scope, $this->configScopes)) {
 				$ls_scope = array_key_first($this->configScopes);
 
-				if ($lo_session->started()) {
-					$lo_session->write($ls_sessionIdentifier, $ls_scope);
-				}
+				$lo_session->write($this->selectedScopeSessionIdentifier, $ls_scope);
+
+				$this->redirect(['action' => 'overview']);
 			}
 
-			$this->overviewWhere['scope'] = $ls_scope;
-
+			$this->setOverviewWhere('scope', $ls_scope);
 		}
+	}
+
+
+	protected function initializeOverviewWhere () {
+		$this->overviewWhere = [
+			'scope' => 'system',
+		];
 	}
 
 
@@ -66,24 +69,34 @@ class ConfigurationController extends Controller {
 	 *
 	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
 	 *
+	 * @throws \Exception
+	 *
 	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
 	public function overview () {
 		$this->Access->ensureOne('create', 'update', 'delete');
 
-		$lo_configuration = $this->Configuration->find('withAttributes')->where($this->overviewWhere)
+		if ($this->getOverviewWhere('scope') !== 'system') {
+			if (!$this->Access->scopeIsAccessible($this->getOverviewWhere('scope'), NULL, 'configure')) {
+				$this->Flash->error(__('::scope_not_accessible'));
+
+				return $this->redirect(['action' => 'overview', 'scope' => 'system']);
+			}
+		}
+
+		$lo_configuration = $this->Configuration->find('withAttributes')->where($this->getOverviewWhere())
 		->order([
 			'name' => 'ASC',
 			'languages_shortcode' => 'ASC',
-		])->all();
+		]);
 
-		$la_configuration = \Cake\Utility\Hash::expand($lo_configuration->groupBy('name')->toArray());
+		$la_configuration = \Cake\Utility\Hash::expand($lo_configuration->all()->groupBy('name')->toArray());
 
 		$this->set([
 			'ao_configuration' => $lo_configuration,
 			'aa_configuration' => $la_configuration,
 			'aa_configScopes' => $this->configScopes,
-			'as_selectedScope' => $this->overviewWhere['scope']
+			'as_selectedScope' => $this->getOverviewWhere('scope'),
 		]);
 	}
 
@@ -92,6 +105,10 @@ class ConfigurationController extends Controller {
 	 * Add method
 	 *
 	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
+	 *
+	 * @throws \ReflectionException
+	 * @throws \Exception
+	 *
 	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
 	public function add () {
@@ -99,7 +116,11 @@ class ConfigurationController extends Controller {
 
 		$lo_configuration = $this->Configuration->newDefaultEntity();
 		if ($this->request->is('post')) {
-			$lo_configuration = $this->Configuration->patchEntity($lo_configuration, $this->request->getData());
+			/** @noinspection DuplicatedCode */
+			$this->Configuration->patchEntity($lo_configuration, $this->request->getData());
+
+			$lo_session = $this->request->getSession();
+			$lo_session->write($this->selectedScopeSessionIdentifier, $lo_configuration->scope);
 
 			if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
 				if ($this->Configuration->save($lo_configuration)) {
@@ -115,10 +136,25 @@ class ConfigurationController extends Controller {
 				$this->Flash->error(__('::add_failed'));
 			}
 		}
+		else {
+			$lo_session = $this->request->getSession();
+			$lo_configuration->scope = $lo_session->read($this->selectedScopeSessionIdentifier);
+		}
+
+		if ($lo_configuration->scope !== 'system') {
+			if (!$this->Access->scopeIsAccessible($lo_configuration->scope, NULL, 'configure')) {
+				$this->Flash->error(__('::scope_not_accessible'));
+
+				return $this->redirect(['action' => 'overview']);
+			}
+		}
+
+		$lo_configOptions = \Awyiss\Configuration\ConfigOptionsProvider::loadConfiguration($lo_configuration->scope);
 
 		$this->set([
 			'ao_configuration' => $lo_configuration,
 			'aa_configScopes' => $this->configScopes,
+			'ao_configOptions' => $lo_configOptions,
 		]);
 	}
 
@@ -127,6 +163,10 @@ class ConfigurationController extends Controller {
 	 * Edit method
 	 *
 	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
+	 *
+	 * @throws \ReflectionException
+	 * @throws \Exception
+	 *
 	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
 	public function edit () {
@@ -142,7 +182,11 @@ class ConfigurationController extends Controller {
 		}
 
 		if ($this->request->is(['patch', 'post', 'put'])) {
-			$lo_configuration = $this->Configuration->patchEntity($lo_configuration, $this->request->getData());
+			/** @noinspection DuplicatedCode */
+			$this->Configuration->patchEntity($lo_configuration, $this->request->getData());
+
+			$lo_session = $this->request->getSession();
+			$lo_session->write($this->selectedScopeSessionIdentifier, $lo_configuration->scope);
 
 			if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
 				if ($this->Configuration->save($lo_configuration)) {
@@ -159,9 +203,20 @@ class ConfigurationController extends Controller {
 			}
 		}
 
+		if ($lo_configuration->scope !== 'system') {
+			if (!$this->Access->scopeIsAccessible($lo_configuration->scope, NULL, 'configure')) {
+				$this->Flash->error(__('::scope_not_accessible'));
+
+				return $this->redirect(['action' => 'overview']);
+			}
+		}
+
+		$lo_configOptions = \Awyiss\Configuration\ConfigOptionsProvider::loadConfiguration($lo_configuration->scope);
+
 		$this->set([
 			'ao_configuration' => $lo_configuration,
 			'aa_configScopes' => $this->configScopes,
+			'ao_configOptions' => $lo_configOptions,
 		]);
 	}
 
@@ -170,6 +225,9 @@ class ConfigurationController extends Controller {
 	 * Delete method
 	 *
 	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
+	 *
+	 * @throws \Exception
+	 *
 	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
 	public function delete () {

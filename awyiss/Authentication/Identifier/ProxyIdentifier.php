@@ -27,7 +27,7 @@ class ProxyIdentifier extends AbstractIdentifier {
 
 
 	/**
-	 * {@inheritDoc}
+	 * @inheritDoc
 	 */
 	public function identify (array $credentials): \ArrayAccess|array|null {
 		$this->setConfig('resolver', $this->getConfig('remoteResolver'));

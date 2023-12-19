@@ -4,49 +4,42 @@
 namespace Awyiss\Model\Table;
 
 
+use Awyiss\Model\Entity\Language;
+use Cake\Datasource\EntityInterface;
 use Cake\ORM\RulesChecker;
 use Cake\Validation\Validator;
+use DateTimeZone;
 
 
 /**
  * Languages Model
  *
- * @method \Awyiss\Model\Entity\Language newDefaultEntity()
- * @method \Awyiss\Model\Entity\Language newEmptyEntity()
- * @method \Awyiss\Model\Entity\Language newEntity(array $data, array $options = [])
- * @method \Awyiss\Model\Entity\Language[] newEntities(array $data, array $options = [])
- * @method \Awyiss\Model\Entity\Language get($primaryKey, $options = [])
- * @method \Awyiss\Model\Entity\Language findOrCreate($search, ?callable $callback = NULL, $options = [])
- * @method \Awyiss\Model\Entity\Language patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
- * @method \Awyiss\Model\Entity\Language[] patchEntities(iterable $entities, array $data, array $options = [])
- * @method \Awyiss\Model\Entity\Language|false save(\Cake\Datasource\EntityInterface $entity, $options = [])
- * @method \Awyiss\Model\Entity\Language saveOrFail(\Cake\Datasource\EntityInterface $entity, $options = [])
- * @method \Awyiss\Model\Entity\Language[]|\Cake\Datasource\ResultSetInterface|false saveMany(iterable $entities, $options = [])
- * @method \Awyiss\Model\Entity\Language[]|\Cake\Datasource\ResultSetInterface saveManyOrFail(iterable $entities, $options = [])
- * @method \Awyiss\Model\Entity\Language[]|\Cake\Datasource\ResultSetInterface|false deleteMany(iterable $entities, $options = [])
- * @method \Awyiss\Model\Entity\Language[]|\Cake\Datasource\ResultSetInterface deleteManyOrFail(iterable $entities, $options = [])
  * @property \Awyiss\Model\Table\ConfigurationTable&\Cake\ORM\Association\HasMany $Configuration
+ *
+ * @method Language newDefaultEntity(array $aa_additionalData = [])
+ * @method Language patchEntity(EntityInterface $ao_entity, array $aa_data, array $aa_options = [])
  */
 class LanguagesTable extends \Awyiss\Model\Table {
+	/**
+	 * @inheritDoc
+	 */
 	protected array $_defaultConfig = [
 		'systemOrder' => [
 			'relatedColumns' => ['type'],
+		],
+		'translate' => [
+			'fields' => ['title'],
 		],
 	];
 
 
 	/**
-	 * Initialize method
-	 *
-	 * @param array $aa_config The configuration for the Table.
-	 *
-	 * @return void
+	 * @inheritDoc
 	 */
 	public function initialize (array $aa_config): void {
 		parent::initialize($aa_config);
 
 		$this->setTable('languages');
-		$this->setDisplayField('title');
 		$this->setPrimaryKey('id');
 
 		$this->hasMany('Configuration')
@@ -58,20 +51,16 @@ class LanguagesTable extends \Awyiss\Model\Table {
 
 
 	/**
-	 * Default validation rules.
-	 *
-	 * @param \Cake\Validation\Validator $ao_validator Validator instance.
-	 *
-	 * @return \Cake\Validation\Validator
+	 * @inheritDoc
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function validationDefault (Validator $ao_validator): Validator {
 		$ao_validator->integer('id')->allowEmptyString('id', NULL, 'create');
 
-		$ao_validator->scalar('shortcode')
-			->minLength('shortcode', 2, __('validation::shortcode_incorrect_length'))
-			->maxLength('shortcode', 2, __('validation::shortcode_incorrect_length'))
+		$ao_validator->ascii('shortcode')
+			->minLength('shortcode', 2, __('validation::not_exact_length'))
+			->maxLength('shortcode', 2, __('validation::not_exact_length'))
 			->requirePresence('shortcode')
 			->notEmptyString('shortcode');
 
@@ -79,23 +68,43 @@ class LanguagesTable extends \Awyiss\Model\Table {
 
 		$ao_validator->scalar('timezone')->maxLength('timezone', 32)->requirePresence('timezone')->notEmptyString('timezone');
 
-		$ao_validator->scalar('locale')->maxLength('locale', 20)->requirePresence('locale')->notEmptyString('locale');
+		$ao_validator->scalar('locale')->maxLength('locale', 5)->requirePresence('locale')->notEmptyString('locale');
 
 		$ao_validator->scalar('type')->notEmptyString('type');
+
+		$ao_validator->integer('system_order')->requirePresence('system_order')->notEmptyString('system_order');
 
 		$ao_validator->boolean('active')->notEmptyString('active');
 
 		$ao_validator->boolean('deleted')->notEmptyString('deleted');
 
-		$ao_validator->integer('system_order')->requirePresence('system_order')->notEmptyString('system_order');
-
 		return $ao_validator;
 	}
 
 
-	public function buildRules (RulesChecker $rules): RulesChecker {
-		$rules->add($rules->isUnique(['shortcode', 'type'], __('validation::shortcode_not_unique')));
+	/**
+	 * @inheritDoc
+	 *
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 */
+	public function buildRules (RulesChecker $ao_rules): RulesChecker {
+		$ao_rules->add($ao_rules->isUnique(['shortcode', 'type'], __('validation::shortcode_not_unique')));
 
-		return $rules;
+		$ao_rules->add(function(Language $ao_entity) {
+			return in_array($ao_entity->timezone, DateTimeZone::listIdentifiers());
+		}, [
+			'errorField' => 'timezone',
+			'message' => __('::unknown_timezone'),
+		]);
+
+		$ao_rules->add(function(Language $ao_entity) {
+			/** @noinspection PhpUndefinedClassInspection */
+			return in_array($ao_entity->locale, \ResourceBundle::getLocales(''));
+		}, [
+			'errorField' => 'locale',
+			'message' => __('::unknown_locale'),
+		]);
+
+		return $ao_rules;
 	}
 }

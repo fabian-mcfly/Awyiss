@@ -4,6 +4,7 @@
 namespace Awyiss\Event;
 
 
+use Cake\Event\EventListenerInterface;
 use Cake\Event\EventManager;
 use Cake\Utility\Inflector;
 use ReflectionClass;
@@ -100,11 +101,11 @@ class EventListenersProvider {
 
 				$lo_reflection = new ReflectionClass($ls_listenerClass);
 
-				if ( ! $lo_reflection->isSubclassOf(AbstractListener::class)) {
-					throw new RuntimeException(sprintf('The provided Listener class `%s` does not extend the `%s` class.', $ls_listenerClass, AbstractListener::class));
+				if ( ! $lo_reflection->implementsInterface(EventListenerInterface::class)) {
+					throw new RuntimeException(sprintf('The provided Listener class `%s` does not extend the `%s` class.', $ls_listenerClass, EventListenerInterface::class));
 				}
 
-				/** @var AbstractListener $ls_listenerClass */
+				/** @var \Awyiss\Event\EventListenerTrait $ls_listenerClass */
 				$ls_scope = Inflector::underscore($ls_listenerClass::getScope());
 
 				if (isset($la_listeners[ $ls_scope ])) {

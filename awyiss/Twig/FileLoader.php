@@ -4,7 +4,7 @@
 namespace Awyiss\Twig;
 
 
-use Cake\Core\App;
+use Awyiss\Core\App;
 use Cake\Core\Plugin;
 use Twig\Error\LoaderError;
 

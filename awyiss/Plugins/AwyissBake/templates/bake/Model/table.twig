@@ -11,10 +11,7 @@ namespace {{ namespace }}\Model\Table;
 {{ DocBlock.classDescription(name, 'Model', annotations)|raw }}
 class {{ name }}Table extends \{{ namespace }}\Model\Table {
 	/**
-	 * Initialize method
-	 *
-	 * @param array $aa_config The configuration for the Table.
-	 * @return void
+	 * @inheritDoc
 	 */
 	public function initialize (array $aa_config): void {
 		parent::initialize($aa_config);
@@ -67,10 +64,9 @@ class {{ name }}Table extends \{{ namespace }}\Model\Table {
 {%- if validation %}
 
 	/**
-	 * Default validation rules.
+	 * @inheritDoc
 	 *
-	 * @param \Cake\Validation\Validator $ao_validator Validator instance.
-	 * @return \Cake\Validation\Validator
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function validationDefault (Validator $ao_validator): Validator {
 {% for field, rules in validation %}
@@ -93,27 +89,23 @@ class {{ name }}Table extends \{{ namespace }}\Model\Table {
 {%- if rulesChecker %}
 
 	/**
-	 * Returns a rules checker object that will be used for validating
-	 * application integrity.
+	 * @inheritDoc
 	 *
-	 * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
-	 * @return \Cake\ORM\RulesChecker
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildRules (RulesChecker $rules): RulesChecker {
+	public function buildRules (RulesChecker $ao_rules): RulesChecker {
 {% for field, rule in rulesChecker %}
-		$rules->add($rules->{{ rule.name }}(['{{ field }}']{{ (rule.extra is defined and rule.extra ? (", '#{rule.extra}'") : '')|raw }}), ['errorField' => '{{ field }}']);
+		$ao_rules->add($ao_rules->{{ rule.name }}(['{{ field }}']{{ (rule.extra is defined and rule.extra ? (", '#{rule.extra}'") : '')|raw }}), ['errorField' => '{{ field }}']);
 {% endfor %}
 
-		return $rules;
+		return $ao_rules;
 	}
 {% endif %}
 
 {%- if connection is not same as('default') %}
 
 	/**
-	 * Returns the database connection name to use by default.
-	 *
-	 * @return string
+	 * @inheritDoc
 	 */
 	public static function defaultConnectionName (): string {
 		return '{{ connection }}';

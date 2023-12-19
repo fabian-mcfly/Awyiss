@@ -4,7 +4,7 @@
 namespace Awyiss\Authorization\Permission\Setting;
 
 
-use Cake\Core\App;
+use Awyiss\Core\App;
 use Cake\Core\ObjectRegistry;
 use RuntimeException;
 

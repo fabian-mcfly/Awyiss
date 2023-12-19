@@ -6,6 +6,7 @@ declare(strict_types=1);
 namespace Awyiss\View\Helper;
 
 
+use Cake\Utility\Inflector;
 use Cake\View\Helper\IdGeneratorTrait;
 use Cake\View\StringTemplateTrait;
 use Cake\View\View;
@@ -22,6 +23,7 @@ class CategoriesHelper extends \Cake\View\Helper {
 	use StringTemplateTrait;
 
 	protected $_defaultConfig = [
+		'templateClass' => \Awyiss\View\StringTemplate::class,
 		'templates' => [
 			'aggregationOption' => '<li{{attrs}}><a href="{{baseUrl}}/{{name}}:{{value}}">{{text}}</a></li>',
 			'unassignedOption' => '<li{{attrs}}><a href="{{baseUrl}}/{{name}}:{{value}}">{{text}}</a></li>',
@@ -148,8 +150,8 @@ class CategoriesHelper extends \Cake\View\Helper {
 			'baseUrl' => NULL,
 			'disabled' => FALSE,
 			'escape' => TRUE,
-			'label' => _('::' . $ls_fieldName . '_filter_label'),
-			'name' => \Cake\Utility\Inflector::dasherize($ls_fieldName),
+			'label' => _('::' . Inflector::underscore($ls_fieldName) . '_filter_label'),
+			'name' => Inflector::dasherize($ls_fieldName),
 			'unassignedLabel' => _('::' . $ls_fieldName . '_filter_unassigned'),
 			'unassignedKey' => 'unassigned',
 			'val' => NULL,
@@ -182,6 +184,7 @@ class CategoriesHelper extends \Cake\View\Helper {
 	protected function getCategoriesFromRequest (...$aa_names): ?iterable {
 		$lx_return = [];
 		$la_categorization = $this->getView()->getRequest()->getAttribute('categorization', []);
+
 
 		foreach ($aa_names AS $ls_name) {
 			$lx_return = \Cake\Utility\Hash::get($la_categorization, $ls_name . '.categories.simple', []);

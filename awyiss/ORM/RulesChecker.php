@@ -17,12 +17,22 @@ use Cake\ORM\Association;
 use Cake\Utility\Inflector;
 
 
+/**
+ * ORM flavoured rules checker.
+ *
+ * Adds ORM related features to the RulesChecker class.
+ *
+ * This variation uses translatable identifiers as error messages
+ *
+ * @see \Cake\ORM\RulesChecker
+ * @see \Cake\Datasource\RulesChecker
+ */
 class RulesChecker extends \Cake\ORM\RulesChecker {
 	public function isUnique (array $aa_fields, $ax_options = NULL): RuleInvoker {
 		$la_options = is_array($ax_options) ? $ax_options : ['message' => $ax_options];
 
 		if (empty($la_options['message'])) {
-			$la_options['message'] = __('form_validation::error_unique');
+			$la_options['message'] = __('validation::error_unique');
 		}
 
 		return parent::isUnique($aa_fields, $la_options);
@@ -33,7 +43,7 @@ class RulesChecker extends \Cake\ORM\RulesChecker {
 		$la_options = is_array($ax_options) ? $ax_options : ['message' => $ax_options];
 
 		if (empty($la_options['message'])) {
-			$la_options['message'] = __('form_validation::error_exists_in');
+			$la_options['message'] = __('validation::error_exists_in');
 		}
 
 		return parent::existsIn($ax_fields, $ax_table, $la_options);
@@ -71,7 +81,7 @@ class RulesChecker extends \Cake\ORM\RulesChecker {
 
 		$ls_message = $as_message;
 		if ( ! $ls_message) {
-			$ls_message = __('form_validation::error_link_constraint_rule', $ls_associationAlias);
+			$ls_message = __('validation::error_link_constraint_rule', $ls_associationAlias);
 		}
 
 		return parent::_addLinkConstraintRule($lx_association, $ls_errorField, $ls_message, $as_linkStatus, $as_ruleName);
@@ -81,7 +91,7 @@ class RulesChecker extends \Cake\ORM\RulesChecker {
 	public function validCount (string $as_field, int $ai_count = 0, string $as_operator = '>', ?string $as_message = NULL): RuleInvoker {
 		$ls_message = $as_message;
 		if ( ! $ls_message) {
-			$ls_message = __('form_validation::error_valid_count', [$as_operator, $ai_count]);
+			$ls_message = __('validation::error_valid_count', [$as_operator, $ai_count]);
 		}
 
 		return parent::validCount($as_field, $ai_count, $as_operator, $ls_message);

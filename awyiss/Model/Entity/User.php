@@ -37,13 +37,7 @@ class User extends \Awyiss\Model\Entity implements IdentityPermissionsInterface,
 
 
 	/**
-	 * Fields that can be mass assigned using newEntity() or patchEntity().
-	 *
-	 * Note that when '*' is set to true, this allows all unspecified fields to
-	 * be mass assigned. For security purposes, it is advised to set '*' to false
-	 * (or remove it), and explicitly make individual fields accessible as needed.
-	 *
-	 * @var array
+	 * @inheritDoc
 	 */
 	protected $_accessible = [
 		'username' => TRUE,
@@ -51,20 +45,16 @@ class User extends \Awyiss\Model\Entity implements IdentityPermissionsInterface,
 		'firstname' => TRUE,
 		'lastname' => TRUE,
 		'email' => TRUE,
+		'active' => TRUE,
 		'usergroups' => TRUE,
 	];
-	/*protected array $defaults = [
-		'usergroups' => [],
-	];*/
 	/**
-	 * Fields that are excluded from JSON versions of the entity.
-	 *
-	 * @var array
+	 * @inheritDoc
 	 */
 	protected $_hidden = [
 		'password',
 	];
-	protected ?AccessCollection $accesses = NULL;
+	protected ?AccessCollection $accesCollection;
 
 
 	/**
@@ -83,49 +73,62 @@ class User extends \Awyiss\Model\Entity implements IdentityPermissionsInterface,
 	}
 
 
+	/**
+	 * Returns the AccessCollection that contains all set permissions for this user
+	 *
+	 * @return \Awyiss\Authorization\AccessCollection
+	 */
 	public function getAccess (): AccessCollection {
-		$this->accesses = NULL;
-		if ($this->accesses === NULL) {
-			$this->accesses = new AccessCollection();
-
-			$la_usergroups = $this->getUsergroups();
+		if ( ! isset($this->accesCollection)) {
+			$this->accesCollection = new AccessCollection();
+			$la_usergroups = $this->getUsergroups() ?? [];
 			/** @var \Awyiss\Model\Entity\UsergroupPermission $lo_usergrousPermissions */
 			foreach (array_merge(...array_column($la_usergroups, 'usergroup_permissions')) as $lo_usergrousPermissions) {
-				$this->accesses->add($lo_usergrousPermissions->scope, $lo_usergrousPermissions->identifier, $lo_usergrousPermissions->access, $lo_usergrousPermissions->settings);
+				$this->accesCollection->add($lo_usergrousPermissions->scope, $lo_usergrousPermissions->identifier, $lo_usergrousPermissions->access, $lo_usergrousPermissions->settings);
 			}
 		}
 
-		return $this->accesses;
+		return $this->accesCollection;
 	}
 
 
-	public function getUsergroups (): ?array {
+	/**
+	 * Returns an array of Usergroup-entities
+	 *
+	 * @return \Awyiss\Model\Entity\Usergroup[]
+	 */
+	public function getUsergroups (): array {
 		//if (!$this->usergroups)  {
-		if ($this->usergroups === NULL) {
+		if ( ! isset($this->usergroups)) {
+			/** @var \Awyiss\Model\Table\UsergroupsUsersTable $lo_usergroupsUsers */
+			$lo_usergroupsUsers = FactoryLocator::get('Table')->get('UsergroupsUsers');
+			$lo_usergroupsUsers->skipAccessCheckOnce();
+
 			/** @var self $lo_self */
-			$lo_self = FactoryLocator::get('Table')->get($this->getSource())->get($this->id, ['contain' => ['Usergroups.UsergroupPermissions']]);
-			$this->usergroups = $lo_self->usergroups;
+			$lo_self = FactoryLocator::get('Table')->get($this->getSource())->get($this->id, [
+				'contain' => [
+					'Usergroups' => [
+						'UsergroupPermissions' => [
+							'finder' => ['all' => ['access' => ['skip' => TRUE]]],
+						],
+						'finder' => ['all' => ['access' => ['skip' => TRUE]]],
+					],
+				],
+				'access' => ['skip' => TRUE],
+			]);
+
+			$this->usergroups = $lo_self->usergroups ?? [];
 		}
 
 		return $this->usergroups;
 	}
 
 
-	public function __wakeup () {
-		if ($this->get('last_login') < \Cake\I18n\FrozenTime::now()->subMinutes(2)) {
-			$this->usergroups = NULL;
-		}
-	}
-
-
-	// Automatically hash passwords when they are changed.
-
-
 	/**
 	 * @noinspection PhpUnused
 	 */
 	protected function _setEmail (string $ax_email): ?string {
-		if ($ax_email === '') {
+		if (empty($ax_email)) {
 			return NULL;
 		}
 
@@ -137,6 +140,7 @@ class User extends \Awyiss\Model\Entity implements IdentityPermissionsInterface,
 	 * @noinspection PhpUnused
 	 */
 	protected function _setPassword (string $as_password): ?string {
+		// Automatically hash passwords when they are changed.
 		if ( ! empty($as_password)) {
 			$lo_hasher = new DefaultPasswordHasher();
 
@@ -144,5 +148,14 @@ class User extends \Awyiss\Model\Entity implements IdentityPermissionsInterface,
 		}
 
 		return NULL;
+	}
+
+
+	public function __wakeup () {
+		/*if ($this->get('last_login') < \Cake\I18n\FrozenTime::now()->subMinutes(2)) {
+			$this->usergroups = NULL;
+		}*/
+		$this->usergroups = NULL;
+		$this->accesCollection = NULL;
 	}
 }

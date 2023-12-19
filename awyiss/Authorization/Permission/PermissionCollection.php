@@ -4,7 +4,7 @@
 namespace Awyiss\Authorization\Permission;
 
 
-use Cake\Core\App;
+use Awyiss\Core\App;
 use Cake\Core\ObjectRegistry;
 use RuntimeException;
 
@@ -49,7 +49,7 @@ class PermissionCollection extends ObjectRegistry {
 
 
 	/**
-	 * {@inheritDoc}
+	 * @inheritDoc
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */

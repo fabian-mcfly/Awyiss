@@ -33,12 +33,15 @@ class ContentTemplatesController extends Controller {
 	 * Overview method
 	 *
 	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
+	 *
+	 * @throws \Exception
+	 *
 	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
 	public function overview () {
 		$this->Access->ensureOne('create', 'update', 'delete');
 
-		$lo_contentTemplates = $this->ContentTemplates->find('withAttributes')->where($this->overviewWhere);
+		$lo_contentTemplates = $this->ContentTemplates->find('withAttributes')->where($this->getOverviewWhere());
 
 		$this->set([
 			'ao_contentTemplates' => $lo_contentTemplates,
@@ -50,6 +53,9 @@ class ContentTemplatesController extends Controller {
 	 * Add method
 	 *
 	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
+	 *
+	 * @throws \Exception
+	 *
 	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
 	public function add () {
@@ -63,11 +69,11 @@ class ContentTemplatesController extends Controller {
 				});
 			}
 
-			$la_assigned_content_areas = $this->request->getData('assigned_content_areas', []);
+			$la_assignedTemplatePositions = $this->request->getData('assigned_template_positions', []);
 
-			$lo_contentTemplate = $this->ContentTemplates->patchEntity($lo_contentTemplate, [
+			$this->ContentTemplates->patchEntity($lo_contentTemplate, [
 					'available_elements' => $la_available_elements,
-					'assigned_content_areas' => $la_assigned_content_areas,
+					'assigned_template_positions' => $la_assignedTemplatePositions,
 				] + $this->request->getData());
 
 			if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
@@ -93,22 +99,25 @@ class ContentTemplatesController extends Controller {
 	}
 
 
-	protected function getPageTemplates (): \Cake\ORM\ResultSet {
-		return $this->getTableLocator()->get('PageTemplates')->find('withAttributes')->all();
-	}
-
-
 	/**
 	 * Edit method
 	 *
 	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
+	 *
+	 * @throws \Exception
+	 *
 	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
 	public function edit () {
 		$this->Access->ensure('update');
 
 		$li_id = $this->request->getParam('id');
-		$lo_contentTemplate = $this->ContentTemplates->find()->where(['id' => $li_id])->first();
+		try {
+			$lo_contentTemplate = $this->ContentTemplates->find()->find('translations')->where(['ContentTemplates.id' => $li_id])->first();
+		}
+		catch (\Exception) {
+			exit;
+		}
 
 		if ( ! $lo_contentTemplate) {
 			$this->Flash->error(__('::record_not_found'));
@@ -123,20 +132,20 @@ class ContentTemplatesController extends Controller {
 				});
 			}
 
-			$la_assignedContentAreas = $this->request->getData('assigned_content_areas', []);
+			$la_assignedTemplatePositions = $this->request->getData('assigned_template_positions', []);
 
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 			$lb_availableElementsDirty = ! ($lo_contentTemplate->available_elements == $la_availableElements);
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-			$lb_assignedContentAreasDirty = ! ($lo_contentTemplate->assigned_content_areas == $la_assignedContentAreas);
+			$lb_assignedTemplatePositionsDirty = ! ($lo_contentTemplate->assigned_template_positions == $la_assignedTemplatePositions);
 
-			$lo_contentTemplate = $this->ContentTemplates->patchEntity($lo_contentTemplate, [
+			$this->ContentTemplates->patchEntity($lo_contentTemplate, [
 					'available_elements' => $la_availableElements,
-					'assigned_content_areas' => $la_assignedContentAreas,
+					'assigned_template_positions' => $la_assignedTemplatePositions,
 				] + $this->request->getData());
 
 			$lo_contentTemplate->setDirty('available_elements', $lb_availableElementsDirty);
-			$lo_contentTemplate->setDirty('assigned_content_areas', $lb_assignedContentAreasDirty);
+			$lo_contentTemplate->setDirty('assigned_template_positions', $lb_assignedTemplatePositionsDirty);
 
 			if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
 				if ($this->ContentTemplates->save($lo_contentTemplate)) {
@@ -150,6 +159,7 @@ class ContentTemplatesController extends Controller {
 				}
 
 				$this->Flash->error(__('::edit_failed'));
+				$this->Flash->error(json_encode($lo_contentTemplate->getErrors()));
 			}
 		}
 
@@ -165,6 +175,9 @@ class ContentTemplatesController extends Controller {
 	 * Delete method
 	 *
 	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
+	 *
+	 * @throws \Exception
+	 *
 	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
 	public function delete () {
@@ -188,5 +201,10 @@ class ContentTemplatesController extends Controller {
 		}
 
 		return $this->redirect(['action' => 'overview']);
+	}
+
+
+	protected function getPageTemplates (): \Cake\ORM\Query {
+		return $this->getTableLocator()->get('PageTemplates')->find('withAttributes');
 	}
 }

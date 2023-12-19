@@ -35,7 +35,7 @@ class Validator extends \Cake\Validation\Validator {
 		$la_errors = [];
 		// Loading default provider in case there is none
 		$this->getProvider('default');
-		//$ls_message = __('form_validation::invalid_value');
+		//$ls_message = __('validation::invalid_value');
 
 		foreach ($ao_rules as $ls_name => $lo_rule) {
 			$lx_result = $lo_rule->process($aa_data[ $as_field ], $this->_providers, [
@@ -84,14 +84,14 @@ class Validator extends \Cake\Validation\Validator {
 			}
 
 			/*try {
-				$ls_message = __('form_validation::error_' . Inflector::underscore($ls_name), $la_pass);
+				$ls_message = __('validation::error_' . Inflector::underscore($ls_name), $la_pass);
 			}
 			catch (\Exception $e) {
 				dump($ls_name, $lx_pass);
 				dd($this->ls_i18nDomain, $ls_name, $la_pass, $e->getMessage());
 			}*/
 
-			$la_errors[ $ls_name ] = __('form_validation::error_' . Inflector::underscore($ls_name), $la_pass);
+			$la_errors[ $ls_name ] = __('validation::error_' . Inflector::underscore($ls_name), $la_pass);
 
 			if ($lo_rule->isLast()) {
 				break;
@@ -112,7 +112,7 @@ class Validator extends \Cake\Validation\Validator {
 			return NULL;
 		}
 
-		$ls_defaultMessage = __('form_validation::error_required');
+		$ls_defaultMessage = __('validation::error_required');
 
 		return $this->_presenceMessages[ $as_field ] ?? $ls_defaultMessage;
 	}
@@ -128,7 +128,7 @@ class Validator extends \Cake\Validation\Validator {
 			return NULL;
 		}
 
-		$ls_defaultMessage = __('form_validation::error_not_empty');
+		$ls_defaultMessage = __('validation::error_not_empty');
 
 		foreach ($this->_fields[ $as_field ] as $rule) {
 			if ($rule->get('rule') === 'notBlank' && $rule->get('message')) {

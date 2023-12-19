@@ -14,7 +14,7 @@
 				<tr>
 					<th>{{ helper_Paginator_sort('title') }}</th>
 					<th>{{ helper_Paginator_sort('filename') }}</th>
-					<th>{{ helper_Paginator_sort('content_areas') }}</th>
+					<th>{{ helper_Paginator_sort('template_positions') }}</th>
 					<th class="actions"></th>
 				</tr>
 			</thead>
@@ -28,7 +28,7 @@
 						<tr>
 							<td>{{ lo_pageTemplate.title }} ({{ lo_pageTemplate.system_order }})</td>
 							<td>{{ lo_pageTemplate.filename }}</td>
-							<td>{{ lo_pageTemplate.content_areas|join(', ') }}</td>
+							<td>{{ lo_pageTemplate.template_positions|join(', ') }}</td>
 							<td class="actions">
 								{% if helper_Access_isAccessible('update') %}
 									{{ helper_Html_link(__('::edit'), {action: 'edit', id: lo_pageTemplate.id}) }}

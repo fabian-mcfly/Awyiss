@@ -57,33 +57,13 @@ class AppView extends TwigView {
 				ROOT . DS . APP_DIR . DS . 'templates' . DS . 'Backend' . DS
 			], 'Backend');
 
-			$lo_twig->addFunction(new \Twig\TwigFunction('staticCall', function($as_class, $as_method, $aa_args = []) {
-				if (class_exists($as_class) && method_exists($as_class, $as_method)) {
-					return call_user_func_array([$as_class, $as_method], $aa_args);
-				}
+			$lo_twig->addExtension(new \Awyiss\Twig\Extension\AwyissExtension());
 
-				return NULL;
-			}));
-
-			$lo_twig->addFunction(new \Twig\TwigFunction('combine', function($aa_keys, $aa_values) {
-				return array_combine($aa_keys, $aa_values);
-			}));
-
-			$lo_twig->addFunction(new \Twig\TwigFunction('naturalSort', function(array $aa_data, int|string $as_key = NULL) {
-				uasort($aa_data, function($a, $b) use ($as_key) {
-					if (!empty($as_key)) {
-						return strnatcmp($a[ $as_key ], $b[ $as_key ]);
-					}
-
-					return strnatcmp($a, $b);
-				});
-
-				return $aa_data;
-			}));
-
-			$lo_twig->addTest(new \Twig\TwigTest('array', function ($ax_value) {
-				return is_array($ax_value);
-			}));
+			//This looks for a custom Twig Extension class in \<custom namespace>\Twig\Extension\<CustomNamespace>Extension.php and adds it
+			$ls_customExtensionClass = '\\' . CUSTOM_NAMESPACE . '\Twig\Extension\\' . CUSTOM_NAMESPACE . 'Extension';
+			if (class_exists($ls_customExtensionClass)) {
+				$lo_twig->addExtension(new $ls_customExtensionClass());
+			}
 
 			$lo_twig->initialized = TRUE;
 		}

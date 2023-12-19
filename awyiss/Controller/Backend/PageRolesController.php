@@ -17,12 +17,15 @@ class PageRolesController extends Controller {
 	 * Overview method
 	 *
 	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
+	 *
+	 * @throws \Exception
+	 *
 	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
 	public function overview () {
 		$this->Access->ensureOne('create', 'update', 'delete');
 
-		$lo_pageRoles = $this->PageRoles->find('withAttributes');
+		$lo_pageRoles = $this->PageRoles->find('withAttributes')->where($this->getOverviewWhere());
 
 		$this->set([
 			'ao_pageRoles' => $lo_pageRoles,
@@ -34,6 +37,9 @@ class PageRolesController extends Controller {
 	 * Add method
 	 *
 	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
+	 *
+	 * @throws \Exception
+	 *
 	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
 	public function add () {
@@ -41,7 +47,7 @@ class PageRolesController extends Controller {
 
 		$lo_pageRole = $this->PageRoles->newDefaultEntity();
 		if ($this->request->is('post')) {
-			$lo_pageRole = $this->PageRoles->patchEntity($lo_pageRole, $this->request->getData());
+			$this->PageRoles->patchEntity($lo_pageRole, $this->request->getData());
 
 			if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
 				if ($this->PageRoles->save($lo_pageRole)) {
@@ -67,6 +73,9 @@ class PageRolesController extends Controller {
 	 * Edit method
 	 *
 	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
+	 *
+	 * @throws \Exception
+	 *
 	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
 	public function edit () {
@@ -82,7 +91,7 @@ class PageRolesController extends Controller {
 		}
 
 		if ($this->request->is(['patch', 'post', 'put'])) {
-			$lo_pageRole = $this->PageRoles->patchEntity($lo_pageRole, $this->request->getData());
+			$this->PageRoles->patchEntity($lo_pageRole, $this->request->getData());
 
 			if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
 				if ($this->PageRoles->save($lo_pageRole)) {
@@ -109,6 +118,9 @@ class PageRolesController extends Controller {
 	 * Delete method
 	 *
 	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
+	 *
+	 * @throws \Exception
+	 *
 	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
 	public function delete () {

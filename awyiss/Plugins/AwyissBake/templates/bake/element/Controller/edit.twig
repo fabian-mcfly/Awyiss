@@ -6,21 +6,25 @@
 	 * Edit method
 	 *
 	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
+	 *
+	 * @throws \Exception
+	 *
 	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
 	public function edit () {
 		$this->Access->ensure('update');
 
-		$li_id = $this->request->getParam('id');
-		$lo_{{ singularName }} = $this->{{ currentModelName }}->find()->where(['id' => $li_id])->first();
-
-		if (!$lo_{{ singularName }}) {
+		try {
+			$li_id = $this->request->getParam('id');
+			$lo_{{ singularName }} = $this->{{ currentModelName }}->get($li_id);
+		}
+		catch (RecordNotFoundException|InvalidPrimaryKeyException) {
 			$this->Flash->error(__('::record_not_found'));
 			return $this->redirect(['action' => 'overview']);
 		}
 
 		if ($this->request->is(['patch', 'post', 'put'])) {
-			$lo_{{ singularName }} = $this->{{ currentModelName }}->patchEntity($lo_{{ singularName }}, $this->request->getData());
+			$this->{{ currentModelName }}->patchEntity($lo_{{ singularName }}, $this->request->getData());
 
 			if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
 				if ($this->{{ currentModelName }}->save($lo_{{ singularName }})) {

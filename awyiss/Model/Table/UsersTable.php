@@ -4,6 +4,7 @@
 namespace Awyiss\Model\Table;
 
 
+use Cake\Datasource\EntityInterface;
 use Cake\ORM\Query;
 use Cake\ORM\RulesChecker;
 use Cake\Validation\Validator;
@@ -12,31 +13,15 @@ use Cake\Validation\Validator;
 /**
  * Users Model
  *
- * @method \Awyiss\Model\Entity\User newDefaultEntity()
- * @method \Awyiss\Model\Entity\User newEmptyEntity()
- * @method \Awyiss\Model\Entity\User newEntity(array $data, array $options = [])
- * @method \Awyiss\Model\Entity\User[] newEntities(array $data, array $options = [])
- * @method \Awyiss\Model\Entity\User get($primaryKey, $options = [])
- * @method \Awyiss\Model\Entity\User findOrCreate($search, ?callable $callback = NULL, $options = [])
- * @method \Awyiss\Model\Entity\User patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
- * @method \Awyiss\Model\Entity\User[] patchEntities(iterable $entities, array $data, array $options = [])
- * @method \Awyiss\Model\Entity\User|false save(\Cake\Datasource\EntityInterface $entity, $options = [])
- * @method \Awyiss\Model\Entity\User saveOrFail(\Cake\Datasource\EntityInterface $entity, $options = [])
- * @method \Awyiss\Model\Entity\User[]|\Cake\Datasource\ResultSetInterface|false saveMany(iterable $entities, $options = [])
- * @method \Awyiss\Model\Entity\User[]|\Cake\Datasource\ResultSetInterface saveManyOrFail(iterable $entities, $options = [])
- * @method \Awyiss\Model\Entity\User[]|\Cake\Datasource\ResultSetInterface|false deleteMany(iterable $entities, $options = [])
- * @method \Awyiss\Model\Entity\User[]|\Cake\Datasource\ResultSetInterface deleteManyOrFail(iterable $entities, $options = [])
  * @property \Awyiss\Model\Table\UsergroupsTable&\Cake\ORM\Association\BelongsToMany $Usergroups
  * @property \Awyiss\Model\Table\UsergroupsUsersTable&\Cake\ORM\Association\HasMany $UsergroupsUsers
+ *
+ * @method \Awyiss\Model\Entity\User newDefaultEntity(array $aa_additionalData = [])
+ * @method \Awyiss\Model\Entity\User patchEntity(EntityInterface $ao_entity, array $aa_data, array $aa_options = [])
  */
 class UsersTable extends \Awyiss\Model\Table {
 	/**
-	 * Initialize method
-	 *
-	 * @param array $aa_config The configuration for the Table.
-	 *
-	 * @return void
-	 * @throws \ReflectionException
+	 * @inheritDoc
 	 */
 	public function initialize (array $aa_config): void {
 		parent::initialize($aa_config);
@@ -85,11 +70,7 @@ class UsersTable extends \Awyiss\Model\Table {
 
 
 	/**
-	 * Default validation rules.
-	 *
-	 * @param \Awyiss\Validation\Validator $ao_validator Validator instance.
-	 *
-	 * @return \Awyiss\Validation\Validator
+	 * @inheritDoc
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
@@ -101,7 +82,7 @@ class UsersTable extends \Awyiss\Model\Table {
 		$ao_validator->scalar('password')
 			->maxLength('password', 255)
 			->requirePresence('password', 'create')
-			->allowEmptyString('password')
+			->allowEmptyString('password', NULL, 'update')
 			->minLength('password', 8);
 
 		$ao_validator->sameAs('password', 'password_confirm');
@@ -114,17 +95,14 @@ class UsersTable extends \Awyiss\Model\Table {
 
 		$ao_validator->boolean('active')->notEmptyString('active');
 
+		$ao_validator->boolean('deleted')->notEmptyString('deleted');
+
 		return $ao_validator;
 	}
 
 
 	/**
-	 * Returns a rules checker object that will be used for validating
-	 * application integrity.
-	 *
-	 * @param \Cake\ORM\RulesChecker $ao_rules The rules object to be modified.
-	 *
-	 * @return \Cake\ORM\RulesChecker
+	 * @inheritDoc
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
