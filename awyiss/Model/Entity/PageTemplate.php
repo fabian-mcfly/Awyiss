@@ -10,7 +10,7 @@ namespace Awyiss\Model\Entity;
  * @property int $id
  * @property string $title
  * @property string $filename
- * @property array $contentareas
+ * @property array $content_areas
  * @property int $page_roles_id
  * @property bool $active
  * @property bool $deleted
@@ -35,19 +35,19 @@ class PageTemplate extends \Awyiss\Model\Entity {
 	 * @var array
 	 */
 	protected $_accessible = [
-        'title' => true,
-        'filename' => true,
-        'contentareas' => true,
-        'page_roles_id' => true,
-        'active' => true,
-        'deleted' => true,
-        'system_order' => true,
-        'created_by' => true,
-        'created_on' => true,
-        'changed_by' => true,
-        'changed_on' => true,
-        'deleted_by' => true,
-        'deleted_on' => true,
-        'page_role' => true,
-    ];
+		'title' => TRUE,
+		'filename' => TRUE,
+		'content_areas' => TRUE,
+		'page_roles_id' => TRUE,
+		'active' => TRUE,
+		'system_order' => TRUE,
+	];
+
+
+	/**
+	 * @noinspection PhpUnused
+	 */
+	public function _setContentAreas (mixed $ax_value): array {
+		return is_array($ax_value) ? $ax_value : [$ax_value];
+	}
 }

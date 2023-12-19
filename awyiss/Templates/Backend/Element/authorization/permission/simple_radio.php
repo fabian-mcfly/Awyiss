@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @var \Awyiss\Authorization\Permission\SimplePermission $ao_permission
  * @var \Awyiss\Model\Entity|NULL $ao_entity

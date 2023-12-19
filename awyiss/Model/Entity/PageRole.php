@@ -11,9 +11,9 @@ namespace Awyiss\Model\Entity;
  * @property string $title
  * @property string $identifier
  * @property bool $include_in_linklist
- * @property int $system_order
  * @property bool $active
  * @property bool $deleted
+ * @property int $system_order
  * @property int|null $created_by
  * @property \Cake\I18n\FrozenTime|null $created_on
  * @property int|null $changed_by
@@ -35,8 +35,7 @@ class PageRole extends \Awyiss\Model\Entity {
 		'title' => TRUE,
 		'identifier' => TRUE,
 		'include_in_linklist' => TRUE,
-		'system_order' => TRUE,
 		'active' => TRUE,
-		'deleted' => TRUE,
+		'system_order' => TRUE,
 	];
 }

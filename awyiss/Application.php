@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php /** @noinspection PhpMultipleClassDeclarationsInspection */
+
+declare(strict_types=1);
 
 
 namespace Awyiss;
@@ -17,7 +19,6 @@ use Cake\Http\ControllerFactoryInterface;
 use Cake\Http\Middleware\BodyParserMiddleware;
 use Cake\Http\MiddlewareQueue;
 use Cake\ORM\Locator\TableLocator;
-use Cake\Routing\Middleware\AssetMiddleware;
 use Cake\Routing\Middleware\RoutingMiddleware;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\Router;
@@ -25,25 +26,25 @@ use Composer\Autoload\ClassLoader;
 
 
 class Application extends BaseApplication {
-	private $ls_configDir;
-	private $lo_loader;
+	protected ClassLoader $classLoader;
 
 
 	/**
 	 * Constructor
 	 *
-	 * @param \Cake\Event\EventManagerInterface $eventManager Application event manager instance.
-	 * @param \Cake\Http\ControllerFactoryInterface $controllerFactory Controller factory.
+	 * @param \Composer\Autoload\ClassLoader $ao_loader
+	 * @param null|\Cake\Event\EventManagerInterface $ao_eventManager Application event manager instance.
+	 * @param null|\Cake\Http\ControllerFactoryInterface $ao_controllerFactory Controller factory.
 	 *
 	 * @noinspection PhpMissingParentConstructorInspection
 	 */
-	public function __construct (ClassLoader $loader, ?EventManagerInterface $eventManager = NULL, ?ControllerFactoryInterface $controllerFactory = NULL) {
-		$this->lo_loader = $loader;
+	public function __construct (ClassLoader $ao_loader, ?EventManagerInterface $ao_eventManager = NULL, ?ControllerFactoryInterface $ao_controllerFactory = NULL) {
+		$this->classLoader = $ao_loader;
 		$this->plugins = Plugin::getCollection();
-		$this->_eventManager = $eventManager ?: EventManager::instance();
-		$this->controllerFactory = $controllerFactory;
+		$this->_eventManager = $ao_eventManager ?: EventManager::instance();
+		$this->controllerFactory = $ao_controllerFactory;
 
-		$this->ls_configDir = dirname(__DIR__) . DS . 'awyiss' . DS . 'Config' . DS;
+		$this->configDir = dirname(__DIR__) . DS . 'awyiss' . DS . 'config' . DS;
 
 		//Might be set in awyiss/bin/cake.php
 		if ( ! defined('CONFIG_ENV')) {
@@ -70,7 +71,8 @@ class Application extends BaseApplication {
 	 * @return void
 	 */
 	public function bootstrap (): void {
-		require_once $this->ls_configDir . 'bootstrap.php';
+		/** @noinspection PhpIncludeInspection */
+		require_once $this->configDir . 'bootstrap.php';
 
 
 		if (is_file($ls_file = CUSTOM_CONFIG . 'bootstrap.php')) {
@@ -87,7 +89,7 @@ class Application extends BaseApplication {
 		 * and the customer-specific namespace
 		 */
 		//$this->lo_loader->addPsr4('Awyiss\\', [ROOT . DS . CUSTOM_DIR], TRUE);
-		$this->lo_loader->addPsr4(CUSTOM_NAMESPACE . '\\', [ROOT . DS . CUSTOM_DIR], TRUE);
+		$this->classLoader->addPsr4(CUSTOM_NAMESPACE . '\\', [ROOT . DS . CUSTOM_DIR], TRUE);
 
 
 		if (PHP_SAPI === 'cli') {
@@ -106,9 +108,9 @@ class Application extends BaseApplication {
 		 * Only try to load DebugKit in development mode
 		 * Debug Kit should not be installed on a production system
 		 */
-		if (Configure::read('debug')) {
+		/*if (Configure::read('debug')) {
 			$this->addPlugin('DebugKit');
-		}
+		}*/
 
 
 		if (is_file($ls_file = CUSTOM_CONFIG . 'plugins.php')) {
@@ -145,27 +147,34 @@ class Application extends BaseApplication {
 	/**
 	 * Setup the middleware queue
 	 *
-	 * @param \Cake\Http\MiddlewareQueue $middlewareQueue The middleware queue to setup.
+	 * @param \Cake\Http\MiddlewareQueue $ao_middlewareQueue The middleware queue to setup.
 	 *
 	 * @return \Cake\Http\MiddlewareQueue The updated middleware queue.
+	 *
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function middleware (MiddlewareQueue $middlewareQueue): MiddlewareQueue {
-		$middlewareQueue->add(new ErrorHandlerMiddleware(Configure::read('Error')))->add(new AssetMiddleware([
+	public function middleware (MiddlewareQueue $ao_middlewareQueue): MiddlewareQueue {
+		$ao_middlewareQueue->add(new ErrorHandlerMiddleware(Configure::read('Error')));
+		/*$ao_middlewareQueue->add(new AssetMiddleware([
 			'cacheTime' => Configure::read('Asset.cacheTime'),
-		]))->add(new RoutingMiddleware($this))->add(new BodyParserMiddleware());
+		]));*/
+		$ao_middlewareQueue->add(new RoutingMiddleware($this));
+		$ao_middlewareQueue->add(new BodyParserMiddleware());
 
-		return $middlewareQueue;
+		return $ao_middlewareQueue;
 	}
 
 
 	/**
 	 * {@inheritDoc}
 	 *
-	 * @param \Cake\Routing\RouteBuilder $routes A route builder to add routes into.
+	 * @param \Cake\Routing\RouteBuilder $ao_routes A route builder to add routes into.
 	 *
 	 * @return void
+	 *
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function routes (RouteBuilder $routes): void {
+	public function routes (RouteBuilder $ao_routes): void {
 		// Only load routes if the router is empty
 		if ( ! Router::routes()) {
 			/**
@@ -183,7 +192,8 @@ class Application extends BaseApplication {
 				require_once $ls_file;
 			}
 
-			require $this->ls_configDir . 'routes_backend.php';
+			/** @noinspection PhpIncludeInspection */
+			require $this->configDir . 'routes_backend.php';
 
 			/**
 			 * Now after the backend-related routes were loaded, we can load general routes
@@ -200,7 +210,8 @@ class Application extends BaseApplication {
 				require_once $ls_file;
 			}
 
-			require $this->ls_configDir . 'routes.php';
+			/** @noinspection PhpIncludeInspection */
+			require $this->configDir . 'routes.php';
 			/**
 			 * The reason we're doing this is because a custom config might overwrite routes for the frontend using the * placeholder
 			 * which are required for the Awyiss backend
@@ -217,12 +228,14 @@ class Application extends BaseApplication {
 	/**
 	 * Register application container services.
 	 *
-	 * @param \Cake\Core\ContainerInterface $container The Container to update.
+	 * @param \Cake\Core\ContainerInterface $ao_container The Container to update.
 	 *
 	 * @return void
 	 * @link https://book.cakephp.org/4/en/development/dependency-injection.html#dependency-injection
+	 *
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function services (ContainerInterface $container): void {
+	public function services (ContainerInterface $ao_container): void {
 		if (is_file($ls_file = CUSTOM_CONFIG . 'services.php')) {
 			require_once $ls_file;
 		}

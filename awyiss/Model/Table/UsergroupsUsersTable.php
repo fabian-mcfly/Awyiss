@@ -14,11 +14,12 @@ use Cake\Validation\Validator;
  * @property \Awyiss\Model\Table\UsergroupsTable&\Cake\ORM\Association\BelongsTo $Usergroups
  * @property \Awyiss\Model\Table\UsersTable&\Cake\ORM\Association\BelongsTo $Users
  *
+ * @method \Awyiss\Model\Entity\UsergroupsUser newDefaultEntity()
  * @method \Awyiss\Model\Entity\UsergroupsUser newEmptyEntity()
  * @method \Awyiss\Model\Entity\UsergroupsUser newEntity(array $data, array $options = [])
  * @method \Awyiss\Model\Entity\UsergroupsUser[] newEntities(array $data, array $options = [])
  * @method \Awyiss\Model\Entity\UsergroupsUser get($primaryKey, $options = [])
- * @method \Awyiss\Model\Entity\UsergroupsUser findOrCreate($search, ?callable $callback = null, $options = [])
+ * @method \Awyiss\Model\Entity\UsergroupsUser findOrCreate($search, ?callable $callback = NULL, $options = [])
  * @method \Awyiss\Model\Entity\UsergroupsUser patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
  * @method \Awyiss\Model\Entity\UsergroupsUser[] patchEntities(iterable $entities, array $data, array $options = [])
  * @method \Awyiss\Model\Entity\UsergroupsUser|false save(\Cake\Datasource\EntityInterface $entity, $options = [])
@@ -60,6 +61,8 @@ class UsergroupsUsersTable extends \Awyiss\Model\Table {
 	 * @param \Cake\Validation\Validator $ao_validator Validator instance.
 	 *
 	 * @return \Cake\Validation\Validator
+	 *
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function validationDefault (Validator $ao_validator): Validator {
 		$ao_validator->integer('id')->allowEmptyString('id', NULL, 'create');

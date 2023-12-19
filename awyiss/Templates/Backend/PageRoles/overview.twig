@@ -1,20 +1,17 @@
-{#
+{# @var ao_pageRoles \Awyiss\Model\Entity\PageRole[] #}
+{# @var _view \Awyiss\View\BackendView #}
 
-@var ao_pageRoles \Awyiss\Model\Entity\PageRole[]
-@var _view \Awyiss\View\BackendView
-
-#}
+{# {{ helper_Categories_filter() }} #}
 
 <div class="PageRoles Overview">
 	{% if helper_Access_isAccessible('create') %}
-		{{ helper_Html_link(__('::create'), {'action' : 'add'}, {'class' : 'Button' }) }}
+		{{ helper_Html_link(__('::create'), {action: 'add'}, {class: 'Button'}) }}
 	{% endif %}
-	<h3>{{ __('Page Roles') }}</h3>
+	<h1>{{ __('::headline_overview') }}</h1>
 	<div class="table-responsive">
 		<table>
 			<thead>
 				<tr>
-					<th>{{ helper_Paginator_sort('id') }}</th>
 					<th>{{ helper_Paginator_sort('title') }}</th>
 					<th>{{ helper_Paginator_sort('identifier') }}</th>
 					<th>{{ helper_Paginator_sort('include_in_linklist') }}</th>
@@ -25,17 +22,16 @@
 			<tbody>
 				{% for lo_pageRole in ao_pageRoles %}
 					<tr>
-						<td>{{ helper_Number_format(lo_pageRole.id) }}</td>
-						<td>{{ lo_pageRole.title }}</td>
+						<td>{{ lo_pageRole.title }} ({{ lo_pageRole.system_order }})</td>
 						<td>{{ lo_pageRole.identifier }}</td>
 						<td>{{ lo_pageRole.include_in_linklist }}</td>
 						<td>{{ lo_pageRole.active }}</td>
 						<td class="actions">
 							{% if helper_Access_isAccessible('update') %}
-								{{ helper_Html_link(__('::edit'), {'action' : 'edit', 'id' : lo_pageRole.id}) }}
+								{{ helper_Html_link(__('::edit'), {action: 'edit', id: lo_pageRole.id}) }}
 							{% endif %}
 							{% if helper_Access_isAccessible('delete') %}
-								{{ helper_Form_postLink(__('::delete'), {'action' : 'delete', 0: lo_pageRole.id}, {'confirm' : __('Are you sure you want to delete # {0}?', lo_pageRole.id) }) }}
+								{{ helper_Form_postLink(__('::delete'), {action: 'delete', id: lo_pageRole.id}, {confirm: __('::confirm_delete', lo_pageRole.id) }) }}
 							{% endif %}
 						</td>
 					</tr>
@@ -43,5 +39,5 @@
 			</tbody>
 		</table>
 	</div>
-	{{ helper_Paginator_render() }}
+	{# { helper_Paginator_render() } #}
 </div>

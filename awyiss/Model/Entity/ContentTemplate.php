@@ -10,7 +10,8 @@ namespace Awyiss\Model\Entity;
  * @property int $id
  * @property string $title
  * @property string $filename
- * @property array $visible_elements
+ * @property array $available_elements
+ * @property array $assigned_content_areas
  * @property bool $active
  * @property bool $deleted
  * @property int $system_order
@@ -35,14 +36,25 @@ class ContentTemplate extends \Awyiss\Model\Entity {
 	protected $_accessible = [
 		'title' => TRUE,
 		'filename' => TRUE,
-		'visible_elements' => TRUE,
+		'available_elements' => TRUE,
+		'assigned_content_areas' => TRUE,
 		'active' => TRUE,
-		'deleted' => TRUE,
 		'system_order' => TRUE,
 	];
 
 
-	public function _setVisibleElements ($ax_value) {
+	/**
+	 * @noinspection PhpUnused
+	 */
+	public function _setAvailableElements (mixed $ax_value): array {
+		return is_array($ax_value) ? $ax_value : [$ax_value];
+	}
+
+
+	/**
+	 * @noinspection PhpUnused
+	 */
+	public function _setAssignedContentAreas (mixed $ax_value): array {
 		return is_array($ax_value) ? $ax_value : [$ax_value];
 	}
 }

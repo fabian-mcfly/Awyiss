@@ -1,25 +1,22 @@
-{#
-
-@var ao_pageTemplate Awyiss\Model\Entity\PageTemplate
-@var _view \Awyiss\View\BackendView
-
-#}
+{# @var ao_pageTemplate \Awyiss\Model\Entity\PageTemplate #}
+{# @var _view \Awyiss\View\BackendView #}
 
 <div class="PageTemplates Form Add">
-	{{ helper_Form_create(ao_pageTemplate, {'method': 'post', 'idPrefix': 'pageTemplate'}) }}
-	
+	{{ helper_Form_create(ao_pageTemplate, {method: 'post', idPrefix: 'PageTemplate'}) }}
+
 	<fieldset>
 		<legend>{{ __('::headline_add') }}</legend>
 		{{ helper_Form_control('title') }}
 		{{ helper_Form_control('filename') }}
-		{{ helper_Form_control('contentareas') }}
-		{{ helper_Form_control('page_roles_id', {'options': ao_pageRoles}) }}
+		{{ helper_Form_control('content_areas') }}
+		{{ helper_Categories_control('page_roles_id', {val: ao_pageTemplate.page_roles_id, empty: FALSE}) }}
 		{{ helper_Form_control('active') }}
-		{{ helper_Form_control('system_order') }}
+		{{ helper_SystemOrder_control('system_order', {entity: ao_pageTemplate}) }}
 	</fieldset>
-	
+
+	{{ helper_Form_hidden('reload_form', {val: 0}) }}
+
 	{{ helper_Form_button(__('::save')) }}
-	{{ helper_Form_button(__('::save_close')) }}
+	{{ helper_Form_button(__('::save_close'), {name: 'submit', value: 'submit_close'}) }}
 	{{ helper_Form_end() }}
-	
 </div>

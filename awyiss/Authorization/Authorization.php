@@ -4,17 +4,15 @@
 namespace Awyiss\Authorization;
 
 
-use Authentication\AuthenticationServiceInterface;
-use Authentication\AuthenticationServiceProviderInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 
 class Authorization implements AuthorizationServiceProviderInterface  {
-	private string $ls_type;
+	protected string $type;
 
 
 	public function __construct (string $as_type) {
-		$this->ls_type = $as_type;
+		$this->type = $as_type;
 	}
 
 
@@ -24,6 +22,6 @@ class Authorization implements AuthorizationServiceProviderInterface  {
 	 * @return \Awyiss\Authorization\AuthorizationServiceInterface
 	 */
 	public function getAuthorizationService (ServerRequestInterface $ao_request): AuthorizationServiceInterface {
-		return new \Awyiss\Authorization\AuthorizationService($this->ls_type);
+		return new \Awyiss\Authorization\AuthorizationService($this->type);
 	}
 }

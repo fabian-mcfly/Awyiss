@@ -16,7 +16,7 @@ trait StringTemplateTrait {
 	/**
 	 * Returns the templater instance.
 	 *
-	 * @return \Cake\View\StringTemplate
+	 * @return \Awyiss\View\StringTemplate
 	 */
 	public function templater (): StringTemplate {
 		if ($this->_templater === NULL) {

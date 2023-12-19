@@ -7,20 +7,24 @@ namespace Awyiss\Authentication;
 use Authentication\AuthenticationServiceInterface;
 use Authentication\AuthenticationServiceProviderInterface;
 use Authentication\Identifier\IdentifierInterface;
+use Cake\Datasource\EntityInterface;
+use Cake\Event\Event;
+use Cake\Event\EventManager;
 use Cake\Routing\Router;
 use Psr\Http\Message\ServerRequestInterface;
 
 
-final class Authentication implements AuthenticationServiceProviderInterface {
-	private string $ls_type;
-	private static bool $lb_disableDefaultAuthenticators = FALSE;
-	private static bool $lb_disableDefaultIdentifiers = FALSE;
-	private static array $la_authenticators = [];
-	private static array $la_identifiers = [];
+class Authentication implements AuthenticationServiceProviderInterface {
+	protected ?AuthenticationServiceInterface $service = NULL;
+	protected string $type;
+	protected static bool $disableDefaultAuthenticators = FALSE;
+	protected static bool $disableDefaultIdentifiers = FALSE;
+	protected static array $authenticators = [];
+	protected static array $identifiers = [];
 
 
 	public function __construct (string $as_type) {
-		$this->ls_type = $as_type;
+		$this->type = $as_type;
 	}
 
 
@@ -31,7 +35,7 @@ final class Authentication implements AuthenticationServiceProviderInterface {
 	 */
 	public static function addAuthenticator (string|callable $ax_authenticator, array $aa_config = [], int $ai_priority = 100): void {
 		if (is_string($ax_authenticator)) {
-			self::$la_authenticators[] = [
+			static::$authenticators[] = [
 				'authenticator' => [
 					'name' => $ax_authenticator,
 					'config' => $aa_config,
@@ -40,7 +44,7 @@ final class Authentication implements AuthenticationServiceProviderInterface {
 			];
 		}
 		else {
-			self::$la_authenticators[] = [
+			static::$authenticators[] = [
 				'authenticator' => $ax_authenticator,
 				'priority' => $ai_priority,
 			];
@@ -53,12 +57,12 @@ final class Authentication implements AuthenticationServiceProviderInterface {
 	 *
 	 * @throws \Exception
 	 */
-	private function loadAuthenticators (AuthenticationServiceInterface $ao_servce): void {
-		if ( ! self::$lb_disableDefaultAuthenticators) {
+	protected function loadAuthenticators (AuthenticationServiceInterface $ao_servce): void {
+		if ( ! static::$disableDefaultAuthenticators) {
 			$this->addDefaultAuthenticators();
 		}
 
-		$la_authenticators = self::$la_authenticators;
+		$la_authenticators = static::$authenticators;
 		usort($la_authenticators, function($aa_a, $aa_b) {
 			return $aa_a['priority'] <=> $aa_b['priority'];
 		});
@@ -87,14 +91,14 @@ final class Authentication implements AuthenticationServiceProviderInterface {
 	/**
 	 * Register the default authenticators for Session and Form
 	 */
-	private function addDefaultAuthenticators (): void {
+	protected function addDefaultAuthenticators (): void {
 		$this->addAuthenticator(\Awyiss\Authentication\Authenticator\SessionAuthenticator::class, [
 			'identify' => function($lx_user) {
-				if (is_object($lx_user) && ($lx_user instanceof \Awyiss\Model\Entity\User || $lx_user instanceof \Awyiss\Model\Entity\UsersExternal)) {
+				if (($lx_user instanceof \Awyiss\Model\Entity\User || $lx_user instanceof \Awyiss\Model\Entity\UsersExternal)) {
 					//Set last_login
-					$lo_check = \Cake\I18n\Time::now()->subMinutes(10);
+					$lo_check = \Cake\I18n\FrozenTime::now()->subMinutes(10);
 					if ($lo_check > $lx_user->last_login) {
-						$lx_user->set('last_login', \Cake\I18n\Time::now());
+						$lx_user->set('last_login', \Cake\I18n\FrozenTime::now());
 
 						if ($lx_user instanceof \Awyiss\Model\Entity\UsersExternal) {
 							return [
@@ -117,11 +121,12 @@ final class Authentication implements AuthenticationServiceProviderInterface {
 				IdentifierInterface::CREDENTIAL_USERNAME => 'username',
 				IdentifierInterface::CREDENTIAL_PASSWORD => 'password',
 			],
-			'loginUrl' => Router::url([
+			/*'loginUrl' => Router::url([
 				'_name' => 'backend',
 				'controller' => 'Users',
 				'action' => 'login',
-			]),
+			]),*/
+			'loginUrl' => '/backend/de/users/login/',/**/
 		], 20);
 	}
 
@@ -134,7 +139,7 @@ final class Authentication implements AuthenticationServiceProviderInterface {
 	 * @noinspection PhpUnused
 	 */
 	public static function disableDefaultAuthenticators (bool $ab_disableDefaultAuthenticators): void {
-		self::$lb_disableDefaultAuthenticators = $ab_disableDefaultAuthenticators;
+		static::$disableDefaultAuthenticators = $ab_disableDefaultAuthenticators;
 	}
 
 
@@ -145,7 +150,7 @@ final class Authentication implements AuthenticationServiceProviderInterface {
 	 */
 	public static function addIdentifier (string|callable $ax_identifier, array $aa_config = [], int $ai_priority = 100): void {
 		if (is_string($ax_identifier)) {
-			self::$la_identifiers[] = [
+			static::$identifiers[] = [
 				'identifier' => [
 					'name' => $ax_identifier,
 					'config' => $aa_config,
@@ -154,7 +159,7 @@ final class Authentication implements AuthenticationServiceProviderInterface {
 			];
 		}
 		else {
-			self::$la_identifiers[] = [
+			static::$identifiers[] = [
 				'identifier' => $ax_identifier,
 				'priority' => $ai_priority,
 			];
@@ -167,12 +172,12 @@ final class Authentication implements AuthenticationServiceProviderInterface {
 	 *
 	 * @throws \Exception
 	 */
-	private function loadIdentifiers (AuthenticationServiceInterface $ao_servce): void {
-		if ( ! self::$lb_disableDefaultIdentifiers) {
+	protected function loadIdentifiers (AuthenticationServiceInterface $ao_servce): void {
+		if ( ! static::$disableDefaultIdentifiers) {
 			$this->addDefaultIdentifiers();
 		}
 
-		$la_identifiers = self::$la_identifiers;
+		$la_identifiers = static::$identifiers;
 		usort($la_identifiers, function($aa_a, $aa_b) {
 			return $aa_a['priority'] <=> $aa_b['priority'];
 		});
@@ -201,7 +206,7 @@ final class Authentication implements AuthenticationServiceProviderInterface {
 	/**
 	 * Register the default identifiers for backend users
 	 */
-	private function addDefaultIdentifiers (): void {
+	protected function addDefaultIdentifiers (): void {
 		$this->addIdentifier(\Authentication\Identifier\PasswordIdentifier::class, [
 			'resolver' => [
 				'className' => \Authentication\Identifier\Resolver\OrmResolver::class,
@@ -215,9 +220,11 @@ final class Authentication implements AuthenticationServiceProviderInterface {
 	 * Disable the default identifiers for Session and Form
 	 *
 	 * @param bool $ab_disableDefaultIdentifiers
+	 *
+	 * @noinspection PhpUnused
 	 */
 	public static function disableDefaultIdentifiers (bool $ab_disableDefaultIdentifiers): void {
-		self::$lb_disableDefaultIdentifiers = $ab_disableDefaultIdentifiers;
+		static::$disableDefaultIdentifiers = $ab_disableDefaultIdentifiers;
 	}
 
 
@@ -226,10 +233,20 @@ final class Authentication implements AuthenticationServiceProviderInterface {
 	 *
 	 * @return \Authentication\AuthenticationServiceInterface
 	 * @throws \Exception
+	 *
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function getAuthenticationService (ServerRequestInterface $ao_request): AuthenticationServiceInterface {
-		if ($this->ls_type === 'Backend') {
-			return $this->getBackendAuthenticationService($ao_request);
+		/*if (!$ao_request && ! $this->service) {
+			throw new \RuntimeException(sprintf('Cannot retrieve authentication service without a request object in `%s`', static::class));
+		}*/
+
+		if ($this->type === 'backend') {
+			if ( ! $this->service) {
+				$this->service = $this->getBackendAuthenticationService($ao_request);
+			}
+
+			return $this->service;
 		}
 
 		throw new \Exception(__('::unknown_authentication'));
@@ -240,25 +257,65 @@ final class Authentication implements AuthenticationServiceProviderInterface {
 	 * @param \Psr\Http\Message\ServerRequestInterface $ao_request
 	 *
 	 * @return \Authentication\AuthenticationServiceInterface
+	 * @throws \Exception
+	 *
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function getBackendAuthenticationService (ServerRequestInterface $ao_request): AuthenticationServiceInterface {
+	protected function getBackendAuthenticationService (ServerRequestInterface $ao_request): AuthenticationServiceInterface {
 		$lo_service = new \Awyiss\Authentication\AuthenticationService();
 
-		$lb_isLogoutPage = strtolower(Router::getRequest()->getParam('controller') . '/' . Router::getRequest()->getParam('action')) === 'users/logout';
+		try {
+			/** @var \Awyiss\Middleware\LocaleMiddleware $lo_locale */
+			$lo_locale = $ao_request->getAttribute('locale');
+			$ls_lang = $lo_locale->getLanguageFromUrl();
+		}
+		catch (\Exception $lo_exception) {
+			if ($lo_exception->getCode() == 404) {
+				$la_languages = $lo_locale->getLanguages('backend');
+				$ls_lang = key($la_languages) ?? NULL;
+			}
+
+			if (empty($ls_lang)) {
+				throw $lo_exception;
+			}
+		}
+
+		//$lb_isLogoutPage = strtolower(Router::getRequest()->getParam('controller') . '/' . Router::getRequest()->getParam('action')) === 'users/logout';
 		// Define where users should be redirected to when they are not authenticated
 		$lo_service->setConfig([
 			'unauthenticatedRedirect' => Router::url([
 				'_name' => 'backend',
+				'lang' => $ls_lang,
 				'controller' => 'Users',
 				'action' => 'login',
 			]),
-			'queryParam' => $lb_isLogoutPage ? NULL : 'redirect',
+			/*'unauthenticatedRedirect' => '/backend/de/users/login/',*/ //'queryParam' => $lb_isLogoutPage ? NULL : 'redirect',
+			'queryParam' => NULL,
 		]);
 
 		$this->loadAuthenticators($lo_service);
 		$this->loadIdentifiers($lo_service);
 
+		EventManager::instance()->on('Behavior.TimeTracker.beforeSave', function() use ($lo_service) {
+			$this->fillIdentityColumn($lo_service, ...func_get_args());
+		});
+
+		EventManager::instance()->on('Behavior.Audit.beforeSave', function() use ($lo_service) {
+			$this->fillIdentityColumn($lo_service, ...func_get_args());
+		});
+
 		return $lo_service;
+	}
+
+	/**
+	 * @noinspection PhpUnusedParameterInspection
+	 */
+	protected function fillIdentityColumn (AuthenticationService $ao_authenticationService, Event $ao_event, EntityInterface $ao_entity, string $as_identityColumn): void {
+		$lo_identity = $ao_authenticationService->getIdentity();
+		$ao_entity->$as_identityColumn = $lo_identity->getIdentifier();
+
+		if ($lo_identity instanceof \Awyiss\Model\Entity\UsersExternal) {
+			$ao_entity->$as_identityColumn *= -1;
+		}
 	}
 }

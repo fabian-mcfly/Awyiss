@@ -1,22 +1,11 @@
-<?
+<?php declare(strict_types=1);
 
 /*
- * Local configuration file to provide any overrides to our app.php configuration
+ * Local configuration file to provide any overrides to our awyiss.php configuration
  * Note: It is not recommended to commit files with credentials into source code version control.
  */
 return [
 	'debug' => filter_var(env('DEBUG', FALSE), FILTER_VALIDATE_BOOLEAN),
-
-	/*
-	 * Security and encryption configuration
-	 *
-	 * - salt - A random string used in security hashing methods.
-	 *   The salt value is also used as the encryption key.
-	 *   You should treat it as extremely sensitive data.
-	 */
-	'Security' => [
-		'salt' => env('SECURITY_SALT', ''),
-	],
 
 	/*
 	 * Connection information used by the ORM to connect
@@ -26,14 +15,32 @@ return [
 	 */
 	'Datasources' => [
 		'default' => [
-			'username' => '',
-			'password' => '',
-			'database' => 'awyiss',
+			'database' => '',
 			/*
-			 * You can use a DSN string to set the entire configuration
+			 * If your MySQL server is configured with `skip-character-set-client-handshake`
+			 * then you MUST use the `flags` config to set your charset encoding.
+			 * For e.g. `'flags' => [\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8mb4']`
 			 */
-			'url' => env('DATABASE_URL', NULL),
+			'flags' => [],
+			/*
+			 * During development, if using MySQL < 5.6, uncommenting the
+			 * following line could boost the speed at which schema metadata is
+			 * fetched from the database. It can also be set directly with the
+			 * mysql configuration directive 'innodb_stats_on_metadata = 0'
+			 * which is the recommended value in production environments
+			 */
+			//'init' => ['SET GLOBAL innodb_stats_on_metadata = 0'],
+			'password' => '',
+			//'url' => env('DATABASE_URL', NULL), //You can use a DSN string to set the entire configuration
+			'username' => '',
+
 		],
+	],
+
+	'Email' => [
+		'default' => [
+			'from' => NULL,
+		]
 	],
 
 	/*
@@ -48,19 +55,24 @@ return [
 			//'className' => \Cake\Mailer\Transport\DebugTransport::class, //To not send any mails
 			'className' => \Cake\Mailer\Transport\MailTransport::class, //To use the default php mail()
 			//'className' => \Cake\Mailer\Transport\SmtpTransport::class, //To use a smtp server
-			'host' => 'localhost',
-			'port' => 25,
-			'username' => NULL,
-			'password' => NULL,
 			'client' => NULL,
-			'url' => env('EMAIL_TRANSPORT_DEFAULT_URL', NULL),
+			'host' => 'localhost',
+			'password' => NULL,
+			'port' => 25,
+			'url' => env('EMAIL_TRANSPORT_DEFAULT_URL'),
+			'username' => NULL,
 		],
 	],
 
-	'Email' => [
-		'default' => [
-			'from' => NULL,
-		]
+	/*
+	 * Security and encryption configuration
+	 *
+	 * - salt - A random string used in security hashing methods.
+	 *   The salt value is also used as the encryption key.
+	 *   You should treat it as extremely sensitive data.
+	 */
+	'Security' => [
+		'salt' => env('SECURITY_SALT', ''),
 	],
 
 	'Session' => [

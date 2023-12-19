@@ -29,18 +29,16 @@ class ProxyIdentifier extends AbstractIdentifier {
 	/**
 	 * {@inheritDoc}
 	 */
-	public function identify (array $credentials) {
+	public function identify (array $credentials): \ArrayAccess|array|null {
 		$this->setConfig('resolver', $this->getConfig('remoteResolver'));
-		$identity = $this->getResolver()->find($credentials);
 
-		return $identity;
+		return $this->getResolver()->find($credentials);
 	}
 
 
-	public function reidentify ($credentials) {
+	public function reidentify ($credentials): \ArrayAccess|array|null {
 		$this->setConfig('resolver', $this->getConfig('localResolver'));
-		$identity = $this->getResolver()->find($credentials);
 
-		return $identity;
+		return $this->getResolver()->find($credentials);
 	}
 }

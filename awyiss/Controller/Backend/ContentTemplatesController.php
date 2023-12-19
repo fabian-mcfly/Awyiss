@@ -11,82 +11,180 @@ use Awyiss\Controller\BackendController as Controller;
  * ContentTemplates Controller
  *
  * @property \Awyiss\Model\Table\ContentTemplatesTable $ContentTemplates
- * @method \Awyiss\Model\Entity\ContentTemplate[]|\Cake\Datasource\ResultSetInterface paginate($object = NULL, array $settings = [])
  */
 class ContentTemplatesController extends Controller {
+	protected array $availableElements = [
+		'parent_id',
+		'columnwidth',
+		'title',
+		'subtitle',
+		'text',
+		'link',
+		'media_id',
+		'media_alt_id',
+		'media_folders_id',
+		'duplicate_of',
+		'forms_id',
+		'tags',
+	];
+
+
 	/**
 	 * Overview method
 	 *
-	 * @return \Cake\Http\Response|null|void Renders view
+	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
+	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
 	public function overview () {
-		$contentTemplates = $this->paginate($this->ContentTemplates->find('withAttributes'));
+		$this->Access->ensureOne('create', 'update', 'delete');
 
-		$this->set(compact('contentTemplates'));
+		$lo_contentTemplates = $this->ContentTemplates->find('withAttributes')->where($this->overviewWhere);
+
+		$this->set([
+			'ao_contentTemplates' => $lo_contentTemplates,
+		]);
 	}
 
 
 	/**
 	 * Add method
 	 *
-	 * @return \Cake\Http\Response|null|void Redirects on successful add, renders view otherwise.
+	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
+	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
 	public function add () {
-		$contentTemplate = $this->ContentTemplates->newEmptyEntity();
-		if ($this->request->is('post')) {
-			$contentTemplate = $this->ContentTemplates->patchEntity($contentTemplate, $this->request->getData());
-			if ($this->ContentTemplates->save($contentTemplate)) {
-				$this->Flash->success(__('The content template has been saved.'));
+		$this->Access->ensure('create');
 
-				return $this->redirect(['action' => 'overview']);
+		$lo_contentTemplate = $this->ContentTemplates->newDefaultEntity();
+		if ($this->request->is('post')) {
+			if ($la_available_elements = $this->request->getData('available_elements', [])) {
+				$la_available_elements = array_filter($la_available_elements, function($aa_element) {
+					return ! is_numeric($aa_element['name']);
+				});
 			}
-			$this->Flash->error(__('The content template could not be saved. Please, try again.'));
+
+			$la_assigned_content_areas = $this->request->getData('assigned_content_areas', []);
+
+			$lo_contentTemplate = $this->ContentTemplates->patchEntity($lo_contentTemplate, [
+					'available_elements' => $la_available_elements,
+					'assigned_content_areas' => $la_assigned_content_areas,
+				] + $this->request->getData());
+
+			if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
+				if ($this->ContentTemplates->save($lo_contentTemplate)) {
+					$this->Flash->success(__('::add_succeeded'));
+
+					if ($this->request->getData('submit') == 'submit_close') {
+						return $this->redirect(['action' => 'overview']);
+					}
+
+					return $this->redirect(['action' => 'edit', 'id' => $lo_contentTemplate->id]);
+				}
+
+				$this->Flash->error(__('::add_failed'));
+			}
 		}
-		$this->set(compact('contentTemplate'));
+
+		$this->set([
+			'ao_contentTemplate' => $lo_contentTemplate,
+			'aa_availableElements' => $this->availableElements,
+			'ao_pageTemplates' => $this->getPageTemplates(),
+		]);
+	}
+
+
+	protected function getPageTemplates (): \Cake\ORM\ResultSet {
+		return $this->getTableLocator()->get('PageTemplates')->find('withAttributes')->all();
 	}
 
 
 	/**
 	 * Edit method
 	 *
-	 * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
-	 * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
+	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
 	public function edit () {
-		$id = $this->request->getParam('id');
+		$this->Access->ensure('update');
 
-		$contentTemplate = $this->ContentTemplates->get($id, [
-			'contain' => [],
-		]);
-		if ($this->request->is(['patch', 'post', 'put'])) {
-			$contentTemplate = $this->ContentTemplates->patchEntity($contentTemplate, $this->request->getData());
-			if ($this->ContentTemplates->save($contentTemplate)) {
-				$this->Flash->success(__('The content template has been saved.'));
+		$li_id = $this->request->getParam('id');
+		$lo_contentTemplate = $this->ContentTemplates->find()->where(['id' => $li_id])->first();
 
-				return $this->redirect(['action' => 'overview']);
-			}
-			$this->Flash->error(__('The content template could not be saved. Please, try again.'));
+		if ( ! $lo_contentTemplate) {
+			$this->Flash->error(__('::record_not_found'));
+
+			return $this->redirect(['action' => 'overview']);
 		}
-		$this->set(compact('contentTemplate'));
+
+		if ($this->request->is(['patch', 'post', 'put'])) {
+			if ($la_availableElements = $this->request->getData('available_elements', [])) {
+				$la_availableElements = array_filter($la_availableElements, function($aa_element) {
+					return ! is_numeric($aa_element['name']);
+				});
+			}
+
+			$la_assignedContentAreas = $this->request->getData('assigned_content_areas', []);
+
+			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+			$lb_availableElementsDirty = ! ($lo_contentTemplate->available_elements == $la_availableElements);
+			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+			$lb_assignedContentAreasDirty = ! ($lo_contentTemplate->assigned_content_areas == $la_assignedContentAreas);
+
+			$lo_contentTemplate = $this->ContentTemplates->patchEntity($lo_contentTemplate, [
+					'available_elements' => $la_availableElements,
+					'assigned_content_areas' => $la_assignedContentAreas,
+				] + $this->request->getData());
+
+			$lo_contentTemplate->setDirty('available_elements', $lb_availableElementsDirty);
+			$lo_contentTemplate->setDirty('assigned_content_areas', $lb_assignedContentAreasDirty);
+
+			if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
+				if ($this->ContentTemplates->save($lo_contentTemplate)) {
+					$this->Flash->success(__('::edit_succeeded'));
+
+					if ($this->request->getData('submit') == 'submit_close') {
+						return $this->redirect(['action' => 'overview']);
+					}
+
+					return $this->redirect(['action' => 'edit', 'id' => $lo_contentTemplate->id]);
+				}
+
+				$this->Flash->error(__('::edit_failed'));
+			}
+		}
+
+		$this->set([
+			'ao_contentTemplate' => $lo_contentTemplate,
+			'aa_availableElements' => $this->availableElements,
+			'ao_pageTemplates' => $this->getPageTemplates(),
+		]);
 	}
 
 
 	/**
 	 * Delete method
 	 *
-	 * @param string|null $id Content Template id.
-	 *
-	 * @return \Cake\Http\Response|null|void Redirects to overview.
-	 * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
+	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
-	public function delete ($id = NULL) {
-		$this->request->allowMethod(['post', 'delete']);
-		$contentTemplate = $this->ContentTemplates->get($id);
-		if ($this->ContentTemplates->delete($contentTemplate)) {
-			$this->Flash->success(__('The content template has been deleted.'));
+	public function delete () {
+		$this->Access->ensure('delete');
+
+		$this->request->allowMethod(['get', 'delete']);
+		$li_id = $this->request->getParam('id');
+		$lo_contentTemplate = $this->ContentTemplates->find()->where(['id' => $li_id])->first();
+
+		if ( ! $lo_contentTemplate) {
+			$this->Flash->error(__('::record_not_found'));
+
+			return $this->redirect(['action' => 'overview']);
+		}
+
+		if ($this->ContentTemplates->delete($lo_contentTemplate)) {
+			$this->Flash->success(__('::delete_succeeded'));
 		}
 		else {
-			$this->Flash->error(__('The content template could not be deleted. Please, try again.'));
+			$this->Flash->error(__('::delete_failed'));
 		}
 
 		return $this->redirect(['action' => 'overview']);

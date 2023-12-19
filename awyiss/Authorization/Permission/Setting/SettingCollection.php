@@ -36,8 +36,9 @@ class SettingCollection extends ObjectRegistry {
 	 * @param string $as_alias Setting alias.
 	 * @param array $aa_config Config array.
 	 *
-	 * @return \Awyiss\Authorization\Permission\Setting\SettingCollection
-	 * @throws \RuntimeException
+	 * @return \Awyiss\Authorization\Permission\Setting\SettingInterface
+	 *
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	protected function _create ($as_class, string $as_alias, array $aa_config): SettingInterface {
 		$lo_setting = new $as_class($aa_config);
@@ -56,8 +57,10 @@ class SettingCollection extends ObjectRegistry {
 	 *
 	 * @return string|null
 	 * @psalm-return class-string|null
+	 *
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	protected function _resolveClassName ($as_class): ?string {
+	protected function _resolveClassName (string $as_class): ?string {
 		$ls_className = App::className($as_class);
 
 		return is_string($ls_className) ? $ls_className : NULL;
@@ -66,13 +69,13 @@ class SettingCollection extends ObjectRegistry {
 
 	/**
 	 * @param string $as_class Missing class.
-	 * @param string $as_plugin Class plugin.
+	 * @param null|string $as_plugin Class plugin.
 	 *
 	 * @return void
-	 * @throws \RuntimeException
+	 *
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	protected function _throwMissingClassError (string $as_class, ?string $as_plugin): void {
-		$message = sprintf('Setting class `%s` was not found.', $as_class);
-		throw new RuntimeException($message);
+		throw new RuntimeException(sprintf('Setting class `%s` was not found.', $as_class));
 	}
 }

@@ -5,6 +5,9 @@ namespace Awyiss\Model;
 
 
 abstract class Entity extends \Cake\ORM\Entity {
+	protected array $defaults = [];
+
+
 	public function __construct (array $aa_properties = [], array $aa_options = []) {
 		parent::__construct($aa_properties, $aa_options);
 
@@ -21,6 +24,9 @@ abstract class Entity extends \Cake\ORM\Entity {
 	}
 
 
+	/**
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 */
 	public function &get (string $as_field) {
 		$lx_value = parent::get($as_field);
 		$ls_method = static::_accessor($as_field, 'get');
@@ -33,5 +39,10 @@ abstract class Entity extends \Cake\ORM\Entity {
 		}
 
 		return $lx_value;
+	}
+
+
+	public function defaultValues (): array {
+		return $this->defaults;
 	}
 }

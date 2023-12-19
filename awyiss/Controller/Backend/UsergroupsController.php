@@ -18,14 +18,16 @@ class UsergroupsController extends Controller {
 	/**
 	 * Overview method
 	 *
-	 * @return \Cake\Http\Response|NULL|void Renders view
+	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
 	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
 	public function overview () {
-		$lo_usergroups = $this->paginate($this->Usergroups->find('withAttributes')->contain(['UsergroupsPermissions']));
+		$this->Access->ensureOne('create', 'update', 'delete');
+
+		$lo_usergroups = $this->paginate($this->Usergroups->find('withAttributes'));
 
 		$this->set([
-			'usergroups' => $lo_usergroups,
+			'ao_usergroups' => $lo_usergroups,
 		]);
 	}
 	
@@ -33,33 +35,36 @@ class UsergroupsController extends Controller {
 	/**
 	 * Add method
 	 *
-	 * @return \Cake\Http\Response|NULL|void Redirects on successful add, renders view otherwise.
+	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
 	 * @noinspection PhpReturnDocTypeMismatchInspection
-	 * @noinspection RedundantSuppression
 	 */
 	public function add () {
-		$la_authorizationPolicies = $this->_getAuthorizationPolicies();
+		$this->Access->ensure('create');
 
-		$lo_usergroup = $this->Usergroups->newEmptyEntity();
+		$la_authorizationPolicies = $this->getAuthorizationPolicies();
+
+		$lo_usergroup = $this->Usergroups->newDefaultEntity();
 		if ($this->request->is('post')) {
 			$la_data = $this->request->getData();
-			$la_data['usergroups_permissions'] = $this->_reformatPermissionsData($la_authorizationPolicies, $la_data);
+			$la_data['usergroup_permissions'] = $this->reformatPermissionsData($la_authorizationPolicies, $la_data);
+			$lo_usergroup = $this->Usergroups->patchEntity($lo_usergroup, $la_data, ['associated' => ['UsergroupPermissions', 'Users']]);
 
-			$lo_usergroup = $this->Usergroups->patchEntity($lo_usergroup, $la_data, ['associated' => ['UsergroupsPermissions', 'Users']]);
-			if ($this->Usergroups->save($lo_usergroup)) {
-				$this->Flash->success(__('::add_succeeded'));
+			if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
+				if ($this->Usergroups->save($lo_usergroup)) {
+					$this->Flash->success(__('::add_succeeded'));
 
-				if ($this->request->getData('submit') == 'submit_close') {
-					return $this->redirect(['action' => 'overview']);
+					if ($this->request->getData('submit') == 'submit_close') {
+						return $this->redirect(['action' => 'overview']);
+					}
+
+					return $this->redirect(['action' => 'edit', 'id' => $lo_usergroup->id]);
 				}
-
-				return $this->redirect(['action' => 'edit', 'id' => $lo_usergroup->id]);
+				$this->Flash->error(__('::add_failed'));
 			}
-			$this->Flash->error(__('::add_failed'));
 		}
 
 		$la_currentPermissions = [];
-		foreach ($lo_usergroup->usergroups_permissions ?? [] AS $lo_usergroupPermission) {
+		foreach ($lo_usergroup->usergroup_permissions ?? [] AS $lo_usergroupPermission) {
 			if (!isset($la_currentPermissions[ $lo_usergroupPermission->scope ])) {
 				$la_currentPermissions[ $lo_usergroupPermission->scope ] = [];
 			}
@@ -69,12 +74,12 @@ class UsergroupsController extends Controller {
 				'settings' => json_decode($lo_usergroupPermission->settings ?? "", TRUE),
 			];
 		}
-		$lo_usergroup->usergroups_permissions = $la_currentPermissions;
+		$lo_usergroup->usergroup_permissions = $la_currentPermissions;
 
 		$this->set([
-			'usergroup' => $lo_usergroup,
-			'users' => $this->Usergroups->Users->find()->all(),
-			'authorizationPolicies' => $la_authorizationPolicies,
+			'ao_usergroup' => $lo_usergroup,
+			'ao_users' => $this->Usergroups->Users->find()->all(),
+			'aa_authorizationPolicies' => $la_authorizationPolicies,
 		]);
 	}
 	
@@ -82,39 +87,45 @@ class UsergroupsController extends Controller {
 	/**
 	 * Edit method
 	 *
-	 * @return \Cake\Http\Response|NULL|void Redirects on successful edit, renders view otherwise.
-	 * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
 	 * @noinspection PhpReturnDocTypeMismatchInspection
-	 * @noinspection RedundantSuppression
 	 */
 	public function edit () {
-		$la_authorizationPolicies = $this->_getAuthorizationPolicies();
+		$this->Access->ensure('update');
+
+		$la_authorizationPolicies = $this->getAuthorizationPolicies();
 
 		$li_id = $this->request->getParam('id');
-		$lo_usergroup = $this->Usergroups->get($li_id, [
-			'contain' => ['UsergroupsPermissions', 'Users'],
-		]);
+		$lo_usergroup = $this->Usergroups->find()->contain(['UsergroupPermissions', 'Users'])->where(['id' => $li_id])->first();
+
+		if ( ! $lo_usergroup) {
+			$this->Flash->error(__('::record_not_found'));
+
+			return $this->redirect(['action' => 'overview']);
+		}
 
 		if ($this->request->is(['patch', 'post', 'put'])) {
 			$la_data = $this->request->getData();
-			$la_data['usergroups_permissions'] = $this->_reformatPermissionsData($la_authorizationPolicies, $la_data);
+			$la_data['usergroup_permissions'] = $this->reformatPermissionsData($la_authorizationPolicies, $la_data);
 
-			$lo_usergroup = $this->Usergroups->patchEntity($lo_usergroup, $la_data, ['associated' => ['UsergroupsPermissions', 'Users']]);
+			$lo_usergroup = $this->Usergroups->patchEntity($lo_usergroup, $la_data, ['associated' => ['UsergroupPermissions', 'Users']]);
 
-			if ($this->Usergroups->save($lo_usergroup)) {
-				$this->Flash->success(__('::edit_succeeded'));
+			if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
+				if ($this->Usergroups->save($lo_usergroup)) {
+					$this->Flash->success(__('::edit_succeeded'));
 
-				if ($this->request->getData('submit') == 'submit_close') {
-					return $this->redirect(['action' => 'overview']);
+					if ($this->request->getData('submit') == 'submit_close') {
+						return $this->redirect(['action' => 'overview']);
+					}
+
+					return $this->redirect(['action' => 'edit', 'id' => $lo_usergroup->id]);
 				}
-
-				return $this->redirect(['action' => 'edit', 'id' => $lo_usergroup->id]);
+				$this->Flash->error(__('::edit_failed'));
 			}
-			$this->Flash->error(__('::edit_failed'));
 		}
 
 		$la_currentPermissions = [];
-		foreach ($lo_usergroup->usergroups_permissions ?? [] AS $lo_usergroupPermission) {
+		foreach ($lo_usergroup->usergroup_permissions ?? [] AS $lo_usergroupPermission) {
 			if (!isset($la_currentPermissions[ $lo_usergroupPermission->scope ])) {
 				$la_currentPermissions[ $lo_usergroupPermission->scope ] = [];
 			}
@@ -124,12 +135,12 @@ class UsergroupsController extends Controller {
 				'settings' => json_decode($lo_usergroupPermission->settings ?? "", TRUE),
 			];
 		}
-		$lo_usergroup->usergroups_permissions = $la_currentPermissions;
+		$lo_usergroup->usergroup_permissions = $la_currentPermissions;
 
 		$this->set([
-			'usergroup' => $lo_usergroup,
-			'users' => $this->Usergroups->Users->find()->all(),
-			'authorizationPolicies' => $la_authorizationPolicies,
+			'ao_usergroup' => $lo_usergroup,
+			'ao_users' => $this->Usergroups->Users->find()->all(),
+			'aa_authorizationPolicies' => $la_authorizationPolicies,
 		]);
 	}
 	
@@ -137,15 +148,22 @@ class UsergroupsController extends Controller {
 	/**
 	 * Delete method
 	 *
-	 * @return \Cake\Http\Response|NULL|void Redirects to overview.
-	 * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
 	 * @noinspection PhpReturnDocTypeMismatchInspection
-	 * @noinspection RedundantSuppression
 	 */
 	public function delete () {
+		$this->Access->ensure('delete');
+
 		$this->request->allowMethod(['get', 'delete']);
 		$li_id = $this->request->getParam('id');
 		$lo_usergroup = $this->Usergroups->get($li_id);
+
+		if ( ! $lo_usergroup) {
+			$this->Flash->error(__('::record_not_found'));
+
+			return $this->redirect(['action' => 'overview']);
+		}
+
 		if ($this->Usergroups->delete($lo_usergroup)) {
 			$this->Flash->success(__('::delete_succeeded'));
 		}
@@ -157,7 +175,7 @@ class UsergroupsController extends Controller {
 	}
 
 
-	private function _getAuthorizationPolicies (): array {
+	protected function getAuthorizationPolicies (): array {
 		/** @var \Awyiss\Authorization\AuthorizationService $lo_authorizationService */
 		$lo_authorizationService = $this->getRequest()->getAttribute('authorization');
 		$la_policies = $lo_authorizationService->getPolicies();
@@ -168,7 +186,7 @@ class UsergroupsController extends Controller {
 	}
 
 
-	private function _reformatPermissionsData (array $aa_authorizationPolicies, array $aa_data = []): array {
+	protected function reformatPermissionsData (array $aa_authorizationPolicies, array $aa_data = []): array {
 		$la_permissions = [];
 
 		/** @var \Awyiss\Authorization\Policy\PolicyInterface $lo_authorizationPolicy */

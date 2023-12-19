@@ -24,7 +24,6 @@ use Cake\Core\Configure;
 use Cake\Datasource\ConnectionManager;
 use Cake\Error\ConsoleErrorHandler;
 use Cake\Error\ErrorHandler;
-use Cake\I18n\Package;
 use Cake\Log\Log;
 use Cake\Mailer\Mailer;
 use Cake\Mailer\TransportFactory;
@@ -33,12 +32,7 @@ use Cake\Utility\Security;
 
 
 /*
- * Read configuration file and inject configuration into various
- * CakePHP classes.
- *
- * By default there is only one configuration file. It is often a good
- * idea to create multiple configuration files, and separate the configuration
- * that changes from configuration that does not. This makes deployment simpler.
+ * Read configuration file
  */
 try {
 	Configure::config('default', new PhpConfig());
@@ -54,9 +48,9 @@ catch (\Exception $ex) {
  * for a short time.
  */
 if (Configure::read('debug')) {
-	Configure::write('Cache._cake_model_.duration', '+30 seconds');
-	Configure::write('Cache._cake_core_.duration', '+30 seconds');
-	Configure::write('Cache._cake_routes_.duration', '+2 seconds');
+	Configure::write('Cache._cake_model_.duration', '+60 seconds');
+	Configure::write('Cache._cake_core_.duration', '+60 seconds');
+	Configure::write('Cache._cake_routes_.duration', '+60 seconds');
 }
 
 
@@ -139,16 +133,3 @@ TransportFactory::setConfig(Configure::consume('EmailTransport'));
 //\Cake\Utility\Inflector::rules('plural', ['/^(inflect)or$/i' => '\1ables']);
 //\Cake\Utility\Inflector::rules('irregular', ['red' => 'redlings']);
 \Cake\Utility\Inflector::rules('uninflected', ['media']);
-
-
-\Cake\I18n\I18n::config('_fallback', function($as_domain, $as_locale) {
-	$ls_domain = $as_domain;
-	if (strpos($ls_domain, '/') === FALSE) {
-		$ls_domain = (defined('IS_BACKEND') && IS_BACKEND ? 'backend' : 'frontend') . DS . $ls_domain;
-	}
-
-	$lo_fileLoader = new \Awyiss\I18n\MessagesFileLoader($ls_domain, $as_locale, 'po');
-	$lo_default = $lo_fileLoader();
-
-	return new Package('default', NULL, $lo_default->getMessages());
-});

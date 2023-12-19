@@ -8,27 +8,32 @@ use Awyiss\Authorization\Permission\PermissionCollection;
 
 
 trait FullPermissionsTrait {
-	protected static $lo_permissionCollection;
-	protected static $ls_scope;
+	protected static ?PermissionCollection $permissionCollection = NULL;
+	protected static string $scope;
 
 
 	public static function getScope (): string {
-		if (static::$ls_scope === NULL) {
+		if (static::$scope === NULL) {
 			$la_parts = explode('\\', static::class);
-			static::$ls_scope = array_pop($la_parts);
-			static::$ls_scope = substr(static::$ls_scope, 0, -6);
-			static::$ls_scope = \Cake\Utility\Inflector::underscore(static::$ls_scope);
+			static::$scope = array_pop($la_parts);
+			static::$scope = substr(static::$scope, 0, -6);
+			static::$scope = \Cake\Utility\Inflector::underscore(static::$scope);
 		}
 
-		return static::$ls_scope;
+		return static::$scope;
 	}
 
 
+	/**
+	 * @throws \Exception
+	 *
+	 * @noinspection PhpUnused
+	 */
 	public static function getPermissions (): PermissionCollection {
-		if (static::$lo_permissionCollection === NULL) {
-			static::$lo_permissionCollection = new PermissionCollection(static::getScope());
+		if (static::$permissionCollection === NULL) {
+			static::$permissionCollection = new PermissionCollection(static::getScope());
 		}
 
-		return static::$lo_permissionCollection;
+		return static::$permissionCollection;
 	}
 }

@@ -2,11 +2,11 @@
 	/**
 	 * Overview method
 	 *
-	 * @return void|?Response Renders view
+	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
 	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
 	public function overview () {
-		$this->Access->assureOne('create', 'update', 'delete');
+		$this->Access->ensureOne('create', 'update', 'delete');
 
 {% set belongsTo = Bake.aliasExtractor(modelObj, 'BelongsTo') %}
 {% if belongsTo %}

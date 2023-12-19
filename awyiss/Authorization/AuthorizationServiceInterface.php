@@ -5,7 +5,6 @@ namespace Awyiss\Authorization;
 
 
 use Authentication\AuthenticationServiceInterface;
-use Awyiss\Authorization\Policy\PolicyInterface;
 
 
 interface AuthorizationServiceInterface {

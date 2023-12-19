@@ -18,61 +18,47 @@ namespace Awyiss\Controller\Component;
  */
 class PaginatorComponent extends \Cake\Controller\Component\PaginatorComponent {
 	/**
-	 * Default pagination aa_settings.
-	 *
-	 * When calling paginate() these aa_settings will be merged with the configuration
-	 * you provide.
-	 *
-	 * - `maxLimit` - The maximum limit users can choose to view. Defaults to 100
-	 * - `limit` - The initial number of items per page. Defaults to 20.
-	 * - `page` - The starting page, defaults to 1.
-	 * - `allowedParameters` - A list of parameters users are allowed to set using request
-	 *   parameters. Modifying this list will allow users to have more influence
-	 *   over pagination, be careful with what you permit.
-	 *
-	 * @var array
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	protected $_defaultConfig = [
-		'page' => 1,
-		'limit' => 20,
-		'maxLimit' => 100,
-		'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
-	];
-
-
-	public function paginate (object $ao_object, array $aa_settings = []): \Cake\Datasource\ResultSetInterface {
-		$request = $this->_registry->getController()->getRequest();
-
-		try {
-			$la_params = $request->getParam('parts', []);
-			array_walk($la_params, function(&$ax_value) {
-				$ax_value = str_replace('-', '_', $ax_value);
-			});
-
-			$results = $this->_paginator->paginate($ao_object, $la_params, $aa_settings);
-
-			$this->_setPagingParams();
-		}
-		catch (\Cake\Datasource\Exception\PageOutOfBoundsException $ex) {
-			$this->_setPagingParams();
-
-			throw new \Cake\Http\Exception\NotFoundException(NULL, NULL, $ex);
-		}
-
-		return $results;
+	public function initialize (array $aa_config): void {
+		$this->setConfig($aa_config + $this->getController()->paginate + [
+			'page' => 1,
+			'limit' => 20,
+			'maxLimit' => 99999,
+			'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
+		], NULL, FALSE);
 	}
 
 
 	/**
-	 * Set paging params to request instance.
-	 *
-	 * @return void
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	protected function _setPagingParams (): void {
-		$controller = $this->getController();
-		$request = $controller->getRequest();
-		$paging = $this->_paginator->getPagingParams() + (array) $request->getAttribute('paging', []);
+	public function paginate (object $ao_object, array $aa_settings = []): \Cake\Datasource\ResultSetInterface {
+		$lo_request = $this->getController()->getRequest();
 
-		$controller->setRequest($request->withAttribute('paging', $paging));
+		try {
+			$la_params = $lo_request->getParam('parts', []);
+			array_walk($la_params, function(&$ax_value) {
+				$ax_value = str_replace('-', '_', $ax_value);
+			});
+
+			$lo_results = $this->_paginator->paginate($ao_object, $la_params, $aa_settings);
+
+			$this->_setPagingParams();
+		}
+		catch (\Cake\Datasource\Exception\PageOutOfBoundsException $ex) {
+			//try {
+			//	$lo_results = $this->_paginator->paginate($ao_object, ['page' => 1] + $la_params, $aa_settings);
+			//
+			//	$this->_setPagingParams();
+			//}
+			//catch (\Cake\Datasource\Exception\PageOutOfBoundsException $ex) {
+			$this->_setPagingParams();
+
+			throw new \Cake\Http\Exception\NotFoundException(NULL, NULL, $ex);
+			//}
+		}
+
+		return $lo_results;
 	}
 }

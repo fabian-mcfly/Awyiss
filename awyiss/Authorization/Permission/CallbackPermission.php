@@ -9,8 +9,8 @@ use RuntimeException;
 
 
 class CallbackPermission extends SimplePermission implements SettingPermissionInterface {
-	private mixed $lx_callback = NULL;
-	private ?SettingCollection $lo_settingCollection = NULL;
+	protected mixed $callback = NULL;
+	protected ?SettingCollection $settingCollection = NULL;
 
 
 	public function __construct (array $aa_config, ?PermissionCollection $ao_permissionCollection = NULL) {
@@ -22,8 +22,11 @@ class CallbackPermission extends SimplePermission implements SettingPermissionIn
 	}
 
 
+	/**
+	 * @noinspection PhpUnused
+	 */
 	public function getCallback (): mixed {
-		return $this->lx_callback;
+		return $this->callback;
 	}
 
 
@@ -32,29 +35,35 @@ class CallbackPermission extends SimplePermission implements SettingPermissionIn
 			throw new RuntimeException('Config `callback` must be callable');
 		}
 
-		$this->lx_callback = $ax_callback;
+		$this->callback = $ax_callback;
 
 		return $this;
 	}
 
 
+	/**
+	 * @throws \Exception
+	 */
 	public function getSettings (): SettingCollection {
-		if ($this->lo_settingCollection === NULL) {
-			$this->lo_settingCollection = $this->_defaultSettings();
+		if ($this->settingCollection === NULL) {
+			$this->settingCollection = $this->defaultSettings();
 		}
 
-		return $this->lo_settingCollection;
+		return $this->settingCollection;
 	}
 
 
 	public function setSettings (SettingCollection $ao_settings): CallbackPermission {
-		$this->lo_settingCollection = $ao_settings;
+		$this->settingCollection = $ao_settings;
 
 		return $this;
 	}
 
 
-	private function _defaultSettings (): SettingCollection {
+	/**
+	 * @throws \Exception
+	 */
+	protected function defaultSettings (): SettingCollection {
 		$lo_settingCollection = new SettingCollection();
 
 		$lo_settingCollection->load(\Awyiss\Authorization\Permission\Setting\SingleChoiceSetting::class, [

@@ -5,24 +5,22 @@ namespace Awyiss\Controller\Backend;
 
 
 use Awyiss\Controller\BackendController as Controller;
-use Cake\Http\Response;
 
 
 /**
  * PageRoles Controller
  *
  * @property \Awyiss\Model\Table\PageRolesTable $PageRoles
- * @method \Awyiss\Model\Entity\PageRole[]|\Cake\Datasource\ResultSetInterface paginate($ao_object = NULL, array $aa_settings = [])
  */
 class PageRolesController extends Controller {
 	/**
 	 * Overview method
 	 *
-	 * @return void|?Response Renders view
+	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
 	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
 	public function overview () {
-		$this->Access->assureOne('create', 'update', 'delete');
+		$this->Access->ensureOne('create', 'update', 'delete');
 
 		$lo_pageRoles = $this->PageRoles->find('withAttributes');
 
@@ -30,93 +28,99 @@ class PageRolesController extends Controller {
 			'ao_pageRoles' => $lo_pageRoles,
 		]);
 	}
-	
+
 
 	/**
 	 * Add method
 	 *
-	 * @return void|?Response Redirects on successful add, renders view otherwise.
+	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
 	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
 	public function add () {
-		$this->Access->assure('create');
+		$this->Access->ensure('create');
 
-		$lo_pageRole = $this->PageRoles->newEmptyEntity();
+		$lo_pageRole = $this->PageRoles->newDefaultEntity();
 		if ($this->request->is('post')) {
 			$lo_pageRole = $this->PageRoles->patchEntity($lo_pageRole, $this->request->getData());
-			if ($this->PageRoles->save($lo_pageRole)) {
-				$this->Flash->success(__('::add_succeeded'));
 
-				if ($this->request->getData('submit') == 'submit_close') {
-					return $this->redirect(['action' => 'overview']);
+			if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
+				if ($this->PageRoles->save($lo_pageRole)) {
+					$this->Flash->success(__('::add_succeeded'));
+
+					if ($this->request->getData('submit') == 'submit_close') {
+						return $this->redirect(['action' => 'overview']);
+					}
+
+					return $this->redirect(['action' => 'edit', 'id' => $lo_pageRole->id]);
 				}
-
-				return $this->redirect(['action' => 'edit', 'id' => $lo_pageRole->id]);
+				$this->Flash->error(__('::add_failed'));
 			}
-			$this->Flash->error(__('::add_failed'));
 		}
 
 		$this->set([
 			'ao_pageRole' => $lo_pageRole,
 		]);
 	}
-	
+
 
 	/**
 	 * Edit method
 	 *
-	 * @return void|?Response Redirects on successful edit, renders view otherwise.
-	 * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
-	 * @noinspection PhpDocSignatureInspection
+	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
+	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
 	public function edit () {
-		$this->Access->assure('update');
+		$this->Access->ensure('update');
 
 		$li_id = $this->request->getParam('id');
 		$lo_pageRole = $this->PageRoles->find()->where(['id' => $li_id])->first();
 
-		if (!$lo_pageRole) {
+		if ( ! $lo_pageRole) {
 			$this->Flash->error(__('::record_not_found'));
+
 			return $this->redirect(['action' => 'overview']);
 		}
 
 		if ($this->request->is(['patch', 'post', 'put'])) {
 			$lo_pageRole = $this->PageRoles->patchEntity($lo_pageRole, $this->request->getData());
-			if ($this->PageRoles->save($lo_pageRole)) {
-				$this->Flash->success(__('::editSucceeded'));
 
-				if ($this->request->getData('submit') == 'submit_close') {
-					return $this->redirect(['action' => 'overview']);
+			if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
+				if ($this->PageRoles->save($lo_pageRole)) {
+					$this->Flash->success(__('::edit_succeeded'));
+
+					if ($this->request->getData('submit') == 'submit_close') {
+						return $this->redirect(['action' => 'overview']);
+					}
+
+					return $this->redirect(['action' => 'edit', 'id' => $lo_pageRole->id]);
 				}
 
-				return $this->redirect(['action' => 'edit', 'id' => $lo_pageRole->id]);
+				$this->Flash->error(__('::edit_failed'));
 			}
-			$this->Flash->error(__('::editFailed'));
 		}
 
 		$this->set([
 			'ao_pageRole' => $lo_pageRole,
 		]);
 	}
-	
+
 
 	/**
 	 * Delete method
 	 *
-	 * @return void|?Response Redirects to overview.
-	 * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
 	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
 	public function delete () {
-		$this->Access->assure('delete');
+		$this->Access->ensure('delete');
 
 		$this->request->allowMethod(['get', 'delete']);
 		$li_id = $this->request->getParam('id');
-
 		$lo_pageRole = $this->PageRoles->find()->where(['id' => $li_id])->first();
 
-		if (!$lo_pageRole) {
+		if ( ! $lo_pageRole) {
 			$this->Flash->error(__('::record_not_found'));
+
 			return $this->redirect(['action' => 'overview']);
 		}
 

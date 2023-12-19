@@ -25,10 +25,10 @@ use Cake\Error\Debugger;
 <ul class="stack-trace">
 	<?php foreach ($trace as $i => $stack):?>
 		<?php
-		$class = isset($stack['file']) && strpos($stack['file'], APP) === FALSE ? 'vendor-frame' : 'app-frame';
-		$class .= $i == 0 ? ' active' : '';
+		$ls_class = isset($stack['file']) && strpos($stack['file'], APP) === FALSE ? 'vendor-frame' : 'app-frame';
+		$ls_class .= $i == 0 ? ' active' : '';
 		?>
-		<li class="stack-frame <?=$class?>">
+		<li class="stack-frame <?=$ls_class?>">
 			<a href="#" data-target="stack-frame-<?=$i?>">
 				<?php if (isset($stack['class'])):?>
 					<span class="stack-function"><?=h($stack['class'] . $stack['type'] . $stack['function'])?></span>

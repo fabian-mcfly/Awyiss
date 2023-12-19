@@ -1,0 +1,87 @@
+{# @var ao_contentTemplate \Awyiss\Model\Entity\ContentTemplate #}
+{# @var aa_availableElements array #}
+{# @var ao_pageTemplates \Cake\ORM\ResultSet #}
+{# @var _view \Awyiss\View\BackendView #}
+
+{% set la_requiredElements = combine((ao_contentTemplate.available_elements ?? [])|column('name'), (ao_contentTemplate.available_elements ?? [])|column('required')) %}
+
+<div class="ContentTemplates Form Add">
+	{{ helper_Form_create(ao_contentTemplate, {method: 'post', idPrefix: 'ContentTemplate'}) }}
+
+	<fieldset>
+		<legend>{{ __('::headline_add') }}</legend>
+		{{ helper_Form_control('title') }}
+		{{ helper_Form_control('filename') }}
+		{{ helper_Form_control('active') }}
+		{{ helper_SystemOrder_control('system_order', {entity: ao_contentTemplate}) }}
+	</fieldset>
+
+	<fieldset>
+		<legend>{{ __('::available_elements') }}</legend>
+		<ul class="NoList">
+			{% for ls_availableElement in aa_availableElements %}
+				<li>
+					{{ helper_Form_checkbox('available_elements[' ~ loop.index0 ~ '][name]', {
+						value: ls_availableElement,
+
+						id: 'ContentTemplate-AvailableElements-' ~ ls_availableElement|camelize,
+						checked: ls_availableElement in (ao_contentTemplate.available_elements ?? [])|column('name'),
+					}) }}
+
+					<label for="ContentTemplate-AvailableElements-{{ ls_availableElement|camelize }}">{{ __('contents::' ~ ls_availableElement) }}</label>
+
+					{{ helper_Form_checkbox('available_elements[' ~ loop.index0 ~ '][required]', {
+						value: TRUE,
+						label: __('::required'),
+						id: 'ContentTemplate-AvailableElements-' ~ ls_availableElement|camelize,
+						checked: la_requiredElements[ ls_availableElement ] ?? FALSE,
+					}) }}
+
+				</li>
+			{% endfor %}
+		</ul>
+	</fieldset>
+
+	<fieldset>
+		<legend>{{ __('::page_templates') }}</legend>
+		<table>
+			<thead>
+				<tr>
+					<th>
+						{{ __('pageTemplates::title') }}
+					</th>
+					<th>
+						{{ __('pageTemplates::content_areas') }}
+					</th>
+				</tr>
+			</thead>
+			{% for lo_pageTemplate in ao_pageTemplates|filter(ao_pageTemplate => ao_pageTemplate.content_areas is not empty ) %}
+				<tbody>
+					<tr>
+						<td>
+							<strong>{{ lo_pageTemplate.title }}</strong>
+						</td>
+						<td>
+							{% for ls_contentArea in lo_pageTemplate.content_areas %}
+								{{ helper_Form_control('assigned_content_areas[' ~ lo_pageTemplate.id ~ '][]', {
+									hiddenField: FALSE,
+									type: 'checkbox',
+									value: ls_contentArea,
+									label: ls_contentArea,
+									id: 'ContentTemplate-AssignedContentAreas-' ~ lo_pageTemplate.filename|camelize ~'-' ~ ls_contentArea|camelize,
+									checked: ls_contentArea in (ao_contentTemplate.assigned_content_areas[ lo_pageTemplate.id ] ?? []),
+								}) }}
+							{% endfor %}
+						</td>
+					</tr>
+				</tbody>
+			{% endfor %}
+		</table>
+	</fieldset>
+
+	{{ helper_Form_hidden('reload_form', {val: 0}) }}
+
+	{{ helper_Form_button(__('::save')) }}
+	{{ helper_Form_button(__('::save_close'), {name: 'submit', value: 'submit_close'}) }}
+	{{ helper_Form_end() }}
+</div>

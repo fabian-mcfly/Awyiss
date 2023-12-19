@@ -9,44 +9,57 @@ use Awyiss\Authorization\Permission\PermissionInterface;
 
 
 trait BasicCrudPermissionsTrait {
-	protected static ?PermissionCollection $lo_permissionCollection = NULL;
-	protected static $ls_scope;
+	protected static ?PermissionCollection $permissionCollection = NULL;
+	protected static ?string $scope = NULL;
 
 
 	public static function getScope (): string {
-		if (static::$ls_scope === NULL) {
+		if (static::$scope === NULL) {
 			$la_parts = explode('\\', static::class);
-			static::$ls_scope = array_pop($la_parts);
-			static::$ls_scope = substr(static::$ls_scope, 0, -6);
-			static::$ls_scope = \Cake\Utility\Inflector::underscore(static::$ls_scope);
+			static::$scope = array_pop($la_parts);
+			static::$scope = substr(static::$scope, 0, -6);
+			static::$scope = \Cake\Utility\Inflector::underscore(static::$scope);
 		}
 
-		return static::$ls_scope;
+		return static::$scope;
 	}
 
 
+	/**
+	 * @throws \Exception
+	 *
+	 * @noinspection PhpUnused
+	 */
 	public static function getPermissions (): PermissionCollection {
-		if (static::$lo_permissionCollection === NULL) {
-			static::$lo_permissionCollection = static::_loadPermissions();
+		if (static::$permissionCollection === NULL) {
+			static::$permissionCollection = static::_loadPermissions();
 		}
 
-		return static::$lo_permissionCollection;
+		return static::$permissionCollection;
 	}
 
 
+	/**
+	 * @throws \Exception
+	 *
+	 * @noinspection PhpUnused
+	 */
 	public static function getPermission (string $as_identifier): ?PermissionInterface {
-		if (static::$lo_permissionCollection === NULL) {
-			static::$lo_permissionCollection = static::_loadPermissions();
+		if (static::$permissionCollection === NULL) {
+			static::$permissionCollection = static::_loadPermissions();
 		}
 
-		if (static::$lo_permissionCollection->has($as_identifier)) {
-			return static::$lo_permissionCollection->get($as_identifier);
+		if (static::$permissionCollection->has($as_identifier)) {
+			return static::$permissionCollection->get($as_identifier);
 		}
 
 		return NULL;
 	}
 
 
+	/**
+	 * @throws \Exception
+	 */
 	private static function _loadPermissions (): ?PermissionCollection {
 		$lo_permissions = new PermissionCollection(static::getScope());
 

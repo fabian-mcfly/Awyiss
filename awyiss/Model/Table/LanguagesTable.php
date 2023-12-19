@@ -11,11 +11,12 @@ use Cake\Validation\Validator;
 /**
  * Languages Model
  *
+ * @method \Awyiss\Model\Entity\Language newDefaultEntity()
  * @method \Awyiss\Model\Entity\Language newEmptyEntity()
  * @method \Awyiss\Model\Entity\Language newEntity(array $data, array $options = [])
  * @method \Awyiss\Model\Entity\Language[] newEntities(array $data, array $options = [])
  * @method \Awyiss\Model\Entity\Language get($primaryKey, $options = [])
- * @method \Awyiss\Model\Entity\Language findOrCreate($search, ?callable $callback = null, $options = [])
+ * @method \Awyiss\Model\Entity\Language findOrCreate($search, ?callable $callback = NULL, $options = [])
  * @method \Awyiss\Model\Entity\Language patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
  * @method \Awyiss\Model\Entity\Language[] patchEntities(iterable $entities, array $data, array $options = [])
  * @method \Awyiss\Model\Entity\Language|false save(\Cake\Datasource\EntityInterface $entity, $options = [])
@@ -24,9 +25,16 @@ use Cake\Validation\Validator;
  * @method \Awyiss\Model\Entity\Language[]|\Cake\Datasource\ResultSetInterface saveManyOrFail(iterable $entities, $options = [])
  * @method \Awyiss\Model\Entity\Language[]|\Cake\Datasource\ResultSetInterface|false deleteMany(iterable $entities, $options = [])
  * @method \Awyiss\Model\Entity\Language[]|\Cake\Datasource\ResultSetInterface deleteManyOrFail(iterable $entities, $options = [])
- * @property \Awyiss\Model\Table\SystemConfigurationTable&\Cake\ORM\Association\HasMany $SystemConfiguration
+ * @property \Awyiss\Model\Table\ConfigurationTable&\Cake\ORM\Association\HasMany $Configuration
  */
 class LanguagesTable extends \Awyiss\Model\Table {
+	protected array $_defaultConfig = [
+		'systemOrder' => [
+			'relatedColumns' => ['type'],
+		],
+	];
+
+
 	/**
 	 * Initialize method
 	 *
@@ -41,7 +49,7 @@ class LanguagesTable extends \Awyiss\Model\Table {
 		$this->setDisplayField('title');
 		$this->setPrimaryKey('id');
 
-		$this->hasMany('SystemConfiguration')
+		$this->hasMany('Configuration')
 			->setBindingKey('shortcode')
 			->setForeignKey('languages_shortcode')
 			->setSaveStrategy('replace')
@@ -55,6 +63,8 @@ class LanguagesTable extends \Awyiss\Model\Table {
 	 * @param \Cake\Validation\Validator $ao_validator Validator instance.
 	 *
 	 * @return \Cake\Validation\Validator
+	 *
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function validationDefault (Validator $ao_validator): Validator {
 		$ao_validator->integer('id')->allowEmptyString('id', NULL, 'create');
@@ -84,11 +94,6 @@ class LanguagesTable extends \Awyiss\Model\Table {
 
 
 	public function buildRules (RulesChecker $rules): RulesChecker {
-		/*$rules->addCreate([$this, 'uniqueShortcode'], 'uniqueShortcode', [
-			'errorField' => 'shortcode',
-			'message' => 'shortcode_not_unique'
-		]);*/
-
 		$rules->add($rules->isUnique(['shortcode', 'type'], __('validation::shortcode_not_unique')));
 
 		return $rules;

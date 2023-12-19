@@ -7,6 +7,7 @@ namespace Awyiss\Model\Table;
 /**
  * Attributes Model
  *
+ * @method \Awyiss\Model\Entity\Attribute newDefaultEntity()
  * @method \Awyiss\Model\Entity\Attribute newEmptyEntity()
  * @method \Awyiss\Model\Entity\Attribute newEntity(array $data, array $options = [])
  * @method \Awyiss\Model\Entity\Attribute[] newEntities(array $data, array $options = [])

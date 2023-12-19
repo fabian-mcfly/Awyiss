@@ -8,6 +8,7 @@ use Authentication\IdentityInterface;
 use Authentication\PasswordHasher\DefaultPasswordHasher;
 use Awyiss\Authorization\AccessCollection;
 use Awyiss\Authorization\IdentityPermissionsInterface;
+use Cake\Datasource\FactoryLocator;
 
 
 /**
@@ -32,6 +33,9 @@ use Awyiss\Authorization\IdentityPermissionsInterface;
  * @property \Awyiss\Model\Entity\Usergroup[] $usergroups
  */
 class User extends \Awyiss\Model\Entity implements IdentityPermissionsInterface, IdentityInterface {
+	use \Cake\ORM\Locator\LocatorAwareTrait;
+
+
 	/**
 	 * Fields that can be mass assigned using newEntity() or patchEntity().
 	 *
@@ -49,6 +53,9 @@ class User extends \Awyiss\Model\Entity implements IdentityPermissionsInterface,
 		'email' => TRUE,
 		'usergroups' => TRUE,
 	];
+	/*protected array $defaults = [
+		'usergroups' => [],
+	];*/
 	/**
 	 * Fields that are excluded from JSON versions of the entity.
 	 *
@@ -57,13 +64,13 @@ class User extends \Awyiss\Model\Entity implements IdentityPermissionsInterface,
 	protected $_hidden = [
 		'password',
 	];
-	private ?AccessCollection $lo_accesses = NULL;
+	protected ?AccessCollection $accesses = NULL;
 
 
 	/**
 	 * Authentication\IdentityInterface method
 	 */
-	public function getIdentifier () {
+	public function getIdentifier (): ?int {
 		return $this->id;
 	}
 
@@ -71,16 +78,32 @@ class User extends \Awyiss\Model\Entity implements IdentityPermissionsInterface,
 	/**
 	 * Authentication\IdentityInterface method
 	 */
-	public function getOriginalData () {
+	public function getOriginalData (): self {
 		return $this;
+	}
+
+
+	public function getAccess (): AccessCollection {
+		$this->accesses = NULL;
+		if ($this->accesses === NULL) {
+			$this->accesses = new AccessCollection();
+
+			$la_usergroups = $this->getUsergroups();
+			/** @var \Awyiss\Model\Entity\UsergroupPermission $lo_usergrousPermissions */
+			foreach (array_merge(...array_column($la_usergroups, 'usergroup_permissions')) as $lo_usergrousPermissions) {
+				$this->accesses->add($lo_usergrousPermissions->scope, $lo_usergrousPermissions->identifier, $lo_usergrousPermissions->access, $lo_usergrousPermissions->settings);
+			}
+		}
+
+		return $this->accesses;
 	}
 
 
 	public function getUsergroups (): ?array {
 		//if (!$this->usergroups)  {
-		if ($this->usergroups === NULL)  {
+		if ($this->usergroups === NULL) {
 			/** @var self $lo_self */
-			$lo_self = \Cake\Datasource\FactoryLocator::get('Table')->get($this->getSource())->get($this->id, ['contain' => ['Usergroups.UsergroupsPermissions']]);
+			$lo_self = FactoryLocator::get('Table')->get($this->getSource())->get($this->id, ['contain' => ['Usergroups.UsergroupPermissions']]);
 			$this->usergroups = $lo_self->usergroups;
 		}
 
@@ -88,37 +111,38 @@ class User extends \Awyiss\Model\Entity implements IdentityPermissionsInterface,
 	}
 
 
-	public function getAccess (): AccessCollection {
-		$this->lo_accesses = NULL;
-		if ($this->lo_accesses === NULL) {
-			$this->lo_accesses = new AccessCollection();
-
-			$la_usergroups = $this->getUsergroups();
-			/** @var \Awyiss\Model\Entity\UsergroupsPermission $lo_usergrousPermissions */
-			foreach (array_merge(...array_column($la_usergroups, 'usergroups_permissions')) as $lo_usergrousPermissions) {
-				$this->lo_accesses->add($lo_usergrousPermissions->scope, $lo_usergrousPermissions->identifier, $lo_usergrousPermissions->access, $lo_usergrousPermissions->settings);
-			}
+	public function __wakeup () {
+		if ($this->get('last_login') < \Cake\I18n\FrozenTime::now()->subMinutes(2)) {
+			$this->usergroups = NULL;
 		}
-
-		return $this->lo_accesses;
-	}
-
-
-	protected function _setEmail ($value) {
-		if ($value === '') {
-			$value = NULL;
-		}
-
-		return $value;
 	}
 
 
 	// Automatically hash passwords when they are changed.
-	protected function _setPassword (string $as_password) {
-		if (!empty($as_password)) {
+
+
+	/**
+	 * @noinspection PhpUnused
+	 */
+	protected function _setEmail (string $ax_email): ?string {
+		if ($ax_email === '') {
+			return NULL;
+		}
+
+		return $ax_email;
+	}
+
+
+	/**
+	 * @noinspection PhpUnused
+	 */
+	protected function _setPassword (string $as_password): ?string {
+		if ( ! empty($as_password)) {
 			$lo_hasher = new DefaultPasswordHasher();
 
 			return $lo_hasher->hash($as_password);
 		}
+
+		return NULL;
 	}
 }

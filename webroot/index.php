@@ -11,7 +11,7 @@ ini_set('display_errors', 1);
 $ls_dir = dirname(__DIR__);
 
 // Check platform requirements
-if (file_exists($ls_file = $ls_dir . '/awyiss/Config/requirements.php')) {
+if (file_exists($ls_file = $ls_dir . '/awyiss/config/requirements.php')) {
 	require $ls_file;
 }
 

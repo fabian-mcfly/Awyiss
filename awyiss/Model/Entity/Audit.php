@@ -13,6 +13,7 @@ namespace Awyiss\Model\Entity;
  * @property int $parent_id
  * @property array|null $data_old
  * @property array|null $data_new
+ * @property array|null $diff
  * @property int|null $created_by
  * @property \Cake\I18n\FrozenTime|null $created_on
  */
@@ -32,27 +33,44 @@ class Audit extends \Awyiss\Model\Entity {
 		'parent_id' => TRUE,
 		'data_old' => TRUE,
 		'data_new' => TRUE,
+		'diff' => TRUE,
 		'created_by' => TRUE,
 		'created_on' => TRUE,
 	];
 
 
 	/**
-	 * @param $ax_value
+	 * @param mixed $ax_value
 	 *
 	 * @return array
+	 *
+	 * @noinspection PhpUnused
 	 */
-	public function _setDataOld ($ax_value): array {
+	public function _setDataOld (mixed $ax_value): array {
 		return is_array($ax_value) ? $ax_value : [$ax_value];
 	}
 
 
 	/**
-	 * @param $ax_value
+	 * @param mixed $ax_value
 	 *
 	 * @return array
+	 *
+	 * @noinspection PhpUnused
 	 */
-	public function _setDataNew ($ax_value): array {
+	public function _setDataNew (mixed $ax_value): array {
+		return is_array($ax_value) ? $ax_value : [$ax_value];
+	}
+
+
+	/**
+	 * @param mixed $ax_value
+	 *
+	 * @return array
+	 *
+	 * @noinspection PhpUnused
+	 */
+	public function _setDiff (mixed $ax_value): array {
 		return is_array($ax_value) ? $ax_value : [$ax_value];
 	}
 }

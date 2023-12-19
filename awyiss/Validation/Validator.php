@@ -1,19 +1,27 @@
 <?php
 
+/**
+ * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+ */
+
+declare(strict_types=1);
+
 
 namespace Awyiss\Validation;
 
 
+use Cake\Utility\Inflector;
 use Cake\Validation\ValidationSet;
 
 
 class Validator extends \Cake\Validation\Validator {
-	private string $ls_i18nDomain = '';
+	protected string $i18nDomain = '';
 
 
 	public function setI18nDomain (string $as_domain) {
-		$this->ls_i18nDomain = \Cake\Utility\Inflector::underscore($as_domain);
+		$this->i18nDomain = Inflector::underscore($as_domain);
 	}
+
 
 	/**
 	 * @param string $as_field
@@ -27,11 +35,7 @@ class Validator extends \Cake\Validation\Validator {
 		$la_errors = [];
 		// Loading default provider in case there is none
 		$this->getProvider('default');
-		$ls_message = 'The provided value is invalid';
-
-		if ($this->_useI18n) {
-			$ls_message = __('form_validation::invalid_value');
-		}
+		//$ls_message = __('form_validation::invalid_value');
 
 		foreach ($ao_rules as $ls_name => $lo_rule) {
 			$lx_result = $lo_rule->process($aa_data[ $as_field ], $this->_providers, [
@@ -40,42 +44,54 @@ class Validator extends \Cake\Validation\Validator {
 				'field' => $as_field,
 			]);
 
-			if ($this->_useI18n) {
-				$la_pass = [
-					'field' => __($this->ls_i18nDomain . '::' . $as_field),
-				];
-
-				if ($lx_pass = ($lo_rule->get('pass')[0] ?? [])) {
-					if ($ls_name == 'sameAs' || $ls_name == 'notSameAs') {
-						$lx_pass = __($this->ls_i18nDomain . '::' . $lx_pass);
-					}
-					elseif ($ls_name == 'dateTime') {
-						$lx_pass = $lx_pass[0] ?? 'Ymd';
-					}
-					$la_pass[ $ls_name ] = $lx_pass;
-
-				}
-
-				//try {
-					$ls_message = __d('cake', 'form_validation::' . $ls_name . 'Error', $la_pass);
-				//}
-				//catch (\Exception $e) {
-				//	dump($ls_name, $lx_pass);
-				//	dd($this->ls_i18nDomain, $ls_name, $la_pass, $e->getMessage());
-				//}
-			}
-
 			if ($lx_result === TRUE) {
 				continue;
 			}
 
-			$la_errors[ $ls_name ] = $ls_message;
-			if (is_array($lx_result) && $ls_name === static::NESTED) {
-				$la_errors = $lx_result;
+			if (is_string($lx_result) || (is_array($lx_result) && $ls_name === static::NESTED)) {
+				if (is_string($lx_result)) {
+					$la_errors[ $ls_name ] = $lx_result;
+				}
+				else {
+					$la_errors = $lx_result;
+				}
+
+				if ($lo_rule->isLast()) {
+					break;
+				}
+
+				continue;
 			}
-			if (is_string($lx_result)) {
-				$la_errors[ $ls_name ] = $lx_result;
+
+			$la_pass = [
+				'field' => __($this->i18nDomain . '::' . Inflector::underscore($as_field)),
+			];
+
+			if ($lx_pass = ($lo_rule->get('pass')[0] ?? [])) {
+				if ($ls_name == 'sameAs' || $ls_name == 'notSameAs') {
+					$lx_pass = __($this->i18nDomain . '::' . Inflector::underscore($lx_pass));
+				}
+				elseif ($ls_name == 'dateTime') {
+					$lx_pass = $lx_pass[0] ?? 'Ymd';
+				}
+				elseif ($ls_name == 'inList') {
+					$lx_pass = implode(',', $lx_pass);
+				}
+				elseif (!is_scalar($lx_pass)) {
+					throw new \RuntimeException(sprintf('Missing translation informations for `%s`, passed arguments: `%s`', $ls_name, print_r($lx_pass, TRUE)));
+				}
+				$la_pass[ $ls_name ] = $lx_pass;
 			}
+
+			/*try {
+				$ls_message = __('form_validation::error_' . Inflector::underscore($ls_name), $la_pass);
+			}
+			catch (\Exception $e) {
+				dump($ls_name, $lx_pass);
+				dd($this->ls_i18nDomain, $ls_name, $la_pass, $e->getMessage());
+			}*/
+
+			$la_errors[ $ls_name ] = __('form_validation::error_' . Inflector::underscore($ls_name), $la_pass);
 
 			if ($lo_rule->isLast()) {
 				break;
@@ -96,10 +112,7 @@ class Validator extends \Cake\Validation\Validator {
 			return NULL;
 		}
 
-		$ls_defaultMessage = 'This field is required';
-		if ($this->_useI18n) {
-			$ls_defaultMessage = __d('cake', 'This field is required');
-		}
+		$ls_defaultMessage = __('form_validation::error_required');
 
 		return $this->_presenceMessages[ $as_field ] ?? $ls_defaultMessage;
 	}
@@ -115,10 +128,7 @@ class Validator extends \Cake\Validation\Validator {
 			return NULL;
 		}
 
-		$ls_defaultMessage = 'This field cannot be left empty';
-		if ($this->_useI18n) {
-			$ls_defaultMessage = __d('cake', 'This field cannot be left empty');
-		}
+		$ls_defaultMessage = __('form_validation::error_not_empty');
 
 		foreach ($this->_fields[ $as_field ] as $rule) {
 			if ($rule->get('rule') === 'notBlank' && $rule->get('message')) {

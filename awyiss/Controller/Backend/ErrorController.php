@@ -13,6 +13,7 @@ class ErrorController extends Controller {
 	 * Initialization hook method.
 	 *
 	 * @return void
+	 * @throws \Exception
 	 */
 	public function initialize (): void {
 		$this->loadComponent('RequestHandler');
@@ -24,7 +25,7 @@ class ErrorController extends Controller {
 	 *
 	 * @param \Cake\Event\EventInterface $ao_event Event.
 	 *
-	 * @return \Cake\Http\Response|null|void
+	 * @return null|void
 	 */
 	public function beforeRender (EventInterface $ao_event) {
 		$lo_builder = $this->viewBuilder();

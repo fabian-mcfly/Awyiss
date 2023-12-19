@@ -48,6 +48,9 @@ class AccessComponent extends Component {
 	}
 
 
+	/**
+	 * @noinspection PhpUnused
+	 */
 	public function forScope (string $as_scope): self {
 		$this->resetScope();
 
@@ -70,6 +73,9 @@ class AccessComponent extends Component {
 	}
 
 
+	/**
+	 * @noinspection PhpUnused
+	 */
 	public function setIdentity (IdentityPermissionsInterface $ao_identity): self {
 		$this->setConfig('identity', $ao_identity);
 
@@ -84,6 +90,9 @@ class AccessComponent extends Component {
 	}
 
 
+	/**
+	 * @noinspection PhpUnused
+	 */
 	public function withIdentity (IdentityPermissionsInterface $ao_identity): self {
 		$this->resetIdentity();
 
@@ -94,17 +103,20 @@ class AccessComponent extends Component {
 	}
 
 
-	public function assureOne (string ...$ax_identifier): void {
-		$this->assure($ax_identifier);
+	public function ensureOne (string ...$ax_identifier): void {
+		$this->ensure($ax_identifier);
 	}
 
 
-	public function assureAll (string ...$ax_identifier): void {
-		$this->assure(...$ax_identifier);
+	/**
+	 * @noinspection PhpUnused
+	 */
+	public function ensureAll (string ...$ax_identifier): void {
+		$this->ensure(...$ax_identifier);
 	}
 
 
-	public function assure (string|array ...$ax_identifier): void {
+	public function ensure (string|array ...$ax_identifier): void {
 		$ls_scope = $this->getScope();
 
 		/** @var \Awyiss\Authorization\AuthorizationService $lo_authorizationService */
@@ -116,7 +128,7 @@ class AccessComponent extends Component {
 			//Default = no access?
 			if (!$this->getConfig('defaultAccessible', FALSE)) {
 				//I'm sorry Dave, I'm afraid I can't do that
-				$this->_throwAccessViolationException($ls_scope);
+				$this->throwAccessViolationException($ls_scope);
 			}
 			else {
 				return;
@@ -126,20 +138,26 @@ class AccessComponent extends Component {
 		$lo_identity = $this->getIdentity();
 		$la_accesses = [];
 		foreach ($ax_identifier AS $lx_identifier) {
-			$la_accesses[] = $this->_getAccess($ls_policyClass, $lx_identifier, $lo_identity->getAccess()->getScope($ls_scope));
+			$la_accesses[] = $this->getAccess($ls_policyClass, $lx_identifier, $lo_identity->getAccess()->getScope($ls_scope));
 		}
 
 		if (in_array(FALSE, $la_accesses, TRUE) ||
 			(!in_array(TRUE, $la_accesses, TRUE) && !$this->getConfig('defaultAccessible', FALSE))) {
-			$this->_throwAccessViolationException($ls_scope);
+			$this->throwAccessViolationException($ls_scope);
 		}
 	}
 
 
 	/**
-	 * @var \Awyiss\Authorization\Policy\PolicyInterface|NULL $as_policyClass
+	 *
+	 * @param string $as_policyClass
+	 * @param string|array $ax_identifier
+	 * @param null|array $aa_access
+	 *
+	 * @return null|bool
 	 */
-	private function _getAccess (string $as_policyClass, string|array $ax_identifier, ?array $aa_access): mixed {
+	protected function getAccess (string $as_policyClass, string|array $ax_identifier, ?array $aa_access): ?bool {
+		/** @var \Awyiss\Authorization\Policy\PolicyInterface $as_policyClass */
 		if (is_string($ax_identifier)) {
 			return $as_policyClass::getPermission($ax_identifier)?->isAccessible($aa_access);
 		}
@@ -157,12 +175,18 @@ class AccessComponent extends Component {
 	}
 
 
-	private function _throwAccessViolationException (string $as_scope): void {
+	/**
+	 * @noinspection PhpUnusedParameterInspection
+	 */
+	protected function throwAccessViolationException (string $as_scope): void {
 		throw new \Cake\Http\Exception\ForbiddenException();
 	}
 
 
-	private function _getIdentity (): IdentityPermissionsInterface {
+	/**
+	 * @noinspection DuplicatedCode
+	 */
+	protected function _getIdentity (): IdentityPermissionsInterface {
 		/** @var \Awyiss\Authorization\AuthorizationService $lo_authorizationService */
 		$lo_authorizationService = $this->getController()->getRequest()->getAttribute('authorization');
 		if ( ! $lo_authorizationService) {

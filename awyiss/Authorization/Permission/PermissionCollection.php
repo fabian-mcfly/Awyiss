@@ -10,16 +10,18 @@ use RuntimeException;
 
 
 class PermissionCollection extends ObjectRegistry {
-	private string $ls_scope;
+	protected string $scope;
 
 
 	/**
 	 * Constructor
 	 *
 	 * @param array $aa_config Configuration
+	 *
+	 * @throws \Exception
 	 */
 	public function __construct (string $as_scope, array $aa_config = []) {
-		$this->ls_scope = $as_scope;
+		$this->scope = $as_scope;
 
 		foreach ($aa_config as $key => $value) {
 			if (is_int($key)) {
@@ -32,10 +34,13 @@ class PermissionCollection extends ObjectRegistry {
 
 
 	public function getScope (): string {
-		return $this->ls_scope;
+		return $this->scope;
 	}
 
 
+	/**
+	 * @throws \Exception
+	 */
 	public function add (string $as_identifier, array $aa_config = []): self {
 		$this->load($as_identifier, $aa_config);
 
@@ -45,6 +50,8 @@ class PermissionCollection extends ObjectRegistry {
 
 	/**
 	 * {@inheritDoc}
+	 *
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function load (string $as_identifier, array $aa_config = []): PermissionInterface {
 		if ( ! isset($aa_config['className'])) {
@@ -96,11 +103,11 @@ class PermissionCollection extends ObjectRegistry {
 	 * @param string $as_alias Permission alias.
 	 * @param array $aa_config Config array.
 	 *
-	 * @return \Awyiss\Authorization\Permission\PermissionCollection
-	 * @throws \RuntimeException
+	 * @return \Awyiss\Authorization\Permission\PermissionInterface
+	 *
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	protected function _create ($as_class, string $as_alias, array $aa_config): PermissionInterface {
-		/** @var \Awyiss\Authorization\Permission\PermissionInterface $as_class */
 		$lo_permission = new $as_class($aa_config, $this);
 		if ( ! ($lo_permission instanceof PermissionInterface)) {
 			throw new RuntimeException(sprintf('Permission class `%s` must implement `%s`.', $as_class, PermissionInterface::class));
@@ -117,8 +124,10 @@ class PermissionCollection extends ObjectRegistry {
 	 *
 	 * @return string|null
 	 * @psalm-return class-string|null
+	 *
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	protected function _resolveClassName ($as_class): ?string {
+	protected function _resolveClassName (string $as_class): ?string {
 		$ls_className = App::className($as_class);
 
 		return is_string($ls_className) ? $ls_className : NULL;
@@ -127,10 +136,11 @@ class PermissionCollection extends ObjectRegistry {
 
 	/**
 	 * @param string $as_class Missing class.
-	 * @param string $as_plugin Class plugin.
+	 * @param null|string $as_plugin Class plugin.
 	 *
 	 * @return void
-	 * @throws \RuntimeException
+	 *
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	protected function _throwMissingClassError (string $as_class, ?string $as_plugin): void {
 		$message = sprintf('Permission class `%s` was not found.', $as_class);

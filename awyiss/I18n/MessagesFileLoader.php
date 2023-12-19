@@ -6,7 +6,6 @@ namespace Awyiss\I18n;
 
 use Cake\Core\App;
 use Cake\I18n\Package;
-use Locale;
 use RuntimeException;
 
 
@@ -31,7 +30,7 @@ class MessagesFileLoader extends \Cake\I18n\MessagesFileLoader {
 
 		$ls_fileName = $this->_name;
 		$ls_subfolder = NULL;
-		$li_strpos = strpos($ls_fileName, '/');
+		$li_strpos = strpos($ls_fileName, DS);
 		if ($li_strpos !== FALSE) {
 			$ls_subfolder = substr($ls_fileName, 0, $li_strpos + 1);
 			$ls_fileName = substr($ls_fileName, $li_strpos + 1);

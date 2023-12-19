@@ -10,66 +10,66 @@ use RuntimeException;
 
 
 class AuthorizationService implements AuthorizationServiceInterface {
-	private array $la_policies = [];
-	private ?AuthenticationServiceInterface $lo_authenticationService = NULL;
-	private string $ls_permissionsPropertyName = 'usergroups_permissions';
-	private string $ls_type;
+	protected array $policies = [];
+	protected ?AuthenticationServiceInterface $authenticationService = NULL;
+	//protected string $permissionsPropertyName = 'usergroup_permissions';
+	protected string $type;
 
 
 	public function __construct (string $as_type) {
-		$this->ls_type = \Cake\Utility\Inflector::camelize($as_type);
+		$this->type = \Cake\Utility\Inflector::camelize($as_type);
 	}
 
 
 	public function setAuthenticationService (AuthenticationServiceInterface $ao_authenticationService) {
-		$this->lo_authenticationService = $ao_authenticationService;
+		$this->authenticationService = $ao_authenticationService;
 	}
 
 
 	public function getAuthenticationService (): ?AuthenticationServiceInterface {
-		return $this->lo_authenticationService;
+		return $this->authenticationService;
 	}
 
 
 	public function getType (): string {
-		return $this->ls_type;
+		return $this->type;
 	}
 
 
 	public function getPolicies (string $as_type = NULL): array {
-		$ls_type = $as_type ? \Cake\Utility\Inflector::camelize($as_type) : $this->ls_type;
+		$ls_type = $as_type ? \Cake\Utility\Inflector::camelize($as_type) : $this->type;
 
-		if (!isset($this->la_policies[ $ls_type ])) {
-			$this->la_policies[ $ls_type ] = $this->_findPolicy('*', $ls_type);
-		}
+		//if (!isset($this->policies[ $ls_type ])) {
+		$this->policies[ $ls_type ] = $this->findPolicy('*', $ls_type);
+		//}
 
-		return $this->la_policies[ $ls_type ] ?? [];
+		return $this->policies[ $ls_type ] ?? [];
 	}
 
 
 	public function getPolicy (string $as_scope, ?string $as_type = NULL): ?string {
-		$ls_type = $as_type ? \Cake\Utility\Inflector::camelize($as_type) : $this->ls_type;
+		$ls_type = $as_type ? \Cake\Utility\Inflector::camelize($as_type) : $this->type;
 
-		if (!isset($this->la_policies[ $ls_type ])) {
-			$this->la_policies[ $ls_type ] = [];
+		if (!isset($this->policies[ $ls_type ])) {
+			$this->policies[ $ls_type ] = [];
 		}
 
-		if (empty($this->la_policies[ $ls_type ][ $as_scope ])) {
-			$this->la_policies[ $ls_type ] += $this->_findPolicy($as_scope, $ls_type);
+		if (empty($this->policies[ $ls_type ][ $as_scope ])) {
+			$this->policies[ $ls_type ] += $this->findPolicy($as_scope, $ls_type);
 		}
 
-		return $this->la_policies[ $ls_type ][ $as_scope ] ?? NULL;
+		return $this->policies[ $ls_type ][ $as_scope ] ?? NULL;
 	}
 
 
-	protected function _findPolicy (string $as_scope, string $as_type) {
+	protected function findPolicy (string $as_name, string $as_type): array {
 		$la_policies = [];
-		$ls_scope = \Cake\Utility\Inflector::camelize($as_scope);
+		$ls_name = \Cake\Utility\Inflector::camelize($as_name);
 		$ls_type = \Cake\Utility\Inflector::camelize($as_type);
 
 		$la_paths = [
-			'\\' . CUSTOM_NAMESPACE . '\Authorization\Policy\\' . $ls_type . '\\' => implode(DS, [ROOT, CUSTOM_DIR, 'Authorization', 'Policy', $ls_type, $ls_scope . 'Policy.php',]),
-			'\Awyiss\Authorization\Policy\\' . $ls_type . '\\' => implode(DS, [ROOT, APP_DIR, 'Authorization', 'Policy', $ls_type, $ls_scope . 'Policy.php']),
+			'\\' . CUSTOM_NAMESPACE . '\Authorization\Policy\\' . $ls_type . '\\' => implode(DS, [ROOT, CUSTOM_DIR, 'Authorization', 'Policy', $ls_type, $ls_name . 'Policy.php',]),
+			'\Awyiss\Authorization\Policy\\' . $ls_type . '\\' => implode(DS, [ROOT, APP_DIR, 'Authorization', 'Policy', $ls_type, $ls_name . 'Policy.php']),
 		];
 
 		foreach ($la_paths as $ls_namespace => $ls_path) {

@@ -22,7 +22,7 @@ namespace Awyiss\Model\Entity;
  * @property \Cake\I18n\FrozenTime|null $changed_on
  * @property int|null $deleted_by
  * @property \Cake\I18n\FrozenTime|null $deleted_on
- * @property \Awyiss\Model\Entity\SystemConfiguration[] $system_configuration
+ * @property \Awyiss\Model\Entity\Configuration[] $configuration
  */
 class Language extends \Awyiss\Model\Entity {
 	/**
@@ -41,7 +41,6 @@ class Language extends \Awyiss\Model\Entity {
 		'locale' => TRUE,
 		'type' => TRUE,
 		'active' => TRUE,
-		'deleted' => TRUE,
 		'system_order' => TRUE,
 	];
 }

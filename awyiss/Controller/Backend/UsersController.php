@@ -5,7 +5,7 @@ namespace Awyiss\Controller\Backend;
 
 
 use Awyiss\Controller\BackendController as Controller;
-
+use Cake\Event\EventInterface;
 
 //awyiss: $2y$10$B1IWA5ic5yFJCbxB7kvKD.hnfrA3M34LPtOH5y.zrK0b6PpAHj.Eu
 
@@ -17,11 +17,21 @@ use Awyiss\Controller\BackendController as Controller;
  * @method \Awyiss\Model\Entity\User[]|\Cake\Datasource\ResultSetInterface paginate($object = NULL, array $settings = [])
  */
 class UsersController extends Controller {
+	public array $categorize = [
+		'allowUnassigned' => TRUE,
+		'associationName' => 'Usergroups',
+		'enabled' => TRUE,
+		'name' => 'usergroup',
+	];
+
+
 	/**
 	 * {@inheritDoc}
+	 *
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function beforeFilter (\Cake\Event\EventInterface $event) {
-		parent::beforeFilter($event);
+	public function beforeFilter (EventInterface $ao_event) {
+		parent::beforeFilter($ao_event);
 		$this->Authentication->allowUnauthenticated(['login']);
 	}
 
@@ -29,38 +39,56 @@ class UsersController extends Controller {
 	/**
 	 * Overview method
 	 *
-	 * @return \Cake\Http\Response|null|void Renders view
+	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
 	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
 	public function overview () {
-		$users = $this->paginate($this->Users->find('withAttributes')->contain(['Usergroups']));
+		$this->Access->ensureOne('create', 'update', 'delete');
 
-		$this->set(compact('users'));
+		$lo_users = $this->Categories->filterQuery($this->Users->find('withAttributes'));
+		$lo_users = $this->paginate($lo_users);
+
+		$this->set([
+			'ao_users' => $lo_users,
+		]);
 	}
 
 
 	/**
 	 * Add method
 	 *
-	 * @return \Cake\Http\Response|null|void Redirects on successful add, renders view otherwise.
+	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
 	 * @noinspection PhpReturnDocTypeMismatchInspection
-	 * @noinspection RedundantSuppression
 	 */
 	public function add () {
-		$lo_user = $this->Users->newEmptyEntity();
+		$this->Access->ensure('create');
+
+		$lo_user = $this->Users->newDefaultEntity();
 		if ($this->request->is('post')) {
 			$lo_user = $this->Users->patchEntity($lo_user, $this->request->getData(), ['associated' => ['Usergroups']]);
-			if ($this->Users->save($lo_user)) {
-				$this->Flash->success(__('The user has been saved.'));
 
-				return $this->redirect(['action' => 'overview']);
+			if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
+				if ($this->Users->save($lo_user)) {
+					$this->Flash->success(__('::add_succeeded'));
+
+					if ($this->request->getData('submit') == 'submit_close') {
+						return $this->redirect(['action' => 'overview']);
+					}
+
+					return $this->redirect(['action' => 'edit', 'id' => $lo_user->id]);
+				}
+
+				$this->Flash->error(__('::add_failed'));
 			}
-			$this->Flash->error(__('The user could not be saved. Please, try again.'));
+		}
+
+		if (empty($lo_user->usergroups)) {
+			$lo_user->usergroups = [];
 		}
 
 		$this->set([
-			'user' => $lo_user,
-			'usergroups' => $this->Users->Usergroups->find()->all(),
+			'ao_user' => $lo_user,
+			'ao_usergroups' => $this->Users->Usergroups->find()->all(),
 		]);
 	}
 
@@ -68,18 +96,23 @@ class UsersController extends Controller {
 	/**
 	 * Edit method
 	 *
-	 * @param string|null $id User id.
-	 *
-	 * @return \Cake\Http\Response|null|void Redirects on successful edit, renders view otherwise.
-	 * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
 	 * @noinspection PhpReturnDocTypeMismatchInspection
-	 * @noinspection RedundantSuppression
 	 */
 	public function edit () {
-		$id = $this->request->getParam('id');
-		$lo_user = $this->Users->get($id, [
-			'contain' => ['Usergroups'],
-		]);
+		$this->Access->ensure('update');
+
+		$li_id = $this->request->getParam('id');
+
+		$lo_user = $this->Users->find()->contain([
+			'Usergroups',
+		])->where(['id' => $li_id])->first();
+
+		if ( ! $lo_user) {
+			$this->Flash->error(__('::record_not_found'));
+
+			return $this->redirect(['action' => 'overview']);
+		}
 
 		if ($this->request->is(['patch', 'post', 'put'])) {
 			$la_data = $this->request->getData();
@@ -89,18 +122,24 @@ class UsersController extends Controller {
 
 			$lo_user = $this->Users->patchEntity($lo_user, $la_data, ['associated' => ['Usergroups']]);
 
-			if ($this->Users->save($lo_user)) {
-				$this->Flash->success(__('The user has been saved.'));
+			if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
+				if ($this->Users->save($lo_user)) {
+					$this->Flash->success(__('::edit_succeeded'));
 
-				return $this->redirect(['action' => 'overview']);
+					if ($this->request->getData('submit') == 'submit_close') {
+						return $this->redirect(['action' => 'overview']);
+					}
+
+					return $this->redirect(['action' => 'edit', 'id' => $lo_user->id]);
+				}
+
+				$this->Flash->error(__('::edit_failed'));
 			}
-
-			$this->Flash->error(__('The user could not be saved. Please, try again.'));
 		}
 
 		$this->set([
-			'user' => $lo_user,
-			'usergroups' => $this->Users->Usergroups->find()->all(),
+			'ao_user' => $lo_user,
+			'ao_usergroups' => $this->Users->Usergroups->find()->all(),
 		]);
 	}
 
@@ -108,18 +147,27 @@ class UsersController extends Controller {
 	/**
 	 * Delete method
 	 *
-	 * @return \Cake\Http\Response|null|void Redirects to overview.
-	 * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
+	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
 	public function delete () {
+		$this->Access->ensure('delete');
+
 		$this->request->allowMethod(['get', 'delete']);
-		$id = $this->request->getParam('id');
-		$lo_user = $this->Users->get($id);
+		$li_id = $this->request->getParam('id');
+		$lo_user = $this->Users->get($li_id);
+
+		if ( ! $lo_user) {
+			$this->Flash->error(__('::record_not_found'));
+
+			return $this->redirect(['action' => 'overview']);
+		}
+
 		if ($this->Users->delete($lo_user)) {
-			$this->Flash->success(__('The user has been deleted.'));
+			$this->Flash->success(__('::delete_succeeded'));
 		}
 		else {
-			$this->Flash->error(__('The user could not be deleted. Please, try again.'));
+			$this->Flash->error(__('::delete_failed'));
 		}
 
 		return $this->redirect(['action' => 'overview']);
@@ -140,31 +188,35 @@ class UsersController extends Controller {
 			if ($this->request->is('post')) {
 				$lo_user = $this->Authentication->getIdentity()->getOriginalData();
 
-				if (is_object($lo_user) && $lo_user instanceof \Awyiss\Model\Entity\User) {
+				if ($lo_user instanceof \Awyiss\Model\Entity\User) {
 					//Track last_login and reset the failed login attempts
 					$lo_user->set([
 						'failed_attempts' => 0,
-						'last_login' => \Cake\I18n\Time::now(),
+						'last_login' => \Cake\I18n\FrozenTime::now(),
 					], ['guard' => FALSE]);
 
-					$this->Users->save($lo_user, ['saveAudit' => FALSE, 'setTimeOnUpdate' => FALSE]);
+					$this->Users->save($lo_user, ['skipAuditBehavior' => TRUE, 'setTimeOnUpdate' => FALSE]);
 				}
-				elseif (is_object($lo_user) && $lo_user instanceof \Awyiss\Model\Entity\UsersExternal) {
+				elseif ($lo_user instanceof \Awyiss\Model\Entity\UsersExternal) {
 					$lo_usersExternal = $this->getTableLocator()->get('UsersExternal');
 					//Track last_login
-					$lo_user->set('last_login', \Cake\I18n\Time::now());
+					$lo_user->set('last_login', \Cake\I18n\FrozenTime::now());
 
-					$lo_usersExternal->save($lo_user, ['saveAudit' => FALSE]);
+					$lo_usersExternal->save($lo_user, ['skipAuditBehavior' => TRUE]);
 				}
+
+				/** @var \Cake\Http\Session $lo_session */
+				$lo_session = $this->request->getAttribute('session');
+				$lo_session->write('backend.languageShortcode', $this->request->getData('languages_shortcode'));
 			}
 
-			$target = $this->Authentication->getLoginRedirect() ?? \Cake\Routing\Router::url([
+			$ls_redirectUri = $this->Authentication->getLoginRedirect() ?? \Cake\Routing\Router::url([
 				'_name' => 'backend',
 				'controller' => 'Dashboard',
 				'action' => 'overview',
 			]);
 
-			return $this->redirect($target);
+			return $this->redirect($ls_redirectUri);
 		}
 
 		if ($this->request->is('post') && ! $lo_result->isValid()) {
@@ -172,9 +224,9 @@ class UsersController extends Controller {
 			if (($ls_username = $this->request->getData('username')) && ($lo_user = $this->Users->find()->where(['username' => $ls_username])->first())) {
 				$lo_user->set([
 					'failed_attempts' => $lo_user->failed_attempts + 1,
-					'last_login' => \Cake\I18n\Time::now(),
+					'last_login' => \Cake\I18n\FrozenTime::now(),
 				], ['guard' => FALSE]);
-				$this->Users->save($lo_user, ['saveAudit' => FALSE, 'setTimeOnUpdate' => FALSE]);
+				$this->Users->save($lo_user, ['skipAuditBehavior' => TRUE, 'setTimeOnUpdate' => FALSE]);
 			}
 
 			dump($lo_result->getErrors());
@@ -185,11 +237,31 @@ class UsersController extends Controller {
 			//Do something to slow down the process
 			password_hash(md5(\Cake\Utility\Security::randomString()), PASSWORD_BCRYPT, ['cost' => 16]);
 		}
+
+		/** @var \Awyiss\Middleware\LocaleMiddleware $lo_locale */
+		$lo_locale = $this->request->getAttribute('locale');
+		$la_languages = $lo_locale->getLanguages('backend');
+
+		$la_languages = array_combine(array_column($la_languages, 'shortcode'), array_column($la_languages, 'title'));
+
+		$this->set([
+			'aa_languages' => $la_languages,
+		]);
+
+		$this->viewBuilder()->setLayout('login');
 	}
 
 
+	/**
+	 * @noinspection PhpMissingReturnTypeInspection
+	 * @noinspection PhpUnused
+	 */
 	public function logout () {
 		$this->Authentication->logout();
+
+		/** @var \Cake\Http\Session $lo_session */
+		$lo_session = $this->getRequest()->getAttribute('session');
+		$lo_session->delete('unauthenticatedRedirectUrl');
 
 		return $this->redirect(\Cake\Routing\Router::url([
 			'_name' => 'backend',

@@ -7,7 +7,6 @@ namespace Awyiss\View\Helper;
 use Awyiss\Authorization\IdentityPermissionsInterface;
 use Awyiss\Model\Entity\User;
 use Awyiss\Model\Entity\UsersExternal;
-use Cake\Controller\Component;
 
 
 class AccessHelper extends \Cake\View\Helper {
@@ -38,6 +37,9 @@ class AccessHelper extends \Cake\View\Helper {
 	}
 
 
+	/**
+	 * @noinspection PhpUnused
+	 */
 	public function resetScope (): self {
 		$this->setConfig('scope');
 
@@ -57,6 +59,9 @@ class AccessHelper extends \Cake\View\Helper {
 	}
 
 
+	/**
+	 * @noinspection PhpUnused
+	 */
 	public function setIdentity (IdentityPermissionsInterface $ao_identity): self {
 		$this->setConfig('identity', $ao_identity);
 
@@ -64,15 +69,35 @@ class AccessHelper extends \Cake\View\Helper {
 	}
 
 
-	public function resetIdentity (): self {
+	/**
+	 * @noinspection PhpUnused
+	 */
+	 public function resetIdentity (): self {
 		$this->setConfig('identity');
 
 		return $this;
 	}
 
 
+	/**
+	 * @noinspection PhpUnused
+	 */
 	public function isAccessible (string|array ...$ax_identifier): bool {
 		$ls_scope = $this->getScope();
+		$lo_identity = $this->getIdentity();
+
+		return $this->scopeIsAccessible($ls_scope, $lo_identity, $ax_identifier);
+	}
+
+
+	public function scopeIsAccessible (?string $as_scope = NULL, ?IdentityPermissionsInterface $ao_identity = NULL, string|array ...$ax_identifier): bool {
+		$ls_scope = $as_scope;
+		if (!empty($ls_scope)) {
+			$ls_scope = \Cake\Utility\Inflector::underscore($ls_scope);
+		}
+		else {
+			$ls_scope = $this->getScope();
+		}
 
 		/** @var \Awyiss\Authorization\AuthorizationService $lo_authorizationService */
 		$lo_authorizationService = $this->getView()->getRequest()->getAttribute('authorization');
@@ -83,10 +108,10 @@ class AccessHelper extends \Cake\View\Helper {
 			return (bool) $this->getConfig('defaultAccessible', FALSE);
 		}
 
-		$lo_identity = $this->getIdentity();
+		$lo_identity = $ao_identity ?? $this->getIdentity();
 		$la_accesses = [];
 		foreach ($ax_identifier AS $lx_identifier) {
-			$la_accesses[] = $this->_getAccess($ls_policyClass, $lx_identifier, $lo_identity->getAccess()->getScope($ls_scope));
+			$la_accesses[] = $this->getAccess($ls_policyClass, $lx_identifier, $lo_identity->getAccess()->getScope($ls_scope));
 		}
 
 		if (in_array(FALSE, $la_accesses, TRUE) ||
@@ -100,15 +125,22 @@ class AccessHelper extends \Cake\View\Helper {
 
 
 	/**
-	 * @var \Awyiss\Authorization\Policy\PolicyInterface|NULL $as_policyClass
+	 *
+	 * @param string $as_policyClass
+	 * @param string|array $ax_identifier
+	 * @param null|array $aa_access
+	 *
+	 * @return null|bool
 	 */
-	private function _getAccess (string $as_policyClass, string|array $ax_identifier, ?array $aa_access): mixed {
+	protected function getAccess (string $as_policyClass, string|array $ax_identifier, ?array $aa_access): ?bool {
 		if (is_string($ax_identifier)) {
+			/** @var \Awyiss\Authorization\Policy\PolicyInterface $as_policyClass */
 			return $as_policyClass::getPermission($ax_identifier)?->isAccessible($aa_access);
 		}
 
 		$la_accesses = [];
 		foreach ($ax_identifier AS $ls_identifier) {
+			/** @var \Awyiss\Authorization\Policy\PolicyInterface $as_policyClass */
 			$la_accesses[] = $as_policyClass::getPermission($ls_identifier)?->isAccessible($aa_access);
 		}
 
@@ -120,9 +152,10 @@ class AccessHelper extends \Cake\View\Helper {
 	}
 
 
-	private function _getIdentity (): IdentityPermissionsInterface {
+	protected function _getIdentity (): IdentityPermissionsInterface {
 		/** @var \Awyiss\Authorization\AuthorizationService $lo_authorizationService */
 		$lo_authorizationService = $this->getView()->getRequest()->getAttribute('authorization');
+		/** @noinspection DuplicatedCode */
 		if ( ! $lo_authorizationService) {
 			throw new \RuntimeException(sprintf('Object `%s` does not use the authorization middleware.', static::class));
 		}

@@ -38,7 +38,7 @@ class UsersExternal extends \Awyiss\Model\Entity implements IdentityInterface {
 	/**
 	 * Authentication\IdentityInterface method
 	 */
-	public function getIdentifier () {
+	public function getIdentifier (): ?int {
 		return $this->id;
 	}
 
@@ -46,7 +46,7 @@ class UsersExternal extends \Awyiss\Model\Entity implements IdentityInterface {
 	/**
 	 * Authentication\IdentityInterface method
 	 */
-	public function getOriginalData () {
+	public function getOriginalData (): self {
 		return $this;
 	}
 }

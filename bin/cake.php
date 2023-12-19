@@ -1,7 +1,7 @@
 #!/usr/bin/php -q
 <?php
 // Check platform requirements
-require dirname(__DIR__) . '/awyiss/Config/requirements.php';
+require dirname(__DIR__) . '/awyiss/config/requirements.php';
 $lo_loader = require dirname(__DIR__) . '/vendor/autoload.php';
 
 use Cake\Console\CommandRunner;

@@ -12,42 +12,44 @@ use Psr\Http\Message\ServerRequestInterface;
 class SessionAuthenticator extends \Authentication\Authenticator\SessionAuthenticator {
 	/**
 	 * @inheritDoc
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function authenticate (ServerRequestInterface $request): ResultInterface {
-		$sessionKey = $this->getConfig('sessionKey');
-		/** @var \Cake\Http\Session $session */
-		$session = $request->getAttribute('session');
-		$user = $session->read($sessionKey);
+	public function authenticate (ServerRequestInterface $ao_request): ResultInterface {
+		$ls_sessionKey = $this->getConfig('sessionKey');
+		/** @var \Cake\Http\Session $lo_session */
+		$lo_session = $ao_request->getAttribute('session');
+		$lo_user = $lo_session->read($ls_sessionKey);
 
-		if (empty($user)) {
-			return new Result(NULL, Result::FAILURE_IDENTITY_NOT_FOUND);
+		if (empty($lo_user)) {
+			return new Result(NULL, ResultInterface::FAILURE_IDENTITY_NOT_FOUND);
 		}
 
 		$lx_identify = $this->getConfig('identify');
 		if (is_callable($lx_identify)) {
-			$lx_identify = $lx_identify($user);
+			$lx_identify = $lx_identify($lo_user);
 		}
 
 		if ($lx_identify) {
-			$credentials = $lx_identify;
+			$la_credentials = $lx_identify;
 			if ($lx_identify === TRUE) {
-				$credentials = [];
+				$la_credentials = [];
 				foreach ($this->getConfig('fields') as $key => $field) {
-					$credentials[ $key ] = $user[ $field ];
+					$la_credentials[ $key ] = $lo_user[ $field ];
 				}
 			}
 
-			$user = $this->_identifier->reidentify($credentials);
+			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+			$lo_user = $this->_identifier->reidentify($la_credentials);
 
-			if (empty($user)) {
-				return new Result(NULL, Result::FAILURE_CREDENTIALS_INVALID);
+			if (empty($lo_user)) {
+				return new Result(NULL, ResultInterface::FAILURE_CREDENTIALS_INVALID);
 			}
 		}
 
-		if ( ! ($user instanceof \ArrayAccess)) {
-			$user = new \ArrayObject($user);
+		if ( ! ($lo_user instanceof \ArrayAccess)) {
+			$lo_user = new \ArrayObject($lo_user);
 		}
 
-		return new Result($user, Result::SUCCESS);
+		return new Result($lo_user, ResultInterface::SUCCESS);
 	}
 }

@@ -8,9 +8,6 @@ use Awyiss\View\StringTemplateTrait;
 use Cake\Utility\Hash;
 
 
-/**
- * {@inheritdoc}
- */
 class PaginatorHelper extends \Cake\View\Helper\PaginatorHelper {
 	use StringTemplateTrait;
 
@@ -18,11 +15,26 @@ class PaginatorHelper extends \Cake\View\Helper\PaginatorHelper {
 	public function __construct (\Cake\View\View $view, array $config = []) {
 		parent::__construct($view, $config);
 
-		$query = $this->_View->getRequest()->getParam('parts');
+		$la_query = $this->_View->getRequest()->getParam('parts');
 
-		unset($query['page'], $query['limit'], $query['sort'], $query['direction']);
+		unset($la_query['page'], $la_query['limit'], $la_query['sort'], $la_query['direction']);
 
-		$this->setConfig('options.url', array_merge($this->_View->getRequest()->getParam('parts', []), $query));
+		$this->setConfig('options.url', array_merge($this->_View->getRequest()->getParam('parts', []), $la_query));
+	}
+
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 */
+	public function sort(string $as_key, $ax_title = null, array $aa_options = []): string {
+		$ls_title = $ax_title;
+		if (empty($ls_title)) {
+			$ls_title = _('::' . $as_key);
+		}
+
+		return parent::sort($as_key, $ls_title, $aa_options);
 	}
 
 
@@ -47,8 +59,9 @@ class PaginatorHelper extends \Cake\View\Helper\PaginatorHelper {
 		}
 
 		$la_params += ['page' => NULL, 'limit' => NULL, 'sort' => NULL, 'direction' => NULL];
-
-		$la_params = Hash::filter($la_params);
+		$la_params = Hash::filter($la_params, function ($var): bool {
+			return $var !== NULL;
+		});
 
 		if (isset($paging['sortDefault'], $paging['directionDefault'], $la_params['sort'], $la_params['direction']) && $la_params['sort'] === $paging['sortDefault'] && strtolower($la_params['direction']) === strtolower($paging['directionDefault'])) {
 			$la_params['sort'] = $la_params['direction'] = FALSE;
@@ -63,7 +76,8 @@ class PaginatorHelper extends \Cake\View\Helper\PaginatorHelper {
 
 
 	public function render (): string {
-		if (!$this->params) return '';
+		if (empty($this->param('pageCount')) || $this->param('pageCount') == 1) return '';
+		//if (!$this->params) return '';
 
 		return $this->_View->element('paginator/pagination');
 	}

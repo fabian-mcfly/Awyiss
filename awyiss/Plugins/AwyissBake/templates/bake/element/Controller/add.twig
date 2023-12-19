@@ -3,25 +3,28 @@
 	/**
 	 * Add method
 	 *
-	 * @return void|?Response Redirects on successful add, renders view otherwise.
+	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
 	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
 	public function add () {
-		$this->Access->assure('create');
+		$this->Access->ensure('create');
 
-		$lo_{{ singularName }} = $this->{{ currentModelName }}->newEmptyEntity();
+		$lo_{{ singularName }} = $this->{{ currentModelName }}->newDefaultEntity();
 		if ($this->request->is('post')) {
 			$lo_{{ singularName }} = $this->{{ currentModelName }}->patchEntity($lo_{{ singularName }}, $this->request->getData());
-			if ($this->{{ currentModelName }}->save($lo_{{ singularName }})) {
-				$this->Flash->success(__('::add_succeeded'));
+			if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
+				if ($this->{{ currentModelName }}->save($lo_{{ singularName }})) {
+					$this->Flash->success(__('::add_succeeded'));
 
-				if ($this->request->getData('submit') == 'submit_close') {
-					return $this->redirect(['action' => 'overview']);
+					if ($this->request->getData('submit') == 'submit_close') {
+						return $this->redirect(['action' => 'overview']);
+					}
+
+					return $this->redirect(['action' => 'edit', 'id' => $lo_{{ singularName }}->id]);
 				}
 
-				return $this->redirect(['action' => 'edit', 'id' => $lo_{{ singularName }}->id]);
+				$this->Flash->error(__('::add_failed'));
 			}
-			$this->Flash->error(__('::add_failed'));
 		}
 
 		$this->set([

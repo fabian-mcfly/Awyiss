@@ -25,31 +25,34 @@ class AuthenticationService extends \Authentication\AuthenticationService {
 
 	/**
 	 * {@inheritDoc}
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 */
+	public function getUnauthenticatedRedirectUrl (ServerRequestInterface $ao_request): ?string {
+		/**
+		 * This one's hacky and needs a serious rework but works for now
+		 * We write the current Uri to the session since we don't like having an uri-encoded
+		 * paramter containing the old path. That looks amateurish
+		 */
+
+		$lo_uri = $ao_request->getUri();
+		$ls_redirectUri = $lo_uri->getPath();
+
+		/** @var \Cake\Http\Session $lo_session */
+		$lo_session = $ao_request->getAttribute('session');
+		$lo_session->write('unauthenticatedRedirectUrl', $ls_redirectUri);
+
+		return parent::getUnauthenticatedRedirectUrl($ao_request);
+	}
+
+
+	/**
+	 * {@inheritDoc}
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function getLoginRedirect (ServerRequestInterface $ao_request): ?string {
-		$redirectParam = $this->getConfig('queryParam');
-		$params = $ao_request->getQueryParams();
-		if (empty($redirectParam) || ! isset($params[ $redirectParam ]) || strlen($params[ $redirectParam ]) === 0) {
-			return NULL;
-		}
+		/** @var \Cake\Http\Session $lo_session */
+		$lo_session = $ao_request->getAttribute('session');
 
-		$parsed = parse_url($params[ $redirectParam ]);
-		if ($parsed === FALSE) {
-			return $params[ $redirectParam ];
-		}
-		if ( ! empty($parsed['host']) || ! empty($parsed['scheme'])) {
-			return NULL;
-		}
-		$parsed += ['path' => '/', 'query' => ''];
-		/** @psalm-suppress PossiblyUndefinedArrayOffset */
-		if (strlen($parsed['path']) && $parsed['path'][0] !== '/') {
-			$parsed['path'] = "/{$parsed['path']}";
-		}
-		/** @psalm-suppress PossiblyUndefinedArrayOffset */
-		if ($parsed['query']) {
-			$parsed['query'] = "?{$parsed['query']}";
-		}
-
-		return $parsed['path'] . $parsed['query'];
+		return $lo_session->read('unauthenticatedRedirectUrl');
 	}
 }

@@ -1,0 +1,42 @@
+{# @var ao_user \Awyiss\Model\Entity\User #}
+{# @var ao_usergroups \Awyiss\Model\Entity\Usergroup[] #}
+{# @var _view \Awyiss\View\BackendView #}
+
+<div class="Users Form Add">
+	{{ helper_Form_create(ao_user, {'method': 'post', 'idPrefix': 'user'}) }}
+
+	<fieldset>
+		<legend>{{ __('::headline_add') }}</legend>
+		{{ helper_Form_control('username') }}
+		{{ helper_Form_control('password', {'value': ''}) }}
+		{{ helper_Form_control('password_confirm', {'value': ''}) }}
+		{{ helper_Form_control('firstname') }}
+		{{ helper_Form_control('lastname') }}
+		{{ helper_Form_control('email') }}
+		{{ helper_Form_control('active') }}
+	</fieldset>
+
+	<fieldset>
+		<legend>{{ __('::fieldset_usergroups') }}</legend>
+		{{ helper_Form_hidden('usergroups._ids', {value: ''}) }}
+		<ul class="NoList">
+			{% for lo_usergroup in ao_usergroups %}
+				<li>
+					{{ helper_Form_control('usergroups._ids.' ~ lo_usergroup.id, {
+						hiddenField: FALSE,
+						type: 'checkbox',
+						value: lo_usergroup.id,
+						label: lo_usergroup.title,
+						checked: lo_usergroup.id in (ao_user.usergroups)|column('id'),
+					}) }}
+				</li>
+			{% endfor %}
+		</ul>
+	</fieldset>
+
+	{{ helper_Form_hidden('reload_form', {val: 0}) }}
+
+	{{ helper_Form_button(__('::save')) }}
+	{{ helper_Form_button(__('::save_close'), {name: 'submit', value: 'submit_close'}) }}
+	{{ helper_Form_end() }}
+</div>

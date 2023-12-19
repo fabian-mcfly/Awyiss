@@ -4,9 +4,6 @@
 namespace Awyiss\View;
 
 
-use Cake\TwigView\View\TwigView;
-
-
 /**
  * Application View
  *
@@ -21,14 +18,38 @@ class BackendView extends AppView {
 		$this->loadHelper('Access');
 		$this->loadHelper('Authentication.Identity');
 		$this->loadHelper('Paginator', ['templates' => 'paginator_templates']);
+		$this->loadHelper('SystemOrder', ['templates' => [
+			'titleOption' => function (mixed $ax_option): string {
+				$ls_inactive = '';
+				if (empty($ax_option->active ?? TRUE)) {
+					$ls_inactive = '(' . __('::system_order_inactive') . ') ';
+				}
 
-		/*
-		 * TODO: change this to use the language saved in the session (saved after login)
-		 * but only for the backend.
-		 * The frontend should always output the time in the language-specific timezone
-		 */
-		$lo_language = \Awyiss\Controller\AppController::getUrlLanguage();
-		$this->loadHelper('Time', ['outputTimezone' => $lo_language->timezone]);
+				return __('::system_order_after') . ' ' . $ls_inactive . $ax_option->title;
+			},
+			'titleOptionCurrent' => function (mixed $ax_option): string {
+				$ls_inactive = '';
+				if (empty($ax_option->active ?? TRUE)) {
+					$ls_inactive = '(' . __('::system_order_inactive') . ') ';
+				}
+
+				return $ls_inactive . $ax_option->title;
+			},
+			'titleOptionSelected' => function (mixed $ax_option): string {
+				$ls_inactive = '';
+				if (empty($ax_option->active ?? TRUE)) {
+					$ls_inactive = '(' . __('::system_order_inactive') . ') ';
+				}
+
+				return '-> ' . __('::system_order_after') . ' ' . $ls_inactive . $ax_option->title;
+			},
+		]]);
+
+		/** @var \Awyiss\Middleware\LocaleMiddleware $lo_locale */
+		$lo_locale = $this->request->getAttribute('locale');
+		if ($lo_language = $lo_locale->getLanguageFromSession()) {
+			$this->loadHelper('Time', ['outputTimezone' => $lo_language->timezone]);
+		}
 
 		$this->loadHelper('Form', [
 			'autoSetCustomValidity' => FALSE,

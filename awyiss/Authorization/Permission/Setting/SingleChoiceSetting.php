@@ -13,13 +13,14 @@ class SingleChoiceSetting implements SettingInterface {
 
 	public const TYPE_RADIO = 'radio';
 	public const TYPE_SELECT = 'select';
+
+
 	/**
 	 * Default config for this object.
-	 * - `fields` The fields to use to identify a user by.
 	 *
 	 * @var array
 	 */
-	protected $_defaultConfig = [
+	protected array $_defaultConfig = [
 		'options' => [-1, 0, 1],
 		'preferredInput' => self::TYPE_RADIO,
 	];

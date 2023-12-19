@@ -21,7 +21,7 @@ interface PermissionInterface {
 
 
 	/**
-	 * @return string
+	 * @return array
 	 */
 	public function getOptions (): array;
 

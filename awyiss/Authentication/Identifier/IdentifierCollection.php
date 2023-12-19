@@ -12,22 +12,22 @@ class IdentifierCollection extends \Authentication\Identifier\IdentifierCollecti
 	 *
 	 * @return \ArrayAccess|array|null
 	 */
-	public function reidentify (array $credentials) {
-		/** @var \Authentication\Identifier\IdentifierInterface $identifier */
-		foreach ($this->_loaded as $name => $identifier) {
-			if (is_callable([$identifier, 'reidentify'])) {
-				$result = $identifier->reidentify($credentials);
+	public function reidentify (array $credentials): \ArrayAccess|array|null {
+		/** @var \Authentication\Identifier\IdentifierInterface $lo_identifier */
+		foreach ($this->_loaded as $ls_name => $lo_identifier) {
+			if (is_callable([$lo_identifier, 'reidentify'])) {
+				$lx_result = $lo_identifier->reidentify($credentials);
 			}
 			else {
-				$result = $identifier->identify($credentials);
+				$lx_result = $lo_identifier->identify($credentials);
 			}
 
-			if ($result) {
-				$this->_successfulIdentifier = $identifier;
+			if ($lx_result) {
+				$this->_successfulIdentifier = $lo_identifier;
 
-				return $result;
+				return $lx_result;
 			}
-			$this->_errors[ $name ] = $identifier->getErrors();
+			$this->_errors[ $ls_name ] = $lo_identifier->getErrors();
 		}
 
 		$this->_successfulIdentifier = NULL;

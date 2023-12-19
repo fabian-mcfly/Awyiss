@@ -10,13 +10,14 @@ use Cake\Validation\Validator;
 /**
  * Usergroups Model
  *
- * @property \Awyiss\Model\Table\UsergroupsPermissionsTable&\Cake\ORM\Association\HasMany $UsergroupsPermissions
+ * @property \Awyiss\Model\Table\UsergroupPermissionsTable&\Cake\ORM\Association\HasMany $UsergroupPermissions
  *
+ * @method \Awyiss\Model\Entity\Usergroup newDefaultEntity()
  * @method \Awyiss\Model\Entity\Usergroup newEmptyEntity()
  * @method \Awyiss\Model\Entity\Usergroup newEntity(array $data, array $options = [])
  * @method \Awyiss\Model\Entity\Usergroup[] newEntities(array $data, array $options = [])
  * @method \Awyiss\Model\Entity\Usergroup get($primaryKey, $options = [])
- * @method \Awyiss\Model\Entity\Usergroup findOrCreate($search, ?callable $callback = null, $options = [])
+ * @method \Awyiss\Model\Entity\Usergroup findOrCreate($search, ?callable $callback = NULL, $options = [])
  * @method \Awyiss\Model\Entity\Usergroup patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
  * @method \Awyiss\Model\Entity\Usergroup[] patchEntities(iterable $entities, array $data, array $options = [])
  * @method \Awyiss\Model\Entity\Usergroup|false save(\Cake\Datasource\EntityInterface $entity, $options = [])
@@ -43,9 +44,7 @@ class UsergroupsTable extends \Awyiss\Model\Table {
 		$this->setDisplayField('title');
 		$this->setPrimaryKey('id');
 
-		$this->hasMany('UsergroupsPermissions')
-			->setSaveStrategy('replace')
-			->setDependent(TRUE);
+		$this->hasMany('UsergroupPermissions')->setSaveStrategy('replace')->setDependent(TRUE);
 
 		$this->belongsToMany('Users');
 	}
@@ -57,6 +56,8 @@ class UsergroupsTable extends \Awyiss\Model\Table {
 	 * @param \Cake\Validation\Validator $ao_validator Validator instance.
 	 *
 	 * @return \Cake\Validation\Validator
+	 *
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function validationDefault (Validator $ao_validator): Validator {
 		$ao_validator->integer('id')->allowEmptyString('id', NULL, 'create');

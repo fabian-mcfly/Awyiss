@@ -1,0 +1,48 @@
+{# @var ao_users \Awyiss\Model\Entity\User[] #}
+{# @var _view \Awyiss\View\BackendView #}
+
+<div class="Users Overview">
+	{% if helper_Access_isAccessible('create') %}
+		{{ helper_Html_link(__('::create'), {action: 'add'}, {class: 'Button'}) }}
+	{% endif %}
+	<h1>{{ __('::headline_overview') }}</h1>
+
+	{{ helper_Categories_filter('usergroup', [], {includeUnassigned: TRUE}) }}
+
+	<div class="table-responsive">
+		<table>
+			<thead>
+				<tr>
+					<th>{{ helper_Paginator_sort('username') }}</th>
+					<th>{{ helper_Paginator_sort('last_login') }}</th>
+					<th>{{ helper_Paginator_sort('firstname') }}</th>
+					<th>{{ helper_Paginator_sort('lastname') }}</th>
+					<th>{{ helper_Paginator_sort('email') }}</th>
+					<th class="actions"></th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for lo_user in ao_users %}
+					<tr>
+						<td>{{ lo_user.username }}</td>
+						<td>{{ helper_Time_format(lo_user.last_login) }}</td>
+						<td>{{ lo_user.firstname }}</td>
+						<td>{{ lo_user.lastname }}</td>
+						<td>{{ lo_user.email }}</td>
+						<td class="actions">
+							{% if helper_Access_isAccessible('update') %}
+								{{ helper_Html_link(__('::edit'), {action: 'edit', id: lo_user.id}) }}
+							{% endif %}
+							{% if helper_Access_isAccessible('delete') %}
+								{{ helper_Html_link(__('::delete'), {action: 'delete', id: lo_user.id}) }}
+							{% endif %}
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+
+	{{ helper_Paginator_render() }}
+
+</div>

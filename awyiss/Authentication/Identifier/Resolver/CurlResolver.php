@@ -12,6 +12,8 @@ class CurlResolver implements \Authentication\Identifier\Resolver\ResolverInterf
 	public const TYPE_GET = 'GET';
 	public const TYPE_POST = 'POST';
 	public const ACCEPT_JSON = 'application/json';
+
+
 	protected array $_defaultConfig = [
 		'url' => NULL,
 		'requestType' => self::TYPE_GET,
@@ -55,15 +57,20 @@ class CurlResolver implements \Authentication\Identifier\Resolver\ResolverInterf
 					$lx_requestData = $lx_requestData($credentials);
 				}
 
+				/** @noinspection PhpUndefinedConstantInspection */
 				curl_setopt($lo_curl_handle, CURLOPT_POST, TRUE);
+				/** @noinspection PhpUndefinedConstantInspection */
 				curl_setopt($lo_curl_handle, CURLOPT_POSTFIELDS, $lx_requestData);
 				break;
 			default:
 				throw new \Exception(__('::resolver_unknown_request_type'));
 		}
 
+		/** @noinspection PhpUndefinedConstantInspection */
 		curl_setopt($lo_curl_handle, CURLOPT_HTTPHEADER, ['Accept: ' . $this->_config['acceptType']]);
+		/** @noinspection PhpUndefinedConstantInspection */
 		curl_setopt($lo_curl_handle, CURLOPT_URL, $lx_url);
+		/** @noinspection PhpUndefinedConstantInspection */
 		curl_setopt($lo_curl_handle, CURLOPT_RETURNTRANSFER, 1);
 		$lx_result = curl_exec($lo_curl_handle);
 		curl_close($lo_curl_handle);

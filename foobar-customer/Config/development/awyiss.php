@@ -1,11 +1,11 @@
-<?
+<?php declare(strict_types=1);
 
 return [
 	'debug' => filter_var(env('DEBUG', TRUE), FILTER_VALIDATE_BOOLEAN),
 
 	'Datasources' => [
 		'default' => [
-			'log' => FALSE,
+			'log' => TRUE,
 		],
 	],
 
@@ -17,7 +17,7 @@ return [
 		],
 	],
 
-	/*'DebugKit' => [
-		'forceEnable' => TRUE,
-	],*/
+	'Error' => [
+		'errorLevel' => E_ALL,
+	],
 ];

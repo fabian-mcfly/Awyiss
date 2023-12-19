@@ -17,7 +17,7 @@ namespace Awyiss\Model\Entity;
  * @property \Cake\I18n\FrozenTime|null $changed_on
  * @property int|null $deleted_by
  * @property \Cake\I18n\FrozenTime|null $deleted_on
- * @property \Awyiss\Model\Entity\UsergroupsPermission[] $usergroups_permissions
+ * @property \Awyiss\Model\Entity\UsergroupPermission[] $usergroup_permissions
  * @property \Awyiss\Model\Entity\User[] $users
  */
 class Usergroup extends \Awyiss\Model\Entity {
@@ -33,7 +33,7 @@ class Usergroup extends \Awyiss\Model\Entity {
 	protected $_accessible = [
 		'title' => TRUE,
 		'active' => TRUE,
-		'usergroups_permissions' => TRUE,
+		'usergroup_permissions' => TRUE,
 		'users' => TRUE,
 	];
 }

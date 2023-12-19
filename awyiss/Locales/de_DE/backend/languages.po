@@ -1,4 +1,4 @@
-msgid "headline"
+msgid "headline_overview"
 msgstr "Sprachen aus Awyiss' languages.po"
 
 msgid "headline3"

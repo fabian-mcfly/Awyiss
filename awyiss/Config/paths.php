@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php /** @noinspection PhpDefineCanBeReplacedWithConstInspection */
+
+declare(strict_types=1);
 
 /*
  * Use the DS to separate the directories in other defines
@@ -25,13 +27,13 @@ define('APP', ROOT . DS . APP_DIR . DS);
 /*
  * Path to the config directories.
  */
-define('CONFIG', ROOT . DS . APP_DIR . DS . 'Config' . DS);
+define('CONFIG', ROOT . DS . APP_DIR . DS . 'config' . DS);
 
-define('CUSTOM_CONFIG', ROOT . DS . CUSTOM_DIR . DS . 'Config' . DS);
+define('CUSTOM_CONFIG', ROOT . DS . CUSTOM_DIR . DS . 'config' . DS);
 
 define('CUSTOM_NAMESPACE', \Cake\Utility\Inflector::camelize(str_replace('_', '-', CUSTOM_DIR), '-'));
 
-define('ENV_CUSTOM_CONFIG', ROOT . DS . CUSTOM_DIR . DS . 'Config' . DS . CONFIG_ENV . DS);
+define('ENV_CUSTOM_CONFIG', ROOT . DS . CUSTOM_DIR . DS . 'config' . DS . CONFIG_ENV . DS);
 
 /*
  * File path to the webroot directory.

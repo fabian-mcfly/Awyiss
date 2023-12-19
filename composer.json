@@ -1,6 +1,6 @@
 {
     "name": "cakephp/awyiss",
-    "description": "AwYiss! The CakePHP-based CMS you didn't know you'd need",
+    "description": "Awyiss! The CakePHP-based CMS you didn't know you'd need",
     "homepage": "https://awyiss.de",
     "type": "project",
     "license": "MIT",
@@ -29,14 +29,14 @@
     "autoload": {
         "psr-4": {
             "Awyiss\\": "awyiss/",
-            "AwyissBake\\": "awyiss/Plugins/AwyissBake/src/"
+            "AwyissBake\\": "awyiss/plugins/AwyissBake/src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
             "Awyiss\\Test\\": "tests/",
             "Cake\\Test\\": "vendor/cakephp/cakephp/tests/",
-            "AwyissBake\\Test\\": "awyiss/Plugins/AwyissBake/tests/"
+            "AwyissBake\\Test\\": "awyiss/plugins/AwyissBake/tests/"
         }
     },
     "scripts": {

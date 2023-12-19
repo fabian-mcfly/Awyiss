@@ -5,13 +5,13 @@ use Awyiss\Routing\Route\AwyissRoute;
 use Cake\Routing\RouteBuilder;
 
 
-/** @var \Cake\Routing\RouteBuilder $routes */
-$routes->scope('/', function(RouteBuilder $ao_routes) {
+/** @var \Cake\Routing\RouteBuilder $ao_routes */
+$ao_routes->scope('/', function(RouteBuilder $ao_routes) {
 	$ao_routes->setRouteClass(AwyissRoute::class);
 
-	$ao_routes->connect('/{lang}/*', [/*'prefix' => 'Frontend',*/ 'controller' => 'Frontend', 'action' => 'index'], ['_name' => 'frontend'])->setPatterns([
+	$ao_routes->connect('/{lang}/*', [/*'prefix' => 'Frontend',*/ 'controller' => 'frontend', 'action' => 'index'], ['_name' => 'frontend'])->setPatterns([
 		'lang' => '[a-z]{2}',
 	])->setPersist(['lang', 'slug']);
 
-	$ao_routes->connect('/*', [/*'prefix' => 'Frontend',*/ 'controller' => 'Frontend', 'action' => 'noLanguageFound']);
+	$ao_routes->connect('/*', [/*'prefix' => 'Frontend',*/ 'controller' => 'frontend', 'action' => 'noLanguageFound']);
 });

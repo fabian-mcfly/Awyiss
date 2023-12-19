@@ -9,6 +9,9 @@ use Cake\Routing\Router;
 
 
 class FrontendController extends AppController {
+	/**
+	 * @throws \Exception
+	 */
 	public function initialize (): void {
 		defined('IS_BACKEND') || define('IS_BACKEND', FALSE);
 
@@ -27,14 +30,15 @@ class FrontendController extends AppController {
 	/**
 	 * No language (first two-letter part of the url) found
 	 *
-	 * @return null|\Cake\Http\Response
+	 * @return \Cake\Http\Response
 	 * @throws \Exception
+	 * @noinspection PhpUnused
 	 */
 	public function noLanguageFound (): \Cake\Http\Response {
 		//TODO: Multi-domain: get and set default language of current domain
 
 		//Get the first language and redirect
-		if ( ! $la_languages = static::getLanguages('frontend')) {
+		if ( ! $la_languages = $this->getLanguages('frontend')) {
 			throw new \Exception('No frontend language found.');
 		}
 

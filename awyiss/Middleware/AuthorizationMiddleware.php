@@ -16,25 +16,22 @@ use RuntimeException;
 class AuthorizationMiddleware implements MiddlewareInterface {
 	use InstanceConfigTrait;
 
-
-	protected $_defaultConfig = [];
-
-
 	/**
 	 * Authentication service or application instance.
 	 */
-	protected \Awyiss\Authorization\Authorization $lo_subject;
+	protected \Awyiss\Authorization\Authorization $subject;
+	protected array $_defaultConfig = [];
 
 
 	/**
 	 * Constructor
 	 *
 	 * @param AuthorizationServiceInterface|AuthorizationServiceProviderInterface $ao_subject Authorization service or application instance.
-	 * @param array $aa_config Array of configuration settings.
+	 * @param null|array $aa_config Array of configuration settings.
 	 *
 	 * @throws \InvalidArgumentException When invalid subject has been passed.
 	 */
-	public function __construct ($ao_subject, $aa_config = NULL) {
+	public function __construct (AuthorizationServiceProviderInterface|AuthorizationServiceInterface $ao_subject, array $aa_config = NULL) {
 		$this->setConfig($aa_config);
 
 		if ( ! ($ao_subject instanceof AuthorizationServiceInterface) && ! ($ao_subject instanceof AuthorizationServiceProviderInterface)) {
@@ -48,19 +45,20 @@ class AuthorizationMiddleware implements MiddlewareInterface {
 			throw new InvalidArgumentException($ls_message);
 		}
 
-		$this->lo_subject = $ao_subject;
+		$this->subject = $ao_subject;
 	}
 
 
+	/**
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 */
 	public function process (\Psr\Http\Message\ServerRequestInterface $ao_request, \Psr\Http\Server\RequestHandlerInterface $ao_handler): \Psr\Http\Message\ResponseInterface {
 		$lo_service = $this->getAuthorizationService($ao_request);
 		$lo_service->setAuthenticationService($ao_request->getAttribute('authentication'));
 
 		$lo_request = $ao_request->withAttribute('authorization', $lo_service);
 
-		$lo_response = $ao_handler->handle($lo_request);
-
-		return $lo_response;
+		return $ao_handler->handle($lo_request);
 	}
 
 
@@ -72,7 +70,7 @@ class AuthorizationMiddleware implements MiddlewareInterface {
 	 * @throws \RuntimeException When authentication method has not been defined.
 	 */
 	protected function getAuthorizationService(ServerRequestInterface $ao_request): AuthorizationServiceInterface {
-		$lo_subject = $this->lo_subject;
+		$lo_subject = $this->subject;
 
 		if ($lo_subject instanceof AuthorizationServiceProviderInterface) {
 			$lo_subject = $lo_subject->getAuthorizationService($ao_request);

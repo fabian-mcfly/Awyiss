@@ -4,19 +4,20 @@
 namespace Awyiss\Model\Table;
 
 
-use Cake\ORM\RulesChecker;
 use Cake\ORM\Query;
+use Cake\ORM\RulesChecker;
 use Cake\Validation\Validator;
 
 
 /**
  * Users Model
  *
+ * @method \Awyiss\Model\Entity\User newDefaultEntity()
  * @method \Awyiss\Model\Entity\User newEmptyEntity()
  * @method \Awyiss\Model\Entity\User newEntity(array $data, array $options = [])
  * @method \Awyiss\Model\Entity\User[] newEntities(array $data, array $options = [])
  * @method \Awyiss\Model\Entity\User get($primaryKey, $options = [])
- * @method \Awyiss\Model\Entity\User findOrCreate($search, ?callable $callback = null, $options = [])
+ * @method \Awyiss\Model\Entity\User findOrCreate($search, ?callable $callback = NULL, $options = [])
  * @method \Awyiss\Model\Entity\User patchEntity(\Cake\Datasource\EntityInterface $entity, array $data, array $options = [])
  * @method \Awyiss\Model\Entity\User[] patchEntities(iterable $entities, array $data, array $options = [])
  * @method \Awyiss\Model\Entity\User|false save(\Cake\Datasource\EntityInterface $entity, $options = [])
@@ -35,6 +36,7 @@ class UsersTable extends \Awyiss\Model\Table {
 	 * @param array $aa_config The configuration for the Table.
 	 *
 	 * @return void
+	 * @throws \ReflectionException
 	 */
 	public function initialize (array $aa_config): void {
 		parent::initialize($aa_config);
@@ -47,29 +49,36 @@ class UsersTable extends \Awyiss\Model\Table {
 	}
 
 
-	/*public function findActive (Query $ao_query, array $aa_options): Query {
+	/**
+	 * @noinspection PhpUnused
+	 * @noinspection PhpUnusedParameterInspection
+	 */
+	public function findActive (Query $ao_query, array $aa_options): Query {
 		$ao_query->where([
 			'active' => 1,
-			'deleted' => 0,
 			'OR' => [
 				'failed_attempts <' => 5,
-				'last_login <=' => \Cake\I18n\Time::now()->subMinutes(10),
-			]
+				'last_login <=' => \Cake\I18n\FrozenTime::now()->subMinutes(10),
+			],
 		]);
 
 		return $ao_query;
-	}*/
+	}
 
 
+	/**
+	 * @noinspection PhpUnused
+	 * @noinspection PhpUnusedParameterInspection
+	 */
 	public function findActiveWithUsergroups (Query $ao_query, array $aa_options): Query {
-		/*$ao_query->where([
+		$ao_query->where([
 			'active' => 1,
-			'deleted' => 0,
 			'OR' => [
 				'failed_attempts <' => 5,
-				'last_login <=' => \Cake\I18n\Time::now()->subMinutes(10),
-			]
-		])->contain(['Usergroups.UsergroupsPermissions']);*/
+				'last_login <=' => \Cake\I18n\FrozenTime::now()->subMinutes(10),
+			],
+		])/*->contain(['Usergroups.UsergroupPermissions'])*/
+		;
 
 		return $ao_query;
 	}
@@ -81,13 +90,19 @@ class UsersTable extends \Awyiss\Model\Table {
 	 * @param \Awyiss\Validation\Validator $ao_validator Validator instance.
 	 *
 	 * @return \Awyiss\Validation\Validator
+	 *
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function validationDefault (Validator $ao_validator): Validator {
 		$ao_validator->integer('id')->allowEmptyString('id', NULL, 'create');
 
 		$ao_validator->scalar('username')->maxLength('username', 50)->requirePresence('username', 'create')->notEmptyString('username');
 
-		$ao_validator->scalar('password')->maxLength('password', 255)->requirePresence('password', 'create')->allowEmptyString('password')->minLength('password', 8);
+		$ao_validator->scalar('password')
+			->maxLength('password', 255)
+			->requirePresence('password', 'create')
+			->allowEmptyString('password')
+			->minLength('password', 8);
 
 		$ao_validator->sameAs('password', 'password_confirm');
 
@@ -107,14 +122,16 @@ class UsersTable extends \Awyiss\Model\Table {
 	 * Returns a rules checker object that will be used for validating
 	 * application integrity.
 	 *
-	 * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
+	 * @param \Cake\ORM\RulesChecker $ao_rules The rules object to be modified.
 	 *
 	 * @return \Cake\ORM\RulesChecker
+	 *
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildRules (RulesChecker $rules): RulesChecker {
-		$rules->add($rules->isUnique(['username']), ['errorField' => 'username']);
-		$rules->add($rules->isUnique(['email']), ['errorField' => 'email']);
+	public function buildRules (RulesChecker $ao_rules): RulesChecker {
+		$ao_rules->add($ao_rules->isUnique(['username']), ['errorField' => 'username']);
+		$ao_rules->add($ao_rules->isUnique(['email']), ['errorField' => 'email']);
 
-		return $rules;
+		return $ao_rules;
 	}
 }

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @var \Cake\View\View $this
  */
@@ -121,10 +121,10 @@ $cakeDescription = 'CakePHP: the rapid development PHP framework';
 								<?php $settings = Cache::getConfig('_cake_core_');?>
 								<?php if ( ! empty($settings)) :?>
 									<li class="bullet success">The
-										<em><?php echo $settings['className']?>Engine</em> is being used for core caching. To change the config edit config/app.php
+										<em><?php echo $settings['className']?>Engine</em> is being used for core caching. To change the config edit config/awyiss.php
 									</li>
 								<?php else :?>
-									<li class="bullet problem">Your cache is NOT working. Please check the settings in config/app.php</li>
+									<li class="bullet problem">Your cache is NOT working. Please check the settings in config/awyiss.php</li>
 								<?php endif;?>
 							</ul>
 						</div>

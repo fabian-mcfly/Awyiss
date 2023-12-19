@@ -1,0 +1,23 @@
+{# @var ao_configuration \Awyiss\Model\Entity\Configuration #}
+{# @var aa_configScopes array #}
+{# @var _view \Awyiss\View\BackendView #}
+
+<div class="Configuration Form Edit">
+	{{ helper_Form_create(ao_configuration, {method: 'post', idPrefix: 'Configuration'}) }}
+
+	<h1>{{ __('::headline_edit') }}</h1>
+
+	<fieldset>
+		<legend>{{ __('::fieldset_general') }}</legend>
+		{{ helper_Form_control('scope', {options: naturalSort(aa_configScopes|map((value,key) => __(key ~ '::title')))}) }}
+		{{ helper_Form_control('name') }}
+		{{ helper_Form_control('value') }}
+		{{ helper_Locale_control('languages_shortcode') }}
+	</fieldset>
+
+	{{ helper_Form_hidden('reload_form', {val: 0}) }}
+
+	{{ helper_Form_button(__('::save')) }}
+	{{ helper_Form_button(__('::save_close'), {name: 'submit', value: 'submit_close'}) }}
+	{{ helper_Form_end() }}
+</div>

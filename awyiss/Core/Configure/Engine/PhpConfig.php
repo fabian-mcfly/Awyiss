@@ -9,7 +9,7 @@ use Cake\Utility\Hash;
 
 
 class PhpConfig extends \Cake\Core\Configure\Engine\PhpConfig {
-	private $la_paths = [
+	protected array $paths = [
 		CONFIG,
 		CUSTOM_CONFIG,
 		ENV_CUSTOM_CONFIG,
@@ -22,6 +22,7 @@ class PhpConfig extends \Cake\Core\Configure\Engine\PhpConfig {
 	 * @param string|null $as_path The path to read config files from.
 	 *
 	 * @noinspection PhpMissingParentConstructorInspection
+	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function __construct (?string $as_path = NULL) {
 		$this->_path = NULL;
@@ -29,7 +30,7 @@ class PhpConfig extends \Cake\Core\Configure\Engine\PhpConfig {
 
 
 	public function read (string $key): array {
-		$la_paths = $this->_path ? [$this->_path] : $this->la_paths;
+		$la_paths = $this->_path ? [$this->_path] : $this->paths;
 		$la_return = [];
 
 		foreach ($la_paths as $ls_path) {

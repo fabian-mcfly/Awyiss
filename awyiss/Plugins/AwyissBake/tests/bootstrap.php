@@ -6,6 +6,8 @@
  * This function is used to find the location of CakePHP whether CakePHP
  * has been installed as a dependency of the plugin, or the plugin is itself
  * installed as a dependency of an application.
+ *
+ * @throws \Exception
  */
 $findRoot = function($root) {
 	do {
@@ -23,6 +25,7 @@ unset($findRoot);
 
 chdir($root);
 
+/** @noinspection PhpIncludeInspection */
 require_once $root . '/vendor/autoload.php';
 
 /**
@@ -30,9 +33,11 @@ require_once $root . '/vendor/autoload.php';
  * To customize constants and configuration remove this require
  * and define the data required by your plugin here.
  */
+/** @noinspection PhpIncludeInspection */
 require_once $root . '/vendor/cakephp/cakephp/tests/bootstrap.php';
 
 if (file_exists($root . '/config/bootstrap.php')) {
+	/** @noinspection PhpIncludeInspection */
 	require $root . '/config/bootstrap.php';
 
 	return;

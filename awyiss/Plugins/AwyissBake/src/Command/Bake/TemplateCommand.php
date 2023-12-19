@@ -16,7 +16,7 @@ use InvalidArgumentException;
  * Task class for creating view template files.
  */
 class TemplateCommand extends \Bake\Command\TemplateCommand {
-	public $la_scaffoldActions = ['overview', 'add', 'edit'];
+	public $scaffoldActions = ['overview', 'add', 'edit'];
 
 
 	public function initialize(): void {
@@ -39,7 +39,7 @@ class TemplateCommand extends \Bake\Command\TemplateCommand {
 		}
 
 		if (empty($la_methods)) {
-			$la_methods = $this->la_scaffoldActions;
+			$la_methods = $this->scaffoldActions;
 		}
 
 		foreach ($la_methods as $i => $ls_method) {
@@ -47,7 +47,7 @@ class TemplateCommand extends \Bake\Command\TemplateCommand {
 				unset($la_methods[ $i ]);
 			}
 
-			if ($ls_method == 'index' && strpos($this->controllerClass, $ls_base . '\Controller\Backend') === 0) {
+			if ($ls_method == 'index' && str_starts_with($this->controllerClass, $ls_base . '\Controller\Backend')) {
 				unset($la_methods[ $i ]);
 			}
 		}
@@ -63,6 +63,8 @@ class TemplateCommand extends \Bake\Command\TemplateCommand {
 	 * @param string|null $as_container Unused.
 	 *
 	 * @return string
+	 *
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function getTemplatePath (Arguments $aa_args, ?string $as_container = null): string {
 		$la_paths = (array)Configure::read('App.paths.templates');
@@ -100,10 +102,11 @@ class TemplateCommand extends \Bake\Command\TemplateCommand {
 	 * @param \Cake\Console\Arguments $aa_args CLI arguments
 	 * @param \Cake\Console\ConsoleIo $ao_io Console io
 	 * @param string $as_template Template file to use.
-	 * @param string|true $ax_content Content to write.
-	 * @param string $as_outputFile The output file to create. If null will use `$as_template`
+	 * @param string|bool $ax_content Content to write.
+	 * @param null|string $as_outputFile The output file to create. If null will use `$as_template`
 	 *
 	 * @return void
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function bake (
 		Arguments $aa_args, ConsoleIo $ao_io, string $as_template, $ax_content = '', ?string $as_outputFile = NULL

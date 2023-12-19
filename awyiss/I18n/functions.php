@@ -8,8 +8,8 @@ if ( ! function_exists('__')) {
 	/**
 	 * Returns a translated string if one is found; Otherwise, the submitted message.
 	 *
-	 * @param string $as_singular Text to translate.
-	 * @param mixed ...$args Array with arguments or multiple arguments in function.
+	 * @param string $as_string
+	 * @param mixed ...$aa_args
 	 *
 	 * @return string The translated text.
 	 * @link https://book.cakephp.org/4/en/core-libraries/global-constants-and-functions.html#__
@@ -23,7 +23,7 @@ if ( ! function_exists('__')) {
 		}
 
 		$ls_domain = 'default';
-		if (strpos($as_string, '::') !== FALSE) {
+		if (str_contains($as_string, '::')) {
 			$la_parts = explode('::', $as_string);
 			$ls_string = array_pop($la_parts);
 

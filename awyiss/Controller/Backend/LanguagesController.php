@@ -11,32 +11,32 @@ use Awyiss\Controller\BackendController as Controller;
  * Languages Controller
  *
  * @property \Awyiss\Model\Table\LanguagesTable $Languages
- * @method \Awyiss\Model\Entity\Language[]|\Cake\Datasource\ResultSetInterface paginate($ao_object = NULL, array $aa_settings = [])
  */
 class LanguagesController extends Controller {
-	private array $la_overviewWhere = ['type' => 'frontend'];
-
-
-	public function initialize (): void {
-		parent::initialize();
-
-		if ($ls_type = $this->request->getParam('type')) {
-			$this->la_overviewWhere['type'] = $ls_type;
-		}
-	}
-
-
 	/**
 	 * Overview method
 	 *
-	 * @return \Cake\Http\Response|NULL|void Renders view
+	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
 	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
 	public function overview () {
-		$lo_languages = $this->paginate($this->Languages->find('withAttributes')->where($this->la_overviewWhere));
+		$this->Access->ensureOne('create', 'update', 'delete');
+
+		$lo_languages = $this->Languages->find('withAttributes')->where($this->overviewWhere)->all();
+		$lo_languages = $lo_languages->groupBy('type');
+
+		$la_types = [];
+		foreach (array_keys($lo_languages->toArray()) as $ls_type) {
+			$la_types[ $ls_type ] = __('::' . $ls_type);
+		}
+		krsort($la_types);
+		/*uasort($la_types, function($a, $b) {
+			return strnatcmp($a, $b);
+		});*/
 
 		$this->set([
-			'languages' => $lo_languages,
+			'ao_languages' => $lo_languages,
+			'aa_types' => $la_types,
 		]);
 	}
 
@@ -44,28 +44,36 @@ class LanguagesController extends Controller {
 	/**
 	 * Add method
 	 *
-	 * @return \Cake\Http\Response|NULL|void Redirects on successful add, renders view otherwise.
+	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
 	 * @noinspection PhpReturnDocTypeMismatchInspection
-	 * @noinspection RedundantSuppression
 	 */
 	public function add () {
-		$lo_language = $this->Languages->newEmptyEntity();
+		$this->Access->ensure('create');
+
+		$lo_language = $this->Languages->newDefaultEntity();
 		if ($this->request->is('post')) {
 			$lo_language = $this->Languages->patchEntity($lo_language, $this->request->getData());
-			if ($this->Languages->save($lo_language)) {
-				$this->Flash->success(__('::add_succeeded'));
 
-				if ($this->request->getData('submit') == 'submit_close') {
-					return $this->redirect(['action' => 'overview']);
+			if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
+				if ($this->Languages->save($lo_language)) {
+					$this->Flash->success(__('::add_succeeded'));
+
+					if ($this->request->getData('submit') == 'submit_close') {
+						return $this->redirect(['action' => 'overview']);
+					}
+
+					return $this->redirect(['action' => 'edit', 'id' => $lo_language->id]);
 				}
 
-				return $this->redirect(['action' => 'edit', 'id' => $lo_language->id]);
+				$this->Flash->error(__('::add_failed'));
 			}
-			$this->Flash->error(__('::add_failed'));
+			else {
+				$lo_language->system_order = NULL;
+			}
 		}
 
 		$this->set([
-			'language' => $lo_language,
+			'ao_language' => $lo_language,
 		]);
 	}
 
@@ -73,32 +81,44 @@ class LanguagesController extends Controller {
 	/**
 	 * Edit method
 	 *
-	 * @return \Cake\Http\Response|NULL|void Redirects on successful edit, renders view otherwise.
-	 * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
 	 * @noinspection PhpReturnDocTypeMismatchInspection
-	 * @noinspection RedundantSuppression
 	 */
 	public function edit () {
+		$this->Access->ensure('update');
+
 		$li_id = $this->request->getParam('id');
-		$lo_language = $this->Languages->get($li_id, [
-			'contain' => [],
-		]);
+		$lo_language = $this->Languages->find()->where(['id' => $li_id])->first();
+
+		if ( ! $lo_language) {
+			$this->Flash->error(__('::record_not_found'));
+
+			return $this->redirect(['action' => 'overview']);
+		}
+
 		if ($this->request->is(['patch', 'post', 'put'])) {
 			$lo_language = $this->Languages->patchEntity($lo_language, $this->request->getData());
-			if ($this->Languages->save($lo_language)) {
-				$this->Flash->success(__('::edit_succeeded'));
 
-				if ($this->request->getData('submit') == 'submit_close') {
-					return $this->redirect(['action' => 'overview']);
+			if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
+				if ($this->Languages->save($lo_language)) {
+					$this->Flash->success(__('::edit_succeeded'));
+
+					if ($this->request->getData('submit') == 'submit_close') {
+						return $this->redirect(['action' => 'overview']);
+					}
+
+					return $this->redirect(['action' => 'edit', 'id' => $lo_language->id]);
 				}
 
-				return $this->redirect(['action' => 'edit', 'id' => $lo_language->id]);
+				$this->Flash->error(__('::edit_failed'));
 			}
-			$this->Flash->error(__('::edit_failed'));
+			else {
+				$lo_language->system_order = NULL;
+			}
 		}
 
 		$this->set([
-			'language' => $lo_language,
+			'ao_language' => $lo_language,
 		]);
 	}
 
@@ -106,15 +126,22 @@ class LanguagesController extends Controller {
 	/**
 	 * Delete method
 	 *
-	 * @return \Cake\Http\Response|NULL|void Redirects to overview.
-	 * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
+	 * @return void|?\Cake\Http\Response Redirects on successful add, renders view otherwise.
 	 * @noinspection PhpReturnDocTypeMismatchInspection
-	 * @noinspection RedundantSuppression
 	 */
 	public function delete () {
+		$this->Access->ensure('delete');
+
 		$this->request->allowMethod(['get', 'delete']);
 		$li_id = $this->request->getParam('id');
-		$lo_language = $this->Languages->get($li_id);
+		$lo_language = $this->Languages->find()->where(['id' => $li_id])->first();
+
+		if ( ! $lo_language) {
+			$this->Flash->error(__('::record_not_found'));
+
+			return $this->redirect(['action' => 'overview']);
+		}
+
 		if ($this->Languages->delete($lo_language)) {
 			$this->Flash->success(__('::delete_succeeded'));
 		}
