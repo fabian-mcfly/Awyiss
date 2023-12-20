@@ -36,15 +36,15 @@ class MenuEntry extends Entity {
 	 * @inheritDoc
 	 */
 	protected array $_accessible = [
-        'menuId' => TRUE,
-        'languageShortcode' => TRUE,
-        'parentId' => TRUE,
-        'title' => TRUE,
-        'link' => TRUE,
-        'external' => TRUE,
-        'systemOrder' => TRUE,
-        'active' => TRUE,
-    ];
+		'menuId' => TRUE,
+		'languageShortcode' => TRUE,
+		'parentId' => TRUE,
+		'title' => TRUE,
+		'link' => TRUE,
+		'external' => TRUE,
+		'systemOrder' => TRUE,
+		'active' => TRUE,
+	];
 	/**
 	 * @inheritDoc
 	 */
@@ -67,9 +67,10 @@ class MenuEntry extends Entity {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function getChildren (): ?CollectionInterface {
+	public function getChildren(): ?CollectionInterface {
 		/** @var MenuEntriesTable $lo_table */
 		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
+
 
 		return $lo_table->getChildren($this);
 	}
@@ -80,9 +81,10 @@ class MenuEntry extends Entity {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function getNestedChildren (array $aa_options = [], int $ai_currentLevel = 0): ?CollectionInterface {
+	public function getNestedChildren(array $aa_options = [], int $ai_currentLevel = 0): ?CollectionInterface {
 		/** @var MenuEntriesTable $lo_table */
 		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
+
 
 		return $lo_table->getNestedChildren($this, $aa_options, $ai_currentLevel);
 	}
@@ -93,9 +95,10 @@ class MenuEntry extends Entity {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function getParent (): ?self {
+	public function getParent(): ?self {
 		/** @var MenuEntriesTable $lo_table */
 		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
+
 
 		return $lo_table->getParent($this);
 	}
@@ -106,9 +109,10 @@ class MenuEntry extends Entity {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function getParents (array $aa_options = [], int $ai_currentLevel = 0): ?CollectionInterface {
+	public function getParents(array $aa_options = [], int $ai_currentLevel = 0): ?CollectionInterface {
 		/** @var MenuEntriesTable $lo_table */
 		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
+
 
 		return $lo_table->getParents($this, $aa_options, $ai_currentLevel);
 	}

@@ -35,6 +35,7 @@ use Twig\Loader\LoaderInterface;
 class AppView extends TwigView {
 	protected static bool $initialized = FALSE;
 
+
 	/**
 	 * @inheritDoc
 	 *
@@ -42,7 +43,7 @@ class AppView extends TwigView {
 	 *
 	 * @throws LoaderError
 	 */
-	public function initialize (): void {
+	public function initialize(): void {
 		$this->setConfig('environment', [
 			'auto_reload' => TRUE,
 			//'cache' => FALSE,
@@ -84,7 +85,7 @@ class AppView extends TwigView {
 	 *
 	 * @return LoaderInterface
 	 */
-	protected function createLoader (): LoaderInterface {
+	protected function createLoader(): LoaderInterface {
 		return new FileLoader($this->extensions);
 	}
 }

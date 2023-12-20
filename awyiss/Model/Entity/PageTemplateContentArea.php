@@ -26,10 +26,11 @@ class PageTemplateContentArea extends Entity {
 		'contentAreaId' => TRUE,
 		'systemOrder' => TRUE,
 	];
-
+	/** @var array|string[] */
+	protected array $_virtual = [];
 	/**
-	* @inheritDoc
-	*/
+	 * @inheritDoc
+	 */
 	protected static array $fieldMap = [
 		'page_template_id' => 'pageTemplateId',
 		'page_template' => 'pageTemplate',
@@ -37,6 +38,4 @@ class PageTemplateContentArea extends Entity {
 		'content_area' => 'contentArea',
 		'system_order' => 'systemOrder',
 	];
-	/** @var array|string[] */
-	protected array $_virtual = [];
 }

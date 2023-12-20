@@ -43,7 +43,7 @@ class AttributesTask extends Task/* implements AddInterface*/ {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function run (array $aa_data, int $ai_jobId): void {
+	public function run(array $aa_data, int $ai_jobId): void {
 		//$la_diff holds the entity's old values that differ from the new ones
 		$la_diff = Hash::diff($aa_data['old'], $aa_data['new']);
 
@@ -87,7 +87,7 @@ class AttributesTask extends Task/* implements AddInterface*/ {
 
 		if (isset($la_diff['deleted'])) {
 			//For now, the sheer existence of the deleted key is enough since there's no undelete-method
-			if ( ! $lb_tableExists) {
+			if (!$lb_tableExists) {
 				//If the table does not exist, there's nothing to do.
 				return;
 			}
@@ -102,7 +102,7 @@ class AttributesTask extends Task/* implements AddInterface*/ {
 			}
 
 			//The target attributes-table does not exist
-			if ( ! $lb_tableExists) {
+			if (!$lb_tableExists) {
 				//Bake a `create`-migration that also adds the parent id-column and the column for the attribute-entity
 				$la_commands[] = 'bin/cake bake migration create_' . $ls_attributesTable . ' ' . $ls_foreignKey . ':integer[11] ' . $ls_column . $ls_folder;
 			}
@@ -128,21 +128,21 @@ class AttributesTask extends Task/* implements AddInterface*/ {
 	 *
 	 * @return array
 	 */
-	public function getTypeAndLength (?string $as_type): array {
+	public function getTypeAndLength(?string $as_type): array {
 		$ls_type = $as_type ?: 'varchar(255)';
 
-		if ( ! preg_match(AttributesTable::TYPE_PATTERN, $ls_type, $la_typeMatches, PREG_UNMATCHED_AS_NULL)) {
+		if (!preg_match(AttributesTable::TYPE_PATTERN, $ls_type, $la_typeMatches, PREG_UNMATCHED_AS_NULL)) {
 			return ['string', 255];
 		}
 
 		$lo_reflector = new ReflectionClass(AdapterInterface::class);
 		$lo_collection = new Collection($lo_reflector->getConstants());
 
-		$la_validTypes = $lo_collection->filter(function($value, $constant) {
+		$la_validTypes = $lo_collection->filter(function ($value, $constant) {
 			return str_starts_with($constant, 'PHINX_TYPE_');
 		})->toArray();
 
-		if (empty($la_typeMatches[1]) || ! in_array($la_typeMatches[1], $la_validTypes)) {
+		if (empty($la_typeMatches[1]) || !in_array($la_typeMatches[1], $la_validTypes)) {
 			if ($la_typeMatches[1] == 'int') {
 				$la_typeMatches[1] = 'integer';
 			}
@@ -153,6 +153,7 @@ class AttributesTask extends Task/* implements AddInterface*/ {
 				$la_typeMatches[1] = 'string';
 			}
 		}
+
 
 		return [$la_typeMatches[1], $la_typeMatches[2] ?: NULL];
 	}
@@ -166,7 +167,7 @@ class AttributesTask extends Task/* implements AddInterface*/ {
 	 *
 	 * @return bool
 	 */
-	protected function buildAlterOldTableCommands (array &$aa_commands, array $aa_data, string $as_folder): bool {
+	protected function buildAlterOldTableCommands(array &$aa_commands, array $aa_data, string $as_folder): bool {
 		$ls_oldAttributesTable = 'attributes_' . $aa_data['old']['scope'];
 
 		$lo_schema = ConnectionManager::get('default')->getSchemaCollection()->describe($ls_oldAttributesTable);
@@ -199,23 +200,36 @@ class AttributesTask extends Task/* implements AddInterface*/ {
 		else {
 			if (file_exists($ls_oldTableFile)) {
 				if (posix_getuid() != fileowner($ls_oldTableFile)) {
-					throw new QueueException(sprintf('Cannot migrate `%s` in `%s`. Make sure all files have the same owner the cronjob runs with.',
-						$ls_oldTableFile,
-						self::class));
+					throw new QueueException(
+						sprintf(
+							'Cannot migrate `%s` in `%s`. Make sure all files have the same owner the cronjob runs with.',
+							$ls_oldTableFile,
+							self::class
+						)
+					);
 				}
 			}
 
 			if (file_exists($ls_oldEntityFile)) {
 				if (posix_getuid() != fileowner($ls_oldEntityFile)) {
-					throw new QueueException(sprintf('Cannot migrate `%s` in `%s`. Make sure all files have the same owner the cronjob runs with.',
-						$ls_oldEntityFile,
-						self::class));
+					throw new QueueException(
+						sprintf(
+							'Cannot migrate `%s` in `%s`. Make sure all files have the same owner the cronjob runs with.',
+							$ls_oldEntityFile,
+							self::class
+						)
+					);
 				}
 			}
 
 			//Bake a `remove`-migration
-			$aa_commands[] = 'bin/cake bake migration remove_' . $aa_data['new']['identifier'] . '_from_' . $ls_oldAttributesTable .
-							 ' ' . $aa_data['old']['identifier'] . $as_folder;
+			$aa_commands[] = 'bin/cake bake migration remove_' .
+							 $aa_data['new']['identifier'] .
+							 '_from_' .
+							 $ls_oldAttributesTable .
+							 ' ' .
+							 $aa_data['old']['identifier'] .
+							 $as_folder;
 		}
 
 		/*
@@ -223,6 +237,7 @@ class AttributesTask extends Task/* implements AddInterface*/ {
 		 * has the same "version" as the migration that adds the column to the new table.
 		*/
 		$aa_commands[] = 'sleep 1';
+
 
 		return $lb_bakeOldModel;
 	}
@@ -237,7 +252,7 @@ class AttributesTask extends Task/* implements AddInterface*/ {
 	 *
 	 * @return array
 	 */
-	protected function createJob (array $aa_commands, array $aa_data, bool $ab_scopeIsPageRole, bool $ab_bakeOldModel): void {
+	protected function createJob(array $aa_commands, array $aa_data, bool $ab_scopeIsPageRole, bool $ab_bakeOldModel): void {
 		if (empty($aa_commands)) {
 			return;
 		}
@@ -293,7 +308,7 @@ class AttributesTask extends Task/* implements AddInterface*/ {
 	 *
 	 * @return void
 	 */
-	protected function buildAlterTableCommands (array &$aa_commands, array $aa_data, array $aa_diff, bool $ab_changedScope, string $as_column, string $as_folder): void {
+	protected function buildAlterTableCommands(array &$aa_commands, array $aa_data, array $aa_diff, bool $ab_changedScope, string $as_column, string $as_folder): void {
 		$ls_attributesTable = 'attributes_' . $aa_data['new']['scope'];
 
 		$ls_tableFile = ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Table' . DS . Inflector::camelize($ls_attributesTable) . 'Table.php';
@@ -301,23 +316,31 @@ class AttributesTask extends Task/* implements AddInterface*/ {
 
 		if (file_exists($ls_tableFile)) {
 			if (posix_getuid() != fileowner($ls_tableFile)) {
-				throw new QueueException(sprintf('Cannot migrate `%s` in `%s`. Make sure all files have the same owner the cronjob runs with.',
+				throw new QueueException(
+					sprintf(
+						'Cannot migrate `%s` in `%s`. Make sure all files have the same owner the cronjob runs with.',
 						$ls_tableFile,
-						self::class));
+						self::class
+					)
+				);
 			}
 		}
 
 		if (file_exists($ls_entityFile)) {
 			if (posix_getuid() != fileowner($ls_entityFile)) {
-				throw new QueueException(sprintf('Cannot migrate `%s` in `%s`. Make sure all files have the same owner the cronjob runs with.',
+				throw new QueueException(
+					sprintf(
+						'Cannot migrate `%s` in `%s`. Make sure all files have the same owner the cronjob runs with.',
 						$ls_entityFile,
-						self::class));
+						self::class
+					)
+				);
 			}
 		}
 
 
 		//Column is renamed but only if the scope is still the same.
-		if ( ! $ab_changedScope && isset($aa_diff['identifier'])) {
+		if (!$ab_changedScope && isset($aa_diff['identifier'])) {
 			//The scope has not changed, but the identifier has: alter the column
 			$aa_commands[] = 'bin/cake bake migration alter_' . $aa_data['old']['identifier'] . '_on_' . $ls_attributesTable . ' ' . $as_column . $as_folder;
 		}
@@ -325,7 +348,7 @@ class AttributesTask extends Task/* implements AddInterface*/ {
 			$lo_schema = ConnectionManager::get('default')->getSchemaCollection()->describe($ls_attributesTable);
 			$lb_columnExists = $lo_schema->hasColumn($aa_data['new']['identifier']);
 
-			if ( ! $lb_columnExists) {
+			if (!$lb_columnExists) {
 				//The column does not exist in the target table? Add it.
 				$aa_commands[] = 'bin/cake bake migration add_' . $aa_data['new']['identifier'] . '_to_' . $ls_attributesTable . ' ' . $as_column . $as_folder;
 			}

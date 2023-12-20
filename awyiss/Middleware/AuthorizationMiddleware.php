@@ -7,9 +7,9 @@ namespace Awyiss\Middleware;
 use Awyiss\Authorization\AuthorizationServiceInterface;
 use Awyiss\Authorization\AuthorizationServiceProviderInterface;
 use Awyiss\Event\EventListenersProvider;
+use Awyiss\Routing\Router;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Event\EventDispatcherTrait;
-use Awyiss\Routing\Router;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -42,7 +42,7 @@ class AuthorizationMiddleware implements MiddlewareInterface {
 	 *
 	 * @throws \InvalidArgumentException When invalid subject has been passed.
 	 */
-	public function __construct (AuthorizationServiceProviderInterface|AuthorizationServiceInterface $ao_subject, array $aa_config = NULL) {
+	public function __construct(AuthorizationServiceProviderInterface|AuthorizationServiceInterface $ao_subject, array $aa_config = NULL) {
 		$this->setConfig($aa_config ?? []);
 
 		$this->subject = $ao_subject;
@@ -56,7 +56,7 @@ class AuthorizationMiddleware implements MiddlewareInterface {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function process (ServerRequestInterface $ao_request, RequestHandlerInterface $ao_handler): ResponseInterface {
+	public function process(ServerRequestInterface $ao_request, RequestHandlerInterface $ao_handler): ResponseInterface {
 		$lo_service = $this->getAuthorizationService($ao_request);
 		$lo_service->setAuthenticationService($ao_request->getAttribute('authentication'));
 
@@ -68,6 +68,7 @@ class AuthorizationMiddleware implements MiddlewareInterface {
 			'authorizationService' => $lo_service,
 		], $this);
 
+
 		return $ao_handler->handle($lo_request);
 	}
 
@@ -76,6 +77,7 @@ class AuthorizationMiddleware implements MiddlewareInterface {
 	 * Returns AuthorizationServiceInterface instance.
 	 *
 	 * @param ServerRequestInterface $ao_request Server request.
+	 *
 	 * @return AuthorizationServiceInterface
 	 * @throws RuntimeException When authentication method has not been defined.
 	 */
@@ -86,8 +88,10 @@ class AuthorizationMiddleware implements MiddlewareInterface {
 			$lo_subject = $lo_subject->getAuthorizationService($ao_request);
 		}
 
-		if ( ! $lo_subject instanceof AuthorizationServiceInterface) {
-			throw new RuntimeException(sprintf('Service provided by a subject must be an instance of `%s`, `%s` given.', AuthorizationServiceInterface::class, gettype($lo_subject)));
+		if (!$lo_subject instanceof AuthorizationServiceInterface) {
+			throw new RuntimeException(
+				sprintf('Service provided by a subject must be an instance of `%s`, `%s` given.', AuthorizationServiceInterface::class, gettype($lo_subject))
+			);
 		}
 
 

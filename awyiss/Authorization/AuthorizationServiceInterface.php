@@ -19,7 +19,7 @@ interface AuthorizationServiceInterface {
 	 *
 	 * @param string $as_realm
 	 */
-	public function __construct (string $as_realm);
+	public function __construct(string $as_realm);
 
 
 	/**
@@ -27,7 +27,7 @@ interface AuthorizationServiceInterface {
 	 *
 	 * @return null|AuthenticationServiceInterface
 	 */
-	public function getAuthenticationService (): ?AuthenticationServiceInterface;
+	public function getAuthenticationService(): ?AuthenticationServiceInterface;
 
 
 	/**
@@ -37,7 +37,7 @@ interface AuthorizationServiceInterface {
 	 *
 	 * @return $this
 	 */
-	public function setAuthenticationService (AuthenticationServiceInterface $ao_authenticationService): static;
+	public function setAuthenticationService(AuthenticationServiceInterface $ao_authenticationService): static;
 
 
 	/**
@@ -45,7 +45,7 @@ interface AuthorizationServiceInterface {
 	 *
 	 * @return string
 	 */
-	public function getRealm (): string;
+	public function getRealm(): string;
 
 
 	/**
@@ -55,7 +55,7 @@ interface AuthorizationServiceInterface {
 	 *
 	 * @return array<string, class-string<PolicyInterface>>
 	 */
-	public function getPolicies (string $as_realm = NULL): array;
+	public function getPolicies(string $as_realm = NULL): array;
 
 
 	/**
@@ -67,10 +67,10 @@ interface AuthorizationServiceInterface {
 	 *
 	 * - \Awyiss\Authorization\Policy\\`$as_realm`\\`$as_scope`Policy
 	 *
-	 * @param string      $as_scope
+	 * @param string $as_scope
 	 * @param null|string $as_realm
 	 *
 	 * @return null|class-string<PolicyInterface>
 	 */
-	public function getPolicy (string $as_scope, ?string $as_realm = NULL): ?string;
+	public function getPolicy(string $as_scope, ?string $as_realm = NULL): ?string;
 }

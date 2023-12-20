@@ -11,8 +11,6 @@ enum PermissionAccess: int {
 	case OPTION_GRANTED = 1;
 	case OPTION_DENIED = 0;
 	//case OPTION_INDIFFERENT = NULL;
-
-
 	/**
 	 * Returns a value that can represent the enum case in the database.
 	 * Since one is NULL, it cannot be a backed enum

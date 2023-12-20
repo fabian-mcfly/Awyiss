@@ -12,10 +12,11 @@ interface SettingInterface {
 	final public const TYPE_RADIO = 'radio';
 	final public const TYPE_SELECT = 'select';
 
+
 	/**
 	 * @return string
 	 */
-	public function getType (): string;
+	public function getType(): string;
 
 
 	/**
@@ -23,13 +24,13 @@ interface SettingInterface {
 	 *
 	 * @return $this
 	 */
-	public function setType (string $as_type): static;
+	public function setType(string $as_type): static;
 
 
 	/**
 	 * @return string
 	 */
-	public function getOptions (): string;
+	public function getOptions(): string;
 
 
 	/**
@@ -37,5 +38,5 @@ interface SettingInterface {
 	 *
 	 * @return $this
 	 */
-	public function setOptions (array $aa_options): static;
+	public function setOptions(array $aa_options): static;
 }

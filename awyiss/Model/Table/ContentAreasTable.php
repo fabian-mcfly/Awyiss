@@ -46,10 +46,11 @@ class ContentAreasTable extends Table {
 		],
 	];
 
+
 	/**
 	 * @inheritDoc
 	 */
-	public function initialize (array $aa_config): void {
+	public function initialize(array $aa_config): void {
 		parent::initialize($aa_config);
 
 		/*$this->belongsToMany('ContentTemplates', [
@@ -81,7 +82,7 @@ class ContentAreasTable extends Table {
 	 *
 	 * @return Validator
 	 */
-	public function validationDefault (Validator $ao_validator): Validator {
+	public function validationDefault(Validator $ao_validator): Validator {
 		parent::validationDefault($ao_validator);
 
 
@@ -125,11 +126,12 @@ class ContentAreasTable extends Table {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildRules (RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
+	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
 		$ao_rules->add($ao_rules->isUnique(['identifier']), 'identifierUnique', [
 			'errorField' => 'identifier',
 			'message' => __dfx($this->getI18nDomain(), 'validation', 'content_areas', 'error_identifier_unique'),
 		]);
+
 
 		return $ao_rules;
 	}

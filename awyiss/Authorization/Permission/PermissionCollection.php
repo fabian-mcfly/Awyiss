@@ -38,7 +38,7 @@ class PermissionCollection {
 	 * @param null|AuthorizationService $ao_authorizationService
 	 * @param array<UsergroupPermission|array{scope: string, identifier: string, access: mixed, settings: mixed}> $aa_permissions
 	 */
-	public function __construct (?AuthorizationService $ao_authorizationService, array $aa_permissions = []) {
+	public function __construct(?AuthorizationService $ao_authorizationService, array $aa_permissions = []) {
 		$this->authorizationService = $ao_authorizationService;
 
 		foreach ($aa_permissions as $lx_permission) {
@@ -54,10 +54,14 @@ class PermissionCollection {
 				$this->add(Permission::createFromArray(...$lx_permission));
 			}
 			else {
-				throw new RuntimeException(sprintf('Permission must be of type `array|%s` in `%s`. `%s` given',
-					PermissionInterface::class,
-					static::class,
-					gettype($lx_permission)));
+				throw new RuntimeException(
+					sprintf(
+						'Permission must be of type `array|%s` in `%s`. `%s` given',
+						PermissionInterface::class,
+						static::class,
+						gettype($lx_permission)
+					)
+				);
 			}
 		}
 	}
@@ -73,10 +77,11 @@ class PermissionCollection {
 	 * @return $this
 	 *
 	 */
-	public function add (Permission $ao_permission): static {
+	public function add(Permission $ao_permission): static {
 		$ao_permission->setAuthorizationService($this->authorizationService);
 
 		$this->permissions[ $ao_permission->getScope() ][ $ao_permission->getIdentifier() ][] = $ao_permission;
+
 
 		return $this;
 	}
@@ -87,7 +92,7 @@ class PermissionCollection {
 	 *
 	 * @return array<string, array<string, Permission[]>>
 	 */
-	public function get (): array {
+	public function get(): array {
 		return $this->permissions;
 	}
 
@@ -102,7 +107,7 @@ class PermissionCollection {
 	 *
 	 * @return bool
 	 */
-	public function hasPermissions (string $as_scope, string $as_identifier = NULL): bool {
+	public function hasPermissions(string $as_scope, string $as_identifier = NULL): bool {
 		return $this->getPermissions($as_scope, $as_identifier) !== NULL;
 	}
 
@@ -115,14 +120,16 @@ class PermissionCollection {
 	 *
 	 * @return NULL|array<array<string, Permission[]>>|array<string, Permission[]>
 	 */
-	public function getPermissions (string $as_scope, string $as_identifier = NULL): ?array {
+	public function getPermissions(string $as_scope, string $as_identifier = NULL): ?array {
 		$ls_scope = AuthorizationService::sanitizeScope($as_scope);
 
 		if ($as_identifier) {
 			$ls_identifier = AuthorizationService::sanitizeIdentifier($as_identifier);
 
+
 			return $this->permissions[ $ls_scope ][ $ls_identifier ] ?? NULL;
 		}
+
 
 		return $this->permissions[ $ls_scope ] ?? NULL;
 	}
@@ -158,7 +165,7 @@ class PermissionCollection {
 	 *
 	 * @throws \ReflectionException
 	 */
-	public function scopeIsAccessible (string $as_scope, array $aa_additionalData = [], string|array ...$ax_identifier): bool {
+	public function scopeIsAccessible(string $as_scope, array $aa_additionalData = [], string|array ...$ax_identifier): bool {
 		/*
 		 * Traverse the provided identifiers and remember the accessibility in $lx_policyClass,
 		 * using the identity's currently assigned permissions.
@@ -166,7 +173,7 @@ class PermissionCollection {
 		 */
 		$la_accessible = [];
 		foreach ($ax_identifier as $lx_identifier) {
-			if ( ! is_array($lx_identifier)) {
+			if (!is_array($lx_identifier)) {
 				$lx_identifier = [$lx_identifier];
 			}
 
@@ -177,6 +184,7 @@ class PermissionCollection {
 		if (array_unique($la_accessible) === [TRUE]) {
 			return TRUE;
 		}
+
 
 		//I am sorry Dave. I'm afraid I can't do that.
 		return FALSE;
@@ -194,17 +202,17 @@ class PermissionCollection {
 	 *
 	 * @throws \ReflectionException
 	 */
-	protected function identifierIsAccessible (string $as_scope, array $aa_additionalData = [], ...$aa_identifier): ?bool {
+	protected function identifierIsAccessible(string $as_scope, array $aa_additionalData = [], ...$aa_identifier): ?bool {
 		$la_accessible = [];
 
 		//Traverse the identifiers and check if it's accessible, given the collection of permissions for `$as_scope`
 		foreach ($aa_identifier as $ls_identifier) {
-			if ( ! is_string($ls_identifier)) {
+			if (!is_string($ls_identifier)) {
 				throw new RuntimeException(sprintf('The identifier is invalid. Expected `string`, `%s` given', gettype($ls_identifier)));
 			}
 
 			$la_permissions = $this->getPermissions($as_scope, $ls_identifier);
-			if ( ! $la_permissions) {
+			if (!$la_permissions) {
 				continue;
 			}
 
@@ -215,6 +223,7 @@ class PermissionCollection {
 		if (in_array(TRUE, $la_accessible, TRUE)) {
 			return TRUE;
 		}
+
 
 		//Otherwise the access depends on the default accessible. FALSE makes sense as a fallback.
 		return Permission::DEFAULT_PERMISSION;
@@ -229,11 +238,11 @@ class PermissionCollection {
 	 *
 	 * @throws \ReflectionException
 	 */
-	protected function permissionsAreAccessible (array $aa_permissions, array $aa_additionalData = []): ?bool {
+	protected function permissionsAreAccessible(array $aa_permissions, array $aa_additionalData = []): ?bool {
 		$la_accessible = [];
 
 		foreach ($aa_permissions as $lo_permission) {
-			if ( ! ($lo_permission instanceof Permission)) {
+			if (!($lo_permission instanceof Permission)) {
 				throw new RuntimeException(sprintf('The permission is invalid. Expected instance of `%s`, `%s` given', Permission::class, gettype($lo_permission)));
 			}
 
@@ -246,6 +255,7 @@ class PermissionCollection {
 		elseif (in_array(TRUE, $la_accessible, TRUE)) {
 			return TRUE;
 		}
+
 
 		return NULL;
 	}

@@ -35,7 +35,7 @@ class ControllerFactory extends \Cake\Controller\ControllerFactory {
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 * @noinspection PhpParamsInspection //somehow PhpStorm does not realize that ServerRequest extends ServerRequestInterface
 	 */
-	public function create (ServerRequestInterface $ao_request): Controller {
+	public function create(ServerRequestInterface $ao_request): Controller {
 		$ls_className = $this->getControllerClass($ao_request);
 
 		//No className means no class exists for the current request
@@ -64,6 +64,7 @@ class ControllerFactory extends \Cake\Controller\ControllerFactory {
 			$lo_controller = $lo_reflection->newInstance($ao_request);
 		}
 
+
 		return $lo_controller;
 	}
 
@@ -76,7 +77,7 @@ class ControllerFactory extends \Cake\Controller\ControllerFactory {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function getControllerClass (ServerRequest $ao_request): ?string {
+	public function getControllerClass(ServerRequest $ao_request): ?string {
 		$ls_pluginPath = '';
 		$ls_namespace = 'Controller';
 		$ls_controller = $ao_request->getParam('controller', '');
@@ -95,6 +96,7 @@ class ControllerFactory extends \Cake\Controller\ControllerFactory {
 			throw $this->missingController($ao_request);
 		}
 
+
 		/** @var class-string<Controller>|NULL */
 		return App::className($ls_pluginPath . $ls_controller, $ls_namespace, 'Controller');
 	}
@@ -108,13 +110,13 @@ class ControllerFactory extends \Cake\Controller\ControllerFactory {
 	 *
 	 * @throws \ReflectionException
 	 *
-	 * @see \Awyiss\Controller\Backend\PagesController::asPageRole()
+	 * @see          \Awyiss\Controller\Backend\PagesController::asPageRole()
 	 *
 	 * @noinspection PhpMethodParametersCountMismatchInspection
 	 * @noinspection PhpUndefinedClassInspection
 	 * @noinspection PhpFullyQualifiedNameUsageInspection
 	 */
-	public function tryGenericPagesController (ServerRequest $ao_request): ?Controller {
+	public function tryGenericPagesController(ServerRequest $ao_request): ?Controller {
 		$ls_namespace = 'Controller';
 		$ls_controller = $ao_request->getParam('controller', '');
 		if ($ao_request->getParam('prefix')) {
@@ -141,7 +143,7 @@ class ControllerFactory extends \Cake\Controller\ControllerFactory {
 		}
 
 		//Set a class alias, so it's available in the root namespace, allowing the extension of "\GenericPagesBase"
-		if ( ! class_exists('GenericPagesBase')) {
+		if (!class_exists('GenericPagesBase')) {
 			class_alias($ls_baseController, 'GenericPagesBase');
 		}
 
@@ -152,6 +154,7 @@ class ControllerFactory extends \Cake\Controller\ControllerFactory {
 		 */
 		$lo_controller = new class ($ao_request) extends \GenericPagesBase {};
 		$lo_controller->asPageRole(constant($ls_constantIdentifier), $ls_controller);
+
 
 		return $lo_controller;
 	}

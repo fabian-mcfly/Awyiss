@@ -26,29 +26,29 @@ class PolicyCommand extends BakeCommand {
 	 */
 	use UtilTrait;
 
-	/**
-	 * @var array|string[] Table names that must never have permissions
-	 */
-	private array $blocklistedNames = ['audit', 'queue_processes', 'queued_jobs', 'usergroup_permissions', 'usergroups_users'];
+
 	/**
 	 * Path fragment for generated code.
 	 *
 	 * @var string
 	 */
 	public string $pathFragment = 'Authorization/Policy/';
+	/**
+	 * @var array|string[] Table names that must never have permissions
+	 */
+	private array $blocklistedNames = ['audit', 'queue_processes', 'queued_jobs', 'usergroup_permissions', 'usergroups_users'];
 
 
 	/**
 	 * Execute the command.
 	 *
 	 * @param Arguments $ao_args The command arguments.
-	 * @param ConsoleIo $ao_io   The console io
+	 * @param ConsoleIo $ao_io The console io
 	 *
 	 * @return int|null The exit code or null for success
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function execute(Arguments $ao_args, ConsoleIo $ao_io): ?int
-	{
+	public function execute(Arguments $ao_args, ConsoleIo $ao_io): ?int {
 		$this->extractCommonProperties($ao_args);
 		$ls_name = $ao_args->getArgument('name') ?? '';
 		$ls_name = $this->_getName($ls_name);
@@ -66,11 +66,13 @@ class PolicyCommand extends BakeCommand {
 				$ao_io->out('- ' . $this->_camelize($ls_table));
 			}
 
+
 			return static::CODE_SUCCESS;
 		}
 
 		if (in_array($ls_name, $this->blocklistedNames)) {
 			$ao_io->err('Error: Name not allowed');
+
 
 			return static::CODE_ERROR;
 		}
@@ -79,6 +81,7 @@ class PolicyCommand extends BakeCommand {
 
 		$this->bake($ls_policy, $ao_args, $ao_io);
 
+
 		return static::CODE_SUCCESS;
 	}
 
@@ -86,9 +89,9 @@ class PolicyCommand extends BakeCommand {
 	/**
 	 * Assembles and writes a Policy file
 	 *
-	 * @param string    $as_policyName Policy name already pluralized and correctly cased.
-	 * @param Arguments $ao_args       The console arguments
-	 * @param ConsoleIo $ao_io         The console io
+	 * @param string $as_policyName Policy name already pluralized and correctly cased.
+	 * @param Arguments $ao_args The console arguments
+	 * @param ConsoleIo $ao_io The console io
 	 *
 	 * @return void
 	 */
@@ -109,9 +112,7 @@ class PolicyCommand extends BakeCommand {
 			'prefix' => $ls_prefix,
 		];
 
-		$ls_contents = $this->createTemplateRenderer()
-			->set($la_data)
-			->generate('AwyissBake.Policy/policy');
+		$ls_contents = $this->createTemplateRenderer()->set($la_data)->generate('AwyissBake.Policy/policy');
 
 		$ls_path = $this->getPath($ao_args);
 		$ls_filename = $ls_path . $as_policyName . 'Policy.php';
@@ -126,7 +127,8 @@ class PolicyCommand extends BakeCommand {
 	 * @param ConsoleOptionParser $ao_parser The option parser to update.
 	 *
 	 * @return ConsoleOptionParser
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection*/
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 */
 	public function buildOptionParser(ConsoleOptionParser $ao_parser): ConsoleOptionParser {
 		$lo_parser = $this->_setCommonOptions($ao_parser);
 
@@ -139,6 +141,7 @@ class PolicyCommand extends BakeCommand {
 		])->addOption('prefix', [
 			'help' => 'The routing prefix to use.',
 		]);
+
 
 		return $lo_parser;
 	}

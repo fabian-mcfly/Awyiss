@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 
 namespace Awyiss\Middleware;
@@ -15,7 +15,7 @@ class AuthenticationMiddleware extends \Authentication\Middleware\Authentication
 	 *
 	 * @noinspection PhpMissingParentConstructorInspection
 	 */
-	public function __construct (
+	public function __construct(
 		AuthenticationServiceInterface|AuthenticationServiceProviderInterface $subject
 	) {
 		$this->subject = $subject;

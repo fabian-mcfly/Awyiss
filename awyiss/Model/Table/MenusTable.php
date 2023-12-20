@@ -21,6 +21,14 @@ use Cake\Validation\Validator;
  * @method Menu newDefaultEntity(array $aa_additionalData = [])
  */
 class MenusTable extends Table {
+	/**
+	 * @inheritDoc
+	 */
+	public const ATTRIBUTABLE = FALSE;
+	/**
+	 * @inheritDoc
+	 */
+	public const TABLE = 'menus';
 	protected array $_defaultConfig = [
 		'translate' => [
 			'fields' => ['title'],
@@ -31,17 +39,7 @@ class MenusTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public const ATTRIBUTABLE = FALSE;
-	/**
-	 * @inheritDoc
-	 */
-	public const TABLE = 'menus';
-
-
-	/**
-	 * @inheritDoc
-	 */
-	public function initialize (array $aa_config): void {
+	public function initialize(array $aa_config): void {
 		parent::initialize($aa_config);
 
 		//Used only internally to delete all entries, no matter the current language
@@ -68,7 +66,7 @@ class MenusTable extends Table {
 	 * @return Validator
 	 * @noinspection DuplicatedCode
 	 */
-	public function validationDefault (Validator $ao_validator): Validator {
+	public function validationDefault(Validator $ao_validator): Validator {
 		parent::validationDefault($ao_validator);
 
 
@@ -109,6 +107,7 @@ class MenusTable extends Table {
 			'boolean' => ['rule' => 'boolean'],
 		]);
 
+
 		return $ao_validator;
 	}
 
@@ -122,11 +121,12 @@ class MenusTable extends Table {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildRules (RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
+	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
 		$ao_rules->add($ao_rules->isUnique(['identifier']), 'identifierUnique', [
 			'errorField' => 'identifier',
 			'message' => __dfx($this->getI18nDomain(), 'validation', 'menus', 'error_identifier_unique'),
 		]);
+
 
 		return $ao_rules;
 	}
@@ -136,7 +136,7 @@ class MenusTable extends Table {
 	 * @return void
 	 * @noinspection PhpUnused
 	 */
-	public function beforeSoftDelete (): void {
+	public function beforeSoftDelete(): void {
 		$this->AllMenuEntries->disableCascadeCallbacks();
 	}
 
@@ -145,7 +145,7 @@ class MenusTable extends Table {
 	 * @return void
 	 * @noinspection PhpUnused
 	 */
-	public function beforeDelete (): void {
+	public function beforeDelete(): void {
 		$this->AllMenuEntries->disableCascadeCallbacks();
 	}
 
@@ -154,7 +154,7 @@ class MenusTable extends Table {
 	 * @return void
 	 * @noinspection PhpUnused
 	 */
-	public function afterSoftDelete (): void {
+	public function afterSoftDelete(): void {
 		$this->AllMenuEntries->enableCascadeCallbacks();
 	}
 
@@ -163,7 +163,7 @@ class MenusTable extends Table {
 	 * @return void
 	 * @noinspection PhpUnused
 	 */
-	public function afterDelete (): void {
+	public function afterDelete(): void {
 		$this->AllMenuEntries->enableCascadeCallbacks();
 	}
 }

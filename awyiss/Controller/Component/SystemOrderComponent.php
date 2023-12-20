@@ -38,7 +38,7 @@ class SystemOrderComponent extends Component {
 	 *
 	 * @return void
 	 */
-	public function startup (): void {
+	public function startup(): void {
 		if ($this->getConfig('entityName') === NULL) {
 			$this->setConfig('entityName', Inflector::variable(Inflector::singularize($this->getController()->getName())));
 		}
@@ -52,12 +52,12 @@ class SystemOrderComponent extends Component {
 	/**
 	 * Sets view vars before rendering a view, depending on the name set in the config
 	 * For usergroups as categories for users, the set view vars are
-	 * 		ao_systemOrderRecords
-	 * 		aa_systemOrderRelatedColumns
+	 *        ao_systemOrderRecords
+	 *        aa_systemOrderRelatedColumns
 	 *
 	 * @return void
 	 */
-	public function beforeRender (): void {
+	public function beforeRender(): void {
 		$lo_controller = $this->getController();
 		$lo_view = $lo_controller->viewBuilder();
 
@@ -75,16 +75,12 @@ class SystemOrderComponent extends Component {
 
 		$lo_records = $this->getConfig('records');
 
-		if ( ! $lo_records) {
+		if (!$lo_records) {
 			$ls_action = $lo_controller->getRequest()->getParam('action');
 			$lx_autoload = $this->getConfig('autoload');
 
 			//Shall we autoload the records?
-			if (
-				$lx_autoload === TRUE ||
-				(is_array($lx_autoload) && in_array($ls_action, $lx_autoload)) ||
-				(is_string($lx_autoload) && $ls_action === $lx_autoload)
-			) {
+			if ($lx_autoload === TRUE || (is_array($lx_autoload) && in_array($ls_action, $lx_autoload)) || (is_string($lx_autoload) && $ls_action === $lx_autoload)) {
 				$ls_varName = 'ao_' . $this->getConfig('entityName');
 				if ($lo_entity = $lo_view->getVar($ls_varName)) {
 					//Get the records from the database
@@ -106,8 +102,7 @@ class SystemOrderComponent extends Component {
 		 *
 		 * Do not try to get an entity or call `ensurePossibleSystemOrder` when records exist in the config,
 		 * since those might not be related to the entity
-		 */
-		/* else {
+		 */ /* else {
 		 * 	$ls_varName = 'ao_' . $this->getConfig('entityName');
 		 * 	if ($lo_entity = $lo_view->getVar($ls_varName)) {
 		 * 		$this->ensurePossibleSystemOrder($lo_entity);
@@ -116,14 +111,14 @@ class SystemOrderComponent extends Component {
 		 */
 
 		//Set view vars if they don't already exist
-		if ( ! $lo_view->getVar('ao_systemOrderRecords')) {
+		if (!$lo_view->getVar('ao_systemOrderRecords')) {
 			$lo_view->setVar('ao_systemOrderRecords', $lo_records);
 		}
 
 		//Set view vars if they don't already exist
-		if ( ! $lo_view->getVar('aa_systemOrderRelatedColumns')) {
+		if (!$lo_view->getVar('aa_systemOrderRelatedColumns')) {
 			$la_relatedColumns = $this->getConfig('relatedColumns');
-			if ( ! $la_relatedColumns) {
+			if (!$la_relatedColumns) {
 				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 				$la_relatedColumns = $lo_table->getSystemOrderRelatedColumns();
 			}
@@ -143,16 +138,16 @@ class SystemOrderComponent extends Component {
 	 *
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::addQueryConditions() method
 	 */
-	public function getRecords (EntityInterface $ao_entity): ?ResultSetInterface {
+	public function getRecords(EntityInterface $ao_entity): ?ResultSetInterface {
 		$lo_controller = $this->getController();
 		/** @var Table $lo_table */
 		$lo_table = $lo_controller->{$this->getConfig('tableName')};
 
-		if ( ! $lo_table) {
+		if (!$lo_table) {
 			return NULL;
 		}
 
-		if ( ! $lo_table->hasBehavior('SystemOrder') || !$lo_table->getBehavior('SystemOrder')->getConfig('enabled')) {
+		if (!$lo_table->hasBehavior('SystemOrder') || !$lo_table->getBehavior('SystemOrder')->getConfig('enabled')) {
 			return NULL;
 		}
 
@@ -160,6 +155,7 @@ class SystemOrderComponent extends Component {
 		$lo_systemOrderRecords = $lo_systemOrderQuery->all();
 
 		$this->setConfig('records', $lo_systemOrderRecords);
+
 
 		return $lo_systemOrderRecords;
 	}
@@ -176,14 +172,14 @@ class SystemOrderComponent extends Component {
 	 * For example: for 4 existing records, a new entity can have system_order of [1-5]
 	 *
 	 * @param EntityInterface $ao_entity
-	 * @param NULL|ResultSet  $ao_records
+	 * @param NULL|ResultSet $ao_records
 	 *
 	 * @return void
 	 *
 	 * @noinspection PhpPossiblePolymorphicInvocationInspection
 	 */
-	public function ensurePossibleSystemOrder (EntityInterface $ao_entity, ?ResultSet $ao_records = NULL): void {
-		if ( ! $ao_entity->has('systemOrder')) {
+	public function ensurePossibleSystemOrder(EntityInterface $ao_entity, ?ResultSet $ao_records = NULL): void {
+		if (!$ao_entity->has('systemOrder')) {
 			return;
 		}
 
@@ -192,11 +188,10 @@ class SystemOrderComponent extends Component {
 		$li_highestSystemOrder = $lo_records->max('systemOrder')?->systemOrder ?? 0;
 
 		if (empty($ao_entity->systemOrder)) {
-			/** @noinspection PhpDynamicFieldDeclarationInspection */
-			$ao_entity->systemOrder = $li_highestSystemOrder + 1;
+			$ao_entity->set('systemOrder', $li_highestSystemOrder + 1);
 		}
 		elseif ($ao_entity->systemOrder > $li_highestSystemOrder) {
-			$ao_entity->systemOrder = $li_highestSystemOrder;
+			$ao_entity->set('systemOrder', $li_highestSystemOrder);
 		}
 	}
 }

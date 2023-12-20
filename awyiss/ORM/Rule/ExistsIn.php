@@ -20,14 +20,15 @@ class ExistsIn extends \Cake\ORM\Rule\ExistsIn {
 	 *
 	 * @var string|\Cake\ORM\Table|Association|Table
 	 */
-	protected string|Association|Table|\Cake\ORM\Table $_repository;
+	protected string | Association | Table | \Cake\ORM\Table $_repository;
+
 
 	/**
 	 * Performs the existence check
 	 *
 	 * Implemented from parent class 1:1 but pass the initial options to the `exists`-method
 	 *
-	 * @param EntityInterface      $ao_entity  The entity from where to extract the fields
+	 * @param EntityInterface $ao_entity The entity from where to extract the fields
 	 * @param array<string, mixed> $aa_options Options passed to the check,
 	 * where the `repository` key is required.
 	 *
@@ -35,10 +36,17 @@ class ExistsIn extends \Cake\ORM\Rule\ExistsIn {
 	 * @throws RuntimeException When the rule refers to an undefined association.
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function __invoke (EntityInterface $ao_entity, array $aa_options): bool {
+	public function __invoke(EntityInterface $ao_entity, array $aa_options): bool {
 		if (is_string($this->_repository)) {
-			if ( ! $aa_options['repository']->hasAssociation($this->_repository)) {
-				throw new RuntimeException(sprintf("ExistsIn rule for '%s' is invalid. '%s' is not associated with '%s'.", implode(', ', $this->_fields), $this->_repository, get_class($aa_options['repository'])));
+			if (!$aa_options['repository']->hasAssociation($this->_repository)) {
+				throw new RuntimeException(
+					sprintf(
+						"ExistsIn rule for '%s' is invalid. '%s' is not associated with '%s'.",
+						implode(', ', $this->_fields),
+						$this->_repository,
+						get_class($aa_options['repository'])
+					)
+				);
 			}
 			$lo_repository = $aa_options['repository']->getAssociation($this->_repository);
 			$this->_repository = $lo_repository;
@@ -55,18 +63,18 @@ class ExistsIn extends \Cake\ORM\Rule\ExistsIn {
 			$lo_realTarget = $lo_target;
 		}
 
-		if ( ! empty($aa_options['_sourceTable']) && $lo_realTarget === $aa_options['_sourceTable']) {
+		if (!empty($aa_options['_sourceTable']) && $lo_realTarget === $aa_options['_sourceTable']) {
 			return TRUE;
 		}
 
-		if ( ! empty($aa_options['repository'])) {
+		if (!empty($aa_options['repository'])) {
 			$lo_source = $aa_options['repository'];
 		}
 		if ($lo_source instanceof Association) {
 			$lo_source = $lo_source->getSource();
 		}
 
-		if ( ! $ao_entity->extract($this->_fields, TRUE)) {
+		if (!$ao_entity->extract($this->_fields, TRUE)) {
 			return TRUE;
 		}
 
@@ -83,7 +91,7 @@ class ExistsIn extends \Cake\ORM\Rule\ExistsIn {
 			}
 		}
 
-		$la_primary = array_map(function($as_key) use ($lo_target) {
+		$la_primary = array_map(function ($as_key) use ($lo_target) {
 			return $lo_target->aliasField($as_key) . ' IS';
 		}, $la_bindingKey);
 
@@ -91,6 +99,7 @@ class ExistsIn extends \Cake\ORM\Rule\ExistsIn {
 		$la_conditions = array_combine($la_primary, $ao_entity->extract($la_fields));
 
 		$la_options = array_diff_key($this->_options, ['allowNullableNulls' => NULL]);
+
 
 		return $lo_target->exists($la_conditions, $la_options);
 	}

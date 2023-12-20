@@ -9,9 +9,9 @@ use Awyiss\Configuration\ConfigOptionsProvider;
 use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Model\Entity\Configuration;
 use Awyiss\Model\Table\ConfigurationTable;
+use Awyiss\Routing\Router;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
-use Awyiss\Routing\Router;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 
@@ -44,10 +44,10 @@ class ConfigurationController extends Controller {
 	 * @throws \ReflectionException
 	 * @throws \Exception
 	 */
-	public function initialize (): void {
+	public function initialize(): void {
 		parent::initialize();
 
-		foreach ($this->Configuration->getScopes() AS $ls_scope => $ls_configOptionsClass) {
+		foreach ($this->Configuration->getScopes() as $ls_scope => $ls_configOptionsClass) {
 			$this->configScopes[ Inflector::underscore($ls_scope) ] = $ls_configOptionsClass;
 		}
 
@@ -68,7 +68,7 @@ class ConfigurationController extends Controller {
 				}
 			}
 			//Session not started OR there's no scope saved in the session
-			elseif ( ! $lo_session->started() || ! ($ls_scope = $lo_session->read($this->selectedScopeSessionIdentifier))) {
+			elseif (!$lo_session->started() || !($ls_scope = $lo_session->read($this->selectedScopeSessionIdentifier))) {
 				//Default to scope 'system'
 				$ls_scope = 'system';
 
@@ -78,7 +78,7 @@ class ConfigurationController extends Controller {
 			}
 
 			//If the selected scope is not inside the available configuration scopes, reset it to the first available one.
-			if (! array_key_exists($ls_scope, $this->configScopes)) {
+			if (!array_key_exists($ls_scope, $this->configScopes)) {
 				$ls_scope = array_key_first($this->configScopes);
 
 				if ($lo_session->started()) {
@@ -101,26 +101,24 @@ class ConfigurationController extends Controller {
 	 *
 	 * @throws \Exception
 	 */
-	public function overview () {
+	public function overview() {
 		$this->Authorization->setAdditionalData([
 			'scope' => '',
 		])->ensure('read');
 
-		if (! $this->Authorization->withAdditionalData([
-			'scope' => $this->getOverviewWhere('scope'),
-		])->isAccessible('read')) {
+		if (!$this->Authorization->withAdditionalData(['scope' => $this->getOverviewWhere('scope')])->isAccessible('read')) {
 			$this->Flash->error(__('scope_not_accessible'));
+
 
 			return $this->redirect(['action' => 'overview', 'scope' => 'system']);
 		}
 
-		$lo_configuration = $this->Configuration->find()->where($this->getOverviewWhere())
-		->orderBy([
-			'identifier' => 'ASC',
-			'language_shortcode' => 'ASC',
-		]);
+		$lo_configuration = $this->Configuration->find()->where($this->getOverviewWhere())->orderBy([
+				'identifier' => 'ASC',
+				'language_shortcode' => 'ASC',
+			]);
 
-		$la_configuration = $lo_configuration->all()->groupBy('realm')->map(function($aa_data) {
+		$la_configuration = $lo_configuration->all()->groupBy('realm')->map(function ($aa_data) {
 			return Hash::expand(collection($aa_data)->groupBy('identifier')->toArray());
 		})->toArray();
 
@@ -142,7 +140,7 @@ class ConfigurationController extends Controller {
 	 * @throws \ReflectionException
 	 * @throws \Exception
 	 */
-	public function add (): void {
+	public function add(): void {
 		$this->Authorization->setAdditionalData([
 			'scope' => '',
 		])->ensure('create');
@@ -182,15 +180,16 @@ class ConfigurationController extends Controller {
 	 * @throws \ReflectionException
 	 * @throws \Exception
 	 */
-	public function edit () {
+	public function edit() {
 		$this->Authorization->setAdditionalData([
 			'scope' => '',
 		])->ensure('update');
 
-			/** @var Configuration $lo_configuration */
+		/** @var Configuration $lo_configuration */
 		$lo_configuration = $this->Configuration->findById((int) $this->request->getParam('id'))->find('translations')->first();
-		if ( ! $lo_configuration) {
+		if (!$lo_configuration) {
 			$this->Flash->error(__('record_not_found'));
+
 
 			return $this->redirect(['action' => 'overview']);
 		}
@@ -199,10 +198,9 @@ class ConfigurationController extends Controller {
 			$this->save($lo_configuration, 'edit');
 		}
 		else {
-			if (! $this->Authorization->withAdditionalData([
-				'scope' => $lo_configuration->scope,
-			])->isAccessible('read')) {
+			if (!$this->Authorization->withAdditionalData(['scope' => $lo_configuration->scope])->isAccessible('read')) {
 				$this->Flash->error(__('scope_not_accessible'));
+
 
 				return $this->redirect(['action' => 'overview']);
 			}
@@ -227,17 +225,19 @@ class ConfigurationController extends Controller {
 	 *
 	 * @throws \Exception
 	 */
-	public function delete (): Response {
+	public function delete(): Response {
 		$this->Authorization->setAdditionalData([
 			'scope' => '',
 		])->ensure('delete');
 
 		$this->request->allowMethod(['get', 'delete']);
 
-			/** @var Configuration $lo_configuration */
+		/** @var Configuration $lo_configuration */
 		$lo_configuration = $this->Configuration->findById((int) $this->request->getParam('id'))->find('translations')->first();
-		if ( ! $lo_configuration) {
+		if (!$lo_configuration) {
 			$this->Flash->error(__('record_not_found'));
+
+
 			return $this->redirect(['action' => 'overview']);
 		}
 
@@ -247,6 +247,7 @@ class ConfigurationController extends Controller {
 		else {
 			$this->Flash->error(__('delete_failed'));
 		}
+
 
 		return $this->redirect(['action' => 'overview']);
 	}
@@ -259,7 +260,7 @@ class ConfigurationController extends Controller {
 	 * @return void
 	 * @throws \Exception
 	 */
-	protected function save (Configuration $ao_configuration, string $as_method = 'add'): void {
+	protected function save(Configuration $ao_configuration, string $as_method = 'add'): void {
 		$la_associated = [];
 		if ($this->Configuration->hasAttributes()) {
 			$la_associated[] = $this->Configuration->getAttributesTable(TRUE);
@@ -268,9 +269,7 @@ class ConfigurationController extends Controller {
 
 		$this->Configuration->patchEntity($ao_configuration, $this->request->getData(), ['associated' => $la_associated]);
 
-		if ( ! $this->Authorization->withAdditionalData([
-			'scope' => $ao_configuration->scope,
-		])->isAccessible('read')) {
+		if (!$this->Authorization->withAdditionalData(['scope' => $ao_configuration->scope])->isAccessible('read')) {
 			$this->Flash->error(__('scope_not_accessible'));
 
 			throw new RedirectException(Router::url(['action' => 'overview'], TRUE), 302);
@@ -280,7 +279,7 @@ class ConfigurationController extends Controller {
 		$lo_session->write($this->selectedScopeSessionIdentifier, $ao_configuration->scope);
 		$lo_session->write($this->selectedRealmSessionIdentifier, $ao_configuration->realm);
 
-		if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
+		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
 			if ($this->Configuration->save($ao_configuration)) {
 				$this->Flash->success(__($as_method . '_succeeded'));
 
@@ -302,7 +301,7 @@ class ConfigurationController extends Controller {
 	/**
 	 * @inheritDoc
 	 */
-	protected function initializeOverviewWhere (): void {
+	protected function initializeOverviewWhere(): void {
 		$this->overviewWhere = [
 			'scope' => 'system',
 		];

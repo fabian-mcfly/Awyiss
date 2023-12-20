@@ -49,7 +49,7 @@ class UsergroupPermission extends Entity implements PermissionInterface {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function _setScope (string $as_scope): string {
+	public function _setScope(string $as_scope): string {
 		return Inflector::underscore($as_scope);
 	}
 
@@ -63,7 +63,7 @@ class UsergroupPermission extends Entity implements PermissionInterface {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function _setIdentifier (string $as_identifier): string {
+	public function _setIdentifier(string $as_identifier): string {
 		return Inflector::underscore($as_identifier);
 	}
 
@@ -73,16 +73,17 @@ class UsergroupPermission extends Entity implements PermissionInterface {
 	 *
 	 * Required by PermissionInterface
 	 */
-	public function getScope (): string {
+	public function getScope(): string {
 		return $this->scope;
 	}
+
 
 	/**
 	 * @inheritDoc
 	 *
 	 * Required by PermissionInterface
 	 */
-	public function getIdentifier (): string {
+	public function getIdentifier(): string {
 		return $this->identifier;
 	}
 
@@ -92,7 +93,7 @@ class UsergroupPermission extends Entity implements PermissionInterface {
 	 *
 	 * Required by PermissionInterface
 	 */
-	public function getAccess (): PermissionAccess {
+	public function getAccess(): PermissionAccess {
 		return $this->access;
 	}
 
@@ -102,7 +103,7 @@ class UsergroupPermission extends Entity implements PermissionInterface {
 	 *
 	 * Required by PermissionInterface
 	 */
-	public function getSettings (): ?array {
+	public function getSettings(): ?array {
 		return $this->settings;
 	}
 }

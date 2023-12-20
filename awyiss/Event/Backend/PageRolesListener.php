@@ -35,7 +35,7 @@ class PageRolesListener implements EventListenerInterface {
 	/**
 	 * @inheritDoc
 	 */
-	public function implementedEvents (): array {
+	public function implementedEvents(): array {
 		return [
 			'Model.PageRoles.afterSave' => 'afterSave',
 			'Model.PageRoles.afterSaveCommit' => 'afterSaveCommit',
@@ -52,24 +52,23 @@ class PageRolesListener implements EventListenerInterface {
 	 *
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function afterSave (Event $ao_event, PageRole $ao_entity): void {
+	public function afterSave(Event $ao_event, PageRole $ao_entity): void {
 		//Create backend menu entries for the new page role
 		$this->createBackendMenuEntries($ao_entity);
 	}
 
 
 	/**
-	 * @param Event    $ao_event
+	 * @param Event $ao_event
 	 * @param PageRole $ao_entity
 	 *
 	 * @noinspection PhpUnused
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function afterSaveCommit (Event $ao_event, PageRole $ao_entity): void {
+	public function afterSaveCommit(Event $ao_event, PageRole $ao_entity): void {
 		$this->createCustomConstantsFile();
 
 		$this->createPageRoleModel($ao_entity);
-
 		/*$lo_queue = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
 		if ( ! $lo_queue->isQueued('system::create_page_role_model_' . $ao_entity->identifier)) {
 			$lo_queue->createJob('CreatePageRoleModel', [
@@ -84,14 +83,14 @@ class PageRolesListener implements EventListenerInterface {
 
 
 	/**
-	 * @param Event    $ao_event
+	 * @param Event $ao_event
 	 * @param PageRole $ao_entity
 	 *
 	 * @noinspection PhpUnused
 	 * @noinspection PhpNoReturnAttributeCanBeAddedInspection
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function afterDelete (Event $ao_event, PageRole $ao_entity): void {
+	public function afterDelete(Event $ao_event, PageRole $ao_entity): void {
 		$this->createCustomConstantsFile();
 
 		//TODO: Delete table file
@@ -105,10 +104,10 @@ class PageRolesListener implements EventListenerInterface {
 	 *
 	 * @return void
 	 */
-	protected function createCustomConstantsFile (): void {
+	protected function createCustomConstantsFile(): void {
 		/** @var QueuedJobsTable $lo_queue */
 		$lo_queue = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
-		if ( ! $lo_queue->isQueued('system::create_custom_constants')) {
+		if (!$lo_queue->isQueued('system::create_custom_constants')) {
 			$lo_queue->createJob('CreateCustomConstants', [
 				'environment' => CONFIG_ENV,
 			], [
@@ -127,8 +126,8 @@ class PageRolesListener implements EventListenerInterface {
 	 *
 	 * @return void
 	 */
-	protected function createBackendMenuEntries (PageRole $ao_entity): void {
-		if ( ! Configure::read('Awyiss.PageRoles.Backend.autoCreateMenuEntries') || ! $ao_entity->isNew()) {
+	protected function createBackendMenuEntries(PageRole $ao_entity): void {
+		if (!Configure::read('Awyiss.PageRoles.Backend.autoCreateMenuEntries') || !$ao_entity->isNew()) {
 			return;
 		}
 
@@ -194,7 +193,7 @@ class PageRolesListener implements EventListenerInterface {
 	 *
 	 * @return void
 	 */
-	private function createPageRoleModel (PageRole $ao_entity): void {
+	private function createPageRoleModel(PageRole $ao_entity): void {
 		if ($ao_entity->identifier === 'page') {
 			return;
 		}

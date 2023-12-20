@@ -4,15 +4,10 @@
 namespace Awyiss\Event\Global;
 
 
-use Authentication\Authenticator\AuthenticatorInterface;
-use Authentication\IdentityInterface;
 use Awyiss\Authorization\AuthorizationServiceInterface;
 use Awyiss\Authorization\Policy\GenericPagePolicy;
-use Awyiss\Awyiss;
 use Awyiss\Event\EventListenerTrait;
-use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Table;
-use Awyiss\Routing\Router;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
 use Cake\Utility\Inflector;
@@ -26,12 +21,6 @@ class AuthorizationListener implements EventListenerInterface {
 
 
 	/**
-	 * @var string
-	 */
-	protected static string $scope;
-
-
-	/**
 	 * @var array|array[]
 	 */
 	protected array $initializedModels = [
@@ -41,12 +30,16 @@ class AuthorizationListener implements EventListenerInterface {
 	 * @var AuthorizationServiceInterface
 	 */
 	protected AuthorizationServiceInterface $authorizationService;
+	/**
+	 * @var string
+	 */
+	protected static string $scope;
 
 
 	/**
 	 * @inheritDoc
 	 */
-	public function implementedEvents (): array {
+	public function implementedEvents(): array {
 		return [
 			'Authorization.requestPolicyClass' => 'requestPolicyClass',
 			'Authorization.requestAuthorizationService' => 'requestAuthorizationService',
@@ -65,7 +58,7 @@ class AuthorizationListener implements EventListenerInterface {
 	 * @noinspection PhpUnused
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function authorizationMiddlewareAfterProcess (Event $ao_event, AuthorizationServiceInterface $ao_authorizationService): void {
+	public function authorizationMiddlewareAfterProcess(Event $ao_event, AuthorizationServiceInterface $ao_authorizationService): void {
 		$this->authorizationService = $ao_authorizationService;
 
 		/** @var Table $lo_model */
@@ -94,12 +87,12 @@ class AuthorizationListener implements EventListenerInterface {
 	 * @noinspection PhpUnused
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function modelInitialize (Event $ao_event): void {
+	public function modelInitialize(Event $ao_event): void {
 		/** @var Table $lo_model */
 		$lo_model = $ao_event->getSubject();
 
 		if ($lo_model instanceof Table) {
-			if ( ! isset($this->authorizationService)) {
+			if (!isset($this->authorizationService)) {
 				$this->initializedModels['authorizationService'][] = $lo_model;
 			}
 			elseif ($lo_model->hasBehavior('Authorize')) {
@@ -119,7 +112,7 @@ class AuthorizationListener implements EventListenerInterface {
 	 * @noinspection PhpUnused
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function requestAuthorizationService (Event $ao_event): void {
+	public function requestAuthorizationService(Event $ao_event): void {
 		if (isset($this->authorizationService)) {
 			$ao_event->setResult($this->authorizationService);
 		}
@@ -135,7 +128,7 @@ class AuthorizationListener implements EventListenerInterface {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function requestPolicyClass (Event $ao_event): void {
+	public function requestPolicyClass(Event $ao_event): void {
 		$ls_singular = Inflector::singularize(Inflector::underscore($ao_event->getData('scope')));
 		$ls_constant = 'PAGEROLE_' . strtoupper($ls_singular);
 		if (defined($ls_constant)) {

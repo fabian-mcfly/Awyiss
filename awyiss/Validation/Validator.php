@@ -24,21 +24,25 @@ class Validator extends \Cake\Validation\Validator {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function offsetExists ($as_field): bool {
+	public function offsetExists($as_field): bool {
 		dd(__FILE__, __LINE__, debug_backtrace(2));
+
+
 		return isset($this->_fields[ $as_field ]);
 	}
 
-	public function offsetSet ($field, $rules): void {
+
+	public function offsetSet($field, $rules): void {
 		dd(__FILE__, __LINE__, debug_backtrace(2));
 	}
 
- 	public function offsetUnset ($field): void {
+
+	public function offsetUnset($field): void {
 		dd(__FILE__, __LINE__, debug_backtrace(2));
 	}
 
 
-	public function remove (string $field, ?string $rule = NULL) {
+	public function remove(string $field, ?string $rule = NULL) {
 		dd(__FILE__, __LINE__, debug_backtrace(2));
 	}
 
@@ -48,7 +52,7 @@ class Validator extends \Cake\Validation\Validator {
 	 *
 	 * @return void
 	 */
-	public function setI18nDomain (string $as_domain): void {
+	public function setI18nDomain(string $as_domain): void {
 		$this->i18nDomain = Inflector::underscore($as_domain);
 	}
 
@@ -58,8 +62,9 @@ class Validator extends \Cake\Validation\Validator {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function validate (array $aa_data, bool $ab_newRecord = TRUE): array {
+	public function validate(array $aa_data, bool $ab_newRecord = TRUE): array {
 		$la_data = $this->underscoreFields($aa_data, TRUE);
+
 
 		return parent::validate($la_data, $ab_newRecord);
 	}
@@ -70,8 +75,9 @@ class Validator extends \Cake\Validation\Validator {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function allowEmptyFor (string $as_field, ?int $ai_flags = NULL, $ax_when = TRUE, ?string $as_message = NULL) {
+	public function allowEmptyFor(string $as_field, ?int $ai_flags = NULL, $ax_when = TRUE, ?string $as_message = NULL) {
 		$ls_field = $this->underscoreField($as_field);
+
 
 		return parent::allowEmptyFor($ls_field, $ai_flags, $ax_when, $as_message);
 	}
@@ -83,7 +89,7 @@ class Validator extends \Cake\Validation\Validator {
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 * @noinspection PhpHierarchyChecksInspection <-- WHY?
 	 */
-	public function field (string $as_name, ?ValidationSet $ao_validationSet = NULL): ValidationSet {
+	public function field(string $as_name, ?ValidationSet $ao_validationSet = NULL): ValidationSet {
 		$ls_name = $this->underscoreField($as_name);
 
 		if (empty($this->_fields[ $ls_name ])) {
@@ -94,6 +100,7 @@ class Validator extends \Cake\Validation\Validator {
 			$this->allowEmptyString($as_name);
 		}
 
+
 		return $this->_fields[ $ls_name ];
 	}
 
@@ -103,23 +110,70 @@ class Validator extends \Cake\Validation\Validator {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function hasField (string $as_name): bool {
+	public function hasField(string $as_name): bool {
 		$ls_name = $this->underscoreField($as_name);
+
 
 		return isset($this->_fields[ $ls_name ]);
 	}
 
 
 	/**
-	 * @param string        $as_field
+	 * @param string $as_field
+	 *
+	 * @return NULL|string
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 */
+	public function getRequiredMessage(string $as_field): ?string {
+		$ls_field = $this->underscoreField($as_field);
+
+		if (!isset($this->_fields[ $ls_field ])) {
+			return NULL;
+		}
+
+		$ls_defaultMessage = __dfx($this->i18nDomain, 'validation', $as_field, 'error_required');
+
+
+		return $this->_presenceMessages[ $ls_field ] ?? $ls_defaultMessage;
+	}
+
+
+	/**
+	 * @param string $as_field
+	 *
+	 * @return NULL|string
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 */
+	public function getNotEmptyMessage(string $as_field): ?string {
+		$ls_field = $this->underscoreField($as_field);
+
+		if (!isset($this->_fields[ $ls_field ])) {
+			return NULL;
+		}
+
+		$ls_defaultMessage = __dfx($this->i18nDomain, 'validation', $as_field, 'error_not_empty');
+
+		foreach ($this->_fields[ $ls_field ] as $lo_rule) {
+			if ($lo_rule->get('rule') === 'notBlank' && $lo_rule->get('message')) {
+				return $lo_rule->get('message');
+			}
+		}
+
+
+		return $this->_allowEmptyMessages[ $ls_field ] ?? $ls_defaultMessage;
+	}
+
+
+	/**
+	 * @param string $as_field
 	 * @param ValidationSet $ao_rules
-	 * @param array         $aa_data
-	 * @param bool          $ab_newRecord
+	 * @param array $aa_data
+	 * @param bool $ab_newRecord
 	 *
 	 * @return array
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	protected function _processRules (string $as_field, ValidationSet $ao_rules, array $aa_data, bool $ab_newRecord): array {
+	protected function _processRules(string $as_field, ValidationSet $ao_rules, array $aa_data, bool $ab_newRecord): array {
 		$la_errors = [];
 		// Loading default provider in case there is none
 		$this->getProvider('default');
@@ -190,51 +244,8 @@ class Validator extends \Cake\Validation\Validator {
 			}
 		}
 
+
 		return $la_errors;
-	}
-
-
-	/**
-	 * @param string $as_field
-	 *
-	 * @return NULL|string
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
-	 */
-	public function getRequiredMessage (string $as_field): ?string {
-		$ls_field = $this->underscoreField($as_field);
-
-		if ( ! isset($this->_fields[ $ls_field ])) {
-			return NULL;
-		}
-
-		$ls_defaultMessage = __dfx($this->i18nDomain, 'validation', $as_field, 'error_required');
-
-		return $this->_presenceMessages[ $ls_field ] ?? $ls_defaultMessage;
-	}
-
-
-	/**
-	 * @param string $as_field
-	 *
-	 * @return NULL|string
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
-	 */
-	public function getNotEmptyMessage (string $as_field): ?string {
-		$ls_field = $this->underscoreField($as_field);
-
-		if ( ! isset($this->_fields[ $ls_field ])) {
-			return NULL;
-		}
-
-		$ls_defaultMessage = __dfx($this->i18nDomain, 'validation', $as_field, 'error_not_empty');
-
-		foreach ($this->_fields[ $ls_field ] as $lo_rule) {
-			if ($lo_rule->get('rule') === 'notBlank' && $lo_rule->get('message')) {
-				return $lo_rule->get('message');
-			}
-		}
-
-		return $this->_allowEmptyMessages[ $ls_field ] ?? $ls_defaultMessage;
 	}
 
 
@@ -247,7 +258,7 @@ class Validator extends \Cake\Validation\Validator {
 	 *
 	 * @return array
 	 */
-	protected function underscoreFields (array $aa_fields, bool $ab_underscoreKeys = FALSE): array {
+	protected function underscoreFields(array $aa_fields, bool $ab_underscoreKeys = FALSE): array {
 		$la_fields = [];
 
 		foreach ($aa_fields as $lx_field => $lx_value) {
@@ -256,6 +267,7 @@ class Validator extends \Cake\Validation\Validator {
 
 			$la_fields[ $lx_field ] = $lx_value;
 		}
+
 
 		return $la_fields;
 	}
@@ -266,8 +278,8 @@ class Validator extends \Cake\Validation\Validator {
 	 *
 	 * @return mixed
 	 */
-	protected function underscoreField (mixed $ax_field): mixed {
-		if ( ! $ax_field || ! is_string($ax_field) || str_starts_with($ax_field, '_')) {
+	protected function underscoreField(mixed $ax_field): mixed {
+		if (!$ax_field || !is_string($ax_field) || str_starts_with($ax_field, '_')) {
 			return $ax_field;
 		}
 
@@ -275,8 +287,10 @@ class Validator extends \Cake\Validation\Validator {
 			$ls_prefix = substr($ax_field, 0, $li_lastPos);
 			$ls_field = substr($ax_field, $li_lastPos + 1);
 
+
 			return $ls_prefix . '.' . Inflector::underscore($ls_field);
 		}
+
 
 		return Inflector::underscore($ax_field);
 	}

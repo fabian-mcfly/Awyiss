@@ -24,7 +24,7 @@ class MessagesFileLoader extends \Cake\I18n\MessagesFileLoader {
 	 * @throws RuntimeException if no file parser class could be found for the specified
 	 * file extension.
 	 */
-	public function __invoke (): Package|false {
+	public function __invoke(): Package|false {
 		$la_folders = $this->translationsFolders();
 		$ls_extension = $this->_extension;
 
@@ -40,7 +40,7 @@ class MessagesFileLoader extends \Cake\I18n\MessagesFileLoader {
 		$ls_parserName = ucfirst($ls_extension);
 		$ls_parserClass = App::className($ls_parserName, 'I18n\Parser', 'FileParser');
 
-		if ( ! $ls_parserClass) {
+		if (!$ls_parserClass) {
 			throw new RuntimeException(sprintf('Could not find class %s', "{$ls_parserName}FileParser"));
 		}
 
@@ -57,6 +57,7 @@ class MessagesFileLoader extends \Cake\I18n\MessagesFileLoader {
 				}
 			}
 		}
+
 
 		return $lo_package;
 	}

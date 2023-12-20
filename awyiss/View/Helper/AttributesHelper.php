@@ -9,7 +9,6 @@ use Awyiss\Attributes\AttributeOptionsProvider;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity\Attribute;
 use Awyiss\Model\Entity\Language;
-use Awyiss\Model\Table\AttributesTable;
 use Cake\Collection\Collection;
 use Cake\ORM\Query;
 use Cake\Utility\Hash;
@@ -31,7 +30,7 @@ class AttributesHelper extends Helper {
 	 * @var array<string, mixed>
 	 */
 	protected array $_defaultConfig = [
-		'attributeOptionsProviderClass' => AttributeOptionsProvider::class
+		'attributeOptionsProviderClass' => AttributeOptionsProvider::class,
 	];
 	/**
 	 * @inheritDoc
@@ -80,7 +79,7 @@ class AttributesHelper extends Helper {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function allControls (string $as_fieldset, array $aa_fields = [], array $aa_options = []): string {
+	public function allControls(string $as_fieldset, array $aa_fields = [], array $aa_options = []): string {
 		/** @var EntityContext $lo_context */
 		$lo_context = $this->Form->context();
 		$ls_source = $aa_options['source'] ?? $lo_context->entity()?->getSource();
@@ -90,7 +89,7 @@ class AttributesHelper extends Helper {
 		}
 
 		$ls_emptyField = '';
-		if ( ! isset(static::$initiatedSources[ $ls_source ])) {
+		if (!isset(static::$initiatedSources[ $ls_source ])) {
 			static::$initiatedSources[ $ls_source ] = TRUE;
 			$ls_emptyField = $this->Form->hidden('attributes', [
 				'val' => [],
@@ -110,7 +109,7 @@ class AttributesHelper extends Helper {
 		$la_attributeFields = static::$attributesByFieldset[ $as_fieldset ];
 
 		$la_fields = array_merge(Hash::normalize(array_keys($la_attributeFields)), Hash::normalize($aa_fields));
-		$la_fields = array_filter($la_fields, function($ax_value) {
+		$la_fields = array_filter($la_fields, function ($ax_value) {
 			return $ax_value !== FALSE;
 		});
 
@@ -122,25 +121,28 @@ class AttributesHelper extends Helper {
 			return $ls_emptyField;
 		}
 
-		$la_fields = $this->prepareFields($la_fields,
+		$la_fields = $this->prepareFields(
+			$la_fields,
 			static::$attributesByFieldset[ $as_fieldset ],
-			static::$attributeOptions[ $ls_source ]);
+			static::$attributeOptions[ $ls_source ]
+		);
+
 
 		return $ls_emptyField . $this->Form->controls($la_fields, $aa_options + ['fieldset' => FALSE]);
 	}
 
 
-	public function control (string $as_fieldName, array $aa_options = []): string {
+	public function control(string $as_fieldName, array $aa_options = []): string {
 		/** @var EntityContext $lo_context */
 		$lo_context = $this->Form->context();
 		$ls_source = $aa_options['source'] ?? $lo_context->entity()->getSource();
 
-		if ( ! isset(static::$attributes)) {
+		if (!isset(static::$attributes)) {
 			$this->buildAttributes($ls_source);
 		}
 
 		$ls_emptyField = '';
-		if ( ! isset(static::$initiatedSources[ $ls_source ])) {
+		if (!isset(static::$initiatedSources[ $ls_source ])) {
 			static::$initiatedSources[ $ls_source ] = TRUE;
 			$ls_emptyField = $this->Form->hidden('attributes', [
 				'val' => [],
@@ -157,10 +159,13 @@ class AttributesHelper extends Helper {
 			return $ls_emptyField;
 		}
 
-		[$ls_fieldName, $la_options] = $this->prepareField($as_fieldName,
+		[$ls_fieldName, $la_options] = $this->prepareField(
+			$as_fieldName,
 			$aa_options,
 			static::$attributes,
-			static::$attributeOptions[ $ls_source ]);
+			static::$attributeOptions[ $ls_source ]
+		);
+
 
 		return $ls_emptyField . $this->Form->control($ls_fieldName, $la_options);
 	}
@@ -175,15 +180,15 @@ class AttributesHelper extends Helper {
 	 *
 	 * @throws Exception
 	 */
-	protected function prepareField (string $as_fieldName, array $aa_options, array $aa_attributeFields, AttributeOptionsInterface|NULL $ao_attributeOptions): array {
-		if ( ! array_key_exists($as_fieldName, $aa_attributeFields)) {
+	protected function prepareField(string $as_fieldName, array $aa_options, array $aa_attributeFields, AttributeOptionsInterface | null $ao_attributeOptions): array {
+		if (!array_key_exists($as_fieldName, $aa_attributeFields)) {
 			return [];
 		}
 
 		$la_options = $aa_options;
 		$lo_language = $la_options['language'] ?? LocaleMiddleware::getLanguage(NULL);
 
-		if ( ! isset($la_options['type'])) {
+		if (!isset($la_options['type'])) {
 			$la_options['type'] = $aa_attributeFields[ $as_fieldName ]->inputType;
 		}
 
@@ -204,7 +209,7 @@ class AttributesHelper extends Helper {
 				break;*/
 		}
 
-		if ( ! isset($la_options['timezone']) && in_array($la_options['type'], ['datetime'])) {
+		if (!isset($la_options['timezone']) && in_array($la_options['type'], ['datetime'])) {
 			$la_options['timezone'] = $lo_language->timezone;
 		}
 
@@ -228,7 +233,7 @@ class AttributesHelper extends Helper {
 				throw new \RuntimeException(sprintf('Missing language for translation of `%s`', $as_fieldName));
 			}
 
-			if ( ! isset($la_options['timezone']) && ! isset($la_options['timezone']) && in_array($la_options['type'], ['datetime'])) {
+			if (!isset($la_options['timezone']) && !isset($la_options['timezone']) && in_array($la_options['type'], ['datetime'])) {
 				$la_options['timezone'] = $lo_language->timezone;
 			}
 
@@ -236,9 +241,10 @@ class AttributesHelper extends Helper {
 		}
 		unset($la_options['isTranslation'], $la_options['language']);
 
-		if ( ! str_starts_with($ls_field, 'attributes.')) {
+		if (!str_starts_with($ls_field, 'attributes.')) {
 			$ls_field = 'attributes.' . $ls_field;
 		}
+
 
 		return [
 			$ls_field,
@@ -256,13 +262,14 @@ class AttributesHelper extends Helper {
 	 *
 	 * @throws Exception
 	 */
-	protected function prepareFields (array $aa_fields, array $aa_attributeFields, AttributeOptionsInterface|NULL $ao_attributeOptions): array {
+	protected function prepareFields(array $aa_fields, array $aa_attributeFields, AttributeOptionsInterface | null $ao_attributeOptions): array {
 		$la_fields = [];
 		foreach ($aa_fields as $ls_fieldName => $la_options) {
 			[$ls_fieldName, $la_options] = $this->prepareField($ls_fieldName, $la_options ?? [], $aa_attributeFields, $ao_attributeOptions);
 			$la_fields[ $ls_fieldName ] = $la_options;
 		}
 		unset($la_options);
+
 
 		return $la_fields;
 	}
@@ -274,17 +281,17 @@ class AttributesHelper extends Helper {
 	 *
 	 * @return void
 	 */
-	protected function prepareValue (string $as_field, mixed &$aa_options): void {
+	protected function prepareValue(string $as_field, mixed &$aa_options): void {
 		$la_valOptions = [
 			'default' => $lx_options['default'] ?? NULL,
 			'schemaDefault' => $lx_options['schemaDefault'] ?? TRUE,
 		];
 
-		if ( ! array_key_exists('val', $aa_options)) {
+		if (!array_key_exists('val', $aa_options)) {
 			$aa_options['val'] = $this->Form->getSourceValue($as_field, $la_valOptions);
 		}
 
-		if ( ! empty($aa_options['val'])) {
+		if (!empty($aa_options['val'])) {
 			$this->harmonizeValue($aa_options['val'], $aa_options['type']);
 		}
 	}
@@ -296,7 +303,7 @@ class AttributesHelper extends Helper {
 	 *
 	 * @return void
 	 */
-	protected function harmonizeValue (mixed &$ax_value, string $as_type): void {
+	protected function harmonizeValue(mixed &$ax_value, string $as_type): void {
 		if (is_array($ax_value)) {
 			if ($as_type != 'multiinput') {
 				$ax_value = json_encode($ax_value);
@@ -310,12 +317,13 @@ class AttributesHelper extends Helper {
 	 *
 	 * @return Query|array
 	 */
-	protected function buildAttributes (string $as_source, $ab_returnQuery = FALSE): array {
+	protected function buildAttributes(string $as_source, $ab_returnQuery = FALSE): array {
 		/** @var EntityContext $lo_context */
 		$lo_context = $this->Form->context();
 		$lo_table = $lo_context->fetchTable($as_source);
 
 		static::$attributes = $lo_table->getAttributes();
+
 
 		return static::$attributes;
 	}
@@ -326,20 +334,22 @@ class AttributesHelper extends Helper {
 	 *
 	 * @return void
 	 */
-	protected function buildAttributesGroupedByFieldset (string $as_source): void {
+	protected function buildAttributesGroupedByFieldset(string $as_source): void {
 		$la_attributes = $this->buildAttributes($as_source);
 
-		if (! $la_attributes) {
+		if (!$la_attributes) {
 			static::$attributesByFieldset = [];
+
+
 			return;
 		}
 
 		$la_groupedByFieldset = (new Collection($la_attributes))->combine(
 			'identifier',
-			function(Attribute $ao_entity) {
+			function (Attribute $ao_entity) {
 				return $ao_entity;
 			},
-			function(Attribute $ao_entity) {
+			function (Attribute $ao_entity) {
 				return $ao_entity->fieldset;
 			}
 		)->toArray();
@@ -351,28 +361,28 @@ class AttributesHelper extends Helper {
 	/**
 	 * @return void
 	 */
-	protected function initializeTranslate (): void {
+	protected function initializeTranslate(): void {
 		/** @var EntityContext $lo_context */
 		$lo_context = $this->Form->context();
 		$lo_table = $lo_context->fetchTable($lo_context->entity()->getSource());
 
-		if ( ! $lo_table->hasAssociation($ls_associationAlias = $lo_table->getAttributesTable(TRUE))) {
+		if (!$lo_table->hasAssociation($ls_associationAlias = $lo_table->getAttributesTable(TRUE))) {
 			return;
 		}
 
 		$lo_attributesTable = $lo_context->fetchTable($ls_associationAlias);
 
-		if (! $lo_attributesTable->hasBehavior('Translate')) {
+		if (!$lo_attributesTable->hasBehavior('Translate')) {
 			return;
 		}
 
 		$la_translatableAttributes = $lo_attributesTable->getBehavior('Translate')->getConfig('fields', []);
 
-		if (! $la_translatableAttributes) {
+		if (!$la_translatableAttributes) {
 			return;
 		}
 
-		$la_translatableAttributes = array_map(function($as_field) {
+		$la_translatableAttributes = array_map(function ($as_field) {
 			return 'attributes.' . $as_field;
 		}, $la_translatableAttributes);
 

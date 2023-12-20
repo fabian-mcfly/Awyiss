@@ -15,7 +15,6 @@ use Cake\Datasource\FactoryLocator;
 use Cake\Event\EventInterface;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Utility\Inflector;
-use Cake\Utility\Text;
 use Cake\Validation\Validator;
 use ReflectionClass;
 
@@ -39,8 +38,6 @@ class AttributesTable extends Table {
 	 * https://regex101.com/r/0h9ziN/1
 	 */
 	public const TYPE_PATTERN = '/^(\w*)(?:\((\d+(?:,\d+)*)+\)+)?$/';
-
-
 	protected array $_defaultConfig = [
 		'systemOrder' => [
 			'relatedColumns' => ['scope', 'fieldset'],
@@ -59,7 +56,7 @@ class AttributesTable extends Table {
 		'general',
 		'content',
 		'media',
-		'attributes'
+		'attributes',
 	];
 	/**
 	 * @todo change this from a protected property to something that can be extended.
@@ -86,8 +83,6 @@ class AttributesTable extends Table {
 	 * @var array
 	 */
 	protected array $attributeScopes;
-
-
 	/*
 	 * @inheritDoc
 	 *
@@ -108,7 +103,7 @@ class AttributesTable extends Table {
 	 *
 	 * @return Validator
 	 */
-	public function validationDefault (Validator $ao_validator): Validator {
+	public function validationDefault(Validator $ao_validator): Validator {
 		parent::validationDefault($ao_validator);
 
 
@@ -221,8 +216,8 @@ class AttributesTable extends Table {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildRules (RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
-		$ao_rules->add(function(Attribute $ao_entity/*, array $aa_options*/): bool {
+	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
+		$ao_rules->add(function (Attribute $ao_entity/*, array $aa_options*/): bool {
 			//Check if the provided scope can have attributes
 			return in_array($ao_entity->scope, array_keys($this->getAvailableScopes()));
 		}, 'validScope', [
@@ -231,8 +226,8 @@ class AttributesTable extends Table {
 		]);
 
 
-		$ao_rules->add(function(Attribute $ao_entity) {
-			if ( ! $ao_entity->getError('scope')) {
+		$ao_rules->add(function (Attribute $ao_entity) {
+			if (!$ao_entity->getError('scope')) {
 				/** @var Table $lo_table */
 				$lo_table = FactoryLocator::get('Table')->get($this->getAvailableScopes()[ $ao_entity->scope ]);
 				if ($lo_table->getSchema()->getColumn($ao_entity->identifier)) {
@@ -245,27 +240,259 @@ class AttributesTable extends Table {
 			$lo_connection = ConnectionManager::get('default');
 			if ($lo_connection->getDriver() instanceof Mysql) {
 				$la_reservedWords = [
-					'accessible', 'add', 'all', 'alter', 'analyze', 'and', 'as', 'asc', 'asensitive', 'before', 'between', 'bigint', 'binary', 'blob', 'both', 'by', 'call',
-					'cascade', 'case', 'change', 'char', 'character', 'check', 'collate', 'column', 'condition', 'constraint', 'continue', 'convert', 'create', 'cross',
-					'current_date', 'current_role', 'current_time', 'current_timestamp', 'current_user', 'cursor', 'database', 'databases', 'day_hour', 'day_microsecond',
-					'day_minute', 'day_second', 'dec', 'decimal', 'declare', 'default', 'delayed', 'delete', 'delete_domain_id', 'desc', 'describe', 'deterministic', 'distinct',
-					'distinctrow', 'div', 'do_domain_ids', 'double', 'drop', 'dual', 'each', 'else', 'elseif', 'enclosed', 'escaped', 'except', 'exists', 'exit', 'explain',
-					'false', 'fetch', 'float', 'float4', 'float8', 'for', 'force', 'foreign', 'from', 'fulltext', 'general', 'grant', 'group', 'having', 'high_priority',
-					'hour_microsecond', 'hour_minute', 'hour_second', 'if', 'ignore', 'ignore_domain_ids', 'ignore_server_ids', 'in', 'index', 'infile', 'inner', 'inout',
-					'insensitive', 'insert', 'int', 'int1', 'int2', 'int3', 'int4', 'int8', 'integer', 'intersect', 'interval', 'into', 'is', 'iterate', 'join', 'key', 'keys',
-					'kill', 'leading', 'leave', 'left', 'like', 'limit', 'linear', 'lines', 'load', 'localtime', 'localtimestamp', 'lock', 'long', 'longblob', 'longtext', 'loop',
-					'low_priority', 'master_heartbeat_period', 'master_ssl_verify_server_cert', 'match', 'maxvalue', 'mediumblob', 'mediumint', 'mediumtext', 'middleint',
-					'minute_microsecond', 'minute_second', 'mod', 'modifies', 'natural', 'not', 'no_write_to_binlog', 'null', 'numeric', 'offset', 'on', 'optimize', 'option',
-					'optionally', 'or', 'order', 'out', 'outer', 'outfile', 'over', 'page_checksum', 'parse_vcol_expr', 'partition', 'position', 'precision', 'primary',
-					'procedure', 'purge', 'range', 'read', 'reads', 'read_write', 'real', 'recursive', 'ref_system_id', 'references', 'regexp', 'release', 'rename', 'repeat',
-					'replace', 'require', 'resignal', 'restrict', 'return', 'returning', 'revoke', 'right', 'rlike', 'row_number', 'rows', 'schema', 'schemas',
-					'second_microsecond', 'select', 'sensitive', 'separator', 'set', 'show', 'signal', 'slow', 'smallint', 'spatial', 'specific', 'sql', 'sqlexception', 'sqlstate',
-					'sqlwarning', 'sql_big_result', 'sql_calc_found_rows', 'sql_small_result', 'ssl', 'starting', 'stats_auto_recalc', 'stats_persistent', 'stats_sample_pages',
-					'straight_join', 'table', 'terminated', 'then', 'tinyblob', 'tinyint', 'tinytext', 'to', 'trailing', 'trigger', 'true', 'undo', 'union', 'unique', 'unlock',
-					'unsigned', 'update', 'usage', 'use', 'using', 'utc_date', 'utc_time', 'utc_timestamp', 'values', 'varbinary', 'varchar', 'varcharacter', 'varying', 'when',
-					'where', 'while', 'window', 'write', 'xor', 'year_month', 'zerofill',
+					'accessible',
+					'add',
+					'all',
+					'alter',
+					'analyze',
+					'and',
+					'as',
+					'asc',
+					'asensitive',
+					'before',
+					'between',
+					'bigint',
+					'binary',
+					'blob',
+					'both',
+					'by',
+					'call',
+					'cascade',
+					'case',
+					'change',
+					'char',
+					'character',
+					'check',
+					'collate',
+					'column',
+					'condition',
+					'constraint',
+					'continue',
+					'convert',
+					'create',
+					'cross',
+					'current_date',
+					'current_role',
+					'current_time',
+					'current_timestamp',
+					'current_user',
+					'cursor',
+					'database',
+					'databases',
+					'day_hour',
+					'day_microsecond',
+					'day_minute',
+					'day_second',
+					'dec',
+					'decimal',
+					'declare',
+					'default',
+					'delayed',
+					'delete',
+					'delete_domain_id',
+					'desc',
+					'describe',
+					'deterministic',
+					'distinct',
+					'distinctrow',
+					'div',
+					'do_domain_ids',
+					'double',
+					'drop',
+					'dual',
+					'each',
+					'else',
+					'elseif',
+					'enclosed',
+					'escaped',
+					'except',
+					'exists',
+					'exit',
+					'explain',
+					'false',
+					'fetch',
+					'float',
+					'float4',
+					'float8',
+					'for',
+					'force',
+					'foreign',
+					'from',
+					'fulltext',
+					'general',
+					'grant',
+					'group',
+					'having',
+					'high_priority',
+					'hour_microsecond',
+					'hour_minute',
+					'hour_second',
+					'if',
+					'ignore',
+					'ignore_domain_ids',
+					'ignore_server_ids',
+					'in',
+					'index',
+					'infile',
+					'inner',
+					'inout',
+					'insensitive',
+					'insert',
+					'int',
+					'int1',
+					'int2',
+					'int3',
+					'int4',
+					'int8',
+					'integer',
+					'intersect',
+					'interval',
+					'into',
+					'is',
+					'iterate',
+					'join',
+					'key',
+					'keys',
+					'kill',
+					'leading',
+					'leave',
+					'left',
+					'like',
+					'limit',
+					'linear',
+					'lines',
+					'load',
+					'localtime',
+					'localtimestamp',
+					'lock',
+					'long',
+					'longblob',
+					'longtext',
+					'loop',
+					'low_priority',
+					'master_heartbeat_period',
+					'master_ssl_verify_server_cert',
+					'match',
+					'maxvalue',
+					'mediumblob',
+					'mediumint',
+					'mediumtext',
+					'middleint',
+					'minute_microsecond',
+					'minute_second',
+					'mod',
+					'modifies',
+					'natural',
+					'not',
+					'no_write_to_binlog',
+					'null',
+					'numeric',
+					'offset',
+					'on',
+					'optimize',
+					'option',
+					'optionally',
+					'or',
+					'order',
+					'out',
+					'outer',
+					'outfile',
+					'over',
+					'page_checksum',
+					'parse_vcol_expr',
+					'partition',
+					'position',
+					'precision',
+					'primary',
+					'procedure',
+					'purge',
+					'range',
+					'read',
+					'reads',
+					'read_write',
+					'real',
+					'recursive',
+					'ref_system_id',
+					'references',
+					'regexp',
+					'release',
+					'rename',
+					'repeat',
+					'replace',
+					'require',
+					'resignal',
+					'restrict',
+					'return',
+					'returning',
+					'revoke',
+					'right',
+					'rlike',
+					'row_number',
+					'rows',
+					'schema',
+					'schemas',
+					'second_microsecond',
+					'select',
+					'sensitive',
+					'separator',
+					'set',
+					'show',
+					'signal',
+					'slow',
+					'smallint',
+					'spatial',
+					'specific',
+					'sql',
+					'sqlexception',
+					'sqlstate',
+					'sqlwarning',
+					'sql_big_result',
+					'sql_calc_found_rows',
+					'sql_small_result',
+					'ssl',
+					'starting',
+					'stats_auto_recalc',
+					'stats_persistent',
+					'stats_sample_pages',
+					'straight_join',
+					'table',
+					'terminated',
+					'then',
+					'tinyblob',
+					'tinyint',
+					'tinytext',
+					'to',
+					'trailing',
+					'trigger',
+					'true',
+					'undo',
+					'union',
+					'unique',
+					'unlock',
+					'unsigned',
+					'update',
+					'usage',
+					'use',
+					'using',
+					'utc_date',
+					'utc_time',
+					'utc_timestamp',
+					'values',
+					'varbinary',
+					'varchar',
+					'varcharacter',
+					'varying',
+					'when',
+					'where',
+					'while',
+					'window',
+					'write',
+					'xor',
+					'year_month',
+					'zerofill',
 				];
 			}
+
 
 			return !in_array($ao_entity->identifier, $la_reservedWords);
 		}, 'validIdentifier', [
@@ -276,15 +503,16 @@ class AttributesTable extends Table {
 
 		$ao_rules->add($ao_rules->isUnique([
 			'identifier',
-			'scope'
+			'scope',
 		]), 'identifierUniqueForScope', [
 			'errorField' => 'identifier',
 			'message' => __dfx($this->getI18nDomain(), 'validation', 'attributes', 'error_identifier_unique'),
 		]);
 
 
-		$ao_rules->add(function(Attribute $ao_entity/*, array $aa_options*/): bool {
+		$ao_rules->add(function (Attribute $ao_entity/*, array $aa_options*/): bool {
 			$la_availableFieldsets = $this->getAvailableFieldsets();
+
 
 			//Check if the provided fieldset is valid. For scope `contents`, always return true
 			return in_array($ao_entity->fieldset, $la_availableFieldsets) || $ao_entity->scope === 'contents';
@@ -294,8 +522,9 @@ class AttributesTable extends Table {
 		]);
 
 
-		$ao_rules->add(function(Attribute $ao_entity/*, array $aa_options*/): bool {
+		$ao_rules->add(function (Attribute $ao_entity/*, array $aa_options*/): bool {
 			$la_availableInputTypes = $this->getAvailableInputTypes();
+
 
 			//Check if the provided scope can have attributes
 			return in_array($ao_entity->inputType, $la_availableInputTypes);
@@ -318,7 +547,7 @@ class AttributesTable extends Table {
 	 *
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function beforeSave (EventInterface $ao_event, Attribute|EntityInterface $ao_entity, \ArrayObject $ao_options): void {
+	public function beforeSave(EventInterface $ao_event, Attribute|EntityInterface $ao_entity, \ArrayObject $ao_options): void {
 		if ($ao_entity->scope === 'contents') {
 			//For contents, the content template decides where an attribute will go
 			$ao_entity->fieldset = '';
@@ -326,8 +555,8 @@ class AttributesTable extends Table {
 			$ao_entity->required = FALSE;
 		}
 
-		$la_pageRoles = array_keys(array_filter($this->getAvailableScopes(), function($ax_table) {
-			return ! is_string($ax_table);
+		$la_pageRoles = array_keys(array_filter($this->getAvailableScopes(), function ($ax_table) {
+			return !is_string($ax_table);
 		}));
 
 		//Contents, Menu Entries and all types of pages don't need to have translatable attributes since they all are translations themselves
@@ -343,7 +572,7 @@ class AttributesTable extends Table {
 	 * @return array
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function getAvailableFieldsets (string $as_scope = NULL): array {
+	public function getAvailableFieldsets(string $as_scope = NULL): array {
 		return $this->availableFieldsets;
 	}
 
@@ -351,7 +580,7 @@ class AttributesTable extends Table {
 	/**
 	 * @return array
 	 */
-	public function getAvailableInputTypes (): array {
+	public function getAvailableInputTypes(): array {
 		return $this->availableInputTypes;
 	}
 
@@ -361,8 +590,8 @@ class AttributesTable extends Table {
 	 *
 	 * @throws \ReflectionException
 	 */
-	public function getAvailableScopes (): array {
-		if ( ! isset($this->attributeScopes)) {
+	public function getAvailableScopes(): array {
+		if (!isset($this->attributeScopes)) {
 			$this->attributeScopes = [];
 
 			$la_paths = [
@@ -381,13 +610,13 @@ class AttributesTable extends Table {
 					//dump($ls_tableClass, $ls_tableClass::TABLE, $ls_tableClass::ATTRIBUTABLE);
 
 					//If an entry exists or if the table does not allow attributes, skip it
-					if (isset($this->attributeScopes[ $ls_tableClass::TABLE ]) || ! $ls_tableClass::ATTRIBUTABLE) {
+					if (isset($this->attributeScopes[ $ls_tableClass::TABLE ]) || !$ls_tableClass::ATTRIBUTABLE) {
 						continue;
 					}
 
 					//If the given table is not a subclass of \Awyiss\Model\Table, skip it
 					$lo_reflection = new ReflectionClass($ls_tableClass);
-					if ( ! $lo_reflection->isSubclassOf(Table::class)) {
+					if (!$lo_reflection->isSubclassOf(Table::class)) {
 						continue;
 					}
 
@@ -398,7 +627,8 @@ class AttributesTable extends Table {
 
 
 		//Get all page roles from the database because we want them to have policies too
-		$lo_pageRoles = FactoryLocator::get('Table')->get('PageRoles')->find('active',
+		$lo_pageRoles = FactoryLocator::get('Table')->get('PageRoles')->find(
+			'active',
 			authorize: ['skip' => TRUE],
 		)->all();
 
@@ -409,7 +639,7 @@ class AttributesTable extends Table {
 			$lo_newTable = FactoryLocator::get('Table')->get($ls_identifier);
 
 			//If an entry exists or if the table does not allow attributes, skip it
-			if (isset($this->attributeScopes[ $ls_identifier ]) || ! $lo_newTable::ATTRIBUTABLE) {
+			if (isset($this->attributeScopes[ $ls_identifier ]) || !$lo_newTable::ATTRIBUTABLE) {
 				continue;
 			}
 
@@ -417,6 +647,7 @@ class AttributesTable extends Table {
 		}
 
 		ksort($this->attributeScopes);
+
 
 		return $this->attributeScopes;
 	}

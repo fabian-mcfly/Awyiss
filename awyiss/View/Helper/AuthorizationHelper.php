@@ -34,7 +34,7 @@ class AuthorizationHelper extends Helper {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function getAdditionalData (): array {
+	public function getAdditionalData(): array {
 		return $this->getConfig('additionalData');
 	}
 
@@ -46,8 +46,9 @@ class AuthorizationHelper extends Helper {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function setAdditionalData (array $aa_data): static {
+	public function setAdditionalData(array $aa_data): static {
 		$this->setConfig('additionalData', $aa_data, FALSE);
+
 
 		return $this;
 	}
@@ -58,8 +59,9 @@ class AuthorizationHelper extends Helper {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function resetAdditionalData (): static {
+	public function resetAdditionalData(): static {
 		$this->setConfig('additionalData', [], FALSE);
+
 
 		return $this;
 	}
@@ -70,13 +72,14 @@ class AuthorizationHelper extends Helper {
 	 *
 	 * @return IdentityPermissionsInterface
 	 */
-	public function getIdentity (): IdentityPermissionsInterface {
+	public function getIdentity(): IdentityPermissionsInterface {
 		$lo_identity = $this->getConfig('identity');
 
-		if ( ! $lo_identity) {
+		if (!$lo_identity) {
 			$lo_identity = $this->_getIdentity();
 			$this->setConfig('identity', $lo_identity);
 		}
+
 
 		return $lo_identity;
 	}
@@ -91,8 +94,9 @@ class AuthorizationHelper extends Helper {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function setIdentity (IdentityPermissionsInterface $ao_identity): static {
+	public function setIdentity(IdentityPermissionsInterface $ao_identity): static {
 		$this->setConfig('identity', $ao_identity);
+
 
 		return $this;
 	}
@@ -105,8 +109,9 @@ class AuthorizationHelper extends Helper {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function resetIdentity (): static {
+	public function resetIdentity(): static {
 		$this->setConfig('identity');
+
 
 		return $this;
 	}
@@ -117,13 +122,14 @@ class AuthorizationHelper extends Helper {
 	 *
 	 * @return string
 	 */
-	public function getScope (): string {
+	public function getScope(): string {
 		$ls_scope = $this->getConfig('scope');
 
-		if ( ! $ls_scope) {
+		if (!$ls_scope) {
 			$ls_scope = Inflector::underscore($this->getView()->getName());
 			$this->setConfig('scope', $ls_scope);
 		}
+
 
 		return $ls_scope;
 	}
@@ -138,8 +144,9 @@ class AuthorizationHelper extends Helper {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function setScope (string $as_scope): static {
+	public function setScope(string $as_scope): static {
 		$this->setConfig('scope', Inflector::pluralize(Inflector::underscore($as_scope)));
+
 
 		return $this;
 	}
@@ -152,8 +159,9 @@ class AuthorizationHelper extends Helper {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function resetScope (): static {
+	public function resetScope(): static {
 		$this->setConfig('scope');
+
 
 		return $this;
 	}
@@ -174,7 +182,7 @@ class AuthorizationHelper extends Helper {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function isAccessible (string|array ...$ax_identifier): bool {
+	public function isAccessible(string | array ...$ax_identifier): bool {
 		return $this->scopeIsAccessible($this->getScope(), NULL, ...$ax_identifier);
 	}
 
@@ -189,11 +197,12 @@ class AuthorizationHelper extends Helper {
 	 *
 	 * @see \Awyiss\Authorization\Permission\PermissionCollection::scopeIsAccessible()
 	 */
-	public function scopeIsAccessible (string $as_scope, ?array $aa_additionalData = NULL, string|array ...$ax_identifier): ?bool {
+	public function scopeIsAccessible(string $as_scope, ?array $aa_additionalData = NULL, string | array ...$ax_identifier): ?bool {
 		//Get the currently assigned permissions from the identity object, resp. their permission collection
 		$lo_identity = $this->getIdentity();
 
 		$la_additionalData = $aa_additionalData ?? $this->getConfig('additionalData');
+
 
 		return $lo_identity->scopeIsAccessible($as_scope, $la_additionalData, ...$ax_identifier);
 	}
@@ -214,9 +223,9 @@ class AuthorizationHelper extends Helper {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function permissionOptions (PermissionOptionInterface $ao_permission, ?Entity $ao_entity = NULL, ?string $as_fileName = NULL, ?string $as_subDir = NULL): string {
+	public function permissionOptions(PermissionOptionInterface $ao_permission, ?Entity $ao_entity = NULL, ?string $as_fileName = NULL, ?string $as_subDir = NULL): string {
 		$ls_subDir = 'authorization' . DS . 'permission_option';
-		if ( ! empty($as_subDir)) {
+		if (!empty($as_subDir)) {
 			$ls_subDir = trim($as_subDir, DS) . DS . $ls_subDir;
 		}
 
@@ -227,7 +236,7 @@ class AuthorizationHelper extends Helper {
 		}
 
 		//This should never happen, but you never know.
-		if ( ! $ao_permission->getConfig('identifier')) {
+		if (!$ao_permission->getConfig('identifier')) {
 			throw new RuntimeException(sprintf('Permission `%s` requires an identifier to be representable.', $ao_permission::class));
 		}
 
@@ -238,6 +247,7 @@ class AuthorizationHelper extends Helper {
 			'as_identifier' => Inflector::underscore($ao_permission->getConfig('identifier')),
 		];
 
+
 		return $this->getView()->element($ls_subDir . DS . $ls_fileName, $la_viewData);
 	}
 
@@ -245,12 +255,13 @@ class AuthorizationHelper extends Helper {
 	/**
 	 * Retreive the identity attribute from the current request
 	 */
-	protected function _getIdentity (): IdentityPermissionsInterface {
+	protected function _getIdentity(): IdentityPermissionsInterface {
 		/** @var IdentityPermissionsInterface|User|UsersExternal $lo_identity */
 		$lo_identity = $this->getView()->getRequest()->getAttribute('identity');
-		if ( ! ($lo_identity instanceof IdentityPermissionsInterface)) {
+		if (!($lo_identity instanceof IdentityPermissionsInterface)) {
 			throw new RuntimeException(sprintf('Object `%s` does not implement `%s`', get_class($lo_identity), IdentityPermissionsInterface::class));
 		}
+
 
 		return $lo_identity;
 	}

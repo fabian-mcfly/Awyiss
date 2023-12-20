@@ -112,9 +112,10 @@ class Page extends Entity {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function getChildren (): ?CollectionInterface {
+	public function getChildren(): ?CollectionInterface {
 		/** @var PagesTable $lo_table */
 		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
+
 
 		return $lo_table->getChildren($this);
 	}
@@ -125,9 +126,10 @@ class Page extends Entity {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function getNestedChildren (array $aa_options = [], int $ai_currentLevel = 0): ?CollectionInterface {
+	public function getNestedChildren(array $aa_options = [], int $ai_currentLevel = 0): ?CollectionInterface {
 		/** @var PagesTable $lo_table */
 		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
+
 
 		return $lo_table->getNestedChildren($this, $aa_options, $ai_currentLevel);
 	}
@@ -138,9 +140,10 @@ class Page extends Entity {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function getParent (): ?self {
+	public function getParent(): ?self {
 		/** @var PagesTable $lo_table */
 		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
+
 
 		return $lo_table->getParent($this);
 	}
@@ -151,9 +154,10 @@ class Page extends Entity {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function getParents (array $aa_options = [], int $ai_currentLevel = 0): ?CollectionInterface {
+	public function getParents(array $aa_options = [], int $ai_currentLevel = 0): ?CollectionInterface {
 		/** @var PagesTable $lo_table */
 		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
+
 
 		return $lo_table->getParents($this, $aa_options, $ai_currentLevel);
 	}
@@ -164,13 +168,14 @@ class Page extends Entity {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	protected function _setSlug (string $as_slug): string {
+	protected function _setSlug(string $as_slug): string {
 		$ls_slug = Text::slug($as_slug, ['preserve' => '/']);
 		$ls_slug = trim($ls_slug, '/');
 
 		if (str_contains($ls_slug, '/')) {
 			$ls_slug = substr($ls_slug, strrpos($ls_slug, '/') + 1);
 		}
+
 
 		return mb_strtolower($ls_slug);
 	}

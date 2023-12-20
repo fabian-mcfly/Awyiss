@@ -36,7 +36,7 @@ class SingleChoiceSetting implements SettingInterface {
 	 *
 	 * @param array $aa_config Configuration settings.
 	 */
-	public function __construct (array $aa_config = []) {
+	public function __construct(array $aa_config = []) {
 		$this->setConfig($aa_config);
 	}
 
@@ -44,7 +44,7 @@ class SingleChoiceSetting implements SettingInterface {
 	/**
 	 * @return string
 	 */
-	public function getType (): string {
+	public function getType(): string {
 		return $this->getConfig('type');
 	}
 
@@ -54,8 +54,9 @@ class SingleChoiceSetting implements SettingInterface {
 	 *
 	 * @return SettingInterface
 	 */
-	public function setType (string $as_type): static {
+	public function setType(string $as_type): static {
 		$this->setConfig('type', Inflector::underscore($as_type));
+
 
 		return $this;
 	}
@@ -64,7 +65,7 @@ class SingleChoiceSetting implements SettingInterface {
 	/**
 	 * @return string
 	 */
-	public function getOptions (): string {
+	public function getOptions(): string {
 		return $this->getConfig('options');
 	}
 
@@ -74,8 +75,9 @@ class SingleChoiceSetting implements SettingInterface {
 	 *
 	 * @return SettingInterface
 	 */
-	public function setOptions (array $aa_options): static {
+	public function setOptions(array $aa_options): static {
 		$this->setConfig('options', $aa_options);
+
 
 		return $this;
 	}

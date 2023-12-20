@@ -19,8 +19,6 @@ class I18nTable extends Table {
 	 * @inheritDoc
 	 */
 	public const TABLE = 'i18n';
-
-
 	/**
 	 * @inheritDoc
 	 */
@@ -32,8 +30,6 @@ class I18nTable extends Table {
 			'enabled' => FALSE,
 		],
 	];
-
-
 	/*
 	 * @inheritDoc
 	 *

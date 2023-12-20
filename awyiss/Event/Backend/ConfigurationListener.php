@@ -31,7 +31,7 @@ class ConfigurationListener implements EventListenerInterface {
 	/**
 	 * @inheritDoc
 	 */
-	public function implementedEvents (): array {
+	public function implementedEvents(): array {
 		return [
 			'Model.Configuration.afterSaveCommit' => 'removeCustomConfigFile',
 			'Model.Configuration.afterDelete' => 'removeCustomConfigFile',
@@ -44,7 +44,7 @@ class ConfigurationListener implements EventListenerInterface {
 	 * We are too lazy to delete only those of the current language.
 	 * It's easier and doesn't affect performance that much to recreate the file once.
 	 *
-	 * @param Event           $ao_event
+	 * @param Event $ao_event
 	 * @param ContentTemplate $ao_entity
 	 *
 	 * @noinspection PhpUnused
@@ -52,7 +52,7 @@ class ConfigurationListener implements EventListenerInterface {
 	 *
 	 * @throws \Exception
 	 */
-	public function removeCustomConfigFile (Event $ao_event, EntityInterface $ao_entity): void {
+	public function removeCustomConfigFile(Event $ao_event, EntityInterface $ao_entity): void {
 		/** @var QueuedJobsTable $lo_queue */
 		$lo_queue = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
 		if ($lo_queue->isQueued('create_custom_configuration')) {
@@ -65,7 +65,7 @@ class ConfigurationListener implements EventListenerInterface {
 		];
 
 		$lo_queue->createJob('CreateCustomConfiguration', [
-			'languageShortcodes' => $la_languageShortcodes
+			'languageShortcodes' => $la_languageShortcodes,
 		], [
 			'group' => 'general',
 			'priority' => 1,

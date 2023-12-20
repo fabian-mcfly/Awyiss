@@ -36,10 +36,6 @@ class AttributesBehavior extends Behavior {
 
 
 	/**
-	 * @var array<string, string|AttributeOptionsInterface>
-	 */
-	protected static array $attributeOptions;
-	/**
 	 * @var array<string, array<string, Attribute>>
 	 */
 	protected array $attributes;
@@ -79,6 +75,10 @@ class AttributesBehavior extends Behavior {
 	 * @var bool
 	 */
 	protected bool $hasAttributes = FALSE;
+	/**
+	 * @var array<string, string|AttributeOptionsInterface>
+	 */
+	protected static array $attributeOptions;
 
 
 	/**
@@ -88,10 +88,12 @@ class AttributesBehavior extends Behavior {
 	 *
 	 * @return void
 	 *
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection*/
-	public function initialize (array $aa_config): void {
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 */
+	public function initialize(array $aa_config): void {
 		if ($this->getConfig('isAttributesTable')) {
 			$this->initializeTranslate();
+
 
 			return;
 		}
@@ -99,13 +101,13 @@ class AttributesBehavior extends Behavior {
 		$this->attributesTable = 'attributes_' . $this->getConfig('sourceTable');
 
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		if ( ! $this->table()::ATTRIBUTABLE) {
+		if (!$this->table()::ATTRIBUTABLE) {
 			return;
 		}
 
 		$ls_identifier = Inflector::camelize($this->attributesTable);
 
-		if ( ! App::className($ls_identifier, 'Model\Table', 'Table')) {
+		if (!App::className($ls_identifier, 'Model\Table', 'Table')) {
 			return;
 		}
 
@@ -126,7 +128,7 @@ class AttributesBehavior extends Behavior {
 	 * @return string
 	 * @noinspection PhpUnused
 	 */
-	public function getAttributesTable (bool $ab_camelized = FALSE): string {
+	public function getAttributesTable(bool $ab_camelized = FALSE): string {
 		return $ab_camelized ? Inflector::camelize(Inflector::tableize($this->attributesTable)) : $this->attributesTable;
 	}
 
@@ -135,7 +137,7 @@ class AttributesBehavior extends Behavior {
 	 * @return bool
 	 * @noinspection PhpUnused
 	 */
-	public function hasAttributes (): bool {
+	public function hasAttributes(): bool {
 		return $this->hasAttributes;
 	}
 
@@ -143,22 +145,23 @@ class AttributesBehavior extends Behavior {
 	/**
 	 * @return array
 	 */
-	public function getAttributes (): array {
+	public function getAttributes(): array {
 		$ls_scope = substr($this->table()->getTable(), 11);
 
 		if (isset($this->attributes)) {
 			return $this->attributes[ $ls_scope ] ?? [];
 		}
 
-		if ( ! $this->getConfig('isAttributesTable')) {
+		if (!$this->getConfig('isAttributesTable')) {
 			$ls_assocatiation = Inflector::camelize($this->attributesTable);
 
-			if ( ! $this->table()->hasAssociation($ls_assocatiation)) {
+			if (!$this->table()->hasAssociation($ls_assocatiation)) {
 				return [];
 			}
 
 			/** @var Table $lo_association */
 			$lo_association = $this->table()->getAssociation($ls_assocatiation);
+
 
 			return $lo_association->getAttributes();
 		}
@@ -166,43 +169,24 @@ class AttributesBehavior extends Behavior {
 
 		$lo_attributesTable = FactoryLocator::get('Table')->get('Attributes');
 		$lo_attributesQuery = $lo_attributesTable->find('all', authorize: [
-			'skip' => TRUE
+			'skip' => TRUE,
 		]);
 
 		/**
 		 * @noinspection PhpPossiblePolymorphicInvocationInspection
 		 * @noinspection PhpUndefinedMethodInspection
-		*/
+		 */
 		$lo_attributesQuery = $lo_attributesQuery->orderByAsc($lo_attributesQuery->newExpr($lo_attributesQuery->func()->FIELD([
 			'fieldset' => 'identifier',
-			...$lo_attributesTable->getAvailableFieldsets()
+			...$lo_attributesTable->getAvailableFieldsets(),
 		])));
 
-		$this->attributes = $lo_attributesQuery->all()->groupBy('scope')->map(function($aa_attributes) {
+		$this->attributes = $lo_attributesQuery->all()->groupBy('scope')->map(function ($aa_attributes) {
 			return collection($aa_attributes)->indexBy('identifier')->toArray();
 		})->toArray();
 
+
 		return $this->attributes[ $ls_scope ] ?? [];
-	}
-
-
-	/**
-	 * @return void
-	 */
-	protected function initializeTranslate (): void {
-		/** @var Table $lo_table */
-		$lo_table = $this->table();
-
-		$la_translatableFields = $lo_table->getConfig('translate.fields');
-		foreach ($this->getAttributes() AS $lo_attribute) {
-			if ( ! $lo_attribute->translatable) {
-				continue;
-			}
-
-			$la_translatableFields[] = $lo_attribute->identifier;
-		}
-
-		$lo_table->setConfig('translate.fields', $la_translatableFields);
 	}
 
 
@@ -218,7 +202,7 @@ class AttributesBehavior extends Behavior {
 	 *
 	 * @see \Awyiss\Attributes\AttributeOptions::validateValue
 	 */
-	public function buildRules (Event $ao_event, RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
+	public function buildRules(Event $ao_event, RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
 		if (!$this->getConfig('isAttributesTable')) {
 			return $ao_rules;
 		}
@@ -237,11 +221,11 @@ class AttributesBehavior extends Behavior {
 
 		/** @var Attribute $lo_attribute */
 		foreach ($this->getAttributes() as $lo_attribute) {
-			if ( ! isset($lo_attributeOptions[ $lo_attribute->identifier ])) {
+			if (!isset($lo_attributeOptions[ $lo_attribute->identifier ])) {
 				continue;
 			}
 
-			$ao_rules->add(function(Entity $ao_entity/*, array $aa_options*/) use ($lo_attribute, $lo_attributeOptions): bool|string {
+			$ao_rules->add(function (Entity $ao_entity/*, array $aa_options*/) use ($lo_attribute, $lo_attributeOptions): bool|string {
 				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 				return $lo_attributeOptions->validateValue($lo_attribute->identifier, $ao_entity->get($lo_attribute->identifier), $ao_entity->getEntity());
 			}, 'validValue', [
@@ -249,6 +233,7 @@ class AttributesBehavior extends Behavior {
 				'message' => __d('attributes', 'error_valid_value'),
 			]);
 		}
+
 
 		return $ao_rules;
 	}
@@ -264,8 +249,8 @@ class AttributesBehavior extends Behavior {
 	 *
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function beforeFind (EventInterface $ao_event, SelectQuery $ao_query, ArrayObject $ao_options, bool $ab_primary): void {
-		if ($this->getConfig('isAttributesTable') || ! $this->hasAttributes()) {
+	public function beforeFind(EventInterface $ao_event, SelectQuery $ao_query, ArrayObject $ao_options, bool $ab_primary): void {
+		if ($this->getConfig('isAttributesTable') || !$this->hasAttributes()) {
 			return;
 		}
 
@@ -295,13 +280,15 @@ class AttributesBehavior extends Behavior {
 			],
 		]);
 
-		$ao_query->mapReduce(function(array|Entity $ao_entity, int $ai_key, MapReduce $ao_mapReduce) use ($ao_query): void {
-			if ( ! is_a($ao_entity, Entity::class)) {
+		$ao_query->mapReduce(function (array|Entity $ao_entity, int $ai_key, MapReduce $ao_mapReduce) use ($ao_query): void {
+			if (!is_a($ao_entity, Entity::class)) {
 				$ao_mapReduce->emit($ao_entity);
+
+
 				return;
 			}
 
-			if ( ! $ao_entity->attributes) {
+			if (!$ao_entity->attributes) {
 				/** @var HasOne|Table $lo_association */
 				$lo_association = $this->table()->{$this->getAttributesTable(TRUE)};
 
@@ -318,13 +305,38 @@ class AttributesBehavior extends Behavior {
 			}
 
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-			if (isset($ao_entity->attributes) && ! $ao_entity->attributes->getEntity()) {
+			if (isset($ao_entity->attributes) && !$ao_entity->attributes->getEntity()) {
 				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 				$ao_entity->attributes->setEntity($ao_entity);
 			}
 
 			$ao_mapReduce->emit($ao_entity);
 		});
+	}
+
+
+	/**
+	 * @param EventInterface $ao_event
+	 * @param EntityInterface $ao_entity
+	 *
+	 * @return void
+	 *
+	 * @noinspection PhpUnusedParameterInspection
+	 */
+	public function afterSave(EventInterface $ao_event, Entity|\Cake\ORM\Entity $ao_entity/*, ArrayObject $ao_options*/): void {
+		if (!$this->hasAttributes()) {
+			return;
+		}
+
+		//If the `attributes`-property was set to FALSE, delete the existings attributes for this entity
+		if (!$ao_entity->isNew() && !$ao_entity->get('attributes')) {
+			$this->table()->loadInto($ao_entity, [$this->getAttributesTable(TRUE)]);
+
+			if (!empty($ao_entity->attributes) && !$ao_entity->attributes->isNew()) {
+				$this->fetchTable($this->getAttributesTable(TRUE))->delete($ao_entity->attributes);
+				unset($ao_entity->attributes);
+			}
+		}
 	}
 
 
@@ -348,26 +360,21 @@ class AttributesBehavior extends Behavior {
 
 
 	/**
-	 * @param EventInterface  $ao_event
-	 * @param EntityInterface $ao_entity
-	 *
 	 * @return void
-	 *
-	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function afterSave (EventInterface $ao_event, Entity|\Cake\ORM\Entity $ao_entity/*, ArrayObject $ao_options*/): void {
-		if ( ! $this->hasAttributes()) {
-			return;
-		}
+	protected function initializeTranslate(): void {
+		/** @var Table $lo_table */
+		$lo_table = $this->table();
 
-		//If the `attributes`-property was set to FALSE, delete the existings attributes for this entity
-		if (! $ao_entity->isNew() && ! $ao_entity->get('attributes')) {
-			$this->table()->loadInto($ao_entity, [$this->getAttributesTable(TRUE)]);
-
-			if ( ! empty($ao_entity->attributes) && ! $ao_entity->attributes->isNew()) {
-				$this->fetchTable($this->getAttributesTable(TRUE))->delete($ao_entity->attributes);
-				unset($ao_entity->attributes);
+		$la_translatableFields = $lo_table->getConfig('translate.fields');
+		foreach ($this->getAttributes() as $lo_attribute) {
+			if (!$lo_attribute->translatable) {
+				continue;
 			}
+
+			$la_translatableFields[] = $lo_attribute->identifier;
 		}
+
+		$lo_table->setConfig('translate.fields', $la_translatableFields);
 	}
 }

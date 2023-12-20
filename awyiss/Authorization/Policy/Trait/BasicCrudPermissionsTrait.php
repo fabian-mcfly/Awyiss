@@ -22,7 +22,7 @@ trait BasicCrudPermissionsTrait {
 	 * @return PermissionOptionCollection
 	 * @throws \Exception
 	 */
-	protected static function loadPermissionOptions (): PermissionOptionCollection {
+	protected static function loadPermissionOptions(): PermissionOptionCollection {
 		$lo_permissionOptions = new PermissionOptionCollection(static::getScope());
 
 		$lo_permissionOptions->load('read', [
@@ -46,6 +46,7 @@ trait BasicCrudPermissionsTrait {
 				'className' => SimplePermissionOption::class,
 			]);
 		}
+
 
 		return $lo_permissionOptions;
 	}

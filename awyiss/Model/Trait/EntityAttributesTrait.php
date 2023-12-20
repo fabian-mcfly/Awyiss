@@ -22,7 +22,7 @@ trait EntityAttributesTrait {
 	 * @param array $aa_properties
 	 * @param array $aa_options
 	 */
-	public function __construct (array $aa_properties = [], array $aa_options = []) {
+	public function __construct(array $aa_properties = [], array $aa_options = []) {
 		parent::__construct($aa_properties, $aa_options);
 
 		/** @var Table $lo_table */
@@ -41,10 +41,10 @@ trait EntityAttributesTrait {
 	 *
 	 * @return void
 	 */
-	public function initAttributesField (HasOne $ao_attributesTable, string $as_foreignKey): void {
+	public function initAttributesField(HasOne $ao_attributesTable, string $as_foreignKey): void {
 		$lo_attributes = $this->_fields['attributes'] ?? NULL;
 
-		if (!$lo_attributes || ! is_a($lo_attributes, Entity::class)) {
+		if (!$lo_attributes || !is_a($lo_attributes, Entity::class)) {
 			return;
 		}
 
@@ -68,7 +68,7 @@ trait EntityAttributesTrait {
 	/**
 	 * @inheritDoc
 	 */
-	public function &get (string $as_field) {
+	public function &get(string $as_field) {
 		if ($as_field === '') {
 			throw new InvalidArgumentException('Cannot get an empty field');
 		}
@@ -91,9 +91,10 @@ trait EntityAttributesTrait {
 
 		/**
 		 * @noinspection PhpUnnecessaryLocalVariableInspection Does this sound _unnecessary_ to you?
-		 * 	Uncaught ParseError: syntax error, unexpected token "&", expecting ";"
-		*/
+		 *    Uncaught ParseError: syntax error, unexpected token "&", expecting ";"
+		 */
 		$lx_value = &$this->getFromAttribute($as_field);
+
 
 		return $lx_value;
 	}
@@ -106,14 +107,11 @@ trait EntityAttributesTrait {
 	 *
 	 * @return mixed
 	 */
-	public function &getFromAttribute (string $as_field): mixed {
+	public function &getFromAttribute(string $as_field): mixed {
 		$lx_value = NULL;
 
-		if (
-			// No attributes field = no value to fetch from there
-			empty($this->_fields['attributes']) ||
-			! ($this->_fields['attributes'] instanceof Entity)
-		) {
+		// No attributes field = no value to fetch from there
+		if (empty($this->_fields['attributes']) || !($this->_fields['attributes'] instanceof Entity)) {
 			return $lx_value;
 		}
 		/*if ( ! array_key_exists($as_field, $this->_fields) && in_array($as_field, $this->getVirtual())) {
@@ -128,6 +126,7 @@ trait EntityAttributesTrait {
 		 *    Uncaught ParseError: syntax error, unexpected token "&", expecting ";"
 		 */
 		$lx_value = &$lo_attributesEntity->get($as_field);
+
 
 		return $lx_value;
 	}

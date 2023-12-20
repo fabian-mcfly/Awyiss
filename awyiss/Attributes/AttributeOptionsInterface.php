@@ -20,33 +20,36 @@ interface AttributeOptionsInterface {
 	 *
 	 * @return void
 	 */
-	public function initializeAttributeOptions (): void;
+	public function initializeAttributeOptions(): void;
+
 
 	/**
 	 * Return the options found under the path provided.
 	 *
-	 * @param string                $as_identifier
-	 * @param array                 $aa_currentOptions
+	 * @param string $as_identifier
+	 * @param array $aa_currentOptions
 	 * @param NULL|ContextInterface $ao_context
 	 *
 	 * @return array
 	 * @see AttributeOptions
 	 * @see \Cake\Utility\Hash::get()
 	 */
-	public function getAttributeOptions (string $as_identifier, array $aa_currentOptions = [], ContextInterface $ao_context = NULL): array;
+	public function getAttributeOptions(string $as_identifier, array $aa_currentOptions = [], ContextInterface $ao_context = NULL): array;
+
 
 	/**
 	 * Retreives an options class and validates the provided value for the given attributeOptionIdentifier
 	 *
 	 * Returns a string with an error message if the value is not valid.
 	 *
-	 * @param string      $as_identifier
-	 * @param mixed       $ax_value
+	 * @param string $as_identifier
+	 * @param mixed $ax_value
 	 * @param NULL|Entity $ao_entity
 	 *
 	 * @return bool|string
 	 */
-	public function validateValue (string $as_identifier, mixed $ax_value, Entity $ao_entity = NULL): bool|string;
+	public function validateValue(string $as_identifier, mixed $ax_value, Entity $ao_entity = NULL): bool|string;
+
 
 	/**
 	 * Return the scope of the options-collection.
@@ -54,5 +57,5 @@ interface AttributeOptionsInterface {
 	 *
 	 * @return string
 	 */
-	public static function getScope (): string;
+	public static function getScope(): string;
 }

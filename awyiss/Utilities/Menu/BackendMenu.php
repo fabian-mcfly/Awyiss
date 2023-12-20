@@ -21,7 +21,7 @@ class BackendMenu {
 	protected ?Menu $dynamicMenu = NULL;
 
 
-	public function __construct (?IdentityPermissionsInterface $ao_identity = NULL) {
+	public function __construct(?IdentityPermissionsInterface $ao_identity = NULL) {
 		$this->identity = $ao_identity;
 
 		$this->createMenu();
@@ -32,7 +32,22 @@ class BackendMenu {
 	}
 
 
-	protected function createMenu () {
+	public function getMenu(): ?Menu {
+		return $this->menu;
+	}
+
+
+	public function getCustomMenu(): ?Menu {
+		return $this->customMenu;
+	}
+
+
+	public function getDynamicMenu(): ?Menu {
+		return $this->dynamicMenu;
+	}
+
+
+	protected function createMenu() {
 		$la_config = [
 			'identity' => $this->identity,
 			'validate' => [
@@ -46,12 +61,7 @@ class BackendMenu {
 	}
 
 
-	public function getMenu (): ?Menu {
-		return $this->menu;
-	}
-
-
-	protected function createCustomMenu (): void {
+	protected function createCustomMenu(): void {
 		$ls_filePath = realpath(CUSTOM_CONFIG . DS . 'menu.json');
 		if ($ls_filePath) {
 			$lo_customMenuData = MenuLoader::loadJsonFile($ls_filePath);
@@ -60,7 +70,7 @@ class BackendMenu {
 				'uniqueIdentifiers' => TRUE,
 			]);
 
-			if ( ! $lb_valid) {
+			if (!$lb_valid) {
 				throw new RuntimeException('The data is not valid according to menu-extension.schema.json');
 			}
 
@@ -70,12 +80,7 @@ class BackendMenu {
 	}
 
 
-	public function getCustomMenu (): ?Menu {
-		return $this->customMenu;
-	}
-
-
-	protected function createDynamicMenu () {
+	protected function createDynamicMenu() {
 		/** @var BackendMenuEntriesTable $lo_table */
 		$lo_table = $this->fetchTable('BackendMenuEntries');
 
@@ -83,20 +88,15 @@ class BackendMenu {
 			'authorize' => [
 				'skip' => TRUE,
 			],
-		])->all()->groupBy(function(BackendMenuEntry $ao_entity) {
+		])->all()->groupBy(function (BackendMenuEntry $ao_entity) {
 			return $ao_entity->parentId ? 'appendTo' : 'insertAfter';
-		})->map(function(array $aa_menuEntries) {
-			return collection($aa_menuEntries)->groupBy(function(BackendMenuEntry $ao_entity) {
+		})->map(function (array $aa_menuEntries) {
+			return collection($aa_menuEntries)->groupBy(function (BackendMenuEntry $ao_entity) {
 				return $ao_entity->parentId ?? $ao_entity->insertAfterId ?? '';
 			})->toArray();
 		})->toArray();
 
 		$this->dynamicMenu = unserialize(serialize($this->getCustomMenu() ?? $this->getMenu()));
 		$this->dynamicMenu->extend($la_menuEntries);
-	}
-
-
-	public function getDynamicMenu (): ?Menu {
-		return $this->dynamicMenu;
 	}
 }

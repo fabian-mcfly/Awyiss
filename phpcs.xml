@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<ruleset name="CustomStandard">
+	<description>Awyiss coding standard based on PhpStorm configuration.</description>
+
+	<file>./awyiss</file>
+
+	<exclude-pattern>./tm/*p</exclude-pattern>
+	<exclude-pattern>./tests/*</exclude-pattern>
+	<exclude-pattern>./vendor/*</exclude-pattern>
+
+	<rule ref="PSR12">
+		<exclude name="Generic.Files.LineLength"/>
+		<exclude name="Generic.WhiteSpace.DisallowTabIndent"/>
+		<exclude name="Generic.PHP.LowerCaseConstant"/>
+
+		<exclude name="PSR2.Classes.ClassDeclaration"/>
+		<exclude name="PSR2.Classes.PropertyDeclaration.Underscore"/>
+		<exclude name="PSR2.Methods.MethodDeclaration.Underscore"/>
+
+		<exclude name="PSR12.Files.FileHeader.SpacingAfterBlock"/>
+		<exclude name="PSR12.Files.OpenTag.NotAlone"/>
+
+		<exclude name="Squiz.ControlStructures.ControlSignature.SpaceAfterCloseBrace"/>
+		<exclude name="Squiz.Functions.MultiLineFunctionDeclaration.BraceOnSameLine"/>
+	</rule>
+
+	<!-- Line length -->
+	<rule ref="Generic.Files.LineLength">
+		<properties>
+			<property name="lineLimit" value="140"/>
+			<property name="absoluteLineLimit" value="180"/>
+		</properties>
+	</rule>
+
+	<rule ref="Generic.Classes.OpeningBraceSameLine"/>
+	<rule ref="Generic.Functions.OpeningFunctionBraceKernighanRitchie"/>
+	<rule ref="Generic.PHP.RequireStrictTypes"/>
+	<rule ref="Generic.PHP.UpperCaseConstant"/>
+
+	<!-- Use tab character for indentation -->
+	<rule ref="Generic.WhiteSpace.DisallowSpaceIndent"/>
+	<rule ref="Generic.WhiteSpace.ScopeIndent">
+		<properties>
+			<property name="tabIndent" value="true"/>
+		</properties>
+	</rule>
+
+	<rule ref="Generic.Arrays.DisallowLongArraySyntax"/>
+</ruleset>

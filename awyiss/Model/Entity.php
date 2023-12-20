@@ -24,14 +24,6 @@ class Entity extends \Cake\ORM\Entity {
 		EntityAttributesTrait::get as getOrGetFromAttribute;
 	}
 	use EntityFieldMapTrait;
-	/*use EntityOriginalsTrait {
-		EntityOriginalsTrait::set as _set;
-		EntityOriginalsTrait::_unset insteadof EntityFieldMapTrait;
-		EntityOriginalsTrait::getOriginal as _getOriginal;
-		EntityOriginalsTrait::setDirty as _setDirty;
-		EntityOriginalsTrait::extractOriginal as _extractOriginal;
-		EntityOriginalsTrait::extractOriginalChanged as _extractOriginalChanged;
-	}*/
 	use TranslateTrait;
 
 
@@ -50,7 +42,7 @@ class Entity extends \Cake\ORM\Entity {
 	 * @param array $aa_properties
 	 * @param array $aa_options
 	 */
-	public function __construct (array $aa_properties = [], array $aa_options = []) {
+	public function __construct(array $aa_properties = [], array $aa_options = []) {
 		$la_properties = $this->mapFields($aa_properties, TRUE);
 
 		//Remember the original field names here.
@@ -74,7 +66,7 @@ class Entity extends \Cake\ORM\Entity {
 			}
 		}
 
-		if ( ! array_key_exists('_translations', $this->_accessible)) {
+		if (!array_key_exists('_translations', $this->_accessible)) {
 			$this->setAccess('_translations', TRUE);
 		}
 	}
@@ -85,10 +77,11 @@ class Entity extends \Cake\ORM\Entity {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function &get (string $as_field): mixed {
+	public function &get(string $as_field): mixed {
 		$ls_field = static::mapField($as_field);
 		/** @noinspection PhpUnnecessaryLocalVariableInspection ... stupid PhpStorm */
 		$lx_value = &$this->getOrGetFromAttribute($ls_field);
+
 
 		return $lx_value;
 	}
@@ -102,7 +95,7 @@ class Entity extends \Cake\ORM\Entity {
 	 * @return bool
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function hasOriginal (string $as_field): bool {
+	public function hasOriginal(string $as_field): bool {
 		return array_key_exists(static::mapField($as_field), $this->_original);
 	}
 
@@ -112,7 +105,7 @@ class Entity extends \Cake\ORM\Entity {
 	 *
 	 * @return array
 	 */
-	public function defaultValues (): array {
+	public function defaultValues(): array {
 		return $this->defaults;
 	}
 
@@ -122,7 +115,7 @@ class Entity extends \Cake\ORM\Entity {
 	 *
 	 * @return bool
 	 */
-	public function allowsAudit (): bool {
+	public function allowsAudit(): bool {
 		return $this->_audit;
 	}
 
@@ -136,8 +129,9 @@ class Entity extends \Cake\ORM\Entity {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function enableAudit (bool $ab_audit = TRUE): static {
+	public function enableAudit(bool $ab_audit = TRUE): static {
 		$this->_audit = $ab_audit;
+
 
 		return $this;
 	}
@@ -148,8 +142,9 @@ class Entity extends \Cake\ORM\Entity {
 	 *
 	 * @return $this
 	 */
-	public function disableAudit (): static {
+	public function disableAudit(): static {
 		$this->_audit = FALSE;
+
 
 		return $this;
 	}
@@ -164,13 +159,13 @@ class Entity extends \Cake\ORM\Entity {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	protected function _getLabel (): string {
+	protected function _getLabel(): string {
 		$ls_scope = Inflector::underscore($this->getSource()) ?: 'system';
 
 		$ls_title = $this->title ?? $this->name;
 
 		if (empty($ls_title)) {
-			if ( ! empty($this->identifier)) {
+			if (!empty($this->identifier)) {
 				$ls_identifier = $this->identifier;
 				$ls_title = __d($ls_scope, 'title_' . Inflector::underscore($ls_identifier));
 			}
@@ -183,6 +178,7 @@ class Entity extends \Cake\ORM\Entity {
 		if (key_exists('active', $this->_fields) && empty($this->active)) {
 			$ls_inactive = __d($ls_scope, 'inactive') . ' ';
 		}
+
 
 		return $ls_inactive . $ls_title;
 	}

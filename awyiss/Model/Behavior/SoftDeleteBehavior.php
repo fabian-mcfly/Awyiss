@@ -53,15 +53,16 @@ class SoftDeleteBehavior extends Behavior {
 	 * Constructor hook method.
 	 *
 	 * @param array<string, mixed> $aa_config The configuration settings provided to this behavior.
+	 *
 	 * @return void
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function initialize (array $aa_config): void {
+	public function initialize(array $aa_config): void {
 		parent::initialize($aa_config);
 
 		//If the behavior is loaded for a table without a 'deleted'-column, disable it.
-		if ( ! $this->table()->getSchema()->getColumn('deleted')) {
+		if (!$this->table()->getSchema()->getColumn('deleted')) {
 			$this->setConfig('enabled', FALSE);
 		}
 	}
@@ -78,8 +79,8 @@ class SoftDeleteBehavior extends Behavior {
 	 * @noinspection PhpUnused
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function findDeleted (SelectQuery $ao_query, array $aa_options): SelectQuery {
-		if ( ! $this->getConfig('enabled')) {
+	public function findDeleted(SelectQuery $ao_query, array $aa_options): SelectQuery {
+		if (!$this->getConfig('enabled')) {
 			return $ao_query;
 		}
 
@@ -88,6 +89,7 @@ class SoftDeleteBehavior extends Behavior {
 		])->applyOptions([
 			'softDelete' => ['includeDeleted' => TRUE],
 		]);
+
 
 		return $ao_query;
 	}
@@ -104,8 +106,8 @@ class SoftDeleteBehavior extends Behavior {
 	 * @noinspection PhpUnused
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function findWithDeleted (SelectQuery $ao_query, array $aa_options): SelectQuery {
-		if ( ! $this->getConfig('enabled')) {
+	public function findWithDeleted(SelectQuery $ao_query, array $aa_options): SelectQuery {
+		if (!$this->getConfig('enabled')) {
 			return $ao_query;
 		}
 
@@ -114,6 +116,7 @@ class SoftDeleteBehavior extends Behavior {
 		])->applyOptions([
 			'softDelete' => ['includeDeleted' => TRUE],
 		]);
+
 
 		return $ao_query;
 	}
@@ -129,8 +132,8 @@ class SoftDeleteBehavior extends Behavior {
 	 *
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function buildRules (EventInterface $ao_event, RulesChecker $ao_rules): RulesChecker {
-		if ( ! $this->getConfig('enabled')) {
+	public function buildRules(EventInterface $ao_event, RulesChecker $ao_rules): RulesChecker {
+		if (!$this->getConfig('enabled')) {
 			return $ao_rules;
 		}
 
@@ -138,12 +141,13 @@ class SoftDeleteBehavior extends Behavior {
 			return $ao_rules;
 		}
 
-		$ao_rules->addUpdate(function(EntityInterface $ao_entity, array $aa_options): ?bool {
+		$ao_rules->addUpdate(function (EntityInterface $ao_entity, array $aa_options): ?bool {
 			return !$ao_entity->hasOriginal('deleted') || !$ao_entity->getOriginal('deleted');
 		}, 'softDelete', [
 			'errorField' => '_general',
 			'message' => __d('system', 'cant_modify_deleted'),
 		]);
+
 
 		return $ao_rules;
 	}
@@ -159,8 +163,8 @@ class SoftDeleteBehavior extends Behavior {
 	 *
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function beforeFind (EventInterface $ao_event, SelectQuery $ao_query, ArrayObject $ao_options, $ab_primary): void {
-		if ( ! $this->getConfig('enabled')) {
+	public function beforeFind(EventInterface $ao_event, SelectQuery $ao_query, ArrayObject $ao_options, $ab_primary): void {
+		if (!$this->getConfig('enabled')) {
 			return;
 		}
 
@@ -191,8 +195,8 @@ class SoftDeleteBehavior extends Behavior {
 	 * @return NULL
 	 * @noinspection PhpUnused
 	 */
-	public function beforeDelete (EventInterface $ao_event, EntityInterface $ao_entity, ArrayObject $ao_options): void {
-		if ( ! $this->getConfig('enabled')) {
+	public function beforeDelete(EventInterface $ao_event, EntityInterface $ao_entity, ArrayObject $ao_options): void {
+		if (!$this->getConfig('enabled')) {
 			return;
 		}
 
@@ -212,7 +216,7 @@ class SoftDeleteBehavior extends Behavior {
 		}
 
 		//Call softDelete. If it fails, throw an exception
-		if ( ! $this->softDelete($ao_entity, $lo_options, $ao_event)) {
+		if (!$this->softDelete($ao_entity, $lo_options, $ao_event)) {
 			throw new RuntimeException(sprintf('Could not soft-delete entity of type `%s`', $ao_entity::class));
 		}
 
@@ -236,8 +240,8 @@ class SoftDeleteBehavior extends Behavior {
 	 * @return void
 	 * @noinspection PhpUnused
 	 */
-	public function afterDeleteCommit (EventInterface $ao_event, EntityInterface $ao_entity, ArrayObject $ao_options): void {
-		if ( ! $this->getConfig('enabled')) {
+	public function afterDeleteCommit(EventInterface $ao_event, EntityInterface $ao_entity, ArrayObject $ao_options): void {
+		if (!$this->getConfig('enabled')) {
 			return;
 		}
 
@@ -271,7 +275,7 @@ class SoftDeleteBehavior extends Behavior {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function softDelete (EntityInterface $ao_entity, ArrayObject $ao_options, ?EventInterface $ao_event = NULL): bool {
+	public function softDelete(EntityInterface $ao_entity, ArrayObject $ao_options, ?EventInterface $ao_event = NULL): bool {
 		$lo_table = $this->table();
 
 		$la_defaults = [
@@ -282,7 +286,7 @@ class SoftDeleteBehavior extends Behavior {
 		];
 		$lo_options = $ao_options;
 
-		foreach ($la_defaults AS $ls_key => $lx_value) {
+		foreach ($la_defaults as $ls_key => $lx_value) {
 			if (!$ao_options->offsetExists($ls_key)) {
 				$ao_options->offsetSet($ls_key, $lx_value);
 			}
@@ -298,6 +302,7 @@ class SoftDeleteBehavior extends Behavior {
 			$ao_event->stopPropagation();
 			$ao_event->setResult($lo_event->getResult());
 
+
 			return FALSE;
 		}
 
@@ -306,7 +311,7 @@ class SoftDeleteBehavior extends Behavior {
 
 		//No primary key set? Throw an exception since we can't delete new entities
 		foreach ($la_primaryKeys as $ls_field) {
-			if ( ! $ao_entity->has($ls_field)) {
+			if (!$ao_entity->has($ls_field)) {
 				throw new RuntimeException(sprintf('Missing property `%s` in entity `%s`.', $ls_field, $ao_entity::class));
 			}
 		}
@@ -321,11 +326,8 @@ class SoftDeleteBehavior extends Behavior {
 
 		/**
 		 * Set the `deleted`-column
-		 *
-		 * @noinspection PhpPossiblePolymorphicInvocationInspection
-		 *               @noinspection PhpDynamicFieldDeclarationInspection
 		 */
-		$ao_entity->deleted = TRUE;
+		$ao_entity->set('deleted', TRUE);
 
 		//Save the entity but skip both the authorization and the system order behavior
 		$la_options = ['checkRules' => FALSE] + (array) $lo_options;
@@ -338,8 +340,10 @@ class SoftDeleteBehavior extends Behavior {
 			//Clean the entity because it's saved and therefore no longer dirty.
 			$ao_entity->clean();
 
+
 			return TRUE;
 		}
+
 
 		return FALSE;
 	}
@@ -350,12 +354,13 @@ class SoftDeleteBehavior extends Behavior {
 	 *
 	 * @return bool
 	 */
-	protected function isRecursable (Association $ao_association): bool {
+	protected function isRecursable(Association $ao_association): bool {
 		$lo_table = $this->table();
 
 		if ($ao_association->isOwningSide($lo_table) && $ao_association->getDependent() && $ao_association->getCascadeCallbacks()) {
 			return TRUE;
 		}
+
 
 		return FALSE;
 	}

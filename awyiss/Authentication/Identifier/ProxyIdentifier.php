@@ -39,8 +39,9 @@ class ProxyIdentifier extends AbstractIdentifier {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function identify (array $aa_credentials): ArrayAccess|array|NULL {
+	public function identify(array $aa_credentials): ArrayAccess|array|null {
 		$this->setConfig('resolver', $this->getConfig('remoteResolver'));
+
 
 		return $this->getResolver()->find($aa_credentials);
 	}
@@ -55,10 +56,11 @@ class ProxyIdentifier extends AbstractIdentifier {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function reidentify (array $aa_credentials): ArrayAccess|array|NULL {
+	public function reidentify(array $aa_credentials): ArrayAccess|array|null {
 		$this->setConfig('resolver', $this->getConfig('localResolver'));
 
 		dump($this->getConfig('localResolver'));
+
 
 		return $this->getResolver()->find($aa_credentials);
 	}

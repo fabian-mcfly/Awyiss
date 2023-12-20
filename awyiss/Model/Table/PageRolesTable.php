@@ -38,8 +38,7 @@ class PageRolesTable extends Table {
 	 * @inheritDoc
 	 */
 	protected array $_defaultConfig = [
-		'implementedEvents' => [
-			//'beforeSoftDelete'
+		'implementedEvents' => [//'beforeSoftDelete'
 		],
 		'translate' => [
 			'fields' => ['title'],
@@ -61,7 +60,7 @@ class PageRolesTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public function initialize (array $aa_config): void {
+	public function initialize(array $aa_config): void {
 		parent::initialize($aa_config);
 
 		$this->belongsTo('PageRoles');
@@ -82,7 +81,7 @@ class PageRolesTable extends Table {
 	 * @return Validator
 	 * @noinspection DuplicatedCode
 	 */
-	public function validationDefault (Validator $ao_validator): Validator {
+	public function validationDefault(Validator $ao_validator): Validator {
 		parent::validationDefault($ao_validator);
 
 
@@ -133,6 +132,7 @@ class PageRolesTable extends Table {
 			'boolean' => ['rule' => 'boolean'],
 		]);
 
+
 		return $ao_validator;
 	}
 
@@ -146,7 +146,7 @@ class PageRolesTable extends Table {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildRules (RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
+	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
 		//TODO: merge all 3 rules into one.
 
 		$ao_rules->add($ao_rules->isUnique(['identifier']), 'identifierUnique', [
@@ -155,12 +155,13 @@ class PageRolesTable extends Table {
 		]);
 
 
-		$ao_rules->addCreate(function(PageRole $ao_entity): bool {
+		$ao_rules->addCreate(function (PageRole $ao_entity): bool {
 			$ls_identifier = strtolower(Inflector::underscore($ao_entity->identifier));
 
 			if (in_array($ls_identifier, $this->blocklistedIdentifiers)) {
 				return FALSE;
 			}
+
 
 			return App::className(Inflector::camelize(Inflector::tableize($ls_identifier)), 'Controller/Backend', 'Controller') === NULL;
 		}, 'identifierAllowed', [
@@ -169,15 +170,15 @@ class PageRolesTable extends Table {
 		]);
 
 
-		$ao_rules->addUpdate(function(PageRole $ao_entity/*, array $aa_options*/): bool {
-			return ! $ao_entity->hasOriginal('identifier') && ! $ao_entity->isDirty('identifier');
+		$ao_rules->addUpdate(function (PageRole $ao_entity/*, array $aa_options*/): bool {
+			return !$ao_entity->hasOriginal('identifier') && !$ao_entity->isDirty('identifier');
 		}, 'identifierUnchanged', [
 			'errorField' => 'identifier',
 			'message' => __d($this->getI18nDomain(), 'error_identifier_unchanged'),
 		]);
 
 
-		$ao_rules->addDelete(function(PageRole $ao_entity): bool {
+		$ao_rules->addDelete(function (PageRole $ao_entity): bool {
 			dump($ao_entity);
 			dd(__FILE__, __LINE__);
 		});

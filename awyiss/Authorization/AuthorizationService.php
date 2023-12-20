@@ -35,7 +35,7 @@ class AuthorizationService implements AuthorizationServiceInterface {
 	/**
 	 * @inheritDoc
 	 */
-	public function __construct (string $as_realm) {
+	public function __construct(string $as_realm) {
 		$this->realm = $as_realm;
 	}
 
@@ -43,7 +43,7 @@ class AuthorizationService implements AuthorizationServiceInterface {
 	/**
 	 * @inheritDoc
 	 */
-	public function getAuthenticationService (): ?AuthenticationServiceInterface {
+	public function getAuthenticationService(): ?AuthenticationServiceInterface {
 		return $this->authenticationService;
 	}
 
@@ -51,8 +51,9 @@ class AuthorizationService implements AuthorizationServiceInterface {
 	/**
 	 * @inheritDoc
 	 */
-	public function setAuthenticationService (AuthenticationServiceInterface $ao_authenticationService): static {
+	public function setAuthenticationService(AuthenticationServiceInterface $ao_authenticationService): static {
 		$this->authenticationService = $ao_authenticationService;
+
 
 		return $this;
 	}
@@ -61,7 +62,7 @@ class AuthorizationService implements AuthorizationServiceInterface {
 	/**
 	 * @inheritDoc
 	 */
-	public function getRealm (): string {
+	public function getRealm(): string {
 		return $this->realm;
 	}
 
@@ -70,11 +71,12 @@ class AuthorizationService implements AuthorizationServiceInterface {
 	 * @inheritDoc
 	 * @throws \ReflectionException
 	 */
-	public function getPolicies (string $as_realm = NULL): array {
+	public function getPolicies(string $as_realm = NULL): array {
 		$ls_realm = $as_realm ?: $this->realm;
 
 		//if (!isset($this->policies[ $ls_realm ])) {
 		$this->policies[ $ls_realm ] = $this->findPolicy('*', $ls_realm);
+
 
 		//}
 
@@ -87,17 +89,18 @@ class AuthorizationService implements AuthorizationServiceInterface {
 	 *
 	 * @throws \ReflectionException
 	 */
-	public function getPolicy (string $as_scope, ?string $as_realm = NULL): ?string {
+	public function getPolicy(string $as_scope, ?string $as_realm = NULL): ?string {
 		$ls_realm = $as_realm ?: $this->realm;
 		$ls_scope = static::sanitizeScope($as_scope);
 
-		if ( ! isset($this->policies[ $ls_realm ])) {
+		if (!isset($this->policies[ $ls_realm ])) {
 			$this->policies[ $ls_realm ] = [];
 		}
 
 		if (empty($this->policies[ $ls_realm ][ $ls_scope ])) {
 			$this->policies[ $ls_realm ] += $this->findPolicy($ls_scope, $ls_realm);
 		}
+
 
 		return $this->policies[ $ls_realm ][ $ls_scope ] ?? NULL;
 	}
@@ -110,12 +113,14 @@ class AuthorizationService implements AuthorizationServiceInterface {
 	 * @return array<string, class-string<PolicyInterface>>
 	 * @throws \ReflectionException
 	 */
-	protected function findPolicy (string $as_scope, string $as_realm): array {
+	protected function findPolicy(string $as_scope, string $as_realm): array {
 		$la_policies = [];
 
 		$la_paths = [
-			'\\' . CUSTOM_NAMESPACE . '\Authorization\Policy\\' . $as_realm . '\\' => implode(DS,
-				[ROOT, CUSTOM_DIR, 'Authorization', 'Policy', $as_realm, $as_scope . 'Policy.php',]),
+			'\\' . CUSTOM_NAMESPACE . '\Authorization\Policy\\' . $as_realm . '\\' => implode(
+				DS,
+				[ROOT, CUSTOM_DIR, 'Authorization', 'Policy', $as_realm, $as_scope . 'Policy.php',]
+			),
 			'\Awyiss\Authorization\Policy\\' . $as_realm . '\\' => implode(DS, [ROOT, APP_DIR, 'Authorization', 'Policy', $as_realm, $as_scope . 'Policy.php']),
 		];
 
@@ -136,13 +141,14 @@ class AuthorizationService implements AuthorizationServiceInterface {
 
 				$lo_reflection = new ReflectionClass($ls_policyClass);
 
-				if ( ! $lo_reflection->implementsInterface(PolicyInterface::class)) {
+				if (!$lo_reflection->implementsInterface(PolicyInterface::class)) {
 					throw new RuntimeException(sprintf('The provided Policy class `%s` does not implement the `%s` interface.', $ls_policyClass, PolicyInterface::class));
 				}
 
 				$la_policies[ $ls_scope ] = $ls_policyClass;
 			}
 		}
+
 
 		return $la_policies;
 	}
@@ -156,7 +162,7 @@ class AuthorizationService implements AuthorizationServiceInterface {
 	 *
 	 * @return string
 	 */
-	public static function sanitizeScope (string $as_scope): string {
+	public static function sanitizeScope(string $as_scope): string {
 		return Inflector::camelize(Inflector::pluralize(Text::slug($as_scope, '_')));
 	}
 
@@ -169,7 +175,7 @@ class AuthorizationService implements AuthorizationServiceInterface {
 	 *
 	 * @return string
 	 */
-	public static function sanitizeIdentifier (string $as_identifier): string {
+	public static function sanitizeIdentifier(string $as_identifier): string {
 		return Inflector::variable(Text::slug($as_identifier, '_'));
 	}
 }

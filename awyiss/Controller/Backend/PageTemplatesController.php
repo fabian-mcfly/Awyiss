@@ -7,9 +7,9 @@ namespace Awyiss\Controller\Backend;
 use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Model\Entity\PageTemplate;
 use Awyiss\Model\Table\PageTemplatesTable;
+use Awyiss\Routing\Router;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
-use Awyiss\Routing\Router;
 
 
 /**
@@ -34,7 +34,7 @@ class PageTemplatesController extends Controller {
 	 *
 	 * @throws \Exception
 	 */
-	public function overview (): void {
+	public function overview(): void {
 		$this->Authorization->ensure('read');
 
 		$lo_pageTemplateQuery = $this->PageTemplates->find('withUsages')->where($this->getOverviewWhere())->contain(['ContentAreas']);
@@ -56,7 +56,7 @@ class PageTemplatesController extends Controller {
 	 *
 	 * @throws \Exception
 	 */
-	public function add (): void {
+	public function add(): void {
 		$this->Authorization->ensure('create');
 
 		$lo_pageTemplate = $this->PageTemplates->newDefaultEntity([
@@ -86,13 +86,14 @@ class PageTemplatesController extends Controller {
 	 *
 	 * @throws \Exception
 	 */
-	public function edit () {
+	public function edit() {
 		$this->Authorization->ensure('update');
 
 		/** @var PageTemplate $lo_pageTemplate */
 		$lo_pageTemplate = $this->PageTemplates->findById((int) $this->request->getParam('id'))->find('translations')->contain(['ContentAreas'])->first();
-		if ( ! $lo_pageTemplate) {
+		if (!$lo_pageTemplate) {
 			$this->Flash->error(__('record_not_found'));
+
 
 			return $this->redirect(['action' => 'overview']);
 		}
@@ -120,15 +121,17 @@ class PageTemplatesController extends Controller {
 	 *
 	 * @throws \Exception
 	 */
-	public function delete (): Response {
+	public function delete(): Response {
 		$this->Authorization->ensure('delete');
 
 		$this->request->allowMethod(['get', 'delete']);
 
 		/** @var PageTemplate $lo_pageTemplate */
 		$lo_pageTemplate = $this->PageTemplates->findById((int) $this->request->getParam('id'))->find('translations')->first();
-		if ( ! $lo_pageTemplate) {
+		if (!$lo_pageTemplate) {
 			$this->Flash->error(__('record_not_found'));
+
+
 			return $this->redirect(['action' => 'overview']);
 		}
 
@@ -138,6 +141,7 @@ class PageTemplatesController extends Controller {
 		else {
 			$this->Flash->error(__('delete_failed'));
 		}
+
 
 		return $this->redirect(['action' => 'overview']);
 	}
@@ -149,7 +153,7 @@ class PageTemplatesController extends Controller {
 	 *
 	 * @return void
 	 */
-	protected function save (PageTemplate $ao_pageTemplate, string $as_method = 'add'): void {
+	protected function save(PageTemplate $ao_pageTemplate, string $as_method = 'add'): void {
 		$la_associated = [];
 		if ($this->PageTemplates->hasAttributes()) {
 			$la_associated[] = $this->PageTemplates->getAttributesTable(TRUE);
@@ -157,12 +161,12 @@ class PageTemplatesController extends Controller {
 		}
 
 		$la_requestData = $this->request->getData();
-		if ( ! empty($la_requestData['content_areas'])) {
-			$la_requestData['content_areas'] = array_values(array_filter($la_requestData['content_areas'], function(array $aa_element) {
-				return ! empty($aa_element['id']);
+		if (!empty($la_requestData['content_areas'])) {
+			$la_requestData['content_areas'] = array_values(array_filter($la_requestData['content_areas'], function (array $aa_element) {
+				return !empty($aa_element['id']);
 			}));
 
-			array_walk($la_requestData['content_areas'], function(array &$aa_contentArea, int $ai_index) {
+			array_walk($la_requestData['content_areas'], function (array &$aa_contentArea, int $ai_index) {
 				$aa_contentArea['_joinData']['system_order'] = $ai_index + 1;
 			});
 		}
@@ -180,7 +184,7 @@ class PageTemplatesController extends Controller {
 
 		$this->Categories->ensurePossibleCategorySelection($ao_pageTemplate);
 
-		if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
+		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
 			if ($this->PageTemplates->save($ao_pageTemplate)) {
 				$this->Flash->success(__($as_method . '_succeeded'));
 
@@ -201,4 +205,3 @@ class PageTemplatesController extends Controller {
 		}
 	}
 }
-

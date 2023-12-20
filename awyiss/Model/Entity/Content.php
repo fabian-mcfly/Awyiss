@@ -90,23 +90,15 @@ class Content extends Entity {
 	];
 
 
-	protected function _setData (array $aa_data) {
-		if (empty($aa_data)) {
-			return NULL;
-		}
-
-		return $aa_data;
-	}
-
-
 	/**
 	 * Get all direct children of the current entity
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function getChildren (): ?CollectionInterface {
+	public function getChildren(): ?CollectionInterface {
 		/** @var ContentsTable $lo_table */
 		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
+
 
 		return $lo_table->getChildren($this);
 	}
@@ -117,9 +109,10 @@ class Content extends Entity {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function getNestedChildren (array $aa_options = [], int $ai_currentLevel = 0): ?CollectionInterface {
+	public function getNestedChildren(array $aa_options = [], int $ai_currentLevel = 0): ?CollectionInterface {
 		/** @var ContentsTable $lo_table */
 		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
+
 
 		return $lo_table->getNestedChildren($this, $aa_options, $ai_currentLevel);
 	}
@@ -130,9 +123,10 @@ class Content extends Entity {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function getParent (): ?self {
+	public function getParent(): ?self {
 		/** @var ContentsTable $lo_table */
 		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
+
 
 		return $lo_table->getParent($this);
 	}
@@ -143,10 +137,21 @@ class Content extends Entity {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function getParents (array $aa_options = [], int $ai_currentLevel = 0): ?CollectionInterface {
+	public function getParents(array $aa_options = [], int $ai_currentLevel = 0): ?CollectionInterface {
 		/** @var ContentsTable $lo_table */
 		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
 
+
 		return $lo_table->getParents($this, $aa_options, $ai_currentLevel);
+	}
+
+
+	protected function _setData(array $aa_data) {
+		if (empty($aa_data)) {
+			return NULL;
+		}
+
+
+		return $aa_data;
 	}
 }

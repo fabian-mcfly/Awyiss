@@ -6,7 +6,6 @@ namespace Awyiss\View\Widget;
 
 use Cake\Utility\Inflector;
 use Cake\View\Form\ContextInterface;
-use Cake\View\StringTemplate;
 use Cake\View\Widget\BasicWidget;
 use Traversable;
 
@@ -42,14 +41,14 @@ class LinkSelectWidget extends BasicWidget {
 	/**
 	 * @inheritDoc
 	 *
-	 * @param array            $aa_data
+	 * @param array $aa_data
 	 * @param ContextInterface $ao_context
 	 *
 	 * @return string
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function render (array $aa_data, ContextInterface $ao_context): string {
+	public function render(array $aa_data, ContextInterface $ao_context): string {
 		$la_data = $this->mergeDefaults($aa_data, $ao_context);
 
 		//Render the options
@@ -118,6 +117,7 @@ class LinkSelectWidget extends BasicWidget {
 		//Format the attributes
 		$la_attributes = $this->_templates->formatAttributes($la_data);
 
+
 		//Return the formatted template
 		return $this->_templates->format('linkSelect', [
 			'attrs' => $la_attributes,
@@ -138,7 +138,7 @@ class LinkSelectWidget extends BasicWidget {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function secureFields (array $aa_data): array {
+	public function secureFields(array $aa_data): array {
 		return [];
 	}
 
@@ -151,18 +151,20 @@ class LinkSelectWidget extends BasicWidget {
 	 *
 	 * @return bool
 	 */
-	protected function isSelected (string $as_key, mixed $ax_selected): bool {
+	protected function isSelected(string $as_key, mixed $ax_selected): bool {
 		if ($ax_selected === NULL) {
 			return FALSE;
 		}
 
-		if ( ! is_array($ax_selected)) {
+		if (!is_array($ax_selected)) {
 			$ax_selected = $ax_selected === FALSE ? '0' : $ax_selected;
+
 
 			return $as_key === (string) $ax_selected;
 		}
 
-		$lb_strict = ! is_numeric($as_key);
+		$lb_strict = !is_numeric($as_key);
+
 
 		return in_array($as_key, $ax_selected, $lb_strict);
 	}
@@ -171,17 +173,18 @@ class LinkSelectWidget extends BasicWidget {
 	/**
 	 * Helper method for deciding what options are disabled.
 	 *
-	 * @param string        $as_key      The key to test.
+	 * @param string $as_key The key to test.
 	 * @param string[]|NULL $aa_disabled The disabled values.
 	 *
 	 * @return bool
 	 */
-	protected function isDisabled (string $as_key, ?array $aa_disabled): bool {
+	protected function isDisabled(string $as_key, ?array $aa_disabled): bool {
 		if ($aa_disabled === NULL) {
 			return FALSE;
 		}
 
-		$lb_strict = ! is_numeric($as_key);
+		$lb_strict = !is_numeric($as_key);
+
 
 		return in_array($as_key, $aa_disabled, $lb_strict);
 	}
@@ -194,7 +197,7 @@ class LinkSelectWidget extends BasicWidget {
 	 *
 	 * @return string
 	 */
-	protected function renderUnassignedOption (array $aa_data): string {
+	protected function renderUnassignedOption(array $aa_data): string {
 		$la_data = $aa_data;
 
 		$lx_escape = $la_data['escape'] ?? TRUE;
@@ -213,6 +216,7 @@ class LinkSelectWidget extends BasicWidget {
 			$la_attributes = $this->_templates->addClass($la_attributes, $la_data['selectedClass'] ?? 'Active');
 		}
 
+
 		return $this->_templates->format('unassignedOption', [
 			'attrs' => $this->_templates->formatAttributes($la_attributes),
 			'templateVars' => $la_attributes['templateVars'],
@@ -229,7 +233,7 @@ class LinkSelectWidget extends BasicWidget {
 	 *
 	 * @return string
 	 */
-	protected function renderAggregationOption (array $aa_data): string {
+	protected function renderAggregationOption(array $aa_data): string {
 		$la_data = $aa_data;
 
 		$lx_escape = $la_data['escape'] ?? TRUE;
@@ -248,6 +252,7 @@ class LinkSelectWidget extends BasicWidget {
 			$la_attributes = $this->_templates->addClass($la_attributes, $la_data['selectedClass'] ?? 'Active');
 		}
 
+
 		return $this->_templates->format('aggregationOption', [
 			'attrs' => $this->_templates->formatAttributes($la_attributes),
 			'templateVars' => $la_attributes['templateVars'],
@@ -264,7 +269,7 @@ class LinkSelectWidget extends BasicWidget {
 	 *
 	 * @return array
 	 */
-	protected function renderOptions (array $aa_data): array {
+	protected function renderOptions(array $aa_data): array {
 		$la_data = $aa_data;
 
 		//Make sure the options are an array
@@ -309,7 +314,7 @@ class LinkSelectWidget extends BasicWidget {
 				}
 			}
 
-			if ( ! isset($la_optionAttributes['templateVars'])) {
+			if (!isset($la_optionAttributes['templateVars'])) {
 				$la_optionAttributes['templateVars'] = [];
 			}
 			$la_optionAttributes['templateVars']['identifier'] = $la_data['identifier'];
@@ -340,6 +345,7 @@ class LinkSelectWidget extends BasicWidget {
 			]);
 		}
 
+
 		return $la_options;
 	}
 
@@ -351,10 +357,11 @@ class LinkSelectWidget extends BasicWidget {
 	 *
 	 * @return string
 	 */
-	protected function renderSelectedOption (array $aa_data): string {
+	protected function renderSelectedOption(array $aa_data): string {
 		$la_data = $aa_data;
 
 		$la_selectedOption = (array) $la_data['options'][ $la_data['val'] ];
+
 
 		//Append the formatted template for this option
 		return $this->_templates->format('selectedOption', $la_selectedOption);

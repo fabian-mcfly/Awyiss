@@ -24,8 +24,6 @@ class DatesTable extends Table {
 	 * @inheritDoc
 	 */
 	public const TABLE = 'dates';
-
-
 	/**
 	 * @inheritDoc
 	 */
@@ -49,7 +47,7 @@ class DatesTable extends Table {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function validationDefault (Validator $ao_validator): Validator {
+	public function validationDefault(Validator $ao_validator): Validator {
 		parent::validationDefault($ao_validator);
 
 		$ao_validator->scalar('scope')->maxLength('scope', 50)->requirePresence('scope', 'create')->notEmptyString('scope');
@@ -59,6 +57,7 @@ class DatesTable extends Table {
 		$ao_validator->scalar('type')->maxLength('type', 20)->requirePresence('type', 'create')->notEmptyString('type');
 
 		$ao_validator->dateTime('value')->allowEmptyDateTime('value');
+
 
 		return $ao_validator;
 	}
@@ -73,14 +72,15 @@ class DatesTable extends Table {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildRules (RulesChecker|\Cake\ORM\RulesChecker $ao_rules): RulesChecker {
+	public function buildRules(RulesChecker|\Cake\ORM\RulesChecker $ao_rules): RulesChecker {
 		$ao_rules->add($ao_rules->existsIn('parentId', 'ParentDates'), ['errorField' => 'parentId']);
+
 
 		return $ao_rules;
 	}
 
 
-	public function initializeSchema (TableSchemaInterface $ao_schema): void {
+	public function initializeSchema(TableSchemaInterface $ao_schema): void {
 		parent::initializeSchema($ao_schema);
 
 		$ao_schema->setColumnType('type', EnumType::from(DateType::class));

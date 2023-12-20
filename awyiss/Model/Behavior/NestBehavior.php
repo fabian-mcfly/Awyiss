@@ -12,7 +12,6 @@ use Cake\Collection\Collection;
 use Cake\Collection\CollectionInterface;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
-use Cake\Log\Log;
 use Cake\Utility\Hash;
 use RuntimeException;
 
@@ -22,16 +21,16 @@ use RuntimeException;
  * `getNestedChildren()`, `getChildren()`, `getParent()` and `getParents()`
  *
  * For this, it uses the config options `children`/`parent` with the following options
- * 	- associationName: the alias of a valid hasMany/belongsTo-association, set on the table
- * 	- finder: the finder that's being used to get all children/parent(s)
- * 	- maxLevel: maximum depth of items to return
+ *    - associationName: the alias of a valid hasMany/belongsTo-association, set on the table
+ *    - finder: the finder that's being used to get all children/parent(s)
+ *    - maxLevel: maximum depth of items to return
  *
  * It also moves all nested children to a new scope in the `afterSaveCommit`-event, using the `relatedColumns`-option
  */
 class NestBehavior extends Behavior {
 	/**
 	 * Default configuration
-	 * 	 *
+	 *     *
 	 * These are merged with user-provided configuration when the behavior is used.
 	 *
 	 * @var array
@@ -72,10 +71,10 @@ class NestBehavior extends Behavior {
 	 * @inheritDoc
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function initialize (array $aa_config): void {
+	public function initialize(array $aa_config): void {
 		parent::initialize($aa_config);
 
-		if ( ! $this->getConfig('alias')) {
+		if (!$this->getConfig('alias')) {
 			$ls_alias = $this->table()->getAlias();
 
 			if (str_starts_with($ls_alias, 'Child')) {
@@ -97,10 +96,10 @@ class NestBehavior extends Behavior {
 	 *
 	 * @return $this
 	 */
-	public function buildAssociations (): static {
+	public function buildAssociations(): static {
 		$lo_table = $this->table();
 		$ls_alias = $this->getConfig('alias');
-		if ( ! $this->getConfig('children.associationName') || ! $this->table()->hasAssociation($this->getConfig('children.associationName'))) {
+		if (!$this->getConfig('children.associationName') || !$this->table()->hasAssociation($this->getConfig('children.associationName'))) {
 			$ls_associationName = $this->getConfig('children.associationName') ?: 'Child' . $ls_alias;
 			/** @var Entity $ls_entityClass */
 			$ls_entityClass = $lo_table->getEntityClass();
@@ -122,7 +121,7 @@ class NestBehavior extends Behavior {
 			$this->setConfig('children.associationName', $ls_associationName);
 		}
 
-		if ( ! $this->getConfig('parent.associationName') || ! $this->table()->hasAssociation($this->getConfig('parent.associationName'))) {
+		if (!$this->getConfig('parent.associationName') || !$this->table()->hasAssociation($this->getConfig('parent.associationName'))) {
 			$ls_associationName = $this->getConfig('parent.associationName') ?: 'Parent' . $ls_alias;
 			/** @var Entity $ls_entityClass */
 			$ls_entityClass ??= $lo_table->getEntityClass();
@@ -142,6 +141,7 @@ class NestBehavior extends Behavior {
 			$this->setConfig('parent.associationName', $ls_associationName);
 		}
 
+
 		return $this;
 	}
 
@@ -151,13 +151,13 @@ class NestBehavior extends Behavior {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function getChildren (EntityInterface $ao_entity): ?CollectionInterface {
-		if ( ! $this->getConfig('enabled') || ! $this->getConfig('children')) {
+	public function getChildren(EntityInterface $ao_entity): ?CollectionInterface {
+		if (!$this->getConfig('enabled') || !$this->getConfig('children')) {
 			return NULL;
 		}
 
 		$ls_associationName = $this->getConfig('children.associationName');
-		if ( ! $ls_associationName || ! $this->table()->hasAssociation($ls_associationName)) {
+		if (!$ls_associationName || !$this->table()->hasAssociation($ls_associationName)) {
 			throw new RuntimeException(sprintf('Expected option for `children.associationName` to be a valid assocation on table `%s`', $this->table()->getAlias()));
 		}
 
@@ -167,7 +167,7 @@ class NestBehavior extends Behavior {
 
 		$lo_query = $lo_association->find($lx_finder);
 
-		$la_bindingKeys = (array)$lo_association->getBindingKey();
+		$la_bindingKeys = (array) $lo_association->getBindingKey();
 
 		/** @var Entity $ls_entityClass */
 		$ls_entityClass = $lo_association->getSource()->getEntityClass();
@@ -185,6 +185,7 @@ class NestBehavior extends Behavior {
 			]);
 		}
 
+
 		return $lo_query->all();
 	}
 
@@ -200,14 +201,14 @@ class NestBehavior extends Behavior {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function getNestedChildren (EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0): ?CollectionInterface {
-		if ( ! $this->getConfig('enabled') || ! $this->getConfig('children')) {
+	public function getNestedChildren(EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0): ?CollectionInterface {
+		if (!$this->getConfig('enabled') || !$this->getConfig('children')) {
 			return NULL;
 		}
 
 		$lo_collection = new Collection([]);
 
-		foreach ($this->getChildren($ao_entity) AS $lo_entity) {
+		foreach ($this->getChildren($ao_entity) as $lo_entity) {
 			$lo_collection = $lo_collection->appendItem($lo_entity);
 
 			$li_maxLevel = $aa_options['maxLevel'] ?? $this->getConfig('children.maxLevel');
@@ -223,6 +224,7 @@ class NestBehavior extends Behavior {
 			$lo_collection = $lo_collection->append($lo_children);
 		}
 
+
 		return $lo_collection->compile(FALSE);
 	}
 
@@ -232,8 +234,8 @@ class NestBehavior extends Behavior {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function getParent (EntityInterface $ao_entity): ?EntityInterface {
-		if ( ! $this->getConfig('enabled') || ! $this->getConfig('parent')) {
+	public function getParent(EntityInterface $ao_entity): ?EntityInterface {
+		if (!$this->getConfig('enabled') || !$this->getConfig('parent')) {
 			return NULL;
 		}
 
@@ -249,6 +251,7 @@ class NestBehavior extends Behavior {
 		}
 
 		$lx_finder = $this->getConfig('parent.finder') ?: NULL;
+
 
 		return $lo_association->find($lx_finder)->where([
 			$lo_association->getAlias() . '.' . $lo_association->getBindingKey() => $ao_entity->get($lo_association->getForeignKey()),
@@ -267,8 +270,8 @@ class NestBehavior extends Behavior {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function getParents (EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0): ?CollectionInterface {
-		if ( ! $this->getConfig('enabled') || ! $this->getConfig('parent')) {
+	public function getParents(EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0): ?CollectionInterface {
+		if (!$this->getConfig('enabled') || !$this->getConfig('parent')) {
 			return NULL;
 		}
 
@@ -290,6 +293,7 @@ class NestBehavior extends Behavior {
 			$lo_collection = $lo_collection->append($lo_parent);
 		}
 
+
 		return $lo_collection->compile(FALSE);
 	}
 
@@ -301,20 +305,22 @@ class NestBehavior extends Behavior {
 	 * @return RulesChecker
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function buildRules (EventInterface $ao_event, RulesChecker $ao_rules): RulesChecker {
+	public function buildRules(EventInterface $ao_event, RulesChecker $ao_rules): RulesChecker {
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		$ao_rules->add(function(EntityInterface $ao_entity/*, array $aa_options*/) use ($ao_rules): string|bool {
-			if ( ! $ao_entity->get('parentId') || $ao_entity->isNew()) {
+		$ao_rules->add(function (EntityInterface $ao_entity/*, array $aa_options*/) use ($ao_rules): string|bool {
+			if (!$ao_entity->get('parentId') || $ao_entity->isNew()) {
 				return TRUE;
 			}
 
 			$la_nestedChildrenIds = $this->getNestedChildren($ao_entity)->extract('id')->toArray();
 
-			return ! in_array($ao_entity->get('parentId'), $la_nestedChildrenIds);
+
+			return !in_array($ao_entity->get('parentId'), $la_nestedChildrenIds);
 		}, 'validParentId', [
 			'errorField' => 'parentId',
 			'message' => __dfx($this->table()->getI18nDomain(), 'validation', 'menu_entries', 'error_valid_parent_id'),
 		]);
+
 
 		return $ao_rules;
 	}
@@ -331,12 +337,12 @@ class NestBehavior extends Behavior {
 	 *
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function afterSaveCommit (
+	public function afterSaveCommit(
 		EventInterface $ao_event,
 		EntityInterface $ao_entity,
 		ArrayObject $ao_options
 	): void {
-		if ( ! $this->getConfig('enabled') || ! $this->getConfig('relatedColumns')) {
+		if (!$this->getConfig('enabled') || !$this->getConfig('relatedColumns')) {
 			return;
 		}
 
@@ -349,7 +355,7 @@ class NestBehavior extends Behavior {
 		$la_relatedColumns = $this->getConfig('relatedColumns');
 		$la_dirtyRelatedColumns = array_intersect($ao_entity->getDirty(), $la_relatedColumns);
 
-		if ( ! $la_dirtyRelatedColumns) {
+		if (!$la_dirtyRelatedColumns) {
 			return;
 		}
 

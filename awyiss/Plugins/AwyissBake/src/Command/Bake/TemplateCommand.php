@@ -5,12 +5,15 @@ namespace AwyissBake\Command\Bake;
 
 
 use Cake\Console\Arguments;
-//use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Core\Configure;
-//use Cake\Utility\Inflector;
 use InvalidArgumentException;
 
+
+//use Cake\Console\ConsoleIo;
+
+
+//use Cake\Utility\Inflector;
 
 /**
  * Task class for creating view template files.
@@ -20,8 +23,6 @@ class TemplateCommand extends \Bake\Command\TemplateCommand {
 	 * @inheritDoc
 	 */
 	public array $scaffoldActions = ['overview', 'add', 'edit', 'form'];
-
-
 	/**
 	 * @inheritDoc
 	 */
@@ -31,7 +32,7 @@ class TemplateCommand extends \Bake\Command\TemplateCommand {
 	/**
 	 * @inheritDoc
 	 */
-	public function initialize (): void {
+	public function initialize(): void {
 		//Do not call parent's initialize
 	}
 
@@ -42,15 +43,15 @@ class TemplateCommand extends \Bake\Command\TemplateCommand {
 	 * Combines `\Bake\Command\TemplateCommand::getTemplatePath` and `\Bake\Command\BakeCommand::getTemplatePath`,
 	 * but honors the `folder`-option.
 	 *
-	 * @param Arguments   $ao_args The arguments
+	 * @param Arguments $ao_args The arguments
 	 * @param string|null $as_container
 	 *
-	 * @see \Bake\Command\BakeCommand::getTemplatePath()
-	 * @see \Bake\Command\TemplateCommand::getTemplatePath()
+	 * @see          \Bake\Command\BakeCommand::getTemplatePath()
+	 * @see          \Bake\Command\TemplateCommand::getTemplatePath()
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function getTemplatePath (Arguments $ao_args, ?string $as_container = NULL): string {
+	public function getTemplatePath(Arguments $ao_args, ?string $as_container = NULL): string {
 		$la_paths = (array) Configure::read('App.paths.templates');
 		if (empty($la_paths)) {
 			throw new InvalidArgumentException('Could not read template paths. ' . 'Ensure `App.paths.templates` is defined in your application configuration.');
@@ -74,7 +75,7 @@ class TemplateCommand extends \Bake\Command\TemplateCommand {
 			$ls_path .= $as_container . DS;
 		}
 
-		if ( ! $lb_pathFound && $ls_folder) {
+		if (!$lb_pathFound && $ls_folder) {
 			$ls_path = $ls_folder . DS;
 		}
 
@@ -85,6 +86,7 @@ class TemplateCommand extends \Bake\Command\TemplateCommand {
 
 		$ls_path = str_replace('/', DS, $ls_path);
 		$ls_path .= $this->controllerName . DS;
+
 
 		return $ls_path;
 	}
@@ -126,12 +128,13 @@ class TemplateCommand extends \Bake\Command\TemplateCommand {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildOptionParser (ConsoleOptionParser $ao_parser): ConsoleOptionParser {
+	public function buildOptionParser(ConsoleOptionParser $ao_parser): ConsoleOptionParser {
 		$lo_parser = parent::buildOptionParser($ao_parser);
 
 		$lo_parser->addOption('folder', [
 			'help' => 'The folder to save the views in. Can be either a custom path or they key of an item set in config `App.paths.templates`. Defaults to the the first item in config `App.paths.templates`.',
 		]);
+
 
 		return $lo_parser;
 	}

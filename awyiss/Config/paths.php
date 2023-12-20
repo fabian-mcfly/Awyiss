@@ -5,12 +5,7 @@ declare(strict_types=1);
 /*
  * Use the DS to separate the directories in other defines
  */
-
-
-use Cake\Utility\Inflector;
-
-
-if ( ! defined('DS')) {
+if (!defined('DS')) {
 	define('DS', DIRECTORY_SEPARATOR);
 }
 

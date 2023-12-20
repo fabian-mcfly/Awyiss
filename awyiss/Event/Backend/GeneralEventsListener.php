@@ -24,7 +24,7 @@ class GeneralEventsListener implements EventListenerInterface {
 	/**
 	 * @inheritDoc
 	 */
-	public function implementedEvents (): array {
+	public function implementedEvents(): array {
 		return [
 
 		];

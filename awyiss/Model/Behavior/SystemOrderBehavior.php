@@ -33,8 +33,6 @@ class SystemOrderBehavior extends Behavior {
 	 * Placeholder in <select>-elements that mark the current position. If this one's selected, no changes were made
 	 */
 	public const CURRENT_VALUE_PLACEHOLDER = '__CURRENT__';
-
-
 	/**
 	 * Default configuration
 	 *
@@ -76,11 +74,11 @@ class SystemOrderBehavior extends Behavior {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function initialize (array $aa_config): void {
+	public function initialize(array $aa_config): void {
 		parent::initialize($aa_config);
 
 		//If the behavior is loaded for a table without a 'system_order'-column, disable it.
-		if ( ! $this->table()->getSchema()->getColumn('system_order')) {
+		if (!$this->table()->getSchema()->getColumn('system_order')) {
 			$this->setConfig('enabled', FALSE);
 		}
 	}
@@ -96,8 +94,8 @@ class SystemOrderBehavior extends Behavior {
 	 *
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function beforeFind (EventInterface $ao_event, SelectQuery $ao_query, ArrayObject $ao_options, $ab_primary): void {
-		if ( ! $this->getConfig('enabled')) {
+	public function beforeFind(EventInterface $ao_event, SelectQuery $ao_query, ArrayObject $ao_options, $ab_primary): void {
+		if (!$this->getConfig('enabled')) {
 			return;
 		}
 
@@ -116,7 +114,7 @@ class SystemOrderBehavior extends Behavior {
 	 * @noinspection PhpUnused
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function beforeMarshal (EventInterface $ao_event, ArrayObject $ao_data, ArrayObject $ao_options): void {
+	public function beforeMarshal(EventInterface $ao_event, ArrayObject $ao_data, ArrayObject $ao_options): void {
 		if ($ao_event->isStopped()) {
 			return;
 		}
@@ -137,8 +135,8 @@ class SystemOrderBehavior extends Behavior {
 	 * @noinspection PhpUnusedParameterInspection
 	 * @noinspection PhpPossiblePolymorphicInvocationInspection
 	 */
-	public function beforeSave (EventInterface $ao_event, EntityInterface $ao_entity, ArrayObject $ao_options): void {
-		if ( ! $this->getConfig('enabled')) {
+	public function beforeSave(EventInterface $ao_event, EntityInterface $ao_entity, ArrayObject $ao_options): void {
+		if (!$this->getConfig('enabled')) {
 			return;
 		}
 
@@ -157,7 +155,7 @@ class SystemOrderBehavior extends Behavior {
 		}
 
 		$li_systemOrderOld = $ao_entity->hasOriginal('systemOrder') ? $ao_entity->getOriginal('systemOrder') : NULL;
-		if (! $li_systemOrderOld && $ao_entity->extractOriginalChanged($this->getConfig('relatedColumns'))) {
+		if (!$li_systemOrderOld && $ao_entity->extractOriginalChanged($this->getConfig('relatedColumns'))) {
 			$li_systemOrderOld = $ao_entity->get('systemOrder');
 		}
 
@@ -166,44 +164,40 @@ class SystemOrderBehavior extends Behavior {
 			$li_systemOrder = $ao_entity->get('systemOrder');
 			//Make sure the systemOrder is set and not higher than the max. allowed value plus 1
 			if (is_null($li_systemOrder) || $li_systemOrder > $li_hightesSystemOrder) {
-				/** @noinspection PhpDynamicFieldDeclarationInspection */
 				$ao_entity->set('systemOrder', $li_hightesSystemOrder + 1);
 			}
 			//The position is never allowed to be below 1, because cool orders start at 1, not 0.
 			elseif ($li_systemOrder < 1) {
-				/** @noinspection PhpDynamicFieldDeclarationInspection */
 				$ao_entity->set('systemOrder', 1);
 			}
+
 
 			//Return here since the rest of the method handles logic related to existing entities
 			return;
 		}
 
 		$la_relatedColumns = $this->getConfig('relatedColumns');
-		array_walk($la_relatedColumns, function(&$as_key) {
+		array_walk($la_relatedColumns, function (&$as_key) {
 			$as_key = Inflector::variable($as_key);
 		});
 		$la_dirtyRelatedColumns = array_intersect($ao_entity->getDirty(), $la_relatedColumns);
 
 		//The position is never allowed to be below 1, because cool orders start at 1, not 0.
 		if ($ao_entity->get('systemOrder') < 1) {
-			/** @noinspection PhpDynamicFieldDeclarationInspection */
-			$ao_entity->systemOrder = 1;
+			$ao_entity->set('systemOrder', 1);
 		}
 
 		//The related columns have changed
 		if ($la_dirtyRelatedColumns) {
 			//If the item is being moved to a new scope, it's allowed to take the highest system order plus 1
 			if ($ao_entity->systemOrder > ($li_hightesSystemOrder + 1)) {
-				/** @noinspection PhpDynamicFieldDeclarationInspection */
-				$ao_entity->systemOrder = $li_hightesSystemOrder + 1;
+				$ao_entity->set('systemOrder', $li_hightesSystemOrder + 1);
 			}
 		}
 		else {
 			//If the item stays inside its current scope, it's allowed to take the highest system order
 			if ($ao_entity->systemOrder > $li_hightesSystemOrder) {
-				/** @noinspection PhpDynamicFieldDeclarationInspection */
-				$ao_entity->systemOrder = $li_hightesSystemOrder;
+				$ao_entity->set('systemOrder', $li_hightesSystemOrder);
 			}
 
 			/*
@@ -224,8 +218,8 @@ class SystemOrderBehavior extends Behavior {
 	 * @noinspection PhpUnusedParameterInspection
 	 * @noinspection PhpPossiblePolymorphicInvocationInspection
 	 */
-	public function afterSave (EventInterface $ao_event, EntityInterface $ao_entity, ArrayObject $ao_options): void {
-		if ( ! $this->getConfig('enabled')) {
+	public function afterSave(EventInterface $ao_event, EntityInterface $ao_entity, ArrayObject $ao_options): void {
+		if (!$this->getConfig('enabled')) {
 			return;
 		}
 
@@ -250,12 +244,13 @@ class SystemOrderBehavior extends Behavior {
 		if ($ao_entity->isNew()) {
 			$this->updateAfterInsert($ao_entity);
 
+
 			//Return here since the rest of the method handles logic related to existing entities
 			return;
 		}
 
 		$la_relatedColumns = $this->getConfig('relatedColumns');
-		array_walk($la_relatedColumns, function(&$as_key) {
+		array_walk($la_relatedColumns, function (&$as_key) {
 			$as_key = Inflector::variable($as_key);
 		});
 		$la_dirtyRelatedColumns = array_intersect($ao_entity->getDirty(), $la_relatedColumns);
@@ -267,16 +262,16 @@ class SystemOrderBehavior extends Behavior {
 			 * of the records in the scope, since it was moved out of it, and into a new scope.
 			 *
 			 * This results in two necessary steps:
-			 * 	- update the old scope's items
-			 * 	- update the new scope's items
+			 *    - update the old scope's items
+			 *    - update the new scope's items
 			 *
-			 * - `A B C D E		=>		A B D E`
-			 * - `1 2 3 4 5		=>		1 2 3 4`
+			 * - `A B C D E        =>        A B D E`
+			 * - `1 2 3 4 5        =>        1 2 3 4`
 			 *
 			 * ---
 			 *
-			 * - `a b c d e		=>		a b C c d e`
-			 * - `1 2 3 4 5		=>		1 2 3 4 5 6`
+			 * - `a b c d e        =>        a b C c d e`
+			 * - `1 2 3 4 5        =>        1 2 3 4 5 6`
 			 *
 			 * Moving C to the position 3 of the scope of the lowercase letters means D and E need their system_order decreased by 1,
 			 * while A and B need to stay untouched.
@@ -307,8 +302,8 @@ class SystemOrderBehavior extends Behavior {
 			 *
 			 * All items between (and including) the new position and the old position need to move one to the back (+1)
 			 *
-			 * - `A B C D E		=>		A D B C E`
-			 * - `1 2 3 4 5		=>		1 2 3 4 5`
+			 * - `A B C D E        =>        A D B C E`
+			 * - `1 2 3 4 5        =>        1 2 3 4 5`
 			 *
 			 * Moving D to position 2 means B and C need their system_order increased by 1,
 			 * while A and E need to stay untouched.
@@ -324,8 +319,8 @@ class SystemOrderBehavior extends Behavior {
 			 * The item is being moved to the back.
 			 * All items between (and including) the new position and the old position need to move one to the front (-1)
 			 *
-			 * - `A B C D E		=>		A C D B E`
-			 * - `1 2 3 4 5		=>		1 2 3 4 5`
+			 * - `A B C D E        =>        A C D B E`
+			 * - `1 2 3 4 5        =>        1 2 3 4 5`
 			 *
 			 * Moving B to position 4 means C and D need their system_order decreased by 1,
 			 * while A and E need to stay untouched.
@@ -339,7 +334,7 @@ class SystemOrderBehavior extends Behavior {
 
 			$lo_records = $lo_query->all();
 
-			if ( ! $lo_records->count()) {
+			if (!$lo_records->count()) {
 				//No records found? The item is alone in its scope. But that's okay. Not all entities are gregarious animals
 				return;
 			}
@@ -349,7 +344,7 @@ class SystemOrderBehavior extends Behavior {
 
 			$la_records = $lo_records->toArray();
 			//Increase/decrease the system order of all records
-			array_walk($la_records, function(EntityInterface $ao_record) use ($lb_forward) {
+			array_walk($la_records, function (EntityInterface $ao_record) use ($lb_forward) {
 				/** @var Entity $ao_record */
 				$ao_record->systemOrder += $lb_forward ? 1 : -1;
 			});
@@ -372,8 +367,8 @@ class SystemOrderBehavior extends Behavior {
 	 * @noinspection PhpUnusedParameterInspection
 	 * @noinspection PhpPossiblePolymorphicInvocationInspection
 	 */
-	public function beforeSoftDelete (EventInterface $ao_event, EntityInterface $ao_entity, ArrayObject $ao_options): void {
-		if ( ! $this->getConfig('enabled')) {
+	public function beforeSoftDelete(EventInterface $ao_event, EntityInterface $ao_entity, ArrayObject $ao_options): void {
+		if (!$this->getConfig('enabled')) {
 			return;
 		}
 
@@ -382,7 +377,7 @@ class SystemOrderBehavior extends Behavior {
 		}
 
 		//If there's no original `deleted`-value or if that original value is empty
-		if ( ! $ao_entity->hasOriginal('deleted') || empty($ao_entity->getOriginal('deleted'))) {
+		if (!$ao_entity->hasOriginal('deleted') || empty($ao_entity->getOriginal('deleted'))) {
 			$ao_entity->set('systemOrder', 999999);
 		}
 	}
@@ -397,8 +392,8 @@ class SystemOrderBehavior extends Behavior {
 	 * @noinspection PhpUnusedParameterInspection
 	 * @noinspection PhpPossiblePolymorphicInvocationInspection
 	 */
- 	public function afterSoftDelete (EventInterface $ao_event, EntityInterface $ao_entity, ArrayObject $ao_options): void {
-		if ( ! $this->getConfig('enabled')) {
+	public function afterSoftDelete(EventInterface $ao_event, EntityInterface $ao_entity, ArrayObject $ao_options): void {
+		if (!$this->getConfig('enabled')) {
 			return;
 		}
 
@@ -421,6 +416,7 @@ class SystemOrderBehavior extends Behavior {
 			 */
 			$this->rememberedFields[ $ao_entity->id ] = $ao_entity->extractOriginalChanged($this->getConfig('relatedColumns'));
 
+
 			return;
 		}
 
@@ -435,8 +431,8 @@ class SystemOrderBehavior extends Behavior {
 	 * @noinspection PhpUnusedParameterInspection
 	 * @noinspection PhpPossiblePolymorphicInvocationInspection
 	 */
- 	public function afterSoftDeleteCommit (EventInterface $ao_event, EntityInterface $ao_entity, ArrayObject $ao_options): void {
-		if ( ! $this->getConfig('enabled')) {
+	public function afterSoftDeleteCommit(EventInterface $ao_event, EntityInterface $ao_entity, ArrayObject $ao_options): void {
+		if (!$this->getConfig('enabled')) {
 			return;
 		}
 
@@ -444,15 +440,15 @@ class SystemOrderBehavior extends Behavior {
 			return;
 		}
 
- 		if (isset($this->rememberedFields[ $ao_entity->id ])) {
- 			/*
- 			 * Only after the soft delete got committed, update the entity's siblings
- 			 * The soft delete behavior will ensure that only undeleted entties will be updated
- 			 */
- 			$lo_clonedEntity = new $ao_entity($this->rememberedFields[ $ao_entity->id ] + $ao_entity->getOriginalValues(), [
- 				'markClean' => TRUE,
- 				'markNew' => FALSE,
- 				'useSetters' => FALSE
+		if (isset($this->rememberedFields[ $ao_entity->id ])) {
+			/*
+			 * Only after the soft delete got committed, update the entity's siblings
+			 * The soft delete behavior will ensure that only undeleted entties will be updated
+			 */
+			$lo_clonedEntity = new $ao_entity($this->rememberedFields[ $ao_entity->id ] + $ao_entity->getOriginalValues(), [
+				'markClean' => TRUE,
+				'markNew' => FALSE,
+				'useSetters' => FALSE,
 			]);
 			$this->updateAfterRemove($lo_clonedEntity);
 			unset($this->rememberedFields[ $ao_entity->id ]);
@@ -475,8 +471,8 @@ class SystemOrderBehavior extends Behavior {
 	 *
 	 * @return Query|false
 	 */
-	public function addQueryConditions (?SelectQuery $ao_query, EntityInterface $ao_entity, bool $ab_useOriginal = FALSE): SelectQuery|false {
-		if ( ! $this->getConfig('enabled')) {
+	public function addQueryConditions(?SelectQuery $ao_query, EntityInterface $ao_entity, bool $ab_useOriginal = FALSE): SelectQuery|false {
+		if (!$this->getConfig('enabled')) {
 			return FALSE;
 		}
 
@@ -484,7 +480,7 @@ class SystemOrderBehavior extends Behavior {
 		$ls_tableAlias = $lo_table->getAlias();
 
 		$lo_query = $ao_query;
-		if ( ! $lo_query) {
+		if (!$lo_query) {
 			//If no query was provided, create one
 			$lo_query = $this->table()->find();
 		}
@@ -504,6 +500,7 @@ class SystemOrderBehavior extends Behavior {
 			$lo_query->where([$ls_tableAlias . '.' . Inflector::underscore($ls_column) . $ls_isNullCondition => $lx_value]);
 		}
 
+
 		return $lo_query;
 	}
 
@@ -517,8 +514,8 @@ class SystemOrderBehavior extends Behavior {
 	 *
 	 * @noinspection PhpPossiblePolymorphicInvocationInspection
 	 */
-	public function getHighestSystemOrder (EntityInterface $ao_entity): bool|int {
-		if ( ! $this->getConfig('enabled')) {
+	public function getHighestSystemOrder(EntityInterface $ao_entity): bool|int {
+		if (!$this->getConfig('enabled')) {
 			return FALSE;
 		}
 
@@ -528,6 +525,7 @@ class SystemOrderBehavior extends Behavior {
 		//$lo_query->applyOptions(['authorize' => ['skip' => TRUE]]);
 
 		$lo_record = $lo_query->select('system_order')->orderByDesc('system_order')->first();
+
 
 		return $lo_record ? $lo_record->get('systemOrder') : 0;
 	}
@@ -542,16 +540,17 @@ class SystemOrderBehavior extends Behavior {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function getRelatedColumns (?EntityInterface $ao_entity = NULL): array {
-		if ( ! $this->getConfig('enabled')) {
+	public function getRelatedColumns(?EntityInterface $ao_entity = NULL): array {
+		if (!$this->getConfig('enabled')) {
 			return [];
 		}
 
 		$la_relatedColumns = $this->getConfig('relatedColumns');
 
-		if ( ! $ao_entity) {
+		if (!$ao_entity) {
 			return $la_relatedColumns;
 		}
+
 
 		return array_intersect($ao_entity->getDirty(), $la_relatedColumns);
 	}
@@ -566,7 +565,7 @@ class SystemOrderBehavior extends Behavior {
 	 *
 	 * @noinspection PhpPossiblePolymorphicInvocationInspection
 	 */
-	protected function updateAfterInsert (EntityInterface $ao_entity): void {
+	protected function updateAfterInsert(EntityInterface $ao_entity): void {
 		$lo_table = $this->table();
 		$ls_tableAlias = $lo_table->getAlias();
 
@@ -580,14 +579,14 @@ class SystemOrderBehavior extends Behavior {
 
 		$lo_records = $lo_query->all();
 
-		if ( ! $lo_records->count()) {
+		if (!$lo_records->count()) {
 			//No records found? The item is alone in its scope.
 			return;
 		}
 
 		$la_records = $lo_records->toArray();
 		//Increase the system order of all records
-		array_walk($la_records, function(EntityInterface $ao_record) {
+		array_walk($la_records, function (EntityInterface $ao_record) {
 			/** @var Entity $ao_record */
 			$ao_record->systemOrder++;
 		});
@@ -609,7 +608,7 @@ class SystemOrderBehavior extends Behavior {
 	 *
 	 * @throws \Exception
 	 */
-	protected function updateAfterRemove (EntityInterface $ao_entity): void {
+	protected function updateAfterRemove(EntityInterface $ao_entity): void {
 		$lo_table = $this->table();
 		$ls_tableAlias = $lo_table->getAlias();
 
@@ -628,14 +627,14 @@ class SystemOrderBehavior extends Behavior {
 
 		$lo_records = $lo_query->all();
 
-		if ( ! $lo_records->count()) {
+		if (!$lo_records->count()) {
 			//No records found? The item is alone in its scope.
 			return;
 		}
 
 		$la_records = $lo_records->toArray();
 		//Increase the system order of all records
-		array_walk($la_records, function(EntityInterface $ao_record) {
+		array_walk($la_records, function (EntityInterface $ao_record) {
 			/** @var Entity $ao_record */
 			$ao_record->systemOrder--;
 		});

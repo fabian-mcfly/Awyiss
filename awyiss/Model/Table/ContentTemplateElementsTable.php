@@ -7,7 +7,6 @@ namespace Awyiss\Model\Table;
 use Awyiss\Model\Entity\UsergroupPermission;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
-use Cake\Database\Schema\TableSchemaInterface;
 use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Validation\Validator;
@@ -53,7 +52,7 @@ class ContentTemplateElementsTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public function initialize (array $aa_config): void {
+	public function initialize(array $aa_config): void {
 		parent::initialize($aa_config);
 
 		$this->belongsTo('ContentTemplates', [
@@ -70,7 +69,7 @@ class ContentTemplateElementsTable extends Table {
 	 *
 	 * @return Validator
 	 */
-	public function validationDefault (Validator $ao_validator): Validator {
+	public function validationDefault(Validator $ao_validator): Validator {
 		parent::validationDefault($ao_validator);
 
 
@@ -136,7 +135,7 @@ class ContentTemplateElementsTable extends Table {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildRules (RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
+	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
 		$ao_rules->add($ao_rules->existsIn(['contentTemplateId'], 'ContentTemplates'), 'contentTemplateExists', [
 			'errorField' => 'contentTemplateId',
 			'message' => __d($this->getI18nDomain(), 'error_content_template_exists'),

@@ -28,7 +28,7 @@ class ConfigOptionsProvider {
 	protected static bool $foundAll = FALSE;
 
 
-	private function __construct () {
+	private function __construct() {
 		throw new RuntimeException(sprintf('The class `%s` cannot be instantiated', self::class));
 	}
 
@@ -41,8 +41,8 @@ class ConfigOptionsProvider {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public static function getConfigOptionsFiles (bool $ab_returnLoaded = FALSE): array {
-		if ( ! static::$foundAll) {
+	public static function getConfigOptionsFiles(bool $ab_returnLoaded = FALSE): array {
+		if (!static::$foundAll) {
 			static::$configOptions = static::findConfigOptionsFile('*', $ab_returnLoaded);
 			static::$foundAll = TRUE;
 		}
@@ -50,6 +50,7 @@ class ConfigOptionsProvider {
 		if ($ab_returnLoaded) {
 			return static::$loadedConfigOptions;
 		}
+
 
 		return static::$configOptions;
 	}
@@ -64,7 +65,7 @@ class ConfigOptionsProvider {
 	 * @return NULL|string|ConfigOptionsInterface
 	 * @throws \ReflectionException
 	 */
-	public static function getConfigOptionsFile (string $as_scope, bool $ab_returnLoaded = FALSE): string|ConfigOptionsInterface|NULL {
+	public static function getConfigOptionsFile(string $as_scope, bool $ab_returnLoaded = FALSE): string|ConfigOptionsInterface|null {
 		$ls_scope = static::sanitizeScope($as_scope);
 
 		if (empty(static::$configOptions[ $ls_scope ])) {
@@ -74,6 +75,7 @@ class ConfigOptionsProvider {
 		if ($ab_returnLoaded) {
 			return static::$loadedConfigOptions[ $ls_scope ] ?? NULL;
 		}
+
 
 		return static::$configOptions[ $ls_scope ] ?? NULL;
 	}
@@ -88,7 +90,7 @@ class ConfigOptionsProvider {
 	 *
 	 * @throws \ReflectionException
 	 */
-	public static function loadConfigOptions (string $as_scope): ?ConfigOptionsInterface {
+	public static function loadConfigOptions(string $as_scope): ?ConfigOptionsInterface {
 		$ls_scope = static::sanitizeScope($as_scope);
 
 		if (array_key_exists($ls_scope, static::$loadedConfigOptions)) {
@@ -106,14 +108,16 @@ class ConfigOptionsProvider {
 		else {
 			/** @var NULL|class-string<ConfigOptionsInterface> $ls_configurationClass */
 			$ls_configurationClass = static::getConfigOptionsFile($ls_scope);
-			if ( ! $ls_configurationClass) {
+			if (!$ls_configurationClass) {
 				static::$loadedConfigOptions[ $ls_scope ] = NULL;
+
 
 				return NULL;
 			}
 		}
 
 		static::$loadedConfigOptions[ $ls_scope ] = new $ls_configurationClass();
+
 
 		return static::$loadedConfigOptions[ $ls_scope ];
 	}
@@ -124,10 +128,10 @@ class ConfigOptionsProvider {
 	 *
 	 * Returns a string with an error message if the value is not valid.
 	 *
-	 * @param string      $as_scope
-	 * @param string      $as_realm
-	 * @param string      $as_identifier
-	 * @param mixed       $ax_value
+	 * @param string $as_scope
+	 * @param string $as_realm
+	 * @param string $as_identifier
+	 * @param mixed $ax_value
 	 * @param null|string $as_languageShortcode
 	 *
 	 * @return bool|string
@@ -135,12 +139,13 @@ class ConfigOptionsProvider {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public static function validateConfigValue (string $as_scope, string $as_realm, string $as_identifier, mixed $ax_value, ?string $as_languageShortcode = NULL): bool|string {
+	public static function validateConfigValue(string $as_scope, string $as_realm, string $as_identifier, mixed $ax_value, ?string $as_languageShortcode = NULL): bool|string {
 		$lo_configuration = static::loadConfigOptions($as_scope);
 
-		if ( ! $lo_configuration) {
+		if (!$lo_configuration) {
 			return FALSE;
 		}
+
 
 		return $lo_configuration->validateConfigValue($as_realm, $as_identifier, $ax_value, $as_languageShortcode);
 	}
@@ -152,21 +157,48 @@ class ConfigOptionsProvider {
 	 * @param string $as_scope
 	 * @param string $as_realm
 	 * @param string $as_identifier
-	 * @param mixed  $ax_value
+	 * @param mixed $ax_value
 	 *
 	 * @return mixed
 	 * @throws \ReflectionException
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public static function typecastConfigValue (string $as_scope, string $as_realm, string $as_identifier, mixed $ax_value): mixed {
+	public static function typecastConfigValue(string $as_scope, string $as_realm, string $as_identifier, mixed $ax_value): mixed {
 		$lo_configuration = static::loadConfigOptions($as_scope);
 
-		if ( ! $lo_configuration) {
+		if (!$lo_configuration) {
 			return $ax_value;
 		}
 
+
 		return $lo_configuration->typecastConfigValue($as_realm, $as_identifier, $ax_value);
+	}
+
+
+	/**
+	 * Sanitize the provided scope by removing all non-ascii characters
+	 * Returns a camelBacked string
+	 *
+	 * @param string $as_scope
+	 *
+	 * @return string
+	 */
+	public static function sanitizeScope(string $as_scope): string {
+		return Inflector::camelize(Inflector::pluralize(Text::slug($as_scope, '_')));
+	}
+
+
+	/**
+	 * Sanitize the provided identifier by removing all non-ascii characters
+	 * Returns a camelBacked string
+	 *
+	 * @param string $as_identifier
+	 *
+	 * @return string
+	 */
+	public static function sanitizeIdentifier(string $as_identifier): string {
+		return Inflector::variable(Text::slug($as_identifier, '_'));
 	}
 
 
@@ -179,12 +211,12 @@ class ConfigOptionsProvider {
 	 * the Awyiss one is ignored.
 	 *
 	 * @param string $as_scope
-	 * @param bool   $ab_load
+	 * @param bool $ab_load
 	 *
 	 * @return array<string, class-string<ConfigOptionsInterface>>
 	 * @throws \ReflectionException
 	 */
-	protected static function findConfigOptionsFile (string $as_scope, bool $ab_load = FALSE): array {
+	protected static function findConfigOptionsFile(string $as_scope, bool $ab_load = FALSE): array {
 		$la_configurations = [];
 
 		$la_paths = [
@@ -203,8 +235,10 @@ class ConfigOptionsProvider {
 
 				$lo_reflection = new ReflectionClass($ls_configurationClass);
 
-				if ( ! $lo_reflection->implementsInterface(ConfigOptionsInterface::class)) {
-					throw new RuntimeException(sprintf('The provided Configuration class `%s` does not extend the `%s` class.', $ls_configurationClass, ConfigOptionsInterface::class));
+				if (!$lo_reflection->implementsInterface(ConfigOptionsInterface::class)) {
+					throw new RuntimeException(
+						sprintf('The provided Configuration class `%s` does not extend the `%s` class.', $ls_configurationClass, ConfigOptionsInterface::class)
+					);
 				}
 
 				/**
@@ -224,32 +258,7 @@ class ConfigOptionsProvider {
 			}
 		}
 
+
 		return $la_configurations;
-	}
-
-
-	/**
-	 * Sanitize the provided scope by removing all non-ascii characters
-	 * Returns a camelBacked string
-	 *
-	 * @param string $as_scope
-	 *
-	 * @return string
-	 */
-	public static function sanitizeScope (string $as_scope): string {
-		return Inflector::camelize(Inflector::pluralize(Text::slug($as_scope, '_')));
-	}
-
-
-	/**
-	 * Sanitize the provided identifier by removing all non-ascii characters
-	 * Returns a camelBacked string
-	 *
-	 * @param string $as_identifier
-	 *
-	 * @return string
-	 */
-	public static function sanitizeIdentifier (string $as_identifier): string {
-		return Inflector::variable(Text::slug($as_identifier, '_'));
 	}
 }

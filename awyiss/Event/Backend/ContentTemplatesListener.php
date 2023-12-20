@@ -31,7 +31,7 @@ class ContentTemplatesListener implements EventListenerInterface {
 	/**
 	 * @inheritDoc
 	 */
-	public function implementedEvents (): array {
+	public function implementedEvents(): array {
 		return [
 			'Model.ContentTemplates.beforeSave' => 'beforeSave',
 			'Model.ContentTemplates.afterSaveCommit' => 'afterSaveCommit',
@@ -48,12 +48,12 @@ class ContentTemplatesListener implements EventListenerInterface {
 	 *
 	 * This is neccesary since a second file rename job could interfere with the first one.
 	 *
-	 * @param Event           $ao_event
+	 * @param Event $ao_event
 	 * @param ContentTemplate $ao_entity
 	 *
 	 * @return void
 	 */
-	public function beforeSave (Event $ao_event, ContentTemplate $ao_entity): void {
+	public function beforeSave(Event $ao_event, ContentTemplate $ao_entity): void {
 		if ($ao_entity->hasOriginal('filename') && $ao_entity->filename != $ao_entity->getOriginal('filename')) {
 			/** @var QueuedJobsTable $lo_queue */
 			$lo_queue = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
@@ -72,12 +72,12 @@ class ContentTemplatesListener implements EventListenerInterface {
 	 * - create a template if it's new
 	 * - rename the template if it already exists
 	 *
-	 * @param Event           $ao_event
+	 * @param Event $ao_event
 	 * @param ContentTemplate $ao_entity
 	 *
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function afterSaveCommit (Event $ao_event, ContentTemplate $ao_entity): void {
+	public function afterSaveCommit(Event $ao_event, ContentTemplate $ao_entity): void {
 		$ls_fileName = Text::slug($ao_entity->filename, ['replacement' => '_']);
 		$ls_fileName = trim($ls_fileName, '_');
 		$ls_extension = '.twig';
@@ -135,13 +135,13 @@ class ContentTemplatesListener implements EventListenerInterface {
 	 * - prepend '_deleted-'
 	 * - append '-' and the current timestamp
 	 *
-	 * @param Event           $ao_event
+	 * @param Event $ao_event
 	 * @param ContentTemplate $ao_entity
 	 *
 	 * @noinspection PhpUnused
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function afterSoftDelete (Event $ao_event, ContentTemplate $ao_entity): void {
+	public function afterSoftDelete(Event $ao_event, ContentTemplate $ao_entity): void {
 		$ls_fileName = Text::slug($ao_entity->filename, ['replacement' => '_']);
 		$ls_fileName = trim($ls_fileName, '_');
 		$ls_extension = '.twig';

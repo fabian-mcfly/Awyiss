@@ -5,6 +5,7 @@
  * @noinspection PhpParameterNameChangedDuringInheritanceInspection
  */
 
+
 declare(strict_types=1);
 
 
@@ -38,7 +39,7 @@ class RulesChecker extends \Cake\ORM\RulesChecker {
 	 *
 	 * @return RuleInvoker
 	 */
-	public function isUnique (array $aa_fields, $ax_options = NULL): RuleInvoker {
+	public function isUnique(array $aa_fields, $ax_options = NULL): RuleInvoker {
 		$la_options = is_array($ax_options) ? $ax_options : ['message' => $ax_options];
 
 		if (empty($la_options['message'])) {
@@ -49,6 +50,7 @@ class RulesChecker extends \Cake\ORM\RulesChecker {
 		if (($this->_options['repository'] ?? NULL) && $ls_entityClass = ($this->_options['repository']->getEntityClass() ?? NULL)) {
 			$la_fields = $ls_entityClass::unmapFields($la_fields);
 		}
+
 
 		return parent::isUnique($la_fields, $la_options);
 	}
@@ -63,7 +65,7 @@ class RulesChecker extends \Cake\ORM\RulesChecker {
 	 *
 	 * @return RuleInvoker
 	 */
-	public function existsIn ($ax_fields, $ax_table, $ax_options = NULL): RuleInvoker {
+	public function existsIn($ax_fields, $ax_table, $ax_options = NULL): RuleInvoker {
 		$la_options = is_array($ax_options) ? $ax_options : ['message' => $ax_options];
 		$ls_message = ($la_options['message'] ?? NULL) ?: __d('validation', 'error_exists_in');
 		unset($la_options['message']);
@@ -75,8 +77,30 @@ class RulesChecker extends \Cake\ORM\RulesChecker {
 			$ls_errorField = is_string($ax_fields) ? $ax_fields : current($ax_fields);
 		}
 
+
 		//return parent::existsIn($ax_fields, $ax_table, $la_options);
 		return $this->_addError(new ExistsIn($ax_fields, $ax_table, $la_options), '_existsIn', ['errorField' => $ls_errorField, 'message' => $ls_message]);
+	}
+
+
+	/**
+	 * @inheritDoc
+	 *
+	 * @param string $as_field
+	 * @param int $ai_count
+	 * @param string $as_operator
+	 * @param null|string $as_message
+	 *
+	 * @return RuleInvoker
+	 */
+	public function validCount(string $as_field, int $ai_count = 0, string $as_operator = '>', ?string $as_message = NULL): RuleInvoker {
+		$ls_message = $as_message;
+		if (!$ls_message) {
+			$ls_message = __d('validation', 'error_valid_count', [$as_operator, $ai_count]);
+		}
+
+
+		return parent::validCount($as_field, $ai_count, $as_operator, $ls_message);
 	}
 
 
@@ -91,7 +115,7 @@ class RulesChecker extends \Cake\ORM\RulesChecker {
 	 *
 	 * @return RuleInvoker
 	 */
-	protected function _addLinkConstraintRule ($ax_association, ?string $as_errorField, ?string $as_message, string $as_linkStatus, string $as_ruleName): RuleInvoker {
+	protected function _addLinkConstraintRule($ax_association, ?string $as_errorField, ?string $as_message, string $as_linkStatus, string $as_ruleName): RuleInvoker {
 		$ls_errorField = $as_errorField;
 		$lx_association = $ax_association;
 
@@ -122,30 +146,11 @@ class RulesChecker extends \Cake\ORM\RulesChecker {
 		}
 
 		$ls_message = $as_message;
-		if ( ! $ls_message) {
+		if (!$ls_message) {
 			$ls_message = __d('validation', 'error_link_constraint_rule', $ls_associationAlias);
 		}
 
+
 		return parent::_addLinkConstraintRule($lx_association, $ls_errorField, $ls_message, $as_linkStatus, $as_ruleName);
-	}
-
-
-	/**
-	 * @inheritDoc
-	 *
-	 * @param string $as_field
-	 * @param int $ai_count
-	 * @param string $as_operator
-	 * @param null|string $as_message
-	 *
-	 * @return RuleInvoker
-	 */
-	public function validCount (string $as_field, int $ai_count = 0, string $as_operator = '>', ?string $as_message = NULL): RuleInvoker {
-		$ls_message = $as_message;
-		if ( ! $ls_message) {
-			$ls_message = __d('validation', 'error_valid_count', [$as_operator, $ai_count]);
-		}
-
-		return parent::validCount($as_field, $ai_count, $as_operator, $ls_message);
 	}
 }

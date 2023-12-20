@@ -60,7 +60,7 @@ class Behavior extends \Cake\ORM\Behavior {
 	 *
 	 * This variation will use the class's "defaultEvents"-property instead of a hardcoded array of events names
 	 */
-	public function implementedEvents (): array {
+	public function implementedEvents(): array {
 		$li_priority = $this->getConfig('priority');
 		$la_eventMap = $this->getConfig('implementedEvents', []);
 
@@ -71,6 +71,7 @@ class Behavior extends \Cake\ORM\Behavior {
 		/** @var \Awyiss\Model\Table $lo_table */
 		$lo_table = $this->table();
 
+
 		return $lo_table->buildEventMap($this, $la_eventMap, $li_priority);
 	}
 
@@ -80,14 +81,16 @@ class Behavior extends \Cake\ORM\Behavior {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function getDefaultEvents (): array {
+	public function getDefaultEvents(): array {
 		return $this->defaultEvents;
 	}
 
 
-	public function enable () {
+	public function enable() {
 		if (array_key_exists('enabled', $this->_config)) {
 			$this->_config['enabled'] = TRUE;
+
+
 			return;
 		}
 
@@ -95,9 +98,11 @@ class Behavior extends \Cake\ORM\Behavior {
 	}
 
 
-	public function disable () {
+	public function disable() {
 		if (array_key_exists('enabled', $this->_config)) {
 			$this->_config['enabled'] = FALSE;
+
+
 			return;
 		}
 

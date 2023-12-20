@@ -7,13 +7,12 @@ namespace Awyiss\Controller\Backend;
 use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Model\Entity\Attribute;
 use Awyiss\Model\Table\AttributesTable;
+use Awyiss\Routing\Router;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
-use Awyiss\Routing\Router;
 
 
 //use Cake\Datasource\ConnectionManager;
-
 
 /**
  * Attributes Controller
@@ -42,7 +41,7 @@ class AttributesController extends Controller {
 	 * @throws \ReflectionException
 	 * @throws \Exception
 	 */
-	public function initialize (): void {
+	public function initialize(): void {
 		$this->attributeScopes = $this->Attributes->getAvailableScopes();
 
 		$la_attributeScopes = $this->attributeScopes;
@@ -61,7 +60,7 @@ class AttributesController extends Controller {
 	 *
 	 * @throws \Exception
 	 */
-	public function overview (): void {
+	public function overview(): void {
 		$this->Authorization->ensure('read');
 
 		$lo_attributes = $this->Attributes->find()->where($this->getOverviewWhere());
@@ -87,7 +86,7 @@ class AttributesController extends Controller {
 	 *
 	 * @throws \Exception
 	 */
-	public function add (): void {
+	public function add(): void {
 		$this->Authorization->ensure('create');
 
 		$lo_attribute = $this->Attributes->newDefaultEntity([
@@ -101,7 +100,7 @@ class AttributesController extends Controller {
 		$la_availableFieldsets = $this->Attributes->getAvailableFieldsets($lo_attribute->scope);
 		$this->ensurePossibleFieldset($lo_attribute, $la_availableFieldsets);
 
-		$la_pageRoles = array_keys(array_filter($this->attributeScopes, function($ax_table) {
+		$la_pageRoles = array_keys(array_filter($this->attributeScopes, function ($ax_table) {
 			return !is_string($ax_table);
 		}));
 
@@ -121,13 +120,14 @@ class AttributesController extends Controller {
 	 *
 	 * @throws \Exception
 	 */
-	public function edit () {
+	public function edit() {
 		$this->Authorization->ensure('update');
 
 		/** @var Attribute $lo_attribute */
 		$lo_attribute = $this->Attributes->findById((int) $this->request->getParam('id'))->find('translations')->first();
-		if ( ! $lo_attribute) {
+		if (!$lo_attribute) {
 			$this->Flash->error(__('record_not_found'));
+
 
 			return $this->redirect(['action' => 'overview']);
 		}
@@ -139,8 +139,8 @@ class AttributesController extends Controller {
 		$la_availableFieldsets = $this->Attributes->getAvailableFieldsets($lo_attribute->scope);
 		$this->ensurePossibleFieldset($lo_attribute, $la_availableFieldsets);
 
-		$la_pageRoles = array_keys(array_filter($this->attributeScopes, function($ax_table) {
-			return ! is_string($ax_table);
+		$la_pageRoles = array_keys(array_filter($this->attributeScopes, function ($ax_table) {
+			return !is_string($ax_table);
 		}));
 
 		$this->set([
@@ -159,15 +159,16 @@ class AttributesController extends Controller {
 	 *
 	 * @throws \Exception
 	 */
-	public function delete (): Response {
+	public function delete(): Response {
 		$this->Authorization->ensure('delete');
 
 		$this->request->allowMethod(['get', 'delete']);
 
 		/** @var Attribute $lo_attribute */
 		$lo_attribute = $this->Attributes->findById((int) $this->request->getParam('id'))->find('translations')->first();
-		if ( ! $lo_attribute) {
+		if (!$lo_attribute) {
 			$this->Flash->error(__('record_not_found'));
+
 
 			return $this->redirect(['action' => 'overview']);
 		}
@@ -179,6 +180,7 @@ class AttributesController extends Controller {
 			$this->Flash->error(__('delete_failed'));
 		}
 
+
 		return $this->redirect(['action' => 'overview']);
 	}
 
@@ -189,7 +191,7 @@ class AttributesController extends Controller {
 	 *
 	 * @return void
 	 */
-	protected function save (Attribute $ao_attribute, string $as_method = 'add'): void {
+	protected function save(Attribute $ao_attribute, string $as_method = 'add'): void {
 		$la_associated = [];
 		if ($this->Attributes->hasAttributes()) {
 			$la_associated[] = $this->Attributes->getAttributesTable(TRUE);
@@ -198,7 +200,7 @@ class AttributesController extends Controller {
 
 		$this->Attributes->patchEntity($ao_attribute, $this->request->getData(), ['associated' => $la_associated]);
 
-		if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
+		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
 			if ($this->Attributes->save($ao_attribute)) {
 				$this->Flash->success(__($as_method . '_succeeded'));
 
@@ -210,7 +212,7 @@ class AttributesController extends Controller {
 			}
 
 			$this->Flash->error(__($as_method . '_failed'));
-			foreach ($ao_attribute->getError('_general') AS $ls_error) {
+			foreach ($ao_attribute->getError('_general') as $ls_error) {
 				$this->Flash->error($ls_error);
 			}
 		}
@@ -219,11 +221,11 @@ class AttributesController extends Controller {
 
 	/**
 	 * @param Attribute $ao_attribute
-	 * @param array     $aa_availableFieldsets
+	 * @param array $aa_availableFieldsets
 	 *
 	 * @return void
 	 */
-	protected function ensurePossibleFieldset (Attribute $ao_attribute, array $aa_availableFieldsets): void {
+	protected function ensurePossibleFieldset(Attribute $ao_attribute, array $aa_availableFieldsets): void {
 		if (empty($ao_attribute->fieldset) || !in_array($ao_attribute->fieldset, $aa_availableFieldsets)) {
 			$la_errors = $ao_attribute->getError('fieldset');
 
@@ -242,4 +244,3 @@ class AttributesController extends Controller {
 		}
 	}
 }
-

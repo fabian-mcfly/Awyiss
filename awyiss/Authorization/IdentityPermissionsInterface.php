@@ -16,7 +16,7 @@ interface IdentityPermissionsInterface {
 	 *
 	 * @return PermissionCollection
 	 */
-	public function getPermissionCollection (): PermissionCollection;
+	public function getPermissionCollection(): PermissionCollection;
 
 
 	/**
@@ -33,5 +33,5 @@ interface IdentityPermissionsInterface {
 	 * @throws \ReflectionException
 	 * @see PermissionCollection::scopeIsAccessible
 	 */
-	public function scopeIsAccessible (string $as_scope, ?array $aa_additionalData = NULL, string|array ...$ax_identifier);
+	public function scopeIsAccessible(string $as_scope, ?array $aa_additionalData = NULL, string|array ...$ax_identifier);
 }

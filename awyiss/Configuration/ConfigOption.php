@@ -32,8 +32,6 @@ class ConfigOption {
 		'nullable' => 'bool|array',
 		'type' => 'string',
 	];
-
-
 	/**
 	 * @var null|mixed
 	 */
@@ -66,7 +64,7 @@ class ConfigOption {
 	/**
 	 * @param array{defaultValue: mixed, localizable: bool, identifier: string, nullable: bool|array, type: string} $aa_settings
 	 */
-	public function __construct (#[ArrayShape(self::SETTINGS_SHAPE)] array $aa_settings = []) {
+	public function __construct(#[ArrayShape(self::SETTINGS_SHAPE)] array $aa_settings = []) {
 		if (isset($aa_settings['defaultValue'])) {
 			$this->setDefaultValue($aa_settings['defaultValue']);
 		}
@@ -109,7 +107,7 @@ class ConfigOption {
 	/**
 	 * @return mixed
 	 */
-	public function getDefaultValue (): mixed {
+	public function getDefaultValue(): mixed {
 		return $this->defaultValue;
 	}
 
@@ -119,8 +117,9 @@ class ConfigOption {
 	 *
 	 * @return self
 	 */
-	public function setDefaultValue (mixed $ax_defaultValue): static {
+	public function setDefaultValue(mixed $ax_defaultValue): static {
 		$this->defaultValue = $ax_defaultValue;
+
 
 		return $this;
 	}
@@ -129,7 +128,7 @@ class ConfigOption {
 	/**
 	 * @return string
 	 */
-	public function getDescription (): string {
+	public function getDescription(): string {
 		return $this->description;
 	}
 
@@ -139,8 +138,9 @@ class ConfigOption {
 	 *
 	 * @return ConfigOption
 	 */
-	public function setDescription (string $as_description): static {
+	public function setDescription(string $as_description): static {
 		$this->description = $as_description;
+
 
 		return $this;
 	}
@@ -149,7 +149,7 @@ class ConfigOption {
 	/**
 	 * @return string
 	 */
-	public function getIdentifier (): string {
+	public function getIdentifier(): string {
 		return $this->identifier;
 	}
 
@@ -159,8 +159,9 @@ class ConfigOption {
 	 *
 	 * @return self
 	 */
-	public function setIdentifier (string $as_identifier): static {
+	public function setIdentifier(string $as_identifier): static {
 		$this->identifier = Inflector::variable($as_identifier);
+
 
 		return $this;
 	}
@@ -169,7 +170,7 @@ class ConfigOption {
 	/**
 	 * @return ConfigOptionType
 	 */
-	public function getType (): ConfigOptionType {
+	public function getType(): ConfigOptionType {
 		return $this->type;
 	}
 
@@ -179,8 +180,9 @@ class ConfigOption {
 	 *
 	 * @return self
 	 */
-	public function setType (ConfigOptionType $ae_type): static {
+	public function setType(ConfigOptionType $ae_type): static {
 		$this->type = $ae_type;
+
 
 		return $this;
 	}
@@ -189,7 +191,7 @@ class ConfigOption {
 	/**
 	 * @return bool
 	 */
-	public function isLocalizable (): bool {
+	public function isLocalizable(): bool {
 		return $this->localizable;
 	}
 
@@ -197,7 +199,7 @@ class ConfigOption {
 	/**
 	 * @param bool $ab_localizable
 	 */
-	public function setLocalizable (bool $ab_localizable): void {
+	public function setLocalizable(bool $ab_localizable): void {
 		$this->localizable = $ab_localizable;
 	}
 
@@ -207,7 +209,7 @@ class ConfigOption {
 	 *
 	 * @return bool
 	 */
-	public function isNullable (bool $ab_localized = FALSE): bool {
+	public function isNullable(bool $ab_localized = FALSE): bool {
 		return $this->nullable[ $ab_localized ? 'localized' : 'global' ];
 	}
 
@@ -216,7 +218,7 @@ class ConfigOption {
 	 * @param bool $ab_nullable
 	 * @param bool $ab_localized
 	 */
-	public function setNullable (bool $ab_nullable, bool $ab_localized = FALSE): void {
+	public function setNullable(bool $ab_nullable, bool $ab_localized = FALSE): void {
 		$this->nullable[ $ab_localized ? 'localized' : 'global' ] = $ab_nullable;
 	}
 
@@ -234,7 +236,7 @@ class ConfigOption {
 	 *
 	 * @return bool|string
 	 */
-	public function validateConfigValue (mixed $ax_value, ?string $as_languageShortcode = NULL): bool|string {
+	public function validateConfigValue(mixed $ax_value, ?string $as_languageShortcode = NULL): bool|string {
 		if ($as_languageShortcode !== NULL && !$this->isLocalizable()) {
 			return __d('configuration', 'error_option_not_localizable');
 		}
@@ -244,8 +246,10 @@ class ConfigOption {
 				return __d('configuration', 'error_option_not_nullable');
 			}
 
+
 			return TRUE;
 		}
+
 
 		return $this->getType()->validateType($ax_value, $this->isNullable($as_languageShortcode !== NULL));
 	}
@@ -258,7 +262,7 @@ class ConfigOption {
 	 *
 	 * @return mixed
 	 */
-	public function typecastConfigValue (mixed $ax_value): mixed {
+	public function typecastConfigValue(mixed $ax_value): mixed {
 		return $this->getType()->typeCast($ax_value);
 	}
 }

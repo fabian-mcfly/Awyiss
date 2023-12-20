@@ -18,7 +18,7 @@ class AwyissExtension extends AbstractExtension {
 	 *
 	 * @return TwigTest[]
 	 */
-	public function getTests (): array {
+	public function getTests(): array {
 		return [
 			new TwigTest('array', function ($ax_value): bool {
 				return is_array($ax_value);
@@ -44,13 +44,13 @@ class AwyissExtension extends AbstractExtension {
 	 *
 	 * @return TwigFunction[]
 	 */
-	public function getFunctions (): array {
+	public function getFunctions(): array {
 		return [
-			new TwigFunction('getClass', function($ax_class): string {
+			new TwigFunction('getClass', function ($ax_class): string {
 				return get_class($ax_class);
 			}),
 
-			new TwigFunction('combine', function($aa_keys, $aa_values): array {
+			new TwigFunction('combine', function ($aa_keys, $aa_values): array {
 				return array_combine($aa_keys, $aa_values);
 			}),
 
@@ -69,22 +69,25 @@ class AwyissExtension extends AbstractExtension {
 			new TwigFunction('__df', '__df'),
 			new TwigFunction('__dfx', '__dfx'),
 
-			new TwigFunction('naturalSort', function(array $aa_data, int|string $as_key = NULL): array {
-				uasort($aa_data, function($a, $b) use ($as_key) {
+			new TwigFunction('naturalSort', function (array $aa_data, int | string $as_key = NULL): array {
+				uasort($aa_data, function ($a, $b) use ($as_key) {
 					if (!empty($as_key)) {
 						return strnatcasecmp($a[ $as_key ], $b[ $as_key ]);
 					}
 
+
 					return strnatcasecmp($a, $b);
 				});
+
 
 				return $aa_data;
 			}),
 
-			new TwigFunction('staticCall', function(string $ax_class, string $as_method, ...$aa_args): mixed {
+			new TwigFunction('staticCall', function (string $ax_class, string $as_method, ...$aa_args): mixed {
 				if (class_exists($ax_class) && method_exists($ax_class, $as_method)) {
 					return call_user_func_array([$ax_class, $as_method], $aa_args);
 				}
+
 
 				return NULL;
 			}),

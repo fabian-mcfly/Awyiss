@@ -39,8 +39,6 @@ class BackendMenuEntriesTable extends Table {
 	 * @inheritDoc
 	 */
 	public const TABLE = 'backend_menu_entries';
-
-
 	protected array $_defaultConfig = [
 		'nest' => [
 			'relatedColumns' => [],
@@ -57,7 +55,7 @@ class BackendMenuEntriesTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public function initialize (array $aa_config): void {
+	public function initialize(array $aa_config): void {
 		parent::initialize($aa_config);
 
 		$this->addBehavior('Nest', $this->getConfig('nest', []));
@@ -72,13 +70,13 @@ class BackendMenuEntriesTable extends Table {
 	 *
 	 * @return Validator
 	 */
-	public function validationDefault (Validator $ao_validator): Validator {
+	public function validationDefault(Validator $ao_validator): Validator {
 		parent::validationDefault($ao_validator);
 
 
 		$ao_validator->requirePresence([
 			'parentId' => [
-				'mode' => function(array $aa_context): bool {
+				'mode' => function (array $aa_context): bool {
 					/** @var BackendMenuEntriesTable $lo_table */
 					$lo_table = $aa_context['providers']['table'];
 					/** @var BackendMenuEntry $ls_entityClass */
@@ -86,11 +84,12 @@ class BackendMenuEntriesTable extends Table {
 
 					$la_data = $aa_context['data'];
 
-					return empty($la_data[ $ls_entityClass::unmapField('insertAfterId') ]) ;
-				}
+
+					return empty($la_data[ $ls_entityClass::unmapField('insertAfterId') ]);
+				},
 			],
 			'insertAfterId' => [
-				'mode' => function(array $aa_context): bool {
+				'mode' => function (array $aa_context): bool {
 					/** @var BackendMenuEntriesTable $lo_table */
 					$lo_table = $aa_context['providers']['table'];
 					/** @var BackendMenuEntry $ls_entityClass */
@@ -98,8 +97,9 @@ class BackendMenuEntriesTable extends Table {
 
 					$la_data = $aa_context['data'];
 
+
 					return empty($la_data[ $ls_entityClass::unmapField('parentId') ]);
-				}
+				},
 			],
 			'title',
 		], 'create');
@@ -111,13 +111,14 @@ class BackendMenuEntriesTable extends Table {
 		]);
 
 
-		$ao_validator->notEmptyString('parentId', NULL, function(array $aa_context): bool {
+		$ao_validator->notEmptyString('parentId', NULL, function (array $aa_context): bool {
 			/** @var BackendMenuEntriesTable $lo_table */
 			$lo_table = $aa_context['providers']['table'];
 			/** @var BackendMenuEntry $ls_entityClass */
 			$ls_entityClass = $lo_table->getEntityClass();
 
 			$la_data = $aa_context['data'];
+
 
 			return empty($la_data[ $ls_entityClass::unmapField('insertAfterId') ]);
 		});
@@ -127,13 +128,14 @@ class BackendMenuEntriesTable extends Table {
 		]);
 
 
-		$ao_validator->notEmptyString('insertAfterId', NULL, function(array $aa_context): bool {
+		$ao_validator->notEmptyString('insertAfterId', NULL, function (array $aa_context): bool {
 			/** @var BackendMenuEntriesTable $lo_table */
 			$lo_table = $aa_context['providers']['table'];
 			/** @var BackendMenuEntry $ls_entityClass */
 			$ls_entityClass = $lo_table->getEntityClass();
 
 			$la_data = $aa_context['data'];
+
 
 			return empty($la_data[ $ls_entityClass::unmapField('parentId') ]);
 		});
@@ -191,30 +193,36 @@ class BackendMenuEntriesTable extends Table {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildRules (RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
-		$ao_rules->add(function(BackendMenuEntry $ao_entity, array $aa_options) use ($ao_rules): bool {
+	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
+		$ao_rules->add(function (BackendMenuEntry $ao_entity, array $aa_options) use ($ao_rules): bool {
 			static $lo_menu;
 
-			if ( ! $aa_options['checkRules']) {
+			if (!$aa_options['checkRules']) {
 				dd(__FILE__, __LINE__);
 			}
 
-			if ( ! ($lx_parentId = $ao_entity->get('parentId'))) {
+			if (!($lx_parentId = $ao_entity->get('parentId'))) {
 				return TRUE;
 			}
 
-			if ( ! is_numeric($lx_parentId)) {
-				if ( ! isset($lo_menu)) {
+			if (!is_numeric($lx_parentId)) {
+				if (!isset($lo_menu)) {
 					$lo_menu = new BackendMenu();
 				}
+
 
 				return (bool) ($lo_menu->getCustomMenu() ?? $lo_menu->getMenu())->getItem($lx_parentId);
 			}
 
-			$lo_existsIn = $ao_rules->existsIn(['parentId'], 'ParentBackendMenuEntries', [
-				'errorField' => 'parentId',
-				'message' => __dfx($this->getI18nDomain(), 'validation', 'backend_menu_entries', 'error_valid_parent_id'),
-			]);
+			$lo_existsIn = $ao_rules->existsIn(
+				['parentId'],
+				'ParentBackendMenuEntries',
+				[
+					'errorField' => 'parentId',
+					'message' => __dfx($this->getI18nDomain(), 'validation', 'backend_menu_entries', 'error_valid_parent_id'),
+				]
+			);
+
 
 			return $lo_existsIn($ao_entity, $aa_options);
 		}, 'validParentId');
@@ -230,7 +238,7 @@ class BackendMenuEntriesTable extends Table {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function listNested (SelectQuery $ao_query): CollectionInterface {
+	public function listNested(SelectQuery $ao_query): CollectionInterface {
 		$lo_menuEntries = $ao_query->find('threaded')->all()->listNested();
 
 		/** @var BackendMenuEntry $lo_menuEntry */
@@ -240,6 +248,7 @@ class BackendMenuEntriesTable extends Table {
 			$lo_menuEntry->level = $lo_menuEntries->getDepth();
 		}
 
+
 		return $lo_menuEntries;
 	}
 
@@ -247,8 +256,8 @@ class BackendMenuEntriesTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	protected function initializeSchema (TableSchemaInterface $ao_schema): void {
-		parent::initializeSchema($ao_schema);;
+	protected function initializeSchema(TableSchemaInterface $ao_schema): void {
+		parent::initializeSchema($ao_schema);
 
 		$ao_schema->setColumnType('access', 'json');
 	}

@@ -22,25 +22,25 @@ class EventListenersMiddleware implements MiddlewareInterface {
 	/**
 	 * @param null|string $as_realm
 	 */
-	public function __construct (?string $as_realm = NULL) {
+	public function __construct(?string $as_realm = NULL) {
 		$this->realm = $as_realm;
 	}
 
 
 	/**
 	 * @inheritDoc
-
 	 *
 	 * @throws \ReflectionException
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function process (ServerRequestInterface $ao_request, RequestHandlerInterface $ao_handler): ResponseInterface {
+	public function process(ServerRequestInterface $ao_request, RequestHandlerInterface $ao_handler): ResponseInterface {
 		EventListenersProvider::loadListener('general_events', $this->getRealm());
 
 		Awyiss::setRealm($this->getRealm());
 
 		$lo_request = $ao_request->withAttribute('eventListeners', $this);
+
 
 		return $ao_handler->handle($lo_request);
 	}
@@ -49,7 +49,7 @@ class EventListenersMiddleware implements MiddlewareInterface {
 	/**
 	 * @return null|string
 	 */
-	public function getRealm (): ?string {
+	public function getRealm(): ?string {
 		return $this->realm;
 	}
 
@@ -61,8 +61,9 @@ class EventListenersMiddleware implements MiddlewareInterface {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function setRealm (string $realm): static {
+	public function setRealm(string $realm): static {
 		$this->realm = $realm;
+
 
 		return $this;
 	}

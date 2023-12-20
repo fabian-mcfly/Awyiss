@@ -8,7 +8,6 @@ use ArrayObject;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
 use Cake\ORM\Entity;
-use Cake\Utility\Inflector;
 
 
 /**
@@ -26,7 +25,7 @@ class EavStrategy extends \Cake\ORM\Behavior\Translate\EavStrategy {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function beforeSave (EventInterface $ao_event, EntityInterface $ao_entity, ArrayObject $ao_options): void {
+	public function beforeSave(EventInterface $ao_event, EntityInterface $ao_entity, ArrayObject $ao_options): void {
 		$ls_locale = $ao_entity->get('_locale') ?: $this->getLocale();
 		$ao_options['associated'] = [$this->translationTable->getAlias() => ['validate' => FALSE]] + $ao_options['associated'];
 
@@ -63,10 +62,11 @@ class EavStrategy extends \Cake\ORM\Behavior\Translate\EavStrategy {
 		// When we have no key and bundled translations, we
 		// need to mark the entity dirty so the root
 		// entity persists.
-		if ($lb_noFields && $la_bundled && ! $li_key) {
+		if ($lb_noFields && $la_bundled && !$li_key) {
 			foreach ($this->_config['fields'] as $ls_field) {
 				$ao_entity->setDirty($ls_field);
 			}
+
 
 			return;
 		}
@@ -80,11 +80,11 @@ class EavStrategy extends \Cake\ORM\Behavior\Translate\EavStrategy {
 		$la_preexistentValues = [];
 		if ($li_key) {
 			$la_preexistentValues = $this->translationTable->find()->select(['id', 'field'])->where([
-					'field IN' => $la_fields,
-					'locale' => $ls_locale,
-					'foreign_key' => $li_key,
-					'model' => $ls_modelName,
-				])->all()->indexBy('field');
+				'field IN' => $la_fields,
+				'locale' => $ls_locale,
+				'foreign_key' => $li_key,
+				'model' => $ls_modelName,
+			])->all()->indexBy('field');
 		}
 
 
@@ -109,7 +109,6 @@ class EavStrategy extends \Cake\ORM\Behavior\Translate\EavStrategy {
 		$ao_entity->set('_i18n', array_merge($la_bundled, array_values($la_modifiedValues + $la_newValues)));
 		$ao_entity->set('_locale', $ls_locale, ['setter' => FALSE]);
 		$ao_entity->setDirty('_locale', FALSE);
-
 		/* With those lines, the main language would not find its way in the db
 		foreach ($la_fields as $ls_field) {
 			$ao_entity->setDirty($ls_field, FALSE);
@@ -129,12 +128,12 @@ class EavStrategy extends \Cake\ORM\Behavior\Translate\EavStrategy {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function afterSave (EventInterface $ao_event, EntityInterface $ao_entity): void {
+	public function afterSave(EventInterface $ao_event, EntityInterface $ao_entity): void {
 		$la_original = $ao_entity->hasOriginal('_translations') ? $ao_entity->getOriginal('_translations') : [];
 		$la_translationsDiff = array_diff_key($la_original, $ao_entity->get('_translations') ?? []);
 
 		if (!empty($la_translationsDiff)) {
-			$la_primaryKey = (array)$this->table->getPrimaryKey();
+			$la_primaryKey = (array) $this->table->getPrimaryKey();
 			$this->translationTable->deleteQuery()->delete()->where([
 				'locale IN' => array_keys($la_translationsDiff),
 				'foreign_key' => $ao_entity->get(current($la_primaryKey)),
@@ -144,7 +143,7 @@ class EavStrategy extends \Cake\ORM\Behavior\Translate\EavStrategy {
 
 		//Check if there are keys in the translation entities that aren't set in the config
 		$la_unusedKeys = [];
-		foreach ($ao_entity->get('_translations') ?? [] AS $lo_translation) {
+		foreach ($ao_entity->get('_translations') ?? [] as $lo_translation) {
 			$la_keys = array_diff(array_keys($lo_translation->extract()), $this->getConfig('fields'), ['locale']);
 			if ($la_keys) {
 				$lo_translation->unset($la_keys);
@@ -224,10 +223,11 @@ class EavStrategy extends \Cake\ORM\Behavior\Translate\EavStrategy {
 	 * @param EntityInterface $ao_entity The entity to check for empty translations fields inside.
 	 *
 	 * @return void
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection*/
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 */
 	protected function unsetEmptyFields(EntityInterface $ao_entity): void {
 		/** @var array<Entity> $la_translations */
-		$la_translations = (array)$ao_entity->get('_translations');
+		$la_translations = (array) $ao_entity->get('_translations');
 		foreach ($la_translations as $ls_locale => $lo_translation) {
 			$la_fields = $lo_translation->extract($this->getConfig('fields'));
 			foreach ($la_fields as $ls_field => $lx_value) {

@@ -46,13 +46,13 @@ class TranslatableTextWidget extends BasicWidget {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function render (array $aa_data, ContextInterface $ao_context): string {
+	public function render(array $aa_data, ContextInterface $ao_context): string {
 		$la_data = $aa_data + $this->mergeDefaults($aa_data, $ao_context);
 
 		$la_data += ['readonly' => TRUE];
 
 		$la_data['templateVars']['controls'] = '';
-		foreach ($la_data['controls'] AS $ls_control) {
+		foreach ($la_data['controls'] as $ls_control) {
 			$la_data['templateVars']['controls'] .= $ls_control;
 		}
 
@@ -62,6 +62,7 @@ class TranslatableTextWidget extends BasicWidget {
 			// explicitly convert to 0 to avoid empty string which is marshaled as null
 			$la_data['value'] = '0';
 		}
+
 
 		return $this->_templates->format('translatableText', [
 			'name' => $la_data['name'],

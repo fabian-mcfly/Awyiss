@@ -32,15 +32,15 @@ class ControllerCommand extends \Bake\Command\ControllerCommand {
 	 *
 	 * It also changes the default actions: No 'index'- and 'view'-, but 'overview'- and 'save'-method.
 	 *
-	 * @param string    $as_controllerName Controller name already pluralized and correctly cased.
-	 * @param Arguments $ao_args           The console arguments
-	 * @param ConsoleIo $ao_io             The console io
+	 * @param string $as_controllerName Controller name already pluralized and correctly cased.
+	 * @param Arguments $ao_args The console arguments
+	 * @param ConsoleIo $ao_io The console io
 	 *
 	 * @return void
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function bake (string $as_controllerName, Arguments $ao_args, ConsoleIo $ao_io): void {
+	public function bake(string $as_controllerName, Arguments $ao_args, ConsoleIo $ao_io): void {
 		$ao_io->quiet(sprintf('Baking controller class for %s...', $as_controllerName));
 
 		$la_actions = [];
@@ -132,12 +132,13 @@ class ControllerCommand extends \Bake\Command\ControllerCommand {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildOptionParser (ConsoleOptionParser $ao_parser): ConsoleOptionParser {
+	public function buildOptionParser(ConsoleOptionParser $ao_parser): ConsoleOptionParser {
 		$lo_parser = parent::buildOptionParser($ao_parser);
 
 		$lo_parser->addOption('namespace', [
 			'help' => 'The namespace for the model. Should be either "Awyiss" or <CUSTOM_NAMESPACE>',
 		]);
+
 
 		return $lo_parser;
 	}

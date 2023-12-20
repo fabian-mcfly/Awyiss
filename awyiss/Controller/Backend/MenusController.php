@@ -7,10 +7,10 @@ namespace Awyiss\Controller\Backend;
 use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Model\Entity\Menu;
 use Awyiss\Model\Table\MenusTable;
+use Awyiss\Routing\Router;
 use Cake\Datasource\ResultSetInterface;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
-use Awyiss\Routing\Router;
 
 
 /**
@@ -26,7 +26,7 @@ class MenusController extends Controller {
 	 * @throws \Exception
 	 *
 	 */
-	public function overview (): void {
+	public function overview(): void {
 		$this->Authorization->ensure('read');
 
 		$lo_menus = $this->paginate($this->Menus->find());
@@ -35,7 +35,7 @@ class MenusController extends Controller {
 			'ao_menus' => $lo_menus,
 		]);
 	}
-	
+
 
 	/**
 	 * Add method
@@ -44,7 +44,7 @@ class MenusController extends Controller {
 	 *
 	 * @throws \Exception
 	 */
-	public function add (): void {
+	public function add(): void {
 		$this->Authorization->ensure('create');
 
 		$lo_menu = $this->Menus->newDefaultEntity();
@@ -57,7 +57,7 @@ class MenusController extends Controller {
 			'ao_menu' => $lo_menu,
 		]);
 	}
-	
+
 
 	/**
 	 * Edit method
@@ -67,13 +67,14 @@ class MenusController extends Controller {
 	 * @throws \Exception
 	 *
 	 */
-	public function edit () {
+	public function edit() {
 		$this->Authorization->ensure('update');
 
 		/** @var Menu $lo_menu */
 		$lo_menu = $this->Menus->findById((int) $this->request->getParam('id'))->find('translations')->first();
-		if (! $lo_menu) {
+		if (!$lo_menu) {
 			$this->Flash->error(__('record_not_found'));
+
 
 			return $this->redirect(['action' => 'overview']);
 		}
@@ -86,7 +87,7 @@ class MenusController extends Controller {
 			'ao_menu' => $lo_menu,
 		]);
 	}
-	
+
 
 	/**
 	 * Delete method
@@ -96,15 +97,16 @@ class MenusController extends Controller {
 	 * @throws \Exception
 	 *
 	 */
-	public function delete (): Response {
+	public function delete(): Response {
 		$this->Authorization->ensure('delete');
 
 		$this->request->allowMethod(['get', 'delete']);
 
 		/** @var Menu $lo_menu */
 		$lo_menu = $this->Menus->findById((int) $this->request->getParam('id'))->find('translations')->first();
-		if (! $lo_menu) {
+		if (!$lo_menu) {
 			$this->Flash->error(__('record_not_found'));
+
 
 			return $this->redirect(['action' => 'overview']);
 		}
@@ -116,19 +118,20 @@ class MenusController extends Controller {
 			$this->Flash->error(__('delete_failed'));
 		}
 
+
 		return $this->redirect(['action' => 'overview']);
 	}
-	
+
 
 	/**
-	* @param Menu $ao_menu
-	* @param string $as_method
-	*
-	* @return void
-	*
-	* @throws RedirectException
-	*/
-	protected function save (Menu $ao_menu, string $as_method = 'add'): void {
+	 * @param Menu $ao_menu
+	 * @param string $as_method
+	 *
+	 * @return void
+	 *
+	 * @throws RedirectException
+	 */
+	protected function save(Menu $ao_menu, string $as_method = 'add'): void {
 		$la_associated = [];
 		if ($this->Menus->hasAttributes()) {
 			$la_associated[] = $this->Menus->getAttributesTable(TRUE);
@@ -137,7 +140,7 @@ class MenusController extends Controller {
 
 		$this->Menus->patchEntity($ao_menu, $this->request->getData(), ['associated' => $la_associated]);
 
-		if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
+		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
 			if ($this->Menus->save($ao_menu)) {
 				$this->Flash->success(__($as_method . '_succeeded'));
 
@@ -155,4 +158,3 @@ class MenusController extends Controller {
 		}
 	}
 }
-

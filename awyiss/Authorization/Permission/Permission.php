@@ -20,6 +20,12 @@ class Permission {
 
 
 	/**
+	 * Default permission
+	 */
+	public const DEFAULT_PERMISSION = FALSE;
+
+
+	/**
 	 * @var mixed
 	 */
 	protected mixed $access;
@@ -34,7 +40,7 @@ class Permission {
 	/**
 	 * @var null|string|PolicyInterface|GenericPagePolicy
 	 */
-	protected string|PolicyInterface|GenericPagePolicy|NULL $policyClass = NULL;
+	protected string|PolicyInterface|GenericPagePolicy|null $policyClass = NULL;
 	/**
 	 * @var string
 	 */
@@ -46,18 +52,12 @@ class Permission {
 
 
 	/**
-	 * Default permission
-	 */
-	public const DEFAULT_PERMISSION = FALSE;
-
-
-	/**
 	 * @param string $as_scope
 	 * @param string $as_identifier
 	 * @param mixed|NULL $ax_access
 	 * @param mixed $ax_settings
 	 */
-	public function __construct (string $as_scope, string $as_identifier, mixed $ax_access = NULL, mixed $ax_settings = []) {
+	public function __construct(string $as_scope, string $as_identifier, mixed $ax_access = NULL, mixed $ax_settings = []) {
 		if (empty($as_scope)) {
 			throw new RuntimeException(sprintf('Scope must not be empty in `%s`.', static::class));
 		}
@@ -74,30 +74,11 @@ class Permission {
 
 
 	/**
-	 * @param array $aa_permission
-	 *
-	 * @return static
-	 */
-	public static function createFromArray (array $aa_permission): static {
-		return new static($aa_permission['scope'] ?? '', $aa_permission['identifier'] ?? '', $aa_permission['access'] ?? NULL, $aa_permission['settings'] ?? NULL);
-	}
-
-
-	/**
-	 * @param PermissionInterface $ao_permission
-	 *
-	 * @return static
-	 */
-	public static function createFromObject (PermissionInterface $ao_permission): static {
-		return new static($ao_permission->getScope(), $ao_permission->getIdentifier(), $ao_permission->getAccess(), $ao_permission->getSettings());
-	}
-
-	/**
 	 * Return the access
 	 *
 	 * @return mixed
 	 */
-	public function getAccess (): mixed {
+	public function getAccess(): mixed {
 		return $this->access;
 	}
 
@@ -107,8 +88,9 @@ class Permission {
 	 *
 	 * @return Permission
 	 */
-	public function setAuthorizationService (?AuthorizationService $ao_authorizationService): static {
+	public function setAuthorizationService(?AuthorizationService $ao_authorizationService): static {
 		$this->authorizationService = $ao_authorizationService;
+
 
 		return $this;
 	}
@@ -119,7 +101,7 @@ class Permission {
 	 *
 	 * @return string
 	 */
-	public function getIdentifier (): string {
+	public function getIdentifier(): string {
 		return $this->identifier;
 	}
 
@@ -132,12 +114,12 @@ class Permission {
 	 * @return NULL|GenericPagePolicy|PolicyInterface|string
 	 * @throws \ReflectionException
 	 */
-	public function getPolicyClass (): mixed {
+	public function getPolicyClass(): mixed {
 		if (!$this->policyClass) {
 			$this->policyClass = $this->authorizationService->getPolicy($this->getScope());
 		}
 
-		if ( ! $this->policyClass) {
+		if (!$this->policyClass) {
 			$lo_event = $this->dispatchEvent('Authorization.requestPolicyClass', [
 				'scope' => $this->getScope(),
 			], $this);
@@ -146,6 +128,7 @@ class Permission {
 			//This is my Last Resort!
 			$this->policyClass = $lo_event->getResult();
 		}
+
 
 		return $this->policyClass;
 	}
@@ -161,16 +144,17 @@ class Permission {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function setPolicyClass (NULL|string|PolicyInterface|GenericPagePolicy $ax_policyClass = NULL): static {
+	public function setPolicyClass(null|string|PolicyInterface|GenericPagePolicy $ax_policyClass = NULL): static {
 		if (is_string($ax_policyClass)) {
 			$lo_reflection = new ReflectionClass($ax_policyClass);
 
-			if ( ! $lo_reflection->implementsInterface(PolicyInterface::class)) {
+			if (!$lo_reflection->implementsInterface(PolicyInterface::class)) {
 				throw new RuntimeException(sprintf('The provided Policy class `%s` does not implement the `%s` interface.', $ax_policyClass, PolicyInterface::class));
 			}
 		}
 
 		$this->policyClass = $ax_policyClass;
+
 
 		return $this;
 	}
@@ -181,7 +165,7 @@ class Permission {
 	 *
 	 * @return string
 	 */
-	public function getScope (): string {
+	public function getScope(): string {
 		return $this->scope;
 	}
 
@@ -191,7 +175,7 @@ class Permission {
 	 *
 	 * @return mixed
 	 */
-	public function getSettings (): mixed {
+	public function getSettings(): mixed {
 		return $this->settings;
 	}
 
@@ -200,18 +184,18 @@ class Permission {
 	 * Retreives the PermissionOption from the currently set policy class
 	 * and checks the access
 	 *
-	 * @param array                $aa_additionalData
+	 * @param array $aa_additionalData
 	 * @param PermissionCollection $ao_permissionCollection
 	 *
 	 * @return null|bool
 	 * @throws \ReflectionException
 	 * @throws \Exception
 	 */
-	public function isAccessible (array $aa_additionalData, PermissionCollection $ao_permissionCollection): ?bool {
+	public function isAccessible(array $aa_additionalData, PermissionCollection $ao_permissionCollection): ?bool {
 		//string|PolicyInterface|GenericPagePolicy|NULL $lx_policyClass = NULL,
 		$lx_policyClass = $this->getPolicyClass();
 
-		if ( ! $lx_policyClass) {
+		if (!$lx_policyClass) {
 			return static::DEFAULT_PERMISSION;
 		}
 
@@ -226,10 +210,31 @@ class Permission {
 		}
 
 
-		if ( ! $lo_permissionOption) {
+		if (!$lo_permissionOption) {
 			return static::DEFAULT_PERMISSION;
 		}
 
+
 		return $lo_permissionOption->isAccessible($this->getAccess(), $this->getSettings(), $aa_additionalData, $ao_permissionCollection);
+	}
+
+
+	/**
+	 * @param array $aa_permission
+	 *
+	 * @return static
+	 */
+	public static function createFromArray(array $aa_permission): static {
+		return new static($aa_permission['scope'] ?? '', $aa_permission['identifier'] ?? '', $aa_permission['access'] ?? NULL, $aa_permission['settings'] ?? NULL);
+	}
+
+
+	/**
+	 * @param PermissionInterface $ao_permission
+	 *
+	 * @return static
+	 */
+	public static function createFromObject(PermissionInterface $ao_permission): static {
+		return new static($ao_permission->getScope(), $ao_permission->getIdentifier(), $ao_permission->getAccess(), $ao_permission->getSettings());
 	}
 }

@@ -23,7 +23,7 @@ class PageTemplatesConfigOptions extends AbstractConfigOptions {
 	/**
 	 * @inheritDoc
 	 */
-	public function initializeConfigOptions (): void {
+	public function initializeConfigOptions(): void {
 		$this->add(Awyiss::REALM_BACKEND, [
 			'paginate' => [
 				new ConfigOption([

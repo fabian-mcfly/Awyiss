@@ -31,7 +31,7 @@ class PageTemplatesListener implements EventListenerInterface {
 	/**
 	 * @inheritDoc
 	 */
-	public function implementedEvents (): array {
+	public function implementedEvents(): array {
 		return [
 			'Model.PageTemplates.beforeSave' => 'beforeSave',
 			'Model.PageTemplates.afterSaveCommit' => 'afterSaveCommit',
@@ -48,12 +48,12 @@ class PageTemplatesListener implements EventListenerInterface {
 	 *
 	 * This is neccesary since a second file rename job could interfere with the first one.
 	 *
-	 * @param Event        $ao_event
+	 * @param Event $ao_event
 	 * @param PageTemplate $ao_entity
 	 *
 	 * @return void
 	 */
-	public function beforeSave (Event $ao_event, PageTemplate $ao_entity): void {
+	public function beforeSave(Event $ao_event, PageTemplate $ao_entity): void {
 		if ($ao_entity->hasOriginal('filename') && $ao_entity->filename != $ao_entity->getOriginal('filename')) {
 			/** @var QueuedJobsTable $lo_queue */
 			$lo_queue = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
@@ -72,12 +72,12 @@ class PageTemplatesListener implements EventListenerInterface {
 	 * - create a template if it's new
 	 * - rename the template if it already exists
 	 *
-	 * @param Event        $ao_event
+	 * @param Event $ao_event
 	 * @param PageTemplate $ao_entity
 	 *
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function afterSaveCommit (Event $ao_event, PageTemplate $ao_entity): void {
+	public function afterSaveCommit(Event $ao_event, PageTemplate $ao_entity): void {
 		$ls_fileName = Text::slug($ao_entity->filename, ['replacement' => '_']);
 		$ls_fileName = trim($ls_fileName, '_');
 		$ls_extension = '.twig';
@@ -87,7 +87,7 @@ class PageTemplatesListener implements EventListenerInterface {
 
 		$la_commands = [];
 
-		if ( ! file_exists($ls_folderPath)) {
+		if (!file_exists($ls_folderPath)) {
 			$la_commands[] = 'mkdir -m 777 -p ' . $ls_folderPath;
 		}
 
@@ -106,7 +106,7 @@ class PageTemplatesListener implements EventListenerInterface {
 		}
 
 		//If the file does not exist, we create one based on a twig-template for frontent page templates
-		if ( ! $lb_fileExists) {
+		if (!$lb_fileExists) {
 			$la_commands[] = 'bin/cake bake template page_templates page_template ' . $ls_fileName . ' --prefix Frontend --controller pages';
 			$la_commands[] = 'chmod 0777 ' . $ls_filePath;
 		}
@@ -134,13 +134,13 @@ class PageTemplatesListener implements EventListenerInterface {
 	 * - prepend '_deleted-'
 	 * - append '-' and the current timestamp
 	 *
-	 * @param Event        $ao_event
+	 * @param Event $ao_event
 	 * @param PageTemplate $ao_entity
 	 *
 	 * @noinspection PhpUnused
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function afterSoftDelete (Event $ao_event, PageTemplate $ao_entity): void {
+	public function afterSoftDelete(Event $ao_event, PageTemplate $ao_entity): void {
 		$ls_fileName = Text::slug($ao_entity->filename, ['replacement' => '_']);
 		$ls_fileName = trim($ls_fileName, '_');
 		$ls_extension = '.twig';

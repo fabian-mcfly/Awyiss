@@ -23,7 +23,7 @@ class UsersConfigOptions extends AbstractConfigOptions {
 	/**
 	 * @inheritDoc
 	 */
-	public function initializeConfigOptions (): void {
+	public function initializeConfigOptions(): void {
 		$this->add(Awyiss::REALM_BACKEND, [
 			new ConfigOption([
 				'defaultValue' => TRUE,

@@ -15,22 +15,15 @@ use Cake\Utility\Filesystem;
  */
 class I18nExtractCommand extends \Cake\Command\I18nExtractCommand {
 	/**
-	 * @inheritDoc
-	 */
-	public static function defaultName(): string {
-		return 'i18n extract';
-	}
-
-
-	/**
 	 * {@inheritDoc}
 	 *
 	 * Added
 	 * - '__df' => ['domain', 'fallback', 'context', 'singular'],
 	 * - '__dfx' => ['domain', 'fallback', 'context', 'singular'],
 	 *
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection*/
-	protected function _extractTokens (Arguments $ao_args, ConsoleIo $ao_io): void {
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 */
+	protected function _extractTokens(Arguments $ao_args, ConsoleIo $ao_io): void {
 		/** @var ProgressHelper $lo_progress */
 		$lo_progress = $ao_io->helper('progress');
 		$lo_progress->init(['total' => count($this->_files)]);
@@ -68,7 +61,7 @@ class I18nExtractCommand extends \Cake\Command\I18nExtractCommand {
 
 				$this->_tokens = [];
 				foreach ($la_allTokens as $lx_token) {
-					if ( ! is_array($lx_token) || ($lx_token[0] !== T_WHITESPACE && $lx_token[0] !== T_INLINE_HTML)) {
+					if (!is_array($lx_token) || ($lx_token[0] !== T_WHITESPACE && $lx_token[0] !== T_INLINE_HTML)) {
 						$this->_tokens[] = $lx_token;
 					}
 				}
@@ -79,7 +72,7 @@ class I18nExtractCommand extends \Cake\Command\I18nExtractCommand {
 				}
 			}
 
-			if ( ! $lb_isVerbose) {
+			if (!$lb_isVerbose) {
 				$lo_progress->increment();
 				$lo_progress->draw();
 			}
@@ -92,9 +85,9 @@ class I18nExtractCommand extends \Cake\Command\I18nExtractCommand {
 	 *
 	 * @return void
 	 */
-	protected function _searchFiles (): void {
+	protected function _searchFiles(): void {
 		$ls_pattern = FALSE;
-		if ( ! empty($this->_exclude)) {
+		if (!empty($this->_exclude)) {
 			$la_exclude = [];
 			foreach ($this->_exclude as $ls_exclude) {
 				if (DIRECTORY_SEPARATOR !== '\\' && $ls_exclude[0] !== DIRECTORY_SEPARATOR) {
@@ -116,12 +109,20 @@ class I18nExtractCommand extends \Cake\Command\I18nExtractCommand {
 			$lo_files = $lo_filesystem->findRecursive($ls_path, '/\.(php|twig)$/');
 			$la_files = array_keys(iterator_to_array($lo_files));
 			sort($la_files);
-			if ( ! empty($ls_pattern)) {
+			if (!empty($ls_pattern)) {
 				$la_files = preg_grep($ls_pattern, $la_files, PREG_GREP_INVERT);
 				$la_files = array_values($la_files);
 			}
 			$this->_files = array_merge($this->_files, $la_files);
 		}
 		$this->_files = array_unique($this->_files);
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public static function defaultName(): string {
+		return 'i18n extract';
 	}
 }

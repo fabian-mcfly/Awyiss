@@ -10,7 +10,7 @@ use Cake\Utility\Hash;
 /**
  * Extends the column parser with an optional default value.
  *
- * Currently not in use.
+ * Currently unused.
  */
 class ColumnParser extends \Migrations\Util\ColumnParser {
 	/**
@@ -18,6 +18,8 @@ class ColumnParser extends \Migrations\Util\ColumnParser {
 	 *
 	 * @link https://regex101.com/r/aIrJ5T/1
 	 * @var string
+	 *
+	 * @noinspection RegExpRedundantEscape
 	 */
 	protected string $regexpParseColumn = '/
 		^
@@ -37,6 +39,9 @@ class ColumnParser extends \Migrations\Util\ColumnParser {
 	 *
 	 * @link https://regex101.com/r/9Poorq/2
 	 * @var string
+	 *
+	 * @noinspection RegExpSingleCharAlternation
+	 * @noinspection RegExpRedundantEscape
 	 */
 	protected string $regexpParseField = '/(\w+\??)(?=\[|\()(?:\[([0-9,]+)\])?(?:\((.*)\))?/';
 
@@ -46,7 +51,7 @@ class ColumnParser extends \Migrations\Util\ColumnParser {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function parseFields (array $aa_arguments): array {
+	public function parseFields(array $aa_arguments): array {
 		$la_fields = [];
 		$la_arguments = $this->validArguments($aa_arguments);
 		foreach ($la_arguments as $ls_field) {
@@ -77,7 +82,7 @@ class ColumnParser extends \Migrations\Util\ColumnParser {
 				],
 			];
 
-			if ( ! empty($lx_length)) {
+			if (!empty($lx_length)) {
 				if (is_array($lx_length)) {
 					[$la_fields[ $ls_field ]['options']['precision'], $la_fields[ $ls_field ]['options']['scale']] = $lx_length;
 				}
@@ -91,6 +96,7 @@ class ColumnParser extends \Migrations\Util\ColumnParser {
 			}
 		}
 
+
 		return $la_fields;
 	}
 
@@ -101,7 +107,7 @@ class ColumnParser extends \Migrations\Util\ColumnParser {
 	 *
 	 * @return array
 	 */
-	public function getTypeAndLengthAndDefault ($as_field, $as_type): array {
+	public function getTypeAndLengthAndDefault($as_field, $as_type): array {
 		/*$aa_type = [];
 		$aa_type[] = 'tinyinteger';
 		$aa_type[] = 'tinyinteger?';
@@ -123,12 +129,14 @@ class ColumnParser extends \Migrations\Util\ColumnParser {
 				$la_matches[2] = explode(',', $la_matches[2]);
 			}
 
+
 			return [$la_matches[1], $la_matches[2] ?: NULL, $la_matches[3] ?: NULL];
 		}
 
 		/** @var string $ls_fieldType */
 		$ls_fieldType = $this->getType($as_field, $as_type);
 		$li_length = $this->getLength($ls_fieldType);
+
 
 		return [$ls_fieldType, $li_length, NULL];
 	}

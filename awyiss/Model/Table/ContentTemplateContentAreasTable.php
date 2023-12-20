@@ -49,7 +49,7 @@ class ContentTemplateContentAreasTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public function initialize (array $aa_config): void {
+	public function initialize(array $aa_config): void {
 		parent::initialize($aa_config);
 
 		$this->belongsTo('ContentAreas');
@@ -70,7 +70,7 @@ class ContentTemplateContentAreasTable extends Table {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function validationDefault (Validator $ao_validator): Validator {
+	public function validationDefault(Validator $ao_validator): Validator {
 		parent::validationDefault($ao_validator);
 
 
@@ -121,7 +121,7 @@ class ContentTemplateContentAreasTable extends Table {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildRules (RulesChecker|\Cake\ORM\RulesChecker $ao_rules): RulesChecker {
+	public function buildRules(RulesChecker|\Cake\ORM\RulesChecker $ao_rules): RulesChecker {
 		$ao_rules->add($ao_rules->existsIn(['contentTemplateId'], 'ContentTemplates'), 'contentTemplateExists', [
 			'errorField' => 'contentTemplateId',
 			'message' => __d($this->getI18nDomain(), 'error_content_template_exists'),
@@ -140,8 +140,9 @@ class ContentTemplateContentAreasTable extends Table {
 		]);
 
 
-		$ao_rules->add(function(ContentTemplateContentArea $ao_entity/*, array $aa_options*/): bool {
+		$ao_rules->add(function (ContentTemplateContentArea $ao_entity/*, array $aa_options*/): bool {
 			$lo_pageTemplateContentAreasTable = FactoryLocator::get('Table')->get('PageTemplateContentAreas');
+
 
 			return (bool) $lo_pageTemplateContentAreasTable->find()->where([
 				'page_template_id' => $ao_entity->pageTemplateId,
@@ -151,6 +152,7 @@ class ContentTemplateContentAreasTable extends Table {
 			'errorField' => '_general',
 			'message' => __d($this->getI18nDomain(), 'error_page_template_content_area_exists'),
 		]);
+
 
 		return $ao_rules;
 	}

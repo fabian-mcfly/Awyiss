@@ -23,7 +23,7 @@ class SystemConfigOptions extends AbstractConfigOptions {
 	/**
 	 * @inheritDoc
 	 */
-	public function initializeConfigOptions (): void {
+	public function initializeConfigOptions(): void {
 		$this->add(Awyiss::REALM_FRONTEND, [
 			new ConfigOption([
 				'defaultValue' => TRUE,
@@ -41,7 +41,7 @@ class SystemConfigOptions extends AbstractConfigOptions {
 					'defaultValue' => ' | ',
 					'identifier' => 'titleSeparator',
 				]),
-			]
+			],
 		]);
 
 
@@ -62,7 +62,7 @@ class SystemConfigOptions extends AbstractConfigOptions {
 					'defaultValue' => ' | ',
 					'identifier' => 'titleSeparator',
 				]),
-			]
+			],
 		]);
 	}
 }

@@ -23,7 +23,7 @@ class MigrationCommand extends BakeMigrationCommand {
 	/**
 	 * @inheritDoc
 	 */
-	public function template (): string {
+	public function template(): string {
 		return 'AwyissBake.Migrations/config/skeleton';
 	}
 
@@ -39,7 +39,7 @@ class MigrationCommand extends BakeMigrationCommand {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function templateData (Arguments $ao_arguments): array {
+	public function templateData(Arguments $ao_arguments): array {
 		$ls_className = $this->_name;
 		$ls_namespace = Configure::read('App.namespace');
 		$ls_pluginPath = '';
@@ -68,7 +68,7 @@ class MigrationCommand extends BakeMigrationCommand {
 		$la_indexes = $lo_columnParser->parseIndexes($la_arguments);
 		$la_primaryKeys = $lo_columnParser->parsePrimaryKey($la_arguments);
 
-		if (in_array($la_actions[0], ['alter_table', 'add_field'], TRUE) && ! empty($la_primaryKeys)) {
+		if (in_array($la_actions[0], ['alter_table', 'add_field'], TRUE) && !empty($la_primaryKeys)) {
 			$this->io->abort('Adding a primary key to an already existing table is not supported.');
 		}
 
@@ -91,13 +91,14 @@ class MigrationCommand extends BakeMigrationCommand {
 					 * This way, we can check for the `originalName`-key of the field inside the `skeleton.twig`-file
 					 * and call the `rename`-method of the migration
 					 *
-					 * @see awyiss/plugins/AwyissBake/templates/bake/migrations/config/skeleton.twig:53
+					 * @see  awyiss/plugins/AwyissBake/templates/bake/migrations/config/skeleton.twig:53
 					 * @link awyiss/plugins/AwyissBake/templates/bake/migrations/config/skeleton.twig:53
 					 */
 					$la_fields[ $ls_key ]['originalName'] = $ls_fieldName;
 				}
 			}
 		}
+
 
 		return [
 			'plugin' => $this->plugin,
@@ -120,17 +121,17 @@ class MigrationCommand extends BakeMigrationCommand {
 	 *
 	 * Re-implemented `\Migrations\Command\BakeSimpleMigrationCommand::bake()` because it's not possible to call a parent's parent.
 	 *
-	 * @param string    $as_name
+	 * @param string $as_name
 	 * @param Arguments $ao_arguments
 	 * @param ConsoleIo $ao_io
 	 *
 	 * @return void
 	 *
-	 * @see \Migrations\Command\BakeSimpleMigrationCommand::bake()
+	 * @see          \Migrations\Command\BakeSimpleMigrationCommand::bake()
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function bake (string $as_name, Arguments $ao_arguments, ConsoleIo $ao_io): void {
+	public function bake(string $as_name, Arguments $ao_arguments, ConsoleIo $ao_io): void {
 		EventManager::instance()->on('Bake.initialize', function (Event $event) {
 			$event->getSubject()->loadHelper('Migrations.Migration');
 		});
@@ -146,7 +147,7 @@ class MigrationCommand extends BakeMigrationCommand {
 
 		//If migration(s) with the same name already exist(s)
 		$la_migrationWithSameName = glob($ls_path . '*_' . $this->_name . '.php');
-		if ( ! empty($la_migrationWithSameName)) {
+		if (!empty($la_migrationWithSameName)) {
 			//Shell the migration be overwritten?
 			if ($ao_arguments->getOption('force')) {
 				//If so, delete all existing migrations
@@ -208,12 +209,13 @@ class MigrationCommand extends BakeMigrationCommand {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildOptionParser (ConsoleOptionParser $ao_parser): ConsoleOptionParser {
+	public function buildOptionParser(ConsoleOptionParser $ao_parser): ConsoleOptionParser {
 		$lo_parser = parent::buildOptionParser($ao_parser);
 
 		$lo_parser->addOption('folder', [
 			'help' => 'The folder to save the migration in.',
 		]);
+
 
 		return $lo_parser;
 	}
@@ -230,19 +232,20 @@ class MigrationCommand extends BakeMigrationCommand {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function getPath (Arguments $ao_args): string {
+	public function getPath(Arguments $ao_args): string {
 		$ls_path = APP . $this->pathFragment;
 		if ($this->plugin) {
 			$ls_path = $this->_pluginPath($this->plugin) . $this->pathFragment;
 		}
 		elseif ($ao_args->getOption('folder')) {
 			$ls_path = $ao_args->getOption('folder');
-			if ( ! in_array(substr($ls_path, 0, 1), ['/', DS])) {
+			if (!in_array(substr($ls_path, 0, 1), ['/', DS])) {
 				$ls_path = ROOT . DS . $ls_path;
 			}
 		}
 
 		$ls_path = rtrim($ls_path, DS . '/') . DS;
+
 
 		return str_replace('/', DS, $ls_path);
 	}

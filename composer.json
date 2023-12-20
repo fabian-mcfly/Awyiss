@@ -5,7 +5,7 @@
 	"type": "project",
 	"license": "MIT",
 	"require": {
-		"php": ">=8.1",
+		"php": ">=8.2",
 		"ext-curl": "*",
 		"ext-intl": "*",
 		"ext-posix": "*",
@@ -51,8 +51,8 @@
 			"@test",
 			"@cs-check"
 		],
-		"cs-check": "phpcs --colors -p  src/ tests/",
-		"cs-fix": "phpcbf --colors -p src/ tests/",
+		"cs-check": "phpcs --colors -p awyiss/ tests/",
+		"cs-fix": "phpcbf --colors -p awyiss/ tests/",
 		"stan": "phpstan analyse",
 		"test": "phpunit --colors=always"
 	},

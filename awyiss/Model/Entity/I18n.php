@@ -5,14 +5,13 @@ namespace Awyiss\Model\Entity;
 
 
 use Awyiss\Model\Entity;
-use Cake\I18n\FrozenTime;
 
 
 class I18n extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	 protected array $_accessible = [
+	protected array $_accessible = [
 		'locale' => TRUE,
 		'model' => TRUE,
 		'foreignKey' => TRUE,

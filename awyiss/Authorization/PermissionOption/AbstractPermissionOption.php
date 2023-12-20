@@ -45,14 +45,18 @@ abstract class AbstractPermissionOption implements PermissionOptionInterface {
 	/**
 	 * @inheritDoc
 	 */
-	public function __construct (array $aa_config, PermissionOptionCollection $ao_permissionOptionCollection) {
+	public function __construct(array $aa_config, PermissionOptionCollection $ao_permissionOptionCollection) {
 		$ls_type = static::getType();
 		$ls_testType = strtolower(Text::slug($ls_type, '_'));
 
 		if ($ls_testType !== $ls_type) {
-			throw new RuntimeException(sprintf('The provided type should be written underscored (`%s`). `%s` given.',
-				$ls_testType,
-				$ls_type));
+			throw new RuntimeException(
+				sprintf(
+					'The provided type should be written underscored (`%s`). `%s` given.',
+					$ls_testType,
+					$ls_type
+				)
+			);
 		}
 
 		$this->permissionOptionCollection = $ao_permissionOptionCollection;
@@ -64,7 +68,7 @@ abstract class AbstractPermissionOption implements PermissionOptionInterface {
 	/**
 	 * @inheritDoc
 	 */
-	public function getPermissionOptionCollection (): PermissionOptionCollection {
+	public function getPermissionOptionCollection(): PermissionOptionCollection {
 		return $this->permissionOptionCollection;
 	}
 
@@ -72,13 +76,14 @@ abstract class AbstractPermissionOption implements PermissionOptionInterface {
 	/**
 	 * @inheritDoc
 	 */
-	public function getType (): string {
+	public function getType(): string {
 		if (!isset($this->type)) {
 			$la_parts = explode('\\', static::class);
 			$this->type = array_pop($la_parts) ?? '';
 			$this->type = substr($this->type, 0, -10);
 			$this->type = Inflector::underscore($this->type);
 		}
+
 
 		return $this->type;
 	}
@@ -87,7 +92,7 @@ abstract class AbstractPermissionOption implements PermissionOptionInterface {
 	/**
 	 * @inheritDoc
 	 */
-	public function getOptions (): array {
+	public function getOptions(): array {
 		return $this->options;
 	}
 
@@ -97,7 +102,7 @@ abstract class AbstractPermissionOption implements PermissionOptionInterface {
 	 *
 	 * @throws RuntimeException
 	 */
-	public function setOptions (array $aa_options): static {
+	public function setOptions(array $aa_options): static {
 		throw new RuntimeException(sprintf('`%s` does not allow setting options. Use `%s` instead.', static::class, CallbackPermissionOption::class));
 	}
 
@@ -105,7 +110,7 @@ abstract class AbstractPermissionOption implements PermissionOptionInterface {
 	/**
 	 * @inheritDoc
 	 */
-	public function hasSettings (): bool {
+	public function hasSettings(): bool {
 		return FALSE;
 	}
 }

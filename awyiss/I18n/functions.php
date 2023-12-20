@@ -6,7 +6,7 @@ use Cake\I18n\I18n;
 use Cake\Utility\Inflector;
 
 
-if ( ! function_exists('__')) {
+if (!function_exists('__')) {
 	/**
 	 * Returns a translated string if one is found; Otherwise, the submitted message.
 	 *
@@ -18,8 +18,8 @@ if ( ! function_exists('__')) {
 	 *
 	 * @noinspection PhpFunctionNamingConventionInspection
 	 */
-	function __ (string $as_string, ...$aa_args): string {
-		if ( ! $as_string) {
+	function __(string $as_string, ...$aa_args): string {
+		if (!$as_string) {
 			return '';
 		}
 
@@ -38,26 +38,27 @@ if ( ! function_exists('__')) {
 			$ls_return = I18n::getTranslator('system')->translate($as_string, $la_args);
 		}
 
+
 		return $ls_return;
 	}
 }
 
 
-if ( ! function_exists('__d')) {
+if (!function_exists('__d')) {
 	/**
 	 * Allows you to override the current as_domain for a single message lookup.
 	 *
 	 * @param string $as_domain Domain.
 	 * @param string $as_string String to translate.
-	 * @param mixed  ...$aa_args
+	 * @param mixed ...$aa_args
 	 *
 	 * @return string Translated string.
 	 * @link https://book.cakephp.org/4/en/core-libraries/global-constants-and-functions.html#__d
 	 *
 	 * @noinspection PhpFunctionNamingConventionInspection
 	 */
-	function __d (string $as_domain, string $as_string, ...$aa_args): string {
-		if ( ! $as_string) {
+	function __d(string $as_domain, string $as_string, ...$aa_args): string {
+		if (!$as_string) {
 			return '';
 		}
 
@@ -72,12 +73,13 @@ if ( ! function_exists('__d')) {
 			$ls_return = $as_domain . '::' . $as_string;
 		}
 
+
 		return $ls_return;
 	}
 }
 
 
-if ( ! function_exists('__df')) {
+if (!function_exists('__df')) {
 	/**
 	 * Allows you to override the current as_domain for a single message lookup.
 	 * If no translation for the given as_domain can be found, a fallbackdomain will be used
@@ -92,8 +94,8 @@ if ( ! function_exists('__df')) {
 	 *
 	 * @noinspection PhpFunctionNamingConventionInspection
 	 */
-	function __df (string $as_domain, string $as_fallbackDomain, string $as_string, ...$aa_args): string {
-		if ( ! $as_string) {
+	function __df(string $as_domain, string $as_fallbackDomain, string $as_string, ...$aa_args): string {
+		if (!$as_string) {
 			return '';
 		}
 
@@ -112,12 +114,13 @@ if ( ! function_exists('__df')) {
 			$ls_return = $as_domain . '::' . $as_string;
 		}
 
+
 		return $ls_return;
 	}
 }
 
 
-if ( ! function_exists('__dx')) {
+if (!function_exists('__dx')) {
 	/**
 	 * Allows you to override the current domain for a single message lookup.
 	 * The context is a unique identifier for the translations string that makes it unique
@@ -126,15 +129,15 @@ if ( ! function_exists('__dx')) {
 	 * @param string $as_domain
 	 * @param string $as_context
 	 * @param string $as_string
-	 * @param mixed  ...$aa_args
+	 * @param mixed ...$aa_args
 	 *
 	 * @return string Translated string.
 	 * @link https://book.cakephp.org/4/en/core-libraries/global-constants-and-functions.html#__dx
 	 *
 	 * @noinspection PhpFunctionNamingConventionInspection
 	 */
-	function __dx (string $as_domain, string $as_context, string $as_string, ...$aa_args): string {
-		if ( ! $as_string) {
+	function __dx(string $as_domain, string $as_context, string $as_string, ...$aa_args): string {
+		if (!$as_string) {
 			return '';
 		}
 
@@ -143,12 +146,13 @@ if ( ! function_exists('__dx')) {
 			$la_args = $aa_args[0];
 		}
 
+
 		return __d($as_domain, $as_string, ['_context' => $as_context] + $la_args);
 	}
 }
 
 
-if ( ! function_exists('__dfx')) {
+if (!function_exists('__dfx')) {
 	/**
 	 * Allows you to override the current as_domain for a single message lookup.
 	 * If no translation for the given as_domain can be found, a fallbackdomain will be used
@@ -166,8 +170,8 @@ if ( ! function_exists('__dfx')) {
 	 *
 	 * @noinspection PhpFunctionNamingConventionInspection
 	 */
-	function __dfx (string $as_domain, string $as_fallbackDomain, string $as_context, string $as_string, ...$aa_args): string {
-		if ( ! $as_string) {
+	function __dfx(string $as_domain, string $as_fallbackDomain, string $as_context, string $as_string, ...$aa_args): string {
+		if (!$as_string) {
 			return '';
 		}
 
@@ -176,28 +180,29 @@ if ( ! function_exists('__dfx')) {
 			$la_args = $aa_args[0];
 		}
 
+
 		return __df($as_domain, $as_fallbackDomain, $as_string, ['_context' => $as_context] + $la_args);
 	}
 }
 
 
-if ( ! function_exists('__x')) {
+if (!function_exists('__x')) {
 	/**
 	 * Returns a translated string if one is found; Otherwise, the submitted message.
 	 * The context is a unique identifier for the translations string that makes it unique
 	 * within the same domain.
 	 *
-	 * @param string $as_context  Context of the text.
+	 * @param string $as_context Context of the text.
 	 * @param string $as_string Text to translate.
-	 * @param mixed  ...$aa_args  Array with arguments or multiple arguments in function.
+	 * @param mixed ...$aa_args Array with arguments or multiple arguments in function.
 	 *
 	 * @return string Translated string.
 	 * @link https://book.cakephp.org/4/en/core-libraries/global-constants-and-functions.html#__x
 	 *
 	 * @noinspection PhpFunctionNamingConventionInspection
 	 */
-	function __x (string $as_context, string $as_string, ...$aa_args): string {
-		if ( ! $as_string) {
+	function __x(string $as_context, string $as_string, ...$aa_args): string {
+		if (!$as_string) {
 			return '';
 		}
 
@@ -215,6 +220,7 @@ if ( ! function_exists('__x')) {
 		else {
 			$ls_return = I18n::getTranslator('system')->translate($as_string, ['_context' => $as_context] + $la_args);
 		}
+
 
 		return $ls_return;
 	}

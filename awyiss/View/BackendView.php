@@ -19,7 +19,7 @@ class BackendView extends AppView {
 	 *
 	 * @throws LoaderError
 	 */
-	public function initialize (): void {
+	public function initialize(): void {
 		parent::initialize();
 
 		$this->addHelper('Attributes');
@@ -29,13 +29,13 @@ class BackendView extends AppView {
 		$this->addHelper('Paginator', ['templates' => 'paginator_templates']);
 		$this->addHelper('SystemOrder', [
 			'templates' => [
-				'titleOption' => function(mixed $ax_option): string {
+				'titleOption' => function (mixed $ax_option): string {
 					return __('system_order_after') . ' ' . $ax_option->label;
 				},
-				'titleOptionCurrent' => function(mixed $ax_option): string {
+				'titleOptionCurrent' => function (mixed $ax_option): string {
 					return $ax_option->label;
 				},
-				'titleOptionSelected' => function(mixed $ax_option): string {
+				'titleOptionSelected' => function (mixed $ax_option): string {
 					return '-> ' . __('system_order_after') . ' ' . $ax_option->label;
 				},
 			],

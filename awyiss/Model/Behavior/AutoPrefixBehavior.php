@@ -24,7 +24,7 @@ class AutoPrefixBehavior extends Behavior {
 		'enabled' => TRUE,
 		'implementedEvents' => [
 			'beforeFind',
-		]
+		],
 	];
 	protected string $alias;
 
@@ -38,7 +38,7 @@ class AutoPrefixBehavior extends Behavior {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function initialize (array $aa_config): void {
+	public function initialize(array $aa_config): void {
 		$this->alias = $this->table()->getAlias();
 	}
 
@@ -53,13 +53,13 @@ class AutoPrefixBehavior extends Behavior {
 	 *
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function beforeFind (EventInterface $ao_event, SelectQuery $ao_query, ArrayObject $ao_options, $ab_primary): void {
-		if ( ! $this->getConfig('enabled')) {
+	public function beforeFind(EventInterface $ao_event, SelectQuery $ao_query, ArrayObject $ao_options, $ab_primary): void {
+		if (!$this->getConfig('enabled')) {
 			return;
 		}
 
 		//For all parts of the query, call `expressionVisitor`
-		$ao_query->traverseParts(function(?QueryExpression $ao_expression) {
+		$ao_query->traverseParts(function (?QueryExpression $ao_expression) {
 			if (is_null($ao_expression)) {
 				return;
 			}
@@ -74,7 +74,7 @@ class AutoPrefixBehavior extends Behavior {
 	 *
 	 * @return void
 	 */
-	protected function expressionVisitor (QueryExpression|UnaryExpression $ao_expression): void {
+	protected function expressionVisitor(QueryExpression|UnaryExpression $ao_expression): void {
 		/**
 		 * An expression object that represents an expression with only a single operand.
 		 *
@@ -82,32 +82,34 @@ class AutoPrefixBehavior extends Behavior {
 		 */
 		if ($ao_expression instanceof UnaryExpression) {
 			//Traverse all parts of this expression
-			$ao_expression->traverse(function(IdentifierExpression|QueryExpression|ComparisonExpression $ao_expression) {
+			$ao_expression->traverse(function (IdentifierExpression|QueryExpression|ComparisonExpression $ao_expression) {
 				//If the expression is an instance of ComparisonExpression, set the prefixed field if it does not contain '.'
 				if ($ao_expression instanceof ComparisonExpression) {
 					$ls_field = $ao_expression->getField();
-					if ( ! str_contains($ls_field, '.')) {
+					if (!str_contains($ls_field, '.')) {
 						$ao_expression->setField($this->alias . '.' . $ls_field);
 					}
 				}
 				//If the expression is an instance of IdentifierExpression, set the prefixed identifier if it does not contain '.'
 				elseif ($ao_expression instanceof IdentifierExpression) {
 					$ls_field = $ao_expression->getIdentifier();
-					if ( ! str_contains($ls_field, '.')) {
+					if (!str_contains($ls_field, '.')) {
 						$ao_expression->setIdentifier($this->alias . '.' . $ls_field);
 					}
 				}
 
+
 				//Return the modified expression
 				return $ao_expression;
 			});
+
 
 			//That's all there is to do for this type of expression
 			return;
 		}
 
 		//The expression is an instance of QueryExpression. So iterate all parts
-		$ao_expression->iterateParts(function(ExpressionInterface $ao_expression) {
+		$ao_expression->iterateParts(function (ExpressionInterface $ao_expression) {
 			//If the expression is an instance of ComparisonExpression, set the prefixed field if it does not contain '.'
 			if ($ao_expression instanceof ComparisonExpression) {
 				$la_field = $ao_expression->getField();
@@ -115,8 +117,8 @@ class AutoPrefixBehavior extends Behavior {
 					$la_field = [$la_field];
 				}
 
-				foreach ($la_field AS $ls_field) {
-					if ( ! str_contains($ls_field, '.')) {
+				foreach ($la_field as $ls_field) {
+					if (!str_contains($ls_field, '.')) {
 						$ao_expression->setField($this->alias . '.' . $ls_field);
 					}
 				}
@@ -131,6 +133,7 @@ class AutoPrefixBehavior extends Behavior {
 			else {
 				dd($ao_expression, __FILE__, __LINE__);
 			}
+
 
 			return $ao_expression;
 		});

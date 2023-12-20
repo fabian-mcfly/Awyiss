@@ -33,15 +33,16 @@ class LocaleHelper extends Helper {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function languageTitle (?string $as_shortcode = NULL, ?array $aa_languagesByShortcode = NULL): ?string {
-		if ( ! $as_shortcode) {
+	public function languageTitle(?string $as_shortcode = NULL, ?array $aa_languagesByShortcode = NULL): ?string {
+		if (!$as_shortcode) {
 			return NULL;
 		}
 
 		$la_languages = $aa_languagesByShortcode ?: LocaleMiddleware::getLanguagesByShortcode();
-		if ( ! isset($la_languages [ $as_shortcode ])) {
+		if (!isset($la_languages [ $as_shortcode ])) {
 			return NULL;
 		}
+
 
 		return ($la_languages [ $as_shortcode ][ Awyiss::REALM_FRONTEND ] ?? $la_languages [ $as_shortcode ][ Awyiss::REALM_BACKEND ])?->title ?? NULL;
 	}
@@ -64,7 +65,7 @@ class LocaleHelper extends Helper {
 	 *
 	 * @see FormHelper::control
 	 */
-	public function control (?string $as_fieldName = NULL, array $aa_attributes = []): string {
+	public function control(?string $as_fieldName = NULL, array $aa_attributes = []): string {
 		$la_attributes = $aa_attributes + ['type' => 'select'];
 
 		if (empty($aa_attributes['realm'])) {
@@ -78,6 +79,7 @@ class LocaleHelper extends Helper {
 
 		unset($la_attributes['languageRealm']);
 
+
 		return $this->Form->control($as_fieldName, $la_attributes);
 	}
 
@@ -87,7 +89,7 @@ class LocaleHelper extends Helper {
 	 *
 	 * @return void
 	 */
-	public function beforeRender (Event $ao_event): void {
+	public function beforeRender(Event $ao_event): void {
 		$la_languages = LocaleMiddleware::getLanguages();
 
 		/** @var View $ao_view */
@@ -102,18 +104,19 @@ class LocaleHelper extends Helper {
 	/**
 	 * @return array
 	 */
-	protected function allLanguages (): array {
+	protected function allLanguages(): array {
 		$la_languages = [];
 
 		foreach (LocaleMiddleware::getLanguagesByShortcode() as $ls_shortcode => $la_languagesByRealm) {
 			$lo_language = $la_languagesByRealm[ Awyiss::REALM_FRONTEND ] ?? $la_languagesByRealm[ Awyiss::REALM_BACKEND ] ?? NULL;
 
-			if ( ! $lo_language) {
+			if (!$lo_language) {
 				continue;
 			}
 
 			$la_languages[ $ls_shortcode ] = $lo_language->title;
 		}
+
 
 		return $la_languages;
 	}
@@ -124,12 +127,13 @@ class LocaleHelper extends Helper {
 	 *
 	 * @return array
 	 */
-	protected function languagesForRealm (string $as_realm): array {
+	protected function languagesForRealm(string $as_realm): array {
 		$la_languages = [];
 
-		foreach (LocaleMiddleware::getLanguages($as_realm) AS $ls_shortcode => $lo_language) {
+		foreach (LocaleMiddleware::getLanguages($as_realm) as $ls_shortcode => $lo_language) {
 			$la_languages[ $ls_shortcode ] = $lo_language->title;
 		}
+
 
 		return $la_languages;
 	}

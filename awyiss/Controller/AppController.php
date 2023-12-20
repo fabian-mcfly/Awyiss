@@ -19,7 +19,7 @@ abstract class AppController extends Controller {
 	/**
 	 * @throws \Exception
 	 */
-	public function initialize (): void {
+	public function initialize(): void {
 		Awyiss::loadConfiguration(
 			LocaleMiddleware::getLanguage()->shortcode,
 			LocaleMiddleware::getLanguage(Awyiss::REALM_BACKEND)->shortcode,
