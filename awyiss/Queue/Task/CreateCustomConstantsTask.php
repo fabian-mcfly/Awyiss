@@ -32,7 +32,7 @@ class CreateCustomConstantsTask extends Task {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function run (array $aa_data, int $ai_jobId): void {
+	public function run(array $aa_data, int $ai_jobId): void {
 		$ls_environment = preg_replace('/[^a-z-_]/i', '', $aa_data['environment'] ?? CONFIG_ENV);
 
 		$ls_filePath = CUSTOM_CONFIG . $ls_environment . DS . 'constants.php';

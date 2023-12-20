@@ -25,7 +25,7 @@ class FileLoader extends \Cake\TwigView\Twig\FileLoader {
 	 *
 	 * @noinspection PhpMissingParentConstructorInspection
 	 */
-	public function __construct (array $aa_extensions) {
+	public function __construct(array $aa_extensions) {
 		$this->extensions = $aa_extensions;
 		$this->paths[ static::MAIN_NAMESPACE ] = App::path('templates');
 	}
@@ -36,19 +36,8 @@ class FileLoader extends \Cake\TwigView\Twig\FileLoader {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function getPaths (string $as_namespace = self::MAIN_NAMESPACE): array {
+	public function getPaths(string $as_namespace = self::MAIN_NAMESPACE): array {
 		return $this->paths[ $as_namespace ] ?? [];
-	}
-
-
-	/**
-	 * Returns the path namespaces.
-	 *
-	 * The main namespace is always defined.
-	 *
-	 * @noinspection PhpUnused*/
-	public function getNamespaces (): array {
-		return array_keys($this->paths);
 	}
 
 
@@ -60,13 +49,25 @@ class FileLoader extends \Cake\TwigView\Twig\FileLoader {
 	 *
 	 * @throws LoaderError
 	 */
-	public function setPaths ($ax_paths, string $as_namespace = self::MAIN_NAMESPACE): void {
+	public function setPaths($ax_paths, string $as_namespace = self::MAIN_NAMESPACE): void {
 		$la_paths = !is_array($ax_paths) ? [$ax_paths] : $ax_paths;
 
 		$this->paths[ $as_namespace ] = [];
 		foreach ($la_paths as $ls_path) {
 			$this->addPath($ls_path, $as_namespace);
 		}
+	}
+
+
+	/**
+	 * Returns the path namespaces.
+	 *
+	 * The main namespace is always defined.
+	 *
+	 * @noinspection PhpUnused
+	 */
+	public function getNamespaces(): array {
+		return array_keys($this->paths);
 	}
 
 
@@ -80,15 +81,15 @@ class FileLoader extends \Cake\TwigView\Twig\FileLoader {
 	 * @return void
 	 * @throws LoaderError
 	 */
-	public function addPath (string $as_path, string $as_namespace = self::MAIN_NAMESPACE, bool $ab_prepend = FALSE): void {
+	public function addPath(string $as_path, string $as_namespace = self::MAIN_NAMESPACE, bool $ab_prepend = FALSE): void {
 		$ls_checkPath = $this->isAbsolutePath($as_path) ? $as_path : $this->rootPath . $as_path;
-		if ( ! is_dir($ls_checkPath)) {
+		if (!is_dir($ls_checkPath)) {
 			throw new LoaderError(sprintf('The "%s" directory does not exist ("%s").', $as_path, $ls_checkPath));
 		}
 
 		$ls_path = rtrim($as_path, '/\\') . DS;
 
-		if ( ! isset($this->paths[ $as_namespace ])) {
+		if (!isset($this->paths[ $as_namespace ])) {
 			$this->paths[ $as_namespace ] = [$ls_path];
 		}
 		else {
@@ -121,7 +122,7 @@ class FileLoader extends \Cake\TwigView\Twig\FileLoader {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function prependPath (string $as_path, string $as_namespace = self::MAIN_NAMESPACE): void {
+	public function prependPath(string $as_path, string $as_namespace = self::MAIN_NAMESPACE): void {
 		$this->addPath($as_path, $as_namespace, TRUE);
 	}
 
@@ -136,7 +137,7 @@ class FileLoader extends \Cake\TwigView\Twig\FileLoader {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function findTemplate (string $as_name): string {
+	public function findTemplate(string $as_name): string {
 		if (file_exists($as_name)) {
 			return $as_name;
 		}
@@ -197,7 +198,7 @@ class FileLoader extends \Cake\TwigView\Twig\FileLoader {
 	 *
 	 * @throws LoaderError
 	 */
-	private function parseName (string $as_name): array {
+	private function parseName(string $as_name): array {
 		if (isset($as_name[0]) && '@' == $as_name[0]) {
 			if (FALSE === $li_pos = strpos($as_name, '/')) {
 				throw new LoaderError(sprintf('Malformed namespaced template name "%s" (expecting "@namespace/template_name").', $as_name));
@@ -206,8 +207,10 @@ class FileLoader extends \Cake\TwigView\Twig\FileLoader {
 			$ls_namespace = substr($as_name, 1, $li_pos - 1);
 			$ls_shortname = substr($as_name, $li_pos + 1);
 
+
 			return [$ls_namespace, $ls_shortname];
 		}
+
 
 		return [self::MAIN_NAMESPACE, $as_name];
 	}
@@ -220,7 +223,7 @@ class FileLoader extends \Cake\TwigView\Twig\FileLoader {
 	 *
 	 * @throws LoaderError
 	 */
-	private function validateName (string $as_name): void {
+	private function validateName(string $as_name): void {
 		if (str_contains($as_name, "\0")) {
 			throw new LoaderError('A template name cannot contain NUL bytes.');
 		}
@@ -248,7 +251,9 @@ class FileLoader extends \Cake\TwigView\Twig\FileLoader {
 	 *
 	 * @return bool
 	 */
-	private function isAbsolutePath (string $as_file): bool {
-		return strspn($as_file, '/\\', 0, 1) || (strlen($as_file) > 3 && ctype_alpha($as_file[0]) && ':' === $as_file[1] && strspn($as_file, '/\\', 2, 1)) || NULL !== parse_url($as_file, PHP_URL_SCHEME);
+	private function isAbsolutePath(string $as_file): bool {
+		return strspn($as_file, '/\\', 0, 1) ||
+			   (strlen($as_file) > 3 && ctype_alpha($as_file[0]) && ':' === $as_file[1] && strspn($as_file, '/\\', 2, 1)) ||
+			   NULL !== parse_url($as_file, PHP_URL_SCHEME);
 	}
 }

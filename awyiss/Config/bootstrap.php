@@ -19,6 +19,7 @@ require CORE_PATH . 'config' . DS . 'bootstrap.php';
 
 
 use Awyiss\Core\Configure\Engine\PhpConfig;
+use Awyiss\Routing\Router;
 use Cake\Cache\Cache;
 use Cake\Core\Configure;
 use Cake\Datasource\ConnectionManager;
@@ -27,10 +28,10 @@ use Cake\Error\ExceptionTrap;
 use Cake\Log\Log;
 use Cake\Mailer\Mailer;
 use Cake\Mailer\TransportFactory;
-use Awyiss\Routing\Router;
 use Cake\Utility\Inflector;
 use Cake\Utility\Security;
 use josegonzalez\Dotenv\Loader;
+
 
 /**
  * Load global functions.
@@ -38,19 +39,19 @@ use josegonzalez\Dotenv\Loader;
 require CAKE . 'functions.php';
 
 
-if ( ! env('CONFIG_ENV') && file_exists(ROOT . DS . '.env')) {
+if (!env('CONFIG_ENV') && file_exists(ROOT . DS . '.env')) {
 	$lo_dotenv = new Loader([ROOT . DS . '.env']);
 	$lo_dotenv->parse()->putenv()->toEnv()->toServer();
 }
 
 //Might be set in awyiss/bin/cake.php
-if ( ! defined('CONFIG_ENV')) {
+if (!defined('CONFIG_ENV')) {
 	define('CONFIG_ENV', env('CONFIG_ENV', 'production'));
 }
 
 //Might be set in awyiss/bin/cake.php
-if ( ! defined('CUSTOM_DIR')) {
-	if ( ! $ls_customDir = env('CUSTOM_DIR')) {
+if (!defined('CUSTOM_DIR')) {
+	if (!$ls_customDir = env('CUSTOM_DIR')) {
 		exit('Environment Variable CUSTOM_DIR is not set.');
 	}
 	define('CUSTOM_DIR', $ls_customDir);
@@ -125,7 +126,7 @@ if (PHP_SAPI === 'cli') {
  * This URL is used as the base of all absolute links.
  */
 $ls_fullBaseUrl = Configure::read('App.fullBaseUrl');
-if ( ! $ls_fullBaseUrl) {
+if (!$ls_fullBaseUrl) {
 	$ls_https = NULL;
 	if (env('HTTPS')) {
 		$ls_https = 's';

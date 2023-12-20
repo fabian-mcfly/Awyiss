@@ -59,8 +59,9 @@ class Language extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	public function defaultValues (): array {
+	public function defaultValues(): array {
 		$la_realms = Awyiss::getRealms();
+
 
 		return [
 			'realm' => reset($la_realms),

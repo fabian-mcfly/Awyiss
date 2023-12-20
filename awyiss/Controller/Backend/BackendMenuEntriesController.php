@@ -10,7 +10,6 @@ use Awyiss\Model\Table\BackendMenuEntriesTable;
 use Awyiss\Routing\Router;
 use Awyiss\Utilities\Menu\BackendMenu;
 use Awyiss\Utilities\Menu\Menu;
-use Awyiss\Utilities\Menu\MenuLoader;
 use Cake\Collection\Collection;
 use Cake\Collection\CollectionInterface;
 use Cake\Http\Exception\RedirectException;
@@ -34,7 +33,7 @@ class BackendMenuEntriesController extends Controller {
 	 *
 	 * @throws \Exception
 	 */
-	public function overview (): void {
+	public function overview(): void {
 		$this->Authorization->ensure('read');
 
 		$lo_menu = new BackendMenu();
@@ -43,7 +42,7 @@ class BackendMenuEntriesController extends Controller {
 			'ao_menu' => $lo_menu,
 		]);
 	}
-	
+
 
 	/**
 	 * Add method
@@ -52,7 +51,7 @@ class BackendMenuEntriesController extends Controller {
 	 *
 	 * @throws \Exception
 	 */
-	public function add (): void {
+	public function add(): void {
 		$this->Authorization->ensure('create');
 
 		$lo_menuEntry = $this->BackendMenuEntries->newDefaultEntity();
@@ -77,7 +76,7 @@ class BackendMenuEntriesController extends Controller {
 			'ao_threadedMenuEntries' => $lo_threadedMenuEntries,
 		]);
 	}
-	
+
 
 	/**
 	 * Edit method
@@ -86,13 +85,14 @@ class BackendMenuEntriesController extends Controller {
 	 *
 	 * @throws \Exception
 	 */
-	public function edit () {
+	public function edit() {
 		$this->Authorization->ensure('update');
 
 		/** @var BackendMenuEntry $lo_menuEntry */
 		$lo_menuEntry = $this->BackendMenuEntries->findById((int) $this->request->getParam('id'))->find('translations')->first();
-		if (! $lo_menuEntry) {
+		if (!$lo_menuEntry) {
 			$this->Flash->error(__('record_not_found'));
+
 
 			return $this->redirect(['action' => 'overview']);
 		}
@@ -117,7 +117,7 @@ class BackendMenuEntriesController extends Controller {
 			'ao_threadedMenuEntries' => $lo_threadedMenuEntries,
 		]);
 	}
-	
+
 
 	/**
 	 * Delete method
@@ -126,15 +126,16 @@ class BackendMenuEntriesController extends Controller {
 	 *
 	 * @throws \Exception
 	 */
-	public function delete (): Response {
+	public function delete(): Response {
 		$this->Authorization->ensure('delete');
 
 		$this->request->allowMethod(['get', 'delete']);
 
 		/** @var BackendMenuEntry $lo_menuEntry */
 		$lo_menuEntry = $this->BackendMenuEntries->findById((int) $this->request->getParam('id'))->find('translations')->first();
-		if (! $lo_menuEntry) {
+		if (!$lo_menuEntry) {
 			$this->Flash->error(__('record_not_found'));
+
 
 			return $this->redirect(['action' => 'overview']);
 		}
@@ -146,19 +147,69 @@ class BackendMenuEntriesController extends Controller {
 			$this->Flash->error(__('delete_failed'));
 		}
 
+
 		return $this->redirect(['action' => 'overview']);
 	}
-	
+
 
 	/**
-	* @param BackendMenuEntry $ao_menuEntry
-	* @param string $as_method
-	*
-	* @return void
-	*
-	* @throws RedirectException
-	*/
-	protected function save (BackendMenuEntry $ao_menuEntry, string $as_method = 'add'): void {
+	 * Returns a Collection of all available menuentries that exist within the same menu and the same `language_shortcode`
+	 * as the entity, provided via `$ao_menuEntry`
+	 *
+	 * @param BackendMenuEntry $ao_menuEntry
+	 *
+	 * @return CollectionInterface
+	 */
+	public function getThreadedMenuEntries(BackendMenuEntry $ao_menuEntry): CollectionInterface {
+		if (!isset($this->threadedMenuEntries)) {
+			$lo_query = $this->BackendMenuEntries->find()->where([
+				'parent_id' . ($ao_menuEntry->parentId === NULL ? ' IS' : NULL) => $ao_menuEntry->parentId,
+				'insert_after_id' . ($ao_menuEntry->insertAfterId === NULL ? ' IS' : NULL) => $ao_menuEntry->insertAfterId,
+			]);
+
+			$this->threadedMenuEntries = $this->BackendMenuEntries->listNested($lo_query);
+		}
+
+		//Single "=". We only want to find threaded menu entries at the same level for an existing entity (id equals not NULL)
+		if ($li_originalId = $ao_menuEntry->get('id')) {
+			$li_foundAtLevel = NULL;
+			$lo_threadedMenuEntries = new Collection($this->threadedMenuEntries->toList());
+
+			$lo_threadedMenuEntries = $lo_threadedMenuEntries->filter(function ($ao_menuEntry) use ($li_originalId, &$li_foundAtLevel) {
+				if ($ao_menuEntry->get('id') === $li_originalId) {
+					$li_foundAtLevel = $ao_menuEntry->level;
+				}
+				elseif (is_null($li_foundAtLevel) || $ao_menuEntry->level <= $li_foundAtLevel) {
+					$li_foundAtLevel = NULL;
+
+
+					return TRUE;
+				}
+
+
+				return FALSE;
+			});
+
+			$lo_threadedMenuEntries = $lo_threadedMenuEntries->nest('id', 'parentId');
+
+
+			return $lo_threadedMenuEntries->listNested();
+		}
+
+
+		return $this->threadedMenuEntries;
+	}
+
+
+	/**
+	 * @param BackendMenuEntry $ao_menuEntry
+	 * @param string $as_method
+	 *
+	 * @return void
+	 *
+	 * @throws RedirectException
+	 */
+	protected function save(BackendMenuEntry $ao_menuEntry, string $as_method = 'add'): void {
 		$la_associated = [];
 		if ($this->BackendMenuEntries->hasAttributes()) {
 			$la_associated[] = $this->BackendMenuEntries->getAttributesTable(TRUE);
@@ -167,7 +218,7 @@ class BackendMenuEntriesController extends Controller {
 
 		$this->BackendMenuEntries->patchEntity($ao_menuEntry, $this->request->getData(), ['associated' => $la_associated]);
 
-		if ( ! empty($ao_menuEntry->parentId)) {
+		if (!empty($ao_menuEntry->parentId)) {
 			$ao_menuEntry->insertAfterId = NULL;
 
 			$lo_request = $this->getRequest();
@@ -178,7 +229,7 @@ class BackendMenuEntriesController extends Controller {
 			}
 		}
 
-		if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
+		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
 			if ($this->BackendMenuEntries->save($ao_menuEntry)) {
 				$this->Flash->success(__($as_method . '_succeeded'));
 
@@ -206,70 +257,25 @@ class BackendMenuEntriesController extends Controller {
 
 
 	/**
-	 * Returns a Collection of all available menuentries that exist within the same menu and the same `language_shortcode`
-	 * as the entity, provided via `$ao_menuEntry`
-	 *
-	 * @param BackendMenuEntry $ao_menuEntry
-	 *
-	 * @return CollectionInterface
-	 */
-	public function getThreadedMenuEntries (BackendMenuEntry $ao_menuEntry): CollectionInterface {
-		if (!isset($this->threadedMenuEntries)) {
-			$lo_query = $this->BackendMenuEntries->find()->where([
-				'parent_id' . ($ao_menuEntry->parentId === NULL ? ' IS' : NULL) => $ao_menuEntry->parentId,
-				'insert_after_id' . ($ao_menuEntry->insertAfterId === NULL ? ' IS' : NULL) => $ao_menuEntry->insertAfterId,
-			]);
-
-			$this->threadedMenuEntries = $this->BackendMenuEntries->listNested($lo_query);
-		}
-
-		//Single "=". We only want to find threaded menu entries at the same level for an existing entity (id equals not NULL)
-		if ($li_originalId = $ao_menuEntry->get('id')) {
-			$li_foundAtLevel = NULL;
-			$lo_threadedMenuEntries = new Collection($this->threadedMenuEntries->toList());
-
-			$lo_threadedMenuEntries = $lo_threadedMenuEntries->filter(function($ao_menuEntry) use ($li_originalId, &$li_foundAtLevel) {
-				if ($ao_menuEntry->get('id') === $li_originalId) {
-					$li_foundAtLevel = $ao_menuEntry->level;
-				}
-				elseif (is_null($li_foundAtLevel) || $ao_menuEntry->level <= $li_foundAtLevel) {
-					$li_foundAtLevel = NULL;
-
-					return TRUE;
-				}
-
-				return FALSE;
-			});
-
-			$lo_threadedMenuEntries = $lo_threadedMenuEntries->nest('id', 'parentId');
-
-			return $lo_threadedMenuEntries->listNested();
-		}
-
-		return $this->threadedMenuEntries;
-	}
-
-
-	/**
 	 * @inheritDoc
 	 *
 	 * @throws \Exception
 	 */
-	protected function initializeOverviewWhere (): void {
+	protected function initializeOverviewWhere(): void {
 		$this->overviewWhere = [
 
 		];
 	}
 
 
-	protected function generateMenuSelectOptions (Menu $ao_menu): array {
+	protected function generateMenuSelectOptions(Menu $ao_menu): array {
 		$la_options = [];
 
-		foreach ($ao_menu->items() AS $ls_identifier => $lo_item) {
+		foreach ($ao_menu->items() as $ls_identifier => $lo_item) {
 			$la_options[ $ls_identifier ] = str_repeat('- ', $lo_item->level - 1) . $lo_item->getTitle();
 		}
+
 
 		return $la_options;
 	}
 }
-

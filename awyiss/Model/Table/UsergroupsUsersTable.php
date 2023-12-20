@@ -16,7 +16,7 @@ use Cake\Validation\Validator;
  * UsergroupsUsers Model
  *
  * @property UsergroupsTable&BelongsTo $Usergroups
- * @property UsersTable&BelongsTo      $Users
+ * @property UsersTable&BelongsTo $Users
  *
  * @method UsergroupsUser newDefaultEntity(array $aa_additionalData = [])
  */
@@ -50,7 +50,7 @@ class UsergroupsUsersTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public function initialize (array $aa_config): void {
+	public function initialize(array $aa_config): void {
 		parent::initialize($aa_config);
 
 		$this->belongsTo('Usergroups', [
@@ -71,7 +71,7 @@ class UsergroupsUsersTable extends Table {
 	 *
 	 * @return Validator
 	 */
-	public function validationDefault (Validator $ao_validator): Validator {
+	public function validationDefault(Validator $ao_validator): Validator {
 		parent::validationDefault($ao_validator);
 
 
@@ -106,7 +106,7 @@ class UsergroupsUsersTable extends Table {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildRules (RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
+	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
 		$ao_rules->add($ao_rules->existsIn(['usergroupId'], 'Usergroups'), 'usergroupExists', [
 			'errorField' => 'usergroupId',
 			'message' => __d($this->getI18nDomain(), 'error_usergroup_exists'),

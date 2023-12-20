@@ -20,7 +20,7 @@ abstract class AttributeOptionsCollection extends ArrayIterator implements Attri
 	 *
 	 * @noinspection PhpMissingParentConstructorInspection
 	 */
-	public function __construct () {
+	public function __construct() {
 		$ls_scope = static::getScope();
 		$ls_testScope = AttributeOptionsProvider::sanitizeScope($ls_scope);
 
@@ -33,21 +33,6 @@ abstract class AttributeOptionsCollection extends ArrayIterator implements Attri
 
 
 	/**
-	 * @inheritDoc
-	 */
-	public static function getScope (): string {
-		if ( ! isset(static::$scope)) {
-			$la_parts = explode('\\', static::class);
-			static::$scope = array_pop($la_parts);
-			static::$scope = substr(static::$scope, 0, -16);
-			static::$scope = AttributeOptionsProvider::sanitizeScope(static::$scope);
-		}
-
-		return static::$scope;
-	}
-
-
-	/**
 	 * Adds a AttributeOptionsCollection or a set of elements, containing nested AttributeOptionsCollection or
 	 * AttributeOptionsCollection to this collection
 	 *
@@ -55,7 +40,7 @@ abstract class AttributeOptionsCollection extends ArrayIterator implements Attri
 	 *
 	 * @return $this
 	 */
-	public function add (array|AttributeOptions $ax_attributeOption): static {
+	public function add(array|AttributeOptions $ax_attributeOption): static {
 		/*
 		 * If the provided value for `$ax_attributeOption` is an instance of `AttributeOptionsCollection`,
 		 * add it to the current collection
@@ -69,6 +54,7 @@ abstract class AttributeOptionsCollection extends ArrayIterator implements Attri
 			}
 
 			$this->offsetSet($ls_identifier, $ax_attributeOption);
+
 
 			return $this;
 		}
@@ -93,6 +79,7 @@ abstract class AttributeOptionsCollection extends ArrayIterator implements Attri
 			}
 		}
 
+
 		return $this;
 	}
 
@@ -100,14 +87,15 @@ abstract class AttributeOptionsCollection extends ArrayIterator implements Attri
 	/**
 	 * @inheritDoc
 	 */
-	public function getAttributeOptions (string $as_identifier, array $aa_currentOptions = [], ContextInterface $ao_context = NULL): array {
+	public function getAttributeOptions(string $as_identifier, array $aa_currentOptions = [], ContextInterface $ao_context = NULL): array {
 		$ls_identifier = AttributeOptionsProvider::sanitizeIdentifier($as_identifier);
 
 		/** @var AttributeOptions $lo_attributeOptions */
 		$lo_attributeOptions = Hash::get($this, $ls_identifier);
-		if ( ! $lo_attributeOptions) {
+		if (!$lo_attributeOptions) {
 			return $aa_currentOptions;
 		}
+
 
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 		return $lo_attributeOptions->buildOptions($aa_currentOptions, $ao_context->entity());
@@ -117,15 +105,32 @@ abstract class AttributeOptionsCollection extends ArrayIterator implements Attri
 	/**
 	 * @inheritDoc
 	 */
-	public function validateValue (string $as_identifier, mixed $ax_value, Entity $ao_entity = NULL): bool|string {
+	public function validateValue(string $as_identifier, mixed $ax_value, Entity $ao_entity = NULL): bool|string {
 		$ls_identifier = AttributeOptionsProvider::sanitizeIdentifier($as_identifier);
 
 		/** @var AttributeOptions $lo_attributeOptions */
 		$lo_attributeOptions = Hash::get($this, $ls_identifier);
-		if ( ! $lo_attributeOptions) {
+		if (!$lo_attributeOptions) {
 			return TRUE;
 		}
 
+
 		return $lo_attributeOptions->validateValue($ax_value, $ao_entity);
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public static function getScope(): string {
+		if (!isset(static::$scope)) {
+			$la_parts = explode('\\', static::class);
+			static::$scope = array_pop($la_parts);
+			static::$scope = substr(static::$scope, 0, -16);
+			static::$scope = AttributeOptionsProvider::sanitizeScope(static::$scope);
+		}
+
+
+		return static::$scope;
 	}
 }

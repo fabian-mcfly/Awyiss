@@ -67,7 +67,7 @@ class ContentTemplatesTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public function initialize (array $aa_config): void {
+	public function initialize(array $aa_config): void {
 		parent::initialize($aa_config);
 
 		$this->hasMany('Contents', [
@@ -100,7 +100,7 @@ class ContentTemplatesTable extends Table {
 	/**
 	 * @return string[]
 	 */
-	public function getAvailableContentElements (): array {
+	public function getAvailableContentElements(): array {
 		return $this->availableContentElements;
 	}
 
@@ -108,7 +108,7 @@ class ContentTemplatesTable extends Table {
 	/**
 	 * @return string[]
 	 */
-	public function getAvailableFieldsets (): array {
+	public function getAvailableFieldsets(): array {
 		return $this->availableFieldsets;
 	}
 
@@ -118,7 +118,7 @@ class ContentTemplatesTable extends Table {
 	 *
 	 * @return array
 	 */
-	public function getAssignedContentAttributes (ContentTemplate $ao_contentTemplate): array {
+	public function getAssignedContentAttributes(ContentTemplate $ao_contentTemplate): array {
 		$la_availableContentAttributes = $this->getAvailableContentAttributes();
 
 		if (!isset($ao_contentTemplate->contentTemplateElements)) {
@@ -139,11 +139,12 @@ class ContentTemplatesTable extends Table {
 
 		$la_availableContentElementIdentifiers = array_column($ao_contentTemplate->contentTemplateElements, 'identifier');
 		$la_assignedContentAttributes = [];
-		foreach ($la_availableContentAttributes AS $la_attribute) {
+		foreach ($la_availableContentAttributes as $la_attribute) {
 			if (in_array('attributes.' . $la_attribute['identifier'], $la_availableContentElementIdentifiers)) {
 				$la_assignedContentAttributes[] = $la_attribute['identifier'];
 			}
 		}
+
 
 		return $la_assignedContentAttributes;
 	}
@@ -152,7 +153,7 @@ class ContentTemplatesTable extends Table {
 	/**
 	 * @return array<int, array>
 	 */
-	public function getAvailableContentAttributes (): array {
+	public function getAvailableContentAttributes(): array {
 		if (isset($this->availableContentAttributes)) {
 			return $this->availableContentAttributes;
 		}
@@ -162,7 +163,7 @@ class ContentTemplatesTable extends Table {
 			'authorize' => [
 				'skip' => TRUE,
 			],
-		])->all()->indexBy('id')->map(function(Attribute $ao_attribute): array {
+		])->all()->indexBy('id')->map(function (Attribute $ao_attribute): array {
 			return [
 				'title' => $ao_attribute->title,
 				'label' => $ao_attribute->label,
@@ -172,6 +173,7 @@ class ContentTemplatesTable extends Table {
 				'inputType' => $ao_attribute->inputType,
 			];
 		})->toArray();
+
 
 		return $this->availableContentAttributes;
 	}
@@ -185,7 +187,7 @@ class ContentTemplatesTable extends Table {
 	 *
 	 * @return Validator
 	 */
-	public function validationDefault (Validator $ao_validator): Validator {
+	public function validationDefault(Validator $ao_validator): Validator {
 		parent::validationDefault($ao_validator);
 
 
@@ -245,14 +247,14 @@ class ContentTemplatesTable extends Table {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildRules (RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
+	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
 		$ao_rules->add($ao_rules->isUnique(['filename']), 'uniqueFilename', [
 			'errorField' => 'filename',
 			'message' => __dfx($this->getI18nDomain(), 'validation', 'content_templates', 'error_unique_filename'),
 		]);
 
 
-		$ao_rules->add(function(ContentTemplate $ao_entity): bool {
+		$ao_rules->add(function (ContentTemplate $ao_entity): bool {
 			$lb_valid = TRUE;
 
 			$la_availableAttributes = array_column($this->getAvailableContentAttributes(), 'identifier');
@@ -260,7 +262,7 @@ class ContentTemplatesTable extends Table {
 				if (str_starts_with($lo_assignedContentElement->identifier, 'attributes.')) {
 					$ls_identifier = substr($lo_assignedContentElement->identifier, 11);
 
-					if ( ! in_array($ls_identifier, $la_availableAttributes)) {
+					if (!in_array($ls_identifier, $la_availableAttributes)) {
 						$lb_valid = FALSE;
 						break;
 					}
@@ -274,6 +276,7 @@ class ContentTemplatesTable extends Table {
 				}
 			}
 
+
 			return $lb_valid;
 		}, 'validContentElements', [
 			'errorField' => 'contentTemplateElements',
@@ -282,7 +285,7 @@ class ContentTemplatesTable extends Table {
 		]);
 
 
-		$ao_rules->addDelete(function(ContentTemplate $ao_entity): bool {
+		$ao_rules->addDelete(function (ContentTemplate $ao_entity): bool {
 			dump($ao_entity);
 			dd(__FILE__, __LINE__);
 		});

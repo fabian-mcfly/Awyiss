@@ -48,7 +48,7 @@ class PageTemplateContentAreasTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public function initialize (array $aa_config): void {
+	public function initialize(array $aa_config): void {
 		parent::initialize($aa_config);
 
 		$this->belongsTo('ContentAreas');
@@ -67,7 +67,7 @@ class PageTemplateContentAreasTable extends Table {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function validationDefault (Validator $ao_validator): Validator {
+	public function validationDefault(Validator $ao_validator): Validator {
 		parent::validationDefault($ao_validator);
 
 
@@ -108,7 +108,7 @@ class PageTemplateContentAreasTable extends Table {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildRules (RulesChecker|\Cake\ORM\RulesChecker $ao_rules): RulesChecker {
+	public function buildRules(RulesChecker|\Cake\ORM\RulesChecker $ao_rules): RulesChecker {
 		$ao_rules->add($ao_rules->existsIn(['pageTemplateId'], 'PageTemplates'), 'pageTemplateExists', [
 			'errorField' => 'pageTemplateId',
 			'message' => __d($this->getI18nDomain(), 'error_page_template_exists'),
@@ -119,6 +119,7 @@ class PageTemplateContentAreasTable extends Table {
 			'errorField' => 'contentAreaId',
 			'message' => __d($this->getI18nDomain(), 'error_content_area_exists'),
 		]);
+
 
 		return $ao_rules;
 	}

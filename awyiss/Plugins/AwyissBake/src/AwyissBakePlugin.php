@@ -20,7 +20,7 @@ class AwyissBakePlugin extends BasePlugin {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function console (CommandCollection $ao_commands): CommandCollection {
+	public function console(CommandCollection $ao_commands): CommandCollection {
 		//Required because otherwise bake doesn't overwrite the "migrations migrate" command.
 		$ao_commands->remove('migrations');
 		$ao_commands->remove('migrations migrate');
@@ -31,6 +31,7 @@ class AwyissBakePlugin extends BasePlugin {
 		$ao_commands->remove('i18n extract');
 
 		$la_commands = $ao_commands->discoverPlugin($this->getName());
+
 
 		return $ao_commands->addMany($la_commands);
 	}

@@ -64,7 +64,7 @@ class AuthorizeBehavior extends Behavior {
 	protected array $_defaultConfig = [
 		'additionalData' => [],
 		'enabled' => TRUE,
-		'failSilently' => ! TRUE, //if TRUE, a ForbiddenException will be thrown for inaccessible scopes
+		'failSilently' => !TRUE, //if TRUE, a ForbiddenException will be thrown for inaccessible scopes
 		'implementedEvents' => [
 			'Model.buildRules' => 'buildRules',
 			'Model.beforeFind' => 'handleEvent',
@@ -94,7 +94,7 @@ class AuthorizeBehavior extends Behavior {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function getAdditionalData (): array {
+	public function getAdditionalData(): array {
 		return $this->getConfig('additionalData');
 	}
 
@@ -106,8 +106,9 @@ class AuthorizeBehavior extends Behavior {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function setAdditionalData (array $aa_data): static {
+	public function setAdditionalData(array $aa_data): static {
 		$this->setConfig('additionalData', $aa_data, FALSE);
+
 
 		return $this;
 	}
@@ -118,22 +119,9 @@ class AuthorizeBehavior extends Behavior {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function resetAdditionalData (): static {
+	public function resetAdditionalData(): static {
 		$this->setConfig('additionalData', [], FALSE);
 
-		return $this;
-	}
-
-
-	/**
-	 * Sets the authorization service that's used to retreive the AuthenticationService
-	 *
-	 * @param AuthorizationServiceInterface $ao_authorizationService
-	 *
-	 * @return $this
-	 */
-	public function setAuthorizationService (AuthorizationServiceInterface $ao_authorizationService): static {
-		$this->authorizationService = $ao_authorizationService;
 
 		return $this;
 	}
@@ -144,13 +132,29 @@ class AuthorizeBehavior extends Behavior {
 	 *
 	 * @return NULL|AuthorizationServiceInterface
 	 */
-	public function getAuthorizationService (): ?AuthorizationServiceInterface {
-		if ( ! isset($this->authorizationService)) {
+	public function getAuthorizationService(): ?AuthorizationServiceInterface {
+		if (!isset($this->authorizationService)) {
 			$lo_event = $this->table()->dispatchEvent('Authorization.requestAuthorizationService');
 			$this->authorizationService = $lo_event->getResult();
 		}
 
+
 		return $this->authorizationService;
+	}
+
+
+	/**
+	 * Sets the authorization service that's used to retreive the AuthenticationService
+	 *
+	 * @param AuthorizationServiceInterface $ao_authorizationService
+	 *
+	 * @return $this
+	 */
+	public function setAuthorizationService(AuthorizationServiceInterface $ao_authorizationService): static {
+		$this->authorizationService = $ao_authorizationService;
+
+
+		return $this;
 	}
 
 
@@ -159,13 +163,14 @@ class AuthorizeBehavior extends Behavior {
 	 *
 	 * @return null|IdentityPermissionsInterface
 	 */
-	public function getIdentity (): ?IdentityPermissionsInterface {
+	public function getIdentity(): ?IdentityPermissionsInterface {
 		$lo_identity = $this->getConfig('identity');
 
-		if ( ! $lo_identity) {
+		if (!$lo_identity) {
 			$lo_identity = $this->_getIdentity();
 			$this->setConfig('identity', $lo_identity);
 		}
+
 
 		return $lo_identity;
 	}
@@ -180,8 +185,9 @@ class AuthorizeBehavior extends Behavior {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function setIdentity (IdentityPermissionsInterface $ao_identity): static {
+	public function setIdentity(IdentityPermissionsInterface $ao_identity): static {
 		$this->setConfig('identity', $ao_identity);
+
 
 		return $this;
 	}
@@ -192,13 +198,14 @@ class AuthorizeBehavior extends Behavior {
 	 *
 	 * @return string
 	 */
-	public function getScope (): string {
+	public function getScope(): string {
 		$ls_scope = $this->getConfig('scope');
 
-		if ( ! $ls_scope) {
+		if (!$ls_scope) {
 			$ls_scope = Inflector::pluralize(Inflector::underscore($this->table()->getTable()));
 			$this->setConfig('scope', $ls_scope);
 		}
+
 
 		return $ls_scope;
 	}
@@ -211,8 +218,9 @@ class AuthorizeBehavior extends Behavior {
 	 *
 	 * @return $this
 	 */
-	public function setScope (string $as_scope): static {
+	public function setScope(string $as_scope): static {
 		$this->setConfig('scope', Inflector::pluralize(Inflector::underscore($as_scope)));
+
 
 		return $this;
 	}
@@ -227,8 +235,9 @@ class AuthorizeBehavior extends Behavior {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function skip (bool $ab_skip = TRUE): static {
+	public function skip(bool $ab_skip = TRUE): static {
 		$this->setConfig('skip', $ab_skip);
+
 
 		return $this;
 	}
@@ -243,8 +252,9 @@ class AuthorizeBehavior extends Behavior {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function skipOnce (bool $ab_skip = TRUE): static {
+	public function skipOnce(bool $ab_skip = TRUE): static {
 		$this->setConfig('skipOnce', $ab_skip);
+
 
 		return $this;
 	}
@@ -258,26 +268,27 @@ class AuthorizeBehavior extends Behavior {
 	 *
 	 * @return RulesChecker
 	 */
-	public function buildRules (EventInterface $ao_event, RulesChecker $ao_rules): RulesChecker {
-		if ( ! $this->getConfig('enabled')) {
+	public function buildRules(EventInterface $ao_event, RulesChecker $ao_rules): RulesChecker {
+		if (!$this->getConfig('enabled')) {
 			return $ao_rules;
 		}
 
 		//If a config item with the name of the event (`Entity.create`, `Entity.update`) exists, make sure it's callable.
 		if ($lx_call = $this->getConfig($ao_event->getName())) {
-			if ( ! is_callable($lx_call)) {
+			if (!is_callable($lx_call)) {
 				throw new RuntimeException(sprintf('Expected option for `%s` to be `callable`, `%s` given', $ao_event->getName(), gettype($lx_call)));
 			}
 		}
 
 		//Add a rule that returns TRUE or FALSE whether the entity can be created resp. updated
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		$ao_rules->add(function(EntityInterface $ao_entity, array $aa_options) use ($lx_call): ?bool {
+		$ao_rules->add(function (EntityInterface $ao_entity, array $aa_options) use ($lx_call): ?bool {
 			$la_options = Hash::merge($this->getConfig(), Hash::get($aa_options, 'authorize'));
 
 			//Skipping the check means the rule returns TRUE.
 			if ($la_options['skip'] === TRUE || $la_options['skipOnce'] === TRUE) {
 				$this->setConfig('skipOnce', FALSE);
+
 
 				return TRUE;
 			}
@@ -294,11 +305,13 @@ class AuthorizeBehavior extends Behavior {
 				return FALSE;
 			}
 
+
 			return TRUE;
 		}, 'scopeAccessible', [
 			'errorField' => '_general',
 			'message' => __dfx($this->table()->getI18nDomain(), 'validation', $this->table()->getTable(), 'error_scope_accessible'),
 		]);
+
 
 		return $ao_rules;
 	}
@@ -314,8 +327,8 @@ class AuthorizeBehavior extends Behavior {
 	 * @throws \Exception
 	 * @noinspection PhpUnused
 	 */
-	public function handleEvent (EventInterface $ao_event, SelectQuery|DeleteQuery|EntityInterface $ao_subject, ArrayObject $ao_options): void {
-		if ( ! $this->getConfig('enabled')) {
+	public function handleEvent(EventInterface $ao_event, SelectQuery|DeleteQuery|EntityInterface $ao_subject, ArrayObject $ao_options): void {
+		if (!$this->getConfig('enabled')) {
 			return;
 		}
 
@@ -325,20 +338,20 @@ class AuthorizeBehavior extends Behavior {
 		if ($la_options['skip'] === TRUE || $la_options['skipOnce'] === TRUE) {
 			$this->setConfig('skipOnce', FALSE);
 
-			if ( ! ($ao_subject instanceof SelectQuery)) {
+			if (!($ao_subject instanceof SelectQuery)) {
 				return;
 			}
 
 			//Disable
 			foreach ($ao_subject->getRepository()->associations() as $lo_association) {
-				if ( ! in_array($lo_association->getAlias(), $ao_subject->getContain())) {
+				if (!in_array($lo_association->getAlias(), $ao_subject->getContain())) {
 					continue;
 				}
 
 				dd($lo_association, __LINE__, __FILE__);
 
 				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-				if ($lo_association->type() !== Association::MANY_TO_MANY || ! $lo_association->hasThrough()) {
+				if ($lo_association->type() !== Association::MANY_TO_MANY || !$lo_association->hasThrough()) {
 					continue;
 				}
 
@@ -347,13 +360,14 @@ class AuthorizeBehavior extends Behavior {
 				 * @var Table $lo_junctionTable
 				 */
 				$lo_junctionTable = $lo_association->junction();
-				if ( ! $lo_junctionTable->hasBehavior('Authorize')) {
+				if (!$lo_junctionTable->hasBehavior('Authorize')) {
 					continue;
 				}
 
 				//Disable the authorization check for junction tables once
 				$lo_junctionTable->skipAuthorizationCheckOnce();
 			}
+
 
 			return;
 		}
@@ -363,7 +377,7 @@ class AuthorizeBehavior extends Behavior {
 
 		//If the event name is a callable config item, call it and set the return value as the accessible status
 		if ($lx_call = $this->getConfig($ao_event->getName())) {
-			if ( ! is_callable($lx_call)) {
+			if (!is_callable($lx_call)) {
 				throw new RuntimeException(sprintf('Expected option for `%s` to be `callable`, `%s` given', $ao_event->getName(), gettype($lx_call)));
 			}
 
@@ -372,13 +386,17 @@ class AuthorizeBehavior extends Behavior {
 
 		if ($lb_accessible === FALSE || ($lb_accessible === NULL && Permission::DEFAULT_PERMISSION === FALSE)) {
 			if ($ao_subject instanceof SelectQuery || $ao_subject instanceof DeleteQuery) {
-				$this->log(sprintf('Permission denied in event `%s` for table `%s`. Scope: `%s`.' . PHP_EOL . 'Query: %s.' . PHP_EOL . 'Params: %s',
-					$ao_event->getName(),
-					$ao_subject->getRepository()->getTable(),
-					$this->getScope(),
-					$ao_subject->sql(),
-					var_export($ao_subject->getValueBinder()->bindings(), TRUE)),
-					'error');
+				$this->log(
+					sprintf(
+						'Permission denied in event `%s` for table `%s`. Scope: `%s`.' . PHP_EOL . 'Query: %s.' . PHP_EOL . 'Params: %s',
+						$ao_event->getName(),
+						$ao_subject->getRepository()->getTable(),
+						$this->getScope(),
+						$ao_subject->sql(),
+						var_export($ao_subject->getValueBinder()->bindings(), TRUE)
+					),
+					'error'
+				);
 			}
 			else {
 				$this->log(sprintf('Permission denied in event `%s`', $ao_event->getName()), 'error');
@@ -399,42 +417,6 @@ class AuthorizeBehavior extends Behavior {
 
 
 	/**
-	 * Internal function used by `beforeFind` and `handleEvent`
-	 *
-	 * @param string $as_identifier
-	 * @param SelectQuery|DeleteQuery|EntityInterface $ao_subject
-	 * @param array $aa_options
-	 *
-	 * @return bool
-	 * @throws \Exception
-	 */
-	protected function handle (string $as_identifier, SelectQuery|DeleteQuery|EntityInterface $ao_subject, array $aa_options = []): bool {
-		$ls_scope = $aa_options['scope'] ?? $this->getScope();
-
-		$lx_identifier = $aa_options['identifiers'][ $as_identifier ] ?? NULL;
-		if ( ! is_string($lx_identifier) && ! is_array($lx_identifier)) {
-			throw new RuntimeException(sprintf('The identifier for `%s` is invalid. Expected `string|array`, `%s` given', $as_identifier, gettype($lx_identifier)));
-		}
-
-		if ( ! is_array($lx_identifier)) {
-			$lx_identifier = [$lx_identifier];
-		}
-
-		$la_additionalData = [
-			'event' => $as_identifier,
-			'subject' => $ao_subject,
-		];
-
-		/*if (!$this->scopeIsAccessible($ls_scope, $la_additionalData, ...$lx_identifier)) {
-			//dd(__LINE__, __FILE__, $ao_subject, $ls_scope, debug_backtrace(2));
-			dd($aa_options['identifiers']);
-		}*/
-
-		return $this->scopeIsAccessible($ls_scope, $la_additionalData, ...$lx_identifier);
-	}
-
-
-	/**
 	 * For a list of given identifiers, return TRUE or FALSE whether they're accessible inside the current scope
 	 * for the current identity.
 	 *
@@ -449,7 +431,7 @@ class AuthorizeBehavior extends Behavior {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function isAccessible (string|array ...$ax_identifier): bool {
+	public function isAccessible(string|array ...$ax_identifier): bool {
 		return $this->scopeIsAccessible($this->getScope(), NULL, ...$ax_identifier);
 	}
 
@@ -468,15 +450,54 @@ class AuthorizeBehavior extends Behavior {
 	 * @throws \ReflectionException
 	 * @see \Awyiss\Authorization\Permission\PermissionCollection::scopeIsAccessible()
 	 */
-	public function scopeIsAccessible (string $as_scope, ?array $aa_additionalData = NULL, string|array ...$ax_identifier): bool {
+	public function scopeIsAccessible(string $as_scope, ?array $aa_additionalData = NULL, string|array ...$ax_identifier): bool {
 		//Get the currently assigned permissions from the identity object, resp. their permission collection
 		$lo_identity = $this->getIdentity();
 
-		if ( ! $lo_identity) {
+		if (!$lo_identity) {
 			return FALSE;
 		}
 
+
 		return $lo_identity->scopeIsAccessible($as_scope, $aa_additionalData ?? $this->getConfig('additionalData'), ...$ax_identifier);
+	}
+
+
+	/**
+	 * Internal function used by `beforeFind` and `handleEvent`
+	 *
+	 * @param string $as_identifier
+	 * @param SelectQuery|DeleteQuery|EntityInterface $ao_subject
+	 * @param array $aa_options
+	 *
+	 * @return bool
+	 * @throws \Exception
+	 */
+	protected function handle(string $as_identifier, SelectQuery|DeleteQuery|EntityInterface $ao_subject, array $aa_options = []): bool {
+		$ls_scope = $aa_options['scope'] ?? $this->getScope();
+
+		$lx_identifier = $aa_options['identifiers'][ $as_identifier ] ?? NULL;
+		if (!is_string($lx_identifier) && !is_array($lx_identifier)) {
+			throw new RuntimeException(sprintf('The identifier for `%s` is invalid. Expected `string|array`, `%s` given', $as_identifier, gettype($lx_identifier)));
+		}
+
+		if (!is_array($lx_identifier)) {
+			$lx_identifier = [$lx_identifier];
+		}
+
+		$la_additionalData = [
+			'event' => $as_identifier,
+			'subject' => $ao_subject,
+		];
+
+
+		/*if (!$this->scopeIsAccessible($ls_scope, $la_additionalData, ...$lx_identifier)) {
+			//dd(__LINE__, __FILE__, $ao_subject, $ls_scope, debug_backtrace(2));
+			dd($aa_options['identifiers']);
+		}*/
+
+
+		return $this->scopeIsAccessible($ls_scope, $la_additionalData, ...$lx_identifier);
 	}
 
 
@@ -485,22 +506,23 @@ class AuthorizeBehavior extends Behavior {
 	 * Then retreive the AuthenticationServiceInterface from the AuthorizationServiceInterface
 	 * Then retreive the IdentityInterface from AuthenticationServiceInterface.
 	 */
-	protected function _getIdentity (): ?IdentityPermissionsInterface {
+	protected function _getIdentity(): ?IdentityPermissionsInterface {
 		/** @var AuthorizationService $lo_authorizationService */
 		$lo_authorizationService = $this->getAuthorizationService();
-		if ( ! $lo_authorizationService) {
+		if (!$lo_authorizationService) {
 			throw new RuntimeException(sprintf('Could not retreive `AuthorizationService` in `%s`.', static::class));
 		}
 
 		$lo_authenticationService = $lo_authorizationService->getAuthenticationService();
-		if ( ! $lo_authenticationService) {
+		if (!$lo_authenticationService) {
 			throw new RuntimeException(sprintf('Object `%s` does not have an authentication service set.', get_class($lo_authorizationService)));
 		}
 		/** @var IdentityPermissionsInterface|User|UsersExternal $lo_identity */
 		$lo_identity = $lo_authenticationService->getIdentity();
-		if ($lo_identity && ! ($lo_identity instanceof IdentityPermissionsInterface)) {
+		if ($lo_identity && !($lo_identity instanceof IdentityPermissionsInterface)) {
 			throw new RuntimeException(sprintf('Object `%s` does not implement `%s`', get_class($lo_identity), IdentityPermissionsInterface::class));
 		}
+
 
 		return $lo_identity;
 	}

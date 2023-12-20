@@ -26,12 +26,13 @@ class PagesPolicy extends AbstractPolicy {
 	/**
 	 * @inheritDoc
 	 */
-	protected static function loadPermissionOptions (): PermissionOptionCollection {
+	protected static function loadPermissionOptions(): PermissionOptionCollection {
 		$lo_permissionOptions = parent::loadPermissionOptions();
 
 		$lo_permissionOptions->load('contents', [
 			'className' => SimplePermissionOption::class,
 		]);
+
 
 		return $lo_permissionOptions;
 	}

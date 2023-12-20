@@ -28,7 +28,6 @@ class UsersExternal extends Entity implements IdentityInterface {
 		'username' => TRUE,
 		'usergroups' => TRUE,
 	];
-
 	/**
 	 * @inheritDoc
 	 */
@@ -43,7 +42,7 @@ class UsersExternal extends Entity implements IdentityInterface {
 	 *
 	 * @see IdentityInterface::getIdentifier
 	 */
-	public function getIdentifier (): ?int {
+	public function getIdentifier(): ?int {
 		return $this->id;
 	}
 
@@ -53,7 +52,7 @@ class UsersExternal extends Entity implements IdentityInterface {
 	 *
 	 * @see IdentityInterface::getOriginalData
 	 */
-	public function getOriginalData (): static {
+	public function getOriginalData(): static {
 		return $this;
 	}
 }

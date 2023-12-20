@@ -23,7 +23,7 @@ trait UtilTrait {
 	 *
 	 * @return string Path to output.
 	 */
-	public function getPath (Arguments $ao_args): string {
+	public function getPath(Arguments $ao_args): string {
 		$ls_path = APP . $this->pathFragment;
 		if ($this->plugin) {
 			$ls_path = $this->_pluginPath($this->plugin) . 'src/' . $this->pathFragment;
@@ -37,6 +37,7 @@ trait UtilTrait {
 		if ($ls_prefix) {
 			$ls_path .= $ls_prefix . DIRECTORY_SEPARATOR;
 		}
+
 
 		return str_replace('/', DIRECTORY_SEPARATOR, $ls_path);
 	}

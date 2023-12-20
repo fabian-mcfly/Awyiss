@@ -61,8 +61,9 @@ class ContentTemplate extends Entity {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	protected function _setFilename (string $as_filename): string {
+	protected function _setFilename(string $as_filename): string {
 		$ls_filename = Text::slug($as_filename, ['replacement' => '_']);
+
 
 		return mb_strtolower($ls_filename);
 	}

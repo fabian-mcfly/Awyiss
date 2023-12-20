@@ -30,7 +30,7 @@ class AttributesListener implements EventListenerInterface {
 	/**
 	 * @inheritDoc
 	 */
-	public function implementedEvents (): array {
+	public function implementedEvents(): array {
 		return [
 			'Model.Attributes.afterSaveCommit' => 'afterSaveCommit',
 		];
@@ -41,16 +41,16 @@ class AttributesListener implements EventListenerInterface {
 	 * After saving an attribute entity, create a job in the queue that handles the entity's new data
 	 * and bakes migrations accordingly.
 	 *
-	 * @param Event     $ao_event
+	 * @param Event $ao_event
 	 * @param Attribute $ao_entity
 	 *
 	 * @return void
 	 *
-	 * @see \Awyiss\Queue\Task\AttributesTask
+	 * @see          \Awyiss\Queue\Task\AttributesTask
 	 *
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function afterSaveCommit (Event $ao_event, Entity $ao_entity): void {
+	public function afterSaveCommit(Event $ao_event, Entity $ao_entity): void {
 		$la_relevantColumns = ['scope', 'identifier', 'type', 'hasIndex', 'required', 'defaultValue', 'deleted'];
 
 		$la_oldData = $ao_entity->isNew() ? array_fill_keys($la_relevantColumns, NULL) : $ao_entity->extractOriginal($la_relevantColumns, FALSE);
@@ -67,7 +67,7 @@ class AttributesListener implements EventListenerInterface {
 		$lo_queue->createJob('Attributes', [
 			'id' => $ao_entity->id,
 			'old' => $la_oldData,
-			'new' => $la_newData
+			'new' => $la_newData,
 		], [
 			'group' => 'general',
 			'priority' => 1,

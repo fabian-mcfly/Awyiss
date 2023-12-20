@@ -10,18 +10,17 @@ use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity\User;
 use Awyiss\Model\Entity\UsersExternal;
 use Awyiss\Model\Table\UsersTable;
+use Awyiss\Routing\Router;
 use Cake\Event\EventInterface;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
 use Cake\Http\Session;
 use Cake\I18n\FrozenTime;
-use Awyiss\Routing\Router;
 use Cake\Utility\Hash;
 use Cake\Utility\Security;
 
 
 //awyiss: $2y$10$B1IWA5ic5yFJCbxB7kvKD.hnfrA3M34LPtOH5y.zrK0b6PpAHj.Eu
-
 
 /**
  * Users Controller
@@ -45,7 +44,7 @@ class UsersController extends Controller {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function beforeFilter (EventInterface $ao_event): void {
+	public function beforeFilter(EventInterface $ao_event): void {
 		parent::beforeFilter($ao_event);
 		$this->Authentication->allowUnauthenticated(['login', 'logout']);
 
@@ -61,7 +60,7 @@ class UsersController extends Controller {
 	 * @return void
 	 * @throws \Exception
 	 */
-	public function overview (): void {
+	public function overview(): void {
 		$this->Authorization->ensure('read');
 
 		$lo_users = $this->Users->find()->where($this->getOverviewWhere());
@@ -80,7 +79,7 @@ class UsersController extends Controller {
 	 * @return void
 	 * @throws \Exception
 	 */
-	public function add (): void {
+	public function add(): void {
 		$this->Authorization->ensure('create');
 
 		$lo_user = $this->Users->newDefaultEntity();
@@ -107,7 +106,7 @@ class UsersController extends Controller {
 	 *
 	 * @throws \Exception
 	 */
-	public function edit () {
+	public function edit() {
 		$this->Authorization->ensure('update');
 
 		/*
@@ -118,8 +117,9 @@ class UsersController extends Controller {
 
 		/** @var User $lo_user */
 		$lo_user = $this->Users->findById((int) $this->request->getParam('id'))->find('translations')->contain(['Usergroups'])->first();
-		if ( ! $lo_user) {
+		if (!$lo_user) {
 			$this->Flash->error(__('record_not_found'));
+
 
 			return $this->redirect(['action' => 'overview']);
 		}
@@ -148,14 +148,15 @@ class UsersController extends Controller {
 	 *
 	 * @throws \Exception
 	 */
-	public function delete (): Response {
+	public function delete(): Response {
 		$this->Authorization->ensure('delete');
 
 		$this->request->allowMethod(['get', 'delete']);
 
 		$lo_user = $this->Users->findById((int) $this->request->getParam('id'))->find('translations')->first();
-		if ( ! $lo_user) {
+		if (!$lo_user) {
 			$this->Flash->error(__('record_not_found'));
+
 
 			return $this->redirect(['action' => 'overview']);
 		}
@@ -167,67 +168,8 @@ class UsersController extends Controller {
 			$this->Flash->error(__('delete_failed'));
 		}
 
+
 		return $this->redirect(['action' => 'overview']);
-	}
-
-
-	/**
-	 * @param User $ao_user
-	 * @param string $as_method
-	 *
-	 * @return void
-	 */
-	protected function save (User $ao_user, string $as_method = 'add'): void {
-		$la_associated = [];
-		if ($this->Users->hasAttributes()) {
-			$la_associated[] = $this->Users->getAttributesTable(TRUE);
-			$ao_user->setAccess('attributes', TRUE);
-		}
-
-		/*
-		 * Skip Authorization Check for Usergroups. Even without access to the scope "Usergroups"
-		 * the current user can modify the affiliation(s) of users
-		 */
-		$this->Users->Usergroups->skipAuthorizationCheck();
-
-		$la_data = $this->request->getData();
-
-		if (empty($la_data['password'])) {
-			unset ($la_data['password']);
-		}
-
-		$la_associated['Usergroups'] = ['onlyIds' => TRUE];
-
-		$this->Users->patchEntity($ao_user, $la_data, ['associated' => $la_associated]);
-
-		if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-			if ($this->Users->save($ao_user)) {
-				$this->Flash->success(__($as_method . '_succeeded'));
-
-				if ($this->request->getData('submit') == 'submit_close') {
-					if ($ao_user->usergroups) {
-						$la_usergroups = Hash::combine($ao_user->usergroups, '{n}.id', '{n}.label');
-					}
-					/*
-					 * Make sure the currently selected category is still part of the categories assigned to the user, otherwise the overview.
-					 * Otherwise a redirect would show a site without the modified user, which could be a bit confusing.
-					 */
-					$this->Categories->verifySelection(NULL, $la_usergroups ?? []);
-
-					throw new RedirectException(Router::url(['action' => 'overview'], TRUE), 302);
-				}
-
-				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $ao_user->id], TRUE), 302);
-			}
-
-			$this->Flash->error(__($as_method .  '_failed'));
-			foreach ($ao_user->getError('_general') as $ls_error) {
-				$this->Flash->error($ls_error);
-			}
-		}
-
-		//Enable Authorization Check for Usergroups
-		$this->Users->Usergroups->skipAuthorizationCheck(FALSE);
 	}
 
 
@@ -236,7 +178,7 @@ class UsersController extends Controller {
 	 *
 	 * @return void|?Response
 	 */
-	public function login () {
+	public function login() {
 		$lo_result = $this->Authentication->getResult();
 
 		// If the user is logged in send them away.
@@ -273,12 +215,16 @@ class UsersController extends Controller {
 				'action' => 'overview',
 			]);
 
+
 			return $this->redirect($ls_redirectUri);
 		}
 
-		if ($this->request->is('post') && ! $lo_result->isValid()) {
+		if ($this->request->is('post') && !$lo_result->isValid()) {
 			/** @var User $lo_user */
-			if (($ls_username = $this->request->getData('username')) && ($lo_user = $this->Users->find()->applyOptions(['authorize' => ['skip' => TRUE]])->where(['username' => $ls_username])->first())) {
+			if (
+				($ls_username = $this->request->getData('username')) &&
+				($lo_user = $this->Users->find()->applyOptions(['authorize' => ['skip' => TRUE]])->where(['username' => $ls_username])->first())
+			) {
 				$lo_user->set([
 					'failedAttempts' => $lo_user->failedAttempts + 1,
 					'lastLogin' => FrozenTime::now(),
@@ -308,17 +254,78 @@ class UsersController extends Controller {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function logout (): ?Response {
+	public function logout(): ?Response {
 		$this->Authentication->logout();
 
 		/** @var Session $lo_session */
 		$lo_session = $this->getRequest()->getAttribute('session');
 		$lo_session->destroy();
 
+
 		return $this->redirect(Router::url([
 			'_name' => Awyiss::REALM_BACKEND,
 			'controller' => 'Users',
 			'action' => 'login',
 		]));
+	}
+
+
+	/**
+	 * @param User $ao_user
+	 * @param string $as_method
+	 *
+	 * @return void
+	 */
+	protected function save(User $ao_user, string $as_method = 'add'): void {
+		$la_associated = [];
+		if ($this->Users->hasAttributes()) {
+			$la_associated[] = $this->Users->getAttributesTable(TRUE);
+			$ao_user->setAccess('attributes', TRUE);
+		}
+
+		/*
+		 * Skip Authorization Check for Usergroups. Even without access to the scope "Usergroups"
+		 * the current user can modify the affiliation(s) of users
+		 */
+		$this->Users->Usergroups->skipAuthorizationCheck();
+
+		$la_data = $this->request->getData();
+
+		if (empty($la_data['password'])) {
+			unset($la_data['password']);
+		}
+
+		$la_associated['Usergroups'] = ['onlyIds' => TRUE];
+
+		$this->Users->patchEntity($ao_user, $la_data, ['associated' => $la_associated]);
+
+		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
+			if ($this->Users->save($ao_user)) {
+				$this->Flash->success(__($as_method . '_succeeded'));
+
+				if ($this->request->getData('submit') == 'submit_close') {
+					if ($ao_user->usergroups) {
+						$la_usergroups = Hash::combine($ao_user->usergroups, '{n}.id', '{n}.label');
+					}
+					/*
+					 * Make sure the currently selected category is still part of the categories assigned to the user, otherwise the overview.
+					 * Otherwise a redirect would show a site without the modified user, which could be a bit confusing.
+					 */
+					$this->Categories->verifySelection(NULL, $la_usergroups ?? []);
+
+					throw new RedirectException(Router::url(['action' => 'overview'], TRUE), 302);
+				}
+
+				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $ao_user->id], TRUE), 302);
+			}
+
+			$this->Flash->error(__($as_method . '_failed'));
+			foreach ($ao_user->getError('_general') as $ls_error) {
+				$this->Flash->error($ls_error);
+			}
+		}
+
+		//Enable Authorization Check for Usergroups
+		$this->Users->Usergroups->skipAuthorizationCheck(FALSE);
 	}
 }

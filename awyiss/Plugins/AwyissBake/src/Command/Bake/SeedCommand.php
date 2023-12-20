@@ -16,8 +16,6 @@ use Migrations\Command\BakeSeedCommand;
  * Task class for creating and updating controller files.
  */
 class SeedCommand extends BakeSeedCommand {
-
-
 	/**
 	 * {@inheritDoc}
 	 *
@@ -29,7 +27,7 @@ class SeedCommand extends BakeSeedCommand {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildOptionParser (ConsoleOptionParser $ao_parser): ConsoleOptionParser {
+	public function buildOptionParser(ConsoleOptionParser $ao_parser): ConsoleOptionParser {
 		$lo_parser = parent::buildOptionParser($ao_parser);
 
 		$lo_parser->addOption('folder', [
@@ -41,6 +39,7 @@ class SeedCommand extends BakeSeedCommand {
 			'help' => 'Add the truncate command in the seed.',
 			'short' => 't',
 		]);
+
 
 		return $lo_parser;
 	}
@@ -57,19 +56,20 @@ class SeedCommand extends BakeSeedCommand {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function getPath (Arguments $ao_args): string {
+	public function getPath(Arguments $ao_args): string {
 		$ls_path = \APP . $this->pathFragment;
 		if ($this->plugin) {
 			$ls_path = $this->_pluginPath($this->plugin) . $this->pathFragment;
 		}
 		elseif ($ao_args->getOption('folder')) {
 			$ls_path = $ao_args->getOption('folder');
-			if ( ! in_array(substr($ls_path, 0, 1), ['/', DS])) {
+			if (!in_array(substr($ls_path, 0, 1), ['/', DS])) {
 				$ls_path = \ROOT . \DS . $ls_path;
 			}
 		}
 
 		$ls_path = rtrim($ls_path, DS . '/') . \DS;
+
 
 		return str_replace('/', DS, $ls_path);
 	}
@@ -78,7 +78,7 @@ class SeedCommand extends BakeSeedCommand {
 	/**
 	 * @inheritDoc
 	 */
-	public function template (): string {
+	public function template(): string {
 		return 'AwyissBake.Migrations/Seed/seed';
 	}
 
@@ -91,7 +91,7 @@ class SeedCommand extends BakeSeedCommand {
 	 * @return array
 	 * @phpstan-return array<string, mixed>
 	 */
-	public function templateData (Arguments $arguments): array {
+	public function templateData(Arguments $arguments): array {
 		$ls_namespace = Configure::read('App.namespace');
 		if ($this->plugin) {
 			$ls_namespace = $this->_pluginNamespace($this->plugin);
@@ -138,6 +138,7 @@ class SeedCommand extends BakeSeedCommand {
 
 			$la_records = $this->prettifyArray($la_records);
 		}
+
 
 		return [
 			'className' => $this->_name,

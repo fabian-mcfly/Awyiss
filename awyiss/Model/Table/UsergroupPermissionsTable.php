@@ -52,7 +52,7 @@ class UsergroupPermissionsTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public function initialize (array $aa_config): void {
+	public function initialize(array $aa_config): void {
 		parent::initialize($aa_config);
 
 		$this->belongsTo('Usergroups', [
@@ -69,7 +69,7 @@ class UsergroupPermissionsTable extends Table {
 	 *
 	 * @return Validator
 	 */
-	public function validationDefault (Validator $ao_validator): Validator {
+	public function validationDefault(Validator $ao_validator): Validator {
 		parent::validationDefault($ao_validator);
 
 
@@ -117,7 +117,7 @@ class UsergroupPermissionsTable extends Table {
 		$ao_validator->add('settings', [
 			'isArray' => ['rule' => 'isArray'],
 			'maxLengthBytes' => [
-				'rule' => function($ax_value) {
+				'rule' => function ($ax_value) {
 					return strlen(json_encode($ax_value)) <= 65535;
 				},
 			],
@@ -137,8 +137,13 @@ class UsergroupPermissionsTable extends Table {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildRules (RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
-		$ao_rules->add($ao_rules->existsIn(['usergroupId'], 'Usergroups'), 'usergroupExists',
+	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
+		$ao_rules->add(
+			$ao_rules->existsIn(
+				['usergroupId'],
+				'Usergroups'
+			),
+			'usergroupExists',
 			[
 				'errorField' => 'usergroupId',
 				'message' => __d($this->getI18nDomain(), 'error_usergroup_exists'),
@@ -153,8 +158,8 @@ class UsergroupPermissionsTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	protected function initializeSchema (TableSchemaInterface $ao_schema): void {
-		parent::initializeSchema($ao_schema);;
+	protected function initializeSchema(TableSchemaInterface $ao_schema): void {
+		parent::initializeSchema($ao_schema);
 
 		//$ao_schema->setColumnType('access', 'integer');
 		$ao_schema->setColumnType('access', EnumType::from(PermissionAccess::class));

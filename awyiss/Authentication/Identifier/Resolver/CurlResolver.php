@@ -30,8 +30,6 @@ class CurlResolver implements ResolverInterface {
 	 * Accept content type 'application/json'
 	 */
 	final public const ACCEPT_JSON = 'application/json';
-
-
 	/**
 	 * Default configuration.
 	 * - `acceptType` The content type to use for the request
@@ -54,7 +52,7 @@ class CurlResolver implements ResolverInterface {
 	/**
 	 * @param array $aa_config
 	 */
-	public function __construct (array $aa_config = []) {
+	public function __construct(array $aa_config = []) {
 		$this->setConfig($aa_config);
 	}
 
@@ -70,7 +68,7 @@ class CurlResolver implements ResolverInterface {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function find (array $aa_credentials, string $as_type = self::TYPE_AND): array|\ArrayAccess|null {
+	public function find(array $aa_credentials, string $as_type = self::TYPE_AND): array|\ArrayAccess|null {
 		$lx_url = $this->_config['url'] ?? NULL;
 		if (is_callable($lx_url)) {
 			$lx_url = $lx_url($aa_credentials);
@@ -84,7 +82,6 @@ class CurlResolver implements ResolverInterface {
 
 		switch ($this->_config['requestType']) {
 			case self::TYPE_GET:
-
 				break;
 			case self::TYPE_POST:
 				$lx_requestData = $this->_config['requestData'];
@@ -116,6 +113,7 @@ class CurlResolver implements ResolverInterface {
 		if ($lx_result) {
 			return $lx_result;
 		}
+
 
 		return NULL;
 	}

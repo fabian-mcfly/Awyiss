@@ -29,7 +29,7 @@ class FlashHelper extends Helper {
 	 *
 	 * @see Helper\FlashHelper::render
 	 */
-	public function render (string $as_key = '*', array $aa_options = []): ?string {
+	public function render(string $as_key = '*', array $aa_options = []): ?string {
 		$lo_flash = $this->_View->getRequest()->getFlash();
 
 		if ($as_key === '*') {
@@ -45,7 +45,7 @@ class FlashHelper extends Helper {
 			$la_messages = $lo_flash->consume($as_key);
 		}
 
-		if ( ! $la_messages) {
+		if (!$la_messages) {
 			return NULL;
 		}
 
@@ -53,12 +53,12 @@ class FlashHelper extends Helper {
 		foreach ($la_messages as $la_message) {
 			$la_message = $aa_options + $la_message;
 
-			if ( ! isset($la_message['params']['escape']) || $la_message['params']['escape'] !== FALSE) {
+			if (!isset($la_message['params']['escape']) || $la_message['params']['escape'] !== FALSE) {
 				$la_message['message'] = h($la_message['message']);
 			}
 
 			$la_message['class'] = '';
-			if ( ! empty($la_message['params']['class'])) {
+			if (!empty($la_message['params']['class'])) {
 				$la_message['class'] .= ' ' . $la_message['params']['class'];
 				unset($la_message['params']['class']);
 			}
@@ -69,6 +69,7 @@ class FlashHelper extends Helper {
 				'as_classes' => $la_message['class'],
 			]);
 		}
+
 
 		return $ls_messages;
 	}

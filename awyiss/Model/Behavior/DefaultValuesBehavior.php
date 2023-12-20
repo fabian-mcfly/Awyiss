@@ -46,8 +46,8 @@ class DefaultValuesBehavior extends Behavior {
 	 *
 	 * @return EntityInterface
 	 */
-	public function newDefaultEntity (array $aa_additionalData = []): EntityInterface {
-		if ( ! $this->getConfig('enabled')) {
+	public function newDefaultEntity(array $aa_additionalData = []): EntityInterface {
+		if (!$this->getConfig('enabled')) {
 			//Calling this method when the behavior is disabled results in an exception
 			throw new RuntimeException(sprintf('The method `newDefaultEntity()` is not available since the `%s` Behavior is not enabled', static::class));
 		}
@@ -61,7 +61,7 @@ class DefaultValuesBehavior extends Behavior {
 		$la_defaults = $this->table()->getSchema()->defaultValues();
 		//Get the column types
 		$la_typeMap = $this->table()->getSchema()->typeMap();
-		foreach ($la_defaults AS $ls_column => &$lx_default) {
+		foreach ($la_defaults as $ls_column => &$lx_default) {
 			if (is_null($lx_default)) {
 				//No default value? That's already the entities default.
 				continue;

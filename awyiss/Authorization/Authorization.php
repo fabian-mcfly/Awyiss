@@ -12,7 +12,7 @@ use Psr\Http\Message\ServerRequestInterface;
  *
  * @see AuthorizationService
  */
-class Authorization implements AuthorizationServiceProviderInterface  {
+class Authorization implements AuthorizationServiceProviderInterface {
 	/**
 	 * @var string
 	 */
@@ -24,7 +24,7 @@ class Authorization implements AuthorizationServiceProviderInterface  {
 	 *
 	 * @param string $as_realm
 	 */
-	public function __construct (string $as_realm) {
+	public function __construct(string $as_realm) {
 		$this->realm = $as_realm;
 	}
 
@@ -32,7 +32,7 @@ class Authorization implements AuthorizationServiceProviderInterface  {
 	/**
 	 * @inheritDoc
 	 */
-	public function getAuthorizationService (ServerRequestInterface $ao_request): AuthorizationServiceInterface {
+	public function getAuthorizationService(ServerRequestInterface $ao_request): AuthorizationServiceInterface {
 		return new AuthorizationService($this->realm);
 	}
 }

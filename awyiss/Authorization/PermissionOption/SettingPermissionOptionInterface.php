@@ -17,7 +17,7 @@ interface SettingPermissionOptionInterface {
 	 * @return SettingCollection
 	 * @noinspection PhpUnused
 	 */
-	public function getSettings (): SettingCollection;
+	public function getSettings(): SettingCollection;
 
 
 	/**
@@ -28,9 +28,7 @@ interface SettingPermissionOptionInterface {
 	 * @return $this
 	 * @noinspection PhpUnused
 	 */
-	public function setSettings (SettingCollection $ao_settings): static;
-
-
+	public function setSettings(SettingCollection $ao_settings): static;
 	/*
 	protected SettingCollection $settingCollection;
 

@@ -18,5 +18,5 @@ interface AuthorizationServiceProviderInterface {
 	 *
 	 * @return AuthorizationServiceInterface
 	 */
-	public function getAuthorizationService (ServerRequestInterface $ao_request): AuthorizationServiceInterface;
+	public function getAuthorizationService(ServerRequestInterface $ao_request): AuthorizationServiceInterface;
 }

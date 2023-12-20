@@ -47,7 +47,7 @@ class ContentTemplateElement extends Entity {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function _setIdentifier (string $as_identifier): string {
+	public function _setIdentifier(string $as_identifier): string {
 		return Inflector::underscore($as_identifier);
 	}
 }

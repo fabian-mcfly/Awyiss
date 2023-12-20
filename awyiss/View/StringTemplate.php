@@ -19,7 +19,7 @@ class StringTemplate extends \Cake\View\StringTemplate {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function load (string $as_file): void {
+	public function load(string $as_file): void {
 		if ($as_file === '') {
 			throw new CakeException('String template filename cannot be an empty string');
 		}

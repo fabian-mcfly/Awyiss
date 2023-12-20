@@ -29,15 +29,15 @@ class UrlHelper extends \Cake\View\Helper\UrlHelper {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function build ($ax_url = NULL, array $aa_options = []): string {
+	public function build($ax_url = NULL, array $aa_options = []): string {
 		$lx_url = $ax_url;
 		$la_options = $aa_options + [
-			'fullBase' => FALSE,
-			'escape' => TRUE,
-		];
+				'fullBase' => FALSE,
+				'escape' => TRUE,
+			];
 
 		$la_params = [];
-		if ( ! is_string($lx_url) && ( ! empty($la_options['withParams']) || ! empty($la_options['withoutParams']))) {
+		if (!is_string($lx_url) && (!empty($la_options['withParams']) || !empty($la_options['withoutParams']))) {
 			$la_params = $this->buildParameters($la_options, $la_params);
 		}
 
@@ -48,7 +48,7 @@ class UrlHelper extends \Cake\View\Helper\UrlHelper {
 		if (is_array($lx_url)) {
 			$lx_url += $la_params;
 
-			if (! array_key_exists('_name', $lx_url) && empty($lx_url['plugin'])) {
+			if (!array_key_exists('_name', $lx_url) && empty($lx_url['plugin'])) {
 				$lx_url['_name'] = Awyiss::getRealm();
 			}
 
@@ -67,6 +67,7 @@ class UrlHelper extends \Cake\View\Helper\UrlHelper {
 			$ls_url = h($ls_url);
 		}
 
+
 		return $ls_url;
 	}
 
@@ -77,12 +78,12 @@ class UrlHelper extends \Cake\View\Helper\UrlHelper {
 	 *
 	 * @return array
 	 */
-	protected function buildParameters (array $aa_options, mixed $aa_params): array {
+	protected function buildParameters(array $aa_options, mixed $aa_params): array {
 		$la_options = $aa_options;
 		$la_params = $aa_params;
 
 		$la_currentParts = [];
-		foreach (($this->_View->getRequest()->getParam('parts') ?: []) AS $lx_key => $lx_value) {
+		foreach (($this->_View->getRequest()->getParam('parts') ?: []) as $lx_key => $lx_value) {
 			if (is_numeric($lx_key)) {
 				continue;
 			}
@@ -91,7 +92,7 @@ class UrlHelper extends \Cake\View\Helper\UrlHelper {
 		}
 
 		if ($la_withParams = ($la_options['withParams'] ?? [])) {
-			if ( ! is_array($la_withParams)) {
+			if (!is_array($la_withParams)) {
 				$la_withParams = [$la_withParams];
 			}
 
@@ -110,7 +111,7 @@ class UrlHelper extends \Cake\View\Helper\UrlHelper {
 		}
 
 		if ($la_withoutParams = ($la_options['withoutParams'] ?? [])) {
-			if ( ! is_array($la_withoutParams)) {
+			if (!is_array($la_withoutParams)) {
 				$la_withoutParams = [$la_withoutParams];
 			}
 
@@ -130,7 +131,7 @@ class UrlHelper extends \Cake\View\Helper\UrlHelper {
 			}
 		}
 
-		if (empty($la_params) && ! empty($la_withoutParams)) {
+		if (empty($la_params) && !empty($la_withoutParams)) {
 			/**
 			 * This is a workaround for how Router::url() builds a URL
 			 * If the first paramter is empty, it'll use all existing values.
@@ -139,6 +140,7 @@ class UrlHelper extends \Cake\View\Helper\UrlHelper {
 			 */
 			$la_params[ reset($la_withoutParams) ] = FALSE;
 		}
+
 
 		return $la_params;
 	}

@@ -6,6 +6,7 @@ namespace Awyiss\Controller\Component;
 
 use Awyiss\Model\Entity;
 use Awyiss\Model\Table;
+use Awyiss\Routing\Router;
 use Cake\Collection\CollectionInterface;
 use Cake\Collection\Iterator\TreeIterator;
 use Cake\Controller\Component;
@@ -17,7 +18,6 @@ use Cake\ORM\Association\BelongsToMany;
 use Cake\ORM\Association\HasMany;
 use Cake\ORM\Query;
 use Cake\ORM\Query\SelectQuery;
-use Awyiss\Routing\Router;
 use Cake\Utility\Inflector;
 use RuntimeException;
 
@@ -81,7 +81,7 @@ class CategoriesComponent extends Component {
 	 *
 	 * @return void
 	 */
-	public function enable (): void {
+	public function enable(): void {
 		$this->setConfig('enabled', TRUE);
 	}
 
@@ -91,7 +91,7 @@ class CategoriesComponent extends Component {
 	 *
 	 * @return void
 	 */
-	public function disable (): void {
+	public function disable(): void {
 		$this->setConfig('enabled', FALSE);
 	}
 
@@ -105,19 +105,19 @@ class CategoriesComponent extends Component {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function initialize (array $aa_config): void {
-		if ( ! $this->getConfig('identifier')) {
+	public function initialize(array $aa_config): void {
+		if (!$this->getConfig('identifier')) {
 			throw new RuntimeException(sprintf('`%s` is missing the identifier attribute.', static::class));
 		}
 
-		if ( ! $this->getConfig('uriParam')) {
+		if (!$this->getConfig('uriParam')) {
 			$ls_identifier = $this->getConfig('identifier');
 			$this->setConfig('uriParam', Inflector::dasherize($ls_identifier));
 		}
 
-		if ( ! $this->getConfig('useDatasource')) {
+		if (!$this->getConfig('useDatasource')) {
 			$la_categories = $this->getConfig('categories');
-			if ( ! $la_categories || ! is_array($la_categories)) {
+			if (!$la_categories || !is_array($la_categories)) {
 				throw new RuntimeException(sprintf('You need to provide categories when using `useDatasource = false` in `%s`.', static::class));
 			}
 		}
@@ -135,7 +135,7 @@ class CategoriesComponent extends Component {
 	 *
 	 * @return void
 	 */
-	public function beforeRender (): void {
+	public function beforeRender(): void {
 		$this->_startup();
 
 		$ls_action = $this->getController()->getRequest()->getParam('action');
@@ -149,11 +149,11 @@ class CategoriesComponent extends Component {
 		$ls_variableNameSingular = Inflector::variable($ls_identifier);
 		$ls_variableNamePlural = Inflector::variable(Inflector::pluralize($ls_identifier));
 
-		if ( ! $lo_view->getVar('aa_' . $ls_variableNamePlural)) {
+		if (!$lo_view->getVar('aa_' . $ls_variableNamePlural)) {
 			$lo_view->setVar('aa_' . $ls_variableNamePlural, $this->getConfig('categories'));
 		}
 
-		if ( ! $lo_view->getVar('ax_selected' . ucfirst($ls_variableNameSingular))) {
+		if (!$lo_view->getVar('ax_selected' . ucfirst($ls_variableNameSingular))) {
 			$lo_view->setVar('ax_selected' . ucfirst($ls_variableNameSingular), $this->getConfig('selectedCategory'));
 		}
 	}
@@ -169,7 +169,7 @@ class CategoriesComponent extends Component {
 	 *
 	 * @return void
 	 */
-	public function ensurePossibleCategorySelection (
+	public function ensurePossibleCategorySelection(
 		EntityInterface $ao_entity,
 		?ResultSetInterface $ao_records = NULL,
 		string $as_property = NULL
@@ -177,20 +177,28 @@ class CategoriesComponent extends Component {
 		$this->_startup();
 
 		$lo_records = $ao_records ?? $this->getConfig('categories.raw', $this->getCategories());
-		if ( ! $lo_records) {
-			throw new RuntimeException(sprintf('Method `ensurePossibleCategory` in `%s` requires a valid set of records to ensure a possible category selection',
-				static::class));
+		if (!$lo_records) {
+			throw new RuntimeException(
+				sprintf(
+					'Method `ensurePossibleCategory` in `%s` requires a valid set of records to ensure a possible category selection',
+					static::class
+				)
+			);
 		}
 
 		$ls_property = $as_property ?? $this->getConfig('foreignKey');
-		if ( ! $ls_property) {
-			throw new RuntimeException(sprintf('Method `ensurePossibleCategory` in `%s` requires a valid column to ensure a possible category selection',
-				static::class));
+		if (!$ls_property) {
+			throw new RuntimeException(
+				sprintf(
+					'Method `ensurePossibleCategory` in `%s` requires a valid column to ensure a possible category selection',
+					static::class
+				)
+			);
 		}
 
 		$ls_bindingKey = $this->getConfig('bindingKey', 'id');
 
-		if (empty($ao_entity->$ls_property) || ! $lo_records->firstMatch([$ls_bindingKey => $ao_entity->$ls_property])) {
+		if (empty($ao_entity->$ls_property) || !$lo_records->firstMatch([$ls_bindingKey => $ao_entity->$ls_property])) {
 			$la_errors = $ao_entity->getError($ls_property);
 			$ao_entity->$ls_property = $lo_records->first()->$ls_bindingKey;
 			$ao_entity->setError($ls_property, $la_errors);
@@ -207,7 +215,7 @@ class CategoriesComponent extends Component {
 	 *
 	 * @return Query
 	 */
-	public function filterQuery (SelectQuery $ao_query, mixed $ax_selectedCategory = NULL): SelectQuery {
+	public function filterQuery(SelectQuery $ao_query, mixed $ax_selectedCategory = NULL): SelectQuery {
 		$this->_startup();
 
 		$lx_selectedCategory = $ax_selectedCategory ?? $this->getConfig('selectedCategory');
@@ -217,22 +225,21 @@ class CategoriesComponent extends Component {
 		}
 
 		//If we shall not use the datasource, apply the query conditions and return
-		if ( ! $this->getConfig('useDatasource')) {
+		if (!$this->getConfig('useDatasource')) {
 			$ao_query->where($this->getQueryConditions($lx_selectedCategory));
+
 
 			return $ao_query;
 		}
 
 		$ls_associationName = $this->getConfig('associationName');
-		if ( ! $ls_associationName) {
+		if (!$ls_associationName) {
 			throw new RuntimeException(sprintf('Cannot filter query without an association in `%s`.', static::class));
 		}
 
 		$lo_association = $ao_query->getRepository()->getAssociation($ls_associationName);
 
-		if ($lo_association instanceof HasMany
-			|| $lo_association instanceof BelongsToMany) {
-
+		if ($lo_association instanceof HasMany || $lo_association instanceof BelongsToMany) {
 			if ($lx_selectedCategory == $this->getConfig('unassignedKey')) {
 				/*
 				 * Find records with no associated category when the selected category equals the config key "unassignedKey".
@@ -242,11 +249,12 @@ class CategoriesComponent extends Component {
 				$ls_column = $lo_junction->getPrimaryKey() . ' IS';
 				$ao_query->leftJoinWith($ls_associationName)->where([$lo_junction->getAlias() . '.' . $ls_column => NULL]);
 
+
 				return $ao_query;
 			}
 
 			//Find records whose category matches the selectedCategory
-			$ao_query->matching($ls_associationName, function(SelectQuery $ao_query) use ($lo_association, $lx_selectedCategory) {
+			$ao_query->matching($ls_associationName, function (SelectQuery $ao_query) use ($lo_association, $lx_selectedCategory) {
 				$lo_junction = $lo_association->junction();
 				$ls_column = $lo_junction->getAssociation($lo_association->getName())->getForeignKey();
 
@@ -255,6 +263,7 @@ class CategoriesComponent extends Component {
 				//dd([$lo_junction->getAlias() . '.' . $ls_column => $lx_selectedCategory]);
 				$ao_query->where([$lo_junction->getAlias() . '.' . $ls_column => $lx_selectedCategory]);
 
+
 				return $ao_query;
 			});
 		}
@@ -262,6 +271,7 @@ class CategoriesComponent extends Component {
 			//With a belongsTo-association, the categorization is realized by a simple "column = value"-limitation
 			$ao_query->where($this->getQueryConditions($lx_selectedCategory));
 		}
+
 
 		return $ao_query;
 	}
@@ -278,39 +288,42 @@ class CategoriesComponent extends Component {
 	 *
 	 * @return NULL|ResultSetInterface
 	 */
-	public function getCategories (?string $as_tableName = NULL, ?string $as_associationName = NULL): ?ResultSetInterface {
-		if ( ! $this->getConfig('useDatasource')) {
-			throw new RuntimeException(sprintf('Cannot retreive categories when using `useDatasource = false` in `%s`.',
-				static::class));
+	public function getCategories(?string $as_tableName = NULL, ?string $as_associationName = NULL): ?ResultSetInterface {
+		if (!$this->getConfig('useDatasource')) {
+			throw new RuntimeException(
+				sprintf(
+					'Cannot retreive categories when using `useDatasource = false` in `%s`.',
+					static::class
+				)
+			);
 		}
 
 		$ls_tableName = $as_tableName ?? $this->getConfig('tableName', $this->getController()->getName());
 
 		//No table? Do nothing.
 		/** @var Table $lo_table */
-		if ( ! $ls_tableName || ! ($lo_table = $this->getController()->{$ls_tableName})) {
+		if (!$ls_tableName || !($lo_table = $this->getController()->{$ls_tableName})) {
 			return NULL;
 		}
 
 		//No matching association? Do nothing.
 		$ls_associationName = $as_associationName ?? $this->getConfig('associationName');
-		if ( ! $ls_associationName || !$lo_table->hasAssociation($ls_associationName)) {
+		if (!$ls_associationName || !$lo_table->hasAssociation($ls_associationName)) {
 			return NULL;
 		}
 
 		$lo_association = $lo_table->getAssociation($ls_associationName);
 
-		if ( ! $this->getConfig('foreignKey')) {
+		if (!$this->getConfig('foreignKey')) {
 			$this->setConfig('foreignKey', $lo_association->getForeignKey());
 		}
 
-		$lo_query = $lo_association->find($this->getConfig('finder'))
-			->where($this->getConfig('queryConditions'))
-			->applyOptions($this->getConfig('queryOptions'));
+		$lo_query = $lo_association->find($this->getConfig('finder'))->where($this->getConfig('queryConditions'))->applyOptions($this->getConfig('queryOptions'));
 
 		if ($this->getConfig('threaded')) {
 			$lo_query->find('threaded');
 		}
+
 
 		return $lo_query->all();
 	}
@@ -320,7 +333,7 @@ class CategoriesComponent extends Component {
 	 * @return mixed
 	 * @noinspection PhpUnused
 	 */
-	public function getIdentifier (): mixed {
+	public function getIdentifier(): mixed {
 		return $this->getConfig('identifier');
 	}
 
@@ -330,7 +343,7 @@ class CategoriesComponent extends Component {
 	 *
 	 * @return array
 	 */
-	public function getQueryConditions (mixed $ax_selectedCategory = NULL): array {
+	public function getQueryConditions(mixed $ax_selectedCategory = NULL): array {
 		$this->_startup();
 
 		$lx_selectedCategory = $ax_selectedCategory ?? $this->getConfig('selectedCategory');
@@ -356,7 +369,6 @@ class CategoriesComponent extends Component {
 			if (is_array($ls_column)) {
 				$ls_column = reset($ls_column);
 			}
-
 			//$ls_column = $ls_associationName . '.' . $ls_column;
 		}
 
@@ -369,8 +381,9 @@ class CategoriesComponent extends Component {
 			$lx_selectedCategory = NULL;
 		}
 
+
 		return [
-			$ls_column => $lx_selectedCategory
+			$ls_column => $lx_selectedCategory,
 		];
 	}
 
@@ -379,14 +392,16 @@ class CategoriesComponent extends Component {
 	 * @return mixed
 	 * @noinspection PhpUnused
 	 */
-	public function getSelectedCategory (): mixed {
+	public function getSelectedCategory(): mixed {
 		//Add the selected category identifier to the config
-		if ( ! $this->getConfig('selectedCategory')) {
+		if (!$this->getConfig('selectedCategory')) {
 			$this->_startup();
 		}
 
+
 		return $this->getConfig('selectedCategory');
 	}
+
 
 	/**
 	 * This method groups the result of the provided query by the column provided via `$as_column`.
@@ -400,15 +415,19 @@ class CategoriesComponent extends Component {
 	 *
 	 * @return SelectQuery
 	 */
-	public function groupResult (SelectQuery $ao_query, ?string $as_column = NULL, ?string $as_associationName = NULL, bool $ab_sortByAssociation = TRUE): SelectQuery {
+	public function groupResult(SelectQuery $ao_query, ?string $as_column = NULL, ?string $as_associationName = NULL, bool $ab_sortByAssociation = TRUE): SelectQuery {
 		$this->_startup();
 
 		$ls_column = $as_column;
 		if ($this->getConfig('useDatasource')) {
 			$ls_associationName = $as_associationName ?? $this->getConfig('associationName');
-			if ( ! $ls_associationName) {
-				throw new RuntimeException(sprintf('Cannot filter query without an association in `%s`.',
-					static::class));
+			if (!$ls_associationName) {
+				throw new RuntimeException(
+					sprintf(
+						'Cannot filter query without an association in `%s`.',
+						static::class
+					)
+				);
 			}
 
 			$lo_association = $ao_query->getRepository()->getAssociation($ls_associationName);
@@ -440,10 +459,10 @@ class CategoriesComponent extends Component {
 			$this->sortQuery($ao_query, $as_column, $as_associationName);
 		}
 
+
 		return $ao_query->formatResults(function (CollectionInterface $ao_collection) use ($ls_column) {
 			return $ao_collection->groupBy($ls_column);
 		});
-
 		/*return $ao_query->mapReduce(function(Entity $ao_entity, int $li_key, MapReduce $ao_mapReduce) use ($ls_column) {
 			$ao_mapReduce->emitIntermediate($ao_entity, $ao_entity->$ls_column);
 		}, function($aa_entities, $ax_column, MapReduce $ao_mapReduce) {
@@ -459,7 +478,7 @@ class CategoriesComponent extends Component {
 	 *
 	 * @return Query
 	 */
-	public function sortQuery (SelectQuery $ao_query, ?string $as_column = NULL, ?string $as_associationName = NULL): SelectQuery {
+	public function sortQuery(SelectQuery $ao_query, ?string $as_column = NULL, ?string $as_associationName = NULL): SelectQuery {
 		$this->_startup();
 
 		$la_categories = $this->getConfig('categories');
@@ -470,9 +489,13 @@ class CategoriesComponent extends Component {
 		$ls_column = $as_column;
 		if ($this->getConfig('useDatasource')) {
 			$ls_associationName = $as_associationName ?? $this->getConfig('associationName');
-			if ( ! $ls_associationName) {
-				throw new RuntimeException(sprintf('Cannot filter query without an association in `%s`.',
-					static::class));
+			if (!$ls_associationName) {
+				throw new RuntimeException(
+					sprintf(
+						'Cannot filter query without an association in `%s`.',
+						static::class
+					)
+				);
 			}
 
 			$lo_association = $ao_query->getRepository()->getAssociation($ls_associationName);
@@ -524,30 +547,74 @@ class CategoriesComponent extends Component {
 		/** @noinspection PhpUndefinedMethodInspection */
 		$ao_query->orderByAsc($ao_query->newExpr($ao_query->func()->FIND_IN_SET([
 			$ls_prefixedColumn => 'identifier',
-			implode(',', $la_categoryIdentifiers)
+			implode(',', $la_categoryIdentifiers),
 		])), TRUE);
 
 		/*
 		 * Set the order by-clause but reset existing order-clauses, so records will be sorted
 		 * by the system_order of category first and then in the desired order.
 		 */
-		if ( ! empty($lo_order)) {
+		if (!empty($lo_order)) {
 			dd($lo_order, __FILE__, __LINE__);
 			//Re-add remembered orders
 			/** @noinspection PhpUnreachableStatementInspection */
-			$lo_order->traverse(function($ao_clause) use ($ao_query) {
+			$lo_order->traverse(function ($ao_clause) use ($ao_query) {
 				$ao_query->orderBy($ao_clause);
 			});
 		}
+
 
 		return $ao_query;
 	}
 
 
 	/**
+	 * Verify the selected category identifier.
+	 * If that fails, set it to the first available or initiate a redirect if
+	 * `redirectOnInvalidSelection` is set to TRUE
+	 *
+	 * @param mixed $ax_categoryId
+	 * @param array $aa_categories
+	 * @param string $as_uriKey
+	 *
+	 * @return mixed
+	 */
+	public function verifySelection(mixed $ax_categoryId = NULL, array $aa_categories = NULL, bool $ab_redirect = NULL): mixed {
+		$lx_categoryId = $ax_categoryId ?: $this->getSelectedCategory();
+		$la_categories = $aa_categories ?? $this->getConfig('categories.simple');
+
+		if (!array_key_exists($lx_categoryId, $la_categories)) {
+			$la_additionalAllowedValues = [];
+			if ($this->getConfig('allowAggregation')) {
+				$la_additionalAllowedValues[] = $this->getConfig('aggregationKey');
+			}
+			if ($this->getConfig('allowUnassigned')) {
+				$la_additionalAllowedValues[] = $this->getConfig('unassignedKey');
+			}
+
+			if (!in_array($lx_categoryId, $la_additionalAllowedValues) && ($lx_categoryId = $this->getConfig('defaultVal')) === NULL) {
+				if ($la_additionalAllowedValues) {
+					$lx_categoryId = reset($la_additionalAllowedValues);
+				}
+				else {
+					$lx_categoryId = array_key_first($la_categories);
+				}
+
+				if ($ab_redirect === TRUE || ($this->getConfig('redirectOnInvalidSelection') && $ab_redirect !== FALSE)) {
+					throw new RedirectException(Router::url(['action' => 'overview', $this->getConfig('uriParam') => $lx_categoryId], TRUE), 302);
+				}
+			}
+		}
+
+
+		return $lx_categoryId;
+	}
+
+
+	/**
 	 * Internal function to retreive categories and add them to the configuration
 	 */
-	protected function _startup (): void {
+	protected function _startup(): void {
 		if ($this->started) {
 			return;
 		}
@@ -565,7 +632,12 @@ class CategoriesComponent extends Component {
 
 		$ls_bindingKey = $this->getConfig('bindingKey', 'id');
 		//Remember an identifier that will be used to save the selected category in the session
-		$ls_sessionIdentifier = 'categories.' . ($lo_request->getParam('lang') ?? 'global') . '.' . Inflector::underscore($ls_tableName) . '.' . Inflector::underscore($ls_identifier);
+		$ls_sessionIdentifier = 'categories.' .
+								($lo_request->getParam('lang') ?? 'global') .
+								'.' .
+								Inflector::underscore($ls_tableName) .
+								'.' .
+								Inflector::underscore($ls_identifier);
 		if (!str_ends_with($ls_sessionIdentifier, '_' . $ls_bindingKey)) {
 			$ls_sessionIdentifier .= '_' . $ls_bindingKey;
 		}
@@ -581,7 +653,7 @@ class CategoriesComponent extends Component {
 			}
 		}
 		//Session not started OR there's no category identifier saved in the session
-		elseif ( ! $lo_session->started() || ! ($lx_categoryId = $lo_session->read($ls_sessionIdentifier))) {
+		elseif (!$lo_session->started() || !($lx_categoryId = $lo_session->read($ls_sessionIdentifier))) {
 			//Set the category identifier to the default value from the config
 			$lx_categoryId = $this->getConfig('defaultVal');
 
@@ -620,7 +692,7 @@ class CategoriesComponent extends Component {
 
 		//Add the whole config of this component as an item inside the 'categorization' attribute of the request
 		$la_categorization = $lo_request->getAttribute('categorization', []);
-		if ( ! is_array($la_categorization)) {
+		if (!is_array($la_categorization)) {
 			$la_categorization = [];
 		}
 		$la_categorization[ $ls_identifier ] = $this->getConfig();
@@ -639,14 +711,15 @@ class CategoriesComponent extends Component {
 	 *
 	 * @return array
 	 */
-	protected function _buildCategories (mixed $as_tableName, mixed $as_bindingKey): array {
-		if ( ! $this->getConfig('useDatasource')) {
+	protected function _buildCategories(mixed $as_tableName, mixed $as_bindingKey): array {
+		if (!$this->getConfig('useDatasource')) {
 			$la_categories = $this->getConfig('categories');
 
 			$this->setConfig('categories', [
 				'raw' => $la_categories['raw'] ?? NULL,
 				'simple' => $la_categories['simple'] ?? $la_categories,
 			], FALSE);
+
 
 			return $la_categories['simple'] ?? $la_categories;
 		}
@@ -681,49 +754,7 @@ class CategoriesComponent extends Component {
 		//Add the array of categories to the config
 		$this->setConfig('categories.simple', $la_categories);
 
+
 		return $la_categories;
-	}
-
-
-	/**
-	 * Verify the selected category identifier.
-	 * If that fails, set it to the first available or initiate a redirect if
-	 * `redirectOnInvalidSelection` is set to TRUE
-	 *
-	 * @param mixed  $ax_categoryId
-	 * @param array  $aa_categories
-	 * @param string $as_uriKey
-	 *
-	 * @return mixed
-	 */
-	public function verifySelection (mixed $ax_categoryId = NULL, array $aa_categories = NULL, bool $ab_redirect = NULL): mixed {
-		$lx_categoryId = $ax_categoryId ?: $this->getSelectedCategory();
-		$la_categories = $aa_categories ?? $this->getConfig('categories.simple');
-
-		if (! array_key_exists($lx_categoryId, $la_categories)) {
-			$la_additionalAllowedValues = [];
-			if ($this->getConfig('allowAggregation')) {
-				$la_additionalAllowedValues[] = $this->getConfig('aggregationKey');
-			}
-			if ($this->getConfig('allowUnassigned')) {
-				$la_additionalAllowedValues[] = $this->getConfig('unassignedKey');
-			}
-
-			if ( ! in_array($lx_categoryId, $la_additionalAllowedValues) && ($lx_categoryId = $this->getConfig('defaultVal')) === NULL) {
-				if ($la_additionalAllowedValues) {
-					$lx_categoryId = reset($la_additionalAllowedValues);
-				}
-				else {
-					$lx_categoryId = array_key_first($la_categories);
-				}
-
-				if ($ab_redirect === TRUE || ($this->getConfig('redirectOnInvalidSelection') && $ab_redirect !== FALSE)) {
-					throw new RedirectException(Router::url(['action' => 'overview', $this->getConfig('uriParam') => $lx_categoryId],
-						TRUE), 302);
-				}
-			}
-		}
-
-		return $lx_categoryId;
 	}
 }

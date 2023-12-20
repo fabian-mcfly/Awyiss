@@ -30,7 +30,7 @@ class TranslateBehavior extends \Cake\ORM\Behavior\TranslateBehavior {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function initialize (array $aa_config): void {
+	public function initialize(array $aa_config): void {
 		parent::initialize($aa_config);
 
 		if (isset($aa_config['locale'])) {
@@ -59,14 +59,14 @@ class TranslateBehavior extends \Cake\ORM\Behavior\TranslateBehavior {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function beforeMarshal (EventInterface $ao_event, ArrayObject $ao_data, ArrayObject $ao_options): void {
+	public function beforeMarshal(EventInterface $ao_event, ArrayObject $ao_data, ArrayObject $ao_options): void {
 		$ls_firstLanguageShortcode = array_key_first($this->languages);
 
 		if (empty($ao_data['_translations'])) {
 			return;
 		}
 
-		foreach ($this->getConfig('fields') AS $ls_field) {
+		foreach ($this->getConfig('fields') as $ls_field) {
 			$ls_defaultTranslation = $ao_data['_translations'][ $ls_firstLanguageShortcode ][ $ls_field ] ?? NULL;
 			$ao_data[ $ls_field ] = $ls_defaultTranslation;
 		}
@@ -78,12 +78,13 @@ class TranslateBehavior extends \Cake\ORM\Behavior\TranslateBehavior {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	protected function referenceName (Table $ao_table): string {
+	protected function referenceName(Table $ao_table): string {
 		$ls_name = namespaceSplit($ao_table::class);
 		$ls_name = substr((string) end($ls_name), 0, -5);
 		if (empty($ls_name)) {
 			$ls_name = $ao_table->getTable() ?: $ao_table->getAlias();
 		}
+
 
 		return Inflector::underscore($ls_name);
 	}

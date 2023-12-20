@@ -19,7 +19,7 @@ interface PolicyInterface {
 	 *
 	 * @return string
 	 */
-	public static function getScope (): string;
+	public static function getScope(): string;
 
 
 	/**
@@ -27,7 +27,7 @@ interface PolicyInterface {
 	 *
 	 * @return PermissionOptionCollection
 	 */
-	public static function getPermissionOptions (): PermissionOptionCollection;
+	public static function getPermissionOptions(): PermissionOptionCollection;
 
 
 	/**
@@ -37,5 +37,5 @@ interface PolicyInterface {
 	 *
 	 * @return NULL|PermissionOptionInterface
 	 */
-	public static function getPermissionOption (string $as_identifier): ?PermissionOptionInterface;
+	public static function getPermissionOption(string $as_identifier): ?PermissionOptionInterface;
 }

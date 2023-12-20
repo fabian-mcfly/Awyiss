@@ -58,12 +58,13 @@ class PageRole extends Entity {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	protected function _setIdentifier (string $as_identifier): string {
+	protected function _setIdentifier(string $as_identifier): string {
 		$ls_identifier = preg_replace('/\d/', '', $as_identifier);
 
 		$ls_identifier = Text::slug($ls_identifier, ['replacement' => '_']);
 
 		$ls_identifier = Inflector::singularize($ls_identifier);
+
 
 		return strtolower($ls_identifier);
 	}

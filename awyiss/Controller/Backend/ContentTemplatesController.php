@@ -8,9 +8,9 @@ use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Model\Entity\ContentTemplate;
 use Awyiss\Model\Entity\PageTemplate;
 use Awyiss\Model\Table\ContentTemplatesTable;
+use Awyiss\Routing\Router;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
-use Awyiss\Routing\Router;
 
 
 /**
@@ -24,7 +24,7 @@ class ContentTemplatesController extends Controller {
 	 *
 	 * @throws \Exception
 	 */
-	public function overview (): void {
+	public function overview(): void {
 		$this->Authorization->ensure('read');
 
 		$lo_contentTemplates = $this->ContentTemplates->find()->where($this->getOverviewWhere())->contain(['ContentTemplateElements'])->all();
@@ -42,7 +42,7 @@ class ContentTemplatesController extends Controller {
 	 *
 	 * @throws \Exception
 	 */
-	public function add (): void {
+	public function add(): void {
 		$this->Authorization->ensure('create');
 
 		$lo_contentTemplate = $this->ContentTemplates->newDefaultEntity();
@@ -54,12 +54,12 @@ class ContentTemplatesController extends Controller {
 		$la_pageTemplates = $this->getPageTemplates();
 
 		$la_assignedContentAreas = [];
-		foreach (($lo_contentTemplate->contentAreas ?? []) AS $lo_contentArea) {
+		foreach (($lo_contentTemplate->contentAreas ?? []) as $lo_contentArea) {
 			$la_assignedContentAreas[ $lo_contentArea->_joinData->pageTemplateId ][] = $lo_contentArea->id;
 		}
 
 		$la_availableFieldset = [];
-		foreach ($this->ContentTemplates->getAvailableFieldsets() AS $ls_fieldset) {
+		foreach ($this->ContentTemplates->getAvailableFieldsets() as $ls_fieldset) {
 			$la_availableFieldset[ $ls_fieldset ] = __d('contents', 'fieldset_' . $ls_fieldset);
 		}
 
@@ -81,16 +81,17 @@ class ContentTemplatesController extends Controller {
 	 *
 	 * @throws \Exception
 	 */
-	public function edit () {
+	public function edit() {
 		$this->Authorization->ensure('update');
 
 		/** @var ContentTemplate $lo_contentTemplate */
 		$lo_contentTemplate = $this->ContentTemplates->findById((int) $this->request->getParam('id'))->find('translations')->contain([
 			'ContentTemplateContentAreas',
-			'ContentTemplateElements'
+			'ContentTemplateElements',
 		])->first();
-		if ( ! $lo_contentTemplate) {
+		if (!$lo_contentTemplate) {
 			$this->Flash->error(__('record_not_found'));
+
 
 			return $this->redirect(['action' => 'overview']);
 		}
@@ -107,7 +108,7 @@ class ContentTemplatesController extends Controller {
 		}
 
 		$la_availableFieldset = [];
-		foreach ($this->ContentTemplates->getAvailableFieldsets() AS $ls_fieldset) {
+		foreach ($this->ContentTemplates->getAvailableFieldsets() as $ls_fieldset) {
 			$la_availableFieldset[ $ls_fieldset ] = __d('contents', 'fieldset_' . $ls_fieldset);
 		}
 
@@ -129,15 +130,17 @@ class ContentTemplatesController extends Controller {
 	 *
 	 * @throws \Exception
 	 */
-	public function delete (): Response {
+	public function delete(): Response {
 		$this->Authorization->ensure('delete');
 
 		$this->request->allowMethod(['get', 'delete']);
 
 		/** @var ContentTemplate $lo_contentTemplate */
 		$lo_contentTemplate = $this->ContentTemplates->findById((int) $this->request->getParam('id'))->find('translations')->first();
-		if ( ! $lo_contentTemplate) {
+		if (!$lo_contentTemplate) {
 			$this->Flash->error(__('record_not_found'));
+
+
 			return $this->redirect(['action' => 'overview']);
 		}
 
@@ -147,6 +150,7 @@ class ContentTemplatesController extends Controller {
 		else {
 			$this->Flash->error(__('delete_failed'));
 		}
+
 
 		return $this->redirect(['action' => 'overview']);
 	}
@@ -158,7 +162,7 @@ class ContentTemplatesController extends Controller {
 	 *
 	 * @return void
 	 */
-	protected function save (ContentTemplate $ao_contentTemplate, string $as_method = 'add'): void {
+	protected function save(ContentTemplate $ao_contentTemplate, string $as_method = 'add'): void {
 		$la_associated = [];
 		if ($this->ContentTemplates->hasAttributes()) {
 			$la_associated[] = $this->ContentTemplates->getAttributesTable(TRUE);
@@ -167,16 +171,16 @@ class ContentTemplatesController extends Controller {
 
 		$la_requestData = $this->request->getData() + ['content_template_elements' => []];
 
-		if ( ! empty($la_requestData['content_areas'])) {
-			$la_requestData['content_template_content_areas'] = array_filter($la_requestData['content_areas'], function(array $aa_element) {
-				return ! empty($aa_element['content_area_id']);
+		if (!empty($la_requestData['content_areas'])) {
+			$la_requestData['content_template_content_areas'] = array_filter($la_requestData['content_areas'], function (array $aa_element) {
+				return !empty($aa_element['content_area_id']);
 			});
 			unset($la_requestData['content_areas']);
 			$la_associated[] = 'ContentTemplateContentAreas';
 		}
 
 		if (!empty($la_requestData['content_template_elements'])) {
-			$la_requestData['content_template_elements'] = array_filter($la_requestData['content_template_elements'], function($aa_element) {
+			$la_requestData['content_template_elements'] = array_filter($la_requestData['content_template_elements'], function ($aa_element) {
 				return !empty($aa_element['identifier']);
 			});
 
@@ -185,7 +189,7 @@ class ContentTemplatesController extends Controller {
 
 		$this->ContentTemplates->patchEntity($ao_contentTemplate, $la_requestData, ['associated' => $la_associated]);
 
-		if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
+		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
 			if ($this->ContentTemplates->save($ao_contentTemplate)) {
 				$this->Flash->success(__($as_method . '_succeeded'));
 
@@ -207,19 +211,17 @@ class ContentTemplatesController extends Controller {
 	/**
 	 * @return array
 	 */
-	protected function getPageTemplates (): array {
+	protected function getPageTemplates(): array {
 		$this->dispatchEvent('Authorization.disableBehavior');
 		$lo_pageTemplates = $this->fetchTable('PageTemplates')->find()->contain(['ContentAreas', 'PageRoles'])->all();
 		$this->dispatchEvent('Authorization.enableBehavior');
 
-		$lo_pageTemplates = $lo_pageTemplates
-		->sortBy('pageRole.systemOrder', SORT_ASC)
-		->filter(function(PageTemplate $ao_entity) {
+		$lo_pageTemplates = $lo_pageTemplates->sortBy('pageRole.systemOrder', SORT_ASC)->filter(function (PageTemplate $ao_entity) {
 			return !empty($ao_entity->contentAreas);
-		})
-		->groupBy(function(PageTemplate $ao_entity) {
+		})->groupBy(function (PageTemplate $ao_entity) {
 			return $ao_entity->pageRole->label;
 		});
+
 
 		return $lo_pageTemplates->toArray();
 	}

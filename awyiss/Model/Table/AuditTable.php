@@ -33,6 +33,7 @@ class AuditTable extends Table {
 		],
 	];
 
+
 	/**
 	 * Returns the default validator object.
 	 *
@@ -41,7 +42,7 @@ class AuditTable extends Table {
 	 *
 	 * @return Validator
 	 */
-	public function validationDefault (Validator $ao_validator): Validator {
+	public function validationDefault(Validator $ao_validator): Validator {
 		parent::validationDefault($ao_validator);
 
 
@@ -93,7 +94,7 @@ class AuditTable extends Table {
 		$ao_validator->add('dataOld', [
 			'isArray' => ['rule' => 'isArray'],
 			'maxLengthBytes' => [
-				'rule' => function($ax_value) {
+				'rule' => function ($ax_value) {
 					return strlen(json_encode($ax_value)) <= 16777215;
 				},
 			],
@@ -103,7 +104,7 @@ class AuditTable extends Table {
 		$ao_validator->add('dataNew', [
 			'isArray' => ['rule' => 'isArray'],
 			'maxLengthBytes' => [
-				'rule' => function($ax_value) {
+				'rule' => function ($ax_value) {
 					return strlen(json_encode($ax_value)) <= 16777215;
 				},
 			],
@@ -113,7 +114,7 @@ class AuditTable extends Table {
 		$ao_validator->add('diff', [
 			'isArray' => ['rule' => 'isArray'],
 			'maxLengthBytes' => [
-				'rule' => function($ax_value) {
+				'rule' => function ($ax_value) {
 					return strlen(json_encode($ax_value)) <= 16777215;
 				},
 			],
@@ -139,8 +140,8 @@ class AuditTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	protected function initializeSchema (TableSchemaInterface $ao_schema): void {
-		parent::initializeSchema($ao_schema);;
+	protected function initializeSchema(TableSchemaInterface $ao_schema): void {
+		parent::initializeSchema($ao_schema);
 
 		$ao_schema->setColumnType('data_old', 'json');
 		$ao_schema->setColumnType('data_new', 'json');

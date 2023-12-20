@@ -72,7 +72,7 @@ class ContentsTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public function initialize (array $aa_config): void {
+	public function initialize(array $aa_config): void {
 		parent::initialize($aa_config);
 
 		$this->addBehavior('Nest', $this->getConfig('nest', []));
@@ -113,7 +113,7 @@ class ContentsTable extends Table {
 	 *
 	 * @return Validator
 	 */
-	public function validationDefault (Validator $ao_validator): Validator {
+	public function validationDefault(Validator $ao_validator): Validator {
 		parent::validationDefault($ao_validator);
 
 
@@ -202,7 +202,7 @@ class ContentsTable extends Table {
 		$ao_validator->add('data', [
 			'isArray' => ['rule' => 'isArray'],
 			'maxLengthBytes' => [
-				'rule' => function(array $aa_value): bool {
+				'rule' => function (array $aa_value): bool {
 					return strlen(json_encode($aa_value)) <= 65535;
 				},
 			],
@@ -237,8 +237,8 @@ class ContentsTable extends Table {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildRules (RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
-		$ao_rules->add(function(Content $ao_entity/*, array $aa_options*/): bool {
+	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
+		$ao_rules->add(function (Content $ao_entity/*, array $aa_options*/): bool {
 			/**
 			 * Retreive the page and the assigned page template.
 			 * This ensures that the user has access to the scope (page role) for the page with `pageId`,
@@ -261,8 +261,9 @@ class ContentsTable extends Table {
 					],
 				]);
 			}
-			catch (RecordNotFoundException|InvalidPrimaryKeyException|ForbiddenException) {
+			catch (RecordNotFoundException | InvalidPrimaryKeyException | ForbiddenException) {
 				$ao_entity->setError('page_id', __d($this->getI18nDomain(), 'error_valid_page_id'));
+
 
 				return FALSE;
 			}
@@ -274,7 +275,8 @@ class ContentsTable extends Table {
 			 */
 			try {
 				/** @var ContentTemplate $lo_contentTemplate */
-				$lo_contentTemplate = $this->ContentTemplates->get($ao_entity->contentTemplateId,
+				$lo_contentTemplate = $this->ContentTemplates->get(
+					$ao_entity->contentTemplateId,
 					authorize: ['skip' => TRUE],
 					contain: [
 						'ContentTemplateContentAreas' => [
@@ -283,9 +285,9 @@ class ContentsTable extends Table {
 									'authorize' => ['skip' => TRUE],
 								],
 							],
-							'queryBuilder' => function(SelectQuery $ao_query) use ($lo_page) {
+							'queryBuilder' => function (SelectQuery $ao_query) use ($lo_page) {
 								return $ao_query->where(['ContentTemplateContentAreas.page_template_id' => $lo_page->pageTemplateId]);
-							}
+							},
 						],
 						'ContentTemplateElements' => [
 							'finder' => [
@@ -297,17 +299,19 @@ class ContentsTable extends Table {
 					],
 				);
 			}
-			catch (RecordNotFoundException|InvalidPrimaryKeyException) {
+			catch (RecordNotFoundException | InvalidPrimaryKeyException) {
 				//Content template not found
 				$ao_entity->setError('content_template_id', __d($this->getI18nDomain(), 'error_valid_content_template_id'));
+
 
 				return FALSE;
 			}
 
 
 			//Content area not found
-			if ( ! in_array($ao_entity->contentAreaId, array_column($lo_contentTemplate->contentTemplateContentAreas, 'content_area_id'))) {
+			if (!in_array($ao_entity->contentAreaId, array_column($lo_contentTemplate->contentTemplateContentAreas, 'content_area_id'))) {
 				$ao_entity->setError('content_area_id', __d($this->getI18nDomain(), 'error_valid_content_area_id'));
+
 
 				return FALSE;
 			}
@@ -325,7 +329,7 @@ class ContentsTable extends Table {
 			/** @noinspection PhpUndefinedMethodInspection */
 			$la_errors = $this->getEntityClass()::mapFields($la_errors, TRUE);
 
-			if ($this->hasAttributes() && ! empty($la_errors['attributes'])) {
+			if ($this->hasAttributes() && !empty($la_errors['attributes'])) {
 				/** @noinspection PhpUndefinedMethodInspection */
 				$la_errors['attributes'] = $this->{$this->getAttributesTable(TRUE)}->getEntityClass()::mapFields($la_errors['attributes'], TRUE);
 				$ao_entity->attributes->setErrors($la_errors['attributes']);
@@ -333,25 +337,25 @@ class ContentsTable extends Table {
 
 			$ao_entity->setErrors($la_errors);
 
+
 			return empty($la_errors);
 		});
 
 
-		$ao_rules->add(function(Content $ao_entity, array $aa_options) use ($ao_rules): bool {
+		$ao_rules->add(function (Content $ao_entity, array $aa_options) use ($ao_rules): bool {
 			if (($aa_options['checkRules'] ?? TRUE) === FALSE) {
 				dd(__FILE__, __LINE__);
 			}
 
-			if ( ! $ao_entity->get('parentId')) {
+			if (!$ao_entity->get('parentId')) {
 				return TRUE;
 			}
 
-			$lo_existsIn = $ao_rules->existsIn(['parentId', 'pageId', 'contentAreaId'], 'ParentContents',
-				[
-					'errorField' => 'parentId',
-					'message' => __dfx($this->getI18nDomain(), 'validation', 'contents', 'error_valid_parent_id'),
-				]
-			);
+			$lo_existsIn = $ao_rules->existsIn(['parentId', 'pageId', 'contentAreaId'], 'ParentContents', [
+				'errorField' => 'parentId',
+				'message' => __dfx($this->getI18nDomain(), 'validation', 'contents', 'error_valid_parent_id'),
+			]);
+
 
 			return $lo_existsIn($ao_entity, $aa_options);
 		}, 'validParentId');
@@ -371,9 +375,13 @@ class ContentsTable extends Table {
 
 
 		//Ensure that a content has no linked duplicating contents when deleting it.
-		$ao_rules->addDelete($ao_rules->isNotLinkedTo('DuplicateContents',
-			'_general',
-			'Must have zero duplicating contents before deletion.'));
+		$ao_rules->addDelete(
+			$ao_rules->isNotLinkedTo(
+				'DuplicateContents',
+				'_general',
+				'Must have zero duplicating contents before deletion.'
+			)
+		);
 
 
 		return $ao_rules;
@@ -386,12 +394,13 @@ class ContentsTable extends Table {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function groupByContentArea (SelectQuery|CollectionInterface $ax_data): CollectionInterface {
+	public function groupByContentArea(SelectQuery|CollectionInterface $ax_data): CollectionInterface {
 		$lo_data = is_a($ax_data, SelectQuery::class) ? $ax_data->all() : $ax_data;
 
 		foreach ($lo_data->groupBy('contentAreaId') as $ls_contentArea => $la_contents) {
 			$lo_data->$ls_contentArea = new Collection($la_contents);
 		}
+
 
 		return $lo_data;
 	}
@@ -405,8 +414,8 @@ class ContentsTable extends Table {
 	 *
 	 * @return CollectionInterface
 	 */
-	public function nestedByContentArea (SelectQuery $ao_query): CollectionInterface {
-		return $ao_query->find('threaded')->all()->groupBy('contentAreaId')->map(function(array $aa_contents): CollectionInterface {
+	public function nestedByContentArea(SelectQuery $ao_query): CollectionInterface {
+		return $ao_query->find('threaded')->all()->groupBy('contentAreaId')->map(function (array $aa_contents): CollectionInterface {
 			$lo_contents = (new Collection($aa_contents))->listNested();
 
 			/** @var Content $lo_content */
@@ -415,6 +424,7 @@ class ContentsTable extends Table {
 				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 				$lo_content->level = $lo_contents->getDepth();
 			}
+
 
 			return $lo_contents;
 		});
@@ -427,7 +437,7 @@ class ContentsTable extends Table {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function listNested (SelectQuery $ao_query): CollectionInterface {
+	public function listNested(SelectQuery $ao_query): CollectionInterface {
 		$lo_contents = $ao_query->find('threaded')->all()->listNested();
 
 		/** @var Content $lo_content */
@@ -436,6 +446,7 @@ class ContentsTable extends Table {
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 			$lo_content->level = $lo_contents->getDepth();
 		}
+
 
 		return $lo_contents;
 	}
@@ -450,14 +461,15 @@ class ContentsTable extends Table {
 	 *
 	 * @return Page
 	 */
-	public function getPage (int $ai_pageId): Page {
+	public function getPage(int $ai_pageId): Page {
 		try {
 			$lo_tableLocator = FactoryLocator::get('Table');
 			/** @var Table $lo_pages */
 			$lo_pages = $lo_tableLocator->get('Pages');
 
 			/** @var Page $lo_page */
-			$lo_page = $lo_pages->get($ai_pageId,
+			$lo_page = $lo_pages->get(
+				$ai_pageId,
 				authorize: [
 					//'failSilently' => FALSE,
 					'skip' => TRUE,
@@ -486,8 +498,7 @@ class ContentsTable extends Table {
 							$ao_query->applyOptions(['authorize' => ['skip' => TRUE]]);
 
 							return $ao_query;
-						},*/
-						'ContentAreas' => [
+						},*/ 'ContentAreas' => [
 							'fields' => [
 								'id',
 								'title',
@@ -509,6 +520,7 @@ class ContentsTable extends Table {
 		catch (ForbiddenException) {
 			throw new ForbiddenException(sprintf('Access to page id `%s` is forbidden', $ai_pageId));
 		}
+
 
 		return $lo_page;
 	}
@@ -545,14 +557,14 @@ class ContentsTable extends Table {
 	 *
 	 * @throws Exception
 	 */
-	public function forPageRole (string $as_identifier, bool $ab_initializePages = TRUE): void {
+	public function forPageRole(string $as_identifier, bool $ab_initializePages = TRUE): void {
 		//Remember the currently used foreign key for the Pages association
 		//$ls_foreignKey = $this->Pages->getForeignKey();
 
 		$ls_singular = Inflector::singularize(Inflector::underscore($as_identifier));
 
 		$ls_constant = 'PAGEROLE_' . strtoupper($ls_singular);
-		if ( ! defined($ls_constant)) {
+		if (!defined($ls_constant)) {
 			throw new RuntimeException(sprintf('Cannot use `%s` for page role `%s`', static::class, $as_identifier));
 		}
 
@@ -578,10 +590,11 @@ class ContentsTable extends Table {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function getForScope (): string {
-		if ( ! isset($this->forScope)) {
+	public function getForScope(): string {
+		if (!isset($this->forScope)) {
 			throw new RuntimeException(sprintf('Cannot use `%s` without calling `forPageRole` first', static::class));
 		}
+
 
 		return $this->forScope;
 	}
@@ -594,7 +607,7 @@ class ContentsTable extends Table {
 	 *
 	 * @noinspection PhpPossiblePolymorphicInvocationInspection
 	 */
-	protected function setForScope (string $as_scope): void {
+	protected function setForScope(string $as_scope): void {
 		if ($this->hasBehavior('Authorize')) {
 			/** @var AuthorizeBehavior $lo_authorization */
 			$lo_authorization = $this->getBehavior('Authorize');
@@ -620,7 +633,7 @@ class ContentsTable extends Table {
 	/**
 	 * @return string
 	 */
-	public function getPageRoleName (): string {
+	public function getPageRoleName(): string {
 		return $this->pageRoleName;
 	}
 
@@ -630,8 +643,9 @@ class ContentsTable extends Table {
 	 *
 	 * @return ContentsTable
 	 */
-	protected function setPageRoleName (string $as_pageRoleName): static {
+	protected function setPageRoleName(string $as_pageRoleName): static {
 		$this->pageRoleName = Inflector::camelize(Inflector::tableize($as_pageRoleName));
+
 
 		return $this;
 	}
@@ -640,7 +654,7 @@ class ContentsTable extends Table {
 	/**
 	 * @return void
 	 */
-	public function disableCascadeCallbacks (): void {
+	public function disableCascadeCallbacks(): void {
 		/** @noinspection PhpUndefinedMethodInspection */
 		$this->ChildContents->setDependent(FALSE)->setCascadeCallbacks(FALSE);
 	}
@@ -649,7 +663,7 @@ class ContentsTable extends Table {
 	/**
 	 * @return void
 	 */
-	public function enableCascadeCallbacks (): void {
+	public function enableCascadeCallbacks(): void {
 		/** @noinspection PhpUndefinedMethodInspection */
 		$this->ChildContents->setDependent(TRUE)->setCascadeCallbacks(TRUE);
 	}
@@ -662,10 +676,10 @@ class ContentsTable extends Table {
 	 *
 	 * @return array
 	 */
-	protected function validateInputFields (Content $ao_entity, Validator $ao_validator, ContentTemplate $ao_contentTemplate): array {
+	protected function validateInputFields(Content $ao_entity, Validator $ao_validator, ContentTemplate $ao_contentTemplate): array {
 		$la_data = $ao_entity->extract();
 
-		if ( ! empty($ao_entity->attributes)) {
+		if (!empty($ao_entity->attributes)) {
 			/** @var \Awyiss\Validation\Validator $lo_attributesValidator */
 			$lo_attributesValidator = new $this->_validatorClass();
 			$lo_attributesValidator->setI18nDomain($this->getI18nDomain());
@@ -681,11 +695,10 @@ class ContentsTable extends Table {
 
 		//Traverse all elements that are available inside the content template
 		foreach ($ao_contentTemplate->contentTemplateElements as $lo_contentTemplateElement) {
-			if ( ! str_starts_with($lo_contentTemplateElement->identifier, 'attributes.')) {
+			if (!str_starts_with($lo_contentTemplateElement->identifier, 'attributes.')) {
 				if ($lo_contentTemplateElement->required === TRUE) {
 					//If the element is marked as required, add a requirePresence check and do not allow an empty string as value
-					$ao_validator->requirePresence($lo_contentTemplateElement->identifier)
-						->notEmptyString($lo_contentTemplateElement->identifier);
+					$ao_validator->requirePresence($lo_contentTemplateElement->identifier)->notEmptyString($lo_contentTemplateElement->identifier);
 					//TODO check if notEmptyString is enouugh. Some fields might need notEmpty*
 				}
 
@@ -711,7 +724,7 @@ class ContentsTable extends Table {
 						$lo_attributesValidator->add($ls_identifier, [
 							'checkboxChecked' => [
 								'rule' => ['equalTo', TRUE],
-							]
+							],
 						]);
 						break;
 					default:
@@ -726,7 +739,7 @@ class ContentsTable extends Table {
 				array_column($ao_contentTemplate->contentTemplateElements, 'identifier')
 			) as $ls_element
 		) {
-			if ($ao_entity->getError($ls_element) || ! $ao_entity->isDirty($ls_element)) {
+			if ($ao_entity->getError($ls_element) || !$ao_entity->isDirty($ls_element)) {
 				continue;
 			}
 
@@ -734,20 +747,20 @@ class ContentsTable extends Table {
 				$ao_validator->add($ls_element, [
 					'isFullwidth' => [
 						'rule' => ['equalTo', 1.0],
-					]
+					],
 				]);
 
 				continue;
 			}
 
 			$ao_validator->add($ls_element, 'isEmpty', [
-				'rule' => function(mixed $ax_value): bool {
-					return empty($ax_value) && ! in_array($ax_value, [FALSE, '0', 0], TRUE);
+				'rule' => function (mixed $ax_value): bool {
+					return empty($ax_value) && !in_array($ax_value, [FALSE, '0', 0], TRUE);
 				},
 			]);
 		}
 
-		if ( ! empty($ao_entity->attributes)) {
+		if (!empty($ao_entity->attributes)) {
 			$la_attributes = array_keys($la_contentAttributes);
 			foreach (
 				array_diff(
@@ -755,14 +768,14 @@ class ContentsTable extends Table {
 					$this->ContentTemplates->getAssignedContentAttributes($ao_contentTemplate)
 				) as $ls_element
 			) {
-				if ( ! $ao_entity->attributes->isDirty($ls_element)) {
+				if (!$ao_entity->attributes->isDirty($ls_element)) {
 					continue;
 				}
 
 				/** @noinspection PhpUndefinedVariableInspection */
 				$lo_attributesValidator->add($ls_element, 'isEmpty', [
-					'rule' => function(mixed $ax_value): bool {
-						return empty($ax_value) && ! in_array($ax_value, [FALSE, '0', 0], TRUE);
+					'rule' => function (mixed $ax_value): bool {
+						return empty($ax_value) && !in_array($ax_value, [FALSE, '0', 0], TRUE);
 					},
 				]);
 			}
@@ -773,6 +786,7 @@ class ContentsTable extends Table {
 			$ao_validator->addNested('attributes', $lo_attributesValidator);
 		}
 
+
 		return $la_data;
 	}
 
@@ -780,7 +794,7 @@ class ContentsTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	protected function initializeSchema (TableSchemaInterface $ao_schema): void {
+	protected function initializeSchema(TableSchemaInterface $ao_schema): void {
 		parent::initializeSchema($ao_schema);
 
 		$ao_schema->setColumnType('data', 'json');

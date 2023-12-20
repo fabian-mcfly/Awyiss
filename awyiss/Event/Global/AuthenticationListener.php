@@ -23,12 +23,6 @@ class AuthenticationListener implements EventListenerInterface {
 
 
 	/**
-	 * @var string
-	 */
-	protected static string $scope;
-
-
-	/**
 	 * @var array|array[]
 	 */
 	protected array $initializedModels = [
@@ -38,12 +32,16 @@ class AuthenticationListener implements EventListenerInterface {
 	 * @var IdentityInterface
 	 */
 	protected IdentityInterface $identity;
+	/**
+	 * @var string
+	 */
+	protected static string $scope;
 
 
 	/**
 	 * @inheritDoc
 	 */
-	public function implementedEvents (): array {
+	public function implementedEvents(): array {
 		return [
 			'Authentication.afterAuthenticate' => 'authenticationAfterAuthenticate',
 			'Authentication.requestLoginUrl' => 'authenticationRequestLoginUrl',
@@ -62,7 +60,7 @@ class AuthenticationListener implements EventListenerInterface {
 	 * @noinspection PhpUnused
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function authenticationAfterAuthenticate (Event $ao_event, AuthenticatorInterface $ao_authenticator, IdentityInterface $ao_identity): void {
+	public function authenticationAfterAuthenticate(Event $ao_event, AuthenticatorInterface $ao_authenticator, IdentityInterface $ao_identity): void {
 		$this->identity = $ao_identity;
 
 		/** @var Table $lo_model */
@@ -88,7 +86,7 @@ class AuthenticationListener implements EventListenerInterface {
 	 * @noinspection PhpUnused
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function authenticationRequestLoginUrl (Event $ao_event): void {
+	public function authenticationRequestLoginUrl(Event $ao_event): void {
 		/** @noinspection PhpUnhandledExceptionInspection */
 		$ao_event->setResult(Router::url([
 			'_name' => Awyiss::REALM_BACKEND,
@@ -115,12 +113,12 @@ class AuthenticationListener implements EventListenerInterface {
 	 * @noinspection PhpUnused
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function modelInitialize (Event $ao_event): void {
+	public function modelInitialize(Event $ao_event): void {
 		/** @var Table $lo_model */
 		$lo_model = $ao_event->getSubject();
 
 		if ($lo_model instanceof Table) {
-			if ( ! isset($this->identity)) {
+			if (!isset($this->identity)) {
 				$this->initializedModels['identity'][] = $lo_model;
 			}
 			elseif ($lo_model->hasBehavior('Audit')) {

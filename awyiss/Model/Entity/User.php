@@ -58,6 +58,13 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 	/**
 	 * @inheritDoc
 	 */
+	protected array $_hidden = [
+		'password',
+	];
+	protected ?PermissionCollection $permissionCollection;
+	/**
+	 * @inheritDoc
+	 */
 	protected static array $fieldMap = [
 		'failed_attempts' => 'failedAttempts',
 		'last_login' => 'lastLogin',
@@ -68,13 +75,6 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 		'deleted_by' => 'deletedBy',
 		'deleted_on' => 'deletedOn',
 	];
-	/**
-	 * @inheritDoc
-	 */
-	protected array $_hidden = [
-		'password',
-	];
-	protected ?PermissionCollection $permissionCollection;
 
 
 	/**
@@ -82,7 +82,7 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 	 *
 	 * @see IdentityInterface::getIdentifier
 	 */
-	public function getIdentifier (): ?int {
+	public function getIdentifier(): ?int {
 		return $this->id;
 	}
 
@@ -92,7 +92,7 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 	 *
 	 * @see IdentityInterface::getOriginalData
 	 */
-	public function getOriginalData (): static {
+	public function getOriginalData(): static {
 		return $this;
 	}
 
@@ -102,13 +102,13 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 	 *
 	 * @return PermissionCollection
 	 */
-	public function getPermissionCollection (): PermissionCollection {
-		if ( ! isset($this->permissionCollection)) {
+	public function getPermissionCollection(): PermissionCollection {
+		if (!isset($this->permissionCollection)) {
 			$lo_event = $this->dispatchEvent('Authorization.requestAuthorizationService', [], $this);
 			/** @var ?AuthorizationService $lo_authorizationService */
 			$lo_authorizationService = $lo_event->getResult();
 
-			if ( ! $lo_authorizationService) {
+			if (!$lo_authorizationService) {
 				throw new RuntimeException(sprintf('Could not retreive `AuthorizationService` in `%s`.', static::class));
 			}
 
@@ -148,7 +148,19 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 			$this->permissionCollection = new PermissionCollection($lo_authorizationService, array_merge(...array_column($la_usergroups, 'usergroup_permissions')));
 		}
 
+
 		return $this->permissionCollection;
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public function scopeIsAccessible(string $as_scope, ?array $aa_additionalData = NULL, array|string ...$ax_identifier): bool {
+		$lo_permissionCollection = $this->getPermissionCollection();
+
+
+		return $lo_permissionCollection->scopeIsAccessible($as_scope, $aa_additionalData, ...$ax_identifier);
 	}
 
 
@@ -157,8 +169,8 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 	 *
 	 * @return Usergroup[]
 	 */
-	protected function getUsergroups (): array {
-		if ( ! isset($this->usergroups)) {
+	protected function getUsergroups(): array {
+		if (!isset($this->usergroups)) {
 			/** @var UsersTable $lo_table */
 			$lo_table = FactoryLocator::get('Table')->get($this->getSource());
 			$lo_table->skipAuthorizationCheckOnce();
@@ -177,17 +189,8 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 			]);
 		}
 
+
 		return $this->usergroups;
-	}
-
-
-	/**
-	 * @inheritDoc
-	 */
-	public function scopeIsAccessible (string $as_scope, ?array $aa_additionalData = NULL, array|string ...$ax_identifier): bool {
-		$lo_permissionCollection = $this->getPermissionCollection();
-
-		return $lo_permissionCollection->scopeIsAccessible($as_scope, $aa_additionalData, ...$ax_identifier);
 	}
 
 
@@ -196,8 +199,9 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 	 *
 	 * @noinspection PhpUnused
 	 */
-	protected function _setUsergroups (?array $aa_usergroups): ?array {
+	protected function _setUsergroups(?array $aa_usergroups): ?array {
 		unset($this->permissionCollection);
+
 
 		return $aa_usergroups;
 	}
@@ -208,7 +212,7 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 	 *
 	 * @noinspection PhpUnused
 	 */
-	protected function _setEmail (string $ax_email): ?string {
+	protected function _setEmail(string $ax_email): ?string {
 		return $ax_email ?: NULL;
 	}
 
@@ -219,13 +223,15 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 	 *
 	 * @noinspection PhpUnused
 	 */
-	protected function _setPassword (string $as_password): ?string {
+	protected function _setPassword(string $as_password): ?string {
 		//Automatically hash passwords when they are changed.
-		if ( ! empty($as_password)) {
+		if (!empty($as_password)) {
 			$lo_hasher = new DefaultPasswordHasher();
+
 
 			return $lo_hasher->hash($as_password);
 		}
+
 
 		return NULL;
 	}

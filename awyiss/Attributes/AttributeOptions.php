@@ -36,8 +36,6 @@ class AttributeOptions {
 		'validate' => 'mixed|callable',
 		'value' => 'mixed|callable',
 	];
-
-
 	/**
 	 * @var array|bool|callable
 	 */
@@ -72,7 +70,7 @@ class AttributeOptions {
 	 * @param array{disabled: array|bool|callable, identifier: string, readonly: bool|callable, options:
 	 *                                             array|callable, value: mixed|callable} $aa_settings
 	 */
-	public function __construct (#[ArrayShape(self::SETTINGS_SHAPE)] array $aa_settings = []) {
+	public function __construct(#[ArrayShape(self::SETTINGS_SHAPE)] array $aa_settings = []) {
 		foreach (
 			[
 				'disabled',
@@ -84,7 +82,7 @@ class AttributeOptions {
 				'value',
 			] as $ls_key
 		) {
-			if ( ! isset($aa_settings[ $ls_key ])) {
+			if (!isset($aa_settings[ $ls_key ])) {
 				continue;
 			}
 
@@ -98,7 +96,7 @@ class AttributeOptions {
 			}
 		}
 
-		if ( ! isset($this->identifier)) {
+		if (!isset($this->identifier)) {
 			throw new RuntimeException('The `identifier` attribute is not set.');
 		}
 	}
@@ -107,7 +105,7 @@ class AttributeOptions {
 	/**
 	 * @return string
 	 */
-	public function getIdentifier (): string {
+	public function getIdentifier(): string {
 		return $this->identifier;
 	}
 
@@ -118,8 +116,9 @@ class AttributeOptions {
 	 * @return self
 	 * @noinspection PhpUnused
 	 */
-	public function setIdentifier (string $as_identifier): static {
+	public function setIdentifier(string $as_identifier): static {
 		$this->identifier = AttributeOptionsProvider::sanitizeIdentifier($as_identifier);
+
 
 		return $this;
 	}
@@ -131,7 +130,7 @@ class AttributeOptions {
 	 *
 	 * @return array
 	 */
-	public function buildOptions (array $aa_currentOptions, Entity $ao_entity): array {
+	public function buildOptions(array $aa_currentOptions, Entity $ao_entity): array {
 		$la_currentOptions = $aa_currentOptions;
 
 		$lx_disabled = $this->getDisabled(TRUE, $ao_entity, $la_currentOptions);
@@ -155,6 +154,7 @@ class AttributeOptions {
 			$la_currentOptions['val'] = $lx_value;
 		}
 
+
 		return $la_currentOptions;
 	}
 
@@ -163,10 +163,11 @@ class AttributeOptions {
 	 * @return array|bool|callable
 	 * @noinspection PhpUnused
 	 */
-	public function getDisabled (bool $ab_evaluate = FALSE, Entity $ao_entity = NULL, array &$aa_currentOptions = []): mixed {
+	public function getDisabled(bool $ab_evaluate = FALSE, Entity $ao_entity = NULL, array &$aa_currentOptions = []): mixed {
 		if ($ab_evaluate && is_callable($this->disabled)) {
 			return call_user_func_array($this->disabled, [$ao_entity, &$aa_currentOptions]);
 		}
+
 
 		return $this->disabled;
 	}
@@ -178,8 +179,9 @@ class AttributeOptions {
 	 * @return self
 	 * @noinspection PhpUnused
 	 */
-	public function setDisabled (array|bool|callable $ax_disabled): static {
+	public function setDisabled(array|bool|callable $ax_disabled): static {
 		$this->disabled = $ax_disabled;
+
 
 		return $this;
 	}
@@ -190,10 +192,11 @@ class AttributeOptions {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function getOptions (bool $ab_evaluate = FALSE, Entity $ao_entity = NULL, array &$aa_currentOptions = []): mixed {
+	public function getOptions(bool $ab_evaluate = FALSE, Entity $ao_entity = NULL, array &$aa_currentOptions = []): mixed {
 		if ($ab_evaluate && is_callable($this->options)) {
 			return call_user_func_array($this->options, [$ao_entity, &$aa_currentOptions]);
 		}
+
 
 		return $this->options;
 	}
@@ -204,8 +207,9 @@ class AttributeOptions {
 	 *
 	 * @return self
 	 */
-	public function setOptions (mixed $ax_options): static {
+	public function setOptions(mixed $ax_options): static {
 		$this->options = $ax_options;
+
 
 		return $this;
 	}
@@ -216,10 +220,11 @@ class AttributeOptions {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function getReadonly (bool $ab_evaluate = FALSE, Entity $ao_entity = NULL, array &$aa_currentOptions = []): mixed {
+	public function getReadonly(bool $ab_evaluate = FALSE, Entity $ao_entity = NULL, array &$aa_currentOptions = []): mixed {
 		if ($ab_evaluate && is_callable($this->readonly)) {
 			return call_user_func_array($this->readonly, [$ao_entity, &$aa_currentOptions]);
 		}
+
 
 		return $this->readonly;
 	}
@@ -231,8 +236,9 @@ class AttributeOptions {
 	 * @return AttributeOptions
 	 * @noinspection PhpUnused
 	 */
-	public function setReadonly (bool|callable $ax_readonly): static {
+	public function setReadonly(bool|callable $ax_readonly): static {
 		$this->readonly = $ax_readonly;
+
 
 		return $this;
 	}
@@ -241,10 +247,11 @@ class AttributeOptions {
 	/**
 	 * @return mixed
 	 */
-	public function getScalar (bool $ab_evaluate = FALSE, mixed $ax_value = NULL, Entity $ao_entity = NULL, array &$aa_currentOptions = []): mixed {
+	public function getScalar(bool $ab_evaluate = FALSE, mixed $ax_value = NULL, Entity $ao_entity = NULL, array &$aa_currentOptions = []): mixed {
 		if ($ab_evaluate && is_callable($this->toScalar)) {
 			return call_user_func_array($this->toScalar, [$ax_value, $ao_entity, &$aa_currentOptions]);
 		}
+
 
 		return $this->toScalar;
 	}
@@ -255,8 +262,9 @@ class AttributeOptions {
 	 *
 	 * @return $this
 	 */
-	public function setScalar (?callable $toScalar = NULL): static {
+	public function setScalar(?callable $toScalar = NULL): static {
 		$this->toScalar = $toScalar;
+
 
 		return $this;
 	}
@@ -267,10 +275,11 @@ class AttributeOptions {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function getValue (bool $ab_evaluate = FALSE, Entity $ao_entity = NULL, array &$aa_currentOptions = []): mixed {
+	public function getValue(bool $ab_evaluate = FALSE, Entity $ao_entity = NULL, array &$aa_currentOptions = []): mixed {
 		if ($ab_evaluate && is_callable($this->value)) {
 			return call_user_func_array($this->value, [$ao_entity, &$aa_currentOptions]);
 		}
+
 
 		return $this->value;
 	}
@@ -281,8 +290,9 @@ class AttributeOptions {
 	 *
 	 * @return AttributeOptions
 	 */
-	public function setValue (mixed $ax_value): static {
+	public function setValue(mixed $ax_value): static {
 		$this->value = $ax_value;
+
 
 		return $this;
 	}
@@ -294,7 +304,7 @@ class AttributeOptions {
 	 *
 	 * @return bool|string
 	 */
-	public function validateValue (mixed $ax_value, ?Entity $ao_entity): bool|string {
+	public function validateValue(mixed $ax_value, ?Entity $ao_entity): bool|string {
 		$lx_validate = $this->getValidate();
 
 		//No validation? Every value is valid.
@@ -305,19 +315,20 @@ class AttributeOptions {
 			$lx_disabled = $this->getDisabled(TRUE, $ao_entity);
 
 			//Disabled means no value is allowed
-			if (in_array($lx_disabled, ['disabled', TRUE], TRUE) && ! empty($ax_value)) {
+			if (in_array($lx_disabled, ['disabled', TRUE], TRUE) && !empty($ax_value)) {
 				return FALSE;
 			}
 
 			$lx_value = $ax_value;
-			if ( ! is_scalar($lx_value) && $lx_value !== NULL) {
+			if (!is_scalar($lx_value) && $lx_value !== NULL) {
 				$lx_value = $this->getScalar(TRUE, $lx_value, $ao_entity);
 			}
 
 			$lb_inOptions = array_key_exists($lx_value, $this->getOptions(TRUE, $ao_entity));
 			$lb_inDisabled = is_array($lx_disabled) && in_array($lx_value, $lx_disabled) ? $lx_disabled : FALSE;
 
-			return $lb_inOptions && ! $lb_inDisabled;
+
+			return $lb_inOptions && !$lb_inDisabled;
 		}
 		elseif (is_callable($lx_validate)) {
 			return $lx_validate($ax_value, $ao_entity, $this);
@@ -330,7 +341,7 @@ class AttributeOptions {
 	/**
 	 * @return mixed
 	 */
-	public function getValidate (): mixed {
+	public function getValidate(): mixed {
 		return $this->validate;
 	}
 
@@ -341,8 +352,9 @@ class AttributeOptions {
 	 * @return AttributeOptions
 	 * @noinspection PhpUnused
 	 */
-	public function setValidate (mixed $ax_validate = NULL): static {
+	public function setValidate(mixed $ax_validate = NULL): static {
 		$this->validate = $ax_validate;
+
 
 		return $this;
 	}

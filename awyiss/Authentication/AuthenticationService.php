@@ -24,13 +24,14 @@ class AuthenticationService extends \Authentication\AuthenticationService {
 	/**
 	 * @inheritDoc
 	 *
-	 * @uses IdentifierCollection
+	 * @uses         IdentifierCollection
 	 * @noinspection PhpMissingParentCallCommonInspection
 	 */
-	public function identifiers (): IdentifierCollection {
+	public function identifiers(): IdentifierCollection {
 		if ($this->_identifiers === NULL) {
 			$this->_identifiers = new IdentifierCollection($this->getConfig('identifiers'));
 		}
+
 
 		return $this->_identifiers;
 	}
@@ -44,7 +45,7 @@ class AuthenticationService extends \Authentication\AuthenticationService {
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 * @noinspection PhpMissingParentCallCommonInspection
 	 */
-	public function authenticate (ServerRequestInterface $ao_request): ResultInterface {
+	public function authenticate(ServerRequestInterface $ao_request): ResultInterface {
 		$lx_result = NULL;
 		/** @var AuthenticatorInterface $lo_authenticator */
 		foreach ($this->authenticators() as $lo_authenticator) {
@@ -58,6 +59,7 @@ class AuthenticationService extends \Authentication\AuthenticationService {
 					'authenticator' => $lo_authenticator,
 					'identity' => $this->getIdentity(),
 				], $this);
+
 
 				return $this->_result;
 			}
@@ -73,6 +75,7 @@ class AuthenticationService extends \Authentication\AuthenticationService {
 
 		$this->_successfulAuthenticator = NULL;
 
+
 		return $this->_result = $lx_result;
 	}
 
@@ -84,7 +87,7 @@ class AuthenticationService extends \Authentication\AuthenticationService {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function getUnauthenticatedRedirectUrl (ServerRequestInterface $ao_request): ?string {
+	public function getUnauthenticatedRedirectUrl(ServerRequestInterface $ao_request): ?string {
 		/*
 		 * This one's hacky and needs a serious rework but works for now
 		 * We write the current Uri to the session since we don't like having an uri-encoded
@@ -98,6 +101,7 @@ class AuthenticationService extends \Authentication\AuthenticationService {
 		$lo_session = $ao_request->getAttribute('session');
 		$lo_session->write('unauthenticatedRedirectUrl', $ls_redirectUri);
 
+
 		return parent::getUnauthenticatedRedirectUrl($ao_request);
 	}
 
@@ -110,9 +114,10 @@ class AuthenticationService extends \Authentication\AuthenticationService {
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 * @noinspection PhpMissingParentCallCommonInspection
 	 */
-	public function getLoginRedirect (ServerRequestInterface $ao_request): ?string {
+	public function getLoginRedirect(ServerRequestInterface $ao_request): ?string {
 		/** @var Session $lo_session */
 		$lo_session = $ao_request->getAttribute('session');
+
 
 		return $lo_session->read('unauthenticatedRedirectUrl');
 	}
@@ -124,7 +129,7 @@ class AuthenticationService extends \Authentication\AuthenticationService {
 	 *
 	 * @return array
 	 */
-	public function __sleep () {
+	public function __sleep() {
 		return [];
 	}
 }

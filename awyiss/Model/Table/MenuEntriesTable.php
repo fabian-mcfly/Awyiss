@@ -12,7 +12,6 @@ use Awyiss\ORM\RulesChecker;
 use Cake\Collection\CollectionInterface;
 use Cake\Datasource\EntityInterface;
 use Cake\ORM\Association\BelongsTo;
-use Cake\ORM\Query;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Validation\Validator;
@@ -32,7 +31,14 @@ use Cake\Validation\Validator;
  * @method CollectionInterface|NULL getParents(EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
  */
 class MenuEntriesTable extends Table {
-
+	/**
+	 * @inheritDoc
+	 */
+	public const ATTRIBUTABLE = TRUE;
+	/**
+	 * @inheritDoc
+	 */
+	public const TABLE = 'menu_entries';
 	protected array $_defaultConfig = [
 		'nest' => [
 			'relatedColumns' => ['languageShortcode', 'menuId'],
@@ -42,20 +48,11 @@ class MenuEntriesTable extends Table {
 		],
 	];
 
-	/**
-	 * @inheritDoc
-	 */
-	public const ATTRIBUTABLE = TRUE;
-	/**
-	 * @inheritDoc
-	 */
-	public const TABLE = 'menu_entries';
-
 
 	/**
 	 * @inheritDoc
 	 */
-	public function initialize (array $aa_config): void {
+	public function initialize(array $aa_config): void {
 		parent::initialize($aa_config);
 
 		$this->addBehavior('Nest', $this->getConfig('nest', []));
@@ -81,7 +78,7 @@ class MenuEntriesTable extends Table {
 	 *
 	 * @return Validator
 	 */
-	public function validationDefault (Validator $ao_validator): Validator {
+	public function validationDefault(Validator $ao_validator): Validator {
 		parent::validationDefault($ao_validator);
 
 
@@ -110,7 +107,7 @@ class MenuEntriesTable extends Table {
 			'isScalar' => ['rule' => 'isScalar'],
 			'ascii' => ['rule' => 'ascii'],
 			'exactLength' => [
-				'rule' => function(string $as_shortcode): bool {
+				'rule' => function (string $as_shortcode): bool {
 					return strlen($as_shortcode) == 2;
 				},
 			],
@@ -171,9 +168,13 @@ class MenuEntriesTable extends Table {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildRules (RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
+	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
 		$ao_rules->add(
-			$ao_rules->existsIn('menuId', 'Menus', ['authorize' => ['skip' => TRUE]]),
+			$ao_rules->existsIn(
+				'menuId',
+				'Menus',
+				['authorize' => ['skip' => TRUE]]
+			),
 			'validMenuId',
 			[
 				'errorField' => 'menuId',
@@ -182,12 +183,12 @@ class MenuEntriesTable extends Table {
 		);
 
 
-		$ao_rules->add(function(MenuEntry $ao_entity, array $aa_options) use ($ao_rules): bool {
-			if ( ! $aa_options['checkRules']) {
+		$ao_rules->add(function (MenuEntry $ao_entity, array $aa_options) use ($ao_rules): bool {
+			if (!$aa_options['checkRules']) {
 				dd(__FILE__, __LINE__);
 			}
 
-			if ( ! $ao_entity->get('parentId')) {
+			if (!$ao_entity->get('parentId')) {
 				return TRUE;
 			}
 
@@ -196,12 +197,17 @@ class MenuEntriesTable extends Table {
 				'message' => __dfx($this->getI18nDomain(), 'validation', 'menu_entries', 'error_valid_parent_id'),
 			]);
 
+
 			return $lo_existsIn($ao_entity, $aa_options);
 		}, 'validParentId');
 
 
 		$ao_rules->add(
-			$ao_rules->existsIn('languageShortcode', 'Languages', ['authorize' => ['skip' => TRUE]]),
+			$ao_rules->existsIn(
+				'languageShortcode',
+				'Languages',
+				['authorize' => ['skip' => TRUE]]
+			),
 			'languageExists',
 			[
 				'errorField' => 'languageShortcode',
@@ -217,7 +223,7 @@ class MenuEntriesTable extends Table {
 	/**
 	 * @return void
 	 */
-	public function disableCascadeCallbacks (): void {
+	public function disableCascadeCallbacks(): void {
 		$this->ChildMenuEntries->setDependent(FALSE)->setCascadeCallbacks(FALSE);
 	}
 
@@ -225,7 +231,7 @@ class MenuEntriesTable extends Table {
 	/**
 	 * @return void
 	 */
-	public function enableCascadeCallbacks (): void {
+	public function enableCascadeCallbacks(): void {
 		$this->ChildMenuEntries->setDependent(TRUE)->setCascadeCallbacks(TRUE);
 	}
 
@@ -236,7 +242,7 @@ class MenuEntriesTable extends Table {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function listNested (SelectQuery $ao_query): CollectionInterface {
+	public function listNested(SelectQuery $ao_query): CollectionInterface {
 		$lo_menuEntries = $ao_query->find('threaded')->all()->listNested();
 
 		/** @var MenuEntry $lo_menuEntry */
@@ -245,6 +251,7 @@ class MenuEntriesTable extends Table {
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 			$lo_menuEntry->level = $lo_menuEntries->getDepth();
 		}
+
 
 		return $lo_menuEntries;
 	}

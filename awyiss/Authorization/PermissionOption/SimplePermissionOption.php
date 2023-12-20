@@ -4,8 +4,8 @@
 namespace Awyiss\Authorization\PermissionOption;
 
 
-use Awyiss\Authorization\Permission\PermissionCollection;
 use Awyiss\Authorization\Permission\PermissionAccess;
+use Awyiss\Authorization\Permission\PermissionCollection;
 
 
 /**
@@ -24,7 +24,7 @@ class SimplePermissionOption extends AbstractPermissionOption {
 	/**
 	 * @inheritDoc
 	 */
-	public function __construct (array $aa_config, PermissionOptionCollection $ao_permissionOptionCollection) {
+	public function __construct(array $aa_config, PermissionOptionCollection $ao_permissionOptionCollection) {
 		parent::__construct($aa_config, $ao_permissionOptionCollection);
 
 		$this->options = [
@@ -38,12 +38,13 @@ class SimplePermissionOption extends AbstractPermissionOption {
 	/**
 	 * @inheritDoc
 	 */
-	public function harmonizeOptionValue (mixed $ax_value): ?PermissionAccess {
-		$lx_value = ($ax_value !== '' && $ax_value !== NULL) ? (int)$ax_value : NULL;
+	public function harmonizeOptionValue(mixed $ax_value): ?PermissionAccess {
+		$lx_value = ($ax_value !== '' && $ax_value !== NULL) ? (int) $ax_value : NULL;
 
 		if ($lx_value === NULL) {
 			return NULL;
 		}
+
 
 		return PermissionAccess::tryFrom($lx_value);
 	}
@@ -52,10 +53,10 @@ class SimplePermissionOption extends AbstractPermissionOption {
 	/**
 	 * @inheritDoc
 	 */
-	public function isAccessible (mixed $ax_access, mixed $ax_settings, array $aa_additionalData, PermissionCollection $ao_permissionCollection): ?bool {
+	public function isAccessible(mixed $ax_access, mixed $ax_settings, array $aa_additionalData, PermissionCollection $ao_permissionCollection): ?bool {
 		$lx_access = $ax_access;
 
-		if (! $lx_access instanceof PermissionAccess) {
+		if (!$lx_access instanceof PermissionAccess) {
 			$lx_access = $this->harmonizeOptionValue($ax_access);
 		}
 
@@ -65,6 +66,7 @@ class SimplePermissionOption extends AbstractPermissionOption {
 		elseif ($lx_access === PermissionAccess::OPTION_DENIED) {
 			return FALSE;
 		}
+
 
 		return NULL;
 	}

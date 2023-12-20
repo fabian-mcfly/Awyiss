@@ -10,6 +10,7 @@ use Awyiss\Model\Entity\Usergroup;
 use Awyiss\Model\Entity\UsersExternal;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
+use Awyiss\Routing\Router;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
 use Cake\Http\Session;
@@ -17,7 +18,6 @@ use Cake\I18n\FrozenTime;
 use Cake\ORM\Association\HasMany;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
-use Awyiss\Routing\Router;
 use Cake\Validation\Validator;
 
 
@@ -30,18 +30,18 @@ use Cake\Validation\Validator;
  * @method Usergroup newDefaultEntity(array $aa_additionalData = [])
  */
 class UsergroupsTable extends Table {
+	public const TABLE = 'usergroups';
 	protected array $_defaultConfig = [
 		'translate' => [
 			'fields' => ['title'],
 		],
 	];
-	public const TABLE = 'usergroups';
 
 
 	/**
 	 * @inheritDoc
 	 */
-	public function initialize (array $aa_config): void {
+	public function initialize(array $aa_config): void {
 		parent::initialize($aa_config);
 
 		$this->hasMany('UsergroupPermissions', [
@@ -62,7 +62,7 @@ class UsergroupsTable extends Table {
 	 *
 	 * @return Validator
 	 */
-	public function validationDefault (Validator $ao_validator): Validator {
+	public function validationDefault(Validator $ao_validator): Validator {
 		parent::validationDefault($ao_validator);
 
 
@@ -108,7 +108,7 @@ class UsergroupsTable extends Table {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildRules (RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
+	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
 		$ao_rules->add($ao_rules->isUnique(['title']), 'titleUnique', [
 			'errorField' => 'title',
 			'message' => __d($this->getI18nDomain(), 'error_title_unique'),
@@ -130,14 +130,14 @@ class UsergroupsTable extends Table {
 	 * @return void
 	 * @throws \Exception
 	 */
-	public function afterSave (EventInterface $ao_event, EntityInterface $ao_entity, ArrayObject $ao_options) {
-		$lo_query = $this->Users->find()->applyOptions(['authorize' => ['skip' => TRUE]])->matching('UsergroupsUsers', function(SelectQuery $ao_query) use ($ao_entity) {
+	public function afterSave(EventInterface $ao_event, EntityInterface $ao_entity, ArrayObject $ao_options) {
+		$lo_query = $this->Users->find()->applyOptions(['authorize' => ['skip' => TRUE]])->matching('UsergroupsUsers', function (SelectQuery $ao_query) use ($ao_entity) {
 			return $ao_query->where(['UsergroupsUsers.usergroup_id' => $ao_entity->id])->applyOptions(['authorize' => ['skip' => TRUE]]);
 		});
 
 		$lo_users = $lo_query->all();
 
-		if ( ! $lo_users->count()) {
+		if (!$lo_users->count()) {
 			//No records found? The item is alone in its scope.
 			return;
 		}
@@ -153,7 +153,7 @@ class UsergroupsTable extends Table {
 
 		$lo_now = FrozenTime::now();
 		//Decrease the system order of all records
-		$lo_users->each(function(User $ao_user) use ($lo_now, $lo_currentUser) {
+		$lo_users->each(function (User $ao_user) use ($lo_now, $lo_currentUser) {
 			$ao_user->changedOn = $lo_now;
 
 			if ($ao_user->id === $lo_currentUser->id) {

@@ -20,7 +20,7 @@ class IdentifierCollection extends \Authentication\Identifier\IdentifierCollecti
 	 * @return ArrayAccess|array|NULL
 	 * @noinspection PhpUnused
 	 */
-	public function reidentify (array $aa_credentials): ArrayAccess|array|NULL {
+	public function reidentify(array $aa_credentials): ArrayAccess|array|null {
 		/** @var IdentifierInterface|ProxyIdentifier $lo_identifier */
 		foreach ($this->_loaded as $ls_identifier => $lo_identifier) {
 			if (is_callable([$lo_identifier, 'reidentify'])) {
@@ -33,12 +33,14 @@ class IdentifierCollection extends \Authentication\Identifier\IdentifierCollecti
 			if ($lx_result) {
 				$this->_successfulIdentifier = $lo_identifier;
 
+
 				return $lx_result;
 			}
 			$this->_errors[ $ls_identifier ] = $lo_identifier->getErrors();
 		}
 
 		$this->_successfulIdentifier = NULL;
+
 
 		return NULL;
 	}

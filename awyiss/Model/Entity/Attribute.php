@@ -68,11 +68,23 @@ class Attribute extends Entity {
 
 
 	/**
+	 * @inheritDoc
+	 */
+	public function defaultValues(): array {
+		/** @var AttributesTable $lo_table */
+		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
+
+
+		return $this->defaults + ['fieldset' => $lo_table->getAvailableFieldsets()[0]];
+	}
+
+
+	/**
 	 * Make sure the identifier is always lowercase, underscored and free of special characters
 	 *
 	 * @noinspection PhpUnused
 	 */
-	protected function _setIdentifier (string $as_identifier): string {
+	protected function _setIdentifier(string $as_identifier): string {
 		return mb_strtolower(Text::slug($as_identifier, ['replacement' => '_']));
 	}
 
@@ -82,18 +94,7 @@ class Attribute extends Entity {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	protected function _setScope (string $as_scope): string {
+	protected function _setScope(string $as_scope): string {
 		return mb_strtolower(Text::slug($as_scope, ['replacement' => '_']));
-	}
-
-
-	/**
-	 * @inheritDoc
-	 */
-	public function defaultValues (): array {
-		/** @var AttributesTable $lo_table */
-		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
-
-		return $this->defaults + ['fieldset' => $lo_table->getAvailableFieldsets()[0]];
 	}
 }

@@ -16,10 +16,10 @@ class PaginatorHelper extends \Cake\View\Helper\PaginatorHelper {
 	/**
 	 * Constructor. Overridden to merge passed args with URL aa_options.
 	 *
-	 * @param View                 $ao_view   The View this helper is being attached to.
+	 * @param View $ao_view The View this helper is being attached to.
 	 * @param array<string, mixed> $aa_config Configuration settings for the helper.
 	 */
-	public function __construct (View $ao_view, array $aa_config = []) {
+	public function __construct(View $ao_view, array $aa_config = []) {
 		parent::__construct($ao_view, $aa_config + ['templateClass' => StringTemplate::class,]);
 
 		$la_query = $this->_View->getRequest()->getParam('parts', []);
@@ -41,11 +41,12 @@ class PaginatorHelper extends \Cake\View\Helper\PaginatorHelper {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function sort (string $as_key, $ax_title = NULL, array $aa_options = []): string {
+	public function sort(string $as_key, $ax_title = NULL, array $aa_options = []): string {
 		$ls_title = $ax_title;
 		if (empty($ls_title)) {
 			$ls_title = __($as_key);
 		}
+
 
 		return parent::sort($as_key, $ls_title, $aa_options);
 	}
@@ -61,7 +62,7 @@ class PaginatorHelper extends \Cake\View\Helper\PaginatorHelper {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function generateUrlParams (array $aa_options = [], array $aa_url = []): array {
+	public function generateUrlParams(array $aa_options = [], array $aa_url = []): array {
 		$la_params = $this->_View->getRequest()->getParam('parts');
 
 		foreach ($aa_options as $lx_key => $lx_value) {
@@ -74,19 +75,24 @@ class PaginatorHelper extends \Cake\View\Helper\PaginatorHelper {
 		}
 
 		$la_params += ['page' => NULL, 'limit' => NULL, 'sort' => NULL, 'direction' => NULL];
-		$la_params = Hash::filter($la_params, function($ax_value): bool {
+		$la_params = Hash::filter($la_params, function ($ax_value): bool {
 			return $ax_value !== NULL;
 		});
 
 		//If the sorting-column and -direction equal their default value, set both to FALSE, so they won't be part of the generated URI
-		if (isset($la_params['sortDefault'], $la_params['directionDefault'], $la_params['sort'], $la_params['direction']) && $la_params['sort'] === $la_params['sortDefault'] && strtolower($la_params['direction']) === strtolower($la_params['directionDefault'])) {
+		if (
+			isset($la_params['sortDefault'], $la_params['directionDefault'], $la_params['sort'], $la_params['direction']) &&
+			$la_params['sort'] === $la_params['sortDefault'] &&
+			strtolower($la_params['direction']) === strtolower($la_params['directionDefault'])
+		) {
 			$la_params['sort'] = $la_params['direction'] = FALSE;
 		}
 
 		//If the page parameter is empty or if it's page one, set it to FALSE, so it won't be part of the generated URI
-		if ( ! empty($aa_options['page']) && $aa_options['page'] === 1) {
+		if (!empty($aa_options['page']) && $aa_options['page'] === 1) {
 			$la_params['page'] = FALSE;
 		}
+
 
 		return $la_params;
 	}
@@ -99,10 +105,11 @@ class PaginatorHelper extends \Cake\View\Helper\PaginatorHelper {
 	 *
 	 * @return string
 	 */
-	public function render (): string {
+	public function render(): string {
 		if (empty($this->param('pageCount')) || $this->param('pageCount') == 1) {
 			return '';
 		}
+
 
 		//if (!$this->params) return '';
 
@@ -115,7 +122,7 @@ class PaginatorHelper extends \Cake\View\Helper\PaginatorHelper {
 	 *
 	 * @return string
 	 */
-	public function __toString (): string {
+	public function __toString(): string {
 		return $this->render();
 	}
 }

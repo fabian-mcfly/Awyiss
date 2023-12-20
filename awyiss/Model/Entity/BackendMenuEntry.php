@@ -36,16 +36,16 @@ class BackendMenuEntry extends Entity {
 	 * @inheritDoc
 	 */
 	protected array $_accessible = [
-        'parentId' => TRUE,
-        'insertAfterId' => TRUE,
-        'title' => TRUE,
-        'link' => TRUE,
-        'access' => TRUE,
-        'external' => TRUE,
-        'systemOrder' => TRUE,
-        'active' => TRUE,
-        'childBackendMenuEntries' => TRUE,
-    ];
+		'parentId' => TRUE,
+		'insertAfterId' => TRUE,
+		'title' => TRUE,
+		'link' => TRUE,
+		'access' => TRUE,
+		'external' => TRUE,
+		'systemOrder' => TRUE,
+		'active' => TRUE,
+		'childBackendMenuEntries' => TRUE,
+	];
 	protected array $defaults = [
 		'parentId' => NULL,
 		'insertAfterId' => NULL,
@@ -68,28 +68,31 @@ class BackendMenuEntry extends Entity {
 	];
 
 
-	public function _setParentId (mixed $ax_value) {
+	public function _setParentId(mixed $ax_value) {
 		if (empty($ax_value)) {
 			return NULL;
 		}
+
 
 		return $ax_value;
 	}
 
 
-	public function _setInsertAfterId (mixed $ax_value) {
+	public function _setInsertAfterId(mixed $ax_value) {
 		if (empty($ax_value)) {
 			return NULL;
 		}
+
 
 		return $ax_value;
 	}
 
 
-	public function _setAccess (mixed $ax_value) {
+	public function _setAccess(mixed $ax_value) {
 		if (empty($ax_value)) {
 			return NULL;
 		}
+
 
 		return is_string($ax_value) ? json_decode($ax_value) : $ax_value;
 	}
@@ -100,9 +103,10 @@ class BackendMenuEntry extends Entity {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function getChildren (): ?CollectionInterface {
+	public function getChildren(): ?CollectionInterface {
 		/** @var BackendMenuEntriesTable $lo_table */
 		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
+
 
 		return $lo_table->getChildren($this);
 	}
@@ -113,9 +117,10 @@ class BackendMenuEntry extends Entity {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function getNestedChildren (array $aa_options = [], int $ai_currentLevel = 0): ?CollectionInterface {
+	public function getNestedChildren(array $aa_options = [], int $ai_currentLevel = 0): ?CollectionInterface {
 		/** @var BackendMenuEntriesTable $lo_table */
 		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
+
 
 		return $lo_table->getNestedChildren($this, $aa_options, $ai_currentLevel);
 	}
@@ -126,9 +131,10 @@ class BackendMenuEntry extends Entity {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function getParent (): ?self {
+	public function getParent(): ?self {
 		/** @var BackendMenuEntriesTable $lo_table */
 		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
+
 
 		return $lo_table->getParent($this);
 	}
@@ -139,9 +145,10 @@ class BackendMenuEntry extends Entity {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function getParents (array $aa_options = [], int $ai_currentLevel = 0): ?CollectionInterface {
+	public function getParents(array $aa_options = [], int $ai_currentLevel = 0): ?CollectionInterface {
 		/** @var BackendMenuEntriesTable $lo_table */
 		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
+
 
 		return $lo_table->getParents($this, $aa_options, $ai_currentLevel);
 	}

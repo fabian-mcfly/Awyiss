@@ -16,6 +16,7 @@ use Cake\View\StringTemplate;
 class MenuRenderer {
 	use InstanceConfigTrait;
 
+
 	protected $_defaultConfig = [
 		'activeOnly' => TRUE,
 		'formatters' => [
@@ -43,7 +44,7 @@ class MenuRenderer {
 	 * @param Menu $menu Menu object to render.
 	 * @param array $config Configuration options for rendering.
 	 */
-	public function __construct (Menu $menu, array $config = []) {
+	public function __construct(Menu $menu, array $config = []) {
 		$this->menu = $menu;
 
 		$this->setConfig($config);
@@ -53,7 +54,7 @@ class MenuRenderer {
 	}
 
 
-	public function render (string $menuIdentifier = '', string $list = ''): string {
+	public function render(string $menuIdentifier = '', string $list = ''): string {
 		if (empty($list)) {
 			$list = $this->renderList();
 		}
@@ -68,6 +69,7 @@ class MenuRenderer {
 			'menuConfig' => $this->menu->getConfig(),
 		];
 
+
 		return $this->format('menu', $data);
 	}
 
@@ -79,7 +81,7 @@ class MenuRenderer {
 	 *
 	 * @return string Rendered HTML.
 	 */
-	public function renderList (Menu|MenuItem|string|null $items = NULL, int $level = 1, ?int $maxLevel = NULL): string {
+	public function renderList(Menu | MenuItem | string | null $items = NULL, int $level = 1, ?int $maxLevel = NULL): string {
 		if (is_string($items)) {
 			$items = [$this->menu->getItem($items)];
 		}
@@ -113,6 +115,7 @@ class MenuRenderer {
 			'menuConfig' => $this->menu->getConfig(),
 		];
 
+
 		return $this->format('list', $data);
 	}
 
@@ -126,16 +129,16 @@ class MenuRenderer {
 	 *
 	 * @return string Rendered HTML for the menu item.
 	 */
-	protected function renderItem (MenuItem $item, int $level = 1, int $maxLevel = 1): string {
+	protected function renderItem(MenuItem $item, int $level = 1, int $maxLevel = 1): string {
 		if ($level > $maxLevel) {
 			return '';
 		}
 
-		if ( ! $item->isVisible()) {
+		if (!$item->isVisible()) {
 			return '';
 		}
 
-		if ($this->getConfig('activeOnly') && ! $item->getActive()) {
+		if ($this->getConfig('activeOnly') && !$item->getActive()) {
 			return '';
 		}
 
@@ -164,6 +167,7 @@ class MenuRenderer {
 			'children' => $childrenContent,
 		];
 
+
 		return $this->format('item', $data);
 	}
 
@@ -176,12 +180,13 @@ class MenuRenderer {
 	 *
 	 * @return string The formatted content.
 	 */
-	protected function format (string $type, array $data): string {
+	protected function format(string $type, array $data): string {
 		$formatter = $this->getConfig('formatters.' . $type);
 
 		if (is_callable($formatter)) {
 			return $formatter($data, $this->menu);
 		}
+
 
 		return $this->templates->format($type, $data);
 	}

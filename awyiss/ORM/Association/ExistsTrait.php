@@ -27,11 +27,12 @@ trait ExistsTrait {
 	 *
 	 * @see Table::exists
 	 */
-	public function exists ($aa_conditions, array $aa_options = []): bool {
+	public function exists($aa_conditions, array $aa_options = []): bool {
 		$la_conditions = $this->find()->where($aa_conditions)->clause('where');
 
 		/** @var Table $lo_table */
 		$lo_table = $this->getTarget();
+
 
 		return $lo_table->exists($la_conditions, $aa_options);
 	}

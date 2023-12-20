@@ -18,7 +18,7 @@ class BelongsToMany extends \Cake\ORM\Association\BelongsToMany {
 	 *
 	 * @return bool
 	 */
-	public function hasThrough (): bool {
+	public function hasThrough(): bool {
 		return isset($this->_through);
 	}
 }

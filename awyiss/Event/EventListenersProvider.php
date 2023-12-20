@@ -34,7 +34,7 @@ class EventListenersProvider {
 	protected static array $loadedListeners = [];
 
 
-	private function __construct () {
+	private function __construct() {
 		throw new RuntimeException(sprintf('The class `%s` cannot be instantiated', self::class));
 	}
 
@@ -47,8 +47,9 @@ class EventListenersProvider {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public static function getListeners (string $as_realm): array {
+	public static function getListeners(string $as_realm): array {
 		static::$eventListeners[ $as_realm ] = static::findListener('*', $as_realm);
+
 
 		return static::$eventListeners[ $as_realm ] ?? [];
 	}
@@ -61,16 +62,17 @@ class EventListenersProvider {
 	 * @return null|string
 	 * @throws \ReflectionException
 	 */
-	public static function getListener (string $as_scope, string $as_realm): ?string {
+	public static function getListener(string $as_scope, string $as_realm): ?string {
 		$ls_scope = static::sanitizeScope($as_scope);
 
-		if ( ! isset(static::$eventListeners[ $as_realm ])) {
+		if (!isset(static::$eventListeners[ $as_realm ])) {
 			static::$eventListeners[ $as_realm ] = [];
 		}
 
 		if (empty(static::$eventListeners[ $as_realm ][ $ls_scope ])) {
 			static::$eventListeners[ $as_realm ] += static::findListener($ls_scope, $as_realm);
 		}
+
 
 		return static::$eventListeners[ $as_realm ][ $ls_scope ] ?? NULL;
 	}
@@ -83,10 +85,10 @@ class EventListenersProvider {
 	 * @return void
 	 * @throws \ReflectionException
 	 */
-	public static function loadListener (string $as_scope, string $as_realm): void {
+	public static function loadListener(string $as_scope, string $as_realm): void {
 		$ls_scope = static::sanitizeScope($as_scope);
 
-		if ( ! isset(static::$loadedListeners[ $as_realm ])) {
+		if (!isset(static::$loadedListeners[ $as_realm ])) {
 			static::$loadedListeners[ $as_realm ] = [];
 		}
 
@@ -95,8 +97,33 @@ class EventListenersProvider {
 		}
 
 		$ls_listenerClass = static::getListener($ls_scope, $as_realm);
-		if ( ! $ls_listenerClass) {
+		if (
+			!$ls_listenerClass &&
+			!in_array(
+				$ls_scope,
+				[
+					'Languages',
+					'Configuration',
+					'MenuEntries',
+					'Users',
+					'UsergroupsUsers',
+					'Usergroups',
+					'UsergroupPermissions',
+					'ContentTemplates',
+					'PageTemplates',
+					'ContentAreas',
+					'PageRoles',
+					'DebugKitRequests',
+					'DebugKitPanels',
+				],
+				TRUE
+			)
+		) {
+			dd($ls_listenerClass, $ls_scope, $as_realm, __LINE__, __FILE__);
+		}
+		if (!$ls_listenerClass) {
 			static::$loadedListeners[ $as_realm ][ $ls_scope ] = FALSE;
+
 
 			return;
 		}
@@ -108,13 +135,26 @@ class EventListenersProvider {
 
 
 	/**
+	 * Sanitize the provided scope by removing all non-ascii characters
+	 * Returns a camelBacked string
+	 *
+	 * @param string $as_scope
+	 *
+	 * @return string
+	 */
+	public static function sanitizeScope(string $as_scope): string {
+		return Inflector::camelize(Text::slug($as_scope, '_'));
+	}
+
+
+	/**
 	 * @param string $as_scope
 	 * @param string $as_realm
 	 *
 	 * @return array
 	 * @throws \ReflectionException
 	 */
-	protected static function findListener (string $as_scope, string $as_realm): array {
+	protected static function findListener(string $as_scope, string $as_realm): array {
 		$la_listeners = [];
 
 		$la_paths = [
@@ -134,7 +174,7 @@ class EventListenersProvider {
 
 				$lo_reflection = new ReflectionClass($ls_listenerClass);
 
-				if ( ! $lo_reflection->implementsInterface(EventListenerInterface::class)) {
+				if (!$lo_reflection->implementsInterface(EventListenerInterface::class)) {
 					throw new RuntimeException(sprintf('The provided Listener class `%s` does not extend the `%s` class.', $ls_listenerClass, EventListenerInterface::class));
 				}
 
@@ -149,19 +189,7 @@ class EventListenersProvider {
 			}
 		}
 
+
 		return $la_listeners;
-	}
-
-
-	/**
-	 * Sanitize the provided scope by removing all non-ascii characters
-	 * Returns a camelBacked string
-	 *
-	 * @param string $as_scope
-	 *
-	 * @return string
-	 */
-	public static function sanitizeScope (string $as_scope): string {
-		return Inflector::camelize(Inflector::pluralize(Text::slug($as_scope, '_')));
 	}
 }

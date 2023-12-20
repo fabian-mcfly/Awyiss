@@ -26,7 +26,7 @@ class ConfigOptionCollection extends ArrayIterator {
 	 *
 	 * @noinspection PhpMissingParentConstructorInspection
 	 */
-	public function __construct (string $as_identifier = NULL) {
+	public function __construct(string $as_identifier = NULL) {
 		if ($as_identifier) {
 			$this->identifier = ConfigOptionsProvider::sanitizeIdentifier($as_identifier);
 		}
@@ -40,7 +40,7 @@ class ConfigOptionCollection extends ArrayIterator {
 	 *
 	 * @return $this
 	 */
-	public function add (array|ConfigOption $ax_configOption): static {
+	public function add(array|ConfigOption $ax_configOption): static {
 		/*
 		 * If the provided value for `$ax_configOption` is an instance of `ConfigOption`,
 		 * add it to the current collection
@@ -54,6 +54,7 @@ class ConfigOptionCollection extends ArrayIterator {
 			}
 
 			$this->offsetSet($ls_identifier, $ax_configOption);
+
 
 			return $this;
 		}
@@ -87,6 +88,7 @@ class ConfigOptionCollection extends ArrayIterator {
 			}
 		}
 
+
 		return $this;
 	}
 
@@ -101,13 +103,13 @@ class ConfigOptionCollection extends ArrayIterator {
 	 *
 	 * @throws RuntimeException
 	 */
-	public function addCollection (ConfigOptionCollection $ao_configOptionsCollection): static {
+	public function addCollection(ConfigOptionCollection $ao_configOptionsCollection): static {
 		$ls_identifier = $ao_configOptionsCollection->getIdentifier();
 
 		if ($this->offsetExists($ls_identifier)) {
 			$lx_offset = $this->offsetGet($ls_identifier);
 			if ($lx_offset instanceof ConfigOptionCollection) {
-				foreach ($ao_configOptionsCollection->getArrayCopy() AS $lx_configOptions) {
+				foreach ($ao_configOptionsCollection->getArrayCopy() as $lx_configOptions) {
 					if ($lx_configOptions instanceof ConfigOptionCollection) {
 						$lx_offset->addCollection($lx_configOptions);
 					}
@@ -115,6 +117,7 @@ class ConfigOptionCollection extends ArrayIterator {
 						$lx_offset->add($lx_configOptions);
 					}
 				}
+
 
 				return $this;
 			}
@@ -124,6 +127,7 @@ class ConfigOptionCollection extends ArrayIterator {
 
 		$this->offsetSet($ls_identifier, $ao_configOptionsCollection);
 
+
 		return $this;
 	}
 
@@ -131,7 +135,7 @@ class ConfigOptionCollection extends ArrayIterator {
 	/**
 	 * @return string
 	 */
-	public function getIdentifier (): string {
+	public function getIdentifier(): string {
 		return $this->identifier;
 	}
 
@@ -141,10 +145,10 @@ class ConfigOptionCollection extends ArrayIterator {
 	 *
 	 * @return array
 	 */
-	public function getConfigOptions (string ...$aa_pathParts): array {
+	public function getConfigOptions(string ...$aa_pathParts): array {
 		$la_configOptions = [];
 
-		foreach ($this AS $lo_configOption) {
+		foreach ($this as $lo_configOption) {
 			if ($lo_configOption instanceof ConfigOptionCollection) {
 				$la_pathParts = $aa_pathParts;
 				$la_pathParts[] = Inflector::variable($lo_configOption->getIdentifier());
@@ -160,6 +164,7 @@ class ConfigOptionCollection extends ArrayIterator {
 				$la_configOptions[ $ls_key ] = $lo_configOption;
 			}
 		}
+
 
 		return $la_configOptions;
 	}

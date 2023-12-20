@@ -30,7 +30,7 @@ class PhpConfig extends BasePhpConfig {
 	 * @noinspection PhpMissingParentConstructorInspection
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function __construct (?string $as_path = NULL) {
+	public function __construct(?string $as_path = NULL) {
 		$this->_path = NULL ?? CONFIG;
 	}
 
@@ -42,7 +42,7 @@ class PhpConfig extends BasePhpConfig {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function read (string $as_key): array {
+	public function read(string $as_key): array {
 		//$la_paths = $this->_path ? [$this->_path] : $this->paths;
 		$la_paths = $this->paths;
 		$la_return = [];
@@ -73,10 +73,12 @@ class PhpConfig extends BasePhpConfig {
 			}
 		}
 
+
 		/*if (count($la_paths) !== 1) {
 			//Reset the internal path
 			$this->_path = $la_paths[0];
 		}*/
+
 
 		return $la_return;
 	}
@@ -95,7 +97,7 @@ class PhpConfig extends BasePhpConfig {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function dump (string $as_key, array $aa_data): bool {
+	public function dump(string $as_key, array $aa_data): bool {
 		$ls_contents = '<?php declare(strict_types=1);' . PHP_EOL . PHP_EOL . 'return ';
 		$ls_contents .= VarExporter::export($aa_data, VarExporter::TRAILING_COMMA_IN_ARRAY);
 		$ls_contents .= ';';
@@ -105,8 +107,11 @@ class PhpConfig extends BasePhpConfig {
 
 		if (file_put_contents($ls_filename, $ls_contents) > 0) {
 			chmod($ls_filename, fileperms($ls_filename) | 128 + 16 + 2);
+
+
 			return TRUE;
 		}
+
 
 		return FALSE;
 	}

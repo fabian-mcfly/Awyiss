@@ -1,5 +1,6 @@
 <?php /** @noinspection HtmlUnknownTarget */
 
+
 declare(strict_types=1);
 
 
@@ -22,13 +23,14 @@ use Cake\View\Widget\WidgetLocator;
 /**
  * Helper class that provides methods related to the Categories-logic in the views
  *
- * @property FormHelper      $Form
+ * @property FormHelper $Form
  * @property PaginatorHelper $Paginator
- * @property UrlHelper       $Url
+ * @property UrlHelper $Url
  */
 class CategoriesHelper extends Helper {
 	use IdGeneratorTrait;
 	use StringTemplateTrait;
+
 
 	/**
 	 * @inheritDoc
@@ -64,10 +66,10 @@ class CategoriesHelper extends Helper {
 
 
 	/**
-	 * @param View  $ao_view
+	 * @param View $ao_view
 	 * @param array $aa_config
 	 */
-	public function __construct (View $ao_view, array $aa_config = []) {
+	public function __construct(View $ao_view, array $aa_config = []) {
 		$la_config = $aa_config;
 
 		//Add the default widgets to those that may be present in the provided config
@@ -94,8 +96,9 @@ class CategoriesHelper extends Helper {
 	 *
 	 * @return $this
 	 */
-	public function setWidgetLocator (WidgetLocator $ao_widgetLocator): static {
+	public function setWidgetLocator(WidgetLocator $ao_widgetLocator): static {
 		$this->widgetLocator = $ao_widgetLocator;
+
 
 		return $this;
 	}
@@ -112,10 +115,11 @@ class CategoriesHelper extends Helper {
 	 *
 	 * @return string
 	 */
-	public function widget (string $as_name, array $aa_data = []): string {
+	public function widget(string $as_name, array $aa_data = []): string {
 		$la_data = $aa_data;
 
 		$lo_widget = $this->widgetLocator->get($as_name);
+
 
 		/**
 		 * This call with $this->Form->context() is hacky but since the WidgetInterface requires a ContextInterface,
@@ -164,7 +168,7 @@ class CategoriesHelper extends Helper {
 	 *
 	 * @see \Cake\View\Helper\FormHelper::control()
 	 */
-	public function control (?string $as_fieldName = NULL, array $aa_attributes = []): string {
+	public function control(?string $as_fieldName = NULL, array $aa_attributes = []): string {
 		$ls_fieldName = $as_fieldName ?? 'category';
 		$la_attributes = $aa_attributes + ['empty' => TRUE, 'type' => 'select'];
 
@@ -175,19 +179,28 @@ class CategoriesHelper extends Helper {
 		}
 
 		if ($la_attributes['options'] instanceof TreeIterator) {
-			$la_attributes['options'] = $la_attributes['options']->printer(...($la_attributes['printer'] ?? [
-				'label',
-				'id',
-				$la_attributes['levelPrefix'] ?? '- ',
-			]));
+			$la_attributes['options'] = $la_attributes['options']->printer(
+				...(
+					$la_attributes['printer'] ?? [
+						'label',
+						'id',
+						$la_attributes['levelPrefix'] ?? '- ',
+					]
+				)
+			);
 		}
 		elseif ($la_attributes['options'] instanceof Collection || $la_attributes['options'] instanceof ResultSet) {
-			$la_attributes['options'] = $la_attributes['options']->combine(...($la_attributes['combinator'] ?? [
-				'id',
-				'label',
-				NULL,
-			]))->toArray();
+			$la_attributes['options'] = $la_attributes['options']->combine(
+				...(
+					$la_attributes['combinator'] ?? [
+						'id',
+						'label',
+						NULL,
+					]
+				)
+			)->toArray();
 		}
+
 
 		return $this->Form->control($ls_fieldName, $la_attributes);
 	}
@@ -246,32 +259,32 @@ class CategoriesHelper extends Helper {
 	 *
 	 * @see \Cake\View\Helper\FormHelper::select();
 	 *
-	public function _select (?string $as_fieldName = NULL, iterable $ax_options = [], array $aa_attributes = []): string {
-		$ls_fieldName = $as_fieldName ?? 'category';
-		$la_attributes = $aa_attributes + ['empty' => TRUE];
-
-		$lx_categories = $ax_options;
-		if (empty($la_attributes['options'])) {
-			$la_attributes['options'] = $this->getCategoriesFromRequest($ls_fieldName, $la_attributes['categoriesIdentifier'] ?? 'category') ?? [];
-		}
-
-		if ($la_attributes['options'] instanceof TreeIterator) {
-			$la_attributes['options'] = $la_attributes['options']->printer(...($la_attributes['printer'] ?? [
-				'label',
-				'id',
-				$la_attributes['levelPrefix'] ?? '- ',
-			]));
-		}
-		elseif ($la_attributes['options'] instanceof Collection) {
-			$la_attributes['options'] = $la_attributes['options']->combine(...($la_attributes['combinator'] ?? [
-				'id',
-				'label',
-				NULL,
-			]))->toArray();
-		}
-
-		return $this->Form->select($ls_fieldName, $lx_categories, $la_attributes);
-	}*/
+	 * public function _select (?string $as_fieldName = NULL, iterable $ax_options = [], array $aa_attributes = []): string {
+	 * $ls_fieldName = $as_fieldName ?? 'category';
+	 * $la_attributes = $aa_attributes + ['empty' => TRUE];
+	 *
+	 * $lx_categories = $ax_options;
+	 * if (empty($la_attributes['options'])) {
+	 * $la_attributes['options'] = $this->getCategoriesFromRequest($ls_fieldName, $la_attributes['categoriesIdentifier'] ?? 'category') ?? [];
+	 * }
+	 *
+	 * if ($la_attributes['options'] instanceof TreeIterator) {
+	 * $la_attributes['options'] = $la_attributes['options']->printer(...($la_attributes['printer'] ?? [
+	 * 'label',
+	 * 'id',
+	 * $la_attributes['levelPrefix'] ?? '- ',
+	 * ]));
+	 * }
+	 * elseif ($la_attributes['options'] instanceof Collection) {
+	 * $la_attributes['options'] = $la_attributes['options']->combine(...($la_attributes['combinator'] ?? [
+	 * 'id',
+	 * 'label',
+	 * NULL,
+	 * ]))->toArray();
+	 * }
+	 *
+	 * return $this->Form->select($ls_fieldName, $lx_categories, $la_attributes);
+	 * }*/
 
 
 	/**
@@ -298,21 +311,21 @@ class CategoriesHelper extends Helper {
 	 *
 	 * @return string
 	 */
-	public function filter (?string $as_fieldName = NULL, iterable $ax_options = [], array $aa_attributes = []): string {
+	public function filter(?string $as_fieldName = NULL, iterable $ax_options = [], array $aa_attributes = []): string {
 		$ls_fieldName = $as_fieldName ?? 'category';
 		$la_attributes = $aa_attributes + [
-			'aggregationLabel' => __($ls_fieldName . '_filter_all'),
-			'aggregationKey' => 'all',
-			'disabled' => FALSE,
-			'escape' => TRUE,
-			'label' => __($ls_fieldName . '_filter_label'),
-			'identifier' => $ls_identifier = Inflector::variable($ls_fieldName),
-			'levelPrefix' => '- ',
-			'unassignedLabel' => __($ls_fieldName . '_filter_unassigned'),
-			'unassignedKey' => 'unassigned',
-			'uriParam' => Inflector::dasherize($ls_fieldName),
-			'val' => $this->getSelectedCategoryFromRequest($ls_identifier),
-		];
+				'aggregationLabel' => __($ls_fieldName . '_filter_all'),
+				'aggregationKey' => 'all',
+				'disabled' => FALSE,
+				'escape' => TRUE,
+				'label' => __($ls_fieldName . '_filter_label'),
+				'identifier' => $ls_identifier = Inflector::variable($ls_fieldName),
+				'levelPrefix' => '- ',
+				'unassignedLabel' => __($ls_fieldName . '_filter_unassigned'),
+				'unassignedKey' => 'unassigned',
+				'uriParam' => Inflector::dasherize($ls_fieldName),
+				'val' => $this->getSelectedCategoryFromRequest($ls_identifier),
+			];
 
 		if (isset($la_attributes['id']) && $la_attributes['id'] === TRUE) {
 			$la_attributes['id'] = $this->_domId($ls_fieldName);
@@ -327,11 +340,15 @@ class CategoriesHelper extends Helper {
 			$la_attributes['options'] = array_combine(array_column($la_attributes['options'], 'id'), $la_attributes['options']);
 		}
 		elseif ($la_attributes['options'] instanceof Collection || $la_attributes['options'] instanceof ResultSet) {
-			$la_attributes['options'] = $la_attributes['options']->combine(...($la_attributes['combinator'] ?? [
-				'id',
-				'label',
-				NULL,
-			]))->toArray();
+			$la_attributes['options'] = $la_attributes['options']->combine(
+				...(
+					$la_attributes['combinator'] ?? [
+						'id',
+						'label',
+						NULL,
+					]
+				)
+			)->toArray();
 		}
 
 		foreach ($la_attributes['options'] as $lx_key => $lx_option) {
@@ -344,7 +361,7 @@ class CategoriesHelper extends Helper {
 				];
 				$la_attributes['options'][ $lx_key ] = $la_data;
 			}
-			elseif ( ! is_array($lx_option)) {
+			elseif (!is_array($lx_option)) {
 				$la_data = [
 					'id' => NULL,
 					'title' => $lx_option,
@@ -359,6 +376,7 @@ class CategoriesHelper extends Helper {
 		$la_attributes['aggregationLink'] = $this->Url->build([$la_attributes['uriParam'] => $la_attributes['aggregationKey']], ['withoutParams' => ['page']]);
 		$la_attributes['unassignedLink'] = $this->Url->build([$la_attributes['uriParam'] => $la_attributes['unassignedKey']], ['withoutParams' => ['page']]);
 
+
 		return $this->widget('linkSelect', $la_attributes);
 	}
 
@@ -371,7 +389,7 @@ class CategoriesHelper extends Helper {
 	 *
 	 * @return NULL|iterable
 	 */
-	public function getCategoriesFromRequest (bool $ab_preferRaw = TRUE, string ...$aa_names): ?iterable {
+	public function getCategoriesFromRequest(bool $ab_preferRaw = TRUE, string ...$aa_names): ?iterable {
 		$la_categorization = $this->getView()->getRequest()->getAttribute('categorization', []);
 
 		foreach ($aa_names as $ls_name) {
@@ -384,10 +402,11 @@ class CategoriesHelper extends Helper {
 				$lx_return = Hash::get($la_categorization, $ls_name . '.categories.simple', []);
 			}
 
-			if ( ! empty($lx_return)) {
+			if (!empty($lx_return)) {
 				return $lx_return;
 			}
 		}
+
 
 		return NULL;
 	}
@@ -400,16 +419,17 @@ class CategoriesHelper extends Helper {
 	 *
 	 * @return mixed
 	 */
-	public function getSelectedCategoryFromRequest (...$aa_names): mixed {
+	public function getSelectedCategoryFromRequest(...$aa_names): mixed {
 		$la_categorization = $this->getView()->getRequest()->getAttribute('categorization', []);
 
 		foreach ($aa_names as $ls_name) {
 			$lx_return = Hash::get($la_categorization, $ls_name . '.selectedCategory');
 
-			if ( ! is_null($lx_return)) {
+			if (!is_null($lx_return)) {
 				return $lx_return;
 			}
 		}
+
 
 		return NULL;
 	}

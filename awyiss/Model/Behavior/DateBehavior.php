@@ -13,7 +13,6 @@ use Cake\Collection\CollectionInterface;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
 use Cake\ORM\Locator\LocatorAwareTrait;
-use Cake\ORM\PropertyMarshalInterface;
 use Cake\ORM\Query\SelectQuery;
 use Cake\Utility\Inflector;
 
@@ -50,11 +49,11 @@ class DateBehavior extends Behavior/* implements PropertyMarshalInterface*/ {
 	protected Table $datesTable;
 
 
-	public function __construct (Table $ao_table, array $aa_config = []) {
+	public function __construct(Table $ao_table, array $aa_config = []) {
 		$la_config = $aa_config + [
-			'referenceName' => $this->getScope($ao_table),
-			'tableLocator' => $ao_table->associations()->getTableLocator(),
-		];
+				'referenceName' => $this->getScope($ao_table),
+				'tableLocator' => $ao_table->associations()->getTableLocator(),
+			];
 
 		parent::__construct($ao_table, $la_config);
 
@@ -65,8 +64,8 @@ class DateBehavior extends Behavior/* implements PropertyMarshalInterface*/ {
 	}
 
 
-	public function beforeFind (EventInterface $event, SelectQuery $query, ArrayObject $options): void {
-		if (! $this->getConfig('types')) {
+	public function beforeFind(EventInterface $event, SelectQuery $query, ArrayObject $options): void {
+		if (!$this->getConfig('types')) {
 			return;
 		}
 
@@ -74,18 +73,15 @@ class DateBehavior extends Behavior/* implements PropertyMarshalInterface*/ {
 		$alias = $this->_table->getAlias();
 		$select = $query->clause('select');
 
-		$conditions = function(string $field, SelectQuery $query, array $select) {
-			return function(SelectQuery $q) use ($field, $query, $select) {
+		$conditions = function (string $field, SelectQuery $query, array $select) {
+			return function (SelectQuery $q) use ($field, $query, $select) {
 				//$table = $q->getRepository();
 				//$q->where([$table->aliasField('locale') => $locale]);
 
-				if (
-					$query->isAutoFieldsEnabled() ||
-					in_array($field, $select, TRUE) ||
-					in_array($this->_table->aliasField($field), $select, TRUE)
-				) {
+				if ($query->isAutoFieldsEnabled() || in_array($field, $select, TRUE) || in_array($this->_table->aliasField($field), $select, TRUE)) {
 					$q->select(['id', 'value']);
 				}
+
 
 				return $q;
 			};
@@ -115,19 +111,20 @@ class DateBehavior extends Behavior/* implements PropertyMarshalInterface*/ {
 	 *
 	 * @return string
 	 */
-	protected function getScope (Table $ao_table): string {
+	protected function getScope(Table $ao_table): string {
 		$ls_name = namespaceSplit($ao_table::class);
 		$ls_name = substr((string) end($ls_name), 0, -5);
 		if (empty($ls_name)) {
 			$ls_name = $ao_table->getTable() ?: $ao_table->getAlias();
 		}
 
+
 		return Inflector::underscore($ls_name);
 	}
 
 
-	protected function rowMapper (CollectionInterface $results): CollectionInterface {
-		return $results->map(function(EntityInterface|array|null $row) {
+	protected function rowMapper(CollectionInterface $results): CollectionInterface {
+		return $results->map(function (EntityInterface|array|null $row) {
 			if ($row === NULL) {
 				return $row;
 			}
@@ -174,6 +171,7 @@ class DateBehavior extends Behavior/* implements PropertyMarshalInterface*/ {
 				$row->setDirty('_dates', FALSE);
 			}
 
+
 			return $row;
 		});
 	}
@@ -182,7 +180,7 @@ class DateBehavior extends Behavior/* implements PropertyMarshalInterface*/ {
 	/**
 	 * @return void
 	 */
-	protected function setupAssociations (): void {
+	protected function setupAssociations(): void {
 		if (!$this->getConfig('types')) {
 			return;
 		}
@@ -195,7 +193,7 @@ class DateBehavior extends Behavior/* implements PropertyMarshalInterface*/ {
 		foreach ($this->getConfig('types') as $le_type) {
 			$name = $alias . '_' . $le_type->value . '_date';
 
-			if ( ! $tableLocator->exists($name)) {
+			if (!$tableLocator->exists($name)) {
 				$fieldTable = $tableLocator->get($name, [
 					'className' => $this->getConfig('datesTable'),
 					'alias' => $name,
@@ -225,7 +223,7 @@ class DateBehavior extends Behavior/* implements PropertyMarshalInterface*/ {
 			'foreignKey' => 'foreign_id',
 			'strategy' => 'subquery',
 			'conditions' => [
-				$targetAlias . '.scope' => $this->getConfig('referenceName')
+				$targetAlias . '.scope' => $this->getConfig('referenceName'),
 			],
 			'propertyName' => '_dates',
 			'dependent' => TRUE,

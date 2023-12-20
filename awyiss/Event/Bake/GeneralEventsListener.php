@@ -26,7 +26,7 @@ class GeneralEventsListener implements EventListenerInterface {
 	/**
 	 * @inheritDoc
 	 */
-	public function implementedEvents (): array {
+	public function implementedEvents(): array {
 		return [
 			'Bake.beforeRender.Controller.controller' => 'beforeRenderControllerController',
 		];
@@ -40,7 +40,7 @@ class GeneralEventsListener implements EventListenerInterface {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function beforeRenderControllerController (Event $ao_event): void {
+	public function beforeRenderControllerController(Event $ao_event): void {
 		/** @var View $ao_view */
 		$ao_view = $ao_event->getSubject();
 

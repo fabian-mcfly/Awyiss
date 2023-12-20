@@ -24,7 +24,7 @@ class MenuCell extends Cell {
 	 *
 	 * @return void
 	 */
-	public function display (): void {
+	public function display(): void {
 		$lo_identity = $this->_getIdentity();
 		$lo_session = $this->request->getSession();
 		//$lo_session->delete('backend_menu');
@@ -58,14 +58,14 @@ class MenuCell extends Cell {
 			}
 		}
 
-		if ( ! $la_menuData || $lo_time < $lo_identity->changedOn) {
+		if (!$la_menuData || $lo_time < $lo_identity->changedOn) {
 			$lo_menu = new BackendMenu($lo_identity);
 			$lo_renderer = new MenuRenderer($lo_menu->getDynamicMenu());
 			$ls_menu = $lo_renderer->render('System');
 
 			$lo_session->write('backend_menu', json_encode([
 				'menu' => $ls_menu,
-				'time' => new DateTime()
+				'time' => new DateTime(),
 			]));
 		}
 		else {
@@ -76,21 +76,20 @@ class MenuCell extends Cell {
 			'as_menu' => $ls_menu,
 		]);
 
-		$this->viewBuilder()
-			->setTemplatePath('Backend/cell/Menu')
-			->setTemplate('menu');
+		$this->viewBuilder()->setTemplatePath('Backend/cell/Menu')->setTemplate('menu');
 	}
 
 
 	/**
 	 * Retreive the identity attribute from the current request
 	 */
-	protected function _getIdentity (): IdentityPermissionsInterface {
+	protected function _getIdentity(): IdentityPermissionsInterface {
 		/** @var IdentityPermissionsInterface|User|UsersExternal $lo_identity */
 		$lo_identity = $this->request->getAttribute('identity');
-		if ( ! ($lo_identity instanceof IdentityPermissionsInterface)) {
+		if (!($lo_identity instanceof IdentityPermissionsInterface)) {
 			throw new RuntimeException(sprintf('Object `%s` does not implement `%s`', get_class($lo_identity), IdentityPermissionsInterface::class));
 		}
+
 
 		return $lo_identity;
 	}

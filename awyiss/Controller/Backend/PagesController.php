@@ -12,13 +12,13 @@ use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity\Page;
 use Awyiss\Model\Table\PagesTable;
+use Awyiss\Routing\Router;
 use Cake\Collection\Collection;
 use Cake\Collection\CollectionInterface;
 use Cake\Collection\Iterator\TreeIterator;
 use Cake\Datasource\ResultSetInterface;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
-use Awyiss\Routing\Router;
 use Cake\Utility\Inflector;
 use Cake\View\Exception\MissingTemplateException;
 
@@ -46,10 +46,10 @@ class PagesController extends Controller {
 
 	/**
 	 * Overview method
-
+	 *
 	 * @throws \Exception
 	 */
-	public function overview (): void {
+	public function overview(): void {
 		$this->Authorization->ensure(['read', 'create']);
 
 		$lo_pages = $this->Pages->find()->where($this->getOverviewWhere());
@@ -71,7 +71,7 @@ class PagesController extends Controller {
 	 *
 	 * @throws \Exception
 	 */
-	public function add (): void {
+	public function add(): void {
 		$this->Authorization->ensure('create');
 
 		$lo_page = $this->Pages->newDefaultEntity([
@@ -105,14 +105,15 @@ class PagesController extends Controller {
 	 *
 	 * @throws \Exception
 	 */
-	public function edit () {
+	public function edit() {
 		$this->Authorization->ensure('update');
 
 		/** @var Page $lo_page */
 		$lo_page = $this->Pages->findById((int) $this->request->getParam('id'))->find('translations')->first();
 
-		if ( ! $lo_page) {
+		if (!$lo_page) {
 			$this->Flash->error(__('record_not_found'));
+
 
 			return $this->redirect(['action' => 'overview']);
 		}
@@ -143,15 +144,17 @@ class PagesController extends Controller {
 	 *
 	 * @throws \Exception
 	 */
-	public function delete (): Response {
+	public function delete(): Response {
 		$this->Authorization->ensure('delete');
 
 		$this->request->allowMethod(['get', 'delete']);
 
 		/** @var Page $lo_page */
 		$lo_page = $this->Pages->findById((int) $this->request->getParam('id'))->find('translations')->first();
-		if ( ! $lo_page) {
+		if (!$lo_page) {
 			$this->Flash->error(__('record_not_found'));
+
+
 			return $this->redirect(['action' => 'overview']);
 		}
 
@@ -162,77 +165,8 @@ class PagesController extends Controller {
 			$this->Flash->error(__('delete_failed'));
 		}
 
+
 		return $this->redirect(['action' => 'overview']);
-	}
-
-
-	/**
-	 * @param Page $ao_page
-	 * @param string $as_method
-	 *
-	 * @return void
-	 */
-	protected function save (Page $ao_page, string $as_method = 'add'): void {
-		$la_associated = [];
-		if ($this->Pages->hasAttributes()) {
-			$la_associated[] = $this->Pages->getAttributesTable(TRUE);
-			$ao_page->setAccess('attributes', TRUE);
-		}
-
-		$this->Pages->patchEntity($ao_page, ['page_role_id' => $this->getPageRoleId()] + $this->request->getData(), ['associated' => $la_associated]);
-
-		if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-			if ($this->Pages->save($ao_page)) {
-				$this->Flash->success(__($as_method . '_succeeded'));
-
-				if ($this->request->getData('submit') == 'submit_close') {
-					throw new RedirectException(Router::url(['action' => 'overview',	'lang' => $ao_page->languageShortcode], TRUE), 302);
-				}
-
-				throw new RedirectException(Router::url(['action' => 'edit', 'lang' => $ao_page->languageShortcode, 'id' => $ao_page->id], TRUE), 302);
-			}
-
-			$this->Flash->error(__($as_method . '_failed'));
-			foreach ($ao_page->getError('_general') as $ls_error) {
-				$this->Flash->error($ls_error);
-			}
-		}
-	}
-
-
-	/**
-	 * @inheritDoc
-	 *
-	 * @throws \Exception
-	 */
-	protected function initializeOverviewWhere (): void {
-		$ls_languageShortcode = LocaleMiddleware::getLanguage()->shortcode;
-
-		$this->overviewWhere = [
-			'language_shortcode' => $ls_languageShortcode,
-			'page_role_id' => $this->getPageRoleId(),
-		];
-	}
-
-
-	/**
-	 * @param Page $ao_page
-	 * @param CollectionInterface $ao_threadedContents
-	 *
-	 * @return void
-	 */
-	protected function ensurePossibleParentId (Page $ao_page, CollectionInterface $ao_threadedPages): void {
-		$la_possibleParentIds = $ao_threadedPages->extract('id')->toArray();
-
-		if ( ! empty($ao_page->parentId) && ! in_array($ao_page->parentId, $la_possibleParentIds)) {
-			$la_errors = $ao_page->getError('parentId');
-
-			$ao_page->parentId = reset($la_possibleParentIds);
-
-			if ($la_errors) {
-				$ao_page->setError('parentId', $la_errors);
-			}
-		}
 	}
 
 
@@ -245,12 +179,13 @@ class PagesController extends Controller {
 	 * @see \Awyiss\Model\Entity\PageTemplate
 	 * @see \Cake\ORM\Table::findList()
 	 */
-	public function getPageTemplates (): CollectionInterface {
+	public function getPageTemplates(): CollectionInterface {
 		if (!isset($this->pageTemplates)) {
 			$this->pageTemplates = $this->Pages->PageTemplates->find('active', authorize: ['skip' => TRUE])->where([
 				'page_role_id' => $this->getPageRoleId(),
 			])->all()->indexBy('id');
 		}
+
 
 		return $this->pageTemplates;
 	}
@@ -266,7 +201,7 @@ class PagesController extends Controller {
 	 *
 	 * @see \Cake\Collection\CollectionTrait::listNested()
 	 */
-	public function getThreadedPages (Page $ao_page): CollectionInterface {
+	public function getThreadedPages(Page $ao_page): CollectionInterface {
 		if (!isset($this->threadedPages)) {
 			$lo_query = $this->Pages->find()->where([
 				'language_shortcode' => $this->getOverviewWhere('language_shortcode'),
@@ -280,22 +215,27 @@ class PagesController extends Controller {
 		if ($li_originalId = $ao_page->get('id')) {
 			$li_foundAtLevel = NULL;
 			$lo_threadedPages = new Collection($this->threadedPages->toList());
-			$lo_threadedPages = $lo_threadedPages->filter(function($ao_page) use ($li_originalId, &$li_foundAtLevel) {
+			$lo_threadedPages = $lo_threadedPages->filter(function ($ao_page) use ($li_originalId, &$li_foundAtLevel) {
 				if ($ao_page->get('id') === $li_originalId) {
 					$li_foundAtLevel = $ao_page->level;
 				}
 				elseif (is_null($li_foundAtLevel) || $ao_page->level <= $li_foundAtLevel) {
 					$li_foundAtLevel = NULL;
+
+
 					return TRUE;
 				}
+
 
 				return FALSE;
 			});
 
 			$lo_threadedPages = $lo_threadedPages->nest('id', 'parentId');
 
+
 			return $lo_threadedPages->listNested();
 		}
+
 
 		return $this->threadedPages;
 	}
@@ -304,7 +244,7 @@ class PagesController extends Controller {
 	/**
 	 * @return int
 	 */
-	public function getPageRoleId (): int {
+	public function getPageRoleId(): int {
 		return $this->pageRoleId;
 	}
 
@@ -316,8 +256,9 @@ class PagesController extends Controller {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function setPageRoleId (int $ai_pageRoleId): static {
+	public function setPageRoleId(int $ai_pageRoleId): static {
 		$this->pageRoleId = $ai_pageRoleId;
+
 
 		return $this;
 	}
@@ -333,28 +274,31 @@ class PagesController extends Controller {
 	 * @return $this
 	 * @throws \ReflectionException
 	 */
-	public function asPageRole (int $ai_pageRoleId, string $as_identifier): static {
+	public function asPageRole(int $ai_pageRoleId, string $as_identifier): static {
 		$this->setPageRoleId($ai_pageRoleId);
 		$this->Pages = $this->{$as_identifier} = $this->fetchTable($as_identifier);
 
 		/** @var AuthorizationService $lo_authorizationService */
 		$lo_authorizationService = $this->getRequest()->getAttribute('authorization');
 		$ls_policyClass = $lo_authorizationService->getPolicy($this->Authorization->getScope(), $this->Authorization->getConfig('policiesRealm'));
-		if ( ! $ls_policyClass) {
+		if (!$ls_policyClass) {
 			$lo_policyClass = new GenericPagePolicy($this->Authorization->getScope());
 		}
 
 		if ($this->Pages->hasBehavior('Authorize')) {
-			$this->Pages->getBehavior('Authorize')/*->setPolicyClass($ls_policyClass ?: $lo_policyClass)*/;
+			$this->Pages->getBehavior('Authorize')/*->setPolicyClass($ls_policyClass ?: $lo_policyClass)*/
+			;
 		}
 
-		$this->Authorization->setScope($as_identifier)/*->setPolicyClass($ls_policyClass ?: $lo_policyClass)*/;
+		$this->Authorization->setScope($as_identifier)/*->setPolicyClass($ls_policyClass ?: $lo_policyClass)*/
+		;
 
 		$this->SystemOrder->setConfig('entityName', Inflector::variable(Inflector::singularize($as_identifier)));
 
 		$this->set([
-			'policyClass' => $ls_policyClass ?: $lo_policyClass
+			'policyClass' => $ls_policyClass ?: $lo_policyClass,
 		]);
+
 
 		return $this;
 	}
@@ -367,11 +311,11 @@ class PagesController extends Controller {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function render (?string $as_template = NULL, ?string $as_layout = NULL): Response {
+	public function render(?string $as_template = NULL, ?string $as_layout = NULL): Response {
 		try {
 			$ls_contents = parent::render($as_template, $as_layout);
 		}
-		/** @noinspection PhpUnusedLocalVariableInspection */
+			/** @noinspection PhpUnusedLocalVariableInspection */
 		catch (MissingTemplateException $ex) {
 			$lo_viewBuilder = $this->viewBuilder();
 			$la_templatePathParts = explode('/', $lo_viewBuilder->getTemplatePath());
@@ -392,7 +336,77 @@ class PagesController extends Controller {
 			$ls_contents = parent::render($as_template, $as_layout);
 		}
 
+
 		return $ls_contents;
 	}
-}
 
+
+	/**
+	 * @param Page $ao_page
+	 * @param string $as_method
+	 *
+	 * @return void
+	 */
+	protected function save(Page $ao_page, string $as_method = 'add'): void {
+		$la_associated = [];
+		if ($this->Pages->hasAttributes()) {
+			$la_associated[] = $this->Pages->getAttributesTable(TRUE);
+			$ao_page->setAccess('attributes', TRUE);
+		}
+
+		$this->Pages->patchEntity($ao_page, ['page_role_id' => $this->getPageRoleId()] + $this->request->getData(), ['associated' => $la_associated]);
+
+		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
+			if ($this->Pages->save($ao_page)) {
+				$this->Flash->success(__($as_method . '_succeeded'));
+
+				if ($this->request->getData('submit') == 'submit_close') {
+					throw new RedirectException(Router::url(['action' => 'overview', 'lang' => $ao_page->languageShortcode], TRUE), 302);
+				}
+
+				throw new RedirectException(Router::url(['action' => 'edit', 'lang' => $ao_page->languageShortcode, 'id' => $ao_page->id], TRUE), 302);
+			}
+
+			$this->Flash->error(__($as_method . '_failed'));
+			foreach ($ao_page->getError('_general') as $ls_error) {
+				$this->Flash->error($ls_error);
+			}
+		}
+	}
+
+
+	/**
+	 * @inheritDoc
+	 *
+	 * @throws \Exception
+	 */
+	protected function initializeOverviewWhere(): void {
+		$ls_languageShortcode = LocaleMiddleware::getLanguage()->shortcode;
+
+		$this->overviewWhere = [
+			'language_shortcode' => $ls_languageShortcode,
+			'page_role_id' => $this->getPageRoleId(),
+		];
+	}
+
+
+	/**
+	 * @param Page $ao_page
+	 * @param CollectionInterface $ao_threadedContents
+	 *
+	 * @return void
+	 */
+	protected function ensurePossibleParentId(Page $ao_page, CollectionInterface $ao_threadedPages): void {
+		$la_possibleParentIds = $ao_threadedPages->extract('id')->toArray();
+
+		if (!empty($ao_page->parentId) && !in_array($ao_page->parentId, $la_possibleParentIds)) {
+			$la_errors = $ao_page->getError('parentId');
+
+			$ao_page->parentId = reset($la_possibleParentIds);
+
+			if ($la_errors) {
+				$ao_page->setError('parentId', $la_errors);
+			}
+		}
+	}
+}

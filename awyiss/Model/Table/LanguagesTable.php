@@ -41,19 +41,19 @@ class LanguagesTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public function initialize (array $aa_config): void {
+	public function initialize(array $aa_config): void {
 		parent::initialize($aa_config);
 
 		$this->hasMany('Configuration', [
 			'bindingKey' => [
 				'realm',
-				'shortcode'
+				'shortcode',
 			],
 			'cascadeCallbacks' => TRUE,
 			'dependent' => TRUE,
 			'foreignKey' => [
 				'realm',
-				'languageShortcode'
+				'languageShortcode',
 			],
 		]);
 
@@ -74,7 +74,7 @@ class LanguagesTable extends Table {
 	 *
 	 * @return Validator
 	 */
-	public function validationDefault (Validator $ao_validator): Validator {
+	public function validationDefault(Validator $ao_validator): Validator {
 		parent::validationDefault($ao_validator);
 
 
@@ -97,7 +97,7 @@ class LanguagesTable extends Table {
 			'isScalar' => ['rule' => 'isScalar'],
 			'ascii' => ['rule' => 'ascii'],
 			'exactLength' => [
-				'rule' => function($as_shortcode) {
+				'rule' => function ($as_shortcode) {
 					return strlen($as_shortcode) == 2;
 				},
 			],
@@ -149,6 +149,7 @@ class LanguagesTable extends Table {
 			'boolean' => ['rule' => 'boolean'],
 		]);
 
+
 		return $ao_validator;
 	}
 
@@ -162,14 +163,14 @@ class LanguagesTable extends Table {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildRules (RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
+	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
 		$ao_rules->add($ao_rules->isUnique(['shortcode', 'realm']), [
 			'errorField' => 'shortcode',
 			'message' => __dfx($this->getI18nDomain(), 'validation', 'shortcode', 'error_unique'),
 		]);
 
 
-		$ao_rules->add(function(Language $ao_entity): bool {
+		$ao_rules->add(function (Language $ao_entity): bool {
 			return in_array($ao_entity->realm, Awyiss::getRealms());
 		}, 'validRealm', [
 			'errorField' => 'realm',
@@ -177,7 +178,7 @@ class LanguagesTable extends Table {
 		]);
 
 
-		$ao_rules->add(function(Language $ao_entity): bool {
+		$ao_rules->add(function (Language $ao_entity): bool {
 			return in_array($ao_entity->timezone, DateTimeZone::listIdentifiers());
 		}, 'validTimezone', [
 			'errorField' => 'timezone',
@@ -185,7 +186,7 @@ class LanguagesTable extends Table {
 		]);
 
 
-		$ao_rules->add(function(Language $ao_entity): bool {
+		$ao_rules->add(function (Language $ao_entity): bool {
 			return in_array($ao_entity->locale, ResourceBundle::getLocales(''));
 		}, 'validLocale', [
 			'errorField' => 'locale',

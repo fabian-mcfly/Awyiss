@@ -4,13 +4,13 @@
 namespace Awyiss\Middleware;
 
 
+use Awyiss\Routing\Router;
 use Cake\Core\ContainerApplicationInterface;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\MiddlewareQueue;
 use Cake\Http\Runner;
 use Cake\Http\ServerRequest;
 use Cake\Routing\Middleware\RoutingMiddleware as BaseRoutingMiddleware;
-use Awyiss\Routing\Router;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -26,12 +26,12 @@ class RoutingMiddleware extends BaseRoutingMiddleware {
 	 *
 	 * Re-implemented to add the following lines to use the parts from AwyissRoute as QueryParams
 	 *
-	 * 		$la_queryParams = $la_params['parts'] ?? [];
-	 * 		$lo_request = $lo_request->withQueryParams($la_queryParams);
+	 *        $la_queryParams = $la_params['parts'] ?? [];
+	 *        $lo_request = $lo_request->withQueryParams($la_queryParams);
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function process (ServerRequestInterface $ao_request, RequestHandlerInterface $ao_handler): ResponseInterface {
+	public function process(ServerRequestInterface $ao_request, RequestHandlerInterface $ao_handler): ResponseInterface {
 		$this->loadRoutes();
 		try {
 			assert($ao_request instanceof ServerRequest);
@@ -56,19 +56,20 @@ class RoutingMiddleware extends BaseRoutingMiddleware {
 				Router::setRequest($lo_request);
 			}
 		}
-		/** @noinspection PhpVariableNamingConventionInspection */
+			/** @noinspection PhpVariableNamingConventionInspection */
 		catch (RedirectException $e) {
 			return new RedirectResponse($e->getMessage(), $e->getCode(), $e->getHeaders());
 		}
 
 		$la_matchingMiddlewares = Router::getRouteCollection()->getMiddleware($la_middlewareNames);
-		if ( ! $la_matchingMiddlewares) {
+		if (!$la_matchingMiddlewares) {
 			return $ao_handler->handle($lo_request ?? $ao_request);
 		}
 
 		$lo_container = $this->app instanceof ContainerApplicationInterface ? $this->app->getContainer() : NULL;
 		$lo_middlewareQueue = new MiddlewareQueue($la_matchingMiddlewares, $lo_container);
 		$lo_runner = new Runner();
+
 
 		return $lo_runner->run($lo_middlewareQueue, $lo_request, $ao_handler);
 	}

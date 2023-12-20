@@ -27,7 +27,7 @@ class App extends \Cake\Core\App {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public static function className (string $as_class, string $as_type = '', string $as_suffix = ''): ?string {
+	public static function className(string $as_class, string $as_type = '', string $as_suffix = ''): ?string {
 		if (str_contains($as_class, '\\')) {
 			return class_exists($as_class) ? $as_class : NULL;
 		}
@@ -42,6 +42,7 @@ class App extends \Cake\Core\App {
 				/** @var class-string */
 				return $ls_base . $ls_fullname;
 			}
+
 
 			return NULL;
 		}
@@ -72,6 +73,7 @@ class App extends \Cake\Core\App {
 			/** @var class-string */
 			return 'Cake' . $ls_fullname;
 		}
+
 
 		return NULL;
 	}

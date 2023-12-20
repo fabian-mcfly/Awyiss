@@ -26,10 +26,9 @@ class Date extends Entity {
 		'type' => TRUE,
 		'value' => TRUE,
 	];
-
 	/**
-	* @inheritDoc
-	*/
+	 * @inheritDoc
+	 */
 	protected static array $fieldMap = [
 		'foreign_id' => 'foreignId',
 	];

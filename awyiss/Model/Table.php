@@ -22,8 +22,8 @@ use Cake\Datasource\EntityInterface;
 use Cake\ORM\Exception\MissingEntityException;
 use Cake\ORM\Query;
 use Cake\ORM\Query\SelectQuery;
-use Cake\Validation\Validator;
 use Cake\Utility\Inflector;
+use Cake\Validation\Validator;
 use RuntimeException;
 
 
@@ -111,7 +111,7 @@ class Table extends \Cake\ORM\Table {
 	/**
 	 * @inheritDoc
 	 */
-	public function __construct (array $aa_config = []) {
+	public function __construct(array $aa_config = []) {
 		if (($this->_defaultConfig['implementedEvents'] ?? NULL) === NULL) {
 			$this->setConfig('implementedEvents', $this->defaultEvents);
 		}
@@ -125,12 +125,12 @@ class Table extends \Cake\ORM\Table {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function initialize (array $aa_config): void {
+	public function initialize(array $aa_config): void {
 		if (static::TABLE) {
 			$this->setTable(static::TABLE);
 		}
 
-		if ( ! $this->getTable()) {
+		if (!$this->getTable()) {
 			return;
 		}
 
@@ -145,10 +145,9 @@ class Table extends \Cake\ORM\Table {
 			}
 		}
 		else {
-			$this->addBehavior('Attributes',
-				['isAttributesTable' => FALSE] +
-				$this->getConfig('attributes', []) +
-				[
+			$this->addBehavior(
+				'Attributes',
+				['isAttributesTable' => FALSE] + $this->getConfig('attributes', []) + [
 					'sourceTable' => $this->getTable(),
 					'foreignKey' => Inflector::singularize($this->getTable()) . '_id',
 				]
@@ -174,10 +173,10 @@ class Table extends \Cake\ORM\Table {
 			dd($aa_config['translateLanguage'], $this->getConfig('translate', []));
 		}*/
 
-		if (0 && ! empty($aa_config['translateLanguage']) && $this->getConfig('translate', [])) {
-			$this->addBehavior('Translate',
-				$this->getConfig('translate') +
-				[
+		if (0 && !empty($aa_config['translateLanguage']) && $this->getConfig('translate', [])) {
+			$this->addBehavior(
+				'Translate',
+				$this->getConfig('translate') + [
 					'allowEmptyTranslations' => FALSE,
 					'defaultLocale' => '',
 					'locale' => $aa_config['translateLanguage']->shortcode ?? NULL,
@@ -238,11 +237,12 @@ class Table extends \Cake\ORM\Table {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function findTranslations (SelectQuery $ao_query): SelectQuery {
+	public function findTranslations(SelectQuery $ao_query): SelectQuery {
 		if ($this->hasBehavior('Translate')) {
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 			return $this->getBehavior('Translate')->findTranslations($ao_query);
 		}
+
 
 		return $ao_query;
 	}
@@ -256,12 +256,13 @@ class Table extends \Cake\ORM\Table {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function findActive (SelectQuery $ao_query): SelectQuery {
-		if ( ! $this->getSchema()->getColumn('active')) {
+	public function findActive(SelectQuery $ao_query): SelectQuery {
+		if (!$this->getSchema()->getColumn('active')) {
 			throw new RuntimeException(sprintf('Cannot use `findActive` on table `%s` ', $this->getAlias()));
 		}
 
 		$ao_query->where(['active' => TRUE]);
+
 
 		return $ao_query;
 	}
@@ -280,8 +281,8 @@ class Table extends \Cake\ORM\Table {
 	/**
 	 * @inheritDoc
 	 */
-	public function getEntityClass (): string {
-		if ( ! $this->_entityClass) {
+	public function getEntityClass(): string {
+		if (!$this->_entityClass) {
 			$ls_default = Entity::class;
 			$ls_self = static::class;
 			$la_parts = explode('\\', $ls_self);
@@ -299,16 +300,17 @@ class Table extends \Cake\ORM\Table {
 
 			/** @var class-string<EntityInterface>|NULL $ls_class */
 			$ls_class = App::className($ls_name, 'Model/Entity');
-			if ( ! $ls_class) {
+			if (!$ls_class) {
 				$ls_class = App::className($ls_alias, 'Model/Entity');
 			}
 
-			if ( ! $ls_class) {
+			if (!$ls_class) {
 				throw new MissingEntityException([$ls_name]);
 			}
 
 			$this->_entityClass = $ls_class;
 		}
+
 
 		return $this->_entityClass;
 	}
@@ -326,11 +328,12 @@ class Table extends \Cake\ORM\Table {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function belongsTo (string $as_associated, array $aa_options = []): BelongsTo {
+	public function belongsTo(string $as_associated, array $aa_options = []): BelongsTo {
 		$aa_options += ['sourceTable' => $this];
 
 		/** @var BelongsTo $lo_association */
 		$lo_association = $this->_associations->load(BelongsTo::class, $as_associated, $aa_options);
+
 
 		return $lo_association;
 	}
@@ -348,11 +351,12 @@ class Table extends \Cake\ORM\Table {
 	 *
 	 * * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function hasOne (string $as_associated, array $aa_options = []): HasOne {
+	public function hasOne(string $as_associated, array $aa_options = []): HasOne {
 		$aa_options += ['sourceTable' => $this];
 
 		/** @var HasOne $lo_association */
 		$lo_association = $this->_associations->load(HasOne::class, $as_associated, $aa_options);
+
 
 		return $lo_association;
 	}
@@ -370,11 +374,12 @@ class Table extends \Cake\ORM\Table {
 	 *
 	 * * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function hasMany (string $as_associated, array $aa_options = []): HasMany {
+	public function hasMany(string $as_associated, array $aa_options = []): HasMany {
 		$aa_options += ['sourceTable' => $this];
 
 		/** @var HasMany $lo_association */
 		$lo_association = $this->_associations->load(HasMany::class, $as_associated, $aa_options);
+
 
 		return $lo_association;
 	}
@@ -392,15 +397,15 @@ class Table extends \Cake\ORM\Table {
 	 *
 	 * * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function belongsToMany (string $as_associated, array $aa_options = []): BelongsToMany {
+	public function belongsToMany(string $as_associated, array $aa_options = []): BelongsToMany {
 		$aa_options += ['sourceTable' => $this];
 
 		/** @var BelongsToMany $lo_association */
 		$lo_association = $this->_associations->load(BelongsToMany::class, $as_associated, $aa_options);
 
+
 		return $lo_association;
 	}
-
 
 
 	/**
@@ -415,17 +420,12 @@ class Table extends \Cake\ORM\Table {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function exists ($aa_conditions, array $aa_options = []): bool {
+	public function exists($aa_conditions, array $aa_options = []): bool {
 		$la_options = array_merge(['authorize' => ['skip' => TRUE]], $aa_options);
 
-		return (bool)count(
-			$this->find()
-				->applyOptions($la_options)
-				->select(['existing' => 1])
-				->where($aa_conditions)
-				->limit(1)
-				->disableHydration()
-				->toArray()
+
+		return (bool) count(
+			$this->find()->applyOptions($la_options)->select(['existing' => 1])->where($aa_conditions)->limit(1)->disableHydration()->toArray()
 		);
 	}
 
@@ -440,10 +440,11 @@ class Table extends \Cake\ORM\Table {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function validationDefault (Validator $ao_validator): Validator {
+	public function validationDefault(Validator $ao_validator): Validator {
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 		$ao_validator->setI18nDomain($this->getI18nDomain());
 		$ao_validator->setStopOnFailure();
+
 
 		return $ao_validator;
 	}
@@ -452,12 +453,13 @@ class Table extends \Cake\ORM\Table {
 	/**
 	 * @inheritDoc
 	 */
-	public function implementedEvents (): array {
+	public function implementedEvents(): array {
 		$la_eventMap = $this->getConfig('implementedEvents', []);
 
 		if (empty($la_eventMap)) {
 			return [];
 		}
+
 
 		return $this->buildEventMap($this, $la_eventMap);
 	}
@@ -472,7 +474,7 @@ class Table extends \Cake\ORM\Table {
 	 *
 	 * @return array
 	 */
-	public function buildEventMap (Table|Behavior $ao_instance, array $aa_eventMap, int $ai_priority = NULL): array {
+	public function buildEventMap(Table|Behavior $ao_instance, array $aa_eventMap, int $ai_priority = NULL): array {
 		$la_eventMap = [];
 		$li_priority = $ai_priority;
 
@@ -485,13 +487,12 @@ class Table extends \Cake\ORM\Table {
 				$lx_callable = $lx_callable['callable'] ?? NULL;
 			}
 
-			if ((is_string($lx_callable) && ! method_exists($ao_instance, $lx_callable)) ||
-				( ! is_string($lx_callable) && ! is_callable($lx_callable))) {
+			if ((is_string($lx_callable) && !method_exists($ao_instance, $lx_callable)) || (!is_string($lx_callable) && !is_callable($lx_callable))) {
 				continue;
 			}
 
 			if (is_numeric($ls_event)) {
-				if ( ! is_string($lx_callable)) {
+				if (!is_string($lx_callable)) {
 					throw new RuntimeException(sprintf('When provided a callable, the key must be a string. `%s` given', gettype($ls_event)));
 				}
 				$ls_event = 'Model.' . $lx_callable;
@@ -508,16 +509,35 @@ class Table extends \Cake\ORM\Table {
 			}
 		}
 
+
 		return $la_eventMap;
+	}
+
+
+	/**
+	 * @return string
+	 */
+	public function getI18nDomain(): string {
+		if (isset($this->i18nDomain)) {
+			return $this->i18nDomain;
+		}
+
+		$ls_alias = $this->getAlias();
+		if (str_starts_with($ls_alias, 'Attributes') && strlen($ls_alias) > 10) {
+			$ls_alias = substr($ls_alias, 10);
+		}
+
+
+		return $this->i18nDomain = Inflector::underscore($ls_alias);
 	}
 
 
 	/**
 	 * Sets specific column types for attributes
 	 */
-	protected function initializeSchema (TableSchemaInterface $ao_schema): void {
+	protected function initializeSchema(TableSchemaInterface $ao_schema): void {
 		if (str_starts_with($this->getTable(), 'attributes_')) {
-			foreach ($this->getAttributes() AS $lo_attribute) {
+			foreach ($this->getAttributes() as $lo_attribute) {
 				$la_column = $ao_schema->getColumn($lo_attribute->identifier);
 				if ($lo_attribute->type === 'json') {
 					$ao_schema->setColumnType($lo_attribute->identifier, 'json');
@@ -529,22 +549,5 @@ class Table extends \Cake\ORM\Table {
 				}
 			}
 		}
-	}
-
-
-	/**
-	 * @return string
-	 */
-	public function getI18nDomain (): string {
-		if (isset($this->i18nDomain)) {
-			return $this->i18nDomain;
-		}
-
-		$ls_alias = $this->getAlias();
-		if (str_starts_with($ls_alias, 'Attributes') && strlen($ls_alias) > 10) {
-			$ls_alias = substr($ls_alias, 10);
-		}
-
-		return $this->i18nDomain = Inflector::underscore($ls_alias);
 	}
 }

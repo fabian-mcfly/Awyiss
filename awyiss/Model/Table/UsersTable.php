@@ -10,7 +10,6 @@ use Awyiss\ORM\RulesChecker;
 use Cake\I18n\FrozenTime;
 use Cake\ORM\Association\BelongsToMany;
 use Cake\ORM\Association\HasMany;
-use Cake\ORM\Query;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Validation\Validator;
@@ -20,7 +19,7 @@ use Cake\Validation\Validator;
  * Users Model
  *
  * @property UsergroupsTable&BelongsToMany $Usergroups
- * @property UsergroupsUsersTable&HasMany  $UsergroupsUsers
+ * @property UsergroupsUsersTable&HasMany $UsergroupsUsers
  *
  * @method User newDefaultEntity(array $aa_additionalData = [])
  */
@@ -31,7 +30,7 @@ class UsersTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public function initialize (array $aa_config): void {
+	public function initialize(array $aa_config): void {
 		parent::initialize($aa_config);
 
 		$this->belongsToMany('Usergroups');
@@ -43,7 +42,7 @@ class UsersTable extends Table {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function findActive (SelectQuery $ao_query): SelectQuery {
+	public function findActive(SelectQuery $ao_query): SelectQuery {
 		$ao_query->where([
 			'active' => 1,
 			'OR' => [
@@ -51,6 +50,7 @@ class UsersTable extends Table {
 				'last_login <=' => FrozenTime::now()->subMinutes(10),
 			],
 		]);
+
 
 		return $ao_query;
 	}
@@ -64,7 +64,7 @@ class UsersTable extends Table {
 	 *
 	 * @return Validator
 	 */
-	public function validationDefault (Validator $ao_validator): Validator {
+	public function validationDefault(Validator $ao_validator): Validator {
 		parent::validationDefault($ao_validator);
 
 
@@ -149,7 +149,7 @@ class UsersTable extends Table {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildRules (RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
+	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
 		$ao_rules->add($ao_rules->isUnique(['username']), [
 			'errorField' => 'username',
 			'message' => __dfx($this->getI18nDomain(), 'validation', 'username', 'error_unique'),

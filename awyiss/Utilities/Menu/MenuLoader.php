@@ -11,7 +11,7 @@ use RuntimeException;
 
 
 class MenuLoader {
-	public static function validateData (object $data, array $config): bool {
+	public static function validateData(object $data, array $config): bool {
 		$factory = NULL;
 		$schema = $config['schema'] ?? NULL;
 		$schemaPath = $config['schemaPath'] ?? NULL;
@@ -31,20 +31,21 @@ class MenuLoader {
 		$validator = new Validator($factory);
 		$validator->validate($data, $schema);
 
-		if ( ! $validator->isValid()) {
+		if (!$validator->isValid()) {
 			return FALSE;
 		}
+
 
 		return TRUE;
 	}
 
 
-	public static function fromObject (object $data, array $config = []) {
+	public static function fromObject(object $data, array $config = []) {
 		$lb_validateUniqueIdentifiers = $config['validate']['uniqueIdentifiers'] ?? FALSE;
 
 		if (isset($config['validate'])) {
 			$valid = static::validateData($data, $config['validate']);
-			if ( ! $valid) {
+			if (!$valid) {
 				throw new RuntimeException('The data is not valid according to the specified schema');
 			}
 		}
@@ -56,7 +57,7 @@ class MenuLoader {
 
 		if ($lb_validateUniqueIdentifiers) {
 			$la_knownIdentifiers = [];
-			foreach ($lo_menu->items() AS $ls_identifier => $item) {
+			foreach ($lo_menu->items() as $ls_identifier => $item) {
 				if (in_array($ls_identifier, $la_knownIdentifiers)) {
 					throw new RuntimeException(sprintf('Cannot use identifier `%s` twice in `%s`', $ls_identifier, self::class));
 				}
@@ -65,42 +66,47 @@ class MenuLoader {
 			}
 		}
 
+
 		return $lo_menu;
 	}
 
 
-	public static function fromJsonFile ($filePath, array $config = []) {
+	public static function fromJsonFile($filePath, array $config = []) {
 		$data = static::loadJsonFile($filePath);
 
+
 		return static::fromObject($data, $config);
 	}
 
 
-	public static function fromJsonString ($jsonString, array $config = []) {
+	public static function fromJsonString($jsonString, array $config = []) {
 		$data = static::loadJsonString($jsonString);
 
+
 		return static::fromObject($data, $config);
 	}
 
 
-	public static function loadJsonFile ($filePath): object {
+	public static function loadJsonFile($filePath): object {
 		$filePath = realpath($filePath);
 
-		if ( ! file_exists($filePath)) {
+		if (!file_exists($filePath)) {
 			throw new RuntimeException(sprintf('File `%s` does not exist.', $filePath));
 		}
 
 		$jsonString = file_get_contents($filePath);
 
+
 		return static::loadJsonString($jsonString);
 	}
 
 
-	public static function loadJsonString ($jsonString) {
+	public static function loadJsonString($jsonString) {
 		$data = json_decode($jsonString);
 		if (json_last_error() !== JSON_ERROR_NONE) {
 			throw new RuntimeException('Invalid JSON string.');
 		}
+
 
 		return $data;
 	}

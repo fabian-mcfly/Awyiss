@@ -35,9 +35,9 @@ class CreateCustomConfigurationTask extends Task {
 	 *
 	 * @throws \Exception
 	 *
-	 * @see Awyiss::loadConfiguration
+	 * @see          Awyiss::loadConfiguration
 	 */
-	public function run (array $aa_data, int $ai_jobId): void {
+	public function run(array $aa_data, int $ai_jobId): void {
 		//Delete all files
 		$ls_fileName = Inflector::underscore(CUSTOM_NAMESPACE) . '\[??\]\[??\].php';
 		foreach (glob(ENV_CUSTOM_CONFIG . $ls_fileName) as $ls_filePath) {

@@ -30,10 +30,10 @@ class Menu extends Entity {
 	 * @inheritDoc
 	 */
 	protected array $_accessible = [
-        'title' => TRUE,
-        'identifier' => TRUE,
-        'active' => TRUE,
-    ];
+		'title' => TRUE,
+		'identifier' => TRUE,
+		'active' => TRUE,
+	];
 	/**
 	 * @inheritDoc
 	 */
@@ -52,8 +52,9 @@ class Menu extends Entity {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	protected function _setIdentifier (string $as_identifier): string {
+	protected function _setIdentifier(string $as_identifier): string {
 		$ls_identifier = Text::slug($as_identifier, ['replacement' => '_']);
+
 
 		return mb_strtolower($ls_identifier);
 	}

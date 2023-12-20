@@ -8,7 +8,6 @@ use Awyiss\Model\Entity\PageTemplate;
 use Awyiss\Model\Table;
 use Awyiss\ORM\Association\BelongsToMany;
 use Awyiss\ORM\RulesChecker;
-use Cake\Database\Schema\TableSchemaInterface;
 use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Query;
 use Cake\ORM\Query\SelectQuery;
@@ -27,6 +26,7 @@ use Cake\Validation\Validator;
  * TODO Or: disallow deletion if a page with that templates exits
  */
 class PageTemplatesTable extends Table {
+	public const TABLE = 'page_templates';
 	/**
 	 * @inheritDoc
 	 */
@@ -38,13 +38,12 @@ class PageTemplatesTable extends Table {
 			'fields' => ['title'],
 		],
 	];
-	public const TABLE = 'page_templates';
 
 
 	/**
 	 * @inheritDoc
 	 */
-	public function initialize (array $aa_config): void {
+	public function initialize(array $aa_config): void {
 		parent::initialize($aa_config);
 
 		$this->belongsToMany('ContentAreas', [
@@ -71,12 +70,10 @@ class PageTemplatesTable extends Table {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function findWithUsages (SelectQuery $ao_query): SelectQuery {
-		return $ao_query->enableAutoFields()
-			->select([
-				'usedForPages' => $ao_query->func()->count('Pages.id')
-			])
-			->leftJoinWith('Pages', function(SelectQuery $ao_query) {
+	public function findWithUsages(SelectQuery $ao_query): SelectQuery {
+		return $ao_query->enableAutoFields()->select([
+				'usedForPages' => $ao_query->func()->count('Pages.id'),
+			])->leftJoinWith('Pages', function (SelectQuery $ao_query) {
 				return $ao_query->applyOptions([
 					'attributes' => [
 						'skip' => TRUE,
@@ -86,10 +83,8 @@ class PageTemplatesTable extends Table {
 					],
 					'skipPageRoleCheck' => TRUE,
 				]);
-			})
-			->groupBy('PageTemplates.id');
+			})->groupBy('PageTemplates.id');
 	}
-
 
 
 	/**
@@ -100,7 +95,7 @@ class PageTemplatesTable extends Table {
 	 *
 	 * @return Validator
 	 */
-	public function validationDefault (Validator $ao_validator): Validator {
+	public function validationDefault(Validator $ao_validator): Validator {
 		parent::validationDefault($ao_validator);
 
 
@@ -168,7 +163,7 @@ class PageTemplatesTable extends Table {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildRules (RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
+	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
 		$ao_rules->add($ao_rules->isUnique(['filename']), 'uniqueFilename', [
 			'errorField' => 'filename',
 			'message' => __dfx($this->getI18nDomain(), 'validation', 'page_templates', 'error_unique_filename'),
@@ -188,7 +183,7 @@ class PageTemplatesTable extends Table {
 
 
 		//TODO: check if pages with the template still exist
-		$ao_rules->addDelete(function(PageTemplate $ao_entity): bool {
+		$ao_rules->addDelete(function (PageTemplate $ao_entity): bool {
 			dump($ao_entity);
 			dd(__FILE__, __LINE__);
 		});

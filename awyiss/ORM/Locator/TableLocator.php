@@ -8,8 +8,8 @@ use Awyiss\Core\App;
 use Awyiss\Event\EventListenersProvider;
 use Awyiss\Model\Entity\Language;
 use Awyiss\Model\Table;
-use Cake\ORM\Table as BaseTable;
 use Cake\ORM\Locator\TableLocator as BaseTableLocator;
+use Cake\ORM\Table as BaseTable;
 
 
 /**
@@ -23,8 +23,6 @@ class TableLocator extends BaseTableLocator {
 	 */
 	protected string $fallbackClassName = Table::class;
 	protected ?Language $translateLanguage = NULL;
-
-
 	/*
 	 * {@inheritDoc}
 	 *
@@ -78,22 +76,9 @@ class TableLocator extends BaseTableLocator {
 
 
 	/**
-	 * @inheritDoc
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
-	 * @throws \ReflectionException
-	 */
-	protected function createInstance (string $as_alias, array $aa_options): BaseTable {
-		EventListenersProvider::loadListener($as_alias, 'Global');
-		/*if (Awyiss::getRealm()) {
-		}*/
-		return parent::createInstance($as_alias, $aa_options + ['translateLanguage' => $this->getTranslateLanguage()]);
-	}
-
-
-	/**
 	 * @return null|Language
 	 */
-	public function getTranslateLanguage (): ?Language {
+	public function getTranslateLanguage(): ?Language {
 		return $this->translateLanguage;
 	}
 
@@ -103,10 +88,28 @@ class TableLocator extends BaseTableLocator {
 	 *
 	 * @return TableLocator
 	 */
-	public function setTranslateLanguage (?Language $ao_language): static {
+	public function setTranslateLanguage(?Language $ao_language): static {
 		$this->translateLanguage = $ao_language;
 
+
 		return $this;
+	}
+
+
+	/**
+	 * @inheritDoc
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 * @throws \ReflectionException
+	 */
+	protected function createInstance(string $as_alias, array $aa_options): BaseTable {
+		EventListenersProvider::loadListener($as_alias, 'Global');
+
+
+		/*if (Awyiss::getRealm()) {
+		}*/
+
+
+		return parent::createInstance($as_alias, $aa_options + ['translateLanguage' => $this->getTranslateLanguage()]);
 	}
 
 
@@ -120,11 +123,12 @@ class TableLocator extends BaseTableLocator {
 	 *
 	 * @param string $as_alias The alias name you want to get. Should be in CamelCase format.
 	 * @param array<string, mixed> $aa_options Table options array.
+	 *
 	 * @return string|null
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	protected function _getClassName (string $as_alias, array $aa_options = []): ?string {
+	protected function _getClassName(string $as_alias, array $aa_options = []): ?string {
 		if (empty($aa_options['className'])) {
 			$aa_options['className'] = $as_alias;
 		}
@@ -139,6 +143,7 @@ class TableLocator extends BaseTableLocator {
 				return $ls_className;
 			}
 		}
+
 
 		return NULL;
 	}

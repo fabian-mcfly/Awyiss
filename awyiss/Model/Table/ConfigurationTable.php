@@ -36,7 +36,7 @@ class ConfigurationTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public function initialize (array $aa_config): void {
+	public function initialize(array $aa_config): void {
 		parent::initialize($aa_config);
 
 		$this->belongsTo('Languages', [
@@ -61,7 +61,7 @@ class ConfigurationTable extends Table {
 	 *
 	 * @return Validator
 	 */
-	public function validationDefault (Validator $ao_validator): Validator {
+	public function validationDefault(Validator $ao_validator): Validator {
 		parent::validationDefault($ao_validator);
 
 		$ao_validator->requirePresence([
@@ -131,21 +131,26 @@ class ConfigurationTable extends Table {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildRules (RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
-		$ao_rules->add($ao_rules->isUnique([
-			'realm',
-			'scope',
-			'identifier',
-			'languageShortcode',
-		], ['authorize' => ['skip' => TRUE]]),
+	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
+		$ao_rules->add(
+			$ao_rules->isUnique(
+				[
+					'realm',
+					'scope',
+					'identifier',
+					'languageShortcode',
+				],
+				['authorize' => ['skip' => TRUE]]
+			),
 			'identifierUniqueForScope',
 			[
 				'errorField' => 'identifier',
 				'message' => __dfx($this->getI18nDomain(), 'validation', 'configuration', 'error_identifier_unique'),
-			]);
+			]
+		);
 
 
-		$ao_rules->add(function(Configuration $ao_entity): bool {
+		$ao_rules->add(function (Configuration $ao_entity): bool {
 			return in_array($ao_entity->realm, Awyiss::getRealms(), TRUE);
 		}, 'validRealm', [
 			'errorField' => 'realm',
@@ -153,8 +158,9 @@ class ConfigurationTable extends Table {
 		]);
 
 
-		$ao_rules->add(function(Configuration $ao_entity/*, array $aa_options*/): bool {
+		$ao_rules->add(function (Configuration $ao_entity/*, array $aa_options*/): bool {
 			$la_configScopes = ConfigOptionsProvider::getConfigOptionsFiles();
+
 
 			//Check if the provided scope is configurable (having a ConfigOptions-class)
 			return in_array(ConfigOptionsProvider::sanitizeScope($ao_entity->scope), array_keys($la_configScopes));
@@ -164,25 +170,28 @@ class ConfigurationTable extends Table {
 		]);
 
 
-		$ao_rules->add(function(Configuration $ao_entity/*, array $aa_options*/): bool|string {
+		$ao_rules->add(function (Configuration $ao_entity/*, array $aa_options*/): bool|string {
 			if ($ao_entity->getError('scope') || $ao_entity->getError('realm')) {
 				return FALSE;
 			}
 
+
 			//Validate the provided value for the scope, identifier and language.
-			return ConfigOptionsProvider::validateConfigValue($ao_entity->scope,
+			return ConfigOptionsProvider::validateConfigValue(
+				$ao_entity->scope,
 				$ao_entity->realm,
 				$ao_entity->identifier,
 				$ao_entity->value,
-				$ao_entity->languageShortcode);
+				$ao_entity->languageShortcode
+			);
 		}, 'validValue', [
 			'errorField' => 'value',
 			'message' => __d($this->getI18nDomain(), 'error_valid_value'),
 		]);
 
 
-		$ao_rules->add(function(Configuration $ao_entity, array $aa_options) use ($ao_rules): bool {
-			if ( ! $ao_entity->get('languageShortcode')) {
+		$ao_rules->add(function (Configuration $ao_entity, array $aa_options) use ($ao_rules): bool {
+			if (!$ao_entity->get('languageShortcode')) {
 				return TRUE;
 			}
 
@@ -194,6 +203,7 @@ class ConfigurationTable extends Table {
 				'errorField' => 'languageShortcode',
 				'message' => __dfx($this->getI18nDomain(), 'validation', 'configuration', 'error_language_exists'),
 			]);
+
 
 			return $lo_existsIn($ao_entity, $aa_options);
 		}, 'languageExists');
@@ -208,8 +218,8 @@ class ConfigurationTable extends Table {
 	 *
 	 * @throws \ReflectionException
 	 */
-	public function getScopes (): array {
-		if ( ! isset($this->configScopes)) {
+	public function getScopes(): array {
+		if (!isset($this->configScopes)) {
 			$this->configScopes = [];
 
 			foreach (ConfigOptionsProvider::getConfigOptionsFiles() as $ls_scope => $ls_className) {
@@ -219,6 +229,7 @@ class ConfigurationTable extends Table {
 				}
 			}
 		}
+
 
 		return $this->configScopes;
 	}

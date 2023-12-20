@@ -55,7 +55,7 @@ class SystemOrderHelper extends Helper {
 	 * @return void
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function initialize (array $aa_config): void {
+	public function initialize(array $aa_config): void {
 		parent::initialize($aa_config);
 
 		$this->_templater = new StringTemplate();
@@ -79,18 +79,18 @@ class SystemOrderHelper extends Helper {
 	 *
 	 * @see FormHelper::control
 	 */
-	public function control (?string $as_fieldName = NULL, array $aa_attributes = []): string {
+	public function control(?string $as_fieldName = NULL, array $aa_attributes = []): string {
 		//Add the provided attributes to the config, so both will be merged
 		$la_attributes = Hash::merge($aa_attributes, $this->getConfig());
 
 		//No entity? That's a big problem.
 		$lo_entity = $la_attributes['entity'] ?? NULL;
-		if ( ! $lo_entity) {
+		if (!$lo_entity) {
 			throw new CakeException('Missing entity for SystemOrderHelper::control');
 		}
 
 		//If the given entity is not an instance of Entity, we can't continue
-		if ( ! ($lo_entity instanceof Entity)) {
+		if (!($lo_entity instanceof Entity)) {
 			$ls_type = is_object($lo_entity) ? get_class($lo_entity) : gettype($lo_entity);
 			$ls_message = sprintf('Entity provided must be an instance of `%s`, `%s` given.', Entity::class, $ls_type);
 
@@ -103,7 +103,7 @@ class SystemOrderHelper extends Helper {
 		}
 
 		//If the options are not in array-form, make 'em!
-		if ( ! is_array($la_attributes['options'])) {
+		if (!is_array($la_attributes['options'])) {
 			$la_attributes['options'] = $this->buildSystemOrderOptions($la_attributes['options'], $la_attributes, $lo_entity);
 		}
 
@@ -113,19 +113,22 @@ class SystemOrderHelper extends Helper {
 		}
 
 		//Default input type, if none was provided
-		if ( ! array_key_exists('type', $la_attributes)) {
+		if (!array_key_exists('type', $la_attributes)) {
 			$la_attributes['type'] = 'select';
 		}
 
 		//Unset attributes that shouldn't be part of the generated input
 		unset($la_attributes['entity'], $la_attributes['includeFirst'], $la_attributes['relatedColumns'], $la_attributes['templateClass'], $la_attributes['templates'], $la_attributes['titleFirst']);
 
+
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		return $this->Form->control($as_fieldName ?? 'system_order',
+		return $this->Form->control(
+			$as_fieldName ?? 'system_order',
 			$la_attributes + [
 				'disabled' => [SystemOrderBehavior::CURRENT_VALUE_PLACEHOLDER],
 				'val' => $lo_entity->systemOrder,
-			]);
+			]
+		);
 	}
 
 
@@ -138,7 +141,7 @@ class SystemOrderHelper extends Helper {
 	 *
 	 * @return array
 	 */
-	protected function buildSystemOrderOptions (iterable|NULL $ax_options, array $aa_attributes, Entity $ao_entity): array {
+	protected function buildSystemOrderOptions(iterable | null $ax_options, array $aa_attributes, Entity $ao_entity): array {
 		$la_options = [];
 		$lb_isNew = $ao_entity->isNew();
 		$la_dirtyRelatedColumns = array_intersect($ao_entity->getDirty(), $aa_attributes['relatedColumns'] ?? []);
@@ -146,10 +149,12 @@ class SystemOrderHelper extends Helper {
 		//If the option `first`-option should be part of the options, add it
 		if ($aa_attributes['includeFirst']) {
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-			$la_options[1] = $this->formatFirstTitle($aa_attributes + [
-					'isOriginalSystemOrder' => ! $lb_isNew && $ao_entity->hasOriginal('systemOrder') && 1 === $ao_entity->getOriginal('systemOrder'),
+			$la_options[1] = $this->formatFirstTitle(
+				$aa_attributes + [
+					'isOriginalSystemOrder' => !$lb_isNew && $ao_entity->hasOriginal('systemOrder') && 1 === $ao_entity->getOriginal('systemOrder'),
 					'isSelectedSystemOrder' => 1 === $ao_entity->systemOrder,
-				]);
+				]
+			);
 		}
 
 		$lb_reachedOriginalSystemOrder = FALSE;
@@ -161,11 +166,11 @@ class SystemOrderHelper extends Helper {
 			 * - the `system order`-property of the option equals the entity's original
 			 */
 			$lb_isOriginalSystemOrder = FALSE;
-			if ( ! $lb_isNew && ! $la_dirtyRelatedColumns) {
+			if (!$lb_isNew && !$la_dirtyRelatedColumns) {
 				if ($ao_entity->hasOriginal('systemOrder') && ($lo_option->systemOrder == $ao_entity->getOriginal('systemOrder'))) {
 					$lb_isOriginalSystemOrder = TRUE;
 				}
-				elseif ( ! $ao_entity->hasOriginal('systemOrder') && ($lo_option->systemOrder == $ao_entity->get('systemOrder'))) {
+				elseif (!$ao_entity->hasOriginal('systemOrder') && ($lo_option->systemOrder == $ao_entity->get('systemOrder'))) {
 					$lb_isOriginalSystemOrder = TRUE;
 				}
 			}
@@ -177,7 +182,7 @@ class SystemOrderHelper extends Helper {
 
 			//The value should be the `system_order`-property of the option
 			$li_systemOrder = $lo_option->systemOrder;
-			if ( ! $lb_reachedOriginalSystemOrder) {
+			if (!$lb_reachedOriginalSystemOrder) {
 				/**
 				 * As long as we haven't reached the original system order in this loop,
 				 * increase the value by one.
@@ -208,12 +213,15 @@ class SystemOrderHelper extends Helper {
 
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 			//Append a new option with the system_order as its value.
-			$la_options[ $li_systemOrder ] = $this->formatTitle($lo_option,
+			$la_options[ $li_systemOrder ] = $this->formatTitle(
+				$lo_option,
 				$aa_attributes + [
 					'isOriginalSystemOrder' => $lb_isOriginalSystemOrder,
 					'isSelectedSystemOrder' => $li_systemOrder == $ao_entity->systemOrder,
-				]);
+				]
+			);
 		}
+
 
 		return $la_options;
 	}
@@ -226,7 +234,7 @@ class SystemOrderHelper extends Helper {
 	 *
 	 * @return string
 	 */
-	protected function formatFirstTitle (array $aa_config): string {
+	protected function formatFirstTitle(array $aa_config): string {
 		$ls_template = 'titleFirst';
 		$la_config = $aa_config;
 
@@ -252,14 +260,18 @@ class SystemOrderHelper extends Helper {
 			 * Format the given template, using the `first`-option from the config as a label,
 			 * with a fallback to the translation of '::system_order_first'
 			 */
-			$ls_title = $this->formatTemplate($ls_template, [
+			$ls_title = $this->formatTemplate(
+				$ls_template,
+				[
 					'first' => is_null($la_config['first']) ? __('system_order_first') : $la_config['first'],
-				] + $la_config);
+				] + $la_config
+			);
 		}
 		//If the template is a callable, call it and use its return value as the title
 		elseif (is_callable($lx_template)) {
 			$ls_title = call_user_func($lx_template, $la_config);
 		}
+
 
 		return $ls_title ?? '';
 	}
@@ -271,7 +283,7 @@ class SystemOrderHelper extends Helper {
 	 *
 	 * @return string
 	 */
-	protected function formatTitle (mixed $ax_data, array $aa_config): string {
+	protected function formatTitle(mixed $ax_data, array $aa_config): string {
 		$ls_title = '';
 		$ls_template = 'titleOption';
 		$la_config = $aa_config;
@@ -295,7 +307,7 @@ class SystemOrderHelper extends Helper {
 			if ($la_data instanceof Entity) {
 				$la_data = $la_data->toArray();
 			}
-			elseif ( ! is_array($ax_data)) {
+			elseif (!is_array($ax_data)) {
 				$la_data = (array) $la_data;
 			}
 
@@ -305,14 +317,18 @@ class SystemOrderHelper extends Helper {
 			 * Format the given template, using the `after`-option from the config as a label,
 			 * with a fallback to the translation of '::system_order_after'
 			 */
-			$ls_title = $this->formatTemplate($ls_template, $la_data + [
+			$ls_title = $this->formatTemplate(
+				$ls_template,
+				$la_data + [
 					'after' => is_null($la_config['after']) ? __('system_order_after') : $la_config['after'],
-				]);
+				]
+			);
 		}
 		//If the template is a callable, call it and use its return value as the title
 		elseif (is_callable($lx_template)) {
 			$ls_title = call_user_func($lx_template, $ax_data, $la_config);
 		}
+
 
 		return $ls_title ?? '';
 	}

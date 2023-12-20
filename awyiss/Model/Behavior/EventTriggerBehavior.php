@@ -52,11 +52,12 @@ class EventTriggerBehavior extends Behavior {
 		'implementedMethods' => [],
 	];
 
+
 	/**
 	 * Will return all config values of `events`-settings, prefixed with 'Model.'
 	 */
-	public function implementedEvents (): array {
-		if ( ! $this->getConfig('enabled')) {
+	public function implementedEvents(): array {
+		if (!$this->getConfig('enabled')) {
 			return [];
 		}
 
@@ -72,6 +73,7 @@ class EventTriggerBehavior extends Behavior {
 			$la_events[ $ls_event ] = $lx_callable;
 		}
 
+
 		return $la_events;
 	}
 
@@ -84,8 +86,8 @@ class EventTriggerBehavior extends Behavior {
 	 *
 	 * @return void
 	 */
-	public function __call (string $as_name, array $aa_arguments): void {
-		if ( ! $this->getConfig('enabled') || ! in_array($as_name, $this->getConfig('events'))) {
+	public function __call(string $as_name, array $aa_arguments): void {
+		if (!$this->getConfig('enabled') || !in_array($as_name, $this->getConfig('events'))) {
 			//Trigger the same error the call of undefined methods would normally trigger.
 			trigger_error(sprintf('Call to undefined method %s::%s()', __CLASS__, $as_name), E_USER_ERROR);
 		}
@@ -97,7 +99,7 @@ class EventTriggerBehavior extends Behavior {
 			 * If the custom events method returns false, the newly created event was stopped.
 			 * This means: don't send the other model-specific events
 			 */
-			if ( ! $this->triggerCreateUpdateEvents($as_name, $aa_arguments[1], $aa_arguments)) {
+			if (!$this->triggerCreateUpdateEvents($as_name, $aa_arguments[1], $aa_arguments)) {
 				return;
 			}
 		}
@@ -123,11 +125,11 @@ class EventTriggerBehavior extends Behavior {
 	 *
 	 * @param string $as_name
 	 * @param Entity $ao_entity
-	 * @param array  $aa_arguments
+	 * @param array $aa_arguments
 	 *
 	 * @return bool
 	 */
-	protected function triggerCreateUpdateEvents (string $as_name, Entity $ao_entity, array $aa_arguments): bool {
+	protected function triggerCreateUpdateEvents(string $as_name, Entity $ao_entity, array $aa_arguments): bool {
 		//If the entity has a `deleted`-property, and it's trueish, don't send the custom events
 		if (property_exists($ao_entity, 'deleted') && $ao_entity->deleted) {
 			return TRUE;
@@ -151,8 +153,10 @@ class EventTriggerBehavior extends Behavior {
 			$aa_arguments[0]->stopPropagation();
 			$aa_arguments[0]->setResult($lo_event->getResult());
 
+
 			return FALSE;
 		}
+
 
 		return TRUE;
 	}

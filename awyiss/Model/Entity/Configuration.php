@@ -12,19 +12,19 @@ use Cake\Utility\Inflector;
 /**
  * Configuration Entity
  *
- * @property int         $id
- * @property string      $realm
- * @property string      $scope
- * @property string      $identifier
+ * @property int $id
+ * @property string $realm
+ * @property string $scope
+ * @property string $identifier
  * @property string|NULL $value
  * @property string|NULL $languageShortcode
- * @property Language    $language
+ * @property Language $language
  */
 class Configuration extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	 protected array $_accessible = [
+	protected array $_accessible = [
 		'realm' => TRUE,
 		'scope' => TRUE,
 		'identifier' => TRUE,
@@ -48,7 +48,7 @@ class Configuration extends Entity {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	protected function _setScope (string $as_scope): string {
+	protected function _setScope(string $as_scope): string {
 		return Inflector::underscore(Inflector::pluralize($as_scope));
 	}
 
@@ -58,7 +58,7 @@ class Configuration extends Entity {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	protected function _setIdentifier (string $as_identifier): string {
+	protected function _setIdentifier(string $as_identifier): string {
 		return Inflector::variable($as_identifier);
 	}
 
@@ -68,7 +68,7 @@ class Configuration extends Entity {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	protected function _setValue (mixed $ax_value): mixed {
+	protected function _setValue(mixed $ax_value): mixed {
 		return $ax_value ?: '';
 	}
 
@@ -78,7 +78,7 @@ class Configuration extends Entity {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	protected function _setLanguageShortcode (?string $as_languageShortcode): ?string {
+	protected function _setLanguageShortcode(?string $as_languageShortcode): ?string {
 		return $as_languageShortcode ?: NULL;
 	}
 }

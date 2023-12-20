@@ -37,7 +37,7 @@ class SessionAuthenticator extends \Authentication\Authenticator\SessionAuthenti
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 * @noinspection PhpMissingParentCallCommonInspection
 	 */
-	public function authenticate (ServerRequestInterface $ao_request): ResultInterface {
+	public function authenticate(ServerRequestInterface $ao_request): ResultInterface {
 		$ls_sessionKey = $this->getConfig('sessionKey');
 		/** @var Session $lo_session */
 		$lo_session = $ao_request->getAttribute('session');
@@ -76,9 +76,10 @@ class SessionAuthenticator extends \Authentication\Authenticator\SessionAuthenti
 			}
 		}
 
-		if ( ! ($lo_user instanceof ArrayAccess)) {
+		if (!($lo_user instanceof ArrayAccess)) {
 			$lo_user = new ArrayObject($lo_user);
 		}
+
 
 		return new Result($lo_user, ResultInterface::SUCCESS);
 	}
@@ -90,7 +91,7 @@ class SessionAuthenticator extends \Authentication\Authenticator\SessionAuthenti
 	 *
 	 * @return array
 	 */
-	public function __sleep () {
+	public function __sleep() {
 		return [];
 	}
 }

@@ -16,8 +16,6 @@ use Cake\Validation\Validator;
  */
 class UsersExternalTable extends Table {
 	public const TABLE = 'users_external';
-
-
 	/*
 	 * @inheritDoc
 	 *
@@ -38,7 +36,7 @@ class UsersExternalTable extends Table {
 	 *
 	 * @return Validator
 	 */
-	public function validationDefault (Validator $ao_validator): Validator {
+	public function validationDefault(Validator $ao_validator): Validator {
 		parent::validationDefault($ao_validator);
 
 
@@ -51,6 +49,7 @@ class UsersExternalTable extends Table {
 		$ao_validator->scalar('provider')->maxLength('provider', 50)->requirePresence('provider', 'create')->notEmptyString('provider');
 		$ao_validator->scalar('username')->maxLength('username', 50)->requirePresence('username', 'create')->notEmptyString('username');
 		$ao_validator->dateTime('lastLogin')->notEmptyDateTime('lastLogin');
+
 
 		return $ao_validator;
 	}

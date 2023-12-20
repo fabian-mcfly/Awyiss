@@ -26,10 +26,10 @@ class Audit extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	 protected array $_accessible = [
+	protected array $_accessible = [
 		'scope' => TRUE,
 		'parentId' => TRUE,
-	 	'transactionId' => TRUE,
+		'transactionId' => TRUE,
 		'type' => TRUE,
 		'dataOld' => TRUE,
 		'dataNew' => TRUE,

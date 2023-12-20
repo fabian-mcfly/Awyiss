@@ -12,7 +12,7 @@ use Awyiss\Routing\Route\AwyissRoute;
 use Cake\Routing\RouteBuilder;
 
 /** @var RouteBuilder $ao_routes */
-$ao_routes->prefix('Backend', function(RouteBuilder $ao_routeBuilder) {
+$ao_routes->prefix('Backend', function (RouteBuilder $ao_routeBuilder) {
 	$ao_routeBuilder->setRouteClass(AwyissRoute::class);
 
 	Awyiss::setRealm(Awyiss::REALM_BACKEND);

@@ -30,7 +30,7 @@ class GenericPagePolicy {
 	 *
 	 * @param string $as_scope
 	 */
-	public function __construct (string $as_scope) {
+	public function __construct(string $as_scope) {
 		$this->scope = AuthorizationService::sanitizeScope($as_scope);
 	}
 
@@ -40,7 +40,7 @@ class GenericPagePolicy {
 	 *
 	 * @return string
 	 */
-	public function getScope (): string {
+	public function getScope(): string {
 		return $this->scope;
 	}
 
@@ -51,10 +51,11 @@ class GenericPagePolicy {
 	 * @return PermissionOptionCollection
 	 * @throws \Exception
 	 */
-	public function getPermissionOptions (): PermissionOptionCollection {
+	public function getPermissionOptions(): PermissionOptionCollection {
 		if (!isset($this->permissionOptionCollection)) {
 			$this->permissionOptionCollection = static::loadPermissionOptions();
 		}
+
 
 		return $this->permissionOptionCollection;
 	}
@@ -70,7 +71,7 @@ class GenericPagePolicy {
 	 * @throws \Exception
 	 * @throws \RuntimeException
 	 */
-	public function getPermissionOption (string $as_identifier): ?PermissionOptionInterface {
+	public function getPermissionOption(string $as_identifier): ?PermissionOptionInterface {
 		if (!isset($this->permissionOptionCollection)) {
 			$this->permissionOptionCollection = $this->loadPermissionOptions();
 		}
@@ -80,6 +81,7 @@ class GenericPagePolicy {
 		if ($this->permissionOptionCollection->has($ls_identifier)) {
 			return $this->permissionOptionCollection->get($ls_identifier);
 		}
+
 
 		return NULL;
 	}
@@ -94,7 +96,7 @@ class GenericPagePolicy {
 	 * @throws \Exception
 	 * @throws \RuntimeException
 	 */
-	protected function loadPermissionOptions (): PermissionOptionCollection {
+	protected function loadPermissionOptions(): PermissionOptionCollection {
 		$lo_permissions = new PermissionOptionCollection($this->getScope());
 
 		$lo_permissions->load('read', [
@@ -123,6 +125,7 @@ class GenericPagePolicy {
 				'className' => SimplePermissionOption::class,
 			]);
 		}
+
 
 		return $lo_permissions;
 	}
