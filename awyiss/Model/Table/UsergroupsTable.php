@@ -6,16 +6,12 @@ namespace Awyiss\Model\Table;
 
 use ArrayObject;
 use Awyiss\Model\Entity\User;
-use Awyiss\Model\Entity\Usergroup;
-use Awyiss\Model\Entity\UsersExternal;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
 use Awyiss\Routing\Router;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
-use Cake\Http\Session;
 use Cake\I18n\FrozenTime;
-use Cake\ORM\Association\HasMany;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Validation\Validator;
@@ -24,13 +20,17 @@ use Cake\Validation\Validator;
 /**
  * Usergroups Model
  *
- * @property UsergroupPermissionsTable&HasMany $UsergroupPermissions
+ * @property UsergroupPermissionsTable&\Awyiss\ORM\Association\HasMany $UsergroupPermissions
  * @property \Awyiss\ORM\Association\BelongsToMany $Users
- *
- * @method Usergroup newDefaultEntity(array $aa_additionalData = [])
+ * @method \Awyiss\Model\Entity\Usergroup newDefaultEntity(array $aa_additionalData = [])
  */
 class UsergroupsTable extends Table {
+	/**
+	 * @inheritDoc
+	 */
 	public const TABLE = 'usergroups';
+
+
 	protected array $_defaultConfig = [
 		'translate' => [
 			'fields' => ['title'],
@@ -45,8 +45,8 @@ class UsergroupsTable extends Table {
 		parent::initialize($aa_config);
 
 		$this->hasMany('UsergroupPermissions', [
-			'cascadeCallbacks' => TRUE,
-			'dependent' => TRUE,
+			'cascadeCallbacks' => true,
+			'dependent' => true,
 			'saveStrategy' => 'replace',
 		]);
 
@@ -59,7 +59,6 @@ class UsergroupsTable extends Table {
 	 *
 	 * @param Validator $ao_validator The validator that can be modified to
 	 * add some rules to it.
-	 *
 	 * @return Validator
 	 */
 	public function validationDefault(Validator $ao_validator): Validator {
@@ -103,9 +102,7 @@ class UsergroupsTable extends Table {
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 *
 	 * @param RulesChecker|BaseRulesChecker $ao_rules The rules object to be modified.
-	 *
 	 * @return RulesChecker
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
@@ -124,15 +121,15 @@ class UsergroupsTable extends Table {
 	 * This will allow the SessionAuthenticator to reset the usergroups for every logged-in user on the next page request
 	 *
 	 * @param EventInterface $ao_event
-	 * @param EntityInterface $ao_entity
+	 * @param \Awyiss\Model\Entity\Usergroup $ao_entity
 	 * @param ArrayObject $ao_options
-	 *
 	 * @return void
 	 * @throws \Exception
+	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function afterSave(EventInterface $ao_event, EntityInterface $ao_entity, ArrayObject $ao_options) {
-		$lo_query = $this->Users->find()->applyOptions(['authorize' => ['skip' => TRUE]])->matching('UsergroupsUsers', function (SelectQuery $ao_query) use ($ao_entity) {
-			return $ao_query->where(['UsergroupsUsers.usergroup_id' => $ao_entity->id])->applyOptions(['authorize' => ['skip' => TRUE]]);
+	public function afterSave(EventInterface $ao_event, EntityInterface $ao_entity, ArrayObject $ao_options): void {
+		$lo_query = $this->Users->find()->applyOptions(['authorize' => ['skip' => true]])->matching('UsergroupsUsers', function (SelectQuery $ao_query) use ($ao_entity) {
+			return $ao_query->where(['UsergroupsUsers.usergroup_id' => $ao_entity->id])->applyOptions(['authorize' => ['skip' => true]]);
 		});
 
 		$lo_users = $lo_query->all();
@@ -142,31 +139,31 @@ class UsergroupsTable extends Table {
 			return;
 		}
 
-		$lo_currentUser = NULL;
+		$lo_currentUser = null;
 		$lo_request = Router::getRequest();
 		if ($lo_request) {
-			/** @var Session $lo_session */
+			/** @var \Cake\Http\Session $lo_session */
 			$lo_session = $lo_request->getAttribute('session');
-			/** @var User|UsersExternal $lo_currentUser */
+			/** @var User|\Awyiss\Model\Entity\UsersExternal $lo_currentUser */
 			$lo_currentUser = $lo_session->read('Auth');
 		}
 
 		$lo_now = FrozenTime::now();
 		//Decrease the system order of all records
-		$lo_users->each(function (User $ao_user) use ($lo_now, $lo_currentUser) {
+		$lo_users->each(function (User $ao_user) use ($lo_now, $lo_currentUser): void {
 			$ao_user->changedOn = $lo_now;
 
 			if ($ao_user->id === $lo_currentUser->id) {
-				$lo_currentUser->usergroups = NULL;
+				$lo_currentUser->usergroups = null;
 			}
 		});
 
 		//Save all found records, but skip the authorization check, the audit and the system order behavior on those to avoid recursion.
 		$this->Users->saveMany($lo_users, [
-			'audit' => ['skip' => TRUE],
-			'authorize' => ['skip' => TRUE],
-			'checkRules' => FALSE,
-			'systemOrder' => ['skip' => TRUE],
+			'audit' => ['skip' => true],
+			'authorize' => ['skip' => true],
+			'checkRules' => false,
+			'systemOrder' => ['skip' => true],
 		]);
 	}
 }

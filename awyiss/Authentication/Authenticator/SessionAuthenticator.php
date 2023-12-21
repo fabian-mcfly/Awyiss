@@ -8,22 +8,19 @@ use ArrayAccess;
 use ArrayObject;
 use Authentication\Authenticator\Result;
 use Authentication\Authenticator\ResultInterface;
+use Authentication\Authenticator\SessionAuthenticator as BaseSessionAuthenticator;
 use Authentication\Identifier\IdentifierInterface;
-use Awyiss\Authentication\Identifier\IdentifierCollection;
-use Awyiss\Model\Entity\User;
-use Awyiss\Model\Entity\UsersExternal;
-use Cake\Http\Session;
 use Psr\Http\Message\ServerRequestInterface;
 
 
 /**
  * Session Authenticator
  */
-class SessionAuthenticator extends \Authentication\Authenticator\SessionAuthenticator {
+class SessionAuthenticator extends BaseSessionAuthenticator {
 	/**
 	 * Identifier or identifiers collection.
 	 *
-	 * @var IdentifierCollection
+	 * @var \Awyiss\Authentication\Identifier\IdentifierCollection
 	 */
 	protected IdentifierInterface $_identifier;
 
@@ -39,13 +36,13 @@ class SessionAuthenticator extends \Authentication\Authenticator\SessionAuthenti
 	 */
 	public function authenticate(ServerRequestInterface $ao_request): ResultInterface {
 		$ls_sessionKey = $this->getConfig('sessionKey');
-		/** @var Session $lo_session */
+		/** @var \Cake\Http\Session $lo_session */
 		$lo_session = $ao_request->getAttribute('session');
-		/** @var User|UsersExternal $lo_user */
+		/** @var \Awyiss\Model\Entity\User|\Awyiss\Model\Entity\UsersExternal $lo_user */
 		$lo_user = $lo_session->read($ls_sessionKey);
 
 		if (empty($lo_user)) {
-			return new Result(NULL, ResultInterface::FAILURE_IDENTITY_NOT_FOUND);
+			return new Result(null, ResultInterface::FAILURE_IDENTITY_NOT_FOUND);
 		}
 
 		$lx_identify = $this->getConfig('identify');
@@ -55,23 +52,23 @@ class SessionAuthenticator extends \Authentication\Authenticator\SessionAuthenti
 
 		if ($lx_identify) {
 			$la_credentials = $lx_identify;
-			if ($lx_identify === TRUE) {
+			if ($lx_identify === true) {
 				$la_credentials = [];
 				foreach ($this->getConfig('fields') as $lx_key => $lx_field) {
 					$la_credentials[ $lx_key ] = $lo_user[ $lx_field ];
 				}
 			}
 
-			/** @var User|UsersExternal $lo_reidentifiedUser */
+			/** @var \Awyiss\Model\Entity\User|\Awyiss\Model\Entity\UsersExternal $lo_reidentifiedUser */
 			$lo_reidentifiedUser = $this->_identifier->reidentify($la_credentials);
 
 			if (empty($lo_reidentifiedUser)) {
-				return new Result(NULL, ResultInterface::FAILURE_CREDENTIALS_INVALID);
+				return new Result(null, ResultInterface::FAILURE_CREDENTIALS_INVALID);
 			}
 
 			//If the db entry of the user changed,
 			if ($lo_reidentifiedUser->changedOn->notEquals($lo_user->changedOn)) {
-				$lo_user->usergroups = NULL;
+				$lo_user->usergroups = null;
 				$lo_user->changedOn = $lo_reidentifiedUser->changedOn;
 			}
 		}
@@ -91,7 +88,7 @@ class SessionAuthenticator extends \Authentication\Authenticator\SessionAuthenti
 	 *
 	 * @return array
 	 */
-	public function __sleep() {
+	public function __sleep(): array {
 		return [];
 	}
 }

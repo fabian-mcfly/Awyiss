@@ -10,16 +10,16 @@ use RuntimeException;
 
 
 /**
- *
+ * A collection of settings for permissions. WIP
  */
 class SettingCollection extends ObjectRegistry {
 	/**
 	 * Map of loaded objects.
 	 *
-	 * @var SettingInterface[]
+	 * @var array<SettingInterface>
 	 */
 	protected array $_loaded = [];
-	/*public function render (\Cake\View\View $ao_view, ?string $as_prePath = NULL): string {
+	/*public function render (\Cake\View\View $ao_view, ?string $as_prePath = null): string {
 		$ls_settings = '';
 
 		foreach ($this->_loaded as $lo_setting) {
@@ -33,15 +33,13 @@ class SettingCollection extends ObjectRegistry {
 	/**
 	 * Creates Setting instance.
 	 *
-	 * @param string $as_class Setting class.
+	 * @param object|string $as_class Setting class.
 	 * @param string $as_alias Setting alias.
 	 * @param array $aa_config Config array.
-	 *
 	 * @return SettingInterface
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	protected function _create($as_class, string $as_alias, array $aa_config): SettingInterface {
+	protected function _create(object|string $as_class, string $as_alias, array $aa_config): SettingInterface {
 		$lo_setting = new $as_class($aa_config);
 		if (!($lo_setting instanceof SettingInterface)) {
 			throw new RuntimeException(sprintf('Setting class `%s` must implement `%s`.', $as_class, SettingInterface::class));
@@ -56,26 +54,22 @@ class SettingCollection extends ObjectRegistry {
 	 * Resolves permission class name.
 	 *
 	 * @param string $as_class Class name to be resolved.
-	 *
-	 * @return string|NULL
-	 * @psalm-return class-string|NULL
-	 *
+	 * @return string|null
+	 * @psalm-return class-string|null
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	protected function _resolveClassName(string $as_class): ?string {
 		$ls_className = App::className($as_class);
 
 
-		return is_string($ls_className) ? $ls_className : NULL;
+		return is_string($ls_className) ? $ls_className : null;
 	}
 
 
 	/**
 	 * @param string $as_class Missing class.
-	 * @param NULL|string $as_plugin Class plugin.
-	 *
+	 * @param string|null $as_plugin Class plugin.
 	 * @return void
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	protected function _throwMissingClassError(string $as_class, ?string $as_plugin): void {

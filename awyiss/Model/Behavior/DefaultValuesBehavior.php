@@ -4,13 +4,11 @@
 namespace Awyiss\Model\Behavior;
 
 
-use Awyiss\Model\Table;
 use Awyiss\ORM\Behavior;
 use Cake\Datasource\EntityInterface;
 use Cake\I18n\Date;
 use Cake\I18n\DateTime;
 use Cake\I18n\Time;
-use Cake\ORM\Association;
 use RuntimeException;
 use UnhandledMatchError;
 
@@ -30,7 +28,7 @@ class DefaultValuesBehavior extends Behavior {
 	 * @var array
 	 */
 	protected array $_defaultConfig = [
-		'enabled' => TRUE,
+		'enabled' => true,
 		'implementedEvents' => [],
 		'implementedMethods' => [
 			'newDefaultEntity' => 'newDefaultEntity',
@@ -43,7 +41,6 @@ class DefaultValuesBehavior extends Behavior {
 	 * populated with the default values set in the database.
 	 *
 	 * @param array $aa_additionalData
-	 *
 	 * @return EntityInterface
 	 */
 	public function newDefaultEntity(array $aa_additionalData = []): EntityInterface {
@@ -71,13 +68,13 @@ class DefaultValuesBehavior extends Behavior {
 			try {
 				$lx_default = match ($la_typeMap[ $ls_column ]) {
 					'boolean' => boolval($lx_default),
-					'date' => $lx_default ? new Date($lx_default) : NULL,
-					'datetime' => $lx_default ? new DateTime($lx_default) : NULL,
+					'date' => $lx_default ? new Date($lx_default) : null,
+					'datetime' => $lx_default ? new DateTime($lx_default) : null,
 					'float' => floatval($lx_default),
 					'integer' => intval($lx_default),
 					'json' => json_decode(trim($lx_default, '\'')),
 					'string', 'text' => strval($lx_default),
-					'time' => $lx_default ? new Time($lx_default) : NULL,
+					'time' => $lx_default ? new Time($lx_default) : null,
 				};
 			}
 			catch (UnhandledMatchError) {
@@ -86,11 +83,11 @@ class DefaultValuesBehavior extends Behavior {
 		}
 		unset($lx_default);
 
-		/** @var Table $lo_table */
+		/** @var \Awyiss\Model\Table $lo_table */
 		$lo_table = $this->table();
 		if ($lo_table->hasAttributes()) {
-			/** @var Association&Table $lo_attributes */
-			$lo_attributes = $lo_table->getAssociation($lo_table->getAttributesTable(TRUE));
+			/** @var \Cake\ORM\Association&\Awyiss\Model\Table $lo_attributes */
+			$lo_attributes = $lo_table->getAssociation($lo_table->getAttributesTable(true));
 			$la_defaults[ $lo_attributes->getProperty() ] = $lo_attributes->newDefaultEntity();
 		}
 
@@ -99,7 +96,7 @@ class DefaultValuesBehavior extends Behavior {
 
 		$la_options = [
 			'fields' => array_keys($la_defaults),
-			'validate' => FALSE,
+			'validate' => false,
 		];
 		$lo_marshaller = $lo_table->marshaller();
 

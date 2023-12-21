@@ -5,10 +5,8 @@ namespace Awyiss\Model\Entity;
 
 
 use Awyiss\Model\Entity;
-use Awyiss\Model\Table\MenuEntriesTable;
 use Cake\Collection\CollectionInterface;
 use Cake\Datasource\FactoryLocator;
-use Cake\I18n\FrozenTime;
 
 
 /**
@@ -25,25 +23,25 @@ use Cake\I18n\FrozenTime;
  * @property bool $active
  * @property bool $deleted
  * @property int|null $createdBy
- * @property FrozenTime|null $createdOn
+ * @property \Cake\I18n\DateTime|null $createdOn
  * @property int|null $changedBy
- * @property FrozenTime|null $changedOn
+ * @property \Cake\I18n\DateTime|null $changedOn
  * @property int|null $deletedBy
- * @property FrozenTime|null $deletedOn
+ * @property \Cake\I18n\DateTime|null $deletedOn
  */
 class MenuEntry extends Entity {
 	/**
 	 * @inheritDoc
 	 */
 	protected array $_accessible = [
-		'menuId' => TRUE,
-		'languageShortcode' => TRUE,
-		'parentId' => TRUE,
-		'title' => TRUE,
-		'link' => TRUE,
-		'external' => TRUE,
-		'systemOrder' => TRUE,
-		'active' => TRUE,
+		'menuId' => true,
+		'languageShortcode' => true,
+		'parentId' => true,
+		'title' => true,
+		'link' => true,
+		'external' => true,
+		'systemOrder' => true,
+		'active' => true,
 	];
 	/**
 	 * @inheritDoc
@@ -68,7 +66,7 @@ class MenuEntry extends Entity {
 	 * @noinspection PhpUnused
 	 */
 	public function getChildren(): ?CollectionInterface {
-		/** @var MenuEntriesTable $lo_table */
+		/** @var \Awyiss\Model\Table\MenuEntriesTable $lo_table */
 		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
 
 
@@ -82,7 +80,7 @@ class MenuEntry extends Entity {
 	 * @noinspection PhpUnused
 	 */
 	public function getNestedChildren(array $aa_options = [], int $ai_currentLevel = 0): ?CollectionInterface {
-		/** @var MenuEntriesTable $lo_table */
+		/** @var \Awyiss\Model\Table\MenuEntriesTable $lo_table */
 		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
 
 
@@ -96,7 +94,7 @@ class MenuEntry extends Entity {
 	 * @noinspection PhpUnused
 	 */
 	public function getParent(): ?self {
-		/** @var MenuEntriesTable $lo_table */
+		/** @var \Awyiss\Model\Table\MenuEntriesTable $lo_table */
 		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
 
 
@@ -110,7 +108,7 @@ class MenuEntry extends Entity {
 	 * @noinspection PhpUnused
 	 */
 	public function getParents(array $aa_options = [], int $ai_currentLevel = 0): ?CollectionInterface {
-		/** @var MenuEntriesTable $lo_table */
+		/** @var \Awyiss\Model\Table\MenuEntriesTable $lo_table */
 		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
 
 

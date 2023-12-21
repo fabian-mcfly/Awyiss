@@ -23,10 +23,10 @@ class LinkSelectWidget extends BasicWidget {
 		'aggregationLink' => '',
 		'aggregationKey' => 'all',
 		'class' => '',
-		'disabled' => FALSE,
-		'escape' => TRUE,
-		'includeAggregation' => TRUE,
-		'includeUnassigned' => FALSE,
+		'disabled' => false,
+		'escape' => true,
+		'includeAggregation' => true,
+		'includeUnassigned' => false,
 		'label' => '',
 		'identifier' => '',
 		'options' => [],
@@ -34,18 +34,15 @@ class LinkSelectWidget extends BasicWidget {
 		'unassignedLabel' => 'all',
 		'unassignedLink' => '',
 		'unassignedKey' => 'all',
-		'val' => NULL,
+		'val' => null,
 	];
 
 
 	/**
 	 * @inheritDoc
-	 *
 	 * @param array $aa_data
 	 * @param ContextInterface $ao_context
-	 *
 	 * @return string
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function render(array $aa_data, ContextInterface $ao_context): string {
@@ -73,13 +70,13 @@ class LinkSelectWidget extends BasicWidget {
 		if (array_key_exists($la_data['val'], $la_data['options'])) {
 			$ls_selectedOption = $this->renderSelectedOption($la_data);
 		}
-		//If the `includeUnassigned`-option is TRUE and the provided value equals the value of the `unassignedKey`-option, it's the currently selected option
-		elseif ($la_data['includeUnassigned'] && $this->isSelected((string) $la_data['unassignedKey'], $la_data['val'])) {
+		//If the `includeUnassigned`-option is true and the provided value equals the value of the `unassignedKey`-option, it's the currently selected option
+		elseif ($la_data['includeUnassigned'] && $this->isSelected((string)$la_data['unassignedKey'], $la_data['val'])) {
 			//The text to display is the value of the `unassignedLabel`-option
 			$ls_selectedOption = $la_data['unassignedLabel'];
 		}
-		//If the `includeAggregation`-option is TRUE and the provided value equals the value of the `aggregationKey`-option, it's the currently selected option
-		elseif ($la_data['includeAggregation'] && $this->isSelected((string) $la_data['aggregationKey'], $la_data['val'])) {
+		//If the `includeAggregation`-option is true and the provided value equals the value of the `aggregationKey`-option, it's the currently selected option
+		elseif ($la_data['includeAggregation'] && $this->isSelected((string)$la_data['aggregationKey'], $la_data['val'])) {
 			//The text to display is the value of the `aggregationLabel`-option
 			$ls_selectedOption = $la_data['aggregationLabel'];
 		}
@@ -131,11 +128,8 @@ class LinkSelectWidget extends BasicWidget {
 
 	/**
 	 * @inheritDoc
-	 *
 	 * @param array $aa_data
-	 *
-	 * @return array|string[]
-	 *
+	 * @return array|array<string>
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function secureFields(array $aa_data): array {
@@ -148,19 +142,18 @@ class LinkSelectWidget extends BasicWidget {
 	 *
 	 * @param string $as_key
 	 * @param mixed $ax_selected
-	 *
 	 * @return bool
 	 */
 	protected function isSelected(string $as_key, mixed $ax_selected): bool {
-		if ($ax_selected === NULL) {
-			return FALSE;
+		if ($ax_selected === null) {
+			return false;
 		}
 
 		if (!is_array($ax_selected)) {
-			$ax_selected = $ax_selected === FALSE ? '0' : $ax_selected;
+			$ax_selected = $ax_selected === false ? '0' : $ax_selected;
 
 
-			return $as_key === (string) $ax_selected;
+			return $as_key === (string)$ax_selected;
 		}
 
 		$lb_strict = !is_numeric($as_key);
@@ -174,13 +167,12 @@ class LinkSelectWidget extends BasicWidget {
 	 * Helper method for deciding what options are disabled.
 	 *
 	 * @param string $as_key The key to test.
-	 * @param string[]|NULL $aa_disabled The disabled values.
-	 *
+	 * @param array<string>|null $aa_disabled The disabled values.
 	 * @return bool
 	 */
 	protected function isDisabled(string $as_key, ?array $aa_disabled): bool {
-		if ($aa_disabled === NULL) {
-			return FALSE;
+		if ($aa_disabled === null) {
+			return false;
 		}
 
 		$lb_strict = !is_numeric($as_key);
@@ -194,13 +186,12 @@ class LinkSelectWidget extends BasicWidget {
 	 * Returns a rendered template for an option that allows the selection of unassigned entries.
 	 *
 	 * @param array $aa_data
-	 *
 	 * @return string
 	 */
 	protected function renderUnassignedOption(array $aa_data): string {
 		$la_data = $aa_data;
 
-		$lx_escape = $la_data['escape'] ?? TRUE;
+		$lx_escape = $la_data['escape'] ?? true;
 
 		$la_attributes = [
 			'class' => 'Item',
@@ -212,7 +203,7 @@ class LinkSelectWidget extends BasicWidget {
 
 		$la_attributes = $this->_templates->addClass($la_attributes, 'Item');
 		$la_attributes = $this->_templates->addClass($la_attributes, 'Item-Unassigned');
-		if ($this->isSelected((string) $la_data['unassignedKey'], $la_data['val'])) {
+		if ($this->isSelected((string)$la_data['unassignedKey'], $la_data['val'])) {
 			$la_attributes = $this->_templates->addClass($la_attributes, $la_data['selectedClass'] ?? 'Active');
 		}
 
@@ -230,13 +221,12 @@ class LinkSelectWidget extends BasicWidget {
 	 * Returns a rendered template for an option that allows the selection of an aggregation of entries.
 	 *
 	 * @param array $aa_data
-	 *
 	 * @return string
 	 */
 	protected function renderAggregationOption(array $aa_data): string {
 		$la_data = $aa_data;
 
-		$lx_escape = $la_data['escape'] ?? TRUE;
+		$lx_escape = $la_data['escape'] ?? true;
 
 		$la_attributes = [
 			'class' => 'Item',
@@ -248,7 +238,7 @@ class LinkSelectWidget extends BasicWidget {
 
 		$la_attributes = $this->_templates->addClass($la_attributes, 'Item');
 		$la_attributes = $this->_templates->addClass($la_attributes, 'Item-Aggregation');
-		if ($this->isSelected((string) $la_data['aggregationKey'], $la_data['val'])) {
+		if ($this->isSelected((string)$la_data['aggregationKey'], $la_data['val'])) {
 			$la_attributes = $this->_templates->addClass($la_attributes, $la_data['selectedClass'] ?? 'Active');
 		}
 
@@ -266,7 +256,6 @@ class LinkSelectWidget extends BasicWidget {
 	 * Returns an array of rendered templates for every option in `$aa_data['options']`
 	 *
 	 * @param array $aa_data
-	 *
 	 * @return array
 	 */
 	protected function renderOptions(array $aa_data): array {
@@ -282,9 +271,9 @@ class LinkSelectWidget extends BasicWidget {
 			return [];
 		}
 
-		$lx_selected = $la_data['val'] ?? NULL;
-		$lx_escape = $la_data['escape'] ?? TRUE;
-		$lx_disabled = NULL;
+		$lx_selected = $la_data['val'] ?? null;
+		$lx_escape = $la_data['escape'] ?? true;
+		$lx_disabled = null;
 		if (isset($la_data['disabled']) && is_array($la_data['disabled'])) {
 			$lx_disabled = $la_data['disabled'];
 		}
@@ -295,7 +284,7 @@ class LinkSelectWidget extends BasicWidget {
 			$la_optionAttributes = [
 				'templateVars' => [],
 				'title' => $lx_value,
-				'label' => NULL,
+				'label' => null,
 				'levelPrefix' => '',
 				'value' => $lx_key,
 			];
@@ -322,13 +311,13 @@ class LinkSelectWidget extends BasicWidget {
 			//Add a class 'Item' and, if the value of the option is selected, 'Active' as well
 			$la_optionAttributes = $this->_templates->addClass($la_optionAttributes, 'Item');
 			$la_optionAttributes = $this->_templates->addClass($la_optionAttributes, 'Item-' . Inflector::camelize($la_optionAttributes['title']));
-			if ($this->isSelected((string) $lx_key, $lx_selected)) {
+			if ($this->isSelected((string)$lx_key, $lx_selected)) {
 				$la_optionAttributes = $this->_templates->addClass($la_optionAttributes, $la_data['selectedClass'] ?? 'Active');
 			}
 
 			//Depending on the status, use the `option`- or `optionDisabled`-template to render the option
 			$ls_template = 'option';
-			if ($this->isDisabled((string) $lx_key, $lx_disabled)) {
+			if ($this->isDisabled((string)$lx_key, $lx_disabled)) {
 				$ls_template = 'optionDisabled';
 				//If the option is disabled, add 'Disabled' to the class
 				$la_optionAttributes = $this->_templates->addClass($la_optionAttributes, $la_data['disabledClass'] ?? 'Disabled');
@@ -354,13 +343,12 @@ class LinkSelectWidget extends BasicWidget {
 	 * Returns the rendered selected option
 	 *
 	 * @param array $aa_data
-	 *
 	 * @return string
 	 */
 	protected function renderSelectedOption(array $aa_data): string {
 		$la_data = $aa_data;
 
-		$la_selectedOption = (array) $la_data['options'][ $la_data['val'] ];
+		$la_selectedOption = (array)$la_data['options'][ $la_data['val'] ];
 
 
 		//Append the formatted template for this option

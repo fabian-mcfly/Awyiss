@@ -15,9 +15,7 @@ use Cake\Core\BasePlugin;
 class AwyissBakePlugin extends BasePlugin {
 	/**
 	 * @param CommandCollection $ao_commands
-	 *
 	 * @return CommandCollection
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function console(CommandCollection $ao_commands): CommandCollection {

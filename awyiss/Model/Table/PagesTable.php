@@ -9,8 +9,6 @@ use Awyiss\Awyiss;
 use Awyiss\Model\Behavior\AuthorizeBehavior;
 use Awyiss\Model\Entity\Page;
 use Awyiss\Model\Table;
-use Awyiss\ORM\Association\BelongsTo;
-use Awyiss\ORM\Association\HasMany;
 use Awyiss\ORM\RulesChecker;
 use Cake\Collection\CollectionInterface;
 use Cake\Database\Expression\QueryExpression;
@@ -25,18 +23,17 @@ use Cake\Validation\Validator;
 /**
  * Pages Model
  *
- * @property PageRolesTable&BelongsTo $PageRoles
- * @property PageTemplatesTable&BelongsTo $PageTemplates
- * @property PagesTable&BelongsTo $Duplicate
- * @property PagesTable&BelongsTo $ParentPages
- * @property PagesTable&HasMany $ChildPages
- * @property ContentsTable&HasMany $Contents
- *
+ * @property PageRolesTable&\Awyiss\ORM\Association\BelongsTo $PageRoles
+ * @property PageTemplatesTable&\Awyiss\ORM\Association\BelongsTo $PageTemplates
+ * @property PagesTable&\Awyiss\ORM\Association\BelongsTo $Duplicate
+ * @property PagesTable&\Awyiss\ORM\Association\BelongsTo $ParentPages
+ * @property PagesTable&\Awyiss\ORM\Association\HasMany $ChildPages
+ * @property ContentsTable&\Awyiss\ORM\Association\HasMany $Contents
  * @method Page newDefaultEntity(array $aa_additionalData = [])
- * @method CollectionInterface|NULL getNestedChildren(EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
- * @method CollectionInterface|NULL getChildren(EntityInterface $ao_entity)
+ * @method CollectionInterface|null getNestedChildren(EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
+ * @method CollectionInterface|null getChildren(EntityInterface $ao_entity)
  * @method Page getParent(EntityInterface $ao_entity)
- * @method CollectionInterface|NULL getParents(EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
+ * @method CollectionInterface|null getParents(EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
  */
 class PagesTable extends Table {
 	/**
@@ -92,9 +89,9 @@ class PagesTable extends Table {
 		$this->buildPagesAssociations();
 
 		$this->hasMany('Contents', [
-			'cascadeCallbacks' => TRUE,
+			'cascadeCallbacks' => true,
 			'className' => 'Contents',
-			'dependent' => TRUE,
+			'dependent' => true,
 			'foreignKey' => 'page_id',
 		]);
 
@@ -129,7 +126,7 @@ class PagesTable extends Table {
 			//Set a default callable for the `Model.buildRules`-event
 			$lo_authorizationBehavior->setConfig('Model.buildRules', function (Page $ao_entity, array $aa_options, AuthorizeBehavior $ao_behavior, ?bool $ab_accessible): ?bool {
 				if (!$ab_accessible) {
-					return FALSE;
+					return false;
 				}
 
 
@@ -142,16 +139,16 @@ class PagesTable extends Table {
 			//Set a default callable for the `Model.beforeFind`-event
 			$lo_accessBehavior->setConfig('Model.beforeFind', function(EventInterface $ao_event, Query $ao_subject, array $aa_options, AuthorizationBehavior $ao_behavior, ?bool $ab_accessible): ?bool {
 				if ( ! $ab_accessible) {
-					return FALSE;
+					return false;
 				}
 
 				//Add a where-condition that limits all results to the page role set for this model
 				$ao_subject->where(['page_role_id' => $this->getPageRoleId()]);
 
-				return TRUE;
+				return true;
 			});
 		}*/
-		/*if ($aa_config['forPageRole'] ?? NULL) {
+		/*if ($aa_config['forPageRole'] ?? null) {
 			$this->setPageRole($aa_config['forPageRole']);
 		}*/
 	}
@@ -171,7 +168,6 @@ class PagesTable extends Table {
 	 *
 	 * @param Validator $ao_validator The validator that can be modified to
 	 * add some rules to it.
-	 *
 	 * @return Validator
 	 */
 	public function validationDefault(Validator $ao_validator): Validator {
@@ -231,7 +227,7 @@ class PagesTable extends Table {
 			'isScalar' => ['rule' => 'isScalar'],
 			'maxLength' => ['rule' => ['maxLength', 255]],
 			'notBlank' => ['rule' => 'notBlank'],
-			'url' => ['rule' => ['url', TRUE]],
+			'url' => ['rule' => ['url', true]],
 		]);
 
 
@@ -307,9 +303,7 @@ class PagesTable extends Table {
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 *
 	 * @param RulesChecker|BaseRulesChecker $ao_rules The rules object to be modified.
-	 *
 	 * @return RulesChecker
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
@@ -320,7 +314,7 @@ class PagesTable extends Table {
 			$ao_rules->existsIn(
 				['languageShortcode'],
 				'Languages',
-				['authorize' => ['skip' => TRUE]]
+				['authorize' => ['skip' => true]]
 			),
 			'languageExists',
 			[
@@ -334,7 +328,7 @@ class PagesTable extends Table {
 			$ao_rules->existsIn(
 				['pageRoleId'],
 				'PageRoles',
-				['authorize' => ['skip' => TRUE]]
+				['authorize' => ['skip' => true]]
 			),
 			'validPageRole',
 			[
@@ -348,7 +342,7 @@ class PagesTable extends Table {
 			$ao_rules->existsIn(
 				['pageTemplateId', 'pageRoleId'],
 				'PageTemplates',
-				['authorize' => ['skip' => TRUE]]
+				['authorize' => ['skip' => true]]
 			),
 			'validPageTemplate',
 			[
@@ -362,7 +356,7 @@ class PagesTable extends Table {
 			$ao_rules->existsIn(
 				['duplicateOf'],
 				'Duplicate' . $ls_pageRole,
-				['authorize' => ['skip' => TRUE]]
+				['authorize' => ['skip' => true]]
 			),
 			'validDuplicateOf',
 			[
@@ -378,17 +372,17 @@ class PagesTable extends Table {
 			}
 
 			if (!$ao_entity->get('parentId')) {
-				return TRUE;
+				return true;
 			}
 
 			$lo_existsIn = $ao_rules->existsIn(
 				['parentId', 'languageShortcode', 'pageRoleId'],
 				'Parent' . $ls_pageRole,
 				[
-					'authorize' => ['skip' => TRUE],
+					'authorize' => ['skip' => true],
 					'errorField' => 'parentId',
 					'message' => __dfx($this->getI18nDomain(), 'validation', 'pages', 'error_valid_parent_id'),
-					'skipPageRoleCheck' => TRUE,
+					'skipPageRoleCheck' => true,
 				],
 			);
 
@@ -413,7 +407,6 @@ class PagesTable extends Table {
 	 * @param EventInterface $ao_event
 	 * @param SelectQuery $ao_query
 	 * @param ArrayObject $ao_options
-	 *
 	 * @return void
 	 */
 	public function beforeFind(EventInterface $ao_event, SelectQuery $ao_query, ArrayObject $ao_options): void {
@@ -421,7 +414,7 @@ class PagesTable extends Table {
 			return;
 		}
 
-		if (!($ao_options['skipPageRoleCheck'] ?? FALSE)) {
+		if (!($ao_options['skipPageRoleCheck'] ?? false)) {
 			$ao_query->where(['page_role_id' => $this->getPageRoleId()]);
 		}
 	}
@@ -431,9 +424,8 @@ class PagesTable extends Table {
 	 * Before saving a page, make sure its slug is unique.
 	 *
 	 * @param EventInterface $ao_event
-	 * @param Page $ao_entity
+	 * @param \Awyiss\Model\Entity\Page $ao_entity
 	 * @param ArrayObject $ao_options
-	 *
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function beforeSave(EventInterface $ao_event, EntityInterface $ao_entity, ArrayObject $ao_options): void {
@@ -458,8 +450,9 @@ class PagesTable extends Table {
 		}
 
 		$ls_preSlug = '';
-		/** @var Page $lo_parentPage */
-		if (!empty($ao_entity->parentId) && $lo_parentPage = $this->get($ao_entity->parentId, authorize: ['skip' => TRUE], skipPageRoleCheck: TRUE)) {
+		if (!empty($ao_entity->parentId)) {
+			/** @var Page $lo_parentPage */
+			$lo_parentPage = $this->get($ao_entity->parentId, authorize: ['skip' => true], skipPageRoleCheck: true);
 			//If there's a parent page, add its slug the one of the current page
 			$ls_preSlug = trim($lo_parentPage->slug, '/') . '/';
 		}
@@ -467,7 +460,7 @@ class PagesTable extends Table {
 		$ls_slug = $ls_preSlug . $ao_entity->slug;
 
 
-		$ls_originalSlug = $ao_entity->hasOriginal('slug') ? $ao_entity->getOriginal('slug') : NULL;
+		$ls_originalSlug = $ao_entity->hasOriginal('slug') ? $ao_entity->getOriginal('slug') : null;
 		//When the slug has changed
 		if ($ls_slug != $ls_originalSlug) {
 			$ls_field = $this->getAlias() . '.slug';
@@ -496,14 +489,13 @@ class PagesTable extends Table {
 			 *    ]
 			 * ]
 			 * ```
-			 *
 			 */
 
 			$li_i = 1;
 			$ls_suffix = '';
 
 			//As long as a page with the same slug exists, append an increasing number to the slug and try again
-			while ($this->exists($la_conditions, ['authorize' => ['skip' => TRUE], 'skipPageRoleCheck' => TRUE])) {
+			while ($this->exists($la_conditions, ['authorize' => ['skip' => true], 'skipPageRoleCheck' => true])) {
 				$li_i++;
 				$ls_suffix = '-' . $li_i;
 
@@ -520,30 +512,32 @@ class PagesTable extends Table {
 			}
 		}
 
-		$ao_entity->set('slug', $ls_slug, ['setter' => FALSE]);
+		$ao_entity->set('slug', $ls_slug, ['setter' => false]);
 		if (!$ao_entity->isNew() && $ls_slug === $ls_originalSlug) {
-			$ao_entity->setDirty('slug', FALSE);
+			$ao_entity->setDirty('slug', false);
 		}
 	}
 
 
 	/**
 	 * @return void
+	 * @throws \Exception
 	 * @noinspection PhpUnused
 	 */
 	public function beforeSoftDelete(): void {
 		$this->Contents->disableCascadeCallbacks();
-		$this->Contents->forPageRole($this->pageRole, FALSE);
+		$this->Contents->forPageRole($this->pageRole, false);
 	}
 
 
 	/**
 	 * @return void
+	 * @throws \Exception
 	 * @noinspection PhpUnused
 	 */
 	public function beforeDelete(): void {
 		$this->Contents->disableCascadeCallbacks();
-		$this->Contents->forPageRole($this->pageRole, FALSE);
+		$this->Contents->forPageRole($this->pageRole, false);
 	}
 
 
@@ -567,9 +561,8 @@ class PagesTable extends Table {
 
 	/**
 	 * @param EventInterface $ao_event
-	 * @param Page $ao_entity
+	 * @param \Awyiss\Model\Entity\Page $ao_entity
 	 * @param ArrayObject $ao_options
-	 *
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function afterSaveCommit(EventInterface $ao_event, EntityInterface $ao_entity, ArrayObject $ao_options): void {
@@ -577,7 +570,7 @@ class PagesTable extends Table {
 			return;
 		}
 
-		$ls_originalSlug = $ao_entity->hasOriginal('slug') ? $ao_entity->getOriginal('slug') : NULL;
+		$ls_originalSlug = $ao_entity->hasOriginal('slug') ? $ao_entity->getOriginal('slug') : null;
 		if ($ls_originalSlug && $ao_entity->slug != $ls_originalSlug) {
 			$lo_query = $this->updateQuery();
 
@@ -592,7 +585,7 @@ class PagesTable extends Table {
 					'slug' => 'identifier',
 					mb_strlen($ls_originalSlug) + 1,
 				], [
-					NULL,
+					null,
 					'integer',
 				]),
 			])))->where(function (QueryExpression $ao_expression/*, Query $ao_query*/) use ($ls_originalSlug) {
@@ -607,7 +600,6 @@ class PagesTable extends Table {
 	 * a collection
 	 *
 	 * @param SelectQuery $ao_query
-	 *
 	 * @return CollectionInterface
 	 */
 	public function listNested(SelectQuery $ao_query): CollectionInterface {
@@ -647,8 +639,8 @@ class PagesTable extends Table {
 		$this->hasMany('Duplicate' . $ls_pageRole, [
 			'bindingKey' => 'duplicate_of',
 			'className' => $ls_pageRole,
-			'cascadeCallbacks' => TRUE,
-			'dependent' => TRUE,
+			'cascadeCallbacks' => true,
+			'dependent' => true,
 			'foreignKey' => 'id',
 		]);
 

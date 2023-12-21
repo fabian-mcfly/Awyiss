@@ -6,6 +6,7 @@ namespace AwyissBake\Command\Bake;
 
 use AwyissBake\Util\UtilTrait;
 use Bake\CodeGen\FileBuilder;
+use Bake\Command\ModelCommand as BaseModelCommand;
 use Cake\Console\Arguments;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
@@ -18,7 +19,7 @@ use Cake\Utility\Inflector;
 /**
  * Command for generating model files.
  */
-class ModelCommand extends \Bake\Command\ModelCommand {
+class ModelCommand extends BaseModelCommand {
 	/*
 	 * Use UtilTrait so that every call of `$this->getPath()` will use the one provided by this trait,
 	 * honoring the `namespace`-option
@@ -35,9 +36,7 @@ class ModelCommand extends \Bake\Command\ModelCommand {
 	 * @param array $aa_data An array to use to generate the Table
 	 * @param Arguments $ao_args CLI Arguments
 	 * @param ConsoleIo $ao_io CLI ao_io
-	 *
 	 * @return void
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function bakeEntity(Table $ao_model, array $aa_data, Arguments $ao_args, ConsoleIo $ao_io): void {
@@ -62,7 +61,7 @@ class ModelCommand extends \Bake\Command\ModelCommand {
 		$ls_path = $this->getPath($ao_args);
 		$ls_filename = $ls_path . 'Entity' . DS . $ls_name . '.php';
 
-		$lo_parsedFile = NULL;
+		$lo_parsedFile = null;
 		if ($ao_args->getOption('update')) {
 			$lo_parsedFile = $this->parseFile($ls_filename);
 		}
@@ -117,9 +116,7 @@ class ModelCommand extends \Bake\Command\ModelCommand {
 	 * @param array $aa_data An array to use to generate the Table
 	 * @param Arguments $ao_args CLI Arguments
 	 * @param ConsoleIo $ao_io CLI Arguments
-	 *
 	 * @return void
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function bakeTable(Table $ao_model, array $aa_data, Arguments $ao_args, ConsoleIo $ao_io): void {
@@ -143,7 +140,7 @@ class ModelCommand extends \Bake\Command\ModelCommand {
 		$ls_path = $this->getPath($ao_args);
 		$ls_filename = $ls_path . 'Table' . DS . $ls_name . 'Table.php';
 
-		$lo_parsedFile = NULL;
+		$lo_parsedFile = null;
 		if ($ao_args->getOption('update')) {
 			$lo_parsedFile = $this->parseFile($ls_filename);
 		}
@@ -165,8 +162,8 @@ class ModelCommand extends \Bake\Command\ModelCommand {
 				'entity' => $ls_entity,
 				'associations' => [],
 				'primaryKey' => 'id',
-				'displayField' => NULL,
-				'table' => NULL,
+				'displayField' => null,
+				'table' => null,
 				'validation' => [],
 				'rulesChecker' => [],
 				'behaviors' => [],
@@ -198,7 +195,6 @@ class ModelCommand extends \Bake\Command\ModelCommand {
 
 	/**
 	 * @inheritDoc
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function getAssociations(Table $ao_table, Arguments $ao_args, ConsoleIo $ao_io): array {
@@ -229,10 +225,9 @@ class ModelCommand extends \Bake\Command\ModelCommand {
 
 	/**
 	 * @inheritDoc
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function getValidation(Table $ao_model, array $aa_associations, Arguments $ao_args): array | false {
+	public function getValidation(Table $ao_model, array $aa_associations, Arguments $ao_args): array|false {
 		if ($ao_args->getOption('no-validation')) {
 			return [];
 		}
@@ -240,7 +235,7 @@ class ModelCommand extends \Bake\Command\ModelCommand {
 		$lo_schema = $ao_model->getSchema();
 		$la_fields = $lo_schema->columns();
 		if (!$la_fields) {
-			return FALSE;
+			return false;
 		}
 
 		$la_validate = [];
@@ -255,11 +250,11 @@ class ModelCommand extends \Bake\Command\ModelCommand {
 
 		foreach ($la_fields as $ls_fieldName) {
 			// Skip primary key
-			if (in_array($ls_fieldName, $ls_primaryKey, TRUE)) {
+			if (in_array($ls_fieldName, $ls_primaryKey, true)) {
 				continue;
 			}
 			$la_field = $lo_schema->getColumn($ls_fieldName);
-			$la_field['isForeignKey'] = in_array(Inflector::variable($ls_fieldName), $lx_foreignKeys, TRUE);
+			$la_field['isForeignKey'] = in_array(Inflector::variable($ls_fieldName), $lx_foreignKeys, true);
 			$la_validation = $this->fieldValidation($lo_schema, $ls_fieldName, $la_field, $ls_primaryKey);
 			if ($la_validation) {
 				$la_validate[ Inflector::variable($ls_fieldName) ] = $la_validation;
@@ -297,14 +292,13 @@ class ModelCommand extends \Bake\Command\ModelCommand {
 
 	/**
 	 * @inheritDoc
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function getRules(Table $ao_model, array $aa_associations, Arguments $aa_args): array {
 		$la_rules = parent::getRules($ao_model, $aa_associations, $aa_args);
 
 		if (str_starts_with($ao_model->getTable(), 'attributes_') && isset($la_rules['page_id'])) {
-			$la_rules['page_id']['options']['skipPageRoleCheck'] = TRUE;
+			$la_rules['page_id']['options']['skipPageRoleCheck'] = true;
 		}
 
 
@@ -316,9 +310,7 @@ class ModelCommand extends \Bake\Command\ModelCommand {
 	 * We do not want to automatically add behaviors.
 	 *
 	 * @param Table $ao_model
-	 *
 	 * @return array
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function getBehaviors(Table $ao_model): array {
@@ -332,9 +324,7 @@ class ModelCommand extends \Bake\Command\ModelCommand {
 	 * Adds the `namespace`-option.
 	 *
 	 * @param ConsoleOptionParser $ao_parser
-	 *
 	 * @return ConsoleOptionParser
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function buildOptionParser(ConsoleOptionParser $ao_parser): ConsoleOptionParser {
@@ -343,7 +333,7 @@ class ModelCommand extends \Bake\Command\ModelCommand {
 		$lo_parser->addOption('namespace', [
 			'help' => 'The namespace for the model. Should be either "Awyiss" or <CUSTOM_NAMESPACE>',
 		])->addOption('is-pagerole', [
-			'boolean' => TRUE,
+			'boolean' => true,
 			'help' => 'Does the model reflect a pagerole? Will extend PagesTable and use db table `pages`.',
 		])->addOption('for-pagerole', [
 			'help' => 'Should the table be associated with a pagerole? Will remove a Page association if present.',
@@ -356,7 +346,6 @@ class ModelCommand extends \Bake\Command\ModelCommand {
 
 	/**
 	 * @param array $aa_associations
-	 *
 	 * @return void
 	 */
 	protected function camelbackAssociationKeys(array &$aa_associations): void {
@@ -366,7 +355,7 @@ class ModelCommand extends \Bake\Command\ModelCommand {
 					$la_association['foreignKey'] = Inflector::variable($la_association['foreignKey']);
 				}
 				elseif (is_array($la_association['foreignKey'])) {
-					array_walk($la_association['foreignKey'], function (&$as_field) {
+					array_walk($la_association['foreignKey'], function (&$as_field): void {
 						$as_field = Inflector::variable($as_field);
 					});
 				}

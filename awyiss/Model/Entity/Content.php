@@ -5,10 +5,8 @@ namespace Awyiss\Model\Entity;
 
 
 use Awyiss\Model\Entity;
-use Awyiss\Model\Table\ContentsTable;
 use Cake\Collection\CollectionInterface;
 use Cake\Datasource\FactoryLocator;
-use Cake\I18n\FrozenTime;
 
 
 /**
@@ -17,26 +15,26 @@ use Cake\I18n\FrozenTime;
  * @property int $id
  * @property int $pageId
  * @property int $parentId
- * @property string|NULL $title
- * @property string|NULL $subtitle
- * @property string|NULL $text
- * @property string|NULL $link
+ * @property string|null $title
+ * @property string|null $subtitle
+ * @property string|null $text
+ * @property string|null $link
  * @property int $contentAreaId
  * @property ContentArea $contentArea
  * @property int $contentTemplateId
  * @property float $columnwidth
- * @property string|NULL $cssClass
- * @property int|NULL $duplicateOf
- * @property string|NULL $data
+ * @property string|null $cssClass
+ * @property int|null $duplicateOf
+ * @property string|null $data
  * @property int $systemOrder
  * @property bool $active
  * @property bool $deleted
- * @property int|NULL $createdBy
- * @property FrozenTime|NULL $createdOn
- * @property int|NULL $changedBy
- * @property FrozenTime|NULL $changedOn
- * @property int|NULL $deletedBy
- * @property FrozenTime|NULL $deletedOn
+ * @property int|null $createdBy
+ * @property \Cake\I18n\DateTime|null $createdOn
+ * @property int|null $changedBy
+ * @property \Cake\I18n\DateTime|null $changedOn
+ * @property int|null $deletedBy
+ * @property \Cake\I18n\DateTime|null $deletedOn
  * @property ContentTemplate $contentTemplate
  * @property Content $parentContent
  * @property Page $page
@@ -49,20 +47,20 @@ class Content extends Entity {
 	 * @inheritDoc
 	 */
 	protected array $_accessible = [
-		'pageId' => TRUE,
-		'parentId' => TRUE,
-		'title' => TRUE,
-		'subtitle' => TRUE,
-		'text' => TRUE,
-		'link' => TRUE,
-		'contentAreaId' => TRUE,
-		'contentTemplateId' => TRUE,
-		'columnwidth' => TRUE,
-		'cssClass' => TRUE,
-		'duplicateOf' => TRUE,
-		'data' => TRUE,
-		'systemOrder' => TRUE,
-		'active' => TRUE,
+		'pageId' => true,
+		'parentId' => true,
+		'title' => true,
+		'subtitle' => true,
+		'text' => true,
+		'link' => true,
+		'contentAreaId' => true,
+		'contentTemplateId' => true,
+		'columnwidth' => true,
+		'cssClass' => true,
+		'duplicateOf' => true,
+		'data' => true,
+		'systemOrder' => true,
+		'active' => true,
 	];
 	/**
 	 * @inheritdoc
@@ -96,7 +94,7 @@ class Content extends Entity {
 	 * @noinspection PhpUnused
 	 */
 	public function getChildren(): ?CollectionInterface {
-		/** @var ContentsTable $lo_table */
+		/** @var \Awyiss\Model\Table\ContentsTable $lo_table */
 		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
 
 
@@ -110,7 +108,7 @@ class Content extends Entity {
 	 * @noinspection PhpUnused
 	 */
 	public function getNestedChildren(array $aa_options = [], int $ai_currentLevel = 0): ?CollectionInterface {
-		/** @var ContentsTable $lo_table */
+		/** @var \Awyiss\Model\Table\ContentsTable $lo_table */
 		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
 
 
@@ -124,7 +122,7 @@ class Content extends Entity {
 	 * @noinspection PhpUnused
 	 */
 	public function getParent(): ?self {
-		/** @var ContentsTable $lo_table */
+		/** @var \Awyiss\Model\Table\ContentsTable $lo_table */
 		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
 
 
@@ -138,7 +136,7 @@ class Content extends Entity {
 	 * @noinspection PhpUnused
 	 */
 	public function getParents(array $aa_options = [], int $ai_currentLevel = 0): ?CollectionInterface {
-		/** @var ContentsTable $lo_table */
+		/** @var \Awyiss\Model\Table\ContentsTable $lo_table */
 		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
 
 
@@ -146,9 +144,16 @@ class Content extends Entity {
 	}
 
 
-	protected function _setData(array $aa_data) {
+	/**
+	 * Make sure no empty array finds its way into the db
+	 *
+	 * @param array $aa_data
+	 * @return array|null
+	 * @noinspection PhpUnused
+	 */
+	protected function _setData(array $aa_data): ?array {
 		if (empty($aa_data)) {
-			return NULL;
+			return null;
 		}
 
 

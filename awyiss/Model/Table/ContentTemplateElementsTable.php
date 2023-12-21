@@ -4,10 +4,8 @@
 namespace Awyiss\Model\Table;
 
 
-use Awyiss\Model\Entity\UsergroupPermission;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
-use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Validation\Validator;
 
@@ -15,15 +13,14 @@ use Cake\Validation\Validator;
 /**
  * UsergroupPermissions Model
  *
- * @property UsergroupsTable&BelongsTo $Usergroups
- *
- * @method UsergroupPermission newDefaultEntity(array $aa_additionalData = [])
+ * @property UsergroupsTable&\Awyiss\ORM\Association\BelongsTo $Usergroups
+ * @method \Awyiss\Model\Entity\UsergroupPermission newDefaultEntity(array $aa_additionalData = [])
  */
 class ContentTemplateElementsTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public const ATTRIBUTABLE = FALSE;
+	public const ATTRIBUTABLE = false;
 	/**
 	 * @inheritDoc
 	 */
@@ -33,7 +30,7 @@ class ContentTemplateElementsTable extends Table {
 	 */
 	protected array $_defaultConfig = [
 		'audit' => [
-			'enabled' => FALSE,
+			'enabled' => false,
 		],
 		'authorize' => [
 			'identifiers' => [
@@ -66,7 +63,6 @@ class ContentTemplateElementsTable extends Table {
 	 *
 	 * @param Validator $ao_validator The validator that can be modified to
 	 * add some rules to it.
-	 *
 	 * @return Validator
 	 */
 	public function validationDefault(Validator $ao_validator): Validator {
@@ -130,9 +126,7 @@ class ContentTemplateElementsTable extends Table {
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 *
 	 * @param RulesChecker|BaseRulesChecker $ao_rules The rules object to be modified.
-	 *
 	 * @return RulesChecker
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {

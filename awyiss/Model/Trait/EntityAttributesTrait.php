@@ -5,9 +5,7 @@ namespace Awyiss\Model\Trait;
 
 
 use Awyiss\Model\Entity;
-use Awyiss\Model\Table;
 use Awyiss\ORM\Association\HasOne;
-use Cake\Datasource\EntityInterface;
 use Cake\Datasource\FactoryLocator;
 use InvalidArgumentException;
 
@@ -25,11 +23,11 @@ trait EntityAttributesTrait {
 	public function __construct(array $aa_properties = [], array $aa_options = []) {
 		parent::__construct($aa_properties, $aa_options);
 
-		/** @var Table $lo_table */
+		/** @var \Awyiss\Model\Table $lo_table */
 		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
 		if ($lo_table->hasAttributes()) {
 			/** @var HasOne $lo_association */
-			$lo_association = $lo_table->getAssociation($lo_table->getAttributesTable(TRUE));
+			$lo_association = $lo_table->getAssociation($lo_table->getAttributesTable(true));
 
 			$this->initAttributesField($lo_association, $lo_association->getForeignKey());
 		}
@@ -39,17 +37,20 @@ trait EntityAttributesTrait {
 	/**
 	 * Sets each of the attribute's values as
 	 *
+	 * @param \Awyiss\ORM\Association\HasOne|\Awyiss\Model\Table $ao_attributesTable
+	 * @param string $as_foreignKey
 	 * @return void
 	 */
 	public function initAttributesField(HasOne $ao_attributesTable, string $as_foreignKey): void {
-		$lo_attributes = $this->_fields['attributes'] ?? NULL;
+		$lo_attributes = $this->_fields['attributes'] ?? null;
 
 		if (!$lo_attributes || !is_a($lo_attributes, Entity::class)) {
 			return;
 		}
 
+		dd($ao_attributesTable, __FILE__, __LINE__);
 		$la_translatableFields = $ao_attributesTable->getConfig('translate.fields', []);
-		/** @var EntityInterface $lo_attributes */
+		/** @var \Cake\Datasource\EntityInterface $lo_attributes */
 		foreach ($lo_attributes->_fields as $ls_key => $lx_value) {
 			if (in_array($ls_key, ['id', $as_foreignKey, '_i18n', '_translations'])) {
 				continue;
@@ -59,9 +60,9 @@ trait EntityAttributesTrait {
 				continue;
 			}
 
-			$this->setVirtual([$ls_key], TRUE);
+			$this->setVirtual([$ls_key], true);
 		}
-		//$this->setHidden(['attributes'], TRUE);
+		//$this->setHidden(['attributes'], true);
 	}
 
 
@@ -73,7 +74,7 @@ trait EntityAttributesTrait {
 			throw new InvalidArgumentException('Cannot get an empty field');
 		}
 
-		$lx_value = NULL;
+		$lx_value = null;
 
 		if (isset($this->_fields[ $as_field ])) {
 			$lx_value = &$this->_fields[ $as_field ];
@@ -104,11 +105,10 @@ trait EntityAttributesTrait {
 	 * Return the value of a field of the attached attribute entity (or null)
 	 *
 	 * @param string $as_field
-	 *
 	 * @return mixed
 	 */
 	public function &getFromAttribute(string $as_field): mixed {
-		$lx_value = NULL;
+		$lx_value = null;
 
 		// No attributes field = no value to fetch from there
 		if (empty($this->_fields['attributes']) || !($this->_fields['attributes'] instanceof Entity)) {
@@ -118,7 +118,7 @@ trait EntityAttributesTrait {
 			$lx_value = ;
 		}*/
 
-		/** @var EntityInterface $lo_attributesEntity */
+		/** @var \Cake\Datasource\EntityInterface $lo_attributesEntity */
 		$lo_attributesEntity = $this->_fields['attributes'];
 
 		/**

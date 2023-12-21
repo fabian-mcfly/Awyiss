@@ -36,7 +36,6 @@ abstract class AbstractPolicy implements PolicyInterface {
 
 	/**
 	 * @inheritDoc
-	 *
 	 * @throws \Exception
 	 */
 	public static function getPermissionOptions(): PermissionOptionCollection {
@@ -51,7 +50,6 @@ abstract class AbstractPolicy implements PolicyInterface {
 
 	/**
 	 * @inheritDoc
-	 *
 	 * @throws \Exception
 	 */
 	public static function getPermissionOption(string $as_identifier): ?PermissionOptionInterface {
@@ -66,6 +64,6 @@ abstract class AbstractPolicy implements PolicyInterface {
 		}
 
 
-		return NULL;
+		return null;
 	}
 }

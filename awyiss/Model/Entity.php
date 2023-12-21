@@ -6,10 +6,9 @@ namespace Awyiss\Model;
 
 use Awyiss\Model\Trait\EntityAttributesTrait;
 use Awyiss\Model\Trait\EntityFieldMapTrait;
-use Awyiss\ORM\Association\HasOne;
-use Cake\Datasource\EntityInterface;
 use Cake\Datasource\FactoryLocator;
 use Cake\ORM\Behavior\Translate\TranslateTrait;
+use Cake\ORM\Entity as BaseEntity;
 use Cake\Utility\Inflector;
 
 
@@ -17,9 +16,9 @@ use Cake\Utility\Inflector;
  * Page Entity
  *
  * @property string $label
- * @property ?EntityInterface $attributes
+ * @property ?\Cake\Datasource\EntityInterface $attributes
  */
-class Entity extends \Cake\ORM\Entity {
+class Entity extends BaseEntity {
 	use EntityAttributesTrait {
 		EntityAttributesTrait::get as getOrGetFromAttribute;
 	}
@@ -27,7 +26,7 @@ class Entity extends \Cake\ORM\Entity {
 	use TranslateTrait;
 
 
-	protected bool $_audit = TRUE;
+	protected bool $_audit = true;
 	/**
 	 * @var array Default values for the entity
 	 */
@@ -43,7 +42,7 @@ class Entity extends \Cake\ORM\Entity {
 	 * @param array $aa_options
 	 */
 	public function __construct(array $aa_properties = [], array $aa_options = []) {
-		$la_properties = $this->mapFields($aa_properties, TRUE);
+		$la_properties = $this->mapFields($aa_properties, true);
 
 		//Remember the original field names here.
 		$this->setOriginalField(array_keys($la_properties));
@@ -54,8 +53,8 @@ class Entity extends \Cake\ORM\Entity {
 			/** @var Table $lo_table */
 			$lo_table = FactoryLocator::get('Table')->get($this->getSource());
 			if ($lo_table->hasAttributes()) {
-				/** @var HasOne $lo_association */
-				$lo_association = $lo_table->getAssociation($lo_table->getAttributesTable(TRUE));
+				/** @var \Awyiss\ORM\Association\HasOne $lo_association */
+				$lo_association = $lo_table->getAssociation($lo_table->getAttributesTable(true));
 
 				/** @var static $ls_associationEntityClass */
 				$ls_associationEntityClass = $lo_association->getEntityClass();
@@ -67,14 +66,13 @@ class Entity extends \Cake\ORM\Entity {
 		}
 
 		if (!array_key_exists('_translations', $this->_accessible)) {
-			$this->setAccess('_translations', TRUE);
+			$this->setAccess('_translations', true);
 		}
 	}
 
 
 	/**
 	 * @inheritDoc
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function &get(string $as_field): mixed {
@@ -91,7 +89,6 @@ class Entity extends \Cake\ORM\Entity {
 	 * Returns whether a field has an original value
 	 *
 	 * @param string $as_field
-	 *
 	 * @return bool
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
@@ -124,12 +121,10 @@ class Entity extends \Cake\ORM\Entity {
 	 * Enables the audit flag that allows the AuditBehavior to track changes to this entity
 	 *
 	 * @param bool $ab_audit
-	 *
 	 * @return $this
-	 *
 	 * @noinspection PhpUnused
 	 */
-	public function enableAudit(bool $ab_audit = TRUE): static {
+	public function enableAudit(bool $ab_audit = true): static {
 		$this->_audit = $ab_audit;
 
 
@@ -143,7 +138,7 @@ class Entity extends \Cake\ORM\Entity {
 	 * @return $this
 	 */
 	public function disableAudit(): static {
-		$this->_audit = FALSE;
+		$this->_audit = false;
 
 
 		return $this;
@@ -170,7 +165,7 @@ class Entity extends \Cake\ORM\Entity {
 				$ls_title = __d($ls_scope, 'title_' . Inflector::underscore($ls_identifier));
 			}
 			else {
-				$ls_title = $this->filename ?? NULL ?? Inflector::singularize($this->getSource()) . $this->id;
+				$ls_title = $this->filename ?? null ?? Inflector::singularize($this->getSource()) . $this->id;
 			}
 		}
 

@@ -25,7 +25,7 @@ class ProxyIdentifier extends AbstractIdentifier {
 			self::CREDENTIAL_PASSWORD => 'password',
 
 		],
-		'remoteResolver' => NULL,
+		'remoteResolver' => null,
 		'localResolver' => 'Authentication.Orm',
 	];
 
@@ -34,9 +34,7 @@ class ProxyIdentifier extends AbstractIdentifier {
 	 * Identifies a user or service by the passed credentials using the `remoteResolver` setting.
 	 *
 	 * @param array $aa_credentials Authentication credentials
-	 *
 	 * @return ArrayAccess|array|null
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function identify(array $aa_credentials): ArrayAccess|array|null {
@@ -51,9 +49,7 @@ class ProxyIdentifier extends AbstractIdentifier {
 	 * Identifies a user or service by the passed credentials using the `localResolver` setting.
 	 *
 	 * @param array $aa_credentials Authentication credentials
-	 *
 	 * @return ArrayAccess|array|null
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function reidentify(array $aa_credentials): ArrayAccess|array|null {

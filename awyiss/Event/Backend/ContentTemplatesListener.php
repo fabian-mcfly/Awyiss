@@ -12,7 +12,6 @@ use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
 use Cake\I18n\FrozenTime;
 use Cake\Utility\Text;
-use Queue\Model\Table\QueuedJobsTable;
 
 
 /**
@@ -50,12 +49,11 @@ class ContentTemplatesListener implements EventListenerInterface {
 	 *
 	 * @param Event $ao_event
 	 * @param ContentTemplate $ao_entity
-	 *
 	 * @return void
 	 */
 	public function beforeSave(Event $ao_event, ContentTemplate $ao_entity): void {
 		if ($ao_entity->hasOriginal('filename') && $ao_entity->filename != $ao_entity->getOriginal('filename')) {
-			/** @var QueuedJobsTable $lo_queue */
+			/** @var \Queue\Model\Table\QueuedJobsTable $lo_queue */
 			$lo_queue = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
 
 			if ($lo_queue->isQueued('content_templates::file_changes')) {
@@ -74,7 +72,6 @@ class ContentTemplatesListener implements EventListenerInterface {
 	 *
 	 * @param Event $ao_event
 	 * @param ContentTemplate $ao_entity
-	 *
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function afterSaveCommit(Event $ao_event, ContentTemplate $ao_entity): void {
@@ -98,7 +95,8 @@ class ContentTemplatesListener implements EventListenerInterface {
 			//After changing the filename in the database, we also need to move (read: rename) the existing file
 			$ls_currentFilename = Text::slug($ao_entity->getOriginal('filename'), ['replacement' => '_']);
 			$ls_currentFilePath = $ls_folderPath . $ls_currentFilename . $ls_extension;
-			if ($lb_fileExists = file_exists($ls_currentFilePath)) {
+			$lb_fileExists = file_exists($ls_currentFilePath);
+			if ($lb_fileExists) {
 				$la_commands[] = 'mv ' . $ls_currentFilePath . ' ' . $ls_filePath;
 			}
 		}
@@ -115,11 +113,11 @@ class ContentTemplatesListener implements EventListenerInterface {
 		if (!empty($la_commands)) {
 			$la_data = [
 				'command' => implode(' && ', array_map('escapeshellcmd', $la_commands)),
-				'escape' => FALSE,
-				'log' => TRUE,
+				'escape' => false,
+				'log' => true,
 			];
 
-			/** @var QueuedJobsTable $lo_queue */
+			/** @var \Queue\Model\Table\QueuedJobsTable $lo_queue */
 			$lo_queue = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
 			$lo_queue->createJob('Queue.Execute', $la_data, [
 				'group' => 'general',
@@ -137,7 +135,6 @@ class ContentTemplatesListener implements EventListenerInterface {
 	 *
 	 * @param Event $ao_event
 	 * @param ContentTemplate $ao_entity
-	 *
 	 * @noinspection PhpUnused
 	 * @noinspection PhpUnusedParameterInspection
 	 */
@@ -157,11 +154,11 @@ class ContentTemplatesListener implements EventListenerInterface {
 				$ls_newFilePath = $ls_folderPath . '_deleted-' . $ls_fileName . '-' . (new FrozenTime())->getTimestamp() . $ls_extension;
 			}
 
-			/** @var QueuedJobsTable $lo_queue */
+			/** @var \Queue\Model\Table\QueuedJobsTable $lo_queue */
 			$lo_queue = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
 			$lo_queue->createJob('Queue.Execute', [
 				'command' => 'mv ' . $ls_filePath . ' ' . $ls_newFilePath,
-				'log' => TRUE,
+				'log' => true,
 			], [
 				'group' => 'general',
 				'priority' => 1,

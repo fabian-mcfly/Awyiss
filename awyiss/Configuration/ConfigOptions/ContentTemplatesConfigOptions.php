@@ -29,8 +29,8 @@ class ContentTemplatesConfigOptions extends AbstractConfigOptions {
 				new ConfigOption([
 					'defaultValue' => 20,
 					'identifier' => 'limit',
-					'localizable' => FALSE,
-					'nullable' => FALSE,
+					'localizable' => false,
+					'nullable' => false,
 					'type' => ConfigOptionType::INTEGER,
 				]),
 			],

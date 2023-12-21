@@ -6,7 +6,6 @@ namespace Awyiss\Model\Entity;
 
 use Authentication\IdentityInterface;
 use Awyiss\Model\Entity;
-use Cake\I18n\FrozenTime;
 
 
 /**
@@ -15,7 +14,7 @@ use Cake\I18n\FrozenTime;
  * @property int $id
  * @property string $providerId
  * @property string $username
- * @property FrozenTime $lastLogin
+ * @property \Cake\I18n\DateTime $lastLogin
  * @property string $provider
  */
 class UsersExternal extends Entity implements IdentityInterface {
@@ -23,10 +22,10 @@ class UsersExternal extends Entity implements IdentityInterface {
 	 * @inheritDoc
 	 */
 	protected array $_accessible = [
-		'provider' => TRUE,
-		'providerId' => TRUE,
-		'username' => TRUE,
-		'usergroups' => TRUE,
+		'provider' => true,
+		'providerId' => true,
+		'username' => true,
+		'usergroups' => true,
 	];
 	/**
 	 * @inheritDoc

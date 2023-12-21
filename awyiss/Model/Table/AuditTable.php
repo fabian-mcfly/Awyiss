@@ -4,7 +4,6 @@
 namespace Awyiss\Model\Table;
 
 
-use Awyiss\Model\Entity\Audit;
 use Awyiss\Model\Table;
 use Cake\Database\Schema\TableSchemaInterface;
 use Cake\Validation\Validator;
@@ -13,13 +12,13 @@ use Cake\Validation\Validator;
 /**
  * Audit Model
  *
- * @method Audit newDefaultEntity(array $aa_additionalData = [])
+ * @method \Awyiss\Model\Entity\Audit newDefaultEntity(array $aa_additionalData = [])
  */
 class AuditTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public const ATTRIBUTABLE = FALSE;
+	public const ATTRIBUTABLE = false;
 	/**
 	 * @inheritDoc
 	 */
@@ -29,7 +28,7 @@ class AuditTable extends Table {
 	 */
 	protected array $_defaultConfig = [
 		'audit' => [
-			'enabled' => FALSE,
+			'enabled' => false,
 		],
 	];
 
@@ -39,7 +38,6 @@ class AuditTable extends Table {
 	 *
 	 * @param Validator $ao_validator The validator that can be modified to
 	 * add some rules to it.
-	 *
 	 * @return Validator
 	 */
 	public function validationDefault(Validator $ao_validator): Validator {

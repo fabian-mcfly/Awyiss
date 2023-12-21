@@ -8,19 +8,18 @@ use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\View\StringTemplate;
 use Cake\Utility\Inflector;
 use Cake\View\Form\EntityContext;
-use Cake\View\Helper\HtmlHelper;
+use Cake\View\Helper\FormHelper as BaseFormHelper;
 use Cake\View\View;
 
 
 /**
  * @inheritDoc
- *
  * @property AttributesHelper $Attributes
- * @property HtmlHelper $Html
+ * @property \Cake\View\Helper\HtmlHelper $Html
  * @property LocaleHelper $Locale
  * @property UrlHelper $Url
  */
-class FormHelper extends \Cake\View\Helper\FormHelper {
+class FormHelper extends BaseFormHelper {
 	/**
 	 * Other helpers used by FormHelper
 	 *
@@ -62,7 +61,7 @@ class FormHelper extends \Cake\View\Helper\FormHelper {
 	 * @inheritDoc
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function create($ax_context = NULL, array $aa_options = []): string {
+	public function create(mixed $ax_context = null, array $aa_options = []): string {
 		$ls_form = parent::create($ax_context, $aa_options);
 
 		$lo_context = $this->context();
@@ -94,9 +93,9 @@ class FormHelper extends \Cake\View\Helper\FormHelper {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function label(string $as_fieldName, ?string $as_text = NULL, array $aa_options = []): string {
+	public function label(string $as_fieldName, ?string $as_text = null, array $aa_options = []): string {
 		$ls_text = $as_text;
-		if ($ls_text === NULL) {
+		if ($ls_text === null) {
 			$ls_text = $as_fieldName;
 			if (str_ends_with($ls_text, '._ids')) {
 				$ls_text = substr($ls_text, 0, -5);
@@ -123,22 +122,21 @@ class FormHelper extends \Cake\View\Helper\FormHelper {
 	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 *
-	public function error (string $as_field, $as_text = NULL, array $aa_options = []): string {
+	public function error (string $as_field, $as_text = null, array $aa_options = []): string {
 		return parent::error($as_field, $as_text, $aa_options);
-		//return parent::error($as_field, $as_text, $aa_options + ['escape' => FALSE]);
+		//return parent::error($as_field, $as_text, $aa_options + ['escape' => false]);
 	}*/
 
 
 	/**
 	 * @inheritDoc
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function control(string $as_fieldName, array $aa_options = []): string {
 		$la_options = $aa_options;
 		if (in_array($as_fieldName, $this->translatableFields) && count($this->languages) > 1) {
 			/*if ($this->error($as_fieldName)) {
-				$la_options['error'] = FALSE;
+				$la_options['error'] = false;
 			}*/
 
 			$ls_association = '';
@@ -148,14 +146,14 @@ class FormHelper extends \Cake\View\Helper\FormHelper {
 				$ls_association .= '.';
 			}
 
-			$la_options['realType'] = $la_options['type'] ?? NULL;
+			$la_options['realType'] = $la_options['type'] ?? null;
 			$la_options['type'] = 'translatableText';
 			$la_options['val'] = $this->getSourceValue($ls_association . '_translations.' . array_key_first($this->languages) . '.' . $ls_fieldName);
 
 			//If there's no translation for the main language, reset the val.
 			//We might need to use the untranslated table value.
 			if (empty($la_options['val'])) {
-				$la_options['val'] = NULL;
+				$la_options['val'] = null;
 			}
 		}
 
@@ -167,22 +165,20 @@ class FormHelper extends \Cake\View\Helper\FormHelper {
 	/**
 	 * @inheritDoc
 	 *
-	 * Use "empty => TRUE" as default value for selects. This negates CakePHP's questionable decision to remove
+	 * Use "empty => true" as default value for selects. This negates CakePHP's questionable decision to remove
 	 * the empty option if a select is required. Usability-wise it's not very clever to show required fields prepopulated.
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function select(string $as_fieldName, iterable $ax_options = [], array $aa_attributes = []): string {
-		return parent::select($as_fieldName, $ax_options, $aa_attributes + ['empty' => TRUE]);
+		return parent::select($as_fieldName, $ax_options, $aa_attributes + ['empty' => true]);
 	}
 
 
 	/**
 	 * @param string $as_fieldName
 	 * @param array $aa_options
-	 *
 	 * @return string
-	 *
+	 * @throws \ReflectionException
 	 * @noinspection PhpUnused
 	 */
 	public function translatableText(string $as_fieldName, array $aa_options = []): string {
@@ -206,8 +202,8 @@ class FormHelper extends \Cake\View\Helper\FormHelper {
 		}
 
 		if (!empty($la_options['controls'])) {
-			$la_options['aria-required'] = $la_options['required'] = FALSE;
-			$la_options['input'] = $this->widget($ls_realType, $la_options + ['readonly' => TRUE]);
+			$la_options['aria-required'] = $la_options['required'] = false;
+			$la_options['input'] = $this->widget($ls_realType, $la_options + ['readonly' => true]);
 
 
 			return $this->widget('translatableText', $la_options);
@@ -238,7 +234,7 @@ class FormHelper extends \Cake\View\Helper\FormHelper {
 			}*/
 
 			if ($ls_association === 'attributes.') {
-				$la_translatableOptions['isTranslation'] = TRUE;
+				$la_translatableOptions['isTranslation'] = true;
 				$la_translatableOptions['language'] = $lo_language;
 				$la_options['controls'][] = $this->Attributes->control($ls_fieldName, $la_translatableOptions);
 			}
@@ -248,39 +244,12 @@ class FormHelper extends \Cake\View\Helper\FormHelper {
 		}
 
 
-		$la_options['aria-required'] = $la_options['required'] = FALSE;
-		$la_options['input'] = $this->widget($ls_realType, $la_options + ['readonly' => TRUE]);
+		$la_options['aria-required'] = $la_options['required'] = false;
+		$la_options['input'] = $this->widget($ls_realType, $la_options + ['readonly' => true]);
 
 
 		return $this->widget('translatableText', $la_options);
 	}
-
-
-	/**
-	 * @inheritDoc
-	 *
-	 * @param string $as_fieldName
-	 * @param $ax_text
-	 * @param array $aa_options
-	 *
-	 * @return string
-	 *
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
-	 */
-	/*public function error (string $as_fieldName, $ax_text = NULL, array $aa_options = []): string {
-		$ls_fieldName = $as_fieldName;
-
-		if (str_contains($ls_fieldName, '_translations.')) {
-			$ls_error = parent::error($ls_fieldName, $ax_text, $aa_options);
-			if (!empty($ls_error)) {
-				return $ls_error;
-			}
-
-			$ls_fieldName = preg_replace('/_translations\.[a-z]{2}\./', '', $ls_fieldName);
-		}
-
-		return parent::error($ls_fieldName, $ax_text, $aa_options);
-	}*/
 
 
 	/**
@@ -289,21 +258,20 @@ class FormHelper extends \Cake\View\Helper\FormHelper {
 	 * @param array $aa_options
 	 * @param string $as_class
 	 * @param string $as_key
-	 *
 	 * @return array
 	 */
 	public function removeClass(array $aa_options, string $as_class, string $as_key = 'class'): array {
 		$la_options = $aa_options;
 		if (isset($la_options[ $as_key ]) && is_array($la_options[ $as_key ])) {
 			$ls_key = array_search($as_class, $la_options[ $as_key ]);
-			if ($ls_key !== FALSE) {
+			if ($ls_key !== false) {
 				unset($la_options[ $as_key ][ $ls_key ]);
 			}
 		}
 		elseif (isset($la_options[ $as_key ]) && trim($la_options[ $as_key ])) {
 			$la_parts = explode(' ', $la_options[ $as_key ]);
 			$ls_key = array_search($as_class, $la_parts);
-			if ($ls_key !== FALSE) {
+			if ($ls_key !== false) {
 				unset($la_parts[ $ls_key ]);
 			}
 
@@ -320,21 +288,20 @@ class FormHelper extends \Cake\View\Helper\FormHelper {
 
 
 	/**
-	 * @param string|array $ax_fields
-	 * @param $ab_merge
-	 *
+	 * @param array|string $ax_fields
+	 * @param bool $ab_merge
 	 * @return $this
 	 */
-	public function setTranslatableField(string | array $ax_fields, $ab_merge = TRUE): static {
+	public function setTranslatableField(string|array $ax_fields, bool $ab_merge = true): static {
 		if (!$ab_merge) {
-			$this->translatableFields = (array) $ax_fields;
+			$this->translatableFields = (array)$ax_fields;
 
 
 			return $this;
 		}
 
 
-		foreach ((array) $ax_fields as $ls_field) {
+		foreach ((array)$ax_fields as $ls_field) {
 			if (!in_array($ls_field, $this->translatableFields)) {
 				$this->translatableFields[] = $ls_field;
 			}
@@ -377,15 +344,13 @@ class FormHelper extends \Cake\View\Helper\FormHelper {
 	 * Generate an ID suitable for use in an ID attribute.
 	 *
 	 * @param string $as_value The value to convert into an ID.
-	 *
 	 * @return string The generated id.
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	protected function _domId(string $as_value): string {
 		if (str_contains($as_value, '.')) {
 			$la_parts = explode('.', $as_value);
-			array_walk($la_parts, function (&$as_part) {
+			array_walk($la_parts, function (&$as_part): void {
 				$as_part = Inflector::camelize($as_part);
 			});
 			$ls_domId = implode('-', $la_parts);

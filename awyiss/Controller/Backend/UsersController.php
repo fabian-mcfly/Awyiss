@@ -9,12 +9,10 @@ use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity\User;
 use Awyiss\Model\Entity\UsersExternal;
-use Awyiss\Model\Table\UsersTable;
 use Awyiss\Routing\Router;
 use Cake\Event\EventInterface;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
-use Cake\Http\Session;
 use Cake\I18n\FrozenTime;
 use Cake\Utility\Hash;
 use Cake\Utility\Security;
@@ -25,23 +23,22 @@ use Cake\Utility\Security;
 /**
  * Users Controller
  *
- * @property UsersTable $Users
+ * @property \Awyiss\Model\Table\UsersTable $Users
  */
 class UsersController extends Controller {
 	/**
 	 * @inheritDoc
 	 */
 	protected array $categorize = [
-		'allowUnassigned' => TRUE,
+		'allowUnassigned' => true,
 		'associationName' => 'Usergroups',
-		'enabled' => TRUE,
+		'enabled' => true,
 		'identifier' => 'usergroupId',
 	];
 
 
 	/**
 	 * @inheritDoc
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function beforeFilter(EventInterface $ao_event): void {
@@ -94,7 +91,7 @@ class UsersController extends Controller {
 
 		$this->set([
 			'ao_user' => $lo_user,
-			'ao_usergroups' => $this->Users->Usergroups->find()->applyOptions(['authorize' => ['skip' => TRUE]]),
+			'ao_usergroups' => $this->Users->Usergroups->find()->applyOptions(['authorize' => ['skip' => true]]),
 		]);
 	}
 
@@ -102,11 +99,10 @@ class UsersController extends Controller {
 	/**
 	 * Edit method
 	 *
-	 * @return void|?Response
-	 *
+	 * @return \Cake\Http\Response|void
 	 * @throws \Exception
 	 */
-	public function edit() {
+	public function edit(int $ai_id) {
 		$this->Authorization->ensure('update');
 
 		/*
@@ -116,7 +112,7 @@ class UsersController extends Controller {
 		$this->Users->Usergroups->skipAuthorizationCheck();
 
 		/** @var User $lo_user */
-		$lo_user = $this->Users->findById((int) $this->request->getParam('id'))->find('translations')->contain(['Usergroups'])->first();
+		$lo_user = $this->Users->findById($ai_id)->find('translations')->contain(['Usergroups'])->first();
 		if (!$lo_user) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -124,7 +120,7 @@ class UsersController extends Controller {
 			return $this->redirect(['action' => 'overview']);
 		}
 
-		$this->Users->Usergroups->skipAuthorizationCheck(FALSE);
+		$this->Users->Usergroups->skipAuthorizationCheck(false);
 
 		if ($this->request->is(['patch', 'post', 'put'])) {
 			$this->save($lo_user, 'edit');
@@ -136,7 +132,7 @@ class UsersController extends Controller {
 
 		$this->set([
 			'ao_user' => $lo_user,
-			'ao_usergroups' => $this->Users->Usergroups->find()->applyOptions(['authorize' => ['skip' => TRUE]]),
+			'ao_usergroups' => $this->Users->Usergroups->find()->applyOptions(['authorize' => ['skip' => true]]),
 		]);
 	}
 
@@ -144,16 +140,16 @@ class UsersController extends Controller {
 	/**
 	 * Delete method
 	 *
+	 * @param int $ai_id
 	 * @return Response
-	 *
 	 * @throws \Exception
 	 */
-	public function delete(): Response {
+	public function delete(int $ai_id): Response {
 		$this->Authorization->ensure('delete');
 
 		$this->request->allowMethod(['get', 'delete']);
 
-		$lo_user = $this->Users->findById((int) $this->request->getParam('id'))->find('translations')->first();
+		$lo_user = $this->Users->findById($ai_id)->find('translations')->first();
 		if (!$lo_user) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -192,19 +188,19 @@ class UsersController extends Controller {
 					$lo_user->set([
 						'failedAttempts' => 0,
 						'lastLogin' => FrozenTime::now(),
-					], ['guard' => FALSE]);
+					], ['guard' => false]);
 
-					$this->Users->save($lo_user, ['authorize' => ['skip' => TRUE], 'audit' => ['skip' => TRUE]]);
+					$this->Users->save($lo_user, ['authorize' => ['skip' => true], 'audit' => ['skip' => true]]);
 				}
 				elseif ($lo_user instanceof UsersExternal) {
 					$lo_usersExternal = $this->fetchTable('UsersExternal');
 					//Track lastLogin
 					$lo_user->set('lastLogin', FrozenTime::now());
 
-					$lo_usersExternal->save($lo_user, ['authorize' => ['skip' => TRUE], 'audit' => ['skip' => TRUE]]);
+					$lo_usersExternal->save($lo_user, ['authorize' => ['skip' => true], 'audit' => ['skip' => true]]);
 				}
 
-				/** @var Session $lo_session */
+				/** @var \Cake\Http\Session $lo_session */
 				$lo_session = $this->request->getAttribute('session');
 				$lo_session->write(LocaleMiddleware::getSessionIdentifier(), $this->request->getData('language_shortcode'));
 			}
@@ -221,15 +217,16 @@ class UsersController extends Controller {
 
 		if ($this->request->is('post') && !$lo_result->isValid()) {
 			/** @var User $lo_user */
-			if (
-				($ls_username = $this->request->getData('username')) &&
-				($lo_user = $this->Users->find()->applyOptions(['authorize' => ['skip' => TRUE]])->where(['username' => $ls_username])->first())
-			) {
-				$lo_user->set([
-					'failedAttempts' => $lo_user->failedAttempts + 1,
-					'lastLogin' => FrozenTime::now(),
-				], ['guard' => FALSE]);
-				$this->Users->save($lo_user, ['authorize' => ['skip' => TRUE], 'audit' => ['skip' => TRUE]]);
+			$ls_username = $this->request->getData('username');
+			if ($ls_username) {
+				$lo_user = $this->Users->find()->applyOptions(['authorize' => ['skip' => true]])->where(['username' => $ls_username])->first();
+				if ($lo_user) {
+					$lo_user->set([
+						'failedAttempts' => $lo_user->failedAttempts + 1,
+						'lastLogin' => FrozenTime::now(),
+					], ['guard' => false]);
+					$this->Users->save($lo_user, ['authorize' => ['skip' => true], 'audit' => ['skip' => true]]);
+				}
 			}
 
 			$this->request = $this->request->withoutData('password');
@@ -250,14 +247,13 @@ class UsersController extends Controller {
 	/**
 	 * Logout method
 	 *
-	 * @return NULL|Response Redirects on logout
-	 *
+	 * @return Response|null Redirects on logout
 	 * @noinspection PhpUnused
 	 */
 	public function logout(): ?Response {
 		$this->Authentication->logout();
 
-		/** @var Session $lo_session */
+		/** @var \Cake\Http\Session $lo_session */
 		$lo_session = $this->getRequest()->getAttribute('session');
 		$lo_session->destroy();
 
@@ -273,14 +269,13 @@ class UsersController extends Controller {
 	/**
 	 * @param User $ao_user
 	 * @param string $as_method
-	 *
 	 * @return void
 	 */
 	protected function save(User $ao_user, string $as_method = 'add'): void {
 		$la_associated = [];
 		if ($this->Users->hasAttributes()) {
-			$la_associated[] = $this->Users->getAttributesTable(TRUE);
-			$ao_user->setAccess('attributes', TRUE);
+			$la_associated[] = $this->Users->getAttributesTable(true);
+			$ao_user->setAccess('attributes', true);
 		}
 
 		/*
@@ -295,7 +290,7 @@ class UsersController extends Controller {
 			unset($la_data['password']);
 		}
 
-		$la_associated['Usergroups'] = ['onlyIds' => TRUE];
+		$la_associated['Usergroups'] = ['onlyIds' => true];
 
 		$this->Users->patchEntity($ao_user, $la_data, ['associated' => $la_associated]);
 
@@ -311,12 +306,12 @@ class UsersController extends Controller {
 					 * Make sure the currently selected category is still part of the categories assigned to the user, otherwise the overview.
 					 * Otherwise a redirect would show a site without the modified user, which could be a bit confusing.
 					 */
-					$this->Categories->verifySelection(NULL, $la_usergroups ?? []);
+					$this->Categories->verifySelection(null, $la_usergroups ?? []);
 
-					throw new RedirectException(Router::url(['action' => 'overview'], TRUE), 302);
+					throw new RedirectException(Router::url(['action' => 'overview'], true), 302);
 				}
 
-				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $ao_user->id], TRUE), 302);
+				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $ao_user->id], true), 302);
 			}
 
 			$this->Flash->error(__($as_method . '_failed'));
@@ -326,6 +321,6 @@ class UsersController extends Controller {
 		}
 
 		//Enable Authorization Check for Usergroups
-		$this->Users->Usergroups->skipAuthorizationCheck(FALSE);
+		$this->Users->Usergroups->skipAuthorizationCheck(false);
 	}
 }

@@ -35,15 +35,15 @@
     <option name="COMMA_AFTER_LAST_ARRAY_ELEMENT" value="true" />
     <option name="COMMA_AFTER_LAST_MATCH_ARM" value="true" />
     <option name="PHPDOC_BLANK_LINE_BEFORE_TAGS" value="true" />
-    <option name="PHPDOC_BLANK_LINES_AROUND_PARAMETERS" value="true" />
+    <option name="PHPDOC_KEEP_BLANK_LINES" value="false" />
     <option name="PHPDOC_WRAP_LONG_LINES" value="true" />
     <option name="THROWS_WEIGHT" value="3" />
     <option name="PARAM_WEIGHT" value="1" />
     <option name="RETURN_WEIGHT" value="2" />
     <option name="SEE_WEIGHT" value="4" />
     <option name="TODO_WEIGHT" value="0" />
-    <option name="UPPER_CASE_BOOLEAN_CONST" value="true" />
-    <option name="UPPER_CASE_NULL_CONST" value="true" />
+    <option name="LOWER_CASE_BOOLEAN_CONST" value="true" />
+    <option name="LOWER_CASE_NULL_CONST" value="true" />
     <option name="ELSE_IF_STYLE" value="COMBINE" />
     <option name="FIELDS_DEFAULT_VISIBILITY" value="protected" />
     <option name="VARIABLE_NAMING_STYLE" value="CAMEL_CASE" />
@@ -56,7 +56,7 @@
     <option name="SPACES_WITHIN_SHORT_ECHO_TAGS" value="false" />
     <option name="SPACE_BEFORE_SHORT_CLOSURE_LEFT_PARENTHESIS" value="true" />
     <option name="FORCE_SHORT_DECLARATION_ARRAY_STYLE" value="true" />
-    <option name="SPACES_AROUND_PIPE_IN_UNION_TYPE" value="true" />
+    <option name="PHPDOC_USE_FQCN" value="true" />
     <option name="PREFER_TEMPLATE_INDENTS" value="true" />
     <option name="IF_LPAREN_ON_NEXT_LINE" value="true" />
     <option name="IF_RPAREN_ON_NEXT_LINE" value="true" />
@@ -153,7 +153,6 @@
     <option name="ALIGN_MULTILINE_BINARY_OPERATION" value="true" />
     <option name="ALIGN_MULTILINE_TERNARY_OPERATION" value="true" />
     <option name="ALIGN_MULTILINE_EXTENDS_LIST" value="true" />
-    <option name="SPACE_AFTER_TYPE_CAST" value="true" />
     <option name="CALL_PARAMETERS_WRAP" value="5" />
     <option name="CALL_PARAMETERS_LPAREN_ON_NEXT_LINE" value="true" />
     <option name="CALL_PARAMETERS_RPAREN_ON_NEXT_LINE" value="true" />

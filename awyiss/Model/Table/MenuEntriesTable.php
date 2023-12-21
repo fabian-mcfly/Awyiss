@@ -7,11 +7,8 @@ namespace Awyiss\Model\Table;
 use Awyiss\Awyiss;
 use Awyiss\Model\Entity\MenuEntry;
 use Awyiss\Model\Table;
-use Awyiss\ORM\Association\HasMany;
 use Awyiss\ORM\RulesChecker;
 use Cake\Collection\CollectionInterface;
-use Cake\Datasource\EntityInterface;
-use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Validation\Validator;
@@ -20,21 +17,20 @@ use Cake\Validation\Validator;
 /**
  * MenuEntries Model
  *
- * @property ContentsTable&BelongsTo $ParentMenuEntries
- * @property MenuEntriesTable&HasMany $ChildMenuEntries
- * @property MenusTable&BelongsTo $Menus
- *
+ * @property \Awyiss\Model\Table\ContentsTable&\Awyiss\ORM\Association\BelongsTo $ParentMenuEntries
+ * @property \Awyiss\Model\Table\MenuEntriesTable&\Awyiss\ORM\Association\HasMany $ChildMenuEntries
+ * @property \Awyiss\Model\Table\MenusTable&\Awyiss\ORM\Association\BelongsTo $Menus
  * @method MenuEntry newDefaultEntity(array $aa_additionalData = [])
- * @method CollectionInterface|NULL getNestedChildren(EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
- * @method CollectionInterface|NULL getChildren(EntityInterface $ao_entity)
- * @method MenuEntry getParent(EntityInterface $ao_entity)
- * @method CollectionInterface|NULL getParents(EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
+ * @method CollectionInterface|null getNestedChildren(\Cake\Datasource\EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
+ * @method CollectionInterface|null getChildren(\Cake\Datasource\EntityInterface $ao_entity)
+ * @method MenuEntry getParent(\Cake\Datasource\EntityInterface $ao_entity)
+ * @method CollectionInterface|null getParents(\Cake\Datasource\EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
  */
 class MenuEntriesTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public const ATTRIBUTABLE = TRUE;
+	public const ATTRIBUTABLE = true;
 	/**
 	 * @inheritDoc
 	 */
@@ -75,7 +71,6 @@ class MenuEntriesTable extends Table {
 	 *
 	 * @param Validator $ao_validator The validator that can be modified to
 	 * add some rules to it.
-	 *
 	 * @return Validator
 	 */
 	public function validationDefault(Validator $ao_validator): Validator {
@@ -163,9 +158,7 @@ class MenuEntriesTable extends Table {
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 *
 	 * @param RulesChecker|BaseRulesChecker $ao_rules The rules object to be modified.
-	 *
 	 * @return RulesChecker
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
@@ -173,7 +166,7 @@ class MenuEntriesTable extends Table {
 			$ao_rules->existsIn(
 				'menuId',
 				'Menus',
-				['authorize' => ['skip' => TRUE]]
+				['authorize' => ['skip' => true]]
 			),
 			'validMenuId',
 			[
@@ -189,7 +182,7 @@ class MenuEntriesTable extends Table {
 			}
 
 			if (!$ao_entity->get('parentId')) {
-				return TRUE;
+				return true;
 			}
 
 			$lo_existsIn = $ao_rules->existsIn(['parentId', 'menuId', 'languageShortcode'], 'ParentMenuEntries', [
@@ -206,7 +199,7 @@ class MenuEntriesTable extends Table {
 			$ao_rules->existsIn(
 				'languageShortcode',
 				'Languages',
-				['authorize' => ['skip' => TRUE]]
+				['authorize' => ['skip' => true]]
 			),
 			'languageExists',
 			[
@@ -224,7 +217,7 @@ class MenuEntriesTable extends Table {
 	 * @return void
 	 */
 	public function disableCascadeCallbacks(): void {
-		$this->ChildMenuEntries->setDependent(FALSE)->setCascadeCallbacks(FALSE);
+		$this->ChildMenuEntries->setDependent(false)->setCascadeCallbacks(false);
 	}
 
 
@@ -232,7 +225,7 @@ class MenuEntriesTable extends Table {
 	 * @return void
 	 */
 	public function enableCascadeCallbacks(): void {
-		$this->ChildMenuEntries->setDependent(TRUE)->setCascadeCallbacks(TRUE);
+		$this->ChildMenuEntries->setDependent(true)->setCascadeCallbacks(true);
 	}
 
 

@@ -4,32 +4,32 @@
 namespace Awyiss\Model\Table;
 
 
-use Awyiss\Model\Entity\PageTemplateContentArea;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
+use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Validation\Validator;
 
 
 /**
  * PageTemplateContentAreas Model
  *
- * @method PageTemplateContentArea newDefaultEntity(array $aa_additionalData = [])
+ * @method \Awyiss\Model\Entity\PageTemplateContentArea newDefaultEntity(array $aa_additionalData = [])
  */
 class PageTemplateContentAreasTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public const ATTRIBUTABLE = FALSE;
+	public const ATTRIBUTABLE = false;
 	/**
 	 * @inheritDoc
 	 */
 	public const TABLE = 'page_template_content_areas';
 	/**
-	 * @var array|array[]
+	 * @var array|array<array>
 	 */
 	protected array $_defaultConfig = [
 		'audit' => [
-			'enabled' => FALSE,
+			'enabled' => false,
 		],
 		'authorize' => [
 			'identifiers' => [
@@ -62,9 +62,7 @@ class PageTemplateContentAreasTable extends Table {
 	 *
 	 * @param Validator $ao_validator The validator that can be modified to
 	 * add some rules to it.
-	 *
 	 * @return Validator
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function validationDefault(Validator $ao_validator): Validator {
@@ -102,13 +100,10 @@ class PageTemplateContentAreasTable extends Table {
 	/**
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 *
-	 * @param \Cake\ORM\RulesChecker $ao_rules The rules object to be modified.
-	 *
-	 * @param RulesChecker|\Cake\ORM\RulesChecker $ao_rules The rules object to be modified.
-	 *
+	 * @param BaseRulesChecker $ao_rules The rules object to be modified.
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildRules(RulesChecker|\Cake\ORM\RulesChecker $ao_rules): RulesChecker {
+	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
 		$ao_rules->add($ao_rules->existsIn(['pageTemplateId'], 'PageTemplates'), 'pageTemplateExists', [
 			'errorField' => 'pageTemplateId',
 			'message' => __d($this->getI18nDomain(), 'error_page_template_exists'),

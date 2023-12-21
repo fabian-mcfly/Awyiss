@@ -21,10 +21,10 @@ class UsergroupsUser extends Entity {
 	 * @inheritDoc
 	 */
 	protected array $_accessible = [
-		'usergroupId' => TRUE,
-		'userId' => TRUE,
-		'usergroup' => TRUE,
-		'user' => TRUE,
+		'usergroupId' => true,
+		'userId' => true,
+		'usergroup' => true,
+		'user' => true,
 	];
 	/**
 	 * @inheritDoc

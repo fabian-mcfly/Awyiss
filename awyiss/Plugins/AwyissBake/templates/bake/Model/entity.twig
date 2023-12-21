@@ -61,7 +61,7 @@ class {{ name }} extends Entity{{ fileBuilder.classBuilder.implements ? ' implem
 	{{~ Bake.concat('\n\n', userProperties) }}
 {% endif %}
 {%- set generatedMethods = [] %}
-	public function setEntity (?Entity $ao_entity = NULL): static {
+	public function setEntity (?Entity $ao_entity = null): static {
 		$this->entity = $ao_entity;
 
 		return $this;

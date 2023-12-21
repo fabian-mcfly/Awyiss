@@ -26,10 +26,10 @@ class SystemConfigOptions extends AbstractConfigOptions {
 	public function initializeConfigOptions(): void {
 		$this->add(Awyiss::REALM_FRONTEND, [
 			new ConfigOption([
-				'defaultValue' => TRUE,
+				'defaultValue' => true,
 				'identifier' => 'editlinks',
-				'localizable' => FALSE,
-				'nullable' => FALSE,
+				'localizable' => false,
+				'nullable' => false,
 				'type' => ConfigOptionType::BOOL,
 			]),
 			'meta' => [
@@ -49,8 +49,8 @@ class SystemConfigOptions extends AbstractConfigOptions {
 			new ConfigOption([
 				'defaultValue' => 600,
 				'identifier' => 'lockTimeout',
-				'localizable' => FALSE,
-				'nullable' => FALSE,
+				'localizable' => false,
+				'nullable' => false,
 				'type' => ConfigOptionType::INTEGER,
 			]),
 			'meta' => [

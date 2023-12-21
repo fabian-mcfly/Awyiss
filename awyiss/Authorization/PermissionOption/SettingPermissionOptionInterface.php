@@ -24,7 +24,6 @@ interface SettingPermissionOptionInterface {
 	 * Sets the `SettingCollection` for this Permission
 	 *
 	 * @param SettingCollection $ao_settings
-	 *
 	 * @return $this
 	 * @noinspection PhpUnused
 	 */

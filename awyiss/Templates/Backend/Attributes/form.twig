@@ -15,7 +15,7 @@
 			{% endblock %}
 
 			{% block formControlInputType %}
-				{{ helper_Form_control('input_type', {empty: FALSE, options: combine(aa_availableInputTypes, aa_availableInputTypes)}) }}
+				{{ helper_Form_control('input_type', {empty: false, options: combine(aa_availableInputTypes, aa_availableInputTypes)}) }}
 			{% endblock %}
 
 			{% block formControlTranslatable %}
@@ -43,12 +43,12 @@
 
 		{% block fieldsetConditionsInner %}
 			{% block formControlScope %}
-				{{ helper_Categories_control('scope', {empty: FALSE}) }}
+				{{ helper_Categories_control('scope', {empty: false}) }}
 			{% endblock %}
 
 			{% block formControlFieldset %}
 				{{ helper_Form_control('fieldset', {
-					empty: FALSE,
+					empty: false,
 					options: combine(aa_availableFieldsets, aa_availableFieldsets),
 					disabled: ao_attribute.scope == 'contents'
 				}) }}

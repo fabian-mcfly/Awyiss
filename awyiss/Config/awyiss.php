@@ -12,7 +12,7 @@ use Queue\Generator\Task\QueuedJobTask;
 
 return [
 	'Asset' => [
-		'timestamp' => TRUE, //Set to 'force' to always enable timestamping regardless of debug value.
+		'timestamp' => true, //Set to 'force' to always enable timestamping regardless of debug value.
 		'cacheTime' => '+1 year',
 	],
 
@@ -24,13 +24,13 @@ return [
 	 * - jsBaseUrl - Web path to the public js directory under webroot.
 	 */
 	'App' => [
-		'base' => FALSE,
+		'base' => false,
 		'cssBaseUrl' => 'css/',
 		'defaultLocale' => env('APP_DEFAULT_LOCALE', ''),
 		'defaultTimezone' => env('APP_DEFAULT_TIMEZONE', 'UTC'),
 		'dir' => 'awyiss',
 		'encoding' => env('APP_ENCODING', 'UTF-8'),
-		'fullBaseUrl' => FALSE,
+		'fullBaseUrl' => false,
 		'imageBaseUrl' => 'img/',
 		'jsBaseUrl' => 'js/',
 		'namespace' => 'Awyiss',
@@ -52,7 +52,7 @@ return [
 		'wwwRoot' => WWW_ROOT,
 	],
 
-	'debug' => filter_var(env('DEBUG', FALSE), FILTER_VALIDATE_BOOLEAN),
+	'debug' => filter_var(env('DEBUG', false), FILTER_VALIDATE_BOOLEAN),
 
 	'Cache' => [
 		'default' => [
@@ -62,11 +62,11 @@ return [
 		],
 
 		'_cake_core_' => [
-			'className' => FileEngine::class, //set to NULL to disable
+			'className' => FileEngine::class, //set to null to disable
 			'duration' => '+1 years',
 			'path' => CACHE . 'persistent' . DS,
 			'prefix' => 'awyiss_core_',
-			'serialize' => TRUE,
+			'serialize' => true,
 			'url' => env('CACHE_CAKECORE_URL'),
 		],
 
@@ -75,32 +75,32 @@ return [
 			'duration' => '+1 years',
 			'path' => CACHE . 'models' . DS,
 			'prefix' => 'awyiss_model_',
-			'serialize' => TRUE,
+			'serialize' => true,
 			'url' => env('CACHE_CAKEMODEL_URL'),
 		],
 	],
 
 	'Datasources' => [
 		'default' => [
-			'cacheMetadata' => TRUE,
+			'cacheMetadata' => true,
 			'className' => Connection::class,
 			'driver' => Mysql::class,
 			'flags' => [],
 			'host' => 'localhost',
-			'log' => FALSE,
-			'persistent' => FALSE,
-			'quoteIdentifiers' => FALSE,
+			'log' => false,
+			'persistent' => false,
+			'quoteIdentifiers' => false,
 			'timezone' => 'UTC',
 		],
 
 		'test' => [
-			'cacheMetadata' => TRUE,
+			'cacheMetadata' => true,
 			'className' => Connection::class,
 			'driver' => Mysql::class,
 			'flags' => [],
-			'log' => FALSE,
-			'persistent' => FALSE,
-			'quoteIdentifiers' => FALSE,
+			'log' => false,
+			'persistent' => false,
+			'quoteIdentifiers' => false,
 			'timezone' => 'UTC',
 		],
 	],
@@ -114,7 +114,7 @@ return [
 	 */
 	'Email' => [
 		'default' => [
-			'emailPattern' => NULL,
+			'emailPattern' => null,
 			'from' => 'awyiss@localhost',
 			'transport' => 'default',
 		],
@@ -126,14 +126,14 @@ return [
 	'EmailTransport' => [
 		'default' => [
 			'className' => MailTransport::class,
-			'client' => NULL,
+			'client' => null,
 			'host' => 'localhost',
-			'password' => NULL,
+			'password' => null,
 			'port' => 25,
 			'timeout' => 30,
-			'tls' => FALSE,
+			'tls' => false,
 			'url' => env('EMAIL_TRANSPORT_DEFAULT_URL'),
-			'username' => NULL,
+			'username' => null,
 		],
 	],
 
@@ -149,9 +149,9 @@ return [
 		'ignoredDeprecationPaths' => [
 			'vendor/cakephp/cakephp/src/Controller/ComponentRegistry.php',
 		],
-		'log' => TRUE,
+		'log' => true,
 		'skipLog' => [],
-		'trace' => TRUE,
+		'trace' => true,
 	],
 
 
@@ -172,7 +172,7 @@ return [
 			'levels' => ['notice', 'info', 'debug'],
 			'path' => LOGS,
 			'size' => 2097152,
-			'scopes' => NULL,
+			'scopes' => null,
 		],
 		'error' => [
 			'className' => FileLog::class,
@@ -180,7 +180,7 @@ return [
 			'levels' => ['warning', 'error', 'critical', 'alert', 'emergency'],
 			'path' => LOGS,
 			'size' => 2097152,
-			'scopes' => NULL,
+			'scopes' => null,
 		],
 		'queue' => [
 			'className' => FileLog::class,
@@ -222,6 +222,6 @@ return [
 			'session.gc_maxlifetime' => 86400, //Time in seconds!
 			'session.gc_probability' => 1,
 		],
-		'timeout' => 1440 //Time in minues!
+		'timeout' => 1440, //Time in minutes!
 	],
 ];

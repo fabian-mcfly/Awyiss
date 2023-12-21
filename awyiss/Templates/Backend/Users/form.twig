@@ -74,7 +74,7 @@
 						{% block userUsergroup %}
 							<li>
 								{{ helper_Form_control('usergroups._ids.' ~ lo_usergroup.id, {
-									hiddenField: FALSE,
+									hiddenField: false,
 									type: 'checkbox',
 									value: lo_usergroup.id,
 									label: lo_usergroup.title,

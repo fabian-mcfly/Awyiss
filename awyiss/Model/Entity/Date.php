@@ -21,10 +21,10 @@ class Date extends Entity {
 	 * @inheritDoc
 	 */
 	protected array $_accessible = [
-		'scope' => TRUE,
-		'foreignId' => TRUE,
-		'type' => TRUE,
-		'value' => TRUE,
+		'scope' => true,
+		'foreignId' => true,
+		'type' => true,
+		'value' => true,
 	];
 	/**
 	 * @inheritDoc

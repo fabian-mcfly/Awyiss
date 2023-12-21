@@ -1,7 +1,7 @@
 {% for i, stack in trace %}
 	{% set excerpt = [] %}
 	{% set params = [] %}
-	{% set line = NULL %}
+	{% set line = null %}
 
 	{% if stack.file and stack.line and stack.line is numeric %}
 		{% set line = stack.line %}

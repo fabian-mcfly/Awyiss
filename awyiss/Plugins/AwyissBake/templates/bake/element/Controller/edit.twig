@@ -5,17 +5,15 @@
 	/**
 	 * Edit method
 	 *
-	 * @return void|?\Cake\Http\Response
-	 *
+	 * @param int $ai_id
+	 * @return \Cake\Http\Response|void
 	 * @throws \Exception
-	 *
-	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
-	public function edit () {
+	public function edit(int $ai_id) {
 		$this->Authorization->ensure('update');
 
 		/** @var {{ entityClassName }} $lo_{{ singularName }} */
-		$lo_{{ singularName }} = $this->{{ currentModelName }}->findById((int) $this->request->getParam('id'))->find('translations')->first();
+		$lo_{{ singularName }} = $this->{{ currentModelName }}->findById($ai_id)->find('translations')->first();
 		if (! $lo_{{ singularName }}) {
 			$this->Flash->error(__('record_not_found'));
 

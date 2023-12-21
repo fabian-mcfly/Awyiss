@@ -71,8 +71,8 @@ class ContentTemplatesTable extends Table {
 		parent::initialize($aa_config);
 
 		$this->hasMany('Contents', [
-			'cascadeCallbacks' => TRUE,
-			'dependent' => TRUE,
+			'cascadeCallbacks' => true,
+			'dependent' => true,
 		]);
 
 		/*$this->belongsToMany('ContentAreas', [
@@ -84,21 +84,21 @@ class ContentTemplatesTable extends Table {
 		]);*/
 
 		$this->hasMany('ContentTemplateContentAreas', [
-			'cascadeCallbacks' => TRUE,
-			'dependent' => TRUE,
+			'cascadeCallbacks' => true,
+			'dependent' => true,
 			'saveStrategy' => 'replace',
 		]);
 
 		$this->hasMany('ContentTemplateElements', [
-			'cascadeCallbacks' => TRUE,
-			'dependent' => TRUE,
+			'cascadeCallbacks' => true,
+			'dependent' => true,
 			'saveStrategy' => 'replace',
 		]);
 	}
 
 
 	/**
-	 * @return string[]
+	 * @return array<string>
 	 */
 	public function getAvailableContentElements(): array {
 		return $this->availableContentElements;
@@ -106,7 +106,7 @@ class ContentTemplatesTable extends Table {
 
 
 	/**
-	 * @return string[]
+	 * @return array<string>
 	 */
 	public function getAvailableFieldsets(): array {
 		return $this->availableFieldsets;
@@ -115,7 +115,6 @@ class ContentTemplatesTable extends Table {
 
 	/**
 	 * @param ContentTemplate $ao_contentTemplate
-	 *
 	 * @return array
 	 */
 	public function getAssignedContentAttributes(ContentTemplate $ao_contentTemplate): array {
@@ -129,7 +128,7 @@ class ContentTemplatesTable extends Table {
 					'finder' => [
 						'all' => [
 							'authorize' => [
-								'skip' => TRUE,
+								'skip' => true,
 							],
 						],
 					],
@@ -161,7 +160,7 @@ class ContentTemplatesTable extends Table {
 		$lo_attributesTable = FactoryLocator::get('Table')->get('Attributes');
 		$this->availableContentAttributes = $lo_attributesTable->find()->where(['scope' => 'contents'])->applyOptions([
 			'authorize' => [
-				'skip' => TRUE,
+				'skip' => true,
 			],
 		])->all()->indexBy('id')->map(function (Attribute $ao_attribute): array {
 			return [
@@ -184,7 +183,6 @@ class ContentTemplatesTable extends Table {
 	 *
 	 * @param Validator $ao_validator The validator that can be modified to
 	 * add some rules to it.
-	 *
 	 * @return Validator
 	 */
 	public function validationDefault(Validator $ao_validator): Validator {
@@ -242,9 +240,7 @@ class ContentTemplatesTable extends Table {
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 *
 	 * @param RulesChecker|BaseRulesChecker $ao_rules The rules object to be modified.
-	 *
 	 * @return RulesChecker
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
@@ -255,7 +251,7 @@ class ContentTemplatesTable extends Table {
 
 
 		$ao_rules->add(function (ContentTemplate $ao_entity): bool {
-			$lb_valid = TRUE;
+			$lb_valid = true;
 
 			$la_availableAttributes = array_column($this->getAvailableContentAttributes(), 'identifier');
 			foreach ($ao_entity->contentTemplateElements as $lo_assignedContentElement) {
@@ -263,7 +259,7 @@ class ContentTemplatesTable extends Table {
 					$ls_identifier = substr($lo_assignedContentElement->identifier, 11);
 
 					if (!in_array($ls_identifier, $la_availableAttributes)) {
-						$lb_valid = FALSE;
+						$lb_valid = false;
 						break;
 					}
 
@@ -271,7 +267,7 @@ class ContentTemplatesTable extends Table {
 				}
 
 				if (!in_array($lo_assignedContentElement->identifier, $this->availableContentElements)) {
-					$lb_valid = FALSE;
+					$lb_valid = false;
 					break;
 				}
 			}

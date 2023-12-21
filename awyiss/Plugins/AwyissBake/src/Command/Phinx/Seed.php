@@ -5,26 +5,26 @@ namespace AwyissBake\Command\Phinx;
 
 
 use Cake\Core\Plugin;
+use Migrations\Command\Phinx\Seed as BaseSeed;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 
 /**
- *
+ * @inheritDoc
  */
-class Seed extends \Migrations\Command\Phinx\Seed {
+class Seed extends BaseSeed {
 	/**
-	 * {@inheritDoc}
-	 *
 	 * Adds the `folder`-option
 	 *
+	 * @inheritDoc
 	 * @return void
 	 */
 	protected function configure(): void {
 		$this->setName('seed')->setDescription('Seed the database with data')->setHelp('runs all available migrations, optionally up to a specific version')->addOption(
 			'--seed',
-			NULL,
+			null,
 			InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
 			'What is the name of the seeder?'
 		)->addOption('--plugin', '-p', InputOption::VALUE_REQUIRED, 'The plugin containing the migrations')->addOption(
@@ -34,13 +34,12 @@ class Seed extends \Migrations\Command\Phinx\Seed {
 			'The datasource connection to use'
 		)
 		//->addOption('--source', '-s', InputOption::VALUE_REQUIRED, 'The folder where migrations are in')
-		->addOption('--folder', NULL, InputOption::VALUE_REQUIRED, 'The folder where seeds are in');
+		->addOption('--folder', null, InputOption::VALUE_REQUIRED, 'The folder where seeds are in');
 	}
 
 
 	/**
-	 * {@inheritDoc}
-	 *
+	 * @inheritDoc
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	protected function execute(InputInterface $ao_input, OutputInterface $ao_output): int {
@@ -71,16 +70,14 @@ class Seed extends \Migrations\Command\Phinx\Seed {
 	 *
 	 * @param InputInterface $ao_input Input of the current command.
 	 * @param string $as_default Default folder to set if no source option is found in the $ao_input param
-	 *
 	 * @return string
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	protected function getOperationsPath(InputInterface $ao_input, string $as_default = 'Migrations'): string {
 		$ls_path = APP . 'config' . DS . $as_default;
 
 		$ls_plugin = $this->getPlugin($ao_input);
-		if ($ls_plugin !== NULL) {
+		if ($ls_plugin !== null) {
 			$ls_path = Plugin::path($ls_plugin) . 'config' . DS . $as_default;
 		}
 		elseif ($ao_input->getOption('folder')) {

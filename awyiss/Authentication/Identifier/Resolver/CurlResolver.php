@@ -4,6 +4,7 @@
 namespace Awyiss\Authentication\Identifier\Resolver;
 
 
+use ArrayAccess;
 use Authentication\Identifier\Resolver\ResolverInterface;
 use Cake\Core\InstanceConfigTrait;
 use Cake\ORM\Locator\LocatorAwareTrait;
@@ -42,10 +43,10 @@ class CurlResolver implements ResolverInterface {
 	 */
 	protected array $_defaultConfig = [
 		'acceptType' => self::ACCEPT_JSON,
-		'modifyResult' => NULL,
+		'modifyResult' => null,
 		'requestData' => [],
 		'requestType' => self::TYPE_GET,
-		'url' => NULL,
+		'url' => null,
 	];
 
 
@@ -62,14 +63,12 @@ class CurlResolver implements ResolverInterface {
 	 *
 	 * @param array $aa_credentials Find conditions.
 	 * @param string $as_type Condition type. Can be `AND` or `OR`.
-	 *
-	 * @return null|array|\ArrayAccess
+	 * @return \ArrayAccess|array||null
 	 * @throws Exception
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function find(array $aa_credentials, string $as_type = self::TYPE_AND): array|\ArrayAccess|null {
-		$lx_url = $this->_config['url'] ?? NULL;
+	public function find(array $aa_credentials, string $as_type = self::TYPE_AND): array|ArrayAccess|null {
+		$lx_url = $this->_config['url'] ?? null;
 		if (is_callable($lx_url)) {
 			$lx_url = $lx_url($aa_credentials);
 		}
@@ -89,7 +88,7 @@ class CurlResolver implements ResolverInterface {
 					$lx_requestData = $lx_requestData($aa_credentials);
 				}
 
-				curl_setopt($lo_curlHandle, CURLOPT_POST, TRUE);
+				curl_setopt($lo_curlHandle, CURLOPT_POST, true);
 				curl_setopt($lo_curlHandle, CURLOPT_POSTFIELDS, $lx_requestData);
 				break;
 			default:
@@ -103,7 +102,7 @@ class CurlResolver implements ResolverInterface {
 		curl_close($lo_curlHandle);
 
 		if ($this->_config['acceptType'] === self::ACCEPT_JSON) {
-			$lx_result = json_decode($lx_result, TRUE);
+			$lx_result = json_decode($lx_result, true);
 		}
 
 		if (is_callable($this->_config['modifyResult'])) {
@@ -115,6 +114,6 @@ class CurlResolver implements ResolverInterface {
 		}
 
 
-		return NULL;
+		return null;
 	}
 }

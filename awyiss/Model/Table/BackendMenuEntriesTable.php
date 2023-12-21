@@ -6,13 +6,10 @@ namespace Awyiss\Model\Table;
 
 use Awyiss\Model\Entity\BackendMenuEntry;
 use Awyiss\Model\Table;
-use Awyiss\ORM\Association\BelongsTo;
-use Awyiss\ORM\Association\HasMany;
 use Awyiss\ORM\RulesChecker;
 use Awyiss\Utilities\Menu\BackendMenu;
 use Cake\Collection\CollectionInterface;
 use Cake\Database\Schema\TableSchemaInterface;
-use Cake\Datasource\EntityInterface;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Validation\Validator;
@@ -21,20 +18,19 @@ use Cake\Validation\Validator;
 /**
  * BackendMenuEntries Model
  *
- * @property BackendMenuEntriesTable&BelongsTo $ParentBackendMenuEntries
- * @property BackendMenuEntriesTable&HasMany $ChildBackendMenuEntries
- *
+ * @property BackendMenuEntriesTable&\Awyiss\ORM\Association\BelongsTo $ParentBackendMenuEntries
+ * @property BackendMenuEntriesTable&\Awyiss\ORM\Association\HasMany $ChildBackendMenuEntries
  * @method BackendMenuEntry newDefaultEntity(array $aa_additionalData = [])
- * @method CollectionInterface|NULL getNestedChildren(EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
- * @method CollectionInterface|NULL getChildren(EntityInterface $ao_entity)
- * @method BackendMenuEntry getParent(EntityInterface $ao_entity)
- * @method CollectionInterface|NULL getParents(EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
+ * @method CollectionInterface|null getNestedChildren(\Cake\Datasource\EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
+ * @method CollectionInterface|null getChildren(\Cake\Datasource\EntityInterface $ao_entity)
+ * @method BackendMenuEntry getParent(\Cake\Datasource\EntityInterface $ao_entity)
+ * @method CollectionInterface|null getParents(\Cake\Datasource\EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
  */
 class BackendMenuEntriesTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public const ATTRIBUTABLE = FALSE;
+	public const ATTRIBUTABLE = false;
 	/**
 	 * @inheritDoc
 	 */
@@ -67,7 +63,6 @@ class BackendMenuEntriesTable extends Table {
 	 *
 	 * @param Validator $ao_validator The validator that can be modified to
 	 * add some rules to it.
-	 *
 	 * @return Validator
 	 */
 	public function validationDefault(Validator $ao_validator): Validator {
@@ -111,7 +106,7 @@ class BackendMenuEntriesTable extends Table {
 		]);
 
 
-		$ao_validator->notEmptyString('parentId', NULL, function (array $aa_context): bool {
+		$ao_validator->notEmptyString('parentId', null, function (array $aa_context): bool {
 			/** @var BackendMenuEntriesTable $lo_table */
 			$lo_table = $aa_context['providers']['table'];
 			/** @var BackendMenuEntry $ls_entityClass */
@@ -128,7 +123,7 @@ class BackendMenuEntriesTable extends Table {
 		]);
 
 
-		$ao_validator->notEmptyString('insertAfterId', NULL, function (array $aa_context): bool {
+		$ao_validator->notEmptyString('insertAfterId', null, function (array $aa_context): bool {
 			/** @var BackendMenuEntriesTable $lo_table */
 			$lo_table = $aa_context['providers']['table'];
 			/** @var BackendMenuEntry $ls_entityClass */
@@ -188,9 +183,7 @@ class BackendMenuEntriesTable extends Table {
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 *
 	 * @param RulesChecker|BaseRulesChecker $ao_rules The rules object to be modified.
-	 *
 	 * @return RulesChecker
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
@@ -201,8 +194,9 @@ class BackendMenuEntriesTable extends Table {
 				dd(__FILE__, __LINE__);
 			}
 
-			if (!($lx_parentId = $ao_entity->get('parentId'))) {
-				return TRUE;
+			$lx_parentId = $ao_entity->get('parentId');
+			if (!$lx_parentId) {
+				return true;
 			}
 
 			if (!is_numeric($lx_parentId)) {
@@ -211,7 +205,7 @@ class BackendMenuEntriesTable extends Table {
 				}
 
 
-				return (bool) ($lo_menu->getCustomMenu() ?? $lo_menu->getMenu())->getItem($lx_parentId);
+				return (bool)($lo_menu->getCustomMenu() ?? $lo_menu->getMenu())->getItem($lx_parentId);
 			}
 
 			$lo_existsIn = $ao_rules->existsIn(

@@ -23,11 +23,13 @@ class ContentTemplateContentArea extends Entity {
 	 * @inheritDoc
 	 */
 	protected array $_accessible = [
-		'contentTemplateId' => TRUE,
-		'contentAreaId' => TRUE,
-		'pageTemplateId' => TRUE,
+		'contentTemplateId' => true,
+		'contentAreaId' => true,
+		'pageTemplateId' => true,
 	];
-	/** @var array|string[] */
+	/**
+	 * @var array|array<string>
+	 */
 	protected array $_virtual = [];
 	/**
 	 * @inheritDoc

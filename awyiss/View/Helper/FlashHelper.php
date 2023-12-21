@@ -24,9 +24,7 @@ class FlashHelper extends Helper {
 	 *
 	 * @param string $as_key
 	 * @param array $aa_options
-	 *
-	 * @return null|string
-	 *
+	 * @return string|null
 	 * @see Helper\FlashHelper::render
 	 */
 	public function render(string $as_key = '*', array $aa_options = []): ?string {
@@ -46,14 +44,14 @@ class FlashHelper extends Helper {
 		}
 
 		if (!$la_messages) {
-			return NULL;
+			return null;
 		}
 
 		$ls_messages = '';
 		foreach ($la_messages as $la_message) {
 			$la_message = $aa_options + $la_message;
 
-			if (!isset($la_message['params']['escape']) || $la_message['params']['escape'] !== FALSE) {
+			if (!isset($la_message['params']['escape']) || $la_message['params']['escape'] !== false) {
 				$la_message['message'] = h($la_message['message']);
 			}
 

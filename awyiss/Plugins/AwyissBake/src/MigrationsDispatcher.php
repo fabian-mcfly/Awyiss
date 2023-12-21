@@ -4,10 +4,13 @@
 namespace AwyissBake;
 
 
+use Migrations\MigrationsDispatcher as BaseMigrationsDispatcher;
+
+
 /**
  * @inheritDoc
  */
-class MigrationsDispatcher extends \Migrations\MigrationsDispatcher {
+class MigrationsDispatcher extends BaseMigrationsDispatcher {
 	/**
 	 * Uses \AwyissBake\Command\Phinx\Migrate
 	 *

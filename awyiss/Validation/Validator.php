@@ -6,6 +6,7 @@ namespace Awyiss\Validation;
 
 use Cake\Utility\Inflector;
 use Cake\Validation\ValidationSet;
+use Cake\Validation\Validator as BaseValidator;
 use RuntimeException;
 
 
@@ -15,16 +16,18 @@ use RuntimeException;
  * Extended version that makes use of the `i18nDomain`-property to make validation errors translatable
  * per scope/domain/model.
  */
-class Validator extends \Cake\Validation\Validator {
+class Validator extends BaseValidator {
 	protected string $i18nDomain = '';
 
 
 	/**
-	 * @inheritDoc
+	 * Returns whether a rule set is defined for a field or not
 	 *
+	 * @param string $field name of the field to check
+	 * @return bool
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function offsetExists($as_field): bool {
+	public function offsetExists(mixed $as_field): bool {
 		dd(__FILE__, __LINE__, debug_backtrace(2));
 
 
@@ -32,24 +35,51 @@ class Validator extends \Cake\Validation\Validator {
 	}
 
 
-	public function offsetSet($field, $rules): void {
+	/**
+	 * Sets the rule set for a field
+	 *
+	 * @param string $field name of the field to set
+	 * @param \Cake\Validation\ValidationSet|array $rules set of rules to apply to field
+	 * @return void
+	 */
+	public function offsetSet(mixed $field, mixed $rules): void {
 		dd(__FILE__, __LINE__, debug_backtrace(2));
 	}
 
 
-	public function offsetUnset($field): void {
+	/**
+	 * Unsets the rule set for a field
+	 *
+	 * @param string $field name of the field to unset
+	 * @return void
+	 */
+	public function offsetUnset(mixed $field): void {
 		dd(__FILE__, __LINE__, debug_backtrace(2));
 	}
 
 
-	public function remove(string $field, ?string $rule = NULL) {
+	/**
+	 * Removes a rule from the set by its name
+	 *
+	 * ### Example:
+	 *
+	 * ```
+	 *      $validator
+	 *          ->remove('title', 'required')
+	 *          ->remove('user_id')
+	 * ```
+	 *
+	 * @param string $field The name of the field from which the rule will be removed
+	 * @param string|null $rule the name of the rule to be removed
+	 * @return $this
+	 */
+	public function remove(string $field, ?string $rule = null): void {
 		dd(__FILE__, __LINE__, debug_backtrace(2));
 	}
 
 
 	/**
 	 * @param string $as_domain
-	 *
 	 * @return void
 	 */
 	public function setI18nDomain(string $as_domain): void {
@@ -59,11 +89,10 @@ class Validator extends \Cake\Validation\Validator {
 
 	/**
 	 * @inheritDoc
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function validate(array $aa_data, bool $ab_newRecord = TRUE): array {
-		$la_data = $this->underscoreFields($aa_data, TRUE);
+	public function validate(array $aa_data, bool $ab_newRecord = true): array {
+		$la_data = $this->underscoreFields($aa_data, true);
 
 
 		return parent::validate($la_data, $ab_newRecord);
@@ -72,10 +101,9 @@ class Validator extends \Cake\Validation\Validator {
 
 	/**
 	 * @inheritDoc
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function allowEmptyFor(string $as_field, ?int $ai_flags = NULL, $ax_when = TRUE, ?string $as_message = NULL) {
+	public function allowEmptyFor(string $as_field, ?int $ai_flags = null, $ax_when = true, ?string $as_message = null): static {
 		$ls_field = $this->underscoreField($as_field);
 
 
@@ -85,11 +113,10 @@ class Validator extends \Cake\Validation\Validator {
 
 	/**
 	 * @inheritDoc
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 * @noinspection PhpHierarchyChecksInspection <-- WHY?
 	 */
-	public function field(string $as_name, ?ValidationSet $ao_validationSet = NULL): ValidationSet {
+	public function field(string $as_name, ?ValidationSet $ao_validationSet = null): ValidationSet {
 		$ls_name = $this->underscoreField($as_name);
 
 		if (empty($this->_fields[ $ls_name ])) {
@@ -107,7 +134,6 @@ class Validator extends \Cake\Validation\Validator {
 
 	/**
 	 * @inheritDoc
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function hasField(string $as_name): bool {
@@ -120,15 +146,14 @@ class Validator extends \Cake\Validation\Validator {
 
 	/**
 	 * @param string $as_field
-	 *
-	 * @return NULL|string
+	 * @return string|null
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function getRequiredMessage(string $as_field): ?string {
 		$ls_field = $this->underscoreField($as_field);
 
 		if (!isset($this->_fields[ $ls_field ])) {
-			return NULL;
+			return null;
 		}
 
 		$ls_defaultMessage = __dfx($this->i18nDomain, 'validation', $as_field, 'error_required');
@@ -140,15 +165,14 @@ class Validator extends \Cake\Validation\Validator {
 
 	/**
 	 * @param string $as_field
-	 *
-	 * @return NULL|string
+	 * @return string|null
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function getNotEmptyMessage(string $as_field): ?string {
 		$ls_field = $this->underscoreField($as_field);
 
 		if (!isset($this->_fields[ $ls_field ])) {
-			return NULL;
+			return null;
 		}
 
 		$ls_defaultMessage = __dfx($this->i18nDomain, 'validation', $as_field, 'error_not_empty');
@@ -169,7 +193,6 @@ class Validator extends \Cake\Validation\Validator {
 	 * @param ValidationSet $ao_rules
 	 * @param array $aa_data
 	 * @param bool $ab_newRecord
-	 *
 	 * @return array
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
@@ -186,7 +209,7 @@ class Validator extends \Cake\Validation\Validator {
 				'field' => $as_field,
 			]);
 
-			if ($lx_result === TRUE) {
+			if ($lx_result === true) {
 				continue;
 			}
 
@@ -209,7 +232,8 @@ class Validator extends \Cake\Validation\Validator {
 				'field' => __df($this->i18nDomain, 'system', Inflector::underscore($as_field)),
 			];
 
-			if ($lx_pass = ($lo_rule->get('pass')[0] ?? [])) {
+			$lx_pass = $lo_rule->get('pass')[0] ?? [];
+			if ($lx_pass) {
 				if (in_array($ls_name, ['sameAs', 'notSameAs', 'compareWith', 'compareFields'])) {
 					//No domain fallback here, since it certainly is a field inside the domain, not something generic
 					$lx_pass = __dx($this->i18nDomain, $ls_name, Inflector::underscore($lx_pass));
@@ -221,21 +245,13 @@ class Validator extends \Cake\Validation\Validator {
 					$lx_pass = implode(',', $lx_pass);
 				}
 				elseif (!is_scalar($lx_pass)) {
-					throw new RuntimeException(sprintf('Missing translation informations for `%s`, passed arguments: `%s`', $ls_name, print_r($lx_pass, TRUE)));
+					throw new RuntimeException(sprintf('Missing translation informations for `%s`, passed arguments: `%s`', $ls_name, print_r($lx_pass, true)));
 				}
 				else {
 					dd($ls_name, $lx_pass, $lo_rule->get('pass'), __FILE__, __LINE__);
 				}
 				$la_pass[ $ls_name ] = $lx_pass;
 			}
-
-			/*try {
-				$ls_message = __d('validation', 'error_' . Inflector::underscore($ls_name), $la_pass);
-			}
-			catch (\Exception $e) {
-				dump($ls_name, $lx_pass);
-				dd($this->ls_i18nDomain, $ls_name, $la_pass, $e->getMessage());
-			}*/
 
 			$la_errors[ $ls_name ] = __dfx($this->i18nDomain, 'validation', $ls_name, 'error_' . Inflector::underscore($ls_name), $la_pass);
 
@@ -255,10 +271,9 @@ class Validator extends \Cake\Validation\Validator {
 	 *
 	 * @param array $aa_fields
 	 * @param bool $ab_variableKey
-	 *
 	 * @return array
 	 */
-	protected function underscoreFields(array $aa_fields, bool $ab_underscoreKeys = FALSE): array {
+	protected function underscoreFields(array $aa_fields, bool $ab_underscoreKeys = false): array {
 		$la_fields = [];
 
 		foreach ($aa_fields as $lx_field => $lx_value) {
@@ -275,7 +290,6 @@ class Validator extends \Cake\Validation\Validator {
 
 	/**
 	 * @param mixed $ax_field
-	 *
 	 * @return mixed
 	 */
 	protected function underscoreField(mixed $ax_field): mixed {
@@ -283,7 +297,8 @@ class Validator extends \Cake\Validation\Validator {
 			return $ax_field;
 		}
 
-		if (($li_lastPos = strrpos($ax_field, '.')) !== FALSE) {
+		$li_lastPos = strrpos($ax_field, '.');
+		if ($li_lastPos !== false) {
 			$ls_prefix = substr($ax_field, 0, $li_lastPos);
 			$ls_field = substr($ax_field, $li_lastPos + 1);
 

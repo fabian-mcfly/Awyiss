@@ -5,8 +5,11 @@ use Awyiss\Routing\Route\AwyissRoute;
 use Cake\Routing\RouteBuilder;
 
 
+/**
+ * @param \Cake\Routing\RouteBuilder $ao_routes
+ * @return void
+ */
 return function (RouteBuilder $ao_routes): void {
-	/** @var RouteBuilder $ao_routes */
 	$ao_routes->scope('/', function (RouteBuilder $ao_routes): void {
 		$ao_routes->setRouteClass(AwyissRoute::class);
 

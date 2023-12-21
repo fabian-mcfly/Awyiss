@@ -4,6 +4,11 @@
  * Local configuration file to provide any overrides to our awyiss.php configuration
  * Note: It is not recommended committing files with credentials into source code version control.
  */
+
+
+use Cake\Mailer\Transport\MailTransport;
+
+
 return [
 	'debug' => filter_var(env('DEBUG', FALSE), FILTER_VALIDATE_BOOLEAN),
 
@@ -15,7 +20,7 @@ return [
 	 */
 	'Datasources' => [
 		'default' => [
-			'database' => '',
+			'database' => 'awyiss',
 			/*
 			 * If your MySQL server is configured with `skip-character-set-client-handshake`
 			 * then you MUST use the `flags` config to set your charset encoding.
@@ -30,9 +35,9 @@ return [
 			 * which is the recommended value in production environments
 			 */
 			//'init' => ['SET GLOBAL innodb_stats_on_metadata = 0'],
-			'password' => '',
+			'password' => '7!s6Z*e.Qrpw@dQN',
 			//'url' => env('DATABASE_URL', NULL), //You can use a DSN string to set the entire configuration
-			'username' => '',
+			'username' => 'awyiss',
 
 		],
 	],
@@ -53,7 +58,7 @@ return [
 	'EmailTransport' => [
 		'default' => [
 			//'className' => \Cake\Mailer\Transport\DebugTransport::class, //To not send any mails
-			'className' => \Cake\Mailer\Transport\MailTransport::class, //To use the default php mail()
+			'className' => MailTransport::class, //To use the default php mail()
 			//'className' => \Cake\Mailer\Transport\SmtpTransport::class, //To use a smtp server
 			'client' => NULL,
 			'host' => 'localhost',
@@ -80,7 +85,7 @@ return [
 	 *   You should treat it as extremely sensitive data.
 	 */
 	'Security' => [
-		'salt' => env('SECURITY_SALT', ''),
+		'salt' => env('SECURITY_SALT', 'a30817f37ea92c24528e179ef2e25c125209b0719700ff4b0bed301ee697067e'),
 	],
 
 	'Session' => [

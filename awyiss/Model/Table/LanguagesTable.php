@@ -8,7 +8,6 @@ use Awyiss\Awyiss;
 use Awyiss\Model\Entity\Language;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
-use Cake\ORM\Association\HasMany;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Validation\Validator;
 use DateTimeZone;
@@ -18,8 +17,7 @@ use ResourceBundle;
 /**
  * Languages Model
  *
- * @property ConfigurationTable&HasMany $Configuration
- *
+ * @property ConfigurationTable&\Awyiss\ORM\Association\HasMany $Configuration
  * @method Language newDefaultEntity(array $aa_additionalData = [])
  */
 class LanguagesTable extends Table {
@@ -34,7 +32,7 @@ class LanguagesTable extends Table {
 		'systemOrder' => [
 			'relatedColumns' => ['realm'],
 		],
-		'translate' => FALSE,
+		'translate' => false,
 	];
 
 
@@ -49,8 +47,8 @@ class LanguagesTable extends Table {
 				'realm',
 				'shortcode',
 			],
-			'cascadeCallbacks' => TRUE,
-			'dependent' => TRUE,
+			'cascadeCallbacks' => true,
+			'dependent' => true,
 			'foreignKey' => [
 				'realm',
 				'languageShortcode',
@@ -59,8 +57,8 @@ class LanguagesTable extends Table {
 
 		$this->hasMany('MenuEntries', [
 			'bindingKey' => 'shortcode',
-			'cascadeCallbacks' => TRUE,
-			'dependent' => TRUE,
+			'cascadeCallbacks' => true,
+			'dependent' => true,
 			'foreignKey' => 'language_shortcode',
 		]);
 	}
@@ -71,7 +69,6 @@ class LanguagesTable extends Table {
 	 *
 	 * @param Validator $ao_validator The validator that can be modified to
 	 * add some rules to it.
-	 *
 	 * @return Validator
 	 */
 	public function validationDefault(Validator $ao_validator): Validator {
@@ -158,9 +155,7 @@ class LanguagesTable extends Table {
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 *
 	 * @param RulesChecker|BaseRulesChecker $ao_rules The rules object to be modified.
-	 *
 	 * @return RulesChecker
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {

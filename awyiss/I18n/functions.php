@@ -12,13 +12,11 @@ if (!function_exists('__')) {
 	 *
 	 * @param string $as_string
 	 * @param mixed ...$aa_args
-	 *
 	 * @return string The translated text.
 	 * @link https://book.cakephp.org/4/en/core-libraries/global-constants-and-functions.html#__
-	 *
 	 * @noinspection PhpFunctionNamingConventionInspection
 	 */
-	function __(string $as_string, ...$aa_args): string {
+	function __(string $as_string, mixed ...$aa_args): string {
 		if (!$as_string) {
 			return '';
 		}
@@ -51,13 +49,11 @@ if (!function_exists('__d')) {
 	 * @param string $as_domain Domain.
 	 * @param string $as_string String to translate.
 	 * @param mixed ...$aa_args
-	 *
 	 * @return string Translated string.
 	 * @link https://book.cakephp.org/4/en/core-libraries/global-constants-and-functions.html#__d
-	 *
 	 * @noinspection PhpFunctionNamingConventionInspection
 	 */
-	function __d(string $as_domain, string $as_string, ...$aa_args): string {
+	function __d(string $as_domain, string $as_string, mixed ...$aa_args): string {
 		if (!$as_string) {
 			return '';
 		}
@@ -88,13 +84,11 @@ if (!function_exists('__df')) {
 	 * @param string $as_fallbackDomain
 	 * @param string $as_string
 	 * @param mixed ...$aa_args
-	 *
 	 * @return string The translated text.
 	 * @link https://book.cakephp.org/4/en/core-libraries/global-constants-and-functions.html#__
-	 *
 	 * @noinspection PhpFunctionNamingConventionInspection
 	 */
-	function __df(string $as_domain, string $as_fallbackDomain, string $as_string, ...$aa_args): string {
+	function __df(string $as_domain, string $as_fallbackDomain, string $as_string, mixed ...$aa_args): string {
 		if (!$as_string) {
 			return '';
 		}
@@ -130,13 +124,11 @@ if (!function_exists('__dx')) {
 	 * @param string $as_context
 	 * @param string $as_string
 	 * @param mixed ...$aa_args
-	 *
 	 * @return string Translated string.
 	 * @link https://book.cakephp.org/4/en/core-libraries/global-constants-and-functions.html#__dx
-	 *
 	 * @noinspection PhpFunctionNamingConventionInspection
 	 */
-	function __dx(string $as_domain, string $as_context, string $as_string, ...$aa_args): string {
+	function __dx(string $as_domain, string $as_context, string $as_string, mixed ...$aa_args): string {
 		if (!$as_string) {
 			return '';
 		}
@@ -164,13 +156,11 @@ if (!function_exists('__dfx')) {
 	 * @param string $as_context
 	 * @param string $as_string
 	 * @param mixed ...$aa_args
-	 *
 	 * @return string Translated string.
 	 * @link https://book.cakephp.org/4/en/core-libraries/global-constants-and-functions.html#__dx
-	 *
 	 * @noinspection PhpFunctionNamingConventionInspection
 	 */
-	function __dfx(string $as_domain, string $as_fallbackDomain, string $as_context, string $as_string, ...$aa_args): string {
+	function __dfx(string $as_domain, string $as_fallbackDomain, string $as_context, string $as_string, mixed ...$aa_args): string {
 		if (!$as_string) {
 			return '';
 		}
@@ -195,13 +185,11 @@ if (!function_exists('__x')) {
 	 * @param string $as_context Context of the text.
 	 * @param string $as_string Text to translate.
 	 * @param mixed ...$aa_args Array with arguments or multiple arguments in function.
-	 *
 	 * @return string Translated string.
 	 * @link https://book.cakephp.org/4/en/core-libraries/global-constants-and-functions.html#__x
-	 *
 	 * @noinspection PhpFunctionNamingConventionInspection
 	 */
-	function __x(string $as_context, string $as_string, ...$aa_args): string {
+	function __x(string $as_context, string $as_string, mixed ...$aa_args): string {
 		if (!$as_string) {
 			return '';
 		}

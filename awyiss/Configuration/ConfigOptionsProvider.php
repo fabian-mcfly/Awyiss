@@ -25,9 +25,12 @@ class ConfigOptionsProvider {
 	/**
 	 * @var bool
 	 */
-	protected static bool $foundAll = FALSE;
+	protected static bool $foundAll = false;
 
 
+	/**
+	 * Trigger an exception during instantiation
+	 */
 	private function __construct() {
 		throw new RuntimeException(sprintf('The class `%s` cannot be instantiated', self::class));
 	}
@@ -38,13 +41,12 @@ class ConfigOptionsProvider {
 	 *
 	 * @return array<string, class-string<ConfigOptionsInterface>>
 	 * @throws \ReflectionException
-	 *
 	 * @noinspection PhpUnused
 	 */
-	public static function getConfigOptionsFiles(bool $ab_returnLoaded = FALSE): array {
+	public static function getConfigOptionsFiles(bool $ab_returnLoaded = false): array {
 		if (!static::$foundAll) {
 			static::$configOptions = static::findConfigOptionsFile('*', $ab_returnLoaded);
-			static::$foundAll = TRUE;
+			static::$foundAll = true;
 		}
 
 		if ($ab_returnLoaded) {
@@ -57,15 +59,14 @@ class ConfigOptionsProvider {
 
 
 	/**
-	 * Returns the found ConfigOptions class for the provided scope or NULL
+	 * Returns the found ConfigOptions class for the provided scope or null
 	 *
 	 * @param string $as_scope
 	 * @param bool $ab_returnLoaded
-	 *
-	 * @return NULL|string|ConfigOptionsInterface
+	 * @return ConfigOptionsInterface|string|null
 	 * @throws \ReflectionException
 	 */
-	public static function getConfigOptionsFile(string $as_scope, bool $ab_returnLoaded = FALSE): string|ConfigOptionsInterface|null {
+	public static function getConfigOptionsFile(string $as_scope, bool $ab_returnLoaded = false): string|ConfigOptionsInterface|null {
 		$ls_scope = static::sanitizeScope($as_scope);
 
 		if (empty(static::$configOptions[ $ls_scope ])) {
@@ -73,21 +74,19 @@ class ConfigOptionsProvider {
 		}
 
 		if ($ab_returnLoaded) {
-			return static::$loadedConfigOptions[ $ls_scope ] ?? NULL;
+			return static::$loadedConfigOptions[ $ls_scope ] ?? null;
 		}
 
 
-		return static::$configOptions[ $ls_scope ] ?? NULL;
+		return static::$configOptions[ $ls_scope ] ?? null;
 	}
 
 
 	/**
-	 * Returns an instance of a ConfigOptions class with the provided scope or NULL
+	 * Returns an instance of a ConfigOptions class with the provided scope or null
 	 *
-	 * @param string|class-string<ConfigOptionsInterface> $as_scope
-	 *
-	 * @return NULL|ConfigOptionsInterface
-	 *
+	 * @param class-string<ConfigOptionsInterface>|string $as_scope
+	 * @return ConfigOptionsInterface|null
 	 * @throws \ReflectionException
 	 */
 	public static function loadConfigOptions(string $as_scope): ?ConfigOptionsInterface {
@@ -106,13 +105,13 @@ class ConfigOptionsProvider {
 			}
 		}
 		else {
-			/** @var NULL|class-string<ConfigOptionsInterface> $ls_configurationClass */
+			/** @var class-string<ConfigOptionsInterface>|null $ls_configurationClass */
 			$ls_configurationClass = static::getConfigOptionsFile($ls_scope);
 			if (!$ls_configurationClass) {
-				static::$loadedConfigOptions[ $ls_scope ] = NULL;
+				static::$loadedConfigOptions[ $ls_scope ] = null;
 
 
-				return NULL;
+				return null;
 			}
 		}
 
@@ -132,18 +131,16 @@ class ConfigOptionsProvider {
 	 * @param string $as_realm
 	 * @param string $as_identifier
 	 * @param mixed $ax_value
-	 * @param null|string $as_languageShortcode
-	 *
-	 * @return bool|string
+	 * @param string|null $as_languageShortcode
+	 * @return string|bool
 	 * @throws \ReflectionException
-	 *
 	 * @noinspection PhpUnused
 	 */
-	public static function validateConfigValue(string $as_scope, string $as_realm, string $as_identifier, mixed $ax_value, ?string $as_languageShortcode = NULL): bool|string {
+	public static function validateConfigValue(string $as_scope, string $as_realm, string $as_identifier, mixed $ax_value, ?string $as_languageShortcode = null): bool|string {
 		$lo_configuration = static::loadConfigOptions($as_scope);
 
 		if (!$lo_configuration) {
-			return FALSE;
+			return false;
 		}
 
 
@@ -158,10 +155,8 @@ class ConfigOptionsProvider {
 	 * @param string $as_realm
 	 * @param string $as_identifier
 	 * @param mixed $ax_value
-	 *
 	 * @return mixed
 	 * @throws \ReflectionException
-	 *
 	 * @noinspection PhpUnused
 	 */
 	public static function typecastConfigValue(string $as_scope, string $as_realm, string $as_identifier, mixed $ax_value): mixed {
@@ -181,7 +176,6 @@ class ConfigOptionsProvider {
 	 * Returns a camelBacked string
 	 *
 	 * @param string $as_scope
-	 *
 	 * @return string
 	 */
 	public static function sanitizeScope(string $as_scope): string {
@@ -194,7 +188,6 @@ class ConfigOptionsProvider {
 	 * Returns a camelBacked string
 	 *
 	 * @param string $as_identifier
-	 *
 	 * @return string
 	 */
 	public static function sanitizeIdentifier(string $as_identifier): string {
@@ -212,11 +205,10 @@ class ConfigOptionsProvider {
 	 *
 	 * @param string $as_scope
 	 * @param bool $ab_load
-	 *
 	 * @return array<string, class-string<ConfigOptionsInterface>>
 	 * @throws \ReflectionException
 	 */
-	protected static function findConfigOptionsFile(string $as_scope, bool $ab_load = FALSE): array {
+	protected static function findConfigOptionsFile(string $as_scope, bool $ab_load = false): array {
 		$la_configurations = [];
 
 		$la_paths = [

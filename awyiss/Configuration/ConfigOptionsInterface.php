@@ -21,20 +21,18 @@ interface ConfigOptionsInterface {
 	/**
 	 * Return all config options as flattened array
 	 *
-	 * @param null|string $as_realm
-	 *
+	 * @param string|null $as_realm
 	 * @return ConfigOptionCollection|array
 	 * @see ConfigOption
 	 */
-	public function getConfigOptions(string $as_realm = NULL): ConfigOptionCollection|array;
+	public function getConfigOptions(?string $as_realm = null): ConfigOptionCollection|array;
 
 	/**
 	 * Return the config option found under the path provided.
 	 *
 	 * @param string $as_realm
-	 * @param string|string[] $ax_path
-	 *
-	 * @return null|ConfigOption
+	 * @param array<string>|string $ax_path
+	 * @return ConfigOption|null
 	 * @see ConfigOption
 	 * @see \Cake\Utility\Hash::get()
 	 */
@@ -48,17 +46,16 @@ interface ConfigOptionsInterface {
 	 * @param string $as_realm
 	 * @param string $as_identifier
 	 * @param mixed $ax_value
-	 * @param null|string $as_languageShortcode
+	 * @param string|null $as_languageShortcode
 	 * @param bool $ab_fallbackValidity
-	 *
-	 * @return bool|string
+	 * @return string|bool
 	 */
 	public function validateConfigValue(
 		string $as_realm,
 		string $as_identifier,
 		mixed $ax_value,
-		?string $as_languageShortcode = NULL,
-		bool $ab_fallbackValidity = TRUE
+		?string $as_languageShortcode = null,
+		bool $ab_fallbackValidity = true
 	): bool|string;
 
 	/**
@@ -67,7 +64,6 @@ interface ConfigOptionsInterface {
 	 * @param string $as_realm
 	 * @param string $as_identifier
 	 * @param mixed $ax_value
-	 *
 	 * @return mixed
 	 * @throws \ReflectionException
 	 */

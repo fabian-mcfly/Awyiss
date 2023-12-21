@@ -2,22 +2,22 @@
 
 return [
 	'DebugKit' => [
-		'onlyDebug' => TRUE,
+		'onlyDebug' => true,
 	],
 	'Bake' => [
-		'onlyCli' => TRUE,
+		'onlyCli' => true,
 	],
 	'Migrations' => [
-		'onlyCli' => TRUE,
+		'onlyCli' => true,
 	],
-	'Authentication' => NULL,
+	'Authentication' => null,
 	'Queue' => [
-		'routes' => FALSE,
+		'routes' => false,
 	],
 	'IdeHelper' => [
-		'onlyCli' => TRUE,
+		'onlyCli' => true,
 	],
 	'AwyissBake' => [
-		'onlyCli' => TRUE,
+		'onlyCli' => true,
 	],
 ];

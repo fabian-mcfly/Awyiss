@@ -4,13 +4,15 @@
 namespace AwyissBake\Command\Bake;
 
 
+use Bake\Command\TemplateAllCommand as BaseTemplateAllCommand;
+
+
 /**
  * Task class for creating view template files.
- *
  * This one overwrites the default bake TemplateAllCommand to use
- *        \AwyissBake\Command\Bake\TemplateCommand
+ *  	\AwyissBake\Command\Bake\TemplateCommand
  */
-class TemplateAllCommand extends \Bake\Command\TemplateAllCommand {
+class TemplateAllCommand extends BaseTemplateAllCommand {
 	/**
 	 * @inheritDoc
 	 */

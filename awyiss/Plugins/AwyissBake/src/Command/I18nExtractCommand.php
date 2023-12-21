@@ -1,10 +1,11 @@
 <?php declare(strict_types=1);
 
+
 //TODO: move out of plugin
 namespace AwyissBake\Command;
 
 
-use Cake\Command\Helper\ProgressHelper;
+use Cake\Command\I18nExtractCommand as BaseI18nExtractCommand;
 use Cake\Console\Arguments;
 use Cake\Console\ConsoleIo;
 use Cake\Utility\Filesystem;
@@ -13,7 +14,7 @@ use Cake\Utility\Filesystem;
 /**
  * Language string extractor
  */
-class I18nExtractCommand extends \Cake\Command\I18nExtractCommand {
+class I18nExtractCommand extends BaseI18nExtractCommand {
 	/**
 	 * {@inheritDoc}
 	 *
@@ -24,7 +25,7 @@ class I18nExtractCommand extends \Cake\Command\I18nExtractCommand {
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	protected function _extractTokens(Arguments $ao_args, ConsoleIo $ao_io): void {
-		/** @var ProgressHelper $lo_progress */
+		/** @var \Cake\Command\Helper\ProgressHelper $lo_progress */
 		$lo_progress = $ao_io->helper('progress');
 		$lo_progress->init(['total' => count($this->_files)]);
 		$lb_isVerbose = $ao_args->getOption('verbose');
@@ -86,7 +87,7 @@ class I18nExtractCommand extends \Cake\Command\I18nExtractCommand {
 	 * @return void
 	 */
 	protected function _searchFiles(): void {
-		$ls_pattern = FALSE;
+		$ls_pattern = false;
 		if (!empty($this->_exclude)) {
 			$la_exclude = [];
 			foreach ($this->_exclude as $ls_exclude) {
@@ -100,7 +101,7 @@ class I18nExtractCommand extends \Cake\Command\I18nExtractCommand {
 
 		foreach ($this->_paths as $ls_path) {
 			$ls_path = realpath($ls_path);
-			if ($ls_path === FALSE) {
+			if ($ls_path === false) {
 				continue;
 			}
 			$ls_path .= DIRECTORY_SEPARATOR;

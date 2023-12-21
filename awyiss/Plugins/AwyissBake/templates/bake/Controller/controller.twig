@@ -31,7 +31,7 @@ use Cake\Http\Exception\RedirectException;
 {% endfor %}
 
 {%- if 'overview' in actions %}
- * @method {{ entityClassName }}[]|\Cake\Datasource\ResultSetInterface paginate($ao_object = NULL, array $aa_settings = [])
+ * @method {{ entityClassName }}[]|\Cake\Datasource\ResultSetInterface paginate($ao_object = null, array $aa_settings = [])
 {% endif %}
  */
 class {{ name }}Controller extends Controller {

@@ -6,6 +6,8 @@ namespace Awyiss\Attributes;
 
 use Cake\Utility\Inflector;
 use Cake\Utility\Text;
+use ReflectionClass;
+use RuntimeException;
 
 
 /**
@@ -19,15 +21,18 @@ class AttributeOptionsProvider {
 	/**
 	 * @var bool
 	 */
-	protected static bool $foundAll = FALSE;
+	protected static bool $foundAll = false;
 	/**
 	 * @var array<string, AttributeOptionsInterface>
 	 */
 	protected static array $loadedAttributeOptions = [];
 
 
+	/**
+	 * Constructor. Throw an exception since this class only offers static methods
+	 */
 	private function __construct() {
-		throw new \RuntimeException(sprintf('The class `%s` cannot be instantiated', self::class));
+		throw new RuntimeException(sprintf('The class `%s` cannot be instantiated', self::class));
 	}
 
 
@@ -36,13 +41,12 @@ class AttributeOptionsProvider {
 	 *
 	 * @return array<string, class-string<AttributeOptionsInterface>>
 	 * @throws \ReflectionException
-	 *
 	 * @noinspection PhpUnused
 	 */
-	public static function getAttributeOptionsFiles(bool $ab_returnLoaded = FALSE): array {
+	public static function getAttributeOptionsFiles(bool $ab_returnLoaded = false): array {
 		if (!static::$foundAll) {
 			static::$attributeOptions = static::findAttributeOptionsFiles('*', $ab_returnLoaded);
-			static::$foundAll = TRUE;
+			static::$foundAll = true;
 		}
 
 		if ($ab_returnLoaded) {
@@ -55,11 +59,10 @@ class AttributeOptionsProvider {
 
 
 	/**
-	 * Returns an instance of a AttributeOptionsCollection class with the provided scope or NULL
+	 * Returns an instance of a AttributeOptionsCollection class with the provided scope or null
 	 *
-	 * @param string|class-string<AttributeOptionsInterface> $as_scope
-	 *
-	 * @return NULL|AttributeOptionsInterface
+	 * @param class-string<AttributeOptionsInterface>|string $as_scope
+	 * @return AttributeOptionsInterface|null
 	 * @throws \ReflectionException
 	 * @noinspection PhpUnused
 	 */
@@ -79,13 +82,13 @@ class AttributeOptionsProvider {
 			}
 		}
 		else {
-			/** @var NULL|class-string<AttributeOptionsInterface> $ls_attributeOptionsClass */
+			/** @var class-string<AttributeOptionsInterface>|null $ls_attributeOptionsClass */
 			$ls_attributeOptionsClass = static::getAttributeOptionsFile($ls_scope);
 			if (!$ls_attributeOptionsClass) {
-				static::$loadedAttributeOptions[ $ls_scope ] = NULL;
+				static::$loadedAttributeOptions[ $ls_scope ] = null;
 
 
-				return NULL;
+				return null;
 			}
 		}
 
@@ -97,15 +100,14 @@ class AttributeOptionsProvider {
 
 
 	/**
-	 * Returns the found AttributeOptionsCollection class for the provided scope or NULL
+	 * Returns the found AttributeOptionsCollection class for the provided scope or null
 	 *
 	 * @param string $as_scope
 	 * @param bool $ab_returnLoaded
-	 *
-	 * @return NULL|string|AttributeOptionsInterface
+	 * @return AttributeOptionsInterface|string|null
 	 * @throws \ReflectionException
 	 */
-	public static function getAttributeOptionsFile(string $as_scope, bool $ab_returnLoaded = FALSE): string|AttributeOptionsInterface|null {
+	public static function getAttributeOptionsFile(string $as_scope, bool $ab_returnLoaded = false): string|AttributeOptionsInterface|null {
 		$ls_scope = static::sanitizeScope($as_scope);
 
 		if (empty(static::$attributeOptions[ $ls_scope ])) {
@@ -113,11 +115,11 @@ class AttributeOptionsProvider {
 		}
 
 		if ($ab_returnLoaded) {
-			return static::$loadedAttributeOptions[ $ls_scope ] ?? NULL;
+			return static::$loadedAttributeOptions[ $ls_scope ] ?? null;
 		}
 
 
-		return static::$attributeOptions[ $ls_scope ] ?? NULL;
+		return static::$attributeOptions[ $ls_scope ] ?? null;
 	}
 
 
@@ -126,7 +128,6 @@ class AttributeOptionsProvider {
 	 * Returns a camelBacked string
 	 *
 	 * @param string $as_scope
-	 *
 	 * @return string
 	 */
 	public static function sanitizeScope(string $as_scope): string {
@@ -139,7 +140,6 @@ class AttributeOptionsProvider {
 	 * Returns a camelBacked string
 	 *
 	 * @param string $as_identifier
-	 *
 	 * @return string
 	 */
 	public static function sanitizeIdentifier(string $as_identifier): string {
@@ -157,11 +157,10 @@ class AttributeOptionsProvider {
 	 *
 	 * @param string $as_scope
 	 * @param bool $ab_load
-	 *
 	 * @return array<string, class-string<AttributeOptionsInterface>>
 	 * @throws \ReflectionException
 	 */
-	protected static function findAttributeOptionsFiles(string $as_scope, bool $ab_load = FALSE): array {
+	protected static function findAttributeOptionsFiles(string $as_scope, bool $ab_load = false): array {
 		$la_attributeOptionFiles = [];
 
 		$la_paths = [
@@ -196,10 +195,10 @@ class AttributeOptionsProvider {
 
 				$ls_attributeOptionsClass = $ls_namespace . $ls_attributeOptionsName;
 
-				$lo_reflection = new \ReflectionClass($ls_attributeOptionsClass);
+				$lo_reflection = new ReflectionClass($ls_attributeOptionsClass);
 
 				if (!$lo_reflection->implementsInterface(AttributeOptionsInterface::class)) {
-					throw new \RuntimeException(
+					throw new RuntimeException(
 						sprintf(
 							'The provided Attributes class `%s` does not extend the `%s` class.',
 							$ls_attributeOptionsClass,

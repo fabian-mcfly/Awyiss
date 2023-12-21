@@ -38,7 +38,7 @@ abstract class AbstractPermissionOption implements PermissionOptionInterface {
 	 */
 	protected array $_defaultConfig = [
 		'preferredInput' => PermissionOptionType::TYPE_RADIO,
-		'identifier' => NULL,
+		'identifier' => null,
 	];
 
 
@@ -99,7 +99,6 @@ abstract class AbstractPermissionOption implements PermissionOptionInterface {
 
 	/**
 	 * @inheritDoc
-	 *
 	 * @throws RuntimeException
 	 */
 	public function setOptions(array $aa_options): static {
@@ -111,6 +110,6 @@ abstract class AbstractPermissionOption implements PermissionOptionInterface {
 	 * @inheritDoc
 	 */
 	public function hasSettings(): bool {
-		return FALSE;
+		return false;
 	}
 }

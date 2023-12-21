@@ -4,13 +4,15 @@
 namespace Awyiss\ORM;
 
 
+use Cake\ORM\Behavior as BaseBehavior;
 use Cake\ORM\Table;
+use RuntimeException;
 
 
 /**
  * General overwrite of the default Behavior class
  */
-class Behavior extends \Cake\ORM\Behavior {
+class Behavior extends BaseBehavior {
 	/**
 	 * This array contains all implemented events and their corresponding method names
 	 * that will get called when the event is fired.
@@ -36,7 +38,6 @@ class Behavior extends \Cake\ORM\Behavior {
 
 	/**
 	 * @inheritDoc
-	 *
 	 * @param Table $ao_table
 	 * @param array $aa_config
 	 */
@@ -49,7 +50,7 @@ class Behavior extends \Cake\ORM\Behavior {
 		}
 
 		$la_implementedEvents = $this->getConfig('implementedEvents');
-		if ($la_implementedEvents === NULL) {
+		if ($la_implementedEvents === null) {
 			$this->setConfig('implementedEvents', $this->defaultEvents);
 		}
 	}
@@ -78,7 +79,6 @@ class Behavior extends \Cake\ORM\Behavior {
 
 	/**
 	 * @return array
-	 *
 	 * @noinspection PhpUnused
 	 */
 	public function getDefaultEvents(): array {
@@ -86,26 +86,32 @@ class Behavior extends \Cake\ORM\Behavior {
 	}
 
 
-	public function enable() {
+	/**
+	 * @return void
+	 */
+	public function enable(): void {
 		if (array_key_exists('enabled', $this->_config)) {
-			$this->_config['enabled'] = TRUE;
+			$this->_config['enabled'] = true;
 
 
 			return;
 		}
 
-		throw new \RuntimeException(sprintf('Cannot enable behavior `%s`', static::class));
+		throw new RuntimeException(sprintf('Cannot enable behavior `%s`', static::class));
 	}
 
 
-	public function disable() {
+	/**
+	 * @return void
+	 */
+	public function disable(): void {
 		if (array_key_exists('enabled', $this->_config)) {
-			$this->_config['enabled'] = FALSE;
+			$this->_config['enabled'] = false;
 
 
 			return;
 		}
 
-		throw new \RuntimeException(sprintf('Cannot disable behavior `%s`', static::class));
+		throw new RuntimeException(sprintf('Cannot disable behavior `%s`', static::class));
 	}
 }

@@ -7,7 +7,6 @@ namespace Awyiss\Controller\Backend;
 use Awyiss\Awyiss;
 use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Model\Entity\Language;
-use Awyiss\Model\Table\LanguagesTable;
 use Awyiss\Routing\Router;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
@@ -16,7 +15,7 @@ use Cake\Http\Response;
 /**
  * Languages Controller
  *
- * @property LanguagesTable $Languages
+ * @property \Awyiss\Model\Table\LanguagesTable $Languages
  */
 class LanguagesController extends Controller {
 	/**
@@ -41,7 +40,6 @@ class LanguagesController extends Controller {
 	 * Add method
 	 *
 	 * @return void
-	 *
 	 * @throws \Exception
 	 */
 	public function add(): void {
@@ -63,15 +61,14 @@ class LanguagesController extends Controller {
 	/**
 	 * Edit method
 	 *
-	 * @return void|?Response
-	 *
+	 * @return \Cake\Http\Response|void
 	 * @throws \Exception
 	 */
-	public function edit() {
+	public function edit(int $ai_id) {
 		$this->Authorization->ensure('update');
 
 		/** @var Language $lo_language */
-		$lo_language = $this->Languages->findById((int) $this->request->getParam('id'))->find('translations')->first();
+		$lo_language = $this->Languages->findById($ai_id)->find('translations')->first();
 		if (!$lo_language) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -93,17 +90,17 @@ class LanguagesController extends Controller {
 	/**
 	 * Delete method
 	 *
+	 * @param int $ai_id
 	 * @return Response
-	 *
 	 * @throws \Exception
 	 */
-	public function delete(): Response {
+	public function delete(int $ai_id): Response {
 		$this->Authorization->ensure('delete');
 
 		$this->request->allowMethod(['get', 'delete']);
 
 		/** @var Language $lo_language */
-		$lo_language = $this->Languages->findById((int) $this->request->getParam('id'))->find('translations')->first();
+		$lo_language = $this->Languages->findById($ai_id)->find('translations')->first();
 		if (!$lo_language) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -126,14 +123,13 @@ class LanguagesController extends Controller {
 	/**
 	 * @param Language $ao_language
 	 * @param string $as_method
-	 *
 	 * @return void
 	 */
 	protected function save(Language $ao_language, string $as_method = 'add'): void {
 		$la_associated = [];
 		if ($this->Languages->hasAttributes()) {
-			$la_associated[] = $this->Languages->getAttributesTable(TRUE);
-			$ao_language->setAccess('attributes', TRUE);
+			$la_associated[] = $this->Languages->getAttributesTable(true);
+			$ao_language->setAccess('attributes', true);
 		}
 
 		$this->Languages->patchEntity($ao_language, $this->request->getData(), ['associated' => $la_associated]);
@@ -143,10 +139,10 @@ class LanguagesController extends Controller {
 				$this->Flash->success(__($as_method . '_succeeded'));
 
 				if ($this->request->getData('submit') == 'submit_close') {
-					throw new RedirectException(Router::url(['action' => 'overview'], TRUE), 302);
+					throw new RedirectException(Router::url(['action' => 'overview'], true), 302);
 				}
 
-				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $ao_language->id], TRUE), 302);
+				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $ao_language->id], true), 302);
 			}
 
 			$this->Flash->error(__($as_method . '_failed'));
@@ -156,7 +152,7 @@ class LanguagesController extends Controller {
 		}
 		else {
 			if ($this->Languages->getSystemOrderRelatedColumns($ao_language)) {
-				$ao_language->systemOrder = NULL;
+				$ao_language->systemOrder = null;
 			}
 			else {
 				$ao_language->systemOrder = $ao_language->getOriginal('systemOrder');

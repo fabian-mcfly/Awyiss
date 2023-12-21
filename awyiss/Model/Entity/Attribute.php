@@ -5,9 +5,7 @@ namespace Awyiss\Model\Entity;
 
 
 use Awyiss\Model\Entity;
-use Awyiss\Model\Table\AttributesTable;
 use Cake\Datasource\FactoryLocator;
-use Cake\I18n\FrozenTime;
 use Cake\Utility\Text;
 
 
@@ -18,8 +16,8 @@ use Cake\Utility\Text;
  * @property string $scope
  * @property string $title
  * @property string $identifier
- * @property string|NULL $defaultValue
- * @property string|NULL $fieldset
+ * @property string|null $defaultValue
+ * @property string|null $fieldset
  * @property string $inputType
  * @property string $type
  * @property bool $hasIndex
@@ -28,30 +26,30 @@ use Cake\Utility\Text;
  * @property int $systemOrder
  * @property bool $active
  * @property bool $deleted
- * @property int|NULL $createdBy
- * @property FrozenTime|NULL $createdOn
- * @property int|NULL $changedBy
- * @property FrozenTime|NULL $changedOn
- * @property int|NULL $deletedBy
- * @property FrozenTime|NULL $deletedOn
+ * @property int|null $createdBy
+ * @property \Cake\I18n\DateTime|null $createdOn
+ * @property int|null $changedBy
+ * @property \Cake\I18n\DateTime|null $changedOn
+ * @property int|null $deletedBy
+ * @property \Cake\I18n\DateTime|null $deletedOn
  */
 class Attribute extends Entity {
 	/**
 	 * @inheritDoc
 	 */
 	protected array $_accessible = [
-		'scope' => TRUE,
-		'title' => TRUE,
-		'identifier' => TRUE,
-		'defaultValue' => TRUE,
-		'fieldset' => TRUE,
-		'inputType' => TRUE,
-		'type' => TRUE,
-		'hasIndex' => TRUE,
-		'required' => TRUE,
-		'translatable' => TRUE,
-		'systemOrder' => TRUE,
-		'active' => TRUE,
+		'scope' => true,
+		'title' => true,
+		'identifier' => true,
+		'defaultValue' => true,
+		'fieldset' => true,
+		'inputType' => true,
+		'type' => true,
+		'hasIndex' => true,
+		'required' => true,
+		'translatable' => true,
+		'systemOrder' => true,
+		'active' => true,
 	];
 	protected static array $fieldMap = [
 		'has_index' => 'hasIndex',
@@ -71,7 +69,7 @@ class Attribute extends Entity {
 	 * @inheritDoc
 	 */
 	public function defaultValues(): array {
-		/** @var AttributesTable $lo_table */
+		/** @var \Awyiss\Model\Table\AttributesTable $lo_table */
 		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
 
 
@@ -83,6 +81,7 @@ class Attribute extends Entity {
 	 * Make sure the identifier is always lowercase, underscored and free of special characters
 	 *
 	 * @noinspection PhpUnused
+	 * @see \Awyiss\Model\Entity\Attribute::$identifier
 	 */
 	protected function _setIdentifier(string $as_identifier): string {
 		return mb_strtolower(Text::slug($as_identifier, ['replacement' => '_']));
@@ -93,6 +92,7 @@ class Attribute extends Entity {
 	 * Make sure the scope is always lowercase, underscored and free of special characters
 	 *
 	 * @noinspection PhpUnused
+	 * @see \Awyiss\Model\Entity\Attribute::$scope
 	 */
 	protected function _setScope(string $as_scope): string {
 		return mb_strtolower(Text::slug($as_scope, ['replacement' => '_']));

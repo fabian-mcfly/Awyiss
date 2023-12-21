@@ -32,12 +32,12 @@
 
 		{% block fieldsetConditionsInner %}
 			{% block formControlParentId %}
-				{{ helper_Form_control('parent_id', {options: aa_parentIdOptions, required: FALSE}) }}
+				{{ helper_Form_control('parent_id', {options: aa_parentIdOptions, required: false}) }}
 			{% endblock %}
 
 			{#% if ao_backendMenuEntry.parentId is empty %#}
 				{% block formControlInsertAfterId %}
-					{{ helper_Form_control('insert_after_id', {options: aa_insertAfterOptions, required: FALSE}) }}
+					{{ helper_Form_control('insert_after_id', {options: aa_insertAfterOptions, required: false}) }}
 				{% endblock %}
 			{#% endif %#}
 

@@ -28,7 +28,6 @@ class RoutingMiddleware extends BaseRoutingMiddleware {
 	 *
 	 *        $la_queryParams = $la_params['parts'] ?? [];
 	 *        $lo_request = $lo_request->withQueryParams($la_queryParams);
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function process(ServerRequestInterface $ao_request, RequestHandlerInterface $ao_handler): ResponseInterface {
@@ -36,7 +35,7 @@ class RoutingMiddleware extends BaseRoutingMiddleware {
 		try {
 			assert($ao_request instanceof ServerRequest);
 			Router::setRequest($ao_request);
-			$la_params = (array) $ao_request->getAttribute('params', []);
+			$la_params = (array)$ao_request->getAttribute('params', []);
 			$la_middlewareNames = [];
 			if (empty($la_params['controller'])) {
 				$la_params = Router::parseRequest($ao_request) + $la_params;
@@ -66,11 +65,12 @@ class RoutingMiddleware extends BaseRoutingMiddleware {
 			return $ao_handler->handle($lo_request ?? $ao_request);
 		}
 
-		$lo_container = $this->app instanceof ContainerApplicationInterface ? $this->app->getContainer() : NULL;
+		$lo_container = $this->app instanceof ContainerApplicationInterface ? $this->app->getContainer() : null;
 		$lo_middlewareQueue = new MiddlewareQueue($la_matchingMiddlewares, $lo_container);
 		$lo_runner = new Runner();
 
 
+		/** @noinspection PhpUndefinedVariableInspection */
 		return $lo_runner->run($lo_middlewareQueue, $lo_request, $ao_handler);
 	}
 }

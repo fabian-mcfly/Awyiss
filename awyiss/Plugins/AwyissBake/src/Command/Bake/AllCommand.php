@@ -6,6 +6,8 @@ namespace AwyissBake\Command\Bake;
 
 //use Bake\Command\ControllerCommand;
 //use Bake\Command\ModelCommand;
+use Bake\Command\AllCommand as BaseAllCommand;
+
 
 /**
  * Command for `bake all`
@@ -14,9 +16,8 @@ namespace AwyissBake\Command\Bake;
  *        \AwyissBake\Command\Bake\ControllerCommand
  *        \AwyissBake\Command\Bake\ModelCommand
  *        \AwyissBake\Command\Bake\TemplateCommand
- *
  */
-class AllCommand extends \Bake\Command\AllCommand {
+class AllCommand extends BaseAllCommand {
 	/**
 	 * @inheritDoc
 	 */

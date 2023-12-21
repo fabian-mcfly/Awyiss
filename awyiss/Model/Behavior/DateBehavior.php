@@ -5,7 +5,6 @@ namespace Awyiss\Model\Behavior;
 
 
 use ArrayObject;
-use Awyiss\Model\Behavior\Date\DateType;
 use Awyiss\Model\Entity\Date;
 use Awyiss\Model\Table;
 use Awyiss\ORM\Behavior;
@@ -17,6 +16,9 @@ use Cake\ORM\Query\SelectQuery;
 use Cake\Utility\Inflector;
 
 
+/**
+ * Handles specific dates for entities, like publishing dates or event/news dates
+ */
 class DateBehavior extends Behavior/* implements PropertyMarshalInterface*/ {
 	use LocatorAwareTrait;
 
@@ -38,7 +40,7 @@ class DateBehavior extends Behavior/* implements PropertyMarshalInterface*/ {
 		'datesTable' => 'Dates',
 		'referenceName' => '',
 		'strategy' => 'subquery',
-		'tableLocator' => NULL,
+		'tableLocator' => null,
 		'types' => [],
 	];
 	/**
@@ -49,6 +51,11 @@ class DateBehavior extends Behavior/* implements PropertyMarshalInterface*/ {
 	protected Table $datesTable;
 
 
+	/**
+	 * @inheritDoc
+	 * @param Table $ao_table
+	 * @param array $aa_config
+	 */
 	public function __construct(Table $ao_table, array $aa_config = []) {
 		$la_config = $aa_config + [
 				'referenceName' => $this->getScope($ao_table),
@@ -58,27 +65,35 @@ class DateBehavior extends Behavior/* implements PropertyMarshalInterface*/ {
 		parent::__construct($ao_table, $la_config);
 
 		$this->_tableLocator = $this->getConfig('tableLocator');
-		$this->datesTable = $this->getTableLocator()->get($this->getConfig('datesTable'), ['allowFallbackClass' => FALSE]);
+		$this->datesTable = $this->getTableLocator()->get($this->getConfig('datesTable'), ['allowFallbackClass' => false]);
 
 		$this->setupAssociations();
 	}
 
 
-	public function beforeFind(EventInterface $event, SelectQuery $query, ArrayObject $options): void {
+	/**
+	 * @param EventInterface $ao_event
+	 * @param SelectQuery $query
+	 * @param ArrayObject $ao_options
+	 * @return void
+	 * @noinspection PhpUnusedParameterInspection
+	 */
+	public function beforeFind(EventInterface $ao_event, SelectQuery $query, ArrayObject $ao_options): void {
 		if (!$this->getConfig('types')) {
 			return;
 		}
 
-		$contain = [];
-		$alias = $this->_table->getAlias();
-		$select = $query->clause('select');
+		$la_contain = [];
+		$ls_alias = $this->_table->getAlias();
+		$la_select = $query->clause('select');
 
-		$conditions = function (string $field, SelectQuery $query, array $select) {
-			return function (SelectQuery $q) use ($field, $query, $select) {
-				//$table = $q->getRepository();
-				//$q->where([$table->aliasField('locale') => $locale]);
-
-				if ($query->isAutoFieldsEnabled() || in_array($field, $select, TRUE) || in_array($this->_table->aliasField($field), $select, TRUE)) {
+		$lc_conditions = function (string $as_field, SelectQuery $ao_query, array $aa_select) {
+			return function (SelectQuery $q) use ($as_field, $ao_query, $aa_select) {
+				if (
+					$ao_query->isAutoFieldsEnabled() ||
+					in_array($as_field, $aa_select, true) ||
+					in_array($this->_table->aliasField($as_field), $aa_select, true)
+				) {
 					$q->select(['id', 'value']);
 				}
 
@@ -87,14 +102,14 @@ class DateBehavior extends Behavior/* implements PropertyMarshalInterface*/ {
 			};
 		};
 
-		/** @var DateType $le_type */
+		/** @var \Awyiss\Model\Behavior\Date\DateType $le_type */
 		foreach ($this->getConfig('types') as $le_type) {
-			$name = $alias . '_' . $le_type->value . '_date';
+			$ls_name = $ls_alias . '_' . $le_type->value . '_date';
 
-			$contain[ $name ]['queryBuilder'] = $conditions($le_type->value, $query, $select);
+			$la_contain[ $ls_name ]['queryBuilder'] = $lc_conditions($le_type->value, $query, $la_select);
 		}
 
-		$query->contain($contain);
+		$query->contain($la_contain);
 		$query->formatResults(fn(CollectionInterface $results) => $this->rowMapper($results), $query::PREPEND);
 	}
 
@@ -108,12 +123,11 @@ class DateBehavior extends Behavior/* implements PropertyMarshalInterface*/ {
 	 * of the autotable instance.
 	 *
 	 * @param Table $ao_table The table class to get a reference name for.
-	 *
 	 * @return string
 	 */
 	protected function getScope(Table $ao_table): string {
 		$ls_name = namespaceSplit($ao_table::class);
-		$ls_name = substr((string) end($ls_name), 0, -5);
+		$ls_name = substr((string)end($ls_name), 0, -5);
 		if (empty($ls_name)) {
 			$ls_name = $ao_table->getTable() ?: $ao_table->getAlias();
 		}
@@ -123,56 +137,60 @@ class DateBehavior extends Behavior/* implements PropertyMarshalInterface*/ {
 	}
 
 
-	protected function rowMapper(CollectionInterface $results): CollectionInterface {
-		return $results->map(function (EntityInterface|array|null $row) {
-			if ($row === NULL) {
-				return $row;
+	/**
+	 * @param CollectionInterface $ao_results
+	 * @return CollectionInterface
+	 */
+	protected function rowMapper(CollectionInterface $ao_results): CollectionInterface {
+		return $ao_results->map(function (EntityInterface|array|null $ax_row): EntityInterface|array|null {
+			if ($ax_row === null) {
+				return null;
 			}
 
-			$hydrated = $row instanceof EntityInterface;
+			$lb_hydrated = $ax_row instanceof EntityInterface;
 
-			$row['_dates'] = [];
-			/** @var DateType $le_type */
+			$ax_row['_dates'] = [];
+			/** @var \Awyiss\Model\Behavior\Date\DateType $le_type */
 			foreach ($this->getConfig('types') as $le_type) {
-				$name = $le_type->value . '_date';
-				$date = $row[ $name ];
+				$ls_name = $le_type->value . '_date';
+				$lo_date = $ax_row[ $ls_name ];
 
-				$row['_dates'][] = $row[ $name ] ? new Date($row[ $name ]->extract(), [
-					'markNew' => FALSE,
-					'useSetters' => FALSE,
-					'markClean' => TRUE,
-				]) : NULL;
+				$ax_row['_dates'][] = $ax_row[ $ls_name ] ? new Date($ax_row[ $ls_name ]->extract(), [
+					'markNew' => false,
+					'useSetters' => false,
+					'markClean' => true,
+				]) : null;
 
-				if ($date === NULL) {
-					$row[ $le_type->value ] = NULL;
+				if ($lo_date === null) {
+					$ax_row[ $le_type->value ] = null;
 
-					if ($hydrated) {
-						$row->setDirty($le_type->value, FALSE);
-						$row->setVirtual([$le_type->value], TRUE);
+					if ($lb_hydrated) {
+						$ax_row->setDirty($le_type->value, false);
+						$ax_row->setVirtual([$le_type->value], true);
 					}
 
-					unset($row[ $name ]);
+					unset($ax_row[ $ls_name ]);
 
 					continue;
 				}
 
-				$row[ $le_type->value ] = $row[ $name ]->value;
+				$ax_row[ $le_type->value ] = $ax_row[ $ls_name ]->value;
 
-				if ($hydrated) {
-					$row->setDirty($le_type->value, FALSE);
-					$row->setVirtual([$le_type->value], TRUE);
+				if ($lb_hydrated) {
+					$ax_row->setDirty($le_type->value, false);
+					$ax_row->setVirtual([$le_type->value], true);
 				}
 
-				unset($row[ $name ]);
+				unset($ax_row[ $ls_name ]);
 			}
 
-			if ($hydrated) {
-				$row['_dates'] = array_values(array_filter($row['_dates']));
-				$row->setDirty('_dates', FALSE);
+			if ($lb_hydrated) {
+				$ax_row['_dates'] = array_values(array_filter($ax_row['_dates']));
+				$ax_row->setDirty('_dates', false);
 			}
 
 
-			return $row;
+			return $ax_row;
 		});
 	}
 
@@ -185,48 +203,49 @@ class DateBehavior extends Behavior/* implements PropertyMarshalInterface*/ {
 			return;
 		}
 
-		$targetAlias = $this->datesTable->getAlias();
-		$alias = $this->_table->getAlias();
-		$tableLocator = $this->getTableLocator();
+		$ls_targetAlias = $this->datesTable->getAlias();
+		$ls_alias = $this->_table->getAlias();
+		$lo_tableLocator = $this->getTableLocator();
 
-		/** @var DateType $le_type */
+		/** @var \Awyiss\Model\Behavior\Date\DateType $le_type */
 		foreach ($this->getConfig('types') as $le_type) {
-			$name = $alias . '_' . $le_type->value . '_date';
+			$ls_name = $ls_alias . '_' . $le_type->value . '_date';
 
-			if (!$tableLocator->exists($name)) {
-				$fieldTable = $tableLocator->get($name, [
+			if (!$lo_tableLocator->exists($ls_name)) {
+				$lo_fieldTable = $lo_tableLocator->get($ls_name, [
 					'className' => $this->getConfig('datesTable'),
-					'alias' => $name,
+					'alias' => $ls_name,
 					'table' => $this->datesTable->getTable(),
 				]);
 			}
 			else {
-				$fieldTable = $tableLocator->get($name);
+				$lo_fieldTable = $lo_tableLocator->get($ls_name);
 			}
 
-			$conditions = [
-				$name . '.scope' => $this->getConfig('referenceName'),
-				$name . '.type' => $le_type->value,
+			$la_conditions = [
+				$ls_name . '.scope' => $this->getConfig('referenceName'),
+				$ls_name . '.type' => $le_type->value,
 			];
 
-			$this->_table->hasOne($name, [
-				'targetTable' => $fieldTable,
+			/** @noinspection PhpClassConstantAccessedViaChildClassInspection */
+			$this->_table->hasOne($ls_name, [
+				'targetTable' => $lo_fieldTable,
 				'foreignKey' => 'foreign_id',
 				'joinType' => SelectQuery::JOIN_TYPE_LEFT,
-				'conditions' => $conditions,
+				'conditions' => $la_conditions,
 				'propertyName' => $le_type->value . '_date',
 			]);
 		}
 
-		$this->_table->hasMany($targetAlias, [
+		$this->_table->hasMany($ls_targetAlias, [
 			'className' => $this->getConfig('datesTable'),
 			'foreignKey' => 'foreign_id',
 			'strategy' => 'subquery',
 			'conditions' => [
-				$targetAlias . '.scope' => $this->getConfig('referenceName'),
+				$ls_targetAlias . '.scope' => $this->getConfig('referenceName'),
 			],
 			'propertyName' => '_dates',
-			'dependent' => TRUE,
+			'dependent' => true,
 		]);
 	}
 }

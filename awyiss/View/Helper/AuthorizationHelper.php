@@ -7,8 +7,6 @@ namespace Awyiss\View\Helper;
 use Awyiss\Authorization\IdentityPermissionsInterface;
 use Awyiss\Authorization\PermissionOption\PermissionOptionInterface;
 use Awyiss\Model\Entity;
-use Awyiss\Model\Entity\User;
-use Awyiss\Model\Entity\UsersExternal;
 use Cake\Utility\Inflector;
 use Cake\View\Helper;
 use RuntimeException;
@@ -23,15 +21,14 @@ class AuthorizationHelper extends Helper {
 	 */
 	protected array $_defaultConfig = [
 		'additionalData' => [],
-		'identity' => NULL,
-		'policiesRealm' => NULL,
-		'scope' => NULL,
+		'identity' => null,
+		'policiesRealm' => null,
+		'scope' => null,
 	];
 
 
 	/**
 	 * @return array
-	 *
 	 * @noinspection PhpUnused
 	 */
 	public function getAdditionalData(): array {
@@ -41,13 +38,11 @@ class AuthorizationHelper extends Helper {
 
 	/**
 	 * @param array $aa_data
-	 *
 	 * @return $this
-	 *
 	 * @noinspection PhpUnused
 	 */
 	public function setAdditionalData(array $aa_data): static {
-		$this->setConfig('additionalData', $aa_data, FALSE);
+		$this->setConfig('additionalData', $aa_data, false);
 
 
 		return $this;
@@ -56,11 +51,10 @@ class AuthorizationHelper extends Helper {
 
 	/**
 	 * @return $this
-	 *
 	 * @noinspection PhpUnused
 	 */
 	public function resetAdditionalData(): static {
-		$this->setConfig('additionalData', [], FALSE);
+		$this->setConfig('additionalData', [], false);
 
 
 		return $this;
@@ -89,9 +83,7 @@ class AuthorizationHelper extends Helper {
 	 * Save the given identity to the config
 	 *
 	 * @param IdentityPermissionsInterface $ao_identity
-	 *
 	 * @return $this
-	 *
 	 * @noinspection PhpUnused
 	 */
 	public function setIdentity(IdentityPermissionsInterface $ao_identity): static {
@@ -106,7 +98,6 @@ class AuthorizationHelper extends Helper {
 	 * Resets the identity so that `getIdentity()` will use the default one provided by `_getIdentity()`
 	 *
 	 * @return $this
-	 *
 	 * @noinspection PhpUnused
 	 */
 	public function resetIdentity(): static {
@@ -139,9 +130,7 @@ class AuthorizationHelper extends Helper {
 	 * Returns the currently set scope
 	 *
 	 * @param string $as_scope
-	 *
 	 * @return $this
-	 *
 	 * @noinspection PhpUnused
 	 */
 	public function setScope(string $as_scope): static {
@@ -156,7 +145,6 @@ class AuthorizationHelper extends Helper {
 	 * Resets the scope so that `getScope()` will use the name of the view's controller name.
 	 *
 	 * @return $this
-	 *
 	 * @noinspection PhpUnused
 	 */
 	public function resetScope(): static {
@@ -168,36 +156,32 @@ class AuthorizationHelper extends Helper {
 
 
 	/**
-	 * For a list of given identifiers, return TRUE or FALSE whether they're accessible inside the current scope
+	 * For a list of given identifiers, return true or false whether they're accessible inside the current scope
 	 * for the current identity.
 	 *
 	 * See \Awyiss\Authorization\Permission\PermissionCollection::scopeIsAccessible() how $ax_identifier is used.
 	 *
-	 * @param string|array ...$ax_identifier
-	 *
+	 * @param array|string ...$ax_identifier
 	 * @return bool
 	 * @throws \Exception
-	 *
-	 * @see          \Awyiss\Authorization\Permission\PermissionCollection::scopeIsAccessible()
-	 *
+	 * @see \Awyiss\Authorization\Permission\PermissionCollection::scopeIsAccessible()
 	 * @noinspection PhpUnused
 	 */
-	public function isAccessible(string | array ...$ax_identifier): bool {
-		return $this->scopeIsAccessible($this->getScope(), NULL, ...$ax_identifier);
+	public function isAccessible(string|array ...$ax_identifier): bool {
+		return $this->scopeIsAccessible($this->getScope(), null, ...$ax_identifier);
 	}
 
 
 	/**
-	 * For a list of given identifiers, return TRUE or FALSE whether they're accessible inside the given scope
+	 * For a list of given identifiers, return true or false whether they're accessible inside the given scope
 	 * for the given identity.
 	 *
 	 * See \Awyiss\Authorization\Permission\PermissionCollection::scopeIsAccessible() how $ax_identifier is used.
 	 *
 	 * @throws \Exception
-	 *
 	 * @see \Awyiss\Authorization\Permission\PermissionCollection::scopeIsAccessible()
 	 */
-	public function scopeIsAccessible(string $as_scope, ?array $aa_additionalData = NULL, string | array ...$ax_identifier): ?bool {
+	public function scopeIsAccessible(string $as_scope, ?array $aa_additionalData = null, string|array ...$ax_identifier): ?bool {
 		//Get the currently assigned permissions from the identity object, resp. their permission collection
 		$lo_identity = $this->getIdentity();
 
@@ -215,15 +199,13 @@ class AuthorizationHelper extends Helper {
 	 * For example `element\authorization\permission\simple_radio`
 	 *
 	 * @param PermissionOptionInterface $ao_permission
-	 * @param null|Entity $ao_entity
-	 * @param null|string $as_fileName
-	 * @param null|string $as_subDir
-	 *
+	 * @param Entity|null $ao_entity
+	 * @param string|null $as_fileName
+	 * @param string|null $as_subDir
 	 * @return string
-	 *
 	 * @noinspection PhpUnused
 	 */
-	public function permissionOptions(PermissionOptionInterface $ao_permission, ?Entity $ao_entity = NULL, ?string $as_fileName = NULL, ?string $as_subDir = NULL): string {
+	public function permissionOptions(PermissionOptionInterface $ao_permission, ?Entity $ao_entity = null, ?string $as_fileName = null, ?string $as_subDir = null): string {
 		$ls_subDir = 'authorization' . DS . 'permission_option';
 		if (!empty($as_subDir)) {
 			$ls_subDir = trim($as_subDir, DS) . DS . $ls_subDir;
@@ -256,7 +238,7 @@ class AuthorizationHelper extends Helper {
 	 * Retreive the identity attribute from the current request
 	 */
 	protected function _getIdentity(): IdentityPermissionsInterface {
-		/** @var IdentityPermissionsInterface|User|UsersExternal $lo_identity */
+		/** @var IdentityPermissionsInterface|\Awyiss\Model\Entity\User|\Awyiss\Model\Entity\UsersExternal $lo_identity */
 		$lo_identity = $this->getView()->getRequest()->getAttribute('identity');
 		if (!($lo_identity instanceof IdentityPermissionsInterface)) {
 			throw new RuntimeException(sprintf('Object `%s` does not implement `%s`', get_class($lo_identity), IdentityPermissionsInterface::class));

@@ -4,6 +4,7 @@
 namespace AwyissBake\Command\Bake;
 
 
+use Bake\Command\TemplateCommand as BaseTemplateCommand;
 use Cake\Console\Arguments;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Core\Configure;
@@ -18,7 +19,7 @@ use InvalidArgumentException;
 /**
  * Task class for creating view template files.
  */
-class TemplateCommand extends \Bake\Command\TemplateCommand {
+class TemplateCommand extends BaseTemplateCommand {
 	/**
 	 * @inheritDoc
 	 */
@@ -38,32 +39,29 @@ class TemplateCommand extends \Bake\Command\TemplateCommand {
 
 
 	/**
+	 * Combines `\Bake\Command\TemplateCommand::getTemplatePath` and `\Bake\Command\BakeCommand::getTemplatePath`, but honors the `folder`-option.
+	 *
 	 * @inheritDoc
-	 *
-	 * Combines `\Bake\Command\TemplateCommand::getTemplatePath` and `\Bake\Command\BakeCommand::getTemplatePath`,
-	 * but honors the `folder`-option.
-	 *
 	 * @param Arguments $ao_args The arguments
 	 * @param string|null $as_container
-	 *
-	 * @see          \Bake\Command\BakeCommand::getTemplatePath()
-	 * @see          \Bake\Command\TemplateCommand::getTemplatePath()
-	 *
+	 * @see \Bake\Command\BakeCommand::getTemplatePath()
+	 * @see \Bake\Command\TemplateCommand::getTemplatePath()
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function getTemplatePath(Arguments $ao_args, ?string $as_container = NULL): string {
-		$la_paths = (array) Configure::read('App.paths.templates');
+	public function getTemplatePath(Arguments $ao_args, ?string $as_container = null): string {
+		$la_paths = (array)Configure::read('App.paths.templates');
 		if (empty($la_paths)) {
 			throw new InvalidArgumentException('Could not read template paths. ' . 'Ensure `App.paths.templates` is defined in your application configuration.');
 		}
 
 		$ls_path = reset($la_paths);
 
-		$lb_pathFound = FALSE;
-		if ($ls_folder = $ao_args->getOption('folder')) {
+		$lb_pathFound = false;
+		$ls_folder = $ao_args->getOption('folder');
+		if ($ls_folder) {
 			if (isset($la_paths[ $ls_folder ])) {
 				$ls_path = $la_paths[ $ls_folder ];
-				$lb_pathFound = TRUE;
+				$lb_pathFound = true;
 			}
 		}
 
@@ -96,14 +94,14 @@ class TemplateCommand extends \Bake\Command\TemplateCommand {
 	 * This variation is required so the bake command outputs a .twig template file
 	 * instead of the default .php extension
 	 */
-	/*public function bake (Arguments $ao_args, ConsoleIo $ao_io, string $as_template, $ax_content = '', ?string $as_outputFile = NULL): void {
+	/*public function bake (Arguments $ao_args, ConsoleIo $ao_io, string $as_template, $ax_content = '', ?string $as_outputFile = null): void {
 		$ls_outputFile = $as_outputFile;
-		if ($ls_outputFile === NULL) {
+		if ($ls_outputFile === null) {
 			$ls_outputFile = $as_template;
 		}
 
 		$lx_content = $ax_content;
-		if ($lx_content === TRUE) {
+		if ($lx_content === true) {
 			$lx_content = $this->getContent($ao_args, $ao_io, $as_template);
 		}
 

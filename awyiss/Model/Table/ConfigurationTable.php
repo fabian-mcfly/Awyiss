@@ -22,7 +22,7 @@ class ConfigurationTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public const ATTRIBUTABLE = FALSE;
+	public const ATTRIBUTABLE = false;
 	/**
 	 * @inheritDoc
 	 */
@@ -58,7 +58,6 @@ class ConfigurationTable extends Table {
 	 *
 	 * @param Validator $ao_validator The validator that can be modified to
 	 * add some rules to it.
-	 *
 	 * @return Validator
 	 */
 	public function validationDefault(Validator $ao_validator): Validator {
@@ -111,7 +110,7 @@ class ConfigurationTable extends Table {
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
 
-		//$ao_validator->integer('id')->allowEmptyString('id', NULL, 'create');
+		//$ao_validator->integer('id')->allowEmptyString('id', null, 'create');
 		//$ao_validator->scalar('realm')->maxLength('realm', 20)->requirePresence('realm')->notEmptyString('realm');
 		//$ao_validator->scalar('scope')->maxLength('scope', 50)->requirePresence('scope')->notEmptyString('scope');
 		//$ao_validator->scalar('identifier')->maxLength('identifier', 255)->requirePresence('identifier', 'create')->notEmptyString('identifier');
@@ -126,9 +125,7 @@ class ConfigurationTable extends Table {
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 *
 	 * @param RulesChecker|BaseRulesChecker $ao_rules The rules object to be modified.
-	 *
 	 * @return RulesChecker
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
@@ -140,7 +137,7 @@ class ConfigurationTable extends Table {
 					'identifier',
 					'languageShortcode',
 				],
-				['authorize' => ['skip' => TRUE]]
+				['authorize' => ['skip' => true]]
 			),
 			'identifierUniqueForScope',
 			[
@@ -151,7 +148,7 @@ class ConfigurationTable extends Table {
 
 
 		$ao_rules->add(function (Configuration $ao_entity): bool {
-			return in_array($ao_entity->realm, Awyiss::getRealms(), TRUE);
+			return in_array($ao_entity->realm, Awyiss::getRealms(), true);
 		}, 'validRealm', [
 			'errorField' => 'realm',
 			'message' => __d($this->getI18nDomain(), 'error_valid_realm'),
@@ -172,7 +169,7 @@ class ConfigurationTable extends Table {
 
 		$ao_rules->add(function (Configuration $ao_entity/*, array $aa_options*/): bool|string {
 			if ($ao_entity->getError('scope') || $ao_entity->getError('realm')) {
-				return FALSE;
+				return false;
 			}
 
 
@@ -192,14 +189,14 @@ class ConfigurationTable extends Table {
 
 		$ao_rules->add(function (Configuration $ao_entity, array $aa_options) use ($ao_rules): bool {
 			if (!$ao_entity->get('languageShortcode')) {
-				return TRUE;
+				return true;
 			}
 
 			$lo_existsIn = $ao_rules->existsIn([
 				'realm',
 				'languageShortcode',
 			], 'Languages', [
-				'authorize' => ['skip' => TRUE],
+				'authorize' => ['skip' => true],
 				'errorField' => 'languageShortcode',
 				'message' => __dfx($this->getI18nDomain(), 'validation', 'configuration', 'error_language_exists'),
 			]);

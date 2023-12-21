@@ -16,7 +16,7 @@ class AwyissExtension extends AbstractExtension {
 	/**
 	 * Returns a list of tests to add to the existing list.
 	 *
-	 * @return TwigTest[]
+	 * @return array<TwigTest>
 	 */
 	public function getTests(): array {
 		return [
@@ -42,7 +42,7 @@ class AwyissExtension extends AbstractExtension {
 	/**
 	 * Returns a list of functions to add to the existing list.
 	 *
-	 * @return TwigFunction[]
+	 * @return array<TwigFunction>
 	 */
 	public function getFunctions(): array {
 		return [
@@ -69,7 +69,7 @@ class AwyissExtension extends AbstractExtension {
 			new TwigFunction('__df', '__df'),
 			new TwigFunction('__dfx', '__dfx'),
 
-			new TwigFunction('naturalSort', function (array $aa_data, int | string $as_key = NULL): array {
+			new TwigFunction('naturalSort', function (array $aa_data, int|string|null $as_key = null): array {
 				uasort($aa_data, function ($a, $b) use ($as_key) {
 					if (!empty($as_key)) {
 						return strnatcasecmp($a[ $as_key ], $b[ $as_key ]);
@@ -89,7 +89,7 @@ class AwyissExtension extends AbstractExtension {
 				}
 
 
-				return NULL;
+				return null;
 			}),
 		];
 	}

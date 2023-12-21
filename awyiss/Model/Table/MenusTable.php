@@ -4,10 +4,8 @@
 namespace Awyiss\Model\Table;
 
 
-use Awyiss\Model\Entity\Menu;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
-use Cake\ORM\Association\HasMany;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Validation\Validator;
 
@@ -15,16 +13,15 @@ use Cake\Validation\Validator;
 /**
  * Menus Model
  *
- * @property MenuEntriesTable&HasMany $AllMenuEntries
- * @property MenuEntriesTable&HasMany $MenuEntries
- *
- * @method Menu newDefaultEntity(array $aa_additionalData = [])
+ * @property MenuEntriesTable&\Awyiss\ORM\Association\HasMany $AllMenuEntries
+ * @property MenuEntriesTable&\Awyiss\ORM\Association\HasMany $MenuEntries
+ * @method \Awyiss\Model\Entity\Menu newDefaultEntity(array $aa_additionalData = [])
  */
 class MenusTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public const ATTRIBUTABLE = FALSE;
+	public const ATTRIBUTABLE = false;
 	/**
 	 * @inheritDoc
 	 */
@@ -44,9 +41,9 @@ class MenusTable extends Table {
 
 		//Used only internally to delete all entries, no matter the current language
 		$this->hasMany('AllMenuEntries', [
-			'cascadeCallbacks' => TRUE,
+			'cascadeCallbacks' => true,
 			'className' => 'MenuEntries',
-			'dependent' => TRUE,
+			'dependent' => true,
 			'foreignKey' => 'menu_id',
 		]);
 
@@ -62,7 +59,6 @@ class MenusTable extends Table {
 	 *
 	 * @param Validator $ao_validator The validator that can be modified to
 	 * add some rules to it.
-	 *
 	 * @return Validator
 	 * @noinspection DuplicatedCode
 	 */
@@ -116,9 +112,7 @@ class MenusTable extends Table {
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 *
 	 * @param RulesChecker|BaseRulesChecker $ao_rules The rules object to be modified.
-	 *
 	 * @return RulesChecker
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {

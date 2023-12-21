@@ -4,6 +4,9 @@
 namespace Awyiss\Model\Behavior\Date;
 
 
+/**
+ * Date fields usable in the `dates`-table
+ */
 enum DateType: string {
 	case EVENT_START = 'event_start';
 	case EVENT_END = 'event_end';

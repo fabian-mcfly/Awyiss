@@ -36,7 +36,7 @@
 
 				{% block formControlContentTemplateId %}
 					{{ helper_Form_control('content_template_id', {
-						empty: FALSE,
+						empty: false,
 						options: ao_contentTemplates.combine('id', 'title')
 					}) }}
 				{% endblock %}
@@ -56,13 +56,13 @@
 				{% endblock %}
 
 				{% block formControlPageId %}
-					{{ helper_Categories_control('page_id', {empty: FALSE, val: ao_content.page_id}) }}
+					{{ helper_Categories_control('page_id', {empty: false, val: ao_content.page_id}) }}
 				{% endblock %}
 
 				{% block formControlContentArea %}
 					{{ helper_Form_control('content_area_id', {
 						disabled: aa_contentAreas.unavailable|column('id'),
-						empty: FALSE,
+						empty: false,
 						options: combine(aa_contentAreas.all|column('id'), aa_contentAreas.all|column('label'))
 					}) }}
 				{% endblock %}

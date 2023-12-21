@@ -29,7 +29,7 @@
 					<td>{{ lo_menu.identifier }}</td>
 					<td>{{ lo_menu.active }}</td>
 					<td class="actions">
-						{% if helper_Authorization_scopeIsAccessible('MenuEntries', NULL, ['read']) %}
+						{% if helper_Authorization_scopeIsAccessible('MenuEntries', null, ['read']) %}
 							{{ helper_Html_link(__('view_entries'), {controller: 'MenuEntries', action: 'overview', menu_id: lo_menu.id}) }}
 						{% endif %}
 

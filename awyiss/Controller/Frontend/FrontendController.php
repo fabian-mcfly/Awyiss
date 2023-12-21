@@ -14,7 +14,7 @@ class FrontendController extends AppController {
 	/**
 	 * @throws \Exception
 	 */
-	public function initialize (): void {
+	public function initialize(): void {
 		AppController::initialize();
 
 		$this->viewBuilder()->setClassName('Frontend');
@@ -24,7 +24,7 @@ class FrontendController extends AppController {
 	/**
 	 * @return void
 	 */
-	public function index (): void {
+	public function index(): void {
 	}
 
 

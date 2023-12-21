@@ -21,7 +21,7 @@ class AuthorizationListener implements EventListenerInterface {
 
 
 	/**
-	 * @var array|array[]
+	 * @var array|array<array>
 	 */
 	protected array $initializedModels = [
 		'authorizationService' => [],
@@ -54,7 +54,6 @@ class AuthorizationListener implements EventListenerInterface {
 	 *
 	 * @param Event $ao_event
 	 * @param AuthorizationServiceInterface $ao_authorizationService
-	 *
 	 * @noinspection PhpUnused
 	 * @noinspection PhpUnusedParameterInspection
 	 */
@@ -81,9 +80,7 @@ class AuthorizationListener implements EventListenerInterface {
 	 * If not, save the model to be handled in `authenticationAfterAuthenticate`.
 	 *
 	 * @param Event $ao_event
-	 *
 	 * @return void
-	 *
 	 * @noinspection PhpUnused
 	 * @noinspection PhpUnusedParameterInspection
 	 */
@@ -108,7 +105,6 @@ class AuthorizationListener implements EventListenerInterface {
 	 * Return it, in case it is set.
 	 *
 	 * @param Event $ao_event
-	 *
 	 * @noinspection PhpUnused
 	 * @noinspection PhpUnusedParameterInspection
 	 */
@@ -125,7 +121,6 @@ class AuthorizationListener implements EventListenerInterface {
 	 * the name of a page role.
 	 *
 	 * @param Event $ao_event
-	 *
 	 * @noinspection PhpUnused
 	 */
 	public function requestPolicyClass(Event $ao_event): void {

@@ -40,7 +40,6 @@ class AttributesTask extends Task/* implements AddInterface*/ {
 
 	/**
 	 * @inheritDoc
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function run(array $aa_data, int $ai_jobId): void {
@@ -48,7 +47,7 @@ class AttributesTask extends Task/* implements AddInterface*/ {
 		$la_diff = Hash::diff($aa_data['old'], $aa_data['new']);
 
 		$ls_column = $aa_data['new']['identifier'];
-		[$ls_type, $lx_length] = $this->getTypeAndLength($aa_data['new']['type'] ?? NULL);
+		[$ls_type, $lx_length] = $this->getTypeAndLength($aa_data['new']['type'] ?? null);
 
 		//Type needs to be in the format of ':string?[50]', where ? marks the field as nullable and [50] sets the length.
 		$ls_column .= ':' . $ls_type;
@@ -71,14 +70,14 @@ class AttributesTask extends Task/* implements AddInterface*/ {
 
 
 		$ls_attributesTable = 'attributes_' . $aa_data['new']['scope'];
-		$lb_bakeOldModel = FALSE;
+		$lb_bakeOldModel = false;
 		$la_commands = [];
 		$ls_foreignKey = Inflector::singularize($aa_data['new']['scope']);
-		$lb_scopeIsPageRole = FALSE;
+		$lb_scopeIsPageRole = false;
 		if (defined('PAGEROLE_' . strtoupper($ls_foreignKey))) {
 			if ($ls_foreignKey !== 'page') {
 				$ls_foreignKey = 'page';
-				$lb_scopeIsPageRole = TRUE;
+				$lb_scopeIsPageRole = true;
 			}
 		}
 		$ls_foreignKey .= '_id';
@@ -96,7 +95,8 @@ class AttributesTask extends Task/* implements AddInterface*/ {
 		}
 		else {
 			//The scope of the attribute has changed.
-			if ($lb_changedScope = isset($la_diff['scope'])) {
+			$lb_changedScope = isset($la_diff['scope']);
+			if ($lb_changedScope) {
 				//We not only need to add the attribute to the new table, but also remove it from the old one.
 				$lb_bakeOldModel = $this->buildAlterOldTableCommands($la_commands, $aa_data, $ls_folder);
 			}
@@ -120,12 +120,11 @@ class AttributesTask extends Task/* implements AddInterface*/ {
 	 * Splits strings into valid phinx column types and length
 	 *   "varchar(255)" => ['string', 255]
 	 *   "int(10,4)" => ['integer', '10,4']
-	 *   "tinyint" => ['tinyint', NULL]
+	 *   "tinyint" => ['tinyint', null]
 	 *
 	 * If no valid type is found, 'string' is returned
 	 *
-	 * @param NULL|string $as_type
-	 *
+	 * @param string|null $as_type
 	 * @return array
 	 */
 	public function getTypeAndLength(?string $as_type): array {
@@ -155,7 +154,7 @@ class AttributesTask extends Task/* implements AddInterface*/ {
 		}
 
 
-		return [$la_typeMatches[1], $la_typeMatches[2] ?: NULL];
+		return [$la_typeMatches[1], $la_typeMatches[2] ?: null];
 	}
 
 
@@ -164,7 +163,6 @@ class AttributesTask extends Task/* implements AddInterface*/ {
 	 * @param string $as_folder
 	 * @param array $la_commands
 	 * @param array $aa_data
-	 *
 	 * @return bool
 	 */
 	protected function buildAlterOldTableCommands(array &$aa_commands, array $aa_data, string $as_folder): bool {
@@ -175,7 +173,7 @@ class AttributesTask extends Task/* implements AddInterface*/ {
 		$ls_oldTableFile = ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Table' . DS . Inflector::camelize($ls_oldAttributesTable) . 'Table.php';
 		$ls_oldEntityFile = ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Entity' . DS . Inflector::classify($ls_oldAttributesTable) . '.php';
 
-		$lb_bakeOldModel = TRUE;
+		$lb_bakeOldModel = true;
 
 		/*
 		 * If there are three or fewer columns in the table, the old attributes-table is no longer required.
@@ -195,7 +193,7 @@ class AttributesTask extends Task/* implements AddInterface*/ {
 				$aa_commands[] = 'unlink ' . $ls_oldEntityFile;
 			}
 
-			$lb_bakeOldModel = FALSE;
+			$lb_bakeOldModel = false;
 		}
 		else {
 			if (file_exists($ls_oldTableFile)) {
@@ -249,7 +247,6 @@ class AttributesTask extends Task/* implements AddInterface*/ {
 	 * @param array $aa_data
 	 * @param string $as_attributesTable
 	 * @param bool $ab_bakeOldModel
-	 *
 	 * @return array
 	 */
 	protected function createJob(array $aa_commands, array $aa_data, bool $ab_scopeIsPageRole, bool $ab_bakeOldModel): void {
@@ -265,7 +262,7 @@ class AttributesTask extends Task/* implements AddInterface*/ {
 		$aa_commands[] = 'bin/cake schema_cache clear';
 
 		//And bake the model
-		$ls_forPageRole = $ab_scopeIsPageRole ? (' --for-pagerole ' . $aa_data['new']['scope']) : NULL;
+		$ls_forPageRole = $ab_scopeIsPageRole ? ' --for-pagerole ' . $aa_data['new']['scope'] : null;
 
 		if (empty($aa_data['new']['deleted'])) {
 			$aa_commands[] = 'bin/cake bake model ' . $ls_attributesTable . ' --namespace ' . CUSTOM_DIR . ' --no-fixture --no-test --update --force' . $ls_forPageRole;
@@ -273,7 +270,7 @@ class AttributesTask extends Task/* implements AddInterface*/ {
 
 		if ($ab_bakeOldModel) {
 			//If the old table was changed but still exists, bake the model for the old table as well.
-			$ls_forPageRole = NULL;
+			$ls_forPageRole = null;
 			if (defined('PAGEROLE_' . strtoupper(Inflector::singularize($aa_data['old']['scope'])))) {
 				$ls_forPageRole = ' --for-pagerole ' . $aa_data['old']['scope'];
 			}
@@ -288,8 +285,8 @@ class AttributesTask extends Task/* implements AddInterface*/ {
 		//Queue the job.
 		$this->QueuedJobs->createJob('Queue.Execute', [
 			'command' => '(' . implode(' && ', array_map('escapeshellcmd', $aa_commands)) . ')',
-			'escape' => FALSE,
-			'log' => TRUE,
+			'escape' => false,
+			'log' => true,
 		], [
 			'group' => 'general',
 			'priority' => 1,
@@ -305,7 +302,6 @@ class AttributesTask extends Task/* implements AddInterface*/ {
 	 * @param bool $ab_changedScope
 	 * @param string $as_column
 	 * @param string $as_folder
-	 *
 	 * @return void
 	 */
 	protected function buildAlterTableCommands(array &$aa_commands, array $aa_data, array $aa_diff, bool $ab_changedScope, string $as_column, string $as_folder): void {

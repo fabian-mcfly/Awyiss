@@ -25,7 +25,6 @@ class PermissionOptionCollection extends ObjectRegistry {
 	 * Constructor
 	 *
 	 * @param array $aa_config Configuration
-	 *
 	 * @throws Exception
 	 */
 	public function __construct(string $as_scope, array $aa_config = []) {
@@ -57,7 +56,6 @@ class PermissionOptionCollection extends ObjectRegistry {
 	 * This is a convenient proxy method for `static::load` that returns `$this` instead of the permission instance
 	 *
 	 * @throws Exception
-	 *
 	 * @see load()
 	 */
 	public function add(string $as_identifier, array $aa_config = []): static {
@@ -75,12 +73,9 @@ class PermissionOptionCollection extends ObjectRegistry {
 	 *
 	 * @param string $as_identifier The name/class of the object to load.
 	 * @param array<string, mixed> $aa_config Additional settings to use when loading the object.
-	 *
 	 * @return mixed
-	 *
 	 * @throws Exception
 	 * @throws RuntimeException
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function load(string $as_identifier, array $aa_config = []): PermissionOptionInterface {
@@ -120,9 +115,7 @@ class PermissionOptionCollection extends ObjectRegistry {
 	 * @param class-string<PermissionOptionInterface> $as_class Permission class.
 	 * @param string $as_alias Permission alias.
 	 * @param array $aa_config Config array.
-	 *
 	 * @return PermissionOptionInterface
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	protected function _create($as_class, string $as_alias, array $aa_config): PermissionOptionInterface {
@@ -141,28 +134,23 @@ class PermissionOptionCollection extends ObjectRegistry {
 	 * Resolves permission class name.
 	 *
 	 * @param string $as_class Class name to be resolved.
-	 *
-	 * @return string|NULL
-	 * @psalm-return class-string|NULL
-	 *
+	 * @return string|null
+	 * @psalm-return class-string|null
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	protected function _resolveClassName(string $as_class): ?string {
 		$ls_className = App::className($as_class);
 
 
-		return is_string($ls_className) ? $ls_className : NULL;
+		return is_string($ls_className) ? $ls_className : null;
 	}
 
 
 	/**
 	 * @param string $as_class Missing class.
-	 * @param NULL|string $as_plugin Class plugin.
-	 *
+	 * @param string|null $as_plugin Class plugin.
 	 * @return void
-	 *
 	 * @throws Exception
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	protected function _throwMissingClassError(string $as_class, ?string $as_plugin): void {

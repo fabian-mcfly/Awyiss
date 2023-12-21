@@ -1,20 +1,13 @@
-<?php /** @noinspection PhpMultipleClassDeclarationsInspection */
-
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 
 namespace Awyiss;
 
 
-use Awyiss\Configuration\AbstractConfigOptions;
-use Awyiss\Configuration\ConfigOption;
-use Awyiss\Configuration\ConfigOptionCollection;
 use Awyiss\Configuration\ConfigOptionsProvider;
 use Awyiss\Controller\ControllerFactory;
 use Awyiss\Event\EventListenersProvider;
 use Awyiss\Middleware\RoutingMiddleware;
-use Awyiss\Model\Entity\PageRole;
 use Awyiss\Model\Table;
 use Awyiss\ORM\Locator\TableLocator;
 use Awyiss\Routing\Router;
@@ -35,8 +28,6 @@ use Cake\Routing\Middleware\AssetMiddleware;
 use Cake\Routing\RouteBuilder;
 use Cake\Utility\Inflector;
 use Composer\Autoload\ClassLoader;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -54,20 +45,18 @@ class Awyiss extends BaseApplication {
 	 */
 	final public const REALM_BACKEND = 'Backend';
 	protected ClassLoader $classLoader;
-	protected static ?string $realm = NULL;
-	protected static ?string $language = NULL;
+	protected static ?string $realm = null;
+	protected static ?string $language = null;
 
 
 	/**
 	 * @inheritDoc
-	 *
 	 * @param ClassLoader $ao_loader
-	 * @param NULL|EventManagerInterface $ao_eventManager Application event manager instance.
-	 * @param NULL|ControllerFactoryInterface $ao_controllerFactory Controller factory.
-	 *
+	 * @param EventManagerInterface|null $ao_eventManager Application event manager instance.
+	 * @param ControllerFactoryInterface|null $ao_controllerFactory Controller factory.
 	 * @noinspection PhpMissingParentConstructorInspection
 	 */
-	public function __construct(ClassLoader $ao_loader, ?EventManagerInterface $ao_eventManager = NULL, ?ControllerFactoryInterface $ao_controllerFactory = NULL) {
+	public function __construct(ClassLoader $ao_loader, ?EventManagerInterface $ao_eventManager = null, ?ControllerFactoryInterface $ao_controllerFactory = null) {
 		$this->classLoader = $ao_loader;
 		$this->plugins = Plugin::getCollection();
 		$this->_eventManager = $ao_eventManager ?: EventManager::instance();
@@ -79,16 +68,19 @@ class Awyiss extends BaseApplication {
 
 	/**
 	 * @inheritDoc
-	 *
 	 * @return void
 	 * @throws \ReflectionException
 	 */
 	public function bootstrap(): void {
 		require_once $this->configDir . 'bootstrap.php';
-		if (is_file($ls_file = CUSTOM_CONFIG . 'bootstrap.php')) {
+
+		$ls_file = CUSTOM_CONFIG . 'bootstrap.php';
+		if (is_file($ls_file)) {
 			require_once $ls_file;
 		}
-		if (is_file($ls_file = ENV_CUSTOM_CONFIG . 'bootstrap.php')) {
+
+		$ls_file = ENV_CUSTOM_CONFIG . 'bootstrap.php';
+		if (is_file($ls_file)) {
 			require_once $ls_file;
 		}
 
@@ -96,7 +88,7 @@ class Awyiss extends BaseApplication {
 		 * At this point we know where the customer-specific files will be.
 		 * so we add the path to the autoloader for the customer-specific namespace
 		 */
-		$this->classLoader->addPsr4(CUSTOM_NAMESPACE . '\\', [ROOT . DS . CUSTOM_DIR], TRUE);
+		$this->classLoader->addPsr4(CUSTOM_NAMESPACE . '\\', [ROOT . DS . CUSTOM_DIR], true);
 
 
 		EventListenersProvider::loadListener('general_events', 'Global');
@@ -106,27 +98,30 @@ class Awyiss extends BaseApplication {
 			Configure::write('Bake.theme', 'AwyissBake');
 			EventListenersProvider::loadListener('general_events', 'Bake');
 
-			FactoryLocator::add('Table', (new TableLocator())->allowFallbackClass(TRUE)->setFallbackClassName(Table::class));
+			FactoryLocator::add('Table', (new TableLocator())->allowFallbackClass(true)->setFallbackClassName(Table::class));
 		}
 		else {
-			FactoryLocator::add('Table', (new TableLocator())->allowFallbackClass(FALSE));
+			FactoryLocator::add('Table', (new TableLocator())->allowFallbackClass(false));
 		}
 
 		//$this->addPlugin('Authentication');
 		//$this->addPlugin('Queue');
 
-		$la_plugins = @include $this->configDir . 'plugins.php';
+		$la_plugins = include $this->configDir . 'plugins.php';
 		if (is_array($la_plugins)) {
 			$this->plugins->addFromConfig($la_plugins);
 		}
 
-		if (is_file($ls_file = CUSTOM_CONFIG . 'plugins.php')) {
+		$ls_file = CUSTOM_CONFIG . 'plugins.php';
+		if (is_file($ls_file)) {
 			$la_plugins = include $ls_file;
 			if (is_array($la_plugins)) {
 				$this->plugins->addFromConfig($la_plugins);
 			}
 		}
-		if (is_file($ls_file = ENV_CUSTOM_CONFIG . 'plugins.php')) {
+
+		$ls_file = ENV_CUSTOM_CONFIG . 'plugins.php';
+		if (is_file($ls_file)) {
 			$la_plugins = include $ls_file;
 			if (is_array($la_plugins)) {
 				$this->plugins->addFromConfig($la_plugins);
@@ -139,11 +134,8 @@ class Awyiss extends BaseApplication {
 
 	/**
 	 * @inheritDoc
-	 *
 	 * @param MiddlewareQueue $ao_middlewareQueue The middleware queue to set up.
-	 *
 	 * @return MiddlewareQueue The updated middleware queue.
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function middleware(MiddlewareQueue $ao_middlewareQueue): MiddlewareQueue {
@@ -164,11 +156,8 @@ class Awyiss extends BaseApplication {
 
 	/**
 	 * @inheritDoc
-	 *
 	 * @param RouteBuilder $ao_routes A route builder to add routes into.
-	 *
 	 * @return void
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function routes(RouteBuilder $ao_routes): void {
@@ -181,11 +170,13 @@ class Awyiss extends BaseApplication {
 			 * - for Awyiss
 			 */
 
-			if (is_file($ls_file = ENV_CUSTOM_CONFIG . 'routes_backend.php')) {
+			$ls_file = ENV_CUSTOM_CONFIG . 'routes_backend.php';
+			if (is_file($ls_file)) {
 				require_once $ls_file;
 			}
 
-			if (is_file($ls_file = CUSTOM_CONFIG . 'routes_backend.php')) {
+			$ls_file = CUSTOM_CONFIG . 'routes_backend.php';
+			if (is_file($ls_file)) {
 				require_once $ls_file;
 			}
 
@@ -198,11 +189,13 @@ class Awyiss extends BaseApplication {
 			 * - for Awyiss
 			 */
 
-			if (is_file($ls_file = ENV_CUSTOM_CONFIG . 'routes.php')) {
+			$ls_file = ENV_CUSTOM_CONFIG . 'routes.php';
+			if (is_file($ls_file)) {
 				require_once $ls_file;
 			}
 
-			if (is_file($ls_file = CUSTOM_CONFIG . 'routes.php')) {
+			$ls_file = CUSTOM_CONFIG . 'routes.php';
+			if (is_file($ls_file)) {
 				require_once $ls_file;
 			}
 
@@ -222,21 +215,19 @@ class Awyiss extends BaseApplication {
 
 	/**
 	 * @inheritDoc
-	 *
 	 * @param ContainerInterface $ao_container The Container to update.
-	 *
 	 * @return void
-	 *
 	 * @link https://book.cakephp.org/4/en/development/dependency-injection.html#dependency-injection
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function services(ContainerInterface $ao_container): void {
-		if (is_file($ls_file = CUSTOM_CONFIG . 'services.php')) {
+		$ls_file = CUSTOM_CONFIG . 'services.php';
+		if (is_file($ls_file)) {
 			require_once $ls_file;
 		}
 
-		if (is_file($ls_file = ENV_CUSTOM_CONFIG . 'services.php')) {
+		$ls_file = ENV_CUSTOM_CONFIG . 'services.php';
+		if (is_file($ls_file)) {
 			require_once $ls_file;
 		}
 	}
@@ -244,18 +235,15 @@ class Awyiss extends BaseApplication {
 
 	/**
 	 * @inheritDoc
-	 *
 	 * @param ServerRequestInterface $ao_request The request
-	 *
 	 * @return ResponseInterface
-	 * @throws ContainerExceptionInterface
-	 * @throws NotFoundExceptionInterface
+	 * @throws \Psr\Container\ContainerExceptionInterface
+	 * @throws \Psr\Container\NotFoundExceptionInterface
 	 * @throws \ReflectionException
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function handle(ServerRequestInterface $ao_request): ResponseInterface {
-		if ($this->controllerFactory === NULL) {
+		if ($this->controllerFactory === null) {
 			$this->controllerFactory = new ControllerFactory($this->getContainer());
 		}
 
@@ -283,7 +271,7 @@ class Awyiss extends BaseApplication {
 	 *
 	 * @throws \Exception
 	 */
-	public static function loadConfiguration(?string $as_frontendLanguage = NULL, ?string $as_backendLanguage = NULL): void {
+	public static function loadConfiguration(?string $as_frontendLanguage = null, ?string $as_backendLanguage = null): void {
 		$lo_configurationTable = FactoryLocator::get('Table')->get('Configuration');
 
 		$ls_fileName = Inflector::underscore(CUSTOM_NAMESPACE);
@@ -299,21 +287,21 @@ class Awyiss extends BaseApplication {
 		 * If the config path `Awyiss` is not empty, we do have a config file
 		 * Therefore loading the database config is skipped
 		 */
-		Configure::load($ls_fileName, 'default', FALSE);
+		Configure::load($ls_fileName, 'default', false);
 		if (Configure::read('Awyiss')) {
 			return;
 		}
 
 		if ($as_frontendLanguage && $as_backendLanguage) {
-			$lo_query = $lo_configurationTable->find()->applyOptions(['authorize' => ['skip' => TRUE]])->enableHydration(FALSE);
+			$lo_query = $lo_configurationTable->find()->applyOptions(['authorize' => ['skip' => true]])->enableHydration(false);
 			$lo_query->where(function (QueryExpression $ao_exp) use ($as_frontendLanguage, $as_backendLanguage) {
 				//$lo_scopeNegated = $lo_query->newExpr()->and(['identifier NOT LIKE' => 'frontend.%'])->add(['identifier NOT LIKE' => 'backend.%']);
 
 				return $ao_exp->or([
-					['language_shortcode IS' => NULL],
+					['language_shortcode IS' => null],
 					$ao_exp->and([['realm' => Awyiss::REALM_BACKEND], ['language_shortcode' => $as_backendLanguage]]),
 					$ao_exp->and([['realm' => Awyiss::REALM_FRONTEND], ['language_shortcode' => $as_frontendLanguage]]),
-					//$ao_exp->and([$lo_scopeNegated, ['language_shortcode IS NOT' => NULL]]),
+					//$ao_exp->and([$lo_scopeNegated, ['language_shortcode IS NOT' => null]]),
 				]);
 			});
 
@@ -321,7 +309,7 @@ class Awyiss extends BaseApplication {
 				'scope' => 'ASC',
 				'realm' => 'ASC',
 				'identifier' => 'ASC',
-				'language_shortcode IS NULL' => 'ASC',
+				'language_shortcode IS null' => 'ASC',
 				'language_shortcode' => 'ASC',
 			]);
 		}
@@ -345,8 +333,8 @@ class Awyiss extends BaseApplication {
 			}
 		}
 
-		/** @var AbstractConfigOptions $lo_configOptions */
-		foreach (ConfigOptionsProvider::getConfigOptionsFiles(TRUE) as $lo_configOptionsFiles) {
+		/** @var \Awyiss\Configuration\AbstractConfigOptions $lo_configOptions */
+		foreach (ConfigOptionsProvider::getConfigOptionsFiles(true) as $lo_configOptionsFiles) {
 			if (!$lo_configOptionsFiles) {
 				continue;
 			}
@@ -354,10 +342,10 @@ class Awyiss extends BaseApplication {
 			$ls_scope = $lo_configOptionsFiles::getScope();
 			/**
 			 * @var string $ls_realm
-			 * @var ConfigOptionCollection $lo_realmConfigOptionCollection
+			 * @var \Awyiss\Configuration\ConfigOptionCollection $lo_realmConfigOptionCollection
 			 */
 			foreach ($lo_configOptionsFiles->getConfigOptions() as $ls_realm => $lo_realmConfigOptionCollection) {
-				/** @var ConfigOption $lo_configOption */
+				/** @var \Awyiss\Configuration\ConfigOption $lo_configOption */
 				foreach ($lo_realmConfigOptionCollection->getConfigOptions() as $ls_key => $lo_configOption) {
 					$ls_key = 'Awyiss.' . $ls_scope . '.' . $ls_realm . '.' . $ls_key;
 					if (!array_key_exists($ls_key, $la_config)) {
@@ -373,12 +361,10 @@ class Awyiss extends BaseApplication {
 
 
 	/**
-	 *
 	 * @param bool $ab_useFile
-	 *
 	 * @return void
 	 */
-	public static function loadConstants(bool $ab_useFile = TRUE): void {
+	public static function loadConstants(bool $ab_useFile = true): void {
 		$ls_filePath = ENV_CUSTOM_CONFIG . 'constants.php';
 
 		if (file_exists($ls_filePath) && $ab_useFile) {
@@ -389,8 +375,8 @@ class Awyiss extends BaseApplication {
 		}
 
 		$lo_pageRolesTable = FactoryLocator::get('Table')->get('PageRoles');
-		/** @var PageRole $lo_pageRole */
-		foreach ($lo_pageRolesTable->find()->applyOptions(['authorize' => ['skip' => TRUE]]) as $lo_pageRole) {
+		/** @var \Awyiss\Model\Entity\PageRole $lo_pageRole */
+		foreach ($lo_pageRolesTable->find()->applyOptions(['authorize' => ['skip' => true]]) as $lo_pageRole) {
 			$ls_constant = 'PAGEROLE_' . strtoupper($lo_pageRole->identifier);
 			defined($ls_constant) || define($ls_constant, $lo_pageRole->id);
 		}
@@ -398,7 +384,7 @@ class Awyiss extends BaseApplication {
 
 
 	/**
-	 * @return null|string
+	 * @return string|null
 	 */
 	public static function getRealm(): ?string {
 		return static::$realm;
@@ -406,15 +392,14 @@ class Awyiss extends BaseApplication {
 
 
 	/**
-	 * @param null|string $as_realm
-	 *
+	 * @param string|null $as_realm
 	 * @return void
 	 */
 	public static function setRealm(?string $as_realm): void {
 		static::$realm = $as_realm;
 
 		$lo_eventManager = EventManager::instance();
-		$lo_event = new Event('Awyiss.setRealm', NULL, [
+		$lo_event = new Event('Awyiss.setRealm', null, [
 			'realm' => static::$realm,
 		]);
 		$lo_eventManager->dispatch($lo_event);
@@ -422,7 +407,7 @@ class Awyiss extends BaseApplication {
 
 
 	/**
-	 * @return null|string
+	 * @return string|null
 	 */
 	public static function getLanguage(): ?string {
 		return self::$language;
@@ -430,8 +415,7 @@ class Awyiss extends BaseApplication {
 
 
 	/**
-	 * @param null|string $as_language
-	 *
+	 * @param string|null $as_language
 	 * @noinspection PhpUnused
 	 */
 	public static function setLanguage(?string $as_language): void {

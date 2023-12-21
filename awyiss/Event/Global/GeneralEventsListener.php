@@ -45,7 +45,6 @@ class GeneralEventsListener implements EventListenerInterface {
 
 	/**
 	 * @param Event $ao_event
-	 *
 	 * @return void
 	 * @throws \ReflectionException
 	 * @noinspection PhpUnused
@@ -69,9 +68,7 @@ class GeneralEventsListener implements EventListenerInterface {
 	 * If not, save the model to be handled in `awyissSetRealm()`
 	 *
 	 * @param Event $ao_event
-	 *
 	 * @return void
-	 *
 	 * @noinspection PhpUnused
 	 * @throws \ReflectionException
 	 */

@@ -4,7 +4,6 @@
 namespace Awyiss\Model\Table;
 
 
-use Awyiss\Model\Behavior\AuthorizeBehavior;
 use Awyiss\Model\Entity\Content;
 use Awyiss\Model\Entity\ContentTemplate;
 use Awyiss\Model\Entity\Page;
@@ -13,38 +12,32 @@ use Awyiss\ORM\RulesChecker;
 use Cake\Collection\Collection;
 use Cake\Collection\CollectionInterface;
 use Cake\Database\Schema\TableSchemaInterface;
-use Cake\Datasource\EntityInterface;
 use Cake\Datasource\Exception\InvalidPrimaryKeyException;
 use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Datasource\FactoryLocator;
 use Cake\Http\Exception\ForbiddenException;
 use Cake\Log\LogTrait;
-use Cake\ORM\Association\BelongsTo;
-use Cake\ORM\Association\HasMany;
-use Cake\ORM\Exception\MissingTableClassException;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Utility\Inflector;
 use Cake\Validation\Validator;
-use Exception;
 use RuntimeException;
 
 
 /**
  * Contents Model
  *
- * @property ContentTemplatesTable&BelongsTo $ContentTemplates
- * @property PagesTable&BelongsTo $Pages
- * @property ContentsTable&BelongsTo $ParentContents
- * @property ContentsTable&HasMany $ChildContents
- * @property ContentsTable&HasMany $DuplicateContents
- * @property ContentsTable&BelongsTo $DuplicateOfContents
- *
+ * @property ContentTemplatesTable&\Awyiss\ORM\Association\BelongsTo $ContentTemplates
+ * @property PagesTable&\Awyiss\ORM\Association\BelongsTo $Pages
+ * @property ContentsTable&\Awyiss\ORM\Association\BelongsTo $ParentContents
+ * @property ContentsTable&\Awyiss\ORM\Association\HasMany $ChildContents
+ * @property ContentsTable&\Awyiss\ORM\Association\HasMany $DuplicateContents
+ * @property ContentsTable&\Awyiss\ORM\Association\BelongsTo $DuplicateOfContents
  * @method Content newDefaultEntity(array $aa_additionalData = [])
- * @method CollectionInterface|NULL getNestedChildren(EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
- * @method CollectionInterface|NULL getChildren(EntityInterface $ao_entity)
- * @method Content getParent(EntityInterface $ao_entity)
- * @method CollectionInterface|NULL getParents(EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
+ * @method CollectionInterface|null getNestedChildren(\Cake\Datasource\EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
+ * @method CollectionInterface|null getChildren(\Cake\Datasource\EntityInterface $ao_entity)
+ * @method Content getParent(\Cake\Datasource\EntityInterface $ao_entity)
+ * @method CollectionInterface|null getParents(\Cake\Datasource\EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
  */
 class ContentsTable extends Table {
 	use LogTrait;
@@ -92,8 +85,8 @@ class ContentsTable extends Table {
 		$this->hasMany('DuplicateContents', [
 			'bindingKey' => 'duplicate_of',
 			'className' => 'Contents',
-			'cascadeCallbacks' => TRUE,
-			'dependent' => TRUE,
+			'cascadeCallbacks' => true,
+			'dependent' => true,
 			'foreignKey' => 'id',
 		]);
 
@@ -110,7 +103,6 @@ class ContentsTable extends Table {
 	 *
 	 * @param Validator $ao_validator The validator that can be modified to
 	 * add some rules to it.
-	 *
 	 * @return Validator
 	 */
 	public function validationDefault(Validator $ao_validator): Validator {
@@ -232,9 +224,7 @@ class ContentsTable extends Table {
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 *
 	 * @param RulesChecker|BaseRulesChecker $ao_rules The rules object to be modified.
-	 *
 	 * @return RulesChecker
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
@@ -255,7 +245,7 @@ class ContentsTable extends Table {
 					'PageTemplates' => [
 						'finder' => [
 							'all' => [
-								'authorize' => ['skip' => TRUE],
+								'authorize' => ['skip' => true],
 							],
 						],
 					],
@@ -265,7 +255,7 @@ class ContentsTable extends Table {
 				$ao_entity->setError('page_id', __d($this->getI18nDomain(), 'error_valid_page_id'));
 
 
-				return FALSE;
+				return false;
 			}
 
 
@@ -277,12 +267,12 @@ class ContentsTable extends Table {
 				/** @var ContentTemplate $lo_contentTemplate */
 				$lo_contentTemplate = $this->ContentTemplates->get(
 					$ao_entity->contentTemplateId,
-					authorize: ['skip' => TRUE],
+					authorize: ['skip' => true],
 					contain: [
 						'ContentTemplateContentAreas' => [
 							'finder' => [
 								'all' => [
-									'authorize' => ['skip' => TRUE],
+									'authorize' => ['skip' => true],
 								],
 							],
 							'queryBuilder' => function (SelectQuery $ao_query) use ($lo_page) {
@@ -292,7 +282,7 @@ class ContentsTable extends Table {
 						'ContentTemplateElements' => [
 							'finder' => [
 								'all' => [
-									'authorize' => ['skip' => TRUE],
+									'authorize' => ['skip' => true],
 								],
 							],
 						],
@@ -304,7 +294,7 @@ class ContentsTable extends Table {
 				$ao_entity->setError('content_template_id', __d($this->getI18nDomain(), 'error_valid_content_template_id'));
 
 
-				return FALSE;
+				return false;
 			}
 
 
@@ -313,7 +303,7 @@ class ContentsTable extends Table {
 				$ao_entity->setError('content_area_id', __d($this->getI18nDomain(), 'error_valid_content_area_id'));
 
 
-				return FALSE;
+				return false;
 			}
 
 
@@ -327,11 +317,11 @@ class ContentsTable extends Table {
 			$la_errors = $lo_validator->validate($la_data, $ao_entity->isNew());
 
 			/** @noinspection PhpUndefinedMethodInspection */
-			$la_errors = $this->getEntityClass()::mapFields($la_errors, TRUE);
+			$la_errors = $this->getEntityClass()::mapFields($la_errors, true);
 
 			if ($this->hasAttributes() && !empty($la_errors['attributes'])) {
 				/** @noinspection PhpUndefinedMethodInspection */
-				$la_errors['attributes'] = $this->{$this->getAttributesTable(TRUE)}->getEntityClass()::mapFields($la_errors['attributes'], TRUE);
+				$la_errors['attributes'] = $this->{$this->getAttributesTable(true)}->getEntityClass()::mapFields($la_errors['attributes'], true);
 				$ao_entity->attributes->setErrors($la_errors['attributes']);
 			}
 
@@ -343,12 +333,12 @@ class ContentsTable extends Table {
 
 
 		$ao_rules->add(function (Content $ao_entity, array $aa_options) use ($ao_rules): bool {
-			if (($aa_options['checkRules'] ?? TRUE) === FALSE) {
+			if (($aa_options['checkRules'] ?? true) === false) {
 				dd(__FILE__, __LINE__);
 			}
 
 			if (!$ao_entity->get('parentId')) {
-				return TRUE;
+				return true;
 			}
 
 			$lo_existsIn = $ao_rules->existsIn(['parentId', 'pageId', 'contentAreaId'], 'ParentContents', [
@@ -411,7 +401,6 @@ class ContentsTable extends Table {
 	 * contents nested and an added `level`-property.
 	 *
 	 * @param SelectQuery $ao_query
-	 *
 	 * @return CollectionInterface
 	 */
 	public function nestedByContentArea(SelectQuery $ao_query): CollectionInterface {
@@ -458,7 +447,6 @@ class ContentsTable extends Table {
 	 * TODO: move to somewhere safe so it's not usable by anyone
 	 *
 	 * @param int $ai_pageId
-	 *
 	 * @return Page
 	 */
 	public function getPage(int $ai_pageId): Page {
@@ -471,8 +459,8 @@ class ContentsTable extends Table {
 			$lo_page = $lo_pages->get(
 				$ai_pageId,
 				authorize: [
-					//'failSilently' => FALSE,
-					'skip' => TRUE,
+					//'failSilently' => false,
+					'skip' => true,
 				],
 				contain: [
 					'PageRoles' => [
@@ -480,9 +468,9 @@ class ContentsTable extends Table {
 							'identifier',
 							'active',
 						],
-						'finder' => ['all' => ['authorize' => ['skip' => TRUE]]],
+						'finder' => ['all' => ['authorize' => ['skip' => true]]],
 						/*'queryBuilder' => function(SelectQuery $ao_query): SelectQuery {
-							$ao_query->applyOptions(['authorize' => ['skip' => TRUE]]);
+							$ao_query->applyOptions(['authorize' => ['skip' => true]]);
 
 							return $ao_query;
 						},*/
@@ -493,9 +481,9 @@ class ContentsTable extends Table {
 							'title',
 							'active',
 						],
-						'finder' => ['all' => ['authorize' => ['skip' => TRUE]]],
+						'finder' => ['all' => ['authorize' => ['skip' => true]]],
 						/*'queryBuilder' => function(SelectQuery $ao_query): SelectQuery {
-							$ao_query->applyOptions(['authorize' => ['skip' => TRUE]]);
+							$ao_query->applyOptions(['authorize' => ['skip' => true]]);
 
 							return $ao_query;
 						},*/ 'ContentAreas' => [
@@ -504,7 +492,7 @@ class ContentsTable extends Table {
 								'title',
 								'active',
 							],
-							'finder' => ['all' => ['authorize' => ['skip' => TRUE]]],
+							'finder' => ['all' => ['authorize' => ['skip' => true]]],
 						],
 					],
 				],
@@ -514,7 +502,7 @@ class ContentsTable extends Table {
 					'page_role_id',
 					'page_template_id',
 				],
-				skipPageRoleCheck: TRUE,
+				skipPageRoleCheck: true,
 			);
 		}
 		catch (ForbiddenException) {
@@ -527,37 +515,14 @@ class ContentsTable extends Table {
 
 
 	/**
-	 * Sets this table to use the 'Pages'-association for a specific page.
-	 *
-	 * @param int $ai_pageId
-	 *
-	 * @return Page
-	 *
-	 * @throws ForbiddenException
-	 * @throws InvalidPrimaryKeyException
-	 * @throws MissingTableClassException
-	 * @throws RecordNotFoundException
-	 * @throws Exception
-	 * @throws RuntimeException
-	 */
-	/*public function forPage (Page $ao_page): Page {
-		$this->forPageRole($ao_page->page_role->identifier);
-
-		return $ao_page;
-	}*/
-
-
-	/**
 	 * Sets this table to run the access check of the 'Pages'-association with a specific page role.
 	 *
 	 * @param string $as_identifier
 	 * @param bool $ab_initializePages
-	 *
 	 * @return void
-	 *
-	 * @throws Exception
+	 * @throws \Exception
 	 */
-	public function forPageRole(string $as_identifier, bool $ab_initializePages = TRUE): void {
+	public function forPageRole(string $as_identifier, bool $ab_initializePages = true): void {
 		//Remember the currently used foreign key for the Pages association
 		//$ls_foreignKey = $this->Pages->getForeignKey();
 
@@ -587,7 +552,6 @@ class ContentsTable extends Table {
 	 * Returns the scope - the plural form of the page role identifier - that's set for the authorization behavior.
 	 *
 	 * @return string
-	 *
 	 * @noinspection PhpUnused
 	 */
 	public function getForScope(): string {
@@ -604,17 +568,16 @@ class ContentsTable extends Table {
 	 * Sets the scope the authorization behavior has to check.
 	 *
 	 * @param string $as_scope
-	 *
 	 * @noinspection PhpPossiblePolymorphicInvocationInspection
 	 */
 	protected function setForScope(string $as_scope): void {
 		if ($this->hasBehavior('Authorize')) {
-			/** @var AuthorizeBehavior $lo_authorization */
+			/** @var \Awyiss\Model\Behavior\AuthorizeBehavior $lo_authorization */
 			$lo_authorization = $this->getBehavior('Authorize');
 			$lo_authorization->setScope($as_scope);
 
 			if ($this->hasAttributes()) {
-				/** @var AuthorizeBehavior $lo_authorization */
+				/** @var \Awyiss\Model\Behavior\AuthorizeBehavior $lo_authorization */
 				$lo_authorization = $this->getAssociation('AttributesContents')->getBehavior('Authorize');
 				$lo_authorization->setScope($as_scope);
 			}
@@ -640,7 +603,6 @@ class ContentsTable extends Table {
 
 	/**
 	 * @param string $as_pageRoleName
-	 *
 	 * @return ContentsTable
 	 */
 	protected function setPageRoleName(string $as_pageRoleName): static {
@@ -656,7 +618,7 @@ class ContentsTable extends Table {
 	 */
 	public function disableCascadeCallbacks(): void {
 		/** @noinspection PhpUndefinedMethodInspection */
-		$this->ChildContents->setDependent(FALSE)->setCascadeCallbacks(FALSE);
+		$this->ChildContents->setDependent(false)->setCascadeCallbacks(false);
 	}
 
 
@@ -665,7 +627,7 @@ class ContentsTable extends Table {
 	 */
 	public function enableCascadeCallbacks(): void {
 		/** @noinspection PhpUndefinedMethodInspection */
-		$this->ChildContents->setDependent(TRUE)->setCascadeCallbacks(TRUE);
+		$this->ChildContents->setDependent(true)->setCascadeCallbacks(true);
 	}
 
 
@@ -673,7 +635,6 @@ class ContentsTable extends Table {
 	 * @param Content $ao_entity
 	 * @param Validator $ao_validator
 	 * @param ContentTemplate $ao_contentTemplate
-	 *
 	 * @return array
 	 */
 	protected function validateInputFields(Content $ao_entity, Validator $ao_validator, ContentTemplate $ao_contentTemplate): array {
@@ -696,7 +657,7 @@ class ContentsTable extends Table {
 		//Traverse all elements that are available inside the content template
 		foreach ($ao_contentTemplate->contentTemplateElements as $lo_contentTemplateElement) {
 			if (!str_starts_with($lo_contentTemplateElement->identifier, 'attributes.')) {
-				if ($lo_contentTemplateElement->required === TRUE) {
+				if ($lo_contentTemplateElement->required === true) {
 					//If the element is marked as required, add a requirePresence check and do not allow an empty string as value
 					$ao_validator->requirePresence($lo_contentTemplateElement->identifier)->notEmptyString($lo_contentTemplateElement->identifier);
 					//TODO check if notEmptyString is enouugh. Some fields might need notEmpty*
@@ -715,7 +676,7 @@ class ContentsTable extends Table {
 				continue;
 			}
 
-			if ($lo_contentTemplateElement->required === TRUE) {
+			if ($lo_contentTemplateElement->required === true) {
 				/** @noinspection PhpUndefinedVariableInspection */
 				$lo_attributesValidator->requirePresence($ls_identifier);
 
@@ -723,7 +684,7 @@ class ContentsTable extends Table {
 					case 'checkbox':
 						$lo_attributesValidator->add($ls_identifier, [
 							'checkboxChecked' => [
-								'rule' => ['equalTo', TRUE],
+								'rule' => ['equalTo', true],
 							],
 						]);
 						break;
@@ -755,7 +716,7 @@ class ContentsTable extends Table {
 
 			$ao_validator->add($ls_element, 'isEmpty', [
 				'rule' => function (mixed $ax_value): bool {
-					return empty($ax_value) && !in_array($ax_value, [FALSE, '0', 0], TRUE);
+					return empty($ax_value) && !in_array($ax_value, [false, '0', 0], true);
 				},
 			]);
 		}
@@ -775,7 +736,7 @@ class ContentsTable extends Table {
 				/** @noinspection PhpUndefinedVariableInspection */
 				$lo_attributesValidator->add($ls_element, 'isEmpty', [
 					'rule' => function (mixed $ax_value): bool {
-						return empty($ax_value) && !in_array($ax_value, [FALSE, '0', 0], TRUE);
+						return empty($ax_value) && !in_array($ax_value, [false, '0', 0], true);
 					},
 				]);
 			}

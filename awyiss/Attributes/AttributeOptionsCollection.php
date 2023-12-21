@@ -36,8 +36,7 @@ abstract class AttributeOptionsCollection extends ArrayIterator implements Attri
 	 * Adds a AttributeOptionsCollection or a set of elements, containing nested AttributeOptionsCollection or
 	 * AttributeOptionsCollection to this collection
 	 *
-	 * @param array<int|string, AttributeOptions>|AttributeOptions $ax_attributeOption
-	 *
+	 * @param AttributeOptions|array<int|string, AttributeOptions> $ax_attributeOption
 	 * @return $this
 	 */
 	public function add(array|AttributeOptions $ax_attributeOption): static {
@@ -87,7 +86,7 @@ abstract class AttributeOptionsCollection extends ArrayIterator implements Attri
 	/**
 	 * @inheritDoc
 	 */
-	public function getAttributeOptions(string $as_identifier, array $aa_currentOptions = [], ContextInterface $ao_context = NULL): array {
+	public function getAttributeOptions(string $as_identifier, array $aa_currentOptions = [], ?ContextInterface $ao_context = null): array {
 		$ls_identifier = AttributeOptionsProvider::sanitizeIdentifier($as_identifier);
 
 		/** @var AttributeOptions $lo_attributeOptions */
@@ -105,13 +104,13 @@ abstract class AttributeOptionsCollection extends ArrayIterator implements Attri
 	/**
 	 * @inheritDoc
 	 */
-	public function validateValue(string $as_identifier, mixed $ax_value, Entity $ao_entity = NULL): bool|string {
+	public function validateValue(string $as_identifier, mixed $ax_value, ?Entity $ao_entity = null): bool|string {
 		$ls_identifier = AttributeOptionsProvider::sanitizeIdentifier($as_identifier);
 
 		/** @var AttributeOptions $lo_attributeOptions */
 		$lo_attributeOptions = Hash::get($this, $ls_identifier);
 		if (!$lo_attributeOptions) {
-			return TRUE;
+			return true;
 		}
 
 

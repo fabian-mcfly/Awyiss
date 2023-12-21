@@ -30,7 +30,7 @@ class SimplePermissionOption extends AbstractPermissionOption {
 		$this->options = [
 			'granted' => PermissionAccess::OPTION_GRANTED,
 			'denied' => PermissionAccess::OPTION_DENIED,
-			'indifferent' => NULL,
+			'indifferent' => null,
 		];
 	}
 
@@ -39,10 +39,10 @@ class SimplePermissionOption extends AbstractPermissionOption {
 	 * @inheritDoc
 	 */
 	public function harmonizeOptionValue(mixed $ax_value): ?PermissionAccess {
-		$lx_value = ($ax_value !== '' && $ax_value !== NULL) ? (int) $ax_value : NULL;
+		$lx_value = $ax_value !== '' && $ax_value !== null ? (int)$ax_value : null;
 
-		if ($lx_value === NULL) {
-			return NULL;
+		if ($lx_value === null) {
+			return null;
 		}
 
 
@@ -61,13 +61,13 @@ class SimplePermissionOption extends AbstractPermissionOption {
 		}
 
 		if ($lx_access === PermissionAccess::OPTION_GRANTED) {
-			return TRUE;
+			return true;
 		}
 		elseif ($lx_access === PermissionAccess::OPTION_DENIED) {
-			return FALSE;
+			return false;
 		}
 
 
-		return NULL;
+		return null;
 	}
 }

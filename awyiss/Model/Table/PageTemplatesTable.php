@@ -6,10 +6,7 @@ namespace Awyiss\Model\Table;
 
 use Awyiss\Model\Entity\PageTemplate;
 use Awyiss\Model\Table;
-use Awyiss\ORM\Association\BelongsToMany;
 use Awyiss\ORM\RulesChecker;
-use Cake\ORM\Association\BelongsTo;
-use Cake\ORM\Query;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Validation\Validator;
@@ -18,14 +15,16 @@ use Cake\Validation\Validator;
 /**
  * PageTemplates Model
  *
- * @property ContentAreasTable&BelongsToMany $ContentAreas
- * @property PageRolesTable&BelongsTo $PageRoles
- *
+ * @property ContentAreasTable&\Awyiss\ORM\Association\BelongsToMany $ContentAreas
+ * @property PageRolesTable&\Awyiss\ORM\Association\BelongsTo $PageRoles
  * @method PageTemplate newDefaultEntity(array $aa_additionalData = [])
  *
  * TODO Or: disallow deletion if a page with that templates exits
  */
 class PageTemplatesTable extends Table {
+	/**
+	 * @inheritDoc
+	 */
 	public const TABLE = 'page_templates';
 	/**
 	 * @inheritDoc
@@ -56,8 +55,8 @@ class PageTemplatesTable extends Table {
 		]);
 
 		$this->hasMany('Pages', [
-			'cascadeCallbacks' => TRUE,
-			'dependent' => TRUE,
+			'cascadeCallbacks' => true,
+			'dependent' => true,
 		]);
 	}
 
@@ -65,9 +64,7 @@ class PageTemplatesTable extends Table {
 	/**
 	 * @param SelectQuery $ao_query
 	 * @param array $aa_options
-	 *
-	 * @return Query
-	 *
+	 * @return \Cake\ORM\Query\SelectQuery
 	 * @noinspection PhpUnused
 	 */
 	public function findWithUsages(SelectQuery $ao_query): SelectQuery {
@@ -76,12 +73,12 @@ class PageTemplatesTable extends Table {
 			])->leftJoinWith('Pages', function (SelectQuery $ao_query) {
 				return $ao_query->applyOptions([
 					'attributes' => [
-						'skip' => TRUE,
+						'skip' => true,
 					],
 					'authorize' => [
-						'skip' => TRUE,
+						'skip' => true,
 					],
-					'skipPageRoleCheck' => TRUE,
+					'skipPageRoleCheck' => true,
 				]);
 			})->groupBy('PageTemplates.id');
 	}
@@ -92,7 +89,6 @@ class PageTemplatesTable extends Table {
 	 *
 	 * @param Validator $ao_validator The validator that can be modified to
 	 * add some rules to it.
-	 *
 	 * @return Validator
 	 */
 	public function validationDefault(Validator $ao_validator): Validator {
@@ -158,9 +154,7 @@ class PageTemplatesTable extends Table {
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 *
 	 * @param RulesChecker|BaseRulesChecker $ao_rules The rules object to be modified.
-	 *
 	 * @return RulesChecker
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
@@ -176,7 +170,7 @@ class PageTemplatesTable extends Table {
 		]);
 
 
-		$ao_rules->add($ao_rules->existsIn(['pageRoleId'], 'PageRoles', ['authorize' => ['skip' => TRUE]]), 'validPageRole', [
+		$ao_rules->add($ao_rules->existsIn(['pageRoleId'], 'PageRoles', ['authorize' => ['skip' => true]]), 'validPageRole', [
 			'errorField' => 'pageRoleId',
 			'message' => __d($this->getI18nDomain(), 'error_valid_page_role'),
 		]);

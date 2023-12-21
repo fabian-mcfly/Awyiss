@@ -6,9 +6,7 @@ namespace Awyiss\Controller\Backend;
 
 use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Model\Entity\Menu;
-use Awyiss\Model\Table\MenusTable;
 use Awyiss\Routing\Router;
-use Cake\Datasource\ResultSetInterface;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
 
@@ -16,15 +14,14 @@ use Cake\Http\Response;
 /**
  * Menus Controller
  *
- * @property MenusTable $Menus
- * @method Menu[]|ResultSetInterface paginate($ao_object = NULL, array $aa_settings = [])
+ * @property \Awyiss\Model\Table\MenusTable $Menus
+ * @method Menu[]|\Cake\Datasource\ResultSetInterface paginate($ao_object = null, array $aa_settings = [])
  */
 class MenusController extends Controller {
 	/**
 	 * Overview method
 	 *
 	 * @throws \Exception
-	 *
 	 */
 	public function overview(): void {
 		$this->Authorization->ensure('read');
@@ -41,7 +38,6 @@ class MenusController extends Controller {
 	 * Add method
 	 *
 	 * @return void
-	 *
 	 * @throws \Exception
 	 */
 	public function add(): void {
@@ -62,16 +58,14 @@ class MenusController extends Controller {
 	/**
 	 * Edit method
 	 *
-	 * @return void|?Response
-	 *
+	 * @return \Cake\Http\Response|void
 	 * @throws \Exception
-	 *
 	 */
-	public function edit() {
+	public function edit(int $ai_id) {
 		$this->Authorization->ensure('update');
 
 		/** @var Menu $lo_menu */
-		$lo_menu = $this->Menus->findById((int) $this->request->getParam('id'))->find('translations')->first();
+		$lo_menu = $this->Menus->findById($ai_id)->find('translations')->first();
 		if (!$lo_menu) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -92,18 +86,17 @@ class MenusController extends Controller {
 	/**
 	 * Delete method
 	 *
+	 * @param int $ai_id
 	 * @return Response
-	 *
 	 * @throws \Exception
-	 *
 	 */
-	public function delete(): Response {
+	public function delete(int $ai_id): Response {
 		$this->Authorization->ensure('delete');
 
 		$this->request->allowMethod(['get', 'delete']);
 
 		/** @var Menu $lo_menu */
-		$lo_menu = $this->Menus->findById((int) $this->request->getParam('id'))->find('translations')->first();
+		$lo_menu = $this->Menus->findById($ai_id)->find('translations')->first();
 		if (!$lo_menu) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -126,16 +119,14 @@ class MenusController extends Controller {
 	/**
 	 * @param Menu $ao_menu
 	 * @param string $as_method
-	 *
 	 * @return void
-	 *
 	 * @throws RedirectException
 	 */
 	protected function save(Menu $ao_menu, string $as_method = 'add'): void {
 		$la_associated = [];
 		if ($this->Menus->hasAttributes()) {
-			$la_associated[] = $this->Menus->getAttributesTable(TRUE);
-			$ao_menu->setAccess('attributes', TRUE);
+			$la_associated[] = $this->Menus->getAttributesTable(true);
+			$ao_menu->setAccess('attributes', true);
 		}
 
 		$this->Menus->patchEntity($ao_menu, $this->request->getData(), ['associated' => $la_associated]);
@@ -145,10 +136,10 @@ class MenusController extends Controller {
 				$this->Flash->success(__($as_method . '_succeeded'));
 
 				if ($this->request->getData('submit') == 'submit_close') {
-					throw new RedirectException(Router::url(['action' => 'overview'], TRUE), 302);
+					throw new RedirectException(Router::url(['action' => 'overview'], true), 302);
 				}
 
-				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $ao_menu->id], TRUE), 302);
+				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $ao_menu->id], true), 302);
 			}
 
 			$this->Flash->error(__($as_method . '_failed'));

@@ -28,8 +28,8 @@ class MediaConfigOptions extends AbstractConfigOptions {
 			new ConfigOption([
 				'defaultValue' => [2560, 1920, 1680, 1280, 1024, 768, 640, 480, 360],
 				'identifier' => 'defaultBreakpoints',
-				'localizable' => FALSE,
-				'nullable' => FALSE,
+				'localizable' => false,
+				'nullable' => false,
 				'type' => ConfigOptionType::JSON,
 			]),
 		]);

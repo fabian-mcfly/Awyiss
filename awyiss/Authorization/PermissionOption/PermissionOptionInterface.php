@@ -33,18 +33,15 @@ interface PermissionOptionInterface {
 
 
 	/**
-	 * @param null|string $as_key
+	 * @param string|null $as_key
 	 * @param mixed $ax_default
-	 *
 	 * @return mixed
-	 *
-	 * @see          \Cake\Core\InstanceConfigTrait::getConfig()
+	 * @see \Cake\Core\InstanceConfigTrait::getConfig()
 	 *
 	 * Since InstanceConfigTrait does not define it:
 	 * @noinspection PhpMissingReturnTypeInspection
-	 * @noinspection PhpMissingParamTypeInspection
 	 */
-	public function getConfig(?string $as_key = NULL, $ax_default = NULL);
+	public function getConfig(?string $as_key = null, mixed $ax_default = null): mixed;
 
 
 	/**
@@ -52,16 +49,13 @@ interface PermissionOptionInterface {
 	 * @param mixed|null $ax_value The value to set.
 	 * @param bool $ab_merge Whether to recursively merge or overwrite existing config, defaults
 	 *                                              to true.
-	 *
 	 * @return $this
-	 *
-	 * @see          \Cake\Core\InstanceConfigTrait::setConfig()
+	 * @see \Cake\Core\InstanceConfigTrait::setConfig()
 	 *
 	 * Since InstanceConfigTrait does not define it:
 	 * @noinspection PhpMissingReturnTypeInspection
-	 * @noinspection PhpMissingParamTypeInspection
 	 */
-	public function setConfig(array|string $key, mixed $value = NULL, bool $merge = TRUE);
+	public function setConfig(array|string $key, mixed $value = null, bool $merge = true);
 
 
 	/**
@@ -84,14 +78,13 @@ interface PermissionOptionInterface {
 	 * Set the available options for this permission
 	 *
 	 * @param array $aa_options
-	 *
 	 * @return $this
 	 */
 	public function setOptions(array $aa_options): static;
 
 
 	/**
-	 * Returns TRUE or FALSE whether this permission offers additional settings
+	 * Returns true or false whether this permission offers additional settings
 	 *
 	 * @return bool
 	 */
@@ -102,8 +95,7 @@ interface PermissionOptionInterface {
 	 * Transform the given value into one that matches the permission's options
 	 *
 	 * @param mixed $ax_value
-	 *
-	 * @return PermissionAccess|NULL
+	 * @return PermissionAccess|null
 	 */
 	public function harmonizeOptionValue(mixed $ax_value): ?PermissionAccess;
 
@@ -115,7 +107,6 @@ interface PermissionOptionInterface {
 	 * @param mixed $ax_settings
 	 * @param array $aa_additionalData
 	 * @param PermissionCollection $ao_permissionCollection
-	 *
 	 * @return ?bool
 	 */
 	public function isAccessible(mixed $ax_access, mixed $ax_settings, array $aa_additionalData, PermissionCollection $ao_permissionCollection): ?bool;

@@ -6,6 +6,7 @@ namespace AwyissBake\Command\Bake;
 
 use Awyiss\Core\App;
 use AwyissBake\Util\UtilTrait;
+use Bake\Command\ControllerCommand as BaseControllerCommand;
 use Cake\Console\Arguments;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
@@ -16,7 +17,7 @@ use Cake\Utility\Inflector;
 /**
  * Task class for creating and updating controller files.
  */
-class ControllerCommand extends \Bake\Command\ControllerCommand {
+class ControllerCommand extends BaseControllerCommand {
 	/*
 	 * Use UtilTrait so that every call of `$this->getPath()` will use the one provided by this trait,
 	 * honoring the `namespace`-option
@@ -35,9 +36,7 @@ class ControllerCommand extends \Bake\Command\ControllerCommand {
 	 * @param string $as_controllerName Controller name already pluralized and correctly cased.
 	 * @param Arguments $ao_args The console arguments
 	 * @param ConsoleIo $ao_io The console io
-	 *
 	 * @return void
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function bake(string $as_controllerName, Arguments $ao_args, ConsoleIo $ao_io): void {
@@ -95,7 +94,7 @@ class ControllerCommand extends \Bake\Command\ControllerCommand {
 
 		$ls_defaultModel = App::className(sprintf('%sTable', $as_controllerName), 'Model/Table');
 		if (!class_exists($ls_defaultModel)) {
-			$ls_defaultModel = NULL;
+			$ls_defaultModel = null;
 		}
 		$ls_entityClassName = $this->_entityName($lo_model->getAlias());
 
@@ -129,7 +128,6 @@ class ControllerCommand extends \Bake\Command\ControllerCommand {
 	 * Adds the `namespace`-option.
 	 *
 	 * @param ConsoleOptionParser $ao_parser The console option parser
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function buildOptionParser(ConsoleOptionParser $ao_parser): ConsoleOptionParser {

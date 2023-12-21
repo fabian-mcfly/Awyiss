@@ -7,6 +7,7 @@ namespace Awyiss\Model\Behavior;
 use ArrayObject;
 use Awyiss\Middleware\LocaleMiddleware;
 use Cake\Event\EventInterface;
+use Cake\ORM\Behavior\TranslateBehavior as BaseTranslateBehavior;
 use Cake\ORM\Table;
 use Cake\Utility\Inflector;
 
@@ -14,7 +15,7 @@ use Cake\Utility\Inflector;
 /**
  * @inheritDoc
  */
-class TranslateBehavior extends \Cake\ORM\Behavior\TranslateBehavior {
+class TranslateBehavior extends BaseTranslateBehavior {
 	/**
 	 * @var array
 	 */
@@ -25,9 +26,7 @@ class TranslateBehavior extends \Cake\ORM\Behavior\TranslateBehavior {
 	 * Initialize hook
 	 *
 	 * @param array<string, mixed> $aa_config The config for this behavior.
-	 *
 	 * @return void
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function initialize(array $aa_config): void {
@@ -54,9 +53,7 @@ class TranslateBehavior extends \Cake\ORM\Behavior\TranslateBehavior {
 	 * @param EventInterface $ao_event
 	 * @param ArrayObject $ao_data
 	 * @param ArrayObject $ao_options
-	 *
 	 * @return void
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function beforeMarshal(EventInterface $ao_event, ArrayObject $ao_data, ArrayObject $ao_options): void {
@@ -67,7 +64,7 @@ class TranslateBehavior extends \Cake\ORM\Behavior\TranslateBehavior {
 		}
 
 		foreach ($this->getConfig('fields') as $ls_field) {
-			$ls_defaultTranslation = $ao_data['_translations'][ $ls_firstLanguageShortcode ][ $ls_field ] ?? NULL;
+			$ls_defaultTranslation = $ao_data['_translations'][ $ls_firstLanguageShortcode ][ $ls_field ] ?? null;
 			$ao_data[ $ls_field ] = $ls_defaultTranslation;
 		}
 	}
@@ -75,12 +72,11 @@ class TranslateBehavior extends \Cake\ORM\Behavior\TranslateBehavior {
 
 	/**
 	 * @inheritDoc
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	protected function referenceName(Table $ao_table): string {
 		$ls_name = namespaceSplit($ao_table::class);
-		$ls_name = substr((string) end($ls_name), 0, -5);
+		$ls_name = substr((string)end($ls_name), 0, -5);
 		if (empty($ls_name)) {
 			$ls_name = $ao_table->getTable() ?: $ao_table->getAlias();
 		}

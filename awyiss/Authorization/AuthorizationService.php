@@ -23,9 +23,9 @@ class AuthorizationService implements AuthorizationServiceInterface {
 	 */
 	protected array $policies = [];
 	/**
-	 * @var null|AuthenticationServiceInterface
+	 * @var AuthenticationServiceInterface|null
 	 */
-	protected ?AuthenticationServiceInterface $authenticationService = NULL;
+	protected ?AuthenticationServiceInterface $authenticationService = null;
 	/**
 	 * @var string
 	 */
@@ -71,7 +71,7 @@ class AuthorizationService implements AuthorizationServiceInterface {
 	 * @inheritDoc
 	 * @throws \ReflectionException
 	 */
-	public function getPolicies(string $as_realm = NULL): array {
+	public function getPolicies(?string $as_realm = null): array {
 		$ls_realm = $as_realm ?: $this->realm;
 
 		//if (!isset($this->policies[ $ls_realm ])) {
@@ -86,10 +86,9 @@ class AuthorizationService implements AuthorizationServiceInterface {
 
 	/**
 	 * @inheritDoc
-	 *
 	 * @throws \ReflectionException
 	 */
-	public function getPolicy(string $as_scope, ?string $as_realm = NULL): ?string {
+	public function getPolicy(string $as_scope, ?string $as_realm = null): ?string {
 		$ls_realm = $as_realm ?: $this->realm;
 		$ls_scope = static::sanitizeScope($as_scope);
 
@@ -102,14 +101,13 @@ class AuthorizationService implements AuthorizationServiceInterface {
 		}
 
 
-		return $this->policies[ $ls_realm ][ $ls_scope ] ?? NULL;
+		return $this->policies[ $ls_realm ][ $ls_scope ] ?? null;
 	}
 
 
 	/**
 	 * @param string $as_scope
 	 * @param string $as_realm
-	 *
 	 * @return array<string, class-string<PolicyInterface>>
 	 * @throws \ReflectionException
 	 */
@@ -159,7 +157,6 @@ class AuthorizationService implements AuthorizationServiceInterface {
 	 * Returns a camelBacked string
 	 *
 	 * @param string $as_scope
-	 *
 	 * @return string
 	 */
 	public static function sanitizeScope(string $as_scope): string {
@@ -172,7 +169,6 @@ class AuthorizationService implements AuthorizationServiceInterface {
 	 * Returns a camelBacked string
 	 *
 	 * @param string $as_identifier
-	 *
 	 * @return string
 	 */
 	public static function sanitizeIdentifier(string $as_identifier): string {

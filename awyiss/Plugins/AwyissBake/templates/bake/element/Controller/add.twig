@@ -4,10 +4,9 @@
 	 * Add method
 	 *
 	 * @return void
-	 *
 	 * @throws \Exception
 	 */
-	public function add (): void {
+	public function add(): void {
 		$this->Authorization->ensure('create');
 
 		$lo_{{ singularName }} = $this->{{ currentModelName }}->newDefaultEntity();

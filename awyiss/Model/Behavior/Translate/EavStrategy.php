@@ -7,13 +7,14 @@ namespace Awyiss\Model\Behavior\Translate;
 use ArrayObject;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
+use Cake\ORM\Behavior\Translate\EavStrategy as BaseEavStrategy;
 use Cake\ORM\Entity;
 
 
 /**
  * @inheritDoc
  */
-class EavStrategy extends \Cake\ORM\Behavior\Translate\EavStrategy {
+class EavStrategy extends BaseEavStrategy {
 	/**
 	 * {@inheritDoc}
 	 *
@@ -22,17 +23,16 @@ class EavStrategy extends \Cake\ORM\Behavior\Translate\EavStrategy {
 	 * @param EventInterface $ao_event The beforeSave event that was fired
 	 * @param EntityInterface $ao_entity The entity that is going to be saved
 	 * @param ArrayObject $ao_options the options passed to the save method
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function beforeSave(EventInterface $ao_event, EntityInterface $ao_entity, ArrayObject $ao_options): void {
 		$ls_locale = $ao_entity->get('_locale') ?: $this->getLocale();
-		$ao_options['associated'] = [$this->translationTable->getAlias() => ['validate' => FALSE]] + $ao_options['associated'];
+		$ao_options['associated'] = [$this->translationTable->getAlias() => ['validate' => false]] + $ao_options['associated'];
 
 		// Check early if empty translations are present in the entity.
 		// If this is the case, unset them to prevent persistence.
 		// This only applies if $this->_config['allowEmptyTranslations'] is false
-		if ($this->_config['allowEmptyTranslations'] === FALSE) {
+		if ($this->_config['allowEmptyTranslations'] === false) {
 			$this->unsetEmptyFields($ao_entity);
 		}
 
@@ -46,7 +46,7 @@ class EavStrategy extends \Cake\ORM\Behavior\Translate\EavStrategy {
 			return;
 		}
 
-		$la_values = $ao_entity->extract($this->_config['fields'], TRUE);
+		$la_values = $ao_entity->extract($this->_config['fields'], true);
 		$la_fields = array_keys($la_values);
 		$lb_noFields = empty($la_fields);
 
@@ -57,7 +57,7 @@ class EavStrategy extends \Cake\ORM\Behavior\Translate\EavStrategy {
 			return;
 		}
 
-		$ls_primaryKey = (array) $this->table->getPrimaryKey();
+		$ls_primaryKey = (array)$this->table->getPrimaryKey();
 		$li_key = $ao_entity->get(current($ls_primaryKey));
 		// When we have no key and bundled translations, we
 		// need to mark the entity dirty so the root
@@ -101,17 +101,17 @@ class EavStrategy extends \Cake\ORM\Behavior\Translate\EavStrategy {
 				'content' => $ls_content,
 				'model' => $ls_modelName,
 			], [
-				'useSetters' => FALSE,
-				'markNew' => TRUE,
+				'useSetters' => false,
+				'markNew' => true,
 			]);
 		}
 
 		$ao_entity->set('_i18n', array_merge($la_bundled, array_values($la_modifiedValues + $la_newValues)));
-		$ao_entity->set('_locale', $ls_locale, ['setter' => FALSE]);
-		$ao_entity->setDirty('_locale', FALSE);
+		$ao_entity->set('_locale', $ls_locale, ['setter' => false]);
+		$ao_entity->setDirty('_locale', false);
 		/* With those lines, the main language would not find its way in the db
 		foreach ($la_fields as $ls_field) {
-			$ao_entity->setDirty($ls_field, FALSE);
+			$ao_entity->setDirty($ls_field, false);
 		}
 		*/
 	}
@@ -123,9 +123,7 @@ class EavStrategy extends \Cake\ORM\Behavior\Translate\EavStrategy {
 	 *
 	 * @param EventInterface $ao_event The beforeSave event that was fired
 	 * @param EntityInterface $ao_entity The entity that is going to be saved
-	 *
 	 * @return void
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function afterSave(EventInterface $ao_event, EntityInterface $ao_entity): void {
@@ -133,7 +131,7 @@ class EavStrategy extends \Cake\ORM\Behavior\Translate\EavStrategy {
 		$la_translationsDiff = array_diff_key($la_original, $ao_entity->get('_translations') ?? []);
 
 		if (!empty($la_translationsDiff)) {
-			$la_primaryKey = (array) $this->table->getPrimaryKey();
+			$la_primaryKey = (array)$this->table->getPrimaryKey();
 			$this->translationTable->deleteQuery()->delete()->where([
 				'locale IN' => array_keys($la_translationsDiff),
 				'foreign_key' => $ao_entity->get(current($la_primaryKey)),
@@ -154,7 +152,7 @@ class EavStrategy extends \Cake\ORM\Behavior\Translate\EavStrategy {
 
 		//Delete unused entries for fields that aren't set in the config
 		if ($la_unusedKeys) {
-			$la_primaryKey = (array) $this->table->getPrimaryKey();
+			$la_primaryKey = (array)$this->table->getPrimaryKey();
 			$this->translationTable->deleteQuery()->delete()->where([
 				'locale IN' => array_keys($ao_entity->get('_translations')),
 				'foreign_key' => $ao_entity->get(current($la_primaryKey)),
@@ -180,22 +178,22 @@ class EavStrategy extends \Cake\ORM\Behavior\Translate\EavStrategy {
 	/*protected function rowMapper (CollectionInterface $ao_results, string $as_locale): CollectionInterface {
 		return $ao_results->map(function($ao_row) use ($as_locale) {
 			@var EntityInterface|array|null $ao_row
-			if ($ao_row === NULL) {
+			if ($ao_row === null) {
 				return $ao_row;
 			}
 			$lb_hydrated = ! is_array($ao_row);
 
 			foreach ($this->_config['fields'] as $ls_field) {
 				$ls_name = $ls_field . '_translation';
-				$ls_translation = $ao_row[ $ls_name ] ?? NULL;
+				$ls_translation = $ao_row[ $ls_name ] ?? null;
 
-				if ($ls_translation === NULL || $ls_translation === FALSE) {
+				if ($ls_translation === null || $ls_translation === false) {
 					unset($ao_row[ $ls_name ]);
 					continue;
 				}
 
-				$ls_content = $ls_translation['content'] ?? NULL;
-				if ($ls_content !== NULL) {
+				$ls_content = $ls_translation['content'] ?? null;
+				if ($ls_content !== null) {
 					$ao_row[ $ls_field ] = $ls_content;
 				}
 
@@ -221,17 +219,16 @@ class EavStrategy extends \Cake\ORM\Behavior\Translate\EavStrategy {
 	 * It also resets the `_translation`-property
 	 *
 	 * @param EntityInterface $ao_entity The entity to check for empty translations fields inside.
-	 *
 	 * @return void
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	protected function unsetEmptyFields(EntityInterface $ao_entity): void {
 		/** @var array<Entity> $la_translations */
-		$la_translations = (array) $ao_entity->get('_translations');
+		$la_translations = (array)$ao_entity->get('_translations');
 		foreach ($la_translations as $ls_locale => $lo_translation) {
 			$la_fields = $lo_translation->extract($this->getConfig('fields'));
 			foreach ($la_fields as $ls_field => $lx_value) {
-				if ($lx_value === NULL || $lx_value === '') {
+				if ($lx_value === null || $lx_value === '') {
 					$lo_translation->unset($ls_field);
 				}
 			}
@@ -246,7 +243,7 @@ class EavStrategy extends \Cake\ORM\Behavior\Translate\EavStrategy {
 		}
 
 		//Set the _translations property to the cleared array of translations
-		$ao_entity->set('_translations', $la_translations, ['guard' => FALSE]);
+		$ao_entity->set('_translations', $la_translations, ['guard' => false]);
 
 		// If now, the whole _translations property is empty,
 		// unset it completely and return

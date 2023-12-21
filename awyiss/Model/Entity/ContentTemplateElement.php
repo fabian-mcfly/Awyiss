@@ -24,11 +24,11 @@ class ContentTemplateElement extends Entity {
 	 * @inheritDoc
 	 */
 	protected array $_accessible = [
-		'contentTemplateId' => TRUE,
-		'identifier' => TRUE,
-		'title' => TRUE,
-		'fieldset' => TRUE,
-		'required' => TRUE,
+		'contentTemplateId' => true,
+		'identifier' => true,
+		'title' => true,
+		'fieldset' => true,
+		'required' => true,
 	];
 	/**
 	 * @inheritDoc
@@ -42,10 +42,9 @@ class ContentTemplateElement extends Entity {
 	 * In the database, the identifier exists as an underscored string
 	 *
 	 * @param string $as_identifier
-	 *
 	 * @return string
-	 *
 	 * @noinspection PhpUnused
+	 * @see \Awyiss\Model\Entity\ContentTemplateElement::$identifier
 	 */
 	public function _setIdentifier(string $as_identifier): string {
 		return Inflector::underscore($as_identifier);

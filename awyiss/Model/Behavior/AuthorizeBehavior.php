@@ -5,14 +5,9 @@ namespace Awyiss\Model\Behavior;
 
 
 use ArrayObject;
-use Awyiss\Authorization\AuthorizationService;
 use Awyiss\Authorization\AuthorizationServiceInterface;
 use Awyiss\Authorization\IdentityPermissionsInterface;
 use Awyiss\Authorization\Permission\Permission;
-use Awyiss\Model\Entity\User;
-use Awyiss\Model\Entity\UsersExternal;
-use Awyiss\Model\Table;
-use Awyiss\ORM\Association\BelongsToMany;
 use Awyiss\ORM\Behavior;
 use Awyiss\ORM\RulesChecker;
 use Cake\Datasource\EntityInterface;
@@ -34,7 +29,7 @@ use RuntimeException;
  * Uses the following config items:
  *
  * - `enabled` Should this behavior be enabled or not
- * - `failSilently` Boolean value. If `TRUE`, this behavior will not throw an exception when no access was granted. But
+ * - `failSilently` Boolean value. If `true`, this behavior will not throw an exception when no access was granted. But
  * it will still return no result/stop the event
  * - `implementedEvents` An array of events this behavior will listen to.
  * Format `[EventName1 => methodName1, EventName2 => methodName2]`
@@ -45,15 +40,14 @@ use RuntimeException;
  * Format `[EventName1 => identifier1, EventName2 => [identifier2, identifier3]]`
  * - `identity` The identity used to retreive the permissions from
  * - `scope` The scope to check the permissions for
- * - `skip` Skip the authorization check until manually turned back on (by settings this flag to `FALSE`)
+ * - `skip` Skip the authorization check until manually turned back on (by settings this flag to `false`)
  * - `skipOnce` Skip the authorization check once and turning it right back on
- *
  */
 class AuthorizeBehavior extends Behavior {
 	use LogTrait;
 
 
-	protected ?AuthorizationServiceInterface $authorizationService = NULL;
+	protected ?AuthorizationServiceInterface $authorizationService = null;
 	/**
 	 * Default configuration
 	 *
@@ -63,8 +57,8 @@ class AuthorizeBehavior extends Behavior {
 	 */
 	protected array $_defaultConfig = [
 		'additionalData' => [],
-		'enabled' => TRUE,
-		'failSilently' => !TRUE, //if TRUE, a ForbiddenException will be thrown for inaccessible scopes
+		'enabled' => true,
+		'failSilently' => !true, //if true, a ForbiddenException will be thrown for inaccessible scopes
 		'implementedEvents' => [
 			'Model.buildRules' => 'buildRules',
 			'Model.beforeFind' => 'handleEvent',
@@ -82,16 +76,15 @@ class AuthorizeBehavior extends Behavior {
 			'Model.beforeSoftDelete' => 'delete',
 			'Model.beforeDelete' => 'delete',
 		],
-		'identity' => NULL,
-		'scope' => NULL,
-		'skip' => FALSE,
-		'skipOnce' => FALSE,
+		'identity' => null,
+		'scope' => null,
+		'skip' => false,
+		'skipOnce' => false,
 	];
 
 
 	/**
 	 * @return array
-	 *
 	 * @noinspection PhpUnused
 	 */
 	public function getAdditionalData(): array {
@@ -101,13 +94,11 @@ class AuthorizeBehavior extends Behavior {
 
 	/**
 	 * @param array $aa_data
-	 *
 	 * @return $this
-	 *
 	 * @noinspection PhpUnused
 	 */
 	public function setAdditionalData(array $aa_data): static {
-		$this->setConfig('additionalData', $aa_data, FALSE);
+		$this->setConfig('additionalData', $aa_data, false);
 
 
 		return $this;
@@ -116,11 +107,10 @@ class AuthorizeBehavior extends Behavior {
 
 	/**
 	 * @return $this
-	 *
 	 * @noinspection PhpUnused
 	 */
 	public function resetAdditionalData(): static {
-		$this->setConfig('additionalData', [], FALSE);
+		$this->setConfig('additionalData', [], false);
 
 
 		return $this;
@@ -130,7 +120,7 @@ class AuthorizeBehavior extends Behavior {
 	/**
 	 * Returns the currently set AuthorizationService that's used to retreive the AuthenticationService
 	 *
-	 * @return NULL|AuthorizationServiceInterface
+	 * @return AuthorizationServiceInterface|null
 	 */
 	public function getAuthorizationService(): ?AuthorizationServiceInterface {
 		if (!isset($this->authorizationService)) {
@@ -147,7 +137,6 @@ class AuthorizeBehavior extends Behavior {
 	 * Sets the authorization service that's used to retreive the AuthenticationService
 	 *
 	 * @param AuthorizationServiceInterface $ao_authorizationService
-	 *
 	 * @return $this
 	 */
 	public function setAuthorizationService(AuthorizationServiceInterface $ao_authorizationService): static {
@@ -161,7 +150,7 @@ class AuthorizeBehavior extends Behavior {
 	/**
 	 * Returns the identity set in the config
 	 *
-	 * @return null|IdentityPermissionsInterface
+	 * @return IdentityPermissionsInterface|null
 	 */
 	public function getIdentity(): ?IdentityPermissionsInterface {
 		$lo_identity = $this->getConfig('identity');
@@ -180,9 +169,7 @@ class AuthorizeBehavior extends Behavior {
 	 * Save the given identity to the config
 	 *
 	 * @param IdentityPermissionsInterface $ao_identity
-	 *
 	 * @return $this
-	 *
 	 * @noinspection PhpUnused
 	 */
 	public function setIdentity(IdentityPermissionsInterface $ao_identity): static {
@@ -215,7 +202,6 @@ class AuthorizeBehavior extends Behavior {
 	 * Returns the currently set scope
 	 *
 	 * @param string $as_scope
-	 *
 	 * @return $this
 	 */
 	public function setScope(string $as_scope): static {
@@ -227,15 +213,13 @@ class AuthorizeBehavior extends Behavior {
 
 
 	/**
-	 * Calling this method with `TRUE`, the authorization check will be skipped until turned back on by passing `FALSE`
+	 * Calling this method with `true`, the authorization check will be skipped until turned back on by passing `false`
 	 *
 	 * @param bool $ab_skip
-	 *
 	 * @return $this
-	 *
 	 * @noinspection PhpUnused
 	 */
-	public function skip(bool $ab_skip = TRUE): static {
+	public function skip(bool $ab_skip = true): static {
 		$this->setConfig('skip', $ab_skip);
 
 
@@ -247,12 +231,10 @@ class AuthorizeBehavior extends Behavior {
 	 * Calling this method will skip the next authorization check
 	 *
 	 * @param bool $ab_skip
-	 *
 	 * @return $this
-	 *
 	 * @noinspection PhpUnused
 	 */
-	public function skipOnce(bool $ab_skip = TRUE): static {
+	public function skipOnce(bool $ab_skip = true): static {
 		$this->setConfig('skipOnce', $ab_skip);
 
 
@@ -265,7 +247,6 @@ class AuthorizeBehavior extends Behavior {
 	 *
 	 * @param EventInterface $ao_event
 	 * @param RulesChecker $ao_rules
-	 *
 	 * @return RulesChecker
 	 */
 	public function buildRules(EventInterface $ao_event, RulesChecker $ao_rules): RulesChecker {
@@ -274,23 +255,24 @@ class AuthorizeBehavior extends Behavior {
 		}
 
 		//If a config item with the name of the event (`Entity.create`, `Entity.update`) exists, make sure it's callable.
-		if ($lx_call = $this->getConfig($ao_event->getName())) {
+		$lx_call = $this->getConfig($ao_event->getName());
+		if ($lx_call) {
 			if (!is_callable($lx_call)) {
 				throw new RuntimeException(sprintf('Expected option for `%s` to be `callable`, `%s` given', $ao_event->getName(), gettype($lx_call)));
 			}
 		}
 
-		//Add a rule that returns TRUE or FALSE whether the entity can be created resp. updated
+		//Add a rule that returns true or false whether the entity can be created resp. updated
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 		$ao_rules->add(function (EntityInterface $ao_entity, array $aa_options) use ($lx_call): ?bool {
 			$la_options = Hash::merge($this->getConfig(), Hash::get($aa_options, 'authorize'));
 
-			//Skipping the check means the rule returns TRUE.
-			if ($la_options['skip'] === TRUE || $la_options['skipOnce'] === TRUE) {
-				$this->setConfig('skipOnce', FALSE);
+			//Skipping the check means the rule returns true.
+			if ($la_options['skip'] === true || $la_options['skipOnce'] === true) {
+				$this->setConfig('skipOnce', false);
 
 
-				return TRUE;
+				return true;
 			}
 
 			//Call the authorization check, depending on whether the entity is new
@@ -301,12 +283,12 @@ class AuthorizeBehavior extends Behavior {
 				$lb_accessible = call_user_func($lx_call, $ao_entity, $la_options, $this, $lb_accessible);
 			}
 
-			if ($lb_accessible === FALSE || ($lb_accessible === NULL && Permission::DEFAULT_PERMISSION === FALSE)) {
-				return FALSE;
+			if ($lb_accessible === false || ($lb_accessible === null && Permission::DEFAULT_PERMISSION === false)) {
+				return false;
 			}
 
 
-			return TRUE;
+			return true;
 		}, 'scopeAccessible', [
 			'errorField' => '_general',
 			'message' => __dfx($this->table()->getI18nDomain(), 'validation', $this->table()->getTable(), 'error_scope_accessible'),
@@ -323,7 +305,6 @@ class AuthorizeBehavior extends Behavior {
 	 * @param EventInterface $ao_event
 	 * @param SelectQuery|DeleteQuery|EntityInterface $ao_subject
 	 * @param ArrayObject $ao_options
-	 *
 	 * @throws \Exception
 	 * @noinspection PhpUnused
 	 */
@@ -335,8 +316,8 @@ class AuthorizeBehavior extends Behavior {
 		$la_options = Hash::merge($this->getConfig(), Hash::get($ao_options, 'authorize'));
 
 		//Skipping the check means the event does nothing.
-		if ($la_options['skip'] === TRUE || $la_options['skipOnce'] === TRUE) {
-			$this->setConfig('skipOnce', FALSE);
+		if ($la_options['skip'] === true || $la_options['skipOnce'] === true) {
+			$this->setConfig('skipOnce', false);
 
 			if (!($ao_subject instanceof SelectQuery)) {
 				return;
@@ -356,8 +337,8 @@ class AuthorizeBehavior extends Behavior {
 				}
 
 				/**
-				 * @var BelongsToMany $lo_association
-				 * @var Table $lo_junctionTable
+				 * @var \Awyiss\ORM\Association\BelongsToMany $lo_association
+				 * @var \Awyiss\Model\Table $lo_junctionTable
 				 */
 				$lo_junctionTable = $lo_association->junction();
 				if (!$lo_junctionTable->hasBehavior('Authorize')) {
@@ -376,7 +357,8 @@ class AuthorizeBehavior extends Behavior {
 		$lb_accessible = $this->handle($ao_event->getName(), $ao_subject, $la_options);
 
 		//If the event name is a callable config item, call it and set the return value as the accessible status
-		if ($lx_call = $this->getConfig($ao_event->getName())) {
+		$lx_call = $this->getConfig($ao_event->getName());
+		if ($lx_call) {
 			if (!is_callable($lx_call)) {
 				throw new RuntimeException(sprintf('Expected option for `%s` to be `callable`, `%s` given', $ao_event->getName(), gettype($lx_call)));
 			}
@@ -384,7 +366,7 @@ class AuthorizeBehavior extends Behavior {
 			$lb_accessible = call_user_func($lx_call, $ao_event, $ao_subject, new ArrayObject($la_options), $this, $lb_accessible);
 		}
 
-		if ($lb_accessible === FALSE || ($lb_accessible === NULL && Permission::DEFAULT_PERMISSION === FALSE)) {
+		if ($lb_accessible === false || ($lb_accessible === null && Permission::DEFAULT_PERMISSION === false)) {
 			if ($ao_subject instanceof SelectQuery || $ao_subject instanceof DeleteQuery) {
 				$this->log(
 					sprintf(
@@ -393,7 +375,7 @@ class AuthorizeBehavior extends Behavior {
 						$ao_subject->getRepository()->getTable(),
 						$this->getScope(),
 						$ao_subject->sql(),
-						var_export($ao_subject->getValueBinder()->bindings(), TRUE)
+						var_export($ao_subject->getValueBinder()->bindings(), true)
 					),
 					'error'
 				);
@@ -402,12 +384,12 @@ class AuthorizeBehavior extends Behavior {
 				$this->log(sprintf('Permission denied in event `%s`', $ao_event->getName()), 'error');
 			}
 
-			if ($la_options['failSilently'] === FALSE) {
+			if ($la_options['failSilently'] === false) {
 				throw new ForbiddenException(sprintf('Permission denied in event `%s` for table `%s`.', $ao_event->getName(), $ao_subject->getRepository()->getTable()));
 			}
 
 			$ao_event->stopPropagation();
-			$ao_event->setResult(FALSE);
+			$ao_event->setResult(false);
 
 			if ($ao_subject instanceof SelectQuery || $ao_subject instanceof DeleteQuery) {
 				$ao_subject->setResult(new ResultSetDecorator([]));
@@ -417,45 +399,41 @@ class AuthorizeBehavior extends Behavior {
 
 
 	/**
-	 * For a list of given identifiers, return TRUE or FALSE whether they're accessible inside the current scope
+	 * For a list of given identifiers, return true or false whether they're accessible inside the current scope
 	 * for the current identity.
 	 *
 	 * See \Awyiss\Authorization\Permission\PermissionCollection::scopeIsAccessible() how $ax_identifier is used.
 	 *
-	 * @param string|array ...$ax_identifier
-	 *
+	 * @param array|string ...$ax_identifier
 	 * @return bool
 	 * @throws \Exception
-	 *
-	 * @see          \Awyiss\Authorization\Permission\PermissionCollection::scopeIsAccessible()
-	 *
+	 * @see \Awyiss\Authorization\Permission\PermissionCollection::scopeIsAccessible()
 	 * @noinspection PhpUnused
 	 */
 	public function isAccessible(string|array ...$ax_identifier): bool {
-		return $this->scopeIsAccessible($this->getScope(), NULL, ...$ax_identifier);
+		return $this->scopeIsAccessible($this->getScope(), null, ...$ax_identifier);
 	}
 
 
 	/**
-	 * For a list of given identifiers, return TRUE or FALSE whether they're accessible inside the given scope
+	 * For a list of given identifiers, return true or false whether they're accessible inside the given scope
 	 * for the given identity.
 	 *
 	 * See \Awyiss\Authorization\Permission\PermissionCollection::scopeIsAccessible() how $ax_identifier is used.
 	 *
 	 * @param string $as_scope
-	 * @param null|array $aa_additionalData
-	 * @param string|array ...$ax_identifier
-	 *
+	 * @param array|null $aa_additionalData
+	 * @param array|string ...$ax_identifier
 	 * @return bool
 	 * @throws \ReflectionException
 	 * @see \Awyiss\Authorization\Permission\PermissionCollection::scopeIsAccessible()
 	 */
-	public function scopeIsAccessible(string $as_scope, ?array $aa_additionalData = NULL, string|array ...$ax_identifier): bool {
+	public function scopeIsAccessible(string $as_scope, ?array $aa_additionalData = null, string|array ...$ax_identifier): bool {
 		//Get the currently assigned permissions from the identity object, resp. their permission collection
 		$lo_identity = $this->getIdentity();
 
 		if (!$lo_identity) {
-			return FALSE;
+			return false;
 		}
 
 
@@ -469,14 +447,13 @@ class AuthorizeBehavior extends Behavior {
 	 * @param string $as_identifier
 	 * @param SelectQuery|DeleteQuery|EntityInterface $ao_subject
 	 * @param array $aa_options
-	 *
 	 * @return bool
 	 * @throws \Exception
 	 */
 	protected function handle(string $as_identifier, SelectQuery|DeleteQuery|EntityInterface $ao_subject, array $aa_options = []): bool {
 		$ls_scope = $aa_options['scope'] ?? $this->getScope();
 
-		$lx_identifier = $aa_options['identifiers'][ $as_identifier ] ?? NULL;
+		$lx_identifier = $aa_options['identifiers'][ $as_identifier ] ?? null;
 		if (!is_string($lx_identifier) && !is_array($lx_identifier)) {
 			throw new RuntimeException(sprintf('The identifier for `%s` is invalid. Expected `string|array`, `%s` given', $as_identifier, gettype($lx_identifier)));
 		}
@@ -507,7 +484,7 @@ class AuthorizeBehavior extends Behavior {
 	 * Then retreive the IdentityInterface from AuthenticationServiceInterface.
 	 */
 	protected function _getIdentity(): ?IdentityPermissionsInterface {
-		/** @var AuthorizationService $lo_authorizationService */
+		/** @var \Awyiss\Authorization\AuthorizationService $lo_authorizationService */
 		$lo_authorizationService = $this->getAuthorizationService();
 		if (!$lo_authorizationService) {
 			throw new RuntimeException(sprintf('Could not retreive `AuthorizationService` in `%s`.', static::class));
@@ -517,7 +494,7 @@ class AuthorizeBehavior extends Behavior {
 		if (!$lo_authenticationService) {
 			throw new RuntimeException(sprintf('Object `%s` does not have an authentication service set.', get_class($lo_authorizationService)));
 		}
-		/** @var IdentityPermissionsInterface|User|UsersExternal $lo_identity */
+		/** @var IdentityPermissionsInterface|\Awyiss\Model\Entity\User|\Awyiss\Model\Entity\UsersExternal $lo_identity */
 		$lo_identity = $lo_authenticationService->getIdentity();
 		if ($lo_identity && !($lo_identity instanceof IdentityPermissionsInterface)) {
 			throw new RuntimeException(sprintf('Object `%s` does not implement `%s`', get_class($lo_identity), IdentityPermissionsInterface::class));

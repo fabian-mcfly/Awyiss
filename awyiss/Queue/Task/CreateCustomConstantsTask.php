@@ -4,7 +4,6 @@
 namespace Awyiss\Queue\Task;
 
 
-use Awyiss\Model\Entity\PageRole;
 use Cake\Datasource\FactoryLocator;
 use Queue\Queue\Task;
 
@@ -27,9 +26,7 @@ class CreateCustomConstantsTask extends Task {
 	/**
 	 * @param array<string, mixed> $aa_data The array passed to QueuedJobsTable::createJob()
 	 * @param int $ai_jobId The id of the QueuedJob entity
-	 *
 	 * @return void
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function run(array $aa_data, int $ai_jobId): void {
@@ -40,8 +37,8 @@ class CreateCustomConstantsTask extends Task {
 		$ls_constantsContents = '<?php declare(strict_types=1);' . PHP_EOL . PHP_EOL;
 
 		$lo_pageRolesTable = FactoryLocator::get('Table')->get('PageRoles');
-		/** @var PageRole $lo_pageRole */
-		foreach ($lo_pageRolesTable->find()->applyOptions(['authorize' => ['skip' => TRUE]]) as $lo_pageRole) {
+		/** @var \Awyiss\Model\Entity\PageRole $lo_pageRole */
+		foreach ($lo_pageRolesTable->find()->applyOptions(['authorize' => ['skip' => true]]) as $lo_pageRole) {
 			$ls_constant = 'PAGEROLE_' . strtoupper($lo_pageRole->identifier);
 			$ls_constantsContents .= 'defined(\'' . $ls_constant . '\') || define(\'' . $ls_constant . '\', ' . $lo_pageRole->id . ');' . PHP_EOL;
 			defined($ls_constant) || define($ls_constant, $lo_pageRole->id);

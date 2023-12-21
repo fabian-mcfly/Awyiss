@@ -4,11 +4,7 @@
 namespace Awyiss\Controller;
 
 
-use Authentication\Controller\Component\AuthenticationComponent;
 use Awyiss\Awyiss;
-use Awyiss\Controller\Component\AuthorizationComponent;
-use Awyiss\Controller\Component\CategoriesComponent;
-use Awyiss\Controller\Component\SystemOrderComponent;
 use Awyiss\Event\EventListenersProvider;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Routing\Router;
@@ -19,26 +15,24 @@ use Cake\Utility\Inflector;
 
 
 /**
- * @property AuthenticationComponent $Authentication
- * @property AuthorizationComponent $Authorization
- * @property CategoriesComponent $Categories
- * @property SystemOrderComponent $SystemOrder
+ * @property \Authentication\Controller\Component\AuthenticationComponent $Authentication
+ * @property \Awyiss\Controller\Component\AuthorizationComponent $Authorization
+ * @property \Awyiss\Controller\Component\CategoriesComponent $Categories
+ * @property \Awyiss\Controller\Component\SystemOrderComponent $SystemOrder
  */
 abstract class BackendController extends AppController {
 	/**
 	 * @see AuthorizationComponent
 	 * @var array Settings for the AuthorizationComponent
-	 *
 	 */
 	protected array $authorization = [];
 	/**
 	 * @see CategoriesComponent
 	 * @var array Settings for the CategoriesComponent
-	 *
 	 */
 	protected array $categorize = [];
 	/**
-	 * @var array|string[] A list of properties that will be merged with values from the database configuration
+	 * @var array|array<string>  A list of properties that will be merged with values from the database configuration
 	 */
 	protected array $customConfigProperties = [
 		'authorize',
@@ -50,25 +44,21 @@ abstract class BackendController extends AppController {
 	/**
 	 * @see \Awyiss\Controller\Component\EventTriggerComponent
 	 * @var array Settings for the EventTriggerComponent
-	 *
 	 */
 	protected array $eventTrigger = [];
 	/**
 	 * @see initializeOverviewWhere()
 	 * @var array Settings used in initializeOverviewWhere()
-	 *
 	 */
 	protected array $overviewWhere;
 	/**
 	 * @inheritDoc
-	 *
 	 * @var array
 	 */
 	protected array $paginate = [];
 	/**
 	 * @see SystemOrderComponent
 	 * @var array Settings for the SystemOrderComponent
-	 *
 	 */
 	protected array $systemOrder = [];
 
@@ -136,14 +126,13 @@ abstract class BackendController extends AppController {
 	 *
 	 * When $ax_key is empty, the whole array is returned.
 	 *
-	 * When $ax_key is set, the corresponding value is returned if set, otherwise NULL.
+	 * When $ax_key is set, the corresponding value is returned if set, otherwise null.
 	 *
-	 * @param NULL|string $ax_key
-	 * @param NULL $ax_default
-	 *
+	 * @param string|null $ax_key
+	 * @param null $ax_default
 	 * @return mixed
 	 */
-	public function getOverviewWhere(string $ax_key = NULL, $ax_default = NULL): mixed {
+	public function getOverviewWhere(?string $ax_key = null, null $ax_default = null): mixed {
 		if (!isset($this->overviewWhere)) {
 			$this->initializeOverviewWhere();
 		}
@@ -160,13 +149,12 @@ abstract class BackendController extends AppController {
 	/**
 	 * Sets the where-clauses used in the overview-method of most controllers.
 	 *
-	 * @param string|array $ax_key
-	 * @param NULL $ax_value
-	 *
+	 * @param array|string $ax_key
+	 * @param null $ax_value
 	 * @return BackendController
 	 * @noinspection PhpUnused
 	 */
-	public function setOverviewWhere(string|array $ax_key, $ax_value = NULL): static {
+	public function setOverviewWhere(string|array $ax_key, null $ax_value = null): static {
 		if (is_string($ax_key)) {
 			$this->overviewWhere[ $ax_key ] = $ax_value;
 		}

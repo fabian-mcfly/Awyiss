@@ -12,7 +12,7 @@ use Awyiss\Controller\BackendController as Controller;
  */
 class DashboardController extends Controller {
 	protected array $categorize = [
-		'enabled' => FALSE,
+		'enabled' => false,
 	];
 	protected ?string $defaultTable = '';
 

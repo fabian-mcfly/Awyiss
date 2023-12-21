@@ -5,7 +5,6 @@ namespace Awyiss\Model\Behavior;
 
 
 use ArrayObject;
-use Awyiss\Model\Entity;
 use Awyiss\ORM\Behavior;
 use Awyiss\ORM\RulesChecker;
 use Cake\Collection\Collection;
@@ -36,15 +35,15 @@ class NestBehavior extends Behavior {
 	 * @var array
 	 */
 	protected array $_defaultConfig = [
-		'alias' => NULL,
+		'alias' => null,
 		'children' => [
-			'associationName' => NULL,
+			'associationName' => null,
 			'bindingKey' => 'id',
-			'finder' => NULL,
+			'finder' => null,
 			'foreignKey' => 'parent_id',
-			'maxLevel' => NULL,
+			'maxLevel' => null,
 		],
-		'enabled' => TRUE,
+		'enabled' => true,
 		'implementedEvents' => [
 			'buildRules',
 			'afterSaveCommit',
@@ -56,14 +55,14 @@ class NestBehavior extends Behavior {
 			'getParents' => 'getParents',
 		],
 		'parent' => [
-			'associationName' => NULL,
+			'associationName' => null,
 			'bindingKey' => 'id',
 			'foreignKey' => 'parent_id',
-			'finder' => NULL,
-			'maxLevel' => NULL,
+			'finder' => null,
+			'maxLevel' => null,
 		],
 		'relatedColumns' => [],
-		'skip' => FALSE,
+		'skip' => false,
 	];
 
 
@@ -101,20 +100,20 @@ class NestBehavior extends Behavior {
 		$ls_alias = $this->getConfig('alias');
 		if (!$this->getConfig('children.associationName') || !$this->table()->hasAssociation($this->getConfig('children.associationName'))) {
 			$ls_associationName = $this->getConfig('children.associationName') ?: 'Child' . $ls_alias;
-			/** @var Entity $ls_entityClass */
+			/** @var \Awyiss\Model\Entity $ls_entityClass */
 			$ls_entityClass = $lo_table->getEntityClass();
 
-			$la_bindingKeys = array_merge((array) $this->getConfig('children.bindingKey'), $this->getConfig('relatedColumns'));
+			$la_bindingKeys = array_merge((array)$this->getConfig('children.bindingKey'), $this->getConfig('relatedColumns'));
 			$la_bindingKeys = $ls_entityClass::unmapFields($la_bindingKeys);
 
-			$la_foreignKeys = array_merge((array) $this->getConfig('children.foreignKey'), $this->getConfig('relatedColumns'));
+			$la_foreignKeys = array_merge((array)$this->getConfig('children.foreignKey'), $this->getConfig('relatedColumns'));
 			$la_foreignKeys = $ls_entityClass::unmapFields($la_foreignKeys);
 
 			$this->table()->hasMany($ls_associationName, [
 				'bindingKey' => $la_bindingKeys,
-				'cascadeCallbacks' => TRUE,
+				'cascadeCallbacks' => true,
 				'className' => $ls_alias,
-				'dependent' => TRUE,
+				'dependent' => true,
 				'foreignKey' => $la_foreignKeys,
 			]);
 
@@ -123,13 +122,13 @@ class NestBehavior extends Behavior {
 
 		if (!$this->getConfig('parent.associationName') || !$this->table()->hasAssociation($this->getConfig('parent.associationName'))) {
 			$ls_associationName = $this->getConfig('parent.associationName') ?: 'Parent' . $ls_alias;
-			/** @var Entity $ls_entityClass */
+			/** @var \Awyiss\Model\Entity $ls_entityClass */
 			$ls_entityClass ??= $lo_table->getEntityClass();
 
-			$la_bindingKeys = array_merge((array) $this->getConfig('parent.bindingKey'), $this->getConfig('relatedColumns'));
+			$la_bindingKeys = array_merge((array)$this->getConfig('parent.bindingKey'), $this->getConfig('relatedColumns'));
 			$la_bindingKeys = $ls_entityClass::unmapFields($la_bindingKeys);
 
-			$la_foreignKeys = array_merge((array) $this->getConfig('parent.foreignKey'), $this->getConfig('relatedColumns'));
+			$la_foreignKeys = array_merge((array)$this->getConfig('parent.foreignKey'), $this->getConfig('relatedColumns'));
 			$la_foreignKeys = $ls_entityClass::unmapFields($la_foreignKeys);
 
 			$this->table()->belongsTo($ls_associationName, [
@@ -153,7 +152,7 @@ class NestBehavior extends Behavior {
 	 */
 	public function getChildren(EntityInterface $ao_entity): ?CollectionInterface {
 		if (!$this->getConfig('enabled') || !$this->getConfig('children')) {
-			return NULL;
+			return null;
 		}
 
 		$ls_associationName = $this->getConfig('children.associationName');
@@ -163,20 +162,20 @@ class NestBehavior extends Behavior {
 
 		$lo_association = $this->table()->getAssociation($ls_associationName);
 
-		$lx_finder = $this->getConfig('children.finder') ?: NULL;
+		$lx_finder = $this->getConfig('children.finder') ?: null;
 
 		$lo_query = $lo_association->find($lx_finder);
 
-		$la_bindingKeys = (array) $lo_association->getBindingKey();
+		$la_bindingKeys = (array)$lo_association->getBindingKey();
 
-		/** @var Entity $ls_entityClass */
+		/** @var \Awyiss\Model\Entity $ls_entityClass */
 		$ls_entityClass = $lo_association->getSource()->getEntityClass();
-		foreach ((array) $lo_association->getForeignKey() as $li_key => $ls_field) {
+		foreach ((array)$lo_association->getForeignKey() as $li_key => $ls_field) {
 			$ls_field = $ls_entityClass::unmapField($ls_field);
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 			$lx_value = $ao_entity->hasOriginal($la_bindingKeys[ $li_key ]) ? $ao_entity->getOriginal($la_bindingKeys[ $li_key ]) : $ao_entity->get($la_bindingKeys[ $li_key ]);
 
-			if ($lx_value === NULL) {
+			if ($lx_value === null) {
 				$ls_field .= ' IS';
 			}
 
@@ -203,7 +202,7 @@ class NestBehavior extends Behavior {
 	 */
 	public function getNestedChildren(EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0): ?CollectionInterface {
 		if (!$this->getConfig('enabled') || !$this->getConfig('children')) {
-			return NULL;
+			return null;
 		}
 
 		$lo_collection = new Collection([]);
@@ -212,7 +211,7 @@ class NestBehavior extends Behavior {
 			$lo_collection = $lo_collection->appendItem($lo_entity);
 
 			$li_maxLevel = $aa_options['maxLevel'] ?? $this->getConfig('children.maxLevel');
-			if (isset($li_maxLevel) && $li_maxLevel <= ($ai_currentLevel + 1)) {
+			if (isset($li_maxLevel) && $li_maxLevel <= $ai_currentLevel + 1) {
 				continue;
 			}
 
@@ -225,18 +224,18 @@ class NestBehavior extends Behavior {
 		}
 
 
-		return $lo_collection->compile(FALSE);
+		return $lo_collection->compile(false);
 	}
 
 
 	/**
-	 * Returns the direct parent entity of the given entity or `NULL` if none exists
+	 * Returns the direct parent entity of the given entity or `null` if none exists
 	 *
 	 * @noinspection PhpUnused
 	 */
 	public function getParent(EntityInterface $ao_entity): ?EntityInterface {
 		if (!$this->getConfig('enabled') || !$this->getConfig('parent')) {
-			return NULL;
+			return null;
 		}
 
 		$ls_associationName = $this->getConfig('parent.associationName');
@@ -247,10 +246,10 @@ class NestBehavior extends Behavior {
 		$lo_association = $this->table()->getAssociation($ls_associationName);
 
 		if (!$ao_entity->get($lo_association->getForeignKey())) {
-			return NULL;
+			return null;
 		}
 
-		$lx_finder = $this->getConfig('parent.finder') ?: NULL;
+		$lx_finder = $this->getConfig('parent.finder') ?: null;
 
 
 		return $lo_association->find($lx_finder)->where([
@@ -272,36 +271,36 @@ class NestBehavior extends Behavior {
 	 */
 	public function getParents(EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0): ?CollectionInterface {
 		if (!$this->getConfig('enabled') || !$this->getConfig('parent')) {
-			return NULL;
+			return null;
 		}
 
 		$lo_collection = new Collection([]);
 
 		$lo_entity = $this->getParent($ao_entity);
 		if (!$lo_entity) {
-			return $lo_collection->compile(FALSE);
+			return $lo_collection->compile(false);
 		}
 
 		$lo_collection = $lo_collection->appendItem($lo_entity);
 
 		$li_maxLevel = $aa_options['maxLevel'] ?? $this->getConfig('parent.maxLevel');
-		if (isset($li_maxLevel) && $li_maxLevel <= ($ai_currentLevel + 1)) {
-			return $lo_collection->compile(FALSE);
+		if (isset($li_maxLevel) && $li_maxLevel <= $ai_currentLevel + 1) {
+			return $lo_collection->compile(false);
 		}
 
-		if ($lo_parent = $this->getParents($lo_entity, $aa_options, $ai_currentLevel + 1)) {
+		$lo_parent = $this->getParents($lo_entity, $aa_options, $ai_currentLevel + 1);
+		if ($lo_parent) {
 			$lo_collection = $lo_collection->append($lo_parent);
 		}
 
 
-		return $lo_collection->compile(FALSE);
+		return $lo_collection->compile(false);
 	}
 
 
 	/**
 	 * @param EventInterface $ao_event
 	 * @param RulesChecker $ao_rules
-	 *
 	 * @return RulesChecker
 	 * @noinspection PhpUnusedParameterInspection
 	 */
@@ -309,7 +308,7 @@ class NestBehavior extends Behavior {
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 		$ao_rules->add(function (EntityInterface $ao_entity/*, array $aa_options*/) use ($ao_rules): string|bool {
 			if (!$ao_entity->get('parentId') || $ao_entity->isNew()) {
-				return TRUE;
+				return true;
 			}
 
 			$la_nestedChildrenIds = $this->getNestedChildren($ao_entity)->extract('id')->toArray();
@@ -348,7 +347,7 @@ class NestBehavior extends Behavior {
 
 		$la_options = Hash::merge($this->getConfig(), Hash::get($ao_options, 'nest'));
 
-		if ($la_options['skip'] === TRUE) {
+		if ($la_options['skip'] === true) {
 			return;
 		}
 
@@ -368,15 +367,15 @@ class NestBehavior extends Behavior {
 		$la_data = array_combine(
 			$la_dirtyRelatedColumns,
 			array_intersect_key(
-				$ao_entity->extract(NULL, FALSE, FALSE),
+				$ao_entity->extract(null, false, false),
 				array_flip($la_dirtyRelatedColumns)
 			)
 		);
 
 		$lo_table = $this->table();
-		/** @var Entity $ls_entityClass */
+		/** @var \Awyiss\Model\Entity $ls_entityClass */
 		$ls_entityClass = $lo_table->getEntityClass();
-		$la_data = $ls_entityClass::unmapFields($la_data, TRUE);
+		$la_data = $ls_entityClass::unmapFields($la_data, true);
 
 		$la_ids = $lo_children->extract('id')->toArray();
 		$this->table()->updateAll($la_data, ['id IN' => $la_ids]);

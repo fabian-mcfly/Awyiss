@@ -17,7 +17,7 @@ use RuntimeException;
 /**
  * Helper functions for the view that are related to SystemOrder-logic
  *
- * @property FormHelper $Form
+ * @property \Awyiss\View\Helper\FormHelper $Form
  */
 class SystemOrderHelper extends Helper {
 	use StringTemplateTrait;
@@ -27,11 +27,11 @@ class SystemOrderHelper extends Helper {
 	 * @inheritDoc
 	 */
 	protected array $_defaultConfig = [
-		'after' => NULL,
-		'empty' => FALSE,
-		'first' => NULL,
-		'includeFirst' => TRUE,
-		'templateClass' => \Awyiss\View\StringTemplate::class,
+		'after' => null,
+		'empty' => false,
+		'first' => null,
+		'includeFirst' => true,
+		'templateClass' => StringTemplate::class,
 		'templates' => [
 			'titleOption' => '{{after}} {{label}}',
 			'titleOptionCurrent' => '{{label}}',
@@ -49,9 +49,7 @@ class SystemOrderHelper extends Helper {
 
 	/**
 	 * @inheritDoc
-	 *
 	 * @param array $aa_config
-	 *
 	 * @return void
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
@@ -72,19 +70,17 @@ class SystemOrderHelper extends Helper {
 	 *
 	 * For more options, see FormHelper::control()
 	 *
-	 * @param null|string $as_fieldName
+	 * @param string|null $as_fieldName
 	 * @param array $aa_attributes
-	 *
 	 * @return string
-	 *
 	 * @see FormHelper::control
 	 */
-	public function control(?string $as_fieldName = NULL, array $aa_attributes = []): string {
+	public function control(?string $as_fieldName = null, array $aa_attributes = []): string {
 		//Add the provided attributes to the config, so both will be merged
 		$la_attributes = Hash::merge($aa_attributes, $this->getConfig());
 
 		//No entity? That's a big problem.
-		$lo_entity = $la_attributes['entity'] ?? NULL;
+		$lo_entity = $la_attributes['entity'] ?? null;
 		if (!$lo_entity) {
 			throw new CakeException('Missing entity for SystemOrderHelper::control');
 		}
@@ -138,10 +134,9 @@ class SystemOrderHelper extends Helper {
 	 * @param iterable $ax_options
 	 * @param array $aa_attributes
 	 * @param Entity $ao_entity
-	 *
 	 * @return array
 	 */
-	protected function buildSystemOrderOptions(iterable | null $ax_options, array $aa_attributes, Entity $ao_entity): array {
+	protected function buildSystemOrderOptions(?iterable $ax_options, array $aa_attributes, Entity $ao_entity): array {
 		$la_options = [];
 		$lb_isNew = $ao_entity->isNew();
 		$la_dirtyRelatedColumns = array_intersect($ao_entity->getDirty(), $aa_attributes['relatedColumns'] ?? []);
@@ -151,13 +146,13 @@ class SystemOrderHelper extends Helper {
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 			$la_options[1] = $this->formatFirstTitle(
 				$aa_attributes + [
-					'isOriginalSystemOrder' => !$lb_isNew && $ao_entity->hasOriginal('systemOrder') && 1 === $ao_entity->getOriginal('systemOrder'),
-					'isSelectedSystemOrder' => 1 === $ao_entity->systemOrder,
+					'isOriginalSystemOrder' => !$lb_isNew && $ao_entity->hasOriginal('systemOrder') && $ao_entity->getOriginal('systemOrder') === 1,
+					'isSelectedSystemOrder' => $ao_entity->systemOrder === 1,
 				]
 			);
 		}
 
-		$lb_reachedOriginalSystemOrder = FALSE;
+		$lb_reachedOriginalSystemOrder = false;
 		foreach (($ax_options ?? []) as $lo_option) {
 			/*
 			 * The option is the original when
@@ -165,19 +160,19 @@ class SystemOrderHelper extends Helper {
 			 * - no system order related columns are dirty AND
 			 * - the `system order`-property of the option equals the entity's original
 			 */
-			$lb_isOriginalSystemOrder = FALSE;
+			$lb_isOriginalSystemOrder = false;
 			if (!$lb_isNew && !$la_dirtyRelatedColumns) {
 				if ($ao_entity->hasOriginal('systemOrder') && ($lo_option->systemOrder == $ao_entity->getOriginal('systemOrder'))) {
-					$lb_isOriginalSystemOrder = TRUE;
+					$lb_isOriginalSystemOrder = true;
 				}
 				elseif (!$ao_entity->hasOriginal('systemOrder') && ($lo_option->systemOrder == $ao_entity->get('systemOrder'))) {
-					$lb_isOriginalSystemOrder = TRUE;
+					$lb_isOriginalSystemOrder = true;
 				}
 			}
 
 			//Remember that we reached the original position
 			if ($lb_isOriginalSystemOrder/* && ! $lb_reachedOriginalSystemOrder*/) {
-				$lb_reachedOriginalSystemOrder = TRUE;
+				$lb_reachedOriginalSystemOrder = true;
 			}
 
 			//The value should be the `system_order`-property of the option
@@ -231,7 +226,6 @@ class SystemOrderHelper extends Helper {
 	 * Returns a formatted title for the `first`-option.
 	 *
 	 * @param array $aa_config
-	 *
 	 * @return string
 	 */
 	protected function formatFirstTitle(array $aa_config): string {
@@ -280,7 +274,6 @@ class SystemOrderHelper extends Helper {
 	/**
 	 * @param mixed $ax_data
 	 * @param array $aa_config
-	 *
 	 * @return string
 	 */
 	protected function formatTitle(mixed $ax_data, array $aa_config): string {
@@ -308,7 +301,7 @@ class SystemOrderHelper extends Helper {
 				$la_data = $la_data->toArray();
 			}
 			elseif (!is_array($ax_data)) {
-				$la_data = (array) $la_data;
+				$la_data = (array)$la_data;
 			}
 
 			//Add the template with its name to the templater

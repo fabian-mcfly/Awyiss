@@ -8,11 +8,10 @@ use Awyiss\Awyiss;
 use Awyiss\Middleware\LocaleMiddleware;
 use Cake\Event\Event;
 use Cake\View\Helper;
-use Cake\View\View;
 
 
 /**
- * @property FormHelper $Form
+ * @property \Awyiss\View\Helper\FormHelper $Form
  */
 class LocaleHelper extends Helper {
 	/**
@@ -24,27 +23,25 @@ class LocaleHelper extends Helper {
 	/**
 	 * Returns the value of the `title`-property of a language with the given shorrtcode.
 	 *
-	 * It first looks for a frontend-language, then a backend-language and falls back to NULL.
+	 * It first looks for a frontend-language, then a backend-language and falls back to null.
 	 *
-	 * @param null|string $as_shortcode
-	 * @param null|array $aa_languagesByShortcode
-	 *
-	 * @return null|string
-	 *
+	 * @param string|null $as_shortcode
+	 * @param array|null $aa_languagesByShortcode
+	 * @return string|null
 	 * @noinspection PhpUnused
 	 */
-	public function languageTitle(?string $as_shortcode = NULL, ?array $aa_languagesByShortcode = NULL): ?string {
+	public function languageTitle(?string $as_shortcode = null, ?array $aa_languagesByShortcode = null): ?string {
 		if (!$as_shortcode) {
-			return NULL;
+			return null;
 		}
 
 		$la_languages = $aa_languagesByShortcode ?: LocaleMiddleware::getLanguagesByShortcode();
 		if (!isset($la_languages [ $as_shortcode ])) {
-			return NULL;
+			return null;
 		}
 
 
-		return ($la_languages [ $as_shortcode ][ Awyiss::REALM_FRONTEND ] ?? $la_languages [ $as_shortcode ][ Awyiss::REALM_BACKEND ])?->title ?? NULL;
+		return ($la_languages [ $as_shortcode ][ Awyiss::REALM_FRONTEND ] ?? $la_languages [ $as_shortcode ][ Awyiss::REALM_BACKEND ])?->title ?? null;
 	}
 
 
@@ -58,14 +55,12 @@ class LocaleHelper extends Helper {
 	 * - `languageRealm` If the realm is set and found as a valid language realm (e.g. 'frontend' or 'backend'),
 	 * the options consist only of languages of this realm. Otherwise, it will use all realms.
 	 *
-	 * @param null|string $as_fieldName
+	 * @param string|null $as_fieldName
 	 * @param array $aa_attributes
-	 *
 	 * @return string
-	 *
 	 * @see FormHelper::control
 	 */
-	public function control(?string $as_fieldName = NULL, array $aa_attributes = []): string {
+	public function control(?string $as_fieldName = null, array $aa_attributes = []): string {
 		$la_attributes = $aa_attributes + ['type' => 'select'];
 
 		if (empty($aa_attributes['realm'])) {
@@ -86,13 +81,12 @@ class LocaleHelper extends Helper {
 
 	/**
 	 * @param Event $ao_event
-	 *
 	 * @return void
 	 */
 	public function beforeRender(Event $ao_event): void {
 		$la_languages = LocaleMiddleware::getLanguages();
 
-		/** @var View $ao_view */
+		/** @var \Cake\View\View $ao_view */
 		$ao_view = $ao_event->getSubject();
 
 		$ao_view->set('aa_languages', $la_languages);
@@ -108,7 +102,7 @@ class LocaleHelper extends Helper {
 		$la_languages = [];
 
 		foreach (LocaleMiddleware::getLanguagesByShortcode() as $ls_shortcode => $la_languagesByRealm) {
-			$lo_language = $la_languagesByRealm[ Awyiss::REALM_FRONTEND ] ?? $la_languagesByRealm[ Awyiss::REALM_BACKEND ] ?? NULL;
+			$lo_language = $la_languagesByRealm[ Awyiss::REALM_FRONTEND ] ?? $la_languagesByRealm[ Awyiss::REALM_BACKEND ] ?? null;
 
 			if (!$lo_language) {
 				continue;
@@ -124,7 +118,6 @@ class LocaleHelper extends Helper {
 
 	/**
 	 * @param string $as_realm
-	 *
 	 * @return array
 	 */
 	protected function languagesForRealm(string $as_realm): array {

@@ -28,7 +28,7 @@
 			{% block formControlPageRoleId %}
 				{{ helper_Categories_control('page_role_id', {
 					categoriesIdentifier: 'pageRole',
-					empty: FALSE,
+					empty: false,
 					val: ao_pageTemplate.pageRoleId,
 				}) }}
 			{% endblock %}
@@ -79,7 +79,7 @@
 								<label for="ContentTemplate-ContentElements-{{ lo_contentArea.identifier|camelize }}">
 									{{ helper_Form_checkbox('content_areas[' ~ li_key ~'][id]', {
 										checked: lo_contentArea.id in la_assignedContentAreas,
-										hiddenField: FALSE,
+										hiddenField: false,
 										id: 'ContentTemplate-ContentElements-' ~ lo_contentArea.identifier|camelize,
 										value: lo_contentArea.id,
 									}) }}

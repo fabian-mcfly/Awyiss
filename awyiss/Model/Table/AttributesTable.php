@@ -4,8 +4,8 @@
 namespace Awyiss\Model\Table;
 
 
+use ArrayObject;
 use Awyiss\Model\Entity\Attribute;
-use Awyiss\Model\Entity\PageRole;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
 use Cake\Database\Driver\Mysql;
@@ -28,7 +28,7 @@ class AttributesTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public const ATTRIBUTABLE = FALSE;
+	public const ATTRIBUTABLE = false;
 	/**
 	 * @inheritDoc
 	 */
@@ -100,7 +100,6 @@ class AttributesTable extends Table {
 	 *
 	 * @param Validator $ao_validator The validator that can be modified to
 	 * add some rules to it.
-	 *
 	 * @return Validator
 	 */
 	public function validationDefault(Validator $ao_validator): Validator {
@@ -211,9 +210,7 @@ class AttributesTable extends Table {
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 *
 	 * @param RulesChecker|BaseRulesChecker $ao_rules The rules object to be modified.
-	 *
 	 * @return RulesChecker
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
@@ -231,7 +228,7 @@ class AttributesTable extends Table {
 				/** @var Table $lo_table */
 				$lo_table = FactoryLocator::get('Table')->get($this->getAvailableScopes()[ $ao_entity->scope ]);
 				if ($lo_table->getSchema()->getColumn($ao_entity->identifier)) {
-					return FALSE;
+					return false;
 				}
 			}
 
@@ -540,19 +537,18 @@ class AttributesTable extends Table {
 
 	/**
 	 * @param EventInterface $ao_event
-	 * @param Attribute|EntityInterface $ao_entity
+	 * @param \Awyiss\Model\Entity\Attribute $ao_entity
 	 * @param \ArrayObject $ao_options
-	 *
 	 * @return void
-	 *
+	 * @throws \ReflectionException
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function beforeSave(EventInterface $ao_event, Attribute|EntityInterface $ao_entity, \ArrayObject $ao_options): void {
+	public function beforeSave(EventInterface $ao_event, Attribute|EntityInterface $ao_entity, ArrayObject $ao_options): void {
 		if ($ao_entity->scope === 'contents') {
 			//For contents, the content template decides where an attribute will go
 			$ao_entity->fieldset = '';
 			//For contents, the content template decides whether an attribute is required
-			$ao_entity->required = FALSE;
+			$ao_entity->required = false;
 		}
 
 		$la_pageRoles = array_keys(array_filter($this->getAvailableScopes(), function ($ax_table) {
@@ -561,18 +557,17 @@ class AttributesTable extends Table {
 
 		//Contents, Menu Entries and all types of pages don't need to have translatable attributes since they all are translations themselves
 		if (in_array($ao_entity->scope, array_merge(['contents', 'menu_entries', 'pages'], $la_pageRoles))) {
-			$ao_entity->translatable = FALSE;
+			$ao_entity->translatable = false;
 		}
 	}
 
 
 	/**
-	 * @param NULL|string $as_scope A scope to specify the available fieldsets.
-	 *
+	 * @param string|null $as_scope A scope to specify the available fieldsets.
 	 * @return array
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function getAvailableFieldsets(string $as_scope = NULL): array {
+	public function getAvailableFieldsets(?string $as_scope = null): array {
 		return $this->availableFieldsets;
 	}
 
@@ -629,10 +624,10 @@ class AttributesTable extends Table {
 		//Get all page roles from the database because we want them to have policies too
 		$lo_pageRoles = FactoryLocator::get('Table')->get('PageRoles')->find(
 			'active',
-			authorize: ['skip' => TRUE],
+			authorize: ['skip' => true],
 		)->all();
 
-		/** @var PageRole $lo_pageRole */
+		/** @var \Awyiss\Model\Entity\PageRole $lo_pageRole */
 		foreach ($lo_pageRoles as $lo_pageRole) {
 			$ls_identifier = Inflector::pluralize($lo_pageRole->identifier);
 			/** @var PagesTable $lo_newTable */

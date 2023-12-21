@@ -71,14 +71,14 @@
 				<ul class="NoList ContentElements">
 					{% set li_elementCounter = 0 %}
 					{% for ls_availableElement in aa_availableContentElements %}
-						{% set lo_contentTemplateElement = ls_availableElement in la_assignedContentElements ? ao_contentTemplate.contentTemplateElements[ li_elementCounter ] : NULL %}
+						{% set lo_contentTemplateElement = ls_availableElement in la_assignedContentElements ? ao_contentTemplate.contentTemplateElements[ li_elementCounter ] : null %}
 
 						{% block formControlContentElement %}
 							<li>
 								<label for="ContentTemplate-ContentElements-{{ ls_availableElement|camelize }}">
 									{{ helper_Form_checkbox('content_template_elements[' ~ loop.index0 ~ '][identifier]', {
 										checked: ls_availableElement in la_assignedContentElements,
-										hiddenField: FALSE,
+										hiddenField: false,
 										id: 'ContentTemplate-ContentElements-' ~ ls_availableElement|camelize,
 										value: ls_availableElement,
 									}) }}
@@ -90,7 +90,7 @@
 									Fieldset
 									{{ helper_Form_select('content_template_elements[' ~ loop.index0 ~ '][fieldset]', aa_availableFieldsets, {
 										id: 'ContentTemplate-ContentElements-' ~ ls_availableElement|camelize ~ '-Fieldset',
-										val: lo_contentTemplateElement ? lo_contentTemplateElement.fieldset : NULL,
+										val: lo_contentTemplateElement ? lo_contentTemplateElement.fieldset : null,
 									}) }}
 
 									{% if (lo_contentTemplateElement) %}
@@ -103,10 +103,10 @@
 								{% if ls_availableElement != 'duplicate_of' %}
 									<label for="ContentTemplate-ContentElements-{{ ls_availableElement|camelize }}-Required">
 										{{ helper_Form_checkbox('content_template_elements[' ~ loop.index0 ~ '][required]', {
-											checked: lo_contentTemplateElement ? lo_contentTemplateElement.required : FALSE,
-											hiddenField: TRUE,
+											checked: lo_contentTemplateElement ? lo_contentTemplateElement.required : false,
+											hiddenField: true,
 											id: 'ContentTemplate-ContentElements-' ~ ls_availableElement|camelize ~ '-Required',
-											value: TRUE,
+											value: true,
 										}) }}
 
 										solls auch pflichtfeld sein?
@@ -121,14 +121,14 @@
 					{% endfor %}
 
 					{% for la_contentAttribute in aa_availableContentAttributes %}
-						{% set lo_contentTemplateElement = 'attributes.' ~ la_contentAttribute.identifier in la_assignedContentElements ? ao_contentTemplate.contentTemplateElements[ li_elementCounter ] : NULL %}
+						{% set lo_contentTemplateElement = 'attributes.' ~ la_contentAttribute.identifier in la_assignedContentElements ? ao_contentTemplate.contentTemplateElements[ li_elementCounter ] : null %}
 
 						{% block formControlContentAttribute %}
 							<li>
 								<label for="ContentTemplate-ContentAttribute-{{ la_contentAttribute.identifier|camelize }}">
 									{{ helper_Form_checkbox('content_template_elements[' ~ (loop.index0 + aa_availableContentElements|length) ~ '][identifier]', {
 										checked: 'attributes.' ~ la_contentAttribute.identifier in la_assignedContentElements,
-										hiddenField: FALSE,
+										hiddenField: false,
 										id: 'ContentTemplate-ContentAttribute-' ~ la_contentAttribute.identifier|camelize,
 										value: 'attributes.' ~ la_contentAttribute.identifier,
 									}) }}
@@ -141,8 +141,8 @@
 
 									{{ helper_Form_select('content_template_elements[' ~ (loop.index0 + aa_availableContentElements|length) ~ '][fieldset]', aa_availableFieldsets, {
 										id: 'ContentTemplate-ContentAttribute-' ~ la_contentAttribute.identifier|camelize ~ '-Fieldset',
-										required: TRUE,
-										val: lo_contentTemplateElement ? lo_contentTemplateElement.fieldset : NULL,
+										required: true,
+										val: lo_contentTemplateElement ? lo_contentTemplateElement.fieldset : null,
 									}) }}
 
 									{% if lo_contentTemplateElement %}
@@ -155,10 +155,10 @@
 								{% if la_contentAttribute.active %}
 									<label for="ContentTemplate-ContentAttribute-{{ la_contentAttribute.identifier|camelize }}-Required">
 										{{ helper_Form_checkbox('content_template_elements[' ~ (loop.index0 + aa_availableContentElements|length) ~ '][required]', {
-											checked: lo_contentTemplateElement ? lo_contentTemplateElement.required : FALSE,
-											hiddenField: TRUE,
+											checked: lo_contentTemplateElement ? lo_contentTemplateElement.required : false,
+											hiddenField: true,
 											id: 'ContentTemplate-ContentAttribute-' ~ la_contentAttribute.identifier|camelize ~ '-Required',
-											value: TRUE,
+											value: true,
 										}) }}
 
 										solls auch pflichtfeld sein?
@@ -224,7 +224,7 @@
 
 															{{ helper_Form_control('content_areas[' ~ li_key ~ '][content_area_id]', {
 																checked: lo_contentArea.id in (aa_assignedContentAreas[ lo_pageTemplate.id ] ?? []),
-																hiddenField: FALSE,
+																hiddenField: false,
 																id: 'ContentTemplate-ContentAreas-' ~ lo_pageTemplate.filename|camelize ~'-' ~ lo_contentArea.identifier|camelize,
 																label: lo_contentArea.label,
 																type: 'checkbox',

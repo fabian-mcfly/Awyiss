@@ -16,22 +16,20 @@ use Psr\Http\Server\RequestHandlerInterface;
  * Middleware that loads the GeneralEventsListener for the realm the middleware was loaded with
  */
 class EventListenersMiddleware implements MiddlewareInterface {
-	protected ?string $realm = NULL;
+	protected ?string $realm = null;
 
 
 	/**
-	 * @param null|string $as_realm
+	 * @param string|null $as_realm
 	 */
-	public function __construct(?string $as_realm = NULL) {
+	public function __construct(?string $as_realm = null) {
 		$this->realm = $as_realm;
 	}
 
 
 	/**
 	 * @inheritDoc
-	 *
 	 * @throws \ReflectionException
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function process(ServerRequestInterface $ao_request, RequestHandlerInterface $ao_handler): ResponseInterface {
@@ -47,7 +45,7 @@ class EventListenersMiddleware implements MiddlewareInterface {
 
 
 	/**
-	 * @return null|string
+	 * @return string|null
 	 */
 	public function getRealm(): ?string {
 		return $this->realm;
@@ -56,9 +54,7 @@ class EventListenersMiddleware implements MiddlewareInterface {
 
 	/**
 	 * @param string $realm
-	 *
 	 * @return EventListenersMiddleware
-	 *
 	 * @noinspection PhpUnused
 	 */
 	public function setRealm(string $realm): static {

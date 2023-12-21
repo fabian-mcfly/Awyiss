@@ -18,7 +18,7 @@ use Cake\Utility\Inflector;
  * @property string $scope
  * @property string $identifier
  * @property PermissionAccess $access
- * @property array|NULL $settings
+ * @property array|null $settings
  * @property Usergroup $usergroup
  */
 class UsergroupPermission extends Entity implements PermissionInterface {
@@ -26,11 +26,11 @@ class UsergroupPermission extends Entity implements PermissionInterface {
 	 * @inheritDoc
 	 */
 	protected array $_accessible = [
-		'usergroupId' => TRUE,
-		'scope' => TRUE,
-		'identifier' => TRUE,
-		'access' => TRUE,
-		'settings' => TRUE,
+		'usergroupId' => true,
+		'scope' => true,
+		'identifier' => true,
+		'access' => true,
+		'settings' => true,
 	];
 	/**
 	 * @inheritDoc
@@ -44,10 +44,9 @@ class UsergroupPermission extends Entity implements PermissionInterface {
 	 * In the database, the scope exists as an underscored string
 	 *
 	 * @param string $as_scope
-	 *
 	 * @return string
-	 *
 	 * @noinspection PhpUnused
+	 * @see \Awyiss\Model\Entity\UsergroupPermission::$scope
 	 */
 	public function _setScope(string $as_scope): string {
 		return Inflector::underscore($as_scope);
@@ -58,10 +57,9 @@ class UsergroupPermission extends Entity implements PermissionInterface {
 	 * In the database, the identifier exists as an underscored string
 	 *
 	 * @param string $as_identifier
-	 *
 	 * @return string
-	 *
 	 * @noinspection PhpUnused
+	 * @see \Awyiss\Model\Entity\UsergroupPermission::$identifier
 	 */
 	public function _setIdentifier(string $as_identifier): string {
 		return Inflector::underscore($as_identifier);

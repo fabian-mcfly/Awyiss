@@ -6,16 +6,13 @@ namespace Awyiss\Event\Backend;
 
 use Awyiss\Awyiss;
 use Awyiss\Event\EventListenerTrait;
-use Awyiss\Model\Entity;
 use Awyiss\Model\Entity\PageRole;
-use Awyiss\Model\Table\BackendMenuEntriesTable;
 use Cake\Core\Configure;
 use Cake\Datasource\FactoryLocator;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Utility\Inflector;
-use Queue\Model\Table\QueuedJobsTable;
 
 
 /**
@@ -47,9 +44,7 @@ class PageRolesListener implements EventListenerInterface {
 	/**
 	 * @param Event $ao_event
 	 * @param PageRole $ao_entity
-	 *
 	 * @return void
-	 *
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function afterSave(Event $ao_event, PageRole $ao_entity): void {
@@ -61,7 +56,6 @@ class PageRolesListener implements EventListenerInterface {
 	/**
 	 * @param Event $ao_event
 	 * @param PageRole $ao_entity
-	 *
 	 * @noinspection PhpUnused
 	 * @noinspection PhpUnusedParameterInspection
 	 */
@@ -85,7 +79,6 @@ class PageRolesListener implements EventListenerInterface {
 	/**
 	 * @param Event $ao_event
 	 * @param PageRole $ao_entity
-	 *
 	 * @noinspection PhpUnused
 	 * @noinspection PhpNoReturnAttributeCanBeAddedInspection
 	 * @noinspection PhpUnusedParameterInspection
@@ -105,7 +98,7 @@ class PageRolesListener implements EventListenerInterface {
 	 * @return void
 	 */
 	protected function createCustomConstantsFile(): void {
-		/** @var QueuedJobsTable $lo_queue */
+		/** @var \Queue\Model\Table\QueuedJobsTable $lo_queue */
 		$lo_queue = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
 		if (!$lo_queue->isQueued('system::create_custom_constants')) {
 			$lo_queue->createJob('CreateCustomConstants', [
@@ -117,13 +110,12 @@ class PageRolesListener implements EventListenerInterface {
 			]);
 		}
 
-		Awyiss::loadConstants(FALSE);
+		Awyiss::loadConstants(false);
 	}
 
 
 	/**
 	 * @param PageRole $ao_entity
-	 *
 	 * @return void
 	 */
 	protected function createBackendMenuEntries(PageRole $ao_entity): void {
@@ -131,7 +123,7 @@ class PageRolesListener implements EventListenerInterface {
 			return;
 		}
 
-		/** @var BackendMenuEntriesTable $lo_menuEntriesTable */
+		/** @var \Awyiss\Model\Table\BackendMenuEntriesTable $lo_menuEntriesTable */
 		$lo_menuEntriesTable = $this->fetchTable('BackendMenuEntries');
 
 		$la_data = [
@@ -165,24 +157,24 @@ class PageRolesListener implements EventListenerInterface {
 		];
 
 		if (isset($ao_entity->_translations)) {
-			/** @var Entity $lo_translation */
+			/** @var \Awyiss\Model\Entity $lo_translation */
 			foreach ($ao_entity->_translations as $ls_shortcode => $lo_translation) {
-				$la_data['_translations'][ $ls_shortcode ] = $lo_translation->extract([], FALSE, FALSE);
+				$la_data['_translations'][ $ls_shortcode ] = $lo_translation->extract([], false, false);
 			}
 		}
 
 		$lo_menuEntry = $lo_menuEntriesTable->patchEntity($lo_menuEntriesTable->newDefaultEntity(), $la_data, [
 			'associated' => [
 				'ChildBackendMenuEntries' => [
-					'validate' => FALSE,
+					'validate' => false,
 				],
 			],
-			'validate' => FALSE,
+			'validate' => false,
 		]);
 
 		$lo_menuEntriesTable->save($lo_menuEntry, [
 			'authorize' => [
-				'skip' => TRUE,
+				'skip' => true,
 			],
 		]);
 	}
@@ -190,14 +182,13 @@ class PageRolesListener implements EventListenerInterface {
 
 	/**
 	 * @param PageRole $ao_entity
-	 *
 	 * @return void
 	 */
 	private function createPageRoleModel(PageRole $ao_entity): void {
 		if ($ao_entity->identifier === 'page') {
 			return;
 		}
-		/** @var QueuedJobsTable $lo_queue */
+		/** @var \Queue\Model\Table\QueuedJobsTable $lo_queue */
 		$lo_queue = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
 
 		if ($lo_queue->isQueued('system::create_page_role_model_' . $ao_entity->identifier)) {
@@ -228,8 +219,8 @@ class PageRolesListener implements EventListenerInterface {
 		//Queue the job.
 		$lo_queue->createJob('Queue.Execute', [
 			'command' => '(' . implode(' && ', array_map('escapeshellcmd', $la_commands)) . ')',
-			'escape' => FALSE,
-			'log' => TRUE,
+			'escape' => false,
+			'log' => true,
 		], [
 			'group' => 'general',
 			'priority' => 1,

@@ -6,12 +6,13 @@ namespace Awyiss\View;
 
 use Awyiss\Core\Configure\Engine\PhpConfig;
 use Cake\Core\Exception\CakeException;
+use Cake\View\StringTemplate as BaseStringTemplate;
 
 
 /**
  * @inheritDoc
  */
-class StringTemplate extends \Cake\View\StringTemplate {
+class StringTemplate extends BaseStringTemplate {
 	/**
 	 * {@inheritDoc}
 	 *

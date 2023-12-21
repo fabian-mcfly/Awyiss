@@ -5,7 +5,6 @@ namespace Awyiss\Model\Entity;
 
 
 use Awyiss\Model\Entity;
-use Cake\I18n\FrozenTime;
 use Cake\Utility\Text;
 
 
@@ -19,20 +18,20 @@ use Cake\Utility\Text;
  * @property bool $active
  * @property bool $deleted
  * @property int|null $createdBy
- * @property FrozenTime|null $createdOn
+ * @property \Cake\I18n\DateTime|null $createdOn
  * @property int|null $changedBy
- * @property FrozenTime|null $changedOn
+ * @property \Cake\I18n\DateTime|null $changedOn
  * @property int|null $deletedBy
- * @property FrozenTime|null $deletedOn
+ * @property \Cake\I18n\DateTime|null $deletedOn
  */
 class Menu extends Entity {
 	/**
 	 * @inheritDoc
 	 */
 	protected array $_accessible = [
-		'title' => TRUE,
-		'identifier' => TRUE,
-		'active' => TRUE,
+		'title' => true,
+		'identifier' => true,
+		'active' => true,
 	];
 	/**
 	 * @inheritDoc
@@ -51,6 +50,7 @@ class Menu extends Entity {
 	 * Make sure the identifier is always lowercase, underscored and free of special characters
 	 *
 	 * @noinspection PhpUnused
+	 * @see \Awyiss\Model\Entity\Menu::$identifier
 	 */
 	protected function _setIdentifier(string $as_identifier): string {
 		$ls_identifier = Text::slug($as_identifier, ['replacement' => '_']);

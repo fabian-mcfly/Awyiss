@@ -20,7 +20,6 @@ trait UtilTrait {
 	 * Added a logic that honors the `namespace`-option and modifies the path accordingly.
 	 *
 	 * @param Arguments $ao_args Arguments instance to read the prefix option from.
-	 *
 	 * @return string Path to output.
 	 */
 	public function getPath(Arguments $ao_args): string {

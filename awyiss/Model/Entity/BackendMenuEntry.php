@@ -5,10 +5,8 @@ namespace Awyiss\Model\Entity;
 
 
 use Awyiss\Model\Entity;
-use Awyiss\Model\Table\BackendMenuEntriesTable;
 use Cake\Collection\CollectionInterface;
 use Cake\Datasource\FactoryLocator;
-use Cake\I18n\FrozenTime;
 
 
 /**
@@ -25,30 +23,30 @@ use Cake\I18n\FrozenTime;
  * @property bool $active
  * @property bool $deleted
  * @property int|null $createdBy
- * @property FrozenTime|null $createdOn
+ * @property \Cake\I18n\DateTime|null $createdOn
  * @property int|null $changedBy
- * @property FrozenTime|null $changedOn
+ * @property \Cake\I18n\DateTime|null $changedOn
  * @property int|null $deletedBy
- * @property FrozenTime|null $deletedOn
+ * @property \Cake\I18n\DateTime|null $deletedOn
  */
 class BackendMenuEntry extends Entity {
 	/**
 	 * @inheritDoc
 	 */
 	protected array $_accessible = [
-		'parentId' => TRUE,
-		'insertAfterId' => TRUE,
-		'title' => TRUE,
-		'link' => TRUE,
-		'access' => TRUE,
-		'external' => TRUE,
-		'systemOrder' => TRUE,
-		'active' => TRUE,
-		'childBackendMenuEntries' => TRUE,
+		'parentId' => true,
+		'insertAfterId' => true,
+		'title' => true,
+		'link' => true,
+		'access' => true,
+		'external' => true,
+		'systemOrder' => true,
+		'active' => true,
+		'childBackendMenuEntries' => true,
 	];
 	protected array $defaults = [
-		'parentId' => NULL,
-		'insertAfterId' => NULL,
+		'parentId' => null,
+		'insertAfterId' => null,
 	];
 	/**
 	 * @inheritDoc
@@ -68,9 +66,14 @@ class BackendMenuEntry extends Entity {
 	];
 
 
-	public function _setParentId(mixed $ax_value) {
+	/**
+	 * @param mixed $ax_value
+	 * @noinspection PhpUnused
+	 * @return mixed
+	 */
+	public function _setParentId(mixed $ax_value): mixed {
 		if (empty($ax_value)) {
-			return NULL;
+			return null;
 		}
 
 
@@ -78,9 +81,14 @@ class BackendMenuEntry extends Entity {
 	}
 
 
-	public function _setInsertAfterId(mixed $ax_value) {
+	/**
+	 * @param mixed $ax_value
+	 * @return mixed
+	 * @noinspection PhpUnused
+	 */
+	public function _setInsertAfterId(mixed $ax_value): mixed {
 		if (empty($ax_value)) {
-			return NULL;
+			return null;
 		}
 
 
@@ -88,9 +96,14 @@ class BackendMenuEntry extends Entity {
 	}
 
 
-	public function _setAccess(mixed $ax_value) {
+	/**
+	 * @param mixed $ax_value
+	 * @return mixed
+	 * @noinspection PhpUnused
+	 */
+	public function _setAccess(mixed $ax_value): mixed {
 		if (empty($ax_value)) {
-			return NULL;
+			return null;
 		}
 
 
@@ -104,7 +117,7 @@ class BackendMenuEntry extends Entity {
 	 * @noinspection PhpUnused
 	 */
 	public function getChildren(): ?CollectionInterface {
-		/** @var BackendMenuEntriesTable $lo_table */
+		/** @var \Awyiss\Model\Table\BackendMenuEntriesTable $lo_table */
 		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
 
 
@@ -115,10 +128,12 @@ class BackendMenuEntry extends Entity {
 	/**
 	 * Get all children, and their children, and their children, and their children of the current entity. And its children.
 	 *
-	 * @noinspection PhpUnused
+	 * @param array $aa_options
+	 * @param int $ai_currentLevel
+	 * @return \Cake\Collection\CollectionInterface|null
 	 */
 	public function getNestedChildren(array $aa_options = [], int $ai_currentLevel = 0): ?CollectionInterface {
-		/** @var BackendMenuEntriesTable $lo_table */
+		/** @var \Awyiss\Model\Table\BackendMenuEntriesTable $lo_table */
 		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
 
 
@@ -129,10 +144,10 @@ class BackendMenuEntry extends Entity {
 	/**
 	 * Get the parent page of the current entity
 	 *
-	 * @noinspection PhpUnused
+	 * @return \Awyiss\Model\Entity\BackendMenuEntry|null
 	 */
 	public function getParent(): ?self {
-		/** @var BackendMenuEntriesTable $lo_table */
+		/** @var \Awyiss\Model\Table\BackendMenuEntriesTable $lo_table */
 		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
 
 
@@ -143,10 +158,12 @@ class BackendMenuEntry extends Entity {
 	/**
 	 * Get all the parent page and all of its parents pages of the current entity
 	 *
-	 * @noinspection PhpUnused
+	 * @param array $aa_options
+	 * @param int $ai_currentLevel
+	 * @return \Cake\Collection\CollectionInterface|null
 	 */
 	public function getParents(array $aa_options = [], int $ai_currentLevel = 0): ?CollectionInterface {
-		/** @var BackendMenuEntriesTable $lo_table */
+		/** @var \Awyiss\Model\Table\BackendMenuEntriesTable $lo_table */
 		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
 
 

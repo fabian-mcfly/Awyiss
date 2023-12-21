@@ -22,9 +22,7 @@ class SeedCommand extends BakeSeedCommand {
 	 * Adds the `folder`-option
 	 *
 	 * @param ConsoleOptionParser $ao_parser
-	 *
 	 * @return ConsoleOptionParser
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function buildOptionParser(ConsoleOptionParser $ao_parser): ConsoleOptionParser {
@@ -35,7 +33,7 @@ class SeedCommand extends BakeSeedCommand {
 		]);
 
 		$lo_parser->addOption('truncate', [
-			'boolean' => TRUE,
+			'boolean' => true,
 			'help' => 'Add the truncate command in the seed.',
 			'short' => 't',
 		]);
@@ -51,24 +49,23 @@ class SeedCommand extends BakeSeedCommand {
 	 * Honors the `folder`-option
 	 *
 	 * @param Arguments $ao_args
-	 *
 	 * @return string
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 * @noinspection DuplicatedCode
 	 */
 	public function getPath(Arguments $ao_args): string {
-		$ls_path = \APP . $this->pathFragment;
+		$ls_path = APP . $this->pathFragment;
 		if ($this->plugin) {
 			$ls_path = $this->_pluginPath($this->plugin) . $this->pathFragment;
 		}
 		elseif ($ao_args->getOption('folder')) {
 			$ls_path = $ao_args->getOption('folder');
 			if (!in_array(substr($ls_path, 0, 1), ['/', DS])) {
-				$ls_path = \ROOT . \DS . $ls_path;
+				$ls_path = ROOT . DS . $ls_path;
 			}
 		}
 
-		$ls_path = rtrim($ls_path, DS . '/') . \DS;
+		$ls_path = rtrim($ls_path, DS . '/') . DS;
 
 
 		return str_replace('/', DS, $ls_path);
@@ -87,7 +84,6 @@ class SeedCommand extends BakeSeedCommand {
 	 * Get template data.
 	 *
 	 * @param \Cake\Console\Arguments $arguments The arguments for the command
-	 *
 	 * @return array
 	 * @phpstan-return array<string, mixed>
 	 */
@@ -97,15 +93,15 @@ class SeedCommand extends BakeSeedCommand {
 			$ls_namespace = $this->_pluginNamespace($this->plugin);
 		}
 
-		$ls_table = Inflector::tableize((string) $arguments->getArgumentAt(0));
+		$ls_table = Inflector::tableize((string)$arguments->getArgumentAt(0));
 		if ($arguments->hasOption('table')) {
 			/** @var string $ls_table */
 			$ls_table = $arguments->getOption('table');
 		}
 
-		$la_records = FALSE;
+		$la_records = false;
 		if ($arguments->getOption('data')) {
-			$li_limit = (int) $arguments->getOption('limit');
+			$li_limit = (int)$arguments->getOption('limit');
 
 			/** @var string $lx_fields */
 			$lx_fields = $arguments->getOption('fields') ?: '*';
@@ -124,7 +120,7 @@ class SeedCommand extends BakeSeedCommand {
 				$lo_authorizeBehavior->disable();
 			}
 
-			$lo_query = $lo_model->find('all')->enableHydration(FALSE);
+			$lo_query = $lo_model->find('all')->enableHydration(false);
 
 			if ($li_limit) {
 				$lo_query->limit($li_limit);
@@ -133,7 +129,6 @@ class SeedCommand extends BakeSeedCommand {
 				$lo_query->select($lx_fields);
 			}
 
-			/** @var array $la_records */
 			$la_records = $lo_query->disableResultsCasting()->toArray();
 
 			$la_records = $this->prettifyArray($la_records);

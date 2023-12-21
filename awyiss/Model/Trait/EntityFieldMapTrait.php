@@ -38,7 +38,7 @@ trait EntityFieldMapTrait {
 	 * @param array $aa_options
 	 */
 	public function __construct(array $aa_properties = [], array $aa_options = []) {
-		$la_properties = static::mapFields($aa_properties, TRUE);
+		$la_properties = static::mapFields($aa_properties, true);
 
 		parent::__construct($la_properties, $aa_options);
 	}
@@ -55,13 +55,13 @@ trait EntityFieldMapTrait {
 	/**
 	 * @inheritDoc
 	 */
-	public function set($ax_field, $ax_value = NULL, array $aa_options = []): EntityInterface {
+	public function set($ax_field, $ax_value = null, array $aa_options = []): EntityInterface {
 		$lx_field = $ax_field;
 		if (is_string($lx_field)) {
 			$lx_field = static::mapField($lx_field);
 		}
 		elseif (is_array($ax_field) && $ax_field) {
-			$lx_field = static::mapFields($ax_field, TRUE);
+			$lx_field = static::mapFields($ax_field, true);
 		}
 
 
@@ -75,14 +75,14 @@ trait EntityFieldMapTrait {
 	 */
 	public function unset($ax_field): EntityInterface {
 		/** @noinspection PhpIncompatibleReturnTypeInspection */
-		return parent::unset(static::mapFields((array) $ax_field));
+		return parent::unset(static::mapFields((array)$ax_field));
 	}
 
 
 	/**
 	 * @inheritDoc
 	 */
-	public function setHidden(array $aa_fields, bool $ab_merge = FALSE): EntityInterface {
+	public function setHidden(array $aa_fields, bool $ab_merge = false): EntityInterface {
 		/** @noinspection PhpIncompatibleReturnTypeInspection */
 		return parent::setHidden(static::mapFields($aa_fields), $ab_merge);
 	}
@@ -91,7 +91,7 @@ trait EntityFieldMapTrait {
 	/**
 	 * @inheritDoc
 	 */
-	public function setVirtual(array $aa_fields, bool $ab_merge = FALSE): EntityInterface {
+	public function setVirtual(array $aa_fields, bool $ab_merge = false): EntityInterface {
 		/** @noinspection PhpIncompatibleReturnTypeInspection */
 		return parent::setVirtual(static::mapFields($aa_fields), $ab_merge);
 	}
@@ -100,7 +100,7 @@ trait EntityFieldMapTrait {
 	/**
 	 * @inheritDoc
 	 */
-	public function getOriginal(string $as_field, bool $ab_allowFallback = FALSE): mixed {
+	public function getOriginal(string $as_field, bool $ab_allowFallback = false): mixed {
 		return parent::getOriginal(static::mapField($as_field), $ab_allowFallback);
 	}
 
@@ -108,12 +108,12 @@ trait EntityFieldMapTrait {
 	/**
 	 * @inheritDoc
 	 */
-	public function extract(?array $aa_fields = [], bool $ab_onlyDirty = FALSE, bool $ab_unmapped = TRUE): array {
+	public function extract(?array $aa_fields = [], bool $ab_onlyDirty = false, bool $ab_unmapped = true): array {
 		$la_fields = $aa_fields ?: array_keys($this->_fields);
 		$la_extracted = parent::extract(static::mapFields($la_fields), $ab_onlyDirty);
 
 		if ($ab_unmapped) {
-			$la_extracted = static::unmapFields($la_extracted, TRUE);
+			$la_extracted = static::unmapFields($la_extracted, true);
 		}
 
 
@@ -124,12 +124,12 @@ trait EntityFieldMapTrait {
 	/**
 	 * @inheritDoc
 	 */
-	public function extractOriginal(?array $aa_fields = [], bool $ab_unmapped = TRUE): array {
+	public function extractOriginal(?array $aa_fields = [], bool $ab_unmapped = true): array {
 		$la_fields = $aa_fields ?: array_keys($this->_fields);
 		$la_extracted = parent::extractOriginal(static::mapFields($la_fields));
 
 		if ($ab_unmapped) {
-			$la_extracted = static::unmapFields($la_extracted, TRUE);
+			$la_extracted = static::unmapFields($la_extracted, true);
 		}
 
 
@@ -140,12 +140,12 @@ trait EntityFieldMapTrait {
 	/**
 	 * @inheritDoc
 	 */
-	public function extractOriginalChanged(?array $aa_fields = [], bool $ab_unmapped = TRUE): array {
+	public function extractOriginalChanged(?array $aa_fields = [], bool $ab_unmapped = true): array {
 		$la_fields = $aa_fields ?: array_keys($this->_fields);
 		$la_extracted = parent::extractOriginalChanged(static::mapFields($la_fields));
 
 		if ($ab_unmapped) {
-			$la_extracted = static::unmapFields($la_extracted, TRUE);
+			$la_extracted = static::unmapFields($la_extracted, true);
 		}
 
 
@@ -156,7 +156,7 @@ trait EntityFieldMapTrait {
 	/**
 	 * @inheritDoc
 	 */
-	public function setDirty(string $as_field, bool $ab_isDirty = TRUE): EntityInterface {
+	public function setDirty(string $as_field, bool $ab_isDirty = true): EntityInterface {
 		/** @noinspection PhpIncompatibleReturnTypeInspection */
 		return parent::setDirty(static::mapField($as_field), $ab_isDirty);
 	}
@@ -165,7 +165,7 @@ trait EntityFieldMapTrait {
 	/**
 	 * @inheritDoc
 	 */
-	public function isDirty(?string $as_field = NULL): bool {
+	public function isDirty(?string $as_field = null): bool {
 		return parent::isDirty(static::mapField($as_field));
 	}
 
@@ -181,16 +181,16 @@ trait EntityFieldMapTrait {
 	/**
 	 * @inheritDoc
 	 */
-	public function setErrors(array $aa_errors, bool $ab_overwrite = FALSE): EntityInterface {
+	public function setErrors(array $aa_errors, bool $ab_overwrite = false): EntityInterface {
 		/** @noinspection PhpIncompatibleReturnTypeInspection */
-		return parent::setErrors(static::mapFields($aa_errors, TRUE), $ab_overwrite);
+		return parent::setErrors(static::mapFields($aa_errors, true), $ab_overwrite);
 	}
 
 
 	/**
 	 * @inheritDoc
 	 */
-	public function setError(string $as_field, $ax_errors, bool $ab_overwrite = FALSE): EntityInterface {
+	public function setError(string $as_field, $ax_errors, bool $ab_overwrite = false): EntityInterface {
 		/** @noinspection PhpIncompatibleReturnTypeInspection */
 		return parent::setError(static::mapField($as_field), $ax_errors, $ab_overwrite);
 	}
@@ -207,9 +207,9 @@ trait EntityFieldMapTrait {
 	/**
 	 * @inheritDoc
 	 */
-	public function setInvalid(array $aa_fields, bool $ab_overwrite = FALSE): EntityInterface {
+	public function setInvalid(array $aa_fields, bool $ab_overwrite = false): EntityInterface {
 		/** @noinspection PhpIncompatibleReturnTypeInspection */
-		return parent::setInvalid(static::mapFields($aa_fields, TRUE), $ab_overwrite);
+		return parent::setInvalid(static::mapFields($aa_fields, true), $ab_overwrite);
 	}
 
 
@@ -233,7 +233,7 @@ trait EntityFieldMapTrait {
 
 
 		/** @noinspection PhpIncompatibleReturnTypeInspection */
-		return parent::setAccess(static::mapFields((array) $as_field), $ab_accessible);
+		return parent::setAccess(static::mapFields((array)$as_field), $ab_accessible);
 	}
 
 
@@ -257,8 +257,7 @@ trait EntityFieldMapTrait {
 	 * Transforms the given value column name to a field name, defined by static::$fieldMap
 	 *
 	 * @param string $as_field
-	 *
-	 * @return NULL|string
+	 * @return string|null
 	 */
 	public static function mapField(?string $as_field): ?string {
 		if (empty($as_field)) {
@@ -275,10 +274,9 @@ trait EntityFieldMapTrait {
 	 *
 	 * @param array $aa_fields
 	 * @param bool $ab_mapKeys
-	 *
 	 * @return array
 	 */
-	public static function mapFields(array $aa_fields, bool $ab_mapKeys = FALSE): array {
+	public static function mapFields(array $aa_fields, bool $ab_mapKeys = false): array {
 		$la_fields = [];
 
 		foreach ($aa_fields as $lx_field => $lx_value) {
@@ -297,15 +295,15 @@ trait EntityFieldMapTrait {
 	 * Transforms the given value field name to a column name, defined by static::$fieldMap
 	 *
 	 * @param string $as_field
-	 *
-	 * @return NULL|string
+	 * @return string|null
 	 */
 	public static function unmapField(?string $as_field): ?string {
 		if (empty($as_field)) {
 			return $as_field;
 		}
 
-		if (FALSE !== $ls_key = array_search($as_field, static::$fieldMap)) {
+		$ls_key = array_search($as_field, static::$fieldMap);
+		if ($ls_key !== false) {
 			return $ls_key;
 		}
 
@@ -320,11 +318,10 @@ trait EntityFieldMapTrait {
 	 *
 	 * @param array $aa_fields
 	 * @param bool $ab_mapKeys
-	 *
 	 * @return array
 	 * @noinspection PhpUnused
 	 */
-	public static function unmapFields(array $aa_fields, bool $ab_mapKeys = FALSE): array {
+	public static function unmapFields(array $aa_fields, bool $ab_mapKeys = false): array {
 		$la_fields = [];
 
 		foreach ($aa_fields as $lx_field => $lx_value) {

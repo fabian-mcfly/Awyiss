@@ -6,49 +6,39 @@ namespace Awyiss\View;
 
 use Awyiss\Twig\Extension\AwyissExtension;
 use Awyiss\Twig\FileLoader;
-use Awyiss\View\Helper\AuthorizationHelper;
-use Awyiss\View\Helper\CategoriesHelper;
-use Awyiss\View\Helper\FlashHelper;
-use Awyiss\View\Helper\FormHelper;
-use Awyiss\View\Helper\LocaleHelper;
-use Awyiss\View\Helper\PaginatorHelper;
-use Awyiss\View\Helper\SystemOrderHelper;
-use Awyiss\View\Helper\UrlHelper;
 use Cake\Core\Configure;
 use Cake\TwigView\View\TwigView;
-use Twig\Error\LoaderError;
 use Twig\Loader\LoaderInterface;
 
 
 /**
  * Application View
  *
- * @property AuthorizationHelper $Authorization
- * @property CategoriesHelper $Categories
- * @property FlashHelper $Flash
- * @property FormHelper $Form
- * @property LocaleHelper $Locale
- * @property PaginatorHelper $Paginator
- * @property SystemOrderHelper $SystemOrder
- * @property UrlHelper $Url
+ * @property \Awyiss\View\Helper\AuthorizationHelper $Authorization
+ * @property \Awyiss\View\Helper\CategoriesHelper $Categories
+ * @property \Awyiss\View\Helper\FlashHelper $Flash
+ * @property \Awyiss\View\Helper\FormHelper $Form
+ * @property \Awyiss\View\Helper\LocaleHelper $Locale
+ * @property \Awyiss\View\Helper\PaginatorHelper $Paginator
+ * @property \Awyiss\View\Helper\SystemOrderHelper $SystemOrder
+ * @property \Awyiss\View\Helper\UrlHelper $Url
+ * @property \Awyiss\View\Helper\AttributesHelper $Attributes
  */
 class AppView extends TwigView {
-	protected static bool $initialized = FALSE;
+	protected static bool $initialized = false;
 
 
 	/**
 	 * @inheritDoc
-	 *
 	 * @return void
-	 *
-	 * @throws LoaderError
+	 * @throws \Twig\Error\LoaderError
 	 */
 	public function initialize(): void {
 		$this->setConfig('environment', [
-			'auto_reload' => TRUE,
-			//'cache' => FALSE,
+			'auto_reload' => true,
+			//'cache' => false,
 			//'debug' => Configure::read('debug'),
-			'strict_variables' => FALSE,
+			'strict_variables' => false,
 		]);
 
 		parent::initialize();
@@ -75,14 +65,13 @@ class AppView extends TwigView {
 				$lo_twig->addExtension(new $ls_customExtensionClass());
 			}
 
-			static::$initialized = TRUE;
+			static::$initialized = true;
 		}
 	}
 
 
 	/**
 	 * @inheritDoc
-	 *
 	 * @return LoaderInterface
 	 */
 	protected function createLoader(): LoaderInterface {

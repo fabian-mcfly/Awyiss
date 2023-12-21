@@ -5,7 +5,6 @@ namespace Awyiss\Model\Entity;
 
 
 use Awyiss\Model\Entity;
-use Cake\I18n\FrozenTime;
 
 
 /**
@@ -16,26 +15,26 @@ use Cake\I18n\FrozenTime;
  * @property int $parentId
  * @property string $transactionId
  * @property string $type
- * @property array|NULL $dataOld
- * @property array|NULL $dataNew
- * @property array|NULL $diff
- * @property int|NULL $createdBy
- * @property FrozenTime|NULL $createdOn
+ * @property array|null $dataOld
+ * @property array|null $dataNew
+ * @property array|null $diff
+ * @property int|null $createdBy
+ * @property \Cake\I18n\DateTime|null $createdOn
  */
 class Audit extends Entity {
 	/**
 	 * @inheritDoc
 	 */
 	protected array $_accessible = [
-		'scope' => TRUE,
-		'parentId' => TRUE,
-		'transactionId' => TRUE,
-		'type' => TRUE,
-		'dataOld' => TRUE,
-		'dataNew' => TRUE,
-		'diff' => TRUE,
-		'createdBy' => TRUE,
-		'createdOn' => TRUE,
+		'scope' => true,
+		'parentId' => true,
+		'transactionId' => true,
+		'type' => true,
+		'dataOld' => true,
+		'dataNew' => true,
+		'diff' => true,
+		'createdBy' => true,
+		'createdOn' => true,
 	];
 	/**
 	 * @inheritDoc

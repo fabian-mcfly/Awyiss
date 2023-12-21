@@ -17,12 +17,12 @@ class CallbackPermissionOption extends SimplePermissionOption {
 	 * @var array
 	 */
 	protected array $callbacks = [
-		'general' => NULL,
-		'Entity.create' => NULL,
-		'Entity.update' => NULL,
-		'Model.beforeFind' => NULL,
-		'Model.beforeSoftDelete' => NULL,
-		'Model.beforeDelete' => NULL,
+		'general' => null,
+		'Entity.create' => null,
+		'Entity.update' => null,
+		'Model.beforeFind' => null,
+		'Model.beforeSoftDelete' => null,
+		'Model.beforeDelete' => null,
 	];
 
 
@@ -41,13 +41,11 @@ class CallbackPermissionOption extends SimplePermissionOption {
 
 	/**
 	 * @param string $as_event
-	 *
-	 * @return NULL|callable
-	 *
+	 * @return callable|null
 	 * @noinspection PhpUnused
 	 */
 	public function getCallback(string $as_event): ?callable {
-		return $this->callbacks[ $as_event ] ?? NULL;
+		return $this->callbacks[ $as_event ] ?? null;
 	}
 
 
@@ -55,7 +53,6 @@ class CallbackPermissionOption extends SimplePermissionOption {
 	 * Sets the callback to be used by the permission
 	 *
 	 * @param mixed $ax_callback
-	 *
 	 * @return $this
 	 */
 	public function setCallback(string $as_event, callable $ax_callback): static {
@@ -68,7 +65,6 @@ class CallbackPermissionOption extends SimplePermissionOption {
 
 	/**
 	 * @return mixed
-	 *
 	 * @noinspection PhpUnused
 	 */
 	public function getCallbacks(): array {
@@ -80,7 +76,6 @@ class CallbackPermissionOption extends SimplePermissionOption {
 	 * Sets the callback to be used by the permission
 	 *
 	 * @param mixed $aa_callbacks
-	 *
 	 * @return $this
 	 */
 	public function setCallbacks(array $aa_callbacks): static {
@@ -102,13 +97,13 @@ class CallbackPermissionOption extends SimplePermissionOption {
 	public function isAccessible(mixed $ax_access, mixed $ax_settings, array $aa_additionalData, PermissionCollection $ao_permissionCollection): ?bool {
 		$lb_accessible = parent::isAccessible($ax_access, $ax_settings, $aa_additionalData, $ao_permissionCollection);
 
-		$lc_callback = NULL;
+		$lc_callback = null;
 		if (!empty($aa_additionalData['event'])) {
 			$lc_callback = $this->getCallback($aa_additionalData['event']);
 		}
 
-		//If the callback for the given event is not set, fall back to the general one. To disable one event completely, its callback needs to be FALSE
-		if ($lc_callback === NULL) {
+		//If the callback for the given event is not set, fall back to the general one. To disable one event completely, its callback needs to be false
+		if ($lc_callback === null) {
 			$lc_callback = $this->getCallback('general');
 		}
 

@@ -46,22 +46,38 @@ if (!env('CONFIG_ENV') && file_exists(ROOT . DS . '.env')) {
 
 //Might be set in awyiss/bin/cake.php
 if (!defined('CONFIG_ENV')) {
+	/**
+	 * The current environment
+	 */
 	define('CONFIG_ENV', env('CONFIG_ENV', 'production'));
 }
 
 //Might be set in awyiss/bin/cake.php
 if (!defined('CUSTOM_DIR')) {
-	if (!$ls_customDir = env('CUSTOM_DIR')) {
+	$ls_customDir = env('CUSTOM_DIR');
+	if (!$ls_customDir) {
 		exit('Environment Variable CUSTOM_DIR is not set.');
 	}
+	/**
+	 * The directory for customer logic and frontend data
+	 */
 	define('CUSTOM_DIR', $ls_customDir);
 }
 
 
+/**
+ * Custom config folder
+ */
 define('CUSTOM_CONFIG', ROOT . DS . CUSTOM_DIR . DS . 'config' . DS);
 
+/**
+ * Custom namespace
+ */
 define('CUSTOM_NAMESPACE', Inflector::camelize(str_replace('_', '-', CUSTOM_DIR), '-'));
 
+/**
+ * Environment-specific custom config folder
+ */
 define('ENV_CUSTOM_CONFIG', CUSTOM_CONFIG . CONFIG_ENV . DS);
 
 /*
@@ -69,7 +85,7 @@ define('ENV_CUSTOM_CONFIG', CUSTOM_CONFIG . CONFIG_ENV . DS);
  */
 try {
 	Configure::config('default', new PhpConfig());
-	Configure::load('awyiss', 'default', FALSE);
+	Configure::load('awyiss', 'default', false);
 }
 catch (Exception $ex) {
 	exit($ex->getMessage() . "\n");
@@ -127,7 +143,7 @@ if (PHP_SAPI === 'cli') {
  */
 $ls_fullBaseUrl = Configure::read('App.fullBaseUrl');
 if (!$ls_fullBaseUrl) {
-	$ls_https = NULL;
+	$ls_https = null;
 	if (env('HTTPS')) {
 		$ls_https = 's';
 	}

@@ -5,7 +5,6 @@ namespace Awyiss\Model\Entity;
 
 
 use Awyiss\Model\Entity;
-use Cake\I18n\DateTime;
 
 
 /**
@@ -17,11 +16,11 @@ use Cake\I18n\DateTime;
  * @property bool $active
  * @property bool $deleted
  * @property int|null $createdBy
- * @property DateTime|null $createdOn
+ * @property \Cake\I18n\DateTime|null $createdOn
  * @property int|null $changedBy
- * @property DateTime|null $changedOn
+ * @property \Cake\I18n\DateTime|null $changedOn
  * @property int|null $deletedBy
- * @property DateTime|null $deletedOn
+ * @property \Cake\I18n\DateTime|null $deletedOn
  * @property PageTemplate[] $pageTemplates
  * @property PageTemplateContentArea[] $_joinData
  * @property ContentTemplateContentArea[] $contentTemplateContentAreas
@@ -31,11 +30,11 @@ class ContentArea extends Entity {
 	 * @inheritDoc
 	 */
 	protected array $_accessible = [
-		'identifier' => TRUE,
-		'title' => TRUE,
-		'active' => TRUE,
-		'pageTemplates' => TRUE,
-		'contentTemplateContentAreas' => TRUE,
+		'identifier' => true,
+		'title' => true,
+		'active' => true,
+		'pageTemplates' => true,
+		'contentTemplateContentAreas' => true,
 	];
 	/**
 	 * @inheritDoc

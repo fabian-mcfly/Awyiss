@@ -5,7 +5,6 @@ namespace Awyiss\Model\Entity;
 
 
 use Awyiss\Model\Entity;
-use Cake\I18n\FrozenTime;
 use Cake\Utility\Inflector;
 use Cake\Utility\Text;
 
@@ -20,23 +19,23 @@ use Cake\Utility\Text;
  * @property int $systemOrder
  * @property bool $active
  * @property bool $deleted
- * @property int|NULL $createdBy
- * @property FrozenTime|NULL $createdOn
- * @property int|NULL $changedBy
- * @property FrozenTime|NULL $changedOn
- * @property int|NULL $deletedBy
- * @property FrozenTime|NULL $deletedOn
+ * @property int|null $createdBy
+ * @property \Cake\I18n\DateTime|null $createdOn
+ * @property int|null $changedBy
+ * @property \Cake\I18n\DateTime|null $changedOn
+ * @property int|null $deletedBy
+ * @property \Cake\I18n\DateTime|null $deletedOn
  */
 class PageRole extends Entity {
 	/**
 	 * @inheritDoc
 	 */
 	protected array $_accessible = [
-		'title' => TRUE,
-		'identifier' => TRUE,
-		'includeInLinklist' => TRUE,
-		'systemOrder' => TRUE,
-		'active' => TRUE,
+		'title' => true,
+		'identifier' => true,
+		'includeInLinklist' => true,
+		'systemOrder' => true,
+		'active' => true,
 	];
 	/**
 	 * @inheritDoc
@@ -57,6 +56,7 @@ class PageRole extends Entity {
 	 * Make sure the identifier is always lowercase, underscored and free of special characters
 	 *
 	 * @noinspection PhpUnused
+	 * @see \Awyiss\Model\Entity\PageRole::$identifier
 	 */
 	protected function _setIdentifier(string $as_identifier): string {
 		$ls_identifier = preg_replace('/\d/', '', $as_identifier);

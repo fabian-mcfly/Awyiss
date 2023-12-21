@@ -6,7 +6,6 @@ namespace Awyiss\Controller\Backend;
 
 use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Model\Entity\PageRole;
-use Awyiss\Model\Table\PageRolesTable;
 use Awyiss\Routing\Router;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
@@ -15,7 +14,7 @@ use Cake\Http\Response;
 /**
  * PageRoles Controller
  *
- * @property PageRolesTable $PageRoles
+ * @property \Awyiss\Model\Table\PageRolesTable $PageRoles
  */
 class PageRolesController extends Controller {
 	/**
@@ -38,7 +37,6 @@ class PageRolesController extends Controller {
 	 * Add method
 	 *
 	 * @return void
-	 *
 	 * @throws \Exception
 	 */
 	public function add(): void {
@@ -59,15 +57,14 @@ class PageRolesController extends Controller {
 	/**
 	 * Edit method
 	 *
-	 * @return void|?Response
-	 *
+	 * @return \Cake\Http\Response|void
 	 * @throws \Exception
 	 */
-	public function edit() {
+	public function edit(int $ai_id) {
 		$this->Authorization->ensure('update');
 
 		/** @var PageRole $lo_pageRole */
-		$lo_pageRole = $this->PageRoles->findById((int) $this->request->getParam('id'))->find('translations')->first();
+		$lo_pageRole = $this->PageRoles->findById($ai_id)->find('translations')->first();
 		if (!$lo_pageRole) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -88,17 +85,17 @@ class PageRolesController extends Controller {
 	/**
 	 * Delete method
 	 *
+	 * @param int $ai_id
 	 * @return Response
-	 *
 	 * @throws \Exception
 	 */
-	public function delete(): Response {
+	public function delete(int $ai_id): Response {
 		$this->Authorization->ensure('delete');
 
 		$this->request->allowMethod(['get', 'delete']);
 
 		/** @var PageRole $lo_pageRole */
-		$lo_pageRole = $this->PageRoles->findById((int) $this->request->getParam('id'))->find('translations')->first();
+		$lo_pageRole = $this->PageRoles->findById($ai_id)->find('translations')->first();
 		if (!$lo_pageRole) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -121,14 +118,13 @@ class PageRolesController extends Controller {
 	/**
 	 * @param PageRole $ao_pageRole
 	 * @param string $as_method
-	 *
 	 * @return void
 	 */
 	protected function save(PageRole $ao_pageRole, string $as_method = 'add'): void {
 		$la_associated = [];
 		if ($this->PageRoles->hasAttributes()) {
-			$la_associated[] = $this->PageRoles->getAttributesTable(TRUE);
-			$ao_pageRole->setAccess('attributes', TRUE);
+			$la_associated[] = $this->PageRoles->getAttributesTable(true);
+			$ao_pageRole->setAccess('attributes', true);
 		}
 
 		$this->PageRoles->patchEntity($ao_pageRole, $this->request->getData(), ['associated' => $la_associated]);
@@ -138,10 +134,10 @@ class PageRolesController extends Controller {
 				$this->Flash->success(__($as_method . '_succeeded'));
 
 				if ($this->request->getData('submit') == 'submit_close') {
-					throw new RedirectException(Router::url(['action' => 'overview'], TRUE), 302);
+					throw new RedirectException(Router::url(['action' => 'overview'], true), 302);
 				}
 
-				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $ao_pageRole->id], TRUE), 302);
+				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $ao_pageRole->id], true), 302);
 			}
 
 			$this->Flash->error(__($as_method . '_failed'));

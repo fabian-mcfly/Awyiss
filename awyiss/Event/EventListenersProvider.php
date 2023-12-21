@@ -34,6 +34,9 @@ class EventListenersProvider {
 	protected static array $loadedListeners = [];
 
 
+	/**
+	 * Throw an exception on initialization
+	 */
 	private function __construct() {
 		throw new RuntimeException(sprintf('The class `%s` cannot be instantiated', self::class));
 	}
@@ -41,10 +44,8 @@ class EventListenersProvider {
 
 	/**
 	 * @param string $as_realm
-	 *
 	 * @return array
 	 * @throws \ReflectionException
-	 *
 	 * @noinspection PhpUnused
 	 */
 	public static function getListeners(string $as_realm): array {
@@ -58,8 +59,7 @@ class EventListenersProvider {
 	/**
 	 * @param string $as_scope
 	 * @param string $as_realm
-	 *
-	 * @return null|string
+	 * @return string|null
 	 * @throws \ReflectionException
 	 */
 	public static function getListener(string $as_scope, string $as_realm): ?string {
@@ -74,14 +74,13 @@ class EventListenersProvider {
 		}
 
 
-		return static::$eventListeners[ $as_realm ][ $ls_scope ] ?? NULL;
+		return static::$eventListeners[ $as_realm ][ $ls_scope ] ?? null;
 	}
 
 
 	/**
 	 * @param string $as_scope
 	 * @param string $as_realm
-	 *
 	 * @return void
 	 * @throws \ReflectionException
 	 */
@@ -97,38 +96,15 @@ class EventListenersProvider {
 		}
 
 		$ls_listenerClass = static::getListener($ls_scope, $as_realm);
-		if (
-			!$ls_listenerClass &&
-			!in_array(
-				$ls_scope,
-				[
-					'Languages',
-					'Configuration',
-					'MenuEntries',
-					'Users',
-					'UsergroupsUsers',
-					'Usergroups',
-					'UsergroupPermissions',
-					'ContentTemplates',
-					'PageTemplates',
-					'ContentAreas',
-					'PageRoles',
-					'DebugKitRequests',
-					'DebugKitPanels',
-				],
-				TRUE
-			)
-		) {
-			dd($ls_listenerClass, $ls_scope, $as_realm, __LINE__, __FILE__);
-		}
+
 		if (!$ls_listenerClass) {
-			static::$loadedListeners[ $as_realm ][ $ls_scope ] = FALSE;
+			static::$loadedListeners[ $as_realm ][ $ls_scope ] = false;
 
 
 			return;
 		}
 
-		static::$loadedListeners[ $as_realm ][ $ls_scope ] = TRUE;
+		static::$loadedListeners[ $as_realm ][ $ls_scope ] = true;
 
 		EventManager::instance()->on(new $ls_listenerClass());
 	}
@@ -139,7 +115,6 @@ class EventListenersProvider {
 	 * Returns a camelBacked string
 	 *
 	 * @param string $as_scope
-	 *
 	 * @return string
 	 */
 	public static function sanitizeScope(string $as_scope): string {
@@ -150,7 +125,6 @@ class EventListenersProvider {
 	/**
 	 * @param string $as_scope
 	 * @param string $as_realm
-	 *
 	 * @return array
 	 * @throws \ReflectionException
 	 */

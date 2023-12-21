@@ -15,7 +15,7 @@
 	<h1>{{ __('headline_overview') }}</h1>
 
 	{{ helper_Categories_filter('scope', naturalSort(aa_configScopes|map((value,key) => __d(key, 'title'))), {
-		includeAggregation: FALSE,
+		includeAggregation: false,
 		val: as_selectedScope
 	}) }}
 

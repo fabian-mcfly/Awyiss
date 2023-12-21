@@ -62,12 +62,10 @@ class GenericPagePolicy {
 
 
 	/**
-	 * Returns one `PermissionInterface` for the provided `$as_identifier`, otherwise NULL
+	 * Returns one `PermissionInterface` for the provided `$as_identifier`, otherwise null
 	 *
 	 * @param string $as_identifier
-	 *
-	 * @return NULL|PermissionOptionInterface
-	 *
+	 * @return PermissionOptionInterface|null
 	 * @throws \Exception
 	 * @throws \RuntimeException
 	 */
@@ -83,7 +81,7 @@ class GenericPagePolicy {
 		}
 
 
-		return NULL;
+		return null;
 	}
 
 
@@ -92,7 +90,6 @@ class GenericPagePolicy {
 	 * for the identifiers 'read', 'create', 'update' and 'delete' (CRUD).
 	 *
 	 * @return PermissionOptionCollection
-	 *
 	 * @throws \Exception
 	 * @throws \RuntimeException
 	 */

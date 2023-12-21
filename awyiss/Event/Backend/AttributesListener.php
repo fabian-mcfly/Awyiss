@@ -6,12 +6,10 @@ namespace Awyiss\Event\Backend;
 
 use Awyiss\Event\EventListenerTrait;
 use Awyiss\Model\Entity;
-use Awyiss\Model\Entity\Attribute;
 use Cake\Datasource\FactoryLocator;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
 use Cake\Utility\Hash;
-use Queue\Model\Table\QueuedJobsTable;
 
 
 /**
@@ -42,19 +40,16 @@ class AttributesListener implements EventListenerInterface {
 	 * and bakes migrations accordingly.
 	 *
 	 * @param Event $ao_event
-	 * @param Attribute $ao_entity
-	 *
+	 * @param \Awyiss\Model\Entity\Attribute $ao_entity
 	 * @return void
-	 *
-	 * @see          \Awyiss\Queue\Task\AttributesTask
-	 *
+	 * @see \Awyiss\Queue\Task\AttributesTask
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function afterSaveCommit(Event $ao_event, Entity $ao_entity): void {
 		$la_relevantColumns = ['scope', 'identifier', 'type', 'hasIndex', 'required', 'defaultValue', 'deleted'];
 
-		$la_oldData = $ao_entity->isNew() ? array_fill_keys($la_relevantColumns, NULL) : $ao_entity->extractOriginal($la_relevantColumns, FALSE);
-		$la_newData = $ao_entity->extract($la_relevantColumns, FALSE, FALSE);
+		$la_oldData = $ao_entity->isNew() ? array_fill_keys($la_relevantColumns, null) : $ao_entity->extractOriginal($la_relevantColumns, false);
+		$la_newData = $ao_entity->extract($la_relevantColumns, false, false);
 		$la_diff = Hash::diff($la_newData, $la_oldData);
 
 		//No changes found in columns, relevant to the migrations?
@@ -62,7 +57,7 @@ class AttributesListener implements EventListenerInterface {
 			return;
 		}
 
-		/** @var QueuedJobsTable $lo_queue */
+		/** @var \Queue\Model\Table\QueuedJobsTable $lo_queue */
 		$lo_queue = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
 		$lo_queue->createJob('Attributes', [
 			'id' => $ao_entity->id,

@@ -1,18 +1,19 @@
 <?php declare(strict_types=1);
 
 
-use Awyiss\Awyiss;
 use Awyiss\Authentication\Authentication;
 use Awyiss\Authorization\Authorization;
+use Awyiss\Awyiss;
 use Awyiss\Middleware\AuthenticationMiddleware;
 use Awyiss\Middleware\AuthorizationMiddleware;
-use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Middleware\EventListenersMiddleware;
+use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Routing\Route\AwyissRoute;
 use Cake\Routing\RouteBuilder;
 
+
 /** @var RouteBuilder $ao_routes */
-$ao_routes->prefix('Backend', function (RouteBuilder $ao_routeBuilder) {
+$ao_routes->prefix('Backend', function (RouteBuilder $ao_routeBuilder): void {
 	$ao_routeBuilder->setRouteClass(AwyissRoute::class);
 
 	Awyiss::setRealm(Awyiss::REALM_BACKEND);
@@ -31,11 +32,19 @@ $ao_routes->prefix('Backend', function (RouteBuilder $ao_routeBuilder) {
 	$ao_routeBuilder->registerMiddleware('authorization', new AuthorizationMiddleware($lo_authorization));
 	$ao_routeBuilder->applyMiddleware('authorization');
 
+	$ao_routeBuilder->connect('/{lang}/{controller}/{action}/id:{id}/*')->setPatterns([
+		'lang' => '[a-zA-Z]{2}',
+		'controller' => '[a-zA-Z0-9-_]+',
+		'action' => '(edit|delete)',
+		'id' => '[0-9]+',
+	])->setPass(['id'])->setPersist(['lang', 'controller']);
+
 	$ao_routeBuilder->connect('/{lang}/{controller}/{action}/*', ['action' => 'overview'], ['_name' => Awyiss::REALM_BACKEND])->setPatterns([
 		'lang' => '[a-zA-Z]{2}',
 		'controller' => '[a-zA-Z0-9-_]+',
 		'action' => '[a-zA-Z0-9-_]+',
 	])->setPersist(['lang', 'controller', 'action']);
+
 
 	$ao_routeBuilder->connect('/{lang}/{controller}/*', ['action' => 'overview'])->setPatterns([
 		'lang' => '[a-zA-Z]{2}',
@@ -48,12 +57,3 @@ $ao_routes->prefix('Backend', function (RouteBuilder $ao_routeBuilder) {
 
 	$ao_routeBuilder->connect('/*', ['controller' => 'dashboard', 'action' => 'overview']);
 });
-
-/*$ao_routes->scope('/rest', function(RouteBuilder $ao_routeBuilder) {
-	$ao_routeBuilder->setRouteClass(AwyissRoute::class);
-
-	$ao_routeBuilder->connect('/{controller}/{action}/*', ['prefix' => 'Backend', 'action' => 'overview'], ['_name' => 'rest'])->setPatterns([
-		'controller' => '[a-zA-Z0-9-_]+',
-		'action' => '[a-zA-Z0-9-_]+',
-	])->setPersist(['controller', 'action']);
-});*/

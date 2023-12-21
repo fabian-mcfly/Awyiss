@@ -7,12 +7,10 @@ namespace Awyiss\Event\Backend;
 use Awyiss\Awyiss;
 use Awyiss\Event\EventListenerTrait;
 use Awyiss\Middleware\LocaleMiddleware;
-use Awyiss\Model\Entity\ContentTemplate;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\FactoryLocator;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
-use Queue\Model\Table\QueuedJobsTable;
 
 
 /**
@@ -45,15 +43,13 @@ class ConfigurationListener implements EventListenerInterface {
 	 * It's easier and doesn't affect performance that much to recreate the file once.
 	 *
 	 * @param Event $ao_event
-	 * @param ContentTemplate $ao_entity
-	 *
+	 * @param \Awyiss\Model\Entity\ContentTemplate $ao_entity
 	 * @noinspection PhpUnused
 	 * @noinspection PhpUnusedParameterInspection
-	 *
 	 * @throws \Exception
 	 */
 	public function removeCustomConfigFile(Event $ao_event, EntityInterface $ao_entity): void {
-		/** @var QueuedJobsTable $lo_queue */
+		/** @var \Queue\Model\Table\QueuedJobsTable $lo_queue */
 		$lo_queue = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
 		if ($lo_queue->isQueued('create_custom_configuration')) {
 			return;

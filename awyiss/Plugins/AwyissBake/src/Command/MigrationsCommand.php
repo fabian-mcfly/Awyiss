@@ -8,7 +8,7 @@ namespace AwyissBake\Command;
 use AwyissBake\MigrationsDispatcher;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Utility\Inflector;
-use Phinx\Console\Command\Migrate;
+use Migrations\Command\MigrationsCommand as BaseMigrationsCommand;
 
 
 /**
@@ -16,7 +16,7 @@ use Phinx\Console\Command\Migrate;
  *
  * Everything's here only to use \AwyissBake\MigrationsDispatcher
  */
-class MigrationsCommand extends \Migrations\Command\MigrationsCommand {
+class MigrationsCommand extends BaseMigrationsCommand {
 	/**
 	 * {@inheritDoc}
 	 *
@@ -30,7 +30,7 @@ class MigrationsCommand extends \Migrations\Command\MigrationsCommand {
 		}
 
 		$lo_parser = self::_getOptionParser();
-		/** @var Migrate $lo_command */
+		/** @var \Phinx\Console\Command\Migrate $lo_command */
 		$lo_command = new MigrationsDispatcher::$phinxCommands[ static::$commandName ]();
 		$lo_parser->setDescription($lo_command->getDescription());
 		$lo_definition = $lo_command->getDefinition();
@@ -65,7 +65,6 @@ class MigrationsCommand extends \Migrations\Command\MigrationsCommand {
 	 * its parent's parent.
 	 *
 	 * @return ConsoleOptionParser
-	 *
 	 * @see \Cake\Console\BaseCommand::getOptionParser()
 	 */
 	protected function _getOptionParser(): ConsoleOptionParser {
@@ -107,7 +106,6 @@ class MigrationsCommand extends \Migrations\Command\MigrationsCommand {
 	 * not BaseCommand
 	 *
 	 * @return string
-	 *
 	 * @see \Cake\Console\BaseCommand::defaultName()
 	 * @see \Migrations\Command\MigrationsCommand::defaultName()
 	 */

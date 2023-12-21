@@ -51,7 +51,6 @@ class SingleChoiceSetting implements SettingInterface {
 
 	/**
 	 * @param string $as_type
-	 *
 	 * @return SettingInterface
 	 */
 	public function setType(string $as_type): static {
@@ -72,7 +71,6 @@ class SingleChoiceSetting implements SettingInterface {
 
 	/**
 	 * @param array $aa_options
-	 *
 	 * @return SettingInterface
 	 */
 	public function setOptions(array $aa_options): static {

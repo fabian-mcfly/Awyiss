@@ -5,8 +5,6 @@ namespace Awyiss\View\Cell\Backend;
 
 
 use Awyiss\Authorization\IdentityPermissionsInterface;
-use Awyiss\Model\Entity\User;
-use Awyiss\Model\Entity\UsersExternal;
 use Awyiss\Utilities\Menu\BackendMenu;
 use Awyiss\Utilities\Menu\MenuRenderer;
 use Cake\I18n\DateTime;
@@ -15,6 +13,9 @@ use Cake\View\Cell;
 use RuntimeException;
 
 
+/**
+ * Provides the backend menu with authorization check
+ */
 class MenuCell extends Cell {
 	use LocatorAwareTrait;
 
@@ -23,6 +24,7 @@ class MenuCell extends Cell {
 	 * Generate the menu and load templates/Backend/cell/menu/menu
 	 *
 	 * @return void
+	 * @throws \ReflectionException
 	 */
 	public function display(): void {
 		$lo_identity = $this->_getIdentity();
@@ -32,17 +34,17 @@ class MenuCell extends Cell {
 		$la_menuData = [];
 		$ls_menu = $lo_session->read('backend_menu');
 		if ($ls_menu) {
-			$la_menuData = json_decode($ls_menu, TRUE);
+			$la_menuData = json_decode($ls_menu, true);
 			$lo_time = new DateTime($la_menuData['time']);
 
 			if ($lo_time >= $lo_identity->changedOn) {
 				$lo_table = $this->fetchTable('BackendMenuEntries');
 				$lo_entity = $lo_table->find()->select('id')->applyOptions([
 					'authorize' => [
-						'skip' => TRUE,
+						'skip' => true,
 					],
 					'softDelete' => [
-						'includeDeleted' => TRUE,
+						'includeDeleted' => true,
 					],
 				])->where([
 					'OR' => [
@@ -58,6 +60,7 @@ class MenuCell extends Cell {
 			}
 		}
 
+		/** @noinspection PhpUndefinedVariableInspection */
 		if (!$la_menuData || $lo_time < $lo_identity->changedOn) {
 			$lo_menu = new BackendMenu($lo_identity);
 			$lo_renderer = new MenuRenderer($lo_menu->getDynamicMenu());
@@ -84,7 +87,7 @@ class MenuCell extends Cell {
 	 * Retreive the identity attribute from the current request
 	 */
 	protected function _getIdentity(): IdentityPermissionsInterface {
-		/** @var IdentityPermissionsInterface|User|UsersExternal $lo_identity */
+		/** @var IdentityPermissionsInterface|\Awyiss\Model\Entity\User|\Awyiss\Model\Entity\UsersExternal $lo_identity */
 		$lo_identity = $this->request->getAttribute('identity');
 		if (!($lo_identity instanceof IdentityPermissionsInterface)) {
 			throw new RuntimeException(sprintf('Object `%s` does not implement `%s`', get_class($lo_identity), IdentityPermissionsInterface::class));

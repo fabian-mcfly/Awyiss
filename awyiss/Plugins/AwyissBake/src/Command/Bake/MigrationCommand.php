@@ -29,14 +29,11 @@ class MigrationCommand extends BakeMigrationCommand {
 
 
 	/**
-	 * @inheritDoc
-	 *
 	 * Implemented nearly 1:1 to use \AwyissBake\Util\ColumnParser instead
 	 *
+	 * @inheritDoc
 	 * @param Arguments $ao_arguments
-	 *
 	 * @return array
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function templateData(Arguments $ao_arguments): array {
@@ -56,7 +53,7 @@ class MigrationCommand extends BakeMigrationCommand {
 				'pluginPath' => $ls_pluginPath,
 				'namespace' => $ls_namespace,
 				'tables' => [],
-				'action' => NULL,
+				'action' => null,
 				'name' => $ls_className,
 			];
 		}
@@ -68,7 +65,7 @@ class MigrationCommand extends BakeMigrationCommand {
 		$la_indexes = $lo_columnParser->parseIndexes($la_arguments);
 		$la_primaryKeys = $lo_columnParser->parsePrimaryKey($la_arguments);
 
-		if (in_array($la_actions[0], ['alter_table', 'add_field'], TRUE) && !empty($la_primaryKeys)) {
+		if (in_array($la_actions[0], ['alter_table', 'add_field'], true) && !empty($la_primaryKeys)) {
 			$this->io->abort('Adding a primary key to an already existing table is not supported.');
 		}
 
@@ -124,15 +121,12 @@ class MigrationCommand extends BakeMigrationCommand {
 	 * @param string $as_name
 	 * @param Arguments $ao_arguments
 	 * @param ConsoleIo $ao_io
-	 *
 	 * @return void
-	 *
-	 * @see          \Migrations\Command\BakeSimpleMigrationCommand::bake()
-	 *
+	 * @see \Migrations\Command\BakeSimpleMigrationCommand::bake()
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function bake(string $as_name, Arguments $ao_arguments, ConsoleIo $ao_io): void {
-		EventManager::instance()->on('Bake.initialize', function (Event $event) {
+		EventManager::instance()->on('Bake.initialize', function (Event $event): void {
 			$event->getSubject()->loadHelper('Migrations.Migration');
 		});
 
@@ -204,9 +198,7 @@ class MigrationCommand extends BakeMigrationCommand {
 	 * Adds the `folder`-option
 	 *
 	 * @param ConsoleOptionParser $ao_parser
-	 *
 	 * @return ConsoleOptionParser
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function buildOptionParser(ConsoleOptionParser $ao_parser): ConsoleOptionParser {
@@ -227,10 +219,9 @@ class MigrationCommand extends BakeMigrationCommand {
 	 * Honors the `folder`-option
 	 *
 	 * @param Arguments $ao_args
-	 *
 	 * @return string
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 * @noinspection DuplicatedCode
 	 */
 	public function getPath(Arguments $ao_args): string {
 		$ls_path = APP . $this->pathFragment;

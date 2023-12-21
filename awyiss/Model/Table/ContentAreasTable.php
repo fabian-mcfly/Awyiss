@@ -4,9 +4,7 @@
 namespace Awyiss\Model\Table;
 
 
-use Awyiss\Model\Entity\ContentArea;
 use Awyiss\Model\Table;
-use Awyiss\ORM\Association\BelongsToMany;
 use Awyiss\ORM\RulesChecker;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Validation\Validator;
@@ -15,21 +13,20 @@ use Cake\Validation\Validator;
 /**
  * ContentAreas Model
  *
- * @property PageTemplatesTable&BelongsToMany $PageTemplates
- *
- * @method ContentArea newDefaultEntity(array $aa_additionalData = [])
+ * @property PageTemplatesTable&\Awyiss\ORM\Association\BelongsToMany $PageTemplates
+ * @method \Awyiss\Model\Entity\ContentArea newDefaultEntity(array $aa_additionalData = [])
  */
 class ContentAreasTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public const ATTRIBUTABLE = FALSE;
+	public const ATTRIBUTABLE = false;
 	/**
 	 * @inheritDoc
 	 */
 	public const TABLE = 'content_areas';
 	/**
-	 * @var array|array[]
+	 * @var array|array<array>
 	 */
 	protected array $_defaultConfig = [
 		'authorize' => [
@@ -62,8 +59,8 @@ class ContentAreasTable extends Table {
 		]);*/
 
 		$this->hasMany('ContentTemplateContentAreas', [
-			'cascadeCallbacks' => TRUE,
-			'dependent' => TRUE,
+			'cascadeCallbacks' => true,
+			'dependent' => true,
 			'saveStrategy' => 'replace',
 		]);
 
@@ -79,7 +76,6 @@ class ContentAreasTable extends Table {
 	 *
 	 * @param Validator $ao_validator The validator that can be modified to
 	 * add some rules to it.
-	 *
 	 * @return Validator
 	 */
 	public function validationDefault(Validator $ao_validator): Validator {
@@ -121,9 +117,7 @@ class ContentAreasTable extends Table {
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 *
 	 * @param RulesChecker|BaseRulesChecker $ao_rules The rules object to be modified.
-	 *
 	 * @return RulesChecker
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {

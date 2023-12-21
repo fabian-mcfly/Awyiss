@@ -38,11 +38,10 @@ class AuthorizationMiddleware implements MiddlewareInterface {
 	 * Constructor
 	 *
 	 * @param AuthorizationServiceInterface|AuthorizationServiceProviderInterface $ao_subject Authorization service or application instance.
-	 * @param NULL|array $aa_config Array of configuration settings.
-	 *
+	 * @param array|null $aa_config Array of configuration settings.
 	 * @throws \InvalidArgumentException|\ReflectionException When invalid subject has been passed.
 	 */
-	public function __construct(AuthorizationServiceProviderInterface|AuthorizationServiceInterface $ao_subject, array $aa_config = NULL) {
+	public function __construct(AuthorizationServiceProviderInterface|AuthorizationServiceInterface $ao_subject, ?array $aa_config = null) {
 		$this->setConfig($aa_config ?? []);
 
 		$this->subject = $ao_subject;
@@ -53,7 +52,6 @@ class AuthorizationMiddleware implements MiddlewareInterface {
 
 	/**
 	 * @inheritDoc
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function process(ServerRequestInterface $ao_request, RequestHandlerInterface $ao_handler): ResponseInterface {
@@ -77,7 +75,6 @@ class AuthorizationMiddleware implements MiddlewareInterface {
 	 * Returns AuthorizationServiceInterface instance.
 	 *
 	 * @param ServerRequestInterface $ao_request Server request.
-	 *
 	 * @return AuthorizationServiceInterface
 	 * @throws RuntimeException When authentication method has not been defined.
 	 */

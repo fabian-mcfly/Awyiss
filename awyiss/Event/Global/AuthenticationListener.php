@@ -23,7 +23,7 @@ class AuthenticationListener implements EventListenerInterface {
 
 
 	/**
-	 * @var array|array[]
+	 * @var array|array<array>
 	 */
 	protected array $initializedModels = [
 		'identity' => [],
@@ -56,7 +56,6 @@ class AuthenticationListener implements EventListenerInterface {
 	 * @param Event $ao_event
 	 * @param AuthenticatorInterface $ao_authenticator
 	 * @param IdentityInterface $ao_identity
-	 *
 	 * @noinspection PhpUnused
 	 * @noinspection PhpUnusedParameterInspection
 	 */
@@ -79,15 +78,12 @@ class AuthenticationListener implements EventListenerInterface {
 	 * For example, the `FormAuthenticator::class` requires one to work.
 	 *
 	 * @param Event $ao_event
-	 *
 	 * @return void
-	 *
 	 * @throws \Exception
 	 * @noinspection PhpUnused
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function authenticationRequestLoginUrl(Event $ao_event): void {
-		/** @noinspection PhpUnhandledExceptionInspection */
 		$ao_event->setResult(Router::url([
 			'_name' => Awyiss::REALM_BACKEND,
 			'lang' => LocaleMiddleware::getLanguage()->shortcode,
@@ -107,9 +103,7 @@ class AuthenticationListener implements EventListenerInterface {
 	 * If not, save the model to be handled in `authenticationAfterAuthenticate`.
 	 *
 	 * @param Event $ao_event
-	 *
 	 * @return void
-	 *
 	 * @noinspection PhpUnused
 	 * @noinspection PhpUnusedParameterInspection
 	 */

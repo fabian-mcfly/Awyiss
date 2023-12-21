@@ -2,16 +2,14 @@
 	/**
 	* @param {{ entityClassName }} $ao_{{ singularName }}
 	* @param string $as_method
-	*
 	* @return void
-	*
 	* @throws \Cake\Http\Exception\RedirectException
 	*/
-	protected function save ({{ entityClassName }} $ao_{{ singularName }}, string $as_method = 'add'): void {
+	protected function save({{ entityClassName }} $ao_{{ singularName }}, string $as_method = 'add'): void {
 		$la_associated = [];
 		if ($this->{{ currentModelName }}->hasAttributes()) {
-			$la_associated[] = $this->{{ currentModelName }}->getAttributesTable(TRUE);
-			$ao_{{ singularName }}->setAccess('attributes', TRUE);
+			$la_associated[] = $this->{{ currentModelName }}->getAttributesTable(true);
+			$ao_{{ singularName }}->setAccess('attributes', true);
 		}
 
 		$this->{{ currentModelName }}->patchEntity($ao_{{ singularName }}, $this->request->getData(), ['associated' => $la_associated]);
@@ -21,10 +19,10 @@
 				$this->Flash->success(__('' . $as_method . '_succeeded'));
 
 				if ($this->request->getData('submit') == 'submit_close') {
-					throw new RedirectException(Router::url(['action' => 'overview'], TRUE), 302);
+					throw new RedirectException(Router::url(['action' => 'overview'], true), 302);
 				}
 
-				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $ao_{{ singularName }}->id], TRUE), 302);
+				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $ao_{{ singularName }}->id], true), 302);
 			}
 
 			$this->Flash->error(__('' . $as_method . '_failed'));

@@ -4,7 +4,6 @@
 namespace Awyiss\Controller\Component;
 
 
-use Awyiss\Model\Table;
 use Cake\Controller\Component;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\ResultSetInterface;
@@ -18,18 +17,19 @@ use Cake\Utility\Inflector;
  * It sets view vars if they don't already exist,
  * offers a convenient `getRecords` method to retreive all categories for a given entity,
  * and `ensurePossibleSystemOrder()` to make sure the set `system_order` is valid.
+ *
+ * @method \Awyiss\Controller\AppController getController()
  */
 class SystemOrderComponent extends Component {
 	/**
 	 * @inheritDoc
-	 *
 	 * @var array<string, mixed>
 	 */
 	protected array $_defaultConfig = [
 		'autoload' => ['add', 'edit'], //can be a boolean value or an array containing all action names for which the records should get autoloaded
-		'entityName' => NULL, //singlularized variable name of the entity that's used to autoload records
-		'records' => NULL,
-		'tableName' => NULL,
+		'entityName' => null, //singlularized variable name of the entity that's used to autoload records
+		'records' => null,
+		'tableName' => null,
 	];
 
 
@@ -39,11 +39,11 @@ class SystemOrderComponent extends Component {
 	 * @return void
 	 */
 	public function startup(): void {
-		if ($this->getConfig('entityName') === NULL) {
+		if ($this->getConfig('entityName') === null) {
 			$this->setConfig('entityName', Inflector::variable(Inflector::singularize($this->getController()->getName())));
 		}
 
-		if ($this->getConfig('tableName') === NULL) {
+		if ($this->getConfig('tableName') === null) {
 			$this->setConfig('tableName', $this->getController()->getName());
 		}
 	}
@@ -66,7 +66,7 @@ class SystemOrderComponent extends Component {
 		}
 
 		/** @var \Cake\ORM\Table $lo_table */
-		$lo_table = $lo_controller->{$this->getConfig('tableName')} ?? NULL;
+		$lo_table = $lo_controller->{$this->getConfig('tableName')} ?? null;
 
 		//Do nothing when no table's set or when the behavior is disabled
 		if (!$lo_table || !$lo_table->hasBehavior('SystemOrder') || !$lo_table->getBehavior('SystemOrder')->getConfig('enabled')) {
@@ -80,9 +80,10 @@ class SystemOrderComponent extends Component {
 			$lx_autoload = $this->getConfig('autoload');
 
 			//Shall we autoload the records?
-			if ($lx_autoload === TRUE || (is_array($lx_autoload) && in_array($ls_action, $lx_autoload)) || (is_string($lx_autoload) && $ls_action === $lx_autoload)) {
+			if ($lx_autoload === true || (is_array($lx_autoload) && in_array($ls_action, $lx_autoload)) || (is_string($lx_autoload) && $ls_action === $lx_autoload)) {
 				$ls_varName = 'ao_' . $this->getConfig('entityName');
-				if ($lo_entity = $lo_view->getVar($ls_varName)) {
+				$lo_entity = $lo_view->getVar($ls_varName);
+				if ($lo_entity) {
 					//Get the records from the database
 					$lo_records = $this->getRecords($lo_entity);
 
@@ -99,7 +100,6 @@ class SystemOrderComponent extends Component {
 			}
 		}
 		/**
-		 *
 		 * Do not try to get an entity or call `ensurePossibleSystemOrder` when records exist in the config,
 		 * since those might not be related to the entity
 		 */ /* else {
@@ -133,25 +133,23 @@ class SystemOrderComponent extends Component {
 	 * `SystemOrderBehavior::addQueryConditions()` method.
 	 *
 	 * @param EntityInterface $ao_entity
-	 *
-	 * @return NULL|ResultSetInterface
-	 *
+	 * @return ResultSetInterface|null
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::addQueryConditions() method
 	 */
 	public function getRecords(EntityInterface $ao_entity): ?ResultSetInterface {
 		$lo_controller = $this->getController();
-		/** @var Table $lo_table */
+		/** @var \Awyiss\Model\Table $lo_table */
 		$lo_table = $lo_controller->{$this->getConfig('tableName')};
 
 		if (!$lo_table) {
-			return NULL;
+			return null;
 		}
 
 		if (!$lo_table->hasBehavior('SystemOrder') || !$lo_table->getBehavior('SystemOrder')->getConfig('enabled')) {
-			return NULL;
+			return null;
 		}
 
-		$lo_systemOrderQuery = $lo_table->addSystemOrderQueryConditions(NULL, $ao_entity);
+		$lo_systemOrderQuery = $lo_table->addSystemOrderQueryConditions(null, $ao_entity);
 		$lo_systemOrderRecords = $lo_systemOrderQuery->all();
 
 		$this->setConfig('records', $lo_systemOrderRecords);
@@ -172,13 +170,11 @@ class SystemOrderComponent extends Component {
 	 * For example: for 4 existing records, a new entity can have system_order of [1-5]
 	 *
 	 * @param EntityInterface $ao_entity
-	 * @param NULL|ResultSet $ao_records
-	 *
+	 * @param ResultSet|null $ao_records
 	 * @return void
-	 *
 	 * @noinspection PhpPossiblePolymorphicInvocationInspection
 	 */
-	public function ensurePossibleSystemOrder(EntityInterface $ao_entity, ?ResultSet $ao_records = NULL): void {
+	public function ensurePossibleSystemOrder(EntityInterface $ao_entity, ?ResultSet $ao_records = null): void {
 		if (!$ao_entity->has('systemOrder')) {
 			return;
 		}

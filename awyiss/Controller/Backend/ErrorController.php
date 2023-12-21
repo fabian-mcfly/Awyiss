@@ -28,17 +28,15 @@ class ErrorController extends Controller {
 	 * beforeRender callback.
 	 *
 	 * @param EventInterface<\Cake\Controller\Controller> $ao_event Event.
-	 *
-	 * @return Response|NULL|void
-	 *
+	 * @return \Cake\Http\Response|void
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function beforeRender(EventInterface $ao_event) {
+	public function beforeRender(EventInterface $ao_event): ?Response {
 		$lo_builder = $this->viewBuilder();
 		//$ls_templatePath = 'Error';
 
-		//if ($this->request->getParam('prefix') //&& in_array($lo_builder->getTemplate(), ['error400', 'error500', 'runtimeError', 'typeError'], TRUE)) {
-		$la_parts = explode(DS, (string) $lo_builder->getTemplatePath(), -1);
+		//if ($this->request->getParam('prefix') //&& in_array($lo_builder->getTemplate(), ['error400', 'error500', 'runtimeError', 'typeError'], true)) {
+		$la_parts = explode(DS, (string)$lo_builder->getTemplatePath(), -1);
 		$ls_templatePath = implode(DS, $la_parts) . DS . 'Error';
 		//}
 

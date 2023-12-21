@@ -8,12 +8,16 @@ use Awyiss\Awyiss;
 use Awyiss\Routing\Router;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
+use Cake\View\Helper\UrlHelper as BaseUrlHelper;
 
 
 /**
  * @inheritDoc
  */
-class UrlHelper extends \Cake\View\Helper\UrlHelper {
+class UrlHelper extends BaseUrlHelper {
+	/**
+	 * An identifier to use all current parameters or none at all
+	 */
 	final public const PARAMS_ALL = '_all';
 	//final public const PARAMS_PAGINATION = ['page', 'limit', 'sort', 'direction'];
 	//final public const PARAMS_SORT = ['limit', 'sort', 'direction'];
@@ -21,20 +25,17 @@ class UrlHelper extends \Cake\View\Helper\UrlHelper {
 
 	/**
 	 * @inheritDoc
-	 *
-	 * @param $ax_url
+	 * @param array|string|null $ax_url
 	 * @param array $aa_options
-	 *
 	 * @return string
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function build($ax_url = NULL, array $aa_options = []): string {
+	public function build(array|string|null $ax_url = null, array $aa_options = []): string {
 		$lx_url = $ax_url;
 		$la_options = $aa_options + [
-				'fullBase' => FALSE,
-				'escape' => TRUE,
-			];
+			'fullBase' => false,
+			'escape' => true,
+		];
 
 		$la_params = [];
 		if (!is_string($lx_url) && (!empty($la_options['withParams']) || !empty($la_options['withoutParams']))) {
@@ -75,7 +76,6 @@ class UrlHelper extends \Cake\View\Helper\UrlHelper {
 	/**
 	 * @param array $aa_options
 	 * @param mixed $aa_params
-	 *
 	 * @return array
 	 */
 	protected function buildParameters(array $aa_options, mixed $aa_params): array {
@@ -91,7 +91,8 @@ class UrlHelper extends \Cake\View\Helper\UrlHelper {
 			$la_currentParts[ Inflector::dasherize($lx_key) ] = $lx_value;
 		}
 
-		if ($la_withParams = ($la_options['withParams'] ?? [])) {
+		$la_withParams = $la_options['withParams'] ?? [];
+		if ($la_withParams) {
 			if (!is_array($la_withParams)) {
 				$la_withParams = [$la_withParams];
 			}
@@ -110,7 +111,8 @@ class UrlHelper extends \Cake\View\Helper\UrlHelper {
 			}
 		}
 
-		if ($la_withoutParams = ($la_options['withoutParams'] ?? [])) {
+		$la_withoutParams = $la_options['withoutParams'] ?? [];
+		if ($la_withoutParams) {
 			if (!is_array($la_withoutParams)) {
 				$la_withoutParams = [$la_withoutParams];
 			}
@@ -138,7 +140,7 @@ class UrlHelper extends \Cake\View\Helper\UrlHelper {
 			 * This results in parameters in the URL even though we explicitely
 			 * that said we didn't want them.
 			 */
-			$la_params[ reset($la_withoutParams) ] = FALSE;
+			$la_params[ reset($la_withoutParams) ] = false;
 		}
 
 

@@ -4,13 +4,14 @@
 namespace Awyiss\Core;
 
 
+use Cake\Core\App as BaseApp;
 use Cake\Core\Configure;
 
 
 /**
  * @inheritDoc
  */
-class App extends \Cake\Core\App {
+class App extends BaseApp {
 	/**
 	 * Return the class name namespaced.
 	 *
@@ -22,14 +23,12 @@ class App extends \Cake\Core\App {
 	 * @param string $as_class
 	 * @param string $as_type
 	 * @param string $as_suffix
-	 *
-	 * @return null|string
-	 *
+	 * @return string|null
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public static function className(string $as_class, string $as_type = '', string $as_suffix = ''): ?string {
 		if (str_contains($as_class, '\\')) {
-			return class_exists($as_class) ? $as_class : NULL;
+			return class_exists($as_class) ? $as_class : null;
 		}
 
 		[$ls_plugin, $ls_name] = pluginSplit($as_class);
@@ -44,7 +43,7 @@ class App extends \Cake\Core\App {
 			}
 
 
-			return NULL;
+			return null;
 		}
 
 
@@ -75,6 +74,6 @@ class App extends \Cake\Core\App {
 		}
 
 
-		return NULL;
+		return null;
 	}
 }

@@ -21,7 +21,7 @@ use Cake\ORM\Query\SelectQuery;
  */
 class AutoPrefixBehavior extends Behavior {
 	protected array $_defaultConfig = [
-		'enabled' => TRUE,
+		'enabled' => true,
 		'implementedEvents' => [
 			'beforeFind',
 		],
@@ -33,9 +33,7 @@ class AutoPrefixBehavior extends Behavior {
 	 * Constructor hook method.
 	 *
 	 * @param array<string, mixed> $aa_config The configuration settings provided to this behavior.
-	 *
 	 * @return void
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function initialize(array $aa_config): void {
@@ -47,19 +45,17 @@ class AutoPrefixBehavior extends Behavior {
 	 * @param EventInterface $ao_event
 	 * @param SelectQuery $ao_query
 	 * @param ArrayObject $ao_options
-	 * @param $ab_primary
-	 *
+	 * @param bool $ab_primary
 	 * @return void
-	 *
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function beforeFind(EventInterface $ao_event, SelectQuery $ao_query, ArrayObject $ao_options, $ab_primary): void {
+	public function beforeFind(EventInterface $ao_event, SelectQuery $ao_query, ArrayObject $ao_options, bool $ab_primary): void {
 		if (!$this->getConfig('enabled')) {
 			return;
 		}
 
 		//For all parts of the query, call `expressionVisitor`
-		$ao_query->traverseParts(function (?QueryExpression $ao_expression) {
+		$ao_query->traverseParts(function (?QueryExpression $ao_expression): void {
 			if (is_null($ao_expression)) {
 				return;
 			}
@@ -71,7 +67,6 @@ class AutoPrefixBehavior extends Behavior {
 
 	/**
 	 * @param QueryExpression|UnaryExpression $ao_expression
-	 *
 	 * @return void
 	 */
 	protected function expressionVisitor(QueryExpression|UnaryExpression $ao_expression): void {

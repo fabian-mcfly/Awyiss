@@ -4,7 +4,6 @@
 namespace Awyiss\Core\Configure\Engine;
 
 
-use Brick\VarExporter\ExportException;
 use Brick\VarExporter\VarExporter;
 use Cake\Core\Configure\Engine\PhpConfig as BasePhpConfig;
 use Cake\Core\Exception\CakeException;
@@ -25,21 +24,18 @@ class PhpConfig extends BasePhpConfig {
 	/**
 	 * Constructor for PHP Config file reading.
 	 *
-	 * @param string|NULL $as_path The path to read config files from.
-	 *
+	 * @param string|null $as_path The path to read config files from.
 	 * @noinspection PhpMissingParentConstructorInspection
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function __construct(?string $as_path = NULL) {
-		$this->_path = NULL ?? CONFIG;
+	public function __construct(?string $as_path = null) {
+		$this->_path = null ?? CONFIG;
 	}
 
 
 	/**
 	 * @param string $as_key
-	 *
 	 * @return array
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function read(string $as_key): array {
@@ -54,14 +50,14 @@ class PhpConfig extends BasePhpConfig {
 			 */
 			$this->_path = $ls_path;
 			try {
-				$ls_filePath = $this->_getFilePath($as_key, TRUE);
+				$ls_filePath = $this->_getFilePath($as_key, true);
 			}
 			catch (CakeException $ex) {
 				continue;
 			}
 
 			//Reset $config in case the file does something with $config internally
-			//$config = NULL;
+			//$config = null;
 
 			$la_fileReturn = include $ls_filePath;
 			if (is_array($la_fileReturn)) {
@@ -90,11 +86,8 @@ class PhpConfig extends BasePhpConfig {
 	 *
 	 * @param string $as_key The identifier to write to.
 	 * @param array $aa_data Data to dump.
-	 *
 	 * @return bool Success
-	 *
-	 * @throws ExportException
-	 *
+	 * @throws \Brick\VarExporter\ExportException
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function dump(string $as_key, array $aa_data): bool {
@@ -109,10 +102,10 @@ class PhpConfig extends BasePhpConfig {
 			chmod($ls_filename, fileperms($ls_filename) | 128 + 16 + 2);
 
 
-			return TRUE;
+			return true;
 		}
 
 
-		return FALSE;
+		return false;
 	}
 }

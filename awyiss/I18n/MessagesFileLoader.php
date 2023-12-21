@@ -5,6 +5,7 @@ namespace Awyiss\I18n;
 
 
 use Awyiss\Core\App;
+use Cake\I18n\MessagesFileLoader as BaseMessagesFileLoader;
 use Cake\I18n\Package;
 use RuntimeException;
 
@@ -15,7 +16,7 @@ use RuntimeException;
  *
  * This class is a callable, so it can be used as a package loader argument.
  */
-class MessagesFileLoader extends \Cake\I18n\MessagesFileLoader {
+class MessagesFileLoader extends BaseMessagesFileLoader {
 	/**
 	 * Loads the translation file and parses it. Returns an instance of a translations
 	 * package containing the messages loaded from the file.
@@ -29,9 +30,9 @@ class MessagesFileLoader extends \Cake\I18n\MessagesFileLoader {
 		$ls_extension = $this->_extension;
 
 		$ls_fileName = $this->_name;
-		$ls_subfolder = NULL;
+		$ls_subfolder = null;
 		$li_strpos = strpos($ls_fileName, DS);
-		if ($li_strpos !== FALSE) {
+		if ($li_strpos !== false) {
 			$ls_subfolder = substr($ls_fileName, 0, $li_strpos + 1);
 			$ls_fileName = substr($ls_fileName, $li_strpos + 1);
 		}

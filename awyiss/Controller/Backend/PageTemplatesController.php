@@ -6,7 +6,6 @@ namespace Awyiss\Controller\Backend;
 
 use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Model\Entity\PageTemplate;
-use Awyiss\Model\Table\PageTemplatesTable;
 use Awyiss\Routing\Router;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
@@ -15,7 +14,7 @@ use Cake\Http\Response;
 /**
  * PageTemplates Controller
  *
- * @property PageTemplatesTable $PageTemplates
+ * @property \Awyiss\Model\Table\PageTemplatesTable $PageTemplates
  */
 class PageTemplatesController extends Controller {
 	/**
@@ -23,7 +22,7 @@ class PageTemplatesController extends Controller {
 	 */
 	protected array $categorize = [
 		'associationName' => 'PageRoles',
-		'enabled' => TRUE,
+		'enabled' => true,
 		'identifier' => 'pageRole',
 		'uriParam' => 'page-role-id',
 	];
@@ -53,7 +52,6 @@ class PageTemplatesController extends Controller {
 	 * Add method
 	 *
 	 * @return void
-	 *
 	 * @throws \Exception
 	 */
 	public function add(): void {
@@ -82,15 +80,14 @@ class PageTemplatesController extends Controller {
 	/**
 	 * Edit method
 	 *
-	 * @return void|?Response
-	 *
+	 * @return \Cake\Http\Response|void
 	 * @throws \Exception
 	 */
-	public function edit() {
+	public function edit(int $ai_id) {
 		$this->Authorization->ensure('update');
 
 		/** @var PageTemplate $lo_pageTemplate */
-		$lo_pageTemplate = $this->PageTemplates->findById((int) $this->request->getParam('id'))->find('translations')->contain(['ContentAreas'])->first();
+		$lo_pageTemplate = $this->PageTemplates->findById($ai_id)->find('translations')->contain(['ContentAreas'])->first();
 		if (!$lo_pageTemplate) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -117,17 +114,17 @@ class PageTemplatesController extends Controller {
 	/**
 	 * Delete method
 	 *
+	 * @param int $ai_id
 	 * @return Response
-	 *
 	 * @throws \Exception
 	 */
-	public function delete(): Response {
+	public function delete(int $ai_id): Response {
 		$this->Authorization->ensure('delete');
 
 		$this->request->allowMethod(['get', 'delete']);
 
 		/** @var PageTemplate $lo_pageTemplate */
-		$lo_pageTemplate = $this->PageTemplates->findById((int) $this->request->getParam('id'))->find('translations')->first();
+		$lo_pageTemplate = $this->PageTemplates->findById($ai_id)->find('translations')->first();
 		if (!$lo_pageTemplate) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -150,14 +147,13 @@ class PageTemplatesController extends Controller {
 	/**
 	 * @param PageTemplate $ao_pageTemplate
 	 * @param string $as_method
-	 *
 	 * @return void
 	 */
 	protected function save(PageTemplate $ao_pageTemplate, string $as_method = 'add'): void {
 		$la_associated = [];
 		if ($this->PageTemplates->hasAttributes()) {
-			$la_associated[] = $this->PageTemplates->getAttributesTable(TRUE);
-			$ao_pageTemplate->setAccess('attributes', TRUE);
+			$la_associated[] = $this->PageTemplates->getAttributesTable(true);
+			$ao_pageTemplate->setAccess('attributes', true);
 		}
 
 		$la_requestData = $this->request->getData();
@@ -166,7 +162,7 @@ class PageTemplatesController extends Controller {
 				return !empty($aa_element['id']);
 			}));
 
-			array_walk($la_requestData['content_areas'], function (array &$aa_contentArea, int $ai_index) {
+			array_walk($la_requestData['content_areas'], function (array &$aa_contentArea, int $ai_index): void {
 				$aa_contentArea['_joinData']['system_order'] = $ai_index + 1;
 			});
 		}
@@ -189,10 +185,10 @@ class PageTemplatesController extends Controller {
 				$this->Flash->success(__($as_method . '_succeeded'));
 
 				if ($this->request->getData('submit') == 'submit_close') {
-					throw new RedirectException(Router::url(['action' => 'overview', 'pageRoleId' => $ao_pageTemplate->pageRoleId], TRUE), 302);
+					throw new RedirectException(Router::url(['action' => 'overview', 'pageRoleId' => $ao_pageTemplate->pageRoleId], true), 302);
 				}
 
-				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $ao_pageTemplate->id], TRUE), 302);
+				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $ao_pageTemplate->id], true), 302);
 			}
 
 			$this->Flash->error(__($as_method . '_failed'));
@@ -201,7 +197,7 @@ class PageTemplatesController extends Controller {
 			}
 		}
 		else {
-			$ao_pageTemplate->systemOrder = NULL;
+			$ao_pageTemplate->systemOrder = null;
 		}
 	}
 }

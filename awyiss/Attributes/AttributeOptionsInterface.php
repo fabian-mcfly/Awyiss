@@ -28,13 +28,12 @@ interface AttributeOptionsInterface {
 	 *
 	 * @param string $as_identifier
 	 * @param array $aa_currentOptions
-	 * @param NULL|ContextInterface $ao_context
-	 *
+	 * @param ContextInterface|null $ao_context
 	 * @return array
 	 * @see AttributeOptions
 	 * @see \Cake\Utility\Hash::get()
 	 */
-	public function getAttributeOptions(string $as_identifier, array $aa_currentOptions = [], ContextInterface $ao_context = NULL): array;
+	public function getAttributeOptions(string $as_identifier, array $aa_currentOptions = [], ?ContextInterface $ao_context = null): array;
 
 
 	/**
@@ -44,11 +43,10 @@ interface AttributeOptionsInterface {
 	 *
 	 * @param string $as_identifier
 	 * @param mixed $ax_value
-	 * @param NULL|Entity $ao_entity
-	 *
-	 * @return bool|string
+	 * @param Entity|null $ao_entity
+	 * @return string|bool
 	 */
-	public function validateValue(string $as_identifier, mixed $ax_value, Entity $ao_entity = NULL): bool|string;
+	public function validateValue(string $as_identifier, mixed $ax_value, ?Entity $ao_entity = null): bool|string;
 
 
 	/**

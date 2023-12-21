@@ -5,10 +5,8 @@ namespace Awyiss\Model\Entity;
 
 
 use Awyiss\Model\Entity;
-use Awyiss\Model\Table\PagesTable;
 use Cake\Collection\CollectionInterface;
 use Cake\Datasource\FactoryLocator;
-use Cake\I18n\FrozenTime;
 use Cake\Utility\Text;
 
 
@@ -17,27 +15,27 @@ use Cake\Utility\Text;
  *
  * @property int $id
  * @property int $parentId
- * @property string|NULL $slug
- * @property string|NULL $languageShortcode
- * @property string|NULL $title
- * @property string|NULL $redirectLink
- * @property string|NULL $metaTitle
- * @property string|NULL $metaDescription
+ * @property string|null $slug
+ * @property string|null $languageShortcode
+ * @property string|null $title
+ * @property string|null $redirectLink
+ * @property string|null $metaTitle
+ * @property string|null $metaDescription
  * @property bool $robotsIndex
  * @property bool $robotsFollow
  * @property int $pageRoleId
  * @property int $pageTemplateId
- * @property int|NULL $duplicateOf
+ * @property int|null $duplicateOf
  * @property int $systemOrder
  * @property bool $active
  * @property bool $parentsActive
  * @property bool $deleted
- * @property int|NULL $createdBy
- * @property FrozenTime|NULL $createdOn
- * @property int|NULL $changedBy
- * @property FrozenTime|NULL $changedOn
- * @property int|NULL $deletedBy
- * @property FrozenTime|NULL $deletedOn
+ * @property int|null $createdBy
+ * @property \Cake\I18n\DateTime|null $createdOn
+ * @property int|null $changedBy
+ * @property \Cake\I18n\DateTime|null $changedOn
+ * @property int|null $deletedBy
+ * @property \Cake\I18n\DateTime|null $deletedOn
  * @property Attribute $attributes
  * @property PageRole $pageRole
  * @property PageTemplate $pageTemplate
@@ -51,24 +49,24 @@ class Page extends Entity {
 	 * @inheritDoc
 	 */
 	protected array $_accessible = [
-		'parentId' => TRUE,
-		'slug' => TRUE,
-		'languageShortcode' => TRUE,
-		'title' => TRUE,
-		'redirectLink' => TRUE,
-		'metaTitle' => TRUE,
-		'metaDescription' => TRUE,
-		'robotsIndex' => TRUE,
-		'robotsFollow' => TRUE,
-		'pageRoleId' => TRUE,
-		'pageTemplateId' => TRUE,
-		'duplicateOf' => TRUE,
-		'systemOrder' => TRUE,
-		'active' => TRUE,
-		'parentsActive' => TRUE,
-		'pageRole' => TRUE,
-		'pageTemplate' => TRUE,
-		'contents' => TRUE,
+		'parentId' => true,
+		'slug' => true,
+		'languageShortcode' => true,
+		'title' => true,
+		'redirectLink' => true,
+		'metaTitle' => true,
+		'metaDescription' => true,
+		'robotsIndex' => true,
+		'robotsFollow' => true,
+		'pageRoleId' => true,
+		'pageTemplateId' => true,
+		'duplicateOf' => true,
+		'systemOrder' => true,
+		'active' => true,
+		'parentsActive' => true,
+		'pageRole' => true,
+		'pageTemplate' => true,
+		'contents' => true,
 	];
 	/**
 	 * @inheritDoc
@@ -113,7 +111,7 @@ class Page extends Entity {
 	 * @noinspection PhpUnused
 	 */
 	public function getChildren(): ?CollectionInterface {
-		/** @var PagesTable $lo_table */
+		/** @var \Awyiss\Model\Table\PagesTable $lo_table */
 		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
 
 
@@ -127,7 +125,7 @@ class Page extends Entity {
 	 * @noinspection PhpUnused
 	 */
 	public function getNestedChildren(array $aa_options = [], int $ai_currentLevel = 0): ?CollectionInterface {
-		/** @var PagesTable $lo_table */
+		/** @var \Awyiss\Model\Table\PagesTable $lo_table */
 		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
 
 
@@ -141,7 +139,7 @@ class Page extends Entity {
 	 * @noinspection PhpUnused
 	 */
 	public function getParent(): ?self {
-		/** @var PagesTable $lo_table */
+		/** @var \Awyiss\Model\Table\PagesTable $lo_table */
 		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
 
 
@@ -155,7 +153,7 @@ class Page extends Entity {
 	 * @noinspection PhpUnused
 	 */
 	public function getParents(array $aa_options = [], int $ai_currentLevel = 0): ?CollectionInterface {
-		/** @var PagesTable $lo_table */
+		/** @var \Awyiss\Model\Table\PagesTable $lo_table */
 		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
 
 
@@ -167,6 +165,7 @@ class Page extends Entity {
 	 * Make sure the slug is always lowercase, dashed and free of special characters
 	 *
 	 * @noinspection PhpUnused
+	 * @see \Awyiss\Model\Entity\Page::$slug
 	 */
 	protected function _setSlug(string $as_slug): string {
 		$ls_slug = Text::slug($as_slug, ['preserve' => '/']);

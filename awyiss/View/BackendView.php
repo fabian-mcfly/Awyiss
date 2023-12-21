@@ -5,7 +5,6 @@ namespace Awyiss\View;
 
 
 use Awyiss\Middleware\LocaleMiddleware;
-use Twig\Error\LoaderError;
 
 
 /**
@@ -14,10 +13,8 @@ use Twig\Error\LoaderError;
 class BackendView extends AppView {
 	/**
 	 * @inheritDoc
-	 *
 	 * @return void
-	 *
-	 * @throws LoaderError
+	 * @throws \Twig\Error\LoaderError
 	 */
 	public function initialize(): void {
 		parent::initialize();
@@ -42,12 +39,13 @@ class BackendView extends AppView {
 		]);
 
 		/** @noinspection PhpUnhandledExceptionInspection */
-		if ($lo_language = LocaleMiddleware::getLanguage(NULL)) {
+		$lo_language = LocaleMiddleware::getLanguage(null);
+		if ($lo_language) {
 			$this->addHelper('Time', ['outputTimezone' => $lo_language->timezone]);
 		}
 
 		$this->addHelper('Form', [
-			'autoSetCustomValidity' => FALSE,
+			'autoSetCustomValidity' => false,
 			'errorClass' => 'Error',
 			'templates' => 'form_templates_backend',
 		]);

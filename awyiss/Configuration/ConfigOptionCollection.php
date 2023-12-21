@@ -22,11 +22,10 @@ class ConfigOptionCollection extends ArrayIterator {
 	/**
 	 * Construct a new ConfigOptionsCollection
 	 *
-	 * @param null|string $as_identifier
-	 *
+	 * @param string|null $as_identifier
 	 * @noinspection PhpMissingParentConstructorInspection
 	 */
-	public function __construct(string $as_identifier = NULL) {
+	public function __construct(?string $as_identifier = null) {
 		if ($as_identifier) {
 			$this->identifier = ConfigOptionsProvider::sanitizeIdentifier($as_identifier);
 		}
@@ -36,8 +35,7 @@ class ConfigOptionCollection extends ArrayIterator {
 	/**
 	 * Adds a ConfigOption or a set of elements, containing nested ConfigOptions or ConfigOptionsCollection to this collection
 	 *
-	 * @param array<int|string, ConfigOptionCollection|ConfigOption|array>|ConfigOption $ax_configOption
-	 *
+	 * @param ConfigOption|array<int|string, ConfigOptionCollection|ConfigOption|array> $ax_configOption
 	 * @return $this
 	 */
 	public function add(array|ConfigOption $ax_configOption): static {
@@ -98,9 +96,7 @@ class ConfigOptionCollection extends ArrayIterator {
 	 * If the identifier of the ConfigOptionsCollection already exists in the current one, a `RuntimeException` is thrown.
 	 *
 	 * @param ConfigOptionCollection $ao_configOptionsCollection
-	 *
 	 * @return $this
-	 *
 	 * @throws RuntimeException
 	 */
 	public function addCollection(ConfigOptionCollection $ao_configOptionsCollection): static {
@@ -142,7 +138,6 @@ class ConfigOptionCollection extends ArrayIterator {
 
 	/**
 	 * @param string ...$aa_pathParts
-	 *
 	 * @return array
 	 */
 	public function getConfigOptions(string ...$aa_pathParts): array {

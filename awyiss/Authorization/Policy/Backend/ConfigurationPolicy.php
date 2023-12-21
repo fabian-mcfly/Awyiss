@@ -30,16 +30,13 @@ class ConfigurationPolicy extends AbstractPolicy {
 
 
 	/**
-	 * @param null|bool $ab_accessible
+	 * @param bool|null $ab_accessible
 	 * @param mixed $ax_access
 	 * @param mixed $ax_settings
 	 * @param array $aa_additionalData
 	 * @param PermissionCollection $ao_permissionCollection
-	 *
-	 * @return null|bool
-	 *
+	 * @return bool|null
 	 * @throws \ReflectionException
-	 *
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public static function callback(?bool $ab_accessible, mixed $ax_access, mixed $ax_settings, array $aa_additionalData, PermissionCollection $ao_permissionCollection): ?bool {
@@ -68,16 +65,13 @@ class ConfigurationPolicy extends AbstractPolicy {
 
 
 	/**
-	 * @param null|bool $ab_accessible
+	 * @param bool|null $ab_accessible
 	 * @param mixed $ax_access
 	 * @param mixed $ax_settings
 	 * @param array $aa_additionalData
 	 * @param PermissionCollection $ao_permissionCollection
-	 *
-	 * @return null|bool
-	 *
+	 * @return bool|null
 	 * @throws \ReflectionException
-	 *
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public static function callbackForEntity(
@@ -93,7 +87,7 @@ class ConfigurationPolicy extends AbstractPolicy {
 			return $lb_accessible;
 		}
 
-		$lo_entity = $aa_additionalData['subject'] ?? NULL;
+		$lo_entity = $aa_additionalData['subject'] ?? null;
 		if (empty($lo_entity) || !($lo_entity instanceof Configuration)) {
 			throw new RuntimeException(
 				sprintf(
@@ -116,14 +110,12 @@ class ConfigurationPolicy extends AbstractPolicy {
 
 
 	/**
-	 * @param null|bool $ab_accessible
+	 * @param bool|null $ab_accessible
 	 * @param mixed $ax_access
 	 * @param mixed $ax_settings
 	 * @param array $aa_additionalData
 	 * @param PermissionCollection $ao_permissionCollection
-	 *
-	 * @return null|bool
-	 *
+	 * @return bool|null
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public static function callbackForFind(
@@ -138,7 +130,7 @@ class ConfigurationPolicy extends AbstractPolicy {
 			return $ab_accessible;
 		}
 
-		$lo_query = $aa_additionalData['subject'] ?? NULL;
+		$lo_query = $aa_additionalData['subject'] ?? null;
 		if (empty($lo_query) || !($lo_query instanceof SelectQuery)) {
 			throw new RuntimeException(
 				sprintf(
@@ -151,7 +143,7 @@ class ConfigurationPolicy extends AbstractPolicy {
 		}
 
 		//Apply a mapReduce call that'll remove all entities from the query, except those that are re-added using the `emit()`-method
-		$lo_query->mapReduce(function (Configuration|array $ao_entity, int $ai_key, MapReduce $ao_mapReduce) use ($ao_permissionCollection) {
+		$lo_query->mapReduce(function (Configuration|array $ao_entity, int $ai_key, MapReduce $ao_mapReduce) use ($ao_permissionCollection): void {
 			if (!$ao_entity instanceof Configuration || strtolower($ao_entity->scope) === 'system') {
 				$ao_mapReduce->emit($ao_entity);
 
@@ -174,7 +166,7 @@ class ConfigurationPolicy extends AbstractPolicy {
 		});
 
 
-		return TRUE;
+		return true;
 	}
 
 

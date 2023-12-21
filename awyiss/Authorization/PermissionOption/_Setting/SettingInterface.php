@@ -9,7 +9,13 @@ namespace Awyiss\Authorization\PermissionOption\Setting;
  * additional settings for a permission.
  */
 interface SettingInterface {
+	/**
+	 * WIP
+	 */
 	final public const TYPE_RADIO = 'radio';
+	/**
+	 * WIP
+	 */
 	final public const TYPE_SELECT = 'select';
 
 
@@ -21,7 +27,6 @@ interface SettingInterface {
 
 	/**
 	 * @param string $as_type
-	 *
 	 * @return $this
 	 */
 	public function setType(string $as_type): static;
@@ -35,7 +40,6 @@ interface SettingInterface {
 
 	/**
 	 * @param array $aa_options
-	 *
 	 * @return $this
 	 */
 	public function setOptions(array $aa_options): static;

@@ -4,11 +4,7 @@
 namespace Awyiss\Model;
 
 
-use Awyiss\Authorization\AuthorizationServiceInterface;
-use Awyiss\Authorization\Policy\GenericPagePolicy;
 use Awyiss\Core\App;
-use Awyiss\Model\Behavior\AuthorizeBehavior;
-use Awyiss\Model\Behavior\DefaultValuesBehavior;
 use Awyiss\Model\Behavior\Translate\EavStrategy;
 use Awyiss\ORM\Association\BelongsTo;
 use Awyiss\ORM\Association\BelongsToMany;
@@ -16,36 +12,38 @@ use Awyiss\ORM\Association\HasMany;
 use Awyiss\ORM\Association\HasOne;
 use Awyiss\ORM\Behavior;
 use Awyiss\ORM\RulesChecker;
+use Awyiss\Validation\Validator;
 use Cake\Core\InstanceConfigTrait;
+use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Schema\TableSchemaInterface;
-use Cake\Datasource\EntityInterface;
 use Cake\ORM\Exception\MissingEntityException;
-use Cake\ORM\Query;
 use Cake\ORM\Query\SelectQuery;
+use Cake\ORM\Table as BaseTable;
 use Cake\Utility\Inflector;
-use Cake\Validation\Validator;
+use Cake\Validation\Validator as BaseValidator;
+use Closure;
 use RuntimeException;
 
 
 /**
  * Base Table
  *
- * @method Query findById(int $ai_id)
- * @method Query addSystemOrderQueryConditions(?Query $ao_query, EntityInterface $ao_entity)
- * @method AuthorizationServiceInterface getAuthorizationService()
- * @method bool|int getHighestSystemOrder(EntityInterface $ao_entity)
- * @method string|GenericPagePolicy|NULL getPolicyClass()
- * @method array getSystemOrderRelatedColumns(?EntityInterface $ao_entity = NULL)
+ * @method SelectQuery findById(int $ai_id)
+ * @method SelectQuery addSystemOrderQueryConditions(?SelectQuery $ao_query, \Cake\Datasource\EntityInterface $ao_entity)
+ * @method \Awyiss\Authorization\AuthorizationServiceInterface getAuthorizationService()
+ * @method bool|int getHighestSystemOrder(\Cake\Datasource\EntityInterface $ao_entity)
+ * @method string|\Awyiss\Authorization\Policy\GenericPagePolicy|null getPolicyClass()
+ * @method array getSystemOrderRelatedColumns(?\Cake\Datasource\EntityInterface $ao_entity = null)
  * @method array getAttributes()
- * @method string getAttributesTable(bool $ab_camelized = FALSE)
+ * @method string getAttributesTable(bool $ab_camelized = false)
  * @method bool hasAttributes()
- * @method AuthorizeBehavior setAuthorizationService(AuthorizationServiceInterface $ao_authorizationService)
- * @method AuthorizeBehavior setPolicyClass(string|GenericPagePolicy|NULL $ax_policyClass)
- * @method AuthorizeBehavior skipAuthorizationCheck(bool $ab_skip = TRUE)
- * @method AuthorizeBehavior skipAuthorizationCheckOnce(bool $ab_skip = TRUE)
- * @method DefaultValuesBehavior newDefaultEntity(array $aa_additionalData = [])
+ * @method \Awyiss\Model\Behavior\AuthorizeBehavior setAuthorizationService(\Awyiss\Authorization\AuthorizationServiceInterface $ao_authorizationService)
+ * @method \Awyiss\Model\Behavior\AuthorizeBehavior setPolicyClass(string|\Awyiss\Authorization\Policy\GenericPagePolicy|null $ax_policyClass)
+ * @method \Awyiss\Model\Behavior\AuthorizeBehavior skipAuthorizationCheck(bool $ab_skip = true)
+ * @method \Awyiss\Model\Behavior\AuthorizeBehavior skipAuthorizationCheckOnce(bool $ab_skip = true)
+ * @method \Awyiss\Model\Behavior\DefaultValuesBehavior newDefaultEntity(array $aa_additionalData = [])
  */
-class Table extends \Cake\ORM\Table {
+class Table extends BaseTable {
 	use InstanceConfigTrait;
 
 
@@ -54,7 +52,7 @@ class Table extends \Cake\ORM\Table {
 	 *
 	 * @var bool
 	 */
-	public const ATTRIBUTABLE = TRUE;
+	public const ATTRIBUTABLE = true;
 	/**
 	 * @inheritDoc
 	 */
@@ -64,7 +62,6 @@ class Table extends \Cake\ORM\Table {
 	 * \Awyiss\Model\Table\AttributesTable::getScopes()
 	 *
 	 * @see \Awyiss\Model\Table\AttributesTable::getAvailableScopes();
-	 *
 	 * @var string
 	 */
 	public const TABLE = '';
@@ -101,7 +98,7 @@ class Table extends \Cake\ORM\Table {
 	 *
 	 * @var string
 	 */
-	protected string $_validatorClass = \Awyiss\Validation\Validator::class;
+	protected string $_validatorClass = Validator::class;
 	/**
 	 * @var string
 	 */
@@ -112,7 +109,7 @@ class Table extends \Cake\ORM\Table {
 	 * @inheritDoc
 	 */
 	public function __construct(array $aa_config = []) {
-		if (($this->_defaultConfig['implementedEvents'] ?? NULL) === NULL) {
+		if (($this->_defaultConfig['implementedEvents'] ?? null) === null) {
 			$this->setConfig('implementedEvents', $this->defaultEvents);
 		}
 
@@ -122,7 +119,6 @@ class Table extends \Cake\ORM\Table {
 
 	/**
 	 * @inheritDoc
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function initialize(array $aa_config): void {
@@ -139,7 +135,7 @@ class Table extends \Cake\ORM\Table {
 		$lb_isAttributesTable = str_starts_with($this->getTable(), 'attributes_');
 
 		if ($lb_isAttributesTable) {
-			$this->addBehavior('Attributes', ['isAttributesTable' => TRUE] + $this->getConfig('attributes', []));
+			$this->addBehavior('Attributes', ['isAttributesTable' => true] + $this->getConfig('attributes', []));
 			if (!$this->getConfig('authorize.scope')) {
 				$this->setConfig('authorize.scope', substr($this->getTable(), 11));
 			}
@@ -147,7 +143,7 @@ class Table extends \Cake\ORM\Table {
 		else {
 			$this->addBehavior(
 				'Attributes',
-				['isAttributesTable' => FALSE] + $this->getConfig('attributes', []) + [
+				['isAttributesTable' => false] + $this->getConfig('attributes', []) + [
 					'sourceTable' => $this->getTable(),
 					'foreignKey' => Inflector::singularize($this->getTable()) . '_id',
 				]
@@ -177,9 +173,9 @@ class Table extends \Cake\ORM\Table {
 			$this->addBehavior(
 				'Translate',
 				$this->getConfig('translate') + [
-					'allowEmptyTranslations' => FALSE,
+					'allowEmptyTranslations' => false,
 					'defaultLocale' => '',
-					'locale' => $aa_config['translateLanguage']->shortcode ?? NULL,
+					'locale' => $aa_config['translateLanguage']->shortcode ?? null,
 					'strategyClass' => EavStrategy::class,
 				]
 			);
@@ -189,52 +185,9 @@ class Table extends \Cake\ORM\Table {
 	}
 
 
-	/*
-	 * @inheritDoc
-	 *
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
-	 *
-	public function find (?string $as_type = NULL, array $aa_options = []): Query {
-		$lo_query = $this->query();
-		$lo_query->select();
-
-		$ls_type = $as_type ?: 'all';
-		if ($ls_type == 'all' && ! defined('IS_BACKEND') || ! IS_BACKEND) {
-			$ls_type = 'active';
-		}
-
-		return $this->callFinder($ls_type, $lo_query, $aa_options);
-	}*/
-
-
-	/*
-	 * @param Query $ao_query
-	 * @param array $aa_options
-	 *
-	 * @return Query
-	 *
-	 * @noinspection PhpUnused
-	 * @noinspection PhpUnusedParameterInspection
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
-	 *
-	public function findAll (Query $ao_query, array $aa_options): Query {
-		if ($this->hasAttributes()) {
-			$ao_query->contain($this->getAttributesTable(TRUE));
-		}
-
-		if ($this->getConfig('translate') && $this->hasBehavior('Translate')) {
-			$ao_query->find('translations');
-		}
-
-		return $ao_query;
-	}*/
-
-
 	/**
 	 * @param SelectQuery $ao_query
-	 *
 	 * @return SelectQuery
-	 *
 	 * @noinspection PhpUnused
 	 */
 	public function findTranslations(SelectQuery $ao_query): SelectQuery {
@@ -251,9 +204,7 @@ class Table extends \Cake\ORM\Table {
 	/**
 	 * @param SelectQuery $ao_query
 	 * @param array $aa_options
-	 *
 	 * @return SelectQuery
-	 *
 	 * @noinspection PhpUnused
 	 */
 	public function findActive(SelectQuery $ao_query): SelectQuery {
@@ -261,22 +212,11 @@ class Table extends \Cake\ORM\Table {
 			throw new RuntimeException(sprintf('Cannot use `findActive` on table `%s` ', $this->getAlias()));
 		}
 
-		$ao_query->where(['active' => TRUE]);
+		$ao_query->where(['active' => true]);
 
 
 		return $ao_query;
 	}
-
-
-	/*public function deleteAll ($conditions): int {
-		return $this->_table->updateAll([
-			'deleted_on' => new \Cake\I18n\Time(),
-			'deleted' => 1,
-		], $conditions);
-
-		return parent::deleteAll($conditions);
-	}*/
-
 
 	/**
 	 * @inheritDoc
@@ -293,12 +233,8 @@ class Table extends \Cake\ORM\Table {
 
 			$ls_alias = Inflector::classify(Inflector::underscore(substr(array_pop($la_parts), 0, -5)));
 			$ls_name = implode('\\', array_slice($la_parts, 0, -1)) . '\\Entity\\' . $ls_alias;
-			/*if ( ! class_exists($ls_name)) {
-			var_dump($ls_name, $ls_default);
-				return $this->_entityClass = $ls_default;
-			}*/
 
-			/** @var class-string<EntityInterface>|NULL $ls_class */
+			/** @var class-string<\Cake\Datasource\EntityInterface>|null $ls_class */
 			$ls_class = App::className($ls_name, 'Model/Entity');
 			if (!$ls_class) {
 				$ls_class = App::className($ls_alias, 'Model/Entity');
@@ -323,9 +259,7 @@ class Table extends \Cake\ORM\Table {
 	 *
 	 * @param string $as_associated
 	 * @param array $aa_options
-	 *
 	 * @return BelongsTo
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function belongsTo(string $as_associated, array $aa_options = []): BelongsTo {
@@ -346,10 +280,8 @@ class Table extends \Cake\ORM\Table {
 	 *
 	 * @param string $as_associated
 	 * @param array $aa_options
-	 *
 	 * @return HasOne
-	 *
-	 * * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function hasOne(string $as_associated, array $aa_options = []): HasOne {
 		$aa_options += ['sourceTable' => $this];
@@ -369,10 +301,8 @@ class Table extends \Cake\ORM\Table {
 	 *
 	 * @param string $as_associated
 	 * @param array $aa_options
-	 *
 	 * @return HasOne
-	 *
-	 * * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function hasMany(string $as_associated, array $aa_options = []): HasMany {
 		$aa_options += ['sourceTable' => $this];
@@ -392,10 +322,8 @@ class Table extends \Cake\ORM\Table {
 	 *
 	 * @param string $as_associated
 	 * @param array $aa_options
-	 *
 	 * @return HasOne
-	 *
-	 * * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function belongsToMany(string $as_associated, array $aa_options = []): BelongsToMany {
 		$aa_options += ['sourceTable' => $this];
@@ -410,37 +338,31 @@ class Table extends \Cake\ORM\Table {
 
 	/**
 	 * Returns true if there is any record in this repository matching the specified conditions.
-	 *
 	 * Does the same as \Cake\ORM\Table::exists but accepts an array of options as the second parameter
 	 *
-	 * @param $aa_conditions
+	 * @param \Cake\Database\Expression\QueryExpression|\Closure|array|string|null $aa_conditions
 	 * @param array $aa_options
-	 *
 	 * @return bool
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function exists($aa_conditions, array $aa_options = []): bool {
-		$la_options = array_merge(['authorize' => ['skip' => TRUE]], $aa_options);
+	public function exists(QueryExpression|Closure|array|string|null $aa_conditions, array $aa_options = []): bool {
+		$la_options = array_merge(['authorize' => ['skip' => true]], $aa_options);
+
+		$lo_results = $this->find()->applyOptions($la_options)->select(['existing' => 1])->where($aa_conditions)->limit(1)->disableHydration()->toArray();
 
 
-		return (bool) count(
-			$this->find()->applyOptions($la_options)->select(['existing' => 1])->where($aa_conditions)->limit(1)->disableHydration()->toArray()
-		);
+		return (bool)count($lo_results);
 	}
 
 
 	/**
 	 * Returns the default validator object.
 	 *
-	 * @param Validator $ao_validator The validator that can be modified to
-	 * add some rules to it.
-	 *
+	 * @param Validator $ao_validator The validator that can be modified to add some rules to it.
 	 * @return Validator
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function validationDefault(Validator $ao_validator): Validator {
+	public function validationDefault(BaseValidator $ao_validator): BaseValidator {
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 		$ao_validator->setI18nDomain($this->getI18nDomain());
 		$ao_validator->setStopOnFailure();
@@ -471,10 +393,9 @@ class Table extends \Cake\ORM\Table {
 	 * @param Table|Behavior $ao_instance
 	 * @param mixed $aa_eventMap
 	 * @param mixed $ai_priority
-	 *
 	 * @return array
 	 */
-	public function buildEventMap(Table|Behavior $ao_instance, array $aa_eventMap, int $ai_priority = NULL): array {
+	public function buildEventMap(Table|Behavior $ao_instance, array $aa_eventMap, ?int $ai_priority = null): array {
 		$la_eventMap = [];
 		$li_priority = $ai_priority;
 
@@ -484,7 +405,7 @@ class Table extends \Cake\ORM\Table {
 					$li_priority = $lx_callable['priority'];
 				}
 
-				$lx_callable = $lx_callable['callable'] ?? NULL;
+				$lx_callable = $lx_callable['callable'] ?? null;
 			}
 
 			if ((is_string($lx_callable) && !method_exists($ao_instance, $lx_callable)) || (!is_string($lx_callable) && !is_callable($lx_callable))) {
@@ -498,7 +419,7 @@ class Table extends \Cake\ORM\Table {
 				$ls_event = 'Model.' . $lx_callable;
 			}
 
-			if ($li_priority === NULL) {
+			if ($li_priority === null) {
 				$la_eventMap[ $ls_event ] = $lx_callable;
 			}
 			else {

@@ -6,22 +6,28 @@ namespace Awyiss\Utilities\Menu;
 
 use Awyiss\Authorization\IdentityPermissionsInterface;
 use Awyiss\Model\Entity\BackendMenuEntry;
-use Awyiss\Model\Table\BackendMenuEntriesTable;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use RuntimeException;
 
 
+/**
+ * Build a menu based cn config/menu.json and customer/config/menu-extension.json
+ */
 class BackendMenu {
 	use LocatorAwareTrait;
 
 
-	protected ?IdentityPermissionsInterface $identity = NULL;
-	protected ?Menu $menu = NULL;
-	protected ?Menu $customMenu = NULL;
-	protected ?Menu $dynamicMenu = NULL;
+	protected ?IdentityPermissionsInterface $identity = null;
+	protected ?Menu $menu = null;
+	protected ?Menu $customMenu = null;
+	protected ?Menu $dynamicMenu = null;
 
 
-	public function __construct(?IdentityPermissionsInterface $ao_identity = NULL) {
+	/**
+	 * @param \Awyiss\Authorization\IdentityPermissionsInterface|null $ao_identity
+	 * @throws \ReflectionException
+	 */
+	public function __construct(?IdentityPermissionsInterface $ao_identity = null) {
 		$this->identity = $ao_identity;
 
 		$this->createMenu();
@@ -32,27 +38,40 @@ class BackendMenu {
 	}
 
 
+	/**
+	 * @return \Awyiss\Utilities\Menu\Menu|null
+	 */
 	public function getMenu(): ?Menu {
 		return $this->menu;
 	}
 
 
+	/**
+	 * @return \Awyiss\Utilities\Menu\Menu|null
+	 */
 	public function getCustomMenu(): ?Menu {
 		return $this->customMenu;
 	}
 
 
+	/**
+	 * @return \Awyiss\Utilities\Menu\Menu|null
+	 */
 	public function getDynamicMenu(): ?Menu {
 		return $this->dynamicMenu;
 	}
 
 
-	protected function createMenu() {
+	/**
+	 * @return void
+	 * @throws \ReflectionException
+	 */
+	protected function createMenu(): void {
 		$la_config = [
 			'identity' => $this->identity,
 			'validate' => [
 				'schemaPath' => CONFIG . DS . 'menu.schema.json',
-				'uniqueIdentifiers' => TRUE,
+				'uniqueIdentifiers' => true,
 			],
 		];
 
@@ -61,13 +80,17 @@ class BackendMenu {
 	}
 
 
+	/**
+	 * @return void
+	 * @throws \ReflectionException
+	 */
 	protected function createCustomMenu(): void {
 		$ls_filePath = realpath(CUSTOM_CONFIG . DS . 'menu.json');
 		if ($ls_filePath) {
 			$lo_customMenuData = MenuLoader::loadJsonFile($ls_filePath);
 			$lb_valid = MenuLoader::validateData($lo_customMenuData, [
 				'schemaPath' => CONFIG . DS . 'menu-extension.schema.json',
-				'uniqueIdentifiers' => TRUE,
+				'uniqueIdentifiers' => true,
 			]);
 
 			if (!$lb_valid) {
@@ -80,13 +103,17 @@ class BackendMenu {
 	}
 
 
-	protected function createDynamicMenu() {
-		/** @var BackendMenuEntriesTable $lo_table */
+	/**
+	 * @return void
+	 * @throws \ReflectionException
+	 */
+	protected function createDynamicMenu(): void {
+		/** @var \Awyiss\Model\Table\BackendMenuEntriesTable $lo_table */
 		$lo_table = $this->fetchTable('BackendMenuEntries');
 
 		$la_menuEntries = $lo_table->find('threaded')->applyOptions([
 			'authorize' => [
-				'skip' => TRUE,
+				'skip' => true,
 			],
 		])->all()->groupBy(function (BackendMenuEntry $ao_entity) {
 			return $ao_entity->parentId ? 'appendTo' : 'insertAfter';

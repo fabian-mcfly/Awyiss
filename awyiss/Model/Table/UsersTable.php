@@ -4,12 +4,9 @@
 namespace Awyiss\Model\Table;
 
 
-use Awyiss\Model\Entity\User;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
 use Cake\I18n\FrozenTime;
-use Cake\ORM\Association\BelongsToMany;
-use Cake\ORM\Association\HasMany;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Validation\Validator;
@@ -18,12 +15,14 @@ use Cake\Validation\Validator;
 /**
  * Users Model
  *
- * @property UsergroupsTable&BelongsToMany $Usergroups
- * @property UsergroupsUsersTable&HasMany $UsergroupsUsers
- *
- * @method User newDefaultEntity(array $aa_additionalData = [])
+ * @property UsergroupsTable&\Awyiss\ORM\Association\BelongsToMany $Usergroups
+ * @property UsergroupsUsersTable&\Awyiss\ORM\Association\HasMany $UsergroupsUsers
+ * @method \Awyiss\Model\Entity\User newDefaultEntity(array $aa_additionalData = [])
  */
 class UsersTable extends Table {
+	/**
+	 * @inheritDoc
+	 */
 	public const TABLE = 'users';
 
 
@@ -61,7 +60,6 @@ class UsersTable extends Table {
 	 *
 	 * @param Validator $ao_validator The validator that can be modified to
 	 * add some rules to it.
-	 *
 	 * @return Validator
 	 */
 	public function validationDefault(Validator $ao_validator): Validator {
@@ -87,7 +85,7 @@ class UsersTable extends Table {
 		]);
 
 
-		$ao_validator->allowEmptyString('password', NULL, 'update');
+		$ao_validator->allowEmptyString('password', null, 'update');
 		$ao_validator->add('password', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'minLength' => ['rule' => ['minLength', 8]],
@@ -144,9 +142,7 @@ class UsersTable extends Table {
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 *
 	 * @param RulesChecker|BaseRulesChecker $ao_rules The rules object to be modified.
-	 *
 	 * @return RulesChecker
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
@@ -156,7 +152,7 @@ class UsersTable extends Table {
 		]);
 
 
-		$ao_rules->add($ao_rules->isUnique(['email'], ['allowMultipleNulls' => TRUE]), [
+		$ao_rules->add($ao_rules->isUnique(['email'], ['allowMultipleNulls' => true]), [
 			'errorField' => 'email',
 			'message' => __df($this->getI18nDomain(), 'validation', 'error_invalid'),
 		]);

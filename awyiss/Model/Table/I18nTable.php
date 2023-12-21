@@ -14,7 +14,7 @@ class I18nTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public const ATTRIBUTABLE = FALSE;
+	public const ATTRIBUTABLE = false;
 	/**
 	 * @inheritDoc
 	 */
@@ -24,10 +24,10 @@ class I18nTable extends Table {
 	 */
 	protected array $_defaultConfig = [
 		'audit' => [
-			'enabled' => FALSE,
+			'enabled' => false,
 		],
 		'authorize' => [
-			'enabled' => FALSE,
+			'enabled' => false,
 		],
 	];
 	/*

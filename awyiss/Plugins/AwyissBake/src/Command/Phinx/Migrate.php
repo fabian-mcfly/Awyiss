@@ -5,14 +5,15 @@ namespace AwyissBake\Command\Phinx;
 
 
 use Cake\Core\Plugin;
+use Migrations\Command\Phinx\Migrate as BaseMigrate;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 
 
 /**
- *
+ * @inheritDoc
  */
-class Migrate extends \Migrations\Command\Phinx\Migrate {
+class Migrate extends BaseMigrate {
 	/**
 	 * {@inheritDoc}
 	 *
@@ -38,14 +39,14 @@ class Migrate extends \Migrations\Command\Phinx\Migrate {
 			'The plugin containing the migrations'
 		)->addOption('--connection', '-c', InputOption::VALUE_REQUIRED, 'The datasource connection to use')
 		//->addOption('--source', '-s', InputOption::VALUE_REQUIRED, 'The folder where migrations are in')
-		->addOption('--folder', NULL, InputOption::VALUE_REQUIRED, 'The folder where migrations are in')->addOption(
+		->addOption('--folder', null, InputOption::VALUE_REQUIRED, 'The folder where migrations are in')->addOption(
 			'--fake',
-			NULL,
+			null,
 			InputOption::VALUE_NONE,
 			"Mark any migrations selected as run, but don't actually execute them"
 		)->addOption(
 			'--no-lock',
-			NULL,
+			null,
 			InputOption::VALUE_NONE,
 			'If present, no lock file will be generated after migrating'
 		);
@@ -59,16 +60,14 @@ class Migrate extends \Migrations\Command\Phinx\Migrate {
 	 *
 	 * @param InputInterface $ao_input Input of the current command.
 	 * @param string $as_default Default folder to set if no folder option is found in the $ao_input param
-	 *
 	 * @return string
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	protected function getOperationsPath(InputInterface $ao_input, string $as_default = 'Migrations'): string {
 		$ls_path = APP . 'config' . DS . $as_default;
 
 		$ls_plugin = $this->getPlugin($ao_input);
-		if ($ls_plugin !== NULL) {
+		if ($ls_plugin !== null) {
 			$ls_path = Plugin::path($ls_plugin) . 'config' . DS . $as_default;
 		}
 		elseif ($ao_input->getOption('folder')) {

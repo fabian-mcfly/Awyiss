@@ -11,7 +11,6 @@ use Cake\Console\Arguments;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Core\Configure;
-use Cake\Database\Connection;
 use Cake\Datasource\ConnectionManager;
 use Cake\Utility\Inflector;
 
@@ -34,7 +33,7 @@ class PolicyCommand extends BakeCommand {
 	 */
 	public string $pathFragment = 'Authorization/Policy/';
 	/**
-	 * @var array|string[] Table names that must never have permissions
+	 * @var array|array<string> Table names that must never have permissions
 	 */
 	private array $blocklistedNames = ['audit', 'queue_processes', 'queued_jobs', 'usergroup_permissions', 'usergroups_users'];
 
@@ -44,7 +43,6 @@ class PolicyCommand extends BakeCommand {
 	 *
 	 * @param Arguments $ao_args The command arguments.
 	 * @param ConsoleIo $ao_io The console io
-	 *
 	 * @return int|null The exit code or null for success
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
@@ -54,7 +52,7 @@ class PolicyCommand extends BakeCommand {
 		$ls_name = $this->_getName($ls_name);
 
 		if (empty($ls_name)) {
-			/** @var Connection $lo_connection */
+			/** @var \Cake\Database\Connection $lo_connection */
 			$lo_connection = ConnectionManager::get($this->connection);
 			$lo_scanner = new TableScanner($lo_connection);
 			$ao_io->out('Possible policies based on your current database:');
@@ -92,7 +90,6 @@ class PolicyCommand extends BakeCommand {
 	 * @param string $as_policyName Policy name already pluralized and correctly cased.
 	 * @param Arguments $ao_args The console arguments
 	 * @param ConsoleIo $ao_io The console io
-	 *
 	 * @return void
 	 */
 	public function bake(string $as_policyName, Arguments $ao_args, ConsoleIo $ao_io): void {
@@ -125,7 +122,6 @@ class PolicyCommand extends BakeCommand {
 	 * Gets the option parser instance and configures it.
 	 *
 	 * @param ConsoleOptionParser $ao_parser The option parser to update.
-	 *
 	 * @return ConsoleOptionParser
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */

@@ -5,7 +5,6 @@ namespace Awyiss\Authorization\Permission;
 
 
 use Awyiss\Authorization\AuthorizationService;
-use Awyiss\Model\Entity\UsergroupPermission;
 use Cake\Event\EventDispatcherTrait;
 use RuntimeException;
 
@@ -21,7 +20,7 @@ class PermissionCollection {
 
 
 	/**
-	 * @var null|AuthorizationService
+	 * @var AuthorizationService|null
 	 */
 	protected ?AuthorizationService $authorizationService;
 	/**
@@ -35,8 +34,8 @@ class PermissionCollection {
 
 
 	/**
-	 * @param null|AuthorizationService $ao_authorizationService
-	 * @param array<UsergroupPermission|array{scope: string, identifier: string, access: mixed, settings: mixed}> $aa_permissions
+	 * @param AuthorizationService|null $ao_authorizationService
+	 * @param array<\Awyiss\Model\Entity\UsergroupPermission|array{scope: string, identifier: string, access: mixed, settings: mixed}> $aa_permissions
 	 */
 	public function __construct(?AuthorizationService $ao_authorizationService, array $aa_permissions = []) {
 		$this->authorizationService = $ao_authorizationService;
@@ -73,9 +72,7 @@ class PermissionCollection {
 	 * If `$ax_scope` is a string, `$as_identifier` needs to be provided
 	 *
 	 * @param Permission $ao_permission
-	 *
 	 * @return $this
-	 *
 	 */
 	public function add(Permission $ao_permission): static {
 		$ao_permission->setAuthorizationService($this->authorizationService);
@@ -98,17 +95,15 @@ class PermissionCollection {
 
 
 	/**
-	 * Returns TRUE or FALSE, whether a scope (and optional identifier) exists in the collection of permission
+	 * Returns true or false, whether a scope (and optional identifier) exists in the collection of permission
 	 *
 	 * @noinspection PhpUnused
-	 *
 	 * @param string $as_scope
-	 * @param null|string $as_identifier
-	 *
+	 * @param string|null $as_identifier
 	 * @return bool
 	 */
-	public function hasPermissions(string $as_scope, string $as_identifier = NULL): bool {
-		return $this->getPermissions($as_scope, $as_identifier) !== NULL;
+	public function hasPermissions(string $as_scope, ?string $as_identifier = null): bool {
+		return $this->getPermissions($as_scope, $as_identifier) !== null;
 	}
 
 
@@ -116,22 +111,21 @@ class PermissionCollection {
 	 * Returns the permission for the given scope (and optional identifier)
 	 *
 	 * @param string $as_scope
-	 * @param null|string $as_identifier
-	 *
-	 * @return NULL|array<array<string, Permission[]>>|array<string, Permission[]>
+	 * @param string|null $as_identifier
+	 * @return array<array<string, Permission[]>>|array<string, Permission[]>|null
 	 */
-	public function getPermissions(string $as_scope, string $as_identifier = NULL): ?array {
+	public function getPermissions(string $as_scope, ?string $as_identifier = null): ?array {
 		$ls_scope = AuthorizationService::sanitizeScope($as_scope);
 
 		if ($as_identifier) {
 			$ls_identifier = AuthorizationService::sanitizeIdentifier($as_identifier);
 
 
-			return $this->permissions[ $ls_scope ][ $ls_identifier ] ?? NULL;
+			return $this->permissions[ $ls_scope ][ $ls_identifier ] ?? null;
 		}
 
 
-		return $this->permissions[ $ls_scope ] ?? NULL;
+		return $this->permissions[ $ls_scope ] ?? null;
 	}
 
 
@@ -139,30 +133,28 @@ class PermissionCollection {
 	 * Checks if the provided identifiers are accessible by the provided identity for the provided scope
 	 *
 	 * A policy is
-	 * - accessible if it returns TRUE
-	 * - forbidden if it returns FALSE
-	 * - indifferent if it returns NULL
+	 * - accessible if it returns true
+	 * - forbidden if it returns false
+	 * - indifferent if it returns null
 	 *
 	 * `$ax_identifier` captures all remaining arguments provided to `scopeIsAccessible`,
 	 * which are then used to checked accesibility.
 	 *
 	 * - Providing a list of arguments, for example `scopeIsAccessible(..., 'read', 'create', 'update', 'delete')` means
-	 * that every one of those identifiers must be accessible for this method to return TRUE.
+	 * that every one of those identifiers must be accessible for this method to return true.
 	 *
 	 * - Providing an array of arguments, for example `scopeIsAccessible(..., ['read', 'create', 'update', 'delete'])` means
-	 * that at least one of those identifiers must be accessible for this method to return TRUE.
+	 * that at least one of those identifiers must be accessible for this method to return true.
 	 *
 	 * It's possible to combine the two methods above.
 	 *
-	 * For example `scopeIsAccessible(..., ['read', 'create'], ['update', 'delete'])` will return TRUE when either `read` or `create`
+	 * For example `scopeIsAccessible(..., ['read', 'create'], ['update', 'delete'])` will return true when either `read` or `create`
 	 * AND either `update` OR `delete` is accessible.
 	 *
 	 * @param string $as_scope
 	 * @param array $aa_additionalData
-	 * @param string|array ...$ax_identifier
-	 *
+	 * @param array|string ...$ax_identifier
 	 * @return bool
-	 *
 	 * @throws \ReflectionException
 	 */
 	public function scopeIsAccessible(string $as_scope, array $aa_additionalData = [], string|array ...$ax_identifier): bool {
@@ -180,29 +172,27 @@ class PermissionCollection {
 			$la_accessible[] = $this->identifierIsAccessible($as_scope, $aa_additionalData, ...$lx_identifier);
 		}
 
-		//If TRUE is part of the result, and the result is only TRUE, and nothing but TRUE, access is granted.
-		if (array_unique($la_accessible) === [TRUE]) {
-			return TRUE;
+		//If true is part of the result, and the result is only true, and nothing but true, access is granted.
+		if (array_unique($la_accessible) === [true]) {
+			return true;
 		}
 
 
 		//I am sorry Dave. I'm afraid I can't do that.
-		return FALSE;
+		return false;
 	}
 
 
 	/**
-	 * Return TRUE or FALSE depending on whether one of the provided identifiers is accessible
+	 * Return true or false depending on whether one of the provided identifiers is accessible
 	 *
 	 * @param string $as_scope
 	 * @param array $aa_additionalData
-	 * @param array|string[] $aa_identifier
-	 *
-	 * @return NULL|bool
-	 *
+	 * @param array|array<string> $aa_identifier
+	 * @return bool|null
 	 * @throws \ReflectionException
 	 */
-	protected function identifierIsAccessible(string $as_scope, array $aa_additionalData = [], ...$aa_identifier): ?bool {
+	protected function identifierIsAccessible(string $as_scope, array $aa_additionalData = [], string|array ...$aa_identifier): ?bool {
 		$la_accessible = [];
 
 		//Traverse the identifiers and check if it's accessible, given the collection of permissions for `$as_scope`
@@ -219,23 +209,21 @@ class PermissionCollection {
 			$la_accessible[] = $this->permissionsAreAccessible($la_permissions, $aa_additionalData);
 		}
 
-		//If TRUE is part of the result access is granted.
-		if (in_array(TRUE, $la_accessible, TRUE)) {
-			return TRUE;
+		//If true is part of the result access is granted.
+		if (in_array(true, $la_accessible, true)) {
+			return true;
 		}
 
 
-		//Otherwise the access depends on the default accessible. FALSE makes sense as a fallback.
+		//Otherwise the access depends on the default accessible. false makes sense as a fallback.
 		return Permission::DEFAULT_PERMISSION;
 	}
 
 
 	/**
-	 * @param Permission[] $aa_permissions
+	 * @param array<Permission> $aa_permissions
 	 * @param array $aa_additionalData
-	 *
-	 * @return null|bool
-	 *
+	 * @return bool|null
 	 * @throws \ReflectionException
 	 */
 	protected function permissionsAreAccessible(array $aa_permissions, array $aa_additionalData = []): ?bool {
@@ -249,14 +237,14 @@ class PermissionCollection {
 			$la_accessible[] = $lo_permission->isAccessible($aa_additionalData, $this);
 		}
 
-		if (in_array(FALSE, $la_accessible, TRUE)) {
-			return FALSE;
+		if (in_array(false, $la_accessible, true)) {
+			return false;
 		}
-		elseif (in_array(TRUE, $la_accessible, TRUE)) {
-			return TRUE;
+		elseif (in_array(true, $la_accessible, true)) {
+			return true;
 		}
 
 
-		return NULL;
+		return null;
 	}
 }

@@ -1,4 +1,7 @@
 <?php declare(strict_types=1);
+/**
+ * @var \Awyiss\View\AppView $this
+ */
 
 if (PHP_SAPI === 'cli') {
 	echo $this->fetch('title') . PHP_EOL;

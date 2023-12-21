@@ -4,11 +4,13 @@
 namespace Awyiss\ORM\Association;
 
 
+use Cake\ORM\Association\HasOne as BaseHasOne;
+
+
 /**
  * {@inheritDoc}
- *
  * Re-implemented 1:1 so it'll use ExistsTrait
  */
-class HasOne extends \Cake\ORM\Association\HasOne {
+class HasOne extends BaseHasOne {
 	use ExistsTrait;
 }

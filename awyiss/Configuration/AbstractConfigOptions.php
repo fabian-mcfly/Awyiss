@@ -6,6 +6,7 @@ namespace Awyiss\Configuration;
 
 use Awyiss\Awyiss;
 use Cake\Utility\Hash;
+use RuntimeException;
 
 
 /**
@@ -14,15 +15,20 @@ use Cake\Utility\Hash;
  * @see ConfigOptionsInterface
  */
 abstract class AbstractConfigOptions implements ConfigOptionsInterface {
-	/** @var array<string, ConfigOptionCollection> */
+	/**
+	 * @var array<string, ConfigOptionCollection>
+	 */
 	protected array $realms = [];
 
 
+	/**
+	 * Set the scope and initialize the config options
+	 */
 	public function __construct() {
 		$ls_scope = static::getScope();
 		$ls_testScope = ConfigOptionsProvider::sanitizeScope($ls_scope);
 		if ($ls_testScope !== $ls_scope) {
-			throw new \RuntimeException(
+			throw new RuntimeException(
 				sprintf(
 					'The provided scope should be written CamelCased (`%s`). `%s` given.',
 					$ls_testScope,
@@ -41,13 +47,12 @@ abstract class AbstractConfigOptions implements ConfigOptionsInterface {
 
 	/**
 	 * @param string $as_realm
-	 * @param array|ConfigOption $ax_configOption
-	 *
+	 * @param ConfigOption|array $ax_configOption
 	 * @return $this
 	 */
 	public function add(string $as_realm, array|ConfigOption $ax_configOption): static {
 		if (!in_array($as_realm, Awyiss::getRealms())) {
-			throw new \RuntimeException(
+			throw new RuntimeException(
 				sprintf(
 					'The realm is not valid. `%s` given.',
 					$as_realm
@@ -65,13 +70,13 @@ abstract class AbstractConfigOptions implements ConfigOptionsInterface {
 	/**
 	 * @inheritDoc
 	 */
-	public function getConfigOptions(string $as_realm = NULL): ConfigOptionCollection|array {
-		if ($as_realm === NULL) {
+	public function getConfigOptions(?string $as_realm = null): ConfigOptionCollection|array {
+		if ($as_realm === null) {
 			return $this->realms;
 		}
 
 		if (!isset($this->realms[ $as_realm ])) {
-			throw new \RuntimeException(sprintf('The realm is not valid. `%s` given.', $as_realm));
+			throw new RuntimeException(sprintf('The realm is not valid. `%s` given.', $as_realm));
 		}
 
 
@@ -86,7 +91,7 @@ abstract class AbstractConfigOptions implements ConfigOptionsInterface {
 		$la_configOptions = $this->realms[ $as_realm ] ?? [];
 
 		if (empty($la_configOptions)) {
-			return NULL;
+			return null;
 		}
 
 
@@ -101,15 +106,15 @@ abstract class AbstractConfigOptions implements ConfigOptionsInterface {
 		string $as_realm,
 		string $as_identifier,
 		mixed $ax_value,
-		?string $as_languageShortcode = NULL,
-		bool $ab_fallbackValidity = TRUE
+		?string $as_languageShortcode = null,
+		bool $ab_fallbackValidity = true
 	): bool|string {
 		$lo_configOption = $this->getConfigOption($as_realm, $as_identifier);
 
 		if (!($lo_configOption instanceof ConfigOption)) {
 			/*
 			 * If there is no config option for the given identifier, we cannot define what's valid and what's not
-			 * This means that we need to return the default validity that the call can specify (default: TRUE)
+			 * This means that we need to return the default validity that the call can specify (default: true)
 			 *
 			 * This is also the case if the given identifier points to a ConfigOptionsCollection instead of a ConfigOption
 			 */

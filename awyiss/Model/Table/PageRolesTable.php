@@ -66,8 +66,8 @@ class PageRolesTable extends Table {
 		$this->belongsTo('PageRoles');
 
 		$this->hasMany('Pages', [
-			'cascadeCallbacks' => TRUE,
-			'dependent' => TRUE,
+			'cascadeCallbacks' => true,
+			'dependent' => true,
 		]);
 	}
 
@@ -77,7 +77,6 @@ class PageRolesTable extends Table {
 	 *
 	 * @param Validator $ao_validator The validator that can be modified to
 	 * add some rules to it.
-	 *
 	 * @return Validator
 	 * @noinspection DuplicatedCode
 	 */
@@ -141,9 +140,7 @@ class PageRolesTable extends Table {
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 *
 	 * @param RulesChecker|BaseRulesChecker $ao_rules The rules object to be modified.
-	 *
 	 * @return RulesChecker
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
@@ -159,11 +156,11 @@ class PageRolesTable extends Table {
 			$ls_identifier = strtolower(Inflector::underscore($ao_entity->identifier));
 
 			if (in_array($ls_identifier, $this->blocklistedIdentifiers)) {
-				return FALSE;
+				return false;
 			}
 
 
-			return App::className(Inflector::camelize(Inflector::tableize($ls_identifier)), 'Controller/Backend', 'Controller') === NULL;
+			return App::className(Inflector::camelize(Inflector::tableize($ls_identifier)), 'Controller/Backend', 'Controller') === null;
 		}, 'identifierAllowed', [
 			'errorField' => 'identifier',
 			'message' => __dfx($this->getI18nDomain(), 'validation', 'page_role', 'error_identifier_allowed'),

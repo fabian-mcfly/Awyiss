@@ -1,6 +1,6 @@
 {#
 @var ao_permission \Awyiss\Authorization\PermissionOptions\SimplePermissionOption
-@var ao_entity \Awyiss\Model\Entity\Usergroup|NULL
+@var ao_entity \Awyiss\Model\Entity\Usergroup|null
 @var as_identifier string
 @var as_scope string
 @var _view \Awyiss\View\BackendView
@@ -9,7 +9,7 @@
 {% block permissionOptions %}
 	{% set ls_fieldName = 'permissions[' ~ as_scope ~ '][' ~ as_identifier ~ ']' %}
 	{% set ls_label = 'Permissions-' ~ as_scope|camelize ~ '-' ~ as_identifier|camelize %}
-	{% set lx_value = ao_entity.usergroup_permissions[ as_scope ][ as_identifier ].access ?? NULL %}
+	{% set lx_value = ao_entity.usergroup_permissions[ as_scope ][ as_identifier ].access ?? null %}
 	{% set la_options = ao_permission.getOptions %}
 
 	<span class="Options SimpleRadio">

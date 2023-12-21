@@ -46,11 +46,11 @@ class Authentication implements AuthenticationServiceProviderInterface {
 	/**
 	 * @var bool
 	 */
-	protected static bool $disableDefaultAuthenticators = FALSE;
+	protected static bool $disableDefaultAuthenticators = false;
 	/**
 	 * @var bool
 	 */
-	protected static bool $disableDefaultIdentifiers = FALSE;
+	protected static bool $disableDefaultIdentifiers = false;
 	/**
 	 * @var array
 	 */
@@ -67,10 +67,8 @@ class Authentication implements AuthenticationServiceProviderInterface {
 
 	/**
 	 * @param ServerRequestInterface $ao_request
-	 *
 	 * @return AuthenticationServiceInterface
 	 * @throws Exception
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function getAuthenticationService(ServerRequestInterface $ao_request): AuthenticationServiceInterface {
@@ -102,9 +100,7 @@ class Authentication implements AuthenticationServiceProviderInterface {
 	 *
 	 * @param AuthenticationServiceInterface $ao_service
 	 * @param ServerRequestInterface $ao_request
-	 *
 	 * @throws Exception
-	 *
 	 * @see AuthenticationServiceInterface::loadAuthenticator
 	 */
 	protected function loadAuthenticators(AuthenticationServiceInterface $ao_service, ServerRequestInterface $ao_request): void {
@@ -146,8 +142,8 @@ class Authentication implements AuthenticationServiceProviderInterface {
 	/**
 	 * Register the default authenticators for Session and Form
 	 *
-	 * @noinspection PhpUnusedParameterInspection
 	 * @throws Exception
+	 * @noinspection PhpUnusedParameterInspection
 	 */
 	protected function addDefaultAuthenticators(AuthenticationServiceInterface $ao_service, ServerRequestInterface $ao_request): void {
 		$this->addAuthenticator(SessionAuthenticator::class, [
@@ -167,12 +163,12 @@ class Authentication implements AuthenticationServiceProviderInterface {
 						}
 
 
-						return TRUE;
+						return true;
 					}
 				}
 
 
-				return FALSE;
+				return false;
 			},
 		], 10);
 
@@ -192,7 +188,6 @@ class Authentication implements AuthenticationServiceProviderInterface {
 	 *
 	 * @param AuthenticationServiceInterface $ao_service
 	 * @param ServerRequestInterface $ao_request
-	 *
 	 * @throws Exception
 	 */
 	protected function loadIdentifiers(AuthenticationServiceInterface $ao_service, ServerRequestInterface $ao_request): void {
@@ -240,7 +235,7 @@ class Authentication implements AuthenticationServiceProviderInterface {
 		$this->addIdentifier(PasswordIdentifier::class, [
 			'resolver' => [
 				'className' => OrmResolver::class,
-				'finder' => ['active' => ['authorize' => ['skip' => TRUE]]],
+				'finder' => ['active' => ['authorize' => ['skip' => true]]],
 			],
 		]);
 	}
@@ -250,10 +245,8 @@ class Authentication implements AuthenticationServiceProviderInterface {
 	 * Returns a backend-specific AuthenticationServiceInterface
 	 *
 	 * @param ServerRequestInterface $ao_request
-	 *
 	 * @return AuthenticationServiceInterface
 	 * @throws Exception
-	 *
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	protected function getBackendAuthenticationService(ServerRequestInterface $ao_request): AuthenticationServiceInterface {
@@ -267,10 +260,10 @@ class Authentication implements AuthenticationServiceProviderInterface {
 				'action' => 'login',
 				'controller' => 'Users',
 				'lang' => LocaleMiddleware::getLanguage()->shortcode,
-				'prefix' => FALSE,
-				'plugin' => NULL,
+				'prefix' => false,
+				'plugin' => null,
 			]),
-			'queryParam' => NULL,
+			'queryParam' => null,
 		]);
 
 		$this->loadAuthenticators($lo_service, $ao_request);
@@ -284,7 +277,7 @@ class Authentication implements AuthenticationServiceProviderInterface {
 	/**
 	 * Registers an Authenticators to the list of available Authenticators.
 	 *
-	 * @param string|callable $ax_authenticator
+	 * @param callable|string $ax_authenticator
 	 * @param array $aa_config
 	 * @param int $ai_priority
 	 */
@@ -311,7 +304,6 @@ class Authentication implements AuthenticationServiceProviderInterface {
 	 * Disable the default authenticators for Session and Form
 	 *
 	 * @param bool $ab_disableDefaultAuthenticators
-	 *
 	 * @noinspection PhpUnused
 	 */
 	public static function disableDefaultAuthenticators(bool $ab_disableDefaultAuthenticators): void {
@@ -322,7 +314,7 @@ class Authentication implements AuthenticationServiceProviderInterface {
 	/**
 	 * Registers an identifier
 	 *
-	 * @param string|callable $ax_identifier
+	 * @param callable|string $ax_identifier
 	 * @param array $aa_config
 	 * @param int $ai_priority
 	 */
@@ -349,7 +341,6 @@ class Authentication implements AuthenticationServiceProviderInterface {
 	 * Disable the default identifier (PasswordIdentifier)
 	 *
 	 * @param bool $ab_disableDefaultIdentifiers
-	 *
 	 * @noinspection PhpUnused
 	 */
 	public static function disableDefaultIdentifiers(bool $ab_disableDefaultIdentifiers): void {

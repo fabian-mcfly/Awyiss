@@ -4,10 +4,8 @@
 namespace Awyiss\Model\Table;
 
 
-use Awyiss\Model\Entity\UsergroupsUser;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
-use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Validation\Validator;
 
@@ -15,22 +13,21 @@ use Cake\Validation\Validator;
 /**
  * UsergroupsUsers Model
  *
- * @property UsergroupsTable&BelongsTo $Usergroups
- * @property UsersTable&BelongsTo $Users
- *
- * @method UsergroupsUser newDefaultEntity(array $aa_additionalData = [])
+ * @property UsergroupsTable&\Awyiss\ORM\Association\BelongsTo $Usergroups
+ * @property UsersTable&\Awyiss\ORM\Association\BelongsTo $Users
+ * @method \Awyiss\Model\Entity\UsergroupsUser newDefaultEntity(array $aa_additionalData = [])
  */
 class UsergroupsUsersTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public const ATTRIBUTABLE = FALSE;
+	public const ATTRIBUTABLE = false;
 	/**
 	 * @inheritDoc
 	 */
 	public const TABLE = 'usergroups_users';
 	/**
-	 * @var array|array[]
+	 * @var array|array<array>
 	 */
 	protected array $_defaultConfig = [
 		'authorize' => [
@@ -68,7 +65,6 @@ class UsergroupsUsersTable extends Table {
 	 *
 	 * @param Validator $ao_validator The validator that can be modified to
 	 * add some rules to it.
-	 *
 	 * @return Validator
 	 */
 	public function validationDefault(Validator $ao_validator): Validator {
@@ -101,9 +97,7 @@ class UsergroupsUsersTable extends Table {
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 *
 	 * @param RulesChecker|BaseRulesChecker $ao_rules The rules object to be modified.
-	 *
 	 * @return RulesChecker
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {

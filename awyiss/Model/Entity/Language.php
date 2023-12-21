@@ -6,7 +6,6 @@ namespace Awyiss\Model\Entity;
 
 use Awyiss\Awyiss;
 use Awyiss\Model\Entity;
-use Cake\I18n\FrozenTime;
 
 
 /**
@@ -21,12 +20,12 @@ use Cake\I18n\FrozenTime;
  * @property int $systemOrder
  * @property bool $active
  * @property bool $deleted
- * @property int|NULL $createdBy
- * @property FrozenTime|NULL $createdOn
- * @property int|NULL $changedBy
- * @property FrozenTime|NULL $changedOn
- * @property int|NULL $deletedBy
- * @property FrozenTime|NULL $deletedOn
+ * @property int|null $createdBy
+ * @property \Cake\I18n\DateTime|null $createdOn
+ * @property int|null $changedBy
+ * @property \Cake\I18n\DateTime|null $changedOn
+ * @property int|null $deletedBy
+ * @property \Cake\I18n\DateTime|null $deletedOn
  * @property Configuration[] $configuration
  */
 class Language extends Entity {
@@ -34,13 +33,13 @@ class Language extends Entity {
 	 * @inheritDoc
 	 */
 	protected array $_accessible = [
-		'shortcode' => TRUE,
-		'title' => TRUE,
-		'timezone' => TRUE,
-		'locale' => TRUE,
-		'realm' => TRUE,
-		'systemOrder' => TRUE,
-		'active' => TRUE,
+		'shortcode' => true,
+		'title' => true,
+		'timezone' => true,
+		'locale' => true,
+		'realm' => true,
+		'systemOrder' => true,
+		'active' => true,
 	];
 	/**
 	 * @inheritDoc

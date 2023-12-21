@@ -9,6 +9,7 @@ use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
 use Cake\Database\Schema\TableSchemaInterface;
 use Cake\Database\Type\EnumType;
+use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Validation\Validator;
 
 
@@ -19,7 +20,7 @@ class DatesTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public const ATTRIBUTABLE = FALSE;
+	public const ATTRIBUTABLE = false;
 	/**
 	 * @inheritDoc
 	 */
@@ -29,10 +30,10 @@ class DatesTable extends Table {
 	 */
 	protected array $_defaultConfig = [
 		'audit' => [
-			'enabled' => FALSE,
+			'enabled' => false,
 		],
 		'authorize' => [
-			'enabled' => FALSE,
+			'enabled' => false,
 		],
 	];
 
@@ -40,11 +41,8 @@ class DatesTable extends Table {
 	/**
 	 * Returns the default validator object.
 	 *
-	 * @param \Cake\Validation\Validator $ao_validator The validator that can be modified to
-	 * add some rules to it.
-	 *
+	 * @param \Cake\Validation\Validator $ao_validator The validator that can be modified to add some rules to it.
 	 * @return \Cake\Validation\Validator
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function validationDefault(Validator $ao_validator): Validator {
@@ -66,13 +64,11 @@ class DatesTable extends Table {
 	/**
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 *
-	 * @param \Cake\ORM\RulesChecker $ao_rules The rules object to be modified.
-	 *
-	 * @param \Awyiss\ORM\RulesChecker|\Cake\ORM\RulesChecker $ao_rules The rules object to be modified.
-	 *
+	 * @param BaseRulesChecker $ao_rules The rules object to be modified.
+	 * @param \Awyiss\ORM\RulesChecker|BaseRulesChecker $ao_rules The rules object to be modified.
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildRules(RulesChecker|\Cake\ORM\RulesChecker $ao_rules): RulesChecker {
+	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
 		$ao_rules->add($ao_rules->existsIn('parentId', 'ParentDates'), ['errorField' => 'parentId']);
 
 
@@ -80,6 +76,11 @@ class DatesTable extends Table {
 	}
 
 
+	/**
+	 * Mark column "type" as enum DateType
+	 *
+	 * @see DateType
+	 */
 	public function initializeSchema(TableSchemaInterface $ao_schema): void {
 		parent::initializeSchema($ao_schema);
 

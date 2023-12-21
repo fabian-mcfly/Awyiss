@@ -28,12 +28,10 @@ use InvalidArgumentException;
  *    'param2' => 'value2',
  * ]
  * ```
- *
  */
 class AwyissRoute extends DashedRoute {
 	/**
 	 * @inheritDoc
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function parse(string $as_url, string $as_method = ''): ?array {
@@ -50,13 +48,13 @@ class AwyissRoute extends DashedRoute {
 		[$ls_url, $ls_ext] = $this->_parseExtension($as_url);
 
 		if (!preg_match($ls_compiledRoute, urldecode($ls_url), $la_route)) {
-			return NULL;
+			return null;
 		}
-		if (isset($this->defaults['_method']) && !in_array($as_method, (array) $this->defaults['_method'], TRUE)) {
-			return NULL;
+		if (isset($this->defaults['_method']) && !in_array($as_method, (array)$this->defaults['_method'], true)) {
+			return null;
 		}
 
-		/*if (($this->defaults['prefix'] ?? NULL) != 'Backend') {
+		/*if (($this->defaults['prefix'] ?? null) != 'Backend') {
 			if ( ! in_array('slug', $this->keys)) {
 				$this->keys[] = 'slug';
 			}
@@ -66,7 +64,6 @@ class AwyissRoute extends DashedRoute {
 			}
 			//unset($this->defaults['action'], $this->defaults['controller']);
 		}*/
-
 		foreach ($la_route as $lx_key => $lx_value) {
 			if (is_numeric($lx_key)) {
 				unset($la_route[ $lx_key ]);
@@ -78,7 +75,6 @@ class AwyissRoute extends DashedRoute {
 
 		$la_route['pass'] = $la_route['parts'] = [];
 		$la_route['slug'] = $la_route['fullSlug'] = '';
-
 		// Assign defaults, set passed args to pass
 		foreach ($la_defaults as $lx_key => $lx_value) {
 			if (isset($la_route[ $lx_key ])) {
@@ -87,24 +83,16 @@ class AwyissRoute extends DashedRoute {
 			$la_route[ $lx_key ] = $lx_value;
 		}
 
-
 		if (!empty($ls_ext)) {
 			$la_route['_ext'] = $ls_ext;
 		}
 
-		$la_route = $this->setRouteArguments($la_route);
-
-		//for now, we disable passing url parameters to method calls
-		unset($la_route['pass']);
-
-
-		return $la_route;
+		return $this->setRouteArguments($la_route);
 	}
 
 
 	/**
 	 * @inheritDoc
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function match(array $aa_url, array $aa_context = []): ?string {
@@ -116,7 +104,7 @@ class AwyissRoute extends DashedRoute {
 		if (!$this->_inflectedDefaults) {
 			$this->_inflectedDefaults = $this->_dasherize($this->defaults);
 		}
-		$la_context = $aa_context + ['params' => [], '_port' => NULL, '_scheme' => NULL, '_host' => NULL];
+		$la_context = $aa_context + ['params' => [], '_port' => null, '_scheme' => null, '_host' => null];
 		if (!empty($this->options['persist']) && is_array($this->options['persist'])) {
 			$la_url = $this->_persistParams($la_url, $this->_dasherize($la_context['params']));
 		}
@@ -138,12 +126,12 @@ class AwyissRoute extends DashedRoute {
 	 */
 	protected function buildUrl(array $aa_params, array $aa_pass = [], array $aa_query = []): string {
 		$ls_pass = implode('/', array_map(function ($ax_value, $ax_key) {
-			if (is_numeric($ax_key) || $ax_value === FALSE) {
-				return NULL;
+			if (is_numeric($ax_key) || $ax_value === false) {
+				return null;
 			}
 
 
-			return rawurlencode(Inflector::dasherize((string) $ax_key)) . ':' . rawurlencode(Inflector::dasherize((string) $ax_value));
+			return rawurlencode(Inflector::dasherize((string)$ax_key)) . ':' . rawurlencode(Inflector::dasherize((string)$ax_value));
 		}, $aa_pass, array_keys($aa_pass)));
 		$ls_url = $this->template;
 
@@ -167,7 +155,7 @@ class AwyissRoute extends DashedRoute {
 		elseif (str_contains($this->template, '*')) {
 			$la_search[] = '*';
 			if (!empty($aa_params['slug'])) {
-				$la_replace[] = $aa_params['slug'] . (!empty($ls_pass) ? '/' . $ls_pass : NULL);
+				$la_replace[] = $aa_params['slug'] . (!empty($ls_pass) ? '/' . $ls_pass : null);
 			}
 			else {
 				$la_replace[] = $ls_pass;
@@ -183,19 +171,16 @@ class AwyissRoute extends DashedRoute {
 
 	/**
 	 * @param array $aa_route
-	 *
 	 * @return array
 	 */
 	protected function setRouteArguments(array $aa_route): array {
 		$la_route = $aa_route;
 
 		if (isset($la_route['_args_'])) {
-			/** @psalm-suppress PossiblyInvalidArgument */
-			$la_pass = [];
-			$lb_foundParams = FALSE;
+			$lb_foundParams = false;
 			foreach ($this->_parseArgs($la_route['_args_'], $la_route) as $ls_part) {
 				if (str_contains($ls_part, ':')) {
-					$lb_foundParams = TRUE;
+					$lb_foundParams = true;
 					[$ls_key, $ls_value] = explode(':', $ls_part);
 					$ls_value = Inflector::underscore($ls_value);
 
@@ -203,7 +188,6 @@ class AwyissRoute extends DashedRoute {
 
 					$la_route[ $ls_key ] = $ls_value;
 
-					$la_pass[ $ls_key ] = $ls_value;
 					$la_route['parts'][ $ls_key ] = $ls_value;
 				}
 				elseif (!$lb_foundParams) {
@@ -221,19 +205,26 @@ class AwyissRoute extends DashedRoute {
 
 				return $ax_key . ':' . $ax_value;
 			}, $la_route['parts'], array_keys($la_route['parts'])));
-
-			$la_route['pass'] = array_merge($la_route['pass'], $la_pass);
 			unset($la_route['_args_']);
 		}
+
+		$la_pass = [];
+		foreach ($this->options['pass'] ?? [] as $ls_key) {
+			$ls_value = null;
+			if (isset($la_route[ $ls_key ])) {
+				$ls_value = $la_route[ $ls_key ];
+				unset($la_route[ $ls_key ]);
+			}
+
+			$la_pass[ $ls_key ] = $ls_value;
+		}
+		$la_route['pass'] = $la_pass;
+		$la_route['parts'] = array_merge($la_pass, $la_route['parts']);
 
 		// pass the name if set
 		if (isset($this->options['_name'])) {
 			$la_route['_name'] = $this->options['_name'];
 		}
-
-		//TODO: restructure 'pass' key route params
-		/*if (isset($this->options['pass'])) {
-		}*/
 
 		$la_route['_route'] = $this;
 		$la_route['_matchedRoute'] = $this->template;
@@ -259,8 +250,7 @@ class AwyissRoute extends DashedRoute {
 	/**
 	 * @param array $aa_hostOptions
 	 * @param array $aa_context
-	 *
-	 * @return NULL|array
+	 * @return array|null
 	 */
 	protected function applyHostOptions(array $aa_hostOptions, array $aa_context): ?array {
 		$la_hostOptions = $aa_hostOptions;
@@ -275,8 +265,8 @@ class AwyissRoute extends DashedRoute {
 			}
 
 			// The host did not match the route preferences
-			if (!$this->hostMatches((string) $la_hostOptions['_host'])) {
-				return NULL;
+			if (!$this->hostMatches((string)$la_hostOptions['_host'])) {
+				return null;
 			}
 		}
 
@@ -304,10 +294,9 @@ class AwyissRoute extends DashedRoute {
 	 * @param string $as_url
 	 * @param array $aa_params
 	 * @param array $aa_query
-	 *
-	 * @return array|string|string[]
+	 * @return array|array<string>|string
 	 */
-	protected function completeUrlScheme(string $as_url, array $aa_params, array $aa_query): string | array {
+	protected function completeUrlScheme(string $as_url, array $aa_params, array $aa_query): string|array {
 		$ls_url = $as_url;
 
 		// add base url if applicable.
@@ -345,16 +334,14 @@ class AwyissRoute extends DashedRoute {
 	/**
 	 * If this route uses pass option, and the passed elements are not set, rekey elements.
 	 *
-	 * If not all named arguments are present in the url, return NULL so that match() can return NULL as well.
+	 * If not all named arguments are present in the url, return null so that match() can return null as well.
 	 *
 	 * @param array $aa_url
 	 * @param array $aa_keyNames
-	 *
-	 * @return null|array
+	 * @return array|null
 	 */
-	protected function rekeyParameters(array $aa_url, array &$aa_keyNames = []): ?array {
+	protected function rekeyParameters(array $aa_url, array $aa_keyNames = []): ?array {
 		$la_url = $aa_url;
-
 
 		if (isset($this->options['pass'])) {
 			foreach ($this->options['pass'] as $li_i => $ls_name) {
@@ -366,22 +353,8 @@ class AwyissRoute extends DashedRoute {
 		}
 
 		if (array_intersect_key($aa_keyNames, $la_url) !== $aa_keyNames) {
-			return NULL;
+			return null;
 		}
-
-
-		/*if (($this->defaults['prefix'] ?? NULL) != 'Backend') {
-			if ( ! in_array('slug', $this->keys)) {
-				$this->keys[] = 'slug';
-				$aa_keyNames['slug'] = 0;
-			}
-
-			if ( ! in_array('params', $this->keys)) {
-				$this->keys[] = 'params';
-				$aa_keyNames['params'] = 0;
-			}
-			//unset($this->defaults['controller'], $this->defaults['action']);
-		}*/
 
 
 		return $la_url;
@@ -391,7 +364,6 @@ class AwyissRoute extends DashedRoute {
 	/**
 	 * @param array $aa_url
 	 * @param array $aa_keyNames
-	 *
 	 * @return array
 	 */
 	protected function handlePassedParameters(array $aa_url, array $aa_keyNames): array {
@@ -431,18 +403,17 @@ class AwyissRoute extends DashedRoute {
 	 * @param array $aa_url
 	 * @param array $aa_hostOptions
 	 * @param array $aa_context
-	 *
-	 * @return null|string
+	 * @return string|null
 	 */
 	protected function _match(array $aa_url, array $aa_hostOptions, array $aa_context): ?string {
 		$la_url = $aa_url;
 
 		$la_hostOptions = $this->applyHostOptions($aa_hostOptions, $aa_context);
 		if (!$la_hostOptions) {
-			return NULL;
+			return null;
 		}
 
-		$ls_query = !empty($la_url['?']) ? (array) $la_url['?'] : [];
+		$ls_query = !empty($la_url['?']) ? (array)$la_url['?'] : [];
 
 		unset($la_url['_host'], $la_url['_scheme'], $la_url['_port'], $la_url['_base'], $la_url['?']);
 
@@ -454,18 +425,18 @@ class AwyissRoute extends DashedRoute {
 
 		// Check the method first as it is special.
 		if (!$this->_matchMethod($la_url)) {
-			return NULL;
+			return null;
 		}
 		unset($la_url['_method'], $la_url['[method]'], $this->defaults['_method']);
 
 		// Missing defaults is a fail.
 		if (array_diff_key($this->defaults, $la_url) !== []) {
-			return NULL;
+			return null;
 		}
 
 		/*// Defaults with different values are a fail.
 		if (array_intersect_key($url, $defaults) != $defaults) {
-			return NULL;
+			return null;
 		}*/
 
 		// check that all the key names are in the url
@@ -473,33 +444,33 @@ class AwyissRoute extends DashedRoute {
 		$la_url = $this->rekeyParameters($la_url, $la_keyNames);
 
 		if (!$la_url) {
-			return NULL;
+			return null;
 		}
 
 		[$la_url, $la_pass] = $this->handlePassedParameters($la_url, $la_keyNames);
 		// if not a greedy route, no extra params are allowed.
 		if (!$this->_greedy && !empty($la_pass)) {
-			return NULL;
+			return null;
 		}
 
 		// check patterns for routed params
 		if (!empty($this->options)) {
 			foreach ($this->options as $lx_key => $ls_pattern) {
-				if (isset($la_url[ $lx_key ]) && !preg_match('#^' . $ls_pattern . '$#u', (string) $la_url[ $lx_key ])) {
-					return NULL;
+				if (isset($la_url[ $lx_key ]) && !preg_match('#^' . $ls_pattern . '$#u', (string)$la_url[ $lx_key ])) {
+					return null;
 				}
 			}
 		}
 
 		$la_url += $la_hostOptions;
 
-		// Ensure controller/action keys are not NULL.
+		// Ensure controller/action keys are not null.
 		if (
 			(isset($la_keyNames['controller']) && !isset($la_url['controller'])) ||
 			(isset($la_keyNames['action']) && !isset($la_url['action'])) ||
 			(isset($la_keyNames['slug']) && !isset($la_url['slug']))
 		) {
-			return NULL;
+			return null;
 		}
 
 

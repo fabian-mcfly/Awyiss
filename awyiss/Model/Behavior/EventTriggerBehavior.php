@@ -24,7 +24,7 @@ class EventTriggerBehavior extends Behavior {
 	 * @var array
 	 */
 	protected array $_defaultConfig = [
-		'enabled' => TRUE,
+		'enabled' => true,
 		'events' => [
 			'beforeMarshal',
 			'afterMarshal',
@@ -83,13 +83,12 @@ class EventTriggerBehavior extends Behavior {
 	 *
 	 * @param string $as_name
 	 * @param array $aa_arguments
-	 *
 	 * @return void
 	 */
 	public function __call(string $as_name, array $aa_arguments): void {
 		if (!$this->getConfig('enabled') || !in_array($as_name, $this->getConfig('events'))) {
 			//Trigger the same error the call of undefined methods would normally trigger.
-			trigger_error(sprintf('Call to undefined method %s::%s()', __CLASS__, $as_name), E_USER_ERROR);
+			trigger_error(sprintf('Call to undefined method %s::%s()', static::class, $as_name), E_USER_ERROR);
 		}
 
 		//Saving an entitiy should create custom events
@@ -126,16 +125,15 @@ class EventTriggerBehavior extends Behavior {
 	 * @param string $as_name
 	 * @param Entity $ao_entity
 	 * @param array $aa_arguments
-	 *
 	 * @return bool
 	 */
 	protected function triggerCreateUpdateEvents(string $as_name, Entity $ao_entity, array $aa_arguments): bool {
 		//If the entity has a `deleted`-property, and it's trueish, don't send the custom events
 		if (property_exists($ao_entity, 'deleted') && $ao_entity->deleted) {
-			return TRUE;
+			return true;
 		}
 
-		$ls_name = match (TRUE) {
+		$ls_name = match (true) {
 			$as_name == 'beforeSave' && $ao_entity->isNew() => 'beforeCreate',
 			$as_name == 'beforeSave' && !$ao_entity->isNew() => 'beforeUpdate',
 			$as_name == 'afterSave' && $ao_entity->isNew() => 'afterCreate',
@@ -154,10 +152,10 @@ class EventTriggerBehavior extends Behavior {
 			$aa_arguments[0]->setResult($lo_event->getResult());
 
 
-			return FALSE;
+			return false;
 		}
 
 
-		return TRUE;
+		return true;
 	}
 }

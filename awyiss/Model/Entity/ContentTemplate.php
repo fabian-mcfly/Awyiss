@@ -5,7 +5,6 @@ namespace Awyiss\Model\Entity;
 
 
 use Awyiss\Model\Entity;
-use Cake\I18n\FrozenTime;
 use Cake\Utility\Text;
 
 
@@ -18,12 +17,12 @@ use Cake\Utility\Text;
  * @property int $systemOrder
  * @property bool $active
  * @property bool $deleted
- * @property int|NULL $createdBy
- * @property FrozenTime|NULL $createdOn
- * @property int|NULL $changedBy
- * @property FrozenTime|NULL $changedOn
- * @property int|NULL $deletedBy
- * @property FrozenTime|NULL $deletedOn
+ * @property int|null $createdBy
+ * @property \Cake\I18n\DateTime|null $createdOn
+ * @property int|null $changedBy
+ * @property \Cake\I18n\DateTime|null $changedOn
+ * @property int|null $deletedBy
+ * @property \Cake\I18n\DateTime|null $deletedOn
  * @property Content[] $contents
  * @property ContentTemplateElement[] $contentTemplateElements
  * @property ContentTemplateContentArea[] $contentTemplateContentAreas
@@ -33,12 +32,12 @@ class ContentTemplate extends Entity {
 	 * @inheritDoc
 	 */
 	protected array $_accessible = [
-		'title' => TRUE,
-		'filename' => TRUE,
-		'systemOrder' => TRUE,
-		'active' => TRUE,
-		'contentTemplateElements' => TRUE,
-		'contentTemplateContentAreas' => TRUE,
+		'title' => true,
+		'filename' => true,
+		'systemOrder' => true,
+		'active' => true,
+		'contentTemplateElements' => true,
+		'contentTemplateContentAreas' => true,
 	];
 	/**
 	 * @inheritDoc
@@ -60,6 +59,7 @@ class ContentTemplate extends Entity {
 	 * Make sure the filename is always lowercase, underscored and free of special characters
 	 *
 	 * @noinspection PhpUnused
+	 * @see \Awyiss\Model\Entity\ContentTemplate::$filename
 	 */
 	protected function _setFilename(string $as_filename): string {
 		$ls_filename = Text::slug($as_filename, ['replacement' => '_']);

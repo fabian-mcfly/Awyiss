@@ -5,7 +5,6 @@ namespace Awyiss\Authorization;
 
 
 use Authentication\AuthenticationServiceInterface;
-use Awyiss\Authorization\Policy\PolicyInterface;
 
 
 /**
@@ -25,7 +24,7 @@ interface AuthorizationServiceInterface {
 	/**
 	 * Return the AuthenticationServiceInterface
 	 *
-	 * @return null|AuthenticationServiceInterface
+	 * @return AuthenticationServiceInterface|null
 	 */
 	public function getAuthenticationService(): ?AuthenticationServiceInterface;
 
@@ -34,7 +33,6 @@ interface AuthorizationServiceInterface {
 	 * Set the AuthenticationServiceInterface
 	 *
 	 * @param AuthenticationServiceInterface $ao_authenticationService
-	 *
 	 * @return $this
 	 */
 	public function setAuthenticationService(AuthenticationServiceInterface $ao_authenticationService): static;
@@ -51,11 +49,10 @@ interface AuthorizationServiceInterface {
 	/**
 	 * Returns an array containing all Policies found for the given realm (sub-namespace)
 	 *
-	 * @param string|NULL $as_realm
-	 *
-	 * @return array<string, class-string<PolicyInterface>>
+	 * @param string|null $as_realm
+	 * @return array<string, class-string<\Awyiss\Authorization\Policy\PolicyInterface>>
 	 */
-	public function getPolicies(string $as_realm = NULL): array;
+	public function getPolicies(?string $as_realm = null): array;
 
 
 	/**
@@ -68,9 +65,8 @@ interface AuthorizationServiceInterface {
 	 * - \Awyiss\Authorization\Policy\\`$as_realm`\\`$as_scope`Policy
 	 *
 	 * @param string $as_scope
-	 * @param null|string $as_realm
-	 *
-	 * @return null|class-string<PolicyInterface>
+	 * @param string|null $as_realm
+	 * @return class-string<\Awyiss\Authorization\Policy\PolicyInterface>|null
 	 */
-	public function getPolicy(string $as_scope, ?string $as_realm = NULL): ?string;
+	public function getPolicy(string $as_scope, ?string $as_realm = null): ?string;
 }

@@ -22,11 +22,13 @@ class PageTemplateContentArea extends Entity {
 	 * @inheritDoc
 	 */
 	protected array $_accessible = [
-		'pageTemplateId' => TRUE,
-		'contentAreaId' => TRUE,
-		'systemOrder' => TRUE,
+		'pageTemplateId' => true,
+		'contentAreaId' => true,
+		'systemOrder' => true,
 	];
-	/** @var array|string[] */
+	/**
+	 * @var array|array<string>
+	 */
 	protected array $_virtual = [];
 	/**
 	 * @inheritDoc

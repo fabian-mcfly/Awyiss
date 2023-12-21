@@ -6,6 +6,7 @@ namespace Awyiss\Configuration;
 
 use Cake\Utility\Inflector;
 use JetBrains\PhpStorm\ArrayShape;
+use RuntimeException;
 
 
 /**
@@ -33,9 +34,9 @@ class ConfigOption {
 		'type' => 'string',
 	];
 	/**
-	 * @var null|mixed
+	 * @var mixed|null
 	 */
-	protected mixed $defaultValue = NULL;
+	protected mixed $defaultValue = null;
 	/**
 	 * @var string
 	 */
@@ -43,7 +44,7 @@ class ConfigOption {
 	/**
 	 * @var bool Can the config value be set independently per language
 	 */
-	protected bool $localizable = TRUE;
+	protected bool $localizable = true;
 	/**
 	 * @var string
 	 */
@@ -52,8 +53,8 @@ class ConfigOption {
 	 * @var array{global: bool, localized: bool} Can the config value be empty or is it required?
 	 */
 	protected array $nullable = [
-		'global' => TRUE,
-		'localized' => FALSE,
+		'global' => true,
+		'localized' => false,
 	];
 	/**
 	 * @var ConfigOptionType
@@ -81,13 +82,13 @@ class ConfigOption {
 			$this->setIdentifier($aa_settings['identifier']);
 		}
 		else {
-			throw new \RuntimeException(sprintf('Missing identifier in `%s`', static::class));
+			throw new RuntimeException(sprintf('Missing identifier in `%s`', static::class));
 		}
 
 		if (isset($aa_settings['nullable'])) {
 			if (is_bool($aa_settings['nullable'])) {
 				$this->setNullable($aa_settings['nullable']);
-				$this->setNullable($aa_settings['nullable'], TRUE);
+				$this->setNullable($aa_settings['nullable'], true);
 			}
 			elseif (is_array($aa_settings['nullable'])) {
 				if (isset($aa_settings['nullable']['global'])) {
@@ -95,7 +96,7 @@ class ConfigOption {
 				}
 
 				if (isset($aa_settings['nullable']['localized'])) {
-					$this->setNullable($aa_settings['nullable']['localized'], TRUE);
+					$this->setNullable($aa_settings['nullable']['localized'], true);
 				}
 			}
 		}
@@ -114,7 +115,6 @@ class ConfigOption {
 
 	/**
 	 * @param mixed $ax_defaultValue
-	 *
 	 * @return self
 	 */
 	public function setDefaultValue(mixed $ax_defaultValue): static {
@@ -135,7 +135,6 @@ class ConfigOption {
 
 	/**
 	 * @param string $as_description
-	 *
 	 * @return ConfigOption
 	 */
 	public function setDescription(string $as_description): static {
@@ -156,7 +155,6 @@ class ConfigOption {
 
 	/**
 	 * @param string $as_identifier
-	 *
 	 * @return self
 	 */
 	public function setIdentifier(string $as_identifier): static {
@@ -177,7 +175,6 @@ class ConfigOption {
 
 	/**
 	 * @param ConfigOptionType $ae_type
-	 *
 	 * @return self
 	 */
 	public function setType(ConfigOptionType $ae_type): static {
@@ -206,10 +203,9 @@ class ConfigOption {
 
 	/**
 	 * @param bool $ab_localized
-	 *
 	 * @return bool
 	 */
-	public function isNullable(bool $ab_localized = FALSE): bool {
+	public function isNullable(bool $ab_localized = false): bool {
 		return $this->nullable[ $ab_localized ? 'localized' : 'global' ];
 	}
 
@@ -218,7 +214,7 @@ class ConfigOption {
 	 * @param bool $ab_nullable
 	 * @param bool $ab_localized
 	 */
-	public function setNullable(bool $ab_nullable, bool $ab_localized = FALSE): void {
+	public function setNullable(bool $ab_nullable, bool $ab_localized = false): void {
 		$this->nullable[ $ab_localized ? 'localized' : 'global' ] = $ab_nullable;
 	}
 
@@ -227,31 +223,30 @@ class ConfigOption {
 	 * Validates the provided `$ax_value` to match the type stored in `self::$type`.
 	 *
 	 * Returns
-	 * - TRUE for a valid value or
-	 * - FALSE for invalid ones or
+	 * - true for a valid value or
+	 * - false for invalid ones or
 	 * - an error message string if a value is not localizable or empty but not nullable
 	 *
 	 * @param mixed $ax_value
-	 * @param null|string $as_languageShortcode
-	 *
-	 * @return bool|string
+	 * @param string|null $as_languageShortcode
+	 * @return string|bool
 	 */
-	public function validateConfigValue(mixed $ax_value, ?string $as_languageShortcode = NULL): bool|string {
-		if ($as_languageShortcode !== NULL && !$this->isLocalizable()) {
+	public function validateConfigValue(mixed $ax_value, ?string $as_languageShortcode = null): bool|string {
+		if ($as_languageShortcode !== null && !$this->isLocalizable()) {
 			return __d('configuration', 'error_option_not_localizable');
 		}
 
-		if ($ax_value === NULL) {
-			if (!$this->isNullable($as_languageShortcode !== NULL)) {
+		if ($ax_value === null) {
+			if (!$this->isNullable($as_languageShortcode !== null)) {
 				return __d('configuration', 'error_option_not_nullable');
 			}
 
 
-			return TRUE;
+			return true;
 		}
 
 
-		return $this->getType()->validateType($ax_value, $this->isNullable($as_languageShortcode !== NULL));
+		return $this->getType()->validateType($ax_value, $this->isNullable($as_languageShortcode !== null));
 	}
 
 
@@ -259,7 +254,6 @@ class ConfigOption {
 	 * Casts the provided `$ax_value` to a type, specified in `self::$type`
 	 *
 	 * @param mixed $ax_value
-	 *
 	 * @return mixed
 	 */
 	public function typecastConfigValue(mixed $ax_value): mixed {

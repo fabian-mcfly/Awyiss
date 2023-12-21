@@ -4,7 +4,6 @@
 namespace Awyiss\Model\Table;
 
 
-use Awyiss\Model\Entity\UsersExternal;
 use Awyiss\Model\Table;
 use Cake\Validation\Validator;
 
@@ -12,9 +11,12 @@ use Cake\Validation\Validator;
 /**
  * UsersExternal Model
  *
- * @method UsersExternal newDefaultEntity(array $aa_additionalData = [])
+ * @method \Awyiss\Model\Entity\UsersExternal newDefaultEntity(array $aa_additionalData = [])
  */
 class UsersExternalTable extends Table {
+	/**
+	 * @inheritDoc
+	 */
 	public const TABLE = 'users_external';
 	/*
 	 * @inheritDoc
@@ -33,7 +35,6 @@ class UsersExternalTable extends Table {
 	 *
 	 * @param Validator $ao_validator The validator that can be modified to
 	 * add some rules to it.
-	 *
 	 * @return Validator
 	 */
 	public function validationDefault(Validator $ao_validator): Validator {
@@ -45,7 +46,7 @@ class UsersExternalTable extends Table {
 			'maxLength' => ['rule' => ['maxLength', 11]],
 		]);
 
-		//$ao_validator->integer('id')->allowEmptyString('id', NULL, 'create');
+		//$ao_validator->integer('id')->allowEmptyString('id', null, 'create');
 		$ao_validator->scalar('provider')->maxLength('provider', 50)->requirePresence('provider', 'create')->notEmptyString('provider');
 		$ao_validator->scalar('username')->maxLength('username', 50)->requirePresence('username', 'create')->notEmptyString('username');
 		$ao_validator->dateTime('lastLogin')->notEmptyDateTime('lastLogin');

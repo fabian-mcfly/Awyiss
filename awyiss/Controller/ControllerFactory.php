@@ -6,11 +6,10 @@ namespace Awyiss\Controller;
 
 use Awyiss\Core\App;
 use Cake\Controller\Controller;
-use Cake\Http\ControllerFactoryInterface;
+use Cake\Controller\ControllerFactory as BaseControllerFactory;
 use Cake\Http\ServerRequest;
 use Cake\Utility\Inflector;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\NotFoundExceptionInterface;
+use GenericPagesBase;
 use Psr\Http\Message\ServerRequestInterface;
 use ReflectionClass;
 
@@ -18,20 +17,17 @@ use ReflectionClass;
 /**
  * Factory method for building controllers for request.
  *
- * @implements ControllerFactoryInterface<Controller>
+ * @implements \Cake\Http\ControllerFactoryInterface<Controller>
  */
-class ControllerFactory extends \Cake\Controller\ControllerFactory {
+class ControllerFactory extends BaseControllerFactory {
 	/**
 	 * Create a controller for a given request.
 	 *
 	 * @param ServerRequestInterface $ao_request The request to build a controller for.
-	 *
 	 * @return Controller
-	 *
-	 * @throws ContainerExceptionInterface
-	 * @throws NotFoundExceptionInterface
+	 * @throws \Psr\Container\ContainerExceptionInterface
+	 * @throws \Psr\Container\NotFoundExceptionInterface
 	 * @throws \ReflectionException
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 * @noinspection PhpParamsInspection //somehow PhpStorm does not realize that ServerRequest extends ServerRequestInterface
 	 */
@@ -39,14 +35,15 @@ class ControllerFactory extends \Cake\Controller\ControllerFactory {
 		$ls_className = $this->getControllerClass($ao_request);
 
 		//No className means no class exists for the current request
-		if ($ls_className === NULL) {
+		if ($ls_className === null) {
 			//Try to get a controller based on \Awyiss\Controller\Backend\PagesController::class
-			if ($lo_controller = $this->tryGenericPagesController($ao_request)) {
+			$lo_controller = $this->tryGenericPagesController($ao_request);
+			if ($lo_controller) {
 				return $lo_controller;
 			}
 		}
 
-		if ($ls_className === NULL) {
+		if ($ls_className === null) {
 			throw $this->missingController($ao_request);
 		}
 
@@ -97,7 +94,7 @@ class ControllerFactory extends \Cake\Controller\ControllerFactory {
 		}
 
 
-		/** @var class-string<Controller>|NULL */
+		/** @var class-string<Controller>|null */
 		return App::className($ls_pluginPath . $ls_controller, $ls_namespace, 'Controller');
 	}
 
@@ -105,16 +102,12 @@ class ControllerFactory extends \Cake\Controller\ControllerFactory {
 	/**
 	 * Tries to create an instance of a controller based on either a class named "GenericPagesBase" or "Pages"
 	 * in the given namespace, e.g. "Backend".
-	 *
 	 * This allows page roles to have their own routes without the need to create a controller
 	 *
 	 * @throws \ReflectionException
-	 *
-	 * @see          \Awyiss\Controller\Backend\PagesController::asPageRole()
-	 *
-	 * @noinspection PhpMethodParametersCountMismatchInspection
+	 * @see \Awyiss\Controller\Backend\PagesController::asPageRole()
 	 * @noinspection PhpUndefinedClassInspection
-	 * @noinspection PhpFullyQualifiedNameUsageInspection
+	 * @noinspection PhpMethodParametersCountMismatchInspection
 	 */
 	public function tryGenericPagesController(ServerRequest $ao_request): ?Controller {
 		$ls_namespace = 'Controller';
@@ -128,17 +121,19 @@ class ControllerFactory extends \Cake\Controller\ControllerFactory {
 		$ls_singular = Inflector::singularize(Inflector::underscore($ls_controller));
 		//Disallow calling the singular form of the controller, e.g. /backend/de/page instead of /backend/de/pages
 		if ($ls_singular == Inflector::underscore($ls_controller) && $ls_singular != Inflector::pluralize(Inflector::underscore($ls_controller))) {
-			return NULL;
+			return null;
 		}
 
 		//When there's no matching page role constant, we don't allow creating a controller
 		$ls_constantIdentifier = 'PAGEROLE_' . strtoupper($ls_singular);
 		if (!defined($ls_constantIdentifier)) {
-			return NULL;
+			return null;
 		}
 
+		/** @var \Cake\Controller\Controller::class $ls_baseController */
 		$ls_baseController = App::className('GenericPagesBase', $ls_namespace, 'Controller');
 		if (!$ls_baseController) {
+			/** @var \Awyiss\Controller\Backend\PagesController::class $ls_baseController */
 			$ls_baseController = App::className('Pages', $ls_namespace, 'Controller');
 		}
 
@@ -152,8 +147,10 @@ class ControllerFactory extends \Cake\Controller\ControllerFactory {
 		 *
 		 * @var \Awyiss\Controller\Backend\PagesController $lo_controller
 		 */
-		$lo_controller = new class ($ao_request) extends \GenericPagesBase {};
+		//phpcs:disable SlevomatCodingStandard.Classes.EmptyLinesAroundClassBraces, Squiz.WhiteSpace.ScopeClosingBrace
+		$lo_controller = new class ($ao_request) extends GenericPagesBase {};
 		$lo_controller->asPageRole(constant($ls_constantIdentifier), $ls_controller);
+		//phpcs:enable
 
 
 		return $lo_controller;

@@ -4,12 +4,15 @@
 namespace Awyiss\ORM\Association;
 
 
+use Cake\ORM\Association\BelongsToMany as BaseBelongsToMany;
+
+
 /**
  * {@inheritDoc}
  *
  * Re-implemented 1:1 so it'll use ExistsTrait
  */
-class BelongsToMany extends \Cake\ORM\Association\BelongsToMany {
+class BelongsToMany extends BaseBelongsToMany {
 	use ExistsTrait;
 
 

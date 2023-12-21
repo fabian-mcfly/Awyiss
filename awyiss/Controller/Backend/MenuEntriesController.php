@@ -8,7 +8,6 @@ use Awyiss\Awyiss;
 use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity\MenuEntry;
-use Awyiss\Model\Table\MenuEntriesTable;
 use Awyiss\Routing\Router;
 use Cake\Collection\Collection;
 use Cake\Collection\CollectionInterface;
@@ -19,16 +18,16 @@ use Cake\Http\Response;
 /**
  * MenuEntries Controller
  *
- * @property MenuEntriesTable $MenuEntries
+ * @property \Awyiss\Model\Table\MenuEntriesTable $MenuEntries
  */
 class MenuEntriesController extends Controller {
 	/**
 	 * @inheritDoc
 	 */
 	protected array $categorize = [
-		'allowAggregation' => FALSE,
+		'allowAggregation' => false,
 		'associationName' => 'Menus',
-		'enabled' => TRUE,
+		'enabled' => true,
 		'identifier' => 'menuId',
 	];
 	/**
@@ -58,7 +57,6 @@ class MenuEntriesController extends Controller {
 	 * Add method
 	 *
 	 * @return void
-	 *
 	 * @throws \Exception
 	 */
 	public function add(): void {
@@ -74,11 +72,11 @@ class MenuEntriesController extends Controller {
 		}
 
 		$lo_threadedMenuEntries = $this->getThreadedMenuEntries($lo_menuEntry);
-		$la_possibleParentIds = $lo_threadedMenuEntries->extract('id')->toArray(FALSE);
+		$la_possibleParentIds = $lo_threadedMenuEntries->extract('id')->toArray(false);
 		if (!empty($lo_menuEntry->parentId) && !in_array($lo_menuEntry->parentId, $la_possibleParentIds)) {
 			$la_errors = $lo_menuEntry->getError('parentId');
-			$lo_menuEntry->set('parentId', NULL, ['setter' => FALSE]);
-			$lo_menuEntry->setError('parentId', $la_errors, TRUE);
+			$lo_menuEntry->set('parentId', null, ['setter' => false]);
+			$lo_menuEntry->setError('parentId', $la_errors, true);
 		}
 
 		$this->set([
@@ -92,15 +90,14 @@ class MenuEntriesController extends Controller {
 	/**
 	 * Edit method
 	 *
-	 * @return void|?Response
-	 *
+	 * @return \Cake\Http\Response|void
 	 * @throws \Exception
 	 */
-	public function edit() {
+	public function edit(int $ai_id) {
 		$this->Authorization->ensure('update');
 
 		/** @var MenuEntry $lo_menuEntry */
-		$lo_menuEntry = $this->MenuEntries->findById((int) $this->request->getParam('id'))->find('translations')->first();
+		$lo_menuEntry = $this->MenuEntries->findById($ai_id)->find('translations')->first();
 		if (!$lo_menuEntry) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -113,11 +110,11 @@ class MenuEntriesController extends Controller {
 		}
 
 		$lo_threadedMenuEntries = $this->getThreadedMenuEntries($lo_menuEntry);
-		$la_possibleParentIds = $lo_threadedMenuEntries->extract('id')->toArray(FALSE);
+		$la_possibleParentIds = $lo_threadedMenuEntries->extract('id')->toArray(false);
 		if (!empty($lo_menuEntry->parentId) && !in_array($lo_menuEntry->parentId, $la_possibleParentIds)) {
 			$la_errors = $lo_menuEntry->getError('parentId');
-			$lo_menuEntry->set('parentId', NULL, ['setter' => FALSE]);
-			$lo_menuEntry->setError('parentId', $la_errors, TRUE);
+			$lo_menuEntry->set('parentId', null, ['setter' => false]);
+			$lo_menuEntry->setError('parentId', $la_errors, true);
 		}
 
 		$this->set([
@@ -131,17 +128,17 @@ class MenuEntriesController extends Controller {
 	/**
 	 * Delete method
 	 *
+	 * @param int $ai_id
 	 * @return Response
-	 *
 	 * @throws \Exception
 	 */
-	public function delete(): Response {
+	public function delete(int $ai_id): Response {
 		$this->Authorization->ensure('delete');
 
 		$this->request->allowMethod(['get', 'delete']);
 
 		/** @var MenuEntry $lo_menuEntry */
-		$lo_menuEntry = $this->MenuEntries->findById((int) $this->request->getParam('id'))->find('translations')->first();
+		$lo_menuEntry = $this->MenuEntries->findById($ai_id)->find('translations')->first();
 		if (!$lo_menuEntry) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -166,7 +163,6 @@ class MenuEntriesController extends Controller {
 	 * as the entity, provided via `$ao_menuEntry`
 	 *
 	 * @param MenuEntry $ao_menuEntry
-	 *
 	 * @return CollectionInterface
 	 */
 	public function getThreadedMenuEntries(MenuEntry $ao_menuEntry): CollectionInterface {
@@ -179,50 +175,48 @@ class MenuEntriesController extends Controller {
 			$this->threadedMenuEntries = $this->MenuEntries->listNested($lo_query);
 		}
 
-		//Single "=". We only want to find threaded menu entries at the same level for an existing entity (id equals not NULL)
-		if ($li_originalId = $ao_menuEntry->get('id')) {
-			$li_foundAtLevel = NULL;
-			$lo_threadedMenuEntries = new Collection($this->threadedMenuEntries->toList());
-
-			$lo_threadedMenuEntries = $lo_threadedMenuEntries->filter(function ($ao_menuEntry) use ($li_originalId, &$li_foundAtLevel) {
-				if ($ao_menuEntry->get('id') === $li_originalId) {
-					$li_foundAtLevel = $ao_menuEntry->level;
-				}
-				elseif (is_null($li_foundAtLevel) || $ao_menuEntry->level <= $li_foundAtLevel) {
-					$li_foundAtLevel = NULL;
-
-
-					return TRUE;
-				}
-
-
-				return FALSE;
-			});
-
-			$lo_threadedMenuEntries = $lo_threadedMenuEntries->nest('id', 'parent_id');
-
-
-			return $lo_threadedMenuEntries->listNested();
+		//We only want to find threaded menu entries at the same level for an existing entity (id equals not null)
+		$li_originalId = $ao_menuEntry->get('id');
+		if (!$li_originalId) {
+			return $this->threadedMenuEntries;
 		}
 
+		$li_foundAtLevel = null;
+		$lo_threadedMenuEntries = new Collection($this->threadedMenuEntries->toList());
 
-		return $this->threadedMenuEntries;
+		$lo_threadedMenuEntries = $lo_threadedMenuEntries->filter(function ($ao_menuEntry) use ($li_originalId, &$li_foundAtLevel) {
+			if ($ao_menuEntry->get('id') === $li_originalId) {
+				$li_foundAtLevel = $ao_menuEntry->level;
+			}
+			elseif (is_null($li_foundAtLevel) || $ao_menuEntry->level <= $li_foundAtLevel) {
+				$li_foundAtLevel = null;
+
+
+				return true;
+			}
+
+
+			return false;
+		});
+
+		$lo_threadedMenuEntries = $lo_threadedMenuEntries->nest('id', 'parent_id');
+
+
+		return $lo_threadedMenuEntries->listNested();
 	}
 
 
 	/**
 	 * @param MenuEntry $ao_menuEntry
 	 * @param string $as_method
-	 *
 	 * @return void
-	 *
 	 * @throws RedirectException
 	 */
 	protected function save(MenuEntry $ao_menuEntry, string $as_method = 'add'): void {
 		$la_associated = [];
 		if ($this->MenuEntries->hasAttributes()) {
-			$la_associated[] = $this->MenuEntries->getAttributesTable(TRUE);
-			$ao_menuEntry->setAccess('attributes', TRUE);
+			$la_associated[] = $this->MenuEntries->getAttributesTable(true);
+			$ao_menuEntry->setAccess('attributes', true);
 		}
 
 		$this->MenuEntries->patchEntity($ao_menuEntry, $this->request->getData(), ['associated' => $la_associated]);
@@ -232,10 +226,10 @@ class MenuEntriesController extends Controller {
 				$this->Flash->success(__($as_method . '_succeeded'));
 
 				if ($this->request->getData('submit') == 'submit_close') {
-					throw new RedirectException(Router::url(['action' => 'overview', 'lang' => $ao_menuEntry->languageShortcode, 'menuId' => $ao_menuEntry->menuId], TRUE), 302);
+					throw new RedirectException(Router::url(['action' => 'overview', 'lang' => $ao_menuEntry->languageShortcode, 'menuId' => $ao_menuEntry->menuId], true), 302);
 				}
 
-				throw new RedirectException(Router::url(['action' => 'edit', 'lang' => $ao_menuEntry->languageShortcode, 'id' => $ao_menuEntry->id], TRUE), 302);
+				throw new RedirectException(Router::url(['action' => 'edit', 'lang' => $ao_menuEntry->languageShortcode, 'id' => $ao_menuEntry->id], true), 302);
 			}
 
 			$this->Flash->error(__($as_method . '_failed'));
@@ -245,7 +239,7 @@ class MenuEntriesController extends Controller {
 		}
 		else {
 			if ($this->MenuEntries->getSystemOrderRelatedColumns($ao_menuEntry)) {
-				$ao_menuEntry->systemOrder = NULL;
+				$ao_menuEntry->systemOrder = null;
 			}
 			else {
 				$ao_menuEntry->systemOrder = $ao_menuEntry->hasOriginal('systemOrder') ? $ao_menuEntry->getOriginal('systemOrder') : $ao_menuEntry->get('systemOrder');
@@ -256,7 +250,6 @@ class MenuEntriesController extends Controller {
 
 	/**
 	 * @inheritDoc
-	 *
 	 * @throws \Exception
 	 */
 	protected function initializeOverviewWhere(): void {

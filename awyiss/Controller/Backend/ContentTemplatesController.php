@@ -7,7 +7,6 @@ namespace Awyiss\Controller\Backend;
 use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Model\Entity\ContentTemplate;
 use Awyiss\Model\Entity\PageTemplate;
-use Awyiss\Model\Table\ContentTemplatesTable;
 use Awyiss\Routing\Router;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
@@ -16,7 +15,7 @@ use Cake\Http\Response;
 /**
  * ContentTemplates Controller
  *
- * @property ContentTemplatesTable $ContentTemplates
+ * @property \Awyiss\Model\Table\ContentTemplatesTable $ContentTemplates
  */
 class ContentTemplatesController extends Controller {
 	/**
@@ -39,7 +38,6 @@ class ContentTemplatesController extends Controller {
 	 * Add method
 	 *
 	 * @return void
-	 *
 	 * @throws \Exception
 	 */
 	public function add(): void {
@@ -77,15 +75,14 @@ class ContentTemplatesController extends Controller {
 	/**
 	 * Edit method
 	 *
-	 * @return void|?Response
-	 *
+	 * @return \Cake\Http\Response|void
 	 * @throws \Exception
 	 */
-	public function edit() {
+	public function edit(int $ai_id) {
 		$this->Authorization->ensure('update');
 
 		/** @var ContentTemplate $lo_contentTemplate */
-		$lo_contentTemplate = $this->ContentTemplates->findById((int) $this->request->getParam('id'))->find('translations')->contain([
+		$lo_contentTemplate = $this->ContentTemplates->findById($ai_id)->find('translations')->contain([
 			'ContentTemplateContentAreas',
 			'ContentTemplateElements',
 		])->first();
@@ -126,17 +123,17 @@ class ContentTemplatesController extends Controller {
 	/**
 	 * Delete method
 	 *
+	 * @param int $ai_id
 	 * @return Response
-	 *
 	 * @throws \Exception
 	 */
-	public function delete(): Response {
+	public function delete(int $ai_id): Response {
 		$this->Authorization->ensure('delete');
 
 		$this->request->allowMethod(['get', 'delete']);
 
 		/** @var ContentTemplate $lo_contentTemplate */
-		$lo_contentTemplate = $this->ContentTemplates->findById((int) $this->request->getParam('id'))->find('translations')->first();
+		$lo_contentTemplate = $this->ContentTemplates->findById($ai_id)->find('translations')->first();
 		if (!$lo_contentTemplate) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -159,14 +156,13 @@ class ContentTemplatesController extends Controller {
 	/**
 	 * @param ContentTemplate $ao_contentTemplate
 	 * @param string $as_method
-	 *
 	 * @return void
 	 */
 	protected function save(ContentTemplate $ao_contentTemplate, string $as_method = 'add'): void {
 		$la_associated = [];
 		if ($this->ContentTemplates->hasAttributes()) {
-			$la_associated[] = $this->ContentTemplates->getAttributesTable(TRUE);
-			$ao_contentTemplate->setAccess('attributes', TRUE);
+			$la_associated[] = $this->ContentTemplates->getAttributesTable(true);
+			$ao_contentTemplate->setAccess('attributes', true);
 		}
 
 		$la_requestData = $this->request->getData() + ['content_template_elements' => []];
@@ -194,10 +190,10 @@ class ContentTemplatesController extends Controller {
 				$this->Flash->success(__($as_method . '_succeeded'));
 
 				if ($this->request->getData('submit') == 'submit_close') {
-					throw new RedirectException(Router::url(['action' => 'overview'], TRUE), 302);
+					throw new RedirectException(Router::url(['action' => 'overview'], true), 302);
 				}
 
-				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $ao_contentTemplate->id], TRUE), 302);
+				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $ao_contentTemplate->id], true), 302);
 			}
 
 			$this->Flash->error(__($as_method . '_failed'));

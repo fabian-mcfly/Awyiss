@@ -1,12 +1,4 @@
-<?php
-
-/**
- * @noinspection PhpInternalEntityUsedInspection
- * @noinspection PhpParameterNameChangedDuringInheritanceInspection
- */
-
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 
 namespace Awyiss\ORM;
@@ -17,8 +9,9 @@ use Awyiss\ORM\Rule\ExistsIn;
 use Cake\Datasource\RuleInvoker;
 use Cake\ORM\Association;
 use Cake\ORM\Rule\LinkConstraint;
+use Cake\ORM\RulesChecker as BaseRulesChecker;
+use Cake\ORM\Table as BaseTable;
 use Cake\Utility\Inflector;
-use InvalidArgumentException;
 
 
 /**
@@ -31,16 +24,15 @@ use InvalidArgumentException;
  * @see \Cake\ORM\RulesChecker
  * @see \Cake\Datasource\RulesChecker
  */
-class RulesChecker extends \Cake\ORM\RulesChecker {
+class RulesChecker extends BaseRulesChecker {
 	/**
 	 * @inheritDoc
-	 *
 	 * @param array $aa_fields
-	 * @param $ax_options
-	 *
+	 * @param array|string|null $ax_options
 	 * @return RuleInvoker
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function isUnique(array $aa_fields, $ax_options = NULL): RuleInvoker {
+	public function isUnique(array $aa_fields, array|string|null $ax_options = null): RuleInvoker {
 		$la_options = is_array($ax_options) ? $ax_options : ['message' => $ax_options];
 
 		if (empty($la_options['message'])) {
@@ -48,8 +40,11 @@ class RulesChecker extends \Cake\ORM\RulesChecker {
 		}
 
 		$la_fields = $aa_fields;
-		if (($this->_options['repository'] ?? NULL) && $ls_entityClass = ($this->_options['repository']->getEntityClass() ?? NULL)) {
-			$la_fields = $ls_entityClass::unmapFields($la_fields);
+		if (($this->_options['repository'] ?? null)) {
+			$ls_entityClass = $this->_options['repository']->getEntityClass() ?? null;
+			if ($ls_entityClass) {
+				$la_fields = $ls_entityClass::unmapFields($la_fields);
+			}
 		}
 
 
@@ -59,16 +54,15 @@ class RulesChecker extends \Cake\ORM\RulesChecker {
 
 	/**
 	 * @inheritDoc
-	 *
-	 * @param $ax_fields
-	 * @param $ax_table
-	 * @param $ax_options
-	 *
+	 * @param array|string $ax_fields
+	 * @param BaseTable|Association|string $ax_table
+	 * @param array|string|null $ax_options
 	 * @return RuleInvoker
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function existsIn($ax_fields, $ax_table, $ax_options = NULL): RuleInvoker {
+	public function existsIn(array|string $ax_fields, BaseTable|Association|string $ax_table, array|string|null $ax_options = null): RuleInvoker {
 		$la_options = is_array($ax_options) ? $ax_options : ['message' => $ax_options];
-		$ls_message = ($la_options['message'] ?? NULL) ?: __d('validation', 'error_exists_in');
+		$ls_message = $la_options['message'] ?? null ?: __d('validation', 'error_exists_in');
 		unset($la_options['message']);
 
 		if (!empty($ax_options['errorField'])) {
@@ -86,15 +80,14 @@ class RulesChecker extends \Cake\ORM\RulesChecker {
 
 	/**
 	 * @inheritDoc
-	 *
 	 * @param string $as_field
 	 * @param int $ai_count
 	 * @param string $as_operator
-	 * @param null|string $as_message
-	 *
+	 * @param string|null $as_message
 	 * @return RuleInvoker
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function validCount(string $as_field, int $ai_count = 0, string $as_operator = '>', ?string $as_message = NULL): RuleInvoker {
+	public function validCount(string $as_field, int $ai_count = 0, string $as_operator = '>', ?string $as_message = null): RuleInvoker {
 		$ls_message = $as_message;
 		if (!$ls_message) {
 			$ls_message = __d('validation', 'error_valid_count', [$as_operator, $ai_count]);
@@ -107,18 +100,22 @@ class RulesChecker extends \Cake\ORM\RulesChecker {
 
 	/**
 	 * @inheritDoc
-	 *
 	 * Re-implemented 1:1 to use a proper fallback error message
-	 *
-	 * @param $ax_association
-	 * @param null|string $as_errorField
-	 * @param null|string $as_message
+	 * @param Association|string $ax_association
+	 * @param string|null $as_errorField
+	 * @param string|null $as_message
 	 * @param string $as_linkStatus
 	 * @param string $as_ruleName
-	 *
 	 * @return RuleInvoker
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	protected function _addLinkConstraintRule(Association|string $ax_association, ?string $as_errorField, ?string $as_message, string $as_linkStatus, string $as_ruleName): RuleInvoker {
+	protected function _addLinkConstraintRule(
+		Association|string $ax_association,
+		?string $as_errorField,
+		?string $as_message,
+		string $as_linkStatus,
+		string $as_ruleName
+	): RuleInvoker {
 		$ls_errorField = $as_errorField;
 		if ($ax_association instanceof Association) {
 			$ls_associationAlias = $ax_association->getName();
@@ -127,10 +124,10 @@ class RulesChecker extends \Cake\ORM\RulesChecker {
 		else {
 			$ls_associationAlias = $ax_association;
 
-			if ($ls_errorField === NULL) {
-				$repository = $this->_options['repository'] ?? NULL;
-				if ($repository instanceof Table) {
-					$ax_association = $repository->getAssociation($ax_association);
+			if ($ls_errorField === null) {
+				$lo_repository = $this->_options['repository'] ?? null;
+				if ($lo_repository instanceof Table) {
+					$ax_association = $lo_repository->getAssociation($ax_association);
 					$ls_errorField = $ax_association->getProperty();
 				}
 				else {

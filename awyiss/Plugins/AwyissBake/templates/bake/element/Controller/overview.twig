@@ -3,10 +3,9 @@
 	 * Overview method
 	 *
 	 * @throws \Exception
-	 *
 	 * @noinspection PhpReturnDocTypeMismatchInspection
 	 */
-	public function overview (): void {
+	public function overview(): void {
 		$this->Authorization->ensure('read');
 
 {% set belongsTo = Bake.aliasExtractor(modelObj, 'BelongsTo') %}

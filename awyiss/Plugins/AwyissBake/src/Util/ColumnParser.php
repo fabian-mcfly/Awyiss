@@ -5,6 +5,7 @@ namespace AwyissBake\Util;
 
 
 use Cake\Utility\Hash;
+use Migrations\Util\ColumnParser as BaseColumnParser;
 
 
 /**
@@ -12,13 +13,12 @@ use Cake\Utility\Hash;
  *
  * Currently unused.
  */
-class ColumnParser extends \Migrations\Util\ColumnParser {
+class ColumnParser extends BaseColumnParser {
 	/**
 	 * Regex used to parse the column definition passed through the shell
 	 *
 	 * @link https://regex101.com/r/aIrJ5T/1
 	 * @var string
-	 *
 	 * @noinspection RegExpRedundantEscape
 	 */
 	protected string $regexpParseColumn = '/
@@ -39,7 +39,6 @@ class ColumnParser extends \Migrations\Util\ColumnParser {
 	 *
 	 * @link https://regex101.com/r/9Poorq/2
 	 * @var string
-	 *
 	 * @noinspection RegExpSingleCharAlternation
 	 * @noinspection RegExpRedundantEscape
 	 */
@@ -48,7 +47,6 @@ class ColumnParser extends \Migrations\Util\ColumnParser {
 
 	/**
 	 * @inheritDoc
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function parseFields(array $aa_arguments): array {
@@ -60,17 +58,17 @@ class ColumnParser extends \Migrations\Util\ColumnParser {
 			$ls_type = Hash::get($la_matches, 2, '');
 			$ls_indexType = Hash::get($la_matches, 3);
 
-			$lb_typeIsPk = in_array($ls_type, ['primary', 'primary_key'], TRUE);
-			$lb_isPrimaryKey = FALSE;
-			if ($lb_typeIsPk || in_array($ls_indexType, ['primary', 'primary_key'], TRUE)) {
-				$lb_isPrimaryKey = TRUE;
+			$lb_typeIsPk = in_array($ls_type, ['primary', 'primary_key'], true);
+			$lb_isPrimaryKey = false;
+			if ($lb_typeIsPk || in_array($ls_indexType, ['primary', 'primary_key'], true)) {
+				$lb_isPrimaryKey = true;
 
 				if ($lb_typeIsPk) {
 					$ls_type = 'primary';
 				}
 			}
 
-			$lb_nullable = (bool) strpos($ls_type, '?');
+			$lb_nullable = (bool)strpos($ls_type, '?');
 			$ls_type = $lb_nullable ? str_replace('?', '', $ls_type) : $ls_type;
 
 			[$ls_type, $lx_length, $lx_default] = $this->getTypeAndLengthAndDefault($ls_field, $ls_type);
@@ -91,8 +89,8 @@ class ColumnParser extends \Migrations\Util\ColumnParser {
 				}
 			}
 
-			if ($lb_isPrimaryKey === TRUE && $ls_type === 'integer') {
-				$la_fields[ $ls_field ]['options']['autoIncrement'] = TRUE;
+			if ($lb_isPrimaryKey === true && $ls_type === 'integer') {
+				$la_fields[ $ls_field ]['options']['autoIncrement'] = true;
 			}
 		}
 
@@ -102,35 +100,18 @@ class ColumnParser extends \Migrations\Util\ColumnParser {
 
 
 	/**
-	 * @param $as_field
-	 * @param $as_type
-	 *
+	 * @param string $as_field
+	 * @param string $as_type
 	 * @return array
 	 */
-	public function getTypeAndLengthAndDefault($as_field, $as_type): array {
-		/*$aa_type = [];
-		$aa_type[] = 'tinyinteger';
-		$aa_type[] = 'tinyinteger?';
-		$aa_type[] = 'tinyinteger(foo(bar)baz)';
-		$aa_type[] = 'tinyinteger[123,3](foo(bar)baz)';
-		$aa_type[] = 'tinyinteger[123,3]';
-		$aa_type[] = 'tinyinteger?[123,3]';
-		$aa_type[] = 'tinyinteger?(foo(bar)baz)';
-		$aa_type[] = 'tinyinteger?[123,3](foo(bar)baz)';
-
-		foreach ($aa_type AS $as_type) {
-			preg_match($this->regexpParseField, $as_type, $la_matches);
-			dump($la_matches);
-		}
-		exit;*/
-
+	public function getTypeAndLengthAndDefault(string $as_field, string $as_type): array {
 		if ($as_type && preg_match($this->regexpParseField, $as_type, $la_matches)) {
 			if (str_contains($la_matches[2], ',')) {
 				$la_matches[2] = explode(',', $la_matches[2]);
 			}
 
 
-			return [$la_matches[1], $la_matches[2] ?: NULL, $la_matches[3] ?: NULL];
+			return [$la_matches[1], $la_matches[2] ?: null, $la_matches[3] ?: null];
 		}
 
 		/** @var string $ls_fieldType */
@@ -138,6 +119,6 @@ class ColumnParser extends \Migrations\Util\ColumnParser {
 		$li_length = $this->getLength($ls_fieldType);
 
 
-		return [$ls_fieldType, $li_length, NULL];
+		return [$ls_fieldType, $li_length, null];
 	}
 }

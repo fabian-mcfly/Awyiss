@@ -8,7 +8,6 @@ use Awyiss\Awyiss;
 use Awyiss\Configuration\ConfigOptionsProvider;
 use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Model\Entity\Configuration;
-use Awyiss\Model\Table\ConfigurationTable;
 use Awyiss\Routing\Router;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
@@ -21,7 +20,7 @@ use Cake\Utility\Inflector;
  *
  * Configuration Controller
  *
- * @property ConfigurationTable $Configuration
+ * @property \Awyiss\Model\Table\ConfigurationTable $Configuration
  */
 class ConfigurationController extends Controller {
 	/**
@@ -61,19 +60,24 @@ class ConfigurationController extends Controller {
 			$lo_session = $this->request->getSession();
 
 			//Is there a request parameter with the name 'scope'?
-			if ($ls_scope = $this->request->getParam('scope')) {
+			$ls_scope = $this->request->getParam('scope');
+			if ($ls_scope) {
 				if ($lo_session->started()) {
 					//Session started? Save the scope that's inside the url parameter in the session
 					$lo_session->write($this->selectedScopeSessionIdentifier, $ls_scope);
 				}
 			}
 			//Session not started OR there's no scope saved in the session
-			elseif (!$lo_session->started() || !($ls_scope = $lo_session->read($this->selectedScopeSessionIdentifier))) {
-				//Default to scope 'system'
-				$ls_scope = 'system';
+			else {
+				$ls_scope = $lo_session->started() ? $lo_session->read($this->selectedScopeSessionIdentifier) : null;
 
-				if ($lo_session->started()) {
-					$lo_session->write($this->selectedScopeSessionIdentifier, $ls_scope);
+				if (!$lo_session->started() || !$ls_scope) {
+					//Default to scope 'system'
+					$ls_scope = 'system';
+
+					if ($lo_session->started()) {
+						$lo_session->write($this->selectedScopeSessionIdentifier, $ls_scope);
+					}
 				}
 			}
 
@@ -98,7 +102,6 @@ class ConfigurationController extends Controller {
 	 * Overview method
 	 *
 	 * @return void|?Response
-	 *
 	 * @throws \Exception
 	 */
 	public function overview() {
@@ -136,7 +139,6 @@ class ConfigurationController extends Controller {
 	 * Add method
 	 *
 	 * @return void
-	 *
 	 * @throws \ReflectionException
 	 * @throws \Exception
 	 */
@@ -175,18 +177,16 @@ class ConfigurationController extends Controller {
 	/**
 	 * Edit method
 	 *
-	 * @return void|?Response
-	 *
-	 * @throws \ReflectionException
+	 * @return \Cake\Http\Response|void
 	 * @throws \Exception
 	 */
-	public function edit() {
+	public function edit(int $ai_id) {
 		$this->Authorization->setAdditionalData([
 			'scope' => '',
 		])->ensure('update');
 
 		/** @var Configuration $lo_configuration */
-		$lo_configuration = $this->Configuration->findById((int) $this->request->getParam('id'))->find('translations')->first();
+		$lo_configuration = $this->Configuration->findById($ai_id)->find('translations')->first();
 		if (!$lo_configuration) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -221,11 +221,11 @@ class ConfigurationController extends Controller {
 	/**
 	 * Delete method
 	 *
+	 * @param int $ai_id
 	 * @return Response
-	 *
 	 * @throws \Exception
 	 */
-	public function delete(): Response {
+	public function delete(int $ai_id): Response {
 		$this->Authorization->setAdditionalData([
 			'scope' => '',
 		])->ensure('delete');
@@ -233,7 +233,7 @@ class ConfigurationController extends Controller {
 		$this->request->allowMethod(['get', 'delete']);
 
 		/** @var Configuration $lo_configuration */
-		$lo_configuration = $this->Configuration->findById((int) $this->request->getParam('id'))->find('translations')->first();
+		$lo_configuration = $this->Configuration->findById($ai_id)->find('translations')->first();
 		if (!$lo_configuration) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -256,15 +256,14 @@ class ConfigurationController extends Controller {
 	/**
 	 * @param Configuration $ao_configuration
 	 * @param string $as_method
-	 *
 	 * @return void
 	 * @throws \Exception
 	 */
 	protected function save(Configuration $ao_configuration, string $as_method = 'add'): void {
 		$la_associated = [];
 		if ($this->Configuration->hasAttributes()) {
-			$la_associated[] = $this->Configuration->getAttributesTable(TRUE);
-			$ao_configuration->setAccess('attributes', TRUE);
+			$la_associated[] = $this->Configuration->getAttributesTable(true);
+			$ao_configuration->setAccess('attributes', true);
 		}
 
 		$this->Configuration->patchEntity($ao_configuration, $this->request->getData(), ['associated' => $la_associated]);
@@ -272,7 +271,7 @@ class ConfigurationController extends Controller {
 		if (!$this->Authorization->withAdditionalData(['scope' => $ao_configuration->scope])->isAccessible('read')) {
 			$this->Flash->error(__('scope_not_accessible'));
 
-			throw new RedirectException(Router::url(['action' => 'overview'], TRUE), 302);
+			throw new RedirectException(Router::url(['action' => 'overview'], true), 302);
 		}
 
 		$lo_session = $this->request->getSession();
@@ -284,10 +283,10 @@ class ConfigurationController extends Controller {
 				$this->Flash->success(__($as_method . '_succeeded'));
 
 				if ($this->request->getData('submit') == 'submit_close') {
-					throw new RedirectException(Router::url(['action' => 'overview', 'scope' => $ao_configuration->scope], TRUE), 302);
+					throw new RedirectException(Router::url(['action' => 'overview', 'scope' => $ao_configuration->scope], true), 302);
 				}
 
-				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $ao_configuration->id], TRUE), 302);
+				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $ao_configuration->id], true), 302);
 			}
 
 			$this->Flash->error(__($as_method . '_failed'));

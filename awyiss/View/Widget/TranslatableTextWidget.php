@@ -21,7 +21,7 @@ class TranslatableTextWidget extends BasicWidget {
 	 * @var array<string, mixed>
 	 */
 	protected array $defaults = [
-		'escape' => TRUE,
+		'escape' => true,
 		'name' => '',
 		'templateVars' => [],
 		'val' => '',
@@ -33,7 +33,7 @@ class TranslatableTextWidget extends BasicWidget {
 	 *
 	 * Data supports the following keys:
 	 *
-	 * - `escape` - Set to `FALSE` to disable HTML escaping.
+	 * - `escape` - Set to `false` to disable HTML escaping.
 	 * - `name` - Set the input name.
 	 * - `val` - A string of the option to mark as selected.
 	 *
@@ -41,15 +41,13 @@ class TranslatableTextWidget extends BasicWidget {
 	 *
 	 * @param array<string, mixed> $aa_data The data to build a textarea with.
 	 * @param \Cake\View\Form\ContextInterface $ao_context The current form context.
-	 *
 	 * @return string HTML elements.
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function render(array $aa_data, ContextInterface $ao_context): string {
 		$la_data = $aa_data + $this->mergeDefaults($aa_data, $ao_context);
 
-		$la_data += ['readonly' => TRUE];
+		$la_data += ['readonly' => true];
 
 		$la_data['templateVars']['controls'] = '';
 		foreach ($la_data['controls'] as $ls_control) {
@@ -58,7 +56,7 @@ class TranslatableTextWidget extends BasicWidget {
 
 		$la_data['value'] = $la_data['val'];
 		unset($la_data['val']);
-		if ($la_data['value'] === FALSE) {
+		if ($la_data['value'] === false) {
 			// explicitly convert to 0 to avoid empty string which is marshaled as null
 			$la_data['value'] = '0';
 		}

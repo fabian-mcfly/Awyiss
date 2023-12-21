@@ -6,15 +6,11 @@ namespace Awyiss\Model\Entity;
 
 use Authentication\IdentityInterface;
 use Authentication\PasswordHasher\DefaultPasswordHasher;
-use Awyiss\Authorization\AuthorizationService;
 use Awyiss\Authorization\IdentityPermissionsInterface;
 use Awyiss\Authorization\Permission\PermissionCollection;
 use Awyiss\Model\Entity;
-use Awyiss\Model\Table\UsergroupsUsersTable;
-use Awyiss\Model\Table\UsersTable;
 use Cake\Datasource\FactoryLocator;
 use Cake\Event\EventDispatcherTrait;
-use Cake\I18n\FrozenTime;
 use RuntimeException;
 
 
@@ -23,20 +19,20 @@ use RuntimeException;
  *
  * @property int $id
  * @property string $username
- * @property string|NULL $password
+ * @property string|null $password
  * @property int $failedAttempts
- * @property FrozenTime|NULL $lastLogin
- * @property string|NULL $firstname
- * @property string|NULL $lastname
- * @property string|NULL $email
+ * @property \Cake\I18n\DateTime|null $lastLogin
+ * @property string|null $firstname
+ * @property string|null $lastname
+ * @property string|null $email
  * @property bool $active
  * @property bool $deleted
- * @property int|NULL $createdBy
- * @property FrozenTime|NULL $createdOn
- * @property int|NULL $changedBy
- * @property FrozenTime|NULL $changedOn
- * @property int|NULL $deletedBy
- * @property FrozenTime|NULL $deletedOn
+ * @property int|null $createdBy
+ * @property \Cake\I18n\DateTime|null $createdOn
+ * @property int|null $changedBy
+ * @property \Cake\I18n\DateTime|null $changedOn
+ * @property int|null $deletedBy
+ * @property \Cake\I18n\DateTime|null $deletedOn
  * @property Usergroup[] $usergroups
  */
 class User extends Entity implements IdentityPermissionsInterface, IdentityInterface {
@@ -47,13 +43,13 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 	 * @inheritDoc
 	 */
 	protected array $_accessible = [
-		'username' => TRUE,
-		'password' => TRUE,
-		'firstname' => TRUE,
-		'lastname' => TRUE,
-		'email' => TRUE,
-		'active' => TRUE,
-		'usergroups' => TRUE,
+		'username' => true,
+		'password' => true,
+		'firstname' => true,
+		'lastname' => true,
+		'email' => true,
+		'active' => true,
+		'usergroups' => true,
 	];
 	/**
 	 * @inheritDoc
@@ -105,7 +101,7 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 	public function getPermissionCollection(): PermissionCollection {
 		if (!isset($this->permissionCollection)) {
 			$lo_event = $this->dispatchEvent('Authorization.requestAuthorizationService', [], $this);
-			/** @var ?AuthorizationService $lo_authorizationService */
+			/** @var ?\Awyiss\Authorization\AuthorizationService $lo_authorizationService */
 			$lo_authorizationService = $lo_event->getResult();
 
 			if (!$lo_authorizationService) {
@@ -156,7 +152,7 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 	/**
 	 * @inheritDoc
 	 */
-	public function scopeIsAccessible(string $as_scope, ?array $aa_additionalData = NULL, array|string ...$ax_identifier): bool {
+	public function scopeIsAccessible(string $as_scope, ?array $aa_additionalData = null, array|string ...$ax_identifier): bool {
 		$lo_permissionCollection = $this->getPermissionCollection();
 
 
@@ -167,23 +163,23 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 	/**
 	 * Returns an array of Usergroup-entities
 	 *
-	 * @return Usergroup[]
+	 * @return array<Usergroup>
 	 */
 	protected function getUsergroups(): array {
 		if (!isset($this->usergroups)) {
-			/** @var UsersTable $lo_table */
+			/** @var \Awyiss\Model\Table\UsersTable $lo_table */
 			$lo_table = FactoryLocator::get('Table')->get($this->getSource());
 			$lo_table->skipAuthorizationCheckOnce();
 
-			/** @var UsergroupsUsersTable $lo_usergroupsUsers */
+			/** @var \Awyiss\Model\Table\UsergroupsUsersTable $lo_usergroupsUsers */
 			$lo_usergroupsUsers = FactoryLocator::get('Table')->get('UsergroupsUsers');
 			$lo_usergroupsUsers->skipAuthorizationCheckOnce();
 
 			$lo_table->loadInto($this, [
 				'Usergroups' => [
-					'finder' => ['active' => ['authorize' => ['skip' => TRUE]]], //Only find active groups.
+					'finder' => ['active' => ['authorize' => ['skip' => true]]], //Only find active groups.
 					'UsergroupPermissions' => [
-						'finder' => ['all' => ['authorize' => ['skip' => TRUE]]],
+						'finder' => ['all' => ['authorize' => ['skip' => true]]],
 					],
 				],
 			]);
@@ -198,6 +194,7 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 	 * Reset the permission collection when usergroups change
 	 *
 	 * @noinspection PhpUnused
+	 * @see \Awyiss\Model\Entity\User::$usergroups
 	 */
 	protected function _setUsergroups(?array $aa_usergroups): ?array {
 		unset($this->permissionCollection);
@@ -208,20 +205,22 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 
 
 	/**
-	 * If the provided email is an empty string, set the email property to NULL.
+	 * If the provided email is an empty string, set the email property to null.
 	 *
 	 * @noinspection PhpUnused
+	 * @see \Awyiss\Model\Entity\User::$email
 	 */
 	protected function _setEmail(string $ax_email): ?string {
-		return $ax_email ?: NULL;
+		return $ax_email ?: null;
 	}
 
 
 	/**
 	 * If the provided password is not an empty string, hash it.
-	 * Otherwise, set it to NULL
+	 * Otherwise, set it to null
 	 *
 	 * @noinspection PhpUnused
+	 * @see \Awyiss\Model\Entity\User::$password
 	 */
 	protected function _setPassword(string $as_password): ?string {
 		//Automatically hash passwords when they are changed.
@@ -233,6 +232,6 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 		}
 
 
-		return NULL;
+		return null;
 	}
 }

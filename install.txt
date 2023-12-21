@@ -10,8 +10,8 @@ sudo crontab -e -u www-data
 
 
 
-bin/cake phpstorm generate
-
+sudo runuser -u www-data -- bin/cake phpstorm generate
+sudo runuser -u www-data -- bin/cake generate phpstorm
 
 
 

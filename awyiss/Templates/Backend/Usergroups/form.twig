@@ -42,7 +42,7 @@
 	</fieldset>
 {% endblock %}
 
-{% if helper_Authorization_scopeIsAccessible('Users', NULL, ['read']) %}
+{% if helper_Authorization_scopeIsAccessible('Users', null, ['read']) %}
 	{% block fieldsetUsers %}
 		<fieldset>
 			<legend>{{ __('users') }}</legend>
@@ -55,7 +55,7 @@
 							{% block usergroupsUser %}
 								<li>
 									{{ helper_Form_control('users._ids.' ~ lo_user.id, {
-										hiddenField: FALSE,
+										hiddenField: false,
 										type: 'checkbox',
 										value: lo_user.id,
 										label: lo_user.username,
@@ -90,7 +90,7 @@
 										{% block usergroupPermission %}
 											<li class="Permission">
 												{{ __(ls_identifier) }}
-												{{ helper_Authorization_permissionOptions(lo_permission, ao_usergroup, NULL, 'Usergroups') }}
+												{{ helper_Authorization_permissionOptions(lo_permission, ao_usergroup, null, 'Usergroups') }}
 												{# $lo_permissions->getSettings()->render($this, 'usergroups') #}
 											</li>
 										{% endblock %}

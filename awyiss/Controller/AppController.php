@@ -6,14 +6,12 @@ namespace Awyiss\Controller;
 
 use Awyiss\Awyiss;
 use Awyiss\Middleware\LocaleMiddleware;
-use Awyiss\Model\Table\ConfigurationTable;
-use Awyiss\Model\Table\LanguagesTable;
 use Cake\Controller\Controller;
 
 
 /**
- * @property LanguagesTable $Languages
- * @property ConfigurationTable $Configuration
+ * @property \Awyiss\Model\Table\LanguagesTable $Languages
+ * @property \Awyiss\Model\Table\ConfigurationTable $Configuration
  */
 abstract class AppController extends Controller {
 	/**
