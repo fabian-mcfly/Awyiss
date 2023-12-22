@@ -128,8 +128,8 @@ class UsergroupsTable extends Table {
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function afterSave(EventInterface $ao_event, EntityInterface $ao_entity, ArrayObject $ao_options): void {
-		$lo_query = $this->Users->find()->applyOptions(['authorize' => ['skip' => true]])->matching('UsergroupsUsers', function (SelectQuery $ao_query) use ($ao_entity) {
-			return $ao_query->where(['UsergroupsUsers.usergroup_id' => $ao_entity->id])->applyOptions(['authorize' => ['skip' => true]]);
+		$lo_query = $this->Users->find()->matching('UsergroupsUsers', function (SelectQuery $ao_query) use ($ao_entity) {
+			return $ao_query->where(['UsergroupsUsers.usergroup_id' => $ao_entity->id]);
 		});
 
 		$lo_users = $lo_query->all();
@@ -161,7 +161,6 @@ class UsergroupsTable extends Table {
 		//Save all found records, but skip the authorization check, the audit and the system order behavior on those to avoid recursion.
 		$this->Users->saveMany($lo_users, [
 			'audit' => ['skip' => true],
-			'authorize' => ['skip' => true],
 			'checkRules' => false,
 			'systemOrder' => ['skip' => true],
 		]);

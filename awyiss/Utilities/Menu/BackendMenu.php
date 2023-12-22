@@ -111,11 +111,7 @@ class BackendMenu {
 		/** @var \Awyiss\Model\Table\BackendMenuEntriesTable $lo_table */
 		$lo_table = $this->fetchTable('BackendMenuEntries');
 
-		$la_menuEntries = $lo_table->find('threaded')->applyOptions([
-			'authorize' => [
-				'skip' => true,
-			],
-		])->all()->groupBy(function (BackendMenuEntry $ao_entity) {
+		$la_menuEntries = $lo_table->find('threaded')->all()->groupBy(function (BackendMenuEntry $ao_entity) {
 			return $ao_entity->parentId ? 'appendTo' : 'insertAfter';
 		})->map(function (array $aa_menuEntries) {
 			return collection($aa_menuEntries)->groupBy(function (BackendMenuEntry $ao_entity) {

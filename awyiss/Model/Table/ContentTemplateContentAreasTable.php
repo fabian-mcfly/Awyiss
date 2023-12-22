@@ -33,17 +33,6 @@ class ContentTemplateContentAreasTable extends Table {
 		'audit' => [
 			'enabled' => false,
 		],
-		'authorize' => [
-			'identifiers' => [
-				//We use the content templates-scope, creating an association will occur when creating or updating a content template
-				'Entity.create' => [['create', 'update']],
-				'Entity.update' => 'update',
-				'Model.beforeFind' => [['read', 'create', 'update', 'delete']],
-				//We use the content templates-scope, deleting an association will occur when updating or deleting a content template
-				'Model.beforeDelete' => [['update', 'delete']],
-			],
-			'scope' => 'content_templates',
-		],
 	];
 
 
@@ -125,13 +114,13 @@ class ContentTemplateContentAreasTable extends Table {
 		]);
 
 
-		$ao_rules->add($ao_rules->existsIn(['contentAreaId'], 'ContentAreas', ['authorize' => ['skip' => true]]), 'contentAreaExists', [
+		$ao_rules->add($ao_rules->existsIn(['contentAreaId'], 'ContentAreas'), 'contentAreaExists', [
 			'errorField' => 'contentAreaId',
 			'message' => __d($this->getI18nDomain(), 'error_content_area_exists'),
 		]);
 
 
-		$ao_rules->add($ao_rules->existsIn(['pageTemplateId'], 'PageTemplates', ['authorize' => ['skip' => true]]), 'pageTemplateExists', [
+		$ao_rules->add($ao_rules->existsIn(['pageTemplateId'], 'PageTemplates'), 'pageTemplateExists', [
 			'errorField' => 'pageTemplateId',
 			'message' => __d($this->getI18nDomain(), 'error_page_template_exists'),
 		]);

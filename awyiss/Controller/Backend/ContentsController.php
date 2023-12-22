@@ -164,9 +164,7 @@ class ContentsController extends Controller {
 	 */
 	public function edit(int $ai_id) {
 		/** @var Content $lo_content */
-		$lo_content = $this->Contents->findById($ai_id)->find('translations')->applyOptions([
-			'authorize' => ['skip' => true],
-		])->first();
+		$lo_content = $this->Contents->findById($ai_id)->find('translations')->first();
 		if (!$lo_content) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -228,9 +226,7 @@ class ContentsController extends Controller {
 		$this->request->allowMethod(['get', 'delete']);
 
 		/** @var Content $lo_content */
-		$lo_content = $this->Contents->findById($ai_id)->find('translations')->applyOptions([
-			'authorize' => ['skip' => true],
-		])->first();
+		$lo_content = $this->Contents->findById($ai_id)->find('translations')->first();
 		if (!$lo_content) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -347,28 +343,15 @@ class ContentsController extends Controller {
 
 			$lo_query = $this->Contents->ContentTemplates->find(
 				'active',
-				authorize: ['skip' => true],
 			)->select([
 				'id',
 				'title',
 				'active',
 			])->matching('ContentTemplateContentAreas', function (SelectQuery $ao_query) use ($li_pageTemplateId) {
-				return $ao_query->where(['ContentTemplateContentAreas.page_template_id' => $li_pageTemplateId])->applyOptions(['authorize' => ['skip' => true]]);
+				return $ao_query->where(['ContentTemplateContentAreas.page_template_id' => $li_pageTemplateId]);
 			})->contain([
-				'ContentTemplateContentAreas' => [
-					'finder' => [
-						'all' => [
-							'authorize' => ['skip' => true],
-						],
-					],
-				],
-				'ContentTemplateElements' => [
-					'finder' => [
-						'all' => [
-							'authorize' => ['skip' => true],
-						],
-					],
-				],
+				'ContentTemplateContentAreas',
+				'ContentTemplateElements',
 			]);
 
 			$this->contentTemplates = $lo_query->all()->indexBy('id');

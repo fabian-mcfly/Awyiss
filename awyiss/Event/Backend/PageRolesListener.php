@@ -172,11 +172,7 @@ class PageRolesListener implements EventListenerInterface {
 			'validate' => false,
 		]);
 
-		$lo_menuEntriesTable->save($lo_menuEntry, [
-			'authorize' => [
-				'skip' => true,
-			],
-		]);
+		$lo_menuEntriesTable->save($lo_menuEntry);
 	}
 
 

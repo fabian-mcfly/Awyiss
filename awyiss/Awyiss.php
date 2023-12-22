@@ -293,7 +293,7 @@ class Awyiss extends BaseApplication {
 		}
 
 		if ($as_frontendLanguage && $as_backendLanguage) {
-			$lo_query = $lo_configurationTable->find()->applyOptions(['authorize' => ['skip' => true]])->enableHydration(false);
+			$lo_query = $lo_configurationTable->find()->enableHydration(false);
 			$lo_query->where(function (QueryExpression $ao_exp) use ($as_frontendLanguage, $as_backendLanguage) {
 				//$lo_scopeNegated = $lo_query->newExpr()->and(['identifier NOT LIKE' => 'frontend.%'])->add(['identifier NOT LIKE' => 'backend.%']);
 
@@ -376,7 +376,7 @@ class Awyiss extends BaseApplication {
 
 		$lo_pageRolesTable = FactoryLocator::get('Table')->get('PageRoles');
 		/** @var \Awyiss\Model\Entity\PageRole $lo_pageRole */
-		foreach ($lo_pageRolesTable->find()->applyOptions(['authorize' => ['skip' => true]]) as $lo_pageRole) {
+		foreach ($lo_pageRolesTable->find() as $lo_pageRole) {
 			$ls_constant = 'PAGEROLE_' . strtoupper($lo_pageRole->identifier);
 			defined($ls_constant) || define($ls_constant, $lo_pageRole->id);
 		}

@@ -35,7 +35,6 @@ abstract class BackendController extends AppController {
 	 * @var array|array<string>  A list of properties that will be merged with values from the database configuration
 	 */
 	protected array $customConfigProperties = [
-		'authorize',
 		'categorize',
 		'eventTrigger',
 		'paginate',
@@ -150,11 +149,11 @@ abstract class BackendController extends AppController {
 	 * Sets the where-clauses used in the overview-method of most controllers.
 	 *
 	 * @param array|string $ax_key
-	 * @param null $ax_value
+	 * @param mixed $ax_value
 	 * @return BackendController
 	 * @noinspection PhpUnused
 	 */
-	public function setOverviewWhere(string|array $ax_key, null $ax_value = null): static {
+	public function setOverviewWhere(string|array $ax_key, mixed $ax_value = null): static {
 		if (is_string($ax_key)) {
 			$this->overviewWhere[ $ax_key ] = $ax_value;
 		}

@@ -169,18 +169,11 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 		if (!isset($this->usergroups)) {
 			/** @var \Awyiss\Model\Table\UsersTable $lo_table */
 			$lo_table = FactoryLocator::get('Table')->get($this->getSource());
-			$lo_table->skipAuthorizationCheckOnce();
-
-			/** @var \Awyiss\Model\Table\UsergroupsUsersTable $lo_usergroupsUsers */
-			$lo_usergroupsUsers = FactoryLocator::get('Table')->get('UsergroupsUsers');
-			$lo_usergroupsUsers->skipAuthorizationCheckOnce();
 
 			$lo_table->loadInto($this, [
 				'Usergroups' => [
-					'finder' => ['active' => ['authorize' => ['skip' => true]]], //Only find active groups.
-					'UsergroupPermissions' => [
-						'finder' => ['all' => ['authorize' => ['skip' => true]]],
-					],
+					'finder' => 'active', //Only find active groups.
+					'UsergroupPermissions',
 				],
 			]);
 		}

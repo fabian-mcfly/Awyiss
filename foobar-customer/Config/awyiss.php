@@ -20,7 +20,7 @@ return [
 	 */
 	'Datasources' => [
 		'default' => [
-			'database' => 'awyiss',
+			'database' => '',
 			/*
 			 * If your MySQL server is configured with `skip-character-set-client-handshake`
 			 * then you MUST use the `flags` config to set your charset encoding.
@@ -35,9 +35,9 @@ return [
 			 * which is the recommended value in production environments
 			 */
 			//'init' => ['SET GLOBAL innodb_stats_on_metadata = 0'],
-			'password' => '7!s6Z*e.Qrpw@dQN',
+			'password' => '',
 			//'url' => env('DATABASE_URL', NULL), //You can use a DSN string to set the entire configuration
-			'username' => 'awyiss',
+			'username' => '',
 
 		],
 	],
@@ -85,7 +85,7 @@ return [
 	 *   You should treat it as extremely sensitive data.
 	 */
 	'Security' => [
-		'salt' => env('SECURITY_SALT', 'a30817f37ea92c24528e179ef2e25c125209b0719700ff4b0bed301ee697067e'),
+		'salt' => env('SECURITY_SALT', ''),
 	],
 
 	'Session' => [

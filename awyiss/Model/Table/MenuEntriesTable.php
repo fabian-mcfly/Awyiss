@@ -166,7 +166,6 @@ class MenuEntriesTable extends Table {
 			$ao_rules->existsIn(
 				'menuId',
 				'Menus',
-				['authorize' => ['skip' => true]]
 			),
 			'validMenuId',
 			[
@@ -199,7 +198,6 @@ class MenuEntriesTable extends Table {
 			$ao_rules->existsIn(
 				'languageShortcode',
 				'Languages',
-				['authorize' => ['skip' => true]]
 			),
 			'languageExists',
 			[

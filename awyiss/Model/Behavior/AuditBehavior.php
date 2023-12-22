@@ -64,6 +64,9 @@ class AuditBehavior extends Behavior {
 		'setTimeOnDelete' => true,
 		'skip' => false,
 	];
+	/**
+	 * @var \Authentication\IdentityInterface|null
+	 */
 	protected ?IdentityInterface $identity = null;
 
 
@@ -223,7 +226,7 @@ class AuditBehavior extends Behavior {
 		$lo_audit = $lo_auditModel->newEntity($la_auditData);
 
 		//Save the audit entity and skip the access check
-		if (!$lo_auditModel->save($lo_audit, ['authorize' => ['skip' => true]])) {
+		if (!$lo_auditModel->save($lo_audit)) {
 			Log::error(sprintf('Could not save audit. Entity errors: `%s`', print_r($lo_audit->getErrors(), true)));
 			throw new RuntimeException('Could not save audit.');
 		}

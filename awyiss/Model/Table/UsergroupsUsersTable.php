@@ -26,22 +26,6 @@ class UsergroupsUsersTable extends Table {
 	 * @inheritDoc
 	 */
 	public const TABLE = 'usergroups_users';
-	/**
-	 * @var array|array<array>
-	 */
-	protected array $_defaultConfig = [
-		'authorize' => [
-			'identifiers' => [
-				//We use the users-scope, creating an association will occur when creating or updating a user
-				'Entity.create' => [['create', 'update']],
-				'Entity.update' => 'update',
-				'Model.beforeFind' => [['read', 'create', 'update', 'delete']],
-				//We use the users-scope, deleting an association will occur when updating or deleting a user
-				'Model.beforeDelete' => [['update', 'delete']],
-			],
-			'scope' => 'users',
-		],
-	];
 
 
 	/**

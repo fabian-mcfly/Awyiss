@@ -174,7 +174,7 @@ class PagesController extends Controller {
 	 */
 	public function getPageTemplates(): CollectionInterface {
 		if (!isset($this->pageTemplates)) {
-			$this->pageTemplates = $this->Pages->PageTemplates->find('active', authorize: ['skip' => true])->where([
+			$this->pageTemplates = $this->Pages->PageTemplates->find('active')->where([
 				'page_role_id' => $this->getPageRoleId(),
 			])->all()->indexBy('id');
 		}
@@ -271,10 +271,6 @@ class PagesController extends Controller {
 		$ls_policyClass = $lo_authorizationService->getPolicy($this->Authorization->getScope(), $this->Authorization->getConfig('policiesRealm'));
 		if (!$ls_policyClass) {
 			$lo_policyClass = new GenericPagePolicy($this->Authorization->getScope());
-		}
-
-		if ($this->Pages->hasBehavior('Authorize')) {
-			$this->Pages->getBehavior('Authorize');/*->setPolicyClass($ls_policyClass ?: $lo_policyClass)*/
 		}
 
 		$this->Authorization->setScope($as_identifier);/*->setPolicyClass($ls_policyClass ?: $lo_policyClass)*/
