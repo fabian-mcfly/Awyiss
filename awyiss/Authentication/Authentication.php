@@ -235,7 +235,7 @@ class Authentication implements AuthenticationServiceProviderInterface {
 		$this->addIdentifier(PasswordIdentifier::class, [
 			'resolver' => [
 				'className' => OrmResolver::class,
-				'finder' => ['active' => ['authorize' => ['skip' => true]]],
+				'finder' => 'active',
 			],
 		]);
 	}

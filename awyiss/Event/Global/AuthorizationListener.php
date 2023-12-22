@@ -7,7 +7,6 @@ namespace Awyiss\Event\Global;
 use Awyiss\Authorization\AuthorizationServiceInterface;
 use Awyiss\Authorization\Policy\GenericPagePolicy;
 use Awyiss\Event\EventListenerTrait;
-use Awyiss\Model\Table;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
 use Cake\Utility\Inflector;
@@ -20,12 +19,6 @@ class AuthorizationListener implements EventListenerInterface {
 	use EventListenerTrait;
 
 
-	/**
-	 * @var array|array<array>
-	 */
-	protected array $initializedModels = [
-		'authorizationService' => [],
-	];
 	/**
 	 * @var AuthorizationServiceInterface
 	 */
@@ -44,7 +37,6 @@ class AuthorizationListener implements EventListenerInterface {
 			'Authorization.requestPolicyClass' => 'requestPolicyClass',
 			'Authorization.requestAuthorizationService' => 'requestAuthorizationService',
 			'Authorization.afterMiddlewareProcess' => 'authorizationMiddlewareAfterProcess',
-			'Model.initialize' => 'modelInitialize',
 		];
 	}
 
@@ -59,44 +51,6 @@ class AuthorizationListener implements EventListenerInterface {
 	 */
 	public function authorizationMiddlewareAfterProcess(Event $ao_event, AuthorizationServiceInterface $ao_authorizationService): void {
 		$this->authorizationService = $ao_authorizationService;
-
-		/** @var Table $lo_model */
-		foreach ($this->initializedModels['authorizationService'] as $lo_model) {
-			if ($lo_model->hasBehavior('Authorize')) {
-				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-				$lo_model->getBehavior('Authorize')->setAuthorizationService($this->authorizationService);
-			}
-		}
-	}
-
-
-	/**
-	 * For every model that is loaded, set
-	 *
-	 * - the AuthorizationService in every model's AuthorizationBehavior, if the Identity is AuthorizationService.
-	 * If not, save the model to be handled in `authorizationMiddlewareAfterProcess`.
-	 *
-	 * - the Identity in the AuditBehavior, if the Identity is known
-	 * If not, save the model to be handled in `authenticationAfterAuthenticate`.
-	 *
-	 * @param Event $ao_event
-	 * @return void
-	 * @noinspection PhpUnused
-	 * @noinspection PhpUnusedParameterInspection
-	 */
-	public function modelInitialize(Event $ao_event): void {
-		/** @var Table $lo_model */
-		$lo_model = $ao_event->getSubject();
-
-		if ($lo_model instanceof Table) {
-			if (!isset($this->authorizationService)) {
-				$this->initializedModels['authorizationService'][] = $lo_model;
-			}
-			elseif ($lo_model->hasBehavior('Authorize')) {
-				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-				$lo_model->getBehavior('Authorize')->setAuthorizationService($this->authorizationService);
-			}
-		}
 	}
 
 

@@ -75,9 +75,6 @@ class PageTemplatesTable extends Table {
 					'attributes' => [
 						'skip' => true,
 					],
-					'authorize' => [
-						'skip' => true,
-					],
 					'skipPageRoleCheck' => true,
 				]);
 			})->groupBy('PageTemplates.id');
@@ -170,7 +167,7 @@ class PageTemplatesTable extends Table {
 		]);
 
 
-		$ao_rules->add($ao_rules->existsIn(['pageRoleId'], 'PageRoles', ['authorize' => ['skip' => true]]), 'validPageRole', [
+		$ao_rules->add($ao_rules->existsIn(['pageRoleId'], 'PageRoles'), 'validPageRole', [
 			'errorField' => 'pageRoleId',
 			'message' => __d($this->getI18nDomain(), 'error_valid_page_role'),
 		]);

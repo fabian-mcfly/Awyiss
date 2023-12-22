@@ -242,13 +242,7 @@ class ContentsTable extends Table {
 			try {
 				/** @var Page $lo_page */
 				$lo_page = $this->{$this->getPageRoleName()}->get($ao_entity->pageId, contain: [
-					'PageTemplates' => [
-						'finder' => [
-							'all' => [
-								'authorize' => ['skip' => true],
-							],
-						],
-					],
+					'PageTemplates',
 				]);
 			}
 			catch (RecordNotFoundException | InvalidPrimaryKeyException | ForbiddenException) {
@@ -267,25 +261,13 @@ class ContentsTable extends Table {
 				/** @var ContentTemplate $lo_contentTemplate */
 				$lo_contentTemplate = $this->ContentTemplates->get(
 					$ao_entity->contentTemplateId,
-					authorize: ['skip' => true],
 					contain: [
 						'ContentTemplateContentAreas' => [
-							'finder' => [
-								'all' => [
-									'authorize' => ['skip' => true],
-								],
-							],
 							'queryBuilder' => function (SelectQuery $ao_query) use ($lo_page) {
 								return $ao_query->where(['ContentTemplateContentAreas.page_template_id' => $lo_page->pageTemplateId]);
 							},
 						],
-						'ContentTemplateElements' => [
-							'finder' => [
-								'all' => [
-									'authorize' => ['skip' => true],
-								],
-							],
-						],
+						'ContentTemplateElements',
 					],
 				);
 			}
@@ -458,22 +440,12 @@ class ContentsTable extends Table {
 			/** @var Page $lo_page */
 			$lo_page = $lo_pages->get(
 				$ai_pageId,
-				authorize: [
-					//'failSilently' => false,
-					'skip' => true,
-				],
 				contain: [
 					'PageRoles' => [
 						'fields' => [
 							'identifier',
 							'active',
 						],
-						'finder' => ['all' => ['authorize' => ['skip' => true]]],
-						/*'queryBuilder' => function(SelectQuery $ao_query): SelectQuery {
-							$ao_query->applyOptions(['authorize' => ['skip' => true]]);
-
-							return $ao_query;
-						},*/
 					],
 					'PageTemplates' => [
 						'fields' => [
@@ -481,18 +453,12 @@ class ContentsTable extends Table {
 							'title',
 							'active',
 						],
-						'finder' => ['all' => ['authorize' => ['skip' => true]]],
-						/*'queryBuilder' => function(SelectQuery $ao_query): SelectQuery {
-							$ao_query->applyOptions(['authorize' => ['skip' => true]]);
-
-							return $ao_query;
-						},*/ 'ContentAreas' => [
+						'ContentAreas' => [
 							'fields' => [
 								'id',
 								'title',
 								'active',
 							],
-							'finder' => ['all' => ['authorize' => ['skip' => true]]],
 						],
 					],
 				],
@@ -571,24 +537,6 @@ class ContentsTable extends Table {
 	 * @noinspection PhpPossiblePolymorphicInvocationInspection
 	 */
 	protected function setForScope(string $as_scope): void {
-		if ($this->hasBehavior('Authorize')) {
-			/** @var \Awyiss\Model\Behavior\AuthorizeBehavior $lo_authorization */
-			$lo_authorization = $this->getBehavior('Authorize');
-			$lo_authorization->setScope($as_scope);
-
-			if ($this->hasAttributes()) {
-				/** @var \Awyiss\Model\Behavior\AuthorizeBehavior $lo_authorization */
-				$lo_authorization = $this->getAssociation('AttributesContents')->getBehavior('Authorize');
-				$lo_authorization->setScope($as_scope);
-			}
-
-			//Also set the scope on the parent and children associations
-			$this->ChildContents->getBehavior('Authorize')->setScope($as_scope);
-			$this->ParentContents->getBehavior('Authorize')->setScope($as_scope);
-			$this->DuplicateContents->getBehavior('Authorize')->setScope($as_scope);
-			$this->DuplicateOfContents->getBehavior('Authorize')->setScope($as_scope);
-		}
-
 		$this->forScope = Inflector::underscore(Inflector::pluralize($as_scope));
 	}
 

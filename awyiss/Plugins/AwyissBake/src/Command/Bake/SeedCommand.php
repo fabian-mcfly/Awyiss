@@ -114,12 +114,6 @@ class SeedCommand extends BakeSeedCommand {
 				'connection' => ConnectionManager::get($this->connection),
 			]);
 
-			if ($lo_model->hasBehavior('Authorize')) {
-				/** @var \Awyiss\Model\Behavior\AuthorizeBehavior $lo_authorizeBehavior */
-				$lo_authorizeBehavior = $lo_model->getBehavior('Authorize');
-				$lo_authorizeBehavior->disable();
-			}
-
 			$lo_query = $lo_model->find('all')->enableHydration(false);
 
 			if ($li_limit) {

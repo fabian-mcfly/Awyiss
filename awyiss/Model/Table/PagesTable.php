@@ -6,7 +6,6 @@ namespace Awyiss\Model\Table;
 
 use ArrayObject;
 use Awyiss\Awyiss;
-use Awyiss\Model\Behavior\AuthorizeBehavior;
 use Awyiss\Model\Entity\Page;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
@@ -72,10 +71,6 @@ class PagesTable extends Table {
 			$this->setConfig('nest.alias', Inflector::camelize($ls_alias));
 		}
 
-		if (!$this->getConfig('authorize.scope')) {
-			$this->setConfig('authorize.scope', Inflector::pluralize($this->pageRole));
-		}
-
 		if (!$this->getConfig('attributes.foreignKey')) {
 			$this->setConfig('attributes.foreignKey', 'page_id');
 		}
@@ -117,40 +112,6 @@ class PagesTable extends Table {
 				'page_role_id',
 			],
 		]);
-
-
-		/** @var AuthorizeBehavior $lo_authorizationBehavior */
-		$lo_authorizationBehavior = $this->getBehavior('Authorize');
-
-		if (!$lo_authorizationBehavior->getConfig('Model.buildRules')) {
-			//Set a default callable for the `Model.buildRules`-event
-			$lo_authorizationBehavior->setConfig('Model.buildRules', function (Page $ao_entity, array $aa_options, AuthorizeBehavior $ao_behavior, ?bool $ab_accessible): ?bool {
-				if (!$ab_accessible) {
-					return false;
-				}
-
-
-				//Make sure the `page_role`-value of the entity equals the page role set for this model
-				return $ao_entity->page_role_id === $this->getPageRoleId();
-			});
-		}
-
-		/*if ( ! $lo_accessBehavior->getConfig('beforeFind')) {
-			//Set a default callable for the `Model.beforeFind`-event
-			$lo_accessBehavior->setConfig('Model.beforeFind', function(EventInterface $ao_event, Query $ao_subject, array $aa_options, AuthorizationBehavior $ao_behavior, ?bool $ab_accessible): ?bool {
-				if ( ! $ab_accessible) {
-					return false;
-				}
-
-				//Add a where-condition that limits all results to the page role set for this model
-				$ao_subject->where(['page_role_id' => $this->getPageRoleId()]);
-
-				return true;
-			});
-		}*/
-		/*if ($aa_config['forPageRole'] ?? null) {
-			$this->setPageRole($aa_config['forPageRole']);
-		}*/
 	}
 
 
@@ -314,7 +275,6 @@ class PagesTable extends Table {
 			$ao_rules->existsIn(
 				['languageShortcode'],
 				'Languages',
-				['authorize' => ['skip' => true]]
 			),
 			'languageExists',
 			[
@@ -328,7 +288,6 @@ class PagesTable extends Table {
 			$ao_rules->existsIn(
 				['pageRoleId'],
 				'PageRoles',
-				['authorize' => ['skip' => true]]
 			),
 			'validPageRole',
 			[
@@ -342,7 +301,6 @@ class PagesTable extends Table {
 			$ao_rules->existsIn(
 				['pageTemplateId', 'pageRoleId'],
 				'PageTemplates',
-				['authorize' => ['skip' => true]]
 			),
 			'validPageTemplate',
 			[
@@ -356,7 +314,6 @@ class PagesTable extends Table {
 			$ao_rules->existsIn(
 				['duplicateOf'],
 				'Duplicate' . $ls_pageRole,
-				['authorize' => ['skip' => true]]
 			),
 			'validDuplicateOf',
 			[
@@ -379,7 +336,6 @@ class PagesTable extends Table {
 				['parentId', 'languageShortcode', 'pageRoleId'],
 				'Parent' . $ls_pageRole,
 				[
-					'authorize' => ['skip' => true],
 					'errorField' => 'parentId',
 					'message' => __dfx($this->getI18nDomain(), 'validation', 'pages', 'error_valid_parent_id'),
 					'skipPageRoleCheck' => true,
@@ -391,10 +347,10 @@ class PagesTable extends Table {
 		}, 'validParentId');
 
 
-		//$ao_rules->addDelete(function() {
-		//	//TODO: make sure no pages with other page_role_ids exists as subpages
-		//	dd(__FILE__, __LINE__);
-		//});
+		$ao_rules->addDelete(function (): void {
+			//TODO: make sure no pages with other page_role_ids exists as subpages
+			dd(__FILE__, __LINE__);
+		});
 
 
 		return $ao_rules;
@@ -452,7 +408,7 @@ class PagesTable extends Table {
 		$ls_preSlug = '';
 		if (!empty($ao_entity->parentId)) {
 			/** @var Page $lo_parentPage */
-			$lo_parentPage = $this->get($ao_entity->parentId, authorize: ['skip' => true], skipPageRoleCheck: true);
+			$lo_parentPage = $this->get($ao_entity->parentId, skipPageRoleCheck: true);
 			//If there's a parent page, add its slug the one of the current page
 			$ls_preSlug = trim($lo_parentPage->slug, '/') . '/';
 		}
@@ -495,7 +451,7 @@ class PagesTable extends Table {
 			$ls_suffix = '';
 
 			//As long as a page with the same slug exists, append an increasing number to the slug and try again
-			while ($this->exists($la_conditions, ['authorize' => ['skip' => true], 'skipPageRoleCheck' => true])) {
+			while ($this->exists($la_conditions, ['skipPageRoleCheck' => true])) {
 				$li_i++;
 				$ls_suffix = '-' . $li_i;
 

@@ -4,6 +4,7 @@
 namespace Awyiss\Model\Table;
 
 
+use Awyiss\Authentication\IdentityAwareTrait;
 use Awyiss\Awyiss;
 use Awyiss\Configuration\ConfigOptionsProvider;
 use Awyiss\Model\Entity\Configuration;
@@ -19,6 +20,9 @@ use Cake\Validation\Validator;
  * @method Configuration newDefaultEntity(array $aa_additionalData = [])
  */
 class ConfigurationTable extends Table {
+	use IdentityAwareTrait;
+
+
 	/**
 	 * @inheritDoc
 	 */
@@ -136,8 +140,7 @@ class ConfigurationTable extends Table {
 					'scope',
 					'identifier',
 					'languageShortcode',
-				],
-				['authorize' => ['skip' => true]]
+				]
 			),
 			'identifierUniqueForScope',
 			[
@@ -196,7 +199,6 @@ class ConfigurationTable extends Table {
 				'realm',
 				'languageShortcode',
 			], 'Languages', [
-				'authorize' => ['skip' => true],
 				'errorField' => 'languageShortcode',
 				'message' => __dfx($this->getI18nDomain(), 'validation', 'configuration', 'error_language_exists'),
 			]);
@@ -219,9 +221,10 @@ class ConfigurationTable extends Table {
 		if (!isset($this->configScopes)) {
 			$this->configScopes = [];
 
+			$lo_identity = $this->getIdentity();
+
 			foreach (ConfigOptionsProvider::getConfigOptionsFiles() as $ls_scope => $ls_className) {
-				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-				if ($this->getBehavior('Authorize')->scopeIsAccessible($this->getTable(), ['scope' => $ls_scope], 'read')) {
+				if ($lo_identity?->scopeIsAccessible($this->getTable(), ['scope' => $ls_scope], 'read')) {
 					$this->configScopes[ $ls_scope ] = $ls_className;
 				}
 			}

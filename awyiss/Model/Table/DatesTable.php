@@ -32,9 +32,6 @@ class DatesTable extends Table {
 		'audit' => [
 			'enabled' => false,
 		],
-		'authorize' => [
-			'enabled' => false,
-		],
 	];
 
 

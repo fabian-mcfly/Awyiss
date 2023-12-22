@@ -52,9 +52,7 @@ class CategoriesComponent extends Component {
 		'foreignKey' => null,
 		'identifier' => 'category',
 		'queryConditions' => [],
-		'queryOptions' => [
-			'authorize' => ['skip' => true],
-		],
+		'queryOptions' => [],
 		'redirectOnInvalidSelection' => true,
 		'selectedCategory' => null,
 		'tableName' => null,

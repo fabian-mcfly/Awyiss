@@ -38,7 +38,7 @@ class CreateCustomConstantsTask extends Task {
 
 		$lo_pageRolesTable = FactoryLocator::get('Table')->get('PageRoles');
 		/** @var \Awyiss\Model\Entity\PageRole $lo_pageRole */
-		foreach ($lo_pageRolesTable->find()->applyOptions(['authorize' => ['skip' => true]]) as $lo_pageRole) {
+		foreach ($lo_pageRolesTable->find() as $lo_pageRole) {
 			$ls_constant = 'PAGEROLE_' . strtoupper($lo_pageRole->identifier);
 			$ls_constantsContents .= 'defined(\'' . $ls_constant . '\') || define(\'' . $ls_constant . '\', ' . $lo_pageRole->id . ');' . PHP_EOL;
 			defined($ls_constant) || define($ls_constant, $lo_pageRole->id);

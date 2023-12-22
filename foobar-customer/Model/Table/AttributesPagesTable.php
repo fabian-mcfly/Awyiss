@@ -37,14 +37,6 @@ class AttributesPagesTable extends Table {
 	 * @inheritDoc
 	 */
 	public const TABLE = 'attributes_pages';
-	/**
-	 * @inheritDoc
-	 */
-	protected array $_defaultConfig = [
-		'authorize' => [
-			'scope' => 'pages',
-		],
-	];
 
 
 	/**
