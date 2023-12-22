@@ -24,16 +24,6 @@ class {{ name }}Table extends Table{{ fileBuilder.classBuilder.implements ? ' im
 	{{~ Bake.concat('\n\n\n', userConstants) }}
 {% endif %}
 {% set userProperties = fileBuilder.classBuilder.userProperties([]) %}
-{% if userProperties._defaultConfig is not defined and table[:11] == 'attributes_'%}
-	/**
-	 * @inheritDoc
-	 */
-	protected array $_defaultConfig = [
-		'authorize' => [
-			'scope' => '{{ table|substr(11) }}',
-		],
-	];
-{% endif %}
 {% if userProperties %}
 	{{~ Bake.concat('\n\n\n', userProperties) }}
 

@@ -622,10 +622,7 @@ class AttributesTable extends Table {
 
 
 		//Get all page roles from the database because we want them to have policies too
-		$lo_pageRoles = FactoryLocator::get('Table')->get('PageRoles')->find(
-			'active',
-			authorize: ['skip' => true],
-		)->all();
+		$lo_pageRoles = FactoryLocator::get('Table')->get('PageRoles')->find('active')->all();
 
 		/** @var \Awyiss\Model\Entity\PageRole $lo_pageRole */
 		foreach ($lo_pageRoles as $lo_pageRole) {

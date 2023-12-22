@@ -25,23 +25,6 @@ class ContentAreasTable extends Table {
 	 * @inheritDoc
 	 */
 	public const TABLE = 'content_areas';
-	/**
-	 * @var array|array<array>
-	 */
-	protected array $_defaultConfig = [
-		'authorize' => [
-			'identifiers' => [
-				//We use the page templates-scope, creating an association will occur when creating or updating a page template
-				'Entity.create' => [['create', 'update']],
-				//We use the page templates-scope, updating an association will occur when creating or updating a page template
-				'Entity.update' => [['create', 'update']],
-				'Model.beforeFind' => [['read', 'create', 'update', 'delete']],
-				//We use the page templates-scope, deleting an association will occur when updating or deleting a page template
-				'Model.beforeDelete' => [['update', 'delete']],
-			],
-			'scope' => 'page_templates',
-		],
-	];
 
 
 	/**
@@ -49,14 +32,6 @@ class ContentAreasTable extends Table {
 	 */
 	public function initialize(array $aa_config): void {
 		parent::initialize($aa_config);
-
-		/*$this->belongsToMany('ContentTemplates', [
-			'foreignKey' => [
-				'content_area_id',
-				'page_template_id'
-			],
-			'through' => 'ContentTemplateContentAreas',
-		]);*/
 
 		$this->hasMany('ContentTemplateContentAreas', [
 			'cascadeCallbacks' => true,

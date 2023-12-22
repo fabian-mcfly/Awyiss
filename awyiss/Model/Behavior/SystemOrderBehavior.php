@@ -349,7 +349,6 @@ class SystemOrderBehavior extends Behavior {
 			//Save all found records, but skip the authorization check, the audit and the system order behavior on those to avoid recursion.
 			$lo_table->saveMany($la_records, [
 				'audit' => ['skip' => true],
-				'authorize' => ['skip' => true],
 				'checkRules' => false,
 				'systemOrder' => ['skip' => true],
 			]);
@@ -514,7 +513,6 @@ class SystemOrderBehavior extends Behavior {
 		$lo_table = $this->table();
 
 		$lo_query = $this->addQueryConditions($lo_table->find(), $ao_entity);
-		//$lo_query->applyOptions(['authorize' => ['skip' => true]]);
 
 		$lo_record = $lo_query->select('system_order')->orderByDesc('system_order')->first();
 
@@ -582,7 +580,6 @@ class SystemOrderBehavior extends Behavior {
 		//Save all found records, but skip the authorization check, the audit and the system order behavior on those to avoid recursion.
 		$lo_table->saveMany($la_records, [
 			'audit' => ['skip' => true],
-			'authorize' => ['skip' => true],
 			'checkRules' => false,
 			'systemOrder' => ['skip' => true],
 		]);
@@ -630,7 +627,6 @@ class SystemOrderBehavior extends Behavior {
 		//Save all found records, but skip the authorization check, the audit and the system order behavior on those to avoid recursion.
 		$lo_table->saveMany($la_records, [
 			'audit' => ['skip' => true],
-			'authorize' => ['skip' => true],
 			'checkRules' => false,
 			'systemOrder' => ['skip' => true],
 		]);

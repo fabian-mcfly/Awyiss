@@ -40,9 +40,6 @@ class MenuCell extends Cell {
 			if ($lo_time >= $lo_identity->changedOn) {
 				$lo_table = $this->fetchTable('BackendMenuEntries');
 				$lo_entity = $lo_table->find()->select('id')->applyOptions([
-					'authorize' => [
-						'skip' => true,
-					],
 					'softDelete' => [
 						'includeDeleted' => true,
 					],

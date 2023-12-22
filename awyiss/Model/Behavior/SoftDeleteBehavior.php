@@ -260,7 +260,6 @@ class SoftDeleteBehavior extends Behavior {
 
 		$la_defaults = [
 			'_cleanOnSuccess' => false,
-			'authorize' => ['skip' => true],
 			'checkRules' => false,
 			'systemOrder' => ['skip' => true],
 		];

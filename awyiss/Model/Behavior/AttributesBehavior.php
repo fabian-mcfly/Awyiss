@@ -161,9 +161,7 @@ class AttributesBehavior extends Behavior {
 
 
 		$lo_attributesTable = FactoryLocator::get('Table')->get('Attributes');
-		$lo_attributesQuery = $lo_attributesTable->find('all', authorize: [
-			'skip' => true,
-		]);
+		$lo_attributesQuery = $lo_attributesTable->find('all');
 
 		/**
 		 * @noinspection PhpPossiblePolymorphicInvocationInspection
@@ -258,15 +256,7 @@ class AttributesBehavior extends Behavior {
 		}
 
 		$ao_query->contain([
-			$this->getAttributesTable(true) => [
-				'finder' => [
-					'all' => [
-						'authorize' => [
-							'skip' => true,
-						],
-					],
-				],
-			],
+			$this->getAttributesTable(true),
 		]);
 
 		$ao_query->mapReduce(function (array|Entity $ao_entity, int $ai_key, MapReduce $ao_mapReduce) use ($ao_query): void {

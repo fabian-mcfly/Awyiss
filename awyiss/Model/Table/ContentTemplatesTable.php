@@ -122,17 +122,8 @@ class ContentTemplatesTable extends Table {
 
 		if (!isset($ao_contentTemplate->contentTemplateElements)) {
 			//Load ContentTemplateAreas in case the entity is missing that key
-			$this->skipAuthorizationCheckOnce();
 			$this->loadInto($ao_contentTemplate, [
-				'ContentTemplateElements' => [
-					'finder' => [
-						'all' => [
-							'authorize' => [
-								'skip' => true,
-							],
-						],
-					],
-				],
+				'ContentTemplateElements',
 			]);
 		}
 
@@ -158,11 +149,7 @@ class ContentTemplatesTable extends Table {
 		}
 
 		$lo_attributesTable = FactoryLocator::get('Table')->get('Attributes');
-		$this->availableContentAttributes = $lo_attributesTable->find()->where(['scope' => 'contents'])->applyOptions([
-			'authorize' => [
-				'skip' => true,
-			],
-		])->all()->indexBy('id')->map(function (Attribute $ao_attribute): array {
+		$this->availableContentAttributes = $lo_attributesTable->find()->where(['scope' => 'contents'])->all()->indexBy('id')->map(function (Attribute $ao_attribute): array {
 			return [
 				'title' => $ao_attribute->title,
 				'label' => $ao_attribute->label,

@@ -266,9 +266,7 @@ class LocaleMiddleware implements MiddlewareInterface {
 	protected static function loadLanguages(): void {
 		$lo_tableLocator = FactoryLocator::get('Table');
 
-		$lo_result = $lo_tableLocator->get('Languages')->find('all', authorize: [
-			'skip' => true,
-		]);
+		$lo_result = $lo_tableLocator->get('Languages')->find('all');
 
 		/** @var Language $lo_language */
 		foreach ($lo_result->all() as $lo_language) {

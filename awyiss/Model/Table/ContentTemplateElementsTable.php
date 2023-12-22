@@ -32,17 +32,6 @@ class ContentTemplateElementsTable extends Table {
 		'audit' => [
 			'enabled' => false,
 		],
-		'authorize' => [
-			'identifiers' => [
-				//We use the usergroups-scope, creating a permission will occur when creating or updating a usergroup
-				'Entity.create' => [['create', 'update']],
-				'Entity.update' => 'update',
-				'Model.beforeFind' => [['read', 'create', 'update', 'delete']],
-				//We use the usergroups-scope, deleting a permission will occur when updating or deleting a usergroup
-				'Model.beforeDelete' => [['update', 'delete']],
-			],
-			'scope' => 'content_templates',
-		],
 	];
 
 

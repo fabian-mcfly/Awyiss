@@ -37,10 +37,6 @@ use RuntimeException;
  * @method array getAttributes()
  * @method string getAttributesTable(bool $ab_camelized = false)
  * @method bool hasAttributes()
- * @method \Awyiss\Model\Behavior\AuthorizeBehavior setAuthorizationService(\Awyiss\Authorization\AuthorizationServiceInterface $ao_authorizationService)
- * @method \Awyiss\Model\Behavior\AuthorizeBehavior setPolicyClass(string|\Awyiss\Authorization\Policy\GenericPagePolicy|null $ax_policyClass)
- * @method \Awyiss\Model\Behavior\AuthorizeBehavior skipAuthorizationCheck(bool $ab_skip = true)
- * @method \Awyiss\Model\Behavior\AuthorizeBehavior skipAuthorizationCheckOnce(bool $ab_skip = true)
  * @method \Awyiss\Model\Behavior\DefaultValuesBehavior newDefaultEntity(array $aa_additionalData = [])
  */
 class Table extends BaseTable {
@@ -136,9 +132,6 @@ class Table extends BaseTable {
 
 		if ($lb_isAttributesTable) {
 			$this->addBehavior('Attributes', ['isAttributesTable' => true] + $this->getConfig('attributes', []));
-			if (!$this->getConfig('authorize.scope')) {
-				$this->setConfig('authorize.scope', substr($this->getTable(), 11));
-			}
 		}
 		else {
 			$this->addBehavior(
@@ -154,7 +147,6 @@ class Table extends BaseTable {
 			$this->addBehavior('SystemOrder', $this->getConfig('systemOrder', []));
 		}
 
-		$this->addBehavior('Authorize', $this->getConfig('authorize', []) + ['priority' => 1]);
 		$this->addBehavior('AutoPrefix', $this->getConfig('autoPrefix', []) + ['priority' => 99999]);
 		$this->addBehavior('DefaultValues', $this->getConfig('defaultValues', []));
 
@@ -169,7 +161,7 @@ class Table extends BaseTable {
 			dd($aa_config['translateLanguage'], $this->getConfig('translate', []));
 		}*/
 
-		if (0 && !empty($aa_config['translateLanguage']) && $this->getConfig('translate', [])) {
+		if (!empty($aa_config['translateLanguage']) && $this->getConfig('translate', [])) {
 			$this->addBehavior(
 				'Translate',
 				$this->getConfig('translate') + [
@@ -346,9 +338,7 @@ class Table extends BaseTable {
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function exists(QueryExpression|Closure|array|string|null $aa_conditions, array $aa_options = []): bool {
-		$la_options = array_merge(['authorize' => ['skip' => true]], $aa_options);
-
-		$lo_results = $this->find()->applyOptions($la_options)->select(['existing' => 1])->where($aa_conditions)->limit(1)->disableHydration()->toArray();
+		$lo_results = $this->find()->applyOptions($aa_options)->select(['existing' => 1])->where($aa_conditions)->limit(1)->disableHydration()->toArray();
 
 
 		return (bool)count($lo_results);

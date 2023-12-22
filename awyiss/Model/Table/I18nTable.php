@@ -26,9 +26,6 @@ class I18nTable extends Table {
 		'audit' => [
 			'enabled' => false,
 		],
-		'authorize' => [
-			'enabled' => false,
-		],
 	];
 	/*
 	 * @inheritDoc

@@ -25,6 +25,12 @@ class AuthenticationListener implements EventListenerInterface {
 	/**
 	 * @var array|array<array>
 	 */
+	protected array $initializedClasses = [
+		'identity' => [],
+	];
+	/**
+	 * @var array|array<array>
+	 */
 	protected array $initializedModels = [
 		'identity' => [],
 	];
@@ -44,6 +50,7 @@ class AuthenticationListener implements EventListenerInterface {
 	public function implementedEvents(): array {
 		return [
 			'Authentication.afterAuthenticate' => 'authenticationAfterAuthenticate',
+			'Authentication.requestIdentity' => 'authenticationRequestIdentity',
 			'Authentication.requestLoginUrl' => 'authenticationRequestLoginUrl',
 			'Model.initialize' => 'modelInitialize',
 		];
@@ -62,6 +69,11 @@ class AuthenticationListener implements EventListenerInterface {
 	public function authenticationAfterAuthenticate(Event $ao_event, AuthenticatorInterface $ao_authenticator, IdentityInterface $ao_identity): void {
 		$this->identity = $ao_identity;
 
+		/** @var \Awyiss\Authentication\IdentityAwareTrait $lo_class */
+		foreach ($this->initializedClasses['identity'] as $lo_class) {
+			$lo_class->setIdentity($this->identity);
+		}
+
 		/** @var Table $lo_model */
 		foreach ($this->initializedModels['identity'] as $lo_model) {
 			if ($lo_model->hasBehavior('Audit')) {
@@ -73,8 +85,31 @@ class AuthenticationListener implements EventListenerInterface {
 
 
 	/**
+	 * @param \Cake\Event\Event $ao_event
+	 * @return void
+	 */
+	public function authenticationRequestIdentity(Event $ao_event): void {
+		/** @var Table $lo_model */
+		$lo_class = $ao_event->getSubject();
+
+		if (method_exists($lo_class, 'setIdentity')) {
+			if (!isset($this->identity)) {
+				$this->initializedClasses['identity'][] = $lo_class;
+			}
+			else {
+				$lo_class->setIdentity($this->identity);
+			}
+
+			$ao_event->setResult($this->identity);
+		}
+		else {
+			$ao_event->setResult($this->identity);
+		}
+	}
+
+
+	/**
 	 * The authentication process might require a URL.
-	 *
 	 * For example, the `FormAuthenticator::class` requires one to work.
 	 *
 	 * @param Event $ao_event
@@ -95,10 +130,8 @@ class AuthenticationListener implements EventListenerInterface {
 
 	/**
 	 * For every model that is loaded, set
-	 *
 	 * - the AuthorizationService in every model's AuthorizationBehavior, if the Identity is AuthorizationService.
 	 * If not, save the model to be handled in `authorizationMiddlewareAfterProcess`.
-	 *
 	 * - the Identity in the AuditBehavior, if the Identity is known
 	 * If not, save the model to be handled in `authenticationAfterAuthenticate`.
 	 *
