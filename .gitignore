@@ -1,6 +1,7 @@
 /logs/*
 /tmp/*
 /vendor/*
+/.env
 /composer.lock
 
 # OS generated files #

@@ -20,24 +20,18 @@ return [
 	 */
 	'Datasources' => [
 		'default' => [
-			'database' => '',
+			'database' => env('DATABASE_NAME', ''),
 			/*
 			 * If your MySQL server is configured with `skip-character-set-client-handshake`
 			 * then you MUST use the `flags` config to set your charset encoding.
 			 * For e.g. `'flags' => [\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8mb4']`
 			 */
 			'flags' => [],
-			/*
-			 * During development, if using MySQL < 5.6, uncommenting the
-			 * following line could boost the speed at which schema metadata is
-			 * fetched from the database. It can also be set directly with the
-			 * mysql configuration directive 'innodb_stats_on_metadata = 0'
-			 * which is the recommended value in production environments
-			 */
+			'host' => env('DATABASE_HOST', 'localhost'),
 			//'init' => ['SET GLOBAL innodb_stats_on_metadata = 0'],
-			'password' => '',
+			'password' => env('DATABASE_PASSWORD', ''),
 			//'url' => env('DATABASE_URL', NULL), //You can use a DSN string to set the entire configuration
-			'username' => 'awyiss',
+			'username' => env('DATABASE_USERNAME', ''),
 
 		],
 	],
