@@ -73,7 +73,7 @@ class Attribute extends Entity {
 		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
 
 
-		return $this->defaults + ['fieldset' => $lo_table->getAvailableFieldsets()[0]];
+		return $this->defaultValues + ['fieldset' => $lo_table->getAvailableFieldsets()[0]];
 	}
 
 

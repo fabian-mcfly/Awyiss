@@ -25,13 +25,13 @@ class ContentTemplateElementsTable extends Table {
 	 * @inheritDoc
 	 */
 	public const TABLE = 'content_template_elements';
+
+
 	/**
 	 * @inheritDoc
 	 */
-	protected array $_defaultConfig = [
-		'audit' => [
-			'enabled' => false,
-		],
+	protected array $audit = [
+		'enabled' => false,
 	];
 
 

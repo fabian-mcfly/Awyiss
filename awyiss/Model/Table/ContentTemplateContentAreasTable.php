@@ -26,13 +26,13 @@ class ContentTemplateContentAreasTable extends Table {
 	 * @inheritDoc
 	 */
 	public const TABLE = 'content_template_content_areas';
+
+
 	/**
-	 * @var array|array<array>
+	 * @inheritDoc
 	 */
-	protected array $_defaultConfig = [
-		'audit' => [
-			'enabled' => false,
-		],
+	protected array $audit = [
+		'enabled' => false,
 	];
 
 

@@ -25,13 +25,13 @@ class DatesTable extends Table {
 	 * @inheritDoc
 	 */
 	public const TABLE = 'dates';
+
+
 	/**
 	 * @inheritDoc
 	 */
-	protected array $_defaultConfig = [
-		'audit' => [
-			'enabled' => false,
-		],
+	protected array $audit = [
+		'enabled' => false,
 	];
 
 

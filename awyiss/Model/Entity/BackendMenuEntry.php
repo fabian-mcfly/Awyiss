@@ -44,7 +44,10 @@ class BackendMenuEntry extends Entity {
 		'active' => true,
 		'childBackendMenuEntries' => true,
 	];
-	protected array $defaults = [
+	/**
+	 * @inheritDoc
+	 */
+	protected array $defaultValues = [
 		'parentId' => null,
 		'insertAfterId' => null,
 	];

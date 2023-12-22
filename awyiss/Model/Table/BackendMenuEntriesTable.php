@@ -35,16 +35,23 @@ class BackendMenuEntriesTable extends Table {
 	 * @inheritDoc
 	 */
 	public const TABLE = 'backend_menu_entries';
-	protected array $_defaultConfig = [
-		'nest' => [
-			'relatedColumns' => [],
-		],
-		'systemOrder' => [
-			'relatedColumns' => ['parentId', 'insertAfterId'],
-		],
-		'translate' => [
-			'fields' => ['title'],
-		],
+	/**
+	 * @inheritDoc
+	 */
+	protected array $nest = [
+		'relatedColumns' => [],
+	];
+	/**
+	 * @inheritDoc
+	 */
+	protected array $systemOrder = [
+		'relatedColumns' => ['parentId', 'insertAfterId'],
+	];
+	/**
+	 * @inheritDoc
+	 */
+	protected array $translate = [
+		'fields' => ['title'],
 	];
 
 

@@ -23,13 +23,13 @@ class AuditTable extends Table {
 	 * @inheritDoc
 	 */
 	public const TABLE = 'audit';
+
+
 	/**
 	 * @inheritDoc
 	 */
-	protected array $_defaultConfig = [
-		'audit' => [
-			'enabled' => false,
-		],
+	protected array $audit = [
+		'enabled' => false,
 	];
 
 

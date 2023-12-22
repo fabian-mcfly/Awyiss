@@ -103,6 +103,6 @@ class Publication extends Page {
 	/**
 	* @inheritDoc
 	*/
-	protected array $defaults = [
+	protected array $defaultValues = [
 		'pageRoleId' => PAGEROLE_PUBLICATION,
 	];}

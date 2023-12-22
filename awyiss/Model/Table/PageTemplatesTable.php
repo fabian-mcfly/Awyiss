@@ -26,16 +26,19 @@ class PageTemplatesTable extends Table {
 	 * @inheritDoc
 	 */
 	public const TABLE = 'page_templates';
+
+
 	/**
 	 * @inheritDoc
 	 */
-	protected array $_defaultConfig = [
-		'systemOrder' => [
-			'relatedColumns' => ['pageRoleId'],
-		],
-		'translate' => [
-			'fields' => ['title'],
-		],
+	protected array $systemOrder = [
+		'relatedColumns' => ['pageRoleId'],
+	];
+	/**
+	 * @inheritDoc
+	 */
+	protected array $translate = [
+		'fields' => ['title'],
 	];
 
 

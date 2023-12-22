@@ -34,7 +34,7 @@ class Configuration extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected array $defaults = [
+	protected array $defaultValues = [
 		'realm' => Awyiss::REALM_FRONTEND,
 		'scope' => 'system',
 	];

@@ -39,16 +39,13 @@ class PagesTable extends Table {
 	 * @inheritDoc
 	 */
 	public const TABLE = 'pages';
+
+
 	/**
 	 * @inheritDoc
 	 */
-	protected array $_defaultConfig = [
-		'nest' => [
-			'relatedColumns' => ['languageShortcode', 'pageRoleId'],
-		],
-		'systemOrder' => [
-			'relatedColumns' => ['languageShortcode', 'pageRoleId', 'parentId'],
-		],
+	protected array $nest = [
+		'relatedColumns' => ['languageShortcode', 'pageRoleId'],
 	];
 	protected string $pageRole = 'page';
 	/**
@@ -57,6 +54,12 @@ class PagesTable extends Table {
 	 * @var int
 	 */
 	protected int $pageRoleId;
+	/**
+	 * @inheritDoc
+	 */
+	protected array $systemOrder = [
+		'relatedColumns' => ['languageShortcode', 'pageRoleId', 'parentId'],
+	];
 
 
 	/**

@@ -31,10 +31,11 @@ class UsergroupsTable extends Table {
 	public const TABLE = 'usergroups';
 
 
-	protected array $_defaultConfig = [
-		'translate' => [
-			'fields' => ['title'],
-		],
+	/**
+	 * @inheritDoc
+	 */
+	protected array $translate = [
+		'fields' => ['title'],
 	];
 
 

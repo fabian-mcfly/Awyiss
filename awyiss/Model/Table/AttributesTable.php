@@ -38,14 +38,8 @@ class AttributesTable extends Table {
 	 * https://regex101.com/r/0h9ziN/1
 	 */
 	public const TYPE_PATTERN = '/^(\w*)(?:\((\d+(?:,\d+)*)+\)+)?$/';
-	protected array $_defaultConfig = [
-		'systemOrder' => [
-			'relatedColumns' => ['scope', 'fieldset'],
-		],
-		'translate' => [
-			'fields' => ['title'],
-		],
-	];
+
+
 	/**
 	 * @todo change this from a protected property to something that can be extended. Maybe even different fieldsets per controller
 	 * @var array
@@ -83,16 +77,18 @@ class AttributesTable extends Table {
 	 * @var array
 	 */
 	protected array $attributeScopes;
-	/*
+	/**
 	 * @inheritDoc
-	 *
-	public function initialize (array $aa_config): void {
-		$this->setTable(static::TABLE);
-
-		parent::initialize($aa_config);
-
-		$this->setPrimaryKey('id');
-	}*/
+	 */
+	protected array $systemOrder = [
+		'relatedColumns' => ['scope', 'fieldset'],
+	];
+	/**
+	 * @inheritDoc
+	 */
+	protected array $translate = [
+		'fields' => ['title'],
+	];
 
 
 	/**

@@ -71,7 +71,7 @@ class Page extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected array $defaults = [
+	protected array $defaultValues = [
 		'pageRoleId' => PAGEROLE_PAGE,
 	];
 	/**

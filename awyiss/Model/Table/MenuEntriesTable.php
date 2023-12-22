@@ -35,13 +35,19 @@ class MenuEntriesTable extends Table {
 	 * @inheritDoc
 	 */
 	public const TABLE = 'menu_entries';
-	protected array $_defaultConfig = [
-		'nest' => [
-			'relatedColumns' => ['languageShortcode', 'menuId'],
-		],
-		'systemOrder' => [
-			'relatedColumns' => ['languageShortcode', 'menuId', 'parentId'],
-		],
+
+
+	/**
+	 * @inheritDoc
+	 */
+	protected array $nest = [
+		'relatedColumns' => ['languageShortcode', 'menuId'],
+	];
+	/**
+	 * @inheritDoc
+	 */
+	protected array $systemOrder = [
+		'relatedColumns' => ['languageShortcode', 'menuId', 'parentId'],
 	];
 
 

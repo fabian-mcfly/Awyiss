@@ -47,19 +47,28 @@ class ContentsTable extends Table {
 	 * @inheritDoc
 	 */
 	public const TABLE = 'contents';
+
+
+	/**
+	 * @var string
+	 */
+	private string $forScope;
 	/**
 	 * @inheritDoc
 	 */
-	protected array $_defaultConfig = [
-		'nest' => [
-			'relatedColumns' => ['pageId', 'contentAreaId'],
-		],
-		'systemOrder' => [
-			'relatedColumns' => ['pageId', 'contentAreaId', 'parentId'],
-		],
+	protected array $nest = [
+		'relatedColumns' => ['pageId', 'contentAreaId'],
 	];
-	private string $forScope;
+	/**
+	 * @var string
+	 */
 	private string $pageRoleName;
+	/**
+	 * @inheritDoc
+	 */
+	protected array $systemOrder = [
+		'relatedColumns' => ['pageId', 'contentAreaId', 'parentId'],
+	];
 
 
 	/**

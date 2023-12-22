@@ -30,7 +30,7 @@ class Entity extends BaseEntity {
 	/**
 	 * @var array Default values for the entity
 	 */
-	protected array $defaults = [];
+	protected array $defaultValues = [];
 	/**
 	 * @inheritDoc
 	 */
@@ -103,7 +103,7 @@ class Entity extends BaseEntity {
 	 * @return array
 	 */
 	public function defaultValues(): array {
-		return $this->defaults;
+		return $this->defaultValues;
 	}
 
 

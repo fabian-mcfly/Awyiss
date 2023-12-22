@@ -25,14 +25,13 @@ class LanguagesTable extends Table {
 	 * @inheritDoc
 	 */
 	public const TABLE = 'languages';
+
+
 	/**
 	 * @inheritDoc
 	 */
-	protected array $_defaultConfig = [
-		'systemOrder' => [
-			'relatedColumns' => ['realm'],
-		],
-		'translate' => false,
+	protected array $systemOrder = [
+		'relatedColumns' => ['realm'],
 	];
 
 

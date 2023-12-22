@@ -61,6 +61,20 @@ class Table extends BaseTable {
 	 * @var string
 	 */
 	public const TABLE = '';
+
+
+	/**
+	 * @var array Settings for the AttributesBehavior
+	 */
+	protected array $attributes = [];
+	/**
+	 * @var array Settings for the AuditBehavior
+	 */
+	protected array $audit = [];
+	/**
+	 * @var array Settings for the AutoPrefixBehavior
+	 */
+	protected array $autoPrefix = [];
 	/**
 	 * The default values set for this table
 	 *
@@ -90,6 +104,18 @@ class Table extends BaseTable {
 		'afterDeleteCommit',
 	];
 	/**
+	 * @var array Settings for the DefaultValuesBehavior
+	 */
+	protected array $defaultValues = [];
+	/**
+	 * @var array Settings for the DatesBehavior
+	 */
+	protected array $dates = [];
+	/**
+	 * @var array Settings for the EventTriggerBehavior
+	 */
+	protected array $eventTrigger = [];
+	/**
 	 * Validator class.
 	 *
 	 * @var string
@@ -99,6 +125,22 @@ class Table extends BaseTable {
 	 * @var string
 	 */
 	protected string $i18nDomain;
+	/**
+	 * @var array Settings for the NestBehavior
+	 */
+	protected array $nest = [];
+	/**
+	 * @var array Settings for the SoftDeleteBehavior
+	 */
+	protected array $softDelete = [];
+	/**
+	 * @var array Settings for the SystemOrderBehavior
+	 */
+	protected array $systemOrder = [];
+	/**
+	 * @var array Settings for the TranslateBehavior
+	 */
+	protected array $translate = [];
 
 
 	/**
@@ -131,39 +173,39 @@ class Table extends BaseTable {
 		$lb_isAttributesTable = str_starts_with($this->getTable(), 'attributes_');
 
 		if ($lb_isAttributesTable) {
-			$this->addBehavior('Attributes', ['isAttributesTable' => true] + $this->getConfig('attributes', []));
+			$this->addBehavior('Attributes', ['isAttributesTable' => true] + $this->attributes);
 		}
 		else {
 			$this->addBehavior(
 				'Attributes',
-				['isAttributesTable' => false] + $this->getConfig('attributes', []) + [
+				['isAttributesTable' => false] + $this->attributes + [
 					'sourceTable' => $this->getTable(),
 					'foreignKey' => Inflector::singularize($this->getTable()) . '_id',
 				]
 			);
 
-			$this->addBehavior('Audit', $this->getConfig('audit', []) + ['priority' => 99999]);
-			$this->addBehavior('SoftDelete', $this->getConfig('softDelete', []));
-			$this->addBehavior('SystemOrder', $this->getConfig('systemOrder', []));
+			$this->addBehavior('Audit', $this->audit + ['priority' => 99999]);
+			$this->addBehavior('SoftDelete', $this->softDelete);
+			$this->addBehavior('SystemOrder', $this->systemOrder);
 		}
 
-		$this->addBehavior('AutoPrefix', $this->getConfig('autoPrefix', []) + ['priority' => 99999]);
-		$this->addBehavior('DefaultValues', $this->getConfig('defaultValues', []));
+		$this->addBehavior('AutoPrefix', $this->autoPrefix + ['priority' => 99999]);
+		$this->addBehavior('DefaultValues', $this->defaultValues);
 
 		if ($this->getTable() !== 'dates') {
-			$this->addBehavior('Date', $this->getConfig('dates', []));
+			$this->addBehavior('Dates', $this->dates);
 		}
 
-		$this->addBehavior('EventTrigger', $this->getConfig('eventTrigger', []));
+		$this->addBehavior('EventTrigger', $this->eventTrigger);
 
 		/*if ($lb_isAttributesTable) {
 			dd($aa_config['translateLanguage'], $this->getConfig('translate', []));
 		}*/
 
-		if (!empty($aa_config['translateLanguage']) && $this->getConfig('translate', [])) {
+		if (!empty($aa_config['translateLanguage']) && !empty($this->translate['fields'])) {
 			$this->addBehavior(
 				'Translate',
-				$this->getConfig('translate') + [
+				$this->translate + [
 					'allowEmptyTranslations' => false,
 					'defaultLocale' => '',
 					'locale' => $aa_config['translateLanguage']->shortcode ?? null,

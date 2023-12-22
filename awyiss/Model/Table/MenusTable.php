@@ -26,10 +26,13 @@ class MenusTable extends Table {
 	 * @inheritDoc
 	 */
 	public const TABLE = 'menus';
-	protected array $_defaultConfig = [
-		'translate' => [
-			'fields' => ['title'],
-		],
+
+	
+	/**
+	 * @inheritDoc
+	 */
+	protected array $translate = [
+		'fields' => ['title'],
 	];
 
 

@@ -19,13 +19,13 @@ class I18nTable extends Table {
 	 * @inheritDoc
 	 */
 	public const TABLE = 'i18n';
+
+
 	/**
 	 * @inheritDoc
 	 */
-	protected array $_defaultConfig = [
-		'audit' => [
-			'enabled' => false,
-		],
+	protected array $audit = [
+		'enabled' => false,
 	];
 	/*
 	 * @inheritDoc

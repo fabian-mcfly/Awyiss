@@ -34,14 +34,13 @@ class PageRolesTable extends Table {
 	 * @inheritDoc
 	 */
 	public const TABLE = 'page_roles';
+
+
 	/**
 	 * @inheritDoc
 	 */
 	protected array $_defaultConfig = [
 		'implementedEvents' => [//'beforeSoftDelete'
-		],
-		'translate' => [
-			'fields' => ['title'],
 		],
 	];
 	/**
@@ -54,6 +53,12 @@ class PageRolesTable extends Table {
 		'element',
 		'generic_pages',
 		'layout',
+	];
+	/**
+	 * @inheritDoc
+	 */
+	protected array $translate = [
+		'fields' => ['title'],
 	];
 
 

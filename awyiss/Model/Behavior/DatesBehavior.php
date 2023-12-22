@@ -19,7 +19,7 @@ use Cake\Utility\Inflector;
 /**
  * Handles specific dates for entities, like publishing dates or event/news dates
  */
-class DateBehavior extends Behavior/* implements PropertyMarshalInterface*/ {
+class DatesBehavior extends Behavior/* implements PropertyMarshalInterface*/ {
 	use LocatorAwareTrait;
 
 

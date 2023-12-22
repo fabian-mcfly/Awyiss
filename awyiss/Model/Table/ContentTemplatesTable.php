@@ -26,11 +26,8 @@ class ContentTemplatesTable extends Table {
 	 * @inheritDoc
 	 */
 	public const TABLE = 'content_templates';
-	protected array $_defaultConfig = [
-		'translate' => [
-			'fields' => ['title'],
-		],
-	];
+
+
 	/**
 	 * @var array<int, string>
 	 */
@@ -62,6 +59,12 @@ class ContentTemplatesTable extends Table {
 	 *     inputType:string}>
 	 */
 	protected array $availableContentAttributes;
+	/**
+	 * @inheritDoc
+	 */
+	protected array $translate = [
+		'fields' => ['title'],
+	];
 
 
 	/**
