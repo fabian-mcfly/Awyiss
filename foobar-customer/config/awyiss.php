@@ -37,7 +37,7 @@ return [
 			//'init' => ['SET GLOBAL innodb_stats_on_metadata = 0'],
 			'password' => '',
 			//'url' => env('DATABASE_URL', NULL), //You can use a DSN string to set the entire configuration
-			'username' => '',
+			'username' => 'awyiss',
 
 		],
 	],
