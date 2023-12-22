@@ -26,7 +26,7 @@ class AttributesController extends Controller {
 	/**
 	 * @inheritDoc
 	 */
-	protected array $categorize = [
+	protected array $categories = [
 		'allowAggregation' => false,
 		'enabled' => true,
 		'identifier' => 'scope',
@@ -48,7 +48,7 @@ class AttributesController extends Controller {
 			$as_className = __d($as_identifier, 'title_menu');
 		});
 
-		$this->categorize['categories'] = $la_attributeScopes;
+		$this->categories['categories'] = $la_attributeScopes;
 
 		parent::initialize();
 	}

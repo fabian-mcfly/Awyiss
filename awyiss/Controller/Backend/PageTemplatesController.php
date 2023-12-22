@@ -20,7 +20,7 @@ class PageTemplatesController extends Controller {
 	/**
 	 * @inheritDoc
 	 */
-	protected array $categorize = [
+	protected array $categories = [
 		'associationName' => 'PageRoles',
 		'enabled' => true,
 		'identifier' => 'pageRole',

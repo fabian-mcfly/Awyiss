@@ -11,7 +11,7 @@ use Awyiss\Controller\BackendController as Controller;
  * Handles the dashboard of the backend
  */
 class DashboardController extends Controller {
-	protected array $categorize = [
+	protected array $categories = [
 		'enabled' => false,
 	];
 	protected ?string $defaultTable = '';

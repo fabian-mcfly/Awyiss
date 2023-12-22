@@ -48,8 +48,8 @@ trait EntityAttributesTrait {
 			return;
 		}
 
-		dd($ao_attributesTable, __FILE__, __LINE__);
 		$la_translatableFields = $ao_attributesTable->getConfig('translate.fields', []);
+
 		/** @var \Cake\Datasource\EntityInterface $lo_attributes */
 		foreach ($lo_attributes->_fields as $ls_key => $lx_value) {
 			if (in_array($ls_key, ['id', $as_foreignKey, '_i18n', '_translations'])) {
@@ -62,7 +62,6 @@ trait EntityAttributesTrait {
 
 			$this->setVirtual([$ls_key], true);
 		}
-		//$this->setHidden(['attributes'], true);
 	}
 
 

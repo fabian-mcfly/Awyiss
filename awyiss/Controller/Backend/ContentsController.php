@@ -31,7 +31,7 @@ class ContentsController extends Controller {
 	/**
 	 * @inheritDoc
 	 */
-	protected array $categorize = [
+	protected array $categories = [
 		'allowAggregation' => false,
 		'associationName' => 'Pages',
 		'enabled' => true,

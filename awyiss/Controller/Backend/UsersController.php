@@ -29,7 +29,7 @@ class UsersController extends Controller {
 	/**
 	 * @inheritDoc
 	 */
-	protected array $categorize = [
+	protected array $categories = [
 		'allowUnassigned' => true,
 		'associationName' => 'Usergroups',
 		'enabled' => true,

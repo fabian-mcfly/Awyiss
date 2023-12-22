@@ -30,12 +30,12 @@ abstract class BackendController extends AppController {
 	 * @see CategoriesComponent
 	 * @var array Settings for the CategoriesComponent
 	 */
-	protected array $categorize = [];
+	protected array $categories = [];
 	/**
 	 * @var array|array<string>  A list of properties that will be merged with values from the database configuration
 	 */
 	protected array $customConfigProperties = [
-		'categorize',
+		'categories',
 		'eventTrigger',
 		'paginate',
 		'systemOrder',
@@ -76,6 +76,8 @@ abstract class BackendController extends AppController {
 			$la_customConfig = Configure::read('Awyiss.' . $this->getName() . '.backend.' . $ls_property);
 			if ($la_customConfig && is_array($this->$ls_property)) {
 				$this->$ls_property = Hash::merge($this->$ls_property, $la_customConfig);
+
+				dd($la_customConfig);
 			}
 		}
 
@@ -89,7 +91,12 @@ abstract class BackendController extends AppController {
 			$ls_testPath = Router::url(['_name' => Awyiss::REALM_BACKEND] + $lo_request->getParam('parts') + ['lang' => $ls_lang]);
 			if (!str_starts_with($ls_path, $ls_testPath)) {
 				$this->redirect(
-					Router::url(['_name' => Awyiss::REALM_BACKEND, '?' => $lo_request->getParam('?')] + $lo_request->getParam('parts') + ['lang' => $ls_lang]),
+					Router::url(
+						[
+							'_name' => Awyiss::REALM_BACKEND,
+							'?' => $lo_request->getParam('?'),
+						] + $lo_request->getParam('parts') + ['lang' => $ls_lang]
+					),
 					301
 				);
 			}
@@ -104,12 +111,11 @@ abstract class BackendController extends AppController {
 			$this->loadComponent('Authorization', $this->authorization);
 
 			//Load with the defaultTable if present, otherwise with the name of the controller
-			$this->loadComponent('Categories', $this->categorize + ['tableName' => $this->defaultTable ?? $this->getName()]);
+			$this->loadComponent('Categories', $this->categories + ['tableName' => $this->defaultTable ?? $this->getName()]);
 
 			$this->loadComponent('EventTrigger', $this->eventTrigger);
 
 			$this->loadComponent('Flash', ['key' => Inflector::underscore($this->getName())]);
-			//$this->loadComponent('Paginator', $this->paginate);
 
 			//Load with the defaultTable if present, otherwise with the name of the controller
 			$this->loadComponent('SystemOrder', $this->systemOrder + ['tableName' => $this->defaultTable ?? $this->getName()]);

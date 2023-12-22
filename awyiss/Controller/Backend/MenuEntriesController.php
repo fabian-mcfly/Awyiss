@@ -24,7 +24,7 @@ class MenuEntriesController extends Controller {
 	/**
 	 * @inheritDoc
 	 */
-	protected array $categorize = [
+	protected array $categories = [
 		'allowAggregation' => false,
 		'associationName' => 'Menus',
 		'enabled' => true,

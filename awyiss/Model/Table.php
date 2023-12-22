@@ -150,9 +150,8 @@ class Table extends BaseTable {
 		$this->addBehavior('AutoPrefix', $this->getConfig('autoPrefix', []) + ['priority' => 99999]);
 		$this->addBehavior('DefaultValues', $this->getConfig('defaultValues', []));
 
-		//if ($this->getTable() !== 'dates') {
-		if ($this->getTable() === 'menus') {
-			$this->addBehavior('Date', $this->getConfig('date', []));
+		if ($this->getTable() !== 'dates') {
+			$this->addBehavior('Date', $this->getConfig('dates', []));
 		}
 
 		$this->addBehavior('EventTrigger', $this->getConfig('eventTrigger', []));
