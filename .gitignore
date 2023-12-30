@@ -3,6 +3,7 @@
 /vendor/*
 /.env
 /composer.lock
+/foobar-customer
 
 # OS generated files #
 ######################
