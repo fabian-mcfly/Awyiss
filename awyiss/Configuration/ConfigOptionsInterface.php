@@ -40,11 +40,10 @@ interface ConfigOptionsInterface {
 
 	/**
 	 * Retreives a configuration class and validates the provided value for the given configOptionIdentifier
-	 *
 	 * Returns a string with an error message if the value is not valid.
 	 *
 	 * @param string $as_realm
-	 * @param string $as_identifier
+	 * @param array|string $ax_path
 	 * @param mixed $ax_value
 	 * @param string|null $as_languageShortcode
 	 * @param bool $ab_fallbackValidity
@@ -52,7 +51,7 @@ interface ConfigOptionsInterface {
 	 */
 	public function validateConfigValue(
 		string $as_realm,
-		string $as_identifier,
+		array|string $ax_path,
 		mixed $ax_value,
 		?string $as_languageShortcode = null,
 		bool $ab_fallbackValidity = true
@@ -62,12 +61,12 @@ interface ConfigOptionsInterface {
 	 * Retreives a configuration class and cast the provided value to it's correct type for the given configOptionIdentifier
 	 *
 	 * @param string $as_realm
-	 * @param string $as_identifier
+	 * @param string $ax_path
 	 * @param mixed $ax_value
 	 * @return mixed
 	 * @throws \ReflectionException
 	 */
-	public function typecastConfigValue(string $as_realm, string $as_identifier, mixed $ax_value): mixed;
+	public function typecastConfigValue(string $as_realm, array|string $ax_path, mixed $ax_value): mixed;
 
 	/**
 	 * Return the scope of the options-collection.

@@ -283,6 +283,8 @@ class Awyiss extends BaseApplication {
 			}
 		}
 
+		Configure::delete('Awyiss');
+
 		/*
 		 * If the config path `Awyiss` is not empty, we do have a config file
 		 * Therefore loading the database config is skipped
@@ -319,12 +321,21 @@ class Awyiss extends BaseApplication {
 
 		$la_config = [];
 		foreach ($lo_query->all() as $la_item) {
-			$ls_path = 'Awyiss.' . ConfigOptionsProvider::sanitizeScope($la_item['scope']) . '.' . $la_item['realm'] . '.' . $la_item['identifier'];
+			$la_item['identifier'] = array_map(function (string $as_identifier) {
+				return ConfigOptionsProvider::sanitizeIdentifier($as_identifier);
+			}, explode('.', $la_item['identifier']));
+
+			$ls_path = implode('.', [
+				'Awyiss',
+				ConfigOptionsProvider::sanitizeScope($la_item['scope']),
+				Inflector::camelize($la_item['realm']),
+				...$la_item['identifier'],
+			]);
 
 			$la_item['value'] = ConfigOptionsProvider::typecastConfigValue(
 				$la_item['scope'],
 				$la_item['realm'],
-				$la_item['identifier'],
+				implode('.', $la_item['identifier']),
 				$la_item['value']
 			);
 
@@ -334,17 +345,16 @@ class Awyiss extends BaseApplication {
 		}
 
 		/** @var \Awyiss\Configuration\AbstractConfigOptions $lo_configOptions */
-		foreach (ConfigOptionsProvider::getConfigOptionsFiles(true) as $lo_configOptionsFiles) {
-			if (!$lo_configOptionsFiles) {
+		foreach (ConfigOptionsProvider::getConfigOptionsFiles(true) as $ls_scope => $lo_configOptionsFile) {
+			if (!$lo_configOptionsFile) {
 				continue;
 			}
 
-			$ls_scope = $lo_configOptionsFiles::getScope();
 			/**
 			 * @var string $ls_realm
 			 * @var \Awyiss\Configuration\ConfigOptionCollection $lo_realmConfigOptionCollection
 			 */
-			foreach ($lo_configOptionsFiles->getConfigOptions() as $ls_realm => $lo_realmConfigOptionCollection) {
+			foreach ($lo_configOptionsFile->getConfigOptions() as $ls_realm => $lo_realmConfigOptionCollection) {
 				/** @var \Awyiss\Configuration\ConfigOption $lo_configOption */
 				foreach ($lo_realmConfigOptionCollection->getConfigOptions() as $ls_key => $lo_configOption) {
 					$ls_key = 'Awyiss.' . $ls_scope . '.' . $ls_realm . '.' . $ls_key;
@@ -355,7 +365,8 @@ class Awyiss extends BaseApplication {
 			}
 		}
 
-		Configure::delete('Awyiss');
+		ksort($la_config);
+
 		Configure::write($la_config);
 	}
 

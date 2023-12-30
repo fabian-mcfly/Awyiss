@@ -4,6 +4,7 @@
 namespace Awyiss\Model;
 
 
+use Awyiss\Awyiss;
 use Awyiss\Core\App;
 use Awyiss\Model\Behavior\Translate\EavStrategy;
 use Awyiss\ORM\Association\BelongsTo;
@@ -13,12 +14,14 @@ use Awyiss\ORM\Association\HasOne;
 use Awyiss\ORM\Behavior;
 use Awyiss\ORM\RulesChecker;
 use Awyiss\Validation\Validator;
+use Cake\Core\Configure;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Schema\TableSchemaInterface;
 use Cake\ORM\Exception\MissingEntityException;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\Table as BaseTable;
+use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 use Cake\Validation\Validator as BaseValidator;
 use Closure;
@@ -76,6 +79,15 @@ class Table extends BaseTable {
 	 */
 	protected array $autoPrefix = [];
 	/**
+	 * @var array<string> A list of properties that will be merged with values from the database configuration
+	 */
+	protected array $customConfigProperties = [
+		'categories',
+		'eventTrigger',
+		'dates',
+		'systemOrder',
+	];
+	/**
 	 * The default values set for this table
 	 *
 	 * @var array
@@ -103,6 +115,7 @@ class Table extends BaseTable {
 		'afterDelete',
 		'afterDeleteCommit',
 	];
+
 	/**
 	 * @var array Settings for the DefaultValuesBehavior
 	 */
@@ -170,6 +183,17 @@ class Table extends BaseTable {
 
 		$this->setPrimaryKey('id');
 
+		//Merge the config properties with custom configuration from the database
+		$ls_scope = Inflector::camelize(isset($this->pageRole) ? Inflector::tableize($this->pageRole) : $this->getTable());
+		foreach ($this->customConfigProperties as $ls_property) {
+			$ls_path = implode('.', ['Awyiss', $ls_scope, Awyiss::REALM_BACKEND, $ls_property]);
+			$la_customConfig = Configure::read($ls_path);
+			if ($la_customConfig && is_array($this->$ls_property)) {
+				/** @noinspection PhpParamsInspection */
+				$this->$ls_property = Hash::merge($this->$ls_property, $la_customConfig);
+			}
+		}
+
 		$lb_isAttributesTable = str_starts_with($this->getTable(), 'attributes_');
 
 		if ($lb_isAttributesTable) {
@@ -179,7 +203,7 @@ class Table extends BaseTable {
 			$this->addBehavior(
 				'Attributes',
 				['isAttributesTable' => false] + $this->attributes + [
-					'sourceTable' => $this->getTable(),
+					'sourceTable' => $this->pageRole ?? $this->getTable(),
 					'foreignKey' => Inflector::singularize($this->getTable()) . '_id',
 				]
 			);

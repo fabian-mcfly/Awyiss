@@ -32,14 +32,19 @@ abstract class BackendController extends AppController {
 	 */
 	protected array $categories = [];
 	/**
-	 * @var array|array<string>  A list of properties that will be merged with values from the database configuration
+	 * @var array<string>  A list of properties that will be merged with values from the database configuration
 	 */
 	protected array $customConfigProperties = [
 		'categories',
+		//'dates',
 		'eventTrigger',
 		'paginate',
 		'systemOrder',
 	];
+	/**
+	 * @var array Settings for the DatesComponent
+	 */
+	//protected array $dates = [];
 	/**
 	 * @see \Awyiss\Controller\Component\EventTriggerComponent
 	 * @var array Settings for the EventTriggerComponent
@@ -72,12 +77,13 @@ abstract class BackendController extends AppController {
 		EventListenersProvider::loadListener($this->getName(), Awyiss::REALM_BACKEND);
 
 		//Merge the config properties with custom configuration from the database
+		$ls_scope = $this->getName();
+
 		foreach ($this->customConfigProperties as $ls_property) {
-			$la_customConfig = Configure::read('Awyiss.' . $this->getName() . '.backend.' . $ls_property);
+			$ls_path = implode('.', ['Awyiss', $ls_scope, Awyiss::REALM_BACKEND, $ls_property]);
+			$la_customConfig = Configure::read($ls_path);
 			if ($la_customConfig && is_array($this->$ls_property)) {
 				$this->$ls_property = Hash::merge($this->$ls_property, $la_customConfig);
-
-				dd($la_customConfig);
 			}
 		}
 

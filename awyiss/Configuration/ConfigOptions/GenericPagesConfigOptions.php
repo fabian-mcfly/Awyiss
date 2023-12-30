@@ -1,0 +1,83 @@
+<?php declare(strict_types=1);
+
+
+namespace Awyiss\Configuration\ConfigOptions;
+
+
+use Awyiss\Awyiss;
+use Awyiss\Configuration\AbstractConfigOptions;
+use Awyiss\Configuration\ConfigOption;
+use Awyiss\Configuration\ConfigOptionType;
+use Awyiss\Model\Behavior\Date\DateType;
+
+
+/**
+ * Provides all configuration options for the ContentTemplates scope
+ */
+class GenericPagesConfigOptions extends AbstractConfigOptions {
+	/**
+	 * @var string Scope of these options
+	 */
+	protected static string $scope = 'GenericPages';
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public function initializeConfigOptions(): void {
+		$this->add(Awyiss::REALM_BACKEND, [
+			'dates' => [
+				'types' => [
+					new ConfigOption([
+						'defaultValue' => DateType::DATE,
+						'identifier' => 'eventStart',
+						'localizable' => false,
+						'nullable' => true,
+						'type' => ConfigOptionType::ENUM,
+						'values' => DateType::class,
+					]),
+					new ConfigOption([
+						'defaultValue' => null,
+						'identifier' => 'eventEnd',
+						'localizable' => false,
+						'nullable' => true,
+						'type' => ConfigOptionType::ENUM,
+						'values' => DateType::class,
+					]),
+					new ConfigOption([
+						'defaultValue' => DateType::DATETIME,
+						'identifier' => 'publicationStart',
+						'localizable' => false,
+						'nullable' => true,
+						'type' => ConfigOptionType::ENUM,
+						'values' => DateType::class,
+					]),
+					new ConfigOption([
+						'defaultValue' => DateType::DATETIME,
+						'identifier' => 'publicationEnd',
+						'localizable' => false,
+						'nullable' => true,
+						'type' => ConfigOptionType::ENUM,
+						'values' => DateType::class,
+					]),
+				],
+			],
+			'paginate' => [
+				new ConfigOption([
+					'defaultValue' => true,
+					'identifier' => 'enabled',
+					'localizable' => false,
+					'nullable' => true,
+					'type' => ConfigOptionType::BOOL,
+				]),
+				new ConfigOption([
+					'defaultValue' => 20,
+					'identifier' => 'limit',
+					'localizable' => false,
+					'nullable' => false,
+					'type' => ConfigOptionType::INTEGER,
+				]),
+			],
+		]);
+	}
+}

@@ -4,6 +4,8 @@
 namespace Awyiss\Configuration;
 
 
+use Awyiss\Configuration\ConfigOptions\GenericPagesConfigOptions;
+use Cake\Datasource\FactoryLocator;
 use Cake\Utility\Inflector;
 use Cake\Utility\Text;
 use ReflectionClass;
@@ -96,22 +98,32 @@ class ConfigOptionsProvider {
 			return static::$loadedConfigOptions[ $ls_scope ];
 		}
 
-		if (class_exists($as_scope)) {
-			$ls_scope = $as_scope::getScope();
-			$ls_configurationClass = $as_scope;
+		if (str_contains($as_scope, '\\')) {
+			if (class_exists($as_scope)) {
+				$ls_scope = $as_scope::getScope();
+				$ls_configurationClass = $as_scope;
 
-			if (array_key_exists($ls_scope, static::$loadedConfigOptions)) {
-				return static::$loadedConfigOptions[ $ls_scope ];
+				if (array_key_exists($ls_scope, static::$loadedConfigOptions)) {
+					return static::$loadedConfigOptions[ $ls_scope ];
+				}
+			}
+			else {
+				return null;
 			}
 		}
 		else {
 			/** @var class-string<ConfigOptionsInterface>|null $ls_configurationClass */
 			$ls_configurationClass = static::getConfigOptionsFile($ls_scope);
+
 			if (!$ls_configurationClass) {
 				static::$loadedConfigOptions[ $ls_scope ] = null;
 
 
 				return null;
+			}
+
+			if (!str_contains($as_scope, '\\')) {
+				$ls_configurationClass = '\\' . GenericPagesConfigOptions::class;
 			}
 		}
 
@@ -153,13 +165,13 @@ class ConfigOptionsProvider {
 	 *
 	 * @param string $as_scope
 	 * @param string $as_realm
-	 * @param string $as_identifier
+	 * @param string $ax_identifierPath
 	 * @param mixed $ax_value
 	 * @return mixed
 	 * @throws \ReflectionException
 	 * @noinspection PhpUnused
 	 */
-	public static function typecastConfigValue(string $as_scope, string $as_realm, string $as_identifier, mixed $ax_value): mixed {
+	public static function typecastConfigValue(string $as_scope, string $as_realm, string $ax_identifierPath, mixed $ax_value): mixed {
 		$lo_configuration = static::loadConfigOptions($as_scope);
 
 		if (!$lo_configuration) {
@@ -167,7 +179,7 @@ class ConfigOptionsProvider {
 		}
 
 
-		return $lo_configuration->typecastConfigValue($as_realm, $as_identifier, $ax_value);
+		return $lo_configuration->typecastConfigValue($as_realm, $ax_identifierPath, $ax_value);
 	}
 
 
@@ -211,15 +223,20 @@ class ConfigOptionsProvider {
 	protected static function findConfigOptionsFile(string $as_scope, bool $ab_load = false): array {
 		$la_configurations = [];
 
+		$ls_scope = $as_scope;
+		if ($ls_scope !== '*') {
+			$ls_scope = Inflector::camelize($ls_scope);
+		}
+
 		$la_paths = [
-			'\\' . CUSTOM_NAMESPACE . '\Configuration\ConfigOptions\\' => implode(DS, [ROOT, CUSTOM_DIR, 'Configuration', 'ConfigOptions', $as_scope . 'ConfigOptions.php',]),
-			'\Awyiss\Configuration\ConfigOptions\\' => implode(DS, [ROOT, APP_DIR, 'Configuration', 'ConfigOptions', $as_scope . 'ConfigOptions.php']),
+			'\\' . CUSTOM_NAMESPACE . '\Configuration\ConfigOptions\\' => implode(DS, [ROOT, CUSTOM_DIR, 'Configuration', 'ConfigOptions', $ls_scope . 'ConfigOptions.php',]),
+			'\Awyiss\Configuration\ConfigOptions\\' => implode(DS, [ROOT, APP_DIR, 'Configuration', 'ConfigOptions', $ls_scope . 'ConfigOptions.php']),
 		];
 
 		foreach ($la_paths as $ls_namespace => $ls_path) {
 			foreach (glob($ls_path) as $ls_filePath) {
 				$ls_configurationName = substr($ls_filePath, strrpos($ls_filePath, DS) + 1, -4);
-				if (str_starts_with($ls_configurationName, '_')) {
+				if (str_starts_with($ls_configurationName, '_') || ($ls_scope === '*' && $ls_configurationName === 'GenericPagesConfigOptions')) {
 					continue;
 				}
 
@@ -236,9 +253,9 @@ class ConfigOptionsProvider {
 				/**
 				 * @var ConfigOptionsInterface $ls_configurationClass
 				 */
-				$ls_scope = $ls_configurationClass::getScope();
+				$ls_configScope = $ls_configurationClass::getScope();
 
-				if (isset($la_configurations[ $ls_scope ])) {
+				if (isset($la_configurations[ $ls_configScope ])) {
 					continue;
 				}
 
@@ -246,10 +263,37 @@ class ConfigOptionsProvider {
 					static::loadConfigOptions($ls_configurationClass);
 				}
 
-				$la_configurations[ $ls_scope ] = $ls_configurationClass;
+				$la_configurations[ $ls_configScope ] = $ls_configurationClass;
 			}
 		}
 
+
+		if ($as_scope === '*') {
+			$lo_pageRolesTable = FactoryLocator::get('Table')->get('PageRoles');
+			/** @var \Awyiss\Model\Entity\PageRole $lo_pageRole */
+			foreach ($lo_pageRolesTable->find()->where(['identifier !=' => 'page'])->select('identifier') as $lo_pageRole) {
+				$ls_configScope = static::sanitizeScope($lo_pageRole->identifier);
+
+				if (isset($la_configurations[ $ls_configScope ])) {
+					continue;
+				}
+
+				$ls_configurationClass = $ls_configScope;
+
+				if ($ab_load) {
+					static::loadConfigOptions($ls_configurationClass);
+				}
+
+				$la_configurations[ $ls_configScope ] = $ls_configScope;
+			}
+		}
+		elseif (!isset($la_configurations[ $as_scope ])) {
+			$ls_singular = Inflector::singularize(Inflector::underscore($as_scope));
+			$ls_constant = 'PAGEROLE_' . strtoupper($ls_singular);
+			if (defined($ls_constant)) {
+				$la_configurations[ $as_scope ] = $as_scope;
+			}
+		}
 
 		return $la_configurations;
 	}

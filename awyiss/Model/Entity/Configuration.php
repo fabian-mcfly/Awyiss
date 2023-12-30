@@ -61,7 +61,7 @@ class Configuration extends Entity {
 	 * @see \Awyiss\Model\Entity\Configuration::$identifier
 	 */
 	protected function _setIdentifier(string $as_identifier): string {
-		return Inflector::variable($as_identifier);
+		return Inflector::underscore($as_identifier);
 	}
 
 
@@ -72,7 +72,7 @@ class Configuration extends Entity {
 	 * @see \Awyiss\Model\Entity\Configuration::$value
 	 */
 	protected function _setValue(mixed $ax_value): mixed {
-		return $ax_value ?: '';
+		return is_null($ax_value) || $ax_value === false ? null : $ax_value;
 	}
 
 

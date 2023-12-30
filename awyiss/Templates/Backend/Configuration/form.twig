@@ -17,7 +17,7 @@
 				{{ _self.recursiveConfigOptions(lx_configuration, ai_level + 1, aa_parent|merge([ls_key])) }}
 			{% endif %}
 		{% else %}
-			<option>{{ aa_parent|length > 0 ? aa_parent|join('.') ~ '.' : '' }}{{ ls_key }}</option>
+			<option value="{{ aa_parent|length > 0 ? aa_parent|join('.') ~ '.' : '' }}{{ ls_key }}">{{ ls_key }}</option>
 		{% endif %}
 	{% endfor %}
 {% endmacro %}
@@ -64,7 +64,7 @@
 
 		{% block fieldsetGeneralInner %}
 			{% block formControlIdentifier %}
-				{{ helper_Form_control('identifier') }}
+				{{ helper_Form_control('identifier', {val: ao_configuration.identifier|variable }) }}
 
 				{% block formControlIdentifierSelect %}
 					<label>

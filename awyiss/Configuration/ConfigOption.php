@@ -31,7 +31,9 @@ class ConfigOption {
 		'localizable' => 'bool',
 		'identifier' => 'string',
 		'nullable' => 'bool|array',
+		'title' => 'string',
 		'type' => 'string',
+		'typecast' => 'callable|null',
 	];
 	/**
 	 * @var mixed|null
@@ -57,51 +59,73 @@ class ConfigOption {
 		'localized' => false,
 	];
 	/**
+	 * @var string|null
+	 */
+	protected ?string $title = null;
+	/**
 	 * @var ConfigOptionType
 	 */
 	protected ConfigOptionType $type;
+	/**
+	 * @var callable|null Can hold a callable that casts the provided value
+	 */
+	protected $typecast = null;
+	/**
+	 * @var array|class-string Possible values for type "listvalue"
+	 */
+	protected array|string $values;
 
 
 	/**
 	 * @param array{defaultValue: mixed, localizable: bool, identifier: string, nullable: bool|array, type: string} $aa_settings
 	 */
-	public function __construct(#[ArrayShape(self::SETTINGS_SHAPE)] array $aa_settings = []) {
-		if (isset($aa_settings['defaultValue'])) {
-			$this->setDefaultValue($aa_settings['defaultValue']);
+	public function __construct(#[ArrayShape(self::SETTINGS_SHAPE)] array|string $aa_settings = []) {
+		$la_settings = $aa_settings;
+		if (!is_array($aa_settings)) {
+			$la_settings = ['identifier' => $aa_settings];
 		}
 
-		if (isset($aa_settings['description'])) {
-			$this->setDescription($aa_settings['description']);
+		if (isset($la_settings['defaultValue'])) {
+			$this->setDefaultValue($la_settings['defaultValue']);
 		}
 
-		if (isset($aa_settings['localizable']) && is_bool($aa_settings['localizable'])) {
-			$this->setLocalizable($aa_settings['localizable']);
+		if (isset($la_settings['description'])) {
+			$this->setDescription($la_settings['description']);
 		}
 
-		if (isset($aa_settings['identifier'])) {
-			$this->setIdentifier($aa_settings['identifier']);
-		}
-		else {
-			throw new RuntimeException(sprintf('Missing identifier in `%s`', static::class));
+		if (isset($la_settings['localizable']) && is_bool($la_settings['localizable'])) {
+			$this->setLocalizable($la_settings['localizable']);
 		}
 
-		if (isset($aa_settings['nullable'])) {
-			if (is_bool($aa_settings['nullable'])) {
-				$this->setNullable($aa_settings['nullable']);
-				$this->setNullable($aa_settings['nullable'], true);
+		if (isset($la_settings['identifier'])) {
+			$this->setIdentifier($la_settings['identifier']);
+		}
+
+		if (isset($la_settings['nullable'])) {
+			if (is_bool($la_settings['nullable'])) {
+				$this->setNullable($la_settings['nullable']);
+				$this->setNullable($la_settings['nullable'], true);
 			}
-			elseif (is_array($aa_settings['nullable'])) {
-				if (isset($aa_settings['nullable']['global'])) {
-					$this->setNullable($aa_settings['nullable']['global']);
+			elseif (is_array($la_settings['nullable'])) {
+				if (isset($la_settings['nullable']['global'])) {
+					$this->setNullable($la_settings['nullable']['global']);
 				}
 
-				if (isset($aa_settings['nullable']['localized'])) {
-					$this->setNullable($aa_settings['nullable']['localized'], true);
+				if (isset($la_settings['nullable']['localized'])) {
+					$this->setNullable($la_settings['nullable']['localized'], true);
 				}
 			}
 		}
 
-		$this->setType($aa_settings['type'] ?? ConfigOptionType::STRING);
+		$this->setType($la_settings['type'] ?? ConfigOptionType::STRING);
+
+		if (isset($la_settings['typecast'])) {
+			$this->setTypecast($la_settings['typecast']);
+		}
+
+		if (isset($la_settings['values'])) {
+			$this->setValues($la_settings['values']);
+		}
 	}
 
 
@@ -166,26 +190,6 @@ class ConfigOption {
 
 
 	/**
-	 * @return ConfigOptionType
-	 */
-	public function getType(): ConfigOptionType {
-		return $this->type;
-	}
-
-
-	/**
-	 * @param ConfigOptionType $ae_type
-	 * @return self
-	 */
-	public function setType(ConfigOptionType $ae_type): static {
-		$this->type = $ae_type;
-
-
-		return $this;
-	}
-
-
-	/**
 	 * @return bool
 	 */
 	public function isLocalizable(): bool {
@@ -220,6 +224,65 @@ class ConfigOption {
 
 
 	/**
+	 * @return string|null
+	 */
+	public function getTitle(): ?string {
+		return $this->title;
+	}
+
+
+	/**
+	 * @param string|null $as_title
+	 * @return $this
+	 */
+	public function setTitle(?string $as_title): static {
+		$this->title = $as_title;
+
+
+		return $this;
+	}
+
+	/**
+	 * @return ConfigOptionType
+	 */
+	public function getType(): ConfigOptionType {
+		return $this->type;
+	}
+
+
+	/**
+	 * @param ConfigOptionType $ae_type
+	 * @return self
+	 */
+	public function setType(ConfigOptionType $ae_type): static {
+		$this->type = $ae_type;
+
+
+		return $this;
+	}
+
+
+	/**
+	 * @return callable|null
+	 */
+	public function getTypecast(): ?callable {
+		return $this->typecast;
+	}
+
+
+	/**
+	 * @param callable|null $ae_type
+	 * @return self
+	 */
+	public function setTypecast(?callable $ac_type): static {
+		$this->typecast = $ac_type;
+
+
+		return $this;
+	}
+
+
+	/**
 	 * Validates the provided `$ax_value` to match the type stored in `self::$type`.
 	 *
 	 * Returns
@@ -246,7 +309,27 @@ class ConfigOption {
 		}
 
 
-		return $this->getType()->validateType($ax_value, $this->isNullable($as_languageShortcode !== null));
+		if ($this->getType() === ConfigOptionType::ENUM || $this->getType() === ConfigOptionType::LISTVALUE) {
+			$lx_values = $this->getValues();
+			if (!$lx_values) {
+				throw new RuntimeException(sprintf('Cannot validate option `%s` with type `%s` without a list of values', $this->identifier, ConfigOptionType::LISTVALUE->value));
+			}
+
+			if ($this->getType() === ConfigOptionType::LISTVALUE) {
+				dd($ax_value, __FILE__, __LINE__);
+			}
+
+			if (!is_string($ax_value) && !is_int($ax_value)) {
+				return false;
+			}
+
+
+			/** @noinspection PhpUndefinedMethodInspection */
+			return (bool)$lx_values::tryFrom($ax_value);
+		}
+
+
+		return $this->getType()->validate($ax_value, $this->isNullable($as_languageShortcode !== null));
 	}
 
 
@@ -257,6 +340,57 @@ class ConfigOption {
 	 * @return mixed
 	 */
 	public function typecastConfigValue(mixed $ax_value): mixed {
-		return $this->getType()->typeCast($ax_value);
+		if ($this->getTypecast()) {
+			return $this->getTypecast()($ax_value);
+		}
+
+		if ($this->getType() === ConfigOptionType::ENUM || $this->getType() === ConfigOptionType::LISTVALUE) {
+			$lx_values = $this->getValues();
+			if (!$lx_values) {
+				throw new RuntimeException(sprintf('Cannot typecast option `%s` with type `%s` without a list of values', $this->identifier, ConfigOptionType::LISTVALUE->value));
+			}
+
+			if ($this->getType() === ConfigOptionType::LISTVALUE) {
+				dd($ax_value, __FILE__, __LINE__);
+			}
+
+			//If the value already is a case of the provided enum class, return it
+			if ($ax_value instanceof $lx_values) {
+				return $ax_value;
+			}
+
+			if (!is_string($ax_value) && !is_int($ax_value)) {
+				return $ax_value;
+			}
+
+			/** @noinspection PhpUndefinedMethodInspection */
+			return $lx_values::tryFrom($ax_value);
+		}
+
+		return $this->getType()->cast($ax_value);
+	}
+
+
+	/**
+	 * @return array|string
+	 */
+	public function getValues(): array|string {
+		return $this->values;
+	}
+
+
+	/**
+	 * @param array $ax_values
+	 * @return $this
+	 */
+	public function setValues(array|string $ax_values): static {
+		if (is_string($ax_values) && !enum_exists($ax_values)) {
+			throw new RuntimeException(sprintf('Provided values must be an array or a valid enum. `%s` given.', gettype($ax_values)));
+		}
+
+		$this->values = $ax_values;
+
+
+		return $this;
 	}
 }

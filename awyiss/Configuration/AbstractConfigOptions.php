@@ -30,7 +30,7 @@ abstract class AbstractConfigOptions implements ConfigOptionsInterface {
 		if ($ls_testScope !== $ls_scope) {
 			throw new RuntimeException(
 				sprintf(
-					'The provided scope should be written CamelCased (`%s`). `%s` given.',
+					'The provided scope should be written `%s`, `%s` given.',
 					$ls_testScope,
 					$ls_scope
 				)
@@ -95,7 +95,28 @@ abstract class AbstractConfigOptions implements ConfigOptionsInterface {
 		}
 
 
-		return Hash::get($la_configOptions, $ax_path);
+		$la_path = $this->sanitizePath($ax_path);
+
+
+		return Hash::get($la_configOptions, $la_path);
+	}
+
+
+	/**
+	 * @param array|string $ax_path
+	 * @return array
+	 */
+	public function sanitizePath(array|string $ax_path): array {
+		$la_identifierPath = $ax_path;
+		if (!is_array($ax_path)) {
+			$la_identifierPath = explode('.', $ax_path);
+		}
+
+		$la_identifierPath = array_map(function ($as_pathFragment) {
+			return ConfigOptionsProvider::sanitizeIdentifier($as_pathFragment);
+		}, $la_identifierPath);
+
+		return $la_identifierPath;
 	}
 
 
@@ -104,12 +125,12 @@ abstract class AbstractConfigOptions implements ConfigOptionsInterface {
 	 */
 	public function validateConfigValue(
 		string $as_realm,
-		string $as_identifier,
+		array|string $ax_path,
 		mixed $ax_value,
 		?string $as_languageShortcode = null,
 		bool $ab_fallbackValidity = true
 	): bool|string {
-		$lo_configOption = $this->getConfigOption($as_realm, $as_identifier);
+		$lo_configOption = $this->getConfigOption($as_realm, $ax_path);
 
 		if (!($lo_configOption instanceof ConfigOption)) {
 			/*
@@ -129,8 +150,8 @@ abstract class AbstractConfigOptions implements ConfigOptionsInterface {
 	/**
 	 * @inheritDoc
 	 */
-	public function typecastConfigValue(string $as_realm, string $as_identifier, mixed $ax_value): mixed {
-		$lo_configOption = $this->getConfigOption($as_realm, $as_identifier);
+	public function typecastConfigValue(string $as_realm, array|string $ax_path, mixed $ax_value): mixed {
+		$lo_configOption = $this->getConfigOption($as_realm, $ax_path);
 
 		if (!($lo_configOption instanceof ConfigOption)) {
 			return $ax_value;
