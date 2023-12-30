@@ -14,7 +14,9 @@ use Awyiss\Model\Entity;
  * @property string $scope
  * @property int $foreignId
  * @property string $type
- * @property \Cake\I18n\DateTime|null $value
+ * @property \Cake\I18n\DateTime|null $dateTime
+ * @property \Cake\I18n\Date|null $date
+ * @property \Cake\I18n\Time|null $time
  */
 class Date extends Entity {
 	/**
@@ -24,12 +26,15 @@ class Date extends Entity {
 		'scope' => true,
 		'foreignId' => true,
 		'type' => true,
-		'value' => true,
+		'dateTime' => true,
+		'date' => true,
+		'time' => true,
 	];
 	/**
 	 * @inheritDoc
 	 */
 	protected static array $fieldMap = [
+		'datetime' => 'dateTime',
 		'foreign_id' => 'foreignId',
 	];
 }

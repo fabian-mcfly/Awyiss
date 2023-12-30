@@ -5,12 +5,14 @@ namespace Awyiss\Model\Behavior;
 
 
 use ArrayObject;
-use Awyiss\Model\Entity\Date;
+use Awyiss\Middleware\LocaleMiddleware;
+use Awyiss\Model\Behavior\Date\DateType;
 use Awyiss\Model\Table;
 use Awyiss\ORM\Behavior;
 use Cake\Collection\CollectionInterface;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
+use Cake\I18n\DateTime;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\ORM\Query\SelectQuery;
 use Cake\Utility\Inflector;
@@ -31,17 +33,10 @@ class DatesBehavior extends Behavior/* implements PropertyMarshalInterface*/ {
 	 * @var array<string, mixed>
 	 */
 	protected array $_defaultConfig = [
-		/*'implementedFinders' => ['translations' => 'findTranslations'],
-		'implementedMethods' => [
-			'setLocale' => 'setLocale',
-			'getLocale' => 'getLocale',
-			'translationField' => 'translationField',
-		],*/
 		'datesTable' => 'Dates',
 		'referenceName' => '',
 		'strategy' => 'subquery',
 		'tableLocator' => null,
-		'types' => [],
 	];
 	/**
 	 * Instance of Table responsible for dates
@@ -49,6 +44,10 @@ class DatesBehavior extends Behavior/* implements PropertyMarshalInterface*/ {
 	 * @var Table
 	 */
 	protected Table $datesTable;
+	/**
+	 * @var array<string, \Awyiss\Model\Behavior\Date\DateType>
+	 */
+	protected array $types = [];
 
 
 	/**
@@ -58,9 +57,12 @@ class DatesBehavior extends Behavior/* implements PropertyMarshalInterface*/ {
 	 */
 	public function __construct(Table $ao_table, array $aa_config = []) {
 		$la_config = $aa_config + [
-				'referenceName' => $this->getScope($ao_table),
-				'tableLocator' => $ao_table->associations()->getTableLocator(),
-			];
+			'referenceName' => $this->getScope($ao_table),
+			'tableLocator' => $ao_table->associations()->getTableLocator(),
+		];
+
+		$this->setTypes($la_config['types'] ?? []);
+		unset($la_config['types']);
 
 		parent::__construct($ao_table, $la_config);
 
@@ -78,39 +80,44 @@ class DatesBehavior extends Behavior/* implements PropertyMarshalInterface*/ {
 	 * @return void
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function beforeFind(EventInterface $ao_event, SelectQuery $query, ArrayObject $ao_options): void {
-		if (!$this->getConfig('types')) {
+	public function beforeFind(EventInterface $ao_event, SelectQuery $ao_query, ArrayObject $ao_options): void {
+		if (!$this->getTypes()) {
 			return;
 		}
 
 		$la_contain = [];
 		$ls_alias = $this->_table->getAlias();
-		$la_select = $query->clause('select');
+		$la_select = $ao_query->clause('select');
 
 		$lc_conditions = function (string $as_field, SelectQuery $ao_query, array $aa_select) {
-			return function (SelectQuery $q) use ($as_field, $ao_query, $aa_select) {
+			return function (SelectQuery $ao_q) use ($as_field, $ao_query, $aa_select) {
 				if (
-					$ao_query->isAutoFieldsEnabled() ||
+					$ao_query->isAutoFieldsEnabled() !== false ||
 					in_array($as_field, $aa_select, true) ||
 					in_array($this->_table->aliasField($as_field), $aa_select, true)
 				) {
-					$q->select(['id', 'value']);
+					$ao_q->select(['id', 'foreign_id', 'type', 'datetime', 'date', 'time']);
 				}
 
 
-				return $q;
+				return $ao_q;
 			};
 		};
 
-		/** @var \Awyiss\Model\Behavior\Date\DateType $le_type */
-		foreach ($this->getConfig('types') as $le_type) {
-			$ls_name = $ls_alias . '_' . $le_type->value . '_date';
 
-			$la_contain[ $ls_name ]['queryBuilder'] = $lc_conditions($le_type->value, $query, $la_select);
+		$la_matching = $ao_query->getEagerLoader()->getMatching();
+		foreach ($this->getTypes() as $ls_identifier => $le_dateType) {
+			$ls_name = $ls_alias . '_' . $ls_identifier . '_date';
+
+			if (isset($la_matching[ $ls_name ])) {
+				continue;
+			}
+
+			$la_contain[ $ls_name ]['queryBuilder'] = $lc_conditions($ls_identifier, $ao_query, $la_select);
 		}
 
-		$query->contain($la_contain);
-		$query->formatResults(fn(CollectionInterface $results) => $this->rowMapper($results), $query::PREPEND);
+		$ao_query->contain($la_contain);
+		$ao_query->formatResults(fn(CollectionInterface $ao_results) => $this->rowMapper($ao_results), $ao_query::PREPEND);
 	}
 
 
@@ -138,6 +145,53 @@ class DatesBehavior extends Behavior/* implements PropertyMarshalInterface*/ {
 
 
 	/**
+	 * @return array
+	 */
+	public function getTypes(): array {
+		return $this->types;
+	}
+
+
+	/**
+	 * @param array $aa_types
+	 * @return array
+	 */
+	protected function normalizeTypes(array $aa_types): array {
+		$la_types = [];
+		foreach ($aa_types as $lx_key => $lx_type) {
+			if ($lx_type === null) {
+				continue;
+			}
+
+			if (is_numeric($lx_key)) {
+				$ls_identifier = Inflector::underscore($lx_type);
+				$le_type = DateType::DATETIME;
+			}
+			else {
+				$le_type = is_string($lx_type) ? DateType::tryFrom($lx_type) : $lx_type;
+				$ls_identifier = Inflector::underscore($lx_key);
+			}
+
+			$la_types[ $ls_identifier ] = $le_type;
+		}
+
+		return $la_types;
+	}
+
+
+	/**
+	 * @param array $aa_types
+	 * @return $this
+	 */
+	public function setTypes(array $aa_types): static {
+		$this->types = $this->normalizeTypes($aa_types);
+
+
+		return $this;
+	}
+
+
+	/**
 	 * @param CollectionInterface $ao_results
 	 * @return CollectionInterface
 	 */
@@ -147,38 +201,43 @@ class DatesBehavior extends Behavior/* implements PropertyMarshalInterface*/ {
 				return null;
 			}
 
+			$ls_alias = $this->_table->getAlias();
 			$lb_hydrated = $ax_row instanceof EntityInterface;
 
 			$ax_row['_dates'] = [];
-			/** @var \Awyiss\Model\Behavior\Date\DateType $le_type */
-			foreach ($this->getConfig('types') as $le_type) {
-				$ls_name = $le_type->value . '_date';
+			foreach ($this->getTypes() as $ls_identifier => $le_dateType) {
+				$ls_name = $ls_identifier . '_date';
+
+				/** @var \Awyiss\Model\Entity\Date $lo_date */
 				$lo_date = $ax_row[ $ls_name ];
 
-				$ax_row['_dates'][] = $ax_row[ $ls_name ] ? new Date($ax_row[ $ls_name ]->extract(), [
-					'markNew' => false,
-					'useSetters' => false,
-					'markClean' => true,
-				]) : null;
-
-				if ($lo_date === null) {
-					$ax_row[ $le_type->value ] = null;
-
-					if ($lb_hydrated) {
-						$ax_row->setDirty($le_type->value, false);
-						$ax_row->setVirtual([$le_type->value], true);
+				if (isset($ax_row['_matchingData'][ $ls_alias . '_' . $ls_name ])) {
+					$lo_date = $ax_row['_matchingData'][ $ls_alias . '_' . $ls_name ];
+					unset($ax_row['_matchingData'][ $ls_alias . '_' . $ls_name ]);
+					if (!$lo_date->id) {
+						unset($ax_row[ $ls_name ]);
+						continue;
 					}
-
-					unset($ax_row[ $ls_name ]);
-
-					continue;
 				}
 
-				$ax_row[ $le_type->value ] = $ax_row[ $ls_name ]->value;
+				$ax_row['_dates'][] = $lo_date;
+
+				if ($lo_date === null) {
+					$ax_row[ $ls_identifier ] = null;
+				}
+				else {
+					$lo_value = match ($le_dateType) {
+						DateType::DATE => $lo_date->date,
+						DateType::TIME => $lo_date->time,
+						DateType::DATETIME => $lo_date->dateTime,
+					};
+
+					$ax_row[ $ls_identifier ] = $lo_value;
+				}
 
 				if ($lb_hydrated) {
-					$ax_row->setDirty($le_type->value, false);
-					$ax_row->setVirtual([$le_type->value], true);
+					$ax_row->setDirty($ls_identifier, false);
+					$ax_row->setVirtual([$ls_identifier], true);
 				}
 
 				unset($ax_row[ $ls_name ]);
@@ -189,6 +248,9 @@ class DatesBehavior extends Behavior/* implements PropertyMarshalInterface*/ {
 				$ax_row->setDirty('_dates', false);
 			}
 
+			if (empty($ax_row['_matchingData'])) {
+				unset($ax_row['_matchingData']);
+			}
 
 			return $ax_row;
 		});
@@ -199,7 +261,7 @@ class DatesBehavior extends Behavior/* implements PropertyMarshalInterface*/ {
 	 * @return void
 	 */
 	protected function setupAssociations(): void {
-		if (!$this->getConfig('types')) {
+		if (!$this->getTypes()) {
 			return;
 		}
 
@@ -207,9 +269,8 @@ class DatesBehavior extends Behavior/* implements PropertyMarshalInterface*/ {
 		$ls_alias = $this->_table->getAlias();
 		$lo_tableLocator = $this->getTableLocator();
 
-		/** @var \Awyiss\Model\Behavior\Date\DateType $le_type */
-		foreach ($this->getConfig('types') as $le_type) {
-			$ls_name = $ls_alias . '_' . $le_type->value . '_date';
+		foreach ($this->getTypes() as $ls_identifier => $le_dateType) {
+			$ls_name = $ls_alias . '_' . $ls_identifier . '_date';
 
 			if (!$lo_tableLocator->exists($ls_name)) {
 				$lo_fieldTable = $lo_tableLocator->get($ls_name, [
@@ -224,7 +285,7 @@ class DatesBehavior extends Behavior/* implements PropertyMarshalInterface*/ {
 
 			$la_conditions = [
 				$ls_name . '.scope' => $this->getConfig('referenceName'),
-				$ls_name . '.type' => $le_type->value,
+				$ls_name . '.type' => $ls_identifier,
 			];
 
 			/** @noinspection PhpClassConstantAccessedViaChildClassInspection */
@@ -233,8 +294,12 @@ class DatesBehavior extends Behavior/* implements PropertyMarshalInterface*/ {
 				'foreignKey' => 'foreign_id',
 				'joinType' => SelectQuery::JOIN_TYPE_LEFT,
 				'conditions' => $la_conditions,
-				'propertyName' => $le_type->value . '_date',
+				'propertyName' => $ls_identifier . '_date',
 			]);
+
+			/** @var \Awyiss\Model\Entity $ls_entityClass */
+			$ls_entityClass = $this->_table->getEntityClass();
+			$ls_entityClass::addFieldMapping($ls_identifier, Inflector::variable($ls_identifier));
 		}
 
 		$this->_table->hasMany($ls_targetAlias, [
@@ -247,5 +312,147 @@ class DatesBehavior extends Behavior/* implements PropertyMarshalInterface*/ {
 			'propertyName' => '_dates',
 			'dependent' => true,
 		]);
+	}
+
+
+	/**
+	 * Implemented finders
+	 *
+	 * @return array
+	 */
+	public function implementedFinders(): array {
+		$la_finders = [];
+		$la_types = $this->getTypes();
+		if (!$la_types) {
+			return $la_finders;
+		}
+
+		if (
+			isset($la_types['publication_start']) ||
+			isset($la_types['publication_end'])
+		) {
+			$la_finders['published'] = 'findPublished';
+		}
+
+		if (
+			isset($la_types['event_start']) ||
+			isset($la_types['event_end'])
+		) {
+			$la_finders['futureEvents'] = 'findFutureEvents';
+			$la_finders['pastEvents'] = 'findPastEvents';
+		}
+
+		return $la_finders;
+	}
+
+
+	/**
+	 * @param \Cake\ORM\Query\SelectQuery $ao_query
+	 * @param mixed|null $ax_date
+	 * @return \Cake\ORM\Query\SelectQuery
+	 * @throws \Exception
+	 */
+	public function findFutureEvents(SelectQuery $ao_query, mixed $ax_date = null): SelectQuery {
+		if ($ax_date) {
+			dd(__LINE__, __FILE__);
+		}
+
+		$lo_date = new DateTime('now');
+		$ls_timezone = LocaleMiddleware::getLanguage(null)->timezone;
+
+		$ls_alias = $this->_table->getAlias();
+		$la_types = $this->getTypes();
+
+		if (isset($la_types['event_start'])) {
+			$ls_name = $ls_alias . '_event_start_date';
+
+			$ao_query->matching($ls_name, function (SelectQuery $ao_query) use ($la_types, $lo_date, $ls_timezone) {
+				if ($la_types['event_start'] !== DateType::DATETIME) {
+					$lo_date = $lo_date->setTimezone($ls_timezone);
+				}
+
+				return $ao_query->where([
+					$la_types['event_start']->value . ' >= ' => $lo_date,
+				]);
+			});
+		}
+
+		if (isset($la_types['event_end'])) {
+			$ls_name = $ls_alias . '_event_end_date';
+
+			$ao_query->matching($ls_name, function (SelectQuery $ao_query) use ($la_types, $lo_date, $ls_timezone) {
+				if ($la_types['event_end'] !== DateType::DATETIME) {
+					$lo_date = $lo_date->setTimezone($ls_timezone);
+				}
+
+				return $ao_query->where([
+					$la_types['event_end']->value . ' <= ' => $lo_date,
+				]);
+			});
+		}
+
+		return $ao_query;
+	}
+
+
+	/**
+	 * @param \Cake\ORM\Query\SelectQuery $ao_query
+	 * @param mixed|null $ax_date
+	 * @return \Cake\ORM\Query\SelectQuery
+	 */
+	public function findPublished(SelectQuery $ao_query, mixed $ax_date = null): SelectQuery {
+		if ($ax_date) {
+			dd(__LINE__, __FILE__);
+		}
+
+		$ls_timezone = LocaleMiddleware::getLanguage(null)->timezone;
+		$lo_date = new DateTime('now');
+
+		$ls_alias = $this->_table->getAlias();
+		$la_types = $this->getTypes();
+
+		if (isset($la_types['publication_start'])) {
+			$ls_name = $ls_alias . '_publication_start_date';
+
+			if ($ao_query->isAutoFieldsEnabled() === null) {
+				$ao_query->enableAutoFields();
+			}
+			$ao_query->select($this->_table->$ls_name);
+
+			$lo_startDate = $lo_date;
+			if ($la_types['event_end'] !== DateType::DATETIME) {
+				$lo_startDate = $lo_date->setTimezone($ls_timezone);
+			}
+
+			$ao_query->leftJoinWith($ls_name)->where([
+				'OR' => [
+					$ls_name . '.' . $la_types['publication_start']->value . ' <= ' => $lo_startDate,
+					$ls_name . '.' . $la_types['publication_start']->value . ' IS ' => null,
+				],
+			]);
+		}
+
+		if (isset($la_types['publication_end'])) {
+			$ls_name = $ls_alias . '_publication_end_date';
+
+			if ($ao_query->isAutoFieldsEnabled() === null) {
+				$ao_query->enableAutoFields();
+			}
+			$ao_query->select($this->_table->$ls_name);
+
+			$lo_endDate = $lo_date;
+			if ($la_types['event_end'] !== DateType::DATETIME) {
+				$lo_endDate = $lo_date->setTimezone($ls_timezone);
+			}
+
+			$ao_query->leftJoinWith($ls_name)->where([
+				'OR' => [
+					$ls_name . '.' . $la_types['publication_end']->value . ' >= ' => $lo_endDate,
+					$ls_name . '.' . $la_types['publication_end']->value . ' IS ' => null,
+				],
+			]);
+		}
+
+		return $ao_query;
 	}
 }

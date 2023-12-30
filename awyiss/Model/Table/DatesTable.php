@@ -4,12 +4,7 @@
 namespace Awyiss\Model\Table;
 
 
-use Awyiss\Model\Behavior\Date\DateType;
 use Awyiss\Model\Table;
-use Awyiss\ORM\RulesChecker;
-use Cake\Database\Schema\TableSchemaInterface;
-use Cake\Database\Type\EnumType;
-use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Validation\Validator;
 
 
@@ -40,47 +35,23 @@ class DatesTable extends Table {
 	 *
 	 * @param \Cake\Validation\Validator $ao_validator The validator that can be modified to add some rules to it.
 	 * @return \Cake\Validation\Validator
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function validationDefault(Validator $ao_validator): Validator {
 		parent::validationDefault($ao_validator);
 
 		$ao_validator->scalar('scope')->maxLength('scope', 50)->requirePresence('scope', 'create')->notEmptyString('scope');
 
-		$ao_validator->integer('parentId')->notEmptyString('parentId');
+		$ao_validator->integer('foreignId')->notEmptyString('foreignId');
 
 		$ao_validator->scalar('type')->maxLength('type', 20)->requirePresence('type', 'create')->notEmptyString('type');
 
-		$ao_validator->dateTime('value')->allowEmptyDateTime('value');
+		$ao_validator->dateTime('datetime')->allowEmptyDateTime('datetime');
+
+		$ao_validator->dateTime('date')->allowEmptyDate('date');
+
+		$ao_validator->dateTime('time')->allowEmptyTime('time');
 
 
 		return $ao_validator;
-	}
-
-
-	/**
-	 * Returns a RulesChecker object after modifying the one that was supplied.
-	 *
-	 * @param BaseRulesChecker $ao_rules The rules object to be modified.
-	 * @param \Awyiss\ORM\RulesChecker|BaseRulesChecker $ao_rules The rules object to be modified.
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
-	 */
-	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
-		$ao_rules->add($ao_rules->existsIn('parentId', 'ParentDates'), ['errorField' => 'parentId']);
-
-
-		return $ao_rules;
-	}
-
-
-	/**
-	 * Mark column "type" as enum DateType
-	 *
-	 * @see DateType
-	 */
-	public function initializeSchema(TableSchemaInterface $ao_schema): void {
-		parent::initializeSchema($ao_schema);
-
-		$ao_schema->setColumnType('type', EnumType::from(DateType::class));
 	}
 }
