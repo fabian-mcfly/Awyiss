@@ -22,6 +22,7 @@ use Awyiss\Core\Configure\Engine\PhpConfig;
 use Awyiss\Routing\Router;
 use Cake\Cache\Cache;
 use Cake\Core\Configure;
+use Cake\Database\TypeFactory;
 use Cake\Datasource\ConnectionManager;
 use Cake\Error\ErrorTrap;
 use Cake\Error\ExceptionTrap;
@@ -176,8 +177,6 @@ Inflector::rules('plural', ['/^(menu)s$/i' => '\1s']);
 //\Cake\Utility\Inflector::rules('irregular', ['red' => 'redlings']);
 Inflector::rules('uninflected', ['configuration', 'media', 'system']);
 
-// set a custom date and time format
-// see https://book.cakephp.org/4/en/core-libraries/time.html#setting-the-default-locale-and-format-string
-// and https://unicode-org.github.io/icu/userguide/format_parse/datetime/#datetime-format-syntax
-//\Cake\I18n\FrozenDate::setToStringFormat('dd.MM.yyyy');
-//\Cake\I18n\FrozenTime::setToStringFormat('dd.MM.yyyy HH:mm');
+TypeFactory::map('char', \Awyiss\Database\Type\StringType::class);
+TypeFactory::map('string', \Awyiss\Database\Type\StringType::class);
+TypeFactory::map('text', \Awyiss\Database\Type\StringType::class);

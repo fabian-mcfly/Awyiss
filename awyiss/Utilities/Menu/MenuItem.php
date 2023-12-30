@@ -202,14 +202,14 @@ class MenuItem {
 
 
 	/**
-	 * @param \Awyiss\Authorization\IdentityPermissionsInterface $identity
+	 * @param \Awyiss\Authorization\IdentityPermissionsInterface $ao_identity
 	 * @param bool $deep
 	 * @return $this
 	 * @throws \ReflectionException
 	 */
-	public function setIdentity(IdentityPermissionsInterface $identity, bool $deep = true): static {
-		$this->identity = $identity;
-		$this->accessible = $this->isAccessibleBy($identity);
+	public function setIdentity(IdentityPermissionsInterface $ao_identity, bool $deep = true): static {
+		$this->identity = $ao_identity;
+		$this->accessible = $this->isAccessibleBy($ao_identity);
 
 		if (!$deep) {
 			return $this;
@@ -217,7 +217,7 @@ class MenuItem {
 
 		if ($this->hasChildren()) {
 			foreach ($this->getChildren() as $lo_child) {
-				$lo_child->setIdentity($identity);
+				$lo_child->setIdentity($ao_identity);
 			}
 		}
 
@@ -356,10 +356,15 @@ class MenuItem {
 
 
 	/**
-	 * @param \Awyiss\Model\Entity\BackendMenuEntry $data
+	 * @param \Awyiss\Model\Entity\BackendMenuEntry $ao_data
 	 * @return void
 	 */
-	protected function convertEntityLink(BackendMenuEntry $data): void {
+	protected function convertEntityLink(BackendMenuEntry $ao_data): void {
+		if (empty($this->link)) {
+			$this->link = null;
+			return;
+		}
+
 		$la_parts = explode('::', $this->link);
 
 		$ls_controller = array_shift($la_parts);
@@ -378,12 +383,12 @@ class MenuItem {
 
 		$la_linkData = [
 			'url' => [
-						 'controller' => $ls_controller,
-						 'action' => $ls_action,
-					 ] + $la_params,
+				 'controller' => $ls_controller,
+				 'action' => $ls_action,
+			 ] + $la_params,
 		];
 
-		if ($data->external) {
+		if ($ao_data->external) {
 			$la_linkData['attributes'] = [
 				'target' => '_blank',
 			];

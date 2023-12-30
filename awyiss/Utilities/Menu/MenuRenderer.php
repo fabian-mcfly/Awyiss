@@ -51,12 +51,12 @@ class MenuRenderer {
 	 * Constructor
 	 *
 	 * @param Menu $ao_menu Menu object to render.
-	 * @param array $config Configuration options for rendering.
+	 * @param array $aa_config Configuration options for rendering.
 	 */
-	public function __construct(Menu $ao_menu, array $config = []) {
+	public function __construct(Menu $ao_menu, array $aa_config = []) {
 		$this->menu = $ao_menu;
 
-		$this->setConfig($config);
+		$this->setConfig($aa_config);
 
 		$this->templates = new StringTemplate();
 		$this->templates->add($this->getConfig('templates'));

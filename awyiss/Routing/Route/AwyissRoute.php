@@ -434,11 +434,6 @@ class AwyissRoute extends DashedRoute {
 			return null;
 		}
 
-		/*// Defaults with different values are a fail.
-		if (array_intersect_key($url, $defaults) != $defaults) {
-			return null;
-		}*/
-
 		// check that all the key names are in the url
 		$la_keyNames = array_flip($this->keys);
 		$la_url = $this->rekeyParameters($la_url, $la_keyNames);

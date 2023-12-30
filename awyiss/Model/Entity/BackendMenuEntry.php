@@ -115,6 +115,21 @@ class BackendMenuEntry extends Entity {
 
 
 	/**
+	 * @param mixed $ax_value
+	 * @return mixed
+	 * @noinspection PhpUnused
+	 */
+	public function _setLink(mixed $ax_value): mixed {
+		if (empty($ax_value)) {
+			return null;
+		}
+
+
+		return $ax_value;
+	}
+
+
+	/**
 	 * Get all direct children of the current entity
 	 *
 	 * @noinspection PhpUnused

@@ -47,6 +47,9 @@ class PagesTable extends Table {
 	protected array $nest = [
 		'relatedColumns' => ['languageShortcode', 'pageRoleId'],
 	];
+	/**
+	 * @var string
+	 */
 	protected string $pageRole = 'page';
 	/**
 	 * Integer identifier of the used page role.

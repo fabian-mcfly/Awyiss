@@ -16,15 +16,15 @@ use RuntimeException;
  */
 class MenuLoader {
 	/**
-	 * @param object $data
-	 * @param array $config
+	 * @param object $ao_data
+	 * @param array $aa_config
 	 * @return bool
 	 * @throws \ReflectionException
 	 */
-	public static function validateData(object $data, array $config): bool {
+	public static function validateData(object $ao_data, array $aa_config): bool {
 		$lo_factory = null;
-		$lx_schema = $config['schema'] ?? null;
-		$ls_schemaPath = $config['schemaPath'] ?? null;
+		$lx_schema = $aa_config['schema'] ?? null;
+		$ls_schemaPath = $aa_config['schemaPath'] ?? null;
 		if ($ls_schemaPath) {
 			$lx_schema = static::loadJsonFile($ls_schemaPath);
 
@@ -39,7 +39,7 @@ class MenuLoader {
 
 		// Validate
 		$lo_validator = new Validator($lo_factory);
-		$lo_validator->validate($data, $lx_schema);
+		$lo_validator->validate($ao_data, $lx_schema);
 
 		if (!$lo_validator->isValid()) {
 			return false;

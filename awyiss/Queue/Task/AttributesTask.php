@@ -137,8 +137,8 @@ class AttributesTask extends Task/* implements AddInterface*/ {
 		$lo_reflector = new ReflectionClass(AdapterInterface::class);
 		$lo_collection = new Collection($lo_reflector->getConstants());
 
-		$la_validTypes = $lo_collection->filter(function ($value, $constant) {
-			return str_starts_with($constant, 'PHINX_TYPE_');
+		$la_validTypes = $lo_collection->filter(function ($ax_value, $as_constant) {
+			return str_starts_with($as_constant, 'PHINX_TYPE_');
 		})->toArray();
 
 		if (empty($la_typeMatches[1]) || !in_array($la_typeMatches[1], $la_validTypes)) {

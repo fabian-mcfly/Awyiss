@@ -98,9 +98,8 @@ class AuthenticationListener implements EventListenerInterface {
 			}
 			else {
 				$lo_class->setIdentity($this->identity);
+				$ao_event->setResult($this->identity);
 			}
-
-			$ao_event->setResult($this->identity);
 		}
 		else {
 			$ao_event->setResult($this->identity);

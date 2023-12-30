@@ -68,7 +68,7 @@
 				},
 				"access": {
 					"scope": "pages",
-					"identifier": ["configure"]
+					"identifier": "configure"
 				}
 			}
 		}

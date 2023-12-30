@@ -153,6 +153,15 @@ class PageRolesListener implements EventListenerInterface {
 					],
 					'system_order' => 2,
 				],
+				[
+					'title' => Inflector::pluralize($ao_entity->identifier) . '::menu_configure',
+					'link' => 'Configuration::overview::scope:' . Inflector::pluralize($ao_entity->identifier),
+					'access' => [
+						'scope' => Inflector::pluralize($ao_entity->identifier),
+						'identifier' => 'configure',
+					],
+					'system_order' => 3,
+				],
 			],
 		];
 

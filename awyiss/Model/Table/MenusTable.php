@@ -27,7 +27,7 @@ class MenusTable extends Table {
 	 */
 	public const TABLE = 'menus';
 
-	
+
 	/**
 	 * @inheritDoc
 	 */
