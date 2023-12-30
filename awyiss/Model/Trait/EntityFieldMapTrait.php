@@ -254,6 +254,16 @@ trait EntityFieldMapTrait {
 
 
 	/**
+	 * @param string $as_field
+	 * @param string $as_mappedField
+	 * @return void
+	 */
+	public static function addFieldMapping(string $as_field, string $as_mappedField): void {
+		static::$fieldMap[ $as_field ] = $as_mappedField;
+	}
+
+
+	/**
 	 * Transforms the given value column name to a field name, defined by static::$fieldMap
 	 *
 	 * @param string $as_field
