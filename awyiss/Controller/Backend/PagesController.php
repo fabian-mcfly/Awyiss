@@ -5,7 +5,6 @@ namespace Awyiss\Controller\Backend;
 
 
 use AllowDynamicProperties;
-use Awyiss\Authorization\Policy\GenericPagePolicy;
 use Awyiss\Awyiss;
 use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Middleware\LocaleMiddleware;
@@ -46,9 +45,9 @@ class PagesController extends Controller {
 	 * @throws \Exception
 	 */
 	public function overview(): void {
-		$this->Authorization->ensure(['read', 'create']);
+		$this->Authorization->ensure('read');
 
-		$lo_pages = $this->Pages->find()->where($this->getOverviewWhere());
+		$lo_pages = $this->Pages->find('futureEvents')->where($this->getOverviewWhere());
 		$lo_pages = $this->Pages->listNested($lo_pages);
 
 		$ls_entitiesName = Inflector::variable($this->getName());
@@ -269,16 +268,13 @@ class PagesController extends Controller {
 		/** @var \Awyiss\Authorization\AuthorizationService $lo_authorizationService */
 		$lo_authorizationService = $this->getRequest()->getAttribute('authorization');
 		$ls_policyClass = $lo_authorizationService->getPolicy($this->Authorization->getScope(), $this->Authorization->getConfig('policiesRealm'));
-		if (!$ls_policyClass) {
-			$lo_policyClass = new GenericPagePolicy($this->Authorization->getScope());
-		}
 
 		$this->Authorization->setScope($as_identifier);/*->setPolicyClass($ls_policyClass ?: $lo_policyClass)*/
 
 		$this->SystemOrder->setConfig('entityName', Inflector::variable(Inflector::singularize($as_identifier)));
 
 		$this->set([
-			'policyClass' => $ls_policyClass ?: $lo_policyClass,
+			'policyClass' => $ls_policyClass,
 		]);
 
 

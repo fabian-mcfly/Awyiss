@@ -4,7 +4,6 @@
 namespace Awyiss\Controller\Backend;
 
 
-use Awyiss\Authorization\Policy\GenericPagePolicy;
 use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Model\Entity\Usergroup;
 use Awyiss\Routing\Router;
@@ -46,7 +45,7 @@ class UsergroupsController extends Controller {
 	public function add(): void {
 		$this->Authorization->ensure('create');
 
-		$lb_usersScopeIsAccessible = $this->Authorization->scopeIsAccessible('Users', null, ['create', 'update']);
+		$lb_usersScopeIsAccessible = $this->Authorization->scopeIsAccessible('Users', [], ['create', 'update']);
 
 		$lo_usergroup = $this->Usergroups->newDefaultEntity();
 
@@ -78,7 +77,7 @@ class UsergroupsController extends Controller {
 	public function edit(int $ai_id) {
 		$this->Authorization->ensure('update');
 
-		$lb_usersScopeIsAccessible = $this->Authorization->scopeIsAccessible('Users', null, ['create', 'update']);
+		$lb_usersScopeIsAccessible = $this->Authorization->scopeIsAccessible('Users', [], ['create', 'update']);
 
 		$la_contain = ['UsergroupPermissions'];
 		if ($lb_usersScopeIsAccessible) {
@@ -192,9 +191,9 @@ class UsergroupsController extends Controller {
 
 	/**
 	 * Retreive all available AuthorizationPolicies, found in both the Awyiss and the custom namespace,
-	 * combined with instances of GenericPagePolicy for page roles without a specified policy
+	 * combined with instances of GenericPagesPolicy for page roles without a specified policy
 	 *
-	 * @return array<string, class-string<\Awyiss\Authorization\Policy\PolicyInterface>|GenericPagePolicy>
+	 * @return array<string, class-string<\Awyiss\Authorization\Policy\PolicyInterface>|\Awyiss\Authorization\Policy\Backend\GenericPagesPolicy>
 	 * @throws \ReflectionException
 	 */
 	protected function getAuthorizationPolicies(): array {
@@ -207,23 +206,6 @@ class UsergroupsController extends Controller {
 		/** @var \Awyiss\Authorization\AuthorizationService $lo_authorizationService */
 		$lo_authorizationService = $this->getRequest()->getAttribute('authorization');
 		$la_policies = $lo_authorizationService->getPolicies();
-
-		//Get all page roles from the database because we want them to have policies too
-		$lo_pageRoles = $this->fetchTable('PageRoles')->find('active')->all();
-
-		/** @var \Awyiss\Model\Entity\PageRole $lo_pageRole */
-		foreach ($lo_pageRoles as $lo_pageRole) {
-			$ls_scope = Inflector::camelize(Inflector::tableize($lo_pageRole->identifier));
-
-			/*
-			 * If there's no policy for the identifier yet, we add an instance of GenericPagePolicy for the page role.
-			 * This way, a custom policy for every page role can be set, but it'll fall back
-			 * to a generic CRUD policy
-			 */
-			if (!isset($la_policies[ $ls_scope ])) {
-				$la_policies[ $ls_scope ] = new GenericPagePolicy($ls_scope);
-			}
-		}
 
 		ksort($la_policies);
 
@@ -269,7 +251,7 @@ class UsergroupsController extends Controller {
 
 		$la_authorizationPolicies = $this->getAuthorizationPolicies();
 
-		/** @var GenericPagePolicy|class-string<\Awyiss\Authorization\Policy\PolicyInterface> $lo_authorizationPolicy */
+		/** @var \Awyiss\Authorization\Policy\Backend\GenericPagesPolicy|class-string<\Awyiss\Authorization\Policy\PolicyInterface> $lo_authorizationPolicy */
 		foreach ($la_authorizationPolicies as $lo_authorizationPolicy) {
 			/** @var \Awyiss\Authorization\PermissionOption\PermissionOptionInterface $lo_permission */
 			foreach ((!is_object($lo_authorizationPolicy) ? $lo_authorizationPolicy::getPermissionOptions() : $lo_authorizationPolicy->getPermissionOptions()) as $lo_permission) {

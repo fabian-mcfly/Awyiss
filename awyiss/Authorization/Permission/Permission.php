@@ -5,7 +5,7 @@ namespace Awyiss\Authorization\Permission;
 
 
 use Awyiss\Authorization\AuthorizationService;
-use Awyiss\Authorization\Policy\GenericPagePolicy;
+use Awyiss\Authorization\Policy\Backend\GenericPagesPolicy;
 use Awyiss\Authorization\Policy\PolicyInterface;
 use Cake\Event\EventDispatcherTrait;
 use ReflectionClass;
@@ -38,9 +38,9 @@ class Permission {
 	 */
 	protected string $identifier;
 	/**
-	 * @var PolicyInterface|GenericPagePolicy|string|null
+	 * @var PolicyInterface|GenericPagesPolicy|string|null
 	 */
-	protected string|PolicyInterface|GenericPagePolicy|null $policyClass = null;
+	protected string|PolicyInterface|GenericPagesPolicy|null $policyClass = null;
 	/**
 	 * @var string
 	 */
@@ -108,26 +108,14 @@ class Permission {
 	/**
 	 * Returns the currently set policy class for this permission,
 	 * or tries loading one from the authorization service.
-	 * If still none's available, an event is fired, hoping it'll return one.
 	 *
-	 * @return GenericPagePolicy|PolicyInterface|string|null
+	 * @return \Awyiss\Authorization\Policy\Backend\GenericPagesPolicy|class-string<\Awyiss\Authorization\Policy\PolicyInterface>|null
 	 * @throws \ReflectionException
 	 */
-	public function getPolicyClass(): mixed {
+	public function getPolicyClass(): GenericPagesPolicy|string|null {
 		if (!$this->policyClass) {
 			$this->policyClass = $this->authorizationService->getPolicy($this->getScope());
 		}
-
-		if (!$this->policyClass) {
-			$lo_event = $this->dispatchEvent('Authorization.requestPolicyClass', [
-				'scope' => $this->getScope(),
-			], $this);
-
-			//Maybe the event handler has found a policy.
-			//This is my Last Resort!
-			$this->policyClass = $lo_event->getResult();
-		}
-
 
 		return $this->policyClass;
 	}
@@ -136,12 +124,12 @@ class Permission {
 	/**
 	 * Sets the policy to be used by the permission
 	 *
-	 * @param PolicyInterface|GenericPagePolicy|string|null $ax_policyClass
+	 * @param PolicyInterface|GenericPagesPolicy|string|null $ax_policyClass
 	 * @return $this
 	 * @throws \ReflectionException
 	 * @noinspection PhpUnused
 	 */
-	public function setPolicyClass(string|PolicyInterface|GenericPagePolicy|null $ax_policyClass = null): static {
+	public function setPolicyClass(string|PolicyInterface|GenericPagesPolicy|null $ax_policyClass = null): static {
 		if (is_string($ax_policyClass)) {
 			$lo_reflection = new ReflectionClass($ax_policyClass);
 
@@ -188,7 +176,6 @@ class Permission {
 	 * @throws \Exception
 	 */
 	public function isAccessible(array $aa_additionalData, PermissionCollection $ao_permissionCollection): ?bool {
-		//string|PolicyInterface|GenericPagePolicy|null $lx_policyClass = null,
 		$lx_policyClass = $this->getPolicyClass();
 
 		if (!$lx_policyClass) {
@@ -196,15 +183,15 @@ class Permission {
 		}
 
 		//Get the Permission from the policy class provided.
-		if ($lx_policyClass instanceof GenericPagePolicy) {
-			//If the $lx_policyClass is an instance of GenericPagePolicy, getPermission is a public, non-static method
+		if ($lx_policyClass instanceof GenericPagesPolicy) {
+			//If the $lx_policyClass is an instance of GenericPagesPolicy, getPermission is a public, non-static method
 			$lo_permissionOption = $lx_policyClass->getPermissionOption($this->getIdentifier());
 		}
 		else {
 			//If the $lx_policyClass is a string or implements the PolicyInterface, getPermission is a static method
+			/** @var \Awyiss\Authorization\Policy\PolicyInterface $lx_policyClass */
 			$lo_permissionOption = $lx_policyClass::getPermissionOption($this->getIdentifier());
 		}
-
 
 		if (!$lo_permissionOption) {
 			return static::DEFAULT_PERMISSION;

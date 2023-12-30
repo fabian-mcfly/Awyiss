@@ -5,6 +5,7 @@ namespace Awyiss\Authorization;
 
 
 use Authentication\AuthenticationServiceInterface;
+use Awyiss\Authorization\Policy\Backend\GenericPagesPolicy;
 
 
 /**
@@ -57,16 +58,13 @@ interface AuthorizationServiceInterface {
 
 	/**
 	 * Returns the FQCN of the Policy with the given scope for the given realm (sub-namespace), if it exists.
-	 *
 	 * It looks for such a policy in the custom_namespace before trying the Awyiss namespace:
-	 *
 	 * - \\`CUSTOM_NAMESPACE`\Authorization\Policy\\`$as_realm`\\`$as_scope`Policy
-	 *
 	 * - \Awyiss\Authorization\Policy\\`$as_realm`\\`$as_scope`Policy
 	 *
 	 * @param string $as_scope
 	 * @param string|null $as_realm
-	 * @return class-string<\Awyiss\Authorization\Policy\PolicyInterface>|null
+	 * @return \Awyiss\Authorization\Policy\Backend\GenericPagesPolicy|class-string<\Awyiss\Authorization\Policy\PolicyInterface>|null
 	 */
-	public function getPolicy(string $as_scope, ?string $as_realm = null): ?string;
+	public function getPolicy(string $as_scope, ?string $as_realm = null): GenericPagesPolicy|string|null;
 }

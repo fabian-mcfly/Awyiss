@@ -23,7 +23,7 @@
 		{% if aa_pageTemplates[ li_pageRoleId ] is defined or lx_selectedPageRoleId == 'all' or lx_selectedPageRoleId == li_pageRoleId %}
 			<fieldset>
 				<legend>
-					{% if helper_Authorization_scopeIsAccessible('PageRoles', null, ['read']) %}
+					{% if helper_Authorization_scopeIsAccessible('PageRoles', [], ['read']) %}
 						{{ helper_Html_link(ls_pageRole, {controller: 'PageRoles', action: 'edit', id: li_key}) }}
 					{% else %}
 						{{ ls_pageRole }}

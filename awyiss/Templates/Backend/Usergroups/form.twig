@@ -42,7 +42,7 @@
 	</fieldset>
 {% endblock %}
 
-{% if helper_Authorization_scopeIsAccessible('Users', null, ['read']) %}
+{% if helper_Authorization_scopeIsAccessible('Users', [], ['read']) %}
 	{% block fieldsetUsers %}
 		<fieldset>
 			<legend>{{ __('users') }}</legend>
@@ -91,7 +91,6 @@
 											<li class="Permission">
 												{{ __(ls_identifier) }}
 												{{ helper_Authorization_permissionOptions(lo_permission, ao_usergroup, null, 'Usergroups') }}
-												{# $lo_permissions->getSettings()->render($this, 'usergroups') #}
 											</li>
 										{% endblock %}
 									{% endfor %}

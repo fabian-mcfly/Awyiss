@@ -168,7 +168,7 @@ class AuthorizationHelper extends Helper {
 	 * @noinspection PhpUnused
 	 */
 	public function isAccessible(string|array ...$ax_identifier): bool {
-		return $this->scopeIsAccessible($this->getScope(), null, ...$ax_identifier);
+		return $this->scopeIsAccessible($this->getScope(), [], ...$ax_identifier);
 	}
 
 
@@ -181,11 +181,11 @@ class AuthorizationHelper extends Helper {
 	 * @throws \Exception
 	 * @see \Awyiss\Authorization\Permission\PermissionCollection::scopeIsAccessible()
 	 */
-	public function scopeIsAccessible(string $as_scope, ?array $aa_additionalData = null, string|array ...$ax_identifier): ?bool {
+	public function scopeIsAccessible(string $as_scope, array $aa_additionalData = [], string|array ...$ax_identifier): ?bool {
 		//Get the currently assigned permissions from the identity object, resp. their permission collection
 		$lo_identity = $this->getIdentity();
 
-		$la_additionalData = $aa_additionalData ?? $this->getConfig('additionalData');
+		$la_additionalData = $aa_additionalData ?: $this->getConfig('additionalData');
 
 
 		return $lo_identity->scopeIsAccessible($as_scope, $la_additionalData, ...$ax_identifier);

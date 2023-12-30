@@ -5,11 +5,9 @@ namespace Awyiss\Event\Global;
 
 
 use Awyiss\Authorization\AuthorizationServiceInterface;
-use Awyiss\Authorization\Policy\GenericPagePolicy;
 use Awyiss\Event\EventListenerTrait;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
-use Cake\Utility\Inflector;
 
 
 /**
@@ -34,7 +32,6 @@ class AuthorizationListener implements EventListenerInterface {
 	 */
 	public function implementedEvents(): array {
 		return [
-			'Authorization.requestPolicyClass' => 'requestPolicyClass',
 			'Authorization.requestAuthorizationService' => 'requestAuthorizationService',
 			'Authorization.afterMiddlewareProcess' => 'authorizationMiddlewareAfterProcess',
 		];
@@ -65,24 +62,6 @@ class AuthorizationListener implements EventListenerInterface {
 	public function requestAuthorizationService(Event $ao_event): void {
 		if (isset($this->authorizationService)) {
 			$ao_event->setResult($this->authorizationService);
-		}
-	}
-
-
-	/**
-	 * The events `Authorization.requestPolicyClass` and `Model.requestPolicyClass` ask for a Policy.
-	 * Return an instance of GenericPagePolicy, in case the event has a data-field 'scope' and it holds
-	 * the name of a page role.
-	 *
-	 * @param Event $ao_event
-	 * @noinspection PhpUnused
-	 */
-	public function requestPolicyClass(Event $ao_event): void {
-		$ls_singular = Inflector::singularize(Inflector::underscore($ao_event->getData('scope')));
-		$ls_constant = 'PAGEROLE_' . strtoupper($ls_singular);
-		if (defined($ls_constant)) {
-			$lo_policy = new GenericPagePolicy($ao_event->getData('scope'));
-			$ao_event->setResult($lo_policy);
 		}
 	}
 }

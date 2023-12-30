@@ -26,11 +26,11 @@ interface IdentityPermissionsInterface {
 	 * See \Awyiss\Authorization\Permission\PermissionCollection::scopeIsAccessible() how $ax_identifier is used.
 	 *
 	 * @param string $as_scope
-	 * @param array|null $aa_additionalData
+	 * @param array $aa_additionalData
 	 * @param array|string ...$ax_identifier
 	 * @return bool
 	 * @throws \ReflectionException
 	 * @see PermissionCollection::scopeIsAccessible
 	 */
-	public function scopeIsAccessible(string $as_scope, ?array $aa_additionalData = null, string|array ...$ax_identifier): bool;
+	public function scopeIsAccessible(string $as_scope, array $aa_additionalData = [], string|array ...$ax_identifier): bool;
 }

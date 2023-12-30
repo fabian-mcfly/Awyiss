@@ -317,7 +317,7 @@ class AuthorizationComponent extends Component {
 	public function ensure(string|array ...$ax_identifier): void {
 		$ls_scope = $this->getScope();
 
-		$ls_isAccessible = $this->scopeIsAccessible($ls_scope, null, ...$ax_identifier);
+		$ls_isAccessible = $this->scopeIsAccessible($ls_scope, [], ...$ax_identifier);
 		if (!$ls_isAccessible) {
 			throw new ForbiddenException();
 		}
@@ -337,7 +337,7 @@ class AuthorizationComponent extends Component {
 	 * @noinspection PhpUnused
 	 */
 	public function isAccessible(string|array ...$ax_identifier): bool {
-		return $this->scopeIsAccessible($this->getScope(), null, ...$ax_identifier);
+		return $this->scopeIsAccessible($this->getScope(), [], ...$ax_identifier);
 	}
 
 
@@ -347,17 +347,17 @@ class AuthorizationComponent extends Component {
 	 * See \Awyiss\Authorization\Permission\PermissionCollection::scopeIsAccessible() how $ax_identifier is used.
 	 *
 	 * @param string $as_scope
-	 * @param array|null $aa_additionalData
+	 * @param array $aa_additionalData
 	 * @param array|string ...$ax_identifier
 	 * @return bool
 	 * @throws \Exception
 	 * @see \Awyiss\Authorization\Permission\PermissionCollection::scopeIsAccessible()
 	 */
-	public function scopeIsAccessible(string $as_scope, ?array $aa_additionalData = null, string|array ...$ax_identifier): bool {
+	public function scopeIsAccessible(string $as_scope, array $aa_additionalData = [], string|array ...$ax_identifier): bool {
 		//Get the currently assigned permissions from the identity object, resp. their permissions collection
 		$lo_identity = $this->getIdentity();
 
-		$la_additionalData = $aa_additionalData ?? $this->getConfig('additionalData');
+		$la_additionalData = $aa_additionalData ?: $this->getConfig('additionalData');
 
 
 		return $lo_identity->scopeIsAccessible($as_scope, $la_additionalData, ...$ax_identifier);

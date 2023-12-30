@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 
-namespace Awyiss\Authorization\Policy;
+namespace Awyiss\Authorization\Policy\Backend;
 
 
 use Awyiss\Authorization\AuthorizationService;
@@ -20,7 +20,7 @@ use Awyiss\Configuration\ConfigOptionsProvider;
  *
  * @see SimplePermissionOption
  */
-class GenericPagePolicy {
+class GenericPagesPolicy {
 	protected PermissionOptionCollection $permissionOptionCollection;
 	protected string $scope;
 
@@ -116,8 +116,7 @@ class GenericPagePolicy {
 			'className' => SimplePermissionOption::class,
 		]);
 
-		if (ConfigOptionsProvider::getConfigOptionsFile($this->getScope())) {
-			//TODO: check if a GenericPagesConfigOptions.php exists
+		if (ConfigOptionsProvider::getConfigOptionsFile($this->getScope()) || ConfigOptionsProvider::getConfigOptionsFile('GenericPages')) {
 			$lo_permissions->load('configure', [
 				'className' => SimplePermissionOption::class,
 			]);

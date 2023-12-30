@@ -32,7 +32,7 @@ use RuntimeException;
  * @method SelectQuery addSystemOrderQueryConditions(?SelectQuery $ao_query, \Cake\Datasource\EntityInterface $ao_entity)
  * @method \Awyiss\Authorization\AuthorizationServiceInterface getAuthorizationService()
  * @method bool|int getHighestSystemOrder(\Cake\Datasource\EntityInterface $ao_entity)
- * @method string|\Awyiss\Authorization\Policy\GenericPagePolicy|null getPolicyClass()
+ * @method string|\Awyiss\Authorization\Policy\Backend\GenericPagesPolicy|null getPolicyClass()
  * @method array getSystemOrderRelatedColumns(?\Cake\Datasource\EntityInterface $ao_entity = null)
  * @method array getAttributes()
  * @method string getAttributesTable(bool $ab_camelized = false)

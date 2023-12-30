@@ -152,7 +152,7 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 	/**
 	 * @inheritDoc
 	 */
-	public function scopeIsAccessible(string $as_scope, ?array $aa_additionalData = null, array|string ...$ax_identifier): bool {
+	public function scopeIsAccessible(string $as_scope, array $aa_additionalData = [], array|string ...$ax_identifier): bool {
 		$lo_permissionCollection = $this->getPermissionCollection();
 
 

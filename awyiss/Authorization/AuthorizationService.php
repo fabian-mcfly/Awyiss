@@ -5,7 +5,9 @@ namespace Awyiss\Authorization;
 
 
 use Authentication\AuthenticationServiceInterface;
+use Awyiss\Authorization\Policy\Backend\GenericPagesPolicy;
 use Awyiss\Authorization\Policy\PolicyInterface;
+use Cake\Datasource\FactoryLocator;
 use Cake\Utility\Inflector;
 use Cake\Utility\Text;
 use ReflectionClass;
@@ -88,7 +90,7 @@ class AuthorizationService implements AuthorizationServiceInterface {
 	 * @inheritDoc
 	 * @throws \ReflectionException
 	 */
-	public function getPolicy(string $as_scope, ?string $as_realm = null): ?string {
+	public function getPolicy(string $as_scope, ?string $as_realm = null): GenericPagesPolicy|string|null {
 		$ls_realm = $as_realm ?: $this->realm;
 		$ls_scope = static::sanitizeScope($as_scope);
 
@@ -100,7 +102,6 @@ class AuthorizationService implements AuthorizationServiceInterface {
 			$this->policies[ $ls_realm ] += $this->findPolicy($ls_scope, $ls_realm);
 		}
 
-
 		return $this->policies[ $ls_realm ][ $ls_scope ] ?? null;
 	}
 
@@ -108,32 +109,37 @@ class AuthorizationService implements AuthorizationServiceInterface {
 	/**
 	 * @param string $as_scope
 	 * @param string $as_realm
-	 * @return array<string, class-string<PolicyInterface>>
+	 * @return array<string, GenericPagesPolicy|class-string<PolicyInterface>>
 	 * @throws \ReflectionException
 	 */
 	protected function findPolicy(string $as_scope, string $as_realm): array {
 		$la_policies = [];
 
+		$ls_scope = $as_scope;
+		if ($ls_scope !== '*') {
+			$ls_scope = Inflector::camelize($ls_scope);
+		}
+
 		$la_paths = [
 			'\\' . CUSTOM_NAMESPACE . '\Authorization\Policy\\' . $as_realm . '\\' => implode(
 				DS,
-				[ROOT, CUSTOM_DIR, 'Authorization', 'Policy', $as_realm, $as_scope . 'Policy.php',]
+				[ROOT, CUSTOM_DIR, 'Authorization', 'Policy', $as_realm, $ls_scope . 'Policy.php',]
 			),
-			'\Awyiss\Authorization\Policy\\' . $as_realm . '\\' => implode(DS, [ROOT, APP_DIR, 'Authorization', 'Policy', $as_realm, $as_scope . 'Policy.php']),
+			'\Awyiss\Authorization\Policy\\' . $as_realm . '\\' => implode(DS, [ROOT, APP_DIR, 'Authorization', 'Policy', $as_realm, $ls_scope . 'Policy.php']),
 		];
 
 		foreach ($la_paths as $ls_namespace => $ls_path) {
 			foreach (glob($ls_path) as $ls_filePath) {
 				$ls_policyName = substr($ls_filePath, strrpos($ls_filePath, DS) + 1, -4);
-				if (str_starts_with($ls_policyName, '_')) {
+				if (str_starts_with($ls_policyName, '_') || ($ls_scope === '*' && $ls_policyName === 'GenericPagesPolicy')) {
 					continue;
 				}
 
 				$ls_policyClass = $ls_namespace . $ls_policyName;
 				/** @var PolicyInterface $ls_policyClass */
-				$ls_scope = $ls_policyClass::getScope();
+				$ls_policyScope = $ls_policyClass::getScope();
 
-				if (isset($la_policies[ $ls_scope ])) {
+				if (isset($la_policies[ $ls_policyScope ])) {
 					continue;
 				}
 
@@ -143,7 +149,29 @@ class AuthorizationService implements AuthorizationServiceInterface {
 					throw new RuntimeException(sprintf('The provided Policy class `%s` does not implement the `%s` interface.', $ls_policyClass, PolicyInterface::class));
 				}
 
-				$la_policies[ $ls_scope ] = $ls_policyClass;
+				$la_policies[ $ls_policyScope ] = $ls_policyClass;
+			}
+		}
+
+
+		if ($as_scope === '*') {
+			$lo_pageRolesTable = FactoryLocator::get('Table')->get('PageRoles');
+			/** @var \Awyiss\Model\Entity\PageRole $lo_pageRole */
+			foreach ($lo_pageRolesTable->find()->where(['identifier !=' => 'page'])->select('identifier') as $lo_pageRole) {
+				$ls_policyScope = static::sanitizeScope($lo_pageRole->identifier);
+
+				if (isset($la_configurations[ $ls_policyScope ])) {
+					continue;
+				}
+
+				$la_policies[ $ls_policyScope ] = new GenericPagesPolicy($ls_policyScope);
+			}
+		}
+		elseif (!isset($la_policies[ $as_scope ])) {
+			$ls_singular = Inflector::singularize(Inflector::underscore($as_scope));
+			$ls_constant = 'PAGEROLE_' . strtoupper($ls_singular);
+			if (defined($ls_constant)) {
+				$la_policies[ $as_scope ] = new GenericPagesPolicy($as_scope);
 			}
 		}
 
@@ -160,7 +188,7 @@ class AuthorizationService implements AuthorizationServiceInterface {
 	 * @return string
 	 */
 	public static function sanitizeScope(string $as_scope): string {
-		return Inflector::camelize(Inflector::pluralize(Text::slug($as_scope, '_')));
+		return Inflector::underscore(Inflector::pluralize(Text::slug($as_scope, '_')));
 	}
 
 
