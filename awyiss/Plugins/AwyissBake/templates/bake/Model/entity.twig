@@ -38,9 +38,7 @@ class {{ name }} extends Entity{{ fileBuilder.classBuilder.implements ? ' implem
 	protected array $_accessible = {{ Bake.exportVar(accessible, 1)|raw }};
 {% endif %}
 {% if accessible and fieldMap %}
-
 {% endif %}
-
 {%- if hidden %}
 {%- set generatedProperties = generatedProperties|merge(['_hidden']) %}
 	/**
@@ -48,8 +46,16 @@ class {{ name }} extends Entity{{ fileBuilder.classBuilder.implements ? ' implem
 	*/
 	protected array $_hidden = {{ Bake.exportVar(hidden, 1)|raw }};
 {% endif %}
+	/**
+	 * Entity to be passed to the validation of attributes
+	 */
+	protected ?Entity $entity = NULL;
+{%- set generatedProperties = generatedProperties|merge(['entity']) %}
 {% if fieldMap %}
-{%- set generatedProperties = generatedProperties|merge(['fieldMap']) %}
+{% set generatedProperties = generatedProperties|merge(['fieldMap']) %}
+
+
+
 	/**
 	* @inheritDoc
 	*/
@@ -60,17 +66,24 @@ class {{ name }} extends Entity{{ fileBuilder.classBuilder.implements ? ' implem
 
 	{{~ Bake.concat('\n\n', userProperties) }}
 {% endif %}
-{%- set generatedMethods = [] %}
-	public function setEntity (?Entity $ao_entity = null): static {
-		$this->entity = $ao_entity;
+{% if name|underscore[:11] == 'attributes_' %}
+{% set generatedMethods = [] %}
+{% set generatedMethods = generatedMethods|merge(['getEntity']) %}
 
-		return $this;
-	}
-{%- set generatedMethods = generatedMethods|merge(['setEntity']) %}
+
 	public function getEntity (): ?Entity {
 		return $this->entity;
 	}
-{%- set generatedMethods = generatedMethods|merge(['getEntity']) %}
+{% set generatedMethods = generatedMethods|merge(['setEntity']) %}
+
+
+	public function setEntity (?Entity $ao_entity = null): static {
+		$this->entity = $ao_entity;
+
+
+		return $this;
+	}
+{% endif %}
 {% set userFunctions = fileBuilder.classBuilder.userFunctions(generatedMethods) %}
 {% if userFunctions %}
 

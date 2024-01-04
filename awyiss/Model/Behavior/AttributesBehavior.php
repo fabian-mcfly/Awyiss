@@ -32,10 +32,6 @@ class AttributesBehavior extends Behavior {
 
 
 	/**
-	 * @var array<string, array<string, \Awyiss\Model\Entity\Attribute>>
-	 */
-	protected array $attributes;
-	/**
 	 * The attributes table is name "attributes_<name>" with <name> being the current table's name.
 	 *
 	 * @var string
@@ -71,10 +67,16 @@ class AttributesBehavior extends Behavior {
 	 * @var bool
 	 */
 	protected bool $hasAttributes = false;
+
+
 	/**
 	 * @var array<string, string|\Awyiss\Attributes\AttributeOptionsInterface>
 	 */
 	protected static array $attributeOptions;
+	/**
+	 * @var array<string, array<string, \Awyiss\Model\Entity\Attribute>>
+	 */
+	protected static array $attributes;
 
 
 	/**
@@ -93,6 +95,7 @@ class AttributesBehavior extends Behavior {
 		}
 
 		$this->attributesTable = 'attributes_' . $this->getConfig('sourceTable');
+
 
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 		if (!$this->table()::ATTRIBUTABLE) {
@@ -139,12 +142,6 @@ class AttributesBehavior extends Behavior {
 	 * @return array
 	 */
 	public function getAttributes(): array {
-		$ls_scope = substr($this->table()->getTable(), 11);
-
-		if (isset($this->attributes)) {
-			return $this->attributes[ $ls_scope ] ?? [];
-		}
-
 		if (!$this->getConfig('isAttributesTable')) {
 			$ls_assocatiation = Inflector::camelize($this->attributesTable);
 
@@ -159,6 +156,11 @@ class AttributesBehavior extends Behavior {
 			return $lo_association->getAttributes();
 		}
 
+		$ls_scope = substr($this->table()->getTable(), 11);
+
+		if (isset(static::$attributes)) {
+			return static::$attributes[ $ls_scope ] ?? [];
+		}
 
 		$lo_attributesTable = FactoryLocator::get('Table')->get('Attributes');
 		$lo_attributesQuery = $lo_attributesTable->find('all');
@@ -172,12 +174,11 @@ class AttributesBehavior extends Behavior {
 			...$lo_attributesTable->getAvailableFieldsets(),
 		])));
 
-		$this->attributes = $lo_attributesQuery->all()->groupBy('scope')->map(function ($aa_attributes) {
+		static::$attributes = $lo_attributesQuery->all()->groupBy('scope')->map(function ($aa_attributes) {
 			return collection($aa_attributes)->indexBy('identifier')->toArray();
 		})->toArray();
 
-
-		return $this->attributes[ $ls_scope ] ?? [];
+		return static::$attributes[ $ls_scope ] ?? [];
 	}
 
 

@@ -178,10 +178,15 @@ class Table extends BaseTable {
 
 		$this->setPrimaryKey('id');
 
+		/**
+		 * @noinspection PhpStrictTypeCheckingInspection
+		 * @noinspection PhpParamsInspection
+		 */
+		$ls_sourceTable = isset($this->pageRole) ? Inflector::tableize($this->pageRole) : $this->getTable();
+
 		//Merge the config properties with custom configuration from the database
-		$ls_scope = Inflector::camelize(isset($this->pageRole) ? Inflector::tableize($this->pageRole) : $this->getTable());
 		foreach ($this->customConfigProperties as $ls_property) {
-			$ls_path = implode('.', ['Awyiss', $ls_scope, Awyiss::REALM_BACKEND, $ls_property]);
+			$ls_path = implode('.', ['Awyiss', Inflector::camelize($ls_sourceTable), Awyiss::REALM_BACKEND, $ls_property]);
 			$la_customConfig = Configure::read($ls_path);
 			if ($la_customConfig && is_array($this->$ls_property)) {
 				/** @noinspection PhpParamsInspection */
@@ -198,7 +203,7 @@ class Table extends BaseTable {
 			$this->addBehavior(
 				'Attributes',
 				['isAttributesTable' => false] + $this->attributes + [
-					'sourceTable' => $this->pageRole ?? $this->getTable(),
+					'sourceTable' => $ls_sourceTable,
 					'foreignKey' => Inflector::singularize($this->getTable()) . '_id',
 				]
 			);

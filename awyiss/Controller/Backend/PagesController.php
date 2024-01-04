@@ -54,7 +54,7 @@ class PagesController extends Controller {
 
 		$this->set([
 			'ao_' . $ls_entitiesName => $lo_pages,
-			'ao_pageTemplates' => $this->getPageTemplates(),
+			//'ao_pageTemplates' => $this->getPageTemplates(),
 		]);
 	}
 
@@ -69,8 +69,8 @@ class PagesController extends Controller {
 		$this->Authorization->ensure('create');
 
 		$lo_page = $this->Pages->newDefaultEntity([
-			'language_shortcode' => $this->getOverviewWhere('language_shortcode'),
-			'page_role_id' => $this->getPageRoleId(),
+			'languageShortcode' => $this->getOverviewWhere('language_shortcode'),
+			'pageRoleId' => $this->getPageRoleId(),
 		]);
 
 		if ($this->request->is('post')) {

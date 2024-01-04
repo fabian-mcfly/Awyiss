@@ -36,15 +36,10 @@ abstract class BackendController extends AppController {
 	 */
 	protected array $customConfigProperties = [
 		'categories',
-		//'dates',
 		'eventTrigger',
 		'paginate',
 		'systemOrder',
 	];
-	/**
-	 * @var array Settings for the DatesComponent
-	 */
-	//protected array $dates = [];
 	/**
 	 * @see \Awyiss\Controller\Component\EventTriggerComponent
 	 * @var array Settings for the EventTriggerComponent
@@ -108,7 +103,7 @@ abstract class BackendController extends AppController {
 			}
 
 			//Redirect to the same route if the last character is not a slash
-			if (!$lo_request->getParam('fullSlug') && !str_ends_with($ls_path, '/')) {
+			if (!$lo_request->getParam('fullSlug') && !str_ends_with($ls_path, '/') && !$lo_request->getParam('parts')) {
 				$this->redirect($ls_path . '/', 301);
 			}
 

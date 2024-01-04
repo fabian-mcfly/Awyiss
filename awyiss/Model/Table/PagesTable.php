@@ -278,10 +278,7 @@ class PagesTable extends Table {
 
 
 		$ao_rules->add(
-			$ao_rules->existsIn(
-				['languageShortcode'],
-				'Languages',
-			),
+			$ao_rules->existsIn('languageShortcode', 'Languages'),
 			'languageExists',
 			[
 				'errorField' => 'languageShortcode',
@@ -291,10 +288,7 @@ class PagesTable extends Table {
 
 
 		$ao_rules->add(
-			$ao_rules->existsIn(
-				['pageRoleId'],
-				'PageRoles',
-			),
+			$ao_rules->existsIn('pageRoleId', 'PageRoles'),
 			'validPageRole',
 			[
 				'errorField' => 'pageRoleId',
@@ -304,10 +298,7 @@ class PagesTable extends Table {
 
 
 		$ao_rules->add(
-			$ao_rules->existsIn(
-				['pageTemplateId', 'pageRoleId'],
-				'PageTemplates',
-			),
+			$ao_rules->existsIn(['pageTemplateId', 'pageRoleId'], 'PageTemplates'),
 			'validPageTemplate',
 			[
 				'errorField' => 'pageTemplateId',
@@ -317,10 +308,7 @@ class PagesTable extends Table {
 
 
 		$ao_rules->add(
-			$ao_rules->existsIn(
-				['duplicateOf'],
-				'Duplicate' . $ls_pageRole,
-			),
+			$ao_rules->existsIn('duplicateOf', 'Duplicate' . $ls_pageRole),
 			'validDuplicateOf',
 			[
 				'errorField' => 'duplicateOf',
@@ -616,6 +604,6 @@ class PagesTable extends Table {
 			$this->removeBehavior('Nest');
 		}
 
-		$this->addBehavior('Nest', $this->getConfig('nest', []));
+		$this->addBehavior('Nest', $this->nest);
 	}
 }

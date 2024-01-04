@@ -57,7 +57,7 @@ class MenuEntriesTable extends Table {
 	public function initialize(array $aa_config): void {
 		parent::initialize($aa_config);
 
-		$this->addBehavior('Nest', $this->getConfig('nest', []));
+		$this->addBehavior('Nest', $this->nest);
 
 		$this->belongsTo('Menus', [
 			'joinType' => 'INNER',

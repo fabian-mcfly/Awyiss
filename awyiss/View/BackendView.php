@@ -22,6 +22,11 @@ class BackendView extends AppView {
 		$this->addHelper('Attributes');
 		$this->addHelper('Authentication.Identity');
 		$this->addHelper('Authorization');
+		$this->addHelper('Form', [
+			'autoSetCustomValidity' => false,
+			'errorClass' => 'Error',
+			'templates' => 'form_templates_backend',
+		]);
 		$this->addHelper('Locale');
 		$this->addHelper('Paginator', ['templates' => 'paginator_templates']);
 		$this->addHelper('SystemOrder', [
@@ -43,11 +48,5 @@ class BackendView extends AppView {
 		if ($lo_language) {
 			$this->addHelper('Time', ['outputTimezone' => $lo_language->timezone]);
 		}
-
-		$this->addHelper('Form', [
-			'autoSetCustomValidity' => false,
-			'errorClass' => 'Error',
-			'templates' => 'form_templates_backend',
-		]);
 	}
 }
