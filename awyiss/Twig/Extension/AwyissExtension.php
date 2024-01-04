@@ -4,6 +4,7 @@
 namespace Awyiss\Twig\Extension;
 
 
+use Awyiss\Core\LocalConfig;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 use Twig\TwigTest;
@@ -46,16 +47,16 @@ class AwyissExtension extends AbstractExtension {
 	 */
 	public function getFunctions(): array {
 		return [
-			new TwigFunction('getClass', function ($ax_class): string {
-				return get_class($ax_class);
-			}),
-
-			new TwigFunction('combine', function ($aa_keys, $aa_values): array {
+			new TwigFunction('combine', function (array $aa_keys, array $aa_values): array {
 				return array_combine($aa_keys, $aa_values);
 			}),
 
 			new TwigFunction('dump', function (): void {
 				dump(...func_get_args());
+			}),
+
+			new TwigFunction('getClass', function (object $ao_class): string {
+				return get_class($ao_class);
 			}),
 
 			new TwigFunction('__', '__'),
@@ -68,6 +69,10 @@ class AwyissExtension extends AbstractExtension {
 			new TwigFunction('__dxn', '__dxn'),
 			new TwigFunction('__df', '__df'),
 			new TwigFunction('__dfx', '__dfx'),
+
+			new TwigFunction('localConfig', function (string|array|null $ax_path = null, mixed $ax_default = null): mixed {
+				return LocalConfig::read($ax_path, $ax_default);
+			}),
 
 			new TwigFunction('naturalSort', function (array $aa_data, int|string|null $as_key = null): array {
 				uasort($aa_data, function ($a, $b) use ($as_key) {
@@ -83,9 +88,9 @@ class AwyissExtension extends AbstractExtension {
 				return $aa_data;
 			}),
 
-			new TwigFunction('staticCall', function (string $ax_class, string $as_method, ...$aa_args): mixed {
-				if (class_exists($ax_class) && method_exists($ax_class, $as_method)) {
-					return call_user_func_array([$ax_class, $as_method], $aa_args);
+			new TwigFunction('staticCall', function (string $as_class, string $as_method, ...$aa_args): mixed {
+				if (class_exists($as_class) && method_exists($as_class, $as_method)) {
+					return call_user_func_array([$as_class, $as_method], $aa_args);
 				}
 
 
