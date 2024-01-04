@@ -248,7 +248,6 @@ class ConfigurationController extends Controller {
 			$this->Flash->error(__('delete_failed'));
 		}
 
-
 		return $this->redirect(['action' => 'overview']);
 	}
 

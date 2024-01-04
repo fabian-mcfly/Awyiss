@@ -50,7 +50,7 @@
 					{% if ai_level > 0 %}
 						{%- for i in range(0, ai_level - 1) %}&ndash; {% endfor -%}
 					{% endif %}
-					{{ ls_key }}
+					{{ ls_key|variable }}
 				</th>
 			</tr>
 			{{ _self.recursiveConfigurationListing(lx_configuration, ai_level + 1) }}
@@ -67,7 +67,7 @@
 							{{ lo_configuration.identifier|split('.')|slice(-1)|join()|variable }}
 						{% endif %}
 					</td>
-					<td>{{ lo_configuration.value }}</td>
+					<td>{{ lo_configuration.value ?? '' }}</td>
 					<td>{{ lo_configuration.language_shortcode is defined ? helper_Locale_languageTitle(lo_configuration.language_shortcode) : '' }}</td>
 					<td class="actions">
 						{% if helper_Authorization_isAccessible('update') %}

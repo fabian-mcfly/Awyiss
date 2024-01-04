@@ -66,13 +66,13 @@ class Configuration extends Entity {
 
 
 	/**
-	 * If the provided value is null or false, set the value to an empty string
+	 * If the provided value is false, set the value to 0
 	 *
 	 * @noinspection PhpUnused
 	 * @see \Awyiss\Model\Entity\Configuration::$value
 	 */
 	protected function _setValue(mixed $ax_value): mixed {
-		return is_null($ax_value) || $ax_value === false ? null : $ax_value;
+		return $ax_value === false ? 0 : $ax_value;
 	}
 
 

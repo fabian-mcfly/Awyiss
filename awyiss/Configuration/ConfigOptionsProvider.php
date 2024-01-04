@@ -87,21 +87,15 @@ class ConfigOptionsProvider {
 	/**
 	 * Returns an instance of a ConfigOptions class with the provided scope or null
 	 *
-	 * @param class-string<ConfigOptionsInterface>|string $as_scope
+	 * @param class-string<ConfigOptionsInterface>|string $as_configOptions
 	 * @return ConfigOptionsInterface|null
 	 * @throws \ReflectionException
 	 */
-	public static function loadConfigOptions(string $as_scope): ?ConfigOptionsInterface {
-		$ls_scope = static::sanitizeScope($as_scope);
-
-		if (array_key_exists($ls_scope, static::$loadedConfigOptions)) {
-			return static::$loadedConfigOptions[ $ls_scope ];
-		}
-
-		if (str_contains($as_scope, '\\')) {
-			if (class_exists($as_scope)) {
-				$ls_scope = $as_scope::getScope();
-				$ls_configurationClass = $as_scope;
+	public static function loadConfigOptions(string $as_configOptions): ?ConfigOptionsInterface {
+		if (str_contains($as_configOptions, '\\')) {
+			if (class_exists($as_configOptions)) {
+				$ls_scope = $as_configOptions::getScope();
+				$ls_configurationClass = $as_configOptions;
 
 				if (array_key_exists($ls_scope, static::$loadedConfigOptions)) {
 					return static::$loadedConfigOptions[ $ls_scope ];
@@ -112,6 +106,12 @@ class ConfigOptionsProvider {
 			}
 		}
 		else {
+			$ls_scope = static::sanitizeScope($as_configOptions);
+
+			if (array_key_exists($ls_scope, static::$loadedConfigOptions)) {
+				return static::$loadedConfigOptions[ $ls_scope ];
+			}
+
 			/** @var class-string<ConfigOptionsInterface>|null $ls_configurationClass */
 			$ls_configurationClass = static::getConfigOptionsFile($ls_scope);
 
@@ -122,13 +122,16 @@ class ConfigOptionsProvider {
 				return null;
 			}
 
-			if (!str_contains($as_scope, '\\')) {
-				$ls_configurationClass = '\\' . GenericPagesConfigOptions::class;
+			if (!str_contains($ls_configurationClass, '\\')) {
+				$ls_configurationClass = GenericPagesConfigOptions::class;
 			}
 		}
 
 		static::$loadedConfigOptions[ $ls_scope ] = new $ls_configurationClass();
 
+		if ($ls_configurationClass::getScope() === 'GenericPages') {
+			static::$loadedConfigOptions[ $ls_scope ]->setPageRole($ls_scope);
+		}
 
 		return static::$loadedConfigOptions[ $ls_scope ];
 	}
@@ -260,13 +263,12 @@ class ConfigOptionsProvider {
 				}
 
 				if ($ab_load) {
-					static::loadConfigOptions($ls_configurationClass);
+					static::loadConfigOptions($ls_configurationClass, $ls_configScope);
 				}
 
 				$la_configurations[ $ls_configScope ] = $ls_configurationClass;
 			}
 		}
-
 
 		if ($as_scope === '*') {
 			$lo_pageRolesTable = FactoryLocator::get('Table')->get('PageRoles');
@@ -278,20 +280,18 @@ class ConfigOptionsProvider {
 					continue;
 				}
 
-				$ls_configurationClass = $ls_configScope;
-
 				if ($ab_load) {
-					static::loadConfigOptions($ls_configurationClass);
+					static::loadConfigOptions($ls_configScope);
 				}
 
 				$la_configurations[ $ls_configScope ] = $ls_configScope;
 			}
 		}
-		elseif (!isset($la_configurations[ $as_scope ])) {
-			$ls_singular = Inflector::singularize(Inflector::underscore($as_scope));
+		elseif (!isset($la_configurations[ $ls_scope ]) && !in_array(strtolower($ls_scope), ['page', 'pages'])) {
+			$ls_singular = Inflector::singularize(Inflector::underscore($ls_scope));
 			$ls_constant = 'PAGEROLE_' . strtoupper($ls_singular);
 			if (defined($ls_constant)) {
-				$la_configurations[ $as_scope ] = $as_scope;
+				$la_configurations[ $ls_scope ] = $ls_scope;
 			}
 		}
 

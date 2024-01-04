@@ -64,7 +64,7 @@
 
 		{% block fieldsetGeneralInner %}
 			{% block formControlIdentifier %}
-				{{ helper_Form_control('identifier', {val: ao_configuration.identifier|variable }) }}
+				{{ helper_Form_control('identifier', {val: ao_configuration.identifier ? ao_configuration.identifier|variable : '' }) }}
 
 				{% block formControlIdentifierSelect %}
 					<label>

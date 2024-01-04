@@ -16,6 +16,12 @@ use Awyiss\Model\Behavior\Date\DateType;
  */
 class GenericPagesConfigOptions extends AbstractConfigOptions {
 	/**
+	 * @var string|null
+	 */
+	protected ?string $pageRole = null;
+
+
+	/**
 	 * @var string Scope of these options
 	 */
 	protected static string $scope = 'GenericPages';
@@ -79,5 +85,25 @@ class GenericPagesConfigOptions extends AbstractConfigOptions {
 				]),
 			],
 		]);
+	}
+
+
+	/**
+	 * @return string|null
+	 */
+	public function getPageRole(): ?string {
+		return $this->pageRole;
+	}
+
+
+	/**
+	 * @param string|null $as_pageRole
+	 * @return $this
+	 */
+	public function setPageRole(?string $as_pageRole): static {
+		$this->pageRole = $as_pageRole;
+
+
+		return $this;
 	}
 }

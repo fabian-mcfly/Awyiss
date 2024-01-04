@@ -34,6 +34,7 @@ class ConfigOption {
 		'title' => 'string',
 		'type' => 'string',
 		'typecast' => 'callable|null',
+		'values' => 'array|callable|string|null',
 	];
 	/**
 	 * @var mixed|null
@@ -71,9 +72,9 @@ class ConfigOption {
 	 */
 	protected $typecast = null;
 	/**
-	 * @var array|class-string Possible values for type "listvalue"
+	 * @var callable|array|class-string|null Possible values for type "listvalue"
 	 */
-	protected array|string $values;
+	protected mixed $values = null;
 
 
 	/**
@@ -310,22 +311,26 @@ class ConfigOption {
 
 
 		if ($this->getType() === ConfigOptionType::ENUM || $this->getType() === ConfigOptionType::LISTVALUE) {
-			$lx_values = $this->getValues();
+			$lx_values = $this->getValues(true);
 			if (!$lx_values) {
 				throw new RuntimeException(sprintf('Cannot validate option `%s` with type `%s` without a list of values', $this->identifier, ConfigOptionType::LISTVALUE->value));
 			}
+		}
 
-			if ($this->getType() === ConfigOptionType::LISTVALUE) {
-				dd($ax_value, __FILE__, __LINE__);
-			}
 
+		if ($this->getType() === ConfigOptionType::ENUM) {
 			if (!is_string($ax_value) && !is_int($ax_value)) {
 				return false;
 			}
 
 
-			/** @noinspection PhpUndefinedMethodInspection */
+			/** @var \BackedEnum $lx_values */
 			return (bool)$lx_values::tryFrom($ax_value);
+		}
+
+		if ($this->getType() === ConfigOptionType::LISTVALUE) {
+			/** @noinspection PhpUndefinedVariableInspection */
+			return in_array($ax_value, $lx_values, true);
 		}
 
 
@@ -345,26 +350,37 @@ class ConfigOption {
 		}
 
 		if ($this->getType() === ConfigOptionType::ENUM || $this->getType() === ConfigOptionType::LISTVALUE) {
-			$lx_values = $this->getValues();
+			$lx_values = $this->getValues(true);
 			if (!$lx_values) {
 				throw new RuntimeException(sprintf('Cannot typecast option `%s` with type `%s` without a list of values', $this->identifier, ConfigOptionType::LISTVALUE->value));
 			}
+		}
 
-			if ($this->getType() === ConfigOptionType::LISTVALUE) {
-				dd($ax_value, __FILE__, __LINE__);
-			}
-
+		if ($this->getType() === ConfigOptionType::ENUM) {
 			//If the value already is a case of the provided enum class, return it
+			/** @noinspection PhpUndefinedVariableInspection */
 			if ($ax_value instanceof $lx_values) {
 				return $ax_value;
 			}
 
 			if (!is_string($ax_value) && !is_int($ax_value)) {
+				return null;
+			}
+
+			/** @var \BackedEnum $lx_values */
+			return $lx_values::tryFrom($ax_value);
+		}
+
+		if ($this->getType() === ConfigOptionType::LISTVALUE) {
+			/** @noinspection PhpUndefinedVariableInspection */
+			if (in_array($ax_value, $lx_values, true)) {
 				return $ax_value;
 			}
 
-			/** @noinspection PhpUndefinedMethodInspection */
-			return $lx_values::tryFrom($ax_value);
+			$lx_key = array_search($ax_value, $lx_values);
+
+
+			return $lx_key ? $lx_values[ $lx_key ] : null;
 		}
 
 		return $this->getType()->cast($ax_value);
@@ -372,18 +388,27 @@ class ConfigOption {
 
 
 	/**
-	 * @return array|string
+	 * @return callable|array|class-string|null
 	 */
-	public function getValues(): array|string {
+	public function getValues(bool $ab_returnEvaluated = false): array|callable|string|null {
+		if ($ab_returnEvaluated) {
+			if (is_string($this->values) && !enum_exists($this->values)) {
+				return $this->values->cases();
+			}
+			elseif (is_callable($this->values)) {
+				return call_user_func($this->values);
+			}
+		}
+
 		return $this->values;
 	}
 
 
 	/**
-	 * @param array $ax_values
+	 * @param callable|array|class-string|null $ax_values
 	 * @return $this
 	 */
-	public function setValues(array|string $ax_values): static {
+	public function setValues(array|callable|string|null $ax_values): static {
 		if (is_string($ax_values) && !enum_exists($ax_values)) {
 			throw new RuntimeException(sprintf('Provided values must be an array or a valid enum. `%s` given.', gettype($ax_values)));
 		}

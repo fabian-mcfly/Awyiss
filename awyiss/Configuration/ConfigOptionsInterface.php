@@ -18,6 +18,7 @@ interface ConfigOptionsInterface {
 	 */
 	public function initializeConfigOptions(): void;
 
+
 	/**
 	 * Return all config options as flattened array
 	 *
@@ -26,6 +27,7 @@ interface ConfigOptionsInterface {
 	 * @see ConfigOption
 	 */
 	public function getConfigOptions(?string $as_realm = null): ConfigOptionCollection|array;
+
 
 	/**
 	 * Return the config option found under the path provided.
@@ -37,6 +39,7 @@ interface ConfigOptionsInterface {
 	 * @see \Cake\Utility\Hash::get()
 	 */
 	public function getConfigOption(string $as_realm, string|array $ax_path): ?ConfigOption;
+
 
 	/**
 	 * Retreives a configuration class and validates the provided value for the given configOptionIdentifier
@@ -57,6 +60,7 @@ interface ConfigOptionsInterface {
 		bool $ab_fallbackValidity = true
 	): bool|string;
 
+
 	/**
 	 * Retreives a configuration class and cast the provided value to it's correct type for the given configOptionIdentifier
 	 *
@@ -67,6 +71,7 @@ interface ConfigOptionsInterface {
 	 * @throws \ReflectionException
 	 */
 	public function typecastConfigValue(string $as_realm, array|string $ax_path, mixed $ax_value): mixed;
+
 
 	/**
 	 * Return the scope of the options-collection.
