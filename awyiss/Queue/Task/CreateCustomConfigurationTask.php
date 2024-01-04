@@ -5,6 +5,7 @@ namespace Awyiss\Queue\Task;
 
 
 use Awyiss\Awyiss;
+use Awyiss\Middleware\LocaleMiddleware;
 use Cake\Core\Configure;
 use Cake\Utility\Inflector;
 use Queue\Queue\Task;
@@ -40,22 +41,30 @@ class CreateCustomConfigurationTask extends Task {
 			unlink($ls_filePath);
 		}
 
-		//Load the config with the provided languages
-		Awyiss::loadConfiguration(...($aa_data['languageShortcodes'] ?? []));
-
-		$ls_frontendLanguage = $aa_data['languageShortcodes'][0] ?? null;
-		$ls_backendLanguage = $aa_data['languageShortcodes'][1] ?? null;
-
-		$ls_fileName = Inflector::underscore(CUSTOM_NAMESPACE);
-		if ($ls_frontendLanguage) {
-			$ls_fileName .= '[' . $ls_frontendLanguage . ']';
-
-			if ($ls_backendLanguage) {
-				$ls_fileName .= '[' . $ls_backendLanguage . ']';
-			}
+		$la_languages = LocaleMiddleware::getLanguages();
+		foreach ($la_languages as &$la_realmLanguages) {
+			$la_realmLanguages = array_keys($la_realmLanguages);
 		}
+		unset($la_realmLanguages);
 
-		//Dump the config to a file
-		Configure::dump($ls_fileName, 'default', ['Awyiss']);
+		foreach (collection($la_languages)->cartesianProduct()->toArray() as $la_languages) {
+			//Load the config with the provided languages
+			Awyiss::loadConfiguration(...$la_languages);
+
+			$ls_frontendLanguage = $la_languages[0] ?? null;
+			$ls_backendLanguage = $la_languages[1] ?? null;
+
+			$ls_fileName = Inflector::underscore(CUSTOM_NAMESPACE);
+			if ($ls_frontendLanguage) {
+				$ls_fileName .= '[' . $ls_frontendLanguage . ']';
+
+				if ($ls_backendLanguage) {
+					$ls_fileName .= '[' . $ls_backendLanguage . ']';
+				}
+			}
+
+			//Dump the config to a file
+			Configure::dump($ls_fileName, 'default', ['Awyiss']);
+		}
 	}
 }
