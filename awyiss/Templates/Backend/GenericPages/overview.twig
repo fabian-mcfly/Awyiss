@@ -27,7 +27,7 @@
 						<td>{{ lo_page.title }} <br> {{ lo_page.slug }}</td>
 						<td>level {{ lo_page.level }} - order {{ lo_page.systemOrder }}</td>
 						<td class="actions">
-							{% if lo_page.duplicate_of is empty and helper_Authorization_isAccessible('contents') %}
+							{% if lo_page.duplicate_of is empty and helper_Authorization_isAccessible('contents') and localConfig('contents.enabled', false) == true %}
 								{{ helper_Html_link(__('view_contents'), {controller: 'contents', action: 'overview', page_id: lo_page.id}) }}
 							{% endif %}
 

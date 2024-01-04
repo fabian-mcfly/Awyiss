@@ -9,6 +9,8 @@ use Awyiss\Authorization\PermissionOption\PermissionOptionCollection;
 use Awyiss\Authorization\PermissionOption\PermissionOptionInterface;
 use Awyiss\Authorization\PermissionOption\SimplePermissionOption;
 use Awyiss\Configuration\ConfigOptionsProvider;
+use Cake\Core\Configure;
+use Cake\Utility\Inflector;
 
 
 /**
@@ -112,9 +114,11 @@ class GenericPagesPolicy {
 			'className' => SimplePermissionOption::class,
 		]);
 
-		$lo_permissions->load('contents', [
-			'className' => SimplePermissionOption::class,
-		]);
+		if (Configure::read('Awyiss.' . Inflector::camelize($this->getScope()) . '.Backend.contents.enabled')) {
+			$lo_permissions->load('contents', [
+				'className' => SimplePermissionOption::class,
+			]);
+		}
 
 		if (ConfigOptionsProvider::getConfigOptionsFile($this->getScope()) || ConfigOptionsProvider::getConfigOptionsFile('GenericPages')) {
 			$lo_permissions->load('configure', [

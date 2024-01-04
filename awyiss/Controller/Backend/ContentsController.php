@@ -12,6 +12,7 @@ use Awyiss\Model\Entity\Page;
 use Awyiss\Routing\Router;
 use Cake\Collection\Collection;
 use Cake\Collection\CollectionInterface;
+use Cake\Core\Configure;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Datasource\Exception\InvalidPrimaryKeyException;
 use Cake\Datasource\Exception\RecordNotFoundException;
@@ -494,6 +495,12 @@ class ContentsController extends Controller {
 		}
 
 		$this->Authorization->setScope($this->Contents->getForScope());
+
+
+		if (!Configure::read('Awyiss.' . Inflector::camelize($this->Contents->getForScope()) . '.Backend.contents.enabled')) {
+			$this->Flash->error(__d($this->Contents->getForScope(), 'contents_disabled'));
+			throw new RedirectException(Router::url(['controller' => $this->Contents->getForScope(), 'action' => 'overview'], true), 404);
+		}
 
 
 		return $lo_page;

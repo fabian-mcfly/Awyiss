@@ -7,14 +7,17 @@ namespace Awyiss\Configuration\ConfigOptions;
 use Awyiss\Awyiss;
 use Awyiss\Configuration\AbstractConfigOptions;
 use Awyiss\Configuration\ConfigOption;
+use Awyiss\Configuration\ConfigOptions\Trait\SystemOrderFieldsTrait;
 use Awyiss\Configuration\ConfigOptionType;
-use Awyiss\Model\Behavior\Date\DateType;
 
 
 /**
  * Provides all configuration options for the ContentTemplates scope
  */
 class GenericPagesConfigOptions extends AbstractConfigOptions {
+	use SystemOrderFieldsTrait;
+
+
 	/**
 	 * @var string|null
 	 */
@@ -32,41 +35,14 @@ class GenericPagesConfigOptions extends AbstractConfigOptions {
 	 */
 	public function initializeConfigOptions(): void {
 		$this->add(Awyiss::REALM_BACKEND, [
-			'dates' => [
-				'types' => [
-					new ConfigOption([
-						'defaultValue' => DateType::DATE,
-						'identifier' => 'eventStart',
-						'localizable' => false,
-						'nullable' => true,
-						'type' => ConfigOptionType::ENUM,
-						'values' => DateType::class,
-					]),
-					new ConfigOption([
-						'defaultValue' => null,
-						'identifier' => 'eventEnd',
-						'localizable' => false,
-						'nullable' => true,
-						'type' => ConfigOptionType::ENUM,
-						'values' => DateType::class,
-					]),
-					new ConfigOption([
-						'defaultValue' => DateType::DATETIME,
-						'identifier' => 'publicationStart',
-						'localizable' => false,
-						'nullable' => true,
-						'type' => ConfigOptionType::ENUM,
-						'values' => DateType::class,
-					]),
-					new ConfigOption([
-						'defaultValue' => DateType::DATETIME,
-						'identifier' => 'publicationEnd',
-						'localizable' => false,
-						'nullable' => true,
-						'type' => ConfigOptionType::ENUM,
-						'values' => DateType::class,
-					]),
-				],
+			'contents' => [
+				new ConfigOption([
+					'defaultValue' => false,
+					'identifier' => 'enabled',
+					'localizable' => false,
+					'nullable' => false,
+					'type' => ConfigOptionType::BOOL,
+				]),
 			],
 			'paginate' => [
 				new ConfigOption([
