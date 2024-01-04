@@ -4,6 +4,7 @@
 namespace Awyiss\View\Helper;
 
 
+use Awyiss\Core\LocalConfig;
 use Awyiss\Model\Behavior\SystemOrderBehavior;
 use Awyiss\Model\Entity;
 use Cake\Core\Exception\CakeException;
@@ -76,11 +77,16 @@ class SystemOrderHelper extends Helper {
 	 * @see FormHelper::control
 	 */
 	public function control(?string $as_fieldName = null, array $aa_attributes = []): string {
+		if (LocalConfig::read('systemOrder.field') !== 'systemOrder') {
+			return '';
+		}
+
 		//Add the provided attributes to the config, so both will be merged
 		$la_attributes = Hash::merge($aa_attributes, $this->getConfig());
 
+
 		//No entity? That's a big problem.
-		$lo_entity = $la_attributes['entity'] ?? null;
+		$lo_entity = $la_attributes['entity'] ?? $this->Form->context()->entity() ?? null;
 		if (!$lo_entity) {
 			throw new CakeException('Missing entity for SystemOrderHelper::control');
 		}

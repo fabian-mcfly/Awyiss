@@ -28,6 +28,7 @@ class SystemOrderComponent extends Component {
 	protected array $_defaultConfig = [
 		'autoload' => ['add', 'edit'], //can be a boolean value or an array containing all action names for which the records should get autoloaded
 		'entityName' => null, //singlularized variable name of the entity that's used to autoload records
+		'field' => 'systemOrder',
 		'records' => null,
 		'tableName' => null,
 	];
@@ -43,6 +44,10 @@ class SystemOrderComponent extends Component {
 			$this->setConfig('entityName', Inflector::variable(Inflector::singularize($this->getController()->getName())));
 		}
 
+		if ($this->getConfig('field') !== 'systemOrder') {
+			$this->setConfig('autoload', false);
+		}
+
 		if ($this->getConfig('tableName') === null) {
 			$this->setConfig('tableName', $this->getController()->getName());
 		}
@@ -50,10 +55,9 @@ class SystemOrderComponent extends Component {
 
 
 	/**
-	 * Sets view vars before rendering a view, depending on the name set in the config
-	 * For usergroups as categories for users, the set view vars are
-	 *        ao_systemOrderRecords
-	 *        aa_systemOrderRelatedColumns
+	 * Sets view vars before rendering a view
+	 *  - ao_systemOrderRecords
+	 *  - aa_systemOrderRelatedColumns
 	 *
 	 * @return void
 	 */
@@ -61,7 +65,7 @@ class SystemOrderComponent extends Component {
 		$lo_controller = $this->getController();
 		$lo_view = $lo_controller->viewBuilder();
 
-		if (!$this->getConfig('tableName')) {
+		if (!$this->getConfig('tableName') || $this->getConfig('field') !== 'systemOrder') {
 			return;
 		}
 
@@ -99,16 +103,6 @@ class SystemOrderComponent extends Component {
 				}
 			}
 		}
-		/**
-		 * Do not try to get an entity or call `ensurePossibleSystemOrder` when records exist in the config,
-		 * since those might not be related to the entity
-		 */ /* else {
-		 * 	$ls_varName = 'ao_' . $this->getConfig('entityName');
-		 * 	if ($lo_entity = $lo_view->getVar($ls_varName)) {
-		 * 		$this->ensurePossibleSystemOrder($lo_entity);
-		 * 	}
-		 * }
-		 */
 
 		//Set view vars if they don't already exist
 		if (!$lo_view->getVar('ao_systemOrderRecords')) {
@@ -175,7 +169,7 @@ class SystemOrderComponent extends Component {
 	 * @noinspection PhpPossiblePolymorphicInvocationInspection
 	 */
 	public function ensurePossibleSystemOrder(EntityInterface $ao_entity, ?ResultSet $ao_records = null): void {
-		if (!$ao_entity->has('systemOrder')) {
+		if (!$ao_entity->has('systemOrder') || $this->getConfig('field') !== 'systemOrder') {
 			return;
 		}
 

@@ -84,6 +84,27 @@ class GenericPagesConfigOptions extends AbstractConfigOptions {
 					'type' => ConfigOptionType::INTEGER,
 				]),
 			],
+			'systemOrder' => [
+				new ConfigOption([
+					'defaultValue' => SORT_ASC,
+					'identifier' => 'direction',
+					'localizable' => false,
+					'nullable' => false,
+					'type' => ConfigOptionType::LISTVALUE,
+					'values' => [
+						SORT_ASC,
+						SORT_DESC,
+					],
+				]),
+				new ConfigOption([
+					'defaultValue' => 'title',
+					'identifier' => 'field',
+					'localizable' => false,
+					'nullable' => false,
+					'type' => ConfigOptionType::LISTVALUE,
+					'values' => $this->getSystemOrderFields(...),
+				]),
+			],
 		]);
 	}
 
