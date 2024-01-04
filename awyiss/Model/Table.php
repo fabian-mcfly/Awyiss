@@ -84,7 +84,6 @@ class Table extends BaseTable {
 	protected array $customConfigProperties = [
 		'categories',
 		'eventTrigger',
-		'dates',
 		'systemOrder',
 	];
 	/**
@@ -120,10 +119,6 @@ class Table extends BaseTable {
 	 * @var array Settings for the DefaultValuesBehavior
 	 */
 	protected array $defaultValues = [];
-	/**
-	 * @var array Settings for the DatesBehavior
-	 */
-	protected array $dates = [];
 	/**
 	 * @var array Settings for the EventTriggerBehavior
 	 */
@@ -215,11 +210,6 @@ class Table extends BaseTable {
 
 		$this->addBehavior('AutoPrefix', $this->autoPrefix + ['priority' => 99999]);
 		$this->addBehavior('DefaultValues', $this->defaultValues);
-
-		if ($this->getTable() !== 'dates') {
-			$this->addBehavior('Dates', $this->dates);
-		}
-
 		$this->addBehavior('EventTrigger', $this->eventTrigger);
 
 		/*if ($lb_isAttributesTable) {

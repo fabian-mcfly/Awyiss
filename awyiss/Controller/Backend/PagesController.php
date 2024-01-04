@@ -47,7 +47,7 @@ class PagesController extends Controller {
 	public function overview(): void {
 		$this->Authorization->ensure('read');
 
-		$lo_pages = $this->Pages->find('futureEvents')->where($this->getOverviewWhere());
+		$lo_pages = $this->Pages->find()->where($this->getOverviewWhere());
 		$lo_pages = $this->Pages->listNested($lo_pages);
 
 		$ls_entitiesName = Inflector::variable($this->getName());
