@@ -44,7 +44,7 @@ if (!function_exists('__')) {
 
 if (!function_exists('__d')) {
 	/**
-	 * Allows you to override the current as_domain for a single message lookup.
+	 * Allows you to override the current domain for a single message lookup.
 	 *
 	 * @param string $as_domain Domain.
 	 * @param string $as_string String to translate.
@@ -77,8 +77,8 @@ if (!function_exists('__d')) {
 
 if (!function_exists('__df')) {
 	/**
-	 * Allows you to override the current as_domain for a single message lookup.
-	 * If no translation for the given as_domain can be found, a fallbackdomain will be used
+	 * Allows you to override the current domain for a single message lookup.
+	 * If no translation for the given domain can be found, a fallback domain will be used
 	 *
 	 * @param string $as_domain
 	 * @param string $as_fallbackDomain
@@ -146,7 +146,7 @@ if (!function_exists('__dx')) {
 
 if (!function_exists('__dfx')) {
 	/**
-	 * Allows you to override the current as_domain for a single message lookup.
+	 * Allows you to override the current domain for a single message lookup.
 	 * If no translation for the given as_domain can be found, a fallbackdomain will be used
 	 * The context is a unique identifier for the translations string that makes it unique
 	 * within the same domain.

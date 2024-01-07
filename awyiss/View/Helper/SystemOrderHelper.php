@@ -77,7 +77,7 @@ class SystemOrderHelper extends Helper {
 	 * @see FormHelper::control
 	 */
 	public function control(?string $as_fieldName = null, array $aa_attributes = []): string {
-		if (LocalConfig::read('systemOrder.field') !== 'systemOrder') {
+		if (LocalConfig::read('systemOrder.field', 'systemOrder') !== 'systemOrder') {
 			return '';
 		}
 
