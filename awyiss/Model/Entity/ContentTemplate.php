@@ -25,7 +25,7 @@ use Cake\Utility\Text;
  * @property \Cake\I18n\DateTime|null $deletedOn
  * @property Content[] $contents
  * @property ContentTemplateElement[] $contentTemplateElements
- * @property ContentTemplateContentArea[] $contentTemplateContentAreas
+ * @property ContentArea[] $contentAreas
  */
 class ContentTemplate extends Entity {
 	/**
@@ -37,14 +37,14 @@ class ContentTemplate extends Entity {
 		'systemOrder' => true,
 		'active' => true,
 		'contentTemplateElements' => true,
-		'contentTemplateContentAreas' => true,
+		'contentAreas' => true,
 	];
 	/**
 	 * @inheritDoc
 	 */
 	protected static array $fieldMap = [
 		'content_template_elements' => 'contentTemplateElements',
-		'content_template_content_areas' => 'contentTemplateContentAreas',
+		'content_areas' => 'contentAreas',
 		'system_order' => 'systemOrder',
 		'created_by' => 'createdBy',
 		'created_on' => 'createdOn',

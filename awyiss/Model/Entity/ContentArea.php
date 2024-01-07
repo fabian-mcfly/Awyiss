@@ -23,7 +23,7 @@ use Awyiss\Model\Entity;
  * @property \Cake\I18n\DateTime|null $deletedOn
  * @property PageTemplate[] $pageTemplates
  * @property PageTemplateContentArea[] $_joinData
- * @property ContentTemplateContentArea[] $contentTemplateContentAreas
+ * @property ContentArea[] $contentAreas
  */
 class ContentArea extends Entity {
 	/**
@@ -47,6 +47,6 @@ class ContentArea extends Entity {
 		'deleted_by' => 'deletedBy',
 		'deleted_on' => 'deletedOn',
 		'page_templates' => 'pageTemplates',
-		'content_template_content_areas' => 'contentTemplateContentAreas',
+		'content_templates' => 'contentTemplates',
 	];
 }

@@ -2,11 +2,21 @@
 @var ao_contentTemplate \Awyiss\Model\Entity\ContentTemplate
 @var aa_availableContentElements array
 @var aa_availableContentAttributes array
-@var aa_assignedContentAreas array
 @var aa_availableFieldsets array
 @var aa_pageTemplates
 @var _view \Awyiss\View\BackendView
 #}
+
+{% set la_availableFieldsets = [] %}
+{% for ls_fieldset in aa_availableFieldsets %}
+	{% set la_availableFieldsets = la_availableFieldsets|merge({(ls_fieldset): __d('contents', 'fieldset_' ~ ls_fieldset)}) %}
+{% endfor %}
+
+{% set la_assignedContentAreas = [] %}
+{% for lo_contentTemplateContentArea in ao_contentTemplate.contentAreas %}
+	{% set ls_key = lo_contentTemplateContentArea._joinData.pageTemplateId ~ '_' ~ lo_contentTemplateContentArea.id %}
+	{% set la_assignedContentAreas = la_assignedContentAreas|merge([ls_key]) %}
+{% endfor %}
 
 {% block fieldsetPresentation %}
 	<fieldset>
@@ -29,9 +39,11 @@
 		<legend>{{ __('fieldset_conditions') }}</legend>
 
 		{% block fieldsetConditionsInner %}
-			{% block formControlSystemOrder %}
-				{{ helper_SystemOrder_control('system_order', {entity: ao_contentTemplate}) }}
-			{% endblock %}
+			{% if localConfig('systemOrder.field', 'systemOrder') == 'systemOrder' %}
+				{% block formControlSystemOrder %}
+					{{ helper_SystemOrder_control('system_order', {entity: ao_contentTemplate}) }}
+				{% endblock %}
+			{% endif %}
 
 			{% block fieldsetConditionsAttributes %}
 				{{ helper_Attributes_allControls('conditions') }}
@@ -88,7 +100,7 @@
 
 								<label for="ContentTemplate-ContentElements-{{ ls_availableElement|camelize }}-Fieldset">
 									Fieldset
-									{{ helper_Form_select('content_template_elements[' ~ loop.index0 ~ '][fieldset]', aa_availableFieldsets, {
+									{{ helper_Form_select('content_template_elements[' ~ loop.index0 ~ '][fieldset]', la_availableFieldsets, {
 										id: 'ContentTemplate-ContentElements-' ~ ls_availableElement|camelize ~ '-Fieldset',
 										val: lo_contentTemplateElement ? lo_contentTemplateElement.fieldset : null,
 									}) }}
@@ -139,7 +151,7 @@
 								<label for="ContentTemplate-ContentAttribute-{{ la_contentAttribute.identifier|camelize }}-Fieldset">
 									Fieldset
 
-									{{ helper_Form_select('content_template_elements[' ~ (loop.index0 + aa_availableContentElements|length) ~ '][fieldset]', aa_availableFieldsets, {
+									{{ helper_Form_select('content_template_elements[' ~ (loop.index0 + aa_availableContentElements|length) ~ '][fieldset]', la_availableFieldsets, {
 										id: 'ContentTemplate-ContentAttribute-' ~ la_contentAttribute.identifier|camelize ~ '-Fieldset',
 										required: true,
 										val: lo_contentTemplateElement ? lo_contentTemplateElement.fieldset : null,
@@ -223,7 +235,7 @@
 															{% set li_key = loop.parent.loop.parent.loop.index0 ~ loop.parent.loop.index0 ~ li_key %}
 
 															{{ helper_Form_control('content_areas[' ~ li_key ~ '][content_area_id]', {
-																checked: lo_contentArea.id in (aa_assignedContentAreas[ lo_pageTemplate.id ] ?? []),
+																checked: (lo_pageTemplate.id ~ '_' ~ lo_contentArea.id) in la_assignedContentAreas,
 																hiddenField: false,
 																id: 'ContentTemplate-ContentAreas-' ~ lo_pageTemplate.filename|camelize ~'-' ~ lo_contentArea.identifier|camelize,
 																label: lo_contentArea.label,

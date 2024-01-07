@@ -26,7 +26,7 @@ class ContentTemplatesController extends Controller {
 	public function overview(): void {
 		$this->Authorization->ensure('read');
 
-		$lo_contentTemplates = $this->ContentTemplates->find()->where($this->getOverviewWhere())->contain(['ContentTemplateElements'])->all();
+		$lo_contentTemplates = $this->ContentTemplates->find('withUsages')->where($this->getOverviewWhere())->all();
 
 		$this->set([
 			'ao_contentTemplates' => $lo_contentTemplates,
@@ -49,25 +49,12 @@ class ContentTemplatesController extends Controller {
 			$this->save($lo_contentTemplate);
 		}
 
-		$la_pageTemplates = $this->getPageTemplates();
-
-		$la_assignedContentAreas = [];
-		foreach (($lo_contentTemplate->contentAreas ?? []) as $lo_contentArea) {
-			$la_assignedContentAreas[ $lo_contentArea->_joinData->pageTemplateId ][] = $lo_contentArea->id;
-		}
-
-		$la_availableFieldset = [];
-		foreach ($this->ContentTemplates->getAvailableFieldsets() as $ls_fieldset) {
-			$la_availableFieldset[ $ls_fieldset ] = __d('contents', 'fieldset_' . $ls_fieldset);
-		}
-
 		$this->set([
 			'ao_contentTemplate' => $lo_contentTemplate,
 			'aa_availableContentElements' => $this->ContentTemplates->getAvailableContentElements(),
 			'aa_availableContentAttributes' => $this->ContentTemplates->getAvailableContentAttributes(),
-			'aa_availableFieldsets' => $la_availableFieldset,
-			'aa_assignedContentAreas' => $la_assignedContentAreas,
-			'aa_pageTemplates' => $la_pageTemplates,
+			'aa_availableFieldsets' => $this->ContentTemplates->getAvailableFieldsets(),
+			'aa_pageTemplates' => $this->getPageTemplates(),
 		]);
 	}
 
@@ -83,7 +70,7 @@ class ContentTemplatesController extends Controller {
 
 		/** @var ContentTemplate $lo_contentTemplate */
 		$lo_contentTemplate = $this->ContentTemplates->findById($ai_id)->find('translations')->contain([
-			'ContentTemplateContentAreas',
+			'ContentAreas',
 			'ContentTemplateElements',
 		])->first();
 		if (!$lo_contentTemplate) {
@@ -97,25 +84,12 @@ class ContentTemplatesController extends Controller {
 			$this->save($lo_contentTemplate, 'edit');
 		}
 
-		$la_pageTemplates = $this->getPageTemplates();
-
-		$la_assignedContentAreas = [];
-		foreach ($lo_contentTemplate->contentTemplateContentAreas as $lo_contentArea) {
-			$la_assignedContentAreas[ $lo_contentArea->pageTemplateId ][] = $lo_contentArea->contentAreaId;
-		}
-
-		$la_availableFieldset = [];
-		foreach ($this->ContentTemplates->getAvailableFieldsets() as $ls_fieldset) {
-			$la_availableFieldset[ $ls_fieldset ] = __d('contents', 'fieldset_' . $ls_fieldset);
-		}
-
 		$this->set([
 			'ao_contentTemplate' => $lo_contentTemplate,
 			'aa_availableContentElements' => $this->ContentTemplates->getAvailableContentElements(),
 			'aa_availableContentAttributes' => $this->ContentTemplates->getAvailableContentAttributes(),
-			'aa_availableFieldsets' => $la_availableFieldset,
-			'aa_assignedContentAreas' => $la_assignedContentAreas,
-			'aa_pageTemplates' => $la_pageTemplates,
+			'aa_availableFieldsets' => $this->ContentTemplates->getAvailableFieldsets(),
+			'aa_pageTemplates' => $this->getPageTemplates(),
 		]);
 	}
 
@@ -171,14 +145,6 @@ class ContentTemplatesController extends Controller {
 
 		$la_requestData = $this->request->getData() + ['content_template_elements' => []];
 
-		if (!empty($la_requestData['content_areas'])) {
-			$la_requestData['content_template_content_areas'] = array_filter($la_requestData['content_areas'], function (array $aa_element) {
-				return !empty($aa_element['content_area_id']);
-			});
-			unset($la_requestData['content_areas']);
-			$la_associated[] = 'ContentTemplateContentAreas';
-		}
-
 		if (!empty($la_requestData['content_template_elements'])) {
 			$la_requestData['content_template_elements'] = array_filter($la_requestData['content_template_elements'], function ($aa_element) {
 				return !empty($aa_element['identifier']);
@@ -187,7 +153,32 @@ class ContentTemplatesController extends Controller {
 			$la_associated[] = 'ContentTemplateElements';
 		}
 
-		$this->ContentTemplates->patchEntity($ao_contentTemplate, $la_requestData, ['associated' => $la_associated]);
+		$this->ContentTemplates->patchEntity($ao_contentTemplate, $la_requestData, [
+			'associated' => $la_associated,
+		]);
+
+		$ao_contentTemplate->set('contentAreas', []);
+		if (!empty($la_requestData['content_areas'])) {
+			$la_contentAreas = collection(array_column($this->getPageTemplates(false), 'contentAreas'))->unfold();
+			$la_contentAreas = $la_contentAreas->indexBy('id')->toArray();
+
+			$ls_throughTable = $this->ContentTemplates->ContentAreas->getThrough();
+			$lo_throughTable = $this->fetchTable($ls_throughTable);
+
+			foreach ($la_requestData['content_areas'] ?? [] as $la_contentAreaData) {
+				if (empty($la_contentAreaData['content_area_id'])) {
+					continue;
+				}
+
+				$lo_contentArea = clone $la_contentAreas[ $la_contentAreaData['content_area_id'] ];
+				unset($lo_contentArea->_joinData);
+				$lo_contentArea->_joinData = $lo_throughTable->newEntity([
+					'page_template_id' => $la_contentAreaData['page_template_id'],
+				]);
+
+				$ao_contentTemplate->contentAreas[] = $lo_contentArea;
+			}
+		}
 
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
 			if ($this->ContentTemplates->save($ao_contentTemplate)) {
@@ -211,16 +202,22 @@ class ContentTemplatesController extends Controller {
 	/**
 	 * @return array
 	 */
-	protected function getPageTemplates(): array {
-		$this->dispatchEvent('Authorization.disableBehavior');
-		$lo_pageTemplates = $this->fetchTable('PageTemplates')->find()->contain(['ContentAreas', 'PageRoles'])->all();
-		$this->dispatchEvent('Authorization.enableBehavior');
+	protected function getPageTemplates(bool $ab_returnGrouped = true): array {
+		static $lo_pageTemplates;
 
-		$lo_pageTemplates = $lo_pageTemplates->sortBy('pageRole.systemOrder', SORT_ASC)->filter(function (PageTemplate $ao_entity) {
-			return !empty($ao_entity->contentAreas);
-		})->groupBy(function (PageTemplate $ao_entity) {
-			return $ao_entity->pageRole->label;
-		});
+		if (!isset($lo_pageTemplates)) {
+			$lo_pageTemplates = $this->fetchTable('PageTemplates')->find()->contain(['ContentAreas', 'PageRoles'])->all()->sortBy('pageRole.systemOrder', SORT_ASC);
+		}
+
+		if ($ab_returnGrouped) {
+			$lo_groupedPageTemplates = $lo_pageTemplates->filter(function (PageTemplate $ao_entity) {
+				return !empty($ao_entity->contentAreas);
+			})->groupBy(function (PageTemplate $ao_entity) {
+				return $ao_entity->pageRole->label;
+			});
+
+			return $lo_groupedPageTemplates->toArray();
+		}
 
 
 		return $lo_pageTemplates->toArray();

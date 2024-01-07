@@ -33,9 +33,8 @@ class ContentAreasTable extends Table {
 	public function initialize(array $aa_config): void {
 		parent::initialize($aa_config);
 
-		$this->hasMany('ContentTemplateContentAreas', [
-			'cascadeCallbacks' => true,
-			'dependent' => true,
+		$this->belongsToMany('ContentTemplates', [
+			'through' => 'ContentTemplateContentAreas',
 			'saveStrategy' => 'replace',
 		]);
 

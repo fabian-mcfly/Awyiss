@@ -9,6 +9,7 @@ use Awyiss\Model\Entity\ContentTemplate;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
 use Cake\Datasource\FactoryLocator;
+use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Validation\Validator;
 
@@ -16,10 +17,8 @@ use Cake\Validation\Validator;
 /**
  * ContentTemplates Model
  *
+ * @property ContentAreasTable&\Awyiss\ORM\Association\BelongsToMany $ContentAreas
  * @method ContentTemplate newDefaultEntity(array $aa_additionalData = [])
- *
- * TODO: delete contents
- * TODO Or: disallow deletion if a content with that template exits
  */
 class ContentTemplatesTable extends Table {
 	/**
@@ -78,18 +77,8 @@ class ContentTemplatesTable extends Table {
 			'dependent' => true,
 		]);
 
-		/*$this->belongsToMany('ContentAreas', [
-			'foreignKey' => [
-				'content_template_id',
-				'page_template_id',
-			],
+		$this->belongsToMany('ContentAreas', [
 			'through' => 'ContentTemplateContentAreas',
-		]);*/
-
-		$this->hasMany('ContentTemplateContentAreas', [
-			'cascadeCallbacks' => true,
-			'dependent' => true,
-			'saveStrategy' => 'replace',
 		]);
 
 		$this->hasMany('ContentTemplateElements', [
@@ -97,6 +86,25 @@ class ContentTemplatesTable extends Table {
 			'dependent' => true,
 			'saveStrategy' => 'replace',
 		]);
+	}
+
+
+	/**
+	 * @param SelectQuery $ao_query
+	 * @param array $aa_options
+	 * @return \Cake\ORM\Query\SelectQuery
+	 * @noinspection PhpUnused
+	 */
+	public function findWithUsages(SelectQuery $ao_query): SelectQuery {
+		return $ao_query->enableAutoFields()->select([
+			'usedForContents' => $ao_query->func()->count('Contents.id'),
+		])->leftJoinWith('Contents', function (SelectQuery $ao_query) {
+			return $ao_query->applyOptions([
+				'attributes' => [
+					'skip' => true,
+				],
+			]);
+		})->groupBy('ContentTemplates.id');
 	}
 
 

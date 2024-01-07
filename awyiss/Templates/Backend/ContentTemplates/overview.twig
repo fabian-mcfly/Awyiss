@@ -18,6 +18,7 @@
 				<tr>
 					<th>{{ __('title') }}</th>
 					<th>{{ __('filename') }}</th>
+					<th>{{ __('used_for_contents') }}</th>
 					<th class="actions"></th>
 				</tr>
 			</thead>
@@ -26,6 +27,7 @@
 					<tr>
 						<td>{{ lo_contentTemplate.title }} ({{ lo_contentTemplate.systemOrder }})</td>
 						<td>{{ lo_contentTemplate.filename }}</td>
+						<td>{{ lo_contentTemplate.usedForContents }}</td>
 						<td class="actions">
 							{% if helper_Authorization_isAccessible('update') %}
 								{{ helper_Html_link(__('edit'), {action: 'edit', id: lo_contentTemplate.id}) }}
