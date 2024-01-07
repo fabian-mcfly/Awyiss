@@ -165,7 +165,7 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 	 *
 	 * @return array<Usergroup>
 	 */
-	protected function getUsergroups(): array {
+	public function getUsergroups(): array {
 		if (!isset($this->usergroups)) {
 			/** @var \Awyiss\Model\Table\UsersTable $lo_table */
 			$lo_table = FactoryLocator::get('Table')->get($this->getSource());

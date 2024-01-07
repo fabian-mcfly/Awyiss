@@ -176,6 +176,15 @@ class UsergroupsController extends Controller {
 
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
 			if ($this->Usergroups->save($ao_usergroup)) {
+				/** @var \Awyiss\Model\Entity\User|\Awyiss\Model\Entity\UsersExternal $lo_currentUser */
+				$lo_currentUser = $this->request->getSession()->read('Auth');
+				$li_userId = $lo_currentUser?->id;
+
+				if ($ao_usergroup->users && in_array($li_userId, array_column($ao_usergroup->users, 'id'))) {
+					$lo_currentUser->usergroups = null;
+					$this->request->getSession()->delete('backend_menu');
+				}
+
 				$this->Flash->success(__($as_method . '_succeeded'));
 
 				if ($this->request->getData('submit') == 'submit_close') {
