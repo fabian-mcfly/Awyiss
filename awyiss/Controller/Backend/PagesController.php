@@ -156,6 +156,10 @@ class PagesController extends Controller {
 		}
 		else {
 			$this->Flash->error(__('delete_failed'));
+
+			foreach ($lo_page->getError('_general') as $ls_error) {
+				$this->Flash->error($ls_error);
+			}
 		}
 
 

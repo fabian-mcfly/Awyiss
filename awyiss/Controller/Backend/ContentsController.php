@@ -244,6 +244,10 @@ class ContentsController extends Controller {
 		}
 		else {
 			$this->Flash->error(__('delete_failed'));
+
+			foreach ($lo_content->getError('_general') as $ls_error) {
+				$this->Flash->error($ls_error);
+			}
 		}
 
 

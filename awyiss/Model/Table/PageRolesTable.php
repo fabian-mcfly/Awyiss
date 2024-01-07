@@ -68,11 +68,16 @@ class PageRolesTable extends Table {
 	public function initialize(array $aa_config): void {
 		parent::initialize($aa_config);
 
-		$this->belongsTo('PageRoles');
+		$this->hasOne('PageTemplates');
 
 		$this->hasMany('Pages', [
 			'cascadeCallbacks' => true,
 			'dependent' => true,
+			'finder' => [
+				'all' => [
+					'skipPageRoleCheck' => true,
+				],
+			],
 		]);
 	}
 
@@ -180,10 +185,14 @@ class PageRolesTable extends Table {
 		]);
 
 
-		$ao_rules->addDelete(function (PageRole $ao_entity): bool {
-			dump($ao_entity);
-			dd(__FILE__, __LINE__);
-		});
+		$ao_rules->addDelete(
+			$ao_rules->isNotLinkedTo('PageTemplates', 'page_templates'),
+			'noLinkedPageTemplates',
+			[
+				'errorField' => '_general',
+				'message' => __df($this->getI18nDomain(), 'system', 'error_linked_page_templates'),
+			]
+		);
 
 
 		return $ao_rules;

@@ -246,6 +246,10 @@ class ConfigurationController extends Controller {
 		}
 		else {
 			$this->Flash->error(__('delete_failed'));
+
+			foreach ($lo_configuration->getError('_general') as $ls_error) {
+				$this->Flash->error($ls_error);
+			}
 		}
 
 		return $this->redirect(['action' => 'overview']);

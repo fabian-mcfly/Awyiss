@@ -4,14 +4,11 @@
 namespace Awyiss\ORM;
 
 
-use Awyiss\Model\Table;
 use Awyiss\ORM\Rule\ExistsIn;
 use Cake\Datasource\RuleInvoker;
 use Cake\ORM\Association;
-use Cake\ORM\Rule\LinkConstraint;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\ORM\Table as BaseTable;
-use Cake\Utility\Inflector;
 
 
 /**
@@ -99,8 +96,9 @@ class RulesChecker extends BaseRulesChecker {
 
 
 	/**
+	 * Re-implemented to use a proper fallback error message
+	 *
 	 * @inheritDoc
-	 * Re-implemented 1:1 to use a proper fallback error message
 	 * @param Association|string $ax_association
 	 * @param string|null $as_errorField
 	 * @param string|null $as_message
@@ -116,24 +114,11 @@ class RulesChecker extends BaseRulesChecker {
 		string $as_linkStatus,
 		string $as_ruleName
 	): RuleInvoker {
-		$ls_errorField = $as_errorField;
 		if ($ax_association instanceof Association) {
 			$ls_associationAlias = $ax_association->getName();
-			$ls_errorField ??= $ax_association->getProperty();
 		}
 		else {
 			$ls_associationAlias = $ax_association;
-
-			if ($ls_errorField === null) {
-				$lo_repository = $this->_options['repository'] ?? null;
-				if ($lo_repository instanceof Table) {
-					$ax_association = $lo_repository->getAssociation($ax_association);
-					$ls_errorField = $ax_association->getProperty();
-				}
-				else {
-					$ls_errorField = Inflector::underscore($ax_association);
-				}
-			}
 		}
 
 		$ls_message = $as_message;
@@ -141,9 +126,6 @@ class RulesChecker extends BaseRulesChecker {
 			$ls_message = __d('validation', 'error_link_constraint_rule', $ls_associationAlias);
 		}
 
-		$lo_rule = new LinkConstraint($ax_association, $as_linkStatus);
-
-
-		return $this->_addError($lo_rule, $as_ruleName, ['errorField' => $ls_errorField, 'message' => $ls_message]);
+		return parent::_addLinkConstraintRule($ax_association, $as_errorField, $ls_message, $as_linkStatus, $as_ruleName);
 	}
 }

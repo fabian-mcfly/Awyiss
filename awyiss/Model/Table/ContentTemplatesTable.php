@@ -271,11 +271,14 @@ class ContentTemplatesTable extends Table {
 		]);
 
 
-		$ao_rules->addDelete(function (ContentTemplate $ao_entity): bool {
-			dump($ao_entity);
-			dd(__FILE__, __LINE__);
-		});
-
+		$ao_rules->addDelete(
+			$ao_rules->isNotLinkedTo('Contents', 'contents'),
+			'noLinkedContents',
+			[
+				'errorField' => '_general',
+				'message' => __df($this->getI18nDomain(), 'system', 'error_linked_contents'),
+			]
+		);
 
 		return $ao_rules;
 	}

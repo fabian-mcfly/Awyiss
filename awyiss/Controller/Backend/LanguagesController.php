@@ -113,6 +113,10 @@ class LanguagesController extends Controller {
 		}
 		else {
 			$this->Flash->error(__('delete_failed'));
+
+			foreach ($lo_language->getError('_general') as $ls_error) {
+				$this->Flash->error($ls_error);
+			}
 		}
 
 

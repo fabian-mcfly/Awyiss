@@ -154,6 +154,10 @@ class UsersController extends Controller {
 		}
 		else {
 			$this->Flash->error(__('delete_failed'));
+
+			foreach ($lo_user->getError('_general') as $ls_error) {
+				$this->Flash->error($ls_error);
+			}
 		}
 
 

@@ -109,6 +109,10 @@ class MenusController extends Controller {
 		}
 		else {
 			$this->Flash->error(__('delete_failed'));
+
+			foreach ($lo_menu->getError('_general') as $ls_error) {
+				$this->Flash->error($ls_error);
+			}
 		}
 
 

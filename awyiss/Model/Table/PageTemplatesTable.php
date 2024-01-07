@@ -4,7 +4,6 @@
 namespace Awyiss\Model\Table;
 
 
-use Awyiss\Model\Entity\PageTemplate;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
 use Cake\ORM\Query\SelectQuery;
@@ -17,9 +16,7 @@ use Cake\Validation\Validator;
  *
  * @property ContentAreasTable&\Awyiss\ORM\Association\BelongsToMany $ContentAreas
  * @property PageRolesTable&\Awyiss\ORM\Association\BelongsTo $PageRoles
- * @method PageTemplate newDefaultEntity(array $aa_additionalData = [])
- *
- * TODO Or: disallow deletion if a page with that templates exits
+ * @method \Awyiss\Model\Entity\PageTemplate newDefaultEntity(array $aa_additionalData = [])
  */
 class PageTemplatesTable extends Table {
 	/**
@@ -60,6 +57,11 @@ class PageTemplatesTable extends Table {
 		$this->hasMany('Pages', [
 			'cascadeCallbacks' => true,
 			'dependent' => true,
+			'finder' => [
+				'all' => [
+					'skipPageRoleCheck' => true,
+				],
+			],
 		]);
 	}
 
@@ -176,11 +178,14 @@ class PageTemplatesTable extends Table {
 		]);
 
 
-		//TODO: check if pages with the template still exist
-		$ao_rules->addDelete(function (PageTemplate $ao_entity): bool {
-			dump($ao_entity);
-			dd(__FILE__, __LINE__);
-		});
+		$ao_rules->addDelete(
+			$ao_rules->isNotLinkedTo('Pages', 'pages'),
+			'noLinkedPages',
+			[
+				'errorField' => '_general',
+				'message' => __df($this->getI18nDomain(), 'system', 'error_linked_pages'),
+			]
+		);
 
 
 		return $ao_rules;
