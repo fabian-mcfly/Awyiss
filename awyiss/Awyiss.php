@@ -271,7 +271,7 @@ class Awyiss extends BaseApplication {
 	 *
 	 * @throws \Exception
 	 */
-	public static function loadConfiguration(?string $as_frontendLanguage = null, ?string $as_backendLanguage = null): void {
+	public static function loadConfiguration(?string $as_frontendLanguage = null, ?string $as_backendLanguage = null, bool $ab_forceReload = false): void {
 		$lo_configurationTable = FactoryLocator::get('Table')->get('Configuration');
 
 		$ls_fileName = Inflector::underscore(CUSTOM_NAMESPACE);
@@ -283,16 +283,18 @@ class Awyiss extends BaseApplication {
 			}
 		}
 
-		Configure::delete('Awyiss');
-
-		/*
-		 * If the config path `Awyiss` is not empty, we do have a config file
-		 * Therefore loading the database config is skipped
-		 */
-		Configure::load($ls_fileName, 'default', false);
-		if (Configure::read('Awyiss')) {
-			return;
+		if (!$ab_forceReload) {
+			/*
+			 * If the config path `Awyiss` is not empty, we do have a config file
+			 * Therefore loading the database config is skipped
+			 */
+			Configure::load($ls_fileName, 'default', false);
+			if (Configure::read('Awyiss')) {
+				return;
+			}
 		}
+
+		Configure::delete('Awyiss');
 
 		if ($as_frontendLanguage && $as_backendLanguage) {
 			$lo_query = $lo_configurationTable->find()->enableHydration(false);

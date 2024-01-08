@@ -4,7 +4,6 @@
 namespace Awyiss\Event\Backend;
 
 
-use Awyiss\Awyiss;
 use Awyiss\Event\EventListenerTrait;
 use Awyiss\Model\Entity\PageRole;
 use Cake\Core\Configure;
@@ -63,16 +62,6 @@ class PageRolesListener implements EventListenerInterface {
 		$this->createCustomConstantsFile();
 
 		$this->createPageRoleModel($ao_entity);
-		/*$lo_queue = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
-		if ( ! $lo_queue->isQueued('system::create_page_role_model_' . $ao_entity->identifier)) {
-			$lo_queue->createJob('CreatePageRoleModel', [
-				'name' => Inflector::camelize(Inflector::pluralize($ao_entity->identifier)),
-			], [
-				'group' => 'general',
-				'priority' => 1,
-				'reference' => 'system::create_page_role_model_' . $ao_entity->identifier,
-			]);
-		}*/
 	}
 
 
@@ -85,9 +74,6 @@ class PageRolesListener implements EventListenerInterface {
 	 */
 	public function afterDelete(Event $ao_event, PageRole $ao_entity): void {
 		$this->createCustomConstantsFile();
-
-		//TODO: Delete table file
-		dd(__LINE__, __FILE__);
 	}
 
 
@@ -98,19 +84,25 @@ class PageRolesListener implements EventListenerInterface {
 	 * @return void
 	 */
 	protected function createCustomConstantsFile(): void {
-		/** @var \Queue\Model\Table\QueuedJobsTable $lo_queue */
-		$lo_queue = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
-		if (!$lo_queue->isQueued('system::create_custom_constants')) {
-			$lo_queue->createJob('CreateCustomConstants', [
-				'environment' => CONFIG_ENV,
-			], [
-				'group' => 'general',
-				'priority' => 1,
-				'reference' => 'system::create_custom_constants',
-			]);
+		$ls_environment = preg_replace('/[^a-z-_]/i', '', CONFIG_ENV);
+
+		$ls_filePath = CUSTOM_CONFIG . $ls_environment . DS . 'constants.php';
+
+		$ls_constantsContents = '<?php declare(strict_types=1);' . PHP_EOL . PHP_EOL;
+
+		$lo_pageRolesTable = FactoryLocator::get('Table')->get('PageRoles');
+		/** @var \Awyiss\Model\Entity\PageRole $lo_pageRole */
+		foreach ($lo_pageRolesTable->find() as $lo_pageRole) {
+			$ls_constant = 'PAGEROLE_' . strtoupper($lo_pageRole->identifier);
+			$ls_constantsContents .= 'defined(\'' . $ls_constant . '\') || define(\'' . $ls_constant . '\', ' . $lo_pageRole->id . ');' . PHP_EOL;
+			defined($ls_constant) || define($ls_constant, $lo_pageRole->id);
 		}
 
-		Awyiss::loadConstants(false);
+		if (file_exists($ls_filePath)) {
+			unlink($ls_filePath);
+		}
+
+		file_put_contents($ls_filePath, $ls_constantsContents);
 	}
 
 
@@ -219,7 +211,7 @@ class PageRolesListener implements EventListenerInterface {
 
 		$la_commands[] = $ls_command;
 
-		$la_commands[] = 'bin/cake bake seed --data PageRoles --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Seeds --truncate';
+		$la_commands[] = 'bin/cake bake seed --data PageRoles --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Seeds --force --truncate';
 
 		//Queue the job.
 		$lo_queue->createJob('Queue.Execute', [

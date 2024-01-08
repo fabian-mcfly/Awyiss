@@ -6,6 +6,7 @@ namespace Awyiss\Event\Backend;
 
 use Awyiss\Awyiss;
 use Awyiss\Event\EventListenerTrait;
+use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity\Configuration;
 use Cake\Core\Configure;
 use Cake\Datasource\FactoryLocator;
@@ -100,16 +101,42 @@ class ConfigurationListener implements EventListenerInterface {
 	 * @throws \Exception
 	 */
 	public function createCustomConfiguration(Event $ao_event, Configuration $ao_entity): void {
-		/** @var \Queue\Model\Table\QueuedJobsTable $lo_queue */
-		$lo_queue = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
-		if ($lo_queue->isQueued('create_custom_configuration')) {
-			return;
+		//Remember the current config
+		$la_rememberedConfig = Configure::read('Awyiss');
+
+		//Delete all files
+		$ls_fileName = Inflector::underscore(CUSTOM_NAMESPACE) . '\[??\]\[??\].php';
+		foreach (glob(ENV_CUSTOM_CONFIG . $ls_fileName) as $ls_filePath) {
+			unlink($ls_filePath);
 		}
 
-		$lo_queue->createJob('CreateCustomConfiguration', null, [
-			'group' => 'general',
-			'priority' => 1,
-			'reference' => 'create_custom_configuration',
-		]);
+		$la_languages = LocaleMiddleware::getLanguages();
+		foreach ($la_languages as &$la_realmLanguages) {
+			$la_realmLanguages = array_keys($la_realmLanguages);
+		}
+		unset($la_realmLanguages);
+
+		foreach (collection($la_languages)->cartesianProduct()->toArray() as $la_languages) {
+			//Load the config with the provided languages
+			Awyiss::loadConfiguration($la_languages[0] ?? null, $la_languages[1] ?? null, true);
+
+			$ls_frontendLanguage = $la_languages[0] ?? null;
+			$ls_backendLanguage = $la_languages[1] ?? null;
+
+			$ls_fileName = Inflector::underscore(CUSTOM_NAMESPACE);
+			if ($ls_frontendLanguage) {
+				$ls_fileName .= '[' . $ls_frontendLanguage . ']';
+
+				if ($ls_backendLanguage) {
+					$ls_fileName .= '[' . $ls_backendLanguage . ']';
+				}
+			}
+
+			//Dump the config to a file
+			Configure::dump($ls_fileName, 'default', ['Awyiss']);
+		}
+
+		Configure::delete('Awyiss');
+		Configure::write($la_rememberedConfig);
 	}
 }
