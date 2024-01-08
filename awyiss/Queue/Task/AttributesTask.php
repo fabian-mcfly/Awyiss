@@ -35,7 +35,7 @@ class AttributesTask extends Task/* implements AddInterface*/ {
 	/**
 	 * @inheritDoc
 	 */
-	public ?int $retries = 0;
+	public ?int $retries = 3;
 
 
 	/**
@@ -221,13 +221,7 @@ class AttributesTask extends Task/* implements AddInterface*/ {
 			}
 
 			//Bake a `remove`-migration
-			$aa_commands[] = 'bin/cake bake migration remove_' .
-							 $aa_data['new']['identifier'] .
-							 '_from_' .
-							 $ls_oldAttributesTable .
-							 ' ' .
-							 $aa_data['old']['identifier'] .
-							 $as_folder;
+			$aa_commands[] = 'bin/cake bake migration remove_' . $aa_data['new']['identifier'] . '_from_' . $ls_oldAttributesTable . ' ' . $aa_data['old']['identifier'] . $as_folder;
 		}
 
 		/*
@@ -280,7 +274,7 @@ class AttributesTask extends Task/* implements AddInterface*/ {
 			$aa_commands[] = 'bin/cake bake model ' . $ls_oldAttributesTable . ' --namespace ' . CUSTOM_DIR . ' --no-fixture --no-test --update --force' . $ls_forPageRole;
 		}
 
-		$aa_commands[] = 'bin/cake bake seed --data Attributes --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Seeds --truncate';
+		$aa_commands[] = 'bin/cake bake seed --data Attributes --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Seeds --force --truncate';
 
 		//Queue the job.
 		$this->QueuedJobs->createJob('Queue.Execute', [
@@ -333,7 +327,6 @@ class AttributesTask extends Task/* implements AddInterface*/ {
 				);
 			}
 		}
-
 
 		//Column is renamed but only if the scope is still the same.
 		if (!$ab_changedScope && isset($aa_diff['identifier'])) {

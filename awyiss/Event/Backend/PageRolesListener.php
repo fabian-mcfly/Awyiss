@@ -7,6 +7,7 @@ namespace Awyiss\Event\Backend;
 use Awyiss\Event\EventListenerTrait;
 use Awyiss\Model\Entity\PageRole;
 use Cake\Core\Configure;
+use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\FactoryLocator;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
@@ -35,6 +36,7 @@ class PageRolesListener implements EventListenerInterface {
 		return [
 			'Model.PageRoles.afterSave' => 'afterSave',
 			'Model.PageRoles.afterSaveCommit' => 'afterSaveCommit',
+			'Model.PageRoles.afterSoftDelete' => 'afterDelete',
 			'Model.PageRoles.afterDelete' => 'afterDelete',
 		];
 	}
@@ -74,6 +76,53 @@ class PageRolesListener implements EventListenerInterface {
 	 */
 	public function afterDelete(Event $ao_event, PageRole $ao_entity): void {
 		$this->createCustomConstantsFile();
+
+		$ls_filePath = implode(DS, [ROOT, CUSTOM_DIR, 'Model', 'Entity', Inflector::classify($ao_entity->identifier) . '.php']);
+		if (file_exists($ls_filePath)) {
+			unlink($ls_filePath);
+		}
+
+		$ls_filePath = implode(DS, [ROOT, CUSTOM_DIR, 'Model', 'Table', Inflector::camelize(Inflector::tableize($ao_entity->identifier)) . 'Table.php']);
+		if (file_exists($ls_filePath)) {
+			unlink($ls_filePath);
+		}
+
+		$ls_attributesTable = 'attributes_' . Inflector::tableize($ao_entity->identifier);
+		$la_tables = ConnectionManager::get('default')->getSchemaCollection()->listTables();
+		if (in_array($ls_attributesTable, $la_tables)) {
+			/** @var \Awyiss\Model\Table $lo_attributesTable */
+			$lo_attributesTable = FactoryLocator::get('Table')->get('Attributes');
+
+			/** @var \Queue\Model\Table\QueuedJobsTable $lo_queue */
+			$lo_queue = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
+			$lo_queue->createJob(
+				'AttributesDelete',
+				[
+					'identifier' => Inflector::tableize($ao_entity->identifier),
+					'identityId' => $lo_attributesTable->getBehavior('Audit')->getIdentity()?->id,
+				],
+				[
+					'group' => 'general',
+					'priority' => 1,
+					'reference' => 'attributes::table_changes',
+				]
+			);
+		}
+
+		$la_commands = [];
+
+		$la_commands[] = 'bin/cake bake seed --data PageRoles --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Seeds --force --truncate';
+
+		//Queue the job.
+		$lo_queue->createJob('Queue.Execute', [
+			'command' => '(' . implode(' && ', array_map('escapeshellcmd', $la_commands)) . ')',
+			'escape' => false,
+			'log' => true,
+		], [
+			'group' => 'general',
+			'priority' => 1,
+			'reference' => 'system::create_page_role_model_' . $ao_entity->identifier,
+		]);
 	}
 
 
