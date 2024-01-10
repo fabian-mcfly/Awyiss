@@ -45,7 +45,6 @@ $ao_routes->prefix('Backend', function (RouteBuilder $ao_routeBuilder): void {
 		'action' => '[a-zA-Z0-9-_]+',
 	])->setPersist(['lang', 'controller', 'action']);
 
-
 	$ao_routeBuilder->connect('/{lang}/{controller}/*', ['action' => 'overview'])->setPatterns([
 		'lang' => '[a-zA-Z]{2}',
 		'controller' => '[a-zA-Z0-9-_]+',

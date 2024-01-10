@@ -32,7 +32,7 @@
 							{% endif %}
 
 							{% if helper_Authorization_isAccessible('update') %}
-								{{ helper_Html_link(__('edit'), {action: 'edit', id: lo_page.id, _name: 'test'}) }}
+								{{ helper_Html_link(__('edit'), {action: 'edit', id: lo_page.id}) }}
 							{% endif %}
 
 							{% if helper_Authorization_isAccessible('delete') %}
