@@ -22,12 +22,12 @@ use Psr\Http\Server\RequestHandlerInterface;
  */
 class RoutingMiddleware extends BaseRoutingMiddleware {
 	/**
-	 * @inheritDoc
-	 *
 	 * Re-implemented to add the following lines to use the parts from AwyissRoute as QueryParams
 	 *
 	 *        $la_queryParams = $la_params['parts'] ?? [];
 	 *        $lo_request = $lo_request->withQueryParams($la_queryParams);
+	 *
+	 * @inheritDoc
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function process(ServerRequestInterface $ao_request, RequestHandlerInterface $ao_handler): ResponseInterface {
