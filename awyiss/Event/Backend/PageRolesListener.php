@@ -231,9 +231,10 @@ class PageRolesListener implements EventListenerInterface {
 	 * @return void
 	 */
 	private function createPageRoleModel(PageRole $ao_entity): void {
-		if ($ao_entity->identifier === 'page') {
+		if ($ao_entity->identifier === 'page' || !$ao_entity->isNew()) {
 			return;
 		}
+
 		/** @var \Queue\Model\Table\QueuedJobsTable $lo_queue */
 		$lo_queue = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
 

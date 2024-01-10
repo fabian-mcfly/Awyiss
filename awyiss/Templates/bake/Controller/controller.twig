@@ -1,0 +1,61 @@
+<?php declare(strict_types=1);
+
+
+namespace {{ namespace }}\Controller{{ prefix }};
+
+
+{% if prefix and prefix == '\\Backend' %}
+use {{ baseNamespace }}\Controller\BackendController as Controller;
+{% elseif plugin %}
+use {{ baseNamespace }}\Controller\AppController as Controller;
+{% else %}
+use {{ baseNamespace }}\Controller\FrontendController as Controller;
+{% endif %}
+use {{ baseNamespace }}\Model\Entity\{{ entityClassName }};
+use Awyiss\Routing\Router;
+use Cake\Datasource\Exception\InvalidPrimaryKeyException;
+use Cake\Datasource\Exception\RecordNotFoundException;
+use Cake\Http\Exception\RedirectException;
+
+
+/**
+ * {{ name }} Controller
+ *
+{% if defaultModel %}
+ * @property \{{ defaultModel }} ${{ name }}
+{% endif %}
+
+{%- for component in components %}
+{% set classInfo = Bake.classInfo(component, 'Controller/Component', 'Component') %}
+ * @property {{ classInfo.fqn }} ${{ classInfo.name }}
+{% endfor %}
+
+{%- if 'overview' in actions %}
+ * @method {{ entityClassName }}[]|\Cake\Datasource\ResultSetInterface paginate($ao_object = null, array $aa_settings = [])
+{% endif %}
+ */
+class {{ name }}Controller extends Controller {
+{% if components or helpers %}
+	/**
+	 * Initialize controller
+	 *
+	 * @return void
+	 */
+	public function initialize (): void {
+		parent::initialize();
+
+{% for component in components %}
+		$this->loadComponent('{{ component }}');
+{% endfor %}
+{% if helpers %}
+		$this->viewBuilder()->setHelpers({{ Bake.exportArray(helpers)|raw }});
+{% endif %}
+	}
+{% if actions|length %}{{ "\n" }}{% endif %}
+{% endif %}
+{%- for action in actions %}
+	{% if loop.index > 1 %}{{ "\n" }}{% endif %}
+	{{- element('Controller/' ~ action) -}}
+{% endfor %}
+}
+

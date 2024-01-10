@@ -1,0 +1,74 @@
+{% set propertyHintMap = [] %}
+{%- for property, propertyType in DocBlock.buildEntityPropertyHintTypeMap(propertySchema ?: []) %}
+	{%- set propertyHintMap = propertyHintMap|merge({(property|variable): propertyType}) %}
+{% endfor %}
+
+{%- set associationHintMap = [] %}
+{%- for association, associationType in DocBlock.buildEntityAssociationHintTypeMap(associationSchema ?: []) %}
+	{%- set associationHintMap = associationHintMap|merge({(association|variable): associationType}) %}
+{% endfor %}
+
+{%- set annotations = DocBlock.propertyHints(propertyHintMap) %}
+
+{%- if associationHintMap %}
+	{%- set annotations = annotations|merge(['']) %}
+	{%- set annotations = annotations|merge(DocBlock.propertyHints(associationHintMap)) %}
+{% endif %}
+
+{%- set accessible = Bake.getFieldAccessibility(fields, primaryKey) %}
+
+{%- set generatedProperties = [] %}
+{{ element('file_header', {
+	namespace: fileBuilder.namespace,
+	classImports: fileBuilder.classImports(['Awyiss\\Model\\Entity\\Page']),
+}) }}
+
+{{ DocBlock.classDescription(name, 'Entity', annotations)|raw }}
+class {{ name }} extends Page{{ fileBuilder.classBuilder.implements ? ' implements ' ~ fileBuilder.classBuilder.implements|join(', ') : '' }} {
+{% set userConstants = fileBuilder.classBuilder.userConstants([]) %}
+{% if userConstants %}
+	{{~ Bake.concat('\n\n', userConstants) }}
+
+{% endif %}
+{% if accessible %}
+{%- set generatedProperties = generatedProperties|merge(['_accessible']) %}
+	/**
+	 * @inheritDoc
+	 */
+	protected array $_accessible = {{ Bake.exportVar(accessible, 1)|raw }};
+{% endif %}
+{% if accessible and fieldMap %}
+
+{% endif %}
+{% if fieldMap %}
+{%- set generatedProperties = generatedProperties|merge(['fieldMap']) %}
+	/**
+	* @inheritDoc
+	*/
+	protected static array $fieldMap = {{ Bake.exportVar(fieldMap, 1)|raw }};
+{% endif %}
+{%- set generatedProperties = generatedProperties|merge(['defaults']) %}
+	/**
+	* @inheritDoc
+	*/
+	protected array $defaults = [
+		'pageRoleId' => PAGEROLE_{{ name|upper }},
+	];
+{%- if hidden %}
+{%- set generatedProperties = generatedProperties|merge(['_hidden']) %}
+	/**
+	* @inheritDoc
+	*/
+	protected array $_hidden = {{ Bake.exportVar(hidden, 1)|raw }};
+{% endif %}
+{% set userProperties = fileBuilder.classBuilder.userProperties(generatedProperties) %}
+{% if userProperties %}
+
+	{{~ Bake.concat('\n\n', userProperties) }}
+{% endif %}
+{% set userFunctions = fileBuilder.classBuilder.userFunctions([]) %}
+{% if userFunctions %}
+
+	{{~ Bake.concat('\n\n', userFunctions) }}
+{% endif %}
+}

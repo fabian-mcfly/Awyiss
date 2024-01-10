@@ -1,0 +1,155 @@
+{% set annotations = DocBlock.buildTableAnnotations(associations, associationInfo, behaviors, entity, namespace) %}
+{% set generatedFunctions = ['initialize'] %}
+{{ element('file_header', {
+	namespace: fileBuilder.namespace,
+	classImports: fileBuilder.classImports(['Awyiss\\Model\\Table', 'Awyiss\\ORM\\RulesChecker', 'Cake\\Validation\\Validator']),
+}) }}
+
+{{ DocBlock.classDescription(name, 'Model', annotations)|raw }}
+class {{ name }}Table extends Table{{ fileBuilder.classBuilder.implements ? ' implements ' ~ fileBuilder.classBuilder.implements|join(', ') : '' }} {
+{% set userConstants = fileBuilder.classBuilder.userConstants([]) %}
+{% if userConstants.ATTRIBUTABLE is not defined %}
+	/**
+	 * @inheritDoc
+	 */
+	public const ATTRIBUTABLE = false;
+{% endif %}
+{% if userConstants.TABLE is not defined %}
+	/**
+	 * @inheritDoc
+	 */
+	public const TABLE = '{{ table }}';
+{% endif %}
+{% if userConstants %}
+	{{~ Bake.concat('\n\n\n', userConstants) }}
+{% endif %}
+{% set userProperties = fileBuilder.classBuilder.userProperties([]) %}
+{% if userProperties %}
+	{{~ Bake.concat('\n\n\n', userProperties) }}
+
+{% endif %}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function initialize (array $aa_config): void {
+		parent::initialize($aa_config);
+{% if displayField != 'id' %}
+		$this->setDisplayField({{ (displayField is iterable ? Bake.exportArray(displayField) : Bake.exportVar(displayField))|raw }});
+
+{% endif %}
+{%- if primaryKey %}
+	{%- if primaryKey is iterable and primaryKey|length > 1 %}
+		$this->setPrimaryKey({{ Bake.exportArray(primaryKey)|raw }});
+		{{- "\n" }}
+	{%- elseif primaryKey|as_array|first != 'id' %}
+		$this->setPrimaryKey('{{ primaryKey|as_array|first }}');
+		{{- "\n" }}
+	{%- endif %}
+{% endif %}
+
+{%- if behaviors %}
+
+{% endif %}
+
+{%- for behavior, behaviorData in behaviors %}
+	$this->addBehavior('{{ behavior }}'{{ (behaviorData ? (", " ~ Bake.exportArray(behaviorData, 2)|raw ~ '') : '')|raw }});
+{% endfor %}
+
+{%- if associations.belongsTo or associations.hasMany or associations.belongsToMany %}
+
+{% endif %}
+
+{%- for type, assocs in associations %}
+	{%- for assoc in assocs %}
+		{%- set assocData = [] %}
+		{%- for key, val in assoc %}
+			{%- if key is not same as('alias') %}
+				{%- set assocData = assocData|merge({(key): val}) %}
+			{%- endif %}
+		{%- endfor %}
+		$this->{{ type }}('{{ assoc.alias }}', {{ Bake.exportArray(assocData, 2)|raw }});
+		{{- "\n" }}
+	{%- endfor %}
+{% endfor %}
+	}
+{{- "\n" }}
+
+{%- if validation %}
+{% set generatedFunctions = generatedFunctions|merge(['validationDefault']) %}
+
+
+	/**
+	 * Returns the default validator object.
+	 *
+	 * @param \Cake\Validation\Validator $ao_validator The validator that can be modified to
+	 * add some rules to it.
+	 *
+	 * @return \Cake\Validation\Validator
+	 *
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 */
+	public function validationDefault (Validator $ao_validator): Validator {
+		parent::validationDefault($ao_validator);
+
+{% for field, rules in validation %}
+{% set validationMethods = Bake.getValidationMethods(field, rules) %}
+{% if validationMethods %}
+		$ao_validator
+{% for validationMethod in validationMethods %}
+{% if loop.last %}
+{% set validationMethod = validationMethod ~ ';' %}
+{% endif %}
+			{{ validationMethod|raw }}
+{% endfor %}
+
+{% endif %}
+{% endfor %}
+		return $ao_validator;
+	}
+{% endif %}
+
+{%- if rulesChecker %}
+{% set generatedFunctions = generatedFunctions|merge(['buildRules']) %}
+
+
+	/**
+	 * Returns a RulesChecker object after modifying the one that was supplied.
+	 *
+	 * @param \Cake\ORM\RulesChecker $ao_rules The rules object to be modified.
+	 *
+	 * @param \Awyiss\ORM\RulesChecker|\Cake\ORM\RulesChecker $ao_rules The rules object to be modified.
+	 *
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 */
+	public function buildRules (RulesChecker|\Cake\ORM\RulesChecker $ao_rules): RulesChecker {
+{% for field, rule in rulesChecker %}
+{% set fields = rule.fields is defined ? Bake.exportArray(rule.fields) : Bake.exportVar(field) %}
+{% set options = '' %}
+{% for optionName, optionValue in rule.options %}
+	{%~ set options = (loop.first ? '[' : options) ~ "'#{optionName}' => " ~ Bake.exportVar(optionValue) ~ (loop.last ? ']' : ', ') %}
+{% endfor %}
+		$ao_rules->add($ao_rules->{{ rule.name }}({{ fields|raw }}{{ (rule.extra|default ? ", '#{rule.extra}'" : '')|raw }}{{ (options ? ', ' ~ options : '')|raw }}), ['errorField' => '{{ field|variable }}']);
+{% endfor %}
+
+		return $ao_rules;
+	}
+{% endif %}
+
+{%- if connection is not same as('default') %}
+{% set generatedFunctions = generatedFunctions|merge(['defaultConnectionName']) %}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public static function defaultConnectionName(): string {
+		return '{{ connection }}';
+	}
+{% endif %}
+{% set userFunctions = fileBuilder.classBuilder.userFunctions(generatedFunctions) %}
+{% if userFunctions %}
+
+	{{~ Bake.concat('\n\n\n', userFunctions) }}
+{% endif %}
+}

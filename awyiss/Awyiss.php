@@ -95,7 +95,6 @@ class Awyiss extends BaseApplication {
 
 
 		if (PHP_SAPI === 'cli') {
-			Configure::write('Bake.theme', 'AwyissBake');
 			EventListenersProvider::loadListener('general_events', 'Bake');
 
 			FactoryLocator::add('Table', (new TableLocator())->allowFallbackClass(true)->setFallbackClassName(Table::class));
@@ -103,9 +102,6 @@ class Awyiss extends BaseApplication {
 		else {
 			FactoryLocator::add('Table', (new TableLocator())->allowFallbackClass(false));
 		}
-
-		//$this->addPlugin('Authentication');
-		//$this->addPlugin('Queue');
 
 		$la_plugins = include $this->configDir . 'plugins.php';
 		if (is_array($la_plugins)) {

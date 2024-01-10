@@ -17,7 +17,4 @@ return [
 	'IdeHelper' => [
 		'onlyCli' => true,
 	],
-	'AwyissBake' => [
-		'onlyCli' => true,
-	],
 ];
