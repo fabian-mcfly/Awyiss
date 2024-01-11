@@ -112,9 +112,9 @@ class BakePolicyCommand extends BakeCommand {
 		$ls_contents = $this->createTemplateRenderer()->set($la_data)->generate('Policy/policy');
 
 		$ls_path = $this->getPath($ao_args);
-		$ls_filename = $ls_path . $as_policyName . 'Policy.php';
+		$ls_filePath = $ls_path . $as_policyName . 'Policy.php';
 
-		$ao_io->createFile($ls_filename, $ls_contents, $this->force);
+		$ao_io->createFile($ls_filePath, $ls_contents, $this->force);
 	}
 
 

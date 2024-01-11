@@ -96,10 +96,10 @@ class PhpConfig extends BasePhpConfig {
 		$ls_contents .= ';';
 		$ls_contents = str_replace('    ', "\t", $ls_contents);
 
-		$ls_filename = ENV_CUSTOM_CONFIG . $as_key . $this->_extension;
+		$ls_filePath = ENV_CUSTOM_CONFIG . $as_key . $this->_extension;
 
-		if (file_put_contents($ls_filename, $ls_contents) > 0) {
-			chmod($ls_filename, fileperms($ls_filename) | 128 + 16 + 2);
+		if (file_put_contents($ls_filePath, $ls_contents)) {
+			chmod($ls_filePath, 0660);
 
 
 			return true;

@@ -189,7 +189,7 @@ class ContentTemplatesTable extends Table {
 
 		$ao_validator->requirePresence([
 			'title',
-			'filename',
+			'fileName',
 		], 'create');
 
 
@@ -207,8 +207,8 @@ class ContentTemplatesTable extends Table {
 		]);
 
 
-		$ao_validator->notEmptyString('filename');
-		$ao_validator->add('filename', [
+		$ao_validator->notEmptyString('fileName');
+		$ao_validator->add('fileName', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'maxLength' => ['rule' => ['maxLength', 100]],
 			'notBlank' => ['rule' => 'notBlank'],
@@ -242,9 +242,9 @@ class ContentTemplatesTable extends Table {
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
-		$ao_rules->add($ao_rules->isUnique(['filename']), 'uniqueFilename', [
-			'errorField' => 'filename',
-			'message' => __dfx($this->getI18nDomain(), 'validation', 'content_templates', 'error_unique_filename'),
+		$ao_rules->add($ao_rules->isUnique(['fileName']), 'uniqueFileName', [
+			'errorField' => 'fileName',
+			'message' => __dfx($this->getI18nDomain(), 'validation', 'content_templates', 'error_unique_file_name'),
 		]);
 
 

@@ -58,11 +58,11 @@ class BakeModelCommand extends BaseModelCommand {
 		}
 
 		$ls_path = $this->getPath($ao_args);
-		$ls_filename = $ls_path . 'Entity' . DS . $ls_name . '.php';
+		$ls_filePath = $ls_path . 'Entity' . DS . $ls_name . '.php';
 
 		$lo_parsedFile = null;
 		if ($ao_args->getOption('update')) {
-			$lo_parsedFile = $this->parseFile($ls_filename);
+			$lo_parsedFile = $this->parseFile($ls_filePath);
 		}
 
 		$la_data = $aa_data + [
@@ -99,7 +99,7 @@ class BakeModelCommand extends BaseModelCommand {
 		$ls_contents = $this->createTemplateRenderer()->set($la_data)->generate($ls_template);
 		$ls_contents = str_replace('    ', "\t", $ls_contents);
 
-		$this->writeFile($ao_io, $ls_filename, $ls_contents, $this->force);
+		$this->writeFile($ao_io, $ls_filePath, $ls_contents, $this->force);
 
 		$ls_emptyFile = $ls_path . 'Entity' . DS . '.gitkeep';
 		$this->deleteEmptyFile($ls_emptyFile, $ao_io);
@@ -136,11 +136,11 @@ class BakeModelCommand extends BaseModelCommand {
 		}
 
 		$ls_path = $this->getPath($ao_args);
-		$ls_filename = $ls_path . 'Table' . DS . $ls_name . 'Table.php';
+		$ls_filePath = $ls_path . 'Table' . DS . $ls_name . 'Table.php';
 
 		$lo_parsedFile = null;
 		if ($ao_args->getOption('update')) {
-			$lo_parsedFile = $this->parseFile($ls_filename);
+			$lo_parsedFile = $this->parseFile($ls_filePath);
 		}
 
 		if ($lo_parsedFile) {
@@ -177,12 +177,12 @@ class BakeModelCommand extends BaseModelCommand {
 		$ls_contents = $this->createTemplateRenderer()->set($la_data)->generate($ls_template);
 		$ls_contents = str_replace('    ', "\t", $ls_contents);
 
-		$this->writeFile($ao_io, $ls_filename, $ls_contents, $this->force);
+		$this->writeFile($ao_io, $ls_filePath, $ls_contents, $this->force);
 
 		// Work around composer caching that classes/files do not exist.
 		// Check for the file as it might not exist in tests.
-		if (file_exists($ls_filename)) {
-			require_once $ls_filename;
+		if (file_exists($ls_filePath)) {
+			require_once $ls_filePath;
 		}
 		$this->getTableLocator()->clear();
 

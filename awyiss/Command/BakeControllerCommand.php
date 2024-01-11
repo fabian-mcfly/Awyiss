@@ -147,9 +147,9 @@ class BakeControllerCommand extends BaseControllerCommand {
 		$ls_contents = $this->createTemplateRenderer()->set($la_data)->generate('Controller/controller');
 
 		$ls_path = $this->getPath($ao_args);
-		$ls_filename = $ls_path . $ls_controllerName . 'Controller.php';
+		$ls_fileName = $ls_path . $ls_controllerName . 'Controller.php';
 
-		$ao_io->createFile($ls_filename, $ls_contents, $this->force);
+		$ao_io->createFile($ls_fileName, $ls_contents, $this->force);
 	}
 
 

@@ -197,10 +197,10 @@ class AttributesTask extends Task/* implements AddInterface*/ {
 		}
 		else {
 			if (file_exists($ls_oldTableFile)) {
-				if (posix_getuid() != fileowner($ls_oldTableFile)) {
+				if (!is_writeable($ls_oldTableFile)) {
 					throw new QueueException(
 						sprintf(
-							'Cannot migrate `%s` in `%s`. Make sure all files have the same owner the cronjob runs with.',
+							'Cannot bake migration file `%s` in `%s`. Make sure the file is writeable for the cronjob user.',
 							$ls_oldTableFile,
 							self::class
 						)
@@ -209,10 +209,10 @@ class AttributesTask extends Task/* implements AddInterface*/ {
 			}
 
 			if (file_exists($ls_oldEntityFile)) {
-				if (posix_getuid() != fileowner($ls_oldEntityFile)) {
+				if (!is_writeable($ls_oldEntityFile)) {
 					throw new QueueException(
 						sprintf(
-							'Cannot migrate `%s` in `%s`. Make sure all files have the same owner the cronjob runs with.',
+							'Cannot bake migration file `%s` in `%s`. Make sure the file is writeable for the cronjob user.',
 							$ls_oldEntityFile,
 							self::class
 						)
@@ -305,10 +305,10 @@ class AttributesTask extends Task/* implements AddInterface*/ {
 		$ls_entityFile = ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Entity' . DS . Inflector::classify($ls_attributesTable) . '.php';
 
 		if (file_exists($ls_tableFile)) {
-			if (posix_getuid() != fileowner($ls_tableFile)) {
+			if (!is_writeable($ls_tableFile)) {
 				throw new QueueException(
 					sprintf(
-						'Cannot migrate `%s` in `%s`. Make sure all files have the same owner the cronjob runs with.',
+						'Cannot bake migration file `%s` in `%s`. Make sure the file is writeable for the cronjob user.',
 						$ls_tableFile,
 						self::class
 					)
@@ -317,10 +317,10 @@ class AttributesTask extends Task/* implements AddInterface*/ {
 		}
 
 		if (file_exists($ls_entityFile)) {
-			if (posix_getuid() != fileowner($ls_entityFile)) {
+			if (!is_writeable($ls_entityFile)) {
 				throw new QueueException(
 					sprintf(
-						'Cannot migrate `%s` in `%s`. Make sure all files have the same owner the cronjob runs with.',
+						'Cannot bake migration file `%s` in `%s`. Make sure the file is writeable for the cronjob user.',
 						$ls_entityFile,
 						self::class
 					)

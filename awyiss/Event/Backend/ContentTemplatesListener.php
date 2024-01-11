@@ -52,7 +52,7 @@ class ContentTemplatesListener implements EventListenerInterface {
 	 * @return void
 	 */
 	public function beforeSave(Event $ao_event, ContentTemplate $ao_entity): void {
-		if ($ao_entity->hasOriginal('filename') && $ao_entity->filename != $ao_entity->getOriginal('filename')) {
+		if ($ao_entity->hasOriginal('fileName') && $ao_entity->fileName != $ao_entity->getOriginal('fileName')) {
 			/** @var \Queue\Model\Table\QueuedJobsTable $lo_queue */
 			$lo_queue = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
 
@@ -75,7 +75,7 @@ class ContentTemplatesListener implements EventListenerInterface {
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function afterSaveCommit(Event $ao_event, ContentTemplate $ao_entity): void {
-		$ls_fileName = Text::slug($ao_entity->filename, ['replacement' => '_']);
+		$ls_fileName = Text::slug($ao_entity->fileName, ['replacement' => '_']);
 		$ls_fileName = trim($ls_fileName, '_');
 		$ls_extension = '.twig';
 
@@ -86,15 +86,15 @@ class ContentTemplatesListener implements EventListenerInterface {
 		$la_commands = [];
 
 		if (!file_exists($ls_folderPath)) {
-			$la_commands[] = 'mkdir -m 775 -p ' . $ls_folderPath;
+			$la_commands[] = 'mkdir -m 0750 -p ' . $ls_folderPath;
 		}
 
 		$ls_filePath = $ls_folderPath . $ls_fileName . $ls_extension;
 
-		if ($ao_entity->hasOriginal('filename') && $ao_entity->filename != $ao_entity->getOriginal('filename')) {
+		if ($ao_entity->hasOriginal('fileName') && $ao_entity->fileName != $ao_entity->getOriginal('fileName')) {
 			//After changing the filename in the database, we also need to move (read: rename) the existing file
-			$ls_currentFilename = Text::slug($ao_entity->getOriginal('filename'), ['replacement' => '_']);
-			$ls_currentFilePath = $ls_folderPath . $ls_currentFilename . $ls_extension;
+			$ls_currentFileName = Text::slug($ao_entity->getOriginal('fileName'), ['replacement' => '_']);
+			$ls_currentFilePath = $ls_folderPath . $ls_currentFileName . $ls_extension;
 			$lb_fileExists = file_exists($ls_currentFilePath);
 			if ($lb_fileExists) {
 				$la_commands[] = 'mv ' . $ls_currentFilePath . ' ' . $ls_filePath;
@@ -107,7 +107,7 @@ class ContentTemplatesListener implements EventListenerInterface {
 		//If the file does not exist, we create one based on a twig-template for frontent content templates
 		if (!$lb_fileExists) {
 			$la_commands[] = 'bin/cake bake template content_templates content_template ' . $ls_fileName . ' --prefix Frontend --controller contents';
-			$la_commands[] = 'chmod 0775 ' . $ls_filePath;
+			$la_commands[] = 'chmod 0750 ' . $ls_filePath;
 		}
 
 		if (!empty($la_commands)) {
@@ -139,7 +139,7 @@ class ContentTemplatesListener implements EventListenerInterface {
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function afterSoftDelete(Event $ao_event, ContentTemplate $ao_entity): void {
-		$ls_fileName = Text::slug($ao_entity->filename, ['replacement' => '_']);
+		$ls_fileName = Text::slug($ao_entity->fileName, ['replacement' => '_']);
 		$ls_fileName = trim($ls_fileName, '_');
 		$ls_extension = '.twig';
 

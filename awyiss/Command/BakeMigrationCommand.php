@@ -188,8 +188,8 @@ class BakeMigrationCommand extends BaseBakeMigrationCommand {
 
 		$ls_contents = $lo_renderer->generate($this->template());
 
-		$ls_filename = $ls_path . $this->fileName($this->_name);
-		$this->createFile($ls_filename, $ls_contents, $ao_arguments, $ao_io);
+		$ls_filePath = $ls_path . $this->fileName($this->_name);
+		$this->createFile($ls_filePath, $ls_contents, $ao_arguments, $ao_io);
 
 		$ls_emptyFile = $ls_path . '.gitkeep';
 		$this->deleteEmptyFile($ls_emptyFile, $ao_io);

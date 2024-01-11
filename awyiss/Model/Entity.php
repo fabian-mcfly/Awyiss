@@ -165,7 +165,7 @@ class Entity extends BaseEntity {
 				$ls_title = __d($ls_scope, 'title_' . Inflector::underscore($ls_identifier));
 			}
 			else {
-				$ls_title = $this->filename ?? null ?? Inflector::singularize($this->getSource()) . $this->id;
+				$ls_title = $this->fileName ?? null ?? Inflector::singularize($this->getSource()) . $this->id;
 			}
 		}
 

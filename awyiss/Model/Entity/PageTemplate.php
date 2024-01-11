@@ -14,7 +14,7 @@ use Cake\Utility\Text;
  * @property int $id
  * @property int $pageRoleId
  * @property string $title
- * @property string $filename
+ * @property string $fileName
  * @property int $systemOrder
  * @property bool $active
  * @property bool $deleted
@@ -35,7 +35,7 @@ class PageTemplate extends Entity {
 	protected array $_accessible = [
 		'pageRoleId' => true,
 		'title' => true,
-		'filename' => true,
+		'fileName' => true,
 		'systemOrder' => true,
 		'active' => true,
 		'contentAreas' => true,
@@ -45,6 +45,7 @@ class PageTemplate extends Entity {
 	 */
 	protected static array $fieldMap = [
 		'page_role_id' => 'pageRoleId',
+		'file_name' => 'fileName',
 		'system_order' => 'systemOrder',
 		'created_by' => 'createdBy',
 		'created_on' => 'createdOn',
@@ -63,10 +64,10 @@ class PageTemplate extends Entity {
 	 * @noinspection PhpUnused
 	 * @see \Awyiss\Model\Entity\PageTemplate::$filename
 	 */
-	protected function _setFilename(string $as_filename): string {
-		$ls_filename = Text::slug($as_filename, ['replacement' => '_']);
+	protected function _setFileName(string $as_fileName): string {
+		$ls_fileName = Text::slug($as_fileName, ['replacement' => '_']);
 
 
-		return mb_strtolower($ls_filename);
+		return mb_strtolower($ls_fileName);
 	}
 }

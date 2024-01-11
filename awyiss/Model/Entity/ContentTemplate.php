@@ -13,7 +13,7 @@ use Cake\Utility\Text;
  *
  * @property int $id
  * @property string $title
- * @property string $filename
+ * @property string $fileName
  * @property int $systemOrder
  * @property bool $active
  * @property bool $deleted
@@ -33,7 +33,7 @@ class ContentTemplate extends Entity {
 	 */
 	protected array $_accessible = [
 		'title' => true,
-		'filename' => true,
+		'fileName' => true,
 		'systemOrder' => true,
 		'active' => true,
 		'contentTemplateElements' => true,
@@ -43,6 +43,7 @@ class ContentTemplate extends Entity {
 	 * @inheritDoc
 	 */
 	protected static array $fieldMap = [
+		'file_name' => 'fileName',
 		'content_template_elements' => 'contentTemplateElements',
 		'content_areas' => 'contentAreas',
 		'system_order' => 'systemOrder',
@@ -61,10 +62,10 @@ class ContentTemplate extends Entity {
 	 * @noinspection PhpUnused
 	 * @see \Awyiss\Model\Entity\ContentTemplate::$filename
 	 */
-	protected function _setFilename(string $as_filename): string {
-		$ls_filename = Text::slug($as_filename, ['replacement' => '_']);
+	protected function _setFileName(string $as_fileName): string {
+		$ls_fileName = Text::slug($as_fileName, ['replacement' => '_']);
 
 
-		return mb_strtolower($ls_filename);
+		return mb_strtolower($ls_fileName);
 	}
 }

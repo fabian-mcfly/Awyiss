@@ -151,7 +151,9 @@ class PageRolesListener implements EventListenerInterface {
 			unlink($ls_filePath);
 		}
 
-		file_put_contents($ls_filePath, $ls_constantsContents);
+		 if (file_put_contents($ls_filePath, $ls_constantsContents)) {
+			 chmod($ls_filePath, 0660);
+		 }
 	}
 
 
