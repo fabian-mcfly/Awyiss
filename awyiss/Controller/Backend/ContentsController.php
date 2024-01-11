@@ -352,10 +352,10 @@ class ContentsController extends Controller {
 				'id',
 				'title',
 				'active',
-			])->matching('ContentTemplateContentAreas', function (SelectQuery $ao_query) use ($li_pageTemplateId) {
+			])->matching('ContentAreas', function (SelectQuery $ao_query) use ($li_pageTemplateId) {
 				return $ao_query->where(['ContentTemplateContentAreas.page_template_id' => $li_pageTemplateId]);
 			})->contain([
-				'ContentTemplateContentAreas',
+				'ContentAreas',
 				'ContentTemplateElements',
 			]);
 
@@ -640,17 +640,16 @@ class ContentsController extends Controller {
 
 		$la_availableContentAreas = [];
 
-		foreach ($lo_contentTemplate->contentTemplateContentAreas ?? [] as $lo_contentTemplateContentArea) {
-			if ($lo_contentTemplateContentArea->pageTemplateId != $lo_page->pageTemplateId) {
+		foreach ($lo_contentTemplate->contentAreas ?? [] as $lo_contentArea) {
+			if ($lo_contentArea->_joinData->pageTemplateId != $lo_page->pageTemplateId) {
 				continue;
 			}
 
-			if (isset($la_unavailableContentAreas[ $lo_contentTemplateContentArea->contentAreaId ])) {
-				$la_availableContentAreas[ $lo_contentTemplateContentArea->contentAreaId ] = $la_unavailableContentAreas[ $lo_contentTemplateContentArea->contentAreaId ];
-				unset($la_unavailableContentAreas[ $lo_contentTemplateContentArea->contentAreaId ]);
+			if (isset($la_unavailableContentAreas[ $lo_contentArea->id ])) {
+				$la_availableContentAreas[ $lo_contentArea->id ] = $la_unavailableContentAreas[ $lo_contentArea->id ];
+				unset($la_unavailableContentAreas[ $lo_contentArea->id ]);
 			}
 		}
-
 
 		return [
 			'available' => $la_availableContentAreas,
