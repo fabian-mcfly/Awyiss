@@ -25,43 +25,43 @@ class SystemConfigOptions extends AbstractConfigOptions {
 	 */
 	public function initializeConfigOptions(): void {
 		$this->add(Awyiss::REALM_FRONTEND, [
-			new ConfigOption([
-				'defaultValue' => true,
-				'identifier' => 'editlinks',
-				'localizable' => false,
-				'nullable' => false,
-				'type' => ConfigOptionType::BOOL,
-			]),
+			new ConfigOption(
+				defaultValue: true,
+				identifier: 'editlinks',
+				localizable: false,
+				nullable: false,
+				type: ConfigOptionType::BOOL,
+			),
 			'meta' => [
-				new ConfigOption([
-					'defaultValue' => 'Firma',
-					'identifier' => 'titleAppendix',
-				]),
-				new ConfigOption([
-					'defaultValue' => ' | ',
-					'identifier' => 'titleSeparator',
-				]),
+				new ConfigOption(
+					defaultValue: 'Firma',
+					identifier: 'titleAppendix',
+				),
+				new ConfigOption(
+					defaultValue: ' | ',
+					identifier: 'titleSeparator',
+				),
 			],
 		]);
 
 
 		$this->add(Awyiss::REALM_BACKEND, [
-			new ConfigOption([
-				'defaultValue' => 600,
-				'identifier' => 'lockTimeout',
-				'localizable' => false,
-				'nullable' => false,
-				'type' => ConfigOptionType::INTEGER,
-			]),
+			new ConfigOption(
+				defaultValue: 600,
+				identifier: 'lockTimeout',
+				localizable: false,
+				nullable: false,
+				type: ConfigOptionType::INTEGER,
+			),
 			'meta' => [
-				new ConfigOption([
-					'defaultValue' => 'Firma',
-					'identifier' => 'titleAppendix',
-				]),
-				new ConfigOption([
-					'defaultValue' => ' | ',
-					'identifier' => 'titleSeparator',
-				]),
+				new ConfigOption(
+					defaultValue: 'Firma',
+					identifier: 'titleAppendix',
+				),
+				new ConfigOption(
+					defaultValue: ' | ',
+					identifier: 'titleSeparator',
+				),
 			],
 		]);
 	}

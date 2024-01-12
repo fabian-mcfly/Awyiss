@@ -35,51 +35,110 @@ class GenericPagesConfigOptions extends AbstractConfigOptions {
 	 */
 	public function initializeConfigOptions(): void {
 		$this->add(Awyiss::REALM_BACKEND, [
+			'categories' => [
+				new ConfigOption(
+					defaultValue: false,
+					identifier: 'allowAggregation',
+					localizable: false,
+					nullable: false,
+					type: ConfigOptionType::BOOL,
+				),
+				new ConfigOption(
+					defaultValue: false,
+					identifier: 'allowUnassigned',
+					localizable: false,
+					nullable: false,
+					type: ConfigOptionType::BOOL,
+				),
+				new ConfigOption(
+					defaultValue: null,
+					identifier: 'associationName',
+					localizable: false,
+					nullable: true,
+					type: ConfigOptionType::STRING,
+
+				),
+				new ConfigOption(
+					defaultValue: null,
+					identifier: 'categories',
+					localizable: false,
+					nullable: true,
+					type: ConfigOptionType::LISTVALUE,
+				),
+				new ConfigOption(
+					defaultValue: 'category',
+					identifier: 'identifier',
+					localizable: false,
+					nullable: false,
+					type: ConfigOptionType::STRING
+				),
+				new ConfigOption(
+					defaultValue: false,
+					identifier: 'enabled',
+					localizable: false,
+					nullable: false,
+					type: ConfigOptionType::BOOL
+				),
+				new ConfigOption(
+					defaultValue: 'parentId',
+					identifier: 'foreignKey',
+					localizable: false,
+					nullable: false,
+					type: ConfigOptionType::STRING
+				),
+				new ConfigOption(
+					defaultValue: true,
+					identifier: 'useDatasource',
+					localizable: false,
+					nullable: false,
+					type: ConfigOptionType::BOOL,
+				),
+			],
 			'contents' => [
-				new ConfigOption([
-					'defaultValue' => false,
-					'identifier' => 'enabled',
-					'localizable' => false,
-					'nullable' => false,
-					'type' => ConfigOptionType::BOOL,
-				]),
+				new ConfigOption(
+					defaultValue: false,
+					identifier: 'enabled',
+					localizable: false,
+					nullable: false,
+					type: ConfigOptionType::BOOL,
+				),
 			],
 			'paginate' => [
-				new ConfigOption([
-					'defaultValue' => true,
-					'identifier' => 'enabled',
-					'localizable' => false,
-					'nullable' => true,
-					'type' => ConfigOptionType::BOOL,
-				]),
-				new ConfigOption([
-					'defaultValue' => 20,
-					'identifier' => 'limit',
-					'localizable' => false,
-					'nullable' => false,
-					'type' => ConfigOptionType::INTEGER,
-				]),
+				new ConfigOption(
+					defaultValue: true,
+					identifier: 'enabled',
+					localizable: false,
+					nullable: true,
+					type: ConfigOptionType::BOOL,
+				),
+				new ConfigOption(
+					defaultValue: 20,
+					identifier: 'limit',
+					localizable: false,
+					nullable: false,
+					type: ConfigOptionType::INTEGER,
+				),
 			],
 			'systemOrder' => [
-				new ConfigOption([
-					'defaultValue' => SORT_ASC,
-					'identifier' => 'direction',
-					'localizable' => false,
-					'nullable' => false,
-					'type' => ConfigOptionType::LISTVALUE,
-					'values' => [
+				new ConfigOption(
+					defaultValue: SORT_ASC,
+					identifier: 'direction',
+					localizable: false,
+					nullable: false,
+					type: ConfigOptionType::LISTVALUE,
+					values: [
 						SORT_ASC,
 						SORT_DESC,
 					],
-				]),
-				new ConfigOption([
-					'defaultValue' => 'title',
-					'identifier' => 'field',
-					'localizable' => false,
-					'nullable' => false,
-					'type' => ConfigOptionType::LISTVALUE,
-					'values' => $this->getSystemOrderFields(...),
-				]),
+				),
+				new ConfigOption(
+					defaultValue: 'title',
+					identifier: 'field',
+					localizable: false,
+					nullable: false,
+					type: ConfigOptionType::LISTVALUE,
+					values: $this->getSystemOrderFields(...),
+				),
 			],
 		]);
 	}

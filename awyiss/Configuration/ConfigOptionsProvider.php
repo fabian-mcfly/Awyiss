@@ -21,7 +21,7 @@ class ConfigOptionsProvider {
 	 */
 	protected static array $configOptions = [];
 	/**
-	 * @var array<string, ConfigOptionsInterface>
+	 * @var array<string, ConfigOptionsInterface|GenericPagesConfigOptions>
 	 */
 	protected static array $loadedConfigOptions = [];
 	/**
@@ -263,7 +263,7 @@ class ConfigOptionsProvider {
 				}
 
 				if ($ab_load) {
-					static::loadConfigOptions($ls_configurationClass, $ls_configScope);
+					static::loadConfigOptions($ls_configurationClass);
 				}
 
 				$la_configurations[ $ls_configScope ] = $ls_configurationClass;

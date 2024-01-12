@@ -26,13 +26,13 @@ class ContentTemplatesConfigOptions extends AbstractConfigOptions {
 	public function initializeConfigOptions(): void {
 		$this->add(Awyiss::REALM_BACKEND, [
 			'paginate' => [
-				new ConfigOption([
-					'defaultValue' => 20,
-					'identifier' => 'limit',
-					'localizable' => false,
-					'nullable' => false,
-					'type' => ConfigOptionType::INTEGER,
-				]),
+				new ConfigOption(
+					defaultValue: 20,
+					identifier: 'limit',
+					localizable: false,
+					nullable: false,
+					type: ConfigOptionType::INTEGER,
+				),
 			],
 		]);
 	}

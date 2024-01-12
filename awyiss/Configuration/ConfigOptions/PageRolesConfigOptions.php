@@ -25,13 +25,13 @@ class PageRolesConfigOptions extends AbstractConfigOptions {
 	 */
 	public function initializeConfigOptions(): void {
 		$this->add(Awyiss::REALM_BACKEND, [
-			new ConfigOption([
-				'defaultValue' => true,
-				'identifier' => 'autoCreateMenuEntries',
-				'localizable' => false,
-				'nullable' => false,
-				'type' => ConfigOptionType::BOOL,
-			]),
+			new ConfigOption(
+				defaultValue: true,
+				identifier: 'autoCreateMenuEntries',
+				localizable: false,
+				nullable: false,
+				type: ConfigOptionType::BOOL,
+			),
 		]);
 	}
 }

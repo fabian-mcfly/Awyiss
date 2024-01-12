@@ -25,20 +25,20 @@ class UsersConfigOptions extends AbstractConfigOptions {
 	 */
 	public function initializeConfigOptions(): void {
 		$this->add(Awyiss::REALM_BACKEND, [
-			new ConfigOption([
-				'defaultValue' => true,
-				'identifier' => 'search',
-				'localizable' => false,
-				'type' => ConfigOptionType::BOOL,
-			]),
+			new ConfigOption(
+				defaultValue: true,
+				identifier: 'search',
+				localizable: false,
+				type: ConfigOptionType::BOOL,
+			),
 			'paginate' => [
-				new ConfigOption([
-					'defaultValue' => 20,
-					'identifier' => 'limit',
-					'localizable' => false,
-					'nullable' => false,
-					'type' => ConfigOptionType::INTEGER,
-				]),
+				new ConfigOption(
+					defaultValue: 20,
+					identifier: 'limit',
+					localizable: false,
+					nullable: false,
+					type: ConfigOptionType::INTEGER,
+				),
 			],
 		]);
 	}

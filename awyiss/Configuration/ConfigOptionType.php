@@ -65,7 +65,7 @@ enum ConfigOptionType: string {
 
 			case self::ENUM:
 			case self::LISTVALUE:
-				throw new RuntimeException(sprintf('Cannot validate case `%s` in `%s` in the enum directly. Use `\Awyiss\Configuration\ConfigOption::validateConfigValue` instead.', $this->name, static::class));
+				throw new RuntimeException(sprintf('Cannot validate case `%s` in `%s` in the enum directly. Use `\Awyiss\Configuration\ConfigOption::validateConfigValue` instead.', $this->name, self::class));
 
 			case self::STRING:
 				return is_string($ax_value);
@@ -83,6 +83,7 @@ enum ConfigOptionType: string {
 	 * @return mixed
 	 */
 	public function cast(mixed $ax_value): mixed {
+		/** @noinspection PhpUncoveredEnumCasesInspection */
 		return match ($this) {
 			self::ARRAY => (array)$ax_value,
 			self::BOOL => boolval($ax_value),

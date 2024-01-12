@@ -5,7 +5,6 @@ namespace Awyiss\Configuration;
 
 
 use Cake\Utility\Inflector;
-use JetBrains\PhpStorm\ArrayShape;
 use RuntimeException;
 
 
@@ -22,20 +21,6 @@ use RuntimeException;
  * @see ConfigOptionsInterface::initializeConfigOptions
  */
 class ConfigOption {
-	/**
-	 * Holds the array definition for `\JetBrains\PhpStorm\ArrayShape` used in `__construct`
-	 */
-	protected const SETTINGS_SHAPE = [
-		'defaultValue' => 'mixed',
-		'description' => 'string',
-		'localizable' => 'bool',
-		'identifier' => 'string',
-		'nullable' => 'bool|array',
-		'title' => 'string',
-		'type' => 'string',
-		'typecast' => 'callable|null',
-		'values' => 'array|callable|string|null',
-	];
 	/**
 	 * @var mixed|null
 	 */
@@ -66,7 +51,7 @@ class ConfigOption {
 	/**
 	 * @var ConfigOptionType
 	 */
-	protected ConfigOptionType $type;
+	protected ConfigOptionType $type = ConfigOptionType::STRING;
 	/**
 	 * @var callable|null Can hold a callable that casts the provided value
 	 */
@@ -78,54 +63,65 @@ class ConfigOption {
 
 
 	/**
-	 * @param array{defaultValue: mixed, localizable: bool, identifier: string, nullable: bool|array, type: string} $aa_settings
+	 * @param string $identifier
+	 * @param \Awyiss\Configuration\ConfigOptionType|null $type
+	 * @param mixed|null $defaultValue
+	 * @param string $description
+	 * @param bool $localizable
+	 * @param bool|array|null $nullable
+	 * @param string|null $title
+	 * @param callable|null $typecast
+	 * @param array|callable|string|null $values
 	 */
-	public function __construct(#[ArrayShape(self::SETTINGS_SHAPE)] array|string $aa_settings = []) {
-		$la_settings = $aa_settings;
-		if (!is_array($aa_settings)) {
-			$la_settings = ['identifier' => $aa_settings];
+	public function __construct(
+		string $identifier,
+		ConfigOptionType|null $type = null,
+		mixed $defaultValue = null,
+		string $description = '',
+		bool $localizable = true,
+		bool|array|null $nullable = null,
+		string $title = null,
+		callable|null $typecast = null,
+		array|callable|string|null $values = null,
+	) {
+		if (isset($defaultValue)) {
+			$this->setDefaultValue($defaultValue);
 		}
 
-		if (isset($la_settings['defaultValue'])) {
-			$this->setDefaultValue($la_settings['defaultValue']);
+		if (isset($description)) {
+			$this->setDescription($description);
 		}
 
-		if (isset($la_settings['description'])) {
-			$this->setDescription($la_settings['description']);
+		if (isset($localizable) && is_bool($localizable)) {
+			$this->setLocalizable($localizable);
 		}
 
-		if (isset($la_settings['localizable']) && is_bool($la_settings['localizable'])) {
-			$this->setLocalizable($la_settings['localizable']);
-		}
+		$this->setIdentifier($identifier);
 
-		if (isset($la_settings['identifier'])) {
-			$this->setIdentifier($la_settings['identifier']);
-		}
-
-		if (isset($la_settings['nullable'])) {
-			if (is_bool($la_settings['nullable'])) {
-				$this->setNullable($la_settings['nullable']);
-				$this->setNullable($la_settings['nullable'], true);
+		if (isset($nullable)) {
+			if (is_bool($nullable)) {
+				$this->setNullable($nullable);
+				$this->setNullable($nullable, true);
 			}
-			elseif (is_array($la_settings['nullable'])) {
-				if (isset($la_settings['nullable']['global'])) {
-					$this->setNullable($la_settings['nullable']['global']);
+			elseif (is_array($nullable)) {
+				if (isset($nullable['global'])) {
+					$this->setNullable($nullable['global']);
 				}
 
-				if (isset($la_settings['nullable']['localized'])) {
-					$this->setNullable($la_settings['nullable']['localized'], true);
+				if (isset($nullable['localized'])) {
+					$this->setNullable($nullable['localized'], true);
 				}
 			}
 		}
 
-		$this->setType($la_settings['type'] ?? ConfigOptionType::STRING);
+		$this->setType($type ?? ConfigOptionType::STRING);
 
-		if (isset($la_settings['typecast'])) {
-			$this->setTypecast($la_settings['typecast']);
+		if (isset($typecast)) {
+			$this->setTypecast($typecast);
 		}
 
-		if (isset($la_settings['values'])) {
-			$this->setValues($la_settings['values']);
+		if (isset($values)) {
+			$this->setValues($values);
 		}
 	}
 

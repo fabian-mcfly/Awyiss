@@ -30,13 +30,13 @@ class PagesConfigOptions extends AbstractConfigOptions {
 	public function initializeConfigOptions(): void {
 		$this->add(Awyiss::REALM_BACKEND, [
 			'contents' => [
-				new ConfigOption([
-					'defaultValue' => true,
-					'identifier' => 'enabled',
-					'localizable' => false,
-					'nullable' => false,
-					'type' => ConfigOptionType::BOOL,
-				]),
+				new ConfigOption(
+					defaultValue: true,
+					identifier: 'enabled',
+					localizable: false,
+					nullable: false,
+					type: ConfigOptionType::BOOL,
+				),
 			],
 		]);
 	}

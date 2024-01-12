@@ -112,11 +112,10 @@ abstract class AbstractConfigOptions implements ConfigOptionsInterface {
 			$la_identifierPath = explode('.', $ax_path);
 		}
 
-		$la_identifierPath = array_map(function ($as_pathFragment) {
+
+		return array_map(function ($as_pathFragment) {
 			return ConfigOptionsProvider::sanitizeIdentifier($as_pathFragment);
 		}, $la_identifierPath);
-
-		return $la_identifierPath;
 	}
 
 
