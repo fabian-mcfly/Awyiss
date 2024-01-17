@@ -96,18 +96,7 @@ class FormHelper extends BaseFormHelper {
 	public function label(string $as_fieldName, ?string $as_text = null, array $aa_options = []): string {
 		$ls_text = $as_text;
 		if ($ls_text === null) {
-			$ls_text = $as_fieldName;
-			if (str_ends_with($ls_text, '._ids')) {
-				$ls_text = substr($ls_text, 0, -5);
-			}
-			if (str_contains($ls_text, '.')) {
-				$ls_fieldElements = explode('.', $ls_text);
-				$ls_text = array_pop($ls_fieldElements);
-			}
-			if (str_ends_with($ls_text, '_id')) {
-				$ls_text = substr($ls_text, 0, -3);
-			}
-			$ls_text = __($ls_text);
+			$ls_text = $this->labelTextFromFieldname($as_fieldName);
 		}
 
 
@@ -115,17 +104,28 @@ class FormHelper extends BaseFormHelper {
 	}
 
 
-	/*
-	 * {@inheritDoc}
+	/**
+	 * Generates a translated label text based on the fieldname
 	 *
-	 * Change the default behavior to not escape by default
-	 *
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
-	 *
-	public function error (string $as_field, $as_text = null, array $aa_options = []): string {
-		return parent::error($as_field, $as_text, $aa_options);
-		//return parent::error($as_field, $as_text, $aa_options + ['escape' => false]);
-	}*/
+	 * @param string $as_fieldName
+	 * @return string
+	 */
+	public function labelTextFromFieldname(string $as_fieldName): string {
+		$ls_text = $as_fieldName;
+		if (str_ends_with($ls_text, '._ids')) {
+			$ls_text = substr($ls_text, 0, -5);
+		}
+		if (str_contains($ls_text, '.')) {
+			$ls_fieldElements = explode('.', $ls_text);
+			$ls_text = array_pop($ls_fieldElements);
+		}
+		if (str_ends_with($ls_text, '_id')) {
+			$ls_text = substr($ls_text, 0, -3);
+		}
+
+
+		return __($ls_text);
+	}
 
 
 	/**
