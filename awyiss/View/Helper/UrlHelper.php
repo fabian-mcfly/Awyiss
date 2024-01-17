@@ -19,8 +19,6 @@ class UrlHelper extends BaseUrlHelper {
 	 * An identifier to use all current parameters or none at all
 	 */
 	final public const PARAMS_ALL = '_all';
-	//final public const PARAMS_PAGINATION = ['page', 'limit', 'sort', 'direction'];
-	//final public const PARAMS_SORT = ['limit', 'sort', 'direction'];
 
 
 	/**
@@ -48,14 +46,6 @@ class UrlHelper extends BaseUrlHelper {
 
 		if (is_array($lx_url)) {
 			$lx_url += $la_params;
-
-			if (!array_key_exists('_name', $lx_url) && empty($lx_url['plugin'])) {
-				$lx_url['_name'] = Awyiss::getRealm();
-			}
-
-			/*if (Awyiss::getRealm() === Awyiss::REALM_BACKEND && empty($lx_url['action'])) {
-				$lx_url['action'] = 'overview';
-			}*/
 
 			if (empty($lx_url['_name'])) {
 				unset($lx_url['_name']);
