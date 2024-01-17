@@ -61,8 +61,8 @@
 				{{ helper_Form_control('title') }}
 			{% endblock %}
 
-			{% block formControlFilename %}
-				{{ helper_Form_control('filename') }}
+			{% block formControlFileName %}
+				{{ helper_Form_control('file_name') }}
 			{% endblock %}
 
 			{% block fieldsetGeneralAttributes %}
@@ -237,7 +237,7 @@
 															{{ helper_Form_control('content_areas[' ~ li_key ~ '][content_area_id]', {
 																checked: (lo_pageTemplate.id ~ '_' ~ lo_contentArea.id) in la_assignedContentAreas,
 																hiddenField: false,
-																id: 'ContentTemplate-ContentAreas-' ~ lo_pageTemplate.filename|camelize ~'-' ~ lo_contentArea.identifier|camelize,
+																id: 'ContentTemplate-ContentAreas-' ~ lo_pageTemplate.fileName|camelize ~'-' ~ lo_contentArea.identifier|camelize,
 																label: lo_contentArea.label,
 																type: 'checkbox',
 																value: lo_contentArea.id,

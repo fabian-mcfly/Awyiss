@@ -34,7 +34,7 @@
 					<thead>
 						<tr>
 							<th>{{ __('title') }}</th>
-							<th>{{ __('filename') }}</th>
+							<th>{{ __('file_name') }}</th>
 							<th>{{ __('content_areas') }}</th>
 							<th>{{ __('used_for_pages') }}</th>
 							<th class="actions"></th>
@@ -46,7 +46,7 @@
 								{# @var lo_pageTemplate \Awyiss\Model\Entity\PageTemplate #}
 								<tr>
 									<td>{{ lo_pageTemplate.title }} ({{ lo_pageTemplate.systemOrder }})</td>
-									<td>{{ lo_pageTemplate.filename }}</td>
+									<td>{{ lo_pageTemplate.fileName }}</td>
 									<td>{{ lo_pageTemplate.contentAreas|column('label')|join(',<br>')|raw }}</td>
 									<td>{{ lo_pageTemplate.usedForPages }}</td>
 									<td class="actions">
