@@ -90,8 +90,6 @@ class LocaleHelper extends Helper {
 		$ao_view = $ao_event->getSubject();
 
 		$ao_view->set('aa_languages', $la_languages);
-		$ao_view->set('aa_languagesFrontend', $la_languages[ Awyiss::REALM_FRONTEND ] ?? []);
-		$ao_view->set('aa_languagesBackend', $la_languages[ Awyiss::REALM_BACKEND ] ?? []);
 	}
 
 

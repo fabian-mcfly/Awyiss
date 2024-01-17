@@ -165,51 +165,6 @@ class EavStrategy extends BaseEavStrategy {
 	}
 
 
-	/*
-	 * Modifies the results from a table find in order to merge the translated fields
-	 * into each entity for a given locale.
-	 *
-	 * @param ResultSetInterface $ao_results Results to map.
-	 * @param string $as_locale Locale string
-	 *
-	 * @return CollectionInterface
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
-	 */
-	/*protected function rowMapper (CollectionInterface $ao_results, string $as_locale): CollectionInterface {
-		return $ao_results->map(function($ao_row) use ($as_locale) {
-			@var EntityInterface|array|null $ao_row
-			if ($ao_row === null) {
-				return $ao_row;
-			}
-			$lb_hydrated = ! is_array($ao_row);
-
-			foreach ($this->_config['fields'] as $ls_field) {
-				$ls_name = $ls_field . '_translation';
-				$ls_translation = $ao_row[ $ls_name ] ?? null;
-
-				if ($ls_translation === null || $ls_translation === false) {
-					unset($ao_row[ $ls_name ]);
-					continue;
-				}
-
-				$ls_content = $ls_translation['content'] ?? null;
-				if ($ls_content !== null) {
-					$ao_row[ $ls_field ] = $ls_content;
-				}
-
-				unset($ao_row[ $ls_name ]);
-			}
-
-			$ao_row['_locale'] = $as_locale;
-			if ($lb_hydrated) {
-				$ao_row->clean();
-			}
-
-			return $ao_row;
-		});
-	}*/
-
-
 	/**
 	 * Unset empty translations to avoid persistence.
 	 *

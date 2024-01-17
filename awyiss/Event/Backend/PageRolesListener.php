@@ -71,11 +71,13 @@ class PageRolesListener implements EventListenerInterface {
 	 * @param Event $ao_event
 	 * @param PageRole $ao_entity
 	 * @noinspection PhpUnused
-	 * @noinspection PhpNoReturnAttributeCanBeAddedInspection
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function afterDelete(Event $ao_event, PageRole $ao_entity): void {
 		$this->createCustomConstantsFile();
+
+		/** @var \Queue\Model\Table\QueuedJobsTable $lo_queue */
+		$lo_queue = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
 
 		$ls_filePath = implode(DS, [ROOT, CUSTOM_DIR, 'Model', 'Entity', Inflector::classify($ao_entity->identifier) . '.php']);
 		if (file_exists($ls_filePath)) {
@@ -93,13 +95,14 @@ class PageRolesListener implements EventListenerInterface {
 			/** @var \Awyiss\Model\Table $lo_attributesTable */
 			$lo_attributesTable = FactoryLocator::get('Table')->get('Attributes');
 
-			/** @var \Queue\Model\Table\QueuedJobsTable $lo_queue */
-			$lo_queue = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
+			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+			$li_identityId = $lo_attributesTable->getBehavior('Audit')->getIdentity()?->id;
+
 			$lo_queue->createJob(
 				'AttributesDelete',
 				[
 					'identifier' => Inflector::tableize($ao_entity->identifier),
-					'identityId' => $lo_attributesTable->getBehavior('Audit')->getIdentity()?->id,
+					'identityId' => $li_identityId,
 				],
 				[
 					'group' => 'general',

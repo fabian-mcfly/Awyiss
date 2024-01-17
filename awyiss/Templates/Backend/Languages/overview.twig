@@ -6,8 +6,6 @@
 
 {% set la_languages = ao_languages.toArray() %}
 
-{# {{ helper_Categories_filter() }} #}
-
 <div class="Languages Overview">
 	{% if helper_Authorization_isAccessible('create') %}
 		{{ helper_Html_link(__('create'), {action: 'add'}, {class: 'Button'}) }}

@@ -36,7 +36,6 @@ class ContentsController extends Controller {
 		'allowAggregation' => false,
 		'associationName' => 'Pages',
 		'enabled' => true,
-		//'finder' => 'forCurrentLanguage',
 		'identifier' => 'pageId',
 		'threaded' => true,
 	];
