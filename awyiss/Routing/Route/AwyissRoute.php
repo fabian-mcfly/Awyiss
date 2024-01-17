@@ -125,7 +125,7 @@ class AwyissRoute extends DashedRoute {
 	 */
 	protected function buildUrlString(array $aa_params, array $aa_pass = [], array $aa_query = []): string {
 		$ls_pass = implode('/', array_map(function ($ax_value, $ax_key) {
-			if (is_numeric($ax_key) || $ax_value === false) {
+			if (is_numeric($ax_key) || $ax_value === false || $ax_value === null) {
 				//Skip numeric keys or values explicitly set to false (for example: "page => false" removes the page param from the url
 				return null;
 			}
@@ -133,12 +133,14 @@ class AwyissRoute extends DashedRoute {
 			//Combine key and value using a ":", creating one url part of .../key1:param1/...
 			return rawurlencode(Inflector::dasherize((string)$ax_key)) . ':' . rawurlencode(Inflector::dasherize((string)$ax_value));
 		}, $aa_pass, array_keys($aa_pass)));
+		$ls_pass = rtrim($ls_pass, '/');
+
 		$ls_url = $this->template;
 
 		$la_search = $la_replace = [];
 		foreach ($this->keys as $ls_key) {
 			if ($ls_key == 'params') {
-				//Do not build the params into the url string yet
+				//Do not build the params into the url string
 				continue;
 			}
 
