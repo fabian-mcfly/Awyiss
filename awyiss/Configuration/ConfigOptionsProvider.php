@@ -28,6 +28,7 @@ class ConfigOptionsProvider {
 	 * @var bool
 	 */
 	protected static bool $foundAll = false;
+	protected static bool $loadedAll = false;
 
 
 	/**
@@ -52,6 +53,15 @@ class ConfigOptionsProvider {
 		}
 
 		if ($ab_returnLoaded) {
+			if (!static::$loadedAll) {
+				foreach (static::$configOptions as $ls_scope => $ls_configOptions) {
+					static::$loadedConfigOptions[ $ls_scope ] = static::loadConfigOptions($ls_configOptions);
+				}
+
+				static::$loadedAll = true;
+			}
+
+			
 			return static::$loadedConfigOptions;
 		}
 
@@ -219,11 +229,10 @@ class ConfigOptionsProvider {
 	 * the Awyiss one is ignored.
 	 *
 	 * @param string $as_scope
-	 * @param bool $ab_load
 	 * @return array<string, class-string<ConfigOptionsInterface>>
 	 * @throws \ReflectionException
 	 */
-	protected static function findConfigOptionsFile(string $as_scope, bool $ab_load = false): array {
+	protected static function findConfigOptionsFile(string $as_scope): array {
 		$la_configurations = [];
 
 		$ls_scope = $as_scope;
@@ -262,10 +271,6 @@ class ConfigOptionsProvider {
 					continue;
 				}
 
-				if ($ab_load) {
-					static::loadConfigOptions($ls_configurationClass);
-				}
-
 				$la_configurations[ $ls_configScope ] = $ls_configurationClass;
 			}
 		}
@@ -278,10 +283,6 @@ class ConfigOptionsProvider {
 
 				if (isset($la_configurations[ $ls_configScope ])) {
 					continue;
-				}
-
-				if ($ab_load) {
-					static::loadConfigOptions($ls_configScope);
 				}
 
 				$la_configurations[ $ls_configScope ] = $ls_configScope;
