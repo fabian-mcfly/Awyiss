@@ -86,7 +86,13 @@ class PagesTable extends Table {
 		}
 
 		parent::initialize($aa_config);
+	}
 
+
+	/**
+	 * @inheritDoc
+	 */
+	public function initializeAssociations(): void {
 		$this->buildPagesAssociations();
 
 		$this->hasMany('Contents', [

@@ -39,9 +39,7 @@ class MenusTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public function initialize(array $aa_config): void {
-		parent::initialize($aa_config);
-
+	public function initializeAssociations(): void {
 		//Used only internally to delete all entries, no matter the current language
 		$this->hasMany('AllMenuEntries', [
 			'cascadeCallbacks' => true,

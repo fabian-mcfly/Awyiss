@@ -65,9 +65,7 @@ class PageRolesTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public function initialize(array $aa_config): void {
-		parent::initialize($aa_config);
-
+	public function initializeAssociations(): void {
 		$this->hasOne('PageTemplates');
 
 		$this->hasMany('Pages', [

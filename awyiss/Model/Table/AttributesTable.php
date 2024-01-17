@@ -368,8 +368,6 @@ class AttributesTable extends Table {
 					/** @var Table::class $ls_tableClass */
 					$ls_tableClass = $ls_namespace . $ls_tableName;
 
-					//dump($ls_tableClass, $ls_tableClass::TABLE, $ls_tableClass::ATTRIBUTABLE);
-
 					//If an entry exists or if the table does not allow attributes, skip it
 					if (isset($this->attributeScopes[ $ls_tableClass::TABLE ]) || !$ls_tableClass::ATTRIBUTABLE) {
 						continue;

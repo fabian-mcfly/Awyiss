@@ -114,7 +114,6 @@ class Table extends BaseTable {
 		'afterDelete',
 		'afterDeleteCommit',
 	];
-
 	/**
 	 * @var array Settings for the DefaultValuesBehavior
 	 */
@@ -178,6 +177,8 @@ class Table extends BaseTable {
 
 		$this->setPrimaryKey('id');
 
+		$this->initializeAssociations();
+
 		/**
 		 * @noinspection PhpStrictTypeCheckingInspection
 		 * @noinspection PhpParamsInspection
@@ -188,7 +189,7 @@ class Table extends BaseTable {
 		foreach ($this->customConfigProperties as $ls_property) {
 			$ls_path = implode('.', ['Awyiss', Inflector::camelize($ls_sourceTable), Awyiss::REALM_BACKEND, $ls_property]);
 			$la_customConfig = Configure::read($ls_path);
-			if ($la_customConfig && is_array($this->$ls_property)) {
+			if ($la_customConfig && is_array($this->$ls_property ?? null)) {
 				/** @noinspection PhpParamsInspection */
 				$this->$ls_property = Hash::merge($this->$ls_property, $la_customConfig);
 			}
@@ -216,10 +217,6 @@ class Table extends BaseTable {
 		$this->addBehavior('AutoPrefix', $this->autoPrefix + ['priority' => 99999]);
 		$this->addBehavior('DefaultValues', $this->defaultValues);
 		$this->addBehavior('EventTrigger', $this->eventTrigger);
-
-		/*if ($lb_isAttributesTable) {
-			dd($aa_config['translateLanguage'], $this->getConfig('translate', []));
-		}*/
 
 		if (!empty($aa_config['translateLanguage']) && !empty($this->translate['fields'])) {
 			$this->addBehavior(
@@ -500,6 +497,15 @@ class Table extends BaseTable {
 
 
 		return $this->i18nDomain = Inflector::underscore($ls_alias);
+	}
+
+
+	/**
+	 * Build associations for this table
+	 *
+	 * @return void
+	 */
+	public function initializeAssociations(): void {
 	}
 
 

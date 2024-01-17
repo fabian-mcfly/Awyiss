@@ -58,6 +58,14 @@ class Behavior extends BaseBehavior {
 
 	/**
 	 * @inheritDoc
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 */
+	public function initialize(array $aa_config): void {
+	}
+
+
+	/**
+	 * @inheritDoc
 	 *
 	 * This variation will use the class's "defaultEvents"-property instead of a hardcoded array of events names
 	 */

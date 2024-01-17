@@ -78,7 +78,13 @@ class ContentsTable extends Table {
 		parent::initialize($aa_config);
 
 		$this->addBehavior('Nest', $this->nest);
+	}
 
+
+	/**
+	 * @inheritDoc
+	 */
+	public function initializeAssociations(): void {
 		$this->belongsTo('ContentAreas', [
 			'joinType' => 'INNER',
 		]);

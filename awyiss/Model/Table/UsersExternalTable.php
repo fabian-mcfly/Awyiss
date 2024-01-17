@@ -18,16 +18,6 @@ class UsersExternalTable extends Table {
 	 * @inheritDoc
 	 */
 	public const TABLE = 'users_external';
-	/*
-	 * @inheritDoc
-	 *
-	public function initialize (array $aa_config): void {
-		$this->setTable(static::TABLE);
-
-		parent::initialize($aa_config);
-
-		$this->setPrimaryKey('id');
-	}*/
 
 
 	/**

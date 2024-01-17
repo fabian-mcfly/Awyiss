@@ -27,14 +27,4 @@ class I18nTable extends Table {
 	protected array $audit = [
 		'enabled' => false,
 	];
-	/*
-	 * @inheritDoc
-	 *
-	public function initialize (array $aa_config): void {
-		$this->setTable(static::TABLE);
-
-		parent::initialize($aa_config);
-
-		$this->setPrimaryKey('id');
-	}*/
 }

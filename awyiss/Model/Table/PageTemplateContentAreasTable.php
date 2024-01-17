@@ -37,9 +37,7 @@ class PageTemplateContentAreasTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public function initialize(array $aa_config): void {
-		parent::initialize($aa_config);
-
+	public function initializeAssociations(): void {
 		$this->belongsTo('ContentAreas');
 
 		$this->belongsTo('PageTemplates');
