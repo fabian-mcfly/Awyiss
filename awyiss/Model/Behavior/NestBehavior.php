@@ -12,6 +12,7 @@ use Cake\Collection\CollectionInterface;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
 use Cake\Utility\Hash;
+use Cake\Utility\Inflector;
 use RuntimeException;
 
 
@@ -36,6 +37,7 @@ class NestBehavior extends Behavior {
 	 */
 	protected array $_defaultConfig = [
 		'alias' => null,
+		'buildRules' => true,
 		'children' => [
 			'associationName' => null,
 			'bindingKey' => 'id',
@@ -68,7 +70,6 @@ class NestBehavior extends Behavior {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function initialize(array $aa_config): void {
 		parent::initialize($aa_config);
@@ -96,6 +97,10 @@ class NestBehavior extends Behavior {
 	 * @return $this
 	 */
 	public function buildAssociations(): static {
+		if (!$this->getConfig('enabled')) {
+			return $this;
+		}
+
 		$lo_table = $this->table();
 		$ls_alias = $this->getConfig('alias');
 		if (!$this->getConfig('children.associationName') || !$this->table()->hasAssociation($this->getConfig('children.associationName'))) {
@@ -172,7 +177,7 @@ class NestBehavior extends Behavior {
 		$ls_entityClass = $lo_association->getSource()->getEntityClass();
 		foreach ((array)$lo_association->getForeignKey() as $li_key => $ls_field) {
 			$ls_field = $ls_entityClass::unmapField($ls_field);
-			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+
 			$lx_value = $ao_entity->hasOriginal($la_bindingKeys[ $li_key ]) ? $ao_entity->getOriginal($la_bindingKeys[ $li_key ]) : $ao_entity->get($la_bindingKeys[ $li_key ]);
 
 			if ($lx_value === null) {
@@ -305,19 +310,45 @@ class NestBehavior extends Behavior {
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function buildRules(EventInterface $ao_event, RulesChecker $ao_rules): RulesChecker {
-		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		$ao_rules->add(function (EntityInterface $ao_entity/*, array $aa_options*/) use ($ao_rules): string|bool {
-			if (!$ao_entity->get('parentId') || $ao_entity->isNew()) {
+		if (!$this->getConfig('enabled') || !$this->getConfig('buildRules')) {
+			return $ao_rules;
+		}
+
+		$ls_foreignKey = $this->getConfig('parent.foreignKey');
+
+		$ao_rules->add(function (EntityInterface $ao_entity, array $aa_options) use ($ao_rules, $ls_foreignKey): string|bool {
+			if (!$ao_entity->get($ls_foreignKey)) {
 				return true;
 			}
 
-			$la_nestedChildrenIds = $this->getNestedChildren($ao_entity)->extract('id')->toArray();
+			$lo_table = $this->table();
+			/** @var \Awyiss\Model\Entity $ls_entityClass */
+			$ls_entityClass = $lo_table->getEntityClass();
 
+			$la_foreignKeys = array_merge((array)$ls_foreignKey, $this->getConfig('relatedColumns'));
+			$la_foreignKeys = $ls_entityClass::unmapFields($la_foreignKeys);
 
-			return !in_array($ao_entity->get('parentId'), $la_nestedChildrenIds);
-		}, 'validParentId', [
-			'errorField' => 'parentId',
-			'message' => __dfx($this->table()->getI18nDomain(), 'validation', 'menu_entries', 'error_valid_parent_id'),
+			$lo_existsIn = $ao_rules->existsIn($la_foreignKeys, $this->getConfig('parent.associationName'), [
+				'errorField' => '__dummy',
+			]);
+
+			if ($ao_entity->isNew()) {
+				$lb_exists = $lo_existsIn($ao_entity, $aa_options);
+			}
+			else {
+				$la_nestedChildrenIds = $this->getNestedChildren($ao_entity)->extract($this->getConfig('parent.bindingKey'))->toArray();
+
+				$lb_exists = $lo_existsIn($ao_entity, $aa_options) && !in_array($ao_entity->get($ls_foreignKey), $la_nestedChildrenIds);
+			}
+
+			if (!$lb_exists) {
+				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+				return __dfx($this->table()->getI18nDomain(), 'validation', 'menu_entries', 'error_valid_' . Inflector::underscore($this->getConfig('parent.foreignKey')));
+			}
+
+			return true;
+		}, 'valid' . Inflector::camelize($ls_foreignKey), [
+			'errorField' => Inflector::variable($ls_foreignKey),
 		]);
 
 
