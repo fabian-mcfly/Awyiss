@@ -61,7 +61,7 @@ class ConfigOptionsProvider {
 				static::$loadedAll = true;
 			}
 
-			
+
 			return static::$loadedConfigOptions;
 		}
 

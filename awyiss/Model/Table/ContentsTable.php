@@ -367,7 +367,8 @@ class ContentsTable extends Table {
 				'DuplicateContents',
 				'_general',
 				'Must have zero duplicating contents before deletion.'
-			)
+			),
+			'noDuplicatingContents'
 		);
 
 
@@ -440,8 +441,6 @@ class ContentsTable extends Table {
 
 	/**
 	 * Return a Page-object with the page role and page template associations
-	 *
-	 * TODO: move to somewhere safe so it's not usable by anyone
 	 *
 	 * @param int $ai_pageId
 	 * @return Page

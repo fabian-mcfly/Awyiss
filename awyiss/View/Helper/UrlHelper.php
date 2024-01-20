@@ -4,7 +4,6 @@
 namespace Awyiss\View\Helper;
 
 
-use Awyiss\Awyiss;
 use Awyiss\Routing\Router;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;

@@ -103,7 +103,7 @@ class RulesChecker extends BaseRulesChecker {
 	 * @return bool
 	 */
 	public function exists(string $as_ruleName): bool {
-		/** @var \Cake\Datasource\RuleInvoker[] $la_rules */
+		/** @var array<\Cake\Datasource\RuleInvoker> $la_rules */
 		$la_rules = Hash::merge(
 			$this->_rules,
 			$this->_createRules,
@@ -228,10 +228,10 @@ class RulesChecker extends BaseRulesChecker {
 	 * Extract the name from the options array
 	 *
 	 * @param array|null $aa_options
-	 * @return mixed
+	 * @return string
 	 */
-	protected function extractName(?array $aa_options) {
-		if ($aa_options === NULL || empty($aa_options['name'])) {
+	protected function extractName(?array $aa_options): string {
+		if ($aa_options === null || empty($aa_options['name'])) {
 			throw new RuntimeException(sprintf('Missing option `name` in `%s`', static::class));
 		}
 

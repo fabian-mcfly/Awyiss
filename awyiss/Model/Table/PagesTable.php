@@ -28,10 +28,10 @@ use Cake\Validation\Validator;
  * @property PagesTable&\Awyiss\ORM\Association\BelongsTo $ParentPages
  * @property PagesTable&\Awyiss\ORM\Association\HasMany $ChildPages
  * @property ContentsTable&\Awyiss\ORM\Association\HasMany $Contents
- * @method Page newDefaultEntity(array $aa_additionalData = [])
+ * @method \Awyiss\Model\Entity\Page newDefaultEntity(array $aa_additionalData = [])
  * @method CollectionInterface|null getNestedChildren(EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
  * @method CollectionInterface|null getChildren(EntityInterface $ao_entity)
- * @method Page getParent(EntityInterface $ao_entity)
+ * @method \Awyiss\Model\Entity\Page getParent(EntityInterface $ao_entity)
  * @method CollectionInterface|null getParents(EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
  */
 class PagesTable extends Table {
@@ -407,7 +407,7 @@ class PagesTable extends Table {
 
 		$ls_preSlug = '';
 		if (!empty($ao_entity->parentId)) {
-			/** @var Page $lo_parentPage */
+			/** @var \Awyiss\Model\Entity\Page $lo_parentPage */
 			$lo_parentPage = $this->get($ao_entity->parentId, skipPageRoleCheck: true);
 			//If there's a parent page, add its slug the one of the current page
 			$ls_preSlug = trim($lo_parentPage->slug, '/') . '/';
@@ -561,7 +561,7 @@ class PagesTable extends Table {
 	public function listNested(SelectQuery $ao_query): CollectionInterface {
 		$lo_pages = $ao_query->find('threaded')->all()->listNested();
 
-		/** @var Page $lo_page */
+		/** @var \Awyiss\Model\Entity\Page $lo_page */
 		foreach ($lo_pages as $lo_page) {
 			$lo_page->setVirtual(['level']);
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */

@@ -240,9 +240,9 @@ class ContentTemplatesTable extends Table {
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
-		$ao_rules->add($ao_rules->isUnique(['fileName']), 'uniqueFileName', [
+		$ao_rules->add($ao_rules->isUnique(['fileName']), 'fileNameUnique', [
 			'errorField' => 'fileName',
-			'message' => __dfx($this->getI18nDomain(), 'validation', 'content_templates', 'error_unique_file_name'),
+			'message' => __dfx($this->getI18nDomain(), 'validation', 'content_templates', 'error_file_name_unique'),
 		]);
 
 

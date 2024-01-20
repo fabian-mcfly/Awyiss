@@ -48,13 +48,13 @@ class PagesController extends Controller {
 		$this->Authorization->ensure('read');
 
 		$lo_pages = $this->Pages->find()->where($this->getOverviewWhere());
+		$this->Categories->filterQuery($lo_pages);
 		$lo_pages = $this->Pages->listNested($lo_pages);
 
 		$ls_entitiesName = Inflector::variable($this->getName());
 
 		$this->set([
 			'ao_' . $ls_entitiesName => $lo_pages,
-			//'ao_pageTemplates' => $this->getPageTemplates(),
 		]);
 	}
 

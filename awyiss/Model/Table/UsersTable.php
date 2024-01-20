@@ -144,15 +144,15 @@ class UsersTable extends Table {
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
-		$ao_rules->add($ao_rules->isUnique(['username']), [
+		$ao_rules->add($ao_rules->isUnique(['username']), 'usernameUnique', [
 			'errorField' => 'username',
-			'message' => __dfx($this->getI18nDomain(), 'validation', 'username', 'error_unique'),
+			'message' => __dfx($this->getI18nDomain(), 'validation', 'username', 'error_username_unique'),
 		]);
 
 
-		$ao_rules->add($ao_rules->isUnique(['email'], ['allowMultipleNulls' => true]), [
+		$ao_rules->add($ao_rules->isUnique(['email'], ['allowMultipleNulls' => true]), 'emailUnique', [
 			'errorField' => 'email',
-			'message' => __df($this->getI18nDomain(), 'validation', 'error_invalid'),
+			'message' => __df($this->getI18nDomain(), 'validation', 'error_email_unique'),
 		]);
 
 

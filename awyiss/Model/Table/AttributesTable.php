@@ -269,7 +269,7 @@ class AttributesTable extends Table {
 			'scope',
 		]), 'identifierUniqueForScope', [
 			'errorField' => 'identifier',
-			'message' => __dfx($this->getI18nDomain(), 'validation', 'attributes', 'error_identifier_unique'),
+			'message' => __dfx($this->getI18nDomain(), 'validation', 'attributes', 'error_identifier_unique_for_scope'),
 		]);
 
 

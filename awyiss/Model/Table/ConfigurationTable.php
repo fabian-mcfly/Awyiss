@@ -38,6 +38,8 @@ class ConfigurationTable extends Table {
 	 * @inheritDoc
 	 */
 	public const TABLE = 'configuration';
+
+
 	/**
 	 * @var array
 	 */
@@ -149,7 +151,7 @@ class ConfigurationTable extends Table {
 			'identifierUniqueForScope',
 			[
 				'errorField' => 'identifier',
-				'message' => __dfx($this->getI18nDomain(), 'validation', 'configuration', 'error_identifier_unique'),
+				'message' => __dfx($this->getI18nDomain(), 'validation', 'configuration', 'error_identifier_unique_for_scope'),
 			]
 		);
 

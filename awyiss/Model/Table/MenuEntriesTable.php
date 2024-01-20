@@ -5,7 +5,6 @@ namespace Awyiss\Model\Table;
 
 
 use Awyiss\Awyiss;
-use Awyiss\Model\Entity\MenuEntry;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
 use Cake\Collection\CollectionInterface;
@@ -20,10 +19,10 @@ use Cake\Validation\Validator;
  * @property \Awyiss\Model\Table\ContentsTable&\Awyiss\ORM\Association\BelongsTo $ParentMenuEntries
  * @property \Awyiss\Model\Table\MenuEntriesTable&\Awyiss\ORM\Association\HasMany $ChildMenuEntries
  * @property \Awyiss\Model\Table\MenusTable&\Awyiss\ORM\Association\BelongsTo $Menus
- * @method MenuEntry newDefaultEntity(array $aa_additionalData = [])
+ * @method \Awyiss\Model\Entity\MenuEntry newDefaultEntity(array $aa_additionalData = [])
  * @method CollectionInterface|null getNestedChildren(\Cake\Datasource\EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
  * @method CollectionInterface|null getChildren(\Cake\Datasource\EntityInterface $ao_entity)
- * @method MenuEntry getParent(\Cake\Datasource\EntityInterface $ao_entity)
+ * @method \Awyiss\Model\Entity\MenuEntry getParent(\Cake\Datasource\EntityInterface $ao_entity)
  * @method CollectionInterface|null getParents(\Cake\Datasource\EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
  */
 class MenuEntriesTable extends Table {
@@ -227,6 +226,7 @@ class MenuEntriesTable extends Table {
 	 * @return void
 	 */
 	public function disableCascadeCallbacks(): void {
+		/** @noinspection PhpUndefinedMethodInspection */
 		$this->ChildMenuEntries->setDependent(false)->setCascadeCallbacks(false);
 	}
 
@@ -235,6 +235,7 @@ class MenuEntriesTable extends Table {
 	 * @return void
 	 */
 	public function enableCascadeCallbacks(): void {
+		/** @noinspection PhpUndefinedMethodInspection */
 		$this->ChildMenuEntries->setDependent(true)->setCascadeCallbacks(true);
 	}
 
@@ -248,7 +249,7 @@ class MenuEntriesTable extends Table {
 	public function listNested(SelectQuery $ao_query): CollectionInterface {
 		$lo_menuEntries = $ao_query->find('threaded')->all()->listNested();
 
-		/** @var MenuEntry $lo_menuEntry */
+		/** @var \Awyiss\Model\Entity\MenuEntry $lo_menuEntry */
 		foreach ($lo_menuEntries as $lo_menuEntry) {
 			$lo_menuEntry->setVirtual(['level']);
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */

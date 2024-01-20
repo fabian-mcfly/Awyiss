@@ -68,20 +68,20 @@ class ConfigOption {
 	 * @param mixed|null $defaultValue
 	 * @param string $description
 	 * @param bool $localizable
-	 * @param bool|array|null $nullable
+	 * @param array|bool|null $nullable
 	 * @param string|null $title
 	 * @param callable|null $typecast
-	 * @param array|callable|string|null $values
+	 * @param callable|array|string|null $values
 	 */
 	public function __construct(
 		string $identifier,
-		ConfigOptionType|null $type = null,
+		?ConfigOptionType $type = null,
 		mixed $defaultValue = null,
 		string $description = '',
 		bool $localizable = true,
 		bool|array|null $nullable = null,
-		string $title = null,
-		callable|null $typecast = null,
+		?string $title = null,
+		?callable $typecast = null,
 		array|callable|string|null $values = null,
 	) {
 		if (isset($defaultValue)) {
