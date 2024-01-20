@@ -1,6 +1,6 @@
 {#
+TODO: modify inputs in add/edit, based on option type
 @var ao_configuration \Awyiss\Model\Entity\Configuration
-@var aa_configScopes array
 @var aa_configOptions array
 @var aa_realms array
 @var _view \Awyiss\View\BackendView
@@ -40,7 +40,7 @@
 
 		{% block fieldsetConditionsInner %}
 			{% block formControlScope %}
-				{{ helper_Form_control('scope', {options: naturalSort(aa_configScopes|map((value,key) => __d(key, 'title')))}) }}
+				{{ helper_Categories_control('scope') }}
 			{% endblock %}
 
 			{% block formControlRealm %}

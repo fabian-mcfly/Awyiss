@@ -13,7 +13,6 @@ use Awyiss\Routing\Router;
 use Cake\Collection\Collection;
 use Cake\Collection\CollectionInterface;
 use Cake\Core\Configure;
-use Cake\Database\Expression\QueryExpression;
 use Cake\Datasource\Exception\InvalidPrimaryKeyException;
 use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Http\Exception\ForbiddenException;
@@ -33,11 +32,7 @@ class ContentsController extends Controller {
 	 * @inheritDoc
 	 */
 	protected array $categories = [
-		'allowAggregation' => false,
-		'associationName' => 'Pages',
-		'enabled' => true,
-		'identifier' => 'pageId',
-		'threaded' => true,
+		'startupMethods' => null,
 	];
 	/**
 	 * @var CollectionInterface
@@ -292,10 +287,12 @@ class ContentsController extends Controller {
 
 		$this->Contents->patchEntity($ao_content, $la_data, ['associated' => $la_associated]);
 
-		//Make sure the new page role of the new page id is accessible (could have changed)
-		$this->page = $this->forPage($ao_content->pageId);
-
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
+			if ($ao_content->isDirty('pageId')) {
+				//Make sure the new page role of the new page id is accessible (could have changed)
+				$this->page = $this->forPage($ao_content->pageId);
+			}
+
 			if ($this->Contents->save($ao_content)) {
 				$this->Flash->success(__($as_method . '_succeeded'));
 
@@ -317,6 +314,13 @@ class ContentsController extends Controller {
 			}
 			else {
 				$ao_content->systemOrder = $ao_content->hasOriginal('systemOrder') ? $ao_content->getOriginal('systemOrder') : $ao_content->get('systemOrder');
+			}
+
+			$this->Categories->ensurePossibleCategory($ao_content);
+
+			if ($ao_content->isDirty('pageId')) {
+				//Make sure the new page role of the new page id is accessible (could have changed)
+				$this->page = $this->forPage($ao_content->pageId);
 			}
 		}
 	}
@@ -458,47 +462,33 @@ class ContentsController extends Controller {
 
 		$this->page = $lo_page;
 
+		$ls_languageShortcode = null;
+		if ($this->request->is(['patch', 'post', 'put']) && in_array($this->request->getParam('action'), ['add', 'edit'])) {
+			$ls_languageShortcode = $this->request->getData('language_shortcode');
+		}
+
+		$this->Categories->setConfig([
+			'finder' => [
+				'forCurrentLanguage' => [
+					'languageShortcode' => $ls_languageShortcode,
+				],
+			],
+			'selectedCategory' => $ai_pageId,
+		]);
 		$this->Contents->forPageRole($lo_page->pageRole->identifier);
 
 		$this->pageRoleName = $this->Contents->getPageRoleName();
 
-		if ($this->request->is(['patch', 'post', 'put']) && in_array($this->request->getParam('action'), ['add', 'edit'])) {
-			$this->Categories->setConfig([
-				'associationName' => Inflector::camelize($this->Contents->getForScope()),
-				'queryConditions' => function (QueryExpression $ao_expression/*, Query $ao_query*/) {
-					return $ao_expression->eq('language_shortcode', $this->request->getData('language_shortcode'))->eq('page_role_id', $this->page->pageRoleId);
-				},
-				'redirectOnInvalidSelection' => false,
-			]);
-		}
-		else {
+		if (!$this->request->is(['patch', 'post', 'put']) || !in_array($this->request->getParam('action'), ['add', 'edit'])) {
 			if ($lo_page->language_shortcode != LocaleMiddleware::getLanguage()->shortcode) {
-				dd(
-					Router::url(
-						[
-							'lang' => $lo_page->languageShortcode,
-						] + $this->request->getParam('parts'),
-						true
-					),
-					__LINE__,
-					__FILE__
-				);
-
 				throw new RedirectException(Router::url([
 					'lang' => $lo_page->languageShortcode,
+					'pageId' => $ai_pageId,
 				], true), 302);
 			}
-
-			$this->Categories->setConfig([
-				'associationName' => Inflector::camelize($this->Contents->getForScope()),
-				'queryConditions' => function (QueryExpression $ao_expression/*, Query $ao_query*/) {
-					return $ao_expression->eq('language_shortcode', $this->page->languageShortcode)->eq('page_role_id', $this->page->pageRoleId);
-				},
-			]);
 		}
 
 		$this->Authorization->setScope($this->Contents->getForScope());
-
 
 		if (!Configure::read('Awyiss.' . Inflector::camelize($this->Contents->getForScope()) . '.Backend.contents.enabled')) {
 			$this->Flash->error(__d($this->Contents->getForScope(), 'contents_disabled'));

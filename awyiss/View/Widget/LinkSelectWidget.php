@@ -12,28 +12,18 @@ use Traversable;
 
 /**
  * Input widget for creating a custom select with links instead of dropdown-options.
- *
  * This class is usually used internally by `\Awyiss\View\Helper\CategoriesHelper`,
  * it but can be used to generate standalone custom selects.
  */
 class LinkSelectWidget extends BasicWidget {
-	//protected array $defaults = [ //as soon as BasicWidget uses a type definition
 	protected array $defaults = [
-		'aggregationLabel' => 'all',
-		'aggregationLink' => '',
-		'aggregationKey' => 'all',
 		'class' => '',
 		'disabled' => false,
 		'escape' => true,
-		'includeAggregation' => true,
-		'includeUnassigned' => false,
 		'label' => '',
 		'identifier' => '',
 		'options' => [],
 		'templateVars' => [],
-		'unassignedLabel' => 'all',
-		'unassignedLink' => '',
-		'unassignedKey' => 'all',
 		'val' => null,
 	];
 
@@ -54,31 +44,11 @@ class LinkSelectWidget extends BasicWidget {
 		//Escape the name if required
 		$ls_name = $la_data['escape'] ? h($la_data['identifier']) : $la_data['identifier'];
 
-		//Shall an option to select unassigned elements be included? Prepend it.
-		if ($la_data['includeUnassigned']) {
-			array_unshift($la_listItems, $this->renderUnassignedOption($la_data));
-		}
-
-		//Shall an option to select an aggregation be included? Prepend it
-		if ($la_data['includeAggregation']) {
-			array_unshift($la_listItems, $this->renderAggregationOption($la_data));
-		}
-
 		$ls_selectedOption = '-';
 
 		//If the provided value is a key of the provided options, it's the currently selected option
 		if (array_key_exists($la_data['val'], $la_data['options'])) {
 			$ls_selectedOption = $this->renderSelectedOption($la_data);
-		}
-		//If the `includeUnassigned`-option is true and the provided value equals the value of the `unassignedKey`-option, it's the currently selected option
-		elseif ($la_data['includeUnassigned'] && $this->isSelected((string)$la_data['unassignedKey'], $la_data['val'])) {
-			//The text to display is the value of the `unassignedLabel`-option
-			$ls_selectedOption = $la_data['unassignedLabel'];
-		}
-		//If the `includeAggregation`-option is true and the provided value equals the value of the `aggregationKey`-option, it's the currently selected option
-		elseif ($la_data['includeAggregation'] && $this->isSelected((string)$la_data['aggregationKey'], $la_data['val'])) {
-			//The text to display is the value of the `aggregationLabel`-option
-			$ls_selectedOption = $la_data['aggregationLabel'];
 		}
 
 		//Add the label to the templateVars, if it does not already exist
@@ -86,23 +56,6 @@ class LinkSelectWidget extends BasicWidget {
 			$la_data['templateVars']['label'] = $la_data['label'];
 		}
 
-		//Unset attributes that shouldn't be part of the generated input
-		$la_blocklistedAttributes = [
-			'aggregationLabel',
-			'aggregationLink',
-			'aggregationKey',
-			'combinator',
-			'escape',
-			'identifier',
-			'label',
-			'options',
-			'unassignedLabel',
-			'unassignedLink',
-			'unassignedKey',
-			'printer',
-			'val',
-		];
-		$la_data = array_diff_key($la_data, array_flip($la_blocklistedAttributes));
 		if (isset($la_data['disabled']) && is_array($la_data['disabled'])) {
 			unset($la_data['disabled']);
 		}
@@ -112,7 +65,13 @@ class LinkSelectWidget extends BasicWidget {
 		$la_data = $this->_templates->addClass($la_data, 'CustomSelect-' . Inflector::camelize(Inflector::underscore($ls_name)));
 
 		//Format the attributes
-		$la_attributes = $this->_templates->formatAttributes($la_data);
+		$la_attributes = [
+			'class' => $la_data['class'],
+		];
+		if (!empty($la_data['attributes'])) {
+			$la_attributes['attributes'] = $la_data['attributes'];
+		}
+		$la_attributes = $this->_templates->formatAttributes($la_attributes);
 
 
 		//Return the formatted template
@@ -179,76 +138,6 @@ class LinkSelectWidget extends BasicWidget {
 
 
 		return in_array($as_key, $aa_disabled, $lb_strict);
-	}
-
-
-	/**
-	 * Returns a rendered template for an option that allows the selection of unassigned entries.
-	 *
-	 * @param array $aa_data
-	 * @return string
-	 */
-	protected function renderUnassignedOption(array $aa_data): string {
-		$la_data = $aa_data;
-
-		$lx_escape = $la_data['escape'] ?? true;
-
-		$la_attributes = [
-			'class' => 'Item',
-			'templateVars' => [
-				'identifier' => $la_data['identifier'],
-				'link' => $la_data['unassignedLink'],
-			],
-		];
-
-		$la_attributes = $this->_templates->addClass($la_attributes, 'Item');
-		$la_attributes = $this->_templates->addClass($la_attributes, 'Item-Unassigned');
-		if ($this->isSelected((string)$la_data['unassignedKey'], $la_data['val'])) {
-			$la_attributes = $this->_templates->addClass($la_attributes, $la_data['selectedClass'] ?? 'Active');
-		}
-
-
-		return $this->_templates->format('unassignedOption', [
-			'attrs' => $this->_templates->formatAttributes($la_attributes),
-			'templateVars' => $la_attributes['templateVars'],
-			'title' => $lx_escape ? h($la_data['unassignedLabel']) : $la_data['unassignedLabel'],
-			'value' => $lx_escape ? h($la_data['unassignedKey']) : $la_data['unassignedKey'],
-		]);
-	}
-
-
-	/**
-	 * Returns a rendered template for an option that allows the selection of an aggregation of entries.
-	 *
-	 * @param array $aa_data
-	 * @return string
-	 */
-	protected function renderAggregationOption(array $aa_data): string {
-		$la_data = $aa_data;
-
-		$lx_escape = $la_data['escape'] ?? true;
-
-		$la_attributes = [
-			'class' => 'Item',
-			'templateVars' => [
-				'identifier' => $la_data['identifier'],
-				'link' => $la_data['aggregationLink'],
-			],
-		];
-
-		$la_attributes = $this->_templates->addClass($la_attributes, 'Item');
-		$la_attributes = $this->_templates->addClass($la_attributes, 'Item-Aggregation');
-		if ($this->isSelected((string)$la_data['aggregationKey'], $la_data['val'])) {
-			$la_attributes = $this->_templates->addClass($la_attributes, $la_data['selectedClass'] ?? 'Active');
-		}
-
-
-		return $this->_templates->format('aggregationOption', [
-			'attrs' => $this->_templates->formatAttributes($la_attributes),
-			'templateVars' => $la_attributes['templateVars'],
-			'title' => $lx_escape ? h($la_data['aggregationLabel']) : $la_data['aggregationLabel'],
-			'value' => $lx_escape ? h($la_data['aggregationKey']) : $la_data['aggregationKey'],
-		]);
 	}
 
 

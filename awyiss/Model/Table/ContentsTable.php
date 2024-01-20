@@ -50,6 +50,16 @@ class ContentsTable extends Table {
 
 
 	/**
+	 * @inheritDoc
+	 */
+	protected array $categories = [
+		'allowAggregation' => false,
+		'enabled' => true,
+		'fieldname' => 'pageId',
+		'identifier' => 'page',
+		'threaded' => true,
+	];
+	/**
 	 * @var string
 	 */
 	private string $forScope;
@@ -90,10 +100,6 @@ class ContentsTable extends Table {
 		]);
 
 		$this->belongsTo('ContentTemplates', [
-			'joinType' => 'INNER',
-		]);
-
-		$this->belongsTo('Pages', [
 			'joinType' => 'INNER',
 		]);
 
@@ -246,11 +252,6 @@ class ContentsTable extends Table {
 		$ao_rules->add(function (Content $ao_entity/*, array $aa_options*/): bool {
 			/**
 			 * Retreive the page and the assigned page template.
-			 * This ensures that the user has access to the scope (page role) for the page with `pageId`,
-			 * since it uses the correct association, and therefore it's assigned access policy.
-			 *
-			 * For this to properly work, it's neccessary to set up the association for the right page resp. page role,
-			 * using `forPageRole()`
 			 *
 			 * @see ContentsTable::forPageRole
 			 */
@@ -260,7 +261,7 @@ class ContentsTable extends Table {
 					'PageTemplates',
 				]);
 			}
-			catch (RecordNotFoundException | InvalidPrimaryKeyException | ForbiddenException) {
+			catch (RecordNotFoundException | InvalidPrimaryKeyException) {
 				$ao_entity->setError('page_id', __d($this->getI18nDomain(), 'error_valid_page_id'));
 
 
@@ -277,7 +278,7 @@ class ContentsTable extends Table {
 				$lo_contentTemplate = $this->ContentTemplates->get(
 					$ao_entity->contentTemplateId,
 					contain: [
-						'ContentTemplateContentAreas' => [
+						'ContentAreas' => [
 							'queryBuilder' => function (SelectQuery $ao_query) use ($lo_page) {
 								return $ao_query->where(['ContentTemplateContentAreas.page_template_id' => $lo_page->pageTemplateId]);
 							},
@@ -296,7 +297,7 @@ class ContentsTable extends Table {
 
 
 			//Content area not found
-			if (!in_array($ao_entity->contentAreaId, array_column($lo_contentTemplate->contentTemplateContentAreas, 'content_area_id'))) {
+			if (!in_array($ao_entity->contentAreaId, array_column($lo_contentTemplate->contentAreas, 'id'))) {
 				$ao_entity->setError('content_area_id', __d($this->getI18nDomain(), 'error_valid_content_area_id'));
 
 
@@ -326,26 +327,7 @@ class ContentsTable extends Table {
 
 
 			return empty($la_errors);
-		});
-
-
-		$ao_rules->add(function (Content $ao_entity, array $aa_options) use ($ao_rules): bool {
-			if (($aa_options['checkRules'] ?? true) === false) {
-				dd(__FILE__, __LINE__);
-			}
-
-			if (!$ao_entity->get('parentId')) {
-				return true;
-			}
-
-			$lo_existsIn = $ao_rules->existsIn(['parentId', 'pageId', 'contentAreaId'], 'ParentContents', [
-				'errorField' => 'parentId',
-				'message' => __dfx($this->getI18nDomain(), 'validation', 'contents', 'error_valid_parent_id'),
-			]);
-
-
-			return $lo_existsIn($ao_entity, $aa_options);
-		}, 'validParentId');
+		}, 'validContentArea');
 
 
 		$ao_rules->add(
@@ -503,9 +485,6 @@ class ContentsTable extends Table {
 	 * @throws \Exception
 	 */
 	public function forPageRole(string $as_identifier, bool $ab_initializePages = true): void {
-		//Remember the currently used foreign key for the Pages association
-		//$ls_foreignKey = $this->Pages->getForeignKey();
-
 		$ls_singular = Inflector::singularize(Inflector::underscore($as_identifier));
 
 		$ls_constant = 'PAGEROLE_' . strtoupper($ls_singular);
@@ -517,10 +496,15 @@ class ContentsTable extends Table {
 		if ($ab_initializePages) {
 			$this->belongsTo($ls_alias, [
 				'bindingKey' => 'id',
+				'finder' => 'forCurrentLanguage',
 				'foreignKey' => 'page_id',
 				'joinType' => 'INNER',
 				'propertyName' => 'page',
 			]);
+
+			$this->getBehavior('Categories')
+				->setConfig('associationName', $ls_alias)
+				->resetCategories();
 		}
 
 		$this->setPageRoleName($ls_alias);

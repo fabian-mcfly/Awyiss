@@ -23,15 +23,6 @@ class AttributesController extends Controller {
 	 * @var array
 	 */
 	protected array $attributeScopes;
-	/**
-	 * @inheritDoc
-	 */
-	protected array $categories = [
-		'allowAggregation' => false,
-		'enabled' => true,
-		'identifier' => 'scope',
-		'useDatasource' => false,
-	];
 
 
 	/**
@@ -42,13 +33,6 @@ class AttributesController extends Controller {
 	 */
 	public function initialize(): void {
 		$this->attributeScopes = $this->Attributes->getAvailableScopes();
-
-		$la_attributeScopes = $this->attributeScopes;
-		array_walk($la_attributeScopes, function (&$as_className, $as_identifier): void {
-			$as_className = __d($as_identifier, 'title_menu');
-		});
-
-		$this->categories['categories'] = $la_attributeScopes;
 
 		parent::initialize();
 	}
@@ -63,17 +47,21 @@ class AttributesController extends Controller {
 		$this->Authorization->ensure('read');
 
 		$lo_attributes = $this->Attributes->find()->where($this->getOverviewWhere());
+		$this->Categories->filterQuery($lo_attributes);
 
 		$la_attributesGroupedByFieldset = $lo_attributes->all()->groupBy('fieldset')->toArray();
 
+		$ls_selectedScope = $this->Categories->getSelectedCategory();
+
 		$la_availableFieldsets = [''];
-		if ($this->getOverviewWhere()['scope'] !== 'contents') {
-			$la_availableFieldsets = $this->Attributes->getAvailableFieldsets($this->getOverviewWhere()['scope']);
+		if ($ls_selectedScope !== 'contents') {
+			$la_availableFieldsets = $this->Attributes->getAvailableFieldsets($ls_selectedScope);
 		}
 
 		$this->set([
 			'aa_attributesGroupedByFieldset' => $la_attributesGroupedByFieldset,
 			'aa_availableFieldsets' => $la_availableFieldsets,
+			'as_selectedScope' => $ls_selectedScope,
 		]);
 	}
 
@@ -88,7 +76,7 @@ class AttributesController extends Controller {
 		$this->Authorization->ensure('create');
 
 		$lo_attribute = $this->Attributes->newDefaultEntity([
-			'scope' => $this->Categories->getSelectedCategory(),
+			'scope' => $this->request->getParam('scope') ?? $this->Categories->getSelectedCategory(),
 		]);
 
 		if ($this->request->is('post')) {
@@ -216,6 +204,8 @@ class AttributesController extends Controller {
 				$this->Flash->error($ls_error);
 			}
 		}
+
+		$this->Categories->ensurePossibleCategory($ao_attribute);
 	}
 
 

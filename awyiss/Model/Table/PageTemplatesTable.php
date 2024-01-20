@@ -28,6 +28,14 @@ class PageTemplatesTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
+	protected array $categories = [
+		'associationName' => 'PageRoles',
+		'enabled' => true,
+		'identifier' => 'pageRole',
+	];
+	/**
+	 * @inheritDoc
+	 */
 	protected array $systemOrder = [
 		'relatedColumns' => ['pageRoleId'],
 	];
@@ -167,12 +175,6 @@ class PageTemplatesTable extends Table {
 		$ao_rules->add($ao_rules->existsIn(['contentAreaId'], 'ContentAreas'), 'validContentAreas', [
 			'errorField' => 'contentAreas',
 			'message' => __d($this->getI18nDomain(), 'error_valid_content_areas'),
-		]);
-
-
-		$ao_rules->add($ao_rules->existsIn(['pageRoleId'], 'PageRoles'), 'validPageRole', [
-			'errorField' => 'pageRoleId',
-			'message' => __d($this->getI18nDomain(), 'error_valid_page_role'),
 		]);
 
 

@@ -10,9 +10,7 @@
 
 	<h1>{{ __('headline_overview') }}</h1>
 
-	{#{% if helper_Authorization_scopeIsAccessible('usergroups', [], ['read']) %}#}
-	{{ helper_Categories_filter('usergroup_id', [], {includeUnassigned: true}) }}
-	{#{% endif %}#}
+	{{ helper_Categories_filter('usergroup') }}
 
 	<div class="table-responsive">
 		<table>

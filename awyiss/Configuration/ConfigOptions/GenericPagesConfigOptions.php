@@ -44,19 +44,11 @@ class GenericPagesConfigOptions extends AbstractConfigOptions {
 					type: ConfigOptionType::BOOL,
 				),
 				new ConfigOption(
-					defaultValue: false,
-					identifier: 'allowUnassigned',
-					localizable: false,
-					nullable: false,
-					type: ConfigOptionType::BOOL,
-				),
-				new ConfigOption(
 					defaultValue: null,
 					identifier: 'associationName',
 					localizable: false,
 					nullable: true,
 					type: ConfigOptionType::STRING,
-
 				),
 				new ConfigOption(
 					defaultValue: null,
@@ -78,13 +70,6 @@ class GenericPagesConfigOptions extends AbstractConfigOptions {
 					localizable: false,
 					nullable: false,
 					type: ConfigOptionType::BOOL
-				),
-				new ConfigOption(
-					defaultValue: 'parentId',
-					identifier: 'foreignKey',
-					localizable: false,
-					nullable: false,
-					type: ConfigOptionType::STRING
 				),
 				new ConfigOption(
 					defaultValue: true,

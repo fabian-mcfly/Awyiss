@@ -18,17 +18,6 @@ use Cake\Http\Response;
  */
 class PageTemplatesController extends Controller {
 	/**
-	 * @inheritDoc
-	 */
-	protected array $categories = [
-		'associationName' => 'PageRoles',
-		'enabled' => true,
-		'identifier' => 'pageRole',
-		'uriParam' => 'page-role-id',
-	];
-
-
-	/**
 	 * Overview method
 	 *
 	 * @throws \Exception
@@ -58,14 +47,11 @@ class PageTemplatesController extends Controller {
 		$this->Authorization->ensure('create');
 
 		$lo_pageTemplate = $this->PageTemplates->newDefaultEntity([
-			'pageRoleId' => $this->Categories->getSelectedCategory(),
+			'pageRoleId' => $this->request->getParam('pageRoleId') ?? $this->Categories->getSelectedCategory(),
 		]);
 
 		if ($this->request->is('post')) {
 			$this->save($lo_pageTemplate);
-		}
-		else {
-			$this->Categories->ensurePossibleCategorySelection($lo_pageTemplate);
 		}
 
 		$la_contentAreas = $this->PageTemplates->ContentAreas->find()->all()->toArray();
@@ -97,9 +83,6 @@ class PageTemplatesController extends Controller {
 
 		if ($this->request->is(['patch', 'post', 'put'])) {
 			$this->save($lo_pageTemplate, 'edit');
-		}
-		else {
-			$this->Categories->ensurePossibleCategorySelection($lo_pageTemplate);
 		}
 
 		$la_contentAreas = $this->PageTemplates->ContentAreas->find()->all()->toArray();
@@ -182,8 +165,6 @@ class PageTemplatesController extends Controller {
 			]),
 		]);
 
-		$this->Categories->ensurePossibleCategorySelection($ao_pageTemplate);
-
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
 			if ($this->PageTemplates->save($ao_pageTemplate)) {
 				$this->Flash->success(__($as_method . '_succeeded'));
@@ -203,5 +184,7 @@ class PageTemplatesController extends Controller {
 		else {
 			$ao_pageTemplate->systemOrder = null;
 		}
+
+		$this->Categories->ensurePossibleCategory($ao_pageTemplate);
 	}
 }

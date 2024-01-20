@@ -6,10 +6,11 @@ namespace Awyiss\Model\Table;
 
 use ArrayObject;
 use Awyiss\Awyiss;
-use Awyiss\Model\Entity\Page;
+use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
 use Cake\Collection\CollectionInterface;
+use Cake\Core\Configure;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
@@ -41,6 +42,13 @@ class PagesTable extends Table {
 	public const TABLE = 'pages';
 
 
+	/**
+	 * @inheritDoc
+	 */
+	protected array $categories = [
+		'finder' => 'forCurrentLanguage',
+		'foreignKey' => 'parent_id',
+	];
 	/**
 	 * @inheritDoc
 	 */
@@ -323,34 +331,10 @@ class PagesTable extends Table {
 		);
 
 
-		$ao_rules->add(function (Page $ao_entity, array $aa_options) use ($ao_rules, $ls_pageRole): bool {
-			if (!$aa_options['checkRules']) {
-				dd(__FILE__, __LINE__);
-			}
-
-			if (!$ao_entity->get('parentId')) {
-				return true;
-			}
-
-			$lo_existsIn = $ao_rules->existsIn(
-				['parentId', 'languageShortcode', 'pageRoleId'],
-				'Parent' . $ls_pageRole,
-				[
-					'errorField' => 'parentId',
-					'message' => __dfx($this->getI18nDomain(), 'validation', 'pages', 'error_valid_parent_id'),
-					'skipPageRoleCheck' => true,
-				],
-			);
-
-
-			return $lo_existsIn($ao_entity, $aa_options);
-		}, 'validParentId');
-
-
 		$ao_rules->addDelete(function (): void {
 			//TODO: make sure no pages with other page_role_ids exists as subpages
 			dd(__FILE__, __LINE__);
-		});
+		}, 'rename');
 
 
 		return $ao_rules;
@@ -573,17 +557,17 @@ class PagesTable extends Table {
 	}
 
 
-	/*
-	 * @param Query $ao_query
-	 *
-	 * @return Query
+	/**
+	 * @param \Cake\ORM\Query\SelectQuery $ao_query
+	 * @param string|null $languageShortcode
+	 * @return \Cake\ORM\Query\SelectQuery
 	 * @throws \Exception
-	 *
-	public function findForCurrentLanguage (Query $ao_query): Query {
+	 */
+	public function findForCurrentLanguage(SelectQuery $ao_query, ?string $languageShortcode = null): SelectQuery {
 		return $ao_query->where([
-			'languageShortcode' => LocaleMiddleware::getLanguage()->shortcode,
+			'language_shortcode' => $languageShortcode ?? LocaleMiddleware::getLanguage()->shortcode,
 		]);
-	}*/
+	}
 
 
 	/**
@@ -610,6 +594,17 @@ class PagesTable extends Table {
 			$this->removeBehavior('Nest');
 		}
 
-		$this->addBehavior('Nest', $this->nest);
+		$la_nestOptions = [];
+		$lb_categoriesEnabled = Configure::read(implode('.', [
+			'Awyiss',
+			$ls_pageRole,
+			Awyiss::getRealm(),
+			'categories',
+			'enabled',
+		]), false);
+		if ($lb_categoriesEnabled) {
+			$la_nestOptions['buildRules'] = false;
+		}
+		$this->addBehavior('Nest', $la_nestOptions + $this->nest);
 	}
 }

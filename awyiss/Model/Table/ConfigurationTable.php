@@ -44,6 +44,34 @@ class ConfigurationTable extends Table {
 	 * @var array
 	 */
 	protected array $configScopes;
+	/**
+	 * @inheritDoc
+	 */
+	protected array $categories = [
+		'allowAggregation' => false,
+		'enabled' => true,
+		'identifier' => 'scope',
+		'useDatasource' => false,
+	];
+
+
+	/**
+	 * @return array
+	 * @throws \ReflectionException
+	 */
+	public function buildCategories(): array {
+		$la_configScopes = [];
+		foreach ($this->getScopes() as $ls_identifier => $ls_className) {
+			$ls_identifier = Inflector::underscore($ls_identifier);
+			$la_configScopes[ $ls_identifier ] = __d($ls_identifier, 'title_menu');
+		}
+
+		uasort($la_configScopes, function ($a, $b) {
+			return strnatcasecmp($a, $b);
+		});
+
+		return $la_configScopes;
+	}
 
 
 	/**
@@ -161,18 +189,6 @@ class ConfigurationTable extends Table {
 		}, 'validRealm', [
 			'errorField' => 'realm',
 			'message' => __d($this->getI18nDomain(), 'error_valid_realm'),
-		]);
-
-
-		$ao_rules->add(function (Configuration $ao_entity/*, array $aa_options*/): bool {
-			$la_configScopes = ConfigOptionsProvider::getConfigOptionsFiles();
-
-
-			//Check if the provided scope is configurable (having a ConfigOptions-class)
-			return in_array(ConfigOptionsProvider::sanitizeScope($ao_entity->scope), array_keys($la_configScopes));
-		}, 'validScope', [
-			'errorField' => 'scope',
-			'message' => __d($this->getI18nDomain(), 'error_valid_scope'),
 		]);
 
 

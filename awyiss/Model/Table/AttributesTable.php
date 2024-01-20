@@ -80,6 +80,15 @@ class AttributesTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
+	protected array $categories = [
+		'allowAggregation' => false,
+		'enabled' => true,
+		'identifier' => 'scope',
+		'useDatasource' => false,
+	];
+	/**
+	 * @inheritDoc
+	 */
 	protected array $systemOrder = [
 		'relatedColumns' => ['scope', 'fieldset'],
 	];
@@ -89,6 +98,24 @@ class AttributesTable extends Table {
 	protected array $translate = [
 		'fields' => ['title'],
 	];
+
+
+	/**
+	 * @return array
+	 */
+	public function buildCategories(): array {
+		$la_attributeScopes = $this->attributeScopes;
+
+		array_walk($la_attributeScopes, function (&$as_className, $as_identifier): void {
+			$as_className = __d($as_identifier, 'title_menu');
+		});
+
+		uasort($la_attributeScopes, function ($a, $b) {
+			return strnatcasecmp($a, $b);
+		});
+
+		return $la_attributeScopes;
+	}
 
 
 	/**
@@ -210,15 +237,6 @@ class AttributesTable extends Table {
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
-		$ao_rules->add(function (Attribute $ao_entity/*, array $aa_options*/): bool {
-			//Check if the provided scope can have attributes
-			return in_array($ao_entity->scope, array_keys($this->getAvailableScopes()));
-		}, 'validScope', [
-			'errorField' => 'scope',
-			'message' => __d($this->getI18nDomain(), 'error_valid_scope'),
-		]);
-
-
 		$ao_rules->add(function (Attribute $ao_entity) {
 			if (!$ao_entity->getError('scope')) {
 				$lx_table = $this->getAvailableScopes()[ $ao_entity->scope ];

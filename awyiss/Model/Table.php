@@ -40,7 +40,8 @@ use RuntimeException;
  * @method array getAttributes()
  * @method string getAttributesTable(bool $ab_camelized = false)
  * @method bool hasAttributes()
- * @method \Awyiss\Model\Behavior\DefaultValuesBehavior newDefaultEntity(array $aa_additionalData = [])
+ * @method \Cake\Datasource\ResultSetInterface|array|null getCategories(bool $ab_returnRaw = false)
+ * @method \Awyiss\Model\Entity newDefaultEntity(array $aa_additionalData = [])
  */
 class Table extends BaseTable {
 	use InstanceConfigTrait;
@@ -78,6 +79,10 @@ class Table extends BaseTable {
 	 * @var array Settings for the AutoPrefixBehavior
 	 */
 	protected array $autoPrefix = [];
+	/**
+	 * @var array Settings for the CategoriesBehavior
+	 */
+	protected array $categories = [];
 	/**
 	 * @var array<string> A list of properties that will be merged with values from the database configuration
 	 */
@@ -215,6 +220,7 @@ class Table extends BaseTable {
 		}
 
 		$this->addBehavior('AutoPrefix', $this->autoPrefix + ['priority' => 99999]);
+		$this->addBehavior('Categories', $this->categories);
 		$this->addBehavior('DefaultValues', $this->defaultValues);
 		$this->addBehavior('EventTrigger', $this->eventTrigger);
 

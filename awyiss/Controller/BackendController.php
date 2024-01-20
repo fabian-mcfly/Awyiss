@@ -10,6 +10,9 @@ use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Routing\Router;
 use Awyiss\View\BackendView;
 use Cake\Core\Configure;
+use Cake\Datasource\Paging\PaginatedInterface;
+use Cake\Datasource\QueryInterface;
+use Cake\Datasource\RepositoryInterface;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 
@@ -111,15 +114,15 @@ abstract class BackendController extends AppController {
 
 			$this->loadComponent('Authorization', $this->authorization);
 
-			//Load with the defaultTable if present, otherwise with the name of the controller
-			$this->loadComponent('Categories', $this->categories + ['tableName' => $this->defaultTable ?? $this->getName()]);
-
 			$this->loadComponent('EventTrigger', $this->eventTrigger);
 
 			$this->loadComponent('Flash', ['key' => Inflector::underscore($this->getName())]);
 
-			//Load with the defaultTable if present, otherwise with the name of the controller
-			$this->loadComponent('SystemOrder', $this->systemOrder + ['tableName' => $this->defaultTable ?? $this->getName()]);
+			if ($this->defaultTable) {
+				$this->loadComponent('Categories', $this->categories);
+
+				$this->loadComponent('SystemOrder', $this->systemOrder);
+			}
 		}
 
 		//Sets the name of the viewClass to be used by the viewBuilder
@@ -140,11 +143,12 @@ abstract class BackendController extends AppController {
 	 */
 	public function getOverviewWhere(?string $ax_key = null, null $ax_default = null): mixed {
 		if (!isset($this->overviewWhere)) {
+			$this->overviewWhere = [];
 			$this->initializeOverviewWhere();
 		}
 
 		if ($ax_key) {
-			return $this->overviewWhere[ $ax_key ] ?? $ax_default;
+			return $this->overviewWhere[ Inflector::underscore($ax_key) ] ?? $ax_default;
 		}
 
 
@@ -180,7 +184,5 @@ abstract class BackendController extends AppController {
 	 * @return void
 	 */
 	protected function initializeOverviewWhere(): void {
-		$this->overviewWhere = [];
-		$this->overviewWhere += $this->Categories->getQueryConditions();
 	}
 }

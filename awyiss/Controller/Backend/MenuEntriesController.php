@@ -22,15 +22,6 @@ use Cake\Http\Response;
  */
 class MenuEntriesController extends Controller {
 	/**
-	 * @inheritDoc
-	 */
-	protected array $categories = [
-		'allowAggregation' => false,
-		'associationName' => 'Menus',
-		'enabled' => true,
-		'identifier' => 'menuId',
-	];
-	/**
 	 * @var CollectionInterface
 	 */
 	protected CollectionInterface $threadedMenuEntries;
@@ -44,7 +35,8 @@ class MenuEntriesController extends Controller {
 	public function overview(): void {
 		$this->Authorization->ensure('read');
 
-		$lo_menuEntries = $this->Categories->filterQuery($this->MenuEntries->find()->where($this->getOverviewWhere()));
+		$lo_menuEntries = $this->MenuEntries->find()->where($this->getOverviewWhere());
+		$this->Categories->filterQuery($lo_menuEntries);
 		$lo_menuEntries = $this->MenuEntries->listNested($lo_menuEntries);
 
 		$this->set([
@@ -64,7 +56,7 @@ class MenuEntriesController extends Controller {
 
 		$lo_menuEntry = $this->MenuEntries->newDefaultEntity([
 			'language_shortcode' => $this->getOverviewWhere('language_shortcode'),
-			'menu_id' => $this->Categories->getSelectedCategory(),
+			'menu_id' => $this->request->getParam('menuId') ?? $this->Categories->getSelectedCategory(),
 		]);
 
 		if ($this->request->is('post')) {
@@ -249,6 +241,8 @@ class MenuEntriesController extends Controller {
 				$ao_menuEntry->systemOrder = $ao_menuEntry->hasOriginal('systemOrder') ? $ao_menuEntry->getOriginal('systemOrder') : $ao_menuEntry->get('systemOrder');
 			}
 		}
+
+		$this->Categories->ensurePossibleCategory($ao_menuEntry);
 	}
 
 
@@ -257,10 +251,10 @@ class MenuEntriesController extends Controller {
 	 * @throws \Exception
 	 */
 	protected function initializeOverviewWhere(): void {
-		$ls_languageShortcode = LocaleMiddleware::getLanguage()->shortcode;
-
 		$this->overviewWhere = [
-			'language_shortcode' => $ls_languageShortcode,
+			'language_shortcode' => LocaleMiddleware::getLanguage()->shortcode,
 		];
+
+		parent::initializeOverviewWhere();
 	}
 }

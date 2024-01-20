@@ -26,11 +26,7 @@
 
 		{% block fieldsetConditionsInner %}
 			{% block formControlPageRoleId %}
-				{{ helper_Categories_control('page_role_id', {
-					categoriesIdentifier: 'pageRole',
-					empty: false,
-					val: ao_pageTemplate.pageRoleId,
-				}) }}
+				{{ helper_Categories_control('page_role') }}
 			{% endblock %}
 
 			{% block formControlSystemOrder %}

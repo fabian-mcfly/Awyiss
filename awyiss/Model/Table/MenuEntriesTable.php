@@ -39,6 +39,15 @@ class MenuEntriesTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
+	protected array $categories = [
+		'allowAggregation' => false,
+		'associationName' => 'Menus',
+		'enabled' => true,
+		'identifier' => 'menu',
+	];
+	/**
+	 * @inheritDoc
+	 */
 	protected array $nest = [
 		'relatedColumns' => ['languageShortcode', 'menuId'],
 	];
@@ -173,38 +182,6 @@ class MenuEntriesTable extends Table {
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
-		$ao_rules->add(
-			$ao_rules->existsIn(
-				'menuId',
-				'Menus',
-			),
-			'validMenuId',
-			[
-				'errorField' => 'menuId',
-				'message' => __d($this->getI18nDomain(), 'error_valid_menu_id'),
-			]
-		);
-
-
-		$ao_rules->add(function (MenuEntry $ao_entity, array $aa_options) use ($ao_rules): bool {
-			if (!$aa_options['checkRules']) {
-				dd(__FILE__, __LINE__);
-			}
-
-			if (!$ao_entity->get('parentId')) {
-				return true;
-			}
-
-			$lo_existsIn = $ao_rules->existsIn(['parentId', 'menuId', 'languageShortcode'], 'ParentMenuEntries', [
-				'errorField' => 'parentId',
-				'message' => __dfx($this->getI18nDomain(), 'validation', 'menu_entries', 'error_valid_parent_id'),
-			]);
-
-
-			return $lo_existsIn($ao_entity, $aa_options);
-		}, 'validParentId');
-
-
 		$ao_rules->add(
 			$ao_rules->existsIn(
 				'languageShortcode',

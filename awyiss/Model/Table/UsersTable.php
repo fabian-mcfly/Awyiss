@@ -29,6 +29,17 @@ class UsersTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
+	protected array $categories = [
+		'allowUnassigned' => true,
+		'associationName' => 'Usergroups',
+		'enabled' => true,
+		'identifier' => 'usergroup',
+	];
+
+
+	/**
+	 * @inheritDoc
+	 */
 	public function initializeAssociations(): void {
 		$this->belongsToMany('Usergroups');
 	}

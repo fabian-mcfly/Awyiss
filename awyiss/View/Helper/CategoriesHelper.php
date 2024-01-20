@@ -8,7 +8,6 @@ use Awyiss\View\StringTemplate;
 use Cake\Collection\Collection;
 use Cake\Collection\Iterator\TreeIterator;
 use Cake\ORM\ResultSet;
-use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 use Cake\View\Helper;
 use Cake\View\Helper\IdGeneratorTrait;
@@ -35,8 +34,6 @@ class CategoriesHelper extends Helper {
 	protected array $_defaultConfig = [
 		'templateClass' => StringTemplate::class,
 		'templates' => [
-			'aggregationOption' => '<li{{attrs}}><a href="{{link}}">{{title}}</a></li>',
-			'unassignedOption' => '<li{{attrs}}><a href="{{link}}">{{title}}</a></li>',
 			'linkSelect' => '<div{{attrs}}><label class="Label">{{label}}: {{selectedOption}}</label><ul class="List">{{options}}</ul></div>',
 			'option' => '<li{{attrs}}><a href="{{link}}">{{levelPrefix}}{{title}}</a></li>',
 			'selectedOption' => '{{title}}',
@@ -151,19 +148,36 @@ class CategoriesHelper extends Helper {
 	 *   of attributes for the label tag. `selected` will be added to any classes e.g. `class => 'myclass'` where
 	 *   widget is checked
 	 *
-	 * @param string|null $as_fieldName
+	 * @param string|null $as_identifier
 	 * @param array $aa_attributes
 	 * @return string
 	 * @see \Cake\View\Helper\FormHelper::control()
 	 */
-	public function control(?string $as_fieldName = null, array $aa_attributes = []): string {
-		$ls_fieldName = $as_fieldName ?? 'category';
-		$la_attributes = $aa_attributes + ['empty' => true, 'type' => 'select'];
+	public function control(string $as_identifier, array $aa_attributes = []): string {
+		$ls_identifier = Inflector::underscore($as_identifier);
+		$la_config = $this->getConfiguration($ls_identifier);
 
-		$ls_identifier = Inflector::variable($ls_fieldName);
+		if (empty($la_config) || !$la_config['enabled']) {
+			return '';
+		}
+
+		$ls_fieldName = Inflector::underscore($la_config['fieldname']);
+
+		$la_config = ['fieldname' => $ls_fieldName] + $la_config;
+		$la_attributes = $aa_attributes + [
+			'empty' => false,
+			'label' => $this->Form->labelTextFromFieldname($ls_fieldName),
+			'type' => 'select',
+		];
+
+
+		if (!isset($la_attributes['val'])) {
+			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+			$la_attributes['val'] = $this->Form->context()->entity()->get($ls_fieldName);
+		}
 
 		if (empty($la_attributes['options'])) {
-			$la_attributes['options'] = $this->getCategoriesFromRequest(true, $la_attributes['categoriesIdentifier'] ?? $ls_identifier, $ls_identifier, 'category') ?? [];
+			$la_attributes['options'] = $this->getCategories($la_config['identifier'], true);
 		}
 
 		if ($la_attributes['options'] instanceof TreeIterator) {
@@ -196,49 +210,52 @@ class CategoriesHelper extends Helper {
 
 	/**
 	 * Returns a filter element, using the `linkSelect`-template.
-	 *
 	 * ### Options:
-	 *
-	 * - `aggregationLabel` The label of an additional option that's displayed when the `includeAggregation`-option is true.
+	 * - `aggregationLabel` The label of an additional option that's displayed when the `allowAggregation`-option is true.
 	 * - `aggregationKey` The value of an additional option that's used for showing the aggregation of all categories.
+	 * - `allowAggregation` Boolean value whether to include the aggregation of all categories.
 	 * - `disabled` Boolean value or an array containing the values that should be disabled in the filter.
 	 * - `escape` Boolean value whether to escape html entities.
-	 * - `includeAggregation` Boolean value whether to include the aggregation of all categories.
-	 * - `includeUnassigned` Boolean value whether to include an option to show items without any category.
+	 * - `allowUnassigned` Boolean value whether to include an option to show items without any category.
 	 * - `label` The label to display in the filter.
 	 * - `name` The name to be used as a parameter in the resulting filter urls.
 	 * - `templateVars` Additional template variables.
-	 * - `unassignedLabel` The label of an additional option that's displayed when the `includeUnassigned`-option is true.
+	 * - `unassignedLabel` The label of an additional option that's displayed when the `allowUnassigned`-option is true.
 	 * - `unassignedKey` The value of an additional option that's used for showing items without any category.
 	 * - `val` The value of the currently selected category.
 	 *
-	 * @param string|null $as_fieldName
+	 * @param string|null $as_identifier
 	 * @param iterable $ax_options
 	 * @param array $aa_attributes
 	 * @return string
 	 */
-	public function filter(?string $as_fieldName = null, iterable $ax_options = [], array $aa_attributes = []): string {
-		$ls_fieldName = $as_fieldName ?? 'category';
-		$la_attributes = $aa_attributes + [
-				'aggregationLabel' => __($ls_fieldName . '_filter_all'),
-				'aggregationKey' => 'all',
-				'disabled' => false,
-				'escape' => true,
-				'label' => __($ls_fieldName . '_filter_label'),
-				'identifier' => $ls_identifier = Inflector::variable($ls_fieldName),
-				'levelPrefix' => '- ',
-				'unassignedLabel' => __($ls_fieldName . '_filter_unassigned'),
-				'unassignedKey' => 'unassigned',
-				'uriParam' => Inflector::dasherize($ls_fieldName),
-				'val' => $this->getSelectedCategoryFromRequest($ls_identifier),
-			];
+	public function filter(string $as_identifier, iterable $ax_options = [], array $aa_attributes = []): string {
+		$ls_identifier = Inflector::underscore($as_identifier);
+		$la_config = $this->getConfiguration($ls_identifier);
+
+		if (empty($la_config) || !$la_config['enabled']) {
+			return '';
+		}
+
+		$ls_fieldName = Inflector::underscore($la_config['fieldname']);
+
+		$la_attributes = ['identifier' => $ls_fieldName] + $aa_attributes + $la_config;
+		$la_attributes += [
+			'aggregationLabel' => __($ls_fieldName . '_filter_all'),
+			'disabled' => false,
+			'escape' => true,
+			'label' => __($ls_fieldName . '_filter_label'),
+			'levelPrefix' => '- ',
+			'unassignedLabel' => __($ls_fieldName . '_filter_unassigned'),
+			'val' => $this->getSelectedCategory($ls_identifier),
+		];
 
 		if (isset($la_attributes['id']) && $la_attributes['id'] === true) {
 			$la_attributes['id'] = $this->_domId($ls_fieldName);
 		}
 		$la_attributes['options'] = $ax_options;
 		if (empty($la_attributes['options'])) {
-			$la_attributes['options'] = $this->getCategoriesFromRequest(true, $la_attributes['identifier']) ?? [];
+			$la_attributes['options'] = $this->getCategories($ls_identifier, true);
 		}
 
 		if ($la_attributes['options'] instanceof TreeIterator) {
@@ -279,8 +296,29 @@ class CategoriesHelper extends Helper {
 			}
 		}
 
-		$la_attributes['aggregationLink'] = $this->Url->build([$la_attributes['uriParam'] => $la_attributes['aggregationKey']], ['withoutParams' => ['page']]);
-		$la_attributes['unassignedLink'] = $this->Url->build([$la_attributes['uriParam'] => $la_attributes['unassignedKey']], ['withoutParams' => ['page']]);
+		//Shall an option to select unassigned elements be included? Prepend it.
+		if ($la_attributes['allowUnassigned']) {
+			$la_attributes['options'] = [
+				$la_attributes['unassignedKey'] => [
+					'id' => null,
+					'title' => $la_attributes['unassignedLabel'],
+					'link' => $this->Url->build([$la_attributes['uriParam'] => $la_attributes['unassignedKey']], ['withoutParams' => ['page']]),
+					'levelPrefix' => null,
+				],
+			] + $la_attributes['options'];
+		}
+
+		//Shall an option to select unassigned elements be included? Prepend it.
+		if ($la_attributes['allowAggregation']) {
+			$la_attributes['options'] = [
+				$la_attributes['aggregationKey'] => [
+					'id' => null,
+					'title' => $la_attributes['aggregationLabel'],
+					'link' => $this->Url->build([$la_attributes['uriParam'] => $la_attributes['aggregationKey']], ['withoutParams' => ['page']]),
+					'levelPrefix' => null,
+				],
+			] + $la_attributes['options'];
+		}
 
 
 		return $this->widget('linkSelect', $la_attributes);
@@ -288,54 +326,51 @@ class CategoriesHelper extends Helper {
 
 
 	/**
-	 * For a list of given names, return the first found `categories.raw` or `categories.simple`-value
-	 * in the `categorization`-attribute of the request, depending on the $ab_preferRaw parameter
-	 *
-	 * @param bool $ab_preferRaw
-	 * @param string ...$aa_names
-	 * @return iterable|null
+	 * @param string $as_identifier
+	 * @return array
 	 */
-	public function getCategoriesFromRequest(bool $ab_preferRaw = true, string ...$aa_names): ?iterable {
-		$la_categorization = $this->getView()->getRequest()->getAttribute('categorization', []);
+	public function getConfiguration(string $as_identifier): array {
+		$ls_name = Inflector::variable(Inflector::pluralize($as_identifier));
+		$la_categories = $this->getView()->get('aa_' . $ls_name);
 
-		foreach ($aa_names as $ls_name) {
-			if ($ab_preferRaw) {
-				$lx_return = Hash::get($la_categorization, $ls_name . '.categories.raw', []);
-			}
-
-			//Empty means no prefered raw format or prefered raw but empty
-			if (empty($lx_return)) {
-				$lx_return = Hash::get($la_categorization, $ls_name . '.categories.simple', []);
-			}
-
-			if (!empty($lx_return)) {
-				return $lx_return;
-			}
-		}
-
-
-		return null;
+		return $la_categories['config'] ?? [];
 	}
 
 
 	/**
-	 * For a list of given names, return the first found `selectedCategory`-value in the `categorization`-attribute of the request
+	 * For a list of given names, return the first found `categories.raw` or `categories.simple`-value in the `categories`-view var
 	 *
-	 * @param string ...$aa_names
-	 * @return mixed
+	 * @param string $as_identifier
+	 * @param bool $ab_preferRaw
+	 * @return iterable|null
 	 */
-	public function getSelectedCategoryFromRequest(string ...$aa_names): mixed {
-		$la_categorization = $this->getView()->getRequest()->getAttribute('categorization', []);
+	public function getCategories(string $as_identifier, bool $ab_preferRaw = false): ?iterable {
+		$ls_name = Inflector::variable(Inflector::pluralize($as_identifier));
+		$la_categories = $this->getView()->get('aa_' . $ls_name);
 
-		foreach ($aa_names as $ls_name) {
-			$lx_return = Hash::get($la_categorization, $ls_name . '.selectedCategory');
-
-			if (!is_null($lx_return)) {
-				return $lx_return;
-			}
+		if ($ab_preferRaw) {
+			$lx_return = $la_categories['raw'];
 		}
 
+		//Empty means no prefered raw format or prefered raw but empty
+		if (empty($lx_return)) {
+			$lx_return = $la_categories['simple'];
+		}
 
-		return null;
+		return $lx_return ?? [];
+	}
+
+
+	/**
+	 * For a list of given names, return the first found `selectedCategory`-value in the `categories`-view va
+	 *
+	 * @param string $as_identifier
+	 * @return mixed
+	 */
+	public function getSelectedCategory(string $as_identifier): mixed {
+		$ls_name = Inflector::variable(Inflector::pluralize($as_identifier));
+		$la_categories = $this->getView()->get('aa_' . $ls_name);
+
+		return $la_categories['selected'] ?? null;
 	}
 }

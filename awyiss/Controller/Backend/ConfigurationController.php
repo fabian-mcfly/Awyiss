@@ -16,21 +16,11 @@ use Cake\Utility\Inflector;
 
 
 /**
- * TODO: modify inputs in add/edit, based on option type
- *
  * Configuration Controller
  *
  * @property \Awyiss\Model\Table\ConfigurationTable $Configuration
  */
 class ConfigurationController extends Controller {
-	/**
-	 * @var array
-	 */
-	protected array $configScopes = [];
-	/**
-	 * @var string
-	 */
-	protected string $selectedScopeSessionIdentifier = '';
 	/**
 	 * @var string
 	 */
@@ -44,56 +34,13 @@ class ConfigurationController extends Controller {
 	 * @throws \Exception
 	 */
 	public function initialize(): void {
-		parent::initialize();
-
-		foreach ($this->Configuration->getScopes() as $ls_scope => $ls_configOptionsClass) {
-			$this->configScopes[ Inflector::underscore($ls_scope) ] = $ls_configOptionsClass;
-		}
-
-
-		//TODO: rebuild using categories-component
-		//Remember an identifier that will be used to save the selected scope in the session
-		$this->selectedScopeSessionIdentifier = 'categories.' . ($this->request->getParam('lang') ?? 'global') . '.' . Inflector::underscore($this->getName()) . '.scope';
 		$this->selectedRealmSessionIdentifier = 'categories.' . ($this->request->getParam('lang') ?? 'global') . '.' . Inflector::underscore($this->getName()) . '.realm';
 
-		if ($this->request->getParam('action') === 'overview') {
-			$lo_session = $this->request->getSession();
+		parent::initialize();
 
-			//Is there a request parameter with the name 'scope'?
-			$ls_scope = $this->request->getParam('scope');
-			if ($ls_scope) {
-				if ($lo_session->started()) {
-					//Session started? Save the scope that's inside the url parameter in the session
-					$lo_session->write($this->selectedScopeSessionIdentifier, $ls_scope);
-				}
-			}
-			//Session not started OR there's no scope saved in the session
-			else {
-				$ls_scope = $lo_session->started() ? $lo_session->read($this->selectedScopeSessionIdentifier) : null;
-
-				if (!$lo_session->started() || !$ls_scope) {
-					//Default to scope 'system'
-					$ls_scope = 'system';
-
-					if ($lo_session->started()) {
-						$lo_session->write($this->selectedScopeSessionIdentifier, $ls_scope);
-					}
-				}
-			}
-
-			//If the selected scope is not inside the available configuration scopes, reset it to the first available one.
-			if (!array_key_exists($ls_scope, $this->configScopes)) {
-				$ls_scope = array_key_first($this->configScopes);
-
-				if ($lo_session->started()) {
-					$lo_session->write($this->selectedScopeSessionIdentifier, $ls_scope);
-				}
-
-				//Redirect to remove the invalid scope parameter from the URL
-				$this->redirect(['action' => 'overview']);
-			}
-
-			$this->setOverviewWhere('scope', $ls_scope);
+		$ls_selectedScope = $this->Categories->getSelectedCategory();
+		if (!$ls_selectedScope) {
+			$this->Categories->setConfig('selectedCategory', 'system');
 		}
 	}
 
@@ -109,7 +56,9 @@ class ConfigurationController extends Controller {
 			'scope' => '',
 		])->ensure('read');
 
-		if (!$this->Authorization->withAdditionalData(['scope' => $this->getOverviewWhere('scope')])->isAccessible('read')) {
+		$ls_selectedScope = $this->Categories->getSelectedCategory();
+
+		if (!$this->Authorization->withAdditionalData(['scope' => $ls_selectedScope])->isAccessible('read')) {
 			$this->Flash->error(__('scope_not_accessible'));
 
 
@@ -117,9 +66,9 @@ class ConfigurationController extends Controller {
 		}
 
 		$lo_configuration = $this->Configuration->find()->where($this->getOverviewWhere())->orderBy([
-				'identifier' => 'ASC',
-				'language_shortcode' => 'ASC',
-			]);
+			'identifier' => 'ASC',
+			'language_shortcode' => 'ASC',
+		]);
 
 		$la_configuration = $lo_configuration->all()->groupBy('realm')->map(function ($aa_data) {
 			return Hash::expand(collection($aa_data)->groupBy('identifier')->toArray());
@@ -128,9 +77,8 @@ class ConfigurationController extends Controller {
 		$this->set([
 			'ao_configuration' => $lo_configuration,
 			'aa_configuration' => $la_configuration,
-			'aa_configScopes' => $this->configScopes,
 			'aa_realms' => Awyiss::getRealms(),
-			'as_selectedScope' => $this->getOverviewWhere('scope'),
+			'as_selectedScope' => $ls_selectedScope,
 		]);
 	}
 
@@ -148,7 +96,7 @@ class ConfigurationController extends Controller {
 		])->ensure('create');
 
 		$lo_configuration = $this->Configuration->newDefaultEntity([
-			'scope' => $this->request->getSession()->read($this->selectedScopeSessionIdentifier),
+			'scope' => $this->Categories->getSelectedCategory(),
 		]);
 
 		if ($this->request->is('post')) {
@@ -167,7 +115,6 @@ class ConfigurationController extends Controller {
 
 		$this->set([
 			'ao_configuration' => $lo_configuration,
-			'aa_configScopes' => $this->configScopes,
 			'aa_configOptions' => $la_configOptions,
 			'aa_realms' => Awyiss::getRealms(),
 		]);
@@ -211,7 +158,6 @@ class ConfigurationController extends Controller {
 
 		$this->set([
 			'ao_configuration' => $lo_configuration,
-			'aa_configScopes' => $this->configScopes,
 			'aa_configOptions' => $la_configOptions,
 			'aa_realms' => Awyiss::getRealms(),
 		]);
@@ -278,7 +224,6 @@ class ConfigurationController extends Controller {
 		}
 
 		$lo_session = $this->request->getSession();
-		$lo_session->write($this->selectedScopeSessionIdentifier, $ao_configuration->scope);
 		$lo_session->write($this->selectedRealmSessionIdentifier, $ao_configuration->realm);
 
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
@@ -297,15 +242,7 @@ class ConfigurationController extends Controller {
 				$this->Flash->error($ls_error);
 			}
 		}
-	}
 
-
-	/**
-	 * @inheritDoc
-	 */
-	protected function initializeOverviewWhere(): void {
-		$this->overviewWhere = [
-			'scope' => 'system',
-		];
+		$this->Categories->ensurePossibleCategory($ao_configuration);
 	}
 }

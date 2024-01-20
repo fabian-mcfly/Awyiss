@@ -28,21 +28,11 @@ use Cake\Utility\Security;
 class UsersController extends Controller {
 	/**
 	 * @inheritDoc
-	 */
-	protected array $categories = [
-		'allowUnassigned' => true,
-		'associationName' => 'Usergroups',
-		'enabled' => true,
-		'identifier' => 'usergroupId',
-	];
-
-
-	/**
-	 * @inheritDoc
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function beforeFilter(EventInterface $ao_event): void {
 		parent::beforeFilter($ao_event);
+
 		$this->Authentication->allowUnauthenticated(['login', 'logout']);
 
 		if (in_array($this->getRequest()->getParam('action'), ['login', 'logout'])) {
@@ -61,7 +51,8 @@ class UsersController extends Controller {
 		$this->Authorization->ensure('read');
 
 		$lo_users = $this->Users->find()->where($this->getOverviewWhere());
-		$lo_users = $this->Categories->filterQuery($lo_users);
+		$this->Categories->filterQuery($lo_users);
+
 		$lo_users = $this->paginate($lo_users);
 
 		$this->set([

@@ -36,7 +36,11 @@
 			{% endblock %}
 
 			{% block formControlParentId %}
-				{{ helper_Form_control('parent_id', {options: ao_threadedPages.printer('label', 'id', '- ')}) }}
+				{% if (localConfig('categories.enabled')) %}
+					{{ helper_Categories_control('category') }}
+				{% else %}
+					{{ helper_Form_control('parent_id', {options: ao_threadedPages.printer('label', 'id', '- ')}) }}
+				{% endif %}
 			{% endblock %}
 
 			{% if localConfig('systemOrder.field', 'systemOrder') == 'systemOrder' %}

@@ -14,10 +14,7 @@
 
 	<h1>{{ __('headline_overview') }}</h1>
 
-	{{ helper_Categories_filter('scope', naturalSort(aa_configScopes|map((value,key) => __d(key, 'title'))), {
-		includeAggregation: false,
-		val: as_selectedScope
-	}) }}
+	{{ helper_Categories_filter('scope') }}
 
 	{% for ls_realm in aa_realms %}
 		<fieldset class="table-responsive">
