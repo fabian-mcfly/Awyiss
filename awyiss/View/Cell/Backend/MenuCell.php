@@ -5,6 +5,7 @@ namespace Awyiss\View\Cell\Backend;
 
 
 use Awyiss\Authorization\IdentityPermissionsInterface;
+use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Utilities\Menu\BackendMenu;
 use Awyiss\Utilities\Menu\MenuRenderer;
 use Cake\I18n\DateTime;
@@ -29,10 +30,10 @@ class MenuCell extends Cell {
 	public function display(): void {
 		$lo_identity = $this->_getIdentity();
 		$lo_session = $this->request->getSession();
-		//$lo_session->delete('backend_menu');
 
 		$la_menuData = [];
-		$ls_menu = $lo_session->read('backend_menu');
+		$ls_sessionIdentifier = 'backend_menu[' . LocaleMiddleware::getLanguage()->shortcode . ']';
+		$ls_menu = $lo_session->read($ls_sessionIdentifier);
 		if ($ls_menu) {
 			$la_menuData = json_decode($ls_menu, true);
 			$lo_time = new DateTime($la_menuData['time']);
@@ -63,7 +64,7 @@ class MenuCell extends Cell {
 			$lo_renderer = new MenuRenderer($lo_menu->getDynamicMenu());
 			$ls_menu = $lo_renderer->render('System');
 
-			$lo_session->write('backend_menu', json_encode([
+			$lo_session->write($ls_sessionIdentifier, json_encode([
 				'menu' => $ls_menu,
 				'time' => new DateTime(),
 			]));
