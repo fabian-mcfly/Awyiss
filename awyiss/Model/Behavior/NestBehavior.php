@@ -408,7 +408,7 @@ class NestBehavior extends Behavior {
 		$ls_entityClass = $lo_table->getEntityClass();
 		$la_data = $ls_entityClass::unmapFields($la_data, true);
 
-		$la_ids = $lo_children->extract('id')->toArray();
+		$la_ids = $lo_children->extract('id')->toList();
 		$this->table()->updateAll($la_data, ['id IN' => $la_ids]);
 	}
 }
