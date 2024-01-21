@@ -5,6 +5,7 @@ namespace Awyiss\Twig\Extension;
 
 
 use Awyiss\Core\LocalConfig;
+use Cake\Collection\CollectionInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 use Twig\TwigTest;
@@ -69,6 +70,17 @@ class AwyissExtension extends AbstractExtension {
 			new TwigFunction('__dxn', '__dxn'),
 			new TwigFunction('__df', '__df'),
 			new TwigFunction('__dfx', '__dfx'),
+
+			new TwigFunction('hashPrinter', function (CollectionInterface|array $ax_data = null, string $as_value, string $as_key, string $as_spacer = '- '): mixed {
+				$la_data = is_array($ax_data) ? $ax_data : $ax_data->toList();
+
+				$la_return = [];
+				foreach ($la_data AS $lx_item) {
+					$la_return[ $lx_item[ $as_key ] ] = str_repeat($as_spacer, $lx_item['level']) . $lx_item[ $as_value ];
+				}
+
+				return $la_return;
+			}),
 
 			new TwigFunction('localConfig', function (string|array|null $ax_path = null, mixed $ax_default = null): mixed {
 				return LocalConfig::read($ax_path, $ax_default);

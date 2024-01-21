@@ -79,14 +79,18 @@ class PagesController extends Controller {
 
 		$ls_entityName = Inflector::variable(Inflector::singularize($this->getName()));
 		$ls_threadedName = Inflector::variable('threaded ' . $this->getName());
+		$ls_parentsName = Inflector::variable('parent ' . $this->getName());
 
 		$lo_threadedPages = $this->getThreadedPages($lo_page);
-		$this->ensurePossibleParentId($lo_page, $lo_threadedPages);
+
+		$lo_parentPages = $this->getParentPages($lo_page, $lo_threadedPages);
+		$this->ensurePossibleParentId($lo_page, $lo_parentPages);
 
 		$this->set([
 			'ao_' . $ls_entityName => $lo_page,
 			'ao_pageTemplates' => $this->getPageTemplates(),
 			'ao_' . $ls_threadedName => $lo_threadedPages,
+			'ao_' . $ls_parentsName => $lo_parentPages,
 			'as_languageRealm' => Awyiss::REALM_FRONTEND,
 		]);
 	}
@@ -117,14 +121,18 @@ class PagesController extends Controller {
 
 		$ls_entityName = Inflector::variable(Inflector::singularize($this->getName()));
 		$ls_threadedName = Inflector::variable('threaded ' . $this->getName());
+		$ls_parentsName = Inflector::variable('parent ' . $this->getName());
 
 		$lo_threadedPages = $this->getThreadedPages($lo_page);
-		$this->ensurePossibleParentId($lo_page, $lo_threadedPages);
+
+		$lo_parentPages = $this->getParentPages($lo_page, $lo_threadedPages);
+		$this->ensurePossibleParentId($lo_page, $lo_parentPages);
 
 		$this->set([
 			'ao_' . $ls_entityName => $lo_page,
 			'ao_pageTemplates' => $this->getPageTemplates(),
 			'ao_' . $ls_threadedName => $lo_threadedPages,
+			'ao_' . $ls_parentsName => $lo_parentPages,
 			'as_languageRealm' => Awyiss::REALM_FRONTEND,
 		]);
 	}
@@ -188,7 +196,7 @@ class PagesController extends Controller {
 
 
 	/**
-	 * Return a collection of pages for the currently set language_shortcode,
+	 * Return a collection of pages for the currently set languageShortcode,
 	 * using `\Cake\Collection\CollectionTrait::listNested()` to be used in a form-select
 	 *
 	 * @param Page $ao_page
@@ -205,14 +213,20 @@ class PagesController extends Controller {
 			$this->threadedPages = $this->Pages->listNested($lo_query);
 		}
 
+		return $this->threadedPages;
+	}
+
+
+	public function getParentPages(Page $ao_page, CollectionInterface $ao_threadedPages): CollectionInterface {
 		//We only want to find threaded pages for an existing entity (id equals not null)
 		$li_originalId = $ao_page->get('id');
 		if (!$li_originalId) {
-			return $this->threadedPages;
+			return $ao_threadedPages;
 		}
 
 		$li_foundAtLevel = null;
-		$lo_threadedPages = new Collection($this->threadedPages->toList());
+		$lo_threadedPages = new Collection($ao_threadedPages->toList());
+
 		$lo_threadedPages = $lo_threadedPages->filter(function ($ao_page) use ($li_originalId, &$li_foundAtLevel) {
 			if ($ao_page->get('id') === $li_originalId) {
 				$li_foundAtLevel = $ao_page->level;
@@ -228,10 +242,8 @@ class PagesController extends Controller {
 			return false;
 		});
 
-		$lo_threadedPages = $lo_threadedPages->nest('id', 'parentId');
 
-
-		return $lo_threadedPages->listNested();
+		return $lo_threadedPages;
 	}
 
 
@@ -308,11 +320,13 @@ class PagesController extends Controller {
 			$ls_entitiesName = Inflector::variable($this->getName());
 			$ls_entityName = Inflector::variable(Inflector::singularize($this->getName()));
 			$ls_threadedName = Inflector::variable('threaded ' . $this->getName());
+			$ls_parentName = Inflector::variable('parent ' . $this->getName());
 
 			$lo_viewBuilder->setVars([
 				'ao_pages' => $lo_viewBuilder->getVar('ao_' . $ls_entitiesName),
 				'ao_page' => $lo_viewBuilder->getVar('ao_' . $ls_entityName),
 				'ao_threadedPages' => $lo_viewBuilder->getVar('ao_' . $ls_threadedName),
+				'ao_parentPages' => $lo_viewBuilder->getVar('ao_' . $ls_parentName),
 			]);
 
 			$ls_contents = parent::render($as_template, $as_layout);
@@ -376,7 +390,7 @@ class PagesController extends Controller {
 	 * @return void
 	 */
 	protected function ensurePossibleParentId(Page $ao_page, CollectionInterface $ao_threadedPages): void {
-		$la_possibleParentIds = $ao_threadedPages->extract('id')->toArray();
+		$la_possibleParentIds = $ao_threadedPages->extract('id')->toList();
 
 		if (!empty($ao_page->parentId) && !in_array($ao_page->parentId, $la_possibleParentIds)) {
 			$la_errors = $ao_page->getError('parentId');
@@ -384,7 +398,7 @@ class PagesController extends Controller {
 			$ao_page->parentId = reset($la_possibleParentIds);
 
 			if ($la_errors) {
-				$ao_page->setError('parentId', $la_errors);
+				$ao_page->setError('parentId', $la_errors, true);
 			}
 		}
 	}

@@ -36,7 +36,7 @@
 			{% endblock %}
 
 			{% block formControlParentId %}
-				{{ helper_Form_control('parent_id', {options: ao_threadedPages.printer('label', 'id', '- ')}) }}
+				{{ helper_Form_control('parent_id', {options: hashPrinter(ao_parentPages, 'label', 'id', '- ')}) }}
 			{% endblock %}
 
 			{% block formControlSystemOrder %}
@@ -44,7 +44,7 @@
 			{% endblock %}
 
 			{% block formControlDuplicateOf %}
-				{{ helper_Form_control('duplicate_of', {options: ao_threadedPages.printer('label', 'id', '- ')}) }}
+				{{ helper_Form_control('duplicate_of', {disabled: [ao_page.id], options: ao_threadedPages.printer('label', 'id', '- ')}) }}
 			{% endblock %}
 
 			{% block fieldsetConditionsAttributes %}
