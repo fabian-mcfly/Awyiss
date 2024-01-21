@@ -125,6 +125,7 @@ class ContentTemplateContentAreasTable extends Table {
 
 
 		$ao_rules->add(function (ContentTemplateContentArea $ao_entity/*, array $aa_options*/): bool {
+			/** @var \Awyiss\Model\Table\PageTemplateContentAreasTable $lo_pageTemplateContentAreasTable */
 			$lo_pageTemplateContentAreasTable = FactoryLocator::get('Table')->get('PageTemplateContentAreas');
 
 

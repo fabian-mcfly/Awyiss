@@ -157,6 +157,7 @@ class ContentTemplatesTable extends Table {
 			return $this->availableContentAttributes;
 		}
 
+		/** @var \Awyiss\Model\Table\AttributesTable $lo_attributesTable */
 		$lo_attributesTable = FactoryLocator::get('Table')->get('Attributes');
 		$this->availableContentAttributes = $lo_attributesTable->find()->where(['scope' => 'contents'])->all()->indexBy('id')->map(function (Attribute $ao_attribute): array {
 			return [

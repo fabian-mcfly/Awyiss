@@ -266,7 +266,9 @@ class LocaleMiddleware implements MiddlewareInterface {
 	protected static function loadLanguages(): void {
 		$lo_tableLocator = FactoryLocator::get('Table');
 
-		$lo_result = $lo_tableLocator->get('Languages')->find('all');
+		/** @var \Awyiss\Model\Table\LanguagesTable $lo_table */
+		$lo_table = $lo_tableLocator->get('Languages');
+		$lo_result = $lo_table->find('all');
 
 		/** @var Language $lo_language */
 		foreach ($lo_result->all() as $lo_language) {

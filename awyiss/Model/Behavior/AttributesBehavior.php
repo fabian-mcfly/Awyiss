@@ -162,6 +162,7 @@ class AttributesBehavior extends Behavior {
 			return static::$attributes[ $ls_scope ] ?? [];
 		}
 
+		/** @var \Awyiss\Model\Table\AttributesTable $lo_attributesTable */
 		$lo_attributesTable = FactoryLocator::get('Table')->get('Attributes');
 		$lo_attributesQuery = $lo_attributesTable->find('all');
 

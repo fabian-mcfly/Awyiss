@@ -276,6 +276,7 @@ class ConfigOptionsProvider {
 		}
 
 		if ($as_scope === '*') {
+			/** @var \Awyiss\Model\Table\PageRolesTable $lo_pageRolesTable */
 			$lo_pageRolesTable = FactoryLocator::get('Table')->get('PageRoles');
 			/** @var \Awyiss\Model\Entity\PageRole $lo_pageRole */
 			foreach ($lo_pageRolesTable->find()->where(['identifier !=' => 'page'])->select('identifier') as $lo_pageRole) {

@@ -142,6 +142,7 @@ class PageRolesListener implements EventListenerInterface {
 
 		$ls_constantsContents = '<?php declare(strict_types=1);' . PHP_EOL . PHP_EOL;
 
+		/** @var \Awyiss\Model\Table\PageRolesTable $lo_pageRolesTable */
 		$lo_pageRolesTable = FactoryLocator::get('Table')->get('PageRoles');
 		/** @var \Awyiss\Model\Entity\PageRole $lo_pageRole */
 		foreach ($lo_pageRolesTable->find() as $lo_pageRole) {

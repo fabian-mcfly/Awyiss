@@ -268,6 +268,7 @@ class Awyiss extends BaseApplication {
 	 * @throws \Exception
 	 */
 	public static function loadConfiguration(?string $as_frontendLanguage = null, ?string $as_backendLanguage = null, bool $ab_forceReload = false): void {
+		/** @var \Awyiss\Model\Table\ConfigurationTable $lo_configurationTable */
 		$lo_configurationTable = FactoryLocator::get('Table')->get('Configuration');
 
 		$ls_fileName = Inflector::underscore(CUSTOM_NAMESPACE);
@@ -383,6 +384,7 @@ class Awyiss extends BaseApplication {
 			return;
 		}
 
+		/** @var \Awyiss\Model\Table\PageRolesTable $lo_pageRolesTable */
 		$lo_pageRolesTable = FactoryLocator::get('Table')->get('PageRoles');
 		/** @var \Awyiss\Model\Entity\PageRole $lo_pageRole */
 		foreach ($lo_pageRolesTable->find() as $lo_pageRole) {
