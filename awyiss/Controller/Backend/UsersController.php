@@ -53,7 +53,11 @@ class UsersController extends Controller {
 		$lo_users = $this->Users->find()->where($this->getOverviewWhere());
 		$this->Categories->filterQuery($lo_users);
 
-		$lo_users = $this->paginate($lo_users);
+		$lo_users = $this->paginate($lo_users, [
+			'order' => [
+				'username' => 'asc',
+			],
+		]);
 
 		$this->set([
 			'ao_users' => $lo_users,

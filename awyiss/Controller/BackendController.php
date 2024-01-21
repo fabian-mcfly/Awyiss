@@ -131,6 +131,29 @@ abstract class BackendController extends AppController {
 
 
 	/**
+	 * @inheritDoc
+	 * @param \Cake\Datasource\RepositoryInterface|\Cake\Datasource\QueryInterface|string|null $object
+	 * @param array $settings
+	 * @return \Cake\Datasource\Paging\PaginatedInterface
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 */
+	public function paginate(
+		RepositoryInterface|QueryInterface|string|null $ao_object = null,
+		array $aa_settings = []
+	): PaginatedInterface {
+		$la_settings = $aa_settings;
+		$la_settings += [
+			'order' => [
+				'title' => 'asc',
+			],
+		];
+
+
+		return parent::paginate($ao_object, $la_settings);
+	}
+
+
+	/**
 	 * Returns the set where-clauses used in the overview-method of most controllers.
 	 *
 	 * When $ax_key is empty, the whole array is returned.
