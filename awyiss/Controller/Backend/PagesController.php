@@ -47,7 +47,7 @@ class PagesController extends Controller {
 	public function overview(): void {
 		$this->Authorization->ensure('read');
 
-		$lo_pages = $this->Pages->find()->where($this->getOverviewWhere());
+		$lo_pages = $this->Pages->find('forCurrentLanguage')->where($this->getOverviewWhere());
 		$this->Categories->filterQuery($lo_pages);
 		$lo_pages = $this->Pages->listNested($lo_pages);
 
@@ -117,6 +117,13 @@ class PagesController extends Controller {
 
 		if ($this->request->is(['patch', 'post', 'put'])) {
 			$this->save($lo_page, 'edit');
+		}
+		elseif ($lo_page->language_shortcode != LocaleMiddleware::getLanguage()->shortcode) {
+			//Don't allow modifying a page in another language
+			throw new RedirectException(Router::url([
+				'lang' => $lo_page->languageShortcode,
+				'id' => $lo_page->id,
+			], true), 302);
 		}
 
 		$ls_entityName = Inflector::variable(Inflector::singularize($this->getName()));
@@ -205,8 +212,7 @@ class PagesController extends Controller {
 	 */
 	public function getThreadedPages(Page $ao_page): CollectionInterface {
 		if (!isset($this->threadedPages)) {
-			$lo_query = $this->Pages->find()->where([
-				'language_shortcode' => $this->getOverviewWhere('language_shortcode'),
+			$lo_query = $this->Pages->find('forCurrentLanguage', $ao_page->languageShortcode)->where([
 				'page_role_id' => $this->getPageRoleId(),
 			]);
 
@@ -375,10 +381,7 @@ class PagesController extends Controller {
 	 * @throws \Exception
 	 */
 	protected function initializeOverviewWhere(): void {
-		$ls_languageShortcode = LocaleMiddleware::getLanguage()->shortcode;
-
 		$this->overviewWhere = [
-			'language_shortcode' => $ls_languageShortcode,
 			'page_role_id' => $this->getPageRoleId(),
 		];
 	}

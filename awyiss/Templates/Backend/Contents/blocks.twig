@@ -24,7 +24,7 @@
 
 
 {% block formControlDuplicateOf %}
-	{{ helper_Form_control('duplicate_of', {required: lo_contentTemplateElement.required}) }}
+	{{ helper_Form_control('duplicate_of', {disabled: [ao_content.id], required: lo_contentTemplateElement.required}) }}
 {% endblock %}
 
 

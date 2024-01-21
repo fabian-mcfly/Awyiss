@@ -64,12 +64,7 @@ class MenuEntriesController extends Controller {
 		}
 
 		$lo_threadedMenuEntries = $this->getThreadedMenuEntries($lo_menuEntry);
-		$la_possibleParentIds = $lo_threadedMenuEntries->extract('id')->toArray(false);
-		if (!empty($lo_menuEntry->parentId) && !in_array($lo_menuEntry->parentId, $la_possibleParentIds)) {
-			$la_errors = $lo_menuEntry->getError('parentId');
-			$lo_menuEntry->set('parentId', null, ['setter' => false]);
-			$lo_menuEntry->setError('parentId', $la_errors, true);
-		}
+		$this->ensurePossibleParentId($lo_menuEntry, $lo_threadedMenuEntries);
 
 		$this->set([
 			'ao_menuEntry' => $lo_menuEntry,
@@ -102,12 +97,7 @@ class MenuEntriesController extends Controller {
 		}
 
 		$lo_threadedMenuEntries = $this->getThreadedMenuEntries($lo_menuEntry);
-		$la_possibleParentIds = $lo_threadedMenuEntries->extract('id')->toArray(false);
-		if (!empty($lo_menuEntry->parentId) && !in_array($lo_menuEntry->parentId, $la_possibleParentIds)) {
-			$la_errors = $lo_menuEntry->getError('parentId');
-			$lo_menuEntry->set('parentId', null, ['setter' => false]);
-			$lo_menuEntry->setError('parentId', $la_errors, true);
-		}
+		$this->ensurePossibleParentId($lo_menuEntry, $lo_threadedMenuEntries);
 
 		$this->set([
 			'ao_menuEntry' => $lo_menuEntry,
@@ -256,5 +246,25 @@ class MenuEntriesController extends Controller {
 		];
 
 		parent::initializeOverviewWhere();
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Entity\MenuEntry $ao_menuEntry
+	 * @param \Cake\Collection\CollectionInterface $ao_threadedMenuEntries
+	 * @return void
+	 */
+	protected function ensurePossibleParentId(MenuEntry $ao_menuEntry, CollectionInterface $ao_threadedMenuEntries): void {
+		$la_possibleParentIds = $ao_threadedMenuEntries->extract('id')->toList();
+
+		if (!empty($ao_menuEntry->parentId) && !in_array($ao_menuEntry->parentId, $la_possibleParentIds)) {
+			$la_errors = $ao_menuEntry->getError('parentId');
+
+			$ao_menuEntry->set('parentId', null, ['setter' => false]);
+
+			if ($la_errors) {
+				$ao_menuEntry->setError('parentId', $la_errors, true);
+			}
+		}
 	}
 }

@@ -479,7 +479,7 @@ class ContentsController extends Controller {
 
 		$this->pageRoleName = $this->Contents->getPageRoleName();
 
-		if (!$this->request->is(['patch', 'post', 'put']) || !in_array($this->request->getParam('action'), ['add', 'edit'])) {
+		if (!$this->request->is(['patch', 'post', 'put']) || $this->request->getParam('action') !== 'edit') {
 			if ($lo_page->language_shortcode != LocaleMiddleware::getLanguage()->shortcode) {
 				throw new RedirectException(Router::url([
 					'lang' => $lo_page->languageShortcode,
