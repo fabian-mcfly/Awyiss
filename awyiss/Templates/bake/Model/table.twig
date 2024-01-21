@@ -129,7 +129,7 @@ class {{ name }}Table extends Table{{ fileBuilder.classBuilder.implements ? ' im
 {% for optionName, optionValue in rule.options %}
 	{%~ set options = (loop.first ? '[' : options) ~ "'#{optionName}' => " ~ Bake.exportVar(optionValue) ~ (loop.last ? ']' : ', ') %}
 {% endfor %}
-		$ao_rules->add($ao_rules->{{ rule.name }}({{ fields|raw }}{{ (rule.extra|default ? ", '#{rule.extra}'" : '')|raw }}{{ (options ? ', ' ~ options : '')|raw }}), ['errorField' => '{{ field|variable }}']);
+		$ao_rules->add($ao_rules->{{ rule.name }}({{ fields|raw }}{{ (rule.extra|default ? ", '#{rule.extra}'" : '')|raw }}{{ (options ? ', ' ~ options : '')|raw }}), 'valid{{ field|camelize }}', ['errorField' => '{{ field|variable }}']);
 {% endfor %}
 
 		return $ao_rules;
