@@ -55,7 +55,7 @@ class GenericPagesConfigOptions extends AbstractConfigOptions {
 					identifier: 'categories',
 					localizable: false,
 					nullable: true,
-					type: ConfigOptionType::LISTVALUE,
+					type: ConfigOptionType::JSON_ARRAY,
 				),
 				new ConfigOption(
 					defaultValue: 'category',

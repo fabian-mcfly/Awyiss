@@ -12,15 +12,15 @@ use TypeError;
 /**
  * Valid data types for values used in `ConfigOption`
  */
-enum ConfigOptionType: string {
-	case ARRAY = 'array';
-	case BOOL = 'bool';
-	case ENUM = 'enum';
-	case FLOAT = 'float';
-	case INTEGER = 'integer';
-	case JSON = 'json';
-	case LISTVALUE = 'listvalue';
-	case STRING = 'string';
+enum ConfigOptionType {
+	case BOOL;
+	case ENUM;
+	case FLOAT;
+	case INTEGER;
+	case JSON_ARRAY;
+	case JSON_OBJECT;
+	case LISTVALUE;
+	case STRING;
 
 
 	/**
@@ -31,10 +31,11 @@ enum ConfigOptionType: string {
 	 * @return string|bool
 	 */
 	public function validate(mixed $ax_value, bool $ab_isNullable = false): bool|string {
-		switch ($this) {
-			case self::ARRAY:
-				return is_array($ax_value);
+		if ($ab_isNullable && $ax_value === null) {
+			return true;
+		}
 
+		switch ($this) {
 			case self::BOOL:
 				/**
 				 * Type bool consideres everything boolish to be a valid value
@@ -49,19 +50,15 @@ enum ConfigOptionType: string {
 			case self::INTEGER:
 				return is_int($ax_value) || ($ax_value === (int)$ax_value);
 
-			case self::JSON:
+			case self::JSON_ARRAY:
+			case self::JSON_OBJECT:
 				try {
 					$la_value = json_decode($ax_value, true, 512, JSON_THROW_ON_ERROR);
-					if (empty($la_value) && !$ab_isNullable) {
-						return __d('configuration', 'error_option_not_nullable');
-					}
-
-
-					return true;
 				}
 				catch (Exception | TypeError) {
 					return false;
 				}
+				return is_array($la_value);
 
 			case self::ENUM:
 			case self::LISTVALUE:
@@ -80,16 +77,21 @@ enum ConfigOptionType: string {
 	 * Casts the provided `$ax_value` to the correct type
 	 *
 	 * @param mixed $ax_value
+	 * @param bool $ab_isNullable
 	 * @return mixed
 	 */
-	public function cast(mixed $ax_value): mixed {
+	public function cast(mixed $ax_value, bool $ab_isNullable = false): mixed {
+		if ($ab_isNullable && $ax_value === null) {
+			return null;
+		}
+
 		/** @noinspection PhpUncoveredEnumCasesInspection */
 		return match ($this) {
-			self::ARRAY => (array)$ax_value,
 			self::BOOL => boolval($ax_value),
 			self::FLOAT => floatval($ax_value),
 			self::INTEGER => intval($ax_value),
-			self::JSON => json_decode($ax_value),
+			self::JSON_ARRAY => json_decode($ax_value, true),
+			self::JSON_OBJECT => json_decode($ax_value),
 			self::STRING => strval($ax_value),
 		};
 	}
