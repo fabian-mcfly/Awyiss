@@ -78,6 +78,24 @@ class Attribute extends Entity {
 
 
 	/**
+	 * Make sure the default value is null if empty
+	 *
+	 * @param string $ax_defaultValue
+	 * @return string
+	 * @see \Awyiss\Model\Entity\Attribute::$identifier
+	 */
+	protected function _setDefaultValue(string $ax_defaultValue): string {
+		$lx_defaultValue = $ax_defaultValue;
+
+		if ($lx_defaultValue === '') {
+			$lx_defaultValue = null;
+		}
+
+		return $lx_defaultValue;
+	}
+
+
+	/**
 	 * Make sure the identifier is always lowercase, underscored and free of special characters
 	 *
 	 * @param string $as_identifier

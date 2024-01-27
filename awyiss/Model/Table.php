@@ -526,7 +526,7 @@ class Table extends BaseTable {
 					$ao_schema->setColumnType($lo_attribute->identifier, 'json');
 				}
 
-				if ($la_column && $la_column['default'] !== $lo_attribute->defaultValue) {
+				if ($la_column['default'] !== $lo_attribute->defaultValue) {
 					$la_column['default'] = $lo_attribute->defaultValue;
 					$ao_schema->addColumn($lo_attribute->identifier, $la_column);
 				}
