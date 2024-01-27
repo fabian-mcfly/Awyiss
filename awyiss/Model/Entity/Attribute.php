@@ -80,7 +80,8 @@ class Attribute extends Entity {
 	/**
 	 * Make sure the identifier is always lowercase, underscored and free of special characters
 	 *
-	 * @noinspection PhpUnused
+	 * @param string $as_identifier
+	 * @return string
 	 * @see \Awyiss\Model\Entity\Attribute::$identifier
 	 */
 	protected function _setIdentifier(string $as_identifier): string {
@@ -91,7 +92,8 @@ class Attribute extends Entity {
 	/**
 	 * Make sure the scope is always lowercase, underscored and free of special characters
 	 *
-	 * @noinspection PhpUnused
+	 * @param string $as_scope
+	 * @return string
 	 * @see \Awyiss\Model\Entity\Attribute::$scope
 	 */
 	protected function _setScope(string $as_scope): string {

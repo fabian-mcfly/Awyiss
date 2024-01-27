@@ -157,7 +157,7 @@ class UsergroupsTable extends Table {
 			}
 		});
 
-		//Save all found records, but skip the authorization check, the audit and the system order behavior on those to avoid recursion.
+		//Save all found records, but skip the audit and the system order behavior on those to avoid recursion.
 		$this->Users->saveMany($lo_users, [
 			'audit' => ['skip' => true],
 			'checkRules' => false,

@@ -136,7 +136,6 @@ class RulesChecker extends BaseRulesChecker {
 		}
 
 
-		//return parent::existsIn($ax_fields, $ax_table, $la_options);
 		return $this->_addError(new ExistsIn($ax_fields, $ax_table, $la_options), '_existsIn', ['errorField' => $ls_errorField, 'message' => $ls_message]);
 	}
 

@@ -29,6 +29,7 @@ class PageTemplatesTable extends Table {
 	 * @inheritDoc
 	 */
 	protected array $categories = [
+		'allowAggregation' => false,
 		'associationName' => 'PageRoles',
 		'enabled' => true,
 		'identifier' => 'pageRole',
@@ -183,7 +184,7 @@ class PageTemplatesTable extends Table {
 			'noLinkedPages',
 			[
 				'errorField' => '_general',
-				'message' => __df($this->getI18nDomain(), 'system', 'error_linked_pages'),
+				'message' => __d($this->getI18nDomain(), 'error_linked_pages'),
 			]
 		);
 

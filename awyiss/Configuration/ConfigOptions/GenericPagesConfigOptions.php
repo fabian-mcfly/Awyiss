@@ -73,6 +73,13 @@ class GenericPagesConfigOptions extends AbstractConfigOptions {
 				),
 				new ConfigOption(
 					defaultValue: true,
+					identifier: 'threaded',
+					localizable: false,
+					nullable: false,
+					type: ConfigOptionType::BOOL
+				),
+				new ConfigOption(
+					defaultValue: true,
 					identifier: 'useDatasource',
 					localizable: false,
 					nullable: false,

@@ -283,7 +283,7 @@ class ContentTemplatesTable extends Table {
 			'noLinkedContents',
 			[
 				'errorField' => '_general',
-				'message' => __df($this->getI18nDomain(), 'system', 'error_linked_contents'),
+				'message' => __d($this->getI18nDomain(), 'error_linked_contents'),
 			]
 		);
 

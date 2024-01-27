@@ -319,25 +319,6 @@ class AttributesBehavior extends Behavior {
 	}
 
 
-	/*
-	 * @param EventInterface  $ao_event
-	 * @param EntityInterface $ao_entity
-	 *
-	 * @return void
-	 *
-	 * @noinspection PhpUnusedParameterInspection
-	 *
-	public function beforeSave (EventInterface $ao_event, EntityInterface $ao_entity, ArrayObject $ao_options): void {
-		if (!$this->getConfig('isAttributesTable')) {
-			return;
-		}
-
-		if (!$ao_entity->id && !$ao_entity->isNew()) {
-			$ao_entity->setNew(true);
-		}
-	}*/
-
-
 	/**
 	 * @return void
 	 */

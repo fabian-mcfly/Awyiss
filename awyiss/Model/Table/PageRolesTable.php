@@ -188,7 +188,7 @@ class PageRolesTable extends Table {
 			'noLinkedPageTemplates',
 			[
 				'errorField' => '_general',
-				'message' => __df($this->getI18nDomain(), 'system', 'error_linked_page_templates'),
+				'message' => __d($this->getI18nDomain(), 'error_linked_page_templates'),
 			]
 		);
 

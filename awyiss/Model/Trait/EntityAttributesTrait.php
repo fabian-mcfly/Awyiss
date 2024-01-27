@@ -113,9 +113,6 @@ trait EntityAttributesTrait {
 		if (empty($this->_fields['attributes']) || !($this->_fields['attributes'] instanceof Entity)) {
 			return $lx_value;
 		}
-		/*if ( ! array_key_exists($as_field, $this->_fields) && in_array($as_field, $this->getVirtual())) {
-			$lx_value = ;
-		}*/
 
 		/** @var \Cake\Datasource\EntityInterface $lo_attributesEntity */
 		$lo_attributesEntity = $this->_fields['attributes'];
