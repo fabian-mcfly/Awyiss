@@ -65,12 +65,12 @@ class MenuEntry extends Entity {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function getChildren(): ?CollectionInterface {
+	public function getChildren(array $aa_options = []): ?CollectionInterface {
 		/** @var \Awyiss\Model\Table\MenuEntriesTable $lo_table */
 		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
 
 
-		return $lo_table->getChildren($this);
+		return $lo_table->getChildren($this, $aa_options);
 	}
 
 
@@ -93,12 +93,12 @@ class MenuEntry extends Entity {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function getParent(): ?self {
+	public function getParent(array $aa_options = []): ?self {
 		/** @var \Awyiss\Model\Table\MenuEntriesTable $lo_table */
 		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
 
 
-		return $lo_table->getParent($this);
+		return $lo_table->getParent($this, $aa_options);
 	}
 
 

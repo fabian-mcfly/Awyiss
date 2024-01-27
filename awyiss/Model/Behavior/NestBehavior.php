@@ -25,7 +25,7 @@ use RuntimeException;
  *    - finder: the finder that's being used to get all children/parent(s)
  *    - maxLevel: maximum depth of items to return
  *
- * It also moves all nested children to a new scope in the `afterSaveCommit`-event, using the `relatedColumns`-option
+ * It also moves all nested children to a new scope in the `afterSave`-event, using the `relatedColumns`-option
  */
 class NestBehavior extends Behavior {
 	/**
@@ -155,7 +155,7 @@ class NestBehavior extends Behavior {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function getChildren(EntityInterface $ao_entity): ?CollectionInterface {
+	public function getChildren(EntityInterface $ao_entity, array $aa_options = []): ?CollectionInterface {
 		if (!$this->getConfig('enabled') || !$this->getConfig('children')) {
 			return null;
 		}
@@ -167,16 +167,21 @@ class NestBehavior extends Behavior {
 
 		$lo_association = $this->table()->getAssociation($ls_associationName);
 
-		$lx_finder = $this->getConfig('children.finder') ?: null;
+		$lx_finder = $aa_options['finder'] ?? $this->getConfig('children.finder');
 
-		$lo_query = $lo_association->find($lx_finder);
+		$lo_query = $lo_association->find($lx_finder, $ao_entity, $this->getConfig('relatedColumns'));
 
 		$la_bindingKeys = (array)$lo_association->getBindingKey();
 
 		/** @var \Awyiss\Model\Entity $ls_entityClass */
 		$ls_entityClass = $lo_association->getSource()->getEntityClass();
+		$la_skipFields = $ls_entityClass::unmapFields($aa_options['skipFields'] ?? []);
 		foreach ((array)$lo_association->getForeignKey() as $li_key => $ls_field) {
 			$ls_field = $ls_entityClass::unmapField($ls_field);
+
+			if (in_array($ls_field, $la_skipFields)) {
+				continue;
+			}
 
 			$lx_value = $ao_entity->hasOriginal($la_bindingKeys[ $li_key ]) ? $ao_entity->getOriginal($la_bindingKeys[ $li_key ]) : $ao_entity->get($la_bindingKeys[ $li_key ]);
 
@@ -212,7 +217,7 @@ class NestBehavior extends Behavior {
 
 		$lo_collection = new Collection([]);
 
-		foreach ($this->getChildren($ao_entity) as $lo_entity) {
+		foreach ($this->getChildren($ao_entity, $aa_options) as $lo_entity) {
 			$lo_collection = $lo_collection->appendItem($lo_entity);
 
 			$li_maxLevel = $aa_options['maxLevel'] ?? $this->getConfig('children.maxLevel');
@@ -238,7 +243,7 @@ class NestBehavior extends Behavior {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function getParent(EntityInterface $ao_entity): ?EntityInterface {
+	public function getParent(EntityInterface $ao_entity, array $aa_options = []): ?EntityInterface {
 		if (!$this->getConfig('enabled') || !$this->getConfig('parent')) {
 			return null;
 		}
@@ -254,7 +259,7 @@ class NestBehavior extends Behavior {
 			return null;
 		}
 
-		$lx_finder = $this->getConfig('parent.finder') ?: null;
+		$lx_finder = $aa_options['finder'] ?? $this->getConfig('parent.finder');
 
 
 		return $lo_association->find($lx_finder)->where([
@@ -281,7 +286,7 @@ class NestBehavior extends Behavior {
 
 		$lo_collection = new Collection([]);
 
-		$lo_entity = $this->getParent($ao_entity);
+		$lo_entity = $this->getParent($ao_entity, $aa_options);
 		if (!$lo_entity) {
 			return $lo_collection->compile(false);
 		}

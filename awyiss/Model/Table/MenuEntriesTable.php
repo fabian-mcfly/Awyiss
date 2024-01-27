@@ -21,8 +21,8 @@ use Cake\Validation\Validator;
  * @property \Awyiss\Model\Table\MenusTable&\Awyiss\ORM\Association\BelongsTo $Menus
  * @method \Awyiss\Model\Entity\MenuEntry newDefaultEntity(array $aa_additionalData = [])
  * @method CollectionInterface|null getNestedChildren(\Cake\Datasource\EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
- * @method CollectionInterface|null getChildren(\Cake\Datasource\EntityInterface $ao_entity)
- * @method \Awyiss\Model\Entity\MenuEntry getParent(\Cake\Datasource\EntityInterface $ao_entity)
+ * @method CollectionInterface|null getChildren(\Cake\Datasource\EntityInterface $ao_entity, array $aa_options = [])
+ * @method \Awyiss\Model\Entity\MenuEntry getParent(\Cake\Datasource\EntityInterface $ao_entity, array $aa_options = [])
  * @method CollectionInterface|null getParents(\Cake\Datasource\EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
  */
 class MenuEntriesTable extends Table {

@@ -35,8 +35,8 @@ use RuntimeException;
  * @property ContentsTable&\Awyiss\ORM\Association\BelongsTo $DuplicateOfContents
  * @method Content newDefaultEntity(array $aa_additionalData = [])
  * @method CollectionInterface|null getNestedChildren(\Cake\Datasource\EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
- * @method CollectionInterface|null getChildren(\Cake\Datasource\EntityInterface $ao_entity)
- * @method Content getParent(\Cake\Datasource\EntityInterface $ao_entity)
+ * @method CollectionInterface|null getChildren(\Cake\Datasource\EntityInterface $ao_entity, array $aa_options = [])
+ * @method Content getParent(\Cake\Datasource\EntityInterface $ao_entity, array $aa_options = [])
  * @method CollectionInterface|null getParents(\Cake\Datasource\EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
  */
 class ContentsTable extends Table {

@@ -22,8 +22,8 @@ use Cake\Validation\Validator;
  * @property BackendMenuEntriesTable&\Awyiss\ORM\Association\HasMany $ChildBackendMenuEntries
  * @method BackendMenuEntry newDefaultEntity(array $aa_additionalData = [])
  * @method CollectionInterface|null getNestedChildren(\Cake\Datasource\EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
- * @method CollectionInterface|null getChildren(\Cake\Datasource\EntityInterface $ao_entity)
- * @method BackendMenuEntry getParent(\Cake\Datasource\EntityInterface $ao_entity)
+ * @method CollectionInterface|null getChildren(\Cake\Datasource\EntityInterface $ao_entity, array $aa_options = [])
+ * @method BackendMenuEntry getParent(\Cake\Datasource\EntityInterface $ao_entity, array $aa_options = [])
  * @method CollectionInterface|null getParents(\Cake\Datasource\EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
  */
 class BackendMenuEntriesTable extends Table {
