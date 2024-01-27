@@ -6,6 +6,7 @@ namespace Awyiss\Model\Trait;
 
 use Awyiss\Model\Entity;
 use Awyiss\ORM\Association\HasOne;
+use Cake\Datasource\EntityInterface;
 use Cake\Datasource\FactoryLocator;
 use InvalidArgumentException;
 
@@ -117,13 +118,56 @@ trait EntityAttributesTrait {
 		/** @var \Cake\Datasource\EntityInterface $lo_attributesEntity */
 		$lo_attributesEntity = $this->_fields['attributes'];
 
+		$ls_field = $as_field;
+		if (str_contains($ls_field, '.')) {
+			$ls_field = explode('.', $ls_field)[1];
+		}
+
 		/**
 		 * @noinspection PhpUnnecessaryLocalVariableInspection Does this sound _unnecessary_ to you?
 		 *    Uncaught ParseError: syntax error, unexpected token "&", expecting ";"
 		 */
-		$lx_value = &$lo_attributesEntity->get($as_field);
+		$lx_value = &$lo_attributesEntity->get($ls_field);
 
 
 		return $lx_value;
+	}
+
+
+	/**
+	 * @inheritDoc
+	 * @param array|string $ax_field
+	 * @param mixed|null $ax_value
+	 * @param array $aa_options
+	 * @return \Cake\Datasource\EntityInterface
+	 */
+	public function set(array|string $ax_field, mixed $ax_value = null, array $aa_options = []): EntityInterface {
+		$lx_field = $ax_field;
+
+		if (($this->_fields['attributes'] ?? null) instanceof Entity) {
+			/** @var Entity $lo_attributes */
+			$lo_attributes = $this->_fields['attributes'];
+
+			if (is_string($lx_field) && $lo_attributes->has($lx_field)) {
+				$lo_attributes->set($lx_field, $ax_value, $aa_options);
+
+				return $this;
+			}
+			elseif (is_array($lx_field)) {
+				$la_attributeFields = [];
+				foreach ($lx_field as $ls_field => $lx_value) {
+					if ($lo_attributes->has($ls_field)) {
+						$la_attributeFields[ $ls_field ] = $lx_value;
+						unset($lx_field[ $ls_field ]);
+					}
+				}
+
+				$lo_attributes->set($la_attributeFields, $ax_value, $aa_options);
+			}
+		}
+
+
+		/** @noinspection PhpIncompatibleReturnTypeInspection */
+		return parent::set($lx_field, $ax_value, $aa_options);
 	}
 }

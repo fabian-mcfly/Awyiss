@@ -55,7 +55,7 @@ trait EntityFieldMapTrait {
 	/**
 	 * @inheritDoc
 	 */
-	public function set($ax_field, $ax_value = null, array $aa_options = []): EntityInterface {
+	public function set(array|string $ax_field, mixed $ax_value = null, array $aa_options = []): EntityInterface {
 		$lx_field = $ax_field;
 		if (is_string($lx_field)) {
 			$lx_field = static::mapField($lx_field);
@@ -73,7 +73,7 @@ trait EntityFieldMapTrait {
 	/**
 	 * @inheritDoc
 	 */
-	public function unset($ax_field): EntityInterface {
+	public function unset(array|string $ax_field): EntityInterface {
 		/** @noinspection PhpIncompatibleReturnTypeInspection */
 		return parent::unset(static::mapFields((array)$ax_field));
 	}
@@ -94,6 +94,17 @@ trait EntityFieldMapTrait {
 	public function setVirtual(array $aa_fields, bool $ab_merge = false): EntityInterface {
 		/** @noinspection PhpIncompatibleReturnTypeInspection */
 		return parent::setVirtual(static::mapFields($aa_fields), $ab_merge);
+	}
+
+
+	/**
+	 * Returns whether a field has an original value
+	 *
+	 * @param string $as_field
+	 * @return bool
+	 */
+	public function hasOriginal(string $as_field): bool {
+		return array_key_exists(static::mapField($as_field), $this->_original);
 	}
 
 
@@ -139,10 +150,26 @@ trait EntityFieldMapTrait {
 
 	/**
 	 * @inheritDoc
+	 * @param array|null $aa_fields
+	 * @param bool $ab_includeUnknownFields If set, returns fields that weren't part of the original entity
+	 * @param bool $ab_unmapped
+	 * @return array
 	 */
-	public function extractOriginalChanged(?array $aa_fields = [], bool $ab_unmapped = true): array {
+	public function extractOriginalChanged(?array $aa_fields = [], bool $ab_includeUnknownFields = false, bool $ab_unmapped = true): array {
 		$la_fields = $aa_fields ?: array_keys($this->_fields);
 		$la_extracted = parent::extractOriginalChanged(static::mapFields($la_fields));
+
+		//Include fields that aren't part of the entity but requested.
+		if ($ab_includeUnknownFields) {
+			foreach ($aa_fields as $ls_field) {
+				if (
+					!array_key_exists($ls_field, $la_extracted) &&
+					!in_array($ls_field, $this->_originalFields)
+				) {
+					$la_extracted[ $ls_field ] = null;
+				}
+			}
+		}
 
 		if ($ab_unmapped) {
 			$la_extracted = static::unmapFields($la_extracted, true);
@@ -216,7 +243,7 @@ trait EntityFieldMapTrait {
 	/**
 	 * @inheritDoc
 	 */
-	public function setInvalidField(string $as_field, $ax_value): EntityInterface {
+	public function setInvalidField(string $as_field, mixed $ax_value): EntityInterface {
 		/** @noinspection PhpIncompatibleReturnTypeInspection */
 		return parent::setInvalidField(static::mapField($as_field), $ax_value);
 	}
@@ -225,7 +252,7 @@ trait EntityFieldMapTrait {
 	/**
 	 * @inheritDoc
 	 */
-	public function setAccess($as_field, bool $ab_accessible): EntityInterface {
+	public function setAccess(array|string $as_field, bool $ab_accessible): EntityInterface {
 		if ($as_field === '*') {
 			/** @noinspection PhpIncompatibleReturnTypeInspection */
 			return parent::setAccess($as_field, $ab_accessible);

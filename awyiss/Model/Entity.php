@@ -6,6 +6,7 @@ namespace Awyiss\Model;
 
 use Awyiss\Model\Trait\EntityAttributesTrait;
 use Awyiss\Model\Trait\EntityFieldMapTrait;
+use Cake\Datasource\EntityInterface;
 use Cake\Datasource\FactoryLocator;
 use Cake\ORM\Behavior\Translate\TranslateTrait;
 use Cake\ORM\Entity as BaseEntity;
@@ -21,6 +22,7 @@ use Cake\Utility\Inflector;
 class Entity extends BaseEntity {
 	use EntityAttributesTrait {
 		EntityAttributesTrait::get as getOrGetFromAttribute;
+		EntityAttributesTrait::set as setOrSetAttribute;
 	}
 	use EntityFieldMapTrait;
 	use TranslateTrait;
@@ -76,7 +78,9 @@ class Entity extends BaseEntity {
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function &get(string $as_field): mixed {
-		$ls_field = static::mapField($as_field);
+		$ls_field = $as_field;
+		$ls_field = static::mapField($ls_field);
+
 		/** @noinspection PhpUnnecessaryLocalVariableInspection ... stupid PhpStorm */
 		$lx_value = &$this->getOrGetFromAttribute($ls_field);
 
@@ -86,14 +90,23 @@ class Entity extends BaseEntity {
 
 
 	/**
-	 * Returns whether a field has an original value
-	 *
-	 * @param string $as_field
-	 * @return bool
+	 * @inheritDoc
+	 * @param array|string $ax_field
+	 * @param mixed|null $ax_value
+	 * @param array $aa_options
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function hasOriginal(string $as_field): bool {
-		return array_key_exists(static::mapField($as_field), $this->_original);
+	public function set(array|string $ax_field, mixed $ax_value = null, array $aa_options = []): EntityInterface {
+		$lx_field = $ax_field;
+		if (is_string($lx_field)) {
+			$lx_field = static::mapField($lx_field);
+		}
+		elseif (is_array($ax_field) && $ax_field) {
+			$lx_field = static::mapFields($ax_field, true);
+		}
+
+
+		return $this->setOrSetAttribute($lx_field, $ax_value, $aa_options);
 	}
 
 
