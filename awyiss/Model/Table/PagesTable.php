@@ -333,10 +333,30 @@ class PagesTable extends Table {
 		);
 
 
-		$ao_rules->addDelete(function (): void {
-			//TODO: make sure no pages with other page_role_ids exists as subpages
-			dd(__FILE__, __LINE__);
-		}, 'rename');
+		$ao_rules->addDelete(function (EntityInterface $ao_page, array $aa_options = []): bool {
+			$lo_children = $this->getNestedChildren($ao_page, [
+				'finder' => [
+					'all' => [
+						'skipPageRoleCheck' => true,
+					],
+				],
+				'skipFields' => [
+					'pageRoleId',
+				],
+			]);
+
+			if (!$lo_children) {
+				return true;
+			}
+
+			$la_pageRoleIds = array_unique($lo_children->extract('pageRoleId')->toList());
+			$la_pageRoleIds = array_filter($la_pageRoleIds, fn (int $ai_pageRoleId) => $ai_pageRoleId != $ao_page->pageRoleId);
+
+			return !$la_pageRoleIds;
+		}, 'noNestedChildrenWithDifferentPageRole', [
+			'errorField' => '_general',
+			'message' => __d($this->getI18nDomain(), 'error_no_nested_children_with_different_page_role'),
+		]);
 
 
 		return $ao_rules;
