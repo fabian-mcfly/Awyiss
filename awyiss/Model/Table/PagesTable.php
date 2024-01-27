@@ -11,7 +11,6 @@ use Awyiss\Model\Entity\Page;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
 use Cake\Collection\CollectionInterface;
-use Cake\Core\Configure;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
@@ -95,6 +94,8 @@ class PagesTable extends Table {
 		}
 
 		parent::initialize($aa_config);
+
+		$this->addBehavior('Nest', $this->nest);
 	}
 
 
@@ -597,22 +598,5 @@ class PagesTable extends Table {
 			'className' => $ls_pageRole,
 			'foreignKey' => 'duplicate_of',
 		]);
-
-		if ($this->hasBehavior('Nest')) {
-			$this->removeBehavior('Nest');
-		}
-
-		$la_nestOptions = [];
-		$lb_categoriesEnabled = Configure::read(implode('.', [
-			'Awyiss',
-			$ls_pageRole,
-			Awyiss::getRealm(),
-			'categories',
-			'enabled',
-		]), false);
-		if ($lb_categoriesEnabled) {
-			$la_nestOptions['buildRules'] = false;
-		}
-		$this->addBehavior('Nest', $la_nestOptions + $this->nest);
 	}
 }
