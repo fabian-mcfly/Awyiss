@@ -272,6 +272,8 @@ class CategoriesComponent extends Component {
 		if (!$lo_view->getVar('aa_' . $ls_variableNamePlural)) {
 			$lo_view->setVar('aa_' . $ls_variableNamePlural, $la_categories);
 		}
+
+		$lo_view->setVar('as_categoriesIdentifier', $la_config['identifier']);
 	}
 
 
@@ -286,12 +288,15 @@ class CategoriesComponent extends Component {
 		$la_possibleCategories = array_keys($this->getCategories());
 
 		if (!in_array($lx_selectedCategory, $la_possibleCategories, true)) {
-			$la_errors = $ao_entity->getError($ls_fieldName);
+			/** @var \Awyiss\Model\Entity $ao_entity */
+			$lo_entity = $this->fieldIsAttribute() ? $ao_entity->attributes : $ao_entity;
 
-			$ao_entity->$ls_fieldName = reset($la_possibleCategories);
+			$la_errors = $lo_entity->getError($ls_fieldName);
+
+			$lo_entity->set($ls_fieldName, reset($la_possibleCategories));
 
 			if ($la_errors) {
-				$ao_entity->setError($ls_fieldName, $la_errors);
+				$lo_entity->setError($ls_fieldName, $la_errors);
 			}
 		}
 
@@ -302,6 +307,16 @@ class CategoriesComponent extends Component {
 			$lo_request = $lo_request->withData($ls_fieldName, $ao_entity->$ls_fieldName);
 			$this->getController()->setRequest($lo_request);
 		}
+	}
+
+
+	/**
+	 * Returns whether the field is one of the attributes for the attached table
+	 *
+	 * @return bool
+	 */
+	public function fieldIsAttribute(): bool {
+		return $this->getBehavior()->fieldIsAttribute();
 	}
 
 

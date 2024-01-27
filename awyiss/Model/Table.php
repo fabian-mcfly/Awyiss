@@ -202,6 +202,8 @@ class Table extends BaseTable {
 
 		$lb_isAttributesTable = str_starts_with($this->getTable(), 'attributes_');
 
+		$lo_schema = $this->getSchema();
+
 		if ($lb_isAttributesTable) {
 			$this->addBehavior('Attributes', ['isAttributesTable' => true] + $this->attributes);
 		}
@@ -215,14 +217,22 @@ class Table extends BaseTable {
 			);
 
 			$this->addBehavior('Audit', $this->audit + ['priority' => 99999]);
-			$this->addBehavior('SoftDelete', $this->softDelete);
-			$this->addBehavior('SystemOrder', $this->systemOrder);
+
+			if ($lo_schema->getColumn('deleted')) {
+				$this->addBehavior('SoftDelete', $this->softDelete);
+			}
+
+			$this->addCategoriesBehavior();
+
+			$this->addBehavior('EventTrigger', $this->eventTrigger);
+
+			if ($lo_schema->getColumn('system_order')) {
+				$this->addBehavior('SystemOrder', $this->systemOrder);
+			}
 		}
 
 		$this->addBehavior('AutoPrefix', $this->autoPrefix + ['priority' => 99999]);
-		$this->addBehavior('Categories', $this->categories);
 		$this->addBehavior('DefaultValues', $this->defaultValues);
-		$this->addBehavior('EventTrigger', $this->eventTrigger);
 
 		if (!empty($aa_config['translateLanguage']) && !empty($this->translate['fields'])) {
 			$this->addBehavior(
@@ -236,7 +246,7 @@ class Table extends BaseTable {
 			);
 		}
 
-		$this->initializeSchema($this->getSchema());
+		$this->initializeSchema($lo_schema);
 	}
 
 
@@ -485,6 +495,28 @@ class Table extends BaseTable {
 
 
 		return $la_eventMap;
+	}
+
+
+	/**
+	 * Returns whether the field is one of the attributes
+	 *
+	 * @param string $as_field
+	 * @return bool
+	 */
+	public function fieldIsAttribute(string $as_field): bool {
+		/** @var \Awyiss\Model\Entity $ls_entityClass */
+		$ls_entityClass = $this->getEntityClass();
+
+		$ls_column = $ls_entityClass::unmapField($as_field);
+
+		//If the column isn't part of the table, just assume it's part of the attributes table.
+		if (!$this->getSchema()->getColumn($ls_column) && $this->hasAttributes()) {
+			return true;
+		}
+
+
+		return false;
 	}
 
 

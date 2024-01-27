@@ -13,6 +13,8 @@ use Cake\Collection\Iterator\TreeIterator;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\ResultSetInterface;
 use Cake\Event\Event;
+use Cake\ORM\Marshaller;
+use Cake\ORM\PropertyMarshalInterface;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\ResultSet;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
@@ -24,7 +26,7 @@ use RuntimeException;
 /**
  * Build the category-association (if necessary) and offers a method to retreive all category records
  */
-class CategoriesBehavior extends Behavior {
+class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 	/**
 	 * Default configuration
 	 *     *
@@ -76,10 +78,13 @@ class CategoriesBehavior extends Behavior {
 	public function initialize(array $aa_config): void {
 		parent::initialize($aa_config);
 
+		/** @var \Awyiss\Model\Table $lo_table */
+		$lo_table = $this->table();
+
 		if ($this->getConfig('associationName')) {
 			$ls_associationName = $this->getConfig('associationName');
-			if (!$this->table()->hasAssociation($ls_associationName)) {
-				$this->table()->belongsTo($ls_associationName, [
+			if (!$lo_table->hasAssociation($ls_associationName)) {
+				$lo_table->belongsTo($ls_associationName, [
 					'bindingKey' => $this->getConfig('bindingKey'),
 					'joinType' => 'INNER',
 					'foreignKey' => $this->getConfig('foreignKey'),
@@ -87,18 +92,102 @@ class CategoriesBehavior extends Behavior {
 			}
 
 			if (!$this->getConfig('fieldname')) {
-				$lo_association = $this->table()->getAssociation($ls_associationName);
-				$this->setConfig('fieldname', $lo_association->getForeignKey());
+				$lo_association = $lo_table->getAssociation($ls_associationName);
+
+				/** @var class-string<\Awyiss\Model\Entity> $ls_entityClass */
+				$ls_entityClass = $lo_table->getEntityClass();
+
+				$this->setConfig('fieldname', $ls_entityClass::mapField($lo_association->getForeignKey()));
 			}
 		}
 
 		if (!$this->getConfig('identifier')) {
-			throw new RuntimeException(sprintf('`%s` is missing the identifier attribute.', static::class));
+			throw new RuntimeException(sprintf('`%s` is missing the identifier attribute for table `%s`', static::class, $lo_table->getAlias()));
 		}
 
 		if (!$this->getConfig('fieldname')) {
 			$this->setConfig('fieldname', Inflector::underscore($this->getConfig('identifier')));
 		}
+	}
+
+
+	/**
+	 * Loads and returns all category-associations, customizable with config settings:
+	 * - `finder`
+	 * - `queryConditions`
+	 *
+	 * @param bool $ab_returnRaw
+	 * @return \Cake\Datasource\ResultSetInterface|\Cake\Collection\Iterator\TreeIterator|array|null
+	 */
+	public function getCategories(bool $ab_returnRaw = false): ResultSetInterface|TreeIterator|array|null {
+		if (!$this->getConfig('enabled')) {
+			return $ab_returnRaw ? new ResultSet([]) : [];
+		}
+
+		if (isset($this->categories)) {
+			return $this->categories[ $ab_returnRaw ? 'raw' : 'simple' ] ?? null;
+		}
+
+		if (!$this->getConfig('useDatasource')) {
+			/** @var \Awyiss\Model\Table $lo_table */
+			$lo_table = $this->table();
+
+			if (method_exists($lo_table, 'buildCategories')) {
+				$la_categories = $lo_table->buildCategories();
+			}
+			else {
+				$la_categories = $this->getConfig('categories');
+			}
+
+			if (!is_array($la_categories)) {
+				throw new RuntimeException(
+					sprintf(
+						'You need to provide categories or a `buildCategories`-method when using `useDatasource = false` in `%s` for table `%s`.',
+						static::class,
+						$lo_table->getAlias()
+					)
+				);
+			}
+
+			$this->categories = [
+				'raw' => $la_categories['raw'] ?? null,
+				'simple' => $la_categories['simple'] ?? $la_categories,
+			];
+
+			//Delete the config setting from the config
+			$this->setConfig('categories');
+		}
+		else {
+			$this->buildCategories();
+		}
+
+
+		return $this->categories[ $ab_returnRaw ? 'raw' : 'simple' ];
+	}
+
+
+	/**
+	 * @return void
+	 */
+	public function resetCategories(): void {
+		if (!$this->getConfig('useDatasource') && !method_exists($this->table(), 'buildCategories')) {
+			return;
+		}
+
+		unset($this->categories);
+	}
+
+
+	/**
+	 * Returns whether the field is one of the attributes for the attached table
+	 *
+	 * @return bool
+	 */
+	public function fieldIsAttribute(): bool {
+		/** @var \Awyiss\Model\Table $lo_table */
+		$lo_table = $this->table();
+
+		return $lo_table->fieldIsAttribute($this->getConfig('fieldname') ?: $this->getConfig('identifier'));
 	}
 
 
@@ -138,7 +227,7 @@ class CategoriesBehavior extends Behavior {
 
 		$ls_associationName = $this->getConfig('associationName');
 		if (!$ls_associationName) {
-			throw new RuntimeException(sprintf('Cannot filter query without an association in `%s`.', static::class));
+			throw new RuntimeException(sprintf('Cannot filter query without an association in `%s` for table `%s`.', static::class, $this->table()->getAlias()));
 		}
 
 		$lo_association = $ao_query->getRepository()->getAssociation($ls_associationName);
@@ -179,64 +268,6 @@ class CategoriesBehavior extends Behavior {
 
 
 	/**
-	 * Loads and returns all category-associations, customizable with config settings:
-	 * - `finder`
-	 * - `queryConditions`
-	 *
-	 * @param bool $ab_returnRaw
-	 * @return \Cake\Datasource\ResultSetInterface|\Cake\Collection\Iterator\TreeIterator|array|null
-	 */
-	public function getCategories(bool $ab_returnRaw = false): ResultSetInterface|TreeIterator|array|null {
-		if (!$this->getConfig('enabled')) {
-			return $ab_returnRaw ? new ResultSet([]) : [];
-		}
-
-		if (isset($this->categories)) {
-			return $this->categories[ $ab_returnRaw ? 'raw' : 'simple' ] ?? null;
-		}
-
-		if (!$this->getConfig('useDatasource')) {
-			if (method_exists($this->table(), 'buildCategories')) {
-				$la_categories = $this->table()->buildCategories();
-			}
-			else {
-				$la_categories = $this->getConfig('categories');
-			}
-
-			if ($la_categories === null || !is_array($la_categories)) {
-				throw new RuntimeException(sprintf('You need to provide categories when using `useDatasource = false` in `%s`.', static::class));
-			}
-
-			$this->categories = [
-				'raw' => $la_categories['raw'] ?? null,
-				'simple' => $la_categories['simple'] ?? $la_categories,
-			];
-
-			//Delete the config setting from the config
-			$this->setConfig('categories');
-		}
-		else {
-			$this->buildCategories();
-		}
-
-
-		return $this->categories[ $ab_returnRaw ? 'raw' : 'simple' ];
-	}
-
-
-	/**
-	 * @return void
-	 */
-	public function resetCategories(): void {
-		if (!$this->getConfig('useDatasource') && !method_exists($this->table(), 'buildCategories')) {
-			return;
-		}
-
-		unset($this->categories);
-	}
-
-
-	/**
 	 * @param mixed|null $ax_selectedCategory
 	 * @return array
 	 */
@@ -273,13 +304,20 @@ class CategoriesBehavior extends Behavior {
 			}
 		}
 
-		/** @var \Awyiss\Model\Entity $ls_entityClass */
-		$ls_entityClass = $this->table()->getEntityClass();
-		$ls_column = $ls_entityClass::unmapField($ls_column);
+		$lb_isAttribute = $this->fieldIsAttribute();
+		if ($lb_isAttribute) {
+			/** @var \Awyiss\Model\Table $lo_table */
+			$lo_table = $this->table();
+			$ls_column = $lo_table->getAttributesTable(true) . '.' . $ls_column;
+		}
 
 		if ($lx_selectedCategory == $this->getConfig('unassignedKey')) {
-			$ls_column .= ' IS';
-			$lx_selectedCategory = null;
+			return [
+				'OR' => [
+					$ls_column . ' IS' => null,
+					$ls_column . ' NOT IN' => array_keys($this->getCategories()),
+				],
+			];
 		}
 
 
@@ -310,8 +348,9 @@ class CategoriesBehavior extends Behavior {
 			if (!$ls_associationName) {
 				throw new RuntimeException(
 					sprintf(
-						'Cannot filter query without an association in `%s`.',
-						static::class
+						'Cannot filter query without an association in `%s` for table `%s`.',
+						static::class,
+						$this->table()->getAlias()
 					)
 				);
 			}
@@ -371,8 +410,9 @@ class CategoriesBehavior extends Behavior {
 			if (!$ls_associationName) {
 				throw new RuntimeException(
 					sprintf(
-						'Cannot filter query without an association in `%s`.',
-						static::class
+						'Cannot filter query without an association in `%s` for table `%s`.',
+						static::class,
+						$this->table()->getAlias()
 					)
 				);
 			}
@@ -490,19 +530,16 @@ class CategoriesBehavior extends Behavior {
 		$ls_associationName = $this->getConfig('associationName');
 		//No matching association? Do nothing.
 		if (!$ls_associationName || !$lo_table->hasAssociation($ls_associationName)) {
-			$this->categories = [
-				'raw' => null,
-				'simple' => null,
-			];
-
-			return;
+			throw new RuntimeException(
+				sprintf(
+					'Cannot build categories without an association in `%s` for table `%s`.',
+					static::class,
+					$this->table()->getAlias()
+				)
+			);
 		}
 
 		$lo_association = $lo_table->getAssociation($ls_associationName);
-
-		if (!$this->getConfig('fieldname')) {
-			$this->setConfig('fieldname', $lo_association->getProperty());
-		}
 
 		$lo_query = $lo_association->find($this->getConfig('finder'))->where($this->getConfig('queryConditions'));
 
@@ -593,5 +630,32 @@ class CategoriesBehavior extends Behavior {
 
 
 		return $ao_rules;
+	}
+
+
+	/**
+	 * @inheritDoc
+	 * @param \Cake\ORM\Marshaller $ao_marshaller The marhshaller of the table the behavior is attached to.
+	 * @param array $aa_map The property map being built.
+	 * @param array<string, mixed> $aa_options The options array used in the marshalling call.
+	 * @return array A map of `[property => callable]` of additional properties to marshal.
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 */
+	public function buildMarshalMap(Marshaller $ao_marshaller, array $aa_map, array $aa_options): array {
+		if ($this->fieldIsAttribute()) {
+			$ls_column = $this->getConfig('fieldname') ?: $this->getConfig('identifier');
+
+			return [
+				$ls_column => function (mixed $ax_value, EntityInterface $ao_entity) use ($ls_column): mixed {
+					$lo_attributes = $ao_entity->get('attributes');
+
+					$lo_attributes->set($ls_column, $ax_value);
+
+					return $ax_value;
+				},
+			];
+		}
+
+		return [];
 	}
 }

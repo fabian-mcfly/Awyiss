@@ -36,11 +36,11 @@
 			{% endblock %}
 
 			{% block formControlParentId %}
-				{% if (localConfig('categories.enabled')) %}
-					{{ helper_Categories_control('category') }}
-				{% else %}
-					{{ helper_Form_control('parent_id', {options: hashPrinter(ao_parentPages, 'label', 'id', '- ')}) }}
+				{% if (as_categoriesIdentifier is defined) %}
+					{{ helper_Categories_control(as_categoriesIdentifier) }}
 				{% endif %}
+
+				{{ helper_Form_control('parent_id', {options: hashPrinter(ao_parentPages, 'label', 'id', '- ')}) }}
 			{% endblock %}
 
 			{% if localConfig('systemOrder.field', 'systemOrder') == 'systemOrder' %}

@@ -47,6 +47,9 @@ class AttributesBehavior extends Behavior {
 	protected array $_defaultConfig = [
 		'attributeOptionsProviderClass' => AttributeOptionsProvider::class,
 		'foreignKey' => null,
+		'implementedFinders' => [
+			'withMatchingAttributes' => 'findWithMatchingAttributes',
+		],
 		'implementedEvents' => [
 			'buildRules',
 			'beforeFind',
@@ -84,7 +87,6 @@ class AttributesBehavior extends Behavior {
 	 *
 	 * @param array<string, mixed> $aa_config The configuration settings provided to this behavior.
 	 * @return void
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function initialize(array $aa_config): void {
 		if ($this->getConfig('isAttributesTable')) {
@@ -116,6 +118,41 @@ class AttributesBehavior extends Behavior {
 			'foreignKey' => $this->getConfig('foreignKey'),
 			'propertyName' => 'attributes',
 		]);
+	}
+
+
+	/**
+	 * Adds where clauses for the provided list of attribute fields
+	 *
+	 * @param \Cake\ORM\Query\SelectQuery $ao_query
+	 * @param \Awyiss\Model\Entity $ao_entity
+	 * @param array $aa_fields
+	 * @return \Cake\ORM\Query\SelectQuery
+	 */
+	public function findWithMatchingAttributes(SelectQuery $ao_query, Entity $ao_entity, array $aa_fields): SelectQuery {
+		/** @var \Awyiss\Model\Table $lo_table */
+		$lo_table = $this->table();
+		$ls_attributesTable = $lo_table->getAttributesTable(true);
+		$la_conditions = [];
+		foreach ($aa_fields as $ls_field) {
+			if (str_starts_with($ls_field, 'attributes.')) {
+				$ls_field = substr($ls_field, 11);
+				$lx_value = $ao_entity->get('attributes')?->get($ls_field);
+
+				if ($lx_value === null) {
+					$ls_field .= ' IS';
+				}
+
+				$la_conditions[ $ls_attributesTable . '.' . $ls_field ] = $lx_value;
+			}
+		}
+
+		if ($la_conditions) {
+			$ao_query->where($la_conditions);
+		}
+
+
+		return $ao_query;
 	}
 
 
@@ -206,22 +243,33 @@ class AttributesBehavior extends Behavior {
 		$ls_attributeOptionsProvider = $this->getConfig('attributeOptionsProviderClass');
 		$lo_attributeOptions = static::$attributeOptions[ $ls_source ] = $ls_attributeOptionsProvider::getAttributeOptionsFile($ls_source, true);
 
-		if (empty($lo_attributeOptions)) {
-			return $ao_rules;
-		}
-
 		/** @var \Awyiss\Model\Entity\Attribute $lo_attribute */
 		foreach ($this->getAttributes() as $lo_attribute) {
 			if (!isset($lo_attributeOptions[ $lo_attribute->identifier ])) {
+				if ($lo_attribute->required) {
+					/*
+					 * TODO: check if the identifier is the category identifier and categories behavior is enabled or
+					 * if the identifier is the nest parent identifier and nest behavior is enabled
+					 * In those cases, skip the checking of the attribute, since the behaviors will do the check
+					 */
+
+					$ao_rules->add(function (Entity $ao_entity/*, array $aa_options*/) use ($lo_attribute): bool|string {
+						return !empty($ao_entity->{$lo_attribute->identifier});
+					}, 'validValue' . Inflector::camelize($lo_attribute->identifier), [
+						'errorField' => $lo_attribute->identifier,
+						'message' => __df($ls_source, 'attributes', 'error_valid_value'),
+					]);
+				}
+
 				continue;
 			}
 
 			$ao_rules->add(function (Entity $ao_entity/*, array $aa_options*/) use ($lo_attribute, $lo_attributeOptions): bool|string {
 				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 				return $lo_attributeOptions->validateValue($lo_attribute->identifier, $ao_entity->get($lo_attribute->identifier), $ao_entity->getEntity());
-			}, 'validValue', [
+			}, 'validValue' . Inflector::camelize($lo_attribute->identifier), [
 				'errorField' => $lo_attribute->identifier,
-				'message' => __d('attributes', 'error_valid_value'),
+				'message' => __df($ls_source, 'attributes', 'error_valid_value'),
 			]);
 		}
 

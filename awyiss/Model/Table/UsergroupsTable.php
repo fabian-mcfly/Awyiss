@@ -161,6 +161,7 @@ class UsergroupsTable extends Table {
 		$this->Users->saveMany($lo_users, [
 			'audit' => ['skip' => true],
 			'checkRules' => false,
+			'nest' => ['skip' => true],
 			'systemOrder' => ['skip' => true],
 		]);
 	}
