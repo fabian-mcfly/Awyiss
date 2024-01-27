@@ -307,7 +307,7 @@ class ConfigOption {
 
 
 		if ($this->getType() === ConfigOptionType::ENUM || $this->getType() === ConfigOptionType::LISTVALUE) {
-			$lx_values = $this->getValues(true);
+			$lx_values = $this->getValues(true, $as_languageShortcode);
 			if (!$lx_values) {
 				throw new RuntimeException(sprintf('Cannot validate option `%s` with type `%s` without a list of values', $this->identifier, ConfigOptionType::LISTVALUE->value));
 			}
@@ -338,15 +338,16 @@ class ConfigOption {
 	 * Casts the provided `$ax_value` to a type, specified in `self::$type`
 	 *
 	 * @param mixed $ax_value
+	 * @param string|null $as_languageShortcode
 	 * @return mixed
 	 */
-	public function typecastConfigValue(mixed $ax_value): mixed {
+	public function typecastConfigValue(mixed $ax_value, ?string $as_languageShortcode = null): mixed {
 		if ($this->getTypecast()) {
-			return $this->getTypecast()($ax_value);
+			return $this->getTypecast()($ax_value, $as_languageShortcode);
 		}
 
 		if ($this->getType() === ConfigOptionType::ENUM || $this->getType() === ConfigOptionType::LISTVALUE) {
-			$lx_values = $this->getValues(true);
+			$lx_values = $this->getValues(true, $as_languageShortcode);
 			if (!$lx_values) {
 				throw new RuntimeException(sprintf('Cannot typecast option `%s` with type `%s` without a list of values', $this->identifier, ConfigOptionType::LISTVALUE->value));
 			}
@@ -379,20 +380,20 @@ class ConfigOption {
 			return $lx_key ? $lx_values[ $lx_key ] : null;
 		}
 
-		return $this->getType()->cast($ax_value);
+		return $this->getType()->cast($ax_value, $this->isNullable($as_languageShortcode !== null));
 	}
 
 
 	/**
 	 * @return callable|array|class-string|null
 	 */
-	public function getValues(bool $ab_returnEvaluated = false): array|callable|string|null {
+	public function getValues(bool $ab_returnEvaluated = false, ?string $as_languageShortcode = null): array|callable|string|null {
 		if ($ab_returnEvaluated) {
 			if (is_string($this->values) && !enum_exists($this->values)) {
 				return $this->values->cases();
 			}
 			elseif (is_callable($this->values)) {
-				return call_user_func($this->values);
+				return call_user_func($this->values, $as_languageShortcode);
 			}
 		}
 

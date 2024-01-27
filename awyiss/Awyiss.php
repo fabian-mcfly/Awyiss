@@ -335,7 +335,8 @@ class Awyiss extends BaseApplication {
 				$la_item['scope'],
 				$la_item['realm'],
 				implode('.', $la_item['identifier']),
-				$la_item['value']
+				$la_item['value'],
+				$la_item['language_shortcode']
 			);
 
 			if (!isset($la_config[ $ls_path ])) {

@@ -192,6 +192,7 @@ class ConfigurationTable extends Table {
 		]);
 
 
+		//Validate the provided value for the scope, identifier and language.
 		$ao_rules->add(function (Configuration $ao_entity/*, array $aa_options*/): bool|string {
 			if ($ao_entity->getError('scope') || $ao_entity->getError('realm')) {
 				return false;
@@ -210,19 +211,23 @@ class ConfigurationTable extends Table {
 					$ao_entity->scope,
 					$ao_entity->realm,
 					$ao_entity->identifier,
-					$ao_entity->value
-				);
-
-				$lb_valid = ConfigOptionsProvider::validateConfigValue(
-					$ao_entity->scope,
-					$ao_entity->realm,
-					$ao_entity->identifier,
-					$lx_value,
+					$ao_entity->value,
 					$ao_entity->languageShortcode
 				);
+
+				//A typecast to null cannot be valid if the initial value wasn't null.
+				//This happens when one tries to json_decode a string, for example.
+				if ($ao_entity->value !== null && $lx_value !== null) {
+					$lb_valid = ConfigOptionsProvider::validateConfigValue(
+						$ao_entity->scope,
+						$ao_entity->realm,
+						$ao_entity->identifier,
+						$lx_value,
+						$ao_entity->languageShortcode
+					);
+				}
 			}
 
-			//Validate the provided value for the scope, identifier and language.
 			return $lb_valid;
 		}, 'validValue', [
 			'errorField' => 'value',
@@ -308,6 +313,11 @@ class ConfigurationTable extends Table {
 			$ao_entity->realm,
 			$ao_entity->identifier,
 			$ao_entity->value,
+			$ao_entity->languageShortcode
 		);
+
+		if (in_array(getType($ao_entity->value), ['array', 'object'])) {
+			$ao_entity->value = json_encode($ao_entity->value);
+		}
 	}
 }

@@ -65,12 +65,13 @@ interface ConfigOptionsInterface {
 	 * Retreives a configuration class and cast the provided value to it's correct type for the given configOptionIdentifier
 	 *
 	 * @param string $as_realm
-	 * @param string $ax_path
+	 * @param array|string $ax_path
 	 * @param mixed $ax_value
+	 * @param string|null $as_languageShortcode
 	 * @return mixed
 	 * @throws \ReflectionException
 	 */
-	public function typecastConfigValue(string $as_realm, array|string $ax_path, mixed $ax_value): mixed;
+	public function typecastConfigValue(string $as_realm, array|string $ax_path, mixed $ax_value, ?string $as_languageShortcode = null): mixed;
 
 
 	/**
