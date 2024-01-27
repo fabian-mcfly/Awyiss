@@ -71,7 +71,7 @@ class AwyissExtension extends AbstractExtension {
 			new TwigFunction('__df', '__df'),
 			new TwigFunction('__dfx', '__dfx'),
 
-			new TwigFunction('hashPrinter', function (CollectionInterface|array $ax_data, string $as_value, string $as_key, string $as_spacer = '- '): mixed {
+			new TwigFunction('hashPrinter', function (CollectionInterface|array $ax_data, string $as_value, string $as_key, string $as_spacer = '- '): array {
 				$la_data = is_array($ax_data) ? $ax_data : $ax_data->toList();
 
 				$la_return = [];

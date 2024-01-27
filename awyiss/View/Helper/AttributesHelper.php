@@ -228,20 +228,7 @@ class AttributesHelper extends Helper {
 		}
 
 		$ls_field = $as_fieldName;
-
-		if (($la_options['isTranslation'] ?? false) === true) {
-			$lo_language = $la_options['language'] ?? null;
-			if (empty($lo_language) || !($lo_language instanceof Language)) {
-				throw new RuntimeException(sprintf('Missing language for translation of `%s`', $as_fieldName));
-			}
-
-			if (in_array($la_options['type'], ['datetime'])) {
-				$la_options['timezone'] = $lo_language->timezone;
-			}
-
-			$ls_field = '_translations.' . $lo_language->shortcode . '.' . $ls_field;
-		}
-		unset($la_options['isTranslation'], $la_options['language']);
+		$ls_field = $this->prepareTranslationField($ls_field, $la_options);
 
 		if (!str_starts_with($ls_field, 'attributes.')) {
 			$ls_field = 'attributes.' . $ls_field;
@@ -402,5 +389,32 @@ class AttributesHelper extends Helper {
 		}, $la_translatableAttributes);
 
 		$this->Form->setTranslatableField($la_translatableAttributes);
+	}
+
+
+	/**
+	 * @param string $as_fieldName
+	 * @param array $aa_options
+	 * @return array
+	 */
+	protected function prepareTranslationField(string $as_fieldName, array &$aa_options): string {
+		$ls_field = $as_fieldName;
+
+		if (($aa_options['isTranslation'] ?? false) === true) {
+			$lo_language = $aa_options['language'] ?? null;
+			if (empty($lo_language) || !($lo_language instanceof Language)) {
+				throw new RuntimeException(sprintf('Missing language for translation of `%s`', $ls_field));
+			}
+
+			if (in_array($aa_options['type'], ['datetime'])) {
+				$aa_options['timezone'] = $lo_language->timezone;
+			}
+
+			$ls_field = '_translations.' . $lo_language->shortcode . '.' . $ls_field;
+		}
+		unset($aa_options['isTranslation'], $aa_options['language']);
+
+
+		return $ls_field;
 	}
 }

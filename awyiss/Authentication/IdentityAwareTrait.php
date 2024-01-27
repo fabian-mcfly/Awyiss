@@ -8,6 +8,9 @@ use Authentication\IdentityInterface;
 use Cake\Event\EventDispatcherTrait;
 
 
+/**
+ * Allows retreiving the identiy from the Authentication Service using an event
+ */
 trait IdentityAwareTrait {
 	use EventDispatcherTrait;
 

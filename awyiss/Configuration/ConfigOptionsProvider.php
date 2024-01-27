@@ -48,7 +48,7 @@ class ConfigOptionsProvider {
 	 */
 	public static function getConfigOptionsFiles(bool $ab_returnLoaded = false): array {
 		if (!static::$foundAll) {
-			static::$configOptions = static::findConfigOptionsFile('*', $ab_returnLoaded);
+			static::$configOptions = static::findConfigOptionsFile('*');
 			static::$foundAll = true;
 		}
 
@@ -82,7 +82,7 @@ class ConfigOptionsProvider {
 		$ls_scope = static::sanitizeScope($as_scope);
 
 		if (empty(static::$configOptions[ $ls_scope ])) {
-			static::$configOptions += static::findConfigOptionsFile($ls_scope, $ab_returnLoaded);
+			static::$configOptions += static::findConfigOptionsFile($ls_scope);
 		}
 
 		if ($ab_returnLoaded) {
@@ -180,9 +180,9 @@ class ConfigOptionsProvider {
 	 * @param string $as_realm
 	 * @param string $ax_identifierPath
 	 * @param mixed $ax_value
+	 * @param string|null $as_languageShortcode
 	 * @return mixed
 	 * @throws \ReflectionException
-	 * @noinspection PhpUnused
 	 */
 	public static function typecastConfigValue(string $as_scope, string $as_realm, string $ax_identifierPath, mixed $ax_value, ?string $as_languageShortcode = null): mixed {
 		$lo_configuration = static::loadConfigOptions($as_scope);

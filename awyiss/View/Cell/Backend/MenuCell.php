@@ -26,6 +26,7 @@ class MenuCell extends Cell {
 	 *
 	 * @return void
 	 * @throws \ReflectionException
+	 * @throws \Exception
 	 */
 	public function display(): void {
 		$lo_identity = $this->_getIdentity();

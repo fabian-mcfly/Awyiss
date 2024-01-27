@@ -9,6 +9,7 @@ use Awyiss\Model\Entity\ContentTemplate;
 use Awyiss\Model\Entity\Page;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
+use Awyiss\Validation\Validator;
 use Cake\Collection\Collection;
 use Cake\Collection\CollectionInterface;
 use Cake\Database\Schema\TableSchemaInterface;
@@ -20,7 +21,7 @@ use Cake\Log\LogTrait;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Utility\Inflector;
-use Cake\Validation\Validator;
+use Cake\Validation\Validator as BaseValidator;
 use RuntimeException;
 
 
@@ -122,11 +123,11 @@ class ContentsTable extends Table {
 	/**
 	 * Returns the default validator object.
 	 *
-	 * @param Validator $ao_validator The validator that can be modified to
+	 * @param \Awyiss\Validation\Validator $ao_validator The validator that can be modified to
 	 * add some rules to it.
-	 * @return Validator
+	 * @return \Awyiss\Validation\Validator
 	 */
-	public function validationDefault(Validator $ao_validator): Validator {
+	public function validationDefault(BaseValidator $ao_validator): BaseValidator {
 		parent::validationDefault($ao_validator);
 
 
@@ -248,7 +249,7 @@ class ContentsTable extends Table {
 	 * @return RulesChecker
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
+	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): BaseRulesChecker {
 		$ao_rules->add(function (Content $ao_entity/*, array $aa_options*/): bool {
 			/**
 			 * Retreive the page and the assigned page template.
@@ -502,9 +503,9 @@ class ContentsTable extends Table {
 				'propertyName' => 'page',
 			]);
 
-			$this->getBehavior('Categories')
-				->setConfig('associationName', $ls_alias)
-				->resetCategories();
+			/** @var \Awyiss\Model\Behavior\CategoriesBehavior $lo_behavior */
+			$lo_behavior = $this->getBehavior('Categories');
+			$lo_behavior->setConfig('associationName', $ls_alias)->resetCategories();
 		}
 
 		$this->setPageRoleName($ls_alias);
@@ -600,46 +601,69 @@ class ContentsTable extends Table {
 			$la_contentAttributes
 		);
 
-		//Traverse all elements that are available inside the content template
-		foreach ($ao_contentTemplate->contentTemplateElements as $lo_contentTemplateElement) {
-			if (!str_starts_with($lo_contentTemplateElement->identifier, 'attributes.')) {
-				if ($lo_contentTemplateElement->required === true) {
-					//If the element is marked as required, add a requirePresence check and do not allow an empty string as value
-					$ao_validator->requirePresence($lo_contentTemplateElement->identifier)->notEmptyString($lo_contentTemplateElement->identifier);
-					//TODO check if notEmptyString is enouugh. Some fields might need notEmpty*
-				}
+		$this->validateAssignedElements($ao_contentTemplate, $ao_entity, $ao_validator, $la_contentAttributes, $lo_attributesValidator ?? null);
 
-				continue;
-			}
+		$this->validateUnassignedElements($ao_contentTemplate, $ao_entity, $ao_validator);
 
-			if (empty($ao_entity->attributes)) {
-				continue;
-			}
+		if (isset($lo_attributesValidator)) {
+			$this->validateUnassignedAttributes($ao_contentTemplate, $ao_entity, $la_contentAttributes, $lo_attributesValidator);
 
-			$ls_identifier = substr($lo_contentTemplateElement->identifier, 11);
-
-			if ($ao_entity->attributes->getError($ls_identifier)) {
-				continue;
-			}
-
-			if ($lo_contentTemplateElement->required === true) {
-				/** @noinspection PhpUndefinedVariableInspection */
-				$lo_attributesValidator->requirePresence($ls_identifier);
-
-				switch ($la_contentAttributes[ $ls_identifier ]['inputType']) {
-					case 'checkbox':
-						$lo_attributesValidator->add($ls_identifier, [
-							'checkboxChecked' => [
-								'rule' => ['equalTo', true],
-							],
-						]);
-						break;
-					default:
-						$lo_attributesValidator->notEmptyString($ls_identifier);
-				}
+			if ($lo_attributesValidator->count()) {
+				$ao_validator->addNested('attributes', $lo_attributesValidator);
 			}
 		}
 
+
+		return $la_data;
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	protected function initializeSchema(TableSchemaInterface $ao_schema): void {
+		parent::initializeSchema($ao_schema);
+
+		$ao_schema->setColumnType('data', 'json');
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Entity\ContentTemplate $ao_contentTemplate
+	 * @param \Awyiss\Model\Entity\Content $ao_entity
+	 * @param array $aa_contentAttributes
+	 * @param \Awyiss\Validation\Validator $ao_attributesValidator
+	 * @return void
+	 */
+	protected function validateUnassignedAttributes(ContentTemplate $ao_contentTemplate, Content $ao_entity, array $aa_contentAttributes, ?Validator $ao_attributesValidator): void {
+		$la_attributes = array_keys($aa_contentAttributes);
+
+		foreach (
+			array_diff(
+				$la_attributes,
+				$this->ContentTemplates->getAssignedContentAttributes($ao_contentTemplate)
+			) as $ls_element
+		) {
+			if (!$ao_entity->attributes->isDirty($ls_element)) {
+				continue;
+			}
+
+			$ao_attributesValidator->add($ls_element, 'isEmpty', [
+				'rule' => function (mixed $ax_value): bool {
+					return empty($ax_value) && !in_array($ax_value, [false, '0', 0], true);
+				},
+			]);
+		}
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Entity\ContentTemplate $ao_contentTemplate
+	 * @param \Awyiss\Model\Entity\Content $ao_entity
+	 * @param \Awyiss\Validation\Validator $ao_validator
+	 * @return void
+	 */
+	protected function validateUnassignedElements(ContentTemplate $ao_contentTemplate, Content $ao_entity, Validator $ao_validator): void {
 		foreach (
 			array_diff(
 				$this->ContentTemplates->getAvailableContentElements(),
@@ -666,44 +690,61 @@ class ContentsTable extends Table {
 				},
 			]);
 		}
-
-		if (!empty($ao_entity->attributes)) {
-			$la_attributes = array_keys($la_contentAttributes);
-			foreach (
-				array_diff(
-					$la_attributes,
-					$this->ContentTemplates->getAssignedContentAttributes($ao_contentTemplate)
-				) as $ls_element
-			) {
-				if (!$ao_entity->attributes->isDirty($ls_element)) {
-					continue;
-				}
-
-				/** @noinspection PhpUndefinedVariableInspection */
-				$lo_attributesValidator->add($ls_element, 'isEmpty', [
-					'rule' => function (mixed $ax_value): bool {
-						return empty($ax_value) && !in_array($ax_value, [false, '0', 0], true);
-					},
-				]);
-			}
-		}
-
-		/** @noinspection PhpUndefinedVariableInspection */
-		if (isset($lo_attributesValidator) && $lo_attributesValidator->count()) {
-			$ao_validator->addNested('attributes', $lo_attributesValidator);
-		}
-
-
-		return $la_data;
 	}
 
 
 	/**
-	 * @inheritDoc
+	 * @param \Awyiss\Model\Entity\ContentTemplate $ao_contentTemplate
+	 * @param \Awyiss\Model\Entity\Content $ao_entity
+	 * @param \Awyiss\Validation\Validator $ao_validator
+	 * @param array $aa_contentAttributes
+	 * @param \Awyiss\Validation\Validator $ao_attributesValidator
+	 * @return void
 	 */
-	protected function initializeSchema(TableSchemaInterface $ao_schema): void {
-		parent::initializeSchema($ao_schema);
+	protected function validateAssignedElements(
+		ContentTemplate $ao_contentTemplate,
+		Content $ao_entity,
+		Validator $ao_validator,
+		array $aa_contentAttributes,
+		?Validator $ao_attributesValidator
+	): void {
+		//Traverse all elements that are available inside the content template
+		foreach ($ao_contentTemplate->contentTemplateElements as $lo_contentTemplateElement) {
+			if (!str_starts_with($lo_contentTemplateElement->identifier, 'attributes.')) {
+				if ($lo_contentTemplateElement->required === true) {
+					//If the element is marked as required, add a requirePresence check and do not allow an empty string as value
+					$ao_validator->requirePresence($lo_contentTemplateElement->identifier)->notEmptyString($lo_contentTemplateElement->identifier);
+					//TODO check if notEmptyString is enouugh. Some fields might need notEmpty*
+				}
 
-		$ao_schema->setColumnType('data', 'json');
+				continue;
+			}
+
+			if (!$ao_attributesValidator) {
+				continue;
+			}
+
+			$ls_identifier = substr($lo_contentTemplateElement->identifier, 11);
+
+			if ($ao_entity->attributes->getError($ls_identifier)) {
+				continue;
+			}
+
+			if ($lo_contentTemplateElement->required === true) {
+				$ao_attributesValidator->requirePresence($ls_identifier);
+
+				switch ($aa_contentAttributes[ $ls_identifier ]['inputType']) {
+					case 'checkbox':
+						$ao_attributesValidator->add($ls_identifier, [
+							'checkboxChecked' => [
+								'rule' => ['equalTo', true],
+							],
+						]);
+						break;
+					default:
+						$ao_attributesValidator->notEmptyString($ls_identifier);
+				}
+			}
+		}
 	}
 }

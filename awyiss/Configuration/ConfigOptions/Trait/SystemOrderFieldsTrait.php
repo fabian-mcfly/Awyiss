@@ -42,8 +42,7 @@ trait SystemOrderFieldsTrait {
 
 		/** @var \Awyiss\Model\Entity $ls_entityClass */
 		$ls_entityClass = $lo_table->getEntityClass();
-		$la_columns = $ls_entityClass::mapFields($la_columns);
 
-		return $la_columns;
+		return $ls_entityClass::mapFields($la_columns);
 	}
 }

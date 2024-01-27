@@ -86,6 +86,7 @@ class SystemOrderHelper extends Helper {
 
 
 		//No entity? That's a big problem.
+		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 		$lo_entity = $la_attributes['entity'] ?? $this->Form->context()->entity() ?? null;
 		if (!$lo_entity) {
 			throw new CakeException('Missing entity for SystemOrderHelper::control');

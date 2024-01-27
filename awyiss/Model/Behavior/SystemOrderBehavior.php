@@ -161,15 +161,7 @@ class SystemOrderBehavior extends Behavior {
 		else {
 			$li_hightesSystemOrder = $this->getHighestSystemOrder($ao_entity);
 			if ($ao_entity->isNew()) {
-				$li_systemOrder = $ao_entity->get('systemOrder');
-				//Make sure the systemOrder is set and not higher than the max. allowed value plus 1
-				if (is_null($li_systemOrder) || $li_systemOrder > $li_hightesSystemOrder) {
-					$ao_entity->set('systemOrder', $li_hightesSystemOrder + 1);
-				}
-				//The position is never allowed to be below 1, because cool orders start at 1, not 0.
-				elseif ($li_systemOrder < 1) {
-					$ao_entity->set('systemOrder', 1);
-				}
+				$this->setSystemOrderForNewEntity($ao_entity, $li_hightesSystemOrder);
 
 
 				//Return here since the rest of the method handles logic related to existing entities
@@ -187,14 +179,6 @@ class SystemOrderBehavior extends Behavior {
 		if (!$li_systemOrderOld && $ao_entity->extractOriginalChanged($this->getConfig('relatedColumns'))) {
 			$li_systemOrderOld = $ao_entity->get('systemOrder');
 		}
-
-
-		$la_relatedColumns = $this->getConfig('relatedColumns');
-		array_walk($la_relatedColumns, function (&$as_key): void {
-			$as_key = Inflector::variable($as_key);
-		});
-		$la_dirtyRelatedColumns = array_intersect($ao_entity->getDirty(), $la_relatedColumns);
-
 
 		//The related columns have changed
 		if ($la_dirtyRelatedColumns) {
@@ -526,9 +510,9 @@ class SystemOrderBehavior extends Behavior {
 	 * @return int|bool
 	 * @noinspection PhpPossiblePolymorphicInvocationInspection
 	 */
-	public function getHighestSystemOrder(EntityInterface $ao_entity): bool|int {
+	public function getHighestSystemOrder(EntityInterface $ao_entity): int {
 		if (!$this->getConfig('enabled')) {
-			return false;
+			return 0;
 		}
 
 		$lo_table = $this->table();
@@ -763,6 +747,25 @@ class SystemOrderBehavior extends Behavior {
 			)
 		) {
 			$ao_entity->setDirty('systemOrder', false);
+		}
+	}
+
+
+	/**
+	 * @param \Cake\Datasource\EntityInterface $ao_entity
+	 * @param int $ai_hightesSystemOrder
+	 * @return void
+	 */
+	protected function setSystemOrderForNewEntity(EntityInterface $ao_entity, int $ai_hightesSystemOrder): void {
+		$li_systemOrder = $ao_entity->get('systemOrder');
+
+		//Make sure the systemOrder is set and not higher than the max. allowed value plus 1
+		if (is_null($li_systemOrder) || $li_systemOrder > $ai_hightesSystemOrder) {
+			$ao_entity->set('systemOrder', $ai_hightesSystemOrder + 1);
+		}
+		//The position is never allowed to be below 1, because cool orders start at 1, not 0.
+		elseif ($li_systemOrder < 1) {
+			$ao_entity->set('systemOrder', 1);
 		}
 	}
 }

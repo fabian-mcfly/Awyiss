@@ -414,6 +414,78 @@ class NestBehavior extends Behavior {
 		$la_data = $ls_entityClass::unmapFields($la_data, true);
 
 		$la_ids = $lo_children->extract('id')->toList();
-		$this->table()->updateAll($la_data, ['id IN' => $la_ids]);
+		$lo_table->updateAll($la_data, ['id IN' => $la_ids]);
+
+
+		$la_attributeFields = $this->extractAttributeFields($la_relatedColumns);
+		if (!$la_attributeFields) {
+			return;
+		}
+
+		$la_data = $ao_entity->get('attributes')?->extract($la_attributeFields);
+		if ($la_data) {
+			$la_data = $ao_entity->get('attributes')::unmapFields($la_data, true);
+
+			$lo_association = $lo_table->getAssociation($lo_table->getAttributesTable(true));
+			$li_affectedRows = $lo_association->updateAll($la_data, [$lo_association->getForeignKey() . ' IN' => $la_ids]);
+
+			if ($li_affectedRows !== count($la_ids)) {
+				/*
+				 * Houston, we have a problem
+				 * Not all children have an attribute row.
+				 */
+				$la_attributeIds = $lo_association->find()
+					->select($lo_association->getForeignKey())
+					->where([$lo_association->getForeignKey() . ' IN' => $la_ids])
+					->disableHydration()
+					->all()
+					->extract($lo_association->getForeignKey())
+					->toList();
+
+				$la_ids = array_diff($la_ids, $la_attributeIds);
+
+				$la_entities = [];
+				foreach ($la_ids as $li_id) {
+					$ls_foreignKey = $lo_association->getForeignKey();
+
+					/** @var \Awyiss\Model\Table $lo_association */
+					$la_entities[] = $lo_association->newDefaultEntity($la_data + [
+						$ls_foreignKey => $li_id,
+					]);
+				}
+
+				$lo_association->saveMany($la_entities, [
+					'audit' => ['skip' => true],
+					'checkRules' => false,
+					'nest' => ['skip' => true],
+					'systemOrder' => ['skip' => true],
+				]);
+			}
+		}
+	}
+
+
+	/**
+	 * Get all attribute fields from an array.
+	 *
+	 * @param array $aa_relatedColumns
+	 * @param bool $ab_inlcudeBaseFields
+	 * @return array
+	 */
+	protected function extractAttributeFields(array $aa_relatedColumns, bool $ab_inlcudeBaseFields = false): array {
+		$la_columns = [];
+
+		foreach ($aa_relatedColumns as $ls_column) {
+			if (str_starts_with($ls_column, 'attributes.')) {
+				$la_columns[] = substr($ls_column, 11);
+			}
+
+			if ($ab_inlcudeBaseFields && !str_contains($ls_column, '.')) {
+				$la_columns[] = $ls_column;
+			}
+		}
+
+
+		return $la_columns;
 	}
 }

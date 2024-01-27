@@ -149,7 +149,7 @@ abstract class AbstractConfigOptions implements ConfigOptionsInterface {
 	/**
 	 * @inheritDoc
 	 */
-	public function typecastConfigValue(string $as_realm, array|string $ax_path, mixed $ax_value, ?string $as_languageShortcode = null,): mixed {
+	public function typecastConfigValue(string $as_realm, array|string $ax_path, mixed $ax_value, ?string $as_languageShortcode = null): mixed {
 		$lo_configOption = $this->getConfigOption($as_realm, $ax_path);
 
 		if (!($lo_configOption instanceof ConfigOption)) {

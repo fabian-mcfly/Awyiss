@@ -34,6 +34,7 @@ use Cake\Validation\Validator;
  * @method CollectionInterface|null getChildren(EntityInterface $ao_entity, array $aa_options = [])
  * @method \Awyiss\Model\Entity\Page getParent(EntityInterface $ao_entity, array $aa_options = [])
  * @method CollectionInterface|null getParents(EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
+ * @noinspection PhpUnnecessaryFullyQualifiedNameInspection
  */
 class PagesTable extends Table {
 	/**
@@ -320,7 +321,7 @@ class PagesTable extends Table {
 		);
 
 
-		$ao_rules->addDelete(function (EntityInterface $ao_page, array $aa_options = []): bool {
+		$ao_rules->addDelete(function (Page $ao_page/*, array $aa_options = []*/): bool {
 			$lo_children = $this->getNestedChildren($ao_page, [
 				'finder' => [
 					'all' => [

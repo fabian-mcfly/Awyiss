@@ -162,6 +162,7 @@ class BackendMenuEntry extends Entity {
 	/**
 	 * Get the parent page of the current entity
 	 *
+	 * @param array $aa_options
 	 * @return \Awyiss\Model\Entity\BackendMenuEntry|null
 	 */
 	public function getParent(array $aa_options = []): ?self {

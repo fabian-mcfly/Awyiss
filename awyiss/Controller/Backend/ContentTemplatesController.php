@@ -165,7 +165,7 @@ class ContentTemplatesController extends Controller {
 			$ls_throughTable = $this->ContentTemplates->ContentAreas->getThrough();
 			$lo_throughTable = $this->fetchTable($ls_throughTable);
 
-			foreach ($la_requestData['content_areas'] ?? [] as $la_contentAreaData) {
+			foreach ($la_requestData['content_areas'] as $la_contentAreaData) {
 				if (empty($la_contentAreaData['content_area_id'])) {
 					continue;
 				}
@@ -200,6 +200,7 @@ class ContentTemplatesController extends Controller {
 
 
 	/**
+	 * @param bool $ab_returnGrouped
 	 * @return array
 	 */
 	protected function getPageTemplates(bool $ab_returnGrouped = true): array {

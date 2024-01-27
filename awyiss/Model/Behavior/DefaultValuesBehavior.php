@@ -4,11 +4,14 @@
 namespace Awyiss\Model\Behavior;
 
 
+use Awyiss\Model\Table;
 use Awyiss\ORM\Behavior;
 use Cake\Datasource\EntityInterface;
+use Cake\Datasource\SchemaInterface;
 use Cake\I18n\Date;
 use Cake\I18n\DateTime;
 use Cake\I18n\Time;
+use Cake\ORM\Association;
 use RuntimeException;
 use UnhandledMatchError;
 
@@ -41,6 +44,7 @@ class DefaultValuesBehavior extends Behavior {
 	 * populated with the default values set in the database.
 	 *
 	 * @param array $aa_additionalData
+	 * @param array $aa_options
 	 * @return EntityInterface
 	 */
 	public function newDefaultEntity(array $aa_additionalData = [], array $aa_options = []): EntityInterface {
@@ -54,12 +58,86 @@ class DefaultValuesBehavior extends Behavior {
 		/** @var EntityInterface $lo_entity */
 		$lo_entity = new $ls_entityClass([], ['source' => $this->table()->getRegistryAlias()]);
 
+		$lo_schema = $this->table()->getSchema();
 		//Get the default values
-		$la_defaults = $this->table()->getSchema()->defaultValues();
-		//Get the column types
-		$la_typeMap = $this->table()->getSchema()->typeMap();
+		$la_defaults = $lo_schema->defaultValues();
 
-		foreach ($la_defaults as $ls_column => &$lx_default) {
+		//Typecast the defaults based on the schema
+		$this->typecastDefaults($la_defaults, $lo_schema);
+
+		/** @var \Awyiss\Model\Table $lo_table */
+		$lo_table = $this->table();
+		if ($lo_table->hasAttributes()) {
+			/** @var \Cake\ORM\Association&\Awyiss\Model\Table $lo_attributes */
+			$lo_attributes = $lo_table->getAssociation($lo_table->getAttributesTable(true));
+			$la_defaults[ $lo_attributes->getProperty() ] = $lo_attributes->newDefaultEntity();
+		}
+
+		if ($lo_table->hasBehavior('Categories') && ($aa_options['includeCategory'] ?? true) === true) {
+			$this->addCategoryDefault($la_defaults, $lo_table, $lo_attributes ?? null);
+		}
+
+
+		return $this->marshallDefaults($lo_entity, $la_defaults, $aa_additionalData, $aa_options);
+	}
+
+
+	/**
+	 * @param array $aa_defaults
+	 * @param \Awyiss\Model\Table $ao_table
+	 * @param \Cake\ORM\Association|null $ao_attributes
+	 * @return void
+	 */
+	protected function addCategoryDefault(array &$aa_defaults, Table $ao_table, Association|null $ao_attributes = null): void {
+		/** @var \Awyiss\Model\Behavior\CategoriesBehavior $lo_categories */
+		$lo_categories = $ao_table->getBehavior('Categories');
+
+		$ls_column = $lo_categories->getConfig('fieldname') ?: $lo_categories->getConfig('identifier');
+
+		if ($ao_attributes) {
+			$aa_defaults[ $ao_attributes->getProperty() ][ $ls_column ] = $lo_categories->getConfig('selectedCategory');
+		}
+		else {
+			$aa_defaults[ $ls_column ] = $lo_categories->getConfig('selectedCategory');
+		}
+	}
+
+
+	/**
+	 * @param \Cake\Datasource\EntityInterface $ao_entity
+	 * @param array $aa_data
+	 * @param array $aa_additionalData
+	 * @param array $aa_options
+	 * @return \Cake\Datasource\EntityInterface
+	 */
+	protected function marshallDefaults(EntityInterface $ao_entity, array $aa_data, array $aa_additionalData, array $aa_options): EntityInterface {
+		/** @var \Awyiss\Model\Entity $ao_entity */
+		$la_defaults = $aa_additionalData + $ao_entity->defaultValues() + $aa_data;
+
+		$la_options = $aa_options + [
+			'fields' => array_keys($la_defaults),
+			'validate' => false,
+		];
+
+		/** @var \Awyiss\Model\Table $lo_table */
+		$lo_table = $this->table();
+
+		$lo_marshaller = $lo_table->marshaller();
+
+
+		return $lo_marshaller->merge($ao_entity, $la_defaults, $la_options);
+	}
+
+
+	/**
+	 * @param array $aa_defaults
+	 * @param \Cake\Datasource\SchemaInterface $ao_schema
+	 * @return void
+	 */
+	protected function typecastDefaults(array $aa_defaults, SchemaInterface $ao_schema): void {
+		$la_typeMap = $ao_schema->typeMap();
+
+		foreach ($aa_defaults as $ls_column => &$lx_default) {
 			if (is_null($lx_default)) {
 				//No default value? That's already the entities default.
 				continue;
@@ -83,39 +161,5 @@ class DefaultValuesBehavior extends Behavior {
 			}
 		}
 		unset($lx_default);
-
-		/** @var \Awyiss\Model\Table $lo_table */
-		$lo_table = $this->table();
-		if ($lo_table->hasAttributes()) {
-			/** @var \Cake\ORM\Association&\Awyiss\Model\Table $lo_attributes */
-			$lo_attributes = $lo_table->getAssociation($lo_table->getAttributesTable(true));
-			$la_defaults[ $lo_attributes->getProperty() ] = $lo_attributes->newDefaultEntity();
-		}
-
-		if ($lo_table->hasBehavior('Categories') && ($aa_options['includeCategory'] ?? true) === true) {
-			/** @var \Awyiss\Model\Behavior\CategoriesBehavior $lo_categories */
-			$lo_categories = $lo_table->getBehavior('Categories');
-			$ls_column = $lo_categories->getConfig('fieldname') ?: $lo_categories->getConfig('identifier');
-
-			if ($lo_table->hasAttributes()) {
-				$la_defaults[ $lo_attributes->getProperty() ][ $ls_column ] = $lo_categories->getConfig('selectedCategory');
-			}
-			else {
-				$la_defaults[ $ls_column ] = $lo_categories->getConfig('selectedCategory');
-			}
-		}
-
-
-		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		$la_defaults = $aa_additionalData + $lo_entity->defaultValues() + $la_defaults;
-
-		$la_options = $aa_options + [
-			'fields' => array_keys($la_defaults),
-			'validate' => false,
-		];
-		$lo_marshaller = $lo_table->marshaller();
-
-
-		return $lo_marshaller->merge($lo_entity, $la_defaults, $la_options);
 	}
 }

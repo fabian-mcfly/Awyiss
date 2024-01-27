@@ -34,7 +34,6 @@ class AutoPrefixBehavior extends Behavior {
 	 *
 	 * @param array<string, mixed> $aa_config The configuration settings provided to this behavior.
 	 * @return void
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function initialize(array $aa_config): void {
 		$this->alias = $this->table()->getAlias();

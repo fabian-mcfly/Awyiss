@@ -309,7 +309,7 @@ class ConfigOption {
 		if ($this->getType() === ConfigOptionType::ENUM || $this->getType() === ConfigOptionType::LISTVALUE) {
 			$lx_values = $this->getValues(true, $as_languageShortcode);
 			if (!$lx_values) {
-				throw new RuntimeException(sprintf('Cannot validate option `%s` with type `%s` without a list of values', $this->identifier, ConfigOptionType::LISTVALUE->value));
+				throw new RuntimeException(sprintf('Cannot validate option `%s` with type `%s` without a list of values', $this->identifier, ConfigOptionType::LISTVALUE->name));
 			}
 		}
 
@@ -349,7 +349,7 @@ class ConfigOption {
 		if ($this->getType() === ConfigOptionType::ENUM || $this->getType() === ConfigOptionType::LISTVALUE) {
 			$lx_values = $this->getValues(true, $as_languageShortcode);
 			if (!$lx_values) {
-				throw new RuntimeException(sprintf('Cannot typecast option `%s` with type `%s` without a list of values', $this->identifier, ConfigOptionType::LISTVALUE->value));
+				throw new RuntimeException(sprintf('Cannot typecast option `%s` with type `%s` without a list of values', $this->identifier, ConfigOptionType::LISTVALUE->name));
 			}
 		}
 

@@ -305,6 +305,7 @@ class ConfigurationTable extends Table {
 	 * @param \ArrayObject $ao_options
 	 * @return void
 	 * @noinspection PhpUnusedParameterInspection
+	 * @throws \ReflectionException
 	 */
 	public function beforeSave(EventInterface $ao_event, Configuration|EntityInterface $ao_entity, ArrayObject $ao_options): void {
 		$ao_entity->value = ConfigOptionsProvider::typecastConfigValue(

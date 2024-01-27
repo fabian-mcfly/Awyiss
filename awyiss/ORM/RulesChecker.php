@@ -28,7 +28,7 @@ class RulesChecker extends BaseRulesChecker {
 	 * @inheritDoc
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function add(callable $ao_rule, array|string|null $ax_name = null, array $aa_options = []) {
+	public function add(callable $ao_rule, array|string|null $ax_name = null, array $aa_options = []): static {
 		$ls_name = is_string($ax_name) ? $ax_name : $this->extractName($ax_name);
 
 		if (isset($this->_rules[ $ls_name ])) {
@@ -46,7 +46,7 @@ class RulesChecker extends BaseRulesChecker {
 	 * @inheritDoc
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function addCreate(callable $ao_rule, array|string|null $ax_name = null, array $aa_options = []) {
+	public function addCreate(callable $ao_rule, array|string|null $ax_name = null, array $aa_options = []): static {
 		$ls_name = is_string($ax_name) ? $ax_name : $this->extractName($ax_name);
 
 		if (isset($this->_createRules[ $ls_name ]) || isset($this->_rules[ $ls_name ])) {
@@ -64,7 +64,7 @@ class RulesChecker extends BaseRulesChecker {
 	 * @inheritDoc
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function addUpdate(callable $ao_rule, array|string|null $ax_name = null, array $aa_options = []) {
+	public function addUpdate(callable $ao_rule, array|string|null $ax_name = null, array $aa_options = []): static {
 		$ls_name = is_string($ax_name) ? $ax_name : $this->extractName($ax_name);
 
 		if (isset($this->_updateRules[ $ls_name ]) || isset($this->_rules[ $ls_name ])) {
@@ -82,7 +82,7 @@ class RulesChecker extends BaseRulesChecker {
 	 * @inheritDoc
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function addDelete(callable $ao_rule, array|string|null $ax_name = null, array $aa_options = []) {
+	public function addDelete(callable $ao_rule, array|string|null $ax_name = null, array $aa_options = []): static {
 		$ls_name = is_string($ax_name) ? $ax_name : $this->extractName($ax_name);
 
 		if (isset($this->_deleteRules[ $ls_name ])) {
