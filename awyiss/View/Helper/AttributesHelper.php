@@ -11,6 +11,7 @@ use Awyiss\Model\Entity\Attribute;
 use Awyiss\Model\Entity\Language;
 use Cake\Collection\Collection;
 use Cake\Utility\Hash;
+use Cake\Utility\Inflector;
 use Cake\View\Helper;
 use RuntimeException;
 
@@ -62,12 +63,12 @@ class AttributesHelper extends Helper {
 	 *  This array allows you to set custom types, labels, or other options.
 	 * @param array<string, mixed> $aa_options A list of options. Valid keys are:
 	 *
-	 *  - `fieldset` Set to `false` to disable the fieldset. You can also pass an
+	 * - `fieldset` Set to `false` to disable the fieldset. You can also pass an
 	 *     array of params to be applied as HTML attributes to the fieldset tag.
 	 *     If you pass an empty array, the fieldset will be enabled.
-	 *  - `legend` Set to `false` to disable the legend for the generated input set.
+	 * - `legend` Set to `false` to disable the legend for the generated input set.
 	 *     Or supply a string to customize the legend text.
-	 *  - `onlyProvided` Set to true to only output fields that are present in the `$aa_fields`-paramter.
+	 * - `onlyProvided` Set to true to only output fields that are present in the `$aa_fields`-paramter.
 	 *     Otherwise, fields will get merged.
 	 * @return string Completed form controls.
 	 * @throws \ReflectionException
@@ -262,8 +263,24 @@ class AttributesHelper extends Helper {
 	 * @throws \Exception
 	 */
 	protected function prepareFields(array $aa_fields, array $aa_attributeFields, ?AttributeOptionsInterface $ao_attributeOptions): array {
+		static $ls_categoryFieldName;
+
+		if (!isset($ls_categoryFieldName)) {
+			$ls_categoryIdentifier = $this->getView()->get('as_categoriesIdentifier');
+
+			$ls_categoryFieldName = null;
+			if ($ls_categoryIdentifier) {
+				$la_categoryOptions = $this->getView()->get('aa_' . Inflector::variable(Inflector::pluralize($ls_categoryIdentifier)))['config'] ?? [];
+				$ls_categoryFieldName = Inflector::underscore($la_categoryOptions['fieldname']);
+			}
+		}
+
 		$la_fields = [];
 		foreach ($aa_fields as $ls_fieldName => $la_options) {
+			if (Inflector::underscore($ls_fieldName) === $ls_categoryFieldName) {
+				continue;
+			}
+
 			[$ls_fieldName, $la_options] = $this->prepareField($ls_fieldName, $la_options ?? [], $aa_attributeFields, $ao_attributeOptions);
 			$la_fields[ $ls_fieldName ] = $la_options;
 		}

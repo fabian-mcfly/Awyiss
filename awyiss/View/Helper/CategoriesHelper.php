@@ -165,6 +165,7 @@ class CategoriesHelper extends Helper {
 
 		$la_config = ['fieldname' => $ls_fieldName] + $la_config;
 		$la_attributes = $aa_attributes + [
+			'isCategory' => true,
 			'empty' => false,
 			'label' => $this->Form->labelTextFromFieldname($ls_fieldName),
 			'type' => 'select',

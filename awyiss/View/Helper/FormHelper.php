@@ -133,12 +133,27 @@ class FormHelper extends BaseFormHelper {
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function control(string $as_fieldName, array $aa_options = []): string {
-		$la_options = $aa_options;
-		if (in_array($as_fieldName, $this->translatableFields) && count($this->languages) > 1) {
-			/*if ($this->error($as_fieldName)) {
-				$la_options['error'] = false;
-			}*/
+		static $ls_categoryFieldName;
 
+		if (!isset($ls_categoryFieldName)) {
+			$ls_categoryIdentifier = $this->getView()->get('as_categoriesIdentifier');
+
+			$ls_categoryFieldName = null;
+			if ($ls_categoryIdentifier) {
+				$la_categoryOptions = $this->getView()->get('aa_' . Inflector::variable(Inflector::pluralize($ls_categoryIdentifier)))['config'] ?? [];
+				$ls_categoryFieldName = Inflector::underscore($la_categoryOptions['fieldname']);
+			}
+		}
+
+		if (Inflector::underscore($as_fieldName) === $ls_categoryFieldName && ($aa_options['isCategory'] ?? false) !== true) {
+			return '';
+		}
+
+		$la_options = $aa_options;
+
+		unset($la_options['isCategory']);
+
+		if (in_array($as_fieldName, $this->translatableFields) && count($this->languages) > 1) {
 			$ls_association = '';
 			$ls_fieldName = $as_fieldName;
 			if (str_contains($ls_fieldName, '.') && !str_starts_with($ls_fieldName, '_translations.')) {
