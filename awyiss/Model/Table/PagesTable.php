@@ -7,6 +7,7 @@ namespace Awyiss\Model\Table;
 use ArrayObject;
 use Awyiss\Awyiss;
 use Awyiss\Middleware\LocaleMiddleware;
+use Awyiss\Model\Entity\Page;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
 use Cake\Collection\CollectionInterface;
@@ -559,13 +560,20 @@ class PagesTable extends Table {
 
 	/**
 	 * @param \Cake\ORM\Query\SelectQuery $ao_query
-	 * @param string|null $languageShortcode
+	 * @param \Awyiss\Model\Entity\Page|string|null $languageShortcode
+	 * @param \Awyiss\Model\Entity\Page|null $entity
 	 * @return \Cake\ORM\Query\SelectQuery
 	 * @throws \Exception
 	 */
-	public function findForCurrentLanguage(SelectQuery $ao_query, ?string $languageShortcode = null): SelectQuery {
+	public function findForCurrentLanguage(SelectQuery $ao_query, Page|string|null $languageShortcode = null, Page|null $entity = null): SelectQuery {
+		$ls_languageShortcode = $languageShortcode;
+
+		if ($entity) {
+			$ls_languageShortcode = $entity->languageShortcode;
+		}
+
 		return $ao_query->where([
-			'language_shortcode' => $languageShortcode ?? LocaleMiddleware::getLanguage()->shortcode,
+			'language_shortcode' => $ls_languageShortcode ?? LocaleMiddleware::getLanguage()->shortcode,
 		]);
 	}
 

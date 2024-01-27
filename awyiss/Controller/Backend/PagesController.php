@@ -69,7 +69,7 @@ class PagesController extends Controller {
 		$this->Authorization->ensure('create');
 
 		$lo_page = $this->Pages->newDefaultEntity([
-			'languageShortcode' => $this->getOverviewWhere('language_shortcode'),
+			'languageShortcode' => LocaleMiddleware::getLanguage()->shortcode,
 			'pageRoleId' => $this->getPageRoleId(),
 		]);
 
@@ -77,22 +77,7 @@ class PagesController extends Controller {
 			$this->save($lo_page);
 		}
 
-		$ls_entityName = Inflector::variable(Inflector::singularize($this->getName()));
-		$ls_threadedName = Inflector::variable('threaded ' . $this->getName());
-		$ls_parentsName = Inflector::variable('parent ' . $this->getName());
-
-		$lo_threadedPages = $this->getThreadedPages($lo_page);
-
-		$lo_parentPages = $this->getParentPages($lo_page, $lo_threadedPages);
-		$this->ensurePossibleParentId($lo_page, $lo_parentPages);
-
-		$this->set([
-			'ao_' . $ls_entityName => $lo_page,
-			'ao_pageTemplates' => $this->getPageTemplates(),
-			'ao_' . $ls_threadedName => $lo_threadedPages,
-			'ao_' . $ls_parentsName => $lo_parentPages,
-			'as_languageRealm' => Awyiss::REALM_FRONTEND,
-		]);
+		$this->setViewVars($lo_page);
 	}
 
 
@@ -126,22 +111,7 @@ class PagesController extends Controller {
 			], true), 302);
 		}
 
-		$ls_entityName = Inflector::variable(Inflector::singularize($this->getName()));
-		$ls_threadedName = Inflector::variable('threaded ' . $this->getName());
-		$ls_parentsName = Inflector::variable('parent ' . $this->getName());
-
-		$lo_threadedPages = $this->getThreadedPages($lo_page);
-
-		$lo_parentPages = $this->getParentPages($lo_page, $lo_threadedPages);
-		$this->ensurePossibleParentId($lo_page, $lo_parentPages);
-
-		$this->set([
-			'ao_' . $ls_entityName => $lo_page,
-			'ao_pageTemplates' => $this->getPageTemplates(),
-			'ao_' . $ls_threadedName => $lo_threadedPages,
-			'ao_' . $ls_parentsName => $lo_parentPages,
-			'as_languageRealm' => Awyiss::REALM_FRONTEND,
-		]);
+		$this->setViewVars($lo_page);
 	}
 
 
@@ -214,7 +184,7 @@ class PagesController extends Controller {
 		if (!isset($this->threadedPages)) {
 			$lo_query = $this->Pages->find('forCurrentLanguage', $ao_page->languageShortcode)->where([
 				'page_role_id' => $this->getPageRoleId(),
-			]);
+			] + $this->Categories->getQueryConditions());
 
 			$this->threadedPages = $this->Pages->listNested($lo_query);
 		}
@@ -223,6 +193,11 @@ class PagesController extends Controller {
 	}
 
 
+	/**
+	 * @param \Awyiss\Model\Entity\Page $ao_page
+	 * @param \Cake\Collection\CollectionInterface $ao_threadedPages
+	 * @return \Cake\Collection\CollectionInterface
+	 */
 	public function getParentPages(Page $ao_page, CollectionInterface $ao_threadedPages): CollectionInterface {
 		//We only want to find threaded pages for an existing entity (id equals not null)
 		$li_originalId = $ao_page->get('id');
@@ -233,6 +208,7 @@ class PagesController extends Controller {
 		$li_foundAtLevel = null;
 		$lo_threadedPages = new Collection($ao_threadedPages->toList());
 
+		/** @noinspection PhpUnnecessaryLocalVariableInspection */
 		$lo_threadedPages = $lo_threadedPages->filter(function ($ao_page) use ($li_originalId, &$li_foundAtLevel) {
 			if ($ao_page->get('id') === $li_originalId) {
 				$li_foundAtLevel = $ao_page->level;
@@ -357,6 +333,12 @@ class PagesController extends Controller {
 
 		$this->Pages->patchEntity($ao_page, ['page_role_id' => $this->getPageRoleId()] + $this->request->getData(), ['associated' => $la_associated]);
 
+		$this->Categories->setConfig('finder', [
+			'forCurrentLanguage' => [
+				'entity' => $ao_page,
+			],
+		]);
+
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
 			if ($this->Pages->save($ao_page)) {
 				$this->Flash->success(__($as_method . '_succeeded'));
@@ -393,6 +375,11 @@ class PagesController extends Controller {
 	 * @return void
 	 */
 	protected function ensurePossibleParentId(Page $ao_page, CollectionInterface $ao_threadedPages): void {
+		if ($this->Categories->getConfig('enabled') && $this->Categories->getConfig('fieldname') === 'parentId') {
+			//No parent id check if categories behavior is enabled and the field is parent id
+			return;
+		}
+
 		$la_possibleParentIds = $ao_threadedPages->extract('id')->toList();
 
 		if (!empty($ao_page->parentId) && !in_array($ao_page->parentId, $la_possibleParentIds)) {
@@ -404,5 +391,31 @@ class PagesController extends Controller {
 				$ao_page->setError('parentId', $la_errors, true);
 			}
 		}
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Entity\Page $ao_page
+	 * @return void
+	 */
+	protected function setViewVars(Page $ao_page): void {
+		$this->Categories->ensurePossibleCategory($ao_page);
+
+		$ls_entityName = Inflector::variable(Inflector::singularize($this->getName()));
+		$ls_threadedName = Inflector::variable('threaded ' . $this->getName());
+		$ls_parentsName = Inflector::variable('parent ' . $this->getName());
+
+		$lo_threadedPages = $this->getThreadedPages($ao_page);
+
+		$lo_parentPages = $this->getParentPages($ao_page, $lo_threadedPages);
+		$this->ensurePossibleParentId($ao_page, $lo_parentPages);
+
+		$this->set([
+			'ao_' . $ls_entityName => $ao_page,
+			'ao_pageTemplates' => $this->getPageTemplates(),
+			'ao_' . $ls_threadedName => $lo_threadedPages,
+			'ao_' . $ls_parentsName => $lo_parentPages,
+			'as_languageRealm' => Awyiss::REALM_FRONTEND,
+		]);
 	}
 }
