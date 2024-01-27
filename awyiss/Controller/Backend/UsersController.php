@@ -284,14 +284,27 @@ class UsersController extends Controller {
 				$this->Flash->success(__($as_method . '_succeeded'));
 
 				if ($this->request->getData('submit') == 'submit_close') {
+					$la_usergroups = [];
+
 					if ($ao_user->usergroups) {
 						$la_usergroups = Hash::combine($ao_user->usergroups, '{n}.id', '{n}.label');
+
+						if ($this->Categories->getConfig('allowAggregation')) {
+							$la_usergroups += [$this->Categories->getConfig('aggregationKey') => 'dummy'];
+						}
 					}
+					else {
+						if ($this->Categories->getConfig('allowUnassigned')) {
+							$la_usergroups += [$this->Categories->getConfig('unassignedKey') => 'dummy',];
+						}
+					}
+
 					/*
-					 * Make sure the currently selected category is still part of the categories assigned to the user, otherwise the overview.
-					 * Otherwise a redirect would show a site without the modified user, which could be a bit confusing.
+					 * Make sure the currently selected category is still part of the categories assigned to the user.
+					 * Otherwise it would show a site without the modified user, which could be a bit confusing.
+					 *
 					 */
-					$this->Categories->verifySelection(null, $la_usergroups ?? []);
+					$this->Categories->verifySelection(null, $la_usergroups);
 
 					throw new RedirectException(Router::url(['action' => 'overview'], true), 302);
 				}
