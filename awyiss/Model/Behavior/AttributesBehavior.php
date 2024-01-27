@@ -253,10 +253,6 @@ class AttributesBehavior extends Behavior {
 			throw new RuntimeException('Eager loaded associations should skip the attributes behavior');
 		}
 
-		if ($ao_query->clause('select') === ['system_order']) {
-			return;
-		}
-
 		$ao_query->contain([
 			$this->getAttributesTable(true),
 		]);
