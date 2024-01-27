@@ -79,19 +79,6 @@ class PagesTable extends Table {
 	 */
 	public function initialize(array $aa_config): void {
 		$this->pageRoleId = constant('PAGEROLE_' . strtoupper($this->pageRole));
-		$ls_alias = Inflector::pluralize($this->pageRole);
-
-		if (!$this->getConfig('nest.alias')) {
-			$this->setConfig('nest.alias', Inflector::camelize($ls_alias));
-		}
-
-		if (!$this->getConfig('attributes.foreignKey')) {
-			$this->setConfig('attributes.foreignKey', 'page_id');
-		}
-
-		if (!$this->getConfig('attributes.sourceTable')) {
-			$this->setConfig('attributes.sourceTable', $ls_alias);
-		}
 
 		parent::initialize($aa_config);
 
