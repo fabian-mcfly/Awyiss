@@ -15,7 +15,7 @@ use Cake\Validation\Validator;
  *
  * @property MenuEntriesTable&\Awyiss\ORM\Association\HasMany $AllMenuEntries
  * @property MenuEntriesTable&\Awyiss\ORM\Association\HasMany $MenuEntries
- * @method \Awyiss\Model\Entity\Menu newDefaultEntity(array $aa_additionalData = [])
+ * @method \Awyiss\Model\Entity\Menu newDefaultEntity(array $aa_additionalData = [], array $aa_options = [])
  */
 class MenusTable extends Table {
 	/**

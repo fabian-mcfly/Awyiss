@@ -21,8 +21,7 @@ use ReflectionClass;
 
 /**
  * Attributes Model
- *
- * @method Attribute newDefaultEntity(array $aa_additionalData = [])
+ * @method Attribute newDefaultEntity(array $aa_additionalData = [], array $aa_options = [])
  */
 class AttributesTable extends Table {
 	/**

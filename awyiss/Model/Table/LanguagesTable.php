@@ -18,7 +18,7 @@ use ResourceBundle;
  * Languages Model
  *
  * @property ConfigurationTable&\Awyiss\ORM\Association\HasMany $Configuration
- * @method Language newDefaultEntity(array $aa_additionalData = [])
+ * @method Language newDefaultEntity(array $aa_additionalData = [], array $aa_options = [])
  */
 class LanguagesTable extends Table {
 	/**

@@ -15,8 +15,7 @@ use Cake\Validation\Validator;
 
 /**
  * PageRoles Model
- *
- * @method PageRole newDefaultEntity(array $aa_additionalData = [])
+ * @method PageRole newDefaultEntity(array $aa_additionalData = [], array $aa_options = [])
  *
  * TODO When renaming a page role identifier => update usergroup_permissions
  * TODO When renaming a page role identifier => update attributes
@@ -26,7 +25,6 @@ use Cake\Validation\Validator;
  * TODO When deleting a page role: delete pages
  * TODO Add all other page roles?! <-- what does this even mean?
  * TODO On delete, remove cascadeCallbacks for nested pages in PagesTable
- *
  * TODO Or: disallow deletion if a page with that role exits
  */
 class PageRolesTable extends Table {

@@ -22,7 +22,7 @@ use Cake\Validation\Validator;
  *
  * @property UsergroupPermissionsTable&\Awyiss\ORM\Association\HasMany $UsergroupPermissions
  * @property \Awyiss\ORM\Association\BelongsToMany $Users
- * @method \Awyiss\Model\Entity\Usergroup newDefaultEntity(array $aa_additionalData = [])
+ * @method \Awyiss\Model\Entity\Usergroup newDefaultEntity(array $aa_additionalData = [], array $aa_options = [])
  */
 class UsergroupsTable extends Table {
 	/**

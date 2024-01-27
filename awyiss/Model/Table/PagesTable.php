@@ -30,7 +30,7 @@ use Cake\Validation\Validator;
  * @property PagesTable&\Awyiss\ORM\Association\BelongsTo $ParentPages
  * @property PagesTable&\Awyiss\ORM\Association\HasMany $ChildPages
  * @property ContentsTable&\Awyiss\ORM\Association\HasMany $Contents
- * @method \Awyiss\Model\Entity\Page newDefaultEntity(array $aa_additionalData = [])
+ * @method \Awyiss\Model\Entity\Page newDefaultEntity(array $aa_additionalData = [], array $aa_options = [])
  * @method CollectionInterface|null getNestedChildren(EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
  * @method CollectionInterface|null getChildren(EntityInterface $ao_entity, array $aa_options = [])
  * @method \Awyiss\Model\Entity\Page getParent(EntityInterface $ao_entity, array $aa_options = [])

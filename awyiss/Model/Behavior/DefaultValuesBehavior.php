@@ -43,7 +43,7 @@ class DefaultValuesBehavior extends Behavior {
 	 * @param array $aa_additionalData
 	 * @return EntityInterface
 	 */
-	public function newDefaultEntity(array $aa_additionalData = []): EntityInterface {
+	public function newDefaultEntity(array $aa_additionalData = [], array $aa_options = []): EntityInterface {
 		if (!$this->getConfig('enabled')) {
 			//Calling this method when the behavior is disabled results in an exception
 			throw new RuntimeException(sprintf('The method `newDefaultEntity()` is not available since the `%s` Behavior is not enabled', static::class));
@@ -58,6 +58,7 @@ class DefaultValuesBehavior extends Behavior {
 		$la_defaults = $this->table()->getSchema()->defaultValues();
 		//Get the column types
 		$la_typeMap = $this->table()->getSchema()->typeMap();
+
 		foreach ($la_defaults as $ls_column => &$lx_default) {
 			if (is_null($lx_default)) {
 				//No default value? That's already the entities default.
@@ -91,10 +92,24 @@ class DefaultValuesBehavior extends Behavior {
 			$la_defaults[ $lo_attributes->getProperty() ] = $lo_attributes->newDefaultEntity();
 		}
 
+		if ($lo_table->hasBehavior('Categories') && ($aa_options['includeCategory'] ?? true) === true) {
+			/** @var \Awyiss\Model\Behavior\CategoriesBehavior $lo_categories */
+			$lo_categories = $lo_table->getBehavior('Categories');
+			$ls_column = $lo_categories->getConfig('fieldname') ?: $lo_categories->getConfig('identifier');
+
+			if ($lo_table->hasAttributes()) {
+				$la_defaults[ $lo_attributes->getProperty() ][ $ls_column ] = $lo_categories->getConfig('selectedCategory');
+			}
+			else {
+				$la_defaults[ $ls_column ] = $lo_categories->getConfig('selectedCategory');
+			}
+		}
+
+
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 		$la_defaults = $aa_additionalData + $lo_entity->defaultValues() + $la_defaults;
 
-		$la_options = [
+		$la_options = $aa_options + [
 			'fields' => array_keys($la_defaults),
 			'validate' => false,
 		];

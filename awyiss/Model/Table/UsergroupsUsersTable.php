@@ -15,7 +15,7 @@ use Cake\Validation\Validator;
  *
  * @property UsergroupsTable&\Awyiss\ORM\Association\BelongsTo $Usergroups
  * @property UsersTable&\Awyiss\ORM\Association\BelongsTo $Users
- * @method \Awyiss\Model\Entity\UsergroupsUser newDefaultEntity(array $aa_additionalData = [])
+ * @method \Awyiss\Model\Entity\UsergroupsUser newDefaultEntity(array $aa_additionalData = [], array $aa_options = [])
  */
 class UsergroupsUsersTable extends Table {
 	/**

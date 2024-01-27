@@ -22,8 +22,7 @@ use Cake\Validation\Validator;
 
 /**
  * Configuration Model
- *
- * @method Configuration newDefaultEntity(array $aa_additionalData = [])
+ * @method Configuration newDefaultEntity(array $aa_additionalData = [], array $aa_options = [])
  */
 class ConfigurationTable extends Table {
 	use IdentityAwareTrait;

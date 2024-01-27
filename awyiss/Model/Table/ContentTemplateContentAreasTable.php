@@ -14,8 +14,7 @@ use Cake\Validation\Validator;
 
 /**
  * ContentTemplateContentAreas Model
- *
- * @method ContentTemplateContentArea newDefaultEntity(array $aa_additionalData = [])
+ * @method ContentTemplateContentArea newDefaultEntity(array $aa_additionalData = [], array $aa_options = [])
  */
 class ContentTemplateContentAreasTable extends Table {
 	/**

@@ -10,8 +10,7 @@ use Cake\Validation\Validator;
 
 /**
  * UsersExternal Model
- *
- * @method \Awyiss\Model\Entity\UsersExternal newDefaultEntity(array $aa_additionalData = [])
+ * @method \Awyiss\Model\Entity\UsersExternal newDefaultEntity(array $aa_additionalData = [], array $aa_options = [])
  */
 class UsersExternalTable extends Table {
 	/**

@@ -33,7 +33,7 @@ use RuntimeException;
  * @property ContentsTable&\Awyiss\ORM\Association\HasMany $ChildContents
  * @property ContentsTable&\Awyiss\ORM\Association\HasMany $DuplicateContents
  * @property ContentsTable&\Awyiss\ORM\Association\BelongsTo $DuplicateOfContents
- * @method Content newDefaultEntity(array $aa_additionalData = [])
+ * @method Content newDefaultEntity(array $aa_additionalData = [], array $aa_options = [])
  * @method CollectionInterface|null getNestedChildren(\Cake\Datasource\EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
  * @method CollectionInterface|null getChildren(\Cake\Datasource\EntityInterface $ao_entity, array $aa_options = [])
  * @method Content getParent(\Cake\Datasource\EntityInterface $ao_entity, array $aa_options = [])

@@ -18,7 +18,7 @@ use Cake\Validation\Validator;
  * ContentTemplates Model
  *
  * @property ContentAreasTable&\Awyiss\ORM\Association\BelongsToMany $ContentAreas
- * @method ContentTemplate newDefaultEntity(array $aa_additionalData = [])
+ * @method ContentTemplate newDefaultEntity(array $aa_additionalData = [], array $aa_options = [])
  */
 class ContentTemplatesTable extends Table {
 	/**
