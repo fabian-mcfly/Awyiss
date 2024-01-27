@@ -501,7 +501,57 @@ class NestBehavior extends Behavior {
 		$lo_table = $this->table();
 
 		$la_ids = $lo_children->extract('id')->toList();
-		$this->table()->updateAll($la_data, ['id IN' => $la_ids]);
+		$lo_table->updateAll($la_data, ['id IN' => $la_ids]);
+
+
+		$la_attributeFields = $this->extractAttributeFields($la_relatedColumns);
+		if (!$la_attributeFields) {
+			return;
+		}
+
+		$la_data = $ao_entity->get('attributes')?->extract($la_attributeFields);
+		if ($la_data) {
+			$la_data = $ao_entity->get('attributes')::unmapFields($la_data, true);
+
+			$lo_association = $lo_table->getAssociation($lo_table->getAttributesTable(true));
+
+			$ls_foreignKey = $lo_association->getForeignKey();
+
+			$li_affectedRows = $lo_association->updateAll($la_data, [$ls_foreignKey . ' IN' => $la_ids]);
+
+			if ($li_affectedRows !== count($la_ids)) {
+				/*
+				 * Houston, we have a problem
+				 * Not all children have an attribute row.
+				 */
+				$la_existingIds = $lo_association->find()
+					->select($ls_foreignKey)
+					->where([$ls_foreignKey . ' IN' => $la_ids])
+					->disableHydration()
+					->all()
+					->extract($ls_foreignKey)
+					->toList();
+
+				$la_newIds = array_diff($la_ids, $la_existingIds);
+
+				$la_entities = [];
+				foreach ($la_newIds as $li_id) {
+					/** @var \Awyiss\Model\Table $lo_association */
+					$la_entities[] = $lo_association->newDefaultEntity(
+						$la_data + [
+							$ls_foreignKey => $li_id,
+						]
+					);
+				}
+
+				$lo_association->saveMany($la_entities, [
+					'audit' => ['skip' => true],
+					'checkRules' => false,
+					'nest' => ['skip' => true],
+					'systemOrder' => ['skip' => true],
+				]);
+			}
+		}
 	}
 
 
