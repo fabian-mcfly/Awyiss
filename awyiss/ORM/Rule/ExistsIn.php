@@ -74,7 +74,7 @@ class ExistsIn extends BaseExistsIn {
 			$lo_source = $lo_source->getSource();
 		}
 
-		if (!$ao_entity->extract($this->_fields, true)) {
+		if (!$ao_entity->extract($this->_fields)) {
 			return true;
 		}
 
