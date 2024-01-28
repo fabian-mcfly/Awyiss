@@ -61,8 +61,19 @@ class ExistsIn extends BaseExistsIn {
 			$lo_source = $lo_source->getSource();
 		}
 
-		if (!$ao_entity->extract($this->_fields)) {
-			return true;
+		if (!$ao_entity->extract($la_fields, true)) {
+			$lx_finder = $lo_target->getFinder();
+			if (is_array($lx_finder) && isset($lx_finder['withMatchingAttributes'])) {
+				$lo_entity = $lx_finder['withMatchingAttributes']['entity']?->attributes ?? null;
+				$la_keys = $lx_finder['withMatchingAttributes']['keys'] ?? [];
+
+				if (!$lo_entity || !$lo_entity->extract($lo_target->extractAttributeFields($la_keys, true), true)) {
+					return true;
+				}
+			}
+			else {
+				return true;
+			}
 		}
 
 		if ($this->_fieldsAreNull($ao_entity, $lo_source)) {
