@@ -33,8 +33,7 @@ class ConfigurationListener implements EventListenerInterface {
 	 */
 	public function implementedEvents(): array {
 		return [
-			'Model.Configuration.afterSave' => 'afterSave',
-			'Model.Configuration.afterSaveCommit' => 'createCustomConfiguration',
+			'Model.Configuration.afterSaveCommit' => 'afterSaveCommit',
 			'Model.Configuration.afterDelete' => 'createCustomConfiguration',
 		];
 	}
@@ -46,46 +45,9 @@ class ConfigurationListener implements EventListenerInterface {
 	 * @return void
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function afterSave(Event $ao_event, Configuration $ao_entity): void {
-		if (
-			$ao_entity->identifier === 'system_order.field' &&
-			$ao_entity->isDirty('identifier') &&
-			$ao_entity->value !== 'systemOrder'
-		) {
-			$li_direction = Configure::read(implode('.', [
-				'Awyiss',
-				Inflector::camelize($ao_entity->scope),
-				Awyiss::getRealm(),
-				'systemOrder',
-				'direction',
-			]));
-
-			/** @var \Awyiss\Model\Table $lo_table */
-			$lo_table = FactoryLocator::get('Table')->get(Inflector::camelize($ao_entity->scope));
-			if ($lo_table->hasBehavior('SystemOrder')) {
-				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-				$lo_table->getBehavior('SystemOrder')->rebuildSystemOrder($ao_entity->value, $li_direction);
-			}
-		}
-		elseif (
-			$ao_entity->identifier === 'system_order.direction' &&
-			$ao_entity->isDirty('identifier')
-		) {
-			$ls_field = Configure::read(implode('.', [
-				'Awyiss',
-				Inflector::camelize($ao_entity->scope),
-				Awyiss::getRealm(),
-				'systemOrder',
-				'field',
-			]));
-
-			/** @var \Awyiss\Model\Table $lo_table */
-			$lo_table = FactoryLocator::get('Table')->get(Inflector::camelize($ao_entity->scope));
-			if ($lo_table->hasBehavior('SystemOrder')) {
-				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-				$lo_table->getBehavior('SystemOrder')->rebuildSystemOrder($ls_field, (int)$ao_entity->value);
-			}
-		}
+	public function afterSaveCommit(Event $ao_event, Configuration $ao_entity): void {
+		$this->rebuildSystemOrder($ao_entity);
+		$this->createCustomConfiguration($ao_event, $ao_entity);
 	}
 
 
@@ -138,5 +100,52 @@ class ConfigurationListener implements EventListenerInterface {
 
 		Configure::delete('Awyiss');
 		Configure::write($la_rememberedConfig);
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Entity\Configuration $ao_entity
+	 * @return void
+	 */
+	protected function rebuildSystemOrder(Configuration $ao_entity): void {
+		if (
+			$ao_entity->identifier === 'system_order.field' &&
+			$ao_entity->isDirty('identifier') &&
+			$ao_entity->value !== 'systemOrder'
+		) {
+			$li_direction = Configure::read(implode('.', [
+				'Awyiss',
+				Inflector::camelize($ao_entity->scope),
+				Awyiss::getRealm(),
+				'systemOrder',
+				'direction',
+			]));
+
+			/** @var \Awyiss\Model\Table $lo_table */
+			$lo_table = FactoryLocator::get('Table')->get(Inflector::camelize($ao_entity->scope));
+			if ($lo_table->hasBehavior('SystemOrder')) {
+				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+				$lo_table->getBehavior('SystemOrder')->rebuildSystemOrder($ao_entity->value, $li_direction);
+			}
+		}
+		elseif (
+			$ao_entity->identifier === 'system_order.direction' &&
+			$ao_entity->isDirty('identifier')
+		) {
+			$ls_field = Configure::read(implode('.', [
+				'Awyiss',
+				Inflector::camelize($ao_entity->scope),
+				Awyiss::getRealm(),
+				'systemOrder',
+				'field',
+			]));
+
+			/** @var \Awyiss\Model\Table $lo_table */
+			$lo_table = FactoryLocator::get('Table')->get(Inflector::camelize($ao_entity->scope));
+			if ($lo_table->hasBehavior('SystemOrder')) {
+				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+				$lo_table->getBehavior('SystemOrder')->rebuildSystemOrder($ls_field, (int)$ao_entity->value);
+			}
+		}
 	}
 }

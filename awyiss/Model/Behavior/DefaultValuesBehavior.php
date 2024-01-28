@@ -88,7 +88,7 @@ class DefaultValuesBehavior extends Behavior {
 	 * @param \Cake\ORM\Association|null $ao_attributes
 	 * @return void
 	 */
-	protected function addCategoryDefault(array &$aa_defaults, Table $ao_table, Association|null $ao_attributes = null): void {
+	protected function addCategoryDefault(array &$aa_defaults, Table $ao_table, ?Association $ao_attributes = null): void {
 		/** @var \Awyiss\Model\Behavior\CategoriesBehavior $lo_categories */
 		$lo_categories = $ao_table->getBehavior('Categories');
 

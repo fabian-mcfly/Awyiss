@@ -37,6 +37,7 @@ use RuntimeException;
  * @method int getHighestSystemOrder(\Cake\Datasource\EntityInterface $ao_entity)
  * @method string|\Awyiss\Authorization\Policy\Backend\GenericPagesPolicy|null getPolicyClass()
  * @method array getSystemOrderRelatedColumns(?\Cake\Datasource\EntityInterface $ao_entity = null)
+ * @method array extractAttributeFields(array $aa_fields, bool $ab_inlcudeBaseFields = false)
  * @method array getAttributes()
  * @method string getAttributesTable(bool $ab_camelized = false)
  * @method bool hasAttributes()

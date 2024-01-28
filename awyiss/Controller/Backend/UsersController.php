@@ -295,14 +295,13 @@ class UsersController extends Controller {
 					}
 					else {
 						if ($this->Categories->getConfig('allowUnassigned')) {
-							$la_usergroups += [$this->Categories->getConfig('unassignedKey') => 'dummy',];
+							$la_usergroups += [$this->Categories->getConfig('unassignedKey') => 'dummy'];
 						}
 					}
 
 					/*
 					 * Make sure the currently selected category is still part of the categories assigned to the user.
-					 * Otherwise it would show a site without the modified user, which could be a bit confusing.
-					 *
+					 * Otherwise the next redirect to the overview would show a site without the modified user, which could be a bit confusing.
 					 */
 					$this->Categories->verifySelection(null, $la_usergroups);
 

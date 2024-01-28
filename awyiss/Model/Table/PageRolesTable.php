@@ -15,6 +15,7 @@ use Cake\Validation\Validator;
 
 /**
  * PageRoles Model
+ *
  * @method PageRole newDefaultEntity(array $aa_additionalData = [], array $aa_options = [])
  *
  * TODO When renaming a page role identifier => update usergroup_permissions

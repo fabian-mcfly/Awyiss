@@ -119,8 +119,8 @@ trait EntityAttributesTrait {
 		$lo_attributesEntity = $this->_fields['attributes'];
 
 		$ls_field = $as_field;
-		if (str_contains($ls_field, '.')) {
-			$ls_field = explode('.', $ls_field)[1];
+		if (str_starts_with($ls_field, 'attributes.')) {
+			$ls_field = substr($ls_field, 11);
 		}
 
 		/**

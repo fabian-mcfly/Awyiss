@@ -77,11 +77,8 @@ class Behavior extends BaseBehavior {
 			return [];
 		}
 
-		/** @var \Awyiss\Model\Table $lo_table */
-		$lo_table = $this->table();
 
-
-		return $lo_table->buildEventMap($this, $la_eventMap, $li_priority);
+		return $this->table()->buildEventMap($this, $la_eventMap, $li_priority);
 	}
 
 
@@ -121,5 +118,14 @@ class Behavior extends BaseBehavior {
 		}
 
 		throw new RuntimeException(sprintf('Cannot disable behavior `%s`', static::class));
+	}
+
+
+	/**
+	 * @inheritDoc
+	 * @return \Awyiss\Model\Table
+	 */
+	public function table(): Table {
+		return $this->_table;
 	}
 }

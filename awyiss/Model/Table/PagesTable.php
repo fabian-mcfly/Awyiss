@@ -574,7 +574,7 @@ class PagesTable extends Table {
 	 * @return \Cake\ORM\Query\SelectQuery
 	 * @throws \Exception
 	 */
-	public function findForCurrentLanguage(SelectQuery $ao_query, Page|string|null $languageShortcode = null, Page|null $entity = null): SelectQuery {
+	public function findForCurrentLanguage(SelectQuery $ao_query, Page|string|null $languageShortcode = null, ?Page $entity = null): SelectQuery {
 		$ls_languageShortcode = $languageShortcode;
 
 		if ($entity) {

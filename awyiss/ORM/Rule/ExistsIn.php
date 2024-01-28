@@ -37,20 +37,7 @@ class ExistsIn extends BaseExistsIn {
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function __invoke(EntityInterface $ao_entity, array $aa_options): bool {
-		if (is_string($this->_repository)) {
-			if (!$aa_options['repository']->hasAssociation($this->_repository)) {
-				throw new RuntimeException(
-					sprintf(
-						"ExistsIn rule for '%s' is invalid. '%s' is not associated with '%s'.",
-						implode(', ', $this->_fields),
-						$this->_repository,
-						get_class($aa_options['repository'])
-					)
-				);
-			}
-			$lo_repository = $aa_options['repository']->getAssociation($this->_repository);
-			$this->_repository = $lo_repository;
-		}
+		$this->setRepository($aa_options['repository']);
 
 		$la_fields = $this->_fields;
 		$lo_source = $lo_target = $this->_repository;
@@ -102,5 +89,27 @@ class ExistsIn extends BaseExistsIn {
 
 
 		return $lo_target->exists($la_conditions, $la_options);
+	}
+
+
+	/**
+	 * @param mixed $ax_repository
+	 * @return void
+	 */
+	protected function setRepository(mixed $ax_repository): void {
+		if (is_string($this->_repository)) {
+			if (!$ax_repository->hasAssociation($this->_repository)) {
+				throw new RuntimeException(
+					sprintf(
+						"ExistsIn rule for '%s' is invalid. '%s' is not associated with '%s'.",
+						implode(', ', $this->_fields),
+						$this->_repository,
+						get_class($ax_repository)
+					)
+				);
+			}
+
+			$this->_repository = $ax_repository->getAssociation($this->_repository);
+		}
 	}
 }

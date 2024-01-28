@@ -151,6 +151,12 @@ class CategoriesComponent extends Component {
 			return;
 		}
 
+		$la_startupMethods = $this->getConfig('startupMethods');
+
+		if ($la_startupMethods === null) {
+			return;
+		}
+
 		$ls_identifier = $this->getConfig('identifier');
 		$lo_request = $this->getController()->getRequest();
 		$lo_session = $lo_request->getSession();
@@ -168,11 +174,7 @@ class CategoriesComponent extends Component {
 		}
 
 		$ls_action = $this->getController()->getRequest()->getParam('action');
-		$la_startupMethods = $this->getConfig('startupMethods');
 
-		if ($la_startupMethods === null) {
-			return;
-		}
 
 		if (in_array($ls_action, $la_startupMethods)) {
 			$la_categories = $this->table->getCategories();
@@ -370,15 +372,11 @@ class CategoriesComponent extends Component {
 
 
 	/**
+	 * @param \Cake\Datasource\EntityInterface|null $ao_entity
 	 * @return mixed
-	 * @noinspection PhpUnused
 	 */
-	public function getSelectedCategory(): mixed {
-		if (!$this->getConfig('enabled')) {
-			return null;
-		}
-
-		return $this->getConfig('selectedCategory');
+	public function getSelectedCategory(?EntityInterface $ao_entity = null): mixed {
+		return $this->getBehavior()->getSelectedCategory($ao_entity);
 	}
 
 
@@ -429,6 +427,10 @@ class CategoriesComponent extends Component {
 	 * @return mixed
 	 */
 	public function verifySelection(mixed $ax_categoryId = null, ?array $aa_categories = null, ?bool $ab_redirect = null): mixed {
+		if (!$this->getConfig('enabled')) {
+			return null;
+		}
+
 		$la_categories = $aa_categories ? array_keys($aa_categories) : $this->getBehavior()->getValidSelectionValues();
 		$lx_verifiedSelection = $this->getBehavior()->verifySelection($ax_categoryId, $la_categories);
 
