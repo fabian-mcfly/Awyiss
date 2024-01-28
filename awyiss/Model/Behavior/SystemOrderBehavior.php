@@ -162,7 +162,7 @@ class SystemOrderBehavior extends Behavior {
 
 		$la_dirtyRelatedFields = array_merge(
 			$ao_entity->extractOriginalChanged($la_relatedColumns),
-			$ao_entity->get('attributes')?->extractOriginalChanged($this->extractAttributeFields($la_relatedColumns), true)
+			$ao_entity->get('attributes')?->extractOriginalChanged($this->table()->extractAttributeFields($la_relatedColumns), true)
 		);
 
 		if (!$ao_entity->isNew()) {
@@ -410,7 +410,7 @@ class SystemOrderBehavior extends Behavior {
 			$la_relatedColumns = $this->getConfig('relatedColumns');
 			$this->rememberedData[ $ao_entity->get('id') ] = array_merge(
 				$ao_entity->extractOriginalChanged($la_relatedColumns),
-				$ao_entity->get('attributes')?->extractOriginalChanged($this->extractAttributeFields($la_relatedColumns), true)
+				$ao_entity->get('attributes')?->extractOriginalChanged($this->table()->extractAttributeFields($la_relatedColumns), true)
 			);
 
 
@@ -467,7 +467,6 @@ class SystemOrderBehavior extends Behavior {
 			return false;
 		}
 
-		/** @var \Awyiss\Model\Table $lo_table */
 		$lo_table = $this->table();
 		/** @var \Awyiss\Model\Entity $ls_entityClass */
 		$ls_entityClass = $lo_table->getEntityClass();
@@ -569,7 +568,7 @@ class SystemOrderBehavior extends Behavior {
 		}
 
 
-		return array_intersect($la_dirty, $this->extractAttributeFields($la_relatedColumns, true));
+		return array_intersect($la_dirty, $this->table()->extractAttributeFields($la_relatedColumns, true));
 	}
 
 
@@ -594,7 +593,7 @@ class SystemOrderBehavior extends Behavior {
 
 		$la_relatedColumns = $this->getConfig('relatedColumns');
 		if ($la_relatedColumns) {
-			$la_relatedColumns = $this->extractAttributeFields($la_relatedColumns, true);
+			$la_relatedColumns = $lo_table->extractAttributeFields($la_relatedColumns, true);
 			$la_groupedItems = $lo_records->groupBy(function (EntityInterface $ao_entity) use ($la_relatedColumns) {
 				$la_values = array_map(function (string $as_field) use ($ao_entity) {
 					return $ao_entity->$as_field ?? '-';
@@ -622,7 +621,7 @@ class SystemOrderBehavior extends Behavior {
 				});
 			});
 
-			$la_items = $la_groupedItems->unfold()->toArray();
+			$la_items = $la_groupedItems->unfold()->toList();
 		}
 		else {
 			$lo_records->each(function (array $aa_items): void {
@@ -641,11 +640,10 @@ class SystemOrderBehavior extends Behavior {
 				});
 			});
 
-			$la_items = $lo_records->toArray();
+			$la_items = $lo_records->toList();
 
 			dd($la_items, __LINE__, __FILE__);
 		}
-
 
 		//Save all found records, but skip the rules check, the audit and the system order behavior on those to avoid recursion.
 		$lo_table->saveMany($la_items, [
@@ -654,30 +652,6 @@ class SystemOrderBehavior extends Behavior {
 			'nest' => ['skip' => true],
 			'systemOrder' => ['skip' => true],
 		]);
-	}
-
-
-	/**
-	 * Get all attribute fields from an array.
-	 *
-	 * @param array $aa_relatedColumns
-	 * @param bool $ab_inlcudeBaseFields
-	 * @return array
-	 */
-	protected function extractAttributeFields(array $aa_relatedColumns, bool $ab_inlcudeBaseFields = false): array {
-		$la_columns = [];
-
-		foreach ($aa_relatedColumns as $ls_column) {
-			if (str_starts_with($ls_column, 'attributes.')) {
-				$la_columns[] = substr($ls_column, 11);
-			}
-
-			if ($ab_inlcudeBaseFields && !str_contains($ls_column, '.')) {
-				$la_columns[] = $ls_column;
-			}
-		}
-
-		return $la_columns;
 	}
 
 
@@ -826,15 +800,34 @@ class SystemOrderBehavior extends Behavior {
 	 * @return void
 	 */
 	protected function setSystemOrderByField(EntityInterface $ao_entity, string $as_field): void {
-		$ls_fieldType = $this->table()->getSchema()->getColumnType($as_field);
-		$ao_query = $this->addQueryConditions($this->table()->find(), $ao_entity);
-		$ao_query->select(['id', $as_field]);
+		$lo_table = $this->table();
+		$ls_fieldType = $lo_table->getSchema()->getColumnType($as_field);
+		$lo_query = $this->addQueryConditions($lo_table->find(), $ao_entity);
 
-		if (!$ao_entity->isNew()) {
-			$ao_query->where(['id !=' => $ao_entity->get('id')]);
+		$ls_field = $as_field;
+		if (str_starts_with($ls_field, 'attributes.')) {
+			$ls_field = substr($ls_field, 11);
 		}
 
-		$la_records = $ao_query->all()->append([$ao_entity])->sortBy(
+		if ($lo_table->fieldIsAttribute($ls_field)) {
+			$ls_attributesTable = $lo_table->getAttributesTable(true);
+			/** @var class-string<\Awyiss\Model\Entity> $ls_entityClass */
+			$ls_entityClass = $lo_table->$ls_attributesTable->getEntityClass();
+
+			$ls_field = $ls_attributesTable . '.' . $ls_entityClass::unmapField($ls_field);
+		}
+		else {
+			/** @var \Awyiss\Model\Entity $ao_entity */
+			$ls_field = $ao_entity::unmapField($ls_field);
+		}
+
+		$lo_query->select(['id', $ls_field]);
+
+		if (!$ao_entity->isNew()) {
+			$lo_query->where(['id !=' => $ao_entity->get('id')]);
+		}
+
+		$la_records = $lo_query->all()->append([$ao_entity])->sortBy(
 			$as_field,
 			$this->getConfig('direction'),
 			in_array($ls_fieldType, ['string', 'text', 'char']) ? SORT_NATURAL | SORT_FLAG_CASE : SORT_NUMERIC
