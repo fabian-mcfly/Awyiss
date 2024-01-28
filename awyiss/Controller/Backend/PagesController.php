@@ -182,9 +182,13 @@ class PagesController extends Controller {
 	 */
 	public function getThreadedPages(Page $ao_page): CollectionInterface {
 		if (!isset($this->threadedPages)) {
-			$lo_query = $this->Pages->find('forCurrentLanguage', $ao_page->languageShortcode)->where([
-				'page_role_id' => $this->getPageRoleId(),
-			] + $this->Categories->getQueryConditions());
+			$lo_query = $this->Pages->find('forCurrentLanguage', $ao_page->languageShortcode)
+			->where(
+				$this->getOverviewWhere() +
+				$this->Categories->getQueryConditions(
+					$this->Categories->getSelectedCategory($ao_page)
+				)
+			);
 
 			$this->threadedPages = $this->Pages->listNested($lo_query);
 		}
@@ -344,6 +348,13 @@ class PagesController extends Controller {
 				$this->Flash->success(__($as_method . '_succeeded'));
 
 				if ($this->request->getData('submit') == 'submit_close') {
+					/*
+					 * Make sure the currently selected category is still part of the categories assigned to the user.
+					 * Otherwise it would show a site without the modified user, which could be a bit confusing.
+					 *
+					 */
+					$this->verifySelection($ao_page);
+
 					throw new RedirectException(Router::url(['action' => 'overview', 'lang' => $ao_page->languageShortcode], true), 302);
 				}
 
@@ -417,5 +428,38 @@ class PagesController extends Controller {
 			'ao_' . $ls_parentsName => $lo_parentPages,
 			'as_languageRealm' => Awyiss::REALM_FRONTEND,
 		]);
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Entity\Page $ao_page
+	 * @return void
+	 */
+	protected function verifySelection(Page $ao_page): void {
+		if (!$this->Categories->getConfig('enabled')) {
+			return;
+		}
+
+		$la_categories = [];
+
+		$ls_field = $this->Categories->getConfig('fieldname');
+		if ($ao_page->get($ls_field)) {
+			$la_categories[ $ao_page->get($ls_field) ] = $ls_field;
+
+			if ($this->Categories->getConfig('allowAggregation')) {
+				$la_categories += [$this->Categories->getConfig('aggregationKey') => 'dummy'];
+			}
+		}
+		else {
+			if ($this->Categories->getConfig('allowUnassigned')) {
+				$la_categories += [$this->Categories->getConfig('unassignedKey') => 'dummy'];
+			}
+		}
+
+		/*
+		 * Make sure the currently selected category is still part of the page.
+		 * Otherwise the next redirect to the overview would show a site without the modified page, which could be a bit confusing.
+		 */
+		$this->Categories->verifySelection(null, $la_categories, true);
 	}
 }
