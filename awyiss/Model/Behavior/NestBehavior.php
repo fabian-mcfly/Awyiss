@@ -40,7 +40,7 @@ class NestBehavior extends Behavior {
 		'children' => [
 			'associationName' => null,
 			'bindingKey' => 'id',
-			'finder' => 'withMatchingAttributes',
+			'finder' => null,
 			'foreignKey' => 'parent_id',
 			'maxLevel' => null,
 		],
@@ -59,7 +59,7 @@ class NestBehavior extends Behavior {
 		'parent' => [
 			'associationName' => null,
 			'bindingKey' => 'id',
-			'finder' => 'withMatchingAttributes',
+			'finder' => null,
 			'foreignKey' => 'parent_id',
 			'maxLevel' => null,
 		],
@@ -345,7 +345,7 @@ class NestBehavior extends Behavior {
 			$la_attributeKeys = [];
 			foreach ($la_foreignKeys as $li_key => $ls_key) {
 				if (str_starts_with($ls_key, 'attributes.')) {
-					$la_attributeKeys[] = substr($ls_key, 11);
+					$la_attributeKeys[] = $ls_key;
 					unset($la_foreignKeys[ $li_key ]);
 				}
 			}
@@ -356,8 +356,8 @@ class NestBehavior extends Behavior {
 				$lx_finder = $lo_association->getFinder();
 				$lo_association->setFinder([
 					'withMatchingAttributes' => [
-						'fields' => $la_attributeKeys,
 						'entity' => $ao_entity,
+						'keys' => $la_attributeKeys,
 					],
 				]);
 			}
@@ -380,7 +380,6 @@ class NestBehavior extends Behavior {
 			}
 
 			if (!$lb_exists) {
-				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 				return __dfx($this->table()->getI18nDomain(), 'validation', 'menu_entries', 'error_valid_' . Inflector::underscore($this->getConfig('parent.foreignKey')));
 			}
 

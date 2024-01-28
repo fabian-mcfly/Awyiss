@@ -151,26 +151,33 @@ class AttributesBehavior extends Behavior {
 	 * Adds where clauses for the provided list of attribute fields
 	 *
 	 * @param \Cake\ORM\Query\SelectQuery $ao_query
-	 * @param \Awyiss\Model\Entity $ao_entity
-	 * @param array $aa_fields
+	 * @param \Awyiss\Model\Entity $entity
+	 * @param array $keys
 	 * @return \Cake\ORM\Query\SelectQuery
 	 */
-	public function findWithMatchingAttributes(SelectQuery $ao_query, Entity $ao_entity, array $aa_fields): SelectQuery {
+	public function findWithMatchingAttributes(SelectQuery $ao_query, Entity $entity, array $keys): SelectQuery {
 		/** @var \Awyiss\Model\Table $lo_table */
 		$lo_table = $this->table();
 		$ls_attributesTable = $lo_table->getAttributesTable(true);
 		$la_conditions = [];
-		foreach ($aa_fields as $ls_field) {
-			if (str_starts_with($ls_field, 'attributes.')) {
-				$ls_field = substr($ls_field, 11);
-				$lx_value = $ao_entity->get('attributes')?->get($ls_field);
 
-				if ($lx_value === null) {
-					$ls_field .= ' IS';
-				}
+		$lo_attributes = $entity->get('attributes');
+		if (!$lo_attributes) {
+			return $ao_query;
+		}
 
-				$la_conditions[ $ls_attributesTable . '.' . $ls_field ] = $lx_value;
+		foreach ($this->extractAttributeFields($keys, true) as $ls_field) {
+			if (!$lo_attributes->has($ls_field)) {
+				continue;
 			}
+
+			$lx_value = $lo_attributes->get($ls_field);
+
+			if ($lx_value === null) {
+				$ls_field .= ' IS';
+			}
+
+			$la_conditions[ $ls_attributesTable . '.' . $ls_field ] = $lx_value;
 		}
 
 		if ($la_conditions) {
