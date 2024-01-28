@@ -56,6 +56,7 @@ class AttributesBehavior extends Behavior {
 			'afterSave',
 		],
 		'implementedMethods' => [
+			'extractAttributeFields' => 'extractAttributeFields',
 			'getAttributes' => 'getAttributes',
 			'getAttributesTable' => 'getAttributesTable',
 			'hasAttributes' => 'hasAttributes',
@@ -118,6 +119,31 @@ class AttributesBehavior extends Behavior {
 			'foreignKey' => $this->getConfig('foreignKey'),
 			'propertyName' => 'attributes',
 		]);
+	}
+
+
+	/**
+	 * Get all attribute fields from an array.
+	 *
+	 * @param array $aa_fields
+	 * @param bool $ab_inlcudeBaseFields
+	 * @return array
+	 */
+	public function extractAttributeFields(array $aa_fields, bool $ab_inlcudeBaseFields = false): array {
+		$la_columns = [];
+
+		foreach ($aa_fields as $ls_column) {
+			if (str_starts_with($ls_column, 'attributes.')) {
+				$la_columns[] = substr($ls_column, 11);
+			}
+
+			if ($ab_inlcudeBaseFields && !str_contains($ls_column, '.')) {
+				$la_columns[] = $ls_column;
+			}
+		}
+
+
+		return $la_columns;
 	}
 
 

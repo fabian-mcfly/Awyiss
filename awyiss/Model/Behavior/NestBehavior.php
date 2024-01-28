@@ -419,7 +419,7 @@ class NestBehavior extends Behavior {
 		$la_relatedColumns = $this->getConfig('relatedColumns');
 		$this->rememberedData[ $ao_entity->get('id') ] = array_merge(
 			$ao_entity->extractOriginalChanged($la_relatedColumns),
-			$ao_entity->get('attributes')?->extractOriginalChanged($this->extractAttributeFields($la_relatedColumns), true)
+			$ao_entity->get('attributes')?->extractOriginalChanged($this->table()->extractAttributeFields($la_relatedColumns), true)
 		);
 	}
 
@@ -504,7 +504,7 @@ class NestBehavior extends Behavior {
 		$lo_table->updateAll($la_data, ['id IN' => $la_ids]);
 
 
-		$la_attributeFields = $this->extractAttributeFields($la_relatedColumns);
+		$la_attributeFields = $lo_table->extractAttributeFields($la_relatedColumns);
 		if (!$la_attributeFields) {
 			return;
 		}
@@ -552,30 +552,5 @@ class NestBehavior extends Behavior {
 				]);
 			}
 		}
-	}
-
-
-	/**
-	 * Get all attribute fields from an array.
-	 *
-	 * @param array $aa_relatedColumns
-	 * @param bool $ab_inlcudeBaseFields
-	 * @return array
-	 */
-	protected function extractAttributeFields(array $aa_relatedColumns, bool $ab_inlcudeBaseFields = false): array {
-		$la_columns = [];
-
-		foreach ($aa_relatedColumns as $ls_column) {
-			if (str_starts_with($ls_column, 'attributes.')) {
-				$la_columns[] = substr($ls_column, 11);
-			}
-
-			if ($ab_inlcudeBaseFields && !str_contains($ls_column, '.')) {
-				$la_columns[] = $ls_column;
-			}
-		}
-
-
-		return $la_columns;
 	}
 }
