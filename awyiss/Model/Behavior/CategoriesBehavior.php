@@ -389,6 +389,26 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 
 
 	/**
+	 * @param \Cake\Datasource\EntityInterface|null $ao_entity
+	 * @return mixed
+	 */
+	public function getSelectedCategory(?EntityInterface $ao_entity = null): mixed {
+		if (!$this->getConfig('enabled')) {
+			return null;
+		}
+
+		if (!$ao_entity) {
+			return $this->getConfig('selectedCategory');
+		}
+
+		$ls_field = $this->getConfig('useDatasource') ? $this->getConfig('fieldname') : $this->getConfig('identifier');
+
+
+		return $ao_entity->get($ls_field);
+	}
+
+
+	/**
 	 * @param \Cake\ORM\Query\SelectQuery $ao_query
 	 * @param string|null $as_column
 	 * @param string|null $as_associationName
