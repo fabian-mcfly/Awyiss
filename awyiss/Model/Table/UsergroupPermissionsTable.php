@@ -116,7 +116,7 @@ class UsergroupPermissionsTable extends Table {
 	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
 		$ao_rules->add(
 			$ao_rules->existsIn(
-				['usergroupId'],
+				'usergroup_id',
 				'Usergroups'
 			),
 			'usergroupExists',

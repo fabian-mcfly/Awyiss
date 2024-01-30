@@ -242,7 +242,7 @@ class ConfigurationTable extends Table {
 
 			$lo_existsIn = $ao_rules->existsIn([
 				'realm',
-				'languageShortcode',
+				'language_shortcode',
 			], 'Languages', [
 				'errorField' => 'languageShortcode',
 				'message' => __dfx($this->getI18nDomain(), 'validation', 'configuration', 'error_language_exists'),

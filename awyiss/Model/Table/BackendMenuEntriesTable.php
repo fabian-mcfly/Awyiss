@@ -216,7 +216,7 @@ class BackendMenuEntriesTable extends Table {
 			}
 
 			$lo_existsIn = $ao_rules->existsIn(
-				['parentId'],
+				'parent_id',
 				'ParentBackendMenuEntries',
 				[
 					'errorField' => 'parentId',

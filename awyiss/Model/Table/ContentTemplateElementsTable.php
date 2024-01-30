@@ -117,7 +117,7 @@ class ContentTemplateElementsTable extends Table {
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
-		$ao_rules->add($ao_rules->existsIn(['contentTemplateId'], 'ContentTemplates'), 'contentTemplateExists', [
+		$ao_rules->add($ao_rules->existsIn('content_template_id', 'ContentTemplates'), 'contentTemplateExists', [
 			'errorField' => 'contentTemplateId',
 			'message' => __d($this->getI18nDomain(), 'error_content_template_exists'),
 		]);

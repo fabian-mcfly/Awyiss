@@ -173,7 +173,7 @@ class PageTemplatesTable extends Table {
 		]);
 
 
-		$ao_rules->add($ao_rules->existsIn(['contentAreaId'], 'ContentAreas'), 'validContentAreas', [
+		$ao_rules->add($ao_rules->existsIn('content_area_id', 'ContentAreas'), 'validContentAreas', [
 			'errorField' => 'contentAreas',
 			'message' => __d($this->getI18nDomain(), 'error_valid_content_areas'),
 		]);

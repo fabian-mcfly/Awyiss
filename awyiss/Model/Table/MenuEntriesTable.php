@@ -184,7 +184,7 @@ class MenuEntriesTable extends Table {
 	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
 		$ao_rules->add(
 			$ao_rules->existsIn(
-				'languageShortcode',
+				'language_shortcode',
 				'Languages',
 			),
 			'languageExists',
