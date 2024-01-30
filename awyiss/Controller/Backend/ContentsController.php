@@ -15,7 +15,6 @@ use Cake\Collection\CollectionInterface;
 use Cake\Core\Configure;
 use Cake\Datasource\Exception\InvalidPrimaryKeyException;
 use Cake\Datasource\Exception\RecordNotFoundException;
-use Cake\Http\Exception\ForbiddenException;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
 use Cake\ORM\Query\SelectQuery;
@@ -50,10 +49,6 @@ class ContentsController extends Controller {
 	 * @var CollectionInterface
 	 */
 	protected CollectionInterface $threadedContents;
-	/**
-	 * @var string
-	 */
-	protected string $pageRoleName;
 
 
 	/**
@@ -62,7 +57,7 @@ class ContentsController extends Controller {
 	 * @throws \Exception
 	 */
 	public function overview(): void {
-		$lo_page = $this->forPage((int)$this->request->getParam('pageId'));
+		$this->forPage((int)$this->request->getParam('pageId'));
 
 		$this->Authorization->ensure('read');
 
@@ -76,7 +71,7 @@ class ContentsController extends Controller {
 		$this->Categories->filterQuery($lo_contents);
 		$la_contents = $this->Contents->nestedByContentArea($lo_contents)->toArray();
 
-		$la_contentAreas = array_combine(array_column($lo_page->pageTemplate->contentAreas, 'id'), array_column($lo_page->pageTemplate->contentAreas, 'label'));
+		$la_contentAreas = array_combine(array_column($this->page->pageTemplate->contentAreas, 'id'), array_column($this->page->pageTemplate->contentAreas, 'label'));
 		$la_unknownContentAreas = array_diff_key($la_contents, $la_contentAreas);
 		foreach ($la_unknownContentAreas as $li_contentAreaId => $lo_contents) {
 			$la_contentAreas[ $li_contentAreaId ] = null;
@@ -86,7 +81,7 @@ class ContentsController extends Controller {
 			'aa_contents' => $la_contents,
 			'aa_contentAreas' => $la_contentAreas,
 			'aa_unknownContentAreas' => $la_unknownContentAreas,
-			'ao_page' => $lo_page,
+			'ao_page' => $this->page,
 			'as_forScope' => $this->Contents->getForScope(),
 		]);
 	}
@@ -100,7 +95,7 @@ class ContentsController extends Controller {
 	 */
 	public function add(): void {
 		$li_pageId = (int)$this->request->getParam('pageId');
-		$lo_page = $this->forPage($li_pageId);
+		$this->forPage($li_pageId);
 
 		$this->Authorization->ensure('create');
 
@@ -110,15 +105,12 @@ class ContentsController extends Controller {
 
 		if ($this->request->is('post')) {
 			$this->save($lo_content);
-
-			//Calling save() might change the page, so use this instead
-			$lo_page = $this->page;
 		}
 
 		$lo_contentTemplates = $this->getContentTemplates();
 		$this->ensurePossibleTemplate($lo_content, $lo_contentTemplates);
 
-		$la_contentAreas = $this->getContentAreas($lo_content, $lo_page);
+		$la_contentAreas = $this->getContentAreas($lo_content, $this->page);
 		$this->ensurePossibleContentArea($lo_content, $la_contentAreas);
 
 		$lo_threadedContents = $this->getThreadedContents($lo_content);
@@ -139,7 +131,7 @@ class ContentsController extends Controller {
 			'ao_content' => $lo_content,
 			'ao_contentTemplates' => $lo_contentTemplates,
 			'ao_threadedContents' => $lo_threadedContents,
-			'ao_page' => $lo_page,
+			'ao_page' => $this->page,
 			'aa_assignedAttributes' => $la_assignedAttributes,
 			'aa_contentAreas' => $la_contentAreas,
 			'aa_contentElementsByFieldset' => $la_contentElementsByFieldset,
@@ -167,7 +159,7 @@ class ContentsController extends Controller {
 			return $this->redirect(['action' => 'overview']);
 		}
 
-		$lo_page = $this->forPage($lo_content->pageId);
+		$this->forPage($lo_content->pageId);
 
 		$this->Authorization->ensure('update');
 
@@ -178,7 +170,7 @@ class ContentsController extends Controller {
 		$lo_contentTemplates = $this->getContentTemplates();
 		$this->ensurePossibleTemplate($lo_content, $lo_contentTemplates);
 
-		$la_contentAreas = $this->getContentAreas($lo_content, $lo_page);
+		$la_contentAreas = $this->getContentAreas($lo_content, $this->page);
 		$this->ensurePossibleContentArea($lo_content, $la_contentAreas);
 
 		$lo_threadedContents = $this->getThreadedContents($lo_content);
@@ -199,7 +191,7 @@ class ContentsController extends Controller {
 			'ao_content' => $lo_content,
 			'ao_contentTemplates' => $lo_contentTemplates,
 			'ao_threadedContents' => $lo_threadedContents,
-			'ao_page' => $lo_page,
+			'ao_page' => $this->page,
 			'aa_assignedAttributes' => $la_assignedAttributes,
 			'aa_contentAreas' => $la_contentAreas,
 			'aa_contentElementsByFieldset' => $la_contentElementsByFieldset,
@@ -291,6 +283,7 @@ class ContentsController extends Controller {
 			if ($ao_content->isDirty('pageId')) {
 				//Make sure the new page role of the new page id is accessible (could have changed)
 				$this->page = $this->forPage($ao_content->pageId);
+				$this->Authorization->ensure($as_method === 'add' ? 'create' : 'update');
 			}
 
 			$this->unsetUnassignedElements($ao_content);
@@ -323,6 +316,8 @@ class ContentsController extends Controller {
 			if ($ao_content->isDirty('pageId')) {
 				//Make sure the new page role of the new page id is accessible (could have changed)
 				$this->page = $this->forPage($ao_content->pageId);
+
+				$this->Authorization->ensure($as_method === 'add' ? 'create' : 'update');
 			}
 		}
 	}
@@ -426,7 +421,6 @@ class ContentsController extends Controller {
 	/**
 	 * Returns and caches a Page object.
 	 *
-	 * @throws ForbiddenException
 	 * @throws \Exception
 	 * @throws \RuntimeException
 	 * @see Page
@@ -458,9 +452,6 @@ class ContentsController extends Controller {
 			$this->Flash->error(__('record_not_found'));
 			throw new RedirectException(Router::url(['controller' => 'dashboard', 'action' => 'overview'], true), 404);
 		}
-		catch (ForbiddenException) {
-			throw new ForbiddenException();
-		}
 
 		$this->page = $lo_page;
 
@@ -477,9 +468,8 @@ class ContentsController extends Controller {
 			],
 			'selectedCategory' => $ai_pageId,
 		]);
-		$this->Contents->forPageRole($lo_page->pageRole->identifier);
 
-		$this->pageRoleName = $this->Contents->getPageRoleName();
+		$this->Contents->forPageRole($lo_page->pageRole->identifier);
 
 		if (!$this->request->is(['patch', 'post', 'put']) || $this->request->getParam('action') !== 'edit') {
 			if ($lo_page->language_shortcode != LocaleMiddleware::getLanguage()->shortcode) {
@@ -610,7 +600,6 @@ class ContentsController extends Controller {
 	 * @param Content $ao_content
 	 * @param Page|null $ao_page
 	 * @return array
-	 * @throws ForbiddenException
 	 * @throws \Exception
 	 * @throws \RuntimeException
 	 */

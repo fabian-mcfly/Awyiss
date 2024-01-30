@@ -16,7 +16,6 @@ use Cake\Database\Schema\TableSchemaInterface;
 use Cake\Datasource\Exception\InvalidPrimaryKeyException;
 use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Datasource\FactoryLocator;
-use Cake\Http\Exception\ForbiddenException;
 use Cake\Log\LogTrait;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
@@ -429,48 +428,62 @@ class ContentsTable extends Table {
 	 * @return Page
 	 */
 	public function getPage(int $ai_pageId): Page {
-		try {
-			$lo_tableLocator = FactoryLocator::get('Table');
-			/** @var Table $lo_pages */
-			$lo_pages = $lo_tableLocator->get('Pages');
+		$lo_tableLocator = FactoryLocator::get('Table');
 
-			/** @var Page $lo_page */
-			$lo_page = $lo_pages->get(
-				$ai_pageId,
-				contain: [
-					'PageRoles' => [
-						'fields' => [
-							'identifier',
-							'active',
+		/** @var Table $lo_pages */
+		$lo_pages = $lo_tableLocator->get('Pages');
+
+		/** @var Page $lo_page */
+		$lo_page = $lo_pages->get(
+			$ai_pageId,
+			attributes: ['skip' => true],
+			contain: [
+				'PageRoles' => [
+					'finder' => [
+						'all' => [
+							'attributes' => ['skip' => true],
+							'translate' => ['skip' => true],
 						],
 					],
-					'PageTemplates' => [
+					'fields' => [
+						'identifier',
+						'active',
+					],
+				],
+				'PageTemplates' => [
+					'finder' => [
+						'all' => [
+							'attributes' => ['skip' => true],
+						],
+					],
+					'fields' => [
+						'id',
+						'title',
+						'active',
+					],
+					'ContentAreas' => [
+						'finder' => [
+							'all' => [
+								'attributes' => ['skip' => true],
+							],
+						],
 						'fields' => [
 							'id',
 							'title',
 							'active',
 						],
-						'ContentAreas' => [
-							'fields' => [
-								'id',
-								'title',
-								'active',
-							],
-						],
 					],
 				],
-				fields: [
-					'id',
-					'language_shortcode',
-					'page_role_id',
-					'page_template_id',
-				],
-				skipPageRoleCheck: true,
-			);
-		}
-		catch (ForbiddenException) {
-			throw new ForbiddenException(sprintf('Access to page id `%s` is forbidden', $ai_pageId));
-		}
+			],
+			fields: [
+				'id',
+				'language_shortcode',
+				'page_role_id',
+				'page_template_id',
+			],
+			skipPageRoleCheck: true,
+			translate: ['skip' => true],
+		);
 
 
 		return $lo_page;
@@ -670,7 +683,7 @@ class ContentsTable extends Table {
 				array_column($ao_contentTemplate->contentTemplateElements, 'identifier')
 			) as $ls_element
 		) {
-			if ($ao_entity->getError($ls_element) || !$ao_entity->isDirty($ls_element)) {
+			if ($ao_entity->getError($ls_element)) {
 				continue;
 			}
 
@@ -714,7 +727,7 @@ class ContentsTable extends Table {
 				if ($lo_contentTemplateElement->required === true) {
 					//If the element is marked as required, add a requirePresence check and do not allow an empty string as value
 					$ao_validator->requirePresence($lo_contentTemplateElement->identifier)->notEmptyString($lo_contentTemplateElement->identifier);
-					//TODO check if notEmptyString is enouugh. Some fields might need notEmpty*
+					//TODO check if notEmptyString is enough. Some fields might need notEmpty*
 				}
 
 				continue;
