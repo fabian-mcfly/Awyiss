@@ -12,6 +12,7 @@ use Awyiss\ORM\Association\BelongsToMany;
 use Awyiss\ORM\Association\HasMany;
 use Awyiss\ORM\Association\HasOne;
 use Awyiss\ORM\Behavior;
+use Awyiss\ORM\Marshaller;
 use Awyiss\ORM\RulesChecker;
 use Awyiss\Validation\Validator;
 use Cake\Core\Configure;
@@ -573,6 +574,14 @@ class Table extends BaseTable {
 				$this->systemOrder['relatedColumns'][] = $ls_fieldName;
 			}
 		}
+	}
+
+
+	/**
+	 * @return \Awyiss\ORM\Marshaller
+	 */
+	public function marshaller(): Marshaller {
+		return new Marshaller($this);
 	}
 
 
