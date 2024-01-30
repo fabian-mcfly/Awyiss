@@ -9,12 +9,33 @@ use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
 use Cake\ORM\Behavior\Translate\EavStrategy as BaseEavStrategy;
 use Cake\ORM\Entity;
+use Cake\ORM\Query\SelectQuery;
+use Cake\Utility\Hash;
 
 
 /**
  * @inheritDoc
  */
 class EavStrategy extends BaseEavStrategy {
+	/**
+	 * @inheritDoc
+	 * @param \Cake\Event\EventInterface $ao_event
+	 * @param \Cake\ORM\Query\SelectQuery $ao_query
+	 * @param \ArrayObject $ao_options
+	 * @return void
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 */
+	public function beforeFind(EventInterface $ao_event, SelectQuery $ao_query, ArrayObject $ao_options): void {
+		$la_options = Hash::get($ao_options, 'translate', []);
+
+		if (($la_options['skip'] ?? false) === true) {
+			return;
+		}
+
+		parent::beforeFind($ao_event, $ao_query, $ao_options);
+	}
+
+
 	/**
 	 * {@inheritDoc}
 	 *
