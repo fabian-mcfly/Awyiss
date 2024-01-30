@@ -151,7 +151,7 @@ class Content extends Entity {
 	 * @return array|null
 	 * @noinspection PhpUnused
 	 */
-	protected function _setData(array $aa_data): ?array {
+	protected function _setData(?array $aa_data = null): ?array {
 		if (empty($aa_data)) {
 			return null;
 		}

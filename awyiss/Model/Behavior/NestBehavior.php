@@ -362,9 +362,7 @@ class NestBehavior extends Behavior {
 				]);
 			}
 
-			$lo_existsIn = $ao_rules->existsIn($la_foreignKeys, $lo_association, [
-				'errorField' => '__dummy',
-			]);
+			$lo_existsIn = $ao_rules->existsIn($la_foreignKeys, $lo_association);
 
 			if ($ao_entity->isNew()) {
 				$lb_exists = $lo_existsIn($ao_entity, $aa_options);
@@ -418,7 +416,7 @@ class NestBehavior extends Behavior {
 		$la_relatedColumns = $this->getConfig('relatedColumns');
 		$this->rememberedData[ $ao_entity->get('id') ] = array_merge(
 			$ao_entity->extractOriginalChanged($la_relatedColumns),
-			$ao_entity->get('attributes')?->extractOriginalChanged($this->table()->extractAttributeFields($la_relatedColumns), true)
+			$ao_entity->get('attributes')?->extractOriginalChanged($this->table()->extractAttributeFields($la_relatedColumns), true) ?? []
 		);
 	}
 

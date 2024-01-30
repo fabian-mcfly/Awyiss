@@ -162,7 +162,7 @@ class SystemOrderBehavior extends Behavior {
 
 		$la_dirtyRelatedFields = array_merge(
 			$ao_entity->extractOriginalChanged($la_relatedColumns),
-			$ao_entity->get('attributes')?->extractOriginalChanged($this->table()->extractAttributeFields($la_relatedColumns), true)
+			$ao_entity->get('attributes')?->extractOriginalChanged($this->table()->extractAttributeFields($la_relatedColumns), true) ?? []
 		);
 
 		if (!$ao_entity->isNew()) {
@@ -410,7 +410,7 @@ class SystemOrderBehavior extends Behavior {
 			$la_relatedColumns = $this->getConfig('relatedColumns');
 			$this->rememberedData[ $ao_entity->get('id') ] = array_merge(
 				$ao_entity->extractOriginalChanged($la_relatedColumns),
-				$ao_entity->get('attributes')?->extractOriginalChanged($this->table()->extractAttributeFields($la_relatedColumns), true)
+				$ao_entity->get('attributes')?->extractOriginalChanged($this->table()->extractAttributeFields($la_relatedColumns), true) ?? []
 			);
 
 
