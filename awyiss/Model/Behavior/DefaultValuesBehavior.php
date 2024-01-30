@@ -58,15 +58,18 @@ class DefaultValuesBehavior extends Behavior {
 		/** @var EntityInterface $lo_entity */
 		$lo_entity = new $ls_entityClass([], ['source' => $this->table()->getRegistryAlias()]);
 
-		$lo_schema = $this->table()->getSchema();
+		/** @var \Awyiss\Model\Table $lo_table */
+		$lo_table = $this->table();
+
+		$lo_schema = $lo_table->getSchema();
 		//Get the default values
 		$la_defaults = $lo_schema->defaultValues();
+		$la_defaults += array_combine($lo_schema->columns(), array_fill(0, count($lo_schema->columns()), null));
+		$la_defaults = array_diff_key($la_defaults, array_flip($lo_schema->getPrimaryKey()));
 
 		//Typecast the defaults based on the schema
 		$this->typecastDefaults($la_defaults, $lo_schema);
 
-		/** @var \Awyiss\Model\Table $lo_table */
-		$lo_table = $this->table();
 		if ($lo_table->hasAttributes()) {
 			/** @var \Cake\ORM\Association&\Awyiss\Model\Table $lo_attributes */
 			$lo_attributes = $lo_table->getAssociation($lo_table->getAttributesTable(true));
@@ -110,9 +113,9 @@ class DefaultValuesBehavior extends Behavior {
 	 * @param array $aa_options
 	 * @return \Cake\Datasource\EntityInterface
 	 */
-	protected function marshallDefaults(EntityInterface $ao_entity, array $aa_data, array $aa_additionalData, array $aa_options): EntityInterface {
+	protected function marshallDefaults(EntityInterface $ao_entity, array $aa_defaults, array $aa_additionalData, array $aa_options): EntityInterface {
 		/** @var \Awyiss\Model\Entity $ao_entity */
-		$la_defaults = $aa_additionalData + $ao_entity->defaultValues() + $aa_data;
+		$la_defaults = $aa_additionalData + $ao_entity->defaultValues() + $aa_defaults;
 
 		$la_options = $aa_options + [
 			'fields' => array_keys($la_defaults),
@@ -134,7 +137,7 @@ class DefaultValuesBehavior extends Behavior {
 	 * @param \Cake\Datasource\SchemaInterface $ao_schema
 	 * @return void
 	 */
-	protected function typecastDefaults(array $aa_defaults, SchemaInterface $ao_schema): void {
+	protected function typecastDefaults(array &$aa_defaults, SchemaInterface $ao_schema): void {
 		$la_typeMap = $ao_schema->typeMap();
 
 		foreach ($aa_defaults as $ls_column => &$lx_default) {
