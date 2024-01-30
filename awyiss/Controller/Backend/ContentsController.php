@@ -293,6 +293,8 @@ class ContentsController extends Controller {
 				$this->page = $this->forPage($ao_content->pageId);
 			}
 
+			$this->unsetUnassignedElements($ao_content);
+
 			if ($this->Contents->save($ao_content)) {
 				$this->Flash->success(__($as_method . '_succeeded'));
 
@@ -645,5 +647,41 @@ class ContentsController extends Controller {
 			'unavailable' => $la_unavailableContentAreas,
 			'all' => $la_contentAreas,
 		];
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Entity\Content $ao_content
+	 * @return void
+	 */
+	protected function unsetUnassignedElements(Content $ao_content): void {
+		$lo_contentTemplates = $this->getContentTemplates();
+		$lo_contentTemplate = $lo_contentTemplates->firstMatch(['id' => $ao_content->contentTemplateId]);
+
+		foreach (
+			array_diff(
+				$this->Contents->ContentTemplates->getAvailableContentElements(),
+				array_column($lo_contentTemplate->contentTemplateElements, 'identifier')
+			) as $ls_element
+		) {
+			if ($ls_element === 'columnwidth') {
+				$ao_content->set($ls_element, 1.0);
+				continue;
+			}
+
+			$ao_content->set($ls_element);
+		}
+
+		$la_contentAttributes = $this->Contents->ContentTemplates->getAvailableContentAttributes();
+		$la_contentAttributes = array_column($la_contentAttributes, 'identifier');
+
+		foreach (
+			array_diff(
+				$la_contentAttributes,
+				$this->Contents->ContentTemplates->getAssignedContentAttributes($lo_contentTemplate)
+			) as $ls_element
+		) {
+			$ao_content->set($ls_element);
+		}
 	}
 }
