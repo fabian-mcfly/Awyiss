@@ -98,6 +98,25 @@ trait EntityFieldMapTrait {
 
 
 	/**
+	 * @inheritDoc
+	 * @param array|string $as_field
+	 * @return bool
+	 */
+	public function has(array|string $as_field): bool {
+		$la_fields = static::mapFields((array)$as_field);
+
+		foreach ($la_fields as $ls_field) {
+			if (!array_key_exists($ls_field, $this->_fields) && !static::_accessor($ls_field, 'get')) {
+				return false;
+			}
+		}
+
+
+		return true;
+	}
+
+
+	/**
 	 * Returns whether a field has an original value
 	 *
 	 * @param string $as_field
