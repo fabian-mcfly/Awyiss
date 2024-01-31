@@ -4,14 +4,17 @@
 namespace Awyiss\Model\Behavior;
 
 
+use ArrayObject;
 use Awyiss\Model\Table;
 use Awyiss\ORM\Behavior;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\SchemaInterface;
+use Cake\Event\EventInterface;
 use Cake\I18n\Date;
 use Cake\I18n\DateTime;
 use Cake\I18n\Time;
 use Cake\ORM\Association;
+use Cake\Utility\Hash;
 use RuntimeException;
 use UnhandledMatchError;
 
@@ -21,6 +24,11 @@ use UnhandledMatchError;
  * - create an entity
  * - load the table schema
  * - set the entity properties to the database default values
+ *
+ * Integrated NullBehavior from "dereuromark"
+ *
+ * @see https://github.com/dereuromark/cakephp-shim
+ * @see https://github.com/dereuromark/cakephp-shim/blame/master/src/Model/Behavior/NullableBehavior.php
  */
 class DefaultValuesBehavior extends Behavior {
 	/**
@@ -32,7 +40,9 @@ class DefaultValuesBehavior extends Behavior {
 	 */
 	protected array $_defaultConfig = [
 		'enabled' => true,
-		'implementedEvents' => [],
+		'implementedEvents' => [
+			'beforeSave',
+		],
 		'implementedMethods' => [
 			'newDefaultEntity' => 'newDefaultEntity',
 		],
@@ -86,6 +96,18 @@ class DefaultValuesBehavior extends Behavior {
 
 
 	/**
+	 * @param \Cake\Event\EventInterface $ao_event
+	 * @param \Cake\Datasource\EntityInterface $ao_entity
+	 * @param \ArrayObject $ao_options
+	 * @return void
+	 * @noinspection PhpUnusedParameterInspection
+	 */
+	public function beforeSave(EventInterface $ao_event, EntityInterface $ao_entity, ArrayObject $ao_options): void {
+		$this->processEntity($ao_entity, $this->_table);
+	}
+
+
+	/**
 	 * @param array $aa_defaults
 	 * @param \Awyiss\Model\Table $ao_table
 	 * @param \Cake\ORM\Association|null $ao_attributes
@@ -129,6 +151,101 @@ class DefaultValuesBehavior extends Behavior {
 
 
 		return $lo_marshaller->merge($ao_entity, $la_defaults, $la_options);
+	}
+
+
+	/**
+	 * @param \ArrayObject|array $aa_data
+	 * @param \Cake\ORM\Table $ao_table
+	 * @return \ArrayObject|array
+	 * @copyright https://github.com/dereuromark/cakephp-shim/tree/master
+	 */
+	protected function processArray(ArrayObject|array $aa_data, Table $ao_table): ArrayObject|array {
+		$la_associations = [];
+
+		/** @var class-string<\Awyiss\Model\Entity> $ls_entityClass */
+		$ls_entityClass = $ao_table->getEntityClass();
+
+		/** @var \Cake\ORM\Association $lo_association */
+		foreach ($ao_table->associations() as $lo_association) {
+			$la_associations[ $lo_association->getProperty() ] = $lo_association->getName();
+		}
+
+		$la_data = $aa_data;
+		foreach ($la_data as $ls_key => $lx_value) {
+			if (array_key_exists($ls_key, $la_associations)) {
+				if ($lx_value !== null) {
+					$la_data[ $ls_key ] = $this->processArray($lx_value, $ao_table->getAssociation($la_associations[ $ls_key ])->getTarget());
+				}
+
+				continue;
+			}
+
+			$lb_nullable = Hash::get((array)$ao_table->getSchema()->getColumn($ls_entityClass::unmapField($ls_key)), 'null');
+
+			if ($lb_nullable !== true) {
+				continue;
+			}
+
+			if ($lx_value !== '') {
+				continue;
+			}
+
+			$lx_default = Hash::get((array)$ao_table->getSchema()->getColumn($ls_entityClass::unmapField($ls_key)), 'default');
+			$la_data[ $ls_key ] = $lx_default;
+		}
+
+
+		return $la_data;
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Entity $ao_entity
+	 * @param \Cake\ORM\Table $ao_table
+	 * @return \Cake\Datasource\EntityInterface
+	 * @copyright https://github.com/dereuromark/cakephp-shim/tree/master
+	 */
+	protected function processEntity(EntityInterface $ao_entity, Table $ao_table): EntityInterface {
+		$la_associations = [];
+		/** @var \Cake\ORM\Association $lo_association */
+		foreach ($ao_table->associations() as $lo_association) {
+			$la_associations[ $ao_entity::mapField($lo_association->getProperty()) ] = $lo_association->getName();
+		}
+
+		foreach ($ao_entity->getDirty() as $ls_field) {
+			$lx_value = $ao_entity->get($ls_field);
+
+			if (array_key_exists($ls_field, $la_associations)) {
+				if ($lx_value !== null) {
+					if ($lx_value instanceof EntityInterface) {
+						$lx_value = $this->processEntity($lx_value, $ao_table->getAssociation($la_associations[ $ls_field ])->getTarget());
+					}
+
+					if (is_array($lx_value) || $lx_value instanceof ArrayObject) {
+						$lx_value = $this->processArray($lx_value, $ao_table->getAssociation($la_associations[ $ls_field ])->getTarget());
+					}
+
+					$ao_entity->set($ls_field, $lx_value);
+				}
+
+				continue;
+			}
+
+			$lb_nullable = Hash::get((array)$ao_table->getSchema()->getColumn($ao_entity::unmapField($ls_field)), 'null');
+
+			if ($lb_nullable !== true) {
+				continue;
+			}
+			if ($lx_value !== '') {
+				continue;
+			}
+
+			$lx_default = Hash::get((array)$ao_table->getSchema()->getColumn($ao_entity::unmapField($ls_field)), 'default');
+			$ao_entity->set($ls_field, $lx_default);
+		}
+
+		return $ao_entity;
 	}
 
 
