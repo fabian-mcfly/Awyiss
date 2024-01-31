@@ -107,8 +107,8 @@ class NestBehavior extends Behavior {
 
 		$lo_table = $this->table();
 		$ls_alias = $this->getConfig('alias');
-		if (!$this->getConfig('children.associationName') || !$this->table()->hasAssociation($this->getConfig('children.associationName'))) {
-			$ls_associationName = $this->getConfig('children.associationName') ?: 'Child' . $ls_alias;
+		if (!$this->getConfig('children.associationName') || !$lo_table->hasAssociation($this->getConfig('children.associationName'))) {
+			$ls_associationName = $this->getConfig('children.associationName') ?: 'Child' . Inflector::camelize($ls_alias);
 			/** @var \Awyiss\Model\Entity $ls_entityClass */
 			$ls_entityClass = $lo_table->getEntityClass();
 
@@ -120,7 +120,7 @@ class NestBehavior extends Behavior {
 			$la_foreignKeys = array_filter($la_foreignKeys, fn ($as_field) => !str_starts_with($as_field, 'attributes.'));
 			$la_foreignKeys = $ls_entityClass::unmapFields($la_foreignKeys);
 
-			$this->table()->hasMany($ls_associationName, [
+			$lo_table->hasMany($ls_associationName, [
 				'bindingKey' => $la_bindingKeys,
 				'cascadeCallbacks' => true,
 				'className' => $ls_alias,
@@ -128,11 +128,14 @@ class NestBehavior extends Behavior {
 				'foreignKey' => $la_foreignKeys,
 			]);
 
+			$ls_property = $lo_table->$ls_associationName->getProperty();
+			$ls_entityClass::addFieldMapping($ls_property, Inflector::variable($ls_property));
+
 			$this->setConfig('children.associationName', $ls_associationName);
 		}
 
-		if (!$this->getConfig('parent.associationName') || !$this->table()->hasAssociation($this->getConfig('parent.associationName'))) {
-			$ls_associationName = $this->getConfig('parent.associationName') ?: 'Parent' . $ls_alias;
+		if (!$this->getConfig('parent.associationName') || !$lo_table->hasAssociation($this->getConfig('parent.associationName'))) {
+			$ls_associationName = $this->getConfig('parent.associationName') ?: 'Parent' . Inflector::camelize($ls_alias);
 			/** @var \Awyiss\Model\Entity $ls_entityClass */
 			$ls_entityClass ??= $lo_table->getEntityClass();
 
@@ -144,11 +147,14 @@ class NestBehavior extends Behavior {
 			$la_foreignKeys = array_filter($la_foreignKeys, fn ($as_field) => !str_starts_with($as_field, 'attributes.'));
 			$la_foreignKeys = $ls_entityClass::unmapFields($la_foreignKeys);
 
-			$this->table()->belongsTo($ls_associationName, [
+			$lo_table->belongsTo($ls_associationName, [
 				'bindingKey' => $la_bindingKeys,
 				'className' => $ls_alias,
 				'foreignKey' => $la_foreignKeys,
 			]);
+
+			$ls_property = $lo_table->$ls_associationName->getProperty();
+			$ls_entityClass::addFieldMapping($ls_property, Inflector::variable($ls_property));
 
 			$this->setConfig('parent.associationName', $ls_associationName);
 		}
