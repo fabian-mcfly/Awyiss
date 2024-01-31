@@ -321,6 +321,17 @@ class PagesTable extends Table {
 		);
 
 
+		//Ensure that a page has no linked duplicating pages when deleting it.
+		$ao_rules->addDelete(
+			$ao_rules->isNotLinkedTo(
+				'DuplicatingPages',
+				'_general',
+				__d($this->getI18nDomain(), 'error_no_duplicating_pages')
+			),
+			'noDuplicatingPages'
+		);
+
+
 		$ao_rules->addDelete(function (Page $ao_page/*, array $aa_options = []*/): bool {
 			$lo_children = $this->getNestedChildren($ao_page, [
 				'finder' => [
