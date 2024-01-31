@@ -13,15 +13,14 @@ use Cake\Datasource\FactoryLocator;
  * Content Entity
  *
  * @property int $id
- * @property int $pageId
- * @property int $parentId
+ * @property int|null $pageId
+ * @property int|null $contentAreaId
+ * @property int|null $contentTemplateId
+ * @property int|null $parentId
  * @property string|null $title
  * @property string|null $subtitle
  * @property string|null $text
  * @property string|null $link
- * @property int $contentAreaId
- * @property ContentArea $contentArea
- * @property int $contentTemplateId
  * @property float $columnwidth
  * @property string|null $cssClass
  * @property int|null $duplicateOf
@@ -35,12 +34,13 @@ use Cake\Datasource\FactoryLocator;
  * @property \Cake\I18n\DateTime|null $changedOn
  * @property int|null $deletedBy
  * @property \Cake\I18n\DateTime|null $deletedOn
- * @property ContentTemplate $contentTemplate
- * @property Content $parentContent
- * @property Page $page
- * @property Content[] $childContents
- * @property Content[] $duplicateContents
- * @property Content $duplicateOfContent
+ * @property \Awyiss\Model\Entity\Page $page
+ * @property \Awyiss\Model\Entity\ContentArea $contentArea
+ * @property \Awyiss\Model\Entity\ContentTemplate $contentTemplate
+ * @property \Awyiss\Model\Entity\Content[] $duplicatingContents
+ * @property \Awyiss\Model\Entity\Content $duplicateOfContent
+ * @property \Awyiss\Model\Entity\Content $parentContent
+ * @property \Awyiss\Model\Entity\Content[] $childContents
  */
 class Content extends Entity {
 	/**
@@ -81,9 +81,7 @@ class Content extends Entity {
 		'deleted_on' => 'deletedOn',
 		'content_area' => 'contentArea',
 		'content_template' => 'contentTemplate',
-		'child_contents' => 'childContents',
-		'parent_content' => 'parentContent',
-		'duplicate_contents' => 'duplicateContents',
+		'duplicating_contents' => 'duplicatingContents',
 		'duplicate_of_content' => 'duplicateOfContent',
 	];
 
@@ -147,11 +145,11 @@ class Content extends Entity {
 	/**
 	 * Make sure no empty array finds its way into the db
 	 *
-	 * @param array $aa_data
+	 * @param array|null $aa_data
 	 * @return array|null
 	 * @noinspection PhpUnused
 	 */
-	protected function _setData(?array $aa_data = null): ?array {
+	protected function _setData(?array $aa_data): ?array {
 		if (empty($aa_data)) {
 			return null;
 		}

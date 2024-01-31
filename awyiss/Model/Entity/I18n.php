@@ -10,6 +10,12 @@ use Awyiss\Model\Entity;
 /**
  * I18n Entity
  * Holds all translated contents for a specific entity field
+ *
+ * @property string|null $locale
+ * @property string|null $model
+ * @property int|null $foreignKey
+ * @property string|null $field
+ * @property string|null $content
  */
 class I18n extends Entity {
 	/**

@@ -31,7 +31,7 @@ use RuntimeException;
  * @property PagesTable&\Awyiss\ORM\Association\BelongsTo $Pages
  * @property ContentsTable&\Awyiss\ORM\Association\BelongsTo $ParentContents
  * @property ContentsTable&\Awyiss\ORM\Association\HasMany $ChildContents
- * @property ContentsTable&\Awyiss\ORM\Association\HasMany $DuplicateContents
+ * @property ContentsTable&\Awyiss\ORM\Association\HasMany $DuplicatingContents
  * @property ContentsTable&\Awyiss\ORM\Association\BelongsTo $DuplicateOfContents
  * @method Content newDefaultEntity(array $aa_additionalData = [], array $aa_options = [])
  * @method CollectionInterface|null getNestedChildren(\Cake\Datasource\EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
@@ -103,7 +103,7 @@ class ContentsTable extends Table {
 			'joinType' => 'INNER',
 		]);
 
-		$this->hasMany('DuplicateContents', [
+		$this->hasMany('DuplicatingContents', [
 			'bindingKey' => 'duplicate_of',
 			'className' => 'Contents',
 			'cascadeCallbacks' => true,
@@ -349,9 +349,9 @@ class ContentsTable extends Table {
 		//Ensure that a content has no linked duplicating contents when deleting it.
 		$ao_rules->addDelete(
 			$ao_rules->isNotLinkedTo(
-				'DuplicateContents',
+				'DuplicatingContents',
 				'_general',
-				'Must have zero duplicating contents before deletion.'
+				__d($this->getI18nDomain(), 'error_no_duplicating_contents')
 			),
 			'noDuplicatingContents'
 		);

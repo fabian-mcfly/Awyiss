@@ -11,12 +11,12 @@ use Awyiss\Model\Entity;
  * ContentTemplateContentArea Entity
  *
  * @property int $id
- * @property int $contentTemplateId
- * @property int $contentAreaId
- * @property int $pageTemplateId
- * @property ContentTemplate $contentTemplate
- * @property ContentArea $contentArea
- * @property PageTemplate $pageTemplate
+ * @property int|null $contentTemplateId
+ * @property int|null $contentAreaId
+ * @property int|null $pageTemplateId
+ * @property \Awyiss\Model\Entity\ContentTemplate $contentTemplate
+ * @property \Awyiss\Model\Entity\ContentArea $contentArea
+ * @property \Awyiss\Model\Entity\PageTemplate $pageTemplate
  */
 class ContentTemplateContentArea extends Entity {
 	/**

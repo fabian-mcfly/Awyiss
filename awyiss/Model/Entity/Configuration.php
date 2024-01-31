@@ -13,12 +13,12 @@ use Cake\Utility\Inflector;
  * Configuration Entity
  *
  * @property int $id
- * @property string $realm
- * @property string $scope
- * @property string $identifier
+ * @property string|null $realm
+ * @property string|null $scope
+ * @property string|null $identifier
  * @property string|null $value
  * @property string|null $languageShortcode
- * @property Language $language
+ * @property \Awyiss\Model\Entity\Language $language
  */
 class Configuration extends Entity {
 	/**
@@ -44,45 +44,46 @@ class Configuration extends Entity {
 
 
 	/**
-	 * Make sure the scope is always lowercase, underscored and free of special characters
+	 * Make sure the identifier is always underscored
 	 *
-	 * @noinspection PhpUnused
-	 * @see \Awyiss\Model\Entity\Configuration::$scope
+	 * @param string|null $as_identifier
+	 * @return string|null
+	 * @see \Awyiss\Model\Entity\Configuration::$identifier
 	 */
-	protected function _setScope(string $as_scope): string {
-		return Inflector::underscore(Inflector::pluralize($as_scope));
+	protected function _setIdentifier(?string $as_identifier): ?string {
+		if ($as_identifier === null) {
+			return null;
+		}
+
+
+		return Inflector::underscore($as_identifier);
 	}
 
 
 	/**
-	 * Make sure the scope is always camelBacked
+	 * Make sure the scope is always lowercase, underscored and free of special characters
 	 *
-	 * @noinspection PhpUnused
-	 * @see \Awyiss\Model\Entity\Configuration::$identifier
+	 * @param string|null $as_scope
+	 * @return string|null
+	 * @see \Awyiss\Model\Entity\Configuration::$scope
 	 */
-	protected function _setIdentifier(string $as_identifier): string {
-		return Inflector::underscore($as_identifier);
+	protected function _setScope(?string $as_scope): ?string {
+		if ($as_scope === null) {
+			return null;
+		}
+
+		return Inflector::underscore(Inflector::pluralize($as_scope));
 	}
 
 
 	/**
 	 * If the provided value is false, set the value to 0
 	 *
-	 * @noinspection PhpUnused
+	 * @param mixed $ax_value
+	 * @return mixed
 	 * @see \Awyiss\Model\Entity\Configuration::$value
 	 */
 	protected function _setValue(mixed $ax_value): mixed {
 		return $ax_value === false ? 0 : $ax_value;
-	}
-
-
-	/**
-	 * If the provided shortcode is an empty string, set it to null
-	 *
-	 * @noinspection PhpUnused
-	 * @see \Awyiss\Model\Entity\Configuration::$language_shortcode
-	 */
-	protected function _setLanguageShortcode(?string $as_languageShortcode): ?string {
-		return $as_languageShortcode ?: null;
 	}
 }

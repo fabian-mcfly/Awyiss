@@ -11,7 +11,7 @@ use Awyiss\Model\Entity;
  * Usergroup Entity
  *
  * @property int $id
- * @property string $title
+ * @property string|null $title
  * @property bool $active
  * @property bool $deleted
  * @property int|null $createdBy
@@ -20,8 +20,8 @@ use Awyiss\Model\Entity;
  * @property \Cake\I18n\DateTime|null $changedOn
  * @property int|null $deletedBy
  * @property \Cake\I18n\DateTime|null $deletedOn
- * @property UsergroupPermission[] $usergroupPermissions
- * @property User[] $users
+ * @property \Awyiss\Model\Entity\UsergroupPermission[] $usergroupPermissions
+ * @property \Awyiss\Model\Entity\User[] $users
  */
 class Usergroup extends Entity {
 	/**

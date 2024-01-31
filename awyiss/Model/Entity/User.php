@@ -18,7 +18,7 @@ use RuntimeException;
  * User Entity
  *
  * @property int $id
- * @property string $username
+ * @property string|null $username
  * @property string|null $password
  * @property int $failedAttempts
  * @property \Cake\I18n\DateTime|null $lastLogin
@@ -33,7 +33,7 @@ use RuntimeException;
  * @property \Cake\I18n\DateTime|null $changedOn
  * @property int|null $deletedBy
  * @property \Cake\I18n\DateTime|null $deletedOn
- * @property Usergroup[] $usergroups
+ * @property \Awyiss\Model\Entity\Usergroup[] $usergroups
  */
 class User extends Entity implements IdentityPermissionsInterface, IdentityInterface {
 	use EventDispatcherTrait;
@@ -57,6 +57,9 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 	protected array $_hidden = [
 		'password',
 	];
+	/**
+	 * @var \Awyiss\Authorization\Permission\PermissionCollection|null
+	 */
 	protected ?PermissionCollection $permissionCollection;
 	/**
 	 * @inheritDoc
@@ -186,7 +189,8 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 	/**
 	 * Reset the permission collection when usergroups change
 	 *
-	 * @noinspection PhpUnused
+	 * @param array|null $aa_usergroups
+	 * @return array|null
 	 * @see \Awyiss\Model\Entity\User::$usergroups
 	 */
 	protected function _setUsergroups(?array $aa_usergroups): ?array {
@@ -198,33 +202,22 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 
 
 	/**
-	 * If the provided email is an empty string, set the email property to null.
-	 *
-	 * @noinspection PhpUnused
-	 * @see \Awyiss\Model\Entity\User::$email
-	 */
-	protected function _setEmail(string $ax_email): ?string {
-		return $ax_email ?: null;
-	}
-
-
-	/**
 	 * If the provided password is not an empty string, hash it.
 	 * Otherwise, set it to null
 	 *
-	 * @noinspection PhpUnused
+	 * @param string|null $as_password
+	 * @return string|null
 	 * @see \Awyiss\Model\Entity\User::$password
 	 */
-	protected function _setPassword(string $as_password): ?string {
-		//Automatically hash passwords when they are changed.
-		if (!empty($as_password)) {
-			$lo_hasher = new DefaultPasswordHasher();
-
-
-			return $lo_hasher->hash($as_password);
+	protected function _setPassword(?string $as_password): ?string {
+		if (empty($as_password)) {
+			return null;
 		}
 
+		//Automatically hash passwords when they are changed.
+		$lo_hasher = new DefaultPasswordHasher();
 
-		return null;
+
+		return $lo_hasher->hash($as_password);
 	}
 }

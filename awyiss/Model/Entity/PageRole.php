@@ -13,8 +13,8 @@ use Cake\Utility\Text;
  * PageRole Entity
  *
  * @property int $id
- * @property string $title
- * @property string $identifier
+ * @property string|null $title
+ * @property string|null $identifier
  * @property bool $includeInLinklist
  * @property int $systemOrder
  * @property bool $active
@@ -55,10 +55,15 @@ class PageRole extends Entity {
 	/**
 	 * Make sure the identifier is always lowercase, underscored and free of special characters
 	 *
-	 * @noinspection PhpUnused
+	 * @param string|null $as_identifier
+	 * @return string|null
 	 * @see \Awyiss\Model\Entity\PageRole::$identifier
 	 */
-	protected function _setIdentifier(string $as_identifier): string {
+	protected function _setIdentifier(?string $as_identifier): ?string {
+		if ($as_identifier === null) {
+			return null;
+		}
+
 		$ls_identifier = preg_replace('/\d/', '', $as_identifier);
 
 		$ls_identifier = Text::slug($ls_identifier, ['replacement' => '_']);

@@ -13,11 +13,11 @@ use Cake\Datasource\FactoryLocator;
  * MenuEntry Entity
  *
  * @property int $id
- * @property int $menuId
- * @property string languageShortcode
- * @property int $parentId
- * @property string $title
- * @property string $link
+ * @property int|null $menuId
+ * @property string|null $languageShortcode
+ * @property int|null $parentId
+ * @property string|null $title
+ * @property string|null $link
  * @property bool $external
  * @property int $systemOrder
  * @property bool $active
@@ -28,6 +28,10 @@ use Cake\Datasource\FactoryLocator;
  * @property \Cake\I18n\DateTime|null $changedOn
  * @property int|null $deletedBy
  * @property \Cake\I18n\DateTime|null $deletedOn
+ * @property \Awyiss\Model\Entity\Menu $menu
+ * @property \Awyiss\Model\Entity\MenuEntry $parentMenuEntry
+ * @property \Awyiss\Model\Entity\MenuEntry[] $childMenuEntries
+ * @property \Awyiss\Model\Entity\Language $language
  */
 class MenuEntry extends Entity {
 	/**

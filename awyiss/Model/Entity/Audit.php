@@ -11,10 +11,10 @@ use Awyiss\Model\Entity;
  * Audit Entity
  *
  * @property int $id
- * @property string $scope
- * @property int $parentId
- * @property string $transactionId
- * @property string $type
+ * @property string|null $scope
+ * @property int|null $parentId
+ * @property string|null $transactionId
+ * @property string|null $type
  * @property array|null $dataOld
  * @property array|null $dataNew
  * @property array|null $diff

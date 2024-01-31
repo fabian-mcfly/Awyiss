@@ -11,7 +11,7 @@ use Awyiss\Model\Entity;
  * ContentArea Entity
  *
  * @property int $id
- * @property string $identifier
+ * @property string|null $identifier
  * @property string|null $title
  * @property bool $active
  * @property bool $deleted
@@ -21,9 +21,9 @@ use Awyiss\Model\Entity;
  * @property \Cake\I18n\DateTime|null $changedOn
  * @property int|null $deletedBy
  * @property \Cake\I18n\DateTime|null $deletedOn
- * @property PageTemplate[] $pageTemplates
- * @property ContentTemplateContentArea|PageTemplateContentArea $_joinData
- * @property ContentArea[] $contentAreas
+ * @property \Awyiss\Model\Entity\PageTemplate[] $pageTemplates
+ * @property \Awyiss\Model\Entity\ContentTemplateContentArea|\Awyiss\Model\Entity\PageTemplateContentArea $_joinData
+ * @property \Awyiss\Model\Entity\ContentArea[] $contentAreas
  */
 class ContentArea extends Entity {
 	/**

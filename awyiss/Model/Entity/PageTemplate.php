@@ -12,9 +12,9 @@ use Cake\Utility\Text;
  * PageTemplate Entity
  *
  * @property int $id
- * @property int $pageRoleId
- * @property string $title
- * @property string $fileName
+ * @property int|null $pageRoleId
+ * @property string|null $title
+ * @property string|null $fileName
  * @property int $systemOrder
  * @property bool $active
  * @property bool $deleted
@@ -24,9 +24,9 @@ use Cake\Utility\Text;
  * @property \Cake\I18n\DateTime|null $changedOn
  * @property int|null $deletedBy
  * @property \Cake\I18n\DateTime|null $deletedOn
- * @property PageRole $pageRole
- * @property ContentArea[] $contentAreas
- * @property PageTemplateContentArea[] $_joinData
+ * @property \Awyiss\Model\Entity\PageRole $pageRole
+ * @property \Awyiss\Model\Entity\ContentArea[] $contentAreas
+ * @property \Awyiss\Model\Entity\PageTemplateContentArea[] $_joinData
  */
 class PageTemplate extends Entity {
 	/**
@@ -61,10 +61,15 @@ class PageTemplate extends Entity {
 	/**
 	 * Make sure the filename is always lowercase, underscored and free of special characters
 	 *
-	 * @noinspection PhpUnused
+	 * @param string|null $as_fileName
+	 * @return string|null
 	 * @see \Awyiss\Model\Entity\PageTemplate::$filename
 	 */
-	protected function _setFileName(string $as_fileName): string {
+	protected function _setFileName(?string $as_fileName): ?string {
+		if ($as_fileName === null) {
+			return null;
+		}
+
 		$ls_fileName = Text::slug($as_fileName, ['replacement' => '_']);
 
 

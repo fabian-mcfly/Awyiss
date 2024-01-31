@@ -12,12 +12,12 @@ use Cake\Utility\Inflector;
  * UsergroupPermission Entity
  *
  * @property int $id
- * @property int $contentTemplateId
- * @property string $identifier
- * @property string $title
- * @property string $fieldset
+ * @property int|null $contentTemplateId
+ * @property string|null $identifier
+ * @property string|null $title
+ * @property string|null $fieldset
  * @property bool $required
- * @property ContentTemplate $contentTemplate
+ * @property \Awyiss\Model\Entity\ContentTemplate $contentTemplate
  */
 class ContentTemplateElement extends Entity {
 	/**
@@ -41,12 +41,16 @@ class ContentTemplateElement extends Entity {
 	/**
 	 * In the database, the identifier exists as an underscored string
 	 *
-	 * @param string $as_identifier
-	 * @return string
+	 * @param string|null $as_identifier
+	 * @return string|null
 	 * @noinspection PhpUnused
 	 * @see \Awyiss\Model\Entity\ContentTemplateElement::$identifier
 	 */
-	public function _setIdentifier(string $as_identifier): string {
+	public function _setIdentifier(?string $as_identifier): ?string {
+		if ($as_identifier === null) {
+			return null;
+		}
+
 		return Inflector::underscore($as_identifier);
 	}
 }

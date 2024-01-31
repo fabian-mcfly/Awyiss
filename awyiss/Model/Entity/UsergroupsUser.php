@@ -11,10 +11,10 @@ use Awyiss\Model\Entity;
  * UsergroupsUser Entity
  *
  * @property int $id
- * @property int $usergroupId
- * @property int $userId
- * @property Usergroup $usergroup
- * @property User $user
+ * @property int|null $usergroupId
+ * @property int|null $userId
+ * @property \Awyiss\Model\Entity\Usergroup $usergroup
+ * @property \Awyiss\Model\Entity\User $user
  */
 class UsergroupsUser extends Entity {
 	/**

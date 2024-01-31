@@ -11,11 +11,11 @@ use Awyiss\Model\Entity;
  * PageTemplateContentArea Entity
  *
  * @property int $id
- * @property int $pageTemplateId
- * @property int $contentAreaId
+ * @property int|null $pageTemplateId
+ * @property int|null $contentAreaId
  * @property int $systemOrder
- * @property PageTemplate $pageTemplate
- * @property ContentArea $contentArea
+ * @property \Awyiss\Model\Entity\PageTemplate $pageTemplate
+ * @property \Awyiss\Model\Entity\ContentArea $contentArea
  */
 class PageTemplateContentArea extends Entity {
 	/**
@@ -35,9 +35,9 @@ class PageTemplateContentArea extends Entity {
 	 */
 	protected static array $fieldMap = [
 		'page_template_id' => 'pageTemplateId',
-		'page_template' => 'pageTemplate',
 		'content_area_id' => 'contentAreaId',
-		'content_area' => 'contentArea',
 		'system_order' => 'systemOrder',
+		'page_template' => 'pageTemplate',
+		'content_area' => 'contentArea',
 	];
 }

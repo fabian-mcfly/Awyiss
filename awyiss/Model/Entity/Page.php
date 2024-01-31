@@ -14,17 +14,17 @@ use Cake\Utility\Text;
  * Page Entity
  *
  * @property int $id
- * @property int $parentId
- * @property string|null $slug
+ * @property int|null $pageRoleId
+ * @property int|null $pageTemplateId
+ * @property int|null $parentId
  * @property string|null $languageShortcode
+ * @property string|null $slug
  * @property string|null $title
  * @property string|null $redirectLink
  * @property string|null $metaTitle
  * @property string|null $metaDescription
  * @property bool $robotsIndex
  * @property bool $robotsFollow
- * @property int $pageRoleId
- * @property int $pageTemplateId
  * @property int|null $duplicateOf
  * @property int $systemOrder
  * @property bool $active
@@ -36,13 +36,14 @@ use Cake\Utility\Text;
  * @property \Cake\I18n\DateTime|null $changedOn
  * @property int|null $deletedBy
  * @property \Cake\I18n\DateTime|null $deletedOn
- * @property Attribute $attributes
- * @property PageRole $pageRole
- * @property PageTemplate $pageTemplate
- * @property Page $parentPage
- * @property Page $duplicate
- * @property Page[] $children
- * @property Content[] $contents
+ * @property \Awyiss\Model\Entity\PageRole $pageRole
+ * @property \Awyiss\Model\Entity\PageTemplate $pageTemplate
+ * @property \Awyiss\Model\Entity\Page[] $duplicatingPages
+ * @property \Awyiss\Model\Entity\Page $duplicateOfPage
+ * @property \Awyiss\Model\Entity\Page $parentPage
+ * @property \Awyiss\Model\Entity\Page[] $childPages
+ * @property \Awyiss\Model\Entity\Content[] $contents
+ * @property \Awyiss\Model\Entity\Language $language
  */
 class Page extends Entity {
 	/**
@@ -63,10 +64,6 @@ class Page extends Entity {
 		'duplicateOf' => true,
 		'systemOrder' => true,
 		'active' => true,
-		'parentsActive' => true,
-		'pageRole' => true,
-		'pageTemplate' => true,
-		'contents' => true,
 	];
 	/**
 	 * @inheritDoc
@@ -96,10 +93,8 @@ class Page extends Entity {
 		'changed_on' => 'changedOn',
 		'deleted_by' => 'deletedBy',
 		'deleted_on' => 'deletedOn',
-		'duplicate_pages' => 'duplicatePages',
+		'duplicating_pages' => 'duplicatingPages',
 		'duplicate_of_page' => 'duplicateOfPage',
-		'child_pages' => 'childPages',
-		'parent_page' => 'parentPage',
 		'page_role' => 'pageRole',
 		'page_template' => 'pageTemplate',
 	];
@@ -164,10 +159,15 @@ class Page extends Entity {
 	/**
 	 * Make sure the slug is always lowercase, dashed and free of special characters
 	 *
-	 * @noinspection PhpUnused
+	 * @param string|null $as_slug
+	 * @return string|null
 	 * @see \Awyiss\Model\Entity\Page::$slug
 	 */
-	protected function _setSlug(string $as_slug): string {
+	protected function _setSlug(?string $as_slug): ?string {
+		if ($as_slug === null) {
+			return null;
+		}
+
 		$ls_slug = Text::slug($as_slug, ['preserve' => '/']);
 		$ls_slug = trim($ls_slug, '/');
 

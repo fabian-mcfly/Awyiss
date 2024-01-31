@@ -12,8 +12,8 @@ use Cake\Utility\Text;
  * ContentTemplate Entity
  *
  * @property int $id
- * @property string $title
- * @property string $fileName
+ * @property string|null $title
+ * @property string|null $fileName
  * @property int $systemOrder
  * @property bool $active
  * @property bool $deleted
@@ -23,9 +23,9 @@ use Cake\Utility\Text;
  * @property \Cake\I18n\DateTime|null $changedOn
  * @property int|null $deletedBy
  * @property \Cake\I18n\DateTime|null $deletedOn
- * @property Content[] $contents
- * @property ContentTemplateElement[] $contentTemplateElements
- * @property ContentArea[] $contentAreas
+ * @property \Awyiss\Model\Entity\Content[] $contents
+ * @property \Awyiss\Model\Entity\ContentTemplateElement[] $contentTemplateElements
+ * @property \Awyiss\Model\Entity\ContentArea[] $contentAreas
  */
 class ContentTemplate extends Entity {
 	/**
@@ -59,10 +59,15 @@ class ContentTemplate extends Entity {
 	/**
 	 * Make sure the filename is always lowercase, underscored and free of special characters
 	 *
-	 * @noinspection PhpUnused
+	 * @param string|null $as_fileName
+	 * @return string|null
 	 * @see \Awyiss\Model\Entity\ContentTemplate::$filename
 	 */
-	protected function _setFileName(string $as_fileName): string {
+	protected function _setFileName(?string $as_fileName): ?string {
+		if ($as_fileName === null) {
+			return null;
+		}
+
 		$ls_fileName = Text::slug($as_fileName, ['replacement' => '_']);
 
 

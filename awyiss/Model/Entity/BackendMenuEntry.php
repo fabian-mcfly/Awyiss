@@ -13,11 +13,11 @@ use Cake\Datasource\FactoryLocator;
  * BackendMenuEntry Entity
  *
  * @property int $id
- * @property string $parentId
- * @property string $insertAfterId
- * @property string $title
- * @property string $link
- * @property array $access
+ * @property string|null $parentId
+ * @property string|null $insertAfterId
+ * @property string|null $title
+ * @property string|null $link
+ * @property array|null $access
  * @property bool $external
  * @property int $systemOrder
  * @property bool $active
@@ -28,6 +28,8 @@ use Cake\Datasource\FactoryLocator;
  * @property \Cake\I18n\DateTime|null $changedOn
  * @property int|null $deletedBy
  * @property \Cake\I18n\DateTime|null $deletedOn
+ * @property \Awyiss\Model\Entity\BackendMenuEntry $parentBackendMenuEntry
+ * @property \Awyiss\Model\Entity\BackendMenuEntry[] $childBackendMenuEntries
  */
 class BackendMenuEntry extends Entity {
 	/**
@@ -42,14 +44,6 @@ class BackendMenuEntry extends Entity {
 		'external' => true,
 		'systemOrder' => true,
 		'active' => true,
-		'childBackendMenuEntries' => true,
-	];
-	/**
-	 * @inheritDoc
-	 */
-	protected array $defaultValues = [
-		'parentId' => null,
-		'insertAfterId' => null,
 	];
 	/**
 	 * @inheritDoc
@@ -64,39 +58,7 @@ class BackendMenuEntry extends Entity {
 		'changed_on' => 'changedOn',
 		'deleted_by' => 'deletedBy',
 		'deleted_on' => 'deletedOn',
-		'child_backend_menu_entries' => 'childBackendMenuEntries',
-		'parent_backend_menu_entries' => 'parentBackendMenuEntries',
 	];
-
-
-	/**
-	 * @param mixed $ax_value
-	 * @noinspection PhpUnused
-	 * @return mixed
-	 */
-	public function _setParentId(mixed $ax_value): mixed {
-		if (empty($ax_value)) {
-			return null;
-		}
-
-
-		return $ax_value;
-	}
-
-
-	/**
-	 * @param mixed $ax_value
-	 * @return mixed
-	 * @noinspection PhpUnused
-	 */
-	public function _setInsertAfterId(mixed $ax_value): mixed {
-		if (empty($ax_value)) {
-			return null;
-		}
-
-
-		return $ax_value;
-	}
 
 
 	/**
@@ -111,21 +73,6 @@ class BackendMenuEntry extends Entity {
 
 
 		return is_string($ax_value) ? json_decode($ax_value) : $ax_value;
-	}
-
-
-	/**
-	 * @param mixed $ax_value
-	 * @return mixed
-	 * @noinspection PhpUnused
-	 */
-	public function _setLink(mixed $ax_value): mixed {
-		if (empty($ax_value)) {
-			return null;
-		}
-
-
-		return $ax_value;
 	}
 
 

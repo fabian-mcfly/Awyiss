@@ -13,13 +13,13 @@ use Cake\Utility\Text;
  * Attribute Entity
  *
  * @property int $id
- * @property string $scope
- * @property string $title
- * @property string $identifier
+ * @property string|null $scope
+ * @property string|null $title
+ * @property string|null $identifier
  * @property string|null $defaultValue
  * @property string|null $fieldset
- * @property string $inputType
- * @property string $type
+ * @property string|null $inputType
+ * @property string|null $type
  * @property bool $hasIndex
  * @property bool $required
  * @property bool $translatable
@@ -78,31 +78,17 @@ class Attribute extends Entity {
 
 
 	/**
-	 * Make sure the default value is null if empty
-	 *
-	 * @param string $ax_defaultValue
-	 * @return string
-	 * @see \Awyiss\Model\Entity\Attribute::$identifier
-	 */
-	protected function _setDefaultValue(string $ax_defaultValue): string {
-		$lx_defaultValue = $ax_defaultValue;
-
-		if ($lx_defaultValue === '') {
-			$lx_defaultValue = null;
-		}
-
-		return $lx_defaultValue;
-	}
-
-
-	/**
 	 * Make sure the identifier is always lowercase, underscored and free of special characters
 	 *
-	 * @param string $as_identifier
-	 * @return string
+	 * @param string|null $as_identifier
+	 * @return string|null
 	 * @see \Awyiss\Model\Entity\Attribute::$identifier
 	 */
-	protected function _setIdentifier(string $as_identifier): string {
+	protected function _setIdentifier(?string $as_identifier): ?string {
+		if ($as_identifier === null) {
+			return null;
+		}
+
 		return mb_strtolower(Text::slug($as_identifier, ['replacement' => '_']));
 	}
 
@@ -110,11 +96,15 @@ class Attribute extends Entity {
 	/**
 	 * Make sure the scope is always lowercase, underscored and free of special characters
 	 *
-	 * @param string $as_scope
-	 * @return string
+	 * @param string|null $as_scope
+	 * @return string|null
 	 * @see \Awyiss\Model\Entity\Attribute::$scope
 	 */
-	protected function _setScope(string $as_scope): string {
+	protected function _setScope(?string $as_scope): ?string {
+		if ($as_scope === null) {
+			return null;
+		}
+
 		return mb_strtolower(Text::slug($as_scope, ['replacement' => '_']));
 	}
 }

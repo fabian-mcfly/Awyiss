@@ -14,12 +14,12 @@ use Cake\Utility\Inflector;
  * UsergroupPermission Entity
  *
  * @property int $id
- * @property int $usergroupId
- * @property string $scope
- * @property string $identifier
- * @property PermissionAccess $access
+ * @property int|null $usergroupId
+ * @property string|null $scope
+ * @property string|null $identifier
+ * @property PermissionAccess|null $access
  * @property array|null $settings
- * @property Usergroup $usergroup
+ * @property \Awyiss\Model\Entity\Usergroup $usergroup
  */
 class UsergroupPermission extends Entity implements PermissionInterface {
 	/**
@@ -43,12 +43,15 @@ class UsergroupPermission extends Entity implements PermissionInterface {
 	/**
 	 * In the database, the scope exists as an underscored string
 	 *
-	 * @param string $as_scope
-	 * @return string
-	 * @noinspection PhpUnused
+	 * @param string|null $as_scope
+	 * @return string|null
 	 * @see \Awyiss\Model\Entity\UsergroupPermission::$scope
 	 */
-	public function _setScope(string $as_scope): string {
+	public function _setScope(?string $as_scope): ?string {
+		if ($as_scope === null) {
+			return null;
+		}
+
 		return Inflector::underscore($as_scope);
 	}
 
@@ -56,12 +59,15 @@ class UsergroupPermission extends Entity implements PermissionInterface {
 	/**
 	 * In the database, the identifier exists as an underscored string
 	 *
-	 * @param string $as_identifier
-	 * @return string
-	 * @noinspection PhpUnused
+	 * @param string|null $as_identifier
+	 * @return string|null
 	 * @see \Awyiss\Model\Entity\UsergroupPermission::$identifier
 	 */
-	public function _setIdentifier(string $as_identifier): string {
+	public function _setIdentifier(?string $as_identifier): ?string {
+		if ($as_identifier === null) {
+			return null;
+		}
+
 		return Inflector::underscore($as_identifier);
 	}
 

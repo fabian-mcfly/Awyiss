@@ -12,9 +12,8 @@ use Cake\Utility\Text;
  * Menu Entity
  *
  * @property int $id
- * @property string $title
- * @property string $identifier
- * @property string|null $languageShortcode
+ * @property string|null $title
+ * @property string|null $identifier
  * @property bool $active
  * @property bool $deleted
  * @property int|null $createdBy
@@ -23,6 +22,7 @@ use Cake\Utility\Text;
  * @property \Cake\I18n\DateTime|null $changedOn
  * @property int|null $deletedBy
  * @property \Cake\I18n\DateTime|null $deletedOn
+ * @property \Awyiss\Model\Entity\MenuEntry[] $menuEntries
  */
 class Menu extends Entity {
 	/**
@@ -43,16 +43,22 @@ class Menu extends Entity {
 		'changed_on' => 'changedOn',
 		'deleted_by' => 'deletedBy',
 		'deleted_on' => 'deletedOn',
+		'menu_entries' => 'menuEntries',
 	];
 
 
 	/**
 	 * Make sure the identifier is always lowercase, underscored and free of special characters
 	 *
-	 * @noinspection PhpUnused
+	 * @param string|null $as_identifier
+	 * @return string|null
 	 * @see \Awyiss\Model\Entity\Menu::$identifier
 	 */
-	protected function _setIdentifier(string $as_identifier): string {
+	protected function _setIdentifier(?string $as_identifier): ?string {
+		if ($as_identifier === null) {
+			return null;
+		}
+
 		$ls_identifier = Text::slug($as_identifier, ['replacement' => '_']);
 
 
