@@ -36,9 +36,6 @@ class SoftDeleteBehavior extends Behavior {
 			'beforeFind',
 			'beforeDelete',
 			'afterDeleteCommit',
-			'beforeSoftDelete',
-			'afterSoftDelete',
-			'afterSoftDeleteCommit',
 		],
 		'implementedMethods' => [
 			'softDelete' => 'softDelete',

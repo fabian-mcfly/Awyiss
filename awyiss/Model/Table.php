@@ -61,7 +61,7 @@ class Table extends BaseTable {
 	public const RULES_CLASS = RulesChecker::class;
 	/**
 	 * Name of the database table. Used in static::initialize() ($this->setTable(static::TABLE)) and in
-	 * \Awyiss\Model\Table\AttributesTable::getScopes()
+	 * \Awyiss\Model\Table\AttributesTable::getAvailableScopes()
 	 *
 	 * @see \Awyiss\Model\Table\AttributesTable::getAvailableScopes();
 	 * @var string
@@ -120,6 +120,9 @@ class Table extends BaseTable {
 		'beforeDelete',
 		'afterDelete',
 		'afterDeleteCommit',
+		'beforeSoftDelete',
+		'afterSoftDelete',
+		'afterSoftDeleteCommit',
 	];
 	/**
 	 * @var array Settings for the DefaultValuesBehavior
