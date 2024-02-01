@@ -5,6 +5,7 @@ namespace Awyiss\Controller\Backend;
 
 
 use Awyiss\Controller\BackendController as Controller;
+use Awyiss\Model\Entity;
 use Awyiss\Model\Entity\PageTemplate;
 use Awyiss\Routing\Router;
 use Cake\Http\Exception\RedirectException;
@@ -144,7 +145,13 @@ class PageTemplatesController extends Controller {
 		}
 
 		$la_requestData = $this->request->getData();
+
 		if (!empty($la_requestData['content_areas'])) {
+			$lo_newContentArea = null;
+			if (isset($la_requestData['content_areas']['new'])) {
+				$lo_newContentArea = $this->createContentArea($la_requestData['content_areas']['new']);
+			}
+
 			$la_requestData['content_areas'] = array_values(array_filter($la_requestData['content_areas'], function (array $aa_element) {
 				return !empty($aa_element['id']);
 			}));
@@ -152,6 +159,15 @@ class PageTemplatesController extends Controller {
 			array_walk($la_requestData['content_areas'], function (array &$aa_contentArea, int $ai_index): void {
 				$aa_contentArea['_joinData']['system_order'] = $ai_index + 1;
 			});
+
+			if ($lo_newContentArea && !$lo_newContentArea->hasErrors()) {
+				$la_requestData['content_areas'][] = [
+					'id' => $lo_newContentArea->id,
+					'_joinData' => [
+						'system_order' => count($la_requestData['content_areas']) + 1,
+					],
+				];
+			}
 		}
 
 		$this->PageTemplates->patchEntity($ao_pageTemplate, $la_requestData, [
@@ -186,5 +202,35 @@ class PageTemplatesController extends Controller {
 		}
 
 		$this->Categories->ensurePossibleCategory($ao_pageTemplate);
+	}
+
+
+	/**
+	 * @param array $aa_data
+	 * @return \Awyiss\Model\Entity|null
+	 */
+	protected function createContentArea(array $aa_data): ?Entity {
+		$ls_title = $aa_data['title'] ?? null;
+		$ls_identifier = $aa_data['identifier'] ?? null;
+
+		if (!$ls_title && !$ls_identifier) {
+			return null;
+		}
+
+		if (!$ls_title) {
+			$ls_title = $ls_identifier;
+		}
+		elseif (!$ls_identifier) {
+			$ls_identifier = $ls_title;
+		}
+
+		$lo_contentArea = $this->PageTemplates->ContentAreas->newDefaultEntity([
+			'title' => $ls_title,
+			'identifier' => $ls_identifier,
+		]);
+
+		$this->PageTemplates->ContentAreas->save($lo_contentArea);
+
+		return $lo_contentArea;
 	}
 }

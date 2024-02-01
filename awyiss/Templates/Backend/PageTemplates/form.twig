@@ -50,7 +50,7 @@
 			{% endblock %}
 
 			{% block formControlFilename %}
-				{{ helper_Form_control('filename') }}
+				{{ helper_Form_control('file_name') }}
 			{% endblock %}
 
 			{% block fieldsetGeneralAttributes %}
@@ -89,6 +89,11 @@
 							</li>
 						{% endblock %}
 					{% endfor %}
+
+					<li class="New">
+						{{ helper_Form_control('content_areas[new][title]') }}
+						{{ helper_Form_control('content_areas[new][identifier]') }}
+					</li>
 				</ul>
 
 				{% block fieldsetContentElementsErrors %}
