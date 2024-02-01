@@ -4,10 +4,12 @@
 namespace Awyiss\Model\Table;
 
 
+use ArrayObject;
 use Awyiss\Awyiss;
 use Awyiss\Model\Entity\Language;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
+use Cake\Event\EventInterface;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Validation\Validator;
 use DateTimeZone;
@@ -17,8 +19,11 @@ use ResourceBundle;
 /**
  * Languages Model
  *
- * @property ConfigurationTable&\Awyiss\ORM\Association\HasMany $Configuration
- * @method Language newDefaultEntity(array $aa_additionalData = [], array $aa_options = [])
+ * @property \Awyiss\Model\Table\ConfigurationTable&\Awyiss\ORM\Association\HasMany $Configuration
+ * @property \Awyiss\Model\Table\MenuEntriesTable&\Awyiss\ORM\Association\HasMany $MenuEntries
+ * @property \Awyiss\Model\Table\PagesTable&\Awyiss\ORM\Association\HasMany $Pages
+ * @method \Awyiss\Model\Entity\Language newDefaultEntity(array $aa_additionalData = [], array $aa_options = [])
+ * @noinspection PhpUnnecessaryFullyQualifiedNameInspection
  */
 class LanguagesTable extends Table {
 	/**
@@ -48,14 +53,26 @@ class LanguagesTable extends Table {
 			'dependent' => true,
 			'foreignKey' => [
 				'realm',
-				'languageShortcode',
+				'language_shortcode',
 			],
 		]);
 
 		$this->hasMany('MenuEntries', [
 			'bindingKey' => 'shortcode',
 			'cascadeCallbacks' => true,
-			'dependent' => true,
+			//'dependent' => true,
+			'foreignKey' => 'language_shortcode',
+		]);
+
+		$this->hasMany('Pages', [
+			'bindingKey' => 'shortcode',
+			'cascadeCallbacks' => true,
+			//'dependent' => true,
+			'finder' => [
+				'all' => [
+					'skipPageRoleCheck' => true,
+				],
+			],
 			'foreignKey' => 'language_shortcode',
 		]);
 	}
@@ -149,6 +166,36 @@ class LanguagesTable extends Table {
 
 
 	/**
+	 * @param \Cake\Event\EventInterface $ao_event
+	 * @param \Awyiss\Model\Entity\Language $ao_entity
+	 * @param \ArrayObject $ao_options
+	 * @return void
+	 * @noinspection PhpUnusedParameterInspection
+	 */
+	public function beforeSoftDelete(EventInterface $ao_event, Language $ao_entity, ArrayObject $ao_options): void {
+		if ($ao_entity->realm === Awyiss::REALM_FRONTEND) {
+			$this->MenuEntries->setDependent(true);
+			$this->Pages->setDependent(true);
+			$this->Pages->ChildPages->setDependent(false)->setCascadeCallbacks(false);
+		}
+	}
+
+
+	/**
+	 * @param \Cake\Event\EventInterface $ao_event
+	 * @param \Awyiss\Model\Entity\Language $ao_entity
+	 * @param \ArrayObject $ao_options
+	 * @return void
+	 * @noinspection PhpUnusedParameterInspection
+	 */
+	public function afterSoftDelete(EventInterface $ao_event, Language $ao_entity, ArrayObject $ao_options): void {
+		$this->MenuEntries->setDependent(false);
+		$this->Pages->setDependent(false);
+		$this->Pages->ChildPages->setDependent(true)->setCascadeCallbacks(true);
+	}
+
+
+	/**
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 *
 	 * @param RulesChecker|BaseRulesChecker $ao_rules The rules object to be modified.
@@ -184,6 +231,20 @@ class LanguagesTable extends Table {
 			'errorField' => 'locale',
 			'message' => __d($this->getI18nDomain(), 'error_valid_locale'),
 		]);
+
+
+		$ao_rules->addDelete(
+			function (Language $ao_entity) use($ao_rules): bool {
+				$li_count = $this->find()->where(['realm' => $ao_entity->realm])->count();
+
+				return $li_count > 1;
+			},
+			'notLastLanguageInRealm',
+			[
+				'errorField' => '_general',
+				'message' => __d($this->getI18nDomain(), 'error_not_last_language_in_realm'),
+			]
+		);
 
 
 		return $ao_rules;
