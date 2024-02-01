@@ -23,7 +23,9 @@ use Cake\Validation\Validator;
 /**
  * Configuration Model
  *
- * @method Configuration newDefaultEntity(array $aa_additionalData = [], array $aa_options = [])
+ * @property \Awyiss\Model\Table\LanguagesTable&\Awyiss\ORM\Association\BelongsTo $Languages
+ * @method \Awyiss\Model\Entity\Configuration newDefaultEntity(array $aa_additionalData = [], array $aa_options = [])
+ * @noinspection PhpUnnecessaryFullyQualifiedNameInspection
  */
 class ConfigurationTable extends Table {
 	use IdentityAwareTrait;

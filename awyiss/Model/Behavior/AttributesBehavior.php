@@ -100,7 +100,6 @@ class AttributesBehavior extends Behavior {
 		$this->attributesTable = 'attributes_' . $this->getConfig('sourceTable');
 
 
-		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 		if (!$this->table()::ATTRIBUTABLE) {
 			return;
 		}
@@ -237,7 +236,6 @@ class AttributesBehavior extends Behavior {
 		$lo_attributesQuery = $lo_attributesTable->find('all');
 
 		/**
-		 * @noinspection PhpPossiblePolymorphicInvocationInspection
 		 * @noinspection PhpUndefinedMethodInspection
 		 */
 		$lo_attributesQuery = $lo_attributesQuery->orderByAsc($lo_attributesQuery->newExpr($lo_attributesQuery->func()->FIELD([
@@ -298,7 +296,7 @@ class AttributesBehavior extends Behavior {
 			}
 
 			$ao_rules->add(function (Entity $ao_entity/*, array $aa_options*/) use ($lo_attribute, $lo_attributeOptions): bool|string {
-				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+				/** @noinspection PhpUndefinedMethodInspection */
 				return $lo_attributeOptions->validateValue($lo_attribute->identifier, $ao_entity->get($lo_attribute->identifier), $ao_entity->getEntity());
 			}, 'validValue' . Inflector::camelize($lo_attribute->identifier), [
 				'errorField' => $lo_attribute->identifier,
@@ -350,7 +348,6 @@ class AttributesBehavior extends Behavior {
 				/** @var \Awyiss\ORM\Association\HasOne|\Awyiss\Model\Table $lo_association */
 				$lo_association = $this->table()->{$this->getAttributesTable(true)};
 
-				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 				$ao_entity->attributes = $lo_association->newDefaultEntity();
 
 				/** @var static $ls_associationEntityClass */
@@ -362,9 +359,9 @@ class AttributesBehavior extends Behavior {
 				$ao_entity->initAttributesField($lo_association, $ls_foreignKey);
 			}
 
-			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+			/** @noinspection PhpUndefinedMethodInspection */
 			if (isset($ao_entity->attributes) && !$ao_entity->attributes->getEntity()) {
-				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+				/** @noinspection PhpUndefinedMethodInspection */
 				$ao_entity->attributes->setEntity($ao_entity);
 			}
 

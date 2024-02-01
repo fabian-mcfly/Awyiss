@@ -14,8 +14,10 @@ use Cake\Validation\Validator;
 /**
  * PageTemplates Model
  *
- * @property ContentAreasTable&\Awyiss\ORM\Association\BelongsToMany $ContentAreas
- * @property PageRolesTable&\Awyiss\ORM\Association\BelongsTo $PageRoles
+ * @todo disallow changing page role
+ * @property \Awyiss\Model\Table\ContentAreasTable&\Awyiss\ORM\Association\BelongsToMany $ContentAreas
+ * @property \Awyiss\Model\Table\PageRolesTable&\Awyiss\ORM\Association\BelongsTo $PageRoles
+ * @property \Awyiss\Model\Table\PagesTable&\Awyiss\ORM\Association\HasMany $Pages
  * @method \Awyiss\Model\Entity\PageTemplate newDefaultEntity(array $aa_additionalData = [], array $aa_options = [])
  */
 class PageTemplatesTable extends Table {
@@ -87,7 +89,6 @@ class PageTemplatesTable extends Table {
 					'attributes' => [
 						'skip' => true,
 					],
-					'skipPageRoleCheck' => true,
 				]);
 			})->groupBy('PageTemplates.id');
 	}

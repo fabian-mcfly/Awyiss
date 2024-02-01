@@ -13,6 +13,8 @@ use Cake\Validation\Validator;
 /**
  * PageTemplateContentAreas Model
  *
+ * @property \Awyiss\Model\Table\ContentAreasTable&\Awyiss\ORM\Association\BelongsTo $ContentAreas
+ * @property \Awyiss\Model\Table\PageTemplatesTable&\Awyiss\ORM\Association\BelongsTo $PageTemplates
  * @method \Awyiss\Model\Entity\PageTemplateContentArea newDefaultEntity(array $aa_additionalData = [], array $aa_options = [])
  */
 class PageTemplateContentAreasTable extends Table {

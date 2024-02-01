@@ -23,17 +23,18 @@ use Cake\Validation\Validator;
 /**
  * Pages Model
  *
- * @property PageRolesTable&\Awyiss\ORM\Association\BelongsTo $PageRoles
- * @property PageTemplatesTable&\Awyiss\ORM\Association\BelongsTo $PageTemplates
- * @property PagesTable&\Awyiss\ORM\Association\BelongsTo $Duplicate
- * @property PagesTable&\Awyiss\ORM\Association\BelongsTo $ParentPages
- * @property PagesTable&\Awyiss\ORM\Association\HasMany $ChildPages
- * @property ContentsTable&\Awyiss\ORM\Association\HasMany $Contents
+ * @property \Awyiss\Model\Table\LanguagesTable&\Awyiss\ORM\Association\BelongsTo $Languages
+ * @property \Awyiss\Model\Table\PageRolesTable&\Awyiss\ORM\Association\BelongsTo $PageRoles
+ * @property \Awyiss\Model\Table\PageTemplatesTable&\Awyiss\ORM\Association\BelongsTo $PageTemplates
+ * @property \Awyiss\Model\Table\PagesTable&\Awyiss\ORM\Association\BelongsTo $Duplicate
+ * @property \Awyiss\Model\Table\PagesTable&\Awyiss\ORM\Association\BelongsTo $ParentPages
+ * @property \Awyiss\Model\Table\PagesTable&\Awyiss\ORM\Association\HasMany $ChildPages
+ * @property \Awyiss\Model\Table\ContentsTable&\Awyiss\ORM\Association\HasMany $Contents
  * @method \Awyiss\Model\Entity\Page newDefaultEntity(array $aa_additionalData = [], array $aa_options = [])
- * @method CollectionInterface|null getNestedChildren(EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
- * @method CollectionInterface|null getChildren(EntityInterface $ao_entity, array $aa_options = [])
+ * @method \Cake\Collection\CollectionInterface|null getNestedChildren(EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
+ * @method \Cake\Collection\CollectionInterface|null getChildren(EntityInterface $ao_entity, array $aa_options = [])
  * @method \Awyiss\Model\Entity\Page getParent(EntityInterface $ao_entity, array $aa_options = [])
- * @method CollectionInterface|null getParents(EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
+ * @method \Cake\Collection\CollectionInterface|null getParents(EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
  * @noinspection PhpUnnecessaryFullyQualifiedNameInspection
  */
 class PagesTable extends Table {
@@ -402,12 +403,13 @@ class PagesTable extends Table {
 			$ao_entity->set('slug', $ao_entity->title);
 		}
 
-		if (!$ao_entity->isDirty('slug')) {
-			/*
-			 * If the slug is not dirty, mark it as such.
-			 * This forces the correct pre-slug when the slug itself has not changed but the parent page or language has.
-			*/
-			$ao_entity->set('slug', $ao_entity->slug . '/');
+		if (
+			!$ao_entity->isDirty('slug') &&
+			!$ao_entity->isDirty('languageShortcode') &&
+			!$ao_entity->isDirty('parentId')
+		) {
+			//If neither the slug, the language nor the parent id have changed, skip the slug logic
+			return;
 		}
 
 		$ls_preSlug = '';
@@ -481,6 +483,44 @@ class PagesTable extends Table {
 
 
 	/**
+	 * @param EventInterface $ao_event
+	 * @param \Awyiss\Model\Entity\Page $ao_entity
+	 * @param ArrayObject $ao_options
+	 * @noinspection PhpUnusedParameterInspection
+	 */
+	public function afterSaveCommit(EventInterface $ao_event, EntityInterface $ao_entity, ArrayObject $ao_options): void {
+		if ($ao_event->isStopped()) {
+			return;
+		}
+
+		$ls_originalSlug = $ao_entity->hasOriginal('slug') ? $ao_entity->getOriginal('slug') : null;
+		if ($ls_originalSlug && $ao_entity->slug != $ls_originalSlug) {
+			$lo_query = $this->updateQuery();
+
+			/**
+			 * UPDATE pages SET slug = (CONCAT('newslug', substr(slug, '8'))) WHERE slug LIKE 'oldslug/%'
+			 *
+			 * TODO: check why this gets called everytime
+			 *
+			 * @noinspection PhpUndefinedMethodInspection
+			 */
+			$lo_query->update($this->getTable())->set('slug', $lo_query->newExpr($lo_query->func()->concat([
+				$ao_entity->slug,
+				$lo_query->func()->substr([
+					'slug' => 'identifier',
+					mb_strlen($ls_originalSlug) + 1,
+				], [
+					null,
+					'integer',
+				]),
+			])))->where(function (QueryExpression $ao_expression/*, Query $ao_query*/) use ($ls_originalSlug) {
+				return $ao_expression->like('slug', $ls_originalSlug . '/%');
+			})->execute();
+		}
+	}
+
+
+	/**
 	 * @return void
 	 * @throws \Exception
 	 * @noinspection PhpUnused
@@ -517,42 +557,6 @@ class PagesTable extends Table {
 	 */
 	public function afterDelete(): void {
 		$this->Contents->enableCascadeCallbacks();
-	}
-
-
-	/**
-	 * @param EventInterface $ao_event
-	 * @param \Awyiss\Model\Entity\Page $ao_entity
-	 * @param ArrayObject $ao_options
-	 * @noinspection PhpUnusedParameterInspection
-	 */
-	public function afterSaveCommit(EventInterface $ao_event, EntityInterface $ao_entity, ArrayObject $ao_options): void {
-		if ($ao_event->isStopped()) {
-			return;
-		}
-
-		$ls_originalSlug = $ao_entity->hasOriginal('slug') ? $ao_entity->getOriginal('slug') : null;
-		if ($ls_originalSlug && $ao_entity->slug != $ls_originalSlug) {
-			$lo_query = $this->updateQuery();
-
-			/**
-			 * UPDATE pages SET slug = (CONCAT('newslug', substr(slug, '8'))) WHERE slug LIKE 'oldslug/%'
-			 *
-			 * @noinspection PhpUndefinedMethodInspection
-			 */
-			$lo_query->update($this->getTable())->set('slug', $lo_query->newExpr($lo_query->func()->concat([
-				$ao_entity->slug,
-				$lo_query->func()->substr([
-					'slug' => 'identifier',
-					mb_strlen($ls_originalSlug) + 1,
-				], [
-					null,
-					'integer',
-				]),
-			])))->where(function (QueryExpression $ao_expression/*, Query $ao_query*/) use ($ls_originalSlug) {
-				return $ao_expression->like('slug', $ls_originalSlug . '/%');
-			})->execute();
-		}
 	}
 
 
@@ -604,7 +608,7 @@ class PagesTable extends Table {
 	protected function buildPagesAssociations(): void {
 		$ls_pageRole = Inflector::camelize(Inflector::pluralize($this->pageRole));
 
-		$this->hasMany('Duplicate' . $ls_pageRole, [
+		$this->hasMany('Duplicating' . $ls_pageRole, [
 			'bindingKey' => 'duplicate_of',
 			'className' => $ls_pageRole,
 			'cascadeCallbacks' => true,

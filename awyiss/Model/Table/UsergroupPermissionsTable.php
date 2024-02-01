@@ -16,7 +16,7 @@ use Cake\Validation\Validator;
 /**
  * UsergroupPermissions Model
  *
- * @property UsergroupsTable&\Awyiss\ORM\Association\BelongsTo $Usergroups
+ * @property \Awyiss\Model\Table\UsergroupsTable&\Awyiss\ORM\Association\BelongsTo $Usergroups
  * @method \Awyiss\Model\Entity\UsergroupPermission newDefaultEntity(array $aa_additionalData = [], array $aa_options = [])
  */
 class UsergroupPermissionsTable extends Table {

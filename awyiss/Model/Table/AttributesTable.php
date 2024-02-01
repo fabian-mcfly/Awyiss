@@ -22,7 +22,8 @@ use ReflectionClass;
 /**
  * Attributes Model
  *
- * @method Attribute newDefaultEntity(array $aa_additionalData = [], array $aa_options = [])
+ * @method \Awyiss\Model\Entity\Attribute newDefaultEntity(array $aa_additionalData = [], array $aa_options = [])
+ * @noinspection PhpUnnecessaryFullyQualifiedNameInspection
  */
 class AttributesTable extends Table {
 	/**

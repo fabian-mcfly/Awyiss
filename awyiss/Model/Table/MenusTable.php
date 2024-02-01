@@ -13,8 +13,8 @@ use Cake\Validation\Validator;
 /**
  * Menus Model
  *
- * @property MenuEntriesTable&\Awyiss\ORM\Association\HasMany $AllMenuEntries
- * @property MenuEntriesTable&\Awyiss\ORM\Association\HasMany $MenuEntries
+ * @property \Awyiss\Model\Table\MenuEntriesTable&\Awyiss\ORM\Association\HasMany $AllMenuEntries
+ * @property \Awyiss\Model\Table\MenuEntriesTable&\Awyiss\ORM\Association\HasMany $MenuEntries
  * @method \Awyiss\Model\Entity\Menu newDefaultEntity(array $aa_additionalData = [], array $aa_options = [])
  */
 class MenusTable extends Table {

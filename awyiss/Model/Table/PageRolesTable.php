@@ -16,17 +16,19 @@ use Cake\Validation\Validator;
 /**
  * PageRoles Model
  *
- * @method PageRole newDefaultEntity(array $aa_additionalData = [], array $aa_options = [])
- *
- * TODO When renaming a page role identifier => update usergroup_permissions
- * TODO When renaming a page role identifier => update attributes
- * TODO When deleting a page role: delete usergroup_permissions
- * TODO When deleting a page role: delete attributes
- * TODO When deleting a page role: delete page templates
- * TODO When deleting a page role: delete pages
- * TODO Add all other page roles?! <-- what does this even mean?
- * TODO On delete, remove cascadeCallbacks for nested pages in PagesTable
- * TODO Or: disallow deletion if a page with that role exits
+ * @todo When renaming a page role identifier => update usergroup_permissions
+ * @todo When renaming a page role identifier => update attributes
+ * @todo When deleting a page role: delete usergroup_permissions
+ * @todo When deleting a page role: delete attributes
+ * @todo When deleting a page role: delete page templates
+ * @todo When deleting a page role: delete pages
+ * @todo Add all other page roles?! <-- what does this even mean?
+ * @todo On delete, remove cascadeCallbacks for nested pages in PagesTable
+ * @todo Or: disallow deletion if a page with that role exits
+ * @property \Awyiss\Model\Table\PageTemplatesTable&\Awyiss\ORM\Association\HasOne $PageTemplates
+ * @property \Awyiss\Model\Table\PagesTable&\Awyiss\ORM\Association\HasMany $Pages
+ * @method \Awyiss\Model\Entity\PageRole newDefaultEntity(array $aa_additionalData = [], array $aa_options = [])
+ * @noinspection PhpUnnecessaryFullyQualifiedNameInspection
  */
 class PageRolesTable extends Table {
 	/**

@@ -234,7 +234,7 @@ class LanguagesTable extends Table {
 
 
 		$ao_rules->addDelete(
-			function (Language $ao_entity) use($ao_rules): bool {
+			function (Language $ao_entity) use ($ao_rules): bool {
 				$li_count = $this->find()->where(['realm' => $ao_entity->realm])->count();
 
 				return $li_count > 1;

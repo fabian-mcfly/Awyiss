@@ -27,17 +27,19 @@ use RuntimeException;
 /**
  * Contents Model
  *
- * @property ContentTemplatesTable&\Awyiss\ORM\Association\BelongsTo $ContentTemplates
- * @property PagesTable&\Awyiss\ORM\Association\BelongsTo $Pages
- * @property ContentsTable&\Awyiss\ORM\Association\BelongsTo $ParentContents
- * @property ContentsTable&\Awyiss\ORM\Association\HasMany $ChildContents
- * @property ContentsTable&\Awyiss\ORM\Association\HasMany $DuplicatingContents
- * @property ContentsTable&\Awyiss\ORM\Association\BelongsTo $DuplicateOfContents
- * @method Content newDefaultEntity(array $aa_additionalData = [], array $aa_options = [])
- * @method CollectionInterface|null getNestedChildren(\Cake\Datasource\EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
- * @method CollectionInterface|null getChildren(\Cake\Datasource\EntityInterface $ao_entity, array $aa_options = [])
- * @method Content getParent(\Cake\Datasource\EntityInterface $ao_entity, array $aa_options = [])
- * @method CollectionInterface|null getParents(\Cake\Datasource\EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
+ * @property \Awyiss\Model\Table\ContentAreasTable&\Awyiss\ORM\Association\BelongsTo $ContentAreas
+ * @property \Awyiss\Model\Table\ContentTemplatesTable&\Awyiss\ORM\Association\BelongsTo $ContentTemplates
+ * @property \Awyiss\Model\Table\PagesTable&\Awyiss\ORM\Association\BelongsTo $Pages
+ * @property \Awyiss\Model\Table\ContentsTable&\Awyiss\ORM\Association\BelongsTo $ParentContents
+ * @property \Awyiss\Model\Table\ContentsTable&\Awyiss\ORM\Association\HasMany $ChildContents
+ * @property \Awyiss\Model\Table\ContentsTable&\Awyiss\ORM\Association\HasMany $DuplicatingContents
+ * @property \Awyiss\Model\Table\ContentsTable&\Awyiss\ORM\Association\BelongsTo $DuplicateOfContents
+ * @method \Awyiss\Model\Entity\Content newDefaultEntity(array $aa_additionalData = [], array $aa_options = [])
+ * @method \Cake\Collection\CollectionInterface|null getNestedChildren(\Cake\Datasource\EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
+ * @method \Cake\Collection\CollectionInterface|null getChildren(\Cake\Datasource\EntityInterface $ao_entity, array $aa_options = [])
+ * @method \Awyiss\Model\Entity\Content getParent(\Cake\Datasource\EntityInterface $ao_entity, array $aa_options = [])
+ * @method \Cake\Collection\CollectionInterface|null getParents(\Cake\Datasource\EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
+ * @noinspection PhpUnnecessaryFullyQualifiedNameInspection
  */
 class ContentsTable extends Table {
 	use LogTrait;

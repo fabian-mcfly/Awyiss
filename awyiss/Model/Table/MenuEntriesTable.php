@@ -20,10 +20,11 @@ use Cake\Validation\Validator;
  * @property \Awyiss\Model\Table\MenuEntriesTable&\Awyiss\ORM\Association\HasMany $ChildMenuEntries
  * @property \Awyiss\Model\Table\MenusTable&\Awyiss\ORM\Association\BelongsTo $Menus
  * @method \Awyiss\Model\Entity\MenuEntry newDefaultEntity(array $aa_additionalData = [], array $aa_options = [])
- * @method CollectionInterface|null getNestedChildren(\Cake\Datasource\EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
- * @method CollectionInterface|null getChildren(\Cake\Datasource\EntityInterface $ao_entity, array $aa_options = [])
+ * @method \Cake\Collection\CollectionInterface|null getNestedChildren(\Cake\Datasource\EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
+ * @method \Cake\Collection\CollectionInterface|null getChildren(\Cake\Datasource\EntityInterface $ao_entity, array $aa_options = [])
  * @method \Awyiss\Model\Entity\MenuEntry getParent(\Cake\Datasource\EntityInterface $ao_entity, array $aa_options = [])
- * @method CollectionInterface|null getParents(\Cake\Datasource\EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
+ * @method \Cake\Collection\CollectionInterface|null getParents(\Cake\Datasource\EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
+ * @noinspection PhpUnnecessaryFullyQualifiedNameInspection
  */
 class MenuEntriesTable extends Table {
 	/**
