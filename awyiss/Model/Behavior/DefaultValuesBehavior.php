@@ -5,6 +5,7 @@ namespace Awyiss\Model\Behavior;
 
 
 use ArrayObject;
+use Awyiss\Model\Entity;
 use Awyiss\Model\Table;
 use Awyiss\ORM\Behavior;
 use Cake\Datasource\EntityInterface;
@@ -64,8 +65,9 @@ class DefaultValuesBehavior extends Behavior {
 		}
 
 		//Retreive the class that's used by the table for the creation of new entities
+		/** @var class-string<\Awyiss\Model\Entity> $ls_entityClass */
 		$ls_entityClass = $this->table()->getEntityClass();
-		/** @var EntityInterface $lo_entity */
+		/** @var \Awyiss\Model\Entity $lo_entity */
 		$lo_entity = new $ls_entityClass([], ['source' => $this->table()->getRegistryAlias()]);
 
 		/** @var \Awyiss\Model\Table $lo_table */
@@ -75,15 +77,20 @@ class DefaultValuesBehavior extends Behavior {
 		//Get the default values
 		$la_defaults = $lo_schema->defaultValues();
 		$la_defaults += array_combine($lo_schema->columns(), array_fill(0, count($lo_schema->columns()), null));
+
+		//No primary keys
 		$la_defaults = array_diff_key($la_defaults, array_flip($lo_schema->getPrimaryKey()));
 
 		//Typecast the defaults based on the schema
 		$this->typecastDefaults($la_defaults, $lo_schema);
 
+		//Map the fields in case the additional data contains mapped keys
+		$la_defaults = $ls_entityClass::mapFields($la_defaults, true);
+
 		if ($lo_table->hasAttributes()) {
 			/** @var \Cake\ORM\Association&\Awyiss\Model\Table $lo_attributes */
 			$lo_attributes = $lo_table->getAssociation($lo_table->getAttributesTable(true));
-			$la_defaults[ $lo_attributes->getProperty() ] = $lo_attributes->newDefaultEntity();
+			$la_defaults[ $ls_entityClass::mapField($lo_attributes->getProperty()) ] = $lo_attributes->newDefaultEntity();
 		}
 
 		if ($lo_table->hasBehavior('Categories') && ($aa_options['includeCategory'] ?? true) === true) {
@@ -168,14 +175,21 @@ class DefaultValuesBehavior extends Behavior {
 
 		/** @var \Cake\ORM\Association $lo_association */
 		foreach ($ao_table->associations() as $lo_association) {
-			$la_associations[ $lo_association->getProperty() ] = $lo_association->getName();
+			$la_associations[ $ls_entityClass::unmapField($lo_association->getProperty()) ] = $lo_association->getName();
 		}
 
 		$la_data = $aa_data;
 		foreach ($la_data as $ls_key => $lx_value) {
+			if (is_numeric($ls_key)) {
+				continue;
+			}
+
 			if (array_key_exists($ls_key, $la_associations)) {
 				if ($lx_value !== null) {
-					$la_data[ $ls_key ] = $this->processArray($lx_value, $ao_table->getAssociation($la_associations[ $ls_key ])->getTarget());
+					$la_data[ $ls_key ] = $this->processArray(
+						$lx_value,
+						$ao_table->getAssociation($la_associations[ $ls_entityClass::unmapField($ls_key) ])->getTarget()
+					);
 				}
 
 				continue;
@@ -232,16 +246,22 @@ class DefaultValuesBehavior extends Behavior {
 				continue;
 			}
 
-			$lb_nullable = Hash::get((array)$ao_table->getSchema()->getColumn($ao_entity::unmapField($ls_field)), 'null');
+
+			if ($ao_entity instanceof Entity) {
+				$ls_field = $ao_entity::unmapField($ls_field);
+			}
+
+			$lb_nullable = Hash::get((array)$ao_table->getSchema()->getColumn($ls_field), 'null');
 
 			if ($lb_nullable !== true) {
 				continue;
 			}
+
 			if ($lx_value !== '') {
 				continue;
 			}
 
-			$lx_default = Hash::get((array)$ao_table->getSchema()->getColumn($ao_entity::unmapField($ls_field)), 'default');
+			$lx_default = Hash::get((array)$ao_table->getSchema()->getColumn($ls_field), 'default');
 			$ao_entity->set($ls_field, $lx_default);
 		}
 
