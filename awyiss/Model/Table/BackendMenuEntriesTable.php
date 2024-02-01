@@ -39,6 +39,7 @@ class BackendMenuEntriesTable extends Table {
 	 * @inheritDoc
 	 */
 	protected array $nest = [
+		'buildRules' => false,
 		'relatedColumns' => [],
 	];
 	/**
