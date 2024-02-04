@@ -93,7 +93,11 @@ class DefaultValuesBehavior extends Behavior {
 			$la_defaults[ $ls_entityClass::mapField($lo_attributes->getProperty()) ] = $lo_attributes->newDefaultEntity();
 		}
 
-		if ($lo_table->hasBehavior('Categories') && ($aa_options['includeCategory'] ?? true) === true) {
+		if (
+			$lo_table->hasBehavior('Categories') &&
+			$lo_table->getBehavior('Categories')->getConfig('enabled') === true &&
+			($aa_options['includeCategory'] ?? true) === true
+		) {
 			$this->addCategoryDefault($la_defaults, $lo_table, $lo_attributes ?? null);
 		}
 
