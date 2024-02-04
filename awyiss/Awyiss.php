@@ -123,8 +123,6 @@ class Awyiss extends BaseApplication {
 				$this->plugins->addFromConfig($la_plugins);
 			}
 		}
-
-		static::loadConstants();
 	}
 
 
@@ -368,30 +366,6 @@ class Awyiss extends BaseApplication {
 		ksort($la_config);
 
 		Configure::write($la_config);
-	}
-
-
-	/**
-	 * @param bool $ab_useFile
-	 * @return void
-	 */
-	public static function loadConstants(bool $ab_useFile = true): void {
-		$ls_filePath = ENV_CUSTOM_CONFIG . 'constants.php';
-
-		if (file_exists($ls_filePath) && $ab_useFile) {
-			require_once $ls_filePath;
-
-
-			return;
-		}
-
-		/** @var \Awyiss\Model\Table\PageRolesTable $lo_pageRolesTable */
-		$lo_pageRolesTable = FactoryLocator::get('Table')->get('PageRoles');
-		/** @var \Awyiss\Model\Entity\PageRole $lo_pageRole */
-		foreach ($lo_pageRolesTable->find() as $lo_pageRole) {
-			$ls_constant = 'PAGEROLE_' . strtoupper($lo_pageRole->identifier);
-			defined($ls_constant) || define($ls_constant, $lo_pageRole->id);
-		}
 	}
 
 

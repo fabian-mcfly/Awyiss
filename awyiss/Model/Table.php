@@ -44,6 +44,7 @@ use RuntimeException;
  * @method bool hasAttributes()
  * @method \Cake\Datasource\ResultSetInterface|array|null getCategories(bool $ab_returnRaw = false)
  * @method \Awyiss\Model\Entity newDefaultEntity(array $aa_additionalData = [])
+ * @noinspection PhpUnnecessaryFullyQualifiedNameInspection
  */
 class Table extends BaseTable {
 	use InstanceConfigTrait;
@@ -193,7 +194,7 @@ class Table extends BaseTable {
 		 * @noinspection PhpStrictTypeCheckingInspection
 		 * @noinspection PhpParamsInspection
 		 */
-		$ls_sourceTable = isset($this->pageRole) ? Inflector::tableize($this->pageRole) : $this->getTable();
+		$ls_sourceTable = isset($this->pageRole) ? Inflector::tableize($this->pageRole->name) : $this->getTable();
 
 		//Merge the config properties with custom configuration from the database
 		foreach ($this->customConfigProperties as $ls_property) {

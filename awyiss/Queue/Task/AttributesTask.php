@@ -4,6 +4,7 @@
 namespace Awyiss\Queue\Task;
 
 
+use Awyiss\Core\App;
 use Awyiss\Model\Table\AttributesTable;
 use Cake\Collection\Collection;
 use Cake\Datasource\ConnectionManager;
@@ -74,13 +75,16 @@ class AttributesTask extends Task/* implements AddInterface*/ {
 		$la_commands = [];
 		$ls_foreignKey = Inflector::singularize($aa_data['new']['scope']);
 		$lb_scopeIsPageRole = false;
-		if (defined('PAGEROLE_' . strtoupper($ls_foreignKey))) {
-			if ($ls_foreignKey !== 'page') {
-				$ls_foreignKey = 'page';
-				$lb_scopeIsPageRole = true;
-			}
+
+		/** @var class-string<\Awyiss\Database\Type\PageRoleEnumInterface> $ls_pageRoleEnum */
+		$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
+		if ($ls_pageRoleEnum::tryFromName($ls_foreignKey) && $ls_foreignKey !== 'page') {
+			$ls_foreignKey = 'page';
+			$lb_scopeIsPageRole = true;
 		}
+
 		$ls_foreignKey .= '_id';
+
 		$la_tables = ConnectionManager::get('default')->getSchemaCollection()->listTables();
 		$lb_tableExists = in_array($ls_attributesTable, $la_tables);
 
@@ -265,7 +269,11 @@ class AttributesTask extends Task/* implements AddInterface*/ {
 		if ($ab_bakeOldModel) {
 			//If the old table was changed but still exists, bake the model for the old table as well.
 			$ls_forPageRole = null;
-			if (defined('PAGEROLE_' . strtoupper(Inflector::singularize($aa_data['old']['scope'])))) {
+
+			/** @var class-string<\Awyiss\Database\Type\PageRoleEnumInterface> $ls_pageRoleEnum */
+			$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
+
+			if ($ls_pageRoleEnum::tryFromName($aa_data['old']['scope'])) {
 				$ls_forPageRole = ' --for-pagerole ' . $aa_data['old']['scope'];
 			}
 

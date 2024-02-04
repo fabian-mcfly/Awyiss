@@ -8,6 +8,7 @@ use Awyiss\ORM\Association\BelongsToMany;
 use Awyiss\ORM\Association\HasMany;
 use Awyiss\ORM\Behavior;
 use Awyiss\ORM\RulesChecker;
+use BackedEnum;
 use Cake\Collection\CollectionInterface;
 use Cake\Collection\Iterator\TreeIterator;
 use Cake\Datasource\EntityInterface;
@@ -383,7 +384,15 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 
 
 		return $ao_query->formatResults(function (CollectionInterface $ao_collection) use ($ls_column) {
-			return $ao_collection->groupBy($ls_column);
+			return $ao_collection->groupBy(function (EntityInterface $ao_entity) use ($ls_column) {
+				$lx_value = $ao_entity->get($ls_column);
+
+				if ($lx_value instanceof BackedEnum) {
+					$lx_value = $lx_value->value;
+				}
+
+				return $lx_value;
+			});
 		});
 	}
 

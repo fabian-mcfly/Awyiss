@@ -25,6 +25,7 @@ use Cake\Validation\Validator;
  * @todo Add all other page roles?! <-- what does this even mean?
  * @todo On delete, remove cascadeCallbacks for nested pages in PagesTable
  * @todo Or: disallow deletion if a page with that role exits
+ * @todo: disable deleting pagerole "page"
  * @property \Awyiss\Model\Table\PageTemplatesTable&\Awyiss\ORM\Association\HasOne $PageTemplates
  * @property \Awyiss\Model\Table\PagesTable&\Awyiss\ORM\Association\HasMany $Pages
  * @method \Awyiss\Model\Entity\PageRole newDefaultEntity(array $aa_additionalData = [], array $aa_options = [])
@@ -37,13 +38,6 @@ class PageRolesTable extends Table {
 	public const TABLE = 'page_roles';
 
 
-	/**
-	 * @inheritDoc
-	 */
-	protected array $_defaultConfig = [
-		'implementedEvents' => [//'beforeSoftDelete'
-		],
-	];
 	/**
 	 * @var array<int, string> A list of identifiers a page role can't have, since they're used by the system
 	 * or because they are template folder names

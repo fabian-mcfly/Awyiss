@@ -6,12 +6,16 @@ namespace Awyiss\Model\Table;
 
 use ArrayObject;
 use Awyiss\Awyiss;
+use Awyiss\Core\App;
+use Awyiss\Database\Type\PageRoleEnumInterface;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity\Page;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
 use Cake\Collection\CollectionInterface;
 use Cake\Database\Expression\QueryExpression;
+use Cake\Database\Schema\TableSchemaInterface;
+use Cake\Database\Type\EnumType;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
 use Cake\ORM\Query\SelectQuery;
@@ -26,7 +30,8 @@ use Cake\Validation\Validator;
  * @property \Awyiss\Model\Table\LanguagesTable&\Awyiss\ORM\Association\BelongsTo $Languages
  * @property \Awyiss\Model\Table\PageRolesTable&\Awyiss\ORM\Association\BelongsTo $PageRoles
  * @property \Awyiss\Model\Table\PageTemplatesTable&\Awyiss\ORM\Association\BelongsTo $PageTemplates
- * @property \Awyiss\Model\Table\PagesTable&\Awyiss\ORM\Association\BelongsTo $Duplicate
+ * @property \Awyiss\Model\Table\PagesTable&\Awyiss\ORM\Association\HasMany $DuplicatingPages
+ * @property \Awyiss\Model\Table\PagesTable&\Awyiss\ORM\Association\BelongsTo $DuplicateOfPages
  * @property \Awyiss\Model\Table\PagesTable&\Awyiss\ORM\Association\BelongsTo $ParentPages
  * @property \Awyiss\Model\Table\PagesTable&\Awyiss\ORM\Association\HasMany $ChildPages
  * @property \Awyiss\Model\Table\ContentsTable&\Awyiss\ORM\Association\HasMany $Contents
@@ -58,15 +63,9 @@ class PagesTable extends Table {
 		'relatedColumns' => ['languageShortcode', 'pageRoleId'],
 	];
 	/**
-	 * @var string
+	 * @var \Awyiss\Database\Type\PageRoleEnumInterface
 	 */
-	protected string $pageRole = 'page';
-	/**
-	 * Integer identifier of the used page role.
-	 *
-	 * @var int
-	 */
-	protected int $pageRoleId;
+	protected PageRoleEnumInterface $pageRole;
 	/**
 	 * @inheritDoc
 	 */
@@ -80,7 +79,12 @@ class PagesTable extends Table {
 	 * @throws \Exception
 	 */
 	public function initialize(array $aa_config): void {
-		$this->pageRoleId = constant('PAGEROLE_' . strtoupper($this->pageRole));
+		/** @var class-string<\Awyiss\Database\Type\PageRoleEnumInterface> $ls_pageRoleEnum */
+		$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
+
+		$la_parts = explode('\\', static::class);
+
+		$this->pageRole = $ls_pageRoleEnum::tryFromName(substr(end($la_parts), 0, -5));
 
 		parent::initialize($aa_config);
 
@@ -127,11 +131,10 @@ class PagesTable extends Table {
 
 
 	/**
-	 * @return int
-	 * @noinspection PhpUnused
+	 * @return \Awyiss\Database\Type\PageRoleEnumInterface
 	 */
-	public function getPageRoleId(): int {
-		return $this->pageRoleId;
+	public function getPageRole(): PageRoleEnumInterface {
+		return $this->pageRole;
 	}
 
 
@@ -279,7 +282,7 @@ class PagesTable extends Table {
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
-		$ls_pageRole = Inflector::camelize(Inflector::pluralize($this->pageRole));
+		$ls_pageRole = Inflector::camelize(Inflector::pluralize($this->pageRole->name));
 
 
 		$ao_rules->add(
@@ -349,10 +352,10 @@ class PagesTable extends Table {
 				return true;
 			}
 
-			$la_pageRoleIds = array_unique($lo_children->extract('pageRoleId')->toList());
-			$la_pageRoleIds = array_filter($la_pageRoleIds, fn (int $ai_pageRoleId) => $ai_pageRoleId != $ao_page->pageRoleId);
+			$la_pageRoles = array_unique($lo_children->extract('pageRoleId')->toList(), SORT_REGULAR);
+			$la_pageRoles = array_filter($la_pageRoles, fn (PageRoleEnumInterface $ae_pageRole) => $ae_pageRole != $ao_page->pageRoleId);
 
-			return !$la_pageRoleIds;
+			return !$la_pageRoles;
 		}, 'noNestedChildrenWithDifferentPageRole', [
 			'errorField' => '_general',
 			'message' => __d($this->getI18nDomain(), 'error_no_nested_children_with_different_page_role'),
@@ -377,7 +380,7 @@ class PagesTable extends Table {
 		}
 
 		if (!($ao_options['skipPageRoleCheck'] ?? false)) {
-			$ao_query->where(['page_role_id' => $this->getPageRoleId()]);
+			$ao_query->where(['page_role_id' => $this->getPageRole()]);
 		}
 	}
 
@@ -606,7 +609,7 @@ class PagesTable extends Table {
 	 * @return void
 	 */
 	protected function buildPagesAssociations(): void {
-		$ls_pageRole = Inflector::camelize(Inflector::pluralize($this->pageRole));
+		$ls_pageRole = Inflector::camelize(Inflector::pluralize($this->pageRole->name));
 
 		$this->hasMany('Duplicating' . $ls_pageRole, [
 			'bindingKey' => 'duplicate_of',
@@ -621,5 +624,17 @@ class PagesTable extends Table {
 			'className' => $ls_pageRole,
 			'foreignKey' => 'duplicate_of',
 		]);
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	protected function initializeSchema(TableSchemaInterface $ao_schema): void {
+		parent::initializeSchema($ao_schema);
+
+		$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
+
+		$this->getSchema()->setColumnType('page_role_id', EnumType::from($ls_pageRoleEnum));
 	}
 }

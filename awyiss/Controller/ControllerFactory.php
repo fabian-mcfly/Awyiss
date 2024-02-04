@@ -124,9 +124,11 @@ class ControllerFactory extends BaseControllerFactory {
 			return null;
 		}
 
-		//When there's no matching page role constant, we don't allow creating a controller
-		$ls_constantIdentifier = 'PAGEROLE_' . strtoupper($ls_singular);
-		if (!defined($ls_constantIdentifier)) {
+		//When there's no matching page role, we don't allow creating a controller
+		/** @var class-string<\Awyiss\Database\Type\PageRoleEnumInterface> $ls_pageRoleEnum */
+		$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
+		$le_pageRole = $ls_pageRoleEnum::tryFromName($ls_singular);
+		if (!$le_pageRole) {
 			return null;
 		}
 
@@ -149,7 +151,7 @@ class ControllerFactory extends BaseControllerFactory {
 		 */
 		//phpcs:disable SlevomatCodingStandard.Classes.EmptyLinesAroundClassBraces, Squiz.WhiteSpace.ScopeClosingBrace
 		$lo_controller = new class ($ao_request) extends GenericPagesBase {};
-		$lo_controller->asPageRole(constant($ls_constantIdentifier), $ls_controller);
+		$lo_controller->asPageRole($le_pageRole, $ls_controller);
 		//phpcs:enable
 
 

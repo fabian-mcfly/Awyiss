@@ -5,6 +5,7 @@ namespace Awyiss\Command;
 
 
 use Awyiss\Command\Util\UtilTrait;
+use Awyiss\Core\App;
 use Bake\CodeGen\FileBuilder;
 use Bake\Command\ModelCommand as BaseModelCommand;
 use Cake\Console\Arguments;
@@ -198,9 +199,12 @@ class BakeModelCommand extends BaseModelCommand {
 	public function getAssociations(Table $ao_table, Arguments $ao_args, ConsoleIo $ao_io): array {
 		$la_allAssociations = parent::getAssociations($ao_table, $ao_args, $ao_io);
 
+		/** @var class-string<\Awyiss\Database\Type\PageRoleEnumInterface> $ls_pageRoleEnum */
+		$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
+
 		if (
 			$ao_args->getOption('for-pagerole') &&
-			defined('PAGEROLE_' . strtoupper(Inflector::singularize($ao_args->getOption('for-pagerole')))) &&
+			$ls_pageRoleEnum::tryFromName($ao_args->getOption('for-pagerole')) &&
 			!empty($la_allAssociations['belongsTo'])
 		) {
 			foreach ($la_allAssociations['belongsTo'] as &$la_association) {
@@ -317,10 +321,9 @@ class BakeModelCommand extends BaseModelCommand {
 
 
 	/**
-	 * {@inheritDoc}
-	 *
 	 * Adds the `namespace`-option.
 	 *
+	 * @inheritDoc
 	 * @param ConsoleOptionParser $ao_parser
 	 * @return ConsoleOptionParser
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection

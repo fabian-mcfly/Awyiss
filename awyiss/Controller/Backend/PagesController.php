@@ -7,6 +7,8 @@ namespace Awyiss\Controller\Backend;
 use AllowDynamicProperties;
 use Awyiss\Awyiss;
 use Awyiss\Controller\BackendController as Controller;
+use Awyiss\Core\App;
+use Awyiss\Database\Type\PageRoleEnumInterface;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity\Page;
 use Awyiss\Routing\Router;
@@ -26,9 +28,9 @@ use Cake\View\Exception\MissingTemplateException;
 #[AllowDynamicProperties]
 class PagesController extends Controller {
 	/**
-	 * @var int
+	 * @var \Awyiss\Database\Type\PageRoleEnumInterface
 	 */
-	protected int $pageRoleId = PAGEROLE_PAGE;
+	protected PageRoleEnumInterface $pageRole;
 	/**
 	 * @var \Cake\Datasource\ResultSetInterface
 	 */
@@ -70,7 +72,7 @@ class PagesController extends Controller {
 
 		$lo_page = $this->Pages->newDefaultEntity([
 			'languageShortcode' => LocaleMiddleware::getLanguage()->shortcode,
-			'pageRoleId' => $this->getPageRoleId(),
+			'pageRoleId' => $this->getPageRole(),
 		]);
 
 		if ($this->request->is('post')) {
@@ -163,7 +165,7 @@ class PagesController extends Controller {
 	public function getPageTemplates(): CollectionInterface {
 		if (!isset($this->pageTemplates)) {
 			$this->pageTemplates = $this->Pages->PageTemplates->find('active')->where([
-				'page_role_id' => $this->getPageRoleId(),
+				'page_role_id' => $this->getPageRole(),
 			])->all()->indexBy('id');
 		}
 
@@ -234,20 +236,25 @@ class PagesController extends Controller {
 
 
 	/**
-	 * @return int
+	 * @return \Awyiss\Database\Type\PageRoleEnumInterface
 	 */
-	public function getPageRoleId(): int {
-		return $this->pageRoleId;
+	public function getPageRole(): PageRoleEnumInterface {
+		if (!isset($this->pageRole)) {
+			/** @var class-string<\Awyiss\Database\Type\PageRoleEnumInterface> $ls_pageRoleEnum */
+			$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
+			$this->pageRole = $ls_pageRoleEnum::Page;
+		}
+
+		return $this->pageRole;
 	}
 
 
 	/**
-	 * @param int $ai_pageRoleId
+	 * @param \Awyiss\Database\Type\PageRoleEnumInterface $ae_pageRole
 	 * @return PagesController
-	 * @noinspection PhpUnused
 	 */
-	public function setPageRoleId(int $ai_pageRoleId): static {
-		$this->pageRoleId = $ai_pageRoleId;
+	public function setPageRole(PageRoleEnumInterface $ae_pageRole): static {
+		$this->pageRole = $ae_pageRole;
 
 
 		return $this;
@@ -258,13 +265,13 @@ class PagesController extends Controller {
 	 * Uses this controller with another page_role_id/identifier, so we don't need to bake one for every page role.
 	 * This is supposed to only handle non-existing controllers as a fallback.
 	 *
-	 * @param int $ai_pageRoleId
+	 * @param \Awyiss\Database\Type\PageRoleEnumInterface $ae_pageRole
 	 * @param string $as_identifier
 	 * @return $this
 	 * @throws \ReflectionException
 	 */
-	public function asPageRole(int $ai_pageRoleId, string $as_identifier): static {
-		$this->setPageRoleId($ai_pageRoleId);
+	public function asPageRole(PageRoleEnumInterface $ae_pageRole, string $as_identifier): static {
+		$this->setPageRole($ae_pageRole);
 		$this->Pages = $this->{$as_identifier} = $this->fetchTable($as_identifier);
 
 		/** @var \Awyiss\Authorization\AuthorizationService $lo_authorizationService */
@@ -335,7 +342,7 @@ class PagesController extends Controller {
 			$ao_page->setAccess('attributes', true);
 		}
 
-		$this->Pages->patchEntity($ao_page, ['page_role_id' => $this->getPageRoleId()] + $this->request->getData(), ['associated' => $la_associated]);
+		$this->Pages->patchEntity($ao_page, ['page_role_id' => $this->getPageRole()] + $this->request->getData(), ['associated' => $la_associated]);
 
 		$this->Categories->setConfig('finder', [
 			'forCurrentLanguage' => [
@@ -375,7 +382,7 @@ class PagesController extends Controller {
 	 */
 	protected function initializeOverviewWhere(): void {
 		$this->overviewWhere = [
-			'page_role_id' => $this->getPageRoleId(),
+			'page_role_id' => $this->getPageRole(),
 		];
 	}
 

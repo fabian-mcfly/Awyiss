@@ -4,8 +4,11 @@
 namespace Awyiss\Model\Table;
 
 
+use Awyiss\Core\App;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
+use Cake\Database\Schema\TableSchemaInterface;
+use Cake\Database\Type\EnumType;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Validation\Validator;
@@ -25,8 +28,6 @@ class PageTemplatesTable extends Table {
 	 * @inheritDoc
 	 */
 	public const TABLE = 'page_templates';
-
-
 	/**
 	 * @inheritDoc
 	 */
@@ -83,14 +84,14 @@ class PageTemplatesTable extends Table {
 	 */
 	public function findWithUsages(SelectQuery $ao_query): SelectQuery {
 		return $ao_query->enableAutoFields()->select([
-				'usedForPages' => $ao_query->func()->count('Pages.id'),
-			])->leftJoinWith('Pages', function (SelectQuery $ao_query) {
-				return $ao_query->applyOptions([
-					'attributes' => [
-						'skip' => true,
-					],
-				]);
-			})->groupBy('PageTemplates.id');
+			'usedForPages' => $ao_query->func()->count('Pages.id'),
+		])->leftJoinWith('Pages', function (SelectQuery $ao_query) {
+			return $ao_query->applyOptions([
+				'attributes' => [
+					'skip' => true,
+				],
+			]);
+		})->groupBy('PageTemplates.id');
 	}
 
 
@@ -191,5 +192,18 @@ class PageTemplatesTable extends Table {
 
 
 		return $ao_rules;
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	protected function initializeSchema(TableSchemaInterface $ao_schema): void {
+		parent::initializeSchema($ao_schema);
+
+		/** @var class-string<\Awyiss\Database\Type\PageRoleEnumInterface> $ls_pageRoleEnum */
+		$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
+
+		$this->getSchema()->setColumnType('page_role_id', EnumType::from($ls_pageRoleEnum));
 	}
 }

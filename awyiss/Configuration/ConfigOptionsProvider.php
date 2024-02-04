@@ -5,6 +5,7 @@ namespace Awyiss\Configuration;
 
 
 use Awyiss\Configuration\ConfigOptions\GenericPagesConfigOptions;
+use Awyiss\Core\App;
 use Cake\Datasource\FactoryLocator;
 use Cake\Utility\Inflector;
 use Cake\Utility\Text;
@@ -290,9 +291,12 @@ class ConfigOptionsProvider {
 			}
 		}
 		elseif (!isset($la_configurations[ $ls_scope ]) && !in_array(strtolower($ls_scope), ['page', 'pages'])) {
-			$ls_singular = Inflector::singularize(Inflector::underscore($ls_scope));
-			$ls_constant = 'PAGEROLE_' . strtoupper($ls_singular);
-			if (defined($ls_constant)) {
+			$ls_singular = Inflector::camelize(Inflector::singularize($ls_scope));
+
+			/** @var class-string<\Awyiss\Model\Enum\PageRole> $ls_pageRoleEnum */
+			$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
+
+			if ($ls_pageRoleEnum::tryFromName($ls_singular)) {
 				$la_configurations[ $ls_scope ] = $ls_scope;
 			}
 		}

@@ -4,6 +4,7 @@
 namespace Awyiss\Model\Table;
 
 
+use Awyiss\Database\Type\PageRoleEnumInterface;
 use Awyiss\Model\Entity\Content;
 use Awyiss\Model\Entity\ContentTemplate;
 use Awyiss\Model\Entity\Page;
@@ -72,9 +73,9 @@ class ContentsTable extends Table {
 		'relatedColumns' => ['pageId', 'contentAreaId'],
 	];
 	/**
-	 * @var string
+	 * @var \Awyiss\Database\Type\PageRoleEnumInterface
 	 */
-	private string $pageRoleName;
+	protected PageRoleEnumInterface $pageRole;
 	/**
 	 * @inheritDoc
 	 */
@@ -259,7 +260,7 @@ class ContentsTable extends Table {
 			 */
 			try {
 				/** @var Page $lo_page */
-				$lo_page = $this->{$this->getPageRoleName()}->get($ao_entity->pageId, contain: [
+				$lo_page = $this->{$this->getPageRole()->tableAlias()}->get($ao_entity->pageId, contain: [
 					'PageTemplates',
 				]);
 			}
@@ -443,7 +444,7 @@ class ContentsTable extends Table {
 			$ai_pageId,
 			attributes: ['skip' => true],
 			contain: [
-				'PageRoles' => [
+				/*'PageRoles' => [
 					'finder' => [
 						'all' => [
 							'attributes' => ['skip' => true],
@@ -454,7 +455,7 @@ class ContentsTable extends Table {
 						'identifier',
 						'active',
 					],
-				],
+				],*/
 				'PageTemplates' => [
 					'finder' => [
 						'all' => [
@@ -498,22 +499,14 @@ class ContentsTable extends Table {
 	/**
 	 * Sets this table to run the access check of the 'Pages'-association with a specific page role.
 	 *
-	 * @param string $as_identifier
+	 * @param \Awyiss\Database\Type\PageRoleEnumInterface $ae_pageRole
 	 * @param bool $ab_initializePages
 	 * @return void
 	 * @throws \Exception
 	 */
-	public function forPageRole(string $as_identifier, bool $ab_initializePages = true): void {
-		$ls_singular = Inflector::singularize(Inflector::underscore($as_identifier));
-
-		$ls_constant = 'PAGEROLE_' . strtoupper($ls_singular);
-		if (!defined($ls_constant)) {
-			throw new RuntimeException(sprintf('Cannot use `%s` for page role `%s`', static::class, $as_identifier));
-		}
-
-		$ls_alias = Inflector::camelize(Inflector::tableize($as_identifier));
+	public function forPageRole(PageRoleEnumInterface $ae_pageRole, bool $ab_initializePages = true): void {
 		if ($ab_initializePages) {
-			$this->belongsTo($ls_alias, [
+			$this->belongsTo($ae_pageRole->tableAlias(), [
 				'bindingKey' => 'id',
 				'finder' => 'forCurrentLanguage',
 				'foreignKey' => 'page_id',
@@ -523,11 +516,11 @@ class ContentsTable extends Table {
 
 			/** @var \Awyiss\Model\Behavior\CategoriesBehavior $lo_behavior */
 			$lo_behavior = $this->getBehavior('Categories');
-			$lo_behavior->setConfig('associationName', $ls_alias)->resetCategories();
+			$lo_behavior->setConfig('associationName', $ae_pageRole->tableAlias())->resetCategories();
 		}
 
-		$this->setPageRoleName($ls_alias);
-		$this->setForScope($as_identifier);
+		$this->setPageRole($ae_pageRole);
+		$this->setForScope($ae_pageRole->tableName());
 	}
 
 
@@ -559,19 +552,19 @@ class ContentsTable extends Table {
 
 
 	/**
-	 * @return string
+	 * @return \Awyiss\Database\Type\PageRoleEnumInterface
 	 */
-	public function getPageRoleName(): string {
-		return $this->pageRoleName;
+	public function getPageRole(): PageRoleEnumInterface {
+		return $this->pageRole;
 	}
 
 
 	/**
-	 * @param string $as_pageRoleName
+	 * @param \Awyiss\Database\Type\PageRoleEnumInterface $as_pageRoleName
 	 * @return ContentsTable
 	 */
-	protected function setPageRoleName(string $as_pageRoleName): static {
-		$this->pageRoleName = Inflector::camelize(Inflector::tableize($as_pageRoleName));
+	protected function setPageRole(PageRoleEnumInterface $ae_pageRoleName): static {
+		$this->pageRole = $ae_pageRoleName;
 
 
 		return $this;

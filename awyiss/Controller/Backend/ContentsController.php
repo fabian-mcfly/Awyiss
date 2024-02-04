@@ -469,7 +469,7 @@ class ContentsController extends Controller {
 			'selectedCategory' => $ai_pageId,
 		]);
 
-		$this->Contents->forPageRole($lo_page->pageRole->identifier);
+		$this->Contents->forPageRole($lo_page->pageRoleId);
 
 		if (!$this->request->is(['patch', 'post', 'put']) || $this->request->getParam('action') !== 'edit') {
 			if ($lo_page->language_shortcode != LocaleMiddleware::getLanguage()->shortcode) {

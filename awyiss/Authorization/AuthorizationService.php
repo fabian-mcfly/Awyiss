@@ -7,6 +7,7 @@ namespace Awyiss\Authorization;
 use Authentication\AuthenticationServiceInterface;
 use Awyiss\Authorization\Policy\Backend\GenericPagesPolicy;
 use Awyiss\Authorization\Policy\PolicyInterface;
+use Awyiss\Core\App;
 use Cake\Datasource\FactoryLocator;
 use Cake\Utility\Inflector;
 use Cake\Utility\Text;
@@ -169,9 +170,10 @@ class AuthorizationService implements AuthorizationServiceInterface {
 			}
 		}
 		elseif (!isset($la_policies[ $as_scope ])) {
-			$ls_singular = Inflector::singularize(Inflector::underscore($as_scope));
-			$ls_constant = 'PAGEROLE_' . strtoupper($ls_singular);
-			if (defined($ls_constant)) {
+			/** @var class-string<\Awyiss\Database\Type\PageRoleEnumInterface> $ls_pageRoleEnum */
+			$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
+
+			if ($ls_pageRoleEnum::tryFromName($as_scope)) {
 				$la_policies[ $as_scope ] = new GenericPagesPolicy($as_scope);
 			}
 		}

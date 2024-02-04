@@ -61,7 +61,7 @@ class PageRolesListener implements EventListenerInterface {
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function afterSaveCommit(Event $ao_event, PageRole $ao_entity): void {
-		$this->createCustomConstantsFile();
+		$this->createPageRoleEnum();
 
 		$this->createPageRoleModel($ao_entity);
 	}
@@ -74,7 +74,7 @@ class PageRolesListener implements EventListenerInterface {
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function afterDelete(Event $ao_event, PageRole $ao_entity): void {
-		$this->createCustomConstantsFile();
+		$this->createPageRoleEnum();
 
 		/** @var \Queue\Model\Table\QueuedJobsTable $lo_queue */
 		$lo_queue = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
@@ -130,81 +130,52 @@ class PageRolesListener implements EventListenerInterface {
 
 
 	/**
-	 * After saving or deleting a page role item, we delete the cached constants file.
-	 * It's easier and doesn't affect performance that much to recreate the file once.
-	 *
-	 * @return void
-	 */
-	protected function createCustomConstantsFile(): void {
-		$ls_environment = preg_replace('/[^a-z-_]/i', '', CONFIG_ENV);
-
-		$ls_filePath = CUSTOM_CONFIG . $ls_environment . DS . 'constants.php';
-
-		$ls_constantsContents = '<?php declare(strict_types=1);' . PHP_EOL . PHP_EOL;
-
-		/** @var \Awyiss\Model\Table\PageRolesTable $lo_pageRolesTable */
-		$lo_pageRolesTable = FactoryLocator::get('Table')->get('PageRoles');
-		/** @var \Awyiss\Model\Entity\PageRole $lo_pageRole */
-		foreach ($lo_pageRolesTable->find() as $lo_pageRole) {
-			$ls_constant = 'PAGEROLE_' . strtoupper($lo_pageRole->identifier);
-			$ls_constantsContents .= 'defined(\'' . $ls_constant . '\') || define(\'' . $ls_constant . '\', ' . $lo_pageRole->id . ');' . PHP_EOL;
-			defined($ls_constant) || define($ls_constant, $lo_pageRole->id);
-		}
-
-		if (file_exists($ls_filePath)) {
-			unlink($ls_filePath);
-		}
-
-		if (file_put_contents($ls_filePath, $ls_constantsContents)) {
-			chmod($ls_filePath, 0660);
-		}
-	}
-
-
-	/**
 	 * @param PageRole $ao_entity
 	 * @return void
 	 */
 	protected function createBackendMenuEntries(PageRole $ao_entity): void {
-		if (!Configure::read('Awyiss.PageRoles.Backend.autoCreateMenuEntries') || !$ao_entity->isNew()) {
+		if (!Configure::read('Awyiss.PageRoles.Backend.autoCreateMenuEntries') || !$ao_entity->isNew() || $ao_entity->identifier === 'page') {
 			return;
 		}
 
 		/** @var \Awyiss\Model\Table\BackendMenuEntriesTable $lo_menuEntriesTable */
 		$lo_menuEntriesTable = $this->fetchTable('BackendMenuEntries');
 
+		$ls_plural = Inflector::pluralize($ao_entity->identifier);
+		$ls_controller = Inflector::camelize($ls_plural);
+
 		$la_data = [
 			'title' => $ao_entity->title,
 			'insert_after_id' => 'pages',
-			'link' => Inflector::camelize(Inflector::pluralize($ao_entity->identifier)) . '::overview',
+			'link' => $ls_controller . '::overview',
 			'access' => [
-				'scope' => Inflector::pluralize($ao_entity->identifier),
+				'scope' => $ls_plural,
 				'identifier' => 'read',
 			],
 			'child_backend_menu_entries' => [
 				[
-					'title' => Inflector::pluralize($ao_entity->identifier) . '::menu_overview',
-					'link' => Inflector::camelize(Inflector::pluralize($ao_entity->identifier)) . '::overview',
+					'title' => $ls_plural . '::menu_overview',
+					'link' => $ls_controller . '::overview',
 					'access' => [
-						'scope' => Inflector::pluralize($ao_entity->identifier),
+						'scope' => $ls_plural,
 						'identifier' => 'read',
 					],
 					'system_order' => 1,
 				],
 				[
-					'title' => Inflector::pluralize($ao_entity->identifier) . '::menu_add',
-					'link' => Inflector::camelize(Inflector::pluralize($ao_entity->identifier)) . '::add',
+					'title' => $ls_plural . '::menu_add',
+					'link' => $ls_controller . '::add',
 					'access' => [
-						'scope' => Inflector::pluralize($ao_entity->identifier),
+						'scope' => $ls_plural,
 						'identifier' => 'create',
 					],
 					'system_order' => 2,
 				],
 				[
-					'title' => Inflector::pluralize($ao_entity->identifier) . '::menu_configure',
-					'link' => 'Configuration::overview::scope:' . Inflector::pluralize($ao_entity->identifier),
+					'title' => $ls_plural . '::menu_configure',
+					'link' => 'Configuration::overview::scope:' . $ls_plural,
 					'access' => [
-						'scope' => Inflector::pluralize($ao_entity->identifier),
+						'scope' => $ls_plural,
 						'identifier' => 'configure',
 					],
 					'system_order' => 3,
@@ -220,6 +191,7 @@ class PageRolesListener implements EventListenerInterface {
 		}
 
 		$lo_menuEntry = $lo_menuEntriesTable->patchEntity($lo_menuEntriesTable->newDefaultEntity(), $la_data, [
+			'accessibleFields' => 'childBackendMenuEntries',
 			'associated' => [
 				'ChildBackendMenuEntries' => [
 					'validate' => false,
@@ -229,6 +201,43 @@ class PageRolesListener implements EventListenerInterface {
 		]);
 
 		$lo_menuEntriesTable->save($lo_menuEntry);
+	}
+
+
+	/**
+	 * After saving or deleting a page role item, we delete the cached constants file.
+	 * It's easier and doesn't affect performance that much to recreate the file once.
+	 *
+	 * @return void
+	 */
+	protected function createPageRoleEnum(): void {
+		$la_pageRoles = [];
+
+		/** @var \Awyiss\Model\Table\PageRolesTable $lo_pageRolesTable */
+		$lo_pageRolesTable = FactoryLocator::get('Table')->get('PageRoles');
+
+		/** @var \Awyiss\Model\Entity\PageRole $lo_pageRole */
+		foreach ($lo_pageRolesTable->find() as $lo_pageRole) {
+			$la_pageRoles[] = $lo_pageRole->identifier . ':' . $lo_pageRole->id;
+		}
+
+		$la_commands[] = 'bin/cake bake enum PageRole ' . implode(',', $la_pageRoles) . ' -i --namespace ' . CUSTOM_NAMESPACE . ' --is-pagerole';
+
+		if (!empty($la_commands)) {
+			$la_data = [
+				'command' => implode(' && ', array_map('escapeshellcmd', $la_commands)),
+				'escape' => false,
+				'log' => true,
+			];
+
+			/** @var \Queue\Model\Table\QueuedJobsTable $lo_queue */
+			$lo_queue = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
+			$lo_queue->createJob('Queue.Execute', $la_data, [
+				'group' => 'general',
+				'priority' => 1,
+				'reference' => 'page_roles::create_enum',
+			]);
+		}
 	}
 
 

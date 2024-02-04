@@ -4,6 +4,7 @@
 namespace Awyiss\Model\Entity;
 
 
+use Awyiss\Core\App;
 use Awyiss\Model\Entity;
 use Cake\Collection\CollectionInterface;
 use Cake\Datasource\FactoryLocator;
@@ -14,7 +15,7 @@ use Cake\Utility\Text;
  * Page Entity
  *
  * @property int $id
- * @property int|null $pageRoleId
+ * @property \Awyiss\Database\Type\PageRoleEnumInterface|null $pageRoleId
  * @property int|null $pageTemplateId
  * @property int|null $parentId
  * @property string|null $languageShortcode
@@ -64,12 +65,6 @@ class Page extends Entity {
 		'duplicateOf' => true,
 		'systemOrder' => true,
 		'active' => true,
-	];
-	/**
-	 * @inheritDoc
-	 */
-	protected array $defaultValues = [
-		'pageRoleId' => PAGEROLE_PAGE,
 	];
 	/**
 	 * @inheritDoc
@@ -177,5 +172,20 @@ class Page extends Entity {
 
 
 		return mb_strtolower($ls_slug);
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public function defaultValues(): array {
+		/** @var class-string<\Awyiss\Database\Type\PageRoleEnumInterface> $ls_pageRoleEnum */
+		$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
+
+		$la_parts = explode('\\', static::class);
+
+		return parent::defaultValues() + [
+			'pageRoleId' => $ls_pageRoleEnum::tryFromName(end($la_parts)),
+		];
 	}
 }
