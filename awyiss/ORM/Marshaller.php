@@ -9,6 +9,9 @@ use Cake\Datasource\InvalidPropertyInterface;
 use Cake\ORM\Marshaller as BaseMarshaller;
 
 
+/**
+ * Custom Marshaller
+ */
 class Marshaller extends BaseMarshaller {
 	/**
 	 * Implemented 1:1 but added a `has`-check before skipping columns and
@@ -32,8 +35,14 @@ class Marshaller extends BaseMarshaller {
 		}
 
 		if (isset($la_options['accessibleFields'])) {
-			foreach ((array)$la_options['accessibleFields'] as $key => $value) {
-				$ao_entity->setAccess($key, $value);
+			if (!is_array($la_options['accessibleFields'])) {
+				$la_options['accessibleFields'] = [
+					(string)$la_options['accessibleFields'] => true,
+				];
+			}
+
+			foreach ($la_options['accessibleFields'] as $lx_key => $lx_value) {
+				$ao_entity->setAccess($lx_key, $lx_value);
 			}
 		}
 
@@ -76,6 +85,9 @@ class Marshaller extends BaseMarshaller {
 
 
 	/**
+	 * Adds `$ao_entity->has($ls_key) &&` in the big if-statement to only skip fields that were present during initialization.
+	 * Helpful for default and null values.
+	 *
 	 * @param \Cake\Datasource\EntityInterface $ao_entity
 	 * @param array $aa_propertyMap
 	 * @param array $aa_data
