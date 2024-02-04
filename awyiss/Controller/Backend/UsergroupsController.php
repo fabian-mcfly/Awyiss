@@ -16,6 +16,7 @@ use Cake\Utility\Inflector;
 /**
  * Usergroups Controller
  *
+ * @todo Make labels in the usergroups::permissions-fieldset use the translation of page role names (if page role)
  * @property \Awyiss\Model\Table\UsergroupsTable $Usergroups
  */
 class UsergroupsController extends Controller {
