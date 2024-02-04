@@ -30,7 +30,7 @@ class PageRolesConfigOptions extends AbstractConfigOptions {
 				identifier: 'autoCreateMenuEntries',
 				localizable: false,
 				nullable: false,
-				type: ConfigOptionType::BOOL,
+				type: ConfigOptionType::Bool,
 			),
 		]);
 	}

@@ -13,14 +13,14 @@ use TypeError;
  * Valid data types for values used in `ConfigOption`
  */
 enum ConfigOptionType {
-	case BOOL;
-	case ENUM;
-	case FLOAT;
-	case INTEGER;
-	case JSON_ARRAY;
-	case JSON_OBJECT;
-	case LISTVALUE;
-	case STRING;
+	case Bool;
+	case Enum;
+	case Float;
+	case Integer;
+	case JsonArray;
+	case JsonObject;
+	case ListValue;
+	case String;
 
 
 	/**
@@ -36,7 +36,7 @@ enum ConfigOptionType {
 		}
 
 		switch ($this) {
-			case self::BOOL:
+			case self::Bool:
 				/**
 				 * Type bool consideres everything boolish to be a valid value
 				 * since the \Model\Entity\Configuration saves everything as a string
@@ -44,14 +44,14 @@ enum ConfigOptionType {
 				 */
 				return is_bool($ax_value) || in_array($ax_value, [1, 0, '1', '0'], true);
 
-			case self::FLOAT:
+			case self::Float:
 				return is_float($ax_value) || ($ax_value === (float)$ax_value);
 
-			case self::INTEGER:
+			case self::Integer:
 				return is_int($ax_value) || ($ax_value === (int)$ax_value);
 
-			case self::JSON_ARRAY:
-			case self::JSON_OBJECT:
+			case self::JsonArray:
+			case self::JsonObject:
 				try {
 					$la_value = json_decode($ax_value, true, 512, JSON_THROW_ON_ERROR);
 				}
@@ -60,11 +60,11 @@ enum ConfigOptionType {
 				}
 				return is_array($la_value);
 
-			case self::ENUM:
-			case self::LISTVALUE:
+			case self::Enum:
+			case self::ListValue:
 				throw new RuntimeException(sprintf('Cannot validate case `%s` in `%s` in the enum directly. Use `\Awyiss\Configuration\ConfigOption::validateConfigValue` instead.', $this->name, self::class));
 
-			case self::STRING:
+			case self::String:
 				return is_string($ax_value);
 		}
 
@@ -87,12 +87,12 @@ enum ConfigOptionType {
 
 		/** @noinspection PhpUncoveredEnumCasesInspection */
 		return match ($this) {
-			self::BOOL => boolval($ax_value),
-			self::FLOAT => floatval($ax_value),
-			self::INTEGER => intval($ax_value),
-			self::JSON_ARRAY => json_decode($ax_value, true),
-			self::JSON_OBJECT => json_decode($ax_value),
-			self::STRING => strval($ax_value),
+			self::Bool => boolval($ax_value),
+			self::Float => floatval($ax_value),
+			self::Integer => intval($ax_value),
+			self::JsonArray => json_decode($ax_value, true),
+			self::JsonObject => json_decode($ax_value),
+			self::String => strval($ax_value),
 		};
 	}
 }

@@ -8,6 +8,6 @@ namespace Awyiss\Authorization\Permission;
  * Enum with all possible permission types.
  */
 enum PermissionAccess: int {
-	case OPTION_GRANTED = 1;
-	case OPTION_DENIED = 0;
+	case Granted = 1;
+	case Denied = 0;
 }

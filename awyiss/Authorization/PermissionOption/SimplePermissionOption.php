@@ -28,8 +28,8 @@ class SimplePermissionOption extends AbstractPermissionOption {
 		parent::__construct($aa_config, $ao_permissionOptionCollection);
 
 		$this->options = [
-			'granted' => PermissionAccess::OPTION_GRANTED,
-			'denied' => PermissionAccess::OPTION_DENIED,
+			'granted' => PermissionAccess::Granted,
+			'denied' => PermissionAccess::Denied,
 			'indifferent' => null,
 		];
 	}
@@ -60,10 +60,10 @@ class SimplePermissionOption extends AbstractPermissionOption {
 			$lx_access = $this->harmonizeOptionValue($ax_access);
 		}
 
-		if ($lx_access === PermissionAccess::OPTION_GRANTED) {
+		if ($lx_access === PermissionAccess::Granted) {
 			return true;
 		}
-		elseif ($lx_access === PermissionAccess::OPTION_DENIED) {
+		elseif ($lx_access === PermissionAccess::Denied) {
 			return false;
 		}
 

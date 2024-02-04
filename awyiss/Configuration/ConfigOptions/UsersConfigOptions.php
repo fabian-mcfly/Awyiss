@@ -29,7 +29,7 @@ class UsersConfigOptions extends AbstractConfigOptions {
 				defaultValue: true,
 				identifier: 'search',
 				localizable: false,
-				type: ConfigOptionType::BOOL,
+				type: ConfigOptionType::Bool,
 			),
 			'paginate' => [
 				new ConfigOption(
@@ -37,7 +37,7 @@ class UsersConfigOptions extends AbstractConfigOptions {
 					identifier: 'limit',
 					localizable: false,
 					nullable: false,
-					type: ConfigOptionType::INTEGER,
+					type: ConfigOptionType::Integer,
 				),
 			],
 		]);

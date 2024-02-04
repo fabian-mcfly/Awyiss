@@ -37,7 +37,7 @@ abstract class AbstractPermissionOption implements PermissionOptionInterface {
 	 * @var array<string, mixed>
 	 */
 	protected array $_defaultConfig = [
-		'preferredInput' => PermissionOptionType::TYPE_RADIO,
+		'preferredInput' => PermissionOptionType::Radio,
 		'identifier' => null,
 	];
 

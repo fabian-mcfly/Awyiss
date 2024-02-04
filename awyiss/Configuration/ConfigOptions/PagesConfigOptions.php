@@ -35,7 +35,7 @@ class PagesConfigOptions extends AbstractConfigOptions {
 					identifier: 'enabled',
 					localizable: false,
 					nullable: false,
-					type: ConfigOptionType::BOOL,
+					type: ConfigOptionType::Bool,
 				),
 			],
 		]);

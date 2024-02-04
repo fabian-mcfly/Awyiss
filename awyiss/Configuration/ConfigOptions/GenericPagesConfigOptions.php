@@ -41,49 +41,49 @@ class GenericPagesConfigOptions extends AbstractConfigOptions {
 					identifier: 'allowAggregation',
 					localizable: false,
 					nullable: false,
-					type: ConfigOptionType::BOOL,
+					type: ConfigOptionType::Bool,
 				),
 				new ConfigOption(
 					defaultValue: null,
 					identifier: 'associationName',
 					localizable: false,
 					nullable: true,
-					type: ConfigOptionType::STRING,
+					type: ConfigOptionType::String,
 				),
 				new ConfigOption(
 					defaultValue: null,
 					identifier: 'categories',
 					localizable: false,
 					nullable: true,
-					type: ConfigOptionType::JSON_ARRAY,
+					type: ConfigOptionType::JsonArray,
 				),
 				new ConfigOption(
 					defaultValue: 'category',
 					identifier: 'identifier',
 					localizable: false,
 					nullable: false,
-					type: ConfigOptionType::STRING
+					type: ConfigOptionType::String
 				),
 				new ConfigOption(
 					defaultValue: false,
 					identifier: 'enabled',
 					localizable: false,
 					nullable: false,
-					type: ConfigOptionType::BOOL
+					type: ConfigOptionType::Bool
 				),
 				new ConfigOption(
 					defaultValue: true,
 					identifier: 'threaded',
 					localizable: false,
 					nullable: false,
-					type: ConfigOptionType::BOOL
+					type: ConfigOptionType::Bool
 				),
 				new ConfigOption(
 					defaultValue: true,
 					identifier: 'useDatasource',
 					localizable: false,
 					nullable: false,
-					type: ConfigOptionType::BOOL,
+					type: ConfigOptionType::Bool,
 				),
 			],
 			'contents' => [
@@ -92,7 +92,7 @@ class GenericPagesConfigOptions extends AbstractConfigOptions {
 					identifier: 'enabled',
 					localizable: false,
 					nullable: false,
-					type: ConfigOptionType::BOOL,
+					type: ConfigOptionType::Bool,
 				),
 			],
 			'paginate' => [
@@ -101,14 +101,14 @@ class GenericPagesConfigOptions extends AbstractConfigOptions {
 					identifier: 'enabled',
 					localizable: false,
 					nullable: true,
-					type: ConfigOptionType::BOOL,
+					type: ConfigOptionType::Bool,
 				),
 				new ConfigOption(
 					defaultValue: 20,
 					identifier: 'limit',
 					localizable: false,
 					nullable: false,
-					type: ConfigOptionType::INTEGER,
+					type: ConfigOptionType::Integer,
 				),
 			],
 			'systemOrder' => [
@@ -117,7 +117,7 @@ class GenericPagesConfigOptions extends AbstractConfigOptions {
 					identifier: 'direction',
 					localizable: false,
 					nullable: false,
-					type: ConfigOptionType::LISTVALUE,
+					type: ConfigOptionType::ListValue,
 					values: [
 						SORT_ASC,
 						SORT_DESC,
@@ -128,7 +128,7 @@ class GenericPagesConfigOptions extends AbstractConfigOptions {
 					identifier: 'field',
 					localizable: false,
 					nullable: false,
-					type: ConfigOptionType::LISTVALUE,
+					type: ConfigOptionType::ListValue,
 					values: $this->getSystemOrderFields(...),
 				),
 			],

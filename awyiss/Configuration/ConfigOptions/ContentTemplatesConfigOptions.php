@@ -31,7 +31,7 @@ class ContentTemplatesConfigOptions extends AbstractConfigOptions {
 					identifier: 'limit',
 					localizable: false,
 					nullable: false,
-					type: ConfigOptionType::INTEGER,
+					type: ConfigOptionType::Integer,
 				),
 			],
 		]);

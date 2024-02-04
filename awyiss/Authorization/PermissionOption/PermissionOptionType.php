@@ -9,8 +9,8 @@ namespace Awyiss\Authorization\PermissionOption;
  * A permission can define a preferred input to be used by the view.
  */
 enum PermissionOptionType: string {
-	case TYPE_CHECKBOX = 'checkbox';
-	case TYPE_RADIO = 'radio';
-	case TYPE_SELECT = 'select';
-	case TYPE_MULTISELECT = 'select_multi';
+	case Checkbox = 'checkbox';
+	case Radio = 'radio';
+	case Select = 'select';
+	case Multiselect = 'select_multi';
 }
