@@ -92,7 +92,7 @@ class BakeControllerCommand extends BaseControllerCommand {
 		$ls_singularHumanName = $this->_singularHumanName($as_controllerName);
 		$ls_pluralHumanName = $this->_variableName($as_controllerName);
 
-		$ls_defaultModel = App::className(sprintf('%sTable', $as_controllerName), 'Model/Table');
+		$ls_defaultModel = App::className($as_controllerName, 'Model/Table', 'Table');
 		if (!class_exists($ls_defaultModel)) {
 			$ls_defaultModel = null;
 		}
