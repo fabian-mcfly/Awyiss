@@ -20,7 +20,6 @@ use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
-use RuntimeException;
 
 
 /**
