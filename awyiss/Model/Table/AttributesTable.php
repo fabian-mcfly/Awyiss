@@ -107,8 +107,8 @@ class AttributesTable extends Table {
 	public function buildCategories(): array {
 		$la_attributeScopes = $this->attributeScopes;
 
-		array_walk($la_attributeScopes, function (&$as_className, $as_identifier): void {
-			$as_className = __d($as_identifier, 'title_menu');
+		array_walk($la_attributeScopes, function (&$as_label, $as_identifier): void {
+			$as_label = __d($as_identifier, 'title_menu');
 		});
 
 		uasort($la_attributeScopes, function ($a, $b) {
