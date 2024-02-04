@@ -328,9 +328,9 @@ class AttributesBehavior extends Behavior {
 			return;
 		}
 
-		if ($ao_query->isEagerLoaded()) {
+		/*if ($ao_query->isEagerLoaded()) {
 			throw new RuntimeException('Eager loaded associations should skip the attributes behavior');
-		}
+		}*/
 
 		$ao_query->contain([
 			$this->getAttributesTable(true),
