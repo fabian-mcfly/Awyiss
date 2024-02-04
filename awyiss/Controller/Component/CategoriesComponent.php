@@ -181,6 +181,10 @@ class CategoriesComponent extends Component {
 
 			//Is there a request parameter with the identifier
 			$lx_categoryId = $lo_request->getParam(Inflector::variable($this->getConfig('uriParam')));
+			if (is_numeric($lx_categoryId)) {
+				$lx_categoryId = (int)$lx_categoryId;
+			}
+
 			if (!$lx_categoryId) {
 				$lx_categoryId = $lo_session->started() ? $lo_session->read($ls_sessionIdentifier) : null;
 				$lx_categoryId ??= $this->getConfig('selectedCategory');
