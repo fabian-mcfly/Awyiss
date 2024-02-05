@@ -4,6 +4,7 @@
 namespace Awyiss\Routing\Route;
 
 
+use BackedEnum;
 use Cake\Routing\Route\DashedRoute;
 use Cake\Utility\Inflector;
 use InvalidArgumentException;
@@ -131,7 +132,19 @@ class AwyissRoute extends DashedRoute {
 			}
 
 			//Combine key and value using a ":", creating one url part of .../key1:param1/...
-			return rawurlencode(Inflector::dasherize((string)$ax_key)) . ':' . rawurlencode(Inflector::dasherize((string)$ax_value));
+			$ls_value = $ax_value;
+			if (is_scalar($ax_value)) {
+				$ls_value = Inflector::dasherize((string)$ax_value);
+			}
+			elseif (is_array($ax_value)) {
+				$ls_value = implode(',', array_map(fn (string|int $ax_value) => Inflector::dasherize((string)$ax_value), $ax_value));
+			}
+			elseif ($ax_value instanceof BackedEnum) {
+				$ls_value = Inflector::dasherize($ax_value->value);
+			}
+
+
+			return rawurlencode(Inflector::dasherize((string)$ax_key)) . ':' . rawurlencode($ls_value);
 		}, $aa_pass, array_keys($aa_pass)));
 		$ls_pass = rtrim($ls_pass, '/');
 
