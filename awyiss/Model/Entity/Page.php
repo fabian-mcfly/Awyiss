@@ -5,6 +5,7 @@ namespace Awyiss\Model\Entity;
 
 
 use Awyiss\Core\App;
+use Awyiss\Database\Type\PageRoleEnumInterface;
 use Awyiss\Model\Entity;
 use Cake\Collection\CollectionInterface;
 use Cake\Datasource\FactoryLocator;
@@ -148,6 +149,20 @@ class Page extends Entity {
 
 
 		return $lo_table->getParents($this, $aa_options, $ai_currentLevel);
+	}
+
+
+	/**
+	 * @param mixed $ax_pageRoleId
+	 * @return \Awyiss\Database\Type\PageRoleEnumInterface|int|null
+	 */
+	protected function _setPageRoleId(mixed $ax_pageRoleId): PageRoleEnumInterface|int|null {
+		if (is_string($ax_pageRoleId)) {
+			return (int)$ax_pageRoleId;
+		}
+
+
+		return $ax_pageRoleId;
 	}
 
 
