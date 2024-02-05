@@ -36,8 +36,8 @@ class PageRolesListener implements EventListenerInterface {
 		return [
 			'Model.PageRoles.afterSave' => 'afterSave',
 			'Model.PageRoles.afterSaveCommit' => 'afterSaveCommit',
-			'Model.PageRoles.afterSoftDelete' => 'afterDelete',
-			'Model.PageRoles.afterDelete' => 'afterDelete',
+			'Model.PageRoles.afterSoftDelete' => 'afterSoftDelete',
+			'Model.PageRoles.afterSoftDeleteCommit' => 'afterSoftDeleteCommit',
 		];
 	}
 
@@ -73,11 +73,29 @@ class PageRolesListener implements EventListenerInterface {
 	 * @noinspection PhpUnused
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function afterDelete(Event $ao_event, PageRole $ao_entity): void {
+	public function afterSoftDelete(Event $ao_event, PageRole $ao_entity): void {
+		$lo_tableLocator = FactoryLocator::get('Table');
+
+		$lo_usergroupPermissions = $lo_tableLocator->get('UsergroupPermissions');
+		$lo_usergroupPermissions->deleteAll([
+			'scope' => Inflector::pluralize($ao_entity->identifier),
+		]);
+	}
+
+
+	/**
+	 * @param Event $ao_event
+	 * @param PageRole $ao_entity
+	 * @noinspection PhpUnused
+	 * @noinspection PhpUnusedParameterInspection
+	 */
+	public function afterSoftDeleteCommit(Event $ao_event, PageRole $ao_entity): void {
+		$lo_tableLocator = FactoryLocator::get('Table');
+
 		$this->createPageRoleEnum();
 
 		/** @var \Queue\Model\Table\QueuedJobsTable $lo_queue */
-		$lo_queue = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
+		$lo_queue = $lo_tableLocator->get('Queue.QueuedJobs');
 
 		$ls_filePath = implode(DS, [ROOT, CUSTOM_DIR, 'Model', 'Entity', Inflector::classify($ao_entity->identifier) . '.php']);
 		if (file_exists($ls_filePath)) {
@@ -93,7 +111,7 @@ class PageRolesListener implements EventListenerInterface {
 		$la_tables = ConnectionManager::get('default')->getSchemaCollection()->listTables();
 		if (in_array($ls_attributesTable, $la_tables)) {
 			/** @var \Awyiss\Model\Table $lo_attributesTable */
-			$lo_attributesTable = FactoryLocator::get('Table')->get('Attributes');
+			$lo_attributesTable = $lo_tableLocator->get('Attributes');
 
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 			$li_identityId = $lo_attributesTable->getBehavior('Audit')->getIdentity()?->id;
@@ -124,7 +142,7 @@ class PageRolesListener implements EventListenerInterface {
 		], [
 			'group' => 'general',
 			'priority' => 1,
-			'reference' => 'system::create_page_role_model_' . $ao_entity->identifier,
+			'reference' => 'system::bake_page_roles_seed',
 		]);
 	}
 
@@ -212,16 +230,17 @@ class PageRolesListener implements EventListenerInterface {
 	 */
 	protected function createPageRoleEnum(): void {
 		$la_pageRoles = [];
+		$lo_tableLocator = FactoryLocator::get('Table');
 
 		/** @var \Awyiss\Model\Table\PageRolesTable $lo_pageRolesTable */
-		$lo_pageRolesTable = FactoryLocator::get('Table')->get('PageRoles');
+		$lo_pageRolesTable = $lo_tableLocator->get('PageRoles');
 
 		/** @var \Awyiss\Model\Entity\PageRole $lo_pageRole */
 		foreach ($lo_pageRolesTable->find() as $lo_pageRole) {
 			$la_pageRoles[] = $lo_pageRole->identifier . ':' . $lo_pageRole->id;
 		}
 
-		$la_commands[] = 'bin/cake bake enum PageRole ' . implode(',', $la_pageRoles) . ' -i --namespace ' . CUSTOM_NAMESPACE . ' --is-pagerole';
+		$la_commands[] = 'bin/cake bake enum PageRole ' . implode(',', $la_pageRoles) . ' -i --namespace ' . CUSTOM_NAMESPACE . ' --is-pagerole --force';
 
 		if (!empty($la_commands)) {
 			$la_data = [
@@ -231,7 +250,7 @@ class PageRolesListener implements EventListenerInterface {
 			];
 
 			/** @var \Queue\Model\Table\QueuedJobsTable $lo_queue */
-			$lo_queue = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
+			$lo_queue = $lo_tableLocator->get('Queue.QueuedJobs');
 			$lo_queue->createJob('Queue.Execute', $la_data, [
 				'group' => 'general',
 				'priority' => 1,
