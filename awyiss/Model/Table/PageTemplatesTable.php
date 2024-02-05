@@ -5,6 +5,7 @@ namespace Awyiss\Model\Table;
 
 
 use Awyiss\Core\App;
+use Awyiss\Model\Entity\PageTemplate;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
 use Cake\Database\Schema\TableSchemaInterface;
@@ -17,11 +18,11 @@ use Cake\Validation\Validator;
 /**
  * PageTemplates Model
  *
- * @todo disallow changing page role
  * @property \Awyiss\Model\Table\ContentAreasTable&\Awyiss\ORM\Association\BelongsToMany $ContentAreas
  * @property \Awyiss\Model\Table\PageRolesTable&\Awyiss\ORM\Association\BelongsTo $PageRoles
  * @property \Awyiss\Model\Table\PagesTable&\Awyiss\ORM\Association\HasMany $Pages
  * @method \Awyiss\Model\Entity\PageTemplate newDefaultEntity(array $aa_additionalData = [], array $aa_options = [])
+ * @noinspection PhpUnnecessaryFullyQualifiedNameInspection
  */
 class PageTemplatesTable extends Table {
 	/**
@@ -65,8 +66,6 @@ class PageTemplatesTable extends Table {
 		]);
 
 		$this->hasMany('Pages', [
-			'cascadeCallbacks' => true,
-			'dependent' => true,
 			'finder' => [
 				'all' => [
 					'skipPageRoleCheck' => true,
@@ -180,6 +179,22 @@ class PageTemplatesTable extends Table {
 			'message' => __d($this->getI18nDomain(), 'error_valid_content_areas'),
 		]);
 
+		$ao_rules->addUpdate(function (PageTemplate $ao_entity, array $aa_options) use ($ao_rules): bool {
+			if (
+				!$ao_entity->hasOriginal('pageRoleId') ||
+				$ao_entity->get('pageRoleId') === $ao_entity->getOriginal('pageRoleId')
+			) {
+				return true;
+			}
+
+			$lo_linkedTo = $ao_rules->isNotLinkedTo(
+				'Pages',
+				'pageRoleId',
+				__d($this->getI18nDomain(), 'error_no_linked_page_templates')
+			);
+
+			return $lo_linkedTo($ao_entity, $aa_options);
+		}, 'noLinkedPageTemplates');
 
 		$ao_rules->addDelete(
 			$ao_rules->isNotLinkedTo('Pages', 'pages'),
