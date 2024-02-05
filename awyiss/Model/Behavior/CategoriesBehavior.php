@@ -645,6 +645,9 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 				}
 			}
 
+			if ($lx_value instanceof BackedEnum) {
+				$lx_value = $lx_value->value;
+			}
 
 			return array_key_exists($lx_value, $la_categories);
 		}, $ls_ruleName, [
