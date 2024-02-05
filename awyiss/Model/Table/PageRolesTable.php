@@ -16,16 +16,6 @@ use Cake\Validation\Validator;
 /**
  * PageRoles Model
  *
- * @todo When renaming a page role identifier => update usergroup_permissions
- * @todo When renaming a page role identifier => update attributes
- * @todo When deleting a page role: delete usergroup_permissions
- * @todo When deleting a page role: delete attributes
- * @todo When deleting a page role: delete page templates
- * @todo When deleting a page role: delete pages
- * @todo Add all other page roles?! <-- what does this even mean?
- * @todo On delete, remove cascadeCallbacks for nested pages in PagesTable
- * @todo Or: disallow deletion if a page with that role exits
- * @todo: disable deleting pagerole "page"
  * @property \Awyiss\Model\Table\PageTemplatesTable&\Awyiss\ORM\Association\HasOne $PageTemplates
  * @property \Awyiss\Model\Table\PagesTable&\Awyiss\ORM\Association\HasMany $Pages
  * @method \Awyiss\Model\Entity\PageRole newDefaultEntity(array $aa_additionalData = [], array $aa_options = [])
@@ -44,9 +34,10 @@ class PageRolesTable extends Table {
 	 */
 	protected array $blocklistedIdentifiers = [
 		'cell',
+		'content_area',
 		'email',
 		'element',
-		'generic_pages',
+		'generic_page',
 		'layout',
 	];
 	/**
@@ -64,8 +55,6 @@ class PageRolesTable extends Table {
 		$this->hasOne('PageTemplates');
 
 		$this->hasMany('Pages', [
-			'cascadeCallbacks' => true,
-			'dependent' => true,
 			'finder' => [
 				'all' => [
 					'skipPageRoleCheck' => true,
@@ -147,36 +136,51 @@ class PageRolesTable extends Table {
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
-		//TODO: merge all 3 rules into one.
+		$ao_rules->add(
+			function (PageRole $ao_entity, array $aa_options) use ($ao_rules): bool|string {
+				if (
+					$ao_entity->hasOriginal('identifier') &&
+					$ao_entity->get('identifier') !== $ao_entity->getOriginal('identifier')
+				) {
+					return __d($this->getI18nDomain(), 'error_identifier_unchanged');
+				}
 
-		$ao_rules->add($ao_rules->isUnique(['identifier']), 'identifierUnique', [
-			'errorField' => 'identifier',
-			'message' => __dfx($this->getI18nDomain(), 'validation', 'page_role', 'error_identifier_unique'),
-		]);
+				$ls_identifier = Inflector::underscore($ao_entity->identifier);
 
+				if (
+					in_array($ls_identifier, $this->blocklistedIdentifiers) ||
+					App::className(Inflector::camelize(Inflector::pluralize($ls_identifier)), 'Controller/Backend', 'Controller')
+				) {
+					return __dfx($this->getI18nDomain(), 'validation', 'page_role', 'error_identifier_allowed');
+				}
 
-		$ao_rules->addCreate(function (PageRole $ao_entity): bool {
-			$ls_identifier = strtolower(Inflector::underscore($ao_entity->identifier));
+				$lo_isUnique = $ao_rules->isUnique(['identifier'], [
+					'message' => __dfx($this->getI18nDomain(), 'validation', 'page_role', 'error_identifier_unique'),
+				]);
+				$lb_isUnique = $lo_isUnique($ao_entity, $aa_options);
 
-			if (in_array($ls_identifier, $this->blocklistedIdentifiers)) {
-				return false;
-			}
+				if (!$lb_isUnique) {
+					return false;
+				}
 
+				return true;
+			},
+			'validIdentifier',
+			[
+				'errorField' => 'identifier',
+			]
+		);
 
-			return App::className(Inflector::camelize(Inflector::tableize($ls_identifier)), 'Controller/Backend', 'Controller') === null;
-		}, 'identifierAllowed', [
-			'errorField' => 'identifier',
-			'message' => __dfx($this->getI18nDomain(), 'validation', 'page_role', 'error_identifier_allowed'),
-		]);
-
-
-		$ao_rules->addUpdate(function (PageRole $ao_entity/*, array $aa_options*/): bool {
-			return !$ao_entity->hasOriginal('identifier') && !$ao_entity->isDirty('identifier');
-		}, 'identifierUnchanged', [
-			'errorField' => 'identifier',
-			'message' => __d($this->getI18nDomain(), 'error_identifier_unchanged'),
-		]);
-
+		$ao_rules->addDelete(
+			function (PageRole $ao_entity/*, array $aa_options*/): bool {
+				return $ao_entity->identifier !== 'page';
+			},
+			'notPageRolePageDeletion',
+			[
+				'errorField' => '_general',
+				'message' => __d($this->getI18nDomain(), 'error_not_page_role_page_deletion'),
+			]
+		);
 
 		$ao_rules->addDelete(
 			$ao_rules->isNotLinkedTo('PageTemplates', 'page_templates'),
