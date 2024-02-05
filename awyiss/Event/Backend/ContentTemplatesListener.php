@@ -10,7 +10,7 @@ use Cake\Core\Configure;
 use Cake\Datasource\FactoryLocator;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
-use Cake\I18n\FrozenTime;
+use Cake\I18n\DateTime;
 use Cake\Utility\Text;
 
 
@@ -151,7 +151,7 @@ class ContentTemplatesListener implements EventListenerInterface {
 		if (file_exists($ls_filePath)) {
 			$ls_newFilePath = $ls_filePath;
 			while (file_exists($ls_newFilePath)) {
-				$ls_newFilePath = $ls_folderPath . '_deleted-' . $ls_fileName . '-' . (new FrozenTime())->getTimestamp() . $ls_extension;
+				$ls_newFilePath = $ls_folderPath . '_deleted-' . $ls_fileName . '-' . (new DateTime())->getTimestamp() . $ls_extension;
 			}
 
 			/** @var \Queue\Model\Table\QueuedJobsTable $lo_queue */

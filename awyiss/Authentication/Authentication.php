@@ -17,7 +17,7 @@ use Awyiss\Model\Entity\User;
 use Awyiss\Model\Entity\UsersExternal;
 use Awyiss\Routing\Router;
 use Cake\Event\EventDispatcherTrait;
-use Cake\I18n\FrozenTime;
+use Cake\I18n\DateTime;
 use Exception;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -150,9 +150,9 @@ class Authentication implements AuthenticationServiceProviderInterface {
 			'identify' => function ($lx_user) {
 				if ($lx_user instanceof User || $lx_user instanceof UsersExternal) {
 					//Set last_login
-					$lo_checkTime = FrozenTime::now()->subMinutes(1);
+					$lo_checkTime = DateTime::now()->subMinutes(1);
 					if ($lo_checkTime >= $lx_user->lastLogin) {
-						$lx_user->set('lastLogin', FrozenTime::now());
+						$lx_user->set('lastLogin', DateTime::now());
 
 						if ($lx_user instanceof UsersExternal) {
 							return [

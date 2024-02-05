@@ -11,7 +11,7 @@ use Awyiss\ORM\RulesChecker;
 use Awyiss\Routing\Router;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
-use Cake\I18n\FrozenTime;
+use Cake\I18n\DateTime;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Validation\Validator;
@@ -147,7 +147,7 @@ class UsergroupsTable extends Table {
 			$lo_currentUser = $lo_session->read('Auth');
 		}
 
-		$lo_now = FrozenTime::now();
+		$lo_now = DateTime::now();
 		//Decrease the system order of all records
 		$lo_users->each(function (User $ao_user) use ($lo_now, $lo_currentUser): void {
 			$ao_user->changedOn = $lo_now;

@@ -13,7 +13,7 @@ use Awyiss\Routing\Router;
 use Cake\Event\EventInterface;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
-use Cake\I18n\FrozenTime;
+use Cake\I18n\DateTime;
 use Cake\Utility\Hash;
 use Cake\Utility\Security;
 
@@ -178,7 +178,7 @@ class UsersController extends Controller {
 					//Track lastLogin and reset the failed login attempts
 					$lo_user->set([
 						'failedAttempts' => 0,
-						'lastLogin' => FrozenTime::now(),
+						'lastLogin' => DateTime::now(),
 					], ['guard' => false]);
 
 					$this->Users->save($lo_user, ['audit' => ['skip' => true]]);
@@ -186,7 +186,7 @@ class UsersController extends Controller {
 				elseif ($lo_user instanceof UsersExternal) {
 					$lo_usersExternal = $this->fetchTable('UsersExternal');
 					//Track lastLogin
-					$lo_user->set('lastLogin', FrozenTime::now());
+					$lo_user->set('lastLogin', DateTime::now());
 
 					$lo_usersExternal->save($lo_user, ['audit' => ['skip' => true]]);
 				}
@@ -214,7 +214,7 @@ class UsersController extends Controller {
 				if ($lo_user) {
 					$lo_user->set([
 						'failedAttempts' => $lo_user->failedAttempts + 1,
-						'lastLogin' => FrozenTime::now(),
+						'lastLogin' => DateTime::now(),
 					], ['guard' => false]);
 					$this->Users->save($lo_user, ['audit' => ['skip' => true]]);
 				}

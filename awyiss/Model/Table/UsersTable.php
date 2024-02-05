@@ -6,7 +6,7 @@ namespace Awyiss\Model\Table;
 
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
-use Cake\I18n\FrozenTime;
+use Cake\I18n\DateTime;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Validation\Validator;
@@ -54,7 +54,7 @@ class UsersTable extends Table {
 			'active' => 1,
 			'OR' => [
 				'failed_attempts <' => 5,
-				'last_login <=' => FrozenTime::now()->subMinutes(10),
+				'last_login <=' => DateTime::now()->subMinutes(10),
 			],
 		]);
 

@@ -14,7 +14,7 @@ use Awyiss\ORM\Association\HasOne;
 use Awyiss\ORM\Behavior;
 use Cake\Database\Schema\TableSchemaInterface;
 use Cake\Event\EventInterface;
-use Cake\I18n\FrozenTime;
+use Cake\I18n\DateTime;
 use Cake\Log\Log;
 use Cake\ORM\Association;
 use Cake\ORM\Locator\LocatorAwareTrait;
@@ -218,7 +218,7 @@ class AuditBehavior extends Behavior {
 			'dataOld' => $la_entityData['old'],
 			'dataNew' => $la_entityData['new'],
 			'diff' => $la_entityData['changes'],
-			'createdOn' => new FrozenTime(),
+			'createdOn' => new DateTime(),
 			'createdBy' => $li_identityId,
 		];
 
@@ -462,7 +462,7 @@ class AuditBehavior extends Behavior {
 	 * @return void
 	 */
 	protected function setCreateInfo(Entity $ao_entity, ?int $ai_identityId, TableSchemaInterface $ao_schema): void {
-		$ao_entity->set('createdOn', FrozenTime::now());
+		$ao_entity->set('createdOn', DateTime::now());
 		if ($ai_identityId && $ao_schema->getColumn('created_by')) {
 			$ao_entity->set('createdBy', $ai_identityId);
 		}
@@ -478,7 +478,7 @@ class AuditBehavior extends Behavior {
 	 * @return void
 	 */
 	protected function setUpdateInfo(Entity $ao_entity, ?int $ai_identityId, TableSchemaInterface $ao_schema): void {
-		$ao_entity->set('changedOn', FrozenTime::now());
+		$ao_entity->set('changedOn', DateTime::now());
 		if ($ai_identityId && $ao_schema->getColumn('changed_by')) {
 			$ao_entity->set('changedBy', $ai_identityId);
 		}
@@ -494,7 +494,7 @@ class AuditBehavior extends Behavior {
 	 * @return void
 	 */
 	protected function setDeleteInfo(Entity $ao_entity, ?int $ai_identityId, TableSchemaInterface $ao_schema): void {
-		$ao_entity->set('deletedOn', FrozenTime::now());
+		$ao_entity->set('deletedOn', DateTime::now());
 		if ($ai_identityId && $ao_schema->getColumn('deleted_by')) {
 			$ao_entity->set('deletedBy', $ai_identityId);
 		}
