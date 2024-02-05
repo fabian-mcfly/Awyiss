@@ -1,0 +1,18 @@
+{{ element('file_header', {
+	namespace: "#{namespace}\\Model\\Enum",
+	classImports: [
+		'Awyiss\\Database\\Type\\PageRoleEnumInterface',
+		'Awyiss\\Model\\Trait\\PageRoleEnumTrait',
+		'Cake\\Database\\Type\\EnumLabelInterface',
+	],
+}) }}
+
+{{ DocBlock.classDescription(name, 'Enum', [])|raw }}
+enum {{ name }}: {{ backingType }} implements EnumLabelInterface{% if isPageRole %}, PageRoleEnumInterface{% endif %} {
+	use PageRoleEnumTrait;
+
+
+{% if cases %}
+	{{ Bake.concat('\n	', cases) }}
+{% endif %}
+}
