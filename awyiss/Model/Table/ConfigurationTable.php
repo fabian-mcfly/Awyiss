@@ -176,6 +176,9 @@ class ConfigurationTable extends Table {
 					'scope',
 					'identifier',
 					'languageShortcode',
+				],
+				[
+					'allowMultipleNulls' => false,
 				]
 			),
 			'identifierUniqueForScope',
