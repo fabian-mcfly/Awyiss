@@ -53,10 +53,8 @@ class PagesController extends Controller {
 		$this->Categories->filterQuery($lo_pages);
 		$lo_pages = $this->Pages->listNested($lo_pages);
 
-		$ls_entitiesName = Inflector::variable($this->getName());
-
 		$this->set([
-			'ao_' . $ls_entitiesName => $lo_pages,
+			'ao_pages' => $lo_pages,
 		]);
 	}
 
@@ -151,6 +149,52 @@ class PagesController extends Controller {
 
 
 		return $this->redirect(['action' => 'overview']);
+	}
+
+
+	/**
+	 * @param Page $ao_page
+	 * @param string $as_method
+	 * @return void
+	 */
+	protected function save(Page $ao_page, string $as_method = 'add'): void {
+		$la_associated = [];
+		if ($this->Pages->hasAttributes()) {
+			$la_associated[] = $this->Pages->getAttributesTableName(true);
+			$ao_page->setAccess('attributes', true);
+		}
+
+		$this->Pages->patchEntity($ao_page, ['page_role_id' => $this->getPageRole()->value] + $this->request->getData(), ['associated' => $la_associated]);
+
+		$this->Categories->setConfig('finder', [
+			'forCurrentLanguage' => [
+				'entity' => $ao_page,
+			],
+		]);
+
+		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
+			if ($this->Pages->save($ao_page)) {
+				$this->Flash->success(__($as_method . '_succeeded'));
+
+				if ($this->request->getData('submit') == 'submit_close') {
+					/*
+					 * Make sure the currently selected category is still part of the categories assigned to the user.
+					 * Otherwise it would show a site without the modified user, which could be a bit confusing.
+					 *
+					 */
+					$this->verifySelection($ao_page);
+
+					throw new RedirectException(Router::url(['action' => 'overview', 'lang' => $ao_page->languageShortcode], true), 302);
+				}
+
+				throw new RedirectException(Router::url(['action' => 'edit', 'lang' => $ao_page->languageShortcode, 'id' => $ao_page->id], true), 302);
+			}
+
+			$this->Flash->error(__($as_method . '_failed'));
+			foreach ($ao_page->getError('_general') as $ls_error) {
+				$this->Flash->error($ls_error);
+			}
+		}
 	}
 
 
@@ -299,80 +343,37 @@ class PagesController extends Controller {
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function render(?string $as_template = null, ?string $as_layout = null): Response {
-		try {
-			$ls_contents = parent::render($as_template, $as_layout);
-		}
-			/** @noinspection PhpUnusedLocalVariableInspection */
-		catch (MissingTemplateException $ex) {
-			$lo_viewBuilder = $this->viewBuilder();
-			$la_templatePathParts = explode('/', $lo_viewBuilder->getTemplatePath());
-			array_pop($la_templatePathParts);
+		$lo_viewBuilder = $this->viewBuilder();
 
-			$lo_viewBuilder->setTemplatePath(implode('/', $la_templatePathParts) . '/GenericPages');
-
+		if ($this->getName() !== 'Pages') {
 			$ls_entitiesName = Inflector::variable($this->getName());
 			$ls_entityName = Inflector::variable(Inflector::singularize($this->getName()));
 			$ls_threadedName = Inflector::variable('threaded ' . $this->getName());
 			$ls_parentName = Inflector::variable('parent ' . $this->getName());
 
 			$lo_viewBuilder->setVars([
-				'ao_pages' => $lo_viewBuilder->getVar('ao_' . $ls_entitiesName),
-				'ao_page' => $lo_viewBuilder->getVar('ao_' . $ls_entityName),
-				'ao_threadedPages' => $lo_viewBuilder->getVar('ao_' . $ls_threadedName),
-				'ao_parentPages' => $lo_viewBuilder->getVar('ao_' . $ls_parentName),
+				'ao_' . $ls_entitiesName => $lo_viewBuilder->getVar('ao_pages'),
+				'ao_' . $ls_entityName => $lo_viewBuilder->getVar('ao_page'),
+				'ao_' . $ls_threadedName => $lo_viewBuilder->getVar('ao_threadedPages'),
+				'ao_' . $ls_parentName => $lo_viewBuilder->getVar('ao_parentPages'),
 			]);
+		}
+
+		try {
+			$ls_contents = parent::render($as_template, $as_layout);
+		}
+			/** @noinspection PhpUnusedLocalVariableInspection */
+		catch (MissingTemplateException $ex) {
+			$la_templatePathParts = explode('/', $lo_viewBuilder->getTemplatePath());
+			array_pop($la_templatePathParts);
+
+			$lo_viewBuilder->setTemplatePath(implode('/', $la_templatePathParts) . '/GenericPages');
 
 			$ls_contents = parent::render($as_template, $as_layout);
 		}
 
 
 		return $ls_contents;
-	}
-
-
-	/**
-	 * @param Page $ao_page
-	 * @param string $as_method
-	 * @return void
-	 */
-	protected function save(Page $ao_page, string $as_method = 'add'): void {
-		$la_associated = [];
-		if ($this->Pages->hasAttributes()) {
-			$la_associated[] = $this->Pages->getAttributesTable(true);
-			$ao_page->setAccess('attributes', true);
-		}
-
-		$this->Pages->patchEntity($ao_page, ['page_role_id' => $this->getPageRole()] + $this->request->getData(), ['associated' => $la_associated]);
-
-		$this->Categories->setConfig('finder', [
-			'forCurrentLanguage' => [
-				'entity' => $ao_page,
-			],
-		]);
-
-		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-			if ($this->Pages->save($ao_page)) {
-				$this->Flash->success(__($as_method . '_succeeded'));
-
-				if ($this->request->getData('submit') == 'submit_close') {
-					/*
-					 * Make sure the currently selected category is still part of the categories assigned to the user.
-					 * Otherwise it would show a site without the modified user, which could be a bit confusing.
-					 *
-					 */
-					$this->verifySelection($ao_page);
-
-					throw new RedirectException(Router::url(['action' => 'overview', 'lang' => $ao_page->languageShortcode], true), 302);
-				}
-
-				throw new RedirectException(Router::url(['action' => 'edit', 'lang' => $ao_page->languageShortcode, 'id' => $ao_page->id], true), 302);
-			}
-
-			$this->Flash->error(__($as_method . '_failed'));
-			foreach ($ao_page->getError('_general') as $ls_error) {
-				$this->Flash->error($ls_error);
-			}
-		}
 	}
 
 
@@ -419,20 +420,16 @@ class PagesController extends Controller {
 	protected function setViewVars(Page $ao_page): void {
 		$this->Categories->ensurePossibleCategory($ao_page);
 
-		$ls_entityName = Inflector::variable(Inflector::singularize($this->getName()));
-		$ls_threadedName = Inflector::variable('threaded ' . $this->getName());
-		$ls_parentsName = Inflector::variable('parent ' . $this->getName());
-
 		$lo_threadedPages = $this->getThreadedPages($ao_page);
 
 		$lo_parentPages = $this->getParentPages($ao_page, $lo_threadedPages);
 		$this->ensurePossibleParentId($ao_page, $lo_parentPages);
 
 		$this->set([
-			'ao_' . $ls_entityName => $ao_page,
+			'ao_page' => $ao_page,
 			'ao_pageTemplates' => $this->getPageTemplates(),
-			'ao_' . $ls_threadedName => $lo_threadedPages,
-			'ao_' . $ls_parentsName => $lo_parentPages,
+			'ao_threadedPages' => $lo_threadedPages,
+			'ao_parentPages' => $lo_parentPages,
 			'as_languageRealm' => Awyiss::REALM_FRONTEND,
 		]);
 	}
