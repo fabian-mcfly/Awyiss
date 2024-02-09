@@ -140,7 +140,7 @@ class AwyissRoute extends DashedRoute {
 				$ls_value = implode(',', array_map(fn (string|int $ax_value) => Inflector::dasherize((string)$ax_value), $ax_value));
 			}
 			elseif ($ax_value instanceof BackedEnum) {
-				$ls_value = Inflector::dasherize($ax_value->value);
+				$ls_value = Inflector::dasherize((string)$ax_value->value);
 			}
 
 
