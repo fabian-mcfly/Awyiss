@@ -39,13 +39,31 @@ class AttributesTable extends Table {
 	 * https://regex101.com/r/0h9ziN/1
 	 */
 	public const TYPE_PATTERN = '/^(\w*)(?:\((\d+(?:,\d+)*)+\)+)?$/';
-
-
 	/**
-	 * @todo change this from a protected property to something that can be extended. Maybe even different fieldsets per controller
 	 * @var array
 	 */
-	protected array $availableFieldsets = [
+	protected array $availableFieldsets;
+	/**
+	 * @var array
+	 */
+	protected array $availableInputTypes;
+	/**
+	 * @var array
+	 */
+	protected array $attributeScopes;
+	/**
+	 * @inheritDoc
+	 */
+	protected array $categories = [
+		'allowAggregation' => false,
+		'enabled' => true,
+		'identifier' => 'scope',
+		'useDatasource' => false,
+	];
+	/**
+	 * @var array
+	 */
+	protected array $defaultAvailableFieldsets = [
 		'presentation',
 		'conditions',
 		'general',
@@ -54,10 +72,9 @@ class AttributesTable extends Table {
 		'attributes',
 	];
 	/**
-	 * @todo change this from a protected property to something that can be extended.
 	 * @var array
 	 */
-	protected array $availableInputTypes = [
+	protected array $defaultAvailableInputTypes = [
 		'text',
 		'date',
 		'datetime',
@@ -73,19 +90,6 @@ class AttributesTable extends Table {
 		'textarea_plain',
 		'password',
 		'hidden',
-	];
-	/**
-	 * @var array
-	 */
-	protected array $attributeScopes;
-	/**
-	 * @inheritDoc
-	 */
-	protected array $categories = [
-		'allowAggregation' => false,
-		'enabled' => true,
-		'identifier' => 'scope',
-		'useDatasource' => false,
 	];
 	/**
 	 * @inheritDoc
@@ -353,6 +357,10 @@ class AttributesTable extends Table {
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function getAvailableFieldsets(?string $as_scope = null): array {
+		if (!isset($this->availableFieldsets)) {
+			$this->availableFieldsets = $this->defaultAvailableFieldsets;
+		}
+
 		return $this->availableFieldsets;
 	}
 
@@ -361,6 +369,10 @@ class AttributesTable extends Table {
 	 * @return array
 	 */
 	public function getAvailableInputTypes(): array {
+		if (!isset($this->availableInputTypes)) {
+			$this->availableInputTypes = $this->defaultAvailableInputTypes;
+		}
+
 		return $this->availableInputTypes;
 	}
 
