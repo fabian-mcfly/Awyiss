@@ -288,6 +288,10 @@ class CategoriesComponent extends Component {
 	 * @return void
 	 */
 	public function ensurePossibleCategory(EntityInterface $ao_entity): void {
+		if (!$this->getConfig('enabled')) {
+			return;
+		}
+
 		$ls_fieldName = $this->getConfig('fieldname');
 		$lx_selectedCategory = $ao_entity->$ls_fieldName;
 
@@ -295,7 +299,7 @@ class CategoriesComponent extends Component {
 
 		if (!in_array($lx_selectedCategory, $la_possibleCategories, true)) {
 			/** @var \Awyiss\Model\Entity $ao_entity */
-			$lo_entity = $this->fieldIsAttribute() ? $ao_entity->attributes : $ao_entity;
+			$lo_entity = $this->fieldIsAttribute() && $ao_entity->attributes ? $ao_entity->attributes : $ao_entity;
 
 			$la_errors = $lo_entity->getError($ls_fieldName);
 
