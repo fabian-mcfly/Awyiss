@@ -42,6 +42,7 @@ class DefaultValuesBehavior extends Behavior {
 	protected array $_defaultConfig = [
 		'enabled' => true,
 		'implementedEvents' => [
+			'beforeMarshal',
 			'beforeSave',
 		],
 		'implementedMethods' => [
@@ -76,6 +77,7 @@ class DefaultValuesBehavior extends Behavior {
 		$lo_schema = $lo_table->getSchema();
 		//Get the default values
 		$la_defaults = $lo_schema->defaultValues();
+
 		$la_defaults += array_combine($lo_schema->columns(), array_fill(0, count($lo_schema->columns()), null));
 
 		//No primary keys
@@ -83,9 +85,6 @@ class DefaultValuesBehavior extends Behavior {
 
 		//Typecast the defaults based on the schema
 		$this->typecastDefaults($la_defaults, $lo_schema);
-
-		//Map the fields in case the additional data contains mapped keys
-		$la_defaults = $ls_entityClass::mapFields($la_defaults, true);
 
 		if ($lo_table->hasAttributes()) {
 			/** @var \Cake\ORM\Association&\Awyiss\Model\Table $lo_attributes */
@@ -101,20 +100,26 @@ class DefaultValuesBehavior extends Behavior {
 			$this->addCategoryDefault($la_defaults, $lo_table, $lo_attributes ?? null);
 		}
 
+		$la_additionalData = $aa_additionalData;
+		if ($aa_additionalData) {
+			//Map the fields in case the additional data contains mapped keys
+			$la_additionalData = $ls_entityClass::unmapFields($aa_additionalData, true);
+		}
 
-		return $this->marshallDefaults($lo_entity, $la_defaults, $aa_additionalData, $aa_options);
+
+		return $this->marshallDefaults($lo_entity, $la_defaults, $la_additionalData, $aa_options);
 	}
 
 
 	/**
 	 * @param \Cake\Event\EventInterface $ao_event
-	 * @param \Cake\Datasource\EntityInterface $ao_entity
+	 * @param \ArrayObject $ao_data
 	 * @param \ArrayObject $ao_options
 	 * @return void
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function beforeSave(EventInterface $ao_event, EntityInterface $ao_entity, ArrayObject $ao_options): void {
-		$this->processEntity($ao_entity, $this->_table);
+	public function beforeMarshal(EventInterface $ao_event, ArrayObject $ao_data, ArrayObject $ao_options): void {
+		$this->processArray($ao_data, $this->_table);
 	}
 
 
@@ -166,6 +171,9 @@ class DefaultValuesBehavior extends Behavior {
 
 
 	/**
+	 * Copyright (c) 2024 Awyiss
+	 * Copyright (c) 2019 Mark Scherer
+	 *
 	 * @param \ArrayObject|array $aa_data
 	 * @param \Cake\ORM\Table $ao_table
 	 * @return \ArrayObject|array
@@ -190,10 +198,23 @@ class DefaultValuesBehavior extends Behavior {
 
 			if (array_key_exists($ls_key, $la_associations)) {
 				if ($lx_value !== null) {
-					$la_data[ $ls_key ] = $this->processArray(
-						$lx_value,
-						$ao_table->getAssociation($la_associations[ $ls_entityClass::unmapField($ls_key) ])->getTarget()
-					);
+					if ($lx_value === '') {
+						$lx_value = $ls_key === 'attributes' ? [] : null;
+					}
+					elseif ($lx_value instanceof EntityInterface) {
+						$lx_value = $this->processEntity(
+							$lx_value,
+							$ao_table->getAssociation($la_associations[ $ls_entityClass::unmapField($ls_key) ])->getTarget()
+						);
+					}
+					else {
+						$lx_value = $this->processArray(
+							$lx_value,
+							$ao_table->getAssociation($la_associations[ $ls_entityClass::unmapField($ls_key) ])->getTarget()
+						);
+					}
+
+					$la_data[ $ls_key ] = $lx_value;
 				}
 
 				continue;
@@ -219,6 +240,9 @@ class DefaultValuesBehavior extends Behavior {
 
 
 	/**
+	 * Copyright (c) 2024 Awyiss
+	 * Copyright (c) 2019 Mark Scherer
+	 *
 	 * @param \Awyiss\Model\Entity $ao_entity
 	 * @param \Cake\ORM\Table $ao_table
 	 * @return \Cake\Datasource\EntityInterface
@@ -236,11 +260,13 @@ class DefaultValuesBehavior extends Behavior {
 
 			if (array_key_exists($ls_field, $la_associations)) {
 				if ($lx_value !== null) {
-					if ($lx_value instanceof EntityInterface) {
+					if ($lx_value === '') {
+						$lx_value = null;
+					}
+					elseif ($lx_value instanceof EntityInterface) {
 						$lx_value = $this->processEntity($lx_value, $ao_table->getAssociation($la_associations[ $ls_field ])->getTarget());
 					}
-
-					if (is_array($lx_value) || $lx_value instanceof ArrayObject) {
+					elseif (is_array($lx_value) || $lx_value instanceof ArrayObject) {
 						$lx_value = $this->processArray($lx_value, $ao_table->getAssociation($la_associations[ $ls_field ])->getTarget());
 					}
 
@@ -268,6 +294,7 @@ class DefaultValuesBehavior extends Behavior {
 			$lx_default = Hash::get((array)$ao_table->getSchema()->getColumn($ls_field), 'default');
 			$ao_entity->set($ls_field, $lx_default);
 		}
+
 
 		return $ao_entity;
 	}
