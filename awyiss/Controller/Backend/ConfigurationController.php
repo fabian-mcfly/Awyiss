@@ -38,8 +38,7 @@ class ConfigurationController extends Controller {
 
 		parent::initialize();
 
-		$ls_selectedScope = $this->Categories->getSelectedCategory();
-		if (!$ls_selectedScope) {
+		if (!$this->Categories->getSelectedCategory()) {
 			$this->Categories->setConfig('selectedCategory', 'system');
 		}
 	}
@@ -69,6 +68,7 @@ class ConfigurationController extends Controller {
 			'identifier' => 'ASC',
 			'language_shortcode' => 'ASC',
 		]);
+		$this->Categories->filterQuery($lo_configuration);
 
 		$la_configuration = $lo_configuration->all()->groupBy('realm')->map(function ($aa_data) {
 			return Hash::expand(collection($aa_data)->groupBy('identifier')->toArray());
