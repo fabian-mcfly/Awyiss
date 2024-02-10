@@ -6,16 +6,22 @@
 <div class="PageRoles Form Add">
 	{{ helper_Form_create(ao_pageRole, {method: 'post', idPrefix: 'PageRole'}) }}
 
-	<h1>{{ __('headline_add') }}</h1>
+	{% block headlineAdd %}
+		<h1>{{ __('headline_add') }}</h1>
+	{% endblock %}
 
-	{% block formButtons %}
+	{% block formAddButtons %}
 		{{ helper_Form_button(__('save')) }}
 		{{ helper_Form_button(__('save_close'), {name: 'submit', value: 'submit_close'}) }}
 	{% endblock %}
 
-	{% include('@Backend/PageRoles/form.twig') %}
+	{% block formAdd %}
+		{% include('@Backend/PageRoles/form.twig') %}
+	{% endblock %}
 
-	{{ block('formButtons') }}
+	{% block formAddButtonsBottom %}
+		{{ block('formAddButtons') }}
+	{% endblock %}
 
 	{{ helper_Form_end() -}}
 </div>

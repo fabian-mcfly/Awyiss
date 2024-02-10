@@ -7,75 +7,119 @@
 #}
 
 <div class="Configuration Overview">
-	{% do helper_Authorization_setAdditionalData({scope: as_selectedScope}) %}
-	{% if helper_Authorization_isAccessible('create') %}
-		{{ helper_Html_link(__('create'), {action: 'add'}, {class: 'Button'}) }}
-	{% endif %}
+	{% block buttonsOverview %}
+		{% do helper_Authorization_setAdditionalData({scope: as_selectedScope}) %}
+		{% if helper_Authorization_isAccessible('create') %}
+			{{ helper_Html_link(__('create'), {action: 'add'}, {class: 'Button'}) }}
+		{% endif %}
+	{% endblock %}
 
-	<h1>{{ __('headline_overview') }}</h1>
+	{% block headlineOverview %}
+		<h1>{{ __('headline_overview') }}</h1>
+	{% endblock %}
 
-	{{ helper_Categories_filter('scope') }}
+	{% block categoriesFilterOverview %}
+		{{ helper_Categories_filter('scope') }}
+	{% endblock %}
 
 	{% for ls_realm in aa_realms %}
-		<fieldset class="table-responsive">
-			<legend>{{ __('fieldset_' ~ ls_realm|underscore ) }}</legend>
-			<table>
-				<thead>
-					<tr>
-						<th>{{ __('identifier') }}</th>
-						<th>{{ __('value') }}</th>
-						<th>{{ __('language_shortcode') }}</th>
-						<th class="actions"></th>
-					</tr>
-				</thead>
-				<tbody>
-					{{ _self.recursiveConfigurationListing(aa_configuration[ ls_realm ]) }}
-				</tbody>
-			</table>
-		</fieldset>
+		{% block fieldsetOverview %}
+			<fieldset class="Fieldset-Overview">
+				<legend>{{ __('fieldset_' ~ ls_realm|underscore ) }}</legend>
+
+				{% block fieldsetOverviewInner %}
+					{% block tableOverview %}
+						<table class="Table-Overview">
+							{% block tableOverviewHead %}
+								<thead>
+									{% block tableOverviewHeadRow %}
+										<tr>
+											{% block tableOverviewHeaderIdentifier %}
+												<th>{{ __('identifier') }}</th>
+											{% endblock %}
+
+											{% block tableOverviewHeaderValue %}
+												<th>{{ __('value') }}</th>
+											{% endblock %}
+
+											{% block tableOverviewHeaderLanguageShortcode %}
+												<th>{{ __('language_shortcode') }}</th>
+											{% endblock %}
+
+											{% block tableOverviewHeaderActions %}
+												<th class="actions"></th>
+											{% endblock %}
+										</tr>
+									{% endblock %}
+								</thead>
+							{% endblock %}
+							{% block tableOverviewBody %}
+								<tbody>
+									{{ _self.recursiveConfigurationListing(aa_configuration[ ls_realm ]) }}
+								</tbody>
+							{% endblock %}
+						</table>
+					{% endblock %}
+				{% endblock %}
+			</fieldset>
+		{% endblock %}
 	{% endfor %}
 
 	{% do helper_Authorization_resetAdditionalData() %}
-	{# { helper_Paginator_render() } #}
 </div>
 
 {% macro recursiveConfigurationListing(aa_items, ai_level = 0) %}
 	{% for ls_key, lx_configuration in aa_items %}
 		{% if (lx_configuration is array and lx_configuration[0] is not defined) %}
-			<tr>
-				<th colspan="4">
-					{% if ai_level > 0 %}
-						{%- for i in range(0, ai_level - 1) %}&ndash; {% endfor -%}
-					{% endif %}
-					{{ ls_key|variable }}
-				</th>
-			</tr>
+			{% block tableOverviewBodyRowGroup %}
+				<tr>
+					<th colspan="4">
+						{% if ai_level > 0 %}
+							{%- for i in range(0, ai_level - 1) %}&ndash; {% endfor -%}
+						{% endif %}
+						{{ ls_key|variable }}
+					</th>
+				</tr>
+			{% endblock %}
 			{{ _self.recursiveConfigurationListing(lx_configuration, ai_level + 1) }}
 		{% else %}
+			{# @var lo_configuration \Awyiss\Model\Entity\Configuration #}
 			{% for lo_configuration in lx_configuration %}
-				{# @var lo_configuration \Awyiss\Model\Entity\Configuration #}
-				<tr>
-					<td>
-						{% if loop.first %}
-							{% if ai_level > 0 %}
-								{%- for i in range(0, ai_level - 1) %}&ndash; {% endfor -%}
-							{% endif %}
+				{% block tableOverviewBodyRow %}
+					<tr>
+						{% block tableOverviewCellIdentifier %}
+							<td>
+								{% if loop.first %}
+									{% if ai_level > 0 %}
+										{%- for i in range(0, ai_level - 1) %}&ndash; {% endfor -%}
+									{% endif %}
 
-							{{ lo_configuration.identifier|split('.')|slice(-1)|join()|variable }}
-						{% endif %}
-					</td>
-					<td>{{ lo_configuration.get('value') ?? '<em>null</em>' }}</td>
-					<td>{{ lo_configuration.language_shortcode is defined ? helper_Locale_languageTitle(lo_configuration.language_shortcode) : '' }}</td>
-					<td class="actions">
-						{% if helper_Authorization_isAccessible('update') %}
-							{{ helper_Html_link(__('edit'), {action: 'edit', id: lo_configuration.id}) }}
-						{% endif %}
+									{{ lo_configuration.identifier|split('.')|slice(-1)|join()|variable }}
+								{% endif %}
+							</td>
+						{% endblock %}
 
-						{% if helper_Authorization_isAccessible('delete') %}
-							{{ helper_Html_link(__('delete'), {action: 'delete', id: lo_configuration.id}, {confirm: __('confirm_delete', lo_configuration.id) }) }}
-						{% endif %}
-					</td>
-				</tr>
+						{% block tableOverviewCellValue %}
+							<td>{{ lo_configuration.get('value') ?? '<em>null</em>' }}</td>
+						{% endblock %}
+
+						{% block tableOverviewCellLanguageShortcode %}
+							<td>{{ lo_configuration.language_shortcode is defined ? helper_Locale_languageTitle(lo_configuration.language_shortcode) : '' }}</td>
+						{% endblock %}
+
+						{% block tableOverviewCellActions %}
+							<td class="actions">
+								{% if helper_Authorization_isAccessible('update') %}
+									{{ helper_Html_link(__('edit'), {action: 'edit', id: lo_configuration.id}) }}
+								{% endif %}
+
+								{% if helper_Authorization_isAccessible('delete') %}
+									{{ helper_Html_link(__('delete'), {action: 'delete', id: lo_configuration.id}, {confirm: __('confirm_delete', lo_configuration.id) }) }}
+								{% endif %}
+							</td>
+						{% endblock %}
+					</tr>
+				{% endblock %}
 			{% endfor %}
 		{% endif %}
 	{% endfor %}

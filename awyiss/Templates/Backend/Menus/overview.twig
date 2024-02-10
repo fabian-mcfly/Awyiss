@@ -4,47 +4,91 @@
 #}
 
 <div class="Menus Overview">
-	{% if helper_Authorization_isAccessible('create') %}
-		{{ helper_Html_link(__('create'), {action: 'add'}, {class: 'Button'}) }}
-	{% endif %}
+	{% block buttonsOverview %}
+		{% if helper_Authorization_isAccessible('create') %}
+			{{ helper_Html_link(__('create'), {action: 'add'}, {class: 'Button'}) }}
+		{% endif %}
+	{% endblock %}
 
-	<h1>{{ __('headline_overview') }}</h1>
+	{% block headlineOverview %}
+		<h1>{{ __('headline_overview') }}</h1>
+	{% endblock %}
 
-	<div class="table-responsive">
-		<table>
-			<thead>
-				<tr>
-					<th>{{ helper_Paginator_sort('id') }}</th>
-					<th>{{ helper_Paginator_sort('title') }}</th>
-					<th>{{ helper_Paginator_sort('identifier') }}</th>
-					<th>{{ helper_Paginator_sort('active') }}</th>
-					<th class="actions"></th>
-				</tr>
-			</thead>
-			<tbody>
-				{% for lo_menu in ao_menus %}
-				<tr>
-					<td>{{ helper_Number_format(lo_menu.id) }}</td>
-					<td>{{ lo_menu.title }}</td>
-					<td>{{ lo_menu.identifier }}</td>
-					<td>{{ lo_menu.active }}</td>
-					<td class="actions">
-						{% if helper_Authorization_scopeIsAccessible('MenuEntries', [], ['read']) %}
-							{{ helper_Html_link(__('view_entries'), {controller: 'MenuEntries', action: 'overview', menu_id: lo_menu.id}) }}
-						{% endif %}
+	{% block tableOverview %}
+		<table class="Table-Overview">
+			{% block tableOverviewHead %}
+				<thead>
+					{% block tableOverviewHeadRow %}
+						<tr>
+							{% block tableOverviewHeaderId %}
+								<th>{{ helper_Paginator_sort('id') }}</th>
+							{% endblock %}
 
-						{% if helper_Authorization_isAccessible('update') %}
-							{{ helper_Html_link(__('edit'), {action: 'edit', id: lo_menu.id}) }}
-						{% endif %}
+							{% block tableOverviewHeaderTitle %}
+								<th>{{ helper_Paginator_sort('title') }}</th>
+							{% endblock %}
 
-						{% if helper_Authorization_isAccessible('delete') %}
-							{{ helper_Html_link(__('delete'), {action: 'delete', id: lo_menu.id}, {confirm: __('confirm_delete', lo_menu.id) }) }}
-						{% endif %}
-					</td>
-				</tr>
-				{% endfor %}
-			</tbody>
+							{% block tableOverviewHeaderIdentifier %}
+								<th>{{ helper_Paginator_sort('identifier') }}</th>
+							{% endblock %}
+
+							{% block tableOverviewHeaderActive %}
+								<th>{{ helper_Paginator_sort('active') }}</th>
+							{% endblock %}
+
+							{% block tableOverviewHeaderActions %}
+								<th class="actions"></th>
+							{% endblock %}
+						</tr>
+					{% endblock %}
+				</thead>
+			{% endblock %}
+			{% block tableOverviewBody %}
+				<tbody>
+					{# @var lo_menu \Awyiss\Model\Entity\Menu #}
+					{% for lo_menu in ao_menus %}
+						{% block tableOverviewBodyRow %}
+							<tr>
+								{% block tableOverviewCellId %}
+									<td>{{ lo_menu.id }}</td>
+								{% endblock %}
+
+								{% block tableOverviewCellTitle %}
+									<td>{{ lo_menu.title }}</td>
+								{% endblock %}
+
+								{% block tableOverviewCellIdentifier %}
+									<td>{{ lo_menu.identifier }}</td>
+								{% endblock %}
+
+								{% block tableOverviewCellActive %}
+									<td>{{ lo_menu.active }}</td>
+								{% endblock %}
+
+								{% block tableOverviewCellActions %}
+									<td class="actions">
+										{% if helper_Authorization_scopeIsAccessible('MenuEntries', [], ['read']) %}
+											{{ helper_Html_link(__('view_entries'), {controller: 'MenuEntries', action: 'overview', menu_id: lo_menu.id}) }}
+										{% endif %}
+
+										{% if helper_Authorization_isAccessible('update') %}
+											{{ helper_Html_link(__('edit'), {action: 'edit', id: lo_menu.id}) }}
+										{% endif %}
+
+										{% if helper_Authorization_isAccessible('delete') %}
+											{{ helper_Html_link(__('delete'), {action: 'delete', id: lo_menu.id}, {confirm: __('confirm_delete', lo_menu.id) }) }}
+										{% endif %}
+									</td>
+								{% endblock %}
+							</tr>
+						{% endblock %}
+					{% endfor %}
+				</tbody>
+			{% endblock %}
 		</table>
-	</div>
-	{{ helper_Paginator_render() }}
+	{% endblock %}
+
+	{% block paginationOverview %}
+		{{ helper_Paginator_render() }}
+	{% endblock %}
 </div>

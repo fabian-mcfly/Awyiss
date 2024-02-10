@@ -5,20 +5,24 @@
 
 {% set fields = Bake.filterFields(fields, schema, modelObject) %}
 <div class="{{ pluralVar[:1]|upper ~ pluralVar[1:] }} Form {{ action|capitalize }}">
-	<h1>{% verbatim %}{{ __('headline_{% endverbatim %}{{ action }}{% verbatim %}') }}{% endverbatim %}</h1>
+	{% verbatim %}{% block headlineAdd %}
+		<h1>{{ __('headline_{% endverbatim %}{{ action }}{% verbatim %}') }}</h1>
+	{% endblock %}{% endverbatim %}
 
 	{% verbatim %}{{{% endverbatim %} helper_Form_create(ao_{{ singularVar }}, {method: 'post', idPrefix: '{{ singularVar }}'}) {% verbatim %}}}{% endverbatim %}
 
-	{% verbatim %}{% block formButtons %}
+	{% verbatim %}{% block formAddButtons %}
 		{{ helper_Form_button(__('save')) }}
 		{{ helper_Form_button(__('save_close'), {name: 'submit', value: 'submit_close'}) }}
 	{% endblock %}{% endverbatim %}
 
-	{% verbatim %}{% block form %}
+	{% verbatim %}{% block formAdd %}
 		{% include('@Backend/{% endverbatim %}{{ modelClass }}{% verbatim %}/form.twig') %}
 	{% endblock %}
 
-	{{ block('formButtons') }}
+	{% block formAddButtonsBottom %}
+		{{ block('formAddButtons') }}
+	{% endblock %}
 
 	{{ helper_Form_end() -}}{% endverbatim %}
 </div>

@@ -10,53 +10,100 @@
 {% do helper_Authorization_setScope(as_forScope) %}
 
 <div class="Contents Overview">
-	{% if helper_Authorization_isAccessible('create') %}
-		{{ helper_Html_link(__('create'), {action: 'add', pageId: ao_page.id}, {class : 'Button'}) }}
-	{% endif %}
+	{% block buttonsOverview %}
+		{% if helper_Authorization_isAccessible('create') %}
+			{{ helper_Html_link(__('create'), {action: 'add', pageId: ao_page.id}, {class : 'Button'}) }}
+		{% endif %}
+	{% endblock %}
 
-	<h1>{{ __('headline_overview') }}</h1>
+	{% block headlineOverview %}
+		<h1>{{ __('headline_overview') }}</h1>
+	{% endblock %}
 
-	{{ helper_Categories_filter('page') }}
+	{% block categoriesFilterOverview %}
+		{{ helper_Categories_filter('page') }}
+	{% endblock %}
 
-	<div class="table-responsive">
-		{% for li_contentAreaId, ls_contentArea in aa_contentAreas %}
-			<fieldset{% if ls_contentArea is null %} class="Unknown"{% endif %}>
+	{% for li_contentAreaId, ls_contentArea in aa_contentAreas %}
+		{% block fieldsetOverview %}
+			<fieldset class="Fieldset-Overview{% if ls_contentArea is null %} Unknown{% endif %}">
 				{% if ls_contentArea is null %}
 					<legend>{{ __('unknown_content_area') }}</legend>
 				{% else %}
 					<legend>{{ ls_contentArea }}</legend>
 				{% endif %}
-				<table>
-					<thead>
-						<tr>
-							<th>{{ __('id') }}</th>
-							<th>{{ __('title') }}</th>
-							<th>{{ __('system_order') }}</th>
-							<th>{{ __('columnwidth') }}</th>
-							<th class="actions"></th>
-						</tr>
-					</thead>
-					<tbody>
-						{# @var lo_content \Awyiss\Model\Entity\Content #}
-						{% for lo_content in aa_contents[ li_contentAreaId ] %}
-							<tr>
-								<td>{{ lo_content.id }}</td>
-								<td>{{ lo_content.title }}</td>
-								<td>level {{ lo_content.level }} - order {{ lo_content.systemOrder }}</td>
-								<td>{{ lo_content.columnwidth }}</td>
-								<td class="actions">
-									{% if helper_Authorization_isAccessible('update') %}
-										{{ helper_Html_link(__('edit'), {action: 'edit', id: lo_content.id}) }}
-									{% endif %}
-									{% if helper_Authorization_isAccessible('delete') %}
-										{{ helper_Html_link(__('delete'), {action: 'delete', id: lo_content.id}, {confirm: __('confirm_delete', lo_content.id) }) }}
-									{% endif %}
-								</td>
-							</tr>
-						{% endfor %}
-					</tbody>
-				</table>
+
+				{% block fieldsetOverviewInner %}
+					{% block tableOverview %}
+						<table class="Table-Overview">
+							{% block tableOverviewHead %}
+								<thead>
+									{% block tableOverviewHeadRow %}
+										<tr>
+											{% block tableOverviewHeaderId %}
+												<th>{{ __('id') }}</th>
+											{% endblock %}
+
+											{% block tableOverviewHeaderTitle %}
+												<th>{{ __('title') }}</th>
+											{% endblock %}
+
+											{% block tableOverviewHeaderSystemOrder %}
+												<th>{{ __('system_order') }}</th>
+											{% endblock %}
+
+											{% block tableOverviewHeaderColumnwidth %}
+												<th>{{ __('columnwidth') }}</th>
+											{% endblock %}
+
+											{% block tableOverviewHeaderActions %}
+												<th class="actions"></th>
+											{% endblock %}
+										</tr>
+									{% endblock %}
+								</thead>
+							{% endblock %}
+							{% block tableOverviewBody %}
+								<tbody>
+									{# @var lo_content \Awyiss\Model\Entity\Content #}
+									{% for lo_content in aa_contents[ li_contentAreaId ] %}
+										{% block tableOverviewBodyRow %}
+											<tr>
+												{% block tableOverviewCellId %}
+													<td>{{ lo_content.id }}</td>
+												{% endblock %}
+
+												{% block tableOverviewCell_. %}
+													<td>{{ lo_content.title }}</td>
+												{% endblock %}
+
+												{% block tableOverviewCellSystemOrder %}
+													<td>level {{ lo_content.level }} - order {{ lo_content.systemOrder }}</td>
+												{% endblock %}
+
+												{% block tableOverviewCellColumnwidth %}
+													<td>{{ lo_content.columnwidth }}</td>
+												{% endblock %}
+
+												{% block tableOverviewCellActions %}
+													<td class="actions">
+														{% if helper_Authorization_isAccessible('update') %}
+															{{ helper_Html_link(__('edit'), {action: 'edit', id: lo_content.id}) }}
+														{% endif %}
+														{% if helper_Authorization_isAccessible('delete') %}
+															{{ helper_Html_link(__('delete'), {action: 'delete', id: lo_content.id}, {confirm: __('confirm_delete', lo_content.id) }) }}
+														{% endif %}
+													</td>
+												{% endblock %}
+											</tr>
+										{% endblock %}
+									{% endfor %}
+								</tbody>
+							{% endblock %}
+						</table>
+					{% endblock %}
+				{% endblock %}
 			</fieldset>
-		{% endfor %}
-	</div>
+		{% endblock %}
+	{% endfor %}
 </div>

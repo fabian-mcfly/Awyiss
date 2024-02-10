@@ -6,53 +6,108 @@
 #}
 
 <div class="Attributes Overview">
-	{% if helper_Authorization_isAccessible('create') %}
-		{{ helper_Html_link(__('create'), {action: 'add', scope: as_selectedScope}, {class: 'Button'}) }}
-	{% endif %}
+	{% block buttonsOverview %}
+		{% if helper_Authorization_isAccessible('create') %}
+			{{ helper_Html_link(__('create'), {action: 'add', scope: as_selectedScope}, {class: 'Button'}) }}
+		{% endif %}
+	{% endblock %}
 
-	<h1>{{ __('headline_overview') }}</h1>
+	{% block headlineOverview %}
+		<h1>{{ __('headline_overview') }}</h1>
+	{% endblock %}
 
-	{{ helper_Categories_filter('scope') }}
+	{% block categoriesFilterOverview %}
+		{{ helper_Categories_filter('scope') }}
+	{% endblock %}
 
 	{% for ls_fieldset in aa_availableFieldsets %}
-		<fieldset>
-			<legend>{{ ls_fieldset }}</legend>
-			<table>
-				<thead>
-					<tr>
-						<th>{{ __('title') }}<br>
-							{{ __('identifier') }}</th>
-						<th>{{ __('default_value') }}</th>
-						<th>{{ __('input_type') }}</th>
-						<th>{{ __('type') }}</th>
-						<th>{{ __('required') }}</th>
-						<th class="actions"></th>
-					</tr>
-				</thead>
-				<tbody>
-					{% if aa_attributesGroupedByFieldset[ ls_fieldset ] is defined %}
-						{# @var lo_attribute \Awyiss\Model\Entity\Attribute #}
-						{% for lo_attribute in aa_attributesGroupedByFieldset[ ls_fieldset ] %}
-							<tr>
-								<td>{{ lo_attribute.title }}<br>
-									{{ lo_attribute.identifier }}</td>
-								<td>{{ lo_attribute.default_value }}</td>
-								<td>{{ lo_attribute.input_type }}</td>
-								<td>{{ lo_attribute.type }}</td>
-								<td>{{ lo_attribute.required }}</td>
-								<td class="actions">
-									{% if helper_Authorization_isAccessible('update') %}
-										{{ helper_Html_link(__('edit'), {action: 'edit', id: lo_attribute.id}) }}
+		{% block fieldsetOverview %}
+			<fieldset>
+				<legend>{{ ls_fieldset }}</legend>
+
+				{% block fieldsetOverviewInner %}
+					{% block tableOverview %}
+						<table class="Table-Overview">
+							{% block tableOverviewHead %}
+								<thead>
+									{% block tableOverviewHeadRow %}
+										<tr>
+											{% block tableOverviewHeaderTitle %}
+												<th>{{ __('title') }}<br>
+													{{ __('identifier') }}</th>
+											{% endblock %}
+
+											{% block tableOverviewHeaderDefaultValue %}
+												<th>{{ __('default_value') }}</th>
+											{% endblock %}
+
+											{% block tableOverviewHeaderInputType %}
+												<th>{{ __('input_type') }}</th>
+											{% endblock %}
+
+											{% block tableOverviewHeaderType %}
+												<th>{{ __('type') }}</th>
+											{% endblock %}
+
+											{% block tableOverviewHeaderRequired %}
+												<th>{{ __('required') }}</th>
+											{% endblock %}
+
+											{% block tableOverviewHeaderActions %}
+												<th class="actions"></th>
+											{% endblock %}
+										</tr>
+									{% endblock %}
+								</thead>
+							{% endblock %}
+							{% block tableOverviewBody %}
+								<tbody>
+									{% if aa_attributesGroupedByFieldset[ ls_fieldset ] is defined %}
+										{# @var lo_attribute \Awyiss\Model\Entity\Attribute #}
+										{% for lo_attribute in aa_attributesGroupedByFieldset[ ls_fieldset ] %}
+											{% block tableOverviewBodyRow %}
+												<tr>
+													{% block tableOverviewCellTitle %}
+														<td>{{ lo_attribute.title }}<br>
+														{{ lo_attribute.identifier }}</td>
+													{% endblock %}
+
+													{% block tableOverviewCellDefaultValue %}
+														<td>{{ lo_attribute.default_value }}</td>
+													{% endblock %}
+
+													{% block tableOverviewCellInputType %}
+														<td>{{ lo_attribute.input_type }}</td>
+													{% endblock %}
+
+													{% block tableOverviewCellType %}
+														<td>{{ lo_attribute.type }}</td>
+													{% endblock %}
+
+													{% block tableOverviewCellRequired %}
+														<td>{{ lo_attribute.required }}</td>
+													{% endblock %}
+
+													{% block tableOverviewCellActions %}
+														<td class="actions">
+															{% if helper_Authorization_isAccessible('update') %}
+																{{ helper_Html_link(__('edit'), {action: 'edit', id: lo_attribute.id}) }}
+															{% endif %}
+															{% if helper_Authorization_isAccessible('delete') %}
+																{{ helper_Html_link(__('delete'), {action: 'delete', id: lo_attribute.id}, {confirm: __('confirm_delete', lo_attribute.id) }) }}
+															{% endif %}
+														</td>
+													{% endblock %}
+												</tr>
+											{% endblock %}
+										{% endfor %}
 									{% endif %}
-									{% if helper_Authorization_isAccessible('delete') %}
-										{{ helper_Html_link(__('delete'), {action: 'delete', id: lo_attribute.id}, {confirm: __('confirm_delete', lo_attribute.id) }) }}
-									{% endif %}
-								</td>
-							</tr>
-						{% endfor %}
-					{% endif %}
-				</tbody>
-			</table>
-		</fieldset>
+								</tbody>
+							{% endblock %}
+						</table>
+					{% endblock %}
+				{% endblock %}
+			</fieldset>
+		{% endblock %}
 	{% endfor %}
 </div>

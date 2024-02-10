@@ -4,39 +4,74 @@
 #}
 
 <div class="ContentTemplates Overview">
-	{% if helper_Authorization_isAccessible('create') %}
-		{{ helper_Html_link(__('create'), {action: 'add'}, {class: 'Button'}) }}
-	{% endif %}
+	{% block buttonsOverview %}
+		{% if helper_Authorization_isAccessible('create') %}
+			{{ helper_Html_link(__('create'), {action: 'add'}, {class: 'Button'}) }}
+		{% endif %}
+	{% endblock %}
 
-	<h1>{{ __('headline_overview') }}</h1>
+	{% block headlineOverview %}
+		<h1>{{ __('headline_overview') }}</h1>
+	{% endblock %}
 
-	<div class="table-responsive">
-		<table>
-			<thead>
-				<tr>
-					<th>{{ __('title') }}</th>
-					<th>{{ __('file_name') }}</th>
-					<th>{{ __('used_for_contents') }}</th>
-					<th class="actions"></th>
-				</tr>
-			</thead>
-			<tbody>
-				{% for lo_contentTemplate in ao_contentTemplates %}
-					<tr>
-						<td>{{ lo_contentTemplate.title }} ({{ lo_contentTemplate.systemOrder }})</td>
-						<td>{{ lo_contentTemplate.fileName }}</td>
-						<td>{{ lo_contentTemplate.usedForContents }}</td>
-						<td class="actions">
-							{% if helper_Authorization_isAccessible('update') %}
-								{{ helper_Html_link(__('edit'), {action: 'edit', id: lo_contentTemplate.id}) }}
-							{% endif %}
-							{% if helper_Authorization_isAccessible('delete') %}
-								{{ helper_Html_link(__('delete'), {action: 'delete', id: lo_contentTemplate.id}, {confirm: __('confirm_delete', lo_contentTemplate.id) }) }}
-							{% endif %}
-						</td>
-					</tr>
-				{% endfor %}
-			</tbody>
+	{% block tableOverview %}
+		<table class="Table-Overview">
+			{% block tableOverviewHead %}
+				<thead>
+					{% block tableOverviewHeadRow %}
+						<tr>
+							{% block tableOverviewHeaderTitle %}
+								<th>{{ __('title') }}</th>
+							{% endblock %}
+
+							{% block tableOverviewHeaderFileName %}
+								<th>{{ __('file_name') }}</th>
+							{% endblock %}
+
+							{% block tableOverviewHeaderUsedForContents %}
+								<th>{{ __('used_for_contents') }}</th>
+							{% endblock %}
+
+							{% block tableOverviewHeaderActions %}
+								<th class="actions"></th>
+							{% endblock %}
+						</tr>
+					{% endblock %}
+				</thead>
+			{% endblock %}
+			{% block tableOverviewBody %}
+				<tbody>
+					{# @var lo_contentTemplate \Awyiss\Model\Entity\ContentTemplate #}
+					{% for lo_contentTemplate in ao_contentTemplates %}
+						{% block tableOverviewBodyRow %}
+							<tr>
+								{% block tableOverviewCellTitle %}
+									<td>{{ lo_contentTemplate.title }} ({{ lo_contentTemplate.systemOrder }})</td>
+								{% endblock %}
+
+								{% block tableOverviewCellFileName %}
+									<td>{{ lo_contentTemplate.fileName }}</td>
+								{% endblock %}
+
+								{% block tableOverviewCellUsedForContents %}
+									<td>{{ lo_contentTemplate.usedForContents }}</td>
+								{% endblock %}
+
+								{% block tableOverviewCellActions %}
+									<td class="actions">
+										{% if helper_Authorization_isAccessible('update') %}
+											{{ helper_Html_link(__('edit'), {action: 'edit', id: lo_contentTemplate.id}) }}
+										{% endif %}
+										{% if helper_Authorization_isAccessible('delete') %}
+											{{ helper_Html_link(__('delete'), {action: 'delete', id: lo_contentTemplate.id}, {confirm: __('confirm_delete', lo_contentTemplate.id) }) }}
+										{% endif %}
+									</td>
+								{% endblock %}
+							</tr>
+						{% endblock %}
+					{% endfor %}
+				</tbody>
+			{% endblock %}
 		</table>
-	</div>
+	{% endblock %}
 </div>

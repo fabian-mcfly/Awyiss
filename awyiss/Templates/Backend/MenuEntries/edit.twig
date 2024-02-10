@@ -6,19 +6,24 @@
 #}
 
 <div class="MenuEntries Form Edit">
-	<h1>{{ __('headline_edit') }}</h1>
+	{% block headlineEdit %}
+		<h1>{{ __('headline_edit') }}</h1>
+	{% endblock %}
 
 	{{ helper_Form_create(ao_menuEntry, {method: 'post', idPrefix: 'menuEntry'}) }}
 
-	{% block formButtons %}
+	{% block formEditButtons %}
 		{{ helper_Form_button(__('save')) }}
 		{{ helper_Form_button(__('save_close'), {name: 'submit', value: 'submit_close'}) }}
 	{% endblock %}
 
-	{% include('@Backend/MenuEntries/form.twig') %}
+	{% block formEdit %}
+		{% include('@Backend/MenuEntries/form.twig') %}
+	{% endblock %}
 
-	{{ block('formButtons') }}
+	{% block formEditButtonsBottom %}
+		{{ block('formEditButtons') }}
+	{% endblock %}
 
 	{{ helper_Form_end() -}}
-
 </div>

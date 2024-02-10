@@ -11,16 +11,22 @@
 <div class="Languages Form Edit">
 	{{ helper_Form_create(ao_language, {method: 'post', idPrefix: 'Language'}) }}
 
-	<h1>{{ __('headline_edit') }}</h1>
+	{% block headlineEdit %}
+		<h1>{{ __('headline_edit') }}</h1>
+	{% endblock %}
 
-	{% block formButtons %}
+	{% block formEditButtons %}
 		{{ helper_Form_button(__('save')) }}
 		{{ helper_Form_button(__('save_close'), {name: 'submit', value: 'submit_close'}) }}
 	{% endblock %}
 
-	{% include('@Backend/Languages/form.twig') %}
+	{% block formEdit %}
+		{% include('@Backend/Languages/form.twig') %}
+	{% endblock %}
 
-	{{ block('formButtons') }}
+	{% block formEditButtonsBottom %}
+		{{ block('formEditButtons') }}
+	{% endblock %}
 
 	{{ helper_Form_end() -}}
 </div>
