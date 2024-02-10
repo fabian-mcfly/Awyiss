@@ -19,6 +19,8 @@ require CORE_PATH . 'config' . DS . 'bootstrap.php';
 
 
 use Awyiss\Core\Configure\Engine\PhpConfig;
+use Awyiss\Database\Type\IntegerType;
+use Awyiss\Database\Type\StringType;
 use Awyiss\Routing\Router;
 use Cake\Cache\Cache;
 use Cake\Core\Configure;
@@ -177,6 +179,11 @@ Inflector::rules('plural', ['/^(menu)s$/i' => '\1s']);
 //\Cake\Utility\Inflector::rules('irregular', ['red' => 'redlings']);
 Inflector::rules('uninflected', ['configuration', 'media', 'system']);
 
-TypeFactory::map('char', \Awyiss\Database\Type\StringType::class);
-TypeFactory::map('string', \Awyiss\Database\Type\StringType::class);
-TypeFactory::map('text', \Awyiss\Database\Type\StringType::class);
+TypeFactory::map('tinyinteger', IntegerType::class);
+TypeFactory::map('smallinteger', IntegerType::class);
+TypeFactory::map('integer', IntegerType::class);
+TypeFactory::map('biginteger', IntegerType::class);
+
+TypeFactory::map('char', StringType::class);
+TypeFactory::map('string', StringType::class);
+TypeFactory::map('text', StringType::class);
