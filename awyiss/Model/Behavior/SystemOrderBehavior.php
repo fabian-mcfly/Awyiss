@@ -6,6 +6,7 @@ namespace Awyiss\Model\Behavior;
 
 use ArrayObject;
 use Awyiss\ORM\Behavior;
+use BackedEnum;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
 use Cake\ORM\Query\SelectQuery;
@@ -108,6 +109,7 @@ class SystemOrderBehavior extends Behavior {
 	 * @param \Cake\Event\EventInterface $ao_event
 	 * @param \Cake\Datasource\EntityInterface $ao_entity
 	 * @param \ArrayObject $ao_options
+	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function beforeSave(EventInterface $ao_event, EntityInterface $ao_entity, ArrayObject $ao_options): void {
 		if (!$this->getConfig('enabled')) {
@@ -198,6 +200,7 @@ class SystemOrderBehavior extends Behavior {
 	 * @param \Cake\Datasource\EntityInterface $ao_entity
 	 * @param \ArrayObject $ao_options
 	 * @throws \Exception
+	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function afterSave(EventInterface $ao_event, EntityInterface $ao_entity, ArrayObject $ao_options): void {
 		if (!$this->getConfig('enabled')) {
@@ -556,7 +559,17 @@ class SystemOrderBehavior extends Behavior {
 		}
 
 		$lo_table = $this->table();
-		$ls_fieldType = $lo_table->getSchema()->getColumnType($as_field);
+
+		if (str_starts_with($as_field, 'attributes.')) {
+			$ls_fieldType = $lo_table->getAttributesTable()->getSchema()->getColumnType(substr($as_field, 11));
+		}
+		elseif ($lo_table->fieldIsAttribute($as_field)) {
+			$ls_fieldType = $lo_table->getAttributesTable()->getSchema()->getColumnType($as_field);
+		}
+		else {
+			$ls_fieldType = $lo_table->getSchema()->getColumnType($as_field);
+		}
+
 		$lo_records = $lo_table->find()->all()->sortBy(
 			$as_field,
 			$ai_direction,
@@ -568,7 +581,13 @@ class SystemOrderBehavior extends Behavior {
 			$la_relatedColumns = $lo_table->extractAttributeFields($la_relatedColumns, true);
 			$la_groupedItems = $lo_records->groupBy(function (EntityInterface $ao_entity) use ($la_relatedColumns) {
 				$la_values = array_map(function (string $as_field) use ($ao_entity) {
-					return $ao_entity->$as_field ?? '-';
+					$lx_value = $ao_entity->get($as_field);
+
+					if ($lx_value instanceof BackedEnum) {
+						$lx_value = $lx_value->value;
+					}
+
+					return $lx_value ?? '-';
 				}, $la_relatedColumns);
 
 
