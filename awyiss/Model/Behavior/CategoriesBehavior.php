@@ -185,6 +185,10 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 	 * @return bool
 	 */
 	public function fieldIsAttribute(): bool {
+		if (!$this->getConfig('enabled')) {
+			return false;
+		}
+
 		/** @var \Awyiss\Model\Table $lo_table */
 		$lo_table = $this->table();
 
@@ -289,8 +293,6 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 			return [];
 		}
 
-		$ls_column = $this->getConfig('fieldname') ?: $this->getConfig('identifier');
-
 		if ($this->getConfig('useDatasource')) {
 			$ls_associationName = $this->getConfig('associationName');
 			$lo_association = $this->table()->getAssociation($ls_associationName);
@@ -298,18 +300,23 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 			if ($lo_association instanceof HasMany || $lo_association instanceof BelongsToMany) {
 				return [];
 			}
-
-			$ls_column = $lo_association->getForeignKey();
-			if (is_array($ls_column)) {
-				$ls_column = reset($ls_column);
-			}
 		}
 
+		$ls_column = $this->getConfig('fieldname') ?: $this->getConfig('identifier');
+
+		/** @var \Awyiss\Model\Table $lo_table */
+		$lo_table = $this->table();
 		$lb_isAttribute = $this->fieldIsAttribute();
 		if ($lb_isAttribute) {
-			/** @var \Awyiss\Model\Table $lo_table */
-			$lo_table = $this->table();
-			$ls_column = $lo_table->getAttributesTable(true) . '.' . $ls_column;
+			/** @var \Awyiss\Model\Entity $ls_entityClass */
+			$ls_entityClass = $lo_table->getAttributesTable()->getEntityClass();
+			$ls_column = $ls_entityClass::unmapField($ls_column);
+			$ls_column = $lo_table->getAttributesTableName(true) . '.' . $ls_column;
+		}
+		else {
+			/** @var \Awyiss\Model\Entity $ls_entityClass */
+			$ls_entityClass = $lo_table->getEntityClass();
+			$ls_column = $ls_entityClass::unmapField($ls_column);
 		}
 
 		if ($lx_selectedCategory == $this->getConfig('unassignedKey')) {
