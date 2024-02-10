@@ -90,7 +90,7 @@ class PagesController extends Controller {
 	public function edit(int $ai_id) {
 		$this->Authorization->ensure('update');
 
-		/** @var Page $lo_page */
+		/** @var \Awyiss\Model\Entity\Page $lo_page */
 		$lo_page = $this->Pages->findById($ai_id)->find('translations')->first();
 
 		if (!$lo_page) {
@@ -119,7 +119,7 @@ class PagesController extends Controller {
 	 * Delete method
 	 *
 	 * @param int $ai_id
-	 * @return Response
+	 * @return \Cake\Http\Response
 	 * @throws \Exception
 	 */
 	public function delete(int $ai_id): Response {
@@ -127,7 +127,7 @@ class PagesController extends Controller {
 
 		$this->request->allowMethod(['get', 'delete']);
 
-		/** @var Page $lo_page */
+		/** @var \Awyiss\Model\Entity\Page $lo_page */
 		$lo_page = $this->Pages->findById($ai_id)->find('translations')->first();
 		if (!$lo_page) {
 			$this->Flash->error(__('record_not_found'));
@@ -153,7 +153,7 @@ class PagesController extends Controller {
 
 
 	/**
-	 * @param Page $ao_page
+	 * @param \Awyiss\Model\Entity\Page $ao_page
 	 * @param string $as_method
 	 * @return void
 	 */
@@ -202,7 +202,7 @@ class PagesController extends Controller {
 	 * Returns a ResultSet of all `\Awyiss\Model\Entity\PageTemplate` records available
 	 * for the current page_role_id, formatted as a list using `\Cake\ORM\Table::findList()`
 	 *
-	 * @return CollectionInterface
+	 * @return \Cake\Collection\CollectionInterface
 	 * @see \Awyiss\Model\Entity\PageTemplate
 	 * @see \Cake\ORM\Table::findList()
 	 */
@@ -222,8 +222,8 @@ class PagesController extends Controller {
 	 * Return a collection of pages for the currently set languageShortcode,
 	 * using `\Cake\Collection\CollectionTrait::listNested()` to be used in a form-select
 	 *
-	 * @param Page $ao_page
-	 * @return CollectionInterface
+	 * @param \Awyiss\Model\Entity\Page $ao_page
+	 * @return \Cake\Collection\CollectionInterface
 	 * @see \Cake\Collection\CollectionTrait::listNested()
 	 */
 	public function getThreadedPages(Page $ao_page): CollectionInterface {
@@ -295,7 +295,7 @@ class PagesController extends Controller {
 
 	/**
 	 * @param \Awyiss\Database\Type\PageRoleEnumInterface $ae_pageRole
-	 * @return PagesController
+	 * @return \Awyiss\Controller\Backend\PagesController
 	 */
 	public function setPageRole(PageRoleEnumInterface $ae_pageRole): static {
 		$this->pageRole = $ae_pageRole;
@@ -311,7 +311,7 @@ class PagesController extends Controller {
 	 *
 	 * @param \Awyiss\Database\Type\PageRoleEnumInterface $ae_pageRole
 	 * @param string $as_identifier
-	 * @return $this
+	 * @return \Awyiss\Controller\Backend\PagesController
 	 * @throws \ReflectionException
 	 */
 	public function asPageRole(PageRoleEnumInterface $ae_pageRole, string $as_identifier): static {
@@ -362,7 +362,7 @@ class PagesController extends Controller {
 		try {
 			$ls_contents = parent::render($as_template, $as_layout);
 		}
-			/** @noinspection PhpUnusedLocalVariableInspection */
+		/** @noinspection PhpUnusedLocalVariableInspection */
 		catch (MissingTemplateException $ex) {
 			$la_templatePathParts = explode('/', $lo_viewBuilder->getTemplatePath());
 			array_pop($la_templatePathParts);
@@ -389,8 +389,8 @@ class PagesController extends Controller {
 
 
 	/**
-	 * @param Page $ao_page
-	 * @param CollectionInterface $ao_threadedContents
+	 * @param \Awyiss\Model\Entity\Page $ao_page
+	 * @param \Cake\Collection\CollectionInterface $ao_threadedContents
 	 * @return void
 	 */
 	protected function ensurePossibleParentId(Page $ao_page, CollectionInterface $ao_threadedPages): void {
