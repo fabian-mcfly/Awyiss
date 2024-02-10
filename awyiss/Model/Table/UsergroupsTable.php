@@ -105,10 +105,14 @@ class UsergroupsTable extends Table {
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
-		$ao_rules->add($ao_rules->isUnique(['title']), 'titleUnique', [
-			'errorField' => 'title',
-			'message' => __d($this->getI18nDomain(), 'error_title_unique'),
-		]);
+		$ao_rules->add(
+			$ao_rules->isUnique(['title']),
+			'titleUnique',
+			[
+				'errorField' => 'title',
+				'message' => __d($this->getI18nDomain(), 'error_title_unique'),
+			]
+		);
 
 
 		return $ao_rules;

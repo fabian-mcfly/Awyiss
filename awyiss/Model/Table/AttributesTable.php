@@ -287,13 +287,14 @@ class AttributesTable extends Table {
 		]);
 
 
-		$ao_rules->add($ao_rules->isUnique([
-			'identifier',
-			'scope',
-		]), 'identifierUniqueForScope', [
-			'errorField' => 'identifier',
-			'message' => __dfx($this->getI18nDomain(), 'validation', 'attributes', 'error_identifier_unique_for_scope'),
-		]);
+		$ao_rules->add(
+			$ao_rules->isUnique(['identifier', 'scope']),
+			'identifierUniqueForScope',
+			[
+				'errorField' => 'identifier',
+				'message' => __dfx($this->getI18nDomain(), 'validation', 'attributes', 'error_identifier_unique_for_scope'),
+			]
+		);
 
 
 		$ao_rules->add(function (Attribute $ao_entity/*, array $aa_options*/): bool {

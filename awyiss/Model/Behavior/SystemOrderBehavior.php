@@ -782,7 +782,7 @@ class SystemOrderBehavior extends Behavior {
 		}
 
 		if ($lo_table->fieldIsAttribute($ls_field)) {
-			$ls_attributesTable = $lo_table->getAttributesTable(true);
+			$ls_attributesTable = $lo_table->getAttributesTableName(true);
 			/** @var class-string<\Awyiss\Model\Entity> $ls_entityClass */
 			$ls_entityClass = $lo_table->$ls_attributesTable->getEntityClass();
 

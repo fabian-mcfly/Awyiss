@@ -93,13 +93,13 @@ class PageTemplateContentAreasTable extends Table {
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
-		$ao_rules->add($ao_rules->existsIn('page_template_id', 'PageTemplates'), 'pageTemplateExists', [
+		$ao_rules->add($ao_rules->existsIn('pageTemplateId', 'PageTemplates'), 'pageTemplateExists', [
 			'errorField' => 'pageTemplateId',
 			'message' => __d($this->getI18nDomain(), 'error_page_template_exists'),
 		]);
 
 
-		$ao_rules->add($ao_rules->existsIn('content_area_id', 'ContentAreas'), 'contentAreaExists', [
+		$ao_rules->add($ao_rules->existsIn('contentAreaId', 'ContentAreas'), 'contentAreaExists', [
 			'errorField' => 'contentAreaId',
 			'message' => __d($this->getI18nDomain(), 'error_content_area_exists'),
 		]);

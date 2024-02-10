@@ -168,13 +168,17 @@ class PageTemplatesTable extends Table {
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
-		$ao_rules->add($ao_rules->isUnique(['fileName']), 'fileNameUnique', [
-			'errorField' => 'fileName',
-			'message' => __dfx($this->getI18nDomain(), 'validation', 'page_templates', 'error_file_name_unique'),
-		]);
+		$ao_rules->add(
+			$ao_rules->isUnique(['fileName']),
+			'fileNameUnique',
+			[
+				'errorField' => 'fileName',
+				'message' => __dfx($this->getI18nDomain(), 'validation', 'page_templates', 'error_file_name_unique'),
+			]
+		);
 
 
-		$ao_rules->add($ao_rules->existsIn('content_area_id', 'ContentAreas'), 'validContentAreas', [
+		$ao_rules->add($ao_rules->existsIn('contentAreaId', 'ContentAreas'), 'validContentAreas', [
 			'errorField' => 'contentAreas',
 			'message' => __d($this->getI18nDomain(), 'error_valid_content_areas'),
 		]);

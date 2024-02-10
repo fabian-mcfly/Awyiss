@@ -136,7 +136,16 @@ class RulesChecker extends BaseRulesChecker {
 		}
 
 
-		return $this->_addError(new ExistsIn($ax_fields, $ax_table, $la_options), '_existsIn', ['errorField' => $ls_errorField, 'message' => $ls_message]);
+		$la_fields = (array)$ax_fields;
+		if (($this->_options['repository'] ?? null)) {
+			$ls_entityClass = $this->_options['repository']->getEntityClass() ?? null;
+			if ($ls_entityClass) {
+				$la_fields = $ls_entityClass::unmapFields($la_fields);
+			}
+		}
+
+
+		return $this->_addError(new ExistsIn($la_fields, $ax_table, $la_options), '_existsIn', ['errorField' => $ls_errorField, 'message' => $ls_message]);
 	}
 
 
@@ -161,7 +170,6 @@ class RulesChecker extends BaseRulesChecker {
 				$la_fields = $ls_entityClass::unmapFields($la_fields);
 			}
 		}
-
 
 		return parent::isUnique($la_fields, $la_options);
 	}

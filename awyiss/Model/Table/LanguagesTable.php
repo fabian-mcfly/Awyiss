@@ -203,10 +203,14 @@ class LanguagesTable extends Table {
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
-		$ao_rules->add($ao_rules->isUnique(['shortcode', 'realm']), 'shortcodeUniqueForRealm', [
-			'errorField' => 'shortcode',
-			'message' => __dfx($this->getI18nDomain(), 'validation', 'shortcode', 'error_shortcode_unique_for_realm'),
-		]);
+		$ao_rules->add(
+			$ao_rules->isUnique(['shortcode', 'realm']),
+			'shortcodeUniqueForRealm',
+			[
+				'errorField' => 'shortcode',
+				'message' => __dfx($this->getI18nDomain(), 'validation', 'shortcode', 'error_shortcode_unique_for_realm'),
+			]
+		);
 
 
 		$ao_rules->add(function (Language $ao_entity): bool {

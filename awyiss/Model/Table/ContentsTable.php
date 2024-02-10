@@ -335,7 +335,7 @@ class ContentsTable extends Table {
 
 		$ao_rules->add(
 			$ao_rules->existsIn(
-				'duplicate_of',
+				'duplicateOf',
 				'DuplicateOfContents',
 				[
 					'allowNullableNulls' => true,

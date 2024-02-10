@@ -41,7 +41,6 @@ class BackendMenuEntriesTable extends Table {
 	 */
 	protected array $nest = [
 		'buildRules' => false,
-		'relatedColumns' => [],
 	];
 	/**
 	 * @inheritDoc
@@ -218,7 +217,7 @@ class BackendMenuEntriesTable extends Table {
 			}
 
 			$lo_existsIn = $ao_rules->existsIn(
-				'parent_id',
+				'parentId',
 				'ParentBackendMenuEntries',
 				[
 					'errorField' => 'parentId',

@@ -94,10 +94,14 @@ class ContentAreasTable extends Table {
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
-		$ao_rules->add($ao_rules->isUnique(['identifier']), 'identifierUnique', [
-			'errorField' => 'identifier',
-			'message' => __dfx($this->getI18nDomain(), 'validation', 'content_areas', 'error_identifier_unique'),
-		]);
+		$ao_rules->add(
+			$ao_rules->isUnique(['identifier']),
+			'identifierUnique',
+			[
+				'errorField' => 'identifier',
+				'message' => __dfx($this->getI18nDomain(), 'validation', 'content_areas', 'error_identifier_unique'),
+			]
+		);
 
 
 		return $ao_rules;

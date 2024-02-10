@@ -286,7 +286,7 @@ class PagesTable extends Table {
 
 
 		$ao_rules->add(
-			$ao_rules->existsIn('language_shortcode', 'Languages'),
+			$ao_rules->existsIn('languageShortcode', 'Languages'),
 			'languageExists',
 			[
 				'errorField' => 'languageShortcode',
@@ -296,7 +296,7 @@ class PagesTable extends Table {
 
 
 		$ao_rules->add(
-			$ao_rules->existsIn('page_role_id', 'PageRoles'),
+			$ao_rules->existsIn('pageRoleId', 'PageRoles'),
 			'validPageRole',
 			[
 				'errorField' => 'pageRoleId',
@@ -306,7 +306,7 @@ class PagesTable extends Table {
 
 
 		$ao_rules->add(
-			$ao_rules->existsIn(['page_template_id', 'page_role_id'], 'PageTemplates'),
+			$ao_rules->existsIn(['pageTemplateId', 'page_role_id'], 'PageTemplates'),
 			'validPageTemplate',
 			[
 				'errorField' => 'pageTemplateId',
@@ -316,7 +316,7 @@ class PagesTable extends Table {
 
 
 		$ao_rules->add(
-			$ao_rules->existsIn('duplicate_of', 'Duplicate' . $ls_pageRole),
+			$ao_rules->existsIn('duplicateOf', 'DuplicateOf' . $ls_pageRole),
 			'validDuplicateOf',
 			[
 				'errorField' => 'duplicateOf',
