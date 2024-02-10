@@ -292,7 +292,7 @@ class ConfigOption {
 	 * @return string|bool
 	 */
 	public function validateConfigValue(mixed $ax_value, ?string $as_languageShortcode = null): bool|string {
-		if ($as_languageShortcode !== null && !$this->isLocalizable()) {
+		if ($as_languageShortcode !== null && $as_languageShortcode !== '' && !$this->isLocalizable()) {
 			return __d('configuration', 'error_option_not_localizable');
 		}
 
@@ -376,8 +376,7 @@ class ConfigOption {
 
 			$lx_key = array_search($ax_value, $lx_values);
 
-
-			return $lx_key ? $lx_values[ $lx_key ] : null;
+			return $lx_key !== false ? $lx_values[ $lx_key ] : null;
 		}
 
 		return $this->getType()->cast($ax_value, $this->isNullable($as_languageShortcode !== null));
