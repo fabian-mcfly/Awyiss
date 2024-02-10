@@ -373,6 +373,7 @@ class PagesTable extends Table {
 	 * @param SelectQuery $ao_query
 	 * @param ArrayObject $ao_options
 	 * @return void
+	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function beforeFind(EventInterface $ao_event, SelectQuery $ao_query, ArrayObject $ao_options): void {
 		if (!($ao_options['skipPageRoleCheck'] ?? false)) {
@@ -415,8 +416,9 @@ class PagesTable extends Table {
 			$ls_preSlug = trim($lo_parentPage->slug, '/') . '/';
 		}
 
-		$ls_slug = $ls_preSlug . $ao_entity->slug;
-
+		$la_parts = explode('/', $ao_entity->slug);
+		$ls_slug = end($la_parts);
+		$ls_slug = $ls_preSlug . $ls_slug;
 
 		$ls_originalSlug = $ao_entity->hasOriginal('slug') ? $ao_entity->getOriginal('slug') : null;
 		//When the slug has changed
