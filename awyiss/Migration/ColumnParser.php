@@ -111,7 +111,7 @@ class ColumnParser extends BaseColumnParser {
 			}
 
 
-			return [$la_matches[1], $la_matches[2] ?: null, $la_matches[3] ?: null];
+			return [$la_matches[1], $la_matches[2] ?? null ?: null, $la_matches[3] ?? null ?: null];
 		}
 
 		/** @var string $ls_fieldType */
