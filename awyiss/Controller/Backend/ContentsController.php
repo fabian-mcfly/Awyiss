@@ -250,7 +250,7 @@ class ContentsController extends Controller {
 	protected function save(Content $ao_content, string $as_method = 'add'): void {
 		$la_associated = [];
 		if ($this->Contents->hasAttributes()) {
-			$la_associated[] = $this->Contents->getAttributesTable(true);
+			$la_associated[] = $this->Contents->getAttributesTableName(true);
 			$ao_content->setAccess('attributes', true);
 		}
 

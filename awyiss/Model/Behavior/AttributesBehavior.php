@@ -8,6 +8,7 @@ use ArrayObject;
 use Awyiss\Attributes\AttributeOptionsProvider;
 use Awyiss\Core\App;
 use Awyiss\Model\Entity;
+use Awyiss\Model\Table;
 use Awyiss\ORM\Behavior;
 use Awyiss\ORM\RulesChecker;
 use Cake\Collection\Iterator\MapReduce;
@@ -58,6 +59,7 @@ class AttributesBehavior extends Behavior {
 			'extractAttributeFields' => 'extractAttributeFields',
 			'getAttributes' => 'getAttributes',
 			'getAttributesTable' => 'getAttributesTable',
+			'getAttributesTableName' => 'getAttributesTableName',
 			'hasAttributes' => 'hasAttributes',
 		],
 		'isAttributesTable' => false,
@@ -156,7 +158,7 @@ class AttributesBehavior extends Behavior {
 	public function findWithMatchingAttributes(SelectQuery $ao_query, Entity $entity, array $keys): SelectQuery {
 		/** @var \Awyiss\Model\Table $lo_table */
 		$lo_table = $this->table();
-		$ls_attributesTable = $lo_table->getAttributesTable(true);
+		$ls_attributesTable = $lo_table->getAttributesTableName(true);
 		$la_conditions = [];
 
 		$lo_attributes = $entity->get('attributes');
@@ -189,10 +191,20 @@ class AttributesBehavior extends Behavior {
 
 	/**
 	 * @param bool $ab_camelized
+	 * @return \Awyiss\Model\Table
+	 */
+	public function getAttributesTable(): Table {
+		/** @noinspection PhpIncompatibleReturnTypeInspection */
+		return $this->table()->getAssociation($this->getAttributesTableName(true))?->getTarget();
+	}
+
+
+	/**
+	 * @param bool $ab_camelized
 	 * @return string
 	 * @noinspection PhpUnused
 	 */
-	public function getAttributesTable(bool $ab_camelized = false): string {
+	public function getAttributesTableName(bool $ab_camelized = false): string {
 		return $ab_camelized ? Inflector::camelize(Inflector::tableize($this->attributesTable)) : $this->attributesTable;
 	}
 
@@ -277,12 +289,6 @@ class AttributesBehavior extends Behavior {
 		foreach ($this->getAttributes() as $lo_attribute) {
 			if (!isset($lo_attributeOptions[ $lo_attribute->identifier ])) {
 				if ($lo_attribute->required) {
-					/*
-					 * TODO: check if the identifier is the category identifier and categories behavior is enabled or
-					 * if the identifier is the nest parent identifier and nest behavior is enabled
-					 * In those cases, skip the checking of the attribute, since the behaviors will do the check
-					 */
-
 					$ao_rules->add(function (Entity $ao_entity/*, array $aa_options*/) use ($lo_attribute): bool|string {
 						return !empty($ao_entity->{$lo_attribute->identifier});
 					}, 'validValue' . Inflector::camelize($lo_attribute->identifier), [
@@ -295,7 +301,10 @@ class AttributesBehavior extends Behavior {
 			}
 
 			$ao_rules->add(function (Entity $ao_entity/*, array $aa_options*/) use ($lo_attribute, $lo_attributeOptions): bool|string {
-				/** @noinspection PhpUndefinedMethodInspection */
+				/**
+				 * @noinspection PhpUndefinedMethodInspection
+				 * @noinspection PhpPossiblePolymorphicInvocationInspection
+				 */
 				return $lo_attributeOptions->validateValue($lo_attribute->identifier, $ao_entity->get($lo_attribute->identifier), $ao_entity->getEntity());
 			}, 'validValue' . Inflector::camelize($lo_attribute->identifier), [
 				'errorField' => $lo_attribute->identifier,
@@ -332,7 +341,7 @@ class AttributesBehavior extends Behavior {
 		}*/
 
 		$ao_query->contain([
-			$this->getAttributesTable(true),
+			$this->getAttributesTableName(true),
 		]);
 
 		$ao_query->mapReduce(function (array|Entity $ao_entity, int $ai_key, MapReduce $ao_mapReduce) use ($ao_query): void {
@@ -345,7 +354,7 @@ class AttributesBehavior extends Behavior {
 
 			if (!$ao_entity->attributes) {
 				/** @var \Awyiss\ORM\Association\HasOne|\Awyiss\Model\Table $lo_association */
-				$lo_association = $this->table()->{$this->getAttributesTable(true)};
+				$lo_association = $this->getAttributesTable();
 
 				$ao_entity->attributes = $lo_association->newDefaultEntity();
 
@@ -358,9 +367,15 @@ class AttributesBehavior extends Behavior {
 				$ao_entity->initAttributesField($lo_association, $ls_foreignKey);
 			}
 
-			/** @noinspection PhpUndefinedMethodInspection */
+			/**
+			 * @noinspection PhpUndefinedMethodInspection
+			 * @noinspection PhpPossiblePolymorphicInvocationInspection
+			 */
 			if (isset($ao_entity->attributes) && !$ao_entity->attributes->getEntity()) {
-				/** @noinspection PhpUndefinedMethodInspection */
+				/**
+				 * @noinspection PhpUndefinedMethodInspection
+				 * @noinspection PhpPossiblePolymorphicInvocationInspection
+				 */
 				$ao_entity->attributes->setEntity($ao_entity);
 			}
 
@@ -382,10 +397,10 @@ class AttributesBehavior extends Behavior {
 
 		//If the `attributes`-property was set to false, delete the existings attributes for this entity
 		if (!$ao_entity->isNew() && !$ao_entity->get('attributes')) {
-			$this->table()->loadInto($ao_entity, [$this->getAttributesTable(true)]);
+			$this->table()->loadInto($ao_entity, [$this->getAttributesTableName(true)]);
 
 			if (!empty($ao_entity->attributes) && !$ao_entity->attributes->isNew()) {
-				$this->fetchTable($this->getAttributesTable(true))->delete($ao_entity->attributes);
+				$this->getAttributesTable()->delete($ao_entity->attributes);
 				unset($ao_entity->attributes);
 			}
 		}

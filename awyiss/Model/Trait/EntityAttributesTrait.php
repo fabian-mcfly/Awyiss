@@ -28,7 +28,7 @@ trait EntityAttributesTrait {
 		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
 		if ($lo_table->hasAttributes()) {
 			/** @var HasOne $lo_association */
-			$lo_association = $lo_table->getAssociation($lo_table->getAttributesTable(true));
+			$lo_association = $lo_table->getAssociation($lo_table->getAttributesTableName(true));
 
 			$this->initAttributesField($lo_association, $lo_association->getForeignKey());
 		}

@@ -140,7 +140,7 @@ class PageTemplatesController extends Controller {
 	protected function save(PageTemplate $ao_pageTemplate, string $as_method = 'add'): void {
 		$la_associated = [];
 		if ($this->PageTemplates->hasAttributes()) {
-			$la_associated[] = $this->PageTemplates->getAttributesTable(true);
+			$la_associated[] = $this->PageTemplates->getAttributesTableName(true);
 			$ao_pageTemplate->setAccess('attributes', true);
 		}
 

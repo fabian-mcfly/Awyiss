@@ -127,7 +127,7 @@ class PageRolesController extends Controller {
 	protected function save(PageRole $ao_pageRole, string $as_method = 'add'): void {
 		$la_associated = [];
 		if ($this->PageRoles->hasAttributes()) {
-			$la_associated[] = $this->PageRoles->getAttributesTable(true);
+			$la_associated[] = $this->PageRoles->getAttributesTableName(true);
 			$ao_pageRole->setAccess('attributes', true);
 		}
 

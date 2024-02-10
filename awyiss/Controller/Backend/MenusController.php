@@ -129,7 +129,7 @@ class MenusController extends Controller {
 	protected function save(Menu $ao_menu, string $as_method = 'add'): void {
 		$la_associated = [];
 		if ($this->Menus->hasAttributes()) {
-			$la_associated[] = $this->Menus->getAttributesTable(true);
+			$la_associated[] = $this->Menus->getAttributesTableName(true);
 			$ao_menu->setAccess('attributes', true);
 		}
 

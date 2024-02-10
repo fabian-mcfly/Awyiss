@@ -182,7 +182,7 @@ class AttributesController extends Controller {
 	protected function save(Attribute $ao_attribute, string $as_method = 'add'): void {
 		$la_associated = [];
 		if ($this->Attributes->hasAttributes()) {
-			$la_associated[] = $this->Attributes->getAttributesTable(true);
+			$la_associated[] = $this->Attributes->getAttributesTableName(true);
 			$ao_attribute->setAccess('attributes', true);
 		}
 

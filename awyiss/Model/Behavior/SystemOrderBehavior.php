@@ -467,7 +467,7 @@ class SystemOrderBehavior extends Behavior {
 
 				$ls_column = $lo_attributes::unmapField($ls_column);
 
-				$ls_column = $lo_table->getAttributesTable(true) . '.' . $ls_column;
+				$ls_column = $lo_table->getAttributesTableName(true) . '.' . $ls_column;
 			}
 			else {
 				//Add each related column as a where clause, with a value of the entity's current or old value for this column

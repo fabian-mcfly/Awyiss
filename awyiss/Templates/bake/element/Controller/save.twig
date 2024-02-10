@@ -8,7 +8,7 @@
 	protected function save({{ entityClassName }} $ao_{{ singularName }}, string $as_method = 'add'): void {
 		$la_associated = [];
 		if ($this->{{ currentModelName }}->hasAttributes()) {
-			$la_associated[] = $this->{{ currentModelName }}->getAttributesTable(true);
+			$la_associated[] = $this->{{ currentModelName }}->getAttributesTableName(true);
 			$ao_{{ singularName }}->setAccess('attributes', true);
 		}
 

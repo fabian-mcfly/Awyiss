@@ -139,7 +139,7 @@ class ContentTemplatesController extends Controller {
 	protected function save(ContentTemplate $ao_contentTemplate, string $as_method = 'add'): void {
 		$la_associated = [];
 		if ($this->ContentTemplates->hasAttributes()) {
-			$la_associated[] = $this->ContentTemplates->getAttributesTable(true);
+			$la_associated[] = $this->ContentTemplates->getAttributesTableName(true);
 			$ao_contentTemplate->setAccess('attributes', true);
 		}
 

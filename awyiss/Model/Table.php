@@ -32,15 +32,16 @@ use RuntimeException;
 /**
  * Base Table
  *
- * @method SelectQuery findById(int $ai_id)
- * @method SelectQuery addSystemOrderQueryConditions(?SelectQuery $ao_query, \Cake\Datasource\EntityInterface $ao_entity)
+ * @method \Cake\ORM\Query\SelectQuery findById(int $ai_id)
+ * @method \Cake\ORM\Query\SelectQuery addSystemOrderQueryConditions(?SelectQuery $ao_query, \Cake\Datasource\EntityInterface $ao_entity)
  * @method \Awyiss\Authorization\AuthorizationServiceInterface getAuthorizationService()
  * @method int getHighestSystemOrder(\Cake\Datasource\EntityInterface $ao_entity)
  * @method string|\Awyiss\Authorization\Policy\Backend\GenericPagesPolicy|null getPolicyClass()
  * @method array getSystemOrderRelatedColumns(?\Cake\Datasource\EntityInterface $ao_entity = null)
  * @method array extractAttributeFields(array $aa_fields, bool $ab_inlcudeBaseFields = false)
  * @method array getAttributes()
- * @method string getAttributesTable(bool $ab_camelized = false)
+ * @method \Awyiss\Model\Table getAttributesTable()
+ * @method string getAttributesTableName(bool $ab_camelized = false)
  * @method bool hasAttributes()
  * @method \Cake\Datasource\ResultSetInterface|array|null getCategories(bool $ab_returnRaw = false)
  * @method \Awyiss\Model\Entity newDefaultEntity(array $aa_additionalData = [])

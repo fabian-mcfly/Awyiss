@@ -132,7 +132,7 @@ class LanguagesController extends Controller {
 	protected function save(Language $ao_language, string $as_method = 'add'): void {
 		$la_associated = [];
 		if ($this->Languages->hasAttributes()) {
-			$la_associated[] = $this->Languages->getAttributesTable(true);
+			$la_associated[] = $this->Languages->getAttributesTableName(true);
 			$ao_language->setAccess('attributes', true);
 		}
 

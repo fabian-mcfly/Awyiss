@@ -88,7 +88,7 @@ class DefaultValuesBehavior extends Behavior {
 
 		if ($lo_table->hasAttributes()) {
 			/** @var \Cake\ORM\Association&\Awyiss\Model\Table $lo_attributes */
-			$lo_attributes = $lo_table->getAssociation($lo_table->getAttributesTable(true));
+			$lo_attributes = $lo_table->getAssociation($lo_table->getAttributesTableName(true));
 			$la_defaults[ $ls_entityClass::mapField($lo_attributes->getProperty()) ] = $lo_attributes->newDefaultEntity();
 		}
 

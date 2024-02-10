@@ -265,7 +265,7 @@ class UsersController extends Controller {
 	protected function save(User $ao_user, string $as_method = 'add'): void {
 		$la_associated = [];
 		if ($this->Users->hasAttributes()) {
-			$la_associated[] = $this->Users->getAttributesTable(true);
+			$la_associated[] = $this->Users->getAttributesTableName(true);
 			$ao_user->setAccess('attributes', true);
 		}
 

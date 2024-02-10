@@ -211,7 +211,7 @@ class ConfigurationController extends Controller {
 	protected function save(Configuration $ao_configuration, string $as_method = 'add'): void {
 		$la_associated = [];
 		if ($this->Configuration->hasAttributes()) {
-			$la_associated[] = $this->Configuration->getAttributesTable(true);
+			$la_associated[] = $this->Configuration->getAttributesTableName(true);
 			$ao_configuration->setAccess('attributes', true);
 		}
 

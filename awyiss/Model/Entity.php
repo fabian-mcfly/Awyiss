@@ -56,7 +56,7 @@ class Entity extends BaseEntity {
 			$lo_table = FactoryLocator::get('Table')->get($this->getSource());
 			if ($lo_table->hasAttributes()) {
 				/** @var \Awyiss\ORM\Association\HasOne $lo_association */
-				$lo_association = $lo_table->getAssociation($lo_table->getAttributesTable(true));
+				$lo_association = $lo_table->getAssociation($lo_table->getAttributesTableName(true));
 
 				/** @var static $ls_associationEntityClass */
 				$ls_associationEntityClass = $lo_association->getEntityClass();

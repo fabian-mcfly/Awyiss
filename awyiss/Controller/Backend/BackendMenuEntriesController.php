@@ -210,7 +210,7 @@ class BackendMenuEntriesController extends Controller {
 	protected function save(BackendMenuEntry $ao_menuEntry, string $as_method = 'add'): void {
 		$la_associated = [];
 		if ($this->BackendMenuEntries->hasAttributes()) {
-			$la_associated[] = $this->BackendMenuEntries->getAttributesTable(true);
+			$la_associated[] = $this->BackendMenuEntries->getAttributesTableName(true);
 			$ao_menuEntry->setAccess('attributes', true);
 		}
 

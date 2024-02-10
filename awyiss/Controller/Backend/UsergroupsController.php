@@ -159,7 +159,7 @@ class UsergroupsController extends Controller {
 	protected function save(Usergroup $ao_usergroup, bool $ab_usersScopeIsAccessible, string $as_method = 'add'): void {
 		$la_associated = [];
 		if ($this->Usergroups->hasAttributes()) {
-			$la_associated[] = $this->Usergroups->getAttributesTable(true);
+			$la_associated[] = $this->Usergroups->getAttributesTableName(true);
 			$ao_usergroup->setAccess('attributes', true);
 		}
 

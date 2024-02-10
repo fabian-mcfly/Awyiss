@@ -367,7 +367,7 @@ class AttributesHelper extends Helper {
 		/** @var \Awyiss\Model\Table $lo_table */
 		$lo_table = $lo_context->fetchTable($lo_context->entity()->getSource());
 
-		$ls_associationAlias = $lo_table->getAttributesTable(true);
+		$ls_associationAlias = $lo_table->getAttributesTableName(true);
 		if (!$lo_table->hasAssociation($ls_associationAlias)) {
 			return;
 		}

@@ -508,7 +508,7 @@ class NestBehavior extends Behavior {
 		if ($la_data) {
 			$la_data = $ao_entity->get('attributes')::unmapFields($la_data, true);
 
-			$lo_association = $lo_table->getAssociation($lo_table->getAttributesTable(true));
+			$lo_association = $lo_table->getAssociation($lo_table->getAttributesTableName(true));
 
 			$ls_foreignKey = $lo_association->getForeignKey();
 

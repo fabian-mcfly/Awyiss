@@ -322,7 +322,7 @@ class ContentsTable extends Table {
 
 			if ($this->hasAttributes() && !empty($la_errors['attributes'])) {
 				/** @noinspection PhpUndefinedMethodInspection */
-				$la_errors['attributes'] = $this->{$this->getAttributesTable(true)}->getEntityClass()::mapFields($la_errors['attributes'], true);
+				$la_errors['attributes'] = $this->getAttributesTable()->getEntityClass()::mapFields($la_errors['attributes'], true);
 				$ao_entity->attributes->setErrors($la_errors['attributes']);
 			}
 
