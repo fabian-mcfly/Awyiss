@@ -11,6 +11,8 @@ use Cake\Collection\Collection;
 use Cake\Collection\CollectionInterface;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
+use Cake\ORM\Association;
+use Cake\ORM\Query\SelectQuery;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 use RuntimeException;
@@ -28,6 +30,17 @@ use RuntimeException;
  * It also moves all nested children to a new scope in the `afterSave`-event, using the `relatedColumns`-option
  */
 class NestBehavior extends Behavior {
+	/**
+	 * Fetches parents or nested children inside a loop, but only fetches
+	 * those records that are required
+	 */
+	final public const STRATEGY_FETCH_GRADUALLY = 'fetch_gradually';
+	/**
+	 * Fetches all items inside the element's scope and builds a collection
+	 * by filtering out siblings and records that aren't children or parents
+	 */
+	final public const STRATEGY_FETCH_ALL = 'fetch_all';
+
 	/**
 	 * Default configuration
 	 * These are merged with user-provided configuration when the behavior is used.
@@ -64,12 +77,14 @@ class NestBehavior extends Behavior {
 			'maxLevel' => null,
 		],
 		'relatedColumns' => [],
+		'strategy' => self::STRATEGY_FETCH_ALL,
 		'skip' => false,
 	];
 	/**
 	 * @var array Remembered data from existing entities in the beforeSave method
 	 */
 	protected array $rememberedData = [];
+	protected array $records = [];
 
 
 	/**
@@ -174,39 +189,13 @@ class NestBehavior extends Behavior {
 			return null;
 		}
 
-		$ls_associationName = $this->getConfig('children.associationName');
-		if (!$ls_associationName || !$this->table()->hasAssociation($ls_associationName)) {
-			throw new RuntimeException(sprintf('Expected option for `children.associationName` to be a valid assocation on table `%s`', $this->table()->getAlias()));
-		}
-
-		$lo_association = $this->table()->getAssociation($ls_associationName);
+		$lo_association = $this->getAssociation('children');
 
 		$lx_finder = $aa_options['finder'] ?? $this->getConfig('children.finder');
 
 		$lo_query = $lo_association->find($lx_finder, $ao_entity, $this->getConfig('relatedColumns'));
 
-		$la_bindingKeys = (array)$lo_association->getBindingKey();
-
-		/** @var \Awyiss\Model\Entity $ls_entityClass */
-		$ls_entityClass = $lo_association->getSource()->getEntityClass();
-		$la_skipFields = $ls_entityClass::unmapFields($aa_options['skipFields'] ?? []);
-		foreach ((array)$lo_association->getForeignKey() as $li_key => $ls_field) {
-			$ls_field = $ls_entityClass::unmapField($ls_field);
-
-			if (in_array($ls_field, $la_skipFields)) {
-				continue;
-			}
-
-			$lx_value = $ao_entity->hasOriginal($la_bindingKeys[ $li_key ]) ? $ao_entity->getOriginal($la_bindingKeys[ $li_key ]) : $ao_entity->get($la_bindingKeys[ $li_key ]);
-
-			if ($lx_value === null) {
-				$ls_field .= ' IS';
-			}
-
-			$lo_query->where([
-				$lo_association->getAlias() . '.' . $ls_field => $lx_value,
-			]);
-		}
+		$this->addQueryConditions($lo_query, $lo_association, $ao_entity, 'children');
 
 
 		return $lo_query->all();
@@ -229,7 +218,14 @@ class NestBehavior extends Behavior {
 			return null;
 		}
 
+		if ($this->getConfig('strategy') === self::STRATEGY_FETCH_ALL) {
+			return $this->fetchAllNestedChildren($ao_entity, $aa_options);
+		}
+
 		$lo_collection = new Collection([]);
+
+		$ao_entity->setVirtual(['level']);
+		$ao_entity->set('level', $ai_currentLevel);
 
 		foreach ($this->getChildren($ao_entity, $aa_options) as $lo_entity) {
 			$lo_collection = $lo_collection->appendItem($lo_entity);
@@ -262,23 +258,15 @@ class NestBehavior extends Behavior {
 			return null;
 		}
 
-		$ls_associationName = $this->getConfig('parent.associationName');
-		if (!$ls_associationName || !$this->table()->hasAssociation($ls_associationName)) {
-			throw new RuntimeException(sprintf('Expected option for `parent.associationName` to be a valid assocation on table `%s`', $this->table()->getAlias()));
-		}
-
-		$lo_association = $this->table()->getAssociation($ls_associationName);
-
-		if (!$ao_entity->get($lo_association->getForeignKey())) {
-			return null;
-		}
+		$lo_association = $this->getAssociation('parent');
 
 		$lx_finder = $aa_options['finder'] ?? $this->getConfig('parent.finder');
 
+		$lo_query = $lo_association->find($lx_finder, $ao_entity, $this->getConfig('relatedColumns'));
 
-		return $lo_association->find($lx_finder)->where([
-			$lo_association->getAlias() . '.' . $lo_association->getBindingKey() => $ao_entity->get($lo_association->getForeignKey()),
-		])->first();
+		$this->addQueryConditions($lo_query, $lo_association, $ao_entity, 'parent');
+
+		return $lo_query->first();
 	}
 
 
@@ -296,6 +284,10 @@ class NestBehavior extends Behavior {
 	public function getParents(EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0): ?CollectionInterface {
 		if (!$this->getConfig('enabled') || !$this->getConfig('parent')) {
 			return null;
+		}
+
+		if ($this->getConfig('strategy') === self::STRATEGY_FETCH_ALL) {
+			return $this->fetchAllParents($ao_entity, $aa_options);
 		}
 
 		$lo_collection = new Collection([]);
@@ -356,7 +348,7 @@ class NestBehavior extends Behavior {
 				}
 			}
 
-			$lo_association = $lo_table->getAssociation($this->getConfig('parent.associationName'));
+			$lo_association = $this->getAssociation('parent');
 
 			if ($la_attributeKeys) {
 				$lx_finder = $lo_association->getFinder();
@@ -555,5 +547,158 @@ class NestBehavior extends Behavior {
 				]);
 			}
 		}
+	}
+
+
+	/**
+	 * @param \Cake\ORM\Query\SelectQuery $ao_query
+	 * @param \Cake\ORM\Association $ao_association
+	 * @param \Cake\Datasource\EntityInterface $ao_entity
+	 * @param string $as_type
+	 * @return void
+	 */
+	protected function addQueryConditions(SelectQuery $ao_query, Association $ao_association, EntityInterface $ao_entity, string $as_type): void {
+		if ($as_type === 'children') {
+			$la_bindingKeys = (array)$ao_association->getBindingKey();
+			$la_foreignKeys = (array)$ao_association->getForeignKey();
+		}
+		else {
+			$la_foreignKeys = (array)$ao_association->getBindingKey();
+			$la_bindingKeys = (array)$ao_association->getForeignKey();
+		}
+
+		/** @var \Awyiss\Model\Entity $ls_entityClass */
+		$ls_entityClass = $ao_association->getSource()->getEntityClass();
+
+		$la_skipFields = $ls_entityClass::unmapFields($aa_options['skipFields'] ?? []);
+
+		foreach ($la_foreignKeys as $li_key => $ls_field) {
+			$ls_field = $ls_entityClass::unmapField($ls_field);
+
+			if (in_array($ls_field, $la_skipFields)) {
+				continue;
+			}
+
+			$lx_value = $ao_entity->hasOriginal($la_bindingKeys[ $li_key ]) ? $ao_entity->getOriginal($la_bindingKeys[ $li_key ]) : $ao_entity->get($la_bindingKeys[ $li_key ]);
+
+			if ($lx_value === null) {
+				$ls_field .= ' IS';
+			}
+
+			$ao_query->where([
+				$ao_association->getAlias() . '.' . $ls_field => $lx_value,
+			]);
+		}
+	}
+
+
+	/**
+	 * @param string $as_type
+	 * @return \Cake\ORM\Association
+	 */
+	protected function getAssociation(string $as_type): Association {
+		$ls_associationName = $this->getConfig($as_type . '.associationName');
+
+		if (!$ls_associationName || !$this->table()->hasAssociation($ls_associationName)) {
+			throw new RuntimeException(sprintf('Expected option for `%s.associationName` to be a valid assocation on table `%s`', $as_type, $this->table()->getAlias()));
+		}
+
+		return $this->table()->getAssociation($ls_associationName);
+	}
+
+
+	/**
+	 * @param \Cake\Datasource\EntityInterface $ao_entity
+	 * @param array $aa_options
+	 * @return ?CollectionInterface
+	 */
+	protected function fetchAllNestedChildren(EntityInterface $ao_entity, array $aa_options): ?CollectionInterface {
+		$lo_association = $this->getAssociation('children');
+
+		$lx_finder = $aa_options['finder'] ?? $this->getConfig('children.finder');
+
+		$lo_query = $lo_association->find($lx_finder, $ao_entity, $this->getConfig('relatedColumns'));
+		$lo_records = $lo_query->find('threaded')->all();
+
+		if (!$lo_records->count()) {
+			return null;
+		}
+
+		$lo_records = $lo_records->listNested();
+
+		foreach ($lo_records as $lo_entity) {
+			$lo_entity->setVirtual(['level']);
+			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+			$lo_entity->set('level', $lo_records->getDepth());
+		}
+
+		$lo_records = $lo_records->compile(false);
+
+		$li_originalId = $ao_entity->id;
+		$li_foundAtLevel = null;
+		$lo_records = $lo_records->filter(function (EntityInterface $ao_entity) use ($li_originalId, &$li_foundAtLevel) {
+			/** @var \Awyiss\Model\Entity $ao_entity */
+			if ($ao_entity->get('id') === $li_originalId) {
+				$li_foundAtLevel = $ao_entity->level;
+			}
+			elseif ($li_foundAtLevel !== null && $ao_entity->level > $li_foundAtLevel) {
+				return true;
+			}
+
+
+			return false;
+		});
+
+		return $lo_records->compile();
+	}
+
+
+	/**
+	 * @param \Cake\Datasource\EntityInterface $ao_entity
+	 * @param array $aa_options
+	 * @return \Cake\Collection\CollectionInterface|null
+	 */
+	protected function fetchAllParents(EntityInterface $ao_entity, array $aa_options): ?CollectionInterface {
+		$lo_association = $this->getAssociation('parent');
+
+		$lx_finder = $aa_options['finder'] ?? $this->getConfig('parent.finder');
+
+		$lo_query = $lo_association->find($lx_finder, $ao_entity, $this->getConfig('relatedColumns'));
+		$lo_records = $lo_query->find('threaded')->all();
+
+		if (!$lo_records->count()) {
+			return null;
+		}
+
+		$lo_records = $lo_records->listNested('asc');
+
+		foreach ($lo_records as $lo_entity) {
+			$lo_entity->setVirtual(['level']);
+			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+			$lo_entity->set('level', $lo_records->getDepth());
+		}
+
+		$lo_records = $lo_records->compile(false);
+
+		$li_originalId = $ao_entity->id;
+		$li_foundParentId = null;
+		$lo_records = $lo_records->filter(function (EntityInterface $ao_entity) use ($li_originalId, &$li_foundParentId) {
+			/** @var \Awyiss\Model\Entity $ao_entity */
+			if ($ao_entity->get('id') === $li_originalId) {
+				$li_foundParentId = $ao_entity->id;
+			}
+			elseif ($li_foundParentId !== null && $ao_entity->id < $li_foundParentId) {
+				$li_foundParentId = $ao_entity->id;
+
+
+				return true;
+			}
+
+
+			return false;
+		});
+
+
+		return $lo_records->compile(false);
 	}
 }
