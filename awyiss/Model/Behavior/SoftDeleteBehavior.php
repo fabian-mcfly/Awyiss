@@ -124,10 +124,6 @@ class SoftDeleteBehavior extends Behavior {
 			return $ao_rules;
 		}
 
-		if ($ao_event->isStopped()) {
-			return $ao_rules;
-		}
-
 		$ao_rules->addUpdate(function (EntityInterface $ao_entity, array $aa_options): ?bool {
 			return !$ao_entity->hasOriginal('deleted') || !$ao_entity->getOriginal('deleted');
 		}, 'softDelete', [
@@ -151,10 +147,6 @@ class SoftDeleteBehavior extends Behavior {
 	 */
 	public function beforeFind(EventInterface $ao_event, SelectQuery $ao_query, ArrayObject $ao_options, bool $ab_primary): void {
 		if (!$this->getConfig('enabled')) {
-			return;
-		}
-
-		if ($ao_event->isStopped()) {
 			return;
 		}
 
@@ -182,10 +174,6 @@ class SoftDeleteBehavior extends Behavior {
 	 */
 	public function beforeDelete(EventInterface $ao_event, EntityInterface $ao_entity, ArrayObject $ao_options): void {
 		if (!$this->getConfig('enabled')) {
-			return;
-		}
-
-		if ($ao_event->isStopped()) {
 			return;
 		}
 
@@ -223,10 +211,6 @@ class SoftDeleteBehavior extends Behavior {
 			return;
 		}
 
-		if ($ao_event->isStopped()) {
-			return;
-		}
-
 		$lo_options = new ArrayObject(Hash::merge($this->getConfig(), Hash::get($ao_options, 'softDelete')));
 
 		$lo_event = $this->table()->dispatchEvent('Model.afterSoftDeleteCommit', [
@@ -235,7 +219,7 @@ class SoftDeleteBehavior extends Behavior {
 		]);
 
 		//If the 'Model.afterSoftDeleteCommit' event was stopped, stop the afterDeleteCommit event as well
-		if ($lo_event->isStopped() && $ao_event) {
+		if ($lo_event->isStopped()) {
 			$ao_event->stopPropagation();
 			$ao_event->setResult($lo_event->getResult());
 		}

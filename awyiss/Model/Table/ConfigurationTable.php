@@ -150,12 +150,6 @@ class ConfigurationTable extends Table {
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
 
-		//$ao_validator->integer('id')->allowEmptyString('id', null, 'create');
-		//$ao_validator->scalar('realm')->maxLength('realm', 20)->requirePresence('realm')->notEmptyString('realm');
-		//$ao_validator->scalar('scope')->maxLength('scope', 50)->requirePresence('scope')->notEmptyString('scope');
-		//$ao_validator->scalar('identifier')->maxLength('identifier', 255)->requirePresence('identifier', 'create')->notEmptyString('identifier');
-		//$ao_validator->scalar('value')->maxLength('value', 255)->allowEmptyString('value');
-		//$ao_validator->allowEmptyString('language_shortcode');
 
 		return $ao_validator;
 	}

@@ -280,57 +280,6 @@ class AuditBehavior extends Behavior {
 	}
 
 
-	/*
-	 * @param Entity $ao_entity
-	 * @param array $aa_oldData
-	 * @param array $aa_newData
-	 * @param array $aa_diff
-	 *
-	 * @return void
-	protected function auditAttributes (Entity $ao_entity, array &$aa_oldData, array &$aa_newData, array &$aa_diff): void {
-		if ( ! $ao_entity->getSource()) {
-			return;
-		}
-
-		dd('was tut das?');
-
-		/** @var Table $lo_sourceTable *
-		$lo_sourceTable = $this->fetchTable($ao_entity->getSource());
-		if ( ! $lo_sourceTable->hasAttributes()) {
-			return;
-		}
-
-		$la_oldAttributes = [];
-		$la_newAttributes = [];
-
-		/** @noinspection PhpPossiblePolymorphicInvocationInspection *
-		if (is_a($ao_entity->attributes, 'Awyiss\Model\Entity')) {
-			/** @noinspection PhpPossiblePolymorphicInvocationInspection *
-			$la_oldAttributes = $ao_entity->attributes->isNew() ? [] : $ao_entity->attributes->getOriginalValues();
-			/** @noinspection PhpPossiblePolymorphicInvocationInspection *
-			$la_newAttributes = $ao_entity->attributes->extract(array_keys($ao_entity->attributes->getOriginalValues()));
-		}
-		elseif (empty($ao_entity->attributes)) {
-			$lo_sourceTable->loadInto($ao_entity, [$lo_sourceTable->getAttributesTable(true)]);
-
-			if ( ! empty($ao_entity->attributes) && ! $ao_entity->attributes->isNew()) {
-				$la_oldAttributes = $ao_entity->attributes->getOriginalValues();
-				unset($ao_entity->attributes);
-			}
-		}
-
-		$ls_foreignKey = Inflector::underscore(Inflector::singularize($ao_entity->getSource())) . '_id';
-		unset($la_oldAttributes[ $ls_foreignKey ], $la_newAttributes[ $ls_foreignKey ], $la_oldAttributes['id'], $la_newAttributes['id']);
-
-		$la_attributesDiff = Hash::diff($la_oldAttributes, $la_newAttributes);
-		$la_attributesDiff = array_diff_key($la_oldAttributes, array_keys($la_attributesDiff));
-
-		$aa_diff['attributes'] = ! empty($la_attributesDiff) ? $la_attributesDiff : [];
-		$aa_oldData['attributes'] = $la_oldAttributes;
-		$aa_newData['attributes'] = $la_newAttributes;
-	}*/
-
-
 	/**
 	 * @param Entity $ao_entity
 	 * @param string $as_field
@@ -699,8 +648,6 @@ class AuditBehavior extends Behavior {
 
 
 	/**
-	 * TODO: save joinData (get the property name from the association first)
-	 *
 	 * @param Entity $ao_entity
 	 * @param string $as_field
 	 * @param Association|BelongsToMany $ao_association

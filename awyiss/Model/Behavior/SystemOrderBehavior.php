@@ -79,10 +79,6 @@ class SystemOrderBehavior extends Behavior {
 			return;
 		}
 
-		if ($ao_event->isStopped()) {
-			return;
-		}
-
 		$ao_query->orderByAsc($this->table()->getAlias() . '.system_order');
 	}
 
@@ -97,15 +93,11 @@ class SystemOrderBehavior extends Behavior {
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function beforeMarshal(EventInterface $ao_event, ArrayObject $ao_data, ArrayObject $ao_options): void {
-		if ($ao_event->isStopped()) {
-			return;
+		if (isset($ao_data['systemOrder']) && $ao_data['systemOrder'] === static::CURRENT_VALUE_PLACEHOLDER) {
+			unset($ao_data['systemOrder']);
 		}
-
-		if ($ao_data->offsetExists('systemOrder') && $ao_data->offsetGet('systemOrder') === static::CURRENT_VALUE_PLACEHOLDER) {
-			$ao_data->offsetUnset('systemOrder');
-		}
-		elseif ($ao_data->offsetExists('system_order') && $ao_data->offsetGet('system_order') === static::CURRENT_VALUE_PLACEHOLDER) {
-			$ao_data->offsetUnset('system_order');
+		elseif (isset($ao_data['system_order']) && $ao_data['system_order'] === static::CURRENT_VALUE_PLACEHOLDER) {
+			unset($ao_data['system_order']);
 		}
 	}
 
@@ -119,10 +111,6 @@ class SystemOrderBehavior extends Behavior {
 	 */
 	public function beforeSave(EventInterface $ao_event, EntityInterface $ao_entity, ArrayObject $ao_options): void {
 		if (!$this->getConfig('enabled')) {
-			return;
-		}
-
-		if ($ao_event->isStopped()) {
 			return;
 		}
 
@@ -213,10 +201,6 @@ class SystemOrderBehavior extends Behavior {
 	 */
 	public function afterSave(EventInterface $ao_event, EntityInterface $ao_entity, ArrayObject $ao_options): void {
 		if (!$this->getConfig('enabled')) {
-			return;
-		}
-
-		if ($ao_event->isStopped()) {
 			return;
 		}
 
@@ -367,10 +351,6 @@ class SystemOrderBehavior extends Behavior {
 			return;
 		}
 
-		if ($ao_event->isStopped()) {
-			return;
-		}
-
 		//If there's no original `deleted`-value or if that original value is empty
 		if (!$ao_entity->hasOriginal('deleted') || empty($ao_entity->getOriginal('deleted'))) {
 			$ao_entity->set('systemOrder', 999999);
@@ -387,10 +367,6 @@ class SystemOrderBehavior extends Behavior {
 	 */
 	public function afterSoftDelete(EventInterface $ao_event, EntityInterface $ao_entity, ArrayObject $ao_options): void {
 		if (!$this->getConfig('enabled')) {
-			return;
-		}
-
-		if ($ao_event->isStopped()) {
 			return;
 		}
 
@@ -430,10 +406,6 @@ class SystemOrderBehavior extends Behavior {
 	 */
 	public function afterSoftDeleteCommit(EventInterface $ao_event, EntityInterface $ao_entity, ArrayObject $ao_options): void {
 		if (!$this->getConfig('enabled')) {
-			return;
-		}
-
-		if ($ao_event->isStopped()) {
 			return;
 		}
 

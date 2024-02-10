@@ -375,10 +375,6 @@ class PagesTable extends Table {
 	 * @return void
 	 */
 	public function beforeFind(EventInterface $ao_event, SelectQuery $ao_query, ArrayObject $ao_options): void {
-		if ($ao_event->isStopped()) {
-			return;
-		}
-
 		if (!($ao_options['skipPageRoleCheck'] ?? false)) {
 			$ao_query->where(['page_role_id' => $this->getPageRole()]);
 		}
@@ -394,10 +390,6 @@ class PagesTable extends Table {
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function beforeSave(EventInterface $ao_event, EntityInterface $ao_entity, ArrayObject $ao_options): void {
-		if ($ao_event->isStopped()) {
-			return;
-		}
-
 		$ls_field = $this->getSchema()->getColumn('slug');
 		$li_length = $ls_field ? $ls_field['length'] : 0;
 
@@ -492,18 +484,12 @@ class PagesTable extends Table {
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function afterSaveCommit(EventInterface $ao_event, EntityInterface $ao_entity, ArrayObject $ao_options): void {
-		if ($ao_event->isStopped()) {
-			return;
-		}
-
 		$ls_originalSlug = $ao_entity->hasOriginal('slug') ? $ao_entity->getOriginal('slug') : null;
 		if ($ls_originalSlug && $ao_entity->slug != $ls_originalSlug) {
 			$lo_query = $this->updateQuery();
 
 			/**
 			 * UPDATE pages SET slug = (CONCAT('newslug', substr(slug, '8'))) WHERE slug LIKE 'oldslug/%'
-			 *
-			 * TODO: check why this gets called everytime
 			 *
 			 * @noinspection PhpUndefinedMethodInspection
 			 */

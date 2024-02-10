@@ -93,7 +93,6 @@ class EventTriggerBehavior extends Behavior {
 
 		//Saving an entitiy should create custom events
 		if (in_array($as_name, ['beforeSave', 'afterSave', 'afterSaveCommit']) && isset($aa_arguments[1]) && is_a($aa_arguments[1], Entity::class)) {
-			//TODO: check what happens when stopping this event when the entity is deleted
 			/**
 			 * If the custom events method returns false, the newly created event was stopped.
 			 * This means: don't send the other model-specific events
