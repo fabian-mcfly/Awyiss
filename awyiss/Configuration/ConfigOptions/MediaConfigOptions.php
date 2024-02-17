@@ -26,12 +26,24 @@ class MediaConfigOptions extends AbstractConfigOptions {
 	public function initializeConfigOptions(): void {
 		$this->add(Awyiss::REALM_FRONTEND, [
 			new ConfigOption(
-				defaultValue: [2560, 1920, 1680, 1280, 1024, 768, 640, 480, 360],
+				defaultValue: [2560, 1920, 1680, 1280, 1024, 768, 640, 480, 375],
 				identifier: 'defaultBreakpoints',
 				localizable: false,
 				nullable: false,
 				type: ConfigOptionType::JsonArray,
 			),
+		]);
+
+		$this->add(Awyiss::REALM_BACKEND, [
+			'upload' => [
+				new ConfigOption(
+					defaultValue: true,
+					identifier: 'autoOverwrite',
+					localizable: false,
+					nullable: false,
+					type: ConfigOptionType::Bool,
+				),
+			],
 		]);
 	}
 }

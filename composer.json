@@ -16,7 +16,8 @@
 		"cakephp/plugin-installer": "^2.0",
 		"cakephp/twig-view": "^2.0.1",
 		"dereuromark/cakephp-queue": "^7.0",
-		"josegonzalez/dotenv": "^4.0"
+		"josegonzalez/dotenv": "^4.0",
+		"ext-fileinfo": "*"
 	},
 	"require-dev": {
 		"cakephp/cakephp-codesniffer": "^5.0",

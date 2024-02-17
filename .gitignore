@@ -4,6 +4,7 @@
 /.env
 /composer.lock
 /foobar-customer
+/webroot/media/*
 
 # OS generated files #
 ######################
