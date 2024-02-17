@@ -10,7 +10,9 @@ use Cake\Console\Arguments;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Core\Configure;
+use Cake\View\Exception\MissingTemplateException;
 use InvalidArgumentException;
+use RuntimeException;
 
 
 /**
@@ -35,6 +37,38 @@ class TemplateCommand extends BaseTemplateCommand {
 	 */
 	public function initialize(): void {
 		//Do not call parent's initialize
+	}
+
+
+	/**
+	 * @inheritDoc
+	 * @param \Cake\Console\Arguments $ao_args
+	 * @param \Cake\Console\ConsoleIo $ao_io
+	 * @return int|null
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 */
+	public function execute(Arguments $ao_args, ConsoleIo $ao_io): ?int {
+		$li_returnCode = parent::execute($ao_args, $ao_io);
+
+		if ($li_returnCode === static::CODE_ERROR) {
+			return $li_returnCode;
+		}
+
+		$la_vars = $this->_loadController($ao_io);
+
+		try {
+			$ls_content = $this->getContent($ao_args, $ao_io, 'form', $la_vars);
+			$this->bake($ao_args, $ao_io, 'form', $ls_content);
+		}
+		catch (MissingTemplateException $ex) {
+			$ao_io->verbose($ex->getMessage());
+		}
+		catch (RuntimeException $ex) {
+			$ao_io->error($ex->getMessage());
+		}
+
+
+		return static::CODE_SUCCESS;
 	}
 
 
