@@ -60,7 +60,6 @@ class ContentsTable extends Table {
 		'enabled' => true,
 		'fieldname' => 'pageId',
 		'identifier' => 'page',
-		'threaded' => true,
 	];
 	/**
 	 * @var string

@@ -30,7 +30,7 @@ use RuntimeException;
 class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 	/**
 	 * Default configuration
-	 *     *
+	 *
 	 * These are merged with user-provided configuration when the behavior is used.
 	 *
 	 * @var array
@@ -63,7 +63,7 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 		'identifier' => 'category',
 		'queryConditions' => [],
 		'selectedCategory' => null,
-		'threaded' => false,
+		'threaded' => true,
 		'unassignedKey' => 'unassigned',
 		'useDatasource' => true,
 	];
