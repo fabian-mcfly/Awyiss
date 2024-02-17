@@ -1,5 +1,42 @@
+{%- if associations.BelongsToMany is defined %}
+{%- for assocName, assocData in associations.BelongsToMany %}
+		{% verbatim %}{{ helper_Categories_control('{% endverbatim %}{{ assocData.property }}{% verbatim %}._ids', {options: ao_{% endverbatim %}{{ assocData.variable }}{% verbatim %}}) }}{% endverbatim %}
+
+{%- endfor %}
+{% endif %}
+{% verbatim %}
+
+{% block fieldsetPresentation %}
+	<fieldset class="Fieldset-Presentation">
+		<legend>{{ __('fieldset_presentation') }}</legend>
+
+		{% block fieldsetPresentationInner %}
+			{% block fieldsetPresentationAttributes %}
+				{{ helper_Attributes_allControls('presentation') }}
+			{% endblock %}
+		{% endblock %}
+	</fieldset>
+{% endblock %}
+
+{% block fieldsetConditions %}
+	<fieldset class="Fieldset-Conditions">
+		<legend>{{ __('fieldset_conditions') }}</legend>
+
+		{% block fieldsetConditionsInner %}
+			{% block fieldsetConditionsAttributes %}
+				{{ helper_Attributes_allControls('conditions') }}
+			{% endblock %}
+		{% endblock %}
+	</fieldset>
+{% endblock %}
+
+{% block fieldsetGeneral %}
+	<fieldset class="Fieldset-General">
+		<legend>{{ __('fieldset_general') }}</legend>
+
+{% endverbatim %}
 {% for field in fields %}
-{%- if field not in primaryKey %}
+{%- if field not in ['system_order', 'deleted', 'created_on', 'created_by', 'changed_on', 'changed_by', 'deleted_on', 'deleted_by']|merge(primaryKey) %}
 {%- verbatim %}{% block formControl_{% endverbatim %}{{ field[:1]|upper ~ field[1:] }}{% verbatim %} %}
 {% endverbatim %}
 
@@ -29,44 +66,11 @@
 	{%- endif %}
 {%- endif %}
 {% verbatim %}{% endblock %}
+
 {% endverbatim -%}
 {%- endif %}
 {%- endfor %}
-
-{%- if associations.BelongsToMany is defined %}
-	{%- for assocName, assocData in associations.BelongsToMany %}
-		{% verbatim %}{{ helper_Categories_control('{% endverbatim %}{{ assocData.property }}{% verbatim %}._ids', {options: ao_{% endverbatim %}{{ assocData.variable }}{% verbatim %}}) }}{% endverbatim %}
-		{{- "\n" }}
-	{%- endfor %}
-{% endif %}
 {% verbatim %}
-{% block fieldsetPresentation %}
-	<fieldset class="Fieldset-Presentation">
-		<legend>{{ __('fieldset_presentation') }}</legend>
-
-		{% block fieldsetPresentationInner %}
-			{% block fieldsetPresentationAttributes %}
-				{{ helper_Attributes_allControls('presentation') }}
-			{% endblock %}
-		{% endblock %}
-	</fieldset>
-{% endblock %}
-
-{% block fieldsetConditions %}
-	<fieldset class="Fieldset-Conditions">
-		<legend>{{ __('fieldset_conditions') }}</legend>
-
-		{% block fieldsetConditionsInner %}
-			{% block fieldsetConditionsAttributes %}
-				{{ helper_Attributes_allControls('conditions') }}
-			{% endblock %}
-		{% endblock %}
-	</fieldset>
-{% endblock %}
-
-{% block fieldsetGeneral %}
-	<fieldset class="Fieldset-General">
-		<legend>{{ __('fieldset_general') }}</legend>
 
 		{% block fieldsetGeneralInner %}
 			{% block fieldsetGeneralAttributes %}
