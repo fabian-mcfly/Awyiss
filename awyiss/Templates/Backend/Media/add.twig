@@ -1,0 +1,27 @@
+{#
+@var ao_media \Awyiss\Model\Entity\Media
+@var _view \Awyiss\View\BackendView
+#}
+
+<div class="Media Form Add">
+	{% block headlineAdd %}
+		<h1>{{ __('headline_add') }}</h1>
+	{% endblock %}
+
+	{{ helper_Form_create(ao_media, {enctype: 'multipart/form-data', method: 'post', idPrefix: 'media'}) }}
+
+	{% block formAddButtons %}
+		{{ helper_Form_button(__('save')) }}
+		{{ helper_Form_button(__('save_close'), {name: 'submit', value: 'submit_close'}) }}
+	{% endblock %}
+
+	{% block formAdd %}
+		{% include('@Backend/Media/form.twig') %}
+	{% endblock %}
+
+	{% block formAddButtonsBottom %}
+		{{ block('formAddButtons') }}
+	{% endblock %}
+
+	{{ helper_Form_end() -}}
+</div>

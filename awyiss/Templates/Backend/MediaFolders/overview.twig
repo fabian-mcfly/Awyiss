@@ -1,0 +1,93 @@
+{#
+@var ao_mediaFolders \Cake\Collection\Collection
+@var _view \Awyiss\View\BackendView
+#}
+
+<div class="MediaFolders Overview">
+	{% block buttonsOverview %}
+		{% if helper_Authorization_isAccessible('create') %}
+			{{ helper_Html_link(__('create'), {action: 'add'}, {class: 'Button' }) }}
+		{% endif %}
+	{% endblock %}
+
+	{% block headlineOverview %}
+		<h1>{{ __('headline_overview') }}</h1>
+	{% endblock %}
+
+	{# @var la_mediaFolders array<string, \Awyiss\Model\Entity\MediaFolder[]> #}
+	{% for ls_languageShortcode, la_mediaFolders in ao_mediaFolders %}
+		{% block fieldsetOverview %}
+			<fieldset class="Fieldset-Overview">
+				<legend>{{ ls_languageShortcode }}</legend>
+
+				{% block fieldsetOverviewInner %}
+					{% block tableOverview %}
+						<table class="Table-Overview">
+							{% block tableOverviewHead %}
+								<thead>
+									{% block tableOverviewHeadRow %}
+										<tr>
+											{% block tableOverviewHeaderId %}
+												<th>{{ __('id') }}</th>
+											{% endblock %}
+
+											{% block tableOverviewHeaderTitle %}
+												<th>{{ __('title') }}</th>
+											{% endblock %}
+
+											{% block tableOverviewHeaderSystemOrder %}
+												<th>{{ __('system_order') }}</th>
+											{% endblock %}
+
+											{% block tableOverviewHeaderActions %}
+												<th class="actions"></th>
+											{% endblock %}
+										</tr>
+									{% endblock %}
+								</thead>
+							{% endblock %}
+							{% block tableOverviewBody %}
+								<tbody>
+									{# @var lo_mediaFolder \Awyiss\Model\Entity\MediaFolder #}
+									{% for lo_mediaFolder in la_mediaFolders %}
+										{% block tableOverviewBodyRow %}
+											<tr>
+												{% block tableOverviewCellId %}
+													<td>{{ lo_mediaFolder.id }}</td>
+												{% endblock %}
+
+												{% block tableOverviewCellTitle %}
+													<td>{{ lo_mediaFolder.title }} <br> {{ lo_mediaFolder.slug }}</td>
+												{% endblock %}
+
+												{% block tableOverviewCellSystemOrder %}
+													<td>level {{ lo_mediaFolder.level }} - order {{ lo_mediaFolder.systemOrder }}</td>
+												{% endblock %}
+
+												{% block tableOverviewCellActions %}
+													<td class="actions">
+														{% if lo_mediaFolder.duplicate_of is empty and helper_Authorization_isAccessible('contents') %}
+															{{ helper_Html_link(__('view_contents'), {controller: 'contents', action: 'overview', mediaFolder_id: lo_mediaFolder.id}) }}
+														{% endif %}
+
+														{% if helper_Authorization_isAccessible('update') %}
+															{{ helper_Html_link(__('edit'), {action: 'edit', id: lo_mediaFolder.id}) }}
+														{% endif %}
+
+														{% if helper_Authorization_isAccessible('delete') %}
+															{{ helper_Html_link(__('delete'), {action: 'delete', id: lo_mediaFolder.id}, {confirm: __('confirm_delete', lo_mediaFolder.id) }) }}
+														{% endif %}
+													</td>
+												{% endblock %}
+											</tr>
+										{% endblock %}
+									{% endfor %}
+								</tbody>
+							{% endblock %}
+						</table>
+					{% endblock %}
+				{% endblock %}
+			</fieldset>
+		{% endblock %}
+	{% endfor %}
+</div>

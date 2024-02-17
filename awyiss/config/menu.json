@@ -73,6 +73,102 @@
 			}
 		}
 	},
+	"media": {
+		"title": {
+			"translate": ["media", "menu_title"]
+		},
+		"link": {
+			"url": {
+				"controller": "Media",
+				"action": "overview"
+			}
+		},
+		"access": {
+			"scope": "media",
+			"identifier": "read"
+		},
+		"children": {
+			"media_configure": {
+				"title": {
+					"translate": ["media", "menu_configure"]
+				},
+				"link": {
+					"url": {
+						"controller": "Configuration",
+						"action": "overview",
+						"scope": "media"
+					}
+				},
+				"access": {
+					"scope": "media",
+					"identifier": "configure"
+				}
+			},
+			"media_folders": {
+				"title": {
+					"translate": ["media_folders", "menu_title"]
+				},
+				"link": {
+					"url": {
+						"controller": "MediaFolders",
+						"action": "overview"
+					}
+				},
+				"access": {
+					"scope": "media_folders",
+					"identifier": "read"
+				},
+				"children": {
+					"media_folders_overview": {
+						"title": {
+							"translate": ["media_folders", "menu_overview"]
+						},
+						"link": {
+							"url": {
+								"controller": "MediaFolders",
+								"action": "overview"
+							}
+						},
+						"access": {
+							"scope": "MediaFolders",
+							"identifier": "read"
+						}
+					},
+					"media_folders_add": {
+						"title": {
+							"translate": ["media_folders", "menu_add"]
+						},
+						"link": {
+							"url": {
+								"controller": "MediaFolders",
+								"action": "add"
+							}
+						},
+						"access": {
+							"scope": "media_folders",
+							"identifier": "create"
+						}
+					},
+					"media_folders_configure": {
+						"title": {
+							"translate": ["media_folders", "menu_configure"]
+						},
+						"link": {
+							"url": {
+								"controller": "Configuration",
+								"action": "overview",
+								"scope": "media-folders"
+							}
+						},
+						"access": {
+							"scope": "media_folders",
+							"identifier": "configure"
+						}
+					}
+				}
+			}
+		}
+	},
 	"menus": {
 		"title": {
 			"translate": ["menus", "menu_title"]
