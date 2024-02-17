@@ -5,6 +5,8 @@ namespace Awyiss\Model\Table;
 
 
 use Awyiss\Awyiss;
+use Awyiss\Middleware\LocaleMiddleware;
+use Awyiss\Model\Entity\MenuEntry;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
 use Cake\Collection\CollectionInterface;
@@ -236,5 +238,26 @@ class MenuEntriesTable extends Table {
 
 
 		return $lo_menuEntries;
+	}
+
+
+	/**
+	 * @param \Cake\ORM\Query\SelectQuery $ao_query
+	 * @param string|null $languageShortcode
+	 * @param \Awyiss\Model\Entity\MenuEntry|null $entity
+	 * @return \Cake\ORM\Query\SelectQuery
+	 * @throws \Exception
+	 */
+	public function findForCurrentLanguage(SelectQuery $ao_query, ?string $languageShortcode = null, ?MenuEntry $entity = null): SelectQuery {
+		$ls_languageShortcode = $languageShortcode;
+
+		if ($entity) {
+			$ls_languageShortcode = $entity->languageShortcode;
+		}
+
+
+		return $ao_query->where([
+			'language_shortcode' => $ls_languageShortcode ?? LocaleMiddleware::getLanguage()->shortcode,
+		]);
 	}
 }
