@@ -34,11 +34,31 @@ class PageRolesListener implements EventListenerInterface {
 	 */
 	public function implementedEvents(): array {
 		return [
+			'Model.PageRoles.beforeSave' => 'beforeSave',
 			'Model.PageRoles.afterSave' => 'afterSave',
 			'Model.PageRoles.afterSaveCommit' => 'afterSaveCommit',
 			'Model.PageRoles.afterSoftDelete' => 'afterSoftDelete',
 			'Model.PageRoles.afterSoftDeleteCommit' => 'afterSoftDeleteCommit',
 		];
+	}
+
+
+	/**
+	 * @param \Cake\Event\Event $ao_event
+	 * @param \Awyiss\Model\Entity\PageRole $ao_entity
+	 * @return void
+	 */
+	public function beforeSave(Event $ao_event, PageRole $ao_entity): void {
+		$ls_attributesTable = 'attributes_' . Inflector::tableize($ao_entity->identifier);
+		$la_tables = ConnectionManager::get('default')->getSchemaCollection()->listTables();
+		if (in_array($ls_attributesTable, $la_tables)) {
+			/** @var \Queue\Model\Table\QueuedJobsTable $lo_queue */
+			$lo_queue = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
+			if ($lo_queue->isQueued('attributes::table_changes')) {
+				$ao_event->stopPropagation();
+				$ao_entity->setError('_general', __d('attributes', 'table_changes_in_progress'));
+			}
+		}
 	}
 
 
@@ -279,7 +299,7 @@ class PageRolesListener implements EventListenerInterface {
 		$la_commands = [];
 
 		$ls_command = 'bin/cake bake model ' . Inflector::camelize(Inflector::pluralize($ao_entity->identifier));
-		$ls_command .= ' --namespace ' . CUSTOM_DIR;
+		$ls_command .= ' --namespace ' . CUSTOM_NAMESPACE;
 
 		$ls_command .= ' --force';
 		$ls_command .= ' --is-pagerole';
