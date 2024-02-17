@@ -8,6 +8,8 @@ use ArrayObject;
 use Awyiss\Model\Entity;
 use Awyiss\Model\Table;
 use Awyiss\ORM\Behavior;
+use Cake\Database\Type\EnumType;
+use Cake\Database\TypeFactory;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\SchemaInterface;
 use Cake\Event\EventInterface;
@@ -43,7 +45,6 @@ class DefaultValuesBehavior extends Behavior {
 		'enabled' => true,
 		'implementedEvents' => [
 			'beforeMarshal',
-			'beforeSave',
 		],
 		'implementedMethods' => [
 			'newDefaultEntity' => 'newDefaultEntity',
@@ -157,6 +158,7 @@ class DefaultValuesBehavior extends Behavior {
 
 		$la_options = $aa_options + [
 			'fields' => array_keys($la_defaults),
+			'setter' => false,
 			'validate' => false,
 		];
 
@@ -328,7 +330,17 @@ class DefaultValuesBehavior extends Behavior {
 				};
 			}
 			catch (UnhandledMatchError) {
-				dd($la_typeMap[ $ls_column ], __FILE__, __LINE__);
+				if (str_starts_with($la_typeMap[ $ls_column ], 'enum-')) {
+					$lo_dbType = TypeFactory::build($la_typeMap[ $ls_column ]);
+					if ($lo_dbType instanceof EnumType) {
+						$lx_default = $lo_dbType->toPHP($lx_default, $this->table()->getConnection()->getDriver());
+
+
+						return;
+					}
+				}
+
+				dd($la_typeMap[ $ls_column ], __FILE__, __LINE__, $lx_default);
 			}
 		}
 		unset($lx_default);

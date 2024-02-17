@@ -16,6 +16,8 @@ class Marshaller extends BaseMarshaller {
 	/**
 	 * Implemented 1:1 but added a `has`-check before skipping columns and
 	 * extracted that sequencee into `buildProperties()`
+	 * Also passes `aa_options['setter']` to `$entity::set`, to skip using
+	 * setters for default values
 	 *
 	 * @inheritDoc
 	 * @param \Cake\Datasource\EntityInterface $ao_entity
@@ -53,6 +55,7 @@ class Marshaller extends BaseMarshaller {
 		$la_properties = $this->buildProperties($ao_entity, $la_propertyMap, $la_data, $la_errors);
 
 		$ao_entity->setErrors($la_errors);
+
 		if (!isset($la_options['fields'])) {
 			$ao_entity->set($la_properties);
 
@@ -61,6 +64,7 @@ class Marshaller extends BaseMarshaller {
 					$ao_entity->setDirty($ls_field, $lx_value->isDirty());
 				}
 			}
+
 			$this->dispatchAfterMarshal($ao_entity, $la_data, $la_options);
 
 
@@ -72,11 +76,12 @@ class Marshaller extends BaseMarshaller {
 			if (!array_key_exists($ls_field, $la_properties)) {
 				continue;
 			}
-			$ao_entity->set($ls_field, $la_properties[ $ls_field ]);
+			$ao_entity->set($ls_field, $la_properties[ $ls_field ], ['setter' => $la_options['setter'] ?? true]);
 			if ($la_properties[ $ls_field ] instanceof EntityInterface) {
 				$ao_entity->setDirty($ls_field, $la_properties[ $ls_field ]->isDirty());
 			}
 		}
+
 		$this->dispatchAfterMarshal($ao_entity, $la_data, $la_options);
 
 
@@ -135,6 +140,7 @@ class Marshaller extends BaseMarshaller {
 					continue;
 				}
 			}
+
 			$la_properties[ $ls_key ] = $lx_value;
 		}
 
