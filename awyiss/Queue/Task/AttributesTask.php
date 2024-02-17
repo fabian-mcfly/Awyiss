@@ -67,7 +67,7 @@ class AttributesTask extends Task/* implements AddInterface*/ {
 
 
 		//Force migrations for attributes to be stored in the custom directory, to not mess with the Awyiss migrations.
-		$ls_folder = ' --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations';
+		$ls_migrationsPath = ' --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations';
 
 
 		$ls_attributesTable = 'attributes_' . $aa_data['new']['scope'];
@@ -95,23 +95,23 @@ class AttributesTask extends Task/* implements AddInterface*/ {
 				return;
 			}
 
-			$lb_bakeOldModel = $this->buildAlterOldTableCommands($la_commands, $aa_data, $ls_folder);
+			$lb_bakeOldModel = $this->buildAlterOldTableCommands($la_commands, $aa_data, $ls_migrationsPath);
 		}
 		else {
 			//The scope of the attribute has changed.
 			$lb_changedScope = isset($la_diff['scope']);
 			if ($lb_changedScope) {
 				//We not only need to add the attribute to the new table, but also remove it from the old one.
-				$lb_bakeOldModel = $this->buildAlterOldTableCommands($la_commands, $aa_data, $ls_folder);
+				$lb_bakeOldModel = $this->buildAlterOldTableCommands($la_commands, $aa_data, $ls_migrationsPath);
 			}
 
 			//The target attributes-table does not exist
 			if (!$lb_tableExists) {
 				//Bake a `create`-migration that also adds the parent id-column and the column for the attribute-entity
-				$la_commands[] = 'bin/cake bake migration create_' . $ls_attributesTable . ' ' . $ls_foreignKey . ':integer[11] ' . $ls_column . $ls_folder;
+				$la_commands[] = 'bin/cake bake migration create_' . $ls_attributesTable . ' ' . $ls_foreignKey . ':integer[11] ' . $ls_column . $ls_migrationsPath;
 			}
 			else {
-				$this->buildAlterTableCommands($la_commands, $aa_data, $la_diff, $lb_changedScope, $ls_column, $ls_folder);
+				$this->buildAlterTableCommands($la_commands, $aa_data, $la_diff, $lb_changedScope, $ls_column, $ls_migrationsPath);
 			}
 		}
 
@@ -164,12 +164,12 @@ class AttributesTask extends Task/* implements AddInterface*/ {
 
 	/**
 	 * @param string $ls_oldAttributesTable
-	 * @param string $as_folder
+	 * @param string $as_migrationsPath
 	 * @param array $la_commands
 	 * @param array $aa_data
 	 * @return bool
 	 */
-	protected function buildAlterOldTableCommands(array &$aa_commands, array $aa_data, string $as_folder): bool {
+	protected function buildAlterOldTableCommands(array &$aa_commands, array $aa_data, string $as_migrationsPath): bool {
 		$ls_oldAttributesTable = 'attributes_' . $aa_data['old']['scope'];
 
 		$lo_schema = ConnectionManager::get('default')->getSchemaCollection()->describe($ls_oldAttributesTable);
@@ -187,7 +187,7 @@ class AttributesTask extends Task/* implements AddInterface*/ {
 		 */
 		if (count($lo_schema->columns()) <= 3) {
 			//Bake a `drop`-migration
-			$aa_commands[] = 'bin/cake bake migration drop_' . $ls_oldAttributesTable . $as_folder;
+			$aa_commands[] = 'bin/cake bake migration drop_' . $ls_oldAttributesTable . $as_migrationsPath;
 
 			//Remove both the table and the entity files from the custom directory.
 			if (file_exists($ls_oldTableFile)) {
@@ -225,7 +225,7 @@ class AttributesTask extends Task/* implements AddInterface*/ {
 			}
 
 			//Bake a `remove`-migration
-			$aa_commands[] = 'bin/cake bake migration remove_' . $aa_data['new']['identifier'] . '_from_' . $ls_oldAttributesTable . ' ' . $aa_data['old']['identifier'] . $as_folder;
+			$aa_commands[] = 'bin/cake bake migration remove_' . $aa_data['new']['identifier'] . '_from_' . $ls_oldAttributesTable . ' ' . $aa_data['old']['identifier'] . $as_migrationsPath;
 		}
 
 		/*
@@ -263,7 +263,7 @@ class AttributesTask extends Task/* implements AddInterface*/ {
 		$ls_forPageRole = $ab_scopeIsPageRole ? ' --for-pagerole ' . $aa_data['new']['scope'] : null;
 
 		if (empty($aa_data['new']['deleted'])) {
-			$aa_commands[] = 'bin/cake bake model ' . $ls_attributesTable . ' --namespace ' . CUSTOM_DIR . ' --no-fixture --no-test --update --force' . $ls_forPageRole;
+			$aa_commands[] = 'bin/cake bake model ' . $ls_attributesTable . ' --namespace ' . CUSTOM_NAMESPACE . ' --no-fixture --no-test --update --force' . $ls_forPageRole;
 		}
 
 		if ($ab_bakeOldModel) {
@@ -279,7 +279,7 @@ class AttributesTask extends Task/* implements AddInterface*/ {
 
 			$ls_oldAttributesTable = 'attributes_' . $aa_data['old']['scope'];
 
-			$aa_commands[] = 'bin/cake bake model ' . $ls_oldAttributesTable . ' --namespace ' . CUSTOM_DIR . ' --no-fixture --no-test --update --force' . $ls_forPageRole;
+			$aa_commands[] = 'bin/cake bake model ' . $ls_oldAttributesTable . ' --namespace ' . CUSTOM_NAMESPACE . ' --no-fixture --no-test --update --force' . $ls_forPageRole;
 		}
 
 		$aa_commands[] = 'bin/cake bake seed --data Attributes --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Seeds --force --truncate';
@@ -303,10 +303,10 @@ class AttributesTask extends Task/* implements AddInterface*/ {
 	 * @param array $aa_diff
 	 * @param bool $ab_changedScope
 	 * @param string $as_column
-	 * @param string $as_folder
+	 * @param string $as_migrationsPath
 	 * @return void
 	 */
-	protected function buildAlterTableCommands(array &$aa_commands, array $aa_data, array $aa_diff, bool $ab_changedScope, string $as_column, string $as_folder): void {
+	protected function buildAlterTableCommands(array &$aa_commands, array $aa_data, array $aa_diff, bool $ab_changedScope, string $as_column, string $as_migrationsPath): void {
 		$ls_attributesTable = 'attributes_' . $aa_data['new']['scope'];
 
 		$ls_tableFile = ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Table' . DS . Inflector::camelize($ls_attributesTable) . 'Table.php';
@@ -339,7 +339,7 @@ class AttributesTask extends Task/* implements AddInterface*/ {
 		//Column is renamed but only if the scope is still the same.
 		if (!$ab_changedScope && isset($aa_diff['identifier'])) {
 			//The scope has not changed, but the identifier has: alter the column
-			$aa_commands[] = 'bin/cake bake migration alter_' . $aa_data['old']['identifier'] . '_on_' . $ls_attributesTable . ' ' . $as_column . $as_folder;
+			$aa_commands[] = 'bin/cake bake migration alter_' . $aa_data['old']['identifier'] . '_on_' . $ls_attributesTable . ' ' . $as_column . $as_migrationsPath;
 		}
 		else {
 			$lo_schema = ConnectionManager::get('default')->getSchemaCollection()->describe($ls_attributesTable);
@@ -347,11 +347,11 @@ class AttributesTask extends Task/* implements AddInterface*/ {
 
 			if (!$lb_columnExists) {
 				//The column does not exist in the target table? Add it.
-				$aa_commands[] = 'bin/cake bake migration add_' . $aa_data['new']['identifier'] . '_to_' . $ls_attributesTable . ' ' . $as_column . $as_folder;
+				$aa_commands[] = 'bin/cake bake migration add_' . $aa_data['new']['identifier'] . '_to_' . $ls_attributesTable . ' ' . $as_column . $as_migrationsPath;
 			}
 			else {
 				//The column does exist in the target table? Alter it.
-				$aa_commands[] = 'bin/cake bake migration alter_' . $aa_data['new']['identifier'] . '_on_' . $ls_attributesTable . ' ' . $as_column . $as_folder;
+				$aa_commands[] = 'bin/cake bake migration alter_' . $aa_data['new']['identifier'] . '_on_' . $ls_attributesTable . ' ' . $as_column . $as_migrationsPath;
 			}
 		}
 	}
