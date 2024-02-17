@@ -185,7 +185,7 @@ class PagesTable extends Table {
 		$ao_validator->notEmptyString('slug');
 		$ao_validator->add('slug', [
 			'isScalar' => ['rule' => 'isScalar'],
-			'maxLength' => ['rule' => ['maxLength', 255]],
+			'maxLength' => ['rule' => ['maxLength', 1024]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
 
@@ -193,7 +193,7 @@ class PagesTable extends Table {
 		$ao_validator->notEmptyString('title');
 		$ao_validator->add('title', [
 			'isScalar' => ['rule' => 'isScalar'],
-			'maxLength' => ['rule' => ['maxLength', 255]],
+			'maxLength' => ['rule' => ['maxLength', 100]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
 

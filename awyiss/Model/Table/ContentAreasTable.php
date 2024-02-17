@@ -72,7 +72,7 @@ class ContentAreasTable extends Table {
 		$ao_validator->notEmptyString('title');
 		$ao_validator->add('title', [
 			'isScalar' => ['rule' => 'isScalar'],
-			'maxLength' => ['rule' => ['maxLength', 255]],
+			'maxLength' => ['rule' => ['maxLength', 100]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
 
