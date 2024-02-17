@@ -5,6 +5,7 @@ namespace Awyiss\View\Widget;
 
 
 use Cake\Utility\Inflector;
+use Cake\Utility\Text;
 use Cake\View\Form\ContextInterface;
 use Cake\View\Widget\BasicWidget;
 use Traversable;
@@ -190,6 +191,16 @@ class LinkSelectWidget extends BasicWidget {
 				else {
 					$la_optionAttributes['value'] = $lx_key;
 				}
+
+				if ($la_optionAttributes['isGroupLabel'] ?? null === true) {
+					if (isset($aa_data['groupLabels'][ $la_optionAttributes['title'] ?: 'general' ])) {
+						$ls_groupLabel = $aa_data['groupLabels'][$la_optionAttributes['title'] ?: 'general'];
+					}
+					else {
+						$ls_groupLabel = __($aa_data['identifier'] . '_grouplabel_' . ($la_optionAttributes['title'] ?: 'general'));
+					}
+					$la_optionAttributes['title'] = $ls_groupLabel;
+				}
 			}
 
 			if (!isset($la_optionAttributes['templateVars'])) {
@@ -199,7 +210,8 @@ class LinkSelectWidget extends BasicWidget {
 
 			//Add a class 'Item' and, if the value of the option is selected, 'Active' as well
 			$la_optionAttributes = $this->_templates->addClass($la_optionAttributes, 'Item');
-			$la_optionAttributes = $this->_templates->addClass($la_optionAttributes, 'Item-' . Inflector::camelize($la_optionAttributes['title']));
+			$ls_classText = Inflector::camelize(Text::slug($la_optionAttributes['title'], ['replacement' => '']));
+			$la_optionAttributes = $this->_templates->addClass($la_optionAttributes, 'Item-' . $ls_classText);
 			if ($this->isSelected((string)$lx_key, $lx_selected)) {
 				$la_optionAttributes = $this->_templates->addClass($la_optionAttributes, $la_data['selectedClass'] ?? 'Active');
 			}
@@ -211,10 +223,15 @@ class LinkSelectWidget extends BasicWidget {
 				//If the option is disabled, add 'Disabled' to the class
 				$la_optionAttributes = $this->_templates->addClass($la_optionAttributes, $la_data['disabledClass'] ?? 'Disabled');
 			}
+			if ($la_optionAttributes['isGroupLabel'] ?? null === true) {
+				$ls_template = 'groupLabel';
+				$la_optionAttributes = $this->_templates->addClass($la_optionAttributes, 'GroupLabel');
+				$la_optionAttributes = $this->_templates->addClass($la_optionAttributes, 'GroupLabel' . $ls_classText);
+			}
 
 			//Append the formatted template for this option
 			$la_options[] = $this->_templates->format($ls_template, [
-				'attrs' => $this->_templates->formatAttributes($la_optionAttributes, ['title', 'value', 'link', 'levelPrefix']),
+				'attrs' => $this->_templates->formatAttributes($la_optionAttributes, ['title', 'value', 'link', 'levelPrefix', 'isGroupLabel', 'groupLabels']),
 				'templateVars' => $la_optionAttributes['templateVars'],
 				'title' => $lx_escape ? h($la_optionAttributes['title']) : $la_optionAttributes['title'],
 				'levelPrefix' => $lx_escape ? h($la_optionAttributes['levelPrefix']) : $la_optionAttributes['levelPrefix'],
