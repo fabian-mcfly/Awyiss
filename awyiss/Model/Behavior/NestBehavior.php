@@ -127,11 +127,11 @@ class NestBehavior extends Behavior {
 			/** @var \Awyiss\Model\Entity $ls_entityClass */
 			$ls_entityClass = $lo_table->getEntityClass();
 
-			$la_bindingKeys = array_merge((array)$this->getConfig('children.bindingKey'), $this->getConfig('relatedColumns'));
+			$la_bindingKeys = (array)$this->getConfig('children.bindingKey');
 			$la_bindingKeys = array_filter($la_bindingKeys, fn ($as_field) => !str_starts_with($as_field, 'attributes.'));
 			$la_bindingKeys = $ls_entityClass::unmapFields($la_bindingKeys);
 
-			$la_foreignKeys = array_merge((array)$this->getConfig('children.foreignKey'), $this->getConfig('relatedColumns'));
+			$la_foreignKeys = (array)$this->getConfig('children.foreignKey');
 			$la_foreignKeys = array_filter($la_foreignKeys, fn ($as_field) => !str_starts_with($as_field, 'attributes.'));
 			$la_foreignKeys = $ls_entityClass::unmapFields($la_foreignKeys);
 
