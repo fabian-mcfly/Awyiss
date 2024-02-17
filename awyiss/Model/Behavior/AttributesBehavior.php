@@ -354,7 +354,7 @@ class AttributesBehavior extends Behavior {
 
 			if (!$ao_entity->attributes) {
 				/** @var \Awyiss\ORM\Association\HasOne|\Awyiss\Model\Table $lo_association */
-				$lo_association = $this->getAttributesTable();
+				$lo_association = $this->table()->{$this->getAttributesTableName(true)};
 
 				$ao_entity->attributes = $lo_association->newDefaultEntity();
 

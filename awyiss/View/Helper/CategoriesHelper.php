@@ -211,7 +211,7 @@ class CategoriesHelper extends Helper {
 						$ls_groupLabel = $la_attributes['groupLabels'][ $ls_groupLabel ];
 					}
 
-					$la_attributes['options'][ $ls_groupLabel ] = $this->buildOptions($la_options, $la_attributes);
+					$la_attributes['options'][ $ls_groupLabel ] = $this->buildOptions($la_options, $la_attributes + ['buildNested' => true]);
 				}
 			}
 			else {
@@ -419,7 +419,11 @@ class CategoriesHelper extends Helper {
 			)->toArray();
 		}
 		elseif (is_array($ax_options)) {
-			$la_options = $this->buildOptions(collection($ax_options), $aa_attributes, $ab_forLinkSelect);
+			$la_options = $ax_options;
+
+			if ($aa_attributes['buildNested'] ?? null === true) {
+				$la_options = $this->buildOptions(collection($ax_options), $aa_attributes, $ab_forLinkSelect);
+			}
 		}
 		else {
 			throw new RuntimeException(sprintf('Cannot build options for type `%s`.', gettype($ax_options)));
