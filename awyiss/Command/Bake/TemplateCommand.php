@@ -59,6 +59,7 @@ class TemplateCommand extends BaseTemplateCommand {
 		$ls_path = $this->getPath($ao_args, $ls_basePath);
 		$ls_path .= $this->controllerName . DS;
 
+
 		return $ls_path;
 	}
 
@@ -101,17 +102,19 @@ class TemplateCommand extends BaseTemplateCommand {
 
 
 	/**
-	 * {@inheritDoc}
-	 *
 	 * Adds the `folder`-option.
 	 *
+	 * @inheritDoc
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function buildOptionParser(ConsoleOptionParser $ao_parser): ConsoleOptionParser {
 		$lo_parser = parent::buildOptionParser($ao_parser);
 
+		$la_paths = (array)Configure::read('App.paths.templates');
+		$ls_basePath = reset($la_paths);
+
 		$lo_parser->addOption('folder', [
-			'help' => 'The folder to save the templates in. Defaults to the the first item in config `App.paths.templates`.',
+			'help' => 'The folder to save the templates in. Defaults to the the first item in config `App.paths.templates` (`' . $ls_basePath . '`).',
 		]);
 
 

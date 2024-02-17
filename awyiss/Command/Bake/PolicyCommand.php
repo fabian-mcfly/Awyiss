@@ -133,7 +133,12 @@ class PolicyCommand extends BakeCommand {
 		)->addArgument('name', [
 			'help' => 'Name of the policy to bake (without the `Policy` suffix).',
 		])->addOption('namespace', [
-			'help' => 'The namespace for the policy. Should be either "Awyiss" or <CUSTOM_NAMESPACE>',
+			'choices' => [
+				'Awyiss',
+				CUSTOM_NAMESPACE,
+			],
+			'default' => 'Awyiss',
+			'help' => 'The namespace for the policy.',
 		])->addOption('prefix', [
 			'help' => 'The routing prefix to use.',
 		]);

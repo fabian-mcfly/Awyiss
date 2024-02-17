@@ -1,4 +1,4 @@
-<?php declare(strict_types=1);
+{% verbatim %}<?php declare(strict_types=1);{% endverbatim %}
 
 
 namespace {{ namespace }}\Authorization\Policy{{ prefix }};
@@ -11,7 +11,7 @@ use Awyiss\Authorization\Policy\AbstractPolicy;
 /**
  * Permission for the {{ name }} scope
  */
-class {{ name }}Policy extends AbstractPolicy {{ verbatim }}{{{ endverbatim }}
+class {{ name }}Policy extends AbstractPolicy {
 	protected static PermissionOptionCollection $permissionOptionCollection;
 	protected static string $scope;
-{{ verbatim }}}{{ endverbatim }}
+}

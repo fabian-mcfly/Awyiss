@@ -10,6 +10,7 @@
 		$this->Authorization->ensure('create');
 
 		$lo_{{ singularName }} = $this->{{ currentModelName }}->newDefaultEntity();
+
 		if ($this->request->is('post')) {
 			$this->save($lo_{{ singularName }});
 		}

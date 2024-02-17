@@ -1,7 +1,7 @@
-{{ '{# ' }}
+{{ '{#' }}
 @var ao_{{ pluralVar }} {{ entityClass }}[]
 @var _view \{{ namespace }}\View\BackendView
-{{ ' #}' }}
+{{ '#}' }}
 
 <div class="{{ pluralVar[:1]|upper ~ pluralVar[1:] }} Overview">
 {% set fields = Bake.filterFields(fields, schema, modelObject, indexColumns, ['binary', 'text']) %}
@@ -12,77 +12,84 @@
 	{% endblock %}{% endverbatim %}
 
 	{% verbatim %}{% block headlineOverview %}
-	<h1>{{ __('headline_overview') }}</h1>
+		<h1>{{ __('headline_overview') }}</h1>
 	{% endblock %}{% endverbatim %}
 
 	{% verbatim %}{% block tableOverview %}{% endverbatim %}
-	<table>
-		{% verbatim %}{% block tableOverviewHead %}{% endverbatim %}
-			<thead>
-				{% verbatim %}{% block tableOverviewHeadRow %}{% endverbatim %}
-					<tr>
-{% for field in fields %}
-{% if field not in ['system_order', 'deleted', 'created_on', 'created_by', 'changed_on', 'changed_by', 'deleted_on', 'deleted_by'] %}
-						<th>{% verbatim %}{{ helper_Paginator_sort('{% endverbatim %}{{ field }}{% verbatim %}') }}{% endverbatim %}</th>
-{% endif %}
-{% endfor %}
-						{% block tableOverviewHeaderActions %}
-								<th class="actions"></th>
-							{% endblock %}
-					</tr>
-				{% verbatim %}{% endblock %}{% endverbatim %}
-			</thead>
-		{% verbatim %}{% endblock %}{% endverbatim %}
-		{% verbatim %}{% block tableOverviewBody %}{% endverbatim %}
-			<tbody>
-				{% verbatim %}{#{% endverbatim %} @var {{ singularVar }} \{{ entityClass }} {% verbatim %}#}{% endverbatim %}
-				{% verbatim %}{% for lo_{% endverbatim %}{{ singularVar }}{% verbatim %} in ao_{% endverbatim %}{{ pluralVar }}{% verbatim %} %}{% endverbatim %}
-					{% verbatim %}{% block tableOverviewBodyRow %}{% endverbatim %}
+		<table>
+			{% verbatim %}{% block tableOverviewHead %}{% endverbatim %}
+				<thead>
+					{% verbatim %}{% block tableOverviewHeadRow %}{% endverbatim %}
 						<tr>
 {% for field in fields %}
 {% if field not in ['system_order', 'deleted', 'created_on', 'created_by', 'changed_on', 'changed_by', 'deleted_on', 'deleted_by'] %}
+							{% verbatim %}{% block tableOverviewHeader{% endverbatim %}{{ field|camelize }}{% verbatim %} %}{% endverbatim %}
+								<th>{% verbatim %}{{ helper_Paginator_sort('{% endverbatim %}{{ field }}{% verbatim %}') }}{% endverbatim %}</th>
+							{% verbatim %}{% endblock %}{% endverbatim %}
+
+{% endif %}
+{% endfor %}
+							{% verbatim %}{% block tableOverviewHeaderActions %}{% endverbatim %}
+								<th class="actions"></th>
+							{% verbatim %}{% endblock %}{% endverbatim %}
+						</tr>
+					{% verbatim %}{% endblock %}{% endverbatim %}
+				</thead>
+			{% verbatim %}{% endblock %}{% endverbatim %}
+			{% verbatim %}{% block tableOverviewBody %}{% endverbatim %}
+				<tbody>
+					{% verbatim %}{#{% endverbatim %} @var lo_{{ singularVar }} \{{ entityClass }} {% verbatim %}#}{% endverbatim %}
+					{% verbatim %}{% for lo_{% endverbatim %}{{ singularVar }}{% verbatim %} in ao_{% endverbatim %}{{ pluralVar }}{% verbatim %} %}{% endverbatim %}
+						{% verbatim %}{% block tableOverviewBodyRow %}{% endverbatim %}
+							<tr>
+{% for field in fields %}
+{% if field not in ['system_order', 'deleted', 'created_on', 'created_by', 'changed_on', 'changed_by', 'deleted_on', 'deleted_by'] %}
+								{% verbatim %}{% block tableOverviewCell{% endverbatim %}{{ field|camelize }}{% verbatim %} %}{% endverbatim %}
 {% set isKey = false %}
 {% if associations.BelongsTo is defined %}
 {% for alias, details in associations.BelongsTo %}
 {% if field == details.foreignKey %}
 {% set isKey = true %}
-							<td>
-								{% verbatim %}{% if lo_{% endverbatim %}{{ singularVar }}{% verbatim %}.has('{% endverbatim %}{{ details.property }}{% verbatim %}') %}{% endverbatim %}
-									{% verbatim %}{{ helper_Html_link({% endverbatim %}lo_{{ singularVar ~ '.' ~ details.property ~ '.' ~ details.displayField }}{% verbatim %}, {controller: '{% endverbatim %}{{ details.controller }}{% verbatim %}', action: 'view', id: lo_{% endverbatim %}{{ singularVar ~ '.' ~ details.property ~ '.' ~ details.primaryKey[0] }}{% verbatim %}}) }}{% endverbatim %}
-								{% verbatim %}{% endif %}{% endverbatim %}
-							</td>
+									<td>
+										{% verbatim %}{% if lo_{% endverbatim %}{{ singularVar }}{% verbatim %}.has('{% endverbatim %}{{ details.property }}{% verbatim %}') %}{% endverbatim %}
+											{% verbatim %}{{ helper_Html_link({% endverbatim %}lo_{{ singularVar ~ '.' ~ details.property ~ '.' ~ details.displayField }}{% verbatim %}, {controller: '{% endverbatim %}{{ details.controller }}{% verbatim %}', action: 'view', id: lo_{% endverbatim %}{{ singularVar ~ '.' ~ details.property ~ '.' ~ details.primaryKey[0] }}{% verbatim %}}) }}{% endverbatim %}
+										{% verbatim %}{% endif %}{% endverbatim %}
+									</td>
 {% endif %}
 {% endfor %}
 {% endif %}
 {% if isKey is not same as(true) %}
 {% set columnData = Bake.columnData(field, schema) %}
 {% if columnData.type in ['integer', 'float', 'decimal', 'biginteger', 'smallinteger', 'tinyinteger'] %}
-							<td>{% verbatim %}{{ helper_Number_format(lo_{% endverbatim %}{{ singularVar ~ '.' ~ field }}{% verbatim %}) }}{% endverbatim %}</td>
+									<td>{% verbatim %}{{ helper_Number_format(lo_{% endverbatim %}{{ singularVar ~ '.' ~ field }}{% verbatim %}) }}{% endverbatim %}</td>
 {% elseif columnData.type in ['json'] %}
-							<td>{% verbatim %}{{ lo_{% endverbatim %}{{ singularVar }}.{{ field }}{% verbatim %}|join(', ') }}{% endverbatim %}</td>
+									<td>{% verbatim %}{{ lo_{% endverbatim %}{{ singularVar }}.{{ field }}{% verbatim %}|join(', ') }}{% endverbatim %}</td>
 {% else %}
-							<td>{% verbatim %}{{ lo_{% endverbatim %}{{ singularVar }}.{{ field }} {% verbatim %}}}{% endverbatim %}</td>
+									<td>{% verbatim %}{{ lo_{% endverbatim %}{{ singularVar }}.{{ field }} {% verbatim %}}}{% endverbatim %}</td>
 {% endif %}
 {% endif %}
+								{% verbatim %}{% endblock %}{% endverbatim %}
+
 {% endif %}
 {% endfor %}
 {% set pk = 'lo_' ~ singularVar ~ '.' ~ primaryKey[0] %}
-							{% block tableOverviewCellActions %}
+								{% verbatim %}{% block tableOverviewCellActions %}{% endverbatim %}
 									<td class="actions">
-								{% verbatim %}{% if helper_Authorization_isAccessible('update') %}
-									{{ helper_Html_link(__('edit'), {action: 'edit', id: {% endverbatim %}{{ pk }}{% verbatim %}}) }}
-								{% endif %}
-								{% if helper_Authorization_isAccessible('delete') %}
-									{{ helper_Html_link(__('delete'), {action: 'delete', id: {% endverbatim %}{{ pk }}{% verbatim %}}, {confirm: __('confirm_delete', {% endverbatim %}{{ pk }}{% verbatim %}) }) }}
-								{% endif %}{% endverbatim %}
-							</td>
-						</tr>
-					{% verbatim %}{% endblock %}{% endverbatim %}
-				{% verbatim %}{% endfor %}{% endverbatim %}
-			</tbody>
-		{% verbatim %}{% endblock %}{% endverbatim %}
-	</table>
+										{% verbatim %}{% if helper_Authorization_isAccessible('update') %}
+											{{ helper_Html_link(__('edit'), {action: 'edit', id: {% endverbatim %}{{ pk }}{% verbatim %}}) }}
+										{% endif %}
+										{% if helper_Authorization_isAccessible('delete') %}
+											{{ helper_Html_link(__('delete'), {action: 'delete', id: {% endverbatim %}{{ pk }}{% verbatim %}}, {confirm: __('confirm_delete', {% endverbatim %}{{ pk }}{% verbatim %}) }) }}
+										{% endif %}{% endverbatim %}
+									</td>
+								{% verbatim %}{% endblock %}{% endverbatim %}
+							</tr>
+						{% verbatim %}{% endblock %}{% endverbatim %}
+					{% verbatim %}{% endfor %}{% endverbatim %}
+				</tbody>
+			{% verbatim %}{% endblock %}{% endverbatim %}
+		</table>
 	{% verbatim %}{% endblock %}{% endverbatim %}
 
-	{{ '{{ helper_Paginator_render() }}' }}
+	{% verbatim %}{{ helper_Paginator_render() }}{% endverbatim %}
 </div>

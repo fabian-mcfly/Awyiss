@@ -6,6 +6,7 @@ namespace Awyiss\Command\Util;
 
 use Cake\Console\Arguments;
 use Cake\Utility\Inflector;
+use UnexpectedValueException;
 
 
 /**
@@ -36,6 +37,9 @@ trait UtilTrait {
 			if (!in_array($ls_path[0], ['/', DS])) {
 				$ls_path = ROOT . DS . $ls_path;
 			}
+		}
+		elseif ($ls_pathFragment && $ls_pathFragment !== DS) {
+			$ls_path .= $ls_pathFragment;
 		}
 
 		$ls_prefix = $this->getPrefix($ao_args);

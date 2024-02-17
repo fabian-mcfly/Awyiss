@@ -16,7 +16,7 @@
 
 		if ( ! $this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
 			if ($this->{{ currentModelName }}->save($ao_{{ singularName }})) {
-				$this->Flash->success(__('' . $as_method . '_succeeded'));
+				$this->Flash->success(__($as_method . '_succeeded'));
 
 				if ($this->request->getData('submit') == 'submit_close') {
 					throw new RedirectException(Router::url(['action' => 'overview'], true), 302);
@@ -25,7 +25,7 @@
 				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $ao_{{ singularName }}->id], true), 302);
 			}
 
-			$this->Flash->error(__('' . $as_method . '_failed'));
+			$this->Flash->error(__($as_method . '_failed'));
 			foreach ($ao_{{ singularName }}->getError('_general') AS $ls_error) {
 				$this->Flash->error($ls_error);
 			}

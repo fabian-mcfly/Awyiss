@@ -66,8 +66,8 @@ class {{ name }} extends Entity{{ fileBuilder.classBuilder.implements ? ' implem
 
 	{{~ Bake.concat('\n\n', userProperties) }}
 {% endif %}
-{% if name|underscore[:11] == 'attributes_' %}
 {% set generatedMethods = [] %}
+{% if name|underscore[:11] == 'attributes_' %}
 {% set generatedMethods = generatedMethods|merge(['getEntity']) %}
 
 

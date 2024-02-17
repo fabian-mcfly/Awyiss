@@ -390,6 +390,69 @@
 					"scope": "usergroups",
 					"identifier": "read"
 				}
+			},
+			"datatables": {
+				"title": {
+					"translate": ["datatables", "menu_title"]
+				},
+				"link": {
+					"url": {
+						"controller": "Datatables",
+						"action": "overview"
+					}
+				},
+				"access": {
+					"scope": "datatables",
+					"identifier": "read"
+				},
+				"children": {
+					"datatables_overview": {
+						"title": {
+							"translate": ["datatables", "menu_overview"]
+						},
+						"link": {
+							"url": {
+								"controller": "Datatables",
+								"action": "overview"
+							}
+						},
+						"access": {
+							"scope": "Datatables",
+							"identifier": "read"
+						}
+					},
+					"datatables_add": {
+						"title": {
+							"translate": ["datatables", "menu_add"]
+						},
+						"link": {
+							"url": {
+								"controller": "Datatables",
+								"action": "add"
+							}
+						},
+						"access": {
+							"scope": "datatables",
+							"identifier": "create"
+						}
+					},
+					"datatables_configure": {
+						"title": {
+							"translate": ["datatables", "menu_configure"]
+						},
+						"link": {
+							"url": {
+								"controller": "Configuration",
+								"action": "overview",
+								"scope": "datatables"
+							}
+						},
+						"access": {
+							"scope": "datatables",
+							"identifier": "configure"
+						}
+					}
+				}
 			}
 		}
 	}

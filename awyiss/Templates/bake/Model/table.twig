@@ -5,7 +5,11 @@
 	classImports: fileBuilder.classImports(['Awyiss\\Model\\Table', 'Awyiss\\ORM\\RulesChecker', 'Cake\\Validation\\Validator']),
 }) }}
 
-{{ DocBlock.classDescription(name, 'Model', annotations)|raw }}
+/**
+* {{ name }} Model
+*
+* @method \{{ namespace }}\Model\Entity\{{ name|singularize }} newDefaultEntity(array $aa_additionalData = [], array $aa_options = [])
+*/
 class {{ name }}Table extends Table{{ fileBuilder.classBuilder.implements ? ' implements ' ~ fileBuilder.classBuilder.implements|join(', ') : '' }} {
 {% set userConstants = fileBuilder.classBuilder.userConstants([]) %}
 {% if userConstants.ATTRIBUTABLE is not defined %}

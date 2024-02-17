@@ -165,7 +165,12 @@ class ControllerCommand extends BaseControllerCommand {
 		$lo_parser = parent::buildOptionParser($ao_parser);
 
 		$lo_parser->addOption('namespace', [
-			'help' => 'The namespace for the model. Should be either "Awyiss" or <CUSTOM_NAMESPACE>',
+			'choices' => [
+				'Awyiss',
+				CUSTOM_NAMESPACE,
+			],
+			'default' => 'Awyiss',
+			'help' => 'The namespace for the model.',
 		]);
 
 
