@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 
-namespace Awyiss\Command;
+namespace Awyiss\Command\Bake;
 
 
 use Awyiss\Command\Util\UtilTrait;
@@ -16,7 +16,7 @@ use InvalidArgumentException;
 /**
  * Task class for creating view template files.
  */
-class BakeTemplateCommand extends BaseTemplateCommand {
+class TemplateCommand extends BaseTemplateCommand {
 	use UtilTrait;
 
 

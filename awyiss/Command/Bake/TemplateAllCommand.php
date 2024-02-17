@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 
-namespace Awyiss\Command;
+namespace Awyiss\Command\Bake;
 
 
 use Bake\Command\TemplateAllCommand as BaseTemplateAllCommand;
@@ -12,12 +12,12 @@ use Bake\Command\TemplateAllCommand as BaseTemplateAllCommand;
  * This one overwrites the default bake TemplateAllCommand to use
  *  	\AwyissBake\Command\Bake\TemplateCommand
  */
-class BakeTemplateAllCommand extends BaseTemplateAllCommand {
+class TemplateAllCommand extends BaseTemplateAllCommand {
 	/**
 	 * @inheritDoc
 	 */
 	public function initialize(): void {
 		parent::initialize();
-		$this->templateCommand = new BakeTemplateCommand();
+		$this->templateCommand = new TemplateCommand();
 	}
 }

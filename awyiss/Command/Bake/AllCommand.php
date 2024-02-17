@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 
-namespace Awyiss\Command;
+namespace Awyiss\Command\Bake;
 
 
 //use Bake\Command\ControllerCommand;
@@ -17,14 +17,14 @@ use Bake\Command\AllCommand as BaseAllCommand;
  *        \AwyissBake\Command\Bake\ModelCommand
  *        \AwyissBake\Command\Bake\TemplateCommand
  */
-class BakeAllCommand extends BaseAllCommand {
+class AllCommand extends BaseAllCommand {
 	/**
 	 * @inheritDoc
 	 */
 	protected array $commands = [
-		BakeModelCommand::class,
-		BakeControllerCommand::class,
-		BakePolicyCommand::class,
-		BakeTemplateCommand::class,
+		ModelCommand::class,
+		ControllerCommand::class,
+		PolicyCommand::class,
+		TemplateCommand::class,
 	];
 }

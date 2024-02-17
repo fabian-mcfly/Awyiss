@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 
-namespace Awyiss\Command;
+namespace Awyiss\Command\Bake;
 
 
 use Awyiss\Command\Util\UtilTrait;
@@ -20,7 +20,7 @@ use Migrations\Command\BakeMigrationCommand as BaseBakeMigrationCommand;
 /**
  * Command class for generating migration snapshot files.
  */
-class BakeMigrationCommand extends BaseBakeMigrationCommand {
+class MigrationCommand extends BaseBakeMigrationCommand {
 	use UtilTrait;
 
 

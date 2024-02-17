@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 
-namespace Awyiss\Command;
+namespace Awyiss\Command\Bake;
 
 
 use Awyiss\Command\Util\UtilTrait;
@@ -17,7 +17,7 @@ use Cake\Utility\Inflector;
 /**
  * Task class for creating and updating controller files.
  */
-class BakeControllerCommand extends BaseControllerCommand {
+class ControllerCommand extends BaseControllerCommand {
 	/*
 	 * Use UtilTrait so that every call of `$this->getPath()` will use the one provided by this trait,
 	 * honoring the `namespace`-option

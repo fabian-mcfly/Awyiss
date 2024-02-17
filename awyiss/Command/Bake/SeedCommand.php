@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 
-namespace Awyiss\Command;
+namespace Awyiss\Command\Bake;
 
 
 use Awyiss\Command\Util\UtilTrait;
@@ -16,7 +16,7 @@ use Migrations\Command\BakeSeedCommand as BaseBakeSeedCommand;
 /**
  * Task class for creating and updating controller files.
  */
-class BakeSeedCommand extends BaseBakeSeedCommand {
+class SeedCommand extends BaseBakeSeedCommand {
 	use UtilTrait;
 
 

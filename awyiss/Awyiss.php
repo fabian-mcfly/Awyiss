@@ -11,6 +11,7 @@ use Awyiss\Middleware\RoutingMiddleware;
 use Awyiss\Model\Table;
 use Awyiss\ORM\Locator\TableLocator;
 use Awyiss\Routing\Router;
+use Cake\Console\CommandCollection;
 use Cake\Core\Configure;
 use Cake\Core\ContainerInterface;
 use Cake\Core\Plugin;
@@ -123,6 +124,49 @@ class Awyiss extends BaseApplication {
 				$this->plugins->addFromConfig($la_plugins);
 			}
 		}
+	}
+
+
+
+	/**
+	 * @param \Cake\Console\CommandCollection $ao_commands
+	 * @return \Cake\Console\CommandCollection
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 */
+	public function console(CommandCollection $ao_commands): CommandCollection {
+		$la_paths = [
+			implode('\\', [CUSTOM_NAMESPACE, 'Command']) => implode(DS, [ROOT, CUSTOM_DIR, 'Command', '*', '*' . 'Command.php']),
+			implode('\\', ['Awyiss', 'Command']) => implode(DS, [ROOT, APP_DIR, 'Command', '*', '*' . 'Command.php']),
+		];
+
+		$la_commands = [];
+		foreach ($la_paths as $ls_namespace => $ls_path) {
+			foreach (glob($ls_path) as $ls_filePath) {
+				$la_parts = explode(DS, $ls_filePath);
+
+				$ls_commandName = array_pop($la_parts);
+				$ls_subPath = array_pop($la_parts);
+
+				/** @var class-string<\Cake\Console\BaseCommand> $ls_className */
+				$ls_className = $ls_namespace . '\\' . $ls_subPath . '\\' . substr($ls_commandName, 0, -4);
+				$ls_command = $ls_className::defaultName();
+
+				$ls_subPath = Inflector::underscore($ls_subPath);
+				if (!str_starts_with($ls_command, $ls_subPath . ' ')) {
+					$ls_command = $ls_subPath . ' ' . $ls_command;
+				}
+
+				if (!isset($la_commands[ $ls_command ])) {
+					$la_commands[ $ls_command ] = $ls_className;
+				}
+			}
+		}
+
+		if ($la_commands) {
+			$ao_commands->addMany($la_commands);
+		}
+
+		return parent::console($ao_commands);
 	}
 
 

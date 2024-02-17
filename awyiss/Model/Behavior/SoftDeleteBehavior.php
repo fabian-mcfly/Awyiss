@@ -70,7 +70,7 @@ class SoftDeleteBehavior extends Behavior {
 	 * @noinspection PhpUnused
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function findDeleted(SelectQuery $ao_query, array $aa_options): SelectQuery {
+	public function findDeleted(SelectQuery $ao_query, array $aa_options = []): SelectQuery {
 		if (!$this->getConfig('enabled')) {
 			return $ao_query;
 		}
@@ -79,7 +79,7 @@ class SoftDeleteBehavior extends Behavior {
 			$this->table()->getAlias() . '.deleted' => true,
 		])->applyOptions([
 			'softDelete' => ['includeDeleted' => true],
-		]);
+		] + $aa_options);
 
 
 		return $ao_query;
@@ -95,7 +95,7 @@ class SoftDeleteBehavior extends Behavior {
 	 * @noinspection PhpUnused
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function findWithDeleted(SelectQuery $ao_query, array $aa_options): SelectQuery {
+	public function findWithDeleted(SelectQuery $ao_query, array $aa_options = []): SelectQuery {
 		if (!$this->getConfig('enabled')) {
 			return $ao_query;
 		}
@@ -104,7 +104,7 @@ class SoftDeleteBehavior extends Behavior {
 			$this->table()->getAlias() . '.deleted IN' => [false, true],
 		])->applyOptions([
 			'softDelete' => ['includeDeleted' => true],
-		]);
+		] + $aa_options);
 
 
 		return $ao_query;
@@ -242,14 +242,20 @@ class SoftDeleteBehavior extends Behavior {
 			'_cleanOnSuccess' => false,
 			'checkRules' => false,
 			'systemOrder' => ['skip' => true],
+			'_primary' => true,
 		];
 		$lo_options = $ao_options;
 
 		foreach ($la_defaults as $ls_key => $lx_value) {
-			if (!$ao_options->offsetExists($ls_key)) {
-				$ao_options->offsetSet($ls_key, $lx_value);
+			if (!$lo_options->offsetExists($ls_key)) {
+				$lo_options->offsetSet($ls_key, $lx_value);
 			}
 		}
+
+		/**
+		 * Set the `deleted`-column
+		 */
+		$ao_entity->set('deleted', true);
 
 		$lo_event = $lo_table->dispatchEvent('Model.beforeSoftDelete', [
 			'entity' => $ao_entity,
@@ -258,6 +264,12 @@ class SoftDeleteBehavior extends Behavior {
 
 		//If the 'Model.beforeSoftDelete' event was stopped, stop the softDelete event as well
 		if ($lo_event->isStopped() && $ao_event) {
+			/**
+			 * Set the `deleted`-column
+			 */
+			$ao_entity->set('deleted', false);
+			$ao_entity->setDirty('deleted', false);
+
 			$ao_event->stopPropagation();
 			$ao_event->setResult($lo_event->getResult());
 
@@ -282,11 +294,6 @@ class SoftDeleteBehavior extends Behavior {
 				$lo_association->cascadeDelete($ao_entity, ['_primary' => false] + $lo_options->getArrayCopy());
 			}
 		}
-
-		/**
-		 * Set the `deleted`-column
-		 */
-		$ao_entity->set('deleted', true);
 
 		//Save the entity but skip both the authorization and the system order behavior
 		$la_options = ['checkRules' => false] + (array)$lo_options;

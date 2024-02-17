@@ -232,6 +232,7 @@ class SystemOrderBehavior extends Behavior {
 		$la_dirtyRelatedFields = $this->rememberedData[ $ao_entity->get('id') ] ?? [];
 		unset($this->rememberedData[ $ao_entity->get('id') ]);
 
+
 		//The related columns have changed
 		if ($la_dirtyRelatedFields) {
 			/**
@@ -309,6 +310,7 @@ class SystemOrderBehavior extends Behavior {
 
 			$lo_records = $lo_query->all();
 
+
 			if (!$lo_records->count()) {
 				//No records found? The item is alone in its scope. But that's okay. Not all entities are gregarious animals
 				return;
@@ -316,6 +318,7 @@ class SystemOrderBehavior extends Behavior {
 
 			//If we move an item forwards, me move all items one to the back
 			$lb_forward = $li_systemOrderNew < $li_systemOrderOld;
+
 
 			$la_records = $lo_records->toArray();
 			//Increase/decrease the system order of all records
@@ -329,8 +332,9 @@ class SystemOrderBehavior extends Behavior {
 				/** @var \Awyiss\Model\Entity $ao_record */
 				$ao_record->clean();
 
-				$ao_record->set('systemOrder', $ao_record->get('systemOrder') + $lb_forward ? 1 : -1);
+				$ao_record->set('systemOrder', $ao_record->get('systemOrder') + ($lb_forward ? 1 : -1));
 			});
+
 
 			//Save all found records, but skip the rules check, the audit and the system order behavior on those to avoid recursion.
 			$lo_table->saveMany($la_records, [
