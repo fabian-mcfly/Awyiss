@@ -30,8 +30,24 @@ class AttributesListener implements EventListenerInterface {
 	 */
 	public function implementedEvents(): array {
 		return [
+			'Model.Attributes.beforeSave' => 'beforeSave',
 			'Model.Attributes.afterSaveCommit' => 'afterSaveCommit',
 		];
+	}
+
+
+	/**
+	 * @param \Cake\Event\Event $ao_event
+	 * @param \Awyiss\Model\Entity $ao_entity
+	 * @return void
+	 */
+	public function beforeSave(Event $ao_event, Entity $ao_entity): void {
+		/** @var \Queue\Model\Table\QueuedJobsTable $lo_queue */
+		$lo_queue = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
+		if ($lo_queue->isQueued('attributes::table_changes')) {
+			$ao_event->stopPropagation();
+			$ao_entity->setError('_general', __d('attributes', 'table_changes_in_progress'));
+		}
 	}
 
 
