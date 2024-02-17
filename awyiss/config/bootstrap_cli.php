@@ -17,8 +17,4 @@ use Cake\Core\Configure;
 Configure::write('Datasources.default.log', false);
 Configure::write('Log.debug.file', 'cli-debug');
 Configure::write('Log.error.file', 'cli-error');
-
-//Don't log queries from the shell
-Configure::delete('Log.queries');
-
 //Configure::write('Cache._cake_model_.className', NullEngine::class);

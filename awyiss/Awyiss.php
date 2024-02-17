@@ -47,7 +47,6 @@ class Awyiss extends BaseApplication {
 	final public const REALM_BACKEND = 'Backend';
 	protected ClassLoader $classLoader;
 	protected static ?string $realm = null;
-	protected static ?string $language = null;
 
 
 	/**
@@ -448,23 +447,6 @@ class Awyiss extends BaseApplication {
 			'realm' => static::$realm,
 		]);
 		$lo_eventManager->dispatch($lo_event);
-	}
-
-
-	/**
-	 * @return string|null
-	 */
-	public static function getLanguage(): ?string {
-		return self::$language;
-	}
-
-
-	/**
-	 * @param string|null $as_language
-	 * @noinspection PhpUnused
-	 */
-	public static function setLanguage(?string $as_language): void {
-		self::$language = $as_language;
 	}
 
 

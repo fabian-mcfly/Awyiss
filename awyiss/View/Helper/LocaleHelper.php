@@ -63,11 +63,11 @@ class LocaleHelper extends Helper {
 	public function control(?string $as_fieldName = null, array $aa_attributes = []): string {
 		$la_attributes = $aa_attributes + ['type' => 'select'];
 
-		if (empty($aa_attributes['realm'])) {
+		if (empty($aa_attributes['languageRealm'])) {
 			$la_languages = $this->allLanguages();
 		}
 		else {
-			$la_languages = $this->languagesForRealm($aa_attributes['realm']);
+			$la_languages = $this->languagesForRealm($aa_attributes['languageRealm']);
 		}
 
 		$la_attributes['options'] = $la_languages;
@@ -96,7 +96,7 @@ class LocaleHelper extends Helper {
 	/**
 	 * @return array
 	 */
-	protected function allLanguages(): array {
+	public function allLanguages(): array {
 		$la_languages = [];
 
 		foreach (LocaleMiddleware::getLanguagesByShortcode() as $ls_shortcode => $la_languagesByRealm) {
@@ -118,7 +118,7 @@ class LocaleHelper extends Helper {
 	 * @param string $as_realm
 	 * @return array
 	 */
-	protected function languagesForRealm(string $as_realm): array {
+	public function languagesForRealm(string $as_realm): array {
 		$la_languages = [];
 
 		foreach (LocaleMiddleware::getLanguages($as_realm) as $ls_shortcode => $lo_language) {

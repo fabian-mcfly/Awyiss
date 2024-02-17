@@ -92,6 +92,9 @@ class PhpConfig extends BasePhpConfig {
 	 */
 	public function dump(string $as_key, array $aa_data): bool {
 		$ls_contents = '<?php declare(strict_types=1);' . PHP_EOL . PHP_EOL . 'return ';
+
+		ksort($aa_data, SORT_NATURAL | SORT_FLAG_CASE);
+
 		$ls_contents .= VarExporter::export($aa_data, VarExporter::TRAILING_COMMA_IN_ARRAY);
 		$ls_contents .= ';';
 		$ls_contents = str_replace('    ', "\t", $ls_contents);

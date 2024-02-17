@@ -228,7 +228,7 @@ class PagesController extends Controller {
 	 */
 	public function getThreadedPages(Page $ao_page): CollectionInterface {
 		if (!isset($this->threadedPages)) {
-			$lo_query = $this->Pages->find('forCurrentLanguage', $ao_page->languageShortcode)
+			$lo_query = $this->Pages->find('forCurrentLanguage', languageShortcode: $ao_page->languageShortcode)
 			->where(
 				$this->getOverviewWhere() +
 				$this->Categories->getQueryConditions(

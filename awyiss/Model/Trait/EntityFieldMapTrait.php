@@ -236,7 +236,7 @@ trait EntityFieldMapTrait {
 	/**
 	 * @inheritDoc
 	 */
-	public function setError(string $as_field, $ax_errors, bool $ab_overwrite = false): EntityInterface {
+	public function setError(string $as_field, array|string $ax_errors, bool $ab_overwrite = false): EntityInterface {
 		/** @noinspection PhpIncompatibleReturnTypeInspection */
 		return parent::setError(static::mapField($as_field), $ax_errors, $ab_overwrite);
 	}

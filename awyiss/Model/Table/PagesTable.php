@@ -575,12 +575,12 @@ class PagesTable extends Table {
 
 	/**
 	 * @param \Cake\ORM\Query\SelectQuery $ao_query
-	 * @param \Awyiss\Model\Entity\Page|string|null $languageShortcode
+	 * @param string|null $languageShortcode
 	 * @param \Awyiss\Model\Entity\Page|null $entity
 	 * @return \Cake\ORM\Query\SelectQuery
 	 * @throws \Exception
 	 */
-	public function findForCurrentLanguage(SelectQuery $ao_query, Page|string|null $languageShortcode = null, ?Page $entity = null): SelectQuery {
+	public function findForCurrentLanguage(SelectQuery $ao_query, ?string $languageShortcode = null, ?Page $entity = null): SelectQuery {
 		$ls_languageShortcode = $languageShortcode;
 
 		if ($entity) {
