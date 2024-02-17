@@ -331,6 +331,21 @@ class Awyiss extends BaseApplication {
 			if (Configure::read('Awyiss')) {
 				return;
 			}
+			else {
+				/**
+				 * Trigger the creation of the custom configuriation
+				 *
+				 * @see \Awyiss\Event\Backend\ConfigurationListener::createCustomConfiguration()
+				 */
+				$lo_eventManager = EventManager::instance();
+				$lo_event = new Event('Configuration.createCustomConfiguration', null, []);
+				$lo_eventManager->dispatch($lo_event);
+
+				Configure::load($ls_fileName, 'default', false);
+				if (Configure::read('Awyiss')) {
+					return;
+				}
+			}
 		}
 
 		Configure::delete('Awyiss');

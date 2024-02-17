@@ -35,6 +35,7 @@ class ConfigurationListener implements EventListenerInterface {
 		return [
 			'Model.Configuration.afterSaveCommit' => 'afterSaveCommit',
 			'Model.Configuration.afterDelete' => 'createCustomConfiguration',
+			'Configuration.createCustomConfiguration' => 'createCustomConfiguration',
 		];
 	}
 
@@ -43,11 +44,10 @@ class ConfigurationListener implements EventListenerInterface {
 	 * @param \Cake\Event\Event $ao_event
 	 * @param \Awyiss\Model\Entity\Configuration $ao_entity
 	 * @return void
-	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function afterSaveCommit(Event $ao_event, Configuration $ao_entity): void {
 		$this->rebuildSystemOrder($ao_entity);
-		$this->createCustomConfiguration($ao_event, $ao_entity);
+		$this->createCustomConfiguration();
 	}
 
 
@@ -59,10 +59,9 @@ class ConfigurationListener implements EventListenerInterface {
 	 * @param Event $ao_event
 	 * @param \Awyiss\Model\Entity\Configuration $ao_entity
 	 * @noinspection PhpUnused
-	 * @noinspection PhpUnusedParameterInspection
 	 * @throws \Exception
 	 */
-	public function createCustomConfiguration(Event $ao_event, Configuration $ao_entity): void {
+	public function createCustomConfiguration(): void {
 		//Remember the current config
 		$la_rememberedConfig = Configure::read('Awyiss');
 
@@ -99,7 +98,7 @@ class ConfigurationListener implements EventListenerInterface {
 		}
 
 		Configure::delete('Awyiss');
-		Configure::write($la_rememberedConfig);
+		Configure::write($la_rememberedConfig ?? []);
 	}
 
 
