@@ -24,8 +24,8 @@ trait SystemOrderFieldsTrait {
 	public function getSystemOrderFields(): array {
 		$ls_scope = $this->getScope();
 
-		if (method_exists($this, 'getPageRole')) {
-			$ls_scope = $this->getPageRole();
+		if (method_exists($this, 'getDynamicScope')) {
+			$ls_scope = $this->getDynamicScope();
 		}
 
 		/** @var \Awyiss\Model\Table $lo_table */

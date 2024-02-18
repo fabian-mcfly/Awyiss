@@ -5,7 +5,7 @@ namespace Awyiss\Configuration\ConfigOptions;
 
 
 use Awyiss\Awyiss;
-use Awyiss\Configuration\AbstractConfigOptions;
+use Awyiss\Configuration\AbstractGenericConfigOptions;
 use Awyiss\Configuration\ConfigOption;
 use Awyiss\Configuration\ConfigOptions\Trait\SystemOrderFieldsTrait;
 use Awyiss\Configuration\ConfigOptionType;
@@ -14,14 +14,8 @@ use Awyiss\Configuration\ConfigOptionType;
 /**
  * Provides all configuration options for the ContentTemplates scope
  */
-class GenericPagesConfigOptions extends AbstractConfigOptions {
+class GenericPagesConfigOptions extends AbstractGenericConfigOptions {
 	use SystemOrderFieldsTrait;
-
-
-	/**
-	 * @var string|null
-	 */
-	protected ?string $pageRole = null;
 
 
 	/**
@@ -133,25 +127,5 @@ class GenericPagesConfigOptions extends AbstractConfigOptions {
 				),
 			],
 		]);
-	}
-
-
-	/**
-	 * @return string|null
-	 */
-	public function getPageRole(): ?string {
-		return $this->pageRole;
-	}
-
-
-	/**
-	 * @param string|null $as_pageRole
-	 * @return $this
-	 */
-	public function setPageRole(?string $as_pageRole): static {
-		$this->pageRole = $as_pageRole;
-
-
-		return $this;
 	}
 }

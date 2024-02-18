@@ -7,7 +7,6 @@ namespace Awyiss\Model\Table;
 use ArrayObject;
 use Awyiss\Authentication\IdentityAwareTrait;
 use Awyiss\Awyiss;
-use Awyiss\Configuration\ConfigOptions\GenericPagesConfigOptions;
 use Awyiss\Configuration\ConfigOptionsProvider;
 use Awyiss\Model\Entity\Configuration;
 use Awyiss\Model\Table;
