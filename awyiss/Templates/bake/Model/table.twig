@@ -16,7 +16,7 @@ class {{ name }}Table extends Table{{ fileBuilder.classBuilder.implements ? ' im
 	/**
 	 * @inheritDoc
 	 */
-	public const ATTRIBUTABLE = false;
+	public const ATTRIBUTABLE = {% if name[0:10] == 'Attributes' %}false{% else %}true{% endif %};
 {% endif %}
 {% if userConstants.TABLE is not defined %}
 	/**
