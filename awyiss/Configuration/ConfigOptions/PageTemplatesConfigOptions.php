@@ -11,7 +11,7 @@ use Awyiss\Configuration\ConfigOptionType;
 
 
 /**
- * Provides all configuration options for the ContentTemplates scope
+ * Provides all configuration options for the PageTemplates scope
  */
 class PageTemplatesConfigOptions extends AbstractConfigOptions {
 	/**

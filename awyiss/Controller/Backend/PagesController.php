@@ -103,7 +103,7 @@ class PagesController extends Controller {
 		if ($this->request->is(['patch', 'post', 'put'])) {
 			$this->save($lo_page, 'edit');
 		}
-		elseif ($lo_page->language_shortcode != LocaleMiddleware::getLanguage()->shortcode) {
+		elseif ($lo_page->languageShortcode != LocaleMiddleware::getLanguage()->shortcode) {
 			//Don't allow modifying a page in another language
 			throw new RedirectException(Router::url([
 				'lang' => $lo_page->languageShortcode,
@@ -182,7 +182,7 @@ class PagesController extends Controller {
 					 * Otherwise it would show a site without the modified user, which could be a bit confusing.
 					 *
 					 */
-					$this->verifySelection($ao_page);
+					$this->verifyCategorySelection($ao_page);
 
 					throw new RedirectException(Router::url(['action' => 'overview', 'lang' => $ao_page->languageShortcode], true), 302);
 				}
@@ -206,7 +206,7 @@ class PagesController extends Controller {
 	 * @see \Awyiss\Model\Entity\PageTemplate
 	 * @see \Cake\ORM\Table::findList()
 	 */
-	public function getPageTemplates(): CollectionInterface {
+	protected function getPageTemplates(): CollectionInterface {
 		if (!isset($this->pageTemplates)) {
 			$this->pageTemplates = $this->Pages->PageTemplates->find('active')->where([
 				'page_role_id' => $this->getPageRole(),
@@ -226,7 +226,7 @@ class PagesController extends Controller {
 	 * @return \Cake\Collection\CollectionInterface
 	 * @see \Cake\Collection\CollectionTrait::listNested()
 	 */
-	public function getThreadedPages(Page $ao_page): CollectionInterface {
+	protected function getThreadedPages(Page $ao_page): CollectionInterface {
 		if (!isset($this->threadedPages)) {
 			$lo_query = $this->Pages->find('forCurrentLanguage', languageShortcode: $ao_page->languageShortcode)
 			->where(
@@ -248,7 +248,7 @@ class PagesController extends Controller {
 	 * @param \Cake\Collection\CollectionInterface $ao_threadedPages
 	 * @return \Cake\Collection\CollectionInterface
 	 */
-	public function getParentPages(Page $ao_page, CollectionInterface $ao_threadedPages): CollectionInterface {
+	protected function getParentPages(Page $ao_page, CollectionInterface $ao_threadedPages): CollectionInterface {
 		//We only want to find threaded pages for an existing entity (id equals not null)
 		$li_originalId = $ao_page->get('id');
 		if (!$li_originalId) {
@@ -280,32 +280,6 @@ class PagesController extends Controller {
 
 
 	/**
-	 * @return \Awyiss\Database\Type\PageRoleEnumInterface
-	 */
-	public function getPageRole(): PageRoleEnumInterface {
-		if (!isset($this->pageRole)) {
-			/** @var class-string<\Awyiss\Database\Type\PageRoleEnumInterface> $ls_pageRoleEnum */
-			$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
-			$this->pageRole = $ls_pageRoleEnum::Page;
-		}
-
-		return $this->pageRole;
-	}
-
-
-	/**
-	 * @param \Awyiss\Database\Type\PageRoleEnumInterface $ae_pageRole
-	 * @return \Awyiss\Controller\Backend\PagesController
-	 */
-	public function setPageRole(PageRoleEnumInterface $ae_pageRole): static {
-		$this->pageRole = $ae_pageRole;
-
-
-		return $this;
-	}
-
-
-	/**
 	 * Uses this controller with another page_role_id/identifier, so we don't need to bake one for every page role.
 	 * This is supposed to only handle non-existing controllers as a fallback.
 	 *
@@ -315,7 +289,8 @@ class PagesController extends Controller {
 	 * @throws \ReflectionException
 	 */
 	public function asPageRole(PageRoleEnumInterface $ae_pageRole, string $as_identifier): static {
-		$this->setPageRole($ae_pageRole);
+		$this->pageRole = $ae_pageRole;
+
 		$this->Pages = $this->{$as_identifier} = $this->fetchTable($as_identifier);
 
 		/** @var \Awyiss\Authorization\AuthorizationService $lo_authorizationService */
@@ -332,6 +307,21 @@ class PagesController extends Controller {
 
 
 		return $this;
+	}
+
+
+	/**
+	 * @return \Awyiss\Model\Enum\PageRoleEnumInterface
+	 */
+	public function getPageRole(): PageRoleEnumInterface {
+		if (!isset($this->pageRole)) {
+			/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $ls_pageRoleEnum */
+			$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
+			$this->pageRole = $ls_pageRoleEnum::Page;
+		}
+
+
+		return $this->pageRole;
 	}
 
 
@@ -362,8 +352,7 @@ class PagesController extends Controller {
 		try {
 			$ls_contents = parent::render($as_template, $as_layout);
 		}
-		/** @noinspection PhpUnusedLocalVariableInspection */
-		catch (MissingTemplateException $ex) {
+		catch (MissingTemplateException) {
 			$la_templatePathParts = explode('/', $lo_viewBuilder->getTemplatePath());
 			array_pop($la_templatePathParts);
 
@@ -439,7 +428,7 @@ class PagesController extends Controller {
 	 * @param \Awyiss\Model\Entity\Page $ao_page
 	 * @return void
 	 */
-	protected function verifySelection(Page $ao_page): void {
+	protected function verifyCategorySelection(Page $ao_page): void {
 		if (!$this->Categories->getConfig('enabled')) {
 			return;
 		}

@@ -6,7 +6,6 @@ namespace Awyiss\Command\Util;
 
 use Cake\Console\Arguments;
 use Cake\Utility\Inflector;
-use UnexpectedValueException;
 
 
 /**

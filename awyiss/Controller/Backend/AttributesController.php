@@ -90,11 +90,16 @@ class AttributesController extends Controller {
 			return !is_string($ax_table);
 		}));
 
+		$lb_translatableDisabled = in_array($lo_attribute->scope, array_merge($la_pageRoles, ['contents', 'menu_entries', 'pages']));
+		$lb_requiredDisabled = in_array($lo_attribute->scope, ['contents']);
+
 		$this->set([
 			'ao_attribute' => $lo_attribute,
 			'aa_availableFieldsets' => $la_availableFieldsets,
 			'aa_availableInputTypes' => $this->Attributes->getAvailableInputTypes(),
 			'aa_pageRoles' => $la_pageRoles,
+			'ab_translatableDisabled' => $lb_translatableDisabled,
+			'ab_requiredDisabled' => $lb_requiredDisabled,
 		]);
 	}
 
@@ -128,11 +133,16 @@ class AttributesController extends Controller {
 			return !is_string($ax_table);
 		}));
 
+		$lb_translatableDisabled = in_array($lo_attribute->scope, array_merge($la_pageRoles, ['contents', 'menu_entries', 'pages']));
+		$lb_requiredDisabled = in_array($lo_attribute->scope, ['contents']);
+
 		$this->set([
 			'ao_attribute' => $lo_attribute,
 			'aa_availableFieldsets' => $la_availableFieldsets,
 			'aa_availableInputTypes' => $this->Attributes->getAvailableInputTypes(),
 			'aa_pageRoles' => $la_pageRoles,
+			'ab_translatableDisabled' => $lb_translatableDisabled,
+			'ab_requiredDisabled' => $lb_requiredDisabled,
 		]);
 	}
 

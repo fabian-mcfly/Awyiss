@@ -10,22 +10,22 @@
 }) }}
 
 /**
-* {{ name }} Model
-*
-* @property \Awyiss\Model\Table\LanguagesTable&\Awyiss\ORM\Association\BelongsTo $Languages
-* @property \Awyiss\Model\Table\PageRolesTable&\Awyiss\ORM\Association\BelongsTo $PageRoles
-* @property \Awyiss\Model\Table\PageTemplatesTable&\Awyiss\ORM\Association\BelongsTo $PageTemplates
-* @property \{{ namespace }}\Model\Table\{{ name }}Table&\Awyiss\ORM\Association\HasMany $Duplicating{{ name }}
-* @property \{{ namespace }}\Model\Table\{{ name }}Table&\Awyiss\ORM\Association\BelongsTo $DuplicateOf{{ name }}
-* @property \{{ namespace }}\Model\Table\{{ name }}Table&\Awyiss\ORM\Association\BelongsTo $Parent{{ name }}
-* @property \{{ namespace }}\Model\Table\{{ name }}Table&\Awyiss\ORM\Association\HasMany $Child{{ name }}
-* @property \Awyiss\Model\Table\ContentsTable&\Awyiss\ORM\Association\HasMany $Contents
-* @method \{{ namespace }}\Model\Entity\{{ name|singularize }} newDefaultEntity(array $aa_additionalData = [], array $aa_options = [])
-* @method \Cake\Collection\CollectionInterface|null getNestedChildren(EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
-* @method \Cake\Collection\CollectionInterface|null getChildren(EntityInterface $ao_entity, array $aa_options = [])
-* @method \{{ namespace }}\Model\Entity\{{ name|singularize }} getParent(EntityInterface $ao_entity, array $aa_options = [])
-* @method \Cake\Collection\CollectionInterface|null getParents(EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
-*/
+ * {{ name }} Model
+ *
+ * @property \Awyiss\Model\Table\LanguagesTable&\Awyiss\ORM\Association\BelongsTo $Languages
+ * @property \Awyiss\Model\Table\PageRolesTable&\Awyiss\ORM\Association\BelongsTo $PageRoles
+ * @property \Awyiss\Model\Table\PageTemplatesTable&\Awyiss\ORM\Association\BelongsTo $PageTemplates
+ * @property \{{ namespace }}\Model\Table\{{ name }}Table&\Awyiss\ORM\Association\HasMany $Duplicating{{ name }}
+ * @property \{{ namespace }}\Model\Table\{{ name }}Table&\Awyiss\ORM\Association\BelongsTo $DuplicateOf{{ name }}
+ * @property \{{ namespace }}\Model\Table\{{ name }}Table&\Awyiss\ORM\Association\BelongsTo $Parent{{ name }}
+ * @property \{{ namespace }}\Model\Table\{{ name }}Table&\Awyiss\ORM\Association\HasMany $Child{{ name }}
+ * @property \Awyiss\Model\Table\ContentsTable&\Awyiss\ORM\Association\HasMany $Contents
+ * @method \{{ namespace }}\Model\Entity\{{ name|singularize }} newDefaultEntity(array $aa_additionalData = [], array $aa_options = [])
+ * @method \Cake\Collection\CollectionInterface|null getNestedChildren(EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
+ * @method \Cake\Collection\CollectionInterface|null getChildren(EntityInterface $ao_entity, array $aa_options = [])
+ * @method \{{ namespace }}\Model\Entity\{{ name|singularize }} getParent(EntityInterface $ao_entity, array $aa_options = [])
+ * @method \Cake\Collection\CollectionInterface|null getParents(EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
+ */
 class {{ name }}Table extends PagesTable {
 {% set userConstants = fileBuilder.classBuilder.userConstants([]) %}
 {% if userConstants %}

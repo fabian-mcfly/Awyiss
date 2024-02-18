@@ -347,7 +347,7 @@ class AttributesTable extends Table {
 		}));
 
 		//Contents, Menu Entries and all types of pages don't need to have translatable attributes since they all are translations themselves
-		if (in_array($ao_entity->scope, array_merge(['contents', 'menu_entries', 'pages'], $la_pageRoles))) {
+		if (in_array($ao_entity->scope, array_merge($la_pageRoles, ['contents', 'menu_entries', 'pages']))) {
 			$ao_entity->translatable = false;
 		}
 	}
@@ -385,43 +385,48 @@ class AttributesTable extends Table {
 	 * @throws \ReflectionException
 	 */
 	public function getAvailableScopes(): array {
-		if (!isset($this->attributeScopes)) {
-			$this->attributeScopes = [];
-
-			$la_paths = [
-				'\\' . CUSTOM_NAMESPACE . '\Model\Table\\' => implode(DS, [ROOT, CUSTOM_DIR, 'Model', 'Table', '*Table.php',]),
-				'\Awyiss\Model\Table\\' => implode(DS, [ROOT, APP_DIR, 'Model', 'Table', '*Table.php']),
-			];
-
-			//Traverse both namespaces
-			foreach ($la_paths as $ls_namespace => $ls_path) {
-				//Look for files with name "*Table.php"
-				foreach (glob($ls_path) as $ls_filePath) {
-					$ls_tableName = substr($ls_filePath, strrpos($ls_filePath, DS) + 1, -4);
-					/** @var Table::class $ls_tableClass */
-					$ls_tableClass = $ls_namespace . $ls_tableName;
-
-					//If an entry exists or if the table does not allow attributes, skip it
-					if (isset($this->attributeScopes[ $ls_tableClass::TABLE ]) || !$ls_tableClass::ATTRIBUTABLE) {
-						continue;
-					}
-
-					//If the given table is not a subclass of \Awyiss\Model\Table, skip it
-					$lo_reflection = new ReflectionClass($ls_tableClass);
-					if (!$lo_reflection->isSubclassOf(Table::class)) {
-						continue;
-					}
-
-					$this->attributeScopes[ $ls_tableClass::TABLE ] = $ls_tableClass;
-				}
-			}
+		if (isset($this->attributeScopes)) {
+			return $this->attributeScopes;
 		}
 
+		$this->attributeScopes = [];
+
+		$la_paths = [
+			'\\' . CUSTOM_NAMESPACE . '\Model\Table\\' => implode(DS, [ROOT, CUSTOM_DIR, 'Model', 'Table', '*Table.php',]),
+			'\Awyiss\Model\Table\\' => implode(DS, [ROOT, APP_DIR, 'Model', 'Table', '*Table.php']),
+		];
+
+		//Traverse both namespaces
+		foreach ($la_paths as $ls_namespace => $ls_path) {
+			//Look for files with name "*Table.php"
+			foreach (glob($ls_path) as $ls_filePath) {
+				$ls_tableName = substr($ls_filePath, strrpos($ls_filePath, DS) + 1, -4);
+
+				if ($ls_tableName === 'GenericDatatablesTable') {
+					continue;
+				}
+
+				/** @var Table::class $ls_tableClass */
+				$ls_tableClass = $ls_namespace . $ls_tableName;
+
+				//If an entry exists or if the table does not allow attributes, skip it
+				if (isset($this->attributeScopes[ $ls_tableClass::TABLE ]) || !$ls_tableClass::ATTRIBUTABLE) {
+					continue;
+				}
+
+				//If the given table is not a subclass of \Awyiss\Model\Table, skip it
+				$lo_reflection = new ReflectionClass($ls_tableClass);
+				if (!$lo_reflection->isSubclassOf(Table::class)) {
+					continue;
+				}
+
+				$this->attributeScopes[ $ls_tableClass::TABLE ] = $ls_tableClass;
+			}
+		}
 
 		//Get all page roles because we want them to have attributes too
 		/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $ls_pageRoleEnum */
 		$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
-
 		/** @var \Awyiss\Model\Table\PageRolesTable $lo_table */
 		foreach ($ls_pageRoleEnum::cases() as $le_pageRole) {
 			$ls_identifier = Inflector::pluralize(Inflector::underscore($le_pageRole->name));

@@ -145,13 +145,11 @@ class PageRolesTable extends Table {
 					return __d($this->getI18nDomain(), 'error_identifier_unchanged');
 				}
 
-				$ls_identifier = Inflector::underscore($ao_entity->identifier);
-
 				if (
 					$ao_entity->isDirty('identifier') &&
 					(
-						in_array($ls_identifier, $this->blocklistedIdentifiers) ||
-						App::className(Inflector::camelize(Inflector::pluralize($ls_identifier)), 'Controller/Backend', 'Controller')
+						in_array($ao_entity->identifier, $this->blocklistedIdentifiers) ||
+						App::className(Inflector::camelize(Inflector::pluralize($ao_entity->identifier)), 'Controller/Backend', 'Controller')
 					)
 				) {
 					return __dfx($this->getI18nDomain(), 'validation', 'page_role', 'error_identifier_allowed');

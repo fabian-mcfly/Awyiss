@@ -6,10 +6,10 @@
 }) }}
 
 /**
-* {{ name }} Model
-*
-* @method \{{ namespace }}\Model\Entity\{{ name|singularize }} newDefaultEntity(array $aa_additionalData = [], array $aa_options = [])
-*/
+ * {{ name }} Model
+ *
+ * @method \{{ namespace }}\Model\Entity\{{ name|singularize }} newDefaultEntity(array $aa_additionalData = [], array $aa_options = [])
+ */
 class {{ name }}Table extends Table{{ fileBuilder.classBuilder.implements ? ' implements ' ~ fileBuilder.classBuilder.implements|join(', ') : '' }} {
 {% set userConstants = fileBuilder.classBuilder.userConstants([]) %}
 {% if userConstants.ATTRIBUTABLE is not defined %}
@@ -36,12 +36,9 @@ class {{ name }}Table extends Table{{ fileBuilder.classBuilder.implements ? ' im
 	/**
 	 * @inheritDoc
 	 */
-	public function initialize (array $aa_config): void {
+	public function initialize(array $aa_config): void {
 		parent::initialize($aa_config);
-{% if displayField != 'id' %}
-		$this->setDisplayField({{ (displayField is iterable ? Bake.exportArray(displayField) : Bake.exportVar(displayField))|raw }});
 
-{% endif %}
 {%- if primaryKey %}
 	{%- if primaryKey is iterable and primaryKey|length > 1 %}
 		$this->setPrimaryKey({{ Bake.exportArray(primaryKey)|raw }});
@@ -57,7 +54,7 @@ class {{ name }}Table extends Table{{ fileBuilder.classBuilder.implements ? ' im
 {% endif %}
 
 {%- for behavior, behaviorData in behaviors %}
-	$this->addBehavior('{{ behavior }}'{{ (behaviorData ? (", " ~ Bake.exportArray(behaviorData, 2)|raw ~ '') : '')|raw }});
+		$this->addBehavior('{{ behavior }}'{{ (behaviorData ? (", " ~ Bake.exportArray(behaviorData, 2)|raw ~ '') : '')|raw }});
 {% endfor %}
 
 {%- if associations.belongsTo or associations.hasMany or associations.belongsToMany %}
@@ -65,16 +62,18 @@ class {{ name }}Table extends Table{{ fileBuilder.classBuilder.implements ? ' im
 {% endif %}
 
 {%- for type, assocs in associations %}
-	{%- for assoc in assocs %}
-		{%- set assocData = [] %}
-		{%- for key, val in assoc %}
-			{%- if key is not same as('alias') %}
-				{%- set assocData = assocData|merge({(key): val}) %}
-			{%- endif %}
-		{%- endfor %}
+{%- for assoc in assocs %}
+{% if assoc.foreignKey != 'parentId' %}
+{%- set assocData = [] %}
+{%- for key, val in assoc %}
+{%- if key is not same as('alias') %}
+{%- set assocData = assocData|merge({(key): val}) %}
+{%- endif %}
+{%- endfor %}
 		$this->{{ type }}('{{ assoc.alias }}', {{ Bake.exportArray(assocData, 2)|raw }});
-		{{- "\n" }}
-	{%- endfor %}
+{{- "\n" }}
+{%- endif %}
+{%- endfor %}
 {% endfor %}
 	}
 {{- "\n" }}
@@ -88,12 +87,10 @@ class {{ name }}Table extends Table{{ fileBuilder.classBuilder.implements ? ' im
 	 *
 	 * @param \Cake\Validation\Validator $ao_validator The validator that can be modified to
 	 * add some rules to it.
-	 *
 	 * @return \Cake\Validation\Validator
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function validationDefault (Validator $ao_validator): Validator {
+	public function validationDefault(Validator $ao_validator): Validator {
 		parent::validationDefault($ao_validator);
 
 {% for field, rules in validation %}
@@ -121,19 +118,19 @@ class {{ name }}Table extends Table{{ fileBuilder.classBuilder.implements ? ' im
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 *
 	 * @param \Cake\ORM\RulesChecker $ao_rules The rules object to be modified.
-	 *
 	 * @param \Awyiss\ORM\RulesChecker|\Cake\ORM\RulesChecker $ao_rules The rules object to be modified.
-	 *
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildRules (RulesChecker|\Cake\ORM\RulesChecker $ao_rules): RulesChecker {
+	public function buildRules(RulesChecker|\Cake\ORM\RulesChecker $ao_rules): RulesChecker {
 {% for field, rule in rulesChecker %}
 {% set fields = rule.fields is defined ? Bake.exportArray(rule.fields) : Bake.exportVar(field) %}
 {% set options = '' %}
 {% for optionName, optionValue in rule.options %}
-	{%~ set options = (loop.first ? '[' : options) ~ "'#{optionName}' => " ~ Bake.exportVar(optionValue) ~ (loop.last ? ']' : ', ') %}
+{%~ set options = (loop.first ? '[' : options) ~ "'#{optionName}' => " ~ Bake.exportVar(optionValue) ~ (loop.last ? ']' : ', ') %}
 {% endfor %}
+{% if rule.fields[0] != 'parentId' %}
 		$ao_rules->add($ao_rules->{{ rule.name }}({{ fields|raw }}{{ (rule.extra|default ? ", '#{rule.extra}'" : '')|raw }}{{ (options ? ', ' ~ options : '')|raw }}), 'valid{{ rule.fields[0]|camelize }}', ['errorField' => '{{ rule.fields[0]|variable }}']);
+{% endif %}
 {% endfor %}
 
 		return $ao_rules;

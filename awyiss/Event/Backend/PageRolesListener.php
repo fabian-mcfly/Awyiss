@@ -49,6 +49,7 @@ class PageRolesListener implements EventListenerInterface {
 	 * @return void
 	 */
 	public function beforeSave(Event $ao_event, PageRole $ao_entity): void {
+		//If the page role has an attributes table and there is a table change in progress, stop the event.
 		$ls_attributesTable = 'attributes_' . Inflector::tableize($ao_entity->identifier);
 		$la_tables = ConnectionManager::get('default')->getSchemaCollection()->listTables();
 		if (in_array($ls_attributesTable, $la_tables)) {
@@ -81,9 +82,9 @@ class PageRolesListener implements EventListenerInterface {
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function afterSaveCommit(Event $ao_event, PageRole $ao_entity): void {
-		$this->createPageRoleEnum();
+		$this->bakePageRoleEnum();
 
-		$this->createPageRoleModel($ao_entity);
+		$this->bakePageRoleModel($ao_entity);
 	}
 
 
@@ -112,7 +113,7 @@ class PageRolesListener implements EventListenerInterface {
 	public function afterSoftDeleteCommit(Event $ao_event, PageRole $ao_entity): void {
 		$lo_tableLocator = FactoryLocator::get('Table');
 
-		$this->createPageRoleEnum();
+		$this->bakePageRoleEnum();
 
 		/** @var \Queue\Model\Table\QueuedJobsTable $lo_queue */
 		$lo_queue = $lo_tableLocator->get('Queue.QueuedJobs');
@@ -168,31 +169,12 @@ class PageRolesListener implements EventListenerInterface {
 
 
 	/**
-	 * @param PageRole $ao_entity
-	 * @return void
-	 */
-	protected function createBackendMenuEntries(PageRole $ao_entity): void {
-		if (!Configure::read('Awyiss.PageRoles.Backend.autoCreateMenuEntries') || !$ao_entity->isNew() || $ao_entity->identifier === 'page') {
-			return;
-		}
-
-		/** @var \Awyiss\Model\Table\BackendMenuEntriesTable $lo_menuEntriesTable */
-		$lo_menuEntriesTable = $this->fetchTable('BackendMenuEntries');
-
-		$ls_scope = Inflector::pluralize($ao_entity->identifier);
-		$ls_controller = Inflector::camelize($ls_scope);
-
-		$lo_menuEntriesTable->createEntries($ao_entity, $ls_controller, $ls_scope);
-	}
-
-
-	/**
-	 * After saving or deleting a page role item, we delete the cached constants file.
+	 * After saving or deleting a page role item, we delete the cached enum file.
 	 * It's easier and doesn't affect performance that much to recreate the file once.
 	 *
 	 * @return void
 	 */
-	protected function createPageRoleEnum(): void {
+	protected function bakePageRoleEnum(): void {
 		$la_pageRoles = [];
 		$lo_tableLocator = FactoryLocator::get('Table');
 
@@ -228,7 +210,7 @@ class PageRolesListener implements EventListenerInterface {
 	 * @param PageRole $ao_entity
 	 * @return void
 	 */
-	private function createPageRoleModel(PageRole $ao_entity): void {
+	private function bakePageRoleModel(PageRole $ao_entity): void {
 		if ($ao_entity->identifier === 'page' || !$ao_entity->isNew()) {
 			return;
 		}
@@ -271,5 +253,24 @@ class PageRolesListener implements EventListenerInterface {
 			'priority' => 1,
 			'reference' => 'system::create_page_role_model_' . $ao_entity->identifier,
 		]);
+	}
+
+
+	/**
+	 * @param PageRole $ao_entity
+	 * @return void
+	 */
+	protected function createBackendMenuEntries(PageRole $ao_entity): void {
+		if (!Configure::read('Awyiss.PageRoles.Backend.autoCreateMenuEntries') || !$ao_entity->isNew() || $ao_entity->identifier === 'page') {
+			return;
+		}
+
+		/** @var \Awyiss\Model\Table\BackendMenuEntriesTable $lo_menuEntriesTable */
+		$lo_menuEntriesTable = $this->fetchTable('BackendMenuEntries');
+
+		$ls_scope = Inflector::pluralize($ao_entity->identifier);
+		$ls_controller = Inflector::camelize($ls_scope);
+
+		$lo_menuEntriesTable->createEntries($ao_entity, $ls_controller, $ls_scope);
 	}
 }

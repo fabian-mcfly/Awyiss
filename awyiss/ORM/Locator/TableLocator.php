@@ -59,13 +59,10 @@ class TableLocator extends BaseTableLocator {
 
 
 	/**
-	 * {@inheritDoc}
-	 *
-	 * ---
-	 *
 	 * Reimplemented this method 1:1 from \Cake\ORM\Locator\TableLocator::_getClassName,
 	 * so it'll use \Awyiss\Core\App::className to find the class
 	 *
+	 * @inheritDoc
 	 * @param string $as_alias The alias name you want to get. Should be in CamelCase format.
 	 * @param array<string, mixed> $aa_options Table options array.
 	 * @return string|null

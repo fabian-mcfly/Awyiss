@@ -12,7 +12,7 @@ use Awyiss\Configuration\ConfigOptionType;
 
 
 /**
- * Provides all configuration options for the ContentTemplates scope
+ * Provides all configuration options for generic pages
  */
 class GenericPagesConfigOptions extends AbstractGenericConfigOptions {
 	use SystemOrderFieldsTrait;

@@ -48,22 +48,19 @@ class App extends BaseApp {
 
 
 		//No Plugin? Let's check if the class exists in the CUSTOM_NAMESPACE
-		$ls_base = str_replace('/', '\\', rtrim(CUSTOM_NAMESPACE, '\\'));
 		$ls_fullname = '\\' . str_replace('/', '\\', $as_type . '\\' . $ls_name) . $as_suffix;
-
-		if (static::_classExistsInBase($ls_fullname, $ls_base)) {
+		if (static::_classExistsInBase($ls_fullname, CUSTOM_NAMESPACE)) {
 			/** @var class-string */
-			return $ls_base . $ls_fullname;
+			return '\\' . CUSTOM_NAMESPACE . $ls_fullname;
 		}
 
 
 		//No class in the CUSTOM_NAMESPACE? It should be an Awyiss-class then.
-		$ls_base = str_replace('/', '\\', rtrim(Configure::read('App.namespace'), '\\'));
+		$ls_base = Configure::read('App.namespace');
 		$ls_fullname = '\\' . str_replace('/', '\\', $as_type . '\\' . $ls_name) . $as_suffix;
-
 		if (static::_classExistsInBase($ls_fullname, $ls_base)) {
 			/** @var class-string */
-			return $ls_base . $ls_fullname;
+			return '\\' . $ls_base . $ls_fullname;
 		}
 
 

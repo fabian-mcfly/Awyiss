@@ -43,11 +43,11 @@
 				{{ helper_Form_control('parent_id', {options: hashPrinter(ao_parentPages, 'label', 'id', '- ')}) }}
 			{% endblock %}
 
-			{% if localConfig('systemOrder.field', 'systemOrder') == 'systemOrder' %}
-				{% block formControlSystemOrder %}
+			{% block formControlSystemOrder %}
+				{% if localConfig('systemOrder.field', 'systemOrder') == 'systemOrder' %}
 					{{ helper_SystemOrder_control('system_order') }}
-				{% endblock %}
-			{% endif %}
+				{% endif %}
+			{% endblock %}
 
 			{% block formControlDuplicateOf %}
 				{{ helper_Form_control('duplicate_of', {disabled: [ao_page.id], options: ao_threadedPages.printer('label', 'id', '- ')}) }}

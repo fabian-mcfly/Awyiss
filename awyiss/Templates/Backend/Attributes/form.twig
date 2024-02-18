@@ -2,6 +2,10 @@
 @var ao_attribute \Awyiss\Model\Entity\Attribute
 @var aa_availableFieldsets array
 @var aa_availableInputTypes array
+@var aa_availableInputTypes array
+@var aa_availableInputTypes array
+@var ab_translatableDisabled bool
+@var ab_requiredDisabled bool
 @var _view \Awyiss\View\BackendView
 #}
 
@@ -19,11 +23,11 @@
 			{% endblock %}
 
 			{% block formControlTranslatable %}
-				{{ helper_Form_control('translatable', {disabled: ao_attribute.scope in aa_pageRoles|merge(['contents', 'menu_entries', 'pages'])}) }}
+				{{ helper_Form_control('translatable', {disabled: ab_translatableDisabled}) }}
 			{% endblock %}
 
 			{% block formControlRequired %}
-				{{ helper_Form_control('required', {disabled: ao_attribute.scope in ['contents']}) }}
+				{{ helper_Form_control('required', {disabled: ab_requiredDisabled}) }}
 			{% endblock %}
 
 			{% block formControlHasIndex %}

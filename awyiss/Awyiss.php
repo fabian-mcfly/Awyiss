@@ -19,7 +19,6 @@ use Cake\Database\Expression\QueryExpression;
 use Cake\Datasource\FactoryLocator;
 use Cake\Error\Middleware\ErrorHandlerMiddleware;
 use Cake\Event\Event;
-use Cake\Event\EventManager;
 use Cake\Event\EventManagerInterface;
 use Cake\Http\BaseApplication;
 use Cake\Http\ControllerFactoryInterface;
@@ -31,6 +30,7 @@ use Cake\Utility\Inflector;
 use Composer\Autoload\ClassLoader;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use UnexpectedValueException;
 
 
 /**
@@ -352,13 +352,10 @@ class Awyiss extends BaseApplication {
 		if ($as_frontendLanguage && $as_backendLanguage) {
 			$lo_query = $lo_configurationTable->find()->enableHydration(false);
 			$lo_query->where(function (QueryExpression $ao_exp) use ($as_frontendLanguage, $as_backendLanguage) {
-				//$lo_scopeNegated = $lo_query->newExpr()->and(['identifier NOT LIKE' => 'frontend.%'])->add(['identifier NOT LIKE' => 'backend.%']);
-
 				return $ao_exp->or([
 					['language_shortcode IS' => null],
 					$ao_exp->and([['realm' => Awyiss::REALM_BACKEND], ['language_shortcode' => $as_backendLanguage]]),
 					$ao_exp->and([['realm' => Awyiss::REALM_FRONTEND], ['language_shortcode' => $as_frontendLanguage]]),
-					//$ao_exp->and([$lo_scopeNegated, ['language_shortcode IS NOT' => null]]),
 				]);
 			});
 
@@ -371,7 +368,7 @@ class Awyiss extends BaseApplication {
 			]);
 		}
 		else {
-			dd('foobar', __FILE__, __LINE__);
+			throw new UnexpectedValueException(sprintf('Expected string values for frontend and backend language. `%s`/`%s` given', gettype($as_frontendLanguage), gettype($as_backendLanguage)));
 		}
 
 		$la_config = [];

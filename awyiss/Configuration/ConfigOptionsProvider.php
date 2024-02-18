@@ -56,7 +56,7 @@ class ConfigOptionsProvider {
 		if ($ab_returnLoaded) {
 			if (!static::$loadedAll) {
 				foreach (static::$configOptions as $ls_scope => $ls_configOptions) {
-					static::$loadedConfigOptions[ $ls_scope ] = static::loadConfigOptions($ls_scope);
+					static::$loadedConfigOptions[ $ls_scope ] = static::loadConfigOptions($ls_configOptions);
 				}
 
 				static::$loadedAll = true;
@@ -147,9 +147,6 @@ class ConfigOptionsProvider {
 			static::$loadedConfigOptions[ $ls_scope ] = $lx_configurationClass;
 		}
 
-		if ($ls_configurationClass::getScope() === 'GenericPages') {
-			static::$loadedConfigOptions[ $ls_scope ]->setPageRole($ls_scope);
-		}
 
 		return static::$loadedConfigOptions[ $ls_scope ];
 	}

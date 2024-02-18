@@ -12,7 +12,7 @@ use Awyiss\Authorization\Policy\AbstractGenericPolicy;
  *
  * It provides four `SimplePermission` for the identifiers 'read', 'create', 'update' and 'delete' (CRUD).
  *
- * It needs to provide non-static methods so itcan be used for multiple pages/page roles at the same time.
+ * It needs to provide non-static methods, so it can be used for multiple pages/page roles at the same time.
  *
  * @see \Awyiss\Authorization\PermissionOption\SimplePermissionOption
  */

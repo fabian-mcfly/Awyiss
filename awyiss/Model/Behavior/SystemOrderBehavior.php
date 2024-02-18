@@ -636,8 +636,10 @@ class SystemOrderBehavior extends Behavior {
 			});
 
 			$la_items = $lo_records->toList();
+		}
 
-			dd($la_items, __LINE__, __FILE__);
+		if (!$la_items) {
+			return;
 		}
 
 		//Save all found records, but skip the rules check, the audit and the system order behavior on those to avoid recursion.

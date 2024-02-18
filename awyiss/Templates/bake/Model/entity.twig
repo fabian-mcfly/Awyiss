@@ -49,7 +49,7 @@ class {{ name }} extends Entity{{ fileBuilder.classBuilder.implements ? ' implem
 	/**
 	 * Entity to be passed to the validation of attributes
 	 */
-	protected ?Entity $entity = NULL;
+	protected ?Entity $entity = null;
 {%- set generatedProperties = generatedProperties|merge(['entity']) %}
 {% if fieldMap %}
 {% set generatedProperties = generatedProperties|merge(['fieldMap']) %}

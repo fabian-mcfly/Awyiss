@@ -383,7 +383,7 @@ class NestBehavior extends Behavior {
 				]);
 			}
 
-			$lo_existsIn = $ao_rules->existsIn($la_foreignKeys, $lo_association);
+			$lo_existsIn = $ao_rules->existsIn($la_foreignKeys, $lo_association, ['errorField' => '_dummy']);
 
 			if ($ao_entity->isNew()) {
 				$lb_exists = $lo_existsIn($ao_entity, $aa_options);
@@ -399,7 +399,7 @@ class NestBehavior extends Behavior {
 			}
 
 			if (!$lb_exists) {
-				return __dfx($this->table()->getI18nDomain(), 'validation', 'menu_entries', 'error_valid_' . Inflector::underscore($this->getConfig('parent.foreignKey')));
+				return __df($this->table()->getI18nDomain(), 'validation', 'error_valid_' . Inflector::underscore($this->getConfig('parent.foreignKey')));
 			}
 
 			return true;

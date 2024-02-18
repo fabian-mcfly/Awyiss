@@ -268,9 +268,9 @@ return [
 
 
 	'Queue' => [
-		'defaultworkertimeout' => 600,
+		'defaultworkertimeout' => 120,
 		'maxworkers' => 3,
-		'workermaxruntime' => 300,
+		'workermaxruntime' => 600,
 	],
 
 

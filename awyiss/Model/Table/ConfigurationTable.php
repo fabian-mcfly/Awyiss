@@ -275,24 +275,8 @@ class ConfigurationTable extends Table {
 			}
 		}
 
-		//Get all page roles from the database because we want them to have policies too
-		$lo_pageRoles = $this->fetchTable('PageRoles')->find('active')->where(['identifier !=' => 'page'])->all();
-
-		/** @var \Awyiss\Model\Entity\PageRole $lo_pageRole */
-		foreach ($lo_pageRoles as $lo_pageRole) {
-			$ls_scope = Inflector::tableize($lo_pageRole->identifier);
-
-			/*
-			 * If there's no policy for the identifier yet, we add an instance of GenericPagesPolicy for the page role.
-			 * This way, a custom policy for every page role can be set, but it'll fall back
-			 * to a generic CRUD policy
-			 */
-			if (!isset($this->configScopes[ $ls_scope ]) && $lo_identity?->scopeIsAccessible($ls_scope, [], 'configure')) {
-				$this->configScopes[ $ls_scope ] = GenericPagesConfigOptions::class;
-			}
-		}
-
 		ksort($this->configScopes);
+
 
 		return $this->configScopes;
 	}

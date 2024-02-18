@@ -37,9 +37,21 @@ class GeneralEventsListener implements EventListenerInterface {
 	 */
 	public function implementedEvents(): array {
 		return [
-			'Awyiss.setRealm' => 'awyissRealmSet',
+			'Awyiss.getRealm' => 'awyissGetRealm',
+			'Awyiss.setRealm' => 'awyissSetRealm',
 			'Model.initialize' => 'modelInitialize',
 		];
+	}
+
+
+	/**
+	 * @param Event $ao_event
+	 * @return string
+	 * @throws \ReflectionException
+	 * @noinspection PhpUnused
+	 */
+	public function awyissGetRealm(Event $ao_event): string {
+		return $this->realm;
 	}
 
 
@@ -49,7 +61,7 @@ class GeneralEventsListener implements EventListenerInterface {
 	 * @throws \ReflectionException
 	 * @noinspection PhpUnused
 	 */
-	public function awyissRealmSet(Event $ao_event): void {
+	public function awyissSetRealm(Event $ao_event): void {
 		$this->realm = $ao_event->getData('realm');
 
 		if ($this->initializedModels) {

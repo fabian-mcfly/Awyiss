@@ -1,12 +1,16 @@
+{{ '{#' }}
+@var ao_{{ singularVar }} {{ entityClass }}
+@var as_languageRealm string
+@var _view \{{ namespace }}\View\BackendView
+{{ '#}' }}
+
 {%- if associations.BelongsToMany is defined %}
 {%- for assocName, assocData in associations.BelongsToMany %}
 		{% verbatim %}{{ helper_Categories_control('{% endverbatim %}{{ assocData.property }}{% verbatim %}._ids', {options: ao_{% endverbatim %}{{ assocData.variable }}{% verbatim %}}) }}{% endverbatim %}
 
 {%- endfor %}
 {% endif %}
-{% verbatim %}
-
-{% block fieldsetPresentation %}
+{% verbatim %}{% block fieldsetPresentation %}
 	<fieldset class="Fieldset-Presentation">
 		<legend>{{ __('fieldset_presentation') }}</legend>
 
@@ -33,45 +37,54 @@
 {% block fieldsetGeneral %}
 	<fieldset class="Fieldset-General">
 		<legend>{{ __('fieldset_general') }}</legend>
-
 {% endverbatim %}
 {% for field in fields %}
-{%- if field not in ['system_order', 'deleted', 'created_on', 'created_by', 'changed_on', 'changed_by', 'deleted_on', 'deleted_by']|merge(primaryKey) %}
-{%- verbatim %}{% block formControl_{% endverbatim %}{{ field[:1]|upper ~ field[1:] }}{% verbatim %} %}
+{%- if field not in ['deleted', 'created_on', 'created_by', 'changed_on', 'changed_by', 'deleted_on', 'deleted_by']|merge(primaryKey) %}
+		{% verbatim %}{% block formControl{% endverbatim %}{{ field|camelize }}{% verbatim %} %}
 {% endverbatim %}
 
 {%- if keyFields[field] is defined %}
-	{%- set fieldData = Bake.columnData(field, schema) %}
-	{%- if fieldData.null %}
+{%- set fieldData = Bake.columnData(field, schema) %}
+{%- if fieldData.null %}
 			{% verbatim %}{{ helper_Form_control('{% endverbatim %}{{ field }}{% verbatim %}', {options: ao_{% endverbatim %}{{ keyFields[field] }}{% verbatim %}, empty: true}) }}{% endverbatim %}
-		{{- "\n" }}
-	{%- else %}
+{{- "\n" }}
+{%- else %}
 			{% verbatim %}{{ helper_Form_control('{% endverbatim %}{{ field }}{% verbatim %}', {options: ao_{% endverbatim %}{{ keyFields[field] }}{% verbatim %}}) }}{% endverbatim %}
-			{{- "\n" }}
-	{%- endif %}
-{%- elseif field == 'parent_id' %}
-	{% verbatim %}{{ helper_Categories_control('{% endverbatim %}{{ field }}{% verbatim %}') }}{% endverbatim %}
-		{{- "\n" }}
-{%- elseif field == 'system_order' %}
-	{% verbatim %}{{ helper_SystemOrder_control('{% endverbatim %}{{ field }}{% verbatim %}', {entity: ao_{% endverbatim %}{{ singularVar }}{% verbatim %}}) }}{% endverbatim %}
-		{{- "\n" }}
-{%- elseif field not in ['deleted', 'created_on', 'created_by', 'changed_on', 'changed_by', 'deleted_on', 'deleted_by'] %}
-	{%- set fieldData = Bake.columnData(field, schema) %}
-	{%- if fieldData.type in ['date', 'datetime', 'time'] and fieldData.null %}
-	{% verbatim %}{{ helper_Form_control('{% endverbatim %}{{ field }}{% verbatim %}', {empty: true}) }}{% endverbatim %}
-		{{- "\n" }}
-	{%- else %}
-	{% verbatim %}{{ helper_Form_control('{% endverbatim %}{{ field }}{% verbatim %}') }}{% endverbatim %}
-		{{- "\n" }}
-	{%- endif %}
+{{- "\n" }}
 {%- endif %}
-{% verbatim %}{% endblock %}
+{%- elseif field == 'parent_id' %}
+			{% verbatim %}{% if (as_categoriesIdentifier is defined) %}
+				{{ helper_Categories_control(as_categoriesIdentifier) }}
+			{% endif %}
+
+			{% if (ao_parent{% endverbatim %}{{ pluralVar|camelize }}{% verbatim %} is not null) %}
+				{{ helper_Form_control('parent_id', {options: hashPrinter(ao_parent{% endverbatim %}{{ pluralVar|camelize }}{% verbatim %}, 'label', 'id', '- ')}) }}
+			{% endif %}{% endverbatim %}
+{{- "\n" }}
+{%- elseif field == 'system_order' %}
+			{% verbatim %}{% if localConfig('systemOrder.field', 'systemOrder') == 'systemOrder' %}
+				{{ helper_SystemOrder_control('system_order') }}
+			{% endif %}{% endverbatim %}
+{{- "\n" }}
+{%- elseif field == 'languages_shortcode' %}
+			{% verbatim %}{{ helper_Locale_control('language_shortcode', {languageRealm: as_languageRealm}) }}{% endverbatim %}
+{{- "\n" }}
+{%- elseif field not in ['deleted', 'created_on', 'created_by', 'changed_on', 'changed_by', 'deleted_on', 'deleted_by'] %}
+{%- set fieldData = Bake.columnData(field, schema) %}
+{%- if fieldData.type in ['date', 'datetime', 'time'] and fieldData.null %}
+			{% verbatim %}{{ helper_Form_control('{% endverbatim %}{{ field }}{% verbatim %}', {empty: true}) }}{% endverbatim %}
+{{- "\n" }}
+{%- else %}
+			{% verbatim %}{{ helper_Form_control('{% endverbatim %}{{ field }}{% verbatim %}') }}{% endverbatim %}
+{{- "\n" }}
+{%- endif %}
+{%- endif %}
+		{% verbatim %}{% endblock %}
 
 {% endverbatim -%}
 {%- endif %}
 {%- endfor %}
 {% verbatim %}
-
 		{% block fieldsetGeneralInner %}
 			{% block fieldsetGeneralAttributes %}
 				{{ helper_Attributes_allControls('general') }}
@@ -81,7 +94,7 @@
 {% endblock %}
 
 {% block fieldsetContent %}
-	<fieldset class="Fieldset-Conten">
+	<fieldset class="Fieldset-Content">
 		<legend>{{ __('fieldset_content') }}</legend>
 
 		{% block fieldsetContentInner %}
@@ -116,5 +129,5 @@
 	</fieldset>
 {% endblock %}
 
-{{- helper_Form_hidden('reload_form', {val: 0}) }}
+{{ helper_Form_hidden('reload_form', {val: 0}) }}
 {% endverbatim %}

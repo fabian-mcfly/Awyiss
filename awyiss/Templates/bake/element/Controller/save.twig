@@ -26,7 +26,7 @@
 			}
 
 			$this->Flash->error(__($as_method . '_failed'));
-			foreach ($ao_{{ singularName }}->getError('_general') AS $ls_error) {
+			foreach ($ao_{{ singularName }}->getError('_general') as $ls_error) {
 				$this->Flash->error($ls_error);
 			}
 		}
