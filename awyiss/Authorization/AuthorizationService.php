@@ -9,7 +9,6 @@ use Awyiss\Authorization\Policy\AbstractGenericPolicy;
 use Awyiss\Authorization\Policy\Backend\GenericPagesPolicy;
 use Awyiss\Authorization\Policy\PolicyInterface;
 use Awyiss\Core\App;
-use Cake\Datasource\FactoryLocator;
 use Cake\Utility\Inflector;
 use Cake\Utility\Text;
 use ReflectionClass;
@@ -78,11 +77,8 @@ class AuthorizationService implements AuthorizationServiceInterface {
 	public function getPolicies(?string $as_realm = null): array {
 		$ls_realm = $as_realm ?: $this->realm;
 
-		//if (!isset($this->policies[ $ls_realm ])) {
-		$this->policies[ $ls_realm ] = $this->findPolicy('*', $ls_realm);
+		$this->findPolicy('*', $ls_realm);
 
-
-		//}
 
 		return $this->policies[ $ls_realm ] ?? [];
 	}
@@ -101,7 +97,7 @@ class AuthorizationService implements AuthorizationServiceInterface {
 		}
 
 		if (empty($this->policies[ $ls_realm ][ $ls_scope ])) {
-			$this->policies[ $ls_realm ] += $this->findPolicy($ls_scope, $ls_realm);
+			$this->findPolicy($ls_scope, $ls_realm);
 		}
 
 		return $this->policies[ $ls_realm ][ $ls_scope ] ?? null;
@@ -114,19 +110,20 @@ class AuthorizationService implements AuthorizationServiceInterface {
 	 * @return array<string, \Awyiss\Authorization\Policy\AbstractGenericPolicy|class-string<\Awyiss\Authorization\Policy\PolicyInterface>>
 	 * @throws \ReflectionException
 	 */
-	protected function findPolicy(string $as_scope, string $as_realm): array {
-		$la_policies = [];
-
+	protected function findPolicy(string $as_scope, string $as_realm): void {
 		$ls_scope = $as_scope;
 		if ($ls_scope !== '*') {
 			$ls_scope = Inflector::camelize($ls_scope);
 		}
 
 		$la_paths = [
-			'\\' . CUSTOM_NAMESPACE . '\Authorization\Policy\\' . $as_realm . '\\' => implode(
-				DS,
-				[ROOT, CUSTOM_DIR, 'Authorization', 'Policy', $as_realm, $ls_scope . 'Policy.php',]
-			),
+			'\\' . CUSTOM_NAMESPACE . '\Authorization\Policy\\' . $as_realm . '\\' => implode(DS, [
+				ROOT, CUSTOM_DIR,
+				'Authorization',
+				'Policy',
+				$as_realm,
+				$ls_scope . 'Policy.php',
+			]),
 			'\Awyiss\Authorization\Policy\\' . $as_realm . '\\' => implode(DS, [ROOT, APP_DIR, 'Authorization', 'Policy', $as_realm, $ls_scope . 'Policy.php']),
 		];
 
@@ -141,7 +138,7 @@ class AuthorizationService implements AuthorizationServiceInterface {
 				/** @var PolicyInterface $ls_policyClass */
 				$ls_policyScope = $ls_policyClass::getScope();
 
-				if (isset($la_policies[ $ls_policyScope ])) {
+				if (isset($this->policies[ $as_realm ][ $ls_policyScope ])) {
 					continue;
 				}
 
@@ -151,36 +148,22 @@ class AuthorizationService implements AuthorizationServiceInterface {
 					throw new RuntimeException(sprintf('The provided Policy class `%s` does not implement the `%s` interface.', $ls_policyClass, PolicyInterface::class));
 				}
 
-				$la_policies[ $ls_policyScope ] = $ls_policyClass;
+				$this->policies[ $as_realm ][ $ls_policyScope ] = $ls_policyClass;
 			}
 		}
 
 
-		if ($as_scope === '*') {
-			/** @var \Awyiss\Model\Table\PageRolesTable $lo_pageRolesTable */
-			$lo_pageRolesTable = FactoryLocator::get('Table')->get('PageRoles');
-			/** @var \Awyiss\Model\Entity\PageRole $lo_pageRole */
-			foreach ($lo_pageRolesTable->find()->where(['identifier !=' => 'page'])->select('identifier') as $lo_pageRole) {
-				$ls_policyScope = static::sanitizeScope($lo_pageRole->identifier);
+		/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $ls_pageRoleEnum */
+		$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
+		foreach ($ls_pageRoleEnum::cases() as $le_pageRole) {
+			$ls_policyScope = static::sanitizeScope($le_pageRole->name);
 
-				if (isset($la_configurations[ $ls_policyScope ])) {
-					continue;
-				}
-
-				$la_policies[ $ls_policyScope ] = new GenericPagesPolicy($ls_policyScope);
+			if (isset($this->policies[ $as_realm ][ $ls_policyScope ])) {
+				continue;
 			}
+
+			$this->policies[ $as_realm ][ $ls_policyScope ] = new GenericPagesPolicy($ls_policyScope);
 		}
-		elseif (!isset($la_policies[ $as_scope ])) {
-			/** @var class-string<\Awyiss\Database\Type\PageRoleEnumInterface> $ls_pageRoleEnum */
-			$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
-
-			if ($ls_pageRoleEnum::tryFromName($as_scope)) {
-				$la_policies[ $as_scope ] = new GenericPagesPolicy($as_scope);
-			}
-		}
-
-
-		return $la_policies;
 	}
 
 

@@ -7,7 +7,6 @@ namespace Awyiss\Configuration;
 use Awyiss\Configuration\ConfigOptions\GenericPagesConfigOptions;
 use Awyiss\Core\App;
 use Awyiss\Model\Enum\PageRoleEnumInterface;
-use Cake\Datasource\FactoryLocator;
 use Cake\Utility\Inflector;
 use Cake\Utility\Text;
 use ReflectionClass;
@@ -19,11 +18,11 @@ use RuntimeException;
  */
 class ConfigOptionsProvider {
 	/**
-	 * @var array<string, class-string<ConfigOptionsInterface>>
+	 * @var array<string, class-string<\Awyiss\Configuration\ConfigOptionsInterface>|\Awyiss\Model\Enum\PageRole>
 	 */
 	protected static array $configOptions = [];
 	/**
-	 * @var array<string, ConfigOptionsInterface|GenericPagesConfigOptions>
+	 * @var array<string, \Awyiss\Configuration\ConfigOptionsInterface|\Awyiss\Model\Enum\PageRole>
 	 */
 	protected static array $loadedConfigOptions = [];
 	/**
@@ -44,20 +43,20 @@ class ConfigOptionsProvider {
 	/**
 	 * Returns all found ConfigOptions classes in both the Awyiss and the custom namespace
 	 *
-	 * @return array<string, class-string<ConfigOptionsInterface>>
+	 * @return array<string, class-string<\Awyiss\Configuration\ConfigOptionsInterface>>
 	 * @throws \ReflectionException
 	 * @noinspection PhpUnused
 	 */
 	public static function getConfigOptionsFiles(bool $ab_returnLoaded = false): array {
 		if (!static::$foundAll) {
-			static::$configOptions = static::findConfigOptionsFile('*');
+			static::findConfigOptionsFile('*');
 			static::$foundAll = true;
 		}
 
 		if ($ab_returnLoaded) {
 			if (!static::$loadedAll) {
 				foreach (static::$configOptions as $ls_scope => $ls_configOptions) {
-					static::$loadedConfigOptions[ $ls_scope ] = static::loadConfigOptions($ls_configOptions);
+					static::$loadedConfigOptions[ $ls_scope ] = static::loadConfigOptions($ls_scope);
 				}
 
 				static::$loadedAll = true;
@@ -77,20 +76,23 @@ class ConfigOptionsProvider {
 	 *
 	 * @param string $as_scope
 	 * @param bool $ab_returnLoaded
-	 * @return ConfigOptionsInterface|string|null
+	 * @return \Awyiss\Configuration\ConfigOptionsInterface|\Awyiss\Model\Enum\PageRoleEnumInterface|string|null
 	 * @throws \ReflectionException
 	 */
-	public static function getConfigOptionsFile(string $as_scope, bool $ab_returnLoaded = false): string|ConfigOptionsInterface|null {
+	public static function getConfigOptionsFile(string $as_scope, bool $ab_returnLoaded = false): ConfigOptionsInterface|PageRoleEnumInterface|string|null {
 		$ls_scope = static::sanitizeScope($as_scope);
 
-		if (empty(static::$configOptions[ $ls_scope ])) {
-			static::$configOptions += static::findConfigOptionsFile($ls_scope);
+		if (!isset(static::$configOptions[ $ls_scope ])) {
+			static::findConfigOptionsFile($ls_scope);
 		}
 
 		if ($ab_returnLoaded) {
-			return static::$loadedConfigOptions[ $ls_scope ] ?? null;
-		}
+			if (!isset(static::$loadedConfigOptions[ $ls_scope ])) {
+				static::$loadedConfigOptions[ $ls_scope ] = static::loadConfigOptions($ls_scope);
+			}
 
+			return static::$loadedConfigOptions[ $ls_scope ] ?: null;
+		}
 
 		return static::$configOptions[ $ls_scope ] ?? null;
 	}
@@ -99,15 +101,15 @@ class ConfigOptionsProvider {
 	/**
 	 * Returns an instance of a ConfigOptions class with the provided scope or null
 	 *
-	 * @param class-string<ConfigOptionsInterface>|string $as_configOptions
+	 * @param class-string<ConfigOptionsInterface>|string $as_configOptionScope
 	 * @return ConfigOptionsInterface|null
 	 * @throws \ReflectionException
 	 */
-	public static function loadConfigOptions(string $as_configOptions): ?ConfigOptionsInterface {
-		if (str_contains($as_configOptions, '\\')) {
-			if (class_exists($as_configOptions)) {
-				$ls_scope = $as_configOptions::getScope();
-				$ls_configurationClass = $as_configOptions;
+	public static function loadConfigOptions(string $as_configOptionScope): ?ConfigOptionsInterface {
+		if (str_contains($as_configOptionScope, '\\')) {
+			if (class_exists($as_configOptionScope)) {
+				$ls_scope = $as_configOptionScope::getScope();
+				$lx_configurationClass = $as_configOptionScope;
 
 				if (array_key_exists($ls_scope, static::$loadedConfigOptions)) {
 					return static::$loadedConfigOptions[ $ls_scope ];
@@ -118,28 +120,32 @@ class ConfigOptionsProvider {
 			}
 		}
 		else {
-			$ls_scope = static::sanitizeScope($as_configOptions);
+			$ls_scope = static::sanitizeScope($as_configOptionScope);
 
 			if (array_key_exists($ls_scope, static::$loadedConfigOptions)) {
 				return static::$loadedConfigOptions[ $ls_scope ];
 			}
 
-			/** @var class-string<ConfigOptionsInterface>|null $ls_configurationClass */
-			$ls_configurationClass = static::getConfigOptionsFile($ls_scope);
+			/** @var \Awyiss\Model\Enum\PageRoleEnumInterface|class-string<\Awyiss\Configuration\ConfigOptionsInterface>|null $ls_configurationClass */
+			$lx_configurationClass = static::getConfigOptionsFile($ls_scope);
 
-			if (!$ls_configurationClass) {
+			if (!$lx_configurationClass) {
 				static::$loadedConfigOptions[ $ls_scope ] = null;
 
 
 				return null;
 			}
-
-			if (!str_contains($ls_configurationClass, '\\')) {
-				$ls_configurationClass = GenericPagesConfigOptions::class;
-			}
 		}
 
-		static::$loadedConfigOptions[ $ls_scope ] = new $ls_configurationClass();
+		if ($lx_configurationClass instanceof PageRoleEnumInterface) {
+			static::$loadedConfigOptions[ $ls_scope ] = new GenericPagesConfigOptions($ls_scope);
+		}
+		elseif (is_string($lx_configurationClass)) {
+			static::$loadedConfigOptions[ $ls_scope ] = new $lx_configurationClass();
+		}
+		else {
+			static::$loadedConfigOptions[ $ls_scope ] = $lx_configurationClass;
+		}
 
 		if ($ls_configurationClass::getScope() === 'GenericPages') {
 			static::$loadedConfigOptions[ $ls_scope ]->setPageRole($ls_scope);
@@ -200,7 +206,7 @@ class ConfigOptionsProvider {
 
 	/**
 	 * Sanitize the provided scope by removing all non-ascii characters
-	 * Returns a camelBacked string
+	 * Returns a CamelCased string
 	 *
 	 * @param string $as_scope
 	 * @return string
@@ -228,23 +234,22 @@ class ConfigOptionsProvider {
 
 
 	/**
-	 * Finds all ConfigOptions classes in both the Awyiss and the custom namespace for a given identifier.
-	 *
+	 * Finds all ConfigOptions classes in both, the Awyiss and the custom namespace, for a given identifier.
 	 * `$as_scope` can be "*" to return all files.
 	 *
 	 * If a ConfigOptions class exists in both namespaces, the one from the custom namespace is returned,
 	 * the Awyiss one is ignored.
 	 *
+	 * For page roles, no ConfigOptionsInterface is returned but the \Awyiss\Model\Enum\PageRole case
+	 *
 	 * @param string $as_scope
-	 * @return array<string, class-string<ConfigOptionsInterface>>
+	 * @return void
 	 * @throws \ReflectionException
 	 */
-	protected static function findConfigOptionsFile(string $as_scope): array {
-		$la_configurations = [];
-
+	protected static function findConfigOptionsFile(string $as_scope): void {
 		$ls_scope = $as_scope;
 		if ($ls_scope !== '*') {
-			$ls_scope = Inflector::camelize($ls_scope);
+			$ls_scope = static::sanitizeScope($ls_scope);
 		}
 
 		$la_paths = [
@@ -272,41 +277,27 @@ class ConfigOptionsProvider {
 				/**
 				 * @var ConfigOptionsInterface $ls_configurationClass
 				 */
-				$ls_configScope = $ls_configurationClass::getScope();
+				$ls_configScope = static::sanitizeScope($ls_configurationClass::getScope());
 
-				if (isset($la_configurations[ $ls_configScope ])) {
+				if (isset(static::$configOptions[ $ls_configScope ])) {
 					continue;
 				}
 
-				$la_configurations[ $ls_configScope ] = $ls_configurationClass;
+				static::$configOptions[ $ls_configScope ] = $ls_configurationClass;
 			}
 		}
 
-		if ($as_scope === '*') {
-			/** @var \Awyiss\Model\Table\PageRolesTable $lo_pageRolesTable */
-			$lo_pageRolesTable = FactoryLocator::get('Table')->get('PageRoles');
-			/** @var \Awyiss\Model\Entity\PageRole $lo_pageRole */
-			foreach ($lo_pageRolesTable->find()->where(['identifier !=' => 'page'])->select('identifier') as $lo_pageRole) {
-				$ls_configScope = static::sanitizeScope($lo_pageRole->identifier);
 
-				if (isset($la_configurations[ $ls_configScope ])) {
-					continue;
-				}
+		/** @var class-string<\Awyiss\Model\Enum\PageRole> $ls_pageRoleEnum */
+		$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
+		foreach ($ls_pageRoleEnum::cases() as $le_pageRole) {
+			$ls_configScope = static::sanitizeScope($le_pageRole->name);
 
-				$la_configurations[ $ls_configScope ] = $ls_configScope;
+			if (isset(static::$configOptions[ $ls_configScope ])) {
+				continue;
 			}
+
+			static::$configOptions[ $ls_configScope ] = $le_pageRole;
 		}
-		elseif (!isset($la_configurations[ $ls_scope ]) && !in_array(strtolower($ls_scope), ['page', 'pages'])) {
-			$ls_singular = Inflector::camelize(Inflector::singularize($ls_scope));
-
-			/** @var class-string<\Awyiss\Model\Enum\PageRole> $ls_pageRoleEnum */
-			$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
-
-			if ($ls_pageRoleEnum::tryFromName($ls_singular)) {
-				$la_configurations[ $ls_scope ] = $ls_scope;
-			}
-		}
-
-		return $la_configurations;
 	}
 }

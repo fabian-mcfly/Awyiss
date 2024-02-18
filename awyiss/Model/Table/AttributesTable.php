@@ -5,6 +5,7 @@ namespace Awyiss\Model\Table;
 
 
 use ArrayObject;
+use Awyiss\Core\App;
 use Awyiss\Model\Entity\Attribute;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
@@ -417,23 +418,27 @@ class AttributesTable extends Table {
 		}
 
 
-		//Get all page roles from the database because we want them to have policies too
+		//Get all page roles because we want them to have attributes too
+		/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $ls_pageRoleEnum */
+		$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
+
 		/** @var \Awyiss\Model\Table\PageRolesTable $lo_table */
-		$lo_table = FactoryLocator::get('Table')->get('PageRoles');
-		$lo_pageRoles = $lo_table->find('active')->all();
+		foreach ($ls_pageRoleEnum::cases() as $le_pageRole) {
+			$ls_identifier = Inflector::pluralize(Inflector::underscore($le_pageRole->name));
 
-		/** @var \Awyiss\Model\Entity\PageRole $lo_pageRole */
-		foreach ($lo_pageRoles as $lo_pageRole) {
-			$ls_identifier = Inflector::pluralize($lo_pageRole->identifier);
-			/** @var PagesTable $lo_newTable */
-			$lo_newTable = FactoryLocator::get('Table')->get($ls_identifier);
-
-			//If an entry exists or if the table does not allow attributes, skip it
-			if (isset($this->attributeScopes[ $ls_identifier ]) || !$lo_newTable::ATTRIBUTABLE) {
+			if ($ls_identifier === 'Pages' || isset($this->attributeScopes[ $ls_identifier ])) {
 				continue;
 			}
 
-			$this->attributeScopes[ $ls_identifier ] = $lo_newTable;
+			/** @var \Awyiss\Model\Table\PagesTable $lo_pageTable */
+			$lo_pageTable = FactoryLocator::get('Table')->get(Inflector::camelize($ls_identifier));
+
+			//If an entry exists or if the table does not allow attributes, skip it
+			if (!$lo_pageTable::ATTRIBUTABLE) {
+				continue;
+			}
+
+			$this->attributeScopes[ $ls_identifier ] = $lo_pageTable;
 		}
 
 		ksort($this->attributeScopes);
