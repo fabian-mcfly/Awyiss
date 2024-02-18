@@ -68,6 +68,7 @@ class NestBehavior extends Behavior {
 			'getChildren' => 'getChildren',
 			'getParent' => 'getParent',
 			'getParents' => 'getParents',
+			'listNested' => 'listNested',
 		],
 		'parent' => [
 			'associationName' => null,
@@ -311,6 +312,28 @@ class NestBehavior extends Behavior {
 
 
 		return $lo_collection->compile(false);
+	}
+
+
+	/**
+	 * Creates a threaded list of entities from a query, adding the `level`-property to each entity and returns
+	 * a collection
+	 *
+	 * @param SelectQuery $ao_query
+	 * @return CollectionInterface
+	 */
+	public function listNested(SelectQuery $ao_query): CollectionInterface {
+		$lo_records = $ao_query->find('threaded')->all()->listNested();
+
+		/** @var \Awyiss\Model\Entity $lo_page */
+		foreach ($lo_records as $lo_entity) {
+			$lo_entity->setVirtual(['level']);
+			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+			$lo_entity->level = $lo_records->getDepth();
+		}
+
+
+		return $lo_records;
 	}
 
 
@@ -618,19 +641,7 @@ class NestBehavior extends Behavior {
 		$lx_finder = $aa_options['finder'] ?? $this->getConfig('children.finder');
 
 		$lo_query = $lo_association->find($lx_finder, $ao_entity, $this->getConfig('relatedColumns'));
-		$lo_records = $lo_query->find('threaded')->all();
-
-		if (!$lo_records->count()) {
-			return null;
-		}
-
-		$lo_records = $lo_records->listNested();
-
-		foreach ($lo_records as $lo_entity) {
-			$lo_entity->setVirtual(['level']);
-			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-			$lo_entity->set('level', $lo_records->getDepth());
-		}
+		$lo_records = $this->listNested($lo_query);
 
 		$lo_records = $lo_records->compile(false);
 
@@ -664,19 +675,7 @@ class NestBehavior extends Behavior {
 		$lx_finder = $aa_options['finder'] ?? $this->getConfig('parent.finder');
 
 		$lo_query = $lo_association->find($lx_finder, $ao_entity, $this->getConfig('relatedColumns'));
-		$lo_records = $lo_query->find('threaded')->all();
-
-		if (!$lo_records->count()) {
-			return null;
-		}
-
-		$lo_records = $lo_records->listNested('asc');
-
-		foreach ($lo_records as $lo_entity) {
-			$lo_entity->setVirtual(['level']);
-			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-			$lo_entity->set('level', $lo_records->getDepth());
-		}
+		$lo_records = $this->listNested($lo_query);
 
 		$lo_records = $lo_records->compile(false);
 

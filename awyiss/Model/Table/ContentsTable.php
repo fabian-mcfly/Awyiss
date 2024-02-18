@@ -406,27 +406,6 @@ class ContentsTable extends Table {
 
 
 	/**
-	 * Creates a threaded list of contents from a query, adding the `level`-property to each content and returns
-	 * a collection
-	 *
-	 * @noinspection PhpUnused
-	 */
-	public function listNested(SelectQuery $ao_query): CollectionInterface {
-		$lo_contents = $ao_query->find('threaded')->all()->listNested();
-
-		/** @var Content $lo_content */
-		foreach ($lo_contents as $lo_content) {
-			$lo_content->setVirtual(['level']);
-			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-			$lo_content->level = $lo_contents->getDepth();
-		}
-
-
-		return $lo_contents;
-	}
-
-
-	/**
 	 * Return a Page-object with the page role and page template associations
 	 *
 	 * @param int $ai_pageId

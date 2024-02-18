@@ -12,7 +12,6 @@ use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity\Page;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
-use Cake\Collection\CollectionInterface;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Schema\TableSchemaInterface;
 use Cake\Database\Type\EnumType;
@@ -548,28 +547,6 @@ class PagesTable extends Table {
 	 */
 	public function afterDelete(): void {
 		$this->Contents->enableCascadeCallbacks();
-	}
-
-
-	/**
-	 * Creates a threaded list of pages from a query, adding the `level`-property to each page and returns
-	 * a collection
-	 *
-	 * @param SelectQuery $ao_query
-	 * @return CollectionInterface
-	 */
-	public function listNested(SelectQuery $ao_query): CollectionInterface {
-		$lo_pages = $ao_query->find('threaded')->all()->listNested();
-
-		/** @var \Awyiss\Model\Entity\Page $lo_page */
-		foreach ($lo_pages as $lo_page) {
-			$lo_page->setVirtual(['level']);
-			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-			$lo_page->level = $lo_pages->getDepth();
-		}
-
-
-		return $lo_pages;
 	}
 
 

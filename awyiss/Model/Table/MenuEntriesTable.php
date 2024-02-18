@@ -9,7 +9,6 @@ use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity\MenuEntry;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
-use Cake\Collection\CollectionInterface;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Validation\Validator;
@@ -217,27 +216,6 @@ class MenuEntriesTable extends Table {
 	public function enableCascadeCallbacks(): void {
 		/** @noinspection PhpUndefinedMethodInspection */
 		$this->ChildMenuEntries->setDependent(true)->setCascadeCallbacks(true);
-	}
-
-
-	/**
-	 * Creates a threaded list of men entries from a query, adding the `level`-property to each menu entry and returns
-	 * a collection
-	 *
-	 * @noinspection PhpUnused
-	 */
-	public function listNested(SelectQuery $ao_query): CollectionInterface {
-		$lo_menuEntries = $ao_query->find('threaded')->all()->listNested();
-
-		/** @var \Awyiss\Model\Entity\MenuEntry $lo_menuEntry */
-		foreach ($lo_menuEntries as $lo_menuEntry) {
-			$lo_menuEntry->setVirtual(['level']);
-			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-			$lo_menuEntry->level = $lo_menuEntries->getDepth();
-		}
-
-
-		return $lo_menuEntries;
 	}
 
 

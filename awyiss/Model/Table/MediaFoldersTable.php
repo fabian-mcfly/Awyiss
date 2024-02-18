@@ -10,7 +10,6 @@ use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity\MediaFolder;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
-use Cake\Collection\CollectionInterface;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Schema\TableSchemaInterface;
 use Cake\Datasource\EntityInterface;
@@ -406,28 +405,6 @@ class MediaFoldersTable extends Table {
 		parent::initializeSchema($ao_schema);
 
 		$ao_schema->setColumnType('meta_data', 'json');
-	}
-
-
-	/**
-	 * Creates a threaded list of media folders from a query, adding the `level`-property to each media folder and returns
-	 * a collection
-	 *
-	 * @param SelectQuery $ao_query
-	 * @return CollectionInterface
-	 */
-	public function listNested(SelectQuery $ao_query): CollectionInterface {
-		$lo_mediaFolders = $ao_query->find('threaded')->all()->listNested();
-
-		/** @var \Awyiss\Model\Entity\MediaFolder $lo_mediaFolder */
-		foreach ($lo_mediaFolders as $lo_mediaFolder) {
-			$lo_mediaFolder->setVirtual(['level']);
-			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-			$lo_mediaFolder->level = $lo_mediaFolders->getDepth();
-		}
-
-
-		return $lo_mediaFolders;
 	}
 
 
