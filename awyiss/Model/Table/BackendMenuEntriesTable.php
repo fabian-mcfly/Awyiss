@@ -56,16 +56,6 @@ class BackendMenuEntriesTable extends Table {
 
 
 	/**
-	 * @inheritDoc
-	 */
-	public function initialize(array $aa_config): void {
-		parent::initialize($aa_config);
-
-		$this->addBehavior('Nest', $this->nest);
-	}
-
-
-	/**
 	 * Returns the default validator object.
 	 *
 	 * @param Validator $ao_validator The validator that can be modified to

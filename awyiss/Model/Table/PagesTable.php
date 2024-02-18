@@ -86,8 +86,6 @@ class PagesTable extends Table {
 		$this->pageRole = $ls_pageRoleEnum::tryFromName(substr(end($la_parts), 0, -5));
 
 		parent::initialize($aa_config);
-
-		$this->addBehavior('Nest', $this->nest);
 	}
 
 

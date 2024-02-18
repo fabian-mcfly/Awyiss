@@ -241,6 +241,10 @@ class Table extends BaseTable {
 		$this->addBehavior('AutoPrefix', $this->autoPrefix + ['priority' => 99999]);
 		$this->addBehavior('DefaultValues', $this->defaultValues);
 
+		if ($this->nest) {
+			$this->addBehavior('Nest', $this->nest);
+		}
+
 		if (!empty($aa_config['translateLanguage']) && !empty($this->translate['fields'])) {
 			$this->addBehavior(
 				'Translate',
