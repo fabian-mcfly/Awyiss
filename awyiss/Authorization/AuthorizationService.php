@@ -186,13 +186,18 @@ class AuthorizationService implements AuthorizationServiceInterface {
 
 	/**
 	 * Sanitize the provided scope by removing all non-ascii characters
-	 * Returns a camelBacked string
+	 * Returns an underscored string
 	 *
 	 * @param string $as_scope
 	 * @return string
 	 */
 	public static function sanitizeScope(string $as_scope): string {
-		return Inflector::underscore(Inflector::pluralize(Text::slug($as_scope, '_')));
+		$ls_scope = Text::slug($as_scope, '_');
+		$ls_scope = Inflector::singularize($ls_scope);
+		$ls_scope = Inflector::pluralize($ls_scope);
+
+
+		return Inflector::underscore($ls_scope);
 	}
 
 

@@ -205,7 +205,12 @@ class ConfigOptionsProvider {
 	 * @return string
 	 */
 	public static function sanitizeScope(string $as_scope): string {
-		return Inflector::camelize(Inflector::pluralize(Text::slug($as_scope, '_')));
+		$ls_scope = Text::slug($as_scope, '_');
+		$ls_scope = Inflector::singularize($ls_scope);
+		$ls_scope = Inflector::pluralize($ls_scope);
+
+
+		return Inflector::camelize($ls_scope);
 	}
 
 

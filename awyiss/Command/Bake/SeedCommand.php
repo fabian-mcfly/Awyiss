@@ -68,7 +68,7 @@ class SeedCommand extends BaseBakeSeedCommand {
 			$ls_namespace = $this->_pluginNamespace($this->plugin);
 		}
 
-		$ls_table = Inflector::tableize((string)$arguments->getArgumentAt(0));
+		$ls_table = Inflector::underscore((string)$arguments->getArgumentAt(0));
 		if ($arguments->hasOption('table')) {
 			/** @var string $ls_table */
 			$ls_table = $arguments->getOption('table');

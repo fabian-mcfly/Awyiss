@@ -72,7 +72,12 @@ class Configuration extends Entity {
 			return null;
 		}
 
-		return Inflector::underscore(Inflector::pluralize($as_scope));
+		$ls_scope = Inflector::underscore($as_scope);
+		$ls_scope = Inflector::singularize($ls_scope);
+		$ls_scope = Inflector::pluralize($ls_scope);
+
+
+		return Inflector::underscore($ls_scope);
 	}
 
 

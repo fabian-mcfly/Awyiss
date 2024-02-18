@@ -205,7 +205,7 @@ class AttributesBehavior extends Behavior {
 	 * @noinspection PhpUnused
 	 */
 	public function getAttributesTableName(bool $ab_camelized = false): string {
-		return $ab_camelized ? Inflector::camelize(Inflector::tableize($this->attributesTable)) : $this->attributesTable;
+		return $ab_camelized ? Inflector::camelize($this->attributesTable) : $this->attributesTable;
 	}
 
 

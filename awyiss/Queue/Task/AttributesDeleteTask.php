@@ -40,7 +40,7 @@ class AttributesDeleteTask extends Task/* implements AddInterface*/ {
 	public function run(array $aa_data, int $ai_jobId): void {
 		$ls_attributesTable = 'attributes_' . $aa_data['identifier'];
 
-		$ls_tableFile = ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Table' . DS . Inflector::camelize(Inflector::tableize($ls_attributesTable)) . 'Table.php';
+		$ls_tableFile = ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Table' . DS . Inflector::camelize($ls_attributesTable) . 'Table.php';
 		$ls_entityFile = ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Entity' . DS . Inflector::classify($ls_attributesTable) . '.php';
 
 		//Remove both the table and the entity files from the custom directory.

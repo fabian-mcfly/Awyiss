@@ -134,7 +134,11 @@ class AuthorizationHelper extends Helper {
 	 * @noinspection PhpUnused
 	 */
 	public function setScope(string $as_scope): static {
-		$this->setConfig('scope', Inflector::pluralize(Inflector::underscore($as_scope)));
+		$ls_scope = Inflector::underscore($as_scope);
+		$ls_scope = Inflector::singularize($ls_scope);
+		$ls_scope = Inflector::pluralize($ls_scope);
+
+		$this->setConfig('scope', $ls_scope);
 
 
 		return $this;
