@@ -220,7 +220,7 @@ class PageTemplatesTable extends Table {
 	protected function initializeSchema(TableSchemaInterface $ao_schema): void {
 		parent::initializeSchema($ao_schema);
 
-		/** @var class-string<\Awyiss\Database\Type\PageRoleEnumInterface> $ls_pageRoleEnum */
+		/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $ls_pageRoleEnum */
 		$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
 
 		$this->getSchema()->setColumnType('page_role_id', EnumType::from($ls_pageRoleEnum));

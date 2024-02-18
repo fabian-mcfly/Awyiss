@@ -76,7 +76,7 @@ class AttributesTask extends Task/* implements AddInterface*/ {
 		$ls_foreignKey = Inflector::singularize($aa_data['new']['scope']);
 		$lb_scopeIsPageRole = false;
 
-		/** @var class-string<\Awyiss\Database\Type\PageRoleEnumInterface> $ls_pageRoleEnum */
+		/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $ls_pageRoleEnum */
 		$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
 		if ($ls_pageRoleEnum::tryFromName($ls_foreignKey) && $ls_foreignKey !== 'page') {
 			$ls_foreignKey = 'page';
@@ -270,7 +270,7 @@ class AttributesTask extends Task/* implements AddInterface*/ {
 			//If the old table was changed but still exists, bake the model for the old table as well.
 			$ls_forPageRole = null;
 
-			/** @var class-string<\Awyiss\Database\Type\PageRoleEnumInterface> $ls_pageRoleEnum */
+			/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $ls_pageRoleEnum */
 			$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
 
 			if ($ls_pageRoleEnum::tryFromName($aa_data['old']['scope'])) {

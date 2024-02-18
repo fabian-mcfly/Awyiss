@@ -8,9 +8,9 @@ use AllowDynamicProperties;
 use Awyiss\Awyiss;
 use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Core\App;
-use Awyiss\Database\Type\PageRoleEnumInterface;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity\Page;
+use Awyiss\Model\Enum\PageRoleEnumInterface;
 use Awyiss\Routing\Router;
 use Cake\Collection\Collection;
 use Cake\Collection\CollectionInterface;
@@ -28,7 +28,7 @@ use Cake\View\Exception\MissingTemplateException;
 #[AllowDynamicProperties]
 class PagesController extends Controller {
 	/**
-	 * @var \Awyiss\Database\Type\PageRoleEnumInterface
+	 * @var \Awyiss\Model\Enum\PageRoleEnumInterface
 	 */
 	protected PageRoleEnumInterface $pageRole;
 	/**
@@ -309,7 +309,7 @@ class PagesController extends Controller {
 	 * Uses this controller with another page_role_id/identifier, so we don't need to bake one for every page role.
 	 * This is supposed to only handle non-existing controllers as a fallback.
 	 *
-	 * @param \Awyiss\Database\Type\PageRoleEnumInterface $ae_pageRole
+	 * @param \Awyiss\Model\Enum\PageRoleEnumInterface $ae_pageRole
 	 * @param string $as_identifier
 	 * @return \Awyiss\Controller\Backend\PagesController
 	 * @throws \ReflectionException

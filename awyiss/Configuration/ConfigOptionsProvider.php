@@ -6,6 +6,7 @@ namespace Awyiss\Configuration;
 
 use Awyiss\Configuration\ConfigOptions\GenericPagesConfigOptions;
 use Awyiss\Core\App;
+use Awyiss\Model\Enum\PageRoleEnumInterface;
 use Cake\Datasource\FactoryLocator;
 use Cake\Utility\Inflector;
 use Cake\Utility\Text;

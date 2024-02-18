@@ -4,8 +4,8 @@
 namespace Awyiss\Model\Entity;
 
 
-use Awyiss\Database\Type\PageRoleEnumInterface;
 use Awyiss\Model\Entity;
+use Awyiss\Model\Enum\PageRoleEnumInterface;
 use Cake\Utility\Text;
 
 
@@ -80,7 +80,7 @@ class PageTemplate extends Entity {
 
 	/**
 	 * @param mixed $ax_pageRoleId
-	 * @return \Awyiss\Database\Type\PageRoleEnumInterface|int|null
+	 * @return \Awyiss\Model\Enum\PageRoleEnumInterface|int|null
 	 */
 	protected function _setPageRoleId(mixed $ax_pageRoleId): PageRoleEnumInterface|int|null {
 		if (is_string($ax_pageRoleId)) {

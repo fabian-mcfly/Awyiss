@@ -7,9 +7,9 @@ namespace Awyiss\Model\Table;
 use ArrayObject;
 use Awyiss\Awyiss;
 use Awyiss\Core\App;
-use Awyiss\Database\Type\PageRoleEnumInterface;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity\Page;
+use Awyiss\Model\Enum\PageRoleEnumInterface;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
 use Cake\Database\Expression\QueryExpression;
@@ -62,7 +62,7 @@ class PagesTable extends Table {
 		'relatedColumns' => ['languageShortcode', 'pageRoleId'],
 	];
 	/**
-	 * @var \Awyiss\Database\Type\PageRoleEnumInterface
+	 * @var \Awyiss\Model\Enum\PageRoleEnumInterface
 	 */
 	protected PageRoleEnumInterface $pageRole;
 	/**
@@ -78,7 +78,7 @@ class PagesTable extends Table {
 	 * @throws \Exception
 	 */
 	public function initialize(array $aa_config): void {
-		/** @var class-string<\Awyiss\Database\Type\PageRoleEnumInterface> $ls_pageRoleEnum */
+		/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $ls_pageRoleEnum */
 		$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
 
 		$la_parts = explode('\\', static::class);
@@ -128,7 +128,7 @@ class PagesTable extends Table {
 
 
 	/**
-	 * @return \Awyiss\Database\Type\PageRoleEnumInterface
+	 * @return \Awyiss\Model\Enum\PageRoleEnumInterface
 	 */
 	public function getPageRole(): PageRoleEnumInterface {
 		return $this->pageRole;

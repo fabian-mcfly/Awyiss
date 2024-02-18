@@ -5,8 +5,8 @@ namespace Awyiss\Model\Entity;
 
 
 use Awyiss\Core\App;
-use Awyiss\Database\Type\PageRoleEnumInterface;
 use Awyiss\Model\Entity;
+use Awyiss\Model\Enum\PageRoleEnumInterface;
 use Cake\Collection\CollectionInterface;
 use Cake\Datasource\FactoryLocator;
 use Cake\Utility\Text;
@@ -16,7 +16,7 @@ use Cake\Utility\Text;
  * Page Entity
  *
  * @property int $id
- * @property \Awyiss\Database\Type\PageRoleEnumInterface|null $pageRoleId
+ * @property \Awyiss\Model\Enum\PageRoleEnumInterface|null $pageRoleId
  * @property int|null $pageTemplateId
  * @property int|null $parentId
  * @property string|null $languageShortcode
@@ -154,7 +154,7 @@ class Page extends Entity {
 
 	/**
 	 * @param mixed $ax_pageRoleId
-	 * @return \Awyiss\Database\Type\PageRoleEnumInterface|int|null
+	 * @return \Awyiss\Model\Enum\PageRoleEnumInterface|int|null
 	 */
 	protected function _setPageRoleId(mixed $ax_pageRoleId): PageRoleEnumInterface|int|null {
 		if (is_string($ax_pageRoleId)) {
@@ -194,7 +194,7 @@ class Page extends Entity {
 	 * @inheritDoc
 	 */
 	public function defaultValues(): array {
-		/** @var class-string<\Awyiss\Database\Type\PageRoleEnumInterface> $ls_pageRoleEnum */
+		/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $ls_pageRoleEnum */
 		$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
 
 		$la_parts = explode('\\', static::class);

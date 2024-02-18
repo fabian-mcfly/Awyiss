@@ -199,7 +199,7 @@ class ModelCommand extends BaseModelCommand {
 	public function getAssociations(Table $ao_table, Arguments $ao_args, ConsoleIo $ao_io): array {
 		$la_allAssociations = parent::getAssociations($ao_table, $ao_args, $ao_io);
 
-		/** @var class-string<\Awyiss\Database\Type\PageRoleEnumInterface> $ls_pageRoleEnum */
+		/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $ls_pageRoleEnum */
 		$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
 
 		if (

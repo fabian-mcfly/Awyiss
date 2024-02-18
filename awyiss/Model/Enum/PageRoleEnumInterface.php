@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 
-namespace Awyiss\Database\Type;
+namespace Awyiss\Model\Enum;
 
 
 use BackedEnum;

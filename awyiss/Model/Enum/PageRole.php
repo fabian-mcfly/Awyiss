@@ -4,7 +4,6 @@
 namespace Awyiss\Model\Enum;
 
 
-use Awyiss\Database\Type\PageRoleEnumInterface;
 use Awyiss\Model\Trait\PageRoleEnumTrait;
 use Cake\Database\Type\EnumLabelInterface;
 

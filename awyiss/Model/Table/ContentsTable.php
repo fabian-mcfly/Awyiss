@@ -4,10 +4,10 @@
 namespace Awyiss\Model\Table;
 
 
-use Awyiss\Database\Type\PageRoleEnumInterface;
 use Awyiss\Model\Entity\Content;
 use Awyiss\Model\Entity\ContentTemplate;
 use Awyiss\Model\Entity\Page;
+use Awyiss\Model\Enum\PageRoleEnumInterface;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
 use Awyiss\Validation\Validator;
@@ -72,7 +72,7 @@ class ContentsTable extends Table {
 		'relatedColumns' => ['pageId', 'contentAreaId'],
 	];
 	/**
-	 * @var \Awyiss\Database\Type\PageRoleEnumInterface
+	 * @var \Awyiss\Model\Enum\PageRoleEnumInterface
 	 */
 	protected PageRoleEnumInterface $pageRole;
 	/**
@@ -467,7 +467,7 @@ class ContentsTable extends Table {
 	/**
 	 * Sets this table to run the access check of the 'Pages'-association with a specific page role.
 	 *
-	 * @param \Awyiss\Database\Type\PageRoleEnumInterface $ae_pageRole
+	 * @param \Awyiss\Model\Enum\PageRoleEnumInterface $ae_pageRole
 	 * @param bool $ab_initializePages
 	 * @return void
 	 * @throws \Exception
@@ -520,7 +520,7 @@ class ContentsTable extends Table {
 
 
 	/**
-	 * @return \Awyiss\Database\Type\PageRoleEnumInterface
+	 * @return \Awyiss\Model\Enum\PageRoleEnumInterface
 	 */
 	public function getPageRole(): PageRoleEnumInterface {
 		return $this->pageRole;
@@ -528,7 +528,7 @@ class ContentsTable extends Table {
 
 
 	/**
-	 * @param \Awyiss\Database\Type\PageRoleEnumInterface $as_pageRoleName
+	 * @param \Awyiss\Model\Enum\PageRoleEnumInterface $as_pageRoleName
 	 * @return ContentsTable
 	 */
 	protected function setPageRole(PageRoleEnumInterface $ae_pageRoleName): static {
