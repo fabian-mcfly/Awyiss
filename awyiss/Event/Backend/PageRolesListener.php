@@ -179,66 +179,10 @@ class PageRolesListener implements EventListenerInterface {
 		/** @var \Awyiss\Model\Table\BackendMenuEntriesTable $lo_menuEntriesTable */
 		$lo_menuEntriesTable = $this->fetchTable('BackendMenuEntries');
 
-		$ls_plural = Inflector::pluralize($ao_entity->identifier);
-		$ls_controller = Inflector::camelize($ls_plural);
+		$ls_scope = Inflector::pluralize($ao_entity->identifier);
+		$ls_controller = Inflector::camelize($ls_scope);
 
-		$la_data = [
-			'title' => $ao_entity->title,
-			'insert_after_id' => 'pages',
-			'link' => $ls_controller . '::overview',
-			'access' => [
-				'scope' => $ls_plural,
-				'identifier' => 'read',
-			],
-			'child_backend_menu_entries' => [
-				[
-					'title' => $ls_plural . '::menu_overview',
-					'link' => $ls_controller . '::overview',
-					'access' => [
-						'scope' => $ls_plural,
-						'identifier' => 'read',
-					],
-					'system_order' => 1,
-				],
-				[
-					'title' => $ls_plural . '::menu_add',
-					'link' => $ls_controller . '::add',
-					'access' => [
-						'scope' => $ls_plural,
-						'identifier' => 'create',
-					],
-					'system_order' => 2,
-				],
-				[
-					'title' => $ls_plural . '::menu_configure',
-					'link' => 'Configuration::overview::scope:' . $ls_plural,
-					'access' => [
-						'scope' => $ls_plural,
-						'identifier' => 'configure',
-					],
-					'system_order' => 3,
-				],
-			],
-		];
-
-		if (isset($ao_entity->_translations)) {
-			/** @var \Awyiss\Model\Entity $lo_translation */
-			foreach ($ao_entity->_translations as $ls_shortcode => $lo_translation) {
-				$la_data['_translations'][ $ls_shortcode ] = $lo_translation->extract([], false, false);
-			}
-		}
-
-		$lo_menuEntry = $lo_menuEntriesTable->patchEntity($lo_menuEntriesTable->newDefaultEntity(), $la_data, [
-			'accessibleFields' => 'childBackendMenuEntries',
-			'associated' => [
-				'ChildBackendMenuEntries' => [
-					'validate' => false,
-				],
-			],
-			'validate' => false,
-		]);
-
-		$lo_menuEntriesTable->save($lo_menuEntry);
+		$lo_menuEntriesTable->createEntries($ao_entity, $ls_controller, $ls_scope);
 	}
 
 

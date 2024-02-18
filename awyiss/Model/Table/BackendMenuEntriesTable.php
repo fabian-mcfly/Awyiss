@@ -4,12 +4,12 @@
 namespace Awyiss\Model\Table;
 
 
+use Awyiss\Model\Entity;
 use Awyiss\Model\Entity\BackendMenuEntry;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
 use Awyiss\Utilities\Menu\BackendMenu;
 use Cake\Database\Schema\TableSchemaInterface;
-use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Validation\Validator;
 
@@ -224,23 +224,69 @@ class BackendMenuEntriesTable extends Table {
 
 
 	/**
-	 * Creates a threaded list of men entries from a query, adding the `level`-property to each menu entry and returns
-	 * a collection
-	 *
-	 * @noinspection PhpUnused
+	 * @param \Awyiss\Model\Entity $ao_entity
+	 * @param string $as_controller
+	 * @param string $as_scope
+	 * @return void
 	 */
-	public function listNested(SelectQuery $ao_query): CollectionInterface {
-		$lo_menuEntries = $ao_query->find('threaded')->all()->listNested();
+	public function createEntries(Entity $ao_entity, string $as_controller, string $as_scope, string $as_insertAfterId = 'pages'): void {
+		$la_data = [
+			'title' => $ao_entity->title,
+			'insert_after_id' => $as_insertAfterId,
+			'link' => $as_controller . '::overview',
+			'access' => [
+				'scope' => $as_scope,
+				'identifier' => 'read',
+			],
+			'child_backend_menu_entries' => [
+				[
+					'title' => $as_scope . '::menu_overview',
+					'link' => $as_controller . '::overview',
+					'access' => [
+						'scope' => $as_scope,
+						'identifier' => 'read',
+					],
+					'system_order' => 1,
+				],
+				[
+					'title' => $as_scope . '::menu_add',
+					'link' => $as_controller . '::add',
+					'access' => [
+						'scope' => $as_scope,
+						'identifier' => 'create',
+					],
+					'system_order' => 2,
+				],
+				[
+					'title' => $as_scope . '::menu_configure',
+					'link' => 'Configuration::overview::scope:' . $as_scope,
+					'access' => [
+						'scope' => $as_scope,
+						'identifier' => 'configure',
+					],
+					'system_order' => 3,
+				],
+			],
+		];
 
-		/** @var BackendMenuEntry $lo_menuEntry */
-		foreach ($lo_menuEntries as $lo_menuEntry) {
-			$lo_menuEntry->setVirtual(['level']);
-			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-			$lo_menuEntry->level = $lo_menuEntries->getDepth();
+		if (isset($ao_entity->_translations)) {
+			/** @var \Awyiss\Model\Entity $lo_translation */
+			foreach ($ao_entity->_translations as $ls_shortcode => $lo_translation) {
+				$la_data['_translations'][ $ls_shortcode ] = $lo_translation->extract([], false, false);
+			}
 		}
 
+		$lo_menuEntry = $this->patchEntity($this->newDefaultEntity(), $la_data, [
+			'accessibleFields' => 'childBackendMenuEntries',
+			'associated' => [
+				'ChildBackendMenuEntries' => [
+					'validate' => false,
+				],
+			],
+			'validate' => false,
+		]);
 
-		return $lo_menuEntries;
+		$this->save($lo_menuEntry);
 	}
 
 
