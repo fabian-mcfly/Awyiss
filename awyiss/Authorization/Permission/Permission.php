@@ -5,7 +5,7 @@ namespace Awyiss\Authorization\Permission;
 
 
 use Awyiss\Authorization\AuthorizationService;
-use Awyiss\Authorization\Policy\Backend\GenericPagesPolicy;
+use Awyiss\Authorization\Policy\AbstractGenericPolicy;
 use Awyiss\Authorization\Policy\PolicyInterface;
 use Cake\Event\EventDispatcherTrait;
 use ReflectionClass;
@@ -30,7 +30,7 @@ class Permission {
 	 */
 	protected mixed $access;
 	/**
-	 * @var AuthorizationService|null
+	 * @var \Awyiss\Authorization\AuthorizationService|null
 	 */
 	protected ?AuthorizationService $authorizationService;
 	/**
@@ -38,9 +38,9 @@ class Permission {
 	 */
 	protected string $identifier;
 	/**
-	 * @var PolicyInterface|GenericPagesPolicy|string|null
+	 * @var \Awyiss\Authorization\Policy\PolicyInterface|\Awyiss\Authorization\Policy\AbstractGenericPolicy|string|null
 	 */
-	protected string|PolicyInterface|GenericPagesPolicy|null $policyClass = null;
+	protected string|PolicyInterface|AbstractGenericPolicy|null $policyClass = null;
 	/**
 	 * @var string
 	 */
@@ -109,10 +109,10 @@ class Permission {
 	 * Returns the currently set policy class for this permission,
 	 * or tries loading one from the authorization service.
 	 *
-	 * @return \Awyiss\Authorization\Policy\Backend\GenericPagesPolicy|class-string<\Awyiss\Authorization\Policy\PolicyInterface>|null
+	 * @return \Awyiss\Authorization\Policy\AbstractGenericPolicy|class-string<\Awyiss\Authorization\Policy\PolicyInterface>|null
 	 * @throws \ReflectionException
 	 */
-	public function getPolicyClass(): GenericPagesPolicy|string|null {
+	public function getPolicyClass(): AbstractGenericPolicy|string|null {
 		if (!$this->policyClass) {
 			$this->policyClass = $this->authorizationService->getPolicy($this->getScope());
 		}
@@ -124,12 +124,12 @@ class Permission {
 	/**
 	 * Sets the policy to be used by the permission
 	 *
-	 * @param PolicyInterface|GenericPagesPolicy|string|null $ax_policyClass
+	 * @param \Awyiss\Authorization\Policy\PolicyInterface|\Awyiss\Authorization\Policy\AbstractGenericPolicy|string|null $ax_policyClass
 	 * @return $this
 	 * @throws \ReflectionException
 	 * @noinspection PhpUnused
 	 */
-	public function setPolicyClass(string|PolicyInterface|GenericPagesPolicy|null $ax_policyClass = null): static {
+	public function setPolicyClass(string|PolicyInterface|AbstractGenericPolicy|null $ax_policyClass = null): static {
 		if (is_string($ax_policyClass)) {
 			$lo_reflection = new ReflectionClass($ax_policyClass);
 
@@ -183,8 +183,8 @@ class Permission {
 		}
 
 		//Get the Permission from the policy class provided.
-		if ($lx_policyClass instanceof GenericPagesPolicy) {
-			//If the $lx_policyClass is an instance of GenericPagesPolicy, getPermission is a public, non-static method
+		if ($lx_policyClass instanceof AbstractGenericPolicy) {
+			//If the $lx_policyClass is an instance of AbstractGenericPolicy, getPermission is a public, non-static method
 			$lo_permissionOption = $lx_policyClass->getPermissionOption($this->getIdentifier());
 		}
 		else {

@@ -36,7 +36,7 @@ use RuntimeException;
  * @method \Cake\ORM\Query\SelectQuery addSystemOrderQueryConditions(?SelectQuery $ao_query, \Cake\Datasource\EntityInterface $ao_entity)
  * @method \Awyiss\Authorization\AuthorizationServiceInterface getAuthorizationService()
  * @method int getHighestSystemOrder(\Cake\Datasource\EntityInterface $ao_entity)
- * @method string|\Awyiss\Authorization\Policy\Backend\GenericPagesPolicy|null getPolicyClass()
+ * @method string|\Awyiss\Authorization\Policy\AbstractGenericPolicy|null getPolicyClass()
  * @method array getSystemOrderRelatedColumns(?\Cake\Datasource\EntityInterface $ao_entity = null)
  * @method array extractAttributeFields(array $aa_fields, bool $ab_inlcudeBaseFields = false)
  * @method array getAttributes()

@@ -205,9 +205,9 @@ class UsergroupsController extends Controller {
 
 	/**
 	 * Retreive all available AuthorizationPolicies, found in both the Awyiss and the custom namespace,
-	 * combined with instances of GenericPagesPolicy for page roles without a specified policy
+	 * combined with instances of AbstractGenericPolicy for page roles without a specified policy
 	 *
-	 * @return array<string, class-string<\Awyiss\Authorization\Policy\PolicyInterface>|\Awyiss\Authorization\Policy\Backend\GenericPagesPolicy>
+	 * @return array<string, class-string<\Awyiss\Authorization\Policy\PolicyInterface>|\Awyiss\Authorization\Policy\AbstractGenericPolicy>
 	 * @throws \ReflectionException
 	 */
 	protected function getAuthorizationPolicies(): array {
@@ -265,7 +265,7 @@ class UsergroupsController extends Controller {
 
 		$la_authorizationPolicies = $this->getAuthorizationPolicies();
 
-		/** @var \Awyiss\Authorization\Policy\Backend\GenericPagesPolicy|class-string<\Awyiss\Authorization\Policy\PolicyInterface> $lo_authorizationPolicy */
+		/** @var \Awyiss\Authorization\Policy\AbstractGenericPolicy|class-string<\Awyiss\Authorization\Policy\PolicyInterface> $lo_authorizationPolicy */
 		foreach ($la_authorizationPolicies as $lo_authorizationPolicy) {
 			/** @var \Awyiss\Authorization\PermissionOption\PermissionOptionInterface $lo_permission */
 			foreach ((!is_object($lo_authorizationPolicy) ? $lo_authorizationPolicy::getPermissionOptions() : $lo_authorizationPolicy->getPermissionOptions()) as $lo_permission) {

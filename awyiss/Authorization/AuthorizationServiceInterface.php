@@ -5,7 +5,7 @@ namespace Awyiss\Authorization;
 
 
 use Authentication\AuthenticationServiceInterface;
-use Awyiss\Authorization\Policy\Backend\GenericPagesPolicy;
+use Awyiss\Authorization\Policy\AbstractGenericPolicy;
 
 
 /**
@@ -64,7 +64,7 @@ interface AuthorizationServiceInterface {
 	 *
 	 * @param string $as_scope
 	 * @param string|null $as_realm
-	 * @return \Awyiss\Authorization\Policy\Backend\GenericPagesPolicy|class-string<\Awyiss\Authorization\Policy\PolicyInterface>|null
+	 * @return \Awyiss\Authorization\Policy\AbstractGenericPolicy|class-string<\Awyiss\Authorization\Policy\PolicyInterface>|null
 	 */
-	public function getPolicy(string $as_scope, ?string $as_realm = null): GenericPagesPolicy|string|null;
+	public function getPolicy(string $as_scope, ?string $as_realm = null): AbstractGenericPolicy|string|null;
 }

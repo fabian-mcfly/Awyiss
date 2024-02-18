@@ -5,6 +5,7 @@ namespace Awyiss\Authorization;
 
 
 use Authentication\AuthenticationServiceInterface;
+use Awyiss\Authorization\Policy\AbstractGenericPolicy;
 use Awyiss\Authorization\Policy\Backend\GenericPagesPolicy;
 use Awyiss\Authorization\Policy\PolicyInterface;
 use Awyiss\Core\App;
@@ -91,7 +92,7 @@ class AuthorizationService implements AuthorizationServiceInterface {
 	 * @inheritDoc
 	 * @throws \ReflectionException
 	 */
-	public function getPolicy(string $as_scope, ?string $as_realm = null): GenericPagesPolicy|string|null {
+	public function getPolicy(string $as_scope, ?string $as_realm = null): AbstractGenericPolicy|string|null {
 		$ls_realm = $as_realm ?: $this->realm;
 		$ls_scope = static::sanitizeScope($as_scope);
 
@@ -110,7 +111,7 @@ class AuthorizationService implements AuthorizationServiceInterface {
 	/**
 	 * @param string $as_scope
 	 * @param string $as_realm
-	 * @return array<string, GenericPagesPolicy|class-string<PolicyInterface>>
+	 * @return array<string, \Awyiss\Authorization\Policy\AbstractGenericPolicy|class-string<\Awyiss\Authorization\Policy\PolicyInterface>>
 	 * @throws \ReflectionException
 	 */
 	protected function findPolicy(string $as_scope, string $as_realm): array {
