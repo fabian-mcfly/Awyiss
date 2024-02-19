@@ -320,6 +320,10 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 		}
 
 		if ($lx_selectedCategory == $this->getConfig('unassignedKey')) {
+			if (!$this->getCategories()) {
+				return [$ls_column . ' IS' => null];
+			}
+
 			return [
 				'OR' => [
 					$ls_column . ' IS' => null,
