@@ -36,6 +36,7 @@ class ConfigurationListener implements EventListenerInterface {
 			'Model.Configuration.afterSaveCommit' => 'afterSaveCommit',
 			'Model.Configuration.afterDelete' => 'createCustomConfiguration',
 			'Configuration.createCustomConfiguration' => 'createCustomConfiguration',
+			'Configuration.deleteCustomConfiguration' => 'deleteCustomConfiguration',
 		];
 	}
 
@@ -44,6 +45,8 @@ class ConfigurationListener implements EventListenerInterface {
 	 * @param \Cake\Event\Event $ao_event
 	 * @param \Awyiss\Model\Entity\Configuration $ao_entity
 	 * @return void
+	 * @noinspection PhpUnusedParameterInspection
+	 * @throws \Exception
 	 */
 	public function afterSaveCommit(Event $ao_event, Configuration $ao_entity): void {
 		$this->rebuildSystemOrder($ao_entity);
@@ -55,21 +58,14 @@ class ConfigurationListener implements EventListenerInterface {
 	 * After saving or deleting a config item, we delete and create new cached config files.
 	 * We are too lazy to delete only those of the current language.
 	 * It's easier and doesn't affect performance that much to recreate each file once.
-	 *
-	 * @param Event $ao_event
-	 * @param \Awyiss\Model\Entity\Configuration $ao_entity
-	 * @noinspection PhpUnused
+
 	 * @throws \Exception
 	 */
 	public function createCustomConfiguration(): void {
 		//Remember the current config
 		$la_rememberedConfig = Configure::read('Awyiss');
 
-		//Delete all files
-		$ls_fileName = Inflector::underscore(CUSTOM_NAMESPACE) . '\[??\]\[??\].php';
-		foreach (glob(ENV_CUSTOM_CONFIG . $ls_fileName) as $ls_filePath) {
-			unlink($ls_filePath);
-		}
+		$this->deleteCustomConfiguration();
 
 		$la_languages = LocaleMiddleware::getLanguages();
 		foreach ($la_languages as &$la_realmLanguages) {
@@ -145,6 +141,20 @@ class ConfigurationListener implements EventListenerInterface {
 				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 				$lo_table->getBehavior('SystemOrder')->rebuildSystemOrder($ls_field, (int)$ao_entity->value);
 			}
+		}
+	}
+
+
+	/**
+	 * Removes all custom config files
+	 *
+	 * @return string
+	 */
+	public function deleteCustomConfiguration(): void {
+		//Delete all files
+		$ls_fileName = Inflector::underscore(CUSTOM_NAMESPACE) . '\[??\]\[??\].php';
+		foreach (glob(ENV_CUSTOM_CONFIG . $ls_fileName) as $ls_filePath) {
+			unlink($ls_filePath);
 		}
 	}
 }
