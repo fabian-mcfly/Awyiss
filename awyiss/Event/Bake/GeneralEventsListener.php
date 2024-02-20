@@ -4,8 +4,12 @@
 namespace Awyiss\Event\Bake;
 
 
+use Awyiss\Command\Bake\EnumCommand;
 use Awyiss\Event\EventListenerTrait;
+use Awyiss\Event\EventManager;
+use Cake\Console\Arguments;
 use Cake\Event\Event;
+use Cake\Event\EventInterface;
 use Cake\Event\EventListenerInterface;
 
 
@@ -28,7 +32,29 @@ class GeneralEventsListener implements EventListenerInterface {
 	public function implementedEvents(): array {
 		return [
 			'Bake.beforeRender.Controller.controller' => 'beforeRenderControllerController',
+			'Command.afterExecute' => 'afterCommandExecute',
 		];
+	}
+
+
+	/**
+	 * @param \Cake\Event\EventInterface $ao_event
+	 * @param \Cake\Console\Arguments $ao_args
+	 * @return void
+	 */
+	public function afterCommandExecute(EventInterface $ao_event, Arguments $ao_args): void {
+		/** @var \Cake\Command\Command $foo */
+		$lo_command = $ao_event->getSubject();
+
+		if ($lo_command::class === EnumCommand::class && $ao_args->getOption('is-pagerole')) {
+			/**
+			 * Trigger the creation of the custom configuriation
+			 *
+			 * @see \Awyiss\Event\Backend\ConfigurationListener::createCustomConfiguration()
+			 */
+			$lo_eventManager = EventManager::instance();
+			$lo_eventManager->dispatch('Configuration.deleteCustomConfiguration');
+		}
 	}
 
 
