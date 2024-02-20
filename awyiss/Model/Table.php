@@ -6,6 +6,7 @@ namespace Awyiss\Model;
 
 use Awyiss\Awyiss;
 use Awyiss\Core\App;
+use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Behavior\Translate\EavStrategy;
 use Awyiss\ORM\Association\BelongsTo;
 use Awyiss\ORM\Association\BelongsToMany;
@@ -294,6 +295,38 @@ class Table extends BaseTable {
 
 		return $ao_query;
 	}
+
+
+	/**
+	 * @param \Cake\ORM\Query\SelectQuery $ao_query
+	 * @param string|null $languageShortcode
+	 * @param \Awyiss\Model\Entity\MediaFolder|null $entity
+	 * @param bool $includeGlobal
+	 * @return \Cake\ORM\Query\SelectQuery
+	 * @throws \Exception
+	 */
+	public function findForCurrentLanguage(SelectQuery $ao_query, ?string $languageShortcode = null, ?Entity $entity = null, bool $includeGlobal = true): SelectQuery {
+		$ls_languageShortcode = $languageShortcode ?? LocaleMiddleware::getLanguage()->shortcode;
+
+		if ($entity) {
+			$ls_languageShortcode = $entity->languageShortcode;
+		}
+
+		if ($includeGlobal && $ls_languageShortcode) {
+			return $ao_query->where([
+				'OR' => [
+					'language_shortcode' => $ls_languageShortcode,
+					'language_shortcode IS' => null,
+				],
+			]);
+		}
+
+
+		return $ao_query->where([
+			'language_shortcode' . ($ls_languageShortcode ? '' : ' IS') => $ls_languageShortcode,
+		]);
+	}
+
 
 	/**
 	 * @inheritDoc

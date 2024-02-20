@@ -6,7 +6,6 @@ namespace Awyiss\Model\Table;
 
 use ArrayObject;
 use Awyiss\Awyiss;
-use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity\MediaFolder;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
@@ -14,7 +13,6 @@ use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Schema\TableSchemaInterface;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
-use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Validation\Validator;
 
@@ -394,37 +392,6 @@ class MediaFoldersTable extends Table {
 		parent::initializeSchema($ao_schema);
 
 		$ao_schema->setColumnType('meta_data', 'json');
-	}
-
-
-	/**
-	 * @param \Cake\ORM\Query\SelectQuery $ao_query
-	 * @param string|null $languageShortcode
-	 * @param \Awyiss\Model\Entity\MediaFolder|null $entity
-	 * @param bool $includeGlobal
-	 * @return \Cake\ORM\Query\SelectQuery
-	 * @throws \Exception
-	 */
-	public function findForCurrentLanguage(SelectQuery $ao_query, ?string $languageShortcode = null, ?MediaFolder $entity = null, bool $includeGlobal = true): SelectQuery {
-		$ls_languageShortcode = $languageShortcode;
-
-		if ($entity) {
-			$ls_languageShortcode = $entity->languageShortcode;
-		}
-
-		if ($includeGlobal) {
-			return $ao_query->where([
-				'OR' => [
-					'language_shortcode' => $ls_languageShortcode ?? LocaleMiddleware::getLanguage()->shortcode,
-					'language_shortcode IS' => null,
-				],
-			]);
-		}
-
-
-		return $ao_query->where([
-			'language_shortcode' . ($ls_languageShortcode ? '' : ' IS') => $ls_languageShortcode,
-		]);
 	}
 
 

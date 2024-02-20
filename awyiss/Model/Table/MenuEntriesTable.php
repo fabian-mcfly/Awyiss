@@ -5,11 +5,8 @@ namespace Awyiss\Model\Table;
 
 
 use Awyiss\Awyiss;
-use Awyiss\Middleware\LocaleMiddleware;
-use Awyiss\Model\Entity\MenuEntry;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
-use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Validation\Validator;
 
@@ -25,7 +22,6 @@ use Cake\Validation\Validator;
  * @method \Cake\Collection\CollectionInterface|null getChildren(\Cake\Datasource\EntityInterface $ao_entity, array $aa_options = [])
  * @method \Awyiss\Model\Entity\MenuEntry getParent(\Cake\Datasource\EntityInterface $ao_entity, array $aa_options = [])
  * @method \Cake\Collection\CollectionInterface|null getParents(\Cake\Datasource\EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
- * @noinspection PhpUnnecessaryFullyQualifiedNameInspection
  */
 class MenuEntriesTable extends Table {
 	/**
@@ -206,26 +202,5 @@ class MenuEntriesTable extends Table {
 	public function enableCascadeCallbacks(): void {
 		/** @noinspection PhpUndefinedMethodInspection */
 		$this->ChildMenuEntries->setDependent(true)->setCascadeCallbacks(true);
-	}
-
-
-	/**
-	 * @param \Cake\ORM\Query\SelectQuery $ao_query
-	 * @param string|null $languageShortcode
-	 * @param \Awyiss\Model\Entity\MenuEntry|null $entity
-	 * @return \Cake\ORM\Query\SelectQuery
-	 * @throws \Exception
-	 */
-	public function findForCurrentLanguage(SelectQuery $ao_query, ?string $languageShortcode = null, ?MenuEntry $entity = null): SelectQuery {
-		$ls_languageShortcode = $languageShortcode;
-
-		if ($entity) {
-			$ls_languageShortcode = $entity->languageShortcode;
-		}
-
-
-		return $ao_query->where([
-			'language_shortcode' => $ls_languageShortcode ?? LocaleMiddleware::getLanguage()->shortcode,
-		]);
 	}
 }

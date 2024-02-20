@@ -7,7 +7,6 @@ namespace Awyiss\Model\Table;
 use ArrayObject;
 use Awyiss\Awyiss;
 use Awyiss\Core\App;
-use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity\Page;
 use Awyiss\Model\Enum\PageRoleEnumInterface;
 use Awyiss\Model\Table;
@@ -545,26 +544,6 @@ class PagesTable extends Table {
 	 */
 	public function afterDelete(): void {
 		$this->Contents->enableCascadeCallbacks();
-	}
-
-
-	/**
-	 * @param \Cake\ORM\Query\SelectQuery $ao_query
-	 * @param string|null $languageShortcode
-	 * @param \Awyiss\Model\Entity\Page|null $entity
-	 * @return \Cake\ORM\Query\SelectQuery
-	 * @throws \Exception
-	 */
-	public function findForCurrentLanguage(SelectQuery $ao_query, ?string $languageShortcode = null, ?Page $entity = null): SelectQuery {
-		$ls_languageShortcode = $languageShortcode;
-
-		if ($entity) {
-			$ls_languageShortcode = $entity->languageShortcode;
-		}
-
-		return $ao_query->where([
-			'language_shortcode' => $ls_languageShortcode ?? LocaleMiddleware::getLanguage()->shortcode,
-		]);
 	}
 
 
