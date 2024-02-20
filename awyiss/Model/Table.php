@@ -93,6 +93,7 @@ class Table extends BaseTable {
 	protected array $customConfigProperties = [
 		'categories',
 		'eventTrigger',
+		'nest',
 		'systemOrder',
 	];
 	/**
