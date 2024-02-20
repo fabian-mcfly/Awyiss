@@ -81,10 +81,10 @@ class EventListenersProvider {
 	/**
 	 * @param string $as_scope
 	 * @param string $as_realm
-	 * @return void
+	 * @return bool
 	 * @throws \ReflectionException
 	 */
-	public static function loadListener(string $as_scope, string $as_realm): void {
+	public static function loadListener(string $as_scope, string $as_realm): bool {
 		$ls_scope = static::sanitizeScope($as_scope);
 
 		if (!isset(static::$loadedListeners[ $as_realm ])) {
@@ -92,7 +92,7 @@ class EventListenersProvider {
 		}
 
 		if (array_key_exists($ls_scope, static::$loadedListeners[ $as_realm ])) {
-			return;
+			return static::$loadedListeners[ $as_realm ][ $ls_scope ];
 		}
 
 		$ls_listenerClass = static::getListener($ls_scope, $as_realm);
@@ -101,12 +101,15 @@ class EventListenersProvider {
 			static::$loadedListeners[ $as_realm ][ $ls_scope ] = false;
 
 
-			return;
+			return false;
 		}
 
 		static::$loadedListeners[ $as_realm ][ $ls_scope ] = true;
 
 		EventManager::instance()->on(new $ls_listenerClass());
+
+
+		return true;
 	}
 
 

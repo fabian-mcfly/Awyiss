@@ -7,6 +7,7 @@ namespace Awyiss;
 use Awyiss\Configuration\ConfigOptionsProvider;
 use Awyiss\Controller\ControllerFactory;
 use Awyiss\Event\EventListenersProvider;
+use Awyiss\Event\EventManager;
 use Awyiss\Middleware\RoutingMiddleware;
 use Awyiss\Model\Table;
 use Awyiss\ORM\Locator\TableLocator;
@@ -337,8 +338,7 @@ class Awyiss extends BaseApplication {
 				 * @see \Awyiss\Event\Backend\ConfigurationListener::createCustomConfiguration()
 				 */
 				$lo_eventManager = EventManager::instance();
-				$lo_event = new Event('Configuration.createCustomConfiguration', null, []);
-				$lo_eventManager->dispatch($lo_event);
+				$lo_eventManager->dispatch('Configuration.createCustomConfiguration');
 
 				Configure::load($ls_fileName, 'default', false);
 				if (Configure::read('Awyiss')) {
