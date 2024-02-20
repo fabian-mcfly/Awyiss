@@ -58,7 +58,7 @@ class AttributesTask extends Task/* implements AddInterface*/ {
 		if (!empty($lx_length)) {
 			$ls_column .= '[' . $lx_length . ']';
 		}
-		if (array_key_exists('defaultValue', $aa_data['new'])) {
+		if (isset($aa_data['new']['defaultValue']) && $aa_data['new']['defaultValue'] !== '') {
 			$ls_column .= '(' . $aa_data['new']['defaultValue'] . ')';
 		}
 		if (!empty($aa_data['new']['hasIndex'])) {
