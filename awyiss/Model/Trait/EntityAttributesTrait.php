@@ -86,7 +86,7 @@ trait EntityAttributesTrait {
 		}
 
 		//Return a value if found or if an accessor exists.
-		if (!is_null($lx_value) || $ls_method) {
+		if (!is_null($lx_value) || $ls_method || $as_field === '_translations') {
 			return $lx_value;
 		}
 
@@ -142,6 +142,11 @@ trait EntityAttributesTrait {
 	 * @return \Cake\Datasource\EntityInterface
 	 */
 	public function set(array|string $ax_field, mixed $ax_value = null, array $aa_options = []): EntityInterface {
+		if (is_string($ax_field) && in_array($ax_field, ['_locale', '_translations'])) {
+			/** @noinspection PhpIncompatibleReturnTypeInspection */
+			return parent::set($ax_field, $ax_value, $aa_options);
+		}
+
 		$lx_field = $ax_field;
 
 		if (($this->_fields['attributes'] ?? null) instanceof Entity) {
@@ -156,6 +161,10 @@ trait EntityAttributesTrait {
 			elseif (is_array($lx_field)) {
 				$la_attributeFields = [];
 				foreach ($lx_field as $ls_field => $lx_value) {
+					if (in_array($ls_field, ['_locale', '_translations'])) {
+						continue;
+					}
+
 					if ($lo_attributes->has($ls_field)) {
 						$la_attributeFields[ $ls_field ] = $lx_value;
 						unset($lx_field[ $ls_field ]);
