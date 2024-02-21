@@ -52,8 +52,11 @@ class AttributesDeleteTask extends Task/* implements AddInterface*/ {
 		}
 
 
+		$lo_tableLocator = FactoryLocator::get('Table');
+
+
 		/** @var \Awyiss\Model\Table $lo_attributesTable */
-		$lo_attributesTable = FactoryLocator::get('Table')->get('Attributes');
+		$lo_attributesTable = $lo_tableLocator->get('Attributes');
 		//Update all records
 		$lo_attributesTable->updateAll([
 			'deleted' => true,
@@ -61,6 +64,12 @@ class AttributesDeleteTask extends Task/* implements AddInterface*/ {
 			'deleted_on' => DateTime::now(),
 		], [
 			'scope' => Inflector::tableize($aa_data['identifier']),
+		]);
+
+
+		$lo_configuration = $lo_tableLocator->get('I18n');
+		$lo_configuration->deleteAll([
+			'model' => $ls_attributesTable,
 		]);
 
 
