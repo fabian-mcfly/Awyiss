@@ -156,7 +156,7 @@ class EavStrategy extends BaseEavStrategy {
 			$this->translationTable->deleteQuery()->delete()->where([
 				'locale IN' => array_keys($la_translationsDiff),
 				'foreign_key' => $ao_entity->get(current($la_primaryKey)),
-				'scope' => $this->_config['referenceName'],
+				'model' => $this->_config['referenceName'],
 			])->execute();
 		}
 
@@ -178,7 +178,7 @@ class EavStrategy extends BaseEavStrategy {
 				'locale IN' => array_keys($ao_entity->get('_translations')),
 				'foreign_key' => $ao_entity->get(current($la_primaryKey)),
 				'field IN' => $la_unusedKeys,
-				'scope' => $this->_config['referenceName'],
+				'model' => $this->_config['referenceName'],
 			])->execute();
 		}
 
