@@ -97,6 +97,24 @@ class PageRolesListener implements EventListenerInterface {
 	public function afterSoftDelete(Event $ao_event, PageRole $ao_entity): void {
 		$lo_tableLocator = FactoryLocator::get('Table');
 
+		$lo_menuEntries = $lo_tableLocator->get('BackendMenuEntries');
+		$lo_menuEntries->deleteAll([
+			'OR' => [
+				'link LIKE' => Inflector::tableize($ao_entity->identifier) . '::%',
+				'link' => 'Configuration::overview::scope:' . Inflector::pluralize($ao_entity->identifier),
+			]
+		]);
+
+		$lo_configuration = $lo_tableLocator->get('Configuration');
+		$lo_configuration->deleteAll([
+			'scope' => Inflector::pluralize($ao_entity->identifier),
+		]);
+
+		$lo_configuration = $lo_tableLocator->get('I18n');
+		$lo_configuration->deleteAll([
+			'model' => Inflector::pluralize($ao_entity->identifier),
+		]);
+
 		$lo_usergroupPermissions = $lo_tableLocator->get('UsergroupPermissions');
 		$lo_usergroupPermissions->deleteAll([
 			'scope' => Inflector::pluralize($ao_entity->identifier),
