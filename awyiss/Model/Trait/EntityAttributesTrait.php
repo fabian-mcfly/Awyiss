@@ -49,7 +49,10 @@ trait EntityAttributesTrait {
 			return;
 		}
 
-		$la_translatableFields = $ao_attributesTable->getConfig('translate.fields', []);
+		$la_translatableFields = [];
+		if ($ao_attributesTable->hasBehavior('Translate')) {
+			$la_translatableFields = $ao_attributesTable->getBehavior('Translate')->getConfig('fields', []);
+		}
 
 		/** @var \Cake\Datasource\EntityInterface $lo_attributes */
 		foreach ($lo_attributes->_fields as $ls_key => $lx_value) {

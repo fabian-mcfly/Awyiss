@@ -92,14 +92,10 @@ class AttributesBehavior extends Behavior {
 	 */
 	public function initialize(array $aa_config): void {
 		if ($this->getConfig('isAttributesTable')) {
-			$this->initializeTranslate();
-
-
 			return;
 		}
 
 		$this->attributesTable = 'attributes_' . $this->getConfig('sourceTable');
-
 
 		if (!$this->table()::ATTRIBUTABLE) {
 			return;
@@ -414,25 +410,5 @@ class AttributesBehavior extends Behavior {
 				unset($ao_entity->attributes);
 			}
 		}
-	}
-
-
-	/**
-	 * @return void
-	 */
-	protected function initializeTranslate(): void {
-		/** @var \Awyiss\Model\Table $lo_table */
-		$lo_table = $this->table();
-
-		$la_translatableFields = $lo_table->getConfig('translate.fields');
-		foreach ($this->getAttributes() as $lo_attribute) {
-			if (!$lo_attribute->translatable) {
-				continue;
-			}
-
-			$la_translatableFields[] = $lo_attribute->identifier;
-		}
-
-		$lo_table->setConfig('translate.fields', $la_translatableFields);
 	}
 }

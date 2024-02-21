@@ -214,16 +214,11 @@ class Table extends BaseTable {
 		$lo_schema = $this->getSchema();
 
 		if ($lb_isAttributesTable) {
-			$this->addBehavior('Attributes', ['isAttributesTable' => true] + $this->attributes);
+			$this->addAttributesBehavior();
 		}
 		else {
-			$this->addBehavior(
-				'Attributes',
-				['isAttributesTable' => false] + $this->attributes + [
-					'sourceTable' => $ls_sourceTable,
-					'foreignKey' => Inflector::singularize($this->getTable()) . '_id',
-				]
-			);
+			$this->addAttributesBehavior($ls_sourceTable);
+
 
 			$this->addBehavior('Audit', $this->audit + ['priority' => 99999]);
 
@@ -653,6 +648,42 @@ class Table extends BaseTable {
 					$ao_schema->addColumn($lo_attribute->identifier, $la_column);
 				}
 			}
+		}
+	}
+
+
+	/**
+	 * @param string|null $as_sourceTable
+	 * @return void
+	 */
+	protected function addAttributesBehavior(?string $as_sourceTable = null): void {
+		if ($as_sourceTable) {
+			$la_options = ['isAttributesTable' => false] + $this->attributes + [
+				'sourceTable' => $as_sourceTable,
+				'foreignKey' => Inflector::singularize($this->getTable()) . '_id',
+			];
+		}
+		else {
+			$la_options = ['isAttributesTable' => true] + $this->attributes;
+		}
+
+		$this->addBehavior('Attributes', $la_options);
+
+		if ($as_sourceTable) {
+			return;
+		}
+
+		/** @var \Awyiss\Model\Behavior\AttributesBehavior $lo_attributes */
+		$lo_attributes = $this->getBehavior('Attributes');
+
+		$la_attributes = $lo_attributes->getAttributes();
+
+		foreach ($la_attributes as $lo_attribute) {
+			if (!$lo_attribute->translatable) {
+				continue;
+			}
+
+			$this->translate['fields'][] = $lo_attribute->identifier;
 		}
 	}
 }
