@@ -340,9 +340,19 @@ class AttributesBehavior extends Behavior {
 			throw new RuntimeException('Eager loaded associations should skip the attributes behavior');
 		}*/
 
-		$ao_query->contain([
-			$this->getAttributesTableName(true),
-		]);
+		$lb_containsI18n = isset($ao_query->getContain()['I18n']);
+		if ($lb_containsI18n) {
+			$ao_query->contain([
+				$this->getAttributesTableName(true) => [
+					'finder' => 'translations',
+				],
+			]);
+		}
+		else {
+			$ao_query->contain([
+				$this->getAttributesTableName(true),
+			]);
+		}
 
 		$ao_query->mapReduce(function (array|Entity $ao_entity, int $ai_key, MapReduce $ao_mapReduce) use ($ao_query): void {
 			if (!is_a($ao_entity, Entity::class)) {
