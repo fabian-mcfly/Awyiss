@@ -169,7 +169,6 @@ class AttributesHelper extends Helper {
 			static::$attributeOptions[ $ls_source ]
 		);
 
-
 		return $ls_emptyField . $this->Form->control($ls_fieldName, $la_options);
 	}
 
@@ -211,6 +210,10 @@ class AttributesHelper extends Helper {
 				break;*/
 		}
 
+		if (!isset($la_options['label']) && isset($aa_attributeFields[ $as_fieldName ])) {
+			$la_options['label'] = $aa_attributeFields[ $as_fieldName ]->label;
+		}
+
 		if (!isset($la_options['timezone']) && in_array($la_options['type'], ['datetime'])) {
 			$la_options['timezone'] = $lo_language->timezone;
 		}
@@ -233,6 +236,8 @@ class AttributesHelper extends Helper {
 		if (!str_starts_with($ls_field, 'attributes.')) {
 			$ls_field = 'attributes.' . $ls_field;
 		}
+
+		unset($la_options['realType']);
 
 
 		return [
