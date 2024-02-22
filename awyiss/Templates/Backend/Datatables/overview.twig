@@ -1,0 +1,87 @@
+{#
+@var ao_datatables Awyiss\Model\Entity\Datatable[]
+@var _view \Awyiss\View\BackendView
+#}
+
+<div class="Datatables Overview">
+	{% block buttonsOverview %}
+		{% if helper_Authorization_isAccessible('create') %}
+			{{ helper_Html_link(__('create'), {action: 'add'}, {class: 'Button'}) }}
+		{% endif %}
+	{% endblock %}
+
+	{% block headlineOverview %}
+		<h1>{{ __('headline_overview') }}</h1>
+	{% endblock %}
+
+	{% block tableOverview %}
+		<table>
+			{% block tableOverviewHead %}
+				<thead>
+					{% block tableOverviewHeadRow %}
+						<tr>
+							{% block tableOverviewHeaderId %}
+								<th>{{ helper_Paginator_sort('id') }}</th>
+							{% endblock %}
+
+							{% block tableOverviewHeaderTitle %}
+								<th>{{ helper_Paginator_sort('title') }}</th>
+							{% endblock %}
+
+							{% block tableOverviewHeaderIdentifier %}
+								<th>{{ helper_Paginator_sort('identifier') }}</th>
+							{% endblock %}
+
+							{% block tableOverviewHeaderActive %}
+								<th>{{ helper_Paginator_sort('active') }}</th>
+							{% endblock %}
+
+							{% block tableOverviewHeaderActions %}
+								<th class="actions"></th>
+							{% endblock %}
+						</tr>
+					{% endblock %}
+				</thead>
+			{% endblock %}
+			{% block tableOverviewBody %}
+				<tbody>
+					{# @var lo_datatable \Awyiss\Model\Entity\Datatable #}
+					{% for lo_datatable in ao_datatables %}
+						{% block tableOverviewBodyRow %}
+							<tr>
+								{% block tableOverviewCellId %}
+									<td>{{ helper_Number_format(lo_datatable.id) }}</td>
+								{% endblock %}
+
+								{% block tableOverviewCellTitle %}
+									<td>{{ lo_datatable.title }}</td>
+								{% endblock %}
+
+								{% block tableOverviewCellIdentifier %}
+									<td>{{ lo_datatable.identifier }}</td>
+								{% endblock %}
+
+								{% block tableOverviewCellActive %}
+									<td>{{ lo_datatable.active }}</td>
+								{% endblock %}
+
+								{% block tableOverviewCellActions %}
+									<td class="actions">
+										{% if helper_Authorization_isAccessible('update') %}
+											{{ helper_Html_link(__('edit'), {action: 'edit', id: lo_datatable.id}) }}
+										{% endif %}
+										{% if helper_Authorization_isAccessible('delete') %}
+											{{ helper_Html_link(__('delete'), {action: 'delete', id: lo_datatable.id}, {confirm: __('confirm_delete', lo_datatable.id) }) }}
+										{% endif %}
+									</td>
+								{% endblock %}
+							</tr>
+						{% endblock %}
+					{% endfor %}
+				</tbody>
+			{% endblock %}
+		</table>
+	{% endblock %}
+
+	{{ helper_Paginator_render() }}
+</div>

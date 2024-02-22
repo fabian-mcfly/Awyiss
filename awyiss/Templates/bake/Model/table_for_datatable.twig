@@ -1,0 +1,42 @@
+{% set generatedFunctions = ['initialize'] %}
+{{ element('file_header', {
+	namespace: fileBuilder.namespace,
+	classImports: fileBuilder.classImports([
+		'Awyiss\\Model\\Table\\GenericDatatablesTable',
+		'Cake\\Datasource\\EntityInterface',
+	]),
+}) }}
+
+/**
+ * {{ name }} Model
+ *
+ * @method \{{ namespace }}\Model\Entity\{{ name|singularize }} newDefaultEntity(array $aa_additionalData = [], array $aa_options = [])
+ * @method \Cake\Collection\CollectionInterface|null getNestedChildren(EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
+ * @method \Cake\Collection\CollectionInterface|null getChildren(EntityInterface $ao_entity, array $aa_options = [])
+ * @method \{{ namespace }}\Model\Entity\{{ name|singularize }} getParent(EntityInterface $ao_entity, array $aa_options = [])
+ * @method \Cake\Collection\CollectionInterface|null getParents(EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
+ */
+class {{ name }}Table extends GenericDatatablesTable {
+{% set userConstants = fileBuilder.classBuilder.userConstants([]) %}
+{% if userConstants.TABLE is not defined %}
+	/**
+	* @inheritDoc
+	*/
+	public const TABLE = '{{ table }}';
+{% endif %}
+{% if userConstants %}
+	{{~ Bake.concat('\n\n\n', userConstants) }}
+
+{% else %}
+{% endif %}
+{% set userProperties = fileBuilder.classBuilder.userProperties([]) %}
+{% if userProperties %}
+	{{~ Bake.concat('\n\n\n', userProperties) }}
+
+{% endif %}
+{% set userFunctions = fileBuilder.classBuilder.userFunctions(generatedFunctions) %}
+{% if userFunctions %}
+
+	{{~ Bake.concat('\n\n\n', userFunctions) }}
+{% endif %}
+}

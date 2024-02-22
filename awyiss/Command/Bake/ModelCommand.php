@@ -171,6 +171,9 @@ class ModelCommand extends BaseModelCommand {
 			];
 
 		$ls_template = 'Model/table';
+		if ($ao_args->getOption('is-datatable')) {
+			$ls_template = 'Model/table_for_datatable';
+		}
 		if ($ao_args->getOption('is-pagerole')) {
 			$ls_template = 'Model/table_for_pagerole';
 		}
@@ -338,10 +341,14 @@ class ModelCommand extends BaseModelCommand {
 			],
 			'default' => 'Awyiss',
 			'help' => 'The namespace for the model.',
+		])->addOption('is-datatable', [
+			'boolean' => true,
+			'help' => 'Does the model reflect a datatable? Will extend GenericDatatablesTable.',
 		])->addOption('is-pagerole', [
 			'boolean' => true,
 			'help' => 'Does the model reflect a pagerole? Will extend PagesTable and use db table `pages`.',
 		])->addOption('for-pagerole', [
+			'boolean' => true,
 			'help' => 'Should the table be associated with a pagerole? Will remove a Page association if present.',
 		]);
 

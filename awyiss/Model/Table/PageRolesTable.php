@@ -8,6 +8,7 @@ use Awyiss\Core\App;
 use Awyiss\Model\Entity\PageRole;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
+use Cake\Datasource\FactoryLocator;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Utility\Inflector;
 use Cake\Validation\Validator;
@@ -145,11 +146,19 @@ class PageRolesTable extends Table {
 					return __d($this->getI18nDomain(), 'error_identifier_unchanged');
 				}
 
+				$ls_pluralIdentifier = Inflector::pluralize($ao_entity->identifier);
+
+				/** @var \Awyiss\Model\Table\DatatablesTable $lo_datatablesTable */
+				$lo_datatablesTable = FactoryLocator::get('Table')->get('Datatables');
+				$lo_datatables = $lo_datatablesTable->findAllAndCache();
+
 				if (
 					$ao_entity->isDirty('identifier') &&
 					(
+						str_starts_with($ao_entity->identifier, 'attributes_') ||
 						in_array($ao_entity->identifier, $this->blocklistedIdentifiers) ||
-						App::className(Inflector::camelize(Inflector::pluralize($ao_entity->identifier)), 'Controller/Backend', 'Controller')
+						App::className(Inflector::camelize($ls_pluralIdentifier), 'Controller/Backend', 'Controller') ||
+						$lo_datatables->firstMatch(['active' => true, 'identifier' => $ls_pluralIdentifier])
 					)
 				) {
 					return __dfx($this->getI18nDomain(), 'validation', 'page_role', 'error_identifier_allowed');

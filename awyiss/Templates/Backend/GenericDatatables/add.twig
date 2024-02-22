@@ -1,0 +1,32 @@
+{#
+@var ao_record Cake\Datasource\EntityInterface
+@var ao_datatable \Awyiss\Model\Entity\Datatable
+@var as_languageRealm string
+@var ab_nesting bool
+@var ab_splitIntoLanguages bool
+@var ab_translatable bool
+@var _view \Awyiss\View\BackendView
+#}
+
+<div class="GenericDatatables Form Add">
+	{% block headlineAdd %}
+		<h1>{{ __('headline_add') }}</h1>
+	{% endblock %}
+
+	{{ helper_Form_create(ao_record, {method: 'post', idPrefix: ao_datatable.identifier}) }}
+
+	{% block formAddButtons %}
+		{{ helper_Form_button(__('save')) }}
+		{{ helper_Form_button(__('save_close'), {name: 'submit', value: 'submit_close'}) }}
+	{% endblock %}
+
+	{% block formAdd %}
+		{% include('@Backend/GenericDatatables/form.twig') %}
+	{% endblock %}
+
+	{% block formAddButtonsBottom %}
+		{{ block('formAddButtons') }}
+	{% endblock %}
+
+	{{ helper_Form_end() -}}
+</div>

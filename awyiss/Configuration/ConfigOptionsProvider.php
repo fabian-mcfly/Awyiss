@@ -4,9 +4,12 @@
 namespace Awyiss\Configuration;
 
 
+use Awyiss\Configuration\ConfigOptions\GenericDatatablesConfigOptions;
 use Awyiss\Configuration\ConfigOptions\GenericPagesConfigOptions;
 use Awyiss\Core\App;
+use Awyiss\Model\Entity\Datatable;
 use Awyiss\Model\Enum\PageRoleEnumInterface;
+use Cake\Datasource\FactoryLocator;
 use Cake\Utility\Inflector;
 use Cake\Utility\Text;
 use ReflectionClass;
@@ -21,6 +24,10 @@ class ConfigOptionsProvider {
 	 * @var array<string, class-string<\Awyiss\Configuration\ConfigOptionsInterface>|\Awyiss\Model\Enum\PageRole>
 	 */
 	protected static array $configOptions = [];
+	/**
+	 * @var array<string, \Awyiss\Model\Entity\Datatable>
+	 */
+	protected static array $datatables;
 	/**
 	 * @var array<string, \Awyiss\Configuration\ConfigOptionsInterface|\Awyiss\Model\Enum\PageRole>
 	 */
@@ -56,7 +63,7 @@ class ConfigOptionsProvider {
 		if ($ab_returnLoaded) {
 			if (!static::$loadedAll) {
 				foreach (static::$configOptions as $ls_scope => $ls_configOptions) {
-					static::$loadedConfigOptions[ $ls_scope ] = static::loadConfigOptions($ls_configOptions);
+					static::$loadedConfigOptions[ $ls_scope ] = static::loadConfigOptions($ls_scope);
 				}
 
 				static::$loadedAll = true;
@@ -257,7 +264,7 @@ class ConfigOptionsProvider {
 		foreach ($la_paths as $ls_namespace => $ls_path) {
 			foreach (glob($ls_path) as $ls_filePath) {
 				$ls_configurationName = substr($ls_filePath, strrpos($ls_filePath, DS) + 1, -4);
-				if (str_starts_with($ls_configurationName, '_') || ($ls_scope === '*' && $ls_configurationName === 'GenericPagesConfigOptions')) {
+				if ($ls_scope === '*' && in_array($ls_configurationName, ['GenericDatatablesConfigOptions', 'GenericPagesConfigOptions'])) {
 					continue;
 				}
 
@@ -295,6 +302,22 @@ class ConfigOptionsProvider {
 			}
 
 			static::$configOptions[ $ls_configScope ] = $le_pageRole;
+		}
+
+
+		if (!isset(static::$datatables)) {
+			//Get all datatables from the database because we want them to have a generic policy too
+			/** @var \Awyiss\Model\Table\DatatablesTable $lo_table */
+			$lo_table = FactoryLocator::get('Table')->get('Datatables');
+			static::$datatables = $lo_table->findAllAndCache()->reject(function (Datatable $ao_datatable) {
+				return $ao_datatable->active === false;
+			})->indexBy(function (Datatable $ao_datatable) {
+				return static::sanitizeScope($ao_datatable->identifier);
+			})->map(function (Datatable $ao_datatable) {
+				return new GenericDatatablesConfigOptions($ao_datatable->identifier);
+			})->toArray();
+
+			static::$configOptions += static::$datatables;
 		}
 	}
 }

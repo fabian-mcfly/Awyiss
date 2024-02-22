@@ -5,10 +5,14 @@ namespace Awyiss\Controller;
 
 
 use Awyiss\Core\App;
+use Awyiss\Model\Entity\Datatable;
+use Awyiss\Model\Enum\PageRoleEnumInterface;
 use Cake\Controller\Controller;
 use Cake\Controller\ControllerFactory as BaseControllerFactory;
+use Cake\Datasource\FactoryLocator;
 use Cake\Http\ServerRequest;
 use Cake\Utility\Inflector;
+use GenericDatatablesBase;
 use GenericPagesBase;
 use Psr\Http\Message\ServerRequestInterface;
 use ReflectionClass;
@@ -37,7 +41,7 @@ class ControllerFactory extends BaseControllerFactory {
 		//No className means no class exists for the current request
 		if ($ls_className === null) {
 			//Try to get a controller based on \Awyiss\Controller\Backend\PagesController::class
-			$lo_controller = $this->tryGenericPagesController($ao_request);
+			$lo_controller = $this->tryGenericController($ao_request);
 			if ($lo_controller) {
 				return $lo_controller;
 			}
@@ -106,10 +110,8 @@ class ControllerFactory extends BaseControllerFactory {
 	 *
 	 * @throws \ReflectionException
 	 * @see \Awyiss\Controller\Backend\PagesController::asPageRole()
-	 * @noinspection PhpUndefinedClassInspection
-	 * @noinspection PhpMethodParametersCountMismatchInspection
 	 */
-	public function tryGenericPagesController(ServerRequest $ao_request): ?Controller {
+	public function tryGenericController(ServerRequest $ao_request): ?Controller {
 		$ls_namespace = 'Controller';
 		$ls_controller = $ao_request->getParam('controller', '');
 		if ($ao_request->getParam('prefix')) {
@@ -125,33 +127,123 @@ class ControllerFactory extends BaseControllerFactory {
 		}
 
 		//When there's no matching page role, we don't allow creating a controller
-		/** @var class-string<\Awyiss\Database\Type\PageRoleEnumInterface> $ls_pageRoleEnum */
+		/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $ls_pageRoleEnum */
 		$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
 		$le_pageRole = $ls_pageRoleEnum::tryFromName($ls_singular);
-		if (!$le_pageRole) {
-			return null;
+		if ($le_pageRole) {
+			return $this->buildGenericPageController($ls_controller, $ls_namespace, $ao_request, $le_pageRole);
 		}
 
+
+		//Get all datatables from the database because we want them to have a generic policy too
+		/** @var \Awyiss\Model\Table\DatatablesTable $lo_table */
+		$lo_table = FactoryLocator::get('Table')->get('Datatables');
+		$lo_datatables = $lo_table->findAllAndCache();
+		$lo_datatable = $lo_datatables->firstMatch([
+			'active' => true,
+			'identifier' => Inflector::underscore($ls_controller),
+		]);
+
+		if ($lo_datatable) {
+			return $this->buildGenericDatatablesController($ls_controller, $ls_namespace, $ao_request, $lo_datatable);
+		}
+
+
+		return null;
+	}
+
+
+	/**
+	 * @param string $as_controller
+	 * @param string $as_namespace
+	 * @param \Cake\Http\ServerRequest $ao_request
+	 * @param \Awyiss\Model\Entity\Datatable $ao_datatable
+	 * @return \Awyiss\Controller\Backend\GenericDatatablesController
+	 * @throws \ReflectionException
+	 * @noinspection PhpUndefinedClassInspection
+	 * @noinspection PhpMethodParametersCountMismatchInspection
+	 */
+	protected function buildGenericDatatablesController(
+		string $as_controller,
+		string $as_namespace,
+		ServerRequest $ao_request,
+		Datatable $ao_datatable
+	): Controller {
 		/** @var \Cake\Controller\Controller::class $ls_baseController */
-		$ls_baseController = App::className('GenericPagesBase', $ls_namespace, 'Controller');
+		$ls_baseController = App::className('GenericDatatablesBase', $as_namespace, 'Controller');
+		if (!$ls_baseController) {
+			/** @var \Awyiss\Controller\Backend\GenericDatatablesController::class $ls_baseController */
+			$ls_baseController = App::className('GenericDatatables', $as_namespace, 'Controller');
+		}
+
+		/*
+		 * Set a class alias, so it's available in the root namespace, allowing the extension of "\GenericDatatablesBase"
+		 *
+		 * This is required because it's not possible to extend a dynamic class. And since $ls_baseController might
+		 * return a controller inside the custom namespace, line 157 would extend the wrong class,
+		 * if "GenericDatatables" would be hard coded
+		 */
+		if (!class_exists('GenericDatatablesBase')) {
+			class_alias($ls_baseController, 'GenericDatatablesBase');
+		}
+
+		/**
+		 * Create a new class instance and set the datatable to the defined constant.
+		 *
+		 * @var \Awyiss\Controller\Backend\GenericDatatablesController $lo_controller
+		 */
+		//phpcs:disable SlevomatCodingStandard.Classes.EmptyLinesAroundClassBraces, Squiz.WhiteSpace.ScopeClosingBrace
+		$lo_controller = new class ($ao_request) extends GenericDatatablesBase { };
+		$lo_controller->forDatatable($ao_datatable, $as_controller);
+		//phpcs:enable
+
+
+		return $lo_controller;
+	}
+
+
+	/**
+	 * @param string $as_controller
+	 * @param string $as_namespace
+	 * @param \Cake\Http\ServerRequest $ao_request
+	 * @param \Awyiss\Model\Enum\PageRoleEnumInterface $ae_pageRole
+	 * @return \Awyiss\Controller\Backend\PagesController
+	 * @throws \ReflectionException
+	 * @noinspection PhpUndefinedClassInspection
+	 * @noinspection PhpMethodParametersCountMismatchInspection
+	 */
+	protected function buildGenericPageController(
+		string $as_controller,
+		string $as_namespace,
+		ServerRequest $ao_request,
+		PageRoleEnumInterface $ae_pageRole
+	): Controller {
+		/** @var \Cake\Controller\Controller::class $ls_baseController */
+		$ls_baseController = App::className('GenericPagesBase', $as_namespace, 'Controller');
 		if (!$ls_baseController) {
 			/** @var \Awyiss\Controller\Backend\PagesController::class $ls_baseController */
-			$ls_baseController = App::className('Pages', $ls_namespace, 'Controller');
+			$ls_baseController = App::className('Pages', $as_namespace, 'Controller');
 		}
 
-		//Set a class alias, so it's available in the root namespace, allowing the extension of "\GenericPagesBase"
+		/*
+		 * Set a class alias, so it's available in the root namespace, allowing the extension of "\GenericPagesBase"
+		 *
+		 * This is required because it's not possible to extend a dynamic class. And since $ls_baseController might
+		 * return a controller inside the custom namespace, line 157 would extend the wrong class,
+		 * if "Pages" would be hard coded
+		 */
 		if (!class_exists('GenericPagesBase')) {
 			class_alias($ls_baseController, 'GenericPagesBase');
 		}
 
 		/**
-		 * Create a new class instance and set the page_role to the defined constant.
+		 * Create a new class instance and set the page_role to the defined enum.
 		 *
 		 * @var \Awyiss\Controller\Backend\PagesController $lo_controller
 		 */
 		//phpcs:disable SlevomatCodingStandard.Classes.EmptyLinesAroundClassBraces, Squiz.WhiteSpace.ScopeClosingBrace
-		$lo_controller = new class ($ao_request) extends GenericPagesBase {};
-		$lo_controller->asPageRole($le_pageRole, $ls_controller);
+		$lo_controller = new class ($ao_request) extends GenericPagesBase { };
+		$lo_controller->asPageRole($ae_pageRole, $as_controller);
 		//phpcs:enable
 
 

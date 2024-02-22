@@ -6,9 +6,12 @@ namespace Awyiss\Authorization;
 
 use Authentication\AuthenticationServiceInterface;
 use Awyiss\Authorization\Policy\AbstractGenericPolicy;
+use Awyiss\Authorization\Policy\Backend\GenericDatatablesPolicy;
 use Awyiss\Authorization\Policy\Backend\GenericPagesPolicy;
 use Awyiss\Authorization\Policy\PolicyInterface;
 use Awyiss\Core\App;
+use Awyiss\Model\Entity\Datatable;
+use Cake\Datasource\FactoryLocator;
 use Cake\Utility\Inflector;
 use Cake\Utility\Text;
 use ReflectionClass;
@@ -21,6 +24,10 @@ use RuntimeException;
  * @see AuthorizationServiceInterface
  */
 class AuthorizationService implements AuthorizationServiceInterface {
+	/**
+	 * @var array<string, \Awyiss\Model\Entity\Datatable>
+	 */
+	protected array $datatables;
 	/**
 	 * @var array
 	 */
@@ -130,7 +137,7 @@ class AuthorizationService implements AuthorizationServiceInterface {
 		foreach ($la_paths as $ls_namespace => $ls_path) {
 			foreach (glob($ls_path) as $ls_filePath) {
 				$ls_policyName = substr($ls_filePath, strrpos($ls_filePath, DS) + 1, -4);
-				if (str_starts_with($ls_policyName, '_') || ($ls_scope === '*' && $ls_policyName === 'GenericPagesPolicy')) {
+				if ($ls_scope === '*' && in_array($ls_policyName, ['GenericDatatablesPolicy', 'GenericPagesPolicy'])) {
 					continue;
 				}
 
@@ -163,6 +170,26 @@ class AuthorizationService implements AuthorizationServiceInterface {
 			}
 
 			$this->policies[ $as_realm ][ $ls_policyScope ] = new GenericPagesPolicy($ls_policyScope);
+		}
+
+
+		if (!isset($this->datatables)) {
+			//Get all datatables from the database because we want them to have a generic policy too
+			/** @var \Awyiss\Model\Table\DatatablesTable $lo_table */
+			$lo_table = FactoryLocator::get('Table')->get('Datatables');
+			$this->datatables = $lo_table->findAllAndCache()->reject(function (Datatable $ao_datatable) {
+				return $ao_datatable->active === false;
+			})->indexBy(function (Datatable $ao_datatable) {
+				return static::sanitizeScope($ao_datatable->identifier);
+			})->filter(function (Datatable $ao_datatable) {
+				/** @var \Awyiss\Model\Table $lo_datatableTable */
+				$lo_datatableTable = FactoryLocator::get('Table')->get(Inflector::camelize($ao_datatable->identifier));
+				return $lo_datatableTable::ATTRIBUTABLE;
+			})->map(function (Datatable $ao_datatable) {
+				return new GenericDatatablesPolicy($ao_datatable->identifier);
+			})->toArray();
+
+			$this->policies[ $as_realm ] += $this->datatables;
 		}
 	}
 
