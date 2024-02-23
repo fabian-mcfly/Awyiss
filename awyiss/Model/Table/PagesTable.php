@@ -5,6 +5,7 @@ namespace Awyiss\Model\Table;
 
 
 use ArrayObject;
+use Awyiss\Authentication\IdentityAwareTrait;
 use Awyiss\Awyiss;
 use Awyiss\Core\App;
 use Awyiss\Model\Entity\Page;
@@ -16,6 +17,7 @@ use Cake\Database\Schema\TableSchemaInterface;
 use Cake\Database\Type\EnumType;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
+use Cake\I18n\DateTime;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Utility\Inflector;
@@ -33,6 +35,7 @@ use Cake\Validation\Validator;
  * @property \Awyiss\Model\Table\PagesTable&\Awyiss\ORM\Association\BelongsTo $ParentPages
  * @property \Awyiss\Model\Table\PagesTable&\Awyiss\ORM\Association\HasMany $ChildPages
  * @property \Awyiss\Model\Table\ContentsTable&\Awyiss\ORM\Association\HasMany $Contents
+ * @property \Awyiss\Model\Table\PagesTable&\Awyiss\ORM\Association\HasMany $SlugHistory
  * @method \Awyiss\Model\Entity\Page newDefaultEntity(array $aa_additionalData = [], array $aa_options = [])
  * @method \Cake\Collection\CollectionInterface|null getNestedChildren(EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
  * @method \Cake\Collection\CollectionInterface|null getChildren(EntityInterface $ao_entity, array $aa_options = [])
@@ -41,6 +44,8 @@ use Cake\Validation\Validator;
  * @noinspection PhpUnnecessaryFullyQualifiedNameInspection
  */
 class PagesTable extends Table {
+	use IdentityAwareTrait;
+
 	/**
 	 * @inheritDoc
 	 */
@@ -122,6 +127,12 @@ class PagesTable extends Table {
 				'page_template_id',
 				'page_role_id',
 			],
+		]);
+
+		$this->hasMany('SlugHistory', [
+			'cascadeCallbacks' => true,
+			'dependent' => true,
+			'foreignKey' => 'page_id',
 		]);
 	}
 
@@ -481,9 +492,35 @@ class PagesTable extends Table {
 	 * @param ArrayObject $ao_options
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function afterSaveCommit(EventInterface $ao_event, EntityInterface $ao_entity, ArrayObject $ao_options): void {
+	public function afterSave(EventInterface $ao_event, EntityInterface $ao_entity, ArrayObject $ao_options): void {
 		$ls_originalSlug = $ao_entity->hasOriginal('slug') ? $ao_entity->getOriginal('slug') : null;
 		if ($ls_originalSlug && $ao_entity->slug != $ls_originalSlug) {
+			$lo_records = $this->find('all', skipPageRoleCheck: true)->where(function (QueryExpression $ao_expression) use ($ls_originalSlug) {
+				return $ao_expression->like('slug', $ls_originalSlug . '/%');
+			})->all();
+
+			$li_userId = $this->getIdentity()?->id;
+			$ld_now = new DateTime('now');
+
+			$lo_query = $this->SlugHistory->insertQuery()->insert(['slug', 'page_id', 'created_by', 'created_on']);
+			$lo_query->values([
+				'slug' => $ao_entity->languageShortcode . '/' . $ls_originalSlug,
+				'page_id' => $ao_entity->id,
+				'created_by' => $li_userId,
+				'created_on' => $ld_now,
+			]);
+			/** @var \Awyiss\Model\Entity\Page $lo_page */
+			foreach ($lo_records as $lo_page) {
+				$lo_query->values([
+					'slug' => $lo_page->languageShortcode . '/' . $lo_page->slug,
+					'page_id' => $lo_page->id,
+					'created_by' => $li_userId,
+					'created_on' => $ld_now,
+				]);
+			}
+			$lo_query->execute();
+
+
 			$lo_query = $this->updateQuery();
 
 			/**

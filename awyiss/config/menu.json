@@ -55,6 +55,21 @@
 					"identifier": "create"
 				}
 			},
+			"slug_history": {
+				"title": {
+					"translate": ["slug_history", "menu_title"]
+				},
+				"link": {
+					"url": {
+						"controller": "SlugHistory",
+						"action": "overview"
+					}
+				},
+				"access": {
+					"scope": "slug_history",
+					"identifier": "read"
+				}
+			},
 			"pages_configure": {
 				"title": {
 					"translate": ["pages", "menu_configure"]

@@ -1,0 +1,27 @@
+{#
+@var ao_slugHistory Awyiss\Model\Entity\SlugHistory
+@var _view \Awyiss\View\BackendView
+#}
+
+<div class="SlugHistory Form Edit">
+	{% block headlineEdit %}
+		<h1>{{ __('headline_edit') }}</h1>
+	{% endblock %}
+
+	{{ helper_Form_create(ao_slugHistory, {method: 'post', idPrefix: 'slugHistory'}) }}
+
+	{% block formEditButtons %}
+		{{ helper_Form_button(__('save')) }}
+		{{ helper_Form_button(__('save_close'), {name: 'submit', value: 'submit_close'}) }}
+	{% endblock %}
+
+	{% block formEdit %}
+		{% include('@Backend/SlugHistory/form.twig') %}
+	{% endblock %}
+
+	{% block formEditButtonsBottom %}
+		{{ block('formEditButtons') }}
+	{% endblock %}
+
+	{{ helper_Form_end() -}}
+</div>
