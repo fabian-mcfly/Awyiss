@@ -106,6 +106,14 @@ class EventTriggerBehavior extends Behavior {
 		unset($la_arguments[0]);
 
 		$ls_alias = $this->table()->getAlias();
+
+		if (str_starts_with($ls_alias, 'Child')) {
+			$ls_alias = substr($ls_alias, 5);
+		}
+		elseif (str_starts_with($ls_alias, 'Parent')) {
+			$ls_alias = substr($ls_alias, 6);
+		}
+
 		//Create a new event with the modified name and dispatch it.
 		$lo_event = new Event('Model.' . $ls_alias . '.' . $as_name, $this->table(), $la_arguments);
 		$this->table()->getEventManager()->dispatch($lo_event);
