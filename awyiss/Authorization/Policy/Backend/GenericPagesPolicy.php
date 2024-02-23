@@ -4,7 +4,11 @@
 namespace Awyiss\Authorization\Policy\Backend;
 
 
+use Awyiss\Authorization\PermissionOption\PermissionOptionCollection;
+use Awyiss\Authorization\PermissionOption\SimplePermissionOption;
 use Awyiss\Authorization\Policy\AbstractGenericPolicy;
+use Cake\Core\Configure;
+use Cake\Utility\Inflector;
 
 
 /**
@@ -17,4 +21,24 @@ use Awyiss\Authorization\Policy\AbstractGenericPolicy;
  * @see \Awyiss\Authorization\PermissionOption\SimplePermissionOption
  */
 class GenericPagesPolicy extends AbstractGenericPolicy {
+	/**
+	 * Creates a `PermissionOptionCollection` and four `SimplePermission`
+	 * for the identifiers 'read', 'create', 'update' and 'delete' (CRUD).
+	 *
+	 * @return \Awyiss\Authorization\PermissionOption\PermissionOptionCollection
+	 * @throws \Exception
+	 * @throws \RuntimeException
+	 */
+	protected function loadPermissionOptions(): PermissionOptionCollection {
+		$lo_permissions = parent::loadPermissionOptions();
+
+		if (Configure::read('Awyiss.' . Inflector::camelize($this->getScope()) . '.Backend.contents.enabled')) {
+			$lo_permissions->load('contents', [
+				'className' => SimplePermissionOption::class,
+			]);
+		}
+
+
+		return $lo_permissions;
+	}
 }
