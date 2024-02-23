@@ -46,6 +46,7 @@ use RuntimeException;
  * @method bool hasAttributes()
  * @method \Cake\Datasource\ResultSetInterface|array|null getCategories(bool $ab_returnRaw = false)
  * @method \Awyiss\Model\Entity newDefaultEntity(array $aa_additionalData = [])
+ * @method \Cake\Collection\CollectionInterface listNested(\Cake\ORM\Query\SelectQuery $ao_query)
  * @noinspection PhpUnnecessaryFullyQualifiedNameInspection
  */
 class Table extends BaseTable {
