@@ -192,6 +192,11 @@ class Table extends BaseTable {
 
 		$this->setPrimaryKey('id');
 
+		//Do not load behaviors for translation associations
+		if (str_ends_with($this->getTable(), '_translation') || str_ends_with($this->getAlias(), '_translation')) {
+			return;
+		}
+
 		$this->initializeAssociations();
 
 		/**
