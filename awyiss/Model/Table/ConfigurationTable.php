@@ -4,15 +4,12 @@
 namespace Awyiss\Model\Table;
 
 
-use ArrayObject;
 use Awyiss\Authentication\IdentityAwareTrait;
 use Awyiss\Awyiss;
 use Awyiss\Configuration\ConfigOptionsProvider;
 use Awyiss\Model\Entity\Configuration;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
-use Cake\Datasource\EntityInterface;
-use Cake\Event\EventInterface;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Utility\Inflector;
@@ -279,28 +276,5 @@ class ConfigurationTable extends Table {
 
 
 		return $this->configScopes;
-	}
-
-
-	/**
-	 * @param \Cake\Event\EventInterface $ao_event
-	 * @param \Awyiss\Model\Entity\Configuration|\Cake\Datasource\EntityInterface $ao_entity
-	 * @param \ArrayObject $ao_options
-	 * @return void
-	 * @noinspection PhpUnusedParameterInspection
-	 * @throws \ReflectionException
-	 */
-	public function beforeSave(EventInterface $ao_event, Configuration|EntityInterface $ao_entity, ArrayObject $ao_options): void {
-		$ao_entity->value = ConfigOptionsProvider::typecastConfigValue(
-			$ao_entity->scope,
-			$ao_entity->realm,
-			$ao_entity->identifier,
-			$ao_entity->value,
-			$ao_entity->languageShortcode
-		);
-
-		if (in_array(getType($ao_entity->value), ['array', 'object'])) {
-			$ao_entity->value = json_encode($ao_entity->value);
-		}
 	}
 }

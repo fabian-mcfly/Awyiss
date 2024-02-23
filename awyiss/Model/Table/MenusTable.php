@@ -129,40 +129,4 @@ class MenusTable extends Table {
 
 		return $ao_rules;
 	}
-
-
-	/**
-	 * @return void
-	 * @noinspection PhpUnused
-	 */
-	public function beforeSoftDelete(): void {
-		$this->AllMenuEntries->disableCascadeCallbacks();
-	}
-
-
-	/**
-	 * @return void
-	 * @noinspection PhpUnused
-	 */
-	public function beforeDelete(): void {
-		$this->AllMenuEntries->disableCascadeCallbacks();
-	}
-
-
-	/**
-	 * @return void
-	 * @noinspection PhpUnused
-	 */
-	public function afterSoftDelete(): void {
-		$this->AllMenuEntries->enableCascadeCallbacks();
-	}
-
-
-	/**
-	 * @return void
-	 * @noinspection PhpUnused
-	 */
-	public function afterDelete(): void {
-		$this->AllMenuEntries->enableCascadeCallbacks();
-	}
 }

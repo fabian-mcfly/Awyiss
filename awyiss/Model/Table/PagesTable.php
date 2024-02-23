@@ -4,21 +4,14 @@
 namespace Awyiss\Model\Table;
 
 
-use ArrayObject;
-use Awyiss\Authentication\IdentityAwareTrait;
 use Awyiss\Awyiss;
 use Awyiss\Core\App;
 use Awyiss\Model\Entity\Page;
 use Awyiss\Model\Enum\PageRoleEnumInterface;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
-use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Schema\TableSchemaInterface;
 use Cake\Database\Type\EnumType;
-use Cake\Datasource\EntityInterface;
-use Cake\Event\EventInterface;
-use Cake\I18n\DateTime;
-use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Utility\Inflector;
 use Cake\Validation\Validator;
@@ -37,15 +30,13 @@ use Cake\Validation\Validator;
  * @property \Awyiss\Model\Table\ContentsTable&\Awyiss\ORM\Association\HasMany $Contents
  * @property \Awyiss\Model\Table\PagesTable&\Awyiss\ORM\Association\HasMany $SlugHistory
  * @method \Awyiss\Model\Entity\Page newDefaultEntity(array $aa_additionalData = [], array $aa_options = [])
- * @method \Cake\Collection\CollectionInterface|null getNestedChildren(EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
- * @method \Cake\Collection\CollectionInterface|null getChildren(EntityInterface $ao_entity, array $aa_options = [])
- * @method \Awyiss\Model\Entity\Page getParent(EntityInterface $ao_entity, array $aa_options = [])
- * @method \Cake\Collection\CollectionInterface|null getParents(EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
+ * @method \Cake\Collection\CollectionInterface|null getNestedChildren(Page $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
+ * @method \Cake\Collection\CollectionInterface|null getChildren(Page $ao_entity, array $aa_options = [])
+ * @method \Awyiss\Model\Entity\Page getParent(Page $ao_entity, array $aa_options = [])
+ * @method \Cake\Collection\CollectionInterface|null getParents(Page $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
  * @noinspection PhpUnnecessaryFullyQualifiedNameInspection
  */
 class PagesTable extends Table {
-	use IdentityAwareTrait;
-
 	/**
 	 * @inheritDoc
 	 */
@@ -370,217 +361,6 @@ class PagesTable extends Table {
 
 
 		return $ao_rules;
-	}
-
-
-	/**
-	 * Add a where-condition that limits all results to the page role set for this model
-	 *
-	 * @param EventInterface $ao_event
-	 * @param SelectQuery $ao_query
-	 * @param ArrayObject $ao_options
-	 * @return void
-	 * @noinspection PhpUnusedParameterInspection
-	 */
-	public function beforeFind(EventInterface $ao_event, SelectQuery $ao_query, ArrayObject $ao_options): void {
-		if (!($ao_options['skipPageRoleCheck'] ?? false)) {
-			$ao_query->where(['page_role_id' => $this->getPageRole()]);
-		}
-	}
-
-
-	/**
-	 * Before saving a page, make sure its slug is unique.
-	 *
-	 * @param EventInterface $ao_event
-	 * @param \Awyiss\Model\Entity\Page $ao_entity
-	 * @param ArrayObject $ao_options
-	 * @noinspection PhpUnusedParameterInspection
-	 */
-	public function beforeSave(EventInterface $ao_event, EntityInterface $ao_entity, ArrayObject $ao_options): void {
-		$ls_field = $this->getSchema()->getColumn('slug');
-		$li_length = $ls_field ? $ls_field['length'] : 0;
-
-		if (empty($ao_entity->slug)) {
-			//Make sure the slug is set. Use the title if it's empty.
-			$ao_entity->set('slug', $ao_entity->title);
-		}
-
-		if (
-			!$ao_entity->isDirty('slug') &&
-			!$ao_entity->isDirty('languageShortcode') &&
-			!$ao_entity->isDirty('parentId')
-		) {
-			//If neither the slug, the language nor the parent id have changed, skip the slug logic
-			return;
-		}
-
-		$ls_preSlug = '';
-		if (!empty($ao_entity->parentId)) {
-			/** @var \Awyiss\Model\Entity\Page $lo_parentPage */
-			$lo_parentPage = $this->get($ao_entity->parentId, skipPageRoleCheck: true);
-			//If there's a parent page, add its slug the one of the current page
-			$ls_preSlug = trim($lo_parentPage->slug, '/') . '/';
-		}
-
-		$la_parts = explode('/', $ao_entity->slug);
-		$ls_slug = end($la_parts);
-		$ls_slug = $ls_preSlug . $ls_slug;
-
-		$ls_originalSlug = $ao_entity->hasOriginal('slug') ? $ao_entity->getOriginal('slug') : null;
-		//When the slug has changed
-		if ($ls_slug != $ls_originalSlug) {
-			$ls_field = $this->getAlias() . '.slug';
-
-			$la_conditions = [
-				$ls_field => $ls_slug,
-				'language_shortcode' => $ao_entity->languageShortcode,
-			];
-
-			$ls_primaryKey = $this->getPrimaryKey();
-			$li_id = $ao_entity->get($ls_primaryKey);
-			if ($li_id) {
-				$la_conditions['NOT'] = [$this->getAlias() . '.' . $ls_primaryKey => $li_id];
-			}
-
-			/**
-			 * `$la_conditions` holds an array of query conditions that are used to find pages with the same
-			 * slug
-			 *
-			 * ```
-			 * [
-			 *    "Pages.slug" => "new/slug/of/the/current/page"
-			 *    "language_shortcode" => "de"
-			 *    "NOT" => [
-			 *        "Pages.id" => 1234
-			 *    ]
-			 * ]
-			 * ```
-			 */
-
-			$li_i = 1;
-			$ls_suffix = '';
-
-			//As long as a page with the same slug exists, append an increasing number to the slug and try again
-			while ($this->exists($la_conditions, ['skipPageRoleCheck' => true])) {
-				$li_i++;
-				$ls_suffix = '-' . $li_i;
-
-				if ($li_length && (mb_strlen($ls_slug . $ls_suffix) > $li_length)) {
-					$ls_slug = mb_substr($ls_slug, 0, $li_length - mb_strlen($ls_suffix));
-				}
-
-				$la_conditions[ $ls_field ] = $ls_slug . $ls_suffix;
-			}
-
-			//Append the suffix, if it's not empty
-			if ($ls_suffix) {
-				$ls_slug .= $ls_suffix;
-			}
-		}
-
-		$ao_entity->set('slug', $ls_slug, ['setter' => false]);
-		if (!$ao_entity->isNew() && $ls_slug === $ls_originalSlug) {
-			$ao_entity->setDirty('slug', false);
-		}
-	}
-
-
-	/**
-	 * @param EventInterface $ao_event
-	 * @param \Awyiss\Model\Entity\Page $ao_entity
-	 * @param ArrayObject $ao_options
-	 * @noinspection PhpUnusedParameterInspection
-	 */
-	public function afterSave(EventInterface $ao_event, EntityInterface $ao_entity, ArrayObject $ao_options): void {
-		$ls_originalSlug = $ao_entity->hasOriginal('slug') ? $ao_entity->getOriginal('slug') : null;
-		if ($ls_originalSlug && $ao_entity->slug != $ls_originalSlug) {
-			$lo_records = $this->find('all', skipPageRoleCheck: true)->where(function (QueryExpression $ao_expression) use ($ls_originalSlug) {
-				return $ao_expression->like('slug', $ls_originalSlug . '/%');
-			})->all();
-
-			$li_userId = $this->getIdentity()?->id;
-			$ld_now = new DateTime('now');
-
-			$lo_query = $this->SlugHistory->insertQuery()->insert(['slug', 'page_id', 'created_by', 'created_on']);
-			$lo_query->values([
-				'slug' => $ao_entity->languageShortcode . '/' . $ls_originalSlug,
-				'page_id' => $ao_entity->id,
-				'created_by' => $li_userId,
-				'created_on' => $ld_now,
-			]);
-			/** @var \Awyiss\Model\Entity\Page $lo_page */
-			foreach ($lo_records as $lo_page) {
-				$lo_query->values([
-					'slug' => $lo_page->languageShortcode . '/' . $lo_page->slug,
-					'page_id' => $lo_page->id,
-					'created_by' => $li_userId,
-					'created_on' => $ld_now,
-				]);
-			}
-			$lo_query->execute();
-
-
-			$lo_query = $this->updateQuery();
-
-			/**
-			 * UPDATE pages SET slug = (CONCAT('newslug', substr(slug, '8'))) WHERE slug LIKE 'oldslug/%'
-			 *
-			 * @noinspection PhpUndefinedMethodInspection
-			 */
-			$lo_query->update($this->getTable())->set('slug', $lo_query->newExpr($lo_query->func()->concat([
-				$ao_entity->slug,
-				$lo_query->func()->substr([
-					'slug' => 'identifier',
-					mb_strlen($ls_originalSlug) + 1,
-				], [
-					null,
-					'integer',
-				]),
-			])))->where(function (QueryExpression $ao_expression/*, Query $ao_query*/) use ($ls_originalSlug) {
-				return $ao_expression->like('slug', $ls_originalSlug . '/%');
-			})->execute();
-		}
-	}
-
-
-	/**
-	 * @return void
-	 * @throws \Exception
-	 * @noinspection PhpUnused
-	 */
-	public function beforeSoftDelete(): void {
-		$this->Contents->disableCascadeCallbacks();
-		$this->Contents->forPageRole($this->pageRole, false);
-	}
-
-
-	/**
-	 * @return void
-	 * @throws \Exception
-	 * @noinspection PhpUnused
-	 */
-	public function beforeDelete(): void {
-		$this->Contents->disableCascadeCallbacks();
-		$this->Contents->forPageRole($this->pageRole, false);
-	}
-
-
-	/**
-	 * @return void
-	 * @noinspection PhpUnused
-	 */
-	public function afterSoftDelete(): void {
-		$this->Contents->enableCascadeCallbacks();
-	}
-
-
-	/**
-	 * @return void
-	 * @noinspection PhpUnused
-	 */
-	public function afterDelete(): void {
-		$this->Contents->enableCascadeCallbacks();
 	}
 
 

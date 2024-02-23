@@ -4,16 +4,13 @@
 namespace Awyiss\Model\Table;
 
 
-use ArrayObject;
 use Awyiss\Core\App;
 use Awyiss\Model\Entity\Attribute;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
 use Cake\Database\Driver\Mysql;
 use Cake\Datasource\ConnectionManager;
-use Cake\Datasource\EntityInterface;
 use Cake\Datasource\FactoryLocator;
-use Cake\Event\EventInterface;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Utility\Inflector;
 use Cake\Validation\Validator;
@@ -323,33 +320,6 @@ class AttributesTable extends Table {
 
 
 		return $ao_rules;
-	}
-
-
-	/**
-	 * @param EventInterface $ao_event
-	 * @param \Awyiss\Model\Entity\Attribute $ao_entity
-	 * @param \ArrayObject $ao_options
-	 * @return void
-	 * @throws \ReflectionException
-	 * @noinspection PhpUnusedParameterInspection
-	 */
-	public function beforeSave(EventInterface $ao_event, Attribute|EntityInterface $ao_entity, ArrayObject $ao_options): void {
-		if ($ao_entity->scope === 'contents') {
-			//For contents, the content template decides where an attribute will go
-			$ao_entity->fieldset = '';
-			//For contents, the content template decides whether an attribute is required
-			$ao_entity->required = false;
-		}
-
-		$la_pageRoles = array_keys(array_filter($this->getAvailableScopes(), function ($ax_table) {
-			return !is_string($ax_table);
-		}));
-
-		//Contents, Menu Entries and all types of pages don't need to have translatable attributes since they all are translations themselves
-		if (in_array($ao_entity->scope, array_merge($la_pageRoles, ['contents', 'menu_entries', 'pages']))) {
-			$ao_entity->translatable = false;
-		}
 	}
 
 

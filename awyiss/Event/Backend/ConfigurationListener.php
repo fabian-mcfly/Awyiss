@@ -5,6 +5,7 @@ namespace Awyiss\Event\Backend;
 
 
 use Awyiss\Awyiss;
+use Awyiss\Configuration\ConfigOptionsProvider;
 use Awyiss\Event\EventListenerTrait;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity\Configuration;
@@ -33,11 +34,34 @@ class ConfigurationListener implements EventListenerInterface {
 	 */
 	public function implementedEvents(): array {
 		return [
+			'Model.Configuration.beforeSave' => 'beforeSave',
 			'Model.Configuration.afterSaveCommit' => 'afterSaveCommit',
 			'Model.Configuration.afterDelete' => 'createCustomConfiguration',
 			'Configuration.createCustomConfiguration' => 'createCustomConfiguration',
 			'Configuration.deleteCustomConfiguration' => 'deleteCustomConfiguration',
 		];
+	}
+
+
+	/**
+	 * @param \Cake\Event\Event $ao_event
+	 * @param \Awyiss\Model\Entity\Configuration $ao_entity
+	 * @return void
+	 * @noinspection PhpUnusedParameterInspection
+	 * @throws \ReflectionException
+	 */
+	public function beforeSave(Event $ao_event, Configuration $ao_entity): void {
+		$ao_entity->value = ConfigOptionsProvider::typecastConfigValue(
+			$ao_entity->scope,
+			$ao_entity->realm,
+			$ao_entity->identifier,
+			$ao_entity->value,
+			$ao_entity->languageShortcode
+		);
+
+		if (in_array(getType($ao_entity->value), ['array', 'object'])) {
+			$ao_entity->value = json_encode($ao_entity->value);
+		}
 	}
 
 

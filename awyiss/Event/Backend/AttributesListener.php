@@ -5,7 +5,7 @@ namespace Awyiss\Event\Backend;
 
 
 use Awyiss\Event\EventListenerTrait;
-use Awyiss\Model\Entity;
+use Awyiss\Model\Entity\Attribute;
 use Cake\Datasource\FactoryLocator;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
@@ -38,15 +38,38 @@ class AttributesListener implements EventListenerInterface {
 
 	/**
 	 * @param \Cake\Event\Event $ao_event
-	 * @param \Awyiss\Model\Entity $ao_entity
+	 * @param \Awyiss\Model\Entity\Attribute $ao_entity
 	 * @return void
+	 * @throws \ReflectionException
 	 */
-	public function beforeSave(Event $ao_event, Entity $ao_entity): void {
+	public function beforeSave(Event $ao_event, Attribute $ao_entity): void {
 		/** @var \Queue\Model\Table\QueuedJobsTable $lo_queue */
 		$lo_queue = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
 		if ($lo_queue->isQueued('attributes::table_changes')) {
 			$ao_event->stopPropagation();
 			$ao_entity->setError('_general', __d('attributes', 'table_changes_in_progress'));
+
+
+			return;
+		}
+
+		/** @var \Awyiss\Model\Table\AttributesTable $lo_table */
+		$lo_table = $ao_event->getSubject();
+
+		if ($ao_entity->scope === 'contents') {
+			//For contents, the content template decides where an attribute will go
+			$ao_entity->fieldset = '';
+			//For contents, the content template decides whether an attribute is required
+			$ao_entity->required = false;
+		}
+
+		$la_pageRoles = array_keys(array_filter($lo_table->getAvailableScopes(), function ($ax_table) {
+			return !is_string($ax_table);
+		}));
+
+		//Contents, Menu Entries and all types of pages don't need to have translatable attributes since they all are translations themselves
+		if (in_array($ao_entity->scope, array_merge($la_pageRoles, ['contents', 'menu_entries', 'pages']))) {
+			$ao_entity->translatable = false;
 		}
 	}
 
@@ -61,7 +84,7 @@ class AttributesListener implements EventListenerInterface {
 	 * @see \Awyiss\Queue\Task\AttributesTask
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function afterSaveCommit(Event $ao_event, Entity $ao_entity): void {
+	public function afterSaveCommit(Event $ao_event, Attribute $ao_entity): void {
 		$la_relevantColumns = ['scope', 'identifier', 'type', 'hasIndex', 'required', 'defaultValue', 'deleted'];
 
 		$la_oldData = $ao_entity->isNew() ? array_fill_keys($la_relevantColumns, null) : $ao_entity->extractOriginal($la_relevantColumns, false);

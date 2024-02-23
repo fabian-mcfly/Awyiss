@@ -102,7 +102,7 @@ class PageRolesListener implements EventListenerInterface {
 			'OR' => [
 				'link LIKE' => Inflector::tableize($ao_entity->identifier) . '::%',
 				'link' => 'Configuration::overview::scope:' . Inflector::pluralize($ao_entity->identifier),
-			]
+			],
 		]);
 
 		$lo_configuration = $lo_tableLocator->get('Configuration');

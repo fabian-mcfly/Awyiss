@@ -4,12 +4,10 @@
 namespace Awyiss\Model\Table;
 
 
-use ArrayObject;
 use Awyiss\Awyiss;
 use Awyiss\Model\Entity\Language;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
-use Cake\Event\EventInterface;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Validation\Validator;
 use DateTimeZone;
@@ -162,36 +160,6 @@ class LanguagesTable extends Table {
 
 
 		return $ao_validator;
-	}
-
-
-	/**
-	 * @param \Cake\Event\EventInterface $ao_event
-	 * @param \Awyiss\Model\Entity\Language $ao_entity
-	 * @param \ArrayObject $ao_options
-	 * @return void
-	 * @noinspection PhpUnusedParameterInspection
-	 */
-	public function beforeSoftDelete(EventInterface $ao_event, Language $ao_entity, ArrayObject $ao_options): void {
-		if ($ao_entity->realm === Awyiss::REALM_FRONTEND) {
-			$this->MenuEntries->setDependent(true);
-			$this->Pages->setDependent(true);
-			$this->Pages->ChildPages->setDependent(false)->setCascadeCallbacks(false);
-		}
-	}
-
-
-	/**
-	 * @param \Cake\Event\EventInterface $ao_event
-	 * @param \Awyiss\Model\Entity\Language $ao_entity
-	 * @param \ArrayObject $ao_options
-	 * @return void
-	 * @noinspection PhpUnusedParameterInspection
-	 */
-	public function afterSoftDelete(EventInterface $ao_event, Language $ao_entity, ArrayObject $ao_options): void {
-		$this->MenuEntries->setDependent(false);
-		$this->Pages->setDependent(false);
-		$this->Pages->ChildPages->setDependent(true)->setCascadeCallbacks(true);
 	}
 
 

@@ -4,15 +4,8 @@
 namespace Awyiss\Model\Table;
 
 
-use ArrayObject;
-use Awyiss\Model\Entity\User;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
-use Awyiss\Routing\Router;
-use Cake\Datasource\EntityInterface;
-use Cake\Event\EventInterface;
-use Cake\I18n\DateTime;
-use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Validation\Validator;
 
@@ -116,57 +109,5 @@ class UsergroupsTable extends Table {
 
 
 		return $ao_rules;
-	}
-
-
-	/**
-	 * Set the `changedOn`-field for all associated users.
-	 * This will allow the SessionAuthenticator to reset the usergroups for every logged-in user on the next page request
-	 *
-	 * @param EventInterface $ao_event
-	 * @param \Awyiss\Model\Entity\Usergroup $ao_entity
-	 * @param ArrayObject $ao_options
-	 * @return void
-	 * @throws \Exception
-	 * @noinspection PhpUnusedParameterInspection
-	 */
-	public function afterSave(EventInterface $ao_event, EntityInterface $ao_entity, ArrayObject $ao_options): void {
-		$lo_query = $this->Users->find()->matching('UsergroupsUsers', function (SelectQuery $ao_query) use ($ao_entity) {
-			return $ao_query->where(['UsergroupsUsers.usergroup_id' => $ao_entity->id]);
-		});
-
-		$lo_users = $lo_query->all();
-
-		if (!$lo_users->count()) {
-			//No records found? The item is alone in its scope.
-			return;
-		}
-
-		$lo_currentUser = null;
-		$lo_request = Router::getRequest();
-		if ($lo_request) {
-			/** @var \Cake\Http\Session $lo_session */
-			$lo_session = $lo_request->getAttribute('session');
-			/** @var User|\Awyiss\Model\Entity\UsersExternal $lo_currentUser */
-			$lo_currentUser = $lo_session->read('Auth');
-		}
-
-		$lo_now = DateTime::now();
-		//Decrease the system order of all records
-		$lo_users->each(function (User $ao_user) use ($lo_now, $lo_currentUser): void {
-			$ao_user->changedOn = $lo_now;
-
-			if ($ao_user->id === $lo_currentUser->id) {
-				$lo_currentUser->usergroups = null;
-			}
-		});
-
-		//Save all found records, but skip the audit and the system order behavior on those to avoid recursion.
-		$this->Users->saveMany($lo_users, [
-			'audit' => ['skip' => true],
-			'checkRules' => false,
-			'nest' => ['skip' => true],
-			'systemOrder' => ['skip' => true],
-		]);
 	}
 }
