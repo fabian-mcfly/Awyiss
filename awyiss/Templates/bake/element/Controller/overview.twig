@@ -9,11 +9,11 @@
 
 {% set belongsTo = Bake.aliasExtractor(modelObj, 'BelongsTo') %}
 {% if belongsTo %}
-		$this->paginate = [
-			'contain' => {{ Bake.exportArray(belongsTo)|raw }},
-		];
+		$lo_query = $this->{{ currentModelName }}->find()->contain({{ Bake.exportArray(belongsTo)|raw }});
+{% else %}
+		$lo_query = $this->{{ currentModelName }}->find();
 {% endif %}
-		$lo_{{ pluralName }} = $this->paginate($this->{{ currentModelName }}->find());
+		$lo_{{ pluralName }} = $this->paginate($lo_query);
 
 		$this->set([
 			'ao_{{ pluralName }}' => $lo_{{ pluralName }},
