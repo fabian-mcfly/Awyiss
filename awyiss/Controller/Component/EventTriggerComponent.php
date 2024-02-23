@@ -7,7 +7,6 @@ namespace Awyiss\Controller\Component;
 use Cake\Controller\Component;
 use Cake\Event\Event;
 use Cake\Event\EventInterface;
-use Cake\Utility\Inflector;
 
 
 //use Cake\Http\Response;
@@ -114,9 +113,8 @@ class EventTriggerComponent extends Component {
 		}
 
 		$lo_controller = $this->getController();
-		$ls_controllerName = Inflector::singularize($lo_controller->getName());
 
-		$lo_event = new Event('Controller.' . $ls_controllerName . '.' . $as_name, $lo_controller, ($ao_event?->getData() ?? []) + $aa_arguments);
+		$lo_event = new Event('Controller.' . $lo_controller->getName() . '.' . $as_name, $lo_controller, ($ao_event?->getData() ?? []) + $aa_arguments);
 		$lo_controller->getEventManager()->dispatch($lo_event);
 
 		if ($lo_event->isStopped()) {
