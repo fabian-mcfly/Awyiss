@@ -5,6 +5,7 @@
 @var ab_nesting bool
 @var ab_splitIntoLanguages bool
 @var ab_translatable bool
+@var localConfig array
 @var _view \Awyiss\View\BackendView
 #}
 
@@ -47,7 +48,7 @@
 		{% endblock %}
 
 		{% block formControlSystemOrder %}
-			{% if localConfig('systemOrder.field', 'systemOrder') == 'systemOrder' %}
+			{% if as_systemOrderField == 'systemOrder' %}
 				{{ helper_SystemOrder_control('system_order') }}
 			{% endif %}
 		{% endblock %}

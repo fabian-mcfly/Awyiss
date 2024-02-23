@@ -1,6 +1,7 @@
 {{ '{#' }}
 @var ao_{{ singularVar }} {{ entityClass }}
 @var as_languageRealm string
+@var as_systemOrderField string
 @var _view \{{ namespace }}\View\BackendView
 {{ '#}' }}
 
@@ -62,7 +63,7 @@
 			{% endif %}{% endverbatim %}
 {{- "\n" }}
 {%- elseif field == 'system_order' %}
-			{% verbatim %}{% if localConfig('systemOrder.field', 'systemOrder') == 'systemOrder' %}
+			{% verbatim %}{% if as_systemOrderField == 'systemOrder' %}
 				{{ helper_SystemOrder_control('system_order') }}
 			{% endif %}{% endverbatim %}
 {{- "\n" }}

@@ -4,7 +4,6 @@
 namespace Awyiss\Twig\Extension;
 
 
-use Awyiss\Core\LocalConfig;
 use Cake\Collection\CollectionInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
@@ -80,10 +79,6 @@ class AwyissExtension extends AbstractExtension {
 				}
 
 				return $la_return;
-			}),
-
-			new TwigFunction('localConfig', function (string|array|null $ax_path = null, mixed $ax_default = null): mixed {
-				return LocalConfig::read($ax_path, $ax_default);
 			}),
 
 			new TwigFunction('naturalSort', function (array $aa_data, int|string|null $as_key = null): array {

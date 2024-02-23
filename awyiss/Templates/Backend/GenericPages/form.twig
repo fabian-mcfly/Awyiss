@@ -3,6 +3,7 @@
 @var ao_pageTemplates \Cake\Collection\CollectionInterface
 @var ao_threadedPages \Cake\Collection\Iterator\TreeIterator
 @var as_languageRealm string
+@var localConfig array
 @var _view \Awyiss\View\BackendView
 #}
 
@@ -44,7 +45,7 @@
 			{% endblock %}
 
 			{% block formControlSystemOrder %}
-				{% if localConfig('systemOrder.field', 'systemOrder') == 'systemOrder' %}
+				{% if as_systemOrderField == 'systemOrder' %}
 					{{ helper_SystemOrder_control('system_order') }}
 				{% endif %}
 			{% endblock %}

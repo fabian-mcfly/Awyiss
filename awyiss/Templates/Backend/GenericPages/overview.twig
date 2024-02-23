@@ -1,5 +1,6 @@
 {#
 @var ao_pages \Awyiss\Model\Entity\Page[]
+@var localConfig array
 @var _view \Awyiss\View\BackendView
 #}
 
@@ -63,7 +64,7 @@
 
 								{% block tableOverviewCellActions %}
 									<td class="actions">
-										{% if lo_page.duplicate_of is empty and helper_Authorization_isAccessible('contents') and localConfig('contents.enabled', false) == true %}
+										{% if lo_page.duplicate_of is empty and helper_Authorization_isAccessible('contents') and ab_contentsEnabled == true %}
 											{{ helper_Html_link(__('view_contents'), {controller: 'contents', action: 'overview', page_id: lo_page.id}) }}
 										{% endif %}
 

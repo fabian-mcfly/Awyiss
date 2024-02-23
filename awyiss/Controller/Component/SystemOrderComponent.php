@@ -119,6 +119,11 @@ class SystemOrderComponent extends Component {
 
 			$lo_view->setVar('aa_systemOrderRelatedColumns', $la_relatedColumns);
 		}
+
+		//Set view vars if they don't already exist
+		if (!$lo_view->getVar('as_systemOrderField')) {
+			$lo_view->setVar('as_systemOrderField', $this->getConfig('field'));
+		}
 	}
 
 

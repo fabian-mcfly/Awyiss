@@ -42,14 +42,6 @@ abstract class GenericDatatablesController extends Controller {
 
 
 	/**
-	 * @inheritDoc
-	 */
-	public function initialize(): void {
-		parent::initialize();
-	}
-
-
-	/**
 	 * Overview method
 	 *
 	 * @throws \Exception
@@ -213,6 +205,7 @@ abstract class GenericDatatablesController extends Controller {
 			'ab_splitIntoLanguages' => $this->splitIntoLanguages,
 			'ab_translatable' => $this->translatable,
 			'as_languageRealm' => Awyiss::REALM_FRONTEND,
+			'localConfig' => LocalConfig::read(),
 		]);
 	}
 

@@ -39,11 +39,9 @@
 		<legend>{{ __('fieldset_conditions') }}</legend>
 
 		{% block fieldsetConditionsInner %}
-			{% if localConfig('systemOrder.field', 'systemOrder') == 'systemOrder' %}
-				{% block formControlSystemOrder %}
-					{{ helper_SystemOrder_control('system_order', {entity: ao_contentTemplate}) }}
-				{% endblock %}
-			{% endif %}
+			{% block formControlSystemOrder %}
+				{{ helper_SystemOrder_control('system_order', {entity: ao_contentTemplate}) }}
+			{% endblock %}
 
 			{% block fieldsetConditionsAttributes %}
 				{{ helper_Attributes_allControls('conditions') }}

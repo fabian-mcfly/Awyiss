@@ -8,6 +8,7 @@ use AllowDynamicProperties;
 use Awyiss\Awyiss;
 use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Core\App;
+use Awyiss\Core\LocalConfig;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity\Page;
 use Awyiss\Model\Enum\PageRoleEnumInterface;
@@ -55,6 +56,8 @@ class PagesController extends Controller {
 
 		$this->set([
 			'ao_pages' => $lo_pages,
+			'localConfig' => LocalConfig::read(),
+			'ab_contentsEnabled' => LocalConfig::read('contents.enabled'),
 		]);
 	}
 
@@ -420,6 +423,7 @@ class PagesController extends Controller {
 			'ao_threadedPages' => $lo_threadedPages,
 			'ao_parentPages' => $lo_parentPages,
 			'as_languageRealm' => Awyiss::REALM_FRONTEND,
+			'localConfig' => LocalConfig::read(),
 		]);
 	}
 
