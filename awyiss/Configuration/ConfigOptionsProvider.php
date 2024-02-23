@@ -251,20 +251,22 @@ class ConfigOptionsProvider {
 	 * @throws \ReflectionException
 	 */
 	protected static function findConfigOptionsFile(string $as_scope): void {
-		$ls_scope = $as_scope;
-		if ($ls_scope !== '*') {
-			$ls_scope = static::sanitizeScope($ls_scope);
+		$ls_scope = null;
+		$ls_className = $as_scope;
+		if ($ls_className !== '*') {
+			$ls_scope = static::sanitizeScope($as_scope);
+			$ls_className = Inflector::camelize($ls_scope);
 		}
 
 		$la_paths = [
-			'\\' . CUSTOM_NAMESPACE . '\Configuration\ConfigOptions\\' => implode(DS, [ROOT, CUSTOM_DIR, 'Configuration', 'ConfigOptions', $ls_scope . 'ConfigOptions.php',]),
-			'\Awyiss\Configuration\ConfigOptions\\' => implode(DS, [ROOT, APP_DIR, 'Configuration', 'ConfigOptions', $ls_scope . 'ConfigOptions.php']),
+			'\\' . CUSTOM_NAMESPACE . '\Configuration\ConfigOptions\\' => implode(DS, [ROOT, CUSTOM_DIR, 'Configuration', 'ConfigOptions', $ls_className . 'ConfigOptions.php',]),
+			'\Awyiss\Configuration\ConfigOptions\\' => implode(DS, [ROOT, APP_DIR, 'Configuration', 'ConfigOptions', $ls_className . 'ConfigOptions.php']),
 		];
 
 		foreach ($la_paths as $ls_namespace => $ls_path) {
 			foreach (glob($ls_path) as $ls_filePath) {
 				$ls_configurationName = substr($ls_filePath, strrpos($ls_filePath, DS) + 1, -4);
-				if ($ls_scope === '*' && in_array($ls_configurationName, ['GenericDatatablesConfigOptions', 'GenericPagesConfigOptions'])) {
+				if ($ls_className === '*' && in_array($ls_configurationName, ['GenericDatatablesConfigOptions', 'GenericPagesConfigOptions'])) {
 					continue;
 				}
 
@@ -297,7 +299,10 @@ class ConfigOptionsProvider {
 		foreach ($ls_pageRoleEnum::cases() as $le_pageRole) {
 			$ls_configScope = static::sanitizeScope($le_pageRole->name);
 
-			if (isset(static::$configOptions[ $ls_configScope ])) {
+			if (
+				isset(static::$configOptions[ $ls_configScope ]) ||
+				($ls_className !== '*' && $ls_configScope !== $ls_scope)
+			) {
 				continue;
 			}
 
@@ -309,7 +314,12 @@ class ConfigOptionsProvider {
 			//Get all datatables from the database because we want them to have a generic policy too
 			/** @var \Awyiss\Model\Table\DatatablesTable $lo_table */
 			$lo_table = FactoryLocator::get('Table')->get('Datatables');
-			static::$datatables = $lo_table->findAllAndCache()->reject(function (Datatable $ao_datatable) {
+			static::$datatables = $lo_table->findAllAndCache()->reject(function (Datatable $ao_datatable) use ($ls_className, $ls_scope) {
+				if ($ls_className !== '*' && static::sanitizeScope($ao_datatable->identifier) !== $ls_scope) {
+					return true;
+				}
+
+
 				return $ao_datatable->active === false;
 			})->indexBy(function (Datatable $ao_datatable) {
 				return static::sanitizeScope($ao_datatable->identifier);

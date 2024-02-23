@@ -118,9 +118,11 @@ class AuthorizationService implements AuthorizationServiceInterface {
 	 * @throws \ReflectionException
 	 */
 	protected function findPolicy(string $as_scope, string $as_realm): void {
-		$ls_scope = $as_scope;
-		if ($ls_scope !== '*') {
-			$ls_scope = Inflector::camelize($ls_scope);
+		$ls_scope = null;
+		$ls_className = $as_scope;
+		if ($ls_className !== '*') {
+			$ls_scope = static::sanitizeScope($as_scope);
+			$ls_className = Inflector::camelize($ls_scope);
 		}
 
 		$la_paths = [
@@ -129,15 +131,15 @@ class AuthorizationService implements AuthorizationServiceInterface {
 				'Authorization',
 				'Policy',
 				$as_realm,
-				$ls_scope . 'Policy.php',
+				$ls_className . 'Policy.php',
 			]),
-			'\Awyiss\Authorization\Policy\\' . $as_realm . '\\' => implode(DS, [ROOT, APP_DIR, 'Authorization', 'Policy', $as_realm, $ls_scope . 'Policy.php']),
+			'\Awyiss\Authorization\Policy\\' . $as_realm . '\\' => implode(DS, [ROOT, APP_DIR, 'Authorization', 'Policy', $as_realm, $ls_className . 'Policy.php']),
 		];
 
 		foreach ($la_paths as $ls_namespace => $ls_path) {
 			foreach (glob($ls_path) as $ls_filePath) {
 				$ls_policyName = substr($ls_filePath, strrpos($ls_filePath, DS) + 1, -4);
-				if ($ls_scope === '*' && in_array($ls_policyName, ['GenericDatatablesPolicy', 'GenericPagesPolicy'])) {
+				if ($ls_className === '*' && in_array($ls_policyName, ['GenericDatatablesPolicy', 'GenericPagesPolicy'])) {
 					continue;
 				}
 
@@ -165,7 +167,10 @@ class AuthorizationService implements AuthorizationServiceInterface {
 		foreach ($ls_pageRoleEnum::cases() as $le_pageRole) {
 			$ls_policyScope = static::sanitizeScope($le_pageRole->name);
 
-			if (isset($this->policies[ $as_realm ][ $ls_policyScope ])) {
+			if (
+				isset($this->policies[ $as_realm ][ $ls_policyScope ]) ||
+				($ls_className !== '*' && $ls_policyScope !== $ls_scope)
+			) {
 				continue;
 			}
 
@@ -177,13 +182,20 @@ class AuthorizationService implements AuthorizationServiceInterface {
 			//Get all datatables from the database because we want them to have a generic policy too
 			/** @var \Awyiss\Model\Table\DatatablesTable $lo_table */
 			$lo_table = FactoryLocator::get('Table')->get('Datatables');
-			$this->datatables = $lo_table->findAllAndCache()->reject(function (Datatable $ao_datatable) {
+			$this->datatables = $lo_table->findAllAndCache()->reject(function (Datatable $ao_datatable) use ($ls_className, $ls_scope) {
+				if ($ls_className !== '*' && static::sanitizeScope($ao_datatable->identifier) !== $ls_scope) {
+					return true;
+				}
+
+
 				return $ao_datatable->active === false;
 			})->indexBy(function (Datatable $ao_datatable) {
 				return static::sanitizeScope($ao_datatable->identifier);
 			})->filter(function (Datatable $ao_datatable) {
 				/** @var \Awyiss\Model\Table $lo_datatableTable */
 				$lo_datatableTable = FactoryLocator::get('Table')->get(Inflector::camelize($ao_datatable->identifier));
+
+
 				return $lo_datatableTable::ATTRIBUTABLE;
 			})->map(function (Datatable $ao_datatable) {
 				return new GenericDatatablesPolicy($ao_datatable->identifier);
