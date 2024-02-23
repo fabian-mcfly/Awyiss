@@ -62,6 +62,7 @@ class EventManager extends BaseEventManager {
 			'Error',
 			'Exception',
 			'Model',
+			'Server',
 			'View',
 		]);
 
