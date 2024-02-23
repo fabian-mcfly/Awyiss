@@ -18,23 +18,31 @@ use Cake\Validation\Validator;
  * and rules based on the config settings for the extending datatable
  */
 abstract class GenericDatatablesTable extends Table {
+	protected bool $nesting;
+	protected bool $splitIntoLanguages;
+	protected bool $translatable;
+
+
 	/**
 	 * @inheritDoc
 	 */
 	public function __construct(array $aa_config = []) {
 		$ls_scope = Inflector::camelize($this->getTable());
 
-		if (LocalConfig::read('translatable', null, $ls_scope)) {
-			$this->translate['fields'][] = 'title';
-		}
-
-		if (LocalConfig::read('nest.enabled', null, $ls_scope)) {
+		$this->nesting = LocalConfig::read('nest.enabled', null, $ls_scope);
+		if ($this->nesting) {
 			$this->systemOrder['relatedColumns'][] = 'parentId';
 		}
 
-		if (LocalConfig::read('splitIntoLanguages', null, $ls_scope)) {
+		$this->splitIntoLanguages = LocalConfig::read('splitIntoLanguages', null, $ls_scope);
+		if ($this->splitIntoLanguages) {
 			$this->nest['relatedColumns'][] = 'languageShortcode';
 			$this->systemOrder['relatedColumns'][] = 'languageShortcode';
+		}
+
+		$this->translatable = LocalConfig::read('translatable', null, $ls_scope);
+		if ($this->translatable) {
+			$this->translate['fields'][] = 'title';
 		}
 
 		parent::__construct($aa_config);
@@ -46,8 +54,7 @@ abstract class GenericDatatablesTable extends Table {
 	public function initialize(array $aa_config): void {
 		parent::initialize($aa_config);
 
-		$ls_scope = Inflector::camelize($this->getTable());
-		if (!LocalConfig::read('translatable', null, $ls_scope) && $this->hasAttributes()) {
+		if (!$this->translatable && $this->hasAttributes()) {
 			$lo_attributesTable = $this->getAttributesTable();
 			if ($lo_attributesTable->hasBehavior('Translate')) {
 				$lo_attributesTable->getBehavior('Translate')->setConfig('fields');
@@ -81,9 +88,6 @@ abstract class GenericDatatablesTable extends Table {
 		parent::validationDefault($ao_validator);
 
 
-		$ls_scope = Inflector::camelize($this->getTable());
-
-
 		$ao_validator->add('id', [
 			'isInteger' => ['rule' => 'isInteger'],
 			'maxLength' => ['rule' => ['maxLength', 11]],
@@ -96,7 +100,7 @@ abstract class GenericDatatablesTable extends Table {
 		]);
 
 
-		if (LocalConfig::read('splitIntoLanguages', null, $ls_scope)) {
+		if ($this->splitIntoLanguages) {
 			$ao_validator->notEmptyString('languageShortcode');
 			$ao_validator->add('languageShortcode', [
 				'isScalar' => ['rule' => 'isScalar'],
@@ -145,9 +149,7 @@ abstract class GenericDatatablesTable extends Table {
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
-		$ls_scope = Inflector::camelize($this->getTable());
-
-		if (LocalConfig::read('splitIntoLanguages', null, $ls_scope)) {
+		if ($this->splitIntoLanguages) {
 			$ao_rules->add(
 				$ao_rules->existsIn('languageShortcode', 'Languages'),
 				'languageExists',
