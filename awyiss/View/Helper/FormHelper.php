@@ -77,11 +77,6 @@ class FormHelper extends BaseFormHelper {
 		$this->translatableFields = $lo_sourceTable->getBehavior('Translate')->getConfig('fields');
 
 
-		/*if ($this->translatableFields) {
-			dd($this->translatableFields, $ls_form, __FILE__, __LINE__);
-		}*/
-
-
 		return $ls_form;
 	}
 

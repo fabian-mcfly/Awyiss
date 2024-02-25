@@ -9,11 +9,10 @@ use Cake\View\Helper;
 
 /**
  * FlashHelper class to render flash messages.
- *
  * After setting messages in your controllers with FlashComponent, you can use
  * this class to output your flash messages in your views.
  *
- * @see Helper\FlashHelper
+ * @see \Cake\View\Helper\FlashHelper
  */
 class FlashHelper extends Helper {
 	/**

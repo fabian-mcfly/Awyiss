@@ -1,7 +1,15 @@
-
+{#
+/**
+ * Copyright (c) Awyiss
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ *
+ * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
+ * Redistributions of files must retain the above copyright notice.
+ */
+#}
 {% set belongsTo = Bake.aliasExtractor(modelObj, 'BelongsTo') %}
 {% set belongsToMany = Bake.aliasExtractor(modelObj, 'belongsToMany') %}
-{% set compact = [] %}
 	/**
 	 * Edit method
 	 *
@@ -30,8 +38,7 @@
 {%- set otherName = Bake.getAssociatedTableAlias(modelObj, assoc) %}
 {%- set otherPlural = otherName|variable %}
 			'ao_{{ otherPlural }}' => $this->{{ currentModelName }}->{{ otherName }}->find('list', ['limit' => 200]),
-{{- "\n" }}
-{%- set compact = compact|merge(["'#{otherPlural}'"]) %}
+
 {% endfor %}
 		]);
 	}

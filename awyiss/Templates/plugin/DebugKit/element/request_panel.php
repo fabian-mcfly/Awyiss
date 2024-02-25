@@ -1,8 +1,13 @@
 <?php declare(strict_types=1);
+
 /**
- * @var \Awyiss\View\AppView $this
- * @var mixed $data
- * @var mixed $key
+ * @var \DebugKit\View\AjaxView $this
+ * @var array $headers
+ * @var array $attributes
+ * @var \Cake\Error\Debug\NodeInterface $data
+ * @var \Cake\Error\Debug\NodeInterface $query
+ * @var \Cake\Error\Debug\NodeInterface $cookie
+ * @var string $matchedRoute
  */
 
 if (!empty($la_data)) {

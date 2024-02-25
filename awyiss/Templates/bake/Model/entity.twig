@@ -1,3 +1,13 @@
+{#
+/**
+ * Copyright (c) Awyiss
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ *
+ * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
+ * Redistributions of files must retain the above copyright notice.
+ */
+#}
 {% set propertyHintMap = [] %}
 {%- for property, propertyType in DocBlock.buildEntityPropertyHintTypeMap(propertySchema ?: []) %}
 	{%- set propertyHintMap = propertyHintMap|merge({(property|variable): propertyType}) %}

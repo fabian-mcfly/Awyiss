@@ -21,64 +21,6 @@ class Validator extends BaseValidator {
 
 
 	/**
-	 * Returns whether a rule set is defined for a field or not
-	 *
-	 * @param string $field name of the field to check
-	 * @return bool
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
-	 */
-	public function offsetExists(mixed $as_field): bool {
-		dd(__FILE__, __LINE__, debug_backtrace(2));
-
-
-		return isset($this->_fields[ $as_field ]);
-	}
-
-
-	/**
-	 * Sets the rule set for a field
-	 *
-	 * @param string $field name of the field to set
-	 * @param \Cake\Validation\ValidationSet|array $rules set of rules to apply to field
-	 * @return void
-	 */
-	public function offsetSet(mixed $field, mixed $rules): void {
-		dd(__FILE__, __LINE__, debug_backtrace(2));
-	}
-
-
-	/**
-	 * Unsets the rule set for a field
-	 *
-	 * @param string $field name of the field to unset
-	 * @return void
-	 */
-	public function offsetUnset(mixed $field): void {
-		dd(__FILE__, __LINE__, debug_backtrace(2));
-	}
-
-
-	/**
-	 * Removes a rule from the set by its name
-	 *
-	 * ### Example:
-	 *
-	 * ```
-	 *      $validator
-	 *          ->remove('title', 'required')
-	 *          ->remove('user_id')
-	 * ```
-	 *
-	 * @param string $field The name of the field from which the rule will be removed
-	 * @param string|null $rule the name of the rule to be removed
-	 * @return $this
-	 */
-	public function remove(string $field, ?string $rule = null): void {
-		dd(__FILE__, __LINE__, debug_backtrace(2));
-	}
-
-
-	/**
 	 * @param string $as_domain
 	 * @return void
 	 */

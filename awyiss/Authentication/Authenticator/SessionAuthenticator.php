@@ -31,6 +31,7 @@ class SessionAuthenticator extends BaseSessionAuthenticator {
 	 * Extended to call the config setting `identify` if it's a callable
 	 * and to use `reidentify`-method on `\Awyiss\Authentication\Identifier\IdentifierCollection::reidentify()`
 	 *
+	 * @see \Awyiss\Authentication\Identifier\IdentifierCollection::reidentify
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 * @noinspection PhpMissingParentCallCommonInspection
 	 */
