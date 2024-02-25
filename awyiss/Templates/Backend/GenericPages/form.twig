@@ -1,9 +1,11 @@
 {#
 @var ao_page \Awyiss\Model\Entity\Page
 @var ao_pageTemplates \Cake\Collection\CollectionInterface
-@var ao_threadedPages \Cake\Collection\Iterator\TreeIterator
+@var ao_threadedPages \Cake\Collection\CollectionInterface
+@var ao_parentPages \Cake\Collection\CollectionInterface
 @var as_languageRealm string
 @var localConfig array
+@var ab_nestingEnabled bool
 @var _view \Awyiss\View\BackendView
 #}
 
@@ -41,7 +43,9 @@
 					{{ helper_Categories_control(as_categoriesIdentifier) }}
 				{% endif %}
 
-				{{ helper_Form_control('parent_id', {options: hashPrinter(ao_parentPages, 'label', 'id', '- ')}) }}
+				{% if ab_nestingEnabled %}
+					{{ helper_Form_control('parent_id', {options: hashPrinter(ao_parentPages, 'label', 'id', '- ')}) }}
+				{% endif %}
 			{% endblock %}
 
 			{% block formControlSystemOrder %}
@@ -173,4 +177,6 @@
 	</fieldset>
 {% endblock %}
 
-{{- helper_Form_hidden('reload_form', {val: 0}) }}
+{% block formInputReloadForm %}
+	{{ helper_Form_hidden('reload_form', {val: 0}) }}
+{% endblock %}

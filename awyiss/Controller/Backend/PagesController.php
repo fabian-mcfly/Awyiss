@@ -36,6 +36,9 @@ class PagesController extends Controller {
 	 * @var \Cake\Datasource\ResultSetInterface
 	 */
 	protected CollectionInterface $pageTemplates;
+	protected array $systemOrder = [
+		'autoload' => ['add', 'addBatch', 'edit'],
+	];
 	/**
 	 * @var \Cake\Collection\Iterator\TreeIterator
 	 */
@@ -58,6 +61,7 @@ class PagesController extends Controller {
 			'ao_pages' => $lo_pages,
 			'localConfig' => LocalConfig::read(),
 			'ab_contentsEnabled' => LocalConfig::read('contents.enabled'),
+			'ab_nestingEnabled' => LocalConfig::read('nest.enabled'),
 		]);
 	}
 
@@ -78,6 +82,85 @@ class PagesController extends Controller {
 
 		if ($this->request->is('post')) {
 			$this->save($lo_page);
+		}
+
+		$this->setViewVars($lo_page);
+	}
+
+
+	/**
+	 * Add method
+	 *
+	 * @return void
+	 * @throws \Exception
+	 */
+	public function addBatch(): void {
+		$this->Authorization->ensure('create');
+
+		$lo_page = $this->Pages->newDefaultEntity([
+			'languageShortcode' => LocaleMiddleware::getLanguage()->shortcode,
+			'pageRoleId' => $this->getPageRole(),
+		]);
+
+		$la_requestData = $this->request->getData();
+		if ($this->request->is('post') && !empty($la_requestData['pages'])) {
+			$la_associated = [];
+			if ($this->Pages->hasAttributes()) {
+				$la_associated[] = $this->Pages->getAttributesTableName(true);
+				$lo_page->setAccess('attributes', true);
+			}
+
+			$la_data = [
+				'page_role_id' => $this->getPageRole()->value,
+				'slug' => 'dummy',
+				'title' => 'dummy',
+			];
+			$la_data += $this->request->getData();
+
+			$this->Pages->patchEntity($lo_page, $la_data, ['associated' => $la_associated]);
+
+			$this->Categories->setConfig('finder', [
+				'forCurrentLanguage' => [
+					'entity' => $lo_page,
+				],
+			]);
+
+			$lo_entities = $this->buildEntitiesFromIndentedRows($la_requestData['pages'], $la_requestData);
+
+			if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
+				$lb_success = false;
+
+				if ($lo_entities->count()) {
+					$ls_pageRole = Inflector::pluralize($this->getPageRole()->name);
+					$la_entities = $lo_entities->toArray();
+
+					if ($this->Pages->saveMany($la_entities, ['associated' => ['Child' . $ls_pageRole]])) {
+						$lb_success = true;
+					}
+					else {
+						$lo_page = $lo_entities->first();
+					}
+				}
+
+				if ($lb_success) {
+					$this->Flash->success(__('add_batch_succeeded'));
+
+					/*
+					 * Make sure the currently selected category is still part of the categories assigned to the user.
+					 * Otherwise it would show a site without the modified user, which could be a bit confusing.
+					 *
+					 */
+					$this->verifyCategorySelection($lo_page);
+
+					throw new RedirectException(Router::url(['action' => 'overview', 'lang' => $lo_page->languageShortcode], true), 302);
+				}
+				else {
+					$this->Flash->error(__('add_batch_failed'));
+					foreach ($lo_page->getError('_general') as $ls_error) {
+						$this->Flash->error($ls_error);
+					}
+				}
+			}
 		}
 
 		$this->setViewVars($lo_page);
@@ -424,6 +507,7 @@ class PagesController extends Controller {
 			'ao_parentPages' => $lo_parentPages,
 			'as_languageRealm' => Awyiss::REALM_FRONTEND,
 			'localConfig' => LocalConfig::read(),
+			'ab_nestingEnabled' => LocalConfig::read('nest.enabled'),
 		]);
 	}
 
@@ -458,5 +542,92 @@ class PagesController extends Controller {
 		 * Otherwise the next redirect to the overview would show a site without the modified page, which could be a bit confusing.
 		 */
 		$this->Categories->verifySelection(null, $la_categories, true);
+	}
+
+
+	/**
+	 * @param string $as_text
+	 * @param array $aa_requestData
+	 * @return \Cake\Collection\CollectionInterface
+	 */
+	protected function buildEntitiesFromIndentedRows(string $as_text, array $aa_requestData): CollectionInterface {
+		$li_currentId = 1;
+		$la_parentStack = []; //Stack to keep track of the parent at each level
+		$la_sortCounter = []; // Array to keep track of the sort order at each level
+		$lo_entities = collection([]);
+
+		$li_rootParentId = $aa_requestData['parent_id'] ?: null;
+		unset($aa_requestData['parent_id']);
+		$li_firstSystemOrder = $aa_requestData['system_order'];
+		unset($aa_requestData['system_order']);
+
+		$la_associated = [];
+		if ($this->Pages->hasAttributes()) {
+			$la_associated[] = $this->Pages->getAttributesTableName(true);
+		}
+
+		foreach (explode("\n", $as_text) as $ls_title) {
+			$ls_title = rtrim($ls_title);
+			$ls_title = ltrim($ls_title, " \n\r\v\0");
+			$li_level = substr_count($ls_title, "\t");
+
+			//Update parent stack for the current level
+			$la_parentStack[ $li_level ] = $li_currentId;
+
+			//Increment or initialize sort counter for the current level
+			if (!isset($la_sortCounter[ $li_level ])) {
+				$la_sortCounter[ $li_level ] = 1;
+			}
+			else {
+				$la_sortCounter[ $li_level ]++;
+			}
+
+			//Reset sort counters for all deeper levels
+			foreach (array_keys($la_sortCounter) as $li_key) {
+				if ($li_key > $li_level) {
+					unset($la_sortCounter[ $li_key ]);
+				}
+			}
+
+			//Determine the parent ID
+			$li_parentId = $li_level > 0 ? $la_parentStack[ $li_level - 1 ] : null;
+
+			$lo_entity = $this->Pages->newDefaultEntity();
+
+			$la_data = ['page_role_id' => $this->getPageRole()->value];
+			$la_data += [
+				'tempId' => $li_currentId,
+				'title' => trim($ls_title),
+				'slug' => $ls_title,
+				'level' => $li_level,
+				'parentId' => $li_level === 0 ? $li_rootParentId : null,
+				'tempParentId' => $li_level === 0 ? null : $li_parentId,
+				'systemOrder' => $la_sortCounter[ $li_level ] + ($li_level === 0 ? $li_firstSystemOrder : 0),
+			];
+			$la_data += $aa_requestData;
+
+			$this->Pages->patchEntity(
+				$lo_entity,
+				$la_data,
+				[
+					'accessibleFields' => [
+						'attributes' => true,
+						'tempId' => true,
+						'tempParentId' => true,
+					],
+					'associated' => $la_associated,
+				]
+			);
+
+			//Add the current line to the result
+			$lo_entities = $lo_entities->append([ $lo_entity ]);
+
+			$li_currentId++;
+		}
+
+		$ls_pageRole = Inflector::pluralize($this->getPageRole()->name);
+
+
+		return $lo_entities->nest('tempId', 'tempParentId', 'child' . $ls_pageRole);
 	}
 }

@@ -53,6 +53,23 @@
 				"access": {
 					"scope": "pages",
 					"identifier": "create"
+				},
+				"children": {
+					"pages_add_batch": {
+						"title": {
+							"translate": ["pages", "menu_add_batch"]
+						},
+						"link": {
+							"url": {
+								"controller": "Pages",
+								"action": "add-batch"
+							}
+						},
+						"access": {
+							"scope": "pages",
+							"identifier": "create"
+						}
+					}
 				}
 			},
 			"slug_history": {
