@@ -5,6 +5,7 @@ namespace Awyiss\Event;
 
 
 use Awyiss\Awyiss;
+use Awyiss\Core\App;
 use Cake\Event\Event;
 use Cake\Event\EventInterface;
 use Cake\Event\EventManager as BaseEventManager;
@@ -16,6 +17,11 @@ use Cake\Log\Log;
  * Before dispatching any event, try loading corresponding listeners.
  */
 class EventManager extends BaseEventManager {
+	/**
+	 * @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface>
+	 */
+	protected static string $pageRoleEnum;
+
 	/**
 	 * @inheritDoc
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
@@ -31,6 +37,7 @@ class EventManager extends BaseEventManager {
 			$this->lazyLoadListeners($lo_event->getName());
 		}
 
+
 		return parent::dispatch($lo_event);
 	}
 
@@ -45,6 +52,10 @@ class EventManager extends BaseEventManager {
 	 * @throws \ReflectionException
 	 */
 	protected function lazyLoadListeners(string $as_name): void {
+		if (!isset(static::$pageRoleEnum)) {
+			static::$pageRoleEnum = App::className('PageRole', 'Model/Enum');
+		}
+
 		$la_parts = explode('.', $as_name);
 
 		if (!$la_parts) {
@@ -55,6 +66,7 @@ class EventManager extends BaseEventManager {
 		//Don't use general event scopes, as they aren't what Awyiss understands as scopes.
 		$lb_generalScope = in_array($ls_scope, [
 			'Application',
+			'Awyiss',
 			'Bake',
 			'Command',
 			'Console',
@@ -80,6 +92,14 @@ class EventManager extends BaseEventManager {
 
 		$ls_scope = EventListenersProvider::sanitizeScope($ls_scope);
 
+		//If a regex-matching event for the scope exists, do nothing. This means that this event was most likely never set anywhere
+		if (
+			$this->matchingListeners('/(?<=\.|^)' . $ls_scope . '\./') ||
+			static::instance()->matchingListeners('/(?<=\.|^)' . $ls_scope . '\./')
+		) {
+			return;
+		}
+
 		//Try loading the scope from for the global realm
 		Log::debug(sprintf('Trying to lazyload global event listeners for: `%s` (`%s` fired)', $ls_scope, $as_name));
 		$lb_loaded = EventListenersProvider::loadListener($ls_scope, 'Global');
@@ -90,6 +110,29 @@ class EventManager extends BaseEventManager {
 			Log::debug(sprintf('Trying to lazyload `%s` event listeners for: `%s` (`%s` fired)', Awyiss::getRealm(), $ls_scope, $as_name));
 			$lb_loaded = EventListenersProvider::loadListener($ls_scope, Awyiss::getRealm());
 			Log::debug(sprintf('Loaded: %s', $lb_loaded ? 'true' : 'false'));
+
+			/** @noinspection PhpUndefinedMethodInspection */
+			if (!$lb_loaded && static::$pageRoleEnum::tryFromName($ls_scope)) {
+				Log::debug(sprintf('Found a page role for scope `%s`', $ls_scope));
+				//Try loading the pages listener from for the current realm
+				Log::debug('Trying to lazyload fallback event listeners for pages');
+				$lb_loaded = EventListenersProvider::loadListener('Pages', Awyiss::getRealm());
+				Log::debug(sprintf('Loaded: %s', $lb_loaded ? 'true' : 'false'));
+			}
 		}
+	}
+
+
+	/**
+	 * @param string $eventKeyPattern
+	 * @return array
+	 */
+	public function matchingListeners(string $eventKeyPattern): array {
+		return array_intersect_key(
+			$this->_listeners,
+			array_flip(
+				preg_grep($eventKeyPattern, array_keys($this->_listeners), 0) ?: []
+			)
+		);
 	}
 }
