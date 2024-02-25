@@ -9,6 +9,7 @@ use Awyiss\Authentication\IdentityAwareTrait;
 use Awyiss\Core\App;
 use Awyiss\Event\EventListenerTrait;
 use Awyiss\Model\Entity\Page;
+use Awyiss\Model\Enum\PageRoleEnumInterface;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
@@ -72,6 +73,20 @@ class PagesListener implements EventListenerInterface {
 
 		if (!($ao_options['skipPageRoleCheck'] ?? false)) {
 			$ao_query->where(['page_role_id' => $lo_table->getPageRole()]);
+		}
+		else {
+			/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $ls_pageRoleEnum */
+			$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
+
+			$ls_prefixedColumn = $ao_query->getRepository()->getAlias() . '.page_role_id';
+
+			/** @noinspection PhpUndefinedMethodInspection */
+			$ao_query->orderByAsc($ao_query->newExpr($ao_query->func()->FIND_IN_SET([
+				$ls_prefixedColumn => 'identifier',
+				implode(',', array_map(function(PageRoleEnumInterface $ae_pageRole) {
+					return $ae_pageRole->value;
+				}, $ls_pageRoleEnum::cases())),
+			])), true);
 		}
 	}
 
