@@ -6,6 +6,7 @@ namespace Awyiss\Model;
 
 use Awyiss\Awyiss;
 use Awyiss\Core\App;
+use Awyiss\Event\EventManager;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Behavior\Translate\EavStrategy;
 use Awyiss\ORM\Association\BelongsTo;
@@ -173,7 +174,7 @@ class Table extends BaseTable {
 			$this->setConfig('implementedEvents', $this->defaultEvents);
 		}
 
-		parent::__construct($aa_config);
+		parent::__construct($aa_config + ['eventManager' => new EventManager()]);
 	}
 
 
