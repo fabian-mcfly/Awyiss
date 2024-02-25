@@ -38,6 +38,7 @@ class MediaFoldersTable extends Table {
 	 * @inheritDoc
 	 */
 	protected array $nest = [
+		'enabled' => true,
 		'relatedColumns' => ['languageShortcode'],
 	];
 	/**

@@ -69,6 +69,7 @@ class ContentsTable extends Table {
 	 * @inheritDoc
 	 */
 	protected array $nest = [
+		'enabled' => true,
 		'relatedColumns' => ['pageId', 'contentAreaId'],
 	];
 	/**

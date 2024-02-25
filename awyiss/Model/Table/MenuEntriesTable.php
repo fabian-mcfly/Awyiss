@@ -47,6 +47,7 @@ class MenuEntriesTable extends Table {
 	 * @inheritDoc
 	 */
 	protected array $nest = [
+		'enabled' => true,
 		'relatedColumns' => ['languageShortcode', 'menuId'],
 	];
 	/**

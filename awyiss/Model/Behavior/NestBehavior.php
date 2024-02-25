@@ -57,7 +57,7 @@ class NestBehavior extends Behavior {
 			'foreignKey' => 'parent_id',
 			'maxLevel' => null,
 		],
-		'enabled' => true,
+		'enabled' => false,
 		'implementedEvents' => [
 			'buildRules',
 			'beforeSave',

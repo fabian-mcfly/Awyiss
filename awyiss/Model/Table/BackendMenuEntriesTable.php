@@ -40,6 +40,7 @@ class BackendMenuEntriesTable extends Table {
 	 */
 	protected array $nest = [
 		'buildRules' => false,
+		'enabled' => true,
 	];
 	/**
 	 * @inheritDoc
