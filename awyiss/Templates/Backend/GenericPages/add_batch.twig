@@ -1,0 +1,122 @@
+{#
+@var ao_page \Awyiss\Model\Entity\Page
+@var ao_pageTemplates \Cake\Collection\CollectionInterface
+@var ao_threadedPages \Cake\Collection\CollectionInterface
+@var ao_parentPages \Cake\Collection\CollectionInterface
+@var as_languageRealm string
+@var localConfig array
+@var ab_nestingEnabled bool
+@var _view \Awyiss\View\BackendView
+#}
+
+{% use '@Backend/GenericPages/form.twig' %}
+
+{% block formControlDuplicateOf %}{% endblock %}
+{% block formControlTitle %}{% endblock %}
+{% block formControlSlug %}{% endblock %}
+{% block formControlMetaTitle %}{% endblock %}
+{% block formControlMetaDescription %}{% endblock %}
+{% block formControlRedirectLink %}{% endblock %}
+
+<div class="Pages Form AddBatch">
+	{{ helper_Form_create(ao_page, {method: 'post', idPrefix: 'page'}) }}
+
+	{% block headlineAddBatch %}
+		<h1>{{ __('headline_add_batch') }}</h1>
+	{% endblock %}
+
+	{% block formAddBatchButtons %}
+		{{ helper_Form_button(__('save_close'), {name: 'submit', value: 'submit_close'}) }}
+	{% endblock %}
+
+	{% block formAddBatch %}
+		{{ block("fieldsetPresentation") }}
+
+		{{ block("fieldsetConditions") }}
+
+		{% block fieldsetGeneral %}
+			<fieldset>
+				<legend>{{ __('fieldset_general') }}</legend>
+
+				{% block fieldsetGeneralInner %}
+					{% block formControlPages %}
+						{{ helper_Form_control('pages', {type: 'textarea'}) }}
+					{% endblock %}
+
+					{{ parent() }}
+				{% endblock %}
+			</fieldset>
+		{% endblock %}
+
+		{{ block("fieldsetContent") }}
+
+		{{ block("fieldsetAttributes") }}
+
+		{{ block("fieldsetSeo") }}
+
+		{{ block("formInputReloadForm") }}
+	{% endblock %}
+
+	{% block formAddBatchButtonsBottom %}
+		{{ block('formAddBatchButtons') }}
+	{% endblock %}
+
+	{{ helper_Form_end() }}
+</div>
+<script>
+	class BatchArea {
+		#element; //Private field to store the text editor element
+
+		constructor (element) {
+			//Assign the passed DOM element to the private field
+			this.#element = element;
+
+			//Add a keydown event listener to the element using an arrow function
+			this.#element.addEventListener('keydown', this.handleKeyEvent);
+		}
+
+		//Handles key down events in the text area
+		handleKeyEvent = (event) => {
+			const keyCode = event.keyCode || event.which;
+
+			//Tab key adds a tab character
+			if (keyCode === 9) {
+				event.preventDefault();
+				this.insertTab();
+			}
+
+			//Enter key adds a new line with indentation (if not combined with Ctrl or Shift)
+			if (keyCode === 13 && !(event.ctrlKey || event.shiftKey)) {
+				event.preventDefault();
+				this.insertNewLineWithIndent();
+			}
+		}
+
+		//Inserts a tab at the current cursor position
+		insertTab = () => {
+			//Destructure properties from the element for easier access
+			const {selectionStart: start, selectionEnd: end, value} = this.#element;
+
+			//Insert a tab character at the cursor position
+			this.#element.value = `${value.substring(0, start)}\t${value.substring(end)}`;
+			//Update the cursor position to be after the inserted tab
+			this.#element.selectionStart = this.#element.selectionEnd = start + 1;
+		}
+
+		//Inserts a new line and maintains the previous line's indentation level
+		insertNewLineWithIndent = () => {
+			//Destructure properties from the element for easier access
+			const {selectionStart: start, selectionEnd: end, value} = this.#element;
+			//Get the last line before the cursor to determine the indentation level
+			const lastLine = value.substring(0, start).split("\n").pop();
+			//Count the number of tab characters for indentation (nullish coalescing defaults to 0)
+			const indentLevel = lastLine.match(/\t/g)?.length ?? 0;
+
+			//Insert a newline and repeat the tabs for indentation
+			this.#element.value = `${value.substring(0, start)}\n${"\t".repeat(indentLevel)}${value.substring(end)}`;
+			//Update the cursor position to be after the new line and indentation
+			this.#element.selectionStart = this.#element.selectionEnd = start + 1 + indentLevel;
+		}
+	}
+	new BatchArea(document.getElementById('Page-Pages'));
+</script>
