@@ -35,7 +35,7 @@
 		{% endblock %}
 
 		{% block formControlPageId %}
-			{{ helper_Form_control('page_id', {options: ao_pages}) }}
+			{{ helper_Form_control('page_id', {options: hashPrinter(ao_threadedPages, 'label', 'id', '- ')}) }}
 		{% endblock %}
 
 

@@ -7,6 +7,7 @@ namespace Awyiss\Controller\Backend;
 use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Model\Entity\SlugHistory;
 use Awyiss\Routing\Router;
+use Cake\Collection\CollectionInterface;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
 
@@ -18,6 +19,12 @@ use Cake\Http\Response;
  * @method SlugHistory[]|\Cake\Datasource\ResultSetInterface paginate($ao_object = null, array $aa_settings = [])
  */
 class SlugHistoryController extends Controller {
+	/**
+	 * @var \Cake\Collection\Iterator\TreeIterator
+	 */
+	protected CollectionInterface $threadedPages;
+
+
 	/**
 	 * Overview method
 	 *
@@ -50,9 +57,11 @@ class SlugHistoryController extends Controller {
 			$this->save($lo_slugHistory);
 		}
 
+		$lo_threadedPages = $this->getThreadedPages();
+
 		$this->set([
 			'ao_slugHistory' => $lo_slugHistory,
-			'ao_pages' => $this->SlugHistory->Pages->find('list', ['limit' => 200]),
+			'ao_threadedPages' => $lo_threadedPages->toList(),
 		]);
 	}
 
@@ -79,9 +88,11 @@ class SlugHistoryController extends Controller {
 			$this->save($lo_slugHistory, 'edit');
 		}
 
+		$lo_threadedPages = $this->getThreadedPages();
+
 		$this->set([
 			'ao_slugHistory' => $lo_slugHistory,
-			'ao_pages' => $this->SlugHistory->Pages->find('list', ['limit' => 200]),
+			'ao_threadedPages' => $lo_threadedPages->toList(),
 		]);
 	}
 
@@ -153,5 +164,24 @@ class SlugHistoryController extends Controller {
 				$this->Flash->error($ls_error);
 			}
 		}
+	}
+
+
+	/**
+	 * Return a collection of pages for the currently set languageShortcode,
+	 * using `\Cake\Collection\CollectionTrait::listNested()` to be used in a form-select
+	 *
+	 * @return \Cake\Collection\CollectionInterface
+	 * @see \Cake\Collection\CollectionTrait::listNested()
+	 */
+	protected function getThreadedPages(): CollectionInterface {
+		if (!isset($this->threadedPages)) {
+			$lo_query = $this->SlugHistory->Pages->find('forCurrentLanguage', skipPageRoleCheck: true);
+
+			$this->threadedPages = $this->SlugHistory->Pages->listNested($lo_query);
+		}
+
+
+		return $this->threadedPages;
 	}
 }

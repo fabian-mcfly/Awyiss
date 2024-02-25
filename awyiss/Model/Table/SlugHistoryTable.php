@@ -13,6 +13,7 @@ use Cake\Validation\Validator;
 /**
  * SlugHistory Model
  *
+ * @property \Awyiss\Model\Table\PagesTable&\Awyiss\ORM\Association\BelongsTo $Pages
  * @method \Awyiss\Model\Entity\SlugHistory newDefaultEntity(array $aa_additionalData = [], array $aa_options = [])
  */
 class SlugHistoryTable extends Table {
@@ -32,6 +33,11 @@ class SlugHistoryTable extends Table {
 		parent::initialize($aa_config);
 
 		$this->belongsTo('Pages', [
+			'finder' => [
+				'all' => [
+					'skipPageRoleCheck' => true,
+				],
+			],
 			'foreignKey' => 'page_id',
 			'joinType' => 'INNER',
 		]);

@@ -56,7 +56,7 @@
 								{% block tableOverviewCellPageId %}
 									<td>
 										{% if lo_slugHistory.has('page') %}
-											{{ helper_Html_link(lo_slugHistory.page.title, {controller: 'Pages', action: 'view', id: lo_slugHistory.page.id}) }}
+											{{ lo_slugHistory.page.title }}
 										{% endif %}
 									</td>
 								{% endblock %}
