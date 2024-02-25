@@ -68,6 +68,7 @@ class LinkSelectWidget extends BasicWidget {
 		//Format the attributes
 		$la_attributes = [
 			'class' => $la_data['class'],
+			'id' => $la_data['id'],
 		];
 		if (!empty($la_data['attributes'])) {
 			$la_attributes['attributes'] = $la_data['attributes'];
@@ -210,8 +211,19 @@ class LinkSelectWidget extends BasicWidget {
 
 			//Add a class 'Item' and, if the value of the option is selected, 'Active' as well
 			$la_optionAttributes = $this->_templates->addClass($la_optionAttributes, 'Item');
-			$ls_classText = Inflector::camelize(Text::slug($la_optionAttributes['title'], ['replacement' => '']));
-			$la_optionAttributes = $this->_templates->addClass($la_optionAttributes, 'Item-' . $ls_classText);
+
+			$ls_classText = 'Item-' . Text::slug(Inflector::camelize($la_optionAttributes['title']), ['replacement' => '']);
+			$la_optionAttributes = $this->_templates->addClass($la_optionAttributes, $ls_classText);
+
+			if ($la_optionAttributes['id'] ?? false !== false) {
+				$ls_classText = 'Item-' . Text::slug(Inflector::camelize((string)$la_optionAttributes['id']), ['replacement' => '']);
+				$la_optionAttributes = $this->_templates->addClass($la_optionAttributes, $ls_classText);
+
+				if (!empty($la_data['id'])) {
+					$la_optionAttributes['id'] = $la_data['id'] . $ls_classText;
+				}
+			}
+
 			if ($this->isSelected((string)$lx_key, $lx_selected)) {
 				$la_optionAttributes = $this->_templates->addClass($la_optionAttributes, $la_data['selectedClass'] ?? 'Active');
 			}
