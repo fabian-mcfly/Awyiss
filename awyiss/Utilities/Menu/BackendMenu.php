@@ -86,20 +86,22 @@ class BackendMenu {
 	 */
 	protected function createCustomMenu(): void {
 		$ls_filePath = realpath(CUSTOM_CONFIG . DS . 'menu.json');
-		if ($ls_filePath) {
-			$lo_customMenuData = MenuLoader::loadJsonFile($ls_filePath);
-			$lb_valid = MenuLoader::validateData($lo_customMenuData, [
-				'schemaPath' => CONFIG . DS . 'menu-extension.schema.json',
-				'uniqueIdentifiers' => true,
-			]);
-
-			if (!$lb_valid) {
-				throw new RuntimeException('The data is not valid according to menu-extension.schema.json');
-			}
-
-			$this->customMenu = unserialize(serialize($this->getMenu()));
-			$this->customMenu?->extend($lo_customMenuData);
+		if (!$ls_filePath) {
+			return;
 		}
+
+		$lo_customMenuData = MenuLoader::loadJsonFile($ls_filePath);
+		$lb_valid = MenuLoader::validateData($lo_customMenuData, [
+			'schemaPath' => CONFIG . DS . 'menu-extension.schema.json',
+			'uniqueIdentifiers' => true,
+		]);
+
+		if (!$lb_valid) {
+			throw new RuntimeException('The data is not valid according to menu-extension.schema.json');
+		}
+
+		$this->customMenu = unserialize(serialize($this->getMenu()));
+		$this->customMenu?->extend($lo_customMenuData);
 	}
 
 
