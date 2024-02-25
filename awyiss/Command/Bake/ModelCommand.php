@@ -348,7 +348,6 @@ class ModelCommand extends BaseModelCommand {
 			'boolean' => true,
 			'help' => 'Does the model reflect a pagerole? Will extend PagesTable and use db table `pages`.',
 		])->addOption('for-pagerole', [
-			'boolean' => true,
 			'help' => 'Should the table be associated with a pagerole? Will remove a Page association if present.',
 		]);
 
