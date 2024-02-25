@@ -15,9 +15,9 @@ use Cake\Utility\Hash;
  */
 class PhpConfig extends BasePhpConfig {
 	protected array $paths = [
-		CONFIG,
-		CUSTOM_CONFIG,
-		ENV_CUSTOM_CONFIG,
+		'Awyiss' => CONFIG,
+		CUSTOM_NAMESPACE => CUSTOM_CONFIG,
+		CUSTOM_NAMESPACE . '_' . CONFIG_ENV => ENV_CUSTOM_CONFIG,
 	];
 
 
@@ -99,7 +99,16 @@ class PhpConfig extends BasePhpConfig {
 		$ls_contents .= ';';
 		$ls_contents = str_replace('    ', "\t", $ls_contents);
 
-		$ls_filePath = ENV_CUSTOM_CONFIG . $as_key . $this->_extension;
+
+		$ls_key = $as_key;
+		$ls_folder = ENV_CUSTOM_CONFIG;
+
+		if (str_contains($ls_key, '.')) {
+			[$ls_folder, $ls_key] = explode('.', $ls_key);
+			$ls_folder = $this->paths[ $ls_folder ] ?? ENV_CUSTOM_CONFIG;
+		}
+
+		$ls_filePath = $ls_folder . $ls_key . $this->_extension;
 
 		if (file_put_contents($ls_filePath, $ls_contents)) {
 			chmod($ls_filePath, 0660);
