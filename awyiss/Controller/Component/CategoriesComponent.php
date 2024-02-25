@@ -63,7 +63,7 @@ class CategoriesComponent extends Component {
 		parent::initialize($aa_config);
 
 		if (!$this->getConfig('uriParam')) {
-			$ls_identifier = $this->getConfig('fieldname');
+			$ls_identifier = $this->getConfig('identifier');
 			$this->setConfig('uriParam', Inflector::dasherize($ls_identifier));
 		}
 	}
@@ -268,9 +268,18 @@ class CategoriesComponent extends Component {
 		ksort($la_config);
 		unset($la_config['implementedEvents'], $la_config['implementedMethods']);
 
+		$lo_categories = $this->getCategories(true);
+
+		$lo_parentCategories = null;
+		$lx_includeParents = $this->getConfig('includeParentCategories');
+		if ($this->getConfig('includeParentCategories')) {
+			$lo_parentCategories = $this->getBehavior()->getParentCategories(0, $lx_includeParents === true ? PHP_INT_MAX : (int)$lx_includeParents);
+		}
+
 		$la_categories = [
 			'config' => $la_config,
-			'raw' => $this->getCategories(true),
+			'parents' => $lo_parentCategories,
+			'raw' => $lo_categories,
 			'selected' => $this->getConfig('selectedCategory'),
 			'simple' => $this->getCategories(),
 		];

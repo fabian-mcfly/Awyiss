@@ -60,6 +60,7 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 		'fieldname' => null,
 		'finder' => null,
 		'foreignKey' => null,
+		'includeParentCategories' => false,
 		'identifier' => 'category',
 		'queryConditions' => [],
 		'selectedCategory' => null,
@@ -561,6 +562,75 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 
 
 	/**
+	 * @param int $ai_level
+	 * @param int $ai_maxLevel
+	 * @return \Cake\Collection\CollectionInterface|null
+	 */
+	public function getParentCategories(int $ai_level = 0, int $ai_maxLevel = PHP_INT_MAX): ?CollectionInterface {
+		/** @var \Awyiss\Model\Table $lo_table */
+		$lo_table = $this->table();
+
+		$ls_associationName = $this->getConfig('associationName');
+
+		if (empty($ls_associationName) || !$lo_table->hasAssociation($ls_associationName) || $ai_level > $ai_maxLevel) {
+			return null;
+		}
+
+		$lo_association = $lo_table->getAssociation($ls_associationName);
+
+		$lo_categories = collection([]);
+
+		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+		$lo_parentCategories = $lo_association->getBehavior('Categories')->getParentCategories($ai_level + 1, $ai_maxLevel);
+		if ($lo_parentCategories) {
+			$lo_categories = $lo_categories->append($lo_parentCategories);
+		}
+
+		$lo_categories = $lo_categories->append($this->getCategories(true));
+		if ($ai_level === 0) {
+			$lo_categories = $lo_categories->indexBy('id')->compile();
+			$lo_categories = $lo_categories->nest('id', 'parentId')->listNested();
+
+			$this->setParents($lo_categories, $lo_association->getEntityClass(), $ai_maxLevel);
+		}
+
+
+		return $lo_categories;
+	}
+
+
+	/**
+	 * @param \Cake\Collection\CollectionInterface $ao_categories
+	 * @param string $as_entityClass
+	 * @param int $ai_maxLevel
+	 * @return void
+	 */
+	protected function setParents(CollectionInterface $ao_categories, string $as_entityClass, int $ai_maxLevel): void {
+		$la_currentPath = []; // Keep track of the current path
+
+		/** @var \Awyiss\Model\Entity $lo_entity */
+		foreach ($ao_categories as $lo_entity) {
+			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+			$li_currentDepth = $ao_categories->getDepth();
+
+			// Adjust the current path to reflect the current depth
+			$la_currentPath = array_slice($la_currentPath, 0, $li_currentDepth);
+
+			// Check if the entity is an instance of the special class
+			if ($lo_entity instanceof $as_entityClass) {
+				$li_parentsCount = min($ai_maxLevel, $li_currentDepth);
+				$lo_entity->_parents = array_values(array_slice($la_currentPath, -$li_parentsCount, $li_parentsCount, true));
+				$lo_entity->setVirtual(['_parents'], true);
+
+				continue;
+			}
+
+			$la_currentPath[ $li_currentDepth ] = $lo_entity;
+		}
+	}
+
+
+	/**
 	 * @return void
 	 */
 	protected function buildCategories(): void {
@@ -590,8 +660,9 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 		$lo_categories = $lo_query->all();
 
 		if ($this->getConfig('threaded')) {
-			//Create a nested list of all categories
 			/**
+			 * Create a nested list of all categories
+			 *
 			 * @var \Cake\Collection\Iterator\TreeIterator $lo_categories
 			 */
 			$lo_categories = $lo_categories->listNested();

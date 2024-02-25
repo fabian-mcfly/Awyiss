@@ -38,6 +38,13 @@ class GenericPagesConfigOptions extends AbstractGenericConfigOptions {
 					type: ConfigOptionType::Bool,
 				),
 				new ConfigOption(
+					defaultValue: false,
+					identifier: 'allowUnassigned',
+					localizable: false,
+					nullable: false,
+					type: ConfigOptionType::Bool,
+				),
+				new ConfigOption(
 					defaultValue: null,
 					identifier: 'associationName',
 					localizable: false,
@@ -66,6 +73,13 @@ class GenericPagesConfigOptions extends AbstractGenericConfigOptions {
 					type: ConfigOptionType::Bool
 				),
 				new ConfigOption(
+					defaultValue: false,
+					identifier: 'includeParentCategories',
+					localizable: false,
+					nullable: false,
+					type: ConfigOptionType::Bool
+				),
+				new ConfigOption(
 					defaultValue: true,
 					identifier: 'threaded',
 					localizable: false,
@@ -81,6 +95,15 @@ class GenericPagesConfigOptions extends AbstractGenericConfigOptions {
 				),
 			],
 			'contents' => [
+				new ConfigOption(
+					defaultValue: false,
+					identifier: 'enabled',
+					localizable: false,
+					nullable: false,
+					type: ConfigOptionType::Bool,
+				),
+			],
+			'nest' => [
 				new ConfigOption(
 					defaultValue: false,
 					identifier: 'enabled',

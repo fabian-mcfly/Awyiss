@@ -171,6 +171,7 @@ class CategoriesHelper extends Helper {
 		$la_attributes = $aa_attributes + [
 			'isCategory' => true,
 			'empty' => false,
+			'groupBy' => false,
 			'groupLabels' => [],
 			'label' => $this->Form->labelTextFromFieldname($ls_fieldName),
 			'type' => 'select',
@@ -190,6 +191,11 @@ class CategoriesHelper extends Helper {
 		unset($la_attributes['options']);
 		if ($lx_options) {
 			$ls_groupBy = $la_attributes['groupBy'] ?? null;
+
+			if (!$ls_groupBy && !empty($la_config['includeParentCategories'])) {
+				$ls_groupBy = '_parents';
+			}
+
 			if ($ls_groupBy) {
 				if (!$lx_options instanceof CollectionInterface) {
 					$lx_options = collection($lx_options);
@@ -197,6 +203,14 @@ class CategoriesHelper extends Helper {
 
 				$lx_options = $lx_options->groupBy(function (mixed $ax_element) use ($ls_groupBy) {
 					if ($ax_element instanceof EntityInterface) {
+						if (is_array($ax_element->$ls_groupBy)) {
+							return implode(' - ', array_map(function (EntityInterface $ao_entity) {
+								/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+								return $ao_entity->label;
+							}, $ax_element->$ls_groupBy));
+						}
+
+
 						return $ax_element->$ls_groupBy ?? '';
 					}
 
@@ -255,20 +269,22 @@ class CategoriesHelper extends Helper {
 
 		$ls_fieldName = Inflector::underscore($la_config['fieldname']);
 
-		$la_attributes = ['identifier' => $ls_fieldName] + $aa_attributes + $la_config;
+		$la_attributes = $aa_attributes + $la_config;
 		$la_attributes += [
 			'aggregationLabel' => __($ls_fieldName . '_filter_all'),
 			'disabled' => false,
 			'escape' => true,
-			'label' => __($ls_fieldName . '_filter_label'),
+			'id' => true,
+			'label' => __($ls_identifier . '_filter_label'),
 			'levelPrefix' => '- ',
-			'unassignedLabel' => __($ls_fieldName . '_filter_unassigned'),
+			'unassignedLabel' => __($ls_identifier . '_filter_unassigned'),
 			'val' => $this->getSelectedCategory($ls_identifier),
 		];
 
 		if (isset($la_attributes['id']) && $la_attributes['id'] === true) {
-			$la_attributes['id'] = $this->_domId($ls_fieldName);
+			$la_attributes['id'] = 'CustomSelect-' . Inflector::camelize($this->_domId($ls_identifier), '-');
 		}
+
 		$la_attributes['options'] = $ax_options;
 		if (!$la_attributes['options']) {
 			$la_attributes['options'] = $this->getCategories($ls_identifier, true);
@@ -278,13 +294,31 @@ class CategoriesHelper extends Helper {
 		unset($la_attributes['options']);
 		if ($lx_options) {
 			$ls_groupBy = $la_attributes['groupBy'] ?? null;
+
+			if (!$ls_groupBy && !empty($la_config['includeParentCategories'])) {
+				$ls_groupBy = '_parents';
+			}
+
 			if ($ls_groupBy) {
 				if (!$lx_options instanceof CollectionInterface) {
 					$lx_options = collection($lx_options);
 				}
 
-				$lx_options = $lx_options->groupBy(function (mixed $ax_element) use ($ls_groupBy) {
+				$la_options = $lx_options->groupBy(function (mixed $ax_element) use ($ls_groupBy, &$la_attributes) {
 					if ($ax_element instanceof EntityInterface) {
+						if (is_array($ax_element->$ls_groupBy)) {
+							$ls_path = implode(' - ', array_map(function (EntityInterface $ao_entity) {
+								/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+								return $ao_entity->label;
+							}, $ax_element->$ls_groupBy));
+
+							$la_attributes['groupLabels'][ $ls_path ] ??= $ls_path;
+
+
+							return $ls_path;
+						}
+
+
 						return $ax_element->$ls_groupBy ?? '';
 					}
 
@@ -293,7 +327,7 @@ class CategoriesHelper extends Helper {
 				})->toArray();
 
 				$la_attributes['options'] = [];
-				foreach ($lx_options as $lx_key => $la_options) {
+				foreach ($la_options as $lx_key => $lx_options) {
 					$la_attributes['options'][] = [
 						'id' => null,
 						'title' => $lx_key,
@@ -301,7 +335,7 @@ class CategoriesHelper extends Helper {
 						'levelPrefix' => null,
 						'isGroupLabel' => true,
 					];
-					$la_attributes['options'] = array_merge($la_attributes['options'], $this->buildOptions($la_options, $la_attributes, true));
+					$la_attributes['options'] += $this->buildOptions($lx_options, $la_attributes, true);
 				}
 			}
 			else {
@@ -391,6 +425,7 @@ class CategoriesHelper extends Helper {
 	/**
 	 * @param array $ax_options
 	 * @param array $aa_attributes
+	 * @param bool $ab_forLinkSelect
 	 * @return array
 	 */
 	protected function buildOptions(iterable $ax_options, array $aa_attributes, bool $ab_forLinkSelect = false): array {
@@ -433,6 +468,7 @@ class CategoriesHelper extends Helper {
 			return $la_options;
 		}
 
+		$la_formattedOptions = [];
 		foreach ($la_options as $lx_key => $lx_option) {
 			if (is_object($lx_option)) {
 				$la_data = [
@@ -441,9 +477,12 @@ class CategoriesHelper extends Helper {
 					'link' => $this->Url->build([$aa_attributes['uriParam'] => $lx_option->id], ['withoutParams' => ['page']]),
 					'levelPrefix' => str_repeat($aa_attributes['levelPrefix'] ?? '', $lx_option->level ?? 0),
 				];
-				$la_options[ $lx_key ] = $la_data;
+				$la_formattedOptions[ $lx_option->id ] = $la_data;
 			}
-			elseif (!is_array($lx_option)) {
+			elseif (is_array($lx_option)) {
+				$la_formattedOptions[ $la_data['id'] ?? $lx_key ] = $la_data;
+			}
+			else {
 				$la_data = [
 					'id' => null,
 					'title' => $lx_option,
@@ -451,11 +490,11 @@ class CategoriesHelper extends Helper {
 					'levelPrefix' => null,
 				];
 
-				$la_options[ $lx_key ] = $la_data;
+				$la_formattedOptions[ $lx_option ] = $la_data;
 			}
 		}
 
 
-		return $la_options;
+		return $la_formattedOptions;
 	}
 }
