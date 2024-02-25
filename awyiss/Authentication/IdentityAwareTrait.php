@@ -5,7 +5,9 @@ namespace Awyiss\Authentication;
 
 
 use Authentication\IdentityInterface;
+use Awyiss\Event\EventManager;
 use Cake\Event\EventDispatcherTrait;
+use Cake\Event\EventManagerInterface;
 
 
 /**
@@ -19,6 +21,14 @@ trait IdentityAwareTrait {
 	 * @var \Authentication\IdentityInterface|null
 	 */
 	protected ?IdentityInterface $identity = null;
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getEventManager(): EventManagerInterface {
+		return $this->_eventManager ??= new EventManager();
+	}
 
 
 	/**

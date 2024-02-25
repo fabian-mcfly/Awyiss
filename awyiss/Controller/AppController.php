@@ -5,6 +5,7 @@ namespace Awyiss\Controller;
 
 
 use Awyiss\Awyiss;
+use Awyiss\Event\EventManager;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Routing\Router;
 use Cake\Controller\Controller;
@@ -22,6 +23,8 @@ abstract class AppController extends Controller {
 	 * @throws \Exception
 	 */
 	public function initialize(): void {
+		$this->setEventManager(new EventManager());
+
 		Awyiss::loadConfiguration(
 			LocaleMiddleware::getLanguage()->shortcode,
 			LocaleMiddleware::getLanguage(Awyiss::REALM_BACKEND)->shortcode,
