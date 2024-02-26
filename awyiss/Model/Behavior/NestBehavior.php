@@ -12,6 +12,7 @@ use Cake\Collection\CollectionInterface;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
 use Cake\ORM\Association;
+use Cake\ORM\Exception\PersistenceFailedException;
 use Cake\ORM\Query\SelectQuery;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
@@ -562,12 +563,21 @@ class NestBehavior extends Behavior {
 					);
 				}
 
-				$lo_association->saveMany($la_entities, [
-					'audit' => ['skip' => true],
-					'checkRules' => false,
-					'nest' => ['skip' => true],
-					'systemOrder' => ['skip' => true],
-				]);
+				try {
+					//Save all found records, but skip the audit and the system order behavior on those to avoid recursion.
+					$lo_association->saveMany($la_entities, [
+						'audit' => ['skip' => true],
+						'atomic' => false,
+						'checkRules' => false,
+						'nest' => ['skip' => true],
+						'systemOrder' => ['skip' => true],
+						'transaction' => false,
+					]);
+				}
+				catch (PersistenceFailedException $ex) {
+					$ao_event->stopPropagation();
+					$ao_event->setResult($ex->getEntity()->getErrors());
+				}
 			}
 		}
 	}

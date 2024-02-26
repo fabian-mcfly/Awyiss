@@ -73,7 +73,7 @@ class ConfigurationListener implements EventListenerInterface {
 	 * @throws \Exception
 	 */
 	public function afterSaveCommit(Event $ao_event, Configuration $ao_entity): void {
-		$this->rebuildSystemOrder($ao_entity);
+		$this->rebuildSystemOrder($ao_event, $ao_entity);
 		$this->createCustomConfiguration();
 	}
 
@@ -123,10 +123,11 @@ class ConfigurationListener implements EventListenerInterface {
 
 
 	/**
+	 * @param \Cake\Event\Event $ao_event
 	 * @param \Awyiss\Model\Entity\Configuration $ao_entity
 	 * @return void
 	 */
-	protected function rebuildSystemOrder(Configuration $ao_entity): void {
+	protected function rebuildSystemOrder(Event $ao_event, Configuration $ao_entity): void {
 		if (
 			$ao_entity->identifier === 'system_order.field' &&
 			$ao_entity->isDirty('identifier') &&
@@ -144,7 +145,7 @@ class ConfigurationListener implements EventListenerInterface {
 			$lo_table = FactoryLocator::get('Table')->get(Inflector::camelize($ao_entity->scope));
 			if ($lo_table->hasBehavior('SystemOrder')) {
 				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-				$lo_table->getBehavior('SystemOrder')->rebuildSystemOrder($ao_entity->value, $li_direction);
+				$lo_table->getBehavior('SystemOrder')->rebuildSystemOrder($ao_event, $ao_entity->value, $li_direction);
 			}
 		}
 		elseif (
@@ -163,7 +164,7 @@ class ConfigurationListener implements EventListenerInterface {
 			$lo_table = FactoryLocator::get('Table')->get(Inflector::camelize($ao_entity->scope));
 			if ($lo_table->hasBehavior('SystemOrder')) {
 				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-				$lo_table->getBehavior('SystemOrder')->rebuildSystemOrder($ls_field, (int)$ao_entity->value);
+				$lo_table->getBehavior('SystemOrder')->rebuildSystemOrder($ao_event, $ls_field, (int)$ao_entity->value);
 			}
 		}
 	}

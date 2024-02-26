@@ -4,6 +4,7 @@
 namespace Awyiss\Model;
 
 
+use ArrayObject;
 use Awyiss\Awyiss;
 use Awyiss\Core\App;
 use Awyiss\Event\EventManager;
@@ -21,13 +22,17 @@ use Cake\Core\Configure;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Schema\TableSchemaInterface;
+use Cake\Datasource\EntityInterface;
 use Cake\ORM\Exception\MissingEntityException;
+use Cake\ORM\Exception\PersistenceFailedException;
+use Cake\ORM\Exception\RolledbackTransactionException;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\Table as BaseTable;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 use Cake\Validation\Validator as BaseValidator;
 use Closure;
+use Exception;
 use RuntimeException;
 
 
@@ -627,6 +632,190 @@ class Table extends BaseTable {
 	 */
 	public function marshaller(): Marshaller {
 		return new Marshaller($this);
+	}
+
+
+	/**
+	 * Persists multiple entities of a table.
+	 * The records will be saved in a transaction - if option `transaction` isn't false - which will be rolled back if
+	 * any one of the records fails to save due to failed validation or database
+	 * error.
+	 *
+	 * @param iterable<\Cake\Datasource\EntityInterface> $ax_entities Entities to save.
+	 * @param array<string, mixed> $aa_options Options used when calling Table::save() for each entity.
+	 * @return iterable<\Cake\Datasource\EntityInterface>|false False on failure, entities list on success.
+	 * @throws \Exception
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 */
+	public function saveMany(iterable $ax_entities, array $aa_options = []): iterable|false {
+		$la_options = $aa_options + ['transaction' => true];
+
+		try {
+			return $this->_saveMany($ax_entities, $la_options);
+		}
+		catch (PersistenceFailedException $ex) {
+			if ($la_options['transaction'] === false) {
+				throw $ex;
+			}
+
+			return false;
+		}
+	}
+
+
+	/**
+	 * Implemented nearly 1:1 but honors the `transaction`-option.
+	 * If set to false, the save calls will not be handled inside a transaction
+	 *
+	 * @param iterable<\Cake\Datasource\EntityInterface> $ax_entities Entities to save.
+	 * @param array<string, mixed> $aa_options Options used when calling Table::save() for each entity.
+	 * @return iterable<\Cake\Datasource\EntityInterface> Entities list.
+	 * @throws \Exception If an entity couldn't be saved.
+	 * @throws \Cake\ORM\Exception\PersistenceFailedException If an entity couldn't be saved.
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 */
+	protected function _saveMany(iterable $ax_entities, array $aa_options = []): iterable {
+		$la_options = new ArrayObject(
+			$aa_options + [
+				'atomic' => true,
+				'checkRules' => true,
+				'_primary' => true,
+			]
+		);
+		$la_options['_cleanOnSuccess'] = false;
+
+		/** @var array<bool> $la_isNew */
+		$la_isNew = [];
+		$lc_cleanupOnFailure = function ($entities) use (&$la_isNew): void {
+			/** @var iterable<\Cake\Datasource\EntityInterface> $entities */
+			foreach ($entities as $lx_key => $lo_entity) {
+				if (isset($la_isNew[ $lx_key ]) && $la_isNew[ $lx_key ]) {
+					$lo_entity->unset($this->getPrimaryKey());
+					$lo_entity->setNew(true);
+				}
+			}
+		};
+
+		/** @var \Cake\Datasource\EntityInterface|null $lo_failed */
+		$lo_failed = null;
+		try {
+			$lc_saveMany = function () use ($ax_entities, $la_options, &$la_isNew, &$lo_failed): bool {
+				// Cache array cast since options are the same for each entity
+				$la_options = (array)$la_options;
+				foreach ($ax_entities as $lx_key => $lo_entity) {
+					$la_isNew[ $lx_key ] = $lo_entity->isNew();
+					if ($this->save($lo_entity, $la_options) === false) {
+						$lo_failed = $lo_entity;
+
+
+						return false;
+					}
+				}
+
+
+				return true;
+			};
+
+			if ($la_options['transaction'] !== false) {
+				$this->getConnection()->transactional($lc_saveMany);
+			}
+			else {
+				$lc_saveMany();
+			}
+		}
+		catch (Exception $ex) {
+			$lc_cleanupOnFailure($ax_entities);
+
+			throw $ex;
+		}
+
+		if ($lo_failed !== null) {
+			$lc_cleanupOnFailure($ax_entities);
+
+			throw new PersistenceFailedException($lo_failed, ['saveMany']);
+		}
+
+		$lc_cleanupOnSuccess = function (EntityInterface $ao_entity) use (&$lc_cleanupOnSuccess): void {
+			$ao_entity->clean();
+			$ao_entity->setNew(false);
+
+			foreach (array_keys($ao_entity->toArray()) as $ls_field) {
+				$lx_value = $ao_entity->get($ls_field);
+
+				if ($lx_value instanceof EntityInterface) {
+					$lc_cleanupOnSuccess($lx_value);
+				}
+				elseif (is_array($lx_value) && current($lx_value) instanceof EntityInterface) {
+					foreach ($lx_value as $lo_associated) {
+						$lc_cleanupOnSuccess($lo_associated);
+					}
+				}
+			}
+		};
+
+		if ($this->_transactionCommitted($la_options['atomic'], $la_options['_primary'])) {
+			foreach ($ax_entities as $lo_entity) {
+				$this->dispatchEvent('Model.afterSaveCommit', [
+					'entity' => $lo_entity,
+					'options' => $la_options,
+				]);
+
+				if ($la_options['atomic'] || $la_options['_primary']) {
+					$lc_cleanupOnSuccess($lo_entity);
+				}
+			}
+		}
+
+
+		return $ax_entities;
+	}
+
+
+	/**
+	 * Re-implemented 1:1 but checks for the result of the afterSave event.
+	 * Returns false, if it was stopped.
+	 *
+	 * @inheritDoc
+	 * @param \Cake\Datasource\EntityInterface $ao_entity
+	 * @param \ArrayObject $aa_options
+	 * @return bool
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 */
+	protected function _onSaveSuccess(EntityInterface $ao_entity, ArrayObject $aa_options): bool {
+		$lx_success = $this->_associations->saveChildren(
+			$this,
+			$ao_entity,
+			$aa_options['associated'],
+			['_primary' => false] + $aa_options->getArrayCopy()
+		);
+
+		if (!$lx_success && $aa_options['atomic']) {
+			return false;
+		}
+
+		$lo_event = $this->dispatchEvent('Model.afterSave', ['entity' => $ao_entity, 'options' => $aa_options]);
+		if ($lo_event->isStopped()) {
+			$lx_errors = $lo_event->getResult();
+			if (!is_array($lx_errors)) {
+				$lx_errors = ['_general' => $lx_errors];
+			}
+
+			$ao_entity->setErrors($lx_errors);
+			return false;
+		}
+
+		if ($aa_options['atomic'] && !$this->getConnection()->inTransaction()) {
+			throw new RolledbackTransactionException(['table' => static::class]);
+		}
+
+		if (!$aa_options['atomic'] && !$aa_options['_primary']) {
+			$ao_entity->clean();
+			$ao_entity->setNew(false);
+			$ao_entity->setSource($this->getRegistryAlias());
+		}
+
+
+		return true;
 	}
 
 

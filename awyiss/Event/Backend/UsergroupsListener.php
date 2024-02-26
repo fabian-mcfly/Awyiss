@@ -11,6 +11,7 @@ use Awyiss\Model\Entity\Usergroup;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
 use Cake\I18n\DateTime;
+use Cake\ORM\Exception\PersistenceFailedException;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\ORM\Query\SelectQuery;
 
@@ -47,7 +48,6 @@ class UsergroupsListener implements EventListenerInterface {
 	 * @param \Awyiss\Model\Entity\Usergroup $ao_entity
 	 * @return void
 	 * @throws \Exception
-	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function afterSave(Event $ao_event, Usergroup $ao_entity): void {
 		$lo_usersTable = $this->fetchTable('Users');
@@ -76,12 +76,20 @@ class UsergroupsListener implements EventListenerInterface {
 			}
 		});
 
-		//Save all found records, but skip the audit and the system order behavior on those to avoid recursion.
-		$lo_usersTable->saveMany($lo_users, [
-			'audit' => ['skip' => true],
-			'checkRules' => false,
-			'nest' => ['skip' => true],
-			'systemOrder' => ['skip' => true],
-		]);
+		try {
+			//Save all found records, but skip the audit and the system order behavior on those to avoid recursion.
+			$lo_usersTable->saveMany($lo_users, [
+				'audit' => ['skip' => true],
+				'atomic' => false,
+				'checkRules' => false,
+				'nest' => ['skip' => true],
+				'systemOrder' => ['skip' => true],
+				'transaction' => false,
+			]);
+		}
+		catch (PersistenceFailedException $ex) {
+			$ao_event->stopPropagation();
+			$ao_event->setResult($ex->getEntity()->getErrors());
+		}
 	}
 }

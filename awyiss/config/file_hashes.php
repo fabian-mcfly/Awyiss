@@ -24,6 +24,8 @@ return [
 		'\\Cake\\ORM\\Locator\\TableLocator::_getClassName' => '9528b583e6de7a781d58fb1600f49caa',
 		'\\Cake\\ORM\\Marshaller::merge' => '813d7c7cce3e10ef7d92518ec9f1b908',
 		'\\Cake\\ORM\\Rule\\ExistsIn::__invoke' => '6c17d9df5865e532a8deadcda2ae2a30',
+		'\\Cake\\ORM\\Table::_onSaveSuccess' => '69e9b480199cbbd5d2210e51b7b676c0',
+		'\\Cake\\ORM\\Table::_saveMany' => '576e2210f085615d1fe5c27f40ca6fd5',
 		'\\Cake\\Routing\\Middleware\\RoutingMiddleware::process' => 'a51917dc8f8579aeb55f1ce6e2c60090',
 		'\\Cake\\Routing\\Router::url' => 'b83bce2e064d87d414cc0fb0ce22a962',
 		'\\Cake\\View\\Helper\\FormHelper::_domId' => 'dd0e84ec44350251046381e6d523aa96',

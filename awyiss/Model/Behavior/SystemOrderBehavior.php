@@ -5,10 +5,12 @@ namespace Awyiss\Model\Behavior;
 
 
 use ArrayObject;
+use Awyiss\Model\Table;
 use Awyiss\ORM\Behavior;
 use BackedEnum;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
+use Cake\ORM\Exception\PersistenceFailedException;
 use Cake\ORM\Query\SelectQuery;
 use Cake\Utility\Hash;
 
@@ -222,7 +224,7 @@ class SystemOrderBehavior extends Behavior {
 		$ls_tableAlias = $lo_table->getAlias();
 
 		if ($ao_entity->isNew()) {
-			$this->updateAfterInsert($ao_entity);
+			$this->updateAfterInsert($ao_event, $ao_entity);
 
 
 			//Return here since the rest of the method handles logic related to existing entities
@@ -260,8 +262,8 @@ class SystemOrderBehavior extends Behavior {
 			 * This is the same as creating a new record, thus calling `updateAfterInsert()` is enough.
 			 */
 
-			$this->updateAfterRemove($ao_entity, $la_dirtyRelatedFields);
-			$this->updateAfterInsert($ao_entity);
+			$this->updateAfterRemove($ao_event, $ao_entity, $la_dirtyRelatedFields);
+			$this->updateAfterInsert($ao_event, $ao_entity);
 		}
 		elseif ($ao_entity->isDirty('systemOrder')) {
 			//No related columns have changed. This means the item was moved inside its scope.
@@ -335,14 +337,7 @@ class SystemOrderBehavior extends Behavior {
 				$ao_record->set('systemOrder', $ao_record->get('systemOrder') + ($lb_forward ? 1 : -1));
 			});
 
-
-			//Save all found records, but skip the rules check, the audit and the system order behavior on those to avoid recursion.
-			$lo_table->saveMany($la_records, [
-				'audit' => ['skip' => true],
-				'checkRules' => false,
-				'nest' => ['skip' => true],
-				'systemOrder' => ['skip' => true],
-			]);
+			$this->saveMany($lo_table, $la_records, $ao_event);
 		}
 	}
 
@@ -400,7 +395,7 @@ class SystemOrderBehavior extends Behavior {
 			return;
 		}
 
-		$this->updateAfterRemove($ao_entity);
+		$this->updateAfterRemove($ao_event, $ao_entity);
 	}
 
 
@@ -424,7 +419,7 @@ class SystemOrderBehavior extends Behavior {
 			$la_values = $this->rememberedData[ $ao_entity->get('id') ];
 			unset($this->rememberedData[ $ao_entity->get('id') ]);
 
-			$this->updateAfterRemove($ao_entity, $la_values);
+			$this->updateAfterRemove($ao_event, $ao_entity, $la_values);
 		}
 	}
 
@@ -552,12 +547,13 @@ class SystemOrderBehavior extends Behavior {
 
 
 	/**
+	 * @param \Cake\Event\EventInterface $ao_event
 	 * @param string $as_field
 	 * @param int $ai_direction
 	 * @return void
 	 * @throws \Exception
 	 */
-	public function rebuildSystemOrder(string $as_field, int $ai_direction = SORT_ASC): void {
+	public function rebuildSystemOrder(EventInterface $ao_event, string $as_field, int $ai_direction = SORT_ASC): void {
 		if ($as_field == 'systemOrder') {
 			return;
 		}
@@ -642,23 +638,18 @@ class SystemOrderBehavior extends Behavior {
 			return;
 		}
 
-		//Save all found records, but skip the rules check, the audit and the system order behavior on those to avoid recursion.
-		$lo_table->saveMany($la_items, [
-			'audit' => ['skip' => true],
-			'checkRules' => false,
-			'nest' => ['skip' => true],
-			'systemOrder' => ['skip' => true],
-		]);
+		$this->saveMany($lo_table, $la_items, $ao_event);
 	}
 
 
 	/**
 	 * This method moves all elements to the back, depending on the position of the newly created resp. changed entity
 	 *
+	 * @param \Cake\Event\EventInterface $ao_event
 	 * @param EntityInterface $ao_entity
 	 * @throws \Exception
 	 */
-	protected function updateAfterInsert(EntityInterface $ao_entity): void {
+	protected function updateAfterInsert(EventInterface $ao_event, EntityInterface $ao_entity): void {
 		$lo_table = $this->table();
 		$ls_tableAlias = $lo_table->getAlias();
 
@@ -691,24 +682,19 @@ class SystemOrderBehavior extends Behavior {
 			$ao_record->set('systemOrder', $ao_record->get('systemOrder') + 1);
 		});
 
-		//Save all found records, but skip the rules check, the audit and the system order behavior on those to avoid recursion.
-		$lo_table->saveMany($la_records, [
-			'audit' => ['skip' => true],
-			'checkRules' => false,
-			'nest' => ['skip' => true],
-			'systemOrder' => ['skip' => true],
-		]);
+		$this->saveMany($lo_table, $la_records, $ao_event);
 	}
 
 
 	/**
 	 * This method moves all elements to the front, depending on the position of the modified entity
 	 *
+	 * @param \Cake\Event\EventInterface $ao_event
 	 * @param EntityInterface $ao_entity
 	 * @param array $aa_originalData
 	 * @throws \Exception
 	 */
-	protected function updateAfterRemove(EntityInterface $ao_entity, array $aa_originalData = []): void {
+	protected function updateAfterRemove(EventInterface $ao_event, EntityInterface $ao_entity, array $aa_originalData = []): void {
 		$lo_table = $this->table();
 		$ls_tableAlias = $lo_table->getAlias();
 
@@ -781,13 +767,7 @@ class SystemOrderBehavior extends Behavior {
 			$ao_record->set('systemOrder', $ao_record->get('systemOrder') - 1);
 		});
 
-		//Save all found records, but skip the rules check, the audit and the system order behavior on those to avoid recursion.
-		$lo_table->saveMany($la_records, [
-			'audit' => ['skip' => true],
-			'checkRules' => false,
-			'nest' => ['skip' => true],
-			'systemOrder' => ['skip' => true],
-		]);
+		$this->saveMany($lo_table, $la_records, $ao_event);
 	}
 
 
@@ -873,6 +853,33 @@ class SystemOrderBehavior extends Behavior {
 		//The position is never allowed to be below 1, because cool orders start at 1, not 0.
 		elseif ($li_systemOrder < 1) {
 			$ao_entity->set('systemOrder', 1);
+		}
+	}
+
+
+	/**
+	 * Save all found records, but skip the rules check, the audit and the system order behavior on those to avoid recursion.
+	 *
+	 * @param \Awyiss\Model\Table $ao_table
+	 * @param array $aa_records
+	 * @param \Cake\Event\EventInterface $ao_event
+	 * @return void
+	 * @throws \Exception
+	 */
+	protected function saveMany(Table $ao_table, array $aa_records, EventInterface $ao_event): void {
+		try {
+			$ao_table->saveMany($aa_records, [
+				'audit' => ['skip' => true],
+				'atomic' => false,
+				'checkRules' => false,
+				'nest' => ['skip' => true],
+				'systemOrder' => ['skip' => true],
+				'transaction' => false,
+			]);
+		}
+		catch (PersistenceFailedException $ex) {
+			$ao_event->stopPropagation();
+			$ao_event->setResult($ex->getEntity()->getErrors());
 		}
 	}
 }
