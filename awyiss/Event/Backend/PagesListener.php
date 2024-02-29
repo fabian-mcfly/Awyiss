@@ -15,6 +15,7 @@ use Cake\Database\Expression\QueryExpression;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
 use Cake\I18n\DateTime;
+use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\ORM\Query\SelectQuery;
 use Cake\Utility\Inflector;
 
@@ -25,6 +26,7 @@ use Cake\Utility\Inflector;
 class PagesListener implements EventListenerInterface {
 	use EventListenerTrait;
 	use IdentityAwareTrait;
+	use LocatorAwareTrait;
 
 
 	/**
@@ -233,6 +235,10 @@ class PagesListener implements EventListenerInterface {
 				$lb_parentsActiveChanged
 			);
 		}
+
+		foreach ($ao_entity->addMenuEntry ?? [] as $li_menuId) {
+			$this->addMenuEntry($li_menuId, $ao_entity);
+		}
 	}
 
 
@@ -285,6 +291,42 @@ class PagesListener implements EventListenerInterface {
 		$lo_table = $ao_event->getSubject();
 
 		$lo_table->Contents->enableCascadeCallbacks();
+	}
+
+
+	/**
+	 * @param int $ai_menuId
+	 * @param \Awyiss\Model\Entity\Page $ao_entity
+	 * @return void
+	 */
+	protected function addMenuEntry(int $ai_menuId, Page $ao_entity): void {
+		/** @var \Awyiss\Model\Table\MenuEntriesTable $lo_table */
+		$lo_table = $this->fetchTable('MenuEntries');
+		$lo_menuEntry = $lo_table->newDefaultEntity([
+			'languageShortcode' => $ao_entity->languageShortcode,
+			'link' => $ao_entity->languageShortcode . '/' . $ao_entity->slug,
+			'menuId' => $ai_menuId,
+			'title' => $ao_entity->title,
+		]);
+
+		if (str_contains($ao_entity->slug, '/')) {
+			$ls_testSlug = $ao_entity->languageShortcode . '/';
+			$ls_testSlug .= substr($ao_entity->slug, 0, strrpos($ao_entity->slug, '/'));
+
+			$lo_records = $lo_table->find()->where([
+				'language_shortcode' => $ao_entity->languageShortcode,
+				'link' => $ls_testSlug,
+				'menu_id' => $ai_menuId,
+			])->all();
+
+			if ($lo_records->count()) {
+				/** @var \Awyiss\Model\Entity\MenuEntry $lo_existingEntry */
+				$lo_existingEntry = $lo_records->first();
+				$lo_menuEntry->parentId = $lo_existingEntry->id;
+			}
+		}
+
+		$lo_table->save($lo_menuEntry);
 	}
 
 

@@ -500,6 +500,8 @@ class PagesController extends Controller {
 		$lo_parentPages = $this->getParentPages($ao_page, $lo_threadedPages);
 		$this->ensurePossibleParentId($ao_page, $lo_parentPages);
 
+		$lo_menus = $this->fetchTable('Menus')->find('active')->all();
+
 		$this->set([
 			'ao_page' => $ao_page,
 			'ao_pageTemplates' => $this->getPageTemplates(),
@@ -508,6 +510,7 @@ class PagesController extends Controller {
 			'as_languageRealm' => Awyiss::REALM_FRONTEND,
 			'localConfig' => LocalConfig::read(),
 			'ab_nestingEnabled' => LocalConfig::read('nest.enabled'),
+			'ao_menus' => $lo_menus,
 		]);
 	}
 

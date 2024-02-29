@@ -348,7 +348,7 @@ class PagesTable extends Table {
 				],
 			]);
 
-			if (!$lo_children) {
+			if (!$lo_children->count()) {
 				return true;
 			}
 

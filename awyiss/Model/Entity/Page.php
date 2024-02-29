@@ -46,6 +46,7 @@ use Cake\Utility\Text;
  * @property \Awyiss\Model\Entity\Page[] $childPages
  * @property \Awyiss\Model\Entity\Content[] $contents
  * @property \Awyiss\Model\Entity\Language $language
+ * @property array<int, int> $addMenuEntry
  */
 class Page extends Entity {
 	/**
@@ -66,6 +67,7 @@ class Page extends Entity {
 		'duplicateOf' => true,
 		'systemOrder' => true,
 		'active' => true,
+		'addMenuEntry' => true,
 	];
 	/**
 	 * @inheritDoc
@@ -93,6 +95,7 @@ class Page extends Entity {
 		'duplicate_of_page' => 'duplicateOfPage',
 		'page_role' => 'pageRole',
 		'page_template' => 'pageTemplate',
+		'add_menu_entry' => 'addMenuEntry',
 	];
 
 
@@ -149,6 +152,25 @@ class Page extends Entity {
 
 
 		return $lo_table->getParents($this, $aa_options, $ai_currentLevel);
+	}
+
+
+	/**
+	 * @param array|null $aa_menuIds
+	 * @return array|null
+	 */
+	protected function _setAddMenuEntry(?array $aa_menuIds): ?array {
+		if (!$aa_menuIds) {
+			return null;
+		}
+
+		$la_menuIds = $aa_menuIds;
+		foreach ($la_menuIds as &$lx_menuId) {
+			$lx_menuId = (int)$lx_menuId;
+		}
+
+
+		return $la_menuIds;
 	}
 
 

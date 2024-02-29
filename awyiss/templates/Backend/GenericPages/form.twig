@@ -6,6 +6,7 @@
 @var as_languageRealm string
 @var localConfig array
 @var ab_nestingEnabled bool
+@var ao_menus \Cake\Collection\CollectionInterface
 @var _view \Awyiss\View\BackendView
 #}
 
@@ -153,15 +154,14 @@
 	</fieldset>
 {% endblock %}
 
-{% block fieldsetData %}
+{% block fieldsetMenus %}
 	<fieldset>
-		<legend>{{ __('fieldset_data') }}</legend>
+		<legend>{{ __('fieldset_menus') }}</legend>
 
-		{% block fieldsetDataInner %}
-			{% block fieldsetDataAttributes %}
-				{{ helper_Attributes_allControls('data') }}
-			{% endblock %}
-		{% endblock %}
+		{# @var lo_menu \Awyiss\Model\Entity\Menu #}
+		{% for lo_menu in ao_menus %}
+			{{ helper_Form_control('add_menu_entry[]', {hiddenField: false, label: lo_menu.label, type: 'checkbox', value: lo_menu.id}) }}
+		{% endfor %}
 	</fieldset>
 {% endblock %}
 
