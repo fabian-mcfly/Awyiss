@@ -137,7 +137,6 @@ class SystemOrderBehavior extends Behavior {
 			if ($ao_entity->isNew()) {
 				$this->setSystemOrderForNewEntity($ao_entity, $li_hightesSystemOrder);
 
-
 				//Return here since the rest of the method handles logic related to existing entities
 				return;
 			}
@@ -851,7 +850,10 @@ class SystemOrderBehavior extends Behavior {
 			$ao_entity->set('systemOrder', $ai_hightesSystemOrder + 1);
 		}
 		//The position is never allowed to be below 1, because cool orders start at 1, not 0.
-		elseif ($li_systemOrder < 1) {
+		elseif ($li_systemOrder === 0) {
+			$ao_entity->set('systemOrder', $ai_hightesSystemOrder + 1);
+		}
+		elseif ($li_systemOrder < 0) {
 			$ao_entity->set('systemOrder', 1);
 		}
 	}
