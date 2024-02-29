@@ -12,6 +12,7 @@ use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
 use Cake\Database\Schema\TableSchemaInterface;
 use Cake\Database\Type\EnumType;
+use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Utility\Inflector;
 use Cake\Validation\Validator;
@@ -396,5 +397,22 @@ class PagesTable extends Table {
 		$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
 
 		$this->getSchema()->setColumnType('page_role_id', EnumType::from($ls_pageRoleEnum));
+	}
+
+
+	/**
+	 * @param \Cake\ORM\Query\SelectQuery $ao_query
+	 * @param array $aa_options
+	 * @return \Cake\ORM\Query\SelectQuery
+	 * @noinspection PhpUnused
+	 */
+	public function findActive(SelectQuery $ao_query): SelectQuery {
+		$ao_query->where([
+			'active' => true,
+			'parents_active' => true,
+		]);
+
+
+		return $ao_query;
 	}
 }

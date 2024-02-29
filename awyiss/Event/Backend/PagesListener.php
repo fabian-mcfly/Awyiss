@@ -10,6 +10,7 @@ use Awyiss\Core\App;
 use Awyiss\Event\EventListenerTrait;
 use Awyiss\Model\Entity\Page;
 use Awyiss\Model\Enum\PageRoleEnumInterface;
+use Awyiss\Model\Table\PagesTable;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
@@ -83,7 +84,7 @@ class PagesListener implements EventListenerInterface {
 			/** @noinspection PhpUndefinedMethodInspection */
 			$ao_query->orderByAsc($ao_query->newExpr($ao_query->func()->FIND_IN_SET([
 				$ls_prefixedColumn => 'identifier',
-				implode(',', array_map(function(PageRoleEnumInterface $ae_pageRole) {
+				implode(',', array_map(function (PageRoleEnumInterface $ae_pageRole) {
 					return $ae_pageRole->value;
 				}, $ls_pageRoleEnum::cases())),
 			])), true);
@@ -112,7 +113,9 @@ class PagesListener implements EventListenerInterface {
 		}
 
 		if (
-			!$ao_entity->isDirty('slug') && !$ao_entity->isDirty('languageShortcode') && !$ao_entity->isDirty('parentId')
+			!$ao_entity->isDirty('slug') &&
+			!$ao_entity->isDirty('languageShortcode') &&
+			!$ao_entity->isDirty('parentId')
 		) {
 			//If neither the slug, the language nor the parent id have changed, skip the slug logic
 			return;
@@ -124,6 +127,11 @@ class PagesListener implements EventListenerInterface {
 			$lo_parentPage = $lo_table->get($ao_entity->parentId, skipPageRoleCheck: true);
 			//If there's a parent page, add its slug the one of the current page
 			$ls_preSlug = trim($lo_parentPage->slug, '/') . '/';
+
+			$ao_entity->parentsActive = $lo_parentPage->active && $lo_parentPage->parentsActive;
+		}
+		elseif ($ao_entity->parentsActive !== true) {
+			$ao_entity->parentsActive = true;
 		}
 
 		$la_parts = explode('/', $ao_entity->slug);
@@ -199,53 +207,31 @@ class PagesListener implements EventListenerInterface {
 		$lo_table = $ao_event->getSubject();
 
 		$ls_originalSlug = $ao_entity->hasOriginal('slug') ? $ao_entity->getOriginal('slug') : null;
-		if ($ls_originalSlug && $ao_entity->slug != $ls_originalSlug) {
-			$lo_records = $lo_table->find('all', skipPageRoleCheck: true)->where(function (QueryExpression $ao_expression) use ($ls_originalSlug) {
-				return $ao_expression->like('slug', $ls_originalSlug . '/%');
-			})->all();
+		$lb_slugChanged = $ls_originalSlug && $ao_entity->slug !== $ls_originalSlug;
 
-			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-			$li_userId = $this->getIdentity()?->id;
-			$ld_now = new DateTime('now');
+		$lb_originalActive = $ao_entity->hasOriginal('active') ? $ao_entity->getOriginal('active') : null;
+		$lb_activeChanged = $lb_originalActive !== null && $ao_entity->active !== $lb_originalActive;
 
-			$lo_query = $lo_table->SlugHistory->insertQuery()->insert(['slug', 'page_id', 'created_by', 'created_on']);
-			$lo_query->values([
-				'slug' => $ao_entity->languageShortcode . '/' . $ls_originalSlug,
-				'page_id' => $ao_entity->id,
-				'created_by' => $li_userId,
-				'created_on' => $ld_now,
-			]);
-			/** @var \Awyiss\Model\Entity\Page $lo_page */
-			foreach ($lo_records as $lo_page) {
-				$lo_query->values([
-					'slug' => $lo_page->languageShortcode . '/' . $lo_page->slug,
-					'page_id' => $lo_page->id,
-					'created_by' => $li_userId,
-					'created_on' => $ld_now,
-				]);
-			}
-			$lo_query->execute();
+		$lb_originalParentsActive = $ao_entity->hasOriginal('parentsActive') ? $ao_entity->getOriginal('parentsActive') : null;
+		$lb_parentsActiveChanged = $lb_originalParentsActive !== null && $ao_entity->parentsActive !== $lb_originalParentsActive;
 
+		$ls_originalLanguage = $ao_entity->hasOriginal('languageShortcode') ? $ao_entity->getOriginal('languageShortcode') : null;
+		$lb_languageChanged = $ls_originalLanguage && $ao_entity->languageShortcode !== $ls_originalLanguage;
 
-			$lo_query = $lo_table->updateQuery();
+		if ($lb_languageChanged || $lb_slugChanged) {
+			$this->createHistoricalSlugs($lo_table, $ao_entity, $ls_originalSlug, $ls_originalLanguage);
+		}
 
-			/**
-			 * UPDATE pages SET slug = (CONCAT('newslug', substr(slug, '8'))) WHERE slug LIKE 'oldslug/%'
-			 *
-			 * @noinspection PhpUndefinedMethodInspection
-			 */
-			$lo_query->update($lo_table->getTable())->set('slug', $lo_query->newExpr($lo_query->func()->concat([
-				$ao_entity->slug,
-				$lo_query->func()->substr([
-					'slug' => 'identifier',
-					mb_strlen($ls_originalSlug) + 1,
-				], [
-					null,
-					'integer',
-				]),
-			])))->where(function (QueryExpression $ao_expression/*, Query $ao_query*/) use ($ls_originalSlug) {
-				return $ao_expression->like('slug', $ls_originalSlug . '/%');
-			})->execute();
+		if ($lb_slugChanged || $lb_activeChanged || $lb_parentsActiveChanged) {
+			$this->updateDescendants(
+				$lo_table,
+				$ao_entity,
+				$ls_originalLanguage,
+				$lb_slugChanged,
+				$ls_originalSlug,
+				$lb_activeChanged,
+				$lb_parentsActiveChanged
+			);
 		}
 	}
 
@@ -299,5 +285,122 @@ class PagesListener implements EventListenerInterface {
 		$lo_table = $ao_event->getSubject();
 
 		$lo_table->Contents->enableCascadeCallbacks();
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Table\PagesTable $ao_table
+	 * @param \Awyiss\Model\Entity\Page $ao_entity
+	 * @param mixed $as_originalSlug
+	 * @param mixed $as_originalLanguage
+	 * @return void
+	 */
+	protected function createHistoricalSlugs(PagesTable $ao_table, Page $ao_entity, ?string $as_originalSlug, ?string $as_originalLanguage): void {
+		$lo_records = $ao_table->find('all', skipPageRoleCheck: true)->where(function (QueryExpression $ao_expression) use ($as_originalSlug) {
+			return $ao_expression->like('slug', $as_originalSlug . '/%');
+		})->all();
+
+		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+		$li_userId = $this->getIdentity()?->id;
+		$ld_now = new DateTime('now');
+
+		$lo_query = $ao_table->SlugHistory->insertQuery()->insert(['slug', 'page_id', 'created_by', 'created_on']);
+		$lo_query->values([
+			'slug' => ($as_originalLanguage ?? $ao_entity->languageShortcode) . '/' . $as_originalSlug,
+			'page_id' => $ao_entity->id,
+			'created_by' => $li_userId,
+			'created_on' => $ld_now,
+		]);
+
+		if (!$lo_records->count()) {
+			return;
+		}
+
+		/** @var \Awyiss\Model\Entity\Page $lo_page */
+		foreach ($lo_records as $lo_page) {
+			$lo_query->values([
+				'slug' => $lo_page->languageShortcode . '/' . $lo_page->slug,
+				'page_id' => $lo_page->id,
+				'created_by' => $li_userId,
+				'created_on' => $ld_now,
+			]);
+		}
+
+		$lo_query->execute();
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Table\PagesTable $ao_table
+	 * @param \Awyiss\Model\Entity\Page $ao_entity
+	 * @param string|null $as_originalLanguage
+	 * @param bool $ab_slugChanged
+	 * @param string|null $as_originalSlug
+	 * @param bool $ab_activeChanged
+	 * @param bool $ab_parentsActiveChanged
+	 * @return void
+	 */
+	protected function updateDescendants(
+		PagesTable $ao_table,
+		Page $ao_entity,
+		?string $as_originalLanguage,
+		bool $ab_slugChanged,
+		?string $as_originalSlug,
+		bool $ab_activeChanged,
+		bool $ab_parentsActiveChanged
+	): void {
+		$lo_query = $ao_table->updateQuery()->update($ao_table->getTable())->where([
+			'language_shortcode' => $as_originalLanguage ?? $ao_entity->languageShortcode,
+		]);
+
+		if ($ab_slugChanged) {
+			/**
+			 * UPDATE pages SET slug = (CONCAT('newslug', substr(slug, '8')))
+			 *
+			 * @noinspection PhpUndefinedMethodInspection
+			 */
+			$lo_query->set('slug', $lo_query->newExpr($lo_query->func()->concat([
+				$ao_entity->slug,
+				$lo_query->func()->substr([
+					'slug' => 'identifier',
+					mb_strlen($as_originalSlug) + 1,
+				], [
+					null,
+					'integer',
+				]),
+			])));
+		}
+
+		if ($ab_activeChanged || $ab_parentsActiveChanged) {
+			$lb_parentsActive = $ao_entity->active && $ao_entity->parentsActive;
+
+			if ($lb_parentsActive) {
+				/**
+				 * When updating all pages with the same slug (LIKE 'oldslug/%'), do not set the parents_active to true
+				 * for pages that descendants of inactive sites.
+				 */
+				$lo_subPages = $ao_table->find('all', skipPageRoleCheck: true)->where(function (QueryExpression $ao_expression) use ($ao_entity, $as_originalSlug) {
+					return $ao_expression->like('slug', ($as_originalSlug ?? $ao_entity->slug) . '/%');
+				})->where(['active' => false])->all();
+
+				foreach ($lo_subPages as $lo_subPage) {
+					$lo_query->where(function (QueryExpression $ao_expression/*, Query $ao_query*/) use ($lo_subPage) {
+						return $ao_expression->notLike('slug', ($lo_subPage->slug) . '/%');
+					});
+				}
+			}
+
+			$lo_query->set('parents_active', $lb_parentsActive);
+		}
+
+
+		/**
+		 * WHERE slug LIKE 'oldslug/%'
+		 */
+		$lo_query->where(function (QueryExpression $ao_expression/*, Query $ao_query*/) use ($ao_entity, $as_originalSlug) {
+			return $ao_expression->like('slug', ($as_originalSlug ?? $ao_entity->slug) . '/%');
+		});
+
+		$lo_query->execute();
 	}
 }

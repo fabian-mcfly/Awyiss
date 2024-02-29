@@ -46,7 +46,8 @@
 						{% block tableOverviewBodyRow %}
 							<tr>
 								{% block tableOverviewCellId %}
-									<td>{{ lo_page.id }}</td>
+									<td>{{ lo_page.id }}<br>
+									{{ lo_page.active ? 'true' : 'false' }} - {{ lo_page.parentsActive ? 'true' : 'false' }}</td>
 								{% endblock %}
 
 								{% block tableOverviewCellTitle %}
