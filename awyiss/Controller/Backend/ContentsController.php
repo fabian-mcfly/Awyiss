@@ -32,6 +32,7 @@ class ContentsController extends Controller {
 	 */
 	protected array $categories = [
 		'startupMethods' => null,
+		'uriParam' => 'page-id',
 	];
 	/**
 	 * @var CollectionInterface
