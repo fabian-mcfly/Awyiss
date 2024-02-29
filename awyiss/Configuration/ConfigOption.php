@@ -221,6 +221,25 @@ class ConfigOption {
 
 
 	/**
+	 * @return mixed
+	 */
+	public function getPrintableValue(): mixed {
+		$lx_value = $this->defaultValue;
+
+		if ($lx_value === null) {
+			return null;
+		}
+
+		return match ($this->type) {
+			ConfigOptionType::Bool => $lx_value ? 'true' : 'false',
+			ConfigOptionType::JsonArray => array_is_list($lx_value) ? implode(', ', $lx_value) : print_r($lx_value, true),
+			ConfigOptionType::JsonObject => print_r($lx_value, true),
+			default => $lx_value,
+		};
+	}
+
+
+	/**
 	 * @return string|null
 	 */
 	public function getTitle(): ?string {
@@ -306,7 +325,11 @@ class ConfigOption {
 		}
 
 
-		if ($this->getType() === ConfigOptionType::Enum || $this->getType() === ConfigOptionType::ListValue) {
+		if (
+			$this->getType() === ConfigOptionType::Enum ||
+			$this->getType() === ConfigOptionType::ListKey ||
+			$this->getType() === ConfigOptionType::ListValue
+		) {
 			$lx_values = $this->getValues(true, $as_languageShortcode);
 			if (!$lx_values) {
 				throw new RuntimeException(sprintf('Cannot validate option `%s` with type `%s` without a list of values', $this->identifier, ConfigOptionType::ListValue->name));
@@ -322,6 +345,11 @@ class ConfigOption {
 
 			/** @var \BackedEnum $lx_values */
 			return (bool)$lx_values::tryFrom($ax_value);
+		}
+
+		if ($this->getType() === ConfigOptionType::ListKey) {
+			/** @noinspection PhpUndefinedVariableInspection */
+			return array_key_exists($ax_value, $lx_values);
 		}
 
 		if ($this->getType() === ConfigOptionType::ListValue) {
@@ -346,7 +374,11 @@ class ConfigOption {
 			return $this->getTypecast()($ax_value, $as_languageShortcode);
 		}
 
-		if ($this->getType() === ConfigOptionType::Enum || $this->getType() === ConfigOptionType::ListValue) {
+		if (
+			$this->getType() === ConfigOptionType::Enum ||
+			$this->getType() === ConfigOptionType::ListKey ||
+			$this->getType() === ConfigOptionType::ListValue
+		) {
 			$lx_values = $this->getValues(true, $as_languageShortcode);
 			if (!$lx_values) {
 				throw new RuntimeException(sprintf('Cannot typecast option `%s` with type `%s` without a list of values', $this->identifier, ConfigOptionType::ListValue->name));
@@ -368,6 +400,24 @@ class ConfigOption {
 			return $lx_values::tryFrom($ax_value);
 		}
 
+		if ($this->getType() === ConfigOptionType::ListKey) {
+			if (in_array($ax_value, array_keys($lx_values), true)) {
+				return $ax_value;
+			}
+
+			foreach ([array_keys($lx_values), $lx_values] as $la_values) {
+				/** @noinspection PhpUndefinedVariableInspection */
+				if (in_array($ax_value, $la_values, true)) {
+					return $ax_value;
+				}
+
+				$lx_key = array_search($ax_value, $la_values);
+
+
+				return $lx_key !== false ? $la_values[ $lx_key ] : null;
+			}
+		}
+
 		if ($this->getType() === ConfigOptionType::ListValue) {
 			/** @noinspection PhpUndefinedVariableInspection */
 			if (in_array($ax_value, $lx_values, true)) {
@@ -379,7 +429,14 @@ class ConfigOption {
 			return $lx_key !== false ? $lx_values[ $lx_key ] : null;
 		}
 
-		return $this->getType()->cast($ax_value, $this->isNullable($as_languageShortcode !== null));
+		$lx_value = $this->getType()->cast($ax_value, $this->isNullable($as_languageShortcode !== null));
+
+		if ($lx_value === null) {
+			return null;
+		}
+
+
+		return $lx_value;
 	}
 
 

@@ -71,12 +71,30 @@ class ConfigurationController extends Controller {
 		$this->Categories->filterQuery($lo_configuration);
 
 		$la_configuration = $lo_configuration->all()->groupBy('realm')->map(function ($aa_data) {
-			return Hash::expand(collection($aa_data)->groupBy('identifier')->toArray());
+			return Hash::expand(collection($aa_data)->groupBy(function (Configuration $ao_entity) {
+				$la_identifier = array_map(function (string $as_identifier) {
+					return ConfigOptionsProvider::sanitizeIdentifier($as_identifier);
+				}, explode('.', $ao_entity->identifier));
+
+
+				return implode('.', $la_identifier);
+			})->toArray());
 		})->toArray();
 
+		$lo_configOptions = ConfigOptionsProvider::loadConfigOptions($ls_selectedScope);
+		$la_configOptions = $lo_configOptions->getConfigOptions();
+
+		/**
+		 * @var string $ls_realm
+		 * @var \Awyiss\Configuration\ConfigOptionCollection $lo_configOptions
+		 */
+		foreach ($la_configOptions as $ls_realm => $lo_configOptions) {
+			$la_configOptions[ $ls_realm ] = Hash::merge([], $lo_configOptions->toArray(), $la_configuration[ $ls_realm ] ?? []);
+		}
+
 		$this->set([
-			'ao_configuration' => $lo_configuration,
 			'aa_configuration' => $la_configuration,
+			'aa_mergedConfiguration' => $la_configOptions,
 			'aa_realms' => Awyiss::getRealms(),
 			'as_selectedScope' => $ls_selectedScope,
 		]);

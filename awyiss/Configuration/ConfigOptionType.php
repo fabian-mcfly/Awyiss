@@ -19,6 +19,7 @@ enum ConfigOptionType {
 	case Integer;
 	case JsonArray;
 	case JsonObject;
+	case ListKey;
 	case ListValue;
 	case String;
 
@@ -85,9 +86,12 @@ enum ConfigOptionType {
 			return null;
 		}
 
-		/** @noinspection PhpUncoveredEnumCasesInspection */
+		/**
+		 * @noinspection PhpUncoveredEnumCasesInspection
+		 * @noinspection PhpTernaryExpressionCanBeReplacedWithConditionInspection
+		 */
 		return match ($this) {
-			self::Bool => boolval($ax_value),
+			self::Bool => $ax_value === 'false' ? false : boolval($ax_value),
 			self::Float => floatval($ax_value),
 			self::Integer => intval($ax_value),
 			self::JsonArray => json_decode($ax_value, true),

@@ -5,6 +5,7 @@ namespace Awyiss\Model\Entity;
 
 
 use Awyiss\Awyiss;
+use Awyiss\Configuration\ConfigOptionsProvider;
 use Awyiss\Model\Entity;
 use Cake\Utility\Inflector;
 
@@ -19,8 +20,14 @@ use Cake\Utility\Inflector;
  * @property string|null $value
  * @property string|null $languageShortcode
  * @property \Awyiss\Model\Entity\Language $language
+ * @property mixed $printableValue
  */
 class Configuration extends Entity {
+	protected static array $fieldMap = [
+		'language_shortcode' => 'languageShortcode',
+	];
+
+
 	/**
 	 * @inheritDoc
 	 */
@@ -38,8 +45,11 @@ class Configuration extends Entity {
 		'realm' => Awyiss::REALM_FRONTEND,
 		'scope' => 'system',
 	];
-	protected static array $fieldMap = [
-		'language_shortcode' => 'languageShortcode',
+	/**
+	 * @inheritDoc
+	 */
+	protected array $_virtual = [
+		'printableValue',
 	];
 
 
@@ -57,6 +67,29 @@ class Configuration extends Entity {
 
 
 		return Inflector::underscore($as_identifier);
+	}
+
+
+	/**
+	 * @return mixed
+	 * @throws \ReflectionException
+	 */
+	public function _getPrintableValue(): mixed {
+		$lx_value = ConfigOptionsProvider::typecastConfigValue(
+			$this->scope,
+			$this->realm,
+			$this->identifier,
+			$this->value,
+			$this->languageShortcode,
+		);
+
+
+		return match (gettype($lx_value)) {
+			'NULL' => null,
+			'boolean' => $lx_value ? 'true' : 'false',
+			'array', 'object' => print_r($lx_value, true),
+			default => $lx_value,
+		};
 	}
 
 

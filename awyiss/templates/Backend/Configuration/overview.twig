@@ -1,6 +1,6 @@
 {#
-@var ao_configuration \Awyiss\Model\Entity\Configuration[]
 @var aa_configuration array
+@var aa_mergedConfiguration array
 @var aa_configScopes array
 @var as_realms array
 @var _view \Awyiss\View\BackendView
@@ -55,7 +55,7 @@
 							{% endblock %}
 							{% block tableOverviewBody %}
 								<tbody>
-									{{ _self.recursiveConfigurationListing(aa_configuration[ ls_realm ]) }}
+									{{ _self.recursiveConfigurationListing(aa_mergedConfiguration[ ls_realm ]) }}
 								</tbody>
 							{% endblock %}
 						</table>
@@ -82,10 +82,37 @@
 				</tr>
 			{% endblock %}
 			{{ _self.recursiveConfigurationListing(lx_configuration, ai_level + 1) }}
+		{% elseif lx_configuration is not array %}
+			{# @var lx_configuration \Awyiss\Configuration\ConfigOption #}
+			{% block tableOverviewBodyRowDefault %}
+				<tr style="opacity:.25">
+					{% block tableOverviewCellDefaultIdentifier %}
+						<td>
+							{% if ai_level > 0 %}
+								{%- for i in range(0, ai_level - 1) %}&ndash; {% endfor -%}
+							{% endif %}
+
+							{{ lx_configuration.identifier }}
+						</td>
+					{% endblock %}
+
+					{% block tableOverviewCellDefaultValue %}
+						<td>{{ lx_configuration.printableValue ?? '<em>null</em>' }}</td>
+					{% endblock %}
+
+					{% block tableOverviewCellDefaultLanguageShortcode %}
+						<td></td>
+					{% endblock %}
+
+					{% block tableOverviewCellDefaultActions %}
+						<td class="actions"></td>
+					{% endblock %}
+				</tr>
+			{% endblock %}
 		{% else %}
 			{# @var lo_configuration \Awyiss\Model\Entity\Configuration #}
 			{% for lo_configuration in lx_configuration %}
-				{% block tableOverviewBodyRow %}
+				{% block tableOverviewBodyRowCustom %}
 					<tr>
 						{% block tableOverviewCellIdentifier %}
 							<td>
@@ -100,7 +127,8 @@
 						{% endblock %}
 
 						{% block tableOverviewCellValue %}
-							<td>{{ lo_configuration.get('value') ?? '<em>null</em>' }}</td>
+							{% set ls_value = lo_configuration.printableValue %}
+							<td>{{ ls_value ?? '<em>null</em>' }}</td>
 						{% endblock %}
 
 						{% block tableOverviewCellLanguageShortcode %}

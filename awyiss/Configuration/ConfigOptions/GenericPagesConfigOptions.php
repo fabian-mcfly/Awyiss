@@ -9,6 +9,7 @@ use Awyiss\Configuration\AbstractGenericConfigOptions;
 use Awyiss\Configuration\ConfigOption;
 use Awyiss\Configuration\ConfigOptions\Trait\SystemOrderFieldsTrait;
 use Awyiss\Configuration\ConfigOptionType;
+use Cake\Utility\Inflector;
 
 
 /**
@@ -134,10 +135,22 @@ class GenericPagesConfigOptions extends AbstractGenericConfigOptions {
 					identifier: 'direction',
 					localizable: false,
 					nullable: false,
-					type: ConfigOptionType::ListValue,
+					type: ConfigOptionType::ListKey,
+					typecast: function (mixed $ax_value): string|int|null {
+						if ($ax_value === 'asc' || intval($ax_value) === SORT_ASC) {
+							return SORT_ASC;
+						}
+
+						if ($ax_value === 'desc' || intval($ax_value) === SORT_DESC) {
+							return SORT_DESC;
+						}
+
+
+						return null;
+					},
 					values: [
-						SORT_ASC,
-						SORT_DESC,
+						SORT_ASC => __d(Inflector::underscore(static::getScope()), 'sort_asc'),
+						SORT_DESC => __d(Inflector::underscore(static::getScope()), 'sort_desc'),
 					],
 				),
 				new ConfigOption(

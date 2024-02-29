@@ -170,6 +170,7 @@ class Entity extends BaseEntity {
 	protected function _getLabel(): string {
 		$ls_scope = Inflector::underscore($this->getSource()) ?: 'system';
 
+		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 		$ls_title = $this->title ?? $this->name;
 
 		if (empty($ls_title)) {

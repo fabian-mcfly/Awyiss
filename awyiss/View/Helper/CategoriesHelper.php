@@ -490,7 +490,7 @@ class CategoriesHelper extends Helper {
 					'levelPrefix' => null,
 				];
 
-				$la_formattedOptions[ $lx_option ] = $la_data;
+				$la_formattedOptions[ $lx_key ] = $la_data;
 			}
 		}
 

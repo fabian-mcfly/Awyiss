@@ -6,6 +6,7 @@ namespace Awyiss\Configuration;
 
 use Awyiss\Awyiss;
 use Cake\Utility\Hash;
+use InvalidArgumentException;
 use RuntimeException;
 
 
@@ -94,11 +95,16 @@ abstract class AbstractConfigOptions implements ConfigOptionsInterface {
 			return null;
 		}
 
-
 		$la_path = $this->sanitizePath($ax_path);
 
+		$lo_configOption = Hash::get($la_configOptions, $la_path);
 
-		return Hash::get($la_configOptions, $la_path);
+		if ($lo_configOption instanceof ConfigOptionCollection) {
+			throw new InvalidArgumentException(sprintf('Expected a path to a config option. Found `%s` instead.`', ConfigOptionCollection::class));
+		}
+
+
+		return $lo_configOption;
 	}
 
 
@@ -129,7 +135,12 @@ abstract class AbstractConfigOptions implements ConfigOptionsInterface {
 		?string $as_languageShortcode = null,
 		bool $ab_fallbackValidity = true
 	): bool|string {
-		$lo_configOption = $this->getConfigOption($as_realm, $ax_path);
+		try {
+			$lo_configOption = $this->getConfigOption($as_realm, $ax_path);
+		}
+		catch (InvalidArgumentException) {
+			return false;
+		}
 
 		if (!($lo_configOption instanceof ConfigOption)) {
 			/*
@@ -149,8 +160,18 @@ abstract class AbstractConfigOptions implements ConfigOptionsInterface {
 	/**
 	 * @inheritDoc
 	 */
-	public function typecastConfigValue(string $as_realm, array|string $ax_path, mixed $ax_value, ?string $as_languageShortcode = null): mixed {
-		$lo_configOption = $this->getConfigOption($as_realm, $ax_path);
+	public function typecastConfigValue(
+		string $as_realm,
+		array|string $ax_path,
+		mixed $ax_value,
+		?string $as_languageShortcode = null,
+	): mixed {
+		try {
+			$lo_configOption = $this->getConfigOption($as_realm, $ax_path);
+		}
+		catch (InvalidArgumentException) {
+			return null;
+		}
 
 		if (!($lo_configOption instanceof ConfigOption)) {
 			return $ax_value;

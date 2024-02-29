@@ -163,4 +163,18 @@ class ConfigOptionCollection extends ArrayIterator {
 
 		return $la_configOptions;
 	}
+
+
+	/**
+	 * @return array
+	 */
+	public function toArray(): array {
+		$la_result = [];
+		foreach ($this as $ls_key => $lx_item) {
+			$la_result[ $ls_key ] = $lx_item instanceof static ? $lx_item->toArray() : $lx_item;
+		}
+
+
+		return $la_result;
+	}
 }

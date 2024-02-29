@@ -196,7 +196,13 @@ class ConfigOptionsProvider {
 	 * @return mixed
 	 * @throws \ReflectionException
 	 */
-	public static function typecastConfigValue(string $as_scope, string $as_realm, string $ax_identifierPath, mixed $ax_value, ?string $as_languageShortcode = null): mixed {
+	public static function typecastConfigValue(
+		string $as_scope,
+		string $as_realm,
+		string $ax_identifierPath,
+		mixed $ax_value,
+		?string $as_languageShortcode = null,
+	): mixed {
 		$lo_configuration = static::loadConfigOptions($as_scope);
 
 		if (!$lo_configuration) {
@@ -204,7 +210,12 @@ class ConfigOptionsProvider {
 		}
 
 
-		return $lo_configuration->typecastConfigValue($as_realm, $ax_identifierPath, $ax_value, $as_languageShortcode);
+		return $lo_configuration->typecastConfigValue(
+			$as_realm,
+			$ax_identifierPath,
+			$ax_value,
+			$as_languageShortcode,
+		);
 	}
 
 
