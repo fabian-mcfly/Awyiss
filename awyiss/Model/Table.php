@@ -777,23 +777,23 @@ class Table extends BaseTable {
 	 *
 	 * @inheritDoc
 	 * @param \Cake\Datasource\EntityInterface $ao_entity
-	 * @param \ArrayObject $aa_options
+	 * @param \ArrayObject $ao_options
 	 * @return bool
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	protected function _onSaveSuccess(EntityInterface $ao_entity, ArrayObject $aa_options): bool {
+	protected function _onSaveSuccess(EntityInterface $ao_entity, ArrayObject $ao_options): bool {
 		$lx_success = $this->_associations->saveChildren(
 			$this,
 			$ao_entity,
-			$aa_options['associated'],
-			['_primary' => false] + $aa_options->getArrayCopy()
+			$ao_options['associated'],
+			['_primary' => false] + $ao_options->getArrayCopy()
 		);
 
-		if (!$lx_success && $aa_options['atomic']) {
+		if (!$lx_success && $ao_options['atomic']) {
 			return false;
 		}
 
-		$lo_event = $this->dispatchEvent('Model.afterSave', ['entity' => $ao_entity, 'options' => $aa_options]);
+		$lo_event = $this->dispatchEvent('Model.afterSave', ['entity' => $ao_entity, 'options' => $ao_options]);
 		if ($lo_event->isStopped()) {
 			$lx_errors = $lo_event->getResult();
 			if (!is_array($lx_errors)) {
@@ -804,11 +804,11 @@ class Table extends BaseTable {
 			return false;
 		}
 
-		if ($aa_options['atomic'] && !$this->getConnection()->inTransaction()) {
+		if ($ao_options['atomic'] && !$this->getConnection()->inTransaction()) {
 			throw new RolledbackTransactionException(['table' => static::class]);
 		}
 
-		if (!$aa_options['atomic'] && !$aa_options['_primary']) {
+		if (!$ao_options['atomic'] && !$ao_options['_primary']) {
 			$ao_entity->clean();
 			$ao_entity->setNew(false);
 			$ao_entity->setSource($this->getRegistryAlias());
