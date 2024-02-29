@@ -385,7 +385,7 @@ class PagesListener implements EventListenerInterface {
 
 				foreach ($lo_subPages as $lo_subPage) {
 					$lo_query->where(function (QueryExpression $ao_expression/*, Query $ao_query*/) use ($lo_subPage) {
-						return $ao_expression->notLike('slug', ($lo_subPage->slug) . '/%');
+						return $ao_expression->notLike('slug', $lo_subPage->slug . '/%');
 					});
 				}
 			}
