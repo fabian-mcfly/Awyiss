@@ -276,10 +276,10 @@ class NestBehavior extends Behavior {
 	 * Returns a collection containing all parents of the given entity.
 	 *
 	 * The depth can be limited using the `maxLevel` option in either the `parent`-config array or
-	 * in the second parameter of the method call.
+	 * as an array key in the second parameter of the method call.
 	 *
-	 * Calling `$Comments->getParents($comment, ['maxLevel' => 2]);` returns the direct parent of $comment as well as
-	 * all direct parent of this.
+	 * Calling `$Comments->getParents($comment, ['maxLevel' => 2]);` returns the direct parent of $comment
+	 * as well as the direct parent of this.
 	 *
 	 * @noinspection PhpUnused
 	 */
