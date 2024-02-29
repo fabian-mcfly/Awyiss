@@ -662,8 +662,13 @@ class NestBehavior extends Behavior {
 			if ($ao_entity->get('id') === $li_originalId) {
 				$li_foundAtLevel = $ao_entity->level;
 			}
-			elseif ($li_foundAtLevel !== null && $ao_entity->level > $li_foundAtLevel) {
-				return true;
+			elseif ($li_foundAtLevel !== null) {
+				if ($ao_entity->level > $li_foundAtLevel) {
+					return true;
+				}
+				else {
+					$li_foundAtLevel = null;
+				}
 			}
 
 
