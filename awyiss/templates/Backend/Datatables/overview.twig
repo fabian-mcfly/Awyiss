@@ -67,6 +67,12 @@
 
 								{% block tableOverviewCellActions %}
 									<td class="actions">
+										{% do helper_Authorization_setScope(lo_datatable.identifier) %}
+										{% if helper_Authorization_isAccessible('read') %}
+											{{ helper_Html_link(__('overview'), {controller: lo_datatable.identifier, action: 'overview'}) }}
+										{% endif %}
+										{% do helper_Authorization_resetScope() %}
+
 										{% if helper_Authorization_isAccessible('update') %}
 											{{ helper_Html_link(__('edit'), {action: 'edit', id: lo_datatable.id}) }}
 										{% endif %}
