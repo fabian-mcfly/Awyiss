@@ -7,6 +7,7 @@ namespace Awyiss\ORM;
 use Awyiss\ORM\Rule\ExistsIn;
 use Cake\Datasource\RuleInvoker;
 use Cake\ORM\Association;
+use Cake\ORM\Rule\IsUnique;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\ORM\Table as BaseTable;
 use Cake\Utility\Hash;
@@ -159,10 +160,6 @@ class RulesChecker extends BaseRulesChecker {
 	public function isUnique(array $aa_fields, array|string|null $ax_options = null): RuleInvoker {
 		$la_options = is_array($ax_options) ? $ax_options : ['message' => $ax_options];
 
-		if (empty($la_options['message'])) {
-			$la_options['message'] = __d('validation', 'error_unique');
-		}
-
 		$la_fields = $aa_fields;
 		if (($this->_options['repository'] ?? null)) {
 			$ls_entityClass = $this->_options['repository']->getEntityClass() ?? null;
@@ -171,7 +168,15 @@ class RulesChecker extends BaseRulesChecker {
 			}
 		}
 
-		return parent::isUnique($la_fields, $la_options);
+		if (empty($la_options['errorField'])) {
+			$la_options['errorField'] = current($la_fields);
+		}
+
+		if (empty($la_options['message'])) {
+			$la_options['message'] = __d('validation', 'error_unique');
+		}
+
+		return $this->_addError(new IsUnique($la_fields, $la_options), '_isUnique', $la_options);
 	}
 
 
