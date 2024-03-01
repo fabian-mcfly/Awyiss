@@ -33,19 +33,16 @@ class MenuCell extends Cell {
 		$lo_session = $this->request->getSession();
 
 		$la_menuData = [];
-		$ls_sessionIdentifier = 'backend_menu[' . LocaleMiddleware::getLanguage()->shortcode . ']';
+		$ls_sessionIdentifier = 'BackendMenu.' . LocaleMiddleware::getLanguage()->shortcode . '';
 		$ls_menu = $lo_session->read($ls_sessionIdentifier);
+
 		if ($ls_menu) {
 			$la_menuData = json_decode($ls_menu, true);
 			$lo_time = new DateTime($la_menuData['time']);
 
 			if ($lo_time >= $lo_identity->changedOn) {
 				$lo_table = $this->fetchTable('BackendMenuEntries');
-				$lo_entity = $lo_table->find()->select('id')->applyOptions([
-					'softDelete' => [
-						'includeDeleted' => true,
-					],
-				])->where([
+				$lo_entity = $lo_table->find()->select('id')->find('withDeleted')->where([
 					'OR' => [
 						'created_on >' => $lo_time,
 						'changed_on >' => $lo_time,
