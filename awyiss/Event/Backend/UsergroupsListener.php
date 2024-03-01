@@ -52,8 +52,8 @@ class UsergroupsListener implements EventListenerInterface {
 	public function afterSave(Event $ao_event, Usergroup $ao_entity): void {
 		$lo_usersTable = $this->fetchTable('Users');
 
-		$lo_query = $lo_usersTable->find()->matching('UsergroupsUsers', function (SelectQuery $ao_query) use ($ao_entity) {
-			return $ao_query->where(['UsergroupsUsers.usergroup_id' => $ao_entity->id]);
+		$lo_query = $lo_usersTable->find()->matching('Usergroups', function (SelectQuery $ao_query) use ($ao_entity) {
+			return $ao_query->find('withDeleted')->where(['Usergroups.id' => $ao_entity->id]);
 		});
 
 		$lo_users = $lo_query->all();
