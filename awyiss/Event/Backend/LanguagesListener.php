@@ -6,6 +6,7 @@ namespace Awyiss\Event\Backend;
 
 use Awyiss\Awyiss;
 use Awyiss\Event\EventListenerTrait;
+use Awyiss\Event\EventManager;
 use Awyiss\Model\Entity\Language;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
@@ -29,9 +30,33 @@ class LanguagesListener implements EventListenerInterface {
 	 */
 	public function implementedEvents(): array {
 		return [
+			'Model.Languages.afterSaveCommit' => 'afterSaveCommit',
 			'Model.Languages.beforeSoftDelete' => 'beforeSoftDelete',
 			'Model.Languages.afterSoftDelete' => 'afterSoftDelete',
 		];
+	}
+
+
+	/**
+	 * @param \Cake\Event\Event $ao_event
+	 * @param \Awyiss\Model\Entity\Language $ao_entity
+	 * @return void
+	 * @noinspection PhpUnusedParameterInspection
+	 */
+	public function afterSaveCommit(Event $ao_event, Language $ao_entity): void {
+		if (
+			$ao_entity->isNew() ||
+			$ao_entity->isDirty('realm') ||
+			$ao_entity->isDirty('shortcode')
+		) {
+			/**
+			 * Trigger the creation of the custom configuriation
+			 *
+			 * @see \Awyiss\Event\Backend\ConfigurationListener::createCustomConfiguration()
+			 */
+			$lo_eventManager = EventManager::instance();
+			$lo_eventManager->dispatch('Configuration.deleteCustomConfiguration');
+		}
 	}
 
 
@@ -64,5 +89,14 @@ class LanguagesListener implements EventListenerInterface {
 		$lo_table->MenuEntries->setDependent(false);
 		$lo_table->Pages->setDependent(false);
 		$lo_table->Pages->ChildPages->setDependent(true)->setCascadeCallbacks(true);
+
+
+		/**
+		 * Trigger the creation of the custom configuriation
+		 *
+		 * @see \Awyiss\Event\Backend\ConfigurationListener::createCustomConfiguration()
+		 */
+		$lo_eventManager = EventManager::instance();
+		$lo_eventManager->dispatch('Configuration.deleteCustomConfiguration');
 	}
 }
