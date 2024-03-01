@@ -325,19 +325,19 @@ class ConfigOptionsProvider {
 			//Get all datatables from the database because we want them to have a generic policy too
 			/** @var \Awyiss\Model\Table\DatatablesTable $lo_table */
 			$lo_table = FactoryLocator::get('Table')->get('Datatables');
-			static::$datatables = $lo_table->findAllAndCache()->reject(function (Datatable $ao_datatable) use ($ls_className, $ls_scope) {
-				if ($ls_className !== '*' && static::sanitizeScope($ao_datatable->identifier) !== $ls_scope) {
-					return true;
-				}
-
-
-				return $ao_datatable->active === false;
-			})->indexBy(function (Datatable $ao_datatable) {
+			static::$datatables = $lo_table->findAllAndCache()->indexBy(function (Datatable $ao_datatable) {
 				return static::sanitizeScope($ao_datatable->identifier);
 			})->map(function (Datatable $ao_datatable) {
 				return new GenericDatatablesConfigOptions($ao_datatable->identifier);
 			})->toArray();
+		}
 
+		if ($ls_scope) {
+			if (isset(static::$datatables[ $ls_scope ])) {
+				static::$configOptions[ $ls_scope ] = static::$datatables[ $ls_scope ];
+			}
+		}
+		else {
 			static::$configOptions += static::$datatables;
 		}
 	}

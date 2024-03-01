@@ -182,14 +182,7 @@ class AuthorizationService implements AuthorizationServiceInterface {
 			//Get all datatables from the database because we want them to have a generic policy too
 			/** @var \Awyiss\Model\Table\DatatablesTable $lo_table */
 			$lo_table = FactoryLocator::get('Table')->get('Datatables');
-			$this->datatables = $lo_table->findAllAndCache()->reject(function (Datatable $ao_datatable) use ($ls_className, $ls_scope) {
-				if ($ls_className !== '*' && static::sanitizeScope($ao_datatable->identifier) !== $ls_scope) {
-					return true;
-				}
-
-
-				return $ao_datatable->active === false;
-			})->indexBy(function (Datatable $ao_datatable) {
+			$this->datatables = $lo_table->findAllAndCache()->indexBy(function (Datatable $ao_datatable) {
 				return static::sanitizeScope($ao_datatable->identifier);
 			})->filter(function (Datatable $ao_datatable) {
 				/** @var \Awyiss\Model\Table $lo_datatableTable */
@@ -200,7 +193,15 @@ class AuthorizationService implements AuthorizationServiceInterface {
 			})->map(function (Datatable $ao_datatable) {
 				return new GenericDatatablesPolicy($ao_datatable->identifier);
 			})->toArray();
+		}
 
+
+		if ($ls_scope) {
+			if (isset($this->datatables[ $ls_scope ])) {
+				$this->policies[ $as_realm ][ $ls_scope ] = $this->datatables[ $ls_scope ];
+			}
+		}
+		else {
 			$this->policies[ $as_realm ] += $this->datatables;
 		}
 	}
