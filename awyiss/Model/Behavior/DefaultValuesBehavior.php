@@ -134,16 +134,22 @@ class DefaultValuesBehavior extends Behavior {
 		/** @var \Awyiss\Model\Behavior\CategoriesBehavior $lo_categories */
 		$lo_categories = $ao_table->getBehavior('Categories');
 
-		$ls_column = $lo_categories->getConfig('fieldname') ?: $lo_categories->getConfig('identifier');
-
 		/** @var class-string<\Awyiss\Model\Entity> $ls_entityClass */
 		$ls_entityClass = $ao_table->getEntityClass();
 
+		$ls_column = $lo_categories->getConfig('fieldname') ?: $lo_categories->getConfig('identifier');
+		$ls_column = $ls_entityClass::unmapField($ls_column);
+
+
 		if ($ao_attributes) {
-			$aa_defaults[ $ao_attributes->getProperty() ][ $ls_entityClass::unmapField($ls_column) ] = $lo_categories->getConfig('selectedCategory');
+			if ($ao_attributes->getSchema()->getColumn($ls_column)) {
+				$aa_defaults[ $ao_attributes->getProperty() ][ $ls_column ] = $lo_categories->getConfig('selectedCategory');
+			}
 		}
 		else {
-			$aa_defaults[ $ls_entityClass::unmapField($ls_column) ] = $lo_categories->getConfig('selectedCategory');
+			if ($ao_table->getSchema()->getColumn($ls_column)) {
+				$aa_defaults[ $ls_column ] = $lo_categories->getConfig('selectedCategory');
+			}
 		}
 	}
 
