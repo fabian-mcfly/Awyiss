@@ -245,7 +245,7 @@ class ConfigurationController extends Controller {
 		$lo_session->write($this->selectedRealmSessionIdentifier, $ao_configuration->realm);
 
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-			if ($this->Configuration->save($ao_configuration)) {
+			if ($this->Configuration->save($ao_configuration, ['asCopy' => (bool)$this->request->getData('save_as_copy')])) {
 				$this->Flash->success(__($as_method . '_succeeded'));
 
 				if ($this->request->getData('submit') == 'submit_close') {

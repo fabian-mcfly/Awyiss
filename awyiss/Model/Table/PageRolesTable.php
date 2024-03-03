@@ -140,6 +140,7 @@ class PageRolesTable extends Table {
 		$ao_rules->add(
 			function (PageRole $ao_entity, array $aa_options) use ($ao_rules): bool|string {
 				if (
+					$aa_options['isCopy'] === false &&
 					$ao_entity->hasOriginal('identifier') &&
 					$ao_entity->get('identifier') !== $ao_entity->getOriginal('identifier')
 				) {
@@ -165,12 +166,12 @@ class PageRolesTable extends Table {
 				}
 
 				$lo_isUnique = $ao_rules->isUnique(['identifier'], [
-					'message' => __dfx($this->getI18nDomain(), 'validation', 'page_role', 'error_identifier_unique'),
+					'errorField' => '_dummy',
 				]);
 				$lb_isUnique = $lo_isUnique($ao_entity, $aa_options);
 
 				if (!$lb_isUnique) {
-					return false;
+					return __dfx($this->getI18nDomain(), 'validation', 'page_role', 'error_identifier_unique');
 				}
 
 				return true;

@@ -53,6 +53,7 @@ class AttributesBehavior extends Behavior {
 		'implementedEvents' => [
 			'buildRules',
 			'beforeFind',
+			'beforeCopy',
 			'afterSave',
 		],
 		'implementedMethods' => [
@@ -387,6 +388,28 @@ class AttributesBehavior extends Behavior {
 
 			$ao_mapReduce->emit($ao_entity);
 		});
+	}
+
+
+	/**
+	 * @param EventInterface $ao_event
+	 * @param \Awyiss\Model\Entity|\Cake\ORM\Entity $ao_entity
+	 * @param \ArrayObject $ao_options
+	 * @return void
+	 * @noinspection PhpUnusedParameterInspection
+	 */
+	public function beforeCopy(EventInterface $ao_event, Entity|BaseEntity $ao_entity, ArrayObject $ao_options): void {
+		$lo_attributes = $ao_entity->get('attributes');
+
+		if ($this->getConfig('isAttributesTable') || !$lo_attributes) {
+			return;
+		}
+
+		/** @var \Awyiss\Model\Table $lo_table */
+		$lo_table = $ao_event->getSubject();
+
+		$lo_attributes->unset((array)$lo_table->getPrimaryKey());
+		$lo_attributes->setNew(true);
 	}
 
 

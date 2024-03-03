@@ -9,13 +9,16 @@
 #}
 
 <div class="GenericDatatables Form Edit">
+	{{ helper_Form_create(ao_record, {method: 'post', idPrefix: ao_datatable.identifier}) }}
+
+	{{ helper_Form_checkbox('save_as_copy', {id: 'SaveAsCopy', value: true}) }}
+
 	{% block headlineEdit %}
 		<h1>{{ __('headline_edit') }}</h1>
 	{% endblock %}
 
-	{{ helper_Form_create(ao_record, {method: 'post', idPrefix: ao_datatable.identifier}) }}
-
 	{% block formEditButtons %}
+		<label for="SaveAsCopy">{{ __('as_copy') }}</label>
 		{{ helper_Form_button(__('save')) }}
 		{{ helper_Form_button(__('save_close'), {name: 'submit', value: 'submit_close'}) }}
 	{% endblock %}

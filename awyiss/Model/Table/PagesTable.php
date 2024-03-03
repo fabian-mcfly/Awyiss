@@ -35,7 +35,7 @@ use Cake\Validation\Validator;
  * @method \Cake\Collection\CollectionInterface|null getChildren(Page $ao_entity, array $aa_options = [])
  * @method \Awyiss\Model\Entity\Page getParent(Page $ao_entity, array $aa_options = [])
  * @method \Cake\Collection\CollectionInterface|null getParents(Page $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
- * @noinspection PhpUnnecessaryFullyQualifiedNameInspection
+ * @noinspection PhpFullyQualifiedNameUsageInspection
  */
 class PagesTable extends Table {
 	/**
@@ -328,16 +328,17 @@ class PagesTable extends Table {
 		//Ensure that a page has no linked duplicating pages when deleting it.
 		$ao_rules->addDelete(
 			$ao_rules->isNotLinkedTo(
-				'DuplicatingPages',
+				'Duplicating' . $ls_pageRole,
 				'_general',
 				__d($this->getI18nDomain(), 'error_no_duplicating_pages')
 			),
-			'noDuplicatingPages'
+			'noDuplicating' . $ls_pageRole
 		);
 
 
 		$ao_rules->addDelete(function (Page $ao_page/*, array $aa_options = []*/): bool {
 			$lo_children = $this->getNestedChildren($ao_page, [
+				'forceEnable' => true,
 				'finder' => [
 					'all' => [
 						'skipPageRoleCheck' => true,
@@ -348,7 +349,7 @@ class PagesTable extends Table {
 				],
 			]);
 
-			if (!$lo_children->count()) {
+			if (!$lo_children?->count()) {
 				return true;
 			}
 

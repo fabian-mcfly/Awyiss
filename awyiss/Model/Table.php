@@ -648,6 +648,55 @@ class Table extends BaseTable {
 
 
 	/**
+	 * @inheritDoc
+	 * @param \Cake\Datasource\EntityInterface $ao_entity
+	 * @param array $aa_options
+	 * @return \Cake\Datasource\EntityInterface|false
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 */
+	public function save(EntityInterface $ao_entity, array $aa_options = []): EntityInterface|false {
+		$la_options = $aa_options;
+		$la_options['isCopy'] ??= false;
+		$la_options['asCopy'] ??= false;
+
+		if ($la_options['asCopy'] === true || $la_options['isCopy'] === true) {
+			/** @noinspection PhpDynamicFieldDeclarationInspection */
+			$ao_entity->originalEntity = clone $ao_entity;
+			$ao_entity->setVirtual(['originalEntity']);
+
+			/** @noinspection PhpUndefinedFieldInspection */
+			if ($ao_entity->originalPrimaryKeys) {
+				/** @noinspection PhpUndefinedFieldInspection */
+				$ao_entity->originalEntity->set($ao_entity->originalPrimaryKeys, ['guard' => false]);
+				$ao_entity->unset('originalPrimaryKeys');
+			}
+
+			if ($ao_entity->originalEntity->isDirty()) {
+				$ao_entity->originalEntity->set(
+					$ao_entity->originalEntity->extractOriginalChanged(
+						$ao_entity->originalEntity->getOriginalFields()
+					)
+				);
+
+				$ao_entity->originalEntity->clean();
+			}
+		}
+
+		if ($la_options['asCopy'] === true) {
+			$ao_entity->unset((array)$this->getPrimaryKey());
+			$ao_entity->setNew(true);
+
+			$la_options['isCopy'] = true;
+		}
+
+		unset($la_options['asCopy']);
+
+
+		return parent::save($ao_entity, $la_options);
+	}
+
+
+	/**
 	 * Persists multiple entities of a table.
 	 * The records will be saved in a transaction - if option `transaction` isn't false - which will be rolled back if
 	 * any one of the records fails to save due to failed validation or database

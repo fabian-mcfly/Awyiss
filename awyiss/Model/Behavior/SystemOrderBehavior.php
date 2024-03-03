@@ -46,6 +46,7 @@ class SystemOrderBehavior extends Behavior {
 		'enabled' => true,
 		'field' => 'systemOrder',
 		'implementedEvents' => [
+			'beforeCopy',
 			'beforeFind',
 			'beforeMarshal',
 			'beforeSave',
@@ -104,6 +105,32 @@ class SystemOrderBehavior extends Behavior {
 		}
 	}
 
+
+	/**
+	 * @param \Cake\Event\EventInterface $ao_event
+	 * @param \Cake\Datasource\EntityInterface $ao_entity
+	 * @param \ArrayObject $ao_options
+	 * @return void
+	 * @noinspection PhpUnusedParameterInspection
+	 */
+	public function beforeCopy(EventInterface $ao_event, EntityInterface $ao_entity, ArrayObject $ao_options): void {
+		if ($ao_options['_primary'] === false) {
+			return;
+		}
+
+		if ($ao_entity->extractOriginalChanged($this->getConfig('relatedColumns'))) {
+			return;
+		}
+
+		/**
+		 * @noinspection PhpUndefinedFieldInspection
+		 * @noinspection PhpPossiblePolymorphicInvocationInspection
+		 */
+		if ($ao_entity->systemOrder >= $ao_entity->originalEntity->systemOrder) {
+			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+			$ao_entity->systemOrder++;
+		}
+	}
 
 	/**
 	 * Before saving an entity, make sure the value for system_order is valid.

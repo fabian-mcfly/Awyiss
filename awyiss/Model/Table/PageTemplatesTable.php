@@ -183,8 +183,10 @@ class PageTemplatesTable extends Table {
 			'message' => __d($this->getI18nDomain(), 'error_valid_content_areas'),
 		]);
 
+
 		$ao_rules->addUpdate(function (PageTemplate $ao_entity, array $aa_options) use ($ao_rules): bool {
 			if (
+				$aa_options['isCopy'] === true ||
 				!$ao_entity->hasOriginal('pageRoleId') ||
 				$ao_entity->get('pageRoleId') === $ao_entity->getOriginal('pageRoleId')
 			) {
@@ -199,6 +201,7 @@ class PageTemplatesTable extends Table {
 
 			return $lo_linkedTo($ao_entity, $aa_options);
 		}, 'noLinkedPageTemplates');
+
 
 		$ao_rules->addDelete(
 			$ao_rules->isNotLinkedTo('Pages', 'pages'),

@@ -44,6 +44,7 @@ class AuditBehavior extends Behavior {
 		'enabled' => true,
 		'implementedEvents' => [
 			'buildValidator',
+			'beforeCopy',
 			'beforeSave',
 			'beforeDelete',
 			'afterSave',
@@ -126,6 +127,20 @@ class AuditBehavior extends Behavior {
 			$ao_options['transactionId'] = vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex(random_bytes(16)), 4));
 			//Text::uuid()
 		}
+	}
+
+
+	/**
+	 * Before saving set information when creating, updating or deleting.
+	 *
+	 * @param EventInterface $ao_event
+	 * @param Entity $ao_entity
+	 * @param ArrayObject $ao_options
+	 * @throws \Exception
+	 * @noinspection PhpUnusedParameterInspection
+	 */
+	public function beforeCopy(EventInterface $ao_event, Entity $ao_entity, ArrayObject $ao_options): void {
+		$ao_entity->unset(['createdOn', 'changedOn', 'changedBy', 'changedOn']);
 	}
 
 

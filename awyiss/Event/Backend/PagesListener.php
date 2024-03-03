@@ -48,6 +48,8 @@ class PagesListener implements EventListenerInterface {
 
 			$la_events += [
 				'Model.' . $ls_identifier . '.beforeFind' => 'beforeFind',
+				'Model.' . $ls_identifier . '.beforeCopy' => 'beforeCopy',
+				'Model.' . $ls_identifier . '.afterCopy' => 'afterCopy',
 				'Model.' . $ls_identifier . '.beforeSave' => 'beforeSave',
 				'Model.' . $ls_identifier . '.afterSave' => 'afterSave',
 				'Model.' . $ls_identifier . '.beforeSoftDelete' => 'beforeSoftDelete',
@@ -74,10 +76,7 @@ class PagesListener implements EventListenerInterface {
 		/** @var \Awyiss\Model\Table\PagesTable $lo_table */
 		$lo_table = $ao_event->getSubject();
 
-		if (!($ao_options['skipPageRoleCheck'] ?? false)) {
-			$ao_query->where(['page_role_id' => $lo_table->getPageRole()]);
-		}
-		else {
+		if (($ao_options['skipPageRoleCheck'] ?? false) === true) {
 			/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $ls_pageRoleEnum */
 			$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
 
@@ -91,6 +90,65 @@ class PagesListener implements EventListenerInterface {
 				}, $ls_pageRoleEnum::cases())),
 			])), true);
 		}
+		else {
+			$ao_query->where(['page_role_id' => $lo_table->getPageRole()]);
+		}
+	}
+
+
+	/**
+	 * @param \Cake\Event\Event $ao_event
+	 * @param \Awyiss\Model\Entity\Page $ao_entity
+	 * @param \ArrayObject $ao_options
+	 * @return void
+	 */
+	public function beforeCopy(Event $ao_event, Page $ao_entity, ArrayObject $ao_options): void {
+		if ($ao_options['_primary'] !== true) {
+			return;
+		}
+
+		/** @var \Awyiss\Model\Table\PagesTable $lo_table */
+		$lo_table = $ao_event->getSubject();
+
+		/** @var \Awyiss\Model\Entity\Page $lo_originalEntity */
+		$lo_originalEntity = $ao_entity->originalEntity;
+		$lo_children = $lo_originalEntity->getNestedChildren([
+			'forceEnable' => true,
+			'finder' => [
+				'all' => [
+					'skipPageRoleCheck' => true,
+				],
+			],
+			'skipFields' => [
+				'pageRoleId',
+			],
+		]);
+
+		if (!$lo_children?->count()) {
+			return;
+		}
+
+		$lo_nestedChildren = $lo_children->nest('id', 'parentId', 'childPages')->toList();
+
+		$la_relatedColumns = $lo_table->getBehavior('Nest')->getConfig('relatedColumns');
+
+		/** @var \Awyiss\Model\Entity\Page $lo_childPage */
+		foreach ($lo_children as $lo_childPage) {
+			$la_primaryKeys = $lo_childPage->extract((array)$lo_table->getPrimaryKey());
+			$lo_childPage->originalPrimaryKeys = $la_primaryKeys;
+
+			$lo_childPage->unset((array)$lo_table->getPrimaryKey());
+			$lo_childPage->setNew(true);
+
+			$lo_childPage->set($ao_entity->extract($la_relatedColumns));
+		}
+
+		$ls_childrenPropertyName = 'child' . $lo_table->getAlias();
+		$ls_childrenAssociationName = Inflector::camelize($ls_childrenPropertyName);
+		$ao_entity->{$ls_childrenPropertyName} = $lo_nestedChildren;
+
+		$lo_table->{$ls_childrenAssociationName}->getBehavior('Nest')->setConfig('buildRules', false);
+		$lo_table->{$ls_childrenAssociationName}->getBehavior('Categories')->setConfig('buildRules', false);
 	}
 
 
@@ -142,7 +200,7 @@ class PagesListener implements EventListenerInterface {
 
 		$ls_originalSlug = $ao_entity->hasOriginal('slug') ? $ao_entity->getOriginal('slug') : null;
 		//When the slug has changed
-		if ($ls_slug != $ls_originalSlug) {
+		if ($ao_entity->isNew() || $ls_slug != $ls_originalSlug) {
 			$ls_field = $lo_table->getAlias() . '.slug';
 
 			$la_conditions = [
@@ -203,8 +261,48 @@ class PagesListener implements EventListenerInterface {
 	 * @param \Awyiss\Model\Entity\Page $ao_entity
 	 * @param ArrayObject $ao_options
 	 * @noinspection PhpUnusedParameterInspection
+	 * @throws \Exception
+	 */
+	public function afterCopy(Event $ao_event, Page $ao_entity, ArrayObject $ao_options): void {
+		/** @var \Awyiss\Model\Table\PagesTable $lo_table */
+		$lo_table = $ao_event->getSubject();
+
+		/** @var \Awyiss\Model\Entity\Page $lo_originalEntity */
+		$lo_originalEntity = $ao_entity->originalEntity;
+
+		$lo_entries = $lo_table->Contents->find('threaded', nestingKey: 'childContents')->where(['page_id' => $lo_originalEntity->id])->all();
+
+		$lo_listedEntries = $lo_entries->listNested('desc', 'childContents');
+		/** @var \Awyiss\Model\Entity\Content $lo_content */
+		foreach ($lo_listedEntries as $lo_content) {
+			$lo_content->unset((array)$lo_table->getPrimaryKey());
+			$lo_content->unset(['pageId']);
+			$lo_content->setNew(true);
+
+			$lo_content->pageId = $ao_entity->id;
+		}
+
+		$lo_table->Contents->saveMany($lo_entries->toList(), [
+			'checkRules' => false,
+		]);
+	}
+
+
+	/**
+	 * @param Event $ao_event
+	 * @param \Awyiss\Model\Entity\Page $ao_entity
+	 * @param ArrayObject $ao_options
+	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function afterSave(Event $ao_event, Page $ao_entity, ArrayObject $ao_options): void {
+		foreach ($ao_entity->addMenuEntry ?? [] as $li_menuId) {
+			$this->addMenuEntry($li_menuId, $ao_entity);
+		}
+
+		if ($ao_entity->isNew()) {
+			return;
+		}
+
 		/** @var \Awyiss\Model\Table\PagesTable $lo_table */
 		$lo_table = $ao_event->getSubject();
 
@@ -234,10 +332,6 @@ class PagesListener implements EventListenerInterface {
 				$lb_activeChanged,
 				$lb_parentsActiveChanged
 			);
-		}
-
-		foreach ($ao_entity->addMenuEntry ?? [] as $li_menuId) {
-			$this->addMenuEntry($li_menuId, $ao_entity);
 		}
 	}
 

@@ -134,7 +134,7 @@ class PageRolesController extends Controller {
 		$this->PageRoles->patchEntity($ao_pageRole, $this->request->getData(), ['associated' => $la_associated]);
 
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-			if ($this->PageRoles->save($ao_pageRole)) {
+			if ($this->PageRoles->save($ao_pageRole, ['asCopy' => (bool)$this->request->getData('save_as_copy')])) {
 				$this->Flash->success(__($as_method . '_succeeded'));
 
 				if ($this->request->getData('submit') == 'submit_close') {

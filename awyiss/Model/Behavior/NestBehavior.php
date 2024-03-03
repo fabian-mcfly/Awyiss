@@ -118,10 +118,6 @@ class NestBehavior extends Behavior {
 	 * @return $this
 	 */
 	public function buildAssociations(): static {
-		if (!$this->getConfig('enabled')) {
-			return $this;
-		}
-
 		$lo_table = $this->table();
 		$ls_alias = $this->getConfig('alias');
 		if (!$this->getConfig('children.associationName') || !$lo_table->hasAssociation($this->getConfig('children.associationName'))) {
@@ -187,7 +183,7 @@ class NestBehavior extends Behavior {
 	 * @noinspection PhpUnused
 	 */
 	public function getChildren(EntityInterface $ao_entity, array $aa_options = []): ?CollectionInterface {
-		if (!$this->getConfig('enabled') || !$this->getConfig('children')) {
+		if (($aa_options['forceEnable'] ?? false) === false && (!$this->getConfig('enabled') || !$this->getConfig('children'))) {
 			return null;
 		}
 
@@ -216,7 +212,7 @@ class NestBehavior extends Behavior {
 	 * @noinspection PhpUnused
 	 */
 	public function getNestedChildren(EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0): ?CollectionInterface {
-		if (!$this->getConfig('enabled') || !$this->getConfig('children')) {
+		if (($aa_options['forceEnable'] ?? false) === false && (!$this->getConfig('enabled') || !$this->getConfig('children'))) {
 			return null;
 		}
 
@@ -238,7 +234,8 @@ class NestBehavior extends Behavior {
 			}
 
 			$lo_children = $this->getNestedChildren($lo_entity, $aa_options, $ai_currentLevel + 1);
-			if (!$lo_children->count()) {
+
+			if (!$lo_children?->count()) {
 				continue;
 			}
 
@@ -256,7 +253,7 @@ class NestBehavior extends Behavior {
 	 * @noinspection PhpUnused
 	 */
 	public function getParent(EntityInterface $ao_entity, array $aa_options = []): ?EntityInterface {
-		if (!$this->getConfig('enabled') || !$this->getConfig('parent')) {
+		if (($aa_options['forceEnable'] ?? false) === false && (!$this->getConfig('enabled') || !$this->getConfig('parent'))) {
 			return null;
 		}
 
@@ -284,7 +281,7 @@ class NestBehavior extends Behavior {
 	 * @noinspection PhpUnused
 	 */
 	public function getParents(EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0): ?CollectionInterface {
-		if (!$this->getConfig('enabled') || !$this->getConfig('parent')) {
+		if (($aa_options['forceEnable'] ?? false) === false && (!$this->getConfig('enabled') || !$this->getConfig('parent'))) {
 			return null;
 		}
 
@@ -321,10 +318,11 @@ class NestBehavior extends Behavior {
 	 * a collection
 	 *
 	 * @param SelectQuery $ao_query
+	 * @param string $as_nestingKey
 	 * @return CollectionInterface
 	 */
-	public function listNested(SelectQuery $ao_query): CollectionInterface {
-		$lo_records = $ao_query->find('threaded')->all()->listNested();
+	public function listNested(SelectQuery $ao_query, string $as_nestingKey = 'children'): CollectionInterface {
+		$lo_records = $ao_query->find('threaded', nestingKey: $as_nestingKey)->all()->listNested('desc', $as_nestingKey);
 
 		/** @var \Awyiss\Model\Entity $lo_page */
 		foreach ($lo_records as $lo_entity) {
@@ -390,7 +388,13 @@ class NestBehavior extends Behavior {
 				$lb_exists = $lo_existsIn($ao_entity, $aa_options);
 			}
 			else {
-				$la_nestedChildrenIds = $this->getNestedChildren($ao_entity)->extract($this->getConfig('parent.bindingKey'))->toArray();
+				$lo_nestedChildren = $this->getNestedChildren($ao_entity);
+
+				if (!$lo_nestedChildren?->count()) {
+					return true;
+				}
+
+				$la_nestedChildrenIds = $lo_nestedChildren->extract($this->getConfig('parent.bindingKey'))->toArray();
 
 				$lb_exists = $lo_existsIn($ao_entity, $aa_options) && !in_array($ao_entity->get($ls_foreignKey), $la_nestedChildrenIds);
 			}
@@ -506,7 +510,7 @@ class NestBehavior extends Behavior {
 
 		$lo_children = $this->getNestedChildren($lo_entity);
 
-		if ($lo_children->isEmpty()) {
+		if (!$lo_children?->count()) {
 			return;
 		}
 
@@ -648,10 +652,15 @@ class NestBehavior extends Behavior {
 	protected function fetchAllNestedChildren(EntityInterface $ao_entity, array $aa_options): ?CollectionInterface {
 		$lo_association = $this->getAssociation('children');
 
-		$lx_finder = $aa_options['finder'] ?? $this->getConfig('children.finder');
+		$lo_query = $lo_association->find();
 
-		$lo_query = $lo_association->find($lx_finder, $ao_entity, $this->getConfig('relatedColumns'));
-		$lo_records = $this->listNested($lo_query);
+		$lx_finder = $aa_options['finder'] ?? $this->getConfig('children.finder');
+		if ($lx_finder) {
+			$lo_query = $lo_association->find($lx_finder, entity: $ao_entity, relatedColumns: $this->getConfig('relatedColumns'));
+		}
+
+		$ls_nestingKey = Inflector::variable($this->getConfig('children.associationName'));
+		$lo_records = $this->listNested($lo_query, $ls_nestingKey);
 
 		$lo_records = $lo_records->compile(false);
 
@@ -675,6 +684,7 @@ class NestBehavior extends Behavior {
 			return false;
 		});
 
+
 		return $lo_records->compile();
 	}
 
@@ -687,10 +697,15 @@ class NestBehavior extends Behavior {
 	protected function fetchAllParents(EntityInterface $ao_entity, array $aa_options): ?CollectionInterface {
 		$lo_association = $this->getAssociation('parent');
 
-		$lx_finder = $aa_options['finder'] ?? $this->getConfig('parent.finder');
+		$lo_query = $lo_association->find();
 
-		$lo_query = $lo_association->find($lx_finder, $ao_entity, $this->getConfig('relatedColumns'));
-		$lo_records = $this->listNested($lo_query);
+		$lx_finder = $aa_options['finder'] ?? $this->getConfig('parent.finder');
+		if ($lx_finder) {
+			$lo_query->find($lx_finder, entity: $ao_entity, relatedColumns: $this->getConfig('relatedColumns'));
+		}
+
+		$ls_nestingKey = Inflector::variable($this->getConfig('parent.associationName'));
+		$lo_records = $this->listNested($lo_query, $ls_nestingKey);
 
 		$lo_records = $lo_records->compile(false);
 

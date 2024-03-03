@@ -130,7 +130,9 @@ class DatatablesTable extends Table {
 		$ao_rules->add(
 			function (Datatable $ao_entity, array $aa_options) use ($ao_rules): bool|string {
 				if (
-					$ao_entity->hasOriginal('identifier') && $ao_entity->get('identifier') !== $ao_entity->getOriginal('identifier')
+					$aa_options['isCopy'] === false &&
+					$ao_entity->hasOriginal('identifier') &&
+					$ao_entity->get('identifier') !== $ao_entity->getOriginal('identifier')
 				) {
 					return __d($this->getI18nDomain(), 'error_identifier_unchanged');
 				}
@@ -151,12 +153,12 @@ class DatatablesTable extends Table {
 				}
 
 				$lo_isUnique = $ao_rules->isUnique(['identifier'], [
-					'message' => __dfx($this->getI18nDomain(), 'validation', 'datatable', 'error_identifier_unique'),
+					'errorField' => '_dummy',
 				]);
 				$lb_isUnique = $lo_isUnique($ao_entity, $aa_options);
 
 				if (!$lb_isUnique) {
-					return false;
+					return __dfx($this->getI18nDomain(), 'validation', 'datatable', 'error_identifier_unique');
 				}
 
 

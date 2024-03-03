@@ -11,12 +11,15 @@ use Awyiss\Model\Table\MediaFoldersTable;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
+use Cake\ORM\Locator\LocatorAwareTrait;
+use Exception;
 
 
 /**
  * Event listeners for the MediaFolders scope of the backend
  */
 class MediaFoldersListener implements EventListenerInterface {
+	use LocatorAwareTrait;
 	use EventListenerTrait;
 
 
@@ -31,10 +34,53 @@ class MediaFoldersListener implements EventListenerInterface {
 	 */
 	public function implementedEvents(): array {
 		return [
+			'Model.MediaFolders.beforeCopy' => 'beforeCopy',
+			'Model.MediaFolders.afterCopy' => 'afterCopy',
 			'Model.MediaFolders.beforeSave' => 'beforeSave',
 			'Model.MediaFolders.afterSave' => 'afterSave',
 			'Model.MediaFolders.beforeSoftDelete' => 'beforeSoftDelete',
 		];
+	}
+
+
+	/**
+	 * @param \Cake\Event\Event $ao_event
+	 * @param \Awyiss\Model\Entity\MediaFolder $ao_entity
+	 * @param \ArrayObject $ao_options
+	 * @return void
+	 */
+	public function beforeCopy(Event $ao_event, MediaFolder $ao_entity, ArrayObject $ao_options): void {
+		if ($ao_options['_primary'] !== true) {
+			return;
+		}
+
+		/** @var \Awyiss\Model\Table\MediaFoldersTable $lo_table */
+		$lo_table = $ao_event->getSubject();
+
+		/** @var \Awyiss\Model\Entity\MediaFolder $lo_originalEntity */
+		$lo_originalEntity = $ao_entity->originalEntity;
+		$lo_children = $lo_originalEntity->getNestedChildren();
+
+		if (!$lo_children?->count()) {
+			return;
+		}
+
+		$lo_nestedChildren = $lo_children->nest('id', 'parentId', 'childMediaFolders')->toList();
+
+		$la_relatedColumns = $lo_table->getBehavior('Nest')->getConfig('relatedColumns');
+
+		/** @var \Awyiss\Model\Entity\MediaFolder $lo_childMediaFolder */
+		foreach ($lo_children as $lo_childMediaFolder) {
+			$la_primaryKeys = $lo_childMediaFolder->extract((array)$lo_table->getPrimaryKey());
+			$lo_childMediaFolder->originalPrimaryKeys = $la_primaryKeys;
+
+			$lo_childMediaFolder->unset((array)$lo_table->getPrimaryKey());
+			$lo_childMediaFolder->setNew(true);
+
+			$lo_childMediaFolder->set($ao_entity->extract($la_relatedColumns));
+		}
+
+		$ao_entity->childMediaFolders = $lo_nestedChildren;
 	}
 
 
@@ -83,7 +129,7 @@ class MediaFoldersListener implements EventListenerInterface {
 		}
 
 		//When the path has changed
-		if ($ls_path != $ls_originalPath) {
+		if ($ao_entity->isNew() || $ls_path != $ls_originalPath) {
 			$ls_field = $lo_table->getAlias() . '.path';
 
 			$la_conditions = [
@@ -136,25 +182,53 @@ class MediaFoldersListener implements EventListenerInterface {
 		if (!$ao_entity->isNew() && $ls_path === $ls_originalPath) {
 			$ao_entity->setDirty('path', false);
 		}
-		//dd($ao_entity);
+	}
+
+
+	/**
+	 * @param \Cake\Event\Event $ao_event
+	 * @param \Awyiss\Model\Entity\MediaFolder $ao_entity
+	 * @param \ArrayObject $ao_options
+	 * @return void
+	 * @throws \Exception
+	 */
+	public function afterCopy(Event $ao_event, MediaFolder $ao_entity, ArrayObject $ao_options): void {
+		/** @var \Awyiss\Model\Table\MediaFoldersTable $lo_table */
+		$lo_table = $ao_event->getSubject();
+
+		/** @var \Awyiss\Model\Entity\MediaFolder $lo_originalEntity */
+		$lo_originalEntity = $ao_entity->originalEntity;
+
+		$this->copyMediaEntities($ao_entity, $lo_originalEntity, $lo_table);
+
+		if ($ao_options['_primary'] === false) {
+			return;
+		}
+
+		$ls_originalPath = $lo_originalEntity->path;
+		if (!str_starts_with($ls_originalPath, 'media/')) {
+			$ls_originalPath = 'media/' . $ls_originalPath;
+		}
+
+		$this->copyDirectory(
+			WWW_ROOT . str_replace('/', DS, $ls_originalPath),
+			WWW_ROOT . str_replace('/', DS, $ao_entity->path)
+		);
 	}
 
 
 	/**
 	 * @param Event $ao_event
 	 * @param \Awyiss\Model\Entity\MediaFolder $ao_entity
+	 * @param \ArrayObject $ao_options
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function afterSave(Event $ao_event, MediaFolder $ao_entity): void {
+	public function afterSave(Event $ao_event, MediaFolder $ao_entity, ArrayObject $ao_options): void {
 		/** @var \Awyiss\Model\Table\MediaFoldersTable $lo_table */
 		$lo_table = $ao_event->getSubject();
 		$ls_originalPath = $ao_entity->hasOriginal('path') ? $ao_entity->getOriginal('path') : null;
 
-		$lb_makeDir = false;
-		if ($ao_entity->isNew()) {
-			$lb_makeDir = true;
-		}
-		elseif ($ls_originalPath && $ao_entity->path != $ls_originalPath) {
+		if (!$ao_entity->isNew() && $ls_originalPath && $ao_entity->path != $ls_originalPath) {
 			foreach ([$lo_table->getTable(), 'media'] as $ls_table) {
 				$this->rebuildDatabasePath($lo_table, $ls_table, $ao_entity, $ls_originalPath);
 			}
@@ -165,16 +239,16 @@ class MediaFoldersListener implements EventListenerInterface {
 					WWW_ROOT . str_replace('/', DS, $ao_entity->path)
 				);
 			}
-			else {
-				$lb_makeDir = true;
-			}
-		}
-		elseif (!is_dir(WWW_ROOT . str_replace('/', DS, $ao_entity->path))) {
-			$lb_makeDir = true;
 		}
 
-		if ($lb_makeDir) {
-			mkdir(WWW_ROOT . str_replace('/', DS, $ao_entity->path));
+		if (
+			!is_dir(WWW_ROOT . str_replace('/', DS, $ao_entity->path)) &&
+			(
+				$ao_options['isCopy'] === false ||
+				$ao_options['_primary'] === true
+			)
+		) {
+			mkdir(WWW_ROOT . str_replace('/', DS, $ao_entity->path), 0750, true);
 		}
 	}
 
@@ -220,5 +294,70 @@ class MediaFoldersListener implements EventListenerInterface {
 		])))->where(function (QueryExpression $ao_expression/*, Query $ao_query*/) use ($ls_originalPath) {
 			return $ao_expression->like('path', $ls_originalPath . '/%');
 		})->execute();
+	}
+
+
+	/**
+	 * Copies a directory with all its content to another location.
+	 *
+	 * @param string $as_sourceDirectory The source directory.
+	 * @param string $as_targetDirectory The destination directory.
+	 * @returns void
+	 * @throws \Exception
+	 */
+	protected function copyDirectory(string $as_sourceDirectory, string $as_targetDirectory): void {
+		//Ensure the source directory exists
+		if (!is_dir($as_sourceDirectory)) {
+			throw new Exception("Source directory does not exist: $as_sourceDirectory");
+		}
+
+		//Create the destination directory if it does not exist
+		if (!is_dir($as_targetDirectory)) {
+			mkdir($as_targetDirectory, 0755, true);
+		}
+
+		//Open the source directory
+		$lr_dir = opendir($as_sourceDirectory);
+
+		//Read each file in directory
+		while (($ls_fileName = readdir($lr_dir)) !== false) {
+			if (($ls_fileName != '.') && ($ls_fileName != '..')) {
+				if (is_dir($as_sourceDirectory . DS . $ls_fileName)) {
+					//If the file is a directory, recursively copy it
+					$this->copyDirectory($as_sourceDirectory . DS . $ls_fileName, $as_targetDirectory . DS . $ls_fileName);
+				}
+				else {
+					//If the file is not a directory, copy it to the destination
+					copy($as_sourceDirectory . DS . $ls_fileName, $as_targetDirectory . DS . $ls_fileName);
+				}
+			}
+		}
+
+		//Close the source directory
+		closedir($lr_dir);
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Entity\MediaFolder $ao_entity
+	 * @param \Awyiss\Model\Entity\MediaFolder $ao_originalEntity
+	 * @param \Awyiss\Model\Table\MediaFoldersTable $ao_table
+	 * @return void
+	 * @throws \Exception
+	 */
+	protected function copyMediaEntities(MediaFolder $ao_entity, MediaFolder $ao_originalEntity, MediaFoldersTable $ao_table): void {
+		$lo_files = $ao_table->Media->find()->where(['media_folder_id' => $ao_originalEntity->id])->all();
+		/** @var \Awyiss\Model\Entity\Media $lo_file */
+		foreach ($lo_files as $lo_file) {
+			$lo_file->unset((array)$ao_table->getPrimaryKey());
+			$lo_file->unset(['mediaFolderId', 'path']);
+			$lo_file->setNew(true);
+
+			$lo_file->mediaFolderId = $ao_entity->id;
+		}
+
+		$ao_table->Media->saveMany($lo_files->toList(), [
+			'checkRules' => false,
+		]);
 	}
 }

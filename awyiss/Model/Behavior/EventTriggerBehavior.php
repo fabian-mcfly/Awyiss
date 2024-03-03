@@ -34,14 +34,8 @@ class EventTriggerBehavior extends Behavior {
 			'beforeRules',
 			'afterRules',
 			'beforeSave',
-			'beforeCreate',
-			'beforeUpdate',
 			'afterSave',
-			'afterCreate',
-			'afterUpdate',
 			'afterSaveCommit',
-			'afterCreateCommit',
-			'afterUpdateCommit',
 			'beforeDelete',
 			'afterDelete',
 			'afterDeleteCommit',
@@ -51,6 +45,10 @@ class EventTriggerBehavior extends Behavior {
 		],
 		'implementedMethods' => [],
 	];
+	/**
+	 * @var string Clean name of the table alias
+	 */
+	protected string $alias;
 
 
 	/**
@@ -93,17 +91,25 @@ class EventTriggerBehavior extends Behavior {
 
 		//Saving an entitiy should create custom events
 		if (in_array($as_name, ['beforeSave', 'afterSave', 'afterSaveCommit']) && isset($aa_arguments[1]) && is_a($aa_arguments[1], Entity::class)) {
-			/**
-			 * If the custom events method returns false, the newly created event was stopped.
-			 * This means: don't send the other model-specific events
-			 */
-			if (!$this->triggerCreateUpdateEvents($as_name, $aa_arguments[1], $aa_arguments)) {
-				return;
+			if (($aa_arguments[2]['isCopy'] ?? false) === true && $aa_arguments[1]->isNew()) {
+				$this->dispatchCopyEvents($as_name, ...$aa_arguments);
+			}
+			else {
+				$this->dispatchCreateUpdateEvents($as_name, ...$aa_arguments);
 			}
 		}
 
-		$la_arguments = $aa_arguments;
-		unset($la_arguments[0]);
+		$this->dispatchEvent($this->getAlias() . '.' . $as_name, ...$aa_arguments);
+	}
+
+
+	/**
+	 * @return string
+	 */
+	protected function getAlias(): string {
+		if (isset($this->alias)) {
+			return $this->alias;
+		}
 
 		$ls_alias = $this->table()->getAlias();
 
@@ -114,49 +120,29 @@ class EventTriggerBehavior extends Behavior {
 			$ls_alias = substr($ls_alias, 6);
 		}
 
-		//Create a new event with the modified name and dispatch it.
-		$lo_event = new Event('Model.' . $ls_alias . '.' . $as_name, $this->table(), $la_arguments);
-		$this->table()->getEventManager()->dispatch($lo_event);
+		$this->alias = $ls_alias;
 
-		//If the new event was stopped, stop the old one as well and set the result.
-		if ($lo_event->isStopped()) {
-			$aa_arguments[0]->stopPropagation();
-			$aa_arguments[0]->setResult($lo_event->getResult());
-		}
+
+		return $this->alias;
 	}
 
 
 	/**
-	 * Trigger custom events when creating or updaten entities, depending on their isNew()-value
-	 *
 	 * @param string $as_name
-	 * @param Entity $ao_entity
+	 * @param \Cake\Event\Event $ao_originalEvent
+	 * @param mixed $ao_subject
 	 * @param array $aa_arguments
 	 * @return bool
 	 */
-	protected function triggerCreateUpdateEvents(string $as_name, Entity $ao_entity, array $aa_arguments): bool {
-		//If the entity has a `deleted`-property, and it's trueish, don't send the custom events
-		if (property_exists($ao_entity, 'deleted') && $ao_entity->deleted) {
-			return true;
-		}
-
-		$ls_name = match (true) {
-			$as_name == 'beforeSave' && $ao_entity->isNew() => 'beforeCreate',
-			$as_name == 'beforeSave' && !$ao_entity->isNew() => 'beforeUpdate',
-			$as_name == 'afterSave' && $ao_entity->isNew() => 'afterCreate',
-			$as_name == 'afterSave' && !$ao_entity->isNew() => 'afterUpdate',
-			$as_name == 'afterSaveCommit' && $ao_entity->isNew() => 'afterCreateCommit',
-			$as_name == 'afterSaveCommit' && !$ao_entity->isNew() => 'afterUpdateCommit',
-		};
-
+	protected function dispatchEvent(string $as_name, Event $ao_originalEvent, mixed ...$aa_arguments): bool {
 		//Create a new event with the modified name and dispatch it.
-		$lo_event = new Event('Model.' . $ls_name, $this->table(), $aa_arguments);
+		$lo_event = new Event('Model.' . $as_name, $this->table(), $aa_arguments);
 		$this->table()->getEventManager()->dispatch($lo_event);
 
 		//If the new event was stopped, stop the old one as well and set the result.
 		if ($lo_event->isStopped()) {
-			$aa_arguments[0]->stopPropagation();
-			$aa_arguments[0]->setResult($lo_event->getResult());
+			$ao_originalEvent->stopPropagation();
+			$ao_originalEvent->setResult($lo_event->getResult());
 
 
 			return false;
@@ -164,5 +150,65 @@ class EventTriggerBehavior extends Behavior {
 
 
 		return true;
+	}
+
+
+	/**
+	 * Trigger custom events when creating or updaten entities, depending on their isNew()-value
+	 *
+	 * @param string $as_name
+	 * @param \Cake\Event\Event $ao_originalEvent
+	 * @param \Awyiss\Model\Entity $ao_subject
+	 * @param array $aa_arguments
+	 * @return bool
+	 */
+	protected function dispatchCreateUpdateEvents(string $as_name, Event $ao_originalEvent, Entity $ao_subject, mixed ...$aa_arguments): bool {
+		//If the entity has a `deleted`-property, and it's trueish, don't send the custom events
+		if (property_exists($ao_subject, 'deleted') && $ao_subject->deleted) {
+			return true;
+		}
+
+		$ls_name = match (true) {
+			$as_name == 'beforeSave' && $ao_subject->isNew() => 'beforeCreate',
+			$as_name == 'beforeSave' && !$ao_subject->isNew() => 'beforeUpdate',
+			$as_name == 'afterSave' && $ao_subject->isNew() => 'afterCreate',
+			$as_name == 'afterSave' && !$ao_subject->isNew() => 'afterUpdate',
+			$as_name == 'afterSaveCommit' && $ao_subject->isNew() => 'afterCreateCommit',
+			$as_name == 'afterSaveCommit' && !$ao_subject->isNew() => 'afterUpdateCommit',
+		};
+
+		//Create a new event with the modified name and dispatch it.
+		if (!$this->dispatchEvent($ls_name, $ao_originalEvent, $ao_subject, ...$aa_arguments)) {
+			return false;
+		}
+
+
+		//Create a new table specific event with the modified name and dispatch it.
+		return $this->dispatchEvent($this->getAlias() . '.' . $ls_name, $ao_originalEvent, $ao_subject, ...$aa_arguments);
+	}
+
+
+	/**
+	 * @param string $as_name
+	 * @param \Cake\Event\Event $ao_originalEvent
+	 * @param \Awyiss\Model\Entity $ao_subject
+	 * @param array $aa_arguments
+	 * @return bool|null
+	 */
+	protected function dispatchCopyEvents(string $as_name, Event $ao_originalEvent, Entity $ao_subject, mixed ...$aa_arguments): ?bool {
+		$ls_name = match (true) {
+			$as_name == 'beforeSave' => 'beforeCopy',
+			$as_name == 'afterSave' => 'afterCopy',
+			$as_name == 'afterSaveCommit' => 'afterCopyCommit',
+		};
+
+		//Create a new event with the modified name and dispatch it.
+		if (!$this->dispatchEvent($ls_name, $ao_originalEvent, $ao_subject, ...$aa_arguments)) {
+			return false;
+		}
+
+
+		//Create a new table specific event with the modified name and dispatch it.
+		return $this->dispatchEvent($this->getAlias() . '.' . $ls_name, $ao_originalEvent, $ao_subject, ...$aa_arguments);
 	}
 }

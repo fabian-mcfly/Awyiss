@@ -167,8 +167,8 @@ class MediaFoldersTable extends Table {
 
 
 		$ao_rules->add(
-			function (MediaFolder $ao_entity/*, array $aa_options*/) use ($ao_rules): bool|string {
-				if ($ao_entity->get('id') === 1) {
+			function (MediaFolder $ao_entity, array $aa_options) use ($ao_rules): bool|string {
+				if ($ao_entity->get('id') === 1 && $aa_options['isCopy'] === false) {
 					if ($ao_entity->get('languageShortcode') !== null) {
 						return __d($this->getI18nDomain(), 'error_root_language_shortcode_unchanged');
 					}
@@ -176,7 +176,6 @@ class MediaFoldersTable extends Table {
 					if ($ao_entity->get('title') !== 'Media') {
 						return __d($this->getI18nDomain(), 'error_root_title_unchanged');
 					}
-
 
 					if ($ao_entity->get('parentId') !== null) {
 						return __d($this->getI18nDomain(), 'error_root_parent_id_unchanged');

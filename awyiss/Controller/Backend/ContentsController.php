@@ -289,7 +289,7 @@ class ContentsController extends Controller {
 
 			$this->unsetUnassignedElements($ao_content);
 
-			if ($this->Contents->save($ao_content)) {
+			if ($this->Contents->save($ao_content, ['asCopy' => (bool)$this->request->getData('save_as_copy')])) {
 				$this->Flash->success(__($as_method . '_succeeded'));
 
 				if ($this->request->getData('submit') == 'submit_close') {

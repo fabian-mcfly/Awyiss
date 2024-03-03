@@ -181,7 +181,7 @@ class ContentTemplatesController extends Controller {
 		}
 
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-			if ($this->ContentTemplates->save($ao_contentTemplate)) {
+			if ($this->ContentTemplates->save($ao_contentTemplate, ['asCopy' => (bool)$this->request->getData('save_as_copy')])) {
 				$this->Flash->success(__($as_method . '_succeeded'));
 
 				if ($this->request->getData('submit') == 'submit_close') {

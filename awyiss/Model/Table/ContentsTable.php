@@ -490,6 +490,11 @@ class ContentsTable extends Table {
 
 		$this->setPageRole($ae_pageRole);
 		$this->setForScope($ae_pageRole->tableName());
+
+		if ($this->getAlias() === 'Contents') {
+			$this->ChildContents->forPageRole($ae_pageRole, $ab_initializePages);
+			$this->ParentContents->forPageRole($ae_pageRole, $ab_initializePages);
+		}
 	}
 
 
