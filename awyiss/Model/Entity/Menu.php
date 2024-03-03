@@ -23,6 +23,7 @@ use Cake\Utility\Text;
  * @property int|null $deletedBy
  * @property \Cake\I18n\DateTime|null $deletedOn
  * @property \Awyiss\Model\Entity\MenuEntry[] $menuEntries
+ * @property \Awyiss\Model\Entity\MenuEntry[] $allMenuEntries
  */
 class Menu extends Entity {
 	/**
@@ -44,6 +45,7 @@ class Menu extends Entity {
 		'deleted_by' => 'deletedBy',
 		'deleted_on' => 'deletedOn',
 		'menu_entries' => 'menuEntries',
+		'all_menu_entries' => 'allMenuEntries',
 	];
 
 
