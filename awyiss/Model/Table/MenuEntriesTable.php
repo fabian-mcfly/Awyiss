@@ -192,8 +192,8 @@ class MenuEntriesTable extends Table {
 	 * @return void
 	 */
 	public function disableCascadeCallbacks(): void {
-		/** @noinspection PhpUndefinedMethodInspection */
-		$this->ChildMenuEntries->setDependent(false)->setCascadeCallbacks(false);
+		$ls_associationName = $this->getBehavior('Nest')->getConfig('children.associationName');
+		$this->{$ls_associationName}->setDependent(false)->setCascadeCallbacks(false);
 	}
 
 
@@ -201,7 +201,7 @@ class MenuEntriesTable extends Table {
 	 * @return void
 	 */
 	public function enableCascadeCallbacks(): void {
-		/** @noinspection PhpUndefinedMethodInspection */
-		$this->ChildMenuEntries->setDependent(true)->setCascadeCallbacks(true);
+		$ls_associationName = $this->getBehavior('Nest')->getConfig('children.associationName');
+		$this->{$ls_associationName}->setDependent(true)->setCascadeCallbacks(true);
 	}
 }
