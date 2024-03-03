@@ -16,9 +16,16 @@ use Cake\Http\Response;
  * SlugHistory Controller
  *
  * @property \Awyiss\Model\Table\SlugHistoryTable $SlugHistory
- * @method SlugHistory[]|\Cake\Datasource\ResultSetInterface paginate($ao_object = null, array $aa_settings = [])
  */
 class SlugHistoryController extends Controller {
+	/**
+	 * @inheritDoc
+	 */
+	protected array $paginate = [
+		'order' => [
+			'created_on' => 'desc',
+		],
+	];
 	/**
 	 * @var \Cake\Collection\Iterator\TreeIterator
 	 */
