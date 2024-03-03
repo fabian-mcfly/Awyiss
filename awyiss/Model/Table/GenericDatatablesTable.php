@@ -29,18 +29,18 @@ abstract class GenericDatatablesTable extends Table {
 	public function __construct(array $aa_config = []) {
 		$ls_scope = Inflector::camelize($this->getTable());
 
-		$this->nesting = LocalConfig::read('nest.enabled', null, $ls_scope);
+		$this->nesting = LocalConfig::read('nest.enabled', false, $ls_scope);
 		if ($this->nesting) {
 			$this->systemOrder['relatedColumns'][] = 'parentId';
 		}
 
-		$this->splitIntoLanguages = LocalConfig::read('splitIntoLanguages', null, $ls_scope);
+		$this->splitIntoLanguages = LocalConfig::read('splitIntoLanguages', true, $ls_scope);
 		if ($this->splitIntoLanguages) {
 			$this->nest['relatedColumns'][] = 'languageShortcode';
 			$this->systemOrder['relatedColumns'][] = 'languageShortcode';
 		}
 
-		$this->translatable = LocalConfig::read('translatable', null, $ls_scope);
+		$this->translatable = LocalConfig::read('translatable', false, $ls_scope);
 		if ($this->translatable) {
 			$this->translate['fields'][] = 'title';
 		}
