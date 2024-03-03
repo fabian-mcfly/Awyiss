@@ -72,6 +72,10 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 	 * @var array
 	 */
 	protected array $categories;
+	/**
+	 * @var \Cake\Collection\CollectionInterface|null
+	 */
+	protected ?CollectionInterface $parentCategories;
 
 
 	/**
@@ -220,6 +224,16 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 
 		//When category is empty or equals the aggregationKey, e.g. "all", do not add query conditions
 		if (!$lx_selectedCategory || $lx_selectedCategory === $this->getConfig('aggregationKey')) {
+			/** @noinspection PhpUndefinedMethodInspection */
+			$la_categories = $this->getCategories();
+			if ($la_categories) {
+				$ao_query->orderByAsc($ao_query->newExpr($ao_query->func()->FIND_IN_SET([
+					$this->getConfig('foreignKey') => 'identifier',
+					implode(',', array_keys($la_categories)),
+				])), true);
+			}
+
+
 			return $ao_query;
 		}
 
@@ -566,58 +580,93 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 	 * @param int $ai_maxLevel
 	 * @return \Cake\Collection\CollectionInterface|null
 	 */
-	public function getParentCategories(int $ai_level = 0, int $ai_maxLevel = PHP_INT_MAX): ?CollectionInterface {
+	public function getParentCategories(bool $ab_include = false): ?CollectionInterface {
+		if (isset($this->parentCategories)) {
+			if ($ab_include) {
+				$lo_categories = $this->parentCategories->append($this->getCategories(true));
+				$lo_categories = $lo_categories->indexBy('id')->compile();
+
+
+				return $lo_categories;
+			}
+
+
+			return $this->parentCategories;
+		}
+
 		/** @var \Awyiss\Model\Table $lo_table */
 		$lo_table = $this->table();
 
 		$ls_associationName = $this->getConfig('associationName');
 
-		if (empty($ls_associationName) || !$lo_table->hasAssociation($ls_associationName) || $ai_level > $ai_maxLevel) {
+		if (
+			empty($ls_associationName) ||
+			!$lo_table->hasAssociation($ls_associationName) ||
+			!$lo_table->getAssociation($ls_associationName)->hasBehavior('Categories')
+		) {
+			$this->parentCategories = null;
+
+
 			return null;
 		}
 
-		$lo_association = $lo_table->getAssociation($ls_associationName);
+		/** @var \Awyiss\Model\Behavior\CategoriesBehavior $lo_behavior */
+		$lo_behavior = $lo_table->getAssociation($ls_associationName)->getBehavior('Categories');
 
-		$lo_categories = collection([]);
+		if (
+			!$lo_behavior->getConfig('enabled') ||
+			!$lo_behavior->getConfig('useDatasource')
+		) {
+			$this->parentCategories = null;
 
-		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		$lo_parentCategories = $lo_association->getBehavior('Categories')->getParentCategories($ai_level + 1, $ai_maxLevel);
-		if ($lo_parentCategories) {
-			$lo_categories = $lo_categories->append($lo_parentCategories);
+
+			return null;
 		}
 
-		$lo_categories = $lo_categories->append($this->getCategories(true));
-		if ($ai_level === 0) {
+		$this->parentCategories = $lo_behavior->getCategories(true);
+
+
+		if ($ab_include) {
+			$lo_categories = $this->parentCategories->append($this->getCategories(true));
 			$lo_categories = $lo_categories->indexBy('id')->compile();
-			$lo_categories = $lo_categories->nest('id', 'parentId')->listNested();
 
-			$this->setParents($lo_categories, $lo_association->getEntityClass(), $ai_maxLevel);
+
+			return $lo_categories;
 		}
 
 
-		return $lo_categories;
+		return $this->parentCategories;
 	}
 
 
 	/**
-	 * @param \Cake\Collection\CollectionInterface $ao_categories
-	 * @param string $as_entityClass
 	 * @param int $ai_maxLevel
 	 * @return void
 	 */
-	protected function setParents(CollectionInterface $ao_categories, string $as_entityClass, int $ai_maxLevel): void {
-		$la_currentPath = []; // Keep track of the current path
+	public function assignParentCategories(int $ai_maxLevel): void {
+		$lo_parentCategories = $this->getParentCategories(true);
+		$lo_parentCategories = $lo_parentCategories->nest('id', 'parentId')->listNested();
+
+		/** @var \Awyiss\Model\Table $lo_table */
+		$lo_table = $this->table();
+
+		$ls_associationName = $this->getConfig('associationName');
+		$lo_association = $lo_table->getAssociation($ls_associationName);
+		$ls_entityClass = $lo_association->getEntityClass();
+
+		//Keep track of the current path
+		$la_currentPath = [];
 
 		/** @var \Awyiss\Model\Entity $lo_entity */
-		foreach ($ao_categories as $lo_entity) {
+		foreach ($lo_parentCategories as $lo_entity) {
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-			$li_currentDepth = $ao_categories->getDepth();
+			$li_currentDepth = $lo_parentCategories->getDepth();
 
-			// Adjust the current path to reflect the current depth
+			//Adjust the current path to reflect the current depth
 			$la_currentPath = array_slice($la_currentPath, 0, $li_currentDepth);
 
-			// Check if the entity is an instance of the special class
-			if ($lo_entity instanceof $as_entityClass) {
+			//Check if the entity is an instance of the special class
+			if ($lo_entity instanceof $ls_entityClass) {
 				$li_parentsCount = min($ai_maxLevel, $li_currentDepth);
 				$lo_entity->_parents = array_values(array_slice($la_currentPath, -$li_parentsCount, $li_parentsCount, true));
 				$lo_entity->setVirtual(['_parents'], true);
@@ -657,7 +706,18 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 			$lo_query->find('threaded');
 		}
 
+		$lo_parentCategories = $this->getParentCategories();
+		if ($lo_parentCategories?->count()) {
+			$la_parentCategorieIds = $lo_parentCategories->extract('id')->toList();
+
+			$lo_query->orderByAsc($lo_query->newExpr($lo_query->func()->FIND_IN_SET([
+				$this->getConfig('foreignKey') => 'identifier',
+				implode(',', $la_parentCategorieIds),
+			])), true);
+		}
+
 		$lo_categories = $lo_query->all();
+
 
 		if ($this->getConfig('threaded')) {
 			/**
