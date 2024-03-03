@@ -463,7 +463,19 @@ class Table extends BaseTable {
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function exists(QueryExpression|Closure|array|string|null $aa_conditions, array $aa_options = []): bool {
-		$lo_results = $this->find()->applyOptions($aa_options)->select(['existing' => 1])->where($aa_conditions)->limit(1)->disableHydration()->toArray();
+		$lx_finder = $aa_options['finder'] ?? 'all';
+		[$lx_finder, $la_options] = $this->_extractFinder($lx_finder);
+
+		$la_options = array_merge($la_options, $aa_options);
+		unset($la_options['finder']);
+
+		$lo_results = $this->find($lx_finder)
+			->applyOptions($la_options)
+			->select(['existing' => 1])
+			->where($aa_conditions)
+			->limit(1)
+			->disableHydration()
+			->toArray();
 
 
 		return (bool)count($lo_results);
@@ -789,6 +801,7 @@ class Table extends BaseTable {
 			['_primary' => false] + $ao_options->getArrayCopy()
 		);
 
+
 		if (!$lx_success && $ao_options['atomic']) {
 			return false;
 		}
@@ -881,5 +894,58 @@ class Table extends BaseTable {
 
 			$this->translate['fields'][] = $lo_attribute->identifier;
 		}
+	}
+
+
+	/**
+	 * Helper method to infer the requested finder and its options.
+	 * Returns the inferred options from the finder $finderData.
+	 *
+	 * ### Examples:
+	 * Given you're using the Muffin/TrashBehavior
+	 *
+	 * The following will call the finder 'withTrashed' with the value of the finder as its options:
+	 *
+	 * ```
+	 * $table->Articles->exists(['id' => 1], 'withTrashed');
+	 * $table->Articles->exists(['id' => 1], ['finder' => ['withTrashed' => []]]);
+	 * //this is the same as
+	 * $table->Articles->exists(['id' => 1], ['finder' => ['all' => ['skipAddTrashCondition' => true]]]);
+	 * ```
+	 *
+	 *
+	 * Only return true if an article with `en` and `es` locales exist
+	 *
+	 * ```
+	 * $table->Articles->exists(['id' => 1], ['finder' => ['translations' => ['locales' => ['en', 'es']]]]
+	 *
+	 * ```
+	 * The following will call the finder 'published' with additional options. Those options will be available
+	 * inside the attached behaviors (resp. their beforeFind-events):
+	 * ```
+	 *
+	 * $table->Articles->exists(['id' => 1], [
+	 * 	'finder' => [
+	 *  	'published' => [
+	 *    		'published_before' => '2010-01-01 00:00:00',
+	 *      	'skipAddTrashCondition' => true,
+	 *  	]
+	 * 	]
+	 * ]);
+	 * ```
+	 *
+	 * @param array|string $ax_finderData The finder name or an array having the name as key
+	 * and options as value.
+	 * @return array
+	 */
+	protected function _extractFinder(array|string $ax_finderData): array {
+		$la_finderData = (array)$ax_finderData;
+
+		if (is_numeric(key($la_finderData))) {
+			return [current($la_finderData), []];
+		}
+
+
+		return [key($la_finderData), current($la_finderData)];
 	}
 }

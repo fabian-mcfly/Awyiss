@@ -28,7 +28,8 @@ class ExistsIn extends BaseExistsIn {
 	/**
 	 * Performs the existence check
 	 *
-	 * Implemented from parent class 1:1 but pass the initial options to the `exists`-method
+	 * Reimplemented to honor the `withMatchingAttributes`-finder that allows checking for the existence
+	 * of entities using attributes
 	 *
 	 * @param EntityInterface $ao_entity The entity from where to extract the fields
 	 * @param array<string, mixed> $aa_options Options passed to the check, where the `repository` key is required.
@@ -97,6 +98,7 @@ class ExistsIn extends BaseExistsIn {
 		$la_conditions = array_combine($la_primary, $ao_entity->extract($la_fields));
 
 		$la_options = array_diff_key($this->_options, ['allowNullableNulls' => null]);
+		$la_options['finder'] ??= $lo_target->getFinder();
 
 
 		return $lo_target->exists($la_conditions, $la_options);
