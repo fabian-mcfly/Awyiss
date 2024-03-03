@@ -24,7 +24,7 @@ use Cake\Validation\Validator;
  * @method \Cake\Collection\CollectionInterface|null getChildren(\Cake\Datasource\EntityInterface $ao_entity, array $aa_options = [])
  * @method \Awyiss\Model\Entity\BackendMenuEntry getParent(\Cake\Datasource\EntityInterface $ao_entity, array $aa_options = [])
  * @method \Cake\Collection\CollectionInterface|null getParents(\Cake\Datasource\EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
- * @noinspection PhpUnnecessaryFullyQualifiedNameInspection
+ * @noinspection PhpFullyQualifiedNameUsageInspection
  */
 class BackendMenuEntriesTable extends Table {
 	/**
@@ -228,9 +228,11 @@ class BackendMenuEntriesTable extends Table {
 	 * @param \Awyiss\Model\Entity $ao_entity
 	 * @param string $as_controller
 	 * @param string $as_scope
+	 * @param string $as_insertAfterId
 	 * @return void
 	 */
 	public function createEntries(Entity $ao_entity, string $as_controller, string $as_scope, string $as_insertAfterId = 'pages'): void {
+		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 		$la_data = [
 			'title' => $ao_entity->title,
 			'insert_after_id' => $as_insertAfterId,

@@ -162,15 +162,65 @@ class LinkSelectWidget extends BasicWidget {
 			return [];
 		}
 
-		$lx_selected = $la_data['val'] ?? null;
-		$lx_escape = $la_data['escape'] ?? true;
 		$lx_disabled = null;
 		if (isset($la_data['disabled']) && is_array($la_data['disabled'])) {
 			$lx_disabled = $la_data['disabled'];
 		}
 
+
+		return $this->buildOptions($la_data, $la_data['val'] ?? null, $lx_disabled, $la_data['escape'] ?? true);
+	}
+
+
+	/**
+	 * Returns the rendered selected option
+	 *
+	 * @param array $aa_data
+	 * @return string
+	 */
+	protected function renderSelectedOption(array $aa_data): string {
+		$la_data = $aa_data;
+
+		$la_selectedOption = (array)$la_data['options'][ $la_data['val'] ];
+
+
+		//Append the formatted template for this option
+		return $this->_templates->format('selectedOption', $la_selectedOption);
+	}
+
+
+	/**
+	 * @param array $aa_data
+	 * @param array $aa_optionAttributes
+	 * @return array
+	 */
+	protected function setGroupLabelTitle(array $aa_data, array $aa_optionAttributes): array {
+		$la_optionAttributes = $aa_optionAttributes;
+
+		if (!empty($aa_data['groupLabels'][ $la_optionAttributes['title'] ?: 'general' ])) {
+			$ls_groupLabel = $aa_data['groupLabels'][ $la_optionAttributes['title'] ?: 'general' ];
+		}
+		else {
+			$ls_groupLabel = __($aa_data['identifier'] . '_grouplabel_' . ($la_optionAttributes['title'] ?: 'general'));
+		}
+
+		$la_optionAttributes['title'] = $ls_groupLabel;
+
+
+		return $la_optionAttributes;
+	}
+
+
+	/**
+	 * @param array $aa_data
+	 * @param mixed $lx_selected
+	 * @param mixed $lx_disabled
+	 * @param bool $lx_escape
+	 * @return array
+	 */
+	protected function buildOptions(array $aa_data, mixed $lx_selected, mixed $lx_disabled, bool $lx_escape): array {
 		$la_options = [];
-		foreach ($la_data['options'] as $lx_key => $lx_value) {
+		foreach ($aa_data['options'] as $lx_key => $lx_value) {
 			//Basic options
 			$la_optionAttributes = [
 				'templateVars' => [],
@@ -194,20 +244,14 @@ class LinkSelectWidget extends BasicWidget {
 				}
 
 				if ($la_optionAttributes['isGroupLabel'] ?? null === true) {
-					if (isset($aa_data['groupLabels'][ $la_optionAttributes['title'] ?: 'general' ])) {
-						$ls_groupLabel = $aa_data['groupLabels'][$la_optionAttributes['title'] ?: 'general'];
-					}
-					else {
-						$ls_groupLabel = __($aa_data['identifier'] . '_grouplabel_' . ($la_optionAttributes['title'] ?: 'general'));
-					}
-					$la_optionAttributes['title'] = $ls_groupLabel;
+					$la_optionAttributes = $this->setGroupLabelTitle($aa_data, $la_optionAttributes);
 				}
 			}
 
 			if (!isset($la_optionAttributes['templateVars'])) {
 				$la_optionAttributes['templateVars'] = [];
 			}
-			$la_optionAttributes['templateVars']['identifier'] = $la_data['identifier'];
+			$la_optionAttributes['templateVars']['identifier'] = $aa_data['identifier'];
 
 			//Add a class 'Item' and, if the value of the option is selected, 'Active' as well
 			$la_optionAttributes = $this->_templates->addClass($la_optionAttributes, 'Item');
@@ -215,17 +259,17 @@ class LinkSelectWidget extends BasicWidget {
 			$ls_classText = 'Item-' . Text::slug(Inflector::camelize($la_optionAttributes['title']), ['replacement' => '']);
 			$la_optionAttributes = $this->_templates->addClass($la_optionAttributes, $ls_classText);
 
-			if ($la_optionAttributes['id'] ?? false !== false) {
+			if (($la_optionAttributes['id'] ?? false) !== false) {
 				$ls_classText = 'Item-' . Text::slug(Inflector::camelize((string)$la_optionAttributes['id']), ['replacement' => '']);
 				$la_optionAttributes = $this->_templates->addClass($la_optionAttributes, $ls_classText);
 
-				if (!empty($la_data['id'])) {
-					$la_optionAttributes['id'] = $la_data['id'] . $ls_classText;
+				if (!empty($aa_data['id'])) {
+					$la_optionAttributes['id'] = $aa_data['id'] . $ls_classText;
 				}
 			}
 
 			if ($this->isSelected((string)$lx_key, $lx_selected)) {
-				$la_optionAttributes = $this->_templates->addClass($la_optionAttributes, $la_data['selectedClass'] ?? 'Active');
+				$la_optionAttributes = $this->_templates->addClass($la_optionAttributes, $aa_data['selectedClass'] ?? 'Active');
 			}
 
 			//Depending on the status, use the `option`- or `optionDisabled`-template to render the option
@@ -233,7 +277,7 @@ class LinkSelectWidget extends BasicWidget {
 			if ($this->isDisabled((string)$lx_key, $lx_disabled)) {
 				$ls_template = 'optionDisabled';
 				//If the option is disabled, add 'Disabled' to the class
-				$la_optionAttributes = $this->_templates->addClass($la_optionAttributes, $la_data['disabledClass'] ?? 'Disabled');
+				$la_optionAttributes = $this->_templates->addClass($la_optionAttributes, $aa_data['disabledClass'] ?? 'Disabled');
 			}
 			if ($la_optionAttributes['isGroupLabel'] ?? null === true) {
 				$ls_template = 'groupLabel';
@@ -254,22 +298,5 @@ class LinkSelectWidget extends BasicWidget {
 
 
 		return $la_options;
-	}
-
-
-	/**
-	 * Returns the rendered selected option
-	 *
-	 * @param array $aa_data
-	 * @return string
-	 */
-	protected function renderSelectedOption(array $aa_data): string {
-		$la_data = $aa_data;
-
-		$la_selectedOption = (array)$la_data['options'][ $la_data['val'] ];
-
-
-		//Append the formatted template for this option
-		return $this->_templates->format('selectedOption', $la_selectedOption);
 	}
 }

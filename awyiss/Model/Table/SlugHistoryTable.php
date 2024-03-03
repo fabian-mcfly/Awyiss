@@ -15,6 +15,7 @@ use Cake\Validation\Validator;
  *
  * @property \Awyiss\Model\Table\PagesTable&\Awyiss\ORM\Association\BelongsTo $Pages
  * @method \Awyiss\Model\Entity\SlugHistory newDefaultEntity(array $aa_additionalData = [], array $aa_options = [])
+ * @noinspection PhpFullyQualifiedNameUsageInspection
  */
 class SlugHistoryTable extends Table {
 	/**
@@ -26,11 +27,11 @@ class SlugHistoryTable extends Table {
 	 */
 	public const TABLE = 'slug_history';
 
+
 	/**
 	 * @inheritDoc
 	 */
-	public function initialize(array $aa_config): void {
-		parent::initialize($aa_config);
+	public function initializeAssociations(): void {
 
 		$this->belongsTo('Pages', [
 			'finder' => [
@@ -84,6 +85,7 @@ class SlugHistoryTable extends Table {
 			'errorField' => 'pageId',
 			'message' => __d($this->getI18nDomain(), 'error_valid_page_id'),
 		]);
+
 
 		return $ao_rules;
 	}

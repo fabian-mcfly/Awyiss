@@ -32,6 +32,7 @@ use RuntimeException;
  *   Returns true or false, depending on the accessibility of the provided identifier(s) for the provided scope and identity
  *
  * @method \Awyiss\Controller\AppController getController()
+ * @noinspection PhpFullyQualifiedNameUsageInspection
  */
 class AuthorizationComponent extends Component {
 	/**

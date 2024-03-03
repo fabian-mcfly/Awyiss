@@ -122,8 +122,10 @@ abstract class GenericDatatablesController extends Controller {
 		if ($this->request->is(['patch', 'post', 'put'])) {
 			$this->save($lo_entity, 'edit');
 		}
+		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 		elseif ($this->splitIntoLanguages && $lo_entity->languageShortcode && $lo_entity->languageShortcode != LocaleMiddleware::getLanguage()->shortcode) {
 			//Don't allow modifying a record in another language
+			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 			throw new RedirectException(Router::url([
 				'lang' => $lo_entity->languageShortcode,
 				'id' => $lo_entity->id,
@@ -166,9 +168,11 @@ abstract class GenericDatatablesController extends Controller {
 					 */
 					$this->verifyCategorySelection($ao_entity);
 
+					/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 					throw new RedirectException(Router::url(['action' => 'overview', 'lang' => $ao_entity->languageShortcode], true), 302);
 				}
 
+				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 				throw new RedirectException(Router::url(['action' => 'edit', 'lang' => $ao_entity->languageShortcode, 'id' => $ao_entity->id], true), 302);
 			}
 
@@ -315,6 +319,7 @@ abstract class GenericDatatablesController extends Controller {
 	 */
 	protected function getThreadedRecords(Entity $ao_entity): CollectionInterface {
 		if (!isset($this->threadedRecords)) {
+			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 			$lo_query = $this->Datatable->find('forCurrentLanguage', languageShortcode: $ao_entity->languageShortcode, includeGlobal: false)->where(
 				$this->getOverviewWhere() + $this->Categories->getQueryConditions(
 					$this->Categories->getSelectedCategory($ao_entity)

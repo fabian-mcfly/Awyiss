@@ -12,6 +12,7 @@ use Cake\Validation\Validator;
  * UsersExternal Model
  *
  * @method \Awyiss\Model\Entity\UsersExternal newDefaultEntity(array $aa_additionalData = [], array $aa_options = [])
+ * @noinspection PhpFullyQualifiedNameUsageInspection
  */
 class UsersExternalTable extends Table {
 	/**

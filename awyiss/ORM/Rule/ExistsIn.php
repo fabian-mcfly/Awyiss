@@ -63,16 +63,7 @@ class ExistsIn extends BaseExistsIn {
 		}
 
 		if (!$ao_entity->extract($la_fields, true)) {
-			$lx_finder = $lo_target->getFinder();
-			if (is_array($lx_finder) && isset($lx_finder['withMatchingAttributes'])) {
-				$lo_entity = $lx_finder['withMatchingAttributes']['entity']?->attributes ?? null;
-				$la_keys = $lx_finder['withMatchingAttributes']['keys'] ?? [];
-
-				if (!$lo_entity || !$lo_entity->extract($lo_target->extractAttributeFields($la_keys, true), true)) {
-					return true;
-				}
-			}
-			else {
+			if ($this->attributeFieldsAreUnchanged($lo_target)) {
 				return true;
 			}
 		}
@@ -102,6 +93,30 @@ class ExistsIn extends BaseExistsIn {
 
 
 		return $lo_target->exists($la_conditions, $la_options);
+	}
+
+
+	/**
+	 * Returns whether the provides keys have changed in the entity's attributes
+	 *
+	 * @param \Cake\ORM\Association|\Awyiss\Model\Table $ao_target
+	 * @return bool
+	 */
+	protected function attributeFieldsAreUnchanged(Association|Table $ao_target): bool {
+		$lx_finder = $ao_target instanceof Association ? $ao_target->getFinder() : 'all';
+		if (!is_array($lx_finder) || !isset($lx_finder['withMatchingAttributes'])) {
+			return true;
+		}
+
+		$lo_attributesEntity = $lx_finder['withMatchingAttributes']['entity']?->attributes ?? null;
+		$la_keys = $lx_finder['withMatchingAttributes']['keys'] ?? [];
+
+		if (!$lo_attributesEntity || !$lo_attributesEntity->extract($ao_target->extractAttributeFields($la_keys, true), true)) {
+			return true;
+		}
+
+
+		return false;
 	}
 
 

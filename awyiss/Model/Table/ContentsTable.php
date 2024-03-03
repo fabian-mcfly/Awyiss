@@ -40,7 +40,6 @@ use RuntimeException;
  * @method \Cake\Collection\CollectionInterface|null getChildren(\Cake\Datasource\EntityInterface $ao_entity, array $aa_options = [])
  * @method \Awyiss\Model\Entity\Content getParent(\Cake\Datasource\EntityInterface $ao_entity, array $aa_options = [])
  * @method \Cake\Collection\CollectionInterface|null getParents(\Cake\Datasource\EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
- * @noinspection PhpUnnecessaryFullyQualifiedNameInspection
  */
 class ContentsTable extends Table {
 	use LogTrait;
@@ -413,18 +412,6 @@ class ContentsTable extends Table {
 			$ai_pageId,
 			attributes: ['skip' => true],
 			contain: [
-				/*'PageRoles' => [
-					'finder' => [
-						'all' => [
-							'attributes' => ['skip' => true],
-							'translate' => ['skip' => true],
-						],
-					],
-					'fields' => [
-						'identifier',
-						'active',
-					],
-				],*/
 				'PageTemplates' => [
 					'finder' => [
 						'all' => [

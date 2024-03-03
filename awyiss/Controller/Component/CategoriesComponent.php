@@ -26,6 +26,7 @@ use Cake\Utility\Inflector;
  * even pages for other pages like newscategories for news.
  *
  * @method \Awyiss\Controller\AppController getController()
+ * @noinspection PhpFullyQualifiedNameUsageInspection
  */
 class CategoriesComponent extends Component {
 	protected array $_defaultConfig = [

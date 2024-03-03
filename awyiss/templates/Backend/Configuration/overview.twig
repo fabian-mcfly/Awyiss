@@ -6,9 +6,10 @@
 @var _view \Awyiss\View\BackendView
 #}
 
+{% do helper_Authorization_setAdditionalData({scope: as_selectedScope}) %}
+
 <div class="Configuration Overview">
 	{% block buttonsOverview %}
-		{% do helper_Authorization_setAdditionalData({scope: as_selectedScope}) %}
 		{% if helper_Authorization_isAccessible('create') %}
 			{{ helper_Html_link(__('create'), {action: 'add'}, {class: 'Button'}) }}
 		{% endif %}
@@ -64,9 +65,9 @@
 			</fieldset>
 		{% endblock %}
 	{% endfor %}
-
-	{% do helper_Authorization_resetAdditionalData() %}
 </div>
+
+{% do helper_Authorization_resetAdditionalData() %}
 
 {% macro recursiveConfigurationListing(aa_items, ai_level = 0) %}
 	{% for ls_key, lx_configuration in aa_items %}

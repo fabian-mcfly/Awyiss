@@ -137,6 +137,8 @@ class DetectAvailableCommandsCommand extends Command {
 
 	/**
 	 * @param array $aa_command
+	 * @param string|null $as_type
+	 * @param \Cake\Console\ConsoleIo|null $ao_io
 	 * @return bool
 	 */
 	protected function testProcess(array $aa_command, ?string $as_type = null, ?ConsoleIo $ao_io = null): bool {

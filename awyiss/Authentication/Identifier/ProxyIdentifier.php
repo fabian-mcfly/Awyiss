@@ -55,8 +55,6 @@ class ProxyIdentifier extends AbstractIdentifier {
 	public function reidentify(array $aa_credentials): ArrayAccess|array|null {
 		$this->setConfig('resolver', $this->getConfig('localResolver'));
 
-		dump($this->getConfig('localResolver'));
-
 
 		return $this->getResolver()->find($aa_credentials);
 	}

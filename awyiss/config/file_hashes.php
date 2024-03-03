@@ -58,6 +58,7 @@ return [
 		'vendor/cakephp/cakephp/src/Validation/Validator.php' => '3c8099b10834fbbaed2f04b3b8e3f32b',
 		'vendor/cakephp/cakephp/src/View/Helper/PaginatorHelper.php' => '13ad3558b41e36a96f35927f44ed7f15',
 		'vendor/cakephp/migrations/src/MigrationsDispatcher.php' => 'fe2debf7bd6dda991d3d8cf395808dee',
+		'vendor/cakephp/migrations/src/Util/UtilTrait.php' => 'e61e54494b309ceda8fa229ce496bdbb',
 		'vendor/cakephp/migrations/templates/bake/Seed/seed.twig' => '0bbfd8333756830f10476ab3b874f2fc',
 		'vendor/cakephp/migrations/templates/bake/config/skeleton.twig' => '3fffdaf28c7871155b24546cf4c5e391',
 		'vendor/cakephp/twig-view/src/Twig/FileLoader.php' => 'dfbac75e674d5503b0f552f83934efa8',

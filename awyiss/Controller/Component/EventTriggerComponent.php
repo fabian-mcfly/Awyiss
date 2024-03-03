@@ -17,6 +17,7 @@ use Cake\Event\EventInterface;
  * with "Foobar" being the name of the currently used controller
  *
  * @method \Awyiss\Controller\AppController getController()
+ * @noinspection PhpFullyQualifiedNameUsageInspection
  */
 class EventTriggerComponent extends Component {
 	/**

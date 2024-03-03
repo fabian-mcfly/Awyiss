@@ -13,6 +13,7 @@ use Cake\Validation\Validator;
  * Audit Model
  *
  * @method \Awyiss\Model\Entity\Audit newDefaultEntity(array $aa_additionalData = [], array $aa_options = [])
+ * @noinspection PhpFullyQualifiedNameUsageInspection
  */
 class AuditTable extends Table {
 	/**

@@ -38,7 +38,7 @@ class GeneralEventsListener implements EventListenerInterface {
 	 *
 	 * @param EventInterface $ao_event
 	 * @param \Awyiss\Model\Entity\Media $ao_entity
-	 * @param ArrayObject $ao_options
+	 * @param \ArrayObject $ao_options
 	 */
 	public function beforeSave(EventInterface $ao_event, EntityInterface $ao_entity/*, ArrayObject $ao_options*/): void {
 		$ao_event->stopPropagation();

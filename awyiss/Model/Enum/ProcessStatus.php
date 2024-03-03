@@ -4,6 +4,11 @@
 namespace Awyiss\Model\Enum;
 
 
+/**
+ * ProcessStatus enum
+ *
+ * Used to track the current status of image preview generation
+ */
 enum ProcessStatus: int {
 	case Undefined = 0;
 	case Success = 1;

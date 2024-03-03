@@ -15,7 +15,6 @@ use Cake\Http\Response;
  * Menus Controller
  *
  * @property \Awyiss\Model\Table\MenusTable $Menus
- * @method Menu[]|\Cake\Datasource\ResultSetInterface paginate($ao_object = null, array $aa_settings = [])
  */
 class MenusController extends Controller {
 	/**

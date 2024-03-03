@@ -22,6 +22,12 @@ use Cake\Http\Response;
  */
 class MenuEntriesController extends Controller {
 	/**
+	 * @inheritDoc
+	 */
+	protected array $categories = [
+		'uriParam' => 'menu-id',
+	];
+	/**
 	 * @var CollectionInterface
 	 */
 	protected CollectionInterface $threadedMenuEntries;

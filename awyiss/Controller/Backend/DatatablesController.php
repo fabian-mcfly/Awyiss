@@ -16,6 +16,7 @@ use Cake\Http\Response;
  *
  * @property \Awyiss\Model\Table\DatatablesTable $Datatables
  * @method Datatable[]|\Cake\Datasource\ResultSetInterface paginate($ao_object = null, array $aa_settings = [])
+ * @noinspection PhpFullyQualifiedNameUsageInspection
  */
 class DatatablesController extends Controller {
 	/**

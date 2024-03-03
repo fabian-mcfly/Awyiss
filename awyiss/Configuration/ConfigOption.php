@@ -401,6 +401,7 @@ class ConfigOption {
 		}
 
 		if ($this->getType() === ConfigOptionType::ListKey) {
+			/** @noinspection PhpUndefinedVariableInspection */
 			if (in_array($ax_value, array_keys($lx_values), true)) {
 				return $ax_value;
 			}

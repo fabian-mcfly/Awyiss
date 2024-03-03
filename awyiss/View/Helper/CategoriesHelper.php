@@ -480,7 +480,7 @@ class CategoriesHelper extends Helper {
 				$la_formattedOptions[ $lx_option->id ] = $la_data;
 			}
 			elseif (is_array($lx_option)) {
-				$la_formattedOptions[ $la_data['id'] ?? $lx_key ] = $la_data;
+				$la_formattedOptions[ $lx_option['id'] ?? $lx_key ] = $lx_option;
 			}
 			else {
 				$la_data = [

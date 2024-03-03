@@ -19,6 +19,7 @@ use Cake\Utility\Inflector;
  * and `ensurePossibleSystemOrder()` to make sure the set `system_order` is valid.
  *
  * @method \Awyiss\Controller\AppController getController()
+ * @noinspection PhpFullyQualifiedNameUsageInspection
  */
 class SystemOrderComponent extends Component {
 	/**

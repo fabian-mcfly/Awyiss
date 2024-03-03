@@ -47,8 +47,8 @@ class GeneralEventsListener implements EventListenerInterface {
 	/**
 	 * @param Event $ao_event
 	 * @return string
-	 * @throws \ReflectionException
 	 * @noinspection PhpUnused
+	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function awyissGetRealm(Event $ao_event): string {
 		return $this->realm;

@@ -33,7 +33,7 @@ class MenuCell extends Cell {
 		$lo_session = $this->request->getSession();
 
 		$la_menuData = [];
-		$ls_sessionIdentifier = 'BackendMenu.' . LocaleMiddleware::getLanguage()->shortcode . '';
+		$ls_sessionIdentifier = 'BackendMenu.' . LocaleMiddleware::getLanguage()->shortcode;
 		$ls_menu = $lo_session->read($ls_sessionIdentifier);
 
 		if ($ls_menu) {
