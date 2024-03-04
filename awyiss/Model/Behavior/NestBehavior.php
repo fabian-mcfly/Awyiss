@@ -119,8 +119,16 @@ class NestBehavior extends Behavior {
 	 */
 	public function buildAssociations(): static {
 		$lo_table = $this->table();
+		$lo_schema = $lo_table->getSchema();
 		$ls_alias = $this->getConfig('alias');
-		if (!$this->getConfig('children.associationName') || !$lo_table->hasAssociation($this->getConfig('children.associationName'))) {
+
+		if (
+			$lo_schema->hasColumn($this->getConfig('children.foreignKey')) &&
+			(
+				!$this->getConfig('children.associationName') ||
+				!$lo_table->hasAssociation($this->getConfig('children.associationName'))
+			)
+		) {
 			$ls_associationName = $this->getConfig('children.associationName') ?: 'Child' . Inflector::camelize($ls_alias);
 			/** @var \Awyiss\Model\Entity $ls_entityClass */
 			$ls_entityClass = $lo_table->getEntityClass();
@@ -147,7 +155,13 @@ class NestBehavior extends Behavior {
 			$this->setConfig('children.associationName', $ls_associationName);
 		}
 
-		if (!$this->getConfig('parent.associationName') || !$lo_table->hasAssociation($this->getConfig('parent.associationName'))) {
+		if (
+			$lo_schema->hasColumn($this->getConfig('parent.foreignKey')) &&
+			(
+				!$this->getConfig('parent.associationName') ||
+				!$lo_table->hasAssociation($this->getConfig('parent.associationName'))
+			)
+		) {
 			$ls_associationName = $this->getConfig('parent.associationName') ?: 'Parent' . Inflector::camelize($ls_alias);
 			/** @var \Awyiss\Model\Entity $ls_entityClass */
 			$ls_entityClass ??= $lo_table->getEntityClass();
