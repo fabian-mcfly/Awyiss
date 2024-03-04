@@ -92,7 +92,11 @@
 																{{ helper_Html_link(__('edit'), {action: 'edit', id: lo_pageTemplate.id}) }}
 															{% endif %}
 															{% if helper_Authorization_isAccessible('delete') %}
-																{{ helper_Html_link(__('delete'), {action: 'delete', id: lo_pageTemplate.id}, {confirm: __('confirm_delete', lo_pageTemplate.id) }) }}
+																{% if lo_pageTemplate.usedForPages == 0 %}
+																	{{ helper_Html_link(__('delete'), {action: 'delete', id: lo_pageTemplate.id}, {confirm: __('confirm_delete', lo_pageTemplate.id) }) }}
+																{% else %}
+																	<a>{{ __('delete') }}</a>
+																{% endif %}
 															{% endif %}
 														</td>
 													{% endblock %}
