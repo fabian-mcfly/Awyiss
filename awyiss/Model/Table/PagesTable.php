@@ -10,6 +10,7 @@ use Awyiss\Model\Entity\Page;
 use Awyiss\Model\Enum\PageRoleEnumInterface;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
+use Cake\Collection\CollectionInterface;
 use Cake\Database\Schema\TableSchemaInterface;
 use Cake\Database\Type\EnumType;
 use Cake\ORM\Query\SelectQuery;
@@ -31,11 +32,10 @@ use Cake\Validation\Validator;
  * @property \Awyiss\Model\Table\ContentsTable&\Awyiss\ORM\Association\HasMany $Contents
  * @property \Awyiss\Model\Table\PagesTable&\Awyiss\ORM\Association\HasMany $SlugHistory
  * @method \Awyiss\Model\Entity\Page newDefaultEntity(array $aa_additionalData = [], array $aa_options = [])
- * @method \Cake\Collection\CollectionInterface|null getNestedChildren(Page $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
- * @method \Cake\Collection\CollectionInterface|null getChildren(Page $ao_entity, array $aa_options = [])
- * @method \Awyiss\Model\Entity\Page getParent(Page $ao_entity, array $aa_options = [])
- * @method \Cake\Collection\CollectionInterface|null getParents(Page $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
- * @noinspection PhpFullyQualifiedNameUsageInspection
+ * @method CollectionInterface|null getNestedChildren(\Awyiss\Model\Entity\Page $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
+ * @method CollectionInterface|null getChildren(\Awyiss\Model\Entity\Page $ao_entity, array $aa_options = [])
+ * @method \Awyiss\Model\Entity\Page getParent(\Awyiss\Model\Entity\Page $ao_entity, array $aa_options = [])
+ * @method CollectionInterface|null getParents(\Awyiss\Model\Entity\Page $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
  */
 class PagesTable extends Table {
 	/**
@@ -337,26 +337,7 @@ class PagesTable extends Table {
 
 
 		$ao_rules->addDelete(function (Page $ao_page/*, array $aa_options = []*/): bool {
-			$lo_children = $this->getNestedChildren($ao_page, [
-				'forceEnable' => true,
-				'finder' => [
-					'all' => [
-						'skipPageRoleCheck' => true,
-					],
-				],
-				'skipFields' => [
-					'pageRoleId',
-				],
-			]);
-
-			if (!$lo_children?->count()) {
-				return true;
-			}
-
-			$la_pageRoles = array_unique($lo_children->extract('pageRoleId')->toList(), SORT_REGULAR);
-			$la_pageRoles = array_filter($la_pageRoles, fn (PageRoleEnumInterface $ae_pageRole) => $ae_pageRole != $ao_page->pageRoleId);
-
-			return !$la_pageRoles;
+			return !$this->hasDescendantsWithDifferentPageRole($ao_page);
 		}, 'noNestedChildrenWithDifferentPageRole', [
 			'errorField' => '_general',
 			'message' => __d($this->getI18nDomain(), 'error_no_nested_children_with_different_page_role'),
@@ -415,5 +396,50 @@ class PagesTable extends Table {
 
 
 		return $ao_query;
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Entity\Page $ao_page
+	 * @return \Cake\Collection\CollectionInterface|null
+	 */
+	public function getNestedPages(Page $ao_page): ?CollectionInterface {
+		$lo_children = $this->getNestedChildren($ao_page, [
+			'forceEnable' => true,
+			'finder' => [
+				'all' => [
+					'skipPageRoleCheck' => true,
+				],
+			],
+			'skipFields' => [
+				'pageRoleId',
+			],
+		]);
+
+		if (!$lo_children?->count()) {
+			return null;
+		}
+
+
+		return $lo_children;
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Entity\Page $ao_page
+	 * @return bool
+	 */
+	public function hasDescendantsWithDifferentPageRole(Page $ao_page): bool {
+		$lo_children = $this->getNestedPages($ao_page);
+
+		if (!$lo_children) {
+			return true;
+		}
+
+		$la_pageRoles = array_unique($lo_children->extract('pageRoleId')->toList(), SORT_REGULAR);
+		$la_pageRoles = array_filter($la_pageRoles, fn (PageRoleEnumInterface $ae_pageRole) => $ae_pageRole != $ao_page->pageRoleId);
+
+
+		return (bool)$la_pageRoles;
 	}
 }

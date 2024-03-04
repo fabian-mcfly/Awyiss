@@ -6,6 +6,7 @@
 @var as_languageRealm string
 @var localConfig array
 @var ab_nestingEnabled bool
+@var hasDescendantsWithDifferentPageRole bool
 @var _view \Awyiss\View\BackendView
 #}
 
@@ -23,6 +24,16 @@
 		{{ helper_Form_button(__('save')) }}
 		{{ helper_Form_button(__('save_close'), {name: 'submit', value: 'submit_close'}) }}
 	{% endblock %}
+
+	{% if hasDescendantsWithDifferentPageRole %}
+		<p>
+			{{ __('copy_descendants_with_different_page_role') }}
+			{{ helper_Form_radio('copy_descendants_with_different_page_role', {
+				0: __('copy_descendants_with_different_page_role_no'),
+				1: __('copy_descendants_with_different_page_role_yes'),
+			}) }}
+		</p>
+	{% endif %}
 
 	{% block formEdit %}
 		{% include('@Backend/Pages/form.twig') %}

@@ -250,6 +250,18 @@ class PagesController extends Controller {
 			$ao_page->setAccess('attributes', true);
 		}
 
+		$lb_saveAsCopy = (bool)$this->request->getData('save_as_copy');
+
+		$lb_hasDescendantsWithDifferentPageRole = false;
+		if (!$ao_page->isNew() && $this->request->getData('save_as_copy')) {
+			$lb_hasDescendantsWithDifferentPageRole = $this->Pages->hasDescendantsWithDifferentPageRole($ao_page);
+		}
+
+		$lb_copyDescendantsWithDifferentPageRole = $this->request->getData('copy_descendants_with_different_page_role');
+		if ($lb_copyDescendantsWithDifferentPageRole !== null && $lb_hasDescendantsWithDifferentPageRole) {
+			$lb_copyDescendantsWithDifferentPageRole = (bool)$lb_copyDescendantsWithDifferentPageRole;
+		}
+
 		$this->Pages->patchEntity($ao_page, ['page_role_id' => $this->getPageRole()->value] + $this->request->getData(), ['associated' => $la_associated]);
 
 		$this->Categories->setConfig('finder', [
@@ -258,8 +270,20 @@ class PagesController extends Controller {
 			],
 		]);
 
-		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-			if ($this->Pages->save($ao_page, ['asCopy' => (bool)$this->request->getData('save_as_copy')])) {
+		if (
+			!$this->request->getData('reload_form') && //reload_form is set when we need to reload options based on current values
+			(
+				//Only save pages if there are no descendants with different page role OR if the decision has been made
+				!$lb_hasDescendantsWithDifferentPageRole ||
+				$lb_copyDescendantsWithDifferentPageRole !== null
+			)
+		) {
+			if (
+				$this->Pages->save($ao_page, [
+					'asCopy' => $lb_saveAsCopy,
+					'copyDescendantsWithDifferentPageRole' => $lb_copyDescendantsWithDifferentPageRole,
+				])
+			) {
 				$this->Flash->success(__($as_method . '_succeeded'));
 
 				if ($this->request->getData('submit') == 'submit_close') {
@@ -281,6 +305,11 @@ class PagesController extends Controller {
 				$this->Flash->error($ls_error);
 			}
 		}
+
+		$this->set([
+			'hasDescendantsWithDifferentPageRole' => $lb_hasDescendantsWithDifferentPageRole,
+			'copyDescendantsWithDifferentPageRole' => $lb_copyDescendantsWithDifferentPageRole,
+		]);
 	}
 
 

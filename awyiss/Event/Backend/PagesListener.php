@@ -112,17 +112,13 @@ class PagesListener implements EventListenerInterface {
 
 		/** @var \Awyiss\Model\Entity\Page $lo_originalEntity */
 		$lo_originalEntity = $ao_entity->originalEntity;
-		$lo_children = $lo_originalEntity->getNestedChildren([
-			'forceEnable' => true,
-			'finder' => [
-				'all' => [
-					'skipPageRoleCheck' => true,
-				],
-			],
-			'skipFields' => [
-				'pageRoleId',
-			],
-		]);
+
+		if (($ao_options['copyDescendantsWithDifferentPageRole'] ?? false) === true) {
+			$lo_children = $lo_table->getNestedPages($lo_originalEntity);
+		}
+		else {
+			$lo_children = $lo_table->getNestedChildren($lo_originalEntity);
+		}
 
 		if (!$lo_children?->count()) {
 			return;
