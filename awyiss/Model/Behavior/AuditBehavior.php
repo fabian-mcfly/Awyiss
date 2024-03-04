@@ -430,6 +430,8 @@ class AuditBehavior extends Behavior {
 		if ($ai_identityId && $ao_schema->getColumn('created_by')) {
 			$ao_entity->set('createdBy', $ai_identityId);
 		}
+
+		$ao_entity->unset(['changedOn', 'changedBy']);
 	}
 
 
