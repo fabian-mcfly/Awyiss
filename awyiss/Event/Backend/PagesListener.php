@@ -315,7 +315,8 @@ class PagesListener implements EventListenerInterface {
 		$lb_languageChanged = $ls_originalLanguage && $ao_entity->languageShortcode !== $ls_originalLanguage;
 
 		if ($lb_languageChanged || $lb_slugChanged) {
-			$this->createHistoricalSlugs($lo_table, $ao_entity, $ls_originalSlug, $ls_originalLanguage);
+			$this->createHistoricalSlugs($lo_table, $ao_entity, $ls_originalLanguage, $ls_originalSlug);
+			$this->updateMenuEntries($ao_entity, $ls_originalLanguage, $ls_originalSlug);
 		}
 
 		if ($lb_slugChanged || $lb_activeChanged || $lb_parentsActiveChanged) {
@@ -423,11 +424,11 @@ class PagesListener implements EventListenerInterface {
 	/**
 	 * @param \Awyiss\Model\Table\PagesTable $ao_table
 	 * @param \Awyiss\Model\Entity\Page $ao_entity
-	 * @param mixed $as_originalSlug
 	 * @param mixed $as_originalLanguage
+	 * @param mixed $as_originalSlug
 	 * @return void
 	 */
-	protected function createHistoricalSlugs(PagesTable $ao_table, Page $ao_entity, ?string $as_originalSlug, ?string $as_originalLanguage): void {
+	protected function createHistoricalSlugs(PagesTable $ao_table, Page $ao_entity, ?string $as_originalLanguage, ?string $as_originalSlug): void {
 		$lo_records = $ao_table->find('all', skipPageRoleCheck: true)->where(function (QueryExpression $ao_expression) use ($as_originalSlug) {
 			return $ao_expression->like('slug', $as_originalSlug . '/%');
 		})->all();
@@ -481,7 +482,7 @@ class PagesListener implements EventListenerInterface {
 		bool $ab_activeChanged,
 		bool $ab_parentsActiveChanged
 	): void {
-		$lo_query = $ao_table->updateQuery()->update($ao_table->getTable())->where([
+		$lo_query = $ao_table->updateQuery()->where([
 			'language_shortcode' => $as_originalLanguage ?? $ao_entity->languageShortcode,
 		]);
 
@@ -532,6 +533,61 @@ class PagesListener implements EventListenerInterface {
 		$lo_query->where(function (QueryExpression $ao_expression/*, Query $ao_query*/) use ($ao_entity, $as_originalSlug) {
 			return $ao_expression->like('slug', ($as_originalSlug ?? $ao_entity->slug) . '/%');
 		});
+
+		$lo_query->execute();
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Entity\Page $ao_entity
+	 * @param string|null $as_originalLanguage
+	 * @param string|null $as_originalSlug
+	 * @return void
+	 */
+	protected function updateMenuEntries(Page $ao_entity, ?string $as_originalLanguage, ?string $as_originalSlug): void {
+		/** @var \Awyiss\Model\Table\MenuEntriesTable $lo_table */
+		$lo_table = $this->fetchTable('MenuEntries');
+
+		$lo_query = $lo_table->updateQuery();
+
+		/**
+		 * UPDATE menu_entries SET link = (CONCAT('de/newslug', substr(link, '12')))
+		 *
+		 * @noinspection PhpUndefinedMethodInspection
+		 */
+		$lo_query->set('link', $lo_query->newExpr($lo_query->func()->concat([
+			$ao_entity->languageShortcode . '/' . $ao_entity->slug,
+			$lo_query->func()->substr([
+				'link' => 'identifier',
+				mb_strlen($as_originalSlug) + 4,
+			], [
+				null,
+				'integer',
+			]),
+		])));
+
+		/**
+		 * WHERE
+		 * 	link LIKE 'xx/oldslug/%'
+		 * OR
+		 * 	link LIKE 'xx/oldslug#%'
+		 * OR
+		 * 	link = 'xx/oldslug'
+		 * with xx being the old language
+		 */
+		$lo_query->where([
+			'OR' => [
+				function (QueryExpression $ao_expression/*, Query $ao_query*/) use ($ao_entity, $as_originalLanguage, $as_originalSlug) {
+					return $ao_expression->like('link', ($as_originalLanguage ?? $ao_entity->languageShortcode) . '/' . ($as_originalSlug ?? $ao_entity->slug) . '/%');
+				},
+				function (QueryExpression $ao_expression/*, Query $ao_query*/) use ($ao_entity, $as_originalLanguage, $as_originalSlug) {
+					return $ao_expression->like('link', ($as_originalLanguage ?? $ao_entity->languageShortcode) . '/' . ($as_originalSlug ?? $ao_entity->slug) . '#%');
+				},
+				[
+					'link' => ($as_originalLanguage ?? $ao_entity->languageShortcode) . '/' . ($as_originalSlug ?? $ao_entity->slug),
+				],
+			],
+		]);
 
 		$lo_query->execute();
 	}
