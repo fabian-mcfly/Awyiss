@@ -97,9 +97,13 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 				]);
 			}
 
-			if (!$this->getConfig('fieldname')) {
-				$lo_association = $lo_table->getAssociation($ls_associationName);
+			$lo_association = $lo_table->getAssociation($ls_associationName);
 
+			if (!$this->getConfig('foreignKey')) {
+				$this->setConfig('foreignKey', $lo_association->getForeignKey());
+			}
+
+			if (!$this->getConfig('fieldname')) {
 				/** @var class-string<\Awyiss\Model\Entity> $ls_entityClass */
 				$ls_entityClass = $lo_table->getEntityClass();
 
@@ -222,35 +226,29 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 			$lx_selectedCategory = current($la_validValues);
 		}
 
-		//When category is empty or equals the aggregationKey, e.g. "all", do not add query conditions
-		if (!$lx_selectedCategory || $lx_selectedCategory === $this->getConfig('aggregationKey')) {
-			/** @noinspection PhpUndefinedMethodInspection */
-			$la_categories = $this->getCategories();
-			if ($la_categories) {
-				$ao_query->orderByAsc($ao_query->newExpr($ao_query->func()->FIND_IN_SET([
-					$this->getConfig('foreignKey') => 'identifier',
-					implode(',', array_keys($la_categories)),
-				])), true);
+		//If we shall not use the datasource, apply the query conditions and return
+		if (!$this->getConfig('useDatasource')) {
+			//When category is empty or equals the aggregationKey, e.g. "all", do not add query conditions
+			if (!$lx_selectedCategory || $lx_selectedCategory === $this->getConfig('aggregationKey')) {
+				return $this->sortQuery($ao_query);
 			}
 
 
-			return $ao_query;
-		}
-
-		//If we shall not use the datasource, apply the query conditions and return
-		if (!$this->getConfig('useDatasource')) {
-			$ao_query->where($this->getQueryConditions($lx_selectedCategory));
-
-
-			return $ao_query;
+			return $ao_query->where($this->getQueryConditions($ax_selectedCategory));
 		}
 
 		$ls_associationName = $this->getConfig('associationName');
-		if (!$ls_associationName) {
+		if (!$ls_associationName || !$ao_query->getRepository()->hasAssociation($ls_associationName)) {
 			throw new RuntimeException(sprintf('Cannot filter query without an association in `%s` for table `%s`.', static::class, $this->table()->getAlias()));
 		}
 
 		$lo_association = $ao_query->getRepository()->getAssociation($ls_associationName);
+
+		//When category is empty or equals the aggregationKey, e.g. "all", do not add query conditions
+		if (!$lx_selectedCategory || $lx_selectedCategory === $this->getConfig('aggregationKey')) {
+			return $this->sortQuery($ao_query);
+		}
+
 
 		if ($lo_association instanceof HasMany || $lo_association instanceof BelongsToMany) {
 			if ($lx_selectedCategory == $this->getConfig('unassignedKey')) {
@@ -454,14 +452,15 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 			return $ao_query;
 		}
 
-		$la_categories = $this->getConfig('categories');
-		if (empty($la_categories['raw']) && empty($la_categories['simple'])) {
+		$la_categories = $this->getCategories();
+		if (empty($la_categories)) {
 			return $ao_query;
 		}
 
 		$ls_column = $as_column;
 		if ($this->getConfig('useDatasource')) {
 			$ls_associationName = $as_associationName ?? $this->getConfig('associationName');
+
 			if (!$ls_associationName) {
 				throw new RuntimeException(
 					sprintf(
@@ -474,6 +473,10 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 
 			$lo_association = $ao_query->getRepository()->getAssociation($ls_associationName);
 
+			if ($lo_association instanceof BelongsToMany) {
+				return $ao_query;
+			}
+
 			if (empty($ls_column)) {
 				$ls_column = $lo_association->getForeignKey();
 				if (is_array($ls_column)) {
@@ -484,17 +487,7 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 			/** @var \Awyiss\Model\Entity $ls_entityClass */
 			$ls_entityClass = $lo_association->getSource()->getEntityClass();
 
-			if (!empty($la_categories['raw'])) {
-				$ls_bindingKey = $lo_association->getBindingKey();
-				if (is_array($ls_bindingKey)) {
-					$ls_bindingKey = reset($ls_bindingKey);
-				}
-
-				$la_categoryIdentifiers = $la_categories['raw']->extract($ls_bindingKey)->toArray();
-			}
-			else {
-				$la_categoryIdentifiers = array_keys($la_categories['simple']);
-			}
+			$la_categoryIdentifiers = array_keys($la_categories);
 		}
 		else {
 			$ls_entityClass = $this->table()->getEntityClass();
@@ -503,7 +496,7 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 				$ls_column = $this->getConfig('identifier');
 			}
 
-			$la_categoryIdentifiers = array_keys($la_categories['simple']);
+			$la_categoryIdentifiers = array_keys($la_categories);
 
 			dd(2, __FILE__, __LINE__);
 		}
@@ -584,10 +577,9 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 		if (isset($this->parentCategories)) {
 			if ($ab_include) {
 				$lo_categories = $this->parentCategories->append($this->getCategories(true));
-				$lo_categories = $lo_categories->indexBy('id')->compile();
 
 
-				return $lo_categories;
+				return $lo_categories->indexBy('id')->compile();
 			}
 
 
@@ -628,10 +620,9 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 
 		if ($ab_include) {
 			$lo_categories = $this->parentCategories->append($this->getCategories(true));
-			$lo_categories = $lo_categories->indexBy('id')->compile();
 
 
-			return $lo_categories;
+			return $lo_categories->indexBy('id')->compile();
 		}
 
 
@@ -710,6 +701,7 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 		if ($lo_parentCategories?->count()) {
 			$la_parentCategorieIds = $lo_parentCategories->extract('id')->toList();
 
+			/** @noinspection PhpUndefinedMethodInspection */
 			$lo_query->orderByAsc($lo_query->newExpr($lo_query->func()->FIND_IN_SET([
 				$this->getConfig('foreignKey') => 'identifier',
 				implode(',', $la_parentCategorieIds),
