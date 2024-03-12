@@ -299,6 +299,7 @@ class MenuItem {
 		$lb_isVisible = $this->isAccessible();
 
 		$lo_children = $this->getChildren();
+		$lb_childIsVisible = false;
 		if ($lo_children) {
 			// Check the visibility of child items
 			foreach ($lo_children->items() as $lo_child) {
@@ -308,8 +309,13 @@ class MenuItem {
 				// If any child is visible, set the parent item to be visible as well
 				if ($lb_childIsVisible) {
 					$lb_isVisible = true;
+					break;
 				}
 			}
+		}
+
+		if ($lb_isVisible && !$this->getLink() && !$lb_childIsVisible) {
+			$lb_isVisible = false;
 		}
 
 		// Set the visibility for this item
