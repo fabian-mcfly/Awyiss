@@ -6,6 +6,7 @@ namespace Awyiss\Model\Entity;
 
 use Awyiss\Awyiss;
 use Awyiss\Configuration\ConfigOptionsProvider;
+use Awyiss\Configuration\ConfigOptionType;
 use Awyiss\Model\Entity;
 use Cake\Utility\Inflector;
 
@@ -75,14 +76,22 @@ class Configuration extends Entity {
 	 * @throws \ReflectionException
 	 */
 	public function _getPrintableValue(): mixed {
-		$lx_value = ConfigOptionsProvider::typecastConfigValue(
-			$this->scope,
-			$this->realm,
-			$this->identifier,
-			$this->value,
-			$this->languageShortcode,
-		);
+		if (!$this->scope || !$this->realm || !$this->identifier) {
+			return null;
+		}
 
+		$lo_configuration = ConfigOptionsProvider::loadConfigOptions($this->scope);
+		$lo_configOption = $lo_configuration?->getConfigOption($this->realm, $this->identifier);
+
+		$lx_value = $this->value;
+
+		if ($lo_configOption) {
+			$lx_value = $lo_configOption->typecastConfigValue($this->value, $this->languageShortcode);
+
+			if ($lo_configOption->getType() === ConfigOptionType::ListKey) {
+				return $lo_configOption->getValues(true, $this->languageShortcode)[ $lx_value ] ?? $lx_value;
+			}
+		}
 
 		return match (gettype($lx_value)) {
 			'NULL' => null,

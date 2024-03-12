@@ -245,6 +245,10 @@ class ConfigOption {
 			return null;
 		}
 
+		if ($this->getType() === ConfigOptionType::ListKey) {
+			return $this->getValues(true)[ $lx_value ] ?? $lx_value;
+		}
+
 		return match ($this->type) {
 			ConfigOptionType::Bool => $lx_value ? 'true' : 'false',
 			ConfigOptionType::JsonArray => array_is_list($lx_value) ? implode(', ', $lx_value) : print_r($lx_value, true),

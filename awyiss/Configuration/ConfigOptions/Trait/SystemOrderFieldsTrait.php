@@ -5,6 +5,7 @@ namespace Awyiss\Configuration\ConfigOptions\Trait;
 
 
 use Cake\Datasource\FactoryLocator;
+use Cake\Utility\Inflector;
 
 
 /**
@@ -30,13 +31,17 @@ trait SystemOrderFieldsTrait {
 
 		/** @var \Awyiss\Model\Table $lo_table */
 		$lo_table = FactoryLocator::get('Table')->get($ls_scope);
-		$la_columns = $lo_table->getSchema()->columns();
+		$la_columns = [];
+
+		foreach ($lo_table->getSchema()->columns() as $ls_column) {
+			$la_columns[ $ls_column ] = __d(Inflector::underscore($ls_scope), $ls_column);
+		}
 
 		/** @var \Awyiss\Model\Behavior\AttributesBehavior $lo_attributesBehavior */
 		$lo_attributesBehavior = $lo_table->getBehavior('Attributes');
 		foreach ($lo_attributesBehavior->getAttributes() as $lo_attribute) {
 			if ($lo_attribute->active) {
-				$la_columns[] = 'attributes.' . $lo_attribute->identifier;
+				$la_columns[ 'attributes.' . $lo_attribute->identifier ] = $lo_attribute->title;
 			}
 		}
 
