@@ -35,13 +35,15 @@ trait IdentityAwareTrait {
 	 * @return \Awyiss\Authorization\IdentityPermissionsInterface|null
 	 */
 	public function getIdentity(): ?IdentityInterface {
-		if (!$this->identity) {
-			$lo_event = $this->dispatchEvent('Authentication.requestIdentity', [], $this);
-
-			//Maybe the event handler has found a policy.
-			//This is my Last Resort!
-			$this->identity = $lo_event->getResult();
+		if (isset($this->identity)) {
+			return $this->identity;
 		}
+
+		$lo_event = $this->dispatchEvent('Authentication.requestIdentity', [], $this);
+
+		//Maybe the event handler has found a policy.
+		//This is my Last Resort!
+		$this->identity = $lo_event->getResult();
 
 		return $this->identity;
 	}
@@ -52,6 +54,7 @@ trait IdentityAwareTrait {
 	 */
 	public function setIdentity(?IdentityInterface $ao_identity): static {
 		$this->identity = $ao_identity;
+
 
 		return $this;
 	}

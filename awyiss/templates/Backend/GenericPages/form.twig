@@ -5,7 +5,8 @@
 @var ao_parentPages \Cake\Collection\CollectionInterface
 @var as_languageRealm string
 @var localConfig array
-@var ab_nestingEnabled bool
+@var ab_nestable bool
+@var ab_sortable bool
 @var ao_menus \Cake\Collection\CollectionInterface
 @var _view \Awyiss\View\BackendView
 #}
@@ -44,13 +45,13 @@
 					{{ helper_Categories_control(as_categoriesIdentifier) }}
 				{% endif %}
 
-				{% if ab_nestingEnabled %}
+				{% if ab_nestable and ao_parentPages is not null %}
 					{{ helper_Form_control('parent_id', {options: hashPrinter(ao_parentPages, 'label', 'id', '- ')}) }}
 				{% endif %}
 			{% endblock %}
 
 			{% block formControlSystemOrder %}
-				{% if as_systemOrderField == 'systemOrder' %}
+				{% if ab_sortable %}
 					{{ helper_SystemOrder_control('system_order') }}
 				{% endif %}
 			{% endblock %}

@@ -177,7 +177,7 @@ TransportFactory::setConfig(Configure::consume('EmailTransport'));
  */
 Inflector::rules('plural', ['/^(menu)s$/i' => '\1s']);
 //\Cake\Utility\Inflector::rules('irregular', ['red' => 'redlings']);
-Inflector::rules('uninflected', ['configuration', 'media', '.*history', 'system']);
+Inflector::rules('uninflected', ['.*configuration', 'media', '.*history', 'system']);
 
 TypeFactory::map('tinyinteger', IntegerType::class);
 TypeFactory::map('smallinteger', IntegerType::class);

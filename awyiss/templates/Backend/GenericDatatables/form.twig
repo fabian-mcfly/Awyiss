@@ -2,7 +2,8 @@
 @var ao_record Cake\Datasource\EntityInterface
 @var ao_datatable \Awyiss\Model\Entity\Datatable
 @var as_languageRealm string
-@var ab_nesting bool
+@var ab_nestable bool
+@var ab_sortable bool
 @var ab_splitIntoLanguages bool
 @var ab_translatable bool
 @var localConfig array
@@ -40,13 +41,13 @@
 				{{ helper_Categories_control(as_categoriesIdentifier) }}
 			{% endif %}
 
-			{% if (ao_parentRecords is not null) %}
+			{% if (ab_nestable and ao_parentRecords is not null) %}
 				{{ helper_Form_control('parent_id', {options: hashPrinter(ao_parentRecords, 'label', 'id', '- ')}) }}
 			{% endif %}
 		{% endblock %}
 
 		{% block formControlSystemOrder %}
-			{% if as_systemOrderField == 'systemOrder' %}
+			{% if ab_sortable %}
 				{{ helper_SystemOrder_control('system_order') }}
 			{% endif %}
 		{% endblock %}

@@ -89,7 +89,9 @@ class LocaleHelper extends Helper {
 		/** @var \Cake\View\View $ao_view */
 		$ao_view = $ao_event->getSubject();
 
-		$ao_view->set('aa_languages', $la_languages);
+		if (!$ao_view->get('aa_languages')) {
+			$ao_view->set('aa_languages', $la_languages);
+		}
 	}
 
 

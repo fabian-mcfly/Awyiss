@@ -113,6 +113,5 @@ class CallbackPermissionOption extends SimplePermissionOption {
 
 
 		return $lb_accessible;
-		//throw new RuntimeException(sprintf('`%s` is not implemented in `%s` yet.', __FUNCTION__, static::class));
 	}
 }

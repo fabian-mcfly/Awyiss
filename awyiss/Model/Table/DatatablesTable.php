@@ -58,15 +58,6 @@ class DatatablesTable extends Table {
 
 
 	/**
-	 * @inheritDoc
-	 */
-	public function initialize(array $aa_config): void {
-		parent::initialize($aa_config);
-		$this->setDisplayField('title');
-	}
-
-
-	/**
 	 * Returns the default validator object.
 	 *
 	 * @param \Cake\Validation\Validator $ao_validator The validator that can be modified to

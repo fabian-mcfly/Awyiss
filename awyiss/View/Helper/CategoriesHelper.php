@@ -225,13 +225,15 @@ class CategoriesHelper extends Helper {
 						$ls_groupLabel = $la_attributes['groupLabels'][ $ls_groupLabel ];
 					}
 
-					$la_attributes['options'][ $ls_groupLabel ] = $this->buildOptions($la_options, $la_attributes + ['buildNested' => true]);
+					$la_attributes['options'][ $ls_groupLabel ] = $this->formatOptions($la_options, $la_attributes + ['buildNested' => true]);
 				}
 			}
 			else {
-				$la_attributes['options'] = $this->buildOptions($lx_options, $la_attributes);
+				$la_attributes['options'] = $this->formatOptions($lx_options, $la_attributes);
 			}
 		}
+
+		unset($la_attributes['groupLabels']);
 
 
 		return $this->Form->control($ls_fieldName, $la_attributes);
@@ -240,13 +242,14 @@ class CategoriesHelper extends Helper {
 
 	/**
 	 * Returns a filter element, using the `linkSelect`-template.
+	 *
 	 * ### Options:
 	 * - `aggregationLabel` The label of an additional option that's displayed when the `allowAggregation`-option is true.
 	 * - `aggregationKey` The value of an additional option that's used for showing the aggregation of all categories.
 	 * - `allowAggregation` Boolean value whether to include the aggregation of all categories.
+	 * - `allowUnassigned` Boolean value whether to include an option to show items without any category.
 	 * - `disabled` Boolean value or an array containing the values that should be disabled in the filter.
 	 * - `escape` Boolean value whether to escape html entities.
-	 * - `allowUnassigned` Boolean value whether to include an option to show items without any category.
 	 * - `label` The label to display in the filter.
 	 * - `name` The name to be used as a parameter in the resulting filter urls.
 	 * - `templateVars` Additional template variables.
@@ -290,82 +293,37 @@ class CategoriesHelper extends Helper {
 			$la_attributes['options'] = $this->getCategories($ls_identifier, true);
 		}
 
-		$lx_options = $la_attributes['options'];
-		unset($la_attributes['options']);
-		if ($lx_options) {
-			$ls_groupBy = $la_attributes['groupBy'] ?? null;
-
-			if (!$ls_groupBy && !empty($la_config['includeParentCategories'])) {
-				$ls_groupBy = '_parents';
-			}
-
-			if ($ls_groupBy) {
-				if (!$lx_options instanceof CollectionInterface) {
-					$lx_options = collection($lx_options);
-				}
-
-				$la_options = $lx_options->groupBy(function (mixed $ax_element) use ($ls_groupBy, &$la_attributes) {
-					if ($ax_element instanceof EntityInterface) {
-						if (is_array($ax_element->$ls_groupBy)) {
-							$ls_path = implode(' - ', array_map(function (EntityInterface $ao_entity) {
-								/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-								return $ao_entity->label;
-							}, $ax_element->$ls_groupBy));
-
-							$la_attributes['groupLabels'][ $ls_path ] ??= $ls_path;
+		$la_attributes = $this->buildOptions($la_attributes, $la_config);
 
 
-							return $ls_path;
-						}
+		return $this->widget('linkSelect', $la_attributes);
+	}
 
 
-						return $ax_element->$ls_groupBy ?? '';
-					}
+	/**
+	 * @param string $as_identifier
+	 * @param iterable|null $ax_options
+	 * @param array $aa_attributes
+	 * @return string
+	 */
+	public function linkSelect(string $as_identifier, ?iterable $ax_options = null, array $aa_attributes = []): string {
+		$la_attributes = $aa_attributes;
+		$la_attributes += [
+			'disabled' => false,
+			'escape' => true,
+			'id' => true,
+			'label' => __($as_identifier . '_filter_label'),
+			'levelPrefix' => '- ',
+			'uriParam' => Inflector::variable($as_identifier),
+			'val' => null,
+		];
 
-
-					return $ax_element[ $ls_groupBy ] ?? '';
-				})->toArray();
-
-				$la_attributes['options'] = [];
-				foreach ($la_options as $lx_key => $lx_options) {
-					$la_attributes['options'][] = [
-						'id' => null,
-						'title' => $lx_key,
-						'link' => null,
-						'levelPrefix' => null,
-						'isGroupLabel' => true,
-					];
-					$la_attributes['options'] += $this->buildOptions($lx_options, $la_attributes, true);
-				}
-			}
-			else {
-				$la_attributes['options'] = $this->buildOptions($lx_options, $la_attributes, true);
-			}
+		if (isset($la_attributes['id']) && $la_attributes['id'] === true) {
+			$la_attributes['id'] = 'CustomSelect-' . Inflector::camelize($this->_domId($as_identifier), '-');
 		}
 
-		//Shall an option to select unassigned elements be included? Prepend it.
-		if ($la_attributes['allowUnassigned']) {
-			$la_attributes['options'] = [
-				$la_attributes['unassignedKey'] => [
-					'id' => null,
-					'title' => $la_attributes['unassignedLabel'],
-					'link' => $this->Url->build([$la_attributes['uriParam'] => $la_attributes['unassignedKey']], ['withoutParams' => ['page']]),
-					'levelPrefix' => null,
-				],
-			] + $la_attributes['options'];
-		}
-
-		//Shall an option to select unassigned elements be included? Prepend it.
-		if ($la_attributes['allowAggregation']) {
-			$la_attributes['options'] = [
-				$la_attributes['aggregationKey'] => [
-					'id' => null,
-					'title' => $la_attributes['aggregationLabel'],
-					'link' => $this->Url->build([$la_attributes['uriParam'] => $la_attributes['aggregationKey']], ['withoutParams' => ['page']]),
-					'levelPrefix' => null,
-				],
-			] + $la_attributes['options'];
-		}
+		$la_attributes['options'] = $ax_options;
+		$la_attributes = $this->buildOptions($la_attributes);
 
 
 		return $this->widget('linkSelect', $la_attributes);
@@ -423,12 +381,113 @@ class CategoriesHelper extends Helper {
 
 
 	/**
+	 * @param array $aa_attributes
+	 * @param array $aa_config
+	 * @return array
+	 */
+	protected function buildOptions(array $aa_attributes, array $aa_config = []): array {
+		$la_attributes = $aa_attributes;
+		$la_attributes += [
+			'allowUnassigned' => false,
+			'allowAggregation' => false,
+		];
+
+		$lx_options = $la_attributes['options'];
+		unset($la_attributes['options']);
+
+		if ($lx_options) {
+			$ls_groupBy = $la_attributes['groupBy'] ?? null;
+
+			if (!$ls_groupBy && !empty($aa_config['includeParentCategories'])) {
+				$ls_groupBy = '_parents';
+			}
+
+			if ($ls_groupBy) {
+				if (!$lx_options instanceof CollectionInterface) {
+					$lx_options = collection($lx_options);
+				}
+
+				$la_options = $lx_options->groupBy(function (mixed $ax_element) use ($ls_groupBy, &$la_attributes) {
+					if ($ax_element instanceof EntityInterface) {
+						if (is_array($ax_element->$ls_groupBy)) {
+							$ls_path = implode(' - ', array_map(function (EntityInterface $ao_entity) {
+								/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+								return $ao_entity->label;
+							}, $ax_element->$ls_groupBy));
+
+							$la_attributes['groupLabels'][ $ls_path ] ??= $ls_path;
+
+
+							return $ls_path;
+						}
+
+
+						return $ax_element->$ls_groupBy ?? '';
+					}
+
+
+					return $ax_element[ $ls_groupBy ] ?? '';
+				})->toArray();
+
+				$la_attributes['options'] = [];
+				foreach ($la_options as $lx_key => $lx_options) {
+					$la_attributes['options'][] = [
+						'id' => null,
+						'title' => $lx_key,
+						'link' => null,
+						'levelPrefix' => null,
+						'isGroupLabel' => true,
+					];
+					$la_attributes['options'] += $this->formatOptions($lx_options, $la_attributes, true);
+				}
+			}
+			else {
+				$la_attributes['options'] = $this->formatOptions($lx_options, $la_attributes, true);
+			}
+		}
+
+		//Shall an option to select unassigned elements be included? Prepend it.
+		if ($la_attributes['allowUnassigned']) {
+			$la_attributes['options'] = [
+				$la_attributes['unassignedKey'] => [
+					'id' => null,
+					'title' => $la_attributes['unassignedLabel'],
+					'link' => $this->Url->build([
+						'_name' => $la_attributes['routeName'] ?? null,
+						$la_attributes['uriParam'] => $la_attributes['unassignedKey'],
+					], ['withoutParams' => ['page']]),
+					'levelPrefix' => null,
+				],
+			] + $la_attributes['options'];
+		}
+
+		//Shall an option to select unassigned elements be included? Prepend it.
+		if ($la_attributes['allowAggregation']) {
+			$la_attributes['options'] = [
+				$la_attributes['aggregationKey'] => [
+					'id' => null,
+					'title' => $la_attributes['aggregationLabel'],
+					'link' => $this->Url->build([
+						'_name' => $la_attributes['routeName'] ?? null,
+						$la_attributes['uriParam'] => $la_attributes['aggregationKey'],
+					], ['withoutParams' => ['page']]),
+					'levelPrefix' => null,
+				],
+			] + $la_attributes['options'];
+		}
+
+
+		return $la_attributes;
+	}
+
+
+	/**
 	 * @param array $ax_options
 	 * @param array $aa_attributes
 	 * @param bool $ab_forLinkSelect
 	 * @return array
 	 */
-	protected function buildOptions(iterable $ax_options, array $aa_attributes, bool $ab_forLinkSelect = false): array {
+	protected function formatOptions(iterable $ax_options, array $aa_attributes, bool $ab_forLinkSelect = false): array {
 		if ($ax_options instanceof TreeIterator) {
 			if ($ab_forLinkSelect) {
 				$la_options = $ax_options->toList();
@@ -457,7 +516,7 @@ class CategoriesHelper extends Helper {
 			$la_options = $ax_options;
 
 			if ($aa_attributes['buildNested'] ?? null === true) {
-				$la_options = $this->buildOptions(collection($ax_options), $aa_attributes, $ab_forLinkSelect);
+				$la_options = $this->formatOptions(collection($ax_options), $aa_attributes, $ab_forLinkSelect);
 			}
 		}
 		else {
@@ -474,7 +533,10 @@ class CategoriesHelper extends Helper {
 				$la_data = [
 					'id' => $lx_option->id,
 					'title' => $lx_option->label ?? $lx_option->title,
-					'link' => $this->Url->build([$aa_attributes['uriParam'] => $lx_option->id], ['withoutParams' => ['page']]),
+					'link' => $this->Url->build([
+						'_name' => $aa_attributes['routeName'] ?? null,
+						$aa_attributes['uriParam'] => $lx_option->id,
+					], ['withoutParams' => ['page']]),
 					'levelPrefix' => str_repeat($aa_attributes['levelPrefix'] ?? '', $lx_option->level ?? 0),
 				];
 				$la_formattedOptions[ $lx_option->id ] = $la_data;
@@ -486,7 +548,10 @@ class CategoriesHelper extends Helper {
 				$la_data = [
 					'id' => null,
 					'title' => $lx_option,
-					'link' => $this->Url->build([$aa_attributes['uriParam'] => $lx_key], ['withoutParams' => ['page']]),
+					'link' => $this->Url->build([
+						'_name' => $aa_attributes['routeName'] ?? null,
+						$aa_attributes['uriParam'] => $lx_key,
+					], ['withoutParams' => ['page']]),
 					'levelPrefix' => null,
 				];
 

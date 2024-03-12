@@ -31,7 +31,7 @@ abstract class AbstractConfigOptions implements ConfigOptionsInterface {
 		if ($ls_testScope !== $ls_scope) {
 			throw new RuntimeException(
 				sprintf(
-					'The provided scope should be written `%s`, `%s` given.',
+					'The provided scope must be written `%s`, `%s` given.',
 					$ls_testScope,
 					$ls_scope
 				)
@@ -53,7 +53,7 @@ abstract class AbstractConfigOptions implements ConfigOptionsInterface {
 	 */
 	public function add(string $as_realm, array|ConfigOption $ax_configOption): static {
 		if (!in_array($as_realm, Awyiss::getRealms())) {
-			throw new RuntimeException(
+			throw new InvalidArgumentException(
 				sprintf(
 					'The realm is not valid. `%s` given.',
 					$as_realm
@@ -77,7 +77,7 @@ abstract class AbstractConfigOptions implements ConfigOptionsInterface {
 		}
 
 		if (!isset($this->realms[ $as_realm ])) {
-			throw new RuntimeException(sprintf('The realm is not valid. `%s` given.', $as_realm));
+			throw new InvalidArgumentException(sprintf('The realm is not valid. `%s` given.', $as_realm));
 		}
 
 

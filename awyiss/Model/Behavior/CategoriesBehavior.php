@@ -213,7 +213,7 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 	 * @param string|null $as_column
 	 * @return \Cake\ORM\Query\SelectQuery
 	 */
-	public function filterQuery(SelectQuery $ao_query, mixed $ax_selectedCategory = null): SelectQuery {
+	public function filterQuery(SelectQuery $ao_query, mixed $ax_selectedCategory = null, bool $ab_sortAggregation = true): SelectQuery {
 		if (!$this->getConfig('enabled')) {
 			return $ao_query;
 		}
@@ -230,7 +230,7 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 		if (!$this->getConfig('useDatasource')) {
 			//When category is empty or equals the aggregationKey, e.g. "all", do not add query conditions
 			if (!$lx_selectedCategory || $lx_selectedCategory === $this->getConfig('aggregationKey')) {
-				return $this->sortQuery($ao_query);
+				return $ab_sortAggregation ? $this->sortQuery($ao_query) : $ao_query;
 			}
 
 
@@ -246,7 +246,7 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 
 		//When category is empty or equals the aggregationKey, e.g. "all", do not add query conditions
 		if (!$lx_selectedCategory || $lx_selectedCategory === $this->getConfig('aggregationKey')) {
-			return $this->sortQuery($ao_query);
+			return $ab_sortAggregation ? $this->sortQuery($ao_query) : $ao_query;
 		}
 
 

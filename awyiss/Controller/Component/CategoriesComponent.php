@@ -349,8 +349,8 @@ class CategoriesComponent extends Component {
 	 * @param string|null $as_column
 	 * @return SelectQuery
 	 */
-	public function filterQuery(SelectQuery $ao_query, mixed $ax_selectedCategory = null): SelectQuery {
-		return $this->getBehavior()->filterQuery($ao_query, $ax_selectedCategory);
+	public function filterQuery(SelectQuery $ao_query, mixed $ax_selectedCategory = null, bool $ab_sortAggregation = true): SelectQuery {
+		return $this->getBehavior()->filterQuery($ao_query, $ax_selectedCategory, $ab_sortAggregation);
 	}
 
 
@@ -460,7 +460,11 @@ class CategoriesComponent extends Component {
 				($this->getConfig('redirectOnInvalidSelection') && $ab_redirect !== false)
 			)
 		) {
-			throw new RedirectException(Router::url(['action' => 'overview', $this->getConfig('uriParam') => current($la_categories)], true), 302);
+			throw new RedirectException(Router::url([
+				'action' => 'overview',
+				$this->getConfig('uriParam') => current($la_categories),
+				'_name' => $this->getController()->getRequest()->getParam('_name'),
+			], true), 302);
 		}
 
 
