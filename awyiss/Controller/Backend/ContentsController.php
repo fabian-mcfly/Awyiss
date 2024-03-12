@@ -69,8 +69,8 @@ class ContentsController extends Controller {
 		 * This could be changed, but I fail to see any benefits
 		 */
 		$lo_contents = $this->Contents->find()->where($this->getOverviewWhere());
-		$this->Categories->filterQuery($lo_contents);
-		$la_contents = $this->Contents->nestedByContentArea($lo_contents)->toArray();
+		$this->Categories->filterQuery($lo_contents, null, !$this->paginate['enabled']);
+		$la_contents = $lo_contents->find('threaded')->all()->groupBy('contentAreaId')->toArray();
 
 		$la_contentAreas = array_combine(array_column($this->page->pageTemplate->contentAreas, 'id'), array_column($this->page->pageTemplate->contentAreas, 'label'));
 		$la_unknownContentAreas = array_diff_key($la_contents, $la_contentAreas);

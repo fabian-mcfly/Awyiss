@@ -1,0 +1,74 @@
+{#
+@var ao_mediaFolders \Cake\Collection\Collection
+@var la_mediaFolders array
+@var ab_paginated bool
+@var _view \Awyiss\View\BackendView
+#}
+
+{% block tableOverview %}
+	<table class="Table-Overview">
+		{% block tableOverviewHead %}
+			<thead>
+				{% block tableOverviewHeadRow %}
+					<tr>
+						{% block tableOverviewHeaderId %}
+							<th>{{ helper_Paginator_sort('id') }}</th>
+						{% endblock %}
+
+						{% block tableOverviewHeaderTitle %}
+							<th>{{ helper_Paginator_sort('title') }}</th>
+						{% endblock %}
+
+						{% block tableOverviewHeaderSystemOrder %}
+							<th>{{ helper_Paginator_sort('system_order') }}</th>
+						{% endblock %}
+
+						{% block tableOverviewHeaderActions %}
+							<th class="actions"></th>
+						{% endblock %}
+					</tr>
+				{% endblock %}
+			</thead>
+		{% endblock %}
+		{% block tableOverviewBody %}
+			<tbody>
+				{# @var lo_mediaFolder \Awyiss\Model\Entity\MediaFolder #}
+				{% for lo_mediaFolder in la_mediaFolders %}
+					{% block tableOverviewBodyRow %}
+						<tr>
+							{% block tableOverviewCellId %}
+								<td>{{ lo_mediaFolder.id }}</td>
+							{% endblock %}
+
+							{% block tableOverviewCellTitle %}
+								<td>{{ lo_mediaFolder.title }} <br> {{ lo_mediaFolder.slug }}</td>
+							{% endblock %}
+
+							{% block tableOverviewCellSystemOrder %}
+								<td>level {{ lo_mediaFolder.level }} - order {{ lo_mediaFolder.systemOrder }}</td>
+							{% endblock %}
+
+							{% block tableOverviewCellActions %}
+								<td class="actions">
+									{% do helper_Authorization_setScope('media') %}
+									{% if helper_Authorization_isAccessible('read') %}
+										{{ helper_Html_link(__('view_files'), {controller: 'media', action: 'overview', mediaFolder: lo_mediaFolder.id}) }}
+									{% endif %}
+									{% do helper_Authorization_resetScope() %}
+
+									{% if helper_Authorization_isAccessible('update') %}
+										{{ helper_Html_link(__('edit'), {action: 'edit', id: lo_mediaFolder.id}) }}
+									{% endif %}
+
+									{% if helper_Authorization_isAccessible('delete') %}
+										{{ helper_Html_link(__('delete'), {action: 'delete', id: lo_mediaFolder.id}, {confirm: __('confirm_delete', lo_mediaFolder.id) }) }}
+									{% endif %}
+								</td>
+							{% endblock %}
+						</tr>
+					{% endblock %}
+				{% endfor %}
+			</tbody>
+		{% endblock %}
+	</table>
+{% endblock %}

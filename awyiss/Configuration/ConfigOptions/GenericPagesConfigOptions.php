@@ -115,10 +115,11 @@ class GenericPagesConfigOptions extends AbstractGenericConfigOptions {
 			],
 			'paginate' => [
 				new ConfigOption(
-					defaultValue: true,
+					defaultValue: false,
 					identifier: 'enabled',
 					localizable: false,
 					nullable: true,
+					personalizable: true,
 					type: ConfigOptionType::Bool,
 				),
 				new ConfigOption(
@@ -126,6 +127,7 @@ class GenericPagesConfigOptions extends AbstractGenericConfigOptions {
 					identifier: 'limit',
 					localizable: false,
 					nullable: false,
+					personalizable: true,
 					type: ConfigOptionType::Integer,
 				),
 			],
@@ -158,7 +160,7 @@ class GenericPagesConfigOptions extends AbstractGenericConfigOptions {
 					identifier: 'field',
 					localizable: false,
 					nullable: false,
-					type: ConfigOptionType::ListValue,
+					type: ConfigOptionType::ListKey,
 					values: $this->getSystemOrderFields(...),
 				),
 			],

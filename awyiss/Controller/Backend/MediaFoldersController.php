@@ -13,6 +13,7 @@ use Cake\Collection\Collection;
 use Cake\Collection\CollectionInterface;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
+use Cake\Utility\Inflector;
 
 
 /**
@@ -22,9 +23,61 @@ use Cake\Http\Response;
  */
 class MediaFoldersController extends Controller {
 	/**
-	 * @var \Cake\Collection\Iterator\TreeIterator
+	 * @var array List of available languages
+	 */
+	protected array $languages = [];
+	/**
+	 * @var string|null Session identifier for the selected language
+	 */
+	protected ?string $selectedLanguageSessionIdentifier = null;
+	/**
+	 * @var \Cake\Collection\Iterator\TreeIterator Collection of media folders for the currently set languageShortcode
 	 */
 	protected CollectionInterface $threadedMediaFolders;
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public function initialize(): void {
+		parent::initialize();
+
+		$this->languages = [
+			'all' => __('all'),
+			'global' => __('global'),
+			LocaleMiddleware::getLanguage()->shortcode => LocaleMiddleware::getLanguage()->title,
+		];
+
+		$this->selectedLanguageSessionIdentifier = 'categories.' . ($this->request->getParam('lang') ?? 'global') . '.' . Inflector::underscore($this->getName()) . '.language';
+
+		if ($this->request->getParam('action') !== 'overview') {
+			return;
+		}
+
+		$lo_session = $this->request->getSession();
+
+		//Is there a request parameter with the name 'language'?
+		$ls_language = $this->request->getParam('language');
+
+		if ($ls_language) {
+			$lo_session->write($this->selectedLanguageSessionIdentifier, $ls_language);
+		}
+		else {
+			$ls_language = $lo_session->read($this->selectedLanguageSessionIdentifier, 'all');
+		}
+
+		//If the selected scope is not inside the available configuration scopes, reset it to the first available one.
+		if (!array_key_exists($ls_language, $this->languages)) {
+			$ls_language = array_key_first($this->languages);
+
+			$lo_session->write($this->selectedLanguageSessionIdentifier, $ls_language);
+
+			//Redirect to remove the invalid scope parameter from the URL
+			$this->redirect(['action' => 'overview']);
+		}
+
+		$this->setOverviewWhere('language_shortcode', $ls_language);
+	}
 
 
 	/**
@@ -35,14 +88,35 @@ class MediaFoldersController extends Controller {
 	public function overview(): void {
 		$this->Authorization->ensure('read');
 
-		$lo_mediaFolders = $this->MediaFolders->find('forCurrentLanguage')->where($this->getOverviewWhere());
-		$lo_mediaFolders->orderBy('language_shortcode');
-		$lo_mediaFolders = $this->MediaFolders->listNested($lo_mediaFolders)->groupBy(function (MediaFolder $ao_mediaFolder) {
-			return $ao_mediaFolder->languageShortcode ?? '_global';
-		});
+		$lo_query = $this->MediaFolders->find('forCurrentLanguage');
+
+		if ($this->getOverviewWhere('language_shortcode') !== 'all') {
+			$la_overviewWhere = $this->getOverviewWhere();
+			if (($la_overviewWhere['language_shortcode'] ?? null) === 'global') {
+				$la_overviewWhere['language_shortcode IS'] = null;
+				unset($la_overviewWhere['language_shortcode']);
+			}
+
+			$lo_query->where($la_overviewWhere);
+		}
+
+		$lb_paginated = $this->paginate['enabled'];
+		if ($lb_paginated) {
+			$lo_mediaFolders = $this->paginate($lo_query);
+		}
+		else {
+			$lo_query->orderBy('language_shortcode');
+
+			$lo_mediaFolders = $lo_query->find('threaded')->all()->groupBy(function (MediaFolder $ao_mediaFolder) {
+				return $ao_mediaFolder->languageShortcode ?? '_global';
+			});
+		}
 
 		$this->set([
 			'ao_mediaFolders' => $lo_mediaFolders,
+			'aa_languages' => $this->languages,
+			'as_selectedLanguage' => $this->getOverviewWhere('language_shortcode'),
+			'ab_paginated' => $lb_paginated,
 		]);
 	}
 
@@ -56,7 +130,15 @@ class MediaFoldersController extends Controller {
 	public function add(): void {
 		$this->Authorization->ensure('create');
 
-		$lo_mediaFolder = $this->MediaFolders->newDefaultEntity();
+		$lo_session = $this->request->getSession();
+		$ls_languageShortcode = $lo_session->read($this->selectedLanguageSessionIdentifier, 'all');
+		if (strlen($ls_languageShortcode) !== 2) {
+			$ls_languageShortcode = null;
+		}
+
+		$lo_mediaFolder = $this->MediaFolders->newDefaultEntity([
+			'languageShortcode' => $ls_languageShortcode,
+		]);
 
 		if ($this->request->is('post')) {
 			$this->save($lo_mediaFolder);
@@ -154,6 +236,13 @@ class MediaFoldersController extends Controller {
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
 			if ($this->MediaFolders->save($ao_mediaFolder, ['asCopy' => (bool)$this->request->getData('save_as_copy')])) {
 				$this->Flash->success(__($as_method . '_succeeded'));
+
+				$lo_session = $this->request->getSession();
+				$ls_languageShortcode = $ao_mediaFolder->languageShortcode ?? 'all';
+				if (strlen($ls_languageShortcode) !== 2) {
+					$ls_languageShortcode = 'global';
+				}
+				$lo_session->write($this->selectedLanguageSessionIdentifier, $ls_languageShortcode);
 
 				if ($this->request->getData('submit') == 'submit_close') {
 					throw new RedirectException(Router::url(['action' => 'overview', 'lang' => $ao_mediaFolder->languageShortcode], true), 302);

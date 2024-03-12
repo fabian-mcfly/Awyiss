@@ -41,6 +41,7 @@ class MediaConfigOptions extends AbstractConfigOptions {
 					identifier: 'autoOverwrite',
 					localizable: false,
 					nullable: false,
+					personalizable: true,
 					type: ConfigOptionType::Bool,
 				),
 			],

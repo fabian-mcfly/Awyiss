@@ -1,5 +1,6 @@
 {#
 @var ao_menus Awyiss\Model\Entity\Menu[]
+@var ab_paginated bool
 @var _view \Awyiss\View\BackendView
 #}
 
@@ -21,19 +22,19 @@
 					{% block tableOverviewHeadRow %}
 						<tr>
 							{% block tableOverviewHeaderId %}
-								<th>{{ helper_Paginator_sort('id') }}</th>
+								<th>{{ ab_paginated ? helper_Paginator_sort('id') : __('id') }}</th>
 							{% endblock %}
 
 							{% block tableOverviewHeaderTitle %}
-								<th>{{ helper_Paginator_sort('title') }}</th>
+								<th>{{ ab_paginated ? helper_Paginator_sort('title') : __('title') }}</th>
 							{% endblock %}
 
 							{% block tableOverviewHeaderIdentifier %}
-								<th>{{ helper_Paginator_sort('identifier') }}</th>
+								<th>{{ ab_paginated ? helper_Paginator_sort('identifier') : __('identifier') }}</th>
 							{% endblock %}
 
 							{% block tableOverviewHeaderActive %}
-								<th>{{ helper_Paginator_sort('active') }}</th>
+								<th>{{ ab_paginated ? helper_Paginator_sort('active') : __('active') }}</th>
 							{% endblock %}
 
 							{% block tableOverviewHeaderActions %}
@@ -88,7 +89,22 @@
 		</table>
 	{% endblock %}
 
-	{% block paginationOverview %}
-		{{ helper_Paginator_render() }}
+	{% block listControlOverview %}
+		<ul class="ListControl">
+			{% block listControlOverviewPagination %}
+				{% set pagination = helper_Paginator_render() %}
+				{% if pagination is not empty %}
+					<li class="ListControl-Pagination">
+						{{ pagination|raw }}
+					</li>
+				{% endif %}
+			{% endblock %}
+
+			{% block paginationOverviewLimitControl %}
+				<li class="ListControl-ListLimit">
+					{{ helper_Paginator_limitControl() }}
+				</li>
+			{% endblock %}
+		</ul>
 	{% endblock %}
 </div>

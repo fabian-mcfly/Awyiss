@@ -41,12 +41,20 @@ class MenuEntriesController extends Controller {
 	public function overview(): void {
 		$this->Authorization->ensure('read');
 
-		$lo_menuEntries = $this->MenuEntries->find()->where($this->getOverviewWhere());
-		$this->Categories->filterQuery($lo_menuEntries);
-		$lo_menuEntries = $this->MenuEntries->listNested($lo_menuEntries);
+		$lo_query = $this->MenuEntries->find()->where($this->getOverviewWhere());
+		$this->Categories->filterQuery($lo_query, null, !$this->paginate['enabled']);
+
+		$lb_paginated = $this->paginate['enabled'];
+		if ($lb_paginated) {
+			$lo_menuEntries = $this->paginate($lo_query);
+		}
+		else {
+			$lo_menuEntries = $lo_query->find('threaded')->all();
+		}
 
 		$this->set([
 			'ao_menuEntries' => $lo_menuEntries,
+			'ab_paginated' => $lb_paginated,
 		]);
 	}
 

@@ -47,7 +47,7 @@ class AttributesController extends Controller {
 		$this->Authorization->ensure('read');
 
 		$lo_attributes = $this->Attributes->find()->where($this->getOverviewWhere());
-		$this->Categories->filterQuery($lo_attributes);
+		$this->Categories->filterQuery($lo_attributes, null, !$this->paginate['enabled']);
 
 		$la_attributesGroupedByFieldset = $lo_attributes->all()->groupBy('fieldset')->toArray();
 

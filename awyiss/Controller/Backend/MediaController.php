@@ -27,7 +27,7 @@ class MediaController extends Controller {
 		$this->Authorization->ensure('read');
 
 		$lo_media = $this->Media->find()->where($this->getOverviewWhere());
-		$this->Categories->filterQuery($lo_media);
+		$this->Categories->filterQuery($lo_media, null, !$this->paginate['enabled']);
 
 		$this->set([
 			'ao_media' => $lo_media,

@@ -27,7 +27,7 @@ class PageTemplatesController extends Controller {
 		$this->Authorization->ensure('read');
 
 		$lo_pageTemplateQuery = $this->PageTemplates->find('withUsages')->where($this->getOverviewWhere())->contain(['ContentAreas']);
-		$this->Categories->filterQuery($lo_pageTemplateQuery);
+		$this->Categories->filterQuery($lo_pageTemplateQuery, null, false);
 		$this->Categories->groupResult($lo_pageTemplateQuery);
 		$lo_pageTemplates = $lo_pageTemplateQuery->all();
 

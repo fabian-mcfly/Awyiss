@@ -28,6 +28,16 @@ use Cake\Utility\Security;
 class UsersController extends Controller {
 	/**
 	 * @inheritDoc
+	 */
+	protected array $paginate = [
+		'order' => [
+			'username' => 'asc',
+		],
+	];
+
+
+	/**
+	 * @inheritDoc
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function beforeFilter(EventInterface $ao_event): void {
@@ -51,13 +61,8 @@ class UsersController extends Controller {
 		$this->Authorization->ensure('read');
 
 		$lo_users = $this->Users->find()->where($this->getOverviewWhere());
-		$this->Categories->filterQuery($lo_users);
-
-		$lo_users = $this->paginate($lo_users, [
-			'order' => [
-				'username' => 'asc',
-			],
-		]);
+		$this->Categories->filterQuery($lo_users, null, false);
+		$lo_users = $this->paginate($lo_users);
 
 		$this->set([
 			'ao_users' => $lo_users,

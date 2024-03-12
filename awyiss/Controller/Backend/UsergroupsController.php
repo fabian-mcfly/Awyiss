@@ -178,12 +178,13 @@ class UsergroupsController extends Controller {
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
 			if ($this->Usergroups->save($ao_usergroup, ['asCopy' => (bool)$this->request->getData('save_as_copy')])) {
 				/** @var \Awyiss\Model\Entity\User|\Awyiss\Model\Entity\UsersExternal $lo_currentUser */
-				$lo_currentUser = $this->request->getSession()->read('Auth');
+				$lo_session = $this->request->getSession();
+				$lo_currentUser = $lo_session->read('Auth');
 				$li_userId = $lo_currentUser?->id;
 
 				if ($ao_usergroup->users && in_array($li_userId, array_column($ao_usergroup->users, 'id'))) {
 					$lo_currentUser->usergroups = null;
-					$this->request->getSession()->delete('backend_menu');
+					$lo_session->delete('Backend.menu');
 				}
 
 				$this->Flash->success(__($as_method . '_succeeded'));
@@ -220,6 +221,7 @@ class UsergroupsController extends Controller {
 		/** @var \Awyiss\Authorization\AuthorizationService $lo_authorizationService */
 		$lo_authorizationService = $this->getRequest()->getAttribute('authorization');
 		$la_policies = $lo_authorizationService->getPolicies();
+		unset($la_policies['user_configuration']);
 
 		ksort($la_policies);
 

@@ -27,7 +27,7 @@ class PaginatorHelper extends BasePaginatorHelper {
 
 		$la_query['page'] = $la_query['limit'] = $la_query['sort'] = $la_query['direction'] = false;
 
-		$this->setConfig('aa_options.aa_url', array_merge($this->_View->getRequest()->getParam('pass', []), $la_query));
+		$this->setConfig('options.url', array_merge($this->_View->getRequest()->getParam('pass', []), $la_query));
 	}
 
 
@@ -94,6 +94,47 @@ class PaginatorHelper extends BasePaginatorHelper {
 
 
 	/**
+	 * @param array $aa_limits
+	 * @param int|null $ai_default
+	 * @param array $options
+	 * @return string
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 */
+	public function limitControl(array $aa_limits = [], ?int $ai_default = null, array $aa_options = []): string {
+		$la_limits = $aa_limits ?: [
+			'20' => '20',
+			'50' => '50',
+			'100' => '100',
+		];
+
+		$la_limits += [$this->param('perPage') => $this->param('perPage')];
+
+		natsort($la_limits);
+
+		$li_defaultPerPage = $ai_default ?? $this->paginated()->perPage();
+
+		$ls_output = $this->Form->create(null, ['url' => ['action' => 'userConfiguration']]);
+		$ls_output .= $this->Form->hidden('identifier', ['val' => 'paginate.limit']);
+		$ls_output .= $this->Form->control(
+			'value',
+			$aa_options + [
+				'default' => $li_defaultPerPage,
+				'empty' => false,
+				'label' => __('limit_per_page'),
+				'options' => $la_limits,
+				'onChange' => 'this.form.submit()',
+				'type' => 'select',
+				'value' => $this->param('perPage'),
+			]
+		);
+		$ls_output .= $this->Form->end();
+
+
+		return $ls_output;
+	}
+
+
+	/**
 	 * Convenient function to render the pagination element (paginator/pagination.twig)
 	 *
 	 * If there's only one page to display, don't output the pagination.
@@ -105,8 +146,6 @@ class PaginatorHelper extends BasePaginatorHelper {
 			return '';
 		}
 
-
-		//if (!$this->params) return '';
 
 		return $this->_View->element('paginator/pagination');
 	}

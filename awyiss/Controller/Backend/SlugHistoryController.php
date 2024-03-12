@@ -24,6 +24,7 @@ class SlugHistoryController extends Controller {
 	protected array $paginate = [
 		'order' => [
 			'created_on' => 'desc',
+			'id' => 'desc',
 		],
 	];
 	/**

@@ -1,0 +1,76 @@
+{#
+@var la_pages \Awyiss\Model\Entity\Page[]
+@var localConfig array
+@var ab_contentsEnabled bool
+@var ab_nestable bool
+@var ab_paginated bool
+@var ab_sortable bool
+@var _view \Awyiss\View\BackendView
+#}
+
+{% block tableOverview %}
+	<table class="Table-Overview">
+		{% block tableOverviewHead %}
+			<thead>
+				{% block tableOverviewHeadRow %}
+					<tr>
+						{% block tableOverviewHeaderId %}
+							<th>{{ helper_Paginator_sort('id') }}</th>
+						{% endblock %}
+
+						{% block tableOverviewHeaderTitle %}
+							<th>{{ helper_Paginator_sort('title') }}</th>
+						{% endblock %}
+
+						{% block tableOverviewHeaderSystemOrder %}
+							<th>{{ helper_Paginator_sort('system_order') }}</th>
+						{% endblock %}
+
+						{% block tableOverviewHeaderActions %}
+							<th class="actions"></th>
+						{% endblock %}
+					</tr>
+				{% endblock %}
+			</thead>
+		{% endblock %}
+		{% block tableOverviewBody %}
+			<tbody>
+				{# @var lo_page \Awyiss\Model\Entity\Page #}
+				{% for lo_page in la_pages %}
+					{% block tableOverviewBodyRow %}
+						<tr>
+							{% block tableOverviewCellId %}
+								<td>{{ lo_page.id }}<br>
+									{{ lo_page.active ? 'true' : 'false' }} - {{ lo_page.parentsActive ? 'true' : 'false' }}</td>
+							{% endblock %}
+
+							{% block tableOverviewCellTitle %}
+								<td>{{ lo_page.title }} <br> {{ lo_page.slug }}</td>
+							{% endblock %}
+
+							{% block tableOverviewCellSystemOrder %}
+								<td>level {{ lo_page.level }} - order {{ lo_page.systemOrder }}</td>
+							{% endblock %}
+
+							{% block tableOverviewCellActions %}
+								<td class="actions">
+									{% if lo_page.duplicate_of is empty and helper_Authorization_isAccessible('contents') and ab_contentsEnabled == true %}
+										{{ helper_Html_link(__('view_contents'), {controller: 'contents', action: 'overview', page_id: lo_page.id}) }}
+									{% endif %}
+
+									{% if helper_Authorization_isAccessible('update') %}
+										{{ helper_Html_link(__('edit'), {action: 'edit', id: lo_page.id}) }}
+									{% endif %}
+
+									{% if helper_Authorization_isAccessible('delete') %}
+										{{ helper_Html_link(__('delete'), {action: 'delete', id: lo_page.id}, {confirm: __('confirm_delete', lo_page.id) }) }}
+									{% endif %}
+								</td>
+							{% endblock %}
+						</tr>
+					{% endblock %}
+				{% endfor %}
+			</tbody>
+		{% endblock %}
+	</table>
+{% endblock %}

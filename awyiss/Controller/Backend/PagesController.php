@@ -19,6 +19,7 @@ use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
 use Cake\Utility\Inflector;
 use Cake\View\Exception\MissingTemplateException;
+use RuntimeException;
 
 
 /**
@@ -29,6 +30,10 @@ use Cake\View\Exception\MissingTemplateException;
 #[AllowDynamicProperties]
 class PagesController extends Controller {
 	/**
+	 * @var bool Nesting enabled
+	 */
+	protected bool $nestable = true;
+	/**
 	 * @var \Awyiss\Model\Enum\PageRoleEnumInterface
 	 */
 	protected PageRoleEnumInterface $pageRole;
@@ -36,6 +41,13 @@ class PagesController extends Controller {
 	 * @var \Cake\Datasource\ResultSetInterface
 	 */
 	protected CollectionInterface $pageTemplates;
+	/**
+	 * @var bool Manual sorting enabled
+	 */
+	protected bool $sortable = true;
+	/**
+	 * @inheritDoc
+	 */
 	protected array $systemOrder = [
 		'autoload' => ['add', 'addBatch', 'edit'],
 	];
@@ -54,14 +66,27 @@ class PagesController extends Controller {
 		$this->Authorization->ensure('read');
 
 		$lo_pages = $this->Pages->find('forCurrentLanguage')->where($this->getOverviewWhere());
-		$this->Categories->filterQuery($lo_pages);
-		$lo_pages = $this->Pages->listNested($lo_pages);
+		$this->Categories->filterQuery($lo_pages, null, !$this->paginate['enabled']);
+
+		$lb_paginated = $this->paginate['enabled'];
+		unset($this->paginate['enabled']);
+		if ($lb_paginated) {
+			$lo_pages = $this->paginate($lo_pages);
+		}
+		elseif ($this->nestable) {
+			$lo_pages = $lo_pages->find('threaded');
+		}
+		else {
+			$lo_pages = $lo_pages->all();
+		}
 
 		$this->set([
 			'ao_pages' => $lo_pages,
 			'localConfig' => LocalConfig::read(),
 			'ab_contentsEnabled' => LocalConfig::read('contents.enabled'),
-			'ab_nestingEnabled' => LocalConfig::read('nest.enabled'),
+			'ab_paginated' => $lb_paginated,
+			'ab_nestable' => $this->nestable,
+			'ab_sortable' => $this->sortable,
 		]);
 	}
 
@@ -408,6 +433,13 @@ class PagesController extends Controller {
 
 		$this->Pages = $this->{$as_identifier} = $this->fetchTable($as_identifier);
 
+		$this->nestable = LocalConfig::read('nest.enabled');
+		if ($this->nestable) {
+			$this->isNestableWithCategoriesEnabled();
+		}
+
+		$this->sortable = LocalConfig::read('systemOrder.field') === 'systemOrder';
+
 		/** @var \Awyiss\Authorization\AuthorizationService $lo_authorizationService */
 		$lo_authorizationService = $this->getRequest()->getAttribute('authorization');
 		$ls_policyClass = $lo_authorizationService->getPolicy($this->Authorization->getScope(), $this->Authorization->getConfig('policiesRealm'));
@@ -526,8 +558,14 @@ class PagesController extends Controller {
 
 		$lo_threadedPages = $this->getThreadedPages($ao_page);
 
-		$lo_parentPages = $this->getParentPages($ao_page, $lo_threadedPages);
-		$this->ensurePossibleParentId($ao_page, $lo_parentPages);
+
+		if ($this->nestable) {
+			$lo_parentPages = $this->getParentPages($ao_page, $lo_threadedPages);
+			$this->ensurePossibleParentId($ao_page, $lo_parentPages);
+		}
+		else {
+			$lo_parentPages = null;
+		}
 
 		$lo_menus = $this->fetchTable('Menus')->find('active')->all();
 
@@ -538,7 +576,8 @@ class PagesController extends Controller {
 			'ao_parentPages' => $lo_parentPages,
 			'as_languageRealm' => Awyiss::REALM_FRONTEND,
 			'localConfig' => LocalConfig::read(),
-			'ab_nestingEnabled' => LocalConfig::read('nest.enabled'),
+			'ab_nestable' => $this->nestable,
+			'ab_sortable' => $this->sortable,
 			'ao_menus' => $lo_menus,
 		]);
 	}
@@ -661,5 +700,19 @@ class PagesController extends Controller {
 
 
 		return $lo_entities->nest('tempId', 'tempParentId', 'child' . $ls_pageRole);
+	}
+
+
+	/**
+	 * @return void
+	 */
+	protected function isNestableWithCategoriesEnabled(): void {
+		$lo_categoriesBehavior = $this->Pages->getBehavior('Categories');
+		if (
+			$lo_categoriesBehavior->getConfig('enabled') &&
+			$lo_categoriesBehavior->getConfig('foreignKey') === 'parent_id'
+		) {
+			throw new RuntimeException(sprintf('Cannot use nesting with categories that uses `parent_id` as the foreign key.',));
+		}
 	}
 }

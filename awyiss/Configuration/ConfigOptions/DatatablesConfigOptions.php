@@ -32,6 +32,16 @@ class DatatablesConfigOptions extends AbstractConfigOptions {
 				nullable: false,
 				type: ConfigOptionType::Bool,
 			),
+			'paginate' => [
+				new ConfigOption(
+					defaultValue: 20,
+					identifier: 'limit',
+					localizable: false,
+					nullable: false,
+					personalizable: true,
+					type: ConfigOptionType::Integer,
+				),
+			],
 		]);
 	}
 }

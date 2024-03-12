@@ -42,6 +42,11 @@ class UsersTable extends Table {
 	 */
 	public function initializeAssociations(): void {
 		$this->belongsToMany('Usergroups');
+
+		$this->hasMany('UserConfiguration', [
+			'cascadeCallbacks' => true,
+			'dependent' => true,
+		]);
 	}
 
 

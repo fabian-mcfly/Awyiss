@@ -18,6 +18,7 @@ use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
 use Cake\Utility\Inflector;
 use Cake\View\Exception\MissingTemplateException;
+use RuntimeException;
 
 
 /**
@@ -33,11 +34,24 @@ abstract class GenericDatatablesController extends Controller {
 	 */
 	protected Datatable $datatable;
 	/**
+	 * @var bool Nesting enabled
+	 */
+	protected bool $nestable;
+	/**
+	 * @var bool Manual sorting enabled
+	 */
+	protected bool $sortable;
+	/**
+	 * @var bool Elements split up into different languages
+	 */
+	protected bool $splitIntoLanguages;
+	/**
 	 * @var \Cake\Collection\Iterator\TreeIterator
 	 */
 	protected CollectionInterface $threadedRecords;
-	protected bool $nesting;
-	protected bool $splitIntoLanguages;
+	/**
+	 * @var bool Translation of datatabe records enabled
+	 */
 	protected bool $translatable;
 
 
@@ -57,22 +71,27 @@ abstract class GenericDatatablesController extends Controller {
 		}
 
 		$lo_query->where($this->getOverviewWhere());
-		$this->Categories->filterQuery($lo_query);
+		$this->Categories->filterQuery($lo_query, null, !$this->paginate['enabled']);
 
-		if ($this->nesting) {
-			$lo_records = $this->Datatable->listNested($lo_query);
-			$lb_paginated = false;
+		$lb_paginated = $this->paginate['enabled'];
+		if ($lb_paginated) {
+			$lo_records = $this->paginate($lo_query);
+		}
+		elseif ($this->nestable) {
+			$this->isNestableWithCategoriesEnabled();
+
+			$lo_records = $lo_query->find('threaded')->all();
 		}
 		else {
-			$lo_records = $this->paginate($lo_query);
-			$lb_paginated = true;
+			$lo_records = $lo_query->all();
 		}
 
 		$this->set([
 			'ao_records' => $lo_records,
 			'ao_datatable' => $this->datatable,
 			'ab_paginated' => $lb_paginated,
-			'ab_nesting' => $this->nesting,
+			'ab_nestable' => $this->nestable,
+			'ab_sortable' => $this->sortable,
 			'ab_splitIntoLanguages' => $this->splitIntoLanguages,
 			'ab_translatable' => $this->translatable,
 		]);
@@ -191,7 +210,7 @@ abstract class GenericDatatablesController extends Controller {
 	protected function setViewVars(Entity $ao_entity): void {
 		$this->Categories->ensurePossibleCategory($ao_entity);
 
-		if ($this->nesting) {
+		if ($this->nestable) {
 			$lo_threadedRecords = $this->getThreadedRecords($ao_entity);
 
 			$lo_parentRecords = $this->getParentRecords($ao_entity, $lo_threadedRecords);
@@ -205,7 +224,8 @@ abstract class GenericDatatablesController extends Controller {
 			'ao_record' => $ao_entity,
 			'ao_parentRecords' => $lo_parentRecords,
 			'ao_datatable' => $this->datatable,
-			'ab_nesting' => $this->nesting,
+			'ab_nestable' => $this->nestable,
+			'ab_sortable' => $this->sortable,
 			'ab_splitIntoLanguages' => $this->splitIntoLanguages,
 			'ab_translatable' => $this->translatable,
 			'as_languageRealm' => Awyiss::REALM_FRONTEND,
@@ -250,9 +270,16 @@ abstract class GenericDatatablesController extends Controller {
 	 */
 	public function forDatatable(Datatable $ao_datatable, string $as_identifier): static {
 		$this->datatable = $ao_datatable;
+
 		$this->Datatable = $this->{$as_identifier} = $this->fetchTable($as_identifier);
 
-		$this->nesting = LocalConfig::read('nest.enabled');
+		$this->nestable = LocalConfig::read('nest.enabled');
+		if ($this->nestable) {
+			$this->isNestableWithCategoriesEnabled();
+		}
+
+		$this->sortable = LocalConfig::read('systemOrder.field') === 'systemOrder';
+
 		$this->splitIntoLanguages = LocalConfig::read('splitIntoLanguages');
 		$this->translatable = LocalConfig::read('translatable');
 
@@ -403,5 +430,23 @@ abstract class GenericDatatablesController extends Controller {
 
 
 		return $ls_contents;
+	}
+
+
+	/**
+	 * @return void
+	 */
+	protected function isNestableWithCategoriesEnabled(): void {
+		if (!$this->Datatable->hasBehavior('Categories')) {
+			return;
+		}
+
+		$lo_categoriesBehavior = $this->Datatable->getBehavior('Categories');
+
+		if (
+			$lo_categoriesBehavior->getConfig('enabled') && $lo_categoriesBehavior->getConfig('foreignKey') === 'parent_id'
+		) {
+			throw new RuntimeException(sprintf('Cannot use nesting with categories that uses `parent_id` as the foreign key.',));
+		}
 	}
 }

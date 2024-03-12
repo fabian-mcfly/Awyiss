@@ -18,7 +18,7 @@ use Cake\Validation\Validator;
  * and rules based on the config settings for the extending datatable
  */
 abstract class GenericDatatablesTable extends Table {
-	protected bool $nesting;
+	protected bool $nestable;
 	protected bool $splitIntoLanguages;
 	protected bool $translatable;
 
@@ -29,8 +29,8 @@ abstract class GenericDatatablesTable extends Table {
 	public function __construct(array $aa_config = []) {
 		$ls_scope = Inflector::camelize($this->getTable());
 
-		$this->nesting = LocalConfig::read('nest.enabled', false, $ls_scope);
-		if ($this->nesting) {
+		$this->nestable = LocalConfig::read('nest.enabled', false, $ls_scope);
+		if ($this->nestable) {
 			$this->systemOrder['relatedColumns'][] = 'parentId';
 		}
 

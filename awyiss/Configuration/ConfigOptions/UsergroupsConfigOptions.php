@@ -37,6 +37,7 @@ class UsergroupsConfigOptions extends AbstractConfigOptions {
 					identifier: 'limit',
 					localizable: false,
 					nullable: false,
+					personalizable: true,
 					type: ConfigOptionType::Integer,
 				),
 			],

@@ -18,6 +18,14 @@ use Cake\Http\Response;
  */
 class MenusController extends Controller {
 	/**
+	 * @inheritDoc
+	 */
+	protected array $paginate = [
+		'enabled' => true,
+	];
+
+
+	/**
 	 * Overview method
 	 *
 	 * @throws \Exception
@@ -25,10 +33,19 @@ class MenusController extends Controller {
 	public function overview(): void {
 		$this->Authorization->ensure('read');
 
-		$lo_menus = $this->paginate($this->Menus->find());
+		$lo_query = $this->Menus->find();
+
+		$lb_paginated = $this->paginate['enabled'];
+		if ($lb_paginated) {
+			$lo_menus = $this->paginate($lo_query);
+		}
+		else {
+			$lo_menus = $lo_query->all();
+		}
 
 		$this->set([
 			'ao_menus' => $lo_menus,
+			'ab_paginated' => $lb_paginated,
 		]);
 	}
 

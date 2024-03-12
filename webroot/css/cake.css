@@ -657,3 +657,77 @@ table.PageTemplates .InputType-Checkbox:first-child {
 	grid-template-columns:repeat(2, 1fr);
 	gap:25px;
 }
+
+.NestedList {
+	--first-column-width:100px;
+}
+
+.NestedList .ListItem {
+	margin:10px 0 0 ;
+	list-style-type:none;
+}
+
+.NestedList .ListItem.Inactive > .ListItem-Inner {
+	background-image:repeating-linear-gradient(-55deg, rgba(51, 51, 51, 0.05), rgba(51, 51, 51, 0.05) 10px, rgba(51, 51, 51, 0.01) 10px, rgba(51, 51, 51, 0.01) 20px);
+}
+
+.NestedList .ListItem.ParentsInactive > .ListItem-Inner {
+	opacity:0.5;
+	border-style:dashed;
+	font-style:italic;
+}
+
+.NestedList .ListItem-Inner {
+	display:grid;
+	padding:10px;
+	font-size:1rem;
+	border:1px solid rgba(0, 0, 0, .1);
+	grid-template-columns:var(--first-column-width) 100px 1fr 200px;
+}
+
+.NestedList .ListItem:first-child {
+	margin-top:0;
+}
+
+.NestedList ul {
+	margin:0 0 0 20px;
+}
+
+.NestedList ul.Level1 {
+	margin-left:0;
+}
+
+.NestedList ul.Level2 {
+	--first-column-width:80px;
+}
+
+.NestedList ul.Level4 {
+	--first-column-width:60px;
+}
+
+.NestedList ul.Level5 {
+	--first-column-width:40px;
+}
+
+.NestedList ul.Level6 {
+	--first-column-width:20px;
+}
+
+.NestedList .Actions {
+	align-self:end;
+}
+
+.NestedList .Actions a {
+	display:block;
+}
+
+.NestedList .Id {
+	font-size:12px;
+	font-style:italic;
+}
+
+
+.Pages-List .ListItem-Inner,
+.Contents-List .ListItem-Inner {
+	grid-template-columns:var(--first-column-width) 1fr 200px;
+}

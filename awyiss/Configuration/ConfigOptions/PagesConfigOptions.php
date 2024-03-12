@@ -38,6 +38,24 @@ class PagesConfigOptions extends AbstractConfigOptions {
 					type: ConfigOptionType::Bool,
 				),
 			],
+			'paginate' => [
+				new ConfigOption(
+					defaultValue: false,
+					identifier: 'enabled',
+					localizable: false,
+					nullable: true,
+					personalizable: true,
+					type: ConfigOptionType::Bool,
+				),
+				new ConfigOption(
+					defaultValue: 20,
+					identifier: 'limit',
+					localizable: false,
+					nullable: false,
+					personalizable: true,
+					type: ConfigOptionType::Integer,
+				),
+			],
 		]);
 	}
 }

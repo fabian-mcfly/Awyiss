@@ -95,7 +95,22 @@
 		</table>
 	{% endblock %}
 
-	{% block paginationOverview %}
-		{{ helper_Paginator_render() }}
+	{% block listControlOverview %}
+		<ul class="ListControl">
+			{% block listControlOverviewPagination %}
+				{% set pagination = helper_Paginator_render() %}
+				{% if pagination is not empty %}
+					<li class="ListControl-Pagination">
+						{{ pagination|raw }}
+					</li>
+				{% endif %}
+			{% endblock %}
+
+			{% block paginationOverviewLimitControl %}
+				<li class="ListControl-ListLimit">
+					{{ helper_Paginator_limitControl() }}
+				</li>
+			{% endblock %}
+		</ul>
 	{% endblock %}
 </div>

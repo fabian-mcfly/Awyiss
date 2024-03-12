@@ -1,5 +1,10 @@
 {#
-@var ao_pages \Awyiss\Model\Entity\Page[]
+@var ao_pages \Awyiss\Model\Entity\Page[]|\Cake\Datasource\Paging\PaginatedResultSet
+@var localConfig array
+@var ab_contentsEnabled bool
+@var ab_nestable bool
+@var ab_paginated bool
+@var ab_sortable bool
 @var _view \Awyiss\View\BackendView
 #}
 
@@ -14,70 +19,58 @@
 		<h1>{{ __('headline_overview') }}</h1>
 	{% endblock %}
 
-	{% block tableOverview %}
-		<table class="Table-Overview">
-			{% block tableOverviewHead %}
-				<thead>
-					{% block tableOverviewHeadRow %}
-						<tr>
-							{% block tableOverviewHeaderId %}
-								<th>{{ __('id') }}</th>
-							{% endblock %}
+	{% block categoriesFilterOverview %}
+		{{ helper_Categories_filter('category') }}
+	{% endblock %}
 
-							{% block tableOverviewHeaderTitle %}
-								<th>{{ __('title') }}</th>
-							{% endblock %}
+	{% if ab_paginated %}
+		{% block paginatedOverview %}
+			{% include '@Backend/Pages/overview_paginated.twig' with {'la_pages': ao_pages.items().toArray()} %}
+		{% endblock %}
+	{% else %}
+		{% from '@Backend/macro/nested_list.twig' import nestedList %}
 
-							{% block tableOverviewHeaderSystemOrder %}
-								<th>{{ __('system_order') }}</th>
-							{% endblock %}
+		{% block listOverview %}
+			{{ nestedList(ao_pages, {
+				contentsEnabled: ab_contentsEnabled,
+				identifier: 'Pages',
+				template: '@Backend/Pages/overview_nested_list_item.twig',
+			}) }}
+		{% endblock %}
+	{% endif %}
 
-							{% block tableOverviewHeaderActions %}
-								<th class="actions"></th>
-							{% endblock %}
-						</tr>
-					{% endblock %}
-				</thead>
+	{% block listControlOverview %}
+		<ul class="ListControl">
+			{% block listControlOverviewListPaginated %}
+				<li class="ListControl-ListPaginated">
+					{{ helper_Html_link(__('list_paginated'), {action: 'userConfiguration', identifier: 'paginate.enabled', value: 'true'}) }}
+				</li>
 			{% endblock %}
-			{% block tableOverviewBody %}
-				<tbody>
-					{# @var lo_page \Awyiss\Model\Entity\Page #}
-					{% for lo_page in ao_pages %}
-						{% block tableOverviewBodyRow %}
-							<tr>
-								{% block tableOverviewCellId %}
-									<td>{{ lo_page.id }}<br>
-									{{ lo_page.active ? 'true' : 'false' }} - {{ lo_page.parentsActive ? 'true' : 'false' }}</td>
-								{% endblock %}
 
-								{% block tableOverviewCellTitle %}
-									<td>{{ lo_page.title }} <br> {{ lo_page.slug }}</td>
-								{% endblock %}
-
-								{% block tableOverviewCellSystemOrder %}
-									<td>level {{ lo_page.level }} - order {{ lo_page.systemOrder }}</td>
-								{% endblock %}
-
-								{% block tableOverviewCellActions %}
-									<td class="actions">
-										{% if lo_page.duplicate_of is empty and helper_Authorization_isAccessible('contents') %}
-											{{ helper_Html_link(__('view_contents'), {controller: 'contents', action: 'overview', page_id: lo_page.id}) }}
-										{% endif %}
-
-										{% if helper_Authorization_isAccessible('update') %}
-											{{ helper_Html_link(__('edit'), {action: 'edit', id: lo_page.id}) }}
-										{% endif %}
-
-										{% if helper_Authorization_isAccessible('delete') %}
-											{{ helper_Html_link(__('delete'), {action: 'delete', id: lo_page.id}, {confirm: __('confirm_delete', lo_page.id) }) }}
-										{% endif %}
-									</td>
-								{% endblock %}
-							</tr>
-						{% endblock %}
-					{% endfor %}
-				</tbody>
+			{% block listControlOverviewListNested %}
+				<li class="ListControl-ListNested">
+					{{ helper_Html_link(__('list_nested'), {action: 'userConfiguration', identifier: 'paginate.enabled', value: 'false'}) }}
+				</li>
 			{% endblock %}
-		</table>
+
+			{% block listControlOverviewPagination %}
+				{% if ab_paginated %}
+					{% set pagination = helper_Paginator_render() %}
+					{% if pagination is not empty %}
+						<li class="ListControl-Pagination">
+							{{ pagination|raw }}
+						</li>
+					{% endif %}
+				{% endif %}
+			{% endblock %}
+
+			{% block paginationOverviewLimitControl %}
+				{% if ab_paginated %}
+					<li class="ListControl-ListLimit">
+						{{ helper_Paginator_limitControl() }}
+					</li>
+				{% endif %}
+			{% endblock %}
+		</ul>
 	{% endblock %}
 </div>

@@ -11,13 +11,13 @@ use Awyiss\Configuration\ConfigOptionType;
 
 
 /**
- * Provides all configuration options for the ContentTemplates scope
+ * Provides all configuration options for the MenuEntries scope
  */
-class ContentTemplatesConfigOptions extends AbstractConfigOptions {
+class MenuEntriesConfigOptions extends AbstractConfigOptions {
 	/**
 	 * @var string Scope of these options
 	 */
-	protected static string $scope = 'ContentTemplates';
+	protected static string $scope = 'MenuEntries';
 
 
 	/**
@@ -27,10 +27,19 @@ class ContentTemplatesConfigOptions extends AbstractConfigOptions {
 		$this->add(Awyiss::REALM_BACKEND, [
 			'paginate' => [
 				new ConfigOption(
+					defaultValue: true,
+					identifier: 'enabled',
+					localizable: false,
+					nullable: true,
+					personalizable: true,
+					type: ConfigOptionType::Bool,
+				),
+				new ConfigOption(
 					defaultValue: 20,
 					identifier: 'limit',
 					localizable: false,
 					nullable: false,
+					personalizable: true,
 					type: ConfigOptionType::Integer,
 				),
 			],

@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 
-namespace awyiss\Configuration\ConfigOptions;
+namespace Awyiss\Configuration\ConfigOptions;
 
 
 use Awyiss\Awyiss;
@@ -11,13 +11,13 @@ use Awyiss\Configuration\ConfigOptionType;
 
 
 /**
- * Provides all configuration options for the PageTemplates scope
+ * Provides all configuration options for the MediaFolders scope
  */
-class PageTemplatesConfigOptions extends AbstractConfigOptions {
+class MediaFoldersConfigOptions extends AbstractConfigOptions {
 	/**
 	 * @var string Scope of these options
 	 */
-	protected static string $scope = 'PageTemplates';
+	protected static string $scope = 'MediaFolders';
 
 
 	/**
@@ -27,10 +27,19 @@ class PageTemplatesConfigOptions extends AbstractConfigOptions {
 		$this->add(Awyiss::REALM_BACKEND, [
 			'paginate' => [
 				new ConfigOption(
+					defaultValue: true,
+					identifier: 'enabled',
+					localizable: false,
+					nullable: true,
+					personalizable: true,
+					type: ConfigOptionType::Bool,
+				),
+				new ConfigOption(
 					defaultValue: 20,
 					identifier: 'limit',
 					localizable: false,
 					nullable: false,
+					personalizable: true,
 					type: ConfigOptionType::Integer,
 				),
 			],

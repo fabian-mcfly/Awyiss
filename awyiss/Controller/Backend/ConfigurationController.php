@@ -68,7 +68,7 @@ class ConfigurationController extends Controller {
 			'identifier' => 'ASC',
 			'language_shortcode' => 'ASC',
 		]);
-		$this->Categories->filterQuery($lo_configuration);
+		$this->Categories->filterQuery($lo_configuration, null, !$this->paginate['enabled']);
 
 		$la_configuration = $lo_configuration->all()->groupBy('realm')->map(function ($aa_data) {
 			return Hash::expand(collection($aa_data)->groupBy(function (Configuration $ao_entity) {

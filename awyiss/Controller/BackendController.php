@@ -63,7 +63,9 @@ abstract class BackendController extends AppController {
 	 * @inheritDoc
 	 * @var array
 	 */
-	protected array $paginate = [];
+	protected array $paginate = [
+		'enabled' => false,
+	];
 	/**
 	 * @see SystemOrderComponent
 	 * @var array Settings for the SystemOrderComponent
@@ -186,12 +188,15 @@ abstract class BackendController extends AppController {
 		array $aa_settings = []
 	): PaginatedInterface {
 		$la_settings = $aa_settings;
+		$la_settings += $this->paginate;
 		$la_settings += [
 			'order' => [
 				'title' => 'asc',
 			],
 		];
 
+		$this->paginate = [];
+		unset($la_settings['enabled']);
 
 		return parent::paginate($ao_object, $la_settings);
 	}

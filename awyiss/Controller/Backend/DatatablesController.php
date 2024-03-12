@@ -15,8 +15,6 @@ use Cake\Http\Response;
  * Datatables Controller
  *
  * @property \Awyiss\Model\Table\DatatablesTable $Datatables
- * @method Datatable[]|\Cake\Datasource\ResultSetInterface paginate($ao_object = null, array $aa_settings = [])
- * @noinspection PhpFullyQualifiedNameUsageInspection
  */
 class DatatablesController extends Controller {
 	/**
@@ -27,7 +25,8 @@ class DatatablesController extends Controller {
 	public function overview(): void {
 		$this->Authorization->ensure('read');
 
-		$lo_datatables = $this->paginate($this->Datatables->find());
+		$lo_datatables = $this->Datatables->find()->where($this->getOverviewWhere());
+		$lo_datatables = $this->paginate($lo_datatables);
 
 		$this->set([
 			'ao_datatables' => $lo_datatables,

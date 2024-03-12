@@ -19,6 +19,14 @@ use Cake\Http\Response;
  */
 class ContentTemplatesController extends Controller {
 	/**
+	 * @inheritDoc
+	 */
+	protected array $paginate = [
+		'enabled' => true,
+	];
+
+
+	/**
 	 * Overview method
 	 *
 	 * @throws \Exception
