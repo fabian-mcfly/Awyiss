@@ -12,6 +12,51 @@ use Awyiss\Routing\Route\AwyissRoute;
 use Cake\Routing\RouteBuilder;
 
 
+/**
+ * @param \Cake\Routing\RouteBuilder $ao_routeBuilder
+ * @return void
+ */
+function addUserConfigurationRoutes(RouteBuilder $ao_routeBuilder): void {
+	$ao_routeBuilder->connect(
+		'/{lang}/user/configuration/{action}/id:{id}/*',
+		['controller' => 'configuration', 'prefix' => 'Backend/User'],
+	)
+	->setPatterns([
+		'lang' => '[a-zA-Z]{2}',
+		'action' => '(edit|delete)',
+		'id' => '[0-9]+',
+	])
+	->setPass(['id'])
+	->setPersist(['lang', 'controller']);
+
+	$ao_routeBuilder->connect(
+		'/{lang}/user/configuration/{action}/*',
+		[
+			'controller' => 'configuration',
+			'action' => 'overview',
+			'prefix' => 'Backend/User',
+		],
+		[
+			'_name' => Awyiss::REALM_BACKEND . '::user_configuration',
+		],
+	)
+	->setPatterns([
+		'lang' => '[a-zA-Z]{2}',
+		'action' => '[a-zA-Z0-9-_]+',
+	])
+	->setPersist(['lang', 'controller', 'action']);
+
+	$ao_routeBuilder->connect(
+		'/{lang}/user/configuration/*',
+		['controller' => 'configuration', 'action' => 'overview', 'prefix' => 'Backend/User'],
+	)
+	->setPatterns([
+		'lang' => '[a-zA-Z]{2}',
+	])
+	->setPersist(['lang', 'controller']);
+}
+
+
 /** @var RouteBuilder $ao_routes */
 $ao_routes->prefix('Backend', function (RouteBuilder $ao_routeBuilder): void {
 	$ao_routeBuilder->setRouteClass(AwyissRoute::class);
@@ -31,6 +76,8 @@ $ao_routes->prefix('Backend', function (RouteBuilder $ao_routeBuilder): void {
 	$lo_authorization = new Authorization(Awyiss::REALM_BACKEND);
 	$ao_routeBuilder->registerMiddleware('authorization', new AuthorizationMiddleware($lo_authorization));
 	$ao_routeBuilder->applyMiddleware('authorization');
+
+	addUserConfigurationRoutes($ao_routeBuilder);
 
 	$ao_routeBuilder->connect('/{lang}/{controller}/{action}/id:{id}/*')->setPatterns([
 		'lang' => '[a-zA-Z]{2}',

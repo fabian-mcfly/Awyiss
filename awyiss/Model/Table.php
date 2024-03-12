@@ -5,6 +5,7 @@ namespace Awyiss\Model;
 
 
 use ArrayObject;
+use Awyiss\Authentication\IdentityAwareTrait;
 use Awyiss\Awyiss;
 use Awyiss\Core\App;
 use Awyiss\Event\EventManager;
@@ -56,6 +57,7 @@ use RuntimeException;
  * @noinspection PhpFullyQualifiedNameUsageInspection
  */
 class Table extends BaseTable {
+	use IdentityAwareTrait;
 	use InstanceConfigTrait;
 
 
@@ -169,6 +171,10 @@ class Table extends BaseTable {
 	 * @var array Settings for the TranslateBehavior
 	 */
 	protected array $translate = [];
+	/**
+	 * @var array Custom configuration, set by the current user, for the current user
+	 */
+	protected array $userConfiguration;
 
 
 	/**
@@ -211,6 +217,8 @@ class Table extends BaseTable {
 		 */
 		$ls_sourceTable = isset($this->pageRole) ? Inflector::tableize($this->pageRole->name) : $this->getTable();
 
+		$this->setUserConfiguration($ls_sourceTable);
+
 		//Merge the config properties with custom configuration from the database
 		foreach ($this->customConfigProperties as $ls_property) {
 			$ls_path = implode('.', ['Awyiss', Inflector::camelize($ls_sourceTable), Awyiss::REALM_BACKEND, $ls_property]);
@@ -218,6 +226,10 @@ class Table extends BaseTable {
 			if ($la_customConfig && is_array($this->$ls_property ?? null)) {
 				/** @noinspection PhpParamsInspection */
 				$this->$ls_property = Hash::merge($this->$ls_property, $la_customConfig);
+			}
+			if (isset($this->userConfiguration[ Inflector::camelize($ls_sourceTable) ][ $ls_property ])) {
+				/** @noinspection PhpParamsInspection */
+				$this->$ls_property = Hash::merge($this->$ls_property, $this->userConfiguration[ Inflector::camelize($ls_sourceTable) ][ $ls_property ]);
 			}
 		}
 
@@ -996,5 +1008,23 @@ class Table extends BaseTable {
 
 
 		return [key($la_finderData), current($la_finderData)];
+	}
+
+
+	/**
+	 * @param string $as_sourceTable
+	 * @return void
+	 */
+	protected function setUserConfiguration(string $as_sourceTable): void {
+		if (isset($this->userConfiguration)) {
+			return;
+		}
+
+		$this->userConfiguration = [];
+
+		if (!in_array($as_sourceTable, ['configuration', 'i18n', 'languages', 'users', 'user_configuration', 'people'])) {
+			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+			$this->userConfiguration = $this->getIdentity()?->getConfiguration() ?? [];
+		}
 	}
 }

@@ -1,0 +1,117 @@
+{#
+TODO: modify inputs in add/edit, based on option type
+@var ao_configuration \Awyiss\Model\Entity\Configuration
+@var aa_configOptions array
+@var _view \Awyiss\View\BackendView
+#}
+
+{% macro recursiveConfigOptions(aa_items, ai_level = 0, aa_parent = []) %}
+	{% for ls_key, lx_configuration in aa_items %}
+		{% if lx_configuration is iterable %}
+			{% if ai_level == 0 %}
+				<optgroup label="{{ ls_key }}">
+					{{ _self.recursiveConfigOptions(lx_configuration, ai_level + 1, aa_parent|merge([ls_key])) }}
+				</optgroup>
+			{% else %}
+				{{ _self.recursiveConfigOptions(lx_configuration, ai_level + 1, aa_parent|merge([ls_key])) }}
+			{% endif %}
+		{% else %}
+			<option value="{{ aa_parent|length > 0 ? aa_parent|join('.') ~ '.' : '' }}{{ ls_key }}">{{ ls_key }}</option>
+		{% endif %}
+	{% endfor %}
+{% endmacro %}
+
+{% block fieldsetPresentation %}
+	<fieldset>
+		<legend>{{ __('fieldset_presentation') }}</legend>
+
+		{% block fieldsetPresentationInner %}
+			{% block fieldsetPresentationAttributes %}
+				{{ helper_Attributes_allControls('presentation') }}
+			{% endblock %}
+		{% endblock %}
+	</fieldset>
+{% endblock %}
+
+{% block fieldsetConditions %}
+	<fieldset>
+		<legend>{{ __('fieldset_conditions') }}</legend>
+
+		{% block fieldsetConditionsInner %}
+			{% block formControlScope %}
+				{{ helper_Categories_control('scope') }}
+			{% endblock %}
+
+			{% block fieldsetConditionsAttributes %}
+				{{ helper_Attributes_allControls('conditions') }}
+			{% endblock %}
+		{% endblock %}
+	</fieldset>
+{% endblock %}
+
+{% block fieldsetGeneral %}
+	<fieldset>
+		<legend>{{ __('fieldset_general') }}</legend>
+
+		{% block fieldsetGeneralInner %}
+			{% block formControlIdentifier %}
+				{{ helper_Form_control('identifier', {val: ao_configuration.identifier ? ao_configuration.identifier|variable : '' }) }}
+
+				{% block formControlIdentifierSelect %}
+					<label>
+						<select name="">
+							<option value=""></option>
+							{{ _self.recursiveConfigOptions(aa_configOptions) }}
+						</select>
+					</label>
+				{% endblock %}
+			{% endblock %}
+
+			{% block formControlValue %}
+				{{ helper_Form_control('value') }}
+			{% endblock %}
+
+			{% block fieldsetGeneralAttributes %}
+				{{ helper_Attributes_allControls('general') }}
+			{% endblock %}
+		{% endblock %}
+	</fieldset>
+{% endblock %}
+
+{% block fieldsetContent %}
+	<fieldset>
+		<legend>{{ __('fieldset_content') }}</legend>
+
+		{% block fieldsetContentInner %}
+			{% block fieldsetContentAttributes %}
+				{{ helper_Attributes_allControls('content') }}
+			{% endblock %}
+		{% endblock %}
+	</fieldset>
+{% endblock %}
+
+{% block fieldsetMedia %}
+	<fieldset>
+		<legend>{{ __('fieldset_media') }}</legend>
+
+		{% block fieldsetMediaInner %}
+			{% block fieldsetMediaAttributes %}
+				{{ helper_Attributes_allControls('media') }}
+			{% endblock %}
+		{% endblock %}
+	</fieldset>
+{% endblock %}
+
+{% block fieldsetAttributes %}
+	<fieldset>
+		<legend>{{ __('fieldset_attributes') }}</legend>
+
+		{% block fieldsetAttributesInner %}
+			{% block fieldsetAttributesAttributes %}
+				{{ helper_Attributes_allControls('attributes') }}
+			{% endblock %}
+		{% endblock %}
+	</fieldset>
+{% endblock %}
+
+{{- helper_Form_hidden('reload_form', {val: 0}) }}

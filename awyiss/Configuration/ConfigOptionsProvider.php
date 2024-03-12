@@ -7,9 +7,8 @@ namespace Awyiss\Configuration;
 use Awyiss\Configuration\ConfigOptions\GenericDatatablesConfigOptions;
 use Awyiss\Configuration\ConfigOptions\GenericPagesConfigOptions;
 use Awyiss\Core\App;
-use Awyiss\Model\Entity\Datatable;
 use Awyiss\Model\Enum\PageRoleEnumInterface;
-use Cake\Datasource\FactoryLocator;
+use Cake\Datasource\ConnectionManager;
 use Cake\Utility\Inflector;
 use Cake\Utility\Text;
 use ReflectionClass;
@@ -322,13 +321,18 @@ class ConfigOptionsProvider {
 
 
 		if (!isset(static::$datatables)) {
-			//Get all datatables from the database because we want them to have a generic policy too
-			/** @var \Awyiss\Model\Table\DatatablesTable $lo_table */
-			$lo_table = FactoryLocator::get('Table')->get('Datatables');
-			static::$datatables = $lo_table->findAllAndCache()->indexBy(function (Datatable $ao_datatable) {
-				return static::sanitizeScope($ao_datatable->identifier);
-			})->map(function (Datatable $ao_datatable) {
-				return new GenericDatatablesConfigOptions($ao_datatable->identifier);
+			/*
+			 * Get all datatables from the database because we want them to have a generic policy too
+			 * Use a raw query to avoid the need for a model which would in return again try to load the config options
+			 * due to the UserConfiguration.
+			 */
+			$lo_connection = ConnectionManager::get('default');
+			$la_results = $lo_connection->selectQuery('*', 'datatables')->where(['deleted' => 0])->execute()->fetchAll('assoc');
+
+			static::$datatables = collection($la_results)->indexBy(function (array $aa_record) {
+				return static::sanitizeScope($aa_record['identifier']);
+			})->map(function (array $aa_record) {
+				return new GenericDatatablesConfigOptions($aa_record['identifier']);
 			})->toArray();
 		}
 

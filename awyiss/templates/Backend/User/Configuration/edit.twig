@@ -1,0 +1,31 @@
+{#
+@var ao_configuration \Awyiss\Model\Entity\Configuration
+@var aa_configOptions array
+@var _view \Awyiss\View\BackendView
+#}
+
+<div class="Configuration Form Edit">
+	{{ helper_Form_create(ao_configuration, {method: 'post', idPrefix: 'Configuration'}) }}
+
+	{{ helper_Form_checkbox('save_as_copy', {id: 'SaveAsCopy', value: true}) }}
+
+	{% block headlineEdit %}
+		<h1>{{ __('headline_edit') }}</h1>
+	{% endblock %}
+
+	{% block formEditButtons %}
+		<label for="SaveAsCopy">{{ __('as_copy') }}</label>
+		{{ helper_Form_button(__('save')) }}
+		{{ helper_Form_button(__('save_close'), {name: 'submit', value: 'submit_close'}) }}
+	{% endblock %}
+
+	{% block formEdit %}
+		{% include('@Backend/User/Configuration/form.twig') %}
+	{% endblock %}
+
+	{% block formEditButtonsBottom %}
+		{{ block('formEditButtons') }}
+	{% endblock %}
+
+	{{ helper_Form_end() -}}
+</div>

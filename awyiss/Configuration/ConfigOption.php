@@ -45,6 +45,10 @@ class ConfigOption {
 		'localized' => false,
 	];
 	/**
+	 * @var bool Can the config value be set by the user
+	 */
+	protected bool $personalizable = false;
+	/**
 	 * @var string|null
 	 */
 	protected ?string $title = null;
@@ -69,6 +73,7 @@ class ConfigOption {
 	 * @param string $description
 	 * @param bool $localizable
 	 * @param array|bool|null $nullable
+	 * @param bool $personalizable
 	 * @param string|null $title
 	 * @param callable|null $typecast
 	 * @param callable|array|string|null $values
@@ -80,21 +85,16 @@ class ConfigOption {
 		string $description = '',
 		bool $localizable = true,
 		bool|array|null $nullable = null,
+		bool $personalizable = false,
 		?string $title = null,
 		?callable $typecast = null,
 		array|callable|string|null $values = null,
 	) {
-		if (isset($defaultValue)) {
-			$this->setDefaultValue($defaultValue);
-		}
+		$this->setDefaultValue($defaultValue);
 
-		if (isset($description)) {
-			$this->setDescription($description);
-		}
+		$this->setDescription($description);
 
-		if (isset($localizable) && is_bool($localizable)) {
-			$this->setLocalizable($localizable);
-		}
+		$this->setLocalizable($localizable);
 
 		$this->setIdentifier($identifier);
 
@@ -114,15 +114,13 @@ class ConfigOption {
 			}
 		}
 
+		$this->setPersonalizable($personalizable);
+
 		$this->setType($type ?? ConfigOptionType::String);
 
-		if (isset($typecast)) {
-			$this->setTypecast($typecast);
-		}
+		$this->setTypecast($typecast);
 
-		if (isset($values)) {
-			$this->setValues($values);
-		}
+		$this->setValues($values);
 	}
 
 
@@ -217,6 +215,23 @@ class ConfigOption {
 	 */
 	public function setNullable(bool $ab_nullable, bool $ab_localized = false): void {
 		$this->nullable[ $ab_localized ? 'localized' : 'global' ] = $ab_nullable;
+	}
+
+
+	/**
+	 * @return bool
+	 */
+	public function isPersonalizable(): bool {
+		return $this->personalizable;
+	}
+
+
+	/**
+	 * @param bool $ab_nullable
+	 * @param bool $ab_localized
+	 */
+	public function setPersonalizable(bool $ab_personalizable): void {
+		$this->personalizable = $ab_personalizable;
 	}
 
 

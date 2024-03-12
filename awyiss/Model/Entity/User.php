@@ -7,10 +7,15 @@ namespace Awyiss\Model\Entity;
 use Authentication\IdentityInterface;
 use Authentication\PasswordHasher\DefaultPasswordHasher;
 use Awyiss\Authorization\IdentityPermissionsInterface;
+use Awyiss\Authorization\Permission\Permission;
+use Awyiss\Authorization\Permission\PermissionAccess;
 use Awyiss\Authorization\Permission\PermissionCollection;
+use Awyiss\Awyiss;
+use Awyiss\Configuration\ConfigOptionsProvider;
 use Awyiss\Model\Entity;
 use Cake\Datasource\FactoryLocator;
 use Cake\Event\EventDispatcherTrait;
+use Cake\Utility\Hash;
 use RuntimeException;
 
 
@@ -57,6 +62,10 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 	protected array $_hidden = [
 		'password',
 	];
+	/**
+	 * @var array
+	 */
+	protected array $userConfiguration;
 	/**
 	 * @var \Awyiss\Authorization\Permission\PermissionCollection|null
 	 */
@@ -145,6 +154,14 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 			 * @var UsergroupPermission $lo_usergrousPermissions
 			 */
 			$this->permissionCollection = new PermissionCollection($lo_authorizationService, array_merge(...array_column($la_usergroups, 'usergroup_permissions')));
+
+			foreach (['read', 'create', 'update', 'delete'] as $ls_identifier) {
+				$this->permissionCollection->add(Permission::createFromArray([
+					'scope' => 'user_configuration',
+					'identifier' => $ls_identifier,
+					'access' => PermissionAccess::Granted,
+				]));
+			}
 		}
 
 
@@ -160,6 +177,48 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 
 
 		return $lo_permissionCollection->scopeIsAccessible($as_scope, $aa_additionalData, ...$ax_identifier);
+	}
+
+
+	/**
+	 * @return array
+	 */
+	public function getConfiguration(): array {
+		if (!isset($this->userConfiguration)) {
+			$lo_table = FactoryLocator::get('Table')->get('UserConfiguration');
+			$lo_records = $lo_table->find()->where(['user_id' => $this->id])->all();
+
+			$this->userConfiguration = $lo_records->groupBy(function (UserConfiguration $ao_entity) {
+				return ConfigOptionsProvider::sanitizeScope($ao_entity->scope);
+			})->map(function (array $aa_records) {
+				return Hash::expand(collection($aa_records)->indexBy(function (UserConfiguration $ao_entity) {
+					$la_identifier = array_map(function (string $as_identifier) {
+						return ConfigOptionsProvider::sanitizeIdentifier($as_identifier);
+					}, explode('.', $ao_entity->identifier));
+
+
+					return implode('.', $la_identifier);
+				})->map(function (UserConfiguration $ao_entity) {
+					return ConfigOptionsProvider::typecastConfigValue(
+						$ao_entity->scope,
+						Awyiss::REALM_BACKEND,
+						$ao_entity->identifier,
+						$ao_entity->value
+					);
+				})->toArray());
+			})->toArray();
+		}
+
+
+		return $this->userConfiguration;
+	}
+
+
+	/**
+	 * @return void
+	 */
+	public function resetConfiguration(): void {
+		unset($this->userConfiguration);
 	}
 
 
