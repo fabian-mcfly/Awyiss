@@ -44,6 +44,12 @@ use Cake\Datasource\FactoryLocator;
  */
 class Content extends Entity {
 	/**
+	 * @var array $contentTemplates All content templates
+	 */
+	protected static array $contentTemplates;
+
+
+	/**
 	 * @inheritDoc
 	 */
 	protected array $_accessible = [
@@ -139,6 +145,85 @@ class Content extends Entity {
 
 
 		return $lo_table->getParents($this, $aa_options, $ai_currentLevel);
+	}
+
+
+	/**
+	 * Creates and returns a specific text, used for list items and so on
+	 * It uses the first of following db colums identifier, filename, title if present and
+	 * prepends a translatable text in case the entity is inactive (active = 0)
+	 * The label can be translated as well
+	 *
+	 * @noinspection PhpUnused
+	 */
+	protected function _getLabel(): string {
+		$la_fields = ['duplicateOf', 'title', 'subtitle', 'text', 'subtitle', 'text', 'cssClass', 'contentTemplateId'];
+
+		$ls_title = 'Content';
+
+		foreach ($la_fields as $ls_column) {
+			if (
+				empty($this->$ls_column) ||
+				(
+					!in_array($ls_column, ['duplicateOf', 'cssClass', 'contentTemplateId']) &&
+					strlen(trim(strip_tags(str_replace('&nbsp;', '', (string)$this->$ls_column)))) === 0
+				)
+			) {
+				continue;
+			}
+
+			$ls_title = $this->$ls_column;
+
+			if ($ls_column === 'duplicateOf') {
+				$lo_content = $this->duplicateOfContent;
+				if (!$lo_content) {
+					$lo_table = FactoryLocator::get('Table')->get($this->getSource());
+					$lo_table->loadInto($this, ['DuplicateOfContents']);
+					$lo_content = $this->duplicateOfContent;
+				}
+
+				if ($lo_content) {
+					$ls_title = __('duplicate_of') . ': ' . $lo_content->label . ' (ID: ' . $lo_content->id . ')';
+					break;
+				}
+			}
+
+			if ($ls_column === 'contentTemplateId') {
+				$lo_template = $this->contentTemplate;
+				if (!$lo_template) {
+					if (!isset(static::$contentTemplates)) {
+						$lo_table = FactoryLocator::get('Table')->get('ContentTemplates');
+						static::$contentTemplates = $lo_table->find()->all()->indexBy('id')->toArray();
+					}
+
+					$lo_template = $this->contentTemplate = static::$contentTemplates[ $this->contentTemplateId ] ?? null;
+				}
+
+				if ($lo_template) {
+					$ls_title = '<em>' . $lo_template->label . '</em>';
+					break;
+				}
+			}
+
+			if ($ls_column === 'cssClass') {
+				$ls_title = '<em>' . $ls_title . '</em>';
+			}
+
+			$ls_title = trim(strip_tags(str_replace('&nbsp;', '', (string)$ls_title)));
+			$ls_title = mb_strlen($ls_title) > 100 ? mb_substr($ls_title, 0, 100) . '...' : $ls_title;
+
+			if (!empty($ls_title)) {
+				break;
+			}
+		}
+
+		$ls_inactive = '';
+		if (key_exists('active', $this->_fields) && empty($this->active)) {
+			$ls_inactive = __d('contents', 'inactive') . ' ';
+		}
+
+
+		return $ls_inactive . $ls_title;
 	}
 
 
