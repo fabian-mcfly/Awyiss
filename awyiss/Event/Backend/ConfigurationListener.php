@@ -6,6 +6,7 @@ namespace Awyiss\Event\Backend;
 
 use Awyiss\Awyiss;
 use Awyiss\Configuration\ConfigOptionsProvider;
+use Awyiss\Core\LocalConfig;
 use Awyiss\Event\EventListenerTrait;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity\Configuration;
@@ -36,7 +37,7 @@ class ConfigurationListener implements EventListenerInterface {
 		return [
 			'Model.Configuration.beforeSave' => 'beforeSave',
 			'Model.Configuration.afterSaveCommit' => 'afterSaveCommit',
-			'Model.Configuration.afterDelete' => 'createCustomConfiguration',
+			'Model.Configuration.afterDelete' => 'afterDelete',
 			'Configuration.createCustomConfiguration' => 'createCustomConfiguration',
 			'Configuration.deleteCustomConfiguration' => 'deleteCustomConfiguration',
 		];
@@ -73,7 +74,21 @@ class ConfigurationListener implements EventListenerInterface {
 	 * @throws \Exception
 	 */
 	public function afterSaveCommit(Event $ao_event, Configuration $ao_entity): void {
+		$this->unnestEntries($ao_event, $ao_entity);
 		$this->rebuildSystemOrder($ao_event, $ao_entity);
+		$this->createCustomConfiguration();
+	}
+
+
+	/**
+	 * @param \Cake\Event\Event $ao_event
+	 * @param \Awyiss\Model\Entity\Configuration $ao_entity
+	 * @return void
+	 * @noinspection PhpUnusedParameterInspection
+	 * @throws \Exception
+	 */
+	public function afterDelete(Event $ao_event, Configuration $ao_entity): void {
+		$this->unnestEntries($ao_event, $ao_entity, true);
 		$this->createCustomConfiguration();
 	}
 
@@ -125,12 +140,82 @@ class ConfigurationListener implements EventListenerInterface {
 	/**
 	 * @param \Cake\Event\Event $ao_event
 	 * @param \Awyiss\Model\Entity\Configuration $ao_entity
+	 * @param bool $ab_deleted
+	 * @return void
+	 * @throws \ReflectionException
+	 */
+	protected function unnestEntries(Event $ao_event, Configuration $ao_entity, bool $ab_deleted = false): void {
+		if ($ao_entity->identifier !== 'nest.enabled') {
+			return;
+		}
+
+		$lb_defaultNest = false;
+		if ($ab_deleted) {
+			$lo_configuration = ConfigOptionsProvider::loadConfigOptions($ao_entity->scope);
+			$lo_configOption = $lo_configuration?->getConfigOption(Awyiss::REALM_BACKEND, $ao_entity->identifier);
+
+			$lb_defaultNest = $lo_configOption?->getDefaultValue() ?? false;
+		}
+
+		if (
+			(
+				$ab_deleted &&
+				!$lb_defaultNest
+			) ||
+			(
+				!$ab_deleted &&
+				$ao_entity->isDirty('value') &&
+				!$ao_entity->value
+			)
+		) {
+			/** @var \Awyiss\Model\Table $lo_table */
+			$lo_table = FactoryLocator::get('Table')->get(Inflector::camelize($ao_entity->scope));
+
+			if (!$lo_table->hasBehavior('Nest')) {
+				return;
+			}
+
+			$lo_schema = $lo_table->getSchema();
+			$ls_column = $lo_table->getBehavior('Nest')->getConfig('children.foreignKey');
+
+			if (!$lo_schema->hasColumn($ls_column)) {
+				return;
+			}
+
+			$lo_table->updateAll([
+				$ls_column => null,
+			], [
+				$ls_column . ' IS NOT' => null,
+			]);
+
+
+			$ls_field = LocalConfig::read([
+				'systemOrder',
+				'field',
+			], 'systemOrder', Inflector::camelize($ao_entity->scope));
+
+			$li_direction = LocalConfig::read([
+				'systemOrder',
+				'direction',
+			], SORT_ASC, Inflector::camelize($ao_entity->scope));
+
+			if ($lo_table->hasBehavior('SystemOrder')) {
+				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+				$lo_table->getBehavior('SystemOrder')->rebuildSystemOrder($ao_event, $ls_field, $li_direction);
+			}
+		}
+	}
+
+
+	/**
+	 * @param \Cake\Event\Event $ao_event
+	 * @param \Awyiss\Model\Entity\Configuration $ao_entity
 	 * @return void
 	 */
 	protected function rebuildSystemOrder(Event $ao_event, Configuration $ao_entity): void {
 		if (
 			$ao_entity->identifier === 'system_order.field' &&
-			$ao_entity->isDirty('identifier') &&
+			$ao_entity->isDirty('value') &&
 			$ao_entity->value !== 'systemOrder'
 		) {
 			$li_direction = Configure::read(implode('.', [
@@ -150,7 +235,7 @@ class ConfigurationListener implements EventListenerInterface {
 		}
 		elseif (
 			$ao_entity->identifier === 'system_order.direction' &&
-			$ao_entity->isDirty('identifier')
+			$ao_entity->isDirty('value')
 		) {
 			$ls_field = Configure::read(implode('.', [
 				'Awyiss',
