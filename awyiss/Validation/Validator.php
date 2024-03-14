@@ -176,7 +176,7 @@ class Validator extends BaseValidator {
 
 			$lx_pass = $lo_rule->get('pass')[0] ?? [];
 			if ($lx_pass) {
-				if (in_array($ls_name, ['sameAs', 'notSameAs', 'compareWith', 'compareFields'])) {
+				if (in_array($ls_name, ['equalTo', 'sameAs', 'notSameAs', 'compareWith', 'compareFields'])) {
 					//No domain fallback here, since it certainly is a field inside the domain, not something generic
 					$lx_pass = __dx($this->i18nDomain, $ls_name, Inflector::underscore($lx_pass));
 				}

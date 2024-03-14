@@ -18,10 +18,11 @@ and builds a recursive list out of it
 		{% set aa_settings = aa_settings|merge({template: '@Backend/macro/nested_list_item.twig'}) %}
 	{% endif -%}
 
-	<ul class="{{ aa_settings.identifier|pluralize }}-List NestedList Level{{ aa_settings.level }}">
+	<ul class="{{ aa_settings.identifier|pluralize }}-List NestedList Level{{ aa_settings.level }}
+		{%- if aa_settings.class is defined %} {{ aa_settings.class }}{% endif -%}">
 		{% for lo_entity in aa_entities %}
-			<li class="ListItem
-				{{ aa_settings.identifier }}-ListItem {{ aa_settings.identifier }}-ListItem{{ lo_entity.id -}}
+			<li class="ListItem {{ aa_settings.identifier }}-ListItem {{ aa_settings.identifier }}-ListItem{{ lo_entity.id -}}
+				{%- if lo_entity.class is defined %} {{ lo_entity.class }}{% endif -%}
 				{%- if lo_entity.active is defined and lo_entity.active == false %} Inactive{% endif -%}
 				{%- if lo_entity.parentsActive is defined and lo_entity.parentsActive == false %} ParentsInactive{% endif -%}
 			">

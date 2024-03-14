@@ -1,10 +1,63 @@
-{% block formControlColumnwidth %}
-	{{ helper_Form_control('columnwidth', {required: lo_contentTemplateElement.required}) }}
+{% block formControlActive %}
+	{{ helper_Form_control('active') }}
 {% endblock %}
 
 
+{% block formControlContentTemplateId %}
+	{{ helper_Form_control('content_template_id', {
+		empty: false,
+		options: settings.contentTemplates.combine('id', 'title')
+	}) }}
+{% endblock %}
+
+
+{% block formControlLanguageShortcode %}
+	{{ helper_Locale_control('language_shortcode', {languageRealm: settings.languageRealm, val: settings.languageShortcode}) }}
+{% endblock %}
+
+
+{% block formControlSystemOrder %}
+	{{ helper_SystemOrder_control('system_order', {entity: settings.content}) }}
+{% endblock %}
+
+
+{% block formControlPage %}
+	{{ helper_Categories_control('page') }}
+{% endblock %}
+
+
+{% block formControlContentAreaId %}
+	{{ helper_Form_control('content_area_id', {
+		disabled: settings.contentAreas.unavailable|column('id'),
+		empty: false,
+		options: combine(settings.contentAreas.all|column('id'), settings.contentAreas.all|column('label'))
+	}) }}
+{% endblock %}
+
+
+{% block formControlColumnWidth %}
+	{{ helper_Form_control('column_width', {empty: false, options: settings.columnWidths, required: lo_contentTemplateElement.required, type: 'select'}) }}
+{% endblock %}
+
+
+{% block formControlColumnIndent %}
+	{{ helper_Form_control('column_indent', {options: settings.columnIndents, required: lo_contentTemplateElement.required, type: 'select'}) }}
+{% endblock %}
+
+
+{% block formControlColumnLast %}
+	{{ helper_Form_control('column_last') }}
+{% endblock %}
+
+
+{% block formControlColumnRtl %}
+	{{ helper_Form_control('column_rtl') }}
+{% endblock %}
+
+
+
 {% block formControlParentId %}
-	{{ helper_Form_control('parent_id', {options: ao_threadedContents.printer('label', 'id', '- '), required: lo_contentTemplateElement.required}) }}
+	{{ helper_Form_control('parent_id', {options: settings.threadedContents.printer('label', 'id', '- '), required: lo_contentTemplateElement.required}) }}
 {% endblock %}
 
 

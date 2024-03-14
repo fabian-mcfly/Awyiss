@@ -10,11 +10,13 @@ use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity\Content;
 use Awyiss\Model\Entity\Page;
 use Awyiss\Routing\Router;
+use Awyiss\Utilities\Contents\ColumnInterface;
 use Cake\Collection\Collection;
 use Cake\Collection\CollectionInterface;
 use Cake\Core\Configure;
 use Cake\Datasource\Exception\InvalidPrimaryKeyException;
 use Cake\Datasource\Exception\RecordNotFoundException;
+use Cake\Datasource\ResultSetDecorator;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
 use Cake\ORM\Query\SelectQuery;
@@ -70,7 +72,29 @@ class ContentsController extends Controller {
 		 */
 		$lo_contents = $this->Contents->find()->where($this->getOverviewWhere());
 		$this->Categories->filterQuery($lo_contents, null, !$this->paginate['enabled']);
-		$la_contents = $lo_contents->find('threaded')->all()->groupBy('contentAreaId')->toArray();
+		$lo_contents = $lo_contents->formatResults(function (ResultSetDecorator $ao_result): ResultSetDecorator {
+			/** @var \Awyiss\Model\Entity\Content $lo_content */
+			foreach ($ao_result as $lo_content) {
+				$lo_content->class = $lo_content->column['width']->getCssClass();
+
+				if ($lo_content->column['indent']) {
+					$lo_content->class .= ' ' . $lo_content->column['indent']->getCssClass();
+				}
+
+				if ($lo_content->columnRtl) {
+					$lo_content->class .= ' Column-RTL';
+				}
+
+				if ($lo_content->columnLast) {
+					$lo_content->class .= ' Column-Last';
+				}
+			}
+
+
+			return $ao_result;
+		})->find('threaded')->all();
+
+		$la_contents = $lo_contents->groupBy('contentAreaId')->toArray();
 
 		$la_contentAreas = array_combine(array_column($this->page->pageTemplate->contentAreas, 'id'), array_column($this->page->pageTemplate->contentAreas, 'label'));
 		$la_unknownContentAreas = array_diff_key($la_contents, $la_contentAreas);
@@ -78,12 +102,18 @@ class ContentsController extends Controller {
 			$la_contentAreas[ $li_contentAreaId ] = null;
 		}
 
+		/** @var class-string<\Awyiss\Utilities\Contents\ColumnSystemInterface> $ls_columnSystemClass */
+		$ls_columnSystemClass = $this->Contents->getColumnSystemClass();
+
 		$this->set([
 			'aa_contents' => $la_contents,
 			'aa_contentAreas' => $la_contentAreas,
 			'aa_unknownContentAreas' => $la_unknownContentAreas,
 			'ao_page' => $this->page,
 			'as_forScope' => $this->Contents->getForScope(),
+			'aa_columnWidths' => $this->Contents->getColumnWidths(),
+			'aa_columnIndents' => $this->Contents->getColumnIndents(),
+			'as_columnSystemName' => $ls_columnSystemClass::getName(),
 		]);
 	}
 
@@ -108,38 +138,7 @@ class ContentsController extends Controller {
 			$this->save($lo_content);
 		}
 
-		$lo_contentTemplates = $this->getContentTemplates();
-		$this->ensurePossibleTemplate($lo_content, $lo_contentTemplates);
-
-		$la_contentAreas = $this->getContentAreas($lo_content, $this->page);
-		$this->ensurePossibleContentArea($lo_content, $la_contentAreas);
-
-		$lo_threadedContents = $this->getThreadedContents($lo_content);
-		$this->ensurePossibleParentId($lo_content, $lo_threadedContents);
-
-		$la_assignedAttributes = $this->getAssignedAttributes($lo_content);
-
-		$ls_languageShortcode = $this->request->getData('languageShortcode') ?: $this->page->languageShortcode;
-
-		/** @var \Awyiss\Model\Entity\ContentTemplate $lo_selectedContentTemplate */
-		$lo_selectedContentTemplate = $lo_contentTemplates->firstMatch(['id' => $lo_content->contentTemplateId]);
-		$la_contentElementsByFieldset = [];
-		if (!empty($lo_selectedContentTemplate->contentTemplateElements)) {
-			$la_contentElementsByFieldset = collection($lo_selectedContentTemplate->contentTemplateElements)->groupBy('fieldset')->toArray();
-		}
-
-		$this->set([
-			'ao_content' => $lo_content,
-			'ao_contentTemplates' => $lo_contentTemplates,
-			'ao_threadedContents' => $lo_threadedContents,
-			'ao_page' => $this->page,
-			'aa_assignedAttributes' => $la_assignedAttributes,
-			'aa_contentAreas' => $la_contentAreas,
-			'aa_contentElementsByFieldset' => $la_contentElementsByFieldset,
-			'as_forScope' => $this->Contents->getForScope(),
-			'as_languageRealm' => Awyiss::REALM_FRONTEND,
-			'as_languageShortcode' => $ls_languageShortcode,
-		]);
+		$this->setViewVars($lo_content);
 	}
 
 
@@ -168,38 +167,7 @@ class ContentsController extends Controller {
 			$this->save($lo_content, 'edit');
 		}
 
-		$lo_contentTemplates = $this->getContentTemplates();
-		$this->ensurePossibleTemplate($lo_content, $lo_contentTemplates);
-
-		$la_contentAreas = $this->getContentAreas($lo_content, $this->page);
-		$this->ensurePossibleContentArea($lo_content, $la_contentAreas);
-
-		$lo_threadedContents = $this->getThreadedContents($lo_content);
-		$this->ensurePossibleParentId($lo_content, $lo_threadedContents);
-
-		$la_assignedAttributes = $this->getAssignedAttributes($lo_content);
-
-		$ls_languageShortcode = $this->request->getData('language_shortcode') ?: $this->page->languageShortcode;
-
-		/** @var \Awyiss\Model\Entity\ContentTemplate $lo_selectedContentTemplate */
-		$lo_selectedContentTemplate = $lo_contentTemplates->firstMatch(['id' => $lo_content->contentTemplateId]);
-		$la_contentElementsByFieldset = [];
-		if (!empty($lo_selectedContentTemplate->contentTemplateElements)) {
-			$la_contentElementsByFieldset = collection($lo_selectedContentTemplate->contentTemplateElements)->groupBy('fieldset')->toArray();
-		}
-
-		$this->set([
-			'ao_content' => $lo_content,
-			'ao_contentTemplates' => $lo_contentTemplates,
-			'ao_threadedContents' => $lo_threadedContents,
-			'ao_page' => $this->page,
-			'aa_assignedAttributes' => $la_assignedAttributes,
-			'aa_contentAreas' => $la_contentAreas,
-			'aa_contentElementsByFieldset' => $la_contentElementsByFieldset,
-			'as_forScope' => $this->Contents->getForScope(),
-			'as_languageRealm' => Awyiss::REALM_FRONTEND,
-			'as_languageShortcode' => $ls_languageShortcode,
-		]);
+		$this->setViewVars($lo_content);
 	}
 
 
@@ -650,12 +618,15 @@ class ContentsController extends Controller {
 
 		foreach (
 			array_diff(
-				$this->Contents->ContentTemplates->getAvailableContentElements(),
+				array_keys($this->Contents->ContentTemplates->getAvailableContentElements()),
 				array_column($lo_contentTemplate->contentTemplateElements, 'identifier')
 			) as $ls_element
 		) {
-			if ($ls_element === 'columnwidth') {
-				$ao_content->set($ls_element, 1.0);
+			if ($ls_element === 'column_width') {
+				$la_columnWidths = $this->Contents->getColumnWidths();
+
+				$ao_content->set($ls_element, key($la_columnWidths));
+
 				continue;
 			}
 
@@ -673,5 +644,58 @@ class ContentsController extends Controller {
 		) {
 			$ao_content->set($ls_element);
 		}
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Entity\Content $lo_content
+	 * @return void
+	 * @throws \Exception
+	 */
+	protected function setViewVars(Content $lo_content): void {
+		$lo_contentTemplates = $this->getContentTemplates();
+		$this->ensurePossibleTemplate($lo_content, $lo_contentTemplates);
+
+		$la_contentAreas = $this->getContentAreas($lo_content, $this->page);
+		$this->ensurePossibleContentArea($lo_content, $la_contentAreas);
+
+		$lo_threadedContents = $this->getThreadedContents($lo_content);
+		$this->ensurePossibleParentId($lo_content, $lo_threadedContents);
+
+		$la_assignedAttributes = $this->getAssignedAttributes($lo_content);
+
+		$ls_languageShortcode = $this->request->getData('language_shortcode') ?: $this->page->languageShortcode;
+
+		/** @var \Awyiss\Model\Entity\ContentTemplate $lo_selectedContentTemplate */
+		$lo_selectedContentTemplate = $lo_contentTemplates->firstMatch(['id' => $lo_content->contentTemplateId]);
+		$la_contentElementsByFieldset = [];
+		if (!empty($lo_selectedContentTemplate->contentTemplateElements)) {
+			$la_contentElementsByFieldset = collection($lo_selectedContentTemplate->contentTemplateElements)->groupBy('fieldset')->toArray();
+		}
+
+		$la_columnWidths = $this->Contents->getColumnWidths();
+		$la_columnWidths = array_map(function (ColumnInterface $ao_column): string {
+			return $ao_column->getLabel();
+		}, $la_columnWidths);
+
+		$la_columnIndents = $this->Contents->getColumnIndents();
+		$la_columnIndents = array_map(function (ColumnInterface $ao_column): string {
+			return $ao_column->getLabel();
+		}, $la_columnIndents);
+
+		$this->set([
+			'ao_content' => $lo_content,
+			'ao_contentTemplates' => $lo_contentTemplates,
+			'ao_threadedContents' => $lo_threadedContents,
+			'ao_page' => $this->page,
+			'aa_assignedAttributes' => $la_assignedAttributes,
+			'aa_contentAreas' => $la_contentAreas,
+			'aa_contentElementsByFieldset' => $la_contentElementsByFieldset,
+			'as_forScope' => $this->Contents->getForScope(),
+			'as_languageRealm' => Awyiss::REALM_FRONTEND,
+			'as_languageShortcode' => $ls_languageShortcode,
+			'aa_columnWidths' => $la_columnWidths,
+			'aa_columnIndents' => $la_columnIndents,
+		]);
 	}
 }

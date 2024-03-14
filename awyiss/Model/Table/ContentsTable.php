@@ -10,6 +10,7 @@ use Awyiss\Model\Entity\Page;
 use Awyiss\Model\Enum\PageRoleEnumInterface;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
+use Awyiss\Utilities\Contents\AwyissColumnSystem;
 use Awyiss\Validation\Validator;
 use Cake\Collection\Collection;
 use Cake\Collection\CollectionInterface;
@@ -61,6 +62,21 @@ class ContentsTable extends Table {
 		'identifier' => 'page',
 	];
 	/**
+	 * @var array The column system
+	 */
+	protected array $columnSystem = [
+		'className' => AwyissColumnSystem::class,
+		'maxColumns' => 5,
+	];
+	/**
+	 * @var array The column widths
+	 */
+	protected array $columnWidths;
+	/**
+	 * @var array The column indents
+	 */
+	protected array $columnIndents;
+	/**
 	 * @var string
 	 */
 	private string $forScope;
@@ -81,6 +97,18 @@ class ContentsTable extends Table {
 	protected array $systemOrder = [
 		'relatedColumns' => ['pageId', 'contentAreaId', 'parentId'],
 	];
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public function initialize(array $aa_config): void {
+		$this->customConfigProperties[] = 'columnSystem';
+
+		parent::initialize($aa_config);
+
+		$this->initializeColumnSystem();
+	}
 
 
 	/**
@@ -108,6 +136,43 @@ class ContentsTable extends Table {
 			'className' => 'Contents',
 			'foreignKey' => 'duplicate_of',
 		]);
+	}
+
+
+	/**
+	 * @return class-string<\Awyiss\Utilities\Contents\ColumnSystemInterface>
+	 */
+	public function getColumnSystemClass(): string {
+		return $this->columnSystem['className'];
+	}
+
+
+	/**
+	 * @return array
+	 */
+	public function getColumnWidths(): array {
+		return $this->columnWidths;
+	}
+
+
+	/**
+	 * @return array
+	 */
+	public function getColumnIndents(): array {
+		return $this->columnIndents;
+	}
+
+
+	/**
+	 * @return void
+	 */
+	protected function initializeColumnSystem(): void {
+		/** @var class-string<\Awyiss\Utilities\Contents\ColumnSystemInterface> $ls_className */
+		$ls_className = $this->columnSystem['className'];
+		$ls_className::setMaxDenominator($this->columnSystem['maxColumns']);
+
+		$this->columnWidths = $ls_className::getColumnWidths();
+		$this->columnIndents = $ls_className::getColumnIndents();
 	}
 
 
@@ -186,9 +251,23 @@ class ContentsTable extends Table {
 		]);
 
 
-		$ao_validator->add('columnwidth', [
-			'decimal' => ['rule' => ['decimal']],
-			'maxLength' => ['rule' => ['maxLength', 4]],
+		$ao_validator->add('columnWidth', [
+			'inList' => [
+				'rule' => [
+					'inList',
+					array_keys($this->getColumnWidths()),
+				],
+			],
+		]);
+
+
+		$ao_validator->add('columnIndent', [
+			'inList' => [
+				'rule' => [
+					'inList',
+					array_keys($this->getColumnIndents()),
+				],
+			],
 		]);
 
 
@@ -320,6 +399,25 @@ class ContentsTable extends Table {
 
 			return empty($la_errors);
 		}, 'validContentArea');
+
+
+		$ao_rules->add(function (Content $ao_entity): bool {
+			/** @var \Awyiss\Utilities\Contents\ColumnInterface $lo_width */
+			$lo_width = $ao_entity->column['width'];
+			/** @var \Awyiss\Utilities\Contents\ColumnInterface $lo_indent */
+			$lo_indent = $ao_entity->column['indent'];
+
+			$lf_totalWidth = $lo_width->getPercentage() + ($lo_indent?->getPercentage() ?? 0);
+
+			if ($lf_totalWidth > 1) {
+				return false;
+			}
+
+			return true;
+		}, 'validWidthIndentCombination', [
+			'errorField' => '_general',
+			'message' => __d($this->getI18nDomain(), 'error_valid_width_indent_combination'),
+		]);
 
 
 		$ao_rules->add(
@@ -638,7 +736,7 @@ class ContentsTable extends Table {
 	protected function validateUnassignedElements(ContentTemplate $ao_contentTemplate, Content $ao_entity, Validator $ao_validator): void {
 		foreach (
 			array_diff(
-				$this->ContentTemplates->getAvailableContentElements(),
+				array_keys($this->ContentTemplates->getAvailableContentElements()),
 				array_column($ao_contentTemplate->contentTemplateElements, 'identifier')
 			) as $ls_element
 		) {
@@ -646,10 +744,32 @@ class ContentsTable extends Table {
 				continue;
 			}
 
-			if ($ls_element === 'columnwidth') {
+			if ($ls_element === 'column_width') {
+				$la_columnWidths = $this->getColumnWidths();
+
 				$ao_validator->add($ls_element, [
-					'isFullwidth' => [
-						'rule' => ['equalTo', 1.0],
+					'equalTo' => [
+						'rule' => ['equalTo', key($la_columnWidths)],
+					],
+				]);
+
+				continue;
+			}
+
+			if ($ls_element === 'column_last') {
+				$ao_validator->add($ls_element, [
+					'equalTo' => [
+						'rule' => ['equalTo', false],
+					],
+				]);
+
+				continue;
+			}
+
+			if ($ls_element === 'column_rtl') {
+				$ao_validator->add($ls_element, [
+					'equalTo' => [
+						'rule' => ['equalTo', false],
 					],
 				]);
 

@@ -21,7 +21,10 @@ use Cake\Datasource\FactoryLocator;
  * @property string|null $subtitle
  * @property string|null $text
  * @property string|null $link
- * @property float $columnwidth
+ * @property float $columnWidth
+ * @property float $columnIndent
+ * @property bool $columnLast
+ * @property bool $columnRtl
  * @property string|null $cssClass
  * @property int|null $duplicateOf
  * @property string|null $data
@@ -41,12 +44,21 @@ use Cake\Datasource\FactoryLocator;
  * @property \Awyiss\Model\Entity\Content $duplicateOfContent
  * @property \Awyiss\Model\Entity\Content $parentContent
  * @property \Awyiss\Model\Entity\Content[] $childContents
+ * @property array{width: \Awyiss\Utilities\Contents\ColumnInterface, indent: ?\Awyiss\Utilities\Contents\ColumnInterface} $column
  */
 class Content extends Entity {
 	/**
 	 * @var array $contentTemplates All content templates
 	 */
 	protected static array $contentTemplates;
+	/**
+	 * @var array The column widths
+	 */
+	protected static array $columnWidths;
+	/**
+	 * @var array The column indents
+	 */
+	protected static array $columnIndents;
 
 
 	/**
@@ -61,7 +73,10 @@ class Content extends Entity {
 		'link' => true,
 		'contentAreaId' => true,
 		'contentTemplateId' => true,
-		'columnwidth' => true,
+		'columnWidth' => true,
+		'columnIndent' => true,
+		'columnLast' => true,
+		'columnRtl' => true,
 		'cssClass' => true,
 		'duplicateOf' => true,
 		'data' => true,
@@ -77,6 +92,10 @@ class Content extends Entity {
 		'content_area_id' => 'contentAreaId',
 		'content_template_id' => 'contentTemplateId',
 		'css_class' => 'cssClass',
+		'column_width' => 'columnWidth',
+		'column_indent' => 'columnIndent',
+		'column_last' => 'columnLast',
+		'column_rtl' => 'columnRtl',
 		'duplicate_of' => 'duplicateOf',
 		'system_order' => 'systemOrder',
 		'created_by' => 'createdBy',
@@ -90,6 +109,10 @@ class Content extends Entity {
 		'duplicating_contents' => 'duplicatingContents',
 		'duplicate_of_content' => 'duplicateOfContent',
 	];
+	/**
+	 * @inheritdoc
+	 */
+	protected array $_virtual = ['column', 'label'];
 
 
 	/**
@@ -149,14 +172,10 @@ class Content extends Entity {
 
 
 	/**
-	 * Creates and returns a specific text, used for list items and so on
-	 * It uses the first of following db colums identifier, filename, title if present and
-	 * prepends a translatable text in case the entity is inactive (active = 0)
-	 * The label can be translated as well
-	 *
-	 * @noinspection PhpUnused
+	 * @param bool $ab_includeHtml
+	 * @return string
 	 */
-	protected function _getLabel(): string {
+	public function getForcedTitle(bool $ab_includeHtml = true): string {
 		$la_fields = ['duplicateOf', 'title', 'subtitle', 'text', 'subtitle', 'text', 'cssClass', 'contentTemplateId'];
 
 		$ls_title = 'Content';
@@ -164,10 +183,7 @@ class Content extends Entity {
 		foreach ($la_fields as $ls_column) {
 			if (
 				empty($this->$ls_column) ||
-				(
-					!in_array($ls_column, ['duplicateOf', 'cssClass', 'contentTemplateId']) &&
-					strlen(trim(strip_tags(str_replace('&nbsp;', '', (string)$this->$ls_column)))) === 0
-				)
+				(!in_array($ls_column, ['duplicateOf', 'cssClass', 'contentTemplateId']) && strlen(trim(strip_tags(str_replace('&nbsp;', '', (string)$this->$ls_column)))) === 0)
 			) {
 				continue;
 			}
@@ -179,6 +195,7 @@ class Content extends Entity {
 				if (!$lo_content) {
 					$lo_table = FactoryLocator::get('Table')->get($this->getSource());
 					$lo_table->loadInto($this, ['DuplicateOfContents']);
+					/** @noinspection PhpConditionAlreadyCheckedInspection */
 					$lo_content = $this->duplicateOfContent;
 				}
 
@@ -200,13 +217,14 @@ class Content extends Entity {
 				}
 
 				if ($lo_template) {
-					$ls_title = '<em>' . $lo_template->label . '</em>';
+					$ls_title = 'Template: ' . ($ab_includeHtml ? '<em>' . $lo_template->label . '</em>' : $lo_template->label);
 					break;
 				}
 			}
 
-			if ($ls_column === 'cssClass') {
+			if ($ls_column === 'cssClass' && $ab_includeHtml) {
 				$ls_title = '<em>' . $ls_title . '</em>';
+				break;
 			}
 
 			$ls_title = trim(strip_tags(str_replace('&nbsp;', '', (string)$ls_title)));
@@ -224,6 +242,56 @@ class Content extends Entity {
 
 
 		return $ls_inactive . $ls_title;
+	}
+
+
+	/**
+	 * @return array<string, ?\Awyiss\Utilities\Contents\ColumnInterface>
+	 */
+	protected function _getColumn(): array {
+		if (!isset(static::$columnWidths)) {
+			/** @var \Awyiss\Model\Table\ContentsTable $lo_table */
+			$lo_table = FactoryLocator::get('Table')->get($this->getSource());
+			static::$columnWidths = $lo_table->getColumnWidths();
+			static::$columnIndents = $lo_table->getColumnIndents();
+		}
+
+		return [
+			'width' => static::$columnWidths[ $this->columnWidth ] ?? reset(static::$columnWidths),
+			'indent' => static::$columnIndents[ $this->columnIndent ] ?? null,
+		];
+	}
+
+
+
+	/**
+	 * Creates and returns a specific text, used for list items and so on
+	 * It uses the first of following db colums identifier, filename, title if present and
+	 * prepends a translatable text in case the entity is inactive (active = 0)
+	 * The label can be translated as well
+	 *
+	 * @noinspection PhpUnused
+	 */
+	protected function _getLabel(): string {
+		return $this->getForcedTitle(false);
+	}
+
+
+	/**
+	 * @param bool|null $ab_last
+	 * @return bool
+	 */
+	protected function _setColumnLast(?bool $ab_last = null): bool {
+		return (bool)$ab_last;
+	}
+
+
+	/**
+	 * @param bool|null $ab_rtl
+	 * @return bool
+	 */
+	protected function _setColumnRtl(?bool $ab_rtl = null): bool {
+		return (bool)$ab_rtl;
 	}
 
 

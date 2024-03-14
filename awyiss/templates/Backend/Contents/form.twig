@@ -14,7 +14,18 @@
 
 {% use '@Backend/Contents/blocks.twig' %}
 
-{% macro renderFormControls(aa_assignedContentTemplateElements = [], ao_threadedContents = {}) %}
+{% set macroSettings = {
+	columnWidths: aa_columnWidths,
+	columnIndents: aa_columnIndents,
+	content: ao_content,
+	contentAreas: aa_contentAreas,
+	contentTemplates: ao_contentTemplates,
+	languageRealm: as_languageRealm,
+	languageShortcode: as_languageShortcode,
+	threadedContents: ao_threadedContents,
+} %}
+
+{% macro renderFormControls(aa_assignedContentTemplateElements = [], settings) %}
 	{% for lo_contentTemplateElement in aa_assignedContentTemplateElements %}
 		{% if lo_contentTemplateElement.identifier[:11] == 'attributes.' %}
 			{{ helper_Attributes_control(lo_contentTemplateElement.identifier[11:], {required: lo_contentTemplateElement.required}) }}
@@ -30,18 +41,7 @@
 			<legend>{{ __('fieldset_presentation') }}</legend>
 
 			{% block fieldsetPresentationInner %}
-				{% block formControlActive %}
-					{{ helper_Form_control('active') }}
-				{% endblock %}
-
-				{% block formControlContentTemplateId %}
-					{{ helper_Form_control('content_template_id', {
-						empty: false,
-						options: ao_contentTemplates.combine('id', 'title')
-					}) }}
-				{% endblock %}
-
-				{{ _self.renderFormControls(aa_contentElementsByFieldset.presentation ?? [], ao_threadedContents) }}
+				{{ _self.renderFormControls(aa_contentElementsByFieldset.presentation ?? [], macroSettings) }}
 			{% endblock %}
 		</fieldset>
 	{% endblock %}
@@ -51,27 +51,7 @@
 			<legend>{{ __('fieldset_conditions') }}</legend>
 
 			{% block fieldsetConditionsInner %}
-				{% block formControlLanguageShortcode %}
-					{{ helper_Locale_control('language_shortcode', {languageRealm: as_languageRealm, val: as_languageShortcode}) }}
-				{% endblock %}
-
-				{% block formControlPageId %}
-					{{ helper_Categories_control('page') }}
-				{% endblock %}
-
-				{% block formControlContentArea %}
-					{{ helper_Form_control('content_area_id', {
-						disabled: aa_contentAreas.unavailable|column('id'),
-						empty: false,
-						options: combine(aa_contentAreas.all|column('id'), aa_contentAreas.all|column('label'))
-					}) }}
-				{% endblock %}
-
-				{% block formControlSystemOrder %}
-					{{ helper_SystemOrder_control('system_order', {entity: ao_content}) }}
-				{% endblock %}
-
-				{{ _self.renderFormControls(aa_contentElementsByFieldset.conditions ?? [], ao_threadedContents) }}
+				{{ _self.renderFormControls(aa_contentElementsByFieldset.conditions ?? [], macroSettings) }}
 			{% endblock %}
 		</fieldset>
 	{% endblock %}
@@ -81,7 +61,7 @@
 			<legend>{{ __('fieldset_general') }}</legend>
 
 			{% block fieldsetGeneralInner %}
-				{{ _self.renderFormControls(aa_contentElementsByFieldset.general ?? [], ao_threadedContents) }}
+				{{ _self.renderFormControls(aa_contentElementsByFieldset.general ?? [], macroSettings) }}
 			{% endblock %}
 		</fieldset>
 	{% endblock %}
@@ -91,7 +71,7 @@
 			<legend>{{ __('fieldset_content') }}</legend>
 
 			{% block fieldsetContentInner %}
-				{{ _self.renderFormControls(aa_contentElementsByFieldset.content ?? [], ao_threadedContents) }}
+				{{ _self.renderFormControls(aa_contentElementsByFieldset.content ?? [], macroSettings) }}
 			{% endblock %}
 		</fieldset>
 	{% endblock %}
@@ -101,7 +81,7 @@
 			<legend>{{ __('fieldset_media') }}</legend>
 
 			{% block fieldsetMediaInner %}
-				{{ _self.renderFormControls(aa_contentElementsByFieldset.media ?? [], ao_threadedContents) }}
+				{{ _self.renderFormControls(aa_contentElementsByFieldset.media ?? [], macroSettings) }}
 			{% endblock %}
 		</fieldset>
 	{% endblock %}
@@ -111,7 +91,7 @@
 			<legend>{{ __('fieldset_attributes') }}</legend>
 
 			{% block fieldsetAttributesInner %}
-				{{ _self.renderFormControls(aa_contentElementsByFieldset.attributes ?? [], ao_threadedContents) }}
+				{{ _self.renderFormControls(aa_contentElementsByFieldset.attributes ?? [], macroSettings) }}
 			{% endblock %}
 		</fieldset>
 	{% endblock %}
@@ -133,7 +113,7 @@
 					{{ helper_Form_control('data.' ~ li_counter ~ '.value') }}
 				{% endblock %}
 
-				{{ _self.renderFormControls(aa_contentElementsByFieldset.data ?? [], ao_threadedContents) }}
+				{{ _self.renderFormControls(aa_contentElementsByFieldset.data ?? [], macroSettings) }}
 			{% endblock %}
 		</fieldset>
 	{% endblock %}
@@ -143,7 +123,7 @@
 			<legend>{{ __('fieldset_publication') }}</legend>
 
 			{% block fieldsetPublicationInner %}
-				{{ _self.renderFormControls(aa_contentElementsByFieldset.publication ?? [], ao_threadedContents) }}
+				{{ _self.renderFormControls(aa_contentElementsByFieldset.publication ?? [], macroSettings) }}
 			{% endblock %}
 		</fieldset>
 	{% endblock %}

@@ -80,14 +80,20 @@
 
 				<ul class="NoList ContentElements">
 					{% set li_elementCounter = 0 %}
-					{% for ls_availableElement in aa_availableContentElements %}
+					{% for ls_availableElement, lb_assignable in aa_availableContentElements %}
 						{% set lo_contentTemplateElement = ls_availableElement in la_assignedContentElements ? ao_contentTemplate.contentTemplateElements[ li_elementCounter ] : null %}
 
 						{% block formControlContentElement %}
 							<li>
 								<label for="ContentTemplate-ContentElements-{{ ls_availableElement|camelize }}">
+									{% if lb_assignable == false %}
+										{{ helper_Form_hidden('content_template_elements[' ~ loop.index0 ~ '][identifier]', {
+											value: ls_availableElement,
+										}) }}
+									{% endif %}
 									{{ helper_Form_checkbox('content_template_elements[' ~ loop.index0 ~ '][identifier]', {
-										checked: ls_availableElement in la_assignedContentElements,
+										checked: lb_assignable == false or ls_availableElement in la_assignedContentElements,
+										disabled: lb_assignable == false,
 										hiddenField: false,
 										id: 'ContentTemplate-ContentElements-' ~ ls_availableElement|camelize,
 										value: ls_availableElement,

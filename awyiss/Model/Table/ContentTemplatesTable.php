@@ -34,14 +34,23 @@ class ContentTemplatesTable extends Table {
 	 * @var array<int, string>
 	 */
 	protected array $availableContentElements = [
-		'parent_id',
-		'css_class',
-		'columnwidth',
-		'title',
-		'subtitle',
-		'text',
-		'link',
-		'duplicate_of',
+		'active' => false,
+		'content_template_id' => false,
+		'language_shortcode' => false,
+		'page' => false,
+		'content_area_id' => false,
+		'parent_id' => true,
+		'system_order' => false,
+		'css_class' => true,
+		'column_width' => true,
+		'column_indent' => true,
+		'column_last' => true,
+		'column_rtl' => true,
+		'title' => true,
+		'subtitle' => true,
+		'text' => true,
+		'link' => true,
+		'duplicate_of' => true,
 	];
 	/**
 	 * @var array<int, string>
@@ -266,7 +275,7 @@ class ContentTemplatesTable extends Table {
 					continue;
 				}
 
-				if (!in_array($lo_assignedContentElement->identifier, $this->availableContentElements)) {
+				if (!in_array($lo_assignedContentElement->identifier, array_keys($this->availableContentElements))) {
 					$lb_valid = false;
 					break;
 				}

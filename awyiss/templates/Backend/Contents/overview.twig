@@ -38,6 +38,7 @@
 
 					{% block listOverview %}
 						{{ nestedList(aa_contents[ li_contentAreaId ], {
+							class: 'ColumnSystem-' ~ as_columnSystemName,
 							identifier: 'Contents',
 							template: '@Backend/Contents/overview_nested_list_item.twig',
 						}) }}

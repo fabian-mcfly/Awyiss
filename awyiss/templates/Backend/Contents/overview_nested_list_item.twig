@@ -1,11 +1,18 @@
 {#
-@var lo_entity \Awyiss\Model\Entity
+@var lo_entity \Awyiss\Model\Entity\Content
 @var settings array
 #}
 
 <div class="{{ settings.identifier }}-ListItem-Inner ListItem-Inner">
 	<span class="Id">{{ lo_entity.id }}</span>
-	<span class="Title">{{ lo_entity.label|raw }}</span>
+	<span class="Title">
+		{{ lo_entity.forcedTitle|raw }}
+		<br>
+		{{ lo_entity.column.width.label }}
+		{% if lo_entity.column.indent %}
+			/ {{ lo_entity.column.indent.label }}
+		{% endif %}
+	</span>
 	<span class="Actions">
 		{% if helper_Authorization_isAccessible('update') %}
 			{{ helper_Html_link(__('edit'), {action: 'edit', id: lo_entity.id}) }}
