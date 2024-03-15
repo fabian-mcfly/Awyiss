@@ -85,7 +85,7 @@ class AttributesTable extends Table {
 		'custom_select',
 		'custom_select_multiple',
 		'textarea',
-		'textarea_plain',
+		'texteditor',
 		'password',
 		'hidden',
 	];

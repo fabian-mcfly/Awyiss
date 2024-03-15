@@ -201,9 +201,13 @@ class AttributesHelper extends Helper {
 				$la_options['type'] = 'select';
 				$la_options['multiple'] = true;
 				break;
-			case 'textarea_plain':
+			case 'texteditor':
 				$la_options['type'] = 'textarea';
-				$la_options['data-plain'] = true;
+				$la_options['data-editor'] = true;
+				break;
+			case 'password':
+				$la_options['placeholder'] = '******';
+				$la_options['val'] = '';
 				break;
 			/*case 'time':
 			case 'datetime':
