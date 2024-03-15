@@ -91,16 +91,11 @@ abstract class BackendController extends AppController {
 		//Merge the config properties with custom configuration from the database
 		$ls_scope = $this->getName();
 
-		$la_userConfiguration = $this->getIdentity()?->getConfiguration();
 		foreach ($this->customConfigProperties as $ls_property) {
 			$ls_path = implode('.', ['Awyiss', $ls_scope, Awyiss::REALM_BACKEND, $ls_property]);
 			$la_customConfig = Configure::read($ls_path);
 			if ($la_customConfig && is_array($this->$ls_property)) {
 				$this->$ls_property = Hash::merge($this->$ls_property, $la_customConfig);
-			}
-
-			if (isset($la_userConfiguration[ $ls_scope ][ $ls_property ])) {
-				$this->$ls_property = Hash::merge($this->$ls_property, $la_userConfiguration[ $ls_scope ][ $ls_property ]);
 			}
 		}
 
@@ -281,6 +276,7 @@ abstract class BackendController extends AppController {
 		$ls_identifier = $lo_request->getParam('identifier') ?: $lo_request->getData('identifier');
 		$lx_value = $lo_request->getParam('value') ?: $lo_request->getData('value');
 
+		/** @var \Awyiss\Model\Entity\User $lo_identity */
 		$lo_identity = $this->getIdentity();
 
 		$la_config = [
@@ -290,6 +286,7 @@ abstract class BackendController extends AppController {
 		];
 
 		//Get the UserConfiguration table and fetch a matching config
+		/** @var \Awyiss\Model\Table $lo_table */
 		$lo_table = $this->fetchTable('UserConfiguration');
 		$lo_config = $lo_table->find()->where([
 			'user_id' => $lo_identity->id,

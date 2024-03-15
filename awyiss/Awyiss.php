@@ -27,6 +27,7 @@ use Cake\Http\Middleware\BodyParserMiddleware;
 use Cake\Http\MiddlewareQueue;
 use Cake\Routing\Middleware\AssetMiddleware;
 use Cake\Routing\RouteBuilder;
+use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 use Composer\Autoload\ClassLoader;
 use Psr\Http\Message\ResponseInterface;
@@ -46,8 +47,18 @@ class Awyiss extends BaseApplication {
 	 * The name of the backend realm
 	 */
 	final public const REALM_BACKEND = 'Backend';
-	protected ClassLoader $classLoader;
+
+
+	/**
+	 * @var string|null
+	 */
 	protected static ?string $realm = null;
+
+
+	/**
+	 * @var \Composer\Autoload\ClassLoader
+	 */
+	protected ClassLoader $classLoader;
 
 
 	/**
@@ -329,6 +340,9 @@ class Awyiss extends BaseApplication {
 			 */
 			Configure::load($ls_fileName, 'default', false);
 			if (Configure::read('Awyiss')) {
+				static::addUserConfiguration();
+
+
 				return;
 			}
 			else {
@@ -342,6 +356,9 @@ class Awyiss extends BaseApplication {
 
 				Configure::load($ls_fileName, 'default', false);
 				if (Configure::read('Awyiss')) {
+					static::addUserConfiguration();
+
+
 					return;
 				}
 			}
@@ -421,6 +438,10 @@ class Awyiss extends BaseApplication {
 		ksort($la_config);
 
 		Configure::write($la_config);
+
+		if (!$ab_forceReload) {
+			static::addUserConfiguration();
+		}
 	}
 
 
@@ -455,5 +476,31 @@ class Awyiss extends BaseApplication {
 			static::REALM_FRONTEND,
 			static::REALM_BACKEND,
 		];
+	}
+
+
+	/**
+	 * Adds the user configuration to the Awyiss configuration
+	 *
+	 * @return void
+	 */
+	protected static function addUserConfiguration(): void {
+		$lo_event = EventManager::instance()->dispatch('Authentication.requestIdentity');
+
+		$lo_identity = $lo_event->getResult();
+		$la_userConfig = $lo_identity?->getConfiguration();
+
+		if (!$la_userConfig) {
+			return;
+		}
+
+		$la_userConfig = array_map(function (array $aa_config) {
+			return ['Backend' => $aa_config];
+		}, $la_userConfig);
+
+		$la_config = Configure::read('Awyiss');
+		$la_config = Hash::merge($la_config, $la_userConfig);
+
+		Configure::write('Awyiss', $la_config);
 	}
 }
