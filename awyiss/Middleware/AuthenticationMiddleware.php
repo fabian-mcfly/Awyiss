@@ -7,6 +7,7 @@ namespace Awyiss\Middleware;
 use Authentication\AuthenticationServiceInterface;
 use Authentication\AuthenticationServiceProviderInterface;
 use Authentication\Middleware\AuthenticationMiddleware as BaseAuthenticationMiddleware;
+use Awyiss\Awyiss;
 use Awyiss\Event\EventListenersProvider;
 
 
@@ -22,6 +23,6 @@ class AuthenticationMiddleware extends BaseAuthenticationMiddleware {
 	public function __construct(AuthenticationServiceInterface|AuthenticationServiceProviderInterface $subject) {
 		$this->subject = $subject;
 
-		EventListenersProvider::loadListener('authentication', 'Global');
+		EventListenersProvider::loadListener('authentication', Awyiss::getRealm());
 	}
 }

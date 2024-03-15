@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 
-namespace Awyiss\Event\Global;
+namespace Awyiss\Event\Backend;
 
 
 use Authentication\Authenticator\AuthenticatorInterface;
@@ -11,6 +11,7 @@ use Awyiss\Event\EventListenerTrait;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Table;
 use Awyiss\Routing\Router;
+use Cake\Core\Exception\CakeException;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
 
@@ -89,10 +90,15 @@ class AuthenticationListener implements EventListenerInterface {
 	 * @return void
 	 */
 	public function authenticationRequestIdentity(Event $ao_event): void {
-		/** @var Table $lo_model */
-		$lo_class = $ao_event->getSubject();
+		try {
+			/** @var Table $lo_model */
+			$lo_class = $ao_event->getSubject();
+		}
+		catch (CakeException) {
+			$lo_class = null;
+		}
 
-		if (method_exists($lo_class, 'setIdentity')) {
+		if ($lo_class && method_exists($lo_class, 'setIdentity')) {
 			if (!isset($this->identity)) {
 				$this->initializedClasses['identity'][] = $lo_class;
 			}

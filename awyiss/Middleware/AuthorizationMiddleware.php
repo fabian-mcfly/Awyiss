@@ -6,6 +6,7 @@ namespace Awyiss\Middleware;
 
 use Awyiss\Authorization\AuthorizationServiceInterface;
 use Awyiss\Authorization\AuthorizationServiceProviderInterface;
+use Awyiss\Awyiss;
 use Awyiss\Event\EventListenersProvider;
 use Awyiss\Routing\Router;
 use Cake\Core\InstanceConfigTrait;
@@ -46,7 +47,7 @@ class AuthorizationMiddleware implements MiddlewareInterface {
 
 		$this->subject = $ao_subject;
 
-		EventListenersProvider::loadListener('authorization', 'Global');
+		EventListenersProvider::loadListener('authorization', Awyiss::getRealm());
 	}
 
 

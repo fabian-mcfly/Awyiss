@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 
-namespace Awyiss\Event\Global;
+namespace Awyiss\Event\Backend;
 
 
 use Awyiss\Authorization\AuthorizationServiceInterface;
