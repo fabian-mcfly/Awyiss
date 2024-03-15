@@ -37,6 +37,10 @@ class SoftDeleteBehavior extends Behavior {
 			'beforeDelete',
 			'afterDeleteCommit',
 		],
+		'implementedFinders' => [
+			'deleted' => 'findDeleted',
+			'withDeleted' => 'findWithDeleted',
+		],
 		'implementedMethods' => [
 			'softDelete' => 'softDelete',
 		],
