@@ -48,6 +48,7 @@ abstract class BackendController extends AppController {
 		'categories',
 		'eventTrigger',
 		'paginate',
+		'publicationData',
 		'systemOrder',
 	];
 	/**
@@ -67,6 +68,10 @@ abstract class BackendController extends AppController {
 	protected array $paginate = [
 		'enabled' => false,
 	];
+	/**
+	 * @var array Settings for the PublicationDataBehavior
+	 */
+	protected array $publicationData = [];
 	/**
 	 * @see SystemOrderComponent
 	 * @var array Settings for the SystemOrderComponent

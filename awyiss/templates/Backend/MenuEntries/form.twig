@@ -109,4 +109,10 @@
 	</fieldset>
 {% endblock %}
 
-{{- helper_Form_hidden('reload_form', {val: 0}) }}
+{% block elementPublicationData %}
+	{{ element('publication_data/fieldset') }}
+{% endblock %}
+
+{% block formInputReloadForm %}
+	{{ helper_Form_hidden('reload_form', {val: 0}) }}
+{% endblock %}

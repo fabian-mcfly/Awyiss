@@ -70,6 +70,10 @@ class Entity extends BaseEntity {
 		if (!array_key_exists('_translations', $this->_accessible)) {
 			$this->setAccess('_translations', true);
 		}
+
+		if (!array_key_exists('_publicationData', $this->_accessible)) {
+			$this->setAccess('_publicationData', true);
+		}
 	}
 
 

@@ -113,16 +113,4 @@
 	</fieldset>
 {% endblock %}
 
-{% block fieldsetPublication %}
-	<fieldset>
-		<legend>{{ __('fieldset_publication') }}</legend>
-
-		{% block fieldsetPublicationInner %}
-			{% block fieldsetPublicationAttributes %}
-				{{ helper_Attributes_allControls('publication') }}
-			{% endblock %}
-		{% endblock %}
-	</fieldset>
-{% endblock %}
-
 {{- helper_Form_hidden('reload_form', {val: 0}) }}

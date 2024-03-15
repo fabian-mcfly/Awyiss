@@ -104,6 +104,7 @@ class Table extends BaseTable {
 		'categories',
 		'eventTrigger',
 		'nest',
+		'publicationData',
 		'systemOrder',
 	];
 	/**
@@ -145,6 +146,10 @@ class Table extends BaseTable {
 	 * @var array Settings for the EventTriggerBehavior
 	 */
 	protected array $eventTrigger = [];
+	/**
+	 * @var array Settings for the PublicationDataBehavior
+	 */
+	protected array $publicationData = [];
 	/**
 	 * Validator class.
 	 *
@@ -264,6 +269,10 @@ class Table extends BaseTable {
 
 		if ($this->nest) {
 			$this->addBehavior('Nest', $this->nest);
+		}
+
+		if ($this->getTable() !== 'publication_data') {
+			$this->addBehavior('PublicationData', $this->publicationData);
 		}
 
 		if (!empty($aa_config['translateLanguage']) && !empty($this->translate['fields'])) {

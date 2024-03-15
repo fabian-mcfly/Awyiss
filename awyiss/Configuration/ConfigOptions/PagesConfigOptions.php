@@ -43,7 +43,7 @@ class PagesConfigOptions extends AbstractConfigOptions {
 					defaultValue: false,
 					identifier: 'enabled',
 					localizable: false,
-					nullable: true,
+					nullable: false,
 					personalizable: true,
 					type: ConfigOptionType::Bool,
 				),
@@ -54,6 +54,14 @@ class PagesConfigOptions extends AbstractConfigOptions {
 					nullable: false,
 					personalizable: true,
 					type: ConfigOptionType::Integer,
+				),
+			],
+			'publicationData' => [
+				new ConfigOption(
+					defaultValue: true,
+					identifier: 'enabled',
+					localizable: false,
+					type: ConfigOptionType::Bool,
 				),
 			],
 		]);

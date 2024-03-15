@@ -1,0 +1,21 @@
+{% block fieldsetPublicationData %}
+	{% if config.publicationData.enabled %}
+		<fieldset>
+			<legend>{{ __('fieldset_publication_data') }}</legend>
+
+			{% block formControlPublicationStart %}
+				{{ helper_Form_control('_publication_data.start.date_time', {type: 'datetime'}) }}
+			{% endblock %}
+
+			{% block formControlPublicationEnd %}
+				{{ helper_Form_control('_publication_data.end.date_time', {type: 'datetime'}) }}
+			{% endblock %}
+
+			{% block fieldsetPublicationDataInner %}
+				{% block fieldsetPublicationDataAttributes %}
+					{{ helper_Attributes_allControls('publication') }}
+				{% endblock %}
+			{% endblock %}
+		</fieldset>
+	{% endif %}
+{% endblock %}

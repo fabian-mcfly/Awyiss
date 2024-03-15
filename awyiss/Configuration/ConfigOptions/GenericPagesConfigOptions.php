@@ -129,6 +129,14 @@ class GenericPagesConfigOptions extends AbstractGenericConfigOptions {
 					type: ConfigOptionType::Integer,
 				),
 			],
+			'publicationData' => [
+				new ConfigOption(
+					defaultValue: true,
+					identifier: 'enabled',
+					localizable: false,
+					type: ConfigOptionType::Bool,
+				),
+			],
 			'systemOrder' => [
 				new ConfigOption(
 					defaultValue: SORT_ASC,

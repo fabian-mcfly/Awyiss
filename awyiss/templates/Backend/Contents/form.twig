@@ -118,15 +118,11 @@
 		</fieldset>
 	{% endblock %}
 
-	{% block fieldsetPublication %}
-		<fieldset class="Fieldset-Publication">
-			<legend>{{ __('fieldset_publication') }}</legend>
-
-			{% block fieldsetPublicationInner %}
-				{{ _self.renderFormControls(aa_contentElementsByFieldset.publication ?? [], macroSettings) }}
-			{% endblock %}
-		</fieldset>
+	{% block elementPublicationData %}
+		{{ element('publication_data/fieldset') }}
 	{% endblock %}
 </div>
 
-{{- helper_Form_hidden('reload_form', {val: 0}) }}
+{% block formInputReloadForm %}
+	{{ helper_Form_hidden('reload_form', {val: 0}) }}
+{% endblock %}

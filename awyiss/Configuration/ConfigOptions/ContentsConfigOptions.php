@@ -42,6 +42,14 @@ class ContentsConfigOptions extends AbstractConfigOptions {
 					type: ConfigOptionType::Integer,
 				),
 			],
+			'publicationData' => [
+				new ConfigOption(
+					defaultValue: true,
+					identifier: 'enabled',
+					localizable: false,
+					type: ConfigOptionType::Bool,
+				),
+			],
 		]);
 	}
 
