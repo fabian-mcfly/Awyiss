@@ -83,15 +83,6 @@ class Behavior extends BaseBehavior {
 
 
 	/**
-	 * @return array
-	 * @noinspection PhpUnused
-	 */
-	public function getDefaultEvents(): array {
-		return $this->defaultEvents;
-	}
-
-
-	/**
 	 * @return void
 	 */
 	public function enable(): void {

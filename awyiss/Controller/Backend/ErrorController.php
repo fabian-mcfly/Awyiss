@@ -6,7 +6,6 @@ namespace Awyiss\Controller\Backend;
 
 use Awyiss\Controller\BackendController as Controller;
 use Cake\Event\EventInterface;
-use Cake\Http\Response;
 
 
 /**
@@ -28,10 +27,9 @@ class ErrorController extends Controller {
 	 * beforeRender callback.
 	 *
 	 * @param EventInterface<\Cake\Controller\Controller> $ao_event Event.
-	 * @return \Cake\Http\Response|void
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 * @return void
 	 */
-	public function beforeRender(EventInterface $ao_event): ?Response {
+	public function beforeRender(EventInterface $ao_event): void {
 		$lo_builder = $this->viewBuilder();
 		//$ls_templatePath = 'Error';
 

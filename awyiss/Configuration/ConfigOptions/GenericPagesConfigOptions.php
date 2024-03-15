@@ -49,14 +49,12 @@ class GenericPagesConfigOptions extends AbstractGenericConfigOptions {
 					defaultValue: null,
 					identifier: 'associationName',
 					localizable: false,
-					nullable: true,
 					type: ConfigOptionType::String,
 				),
 				new ConfigOption(
 					defaultValue: null,
 					identifier: 'categories',
 					localizable: false,
-					nullable: true,
 					type: ConfigOptionType::JsonArray,
 				),
 				new ConfigOption(
@@ -118,7 +116,7 @@ class GenericPagesConfigOptions extends AbstractGenericConfigOptions {
 					defaultValue: false,
 					identifier: 'enabled',
 					localizable: false,
-					nullable: true,
+					nullable: false,
 					personalizable: true,
 					type: ConfigOptionType::Bool,
 				),

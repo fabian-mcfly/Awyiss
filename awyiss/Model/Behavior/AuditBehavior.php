@@ -513,7 +513,7 @@ class AuditBehavior extends Behavior {
 
 		$la_newData = [];
 		$la_entityData = $aa_entityData;
-		if ($lo_associatedEntity) {
+		if ($lo_associatedEntity && $lo_associatedEntity instanceof Entity) {
 			$la_newData = $lo_associatedEntity->extract(null, false, false);
 			$la_newData = array_diff_key($la_newData, $la_keys);
 
@@ -534,7 +534,6 @@ class AuditBehavior extends Behavior {
 				$la_oldData = array_diff_key($lo_entity->getOriginalValues(), $la_keys);
 			}
 			else {
-				dd($ao_entity->get($as_field), $la_newData, __LINE__, __FILE__);
 				if (empty($la_newData)) {
 					return [];
 				}

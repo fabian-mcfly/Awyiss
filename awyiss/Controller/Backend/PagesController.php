@@ -712,7 +712,7 @@ class PagesController extends Controller {
 			$lo_categoriesBehavior->getConfig('enabled') &&
 			$lo_categoriesBehavior->getConfig('foreignKey') === 'parent_id'
 		) {
-			throw new RuntimeException(sprintf('Cannot use nesting with categories that uses `parent_id` as the foreign key.',));
+			throw new RuntimeException('Cannot use nesting with categories that uses `parent_id` as the foreign key.');
 		}
 	}
 }

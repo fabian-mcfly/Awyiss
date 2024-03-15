@@ -30,7 +30,7 @@ class MediaFoldersConfigOptions extends AbstractConfigOptions {
 					defaultValue: true,
 					identifier: 'enabled',
 					localizable: false,
-					nullable: true,
+					nullable: false,
 					personalizable: true,
 					type: ConfigOptionType::Bool,
 				),

@@ -16,7 +16,6 @@ use Cake\Collection\CollectionInterface;
 use Cake\Core\Configure;
 use Cake\Datasource\Exception\InvalidPrimaryKeyException;
 use Cake\Datasource\Exception\RecordNotFoundException;
-use Cake\Datasource\ResultSetDecorator;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
 use Cake\ORM\Query\SelectQuery;
@@ -72,7 +71,7 @@ class ContentsController extends Controller {
 		 */
 		$lo_contents = $this->Contents->find()->where($this->getOverviewWhere());
 		$this->Categories->filterQuery($lo_contents, null, !$this->paginate['enabled']);
-		$lo_contents = $lo_contents->formatResults(function (ResultSetDecorator $ao_result): ResultSetDecorator {
+		$lo_contents = $lo_contents->formatResults(function (Collection $ao_result): Collection {
 			/** @var \Awyiss\Model\Entity\Content $lo_content */
 			foreach ($ao_result as $lo_content) {
 				$lo_content->class = $lo_content->column['width']->getCssClass();
