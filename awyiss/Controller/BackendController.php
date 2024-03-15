@@ -15,6 +15,7 @@ use Cake\Datasource\FactoryLocator;
 use Cake\Datasource\Paging\PaginatedInterface;
 use Cake\Datasource\QueryInterface;
 use Cake\Datasource\RepositoryInterface;
+use Cake\Event\EventInterface;
 use Cake\Http\Response;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
@@ -305,5 +306,23 @@ abstract class BackendController extends AppController {
 		}
 
 		return $this->redirect($lo_request->referer());
+	}
+
+
+	/**
+	 * beforeRender callback.
+	 *
+	 * @param EventInterface<\Cake\Controller\Controller> $ao_event Event.
+	 * @return void
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 */
+	public function beforeRender(EventInterface $ao_event): void {
+		$la_config = [];
+
+		foreach ($this->customConfigProperties as $ls_property) {
+			$la_config[ $ls_property ] = $this->$ls_property;
+		}
+
+		$this->set('config', $la_config);
 	}
 }
