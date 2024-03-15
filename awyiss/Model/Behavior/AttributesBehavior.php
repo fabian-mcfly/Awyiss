@@ -11,10 +11,12 @@ use Awyiss\Model\Entity;
 use Awyiss\Model\Table;
 use Awyiss\ORM\Behavior;
 use Awyiss\ORM\RulesChecker;
+use BadMethodCallException;
 use Cake\Collection\Iterator\MapReduce;
 use Cake\Datasource\FactoryLocator;
 use Cake\Event\Event;
 use Cake\Event\EventInterface;
+use Cake\I18n\DateTime;
 use Cake\ORM\Entity as BaseEntity;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\ORM\Query\SelectQuery;
@@ -54,6 +56,7 @@ class AttributesBehavior extends Behavior {
 			'buildRules',
 			'beforeFind',
 			'beforeCopy',
+			'beforeSave',
 			'afterSave',
 		],
 		'implementedMethods' => [
@@ -116,6 +119,20 @@ class AttributesBehavior extends Behavior {
 			'foreignKey' => $this->getConfig('foreignKey'),
 			'propertyName' => 'attributes',
 		]);
+
+		$la_finders = $this->getConfig('implementedFinders');
+
+		foreach ($this->getAttributes() as $lo_attribute) {
+			if (!in_array($lo_attribute->type, ['date', 'datetime', 'time'])) {
+				continue;
+			}
+
+			$ls_name = Inflector::camelize($lo_attribute->identifier);
+			$la_finders[ 'future' . $ls_name ] = 'future' . $ls_name;
+			$la_finders[ 'past' . $ls_name ] = 'past' . $ls_name;
+		}
+
+		$this->setConfig('implementedFinders', $la_finders);
 	}
 
 
@@ -419,6 +436,35 @@ class AttributesBehavior extends Behavior {
 	 * @return void
 	 * @noinspection PhpUnusedParameterInspection
 	 */
+	public function beforeSave(EventInterface $ao_event, Entity|BaseEntity $ao_entity/*, ArrayObject $ao_options*/): void {
+		if (!$this->getConfig('isAttributesTable')) {
+			return;
+		}
+
+		foreach ($this->getAttributes() as $lo_attribute) {
+			if ($lo_attribute->inputType !== 'password') {
+				continue;
+			}
+
+			if (!$ao_entity->get($lo_attribute->identifier)) {
+				$ao_entity->setDirty($lo_attribute->identifier, false);
+			}
+			else {
+				$ao_entity->set(
+					$lo_attribute->identifier,
+					password_hash($ao_entity->get($lo_attribute->identifier), PASSWORD_BCRYPT, ['cost' => 12])
+				);
+			}
+		}
+	}
+
+
+	/**
+	 * @param EventInterface $ao_event
+	 * @param \Cake\Datasource\EntityInterface $ao_entity
+	 * @return void
+	 * @noinspection PhpUnusedParameterInspection
+	 */
 	public function afterSave(EventInterface $ao_event, Entity|BaseEntity $ao_entity/*, ArrayObject $ao_options*/): void {
 		if (!$this->hasAttributes()) {
 			return;
@@ -433,5 +479,57 @@ class AttributesBehavior extends Behavior {
 				unset($ao_entity->attributes);
 			}
 		}
+	}
+
+
+	/**
+	 * Dynamic finders for past and future dates, times and datetimes
+	 *
+	 * Calling `$table->find('pastTestattribute');`
+	 * will return all entities where the `testattribute` is in the past.
+	 *
+	 * Calling `$table->find('futureTestattribute', new \Cake\I18n\DateTime('2028-12-31 23:59:59'));`
+	 * will return all entities where the `testattribute` is in the future,
+	 * using the provided date as reference.
+	 *
+	 * @param string $method
+	 * @param \Cake\ORM\Query\SelectQuery $query
+	 * @param array ...$args
+	 * @return \Cake\ORM\Query\SelectQuery
+	 */
+	protected function _dynamicFinder(string $method, SelectQuery $query, mixed $date = null): SelectQuery {
+		$ls_method = Inflector::underscore($method);
+		preg_match('/^(future|past)_(\w+)/', $ls_method, $la_matches);
+
+		$lo_now = $date ?? new DateTime('now');
+
+		/** @var \Awyiss\Model\Table $lo_table */
+		$lo_table = $this->table();
+		$ls_attributesTable = $lo_table->getAttributesTableName(true);
+		$ls_field = $la_matches[2];
+
+		$ls_comparator = $la_matches[1] === 'future' ? ' >=' : ' <=';
+
+		return $query->where([
+			$ls_attributesTable . '.'  . $ls_field . $ls_comparator => $lo_now,
+		]);
+	}
+
+
+	/**
+	 * @param string $method name of the method to be invoked
+	 * @param array $args List of arguments passed to the function
+	 * @return SelectQuery
+	 * @throws \BadMethodCallException
+	 */
+	public function __call(string $method, array $args): SelectQuery {
+		$la_finders = $this->getConfig('implementedFinders');
+		if (isset($la_finders[ $method ])) {
+			return $this->_dynamicFinder($method, ...$args);
+		}
+
+		throw new BadMethodCallException(
+			sprintf('Unknown method `%s` called on `%s`', $method, static::class)
+		);
 	}
 }
