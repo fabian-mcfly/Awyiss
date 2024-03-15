@@ -12,7 +12,6 @@ use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity;
 use Awyiss\Model\Entity\Datatable;
 use Awyiss\Routing\Router;
-use Cake\Collection\Collection;
 use Cake\Collection\CollectionInterface;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
@@ -213,16 +212,17 @@ abstract class GenericDatatablesController extends Controller {
 		if ($this->nestable) {
 			$lo_threadedRecords = $this->getThreadedRecords($ao_entity);
 
-			$lo_parentRecords = $this->getParentRecords($ao_entity, $lo_threadedRecords);
-			$this->ensurePossibleParentId($ao_entity, $lo_parentRecords);
+			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+			$lo_possibleParentRecords = $this->Datatable->getPossibleParents($ao_entity, $lo_threadedRecords);
+			$this->ensurePossibleParentId($ao_entity, $lo_possibleParentRecords);
 		}
 		else {
-			$lo_parentRecords = null;
+			$lo_possibleParentRecords = null;
 		}
 
 		$this->set([
 			'ao_record' => $ao_entity,
-			'ao_parentRecords' => $lo_parentRecords,
+			'ao_possibleParentRecords' => $lo_possibleParentRecords,
 			'ao_datatable' => $this->datatable,
 			'ab_nestable' => $this->nestable,
 			'ab_sortable' => $this->sortable,
@@ -301,42 +301,6 @@ abstract class GenericDatatablesController extends Controller {
 
 
 	/**
-	 * @param \Awyiss\Model\Entity $ao_entity
-	 * @param \Cake\Collection\CollectionInterface $ao_threadedRecords
-	 * @return \Cake\Collection\CollectionInterface
-	 */
-	protected function getParentRecords(Entity $ao_entity, CollectionInterface $ao_threadedRecords): CollectionInterface {
-		//We only want to find threaded records for an existing entity (id equals not null)
-		$li_originalId = $ao_entity->get('id');
-		if (!$li_originalId) {
-			return $ao_threadedRecords;
-		}
-
-		$li_foundAtLevel = null;
-		$lo_threadedRecords = new Collection($ao_threadedRecords->toList());
-
-		/** @noinspection PhpUnnecessaryLocalVariableInspection */
-		$lo_threadedRecords = $lo_threadedRecords->filter(function (Entity $ao_entity) use ($li_originalId, &$li_foundAtLevel) {
-			if ($ao_entity->get('id') === $li_originalId) {
-				$li_foundAtLevel = $ao_entity->level;
-			}
-			elseif (is_null($li_foundAtLevel) || $ao_entity->level <= $li_foundAtLevel) {
-				$li_foundAtLevel = null;
-
-
-				return true;
-			}
-
-
-			return false;
-		});
-
-
-		return $lo_threadedRecords;
-	}
-
-
-	/**
 	 * Return a collection of records for the currently set languageShortcode,
 	 * using `\Cake\Collection\CollectionTrait::listNested()` to be used in a form-select
 	 *
@@ -364,6 +328,7 @@ abstract class GenericDatatablesController extends Controller {
 	/**
 	 * @param \Awyiss\Model\Entity $ao_entity
 	 * @return void
+	 * @noinspection DuplicatedCode
 	 */
 	protected function verifyCategorySelection(Entity $ao_entity): void {
 		if (!$this->Categories->getConfig('enabled')) {
@@ -380,10 +345,8 @@ abstract class GenericDatatablesController extends Controller {
 				$la_categories += [$this->Categories->getConfig('aggregationKey') => 'dummy'];
 			}
 		}
-		else {
-			if ($this->Categories->getConfig('allowUnassigned')) {
-				$la_categories += [$this->Categories->getConfig('unassignedKey') => 'dummy'];
-			}
+		elseif ($this->Categories->getConfig('allowUnassigned')) {
+			$la_categories += [$this->Categories->getConfig('unassignedKey') => 'dummy'];
 		}
 
 		/*
@@ -446,7 +409,7 @@ abstract class GenericDatatablesController extends Controller {
 		if (
 			$lo_categoriesBehavior->getConfig('enabled') && $lo_categoriesBehavior->getConfig('foreignKey') === 'parent_id'
 		) {
-			throw new RuntimeException(sprintf('Cannot use nesting with categories that uses `parent_id` as the foreign key.',));
+			throw new RuntimeException('Cannot use nesting with categories that uses `parent_id` as the foreign key.');
 		}
 	}
 }

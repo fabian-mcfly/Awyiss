@@ -2,7 +2,7 @@
 @var ao_page \Awyiss\Model\Entity\Page
 @var ao_pageTemplates \Cake\Collection\CollectionInterface
 @var ao_threadedPages \Cake\Collection\CollectionInterface
-@var ao_parentPages \Cake\Collection\CollectionInterface
+@var ao_possibleParentPages \Cake\Collection\CollectionInterface
 @var as_languageRealm string
 @var localConfig array
 @var ab_nestable bool
@@ -45,8 +45,8 @@
 					{{ helper_Categories_control(as_categoriesIdentifier) }}
 				{% endif %}
 
-				{% if ab_nestable and ao_parentPages is not null %}
-					{{ helper_Form_control('parent_id', {options: hashPrinter(ao_parentPages, 'label', 'id', '- ')}) }}
+				{% if ab_nestable and ao_possibleParentPages is not null %}
+					{{ helper_Form_control('parent_id', {options: hashPrinter(ao_possibleParentPages, 'label', 'id', '- ')}) }}
 				{% endif %}
 			{% endblock %}
 

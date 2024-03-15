@@ -83,24 +83,7 @@ class AttributesController extends Controller {
 			$this->save($lo_attribute);
 		}
 
-		$la_availableFieldsets = $this->Attributes->getAvailableFieldsets($lo_attribute->scope);
-		$this->ensurePossibleFieldset($lo_attribute, $la_availableFieldsets);
-
-		$la_pageRoles = array_keys(array_filter($this->attributeScopes, function ($ax_table) {
-			return !is_string($ax_table);
-		}));
-
-		$lb_translatableDisabled = in_array($lo_attribute->scope, array_merge($la_pageRoles, ['contents', 'menu_entries', 'pages']));
-		$lb_requiredDisabled = in_array($lo_attribute->scope, ['contents']);
-
-		$this->set([
-			'ao_attribute' => $lo_attribute,
-			'aa_availableFieldsets' => $la_availableFieldsets,
-			'aa_availableInputTypes' => $this->Attributes->getAvailableInputTypes(),
-			'aa_pageRoles' => $la_pageRoles,
-			'ab_translatableDisabled' => $lb_translatableDisabled,
-			'ab_requiredDisabled' => $lb_requiredDisabled,
-		]);
+		$this->setViewVars($lo_attribute);
 	}
 
 
@@ -126,24 +109,7 @@ class AttributesController extends Controller {
 			$this->save($lo_attribute, 'edit');
 		}
 
-		$la_availableFieldsets = $this->Attributes->getAvailableFieldsets($lo_attribute->scope);
-		$this->ensurePossibleFieldset($lo_attribute, $la_availableFieldsets);
-
-		$la_pageRoles = array_keys(array_filter($this->attributeScopes, function ($ax_table) {
-			return !is_string($ax_table);
-		}));
-
-		$lb_translatableDisabled = in_array($lo_attribute->scope, array_merge($la_pageRoles, ['contents', 'menu_entries', 'pages']));
-		$lb_requiredDisabled = in_array($lo_attribute->scope, ['contents']);
-
-		$this->set([
-			'ao_attribute' => $lo_attribute,
-			'aa_availableFieldsets' => $la_availableFieldsets,
-			'aa_availableInputTypes' => $this->Attributes->getAvailableInputTypes(),
-			'aa_pageRoles' => $la_pageRoles,
-			'ab_translatableDisabled' => $lb_translatableDisabled,
-			'ab_requiredDisabled' => $lb_requiredDisabled,
-		]);
+		$this->setViewVars($lo_attribute);
 	}
 
 
@@ -241,5 +207,31 @@ class AttributesController extends Controller {
 				$this->setRequest($lo_request);
 			}
 		}
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Entity\Attribute $lo_attribute
+	 * @return void
+	 */
+	protected function setViewVars(Attribute $lo_attribute): void {
+		$la_availableFieldsets = $this->Attributes->getAvailableFieldsets($lo_attribute->scope);
+		$this->ensurePossibleFieldset($lo_attribute, $la_availableFieldsets);
+
+		$la_pageRoles = array_keys(array_filter($this->attributeScopes, function ($ax_table) {
+			return !is_string($ax_table);
+		}));
+
+		$lb_translatableDisabled = in_array($lo_attribute->scope, array_merge($la_pageRoles, ['contents', 'menu_entries', 'pages']));
+		$lb_requiredDisabled = in_array($lo_attribute->scope, ['contents']);
+
+		$this->set([
+			'ao_attribute' => $lo_attribute,
+			'aa_availableFieldsets' => $la_availableFieldsets,
+			'aa_availableInputTypes' => $this->Attributes->getAvailableInputTypes(),
+			'aa_pageRoles' => $la_pageRoles,
+			'ab_translatableDisabled' => $lb_translatableDisabled,
+			'ab_requiredDisabled' => $lb_requiredDisabled,
+		]);
 	}
 }

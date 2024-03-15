@@ -1,6 +1,7 @@
 {#
 @var ao_mediaFolder \Awyiss\Model\Entity\MediaFolder
 @var ao_threadedMediaFolders \Cake\Collection\Iterator\TreeIterator
+@var ao_possibleParentMediaFolders \Cake\Collection\CollectionInterface
 @var as_languageRealm string
 @var _view \Awyiss\View\BackendView
 #}
@@ -31,7 +32,7 @@
 			{% endblock %}
 
 			{% block formControlParentId %}
-				{{ helper_Form_control('parent_id', {disabled: [1], options: hashPrinter(ao_parentMediaFolders, 'label', 'id', '- ')}) }}
+				{{ helper_Form_control('parent_id', {disabled: [1], options: hashPrinter(ao_possibleParentMediaFolders, 'label', 'id', '- ')}) }}
 			{% endblock %}
 
 			{% block formControlSystemOrder %}

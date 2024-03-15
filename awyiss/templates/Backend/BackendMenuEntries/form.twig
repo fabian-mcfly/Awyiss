@@ -1,6 +1,6 @@
 {#
 @var ao_menu \Awyiss\Utilities\Menu
-@var aa_parentIdOptions array
+@var ao_possibleParentMenuEntries \Cake\Collection\CollectionInterface
 @var aa_insertAfterOptions array
 @var ao_backendMenuEntry \Awyiss\Model\Entity\BackendMenuEntry
 @var _view \Awyiss\View\BackendView
@@ -32,7 +32,7 @@
 
 		{% block fieldsetConditionsInner %}
 			{% block formControlParentId %}
-				{{ helper_Form_control('parent_id', {options: aa_parentIdOptions, required: false}) }}
+				{{ helper_Form_control('parent_id', {options: ao_possibleParentMenuEntries, required: false}) }}
 			{% endblock %}
 
 			{#% if ao_backendMenuEntry.parentId is empty %#}

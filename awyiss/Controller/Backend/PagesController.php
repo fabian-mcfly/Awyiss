@@ -13,7 +13,6 @@ use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity\Page;
 use Awyiss\Model\Enum\PageRoleEnumInterface;
 use Awyiss\Routing\Router;
-use Cake\Collection\Collection;
 use Cake\Collection\CollectionInterface;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
@@ -384,42 +383,6 @@ class PagesController extends Controller {
 
 
 	/**
-	 * @param \Awyiss\Model\Entity\Page $ao_page
-	 * @param \Cake\Collection\CollectionInterface $ao_threadedPages
-	 * @return \Cake\Collection\CollectionInterface
-	 */
-	protected function getParentPages(Page $ao_page, CollectionInterface $ao_threadedPages): CollectionInterface {
-		//We only want to find threaded pages for an existing entity (id equals not null)
-		$li_originalId = $ao_page->get('id');
-		if (!$li_originalId) {
-			return $ao_threadedPages;
-		}
-
-		$li_foundAtLevel = null;
-		$lo_threadedPages = new Collection($ao_threadedPages->toList());
-
-		/** @noinspection PhpUnnecessaryLocalVariableInspection */
-		$lo_threadedPages = $lo_threadedPages->filter(function ($ao_page) use ($li_originalId, &$li_foundAtLevel) {
-			if ($ao_page->get('id') === $li_originalId) {
-				$li_foundAtLevel = $ao_page->level;
-			}
-			elseif (is_null($li_foundAtLevel) || $ao_page->level <= $li_foundAtLevel) {
-				$li_foundAtLevel = null;
-
-
-				return true;
-			}
-
-
-			return false;
-		});
-
-
-		return $lo_threadedPages;
-	}
-
-
-	/**
 	 * Uses this controller with another page_role_id/identifier, so we don't need to bake one for every page role.
 	 * This is supposed to only handle non-existing controllers as a fallback.
 	 *
@@ -486,13 +449,13 @@ class PagesController extends Controller {
 			$ls_entitiesName = Inflector::variable($this->getName());
 			$ls_entityName = Inflector::variable(Inflector::singularize($this->getName()));
 			$ls_threadedName = Inflector::variable('threaded ' . $this->getName());
-			$ls_parentName = Inflector::variable('parent ' . $this->getName());
+			$ls_parentName = Inflector::variable('possibleParent ' . $this->getName());
 
 			$lo_viewBuilder->setVars([
 				'ao_' . $ls_entitiesName => $lo_viewBuilder->getVar('ao_pages'),
 				'ao_' . $ls_entityName => $lo_viewBuilder->getVar('ao_page'),
 				'ao_' . $ls_threadedName => $lo_viewBuilder->getVar('ao_threadedPages'),
-				'ao_' . $ls_parentName => $lo_viewBuilder->getVar('ao_parentPages'),
+				'ao_' . $ls_parentName => $lo_viewBuilder->getVar('ao_possibleParentMediaFolders'),
 			]);
 		}
 
@@ -560,11 +523,11 @@ class PagesController extends Controller {
 
 
 		if ($this->nestable) {
-			$lo_parentPages = $this->getParentPages($ao_page, $lo_threadedPages);
-			$this->ensurePossibleParentId($ao_page, $lo_parentPages);
+			$lo_possibleParentPages = $this->Pages->getPossibleParents($ao_page, $lo_threadedPages);
+			$this->ensurePossibleParentId($ao_page, $lo_possibleParentPages);
 		}
 		else {
-			$lo_parentPages = null;
+			$lo_possibleParentPages = null;
 		}
 
 		$lo_menus = $this->fetchTable('Menus')->find('active')->all();
@@ -573,7 +536,7 @@ class PagesController extends Controller {
 			'ao_page' => $ao_page,
 			'ao_pageTemplates' => $this->getPageTemplates(),
 			'ao_threadedPages' => $lo_threadedPages,
-			'ao_parentPages' => $lo_parentPages,
+			'ao_possibleParentPages' => $lo_possibleParentPages,
 			'as_languageRealm' => Awyiss::REALM_FRONTEND,
 			'localConfig' => LocalConfig::read(),
 			'ab_nestable' => $this->nestable,
@@ -586,6 +549,7 @@ class PagesController extends Controller {
 	/**
 	 * @param \Awyiss\Model\Entity\Page $ao_page
 	 * @return void
+	 * @noinspection DuplicatedCode
 	 */
 	protected function verifyCategorySelection(Page $ao_page): void {
 		if (!$this->Categories->getConfig('enabled')) {
@@ -602,10 +566,8 @@ class PagesController extends Controller {
 				$la_categories += [$this->Categories->getConfig('aggregationKey') => 'dummy'];
 			}
 		}
-		else {
-			if ($this->Categories->getConfig('allowUnassigned')) {
-				$la_categories += [$this->Categories->getConfig('unassignedKey') => 'dummy'];
-			}
+		elseif ($this->Categories->getConfig('allowUnassigned')) {
+			$la_categories += [$this->Categories->getConfig('unassignedKey') => 'dummy'];
 		}
 
 		/*

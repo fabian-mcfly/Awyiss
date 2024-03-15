@@ -9,7 +9,7 @@ use Awyiss\Model\Entity\BackendMenuEntry;
 use Awyiss\Routing\Router;
 use Awyiss\Utilities\Menu\BackendMenu;
 use Awyiss\Utilities\Menu\Menu;
-use Cake\Collection\Collection;
+use Awyiss\Utilities\Menu\MenuItem;
 use Cake\Collection\CollectionInterface;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
@@ -21,12 +21,6 @@ use Cake\Http\Response;
  * @property \Awyiss\Model\Table\BackendMenuEntriesTable $BackendMenuEntries
  */
 class BackendMenuEntriesController extends Controller {
-	/**
-	 * @var CollectionInterface
-	 */
-	protected CollectionInterface $threadedMenuEntries;
-
-
 	/**
 	 * Overview method
 	 *
@@ -60,18 +54,15 @@ class BackendMenuEntriesController extends Controller {
 
 		$lo_menu = new BackendMenu();
 
-		$la_parentIdOptions = $this->generateMenuSelectOptions($lo_menu->getDynamicMenu());
-
 		$la_insertAfterOptions = $this->generateMenuSelectOptions($lo_menu->getCustomMenu() ?? $lo_menu->getMenu());
 
-		$lo_threadedMenuEntries = $this->getThreadedMenuEntries($lo_menuEntry);
+		$lo_possibleParentMenuEntries = $this->getPossibleParentMenuEntries($lo_menuEntry, $lo_menu->getDynamicMenu());
 
 		$this->set([
 			'ao_menu' => $lo_menu,
-			'aa_parentIdOptions' => $la_parentIdOptions,
 			'aa_insertAfterOptions' => $la_insertAfterOptions,
 			'ao_backendMenuEntry' => $lo_menuEntry,
-			'ao_threadedMenuEntries' => $lo_threadedMenuEntries,
+			'ao_possibleParentMenuEntries' => $lo_possibleParentMenuEntries,
 		]);
 	}
 
@@ -100,18 +91,15 @@ class BackendMenuEntriesController extends Controller {
 
 		$lo_menu = new BackendMenu();
 
-		$la_parentIdOptions = $this->generateMenuSelectOptions($lo_menu->getDynamicMenu());
-
 		$la_insertAfterOptions = $this->generateMenuSelectOptions($lo_menu->getCustomMenu() ?? $lo_menu->getMenu());
 
-		$lo_threadedMenuEntries = $this->getThreadedMenuEntries($lo_menuEntry);
+		$lo_possibleParentMenuEntries = $this->getPossibleParentMenuEntries($lo_menuEntry, $lo_menu->getDynamicMenu());
 
 		$this->set([
 			'ao_menu' => $lo_menu,
-			'aa_parentIdOptions' => $la_parentIdOptions,
 			'aa_insertAfterOptions' => $la_insertAfterOptions,
 			'ao_backendMenuEntry' => $lo_menuEntry,
-			'ao_threadedMenuEntries' => $lo_threadedMenuEntries,
+			'ao_possibleParentMenuEntries' => $lo_possibleParentMenuEntries,
 		]);
 	}
 
@@ -154,36 +142,34 @@ class BackendMenuEntriesController extends Controller {
 
 
 	/**
-	 * Returns a Collection of all available menuentries that exist within the same menu and the same `language_shortcode`
-	 * as the entity, provided via `$ao_menuEntry`
+	 * Returns a Collection of all possible parent ids for the given menu entry
+	 * to prevent circular references
 	 *
 	 * @param BackendMenuEntry $ao_menuEntry
-	 * @return CollectionInterface
+	 * @param \Awyiss\Utilities\Menu\Menu|null $ao_dynamicMenu
+	 * @return \Cake\Collection\CollectionInterface
 	 */
-	public function getThreadedMenuEntries(BackendMenuEntry $ao_menuEntry): CollectionInterface {
-		if (!isset($this->threadedMenuEntries)) {
-			$lo_query = $this->BackendMenuEntries->find()->where([
-				'parent_id' . ($ao_menuEntry->parentId === null ? ' IS' : null) => $ao_menuEntry->parentId,
-				'insert_after_id' . ($ao_menuEntry->insertAfterId === null ? ' IS' : null) => $ao_menuEntry->insertAfterId,
-			]);
+	public function getPossibleParentMenuEntries(BackendMenuEntry $ao_menuEntry, ?Menu $ao_dynamicMenu): CollectionInterface {
+		$lo_listNested = collection($ao_dynamicMenu->toArray());
 
-			$this->threadedMenuEntries = $this->BackendMenuEntries->listNested($lo_query);
-		}
-
-		//We only want to find threaded menu entries at the same level for an existing entity (id equals not null)
+		//We only want to find threaded pages for an existing entity (id equals not null)
 		$li_originalId = $ao_menuEntry->get('id');
 		if (!$li_originalId) {
-			return $this->threadedMenuEntries;
+			return $lo_listNested;
 		}
 
-		$li_foundAtLevel = null;
-		$lo_threadedMenuEntries = new Collection($this->threadedMenuEntries->toList());
 
-		$lo_threadedMenuEntries = $lo_threadedMenuEntries->filter(function ($ao_menuEntry) use ($li_originalId, &$li_foundAtLevel) {
-			if ($ao_menuEntry->get('id') === $li_originalId) {
-				$li_foundAtLevel = $ao_menuEntry->level;
+		$li_foundAtLevel = null;
+
+		$lo_possibleParents = $lo_listNested->filter(function (MenuItem $ao_item, string|int $ax_identifier) use ($li_originalId, &$li_foundAtLevel) {
+			if (gettype($ax_identifier) === 'string') {
+				return true;
 			}
-			elseif (is_null($li_foundAtLevel) || $ao_menuEntry->level <= $li_foundAtLevel) {
+
+			if ($ax_identifier === $li_originalId) {
+				$li_foundAtLevel = $ao_item->getLevel();
+			}
+			elseif (is_null($li_foundAtLevel) || $ao_item->getLevel() <= $li_foundAtLevel) {
 				$li_foundAtLevel = null;
 
 
@@ -194,10 +180,10 @@ class BackendMenuEntriesController extends Controller {
 			return false;
 		});
 
-		$lo_threadedMenuEntries = $lo_threadedMenuEntries->nest('id', 'parentId');
 
-
-		return $lo_threadedMenuEntries->listNested();
+		return $lo_possibleParents->map(function (MenuItem $ao_item) {
+			return $ao_item->getTitle();
+		});
 	}
 
 
@@ -272,8 +258,9 @@ class BackendMenuEntriesController extends Controller {
 	protected function generateMenuSelectOptions(Menu $ao_menu): array {
 		$la_options = [];
 
+		/** @var MenuItem $lo_item */
 		foreach ($ao_menu->items() as $ls_identifier => $lo_item) {
-			$la_options[ $ls_identifier ] = str_repeat('- ', $lo_item->level - 1) . $lo_item->getTitle();
+			$la_options[ $ls_identifier ] = str_repeat('- ', $lo_item->getLevel() - 1) . $lo_item->getTitle();
 		}
 
 

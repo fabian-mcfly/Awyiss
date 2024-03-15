@@ -57,7 +57,7 @@
 
 
 {% block formControlParentId %}
-	{{ helper_Form_control('parent_id', {options: settings.threadedContents.printer('label', 'id', '- '), required: lo_contentTemplateElement.required}) }}
+	{{ helper_Form_control('parent_id', {options: hashPrinter(settings.possibleParentContents, 'label', 'id', '- '), required: lo_contentTemplateElement.required}) }}
 {% endblock %}
 
 

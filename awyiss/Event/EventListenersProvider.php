@@ -14,12 +14,9 @@ use RuntimeException;
 
 /**
  * Provider of EventListeners
- *
  * This is used to retreive or load the EventListeners for a specific scope and area
- *
  * Controller:
- * - `EventListenersProvider::loadListener($this->getName(), Awyiss::DOMAIN_BACKEND);`
- *
+ * - `EventListenersProvider::loadListener($this->getName(), Awyiss::REALM_BACKEND);`
  * CLI:
  * - `EventListenersProvider::loadListener('general_events', 'Bake');`
  */

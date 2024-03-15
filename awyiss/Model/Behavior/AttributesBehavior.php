@@ -494,7 +494,7 @@ class AttributesBehavior extends Behavior {
 	 *
 	 * @param string $method
 	 * @param \Cake\ORM\Query\SelectQuery $query
-	 * @param array ...$args
+	 * @param mixed|null $date
 	 * @return \Cake\ORM\Query\SelectQuery
 	 */
 	protected function _dynamicFinder(string $method, SelectQuery $query, mixed $date = null): SelectQuery {

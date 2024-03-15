@@ -32,10 +32,11 @@ use Cake\Validation\Validator;
  * @property \Awyiss\Model\Table\ContentsTable&\Awyiss\ORM\Association\HasMany $Contents
  * @property \Awyiss\Model\Table\PagesTable&\Awyiss\ORM\Association\HasMany $SlugHistory
  * @method \Awyiss\Model\Entity\Page newDefaultEntity(array $aa_additionalData = [], array $aa_options = [])
- * @method CollectionInterface|null getNestedChildren(\Awyiss\Model\Entity\Page $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
- * @method CollectionInterface|null getChildren(\Awyiss\Model\Entity\Page $ao_entity, array $aa_options = [])
+ * @method \Cake\Collection\CollectionInterface|null getNestedChildren(\Awyiss\Model\Entity\Page $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
+ * @method \Cake\Collection\CollectionInterface|null getChildren(\Awyiss\Model\Entity\Page $ao_entity, array $aa_options = [])
  * @method \Awyiss\Model\Entity\Page getParent(\Awyiss\Model\Entity\Page $ao_entity, array $aa_options = [])
- * @method CollectionInterface|null getParents(\Awyiss\Model\Entity\Page $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
+ * @method \Cake\Collection\CollectionInterface|null getParents(\Awyiss\Model\Entity\Page $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
+ * @method \Cake\Collection\CollectionInterface getPossibleParents(\Awyiss\Model\Entity $ao_entity, \Cake\Collection\CollectionInterface $ao_threadedEntities)
  */
 class PagesTable extends Table {
 	/**

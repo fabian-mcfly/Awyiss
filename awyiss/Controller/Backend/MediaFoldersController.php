@@ -9,7 +9,6 @@ use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity\MediaFolder;
 use Awyiss\Routing\Router;
-use Cake\Collection\Collection;
 use Cake\Collection\CollectionInterface;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
@@ -281,42 +280,6 @@ class MediaFoldersController extends Controller {
 
 	/**
 	 * @param \Awyiss\Model\Entity\MediaFolder $ao_mediaFolder
-	 * @param \Cake\Collection\CollectionInterface $ao_threadedMediaFolders
-	 * @return \Cake\Collection\CollectionInterface
-	 */
-	public function getParentMediaFolders(MediaFolder $ao_mediaFolder, CollectionInterface $ao_threadedMediaFolders): CollectionInterface {
-		//We only want to find threaded media folders for an existing entity (id equals not null)
-		$li_originalId = $ao_mediaFolder->get('id');
-		if (!$li_originalId) {
-			return $ao_threadedMediaFolders;
-		}
-
-		$li_foundAtLevel = null;
-		$lo_threadedMediaFolders = new Collection($ao_threadedMediaFolders->toList());
-
-		/** @noinspection PhpUnnecessaryLocalVariableInspection */
-		$lo_threadedMediaFolders = $lo_threadedMediaFolders->filter(function ($ao_mediaFolder) use ($li_originalId, &$li_foundAtLevel) {
-			if ($ao_mediaFolder->get('id') === $li_originalId) {
-				$li_foundAtLevel = $ao_mediaFolder->level;
-			}
-			elseif (is_null($li_foundAtLevel) || $ao_mediaFolder->level <= $li_foundAtLevel) {
-				$li_foundAtLevel = null;
-
-
-				return true;
-			}
-
-
-			return false;
-		});
-
-
-		return $lo_threadedMediaFolders;
-	}
-
-
-	/**
-	 * @param \Awyiss\Model\Entity\MediaFolder $ao_mediaFolder
 	 * @param \Cake\Collection\CollectionInterface $ao_threadedContents
 	 * @return void
 	 */
@@ -342,13 +305,13 @@ class MediaFoldersController extends Controller {
 	protected function setViewVars(MediaFolder $ao_mediaFolder): void {
 		$lo_threadedMediaFolders = $this->getThreadedMediaFolders($ao_mediaFolder);
 
-		$lo_parentMediaFolders = $this->getParentMediaFolders($ao_mediaFolder, $lo_threadedMediaFolders);
-		$this->ensurePossibleParentId($ao_mediaFolder, $lo_parentMediaFolders);
+		$lo_possibleParentMediaFolders = $this->MediaFolders->getPossibleParents($ao_mediaFolder, $lo_threadedMediaFolders);
+		$this->ensurePossibleParentId($ao_mediaFolder, $lo_possibleParentMediaFolders);
 
 		$this->set([
 			'ao_mediaFolder' => $ao_mediaFolder,
 			'ao_threadedMediaFolders' => $lo_threadedMediaFolders,
-			'ao_parentMediaFolders' => $lo_parentMediaFolders,
+			'ao_possibleParentMediaFolders' => $lo_possibleParentMediaFolders,
 			'as_languageRealm' => Awyiss::REALM_FRONTEND,
 		]);
 	}

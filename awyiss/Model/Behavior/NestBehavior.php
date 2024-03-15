@@ -5,6 +5,7 @@ namespace Awyiss\Model\Behavior;
 
 
 use ArrayObject;
+use Awyiss\Model\Entity;
 use Awyiss\ORM\Behavior;
 use Awyiss\ORM\RulesChecker;
 use Cake\Collection\Collection;
@@ -69,6 +70,7 @@ class NestBehavior extends Behavior {
 			'getChildren' => 'getChildren',
 			'getParent' => 'getParent',
 			'getParents' => 'getParents',
+			'getPossibleParents' => 'getPossibleParents',
 			'listNested' => 'listNested',
 		],
 		'parent' => [
@@ -324,6 +326,42 @@ class NestBehavior extends Behavior {
 
 
 		return $lo_collection->compile(false);
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Entity $ao_entity
+	 * @param \Cake\Collection\CollectionInterface $ao_threadedEntities
+	 * @return \Cake\Collection\CollectionInterface
+	 */
+	public function getPossibleParents(Entity $ao_entity, CollectionInterface $ao_threadedEntities): CollectionInterface {
+		//We only want to find threaded pages for an existing entity (id equals not null)
+		$li_originalId = $ao_entity->get('id');
+		if (!$li_originalId) {
+			return $ao_threadedEntities;
+		}
+
+		$li_foundAtLevel = null;
+		$lo_threadedEntities = new Collection($ao_threadedEntities->toList());
+
+		/** @noinspection PhpUnnecessaryLocalVariableInspection */
+		$lo_possibleParents = $lo_threadedEntities->filter(function ($ao_record) use ($li_originalId, &$li_foundAtLevel) {
+			if ($ao_record->get('id') === $li_originalId) {
+				$li_foundAtLevel = $ao_record->level;
+			}
+			elseif (is_null($li_foundAtLevel) || $ao_record->level <= $li_foundAtLevel) {
+				$li_foundAtLevel = null;
+
+
+				return true;
+			}
+
+
+			return false;
+		});
+
+
+		return $lo_possibleParents;
 	}
 
 

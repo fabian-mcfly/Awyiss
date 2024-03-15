@@ -336,13 +336,13 @@ class ContentsController extends Controller {
 
 
 	/**
-	 * Returns a Collection of all available contents that exist within the same page and the same `contentArea`
-	 * as the entity `$ao_content`
+	 * Returns a collection of all possible parent contents for the given content
+	 * to prevent circular references.
 	 *
 	 * @param Content $ao_content
 	 * @return CollectionInterface
 	 */
-	protected function getThreadedContents(Content $ao_content): CollectionInterface {
+	protected function getPossibleParentContents(Content $ao_content): CollectionInterface {
 		if (!isset($this->threadedContents)) {
 			if (empty($ao_content->contentAreaId)) {
 				return new Collection([]);
@@ -356,33 +356,8 @@ class ContentsController extends Controller {
 			$this->threadedContents = $this->Contents->listNested($lo_query);
 		}
 
-		//We only want to find threaded contents for an existing entity (id equals not null)
-		$li_originalId = $ao_content->get('id');
-		if (!$li_originalId) {
-			return $this->threadedContents;
-		}
 
-		$li_foundAtLevel = null;
-		$lo_threadedContents = new Collection($this->threadedContents->toList());
-		$lo_threadedContents = $lo_threadedContents->filter(function ($ao_content) use ($li_originalId, &$li_foundAtLevel) {
-			if ($ao_content->get('id') === $li_originalId) {
-				$li_foundAtLevel = $ao_content->level;
-			}
-			elseif (is_null($li_foundAtLevel) || $ao_content->level <= $li_foundAtLevel) {
-				$li_foundAtLevel = null;
-
-
-				return true;
-			}
-
-
-			return false;
-		});
-
-		$lo_threadedContents = $lo_threadedContents->nest('id', 'parentId');
-
-
-		return $lo_threadedContents->listNested();
+		return $this->Contents->getPossibleParents($ao_content, $this->threadedContents);
 	}
 
 
@@ -658,8 +633,8 @@ class ContentsController extends Controller {
 		$la_contentAreas = $this->getContentAreas($lo_content, $this->page);
 		$this->ensurePossibleContentArea($lo_content, $la_contentAreas);
 
-		$lo_threadedContents = $this->getThreadedContents($lo_content);
-		$this->ensurePossibleParentId($lo_content, $lo_threadedContents);
+		$lo_possibleParentContents = $this->getPossibleParentContents($lo_content);
+		$this->ensurePossibleParentId($lo_content, $lo_possibleParentContents);
 
 		$la_assignedAttributes = $this->getAssignedAttributes($lo_content);
 
@@ -685,7 +660,7 @@ class ContentsController extends Controller {
 		$this->set([
 			'ao_content' => $lo_content,
 			'ao_contentTemplates' => $lo_contentTemplates,
-			'ao_threadedContents' => $lo_threadedContents,
+			'ao_possibleParentContents' => $lo_possibleParentContents,
 			'ao_page' => $this->page,
 			'aa_assignedAttributes' => $la_assignedAttributes,
 			'aa_contentAreas' => $la_contentAreas,

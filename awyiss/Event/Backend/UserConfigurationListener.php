@@ -33,7 +33,8 @@ class UserConfigurationListener implements EventListenerInterface {
 	public function implementedEvents(): array {
 		return [
 			'Model.UserConfiguration.beforeSave' => 'beforeSave',
-			'Model.UserConfiguration.afterSave' => 'afterSave',
+			'Model.UserConfiguration.afterSave' => 'resetConfiguration',
+			'Model.UserConfiguration.afterDelete' => 'resetConfiguration',
 		];
 	}
 
@@ -62,12 +63,9 @@ class UserConfigurationListener implements EventListenerInterface {
 
 
 	/**
-	 * @param \Cake\Event\Event $ao_event
-	 * @param \Awyiss\Model\Entity\UserConfiguration $ao_entity
 	 * @return void
-	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function afterSave(Event $ao_event, UserConfiguration $ao_entity): void {
+	public function resetConfiguration(): void {
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 		$this->getIdentity()->resetConfiguration();
 	}

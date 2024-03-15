@@ -1,5 +1,6 @@
 {#
-@var ao_record Cake\Datasource\EntityInterface
+@var ao_record \Cake\Datasource\EntityInterface
+@var ao_possibleParentRecords \Cake\Collection\Collection
 @var ao_datatable \Awyiss\Model\Entity\Datatable
 @var as_languageRealm string
 @var ab_nestable bool
@@ -41,8 +42,8 @@
 				{{ helper_Categories_control(as_categoriesIdentifier) }}
 			{% endif %}
 
-			{% if (ab_nestable and ao_parentRecords is not null) %}
-				{{ helper_Form_control('parent_id', {options: hashPrinter(ao_parentRecords, 'label', 'id', '- ')}) }}
+			{% if (ab_nestable and ao_possibleParentRecords is not null) %}
+				{{ helper_Form_control('parent_id', {options: hashPrinter(ao_possibleParentRecords, 'label', 'id', '- ')}) }}
 			{% endif %}
 		{% endblock %}
 

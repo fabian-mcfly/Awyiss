@@ -9,7 +9,6 @@ use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity\MenuEntry;
 use Awyiss\Routing\Router;
-use Cake\Collection\Collection;
 use Cake\Collection\CollectionInterface;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
@@ -77,12 +76,12 @@ class MenuEntriesController extends Controller {
 			$this->save($lo_menuEntry);
 		}
 
-		$lo_threadedMenuEntries = $this->getThreadedMenuEntries($lo_menuEntry);
-		$this->ensurePossibleParentId($lo_menuEntry, $lo_threadedMenuEntries);
+		$lo_possibleParentMenuEntries = $this->getPossibleParentMenuEntries($lo_menuEntry);
+		$this->ensurePossibleParentId($lo_menuEntry, $lo_possibleParentMenuEntries);
 
 		$this->set([
 			'ao_menuEntry' => $lo_menuEntry,
-			'ao_threadedMenuEntries' => $lo_threadedMenuEntries,
+			'ao_possibleParentMenuEntries' => $lo_possibleParentMenuEntries,
 			'as_languageRealm' => Awyiss::REALM_FRONTEND,
 		]);
 	}
@@ -110,12 +109,12 @@ class MenuEntriesController extends Controller {
 			$this->save($lo_menuEntry, 'edit');
 		}
 
-		$lo_threadedMenuEntries = $this->getThreadedMenuEntries($lo_menuEntry);
-		$this->ensurePossibleParentId($lo_menuEntry, $lo_threadedMenuEntries);
+		$lo_possibleParentMenuEntries = $this->getPossibleParentMenuEntries($lo_menuEntry);
+		$this->ensurePossibleParentId($lo_menuEntry, $lo_possibleParentMenuEntries);
 
 		$this->set([
 			'ao_menuEntry' => $lo_menuEntry,
-			'ao_threadedMenuEntries' => $lo_threadedMenuEntries,
+			'ao_possibleParentMenuEntries' => $lo_possibleParentMenuEntries,
 			'as_languageRealm' => Awyiss::REALM_FRONTEND,
 		]);
 	}
@@ -159,13 +158,13 @@ class MenuEntriesController extends Controller {
 
 
 	/**
-	 * Returns a Collection of all available menuentries that exist within the same menu and the same `language_shortcode`
-	 * as the entity, provided via `$ao_menuEntry`
+	 * Returns a collection of possible parent menu entries for the given menu entry
+	 * to prevent circular references
 	 *
 	 * @param MenuEntry $ao_menuEntry
 	 * @return CollectionInterface
 	 */
-	public function getThreadedMenuEntries(MenuEntry $ao_menuEntry): CollectionInterface {
+	public function getPossibleParentMenuEntries(MenuEntry $ao_menuEntry): CollectionInterface {
 		if (!isset($this->threadedMenuEntries)) {
 			$lo_query = $this->MenuEntries->find()->where([
 				'language_shortcode' => $ao_menuEntry->languageShortcode,
@@ -175,34 +174,8 @@ class MenuEntriesController extends Controller {
 			$this->threadedMenuEntries = $this->MenuEntries->listNested($lo_query);
 		}
 
-		//We only want to find threaded menu entries at the same level for an existing entity (id equals not null)
-		$li_originalId = $ao_menuEntry->get('id');
-		if (!$li_originalId) {
-			return $this->threadedMenuEntries;
-		}
 
-		$li_foundAtLevel = null;
-		$lo_threadedMenuEntries = new Collection($this->threadedMenuEntries->toList());
-
-		$lo_threadedMenuEntries = $lo_threadedMenuEntries->filter(function ($ao_menuEntry) use ($li_originalId, &$li_foundAtLevel) {
-			if ($ao_menuEntry->get('id') === $li_originalId) {
-				$li_foundAtLevel = $ao_menuEntry->level;
-			}
-			elseif (is_null($li_foundAtLevel) || $ao_menuEntry->level <= $li_foundAtLevel) {
-				$li_foundAtLevel = null;
-
-
-				return true;
-			}
-
-
-			return false;
-		});
-
-		$lo_threadedMenuEntries = $lo_threadedMenuEntries->nest('id', 'parent_id');
-
-
-		return $lo_threadedMenuEntries->listNested();
+		return $this->MenuEntries->getPossibleParents($ao_menuEntry, $this->threadedMenuEntries);
 	}
 
 

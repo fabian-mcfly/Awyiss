@@ -118,6 +118,8 @@ class ConfigOption {
 
 		$this->setType($type ?? ConfigOptionType::String);
 
+		$this->setTitle($title);
+
 		$this->setTypecast($typecast);
 
 		$this->setValues($values);
