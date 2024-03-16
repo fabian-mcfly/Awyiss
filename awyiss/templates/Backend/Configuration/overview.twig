@@ -94,6 +94,10 @@
 							{% endif %}
 
 							{{ lx_configuration.identifier }}
+
+							{% if lx_configuration.description %}
+								<span class="Description">{{ lx_configuration.description }}</span>
+							{% endif %}
 						</td>
 					{% endblock %}
 
@@ -123,6 +127,11 @@
 									{% endif %}
 
 									{{ lo_configuration.identifier|split('.')|slice(-1)|join()|variable }}
+								{% endif %}
+
+								{% set description = lo_configuration.description ?? lo_configuration.configOption.description %}
+								{% if description %}
+									<span class="Description">{{ description }}</span>
 								{% endif %}
 							</td>
 						{% endblock %}

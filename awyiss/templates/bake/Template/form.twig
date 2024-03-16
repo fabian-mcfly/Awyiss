@@ -130,5 +130,7 @@
 	</fieldset>
 {% endblock %}
 
-{{ helper_Form_hidden('reload_form', {val: 0}) }}
+{% block formInputReloadForm %}
+	{{ helper_Form_hidden('reload_form', {val: 0}) }}
+{% endblock %}
 {% endverbatim %}
