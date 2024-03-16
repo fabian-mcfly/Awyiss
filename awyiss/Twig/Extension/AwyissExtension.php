@@ -6,6 +6,7 @@ namespace Awyiss\Twig\Extension;
 
 use Cake\Collection\CollectionInterface;
 use Twig\Extension\AbstractExtension;
+use Twig\TwigFilter;
 use Twig\TwigFunction;
 use Twig\TwigTest;
 
@@ -15,26 +16,14 @@ use Twig\TwigTest;
  */
 class AwyissExtension extends AbstractExtension {
 	/**
-	 * Returns a list of tests to add to the existing list.
+	 * Returns a list of filters to add to the existing list.
 	 *
-	 * @return array<TwigTest>
+	 * @return array<\Twig\TwigFilter>
 	 */
-	public function getTests(): array {
+	public function getFilters(): array {
 		return [
-			new TwigTest('array', function ($ax_value): bool {
-				return is_array($ax_value);
-			}),
-
-			new TwigTest('instanceOf', function ($ao_object, $ax_class): bool {
-				return $ao_object instanceof $ax_class;
-			}),
-
-			new TwigTest('numeric', function ($ax_value): bool {
-				return is_numeric($ax_value);
-			}),
-
-			new TwigTest('string', function ($ax_value): bool {
-				return is_string($ax_value);
+			new TwigFilter('json_decode', function (string $as_json): array {
+				return json_decode($as_json, true, 512, JSON_THROW_ON_ERROR);
 			}),
 		];
 	}
@@ -43,7 +32,7 @@ class AwyissExtension extends AbstractExtension {
 	/**
 	 * Returns a list of functions to add to the existing list.
 	 *
-	 * @return array<TwigFunction>
+	 * @return array<\Twig\TwigFunction>
 	 */
 	public function getFunctions(): array {
 		return [
@@ -102,6 +91,32 @@ class AwyissExtension extends AbstractExtension {
 
 
 				return null;
+			}),
+		];
+	}
+
+
+	/**
+	 * Returns a list of tests to add to the existing list.
+	 *
+	 * @return array<\Twig\TwigTest>
+	 */
+	public function getTests(): array {
+		return [
+			new TwigTest('array', function ($ax_value): bool {
+				return is_array($ax_value);
+			}),
+
+			new TwigTest('instanceOf', function ($ao_object, $ax_class): bool {
+				return $ao_object instanceof $ax_class;
+			}),
+
+			new TwigTest('numeric', function ($ax_value): bool {
+				return is_numeric($ax_value);
+			}),
+
+			new TwigTest('string', function ($ax_value): bool {
+				return is_string($ax_value);
 			}),
 		];
 	}

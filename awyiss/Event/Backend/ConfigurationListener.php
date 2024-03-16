@@ -35,7 +35,7 @@ class ConfigurationListener implements EventListenerInterface {
 	 */
 	public function implementedEvents(): array {
 		return [
-			'Model.Configuration.beforeSave' => 'beforeSave',
+			'Model.Configuration.beforeRules' => 'beforeRules',
 			'Model.Configuration.afterSaveCommit' => 'afterSaveCommit',
 			'Model.Configuration.afterDelete' => 'afterDelete',
 			'Configuration.createCustomConfiguration' => 'createCustomConfiguration',
@@ -51,7 +51,7 @@ class ConfigurationListener implements EventListenerInterface {
 	 * @noinspection PhpUnusedParameterInspection
 	 * @throws \ReflectionException
 	 */
-	public function beforeSave(Event $ao_event, Configuration $ao_entity): void {
+	public function beforeRules(Event $ao_event, Configuration $ao_entity): void {
 		$ao_entity->value = ConfigOptionsProvider::typecastConfigValue(
 			$ao_entity->scope,
 			$ao_entity->realm,

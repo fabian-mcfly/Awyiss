@@ -1,10 +1,11 @@
 {#
-TODO: modify inputs in add/edit, based on option type
 @var ao_configuration \Awyiss\Model\Entity\Configuration
 @var aa_configOptions array
 @var aa_realms array
 @var _view \Awyiss\View\BackendView
 #}
+
+{% use '@Backend/Configuration/blocks.twig' %}
 
 {% macro recursiveConfigOptions(aa_items, ai_level = 0, aa_parent = []) %}
 	{% for ls_key, lx_configuration in aa_items %}
@@ -23,7 +24,7 @@ TODO: modify inputs in add/edit, based on option type
 {% endmacro %}
 
 {% block fieldsetPresentation %}
-	<fieldset>
+	<fieldset class="Fieldset-Presentation">
 		<legend>{{ __('fieldset_presentation') }}</legend>
 
 		{% block fieldsetPresentationInner %}
@@ -35,20 +36,20 @@ TODO: modify inputs in add/edit, based on option type
 {% endblock %}
 
 {% block fieldsetConditions %}
-	<fieldset>
+	<fieldset class="Fieldset-Conditions">
 		<legend>{{ __('fieldset_conditions') }}</legend>
 
 		{% block fieldsetConditionsInner %}
 			{% block formControlScope %}
-				{{ helper_Categories_control('scope') }}
+				{{ helper_Categories_control('scope', {'data-form-updater': true}) }}
 			{% endblock %}
 
 			{% block formControlRealm %}
-				{{ helper_Form_control('realm', {options: combine(aa_realms, aa_realms)}) }}
+				{{ helper_Form_control('realm', {options: combine(aa_realms, aa_realms), 'data-form-updater': true}) }}
 			{% endblock %}
 
 			{% block formControlLanguageShortcode %}
-				{{ helper_Locale_control('language_shortcode', {languageRealm: ao_configuration.realm}) }}
+				{{ helper_Locale_control('language_shortcode', {languageRealm: ao_configuration.realm, 'data-form-updater': true}) }}
 			{% endblock %}
 
 			{% block fieldsetConditionsAttributes %}
@@ -59,25 +60,39 @@ TODO: modify inputs in add/edit, based on option type
 {% endblock %}
 
 {% block fieldsetGeneral %}
-	<fieldset>
+	<fieldset class="Fieldset-General">
 		<legend>{{ __('fieldset_general') }}</legend>
 
 		{% block fieldsetGeneralInner %}
 			{% block formControlIdentifier %}
-				{{ helper_Form_control('identifier', {val: ao_configuration.identifier ? ao_configuration.identifier|variable : '' }) }}
+				<div class="Input InputType-Text InputName-Identifier">
+					<label for="Configuration-Identifier">{{ __('identifier') }}</label>
 
-				{% block formControlIdentifierSelect %}
-					<label>
-						<select name="">
+					{{ helper_Form_text('identifier', {
+						id: 'Configuration-Identifier',
+						val: ao_configuration.identifier ? ao_configuration.identifier|variable : '',
+						'data-form-updater': true
+					}) }}
+
+					{% block formControlIdentifierSelect %}
+						<select id="Configuration-Identifier-Options" name="" data-options-for="Configuration-Identifier">
 							<option value=""></option>
 							{{ _self.recursiveConfigOptions(aa_configOptions) }}
 						</select>
-					</label>
-				{% endblock %}
+					{% endblock %}
+				</div>
 			{% endblock %}
 
 			{% block formControlValue %}
-				{{ helper_Form_control('value') }}
+				{% if ao_configuration.configOption %}
+					{{ block('formControlType' ~ ao_configuration.configOption.type.name) }}
+				{% else %}
+					{{ helper_Form_control('value') }}
+				{% endif %}
+			{% endblock %}
+
+			{% block formControlDescription %}
+				{{ helper_Form_control('description', {placeholder: ao_configuration.configOption.description}) }}
 			{% endblock %}
 
 			{% block fieldsetGeneralAttributes %}
@@ -88,7 +103,7 @@ TODO: modify inputs in add/edit, based on option type
 {% endblock %}
 
 {% block fieldsetContent %}
-	<fieldset>
+	<fieldset class="Fieldset-Content">
 		<legend>{{ __('fieldset_content') }}</legend>
 
 		{% block fieldsetContentInner %}
@@ -100,7 +115,7 @@ TODO: modify inputs in add/edit, based on option type
 {% endblock %}
 
 {% block fieldsetMedia %}
-	<fieldset>
+	<fieldset class="Fieldset-Media">
 		<legend>{{ __('fieldset_media') }}</legend>
 
 		{% block fieldsetMediaInner %}
@@ -112,7 +127,7 @@ TODO: modify inputs in add/edit, based on option type
 {% endblock %}
 
 {% block fieldsetAttributes %}
-	<fieldset>
+	<fieldset class="Fieldset-Attributes">
 		<legend>{{ __('fieldset_attributes') }}</legend>
 
 		{% block fieldsetAttributesInner %}
@@ -123,4 +138,137 @@ TODO: modify inputs in add/edit, based on option type
 	</fieldset>
 {% endblock %}
 
-{{- helper_Form_hidden('reload_form', {val: 0}) }}
+{% block formInputReloadForm %}
+	{{ helper_Form_hidden('reload_form', {val: 0}) }}
+{% endblock %}
+
+<script>
+	document.body.addEventListener('change', (event) => {
+		if (event.target.matches('select[data-options-for]')) {
+			const targetInputId = event.target.getAttribute('data-options-for');
+			const targetInput = document.getElementById(targetInputId);
+			if (targetInput) {
+				targetInput.value = event.target.value;
+				event.target.value = ''; // reset the select dropdown
+
+				//Create a new 'change' event
+				const changeEvent = new Event('change');
+
+				//Dispatch the 'change' event on the target input
+				targetInput.dispatchEvent(changeEvent);
+			}
+		}
+	});
+
+
+	/**
+	async function loadClass (className, newPath, originalPath) {
+		let ClassToUse;
+
+		try {
+			// Try to import the new class
+			const ImportedClass = await import(`${newPath}/${className}.js`);
+			ClassToUse = ImportedClass.default;
+		} catch (error) {
+			// If the import fails, use the original class
+			const OriginalClass = await import(`${originalPath}/${className}.js`);
+			ClassToUse = OriginalClass.default;
+		}
+
+		return ClassToUse;
+	}
+
+	// Usage
+	loadClass('FormUpdater', './path/to/new', './path/to/original')
+	.then(FormUpdater => {
+		const formUpdaterInstance = new FormUpdater('data-form-updater');
+		// ...
+	});
+	*/
+
+
+	/**
+	 * FormUpdater class
+	 * This class is used to handle form updates and reloads.
+	 */
+	class FormUpdater {
+		/**
+		 * @private
+		 * @type {string}
+		 * The data attribute used to select elements.
+		 */
+		#dataAttribute;
+
+		/**
+		 * @constructor
+		 * @param {string} dataAttribute - The data attribute used to select elements.
+		 */
+		constructor (dataAttribute) {
+			this.#dataAttribute = dataAttribute;
+			this.#attachEventListeners();
+		}
+
+		/**
+		 * @private
+		 * Attaches event listeners to all elements with the data attribute.
+		 */
+		#attachEventListeners () {
+			document.querySelectorAll(`[${this.#dataAttribute}]`).forEach((element) => {
+				element.addEventListener('change', this.#handleEvent.bind(this));
+			});
+		}
+
+		/**
+		 * @private
+		 * @param {Event} event - The event object.
+		 * Handles the input event by sending a request if the event target is within a form.
+		 */
+		#handleEvent (event) {
+			const form = this.#getForm(event.target);
+			const dataAttributeValue = event.target.getAttribute(this.#dataAttribute);
+			if (form && dataAttributeValue && dataAttributeValue !== '0' && dataAttributeValue.toLowerCase() !== 'false') {
+				this.#sendRequest(form);
+			}
+		}
+
+		/**
+		 * @private
+		 * @param {HTMLElement} element - The element to start the search from.
+		 * @returns {HTMLFormElement|null} The closest form element, or null if none is found.
+		 * Finds the closest form element to the given element.
+		 */
+		#getForm (element) {
+			while (element && element.nodeName.toLowerCase() !== 'form') {
+				element = element.parentNode;
+			}
+			return element;
+		}
+
+		/**
+		 * @private
+		 * @param {HTMLFormElement} form - The form to send the request from.
+		 * Sends a request with the form data, then replaces the form with the new form from the server response.
+		 * Re-attaches event listeners to the new form and re-enables the form inputs.
+		 */
+		#sendRequest (form) {
+			const formData = new FormData(form);
+			formData.append('reload_form', '1'); // append "reload_form" key with value "1"
+			form.querySelectorAll('input, select, textarea').forEach(input => input.disabled = true);
+
+			fetch(form.action, {
+				method: form.method,
+				body: formData
+			})
+			.then(response => response.text())
+			.then(html => {
+				const newForm = new DOMParser().parseFromString(html, 'text/html').querySelector('form');
+				form.parentNode.replaceChild(newForm, form);
+				this.#attachEventListeners();
+			})
+			.catch(error => console.error('Error:', error))
+			.finally(() => form.querySelectorAll('input, select, textarea').forEach(input => input.disabled = false));
+		}
+	}
+
+	new FormUpdater('data-form-updater');
+</script>

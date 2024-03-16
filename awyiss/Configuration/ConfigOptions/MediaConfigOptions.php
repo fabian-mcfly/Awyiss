@@ -30,7 +30,24 @@ class MediaConfigOptions extends AbstractConfigOptions {
 				identifier: 'defaultBreakpoints',
 				localizable: false,
 				nullable: false,
-				type: ConfigOptionType::JsonArray,
+				type: ConfigOptionType::List,
+				typecast: function (array|string|null $aa_values): ?array {
+					if ($aa_values === null) {
+						return null;
+					}
+
+					$la_values = $aa_values;
+
+					if (is_string($la_values)) {
+						$la_values = json_decode($la_values, true);
+					}
+
+					$la_values = array_filter(array_map('intval', $la_values));
+
+					rsort($la_values);
+
+					return $la_values ?: null;
+				}
 			),
 		]);
 

@@ -147,6 +147,12 @@ class ConfigurationTable extends Table {
 		]);
 
 
+		$ao_validator->add('description', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'maxLength' => ['rule' => ['maxLength', 255]],
+		]);
+
+
 		return $ao_validator;
 	}
 

@@ -7,6 +7,7 @@ namespace Awyiss\Configuration\ConfigOptions;
 use Awyiss\Awyiss;
 use Awyiss\Configuration\AbstractGenericConfigOptions;
 use Awyiss\Configuration\ConfigOption;
+use Awyiss\Configuration\ConfigOptions\Trait\TableNamesTrait;
 use Awyiss\Configuration\ConfigOptionType;
 use Cake\Utility\Inflector;
 
@@ -15,6 +16,9 @@ use Cake\Utility\Inflector;
  * Provides all configuration options for the generic datatables scope
  */
 class GenericDatatablesConfigOptions extends AbstractGenericConfigOptions {
+	use TableNamesTrait;
+
+
 	/**
 	 * @var string Scope of these options
 	 */
@@ -38,7 +42,8 @@ class GenericDatatablesConfigOptions extends AbstractGenericConfigOptions {
 					defaultValue: null,
 					identifier: 'associationName',
 					localizable: false,
-					type: ConfigOptionType::String,
+					type: ConfigOptionType::ListKey,
+					values: $this->getTableNames(...),
 				),
 				new ConfigOption(
 					defaultValue: null,

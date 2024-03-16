@@ -72,28 +72,28 @@
 			this.#element = element;
 
 			//Add a keydown event listener to the element using an arrow function
-			this.#element.addEventListener('keydown', this.handleKeyEvent);
+			this.#element.addEventListener('keydown', this.#handleKeyEvent);
 		}
 
 		//Handles key down events in the text area
-		handleKeyEvent = (event) => {
+		#handleKeyEvent = (event) => {
 			const keyCode = event.keyCode || event.which;
 
 			//Tab key adds a tab character
 			if (keyCode === 9) {
 				event.preventDefault();
-				this.insertTab();
+				this.#insertTab();
 			}
 
 			//Enter key adds a new line with indentation (if not combined with Ctrl or Shift)
 			if (keyCode === 13 && !(event.ctrlKey || event.shiftKey)) {
 				event.preventDefault();
-				this.insertNewLineWithIndent();
+				this.#insertNewLineWithIndent();
 			}
 		}
 
 		//Inserts a tab at the current cursor position
-		insertTab = () => {
+		#insertTab = () => {
 			//Destructure properties from the element for easier access
 			const {selectionStart: start, selectionEnd: end, value} = this.#element;
 
@@ -104,7 +104,7 @@
 		}
 
 		//Inserts a new line and maintains the previous line's indentation level
-		insertNewLineWithIndent = () => {
+		#insertNewLineWithIndent = () => {
 			//Destructure properties from the element for easier access
 			const {selectionStart: start, selectionEnd: end, value} = this.#element;
 			//Get the last line before the cursor to determine the indentation level

@@ -19,6 +19,7 @@ enum ConfigOptionType {
 	case Integer;
 	case JsonArray;
 	case JsonObject;
+	case List;
 	case ListKey;
 	case ListValue;
 	case String;
@@ -51,6 +52,7 @@ enum ConfigOptionType {
 			case self::Integer:
 				return is_int($ax_value) || ($ax_value === (int)$ax_value);
 
+			case self::List:
 			case self::JsonArray:
 			case self::JsonObject:
 				try {
@@ -94,8 +96,9 @@ enum ConfigOptionType {
 			self::Bool => $ax_value === 'false' ? false : boolval($ax_value),
 			self::Float => floatval($ax_value),
 			self::Integer => intval($ax_value),
-			self::JsonArray => json_decode($ax_value, true),
-			self::JsonObject => json_decode($ax_value),
+			self::List => json_decode($ax_value ?? '', true),
+			self::JsonArray => json_decode($ax_value ?? '', true),
+			self::JsonObject => json_decode($ax_value ?? ''),
 			self::String => strval($ax_value),
 		};
 	}

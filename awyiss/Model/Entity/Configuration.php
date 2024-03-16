@@ -20,6 +20,7 @@ use Cake\Utility\Inflector;
  * @property string|null $identifier
  * @property string|null $value
  * @property string|null $languageShortcode
+ * @property string|null $description
  * @property \Awyiss\Model\Entity\Language $language
  * @property mixed $printableValue
  */
@@ -38,6 +39,7 @@ class Configuration extends Entity {
 		'identifier' => true,
 		'value' => true,
 		'languageShortcode' => true,
+		'description' => true,
 	];
 	/**
 	 * @inheritDoc
@@ -93,10 +95,12 @@ class Configuration extends Entity {
 			}
 		}
 
+
 		return match (gettype($lx_value)) {
 			'NULL' => null,
 			'boolean' => $lx_value ? 'true' : 'false',
-			'array', 'object' => print_r($lx_value, true),
+			'array' => array_is_list($lx_value) ? implode(', ', $lx_value) : print_r($lx_value, true),
+			'object' => print_r($lx_value, true),
 			default => $lx_value,
 		};
 	}

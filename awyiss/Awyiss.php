@@ -190,9 +190,11 @@ class Awyiss extends BaseApplication {
 	public function middleware(MiddlewareQueue $ao_middlewareQueue): MiddlewareQueue {
 		$ao_middlewareQueue->add(new ErrorHandlerMiddleware(Configure::read('Error'), $this));
 
-		$ao_middlewareQueue->add(new AssetMiddleware([
-			'cacheTime' => Configure::read('Asset.cacheTime'),
-		]));
+		if (Configure::read('debug')) {
+			$ao_middlewareQueue->add(new AssetMiddleware([
+				'cacheTime' => Configure::read('Asset.cacheTime'),
+			]));
+		}
 
 		$ao_middlewareQueue->add(new RoutingMiddleware($this));
 

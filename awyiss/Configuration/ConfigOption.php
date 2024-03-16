@@ -253,7 +253,7 @@ class ConfigOption {
 
 		return match ($this->type) {
 			ConfigOptionType::Bool => $lx_value ? 'true' : 'false',
-			ConfigOptionType::JsonArray => array_is_list($lx_value) ? implode(', ', $lx_value) : print_r($lx_value, true),
+			ConfigOptionType::JsonArray, ConfigOptionType::List => array_is_list($lx_value) ? implode(', ', $lx_value) : print_r($lx_value, true),
 			ConfigOptionType::JsonObject => print_r($lx_value, true),
 			default => $lx_value,
 		};
@@ -402,7 +402,7 @@ class ConfigOption {
 		) {
 			$lx_values = $this->getValues(true, $as_languageShortcode);
 			if (!$lx_values) {
-				throw new RuntimeException(sprintf('Cannot typecast option `%s` with type `%s` without a list of values', $this->identifier, ConfigOptionType::ListValue->name));
+				throw new RuntimeException(sprintf('Cannot typecast option `%s` with type `%s` without a list of values', $this->identifier, $this->getType()->name));
 			}
 		}
 

@@ -8,6 +8,7 @@ use Awyiss\Awyiss;
 use Awyiss\Configuration\AbstractGenericConfigOptions;
 use Awyiss\Configuration\ConfigOption;
 use Awyiss\Configuration\ConfigOptions\Trait\SystemOrderFieldsTrait;
+use Awyiss\Configuration\ConfigOptions\Trait\TableNamesTrait;
 use Awyiss\Configuration\ConfigOptionType;
 use Cake\Utility\Inflector;
 
@@ -17,6 +18,7 @@ use Cake\Utility\Inflector;
  */
 class GenericPagesConfigOptions extends AbstractGenericConfigOptions {
 	use SystemOrderFieldsTrait;
+	use TableNamesTrait;
 
 
 	/**
@@ -49,7 +51,8 @@ class GenericPagesConfigOptions extends AbstractGenericConfigOptions {
 					defaultValue: null,
 					identifier: 'associationName',
 					localizable: false,
-					type: ConfigOptionType::String,
+					type: ConfigOptionType::ListKey,
+					values: $this->getTableNames(...),
 				),
 				new ConfigOption(
 					defaultValue: null,

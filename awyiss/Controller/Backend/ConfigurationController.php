@@ -70,19 +70,20 @@ class ConfigurationController extends Controller {
 		]);
 		$this->Categories->filterQuery($lo_configuration, null, !$this->paginate['enabled']);
 
-		$la_configuration = $lo_configuration->all()->groupBy('realm')->map(function ($aa_data) {
-			return Hash::expand(collection($aa_data)->groupBy(function (Configuration $ao_entity) {
-				$la_identifier = array_map(function (string $as_identifier) {
+		$lo_configOptions = ConfigOptionsProvider::loadConfigOptions($ls_selectedScope);
+		$la_configOptions = $lo_configOptions->getConfigOptions();
+
+		$la_configuration = $lo_configuration->all()->groupBy('realm')->map(function ($aa_data) use ($lo_configOptions) {
+			return Hash::expand(collection($aa_data)->groupBy(function (Configuration $ao_entity) use ($lo_configOptions) {
+				$la_identifier = array_map(function (string $as_identifier) use ($lo_configOptions) {
 					return ConfigOptionsProvider::sanitizeIdentifier($as_identifier);
 				}, explode('.', $ao_entity->identifier));
 
+				$ao_entity->configOption = $lo_configOptions->getConfigOption($ao_entity->realm, implode('.', $la_identifier));
 
 				return implode('.', $la_identifier);
 			})->toArray());
 		})->toArray();
-
-		$lo_configOptions = ConfigOptionsProvider::loadConfigOptions($ls_selectedScope);
-		$la_configOptions = $lo_configOptions->getConfigOptions();
 
 		/**
 		 * @var string $ls_realm
@@ -131,6 +132,8 @@ class ConfigurationController extends Controller {
 		$lo_configOptions = ConfigOptionsProvider::loadConfigOptions($lo_configuration->scope);
 		$la_configOptions = $lo_configOptions->getConfigOptions($lo_configuration->realm);
 
+		$lo_configuration->configOption = $lo_configuration->identifier ? $lo_configOptions->getConfigOption($lo_configuration->realm, $lo_configuration->identifier) : null;
+
 		$this->set([
 			'ao_configuration' => $lo_configuration,
 			'aa_configOptions' => $la_configOptions,
@@ -173,6 +176,8 @@ class ConfigurationController extends Controller {
 
 		$lo_configOptions = ConfigOptionsProvider::loadConfigOptions($lo_configuration->scope);
 		$la_configOptions = $lo_configOptions->getConfigOptions($lo_configuration->realm);
+
+		$lo_configuration->configOption = $lo_configuration->identifier ? $lo_configOptions->getConfigOption($lo_configuration->realm, $lo_configuration->identifier) : null;
 
 		$this->set([
 			'ao_configuration' => $lo_configuration,
@@ -233,7 +238,13 @@ class ConfigurationController extends Controller {
 			$ao_configuration->setAccess('attributes', true);
 		}
 
-		$this->Configuration->patchEntity($ao_configuration, $this->request->getData(), ['associated' => $la_associated]);
+		$la_data = $this->request->getData();
+
+		if (is_array($la_data['value'] ?? null)) {
+			$la_data['value'] = json_encode(array_values($la_data['value']));
+		}
+
+		$this->Configuration->patchEntity($ao_configuration, $la_data, ['associated' => $la_associated]);
 
 		if (!$this->Authorization->withAdditionalData(['scope' => $ao_configuration->scope])->isAccessible('read')) {
 			$this->Flash->error(__('scope_not_accessible'));
