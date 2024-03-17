@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 
-namespace Awyiss\Utilities\Menu;
+namespace Awyiss\Utility\Menu;
 
 
 use JsonSchema\Constraints\Factory;
@@ -53,7 +53,7 @@ class MenuLoader {
 	/**
 	 * @param object $ao_data
 	 * @param array $aa_config
-	 * @return \Awyiss\Utilities\Menu\Menu
+	 * @return \Awyiss\Utility\Menu\Menu
 	 * @throws \ReflectionException
 	 */
 	public static function fromObject(object $ao_data, array $aa_config = []): Menu {
@@ -90,7 +90,7 @@ class MenuLoader {
 	/**
 	 * @param string $as_filePath
 	 * @param array $aa_config
-	 * @return \Awyiss\Utilities\Menu\Menu
+	 * @return \Awyiss\Utility\Menu\Menu
 	 * @throws \ReflectionException
 	 */
 	public static function fromJsonFile(string $as_filePath, array $aa_config = []): Menu {
@@ -104,7 +104,7 @@ class MenuLoader {
 	/**
 	 * @param string $as_jsonString
 	 * @param array $aa_config
-	 * @return \Awyiss\Utilities\Menu\Menu
+	 * @return \Awyiss\Utility\Menu\Menu
 	 * @throws \ReflectionException
 	 */
 	public static function fromJsonString(string $as_jsonString, array $aa_config = []): Menu {

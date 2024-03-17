@@ -10,7 +10,7 @@ use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity\Content;
 use Awyiss\Model\Entity\Page;
 use Awyiss\Routing\Router;
-use Awyiss\Utilities\Contents\ColumnInterface;
+use Awyiss\Utility\Contents\ColumnInterface;
 use Cake\Collection\Collection;
 use Cake\Collection\CollectionInterface;
 use Cake\Core\Configure;
@@ -101,7 +101,7 @@ class ContentsController extends Controller {
 			$la_contentAreas[ $li_contentAreaId ] = null;
 		}
 
-		/** @var class-string<\Awyiss\Utilities\Contents\ColumnSystemInterface> $ls_columnSystemClass */
+		/** @var class-string<\Awyiss\Utility\Contents\ColumnSystemInterface> $ls_columnSystemClass */
 		$ls_columnSystemClass = $this->Contents->getColumnSystemClass();
 
 		$this->set([

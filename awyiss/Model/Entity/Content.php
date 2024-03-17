@@ -44,7 +44,7 @@ use Cake\Datasource\FactoryLocator;
  * @property \Awyiss\Model\Entity\Content $duplicateOfContent
  * @property \Awyiss\Model\Entity\Content $parentContent
  * @property \Awyiss\Model\Entity\Content[] $childContents
- * @property array{width: \Awyiss\Utilities\Contents\ColumnInterface, indent: ?\Awyiss\Utilities\Contents\ColumnInterface} $column
+ * @property array{width: \Awyiss\Utility\Contents\ColumnInterface, indent: ?\Awyiss\Utility\Contents\ColumnInterface} $column
  */
 class Content extends Entity {
 	/**
@@ -246,7 +246,7 @@ class Content extends Entity {
 
 
 	/**
-	 * @return array<string, ?\Awyiss\Utilities\Contents\ColumnInterface>
+	 * @return array<string, ?\Awyiss\Utility\Contents\ColumnInterface>
 	 */
 	protected function _getColumn(): array {
 		if (!isset(static::$columnWidths)) {

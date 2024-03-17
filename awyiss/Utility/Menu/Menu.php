@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 
-namespace Awyiss\Utilities\Menu;
+namespace Awyiss\Utility\Menu;
 
 
 use Awyiss\Authorization\IdentityPermissionsInterface;
@@ -123,7 +123,7 @@ class Menu {
 	/**
 	 * @param string|int $ax_id
 	 * @param bool $ab_deep
-	 * @return \Awyiss\Utilities\Menu\MenuItem|null
+	 * @return \Awyiss\Utility\Menu\MenuItem|null
 	 */
 	public function getItem(string|int $ax_id, bool $ab_deep = true): ?MenuItem {
 		$la_items = $ab_deep ? $this->items() : $this->items;
@@ -139,7 +139,7 @@ class Menu {
 
 
 	/**
-	 * @return array<\Awyiss\Utilities\Menu\MenuItem>
+	 * @return array<\Awyiss\Utility\Menu\MenuItem>
 	 */
 	public function getItems(): array {
 		return $this->items;

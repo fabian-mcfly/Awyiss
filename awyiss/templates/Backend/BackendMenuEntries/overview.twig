@@ -1,5 +1,5 @@
 {#
-@var ao_menu \Awyiss\Utilities\Menu\BackendMenu
+@var ao_menu \Awyiss\Utility\Menu\BackendMenu
 @var _view \Awyiss\View\BackendView
 #}
 
@@ -41,7 +41,7 @@
 			{% endblock %}
 			{% block tableOverviewBody %}
 				<tbody>
-					{# @var lo_menuEntry \Awyiss\Utilities\Menu\MenuEntry #}
+					{# @var lo_menuEntry \Awyiss\Utility\Menu\MenuEntry #}
 					{% for lx_identifier, lo_menuEntry in ao_menu.getDynamicMenu().toArray() %}
 						{% block tableOverviewBodyRow %}
 							<tr>

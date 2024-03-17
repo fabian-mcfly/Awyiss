@@ -27,7 +27,7 @@ class ContentsConfigOptions extends AbstractConfigOptions {
 		$this->add(Awyiss::REALM_BACKEND, [
 			'columnSystem' => [
 				new ConfigOption(
-					defaultValue: '\Awyiss\Utilities\Contents\AwyissColumnSystem',
+					defaultValue: '\Awyiss\Utility\Contents\AwyissColumnSystem',
 					identifier: 'className',
 					localizable: false,
 					nullable: false,
@@ -59,8 +59,8 @@ class ContentsConfigOptions extends AbstractConfigOptions {
 	 */
 	protected function getColumnSystemClasses(): array {
 		$la_paths = [
-			'\\' . CUSTOM_NAMESPACE . '\Utilities\Contents\\' => implode(DS, [ROOT, CUSTOM_DIR, 'Utilities', 'Contents', '*ColumnSystem.php',]),
-			'\Awyiss\Utilities\Contents\\' => implode(DS, [ROOT, APP_DIR, 'Utilities', 'Contents', '*ColumnSystem.php']),
+			'\\' . CUSTOM_NAMESPACE . '\Utility\Contents\\' => implode(DS, [ROOT, CUSTOM_DIR, 'Utility', 'Contents', '*ColumnSystem.php',]),
+			'\Awyiss\Utility\Contents\\' => implode(DS, [ROOT, APP_DIR, 'Utility', 'Contents', '*ColumnSystem.php']),
 		];
 
 		$la_columnSystemClasses = [];
@@ -69,7 +69,7 @@ class ContentsConfigOptions extends AbstractConfigOptions {
 			foreach (glob($ls_path) as $ls_filePath) {
 				$ls_configurationName = substr($ls_filePath, strrpos($ls_filePath, DS) + 1, -4);
 				/**
-				 * @var class-string<\Awyiss\Utilities\Contents\ColumnSystemInterface> $ls_configurationClass
+				 * @var class-string<\Awyiss\Utility\Contents\ColumnSystemInterface> $ls_configurationClass
 				 */
 				$ls_configurationClass = $ls_namespace . $ls_configurationName;
 

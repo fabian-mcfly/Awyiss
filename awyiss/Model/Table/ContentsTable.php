@@ -10,7 +10,7 @@ use Awyiss\Model\Entity\Page;
 use Awyiss\Model\Enum\PageRoleEnumInterface;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
-use Awyiss\Utilities\Contents\AwyissColumnSystem;
+use Awyiss\Utility\Contents\AwyissColumnSystem;
 use Awyiss\Validation\Validator;
 use Cake\Collection\Collection;
 use Cake\Collection\CollectionInterface;
@@ -141,7 +141,7 @@ class ContentsTable extends Table {
 
 
 	/**
-	 * @return class-string<\Awyiss\Utilities\Contents\ColumnSystemInterface>
+	 * @return class-string<\Awyiss\Utility\Contents\ColumnSystemInterface>
 	 */
 	public function getColumnSystemClass(): string {
 		return $this->columnSystem['className'];
@@ -168,7 +168,7 @@ class ContentsTable extends Table {
 	 * @return void
 	 */
 	protected function initializeColumnSystem(): void {
-		/** @var class-string<\Awyiss\Utilities\Contents\ColumnSystemInterface> $ls_className */
+		/** @var class-string<\Awyiss\Utility\Contents\ColumnSystemInterface> $ls_className */
 		$ls_className = $this->columnSystem['className'];
 		$ls_className::setMaxDenominator($this->columnSystem['maxColumns']);
 
@@ -403,9 +403,9 @@ class ContentsTable extends Table {
 
 
 		$ao_rules->add(function (Content $ao_entity): bool {
-			/** @var \Awyiss\Utilities\Contents\ColumnInterface $lo_width */
+			/** @var \Awyiss\Utility\Contents\ColumnInterface $lo_width */
 			$lo_width = $ao_entity->column['width'];
-			/** @var \Awyiss\Utilities\Contents\ColumnInterface $lo_indent */
+			/** @var \Awyiss\Utility\Contents\ColumnInterface $lo_indent */
 			$lo_indent = $ao_entity->column['indent'];
 
 			$lf_totalWidth = $lo_width->getPercentage() + ($lo_indent?->getPercentage() ?? 0);

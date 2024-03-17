@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 
-namespace Awyiss\Utilities\Menu;
+namespace Awyiss\Utility\Menu;
 
 
 use Cake\Core\InstanceConfigTrait;
@@ -38,7 +38,7 @@ class MenuRenderer {
 		],
 	];
 	/**
-	 * @var \Awyiss\Utilities\Menu\Menu
+	 * @var \Awyiss\Utility\Menu\Menu
 	 */
 	protected Menu $menu;
 	/**
@@ -92,7 +92,7 @@ class MenuRenderer {
 	/**
 	 * Renders the menu as HTML.
 	 *
-	 * @param \Awyiss\Utilities\Menu\Menu|\Awyiss\Utilities\Menu\MenuItem|string|null $ax_items
+	 * @param \Awyiss\Utility\Menu\Menu|\Awyiss\Utility\Menu\MenuItem|string|null $ax_items
 	 * @param int $level
 	 * @param int|null $maxLevel
 	 * @return string

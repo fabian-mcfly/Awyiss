@@ -8,7 +8,7 @@ use Awyiss\Model\Entity;
 use Awyiss\Model\Entity\BackendMenuEntry;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
-use Awyiss\Utilities\Menu\BackendMenu;
+use Awyiss\Utility\Menu\BackendMenu;
 use Cake\Database\Schema\TableSchemaInterface;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Validation\Validator;

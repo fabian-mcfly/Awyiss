@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 
-namespace Awyiss\Utilities\Menu;
+namespace Awyiss\Utility\Menu;
 
 
 use Awyiss\Authorization\IdentityPermissionsInterface;
@@ -33,7 +33,7 @@ class MenuItem {
 	 */
 	protected bool $active = true;
 	/**
-	 * @var \Awyiss\Utilities\Menu\Menu|null
+	 * @var \Awyiss\Utility\Menu\Menu|null
 	 */
 	protected ?Menu $children = null;
 	/**
@@ -167,7 +167,7 @@ class MenuItem {
 
 
 	/**
-	 * @return \Awyiss\Utilities\Menu\Menu|null
+	 * @return \Awyiss\Utility\Menu\Menu|null
 	 */
 	public function getChildren(): ?Menu {
 		return $this->children;

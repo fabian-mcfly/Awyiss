@@ -7,9 +7,9 @@ namespace Awyiss\Controller\Backend;
 use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Model\Entity\BackendMenuEntry;
 use Awyiss\Routing\Router;
-use Awyiss\Utilities\Menu\BackendMenu;
-use Awyiss\Utilities\Menu\Menu;
-use Awyiss\Utilities\Menu\MenuItem;
+use Awyiss\Utility\Menu\BackendMenu;
+use Awyiss\Utility\Menu\Menu;
+use Awyiss\Utility\Menu\MenuItem;
 use Cake\Collection\CollectionInterface;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
@@ -146,7 +146,7 @@ class BackendMenuEntriesController extends Controller {
 	 * to prevent circular references
 	 *
 	 * @param BackendMenuEntry $ao_menuEntry
-	 * @param \Awyiss\Utilities\Menu\Menu|null $ao_dynamicMenu
+	 * @param \Awyiss\Utility\Menu\Menu|null $ao_dynamicMenu
 	 * @return \Cake\Collection\CollectionInterface
 	 */
 	public function getPossibleParentMenuEntries(BackendMenuEntry $ao_menuEntry, ?Menu $ao_dynamicMenu): CollectionInterface {
@@ -252,7 +252,7 @@ class BackendMenuEntriesController extends Controller {
 
 
 	/**
-	 * @param \Awyiss\Utilities\Menu\Menu $ao_menu
+	 * @param \Awyiss\Utility\Menu\Menu $ao_menu
 	 * @return array
 	 */
 	protected function generateMenuSelectOptions(Menu $ao_menu): array {

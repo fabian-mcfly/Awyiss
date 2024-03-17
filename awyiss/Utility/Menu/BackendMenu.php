@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 
-namespace Awyiss\Utilities\Menu;
+namespace Awyiss\Utility\Menu;
 
 
 use Awyiss\Authorization\IdentityPermissionsInterface;
@@ -39,7 +39,7 @@ class BackendMenu {
 
 
 	/**
-	 * @return \Awyiss\Utilities\Menu\Menu|null
+	 * @return \Awyiss\Utility\Menu\Menu|null
 	 */
 	public function getMenu(): ?Menu {
 		return $this->menu;
@@ -47,7 +47,7 @@ class BackendMenu {
 
 
 	/**
-	 * @return \Awyiss\Utilities\Menu\Menu|null
+	 * @return \Awyiss\Utility\Menu\Menu|null
 	 */
 	public function getCustomMenu(): ?Menu {
 		return $this->customMenu;
@@ -55,7 +55,7 @@ class BackendMenu {
 
 
 	/**
-	 * @return \Awyiss\Utilities\Menu\Menu|null
+	 * @return \Awyiss\Utility\Menu\Menu|null
 	 */
 	public function getDynamicMenu(): ?Menu {
 		return $this->dynamicMenu;

@@ -6,8 +6,8 @@ namespace Awyiss\View\Cell\Backend;
 
 use Awyiss\Authorization\IdentityPermissionsInterface;
 use Awyiss\Middleware\LocaleMiddleware;
-use Awyiss\Utilities\Menu\BackendMenu;
-use Awyiss\Utilities\Menu\MenuRenderer;
+use Awyiss\Utility\Menu\BackendMenu;
+use Awyiss\Utility\Menu\MenuRenderer;
 use Cake\I18n\DateTime;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\View\Cell;
