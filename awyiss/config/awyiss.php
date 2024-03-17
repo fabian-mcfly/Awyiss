@@ -36,15 +36,15 @@ return [
 		'namespace' => 'Awyiss',
 		'paths' => [
 			'plugins' => [
-				'customer' => ROOT . DS . CUSTOM_DIR . DS . 'plugins' . DS,
+				'customer' => defined('CUSTOM_DIR') ? ROOT . DS . CUSTOM_DIR . DS . 'plugins' . DS : null,
 				'awyiss' => ROOT . DS . APP_DIR . DS . 'plugins' . DS,
 			],
 			'templates' => [
-				'customer' => ROOT . DS . CUSTOM_DIR . DS . 'templates' . DS,
+				'customer' => defined('CUSTOM_DIR') ? ROOT . DS . CUSTOM_DIR . DS . 'templates' . DS : null,
 				'awyiss' => ROOT . DS . APP_DIR . DS . 'templates' . DS,
 			],
 			'locales' => [
-				'customer' => ROOT . DS . CUSTOM_DIR . DS . 'locales' . DS,
+				'customer' => defined('CUSTOM_DIR') ? ROOT . DS . CUSTOM_DIR . DS . 'locales' . DS : null,
 				'awyiss' => ROOT . DS . APP_DIR . DS . 'locales' . DS,
 			],
 		],
@@ -275,7 +275,7 @@ return [
 
 
 	'Security' => [
-		'salt' => env('SECURITY_SALT'),
+		'salt' => env('SECURITY_SALT', 'dummy-salt'),
 	],
 
 

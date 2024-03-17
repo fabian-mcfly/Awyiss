@@ -129,13 +129,15 @@ class EventListenersProvider {
 	 * @throws \ReflectionException
 	 */
 	protected static function findListener(string $as_scope, string $as_realm): array {
+		$la_paths = [];
+
+		if (defined('CUSTOM_NAMESPACE')) {
+			$la_paths['\\' . CUSTOM_NAMESPACE . '\Event\\' . $as_realm . '\\'] = implode(DS, [ROOT, CUSTOM_DIR, 'Event', $as_realm, $as_scope . 'Listener.php']);
+		}
+
+		$la_paths['\Awyiss\Event\\' . $as_realm . '\\'] = implode(DS, [ROOT, APP_DIR, 'Event', $as_realm, $as_scope . 'Listener.php']);
+
 		$la_listeners = [];
-
-		$la_paths = [
-			'\\' . CUSTOM_NAMESPACE . '\Event\\' . $as_realm . '\\' => implode(DS, [ROOT, CUSTOM_DIR, 'Event', $as_realm, $as_scope . 'Listener.php',]),
-			'\Awyiss\Event\\' . $as_realm . '\\' => implode(DS, [ROOT, APP_DIR, 'Event', $as_realm, $as_scope . 'Listener.php']),
-		];
-
 		foreach ($la_paths as $ls_namespace => $ls_path) {
 			foreach (glob($ls_path) as $ls_filePath) {
 				$ls_listenerName = substr($ls_filePath, strrpos($ls_filePath, DS) + 1, -4);

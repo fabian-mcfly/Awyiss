@@ -268,10 +268,16 @@ class ConfigOptionsProvider {
 			$ls_className = Inflector::camelize($ls_scope);
 		}
 
-		$la_paths = [
-			'\\' . CUSTOM_NAMESPACE . '\Configuration\ConfigOptions\\' => implode(DS, [ROOT, CUSTOM_DIR, 'Configuration', 'ConfigOptions', $ls_className . 'ConfigOptions.php',]),
-			'\Awyiss\Configuration\ConfigOptions\\' => implode(DS, [ROOT, APP_DIR, 'Configuration', 'ConfigOptions', $ls_className . 'ConfigOptions.php']),
-		];
+		$la_paths = [];
+
+		if (defined('CUSTOM_NAMESPACE')) {
+			$la_paths[ '\\' . CUSTOM_NAMESPACE . '\Configuration\ConfigOptions\\' ] = implode(
+				DS,
+				[ROOT, CUSTOM_DIR, 'Configuration', 'ConfigOptions', $ls_className . 'ConfigOptions.php',]
+			);
+		}
+
+		$la_paths['\Awyiss\Configuration\ConfigOptions\\'] = implode(DS, [ROOT, APP_DIR, 'Configuration', 'ConfigOptions', $ls_className . 'ConfigOptions.php']);
 
 		foreach ($la_paths as $ls_namespace => $ls_path) {
 			foreach (glob($ls_path) as $ls_filePath) {

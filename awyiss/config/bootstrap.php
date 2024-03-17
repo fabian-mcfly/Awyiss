@@ -47,41 +47,45 @@ if (!env('CONFIG_ENV') && file_exists(ROOT . DS . '.env')) {
 	$lo_dotenv->parse()->putenv()->toEnv()->toServer();
 }
 
-//Might be set in awyiss/bin/cake.php
 if (!defined('CONFIG_ENV')) {
 	/**
 	 * The current environment
 	 */
-	define('CONFIG_ENV', env('CONFIG_ENV', 'production'));
+	$ls_configEnv = env('CONFIG_ENV');
+	if ($ls_configEnv) {
+		define('CONFIG_ENV', $ls_configEnv);
+	}
 }
 
-//Might be set in awyiss/bin/cake.php
 if (!defined('CUSTOM_DIR')) {
-	$ls_customDir = env('CUSTOM_DIR');
-	if (!$ls_customDir) {
-		exit('Environment Variable CUSTOM_DIR is not set.');
-	}
 	/**
 	 * The directory for customer logic and frontend data
 	 */
-	define('CUSTOM_DIR', $ls_customDir);
+	$ls_customDir = env('CUSTOM_DIR');
+	if ($ls_customDir) {
+		define('CUSTOM_DIR', $ls_customDir);
+	}
 }
 
+if (defined('CUSTOM_DIR')) {
+	/**
+	 * Custom config folder
+	 */
+	define('CUSTOM_CONFIG', ROOT . DS . CUSTOM_DIR . DS . 'config' . DS);
 
-/**
- * Custom config folder
- */
-define('CUSTOM_CONFIG', ROOT . DS . CUSTOM_DIR . DS . 'config' . DS);
+	/**
+	 * Custom namespace
+	 */
+	define('CUSTOM_NAMESPACE', Inflector::camelize(str_replace('_', '-', CUSTOM_DIR), '-'));
 
-/**
- * Custom namespace
- */
-define('CUSTOM_NAMESPACE', Inflector::camelize(str_replace('_', '-', CUSTOM_DIR), '-'));
+	if (defined('CONFIG_ENV')) {
+		/**
+		 * Environment-specific custom config folder
+		 */
+		define('ENV_CUSTOM_CONFIG', CUSTOM_CONFIG . CONFIG_ENV . DS);
+	}
+}
 
-/**
- * Environment-specific custom config folder
- */
-define('ENV_CUSTOM_CONFIG', CUSTOM_CONFIG . CONFIG_ENV . DS);
 
 /*
  * Read configuration file

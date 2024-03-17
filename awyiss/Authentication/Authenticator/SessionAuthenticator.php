@@ -68,7 +68,7 @@ class SessionAuthenticator extends BaseSessionAuthenticator {
 			}
 
 			//If the db entry of the user changed,
-			if ($lo_reidentifiedUser->changedOn->notEquals($lo_user->changedOn)) {
+			if ($lo_reidentifiedUser->changedOn?->notEquals($lo_user->changedOn)) {
 				$lo_user->usergroups = null;
 				$lo_user->changedOn = $lo_reidentifiedUser->changedOn;
 			}

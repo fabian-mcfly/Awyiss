@@ -86,21 +86,25 @@ class Awyiss extends BaseApplication {
 	public function bootstrap(): void {
 		require_once $this->configDir . 'bootstrap.php';
 
-		$ls_file = CUSTOM_CONFIG . 'bootstrap.php';
-		if (is_file($ls_file)) {
-			require_once $ls_file;
-		}
+		if (defined('CUSTOM_CONFIG')) {
+			$ls_file = CUSTOM_CONFIG . 'bootstrap.php';
+			if (is_file($ls_file)) {
+				require_once $ls_file;
+			}
 
-		$ls_file = ENV_CUSTOM_CONFIG . 'bootstrap.php';
-		if (is_file($ls_file)) {
-			require_once $ls_file;
+			$ls_file = ENV_CUSTOM_CONFIG . 'bootstrap.php';
+			if (is_file($ls_file)) {
+				require_once $ls_file;
+			}
 		}
 
 		/*
 		 * At this point we know where the customer-specific files will be.
 		 * so we add the path to the autoloader for the customer-specific namespace
 		 */
-		$this->classLoader->addPsr4(CUSTOM_NAMESPACE . '\\', [ROOT . DS . CUSTOM_DIR], true);
+		if (defined('CUSTOM_NAMESPACE')) {
+			$this->classLoader->addPsr4(CUSTOM_NAMESPACE . '\\', [ROOT . DS . CUSTOM_DIR], true);
+		}
 
 
 		EventListenersProvider::loadListener('general_events', 'Global');
@@ -120,19 +124,21 @@ class Awyiss extends BaseApplication {
 			$this->plugins->addFromConfig($la_plugins);
 		}
 
-		$ls_file = CUSTOM_CONFIG . 'plugins.php';
-		if (is_file($ls_file)) {
-			$la_plugins = include $ls_file;
-			if (is_array($la_plugins)) {
-				$this->plugins->addFromConfig($la_plugins);
+		if (defined('CUSTOM_CONFIG')) {
+			$ls_file = CUSTOM_CONFIG . 'plugins.php';
+			if (is_file($ls_file)) {
+				$la_plugins = include $ls_file;
+				if (is_array($la_plugins)) {
+					$this->plugins->addFromConfig($la_plugins);
+				}
 			}
-		}
 
-		$ls_file = ENV_CUSTOM_CONFIG . 'plugins.php';
-		if (is_file($ls_file)) {
-			$la_plugins = include $ls_file;
-			if (is_array($la_plugins)) {
-				$this->plugins->addFromConfig($la_plugins);
+			$ls_file = ENV_CUSTOM_CONFIG . 'plugins.php';
+			if (is_file($ls_file)) {
+				$la_plugins = include $ls_file;
+				if (is_array($la_plugins)) {
+					$this->plugins->addFromConfig($la_plugins);
+				}
 			}
 		}
 	}
@@ -145,10 +151,13 @@ class Awyiss extends BaseApplication {
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function console(CommandCollection $ao_commands): CommandCollection {
-		$la_paths = [
-			implode('\\', [CUSTOM_NAMESPACE, 'Command']) => implode(DS, [ROOT, CUSTOM_DIR, 'Command', '*', '*' . 'Command.php']),
-			implode('\\', ['Awyiss', 'Command']) => implode(DS, [ROOT, APP_DIR, 'Command', '*', '*' . 'Command.php']),
-		];
+		$la_paths = [];
+
+		if (defined('CUSTOM_NAMESPACE')) {
+			$la_paths[ implode('\\', [CUSTOM_NAMESPACE, 'Command']) ] = implode(DS, [ROOT, CUSTOM_DIR, 'Command', '*', '*' . 'Command.php']);
+		}
+
+		$la_paths[ implode('\\', ['Awyiss', 'Command']) ] = implode(DS, [ROOT, APP_DIR, 'Command', '*', '*' . 'Command.php']);
 
 		$la_commands = [];
 		foreach ($la_paths as $ls_namespace => $ls_path) {
@@ -221,14 +230,16 @@ class Awyiss extends BaseApplication {
 			 * - for Awyiss
 			 */
 
-			$ls_file = ENV_CUSTOM_CONFIG . 'routes_backend.php';
-			if (is_file($ls_file)) {
-				require_once $ls_file;
-			}
+			if (defined('CUSTOM_CONFIG')) {
+				$ls_file = ENV_CUSTOM_CONFIG . 'routes_backend.php';
+				if (is_file($ls_file)) {
+					require_once $ls_file;
+				}
 
-			$ls_file = CUSTOM_CONFIG . 'routes_backend.php';
-			if (is_file($ls_file)) {
-				require_once $ls_file;
+				$ls_file = CUSTOM_CONFIG . 'routes_backend.php';
+				if (is_file($ls_file)) {
+					require_once $ls_file;
+				}
 			}
 
 			require $this->configDir . 'routes_backend.php';
@@ -240,14 +251,16 @@ class Awyiss extends BaseApplication {
 			 * - for Awyiss
 			 */
 
-			$ls_file = ENV_CUSTOM_CONFIG . 'routes.php';
-			if (is_file($ls_file)) {
-				require_once $ls_file;
-			}
+			if (defined('CUSTOM_CONFIG')) {
+				$ls_file = ENV_CUSTOM_CONFIG . 'routes.php';
+				if (is_file($ls_file)) {
+					require_once $ls_file;
+				}
 
-			$ls_file = CUSTOM_CONFIG . 'routes.php';
-			if (is_file($ls_file)) {
-				require_once $ls_file;
+				$ls_file = CUSTOM_CONFIG . 'routes.php';
+				if (is_file($ls_file)) {
+					require_once $ls_file;
+				}
 			}
 
 			require $this->configDir . 'routes.php';
@@ -272,6 +285,10 @@ class Awyiss extends BaseApplication {
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function services(ContainerInterface $ao_container): void {
+		if (!defined('CUSTOM_CONFIG')) {
+			return;
+		}
+
 		$ls_file = CUSTOM_CONFIG . 'services.php';
 		if (is_file($ls_file)) {
 			require_once $ls_file;

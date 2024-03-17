@@ -46,8 +46,7 @@
 		}
 	},
 	"scripts": {
-		"post-install-cmd": "Awyiss\\Console\\Installer::postInstall",
-		"post-create-project-cmd": "Awyiss\\Console\\Installer::postInstall",
+		"post-install-cmd": "bin/cake awyiss install",
 		"post-update-cmd": "bin/cake integrity_check check -mi",
 		"check": [
 			"@test",

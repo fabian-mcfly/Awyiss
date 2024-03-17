@@ -2,7 +2,6 @@
 /tmp/*
 /vendor/*
 /.env
-/composer.lock
 /foobar-customer
 /webroot/media/*
 

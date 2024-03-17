@@ -125,16 +125,20 @@ class AuthorizationService implements AuthorizationServiceInterface {
 			$ls_className = Inflector::camelize($ls_scope);
 		}
 
-		$la_paths = [
-			'\\' . CUSTOM_NAMESPACE . '\Authorization\Policy\\' . $as_realm . '\\' => implode(DS, [
-				ROOT, CUSTOM_DIR,
+		$la_paths = [];
+
+		if (defined('CUSTOM_NAMESPACE')) {
+			$la_paths[ '\\' . CUSTOM_NAMESPACE . '\Authorization\Policy\\' . $as_realm . '\\' ] = implode(DS, [
+				ROOT,
+				CUSTOM_DIR,
 				'Authorization',
 				'Policy',
 				$as_realm,
 				$ls_className . 'Policy.php',
-			]),
-			'\Awyiss\Authorization\Policy\\' . $as_realm . '\\' => implode(DS, [ROOT, APP_DIR, 'Authorization', 'Policy', $as_realm, $ls_className . 'Policy.php']),
-		];
+			]);
+		}
+
+		$la_paths['\Awyiss\Authorization\Policy\\' . $as_realm . '\\'] = implode(DS, [ROOT, APP_DIR, 'Authorization', 'Policy', $as_realm, $ls_className . 'Policy.php']);
 
 		foreach ($la_paths as $ls_namespace => $ls_path) {
 			foreach (glob($ls_path) as $ls_filePath) {

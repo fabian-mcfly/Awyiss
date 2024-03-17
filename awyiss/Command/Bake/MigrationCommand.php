@@ -34,6 +34,7 @@ class MigrationCommand extends BaseBakeMigrationCommand {
 
 	/**
 	 * Implemented nearly 1:1 to use \AwyissBake\Util\ColumnParser instead
+	 * Also allow renaming fields using the alter_field-action
 	 *
 	 * @inheritDoc
 	 * @param Arguments $ao_arguments
@@ -49,7 +50,21 @@ class MigrationCommand extends BaseBakeMigrationCommand {
 			$ls_pluginPath = $this->plugin . '.';
 		}
 
+		$la_arguments = $ao_arguments->getArguments();
+		unset($la_arguments[0]);
+		$lo_columnParser = new ColumnParser();
+		$la_fields = $lo_columnParser->parseFields($la_arguments);
+		$la_indexes = $lo_columnParser->parseIndexes($la_arguments);
+		$la_primaryKeys = $lo_columnParser->parsePrimaryKey($la_arguments);
+
 		$la_actions = $this->detectAction($ls_className);
+
+		if (!$la_actions && count($la_fields)) {
+			/** @psalm-suppress PossiblyNullReference */
+			$this->io->abort(
+				'When applying fields the migration name should start with one of the following prefixes: `Create`, `Drop`, `Add`, `Remove`, `Alter`. See: https://book.cakephp.org/migrations/4/en/index.html#migrations-file-name'
+			);
+		}
 
 		if (empty($la_actions)) {
 			return [
@@ -62,17 +77,10 @@ class MigrationCommand extends BaseBakeMigrationCommand {
 			];
 		}
 
-		$la_arguments = $ao_arguments->getArguments();
-		unset($la_arguments[0]);
-		$lo_columnParser = new ColumnParser();
-		$la_fields = $lo_columnParser->parseFields($la_arguments);
-		$la_indexes = $lo_columnParser->parseIndexes($la_arguments);
-		$la_primaryKeys = $lo_columnParser->parsePrimaryKey($la_arguments);
-
 		if (in_array($la_actions[0], ['alter_table', 'add_field'], true) && !empty($la_primaryKeys)) {
+			/** @psalm-suppress PossiblyNullReference */
 			$this->io->abort('Adding a primary key to an already existing table is not supported.');
 		}
-
 
 		[$ls_action, $ls_table] = $la_actions;
 

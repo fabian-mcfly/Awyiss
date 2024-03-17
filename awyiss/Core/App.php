@@ -49,7 +49,7 @@ class App extends BaseApp {
 
 		//No Plugin? Let's check if the class exists in the CUSTOM_NAMESPACE
 		$ls_fullname = '\\' . str_replace('/', '\\', $as_type . '\\' . $ls_name) . $as_suffix;
-		if (static::_classExistsInBase($ls_fullname, CUSTOM_NAMESPACE)) {
+		if (defined('CUSTOM_NAMESPACE') && static::_classExistsInBase($ls_fullname, CUSTOM_NAMESPACE)) {
 			/** @var class-string */
 			return '\\' . CUSTOM_NAMESPACE . $ls_fullname;
 		}

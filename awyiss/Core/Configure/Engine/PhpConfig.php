@@ -16,8 +16,6 @@ use Cake\Utility\Hash;
 class PhpConfig extends BasePhpConfig {
 	protected array $paths = [
 		'Awyiss' => CONFIG,
-		CUSTOM_NAMESPACE => CUSTOM_CONFIG,
-		CUSTOM_NAMESPACE . '_' . CONFIG_ENV => ENV_CUSTOM_CONFIG,
 	];
 
 
@@ -30,6 +28,11 @@ class PhpConfig extends BasePhpConfig {
 	 */
 	public function __construct(?string $as_path = null) {
 		$this->_path = null ?? CONFIG;
+
+		if (defined('CUSTOM_NAMESPACE')) {
+			$this->paths[ CUSTOM_NAMESPACE ] = CUSTOM_CONFIG;
+			$this->paths[ CUSTOM_NAMESPACE . '_' . CONFIG_ENV ] = ENV_CUSTOM_CONFIG;
+		}
 	}
 
 

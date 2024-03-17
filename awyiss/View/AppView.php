@@ -49,20 +49,30 @@ class AppView extends TwigView {
 			/** @var FileLoader $lo_loader */
 			$lo_loader = $lo_twig->getLoader();
 
-			$lo_loader->addPath(ROOT . DS . CUSTOM_DIR . DS . 'templates' . DS, CUSTOM_NAMESPACE);
+			if (defined('CUSTOM_DIR')) {
+				$lo_loader->addPath(ROOT . DS . CUSTOM_DIR . DS . 'templates' . DS, CUSTOM_NAMESPACE);
+			}
+
 			$lo_loader->addPath(ROOT . DS . APP_DIR . DS . 'templates' . DS, Configure::read('App.namespace'));
 
-			$lo_loader->setPaths([
-				ROOT . DS . CUSTOM_DIR . DS . 'templates' . DS . 'Backend' . DS,
-				ROOT . DS . APP_DIR . DS . 'templates' . DS . 'Backend' . DS,
-			], 'Backend');
+			if (defined('CUSTOM_DIR')) {
+				$lo_loader->setPaths([
+					ROOT . DS . CUSTOM_DIR . DS . 'templates' . DS . 'Backend' . DS,
+					ROOT . DS . APP_DIR . DS . 'templates' . DS . 'Backend' . DS,
+				], 'Backend');
+			}
+			else {
+				$lo_loader->addPath(ROOT . DS . APP_DIR . DS . 'templates' . DS . 'Backend' . DS, 'Backend');
+			}
 
 			$lo_twig->addExtension(new AwyissExtension());
 
-			//This looks for a custom Twig Extension class in \<custom namespace>\Twig\Extension\<CustomNamespace>Extension.php and adds it
-			$ls_customExtensionClass = '\\' . CUSTOM_NAMESPACE . '\Twig\Extension\\' . CUSTOM_NAMESPACE . 'Extension';
-			if (class_exists($ls_customExtensionClass)) {
-				$lo_twig->addExtension(new $ls_customExtensionClass());
+			if (defined('CUSTOM_NAMESPACE')) {
+				//This looks for a custom Twig Extension class in \<custom namespace>\Twig\Extension\<CustomNamespace>Extension.php and adds it
+				$ls_customExtensionClass = '\\' . CUSTOM_NAMESPACE . '\Twig\Extension\\' . CUSTOM_NAMESPACE . 'Extension';
+				if (class_exists($ls_customExtensionClass)) {
+					$lo_twig->addExtension(new $ls_customExtensionClass());
+				}
 			}
 
 			static::$initialized = true;
