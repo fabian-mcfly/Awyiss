@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 
-namespace Awyiss\Utility\Contents;
+namespace Awyiss\Utility\Content;
 
 
 /**
@@ -11,7 +11,7 @@ interface ColumnSystemInterface {
 	/**
 	 * Returns the column widths
 	 *
-	 * @return array<string, \Awyiss\Utility\Contents\ColumnInterface>
+	 * @return array<string, \Awyiss\Utility\Content\ColumnInterface>
 	 */
 	public static function getColumnWidths(): array;
 
@@ -19,7 +19,7 @@ interface ColumnSystemInterface {
 	/**
 	 * Returns the column indents
 	 *
-	 * @return array<string, \Awyiss\Utility\Contents\ColumnInterface>
+	 * @return array<string, \Awyiss\Utility\Content\ColumnInterface>
 	 */
 	public static function getColumnIndents(): array;
 

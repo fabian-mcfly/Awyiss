@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 
-namespace Awyiss\Utility\Contents;
+namespace Awyiss\Utility\Content;
 
 
 use RuntimeException;
