@@ -4,7 +4,6 @@
 namespace Awyiss\Middleware;
 
 
-use Awyiss\Awyiss;
 use Awyiss\Event\EventListenersProvider;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -34,8 +33,6 @@ class EventListenersMiddleware implements MiddlewareInterface {
 	 */
 	public function process(ServerRequestInterface $ao_request, RequestHandlerInterface $ao_handler): ResponseInterface {
 		EventListenersProvider::loadListener('general_events', $this->getRealm());
-
-		Awyiss::setRealm($this->getRealm());
 
 		$lo_request = $ao_request->withAttribute('eventListeners', $this);
 
