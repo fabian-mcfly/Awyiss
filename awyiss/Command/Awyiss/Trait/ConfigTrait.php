@@ -127,13 +127,13 @@ trait ConfigTrait {
 		rename($ls_skeletonEnvironmentFilePath, $ls_environmentConfigFilePath);
 
 		// Determine if the environment resembles a production environment
-		$ls_isProductionEnvironment = in_array($this->installEnvironment, ['production', 'prod', 'live']);
+		$lb_isProductionEnvironment = in_array($this->installEnvironment, ['production', 'prod', 'live']);
 
 		// Set the log, debug, forceEnable flags and error level based on the environment
-		$ls_logFlag = !$ls_isProductionEnvironment;
-		$ls_debugFlag = !$ls_isProductionEnvironment;
-		$ls_forceEnableFlag = !$ls_isProductionEnvironment;
-		$ls_errorLevel = $ls_isProductionEnvironment ? 0 : E_ALL;
+		$ls_logFlag = !$lb_isProductionEnvironment;
+		$ls_debugFlag = !$lb_isProductionEnvironment;
+		$ls_forceEnableFlag = !$lb_isProductionEnvironment;
+		$ls_errorLevel = $lb_isProductionEnvironment ? 0 : E_ALL;
 
 		// Load the environment config file
 		$la_environmentConfig = include $ls_environmentConfigFilePath;
