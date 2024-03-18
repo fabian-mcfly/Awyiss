@@ -305,7 +305,8 @@ class IntegrityCheckCommand extends Command {
 		}
 
 		$ao_io->out(sprintf('Finished checking %d files. ', count($la_files)), 0);
-		$ao_io->success(sprintf('%d files unchanged.', $la_results['unchanged']), 1 - $la_results['changed'] ? 0 : 1);
+
+		$ao_io->success(sprintf('%d files unchanged.', $la_results['unchanged']), $la_results['changed'] ? 0 : 1);
 
 		if ($la_results['changed']) {
 			$ao_io->out(' | ', 0);
