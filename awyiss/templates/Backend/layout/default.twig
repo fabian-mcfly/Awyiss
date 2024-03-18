@@ -3,18 +3,21 @@
 	<head>
 		{{ helper_Html_charset() }}
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<title>
-			{{ fetch('title') }}
-		</title>
+		<title>{{ fetch('title') }}</title>
+
 		{{ helper_Html_meta('icon') }}
 
-		<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+		{{ helper_Asset_add([
+			'normalize.css',
+			'milligram.css',
+			'cake.css',
+			'main.css',
+			'main.js',
+			'cakedingbats-webfont.woff',
+			'//fonts.googleapis.com/css2?family=Bebas+Neue&family=Lato:wght@300;400;700&display=swap',
+		]) }}
 
-		{{ helper_Html_css(['normalize.min', 'milligram.min', 'cake']) }}
-
-		{{ fetch('meta') }}
-		{{ fetch('css') }}
-		{{ fetch('script') }}
+		{{ helper_Asset_getTags() }}
 	</head>
 	<body>
 		{% block sidebar %}

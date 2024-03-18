@@ -6,6 +6,7 @@ use Awyiss\Authorization\Authorization;
 use Awyiss\Awyiss;
 use Awyiss\Middleware\AuthenticationMiddleware;
 use Awyiss\Middleware\AuthorizationMiddleware;
+use Awyiss\Middleware\DesignMiddleware;
 use Awyiss\Middleware\EventListenersMiddleware;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Routing\Route\AwyissRoute;
@@ -62,6 +63,9 @@ $ao_routes->prefix('Backend', function (RouteBuilder $ao_routeBuilder): void {
 	$ao_routeBuilder->setRouteClass(AwyissRoute::class);
 
 	Awyiss::setRealm(Awyiss::REALM_BACKEND);
+
+	$ao_routeBuilder->registerMiddleware('design', new DesignMiddleware(Awyiss::REALM_BACKEND));
+	$ao_routeBuilder->applyMiddleware('design');
 
 	$ao_routeBuilder->registerMiddleware('eventListeners', new EventListenersMiddleware(Awyiss::getRealm()));
 	$ao_routeBuilder->applyMiddleware('eventListeners');

@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 
 
+use Awyiss\Awyiss;
 use Cake\Cache\Engine\FileEngine;
 use Cake\Database\Connection;
 use Cake\Database\Driver\Mysql;
@@ -9,6 +10,18 @@ use Cake\Log\Engine\FileLog;
 use Cake\Mailer\Transport\MailTransport;
 use Queue\Generator\Task\QueuedJobTask;
 
+
+$la_assetPaths = [
+	Awyiss::REALM_FRONTEND => [],
+	Awyiss::REALM_BACKEND => [
+		'awyiss' => ROOT . DS . APP_DIR . DS . 'assets' . DS,
+	],
+];
+
+if (defined('CUSTOM_DIR')) {
+	$la_assetPaths[ Awyiss::REALM_FRONTEND ]['customer'] = ROOT . DS . CUSTOM_DIR . DS . 'assets' . DS;
+	$la_assetPaths[ Awyiss::REALM_BACKEND ]['customer'] = ROOT . DS . CUSTOM_DIR . DS . 'assets' . DS . 'awyiss' . DS;
+}
 
 return [
 	'Asset' => [
@@ -35,6 +48,11 @@ return [
 		'jsBaseUrl' => 'js/',
 		'namespace' => 'Awyiss',
 		'paths' => [
+			'assets' => $la_assetPaths,
+			'locales' => [
+				'customer' => defined('CUSTOM_DIR') ? ROOT . DS . CUSTOM_DIR . DS . 'locales' . DS : null,
+				'awyiss' => ROOT . DS . APP_DIR . DS . 'locales' . DS,
+			],
 			'plugins' => [
 				'customer' => defined('CUSTOM_DIR') ? ROOT . DS . CUSTOM_DIR . DS . 'plugins' . DS : null,
 				'awyiss' => ROOT . DS . APP_DIR . DS . 'plugins' . DS,
@@ -42,10 +60,6 @@ return [
 			'templates' => [
 				'customer' => defined('CUSTOM_DIR') ? ROOT . DS . CUSTOM_DIR . DS . 'templates' . DS : null,
 				'awyiss' => ROOT . DS . APP_DIR . DS . 'templates' . DS,
-			],
-			'locales' => [
-				'customer' => defined('CUSTOM_DIR') ? ROOT . DS . CUSTOM_DIR . DS . 'locales' . DS : null,
-				'awyiss' => ROOT . DS . APP_DIR . DS . 'locales' . DS,
 			],
 		],
 		'webroot' => 'webroot',

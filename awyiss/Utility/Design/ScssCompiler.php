@@ -1,0 +1,331 @@
+<?php declare(strict_types=1);
+
+
+namespace Awyiss\Utility\Design;
+
+
+use Awyiss\Awyiss;
+use Cake\Core\Configure;
+use Cake\Log\Log;
+use Exception;
+use InvalidArgumentException;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use ScssPhp\ScssPhp\CompilationResult;
+use ScssPhp\ScssPhp\Compiler;
+use ScssPhp\ScssPhp\OutputStyle;
+use SplFileInfo;
+
+
+/**
+ * Handles SCSS to CSS compilation using ScssPhp.
+ */
+class ScssCompiler {
+	/**
+	 * @var \ScssPhp\ScssPhp\Compiler
+	 */
+	protected static Compiler $compiler;
+	/**
+	 * @var bool $showExceptions Whether to show compile exceptions
+	 */
+	protected static bool $showExceptions = false;
+
+
+	/**
+	 * Discovers all .scss files in a given realm and returns an array of ScssFilesCollection objects.
+	 * Main files are ones that do not start with an underscore.
+	 *
+	 * @param string|null $realm The realm to be searched. This can be either Awyiss::REALM_FRONTEND or Awyiss::REALM_BACKEND.
+	 * @return array An array of ScssFilesCollection objects containing all .scss files and the latest file modification time for each realm.
+	 * @throws InvalidArgumentException If the given realm is not valid.
+	 */
+	public static function discoverRealmFiles(?string $realm): array {
+		// Get the list of valid realms
+		$la_realms = Awyiss::getRealms();
+
+		// Check if the given realm is valid. If not, throw an exception.
+		if (!in_array($realm, $la_realms)) {
+			throw new InvalidArgumentException(sprintf('The given realm `%s` is invalid.', $realm));
+		}
+
+		// Initialize the array of realm folders
+		$la_realmFolders = Configure::read('App.paths.assets');
+		$la_realmFolders = $la_realmFolders[ Awyiss::getRealm() ] ?? [];
+
+		// Initialize the array of realm files
+		$la_realmFiles = [];
+		// For each realm folder, discover the SCSS files and add them to the realm files array
+		foreach ($la_realmFolders as $ls_folderPath) {
+			$la_realmFiles[ $ls_folderPath ] = static::discoverFiles($ls_folderPath . 'scss');
+		}
+
+
+		// Return the array of realm files
+		return $la_realmFiles;
+	}
+
+
+	/**
+	 * Discovers all .scss files in a given directory and returns a ScssFilesCollection object.
+	 * Main files are ones that do not start with an underscore.
+	 *
+	 * @param string $folderPath The path to the directory to be searched.
+	 * @return \Awyiss\Utility\Design\ScssFilesCollection A ScssFilesCollection object containing all .scss files and the latest file modification time.
+	 */
+	public static function discoverFiles(string $folderPath): ScssFilesCollection {
+		// Create a new ScssFilesCollection object.
+		$lo_filesCollection = new ScssFilesCollection($folderPath);
+
+		// Check if the given directory exists. If not, return the empty ScssFilesCollection object.
+		if (!is_dir($folderPath)) {
+			return $lo_filesCollection;
+		}
+
+		// Set the extension to the last directory in folderPath
+		$ls_extension = basename($folderPath);
+
+		// Create a RecursiveDirectoryIterator and a RecursiveIteratorIterator to traverse the directory.
+		$lo_iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($folderPath));
+		// Iterate over each file in the directory.
+		/** @var \SplFileInfo $lo_file */
+		foreach ($lo_iterator as $lo_file) {
+			// If the file is a .scss file, add it to the ScssFilesCollection object.
+			if ($lo_file->isFile() && $lo_file->getExtension() === $ls_extension) {
+				$lo_filesCollection->addFile($lo_file);
+			}
+		}
+
+
+		// Return the ScssFilesCollection object.
+		return $lo_filesCollection;
+	}
+
+
+	/**
+	 * Compiles the SCSS files into CSS.
+	 *
+	 * @param ScssFilesCollection $files A collection of SCSS files to be compiled.
+	 * @param array $vars An array of variables to be passed to the SCSS compiler.
+	 * @param bool $returnCss If true, returns the compiled CSS content; otherwise, writes it to the file system.
+	 * @return array|null An array of compiled CSS content if $returnCss is true, null if no files are found or if the CSS files are newer than the SCSS files.
+	 * @throws \ScssPhp\ScssPhp\Exception\SassException
+	 */
+	public static function compile(ScssFilesCollection $files, array $vars = [], bool $returnCss = false): ?array {
+		// If no files are found, return null.
+		if (!$files->getFiles()) {
+			return null;
+		}
+
+		// Get a collection of css files in the sibling directory of ScssFilesCollection::$folderPath
+		$lo_cssFiles = self::discoverFiles(dirname($files->getFolderPath()) . DS . 'css');
+
+		// If the css files are newer than the scss files, return null.
+		if ($lo_cssFiles->getLastModified() && $lo_cssFiles->getLastModified()->greaterThan($files->getLastModified())) {
+			return null;
+		}
+
+		// Compile all main files from the ScssFilesCollection object
+		$la_compiledCss = [];
+		foreach ($files->getMainFiles() as $lo_file) {
+			$la_compiledCss[] = self::compileScss($lo_file, $vars, $returnCss);
+		}
+
+
+		// Return the compiled CSS content
+		return $la_compiledCss;
+	}
+
+
+	/**
+	 * Compiles SCSS files in multiple folders into CSS.
+	 *
+	 * @param array<string, \Awyiss\Utility\Design\ScssFilesCollection> $folders An associative array where the keys are folder paths and the values are ScssFilesCollection
+	 *     objects.
+	 * @param array $vars An array of variables to be passed to the SCSS compiler. Defaults to an empty array.
+	 * @param bool $returnCss If true, returns the compiled CSS content; otherwise, writes it to the file system. Defaults to false.
+	 * @return array An associative array where the keys are folder paths and the values are the results of the compilation. If $returnCss is true, the values are arrays of
+	 *     compiled CSS content; otherwise, they are null.
+	 * @throws \ScssPhp\ScssPhp\Exception\SassException
+	 */
+	public static function compileFolders(array $folders, array $vars = [], bool $returnCss = false): array {
+		$la_return = [];
+
+		foreach ($folders as $ls_folderPath => $lo_files) {
+			// If the value is not an instance of ScssFilesCollection, skip it.
+			if (!$lo_files instanceof ScssFilesCollection) {
+				continue;
+			}
+
+			// Compile the SCSS files in the folder and store the result in the return array.
+			$la_return[ $ls_folderPath ] = static::compile($lo_files, $vars, $returnCss);
+		}
+
+
+		// Return the array of compilation results.
+		return $la_return;
+	}
+
+
+	/**
+	 * Sets whether to show exceptions during SCSS compilation.
+	 *
+	 * @param bool $showExepctions If true, exceptions during SCSS compilation are shown; otherwise, they are not shown.
+	 * @return void
+	 */
+	public static function showExceptions(bool $showExepctions): void {
+		static::$showExceptions = $showExepctions;
+	}
+
+
+	/**
+	 * @return \ScssPhp\ScssPhp\Compiler
+	 */
+	protected static function getCompiler(): Compiler {
+		// If the compiler is not instantiated, create a new instance and configure it.
+		if (!isset(static::$compiler)) {
+			static::$compiler = new Compiler();
+
+			// Set the output style to expanded by default.
+			static::$compiler->setOutputStyle(OutputStyle::EXPANDED);
+		}
+
+
+		return static::$compiler;
+	}
+
+
+	/**
+	 * Prepares and merges SCSS variables for the compiler.
+	 * This method prepares the SCSS variables by merging default values, application settings,
+	 * and user-defined overrides. It handles special cases, such as font names, by appropriately
+	 * formatting them for SCSS compilation.
+	 *
+	 * @param array $userVars Custom variables provided for the compilation.
+	 * @return array The complete and processed array of variables for the SCSS compiler.
+	 */
+	protected static function prepareVariables(array $userVars): array {
+		// Define default SCSS variables and their values.
+		$la_defaultVars = [
+			'$gi_page_width' => '1200px',
+			'$gi_page_padding' => '15px',
+			'$gi_singlecolumn_breakpoint' => '768px',
+			'$gi_menu_breakpoint' => '1024px',
+			'$gi_column_margin' => '30px',
+			// Add more defaults as necessary.
+		];
+
+		// Map of high-level variable names to their actual SCSS variable names.
+		$la_varMapping = [
+			'frontend_fullwidth' => '$gi_page_width',
+			'frontend_fullwidth_padding' => '$gi_page_padding',
+			'frontend_singlecolumn_breakpoint' => '$gi_singlecolumn_breakpoint',
+			'frontend_menu_breakpoint' => '$gi_menu_breakpoint',
+			'frontend_column_margin' => '$gi_column_margin',
+			'frontend_font_main' => '$gs_font_name_main',
+			'frontend_font_alternative' => '$gs_font_name_alternative',
+		];
+
+		// Process user variables and map them to their actual SCSS variable names.
+		foreach ($userVars as $ls_key => $ls_value) {
+			if (array_key_exists($ls_key, $la_varMapping)) {
+				$ls_scssVarName = $la_varMapping[ $ls_key ];
+
+				// Special handling for font names to ensure they're formatted correctly.
+				if (in_array($ls_scssVarName, ['$gs_font_name_main', '$gs_font_name_alternative']) && !empty($ls_value)) {
+					$ls_value = str_replace('+', ' ', "quote('" . $ls_value . "')");
+				}
+
+				$la_defaultVars[ $ls_scssVarName ] = $ls_value;
+			}
+		}
+
+		// Optionally add more complex logic here, such as pulling in variables from a config file
+		// or environment variables, checking for defined constants, etc.
+		// Example:
+		// if (defined('CUSTOM_VARIABLE')) {
+		//     $defaultVars['$custom_variable'] = constant('CUSTOM_VARIABLE');
+		// }
+
+		return $la_defaultVars;
+	}
+
+
+	/**
+	 * Performs the compilation of SCSS files into CSS.
+	 *
+	 * @param \SplFileInfo $file
+	 * @param array $vars The variables to be passed to the SCSS compiler.
+	 * @param bool $returnCss If true, returns the compiled CSS content; otherwise, writes it to the file system.
+	 * @return \ScssPhp\ScssPhp\CompilationResult|string|false
+	 * @throws \ScssPhp\ScssPhp\Exception\SassException
+	 * @throws \Exception
+	 */
+	public static function compileScss(SplFileInfo $file, array $vars, bool $returnCss): CompilationResult|string|false {
+		// Make sure it's a .scss file.
+		if ($file->getExtension() !== 'scss') {
+			throw new InvalidArgumentException(sprintf('The file `%s` is not a valid SCSS file.', $file->getBasename()));
+		}
+
+		// Instantiate the SCSS compiler and configure it.
+		$lo_scssCompiler = static::getCompiler();
+
+		// Set import paths and variables for the compilation process.
+		$lo_scssCompiler->setImportPaths(dirname($file->getPathname()));
+		$lo_scssCompiler->replaceVariables($vars);
+
+		// Set the css file path based on the scss file
+		$ls_cssFilename = substr($file->getFilename(), 0, -4) . 'css';
+
+		// Get the directory of the scss file, and append the css file name to its parent directory.
+		$ls_cssFolderPath = dirname($file->getPath()) . DS . 'css' . DS;
+
+		// Set the source map options if the CSS content is not returned.
+		if (!$returnCss) {
+			static::$compiler->setSourceMap(Compiler::SOURCE_MAP_FILE);
+			static::$compiler->setSourceMapOptions([
+				'sourceMapWriteTo' => $ls_cssFilename . '.map',
+				'sourceMapURL' => $ls_cssFilename . '.map',
+				'sourceMapFilename' => $ls_cssFilename, // Relative url path of .css file
+				'sourceMapBasepath' => dirname($ls_cssFolderPath), // Difference between file & url locations, removed from ALL source files in .map
+				'sourceRoot' => '../',
+			]);
+		}
+
+		try {
+			$lo_compilationResult = $lo_scssCompiler->compileFile($file->getPathname());
+
+			if ($returnCss) {
+				// If caller requests the CSS content, return it directly.
+				return $lo_compilationResult->getCss();
+			}
+			else {
+				// Write the compiled CSS content and the source map to the file system.
+				file_put_contents($ls_cssFolderPath . $ls_cssFilename, $lo_compilationResult->getCss());
+				file_put_contents($ls_cssFolderPath . $ls_cssFilename . '.map', $lo_compilationResult->getSourceMap());
+			}
+		}
+		catch (Exception $ex) {
+			// Write the debug log
+			Log::error('Cannot compile SCSS file `' . $file->getBasename() . '`: ' . $ex->getMessage());
+
+			// If caller requests to show exceptions, handle the exception accordingly.
+			if (static::$showExceptions) {
+				// If debug is enabled, throw the exception.
+				if (Configure::read('debug')) {
+					throw $ex;
+				}
+
+				// Otherwise show a short message.
+				echo 'Cannot compile SCSS file `' . $file->getBasename() . '`';
+				exit;
+			}
+
+
+			return false;
+		}
+
+
+		// Return the compilation result.
+		return $lo_compilationResult;
+	}
+}

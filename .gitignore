@@ -3,6 +3,8 @@
 /vendor/*
 /.env
 /foobar-customer
+/webroot/assets/
+/webroot/awyiss/
 /webroot/media/*
 
 # OS generated files #

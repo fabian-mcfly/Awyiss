@@ -19,6 +19,7 @@ class BackendView extends AppView {
 	public function initialize(): void {
 		parent::initialize();
 
+		$this->addHelper('Asset');
 		$this->addHelper('Attributes');
 		$this->addHelper('Authentication.Identity');
 		$this->addHelper('Authorization');
