@@ -42,6 +42,8 @@ class LocaleMiddleware implements MiddlewareInterface {
 	 * Use Session for language
 	 */
 	final public const SOURCE_SESSION = '__SESSION__';
+
+
 	/**
 	 * @var array{frontend: ?Language, backend: ?Language}
 	 */
@@ -61,7 +63,13 @@ class LocaleMiddleware implements MiddlewareInterface {
 	 * @var array<string, array{frontend: ?Language[], backend: ?Language[]}>
 	 */
 	protected static array $languagesByShortcode = [];
+	/**
+	 * @var string|null $realm The realm the middleware was loaded with
+	 */
 	protected static ?string $realm = null;
+	/**
+	 * @var array{frontend: string, backend: string} $retrievalStrategy The retrieval strategy for the languages
+	 */
 	protected static array $retrievalStrategy = [
 		Awyiss::REALM_FRONTEND => self::SOURCE_URL,
 		Awyiss::REALM_BACKEND => self::SOURCE_SESSION,
