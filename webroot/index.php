@@ -20,6 +20,7 @@ putenv('CAKE_DISABLE_GLOBAL_FUNCS=1');
 $ls_dir = dirname(__DIR__);
 
 require $ls_dir . '/awyiss/I18n/functions.php';
+require $ls_dir . '/awyiss/functions.php';
 
 // For built-in server
 if (PHP_SAPI === 'cli-server') {
