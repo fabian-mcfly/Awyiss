@@ -313,7 +313,7 @@ class MediaFoldersListener implements EventListenerInterface {
 
 		//Create the destination directory if it does not exist
 		if (!is_dir($as_targetDirectory)) {
-			mkdir($as_targetDirectory, 0755, true);
+			mkdir($as_targetDirectory, 0750, true);
 		}
 
 		//Open the source directory
