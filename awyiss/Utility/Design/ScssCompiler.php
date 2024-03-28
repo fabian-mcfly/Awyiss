@@ -7,6 +7,7 @@ namespace Awyiss\Utility\Design;
 use Awyiss\Awyiss;
 use Cake\Core\Configure;
 use Cake\Log\Log;
+use Cake\Utility\Inflector;
 use Exception;
 use InvalidArgumentException;
 use RecursiveDirectoryIterator;
@@ -105,12 +106,13 @@ class ScssCompiler {
 	 * Compiles the SCSS files into CSS.
 	 *
 	 * @param ScssFilesCollection $files A collection of SCSS files to be compiled.
+	 * @param string $basePath The base path for the SCSS files.
 	 * @param array $vars An array of variables to be passed to the SCSS compiler.
 	 * @param bool $returnCss If true, returns the compiled CSS content; otherwise, writes it to the file system.
 	 * @return array|null An array of compiled CSS content if $returnCss is true, null if no files are found or if the CSS files are newer than the SCSS files.
 	 * @throws \ScssPhp\ScssPhp\Exception\SassException
 	 */
-	public static function compile(ScssFilesCollection $files, array $vars = [], bool $returnCss = false): ?array {
+	public static function compile(ScssFilesCollection $files, string $basePath, array $vars = [], bool $returnCss = false): ?array {
 		// If no files are found, return null.
 		if (!$files->getFiles()) {
 			return null;
@@ -127,7 +129,7 @@ class ScssCompiler {
 		// Compile all main files from the ScssFilesCollection object
 		$la_compiledCss = [];
 		foreach ($files->getMainFiles() as $lo_file) {
-			$la_compiledCss[] = self::compileScss($lo_file, $vars, $returnCss);
+			$la_compiledCss[] = self::compileScss($lo_file, $basePath, $vars, $returnCss);
 		}
 
 
@@ -157,7 +159,7 @@ class ScssCompiler {
 			}
 
 			// Compile the SCSS files in the folder and store the result in the return array.
-			$la_return[ $ls_folderPath ] = static::compile($lo_files, $vars, $returnCss);
+			$la_return[ $ls_folderPath ] = static::compile($lo_files, $ls_folderPath, $vars, $returnCss);
 		}
 
 
@@ -260,7 +262,7 @@ class ScssCompiler {
 	 * @throws \ScssPhp\ScssPhp\Exception\SassException
 	 * @throws \Exception
 	 */
-	public static function compileScss(SplFileInfo $file, array $vars, bool $returnCss): CompilationResult|string|false {
+	public static function compileScss(SplFileInfo $file, string $basePath, array $vars, bool $returnCss): CompilationResult|string|false {
 		// Make sure it's a .scss file.
 		if ($file->getExtension() !== 'scss') {
 			throw new InvalidArgumentException(sprintf('The file `%s` is not a valid SCSS file.', $file->getBasename()));
@@ -276,17 +278,23 @@ class ScssCompiler {
 		// Set the css file path based on the scss file
 		$ls_cssFilename = substr($file->getFilename(), 0, -4) . 'css';
 
-		// Get the directory of the scss file, and append the css file name to its parent directory.
-		$ls_cssFolderPath = dirname($file->getPath()) . DS . 'css' . DS;
+		// Replace 'scss' with 'css' in the file path to get the css folder path
+		$ls_cssFolderPath = rtrim(str_replace($basePath . 'scss', $basePath . 'css', $file->getPath()), DS) . DS;
+
+		static::$compiler->addVariables([
+			'awyissVersion' => Awyiss::VERSION,
+			'awyissVersionName' => Inflector::dasherize(Awyiss::VERSION_NAME),
+		]);
 
 		// Set the source map options if the CSS content is not returned.
 		if (!$returnCss) {
 			static::$compiler->setSourceMap(Compiler::SOURCE_MAP_FILE);
+
 			static::$compiler->setSourceMapOptions([
 				'sourceMapWriteTo' => $ls_cssFilename . '.map',
 				'sourceMapURL' => $ls_cssFilename . '.map',
 				'sourceMapFilename' => $ls_cssFilename, // Relative url path of .css file
-				'sourceMapBasepath' => dirname($ls_cssFolderPath), // Difference between file & url locations, removed from ALL source files in .map
+				'sourceMapBasepath' => $basePath, // Difference between file & url locations, removed from ALL source files in .map
 				'sourceRoot' => '../',
 			]);
 		}
@@ -299,6 +307,11 @@ class ScssCompiler {
 				return $lo_compilationResult->getCss();
 			}
 			else {
+				// Check if the directory exists, if not create it.
+				if (!is_dir($ls_cssFolderPath)) {
+					mkdir($ls_cssFolderPath, 0750, true);
+				}
+
 				// Write the compiled CSS content and the source map to the file system.
 				file_put_contents($ls_cssFolderPath . $ls_cssFilename, $lo_compilationResult->getCss());
 				file_put_contents($ls_cssFolderPath . $ls_cssFilename . '.map', $lo_compilationResult->getSourceMap());
