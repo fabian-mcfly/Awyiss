@@ -35,7 +35,7 @@ class DatatablesListener implements EventListenerInterface {
 	 */
 	public function implementedEvents(): array {
 		return [
-			'Model.Datatables.beforeSave' => 'afterSave',
+			'Model.Datatables.beforeSave' => 'beforeSave',
 			'Model.Datatables.afterSave' => 'afterSave',
 			'Model.Datatables.afterSaveCommit' => 'afterSaveCommit',
 			'Model.Datatables.afterSoftDelete' => 'afterSoftDelete',
