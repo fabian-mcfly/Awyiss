@@ -321,8 +321,11 @@ class FormHelper extends BaseFormHelper {
 			$ls_inputContainerTemplate = 'inputContainer' . $aa_options['errorSuffix'];
 		}
 
-		$ls_name = substr($aa_options['options']['id'], strpos($aa_options['options']['id'], '-') + 1);
-
+		$ls_name = $aa_options['options']['id'];
+		$li_dashPos = strpos($ls_name, '-');
+		if ($li_dashPos !== false) {
+			$ls_name = substr($ls_name, $li_dashPos + 1);
+		}
 
 		return $this->formatTemplate($ls_inputContainerTemplate, [
 			'content' => $aa_options['content'],
