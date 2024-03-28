@@ -5,6 +5,8 @@ namespace Awyiss\Utility\Menu;
 
 
 use Cake\Core\InstanceConfigTrait;
+use Cake\Utility\Inflector;
+use Cake\Utility\Text;
 use Cake\View\StringTemplate;
 
 
@@ -32,11 +34,19 @@ class MenuRenderer {
 		'templates' => [
 			'menu' => '<nav id="Menu-{{identifier}}">' . PHP_EOL . '{{list}}</nav>' . PHP_EOL,
 			'list' => '<ul class="Level{{level}}">' . PHP_EOL . '{{content}}</ul>' . PHP_EOL,
-			'item' => '<li class="Level{{level}}">' . PHP_EOL . '{{link}}{{children}}</li>' . PHP_EOL,
-			'link' => '<a href="{{url}}" class="Level{{level}}"{{attributes}}>{{title}}</a>' . PHP_EOL,
-			'noLink' => '<span class="Level{{level}}">{{title}}</span>' . PHP_EOL,
+			'item' => '<li class="Level{{level}}{{active}}{{hasSubmenu}} MenuItem-{{identifier}}">' . PHP_EOL . '{{link}}{{children}}</li>' . PHP_EOL,
+			'link' => '<a href="{{url}}" class="Level{{level}}{{active}} MenuItem-{{identifier}}"{{attributes}}>{{title}}</a>' . PHP_EOL,
+			'noLink' => '<span class="Level{{level}}{{active}}">{{title}}</span>' . PHP_EOL,
 		],
 	];
+	/**
+	 * @var string The current route.
+	 */
+	protected string $currentRoute;
+	/**
+	 * @var string The identifier of the menu to render.
+	 */
+	protected string $identifier;
 	/**
 	 * @var \Awyiss\Utility\Menu\Menu
 	 */
@@ -69,6 +79,8 @@ class MenuRenderer {
 	 * @return string
 	 */
 	public function render(string $as_menuIdentifier = '', string $as_list = ''): string {
+		$this->identifier = $as_menuIdentifier ?: $this->menu->getConfig('identifier') ?: 'Default';
+
 		$ls_list = $as_list;
 		if (empty($ls_list)) {
 			$ls_list = $this->renderList();
@@ -80,7 +92,7 @@ class MenuRenderer {
 
 		$la_data = [
 			'list' => $ls_list,
-			'identifier' => $as_menuIdentifier ?: $this->menu->getConfig('identifier') ?: 'Default',
+			'identifier' => $this->identifier,
 			'menuConfig' => $this->menu->getConfig(),
 		];
 
@@ -115,7 +127,7 @@ class MenuRenderer {
 
 		$ls_content = '';
 		foreach ($lo_items as $lo_item) {
-			$ls_content .= $this->renderItem($lo_item, 1, $li_maxLevel);
+			$ls_content .= $this->renderItem($lo_item, $level, $li_maxLevel);
 		}
 
 		if (empty($ls_content)) {
@@ -131,6 +143,17 @@ class MenuRenderer {
 
 
 		return $this->format('list', $la_data);
+	}
+
+
+	/**
+	 * Sets the current route.
+	 *
+	 * @param string $currentRoute
+	 * @return void
+	 */
+	public function setCurrentRoute(string $currentRoute): void {
+		$this->currentRoute = $currentRoute;
 	}
 
 
@@ -161,7 +184,12 @@ class MenuRenderer {
 			$ls_childrenContent .= $this->renderList($lo_items, $ai_level + 1, $ai_maxLevel);
 		}
 
-		$la_data = ['title' => $ao_item->getTitle(), 'level' => $ai_level];
+		$la_data = [
+			'active' => $ao_item->isCurrentRoute($this->currentRoute) || $ao_item->hasCurrentRoute($this->currentRoute) ? ' Active' : '',
+			'identifier' => Inflector::camelize(Text::slug($ao_item->getTitle(), '_')),
+			'level' => $ai_level,
+			'title' => $ao_item->getTitle(),
+		];
 
 		$lo_link = $ao_item->getLink();
 		if ($lo_link && $ao_item->isAccessible()) {
@@ -177,9 +205,13 @@ class MenuRenderer {
 		}
 
 		$la_data = [
-			'link' => $ls_link,
-			'level' => $ai_level,
+			'active' => $la_data['active'],
 			'children' => $ls_childrenContent,
+			'hasSubmenu' => $ls_childrenContent !== '' ? ' HasSubmenu' : '',
+			'identifier' => $la_data['identifier'],
+			'level' => $ai_level,
+			'link' => $ls_link,
+			'title' => $la_data['title'],
 		];
 
 

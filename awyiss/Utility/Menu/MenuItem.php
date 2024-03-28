@@ -100,7 +100,10 @@ class MenuItem {
 
 
 	/**
-	 * @return bool|null
+	 * Checks if the menu item is accessible.
+	 *
+	 * @return bool|null Returns true if the menu item is accessible, false otherwise.
+	 * If the accessibility is not set, it returns null.
 	 */
 	public function isAccessible(): ?bool {
 		return $this->accessible;
@@ -108,9 +111,12 @@ class MenuItem {
 
 
 	/**
-	 * @param \Awyiss\Authorization\IdentityPermissionsInterface|null $ao_identity
-	 * @return bool|null
-	 * @throws \ReflectionException
+	 * Checks if the menu item is accessible by a specific identity.
+	 *
+	 * @param \Awyiss\Authorization\IdentityPermissionsInterface|null $ao_identity The identity to check accessibility for.
+	 * @return bool|null Returns true if the menu item is accessible by the provided identity, false otherwise.
+	 * If the accessibility is not set, it returns null.
+	 * @throws \ReflectionException If the class does not exist.
 	 */
 	public function isAccessibleBy(?IdentityPermissionsInterface $ao_identity = null): ?bool {
 		//No access settings means the item is always accessible
@@ -133,8 +139,10 @@ class MenuItem {
 
 
 	/**
-	 * @param bool|null $ab_isAccessible
-	 * @return $this
+	 * Sets the accessibility of the menu item.
+	 *
+	 * @param bool|null $ab_isAccessible The accessibility to set.
+	 * @return $this Returns the current instance.
 	 */
 	public function setAccessible(?bool $ab_isAccessible): static {
 		$this->accessible = $ab_isAccessible;
@@ -145,7 +153,9 @@ class MenuItem {
 
 
 	/**
-	 * @return bool
+	 * Returns the active status of the menu item.
+	 *
+	 * @return bool The active status of the menu item.
 	 */
 	public function getActive(): bool {
 		return $this->active;
@@ -153,7 +163,68 @@ class MenuItem {
 
 
 	/**
-	 * @return Generator|MenuItem
+	 * Checks if the current route matches the route of the menu item.
+	 *
+	 * @param string $currentRoute The current route.
+	 * @return bool True if the current route matches the route of the menu item, false otherwise.
+	 */
+	public function isCurrentRoute(string $currentRoute): bool {
+		static $ls_fullBaseUrl;
+
+		$ls_testUrl = $this->getLink()?->url;
+		if (!$ls_testUrl) {
+			return false;
+		}
+
+		if (!isset($ls_fullBaseUrl)) {
+			$ls_fullBaseUrl = Router::fullBaseUrl();
+		}
+
+		$ls_testUrl = substr_replace($ls_testUrl, '', 0, strlen($ls_fullBaseUrl));
+		if ($ls_testUrl === $currentRoute) {
+			return true;
+		}
+
+		// If there are parameters in the url, remove them and try again
+		if (str_contains($currentRoute, ':')) {
+			$la_segments = explode('/', trim($currentRoute, '/'));
+			$la_segments = array_filter($la_segments, function ($segment) {
+				return strpos($segment, ':') === false;
+			});
+
+			$ls_cleanRoute = '/' . implode('/', $la_segments) . '/';
+
+
+			return $ls_testUrl === $ls_cleanRoute;
+		}
+
+		return false;
+	}
+
+
+	/**
+	 * Checks if the current route matches the route of the menu item or any of its children.
+	 *
+	 * @param string $currentRoute The current route.
+	 * @return bool True if the current route matches the route of the menu item or any of its children, false otherwise.
+	 */
+	public function hasCurrentRoute(string $currentRoute): bool {
+		foreach ($this->children() as $lo_child) {
+			if ($lo_child->isCurrentRoute($currentRoute)) {
+				return true;
+			}
+		}
+
+
+		return false;
+	}
+
+
+	/**
+	 * Generates the children of the menu item.
+	 *
+	 * @param int $ai_maxLevel The maximum level of children to generate.
+	 * @return Generator|MenuItem A generator that yields the children of the menu item.
 	 */
 	public function children(int $ai_maxLevel = -1): Generator {
 		if ($this->children === null) {
@@ -167,7 +238,9 @@ class MenuItem {
 
 
 	/**
-	 * @return \Awyiss\Utility\Menu\Menu|null
+	 * Gets the children of the menu item.
+	 *
+	 * @return \Awyiss\Utility\Menu\Menu|null The children of the menu item.
 	 */
 	public function getChildren(): ?Menu {
 		return $this->children;
@@ -175,8 +248,10 @@ class MenuItem {
 
 
 	/**
-	 * @param object|iterable $ax_children
-	 * @param array|null $aa_config
+	 * Sets the children of the menu item.
+	 *
+	 * @param object|iterable $ax_children The children to set.
+	 * @param array|null $aa_config The configuration for the children.
 	 * @return void
 	 * @throws \ReflectionException
 	 */
@@ -194,7 +269,9 @@ class MenuItem {
 
 
 	/**
-	 * @return bool
+	 * Checks if the menu item has children.
+	 *
+	 * @return bool True if the menu item has children, false otherwise.
 	 */
 	public function hasChildren(): bool {
 		return !empty($this->children);
@@ -202,8 +279,10 @@ class MenuItem {
 
 
 	/**
-	 * @param \Awyiss\Authorization\IdentityPermissionsInterface $ao_identity
-	 * @param bool $deep
+	 * Sets the identity of the menu item.
+	 *
+	 * @param \Awyiss\Authorization\IdentityPermissionsInterface $ao_identity The identity to set.
+	 * @param bool $deep Whether to set the identity deeply.
 	 * @return $this
 	 * @throws \ReflectionException
 	 */
@@ -230,8 +309,9 @@ class MenuItem {
 
 
 	/**
-	 * @return int
-	 * @noinspection PhpUnused
+	 * Gets the level of the menu item.
+	 *
+	 * @return int The level of the menu item.
 	 */
 	public function getLevel(): int {
 		return $this->level;
@@ -239,7 +319,9 @@ class MenuItem {
 
 
 	/**
-	 * @return object|null
+	 * Gets the link of the menu item.
+	 *
+	 * @return object|null The link of the menu item.
 	 */
 	public function getLink(): ?object {
 		if ($this->link === null) {
@@ -269,7 +351,9 @@ class MenuItem {
 
 
 	/**
-	 * @return string|null
+	 * Gets the title of the menu item.
+	 *
+	 * @return string|null The title of the menu item.
 	 */
 	public function getTitle(): ?string {
 		if (is_object($this->title)) {
@@ -286,8 +370,10 @@ class MenuItem {
 
 
 	/**
-	 * @param bool $ab_reset
-	 * @return bool|null
+	 * Determines the visibility of the menu item.
+	 *
+	 * @param bool $ab_reset Whether to reset the visibility.
+	 * @return bool|null The visibility of the menu item.
 	 */
 	public function determineVisibility(bool $ab_reset = false): ?bool {
 		// If reset is false and visible property is not null, use the current visibility
@@ -327,7 +413,9 @@ class MenuItem {
 
 
 	/**
-	 * @return bool|null
+	 * Gets the visibility of the menu item.
+	 *
+	 * @return bool|null The visibility of the menu item.
 	 */
 	public function isVisible(): ?bool {
 		return $this->visible;
@@ -335,9 +423,10 @@ class MenuItem {
 
 
 	/**
-	 * @param bool|null $isVisible
+	 * Sets the visibility of the menu item.
+	 *
+	 * @param bool|null $isVisible The visibility to set.
 	 * @return $this
-	 * @noinspection PhpUnused
 	 */
 	public function setVisible(?bool $isVisible): static {
 		$this->visible = $isVisible;
@@ -348,8 +437,10 @@ class MenuItem {
 
 
 	/**
-	 * @param string $as_field
-	 * @return mixed
+	 * Gets a property of the menu item.
+	 *
+	 * @param string $as_field The property to get.
+	 * @return mixed The value of the property.
 	 */
 	public function __get(string $as_field): mixed {
 		$ls_method = 'get' . Inflector::camelize($as_field);
@@ -362,12 +453,16 @@ class MenuItem {
 
 
 	/**
-	 * @param \Awyiss\Model\Entity\BackendMenuEntry $ao_data
+	 * Converts the link of the menu item from a BackendMenuEntry.
+	 *
+	 * @param \Awyiss\Model\Entity\BackendMenuEntry $ao_data The BackendMenuEntry to convert from.
 	 * @return void
 	 */
 	protected function convertEntityLink(BackendMenuEntry $ao_data): void {
 		if (empty($this->link)) {
 			$this->link = null;
+
+
 			return;
 		}
 
@@ -389,9 +484,9 @@ class MenuItem {
 
 		$la_linkData = [
 			'url' => [
-				 'controller' => $ls_controller,
-				 'action' => $ls_action,
-			 ] + $la_params,
+				'controller' => $ls_controller,
+				'action' => $ls_action,
+			] + $la_params,
 		];
 
 		if ($ao_data->external) {
