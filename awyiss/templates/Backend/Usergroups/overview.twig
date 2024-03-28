@@ -5,8 +5,8 @@
 
 <div class="Usergroups Overview">
 	{% block buttonsOverview %}
-		{% if helper_Authorization_isAccessible('create') %}
-			{{ helper_Html_link(__('create'), {action: 'add'}, {class: 'Button'}) }}
+		{% if AuthorizationHelper.isAccessible('create') %}
+			{{ HtmlHelper.link(__('create'), {action: 'add'}, {class: 'Button'}) }}
 		{% endif %}
 	{% endblock %}
 
@@ -21,7 +21,7 @@
 					{% block tableOverviewHeadRow %}
 						<tr>
 							{% block tableOverviewHeaderTitle %}
-								<th>{{ helper_Paginator_sort('title') }}</th>
+								<th>{{ PaginatorHelper.sort('title') }}</th>
 							{% endblock %}
 
 							{% block tableOverviewHeaderActions %}
@@ -43,11 +43,11 @@
 
 								{% block tableOverviewCellActions %}
 									<td class="actions">
-										{% if helper_Authorization_isAccessible('update') %}
-											{{ helper_Html_link(__('edit'), {action: 'edit', id: lo_usergroup.id}) }}
+										{% if AuthorizationHelper.isAccessible('update') %}
+											{{ HtmlHelper.link(__('edit'), {action: 'edit', id: lo_usergroup.id}) }}
 										{% endif %}
-										{% if helper_Authorization_isAccessible('delete') %}
-											{{ helper_Html_link(__('delete'), {action: 'delete', id: lo_usergroup.id}) }}
+										{% if AuthorizationHelper.isAccessible('delete') %}
+											{{ HtmlHelper.link(__('delete'), {action: 'delete', id: lo_usergroup.id}) }}
 										{% endif %}
 									</td>
 								{% endblock %}
@@ -62,7 +62,7 @@
 	{% block listControlOverview %}
 		<ul class="ListControl">
 			{% block listControlOverviewPagination %}
-				{% set pagination = helper_Paginator_render() %}
+				{% set pagination = PaginatorHelper.render() %}
 				{% if pagination is not empty %}
 					<li class="ListControl-Pagination">
 						{{ pagination|raw }}
@@ -72,7 +72,7 @@
 
 			{% block paginationOverviewLimitControl %}
 				<li class="ListControl-ListLimit">
-					{{ helper_Paginator_limitControl() }}
+					{{ PaginatorHelper.limitControl() }}
 				</li>
 			{% endblock %}
 		</ul>

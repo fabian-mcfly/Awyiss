@@ -10,15 +10,19 @@
 #}
 
 <div class="Attributes Form Add">
-	{{ helper_Form_create(ao_attribute, {method: 'post', idPrefix: 'attribute'}) }}
-
 	{% block headlineAdd %}
 		<h1>{{ __('headline_add') }}</h1>
 	{% endblock %}
 
-	{% block formAddButtons %}
-		{{ helper_Form_button(__('save')) }}
-		{{ helper_Form_button(__('save_close'), {name: 'submit', value: 'submit_close'}) }}
+	{{ FormHelper.create(ao_attribute, {method: 'post', idPrefix: 'attribute'}) }}
+
+	{% block buttonArea %}
+		<div class="ButtonArea">
+			{% block formAddButtons %}
+				{{ FormHelper.button(__('save'), {class: 'Button Button-Success'}) }}
+				{{ FormHelper.button(__('save_close'), {class: 'Button', name: 'submit', value: 'submit_close'}) }}
+			{% endblock %}
+		</div>
 	{% endblock %}
 
 	{% block formAdd %}
@@ -29,5 +33,5 @@
 		{{ block('formAddButtons') }}
 	{% endblock %}
 
-	{{ helper_Form_end() -}}
+	{{ FormHelper.end() }}
 </div>

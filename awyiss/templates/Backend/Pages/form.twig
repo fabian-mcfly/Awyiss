@@ -17,15 +17,15 @@
 
 		{% block fieldsetPresentationInner %}
 			{% block formControlActive %}
-				{{ helper_Form_control('active') }}
+				{{ FormHelper.control('active') }}
 			{% endblock %}
 
 			{% block formControlPageTemplateId %}
-				{{ helper_Form_control('page_template_id', {empty: false, options: ao_pageTemplates.combine('id', 'label')}) }}
+				{{ FormHelper.control('page_template_id', {empty: false, options: ao_pageTemplates.combine('id', 'label')}) }}
 			{% endblock %}
 
 			{% block fieldsetPresentationAttributes %}
-				{{ helper_Attributes_allControls('presentation') }}
+				{{ AttributesHelper.allControls('presentation') }}
 			{% endblock %}
 		{% endblock %}
 	</fieldset>
@@ -37,31 +37,31 @@
 
 		{% block fieldsetConditionsInner %}
 			{% block formControlLanguageShortcode %}
-				{{ helper_Locale_control('language_shortcode', {languageRealm: as_languageRealm}) }}
+				{{ LocaleHelper.control('language_shortcode', {languageRealm: as_languageRealm}) }}
 			{% endblock %}
 
 			{% block formControlParentId %}
 				{% if (as_categoriesIdentifier is defined) %}
-					{{ helper_Categories_control(as_categoriesIdentifier) }}
+					{{ CategoriesHelper.control(as_categoriesIdentifier) }}
 				{% endif %}
 
 				{% if ab_nestable and ao_possibleParentPages is not null %}
-					{{ helper_Form_control('parent_id', {options: hashPrinter(ao_possibleParentPages, 'label', 'id', '- ')}) }}
+					{{ FormHelper.control('parent_id', {options: hashPrinter(ao_possibleParentPages, 'label', 'id', '- ')}) }}
 				{% endif %}
 			{% endblock %}
 
 			{% block formControlSystemOrder %}
 				{% if ab_sortable %}
-					{{ helper_SystemOrder_control('system_order') }}
+					{{ SystemOrderHelper.control('system_order') }}
 				{% endif %}
 			{% endblock %}
 
 			{% block formControlDuplicateOf %}
-				{{ helper_Form_control('duplicate_of', {disabled: [ao_page.id], options: ao_threadedPages.printer('label', 'id', '- ')}) }}
+				{{ FormHelper.control('duplicate_of', {disabled: [ao_page.id], options: ao_threadedPages.printer('label', 'id', '- ')}) }}
 			{% endblock %}
 
 			{% block fieldsetConditionsAttributes %}
-				{{ helper_Attributes_allControls('conditions') }}
+				{{ AttributesHelper.allControls('conditions') }}
 			{% endblock %}
 		{% endblock %}
 	</fieldset>
@@ -73,15 +73,15 @@
 
 		{% block fieldsetGeneralInner %}
 			{% block formControlTitle %}
-				{{ helper_Form_control('title') }}
+				{{ FormHelper.control('title') }}
 			{% endblock %}
 
 			{% block formControlSlug %}
-				{{ helper_Form_control('slug', {required: false}) }}
+				{{ FormHelper.control('slug', {required: false}) }}
 			{% endblock %}
 
 			{% block fieldsetGeneralAttributes %}
-				{{ helper_Attributes_allControls('general') }}
+				{{ AttributesHelper.allControls('general') }}
 			{% endblock %}
 		{% endblock %}
 	</fieldset>
@@ -93,7 +93,7 @@
 
 		{% block fieldsetContentInner %}
 			{% block fieldsetContentAttributes %}
-				{{ helper_Attributes_allControls('content') }}
+				{{ AttributesHelper.allControls('content') }}
 			{% endblock %}
 		{% endblock %}
 	</fieldset>
@@ -105,7 +105,7 @@
 
 		{% block fieldsetMediaInner %}
 			{% block fieldsetMediaAttributes %}
-				{{ helper_Attributes_allControls('media') }}
+				{{ AttributesHelper.allControls('media') }}
 			{% endblock %}
 		{% endblock %}
 	</fieldset>
@@ -117,27 +117,27 @@
 
 		{% block fieldsetSeoInner %}
 			{% block formControlMetaTitle %}
-				{{ helper_Form_control('meta_title') }}
+				{{ FormHelper.control('meta_title') }}
 			{% endblock %}
 
 			{% block formControlMetaDescription %}
-				{{ helper_Form_control('meta_description') }}
+				{{ FormHelper.control('meta_description') }}
 			{% endblock %}
 
 			{% block formControlRobotsIndex %}
-				{{ helper_Form_control('robots_index') }}
+				{{ FormHelper.control('robots_index') }}
 			{% endblock %}
 
 			{% block formControlRobotsFollow %}
-				{{ helper_Form_control('robots_follow') }}
+				{{ FormHelper.control('robots_follow') }}
 			{% endblock %}
 
 			{% block formControlRedirectLink %}
-				{{ helper_Form_control('redirect_link') }}
+				{{ FormHelper.control('redirect_link') }}
 			{% endblock %}
 
 			{% block fieldsetSeoAttributes %}
-				{{ helper_Attributes_allControls('seo') }}
+				{{ AttributesHelper.allControls('seo') }}
 			{% endblock %}
 		{% endblock %}
 	</fieldset>
@@ -149,7 +149,7 @@
 
 		{% block fieldsetAttributesInner %}
 			{% block fieldsetAttributesAttributes %}
-				{{ helper_Attributes_allControls('attributes') }}
+				{{ AttributesHelper.allControls('attributes') }}
 			{% endblock %}
 		{% endblock %}
 	</fieldset>
@@ -161,7 +161,7 @@
 
 		{# @var lo_menu \Awyiss\Model\Entity\Menu #}
 		{% for lo_menu in ao_menus %}
-			{{ helper_Form_control('add_menu_entry[]', {hiddenField: false, label: lo_menu.label, type: 'checkbox', value: lo_menu.id}) }}
+			{{ FormHelper.control('add_menu_entry[]', {hiddenField: false, label: lo_menu.label, type: 'checkbox', value: lo_menu.id}) }}
 		{% endfor %}
 	</fieldset>
 {% endblock %}
@@ -171,5 +171,5 @@
 {% endblock %}
 
 {% block formInputReloadForm %}
-	{{ helper_Form_hidden('reload_form', {val: 0}) }}
+	{{ FormHelper.hidden('reload_form', {val: 0}) }}
 {% endblock %}

@@ -5,18 +5,18 @@
 
 {% set fields = Bake.filterFields(fields, schema, modelObject) %}
 <div class="{{ pluralVar[:1]|upper ~ pluralVar[1:] }} Form {{ action|capitalize }}">
-	{% verbatim %}{{{% endverbatim %} helper_Form_create(ao_{{ singularVar }}, {method: 'post', idPrefix: '{{ singularVar }}'}) {% verbatim %}}}
-
-	{{ helper_Form_checkbox('save_as_copy', {id: 'SaveAsCopy', value: true}) }}
-
-	{% block headlineEdit %}
+	{% verbatim %}{% block headlineEdit %}
 		<h1>{{ __('headline_{% endverbatim %}{{ action }}{% verbatim %}') }}</h1>
-	{% endblock %}{% endverbatim %}
+	{% endblock %}
+
+	{{ FormHelper.create(ao_{% endverbatim %}{{ singularVar }}{% verbatim %}, {method: 'post', idPrefix: '{% endverbatim %}{{ singularVar }}{% verbatim %}'}) }}
+
+	{{ FormHelper.checkbox('save_as_copy', {id: 'SaveAsCopy', value: true}) }}{% endverbatim %}
 
 	{% verbatim %}{% block formEditButtons %}
 		<label for="SaveAsCopy">{{ __('as_copy') }}</label>
-		{{ helper_Form_button(__('save')) }}
-		{{ helper_Form_button(__('save_close'), {name: 'submit', value: 'submit_close'}) }}
+		{{ FormHelper.button(__('save')) }}
+		{{ FormHelper.button(__('save_close'), {name: 'submit', value: 'submit_close'}) }}
 	{% endblock %}{% endverbatim %}
 
 	{% verbatim %}{% block formEdit %}
@@ -27,5 +27,5 @@
 		{{ block('formEditButtons') }}
 	{% endblock %}
 
-	{{ helper_Form_end() -}}{% endverbatim %}
+	{{ FormHelper.end() -}}{% endverbatim %}
 </div>

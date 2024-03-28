@@ -1,10 +1,10 @@
 {% block formControlActive %}
-	{{ helper_Form_control('active') }}
+	{{ FormHelper.control('active') }}
 {% endblock %}
 
 
 {% block formControlContentTemplateId %}
-	{{ helper_Form_control('content_template_id', {
+	{{ FormHelper.control('content_template_id', {
 		empty: false,
 		options: settings.contentTemplates.combine('id', 'title')
 	}) }}
@@ -12,22 +12,22 @@
 
 
 {% block formControlLanguageShortcode %}
-	{{ helper_Locale_control('language_shortcode', {languageRealm: settings.languageRealm, val: settings.languageShortcode}) }}
+	{{ LocaleHelper.control('language_shortcode', {languageRealm: settings.languageRealm, val: settings.languageShortcode}) }}
 {% endblock %}
 
 
 {% block formControlSystemOrder %}
-	{{ helper_SystemOrder_control('system_order', {entity: settings.content}) }}
+	{{ SystemOrderHelper.control('system_order', {entity: settings.content}) }}
 {% endblock %}
 
 
 {% block formControlPage %}
-	{{ helper_Categories_control('page') }}
+	{{ CategoriesHelper.control('page') }}
 {% endblock %}
 
 
 {% block formControlContentAreaId %}
-	{{ helper_Form_control('content_area_id', {
+	{{ FormHelper.control('content_area_id', {
 		disabled: settings.contentAreas.unavailable|column('id'),
 		empty: false,
 		options: combine(settings.contentAreas.all|column('id'), settings.contentAreas.all|column('label'))
@@ -36,56 +36,56 @@
 
 
 {% block formControlColumnWidth %}
-	{{ helper_Form_control('column_width', {empty: false, options: settings.columnWidths, required: lo_contentTemplateElement.required, type: 'select'}) }}
+	{{ FormHelper.control('column_width', {empty: false, options: settings.columnWidths, required: lo_contentTemplateElement.required, type: 'select'}) }}
 {% endblock %}
 
 
 {% block formControlColumnIndent %}
-	{{ helper_Form_control('column_indent', {options: settings.columnIndents, required: lo_contentTemplateElement.required, type: 'select'}) }}
+	{{ FormHelper.control('column_indent', {options: settings.columnIndents, required: lo_contentTemplateElement.required, type: 'select'}) }}
 {% endblock %}
 
 
 {% block formControlColumnLast %}
-	{{ helper_Form_control('column_last') }}
+	{{ FormHelper.control('column_last') }}
 {% endblock %}
 
 
 {% block formControlColumnRtl %}
-	{{ helper_Form_control('column_rtl') }}
+	{{ FormHelper.control('column_rtl') }}
 {% endblock %}
 
 
 
 {% block formControlParentId %}
-	{{ helper_Form_control('parent_id', {options: hashPrinter(settings.possibleParentContents, 'label', 'id', '- '), required: lo_contentTemplateElement.required}) }}
+	{{ FormHelper.control('parent_id', {options: hashPrinter(settings.possibleParentContents, 'label', 'id', '- '), required: lo_contentTemplateElement.required}) }}
 {% endblock %}
 
 
 {% block formControlTitle %}
-	{{ helper_Form_control('title', {required: lo_contentTemplateElement.required}) }}
+	{{ FormHelper.control('title', {required: lo_contentTemplateElement.required}) }}
 {% endblock %}
 
 
 {% block formControlSubtitle %}
-	{{ helper_Form_control('subtitle', {required: lo_contentTemplateElement.required}) }}
+	{{ FormHelper.control('subtitle', {required: lo_contentTemplateElement.required}) }}
 {% endblock %}
 
 
 {% block formControlText %}
-	{{ helper_Form_control('text', {required: lo_contentTemplateElement.required}) }}
+	{{ FormHelper.control('text', {required: lo_contentTemplateElement.required}) }}
 {% endblock %}
 
 
 {% block formControlDuplicateOf %}
-	{{ helper_Form_control('duplicate_of', {disabled: [ao_content.id], required: lo_contentTemplateElement.required}) }}
+	{{ FormHelper.control('duplicate_of', {disabled: [ao_content.id], required: lo_contentTemplateElement.required}) }}
 {% endblock %}
 
 
 {% block formControlLink %}
-	{{ helper_Form_control('link', {required: lo_contentTemplateElement.required}) }}
+	{{ FormHelper.control('link', {required: lo_contentTemplateElement.required}) }}
 {% endblock %}
 
 
 {% block formControlCssClass %}
-	{{ helper_Form_control('css_class', {required: lo_contentTemplateElement.required}) }}
+	{{ FormHelper.control('css_class', {required: lo_contentTemplateElement.required}) }}
 {% endblock %}

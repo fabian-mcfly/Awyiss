@@ -5,12 +5,12 @@
 @var _view \Awyiss\View\BackendView
 #}
 
-{% set lx_selectedPageRoleId = helper_Categories_getSelectedCategory('pageRole') %}
+{% set lx_selectedPageRoleId = CategoriesHelper.getSelectedCategory('pageRole') %}
 
 <div class="PageTemplates Overview">
 	{% block buttonsOverview %}
-		{% if helper_Authorization_isAccessible('create') %}
-			{{ helper_Html_link(__('create'), {action: 'add', pageRoleId: lx_selectedPageRoleId}, {class: 'Button'}) }}
+		{% if AuthorizationHelper.isAccessible('create') %}
+			{{ HtmlHelper.link(__('create'), {action: 'add', pageRoleId: lx_selectedPageRoleId}, {class: 'Button'}) }}
 		{% endif %}
 	{% endblock %}
 
@@ -19,7 +19,7 @@
 	{% endblock %}
 
 	{% block categoriesFilterOverview %}
-		{{ helper_Categories_filter('pageRole') }}
+		{{ CategoriesHelper.filter('pageRole') }}
 	{% endblock %}
 
 	{% for li_pageRoleId, ls_pageRole in aa_pageRoles.simple %}
@@ -27,8 +27,8 @@
 			{% if aa_pageTemplates[ li_pageRoleId ] is defined or lx_selectedPageRoleId == 'all' or lx_selectedPageRoleId == li_pageRoleId %}
 				<fieldset class="Fieldset-Overview">
 					<legend>
-						{% if helper_Authorization_scopeIsAccessible('PageRoles', [], ['read']) %}
-							{{ helper_Html_link(ls_pageRole, {controller: 'PageRoles', action: 'edit', id: li_key}) }}
+						{% if AuthorizationHelper.scopeIsAccessible('PageRoles', [], ['read']) %}
+							{{ HtmlHelper.link(ls_pageRole, {controller: 'PageRoles', action: 'edit', id: li_key}) }}
 						{% else %}
 							{{ ls_pageRole }}
 						{% endif %}
@@ -88,12 +88,18 @@
 
 													{% block tableOverviewCellActions %}
 														<td class="actions">
-															{% if helper_Authorization_isAccessible('update') %}
-																{{ helper_Html_link(__('edit'), {action: 'edit', id: lo_pageTemplate.id}) }}
+															{% if AuthorizationHelper.isAccessible('update') %}
+																{{ HtmlHelper.link(__('edit'), {action: 'edit', id: lo_pageTemplate.id}) }}
 															{% endif %}
-															{% if helper_Authorization_isAccessible('delete') %}
+															{% if AuthorizationHelper.isAccessible('delete') %}
 																{% if lo_pageTemplate.usedForPages == 0 %}
-																	{{ helper_Html_link(__('delete'), {action: 'delete', id: lo_pageTemplate.id}, {confirm: __('confirm_delete', lo_pageTemplate.id) }) }}
+																	{{ HtmlHelper.link(__('delete'), {action: 'delete', id: lo_pageTemplate.id}, {
+				class: 'Button Button-Small Button-Delete',
+				'data-confirm-title': __('confirm_delete_title'),
+				'data-confirm-yes': __('confirm_delete_yes'),
+				'data-confirm-yes-class': 'Button-Delete',
+				'data-confirm-no': __('confirm_delete_no'),
+				'data-confirm': __('confirm_delete', lo_pageTemplate.id) }) }}
 																{% else %}
 																	<a>{{ __('delete') }}</a>
 																{% endif %}

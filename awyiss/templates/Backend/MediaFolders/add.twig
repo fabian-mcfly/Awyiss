@@ -6,15 +6,15 @@
 #}
 
 <div class="MediaFolders Form Add">
-	{{ helper_Form_create(ao_mediaFolder, {method: 'post', idPrefix: 'mediaFolder'}) }}
+	{{ FormHelper.create(ao_mediaFolder, {method: 'post', idPrefix: 'mediaFolder'}) }}
 
 	{% block headlineAdd %}
 		<h1>{{ __('headline_add') }}</h1>
 	{% endblock %}
 
 	{% block formAddButtons %}
-		{{ helper_Form_button(__('save')) }}
-		{{ helper_Form_button(__('save_close'), {name: 'submit', value: 'submit_close'}) }}
+		{{ FormHelper.button(__('save')) }}
+		{{ FormHelper.button(__('save_close'), {name: 'submit', value: 'submit_close'}) }}
 	{% endblock %}
 
 	{% block formAdd %}
@@ -25,6 +25,6 @@
 		{{ block('formAddButtons') }}
 	{% endblock %}
 
-	{{ helper_Form_end() -}}
+	{{ FormHelper.end() -}}
 
 </div>

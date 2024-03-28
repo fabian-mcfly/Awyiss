@@ -15,27 +15,27 @@
 
 		{% block fieldsetPresentationInner %}
 			{% block formControlActive %}
-				{{ helper_Form_control('active') }}
-			{% endblock %}
-
-			{% block formControlInputType %}
-				{{ helper_Form_control('input_type', {empty: false, options: combine(aa_availableInputTypes, aa_availableInputTypes)}) }}
+				{{ FormHelper.control('active') }}
 			{% endblock %}
 
 			{% block formControlTranslatable %}
-				{{ helper_Form_control('translatable', {disabled: ab_translatableDisabled}) }}
+				{{ FormHelper.control('translatable', {disabled: ab_translatableDisabled}) }}
 			{% endblock %}
 
 			{% block formControlRequired %}
-				{{ helper_Form_control('required', {disabled: ab_requiredDisabled}) }}
+				{{ FormHelper.control('required', {disabled: ab_requiredDisabled}) }}
 			{% endblock %}
 
 			{% block formControlHasIndex %}
-				{{ helper_Form_control('has_index') }}
+				{{ FormHelper.control('has_index') }}
+			{% endblock %}
+
+			{% block formControlInputType %}
+				{{ FormHelper.control('input_type', {empty: false, options: combine(aa_availableInputTypes, aa_availableInputTypes)}) }}
 			{% endblock %}
 
 			{% block fieldsetPresentationAttributes %}
-				{{ helper_Attributes_allControls('presentation') }}
+				{{ AttributesHelper.allControls('presentation') }}
 			{% endblock %}
 		{% endblock %}
 	</fieldset>
@@ -47,23 +47,24 @@
 
 		{% block fieldsetConditionsInner %}
 			{% block formControlScope %}
-				{{ helper_Categories_control('scope') }}
+				{{ CategoriesHelper.control('scope', {'data-form-updater': true}) }}
 			{% endblock %}
 
 			{% block formControlFieldset %}
-				{{ helper_Form_control('fieldset', {
+				{{ FormHelper.control('fieldset', {
 					empty: false,
 					options: combine(aa_availableFieldsets, aa_availableFieldsets),
-					disabled: ao_attribute.scope == 'contents'
+					disabled: ao_attribute.scope == 'contents',
+					'data-form-updater': true
 				}) }}
 			{% endblock %}
 
 			{% block formControlSystemOrder %}
-				{{ helper_SystemOrder_control('system_order', {entity: ao_attribute}) }}
+				{{ SystemOrderHelper.control('system_order', {entity: ao_attribute}) }}
 			{% endblock %}
 
 			{% block fieldsetConditionsAttributes %}
-				{{ helper_Attributes_allControls('conditions') }}
+				{{ AttributesHelper.allControls('conditions') }}
 			{% endblock %}
 		{% endblock %}
 	</fieldset>
@@ -75,23 +76,23 @@
 
 		{% block fieldsetGeneralInner %}
 			{% block formControlTitle %}
-				{{ helper_Form_control('title') }}
+				{{ FormHelper.control('title') }}
 			{% endblock %}
 
 			{% block formControlIdentifier %}
-				{{ helper_Form_control('identifier') }}
+				{{ FormHelper.control('identifier') }}
 			{% endblock %}
 
 			{% block formControlDefaultValue %}
-				{{ helper_Form_control('default_value') }}
+				{{ FormHelper.control('default_value') }}
 			{% endblock %}
 
 			{% block formControlType %}
-				{{ helper_Form_control('type') }}
+				{{ FormHelper.control('type') }}
 			{% endblock %}
 
 			{% block fieldsetGeneralAttributes %}
-				{{ helper_Attributes_allControls('general') }}
+				{{ AttributesHelper.allControls('general') }}
 			{% endblock %}
 		{% endblock %}
 	</fieldset>
@@ -103,7 +104,7 @@
 
 		{% block fieldsetContentInner %}
 			{% block fieldsetContentAttributes %}
-				{{ helper_Attributes_allControls('content') }}
+				{{ AttributesHelper.allControls('content') }}
 			{% endblock %}
 		{% endblock %}
 	</fieldset>
@@ -115,7 +116,7 @@
 
 		{% block fieldsetMediaInner %}
 			{% block fieldsetMediaAttributes %}
-				{{ helper_Attributes_allControls('media') }}
+				{{ AttributesHelper.allControls('media') }}
 			{% endblock %}
 		{% endblock %}
 	</fieldset>
@@ -127,12 +128,12 @@
 
 		{% block fieldsetAttributesInner %}
 			{% block fieldsetAttributesAttributes %}
-				{{ helper_Attributes_allControls('attributes') }}
+				{{ AttributesHelper.allControls('attributes') }}
 			{% endblock %}
 		{% endblock %}
 	</fieldset>
 {% endblock %}
 
 {% block formInputReloadForm %}
-	{{ helper_Form_hidden('reload_form', {val: 0}) }}
+	{{ FormHelper.hidden('reload_form', {val: 0}) }}
 {% endblock %}

@@ -21,7 +21,7 @@
 		<div class="stack-frame-header">
             <span class="stack-frame-file">
                 {% if line %}
-					{{ helper_Html_link(staticCall('\\Cake\\Error\\Debugger', 'trimPath', file), staticCall('\\Cake\\Error\\Debugger', 'editorUrl', file, line)) }}
+					{{ HtmlHelper.link(staticCall('\\Cake\\Error\\Debugger', 'trimPath', file), staticCall('\\Cake\\Error\\Debugger', 'editorUrl', file, line)) }}
 				{% else %}
 					{{ staticCall('\\Cake\\Error\\Debugger', 'trimPath', file)|raw }}
 				{% endif %}

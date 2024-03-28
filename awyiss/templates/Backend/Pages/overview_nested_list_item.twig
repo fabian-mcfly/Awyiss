@@ -8,7 +8,7 @@
 	<ul class="Data">
 		<li class="Title">{{ lo_entity.title }}</li>
 		<li class="Slug">
-			{{ helper_Html_link(lo_entity.languageShortcode ~ '/' ~ lo_entity.slug, {
+			{{ HtmlHelper.link(lo_entity.languageShortcode ~ '/' ~ lo_entity.slug, {
 				lang: lo_entity.languageShortcode,
 				slug: lo_entity.slug,
 				_name: 'Frontend',
@@ -18,16 +18,22 @@
 		</li>
 	</ul>
 	<span class="Actions">
-		{% if lo_entity.duplicate_of is empty and helper_Authorization_isAccessible('contents') and settings.contentsEnabled == true %}
-			{{ helper_Html_link(__('view_contents'), {controller: 'contents', action: 'overview', page_id: lo_entity.id}) }}
+		{% if lo_entity.duplicate_of is empty and AuthorizationHelper.isAccessible('contents') and settings.contentsEnabled == true %}
+			{{ HtmlHelper.link(__('view_contents'), {controller: 'contents', action: 'overview', page_id: lo_entity.id}) }}
 		{% endif %}
 
-		{% if helper_Authorization_isAccessible('update') %}
-			{{ helper_Html_link(__('edit'), {action: 'edit', id: lo_entity.id}) }}
+		{% if AuthorizationHelper.isAccessible('update') %}
+			{{ HtmlHelper.link(__('edit'), {action: 'edit', id: lo_entity.id}) }}
 		{% endif %}
 
-		{% if helper_Authorization_isAccessible('delete') %}
-			{{ helper_Html_link(__('delete'), {action: 'delete', id: lo_entity.id}, {confirm: __('confirm_delete', lo_entity.id) }) }}
+		{% if AuthorizationHelper.isAccessible('delete') %}
+			{{ HtmlHelper.link(__('delete'), {action: 'delete', id: lo_entity.id}, {
+				class: 'Button Button-Small Button-Delete',
+				'data-confirm-title': __('confirm_delete_title'),
+				'data-confirm-yes': __('confirm_delete_yes'),
+				'data-confirm-yes-class': 'Button-Delete',
+				'data-confirm-no': __('confirm_delete_no'),
+				'data-confirm': __('confirm_delete', lo_entity.id) }) }}
 		{% endif %}
 	</span>
 </div>

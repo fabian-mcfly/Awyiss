@@ -1,0 +1,45 @@
+{#
+@var lo_entity \Awyiss\Model\Entity\Attribute
+@var settings array
+#}
+
+<div class="{{ settings.identifier }}-ListItem-Inner ListItem-Inner">
+	<div class="AuditInfo" data-id="{{ lo_entity.id }}">
+		<ul class="AuditInfoList">
+			<li><strong>ID:</strong> {{ lo_entity.id }}</li>
+		</ul>
+	</div>
+
+	<ul class="Data">
+		<li class="Title">{{ lo_entity.title }}</li>
+		<li class="DataItem Identifier">
+			<span class="Label">{{ __('identifier') }}:</span> {{ lo_entity.identifier }}
+		</li>
+		<li class="DataItem InputType">
+			<span class="Label">{{ __('input_type') }}:</span> {{ __('input_type_' ~ lo_entity.inputType) }}
+		</li>
+		<li class="DataItem Type">
+			<span class="Label">{{ __('type') }}:</span> {{ __('type_' ~ lo_entity.type) }}
+		</li>
+		<li class="DataItem DefaultValue">
+			<span class="Label">{{ __('default_value') }}:</span> {{ lo_entity.defaultValue ?? '<em>null</em>' }}
+		</li>
+	</ul>
+
+	<span class="Actions">
+		{% if AuthorizationHelper.isAccessible('update') %}
+			{{ HtmlHelper.link(__('edit'), {action: 'edit', id: lo_entity.id}, {class: 'Button Button-Small Button-Edit'}) }}
+		{% endif %}
+
+		{% if AuthorizationHelper.isAccessible('delete') %}
+			{{ HtmlHelper.link(__('delete'), {action: 'delete', id: lo_entity.id}, {
+				class: 'Button Button-Small Button-Delete',
+				'data-confirm-title': __('confirm_delete_title'),
+				'data-confirm-yes': __('confirm_delete_yes'),
+				'data-confirm-yes-class': 'Button-Delete',
+				'data-confirm-no': __('confirm_delete_no'),
+				'data-confirm': __('confirm_delete', lo_entity.id),
+			}) }}
+		{% endif %}
+	</span>
+</div>

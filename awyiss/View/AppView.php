@@ -4,11 +4,15 @@
 namespace Awyiss\View;
 
 
+use Awyiss\Awyiss;
 use Awyiss\Twig\Extension\AwyissExtension;
 use Awyiss\Twig\FileLoader;
+use BadMethodCallException;
 use Cake\Core\Configure;
 use Cake\TwigView\View\TwigView;
+use Cake\View\Helper;
 use Twig\Loader\LoaderInterface;
+use Twig\Markup;
 
 
 /**
@@ -25,7 +29,14 @@ use Twig\Loader\LoaderInterface;
  * @property \Awyiss\View\Helper\AttributesHelper $Attributes
  */
 class AppView extends TwigView {
+	/**
+	 * @var bool $initialized A flag to check if the view has been initialized.
+	 */
 	protected static bool $initialized = false;
+	/**
+	 * @var array $helperCache An associative array to cache the helper instances.
+	 */
+	protected array $helperCache = [];
 
 
 	/**
@@ -77,6 +88,32 @@ class AppView extends TwigView {
 
 			static::$initialized = true;
 		}
+
+		$this->set('Awyiss', [
+			'VERSION' => Awyiss::VERSION,
+			'VERSION_NAME' => Awyiss::VERSION_NAME,
+		]);
+	}
+
+
+	/**
+	 * @inheritDoc
+	 * @return void
+	 */
+	public function loadHelpers(): void {
+		parent::loadHelpers();
+
+		// Get the Twig instance.
+		$lo_twig = $this->getTwig();
+
+		// Set the helper instances to the view.
+		foreach ($this->helpers()->loaded() as $ls_helper) {
+			$lo_helper = $this->helperClass($ls_helper);
+
+			$this->helperCache[ $ls_helper ] = $lo_helper;
+
+			$lo_twig->addGlobal($ls_helper . 'Helper', $lo_helper);
+		}
 	}
 
 
@@ -86,5 +123,55 @@ class AppView extends TwigView {
 	 */
 	protected function createLoader(): LoaderInterface {
 		return new FileLoader($this->extensions);
+	}
+
+
+	/**
+	 * Magic method to handle dynamic property access on the view.
+	 *
+	 * @param string $name
+	 * @return object
+	 */
+	protected function helperClass(string $name): object {
+		return new class ($this->helpers()->{$name}) {
+			/**
+			 * @var mixed $helper The helper instance.
+			 */
+			protected Helper $helper;
+
+
+			/**
+			 * Anonymous class constructor.
+			 *
+			 * @param \Cake\View\Helper $helper The helper instance.
+			 */
+			public function __construct(Helper $helper) {
+				$this->helper = $helper;
+			}
+
+
+			/**
+			 * Magic method to handle dynamic method calls on the helper instance.
+			 *
+			 * @param string $method The name of the method.
+			 * @param array $args The arguments to pass to the method.
+			 * @return mixed The result of the method call, or null if the result is falsy.
+			 * @throws \BadMethodCallException
+			 */
+			public function __call(string $method, array $args): mixed {
+				if (!method_exists($this->helper, $method)) {
+					throw new BadMethodCallException(sprintf('The method "%s" does not exist on the helper.', $method));
+				}
+
+				$lx_result = call_user_func([$this->helper, $method], ...$args);
+
+				if (is_string($lx_result) && str_contains($lx_result, '<') && str_contains($lx_result, '>')) {
+					return new Markup($lx_result, 'UTF-8');
+				}
+
+
+				return $lx_result;
+			}
+		};
 	}
 }

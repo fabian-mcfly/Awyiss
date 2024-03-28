@@ -3,8 +3,8 @@
 @var _view \Awyiss\View\BackendView
 #}
 
-<div class="Users Form">
-	{{ helper_Form_create() }}
+<div class="Users Form Login">
+	{{ FormHelper.create() }}
 
 	{% block fieldsetLogin %}
 		<fieldset class="Fieldset-Login">
@@ -12,21 +12,21 @@
 
 			{% block fieldsetLoginInner %}
 				{% block formControlUsername %}
-					{{ helper_Form_control('username') }}
+					{{ FormHelper.control('username') }}
 				{% endblock %}
 
 				{% block formControlPassword %}
-					{{ helper_Form_control('password') }}
+					{{ FormHelper.control('password') }}
 				{% endblock %}
 
 				{% block formControlLanguageShortcode %}
-					{{ helper_Locale_control('language_shortcode', {empty: false, languageRealm: as_languageRealm}) }}
+					{{ LocaleHelper.control('language_shortcode', {empty: false, languageRealm: as_languageRealm}) }}
 				{% endblock %}
+
+				{{ FormHelper.button(__('login'), {class: 'Submit'}) }}
 			{% endblock %}
 		</fieldset>
 	{% endblock %}
 
-	{{ helper_Form_button(__('login')) }}
-
-	{{ helper_Form_end() }}
+	{{ FormHelper.end() }}
 </div>

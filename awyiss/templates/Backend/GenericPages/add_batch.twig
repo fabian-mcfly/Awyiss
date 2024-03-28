@@ -19,14 +19,14 @@
 {% block formControlRedirectLink %}{% endblock %}
 
 <div class="Pages Form AddBatch">
-	{{ helper_Form_create(ao_page, {method: 'post', idPrefix: 'page'}) }}
+	{{ FormHelper.create(ao_page, {method: 'post', idPrefix: 'page'}) }}
 
 	{% block headlineAddBatch %}
 		<h1>{{ __('headline_add_batch') }}</h1>
 	{% endblock %}
 
 	{% block formAddBatchButtons %}
-		{{ helper_Form_button(__('save_close'), {name: 'submit', value: 'submit_close'}) }}
+		{{ FormHelper.button(__('save_close'), {name: 'submit', value: 'submit_close'}) }}
 	{% endblock %}
 
 	{% block formAddBatch %}
@@ -40,7 +40,7 @@
 
 				{% block fieldsetGeneralInner %}
 					{% block formControlPages %}
-						{{ helper_Form_control('pages', {type: 'textarea'}) }}
+						{{ FormHelper.control('pages', {type: 'textarea'}) }}
 					{% endblock %}
 
 					{{ parent() }}
@@ -61,7 +61,7 @@
 		{{ block('formAddBatchButtons') }}
 	{% endblock %}
 
-	{{ helper_Form_end() }}
+	{{ FormHelper.end() }}
 </div>
 <script>
 	class BatchArea {

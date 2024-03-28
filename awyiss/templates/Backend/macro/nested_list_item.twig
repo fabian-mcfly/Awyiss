@@ -8,12 +8,18 @@
 	<span class="Active">{{ lo_entity.active ? 'true' : 'false' }}</span>
 	<span class="Title">{{ lo_entity.title }}</span>
 	<span class="Actions">
-		{% if helper_Authorization_isAccessible('update') %}
-			{{ helper_Html_link(__('edit'), {action: 'edit', id: lo_entity.id}) }}
+		{% if AuthorizationHelper.isAccessible('update') %}
+			{{ HtmlHelper.link(__('edit'), {action: 'edit', id: lo_entity.id}) }}
 		{% endif %}
 
-		{% if helper_Authorization_isAccessible('delete') %}
-			{{ helper_Html_link(__('delete'), {action: 'delete', id: lo_entity.id}, {confirm: __('confirm_delete', lo_entity.id) }) }}
+		{% if AuthorizationHelper.isAccessible('delete') %}
+			{{ HtmlHelper.link(__('delete'), {action: 'delete', id: lo_entity.id}, {
+				class: 'Button Button-Small Button-Delete',
+				'data-confirm-title': __('confirm_delete_title'),
+				'data-confirm-yes': __('confirm_delete_yes'),
+				'data-confirm-yes-class': 'Button-Delete',
+				'data-confirm-no': __('confirm_delete_no'),
+				'data-confirm': __('confirm_delete', lo_entity.id) }) }}
 		{% endif %}
 	</span>
 </div>

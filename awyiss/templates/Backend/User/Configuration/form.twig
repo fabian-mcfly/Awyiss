@@ -27,7 +27,7 @@ TODO: modify inputs in add/edit, based on option type
 
 		{% block fieldsetPresentationInner %}
 			{% block fieldsetPresentationAttributes %}
-				{{ helper_Attributes_allControls('presentation') }}
+				{{ AttributesHelper.allControls('presentation') }}
 			{% endblock %}
 		{% endblock %}
 	</fieldset>
@@ -39,11 +39,11 @@ TODO: modify inputs in add/edit, based on option type
 
 		{% block fieldsetConditionsInner %}
 			{% block formControlScope %}
-				{{ helper_Categories_control('scope') }}
+				{{ CategoriesHelper.control('scope') }}
 			{% endblock %}
 
 			{% block fieldsetConditionsAttributes %}
-				{{ helper_Attributes_allControls('conditions') }}
+				{{ AttributesHelper.allControls('conditions') }}
 			{% endblock %}
 		{% endblock %}
 	</fieldset>
@@ -55,7 +55,7 @@ TODO: modify inputs in add/edit, based on option type
 
 		{% block fieldsetGeneralInner %}
 			{% block formControlIdentifier %}
-				{{ helper_Form_control('identifier', {val: ao_configuration.identifier ? ao_configuration.identifier|variable : '' }) }}
+				{{ FormHelper.control('identifier', {val: ao_configuration.identifier ? ao_configuration.identifier|variable : '' }) }}
 
 				{% block formControlIdentifierSelect %}
 					<label>
@@ -68,11 +68,11 @@ TODO: modify inputs in add/edit, based on option type
 			{% endblock %}
 
 			{% block formControlValue %}
-				{{ helper_Form_control('value') }}
+				{{ FormHelper.control('value') }}
 			{% endblock %}
 
 			{% block fieldsetGeneralAttributes %}
-				{{ helper_Attributes_allControls('general') }}
+				{{ AttributesHelper.allControls('general') }}
 			{% endblock %}
 		{% endblock %}
 	</fieldset>
@@ -84,7 +84,7 @@ TODO: modify inputs in add/edit, based on option type
 
 		{% block fieldsetContentInner %}
 			{% block fieldsetContentAttributes %}
-				{{ helper_Attributes_allControls('content') }}
+				{{ AttributesHelper.allControls('content') }}
 			{% endblock %}
 		{% endblock %}
 	</fieldset>
@@ -96,7 +96,7 @@ TODO: modify inputs in add/edit, based on option type
 
 		{% block fieldsetMediaInner %}
 			{% block fieldsetMediaAttributes %}
-				{{ helper_Attributes_allControls('media') }}
+				{{ AttributesHelper.allControls('media') }}
 			{% endblock %}
 		{% endblock %}
 	</fieldset>
@@ -108,12 +108,12 @@ TODO: modify inputs in add/edit, based on option type
 
 		{% block fieldsetAttributesInner %}
 			{% block fieldsetAttributesAttributes %}
-				{{ helper_Attributes_allControls('attributes') }}
+				{{ AttributesHelper.allControls('attributes') }}
 			{% endblock %}
 		{% endblock %}
 	</fieldset>
 {% endblock %}
 
 {% block formInputReloadForm %}
-	{{ helper_Form_hidden('reload_form', {val: 0}) }}
+	{{ FormHelper.hidden('reload_form', {val: 0}) }}
 {% endblock %}

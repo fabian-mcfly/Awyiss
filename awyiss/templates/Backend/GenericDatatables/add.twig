@@ -14,11 +14,11 @@
 		<h1>{{ __('headline_add') }}</h1>
 	{% endblock %}
 
-	{{ helper_Form_create(ao_record, {method: 'post', idPrefix: ao_datatable.identifier}) }}
+	{{ FormHelper.create(ao_record, {method: 'post', idPrefix: ao_datatable.identifier}) }}
 
 	{% block formAddButtons %}
-		{{ helper_Form_button(__('save')) }}
-		{{ helper_Form_button(__('save_close'), {name: 'submit', value: 'submit_close'}) }}
+		{{ FormHelper.button(__('save')) }}
+		{{ FormHelper.button(__('save_close'), {name: 'submit', value: 'submit_close'}) }}
 	{% endblock %}
 
 	{% block formAdd %}
@@ -29,5 +29,5 @@
 		{{ block('formAddButtons') }}
 	{% endblock %}
 
-	{{ helper_Form_end() -}}
+	{{ FormHelper.end() -}}
 </div>

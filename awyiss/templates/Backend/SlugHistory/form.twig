@@ -8,7 +8,7 @@
 
 		{% block fieldsetPresentationInner %}
 			{% block fieldsetPresentationAttributes %}
-				{{ helper_Attributes_allControls('presentation') }}
+				{{ AttributesHelper.allControls('presentation') }}
 			{% endblock %}
 		{% endblock %}
 	</fieldset>
@@ -20,7 +20,7 @@
 
 		{% block fieldsetConditionsInner %}
 			{% block fieldsetConditionsAttributes %}
-				{{ helper_Attributes_allControls('conditions') }}
+				{{ AttributesHelper.allControls('conditions') }}
 			{% endblock %}
 		{% endblock %}
 	</fieldset>
@@ -31,17 +31,17 @@
 		<legend>{{ __('fieldset_general') }}</legend>
 
 		{% block formControlSlug %}
-			{{ helper_Form_control('slug') }}
+			{{ FormHelper.control('slug') }}
 		{% endblock %}
 
 		{% block formControlPageId %}
-			{{ helper_Form_control('page_id', {options: hashPrinter(ao_threadedPages, 'label', 'id', '- ')}) }}
+			{{ FormHelper.control('page_id', {options: hashPrinter(ao_threadedPages, 'label', 'id', '- ')}) }}
 		{% endblock %}
 
 
 		{% block fieldsetGeneralInner %}
 			{% block fieldsetGeneralAttributes %}
-				{{ helper_Attributes_allControls('general') }}
+				{{ AttributesHelper.allControls('general') }}
 			{% endblock %}
 		{% endblock %}
 	</fieldset>
@@ -53,7 +53,7 @@
 
 		{% block fieldsetContentInner %}
 			{% block fieldsetContentAttributes %}
-				{{ helper_Attributes_allControls('content') }}
+				{{ AttributesHelper.allControls('content') }}
 			{% endblock %}
 		{% endblock %}
 	</fieldset>
@@ -65,7 +65,7 @@
 
 		{% block fieldsetMediaInner %}
 			{% block fieldsetMediaAttributes %}
-				{{ helper_Attributes_allControls('media') }}
+				{{ AttributesHelper.allControls('media') }}
 			{% endblock %}
 		{% endblock %}
 	</fieldset>
@@ -77,12 +77,12 @@
 
 		{% block fieldsetAttributesInner %}
 			{% block fieldsetAttributesAttributes %}
-				{{ helper_Attributes_allControls('attributes') }}
+				{{ AttributesHelper.allControls('attributes') }}
 			{% endblock %}
 		{% endblock %}
 	</fieldset>
 {% endblock %}
 
 {% block formInputReloadForm %}
-	{{ helper_Form_hidden('reload_form', {val: 0}) }}
+	{{ FormHelper.hidden('reload_form', {val: 0}) }}
 {% endblock %}

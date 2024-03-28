@@ -28,7 +28,7 @@
 {% macro renderFormControls(aa_assignedContentTemplateElements = [], settings) %}
 	{% for lo_contentTemplateElement in aa_assignedContentTemplateElements %}
 		{% if lo_contentTemplateElement.identifier[:11] == 'attributes.' %}
-			{{ helper_Attributes_control(lo_contentTemplateElement.identifier[11:], {required: lo_contentTemplateElement.required}) }}
+			{{ AttributesHelper.control(lo_contentTemplateElement.identifier[11:], {required: lo_contentTemplateElement.required}) }}
 		{% else %}
 			{{ block('formControl' ~ lo_contentTemplateElement.identifier|camelize) }}
 		{% endif %}
@@ -104,13 +104,13 @@
 				{% block formControlData %}
 					{% set li_counter = 0 %}
 					{% for ls_key, lx_value in ao_content.data %}
-						{{ helper_Form_control('data.' ~ li_counter ~ '.key', {val: ls_key}) }}
-						{{ helper_Form_control('data.' ~ li_counter ~ '.value', {val: lx_value}) }}
+						{{ FormHelper.control('data.' ~ li_counter ~ '.key', {val: ls_key}) }}
+						{{ FormHelper.control('data.' ~ li_counter ~ '.value', {val: lx_value}) }}
 						{% set li_counter = li_counter + 1 %}
 					{% endfor %}
 
-					{{ helper_Form_control('data.' ~ li_counter ~ '.key') }}
-					{{ helper_Form_control('data.' ~ li_counter ~ '.value') }}
+					{{ FormHelper.control('data.' ~ li_counter ~ '.key') }}
+					{{ FormHelper.control('data.' ~ li_counter ~ '.value') }}
 				{% endblock %}
 
 				{{ _self.renderFormControls(aa_contentElementsByFieldset.data ?? [], macroSettings) }}
@@ -124,5 +124,5 @@
 </div>
 
 {% block formInputReloadForm %}
-	{{ helper_Form_hidden('reload_form', {val: 0}) }}
+	{{ FormHelper.hidden('reload_form', {val: 0}) }}
 {% endblock %}

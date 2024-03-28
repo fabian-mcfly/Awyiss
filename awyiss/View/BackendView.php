@@ -23,11 +23,14 @@ class BackendView extends AppView {
 		$this->addHelper('Attributes');
 		$this->addHelper('Authentication.Identity');
 		$this->addHelper('Authorization');
+		$this->addHelper('Categories');
+		$this->addHelper('Flash');
 		$this->addHelper('Form', [
 			'autoSetCustomValidity' => false,
 			'errorClass' => 'Error',
 			'templates' => 'form_templates_backend',
 		]);
+		$this->addHelper('Html');
 		$this->addHelper('Locale');
 		$this->addHelper('Paginator', ['templates' => 'paginator_templates']);
 		$this->addHelper('SystemOrder', [
@@ -44,7 +47,11 @@ class BackendView extends AppView {
 			],
 		]);
 
-		/** @noinspection PhpUnhandledExceptionInspection */
+		/**
+		 * @var \Awyiss\Model\Entity\Language|null $lo_language
+		 * @noinspection PhpUnhandledExceptionInspection
+		 */
+
 		$lo_language = LocaleMiddleware::getLanguage(null);
 		if ($lo_language) {
 			$this->addHelper('Time', ['outputTimezone' => $lo_language->timezone]);

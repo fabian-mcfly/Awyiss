@@ -15,15 +15,15 @@
 				{% block tableOverviewHeadRow %}
 					<tr>
 						{% block tableOverviewHeaderId %}
-							<th>{{ helper_Paginator_sort('id') }}</th>
+							<th>{{ PaginatorHelper.sort('id') }}</th>
 						{% endblock %}
 
 						{% block tableOverviewHeaderTitle %}
-							<th>{{ helper_Paginator_sort('title') }}</th>
+							<th>{{ PaginatorHelper.sort('title') }}</th>
 						{% endblock %}
 
 						{% block tableOverviewHeaderSystemOrder %}
-							<th>{{ helper_Paginator_sort('system_order') }}</th>
+							<th>{{ PaginatorHelper.sort('system_order') }}</th>
 						{% endblock %}
 
 						{% block tableOverviewHeaderActions %}
@@ -53,16 +53,22 @@
 
 							{% block tableOverviewCellActions %}
 								<td class="actions">
-									{% if lo_page.duplicate_of is empty and helper_Authorization_isAccessible('contents') and ab_contentsEnabled == true %}
-										{{ helper_Html_link(__('view_contents'), {controller: 'contents', action: 'overview', page_id: lo_page.id}) }}
+									{% if lo_page.duplicate_of is empty and AuthorizationHelper.isAccessible('contents') and ab_contentsEnabled == true %}
+										{{ HtmlHelper.link(__('view_contents'), {controller: 'contents', action: 'overview', page_id: lo_page.id}) }}
 									{% endif %}
 
-									{% if helper_Authorization_isAccessible('update') %}
-										{{ helper_Html_link(__('edit'), {action: 'edit', id: lo_page.id}) }}
+									{% if AuthorizationHelper.isAccessible('update') %}
+										{{ HtmlHelper.link(__('edit'), {action: 'edit', id: lo_page.id}) }}
 									{% endif %}
 
-									{% if helper_Authorization_isAccessible('delete') %}
-										{{ helper_Html_link(__('delete'), {action: 'delete', id: lo_page.id}, {confirm: __('confirm_delete', lo_page.id) }) }}
+									{% if AuthorizationHelper.isAccessible('delete') %}
+										{{ HtmlHelper.link(__('delete'), {action: 'delete', id: lo_page.id}, {
+				class: 'Button Button-Small Button-Delete',
+				'data-confirm-title': __('confirm_delete_title'),
+				'data-confirm-yes': __('confirm_delete_yes'),
+				'data-confirm-yes-class': 'Button-Delete',
+				'data-confirm-no': __('confirm_delete_no'),
+				'data-confirm': __('confirm_delete', lo_page.id) }) }}
 									{% endif %}
 								</td>
 							{% endblock %}

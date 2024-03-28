@@ -12,15 +12,15 @@
 
 		{% block fieldsetPresentationInner %}
 			{% block formControlActive %}
-				{{ helper_Form_control('active') }}
+				{{ FormHelper.control('active') }}
 			{% endblock %}
 
 			{% block formControlExternal %}
-				{{ helper_Form_control('external') }}
+				{{ FormHelper.control('external') }}
 			{% endblock %}
 
 			{% block fieldsetPresentationAttributes %}
-				{{ helper_Attributes_allControls('presentation') }}
+				{{ AttributesHelper.allControls('presentation') }}
 			{% endblock %}
 		{% endblock %}
 	</fieldset>
@@ -32,21 +32,21 @@
 
 		{% block fieldsetConditionsInner %}
 			{% block formControlParentId %}
-				{{ helper_Form_control('parent_id', {options: ao_possibleParentMenuEntries, required: false}) }}
+				{{ FormHelper.control('parent_id', {options: ao_possibleParentMenuEntries, required: false}) }}
 			{% endblock %}
 
 			{#% if ao_backendMenuEntry.parentId is empty %#}
 				{% block formControlInsertAfterId %}
-					{{ helper_Form_control('insert_after_id', {options: aa_insertAfterOptions, required: false}) }}
+					{{ FormHelper.control('insert_after_id', {options: aa_insertAfterOptions, required: false}) }}
 				{% endblock %}
 			{#% endif %#}
 
 			{% block formControlSystemOrder %}
-				{{ helper_SystemOrder_control('system_order', {entity: ao_backendMenuEntry}) }}
+				{{ SystemOrderHelper.control('system_order', {entity: ao_backendMenuEntry}) }}
 			{% endblock %}
 
 			{% block fieldsetConditionsAttributes %}
-				{{ helper_Attributes_allControls('conditions') }}
+				{{ AttributesHelper.allControls('conditions') }}
 			{% endblock %}
 		{% endblock %}
 	</fieldset>
@@ -58,19 +58,19 @@
 
 		{% block fieldsetGeneralInner %}
 			{% block formControlTitle %}
-				{{ helper_Form_control('title') }}
+				{{ FormHelper.control('title') }}
 			{% endblock %}
 
 			{% block formControlLink %}
-				{{ helper_Form_control('link') }}
+				{{ FormHelper.control('link') }}
 			{% endblock %}
 
 			{% block formControlAccess %}
-				{{ helper_Form_control('access', {val: ao_backendMenuEntry.access|json_encode}) }}
+				{{ FormHelper.control('access', {val: ao_backendMenuEntry.access|json_encode}) }}
 			{% endblock %}
 
 			{% block fieldsetGeneralAttributes %}
-				{{ helper_Attributes_allControls('general') }}
+				{{ AttributesHelper.allControls('general') }}
 			{% endblock %}
 		{% endblock %}
 	</fieldset>
@@ -82,7 +82,7 @@
 
 		{% block fieldsetContentInner %}
 			{% block fieldsetContentAttributes %}
-				{{ helper_Attributes_allControls('content') }}
+				{{ AttributesHelper.allControls('content') }}
 			{% endblock %}
 		{% endblock %}
 	</fieldset>
@@ -94,7 +94,7 @@
 
 		{% block fieldsetMediaInner %}
 			{% block fieldsetMediaAttributes %}
-				{{ helper_Attributes_allControls('media') }}
+				{{ AttributesHelper.allControls('media') }}
 			{% endblock %}
 		{% endblock %}
 	</fieldset>
@@ -106,12 +106,12 @@
 
 		{% block fieldsetAttributesInner %}
 			{% block fieldsetAttributesAttributes %}
-				{{ helper_Attributes_allControls('attributes') }}
+				{{ AttributesHelper.allControls('attributes') }}
 			{% endblock %}
 		{% endblock %}
 	</fieldset>
 {% endblock %}
 
 {% block formInputReloadForm %}
-	{{ helper_Form_hidden('reload_form', {val: 0}) }}
+	{{ FormHelper.hidden('reload_form', {val: 0}) }}
 {% endblock %}

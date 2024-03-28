@@ -10,11 +10,11 @@
 
 		{% block fieldsetPresentationInner %}
 			{% block formControlActive %}
-				{{ helper_Form_control('active') }}
+				{{ FormHelper.control('active') }}
 			{% endblock %}
 
 			{% block fieldsetPresentationAttributes %}
-				{{ helper_Attributes_allControls('presentation') }}
+				{{ AttributesHelper.allControls('presentation') }}
 			{% endblock %}
 		{% endblock %}
 	</fieldset>
@@ -26,7 +26,7 @@
 
 		{% block fieldsetConditionsInner %}
 			{% block fieldsetConditionsAttributes %}
-				{{ helper_Attributes_allControls('conditions') }}
+				{{ AttributesHelper.allControls('conditions') }}
 			{% endblock %}
 		{% endblock %}
 	</fieldset>
@@ -38,31 +38,31 @@
 
 		{% block fieldsetGeneralInner %}
 			{% block formControlUsername %}
-				{{ helper_Form_control('username') }}
+				{{ FormHelper.control('username') }}
 			{% endblock %}
 
 			{% block formControlPassword %}
-				{{ helper_Form_control('password', {type: 'password', value: ''}) }}
+				{{ FormHelper.control('password', {type: 'password', value: ''}) }}
 			{% endblock %}
 
 			{% block formControlPasswordConfirm %}
-				{{ helper_Form_control('password_confirm', {type: 'password', value: ''}) }}
+				{{ FormHelper.control('password_confirm', {type: 'password', value: ''}) }}
 			{% endblock %}
 
 			{% block formControlFirstname %}
-				{{ helper_Form_control('firstname') }}
+				{{ FormHelper.control('firstname') }}
 			{% endblock %}
 
 			{% block formControlLastname %}
-				{{ helper_Form_control('lastname') }}
+				{{ FormHelper.control('lastname') }}
 			{% endblock %}
 
 			{% block formControlEmail %}
-				{{ helper_Form_control('email') }}
+				{{ FormHelper.control('email') }}
 			{% endblock %}
 
 			{% block fieldsetGeneralAttributes %}
-				{{ helper_Attributes_allControls('general') }}
+				{{ AttributesHelper.allControls('general') }}
 			{% endblock %}
 		{% endblock %}
 	</fieldset>
@@ -73,13 +73,13 @@
 		<legend>{{ __('fieldset_usergroups') }}</legend>
 
 		{% block fieldsetUsergroupsInner %}
-			{{ helper_Form_hidden('usergroups._ids', {value: ''}) }}
+			{{ FormHelper.hidden('usergroups._ids', {value: ''}) }}
 			{% block userUsergroups %}
 				<ul class="NoList">
 					{% for lo_usergroup in ao_usergroups %}
 						{% block userUsergroup %}
 							<li>
-								{{ helper_Form_control('usergroups._ids.' ~ lo_usergroup.id, {
+								{{ FormHelper.control('usergroups._ids.' ~ lo_usergroup.id, {
 									hiddenField: false,
 									type: 'checkbox',
 									value: lo_usergroup.id,
@@ -101,7 +101,7 @@
 
 		{% block fieldsetContentInner %}
 			{% block fieldsetContentAttributes %}
-				{{ helper_Attributes_allControls('content') }}
+				{{ AttributesHelper.allControls('content') }}
 			{% endblock %}
 		{% endblock %}
 	</fieldset>
@@ -113,7 +113,7 @@
 
 		{% block fieldsetMediaInner %}
 			{% block fieldsetMediaAttributes %}
-				{{ helper_Attributes_allControls('media') }}
+				{{ AttributesHelper.allControls('media') }}
 			{% endblock %}
 		{% endblock %}
 	</fieldset>
@@ -125,12 +125,12 @@
 
 		{% block fieldsetAttributesInner %}
 			{% block fieldsetAttributesAttributes %}
-				{{ helper_Attributes_allControls('attributes') }}
+				{{ AttributesHelper.allControls('attributes') }}
 			{% endblock %}
 		{% endblock %}
 	</fieldset>
 {% endblock %}
 
 {% block formInputReloadForm %}
-	{{ helper_Form_hidden('reload_form', {val: 0}) }}
+	{{ FormHelper.hidden('reload_form', {val: 0}) }}
 {% endblock %}

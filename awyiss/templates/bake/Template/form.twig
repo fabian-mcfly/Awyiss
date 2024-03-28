@@ -7,7 +7,7 @@
 
 {%- if associations.BelongsToMany is defined %}
 {%- for assocName, assocData in associations.BelongsToMany %}
-		{% verbatim %}{{ helper_Categories_control('{% endverbatim %}{{ assocData.property }}{% verbatim %}._ids', {options: ao_{% endverbatim %}{{ assocData.variable }}{% verbatim %}}) }}{% endverbatim %}
+		{% verbatim %}{{ CategoriesHelper.control('{% endverbatim %}{{ assocData.property }}{% verbatim %}._ids', {options: ao_{% endverbatim %}{{ assocData.variable }}{% verbatim %}}) }}{% endverbatim %}
 
 {%- endfor %}
 {% endif %}
@@ -17,7 +17,7 @@
 
 		{% block fieldsetPresentationInner %}
 			{% block fieldsetPresentationAttributes %}
-				{{ helper_Attributes_allControls('presentation') }}
+				{{ AttributesHelper.allControls('presentation') }}
 			{% endblock %}
 		{% endblock %}
 	</fieldset>
@@ -29,7 +29,7 @@
 
 		{% block fieldsetConditionsInner %}
 			{% block fieldsetConditionsAttributes %}
-				{{ helper_Attributes_allControls('conditions') }}
+				{{ AttributesHelper.allControls('conditions') }}
 			{% endblock %}
 		{% endblock %}
 	</fieldset>
@@ -47,36 +47,36 @@
 {%- if keyFields[field] is defined %}
 {%- set fieldData = Bake.columnData(field, schema) %}
 {%- if fieldData.null %}
-			{% verbatim %}{{ helper_Form_control('{% endverbatim %}{{ field }}{% verbatim %}', {options: ao_{% endverbatim %}{{ keyFields[field] }}{% verbatim %}, empty: true}) }}{% endverbatim %}
+			{% verbatim %}{{ FormHelper.control('{% endverbatim %}{{ field }}{% verbatim %}', {options: ao_{% endverbatim %}{{ keyFields[field] }}{% verbatim %}, empty: true}) }}{% endverbatim %}
 {{- "\n" }}
 {%- else %}
-			{% verbatim %}{{ helper_Form_control('{% endverbatim %}{{ field }}{% verbatim %}', {options: ao_{% endverbatim %}{{ keyFields[field] }}{% verbatim %}}) }}{% endverbatim %}
+			{% verbatim %}{{ FormHelper.control('{% endverbatim %}{{ field }}{% verbatim %}', {options: ao_{% endverbatim %}{{ keyFields[field] }}{% verbatim %}}) }}{% endverbatim %}
 {{- "\n" }}
 {%- endif %}
 {%- elseif field == 'parent_id' %}
 			{% verbatim %}{% if (as_categoriesIdentifier is defined) %}
-				{{ helper_Categories_control(as_categoriesIdentifier) }}
+				{{ CategoriesHelper.control(as_categoriesIdentifier) }}
 			{% endif %}
 
 			{% if (ao_parent{% endverbatim %}{{ pluralVar|camelize }}{% verbatim %} is not null) %}
-				{{ helper_Form_control('parent_id', {options: hashPrinter(ao_parent{% endverbatim %}{{ pluralVar|camelize }}{% verbatim %}, 'label', 'id', '- ')}) }}
+				{{ FormHelper.control('parent_id', {options: hashPrinter(ao_parent{% endverbatim %}{{ pluralVar|camelize }}{% verbatim %}, 'label', 'id', '- ')}) }}
 			{% endif %}{% endverbatim %}
 {{- "\n" }}
 {%- elseif field == 'system_order' %}
 			{% verbatim %}{% if as_systemOrderField == 'systemOrder' %}
-				{{ helper_SystemOrder_control('system_order') }}
+				{{ SystemOrderHelper.control('system_order') }}
 			{% endif %}{% endverbatim %}
 {{- "\n" }}
 {%- elseif field == 'languages_shortcode' %}
-			{% verbatim %}{{ helper_Locale_control('language_shortcode', {languageRealm: as_languageRealm}) }}{% endverbatim %}
+			{% verbatim %}{{ LocaleHelper.control('language_shortcode', {languageRealm: as_languageRealm}) }}{% endverbatim %}
 {{- "\n" }}
 {%- elseif field not in ['deleted', 'created_on', 'created_by', 'changed_on', 'changed_by', 'deleted_on', 'deleted_by'] %}
 {%- set fieldData = Bake.columnData(field, schema) %}
 {%- if fieldData.type in ['date', 'datetime', 'time'] and fieldData.null %}
-			{% verbatim %}{{ helper_Form_control('{% endverbatim %}{{ field }}{% verbatim %}', {empty: true}) }}{% endverbatim %}
+			{% verbatim %}{{ FormHelper.control('{% endverbatim %}{{ field }}{% verbatim %}', {empty: true}) }}{% endverbatim %}
 {{- "\n" }}
 {%- else %}
-			{% verbatim %}{{ helper_Form_control('{% endverbatim %}{{ field }}{% verbatim %}') }}{% endverbatim %}
+			{% verbatim %}{{ FormHelper.control('{% endverbatim %}{{ field }}{% verbatim %}') }}{% endverbatim %}
 {{- "\n" }}
 {%- endif %}
 {%- endif %}
@@ -88,7 +88,7 @@
 {% verbatim %}
 		{% block fieldsetGeneralInner %}
 			{% block fieldsetGeneralAttributes %}
-				{{ helper_Attributes_allControls('general') }}
+				{{ AttributesHelper.allControls('general') }}
 			{% endblock %}
 		{% endblock %}
 	</fieldset>
@@ -100,7 +100,7 @@
 
 		{% block fieldsetContentInner %}
 			{% block fieldsetContentAttributes %}
-				{{ helper_Attributes_allControls('content') }}
+				{{ AttributesHelper.allControls('content') }}
 			{% endblock %}
 		{% endblock %}
 	</fieldset>
@@ -112,7 +112,7 @@
 
 		{% block fieldsetMediaInner %}
 			{% block fieldsetMediaAttributes %}
-				{{ helper_Attributes_allControls('media') }}
+				{{ AttributesHelper.allControls('media') }}
 			{% endblock %}
 		{% endblock %}
 	</fieldset>
@@ -124,13 +124,13 @@
 
 		{% block fieldsetAttributesInner %}
 			{% block fieldsetAttributesAttributes %}
-				{{ helper_Attributes_allControls('attributes') }}
+				{{ AttributesHelper.allControls('attributes') }}
 			{% endblock %}
 		{% endblock %}
 	</fieldset>
 {% endblock %}
 
 {% block formInputReloadForm %}
-	{{ helper_Form_hidden('reload_form', {val: 0}) }}
+	{{ FormHelper.hidden('reload_form', {val: 0}) }}
 {% endblock %}
 {% endverbatim %}

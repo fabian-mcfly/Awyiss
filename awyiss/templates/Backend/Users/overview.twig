@@ -5,8 +5,8 @@
 
 <div class="Users Overview">
 	{% block buttonsOverview %}
-		{% if helper_Authorization_isAccessible('create') %}
-			{{ helper_Html_link(__('create'), {action: 'add'}, {class: 'Button'}) }}
+		{% if AuthorizationHelper.isAccessible('create') %}
+			{{ HtmlHelper.link(__('create'), {action: 'add'}, {class: 'Button'}) }}
 		{% endif %}
 	{% endblock %}
 
@@ -15,7 +15,7 @@
 	{% endblock %}
 
 	{% block categoriesFilterOverview %}
-		{{ helper_Categories_filter('usergroup') }}
+		{{ CategoriesHelper.filter('usergroup') }}
 	{% endblock %}
 
 	{% block tableOverview %}
@@ -25,23 +25,23 @@
 					{% block tableOverviewHeadRow %}
 						<tr>
 							{% block tableOverviewHeaderUsername %}
-								<th>{{ helper_Paginator_sort('username') }}</th>
+								<th>{{ PaginatorHelper.sort('username') }}</th>
 							{% endblock %}
 
 							{% block tableOverviewHeaderLastLogin %}
-								<th>{{ helper_Paginator_sort('last_login') }}</th>
+								<th>{{ PaginatorHelper.sort('last_login') }}</th>
 							{% endblock %}
 
 							{% block tableOverviewHeaderFirstname %}
-								<th>{{ helper_Paginator_sort('firstname') }}</th>
+								<th>{{ PaginatorHelper.sort('firstname') }}</th>
 							{% endblock %}
 
 							{% block tableOverviewHeaderLastname %}
-								<th>{{ helper_Paginator_sort('lastname') }}</th>
+								<th>{{ PaginatorHelper.sort('lastname') }}</th>
 							{% endblock %}
 
 							{% block tableOverviewHeaderEmail %}
-								<th>{{ helper_Paginator_sort('email') }}</th>
+								<th>{{ PaginatorHelper.sort('email') }}</th>
 							{% endblock %}
 
 							{% block tableOverviewHeaderActions %}
@@ -62,7 +62,7 @@
 								{% endblock %}
 
 								{% block tableOverviewCellLastLogin %}
-									<td>{{ lo_user.last_login is defined ? helper_Time_format(lo_user.last_login) : '' }}</td>
+									<td>{{ lo_user.last_login is defined ? TimeHelper.format(lo_user.last_login) : '' }}</td>
 								{% endblock %}
 
 								{% block tableOverviewCellFirstname %}
@@ -79,11 +79,11 @@
 
 								{% block tableOverviewCellActions %}
 									<td class="actions">
-										{% if helper_Authorization_isAccessible('update') %}
-											{{ helper_Html_link(__('edit'), {action: 'edit', id: lo_user.id}) }}
+										{% if AuthorizationHelper.isAccessible('update') %}
+											{{ HtmlHelper.link(__('edit'), {action: 'edit', id: lo_user.id}) }}
 										{% endif %}
-										{% if helper_Authorization_isAccessible('delete') %}
-											{{ helper_Html_link(__('delete'), {action: 'delete', id: lo_user.id}) }}
+										{% if AuthorizationHelper.isAccessible('delete') %}
+											{{ HtmlHelper.link(__('delete'), {action: 'delete', id: lo_user.id}) }}
 										{% endif %}
 									</td>
 								{% endblock %}
@@ -98,7 +98,7 @@
 	{% block listControlOverview %}
 		<ul class="ListControl">
 			{% block listControlOverviewPagination %}
-				{% set pagination = helper_Paginator_render() %}
+				{% set pagination = PaginatorHelper.render() %}
 				{% if pagination is not empty %}
 					<li class="ListControl-Pagination">
 						{{ pagination|raw }}
@@ -108,7 +108,7 @@
 
 			{% block paginationOverviewLimitControl %}
 				<li class="ListControl-ListLimit">
-					{{ helper_Paginator_limitControl() }}
+					{{ PaginatorHelper.limitControl() }}
 				</li>
 			{% endblock %}
 		</ul>

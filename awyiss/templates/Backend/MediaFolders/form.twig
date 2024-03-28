@@ -12,11 +12,11 @@
 
 		{% block fieldsetPresentationInner %}
 			{% block formControlActive %}
-				{{ helper_Form_control('active') }}
+				{{ FormHelper.control('active') }}
 			{% endblock %}
 
 			{% block fieldsetPresentationAttributes %}
-				{{ helper_Attributes_allControls('presentation') }}
+				{{ AttributesHelper.allControls('presentation') }}
 			{% endblock %}
 		{% endblock %}
 	</fieldset>
@@ -28,19 +28,19 @@
 
 		{% block fieldsetConditionsInner %}
 			{% block formControlLanguageShortcode %}
-				{{ helper_Locale_control('language_shortcode', {languageRealm: as_languageRealm}) }}
+				{{ LocaleHelper.control('language_shortcode', {languageRealm: as_languageRealm}) }}
 			{% endblock %}
 
 			{% block formControlParentId %}
-				{{ helper_Form_control('parent_id', {disabled: [1], options: hashPrinter(ao_possibleParentMediaFolders, 'label', 'id', '- ')}) }}
+				{{ FormHelper.control('parent_id', {disabled: [1], options: hashPrinter(ao_possibleParentMediaFolders, 'label', 'id', '- ')}) }}
 			{% endblock %}
 
 			{% block formControlSystemOrder %}
-				{{ helper_SystemOrder_control('system_order', {entity: ao_mediaFolder}) }}
+				{{ SystemOrderHelper.control('system_order', {entity: ao_mediaFolder}) }}
 			{% endblock %}
 
 			{% block fieldsetConditionsAttributes %}
-				{{ helper_Attributes_allControls('conditions') }}
+				{{ AttributesHelper.allControls('conditions') }}
 			{% endblock %}
 		{% endblock %}
 	</fieldset>
@@ -52,15 +52,15 @@
 
 		{% block fieldsetGeneralInner %}
 			{% block formControlTitle %}
-				{{ helper_Form_control('title') }}
+				{{ FormHelper.control('title') }}
 			{% endblock %}
 
 			{% block formControlSlug %}
-				{{ helper_Form_control('path', {required: false, readonly: ao_mediaFolder.id == 1}) }}
+				{{ FormHelper.control('path', {required: false, readonly: ao_mediaFolder.id == 1}) }}
 			{% endblock %}
 
 			{% block fieldsetGeneralAttributes %}
-				{{ helper_Attributes_allControls('general') }}
+				{{ AttributesHelper.allControls('general') }}
 			{% endblock %}
 		{% endblock %}
 	</fieldset>
@@ -72,7 +72,7 @@
 
 		{% block fieldsetContentInner %}
 			{% block fieldsetContentAttributes %}
-				{{ helper_Attributes_allControls('content') }}
+				{{ AttributesHelper.allControls('content') }}
 			{% endblock %}
 		{% endblock %}
 	</fieldset>
@@ -84,7 +84,7 @@
 
 		{% block fieldsetMediaInner %}
 			{% block fieldsetMediaAttributes %}
-				{{ helper_Attributes_allControls('media') }}
+				{{ AttributesHelper.allControls('media') }}
 			{% endblock %}
 		{% endblock %}
 	</fieldset>
@@ -96,7 +96,7 @@
 
 		{% block fieldsetAttributesInner %}
 			{% block fieldsetAttributesAttributes %}
-				{{ helper_Attributes_allControls('attributes') }}
+				{{ AttributesHelper.allControls('attributes') }}
 			{% endblock %}
 		{% endblock %}
 	</fieldset>
@@ -108,12 +108,12 @@
 
 		{% block fieldsetDataInner %}
 			{% block fieldsetDataAttributes %}
-				{{ helper_Attributes_allControls('data') }}
+				{{ AttributesHelper.allControls('data') }}
 			{% endblock %}
 		{% endblock %}
 	</fieldset>
 {% endblock %}
 
 {% block formInputReloadForm %}
-	{{ helper_Form_hidden('reload_form', {val: 0}) }}
+	{{ FormHelper.hidden('reload_form', {val: 0}) }}
 {% endblock %}

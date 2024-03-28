@@ -5,14 +5,16 @@
 
 <div class="{{ pluralVar[:1]|upper ~ pluralVar[1:] }} Overview">
 {% set fields = Bake.filterFields(fields, schema, modelObject, indexColumns, ['binary', 'text']) %}
-	{% verbatim %}{% block buttonsOverview %}
-		{% if helper_Authorization_isAccessible('create') %}
-			{{ helper_Html_link(__('create'), {action: 'add'}, {class: 'Button'}) }}
-		{% endif %}
-	{% endblock %}{% endverbatim %}
-
 	{% verbatim %}{% block headlineOverview %}
 		<h1>{{ __('headline_overview') }}</h1>
+	{% endblock %}{% endverbatim %}
+
+	{% verbatim %}{% block buttonsOverview %}
+		<div class="ButtonArea">
+			{% if AuthorizationHelper.isAccessible('create') %}
+				{{ HtmlHelper.link(__('create'), {action: 'add'}, {class: 'Button'}) }}
+			{% endif %}
+		</div>
 	{% endblock %}{% endverbatim %}
 
 	{% verbatim %}{% block tableOverview %}{% endverbatim %}
@@ -24,7 +26,7 @@
 {% for field in fields %}
 {% if field not in ['system_order', 'deleted', 'created_on', 'created_by', 'changed_on', 'changed_by', 'deleted_on', 'deleted_by'] %}
 							{% verbatim %}{% block tableOverviewHeader{% endverbatim %}{{ field|camelize }}{% verbatim %} %}{% endverbatim %}
-								<th>{% verbatim %}{{ helper_Paginator_sort('{% endverbatim %}{{ field }}{% verbatim %}') }}{% endverbatim %}</th>
+								<th>{% verbatim %}{{ PaginatorHelper.sort('{% endverbatim %}{{ field }}{% verbatim %}') }}{% endverbatim %}</th>
 							{% verbatim %}{% endblock %}{% endverbatim %}
 
 {% endif %}
@@ -52,7 +54,7 @@
 {% set isKey = true %}
 									<td>
 										{% verbatim %}{% if lo_{% endverbatim %}{{ singularVar }}{% verbatim %}.has('{% endverbatim %}{{ details.property }}{% verbatim %}') %}{% endverbatim %}
-											{% verbatim %}{{ helper_Html_link({% endverbatim %}lo_{{ singularVar ~ '.' ~ details.property ~ '.' ~ details.displayField }}{% verbatim %}, {controller: '{% endverbatim %}{{ details.controller }}{% verbatim %}', action: 'view', id: lo_{% endverbatim %}{{ singularVar ~ '.' ~ details.property ~ '.' ~ details.primaryKey[0] }}{% verbatim %}}) }}{% endverbatim %}
+											{% verbatim %}{{ HtmlHelper.link({% endverbatim %}lo_{{ singularVar ~ '.' ~ details.property ~ '.' ~ details.displayField }}{% verbatim %}, {controller: '{% endverbatim %}{{ details.controller }}{% verbatim %}', action: 'view', id: lo_{% endverbatim %}{{ singularVar ~ '.' ~ details.property ~ '.' ~ details.primaryKey[0] }}{% verbatim %}}) }}{% endverbatim %}
 										{% verbatim %}{% endif %}{% endverbatim %}
 									</td>
 {% endif %}
@@ -75,11 +77,17 @@
 {% set pk = 'lo_' ~ singularVar ~ '.' ~ primaryKey[0] %}
 								{% verbatim %}{% block tableOverviewCellActions %}{% endverbatim %}
 									<td class="actions">
-										{% verbatim %}{% if helper_Authorization_isAccessible('update') %}
-											{{ helper_Html_link(__('edit'), {action: 'edit', id: {% endverbatim %}{{ pk }}{% verbatim %}}) }}
+										{% verbatim %}{% if AuthorizationHelper.isAccessible('update') %}
+											{{ HtmlHelper.link(__('edit'), {action: 'edit', id: {% endverbatim %}{{ pk }}{% verbatim %}}) }}
 										{% endif %}
-										{% if helper_Authorization_isAccessible('delete') %}
-											{{ helper_Html_link(__('delete'), {action: 'delete', id: {% endverbatim %}{{ pk }}{% verbatim %}}, {confirm: __('confirm_delete', {% endverbatim %}{{ pk }}{% verbatim %}) }) }}
+										{% if AuthorizationHelper.isAccessible('delete') %}
+											{{ HtmlHelper.link(__('delete'), {action: 'delete', id: {% endverbatim %}{{ pk }}{% verbatim %}}, {
+				class: 'Button Button-Small Button-Delete',
+				'data-confirm-title': __('confirm_delete_title'),
+				'data-confirm-yes': __('confirm_delete_yes'),
+				'data-confirm-yes-class': 'Button-Delete',
+				'data-confirm-no': __('confirm_delete_no'),
+				'data-confirm': __('confirm_delete', {% endverbatim %}{{ pk }}{% verbatim %}) }) }}
 										{% endif %}{% endverbatim %}
 									</td>
 								{% verbatim %}{% endblock %}{% endverbatim %}
@@ -91,5 +99,5 @@
 		</table>
 	{% verbatim %}{% endblock %}{% endverbatim %}
 
-	{% verbatim %}{{ helper_Paginator_render() }}{% endverbatim %}
+	{% verbatim %}{{ PaginatorHelper.render() }}{% endverbatim %}
 </div>

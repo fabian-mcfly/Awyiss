@@ -6,19 +6,19 @@
 #}
 
 {% block formControlTypeBool %}
-	{{ helper_Form_control('value', {label: __('input_type_bool_label'), type: 'checkbox'}) }}
+	{{ FormHelper.control('value', {label: __('input_type_bool_label'), type: 'checkbox'}) }}
 {% endblock %}
 
 {% block formControlTypeEnum %}
-	{{ helper_Form_control('value', {options: ao_configuration.configOption.values(true), type: 'select'}) }}
+	{{ FormHelper.control('value', {options: ao_configuration.configOption.values(true), type: 'select'}) }}
 {% endblock %}
 
 {% block formControlTypeFloat %}
-	{{ helper_Form_control('value', {placeholder: ao_configuration.configOption.defaultValue, step: 0.01, type: 'number'}) }}
+	{{ FormHelper.control('value', {placeholder: ao_configuration.configOption.defaultValue, step: 0.01, type: 'number'}) }}
 {% endblock %}
 
 {% block formControlTypeInteger %}
-	{{ helper_Form_control('value', {placeholder: ao_configuration.configOption.defaultValue, step: 1, type: 'number'}) }}
+	{{ FormHelper.control('value', {placeholder: ao_configuration.configOption.defaultValue, step: 1, type: 'number'}) }}
 {% endblock %}
 
 {% block formControlTypeList %}
@@ -31,29 +31,29 @@
 	{% endif %}
 
 	{% for ls_key, lx_value in value %}
-		{{ helper_Form_control('value.' ~ li_counter, {label: false, val: lx_value}) }}
+		{{ FormHelper.control('value.' ~ li_counter, {label: false, val: lx_value}) }}
 		{% set li_counter = li_counter + 1 %}
 	{% endfor %}
 
-	{{ helper_Form_control('value.' ~ li_counter, {label: false}) }}
+	{{ FormHelper.control('value.' ~ li_counter, {label: false}) }}
 {% endblock %}
 
 {% block formControlTypeListKey %}
-	{{ helper_Form_control('value', {options: ao_configuration.configOption.values(true), type: 'select'}) }}
+	{{ FormHelper.control('value', {options: ao_configuration.configOption.values(true), type: 'select'}) }}
 {% endblock %}
 
 {% block formControlTypeListValue %}
-	{{ helper_Form_control('value', {options: ao_configuration.configOption.values(true), type: 'select'}) }}
+	{{ FormHelper.control('value', {options: ao_configuration.configOption.values(true), type: 'select'}) }}
 {% endblock %}
 
 {% block formControlTypeJsonArray %}
-	{{ helper_Form_control('value', {placeholder: ao_configuration.configOption.defaultValue|json_encode, type: 'textarea'}) }}
+	{{ FormHelper.control('value', {placeholder: ao_configuration.configOption.defaultValue|json_encode, type: 'textarea'}) }}
 {% endblock %}
 
 {% block formControlTypeJsonObject %}
-	{{ helper_Form_control('value', {placeholder: ao_configuration.configOption.defaultValue|json_encode, type: 'textarea'}) }}
+	{{ FormHelper.control('value', {placeholder: ao_configuration.configOption.defaultValue|json_encode, type: 'textarea'}) }}
 {% endblock %}
 
 {% block formControlTypeString %}
-	{{ helper_Form_control('value', {placeholder: ao_configuration.configOption.defaultValue}) }}
+	{{ FormHelper.control('value', {placeholder: ao_configuration.configOption.defaultValue}) }}
 {% endblock %}

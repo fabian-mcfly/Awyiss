@@ -10,18 +10,18 @@
 #}
 
 <div class="Attributes Form Edit">
-	{{ helper_Form_create(ao_attribute, {method: 'post', idPrefix: 'attribute'}) }}
-
-	{{ helper_Form_checkbox('save_as_copy', {id: 'SaveAsCopy', value: true}) }}
-
 	{% block headlineEdit %}
 		<h1>{{ __('headline_edit') }}</h1>
 	{% endblock %}
 
+	{{ FormHelper.create(ao_attribute, {method: 'post', idPrefix: 'attribute'}) }}
+
+	{{ FormHelper.checkbox('save_as_copy', {id: 'SaveAsCopy', value: true}) }}
+
 	{% block formEditButtons %}
 		<label for="SaveAsCopy">{{ __('as_copy') }}</label>
-		{{ helper_Form_button(__('save')) }}
-		{{ helper_Form_button(__('save_close'), {name: 'submit', value: 'submit_close'}) }}
+		{{ FormHelper.button(__('save')) }}
+		{{ FormHelper.button(__('save_close'), {name: 'submit', value: 'submit_close'}) }}
 	{% endblock %}
 
 	{% block formEdit %}
@@ -32,5 +32,5 @@
 		{{ block('formEditButtons') }}
 	{% endblock %}
 
-	{{ helper_Form_end() -}}
+	{{ FormHelper.end() -}}
 </div>

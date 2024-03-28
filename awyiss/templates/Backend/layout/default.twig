@@ -1,48 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		{{ helper_Html_charset() }}
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<title>{{ fetch('title') }}</title>
+		{% block head %}
+			{{ HtmlHelper.charset() }}
+			<meta name="viewport" content="width=device-width, initial-scale=1">
+			<title>{{ fetch('title') }}</title>
 
 		{{ helper_Html_meta('icon') }}
 
-		{{ helper_Asset_add([
-			'normalize.css',
-			'milligram.css',
-			'cake.css',
-			'main.css',
-			'main.js',
-			'cakedingbats-webfont.woff',
-			'//fonts.googleapis.com/css2?family=Bebas+Neue&family=Lato:wght@300;400;700&display=swap',
-		]) }}
+			{% block headStylesheets %}
+				{% do AssetHelper.add('main.css', [], true) %}
+			{% endblock %}
 
-		{{ helper_Asset_getTags() }}
+			{% block headScripts %}
+				{{ element('scripts', {controller: controller}) }}
+			{% endblock %}
+
+			{% block headAssetTags %}
+				{{ AssetHelper.createImportMap() }}
+				{{ AssetHelper.getTags() }}
+			{% endblock %}
+		{% endblock %}
 	</head>
 	<body>
-		{% block sidebar %}
-			<aside id="Sidebar">
-				<a href="{{ helper_Url_build({controller: 'dashboard', action: 'overview'}) }}" class="Title">Aw<span>Yiss</span></a>
-
-				{% block systemMenu %}
-					{{ cell('Backend/Menu') }}
-				{% endblock %}
-			</aside>
-		{% endblock %}
 		{% block body %}
-			<div id="Body">
-				{% block content %}
-					<main id="Content">
-						{{ helper_Flash_render() }}
-						{{ fetch('content') }}
-					</main>
-				{% endblock %}
-				{% block footer %}
-					<footer>
-						{{ helper_Html_link(__d('users', 'logout'), {controller: 'users', action: 'logout'}) }}
-					</footer>
-				{% endblock %}
-			</div>
+			{% block header %}
+				<header id="Header">
+					{% block title %}
+						<a href="{{ UrlHelper.build({controller: 'dashboard', action: 'overview'}) }}" class="Title">
+							Aw<span class="Yiss">Yiss</span>
+							<span class="Version">
+								<span class="VersionNo">v{{ Awyiss.VERSION }}</span>
+								<span class="VersionName">{{ Awyiss.VERSION_NAME }}</span>
+							</span>
+						</a>
+					{% endblock %}
+
+					{% block systemMenu %}
+						{{ cell('Backend/Menu') }}
+					{% endblock %}
+
+					{% block logout %}
+						<a href="{{ UrlHelper.build({controller: 'users', action: 'logout'}) }}" class="Logout">{{ __d('users', 'logout') }}</a>
+					{% endblock %}
+
+					{% block loginLogo %}
+						{% if loginLogoPath %}
+							<img src="{{ UrlHelper.build(loginLogoPath) }}" alt="{{ __d('users', 'loginLogo') }}" class="LoginLogo">
+						{% endif %}
+					{% endblock %}
+				</header>
+			{% endblock %}
+
+			{% block content %}
+				<main id="Content">
+					{% block flashMessages %}
+						{{ FlashHelper.render() }}
+					{% endblock %}
+
+					{{ fetch('content') }}
+				</main>
+			{% endblock %}
 		{% endblock %}
 	</body>
 </html>

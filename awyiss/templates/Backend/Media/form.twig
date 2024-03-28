@@ -9,7 +9,7 @@
 
 		{% block fieldsetPresentationInner %}
 			{% block fieldsetPresentationAttributes %}
-				{{ helper_Attributes_allControls('presentation') }}
+				{{ AttributesHelper.allControls('presentation') }}
 			{% endblock %}
 		{% endblock %}
 	</fieldset>
@@ -21,15 +21,15 @@
 
 		{% block fieldsetConditionsInner %}
 			{% block formControlMediaFolderId %}
-				{{ helper_Categories_control('mediaFolder', {groupBy: 'languageShortcode', groupLabels: helper_Locale_languagesForRealm(as_languageRealm)|merge({general: 'Global'})}) }}
+				{{ CategoriesHelper.control('mediaFolder', {groupBy: 'languageShortcode', groupLabels: LocaleHelper.languagesForRealm(as_languageRealm)|merge({general: 'Global'})}) }}
 			{% endblock %}
 
 			{% block formControlSystemOrder %}
-				{{ helper_SystemOrder_control('system_order', {entity: ao_media}) }}
+				{{ SystemOrderHelper.control('system_order', {entity: ao_media}) }}
 			{% endblock %}
 
 			{% block fieldsetConditionsAttributes %}
-				{{ helper_Attributes_allControls('conditions') }}
+				{{ AttributesHelper.allControls('conditions') }}
 			{% endblock %}
 		{% endblock %}
 	</fieldset>
@@ -41,21 +41,21 @@
 
 		{% block fieldsetGeneralInner %}
 			{% block formControlFile %}
-				{{ helper_Form_control('file', {
+				{{ FormHelper.control('file', {
 					type: 'file',
 				}) }}
 			{% endblock %}
 
 			{% block formControlName %}
-				{{ helper_Form_control('name', {required: false, val: ao_media.cleanName}) }}
+				{{ FormHelper.control('name', {required: false, val: ao_media.cleanName}) }}
 			{% endblock %}
 
 			{% block formControlAlt %}
-				{{ helper_Form_control('alt') }}
+				{{ FormHelper.control('alt') }}
 			{% endblock %}
 
 			{% block fieldsetGeneralAttributes %}
-				{{ helper_Attributes_allControls('general') }}
+				{{ AttributesHelper.allControls('general') }}
 			{% endblock %}
 		{% endblock %}
 	</fieldset>
@@ -67,7 +67,7 @@
 
 		{% block fieldsetContentInner %}
 			{% block fieldsetContentAttributes %}
-				{{ helper_Attributes_allControls('content') }}
+				{{ AttributesHelper.allControls('content') }}
 			{% endblock %}
 		{% endblock %}
 	</fieldset>
@@ -79,7 +79,7 @@
 
 		{% block fieldsetMediaInner %}
 			{% block fieldsetMediaAttributes %}
-				{{ helper_Attributes_allControls('media') }}
+				{{ AttributesHelper.allControls('media') }}
 			{% endblock %}
 		{% endblock %}
 	</fieldset>
@@ -91,12 +91,12 @@
 
 		{% block fieldsetAttributesInner %}
 			{% block fieldsetAttributesAttributes %}
-				{{ helper_Attributes_allControls('attributes') }}
+				{{ AttributesHelper.allControls('attributes') }}
 			{% endblock %}
 		{% endblock %}
 	</fieldset>
 {% endblock %}
 
 {% block formInputReloadForm %}
-	{{ helper_Form_hidden('reload_form', {val: 0}) }}
+	{{ FormHelper.hidden('reload_form', {val: 0}) }}
 {% endblock %}

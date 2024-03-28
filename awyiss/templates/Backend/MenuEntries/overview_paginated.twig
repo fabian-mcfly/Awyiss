@@ -11,19 +11,19 @@
 				{% block tableOverviewHeadRow %}
 					<tr>
 						{% block tableOverviewHeaderTitle %}
-							<th>{{ helper_Paginator_sort('title') }}</th>
+							<th>{{ PaginatorHelper.sort('title') }}</th>
 						{% endblock %}
 
 						{% block tableOverviewHeaderLink %}
-							<th>{{ helper_Paginator_sort('link') }}</th>
+							<th>{{ PaginatorHelper.sort('link') }}</th>
 						{% endblock %}
 
 						{% block tableOverviewHeaderExternal %}
-							<th>{{ helper_Paginator_sort('external') }}</th>
+							<th>{{ PaginatorHelper.sort('external') }}</th>
 						{% endblock %}
 
 						{% block tableOverviewHeaderSystemOrder %}
-							<th>{{ helper_Paginator_sort('system_order') }}</th>
+							<th>{{ PaginatorHelper.sort('system_order') }}</th>
 						{% endblock %}
 
 						{% block tableOverviewHeaderActions %}
@@ -57,11 +57,17 @@
 
 							{% block tableOverviewCellActions %}
 								<td class="actions">
-									{% if helper_Authorization_isAccessible('update') %}
-										{{ helper_Html_link(__('edit'), {action: 'edit', id: lo_menuEntry.id}) }}
+									{% if AuthorizationHelper.isAccessible('update') %}
+										{{ HtmlHelper.link(__('edit'), {action: 'edit', id: lo_menuEntry.id}) }}
 									{% endif %}
-									{% if helper_Authorization_isAccessible('delete') %}
-										{{ helper_Html_link(__('delete'), {action: 'delete', id: lo_menuEntry.id}, {confirm: __('confirm_delete', lo_menuEntry.id) }) }}
+									{% if AuthorizationHelper.isAccessible('delete') %}
+										{{ HtmlHelper.link(__('delete'), {action: 'delete', id: lo_menuEntry.id}, {
+				class: 'Button Button-Small Button-Delete',
+				'data-confirm-title': __('confirm_delete_title'),
+				'data-confirm-yes': __('confirm_delete_yes'),
+				'data-confirm-yes-class': 'Button-Delete',
+				'data-confirm-no': __('confirm_delete_no'),
+				'data-confirm': __('confirm_delete', lo_menuEntry.id) }) }}
 									{% endif %}
 								</td>
 							{% endblock %}

@@ -10,8 +10,8 @@
 
 <div class="Pages Overview">
 	{% block buttonsOverview %}
-		{% if helper_Authorization_isAccessible('create') %}
-			{{ helper_Html_link(__('create'), {action: 'add'}, {class: 'Button' }) }}
+		{% if AuthorizationHelper.isAccessible('create') %}
+			{{ HtmlHelper.link(__('create'), {action: 'add'}, {class: 'Button' }) }}
 		{% endif %}
 	{% endblock %}
 
@@ -20,7 +20,7 @@
 	{% endblock %}
 
 	{% block categoriesFilterOverview %}
-		{{ helper_Categories_filter('category') }}
+		{{ CategoriesHelper.filter('category') }}
 	{% endblock %}
 
 	{% if ab_paginated %}
@@ -43,19 +43,19 @@
 		<ul class="ListControl">
 			{% block listControlOverviewListPaginated %}
 				<li class="ListControl-ListPaginated">
-					{{ helper_Html_link(__('list_paginated'), {action: 'userConfiguration', identifier: 'paginate.enabled', value: 'true'}) }}
+					{{ HtmlHelper.link(__('list_paginated'), {action: 'userConfiguration', identifier: 'paginate.enabled', value: 'true'}) }}
 				</li>
 			{% endblock %}
 
 			{% block listControlOverviewListNested %}
 				<li class="ListControl-ListNested">
-					{{ helper_Html_link(__('list_nested'), {action: 'userConfiguration', identifier: 'paginate.enabled', value: 'false'}) }}
+					{{ HtmlHelper.link(__('list_nested'), {action: 'userConfiguration', identifier: 'paginate.enabled', value: 'false'}) }}
 				</li>
 			{% endblock %}
 
 			{% block listControlOverviewPagination %}
 				{% if ab_paginated %}
-					{% set pagination = helper_Paginator_render() %}
+					{% set pagination = PaginatorHelper.render() %}
 					{% if pagination is not empty %}
 						<li class="ListControl-Pagination">
 							{{ pagination|raw }}
@@ -67,7 +67,7 @@
 			{% block paginationOverviewLimitControl %}
 				{% if ab_paginated %}
 					<li class="ListControl-ListLimit">
-						{{ helper_Paginator_limitControl() }}
+						{{ PaginatorHelper.limitControl() }}
 					</li>
 				{% endif %}
 			{% endblock %}

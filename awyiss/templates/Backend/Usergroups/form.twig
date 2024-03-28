@@ -4,11 +4,11 @@
 
 		{% block fieldsetPresentationInner %}
 			{% block formControlActive %}
-				{{ helper_Form_control('active') }}
+				{{ FormHelper.control('active') }}
 			{% endblock %}
 
 			{% block fieldsetPresentationAttributes %}
-				{{ helper_Attributes_allControls('presentation') }}
+				{{ AttributesHelper.allControls('presentation') }}
 			{% endblock %}
 		{% endblock %}
 	</fieldset>
@@ -20,7 +20,7 @@
 
 		{% block fieldsetConditionsInner %}
 			{% block fieldsetConditionsAttributes %}
-				{{ helper_Attributes_allControls('conditions') }}
+				{{ AttributesHelper.allControls('conditions') }}
 			{% endblock %}
 		{% endblock %}
 	</fieldset>
@@ -32,29 +32,29 @@
 
 		{% block fieldsetGeneralInner %}
 			{% block formControlTitle %}
-				{{ helper_Form_control('title') }}
+				{{ FormHelper.control('title') }}
 			{% endblock %}
 
 			{% block fieldsetGeneralAttributes %}
-				{{ helper_Attributes_allControls('general') }}
+				{{ AttributesHelper.allControls('general') }}
 			{% endblock %}
 		{% endblock %}
 	</fieldset>
 {% endblock %}
 
-{% if helper_Authorization_scopeIsAccessible('Users', [], ['read']) %}
+{% if AuthorizationHelper.scopeIsAccessible('Users', [], ['read']) %}
 	{% block fieldsetUsers %}
 		<fieldset class="Fieldset-Users">
 			<legend>{{ __('users') }}</legend>
 
 			{% block fieldsetUsersInner %}
-				{{ helper_Form_hidden('users._ids', {value: ''}) }}
+				{{ FormHelper.hidden('users._ids', {value: ''}) }}
 				{% block usergroupsUsers %}
 					<ul class="NoList">
 						{% for lo_user in ao_users %}
 							{% block usergroupsUser %}
 								<li>
-									{{ helper_Form_control('users._ids.' ~ lo_user.id, {
+									{{ FormHelper.control('users._ids.' ~ lo_user.id, {
 										hiddenField: false,
 										type: 'checkbox',
 										value: lo_user.id,
@@ -90,7 +90,7 @@
 										{% block usergroupPermission %}
 											<li class="Permission">
 												{{ __(ls_identifier) }}
-												{{ helper_Authorization_permissionOptions(lo_permission, ao_usergroup, null, 'Usergroups') }}
+												{{ AuthorizationHelper.permissionOptions(lo_permission, ao_usergroup, null, 'Usergroups') }}
 											</li>
 										{% endblock %}
 									{% endfor %}
@@ -110,7 +110,7 @@
 
 		{% block fieldsetContentInner %}
 			{% block fieldsetContentAttributes %}
-				{{ helper_Attributes_allControls('content') }}
+				{{ AttributesHelper.allControls('content') }}
 			{% endblock %}
 		{% endblock %}
 	</fieldset>
@@ -122,7 +122,7 @@
 
 		{% block fieldsetMediaInner %}
 			{% block fieldsetMediaAttributes %}
-				{{ helper_Attributes_allControls('media') }}
+				{{ AttributesHelper.allControls('media') }}
 			{% endblock %}
 		{% endblock %}
 	</fieldset>
@@ -134,12 +134,12 @@
 
 		{% block fieldsetAttributesInner %}
 			{% block fieldsetAttributesAttributes %}
-				{{ helper_Attributes_allControls('attributes') }}
+				{{ AttributesHelper.allControls('attributes') }}
 			{% endblock %}
 		{% endblock %}
 	</fieldset>
 {% endblock %}
 
 {% block formInputReloadForm %}
-	{{ helper_Form_hidden('reload_form', {val: 0}) }}
+	{{ FormHelper.hidden('reload_form', {val: 0}) }}
 {% endblock %}
