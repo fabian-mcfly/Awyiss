@@ -82,6 +82,7 @@ class LocaleHelper extends Helper {
 	/**
 	 * @param Event $ao_event
 	 * @return void
+	 * @throws \Exception
 	 */
 	public function beforeRender(Event $ao_event): void {
 		$la_languages = LocaleMiddleware::getLanguages();
@@ -92,6 +93,10 @@ class LocaleHelper extends Helper {
 		if (!$ao_view->get('aa_languages')) {
 			$ao_view->set('aa_languages', $la_languages);
 		}
+
+		// Set the current language
+		$ls_currentLanguage = LocaleMiddleware::getLanguage();
+		$ao_view->set('ao_currentLanguage', $ls_currentLanguage);
 	}
 
 
