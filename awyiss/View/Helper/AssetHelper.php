@@ -15,10 +15,13 @@ use MatthiasMullie\Minify;
 
 /**
  * AssetHelper is a class that extends the Helper class.
- * This class is used to manage and manipulate assets in a web application. It provides methods for adding assets, generating HTML tags for assets, minifying assets, and more.
- * The class maintains an array of assets, which can be of various types (e.g., CSS, JavaScript, fonts). Each asset can have several properties, such as whether it is minified or
- * critical, and its priority. The class also provides methods for sorting assets by priority and for generating fallback content for users who have JavaScript disabled in their
- * browser.
+ * This class is used to manage and manipulate assets in a web application.
+ * It provides methods for adding assets, generating HTML tags for assets, minifying assets, and more.
+ *
+ * The class maintains an array of assets, which can be of various types (e.g., CSS, JavaScript, Fonts).
+ * Each asset can have several properties, such as whether it is minified or critical, and its priority.
+ * The class also provides methods for sorting assets by priority and for generating fallback content
+ * for users who have JavaScript disabled in their browser.
  *
  * @extends Helper
  */
@@ -43,6 +46,10 @@ class AssetHelper extends Helper {
 	 * @var array $checkedAssets An associative array of checked assets. The keys are the asset names, and the values are the asset paths.
 	 */
 	protected array $checkedAssets = [];
+	/**
+	 * @var array $jsModules An array of JavaScript modules included in an import map.
+	 */
+	protected array $jsModules = [];
 	/**
 	 * @var string $realm The realm of the application. This is used to determine the base path for assets.
 	 */
@@ -72,71 +79,74 @@ class AssetHelper extends Helper {
 	 * If the asset is already in the array, it will not be added again.
 	 *
 	 * @param array|string $asset The asset to add. This can be either a string representing the asset, or an array with the asset as the key and an array of options as the value.
+	 * @param array $attributes
 	 * @param bool $critical (optional) Whether the asset is critical. Defaults to false.
 	 * @param bool|null $minified (optional) Whether the asset is minified. Defaults to false.
 	 * @param int $priority (optional) The priority of the asset. Defaults to 1.
 	 * @return void
 	 */
-	public function add(array|string $asset, bool $critical = false, ?bool $minified = null, int $priority = 10): void {
-		$lb_minified = $minified;
+	public function add(array|string $asset, array $attributes = [], bool $critical = false, ?bool $minified = null, int $priority = 10): void {
+		// Determines if the asset is minified based on the provided value or the application's debug configuration
+		$lb_minified = $minified ?? !Configure::read('debug', false);
 
-		// Set minified to the default value if it's not set
-		if ($lb_minified === null) {
-			$lb_minified = !Configure::read('debug', false);
-		}
+		// If the provided asset is an array, use it as is. Otherwise, create an array with the asset as the key and an array of options as the value.
+		$la_assets = is_array($asset) ? $asset : [$asset => ['minified' => $lb_minified, 'critical' => $critical, 'attributes' => $attributes, 'priority' => $priority]];
 
-		// If the asset is an array, extract the asset and options from the array
-		$la_assets = is_array($asset) ? $asset : [$asset => ['minified' => $lb_minified, 'critical' => $critical, 'priority' => $priority]];
-
+		// Iterate over each asset
 		foreach ($la_assets as $lx_key => $lx_value) {
-			if (is_string($lx_key)) {
-				$ls_filename = $lx_key;
+			// If the key is a string, use it as the filename. Otherwise, use the value as the filename.
+			$ls_fileName = is_string($lx_key) ? $lx_key : $lx_value;
 
-				// If the asset is already in the array, skip it
-				if (in_array($ls_filename, $this->assets['all'])) {
-					continue;
-				}
-
-				// If the asset is an array, extract the options from the array
-				$la_options = is_array($lx_value) ? $lx_value : ['minified' => false, 'critical' => false, 'priority' => 1];
-
-				// Set the minified option to the default value if it's not set
-				if (!isset($la_options['minified']) || !is_bool($la_options['minified'])) {
-					$la_options['minified'] = false;
-				}
-
-				// Set the critical option to the default value if it's not set
-				if (!isset($la_options['critical']) || !is_bool($la_options['critical'])) {
-					$la_options['critical'] = false;
-				}
-
-				// Set the priority option to the default value if it's not set
-				if (!isset($la_options['priority']) || !is_int($la_options['priority'])) {
-					$la_options['priority'] = 10;
-				}
-			}
-			else {
-				$ls_filename = $lx_value;
-
-				// If the asset is already in the array, skip it
-				if (in_array($ls_filename, $this->assets['all'])) {
-					continue;
-				}
-
-				$la_options = [
-					'minified' => $lb_minified,
-					'critical' => $critical,
-					'priority' => $priority,
-				];
+			// If the filename is already in the 'all' assets array, skip this iteration
+			if (in_array($ls_fileName, $this->assets['all'])) {
+				continue;
 			}
 
-			$ls_key = $la_options['critical'] ? 'critical' : 'nonCritical';
-			$ls_extension = pathinfo($ls_filename, PATHINFO_EXTENSION);
+			// If the value is an array, use it as the options. Otherwise, create an array of options with the provided values.
+			$la_options = is_array($lx_value) ? $lx_value : ['minified' => $lb_minified, 'critical' => $critical, 'priority' => $priority];
+
+			// Merge the options with a default options array to ensure all keys are present
+			$la_options = array_merge(['minified' => false, 'critical' => false, 'attributes' => false, 'priority' => 10], $la_options);
+
+			// If the asset is critical, set the key to 'critical'. Otherwise, set it to 'nonCritical'.
+			$lx_key = $la_options['critical'] ? 'critical' : 'nonCritical';
+
+			// Get the extension of the filename. If the filename is a Google Fonts URL, set the extension to 'css'.
+			$ls_extension = pathinfo($ls_fileName, PATHINFO_EXTENSION) ?: (str_contains($ls_fileName, '//fonts.googleapis.com') ? 'css' : '');
+
+			// If the extension is a font type, set the extension to 'font'.
+			$ls_extension = in_array($ls_extension, ['woff', 'woff2', 'ttf']) ? 'font' : $ls_extension;
+
+			// Add the asset to the 'all' assets array
+			$this->assets['all'][ $ls_fileName ] = $la_options;
+
+			// Add the asset to the appropriate assets array based on its extension and criticality
+			$this->assets[ $ls_extension ][ $lx_key ][ $ls_fileName ] = $la_options;
+		}
+	}
+
+
+	/**
+	 * Removes an asset from the assets array.
+	 * This method removes an asset from the assets array. It first checks if the asset is an array or a string.
+	 * If the asset is a string, it is converted to an array. The method then iterates over each asset in the array.
+	 * For each asset, it determines the extension of the asset. If the extension is not recognized, it tries to determine it from the URL, if it's a URL.
+	 * If the asset is a font file (with extension 'woff', 'woff2', or 'ttf'), the extension is set to 'font'.
+	 * The method then removes the asset from the 'all', 'critical', and 'nonCritical' arrays in the assets array, using the asset's extension and name.
+	 *
+	 * @param array|string $asset The asset to remove. This can be either a string representing the asset, or an array of assets.
+	 * @return void
+	 */
+	public function remove(array|string $asset): void {
+		$la_assets = is_array($asset) ? $asset : [$asset];
+
+		foreach ($la_assets as $ls_asset) {
+			$ls_extension = pathinfo($ls_asset, PATHINFO_EXTENSION);
 
 			// If the extension is not recognized, try to determine it from the url, if it's an url
 			if (empty($ls_extension)) {
 				// fonts.googleapis.com is a special case, as it's not a file, but a URL
-				if (str_contains($ls_filename, '//fonts.googleapis.com')) {
+				if (str_contains($ls_asset, '//fonts.googleapis.com')) {
 					$ls_extension = 'css';
 				}
 			}
@@ -149,9 +159,10 @@ class AssetHelper extends Helper {
 					$ls_extension = 'font';
 			}
 
-			// If the asset is not already in the array, add it
-			$this->assets['all'][ $ls_filename ] = $la_options;
-			$this->assets[ $ls_extension ][ $ls_key ][ $ls_filename ] = $la_options;
+			// Remove the asset from the assets array
+			unset($this->assets['all'][ $ls_asset ]);
+			unset($this->assets[ $ls_extension ]['critical'][ $ls_asset ]);
+			unset($this->assets[ $ls_extension ]['nonCritical'][ $ls_asset ]);
 		}
 	}
 
@@ -173,12 +184,29 @@ class AssetHelper extends Helper {
 		// Get the extension of the asset
 		$ls_extension = pathinfo($assetPath, PATHINFO_EXTENSION);
 
+		// Generate the additional attributes string
+		$ls_additionalAttributes = '';
+		if (isset($options['attributes']) && is_array($options['attributes'])) {
+			foreach ($options['attributes'] as $ls_attributeName => $lx_attributeValue) {
+				$ls_additionalAttributes .= ' ' . $ls_attributeName . '="' . htmlspecialchars($lx_attributeValue, ENT_QUOTES, 'UTF-8') . '"';
+			}
+		}
+
+		// Get the nonce from the request attributes
+		$ls_nonce = '';
+		if ($ls_extension === 'js') {
+			$ls_nonce = $this->getView()->getRequest()->getAttribute('cspScriptNonce');
+		}
+		elseif ($ls_extension === 'css') {
+			$ls_nonce = $this->getView()->getRequest()->getAttribute('cspStyleNonce');
+		}
+
 		// If the extension is not recognized, try to determine it from the url, if it's an url
 		if ($ls_extension === 'woff' || $ls_extension === 'woff2' || $ls_extension === 'ttf') {
 			if ($lazyLoad) {
 				// Generate a <link> tag with rel="preload" for the font
-				/** @noinspection HtmlUnknownTarget */
-				return sprintf('<link rel="preload" href="%s" as="font" type="font/%s" crossorigin>', $assetPath, $ls_extension) . PHP_EOL;
+				return '<link nonce="' . $ls_nonce . '" rel="preload" href="' . $assetPath . '" as="font" type="font/' . $ls_extension . '"
+					crossorigin' . $ls_additionalAttributes . '>' . PHP_EOL;
 			}
 
 
@@ -188,26 +216,26 @@ class AssetHelper extends Helper {
 		// If the asset is critical, generate a <script> tag for JavaScript files and a <link> tag with rel="stylesheet" for CSS files
 		if ($options['critical']) {
 			if ($ls_extension === 'js') {
-				return '<script src="' . $assetPath . '"></script>' . PHP_EOL;
+				return '<script nonce="' . $ls_nonce . '" src="' . $assetPath . '"' . $ls_additionalAttributes . '></script>' . PHP_EOL;
 			}
 
 
-			return '<link rel="stylesheet" type="text/css" href="' . $assetPath . '"/>' . PHP_EOL;
+			return '<link nonce="' . $ls_nonce . '" rel="stylesheet" type="text/css" href="' . $assetPath . '"' . $ls_additionalAttributes . '/>' . PHP_EOL;
 		}
 
 		// If the asset is a JavaScript file, generate a <script> tag with the async attribute
 		if ($ls_extension === 'js') {
-			return '<script async src="' . $assetPath . '"></script>' . PHP_EOL;
+			return '<script nonce="' . $ls_nonce . '" async src="' . $assetPath . '"' . $ls_additionalAttributes . '></script>' . PHP_EOL;
 		}
 
-		// If the asset is a CSS file and lazy loading is enabled, generate a <link> tag with rel="preload" and an onload attribute
+		// If the asset is a CSS file and lazy loading is enabled, generate a <link> tag with rel="preload"
 		if ($lazyLoad) {
-			return '<link rel="preload" href="' . $assetPath . '" as="style" onload="this.onload=null;this.rel=\'stylesheet\'">' . PHP_EOL;
+			return '<link nonce="' . $ls_nonce . '" rel="preload" href="' . $assetPath . '" as="style"' . $ls_additionalAttributes . ' data-lazyload="true">' . PHP_EOL;
 		}
 
 
 		// If none of the above conditions are met, generate a <link> tag with rel="stylesheet" for the asset
-		return '<link rel="stylesheet" type="text/css" href="' . $assetPath . '"/>' . PHP_EOL;
+		return '<link nonce="' . $ls_nonce . '" rel="stylesheet" type="text/css" href="' . $assetPath . '"' . $ls_additionalAttributes . '/>' . PHP_EOL;
 	}
 
 
@@ -248,23 +276,28 @@ class AssetHelper extends Helper {
 			$ls_subPath = 'font';
 		}
 
-		foreach ($this->realmFolders[ $this->realm ] as $ls_folder) {
+		foreach ($this->realmFolders[ $this->realm ] as $ls_key => $ls_folder) {
 			$ls_assetPath = $ls_folder . $ls_subPath . '/' . $asset;
 			if (!file_exists($ls_assetPath)) {
 				continue;
 			}
 
 			// Convert the filesystem path to a path relative to the application's base path
-			$ls_relativePath = str_replace(realpath(ROOT), '', realpath($ls_assetPath));
+			if ($ls_key === 'customer') {
+				$ls_relativePath = str_replace(realpath(ROOT . DS . CUSTOM_DIR), '', realpath($ls_assetPath));
+			}
+			else {
+				$ls_relativePath = str_replace(realpath(ROOT), '', realpath($ls_assetPath));
+			}
 
 			// Check if the file is minified and append ".min" to the filename before the extension if it is
-			$ls_filename = substr($ls_relativePath, 0, -strlen($ls_extension));
+			$ls_fileName = substr($ls_relativePath, 0, -strlen($ls_extension));
 
 			// If the file should be minified, append "min" to the filename before the extension
 			if ($options['minified'] ?? false) {
-				$ls_filename .= 'min.';
+				$ls_fileName .= 'min.';
 
-				$ls_minifiedPath = ROOT . $ls_filename . $ls_extension;
+				$ls_minifiedPath = ROOT . $ls_fileName . $ls_extension;
 
 				// If the minified file does not exist, create it
 				if (!file_exists($ls_minifiedPath)) {
@@ -281,7 +314,7 @@ class AssetHelper extends Helper {
 
 
 			// Generate a URL for the asset using CakePHP's Router and ppend the modification time to the filename
-			return $this->checkedAssets[ $asset ] = Router::url($ls_filename . $li_modTime . '.' . $ls_extension, true);
+			return $this->checkedAssets[ $asset ] = Router::url($ls_fileName . $li_modTime . '.' . $ls_extension, true);
 		}
 
 		// If the asset is not found, return null
@@ -319,7 +352,12 @@ class AssetHelper extends Helper {
 		$la_assets = $this->sortAssetsByPriority($la_assets);
 
 		$ls_assetTags = '';
-		foreach ($la_assets as $ls_asset => $la_options) {
+		$lb_hasCss = false;
+		foreach ($la_assets as $ls_asset => $la_options) {// Check if the asset is a CSS file
+			if (pathinfo($ls_asset, PATHINFO_EXTENSION) === 'css') {
+				$lb_hasCss = true;
+			}
+
 			// Skip the asset if the criticality does not match the specified criticality
 			if ($critical !== null && $la_options['critical'] !== $critical) {
 				continue;
@@ -340,6 +378,14 @@ class AssetHelper extends Helper {
 		// If the includeNoScript parameter is true, append the result of the getNoScriptTags method to the asset tags string
 		if ($includeNoScript) {
 			$ls_assetTags .= $this->getNoScriptTags($type);
+		}
+
+		$ls_nonce = $this->getView()->getRequest()->getAttribute('cspScriptNonce');
+		// If there is at least one CSS tag, append the JavaScript code
+		if ($lb_hasCss) {
+			$ls_assetTags .= '<script nonce="' . $ls_nonce . '">
+           		[...document.querySelectorAll("link[data-lazyload]")].map((e) => e.addEventListener("load", (e) => e.target.rel = "stylesheet"));
+        	</script>';
 		}
 
 
@@ -395,6 +441,177 @@ class AssetHelper extends Helper {
 
 		// Return the asset tags string, wrapped in a <noscript> tag
 		return '<noscript>' . $ls_assetTags . '</noscript>';
+	}
+
+
+	/**
+	 * Adds a JavaScript module to the `jsModules` array.
+	 * This method accepts a module name and a boolean indicating whether the module is minified. If the minified parameter is not provided,
+	 * it defaults to the opposite of the debug configuration. The method then checks if the module is an array. If it's not, it converts it to an array.
+	 * The method then iterates over each module. If the module is not already in the `jsModules` array, it adds it. If the module options is an array and contains a 'minified'
+	 * key, the provided options are used. Otherwise, the default minified value is used.
+	 *
+	 * @param array|string $module The module to add. This can be either a string representing the module, or an array with the module as the key and an array of options as the
+	 *     value.
+	 * @param bool|null $minified (optional) Whether the module is minified. Defaults to the opposite of the debug configuration.
+	 * @return void
+	 */
+	public function addJsModule(array|string $module, ?bool $minified = null): void {
+		// If minified is not set, default to the opposite of the debug configuration
+		$lb_minified = $minified ?? !Configure::read('debug', false);
+
+		// If module is not an array, convert it to an array
+		$la_modules = is_array($module) ? $module : [$module => ['minified' => $lb_minified]];
+
+		// Iterate over each module
+		foreach ($la_modules as $ls_moduleName => $la_moduleOptions) {
+			// If the key is not a string, use the value as the module name
+			if (!is_string($ls_moduleName)) {
+				$ls_moduleName = $la_moduleOptions;
+				$la_moduleOptions = ['minified' => $lb_minified];
+			}
+
+			// If the module is not already in the jsModules array, add it
+			if (!array_key_exists($ls_moduleName, $this->jsModules)) {
+				// If module options is an array and contains a 'minified' key, use the provided options
+				if (is_array($la_moduleOptions) && array_key_exists('minified', $la_moduleOptions)) {
+					$this->jsModules[ $ls_moduleName ] = $la_moduleOptions;
+				}
+				// Otherwise, use the default minified value
+				else {
+					$this->jsModules[ $ls_moduleName ] = ['minified' => $lb_minified];
+				}
+			}
+		}
+	}
+
+
+	/**
+	 * Removes a JavaScript module from the `jsModules` array.
+	 * This method checks if the provided module name exists in the `jsModules` array. If it does, the method removes it.
+	 *
+	 * @param string $module The name of the JavaScript module to remove.
+	 * @return void
+	 */
+	public function removeJsModule(string $module): void {
+		// If the module is in the jsModules array, remove it
+		if (array_key_exists($module, $this->jsModules)) {
+			unset($this->jsModules[ $module ]);
+		}
+	}
+
+
+	/**
+	 * Creates an import map for JavaScript modules and returns it as a string.
+	 * This method initializes an import map with an empty 'imports' array. It then iterates over each JavaScript module
+	 * stored in the `jsModules` property of the class. For each module, it retrieves the asset path using the `getAssetPath`
+	 * method and adds it to the import map.
+	 * If the `includeScriptTag` parameter is true, the method wraps the import map in a script tag of type "importmap" and
+	 * returns it as a string. The script tag includes a nonce attribute for Content Security Policy (CSP), which is retrieved
+	 * from the request attributes.
+	 * If the `includeScriptTag` parameter is false, the method returns the import map as a JSON string.
+	 *
+	 * @param bool $includeScriptTag Determines whether to wrap the import map in a script tag. Defaults to true.
+	 * @return string The import map as a string. If `includeScriptTag` is true, the import map is wrapped in a script tag.
+	 *                Otherwise, the import map is returned as a JSON string.
+	 * @throws \Exception
+	 */
+	public function createImportMap(bool $includeScriptTag = true): string {
+		// Initialize an import map with an empty 'imports' array
+		$la_importMap = ['imports' => []];
+
+		// Iterate over each JavaScript module
+		foreach ($this->jsModules as $ls_moduleName => $la_options) {
+			// Remove the .js extension from the module name
+			$ls_cleanModuleName = pathinfo($ls_moduleName, PATHINFO_FILENAME);
+
+			// Add the module to the import map
+			$la_importMap['imports'][ $ls_cleanModuleName ] = $this->getAssetPath($ls_moduleName, $la_options);
+		}
+
+		// If includeScriptTag is true, wrap the import map in a script tag
+		if ($includeScriptTag) {
+			$ls_nonce = $this->getView()->getRequest()->getAttribute('cspScriptNonce');
+
+
+			return '<script type="importmap" nonce="' . $ls_nonce . '">' . json_encode($la_importMap) . '</script>';
+		}
+
+
+		// Otherwise, return the import map as a JSON string
+		return json_encode($la_importMap);
+	}
+
+
+	/**
+	 * Returns all final assets.
+	 * This method retrieves all assets from the 'all' assets array and generates a path for each asset using the getAssetPath method.
+	 *
+	 * @return array
+	 * @throws \Exception
+	 */
+	public function getFinalAssets(): array {
+		$la_finalAssets = [];
+
+		// Iterate over each asset in 'all'
+		foreach ($this->assets['all'] as $ls_fileName => $la_options) {
+			// Retrieve the full path of the asset
+			$ls_assetPath = $this->getAssetPath($ls_fileName, $la_options);
+
+			// If the asset path is not null, add it to the final assets array
+			if ($ls_assetPath !== null) {
+				$la_finalAssets[ $ls_fileName ] = $ls_assetPath;
+			}
+		}
+
+
+		return $la_finalAssets;
+	}
+
+
+	/**
+	 * Returns the script nonce from the request attributes.
+	 *
+	 * @return string
+	 */
+	public function getScriptNonce(): string {
+		return $this->getView()->getRequest()->getAttribute('cspScriptNonce');
+	}
+
+
+	/**
+	 * Sets the HTTP2 preload headers for all assets.
+	 *
+	 * @return void
+	 * @throws \Exception
+	 */
+	public function afterLayout(): void {
+		// Get the response object from the view
+		$lo_response = $this->getView()->getResponse();
+
+		$la_header = [];
+
+		// Get all assets and add them to the HTTP2 header
+		foreach ($this->getFinalAssets() as $ls_fileName => $ls_assetPath) {
+			$ls_extension = pathinfo($ls_fileName, PATHINFO_EXTENSION);
+
+			// Set the asType based on the extension
+			$ls_asType = match ($ls_extension) {
+				'css' => 'style',
+				'js' => 'script',
+				'woff', 'woff2', 'ttf' => 'font',
+				default => 'fetch',
+			};
+
+			// Add the asset path to the Link header
+			$la_header[] = 'Link: <' . $ls_assetPath . '>; rel=preload; as=' . $ls_asType . '; nopush';
+		}
+
+		// Add the Link header to the response
+		$lo_response = $lo_response->withHeader('Link', implode(', ', $la_header));
+
+		// Set the response in the view
+		$this->getView()->setResponse($lo_response);
 	}
 
 
