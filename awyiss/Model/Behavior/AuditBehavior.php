@@ -12,12 +12,15 @@ use Awyiss\ORM\Association\BelongsToMany;
 use Awyiss\ORM\Association\HasMany;
 use Awyiss\ORM\Association\HasOne;
 use Awyiss\ORM\Behavior;
+use Cake\Collection\CollectionInterface;
 use Cake\Database\Schema\TableSchemaInterface;
+use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
 use Cake\I18n\DateTime;
 use Cake\Log\Log;
 use Cake\ORM\Association;
 use Cake\ORM\Locator\LocatorAwareTrait;
+use Cake\ORM\Query\SelectQuery;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 use Cake\Validation\Validator;
@@ -69,6 +72,106 @@ class AuditBehavior extends Behavior {
 	 * @var \Authentication\IdentityInterface|null
 	 */
 	protected ?IdentityInterface $identity = null;
+
+
+	/**
+	 * Initialize the behavior with the provided configuration.
+	 *
+	 * @param array $aa_config The configuration array.
+	 * @return void
+	 */
+	public function initialize(array $aa_config): void {
+		parent::initialize($aa_config);
+
+		// Get the table and schema for the current model
+		$lo_table = $this->table();
+		$lo_schema = $lo_table->getSchema();
+
+		// Check if the table has the required columns and add the corresponding associations
+		if ($lo_schema->hasColumn('created_by')) {
+			$this->addAssociation('CreatedBy');
+		}
+
+		if ($lo_schema->hasColumn('changed_by')) {
+			$this->addAssociation('ChangedBy');
+		}
+
+		if ($lo_schema->hasColumn('deleted_by')) {
+			$this->addAssociation('DeletedBy');
+		}
+	}
+
+
+	/**
+	 * Add an association to the table.
+	 *
+	 * @param string $alias The alias for the association.
+	 * @return void
+	 */
+	protected function addAssociation(string $alias): void {
+		$lo_table = $this->table();
+
+		// Add a belongsTo association to the table
+		$lo_table->belongsTo($alias . 'User', [
+			'className' => 'Users',
+			'foreignKey' => Inflector::underscore($alias),
+		]);
+	}
+
+
+	/**
+	 * Modify the query to join with the audit users and select their usernames.
+	 *
+	 * @param SelectQuery $query The query to modify.
+	 * @return SelectQuery The modified query.
+	 */
+	public function findWithAuditUsers(SelectQuery $query): SelectQuery {
+		// Enable auto fields for the query if they are not already enabled
+		if ($query->isAutoFieldsEnabled() === null) {
+			$query->enableAutoFields();
+		}
+
+		// Define the associations to join with
+		$la_associations = ['CreatedByUser', 'ChangedByUser', 'DeletedByUser'];
+		foreach ($la_associations as $ls_associationName) {
+			// Skip the association if it does not exist
+			if (!$this->table()->hasAssociation($ls_associationName)) {
+				continue;
+			}
+
+			// Join with the association and select the username
+			$query->leftJoinWith($ls_associationName)->select($ls_associationName . '.username');
+		}
+
+		// Handle _matchingData
+		$query->formatResults(function (CollectionInterface $ao_results) {
+			return $ao_results->map(function (EntityInterface|array|null $ax_row) {
+				// Skip the row if it does not have _matchingData
+				if (!$ax_row || !isset($ax_row['_matchingData'])) {
+					return $ax_row;
+				}
+
+				// Iterate over the matching data
+				foreach ($ax_row['_matchingData'] as $ls_matchingKey => $lo_user) {
+					// Modify the row data based on the matching data
+					$ls_property = Inflector::variable($ls_matchingKey);
+					$ax_row[ $ls_property ] = $lo_user->username;
+					unset($ax_row['_matchingData'][ $ls_matchingKey ]);
+				}
+
+				// Remove the _matchingData key if it is empty
+				if (empty($ax_row['_matchingData'])) {
+					unset($ax_row['_matchingData']);
+				}
+
+
+				return $ax_row;
+			});
+		});
+
+
+		return $query;
+	}
 
 
 	/**
