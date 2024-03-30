@@ -166,7 +166,10 @@ abstract class GenericDatatablesController extends Controller {
 			$ao_entity->setAccess('attributes', true);
 		}
 
-		$this->Datatable->patchEntity($ao_entity, $this->request->getData(), ['associated' => $la_associated]);
+		$this->Datatable->patchEntity($ao_entity, $this->request->getData(), [
+			'associated' => $la_associated,
+			'validate' => !$this->request->getData('reload_form'),
+		]);
 
 		$this->Categories->setConfig('finder', [
 			'forCurrentLanguage' => [

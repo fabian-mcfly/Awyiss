@@ -273,7 +273,10 @@ class ConfigurationController extends Controller {
 			$ao_configuration->setAccess('attributes', true);
 		}
 
-		$this->UserConfiguration->patchEntity($ao_configuration, $this->request->getData() + ['userId' => $this->getIdentity()->getIdentifier()], ['associated' => $la_associated]);
+		$this->UserConfiguration->patchEntity($ao_configuration, $this->request->getData() + ['userId' => $this->getIdentity()->getIdentifier()], [
+			'associated' => $la_associated,
+			'validate' => !$this->request->getData('reload_form'),
+		]);
 
 		if (!$this->Authorization->withAdditionalData(['scope' => $ao_configuration->scope])->isAccessible('read')) {
 			$this->Flash->error(__('scope_not_accessible'));

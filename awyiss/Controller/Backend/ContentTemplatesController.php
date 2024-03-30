@@ -163,6 +163,7 @@ class ContentTemplatesController extends Controller {
 
 		$this->ContentTemplates->patchEntity($ao_contentTemplate, $la_requestData, [
 			'associated' => $la_associated,
+			'validate' => !$this->request->getData('reload_form'),
 		]);
 
 		$ao_contentTemplate->set('contentAreas', []);

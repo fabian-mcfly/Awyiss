@@ -173,7 +173,10 @@ class UsergroupsController extends Controller {
 			$ao_usergroup->setAccess('users', true);
 		}
 
-		$this->Usergroups->patchEntity($ao_usergroup, $la_data, ['associated' => $la_associated]);
+		$this->Usergroups->patchEntity($ao_usergroup, $la_data, [
+			'associated' => $la_associated,
+			'validate' => !$this->request->getData('reload_form'),
+		]);
 
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
 			if ($this->Usergroups->save($ao_usergroup, ['asCopy' => (bool)$this->request->getData('save_as_copy')])) {

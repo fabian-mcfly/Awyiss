@@ -179,6 +179,7 @@ class PageTemplatesController extends Controller {
 					],
 				],
 			]),
+			'validate' => !$this->request->getData('reload_form'),
 		]);
 
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values

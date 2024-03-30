@@ -162,7 +162,10 @@ class AttributesController extends Controller {
 			$ao_attribute->setAccess('attributes', true);
 		}
 
-		$this->Attributes->patchEntity($ao_attribute, $this->request->getData(), ['associated' => $la_associated]);
+		$this->Attributes->patchEntity($ao_attribute, $this->request->getData(), [
+			'associated' => $la_associated,
+			'validate' => !$this->request->getData('reload_form'),
+		]);
 
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
 			if ($this->Attributes->save($ao_attribute, ['asCopy' => (bool)$this->request->getData('save_as_copy')])) {
@@ -211,22 +214,26 @@ class AttributesController extends Controller {
 
 
 	/**
-	 * @param \Awyiss\Model\Entity\Attribute $lo_attribute
+	 * @param \Awyiss\Model\Entity\Attribute $ao_attribute
 	 * @return void
 	 */
-	protected function setViewVars(Attribute $lo_attribute): void {
-		$la_availableFieldsets = $this->Attributes->getAvailableFieldsets($lo_attribute->scope);
-		$this->ensurePossibleFieldset($lo_attribute, $la_availableFieldsets);
+	protected function setViewVars(Attribute $ao_attribute): void {
+		$la_availableFieldsets = $this->Attributes->getAvailableFieldsets($ao_attribute->scope);
+		$this->ensurePossibleFieldset($ao_attribute, $la_availableFieldsets);
+
+		if ($ao_attribute->scope === 'contents') {
+			$ao_attribute->fieldset = '';
+		}
 
 		$la_pageRoles = array_keys(array_filter($this->attributeScopes, function ($ax_table) {
 			return !is_string($ax_table);
 		}));
 
-		$lb_translatableDisabled = in_array($lo_attribute->scope, array_merge($la_pageRoles, ['contents', 'menu_entries', 'pages']));
-		$lb_requiredDisabled = in_array($lo_attribute->scope, ['contents']);
+		$lb_translatableDisabled = in_array($ao_attribute->scope, array_merge($la_pageRoles, ['contents', 'menu_entries', 'pages']));
+		$lb_requiredDisabled = in_array($ao_attribute->scope, ['contents']);
 
 		$this->set([
-			'ao_attribute' => $lo_attribute,
+			'ao_attribute' => $ao_attribute,
 			'aa_availableFieldsets' => $la_availableFieldsets,
 			'aa_availableInputTypes' => $this->Attributes->getAvailableInputTypes(),
 			'aa_pageRoles' => $la_pageRoles,

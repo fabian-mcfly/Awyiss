@@ -160,7 +160,10 @@ class MediaController extends Controller {
 			$la_data['name'] .= '.' . $ls_extension;
 		}
 
-		$this->Media->patchEntity($ao_media, $la_data, ['associated' => $la_associated]);
+		$this->Media->patchEntity($ao_media, $la_data, [
+			'associated' => $la_associated,
+			'validate' => !$this->request->getData('reload_form'),
+		]);
 
 		if (
 			!$lo_uploadedFile ||

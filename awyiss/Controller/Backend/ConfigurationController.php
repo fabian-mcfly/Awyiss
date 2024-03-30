@@ -244,7 +244,10 @@ class ConfigurationController extends Controller {
 			$la_data['value'] = json_encode(array_values($la_data['value']));
 		}
 
-		$this->Configuration->patchEntity($ao_configuration, $la_data, ['associated' => $la_associated]);
+		$this->Configuration->patchEntity($ao_configuration, $la_data, [
+			'associated' => $la_associated,
+			'validate' => !$this->request->getData('reload_form'),
+		]);
 
 		if (!$this->Authorization->withAdditionalData(['scope' => $ao_configuration->scope])->isAccessible('read')) {
 			$this->Flash->error(__('scope_not_accessible'));

@@ -141,7 +141,10 @@ class PagesController extends Controller {
 			];
 			$la_data += $this->request->getData();
 
-			$this->Pages->patchEntity($lo_page, $la_data, ['associated' => $la_associated]);
+			$this->Pages->patchEntity($lo_page, $la_data, [
+				'associated' => $la_associated,
+				'validate' => !$this->request->getData('reload_form'),
+			]);
 
 			$this->Categories->setConfig('finder', [
 				'forCurrentLanguage' => [

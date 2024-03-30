@@ -245,7 +245,10 @@ class ContentsController extends Controller {
 			$la_data['data'] = $la_dataSet;
 		}
 
-		$this->Contents->patchEntity($ao_content, $la_data, ['associated' => $la_associated]);
+		$this->Contents->patchEntity($ao_content, $la_data, [
+			'associated' => $la_associated,
+			'validate' => !$this->request->getData('reload_form'),
+		]);
 
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
 			if ($ao_content->isDirty('pageId')) {

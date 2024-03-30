@@ -282,7 +282,10 @@ class UsersController extends Controller {
 
 		$la_associated['Usergroups'] = ['onlyIds' => true];
 
-		$this->Users->patchEntity($ao_user, $la_data, ['associated' => $la_associated]);
+		$this->Users->patchEntity($ao_user, $la_data, [
+			'associated' => $la_associated,
+			'validate' => !$this->request->getData('reload_form'),
+		]);
 
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
 			if ($this->Users->save($ao_user, ['asCopy' => (bool)$this->request->getData('save_as_copy')])) {

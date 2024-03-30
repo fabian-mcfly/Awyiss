@@ -200,7 +200,10 @@ class BackendMenuEntriesController extends Controller {
 			$ao_menuEntry->setAccess('attributes', true);
 		}
 
-		$this->BackendMenuEntries->patchEntity($ao_menuEntry, $this->request->getData(), ['associated' => $la_associated]);
+		$this->BackendMenuEntries->patchEntity($ao_menuEntry, $this->request->getData(), [
+			'associated' => $la_associated,
+			'validate' => !$this->request->getData('reload_form'),
+		]);
 
 		if (!empty($ao_menuEntry->parentId)) {
 			$ao_menuEntry->insertAfterId = null;

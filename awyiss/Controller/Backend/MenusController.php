@@ -149,7 +149,10 @@ class MenusController extends Controller {
 			$ao_menu->setAccess('attributes', true);
 		}
 
-		$this->Menus->patchEntity($ao_menu, $this->request->getData(), ['associated' => $la_associated]);
+		$this->Menus->patchEntity($ao_menu, $this->request->getData(), [
+			'associated' => $la_associated,
+			'validate' => !$this->request->getData('reload_form'),
+		]);
 
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
 			if ($this->Menus->save($ao_menu, ['asCopy' => (bool)$this->request->getData('save_as_copy')])) {
