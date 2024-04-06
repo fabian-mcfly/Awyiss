@@ -34,6 +34,9 @@ class BackendView extends AppView {
 		$this->addHelper('Locale');
 		$this->addHelper('Paginator', ['templates' => 'paginator_templates']);
 		$this->addHelper('SystemOrder', [
+			'field' => $this->viewVars['as_systemOrderField'] ?? null,
+			'relatedColumns' => $this->viewVars['aa_systemOrderRelatedColumns'] ?? null,
+			'options' => $this->viewVars['ao_systemOrderRecords'] ?? null,
 			'templates' => [
 				'titleOption' => function (mixed $ax_option): string {
 					return __('system_order_after') . ' ' . $ax_option->label;
