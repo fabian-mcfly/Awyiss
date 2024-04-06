@@ -8,6 +8,7 @@ use Awyiss\Awyiss;
 use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity\Content;
+use Awyiss\Model\Entity\ContentTemplate;
 use Awyiss\Model\Entity\Page;
 use Awyiss\Routing\Router;
 use Awyiss\Utility\Content\ColumnInterface;
@@ -441,33 +442,37 @@ class ContentsController extends Controller {
 	/**
 	 * @param Content $ao_content
 	 * @param CollectionInterface $ao_threadedContents
+	 * @param \Awyiss\Model\Entity\ContentTemplate $ao_selectedContentTemplate
 	 * @return void
 	 */
-	protected function ensurePossibleParentId(Content $ao_content, CollectionInterface $ao_threadedContents): void {
+	protected function ensurePossibleParentId(Content $ao_content, CollectionInterface $ao_threadedContents, ContentTemplate $ao_selectedContentTemplate): void {
+		// Extract all possible parent ids
 		$la_possibleParentIds = $ao_threadedContents->extract('id')->toList();
-		$la_contentTemplates = $this->getContentTemplates()->toArray();
 
-		if (!empty($ao_content->parentId) && !in_array($ao_content->parentId, $la_possibleParentIds)) {
+		// Build an array of assigned content elements, indexed by their identifier
+		$la_assignedContentElements = collection($ao_selectedContentTemplate->contentTemplateElements)->indexBy('identifier')->toArray();
+
+		// If the parent_id is not in the list of possible parent ids or the parent_id is not assigned to the selected content template
+		if (
+			$ao_content->parentId &&
+			(
+			 	!in_array($ao_content->parentId, $la_possibleParentIds) ||
+				!isset($la_assignedContentElements['parent_id'])
+			)
+		) {
+			// Remember the errors
 			$la_errors = $ao_content->getError('parentId');
 
-			/** @var \Awyiss\Model\Entity\ContentTemplate $lo_contentTemplate */
-			$lo_contentTemplate = $la_contentTemplates[ $ao_content->contentTemplateId ] ?? null;
-			if (!$lo_contentTemplate) {
-				//macht diese if überhaupt sinn?
-				dd(__FILE__, __LINE__);
-				$ao_content->parentId = reset($la_possibleParentIds) ?: null;
+			// If the parent_id is required and there are possible parent ids, set the parent_id to the first possible parent id
+			if (($la_assignedContentElements['parent_id'] ?? null)?->required === true && $la_possibleParentIds) {
+				$ao_content->parentId = reset($la_possibleParentIds);
 			}
+			// Otherwise, set the parent_id to null
 			else {
-				$la_assignedContentElements = collection($lo_contentTemplate->contentTemplateElements)->indexBy('identifier')->toArray();
-
-				if (($la_assignedContentElements['parent_id'] ?? null)?->required === true && $la_possibleParentIds) {
-					$ao_content->parentId = reset($la_possibleParentIds);
-				}
-				else {
-					$ao_content->parentId = null;
-				}
+				$ao_content->parentId = null;
 			}
 
+			// If there were errors, set them again
 			if ($la_errors) {
 				$ao_content->setError('parentId', $la_errors);
 			}
@@ -498,9 +503,8 @@ class ContentsController extends Controller {
 				$ao_content->setError('contentTemplateId', $la_errors);
 			}
 		}
-		elseif (empty($ao_content->contentTemplate)) {
+		elseif (!$ao_content->contentTemplate) {
 			$ao_content->contentTemplate = $ao_contentTemplates->firstMatch(['id' => $ao_content->contentTemplateId]);
-			$ao_content->contentTemplateId = $ao_content->contentTemplate?->id;
 		}
 
 		$lo_request = $this->getRequest();
@@ -625,26 +629,26 @@ class ContentsController extends Controller {
 
 
 	/**
-	 * @param \Awyiss\Model\Entity\Content $lo_content
+	 * @param \Awyiss\Model\Entity\Content $ao_content
 	 * @return void
 	 * @throws \Exception
 	 */
-	protected function setViewVars(Content $lo_content): void {
+	protected function setViewVars(Content $ao_content): void {
 		$lo_contentTemplates = $this->getContentTemplates();
-		$this->ensurePossibleTemplate($lo_content, $lo_contentTemplates);
+		$this->ensurePossibleTemplate($ao_content, $lo_contentTemplates);
+		/** @var \Awyiss\Model\Entity\ContentTemplate $lo_selectedContentTemplate */
+		$lo_selectedContentTemplate = $lo_contentTemplates->firstMatch(['id' => $ao_content->contentTemplateId]);
 
-		$la_contentAreas = $this->getContentAreas($lo_content, $this->page);
-		$this->ensurePossibleContentArea($lo_content, $la_contentAreas);
+		$la_contentAreas = $this->getContentAreas($ao_content, $this->page);
+		$this->ensurePossibleContentArea($ao_content, $la_contentAreas);
 
-		$lo_possibleParentContents = $this->getPossibleParentContents($lo_content);
-		$this->ensurePossibleParentId($lo_content, $lo_possibleParentContents);
+		$lo_possibleParentContents = $this->getPossibleParentContents($ao_content);
+		$this->ensurePossibleParentId($ao_content, $lo_possibleParentContents, $lo_selectedContentTemplate);
 
-		$la_assignedAttributes = $this->getAssignedAttributes($lo_content);
+		$la_assignedAttributes = $this->getAssignedAttributes($ao_content);
 
 		$ls_languageShortcode = $this->request->getData('language_shortcode') ?: $this->page->languageShortcode;
 
-		/** @var \Awyiss\Model\Entity\ContentTemplate $lo_selectedContentTemplate */
-		$lo_selectedContentTemplate = $lo_contentTemplates->firstMatch(['id' => $lo_content->contentTemplateId]);
 		$la_contentElementsByFieldset = [];
 		if (!empty($lo_selectedContentTemplate->contentTemplateElements)) {
 			$la_contentElementsByFieldset = collection($lo_selectedContentTemplate->contentTemplateElements)->groupBy('fieldset')->toArray();
@@ -661,7 +665,7 @@ class ContentsController extends Controller {
 		}, $la_columnIndents);
 
 		$this->set([
-			'ao_content' => $lo_content,
+			'ao_content' => $ao_content,
 			'ao_contentTemplates' => $lo_contentTemplates,
 			'ao_possibleParentContents' => $lo_possibleParentContents,
 			'ao_page' => $this->page,
