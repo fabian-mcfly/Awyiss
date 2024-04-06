@@ -30,6 +30,7 @@ class SystemOrderHelper extends Helper {
 	protected array $_defaultConfig = [
 		'after' => null,
 		'empty' => false,
+		'field' => 'systemOrder',
 		'first' => null,
 		'includeFirst' => true,
 		'templateClass' => StringTemplate::class,
@@ -77,7 +78,7 @@ class SystemOrderHelper extends Helper {
 	 * @see FormHelper::control
 	 */
 	public function control(?string $as_fieldName = null, array $aa_attributes = []): string {
-		if (LocalConfig::read('systemOrder.field', 'systemOrder') !== 'systemOrder') {
+		if ($this->getConfig('field', 'systemOrder') !== 'systemOrder') {
 			return '';
 		}
 
@@ -100,19 +101,9 @@ class SystemOrderHelper extends Helper {
 			throw new RuntimeException($ls_message);
 		}
 
-		//If options are not provided, fetch them from the view var
-		if (empty($la_attributes['options'])) {
-			$la_attributes['options'] = $this->getView()->get('ao_systemOrderRecords');
-		}
-
 		//If the options are not in array-form, make 'em!
 		if (!is_array($la_attributes['options'])) {
 			$la_attributes['options'] = $this->buildSystemOrderOptions($la_attributes['options'], $la_attributes, $lo_entity);
-		}
-
-		//If related columns are not provided, fetch them from the view var
-		if (empty($la_attributes['relatedColumns'])) {
-			$la_attributes['relatedColumns'] = $this->getView()->get('aa_systemOrderRelatedColumns') ?? [];
 		}
 
 		//Default input type, if none was provided
