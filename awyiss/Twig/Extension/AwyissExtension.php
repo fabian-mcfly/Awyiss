@@ -22,8 +22,12 @@ class AwyissExtension extends AbstractExtension {
 	 */
 	public function getFilters(): array {
 		return [
-			new TwigFilter('json_decode', function (string $as_json): array {
-				return json_decode($as_json, true, 512, JSON_THROW_ON_ERROR);
+			new TwigFilter('json_decode', function (string $as_json): ?array {
+				$la_return = json_decode($as_json, true);
+
+
+				// If the JSON is invalid, return null
+				return !is_array($la_return) ? null : $la_return;
 			}),
 		];
 	}
@@ -59,16 +63,20 @@ class AwyissExtension extends AbstractExtension {
 			new TwigFunction('__df', '__df'),
 			new TwigFunction('__dfx', '__dfx'),
 
-			new TwigFunction('hashPrinter', function (CollectionInterface|array $ax_data, string $as_value, string $as_key, string $as_spacer = '- '): array {
-				$la_data = is_array($ax_data) ? $ax_data : $ax_data->toList();
+			new TwigFunction(
+				'hashPrinter',
+				function (CollectionInterface|array $ax_data, string $as_value, string $as_key, string $as_spacer = '- ', int $ai_levelOffset = 0): array {
+					$la_data = is_array($ax_data) ? $ax_data : $ax_data->toList();
 
-				$la_return = [];
-				foreach ($la_data as $lx_item) {
-					$la_return[ $lx_item[ $as_key ] ] = str_repeat($as_spacer, $lx_item['level']) . $lx_item[ $as_value ];
+					$la_return = [];
+					foreach ($la_data as $lx_key => $lx_item) {
+						$la_return[ $as_key === 'key' ? $lx_key : $lx_item[ $as_key ] ] = str_repeat($as_spacer, $lx_item['level'] - $ai_levelOffset) . $lx_item[ $as_value ];
+					}
+
+
+					return $la_return;
 				}
-
-				return $la_return;
-			}),
+			),
 
 			new TwigFunction('naturalSort', function (array $aa_data, int|string|null $as_key = null): array {
 				uasort($aa_data, function ($a, $b) use ($as_key) {
