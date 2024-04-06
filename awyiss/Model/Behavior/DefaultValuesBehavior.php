@@ -107,8 +107,15 @@ class DefaultValuesBehavior extends Behavior {
 			$la_additionalData = $ls_entityClass::unmapFields($aa_additionalData, true);
 		}
 
+		$lo_entity = $this->marshallDefaults($lo_entity, $la_defaults, $la_additionalData, $aa_options);
 
-		return $this->marshallDefaults($lo_entity, $la_defaults, $la_additionalData, $aa_options);
+		//Set the entity to the attributes entity
+		if ($lo_table->hasAttributes()) {
+			$lo_entity->{$ls_entityClass::mapField($lo_attributes->getProperty())}->setEntity($lo_entity);
+		}
+
+
+		return $lo_entity;
 	}
 
 
