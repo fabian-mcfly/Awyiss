@@ -336,7 +336,6 @@ class ContentsTable extends Table {
 			catch (RecordNotFoundException | InvalidPrimaryKeyException) {
 				$ao_entity->setError('page_id', __d($this->getI18nDomain(), 'error_valid_page_id'));
 
-
 				return false;
 			}
 
@@ -363,15 +362,21 @@ class ContentsTable extends Table {
 				//Content template not found
 				$ao_entity->setError('content_template_id', __d($this->getI18nDomain(), 'error_valid_content_template_id'));
 
+				return false;
+			}
+
+
+			//Content area not found in the content template
+			if (!in_array($ao_entity->contentAreaId, array_column($lo_contentTemplate->contentAreas, 'id'))) {
+				$ao_entity->setError('content_area_id', __d($this->getI18nDomain(), 'error_valid_content_area_id'));
 
 				return false;
 			}
 
 
-			//Content area not found
-			if (!in_array($ao_entity->contentAreaId, array_column($lo_contentTemplate->contentAreas, 'id'))) {
-				$ao_entity->setError('content_area_id', __d($this->getI18nDomain(), 'error_valid_content_area_id'));
-
+			// Make sure that all children of the current entity can be moved to the target content area as well
+			if (!$this->childrenCanBeMoved($ao_entity, $lo_page->pageTemplateId)) {
+				$ao_entity->setError('content_area_id', __d($this->getI18nDomain(), 'error_valid_content_area_id_for_children'));
 
 				return false;
 			}
@@ -449,6 +454,42 @@ class ContentsTable extends Table {
 
 
 		return $ao_rules;
+	}
+
+
+	/**
+	 * Checks if all children of the current entity can be moved to the target content area.
+	 *
+	 * @param \Awyiss\Model\Entity\Content $ao_entity
+	 * @return bool
+	 */
+	protected function childrenCanBeMoved(Content $ao_entity, int $ai_pageTemplateId): bool {
+		$li_contentAreaId = $ao_entity->contentAreaId;
+
+		// Get all children of the current entity
+		$lo_children = $ao_entity->getNestedChildren([
+			'contain' => [
+				'ContentTemplates' => [
+					'ContentAreas' => [
+						'queryBuilder' => function (SelectQuery $ao_query) use ($li_contentAreaId, $ai_pageTemplateId) {
+							return $ao_query->where([
+								'ContentTemplateContentAreas.content_area_id' => $li_contentAreaId,
+								'ContentTemplateContentAreas.page_template_id' => $ai_pageTemplateId,
+							]);
+						},
+					],
+				],
+			],
+		]);
+
+		/** @var \Awyiss\Model\Entity\Content $lo_child */
+		foreach ($lo_children as $lo_child) {
+			if (!$lo_child->contentTemplate?->contentAreas) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 
