@@ -209,6 +209,10 @@ class NestBehavior extends Behavior {
 
 		$lo_query = $lo_association->find($lx_finder, $ao_entity, $this->getConfig('relatedColumns'));
 
+		if (!empty($aa_options['contain'])) {
+			$lo_query->contain($aa_options['contain']);
+		}
+
 		$this->addQueryConditions($lo_query, $lo_association, $ao_entity, 'children');
 
 
@@ -232,7 +236,7 @@ class NestBehavior extends Behavior {
 			return null;
 		}
 
-		if ($this->getConfig('strategy') === self::STRATEGY_FETCH_ALL) {
+		if ($this->getConfig('strategy') === self::STRATEGY_FETCH_ALL && empty($aa_options['contain'])) {
 			return $this->fetchAllNestedChildren($ao_entity, $aa_options);
 		}
 
@@ -279,6 +283,10 @@ class NestBehavior extends Behavior {
 
 		$lo_query = $lo_association->find($lx_finder, $ao_entity, $this->getConfig('relatedColumns'));
 
+		if (!empty($aa_options['contain'])) {
+			$lo_query->contain($aa_options['contain']);
+		}
+
 		$this->addQueryConditions($lo_query, $lo_association, $ao_entity, 'parent');
 
 		return $lo_query->first();
@@ -301,7 +309,7 @@ class NestBehavior extends Behavior {
 			return null;
 		}
 
-		if ($this->getConfig('strategy') === self::STRATEGY_FETCH_ALL) {
+		if ($this->getConfig('strategy') === self::STRATEGY_FETCH_ALL && empty($aa_options['contain'])) {
 			return $this->fetchAllParents($ao_entity, $aa_options);
 		}
 
