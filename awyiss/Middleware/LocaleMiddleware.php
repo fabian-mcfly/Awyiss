@@ -127,6 +127,9 @@ class LocaleMiddleware implements MiddlewareInterface {
 			$lo_tableLocator = FactoryLocator::get('Table');
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 			$lo_tableLocator->setTranslateLanguage($lo_language);
+
+			// Add the TranslateBehavior to the LanguagesTable as it's not set on instantiation
+			$lo_tableLocator->get('Languages')->addTranslateBehavior($lo_language);
 		}
 
 		$lo_request = $ao_request->withAttribute('locale', $this);
