@@ -100,6 +100,7 @@ class Media extends Entity {
 			'image/png',
 			'image/gif',
 			'image/webp',
+			'image/svg+xml',
 		]);
 	}
 
@@ -431,11 +432,13 @@ class Media extends Entity {
 	 * @return string|null
 	 */
 	protected function _getWebpPathAbsolute(): ?string {
-		if (!$this->path) {
+		$ls_webpPath = $this->webpPath;
+
+		if (!$ls_webpPath) {
 			return null;
 		}
 
-		return WWW_ROOT . str_replace('/', DS, $this->webpPath);
+		return WWW_ROOT . str_replace('/', DS, $ls_webpPath);
 	}
 
 
