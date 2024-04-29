@@ -201,7 +201,7 @@ class ConfigurationListener implements EventListenerInterface {
 
 			if ($lo_table->hasBehavior('SystemOrder')) {
 				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-				$lo_table->getBehavior('SystemOrder')->rebuildSystemOrder($ao_event, $ls_field, $li_direction);
+				$lo_table->getBehavior('SystemOrder')->rebuildSystemOrder($ls_field, $li_direction, $ao_event);
 			}
 		}
 	}
@@ -230,7 +230,7 @@ class ConfigurationListener implements EventListenerInterface {
 			$lo_table = FactoryLocator::get('Table')->get(Inflector::camelize($ao_entity->scope));
 			if ($lo_table->hasBehavior('SystemOrder')) {
 				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-				$lo_table->getBehavior('SystemOrder')->rebuildSystemOrder($ao_event, $ao_entity->value, $li_direction);
+				$lo_table->getBehavior('SystemOrder')->rebuildSystemOrder($ao_entity->value, $li_direction, $ao_event);
 			}
 		}
 		elseif (
@@ -245,11 +245,16 @@ class ConfigurationListener implements EventListenerInterface {
 				'field',
 			]));
 
+			// If the field is set to 'systemOrder', we don't need to rebuild the system order
+			if ($ls_field === 'systemOrder') {
+				return;
+			}
+
 			/** @var \Awyiss\Model\Table $lo_table */
 			$lo_table = FactoryLocator::get('Table')->get(Inflector::camelize($ao_entity->scope));
 			if ($lo_table->hasBehavior('SystemOrder')) {
 				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-				$lo_table->getBehavior('SystemOrder')->rebuildSystemOrder($ao_event, $ls_field, (int)$ao_entity->value);
+				$lo_table->getBehavior('SystemOrder')->rebuildSystemOrder($ls_field, (int)$ao_entity->value, $ao_event);
 			}
 		}
 	}
