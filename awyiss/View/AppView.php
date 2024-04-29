@@ -77,6 +77,7 @@ class AppView extends TwigView {
 			}
 
 			$lo_twig->addExtension(new AwyissExtension());
+			$lo_twig->addExtension(new EnumExtension());
 
 			if (defined('CUSTOM_NAMESPACE')) {
 				//This looks for a custom Twig Extension class in \<custom namespace>\Twig\Extension\<CustomNamespace>Extension.php and adds it
