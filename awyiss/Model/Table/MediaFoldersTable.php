@@ -9,6 +9,7 @@ use Awyiss\Model\Entity\MediaFolder;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
 use Cake\Database\Schema\TableSchemaInterface;
+use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Validation\Validator;
 
@@ -140,6 +141,11 @@ class MediaFoldersTable extends Table {
 		]);
 
 
+		$ao_validator->add('parentsActive', [
+			'boolean' => ['rule' => 'boolean'],
+		]);
+
+
 		$ao_validator->add('deleted', [
 			'boolean' => ['rule' => 'boolean'],
 		]);
@@ -231,5 +237,22 @@ class MediaFoldersTable extends Table {
 		parent::initializeSchema($ao_schema);
 
 		$ao_schema->setColumnType('meta_data', 'json');
+	}
+
+
+	/**
+	 * @param \Cake\ORM\Query\SelectQuery $ao_query
+	 * @param array $aa_options
+	 * @return \Cake\ORM\Query\SelectQuery
+	 * @noinspection PhpUnused
+	 */
+	public function findActive(SelectQuery $ao_query): SelectQuery {
+		$ao_query->where([
+			'active' => true,
+			'parents_active' => true,
+		]);
+
+
+		return $ao_query;
 	}
 }

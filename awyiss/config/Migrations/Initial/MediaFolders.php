@@ -64,6 +64,10 @@ class MediaFolders {
 			'default' => true,
 			'limit' => null,
 			'null' => false,
+		])->addColumn('parents_active', 'boolean', [
+			'default' => true,
+			'limit' => null,
+			'null' => false,
 		])->addColumn('deleted', 'boolean', [
 			'default' => false,
 			'limit' => null,

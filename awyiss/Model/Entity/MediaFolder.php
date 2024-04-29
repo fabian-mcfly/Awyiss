@@ -21,6 +21,7 @@ use Cake\Utility\Text;
  * @property bool $hidden
  * @property int $systemOrder
  * @property bool $active
+ * @property bool $parentsActive
  * @property bool $deleted
  * @property int|null $createdBy
  * @property \Cake\I18n\DateTime|null $createdOn
@@ -53,6 +54,7 @@ class MediaFolder extends Entity {
 		'parent_id' => 'parentId',
 		'language_shortcode' => 'languageShortcode',
 		'system_order' => 'systemOrder',
+		'parents_active' => 'parentsActive',
 		'created_by' => 'createdBy',
 		'created_on' => 'createdOn',
 		'changed_by' => 'changedBy',

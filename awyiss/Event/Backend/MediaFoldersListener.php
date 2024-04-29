@@ -116,6 +116,11 @@ class MediaFoldersListener implements EventListenerInterface {
 			$lo_parentMediaFolder = $lo_table->get($ao_entity->parentId);
 			//If there's a parent media folder, add its path the one of the current media folder
 			$ls_prePath = trim($lo_parentMediaFolder->path, '/') . '/';
+
+			$ao_entity->parentsActive = $lo_parentMediaFolder->active && $lo_parentMediaFolder->parentsActive;
+		}
+		elseif ($ao_entity->parentsActive !== true) {
+			$ao_entity->parentsActive = true;
 		}
 
 		$la_parts = explode('/', $ao_entity->path);
@@ -226,9 +231,17 @@ class MediaFoldersListener implements EventListenerInterface {
 	public function afterSave(Event $ao_event, MediaFolder $ao_entity, ArrayObject $ao_options): void {
 		/** @var \Awyiss\Model\Table\MediaFoldersTable $lo_table */
 		$lo_table = $ao_event->getSubject();
-		$ls_originalPath = $ao_entity->hasOriginal('path') ? $ao_entity->getOriginal('path') : null;
 
-		if (!$ao_entity->isNew() && $ls_originalPath && $ao_entity->path != $ls_originalPath) {
+		$ls_originalPath = $ao_entity->hasOriginal('path') ? $ao_entity->getOriginal('path') : null;
+		$lb_pathChanged = $ls_originalPath && $ao_entity->path != $ls_originalPath;
+
+		$lb_originalActive = $ao_entity->hasOriginal('active') ? $ao_entity->getOriginal('active') : null;
+		$lb_activeChanged = $lb_originalActive !== null && $ao_entity->active !== $lb_originalActive;
+
+		$lb_originalParentsActive = $ao_entity->hasOriginal('parentsActive') ? $ao_entity->getOriginal('parentsActive') : null;
+		$lb_parentsActiveChanged = $lb_originalParentsActive !== null && $ao_entity->parentsActive !== $lb_originalParentsActive;
+
+		if (!$ao_entity->isNew() && $lb_pathChanged) {
 			foreach ([$lo_table->getTable(), 'media'] as $ls_table) {
 				$this->rebuildDatabasePath($lo_table, $ls_table, $ao_entity, $ls_originalPath);
 			}
@@ -239,6 +252,14 @@ class MediaFoldersListener implements EventListenerInterface {
 					WWW_ROOT . str_replace('/', DS, $ao_entity->path)
 				);
 			}
+		}
+
+		if ($lb_activeChanged || $lb_parentsActiveChanged) {
+			$this->updateDescendants(
+				$lo_table,
+				$ao_entity,
+				$ls_originalPath,
+			);
 		}
 
 		if (
@@ -294,6 +315,50 @@ class MediaFoldersListener implements EventListenerInterface {
 		])))->where(function (QueryExpression $ao_expression/*, Query $ao_query*/) use ($ls_originalPath) {
 			return $ao_expression->like('path', $ls_originalPath . '/%');
 		})->execute();
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Table\MediaFoldersTable $ao_table
+	 * @param \Awyiss\Model\Entity\MediaFolder $ao_entity
+	 * @param string|null $as_originalPath
+	 * @return void
+	 */
+	protected function updateDescendants(
+		MediaFoldersTable $ao_table,
+		MediaFolder $ao_entity,
+		?string $as_originalPath,
+	): void {
+		$lo_query = $ao_table->updateQuery();
+
+		$lb_parentsActive = $ao_entity->active && $ao_entity->parentsActive;
+
+		if ($lb_parentsActive) {
+			/**
+			 * When updating all media folders with the same path (LIKE 'oldpath/%'), do not set the parents_active to true
+			 * for media folders that descendants of inactive sites.
+			 */
+			$lo_subFolders = $ao_table->find('all', skipPageRoleCheck: true)->where(function (QueryExpression $ao_expression) use ($ao_entity, $as_originalPath) {
+				return $ao_expression->like('path', ($as_originalPath ?? $ao_entity->path) . '/%');
+			})->where(['active' => false])->all();
+
+			foreach ($lo_subFolders as $lo_subFolder) {
+				$lo_query->where(function (QueryExpression $ao_expression/*, Query $ao_query*/) use ($lo_subFolder) {
+					return $ao_expression->notLike('path', $lo_subFolder->path . '/%');
+				});
+			}
+		}
+
+		$lo_query->set('parents_active', $lb_parentsActive);
+
+		/**
+		 * WHERE path LIKE 'oldpath/%'
+		 */
+		$lo_query->where(function (QueryExpression $ao_expression/*, Query $ao_query*/) use ($ao_entity, $as_originalPath) {
+			return $ao_expression->like('path', ($as_originalPath ?? $ao_entity->path) . '/%');
+		});
+
+		$lo_query->execute();
 	}
 
 
