@@ -332,8 +332,9 @@ class AttributesHelper extends Helper {
 		/** @var \Awyiss\Model\Table $lo_table */
 		$lo_table = $lo_context->fetchTable($as_source);
 
-		static::$attributes = $lo_table->getAttributes();
-
+		static::$attributes = array_filter($lo_table->getAttributes(), function (Attribute $ao_attribute) {
+			return $ao_attribute->active;
+		});
 
 		return static::$attributes;
 	}
