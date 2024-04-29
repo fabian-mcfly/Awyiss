@@ -66,7 +66,7 @@ class MediaFoldersController extends Controller {
 		}
 
 		//If the selected scope is not inside the available configuration scopes, reset it to the first available one.
-		if (!array_key_exists($ls_language, $this->languages)) {
+		if (!array_key_exists($ls_language, $this->languages) && $ls_language !== 'all') {
 			$ls_language = array_key_first($this->languages);
 
 			$lo_session->write($this->selectedLanguageSessionIdentifier, $ls_language);
@@ -240,11 +240,10 @@ class MediaFoldersController extends Controller {
 				$this->Flash->success(__($as_method . '_succeeded'));
 
 				$lo_session = $this->request->getSession();
-				$ls_languageShortcode = $ao_mediaFolder->languageShortcode ?? 'all';
-				if (strlen($ls_languageShortcode) !== 2) {
-					$ls_languageShortcode = 'global';
+				$ls_languageShortcode = $ao_mediaFolder->languageShortcode ?? 'global';
+				if ($lo_session->read($this->selectedLanguageSessionIdentifier, 'all') !== 'all') {
+					$lo_session->write($this->selectedLanguageSessionIdentifier, $ls_languageShortcode);
 				}
-				$lo_session->write($this->selectedLanguageSessionIdentifier, $ls_languageShortcode);
 
 				if ($this->request->getData('submit') == 'submit_close') {
 					throw new RedirectException(Router::url(['action' => 'overview', 'lang' => $ao_mediaFolder->languageShortcode], true), 302);
@@ -257,6 +256,9 @@ class MediaFoldersController extends Controller {
 			foreach ($ao_mediaFolder->getError('_general') as $ls_error) {
 				$this->Flash->error($ls_error);
 			}
+		}
+		else {
+			$ao_mediaFolder->systemOrder = null;
 		}
 	}
 
