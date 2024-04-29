@@ -8,6 +8,7 @@ use ArrayObject;
 use Awyiss\Model\Table;
 use Awyiss\ORM\Behavior;
 use BackedEnum;
+use Cake\Collection\CollectionInterface;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
 use Cake\ORM\Exception\PersistenceFailedException;
@@ -51,9 +52,9 @@ class SystemOrderBehavior extends Behavior {
 			'beforeMarshal',
 			'beforeSave',
 			'afterSave',
-			'beforeSoftDelete',
-			'afterSoftDelete',
-			'afterSoftDeleteCommit',
+			'beforeDelete',
+			'afterDelete',
+			'afterDeleteCommit',
 		],
 		'implementedMethods' => [
 			'addSystemOrderQueryConditions' => 'addQueryConditions',
@@ -369,12 +370,12 @@ class SystemOrderBehavior extends Behavior {
 
 
 	/**
-	 * Before a soft delete, set the systemOrder to 999999, so it'll no longer be part of the group.
+	 * Before a delete, set the systemOrder to 999999, so it'll no longer be part of the group.
 	 *
 	 * @noinspection PhpUnused
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function beforeSoftDelete(EventInterface $ao_event, EntityInterface $ao_entity, ArrayObject $ao_options): void {
+	public function beforeDelete(EventInterface $ao_event, EntityInterface $ao_entity, ArrayObject $ao_options): void {
 		if (!$this->getConfig('enabled')) {
 			return;
 		}
@@ -387,18 +388,18 @@ class SystemOrderBehavior extends Behavior {
 
 
 	/**
-	 * After a soft delete, call the `updateAfterRemove`-method since soft deleting an item means it's no longer part of the scope.
+	 * After a delete, call the `updateAfterRemove`-method since deleting an item means it's no longer part of the scope.
 	 *
 	 * @throws \Exception
 	 * @noinspection PhpUnused
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function afterSoftDelete(EventInterface $ao_event, EntityInterface $ao_entity, ArrayObject $ao_options): void {
+	public function afterDelete(EventInterface $ao_event, EntityInterface $ao_entity, ArrayObject $ao_options): void {
 		if (!$this->getConfig('enabled')) {
 			return;
 		}
 
-		//If it's not the primary softDelete action, there is no need to call updateAfterRemove, since all siblings will be deleted as well
+		//If it's not the primary delete action, there is no need to call updateAfterRemove, since all siblings will be deleted as well
 		if ($ao_options['_primary'] !== true) {
 			return;
 		}
@@ -407,7 +408,7 @@ class SystemOrderBehavior extends Behavior {
 		if ($lo_options['skip'] === true) {
 			/*
 			 * If the system order behavior is skipped, remember the orignal values of the related columns for the given entity
-			 * and handle them in the afterSoftDeleteCommit event.
+			 * and handle them in the afterDeleteCommit event.
 			 *
 			 * This will make sure that the update will not run on entities that will be deleted inside the same transaction
 			 */
@@ -432,15 +433,14 @@ class SystemOrderBehavior extends Behavior {
 	 * @throws \Exception
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function afterSoftDeleteCommit(EventInterface $ao_event, EntityInterface $ao_entity, ArrayObject $ao_options): void {
+	public function afterDeleteCommit(EventInterface $ao_event, EntityInterface $ao_entity, ArrayObject $ao_options): void {
 		if (!$this->getConfig('enabled')) {
 			return;
 		}
 
 		if (isset($this->rememberedData[ $ao_entity->get('id') ])) {
 			/*
-			 * Only after the soft delete got committed, update the entity's siblings
-			 * The soft delete behavior will ensure that only undeleted entties will be updated
+			 * Only after the delete got committed, update the entity's siblings
 			 */
 			$la_values = $this->rememberedData[ $ao_entity->get('id') ];
 			unset($this->rememberedData[ $ao_entity->get('id') ]);
@@ -573,10 +573,11 @@ class SystemOrderBehavior extends Behavior {
 
 
 	/**
-	 * @param \Cake\Event\EventInterface $ao_event
 	 * @param string $as_field
 	 * @param int $ai_direction
-	 * @return void
+	 * @param \Cake\Event\EventInterface|null $ao_event
+	 * @param array $additionalWhere
+	 * @return iterable|false
 	 * @throws \Exception
 	 */
 	public function rebuildSystemOrder(EventInterface $ao_event, string $as_field, int $ai_direction = SORT_ASC): void {
@@ -602,69 +603,7 @@ class SystemOrderBehavior extends Behavior {
 			in_array($ls_fieldType, ['string', 'text', 'char']) ? SORT_NATURAL | SORT_FLAG_CASE : SORT_NUMERIC
 		);
 
-		$la_relatedColumns = $this->getConfig('relatedColumns');
-		if ($la_relatedColumns) {
-			$la_relatedColumns = $lo_table->extractAttributeFields($la_relatedColumns, true);
-			$la_groupedItems = $lo_records->groupBy(function (EntityInterface $ao_entity) use ($la_relatedColumns) {
-				$la_values = array_map(function (string $as_field) use ($ao_entity) {
-					$lx_value = $ao_entity->get($as_field);
-
-					if ($lx_value instanceof BackedEnum) {
-						$lx_value = $lx_value->value;
-					}
-
-					return $lx_value ?? '-';
-				}, $la_relatedColumns);
-
-
-				return implode('_', $la_values);
-			})
-			->reject(function (array $aa_items): bool {
-				return count($aa_items) === 1;
-			})
-			->each(function (array $aa_items): void {
-				//Increase the system order of all records
-				array_walk($aa_items, function (EntityInterface $ao_record, int $ai_index): void {
-					/*
-					 * Mark all fields except systemOrder as dirty. That prevents associations getting saved.
-					 * This might happen if the fetch records have no attribute association but available attributes.
-					 * In this case, a default attribute entity gets set but this could be invalid.
-					 */
-
-					/** @var \Awyiss\Model\Entity $ao_record */
-					$ao_record->clean();
-
-					$ao_record->set('systemOrder', $ai_index + 1);
-				});
-			});
-
-			$la_items = $la_groupedItems->unfold()->toList();
-		}
-		else {
-			$lo_records->each(function (array $aa_items): void {
-				//Increase the system order of all records
-				array_walk($aa_items, function (EntityInterface $ao_record, int $ai_index): void {
-					/*
-					 * Mark all fields except systemOrder as dirty. That prevents associations getting saved.
-					 * This might happen if the fetch records have no attribute association but available attributes.
-					 * In this case, a default attribute entity gets set but this could be invalid.
-					 */
-
-					/** @var \Awyiss\Model\Entity $ao_record */
-					$ao_record->clean();
-
-					$ao_record->set('systemOrder', $ai_index + 1);
-				});
-			});
-
-			$la_items = $lo_records->toList();
-		}
-
-		if (!$la_items) {
-			return;
-		}
-
-		$this->saveMany($lo_table, $la_items, $ao_event);
+		return $this->_rebuildSystemOrder($lo_table, $lo_records, $ao_event, $additionalWhere);
 	}
 
 
@@ -891,13 +830,13 @@ class SystemOrderBehavior extends Behavior {
 	 *
 	 * @param \Awyiss\Model\Table $ao_table
 	 * @param array $aa_records
-	 * @param \Cake\Event\EventInterface $ao_event
-	 * @return void
+	 * @param \Cake\Event\EventInterface|null $ao_event
+	 * @return iterable|false
 	 * @throws \Exception
 	 */
-	protected function saveMany(Table $ao_table, array $aa_records, EventInterface $ao_event): void {
+	protected function saveMany(Table $ao_table, array $aa_records, ?EventInterface $ao_event = null): iterable|false {
 		try {
-			$ao_table->saveMany($aa_records, [
+			return $ao_table->saveMany($aa_records, [
 				'audit' => ['skip' => true],
 				'atomic' => false,
 				'checkRules' => false,
@@ -907,8 +846,107 @@ class SystemOrderBehavior extends Behavior {
 			]);
 		}
 		catch (PersistenceFailedException $ex) {
-			$ao_event->stopPropagation();
-			$ao_event->setResult($ex->getEntity()->getErrors());
+			if ($ao_event) {
+				$ao_event->stopPropagation();
+				$ao_event->setResult($ex->getEntity()->getErrors());
+			}
+
+			return false;
 		}
+	}
+
+
+	/**
+	 * Ensure that the system order is gapless and starts at 1.
+	 *
+	 * @param \Cake\Event\EventInterface|null $ao_event
+	 * @param array $additionalWhere
+	 * @return iterable|false
+	 * @throws \Exception
+	 */
+	public function ensureGaplessSystemOrder(?EventInterface $ao_event = null, array $additionalWhere = []): iterable|false {
+		$lo_table = $this->table();
+		$lo_query = $lo_table->find();
+
+		if ($additionalWhere) {
+			$lo_query->where($additionalWhere);
+		}
+
+		$lo_records = $lo_query->all()->sortBy('system_order', SORT_ASC);
+
+		return $this->_rebuildSystemOrder($lo_table, $lo_records, $ao_event);
+	}
+
+
+	/**
+	 * @param \Cake\ORM\Table|\Awyiss\Model\Table $lo_table
+	 * @param \Cake\Collection\CollectionInterface $ao_records
+	 * @param \Cake\Event\EventInterface|null $ao_event
+	 * @return array|false|iterable
+	 * @throws \Exception
+	 */
+	protected function _rebuildSystemOrder(Table $ao_table, CollectionInterface $ao_records, ?EventInterface $ao_event): false|iterable {
+		$la_relatedColumns = $this->getConfig('relatedColumns');
+
+		if ($la_relatedColumns) {
+			$la_relatedColumns = $ao_table->extractAttributeFields($la_relatedColumns, true);
+			$la_groupedItems = $ao_records->groupBy(function (EntityInterface $ao_entity) use ($la_relatedColumns) {
+				$la_values = array_map(function (string $as_field) use ($ao_entity) {
+					$lx_value = $ao_entity->get($as_field);
+
+					if ($lx_value instanceof BackedEnum) {
+						$lx_value = $lx_value->value;
+					}
+
+					return $lx_value ?? '-';
+				}, $la_relatedColumns);
+
+
+				return implode('_', $la_values);
+			})->reject(function (array $aa_items): bool {
+				return count($aa_items) === 1;
+			})->each(function (array $aa_items): void {
+				//Increase the system order of all records
+				array_walk($aa_items, function (EntityInterface $ao_record, int $ai_index): void {
+					/*
+					 * Mark all fields except systemOrder as dirty. That prevents associations getting saved.
+					 * This might happen if the fetch records have no attribute association but available attributes.
+					 * In this case, a default attribute entity gets set but this could be invalid.
+					 */
+
+					/** @var \Awyiss\Model\Entity $ao_record */
+					$ao_record->clean();
+
+					$ao_record->set('systemOrder', $ai_index + 1);
+				});
+			});
+
+			$la_items = $la_groupedItems->unfold()->toList();
+		}
+		else {
+			$ao_records->each(function (array $aa_items): void {
+				//Increase the system order of all records
+				array_walk($aa_items, function (EntityInterface $ao_record, int $ai_index): void {
+					/*
+					 * Mark all fields except systemOrder as dirty. That prevents associations getting saved.
+					 * This might happen if the fetch records have no attribute association but available attributes.
+					 * In this case, a default attribute entity gets set but this could be invalid.
+					 */
+
+					/** @var \Awyiss\Model\Entity $ao_record */
+					$ao_record->clean();
+
+					$ao_record->set('systemOrder', $ai_index + 1);
+				});
+			});
+
+			$la_items = $ao_records->toList();
+		}
+
+		if (!$la_items) {
+			return [];
+		}
+
+		return $this->saveMany($ao_table, $la_items, $ao_event);
 	}
 }
