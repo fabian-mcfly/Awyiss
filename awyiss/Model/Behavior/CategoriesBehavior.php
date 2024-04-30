@@ -508,6 +508,11 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 
 		$ls_prefixedColumn = $ao_query->getRepository()->getAlias() . '.' . $ls_column;
 
+		// If the table has a SystemOrder behavior, use the sort field to sort the records
+		if ($ao_query->getRepository()->hasBehavior('SystemOrder')) {
+			$this->_sortQueryBySystemOrderField($ao_query);
+		}
+
 		/** @noinspection PhpUndefinedMethodInspection */
 		$ao_query->orderByAsc($ao_query->newExpr($ao_query->func()->FIND_IN_SET([
 			$ls_prefixedColumn => 'identifier',
@@ -831,5 +836,53 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 		}
 
 		return [];
+	}
+
+
+	/**
+	 * Sorts the query by the field used for the system order.
+	 * This method is used to sort the query by the system order field, in case the system_order field itself
+	 * is ambiguous
+	 *
+	 * @param \Cake\ORM\Query\SelectQuery $ao_query
+	 * @return void
+	 */
+	protected function _sortQueryBySystemOrderField(SelectQuery $ao_query) {
+		$lo_table = $ao_query->getRepository();
+
+		/** @var \Awyiss\Model\Behavior\SystemOrderBehavior $lo_behavior */
+		$lo_behavior = $lo_table->getBehavior('SystemOrder');
+		$ls_field = $lo_behavior->getConfig('field');
+		if ($ls_field === 'system_order') {
+			return;
+		}
+
+		$ls_direction = $lo_behavior->getConfig('direction');
+
+		if (str_starts_with($ls_field, 'attributes.')) {
+			$ls_fieldType = $lo_table->getAttributesTable()->getSchema()->getColumnType(substr($ls_field, 11));
+		}
+		elseif ($lo_table->fieldIsAttribute($ls_field)) {
+			$ls_fieldType = $lo_table->getAttributesTable()->getSchema()->getColumnType($ls_field);
+		}
+		else {
+			$ls_fieldType = $lo_table->getSchema()->getColumnType($ls_field);
+		}
+
+		/*
+		 * $lo_records = $lo_query->all()->sortBy(
+		 *	$as_field,
+		 *	$ai_direction,
+		 *	in_array($ls_fieldType, ['string', 'text', 'char']) ? SORT_NATURAL | SORT_FLAG_CASE : SORT_NUMERIC
+		 * );
+		 */
+
+		 $ao_query->formatResults(function (CollectionInterface $ao_collection) use ($ls_field, $ls_direction, $ls_fieldType) {
+			 return $ao_collection->sortBy(
+				 $ls_field,
+				 $ls_direction,
+				 in_array($ls_fieldType, ['string', 'text', 'char']) ? SORT_NATURAL | SORT_FLAG_CASE : SORT_NUMERIC
+			 );
+		 });
 	}
 }

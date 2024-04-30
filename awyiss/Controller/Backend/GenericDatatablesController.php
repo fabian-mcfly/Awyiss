@@ -78,14 +78,6 @@ abstract class GenericDatatablesController extends Controller {
 			$this->Categories->getSelectedCategory() === $this->Categories->getConfig('unassignedKey')
 		) {
 			$this->sortable = false;
-
-			/**
-			 * Sort the query by the configured systemOrder field since the default order (system_order asc) could
-			 * result in a wrong order in the aggregation category or the unassigned category.
-			 * This is because the system_order field is not unique and the default order could result in a wrong order.
-			 * What's on position 2 in their own category could be on position 1 or position 10 in the aggregation category.
-			 */
-			// TODO: sort the query by the configured systemOrder field
 		}
 
 		$lb_paginated = $this->paginate['enabled'];

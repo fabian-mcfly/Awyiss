@@ -599,13 +599,21 @@ class SystemOrderBehavior extends Behavior {
 			$ls_fieldType = $lo_table->getSchema()->getColumnType($as_field);
 		}
 
-		$lo_records = $lo_table->find()->all()->sortBy(
+		$lo_query = $lo_table->find();
+
+		if ($additionalWhere) {
+			$lo_query->where($additionalWhere);
+		}
+
+		$lo_records = $lo_query->all()->sortBy(
 			$as_field,
 			$ai_direction,
 			in_array($ls_fieldType, ['string', 'text', 'char']) ? SORT_NATURAL | SORT_FLAG_CASE : SORT_NUMERIC
 		);
 
-		return $this->_rebuildSystemOrder($lo_table, $lo_records, $ao_event, $additionalWhere);
+		//dd($lo_records->toArray(), $ai_direction, in_array($ls_fieldType, ['string', 'text', 'char']) ? SORT_NATURAL | SORT_FLAG_CASE : SORT_NUMERIC);
+
+		return $this->_rebuildSystemOrder($lo_table, $lo_records, $ao_event);
 	}
 
 
@@ -884,25 +892,11 @@ class SystemOrderBehavior extends Behavior {
 	 * @param \Awyiss\Model\Table $ao_table
 	 * @param \Cake\Collection\CollectionInterface $ao_records
 	 * @param \Cake\Event\EventInterface|null $ao_event
-	 * @param array $additionalWhere
 	 * @return iterable|false
 	 * @throws \Exception
 	 */
-	protected function _rebuildSystemOrder(Table $ao_table, CollectionInterface $ao_records, ?EventInterface $ao_event, array $additionalWhere = []): iterable|false {
+	protected function _rebuildSystemOrder(Table $ao_table, CollectionInterface $ao_records, ?EventInterface $ao_event): iterable|false {
 		$la_relatedColumns = $this->getConfig('relatedColumns');
-
-		if ($additionalWhere) {
-			$la_additionalWhere = $additionalWhere;
-			$ao_records = $ao_records->filter(function (EntityInterface $ao_entity) use ($la_additionalWhere): bool {
-				foreach ($la_additionalWhere as $ls_field => $lx_value) {
-					if ($ao_entity->get($ls_field) !== $lx_value) {
-						return false;
-					}
-				}
-
-				return true;
-			});
-		}
 
 		if ($la_relatedColumns) {
 			$la_relatedColumns = $ao_table->extractAttributeFields($la_relatedColumns, true);
