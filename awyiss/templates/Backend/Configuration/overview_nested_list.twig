@@ -51,6 +51,13 @@
 									<li class="DataItem Value">
 										{% if key == 0 %}<span class="Label">{{ __('value') }}:</span>{% endif %}
 										{% set value = configuration.printableValue %}
+
+										{% if value is same as true or value is same as 'true' %}
+											<i class="las la-check"></i>
+										{% elseif value is same as false or value is same as 'false' %}
+											<i class="las la-times"></i>
+										{% endif %}
+
 										{{ value ?? '<em>null</em>' }}
 									</li>
 								{% endblock %}
