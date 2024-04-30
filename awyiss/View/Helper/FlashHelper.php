@@ -16,7 +16,7 @@ use Cake\View\Helper;
  */
 class FlashHelper extends Helper {
 	/**
-	 * When calling this method with '*' as `as_key`, it will return all flash messages, no matter they key they
+	 * When calling this method with '*' as `$as_key`, it will return all flash messages, no matter they key they
 	 * have been set with.
 	 *
 	 * This allows the backend to display messages after redirecting to a different controller.
@@ -61,9 +61,9 @@ class FlashHelper extends Helper {
 			}
 
 			$ls_messages .= $this->_View->element($la_message['element'], [
-				'as_message' => $la_message['message'],
-				'aa_params' => $la_message['params'] ?? [],
-				'as_classes' => $la_message['class'],
+				'message' => $la_message['message'],
+				'params' => $la_message['params'] ?? [],
+				'classes' => $la_message['class'],
 			]);
 		}
 

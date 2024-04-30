@@ -1,0 +1,9 @@
+.ConfigurationController,
+.UserConfigurationController {
+	&.AddAction,
+	&.EditAction {
+		.Fieldset-General {
+			grid-column:auto / span 2;
+		}
+	}
+}

@@ -1,44 +1,72 @@
 {#
-@var ao_mediaFolders \Cake\Collection\Collection
-@var ab_paginated bool
+@var mediaFolders \Cake\Collection\Collection
+@var paginated bool
 @var _view \Awyiss\View\BackendView
 #}
 
 <div class="MediaFolders Overview">
-	{% block buttonsOverview %}
-		{% if AuthorizationHelper.isAccessible('create') %}
-			{{ HtmlHelper.link(__('create'), {action: 'add'}, {class: 'Button' }) }}
-		{% endif %}
-	{% endblock %}
-
 	{% block headlineOverview %}
 		<h1>{{ __('headline_overview') }}</h1>
 	{% endblock %}
 
-	{% block categoriesFilterOverview %}
-		{{ CategoriesHelper.linkSelect('language', aa_languages, {
-			val: as_selectedLanguage
-		}) }}
+	{% block buttonArea %}
+		<div class="ButtonArea">
+			{% block categoriesFilterOverview %}
+				{{ CategoriesHelper.linkSelect('language', languages, {
+					val: selectedLanguage
+				}) }}
+			{% endblock %}
+
+			{% block buttonsOverview %}
+				{% if paginated == false %}
+					<button class="Button Button-SaveSystemOrder" disabled>{{ __d('system', 'save_system_order') }}</button>
+				{% endif %}
+
+				{% if AuthorizationHelper.isAccessible('create') %}
+					{{ HtmlHelper.link(__('create'), {action: 'add'}, {class : 'Button Button-Add'}) }}
+				{% endif %}
+
+				{% block listControlOverviewListPaginated %}
+					{{ HtmlHelper.link(__('list_paginated'), {action: 'userConfiguration', identifier: 'paginate.enabled', value: 'true'}, {
+						class: 'Button Button-Small Button-ListView Button-ListView-PaginatedList',
+						disabled: localConfig.paginate.enabled == true
+					}) }}
+				{% endblock %}
+
+				{% block listControlOverviewListNested %}
+					{{ HtmlHelper.link(__('list_nested'), {action: 'userConfiguration', identifier: 'paginate.enabled', value: 'false'}, {
+						class: 'Button Button-Small Button-ListView Button-ListView-NestedList',
+						disabled: localConfig.paginate.enabled == false
+					}) }}
+				{% endblock %}
+			{% endblock %}
+		</div>
 	{% endblock %}
 
-	{% if ab_paginated %}
+	{% if paginated %}
 		{% block paginatedOverview %}
-			{% include '@Backend/MediaFolders/overview_paginated.twig' with {'la_mediaFolders': ao_mediaFolders.items().toArray()} %}
+			{% include '@Backend/MediaFolders/overview_paginated_list.twig' with _context|merge({records: mediaFolders.items().toArray()}) %}
 		{% endblock %}
 	{% else %}
 		{% from '@Backend/macro/nested_list.twig' import nestedList %}
-		{# @var la_mediaFolders array<string, \Awyiss\Model\Entity\MediaFolder[]> #}
-		{% for ls_languageShortcode, la_mediaFolders in ao_mediaFolders %}
+		{# @var mediaFolders array<string, \Awyiss\Model\Entity\MediaFolder[]> #}
+		{% for languageShortcode, mediaFolders in mediaFolders %}
 			{% block fieldsetOverview %}
-			<fieldset class="Fieldset-Overview">
-				<legend>{{ aa_languages[ ls_languageShortcode ] ?? __('global') }}</legend>
+			<fieldset class="Overview-Fieldset">
+				<legend>{{ languages[ languageShortcode ] ?? __('global') }}</legend>
 
 				{% block fieldsetOverviewInner %}
 					{% block listOverview %}
-						{{ nestedList(la_mediaFolders, {
-							identifier: 'MediaFolder',
-
-						}) }}
+						{{ nestedList(mediaFolders, _context|merge({
+							data: {
+								nestable: false,
+								'language-shortcode': languageShortcode,
+								'movable-between-groups': false,
+							},
+							displayedFields: localConfig.overview.displayedFields,
+							identifier: 'MediaFolders',
+							template: '@Backend/MediaFolders/overview_nested_list_item.twig',
+						})) }}
 					{% endblock %}
 				{% endblock %}
 			</fieldset>
@@ -46,38 +74,11 @@
 		{% endfor %}
 	{% endif %}
 
-	{% block listControlOverview %}
-		<ul class="ListControl">
-			{% block listControlOverviewListPaginated %}
-				<li class="ListControl-ListPaginated">
-					{{ HtmlHelper.link(__('list_paginated'), {action: 'userConfiguration', identifier: 'paginate.enabled', value: 'true'}) }}
-				</li>
-			{% endblock %}
+	{% block buttonAreaBottom %}
+		<div class="ButtonArea ButtonArea-Bottom">
+			{{ block('categoriesFilterOverview') }}
 
-			{% block listControlOverviewListNested %}
-				<li class="ListControl-ListNested">
-					{{ HtmlHelper.link(__('list_nested'), {action: 'userConfiguration', identifier: 'paginate.enabled', value: 'false'}) }}
-				</li>
-			{% endblock %}
-
-			{% block listControlOverviewPagination %}
-				{% if ab_paginated %}
-					{% set pagination = PaginatorHelper.render() %}
-					{% if pagination is not empty %}
-						<li class="ListControl-Pagination">
-							{{ pagination|raw }}
-						</li>
-					{% endif %}
-				{% endif %}
-			{% endblock %}
-
-			{% block paginationOverviewLimitControl %}
-				{% if ab_paginated %}
-					<li class="ListControl-ListLimit">
-						{{ PaginatorHelper.limitControl() }}
-					</li>
-				{% endif %}
-			{% endblock %}
-		</ul>
+			{{ block('buttonsOverview') }}
+		</div>
 	{% endblock %}
 </div>

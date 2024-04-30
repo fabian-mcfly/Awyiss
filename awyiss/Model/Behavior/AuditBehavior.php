@@ -6,6 +6,7 @@ namespace Awyiss\Model\Behavior;
 
 use ArrayObject;
 use Authentication\IdentityInterface;
+use Awyiss\Authentication\IdentityAwareTrait;
 use Awyiss\Model\Entity;
 use Awyiss\Model\Entity\UsersExternal;
 use Awyiss\ORM\Association\BelongsToMany;
@@ -32,6 +33,7 @@ use RuntimeException;
  * It also sets information when creating, updating or deleting an entity.
  */
 class AuditBehavior extends Behavior {
+	use IdentityAwareTrait;
 	use LocatorAwareTrait;
 
 
@@ -350,16 +352,6 @@ class AuditBehavior extends Behavior {
 		}
 
 		unset($this->auditData[ $ao_entity->id ]);
-	}
-
-
-	/**
-	 * Returns the currently set identity
-	 *
-	 * @return IdentityInterface|null
-	 */
-	public function getIdentity(): ?IdentityInterface {
-		return $this->identity;
 	}
 
 

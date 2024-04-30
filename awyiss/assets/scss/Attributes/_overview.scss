@@ -1,0 +1,49 @@
+.AttributesController {
+	&.OverviewAction {
+		.Overview {
+			&:has(.SortableChosen) {
+				.Fieldset-Fieldset {
+					&:not(:has(.ListItem)) {
+						background-color:#D5F1E5;
+
+						.🌚& {
+							background-color:var(--colorSemiDark)
+						}
+					}
+				}
+			}
+		}
+
+		.Fieldset-Fieldset {
+			grid-column:1 / -1;
+
+			&:first-of-type {
+				border-top-right-radius:0;
+			}
+
+			&:last-of-type {
+				border-bottom-right-radius:0;
+			}
+
+			&:not(.Collapsed) {
+				&:not(:has(.ListItem)) {
+					padding-bottom:40px;
+
+					&::after {
+						@extend %EmptyList;
+
+						.🌚& {
+							@extend %EmptyListDarkMode;
+
+						}
+					}
+
+					.Attributes-List {
+						height:40px;
+						margin-left:-52px;
+					}
+				}
+			}
+		}
+	}
+}

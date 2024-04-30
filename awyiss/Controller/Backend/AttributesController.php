@@ -6,12 +6,13 @@ namespace Awyiss\Controller\Backend;
 
 use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Model\Entity\Attribute;
+use Awyiss\Model\Table;
 use Awyiss\Routing\Router;
+use Awyiss\Utility\Content\ColumnInterface;
+use Cake\Database\Expression\QueryExpression;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
 
-
-//use Cake\Datasource\ConnectionManager;
 
 /**
  * Attributes Controller
@@ -46,10 +47,17 @@ class AttributesController extends Controller {
 	public function overview(): void {
 		$this->Authorization->ensure('read');
 
-		$lo_attributes = $this->Attributes->find()->where($this->getOverviewWhere());
-		$this->Categories->filterQuery($lo_attributes, null, !$this->paginate['enabled']);
+		$lo_query = $this->Attributes->find()->where($this->getOverviewWhere());
+		$this->Categories->filterQuery($lo_query, null, !$this->paginate['enabled']);
 
-		$la_attributesGroupedByFieldset = $lo_attributes->all()->groupBy('fieldset')->toArray();
+		$lb_paginated = $this->paginate['enabled'];
+		if ($lb_paginated) {
+			$lo_attributes = $this->paginate($lo_query);
+		}
+		else {
+			$lo_attributes = $lo_query->all();
+			$la_attributesGroupedByFieldset = $lo_query->all()->groupBy('fieldset')->toArray();
+		}
 
 		$ls_selectedScope = $this->Categories->getSelectedCategory();
 
@@ -59,9 +67,11 @@ class AttributesController extends Controller {
 		}
 
 		$this->set([
-			'aa_attributesGroupedByFieldset' => $la_attributesGroupedByFieldset,
-			'aa_availableFieldsets' => $la_availableFieldsets,
-			'as_selectedScope' => $ls_selectedScope,
+			'attributes' => $lo_attributes,
+			'attributesGroupedByFieldset' => $la_attributesGroupedByFieldset ?? [],
+			'availableFieldsets' => $la_availableFieldsets,
+			'paginated' => $lb_paginated,
+			'selectedScope' => $ls_selectedScope,
 		]);
 	}
 
@@ -214,6 +224,51 @@ class AttributesController extends Controller {
 
 
 	/**
+	 * @param array $aa_requestData
+	 * @param \Awyiss\Model\Table $ao_table
+	 * @return int
+	 */
+	protected function _saveSystemOrder(array $aa_requestData, Table $ao_table): int {
+		/*
+		 * Build an array of the order data
+		 * In the first level, the key is the fieldset, the value is an array of the child ids
+		 * In the second level, the value is the child id, the key is the order, offset by -1
+		 */
+		$la_orderData = [];
+		foreach ($aa_requestData as $ls_fieldset => $la_children) {
+			foreach ($la_children as $li_order => $li_id) {
+				$la_orderData[] = [
+					'id' => $li_id,
+					'fieldset' => $ls_fieldset,
+					'systemOrder' => $li_order + 1,
+				];
+			}
+		}
+
+		/** @noinspection PhpUnnecessaryLocalVariableInspection */
+		$li_affectedRows = $ao_table->updateAll(function (QueryExpression $ao_expression) use ($la_orderData) {
+			$lo_fieldsetCase = $ao_expression->case();
+			$lo_systemOrderCase = $ao_expression->case();
+
+			foreach ($la_orderData as $la_data) {
+				$lo_fieldsetCase->when(['id' => $la_data['id']])->then($la_data['fieldset'], 'string');
+				$lo_systemOrderCase->when(['id' => $la_data['id']])->then($la_data['systemOrder'], 'integer');
+			}
+
+			return [
+				'fieldset' => $lo_fieldsetCase,
+				'system_order' => $lo_systemOrderCase,
+			];
+		}, [
+			'id IN' => array_column($la_orderData, 'id'),
+		]);
+
+
+		return $li_affectedRows;
+	}
+
+
+	/**
 	 * @param \Awyiss\Model\Entity\Attribute $ao_attribute
 	 * @return void
 	 */
@@ -232,13 +287,19 @@ class AttributesController extends Controller {
 		$lb_translatableDisabled = in_array($ao_attribute->scope, array_merge($la_pageRoles, ['contents', 'menu_entries', 'pages']));
 		$lb_requiredDisabled = in_array($ao_attribute->scope, ['contents']);
 
+		$la_columnSpans = $this->Attributes->getColumnSpans();
+		$la_columnSpans = array_map(function (ColumnInterface $ao_column): string {
+			return $ao_column->getLabel();
+		}, $la_columnSpans);
+
 		$this->set([
-			'ao_attribute' => $ao_attribute,
-			'aa_availableFieldsets' => $la_availableFieldsets,
-			'aa_availableInputTypes' => $this->Attributes->getAvailableInputTypes(),
-			'aa_pageRoles' => $la_pageRoles,
-			'ab_translatableDisabled' => $lb_translatableDisabled,
-			'ab_requiredDisabled' => $lb_requiredDisabled,
+			'attribute' => $ao_attribute,
+			'availableFieldsets' => $la_availableFieldsets,
+			'availableInputTypes' => $this->Attributes->getAvailableInputTypes(),
+			'pageRoles' => $la_pageRoles,
+			'translatableDisabled' => $lb_translatableDisabled,
+			'requiredDisabled' => $lb_requiredDisabled,
+			'columnSpans' => $la_columnSpans,
 		]);
 	}
 }

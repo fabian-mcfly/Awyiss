@@ -91,7 +91,7 @@ class MenuCell extends Cell {
 
 		// Set the menu in the view variables
 		$this->set([
-			'as_menu' => $ls_menu,
+			'menu' => $ls_menu,
 		]);
 
 		// Set the template for the view

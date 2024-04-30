@@ -1,0 +1,10 @@
+#TranslationDialog {
+	&::after {
+		content:attr(data-title, 'Translation');
+	}
+
+	.FormInput {
+		width:100%;
+		flex:0 0 100%;
+	}
+}

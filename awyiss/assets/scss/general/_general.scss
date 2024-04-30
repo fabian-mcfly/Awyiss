@@ -1,0 +1,203 @@
+html {
+	--backgroundColor:var(--colorLight);
+	--backgroundColorContent:var(--colorBright);
+	--scrollbarColor:#{$colorMedium} #{$colorBright};
+
+	//background-attachment:fixed;
+	//background-image:url($relativePath + 'img/background-pattern-light.png');
+	background-color:var(--backgroundColor);
+	color:var(--colorText);
+	font-family:var(--fontStackMain);
+	font-size:var(--fontSizeMain);
+	font-weight:400;
+	letter-spacing:0;
+	box-sizing:border-box;
+	scrollbar-color:var(--scrollbarColor);
+	scrollbar-width:thin;
+
+	&.Scale-Medium {
+		--fontSizeMain:#{$fontSizeMainMedium};
+	}
+
+	&.Scale-Small {
+		--fontSizeMain:#{$fontSizeMainSmall};
+	}
+
+	&.🌚,
+	.🌚 {
+		--backgroundColor:#{desaturate($colorText, 10)};
+		--backgroundColorContent:#{$colorBackgroundContentDarkMode};
+		--colorLight:#C7CED0;
+		--colorSemiDark:#{$colorSemiDarkDarkMode};
+		--colorText:#{$colorLight};
+		--scrollbarColor:var(--backgroundColorContent) var(--colorSemiDark);
+
+		color:var(--colorText);
+	}
+
+	.🌚 {
+		background-blend-mode:color-burn;
+		background-color:var(--backgroundColor);
+		background-image:url($relativePath + 'img/background-pattern-dark.png');
+	}
+}
+
+body {
+	min-height:100dvh;
+	padding-top:80px;
+	padding-bottom:60px;
+	font-family:inherit;
+	font-size:inherit;
+	font-weight:400;
+	letter-spacing:inherit;
+	line-height:var(--lineHeightMain);
+	position:relative;
+	transition:margin-bottom .3s ease-in-out;
+
+	&::before {
+		content:'';
+		background-image:url($relativePath + 'img/background-pattern-light.png');
+		background-color:var(--backgroundColor);
+		position:fixed;
+		inset:0;
+		bottom:var(--bottomOffset, 0);
+		z-index:-1;
+		transition:bottom .3s ease-in-out;
+
+		.🌚 & {
+			background-image:url($relativePath + 'img/background-pattern-dark.png');
+			background-blend-mode:color-burn;
+		}
+	}
+}
+
+h1, h2, h3, h4, h5, h6 {
+	margin-top:2rem;
+	font-family:var(--fontStackHeading);
+	font-size:var(--fontSizeHeading);
+	line-height:var(--lineHeightHeading);
+
+	&:first-child {
+		margin-top:0;
+	}
+}
+
+a {
+	color:var(--colorSuccess);
+	text-decoration:none;
+
+	main & {
+		border-bottom:1px solid;
+	}
+
+	&,
+	&::before,
+	&::after {
+		transition:color .3s ease-in-out;
+	}
+}
+
+table {
+	width:100%;
+}
+
+::-moz-selection {
+	background-color:var(--colorSuccess);
+	color:var(--colorBright);
+	text-shadow:1px 1px 0 rgba(0, 0, 0, .1);
+}
+
+::selection {
+	background-color:var(--colorSuccess);
+	color:var(--colorBright);
+	text-shadow:1px 1px 0 rgba(0, 0, 0, .1);
+}
+
+.NoTextSelect {
+	user-select:none;
+	-webkit-user-select:none;
+	-moz-user-select:none;
+	-ms-user-select:none;
+}
+
+.NoList {
+	> li {
+		margin:0;
+		list-style-type:none;
+	}
+}
+
+.FileType-Icon {
+	display:inline-block;
+	width:2rem;
+	aspect-ratio:.75;
+	border-radius:5px;
+	border:2px solid var(--colorSuccess);
+	background-color:#D5F1E5;
+	position:relative;
+
+	&::after {
+		content:attr(data-extension);
+		padding:2px 5px;
+		background-color:var(--colorSuccess);
+		color:var(--colorBright);
+		//noinspection CssNoGenericFontName
+		font-family:var(--fontStackHeading);
+		font-size:16px;
+		line-height:1;
+		position:absolute;
+		bottom:.5rem;
+		left:50%;
+	}
+}
+
+.las {
+	&.la-check {
+		color:var(--colorSuccess);
+
+		.🌚 & {
+			text-shadow:0 0 3px var(--colorSuccess);
+		}
+	}
+
+	&.la-times {
+		color:var(--colorError);
+
+		.🌚 & {
+			text-shadow:0 0 3px var(--colorError);
+		}
+	}
+}
+
+progress {
+	width:100%;
+	height:26px;
+	border:none;
+	border-radius:5px;
+	background-color:var(--colorLight);
+
+	&::-webkit-progress-bar {
+		border-radius:5px;
+		background-color:var(--colorLight);
+	}
+
+	&::-webkit-progress-value {
+		border-radius:5px;
+		background-color:var(--colorSuccess);
+		background-image:repeating-linear-gradient(-45deg, transparent, transparent 10px, rgba(0, 0, 0, .2) 10px, rgba(0, 0, 0, .2) 20px);
+		background-size:28px 100%;
+		animation:ProgressStripes 5s linear infinite;
+	}
+
+	&::-moz-progress-bar {
+		border-radius:5px;
+		background-color:var(--colorSuccess);
+		background-image:repeating-linear-gradient(-45deg, transparent, transparent 10px, rgba(0, 0, 0, .2) 10px, rgba(0, 0, 0, .2) 20px);
+		background-size:28px 100%;
+		animation:ProgressStripes 3s linear infinite;
+	}
+}
+
+@keyframes ProgressStripes {
+   100% { background-position:84px 0; }
+}

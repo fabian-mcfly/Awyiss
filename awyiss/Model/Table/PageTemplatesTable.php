@@ -33,7 +33,7 @@ class PageTemplatesTable extends Table {
 	 * @inheritDoc
 	 */
 	protected array $categories = [
-		'allowAggregation' => false,
+		//'allowAggregation' => false,
 		'associationName' => 'PageRoles',
 		'enabled' => true,
 		'identifier' => 'pageRole',
@@ -83,7 +83,7 @@ class PageTemplatesTable extends Table {
 	 */
 	public function findWithUsages(SelectQuery $ao_query): SelectQuery {
 		return $ao_query->enableAutoFields()->select([
-			'usedForPages' => $ao_query->func()->count('Pages.id'),
+			'used_for_pages' => $ao_query->func()->count('Pages.id'),
 		])->leftJoinWith('Pages', function (SelectQuery $ao_query) {
 			return $ao_query->applyOptions([
 				'attributes' => [

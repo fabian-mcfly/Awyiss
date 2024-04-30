@@ -60,20 +60,33 @@ class DesignMiddleware implements MiddlewareInterface {
 
 		// If the SCSS files need to be compiled, compile them
 		if ($lb_mustCompile) {
-			// Set the exception handling for the ScssCompiler
-			ScssCompiler::showExceptions($lb_showExepctions);
-
-			// Discover the SCSS files in the realm
-			$la_files = ScssCompiler::discoverRealmFiles($this->realm);
-
-			// Compile the SCSS files
-			ScssCompiler::compileFolders($la_files);
+			$this->compileScss($lb_showExepctions);
 		}
 
 		// Add the 'design' attribute to the request
 		$lo_request = $ao_request->withAttribute('design', $this);
 
-
 		return $ao_handler->handle($lo_request);
+	}
+
+
+	/**
+	 * The compileScss method is responsible for compiling the SCSS files in the realm.
+	 * It uses the ScssCompiler to discover the SCSS files in the realm and compile them.
+	 * The method takes a boolean parameter to determine if exceptions should be shown.
+	 *
+	 * @param bool $ab_showExepctions
+	 * @return void
+	 * @throws \ScssPhp\ScssPhp\Exception\SassException
+	 */
+	public function compileScss(bool $ab_showExepctions): void {
+		// Set the exception handling for the ScssCompiler
+		ScssCompiler::showExceptions($ab_showExepctions);
+
+		// Discover the SCSS files in the realm
+		$la_files = ScssCompiler::discoverRealmFiles($this->realm);
+
+		// Compile the SCSS files
+		ScssCompiler::compileFolders($la_files);
 	}
 }

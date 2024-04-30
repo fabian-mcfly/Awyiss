@@ -25,6 +25,7 @@
 		$lo_{{ pluralName }} = $this->paginate($lo_query);
 
 		$this->set([
-			'ao_{{ pluralName }}' => $lo_{{ pluralName }},
+			'{{ pluralName }}' => $lo_{{ pluralName }},
+			'attributes' => $this->{{ currentModelName }}->getAttributes(),
 		]);
 	}

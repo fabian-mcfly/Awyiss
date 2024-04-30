@@ -1,0 +1,51 @@
+{#
+@var entity \Awyiss\Model\Entity\Attribute
+@var attributes \Awyiss\Model\Entity\Attribute[]
+@var attributesGroupedByFieldset array
+@var attributeScopes array
+@var _view \Awyiss\View\BackendView
+@var CategproesHelper \Awyiss\View\Helper\CategoriesHelper
+#}
+
+{% extends '@Backend/element/overview/overview_paginated_list.twig' %}
+
+{% block tableOverviewHeaderTitle %}{% endblock %}
+{% block tableOverviewCellTitle %}{% endblock %}
+
+{% block tableOverviewHeaderDefaultFields %}
+	<th class="TableHeader-Slug{% if PaginatorHelper.currentSortKey() == 'slug' %} Active{% endif %}">{{ PaginatorHelper.sort('slug') }}</th>
+	<th class="TableHeader-Page{% if PaginatorHelper.currentSortKey() == 'page_title' %} Active{% endif %}">{{ PaginatorHelper.sort('page_title') }}</th>
+{% endblock %}
+
+
+{% block tableOverviewBodyRow %}
+	<tr>
+		{{ block('tableOverviewCellId') }}
+
+		{% block tableOverviewCellDefaultFields %}
+			<td class="TableCell-Slug">{{ entity.slug }}</td>
+
+			<td class="TableCell-Page">
+				{% if entity.has('page') %}
+					{{ entity.page.title }}<br>
+					{{ HtmlHelper.link(entity.page.languageShortcode ~ '/' ~ entity.page.slug, {
+						lang: entity.page.languageShortcode,
+						slug: entity.page.slug,
+						_name: 'Frontend',
+					}, {
+						target: '_blank',
+					}) }}
+				{% endif %}
+			</td>
+		{% endblock %}
+
+		{{ block('tableOverviewCellDisplayedFields') }}
+
+		{{ block('tableOverviewCellAuditInfo') }}
+
+		{{ block('tableOverviewCellActions') }}
+	</tr>
+{% endblock %}
+
+
+{% block tableOverviewFootColSpan %}{{ localConfig.overview.displayedFields|length + 5 }}{% endblock %}

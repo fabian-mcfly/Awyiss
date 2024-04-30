@@ -93,6 +93,13 @@ class Configuration extends Entity {
 			if ($lo_configOption->getType() === ConfigOptionType::ListKey) {
 				return $lo_configOption->getValues(true, $this->languageShortcode)[ $lx_value ] ?? $lx_value;
 			}
+
+			if ($lo_configOption->getType() === ConfigOptionType::ValueCollection) {
+				$la_values = $lo_configOption->getValues(true, $this->languageShortcode);
+				$la_values = array_intersect_key($la_values, array_flip($lx_value ?? []));
+
+				return implode(', ', $la_values);
+			}
 		}
 
 

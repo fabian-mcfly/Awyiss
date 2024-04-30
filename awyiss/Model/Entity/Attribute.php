@@ -23,6 +23,7 @@ use Cake\Utility\Text;
  * @property bool $hasIndex
  * @property bool $required
  * @property bool $translatable
+ * @property string $columnSpan
  * @property int $systemOrder
  * @property bool $active
  * @property bool $deleted
@@ -48,21 +49,14 @@ class Attribute extends Entity {
 		'hasIndex' => true,
 		'required' => true,
 		'translatable' => true,
+		'columnSpan' => true,
 		'systemOrder' => true,
 		'active' => true,
 	];
-	protected static array $fieldMap = [
-		'has_index' => 'hasIndex',
-		'input_type' => 'inputType',
-		'default_value' => 'defaultValue',
-		'system_order' => 'systemOrder',
-		'created_by' => 'createdBy',
-		'created_on' => 'createdOn',
-		'changed_by' => 'changedBy',
-		'changed_on' => 'changedOn',
-		'deleted_by' => 'deletedBy',
-		'deleted_on' => 'deletedOn',
-	];
+	/**
+	 * @inheritdoc
+	 */
+	protected array $_virtual = ['column', 'label'];
 
 
 	/**
@@ -74,6 +68,22 @@ class Attribute extends Entity {
 
 
 		return $this->defaultValues + ['fieldset' => $lo_table->getAvailableFieldsets()[0]];
+	}
+
+
+	/**
+	 * @return array<string, ?\Awyiss\Utility\Content\ColumnInterface>
+	 */
+	protected function _getColumn(): array {
+		if (!isset(static::$columnSpans)) {
+			/** @var \Awyiss\Model\Table\AttributesTable $lo_table */
+			$lo_table = FactoryLocator::get('Table')->get('Attributes');
+			static::$columnSpans = $lo_table->getColumnSpans();
+		}
+
+		return [
+			'span' => static::$columnSpans[ $this->columnSpan ] ?? reset(static::$columnSpans),
+		];
 	}
 
 

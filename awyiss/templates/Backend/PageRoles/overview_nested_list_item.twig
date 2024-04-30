@@ -1,0 +1,15 @@
+{#
+@var entity \Awyiss\Model\Entity
+@var childrenList string
+@var settings array
+#}
+
+{% extends '@Backend/element/overview/nested_list_item.twig' %}
+
+{% block nestedListItemDataDisplayedFieldDefaultValue %}
+	{% if field == 'include_in_linklist' %}
+		{{ entity.include_in_linklist ? '<i class="las la-check"></i>' : '<i class="las la-times"></i>' }}
+	{% else %}
+		{{ parent() }}
+	{% endif %}
+{% endblock %}

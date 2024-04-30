@@ -1,0 +1,33 @@
+{#
+@var entity \Awyiss\Model\Entity\Attribute
+@var attributes \Awyiss\Model\Entity\Attribute[]
+@var attributesGroupedByFieldset array
+@var attributeScopes array
+@var _view \Awyiss\View\BackendView
+@var CategproesHelper \Awyiss\View\Helper\CategoriesHelper
+#}
+
+{% extends '@Backend/element/overview/overview_paginated_list.twig' %}
+
+{% block tableOverviewHeaderDefaultFields %}
+	<th class="TableHeader-PageRole{% if PaginatorHelper.currentSortKey() == 'page_role_title' %} Active{% endif %}">{{ PaginatorHelper.sort('page_role_title') }}</th>
+	<th class="TableHeader-UsedForPages{% if PaginatorHelper.currentSortKey() == 'used_for_pages' %} Active{% endif %}">{{ PaginatorHelper.sort('used_for_pages') }}</th>
+{% endblock %}
+
+{% block tableOverviewCellDefaultFields %}
+	<td class="TableCell-PageRole">{{ pageRoles.simple[ entity.pageRoleId.value ] }}</td>
+	<td class="TableCell-UsedForPages">{{ entity.usedForPages }}</td>
+{% endblock %}
+
+{% block tableOverviewCellActionsDelete %}
+	{% if entity.usedForPages == 0 %}
+		{{ parent() }}
+	{% else %}
+		{% if AuthorizationHelper.isAccessible('delete') %}
+			<!--suppress HtmlUnknownAttribute -->
+			<a class="Button Button-Small Button-Delete" disabled>{{ __('delete') }}</a>
+		{% endif %}
+	{% endif %}
+{% endblock %}
+
+{% block tableOverviewFootColSpan %}{{ localConfig.overview.displayedFields|length + 6 }}{% endblock %}

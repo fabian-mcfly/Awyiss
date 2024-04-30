@@ -1,0 +1,25 @@
+{#
+@var language \Awyiss\Model\Entity\Language
+@var languages \Awyiss\Model\Entity\Language[]
+#}
+
+{% set currentLanguage = language %}
+{% set currentAction = _view.getRequest().getParam('action') %}
+
+<div class="LanguageSwitcher">
+	<button class="Button LanguageSwitcherLabel">
+		<img src="{{ UrlHelper.build('awyiss/assets/img/countries/' ~ currentLanguage.shortcode ~'.svg') }}" alt="{{ __d('users', 'loginLogo') }}">
+		{{ currentLanguage.title }}
+	</button>
+
+	<ul class="Languages">
+		{% for language in languages %}
+			<li class="Language{% if language.shortcode == currentLanguage.shortcode %} Active{% endif %}">
+				{% set icon %}
+					<img src="{{ UrlHelper.build('awyiss/assets/img/countries/' ~ language.shortcode ~'.svg') }}" alt="{{ __d('users', 'loginLogo') }}">
+				{% endset %}
+				{{ HtmlHelper.link(icon ~ language.title, {lang: language.shortcode, action: currentAction == 'edit' ? 'overview' : null}, {escape: false}) }}
+			</li>
+		{% endfor %}
+	</ul>
+</div>

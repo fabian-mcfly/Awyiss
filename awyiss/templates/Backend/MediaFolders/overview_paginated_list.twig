@@ -1,0 +1,26 @@
+{#
+@var mediaFolders \Cake\Collection\Collection
+@var mediaFolders array
+@var paginated bool
+@var _view \Awyiss\View\BackendView
+#}
+
+{% extends '@Backend/element/overview/overview_paginated_list.twig' %}
+
+{% block tableOverviewCellActions %}
+	<td class="TableCell-Actions">
+		<div class="Actions">
+			{% block tableOverviewCellActionsViewFiles %}
+				{% do AuthorizationHelper.setScope('media') %}
+				{% if AuthorizationHelper.isAccessible('read') %}
+					{{ HtmlHelper.link(__('view_files'), {controller: 'media', action: 'overview', mediaFolderId: entity.id}, {class: 'Button Button-Small Button-View Button-ViewFiles'}) }}
+				{% endif %}
+				{% do AuthorizationHelper.resetScope() %}
+			{% endblock %}
+
+			{{ block('tableOverviewCellActionsUpdate') }}
+
+			{{ block('tableOverviewCellActionsDelete') }}
+		</div>
+	</td>
+{% endblock %}

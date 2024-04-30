@@ -7,7 +7,7 @@ namespace Awyiss\Configuration\ConfigOptions;
 use Awyiss\Awyiss;
 use Awyiss\Configuration\AbstractConfigOptions;
 use Awyiss\Configuration\ConfigOption;
-use Awyiss\Configuration\ConfigOptions\Trait\SystemOrderFieldsTrait;
+use Awyiss\Configuration\ConfigOptions\Trait\TableFieldsTrait;
 use Awyiss\Configuration\ConfigOptionType;
 
 
@@ -15,7 +15,7 @@ use Awyiss\Configuration\ConfigOptionType;
  * Provides all configuration options for the Pages scope
  */
 class PagesConfigOptions extends AbstractConfigOptions {
-	use SystemOrderFieldsTrait;
+	use TableFieldsTrait;
 
 
 	/**
@@ -36,6 +36,25 @@ class PagesConfigOptions extends AbstractConfigOptions {
 					localizable: false,
 					nullable: false,
 					type: ConfigOptionType::Bool,
+				),
+			],
+			'overview' => [
+				new ConfigOption(
+					defaultValue: [
+						'slug',
+						'pageTemplateId',
+					],
+					identifier: 'displayedFields',
+					localizable: false,
+					personalizable: true,
+					type: ConfigOptionType::ValueCollection,
+					values: function () {
+						$la_fields = $this->getTableFields();
+
+						unset($la_fields['id'], $la_fields['title']);
+
+						return $la_fields;
+					},
 				),
 			],
 			'paginate' => [
@@ -61,6 +80,7 @@ class PagesConfigOptions extends AbstractConfigOptions {
 					defaultValue: true,
 					identifier: 'enabled',
 					localizable: false,
+					nullable: false,
 					type: ConfigOptionType::Bool,
 				),
 			],

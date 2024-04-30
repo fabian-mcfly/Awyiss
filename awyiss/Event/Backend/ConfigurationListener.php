@@ -216,7 +216,7 @@ class ConfigurationListener implements EventListenerInterface {
 		if (
 			$ao_entity->identifier === 'system_order.field' &&
 			$ao_entity->isDirty('value') &&
-			$ao_entity->value !== 'systemOrder'
+			Inflector::variable($ao_entity->value) !== 'systemOrder'
 		) {
 			$li_direction = Configure::read(implode('.', [
 				'Awyiss',

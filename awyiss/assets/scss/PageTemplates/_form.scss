@@ -1,0 +1,72 @@
+.PageTemplatesController {
+	.ContentAreas {
+		li {
+			position:relative;
+			cursor:move;
+
+			&.SortableGhost {
+				&::before {
+					content:'';
+					background-color:rgba($colorSuccess, .25);
+					position:absolute;
+					inset:-10px -10px -5px -10px;
+					outline:2px solid var(--colorSuccess);
+					outline-offset:-2px;
+				}
+			}
+		}
+
+	}
+
+	.FormInputName-ContentAreasNew {
+		.FormInputType-ListItem {
+			display:grid;
+			padding-right:57px;
+			transform:translateZ(0);
+			gap:0 5px;
+			grid-template-columns:repeat(2, 1fr);
+
+			&:nth-child(1) {
+				.SortableHandle {
+					transform:translateY(1rem);
+				}
+
+				.Button-Remove {
+					transform:translateY(1.05rem);
+				}
+			}
+
+			&:nth-child(n+2) {
+				.Label {
+					display:none;
+				}
+			}
+		}
+
+		.FormInput {
+			width:100%;
+			min-width:0;
+			margin-bottom:0;
+			grid-column-end:auto;
+		}
+
+		.Label {
+			white-space:nowrap;
+			overflow:hidden;
+			text-overflow:ellipsis;
+		}
+
+		.Button-Remove {
+			width:52px;
+			height:52px;
+			top:0;
+			right:0;
+
+			&.Disabled {
+				opacity:.25;
+				visibility:visible;
+				pointer-events:none;
+			}
+		}
+	}
+}

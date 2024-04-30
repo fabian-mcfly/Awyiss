@@ -8,6 +8,7 @@ use Awyiss\View\StringTemplate;
 use Cake\Collection\CollectionInterface;
 use Cake\Collection\Iterator\TreeIterator;
 use Cake\Datasource\EntityInterface;
+use Cake\Datasource\Paging\PaginatedResultSet;
 use Cake\Utility\Inflector;
 use Cake\View\Helper;
 use Cake\View\Helper\IdGeneratorTrait;
@@ -36,10 +37,10 @@ class CategoriesHelper extends Helper {
 	protected array $_defaultConfig = [
 		'templateClass' => StringTemplate::class,
 		'templates' => [
-			'linkSelect' => '<div{{attrs}}><label class="Label">{{label}}: {{selectedOption}}</label><ul class="List">{{options}}</ul></div>',
-			'option' => '<li{{attrs}}><a href="{{link}}">{{levelPrefix}}{{title}}</a></li>',
+			'linkSelect' => '<div{{attrs}}><label class="Label" tabindex="0"><strong>{{label}}:</strong> {{selectedOption}}</label><ul class="List">{{options}}</ul></div>',
+			'option' => '<li{{attrs}}><a href="{{link}}" title="{{title}}">{{levelPrefix}}{{title}}</a></li>',
 			'optionDisabled' => '<li{{attrs}}>{{levelPrefix}}{{title}}</li>',
-			'groupLabel' => '<li{{attrs}}><strong>{{title}}</strong></li>',
+			'groupLabel' => '<li{{attrs}} title="{{title}}"><strong>{{title}}</strong></li>',
 			'selectedOption' => '{{title}}',
 		],
 	];
@@ -216,7 +217,7 @@ class CategoriesHelper extends Helper {
 
 
 					return $ax_element[ $ls_groupBy ] ?? '';
-				})->toArray();
+				});
 
 				$la_attributes['options'] = [];
 				foreach ($lx_options as $lx_key => $la_options) {
@@ -285,7 +286,7 @@ class CategoriesHelper extends Helper {
 		];
 
 		if (isset($la_attributes['id']) && $la_attributes['id'] === true) {
-			$la_attributes['id'] = 'CustomSelect-' . Inflector::camelize($this->_domId($ls_identifier), '-');
+			$la_attributes['id'] = 'LinkSelect-' . Inflector::camelize($this->_domId($ls_identifier), '-');
 		}
 
 		$la_attributes['options'] = $ax_options;
@@ -319,7 +320,7 @@ class CategoriesHelper extends Helper {
 		];
 
 		if (isset($la_attributes['id']) && $la_attributes['id'] === true) {
-			$la_attributes['id'] = 'CustomSelect-' . Inflector::camelize($this->_domId($as_identifier), '-');
+			$la_attributes['id'] = 'LinkSelect-' . Inflector::camelize($this->_domId($as_identifier), '-');
 		}
 
 		$la_attributes['options'] = $ax_options;
@@ -336,7 +337,12 @@ class CategoriesHelper extends Helper {
 	 */
 	public function getConfiguration(string $as_identifier): array {
 		$ls_name = Inflector::variable(Inflector::pluralize($as_identifier));
-		$la_categories = $this->getView()->get('aa_' . $ls_name);
+		$la_categories = $this->getView()->get($ls_name);
+
+		if ($la_categories instanceof PaginatedResultSet) {
+			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+			$la_categories = $la_categories->items()->toArray();
+		}
 
 		return $la_categories['config'] ?? [];
 	}
@@ -351,7 +357,7 @@ class CategoriesHelper extends Helper {
 	 */
 	public function getCategories(string $as_identifier, bool $ab_preferRaw = false): ?iterable {
 		$ls_name = Inflector::variable(Inflector::pluralize($as_identifier));
-		$la_categories = $this->getView()->get('aa_' . $ls_name);
+		$la_categories = $this->getView()->get($ls_name);
 
 		if ($ab_preferRaw) {
 			$lx_return = $la_categories['raw'];
@@ -374,7 +380,7 @@ class CategoriesHelper extends Helper {
 	 */
 	public function getSelectedCategory(string $as_identifier): mixed {
 		$ls_name = Inflector::variable(Inflector::pluralize($as_identifier));
-		$la_categories = $this->getView()->get('aa_' . $ls_name);
+		$la_categories = $this->getView()->get($ls_name);
 
 		return $la_categories['selected'] ?? null;
 	}
@@ -438,7 +444,7 @@ class CategoriesHelper extends Helper {
 						'levelPrefix' => null,
 						'isGroupLabel' => true,
 					];
-					$la_attributes['options'] += $this->formatOptions($lx_options, $la_attributes, true);
+					$la_attributes['options'] += $this->formatOptions($lx_options, $la_attributes + ['isGrouped' => true], true);
 				}
 			}
 			else {
@@ -504,13 +510,22 @@ class CategoriesHelper extends Helper {
 			}
 		}
 		elseif ($ax_options instanceof CollectionInterface) {
-			$la_options = $ax_options->combine(
-				...($aa_attributes['combinator'] ?? [
-					'id',
-					'label',
-					null,
-				])
-			)->toArray();
+			$la_combinator = array_values($aa_attributes['combinator'] ?? [
+				'id',
+				'label',
+				null,
+			]);
+
+			$la_options = [];
+			foreach ($ax_options as $lx_option) {
+				$ls_title = $lx_option->{$la_combinator[1]};
+
+				if ($lx_option->level ?? null) {
+					$ls_title = str_repeat($aa_attributes['levelPrefix'] ?? '- ', $lx_option->level) . $ls_title;
+				}
+
+				$la_options[ $lx_option->{$la_combinator[0]} ] = $ls_title;
+			}
 		}
 		elseif (is_array($ax_options)) {
 			$la_options = $ax_options;

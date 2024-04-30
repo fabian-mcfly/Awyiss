@@ -1,14 +1,38 @@
+{% set controller = _view.getRequest().getParam('controller') -%}
 <!DOCTYPE html>
-<html lang="en">
+<html
+	lang="{{ language.shortcode }}"
+	class="
+		{{- controller }}Controller {{ _view.getRequest().getParam('action')|camelize }}Action
+		{%- if isGenericPage %}	IsGenericPage{%- endif -%}
+		{%- if isGenericDatatable %} IsGenericDatatable{%- endif -%}
+		{%- if config.Awyiss.System.Backend.interface.darkMode == true %} 🌚{% endif -%}
+		{%- if config.Awyiss.System.Backend.interface.scale != 'regular' %} Scale-{{ config.Awyiss.System.Backend.interface.scale|camelize }}{% endif -%}
+	">
 	<head>
 		{% block head %}
 			{{ HtmlHelper.charset() }}
 			<meta name="viewport" content="width=device-width, initial-scale=1">
 			<title>{{ fetch('title') }}</title>
 
-		{{ helper_Html_meta('icon') }}
+			{% block favicons %}
+				<link rel="apple-touch-icon" sizes="180x180" href="/awyiss/assets/favicons/apple-touch-icon.png">
+				<link rel="icon" type="image/png" sizes="32x32" href="/awyiss/assets/favicons/favicon-32x32.png">
+				<link rel="icon" type="image/png" sizes="16x16" href="/awyiss/assets/favicons/favicon-16x16.png">
+				<link rel="manifest" href="/awyiss/assets/favicons/site.webmanifest">
+				<link rel="mask-icon" href="/awyiss/assets/favicons/safari-pinned-tab.svg" color="#63d1a5">
+				<link rel="shortcut icon" href="/awyiss/assets/favicons/favicon.ico">
+				<meta name="msapplication-TileColor" content="#ffffff">
+				<meta name="msapplication-config" content="/awyiss/assets/favicons/browserconfig.xml">
+				<meta name="theme-color" content="#ffffff">
+			{% endblock %}
+
+			{% block paginatorLinks %}
+				{{ PaginatorHelper.meta({first: true, last: true}) }}
+			{% endblock %}
 
 			{% block headStylesheets %}
+				{% do AssetHelper.add('line-awesome/line-awesome.css', [], false, true) %}
 				{% do AssetHelper.add('main.css', [], true) %}
 			{% endblock %}
 
@@ -40,6 +64,13 @@
 						{{ cell('Backend/Menu') }}
 					{% endblock %}
 
+					{% block languageSwitcher %}
+						{% set languages = LocaleHelper.languagesForRealm('Frontend', true) %}
+						{% if languages|length > 1 %}
+							{{ element('language_switcher', {languages: languages}) }}
+						{% endif %}
+					{% endblock %}
+
 					{% block logout %}
 						<a href="{{ UrlHelper.build({controller: 'users', action: 'logout'}) }}" class="Logout">{{ __d('users', 'logout') }}</a>
 					{% endblock %}
@@ -61,6 +92,42 @@
 					{{ fetch('content') }}
 				</main>
 			{% endblock %}
+
+			{% block footer %}
+				<footer id="Footer">
+					<ul id="DarkModeSwitch">
+						{% block darkModeSwitch %}
+							<li class="DarkModeSwitch-Item DarkModeSwitch-Item-Off{% if config.Awyiss.System.Backend.interface.darkMode == false %} Active{% endif %}">
+								<a href="{{ UrlHelper.build({controller: 'dashboard', action: 'userConfiguration', identifier: 'interface.darkMode', value: 'false'}) }}"
+									class="DarkModeSwitch-Link DarkModeSwitch-Link-Off">
+									{{ __d('system', 'dark_mode_switch_off') }}
+								</a>
+							</li>
+							<li class="DarkModeSwitch-Item DarkModeSwitch-Item-On{% if config.Awyiss.System.Backend.interface.darkMode == true %} Active{%  endif %}">
+								<a href="{{ UrlHelper.build({controller: 'dashboard', action: 'userConfiguration', identifier: 'interface.darkMode', value: 'true'}) }}"
+									class="DarkModeSwitch-Link DarkModeSwitch-Link-On">
+									{{ __d('system', 'dark_mode_switch_on') }}
+								</a>
+							</li>
+						{% endblock %}
+					</ul>
+				</footer>
+			{% endblock %}
+
+			{% block hiddenFooter %}
+				<footer id="HiddenFooter">
+					{% block footerContent %}
+						{% block logo2fMedia %}
+							<div class="Logo">
+								<img src="{{ UrlHelper.build('awyiss/assets/img/logo-2f-media.png') }}" srcset="{{ UrlHelper.build('awyiss/assets/img/logo-2f-media@2x.png') }} 2x"
+									alt="2f Media">
+							</div>
+						{% endblock %}
+					{% endblock %}
+				</footer>
+			{% endblock %}
 		{% endblock %}
+
+		{{ element('form_leave_confirmation_dialog') }}
 	</body>
 </html>

@@ -1,0 +1,26 @@
+{#
+@var records Awyiss\Model\Entity\Datatable[]
+@var _view \Awyiss\View\BackendView
+#}
+
+{% extends '@Backend/element/overview/overview_paginated_list.twig' %}
+
+{% block tableOverviewCellActions %}
+	<td class="TableCell-Actions">
+		<div class="Actions">
+			{% do AuthorizationHelper.setScope(entity.identifier) %}
+			{% if AuthorizationHelper.isAccessible('read') %}
+				{{ HtmlHelper.link(__('view_data'), {controller: entity.identifier, action: 'overview'}, {
+					class: 'Button Button-Small Button-View Button-ViewData',
+					disabled: entity.active == false,
+				}) }}
+			{% endif %}
+			{% do AuthorizationHelper.resetScope() %}
+
+			{{ block('tableOverviewCellActionsUpdate') }}
+
+			{{ block('tableOverviewCellActionsDelete') }}
+		</div>
+	</td>
+{% endblock %}
+

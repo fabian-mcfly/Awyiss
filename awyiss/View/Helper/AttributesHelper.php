@@ -136,9 +136,8 @@ class AttributesHelper extends Helper {
 	 * @throws \Exception
 	 */
 	public function control(string $as_fieldName, array $aa_options = []): string {
-		/** @var \Cake\View\Form\EntityContext $lo_context */
-		$lo_context = $this->Form->context();
-		$ls_source = $aa_options['source'] ?? $lo_context->entity()->getSource();
+		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+		$ls_source = $aa_options['source'] ?? $this->Form->context()->entity()->getSource();
 
 		if (!isset(static::$attributes)) {
 			$this->buildAttributes($ls_source);
@@ -169,6 +168,9 @@ class AttributesHelper extends Helper {
 			static::$attributeOptions[ $ls_source ]
 		);
 
+		$la_options['templateVars']['identifier'] = 'Attributes' . Inflector::camelize($as_fieldName);
+
+
 		return $ls_emptyField . $this->Form->control($ls_fieldName, $la_options);
 	}
 
@@ -186,46 +188,15 @@ class AttributesHelper extends Helper {
 			return [];
 		}
 
-		$la_options = $aa_options;
-		$lo_language = $la_options['language'] ?? LocaleMiddleware::getLanguage(null);
+		$la_options = $this->buildOptions($aa_options, $aa_attributeFields, $as_fieldName);
 
-		if (!isset($la_options['type'])) {
-			$la_options['type'] = $aa_attributeFields[ $as_fieldName ]->inputType;
-		}
-
-		switch ($aa_attributeFields[ $as_fieldName ]->inputType) {
-			case 'select':
-				$la_options['empty'] ??= true;
-				break;
-			case 'select_multiple':
-				$la_options['type'] = 'select';
-				$la_options['multiple'] = true;
-				break;
-			case 'texteditor':
-				$la_options['type'] = 'textarea';
-				$la_options['data-editor'] = true;
-				break;
-			case 'password':
-				$la_options['placeholder'] = '******';
-				$la_options['val'] = '';
-				break;
-			/*case 'time':
-			case 'datetime':
-				break;*/
-		}
-
-		if (!isset($la_options['label']) && isset($aa_attributeFields[ $as_fieldName ])) {
-			$la_options['label'] = $aa_attributeFields[ $as_fieldName ]->label;
-		}
-
-		if (!isset($la_options['timezone']) && in_array($la_options['type'], ['datetime'])) {
-			$la_options['timezone'] = $lo_language->timezone;
-		}
-
-		if (!isset($la_options['required']) || $la_options['required'] !== false) {
-			if ($aa_attributeFields[ $as_fieldName ]->required) {
-				$la_options['required'] = true;
-			}
+		/**
+		 * @var \Awyiss\Model\Entity $lo_entity
+		 * @noinspection PhpPossiblePolymorphicInvocationInspection
+		 */
+		$lo_entity = $this->Form->context()->entity();
+		if (!isset($la_options['error']) && $lo_entity->hasErrors() && ($lo_entity->getError('attributes')[ $as_fieldName ] ?? false)) {
+			$la_options['error'] = $lo_entity->getError('attributes')[ $as_fieldName ];
 		}
 
 		$this->prepareValue($as_fieldName, $la_options);
@@ -262,11 +233,11 @@ class AttributesHelper extends Helper {
 		static $ls_categoryFieldName;
 
 		if (!isset($ls_categoryFieldName)) {
-			$ls_categoryIdentifier = $this->getView()->get('as_categoriesIdentifier');
+			$ls_categoryIdentifier = $this->getView()->get('categoriesIdentifier');
 
 			$ls_categoryFieldName = null;
 			if ($ls_categoryIdentifier) {
-				$la_categoryOptions = $this->getView()->get('aa_' . Inflector::variable(Inflector::pluralize($ls_categoryIdentifier)))['config'] ?? [];
+				$la_categoryOptions = $this->getView()->get(Inflector::variable(Inflector::pluralize($ls_categoryIdentifier)))['config'] ?? [];
 				$ls_categoryFieldName = Inflector::underscore($la_categoryOptions['fieldname']);
 			}
 		}
@@ -315,7 +286,7 @@ class AttributesHelper extends Helper {
 	 */
 	protected function harmonizeValue(mixed &$ax_value, string $as_type): void {
 		if (is_array($ax_value)) {
-			if ($as_type != 'multiinput') {
+			if (!in_array($as_type, ['multicheckbox', 'select_multiple', 'custom_select_multiple'])) {
 				$ax_value = json_encode($ax_value);
 			}
 		}
@@ -426,5 +397,65 @@ class AttributesHelper extends Helper {
 
 
 		return $ls_field;
+	}
+
+
+	/**
+	 * @param array $aa_options
+	 * @param array $aa_attributeFields
+	 * @param string $as_fieldName
+	 * @return array
+	 * @throws \Exception
+	 */
+	protected function buildOptions(array $aa_options, array $aa_attributeFields, string $as_fieldName): array {
+		$la_options = $aa_options;
+		$lo_language = $la_options['language'] ?? LocaleMiddleware::getLanguage(null);
+
+		if (!isset($la_options['type'])) {
+			$la_options['type'] = $aa_attributeFields[ $as_fieldName ]->inputType;
+		}
+
+		switch ($aa_attributeFields[ $as_fieldName ]->inputType) {
+			case 'select':
+				$la_options['empty'] ??= true;
+				break;
+			case 'select_multiple':
+				$la_options['type'] = 'select';
+				$la_options['multiple'] = true;
+				break;
+			case 'texteditor':
+				$la_options['type'] = 'textarea';
+				$la_options['data-editor'] = true;
+				break;
+			case 'password':
+				$la_options['placeholder'] = '******';
+				$la_options['val'] = '';
+				break;
+			/*case 'time':
+			case 'datetime':
+				break;*/
+		}
+
+		if (!isset($la_options['label']) && isset($aa_attributeFields[ $as_fieldName ])) {
+			$la_options['label'] = $aa_attributeFields[ $as_fieldName ]->label;
+		}
+
+		if (!isset($la_options['timezone']) && in_array($la_options['type'], ['datetime'])) {
+			$la_options['timezone'] = $lo_language->timezone;
+		}
+
+		if (!isset($la_options['required']) || $la_options['required'] !== false) {
+			if ($aa_attributeFields[ $as_fieldName ]->required) {
+				$la_options['required'] = true;
+			}
+		}
+
+		/** @var \Awyiss\Utility\Content\AbstractColumn $lo_columnSpan */
+		$lo_columnSpan = $aa_attributeFields[ $as_fieldName ]->column['span'];
+		if ($lo_columnSpan->getNumerator() !== 12) {
+			$la_options['columnSpan'] = $lo_columnSpan->getNumerator();
+		}
+
+		return $la_options;
 	}
 }

@@ -1,36 +1,36 @@
 {#
-@var ao_content \Awyiss\Model\Entity\Content
-@var ao_contentTemplates \Cake\Collection\CollectionInterface
-@var ao_possibleParentContents \Cake\Collection\CollectionInterface
-@var ao_page \Awyiss\Model\Entity\Page
-@var aa_assignedAttributes array
-@var aa_contentAreas array
-@var aa_contentElementsByFieldset ContentTemplateElement[]
-@var as_forScope string
-@var as_languageRealm string
-@var as_languageShortcode string
+@var content \Awyiss\Model\Entity\Content
+@var contentTemplates \Cake\Collection\CollectionInterface
+@var possibleParentContents \Cake\Collection\CollectionInterface
+@var page \Awyiss\Model\Entity\Page
+@var assignedAttributes array
+@var contentAreas array
+@var contentElementsByFieldset ContentTemplateElement[]
+@var forScope string
+@var languageRealm string
+@var languageShortcode string
 @var _view \Awyiss\View\BackendView
 #}
 
 {% use '@Backend/Contents/blocks.twig' %}
 
 {% set macroSettings = {
-	columnWidths: aa_columnWidths,
-	columnIndents: aa_columnIndents,
-	content: ao_content,
-	contentAreas: aa_contentAreas,
-	contentTemplates: ao_contentTemplates,
-	languageRealm: as_languageRealm,
-	languageShortcode: as_languageShortcode,
-	possibleParentContents: ao_possibleParentContents,
+	columnWidths: columnWidths,
+	columnIndents: columnIndents,
+	content: content,
+	contentAreas: contentAreas,
+	contentTemplates: contentTemplates,
+	languageRealm: languageRealm,
+	languageShortcode: languageShortcode,
+	possibleParentContents: possibleParentContents,
 } %}
 
-{% macro renderFormControls(aa_assignedContentTemplateElements = [], settings) %}
-	{% for lo_contentTemplateElement in aa_assignedContentTemplateElements %}
-		{% if lo_contentTemplateElement.identifier[:11] == 'attributes.' %}
-			{{ AttributesHelper.control(lo_contentTemplateElement.identifier[11:], {required: lo_contentTemplateElement.required}) }}
+{% macro renderFormControls(assignedContentTemplateElements = [], settings) %}
+	{% for contentTemplateElement in assignedContentTemplateElements %}
+		{% if contentTemplateElement.identifier[:11] == 'attributes.' %}
+			{{ AttributesHelper.control(contentTemplateElement.identifier[11:], {required: contentTemplateElement.required}) }}
 		{% else %}
-			{{ block('formControl' ~ lo_contentTemplateElement.identifier|camelize) }}
+			{{ block('formControl' ~ contentTemplateElement.identifier|camelize) }}
 		{% endif %}
 	{% endfor %}
 {% endmacro %}
@@ -41,7 +41,7 @@
 			<legend>{{ __('fieldset_presentation') }}</legend>
 
 			{% block fieldsetPresentationInner %}
-				{{ _self.renderFormControls(aa_contentElementsByFieldset.presentation ?? [], macroSettings) }}
+				{{ _self.renderFormControls(contentElementsByFieldset.presentation ?? [], macroSettings) }}
 			{% endblock %}
 		</fieldset>
 	{% endblock %}
@@ -51,7 +51,7 @@
 			<legend>{{ __('fieldset_conditions') }}</legend>
 
 			{% block fieldsetConditionsInner %}
-				{{ _self.renderFormControls(aa_contentElementsByFieldset.conditions ?? [], macroSettings) }}
+				{{ _self.renderFormControls(contentElementsByFieldset.conditions ?? [], macroSettings) }}
 			{% endblock %}
 		</fieldset>
 	{% endblock %}
@@ -61,7 +61,7 @@
 			<legend>{{ __('fieldset_general') }}</legend>
 
 			{% block fieldsetGeneralInner %}
-				{{ _self.renderFormControls(aa_contentElementsByFieldset.general ?? [], macroSettings) }}
+				{{ _self.renderFormControls(contentElementsByFieldset.general ?? [], macroSettings) }}
 			{% endblock %}
 		</fieldset>
 	{% endblock %}
@@ -71,7 +71,7 @@
 			<legend>{{ __('fieldset_content') }}</legend>
 
 			{% block fieldsetContentInner %}
-				{{ _self.renderFormControls(aa_contentElementsByFieldset.content ?? [], macroSettings) }}
+				{{ _self.renderFormControls(contentElementsByFieldset.content ?? [], macroSettings) }}
 			{% endblock %}
 		</fieldset>
 	{% endblock %}
@@ -81,7 +81,7 @@
 			<legend>{{ __('fieldset_media') }}</legend>
 
 			{% block fieldsetMediaInner %}
-				{{ _self.renderFormControls(aa_contentElementsByFieldset.media ?? [], macroSettings) }}
+				{{ _self.renderFormControls(contentElementsByFieldset.media ?? [], macroSettings) }}
 			{% endblock %}
 		</fieldset>
 	{% endblock %}
@@ -91,7 +91,7 @@
 			<legend>{{ __('fieldset_attributes') }}</legend>
 
 			{% block fieldsetAttributesInner %}
-				{{ _self.renderFormControls(aa_contentElementsByFieldset.attributes ?? [], macroSettings) }}
+				{{ _self.renderFormControls(contentElementsByFieldset.attributes ?? [], macroSettings) }}
 			{% endblock %}
 		</fieldset>
 	{% endblock %}
@@ -102,18 +102,26 @@
 
 			{% block fieldsetDataInner %}
 				{% block formControlData %}
-					{% set li_counter = 0 %}
-					{% for ls_key, lx_value in ao_content.data %}
-						{{ FormHelper.control('data.' ~ li_counter ~ '.key', {val: ls_key}) }}
-						{{ FormHelper.control('data.' ~ li_counter ~ '.value', {val: lx_value}) }}
-						{% set li_counter = li_counter + 1 %}
-					{% endfor %}
+					<div class="FormInput FormInputType-List FormInputName-Data">
+						<label class="Label">{{ __('data') }}</label>
 
-					{{ FormHelper.control('data.' ~ li_counter ~ '.key') }}
-					{{ FormHelper.control('data.' ~ li_counter ~ '.value') }}
+						{% set counter = 0 %}
+						{% for key, value in content.data %}
+							<div class="FormInputType-ListItem">
+								{{ FormHelper.input('data.' ~ counter ~ '.key', {val: key}) }}
+								{{ FormHelper.input('data.' ~ counter ~ '.value', {val: value}) }}
+								{% set counter = counter + 1 %}
+							</div>
+						{% endfor %}
+
+						<div class="FormInputType-ListItem FormInputType-ListItem-Default">
+							{{ FormHelper.input('data.' ~ counter ~ '.key') }}
+							{{ FormHelper.input('data.' ~ counter ~ '.value') }}
+						</div>
+					</div>
 				{% endblock %}
 
-				{{ _self.renderFormControls(aa_contentElementsByFieldset.data ?? [], macroSettings) }}
+				{{ _self.renderFormControls(contentElementsByFieldset.data ?? [], macroSettings) }}
 			{% endblock %}
 		</fieldset>
 	{% endblock %}
@@ -121,8 +129,8 @@
 	{% block elementPublicationData %}
 		{{ element('publication_data/fieldset') }}
 	{% endblock %}
-</div>
 
-{% block formInputReloadForm %}
-	{{ FormHelper.hidden('reload_form', {val: 0}) }}
-{% endblock %}
+	{% block formInputReloadForm %}
+		{{ FormHelper.hidden('reload_form', {val: 0}) }}
+	{% endblock %}
+</div>

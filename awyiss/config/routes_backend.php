@@ -10,52 +10,9 @@ use Awyiss\Middleware\DesignMiddleware;
 use Awyiss\Middleware\EventListenersMiddleware;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Routing\Route\AwyissRoute;
+use Cake\Core\Configure;
+use Cake\Http\Middleware\CspMiddleware;
 use Cake\Routing\RouteBuilder;
-
-
-/**
- * @param \Cake\Routing\RouteBuilder $ao_routeBuilder
- * @return void
- */
-function addUserConfigurationRoutes(RouteBuilder $ao_routeBuilder): void {
-	$ao_routeBuilder->connect(
-		'/{lang}/user/configuration/{action}/id:{id}/*',
-		['controller' => 'configuration', 'prefix' => 'Backend/User'],
-	)
-	->setPatterns([
-		'lang' => '[a-zA-Z]{2}',
-		'action' => '(edit|delete)',
-		'id' => '[0-9]+',
-	])
-	->setPass(['id'])
-	->setPersist(['lang', 'controller']);
-
-	$ao_routeBuilder->connect(
-		'/{lang}/user/configuration/{action}/*',
-		[
-			'controller' => 'configuration',
-			'action' => 'overview',
-			'prefix' => 'Backend/User',
-		],
-		[
-			'_name' => Awyiss::REALM_BACKEND . '::user_configuration',
-		],
-	)
-	->setPatterns([
-		'lang' => '[a-zA-Z]{2}',
-		'action' => '[a-zA-Z0-9-_]+',
-	])
-	->setPersist(['lang', 'controller', 'action']);
-
-	$ao_routeBuilder->connect(
-		'/{lang}/user/configuration/*',
-		['controller' => 'configuration', 'action' => 'overview', 'prefix' => 'Backend/User'],
-	)
-	->setPatterns([
-		'lang' => '[a-zA-Z]{2}',
-	])
-	->setPersist(['lang', 'controller']);
-}
 
 
 /** @var RouteBuilder $ao_routes */
@@ -64,14 +21,39 @@ $ao_routes->prefix('Backend', function (RouteBuilder $ao_routeBuilder): void {
 
 	Awyiss::setRealm(Awyiss::REALM_BACKEND);
 
-	$ao_routeBuilder->registerMiddleware('design', new DesignMiddleware(Awyiss::REALM_BACKEND));
-	$ao_routeBuilder->applyMiddleware('design');
+	$ao_routeBuilder->registerMiddleware('csp', new CspMiddleware(
+		[
+			'script-src' => [
+				'allow' => Configure::read('Csp.scriptSrc.allow'),
+				'self' => true,
+				'unsafe-inline' => false,
+				'unsafe-eval' => false,
+			],
+			'style-src' => [
+				'allow' => Configure::read('Csp.styleSrc.allow'),
+				'self' => true,
+				'unsafe-inline' => false,
+				'unsafe-eval' => false,
+			],
+		],
+		[
+			'scriptNonce' => true,
+			'styleNonce' => true,
+		]
+	));
+	$ao_routeBuilder->applyMiddleware('csp');
 
 	$ao_routeBuilder->registerMiddleware('eventListeners', new EventListenersMiddleware(Awyiss::getRealm()));
 	$ao_routeBuilder->applyMiddleware('eventListeners');
 
 	$ao_routeBuilder->registerMiddleware('requestLocale', new LocaleMiddleware(Awyiss::getRealm()));
 	$ao_routeBuilder->applyMiddleware('requestLocale');
+
+	// Load the configuration as soon as possible
+	Awyiss::loadConfiguration(
+		LocaleMiddleware::getLanguage()->shortcode,
+		LocaleMiddleware::getLanguage(Awyiss::REALM_BACKEND)->shortcode,
+	);
 
 	$lo_authentication = new Authentication(Awyiss::REALM_BACKEND);
 	$ao_routeBuilder->registerMiddleware('authentication', new AuthenticationMiddleware($lo_authentication));
@@ -81,7 +63,8 @@ $ao_routes->prefix('Backend', function (RouteBuilder $ao_routeBuilder): void {
 	$ao_routeBuilder->registerMiddleware('authorization', new AuthorizationMiddleware($lo_authorization));
 	$ao_routeBuilder->applyMiddleware('authorization');
 
-	addUserConfigurationRoutes($ao_routeBuilder);
+	$ao_routeBuilder->registerMiddleware('design', new DesignMiddleware(Awyiss::REALM_BACKEND));
+	$ao_routeBuilder->applyMiddleware('design');
 
 	$ao_routeBuilder->connect('/{lang}/{controller}/{action}/id:{id}/*')->setPatterns([
 		'lang' => '[a-zA-Z]{2}',

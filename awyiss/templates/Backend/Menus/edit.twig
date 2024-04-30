@@ -1,32 +1,48 @@
 {#
-@var ao_menu Awyiss\Model\Entity\Menu
+@var menu Awyiss\Model\Entity\Menu
 @var _view \Awyiss\View\BackendView
 #}
 
-{{ dump(ao_menu) }}
-
 <div class="Menus Form Edit">
-	{{ FormHelper.create(ao_menu, {method: 'post', idPrefix: 'menu'}) }}
-
-	{{ FormHelper.checkbox('save_as_copy', {id: 'SaveAsCopy', value: true}) }}
+	{% if AuthorizationHelper.isAccessible('read') %}
+		{{ HtmlHelper.link(__('overview'), {action: 'overview'}, {class: 'BackToOverview'}) }}
+	{% endif %}
 
 	{% block headlineEdit %}
 		<h1>{{ __('headline_edit') }}</h1>
 	{% endblock %}
 
-	{% block formEditButtons %}
-		<label for="SaveAsCopy">{{ __('as_copy') }}</label>
-		{{ FormHelper.button(__('save')) }}
-		{{ FormHelper.button(__('save_close'), {name: 'submit', value: 'submit_close'}) }}
+	{{ FormHelper.create(menu, {method: 'post', idPrefix: 'menu'}) }}
+
+	{{ FormHelper.checkbox('save_as_copy', {id: 'SaveAsCopy', value: true}) }}
+
+	{% block buttonArea %}
+		<div class="ButtonArea">
+			{% block formEditButtons %}
+				{% do AuthorizationHelper.setScope('menu_entries') %}
+				{% if AuthorizationHelper.isAccessible('read') %}
+					{{ HtmlHelper.link(__('view_entries'), {controller: 'menuEntries', action: 'overview', menuId: entity.id}, {class: 'Button Button-Small Button-Subtle Button-View Button-ViewMenuEntries'}) }}
+				{% endif %}
+				{% do AuthorizationHelper.resetScope() %}
+
+				<label for="SaveAsCopy" class="Button Button-SaveAsCopy Label-SaveAsCopy">{{ __('as_copy') }}</label>
+				{{ FormHelper.button(__('save'), {class: 'Button Button-Success Button-Save'}) }}
+				{% if AuthorizationHelper.isAccessible('read') %}
+					{{ FormHelper.button(__('save_close'), {class: 'Button Button-SaveClose', name: 'submit', value: 'submit_close'}) }}
+				{% endif %}
+			{% endblock %}
+		</div>
 	{% endblock %}
 
 	{% block formEdit %}
 		{% include('@Backend/Menus/form.twig') %}
 	{% endblock %}
 
-	{% block formEditButtonsBottom %}
-		{{ block('formEditButtons') }}
+	{% block buttonAreaBottom %}
+		<div class="ButtonArea ButtonArea-Bottom">
+			{{ block('formEditButtons') }}
+		</div>
 	{% endblock %}
 
-	{{ FormHelper.end() -}}
+	{{ FormHelper.end() }}
 </div>

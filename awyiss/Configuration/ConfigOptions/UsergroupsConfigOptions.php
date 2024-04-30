@@ -7,6 +7,7 @@ namespace Awyiss\Configuration\ConfigOptions;
 use Awyiss\Awyiss;
 use Awyiss\Configuration\AbstractConfigOptions;
 use Awyiss\Configuration\ConfigOption;
+use Awyiss\Configuration\ConfigOptions\Trait\TableFieldsTrait;
 use Awyiss\Configuration\ConfigOptionType;
 
 
@@ -14,6 +15,9 @@ use Awyiss\Configuration\ConfigOptionType;
  * Provides all configuration options for the Usergroups scope
  */
 class UsergroupsConfigOptions extends AbstractConfigOptions {
+	use TableFieldsTrait;
+
+
 	/**
 	 * @var string Scope of these options
 	 */
@@ -25,12 +29,22 @@ class UsergroupsConfigOptions extends AbstractConfigOptions {
 	 */
 	public function initializeConfigOptions(): void {
 		$this->add(Awyiss::REALM_BACKEND, [
-			new ConfigOption(
-				defaultValue: true,
-				identifier: 'search',
-				localizable: false,
-				type: ConfigOptionType::Bool,
-			),
+			'overview' => [
+				new ConfigOption(
+					defaultValue: [],
+					identifier: 'displayedFields',
+					localizable: false,
+					personalizable: true,
+					type: ConfigOptionType::ValueCollection,
+					values: function () {
+						$la_fields = $this->getTableFields();
+
+						unset($la_fields['id'], $la_fields['title']);
+
+						return $la_fields;
+					},
+				),
+			],
 			'paginate' => [
 				new ConfigOption(
 					defaultValue: 20,
@@ -41,6 +55,12 @@ class UsergroupsConfigOptions extends AbstractConfigOptions {
 					type: ConfigOptionType::Integer,
 				),
 			],
+			new ConfigOption(
+				defaultValue: true,
+				identifier: 'search',
+				localizable: false,
+				type: ConfigOptionType::Bool,
+			),
 		]);
 	}
 }

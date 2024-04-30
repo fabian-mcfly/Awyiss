@@ -1,0 +1,118 @@
+{#
+@var entity \Awyiss\Model\Entity
+@var childrenList string
+@var settings array
+@var _view \Awyiss\View\BackendView
+#}
+
+{% block nestedListItem %}
+	<li
+		{% block nestedListItemId -%}
+			id="{{ settings.identifier|pluralize }}-ListItem{{ entity.id }}"
+		{%- endblock %}
+		{% block nestedListItemClass -%}
+			class="ListItem {{ settings.identifier }}-ListItem {{ settings.identifier }}-ListItem{{ entity.id -}}
+				{%- if entity.class is defined %} {{ entity.class }}{% endif -%}
+				{%- if entity.active is defined and entity.active == false %} Inactive{% endif -%}
+
+				{%- if entity.parentsActive is defined and entity.parentsActive == false %} ParentsInactive
+				{%- elseif settings.parentsActive is defined and settings.parentsActive == false %} ParentsInactive{% endif -%}
+			"
+		{%- endblock %}
+		>
+		{% block nestedListItemInner %}
+			<div {% block nestedListItemInnerClass %}class="{{ settings.identifier }}-ListItem-Inner ListItem-Inner"{% endblock %}>
+				{% block nestedListItemData %}
+					<ul class="Data">
+						{% block nestedListItemDataTitle %}
+							<li class="Title">{{ entity.title }}</li>
+						{% endblock %}
+
+						{% block nestedListItemDataDefaultFields %}{% endblock %}
+
+						{% block nestedListItemDataDisplayedFields %}
+							{% for field in displayedFields %}
+								{% if field == 'system_order' %}
+								{% else %}
+									{% block nestedListItemDataDisplayedField %}
+										<li class="DataItem DataItem-{{ field|camelize }}">
+											{% if field starts with 'attributes.' %}
+												{% set field = field|slice(11)|underscore %}
+												{% block nestedListItemDataDisplayedFieldAttribute %}
+													{% block nestedListItemDataDisplayedFieldAttributeLabel %}
+														<span class="Label">{{ attributes[field].label }}:</span>
+													{% endblock %}
+													{% block nestedListItemDataDisplayedFieldAttributeValue %}
+														{{ entity.attributes.get(field) ?: '-' }}
+													{% endblock %}
+												{% endblock %}
+											{% else %}
+												{% set field = field|underscore %}
+												{% block nestedListItemDataDisplayedFieldDefault %}
+													{% block nestedListItemDataDisplayedFieldDefaultLabel %}
+														<span class="Label">{{ __(field) }}:</span>
+													{% endblock %}
+													{% block nestedListItemDataDisplayedFieldDefaultValue %}
+														{% if field == 'language_shortcode' %}
+															{{ entity.get(field) ? languages.Frontend[ entity.get(field) ].title : '-' }}
+														{% elseif field == 'page_template_id' %}
+															{% if entity.pageTemplate is defined  %}
+																{{ entity.pageTemplate.label }}
+															{% elseif pageTemplates[ entity.get(field) ] is defined %}
+																{{ pageTemplates[ entity.get(field) ].label}}
+															{% else %}
+																-
+															{% endif %}
+														{% else %}
+															{{ entity.get(field) ?: '-' }}
+														{% endif %}
+													{% endblock %}
+												{% endblock %}
+											{% endif %}
+										</li>
+									{% endblock %}
+								{% endif %}
+							{% endfor %}
+						{% endblock %}
+					</ul>
+				{% endblock %}
+
+				{% block nestedListItemAuditInfo %}
+					<div class="AuditInfo" data-id="{{ entity.id }}">
+						{% block nestedListItemAuditInfoList %}
+							<ul class="AuditInfoList">
+								<li><strong>ID:</strong> {{ entity.id }}</li>
+							</ul>
+						{% endblock %}
+					</div>
+				{% endblock %}
+
+				{% block nestedListActions %}
+					<span class="Actions">
+						{% block nestedListActionsEdit %}
+							{% if AuthorizationHelper.isAccessible('update') %}
+								{{ HtmlHelper.link(__('edit'), {action: 'edit', id: entity.id}, {class: 'Button Button-Small Button-Edit'}) }}
+							{% endif %}
+						{% endblock %}
+
+						{% block nestedListActionsDelete %}
+							{% if AuthorizationHelper.isAccessible('delete') %}
+								{{ HtmlHelper.link(__('delete'), {action: 'delete', id: entity.id}, {
+									class: 'Button Button-Small Button-Delete',
+									'data-confirm-title': __('confirm_delete_title'),
+									'data-confirm-yes': __('confirm_delete_yes'),
+									'data-confirm-yes-class': 'Button-Delete',
+									'data-confirm-no': __('confirm_delete_no'),
+									'data-confirm': __('confirm_delete', entity.id) }) }}
+							{% endif %}
+						{% endblock %}
+					</span>
+				{% endblock %}
+			</div>
+		{% endblock %}
+
+		{% block nestedListChildren %}
+			{{ childrenList }}
+		{% endblock %}
+	</li>
+{% endblock %}

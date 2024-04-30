@@ -263,13 +263,16 @@ class UserConfigurationTable extends Table {
 		$lo_identity = $this->getIdentity();
 
 		foreach (ConfigOptionsProvider::getConfigOptionsFiles() as $ls_scope => $ls_className) {
-			if ($lo_identity?->scopeIsAccessible($ls_scope, [], ['read', 'create', 'update'])) {
+			if (in_array($ls_scope, ['Contents', 'System'], true)) {
+				// For now, contents are always accessible since accessing them depends on page roles
+				$this->configScopes[ $ls_scope ] = $ls_className;
+			}
+			elseif ($lo_identity?->scopeIsAccessible($ls_scope, [], ['read', 'create', 'update', 'configure'])) {
 				$this->configScopes[ $ls_scope ] = $ls_className;
 			}
 		}
 
 		ksort($this->configScopes);
-
 
 		return $this->configScopes;
 	}

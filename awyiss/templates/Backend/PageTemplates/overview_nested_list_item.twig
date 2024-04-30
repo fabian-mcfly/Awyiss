@@ -1,0 +1,25 @@
+{#
+@var entity \Awyiss\Model\Entity
+@var childrenList string
+@var settings array
+#}
+
+{% extends '@Backend/element/overview/nested_list_item.twig' %}
+
+{% block nestedListItemDataDefaultFields %}
+	<li class="DataItem DataItem-UsedForPages">
+		<span class="Label">{{ __('used_for_pages') }}:</span>
+		{{ entity.usedForPages }}
+	</li>
+{% endblock %}
+
+{% block nestedListActionsDelete %}
+	{% if entity.usedForPages == 0 %}
+		{{ parent() }}
+	{% else %}
+		{% if AuthorizationHelper.isAccessible('delete') %}
+			<!--suppress HtmlUnknownAttribute -->
+			<a class="Button Button-Small Button-Delete" disabled>{{ __('delete') }}</a>
+		{% endif %}
+	{% endif %}
+{% endblock %}

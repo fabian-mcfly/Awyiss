@@ -1,0 +1,53 @@
+$relativePath:'../' !default;
+$awyissVersion:1 !default;
+$awyissVersionName:'' !default;
+
+$fontSizeMain:20px;
+$fontSizeMainMedium:18px;
+$fontSizeMainSmall:16px;
+$fontStackMain:Lato, Helvetica Neue, Helvetica, Arial, sans-serif;
+$lineHeightMain:1.5rem;
+
+$fontSizeHeading:3rem;
+$fontStackHeading:'2F media', Bebas Neue, Impact, Arial Display, sans-serif;
+$lineHeightHeading:.9em;
+
+$colorBright:#FBFBFB;
+$colorLight:#EDF2F4;
+$colorNeutralLight:#F0F0F0;
+$colorMedium:#7E8B99;
+$colorSemiDark:#3b4651;
+$colorSemiDarkDarkMode:#242c35;
+$colorDark:#131a21;
+$colorText:#202C39;
+$colorSuccess:#63d1a5;
+$colorInfo:#31C5E0;
+$colorWarning:#FFC53A;
+$colorError:#CA2E55;
+$colorBackgroundContentDarkMode:#141b20;
+
+// A list of all available columns and indents with their respective css class names, numerators and denominators
+$columnWidths:[] !default;
+$columnIndents:[] !default;
+
+:root {
+	--colorBright:#{$colorBright};
+	--colorNeutralLight:#{$colorNeutralLight};
+	--colorLight:#{$colorLight};
+	--colorMedium:#{$colorMedium};
+	--colorSemiDark:#{$colorSemiDark};
+	--colorDark:#{$colorDark};
+	--colorText:#{$colorText};
+	--colorSuccess:#{$colorSuccess};
+	--colorInfo:#{$colorInfo};
+	--colorWarning:#{$colorWarning};
+	--colorError:#{$colorError};
+
+	--fontStackMain:#{inspect($fontStackMain)};
+	--fontSizeMain:#{$fontSizeMain};
+	--lineHeightMain:#{$lineHeightMain};
+
+	--fontStackHeading:#{inspect($fontStackHeading)};
+	--fontSizeHeading:#{$fontSizeHeading};
+	--lineHeightHeading:#{$lineHeightHeading};
+}

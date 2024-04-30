@@ -6,8 +6,8 @@ namespace Awyiss\View;
 
 use Awyiss\Awyiss;
 use Awyiss\Twig\Extension\AwyissExtension;
+use Awyiss\Twig\Extension\EnumExtension;
 use Awyiss\Twig\FileLoader;
-use BadMethodCallException;
 use Cake\Core\Configure;
 use Cake\TwigView\View\TwigView;
 use Cake\View\Helper;
@@ -160,10 +160,9 @@ class AppView extends TwigView {
 			 * @throws \BadMethodCallException
 			 */
 			public function __call(string $method, array $args): mixed {
-				if (!method_exists($this->helper, $method)) {
+				/*if (!method_exists($this->helper, $method)) {
 					throw new BadMethodCallException(sprintf('The method "%s" does not exist on the helper.', $method));
-				}
-
+				}*/
 				$lx_result = call_user_func([$this->helper, $method], ...$args);
 
 				if (is_string($lx_result) && str_contains($lx_result, '<') && str_contains($lx_result, '>')) {

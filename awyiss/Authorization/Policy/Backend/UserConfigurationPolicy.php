@@ -52,8 +52,8 @@ class UserConfigurationPolicy extends AbstractPolicy {
 			return $lb_accessible;
 		}
 
-		if (strtolower($ls_scope) !== 'system') {
-			$lb_accessible = $ao_permissionCollection->scopeIsAccessible($ls_scope, [], 'configure');
+		if (!in_array(strtolower($ls_scope), ['contents', 'system'], true)) {
+			$lb_accessible = $ao_permissionCollection->scopeIsAccessible($ls_scope, [], ['read', 'create', 'update', 'configure']);
 		}
 
 		return $lb_accessible;

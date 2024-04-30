@@ -44,8 +44,9 @@ class MenusController extends Controller {
 		}
 
 		$this->set([
-			'ao_menus' => $lo_menus,
-			'ab_paginated' => $lb_paginated,
+			'menus' => $lo_menus,
+			'paginated' => $lb_paginated,
+			'attributes' => $this->Menus->getAttributes(),
 		]);
 	}
 
@@ -66,7 +67,7 @@ class MenusController extends Controller {
 		}
 
 		$this->set([
-			'ao_menu' => $lo_menu,
+			'menu' => $lo_menu,
 		]);
 	}
 
@@ -94,7 +95,7 @@ class MenusController extends Controller {
 		}
 
 		$this->set([
-			'ao_menu' => $lo_menu,
+			'menu' => $lo_menu,
 		]);
 	}
 

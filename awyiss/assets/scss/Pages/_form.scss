@@ -1,0 +1,18 @@
+.PagesController,
+.IsGenericPage {
+	.FormInputName-CopyDescendantsWithDifferentPageRole {
+		margin-block:($lineHeightMain * -2) $lineHeightMain * 2;
+		grid-column:auto / span 2;
+
+		> .Label {
+			&[for] {
+				display:inline-block;
+				width:48%;
+			}
+		}
+	}
+
+	.Fieldset-Presentation {
+		grid-column-start:1;
+	}
+}

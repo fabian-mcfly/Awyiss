@@ -156,7 +156,7 @@ class MediaTable extends Table {
 	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
 		$ao_rules->add(
 			function (Media $ao_entity): bool|string {
-				if ($ao_entity->file->getError()) {
+				if (!$ao_entity->file || $ao_entity->file?->getError()) {
 					return true;
 				}
 
@@ -199,6 +199,33 @@ class MediaTable extends Table {
 
 
 		return $ao_rules;
+	}
+
+
+	/**
+	 * Returns the maximum file size in bytes that can be uploaded
+	 *
+	 * @return int
+	 */
+	public function getMaxFileSize(): int {
+		$ls_maxFileSize = ini_get('upload_max_filesize');
+		$ls_maxFileSize = trim($ls_maxFileSize);
+		$ls_last = strtolower($ls_maxFileSize[strlen($ls_maxFileSize) - 1]);
+
+		$li_maxFileSize = (int)substr($ls_maxFileSize, 0, -1);
+
+		switch ($ls_last) {
+			case 'g':
+				$li_maxFileSize *= 1024;
+				// no break
+			case 'm':
+				$li_maxFileSize *= 1024;
+				// no break
+			case 'k':
+				$li_maxFileSize *= 1024;
+		}
+
+		return $li_maxFileSize;
 	}
 
 

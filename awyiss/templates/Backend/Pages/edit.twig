@@ -1,47 +1,43 @@
-{#
-@var ao_page \Awyiss\Model\Entity\Page
-@var ao_pageTemplates \Cake\Collection\CollectionInterface
-@var ao_threadedPages \Cake\Collection\CollectionInterface
-@var ao_possibleParentPages \Cake\Collection\CollectionInterface
-@var as_languageRealm string
-@var localConfig array
-@var ab_nestable bool
-@var hasDescendantsWithDifferentPageRole bool
-@var _view \Awyiss\View\BackendView
-#}
-
 <div class="Pages Form Edit">
-	{{ FormHelper.create(ao_page, {method: 'post', idPrefix: 'page'}) }}
-
-	{{ FormHelper.checkbox('save_as_copy', {id: 'SaveAsCopy', value: true}) }}
+	{% if AuthorizationHelper.isAccessible('read') %}
+		{{ HtmlHelper.link(__('overview'), {action: 'overview'}, {class: 'BackToOverview'}) }}
+	{% endif %}
 
 	{% block headlineEdit %}
 		<h1>{{ __('headline_edit') }}</h1>
 	{% endblock %}
 
-	{% block formEditButtons %}
-		<label for="SaveAsCopy">{{ __('as_copy') }}</label>
-		{{ FormHelper.button(__('save')) }}
-		{{ FormHelper.button(__('save_close'), {name: 'submit', value: 'submit_close'}) }}
-	{% endblock %}
+	{{ FormHelper.create(page, {method: 'post', idPrefix: 'page'}) }}
 
-	{% if hasDescendantsWithDifferentPageRole %}
-		<p>
-			{{ __('copy_descendants_with_different_page_role') }}
-			{{ FormHelper.radio('copy_descendants_with_different_page_role', {
-				0: __('copy_descendants_with_different_page_role_no'),
-				1: __('copy_descendants_with_different_page_role_yes'),
-			}) }}
-		</p>
-	{% endif %}
+	{{ FormHelper.checkbox('save_as_copy', {id: 'SaveAsCopy', value: true}) }}
+
+	{% block buttonArea %}
+		<div class="ButtonArea">
+			{% block formEditButtons %}
+				{% block tableOverviewCellActionsViewContents %}
+					{% if page.duplicate_of is empty and AuthorizationHelper.isAccessible('contents') and contentsEnabled == true %}
+						{{ HtmlHelper.link(__('view_contents'), {controller: 'contents', action: 'overview', pageId: page.id}, {class: 'Button Button-Small Button-Subtle Button-View Button-ViewContents'}) }}
+					{% endif %}
+				{% endblock %}
+
+				<label for="SaveAsCopy" class="Button Button-SaveAsCopy Label-SaveAsCopy">{{ __('as_copy') }}</label>
+				{{ FormHelper.button(__('save'), {class: 'Button Button-Success Button-Save'}) }}
+				{% if AuthorizationHelper.isAccessible('read') %}
+					{{ FormHelper.button(__('save_close'), {class: 'Button Button-SaveClose', name: 'submit', value: 'submit_close'}) }}
+				{% endif %}
+			{% endblock %}
+		</div>
+	{% endblock %}
 
 	{% block formEdit %}
 		{% include('@Backend/Pages/form.twig') %}
 	{% endblock %}
 
-	{% block formEditButtonsBottom %}
-		{{ block('formEditButtons') }}
+	{% block buttonAreaBottom %}
+		<div class="ButtonArea ButtonArea-Bottom">
+			{{ block('formEditButtons') }}
+		</div>
 	{% endblock %}
 
-	{{ FormHelper.end() -}}
+	{{ FormHelper.end() }}
 </div>

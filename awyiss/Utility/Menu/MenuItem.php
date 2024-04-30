@@ -4,6 +4,7 @@
 namespace Awyiss\Utility\Menu;
 
 
+use ArrayAccess;
 use Awyiss\Authorization\IdentityPermissionsInterface;
 use Awyiss\Model\Entity\BackendMenuEntry;
 use Awyiss\Routing\Router;
@@ -16,7 +17,7 @@ use RuntimeException;
 /**
  * A single menu item with its properties and optional children
  */
-class MenuItem {
+class MenuItem implements ArrayAccess {
 	use InstanceConfigTrait;
 
 
@@ -41,11 +42,15 @@ class MenuItem {
 	 */
 	protected array $_defaultConfig = [];
 	/**
+	 * @var string|int|null
+	 */
+	protected string|int|null $identifier;
+	/**
 	 * @var \Awyiss\Authorization\IdentityPermissionsInterface|mixed|null
 	 */
 	protected ?IdentityPermissionsInterface $identity = null;
 	/**
-	 * @var mixed|int
+	 * @var int
 	 */
 	protected int $level = 0;
 	/**
@@ -71,6 +76,7 @@ class MenuItem {
 	public function __construct(object $ao_data, array $aa_config = [], int $ai_level = 1) {
 		$this->access = $ao_data->access ?? null;
 		$this->active = $ao_data->active ?? true;
+		$this->identifier = $ao_data->identifier ?? null;
 		$this->identity = $aa_config['identity'] ?? null;
 		$this->level = $ai_level;
 		$this->link = $ao_data->link;
@@ -188,8 +194,8 @@ class MenuItem {
 		// If there are parameters in the url, remove them and try again
 		if (str_contains($currentRoute, ':')) {
 			$la_segments = explode('/', trim($currentRoute, '/'));
-			$la_segments = array_filter($la_segments, function ($segment) {
-				return strpos($segment, ':') === false;
+			$la_segments = array_filter($la_segments, function (string $segment) {
+				return !str_contains($segment, ':');
 			});
 
 			$ls_cleanRoute = '/' . implode('/', $la_segments) . '/';
@@ -279,6 +285,14 @@ class MenuItem {
 
 
 	/**
+	 * @return string|int|null
+	 */
+	public function getIdentifier(): string|int|null {
+		return $this->identifier;
+	}
+
+
+	/**
 	 * Sets the identity of the menu item.
 	 *
 	 * @param \Awyiss\Authorization\IdentityPermissionsInterface $ao_identity The identity to set.
@@ -305,6 +319,21 @@ class MenuItem {
 
 
 		return $this;
+	}
+
+
+	/**
+	 * Gets the label of the menu item.
+	 *
+	 * @return string
+	 */
+	public function getLabel(): string {
+		if (!$this->active) {
+			return __d('menu', 'inactive') . ' ' . $this->getTitle();
+		}
+
+
+		return $this->getTitle();
 	}
 
 
@@ -466,6 +495,22 @@ class MenuItem {
 			return;
 		}
 
+		if (!str_contains($this->link, '::')) {
+			$la_linkData = [
+				'url' => !str_contains($this->link, '//') ? Router::url($this->link) : $this->link,
+			];
+
+			if ($ao_data->external) {
+				$la_linkData['attributes'] = [
+					'target' => '_blank',
+				];
+			}
+
+			$this->link = json_decode(json_encode($la_linkData));
+
+			return;
+		}
+
 		$la_parts = explode('::', $this->link);
 
 		$ls_controller = array_shift($la_parts);
@@ -496,5 +541,42 @@ class MenuItem {
 		}
 
 		$this->link = json_decode(json_encode($la_linkData));
+	}
+
+
+	/**
+	 * @param mixed $offset
+	 * @return bool
+	 */
+	public function offsetExists(mixed $offset): bool {
+		return method_exists($this, 'get' . Inflector::camelize($offset));
+	}
+
+
+	/**
+	 * @param mixed $offset
+	 * @return mixed
+	 */
+	public function offsetGet(mixed $offset): mixed {
+		return $this->{'get' . Inflector::camelize($offset)}();
+	}
+
+
+	/**
+	 * @param mixed $offset
+	 * @param mixed $value
+	 * @return void
+	 */
+	public function offsetSet(mixed $offset, mixed $value): void {
+		throw new RuntimeException('Setting values is not allowed');
+	}
+
+
+	/**
+	 * @param mixed $offset
+	 * @return void
+	 */
+	public function offsetUnset(mixed $offset): void {
+		throw new RuntimeException('Unsetting values is not allowed');
 	}
 }

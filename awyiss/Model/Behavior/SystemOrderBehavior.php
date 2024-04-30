@@ -14,6 +14,7 @@ use Cake\Event\EventInterface;
 use Cake\ORM\Exception\PersistenceFailedException;
 use Cake\ORM\Query\SelectQuery;
 use Cake\Utility\Hash;
+use Cake\Utility\Inflector;
 
 
 /**
@@ -151,6 +152,7 @@ class SystemOrderBehavior extends Behavior {
 		}
 
 		$la_options = Hash::merge($this->getConfig(), Hash::get($ao_options, 'systemOrder'));
+		$la_options['field'] = $la_options['field'] ? Inflector::variable($la_options['field']) : '';
 
 		if ($la_options['skip'] === true) {
 			return;
@@ -580,9 +582,9 @@ class SystemOrderBehavior extends Behavior {
 	 * @return iterable|false
 	 * @throws \Exception
 	 */
-	public function rebuildSystemOrder(EventInterface $ao_event, string $as_field, int $ai_direction = SORT_ASC): void {
-		if ($as_field == 'systemOrder') {
-			return;
+	public function rebuildSystemOrder(string $as_field, int $ai_direction = SORT_ASC, ?EventInterface $ao_event = null, array $additionalWhere = []): iterable|false {
+		if (Inflector::variable($as_field) === 'systemOrder') {
+			return $this->ensureGaplessSystemOrder($ao_event, $additionalWhere);
 		}
 
 		$lo_table = $this->table();

@@ -1,0 +1,15 @@
+{#
+@var media \Awyiss\Model\Entity\Media[]
+@var mediaFolders array<string, \Awyiss\Model\Entity\MediaFolder[]>
+@var _view \Awyiss\View\BackendView
+#}
+
+{% set template = paginate ? 'overview_paginated_list' : 'overview_list'%}
+{% extends '@Backend/Media/' ~ template ~ '.twig' %}
+
+{% block listOverview %}
+	{{ block('listOverviewMediaItem') }}
+{% endblock %}
+
+{% block mediaFolders %}{% endblock %}
+{% block tableOverview %}{% endblock %}

@@ -386,7 +386,16 @@ class ContentsTable extends Table {
 			$lo_validator = new $this->_validatorClass();
 			$lo_validator->setI18nDomain($this->getI18nDomain());
 
-			$la_data = $this->validateInputFields($ao_entity, $lo_validator, $lo_contentTemplate);
+			$la_data = $ao_entity->extract();
+			if (!empty($ao_entity->attributes)) {
+				/** @var \Awyiss\Validation\Validator $lo_attributesValidator */
+				$lo_attributesValidator = new $this->_validatorClass();
+				$lo_attributesValidator->setI18nDomain($this->getI18nDomain());
+
+				$la_data['attributes'] = $ao_entity->attributes->extract();
+			}
+
+			$this->validateInputFields($ao_entity, $lo_validator, $lo_attributesValidator ?? null, $lo_contentTemplate);
 
 			//Validate the entity using the
 			$la_errors = $lo_validator->validate($la_data, $ao_entity->isNew());
@@ -691,42 +700,30 @@ class ContentsTable extends Table {
 
 
 	/**
-	 * @param Content $ao_entity
-	 * @param Validator $ao_validator
-	 * @param ContentTemplate $ao_contentTemplate
-	 * @return array
+	 * @param \Awyiss\Model\Entity\Content $ao_entity
+	 * @param \Awyiss\Validation\Validator $ao_validator
+	 * @param \Awyiss\Validation\Validator|null $ao_attributesValidator
+	 * @param \Awyiss\Model\Entity\ContentTemplate $ao_contentTemplate
+	 * @return void
 	 */
-	protected function validateInputFields(Content $ao_entity, Validator $ao_validator, ContentTemplate $ao_contentTemplate): array {
-		$la_data = $ao_entity->extract();
-
-		if (!empty($ao_entity->attributes)) {
-			/** @var \Awyiss\Validation\Validator $lo_attributesValidator */
-			$lo_attributesValidator = new $this->_validatorClass();
-			$lo_attributesValidator->setI18nDomain($this->getI18nDomain());
-
-			$la_data['attributes'] = $ao_entity->attributes->extract();
-		}
-
+	protected function validateInputFields(Content $ao_entity, Validator $ao_validator, ?Validator $ao_attributesValidator, ContentTemplate $ao_contentTemplate): void {
 		$la_contentAttributes = $this->ContentTemplates->getAvailableContentAttributes();
 		$la_contentAttributes = array_combine(
 			array_column($la_contentAttributes, 'identifier'),
 			$la_contentAttributes
 		);
 
-		$this->validateAssignedElements($ao_contentTemplate, $ao_entity, $ao_validator, $la_contentAttributes, $lo_attributesValidator ?? null);
+		$this->validateAssignedElements($ao_contentTemplate, $ao_entity, $ao_validator, $la_contentAttributes, $ao_attributesValidator);
 
 		$this->validateUnassignedElements($ao_contentTemplate, $ao_entity, $ao_validator);
 
-		if (isset($lo_attributesValidator)) {
-			$this->validateUnassignedAttributes($ao_contentTemplate, $ao_entity, $la_contentAttributes, $lo_attributesValidator);
+		if (isset($ao_attributesValidator)) {
+			$this->validateUnassignedAttributes($ao_contentTemplate, $ao_entity, $la_contentAttributes, $ao_attributesValidator);
 
-			if ($lo_attributesValidator->count()) {
-				$ao_validator->addNested('attributes', $lo_attributesValidator);
+			if ($ao_attributesValidator->count()) {
+				$ao_validator->addNested('attributes', $ao_attributesValidator);
 			}
 		}
-
-
-		return $la_data;
 	}
 
 

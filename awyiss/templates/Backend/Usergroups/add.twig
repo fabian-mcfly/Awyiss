@@ -1,29 +1,41 @@
 {#
-@var ao_usergroup \Awyiss\Model\Entity\Usergroup
-@var ao_users \Awyiss\Model\Entity\User[]
-@var aa_authorizationPolicies array
+@var usergroup \Awyiss\Model\Entity\Usergroup
+@var users \Awyiss\Model\Entity\User[]
+@var authorizationPolicies array
 @var _view \Awyiss\View\BackendView
 #}
 
 <div class="Usergroups Form Add">
-	{{ FormHelper.create(ao_usergroup, {method: 'post', idPrefix: 'Usergroup'}) }}
+	{% if AuthorizationHelper.isAccessible('read') %}
+		{{ HtmlHelper.link(__('overview'), {action: 'overview'}, {class: 'BackToOverview'}) }}
+	{% endif %}
 
 	{% block headlineAdd %}
 		<h1>{{ __('headline_add') }}</h1>
 	{% endblock %}
 
-	{% block formAddButtons %}
-		{{ FormHelper.button(__('save')) }}
-		{{ FormHelper.button(__('save_close'), {name: 'submit', value: 'submit_close'}) }}
+	{{ FormHelper.create(usergroup, {method: 'post', idPrefix: 'Usergroup'}) }}
+
+	{% block buttonArea %}
+		<div class="ButtonArea">
+			{% block formAddButtons %}
+				{{ FormHelper.button(__('save'), {class: 'Button Button-Success Button-Save'}) }}
+				{% if AuthorizationHelper.isAccessible('read') %}
+					{{ FormHelper.button(__('save_close'), {class: 'Button Button-SaveClose', name: 'submit', value: 'submit_close'}) }}
+				{% endif %}
+			{% endblock %}
+		</div>
 	{% endblock %}
 
 	{% block formAdd %}
 		{% include('@Backend/Usergroups/form.twig') %}
 	{% endblock %}
 
-	{% block formAddButtonsBottom %}
-		{{ block('formAddButtons') }}
+	{% block buttonAreaBottom %}
+		<div class="ButtonArea ButtonArea-Bottom">
+			{{ block('formAddButtons') }}
+		</div>
 	{% endblock %}
 
-	{{ FormHelper.end() -}}
+	{{ FormHelper.end() }}
 </div>

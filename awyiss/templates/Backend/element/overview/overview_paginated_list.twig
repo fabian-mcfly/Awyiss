@@ -1,0 +1,176 @@
+{#
+@var records Cake\Datasource\EntityInterface[]
+@var _view \Awyiss\View\BackendView
+#}
+
+{% block tableOverview %}
+	<table class="Overview-Table">
+		{% block tableOverviewHead %}
+			<thead>
+				{% block tableOverviewHeadRow %}
+					<tr>
+						{% block tableOverviewHeadRowInner %}
+							{% block tableOverviewHeaderId %}
+								<th class="TableHeader-Id{% if PaginatorHelper.currentSortKey() == 'id' %} Active{% endif %}">{{ PaginatorHelper.sort('id') }}</th>
+							{% endblock %}
+
+							{% block tableOverviewHeaderTitle %}
+								<th class="TableHeader-Title{% if PaginatorHelper.currentSortKey() == 'title' %} Active{% endif %}">{{ PaginatorHelper.sort('title') }}</th>
+							{% endblock %}
+
+							{% block tableOverviewHeaderDefaultFields %}{% endblock %}
+
+							{% block tableOverviewHeaderDisplayedFields %}
+								{% for field in localConfig.overview.displayedFields %}
+									{% block tableOverviewHeaderDisplayedField %}
+										{% if field starts with 'attributes.' %}
+											{% set field = field|slice(11)|underscore %}
+											<th class="TableHeader-{{ field|camelize }}{% if PaginatorHelper.currentSortKey() == field %} Active{% endif %}">
+												{{ PaginatorHelper.sort(field, attributes[field].label) }}
+											</th>
+										{% else %}
+											{% set field = field|underscore %}
+											<th class="TableHeader-{{ field|camelize }}{% if PaginatorHelper.currentSortKey() == field %} Active{% endif %}">
+												{{ PaginatorHelper.sort(field) }}
+											</th>
+										{% endif %}
+									{% endblock %}
+								{% endfor %}
+							{% endblock %}
+
+							{% block tableOverviewHeaderAuditInfo %}
+								<th class="TableHeader-AuditInfo"></th>
+							{% endblock %}
+
+							{% block tableOverviewHeaderActions %}
+								<th class="TableHeader-Actions"></th>
+							{% endblock %}
+						{% endblock %}
+					</tr>
+				{% endblock %}
+			</thead>
+		{% endblock %}
+		{% block tableOverviewBody %}
+			<tbody>
+				{# @var entity \Cake\Datasource\EntityInterface #}
+				{% for entity in records %}
+					{% block tableOverviewBodyRow %}
+						<tr class="{%- if entity.active == false %} Inactive{% endif -%}{%- if entity.parentsActive is defined and entity.parentsActive == false %} ParentsInactive{% endif %}">
+							{% block tableOverviewBodyRowInner %}
+								{% block tableOverviewCellId %}
+									<td class="TableCell-Id">{{ entity.id }}</td>
+								{% endblock %}
+
+								{% block tableOverviewCellTitle %}
+									<td class="TableCell-Title">{{ entity.title }}</td>
+								{% endblock %}
+
+								{% block tableOverviewCellDefaultFields %}{% endblock %}
+
+								{% block tableOverviewCellDisplayedFields %}
+									{% for field in localConfig.overview.displayedFields %}
+										{% block tableOverviewCellDisplayedField %}
+											<td class="TableCell-{{ field|camelize }}">
+												{% if field starts with 'attributes.' %}
+													{% set field = field|slice(11)|underscore %}
+													{% block tableOverviewCellDisplayedFieldAttributeValue %}
+														{{ entity.attributes.get(field) ?: '-' }}
+													{% endblock %}
+												{% else %}
+													{% set field = field|underscore %}
+													{% block tableOverviewCellDisplayedFieldDefaultValue %}
+														{% if field in ['active'] %}
+															{{ entity.get(field) ? '<i class="las la-check"></i>' : '<i class="las la-times"></i>' }}
+														{% elseif field == 'language_shortcode' %}
+															{{ entity.get(field) ? languages.Frontend[ entity.get(field) ].title : '-' }}
+														{% elseif field == 'page_template_id' %}
+															{{ pageTemplates[ entity.get(field) ] is defined ? pageTemplates[ entity.get(field) ].title : '-' }}
+														{% elseif field in ['created_on', 'changed_on'] %}
+															{{ entity.has(field) ? entity.get(field).nice() ?: '-' }}
+														{% else %}
+															{{ entity.has(field) ? entity.get(field) : '-' }}
+														{% endif %}
+													{% endblock %}
+												{% endif %}
+											</td>
+										{% endblock %}
+									{% endfor %}
+								{% endblock %}
+
+								{% block tableOverviewCellAuditInfo %}
+									<td class="TableCell-AuditInfo">
+										<div class="AuditInfo" data-id="{{ entity.id }}">
+											<ul class="AuditInfoList">
+												<li><strong>ID:</strong> {{ entity.id }}</li>
+											</ul>
+										</div>
+									</td>
+								{% endblock %}
+
+								{% block tableOverviewCellActions %}
+									<td class="TableCell-Actions">
+										<div class="Actions">
+											{% block tableOverviewCellActionsUpdate %}
+												{% if AuthorizationHelper.isAccessible('update') %}
+													{{ HtmlHelper.link(__('edit'), {action: 'edit', id: entity.id}, {class: 'Button Button-Small Button-Edit'}) }}
+												{% endif %}
+											{% endblock %}
+
+											{% block tableOverviewCellActionsDelete %}
+												{% if AuthorizationHelper.isAccessible('delete') %}
+													{{ HtmlHelper.link(__('delete'), {action: 'delete', id: entity.id}, {
+														class: 'Button Button-Small Button-Delete',
+														'data-confirm-title': __('confirm_delete_title'),
+														'data-confirm-yes': __('confirm_delete_yes'),
+														'data-confirm-yes-class': 'Button-Delete',
+														'data-confirm-no': __('confirm_delete_no'),
+														'data-confirm': __('confirm_delete', entity.id) }) }}
+												{% endif %}
+											{% endblock %}
+										</div>
+									</td>
+								{% endblock %}
+							{% endblock %}
+						</tr>
+					{% endblock %}
+				{% endfor %}
+			</tbody>
+		{% endblock %}
+		{% block tableOverviewFoot %}
+			{% set tableFootColSpan -%}
+				{% block tableOverviewFootColSpan %}{{ localConfig.overview.displayedFields|length + 4 }}{% endblock %}
+			{%- endset %}
+			<tfoot>
+				<tr>
+					<td colspan="{{ tableFootColSpan }}">
+						{% block listControl %}
+							<ul class="ListControl">
+								{% block listControlListLimit %}
+									<li class="ListControl-Item ListControl-Item-ListLimit">
+										{% block listControlListLimitInner %}
+											{{ PaginatorHelper.limitControl() }}
+										{% endblock %}
+									</li>
+								{% endblock %}
+								{% block listControlPagination %}
+									<li class="ListControl-Item ListControl-Item-Pagination">
+										{% block listControlPaginationInner %}
+											{{ PaginatorHelper.render()|raw }}
+										{% endblock %}
+									</li>
+								{% endblock %}
+								{% block listControlCounter %}
+									<li class="ListControl-Item ListControl-Item-Counter">
+										{% block listControlCounterInner %}
+											<span class="Pagination-Counter">{{ PaginatorHelper.counter(__d('pagination', 'counter'))|raw }}</span>
+										{% endblock %}
+									</li>
+								{% endblock %}
+							</ul>
+						{% endblock %}
+					</td>
+				</tr>
+			</tfoot>
+		{% endblock %}
+	</table>
+{% endblock %}

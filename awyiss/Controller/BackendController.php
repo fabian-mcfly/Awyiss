@@ -6,19 +6,29 @@ namespace Awyiss\Controller;
 
 use Awyiss\Authentication\IdentityAwareTrait;
 use Awyiss\Awyiss;
+use Awyiss\Core\App;
+use Awyiss\Core\LocalConfig;
+use Awyiss\Datasource\Paging\NumericPaginator;
 use Awyiss\Event\EventListenersProvider;
 use Awyiss\Middleware\LocaleMiddleware;
+use Awyiss\Model\Behavior\TranslateBehavior;
+use Awyiss\Model\Table;
 use Awyiss\Routing\Router;
 use Awyiss\View\BackendView;
 use Cake\Core\Configure;
+use Cake\Database\Expression\QueryExpression;
 use Cake\Datasource\FactoryLocator;
+use Cake\Datasource\Paging\Exception\PageOutOfBoundsException;
 use Cake\Datasource\Paging\PaginatedInterface;
 use Cake\Datasource\QueryInterface;
 use Cake\Datasource\RepositoryInterface;
 use Cake\Event\EventInterface;
+use Cake\Http\Exception\NotFoundException;
+use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
+use Psr\Http\Message\UriInterface;
 
 
 /**
@@ -179,8 +189,8 @@ abstract class BackendController extends AppController {
 
 	/**
 	 * @inheritDoc
-	 * @param \Cake\Datasource\RepositoryInterface|\Cake\Datasource\QueryInterface|string|null $object
-	 * @param array $settings
+	 * @param \Cake\Datasource\RepositoryInterface|\Cake\Datasource\QueryInterface|string|null $ao_object
+	 * @param array $aa_settings
 	 * @return \Cake\Datasource\Paging\PaginatedInterface
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
@@ -188,6 +198,11 @@ abstract class BackendController extends AppController {
 		RepositoryInterface|QueryInterface|string|null $ao_object = null,
 		array $aa_settings = []
 	): PaginatedInterface {
+		$lo_object = $ao_object;
+		if (!is_object($ao_object)) {
+			$lo_object = $this->fetchTable($ao_object);
+		}
+
 		$la_settings = $aa_settings;
 		$la_settings += $this->paginate;
 		$la_settings += [
@@ -196,10 +211,37 @@ abstract class BackendController extends AppController {
 			],
 		];
 
-		$this->paginate = [];
+		$this->paginate['aliasedFields'] = [];
 		unset($la_settings['enabled']);
 
-		return parent::paginate($ao_object, $la_settings);
+		/** @var class-string<\Awyiss\Datasource\Paging\NumericPaginator> $lo_paginator */
+		$ls_paginatorClass = App::className(
+			$la_settings['className'] ?? NumericPaginator::class,
+			'Datasource/Paging',
+			'Paginator'
+		);
+		$lo_paginator = new $ls_paginatorClass();
+
+		$la_params = $this->request->getQueryParams();
+
+		/** @var \Awyiss\Model\Table $lo_table */
+		$lo_table = $ao_object->getRepository();
+
+		$this->modifyPaginateParams($la_params, $la_settings, $lo_table, $lo_object);
+		unset($la_settings['className'], $la_settings['defaultSortableFields']);
+
+		try {
+			$lo_results = $lo_paginator->paginate(
+				$lo_object,
+				$la_params,
+				$la_settings
+			);
+		}
+		catch (PageOutOfBoundsException $ex) {
+			throw new NotFoundException(null, null, $ex);
+		}
+
+		return $lo_results;
 	}
 
 
@@ -224,7 +266,6 @@ abstract class BackendController extends AppController {
 			return $this->overviewWhere[ Inflector::underscore($ax_key) ] ?? $ax_default;
 		}
 
-
 		return $this->overviewWhere;
 	}
 
@@ -245,7 +286,6 @@ abstract class BackendController extends AppController {
 			$this->overviewWhere = $ax_key;
 		}
 
-
 		return $this;
 	}
 
@@ -261,6 +301,89 @@ abstract class BackendController extends AppController {
 
 
 	/**
+	 * Saves the order of the systemOrder field in the database for a given list of items.
+	 *
+	 * @return void
+	 * @throws \Exception
+	 */
+	public function saveSystemOrder(): void {
+		$this->Authorization->ensure('read');
+
+		$lo_request = Router::getRequest();
+
+		$ls_tableName = $this->SystemOrder->getConfig('tableName');
+		$lo_table = $this->{$ls_tableName};
+
+		if (!$lo_table->hasBehavior('SystemOrder') || !$lo_table->getBehavior('SystemOrder')->getConfig('enabled')) {
+			if ($this->request->accepts('application/json')) {
+				$this->viewBuilder()->setOption('serialize', ['success', 'message']);
+
+				$this->set('success', false);
+				$this->set('message', __d('system', 'system_order_not_enabled'));
+
+				// Set the view class to JSON
+				$this->viewBuilder()->setClassName('Json');
+
+				// Setting the response status to 422 Unprocessable Entity
+				$this->response = $this->response->withStatus(422, 'Unable to process entity');
+			}
+			else {
+				$this->Flash->error(__d('system', 'system_order_not_enabled'));
+				throw new RedirectException(Router::url(['action' => 'overview'], true), 302);
+			}
+		}
+
+		$ls_field = Inflector::variable($this->SystemOrder->getConfig('field', 'systemOrder'));
+		if ($ls_field !== 'systemOrder') {
+			if ($this->request->accepts('application/json')) {
+				$this->viewBuilder()->setOption('serialize', ['success', 'message']);
+
+				$this->set('success', false);
+				$this->set('message', __d('system', 'system_order_manual_order_is_disabled'));
+
+				// Set the view class to JSON
+				$this->viewBuilder()->setClassName('Json');
+
+				// Setting the response status to 422 Unprocessable Entity
+				$this->response = $this->response->withStatus(422, 'Unable to process entity');
+			}
+			else {
+				$this->Flash->error(__d('system', 'system_order_manual_order_is_disabled'));
+				throw new RedirectException(Router::url(['action' => 'overview'], true), 302);
+			}
+		}
+
+		/** @noinspection DuplicatedCode */
+		$li_affectedRows = $this->_saveSystemOrder($lo_request->getData('order'), $lo_table);
+
+		if ($this->request->accepts('application/json')) {
+			$this->viewBuilder()->setOption('serialize', ['success', 'message']);
+
+			$this->set('success', $li_affectedRows !== false);
+			$this->set('message', $li_affectedRows > 0 ? __d('system', 'system_order_saved') : __d('system', 'system_order_not_saved'));
+
+			// Set the view class to JSON
+			$this->viewBuilder()->setClassName('Json');
+
+			if ($li_affectedRows === false) {
+				// Setting the response status to 422 Unprocessable Entity
+				$this->response = $this->response->withStatus(422, 'Unable to process entity');
+			}
+		}
+		else {
+			if ($li_affectedRows) {
+				$this->Flash->success(__d('system', 'system_order_saved'));
+			}
+			else {
+				$this->Flash->error(__d('system', 'system_order_not_saved'));
+			}
+
+			throw new RedirectException(Router::url(['action' => 'overview'], true), 302);
+		}
+	}
+
+
+	/**
 	 * Sets user configuration based on the provided url parameters and redirects to the previous page.
 	 *
 	 * @return \Cake\Http\Response
@@ -269,6 +392,11 @@ abstract class BackendController extends AppController {
 		$lo_request = Router::getRequest();
 
 		$ls_scope = Inflector::underscore($this->getName());
+
+		if ($ls_scope === 'dashboard') {
+			$ls_scope = 'system';
+		}
+
 		$ls_scope = Inflector::singularize($ls_scope);
 		$ls_scope = Inflector::pluralize($ls_scope);
 		$ls_scope = Inflector::underscore($ls_scope);
@@ -303,11 +431,22 @@ abstract class BackendController extends AppController {
 			$lo_config->set('value', $lx_value);
 		}
 
+		// TODO: Delete the entity if the value is the default value of the config option
+
 		if ($lo_table->save($lo_config)) {
 			$lo_identity->resetConfiguration();
 		}
 
-		return $this->redirect($lo_request->referer());
+		$ls_referer = $lo_request->referer();
+		if ($ls_identifier === 'paginate.limit') {
+			// Remove "page:X" from the referer url
+			$ls_referer = preg_replace('/\/page:\d+/', '', $ls_referer);
+
+			//Remove double slashes
+			$ls_referer = preg_replace('/([^:])\/\//', '$1/', $ls_referer);
+		}
+
+		return $this->redirect($ls_referer);
 	}
 
 
@@ -319,12 +458,248 @@ abstract class BackendController extends AppController {
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function beforeRender(EventInterface $ao_event): void {
-		$la_config = [];
+		$this->set('config', Configure::read());
+		$this->set('localConfig', LocalConfig::read());
+		$this->set('paginate', $this->paginate);
 
-		foreach ($this->customConfigProperties as $ls_property) {
-			$la_config[ $ls_property ] = $this->$ls_property;
+		// Disable the layout for ajax requests
+		if (
+			$this->request->is('ajax') &&
+			($this->request->getData('reload_form') || $this->request->getParam('ajaxForm'))
+		) {
+			$lo_viewBuilder = $this->viewBuilder();
+			$lo_viewBuilder->disableAutoLayout();
+
+			// Consume the flash messages to prevent them from being displayed the next time the page is loaded
+			$ls_controller = Inflector::underscore($this->getName());
+			$this->request->getFlash()->consume($ls_controller);
+		}
+	}
+
+
+	/**
+	 * @param \Cake\Event\EventInterface $event
+	 * @param \Psr\Http\Message\UriInterface|array|string $url
+	 * @param \Cake\Http\Response $response
+	 * @return void
+	 */
+	public function beforeRedirect(EventInterface $event, UriInterface|array|string $url, Response $response): void {
+		if ($this->request->is('ajax')) {
+			// Consume the flash messages to prevent them from being displayed the next time the page is loaded
+			$ls_controller = Inflector::underscore($this->getName());
+			$this->request->getFlash()->consume($ls_controller);
+		}
+	}
+
+
+	/**
+	 * Modifies the paginate-params and settings before calling the paginate method.
+	 *
+	 * @param array $aa_params
+	 * @param array $aa_settings
+	 * @param \Awyiss\Model\Table $ao_table
+	 * @param \Cake\Datasource\RepositoryInterface|\Cake\Datasource\QueryInterface|string|null $ao_object
+	 * @param bool $ab_isContain
+	 * @return void
+	 */
+	protected function modifyPaginateParams(
+		array &$aa_params,
+		array &$aa_settings,
+		Table $ao_table,
+		RepositoryInterface|QueryInterface|string|null $ao_object,
+		bool $ab_isContain = false
+	): void {
+		$ls_tableAlias = $ab_isContain ? $ao_table->getAlias() : null;
+
+		// Make sure the sortableFields are set
+		if (empty($aa_settings['sortableFields'])) {
+			$aa_settings['sortableFields'] = $this->paginate['defaultSortableFields'] ?? [];
+			$aa_settings['sortableFields'] = array_merge($aa_settings['sortableFields'], $ao_table->getSchema()->columns());
+			$aa_settings['sortableFields'] = array_unique($aa_settings['sortableFields']);
 		}
 
-		$this->set('config', $la_config);
+		if ($ab_isContain) {
+			$ls_singularAlias = Inflector::underscore(Inflector::singularize($ls_tableAlias));
+			// Prefix all fields with the table alias
+			foreach ($ao_table->getSchema()->columns() as $ls_field) {
+				$ls_underscoredAlias = $ls_singularAlias . '_' . $ls_field;
+				$aa_settings['sortableFields'][] = $ls_tableAlias . '.' . $ls_field;
+
+				if (isset($aa_params['sort']) && $aa_params['sort'] === $ls_underscoredAlias) {
+					$aa_params['sort'] = $ls_tableAlias . '.' . $ls_field;
+				}
+			}
+
+			//return;
+		}
+
+		// Add the attributes of the table to the sortableFields
+		foreach ($ao_table->getAttributes() as $ls_attribute => $lo_attribute) {
+			if ($ls_tableAlias) {
+				$ls_attribute = $ls_tableAlias . 'Attributes.' . $ls_attribute;
+			}
+
+			$aa_settings['sortableFields'][] = $ls_attribute;
+		}
+
+		// If the table has a behavior for translating, modify the params and/or settings to match the translated field names
+		if ($ao_table->hasBehavior('Translate')) {
+			/** @noinspection PhpParamsInspection */
+			$this->modifyTranslatedPaginateParams($aa_params, $aa_settings, $ao_table->getBehavior('Translate'), $ls_tableAlias);
+		}
+
+		if ($ao_table->hasAttributes() && $ao_table->getAttributesTable()->hasBehavior('Translate')) {
+			/**
+			 * @noinspection PhpParamsInspection
+			 * @noinspection PhpArgumentWithoutNamedIdentifierInspection
+			 */
+			$this->modifyTranslatedPaginateParams($aa_params, $aa_settings, $ao_table->getAttributesTable()->getBehavior('Translate'), $ls_tableAlias);
+		}
+
+		// Traverse the contain array and modify the params and settings for each table
+		if (!$ab_isContain && $ao_object instanceof QueryInterface) {
+			foreach ($ao_object->getContain() as $ls_tableName => $la_containOptions) {
+				/** @var \Awyiss\Model\Table $lo_table */
+				$lo_table = $ao_table->getAssociation($ls_tableName)->getTarget();
+				$this->modifyPaginateParams($aa_params, $aa_settings, $lo_table, null, true);
+			}
+		}
+	}
+
+
+	/**
+	 * @param array $aa_params
+	 * @param array $aa_settings
+	 * @param \Awyiss\Model\Behavior\TranslateBehavior $ao_behavior
+	 * @param ?string $as_tableAlias
+	 * @return void
+	 */
+	protected function modifyTranslatedPaginateParams(
+		array &$aa_params,
+		array &$aa_settings,
+		TranslateBehavior $ao_behavior,
+		?string $as_tableAlias = null,
+	): void {
+		$la_translatableFields = $ao_behavior->getConfig('fields');
+
+		// Modify the sort field if it is set so that it matches the translated field name
+		if (isset($aa_params['sort']) && !is_array($aa_params['sort'])) {
+			if ($as_tableAlias && str_starts_with($aa_params['sort'], $as_tableAlias . '.')) {
+				// Strip the alias from the sort field
+				$ls_field = substr($aa_params['sort'], strlen($as_tableAlias) + 1);
+				if (in_array($ls_field, $la_translatableFields)) {
+					$ls_translationField = $ao_behavior->translationField($ls_field);
+
+					// Add the translated field to the aliasedFields
+					$this->paginate['aliasedFields'][ $ls_translationField ] = $aa_params['sort'];
+
+					$aa_params['sort'] = [$ls_translationField, $aa_params['sort']];
+					$aa_settings['sortableFields'][] = $ls_translationField;
+				}
+			}
+
+			if (in_array($aa_params['sort'], $la_translatableFields)) {
+				$ls_field = $aa_params['sort'];
+				$ls_translationField = $ao_behavior->translationField($ls_field);
+
+				// Add the translated field to the aliasedFields
+				$this->paginate['aliasedFields'][ $ls_translationField ] = $ls_field;
+
+				$aa_params['sort'] = [$ls_translationField, $ls_field];
+				$aa_settings['sortableFields'][] = $ls_translationField;
+			}
+		}
+
+
+		// Modify the default order fields if it is set so that it matches the translated field names
+		if (!$as_tableAlias && !empty($aa_settings['order'])) {
+			$la_order = [];
+
+			// Traverse the order array
+			foreach ($aa_settings['order'] as $ls_field => $ls_direction) {
+				$ls_key = $ls_field;
+
+				if (in_array($ls_field, $la_translatableFields)) {
+					$ls_key = $ao_behavior->translationField($ls_field);
+
+					// Add the translated field to the aliasedFields
+					$this->paginate['aliasedFields'][ $ls_key ] = $ls_field;
+
+					// If the sort field is not set, set it to the translated field, coalesce with the original field
+					$aa_params['sort'] ??= [$ls_key, $ls_field];
+
+					// Add the translated field to the sortableFields
+					$aa_settings['sortableFields'][] = $ls_key;
+				}
+
+				// Set the direction for the translated and the original field to the current direction
+				// if the sort field is set and matches the current field
+				/** @noinspection PhpStrictComparisonWithOperandsOfDifferentTypesInspection */
+				if (($aa_params['direction'] ?? null) && $ls_key === $aa_params['sort']) {
+					$la_order[ $ls_key ] = $aa_params['direction'];
+					$la_order[ $ls_field ] = $aa_params['direction'];
+				}
+				else {
+					$la_order[ $ls_key ] = $ls_direction;
+					$la_order[ $ls_field ] = $ls_direction;
+				}
+			}
+
+			$aa_settings['order'] = $la_order;
+		}
+	}
+
+
+	/**
+	 * @param array $aa_requestData
+	 * @param \Awyiss\Model\Table $ao_table
+	 * @return int
+	 */
+	protected function _saveSystemOrder(array $aa_requestData, Table $ao_table): int {
+		/*
+		 * Build an array of the order data
+		 * In the first level, the key is the parent id, the value is an array of the child ids
+		 * In the second level, the value is the child id, the key is the order, offset by -1
+		 */
+		$la_orderData = [];
+		foreach ($aa_requestData as $li_parentId => $la_children) {
+			foreach ($la_children as $li_order => $li_id) {
+				$la_orderData[] = [
+					'id' => $li_id,
+					'parentId' => $li_parentId === 0 ? null : $li_parentId,
+					'systemOrder' => $li_order + 1,
+				];
+			}
+		}
+
+		$lo_schema = $ao_table->getSchema();
+
+		/** @noinspection PhpUnnecessaryLocalVariableInspection */
+		$li_affectedRows = $ao_table->updateAll(function (QueryExpression $ao_expression) use ($la_orderData, $lo_schema) {
+			$lo_parentCase = $ao_expression->case();
+			$lo_systemOrderCase = $ao_expression->case();
+
+			foreach ($la_orderData as $la_data) {
+				$lo_parentCase->when(['id' => $la_data['id']])->then($la_data['parentId'], 'integer');
+				$lo_systemOrderCase->when(['id' => $la_data['id']])->then($la_data['systemOrder'], 'integer');
+			}
+
+			if ($lo_schema->hasColumn('parent_id')) {
+				return [
+					'parent_id' => $lo_parentCase,
+					'system_order' => $lo_systemOrderCase,
+				];
+			}
+
+
+			return [
+				'system_order' => $lo_systemOrderCase,
+			];
+		}, [
+			'id IN' => array_column($la_orderData, 'id'),
+		]);
+
+
+		return $li_affectedRows;
 	}
 }

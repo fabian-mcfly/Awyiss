@@ -80,30 +80,10 @@ class LocaleHelper extends Helper {
 
 
 	/**
-	 * @param Event $ao_event
-	 * @return void
-	 * @throws \Exception
-	 */
-	public function beforeRender(Event $ao_event): void {
-		$la_languages = LocaleMiddleware::getLanguages();
-
-		/** @var \Cake\View\View $ao_view */
-		$ao_view = $ao_event->getSubject();
-
-		if (!$ao_view->get('aa_languages')) {
-			$ao_view->set('aa_languages', $la_languages);
-		}
-
-		// Set the current language
-		$ls_currentLanguage = LocaleMiddleware::getLanguage();
-		$ao_view->set('ao_currentLanguage', $ls_currentLanguage);
-	}
-
-
-	/**
+	 * @param bool $raw
 	 * @return array
 	 */
-	public function allLanguages(): array {
+	public function allLanguages(bool $raw = false): array {
 		$la_languages = [];
 
 		foreach (LocaleMiddleware::getLanguagesByShortcode() as $ls_shortcode => $la_languagesByRealm) {
@@ -113,7 +93,7 @@ class LocaleHelper extends Helper {
 				continue;
 			}
 
-			$la_languages[ $ls_shortcode ] = $lo_language->title;
+			$la_languages[ $ls_shortcode ] = $raw ? $lo_language : $lo_language->title;
 		}
 
 
@@ -123,13 +103,14 @@ class LocaleHelper extends Helper {
 
 	/**
 	 * @param string $as_realm
+	 * @param bool $raw
 	 * @return array
 	 */
-	public function languagesForRealm(string $as_realm): array {
+	public function languagesForRealm(string $as_realm, bool $raw = false): array {
 		$la_languages = [];
 
 		foreach (LocaleMiddleware::getLanguages($as_realm) as $ls_shortcode => $lo_language) {
-			$la_languages[ $ls_shortcode ] = $lo_language->title;
+			$la_languages[ $ls_shortcode ] = $raw ? $lo_language : $lo_language->title;
 		}
 
 

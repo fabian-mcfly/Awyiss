@@ -15,8 +15,7 @@ use Psr\Http\Message\UriInterface;
 
 
 /**
- * @property \Awyiss\Model\Table\LanguagesTable $Languages
- * @property \Awyiss\Model\Table\ConfigurationTable $Configuration
+ * AppController
  */
 abstract class AppController extends Controller {
 	/**

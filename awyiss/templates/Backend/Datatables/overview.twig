@@ -1,116 +1,30 @@
 {#
-@var ao_datatables Awyiss\Model\Entity\Datatable[]
+@var datatables \Cake\Datasource\Paging\PaginatedResultSet
 @var _view \Awyiss\View\BackendView
 #}
 
 <div class="Datatables Overview">
-	{% block buttonsOverview %}
-		{% if AuthorizationHelper.isAccessible('create') %}
-			{{ HtmlHelper.link(__('create'), {action: 'add'}, {class: 'Button'}) }}
-		{% endif %}
-	{% endblock %}
-
 	{% block headlineOverview %}
 		<h1>{{ __('headline_overview') }}</h1>
 	{% endblock %}
 
-	{% block tableOverview %}
-		<table>
-			{% block tableOverviewHead %}
-				<thead>
-					{% block tableOverviewHeadRow %}
-						<tr>
-							{% block tableOverviewHeaderId %}
-								<th>{{ PaginatorHelper.sort('id') }}</th>
-							{% endblock %}
-
-							{% block tableOverviewHeaderTitle %}
-								<th>{{ PaginatorHelper.sort('title') }}</th>
-							{% endblock %}
-
-							{% block tableOverviewHeaderIdentifier %}
-								<th>{{ PaginatorHelper.sort('identifier') }}</th>
-							{% endblock %}
-
-							{% block tableOverviewHeaderActive %}
-								<th>{{ PaginatorHelper.sort('active') }}</th>
-							{% endblock %}
-
-							{% block tableOverviewHeaderActions %}
-								<th class="actions"></th>
-							{% endblock %}
-						</tr>
-					{% endblock %}
-				</thead>
-			{% endblock %}
-			{% block tableOverviewBody %}
-				<tbody>
-					{# @var lo_datatable \Awyiss\Model\Entity\Datatable #}
-					{% for lo_datatable in ao_datatables %}
-						{% block tableOverviewBodyRow %}
-							<tr>
-								{% block tableOverviewCellId %}
-									<td>{{ lo_datatable.id }}</td>
-								{% endblock %}
-
-								{% block tableOverviewCellTitle %}
-									<td>{{ lo_datatable.title }}</td>
-								{% endblock %}
-
-								{% block tableOverviewCellIdentifier %}
-									<td>{{ lo_datatable.identifier }}</td>
-								{% endblock %}
-
-								{% block tableOverviewCellActive %}
-									<td>{{ lo_datatable.active }}</td>
-								{% endblock %}
-
-								{% block tableOverviewCellActions %}
-									<td class="actions">
-										{% do AuthorizationHelper.setScope(lo_datatable.identifier) %}
-										{% if AuthorizationHelper.isAccessible('read') %}
-											{{ HtmlHelper.link(__('overview'), {controller: lo_datatable.identifier, action: 'overview'}) }}
-										{% endif %}
-										{% do AuthorizationHelper.resetScope() %}
-
-										{% if AuthorizationHelper.isAccessible('update') %}
-											{{ HtmlHelper.link(__('edit'), {action: 'edit', id: lo_datatable.id}) }}
-										{% endif %}
-										{% if AuthorizationHelper.isAccessible('delete') %}
-											{{ HtmlHelper.link(__('delete'), {action: 'delete', id: lo_datatable.id}, {
-				class: 'Button Button-Small Button-Delete',
-				'data-confirm-title': __('confirm_delete_title'),
-				'data-confirm-yes': __('confirm_delete_yes'),
-				'data-confirm-yes-class': 'Button-Delete',
-				'data-confirm-no': __('confirm_delete_no'),
-				'data-confirm': __('confirm_delete', lo_datatable.id) }) }}
-										{% endif %}
-									</td>
-								{% endblock %}
-							</tr>
-						{% endblock %}
-					{% endfor %}
-				</tbody>
-			{% endblock %}
-		</table>
-	{% endblock %}
-
-	{% block listControlOverview %}
-		<ul class="ListControl">
-			{% block listControlOverviewPagination %}
-				{% set pagination = PaginatorHelper.render() %}
-				{% if pagination is not empty %}
-					<li class="ListControl-Pagination">
-						{{ pagination|raw }}
-					</li>
+	{% block buttonArea %}
+		<div class="ButtonArea">
+			{% block buttonsOverview %}
+				{% if AuthorizationHelper.isAccessible('create') %}
+					{{ HtmlHelper.link(__('create'), {action: 'add'}, {class : 'Button Button-Add'}) }}
 				{% endif %}
 			{% endblock %}
+		</div>
+	{% endblock %}
 
-			{% block paginationOverviewLimitControl %}
-				<li class="ListControl-ListLimit">
-					{{ PaginatorHelper.limitControl() }}
-				</li>
-			{% endblock %}
-		</ul>
+	{% block paginatedOverview %}
+		{% include '@Backend/Datatables/overview_paginated_list.twig' with _context|merge({records: datatables.items().toArray()}) %}
+	{% endblock %}
+
+	{% block buttonAreaBottom %}
+		<div class="ButtonArea ButtonArea-Bottom">
+			{{ block('buttonsOverview') }}
+		</div>
 	{% endblock %}
 </div>

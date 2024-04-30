@@ -46,6 +46,29 @@ class SystemConfigOptions extends AbstractConfigOptions {
 
 
 		$this->add(Awyiss::REALM_BACKEND, [
+			'interface' => [
+				new ConfigOption(
+					defaultValue: false,
+					identifier: 'darkMode',
+					localizable: false,
+					nullable: false,
+					personalizable: true,
+					type: ConfigOptionType::Bool,
+				),
+				new ConfigOption(
+					defaultValue: 'regular',
+					identifier: 'scale',
+					localizable: false,
+					nullable: false,
+					personalizable: true,
+					type: ConfigOptionType::ListKey,
+					values: [
+						'small' => __d('system', 'interface_scale_small'),
+						'medium' => __d('system', 'interface_scale_medium'),
+						'regular' => __d('system', 'interface_scale_regular'),
+					],
+				),
+			],
 			new ConfigOption(
 				defaultValue: 600,
 				identifier: 'lockTimeout',
@@ -55,7 +78,7 @@ class SystemConfigOptions extends AbstractConfigOptions {
 			),
 			'meta' => [
 				new ConfigOption(
-					defaultValue: 'Firma',
+					defaultValue: 'Awyiss Backend',
 					identifier: 'titleAppendix',
 				),
 				new ConfigOption(

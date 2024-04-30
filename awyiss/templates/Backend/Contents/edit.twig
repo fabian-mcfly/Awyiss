@@ -1,39 +1,53 @@
 {#
-@var ao_content \Awyiss\Model\Entity\Content
-@var ao_contentTemplates \Cake\Collection\CollectionInterface
-@var ao_possibleParentContents \Cake\Collection\CollectionInterface
-@var ao_page \Awyiss\Model\Entity\Page
-@var aa_assignedAttributes array
-@var aa_contentAreas array
-@var aa_contentElementsByFieldset ContentTemplateElement[]
-@var as_forScope string
-@var as_languageRealm string
-@var as_languageShortcode string
+@var content \Awyiss\Model\Entity\Content
+@var contentTemplates \Cake\Collection\CollectionInterface
+@var possibleParentContents \Cake\Collection\CollectionInterface
+@var page \Awyiss\Model\Entity\Page
+@var assignedAttributes array
+@var contentAreas array
+@var contentElementsByFieldset ContentTemplateElement[]
+@var forScope string
+@var languageRealm string
+@var languageShortcode string
 @var _view \Awyiss\View\BackendView
 #}
 
-<div class="Contents Form Edit">
-	{{ FormHelper.create(ao_content, {method: 'post', idPrefix: 'content'}) }}
+{% do AuthorizationHelper.setScope(forScope) %}
 
-	{{ FormHelper.checkbox('save_as_copy', {id: 'SaveAsCopy', value: true}) }}
+<div class="Contents Form Edit">
+	{% if AuthorizationHelper.isAccessible('read') %}
+		{{ HtmlHelper.link(__('overview'), {action: 'overview', pageId: page.id}, {class: 'BackToOverview'}) }}
+	{% endif %}
 
 	{% block headlineEdit %}
 		<h1>{{ __('headline_edit') }}</h1>
 	{% endblock %}
 
-	{% block formEditButtons %}
-		<label for="SaveAsCopy">{{ __('as_copy') }}</label>
-		{{ FormHelper.button(__('save')) }}
-		{{ FormHelper.button(__('save_close'), {name: 'submit', value: 'submit_close'}) }}
+	{{ FormHelper.create(content, {method: 'post', idPrefix: 'content'}) }}
+
+	{{ FormHelper.checkbox('save_as_copy', {id: 'SaveAsCopy', value: true}) }}
+
+	{% block buttonArea %}
+		<div class="ButtonArea">
+			{% block formEditButtons %}
+				<label for="SaveAsCopy" class="Button Button-SaveAsCopy Label-SaveAsCopy">{{ __('as_copy') }}</label>
+				{{ FormHelper.button(__('save'), {class: 'Button Button-Success Button-Save'}) }}
+				{% if AuthorizationHelper.isAccessible('read') %}
+					{{ FormHelper.button(__('save_close'), {class: 'Button Button-SaveClose', name: 'submit', value: 'submit_close'}) }}
+				{% endif %}
+			{% endblock %}
+		</div>
 	{% endblock %}
 
 	{% block formEdit %}
 		{% include('@Backend/Contents/form.twig') %}
 	{% endblock %}
 
-	{% block formEditButtonsBottom %}
-		{{ block('formEditButtons') }}
+	{% block buttonAreaBottom %}
+		<div class="ButtonArea ButtonArea-Bottom">
+			{{ block('formEditButtons') }}
+		</div>
 	{% endblock %}
 
-	{{ FormHelper.end() -}}
+	{{ FormHelper.end() }}
 </div>

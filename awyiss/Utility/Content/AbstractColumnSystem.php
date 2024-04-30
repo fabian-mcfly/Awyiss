@@ -85,6 +85,19 @@ abstract class AbstractColumnSystem implements ColumnSystemInterface {
 
 
 	/**
+	 * @inheritDoc
+	 */
+	public static function getScssColumnList(): array {
+		$la_columnList = [];
+		foreach (static::getColumnWidths() as $lo_column) {
+			$la_columnList[] = $lo_column->getFraction();
+		}
+
+		return $la_columnList;
+	}
+
+
+	/**
 	 * @param int $minDenominator
 	 * @param int $maxDenominator
 	 * @return array

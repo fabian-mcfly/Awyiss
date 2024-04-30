@@ -1,31 +1,43 @@
 {#
-@var ao_contentTemplate \Awyiss\Model\Entity\ContentTemplate
-@var aa_availableContentElements array
-@var aa_availableContentAttributes array
-@var aa_availableFieldsets array
-@var aa_pageTemplates
+@var contentTemplate \Awyiss\Model\Entity\ContentTemplate
+@var availableContentElements array
+@var availableContentAttributes array
+@var availableFieldsets array
+@var pageTemplates
 @var _view \Awyiss\View\BackendView
 #}
 
 <div class="ContentTemplates Form Add">
-	{{ FormHelper.create(ao_contentTemplate, {method: 'post', idPrefix: 'ContentTemplate'}) }}
+	{% if AuthorizationHelper.isAccessible('read') %}
+		{{ HtmlHelper.link(__('overview'), {action: 'overview', pageId: page.id}, {class: 'BackToOverview'}) }}
+	{% endif %}
 
 	{% block headlineAdd %}
 		<h1>{{ __('headline_add') }}</h1>
 	{% endblock %}
 
-	{% block formAddButtons %}
-		{{ FormHelper.button(__('save')) }}
-		{{ FormHelper.button(__('save_close'), {name: 'submit', value: 'submit_close'}) }}
+	{{ FormHelper.create(contentTemplate, {method: 'post', idPrefix: 'ContentTemplate'}) }}
+
+	{% block buttonArea %}
+		<div class="ButtonArea">
+			{% block formAddButtons %}
+				{{ FormHelper.button(__('save'), {class: 'Button Button-Success Button-Save'}) }}
+				{% if AuthorizationHelper.isAccessible('read') %}
+					{{ FormHelper.button(__('save_close'), {class: 'Button Button-SaveClose', name: 'submit', value: 'submit_close'}) }}
+				{% endif %}
+			{% endblock %}
+		</div>
 	{% endblock %}
 
 	{% block formAdd %}
 		{% include('@Backend/ContentTemplates/form.twig') %}
 	{% endblock %}
 
-	{% block formAddButtonsBottom %}
-		{{ block('formAddButtons') }}
+	{% block buttonAreaBottom %}
+		<div class="ButtonArea ButtonArea-Bottom">
+			{{ block('formAddButtons') }}
+		</div>
 	{% endblock %}
 
-	{{ FormHelper.end() -}}
+	{{ FormHelper.end() }}
 </div>

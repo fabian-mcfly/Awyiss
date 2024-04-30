@@ -79,6 +79,10 @@ class Attributes  {
 			'default' => false,
 			'limit' => null,
 			'null' => false,
+		])->addColumn('column_span', 'string', [
+			'default' => '12/12',
+			'limit' => 5,
+			'null' => false,
 		])->addColumn('system_order', 'integer', [
 			'default' => '0',
 			'limit' => null,

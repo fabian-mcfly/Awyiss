@@ -63,6 +63,11 @@ class MediaListener implements EventListenerInterface {
 		$lo_table = $ao_event->getSubject();
 		$lb_isNew = $ao_entity->isNew();
 
+		// If the systemOrder is the only dirty field, we don't need to do anything
+		if ($ao_entity->getDirty() === ['systemOrder']) {
+			return;
+		}
+
 		if (!isset(static::$mediaFolders)) {
 			/**
 			 * @var \Cake\Collection\Iterator\TreeIterator $lo_mediaFolderse
@@ -102,10 +107,19 @@ class MediaListener implements EventListenerInterface {
 			$ls_tempName = $lo_stream->getMetadata('uri');
 
 			if ($ao_entity->isImage()) {
-				$la_imageSize = getimagesize($ls_tempName);
+				if ($ao_entity->mimeType === 'image/svg+xml') {
+					$la_dimensions = $this->getSvgDimensions(file_get_contents($ls_tempName));
 
-				$ao_entity->width = $la_imageSize[0];
-				$ao_entity->height = $la_imageSize[1];
+					$ao_entity->width = $la_dimensions['width'];
+					$ao_entity->height = $la_dimensions['height'];
+				}
+				else {
+					$la_imageSize = getimagesize($ls_tempName);
+
+					$ao_entity->width = $la_imageSize[0];
+					$ao_entity->height = $la_imageSize[1];
+				}
+
 				$ao_entity->preview = ProcessStatus::NotRequired;
 				/*if ($ao_entity->mimeType !== 'image/webp') {
 					$la_exifData = exif_read_data($ls_tempName, '', true);
@@ -115,16 +129,9 @@ class MediaListener implements EventListenerInterface {
 				$ao_entity->width = null;
 				$ao_entity->height = null;
 				$ao_entity->preview = ProcessStatus::Undefined;
-
-				if ($ao_entity->mimeType === 'image/svg+xml') {
-					$la_dimensions = $this->getSvgDimensions(file_get_contents($ls_tempName));
-
-					$ao_entity->width = $la_dimensions['width'];
-					$ao_entity->height = $la_dimensions['height'];
-				}
 			}
 
-			$ao_entity->webp = $ao_entity->mimeType === 'image/webp' ? ProcessStatus::NotRequired : ProcessStatus::Undefined;
+			$ao_entity->webp = in_array($ao_entity->mimeType, ['image/webp', 'image/svg+xml']) ? ProcessStatus::NotRequired : ProcessStatus::Undefined;
 
 			if ($lb_isNew && LocalConfig::read('upload.autoOverwrite', false, 'Media') === true) {
 				$lo_currentMedia = static::$media[ $ao_entity->mediaFolderId ][ $ao_entity->name ] ?? null;

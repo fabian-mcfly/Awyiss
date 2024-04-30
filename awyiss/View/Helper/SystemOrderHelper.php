@@ -9,6 +9,7 @@ use Awyiss\Model\Behavior\SystemOrderBehavior;
 use Awyiss\Model\Entity;
 use Cake\Core\Exception\CakeException;
 use Cake\Utility\Hash;
+use Cake\Utility\Inflector;
 use Cake\View\Helper;
 use Cake\View\StringTemplate;
 use Cake\View\StringTemplateTrait;
@@ -67,8 +68,8 @@ class SystemOrderHelper extends Helper {
 	 *
 	 * ### Options
 	 * - `entity` The entity the system order is for
-	 * - `options` All possible options. If empty, try fetching the `ao_systemOrderRecords`-var from the view
-	 * - `relatedColumns` The columns related to the system order. If empty, try fetching the `aa_systemOrderRelatedColumns`-var from the view
+	 * - `options` All possible options. If empty, try fetching the `systemOrderRecords`-var from the view
+	 * - `relatedColumns` The columns related to the system order. If empty, try fetching the `systemOrderRelatedColumns`-var from the view
 	 *
 	 * For more options, see FormHelper::control()
 	 *
@@ -78,7 +79,7 @@ class SystemOrderHelper extends Helper {
 	 * @see FormHelper::control
 	 */
 	public function control(?string $as_fieldName = null, array $aa_attributes = []): string {
-		if ($this->getConfig('field', 'systemOrder') !== 'systemOrder') {
+		if (Inflector::variable($this->getConfig('field', 'systemOrder')) !== 'systemOrder') {
 			return '';
 		}
 

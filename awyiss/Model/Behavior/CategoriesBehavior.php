@@ -636,6 +636,10 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 	 */
 	public function assignParentCategories(int $ai_maxLevel): void {
 		$lo_parentCategories = $this->getParentCategories(true);
+		if (!$lo_parentCategories) {
+			return;
+		}
+
 		$lo_parentCategories = $lo_parentCategories->nest('id', 'parentId')->listNested();
 
 		/** @var \Awyiss\Model\Table $lo_table */
@@ -697,19 +701,23 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 			$lo_query->find('threaded');
 		}
 
-		$lo_parentCategories = $this->getParentCategories();
+		// Include parent categories in the query
+		$lo_parentCategories = $this->getConfig('includeParentCategories') ? $this->getParentCategories() : null;
 		if ($lo_parentCategories?->count()) {
 			$la_parentCategorieIds = $lo_parentCategories->extract('id')->toList();
 
+			$ls_field = $this->getConfig('foreignKey');
+			$ls_field = $lo_association->aliasField($ls_field);
+
+			// Order by parent categories first
 			/** @noinspection PhpUndefinedMethodInspection */
 			$lo_query->orderByAsc($lo_query->newExpr($lo_query->func()->FIND_IN_SET([
-				$this->getConfig('foreignKey') => 'identifier',
+				$ls_field => 'identifier',
 				implode(',', $la_parentCategorieIds),
 			])), true);
 		}
 
 		$lo_categories = $lo_query->all();
-
 
 		if ($this->getConfig('threaded')) {
 			/**

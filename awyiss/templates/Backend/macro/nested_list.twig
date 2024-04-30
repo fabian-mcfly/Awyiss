@@ -3,35 +3,58 @@
 A macro that takes an array of entities with "children" properties
 and builds a recursive list out of it
 
-`aa_settings` is a list of settings that can be passed to the macro
+`settings` is a list of settings that can be passed to the macro
 - `identifier` (string) - the identifier of the entity (e.g. "category")
 - `template` (string) - the template to use for each item
 - `level` (int) - the current level of the list
+- `childrenProperty` (string) - the property name of the children (default: "children")
+
+Other fields like `attributes`, `displayedFields`, `localConfig` should be passe do this macro,
+so they can be passed to the template
 
 #}
 
-{% macro nestedList(aa_entities, aa_settings) %}
-	{% if aa_settings.level is not defined %}
-		{% set aa_settings = aa_settings|merge({level: 1}) %}
+{% macro nestedList(entities, settings, childrenMethod = 'children', itemsMethod = '') %}
+	{% if settings.level is not defined %}
+		{% set settings = settings|merge({level: 1}) %}
 	{% endif -%}
-	{% if aa_settings.template is not defined %}
-		{% set aa_settings = aa_settings|merge({template: '@Backend/macro/nested_list_item.twig'}) %}
-	{% endif -%}
+	{% if settings.template is not defined %}
+		{% set settings = settings|merge({template: '@Backend/element/overview/nested_list_item.twig'}) %}
+	{% endif %}
+	{% if settings.class is not defined %}
+		{% set settings = settings|merge({class: ''}) %}
+	{% endif %}
+	{% if settings.parentsActive is not defined %}
+		{% set settings = settings|merge({parentsActive: true}) %}
+	{% endif %}
 
-	<ul class="{{ aa_settings.identifier|pluralize }}-List NestedList Level{{ aa_settings.level }}
-		{%- if aa_settings.class is defined %} {{ aa_settings.class }}{% endif -%}">
-		{% for lo_entity in aa_entities %}
-			<li class="ListItem {{ aa_settings.identifier }}-ListItem {{ aa_settings.identifier }}-ListItem{{ lo_entity.id -}}
-				{%- if lo_entity.class is defined %} {{ lo_entity.class }}{% endif -%}
-				{%- if lo_entity.active is defined and lo_entity.active == false %} Inactive{% endif -%}
-				{%- if lo_entity.parentsActive is defined and lo_entity.parentsActive == false %} ParentsInactive{% endif -%}
-			">
-				{% include aa_settings.template with {'lo_entity': lo_entity, 'settings': aa_settings} %}
+	<ul {% if settings.level == 1 %} id="{{ settings.identifier|pluralize }}-List" {% endif -%}
+		class="{{ settings.identifier|pluralize }}-List NestedList Level{{ settings.level }} {{ settings.class }}"
+		{%- if settings.data is defined %}
+			{%- for key, value in settings.data %} data-{{ key }}="{{ value == false ? 'false' : (value is same as(true) ? 'true' : value) }}"{%- endfor %}
+		{%- endif %}>
 
-				{% if lo_entity.children is not empty %}
-					{{ _self.nestedList(lo_entity.children, aa_settings|merge({level: aa_settings.level + 1})) }}
+		{% for key, entity in entities %}
+			{% set active = key is not numeric or (entity.active == true and settings.parentsActive == true) %}
+
+			{% set children = attribute(entity, childrenMethod) %}
+			{% set childrenList = '' %}
+
+			{% if children is not empty %}
+				{% if itemsMethod != '' %}
+					{% set children = attribute(children, itemsMethod) %}
 				{% endif %}
-			</li>
+
+				{% set childrenList = _self.nestedList(children, settings|merge({
+					level: settings.level + 1,
+					parentsActive: active and settings.parentsActive
+				}), childrenMethod, itemsMethod) %}
+			{% endif %}
+
+			{% include settings.template with _context|merge(settings, {
+				childrenList: childrenList,
+				settings: settings,
+			}) %}
 		{% endfor %}
 	</ul>
 {% endmacro %}

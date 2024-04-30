@@ -69,32 +69,6 @@ class BackendMenuEntriesTable extends Table {
 
 
 		$ao_validator->requirePresence([
-			'parentId' => [
-				'mode' => function (array $aa_context): bool {
-					/** @var BackendMenuEntriesTable $lo_table */
-					$lo_table = $aa_context['providers']['table'];
-					/** @var BackendMenuEntry $ls_entityClass */
-					$ls_entityClass = $lo_table->getEntityClass();
-
-					$la_data = $aa_context['data'];
-
-
-					return empty($la_data[ $ls_entityClass::unmapField('insertAfterId') ]);
-				},
-			],
-			'insertAfterId' => [
-				'mode' => function (array $aa_context): bool {
-					/** @var BackendMenuEntriesTable $lo_table */
-					$lo_table = $aa_context['providers']['table'];
-					/** @var BackendMenuEntry $ls_entityClass */
-					$ls_entityClass = $lo_table->getEntityClass();
-
-					$la_data = $aa_context['data'];
-
-
-					return empty($la_data[ $ls_entityClass::unmapField('parentId') ]);
-				},
-			],
 			'title',
 		], 'create');
 
@@ -105,34 +79,14 @@ class BackendMenuEntriesTable extends Table {
 		]);
 
 
-		$ao_validator->notEmptyString('parentId', null, function (array $aa_context): bool {
-			/** @var BackendMenuEntriesTable $lo_table */
-			$lo_table = $aa_context['providers']['table'];
-			/** @var BackendMenuEntry $ls_entityClass */
-			$ls_entityClass = $lo_table->getEntityClass();
-
-			$la_data = $aa_context['data'];
-
-
-			return empty($la_data[ $ls_entityClass::unmapField('insertAfterId') ]);
-		});
+		$ao_validator->allowEmptyString('parentId');
 		$ao_validator->add('parentId', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'maxLength' => ['rule' => ['maxLength', 50]],
 		]);
 
 
-		$ao_validator->notEmptyString('insertAfterId', null, function (array $aa_context): bool {
-			/** @var BackendMenuEntriesTable $lo_table */
-			$lo_table = $aa_context['providers']['table'];
-			/** @var BackendMenuEntry $ls_entityClass */
-			$ls_entityClass = $lo_table->getEntityClass();
-
-			$la_data = $aa_context['data'];
-
-
-			return empty($la_data[ $ls_entityClass::unmapField('parentId') ]);
-		});
+		$ao_validator->allowEmptyString('insertAfterId');
 		$ao_validator->add('insertAfterId', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'maxLength' => ['rule' => ['maxLength', 50]],

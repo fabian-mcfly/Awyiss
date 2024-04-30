@@ -35,7 +35,7 @@ class ModelCommand extends BaseModelCommand {
 	 * @param Table $ao_model Model name or object
 	 * @param array $aa_data An array to use to generate the Table
 	 * @param Arguments $ao_args CLI Arguments
-	 * @param ConsoleIo $ao_io CLI ao_io
+	 * @param ConsoleIo $ao_io CLI Input
 	 * @return void
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
@@ -284,7 +284,7 @@ class ModelCommand extends BaseModelCommand {
 		if ($aa_metaData['type'] === 'json') {
 			$la_validations = [
 				'isArray' => [
-					'rule' => 'isArray',
+					'rule' => 'array',
 					'args' => [],
 				],
 			] + $la_validations;

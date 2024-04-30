@@ -1,0 +1,692 @@
+.Form {
+	margin-bottom:$lineHeightMain;
+
+	form {
+		&.FetchInProgress {
+			pointer-events:none;
+
+			.ButtonArea,
+			.Fieldsets {
+				opacity:.1;
+			}
+
+			&::after {
+				content:'';
+				width:220px;
+				height:20px;
+				margin:auto;
+				background-image:url($relativePath + 'img/preloader-dots.gif');
+				background-position:center;
+				background-repeat:no-repeat;
+				position:fixed;
+				inset:0;
+				z-index:1860;
+
+				.🌚 & {
+					background-image:url($relativePath + 'img/preloader-dots-bright.gif');
+				}
+			}
+		}
+
+		> .Hidden {
+			display:none;
+		}
+	}
+
+	fieldset {
+		grid-column:1 / span 4;
+
+		> fieldset {
+			grid-column:1 / span 12;
+		}
+	}
+
+	.Fieldset-Presentation,
+	.Fieldset-Conditions {
+		grid-column:auto / span 2;
+	}
+}
+
+input,
+select,
+textarea,
+button,
+.Button {
+	@extend %Input;
+}
+
+input,
+select,
+textarea {
+	&[readonly] {
+		opacity:.5;
+
+		&:focus {
+			border-color:rgba(0, 0, 0, .1);
+			box-shadow:none;
+			background-color:var(--colorLight);
+		}
+	}
+
+	&:focus {
+		--backgroundColor:$colorBright;
+
+		border-color:var(--colorSuccess);
+		box-shadow:0 0 10px 5px rgba($colorSuccess, .1);
+
+		.🌚 & {
+			--backgroundColor:#{lighten($colorSemiDarkDarkMode, 2)};
+		}
+	}
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+	display:inline-block;
+	width:auto;
+	margin-right:10px;
+	padding:0;
+}
+
+input {
+	&:has(+ [data-options-for]) {
+		width:calc(100% - 52px)	;
+		border-radius:5px 0 0 5px;
+		border-right-width:0;
+		margin-right:52px;
+		position:relative;
+		z-index:2;
+
+		&:focus {
+			box-shadow:none;
+
+			+ [data-options-for] {
+				--backgroundColor:#{$colorBright};
+
+				border-color:var(--colorSuccess);
+				box-shadow:0 0 10px 5px rgba($colorSuccess, .1);
+				background-color:var(--backgroundColor);
+
+				.🌚 & {
+					--backgroundColor:#{lighten($colorSemiDarkDarkMode, 2)};
+				}
+			}
+		}
+	}
+
+	&:has(+ [data-options-for]:focus) {
+		--backgroundColor:#{$colorBright};
+
+		border-color:var(--colorSuccess);
+		background-color:var(--backgroundColor);
+
+		.🌚 & {
+			--backgroundColor:#{lighten($colorSemiDarkDarkMode, 2)};
+		}
+	}
+}
+
+select {
+	height:52px;
+	padding-block:0;
+
+	&[data-options-for] {
+		margin-top:-52px;
+	}
+}
+
+optgroup,
+option {
+	font-size:1rem;
+	line-height:30px;
+}
+
+.FormInput {
+	margin-bottom:20px;
+	position:relative;
+	grid-column:auto / span 12;
+
+	&.Error {
+		> input,
+		> select,
+		> textarea {
+			border-color:var(--colorError);
+			box-shadow:0 0 10px 5px rgba($colorError, .1);
+		}
+	}
+
+	&Type-Password {
+		input {
+			padding-right:50px;
+		}
+
+		.RevealPassword {
+			@extend %InFieldButton;
+
+			&.Revealed {
+				background-color:$colorSuccess;
+
+				&::after {
+					content:'\f06e';
+				}
+			}
+
+			&::after {
+				@include la('\f070', 24px);
+				line-height:50px;
+			}
+		}
+	}
+
+	&Type-List {
+		&Item {
+			margin-left:-40px;
+			margin-bottom:5px;
+			padding-left:40px;
+			position:relative;
+
+			&.SortableGhost {
+				input {
+					background-color:rgba($colorSuccess, .25);
+					outline:2px solid var(--colorSuccess);
+					outline-offset:-2px;
+				}
+			}
+
+			&:hover {
+				.SortableHandle {
+					opacity:1;
+				}
+			}
+		}
+
+		.SortableHandle {
+			width:40px;
+			height:40px;
+			border-radius:5px 0 0 5px;
+			background-color:var(--colorMedium);
+			font-size:0;
+			line-height:0;
+			text-align:center;
+			position:absolute;
+			top:6px;
+			left:0;
+			z-index:2;
+			opacity:0;
+			cursor:move;
+			transition:background-color .3s ease-in-out, opacity .3s ease-in-out;
+
+			&:has(+ .NestedListToggle:not(.Hidden)) {
+				border-radius:0 0 0 5px;
+			}
+
+			&:hover {
+				background-color:var(--colorDark);
+			}
+
+			&::before {
+				@include la('\f0b2', 24px);
+				color:var(--colorBright);
+				line-height:40px;
+			}
+		}
+
+		.Button-Remove {
+			@extend %InFieldButton;
+
+			transition:opacity .3s ease-in-out, visibility 0s linear;
+
+			&.Disabled {
+				opacity:0;
+				visibility:hidden;
+
+				transition-delay:0s, .3s;
+			}
+
+			&::after {
+				@include la('\f00d', 24px);
+				line-height:50px;
+			}
+
+			.Hover {
+				background-color:var(--colorError);
+			}
+		}
+
+		.Button-Add {
+			width:100%;
+			padding-block:5px;
+			font-size:0;
+			line-height:0;
+
+			&::after {
+				width:24px;
+				height:24px;
+				margin-left:0;
+				font-size:18px;
+				line-height:20px;
+				text-indent:1px;
+			}
+		}
+	}
+
+	&Type-Checkbox,
+	&Type-Radio {
+		&:last-of-type {
+			margin-bottom:10px;
+		}
+
+		> input {
+			width:0;
+			height:0;
+			margin-right:0;
+			border:0 none;
+			appearance:none;
+			float:left;
+
+			&[disabled] {
+				&:checked {
+					~ .Label {
+						&::before {
+							background-color:var(--colorLight);
+							border-color:rgba(0, 0, 0, .2);
+						}
+					}
+				}
+
+				~ .Label {
+					opacity:.5;
+
+					&::before {
+						background-color:var(--colorLight);
+						border-color:rgba(0, 0, 0, .2);
+						color:var(--colorText);
+
+						.🌚 & {
+							background-color:var(--colorSemiDark);
+							border-color:var(--colorLight);
+							opacity:.25;
+						}
+					}
+				}
+			}
+
+			&:checked {
+				+ .Label {
+					&::before {
+						content:'\f00c';
+						background-color:var(--colorDark);
+						border-color:var(--colorDark);
+
+						.🌚 & {
+							background-color:var(--colorSuccess);
+							border-color:var(--colorSuccess);
+						}
+					}
+				}
+
+				&:focus {
+					+ .Label {
+						&::before {
+							box-shadow:0 0 10px var(--colorInfo);
+							border-color:var(--colorSuccess);
+							background-color:var(--colorSuccess);
+						}
+					}
+				}
+			}
+
+			&:focus {
+				+ .Label {
+					&::before {
+						//border-color:var(--colorSuccess);
+						box-shadow:0 0 10px 5px rgba($colorSuccess, .1);
+						outline:2px solid var(--colorInfo);
+						outline-offset:2px;
+						//background-color:var(--colorBright);
+
+						.🌚 & {
+							outline:2px solid var(--colorSuccess);
+							//background-color:var(--colorMedium);
+							//border-color:var(--colorMedium);
+						}
+					}
+				}
+			}
+		}
+		> .Label {
+			&:first-child {
+				margin-bottom:.75rem;
+			}
+
+			&[for] {
+				min-height:26.5px; // Don't ask...
+				position:relative;
+				padding-left:34px;
+
+				&:last-of-type {
+					margin-bottom:0;
+				}
+
+				&::before {
+					@include la('', 16px);
+
+					width:22px;
+					height:22px;
+					border:1px solid rgba(0, 0, 0, .2);
+					border-radius:5px;
+					color:var(--colorBright);
+					line-height:20px;
+					text-align:center;
+					position:absolute;
+					top:0;
+					left:0;
+
+					.Scale-Small & {
+						top:-4.5px
+					}
+
+					.🌚 & {
+						background-color:var(--colorSemiDark);
+						border-color:rgba(255, 255, 255, .1);
+					}
+				}
+			}
+		}
+	}
+
+	&Type-ValueCollection,
+	&Type-Multicheckbox {
+		display:grid;
+		grid-template-columns:repeat(auto-fill, minmax(200px, 1fr));
+
+		> .Label,
+		> .Error {
+			grid-column:1 / -1;
+		}
+
+		> .Label {
+			&.Label {
+				margin-bottom:.5em;
+			}
+		}
+
+		> .FormInputType-Checkbox {
+			grid-column:auto / span 1;
+
+			&:nth-last-child(1 of .FormInputType-Checkbox),
+			&:nth-last-child(2 of .FormInputType-Checkbox) {
+				margin-bottom:$lineHeightMain * .5;
+			}
+		}
+	}
+
+	&Type-TranslatableText {
+		margin-bottom:0;
+
+		&.Error {
+			.FormInput {
+				&.IsCurrentLanguage {
+					> input,
+					> select,
+					> textarea {
+						border-color:var(--colorError);
+						box-shadow:0 0 10px 5px rgba($colorError, .1);
+					}
+				}
+			}
+		}
+
+		> input,
+		> select,
+		> textarea {
+			display:none;
+		}
+
+		.TranslatableTexts {
+			&:has(+ .ShowTranslationDialog) {
+				//padding-right:72px;
+			}
+
+			.FormInput {
+				display:none;
+
+				&.IsCurrentLanguage {
+					display:block;
+
+					.Label {
+						display:none;
+					}
+				}
+			}
+		}
+
+		.Error {
+			margin-block:-20px 20px;
+		}
+
+		.ShowTranslationDialog {
+			width:50px;
+			height:50px;
+			border-radius:4px;
+			margin-top:1px;
+			padding:0;
+			font-size:0;
+			line-height:0;
+			text-align:center;
+			position:absolute;
+			top:1.05rem;
+			right:1px;
+
+			.Scale-Small & {
+				padding-block:0;
+			}
+
+			&::after {
+				@include la('\f0ac', 30px);
+				line-height:50px;
+			}
+		}
+	}
+
+	&Name-LanguageShortcode {
+		display:none;
+
+		&:has(+ .FormInputName-PageId) {
+			grid-column:auto / span 6;
+		}
+
+	}
+
+	&Name-Slug {
+		display:flex;
+		flex-wrap:wrap;
+
+		&.Error {
+			&,
+			&:focus-within {
+				&::before {
+					border-color:var(--colorError);
+					box-shadow:0 0 10px 5px rgba(202, 46, 85, 0.1);
+				}
+			}
+
+			input {
+				box-shadow:none;
+			}
+		}
+
+		&:focus-within {
+			&::before {
+				border-color:var(--colorSuccess);
+				box-shadow:0 0 10px 5px rgba($colorSuccess, .1);
+				background-color:$colorBright;
+
+				.🌚 & {
+					background-color:#{lighten($colorSemiDarkDarkMode, 2)};
+				}
+			}
+		}
+
+		&::before {
+			@extend %Input;
+
+			content:'';
+			width:100%;
+			height:52px;
+			display:block;
+			position:absolute;
+			top:1rem;
+			left:0;
+			pointer-events:none;
+		}
+
+		.Label.Label {
+			width:100%;
+			padding-bottom:calc(52px + .25rem);
+			margin-bottom:-52px;
+			flex:0 0 100%;
+		}
+
+		input {
+			width:auto;
+			border:0 none;
+			box-shadow:none;
+			background-color:transparent;
+			background-image:none;
+			position:relative;
+			z-index:1;
+			flex:1 1 auto;
+			order:3;
+		}
+
+		.PreSlug {
+			margin:0 0 1px 1px;
+			padding:0 10px;
+			border-radius:5px 0 0 5px;
+			box-shadow:-3px 0 4px inset rgba(0, 0, 0, .25);
+			background-color:var(--colorMedium);
+			color:var(--colorBright);
+			font-size:.8rem;
+			line-height:50px;
+			position:relative;
+			z-index:1;
+			cursor:default;
+			pointer-events:none;
+		}
+
+		div.Error {
+			width:100%;
+			flex:0 0 100%;
+			order:4;
+		}
+	}
+
+	&Name-MetaDescription {
+		textarea {
+			height:100px;
+		}
+	}
+
+	.Label {
+		display:block;
+		margin-bottom:.25rem;
+		padding-left:5px;
+		font-size:.8rem;
+		line-height:1;
+	}
+
+	div.Error {
+		padding-inline:5px;
+		color:var(--colorError);
+		font-size:.8rem;
+	}
+
+	.CharCounter {
+		font-size:12px;
+		line-height:1px;
+		position:absolute;
+		right:20px;
+		bottom:20px;
+	}
+}
+
+#SaveAsCopy {
+	position:absolute;
+	z-index:-2;
+
+	&:focus {
+		~ .ButtonArea {
+			.Label-SaveAsCopy {
+				box-shadow:0 0 10px var(--colorInfo);
+				outline:2px solid var(--colorInfo);
+
+				&:hover {
+					outline-color:transparent;
+				}
+			}
+		}
+	}
+
+	&:checked {
+		~ .ButtonArea {
+			.Label-SaveAsCopy {
+				background-color:var(--colorInfo);
+
+				&::after {
+					content:'\f06a';
+				}
+			}
+		}
+
+		~ .Fieldsets {
+			.FormInputName-LanguageShortcode {
+				display:block;
+
+				+ .FormInputName-PageId {
+					grid-column:auto / span 6;
+				}
+			}
+		}
+	}
+
+	~ .ButtonArea {
+		.Label-SaveAsCopy {
+			&::after {
+				@include la('\f059', 36px);
+				width:28px;
+				height:28px;
+				margin-left:10px;
+				line-height:28px;
+				text-indent:-5px;
+				vertical-align:-6px;
+				transform:translateY(-1px);
+			}
+
+			.Hover {
+				background-color:var(--colorInfo);
+			}
+		}
+	}
+}
+
+.InfoArea {
+	padding:40px;
+	border-radius:5px;
+	border:2px solid var(--colorInfo);
+	background-color:var(--backgroundColorContent);
+	position:relative;
+
+	&::before {
+		content:'';
+		background-color:var(--colorInfo);
+		position:absolute;
+		inset:0;
+		opacity:.25;
+	}
+
+	> * {
+		position:relative;
+		z-index:1;
+	}
+}

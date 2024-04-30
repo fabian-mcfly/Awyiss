@@ -1,0 +1,70 @@
+{#
+@var media \Cake\Datasource\Paging\PaginatedResultSet
+@var mediaFolders array
+@var paginated bool
+@var _view \Awyiss\View\BackendView
+#}
+
+{% extends '@Backend/element/overview/overview_paginated_list.twig' %}
+
+{% block tableOverview %}
+	<table class="Overview-Table" data-media-folder-id="{{ selectedMediaFolderId }}">
+		{{ block('tableOverviewHead') }}
+
+		{% block tableOverviewBody %}
+			<tbody data-system-order-start-index="{{ media.totalCount }}">
+				{# @var entity \Cake\Datasource\EntityInterface #}
+				{% for entity in records %}
+					{{ block('tableOverviewBodyRow') }}
+				{% endfor %}
+			</tbody>
+		{% endblock %}
+
+		{{ block('tableOverviewFoot') }}
+	</table>
+{% endblock %}
+
+{% block tableOverviewHeaderTitle %}
+	<th class="TableHeader-Preview">{{ __('preview') }}</th>
+	<th class="TableHeader-Name{% if PaginatorHelper.currentSortKey() == 'name' %} Active{% endif %}">{{ PaginatorHelper.sort('name') }}</th>
+{% endblock %}
+
+{% block tableOverviewCellTitle %}
+	<td class="TableCell-Preview">
+		{% set preview %}
+			{% if entity.isImage %}
+				<img src="{{ baseUrl }}{{ entity.path }}" alt="{{ entity.name }}">
+			{% elseif entity.preview == enum(ProcessStatus).Success %}
+				<img src="{{ baseUrl }}{{ entity.previewPath }}" alt="{{ entity.name }}">
+			{% else %}
+				<span class="FileType-Icon FileType-Icon-{{ entity.extension|camelize('/') }}" data-extension="{{ entity.extension }}"></span>
+			{% endif %}
+		{% endset %}
+		{{ HtmlHelper.link(preview, entity.path, {
+			escape: false,
+			target: '_blank',
+		}) }}
+	</td>
+	<td class="TableCell-Name">{{ entity.name }}</td>
+{% endblock %}
+
+{% block tableOverviewCellDisplayedFieldDefaultValue %}
+	{% if field == 'path' and entity.path %}
+		{{ HtmlHelper.link(entity.path, entity.path, {
+			target: '_blank',
+		}) }}
+	{% else %}
+		{{ parent() }}
+	{% endif %}
+{% endblock %}
+
+{% block tableOverviewBodyRow %}
+	<tr>
+		{% block tableOverviewBodyRowInner %}
+			{{ parent() }}
+		{% endblock %}
+	</tr>
+{% endblock %}
+
+
+{% block tableOverviewFootColSpan %}{{ localConfig.overview.displayedFields|length + 5 }}{% endblock %}

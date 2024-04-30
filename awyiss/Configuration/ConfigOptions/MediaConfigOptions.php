@@ -7,6 +7,7 @@ namespace Awyiss\Configuration\ConfigOptions;
 use Awyiss\Awyiss;
 use Awyiss\Configuration\AbstractConfigOptions;
 use Awyiss\Configuration\ConfigOption;
+use Awyiss\Configuration\ConfigOptions\Trait\TableFieldsTrait;
 use Awyiss\Configuration\ConfigOptionType;
 
 
@@ -14,6 +15,8 @@ use Awyiss\Configuration\ConfigOptionType;
  * Provides all configuration options for the Media scope
  */
 class MediaConfigOptions extends AbstractConfigOptions {
+	use TableFieldsTrait;
+
 	/**
 	 * @var string Scope of these options
 	 */
@@ -38,8 +41,12 @@ class MediaConfigOptions extends AbstractConfigOptions {
 
 					$la_values = $aa_values;
 
-					if (is_string($la_values)) {
+					if (!is_array($la_values)) {
 						$la_values = json_decode($la_values, true);
+					}
+
+					if (!is_array($la_values)) {
+						$la_values = [$aa_values];
 					}
 
 					$la_values = array_filter(array_map('intval', $la_values));
@@ -52,6 +59,42 @@ class MediaConfigOptions extends AbstractConfigOptions {
 		]);
 
 		$this->add(Awyiss::REALM_BACKEND, [
+			'overview' => [
+				new ConfigOption(
+					defaultValue: [
+						'path',
+					],
+					identifier: 'displayedFields',
+					localizable: false,
+					personalizable: true,
+					type: ConfigOptionType::ValueCollection,
+					values: function () {
+						$la_fields = $this->getTableFields();
+
+						unset($la_fields['id'], $la_fields['title']);
+
+						return $la_fields;
+					},
+				),
+			],
+			'paginate' => [
+				new ConfigOption(
+					defaultValue: false,
+					identifier: 'enabled',
+					localizable: false,
+					nullable: false,
+					personalizable: true,
+					type: ConfigOptionType::Bool,
+				),
+				new ConfigOption(
+					defaultValue: 20,
+					identifier: 'limit',
+					localizable: false,
+					nullable: false,
+					personalizable: true,
+					type: ConfigOptionType::Integer,
+				),
+			],
 			'upload' => [
 				new ConfigOption(
 					defaultValue: true,

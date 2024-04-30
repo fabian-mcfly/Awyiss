@@ -1,0 +1,409 @@
+.Table,
+.Overview-Table {
+	--backgroundColorOdd:transparent;
+	--backgroundColorEven:var(--colorLight);
+
+	padding:0;
+	border-collapse:separate;
+	table-layout:fixed;
+
+	.🌚 & {
+		//--backgroundColorOdd:var(--backgroundColorContent);
+		--backgroundColorEven:#{lighten($colorBackgroundContentDarkMode, 3)};
+	}
+
+	&.FetchInProgress {
+		pointer-events:none;
+
+		tbody {
+			height:80px;
+			position:relative;
+
+			tr {
+				display:none;
+			}
+
+			&::after {
+				content:'';
+				background-color:var(--backgroundColorContent);
+				background-image:url($relativePath + 'img/preloader-dots.gif');
+				background-position:center;
+				background-repeat:no-repeat;
+				position:absolute;
+				inset:0;
+				z-index:1860;
+
+				.🌚 & {
+					background-image:url($relativePath + 'img/preloader-dots-bright.gif');
+				}
+			}
+		}
+	}
+
+	tbody {
+		&:not(:has(tr)) {
+			height:80px;
+			position:relative;
+
+			&::after {
+				@extend %EmptyList;
+				border-radius:0;
+
+				.🌚 & {
+					@extend %EmptyListDarkMode;
+				}
+			}
+		}
+
+		tr {
+			background-color:var(--backgroundColorOdd);
+			transition:background-color .3s ease-in-out;
+
+			&.Inactive {
+				background-image:repeating-linear-gradient(-45deg, transparent, transparent 10px, rgba(0, 0, 0, .05) 10px, rgba(0, 0, 0, .05) 20px);
+
+				&:hover {
+					td {
+						&,
+						.🌚 & {
+							opacity:1;
+						}
+					}
+				}
+
+				td {
+					background-color:transparent;
+					opacity:.5;
+					transition:opacity .3s ease-in-out;
+
+					.🌚 & {
+						opacity:.1;
+					}
+				}
+			}
+
+			&:nth-child(2n) {
+				background-color:var(--backgroundColorEven);
+
+				&:hover {
+					td {
+						background-color:darken($colorLight, 8);
+
+						.🌚 & {
+							background-color:lighten($colorSemiDarkDarkMode, 4);
+						}
+					}
+				}
+			}
+
+			&:first-child {
+				td {
+					border-top:2px solid var(--colorBright);
+
+					.🌚 & {
+						border-top-color:#{darken($colorBackgroundContentDarkMode, 2)};
+					}
+				}
+			}
+
+			/*&:last-child {
+				td {
+					&:first-child {
+						border-radius:0 0 0 5px;
+					}
+
+					&:last-child {
+						border-radius:0 0 5px 0;
+					}
+				}
+			}*/
+
+			&:hover {
+				td {
+					background-color:darken($colorLight, 8);
+
+					.🌚 & {
+						background-color:lighten($colorSemiDarkDarkMode, 4);
+					}
+
+					&:before {
+						background-color:var(--colorLight);
+
+						.🌚 & {
+							background-color:var(--colorSemiDark);
+						}
+					}
+				}
+
+				.AuditInfo {
+					&:not(.Hidden) {
+						opacity:1;
+					}
+				}
+			}
+
+			&:hover,
+			&:focus-within {
+				.Actions {
+					@extend %ActionsHover;
+				}
+			}
+
+		}
+	}
+
+	th,
+	tbody td {
+		padding:10px 20px;
+		border-bottom:2px solid var(--colorBright);
+		//border-inline:1px solid var(--colorNeutralLight);
+		position:relative;
+		vertical-align:top;
+		transition:background-color .3s ease-in-out;
+		//bottom:-3px;
+
+		.🌚 & {
+			border-bottom-color:#{darken($colorBackgroundContentDarkMode, 2)};
+		}
+
+		&::before {
+			content:'';
+			height:100%;
+			width:2px;
+			background-color:var(--colorBright);
+			position:absolute;
+			top:0;
+			left:-1px;
+			z-index:1;
+			bottom:-3px;
+			transition:background-color .3s ease-in-out;
+
+			.🌚 & {
+				background-color:#{darken($colorBackgroundContentDarkMode, 2)};
+			}
+		}
+
+		&:first-child {
+			border-left-width:0;
+
+			&::before {
+				display:none;
+			}
+		}
+
+		&:last-child {
+			border-right-width:0;
+		}
+	}
+
+	th {
+		padding:10px 60px 10px 20px;
+		border-bottom:3px solid #{darken($colorMedium, 8)};
+		border-inline-color:rgba(0, 0, 0, .1);
+		background-color:var(--colorMedium);
+		color:var(--colorBright);
+		transition:border-color .3s ease-in-out, background-color .3s ease-in-out, color .3s ease-in-out;
+
+		.🌚 & {
+			background-color:darken($colorBackgroundContentDarkMode, 4);
+		}
+
+		&.Active {
+			border-bottom-color:darken($colorSuccess, 8);
+			background-color:darken($colorMedium, 8);
+
+			.🌚 & {
+				background-color:$colorBackgroundContentDarkMode;
+			}
+
+			.Sort {
+				&.Sort-Desc {
+					&:hover {
+						&::before {
+							opacity:1;
+						}
+					}
+
+					&::before {
+						color:var(--colorBright);
+						opacity:.25;
+					}
+
+					&::after {
+						color:var(--colorSuccess);
+						opacity:1;
+					}
+				}
+
+				&::before {
+					color:var(--colorSuccess);
+					opacity:1;
+				}
+			}
+		}
+
+		&:has(> .Sort) {
+			padding:0;
+		}
+
+		&:focus-within,
+		&:has(> .Sort:hover) {
+			border-bottom-color:darken($colorSuccess, 8);
+			background-color:darken($colorMedium, 16);
+			color:var(--colorSuccess);
+
+			.🌚 & {
+				background-color:lighten($colorBackgroundContentDarkMode, 3);
+				color:var(--colorBright);
+			}
+		}
+
+		&:first-child {
+			border-top-left-radius:5px;
+
+			.Sort {
+				border-top-left-radius:5px;
+			}
+		}
+
+		&:last-child {
+			border-top-right-radius:5px;
+		}
+
+		&::before {
+			height:auto;
+			background-color:#{darken($colorMedium, 8)};
+			bottom:-3px;
+
+			.🌚 & {
+				background-color:#{darken($colorBackgroundContentDarkMode, 6)};
+			}
+		}
+
+		a {
+			color:inherit;
+		}
+
+		.Sort {
+			display:block;
+			padding:10px 60px 10px 20px;
+			white-space:nowrap;
+			border-bottom-width:0;
+			position:relative;
+			transition:background-color .3s ease-in-out;
+
+			.🌚 & {
+				color:var(--colorMedium) SemiDark;
+			}
+
+			&:hover {
+				//background-color:var(--colorSuccess);
+				outline:0 none;
+
+				&::before,
+				&::after {
+					color:var(--colorSuccess);
+					opacity:1;
+				}
+			}
+
+			&:focus {
+				z-index:10;
+				box-shadow:0 0 10px var(--colorInfo);
+				outline:2px solid var(--colorInfo);
+				outline-offset:2px;
+			}
+
+			&::before,
+			&::after {
+				@include la('\f0de', 20px);
+
+				padding-block:0 10px;
+				color:var(--colorBright);
+				position:absolute;
+				top:10px;
+				right:20px;
+				bottom:10px;
+				opacity:.25;
+				transition:color .3s ease-in-out, opacity .3s ease-in-out;
+
+				.Scale-Small & {
+					top:6px;
+				}
+			}
+
+			&::after {
+				content:'\f0dd';
+				padding-block:10px 0;
+			}
+		}
+	}
+
+	tbody {
+		td {
+			padding-block:15px;
+			line-height:26px;
+
+			.Scale-Small & {
+				padding-block:8px;
+				line-height:1.25;
+			}
+		}
+	}
+
+	tfoot {
+		td {
+			padding:20px;
+			border-radius:0 0 5px 5px;
+			border-top:3px solid #{darken($colorMedium, 8)};
+			background-color:var(--colorMedium);
+			color:var(--colorBright);
+
+			.🌚 & {
+				border-top-color:#{darken($colorBackgroundContentDarkMode, 2)};
+				background-color:darken($colorBackgroundContentDarkMode, 4);
+			}
+		}
+	}
+
+	.TableHeader-AuditInfo,
+	.TableCell-AuditInfo {
+		width:56px;
+		padding:10px;
+	}
+
+	.TableHeader-Id,
+	.TableCell-Id {
+		width:100px;
+	}
+
+	.TableCell-Title {
+		font-size:1rem;
+		font-weight:700;
+		line-height:1.2;
+	}
+
+	.TableHeader-Actions,
+	.TableCell-Actions {
+		width:calc(9rem + 40px);
+		padding-block:10px;
+		overflow:visible;
+
+		.Scale-Small & {
+			width:calc(11rem + 40px);
+		}
+	}
+
+	.AuditInfo {
+		z-index:2;
+	}
+
+	.Actions {
+		@extend %Actions;
+
+
+		.Scale-Small & {
+			width:11rem;
+		}
+	}
+}

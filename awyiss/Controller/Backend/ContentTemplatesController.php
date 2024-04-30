@@ -23,6 +23,7 @@ class ContentTemplatesController extends Controller {
 	 */
 	protected array $paginate = [
 		'enabled' => true,
+		'defaultSortableFields' => ['used_for_contents'],
 	];
 
 
@@ -34,10 +35,20 @@ class ContentTemplatesController extends Controller {
 	public function overview(): void {
 		$this->Authorization->ensure('read');
 
-		$lo_contentTemplates = $this->ContentTemplates->find('withUsages')->where($this->getOverviewWhere())->all();
+		$lo_query = $this->ContentTemplates->find('withUsages')->where($this->getOverviewWhere());
+
+		$lb_paginated = $this->paginate['enabled'];
+		if ($lb_paginated) {
+			$lo_contentTemplates = $this->paginate($lo_query);
+		}
+		else {
+			$lo_contentTemplates = $lo_query->all();
+		}
 
 		$this->set([
-			'ao_contentTemplates' => $lo_contentTemplates,
+			'contentTemplates' => $lo_contentTemplates,
+			'attributes' => $this->ContentTemplates->getAttributes(),
+			'paginated' => $lb_paginated,
 		]);
 	}
 
@@ -57,13 +68,7 @@ class ContentTemplatesController extends Controller {
 			$this->save($lo_contentTemplate);
 		}
 
-		$this->set([
-			'ao_contentTemplate' => $lo_contentTemplate,
-			'aa_availableContentElements' => $this->ContentTemplates->getAvailableContentElements(),
-			'aa_availableContentAttributes' => $this->ContentTemplates->getAvailableContentAttributes(),
-			'aa_availableFieldsets' => $this->ContentTemplates->getAvailableFieldsets(),
-			'aa_pageTemplates' => $this->getPageTemplates(),
-		]);
+		$this->setViewVars($lo_contentTemplate);
 	}
 
 
@@ -92,13 +97,7 @@ class ContentTemplatesController extends Controller {
 			$this->save($lo_contentTemplate, 'edit');
 		}
 
-		$this->set([
-			'ao_contentTemplate' => $lo_contentTemplate,
-			'aa_availableContentElements' => $this->ContentTemplates->getAvailableContentElements(),
-			'aa_availableContentAttributes' => $this->ContentTemplates->getAvailableContentAttributes(),
-			'aa_availableFieldsets' => $this->ContentTemplates->getAvailableFieldsets(),
-			'aa_pageTemplates' => $this->getPageTemplates(),
-		]);
+		$this->setViewVars($lo_contentTemplate);
 	}
 
 
@@ -231,5 +230,69 @@ class ContentTemplatesController extends Controller {
 
 
 		return $lo_pageTemplates->toArray();
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Entity\ContentTemplate $ao_contentTemplate
+	 * @return void
+	 */
+	protected function setViewVars(ContentTemplate $ao_contentTemplate): void {
+		if ($ao_contentTemplate->contentTemplateElements) {
+			$ao_contentTemplate->contentTemplateElements = collection($ao_contentTemplate->contentTemplateElements)->indexBy('identifier')->toArray();
+		}
+
+		// Sort the available content elements by the order of the assigned content template elements
+		$la_availableContentElements = $this->ContentTemplates->getAvailableContentElements();
+		uksort($la_availableContentElements, function ($a, $b) use ($ao_contentTemplate) {
+			$la_keys = array_keys($ao_contentTemplate->contentTemplateElements ?? []);
+			$lx_aPos = array_search($a, $la_keys);
+			$lx_bPos = array_search($b, $la_keys);
+
+			// If $a is not found in the keys, set its position to a high value to sort it at the end
+			if ($lx_aPos === false) {
+				$lx_aPos = PHP_INT_MAX;
+			}
+
+			// Do the same for $b
+			if ($lx_bPos === false) {
+				$lx_bPos = PHP_INT_MAX;
+			}
+
+			// Compare the positions
+			return $lx_aPos <=> $lx_bPos;
+		});
+
+		// Sort the available content attributes by the order of the assigned content template elements
+		$la_availableContentAttributes = $this->ContentTemplates->getAvailableContentAttributes();
+		uasort($la_availableContentAttributes, function ($a, $b) use ($ao_contentTemplate) {
+			$la_keys = array_keys($ao_contentTemplate->contentTemplateElements ?? []);
+			$ls_aIdentifier = 'attributes.' . $a['identifier'];
+			$ls_bIdentifier = 'attributes.' . $b['identifier'];
+
+			$lx_aPos = array_search($ls_aIdentifier, $la_keys);
+			$lx_bPos = array_search($ls_bIdentifier, $la_keys);
+
+			// If $a is not found in the keys, set its position to a high value to sort it at the end
+			if ($lx_aPos === false) {
+				$lx_aPos = PHP_INT_MAX;
+			}
+
+			// Do the same for $b
+			if ($lx_bPos === false) {
+				$lx_bPos = PHP_INT_MAX;
+			}
+
+			// Compare the positions
+			return $lx_aPos <=> $lx_bPos;
+		});
+
+		$this->set([
+			'contentTemplate' => $ao_contentTemplate,
+			'availableContentElements' => $la_availableContentElements,
+			'availableContentAttributes' => $la_availableContentAttributes,
+			'availableFieldsets' => $this->ContentTemplates->getAvailableFieldsets(),
+			'pageTemplates' => $this->getPageTemplates(),
+		]);
 	}
 }

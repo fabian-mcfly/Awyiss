@@ -1,50 +1,97 @@
 {#
-@var aa_contents Collection[]
-@var aa_contentAreas array
-@var aa_unknownContentAreas array
-@var ao_page \Awyiss\Model\Entity\Page
-@var as_forScope string
+@var contents Collection[]
+@var contentAreas array
+@var unknownContentAreas array
+@var page \Awyiss\Model\Entity\Page
+@var contentTemplates array
+@var forScope string
 @var _view \Awyiss\View\BackendView
 #}
 
-{% do AuthorizationHelper.setScope(as_forScope) %}
+{% do AuthorizationHelper.setScope(forScope) %}
 
 <div class="Contents Overview">
-	{% block buttonsOverview %}
-		{% if AuthorizationHelper.isAccessible('create') %}
-			{{ HtmlHelper.link(__('create'), {action: 'add', pageId: ao_page.id}, {class : 'Button'}) }}
-		{% endif %}
-	{% endblock %}
-
 	{% block headlineOverview %}
 		<h1>{{ __('headline_overview') }}</h1>
 	{% endblock %}
 
-	{% block categoriesFilterOverview %}
-		{{ CategoriesHelper.filter('page') }}
-	{% endblock %}
+	{% block buttonArea %}
+		<div class="ButtonArea">
+			{% block categoriesFilterOverview %}
+				{{ CategoriesHelper.filter('page') }}
+			{% endblock %}
 
-	{% from '@Backend/macro/nested_list.twig' import nestedList %}
-	{% for li_contentAreaId, ls_contentArea in aa_contentAreas %}
-		{% block fieldsetOverview %}
-			<fieldset class="Fieldset-Overview{% if ls_contentArea is null %} Unknown{% endif %}">
-				{% if ls_contentArea is null %}
-					<legend>{{ __('unknown_content_area') }}</legend>
-				{% else %}
-					<legend>{{ ls_contentArea }}</legend>
+			{% block buttonsOverview %}
+				<button class="Button Button-SaveSystemOrder" disabled>{{ __d('system', 'save_system_order') }}</button>
+
+				{% if AuthorizationHelper.isAccessible('create') %}
+					{{ HtmlHelper.link(__('create'), {action: 'add', pageId: page.id}, {class : 'Button Button-Add'}) }}
 				{% endif %}
 
-				{% block fieldsetOverviewInner %}
+				{{ HtmlHelper.link(__('overview_list_with_columns'), {
+					action: 'userConfiguration',
+					identifier: 'overview.columnView.enabled',
+					value: 'true'
+				}, {
+					class: 'Button Button-Small Button-ColumnView Button-ColumnView-Enable',
+					disabled: localConfig.overview.columnView.enabled == true,
+				}) }}
 
-					{% block listOverview %}
-						{{ nestedList(aa_contents[ li_contentAreaId ], {
-							class: 'ColumnSystem-' ~ as_columnSystemName,
-							identifier: 'Contents',
-							template: '@Backend/Contents/overview_nested_list_item.twig',
-						}) }}
+				{{ HtmlHelper.link(__('overview_list_linear'), {
+					action: 'userConfiguration',
+					identifier: 'overview.columnView.enabled',
+					value: 'false'
+				}, {
+					class: 'Button Button-Small Button-ColumnView Button-ColumnView-Disable',
+					disabled: localConfig.overview.columnView.enabled == false,
+				}) }}
+			{% endblock %}
+		</div>
+	{% endblock %}
+
+	{% block fieldsetsOverview %}
+		{% for contentAreaId, contentArea in contentAreas %}
+			{% block fieldsetOverview %}
+				<fieldset class="Overview-Fieldset{% if contentArea is null %} Overview-Fieldset-Unknown{% endif %}" data-content-area-id="{{ contentAreaId }}">
+					{% if contentArea is null %}
+						<legend>{{ __('unknown_content_area') }}</legend>
+					{% else %}
+						<legend>{{ contentArea }}</legend>
+					{% endif %}
+
+					{% block fieldsetOverviewInner %}
+						{% block listOverview %}
+							{% from '@Backend/macro/nested_list.twig' import nestedList %}
+							{{ nestedList(contents[ contentAreaId ], _context|merge({
+								class: localConfig.overview.columnView.enabled == true ? 'NestedList-Compact ColumnSystem-' ~ columnSystemName : null,
+								contentTemplates: contentTemplates,
+								data: {
+									'content-area': contentAreaId,
+								},
+								displayedFields: localConfig.overview.displayedFields,
+								identifier: 'Contents',
+								template: '@Backend/Contents/overview_nested_list_item.twig',
+							})) }}
+						{% endblock %}
 					{% endblock %}
-				{% endblock %}
-			</fieldset>
-		{% endblock %}
-	{% endfor %}
+				</fieldset>
+			{% endblock %}
+		{% endfor %}
+	{% endblock %}
+
+	{% block buttonAreaBottom %}
+		<div class="ButtonArea ButtonArea-Bottom">
+			{{ block('categoriesFilterOverview') }}
+
+			{{ block('buttonsOverview') }}
+		</div>
+	{% endblock %}
 </div>
+
+{% block scriptColumnSystemVars %}
+	<script nonce="{{ AssetHelper.getScriptNonce() }}">
+		const columnWidths = {{ columnWidths|values|json_encode|raw }};
+		const columnIndents = {{ columnIndents|values|json_encode|raw }};
+		const columnSystemName = '{{ columnSystemName }}';
+	</script>
+{% endblock %}

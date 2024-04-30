@@ -1,39 +1,33 @@
 {#
-@var lo_entity \Awyiss\Model\Entity\Page
+@var entity \Awyiss\Model\Entity\Page
 @var settings array
 #}
 
-<div class="{{ settings.identifier }}-ListItem-Inner ListItem-Inner">
-	<span class="Id">{{ lo_entity.id }}</span>
-	<ul class="Data">
-		<li class="Title">{{ lo_entity.title }}</li>
-		<li class="Slug">
-			{{ HtmlHelper.link(lo_entity.languageShortcode ~ '/' ~ lo_entity.slug, {
-				lang: lo_entity.languageShortcode,
-				slug: lo_entity.slug,
-				_name: 'Frontend',
-			}, {
-				target: '_blank',
-			}) }}
-		</li>
-	</ul>
+{% extends '@Backend/element/overview/nested_list_item.twig' %}
+
+{% block nestedListItemDataDefaultFields %}
+	<li class="DataItem DataItem-Slug">
+		<span class="Label">{{ __('slug') }}:</span>
+		{{ HtmlHelper.link(entity.languageShortcode ~ '/' ~ entity.slug, {
+			lang: entity.languageShortcode,
+			slug: entity.slug,
+			_name: 'Frontend',
+		}, {
+			target: '_blank',
+		}) }}
+	</li>
+{% endblock %}
+
+{% block nestedListActions %}
 	<span class="Actions">
-		{% if lo_entity.duplicate_of is empty and AuthorizationHelper.isAccessible('contents') and settings.contentsEnabled == true %}
-			{{ HtmlHelper.link(__('view_contents'), {controller: 'contents', action: 'overview', page_id: lo_entity.id}) }}
-		{% endif %}
+		{% block nestedListActionsViewContents %}
+			{% if entity.duplicate_of is empty and AuthorizationHelper.isAccessible('contents') and settings.contentsEnabled == true %}
+				{{ HtmlHelper.link(__('view_contents'), {controller: 'contents', action: 'overview', pageId: entity.id}, {class: 'Button Button-Small Button-View Button-ViewContents'}) }}
+			{% endif %}
+		{% endblock %}
 
-		{% if AuthorizationHelper.isAccessible('update') %}
-			{{ HtmlHelper.link(__('edit'), {action: 'edit', id: lo_entity.id}) }}
-		{% endif %}
+		{{ block('nestedListActionsEdit') }}
 
-		{% if AuthorizationHelper.isAccessible('delete') %}
-			{{ HtmlHelper.link(__('delete'), {action: 'delete', id: lo_entity.id}, {
-				class: 'Button Button-Small Button-Delete',
-				'data-confirm-title': __('confirm_delete_title'),
-				'data-confirm-yes': __('confirm_delete_yes'),
-				'data-confirm-yes-class': 'Button-Delete',
-				'data-confirm-no': __('confirm_delete_no'),
-				'data-confirm': __('confirm_delete', lo_entity.id) }) }}
-		{% endif %}
+		{{ block('nestedListActionsDelete') }}
 	</span>
-</div>
+{% endblock %}

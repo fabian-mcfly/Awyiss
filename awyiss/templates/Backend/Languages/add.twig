@@ -1,32 +1,45 @@
 {#
-@var ao_language \Awyiss\Model\Entity\Language
+@var language \Awyiss\Model\Entity\Language
+@var realms array
 @var _view \Awyiss\View\BackendView
 #}
 
-{% set la_realms = [] %}
-{% for as_realm in aa_realms %}
-	{% set la_realms = la_realms|merge({(as_realm): __('realm_' ~ as_realm|underscore)}) %}
+{% set realms = [] %}
+{% for realm in realms %}
+	{% set realms = realms|merge({(realm): __('realm_' ~ realm|underscore)}) %}
 {% endfor %}
 
 <div class="Languages Form Add">
-	{{ FormHelper.create(ao_language, {method: 'post', idPrefix: 'Language'}) }}
+	{% if AuthorizationHelper.isAccessible('read') %}
+		{{ HtmlHelper.link(__('overview'), {action: 'overview'}, {class: 'BackToOverview'}) }}
+	{% endif %}
 
 	{% block headlineAdd %}
 		<h1>{{ __('headline_add') }}</h1>
 	{% endblock %}
 
-	{% block formAddButtons %}
-		{{ FormHelper.button(__('save')) }}
-		{{ FormHelper.button(__('save_close'), {name: 'submit', value: 'submit_close'}) }}
+	{{ FormHelper.create(language, {method: 'post', idPrefix: 'Language'}) }}
+
+	{% block buttonArea %}
+		<div class="ButtonArea">
+			{% block formAddButtons %}
+				{{ FormHelper.button(__('save'), {class: 'Button Button-Success Button-Save'}) }}
+				{% if AuthorizationHelper.isAccessible('read') %}
+					{{ FormHelper.button(__('save_close'), {class: 'Button Button-SaveClose', name: 'submit', value: 'submit_close'}) }}
+				{% endif %}
+			{% endblock %}
+		</div>
 	{% endblock %}
 
 	{% block formAdd %}
 		{% include('@Backend/Languages/form.twig') %}
 	{% endblock %}
 
-	{% block formAddButtonsBottom %}
-		{{ block('formAddButtons') }}
+	{% block buttonAreaBottom %}
+		<div class="ButtonArea ButtonArea-Bottom">
+			{{ block('formAddButtons') }}
+		</div>
 	{% endblock %}
 
-	{{ FormHelper.end() -}}
+	{{ FormHelper.end() }}
 </div>

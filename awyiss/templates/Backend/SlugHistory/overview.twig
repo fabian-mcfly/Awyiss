@@ -1,107 +1,31 @@
 {#
-@var ao_slugHistory Awyiss\Model\Entity\SlugHistory[]
-@var ab_paginated bool
+@var slugHistory Awyiss\Model\Entity\SlugHistory[]
+@var paginated bool
 @var _view \Awyiss\View\BackendView
 #}
 
 <div class="SlugHistory Overview">
-	{% block buttonsOverview %}
-		{% if AuthorizationHelper.isAccessible('create') %}
-			{{ HtmlHelper.link(__('create'), {action: 'add'}, {class: 'Button'}) }}
-		{% endif %}
-	{% endblock %}
-
 	{% block headlineOverview %}
 		<h1>{{ __('headline_overview') }}</h1>
 	{% endblock %}
 
-	{% block tableOverview %}
-		<table>
-			{% block tableOverviewHead %}
-				<thead>
-					{% block tableOverviewHeadRow %}
-						<tr>
-							{% block tableOverviewHeaderId %}
-								<th>{{ PaginatorHelper.sort('id') }}</th>
-							{% endblock %}
-
-							{% block tableOverviewHeaderSlug %}
-								<th>{{ PaginatorHelper.sort('slug') }}</th>
-							{% endblock %}
-
-							{% block tableOverviewHeaderPageId %}
-								<th>{{ PaginatorHelper.sort('page_id') }}</th>
-							{% endblock %}
-
-							{% block tableOverviewHeaderActions %}
-								<th class="actions"></th>
-							{% endblock %}
-						</tr>
-					{% endblock %}
-				</thead>
-			{% endblock %}
-			{% block tableOverviewBody %}
-				<tbody>
-					{# @var lo_slugHistory \Awyiss\Model\Entity\SlugHistory #}
-					{% for lo_slugHistory in ao_slugHistory %}
-						{% block tableOverviewBodyRow %}
-							<tr>
-								{% block tableOverviewCellId %}
-									<td>{{ lo_slugHistory.id }}</td>
-								{% endblock %}
-
-								{% block tableOverviewCellSlug %}
-									<td>{{ lo_slugHistory.slug }}</td>
-								{% endblock %}
-
-								{% block tableOverviewCellPageId %}
-									<td>
-										{% if lo_slugHistory.has('page') %}
-											{{ lo_slugHistory.page.title }}
-										{% endif %}
-									</td>
-								{% endblock %}
-
-								{% block tableOverviewCellActions %}
-									<td class="actions">
-										{% if AuthorizationHelper.isAccessible('update') %}
-											{{ HtmlHelper.link(__('edit'), {action: 'edit', id: lo_slugHistory.id}) }}
-										{% endif %}
-										{% if AuthorizationHelper.isAccessible('delete') %}
-											{{ HtmlHelper.link(__('delete'), {action: 'delete', id: lo_slugHistory.id}, {
-				class: 'Button Button-Small Button-Delete',
-				'data-confirm-title': __('confirm_delete_title'),
-				'data-confirm-yes': __('confirm_delete_yes'),
-				'data-confirm-yes-class': 'Button-Delete',
-				'data-confirm-no': __('confirm_delete_no'),
-				'data-confirm': __('confirm_delete', lo_slugHistory.id) }) }}
-										{% endif %}
-									</td>
-								{% endblock %}
-							</tr>
-						{% endblock %}
-					{% endfor %}
-				</tbody>
-			{% endblock %}
-		</table>
-	{% endblock %}
-
-	{% block listControlOverview %}
-		<ul class="ListControl">
-			{% block listControlOverviewPagination %}
-				{% set pagination = PaginatorHelper.render() %}
-				{% if pagination is not empty %}
-					<li class="ListControl-Pagination">
-						{{ pagination|raw }}
-					</li>
+	{% block buttonArea %}
+		<div class="ButtonArea">
+			{% block buttonsOverview %}
+				{% if AuthorizationHelper.isAccessible('create') %}
+					{{ HtmlHelper.link(__('create'), {action: 'add'}, {class : 'Button Button-Add'}) }}
 				{% endif %}
 			{% endblock %}
+		</div>
+	{% endblock %}
 
-			{% block paginationOverviewLimitControl %}
-				<li class="ListControl-ListLimit">
-					{{ PaginatorHelper.limitControl() }}
-				</li>
-			{% endblock %}
-		</ul>
+	{% block paginatedOverview %}
+		{% include '@Backend/SlugHistory/overview_paginated_list.twig' with _context|merge({records: slugHistory.items().toArray()}) %}
+	{% endblock %}
+
+	{% block buttonAreaBottom %}
+		<div class="ButtonArea ButtonArea-Bottom">
+			{{ block('buttonsOverview') }}
+		</div>
 	{% endblock %}
 </div>

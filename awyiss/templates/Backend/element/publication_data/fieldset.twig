@@ -1,14 +1,14 @@
 {% block fieldsetPublicationData %}
-	{% if config.publicationData.enabled %}
-		<fieldset>
+	{% if localConfig.publicationData.enabled %}
+		<fieldset class="Fieldset-PublicationData">
 			<legend>{{ __('fieldset_publication_data') }}</legend>
 
 			{% block formControlPublicationStart %}
-				{{ helper_Form_control('_publication_data.start.date_time', {type: 'datetime'}) }}
+				{{ helper_Form_control('_publication_data.start.date_time', {columnSpan: 6, type: 'datetime'}) }}
 			{% endblock %}
 
 			{% block formControlPublicationEnd %}
-				{{ helper_Form_control('_publication_data.end.date_time', {type: 'datetime'}) }}
+				{{ helper_Form_control('_publication_data.end.date_time', {columnSpan: 6, type: 'datetime'}) }}
 			{% endblock %}
 
 			{% block fieldsetPublicationDataInner %}

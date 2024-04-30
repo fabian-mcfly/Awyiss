@@ -253,7 +253,7 @@ class ConfigOption {
 
 		return match ($this->type) {
 			ConfigOptionType::Bool => $lx_value ? 'true' : 'false',
-			ConfigOptionType::JsonArray, ConfigOptionType::List => array_is_list($lx_value) ? implode(', ', $lx_value) : print_r($lx_value, true),
+			ConfigOptionType::JsonArray, ConfigOptionType::List, ConfigOptionType::ValueCollection => array_is_list($lx_value) ? implode(', ', $lx_value) : print_r($lx_value, true),
 			ConfigOptionType::JsonObject => print_r($lx_value, true),
 			default => $lx_value,
 		};
@@ -349,7 +349,8 @@ class ConfigOption {
 		if (
 			$this->getType() === ConfigOptionType::Enum ||
 			$this->getType() === ConfigOptionType::ListKey ||
-			$this->getType() === ConfigOptionType::ListValue
+			$this->getType() === ConfigOptionType::ListValue ||
+			$this->getType() === ConfigOptionType::ValueCollection
 		) {
 			$lx_values = $this->getValues(true, $as_languageShortcode);
 			if (!$lx_values) {
@@ -378,6 +379,18 @@ class ConfigOption {
 			return in_array($ax_value, $lx_values, true);
 		}
 
+		if ($this->getType() === ConfigOptionType::ValueCollection) {
+			$la_values = $ax_value;
+			if (!is_array($la_values)) {
+				$la_values = json_decode($la_values, true);
+			}
+
+			// Make sure all items are keys in $lx_values
+
+			/** @noinspection PhpUndefinedVariableInspection */
+			return count($la_values) === count(array_intersect($la_values, array_keys($lx_values)));
+		}
+
 
 		return $this->getType()->validate($ax_value, $this->isNullable($as_languageShortcode !== null));
 	}
@@ -398,7 +411,8 @@ class ConfigOption {
 		if (
 			$this->getType() === ConfigOptionType::Enum ||
 			$this->getType() === ConfigOptionType::ListKey ||
-			$this->getType() === ConfigOptionType::ListValue
+			$this->getType() === ConfigOptionType::ListValue ||
+			$this->getType() === ConfigOptionType::ValueCollection
 		) {
 			$lx_values = $this->getValues(true, $as_languageShortcode);
 			if (!$lx_values) {
@@ -407,48 +421,23 @@ class ConfigOption {
 		}
 
 		if ($this->getType() === ConfigOptionType::Enum) {
-			//If the value already is a case of the provided enum class, return it
 			/** @noinspection PhpUndefinedVariableInspection */
-			if ($ax_value instanceof $lx_values) {
-				return $ax_value;
-			}
-
-			if (!is_string($ax_value) && !is_int($ax_value)) {
-				return null;
-			}
-
-			/** @var \BackedEnum $lx_values */
-			return $lx_values::tryFrom($ax_value);
+			return $this->typecastEnum($ax_value, $lx_values);
 		}
 
 		if ($this->getType() === ConfigOptionType::ListKey) {
 			/** @noinspection PhpUndefinedVariableInspection */
-			if (in_array($ax_value, array_keys($lx_values), true)) {
-				return $ax_value;
-			}
-
-			foreach ([array_keys($lx_values), $lx_values] as $la_values) {
-				/** @noinspection PhpUndefinedVariableInspection */
-				if (in_array($ax_value, $la_values, true)) {
-					return $ax_value;
-				}
-
-				$lx_key = array_search($ax_value, $la_values);
-
-
-				return $lx_key !== false ? $la_values[ $lx_key ] : null;
-			}
+			return $this->typecastListKey($ax_value, $lx_values);
 		}
 
 		if ($this->getType() === ConfigOptionType::ListValue) {
 			/** @noinspection PhpUndefinedVariableInspection */
-			if (in_array($ax_value, $lx_values, true)) {
-				return $ax_value;
-			}
+			return $this->typecastListValue($ax_value, $lx_values);
+		}
 
-			$lx_key = array_search($ax_value, $lx_values);
-
-			return $lx_key !== false ? $lx_values[ $lx_key ] : null;
+		if ($this->getType() === ConfigOptionType::ValueCollection) {
+			/** @noinspection PhpUndefinedVariableInspection */
+			return $this->typecastValueCollection($ax_value, $lx_values);
 		}
 
 		$lx_value = $this->getType()->cast($ax_value, $this->isNullable($as_languageShortcode !== null));
@@ -492,5 +481,83 @@ class ConfigOption {
 
 
 		return $this;
+	}
+
+
+	/**
+	 * @param mixed $ax_value
+	 * @param mixed $ax_values
+	 * @return \BackedEnum|null
+	 */
+	protected function typecastEnum(mixed $ax_value, mixed $ax_values): mixed {
+		//If the value already is a case of the provided enum class, return it
+		/** @noinspection PhpUndefinedVariableInspection */
+		if ($ax_value instanceof $ax_values) {
+			return $ax_value;
+		}
+
+		if (!is_string($ax_value) && !is_int($ax_value)) {
+			return null;
+		}
+
+		/** @var \BackedEnum $ax_values */
+		return $ax_values::tryFrom($ax_value);
+	}
+
+
+	/**
+	 * @param mixed $ax_value
+	 * @param mixed $ax_values
+	 * @return mixed
+	 */
+	protected function typecastListKey(mixed $ax_value, mixed $ax_values): mixed {
+		/** @noinspection PhpUndefinedVariableInspection */
+		if (in_array($ax_value, array_keys($ax_values), true)) {
+			return $ax_value;
+		}
+
+		foreach ([array_keys($ax_values), $ax_values] as $la_values) {
+			/** @noinspection PhpUndefinedVariableInspection */
+			return $this->typecastListValue($ax_value, $la_values);
+		}
+	}
+
+
+	/**
+	 * @param mixed $ax_value
+	 * @param mixed $ax_values
+	 * @return mixed
+	 */
+	protected function typecastListValue(mixed $ax_value, mixed $ax_values): mixed {
+		/** @noinspection PhpUndefinedVariableInspection */
+		if (in_array($ax_value, $ax_values, true)) {
+			return $ax_value;
+		}
+
+		$lx_key = array_search($ax_value, $ax_values);
+
+		return $lx_key !== false ? $ax_values[ $lx_key ] : null;
+	}
+
+
+	/**
+	 * @param mixed $ax_value
+	 * @param mixed $ax_values
+	 * @return mixed
+	 */
+	protected function typecastValueCollection(mixed $ax_value, mixed $ax_values): mixed {
+		$la_values = $ax_value;
+		if (!is_array($la_values)) {
+			$la_values = $la_values ? json_decode($la_values, true) : [];
+		}
+
+		if (!is_array($la_values)) {
+			$la_values = [$la_values];
+		}
+
+		// Remove all items that aren't keys in $ax_values
+		$la_values = array_intersect($la_values, array_keys($ax_values));
+
+		return $la_values ?: null;
 	}
 }

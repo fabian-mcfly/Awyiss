@@ -1,36 +1,48 @@
 {#
-@var ao_record \Cake\Datasource\EntityInterface
-@var ao_possibleParentRecords \Cake\Collection\Collection
-@var ao_datatable \Awyiss\Model\Entity\Datatable
-@var as_languageRealm string
-@var ab_nestable bool
-@var ab_splitIntoLanguages bool
-@var ab_translatable bool
+@var record \Cake\Datasource\EntityInterface
+@var possibleParentRecords \Cake\Collection\Collection
+@var datatable \Awyiss\Model\Entity\Datatable
+@var languageRealm string
+@var nestable bool
+@var splitIntoLanguages bool
+@var translatable bool
 @var _view \Awyiss\View\BackendView
 #}
 
 <div class="GenericDatatables Form Edit">
-	{{ FormHelper.create(ao_record, {method: 'post', idPrefix: ao_datatable.identifier}) }}
-
-	{{ FormHelper.checkbox('save_as_copy', {id: 'SaveAsCopy', value: true}) }}
+	{% if AuthorizationHelper.isAccessible('read') %}
+		{{ HtmlHelper.link(__('overview'), {action: 'overview'}, {class: 'BackToOverview'}) }}
+	{% endif %}
 
 	{% block headlineEdit %}
 		<h1>{{ __('headline_edit') }}</h1>
 	{% endblock %}
 
-	{% block formEditButtons %}
-		<label for="SaveAsCopy">{{ __('as_copy') }}</label>
-		{{ FormHelper.button(__('save')) }}
-		{{ FormHelper.button(__('save_close'), {name: 'submit', value: 'submit_close'}) }}
+	{{ FormHelper.create(record, {method: 'post', idPrefix: datatable.identifier}) }}
+
+	{{ FormHelper.checkbox('save_as_copy', {id: 'SaveAsCopy', value: true}) }}
+
+	{% block buttonArea %}
+		<div class="ButtonArea">
+			{% block formEditButtons %}
+				<label for="SaveAsCopy" class="Button Button-SaveAsCopy Label-SaveAsCopy">{{ __('as_copy') }}</label>
+				{{ FormHelper.button(__('save'), {class: 'Button Button-Success Button-Save'}) }}
+				{% if AuthorizationHelper.isAccessible('read') %}
+					{{ FormHelper.button(__('save_close'), {class: 'Button Button-SaveClose', name: 'submit', value: 'submit_close'}) }}
+				{% endif %}
+			{% endblock %}
+		</div>
 	{% endblock %}
 
 	{% block formEdit %}
 		{% include('@Backend/GenericDatatables/form.twig') %}
 	{% endblock %}
 
-	{% block formEditButtonsBottom %}
-		{{ block('formEditButtons') }}
+	{% block buttonAreaBottom %}
+		<div class="ButtonArea ButtonArea-Bottom">
+			{{ block('formEditButtons') }}
+		</div>
 	{% endblock %}
 
-	{{ FormHelper.end() -}}
+	{{ FormHelper.end() }}
 </div>

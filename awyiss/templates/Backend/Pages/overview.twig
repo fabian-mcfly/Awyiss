@@ -1,76 +1,78 @@
 {#
-@var ao_pages \Awyiss\Model\Entity\Page[]|\Cake\Datasource\Paging\PaginatedResultSet
+@var pages \Awyiss\Model\Entity\Page[]|\Cake\Datasource\Paging\PaginatedResultSet
 @var localConfig array
-@var ab_contentsEnabled bool
-@var ab_nestable bool
-@var ab_paginated bool
-@var ab_sortable bool
+@var pageTemplates array
+@var contentsEnabled bool
+@var nestable bool
+@var paginated bool
+@var sortable bool
 @var _view \Awyiss\View\BackendView
 #}
 
 <div class="Pages Overview">
-	{% block buttonsOverview %}
-		{% if AuthorizationHelper.isAccessible('create') %}
-			{{ HtmlHelper.link(__('create'), {action: 'add'}, {class: 'Button' }) }}
-		{% endif %}
-	{% endblock %}
-
 	{% block headlineOverview %}
 		<h1>{{ __('headline_overview') }}</h1>
 	{% endblock %}
 
-	{% block categoriesFilterOverview %}
-		{{ CategoriesHelper.filter('category') }}
+	{% block buttonArea %}
+		<div class="ButtonArea">
+			{% block categoriesFilterOverview %}
+				{{ CategoriesHelper.filter('category') }}
+			{% endblock %}
+
+			{% block buttonsOverview %}
+				{% if sortable and paginated == false %}
+					<button class="Button Button-SaveSystemOrder" disabled>{{ __d('system', 'save_system_order') }}</button>
+				{% endif %}
+
+				{% if AuthorizationHelper.isAccessible('create') %}
+					{{ HtmlHelper.link(__('create'), {action: 'add'}, {class: 'Button Button-Add' }) }}
+				{% endif %}
+
+				{% block listControlOverviewListPaginated %}
+					{{ HtmlHelper.link(__('list_paginated'), {action: 'userConfiguration', identifier: 'paginate.enabled', value: 'true'}, {
+						class: 'Button Button-Small Button-ListView Button-ListView-PaginatedList',
+						disabled: localConfig.paginate.enabled == true
+					}) }}
+				{% endblock %}
+
+				{% block listControlOverviewListNested %}
+					{{ HtmlHelper.link(__('list_nested'), {action: 'userConfiguration', identifier: 'paginate.enabled', value: 'false'}, {
+						class: 'Button Button-Small Button-ListView Button-ListView-NestedList',
+						disabled: localConfig.paginate.enabled == false
+					}) }}
+				{% endblock %}
+			{% endblock %}
+		</div>
 	{% endblock %}
 
-	{% if ab_paginated %}
+	{% if paginated %}
 		{% block paginatedOverview %}
-			{% include '@Backend/Pages/overview_paginated.twig' with {'la_pages': ao_pages.items().toArray()} %}
+			{% include '@Backend/Pages/overview_paginated_list.twig' with _context|merge({records: pages.items().toArray()}) %}
 		{% endblock %}
 	{% else %}
-		{% from '@Backend/macro/nested_list.twig' import nestedList %}
-
 		{% block listOverview %}
-			{{ nestedList(ao_pages, {
-				contentsEnabled: ab_contentsEnabled,
-				identifier: 'Pages',
-				template: '@Backend/Pages/overview_nested_list_item.twig',
-			}) }}
+			<div class="Overview-List">
+				{% from '@Backend/macro/nested_list.twig' import nestedList %}
+				{{ nestedList(pages, _context|merge({
+					data: {
+						nestable: false,
+						sortable: sortable,
+						'movable-between-groups': false,
+					},
+					contentsEnabled: contentsEnabled,
+					identifier: 'Pages',
+					template: '@Backend/Pages/overview_nested_list_item.twig',
+				})) }}
+			</div>
 		{% endblock %}
 	{% endif %}
 
-	{% block listControlOverview %}
-		<ul class="ListControl">
-			{% block listControlOverviewListPaginated %}
-				<li class="ListControl-ListPaginated">
-					{{ HtmlHelper.link(__('list_paginated'), {action: 'userConfiguration', identifier: 'paginate.enabled', value: 'true'}) }}
-				</li>
-			{% endblock %}
+	{% block buttonAreaBottom %}
+		<div class="ButtonArea ButtonArea-Bottom">
+			{{ block('categoriesFilterOverview') }}
 
-			{% block listControlOverviewListNested %}
-				<li class="ListControl-ListNested">
-					{{ HtmlHelper.link(__('list_nested'), {action: 'userConfiguration', identifier: 'paginate.enabled', value: 'false'}) }}
-				</li>
-			{% endblock %}
-
-			{% block listControlOverviewPagination %}
-				{% if ab_paginated %}
-					{% set pagination = PaginatorHelper.render() %}
-					{% if pagination is not empty %}
-						<li class="ListControl-Pagination">
-							{{ pagination|raw }}
-						</li>
-					{% endif %}
-				{% endif %}
-			{% endblock %}
-
-			{% block paginationOverviewLimitControl %}
-				{% if ab_paginated %}
-					<li class="ListControl-ListLimit">
-						{{ PaginatorHelper.limitControl() }}
-					</li>
-				{% endif %}
-			{% endblock %}
-		</ul>
+			{{ block('buttonsOverview') }}
+		</div>
 	{% endblock %}
 </div>

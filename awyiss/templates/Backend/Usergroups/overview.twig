@@ -1,80 +1,30 @@
 {#
-@var ao_usergroups \Awyiss\Model\Entity\Usergroup[]
+@var usergroups \Awyiss\Model\Entity\Usergroup[]
 @var _view \Awyiss\View\BackendView
 #}
 
 <div class="Usergroups Overview">
-	{% block buttonsOverview %}
-		{% if AuthorizationHelper.isAccessible('create') %}
-			{{ HtmlHelper.link(__('create'), {action: 'add'}, {class: 'Button'}) }}
-		{% endif %}
-	{% endblock %}
-
 	{% block headlineOverview %}
 		<h1>{{ __('headline_overview') }}</h1>
 	{% endblock %}
 
-	{% block tableOverview %}
-		<table class="Table-Overview">
-			{% block tableOverviewHead %}
-				<thead>
-					{% block tableOverviewHeadRow %}
-						<tr>
-							{% block tableOverviewHeaderTitle %}
-								<th>{{ PaginatorHelper.sort('title') }}</th>
-							{% endblock %}
-
-							{% block tableOverviewHeaderActions %}
-								<th class="actions"></th>
-							{% endblock %}
-						</tr>
-					{% endblock %}
-				</thead>
-			{% endblock %}
-			{% block tableOverviewBody %}
-				<tbody>
-					{# @var lo_usergroup \Awyiss\Model\Entity\Usergroup #}
-					{% for lo_usergroup in ao_usergroups %}
-						{% block tableOverviewBodyRow %}
-							<tr>
-								{% block tableOverviewCellTitle %}
-									<td>{{ lo_usergroup.title }}</td>
-								{% endblock %}
-
-								{% block tableOverviewCellActions %}
-									<td class="actions">
-										{% if AuthorizationHelper.isAccessible('update') %}
-											{{ HtmlHelper.link(__('edit'), {action: 'edit', id: lo_usergroup.id}) }}
-										{% endif %}
-										{% if AuthorizationHelper.isAccessible('delete') %}
-											{{ HtmlHelper.link(__('delete'), {action: 'delete', id: lo_usergroup.id}) }}
-										{% endif %}
-									</td>
-								{% endblock %}
-							</tr>
-						{% endblock %}
-					{% endfor %}
-				</tbody>
-			{% endblock %}
-		</table>
-	{% endblock %}
-
-	{% block listControlOverview %}
-		<ul class="ListControl">
-			{% block listControlOverviewPagination %}
-				{% set pagination = PaginatorHelper.render() %}
-				{% if pagination is not empty %}
-					<li class="ListControl-Pagination">
-						{{ pagination|raw }}
-					</li>
+	{% block buttonArea %}
+		<div class="ButtonArea">
+			{% block buttonsOverview %}
+				{% if AuthorizationHelper.isAccessible('create') %}
+					{{ HtmlHelper.link(__('create'), {action: 'add'}, {class : 'Button Button-Add'}) }}
 				{% endif %}
 			{% endblock %}
+		</div>
+	{% endblock %}
 
-			{% block paginationOverviewLimitControl %}
-				<li class="ListControl-ListLimit">
-					{{ PaginatorHelper.limitControl() }}
-				</li>
-			{% endblock %}
-		</ul>
+	{% block paginatedOverview %}
+		{% include '@Backend/element/overview/overview_paginated_list.twig' with _context|merge({records: usergroups.items().toArray()}) %}
+	{% endblock %}
+
+	{% block buttonAreaBottom %}
+		<div class="ButtonArea ButtonArea-Bottom">
+			{{ block('buttonsOverview') }}
+		</div>
 	{% endblock %}
 </div>

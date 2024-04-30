@@ -29,7 +29,8 @@ class DatatablesController extends Controller {
 		$lo_datatables = $this->paginate($lo_datatables);
 
 		$this->set([
-			'ao_datatables' => $lo_datatables,
+			'datatables' => $lo_datatables,
+			'attributes' => $this->Datatables->getAttributes(),
 		]);
 	}
 
@@ -50,7 +51,7 @@ class DatatablesController extends Controller {
 		}
 
 		$this->set([
-			'ao_datatable' => $lo_datatable,
+			'datatable' => $lo_datatable,
 		]);
 	}
 
@@ -80,7 +81,7 @@ class DatatablesController extends Controller {
 		}
 
 		$this->set([
-			'ao_datatable' => $lo_datatable,
+			'datatable' => $lo_datatable,
 		]);
 	}
 

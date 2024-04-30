@@ -1,7 +1,7 @@
 {#
-@var ao_configuration \Awyiss\Model\Entity\Configuration
-@var aa_configOptions array
-@var aa_realms array
+@var configuration \Awyiss\Model\Entity\Configuration
+@var configOptions array
+@var realms array
 @var _view \Awyiss\View\BackendView
 #}
 
@@ -10,50 +10,81 @@
 {% endblock %}
 
 {% block formControlTypeEnum %}
-	{{ FormHelper.control('value', {options: ao_configuration.configOption.values(true), type: 'select'}) }}
+	{{ FormHelper.control('value', {options: configuration.configOption.values(true), type: 'select'}) }}
 {% endblock %}
 
 {% block formControlTypeFloat %}
-	{{ FormHelper.control('value', {placeholder: ao_configuration.configOption.defaultValue, step: 0.01, type: 'number'}) }}
+	{{ FormHelper.control('value', {placeholder: configuration.configOption.defaultValue, step: 0.01, type: 'number'}) }}
 {% endblock %}
 
 {% block formControlTypeInteger %}
-	{{ FormHelper.control('value', {placeholder: ao_configuration.configOption.defaultValue, step: 1, type: 'number'}) }}
+	{{ FormHelper.control('value', {placeholder: configuration.configOption.defaultValue, step: 1, type: 'number'}) }}
 {% endblock %}
 
 {% block formControlTypeList %}
-	{% set li_counter = 0 %}
-	{% set value = ao_configuration.getValue ?? ao_configuration.configOption.defaultValue %}
-	{% set value = ao_configuration.hasValue('value') ? ao_configuration.get('value') : ao_configuration.configOption.defaultValue %}
+	<div class="FormInput FormInputType-List FormInputName-Value">
+		<label class="Label">{{ __('value') }}</label>
 
-	{% if value is not array %}
-		{% set value = value|json_decode %}
-	{% endif %}
+		{% set counter = 0 %}
+		{% set value = configuration.hasValue('value') ? configuration.get('value') : configuration.configOption.defaultValue %}
 
-	{% for ls_key, lx_value in value %}
-		{{ FormHelper.control('value.' ~ li_counter, {label: false, val: lx_value}) }}
-		{% set li_counter = li_counter + 1 %}
-	{% endfor %}
+		{% if value is not array %}
+			{% set decodedValue = value|json_decode %}
+			{% if decodedValue is not null %}
+				{% set value = decodedValue %}
+			{% else %}
+				{% set value = [value] %}
+			{% endif %}
+		{% endif %}
 
-	{{ FormHelper.control('value.' ~ li_counter, {label: false}) }}
+		{% for key, value in value %}
+			<div class="FormInputType-ListItem">
+				{{ FormHelper.text('value.' ~ counter, {val: value}) }}
+			</div>
+			{% set counter = counter + 1 %}
+		{% endfor %}
+
+		<div class="FormInputType-ListItem FormInputType-ListItem-Default">
+			{{ FormHelper.text('value.' ~ counter) }}
+		</div>
+	</div>
 {% endblock %}
 
 {% block formControlTypeListKey %}
-	{{ FormHelper.control('value', {options: ao_configuration.configOption.values(true), type: 'select'}) }}
+	{{ FormHelper.control('value', {options: configuration.configOption.values(true), type: 'select'}) }}
 {% endblock %}
 
 {% block formControlTypeListValue %}
-	{{ FormHelper.control('value', {options: ao_configuration.configOption.values(true), type: 'select'}) }}
+	{{ FormHelper.control('value', {options: configuration.configOption.values(true), type: 'select'}) }}
 {% endblock %}
 
 {% block formControlTypeJsonArray %}
-	{{ FormHelper.control('value', {placeholder: ao_configuration.configOption.defaultValue|json_encode, type: 'textarea'}) }}
+	{{ FormHelper.control('value', {placeholder: configuration.configOption.defaultValue|json_encode, type: 'textarea'}) }}
 {% endblock %}
 
 {% block formControlTypeJsonObject %}
-	{{ FormHelper.control('value', {placeholder: ao_configuration.configOption.defaultValue|json_encode, type: 'textarea'}) }}
+	{{ FormHelper.control('value', {placeholder: configuration.configOption.defaultValue|json_encode, type: 'textarea'}) }}
 {% endblock %}
 
 {% block formControlTypeString %}
-	{{ FormHelper.control('value', {placeholder: ao_configuration.configOption.defaultValue}) }}
+	{{ FormHelper.control('value', {placeholder: configuration.configOption.defaultValue}) }}
+{% endblock %}
+
+{% block formControlTypeValueCollection %}
+	<div class="FormInput FormInputType-ValueCollection FormInputName-Value">
+		<label class="Label">{{ __('value') }}</label>
+		{% set value = configuration.hasValue('value') ? configuration.get('value')|json_decode : configuration.configOption.defaultValue %}
+		<input type="hidden" name="value" value="">
+
+		{% for key, value in configuration.configOption.values(true) %}
+			{{ FormHelper.control('value[]', {
+				checked: key in value,
+				hiddenField: false,
+				id: 'Configuration-Value-' ~ key|camelize,
+				label: value,
+				type: 'checkbox',
+				value: key,
+			}) }}
+		{% endfor %}
+	</div>
 {% endblock %}

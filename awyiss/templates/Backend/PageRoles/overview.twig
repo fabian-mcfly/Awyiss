@@ -1,92 +1,57 @@
 {#
-@var ao_pageRoles \Awyiss\Model\Entity\PageRole[]
+@var pageRoles \Awyiss\Model\Entity\PageRole[]
 @var _view \Awyiss\View\BackendView
 #}
 
 <div class="PageRoles Overview">
-	{% block buttonsOverview %}
-		{% if AuthorizationHelper.isAccessible('create') %}
-			{{ HtmlHelper.link(__('create'), {action: 'add'}, {class: 'Button'}) }}
-		{% endif %}
-	{% endblock %}
-
 	{% block headlineOverview %}
 		<h1>{{ __('headline_overview') }}</h1>
 	{% endblock %}
 
+	{% block buttonArea %}
+		<div class="ButtonArea">
+			{% block buttonsOverview %}
+				{% if AuthorizationHelper.isAccessible('create') %}
+					{{ HtmlHelper.link(__('create'), {action: 'add'}, {class : 'Button Button-Add'}) }}
 
-	{% block tableOverview %}
-		<table class="Table-Overview">
-			{% block tableOverviewHead %}
-				<thead>
-					{% block tableOverviewHeadRow %}
-						<tr>
-							{% block tableOverviewHeaderTitle %}
-								<th>{{ __('title') }}</th>
-							{% endblock %}
-
-							{% block tableOverviewHeaderIdentifier %}
-								<th>{{ __('identifier') }}</th>
-							{% endblock %}
-
-							{% block tableOverviewHeaderIncludeInLinklist %}
-								<th>{{ __('include_in_linklist') }}</th>
-							{% endblock %}
-
-							{% block tableOverviewHeaderActive %}
-								<th>{{ __('active') }}</th>
-							{% endblock %}
-
-							{% block tableOverviewHeaderActions %}
-								<th class="actions"></th>
-							{% endblock %}
-						</tr>
+					{% block listControlOverviewListPaginated %}
+						{{ HtmlHelper.link(__('list_paginated'), {action: 'userConfiguration', identifier: 'paginate.enabled', value: 'true'}, {
+							class: 'Button Button-Small Button-ListView Button-ListView-PaginatedList',
+							disabled: localConfig.paginate.enabled == true
+						}) }}
 					{% endblock %}
-				</thead>
+
+					{% block listControlOverviewListNested %}
+						{{ HtmlHelper.link(__('list_nested'), {action: 'userConfiguration', identifier: 'paginate.enabled', value: 'false'}, {
+							class: 'Button Button-Small Button-ListView Button-ListView-NestedList',
+							disabled: localConfig.paginate.enabled == false
+						}) }}
+					{% endblock %}
+				{% endif %}
 			{% endblock %}
-			{% block tableOverviewBody %}
-				<tbody>
-					{# @var lo_pageRole \Awyiss\Model\Entity\PageRole #}
-					{% for lo_pageRole in ao_pageRoles %}
-						{% block tableOverviewBodyRow %}
-							<tr>
-								{% block tableOverviewCellTitle %}
-									<td>{{ lo_pageRole.title }} ({{ lo_pageRole.systemOrder }})</td>
-								{% endblock %}
+		</div>
+	{% endblock %}
 
-								{% block tableOverviewCellIdentifier %}
-									<td>{{ lo_pageRole.identifier }}</td>
-								{% endblock %}
+	{% if paginated %}
+		{% block paginatedOverview %}
+			{% include '@Backend/PageRoles/overview_paginated_list.twig' with _context|merge({records: pageRoles.items().toArray()}) %}
+		{% endblock %}
+	{% else %}
+		{% block listOverview %}
+			<div class="Overview-List">
+				{% from '@Backend/macro/nested_list.twig' import nestedList %}
+				{{ nestedList(pageRoles, _context|merge({
+					displayedFields: localConfig.overview.displayedFields,
+					identifier: 'MenuEntry',
+					template: '@Backend/PageRoles/overview_nested_list_item.twig',
+				})) }}
+			</div>
+		{% endblock %}
+	{% endif %}
 
-								{% block tableOverviewCellIncludeInLinklist %}
-									<td>{{ lo_pageRole.include_in_linklist }}</td>
-								{% endblock %}
-
-								{% block tableOverviewCellActive %}
-									<td>{{ lo_pageRole.active }}</td>
-								{% endblock %}
-
-								{% block tableOverviewCellActions %}
-									<td class="actions">
-										{% if AuthorizationHelper.isAccessible('update') %}
-											{{ HtmlHelper.link(__('edit'), {action: 'edit', id: lo_pageRole.id}) }}
-										{% endif %}
-										{% if AuthorizationHelper.isAccessible('delete') %}
-											{{ HtmlHelper.link(__('delete'), {action: 'delete', id: lo_pageRole.id}, {
-				class: 'Button Button-Small Button-Delete',
-				'data-confirm-title': __('confirm_delete_title'),
-				'data-confirm-yes': __('confirm_delete_yes'),
-				'data-confirm-yes-class': 'Button-Delete',
-				'data-confirm-no': __('confirm_delete_no'),
-				'data-confirm': __('confirm_delete', lo_pageRole.id) }) }}
-										{% endif %}
-									</td>
-								{% endblock %}
-							</tr>
-						{% endblock %}
-					{% endfor %}
-				</tbody>
-			{% endblock %}
-		</table>
+	{% block buttonAreaBottom %}
+		<div class="ButtonArea ButtonArea-Bottom">
+			{{ block('buttonsOverview') }}
+		</div>
 	{% endblock %}
 </div>

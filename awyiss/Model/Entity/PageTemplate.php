@@ -56,6 +56,7 @@ class PageTemplate extends Entity {
 		'deleted_on' => 'deletedOn',
 		'page_role' => 'pageRole',
 		'content_areas' => 'contentAreas',
+		'used_for_pages' => 'usedForPages',
 	];
 
 

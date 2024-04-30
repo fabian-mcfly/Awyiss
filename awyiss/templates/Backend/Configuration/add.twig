@@ -1,29 +1,45 @@
 {#
-@var ao_configuration \Awyiss\Model\Entity\Configuration
-@var aa_configOptions array
-@var aa_realms array
+@var configuration \Awyiss\Model\Entity\Configuration
+@var configOptions array
+@var realms array
 @var _view \Awyiss\View\BackendView
 #}
 
+{% do AuthorizationHelper.setAdditionalData({scope: configuration.scope}) %}
+
 <div class="Configuration Form Add">
-	{{ FormHelper.create(ao_configuration, {method: 'post', idPrefix: 'Configuration'}) }}
+	{% if AuthorizationHelper.isAccessible('read') %}
+		{{ HtmlHelper.link(__('overview'), {action: 'overview'}, {class: 'BackToOverview'}) }}
+	{% endif %}
 
 	{% block headlineAdd %}
 		<h1>{{ __('headline_add') }}</h1>
 	{% endblock %}
 
-	{% block formAddButtons %}
-		{{ FormHelper.button(__('save')) }}
-		{{ FormHelper.button(__('save_close'), {name: 'submit', value: 'submit_close'}) }}
+	{{ FormHelper.create(configuration, {method: 'post', idPrefix: 'Configuration'}) }}
+
+	{% block buttonArea %}
+		<div class="ButtonArea">
+			{% block formAddButtons %}
+				{{ FormHelper.button(__('save'), {class: 'Button Button-Success Button-Save'}) }}
+				{% if AuthorizationHelper.isAccessible('read') %}
+					{{ FormHelper.button(__('save_close'), {class: 'Button Button-SaveClose', name: 'submit', value: 'submit_close'}) }}
+				{% endif %}
+			{% endblock %}
+		</div>
 	{% endblock %}
 
 	{% block formAdd %}
 		{% include('@Backend/Configuration/form.twig') %}
 	{% endblock %}
 
-	{% block formAddButtonsBottom %}
-		{{ block('formAddButtons') }}
+	{% block buttonAreaBottom %}
+		<div class="ButtonArea ButtonArea-Bottom">
+			{{ block('formAddButtons') }}
+		</div>
 	{% endblock %}
 
-	{{ FormHelper.end() -}}
+	{{ FormHelper.end() }}
 </div>
+
+{% do AuthorizationHelper.resetAdditionalData() %}

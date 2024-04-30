@@ -1,32 +1,44 @@
 {#
-@var ao_mediaFolder \Awyiss\Model\Entity\MediaFolder
-@var ao_threadedMediaFolders \Cake\Collection\Iterator\TreeIterator
-@var as_languageRealm string
+@var mediaFolder \Awyiss\Model\Entity\MediaFolder
+@var threadedMediaFolders \Cake\Collection\Iterator\TreeIterator
+@var languageRealm string
 @var _view \Awyiss\View\BackendView
 #}
 
 <div class="MediaFolders Form Edit">
-	{{ FormHelper.create(ao_mediaFolder, {method: 'post', idPrefix: 'mediaFolder'}) }}
-
-	{{ FormHelper.checkbox('save_as_copy', {id: 'SaveAsCopy', value: true}) }}
+	{% if AuthorizationHelper.isAccessible('read') %}
+		{{ HtmlHelper.link(__('overview'), {action: 'overview'}, {class: 'BackToOverview'}) }}
+	{% endif %}
 
 	{% block headlineEdit %}
 		<h1>{{ __('headline_edit') }}</h1>
 	{% endblock %}
 
-	{% block formEditButtons %}
-		<label for="SaveAsCopy">{{ __('as_copy') }}</label>
-		{{ FormHelper.button(__('save')) }}
-		{{ FormHelper.button(__('save_close'), {name: 'submit', value: 'submit_close'}) }}
+	{{ FormHelper.create(mediaFolder, {method: 'post', idPrefix: 'mediaFolder'}) }}
+
+	{{ FormHelper.checkbox('save_as_copy', {id: 'SaveAsCopy', value: true}) }}
+
+	{% block buttonArea %}
+		<div class="ButtonArea">
+			{% block formEditButtons %}
+				<label for="SaveAsCopy" class="Button Button-SaveAsCopy Label-SaveAsCopy">{{ __('as_copy') }}</label>
+				{{ FormHelper.button(__('save'), {class: 'Button Button-Success Button-Save'}) }}
+				{% if AuthorizationHelper.isAccessible('read') %}
+					{{ FormHelper.button(__('save_close'), {class: 'Button Button-SaveClose', name: 'submit', value: 'submit_close'}) }}
+				{% endif %}
+			{% endblock %}
+		</div>
 	{% endblock %}
 
 	{% block formEdit %}
 		{% include('@Backend/MediaFolders/form.twig') %}
 	{% endblock %}
 
-	{% block formEditButtonsBottom %}
-		{{ block('formEditButtons') }}
+	{% block buttonAreaBottom %}
+		<div class="ButtonArea ButtonArea-Bottom">
+			{{ block('formEditButtons') }}
+		</div>
 	{% endblock %}
 
-	{{ FormHelper.end() -}}
+	{{ FormHelper.end() }}
 </div>

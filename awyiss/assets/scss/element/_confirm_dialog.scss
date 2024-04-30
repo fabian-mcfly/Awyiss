@@ -1,0 +1,11 @@
+#ConfirmDialog {
+	&::after {
+		content:attr(data-title, 'Confirm');
+	}
+
+	&-Message {
+		width:100%;
+		margin-bottom:$lineHeightMain;
+		flex:0 0 100%;
+	}
+}

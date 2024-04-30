@@ -1,89 +1,178 @@
 {#
-@var ao_media \Awyiss\Model\Entity\Media[]
+@var media \Awyiss\Model\Entity\Media[]
+@var mediaFolders array<string, \Awyiss\Model\Entity\MediaFolder[]>
 @var _view \Awyiss\View\BackendView
 #}
 
-{% set li_selectedMediaFolderId = CategoriesHelper.getSelectedCategory('mediaFolder') %}
+{% set selectedMediaFolderId = CategoriesHelper.getSelectedCategory('mediaFolder') %}
 
 <div class="Media Overview">
-	{% block buttonsOverview %}
-		{% if AuthorizationHelper.isAccessible('create') %}
-			{{ HtmlHelper.link(__('create'), {action: 'add', mediaFolderId: li_selectedMediaFolderId}, {class : 'Button'}) }}
-		{% endif %}
-	{% endblock %}
-
 	{% block headlineOverview %}
 		<h1>{{ __('headline_overview') }}</h1>
 	{% endblock %}
 
-	{% block categoriesFilterOverview %}
-		{{ CategoriesHelper.filter('mediaFolder', null, {groupBy: 'languageShortcode', groupLabels: LocaleHelper.languagesForRealm(as_languageRealm)|merge({general: 'Global'})}) }}
+	{% block buttonArea %}
+		<div class="ButtonArea">
+			{% block categoriesFilterOverview %}
+				{{ CategoriesHelper.filter('mediaFolder', null, {groupBy: 'languageShortcode', groupLabels: LocaleHelper.languagesForRealm(languageRealm)|merge({general: 'Global'})}) }}
+			{% endblock %}
+
+			{% block buttonsOverview %}
+				{% if paginated == false %}
+					<button class="Button Button-SaveSystemOrder" disabled>{{ __d('system', 'save_system_order') }}</button>
+
+					{% if AuthorizationHelper.isAccessible('delete') %}
+						<button
+								class="Button Button-Delete"
+								disabled
+								data-confirm-title="{{ __('confirm_delete_selected_title') }}"
+								data-confirm-yes="{{ __('confirm_delete_yes') }}"
+								data-confirm-yes-class="Button-Delete"
+								data-confirm-no="{{ __('confirm_delete_no') }}"
+								data-confirm="{{ __('confirm_delete_selected', mediaItem.id) }}">{{ __('delete') }}</button>
+					{% endif %}
+				{% endif %}
+
+				{% if AuthorizationHelper.isAccessible('create') %}
+					{{ HtmlHelper.link(__('create'), {action: 'add'}, {class : 'Button Button-Add'}) }}
+				{% endif %}
+
+				{% block listControlOverviewListPaginated %}
+					{{ HtmlHelper.link(__('list_paginated'), {action: 'userConfiguration', identifier: 'paginate.enabled', value: 'true'}, {
+						class: 'Button Button-Small Button-ListView Button-ListView-PaginatedList',
+						disabled: localConfig.paginate.enabled == true
+					}) }}
+				{% endblock %}
+
+				{% block listControlOverviewListNested %}
+					{{ HtmlHelper.link(__('list_nested'), {action: 'userConfiguration', identifier: 'paginate.enabled', value: 'false'}, {
+						class: 'Button Button-Small Button-ListView Button-ListView-NestedList',
+						disabled: localConfig.paginate.enabled == false
+					}) }}
+				{% endblock %}
+			{% endblock %}
+		</div>
 	{% endblock %}
 
-	{% block tableOverview %}
-		<table class="Table-Overview">
-			{% block tableOverviewHead %}
-				<thead>
-					{% block tableOverviewHeadRow %}
+	{% if paginated %}
+		{% block uploadQueue %}
+			{% block uploadQueueTable %}
+				<table id="UploadQueue" class="Table">
+					<thead>
 						<tr>
-							{% block tableOverviewHeaderName %}
-								<th>{{ __('name') }}</th>
-							{% endblock %}
-
-							{% block tableOverviewHeaderPath %}
-								<th>{{ __('path') }}</th>
-							{% endblock %}
-
-							{% block tableOverviewHeaderSystemOrder %}
-								<th>{{ __('system_order') }}</th>
-							{% endblock %}
-
-							{% block tableOverviewHeaderActions %}
-								<th class="actions"></th>
-							{% endblock %}
+							<th class="TableHeader-Name">{{ __('upload_queue_name') }}</th>
+							<th class="TableHeader-Status">{{ __('upload_queue_status') }}</th>
+							<th class="TableHeader-Actions">{{ __('upload_queue_actions') }}</th>
 						</tr>
-					{% endblock %}
-				</thead>
+					</thead>
+					<tbody></tbody>
+				</table>
 			{% endblock %}
-			{% block tableOverviewBody %}
-				<tbody>
-					{# @var lo_media \Awyiss\Model\Entity\Media #}
-					{% for lo_media in ao_media %}
-						{% block tableOverviewBodyRow %}
-							<tr>
-								{% block tableOverviewCellName %}
-									<td>{{ lo_media.name }}</td>
-								{% endblock %}
-
-								{% block tableOverviewCellPath %}
-									<td>{{ lo_media.path }}</td>
-								{% endblock %}
-
-								{% block tableOverviewCellSystemOrder %}
-									<td>order {{ lo_media.systemOrder }}</td>
-								{% endblock %}
-
-								{% block tableOverviewCellActions %}
-									<td class="actions">
-										{% if AuthorizationHelper.isAccessible('update') %}
-											{{ HtmlHelper.link(__('edit'), {action: 'edit', id: lo_media.id}) }}
-										{% endif %}
-										{% if AuthorizationHelper.isAccessible('delete') %}
-											{{ HtmlHelper.link(__('delete'), {action: 'delete', id: lo_media.id}, {
-				class: 'Button Button-Small Button-Delete',
-				'data-confirm-title': __('confirm_delete_title'),
-				'data-confirm-yes': __('confirm_delete_yes'),
-				'data-confirm-yes-class': 'Button-Delete',
-				'data-confirm-no': __('confirm_delete_no'),
-				'data-confirm': __('confirm_delete', lo_media.id) }) }}
-										{% endif %}
-									</td>
-								{% endblock %}
-							</tr>
-						{% endblock %}
-					{% endfor %}
-				</tbody>
+			{% block uploadQueueTableItemTemplate %}
+				<template id="uploadQueueItemTemplate" data-max-file-size="{{ maxFileSize }}" data-error-max-filesize="{{ __('error_max_file_size') }}">
+					<tr class="UploadQueue-Item UploadQueue-Item-InProgress">
+						<td class="TableCell-Name Name"></td>
+						<td class="TableCell-Status Status">
+							<progress value="0" max="100"></progress>
+						</td>
+						<td class="TableCell-Actions">
+							<div class="Actions">
+								<button class="Button Button-Small Button-Error Button-Cancel">{{ __('cancel_upload') }}</button>
+							</div>
+						</td>
+					</tr>
+				</template>
 			{% endblock %}
-		</table>
+		{% endblock %}
+		{% block paginatedOverview %}
+			{% include '@Backend/Media/overview_paginated_list.twig' with _context|merge({records: media.items().toArray()}) %}
+		{% endblock %}
+	{% else %}
+		{% if isAjax %}
+			<div id="MediaOverlay" class="Visible">
+				<div class="ButtonArea">
+					<button class="Button Button-SaveSystemOrder" disabled>{{ __d('system', 'save_system_order') }}</button>
+
+					{% if AuthorizationHelper.isAccessible('delete') %}
+						<button
+							class="Button Button-Delete"
+							disabled
+							data-confirm-title="{{ __('confirm_delete_selected_title') }}"
+							data-confirm-yes="{{ __('confirm_delete_yes') }}"
+							data-confirm-yes-class="Button-Delete"
+							data-confirm-no="{{ __('confirm_delete_no') }}"
+							data-confirm="{{ __('confirm_delete_selected', mediaItem.id) }}">{{ __('delete') }}</button>
+					{% endif %}
+
+					<button class="Button Button-Close">
+						{{ __('close') }}
+					</button>
+				</div>
+		{% endif %}
+
+		{% block listOverview %}
+			{% include '@Backend/Media/overview_list.twig' %}
+
+			{% block listOverviewUploadQueueItemTemplate %}
+				<template id="uploadQueueItemTemplate" data-max-file-size="{{ maxFileSize }}" data-error-max-filesize="{{ __('error_max_file_size') }}">
+					<li class="Media-ListItem UploadQueue-Item UploadQueue-Item-InProgress">
+						<button class="Button Button-Error Button-Cancel">{{ __('cancel_upload') }}</button>
+						<span class="Status"><progress value="0" max="100"></progress></span>
+						<span class="Name"></span>
+					</li>
+				</template>
+			{% endblock %}
+		{% endblock %}
+
+		{% if isAjax %}
+			{% from '@Backend/macro/nested_list.twig' import nestedList %}
+				{% do AuthorizationHelper.setScope('MediaFolders') %}
+				{% block mediaFolders %}
+					<div id="MediaFolders-List"{# class="🌚" #}>
+						{% for languageShortcode, mediaFolders in groupedMediaFolders %}
+							{% block fieldsetOverview %}
+								<fieldset
+										class="Overview-Fieldset Collapsible{% if languageShortcode not in ['', language.shortcode] %} Collapsed{% endif %}"
+										id="MediaFolder-List-{{ (languageShortcode ?? 'global')|camelize }}">
+									<legend>{{ languages[ languageRealm ][ languageShortcode ] ? languages[ languageRealm ][ languageShortcode ].title : __('global') }}</legend>
+
+									{% block fieldsetOverviewInner %}
+										{% block listFoldersOverview %}
+											{{ nestedList(mediaFolders, _context|merge({
+												data: {
+													sortable: false,
+													nestable: false,
+												},
+												identifier: 'MediaFolders',
+												selectedMediaFolderId: selectedMediaFolderId,
+												template: '@Backend/Media/overview_folders_nested_list_item.twig',
+											})) }}
+										{% endblock %}
+									{% endblock %}
+								</fieldset>
+							{% endblock %}
+						{% endfor %}
+					</div>
+				{% endblock %}
+
+				{% if AuthorizationHelper.isAccessible('create') %}
+					<div id="MediaFolders-AddButton">
+						{{ HtmlHelper.link(__d('media_folders', 'create'), {controller: 'MediaFolders', action: 'add'}, {class: 'Button Button-Add OverlayForm'}) }}
+					</div>
+				{% endif %}
+
+				{% do AuthorizationHelper.resetScope() %}
+
+				<div id="UploadQueue-DropZone">{{ __('dropzone_drop_to_upload') }}</div>
+			</div>
+		{% endif %}
+	{% endif %}
+
+	{% block buttonAreaBottom %}
+		<div class="ButtonArea ButtonArea-Bottom">
+			{{ block('categoriesFilterOverview') }}
+
+			{{ block('buttonsOverview') }}
+		</div>
 	{% endblock %}
 </div>

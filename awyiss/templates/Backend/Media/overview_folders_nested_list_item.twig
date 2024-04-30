@@ -1,0 +1,33 @@
+{#
+@var entity \Awyiss\Model\Entity\Page
+@var settings array
+#}
+
+{% extends '@Backend/element/overview/nested_list_item.twig' %}
+
+{% block nestedListItemAuditInfo %}{% endblock %}
+
+{% block nestedListActions %}
+	<span class="Actions">
+		{{ block('nestedListActionsEdit') }}
+	</span>
+{% endblock %}
+
+{% block nestedListItem %}
+	{% if selectedMediaFolderId == entity.id %}
+		{% set entity = entity.set('class', 'Active') %}
+	{% endif %}
+
+	<li {{ block('nestedListItemId') }} {{ block('nestedListItemClass') }} data-collapsed-initial="true" data-language-shortcode="{{ entity.languageShortcode }}">
+		{% block nestedListItemInner %}
+			<div{% block nestedListItemInnerClass %} class="{{ settings.identifier }}-ListItem-Inner ListItem-Inner"{% endblock %} title="{{ entity.title }}">
+				{{ block('nestedListItemData') }}
+				{{ block('nestedListActions') }}
+			</div>
+		{% endblock %}
+
+		{% block nestedListChildren %}
+			{{ childrenList }}
+		{% endblock %}
+	</li>
+{% endblock %}

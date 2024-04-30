@@ -1,104 +1,72 @@
 {#
-@var ao_languages \Cake\Collection\Collection
-@var aa_realms array
+@var languagesByRealm \Cake\Collection\Collection
+@var realms array
 @var _view \Awyiss\View\BackendView
 #}
 
-{% set la_languages = ao_languages.toArray() %}
-
 <div class="Languages Overview">
-	{% block buttonsOverview %}
-		{% if AuthorizationHelper.isAccessible('create') %}
-			{{ HtmlHelper.link(__('create'), {action: 'add'}, {class: 'Button'}) }}
-		{% endif %}
-	{% endblock %}
-
 	{% block headlineOverview %}
 		<h1>{{ __('headline_overview') }}</h1>
 	{% endblock %}
 
-	{% for ls_realm in aa_realms %}
-		{% block fieldsetOverview %}
-			<fieldset class="Fieldset-Overview">
-				<legend>{{ __('' ~ ls_realm) }}</legend>
+	{% block buttonArea %}
+		<div class="ButtonArea">
+			{% block buttonsOverview %}
+				{% if paginated == false %}
+					<button class="Button Button-SaveSystemOrder" disabled>{{ __d('system', 'save_system_order') }}</button>
+				{% endif %}
 
-				{% block fieldsetOverviewInner %}
-					{% block tableOverview %}
-						<table class="Table-Overview">
-							{% block tableOverviewHead %}
-								<thead>
-									{% block tableOverviewHeadRow %}
-										<tr>
-											{% block tableOverviewHeaderTitle %}
-												<th>{{ __('title') }}</th>
-											{% endblock %}
+				{% if AuthorizationHelper.isAccessible('create') %}
+					{{ HtmlHelper.link(__('create'), {action: 'add'}, {class : 'Button Button-Add'}) }}
+				{% endif %}
 
-											{% block tableOverviewHeaderShortcode %}
-												<th>{{ __('shortcode') }}</th>
-											{% endblock %}
-
-											{% block tableOverviewHeaderTimezone %}
-												<th>{{ __('timezone') }}</th>
-											{% endblock %}
-
-											{% block tableOverviewHeaderLocale %}
-												<th>{{ __('locale') }}</th>
-											{% endblock %}
-
-											{% block tableOverviewHeaderActions %}
-												<th class="actions"></th>
-											{% endblock %}
-										</tr>
-									{% endblock %}
-								</thead>
-							{% endblock %}
-							{% block tableOverviewBody %}
-								<tbody>
-									{# @var lo_language \Awyiss\Model\Entity\Language #}
-									{% for lo_language in la_languages[ ls_realm ] %}
-										{% block tableOverviewBodyRow %}
-											<tr>
-												{% block tableOverviewCellTitle %}
-													<td>{{ lo_language.title }} ({{ lo_language.systemOrder }})</td>
-												{% endblock %}
-
-												{% block tableOverviewCellShortcode %}
-													<td>{{ lo_language.shortcode }}</td>
-												{% endblock %}
-
-												{% block tableOverviewCellTimezone %}
-													<td>{{ lo_language.timezone }}</td>
-												{% endblock %}
-
-												{% block tableOverviewCellLocale %}
-													<td>{{ lo_language.locale }}</td>
-												{% endblock %}
-
-												{% block tableOverviewCellActions %}
-													<td class="actions">
-														{% if AuthorizationHelper.isAccessible('update') %}
-															{{ HtmlHelper.link(__('edit'), {action: 'edit', id: lo_language.id}) }}
-														{% endif %}
-														{% if AuthorizationHelper.isAccessible('delete') %}
-															{{ HtmlHelper.link(__('delete'), {action: 'delete', id: lo_language.id}, {
-				class: 'Button Button-Small Button-Delete',
-				'data-confirm-title': __('confirm_delete_title'),
-				'data-confirm-yes': __('confirm_delete_yes'),
-				'data-confirm-yes-class': 'Button-Delete',
-				'data-confirm-no': __('confirm_delete_no'),
-				'data-confirm': __('confirm_delete', lo_language.id) }) }}
-														{% endif %}
-													</td>
-												{% endblock %}
-											</tr>
-										{% endblock %}
-									{% endfor %}
-								</tbody>
-							{% endblock %}
-						</table>
-					{% endblock %}
+				{% block listControlOverviewListPaginated %}
+					{{ HtmlHelper.link(__('list_paginated'), {action: 'userConfiguration', identifier: 'paginate.enabled', value: 'true'}, {
+						class: 'Button Button-Small Button-ListView Button-ListView-PaginatedList',
+						disabled: localConfig.paginate.enabled == true
+					}) }}
 				{% endblock %}
-			</fieldset>
+
+				{% block listControlOverviewListNested %}
+					{{ HtmlHelper.link(__('list_nested'), {action: 'userConfiguration', identifier: 'paginate.enabled', value: 'false'}, {
+						class: 'Button Button-Small Button-ListView Button-ListView-NestedList',
+						disabled: localConfig.paginate.enabled == false
+					}) }}
+				{% endblock %}
+			{% endblock %}
+		</div>
+	{% endblock %}
+
+	{% if paginated %}
+		{% block paginatedOverview %}
+			{% include '@Backend/element/overview/overview_paginated_list.twig' with _context|merge({records: languages.items().toArray()}) %}
 		{% endblock %}
-	{% endfor %}
+	{% else %}
+		{% set languages = languagesByRealm.toArray() %}
+		{% for realm in realms %}
+			{% block fieldsetOverview %}
+				<fieldset class="Overview-Fieldset">
+					<legend>{{ __('' ~ realm) }}</legend>
+					{% block listOverview %}
+						{% from '@Backend/macro/nested_list.twig' import nestedList %}
+						{{ nestedList(languages[ realm ], _context|merge({
+							data: {
+								nestable: false,
+								realm: realm,
+								'sortable-group': realm,
+							},
+							displayedFields: localConfig.overview.displayedFields,
+							identifier: 'Languages',
+						})) }}
+					{% endblock %}
+				</fieldset>
+			{% endblock %}
+		{% endfor %}
+	{% endif %}
+
+	{% block buttonAreaBottom %}
+		<div class="ButtonArea ButtonArea-Bottom">
+			{{ block('buttonsOverview') }}
+		</div>
+	{% endblock %}
 </div>

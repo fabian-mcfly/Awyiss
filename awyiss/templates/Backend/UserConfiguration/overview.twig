@@ -1,0 +1,50 @@
+{#
+@var configuration array
+@var mergedConfiguration array
+@var configScopes array
+@var realms array
+@var _view \Awyiss\View\BackendView
+#}
+
+{% do AuthorizationHelper.setAdditionalData({scope: selectedScope}) %}
+
+<div class="Configuration Overview">
+	{% block headlineOverview %}
+		<h1>{{ __('headline_overview') }}</h1>
+	{% endblock %}
+
+	{% block buttonArea %}
+		<div class="ButtonArea">
+			{% block categoriesFilterOverview %}
+				{{ CategoriesHelper.filter('scope') }}
+			{% endblock %}
+
+			{% block buttonsOverview %}
+				{% if AuthorizationHelper.isAccessible('create') %}
+					{{ HtmlHelper.link(__('create'), {action: 'add'}, {class: 'Button'}) }}
+				{% endif %}
+			{% endblock %}
+		</div>
+	{% endblock %}
+
+	{% block fieldsetOverview %}
+		<fieldset class="Overview-Fieldset">
+			{% block fieldsetOverviewInner %}
+				{% block listOverview %}
+					{% from '@Backend/UserConfiguration/overview_nested_list.twig' import recursiveConfigurationListing %}
+					{{ recursiveConfigurationListing(mergedConfiguration['Backend']) }}
+				{% endblock %}
+			{% endblock %}
+		</fieldset>
+	{% endblock %}
+
+	{% block buttonAreaBottom %}
+		<div class="ButtonArea ButtonArea-Bottom">
+			{{ block('categoriesFilterOverview') }}
+
+			{{ block('buttonsOverview') }}
+		</div>
+	{% endblock %}
+</div>
+
+{% do AuthorizationHelper.resetAdditionalData() %}

@@ -1,27 +1,39 @@
 {#
-@var ao_pageRole \Awyiss\Model\Entity\PageRole
+@var pageRole \Awyiss\Model\Entity\PageRole
 @var _view \Awyiss\View\BackendView
 #}
 
 <div class="PageRoles Form Add">
-	{{ FormHelper.create(ao_pageRole, {method: 'post', idPrefix: 'PageRole'}) }}
+	{% if AuthorizationHelper.isAccessible('read') %}
+		{{ HtmlHelper.link(__('overview'), {action: 'overview', pageId: page.id}, {class: 'BackToOverview'}) }}
+	{% endif %}
 
 	{% block headlineAdd %}
 		<h1>{{ __('headline_add') }}</h1>
 	{% endblock %}
 
-	{% block formAddButtons %}
-		{{ FormHelper.button(__('save')) }}
-		{{ FormHelper.button(__('save_close'), {name: 'submit', value: 'submit_close'}) }}
+	{{ FormHelper.create(pageRole, {method: 'post', idPrefix: 'PageRole'}) }}
+
+	{% block buttonArea %}
+		<div class="ButtonArea">
+			{% block formAddButtons %}
+				{{ FormHelper.button(__('save'), {class: 'Button Button-Success Button-Save'}) }}
+				{% if AuthorizationHelper.isAccessible('read') %}
+					{{ FormHelper.button(__('save_close'), {class: 'Button Button-SaveClose', name: 'submit', value: 'submit_close'}) }}
+				{% endif %}
+			{% endblock %}
+		</div>
 	{% endblock %}
 
 	{% block formAdd %}
 		{% include('@Backend/PageRoles/form.twig') %}
 	{% endblock %}
 
-	{% block formAddButtonsBottom %}
-		{{ block('formAddButtons') }}
+	{% block buttonAreaBottom %}
+		<div class="ButtonArea ButtonArea-Bottom">
+			{{ block('formAddButtons') }}
+		</div>
 	{% endblock %}
 
-	{{ FormHelper.end() -}}
+	{{ FormHelper.end() }}
 </div>

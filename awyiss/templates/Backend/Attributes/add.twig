@@ -1,26 +1,32 @@
 {#
-@var ao_attribute \Awyiss\Model\Entity\Attribute
-@var aa_availableFieldsets array
-@var aa_availableInputTypes array
-@var aa_availableInputTypes array
-@var aa_availableInputTypes array
-@var ab_translatableDisabled bool
-@var ab_requiredDisabled bool
+@var attribute \Awyiss\Model\Entity\Attribute
+@var availableFieldsets array
+@var availableInputTypes array
+@var availableInputTypes array
+@var availableInputTypes array
+@var translatableDisabled bool
+@var requiredDisabled bool
 @var _view \Awyiss\View\BackendView
 #}
 
 <div class="Attributes Form Add">
+	{% if AuthorizationHelper.isAccessible('read') %}
+		{{ HtmlHelper.link(__('overview'), {action: 'overview'}, {class: 'BackToOverview'}) }}
+	{% endif %}
+
 	{% block headlineAdd %}
 		<h1>{{ __('headline_add') }}</h1>
 	{% endblock %}
 
-	{{ FormHelper.create(ao_attribute, {method: 'post', idPrefix: 'attribute'}) }}
+	{{ FormHelper.create(attribute, {method: 'post', idPrefix: 'attribute'}) }}
 
 	{% block buttonArea %}
 		<div class="ButtonArea">
 			{% block formAddButtons %}
-				{{ FormHelper.button(__('save'), {class: 'Button Button-Success'}) }}
-				{{ FormHelper.button(__('save_close'), {class: 'Button', name: 'submit', value: 'submit_close'}) }}
+				{{ FormHelper.button(__('save'), {class: 'Button Button-Success Button-Save'}) }}
+				{% if AuthorizationHelper.isAccessible('read') %}
+					{{ FormHelper.button(__('save_close'), {class: 'Button Button-SaveClose', name: 'submit', value: 'submit_close'}) }}
+				{% endif %}
 			{% endblock %}
 		</div>
 	{% endblock %}
@@ -29,8 +35,10 @@
 		{% include('@Backend/Attributes/form.twig') %}
 	{% endblock %}
 
-	{% block formAddButtonsBottom %}
-		{{ block('formAddButtons') }}
+	{% block buttonAreaBottom %}
+		<div class="ButtonArea ButtonArea-Bottom">
+			{{ block('formAddButtons') }}
+		</div>
 	{% endblock %}
 
 	{{ FormHelper.end() }}

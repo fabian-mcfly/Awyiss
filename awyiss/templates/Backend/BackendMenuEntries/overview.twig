@@ -1,86 +1,42 @@
 {#
-@var ao_menu \Awyiss\Utility\Menu\BackendMenu
+@var menu \Awyiss\Utility\Menu\BackendMenu
 @var _view \Awyiss\View\BackendView
 #}
 
 <div class="MenuEntries Overview">
-	{% block buttonsOverview %}
-		{% if AuthorizationHelper.isAccessible('create') %}
-			{{ HtmlHelper.link(__('create'), {action: 'add'}, {class : 'Button'}) }}
-		{% endif %}
-	{% endblock %}
-
 	{% block headlineOverview %}
 		<h1>{{ __('headline_overview') }}</h1>
 	{% endblock %}
 
-	{% block tableOverview %}
-		<table class="Table-Overview">
-			{% block tableOverviewHead %}
-				<thead>
-					{% block tableOverviewHeadRow %}
-						<tr>
-							{% block tableOverviewHeaderId %}
-								<th>{{ __('id') }}</th>
-							{% endblock %}
+	{% block buttonArea %}
+		<div class="ButtonArea">
+			{% block buttonsOverview %}
+				<button class="Button Button-SaveSystemOrder" disabled>{{ __d('system', 'save_system_order') }}</button>
 
-							{% block tableOverviewHeaderTitle %}
-								<th>{{ __('title') }}</th>
-							{% endblock %}
-
-							{% block tableOverviewHeaderLink %}
-								<th>{{ __('link') }}</th>
-							{% endblock %}
-
-							{% block tableOverviewHeaderActions %}
-								<th class="actions"></th>
-							{% endblock %}
-						</tr>
-					{% endblock %}
-				</thead>
+				{% if AuthorizationHelper.isAccessible('create') %}
+					{{ HtmlHelper.link(__('create'), {action: 'add'}, {class : 'Button Button-Add'}) }}
+				{% endif %}
 			{% endblock %}
-			{% block tableOverviewBody %}
-				<tbody>
-					{# @var lo_menuEntry \Awyiss\Utility\Menu\MenuEntry #}
-					{% for lx_identifier, lo_menuEntry in ao_menu.getDynamicMenu().toArray() %}
-						{% block tableOverviewBodyRow %}
-							<tr>
-								{% block tableOverviewCellIdentifier %}
-									<td>{{ lx_identifier }}<br>
-									level {{ lo_menuEntry.level }} - active {{ lo_menuEntry.active }}</td>
-								{% endblock %}
+		</div>
+	{% endblock %}
 
-								{% block tableOverviewCellTitle %}
-									<td>{{ lo_menuEntry.title }}</td>
-								{% endblock %}
+	{% block listOverview %}
+		<div class="Overview-List">
+			{% from '@Backend/macro/nested_list.twig' import nestedList %}
+			{{ nestedList(menu.getDynamicMenu().getItems(), _context|merge({
+				data: {
 
-								{% block tableOverviewCellLink %}
-									<td>{{ lo_menuEntry.link is defined ? lo_menuEntry.link.url : '' }}</td>
-								{% endblock %}
+				},
+				displayedFields: localConfig.overview.displayedFields,
+				identifier: 'BackendMenuEntries',
+				template: '@Backend/BackendMenuEntries/overview_nested_list_item.twig',
+			}), 'getChildren', 'getItems') }}
+		</div>
+	{% endblock %}
 
-								{% block tableOverviewCellActions %}
-									<td class="actions">
-										{% if lx_identifier is numeric %}
-											{% if AuthorizationHelper.isAccessible('update') %}
-												{{ HtmlHelper.link(__('edit'), {action: 'edit', id: lx_identifier}) }}
-											{% endif %}
-											{% if AuthorizationHelper.isAccessible('delete') %}
-												{{ HtmlHelper.link(__('delete'), {action: 'delete', id: lx_identifier}, {
-				class: 'Button Button-Small Button-Delete',
-				'data-confirm-title': __('confirm_delete_title'),
-				'data-confirm-yes': __('confirm_delete_yes'),
-				'data-confirm-yes-class': 'Button-Delete',
-				'data-confirm-no': __('confirm_delete_no'),
-				'data-confirm': __('confirm_delete', lx_identifier) }) }}
-											{% endif %}
-										{% endif %}
-									</td>
-								{% endblock %}
-							</tr>
-						{% endblock %}
-					{% endfor %}
-				</tbody>
-			{% endblock %}
-		</table>
+	{% block buttonAreaBottom %}
+		<div class="ButtonArea ButtonArea-Bottom">
+			{{ block('buttonsOverview') }}
+		</div>
 	{% endblock %}
 </div>

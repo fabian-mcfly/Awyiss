@@ -1,36 +1,50 @@
 {#
-@var ao_content \Awyiss\Model\Entity\Content
-@var ao_contentTemplates \Cake\Collection\CollectionInterface
-@var ao_possibleParentContents \Cake\Collection\CollectionInterface
-@var ao_page \Awyiss\Model\Entity\Page
-@var aa_assignedAttributes array
-@var aa_contentAreas array
-@var aa_contentElementsByFieldset ContentTemplateElement[]
-@var as_forScope string
-@var as_languageRealm string
-@var as_languageShortcode string
+@var content \Awyiss\Model\Entity\Content
+@var contentTemplates \Cake\Collection\CollectionInterface
+@var possibleParentContents \Cake\Collection\CollectionInterface
+@var page \Awyiss\Model\Entity\Page
+@var assignedAttributes array
+@var contentAreas array
+@var contentElementsByFieldset ContentTemplateElement[]
+@var forScope string
+@var languageRealm string
+@var languageShortcode string
 @var _view \Awyiss\View\BackendView
 #}
 
+{% do AuthorizationHelper.setScope(forScope) %}
+
 <div class="Contents Form Add">
-	{{ FormHelper.create(ao_content, {method: 'post', idPrefix: 'content'}) }}
+	{% if AuthorizationHelper.isAccessible('read') %}
+		{{ HtmlHelper.link(__('overview'), {action: 'overview', pageId: page.id}, {class: 'BackToOverview'}) }}
+	{% endif %}
 
 	{% block headlineAdd %}
 		<h1>{{ __('headline_add') }}</h1>
 	{% endblock %}
 
-	{% block formAddButtons %}
-		{{ FormHelper.button(__('save')) }}
-		{{ FormHelper.button(__('save_close'), {name: 'submit', value: 'submit_close'}) }}
+	{{ FormHelper.create(content, {method: 'post', idPrefix: 'content'}) }}
+
+	{% block buttonArea %}
+		<div class="ButtonArea">
+			{% block formAddButtons %}
+				{{ FormHelper.button(__('save'), {class: 'Button Button-Success Button-Save'}) }}
+				{% if AuthorizationHelper.isAccessible('read') %}
+					{{ FormHelper.button(__('save_close'), {class: 'Button Button-SaveClose', name: 'submit', value: 'submit_close'}) }}
+				{% endif %}
+			{% endblock %}
+		</div>
 	{% endblock %}
 
 	{% block formAdd %}
 		{% include('@Backend/Contents/form.twig') %}
 	{% endblock %}
 
-	{% block formAddButtonsBottom %}
-		{{ block('formAddButtons') }}
+	{% block buttonAreaBottom %}
+		<div class="ButtonArea ButtonArea-Bottom">
+			{{ block('formAddButtons') }}
+		</div>
 	{% endblock %}
 
-	{{ FormHelper.end() -}}
+	{{ FormHelper.end() }}
 </div>

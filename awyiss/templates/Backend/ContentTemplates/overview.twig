@@ -1,87 +1,70 @@
 {#
-@var ao_contentTemplates \Awyiss\Model\Entity\ContentTemplate[]
+@var contentTemplates \Awyiss\Model\Entity\ContentTemplate[]
 @var _view \Awyiss\View\BackendView
 #}
 
 <div class="ContentTemplates Overview">
-	{% block buttonsOverview %}
-		{% if AuthorizationHelper.isAccessible('create') %}
-			{{ HtmlHelper.link(__('create'), {action: 'add'}, {class: 'Button'}) }}
-		{% endif %}
-	{% endblock %}
-
 	{% block headlineOverview %}
 		<h1>{{ __('headline_overview') }}</h1>
 	{% endblock %}
 
-	{% block tableOverview %}
-		<table class="Table-Overview">
-			{% block tableOverviewHead %}
-				<thead>
-					{% block tableOverviewHeadRow %}
-						<tr>
-							{% block tableOverviewHeaderTitle %}
-								<th>{{ __('title') }}</th>
-							{% endblock %}
+	{% block buttonArea %}
+		<div class="ButtonArea">
+			{% block buttonsOverview %}
+				{% if paginated == false %}
+					<button class="Button Button-SaveSystemOrder" disabled>{{ __d('system', 'save_system_order') }}</button>
+				{% endif %}
 
-							{% block tableOverviewHeaderFileName %}
-								<th>{{ __('file_name') }}</th>
-							{% endblock %}
+				{% if AuthorizationHelper.isAccessible('create') %}
+					{{ HtmlHelper.link(__('create'), {action: 'add'}, {class : 'Button Button-Add'}) }}
+				{% endif %}
 
-							{% block tableOverviewHeaderUsedForContents %}
-								<th>{{ __('used_for_contents') }}</th>
-							{% endblock %}
+				{% block listControlOverviewListPaginated %}
+					{{ HtmlHelper.link(__('list_paginated'), {action: 'userConfiguration', identifier: 'paginate.enabled', value: 'true'}, {
+						class: 'Button Button-Small Button-ListView Button-ListView-PaginatedList',
+						disabled: localConfig.paginate.enabled == true
+					}) }}
+				{% endblock %}
 
-							{% block tableOverviewHeaderActions %}
-								<th class="actions"></th>
-							{% endblock %}
-						</tr>
-					{% endblock %}
-				</thead>
+				{% block listControlOverviewListNested %}
+					{{ HtmlHelper.link(__('list_nested'), {action: 'userConfiguration', identifier: 'paginate.enabled', value: 'false'}, {
+						class: 'Button Button-Small Button-ListView Button-ListView-NestedList',
+						disabled: localConfig.paginate.enabled == false
+					}) }}
+				{% endblock %}
 			{% endblock %}
-			{% block tableOverviewBody %}
-				<tbody>
-					{# @var lo_contentTemplate \Awyiss\Model\Entity\ContentTemplate #}
-					{% for lo_contentTemplate in ao_contentTemplates %}
-						{% block tableOverviewBodyRow %}
-							<tr>
-								{% block tableOverviewCellTitle %}
-									<td>{{ lo_contentTemplate.title }} ({{ lo_contentTemplate.systemOrder }})</td>
-								{% endblock %}
+		</div>
+	{% endblock %}
 
-								{% block tableOverviewCellFileName %}
-									<td>{{ lo_contentTemplate.fileName }}</td>
-								{% endblock %}
-
-								{% block tableOverviewCellUsedForContents %}
-									<td>{{ lo_contentTemplate.usedForContents }}</td>
-								{% endblock %}
-
-								{% block tableOverviewCellActions %}
-									<td class="actions">
-										{% if AuthorizationHelper.isAccessible('update') %}
-											{{ HtmlHelper.link(__('edit'), {action: 'edit', id: lo_contentTemplate.id}) }}
-										{% endif %}
-										{% if AuthorizationHelper.isAccessible('delete') %}
-											{% if lo_contentTemplate.usedForContents == 0 %}
-												{{ HtmlHelper.link(__('delete'), {action: 'delete', id: lo_contentTemplate.id}, {
-				class: 'Button Button-Small Button-Delete',
-				'data-confirm-title': __('confirm_delete_title'),
-				'data-confirm-yes': __('confirm_delete_yes'),
-				'data-confirm-yes-class': 'Button-Delete',
-				'data-confirm-no': __('confirm_delete_no'),
-				'data-confirm': __('confirm_delete', lo_contentTemplate.id) }) }}
-											{% else %}
-												<a>{{ __('delete') }}</a>
-											{% endif %}
-										{% endif %}
-									</td>
-								{% endblock %}
-							</tr>
+	{% if paginated %}
+		{% block paginatedOverview %}
+			{% include '@Backend/ContentTemplates/overview_paginated_list.twig' with _context|merge({records: contentTemplates.items().toArray()}) %}
+		{% endblock %}
+	{% else %}
+		{% block fieldsetsOverview %}
+			{% block fieldsetOverview %}
+				<fieldset class="Overview-Fieldset">
+					{% block fieldsetOverviewInner %}
+						{% block listOverview %}
+							{% from '@Backend/macro/nested_list.twig' import nestedList %}
+							{{ nestedList(contentTemplates, _context|merge({
+								data: {
+									nestable: false,
+								},
+								displayedFields: localConfig.overview.displayedFields,
+								identifier: 'ContentTemplates',
+								template: '@Backend/ContentTemplates/overview_nested_list_item.twig',
+							})) }}
 						{% endblock %}
-					{% endfor %}
-				</tbody>
+					{% endblock %}
+				</fieldset>
 			{% endblock %}
-		</table>
+		{% endblock %}
+	{% endif %}
+
+	{% block buttonAreaBottom %}
+		<div class="ButtonArea ButtonArea-Bottom">
+			{{ block('buttonsOverview') }}
+		</div>
 	{% endblock %}
 </div>

@@ -1,0 +1,28 @@
+.ContentsController {
+	.Fieldset-Data,
+	.Fieldset-PublicationData {
+		grid-column:auto / span 2;
+	}
+
+	.FormInputName-Data {
+		.FormInputType-ListItem {
+			display:grid;
+			padding-right:57px;
+			gap:0 5px;
+			grid-template-columns:repeat(2, 1fr);
+		}
+
+		.Button-Remove {
+			width:52px;
+			height:52px;
+			top:0;
+			right:0;
+
+			&.Disabled {
+				opacity:.25;
+				visibility:visible;
+				pointer-events:none;
+			}
+		}
+	}
+}

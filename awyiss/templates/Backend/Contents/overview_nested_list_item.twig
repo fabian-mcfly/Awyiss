@@ -1,31 +1,68 @@
 {#
-@var lo_entity \Awyiss\Model\Entity\Content
+@var entity \Awyiss\Model\Entity\Content
 @var settings array
 #}
 
-<div class="{{ settings.identifier }}-ListItem-Inner ListItem-Inner">
-	<span class="Id">{{ lo_entity.id }}</span>
-	<span class="Title">
-		{{ lo_entity.forcedTitle|raw }}
-		<br>
-		{{ lo_entity.column.width.label }}
-		{% if lo_entity.column.indent %}
-			/ {{ lo_entity.column.indent.label }}
-		{% endif %}
-	</span>
-	<span class="Actions">
-		{% if AuthorizationHelper.isAccessible('update') %}
-			{{ HtmlHelper.link(__('edit'), {action: 'edit', id: lo_entity.id}) }}
-		{% endif %}
+{% extends '@Backend/element/overview/nested_list_item.twig' %}
 
-		{% if AuthorizationHelper.isAccessible('delete') %}
-			{{ HtmlHelper.link(__('delete'), {action: 'delete', id: lo_entity.id}, {
-				class: 'Button Button-Small Button-Delete',
-				'data-confirm-title': __('confirm_delete_title'),
-				'data-confirm-yes': __('confirm_delete_yes'),
-				'data-confirm-yes-class': 'Button-Delete',
-				'data-confirm-no': __('confirm_delete_no'),
-				'data-confirm': __('confirm_delete', lo_entity.id) }) }}
-		{% endif %}
-	</span>
-</div>
+{% block nestedListItemDataTitle %}
+	<li class="Title">{{ entity.forcedTitle|raw }}</li>
+{% endblock %}
+
+{% block nestedListItemDataDisplayedFieldDefaultValue %}
+	{% if field == 'content_template_id' %}
+		{{ entity.contentTemplate.label }}
+	{% elseif field == 'column_width' %}
+		{{ entity.column.width.label }}
+	{% elseif field == 'column_indent' %}
+		{{ entity.column.indent.label }}
+	{% elseif field in ['column_rtl', 'column_last', 'active'] %}
+		{{ entity.get(field) ? '<i class="las la-check"></i>' : '<i class="las la-times"></i>' }}
+	{% elseif field == 'data' %}
+		{%- for key, value in entity.get(field) %}
+			{{- key }}: {{ value }}{% if loop.last == false %}, {% endif %}
+		{% endfor %}
+	{% else %}
+		{{ entity.get(field) ?: '-' }}
+	{% endif %}
+{% endblock %}
+
+{% block nestedListItem %}
+	{% set contentTemplate = settings.contentTemplates[ entity.contentTemplateId ] ?? null  %}
+	<li
+		{{ block('nestedListItemId') }}
+		{{ block('nestedListItemClass') }}
+		{%- if contentTemplate.contentTemplateElements.parent_id is not defined %}
+			data-nestable="false"
+		{%- elseif contentTemplate.contentTemplateElements.parent_id.required %}
+			data-disallow-top-level="true"
+		{%- endif %}
+		{%- if contentTemplate.contentTemplateElements.column_width is not defined %}
+			data-resizable="false"
+		{%- endif %}
+		data-content-area-ids="{{ contentTemplate.contentAreaIds|json_encode }}"
+		data-column-width-class="{{ entity.column.width.cssClass }}"
+		data-max-column-width="{{ 1 - entity.column.indent.percentage }}"
+		>
+		{% block nestedListItemInner %}
+			<div
+				{{ block('nestedListItemInnerClass') }}
+				title="{{ entity.forcedTitle|striptags }} ({{ entity.column.width.label -}}
+				{%- if entity.column.indent.label %} / {{ entity.column.indent.label }}{% endif %})"
+				>
+
+				{% block nestedListItemData %}
+					{{ parent() }}
+				{% endblock %}
+
+				{{ block('nestedListItemAuditInfo') }}
+
+				{{ block('nestedListActions') }}
+			</div>
+		{% endblock %}
+
+		{% block nestedListChildren %}
+			{{ parent() }}
+		{% endblock %}
+	</li>
+{% endblock %}

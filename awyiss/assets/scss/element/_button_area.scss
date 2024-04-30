@@ -1,0 +1,131 @@
+.ButtonArea {
+	@extend %ButtonsListview;
+
+	width:fit-content;
+	margin:-52px -20px ($lineHeightMain * 2) auto;
+	font-size:0;
+	line-height:0;
+	text-align:right;
+	grid-column:1 / span 4;
+
+	&.CannotMoveUpwards {
+		margin-top:$lineHeightMain;
+
+		&:has(.Button-ListView) {
+			+ .Overview-List,
+			+ .Overview-Table {
+				margin-top:0;
+			}
+		}
+
+		.Button-ListView {
+			bottom:$lineHeightMain * -1;
+		}
+
+		+ .Overview-List,
+		+ .Overview-Table {
+			margin-top:$lineHeightMain * -1;
+		}
+	}
+
+	&.ButtonArea-Bottom {
+		margin-top:0;
+		margin-bottom:-$lineHeightMain;
+
+		.Button-ListView {
+			border-radius:0 0 5px 5px;
+			top:$lineHeightMain * -2;
+			bottom:auto;
+		}
+	}
+
+	&:has(+ .Overview-Table),
+	&:has(+ .Overview-List) {
+		.Button-ListView {
+			bottom:$lineHeightMain * -1;
+		}
+	}
+
+	/*&:has(+ .Overview-Table) {
+		.Button-ListView-PaginatedList {
+			background-color:var(--colorLight);
+		}
+	}*/
+
+	&:has(.Button-ListView) {
+		+ .Overview-Table {
+			border-bottom-right-radius:0;
+
+			th {
+				&:last-child {
+					border-top-right-radius:0;
+				}
+			}
+
+			tbody {
+				&:last-child {
+					tr {
+						&:last-child {
+							td {
+								border-bottom-right-radius:0;
+							}
+						}
+					}
+				}
+			}
+
+			tfoot {
+				td {
+					&:last-child {
+						border-bottom-right-radius:0;
+					}
+				}
+			}
+		}
+
+		+ .Overview-Fieldset {
+			&:not(:has(> legend)) {
+				margin-top:0;
+			}
+		}
+		+ .Overview-Fieldset {
+			&:first-of-type {
+				border-top-right-radius:0;
+			}
+
+			&:last-of-type {
+				border-bottom-right-radius:0;
+			}
+		}
+
+		+ .Overview-List {
+			border-top-right-radius:0;
+			border-bottom-right-radius:0;
+		}
+	}
+
+	.Button,
+	.LinkSelect {
+		margin-right:20px;
+		margin-bottom:$lineHeightMain;
+	}
+
+	.Button-Small {
+		margin-top:11px;
+		opacity:.25;
+
+		&.Button-ListView-NestedList {
+			opacity:.5;
+
+			&[disabled],
+			&:hover {
+				opacity:1;
+			}
+		}
+
+		&[disabled],
+		&:hover {
+			opacity:1;
+		}
+	}
+}

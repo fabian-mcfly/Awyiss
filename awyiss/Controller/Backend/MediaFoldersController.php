@@ -8,8 +8,10 @@ use Awyiss\Awyiss;
 use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity\MediaFolder;
+use Awyiss\Model\Table;
 use Awyiss\Routing\Router;
 use Cake\Collection\CollectionInterface;
+use Cake\Database\Expression\QueryExpression;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
 use Cake\Utility\Inflector;
@@ -112,10 +114,11 @@ class MediaFoldersController extends Controller {
 		}
 
 		$this->set([
-			'ao_mediaFolders' => $lo_mediaFolders,
-			'aa_languages' => $this->languages,
-			'as_selectedLanguage' => $this->getOverviewWhere('language_shortcode'),
-			'ab_paginated' => $lb_paginated,
+			'mediaFolders' => $lo_mediaFolders,
+			'languages' => $this->languages,
+			'selectedLanguage' => $this->getOverviewWhere('language_shortcode'),
+			'paginated' => $lb_paginated,
+			'attributes' => $this->MediaFolders->getAttributes(),
 		]);
 	}
 
@@ -264,6 +267,51 @@ class MediaFoldersController extends Controller {
 
 
 	/**
+	 * @param array $aa_requestData
+	 * @param \Awyiss\Model\Table $ao_table
+	 * @return int
+	 */
+	protected function _saveSystemOrder(array $aa_requestData, Table $ao_table): int {
+		// Create a flat array of all order data
+		$la_orderData = [];
+		foreach ($aa_requestData as $la_itemsByLanguageShortcode) {
+			foreach ($la_itemsByLanguageShortcode as $la_items) {
+				array_map(function (array $aa_item) use (&$la_orderData) {
+					$la_data = $aa_item;
+
+					if ($la_data['languageShortcode'] === '_global') {
+						$la_data['languageShortcode'] = null;
+					}
+
+					$la_orderData[] = $la_data;
+				}, $la_items);
+			}
+		}
+
+		/** @noinspection PhpUnnecessaryLocalVariableInspection */
+		$li_affectedRows = $ao_table->updateAll(function (QueryExpression $ao_expression) use ($la_orderData) {
+			$lo_languageShortcodeCase = $ao_expression->case();
+			$lo_systemOrderCase = $ao_expression->case();
+
+			foreach ($la_orderData as $la_data) {
+				$lo_languageShortcodeCase->when(['id' => $la_data['id']])->then($la_data['languageShortcode'], 'string');
+				$lo_systemOrderCase->when(['id' => $la_data['id']])->then($la_data['systemOrder'], 'integer');
+			}
+
+			return [
+				'language_shortcode' => $lo_languageShortcodeCase,
+				'system_order' => $lo_systemOrderCase,
+			];
+		}, [
+			'id IN' => array_column($la_orderData, 'id'),
+		]);
+
+
+		return $li_affectedRows;
+	}
+
+
+	/**
 	 * Return a collection of media folders for the currently set languageShortcode,
 	 * using `\Cake\Collection\CollectionTrait::listNested()` to be used in a form-select
 	 *
@@ -273,7 +321,7 @@ class MediaFoldersController extends Controller {
 	 */
 	public function getThreadedMediaFolders(MediaFolder $ao_mediaFolder): CollectionInterface {
 		if (!isset($this->threadedMediaFolders)) {
-			$lo_query = $this->MediaFolders->find('forCurrentLanguage', languageShortcode: $ao_mediaFolder->languageShortcode, includeGlobal: false)
+			$lo_query = $this->MediaFolders->find('forCurrentLanguage', languageShortcode: $ao_mediaFolder->languageShortcode ?? '_global', includeGlobal: false)
 			->where($this->getOverviewWhere());
 
 			$this->threadedMediaFolders = $this->MediaFolders->listNested($lo_query);
@@ -313,11 +361,17 @@ class MediaFoldersController extends Controller {
 		$lo_possibleParentMediaFolders = $this->MediaFolders->getPossibleParents($ao_mediaFolder, $lo_threadedMediaFolders);
 		$this->ensurePossibleParentId($ao_mediaFolder, $lo_possibleParentMediaFolders);
 
+		// Get the parent media folder if it exists
+		if ($ao_mediaFolder->parentId) {
+			$lo_parentFolder = $this->MediaFolders->findById($ao_mediaFolder->parentId)->first();
+		}
+
 		$this->set([
-			'ao_mediaFolder' => $ao_mediaFolder,
-			'ao_threadedMediaFolders' => $lo_threadedMediaFolders,
-			'ao_possibleParentMediaFolders' => $lo_possibleParentMediaFolders,
-			'as_languageRealm' => Awyiss::REALM_FRONTEND,
+			'mediaFolder' => $ao_mediaFolder,
+			'threadedMediaFolders' => $lo_threadedMediaFolders,
+			'possibleParentMediaFolders' => $lo_possibleParentMediaFolders,
+			'languageRealm' => Awyiss::REALM_FRONTEND,
+			'parentFolder' => $lo_parentFolder ?? null,
 		]);
 	}
 }

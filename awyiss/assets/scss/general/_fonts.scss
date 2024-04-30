@@ -1,0 +1,112 @@
+/**
+ * 2F Media for the headlines
+ */
+@font-face {
+	font-display:swap;
+	font-family:'2F media';
+	font-weight:normal;
+	font-style:normal;
+	//noinspection CssUnknownTarget
+	src:url($relativePath + 'font/2f_media-webfont.woff2') format('woff2'), url($relativePath + 'font/2f_media-webfont.woff') format('woff');
+}
+
+
+/**
+ * Lato for the main font
+ */
+@font-face {
+	font-display:swap;
+	font-family:'Lato';
+	font-style:normal;
+	font-weight:300;
+	//noinspection CssUnknownTarget
+	src:url($relativePath + 'font/lato/lato-v24-latin-300.woff2') format('woff2');
+}
+
+@font-face {
+	font-display:swap;
+	font-family:'Lato';
+	font-style:normal;
+	font-weight:400;
+	//noinspection CssUnknownTarget
+	src:url($relativePath + 'font/lato/lato-v24-latin-regular.woff2') format('woff2');
+}
+
+@font-face {
+	font-display:swap;
+	font-family:'Lato';
+	font-style:italic;
+	font-weight:400;
+	//noinspection CssUnknownTarget
+	src:url($relativePath + 'font/lato/lato-v24-latin-italic.woff2') format('woff2');
+}
+
+@font-face {
+	font-display:swap;
+	font-family:'Lato';
+	font-style:normal;
+	font-weight:700;
+	//noinspection CssUnknownTarget
+	src:url($relativePath + 'font/lato/lato-v24-latin-700.woff2') format('woff2');
+}
+
+@font-face {
+	font-display:swap;
+	font-family:'Lato';
+	font-style:italic;
+	font-weight:700;
+	src:url($relativePath + 'font/lato/lato-v24-latin-700italic.woff2') format('woff2');
+}
+
+
+@font-face {
+	font-display:swap;
+	font-family:'Lato';
+	font-style:normal;
+	font-weight:900;
+	//noinspection CssUnknownTarget
+	src:url($relativePath + 'font/lato/lato-v24-latin-900.woff2') format('woff2');
+}
+
+
+//noinspection CssUnknownTarget
+@font-face {
+	font-family:Line Awesome Brands;
+	font-style:normal;
+	font-weight:normal;
+	font-display:auto;
+	src:url($relativePath + 'font/line-awesome/la-brands-400.eot');
+	src:url($relativePath + "font/line-awesome/la-brands-400.eot?#iefix") format("embedded-opentype"),
+	url($relativePath + "font/line-awesome/la-brands-400.woff2") format("woff2"),
+	url($relativePath + "font/line-awesome/la-brands-400.woff") format("woff"),
+	url($relativePath + "font/line-awesome/la-brands-400.ttf") format("truetype"),
+	url($relativePath + "font/line-awesome/la-brands-400.svg#lineawesome") format("svg");
+}
+
+//noinspection CssUnknownTarget
+@font-face {
+	font-family:Line Awesome;
+	font-style:normal;
+	font-weight:400;
+	font-display:auto;
+	src:url($relativePath + 'font/line-awesome/la-regular-400.eot');
+	src:url($relativePath + "font/line-awesome/la-regular-400.eot?#iefix") format("embedded-opentype"),
+	url($relativePath + "font/line-awesome/la-regular-400.woff2") format("woff2"),
+	url($relativePath + "font/line-awesome/la-regular-400.woff") format("woff"),
+	url($relativePath + "font/line-awesome/la-regular-400.ttf") format("truetype"),
+	url($relativePath + "font/line-awesome/la-regular-400.svg#lineawesome") format("svg");
+}
+
+//noinspection CssUnknownTarget
+@font-face {
+	font-family:Line Awesome;
+	font-style:normal;
+	font-weight:900;
+	font-display:auto;
+	src:url($relativePath + 'font/line-awesome/la-solid-900.eot');
+	src:url($relativePath + "font/line-awesome/la-solid-900.eot?#iefix") format("embedded-opentype"),
+	url($relativePath + "font/line-awesome/la-solid-900.woff2") format("woff2"),
+	url($relativePath + "font/line-awesome/la-solid-900.woff") format("woff"),
+	url($relativePath + "font/line-awesome/la-solid-900.ttf") format("truetype"),
+	url($relativePath + "font/line-awesome/la-solid-900.svg#lineawesome") format("svg");
+}

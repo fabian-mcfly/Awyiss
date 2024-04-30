@@ -5,14 +5,14 @@ namespace Awyiss\Configuration;
 
 
 use Awyiss\Awyiss;
-use Awyiss\Configuration\ConfigOptions\Trait\SystemOrderFieldsTrait;
+use Awyiss\Configuration\ConfigOptions\Trait\TableFieldsTrait;
 
 
 /**
  * Provides all configuration options for the generic datatables scope
  */
 abstract class AbstractGenericConfigOptions extends AbstractConfigOptions {
-	use SystemOrderFieldsTrait;
+	use TableFieldsTrait;
 
 
 	/**

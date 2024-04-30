@@ -20,7 +20,9 @@ $la_assetPaths = [
 
 if (defined('CUSTOM_DIR')) {
 	$la_assetPaths[ Awyiss::REALM_FRONTEND ]['customer'] = ROOT . DS . CUSTOM_DIR . DS . 'assets' . DS;
-	$la_assetPaths[ Awyiss::REALM_BACKEND ]['customer'] = ROOT . DS . CUSTOM_DIR . DS . 'assets' . DS . 'awyiss' . DS;
+	$la_assetPaths[ Awyiss::REALM_BACKEND ] = [
+		'customer' => ROOT . DS . CUSTOM_DIR . DS . 'assets' . DS . 'awyiss' . DS
+	] + $la_assetPaths[ Awyiss::REALM_BACKEND ];
 }
 
 return [

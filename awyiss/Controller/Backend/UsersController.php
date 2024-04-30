@@ -65,7 +65,8 @@ class UsersController extends Controller {
 		$lo_users = $this->paginate($lo_users);
 
 		$this->set([
-			'ao_users' => $lo_users,
+			'users' => $lo_users,
+			'attributes' => $this->Users->getAttributes(),
 		]);
 	}
 
@@ -89,9 +90,13 @@ class UsersController extends Controller {
 			$lo_user->usergroups = [];
 		}
 
+		$lo_query = $this->Users->Usergroups->find();
+		$this->paginate = [];
+		$lo_usergroups = $this->paginate($lo_query);
+
 		$this->set([
-			'ao_user' => $lo_user,
-			'ao_usergroups' => $this->Users->Usergroups->find(),
+			'user' => $lo_user,
+			'usergroups' => $lo_usergroups,
 		]);
 	}
 
@@ -122,9 +127,13 @@ class UsersController extends Controller {
 			$lo_user->usergroups = [];
 		}
 
+		$lo_query = $this->Users->Usergroups->find();
+		$this->paginate = [];
+		$lo_usergroups = $this->paginate($lo_query);
+
 		$this->set([
-			'ao_user' => $lo_user,
-			'ao_usergroups' => $this->Users->Usergroups->find(),
+			'user' => $lo_user,
+			'usergroups' => $lo_usergroups,
 		]);
 	}
 
@@ -226,7 +235,7 @@ class UsersController extends Controller {
 			}
 
 			$this->request = $this->request->withoutData('password');
-			$this->Flash->error('Invalid username or password');
+			$this->Flash->error(__('login_failed'));
 
 			//Do something to slow down the process
 			password_hash(md5(Security::randomString()), PASSWORD_BCRYPT, ['cost' => 16]);
@@ -235,7 +244,7 @@ class UsersController extends Controller {
 		$this->viewBuilder()->setLayout('login');
 
 		$this->set([
-			'as_languageRealm' => Awyiss::REALM_BACKEND,
+			'languageRealm' => Awyiss::REALM_BACKEND,
 		]);
 	}
 

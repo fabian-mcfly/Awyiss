@@ -1,5 +1,5 @@
 {{ '{#' }}
-@var ao_{{ pluralVar }} {{ entityClass }}[]
+@var {{ pluralVar }} {{ entityClass }}[]
 @var _view \{{ namespace }}\View\BackendView
 {{ '#}' }}
 
@@ -40,8 +40,8 @@
 			{% verbatim %}{% endblock %}{% endverbatim %}
 			{% verbatim %}{% block tableOverviewBody %}{% endverbatim %}
 				<tbody>
-					{% verbatim %}{#{% endverbatim %} @var lo_{{ singularVar }} \{{ entityClass }} {% verbatim %}#}{% endverbatim %}
-					{% verbatim %}{% for lo_{% endverbatim %}{{ singularVar }}{% verbatim %} in ao_{% endverbatim %}{{ pluralVar }}{% verbatim %} %}{% endverbatim %}
+					{% verbatim %}{#{% endverbatim %} @var {{ singularVar }} \{{ entityClass }} {% verbatim %}#}{% endverbatim %}
+					{% verbatim %}{% for {% endverbatim %}{{ singularVar }}{% verbatim %} in {% endverbatim %}{{ pluralVar }}{% verbatim %} %}{% endverbatim %}
 						{% verbatim %}{% block tableOverviewBodyRow %}{% endverbatim %}
 							<tr>
 {% for field in fields %}
@@ -53,8 +53,8 @@
 {% if field == details.foreignKey %}
 {% set isKey = true %}
 									<td>
-										{% verbatim %}{% if lo_{% endverbatim %}{{ singularVar }}{% verbatim %}.has('{% endverbatim %}{{ details.property }}{% verbatim %}') %}{% endverbatim %}
-											{% verbatim %}{{ HtmlHelper.link({% endverbatim %}lo_{{ singularVar ~ '.' ~ details.property ~ '.' ~ details.displayField }}{% verbatim %}, {controller: '{% endverbatim %}{{ details.controller }}{% verbatim %}', action: 'view', id: lo_{% endverbatim %}{{ singularVar ~ '.' ~ details.property ~ '.' ~ details.primaryKey[0] }}{% verbatim %}}) }}{% endverbatim %}
+										{% verbatim %}{% if {% endverbatim %}{{ singularVar }}{% verbatim %}.has('{% endverbatim %}{{ details.property }}{% verbatim %}') %}{% endverbatim %}
+											{% verbatim %}{{ HtmlHelper.link({% endverbatim %}{{ singularVar ~ '.' ~ details.property ~ '.' ~ details.displayField }}{% verbatim %}, {controller: '{% endverbatim %}{{ details.controller }}{% verbatim %}', action: 'view', id: {% endverbatim %}{{ singularVar ~ '.' ~ details.property ~ '.' ~ details.primaryKey[0] }}{% verbatim %}}) }}{% endverbatim %}
 										{% verbatim %}{% endif %}{% endverbatim %}
 									</td>
 {% endif %}
@@ -63,18 +63,18 @@
 {% if isKey is not same as(true) %}
 {% set columnData = Bake.columnData(field, schema) %}
 {% if columnData.type in ['integer', 'float', 'decimal', 'biginteger', 'smallinteger', 'tinyinteger'] %}
-									<td>{% verbatim %}{{ helper_Number_format(lo_{% endverbatim %}{{ singularVar ~ '.' ~ field }}{% verbatim %}) }}{% endverbatim %}</td>
+									<td>{% verbatim %}{{ helper_Number_format({% endverbatim %}{{ singularVar ~ '.' ~ field }}{% verbatim %}) }}{% endverbatim %}</td>
 {% elseif columnData.type in ['json'] %}
-									<td>{% verbatim %}{{ lo_{% endverbatim %}{{ singularVar }}.{{ field }}{% verbatim %}|join(', ') }}{% endverbatim %}</td>
+									<td>{% verbatim %}{{ {% endverbatim %}{{ singularVar }}.{{ field }}{% verbatim %}|join(', ') }}{% endverbatim %}</td>
 {% else %}
-									<td>{% verbatim %}{{ lo_{% endverbatim %}{{ singularVar }}.{{ field }} {% verbatim %}}}{% endverbatim %}</td>
+									<td>{% verbatim %}{{ {% endverbatim %}{{ singularVar }}.{{ field }} {% verbatim %}}}{% endverbatim %}</td>
 {% endif %}
 {% endif %}
 								{% verbatim %}{% endblock %}{% endverbatim %}
 
 {% endif %}
 {% endfor %}
-{% set pk = 'lo_' ~ singularVar ~ '.' ~ primaryKey[0] %}
+{% set pk = 'singularVar ~ '.' ~ primaryKey[0] %}
 								{% verbatim %}{% block tableOverviewCellActions %}{% endverbatim %}
 									<td class="actions">
 										{% verbatim %}{% if AuthorizationHelper.isAccessible('update') %}

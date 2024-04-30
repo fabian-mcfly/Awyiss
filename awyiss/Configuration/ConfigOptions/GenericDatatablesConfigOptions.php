@@ -63,7 +63,7 @@ class GenericDatatablesConfigOptions extends AbstractGenericConfigOptions {
 					identifier: 'enabled',
 					localizable: false,
 					nullable: false,
-					type: ConfigOptionType::Bool
+					type: ConfigOptionType::Bool,
 				),
 				new ConfigOption(
 					defaultValue: true,
@@ -80,11 +80,28 @@ class GenericDatatablesConfigOptions extends AbstractGenericConfigOptions {
 					type: ConfigOptionType::Bool,
 				),
 			],
+			'overview' => [
+				new ConfigOption(
+					defaultValue: [],
+					identifier: 'displayedFields',
+					localizable: false,
+					personalizable: true,
+					type: ConfigOptionType::ValueCollection,
+					values: function () {
+						$la_fields = $this->getTableFields();
+
+						unset($la_fields['id'], $la_fields['title']);
+
+						return $la_fields;
+					},
+				),
+			],
 			'nest' => [
 				new ConfigOption(
 					defaultValue: false,
 					identifier: 'enabled',
 					localizable: false,
+					nullable: false,
 					type: ConfigOptionType::Bool,
 				),
 			],
@@ -143,7 +160,7 @@ class GenericDatatablesConfigOptions extends AbstractGenericConfigOptions {
 					localizable: false,
 					nullable: false,
 					type: ConfigOptionType::ListKey,
-					values: $this->getSystemOrderFields(...),
+					values: $this->getTableFields(...),
 				),
 			],
 			new ConfigOption(

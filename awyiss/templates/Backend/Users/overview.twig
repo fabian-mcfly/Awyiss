@@ -1,116 +1,34 @@
 {#
-@var ao_users \Awyiss\Model\Entity\User[]
+@var users \Awyiss\Model\Entity\User[]
 @var _view \Awyiss\View\BackendView
 #}
 
 <div class="Users Overview">
-	{% block buttonsOverview %}
-		{% if AuthorizationHelper.isAccessible('create') %}
-			{{ HtmlHelper.link(__('create'), {action: 'add'}, {class: 'Button'}) }}
-		{% endif %}
-	{% endblock %}
-
 	{% block headlineOverview %}
 		<h1>{{ __('headline_overview') }}</h1>
 	{% endblock %}
 
-	{% block categoriesFilterOverview %}
-		{{ CategoriesHelper.filter('usergroup') }}
-	{% endblock %}
-
-	{% block tableOverview %}
-		<table class="Table-Overview">
-			{% block tableOverviewHead %}
-				<thead>
-					{% block tableOverviewHeadRow %}
-						<tr>
-							{% block tableOverviewHeaderUsername %}
-								<th>{{ PaginatorHelper.sort('username') }}</th>
-							{% endblock %}
-
-							{% block tableOverviewHeaderLastLogin %}
-								<th>{{ PaginatorHelper.sort('last_login') }}</th>
-							{% endblock %}
-
-							{% block tableOverviewHeaderFirstname %}
-								<th>{{ PaginatorHelper.sort('firstname') }}</th>
-							{% endblock %}
-
-							{% block tableOverviewHeaderLastname %}
-								<th>{{ PaginatorHelper.sort('lastname') }}</th>
-							{% endblock %}
-
-							{% block tableOverviewHeaderEmail %}
-								<th>{{ PaginatorHelper.sort('email') }}</th>
-							{% endblock %}
-
-							{% block tableOverviewHeaderActions %}
-								<th class="actions"></th>
-							{% endblock %}
-						</tr>
-					{% endblock %}
-				</thead>
+	{% block buttonArea %}
+		<div class="ButtonArea">
+			{% block categoriesFilterOverview %}
+				{{ CategoriesHelper.filter('usergroup') }}
 			{% endblock %}
-			{% block tableOverviewBody %}
-				<tbody>
-					{# @var lo_user \Awyiss\Model\Entity\User #}
-					{% for lo_user in ao_users %}
-						{% block tableOverviewBodyRow %}
-							<tr>
-								{% block tableOverviewCellUsername %}
-									<td>{{ lo_user.username }}</td>
-								{% endblock %}
 
-								{% block tableOverviewCellLastLogin %}
-									<td>{{ lo_user.last_login is defined ? TimeHelper.format(lo_user.last_login) : '' }}</td>
-								{% endblock %}
-
-								{% block tableOverviewCellFirstname %}
-									<td>{{ lo_user.firstname }}</td>
-								{% endblock %}
-
-								{% block tableOverviewCellLastname %}
-									<td>{{ lo_user.lastname }}</td>
-								{% endblock %}
-
-								{% block tableOverviewCellEmail %}
-									<td>{{ lo_user.email }}</td>
-								{% endblock %}
-
-								{% block tableOverviewCellActions %}
-									<td class="actions">
-										{% if AuthorizationHelper.isAccessible('update') %}
-											{{ HtmlHelper.link(__('edit'), {action: 'edit', id: lo_user.id}) }}
-										{% endif %}
-										{% if AuthorizationHelper.isAccessible('delete') %}
-											{{ HtmlHelper.link(__('delete'), {action: 'delete', id: lo_user.id}) }}
-										{% endif %}
-									</td>
-								{% endblock %}
-							</tr>
-						{% endblock %}
-					{% endfor %}
-				</tbody>
-			{% endblock %}
-		</table>
-	{% endblock %}
-
-	{% block listControlOverview %}
-		<ul class="ListControl">
-			{% block listControlOverviewPagination %}
-				{% set pagination = PaginatorHelper.render() %}
-				{% if pagination is not empty %}
-					<li class="ListControl-Pagination">
-						{{ pagination|raw }}
-					</li>
+			{% block buttonsOverview %}
+				{% if AuthorizationHelper.isAccessible('create') %}
+					{{ HtmlHelper.link(__('create'), {action: 'add'}, {class : 'Button Button-Add'}) }}
 				{% endif %}
 			{% endblock %}
+		</div>
+	{% endblock %}
 
-			{% block paginationOverviewLimitControl %}
-				<li class="ListControl-ListLimit">
-					{{ PaginatorHelper.limitControl() }}
-				</li>
-			{% endblock %}
-		</ul>
+	{% block paginatedOverview %}
+		{% include '@Backend/Users/overview_paginated_list.twig' with _context|merge({records: users.items().toArray()}) %}
+	{% endblock %}
+
+	{% block buttonAreaBottom %}
+		<div class="ButtonArea ButtonArea-Bottom">
+			{{ block('buttonsOverview') }}
+		</div>
 	{% endblock %}
 </div>

@@ -67,6 +67,22 @@ class PagesController extends Controller {
 		$lo_pages = $this->Pages->find('forCurrentLanguage')->where($this->getOverviewWhere());
 		$this->Categories->filterQuery($lo_pages, null, !$this->paginate['enabled']);
 
+		// Disable sorting if the current category is the aggregation category or the unassigned category
+		if (
+			$this->Categories->getSelectedCategory() === $this->Categories->getConfig('aggregationKey') ||
+			$this->Categories->getSelectedCategory() === $this->Categories->getConfig('unassignedKey')
+		) {
+			$this->sortable = false;
+
+			/**
+			 * Sort the query by the configured systemOrder field since the default order (system_order asc) could
+			 * result in a wrong order in the aggregation category or the unassigned category.
+			 * This is because the system_order field is not unique and the default order could result in a wrong order.
+			 * What's on position 2 in their own category could be on position 1 or position 10 in the aggregation category.
+			 */
+			// TODO: sort the query by the configured systemOrder field. Maybe even in the Categories component "filterQuery" method?
+		}
+
 		$lb_paginated = $this->paginate['enabled'];
 		unset($this->paginate['enabled']);
 		if ($lb_paginated) {
@@ -79,13 +95,18 @@ class PagesController extends Controller {
 			$lo_pages = $lo_pages->all();
 		}
 
+		$la_pageTemplates = $this->getPageTemplates()->indexBy('id')->toArray();
+
 		$this->set([
-			'ao_pages' => $lo_pages,
-			'localConfig' => LocalConfig::read(),
-			'ab_contentsEnabled' => LocalConfig::read('contents.enabled'),
-			'ab_paginated' => $lb_paginated,
-			'ab_nestable' => $this->nestable,
-			'ab_sortable' => $this->sortable,
+			'pages' => $lo_pages,
+			//'localConfig' => LocalConfig::read(),
+			'contentsEnabled' => LocalConfig::read('contents.enabled'),
+			'paginated' => $lb_paginated,
+			'nestable' => $this->nestable,
+			'sortable' => $this->sortable,
+			'attributes' => $this->Pages->getAttributes(),
+			'pageTemplates' => $la_pageTemplates,
+			'isGenericPage' => $this->pageRole->value !== 1,
 		]);
 	}
 
@@ -289,7 +310,10 @@ class PagesController extends Controller {
 			$lb_copyDescendantsWithDifferentPageRole = (bool)$lb_copyDescendantsWithDifferentPageRole;
 		}
 
-		$this->Pages->patchEntity($ao_page, ['page_role_id' => $this->getPageRole()->value] + $this->request->getData(), ['associated' => $la_associated]);
+		$this->Pages->patchEntity($ao_page, ['page_role_id' => $this->getPageRole()->value] + $this->request->getData(), [
+			'associated' => $la_associated,
+			'validate' => !$this->request->getData('reload_form'),
+		]);
 
 		$this->Categories->setConfig('finder', [
 			'forCurrentLanguage' => [
@@ -404,7 +428,7 @@ class PagesController extends Controller {
 			$this->isNestableWithCategoriesEnabled();
 		}
 
-		$this->sortable = LocalConfig::read('systemOrder.field') === 'systemOrder';
+		$this->sortable = Inflector::variable(LocalConfig::read('systemOrder.field', 'systemOrder')) === 'systemOrder';
 
 		/** @var \Awyiss\Authorization\AuthorizationService $lo_authorizationService */
 		$lo_authorizationService = $this->getRequest()->getAttribute('authorization');
@@ -455,10 +479,10 @@ class PagesController extends Controller {
 			$ls_parentName = Inflector::variable('possibleParent ' . $this->getName());
 
 			$lo_viewBuilder->setVars([
-				'ao_' . $ls_entitiesName => $lo_viewBuilder->getVar('ao_pages'),
-				'ao_' . $ls_entityName => $lo_viewBuilder->getVar('ao_page'),
-				'ao_' . $ls_threadedName => $lo_viewBuilder->getVar('ao_threadedPages'),
-				'ao_' . $ls_parentName => $lo_viewBuilder->getVar('ao_possibleParentMediaFolders'),
+				$ls_entitiesName => $lo_viewBuilder->getVar('pages'),
+				$ls_entityName => $lo_viewBuilder->getVar('page'),
+				$ls_threadedName => $lo_viewBuilder->getVar('threadedPages'),
+				$ls_parentName => $lo_viewBuilder->getVar('possibleParentPages'),
 			]);
 		}
 
@@ -524,7 +548,6 @@ class PagesController extends Controller {
 
 		$lo_threadedPages = $this->getThreadedPages($ao_page);
 
-
 		if ($this->nestable) {
 			$lo_possibleParentPages = $this->Pages->getPossibleParents($ao_page, $lo_threadedPages);
 			$this->ensurePossibleParentId($ao_page, $lo_possibleParentPages);
@@ -535,16 +558,24 @@ class PagesController extends Controller {
 
 		$lo_menus = $this->fetchTable('Menus')->find('active')->all();
 
+		// Get the parent page if it exists
+		if ($ao_page->parentId) {
+			$lo_parentRecord = $this->Pages->find('all', skipPageRoleCheck: true)->where(['id' => $ao_page->parentId])->first();
+		}
+
 		$this->set([
-			'ao_page' => $ao_page,
-			'ao_pageTemplates' => $this->getPageTemplates(),
-			'ao_threadedPages' => $lo_threadedPages,
-			'ao_possibleParentPages' => $lo_possibleParentPages,
-			'as_languageRealm' => Awyiss::REALM_FRONTEND,
-			'localConfig' => LocalConfig::read(),
-			'ab_nestable' => $this->nestable,
-			'ab_sortable' => $this->sortable,
-			'ao_menus' => $lo_menus,
+			'page' => $ao_page,
+			'pageTemplates' => $this->getPageTemplates(),
+			'contentsEnabled' => LocalConfig::read('contents.enabled'),
+			'threadedPages' => $lo_threadedPages,
+			'possibleParentPages' => $lo_possibleParentPages,
+			'languageRealm' => Awyiss::REALM_FRONTEND,
+			//'localConfig' => LocalConfig::read(),
+			'nestable' => $this->nestable,
+			'sortable' => $this->sortable,
+			'menus' => $lo_menus,
+			'isGenericPage' => $this->pageRole->value !== 1,
+			'parentRecord' => $lo_parentRecord ?? null,
 		]);
 	}
 

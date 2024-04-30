@@ -6,13 +6,16 @@ namespace Awyiss\Controller\Backend;
 
 use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Model\Entity\BackendMenuEntry;
+use Awyiss\Model\Table;
 use Awyiss\Routing\Router;
 use Awyiss\Utility\Menu\BackendMenu;
 use Awyiss\Utility\Menu\Menu;
 use Awyiss\Utility\Menu\MenuItem;
 use Cake\Collection\CollectionInterface;
+use Cake\Database\Expression\QueryExpression;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
+use Cake\I18n\DateTime;
 
 
 /**
@@ -32,7 +35,7 @@ class BackendMenuEntriesController extends Controller {
 		$lo_menu = new BackendMenu();
 
 		$this->set([
-			'ao_menu' => $lo_menu,
+			'menu' => $lo_menu,
 		]);
 	}
 
@@ -59,10 +62,11 @@ class BackendMenuEntriesController extends Controller {
 		$lo_possibleParentMenuEntries = $this->getPossibleParentMenuEntries($lo_menuEntry, $lo_menu->getDynamicMenu());
 
 		$this->set([
-			'ao_menu' => $lo_menu,
-			'aa_insertAfterOptions' => $la_insertAfterOptions,
-			'ao_backendMenuEntry' => $lo_menuEntry,
-			'ao_possibleParentMenuEntries' => $lo_possibleParentMenuEntries,
+			'menu' => $lo_menu,
+			'insertAfterOptions' => $la_insertAfterOptions,
+			'backendMenuEntry' => $lo_menuEntry,
+			'possibleParentMenuEntries' => $lo_possibleParentMenuEntries,
+			'attributes' => $this->BackendMenuEntries->getAttributes(),
 		]);
 	}
 
@@ -96,10 +100,10 @@ class BackendMenuEntriesController extends Controller {
 		$lo_possibleParentMenuEntries = $this->getPossibleParentMenuEntries($lo_menuEntry, $lo_menu->getDynamicMenu());
 
 		$this->set([
-			'ao_menu' => $lo_menu,
-			'aa_insertAfterOptions' => $la_insertAfterOptions,
-			'ao_backendMenuEntry' => $lo_menuEntry,
-			'ao_possibleParentMenuEntries' => $lo_possibleParentMenuEntries,
+			'menu' => $lo_menu,
+			'insertAfterOptions' => $la_insertAfterOptions,
+			'backendMenuEntry' => $lo_menuEntry,
+			'possibleParentMenuEntries' => $lo_possibleParentMenuEntries,
 		]);
 	}
 
@@ -158,9 +162,9 @@ class BackendMenuEntriesController extends Controller {
 			return $lo_listNested;
 		}
 
-
 		$li_foundAtLevel = null;
 
+		/** @noinspection PhpUnnecessaryLocalVariableInspection */
 		$lo_possibleParents = $lo_listNested->filter(function (MenuItem $ao_item, string|int $ax_identifier) use ($li_originalId, &$li_foundAtLevel) {
 			if (gettype($ax_identifier) === 'string') {
 				return true;
@@ -181,10 +185,49 @@ class BackendMenuEntriesController extends Controller {
 		});
 
 
-		return $lo_possibleParents->map(function (MenuItem $ao_item) {
-			return $ao_item->getTitle();
-		});
+		return $lo_possibleParents;
 	}
+
+
+	/**
+	 * @param array $aa_requestData
+	 * @param \Awyiss\Model\Table $ao_table
+	 * @return int
+	 */
+	protected function _saveSystemOrder(array $aa_requestData, Table $ao_table): int {
+		$lo_identity = $this->getIdentity();
+
+		/** @noinspection PhpUnnecessaryLocalVariableInspection */
+		$li_affectedRows = $ao_table->updateAll(function (QueryExpression $ao_expression) use ($aa_requestData, $lo_identity) {
+			$lo_insertAfterIdCase = $ao_expression->case();
+			$lo_parentIdCase = $ao_expression->case();
+			$lo_systemOrderCase = $ao_expression->case();
+
+			foreach ($aa_requestData as $la_data) {
+				$li_id = (int)$la_data['id'];
+
+				$lo_insertAfterIdCase->when(['id' => $li_id])->then($la_data['insertAfterId'], 'string');
+				$lo_parentIdCase->when(['id' => $li_id])->then($la_data['parentId'], 'string');
+				$lo_systemOrderCase->when(['id' => $li_id])->then($la_data['systemOrder'], 'integer');
+			}
+
+
+			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+			return [
+				'insert_after_id' => $lo_insertAfterIdCase,
+				'parent_id' => $lo_parentIdCase,
+				'system_order' => $lo_systemOrderCase,
+				'deleted_by' => $lo_identity?->id,
+				'deleted_on' => DateTime::now(),
+			];
+		}, [
+			'id IN' => array_keys($aa_requestData),
+		]);
+
+
+		return $li_affectedRows;
+	}
+
 
 
 	/**
@@ -263,7 +306,7 @@ class BackendMenuEntriesController extends Controller {
 
 		/** @var MenuItem $lo_item */
 		foreach ($ao_menu->items() as $ls_identifier => $lo_item) {
-			$la_options[ $ls_identifier ] = str_repeat('- ', $lo_item->getLevel() - 1) . $lo_item->getTitle();
+			$la_options[ $ls_identifier ] = str_repeat('- ', $lo_item->getLevel() - 1) . $lo_item->getLabel();
 		}
 
 

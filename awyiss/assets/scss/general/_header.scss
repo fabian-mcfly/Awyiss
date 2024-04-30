@@ -1,0 +1,275 @@
+#Header {
+	--backgroundColorMenu:var(--colorDark);
+	--colorBorder:transparent;
+	--colorMenu:#{$colorText};
+	--colorText:#FFFFFF;
+
+	display:flex;
+	height:100px;
+	padding:20px;
+	color:var(--colorText);
+	position:fixed;
+	top:0;
+	right:0;
+	left:0;
+	z-index:1000;
+
+	.🌚 & {
+		--colorMenu:var(--colorSemiDark);
+	}
+
+	&::before {
+		content:'';
+		backdrop-filter:blur(5px);
+		position:absolute;
+		inset:0 0 -20px 0;
+		z-index:-1;
+		pointer-events:none;
+		mask-image:linear-gradient(to bottom, black 70%, transparent 100%);
+	}
+
+	.Title {
+		padding:0 20px;
+		box-shadow:0 0 10px rgba(0, 0, 0, .25);
+		border-radius:5px 0 0 5px;
+		border-right-width:0;
+		background-color:var(--backgroundColorMenu);
+		color:inherit;
+		font-family:var(--fontStackHeading);
+		font-size:30px;
+		line-height:62px;
+		text-decoration:none;
+		position:relative;
+		flex:0 0 auto;
+
+		&:focus {
+			box-shadow:0 0 10px var(--colorSuccess);
+			outline:2px solid var(--colorSuccess);
+		}
+
+		&:hover {
+			.Version {
+				transform:translateY(0);
+			}
+		}
+
+		.Yiss {
+			color:$colorSuccess;
+		}
+
+		.Version {
+			padding:5px 0;
+			border-radius:0 0 5px 5px;
+			background-color:var(--colorSuccess);
+			font-family:var(--fontStackMain);
+			font-size:10px;
+			line-height:1;
+			text-align:center;
+			position:absolute;
+			top:100%;
+			right:2px;
+			left:5px;
+			z-index:-1;
+			cursor:default;
+			transition:transform .3s ease;
+			transform:translateY(-100%);
+
+			.VersionName {
+				text-transform:uppercase;
+			}
+		}
+	}
+
+	.LanguageSwitcher,
+	.Logout {
+		padding:0 20px 0 25px;
+		margin-left:-6px;
+		box-shadow:0 0 10px rgba(0, 0, 0, .25);
+		border-radius:0 5px 5px 0;
+		border:2px solid var(--colorBorder);
+		background-color:var(--backgroundColorMenu);
+		color:inherit;
+		text-decoration:none;
+		flex:0 0 auto;
+	}
+
+	.LanguageSwitcher {
+		padding-inline:5px 0;
+		position:relative;
+
+		.LanguageSwitcherLabel {
+			display:block;
+			padding:18px 24px;
+			border-radius:5px;
+			background-color:var(--colorMenu);
+			font-size:0;
+			line-height:0;
+			position:relative;
+			overflow:hidden;
+			transition:background-color .3s ease-in-out;
+
+			&.Visible {
+				background-color:var(--colorSuccess);
+			}
+
+			&:hover {
+				background-color:var(--colorSuccess);
+				transition-delay:.3s;
+			}
+
+			&:focus {
+				outline:2px solid var(--colorSuccess);
+				outline-offset:2px;
+				z-index:100;
+
+				&::before {
+					opacity:inherit;
+					transition-delay:.1s, 0s;
+				}
+			}
+
+			.Hover {
+				@extend %HoverEffect;
+			}
+
+			.BackgroundImage {
+				top:18px;
+				left:24px;
+			}
+		}
+
+		.Languages {
+			box-shadow:0 0 10px rgba(0, 0, 0, .25);
+			background-color:var(--backgroundColorMenu);
+			border-radius:5px;
+			margin-top:4px;
+			position:absolute;
+			top:100%;
+			right:0;
+			opacity:0;
+			visibility:hidden;
+			overflow:hidden;
+			transition:opacity .3s ease-in-out, visibility 0s linear .3s;
+
+			&.Visible {
+				opacity:inherit;
+				visibility:inherit;
+				transition-delay:0s;
+			}
+		}
+
+		.Language {
+			margin:0;
+			padding:0 20px;
+			border-bottom:1px solid rgba(255, 255, 255, .1);
+			list-style-type:none;
+			overflow:hidden;
+
+			&.Active {
+				a {
+					color:var(--colorSuccess);
+				}
+			}
+
+			&:last-of-type {
+				border-bottom-width:0;
+			}
+
+			a {
+				display:block;
+				padding:10px 0;
+				color:inherit;
+				line-height:1.5;
+				white-space:nowrap;
+				position:relative;
+				z-index:1;
+
+				&:focus {
+					outline:0 none;
+
+					&::before {
+						content:'';
+						border-radius:5px;
+						box-shadow:0 0 10px var(--colorSuccess);
+						outline:2px solid var(--colorSuccess);
+						position:absolute;
+						inset:3px -8px 2px;
+					}
+				}
+
+				&.Active,
+				&:hover {
+					color:var(--colorSuccess);
+					outline:0 none;
+				}
+			}
+
+			img {
+				margin-right:10px;
+				vertical-align:-3px;
+			}
+		}
+
+		img {
+			width:20px;
+			//outline:2px solid rgba(255, 255, 255, .1);
+			outline-offset:2px;
+			aspect-ratio:1;
+			box-shadow:0 0 10px rgba(0, 0, 0, .25);
+			border-radius:3px;
+			pointer-events:none;
+		}
+
+		.BackgroundImage {
+			outline:0 none;
+			position:absolute;
+			top:16px;
+			left:0;
+			z-index:-1;
+			filter:blur(3px);
+			scale:4;
+			opacity:.15;
+
+			.🌚 & {
+				opacity:.1;
+			}
+		}
+	}
+
+	.Logout {
+		margin-right:40px;
+		font-size:0;
+		line-height:0;
+		z-index:-1;
+
+		&:focus {
+			box-shadow:0 0 10px var(--colorSuccess);
+			outline:2px solid var(--colorSuccess);
+		}
+
+		&:hover {
+			color:$colorSuccess;
+		}
+
+		&::after {
+			@include la('\f2f5', 32px);
+			line-height:56px;
+		}
+	}
+
+	.Logo {
+		color:var(--colorSuccess);
+	}
+
+	.LoginLogo {
+		width:auto;
+		max-width:200px;
+		height:auto;
+		margin-left:auto;
+		align-self:center;
+
+		.🌚 & {
+			filter:brightness(10);
+		}
+	}
+}

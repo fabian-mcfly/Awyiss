@@ -1,0 +1,23 @@
+{#
+@var entity \Awyiss\Model\Entity\Attribute
+@var attributes \Awyiss\Model\Entity\Attribute[]
+@var attributesGroupedByFieldset array
+@var attributeScopes array
+@var _view \Awyiss\View\BackendView
+@var CategproesHelper \Awyiss\View\Helper\CategoriesHelper
+#}
+
+{% extends '@Backend/element/overview/overview_paginated_list.twig' %}
+
+{% block tableOverviewHeaderTitle %}{% endblock %}
+{% block tableOverviewCellTitle %}{% endblock %}
+
+{% block tableOverviewCellDisplayedFieldDefaultValue %}
+	{% if field == 'last_login' %}
+		{{ entity.last_login ? entity.last_login.nice() : '-' }}
+	{% else %}
+		{{ parent() }}
+	{% endif %}
+{% endblock %}
+
+{% block tableOverviewFootColSpan %}{{ localConfig.overview.displayedFields|length + 3 }}{% endblock %}

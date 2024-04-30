@@ -227,10 +227,10 @@ class AuthorizationHelper extends Helper {
 		}
 
 		$la_viewData = [
-			'ao_permission' => $ao_permission,
-			'ao_entity' => $ao_entity,
-			'as_scope' => Inflector::underscore($ao_permission->getPermissionOptionCollection()->getScope()),
-			'as_identifier' => Inflector::underscore($ao_permission->getConfig('identifier')),
+			'permission' => $ao_permission,
+			'entity' => $ao_entity,
+			'scope' => Inflector::underscore($ao_permission->getPermissionOptionCollection()->getScope()),
+			'identifier' => Inflector::underscore($ao_permission->getConfig('identifier')),
 		];
 
 

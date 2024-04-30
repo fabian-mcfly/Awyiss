@@ -15,7 +15,7 @@ use Cake\View\View;
  */
 class PaginatorHelper extends BasePaginatorHelper {
 	/**
-	 * Constructor. Overridden to merge passed args with URL aa_options.
+	 * Constructor. Overridden to merge passed args with URL options.
 	 *
 	 * @param View $ao_view The View this helper is being attached to.
 	 * @param array<string, mixed> $aa_config Configuration settings for the helper.
@@ -25,9 +25,28 @@ class PaginatorHelper extends BasePaginatorHelper {
 
 		$la_query = $this->_View->getRequest()->getParam('parts', []);
 
+		if (!empty($la_query['sort']) && !$this->getConfig('params.sort')) {
+			$this->setConfig('params.sort', $la_query['sort']);
+		}
+
 		$la_query['page'] = $la_query['limit'] = $la_query['sort'] = $la_query['direction'] = false;
 
 		$this->setConfig('options.url', array_merge($this->_View->getRequest()->getParam('pass', []), $la_query));
+	}
+
+
+	/**
+	 * @inheritDoc
+	 * @param array $aa_options
+	 * @return string|null
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 */
+	public function meta(array $aa_options = []): ?string {
+		if (!isset($this->paginated)) {
+			return null;
+		}
+
+		return parent::meta($aa_options);
 	}
 
 
@@ -45,8 +64,37 @@ class PaginatorHelper extends BasePaginatorHelper {
 			$ls_title = __($as_key);
 		}
 
+		// If the key is the current sort key, set the default direction to desc
+		if ($as_key === $this->currentSortKey()) {
+			$aa_options['direction'] = 'desc';
+		}
 
 		return parent::sort($as_key, $ls_title, $aa_options);
+	}
+
+
+	/**
+	 * Returns the current sort key
+	 *
+	 * @return string|null
+	 */
+	public function currentSortKey(): ?string {
+		$ls_sortKey = $this->param('sort');
+		if (!$ls_sortKey) {
+			$ls_sortKey = $this->param('sortDefault');
+		}
+
+		if (!$ls_sortKey) {
+			return null;
+		}
+
+		// Return the original sort key if its aliased
+		$la_aliasFields = $this->getConfig('aliasedFields');
+		if (isset($la_aliasFields[ $ls_sortKey ])) {
+			$ls_sortKey = $la_aliasFields[ $ls_sortKey ];
+		}
+
+		return $ls_sortKey;
 	}
 
 
@@ -122,7 +170,6 @@ class PaginatorHelper extends BasePaginatorHelper {
 				'empty' => false,
 				'label' => __('limit_per_page'),
 				'options' => $la_limits,
-				'onChange' => 'this.form.submit()',
 				'type' => 'select',
 				'value' => $this->param('perPage'),
 			]

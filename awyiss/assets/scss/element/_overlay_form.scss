@@ -1,0 +1,129 @@
+#OverlayForm {
+	background-color:rgba(0, 0, 0, .75);
+	backdrop-filter:blur(5px);
+	position:fixed;
+	inset:0;
+	z-index:182182;
+	opacity:0;
+	visibility:hidden;
+	transition:opacity .3s ease-in-out, visibility 0s linear .3s;
+	scrollbar-color:var(--scrollbarColor);
+	scrollbar-width:thin;
+
+	&.FetchInProgress,
+	&.Visible {
+		opacity:1;
+		visibility:visible;
+		transition-delay:0s;
+
+		html:has(&) {
+			overflow:hidden;
+		}
+	}
+
+	&.FetchInProgress {
+		.Form {
+			pointer-events:none;
+
+			&::after {
+				content:'';
+				width:220px;
+				height:20px;
+				margin:auto;
+				background-image:url($relativePath + 'img/preloader-dots.gif');
+				background-position:center;
+				background-repeat:no-repeat;
+				position:fixed;
+				inset:0;
+				opacity:1;
+				z-index:1860;
+
+				.🌚 & {
+					background-image:url($relativePath + 'img/preloader-dots-bright.gif');
+				}
+			}
+
+			> * {
+				opacity:.1;
+			}
+		}
+	}
+
+	.Form {
+		width:calc(100% - 40px);
+		max-width:1280px;
+		max-height:80vh;
+		margin:auto;
+		padding-top:52px;
+		border-radius:5px;
+		box-shadow:0 0 10px rgba(0, 0, 0, .25);
+		background-color:var(--colorBright);
+		color:var(--colorText);
+		position:fixed;
+		inset:0;
+		overflow:hidden;
+
+		.🌚 & {
+			background-color:var(--backgroundColor);
+			background-image:url($relativePath + 'img/background-pattern-dark.png');
+			background-blend-mode:color-burn;
+		}
+
+		&::before,
+		&::after {
+			content:attr(data-title, 'Form');
+			display:block;
+			width:100%;
+			height:52px;
+			padding:0 20px;
+			border-radius:5px;
+			background-color:rgba($colorDark, .5);
+			color:var(--colorBright);
+			font-size:.8rem;
+			line-height:52px;
+			position:absolute;
+			top:0;
+			left:0;
+		}
+
+		&::before {
+			content:'';
+			background-image:url($relativePath + 'img/awyiss-v1-' + $awyissVersionName + '.jpg');
+			background-color:var(--colorDark);
+			background-position:center;
+			background-size:cover;
+		}
+
+		.ButtonArea {
+			&:not(.ButtonArea-Bottom) {
+				margin-top:0;
+			}
+		}
+
+		form {
+			max-height:100%;
+			border:10px solid transparent;
+			padding:0 30px 30px 30px;
+			overflow-y:auto;
+			scrollbar-color:var(--scrollbarColor);
+			scrollbar-width:thin;
+		}
+
+		> .Button-SaveClose {
+			margin-right:20px;
+			position:absolute;
+			top:0;
+			right:var(--offsetX, 20px);
+		}
+
+		.Button-Close {
+			position:absolute;
+			top:0;
+			right:0;
+		}
+	}
+
+	> .Button-Close {
+		display:none;
+	}
+}

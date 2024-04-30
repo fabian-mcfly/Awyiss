@@ -1,5 +1,5 @@
 {#
-@var aa_languages \Awyiss\Model\Entity\Language[]
+@var languages \Awyiss\Model\Entity\Language[]
 @var _view \Awyiss\View\BackendView
 #}
 
@@ -20,7 +20,7 @@
 				{% endblock %}
 
 				{% block formControlLanguageShortcode %}
-					{{ LocaleHelper.control('language_shortcode', {empty: false, languageRealm: as_languageRealm}) }}
+					{{ LocaleHelper.control('language_shortcode', {empty: false, languageRealm: languageRealm}) }}
 				{% endblock %}
 
 				{{ FormHelper.button(__('login'), {class: 'Submit'}) }}

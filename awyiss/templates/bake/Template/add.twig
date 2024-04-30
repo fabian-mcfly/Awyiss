@@ -1,15 +1,19 @@
 {{ '{#' }}
-@var ao_{{ singularVar }} {{ entityClass }}
+@var {{ singularVar }} {{ entityClass }}
 @var _view \{{ namespace }}\View\BackendView
 {{ '#}' }}
 
 {% set fields = Bake.filterFields(fields, schema, modelObject) %}
 <div class="{{ pluralVar[:1]|upper ~ pluralVar[1:] }} Form {{ action|capitalize }}">
-	{% verbatim %}{% block headlineAdd %}
+	{% verbatim %}{% if AuthorizationHelper.isAccessible('read') %}
+		{{ HtmlHelper.link(__('overview'), {action: 'overview'}, {class: 'BackToOverview'}) }}
+	{% endif %}
+
+	{% block headlineAdd %}
 		<h1>{{ __('headline_{% endverbatim %}{{ action }}{% verbatim %}') }}</h1>
 	{% endblock %}{% endverbatim %}
 
-	{% verbatim %}{{{% endverbatim %} FormHelper.create(ao_{{ singularVar }}, {method: 'post', idPrefix: '{{ singularVar }}'}) {% verbatim %}}}{% endverbatim %}
+	{% verbatim %}{{{% endverbatim %} FormHelper.create({{ singularVar }}, {method: 'post', idPrefix: '{{ singularVar }}'}) {% verbatim %}}}{% endverbatim %}
 
 	{% verbatim %}{% block formAddButtons %}
 		{{ FormHelper.button(__('save')) }}

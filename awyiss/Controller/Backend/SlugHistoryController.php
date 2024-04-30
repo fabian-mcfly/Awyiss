@@ -22,6 +22,7 @@ class SlugHistoryController extends Controller {
 	 * @inheritDoc
 	 */
 	protected array $paginate = [
+		'enabled' => true,
 		'order' => [
 			'created_on' => 'desc',
 			'id' => 'desc',
@@ -42,10 +43,18 @@ class SlugHistoryController extends Controller {
 		$this->Authorization->ensure('read');
 
 		$lo_query = $this->SlugHistory->find()->contain('Pages');
-		$lo_slugHistory = $this->paginate($lo_query);
+
+		$lb_paginated = $this->paginate['enabled'];
+		if ($lb_paginated) {
+			$lo_slugHistory = $this->paginate($lo_query);
+		}
+		else {
+			$lo_slugHistory = $lo_query->all();
+		}
 
 		$this->set([
-			'ao_slugHistory' => $lo_slugHistory,
+			'slugHistory' => $lo_slugHistory,
+			'paginated' => $lb_paginated,
 		]);
 	}
 
@@ -68,8 +77,8 @@ class SlugHistoryController extends Controller {
 		$lo_threadedPages = $this->getThreadedPages();
 
 		$this->set([
-			'ao_slugHistory' => $lo_slugHistory,
-			'ao_threadedPages' => $lo_threadedPages->toList(),
+			'slugHistory' => $lo_slugHistory,
+			'threadedPages' => $lo_threadedPages->toList(),
 		]);
 	}
 
@@ -99,8 +108,8 @@ class SlugHistoryController extends Controller {
 		$lo_threadedPages = $this->getThreadedPages();
 
 		$this->set([
-			'ao_slugHistory' => $lo_slugHistory,
-			'ao_threadedPages' => $lo_threadedPages->toList(),
+			'slugHistory' => $lo_slugHistory,
+			'threadedPages' => $lo_threadedPages->toList(),
 		]);
 	}
 

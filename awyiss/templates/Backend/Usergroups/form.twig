@@ -1,145 +1,141 @@
-{% block fieldsetPresentation %}
-	<fieldset class="Fieldset-Presentation">
-		<legend>{{ __('fieldset_presentation') }}</legend>
+{#
+@var usergroup \Awyiss\Model\Entity\Usergroup
+@var users \Awyiss\Model\Entity\User[]
+@var authorizationPolicies array
+@var _view \Awyiss\View\BackendView
+#}
 
-		{% block fieldsetPresentationInner %}
-			{% block formControlActive %}
-				{{ FormHelper.control('active') }}
-			{% endblock %}
+<div class="Fieldsets">
+	{% block fieldsetPresentation %}
+		<fieldset class="Fieldset-Presentation">
+			<legend>{{ __('fieldset_presentation') }}</legend>
 
-			{% block fieldsetPresentationAttributes %}
-				{{ AttributesHelper.allControls('presentation') }}
-			{% endblock %}
-		{% endblock %}
-	</fieldset>
-{% endblock %}
+			{% block fieldsetPresentationInner %}
+				{% block formControlActive %}
+					{{ FormHelper.control('active') }}
+				{% endblock %}
 
-{% block fieldsetConditions %}
-	<fieldset class="Fieldset-Conditions">
-		<legend>{{ __('fieldset_conditions') }}</legend>
-
-		{% block fieldsetConditionsInner %}
-			{% block fieldsetConditionsAttributes %}
-				{{ AttributesHelper.allControls('conditions') }}
-			{% endblock %}
-		{% endblock %}
-	</fieldset>
-{% endblock %}
-
-{% block fieldsetGeneral %}
-	<fieldset class="Fieldset-General">
-		<legend>{{ __('fieldset_general') }}</legend>
-
-		{% block fieldsetGeneralInner %}
-			{% block formControlTitle %}
-				{{ FormHelper.control('title') }}
-			{% endblock %}
-
-			{% block fieldsetGeneralAttributes %}
-				{{ AttributesHelper.allControls('general') }}
-			{% endblock %}
-		{% endblock %}
-	</fieldset>
-{% endblock %}
-
-{% if AuthorizationHelper.scopeIsAccessible('Users', [], ['read']) %}
-	{% block fieldsetUsers %}
-		<fieldset class="Fieldset-Users">
-			<legend>{{ __('users') }}</legend>
-
-			{% block fieldsetUsersInner %}
-				{{ FormHelper.hidden('users._ids', {value: ''}) }}
-				{% block usergroupsUsers %}
-					<ul class="NoList">
-						{% for lo_user in ao_users %}
-							{% block usergroupsUser %}
-								<li>
-									{{ FormHelper.control('users._ids.' ~ lo_user.id, {
-										hiddenField: false,
-										type: 'checkbox',
-										value: lo_user.id,
-										label: lo_user.username,
-										checked: lo_user.id in (ao_usergroup.users ?? [])|column('id'),
-									}) }}
-								</li>
-							{% endblock %}
-						{% endfor %}
-					</ul>
+				{% block fieldsetPresentationAttributes %}
+					{{ AttributesHelper.allControls('presentation') }}
 				{% endblock %}
 			{% endblock %}
 		</fieldset>
 	{% endblock %}
-{% endif %}
 
-{% block fieldsetPermissions %}
-	<fieldset class="Fieldset-Permissions">
-		<legend>{{ __('permissions') }}</legend>
+	{% block fieldsetConditions %}
+		<fieldset class="Fieldset-Conditions">
+			<legend>{{ __('fieldset_conditions') }}</legend>
 
-		{% block fieldsetPermissionsInner %}
-			{% block usergroupPolicies %}
-				{% for lx_policyClass in aa_authorizationPolicies %}
-					{% block usergroupPolicy %}
-						<fieldset class="Fieldset-Permission">
-							<legend>{{ (lx_policyClass is string ? staticCall(lx_policyClass, 'getScope') : lx_policyClass.getScope)|underscore }}</legend>
+			{% block fieldsetConditionsInner %}
+				{% block fieldsetConditionsAttributes %}
+					{{ AttributesHelper.allControls('conditions') }}
+				{% endblock %}
+			{% endblock %}
+		</fieldset>
+	{% endblock %}
 
-							<ul class="NoList Permissions">
-								{% block usergroupPermissions %}
-									{% set lo_permissions = lx_policyClass is string ? staticCall(lx_policyClass, 'getPermissionOptions') : lx_policyClass.getPermissionOptions %}
-									{% for ls_identifier,lo_permission in lo_permissions %}
-										{# @var lo_permission \Awyiss\Authorization\Permission\PermissionInterface #}
-										{% block usergroupPermission %}
-											<li class="Permission">
-												{{ __(ls_identifier) }}
-												{{ AuthorizationHelper.permissionOptions(lo_permission, ao_usergroup, null, 'Usergroups') }}
-											</li>
-										{% endblock %}
-									{% endfor %}
-								{% endblock %}
-							</ul>
-						</fieldset>
+	{% block fieldsetGeneral %}
+		<fieldset class="Fieldset-General">
+			<legend>{{ __('fieldset_general') }}</legend>
+
+			{% block fieldsetGeneralInner %}
+				{% block formControlTitle %}
+					{{ FormHelper.control('title') }}
+				{% endblock %}
+
+				{% block fieldsetGeneralAttributes %}
+					{{ AttributesHelper.allControls('general') }}
+				{% endblock %}
+			{% endblock %}
+		</fieldset>
+	{% endblock %}
+
+	{% if AuthorizationHelper.scopeIsAccessible('Users', [], ['read']) %}
+		{% block fieldsetUsers %}
+			<fieldset class="Fieldset-Users">
+				<legend>{{ __('users') }}</legend>
+
+				{% block fieldsetUsersInner %}
+					{{ FormHelper.hidden('users._ids', {value: ''}) }}
+
+					{% block userUsergroups %}
+						{% include '@Backend/Usergroups/users_overview_paginated_list.twig' with _context|merge({records: users.items().toArray()}) %}
 					{% endblock %}
-				{% endfor %}
-			{% endblock %}
+				{% endblock %}
+			</fieldset>
 		{% endblock %}
-	</fieldset>
-{% endblock %}
+	{% endif %}
 
-{% block fieldsetContent %}
-	<fieldset class="Fieldset-Content">
-		<legend>{{ __('fieldset_content') }}</legend>
+	{% block fieldsetPermissions %}
+		<fieldset class="Fieldset-Permissions">
+			<legend>{{ __('permissions') }}</legend>
 
-		{% block fieldsetContentInner %}
-			{% block fieldsetContentAttributes %}
-				{{ AttributesHelper.allControls('content') }}
+			{% block fieldsetPermissionsInner %}
+				{% block usergroupPolicies %}
+					{% for policyClass in authorizationPolicies %}
+						{% block usergroupPolicy %}
+							<fieldset class="Fieldset-Permission">
+								{% set title = (policyClass is string ? staticCall(policyClass, 'getScope') : policyClass.getScope)|underscore %}
+								<span class="Title" title="{{ title }}">{{ title }}</span>
+								<div class="Permissions">
+									{% block usergroupPermissions %}
+										{% set permissions = policyClass is string ? staticCall(policyClass, 'getPermissionOptions') : policyClass.getPermissionOptions %}
+										{% for identifier,permission in permissions %}
+											<div class="Permission">
+												{# @var permission \Awyiss\Authorization\Permission\PermissionInterface #}
+												{% block usergroupPermission %}
+													<span class="Label">{{ __(identifier) }}</span>
+													{{ AuthorizationHelper.permissionOptions(permission, usergroup, null, 'Usergroups') }}
+												{% endblock %}
+											</div>
+										{% endfor %}
+									{% endblock %}
+								</div>
+							</fieldset>
+						{% endblock %}
+					{% endfor %}
+				{% endblock %}
 			{% endblock %}
-		{% endblock %}
-	</fieldset>
-{% endblock %}
+		</fieldset>
+	{% endblock %}
 
-{% block fieldsetMedia %}
-	<fieldset class="Fieldset-Media">
-		<legend>{{ __('fieldset_media') }}</legend>
+	{% block fieldsetContent %}
+		<fieldset class="Fieldset-Content">
+			<legend>{{ __('fieldset_content') }}</legend>
 
-		{% block fieldsetMediaInner %}
-			{% block fieldsetMediaAttributes %}
-				{{ AttributesHelper.allControls('media') }}
+			{% block fieldsetContentInner %}
+				{% block fieldsetContentAttributes %}
+					{{ AttributesHelper.allControls('content') }}
+				{% endblock %}
 			{% endblock %}
-		{% endblock %}
-	</fieldset>
-{% endblock %}
+		</fieldset>
+	{% endblock %}
 
-{% block fieldsetAttributes %}
-	<fieldset class="Fieldset-Attributes">
-		<legend>{{ __('fieldset_attributes') }}</legend>
+	{% block fieldsetMedia %}
+		<fieldset class="Fieldset-Media">
+			<legend>{{ __('fieldset_media') }}</legend>
 
-		{% block fieldsetAttributesInner %}
-			{% block fieldsetAttributesAttributes %}
-				{{ AttributesHelper.allControls('attributes') }}
+			{% block fieldsetMediaInner %}
+				{% block fieldsetMediaAttributes %}
+					{{ AttributesHelper.allControls('media') }}
+				{% endblock %}
 			{% endblock %}
-		{% endblock %}
-	</fieldset>
-{% endblock %}
+		</fieldset>
+	{% endblock %}
 
-{% block formInputReloadForm %}
-	{{ FormHelper.hidden('reload_form', {val: 0}) }}
-{% endblock %}
+	{% block fieldsetAttributes %}
+		<fieldset class="Fieldset-Attributes">
+			<legend>{{ __('fieldset_attributes') }}</legend>
+
+			{% block fieldsetAttributesInner %}
+				{% block fieldsetAttributesAttributes %}
+					{{ AttributesHelper.allControls('attributes') }}
+				{% endblock %}
+			{% endblock %}
+		</fieldset>
+	{% endblock %}
+
+	{% block formInputReloadForm %}
+		{{ FormHelper.hidden('reload_form', {val: 0}) }}
+	{% endblock %}
+</div>

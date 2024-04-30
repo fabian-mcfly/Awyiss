@@ -1,118 +1,120 @@
 {#
-@var ao_menuEntry \Awyiss\Model\Entity\MenuEntry
-@var ao_possibleParentMenuEntries \Cake\Collection\Iterator\TreeIterator
-@var as_languageRealm string
+@var menuEntry \Awyiss\Model\Entity\MenuEntry
+@var possibleParentMenuEntries \Cake\Collection\Iterator\TreeIterator
+@var languageRealm string
 @var _view \Awyiss\View\BackendView
 #}
 
-{% block fieldsetPresentation %}
-	<fieldset class="Fieldset-Presentation">
-		<legend>{{ __('fieldset_presentation') }}</legend>
+<div class="Fieldsets">
+	{% block fieldsetPresentation %}
+		<fieldset class="Fieldset-Presentation">
+			<legend>{{ __('fieldset_presentation') }}</legend>
 
-		{% block fieldsetPresentationInner %}
-			{% block formControlActive %}
-				{{ FormHelper.control('active') }}
+			{% block fieldsetPresentationInner %}
+				{% block formControlActive %}
+					{{ FormHelper.control('active') }}
+				{% endblock %}
+
+				{% block formControlExternal %}
+					{{ FormHelper.control('external') }}
+				{% endblock %}
+
+				{% block fieldsetPresentationAttributes %}
+					{{ AttributesHelper.allControls('presentation') }}
+				{% endblock %}
 			{% endblock %}
+		</fieldset>
+	{% endblock %}
 
-			{% block formControlExternal %}
-				{{ FormHelper.control('external') }}
+	{% block fieldsetConditions %}
+		<fieldset class="Fieldset-Conditions">
+			<legend>{{ __('fieldset_conditions') }}</legend>
+
+			{% block fieldsetConditionsInner %}
+				{% block formControlMenuId %}
+					{{ CategoriesHelper.control('menu', {'data-form-updater': true}) }}
+				{% endblock %}
+
+				{% block formControlLanguageShortcode %}
+					{{ LocaleHelper.control('language_shortcode', {languageRealm: languageRealm, 'data-form-updater': true}) }}
+				{% endblock %}
+
+				{% block formControlParentId %}
+					{{ FormHelper.control('parent_id', {options: hashPrinter(possibleParentMenuEntries, 'label', 'id', '- '), 'data-form-updater': true}) }}
+				{% endblock %}
+
+				{% block formControlSystemOrder %}
+					{{ SystemOrderHelper.control('system_order', {entity: menuEntry}) }}
+				{% endblock %}
+
+				{% block fieldsetConditionsAttributes %}
+					{{ AttributesHelper.allControls('conditions') }}
+				{% endblock %}
 			{% endblock %}
+		</fieldset>
+	{% endblock %}
 
-			{% block fieldsetPresentationAttributes %}
-				{{ AttributesHelper.allControls('presentation') }}
+	{% block fieldsetGeneral %}
+		<fieldset class="Fieldset-General">
+			<legend>{{ __('fieldset_general') }}</legend>
+
+			{% block fieldsetGeneralInner %}
+				{% block formControlTitle %}
+					{{ FormHelper.control('title') }}
+				{% endblock %}
+
+				{% block formControlLink %}
+					{{ FormHelper.control('link') }}
+				{% endblock %}
+
+				{% block fieldsetGeneralAttributes %}
+					{{ AttributesHelper.allControls('general') }}
+				{% endblock %}
 			{% endblock %}
-		{% endblock %}
-	</fieldset>
-{% endblock %}
+		</fieldset>
+	{% endblock %}
 
-{% block fieldsetConditions %}
-	<fieldset class="Fieldset-Conditions">
-		<legend>{{ __('fieldset_conditions') }}</legend>
+	{% block fieldsetContent %}
+		<fieldset class="Fieldset-Content">
+			<legend>{{ __('fieldset_content') }}</legend>
 
-		{% block fieldsetConditionsInner %}
-			{% block formControlMenuId %}
-				{{ CategoriesHelper.control('menu') }}
+			{% block fieldsetContentInner %}
+				{% block fieldsetContentAttributes %}
+					{{ AttributesHelper.allControls('content') }}
+				{% endblock %}
 			{% endblock %}
+		</fieldset>
+	{% endblock %}
 
-			{% block formControlLanguageShortcode %}
-				{{ LocaleHelper.control('language_shortcode', {languageRealm: as_languageRealm}) }}
+	{% block fieldsetMedia %}
+		<fieldset class="Fieldset-Media">
+			<legend>{{ __('fieldset_media') }}</legend>
+
+			{% block fieldsetMediaInner %}
+				{% block fieldsetMediaAttributes %}
+					{{ AttributesHelper.allControls('media') }}
+				{% endblock %}
 			{% endblock %}
+		</fieldset>
+	{% endblock %}
 
-			{% block formControlParentId %}
-				{{ FormHelper.control('parent_id', {options: hashPrinter(ao_possibleParentMenuEntries, 'label', 'id', '- ')}) }}
+	{% block fieldsetAttributes %}
+		<fieldset class="Fieldset-Attributes">
+			<legend>{{ __('fieldset_attributes') }}</legend>
+
+			{% block fieldsetAttributesInner %}
+				{% block fieldsetAttributesAttributes %}
+					{{ AttributesHelper.allControls('attributes') }}
+				{% endblock %}
 			{% endblock %}
+		</fieldset>
+	{% endblock %}
 
-			{% block formControlSystemOrder %}
-				{{ SystemOrderHelper.control('system_order', {entity: ao_menuEntry}) }}
-			{% endblock %}
+	{% block elementPublicationData %}
+		{{ element('publication_data/fieldset') }}
+	{% endblock %}
 
-			{% block fieldsetConditionsAttributes %}
-				{{ AttributesHelper.allControls('conditions') }}
-			{% endblock %}
-		{% endblock %}
-	</fieldset>
-{% endblock %}
-
-{% block fieldsetGeneral %}
-	<fieldset class="Fieldset-General">
-		<legend>{{ __('fieldset_general') }}</legend>
-
-		{% block fieldsetGeneralInner %}
-			{% block formControlTitle %}
-				{{ FormHelper.control('title') }}
-			{% endblock %}
-
-			{% block formControlLink %}
-				{{ FormHelper.control('link') }}
-			{% endblock %}
-
-			{% block fieldsetGeneralAttributes %}
-				{{ AttributesHelper.allControls('general') }}
-			{% endblock %}
-		{% endblock %}
-	</fieldset>
-{% endblock %}
-
-{% block fieldsetContent %}
-	<fieldset class="Fieldset-Content">
-		<legend>{{ __('fieldset_content') }}</legend>
-
-		{% block fieldsetContentInner %}
-			{% block fieldsetContentAttributes %}
-				{{ AttributesHelper.allControls('content') }}
-			{% endblock %}
-		{% endblock %}
-	</fieldset>
-{% endblock %}
-
-{% block fieldsetMedia %}
-	<fieldset class="Fieldset-Media">
-		<legend>{{ __('fieldset_media') }}</legend>
-
-		{% block fieldsetMediaInner %}
-			{% block fieldsetMediaAttributes %}
-				{{ AttributesHelper.allControls('media') }}
-			{% endblock %}
-		{% endblock %}
-	</fieldset>
-{% endblock %}
-
-{% block fieldsetAttributes %}
-	<fieldset class="Fieldset-Attributes">
-		<legend>{{ __('fieldset_attributes') }}</legend>
-
-		{% block fieldsetAttributesInner %}
-			{% block fieldsetAttributesAttributes %}
-				{{ AttributesHelper.allControls('attributes') }}
-			{% endblock %}
-		{% endblock %}
-	</fieldset>
-{% endblock %}
-
-{% block elementPublicationData %}
-	{{ element('publication_data/fieldset') }}
-{% endblock %}
-
-{% block formInputReloadForm %}
-	{{ FormHelper.hidden('reload_form', {val: 0}) }}
-{% endblock %}
+	{% block formInputReloadForm %}
+		{{ FormHelper.hidden('reload_form', {val: 0}) }}
+	{% endblock %}
+</div>

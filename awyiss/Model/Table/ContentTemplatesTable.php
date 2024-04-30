@@ -37,7 +37,7 @@ class ContentTemplatesTable extends Table {
 		'active' => false,
 		'content_template_id' => false,
 		'language_shortcode' => false,
-		'page' => false,
+		'page_id' => false,
 		'content_area_id' => false,
 		'parent_id' => true,
 		'system_order' => false,
@@ -107,7 +107,7 @@ class ContentTemplatesTable extends Table {
 	 */
 	public function findWithUsages(SelectQuery $ao_query): SelectQuery {
 		return $ao_query->enableAutoFields()->select([
-			'usedForContents' => $ao_query->func()->count('Contents.id'),
+			'used_for_contents' => $ao_query->func()->count('Contents.id'),
 		])->leftJoinWith('Contents', function (SelectQuery $ao_query) {
 			return $ao_query->applyOptions([
 				'attributes' => [

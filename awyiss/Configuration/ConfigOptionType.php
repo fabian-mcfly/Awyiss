@@ -23,6 +23,7 @@ enum ConfigOptionType {
 	case ListKey;
 	case ListValue;
 	case String;
+	case ValueCollection;
 
 
 	/**
@@ -37,6 +38,7 @@ enum ConfigOptionType {
 			return true;
 		}
 
+		/** @noinspection PhpUncoveredEnumCasesInspection */
 		switch ($this) {
 			case self::Bool:
 				/**
@@ -65,6 +67,7 @@ enum ConfigOptionType {
 
 			case self::Enum:
 			case self::ListValue:
+			case self::ValueCollection:
 				throw new RuntimeException(sprintf('Cannot validate case `%s` in `%s` in the enum directly. Use `\Awyiss\Configuration\ConfigOption::validateConfigValue` instead.', $this->name, self::class));
 
 			case self::String:
@@ -96,8 +99,7 @@ enum ConfigOptionType {
 			self::Bool => $ax_value === 'false' ? false : boolval($ax_value),
 			self::Float => floatval($ax_value),
 			self::Integer => intval($ax_value),
-			self::List => json_decode($ax_value ?? '', true),
-			self::JsonArray => json_decode($ax_value ?? '', true),
+			self::List, self::JsonArray, self::ValueCollection => json_decode($ax_value ?? '', true),
 			self::JsonObject => json_decode($ax_value ?? ''),
 			self::String => strval($ax_value),
 		};

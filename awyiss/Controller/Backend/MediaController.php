@@ -7,9 +7,13 @@ namespace Awyiss\Controller\Backend;
 use Awyiss\Awyiss;
 use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Model\Entity\Media;
+use Awyiss\Model\Entity\MediaFolder;
+use Awyiss\Model\Table;
 use Awyiss\Routing\Router;
+use Cake\Database\Expression\QueryExpression;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
+use Cake\Utility\Inflector;
 
 
 /**
@@ -19,6 +23,27 @@ use Cake\Http\Response;
  */
 class MediaController extends Controller {
 	/**
+	 * @inheritDoc
+	 */
+	protected array $categories = [
+		'queryConditions' => [
+			'active' => true,
+			'parents_active' => true,
+		],
+		'uriParam' => 'media-folder-id',
+	];
+	/**
+	 * @inheritDoc
+	 */
+	protected array $paginate = [
+		'enabled' => false,
+		'order' => [
+			'name' => 'asc',
+		],
+	];
+
+
+	/**
 	 * Overview method
 	 *
 	 * @throws \Exception
@@ -26,13 +51,55 @@ class MediaController extends Controller {
 	public function overview(): void {
 		$this->Authorization->ensure('read');
 
-		$lo_media = $this->Media->find()->where($this->getOverviewWhere());
-		$this->Categories->filterQuery($lo_media, null, !$this->paginate['enabled']);
+		$lo_query = $this->Media->find()->where($this->getOverviewWhere());
+		$this->Categories->filterQuery($lo_query, null, !$this->paginate['enabled']);
+
+		if ($this->request->getParam('paginate')) {
+			$lb_paginated = ($this->request->getParam('paginate', 'false') === 'true');
+		}
+		else {
+			$lb_paginated = $this->paginate['enabled'];
+		}
+
+		if ($lb_paginated) {
+			$lo_media = $this->paginate($lo_query);
+		}
+		else {
+			$lo_media = $lo_query->all();
+		}
+
+		$lo_mediaFolders = $this->Media->MediaFolders->find('active')->find('threaded')->all();
+		$la_mediaFolders = $lo_mediaFolders->groupBy(function (MediaFolder $ao_element) {
+			return $ao_element->languageShortcode ?? '';
+		})->toArray();
+
+		$ls_currentLanguageShortcode = $this->request->getParam('lang');
+		// Sort the grouped media folders by the global and the current language first
+		uksort($la_mediaFolders, function ($as_a, $as_b) use ($ls_currentLanguageShortcode) {
+			if ($as_a === '' || $as_a === $ls_currentLanguageShortcode) {
+				return -1;
+			}
+
+			if ($as_b === '' || $as_b === $ls_currentLanguageShortcode) {
+				return 1;
+			}
+
+			return 0;
+		});
 
 		$this->set([
-			'ao_media' => $lo_media,
-			'as_languageRealm' => Awyiss::REALM_FRONTEND,
+			'media' => $lo_media,
+			'groupedMediaFolders' => $la_mediaFolders,
+			'maxFileSize' => $this->Media->getMaxFileSize(),
+			'isAjax' => $this->request->is('ajax'),
+			'languageRealm' => Awyiss::REALM_FRONTEND,
+			'paginated' => $lb_paginated,
+			'attributes' => $this->Media->getAttributes(),
 		]);
+
+		if ($this->request->is('ajax')) {
+			$this->viewBuilder()->disableAutoLayout();
+		}
 	}
 
 
@@ -48,12 +115,57 @@ class MediaController extends Controller {
 		$lo_media = $this->Media->newDefaultEntity();
 
 		if ($this->request->is('post')) {
-			$this->save($lo_media);
+			try {
+				$this->save($lo_media, 'add', $this->request->is('ajax'));
+			}
+			catch (RedirectException $lo_exception) {
+				if (!$this->request->is('ajax')) {
+					throw $lo_exception;
+				}
+			}
+
+			if ($this->request->is('ajax')) {
+				$ls_errorMessage = null;
+				if ($lo_media->hasErrors()) {
+					$la_errors = $lo_media->getErrors();
+					//First key will be the field name
+					$ls_field = key($la_errors);
+
+					$la_errors = $la_errors[ $ls_field ];
+					$ls_errorMessage = __(Inflector::underscore($ls_field)) . ': ';
+					$ls_errorMessage .= array_values($la_errors)[0];
+				}
+
+				// Consume the flash messages to prevent them from being displayed the next time the page is loaded
+				$this->request->getFlash()->consume('media');
+
+				// Set the view class to JSON
+				$this->viewBuilder()->disableAutoLayout();
+
+				$lo_elementView = $this->createView();
+				$lo_elementView->set([
+					'mediaItem' => $lo_media,
+					'paginate' => ($this->request->getParam('paginate', 'false') === 'true'),
+				]);
+
+				$this->set([
+					'response' => [
+						'html' => $lo_media->hasErrors() ? null : $lo_elementView->render('Backend/Media/overview_ajax_item'),
+						'message' => $ls_errorMessage,
+						'success' => !$lo_media->hasErrors(),
+						'id' => 'Media-ListItem' . $lo_media->id,
+						'item' => $lo_media->getErrors(),
+					],
+				]);
+
+				$this->viewBuilder()->setClassName('Json');
+				$this->viewBuilder()->setOption('serialize', 'response');
+			}
 		}
 
 		$this->set([
-			'ao_media' => $lo_media,
-			'as_languageRealm' => Awyiss::REALM_FRONTEND,
+			'media' => $lo_media,
+			'languageRealm' => Awyiss::REALM_FRONTEND,
 		]);
 	}
 
@@ -67,23 +179,67 @@ class MediaController extends Controller {
 	public function edit(int $ai_id) {
 		$this->Authorization->ensure('update');
 
-		/** @var \Awyiss\Model\Entity\Media $lo_media */
-		$lo_media = $this->Media->findById($ai_id)->find('translations')->first();
+		try {
+			/** @var \Awyiss\Model\Entity\Media $lo_media */
+			$lo_media = $this->Media->findById($ai_id)->find('translations')->first();
 
-		if (!$lo_media) {
-			$this->Flash->error(__('record_not_found'));
+			if (!$lo_media) {
+				$this->Flash->error(__('record_not_found'));
 
+				return $this->redirect(['action' => 'overview']);
+			}
 
-			return $this->redirect(['action' => 'overview']);
+			if ($this->request->is(['patch', 'post', 'put'])) {
+				$this->save($lo_media, 'edit', $this->request->is('ajax'));
+			}
+		}
+		catch (RedirectException $lo_exception) {
+			if (!$this->request->is('ajax')) {
+				throw $lo_exception;
+			}
 		}
 
-		if ($this->request->is(['patch', 'post', 'put'])) {
-			$this->save($lo_media);
+		if ($this->request->is(['patch', 'post', 'put']) && $this->request->is('ajax')) {
+			$ls_errorMessage = null;
+			if ($lo_media->hasErrors()) {
+				$la_errors = $lo_media->getErrors();
+				//First key will be the field name
+				$ls_field = key($la_errors);
+
+				$la_errors = $la_errors[ $ls_field ];
+				$ls_errorMessage = __(Inflector::underscore($ls_field)) . ': ';
+				$ls_errorMessage .= array_values($la_errors)[0];
+			}
+
+			// Consume the flash messages to prevent them from being displayed the next time the page is loaded
+			$this->request->getFlash()->consume('media');
+
+			// Set the view class to JSON
+			$this->viewBuilder()->disableAutoLayout();
+
+			$lo_elementView = $this->createView();
+			$lo_elementView->set([
+				'mediaItem' => $lo_media,
+				'paginate' => ($this->request->getParam('paginate', 'false') === 'true'),
+			]);
+
+			$this->set([
+				'response' => [
+					'html' => $lo_media->hasErrors() ? null : $lo_elementView->render('Backend/Media/overview_ajax_item'),
+					'message' => $ls_errorMessage,
+					'success' => !$lo_media->hasErrors(),
+					'id' => 'Media-ListItem' . $lo_media->id,
+					'item' => $lo_media->getErrors(),
+				],
+			]);
+
+			$this->viewBuilder()->setClassName('Json');
+			$this->viewBuilder()->setOption('serialize', 'response');
 		}
 
 		$this->set([
-			'ao_media' => $lo_media,
-			'as_languageRealm' => Awyiss::REALM_FRONTEND,
+			'media' => $lo_media,
+			'languageRealm' => Awyiss::REALM_FRONTEND,
 		]);
 	}
 
@@ -91,20 +247,23 @@ class MediaController extends Controller {
 	/**
 	 * Delete method
 	 *
-	 * @param int $ai_id
+	 * @param ?int $ai_id
 	 * @return Response
 	 * @throws \Exception
 	 */
-	public function delete(int $ai_id): Response {
+	public function delete(?int $ai_id = null): Response {
 		$this->Authorization->ensure('delete');
 
 		$this->request->allowMethod(['get', 'delete']);
+
+		if (!$ai_id && $this->request->getMethod() === 'DELETE') {
+			return $this->_deleteMultiple();
+		}
 
 		/** @var Media $lo_media */
 		$lo_media = $this->Media->findById($ai_id)->find('translations')->first();
 		if (!$lo_media) {
 			$this->Flash->error(__('record_not_found'));
-
 
 			return $this->redirect(['action' => 'overview']);
 		}
@@ -128,9 +287,10 @@ class MediaController extends Controller {
 	/**
 	 * @param \Awyiss\Model\Entity\MediaFolder $ao_mediaFolder
 	 * @param string $as_method
+	 * @param bool $ab_isAjax
 	 * @return void
 	 */
-	protected function save(Media $ao_media, string $as_method = 'add'): void {
+	protected function save(Media $ao_media, string $as_method = 'add', bool $ab_isAjax = false): void {
 		$la_associated = [];
 		if ($this->Media->hasAttributes()) {
 			$la_associated[] = $this->Media->getAttributesTableName(true);
@@ -165,7 +325,10 @@ class MediaController extends Controller {
 			'validate' => !$this->request->getData('reload_form'),
 		]);
 
-		if (
+		if ($this->request->is('ajax') && $as_method === 'edit') {
+			$ao_media->file = null;
+		}
+		elseif (
 			!$lo_uploadedFile ||
 			$lo_uploadedFile->getError() === UPLOAD_ERR_INI_SIZE ||
 			$lo_uploadedFile->getError() === UPLOAD_ERR_FORM_SIZE
@@ -178,7 +341,15 @@ class MediaController extends Controller {
 		}
 
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-			if ($this->Media->save($ao_media)) {
+			$la_options = [];
+
+			if ($ab_isAjax) {
+				$la_options = [
+					'systemOrder' => ['skip' => true],
+				];
+			}
+
+			if ($this->Media->save($ao_media, $la_options)) {
 				$this->Flash->success(__($as_method . '_succeeded'));
 
 				if ($this->request->getData('submit') == 'submit_close') {
@@ -203,5 +374,160 @@ class MediaController extends Controller {
 		}
 
 		$this->Categories->ensurePossibleCategory($ao_media);
+	}
+
+
+	/**
+	 * Rebuild the system order to ensure that there are no gaps in the order
+	 *
+	 * @return void
+	 */
+	public function rebuildSystemOrder(): void {
+		$li_folderid = $this->request->getParam('mediaFolderId');
+
+		if (!$li_folderid) {
+			if ($this->request->is('ajax')) {
+				$this->viewBuilder()->setOption('serialize', ['success', 'message']);
+
+				$this->set('success', false);
+				$this->set('message', __d('media_folders', 'record_not_found'));
+
+				// Set the view class to JSON
+				$this->viewBuilder()->setClassName('Json');
+
+				// Setting the response status to 400 Bad Request
+				$this->response = $this->response->withStatus(400, 'Bad Request');
+			}
+			else {
+				$this->Flash->error(__d('media_folders', 'record_not_found'));
+				$this->redirect(['action' => 'overview']);
+			}
+		}
+
+		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+		$li_affectedRows = $this->Media->getBehavior('SystemOrder')->rebuildSystemOrder('systemOrder', SORT_ASC, null, [
+			'media_folder_id' => (int)$li_folderid,
+		]);
+
+		if ($this->request->is('ajax')) {
+			$this->viewBuilder()->setOption('serialize', ['success', 'message']);
+
+			$this->set('success', $li_affectedRows !== false);
+			$this->set('message', $li_affectedRows > 0 ? __d('system', 'system_order_saved') : __d('system', 'system_order_not_saved'));
+
+			// Set the view class to JSON
+			$this->viewBuilder()->setClassName('Json');
+
+			if ($li_affectedRows === false) {
+				// Setting the response status to 422 Unprocessable Entity
+				$this->response = $this->response->withStatus(422, 'Unable to process entity');
+			}
+		}
+		else {
+			if ($li_affectedRows === false) {
+				$this->Flash->error(__('rebuild_system_order_failed'));
+			}
+			else {
+				$this->Flash->success(__('rebuild_system_order_succeeded'));
+			}
+
+			$this->redirect(['action' => 'overview']);
+		}
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	protected function _saveSystemOrder(array $aa_requestData, Table $ao_table): int {
+		$li_mediaFolderId = $this->request->getData('media_folder_id');
+
+		$la_orderData = [];
+		foreach ($aa_requestData as $li_index => $li_mediaId) {
+			$la_orderData[] = [
+				'id' => $li_mediaId,
+				'mediaFolderId' => (int)$li_mediaFolderId,
+				'systemOrder' => $li_index + 1,
+			];
+		}
+
+		/** @noinspection PhpUnnecessaryLocalVariableInspection */
+		$li_affectedRows = $ao_table->updateAll(function (QueryExpression $ao_expression) use ($la_orderData) {
+			$lo_folderCase = $ao_expression->case();
+			$lo_systemOrderCase = $ao_expression->case();
+
+			foreach ($la_orderData as $la_data) {
+				$lo_folderCase->when(['id' => $la_data['id']])->then($la_data['mediaFolderId'], 'integer');
+				$lo_systemOrderCase->when(['id' => $la_data['id']])->then($la_data['systemOrder'], 'integer');
+			}
+
+			return [
+				'media_folder_id' => $lo_folderCase,
+				'system_order' => $lo_systemOrderCase,
+			];
+		}, [
+			'id IN' => array_column($la_orderData, 'id'),
+		]);
+
+
+		return $li_affectedRows;
+	}
+
+
+	/**
+	 * @return \Cake\Http\Response
+	 */
+	protected function _deleteMultiple(): Response {
+		$li_ids = $this->request->getData('ids');
+		$li_mediaFolderId = $this->request->getData('media_folder_id');
+
+		$ls_error = null;
+		if (!$li_ids) {
+			$ls_error = __('no_records_selected');
+		}
+		else {
+			$lo_query = $this->Media->find()->where([
+				'id IN' => $li_ids,
+				'media_folder_id' => (int)$li_mediaFolderId,
+			]);
+			$lo_media = $lo_query->all();
+
+			if (
+				!$lo_media->count() ||
+				!$this->Media->deleteMany($lo_media, [
+					'atomic' => false,
+					'systemOrder' => ['skip' => $lo_media->count() > 1],
+				])
+			) {
+				$ls_error = __('delete_failed');
+			}
+			elseif ($lo_media->count() > 1) {
+				// Rebuild the system order if multiple records were deleted
+				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+				$this->Media->getBehavior('SystemOrder')->rebuildSystemOrder('systemOrder', SORT_ASC, null, [
+					'media_folder_id' => (int)$li_mediaFolderId,
+				]);
+			}
+		}
+
+		if ($this->request->is('ajax')) {
+			$la_response = [
+				'message' => $ls_error ?: __('delete_succeeded'),
+				'success' => $ls_error === null,
+			];
+
+			return $this->response->withStatus($ls_error ? 400 : 200, $ls_error ? 'Bad Request' : 'OK')
+				->withType('application/json')
+				->withStringBody(json_encode($la_response));
+		}
+
+		if ($ls_error) {
+			$this->Flash->error(__('no_records_selected'));
+		}
+		else {
+			$this->Flash->success(__('delete_succeeded'));
+		}
+
+		return $this->redirect(['action' => 'overview']);
 	}
 }

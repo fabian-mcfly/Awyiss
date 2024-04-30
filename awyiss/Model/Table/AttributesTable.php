@@ -8,6 +8,7 @@ use Awyiss\Core\App;
 use Awyiss\Model\Entity\Attribute;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
+use Awyiss\Utility\Content\BootstrapColumnSystem;
 use Cake\Database\Driver\Mysql;
 use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\FactoryLocator;
@@ -59,6 +60,10 @@ class AttributesTable extends Table {
 		'useDatasource' => false,
 	];
 	/**
+	 * @var array The column widths
+	 */
+	protected array $columnSpans;
+	/**
 	 * @var array
 	 */
 	protected array $defaultAvailableFieldsets = [
@@ -101,6 +106,16 @@ class AttributesTable extends Table {
 	protected array $translate = [
 		'fields' => ['title'],
 	];
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public function initialize(array $aa_config): void {
+		parent::initialize($aa_config);
+
+		$this->columnSpans = BootstrapColumnSystem::getColumnWidths();
+	}
 
 
 	/**
@@ -210,6 +225,16 @@ class AttributesTable extends Table {
 
 		$ao_validator->add('translatable', [
 			'boolean' => ['rule' => 'boolean'],
+		]);
+
+
+		$ao_validator->add('columSpan', [
+			'inList' => [
+				'rule' => [
+					'inList',
+					array_keys($this->columnSpans),
+				],
+			],
 		]);
 
 
@@ -420,5 +445,13 @@ class AttributesTable extends Table {
 
 
 		return $this->attributeScopes;
+	}
+
+
+	/**
+	 * @return array
+	 */
+	public function getColumnSpans(): array {
+		return $this->columnSpans;
 	}
 }

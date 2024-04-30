@@ -4,11 +4,13 @@
 namespace Awyiss\Controller\Component;
 
 
+use Awyiss\Controller\AppController;
 use Cake\Controller\Component;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\ResultSetInterface;
 use Cake\ORM\ResultSet;
 use Cake\Utility\Inflector;
+use Cake\View\ViewBuilder;
 
 
 /**
@@ -19,7 +21,6 @@ use Cake\Utility\Inflector;
  * and `ensurePossibleSystemOrder()` to make sure the set `system_order` is valid.
  *
  * @method \Awyiss\Controller\AppController getController()
- * @noinspection PhpFullyQualifiedNameUsageInspection
  */
 class SystemOrderComponent extends Component {
 	/**
@@ -45,7 +46,7 @@ class SystemOrderComponent extends Component {
 			$this->setConfig('entityName', Inflector::variable(Inflector::singularize($this->getController()->getName())));
 		}
 
-		if ($this->getConfig('field') !== 'systemOrder') {
+		if (Inflector::variable($this->getConfig('field', 'systemOrder')) !== 'systemOrder') {
 			$this->setConfig('autoload', false);
 		}
 
@@ -57,8 +58,8 @@ class SystemOrderComponent extends Component {
 
 	/**
 	 * Sets view vars before rendering a view
-	 *  - ao_systemOrderRecords
-	 *  - aa_systemOrderRelatedColumns
+	 *  - systemOrderRecords
+	 *  - systemOrderRelatedColumns
 	 *
 	 * @return void
 	 */
@@ -66,7 +67,7 @@ class SystemOrderComponent extends Component {
 		$lo_controller = $this->getController();
 		$lo_view = $lo_controller->viewBuilder();
 
-		if (!$this->getConfig('tableName') || $this->getConfig('field') !== 'systemOrder') {
+		if (!$this->getConfig('tableName') || Inflector::variable($this->getConfig('field', 'systemOrder')) !== 'systemOrder') {
 			return;
 		}
 
@@ -81,50 +82,68 @@ class SystemOrderComponent extends Component {
 		$lo_records = $this->getConfig('records');
 
 		if (!$lo_records) {
-			$ls_action = $lo_controller->getRequest()->getParam('action');
-			$lx_autoload = $this->getConfig('autoload');
-
-			//Shall we autoload the records?
-			if ($lx_autoload === true || (is_array($lx_autoload) && in_array($ls_action, $lx_autoload)) || (is_string($lx_autoload) && $ls_action === $lx_autoload)) {
-				$ls_varName = 'ao_' . $this->getConfig('entityName');
-				$lo_entity = $lo_view->getVar($ls_varName);
-				if ($lo_entity) {
-					//Get the records from the database
-					$lo_records = $this->getRecords($lo_entity);
-
-					//Make sure the system_order property of the found entity is a legit one
-					$this->ensurePossibleSystemOrder($lo_entity);
-
-					$lo_request = $lo_controller->getRequest();
-					//When system_order is part of the request data, overwrite it since it might be outdated
-					if ($lo_request->getData('system_order')) {
-						$lo_request = $lo_request->withData('system_order', $lo_entity->systemOrder);
-						$lo_controller->setRequest($lo_request);
-					}
-				}
-			}
+			$lo_records = $this->autoloadRecords($lo_controller, $lo_view);
 		}
 
 		//Set view vars if they don't already exist
-		if (!$lo_view->getVar('ao_systemOrderRecords')) {
-			$lo_view->setVar('ao_systemOrderRecords', $lo_records);
+		if (!$lo_view->getVar('systemOrderRecords')) {
+			$lo_view->setVar('systemOrderRecords', $lo_records);
 		}
 
 		//Set view vars if they don't already exist
-		if (!$lo_view->getVar('aa_systemOrderRelatedColumns')) {
+		if (!$lo_view->getVar('systemOrderRelatedColumns')) {
 			$la_relatedColumns = $this->getConfig('relatedColumns');
 			if (!$la_relatedColumns) {
 				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 				$la_relatedColumns = $lo_table->getSystemOrderRelatedColumns();
 			}
 
-			$lo_view->setVar('aa_systemOrderRelatedColumns', $la_relatedColumns);
+			$lo_view->setVar('systemOrderRelatedColumns', $la_relatedColumns);
 		}
 
 		//Set view vars if they don't already exist
-		if (!$lo_view->getVar('as_systemOrderField')) {
-			$lo_view->setVar('as_systemOrderField', $this->getConfig('field'));
+		if (!$lo_view->getVar('systemOrderField')) {
+			$lo_view->setVar('systemOrderField', $this->getConfig('field'));
 		}
+	}
+
+
+	/**
+	 * @param \Awyiss\Controller\AppController $ao_controller
+	 * @param \Cake\View\ViewBuilder $ao_view
+	 * @return \Cake\Datasource\ResultSetInterface|null
+	 */
+	protected function autoloadRecords(AppController $ao_controller, ViewBuilder $ao_view): ?ResultSetInterface {
+		$ls_action = $ao_controller->getRequest()->getParam('action');
+		$lx_autoload = $this->getConfig('autoload');
+
+		//Shall we autoload the records?
+		if ($lx_autoload !== true && (!is_array($lx_autoload) || !in_array($ls_action, $lx_autoload)) && (!is_string($lx_autoload) || $ls_action !== $lx_autoload)) {
+			return null;
+		}
+
+		$ls_varName = $this->getConfig('entityName');
+		$lo_entity = $ao_view->getVar($ls_varName);
+
+		if (!$lo_entity) {
+			return null;
+		}
+
+		//Get the records from the database
+		$lo_records = $this->getRecords($lo_entity);
+
+		//Make sure the system_order property of the found entity is a legit one
+		$this->ensurePossibleSystemOrder($lo_entity);
+
+		$lo_request = $ao_controller->getRequest();
+		//When system_order is part of the request data, overwrite it since it might be outdated
+		if ($lo_request->getData('system_order')) {
+			$lo_request = $lo_request->withData('system_order', $lo_entity->systemOrder);
+			$ao_controller->setRequest($lo_request);
+		}
+
+
+		return $lo_records;
 	}
 
 
@@ -175,7 +194,7 @@ class SystemOrderComponent extends Component {
 	 * @noinspection PhpPossiblePolymorphicInvocationInspection
 	 */
 	public function ensurePossibleSystemOrder(EntityInterface $ao_entity, ?ResultSet $ao_records = null): void {
-		if (!$ao_entity->has('systemOrder') || $this->getConfig('field') !== 'systemOrder') {
+		if (!$ao_entity->has('systemOrder') || Inflector::variable($this->getConfig('field', 'systemOrder')) !== 'systemOrder') {
 			return;
 		}
 

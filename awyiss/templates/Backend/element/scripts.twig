@@ -1,0 +1,48 @@
+{% block scriptBaseVars %}
+	<script nonce="{{ AssetHelper.getScriptNonce() }}">
+		const baseUrl = '{{ baseUrl }}';
+		const currentPath = '{{ currentPath }}';
+		const currentUrl = '{{ currentUrl }}';
+		const language = {{ language|json_encode|raw }};
+		const languageShortcode = '{{ languageShortcode }}';
+	</script>
+{% endblock %}
+
+{% block scriptsAdd %}
+	{% do AssetHelper.addJsModule([
+		'modules/AuditInfo.js',
+		'modules/BatchTextArea.js',
+		'modules/ButtonArea.js',
+		'modules/ButtonHandler.js',
+		'modules/CustomMouseEvent.js',
+		'modules/EventHandler.js',
+		'modules/FieldsetManager.js',
+		'modules/FooterReveal.js',
+		'modules/FormLeaveConfirmation.js',
+		'modules/FormUpdater.js',
+		'modules/IdentifierAutofill.js',
+		'modules/InputListManager.js',
+		'modules/Media/Overlay.js',
+		'modules/Media/Sortable.js',
+		'modules/Media/Upload.js',
+		'modules/MultiSelect.js',
+		'modules/NestedListHandler.js',
+		'modules/Observer.js',
+		'modules/OverflowMenu.js',
+		'modules/OverlayForm.js',
+		'modules/PasswordReveal.js',
+		'modules/ResizableContents.js',
+		'modules/SeoSnippet.js',
+		'modules/TitleSetter.js',
+		'modules/TranslatableTexts.js',
+		'Controller/' ~ controller ~ '.js',
+	]) %}
+
+	{% if controller != 'Pages' %}
+		{% do AssetHelper.addJsModule([
+			'Controller/Pages.js',
+		]) %}
+	{% endif %}
+
+	{% do AssetHelper.add('main.js', {type: 'module'}) %}
+{% endblock %}

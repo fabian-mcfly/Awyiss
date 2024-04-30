@@ -1,0 +1,59 @@
+.UsersController {
+	.Form {
+		.Fieldset-Usergroups {
+			padding:20px;
+
+			.Overview-Table {
+				margin:0;
+			}
+
+			tr {
+				position:relative;
+			}
+
+			.TableHeader-UsergroupCheckbox {
+				width:60px;
+			}
+
+			.TableCell-UsergroupCheckbox {
+				position:static;
+
+				&:has(input:checked) {
+					background-color:var(--colorSuccess);
+
+					&::before {
+						display:none;
+					}
+
+					~ td {
+						background-color:rgba($colorSuccess, .25);
+
+						&::before {
+							background-color:rgba(darken($colorSuccess, 8), .25);
+						}
+					}
+				}
+			}
+
+			.FormInput {
+				margin-bottom:0;
+				position:static;
+
+				.Label {
+					position:absolute;
+					inset:0;
+					z-index:2;
+
+					&::before {
+						top:17px;
+						left:19px;
+
+						.Scale-Small& {
+							top:10px;
+						}
+					}
+				}
+			}
+		}
+	}
+}

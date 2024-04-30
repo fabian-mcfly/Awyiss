@@ -1,121 +1,91 @@
 {#
-@var ao_pageTemplates \Cake\Datasource\ResultSetDecorator
-@var aa_pageTemplates array
-@var ai_selectedPageRoleId int
+@var pageTemplates \Awyiss\Model\Entity\PageTemplate[]
+@var pageTemplatesGroupdByPageRole \Awyiss\Model\Entity\PageTemplate[]
+@var selectedPageRoleId int
 @var _view \Awyiss\View\BackendView
 #}
 
-{% set lx_selectedPageRoleId = CategoriesHelper.getSelectedCategory('pageRole') %}
+{% set selectedPageRoleId = CategoriesHelper.getSelectedCategory('pageRole') %}
 
 <div class="PageTemplates Overview">
-	{% block buttonsOverview %}
-		{% if AuthorizationHelper.isAccessible('create') %}
-			{{ HtmlHelper.link(__('create'), {action: 'add', pageRoleId: lx_selectedPageRoleId}, {class: 'Button'}) }}
-		{% endif %}
-	{% endblock %}
-
 	{% block headlineOverview %}
 		<h1>{{ __('headline_overview') }}</h1>
 	{% endblock %}
 
-	{% block categoriesFilterOverview %}
-		{{ CategoriesHelper.filter('pageRole') }}
+	{% block buttonArea %}
+		<div class="ButtonArea">
+			{% block categoriesFilterOverview %}
+				{{ CategoriesHelper.filter('pageRole') }}
+			{% endblock %}
+
+			{% block buttonsOverview %}
+				{% if paginated == false %}
+					<button class="Button Button-SaveSystemOrder" disabled>{{ __d('system', 'save_system_order') }}</button>
+				{% endif %}
+
+				{% if AuthorizationHelper.isAccessible('create') %}
+					{{ HtmlHelper.link(__('create'), {action: 'add'}, {class : 'Button Button-Add'}) }}
+				{% endif %}
+
+				{% block listControlOverviewListPaginated %}
+					{{ HtmlHelper.link(__('list_paginated'), {action: 'userConfiguration', identifier: 'paginate.enabled', value: 'true'}, {
+						class: 'Button Button-Small Button-ListView Button-ListView-PaginatedList',
+						disabled: localConfig.paginate.enabled == true
+					}) }}
+				{% endblock %}
+
+				{% block listControlOverviewListNested %}
+					{{ HtmlHelper.link(__('list_nested'), {action: 'userConfiguration', identifier: 'paginate.enabled', value: 'false'}, {
+						class: 'Button Button-Small Button-ListView Button-ListView-NestedList',
+						disabled: localConfig.paginate.enabled == false
+					}) }}
+				{% endblock %}
+			{% endblock %}
+		</div>
 	{% endblock %}
 
-	{% for li_pageRoleId, ls_pageRole in aa_pageRoles.simple %}
-		{% block fieldsetOverview %}
-			{% if aa_pageTemplates[ li_pageRoleId ] is defined or lx_selectedPageRoleId == 'all' or lx_selectedPageRoleId == li_pageRoleId %}
-				<fieldset class="Fieldset-Overview">
-					<legend>
-						{% if AuthorizationHelper.scopeIsAccessible('PageRoles', [], ['read']) %}
-							{{ HtmlHelper.link(ls_pageRole, {controller: 'PageRoles', action: 'edit', id: li_key}) }}
-						{% else %}
-							{{ ls_pageRole }}
-						{% endif %}
-					</legend>
-
-					{% block fieldsetOverviewInner %}
-						{% block tableOverview %}
-							<table class="Table-Overview">
-								{% block tableOverviewHead %}
-									<thead>
-										{% block tableOverviewHeadRow %}
-											<tr>
-												{% block tableOverviewHeaderTitle %}
-													<th>{{ __('title') }}</th>
-												{% endblock %}
-
-												{% block tableOverviewHeaderFileName %}
-													<th>{{ __('file_name') }}</th>
-												{% endblock %}
-
-												{% block tableOverviewHeaderContentAreas %}
-													<th>{{ __('content_areas') }}</th>
-												{% endblock %}
-
-												{% block tableOverviewHeaderUsedForPages %}
-													<th>{{ __('used_for_pages') }}</th>
-												{% endblock %}
-
-												{% block tableOverviewHeaderActions %}
-													<th class="actions"></th>
-												{% endblock %}
-											</tr>
-										{% endblock %}
-									</thead>
-								{% endblock %}
-								{% block tableOverviewBody %}
-									<tbody>
-										{# @var lo_pageTemplate \Awyiss\Model\Entity\PageTemplate #}
-										{% for lo_pageTemplate in aa_pageTemplates[ li_pageRoleId ] %}
-											{% block tableOverviewBodyRow %}
-												<tr>
-													{% block tableOverviewCellTitle %}
-														<td>{{ lo_pageTemplate.title }} ({{ lo_pageTemplate.systemOrder }})</td>
-													{% endblock %}
-
-													{% block tableOverviewCellFileName %}
-														<td>{{ lo_pageTemplate.fileName }}</td>
-													{% endblock %}
-
-													{% block tableOverviewCellContentAreas %}
-														<td>{{ lo_pageTemplate.contentAreas|column('label')|join(',<br>')|raw }}</td>
-													{% endblock %}
-
-													{% block tableOverviewCellUsedForPages %}
-														<td>{{ lo_pageTemplate.usedForPages }}</td>
-													{% endblock %}
-
-													{% block tableOverviewCellActions %}
-														<td class="actions">
-															{% if AuthorizationHelper.isAccessible('update') %}
-																{{ HtmlHelper.link(__('edit'), {action: 'edit', id: lo_pageTemplate.id}) }}
-															{% endif %}
-															{% if AuthorizationHelper.isAccessible('delete') %}
-																{% if lo_pageTemplate.usedForPages == 0 %}
-																	{{ HtmlHelper.link(__('delete'), {action: 'delete', id: lo_pageTemplate.id}, {
-				class: 'Button Button-Small Button-Delete',
-				'data-confirm-title': __('confirm_delete_title'),
-				'data-confirm-yes': __('confirm_delete_yes'),
-				'data-confirm-yes-class': 'Button-Delete',
-				'data-confirm-no': __('confirm_delete_no'),
-				'data-confirm': __('confirm_delete', lo_pageTemplate.id) }) }}
-																{% else %}
-																	<a>{{ __('delete') }}</a>
-																{% endif %}
-															{% endif %}
-														</td>
-													{% endblock %}
-												</tr>
-											{% endblock %}
-										{% endfor %}
-									</tbody>
-								{% endblock %}
-							</table>
-						{% endblock %}
-					{% endblock %}
-				</fieldset>
-			{% endif %}
+	{% if paginated %}
+		{% block paginatedOverview %}
+			{% include '@Backend/PageTemplates/overview_paginated_list.twig' with _context|merge({records: pageTemplates.items().toArray()}) %}
 		{% endblock %}
-	{% endfor %}
+	{% else %}
+		{% for pageRoleId, pageRole in pageRoles.simple %}
+			{% block fieldsetOverview %}
+				{% if pageTemplatesGroupdByPageRole[ pageRoleId ] is defined or selectedPageRoleId == 'all' or selectedPageRoleId == pageRoleId %}
+					<fieldset class="Overview-Fieldset">
+						{% block fieldsetOverviewInner %}
+							<legend>
+								{% if AuthorizationHelper.scopeIsAccessible('PageRoles', [], ['read']) %}
+									{{ HtmlHelper.link(pageRole, {controller: 'PageRoles', action: 'edit', id: pageRoleId}) }}
+								{% else %}
+									{{ pageRole }}
+								{% endif %}
+							</legend>
+							{% block listOverview %}
+								{% from '@Backend/macro/nested_list.twig' import nestedList %}
+								{{ nestedList(pageTemplatesGroupdByPageRole[ pageRoleId ], _context|merge({
+									data: {
+										nestable: false,
+										'page-role-id': pageRoleId,
+										'sortable-group': pageRoleId,
+									},
+									displayedFields: localConfig.overview.displayedFields,
+									identifier: 'PageTemplates',
+									template: '@Backend/PageTemplates/overview_nested_list_item.twig',
+								})) }}
+							{% endblock %}
+						{% endblock %}
+					</fieldset>
+				{% endif %}
+			{% endblock %}
+		{% endfor %}
+	{% endif %}
+
+	{% block buttonAreaBottom %}
+		<div class="ButtonArea ButtonArea-Bottom">
+			{{ block('categoriesFilterOverview') }}
+
+			{{ block('buttonsOverview') }}
+		</div>
+	{% endblock %}
 </div>

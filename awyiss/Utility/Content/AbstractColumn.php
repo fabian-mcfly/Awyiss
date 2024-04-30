@@ -4,10 +4,13 @@
 namespace Awyiss\Utility\Content;
 
 
+use JsonSerializable;
+
+
 /**
  * Class AwyissColumn
  */
-abstract class AbstractColumn implements ColumnInterface {
+abstract class AbstractColumn implements ColumnInterface,  JsonSerializable {
 	protected string $cssClassPrefix = 'Column';
 	protected int $denominator;
 	protected string $fraction;
@@ -133,5 +136,20 @@ abstract class AbstractColumn implements ColumnInterface {
 
 
 		return $lf_percentage;
+	}
+
+
+	/**
+	 * @return array
+	 */
+	public function jsonSerialize(): array {
+		return [
+			'cssClass' => $this->getCssClass(),
+			'denominator' => $this->getDenominator(),
+			'fraction' => $this->getFraction(),
+			'label' => $this->getLabel(),
+			'numerator' => $this->getNumerator(),
+			'percentage' => $this->getPercentage(),
+		];
 	}
 }

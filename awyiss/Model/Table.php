@@ -243,7 +243,6 @@ class Table extends BaseTable {
 		else {
 			$this->addAttributesBehavior($ls_sourceTable);
 
-
 			$this->addBehavior('Audit', $this->audit + ['priority' => 99999]);
 
 			if ($lo_schema->getColumn('deleted')) {
@@ -271,15 +270,7 @@ class Table extends BaseTable {
 		}
 
 		if (!empty($aa_config['translateLanguage']) && !empty($this->translate['fields'])) {
-			$this->addBehavior(
-				'Translate',
-				$this->translate + [
-					'allowEmptyTranslations' => false,
-					'defaultLocale' => '',
-					'locale' => $aa_config['translateLanguage']->shortcode ?? null,
-					'strategyClass' => EavStrategy::class,
-				]
-			);
+			$this->addTranslateBehavior($aa_config['translateLanguage']);
 		}
 
 		$this->initializeSchema($lo_schema);
@@ -330,6 +321,10 @@ class Table extends BaseTable {
 	 */
 	public function findForCurrentLanguage(SelectQuery $ao_query, ?string $languageShortcode = null, ?Entity $entity = null, bool $includeGlobal = true): SelectQuery {
 		$ls_languageShortcode = $languageShortcode ?? LocaleMiddleware::getLanguage()->shortcode;
+
+		if ($ls_languageShortcode === '_global') {
+			$ls_languageShortcode = null;
+		}
 
 		if ($entity) {
 			$ls_languageShortcode = $entity->languageShortcode;
@@ -1012,5 +1007,22 @@ class Table extends BaseTable {
 
 
 		return [key($la_finderData), current($la_finderData)];
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Entity\Language $translateLanguage
+	 * @return void
+	 */
+	public function addTranslateBehavior(Language $translateLanguage): void {
+		$this->addBehavior(
+			'Translate',
+			$this->translate + [
+				'allowEmptyTranslations' => false,
+				'defaultLocale' => '',
+				'locale' => $translateLanguage->shortcode ?? null,
+				'strategyClass' => EavStrategy::class,
+			]
+		);
 	}
 }

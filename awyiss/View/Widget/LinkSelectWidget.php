@@ -62,8 +62,8 @@ class LinkSelectWidget extends BasicWidget {
 		}
 
 		//Add a new class
-		$la_data = $this->_templates->addClass($la_data, 'CustomSelect');
-		$la_data = $this->_templates->addClass($la_data, 'CustomSelect-' . Inflector::camelize(Inflector::underscore($ls_name)));
+		$la_data = $this->_templates->addClass($la_data, 'LinkSelect');
+		$la_data = $this->_templates->addClass($la_data, 'LinkSelect-' . Inflector::camelize(Inflector::underscore($ls_name)));
 
 		//Format the attributes
 		$la_attributes = [
@@ -212,91 +212,138 @@ class LinkSelectWidget extends BasicWidget {
 
 
 	/**
+	 * Builds the options for the select widget.
+	 *
 	 * @param array $aa_data
-	 * @param mixed $lx_selected
-	 * @param mixed $lx_disabled
-	 * @param bool $lx_escape
+	 * @param mixed $ax_selected
+	 * @param mixed $ax_disabled
+	 * @param bool $ax_escape
 	 * @return array
 	 */
-	protected function buildOptions(array $aa_data, mixed $lx_selected, mixed $lx_disabled, bool $lx_escape): array {
+	protected function buildOptions(array $aa_data, mixed $ax_selected, mixed $ax_disabled, bool $ax_escape): array {
 		$la_options = [];
 		foreach ($aa_data['options'] as $lx_key => $lx_value) {
-			//Basic options
-			$la_optionAttributes = [
-				'templateVars' => [],
-				'title' => $lx_value,
-				'label' => null,
-				'levelPrefix' => '',
-				'value' => $lx_key,
-			];
-
-			//If the value is an array and has a `title`-key
-			if (is_array($lx_value) && isset($lx_value['title'])) {
-				//Use this array as the option attributes
-				$la_optionAttributes = $lx_value;
-
-				//Make sure both the `value`-key and $lx_key have the same content
-				if (isset($lx_value['value'])) {
-					$lx_key = $la_optionAttributes['value'];
-				}
-				else {
-					$la_optionAttributes['value'] = $lx_key;
-				}
-
-				if ($la_optionAttributes['isGroupLabel'] ?? null === true) {
-					$la_optionAttributes = $this->setGroupLabelTitle($aa_data, $la_optionAttributes);
-				}
-			}
-
-			if (!isset($la_optionAttributes['templateVars'])) {
-				$la_optionAttributes['templateVars'] = [];
-			}
-			$la_optionAttributes['templateVars']['identifier'] = $aa_data['identifier'];
-
-			//Add a class 'Item' and, if the value of the option is selected, 'Active' as well
-			$la_optionAttributes = $this->_templates->addClass($la_optionAttributes, 'Item');
-
-			$ls_classText = 'Item-' . Text::slug(Inflector::camelize($la_optionAttributes['title']), ['replacement' => '']);
-			$la_optionAttributes = $this->_templates->addClass($la_optionAttributes, $ls_classText);
-
-			if (($la_optionAttributes['id'] ?? false) !== false) {
-				$ls_classText = 'Item-' . Text::slug(Inflector::camelize((string)$la_optionAttributes['id']), ['replacement' => '']);
-				$la_optionAttributes = $this->_templates->addClass($la_optionAttributes, $ls_classText);
-
-				if (!empty($aa_data['id'])) {
-					$la_optionAttributes['id'] = $aa_data['id'] . $ls_classText;
-				}
-			}
-
-			if ($this->isSelected((string)$lx_key, $lx_selected)) {
-				$la_optionAttributes = $this->_templates->addClass($la_optionAttributes, $aa_data['selectedClass'] ?? 'Active');
-			}
-
-			//Depending on the status, use the `option`- or `optionDisabled`-template to render the option
-			$ls_template = 'option';
-			if ($this->isDisabled((string)$lx_key, $lx_disabled)) {
-				$ls_template = 'optionDisabled';
-				//If the option is disabled, add 'Disabled' to the class
-				$la_optionAttributes = $this->_templates->addClass($la_optionAttributes, $aa_data['disabledClass'] ?? 'Disabled');
-			}
-			if ($la_optionAttributes['isGroupLabel'] ?? null === true) {
-				$ls_template = 'groupLabel';
-				$la_optionAttributes = $this->_templates->addClass($la_optionAttributes, 'GroupLabel');
-				$la_optionAttributes = $this->_templates->addClass($la_optionAttributes, 'GroupLabel' . $ls_classText);
-			}
-
-			//Append the formatted template for this option
-			$la_options[] = $this->_templates->format($ls_template, [
-				'attrs' => $this->_templates->formatAttributes($la_optionAttributes, ['title', 'value', 'link', 'levelPrefix', 'isGroupLabel', 'groupLabels']),
-				'templateVars' => $la_optionAttributes['templateVars'],
-				'title' => $lx_escape ? h($la_optionAttributes['title']) : $la_optionAttributes['title'],
-				'levelPrefix' => $lx_escape ? h($la_optionAttributes['levelPrefix']) : $la_optionAttributes['levelPrefix'],
-				'value' => $lx_escape ? h($la_optionAttributes['value']) : $la_optionAttributes['value'],
-				'link' => $la_optionAttributes['link'],
-			]);
+			$la_optionAttributes = $this->createOptionAttributes($lx_key, $lx_value, $aa_data);
+			$la_optionAttributes = $this->addClassesToOption($la_optionAttributes, $lx_key, $ax_selected, $ax_disabled, $aa_data);
+			$la_options[] = $this->formatOption($la_optionAttributes, $ax_escape, $lx_key, $ax_disabled);
 		}
 
-
 		return $la_options;
+	}
+
+
+	/**
+	 * Creates the basic option attributes.
+	 *
+	 * @param mixed $ax_key
+	 * @param mixed $ax_value
+	 * @param array $aa_data
+	 * @return array
+	 */
+	protected function createOptionAttributes(mixed &$ax_key, mixed $ax_value, array $aa_data): array {
+		$la_optionAttributes = [
+			'templateVars' => [],
+			'title' => $ax_value,
+			'label' => null,
+			'levelPrefix' => '',
+			'value' => $ax_key,
+		];
+
+		if (is_array($ax_value) && isset($ax_value['title'])) {
+			$la_optionAttributes = $ax_value;
+			if (isset($ax_value['value'])) {
+				$ax_key = $la_optionAttributes['value'];
+			}
+			else {
+				$la_optionAttributes['value'] = $ax_key;
+			}
+
+			if ($la_optionAttributes['isGroupLabel'] ?? null === true) {
+				$la_optionAttributes = $this->setGroupLabelTitle($aa_data, $la_optionAttributes);
+			}
+		}
+
+		if (!isset($la_optionAttributes['templateVars'])) {
+			$la_optionAttributes['templateVars'] = [];
+		}
+		$la_optionAttributes['templateVars']['identifier'] = $aa_data['identifier'];
+
+		return $la_optionAttributes;
+	}
+
+
+	/**
+	 * Adds classes to the option attributes.
+	 *
+	 * @param array $aa_optionAttributes
+	 * @param mixed $ax_key
+	 * @param mixed $ax_selected
+	 * @param mixed $ax_disabled
+	 * @param array $aa_data
+	 * @return array
+	 */
+	protected function addClassesToOption(array $aa_optionAttributes, mixed $ax_key, mixed $ax_selected, mixed $ax_disabled, array $aa_data): array {
+		$la_optionAttributes = $this->_templates->addClass($aa_optionAttributes, 'Item');
+		$ls_classText = 'Item-' . Text::slug(Inflector::camelize($la_optionAttributes['title']), ['replacement' => '']);
+		$la_optionAttributes = $this->_templates->addClass($la_optionAttributes, $ls_classText);
+
+		if (($la_optionAttributes['id'] ?? false) !== false) {
+			$ls_classText = 'Item-' . Text::slug(Inflector::camelize((string)$la_optionAttributes['id']), ['replacement' => '']);
+			$la_optionAttributes = $this->_templates->addClass($la_optionAttributes, $ls_classText);
+
+			if (!empty($aa_data['id'])) {
+				$la_optionAttributes['id'] = $aa_data['id'] . $ls_classText;
+			}
+		}
+
+		if ($this->isSelected((string)$ax_key, $ax_selected)) {
+			$la_optionAttributes = $this->_templates->addClass($la_optionAttributes, $aa_data['selectedClass'] ?? 'Active');
+		}
+
+		if ($this->isDisabled((string)$ax_key, $ax_disabled)) {
+			$la_optionAttributes = $this->_templates->addClass($la_optionAttributes, $aa_data['disabledClass'] ?? 'Disabled');
+		}
+
+		if ($la_optionAttributes['isGroupLabel'] ?? null === true) {
+			$la_optionAttributes = $this->_templates->addClass($la_optionAttributes, 'GroupLabel');
+			$la_optionAttributes = $this->_templates->addClass($la_optionAttributes, 'GroupLabel' . $ls_classText);
+		}
+		elseif ($la_optionAttributes['isGrouped'] ?? false) {
+			$la_optionAttributes = $this->_templates->addClass($la_optionAttributes, 'IsGrouped');
+		}
+
+		unset($la_optionAttributes['isGrouped']);
+
+		return $la_optionAttributes;
+	}
+
+
+	/**
+	 * Formats the option for output.
+	 *
+	 * @param array $aa_optionAttributes
+	 * @param bool $ax_escape
+	 * @param mixed $ax_key
+	 * @param mixed $ax_disabled
+	 * @return string
+	 */
+	protected function formatOption(array $aa_optionAttributes, bool $ax_escape, mixed $ax_key, mixed $ax_disabled): string {
+		$ls_template = 'option';
+		if ($this->isDisabled((string)$ax_key, $ax_disabled)) {
+			$ls_template = 'optionDisabled';
+		}
+
+		if ($aa_optionAttributes['isGroupLabel'] ?? null === true) {
+			$ls_template = 'groupLabel';
+		}
+
+		return $this->_templates->format($ls_template, [
+			'attrs' => $this->_templates->formatAttributes($aa_optionAttributes, ['title', 'value', 'link', 'levelPrefix', 'isGroupLabel', 'groupLabels']),
+			'templateVars' => $aa_optionAttributes['templateVars'],
+			'title' => $ax_escape ? h($aa_optionAttributes['title']) : $aa_optionAttributes['title'],
+			'levelPrefix' => $ax_escape ? h($aa_optionAttributes['levelPrefix']) : $aa_optionAttributes['levelPrefix'],
+			'value' => $ax_escape ? h($aa_optionAttributes['value']) : $aa_optionAttributes['value'],
+			'link' => $aa_optionAttributes['link'],
+		]);
 	}
 }

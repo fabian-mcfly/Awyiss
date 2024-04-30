@@ -1,136 +1,125 @@
 {#
-@var ao_user \Awyiss\Model\Entity\User
-@var ao_usergroups \Awyiss\Model\Entity\Usergroup[]
+@var user \Awyiss\Model\Entity\User
+@var usergroups \Awyiss\Model\Entity\Usergroup[]
 @var _view \Awyiss\View\BackendView
 #}
 
-{% block fieldsetPresentation %}
-	<fieldset class="Fieldset-Presentation">
-		<legend>{{ __('fieldset_presentation') }}</legend>
+<div class="Fieldsets">
+	{% block fieldsetPresentation %}
+		<fieldset class="Fieldset-Presentation">
+			<legend>{{ __('fieldset_presentation') }}</legend>
 
-		{% block fieldsetPresentationInner %}
-			{% block formControlActive %}
-				{{ FormHelper.control('active') }}
+			{% block fieldsetPresentationInner %}
+				{% block formControlActive %}
+					{{ FormHelper.control('active') }}
+				{% endblock %}
+
+				{% block fieldsetPresentationAttributes %}
+					{{ AttributesHelper.allControls('presentation') }}
+				{% endblock %}
 			{% endblock %}
+		</fieldset>
+	{% endblock %}
 
-			{% block fieldsetPresentationAttributes %}
-				{{ AttributesHelper.allControls('presentation') }}
+	{% block fieldsetConditions %}
+		<fieldset class="Fieldset-Conditions">
+			<legend>{{ __('fieldset_conditions') }}</legend>
+
+			{% block fieldsetConditionsInner %}
+				{% block fieldsetConditionsAttributes %}
+					{{ AttributesHelper.allControls('conditions') }}
+				{% endblock %}
 			{% endblock %}
-		{% endblock %}
-	</fieldset>
-{% endblock %}
+		</fieldset>
+	{% endblock %}
 
-{% block fieldsetConditions %}
-	<fieldset class="Fieldset-Conditions">
-		<legend>{{ __('fieldset_conditions') }}</legend>
+	{% block fieldsetGeneral %}
+		<fieldset class="Fieldset-General">
+			<legend>{{ __('fieldset_general') }}</legend>
 
-		{% block fieldsetConditionsInner %}
-			{% block fieldsetConditionsAttributes %}
-				{{ AttributesHelper.allControls('conditions') }}
+			{% block fieldsetGeneralInner %}
+				{% block formControlUsername %}
+					{{ FormHelper.control('username', {columnSpan: 6}) }}
+				{% endblock %}
+
+				{% block formControlEmail %}
+					{{ FormHelper.control('email', {columnSpan: 6}) }}
+				{% endblock %}
+
+				{% block formControlPassword %}
+					{{ FormHelper.control('password', {columnSpan: 6, type: 'password', value: ''}) }}
+				{% endblock %}
+
+				{% block formControlPasswordConfirm %}
+					{{ FormHelper.control('password_confirm', {columnSpan: 6, type: 'password', value: ''}) }}
+				{% endblock %}
+
+				{% block formControlFirstname %}
+					{{ FormHelper.control('firstname', {columnSpan: 6}) }}
+				{% endblock %}
+
+				{% block formControlLastname %}
+					{{ FormHelper.control('lastname', {columnSpan: 6}) }}
+				{% endblock %}
+
+				{% block fieldsetGeneralAttributes %}
+					{{ AttributesHelper.allControls('general') }}
+				{% endblock %}
 			{% endblock %}
-		{% endblock %}
-	</fieldset>
-{% endblock %}
+		</fieldset>
+	{% endblock %}
 
-{% block fieldsetGeneral %}
-	<fieldset class="Fieldset-General">
-		<legend>{{ __('fieldset_general') }}</legend>
+	{% block fieldsetUsergroups %}
+		<fieldset class="Fieldset-Usergroups">
+			<legend>{{ __('fieldset_usergroups') }}</legend>
 
-		{% block fieldsetGeneralInner %}
-			{% block formControlUsername %}
-				{{ FormHelper.control('username') }}
+			{% block fieldsetUsergroupsInner %}
+				{{ FormHelper.hidden('usergroups._ids', {value: ''}) }}
+
+				{% block userUsergroups %}
+					{% include '@Backend/Users/usergroups_overview_paginated_list.twig' with _context|merge({records: usergroups.items().toArray()}) %}
+				{% endblock %}
 			{% endblock %}
+		</fieldset>
+	{% endblock %}
 
-			{% block formControlPassword %}
-				{{ FormHelper.control('password', {type: 'password', value: ''}) }}
+	{% block fieldsetContent %}
+		<fieldset class="Fieldset-Content">
+			<legend>{{ __('fieldset_content') }}</legend>
+
+			{% block fieldsetContentInner %}
+				{% block fieldsetContentAttributes %}
+					{{ AttributesHelper.allControls('content') }}
+				{% endblock %}
 			{% endblock %}
+		</fieldset>
+	{% endblock %}
 
-			{% block formControlPasswordConfirm %}
-				{{ FormHelper.control('password_confirm', {type: 'password', value: ''}) }}
+	{% block fieldsetMedia %}
+		<fieldset class="Fieldset-Media">
+			<legend>{{ __('fieldset_media') }}</legend>
+
+			{% block fieldsetMediaInner %}
+				{% block fieldsetMediaAttributes %}
+					{{ AttributesHelper.allControls('media') }}
+				{% endblock %}
 			{% endblock %}
+		</fieldset>
+	{% endblock %}
 
-			{% block formControlFirstname %}
-				{{ FormHelper.control('firstname') }}
+	{% block fieldsetAttributes %}
+		<fieldset class="Fieldset-Attributes">
+			<legend>{{ __('fieldset_attributes') }}</legend>
+
+			{% block fieldsetAttributesInner %}
+				{% block fieldsetAttributesAttributes %}
+					{{ AttributesHelper.allControls('attributes') }}
+				{% endblock %}
 			{% endblock %}
+		</fieldset>
+	{% endblock %}
 
-			{% block formControlLastname %}
-				{{ FormHelper.control('lastname') }}
-			{% endblock %}
-
-			{% block formControlEmail %}
-				{{ FormHelper.control('email') }}
-			{% endblock %}
-
-			{% block fieldsetGeneralAttributes %}
-				{{ AttributesHelper.allControls('general') }}
-			{% endblock %}
-		{% endblock %}
-	</fieldset>
-{% endblock %}
-
-{% block fieldsetUsergroups %}
-	<fieldset class="Fieldset-Usergroups">
-		<legend>{{ __('fieldset_usergroups') }}</legend>
-
-		{% block fieldsetUsergroupsInner %}
-			{{ FormHelper.hidden('usergroups._ids', {value: ''}) }}
-			{% block userUsergroups %}
-				<ul class="NoList">
-					{% for lo_usergroup in ao_usergroups %}
-						{% block userUsergroup %}
-							<li>
-								{{ FormHelper.control('usergroups._ids.' ~ lo_usergroup.id, {
-									hiddenField: false,
-									type: 'checkbox',
-									value: lo_usergroup.id,
-									label: lo_usergroup.title,
-									checked: lo_usergroup.id in (ao_user.usergroups)|column('id'),
-								}) }}
-							</li>
-						{% endblock %}
-					{% endfor %}
-				</ul>
-			{% endblock %}
-		{% endblock %}
-	</fieldset>
-{% endblock %}
-
-{% block fieldsetContent %}
-	<fieldset class="Fieldset-Content">
-		<legend>{{ __('fieldset_content') }}</legend>
-
-		{% block fieldsetContentInner %}
-			{% block fieldsetContentAttributes %}
-				{{ AttributesHelper.allControls('content') }}
-			{% endblock %}
-		{% endblock %}
-	</fieldset>
-{% endblock %}
-
-{% block fieldsetMedia %}
-	<fieldset class="Fieldset-Media">
-		<legend>{{ __('fieldset_media') }}</legend>
-
-		{% block fieldsetMediaInner %}
-			{% block fieldsetMediaAttributes %}
-				{{ AttributesHelper.allControls('media') }}
-			{% endblock %}
-		{% endblock %}
-	</fieldset>
-{% endblock %}
-
-{% block fieldsetAttributes %}
-	<fieldset class="Fieldset-Attributes">
-		<legend>{{ __('fieldset_attributes') }}</legend>
-
-		{% block fieldsetAttributesInner %}
-			{% block fieldsetAttributesAttributes %}
-				{{ AttributesHelper.allControls('attributes') }}
-			{% endblock %}
-		{% endblock %}
-	</fieldset>
-{% endblock %}
-
-{% block formInputReloadForm %}
-	{{ FormHelper.hidden('reload_form', {val: 0}) }}
-{% endblock %}
+	{% block formInputReloadForm %}
+		{{ FormHelper.hidden('reload_form', {val: 0}) }}
+	{% endblock %}
+</div>

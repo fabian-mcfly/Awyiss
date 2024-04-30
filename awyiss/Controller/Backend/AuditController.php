@@ -66,9 +66,9 @@ class AuditController extends Controller {
 			// Set the data to be serialized
 			$this->set([
 				'createdBy' => $ls_createdByUser,
-				'createdOn' => $lo_record->get('createdOn')->nice(),
+				'createdOn' => $lo_record->get('createdOn')?->nice(),
 				'changedBy' => $ls_changedByUser,
-				'changedOn' => $lo_record->get('changedOn')->nice(),
+				'changedOn' => $lo_record->get('changedOn')?->nice(),
 				'created' => __('created_info_label'),
 				'changed' => __('changed_info_label'),
 			]);

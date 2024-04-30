@@ -105,7 +105,7 @@ class ScssCompiler {
 	/**
 	 * Compiles the SCSS files into CSS.
 	 *
-	 * @param ScssFilesCollection $files A collection of SCSS files to be compiled.
+	 * @param \Awyiss\Utility\Design\ScssFilesCollection $files A collection of SCSS files to be compiled.
 	 * @param string $basePath The base path for the SCSS files.
 	 * @param array $vars An array of variables to be passed to the SCSS compiler.
 	 * @param bool $returnCss If true, returns the compiled CSS content; otherwise, writes it to the file system.
@@ -208,11 +208,11 @@ class ScssCompiler {
 	protected static function prepareVariables(array $userVars): array {
 		// Define default SCSS variables and their values.
 		$la_defaultVars = [
-			'$gi_page_width' => '1200px',
-			'$gi_page_padding' => '15px',
-			'$gi_singlecolumn_breakpoint' => '768px',
-			'$gi_menu_breakpoint' => '1024px',
-			'$gi_column_margin' => '30px',
+			'$pageWidth' => '1200px',
+			'$pagePadding' => '15px',
+			'$singlecolumnBreakpoint' => '768px',
+			'$menuBreakpoint' => '1024px',
+			'$columnMargin' => '30px',
 			// Add more defaults as necessary.
 		];
 
@@ -256,6 +256,7 @@ class ScssCompiler {
 	 * Performs the compilation of SCSS files into CSS.
 	 *
 	 * @param \SplFileInfo $file
+	 * @param string $basePath
 	 * @param array $vars The variables to be passed to the SCSS compiler.
 	 * @param bool $returnCss If true, returns the compiled CSS content; otherwise, writes it to the file system.
 	 * @return \ScssPhp\ScssPhp\CompilationResult|string|false
@@ -286,6 +287,8 @@ class ScssCompiler {
 			'awyissVersionName' => Inflector::dasherize(Awyiss::VERSION_NAME),
 		]);
 
+		static::$compiler->addVariables(static::getColumnSystemVariables());
+
 		// Set the source map options if the CSS content is not returned.
 		if (!$returnCss) {
 			static::$compiler->setSourceMap(Compiler::SOURCE_MAP_FILE);
@@ -300,7 +303,8 @@ class ScssCompiler {
 		}
 
 		try {
-			$lo_compilationResult = $lo_scssCompiler->compileFile($file->getPathname());
+			// Suppressing the error isn't ideal, but the library has a flaw with attribute selectors.
+			$lo_compilationResult = @$lo_scssCompiler->compileFile($file->getPathname()); // phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged
 
 			if ($returnCss) {
 				// If caller requests the CSS content, return it directly.
@@ -340,5 +344,65 @@ class ScssCompiler {
 
 		// Return the compilation result.
 		return $lo_compilationResult;
+	}
+
+
+	/**
+	 * Returns the column system variables.
+	 *
+	 * @return array<string, array<array<string, string|int>>>
+	 */
+	protected static function getColumnSystemVariables(): array {
+		/** @var \Awyiss\Utility\Content\ColumnSystemInterface $ls_columnSystemClassName */
+		$ls_columnSystemClassName = Configure::read('Awyiss.Contents.Backend.columnSystem.className');
+
+		$la_widths = [];
+		$la_indents = [];
+		foreach ($ls_columnSystemClassName::getColumnWidths() as $lo_column) {
+			$la_widths[] = [
+				'class' => $lo_column->getCssClass(),
+				'numerator' => $lo_column->getNumerator(),
+				'denominator' => $lo_column->getDenominator(),
+			];
+		}
+
+		foreach ($ls_columnSystemClassName::getColumnIndents() as $lo_column) {
+			$la_indents[] = [
+				'class' => $lo_column->getCssClass(),
+				'numerator' => $lo_column->getNumerator(),
+				'denominator' => $lo_column->getDenominator(),
+			];
+		}
+
+		return [
+			'$columnWidths' => static::arrayToScssMap($la_widths),
+			'$columnIndents' => static::arrayToScssMap($la_indents),
+		];
+	}
+
+
+	/**
+	 * Converts an array to a SCSS map.
+	 *
+	 * @param array $array
+	 * @return string
+	 */
+	protected static function arrayToScssMap(array $array): string {
+		$ls_result = '(';
+
+		foreach ($array as $lx_key => $lx_value) {
+			if (is_array($lx_value)) {
+				$lx_value = static::arrayToScssMap($lx_value); // Recursive call for nested arrays
+			}
+
+			if (gettype($lx_key) === 'string') {
+				$ls_result .= '"' . $lx_key . '": ' . $lx_value . ', ';
+			}
+			else {
+				$ls_result .= $lx_value . ', ';
+			}
+		}
+
+		return rtrim($ls_result, ', ') . ')';
 	}
 }

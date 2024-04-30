@@ -147,7 +147,7 @@ if (!function_exists('__dx')) {
 if (!function_exists('__dfx')) {
 	/**
 	 * Allows you to override the current domain for a single message lookup.
-	 * If no translation for the given as_domain can be found, a fallbackdomain will be used
+	 * If no translation for the given domain can be found, a fallbackdomain will be used
 	 * The context is a unique identifier for the translations string that makes it unique
 	 * within the same domain.
 	 *

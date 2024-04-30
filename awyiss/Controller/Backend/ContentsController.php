@@ -10,11 +10,13 @@ use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity\Content;
 use Awyiss\Model\Entity\ContentTemplate;
 use Awyiss\Model\Entity\Page;
+use Awyiss\Model\Table;
 use Awyiss\Routing\Router;
 use Awyiss\Utility\Content\ColumnInterface;
 use Cake\Collection\Collection;
 use Cake\Collection\CollectionInterface;
 use Cake\Core\Configure;
+use Cake\Database\Expression\QueryExpression;
 use Cake\Datasource\Exception\InvalidPrimaryKeyException;
 use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Http\Exception\RedirectException;
@@ -70,7 +72,7 @@ class ContentsController extends Controller {
 		 * because `nestedByContentArea()` works with a Query, not an array.
 		 * This could be changed, but I fail to see any benefits
 		 */
-		$lo_contents = $this->Contents->find()->where($this->getOverviewWhere());
+		$lo_contents = $this->Contents->find()->where($this->getOverviewWhere())->contain(['ContentTemplates']);
 		$this->Categories->filterQuery($lo_contents, null, !$this->paginate['enabled']);
 		$lo_contents = $lo_contents->formatResults(function (Collection $ao_result): Collection {
 			/** @var \Awyiss\Model\Entity\Content $lo_content */
@@ -105,15 +107,27 @@ class ContentsController extends Controller {
 		/** @var class-string<\Awyiss\Utility\Content\ColumnSystemInterface> $ls_columnSystemClass */
 		$ls_columnSystemClass = $this->Contents->getColumnSystemClass();
 
+		$la_contentTemplates = $this->getContentTemplates()->indexBy('id')->toArray();
+		array_map(function (ContentTemplate $ao_contentTemplate) {
+			// Build an array of assigned content elements, indexed by their identifier
+			$ao_contentTemplate->contentTemplateElements = collection($ao_contentTemplate->contentTemplateElements)->indexBy('identifier')->toArray();
+			// Build an array of assigned content areas, indexed by their id
+			$ao_contentTemplate->contentAreaIds = collection($ao_contentTemplate->contentAreas)->filter(function ($ao_contentArea) {
+				return $ao_contentArea->_joinData->pageTemplateId === $this->page->pageTemplateId;
+			})->extract('id')->unique()->toList();
+		}, $la_contentTemplates);
+
 		$this->set([
-			'aa_contents' => $la_contents,
-			'aa_contentAreas' => $la_contentAreas,
-			'aa_unknownContentAreas' => $la_unknownContentAreas,
-			'ao_page' => $this->page,
-			'as_forScope' => $this->Contents->getForScope(),
-			'aa_columnWidths' => $this->Contents->getColumnWidths(),
-			'aa_columnIndents' => $this->Contents->getColumnIndents(),
-			'as_columnSystemName' => $ls_columnSystemClass::getName(),
+			'contents' => $la_contents,
+			'contentAreas' => $la_contentAreas,
+			'unknownContentAreas' => $la_unknownContentAreas,
+			'page' => $this->page,
+			'forScope' => $this->Contents->getForScope(),
+			'contentTemplates' => $la_contentTemplates,
+			'columnWidths' => $this->Contents->getColumnWidths(),
+			'columnIndents' => $this->Contents->getColumnIndents(),
+			'columnSystemName' => $ls_columnSystemClass::getName(),
+			'attributes' => $this->Contents->getAttributes(),
 		]);
 	}
 
@@ -211,6 +225,108 @@ class ContentsController extends Controller {
 
 
 	/**
+	 * Save the column width of one content.
+	 *
+	 * @return void
+	 * @throws \Exception
+	 */
+	public function saveColumnWidth(): void {
+		$lo_request = Router::getRequest();
+
+		/** @var Content $lo_content */
+		$lo_content = $this->Contents->findById($lo_request->getData('id'))->first();
+		if (!$lo_content) {
+			if ($this->request->accepts('application/json')) {
+				$this->viewBuilder()->setOption('serialize', ['success', 'message']);
+
+				$this->set('success', false);
+				$this->set('message', __('record_not_found'));
+
+				// Set the view class to JSON
+				$this->viewBuilder()->setClassName('Json');
+
+				// Setting the response status to 422 Unprocessable Entity
+				$this->response = $this->response->withStatus(404, 'Record not found');
+			}
+			else {
+				$this->Flash->error(__('record_not_found'));
+
+				throw new RedirectException(Router::url(['action' => 'overview'], true), 302);
+			}
+		}
+
+		//Calling this ensures access to the pageId/it's scope resp. the page role.
+		$this->forPage($lo_content->pageId);
+		$this->Authorization->ensure('read');
+
+		$lo_content->set('columnWidth', $lo_request->getData('width'));
+
+		$this->Contents->save($lo_content);
+
+		if ($this->request->accepts('application/json')) {
+			$this->viewBuilder()->setOption('serialize', ['success', 'message']);
+
+			$this->set('success', !$lo_content->hasErrors());
+			$this->set('message', !$lo_content->hasErrors() ? __('edit_succeeded') : __('edit_failed'));
+
+			// Set the view class to JSON
+			$this->viewBuilder()->setClassName('Json');
+
+			if ($lo_content->hasErrors()) {
+				// Setting the response status to 422 Unprocessable Entity
+				$this->response = $this->response->withStatus(422, 'Unable to process entity');
+			}
+		}
+		else {
+			if (!$lo_content->hasErrors()) {
+				$this->Flash->success(__('edit_succeeded'));
+			}
+			else {
+				$this->Flash->error(__('edit_failed'));
+			}
+
+			throw new RedirectException(Router::url(['action' => 'overview'], true), 302);
+		}
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public function saveSystemOrder(): void {
+		$lo_request = Router::getRequest();
+		$lo_table = $this->Contents;
+
+		$li_affectedRows = $this->_saveSystemOrder($lo_request->getData('order'), $lo_table);
+
+		if ($this->request->accepts('application/json')) {
+			$this->viewBuilder()->setOption('serialize', ['success', 'message']);
+
+			$this->set('success', $li_affectedRows !== false);
+			$this->set('message', $li_affectedRows > 0 ? __d('system', 'system_order_saved') : __d('system', 'system_order_not_saved'));
+
+			// Set the view class to JSON
+			$this->viewBuilder()->setClassName('Json');
+
+			if ($li_affectedRows === false) {
+				// Setting the response status to 422 Unprocessable Entity
+				$this->response = $this->response->withStatus(422, 'Unable to process entity');
+			}
+		}
+		else {
+			if ($li_affectedRows) {
+				$this->Flash->success(__d('system', 'system_order_saved'));
+			}
+			else {
+				$this->Flash->error(__d('system', 'system_order_not_saved'));
+			}
+
+			throw new RedirectException(Router::url(['action' => 'overview'], true), 302);
+		}
+	}
+
+
+	/**
 	 * @param Content $ao_content
 	 * @param string $as_method
 	 * @return void
@@ -292,6 +408,72 @@ class ContentsController extends Controller {
 				$this->Authorization->ensure($as_method === 'add' ? 'create' : 'update');
 			}
 		}
+	}
+
+
+	/**
+	 * @param array $aa_requestData
+	 * @param \Awyiss\Model\Table $ao_table
+	 * @return int
+	 * @throws \Exception
+	 */
+	protected function _saveSystemOrder(array $aa_requestData, Table $ao_table): int {
+		// Create a flat array of all order data
+		$la_orderData = [];
+		foreach ($aa_requestData as $la_itemsByContentAreaId) {
+			foreach ($la_itemsByContentAreaId as $li_parentId => $la_items) {
+				array_map(function (array $aa_item) use (&$la_orderData, $li_parentId) {
+					$la_orderData[] = $aa_item + ['parentId' => $li_parentId ?: null];
+				}, $la_items);
+			}
+		}
+
+		// Get the page id of the first content
+		$lo_content = $ao_table->findById($la_orderData[0]['id'])->first();
+
+		// Calling this ensures access to the pageId/it's scope resp. the page role.
+		$this->forPage($lo_content->pageId);
+		$this->Authorization->ensure('read');
+
+		// Now that we have the page id, we get all current contents
+		$lo_contents = $ao_table->find()->where([
+			'page_id' => $lo_content->pageId,
+		])->all();
+
+		// And make sure that all contents in the request data are part of the current contents
+		$la_filteredOrderData = array_filter($la_orderData, function ($la_item) use ($lo_contents) {
+			return $lo_contents->firstMatch(['id' => $la_item['id']]);
+		});
+
+		// If the filtered order does not match the original order, we return 0
+		if ($la_filteredOrderData !== $la_orderData) {
+			return 0;
+		}
+
+		/** @noinspection PhpUnnecessaryLocalVariableInspection */
+		$li_affectedRows = $ao_table->updateAll(function (QueryExpression $ao_expression) use ($la_orderData) {
+			$lo_contentAreaCase = $ao_expression->case();
+			$lo_parentCase = $ao_expression->case();
+			$lo_systemOrderCase = $ao_expression->case();
+
+			foreach ($la_orderData as $la_data) {
+				$lo_contentAreaCase->when(['id' => $la_data['id']])->then($la_data['contentAreaId'], 'integer');
+				$lo_parentCase->when(['id' => $la_data['id']])->then($la_data['parentId'], 'integer');
+				$lo_systemOrderCase->when(['id' => $la_data['id']])->then($la_data['systemOrder'], 'integer');
+			}
+
+
+			return [
+				'content_area_id' => $lo_contentAreaCase,
+				'parent_id' => $lo_parentCase,
+				'system_order' => $lo_systemOrderCase,
+			];
+		}, [
+			'id IN' => array_column($la_orderData, 'id'),
+		]);
+
+
+		return $li_affectedRows;
 	}
 
 
@@ -442,15 +624,15 @@ class ContentsController extends Controller {
 	/**
 	 * @param Content $ao_content
 	 * @param CollectionInterface $ao_threadedContents
-	 * @param \Awyiss\Model\Entity\ContentTemplate $ao_selectedContentTemplate
+	 * @param \Awyiss\Model\Entity\ContentTemplate|null $ao_selectedContentTemplate
 	 * @return void
 	 */
-	protected function ensurePossibleParentId(Content $ao_content, CollectionInterface $ao_threadedContents, ContentTemplate $ao_selectedContentTemplate): void {
+	protected function ensurePossibleParentId(Content $ao_content, CollectionInterface $ao_threadedContents, ?ContentTemplate $ao_selectedContentTemplate): void {
 		// Extract all possible parent ids
 		$la_possibleParentIds = $ao_threadedContents->extract('id')->toList();
 
 		// Build an array of assigned content elements, indexed by their identifier
-		$la_assignedContentElements = collection($ao_selectedContentTemplate->contentTemplateElements)->indexBy('identifier')->toArray();
+		$la_assignedContentElements = $ao_selectedContentTemplate ? collection($ao_selectedContentTemplate->contentTemplateElements)->indexBy('identifier')->toArray() : [];
 
 		// If the parent_id is not in the list of possible parent ids or the parent_id is not assigned to the selected content template
 		if (
@@ -665,18 +847,18 @@ class ContentsController extends Controller {
 		}, $la_columnIndents);
 
 		$this->set([
-			'ao_content' => $ao_content,
-			'ao_contentTemplates' => $lo_contentTemplates,
-			'ao_possibleParentContents' => $lo_possibleParentContents,
-			'ao_page' => $this->page,
-			'aa_assignedAttributes' => $la_assignedAttributes,
-			'aa_contentAreas' => $la_contentAreas,
-			'aa_contentElementsByFieldset' => $la_contentElementsByFieldset,
-			'as_forScope' => $this->Contents->getForScope(),
-			'as_languageRealm' => Awyiss::REALM_FRONTEND,
-			'as_languageShortcode' => $ls_languageShortcode,
-			'aa_columnWidths' => $la_columnWidths,
-			'aa_columnIndents' => $la_columnIndents,
+			'content' => $ao_content,
+			'contentTemplates' => $lo_contentTemplates,
+			'possibleParentContents' => $lo_possibleParentContents,
+			'page' => $this->page,
+			'assignedAttributes' => $la_assignedAttributes,
+			'contentAreas' => $la_contentAreas,
+			'contentElementsByFieldset' => $la_contentElementsByFieldset,
+			'forScope' => $this->Contents->getForScope(),
+			'languageRealm' => Awyiss::REALM_FRONTEND,
+			'languageShortcode' => $ls_languageShortcode,
+			'columnWidths' => $la_columnWidths,
+			'columnIndents' => $la_columnIndents,
 		]);
 	}
 }

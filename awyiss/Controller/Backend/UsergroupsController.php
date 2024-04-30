@@ -28,11 +28,12 @@ class UsergroupsController extends Controller {
 	public function overview(): void {
 		$this->Authorization->ensure('read');
 
-		$lo_usergroups = $this->Usergroups->find()->where($this->getOverviewWhere());
-		$lo_usergroups = $this->paginate($lo_usergroups);
+		$lo_query = $this->Usergroups->find()->where($this->getOverviewWhere());
+		$lo_usergroups = $this->paginate($lo_query);
 
 		$this->set([
-			'ao_usergroups' => $lo_usergroups,
+			'usergroups' => $lo_usergroups,
+			'attributes' => $this->Usergroups->getAttributes(),
 		]);
 	}
 
@@ -58,13 +59,19 @@ class UsergroupsController extends Controller {
 
 		$lo_users = null;
 		if ($lb_usersScopeIsAccessible) {
-			$lo_users = $this->Usergroups->Users->find()->all()->toArray();
+			$lo_query = $this->Usergroups->Users->find();
+			$this->paginate = [
+				'order' => [
+					'username' => 'asc',
+				],
+			];
+			$lo_users = $this->paginate($lo_query);
 		}
 
 		$this->set([
-			'ao_usergroup' => $lo_usergroup,
-			'ao_users' => $lo_users,
-			'aa_authorizationPolicies' => $this->getAuthorizationPolicies(),
+			'usergroup' => $lo_usergroup,
+			'users' => $lo_users,
+			'authorizationPolicies' => $this->getAuthorizationPolicies(),
 		]);
 	}
 
@@ -100,13 +107,19 @@ class UsergroupsController extends Controller {
 
 		$lo_users = null;
 		if ($lb_usersScopeIsAccessible) {
-			$lo_users = $this->Usergroups->Users->find()->all()->toArray();
+			$lo_query = $this->Usergroups->Users->find();
+			$this->paginate = [
+				'order' => [
+					'username' => 'asc',
+				],
+			];
+			$lo_users = $this->paginate($lo_query);
 		}
 
 		$this->set([
-			'ao_usergroup' => $lo_usergroup,
-			'ao_users' => $lo_users,
-			'aa_authorizationPolicies' => $this->getAuthorizationPolicies(),
+			'usergroup' => $lo_usergroup,
+			'users' => $lo_users,
+			'authorizationPolicies' => $this->getAuthorizationPolicies(),
 		]);
 	}
 

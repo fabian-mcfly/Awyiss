@@ -48,6 +48,10 @@ class Menu {
 				$lx_identifier = $lo_item->id;
 			}
 
+			if (!isset($lo_item->identifier)) {
+				$lo_item->identifier = $lx_identifier;
+			}
+
 			$this->items[ $lx_identifier ] = new MenuItem($lo_item, $aa_config, $ai_level);
 		}
 

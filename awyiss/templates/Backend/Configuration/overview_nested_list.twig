@@ -1,0 +1,108 @@
+{% macro recursiveConfigurationListing(configItems, level = 0) %}
+	<ol class="Configuration-List List Level{{ level + 1 }}">
+		{% for identifier, configItem in configItems %}
+			{% if (configItem is array and configItem[0] is not defined) %}
+				{% block listOverviewItemCategory %}
+					<li class="ListItem ListItem-Category">
+						<span class="Title">
+							{{ identifier|variable }}
+						</span>
+						{{ _self.recursiveConfigurationListing(configItem, level + 1) }}
+					</li>
+				{% endblock %}
+			{% else %}
+				{% set firstIsDefault = false %}
+				{% if configItem is not array %}
+					{% set firstIsDefault = true %}
+					{% set configItem = [configItem] %}
+				{% else %}
+					{% if configItem[0].languageShortcode is not empty and configItem[0].configOption is defined %}
+						{% set firstIsDefault = true %}
+						{% set configItem = [configItem[0].configOption]|merge(configItem) %}
+					{% endif %}
+				{% endif %}
+
+				{# @var configuration \Awyiss\Model\Entity\Configuration|\Awyiss\Configuration\ConfigOption #}
+				{% block listOverviewItem %}
+					{% for key, configuration in configItem %}
+						{% set isDefault = firstIsDefault == true and key == 0 %}
+						{% set identifier = isDefault == false and (firstIsDefault == false or key > 0) ? configuration.identifier : identifier %}
+						<li id="Configuration-ListItem{{ isDefault ? identifier|camelize : configuration.id}}"
+							class="ListItem Configuration-ListItem
+								{% if isDefault -%}
+									ListItem-Default Configuration-ListItem{{ identifier|camelize}}
+								{% else -%}
+									Configuration-ListItem{{ configuration.id }}
+								{% endif -%}
+								{{ loop.parent.loop.index0 % 2 == 1 ? 'Even' : 'Odd' }}
+								{% if key > 0 %} RepeatedIdentifier{% endif -%}
+							">
+							<ul class="Data">
+								{% block listOverviewIdentifier %}
+									<li class="DataItem Identifier">
+										{% if key == 0 %}
+											<span class="Label">{{ __('identifier') }}:</span>
+											{{ identifier|split('.')|slice(-1)|join()|variable }}
+										{% endif %}
+									</li>
+								{% endblock %}
+
+								{% block listOverviewValue %}
+									<li class="DataItem Value">
+										{% if key == 0 %}<span class="Label">{{ __('value') }}:</span>{% endif %}
+										{% set value = configuration.printableValue %}
+										{{ value ?? '<em>null</em>' }}
+									</li>
+								{% endblock %}
+
+								{% block listOverviewLanguageShortcode %}
+									<li class="DataItem LanguageShortcode">
+										{% if key == 0 %}<span class="Label">{{ __('language_shortcode') }}:</span>{% endif %}
+										{{ configuration.language_shortcode is defined ? LocaleHelper.languageTitle(configuration.language_shortcode) : '' }}
+									</li>
+								{% endblock %}
+							</ul>
+
+							{% if isDefault %}
+								<div class="AuditInfo Hidden"></div>
+							{% else %}
+								<div class="AuditInfo" data-id="{{ configuration.id }}">
+									<ul class="AuditInfoList">
+										<li><strong>ID:</strong> {{ configuration.id }}</li>
+										{% set description = configuration.description ?? configuration.configOption.description %}
+										{% if description %}
+											<li>
+												<span class="Label">{{ __('description') }}:</span> {{ description }}
+											</li>
+										{% endif %}
+									</ul>
+								</div>
+							{% endif %}
+
+							{% block listOverviewActions %}
+								{% if isDefault == false %}
+									<span class="Actions">
+										{% if AuthorizationHelper.isAccessible('update') %}
+											{{ HtmlHelper.link(__('edit'), {action: 'edit', id: configuration.id}, {class: 'Button Button-Small Button-Edit'}) }}
+										{% endif %}
+
+										{% if AuthorizationHelper.isAccessible('delete') %}
+											{{ HtmlHelper.link(__('delete'), {action: 'delete', id: configuration.id}, {
+												class: 'Button Button-Small Button-Delete',
+												'data-confirm-title': __('confirm_delete_title'),
+												'data-confirm-yes': __('confirm_delete_yes'),
+												'data-confirm-yes-class': 'Button-Delete',
+												'data-confirm-no': __('confirm_delete_no'),
+												'data-confirm': __('confirm_delete', configuration.id),
+											}) }}
+										{% endif %}
+									</span>
+								{% endif %}
+							{% endblock %}
+						</li>
+					{% endfor %}
+				{% endblock %}
+			{% endif %}
+		{% endfor %}
+	</ol>
+{% endmacro %}

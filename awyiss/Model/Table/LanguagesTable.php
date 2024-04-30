@@ -36,6 +36,12 @@ class LanguagesTable extends Table {
 	protected array $systemOrder = [
 		'relatedColumns' => ['realm'],
 	];
+	/**
+	 * @inheritDoc
+	 */
+	protected array $translate = [
+		'fields' => ['title'],
+	];
 
 
 	/**

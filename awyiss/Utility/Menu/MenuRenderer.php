@@ -184,9 +184,11 @@ class MenuRenderer {
 			$ls_childrenContent .= $this->renderList($lo_items, $ai_level + 1, $ai_maxLevel);
 		}
 
+		$lx_identifier = $ao_item->getIdentifier() ?? $ao_item->getTitle();
+
 		$la_data = [
 			'active' => $ao_item->isCurrentRoute($this->currentRoute) || $ao_item->hasCurrentRoute($this->currentRoute) ? ' Active' : '',
-			'identifier' => Inflector::camelize(Text::slug($ao_item->getTitle(), '_')),
+			'identifier' => !is_string($lx_identifier) ? $lx_identifier : Inflector::camelize(Text::slug($lx_identifier, '_')),
 			'level' => $ai_level,
 			'title' => $ao_item->getTitle(),
 		];

@@ -1,0 +1,179 @@
+.ListControl {
+	display:flex;
+	grid-column:1 / -1;
+	align-items:center;
+}
+
+.ListControl-Item {
+	display:inline-block;
+	margin:0;
+	list-style-type:none;
+	vertical-align:middle;
+	flex-basis:25%;
+}
+
+.ListControl-Item-ListLimit {
+	.FormInput {
+		display:flex;
+		margin-bottom:0;
+
+		.Label {
+			margin-left:10px;
+			margin-bottom:0;
+			padding:0;
+			line-height:50px;
+			order:2;
+		}
+
+		select {
+			width:72px;
+			text-align:center;
+		}
+	}
+}
+
+.ListControl-Item-Pagination {
+	flex-basis:50%;
+
+	.Pagination-List {
+		margin:0 auto;
+	}
+}
+
+.ListControl-Item-Counter {
+	font-size:.8rem;
+	line-height:1;
+	text-align:right;
+}
+
+.Pagination-List {
+	--colorBackground:#{darken($colorMedium, 8)};
+	--colorButtons:#{$colorMedium};
+	--colorText:#FFFFFF;
+
+	display:flex;
+	width:fit-content;
+	box-shadow:0 0 10px rgba(0, 0, 0, .05);
+	border-radius:5px;
+	border:2px solid transparent;
+	background-color:var(--colorBackground);
+	color:var(--colorText);
+	position:relative;
+
+	.🌚 & {
+		--colorBackground:#{darken($colorBackgroundContentDarkMode, 2)};
+		--colorButtons:var(--backgroundColorContent);
+	}
+
+	li {
+		margin:0 1px;
+		list-style-type:none;
+		vertical-align:top;
+
+		&.Sort-First,
+		&.Sort-Prev,
+		&.Sort-Next,
+		&.Sort-Last {
+			font-size:0;
+			line-height:0;
+		}
+
+		&.Sort-First {
+			.Arrow {
+				&::before {
+					content:'\f100';
+				}
+			}
+		}
+
+		&.Sort-Next {
+			.Arrow {
+				&::before {
+					content:'\f105';
+				}
+			}
+		}
+
+		&.Sort-Last {
+			.Arrow {
+				&::before {
+					content:'\f101';
+				}
+			}
+		}
+
+		&.Sort-Current {
+			.Number {
+				background-color:var(--colorSuccess);
+
+				&::after {
+					opacity:inherit;
+					transition-delay:.1s, 0s;
+				}
+			}
+		}
+
+		&.Disabled {
+			.Arrow {
+				opacity:.25;
+				pointer-events:none;
+			}
+		}
+
+		&:first-child {
+			margin-left:0;
+		}
+
+		&:last-child {
+			margin-right:0;
+		}
+	}
+
+	.Arrow,
+	.Number {
+		display:block;
+		width:42px;
+		border-bottom-width:0;
+		border-radius:5px;
+		background-color:var(--colorButtons);
+		color:var(--colorText);
+		font-size:.9rem;
+		line-height:42px;
+		text-align:center;
+		position:relative;
+		z-index:1;
+		overflow:hidden;
+
+		&:hover {
+			&::after {
+				opacity:inherit;
+				transition-delay:.1s, 0s;
+			}
+		}
+
+		&:focus {
+			box-shadow:0 0 10px var(--colorSuccess);
+			outline:2px solid var(--colorSuccess);
+			outline-offset:2px;
+			z-index:2;
+		}
+
+		&::after {
+			@extend %ButtonGlow;
+		}
+
+		.Hover {
+			@extend %HoverEffect;
+		}
+	}
+
+	.Arrow {
+		font-size:inherit;
+		line-height:inherit;
+
+		&::before {
+			@include la('\f104', .9rem);
+			line-height:42px;
+		}
+	}
+}

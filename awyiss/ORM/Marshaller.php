@@ -16,7 +16,7 @@ class Marshaller extends BaseMarshaller {
 	/**
 	 * Implemented 1:1 but added a `has`-check before skipping columns and
 	 * extracted that sequencee into `buildProperties()`
-	 * Also passes `aa_options['setter']` to `$entity::set`, to skip using
+	 * Also passes `$aa_options['setter']` to `$entity::set`, to skip using
 	 * setters for default values
 	 *
 	 * @inheritDoc

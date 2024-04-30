@@ -53,6 +53,7 @@ class ContentTemplate extends Entity {
 		'changed_on' => 'changedOn',
 		'deleted_by' => 'deletedBy',
 		'deleted_on' => 'deletedOn',
+		'used_for_contents' => 'usedForContents',
 	];
 
 

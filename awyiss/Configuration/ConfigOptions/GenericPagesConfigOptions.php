@@ -7,7 +7,7 @@ namespace Awyiss\Configuration\ConfigOptions;
 use Awyiss\Awyiss;
 use Awyiss\Configuration\AbstractGenericConfigOptions;
 use Awyiss\Configuration\ConfigOption;
-use Awyiss\Configuration\ConfigOptions\Trait\SystemOrderFieldsTrait;
+use Awyiss\Configuration\ConfigOptions\Trait\TableFieldsTrait;
 use Awyiss\Configuration\ConfigOptions\Trait\TableNamesTrait;
 use Awyiss\Configuration\ConfigOptionType;
 use Cake\Utility\Inflector;
@@ -17,7 +17,7 @@ use Cake\Utility\Inflector;
  * Provides all configuration options for generic pages
  */
 class GenericPagesConfigOptions extends AbstractGenericConfigOptions {
-	use SystemOrderFieldsTrait;
+	use TableFieldsTrait;
 	use TableNamesTrait;
 
 
@@ -105,6 +105,25 @@ class GenericPagesConfigOptions extends AbstractGenericConfigOptions {
 					type: ConfigOptionType::Bool,
 				),
 			],
+			'overview' => [
+				new ConfigOption(
+					defaultValue: [
+						'slug',
+						'pageTemplateId',
+					],
+					identifier: 'displayedFields',
+					localizable: false,
+					personalizable: true,
+					type: ConfigOptionType::ValueCollection,
+					values: function () {
+						$la_fields = $this->getTableFields();
+
+						unset($la_fields['id'], $la_fields['title']);
+
+						return $la_fields;
+					},
+				),
+			],
 			'nest' => [
 				new ConfigOption(
 					defaultValue: false,
@@ -137,6 +156,7 @@ class GenericPagesConfigOptions extends AbstractGenericConfigOptions {
 					defaultValue: true,
 					identifier: 'enabled',
 					localizable: false,
+					nullable: false,
 					type: ConfigOptionType::Bool,
 				),
 			],
@@ -170,7 +190,7 @@ class GenericPagesConfigOptions extends AbstractGenericConfigOptions {
 					localizable: false,
 					nullable: false,
 					type: ConfigOptionType::ListKey,
-					values: $this->getSystemOrderFields(...),
+					values: $this->getTableFields(...),
 				),
 			],
 		]);

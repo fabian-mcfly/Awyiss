@@ -21,8 +21,8 @@ use Cake\Datasource\FactoryLocator;
  * @property string|null $subtitle
  * @property string|null $text
  * @property string|null $link
- * @property float $columnWidth
- * @property float $columnIndent
+ * @property string $columnWidth
+ * @property string $columnIndent
  * @property bool $columnLast
  * @property bool $columnRtl
  * @property string|null $cssClass

@@ -1,0 +1,275 @@
+.UsergroupsController {
+	.Form {
+		.Fieldset-Users {
+			padding:20px;
+
+			.Overview-Table {
+				margin:0;
+			}
+
+			tr {
+				position:relative;
+			}
+
+			.TableHeader-UserCheckbox {
+				width:60px;
+			}
+
+			.TableCell-UserCheckbox {
+				position:static;
+
+				&:has(input:checked) {
+					background-color:var(--colorSuccess);
+
+					&::before {
+						display:none;
+					}
+
+					~ td {
+						background-color:rgba($colorSuccess, .25);
+
+						&::before {
+							background-color:rgba(darken($colorSuccess, 8), .25);
+						}
+					}
+				}
+			}
+
+			.FormInput {
+				margin-bottom:0;
+				position:static;
+
+				.Label {
+					position:absolute;
+					inset:0;
+					z-index:2;
+
+					&::before {
+						top:20px;
+						left:18px;
+
+						.Scale-Small& {
+							top:10px;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	.Fieldset-Permissions {
+		padding-inline:20px;
+		row-gap:2rem;
+	}
+
+	.Fieldset-Permission {
+		margin:0;
+		padding:0;
+		box-shadow:none;
+		gap:0;
+		grid-column:auto / span 6;
+		grid-template-columns:9rem auto;
+
+		&:first-child {
+			margin-top:0;
+		}
+
+		.Title {
+			display:block;
+			margin-block:5px;
+			padding:1rem 20px;
+			border-radius:5px 0 0 5px;
+			background-color:var(--colorMedium);
+			color:var(--colorBright);
+			font-size:1rem;
+			font-family:var(--fontStackHeading);
+			line-height:1.2;
+			position:sticky;
+			top:100px;
+			align-self:start;
+			overflow:hidden;
+
+			.🌚& {
+				background-color:darken($colorBackgroundContentDarkMode, 4);
+			}
+
+			&::after {
+				content:'';
+				width:10px;
+				height:100%;
+				border-radius:50%;
+				box-shadow:0 0 10px rgba(0, 0, 0, .25);
+				position:absolute;
+				top:0;
+				right:-10px;
+			}
+		}
+
+		.Permissions {
+			padding:5px 10px;
+			border-radius:5px;
+			border-left:2px solid var(--colorMedium);
+
+			.🌚& {
+				border-left-color:darken($colorBackgroundContentDarkMode, 4);
+			}
+		}
+
+		.Permission {
+			display:flex;
+			padding:15px;
+			border-radius:5px;
+
+			.Scale-Small& {
+				padding-block:8px;
+			}
+
+			&:nth-child(2n) {
+				background-color:var(--colorLight);
+
+				.🌚& {
+					background-color:var(--colorSemiDark);
+				}
+			}
+		}
+
+		.Label {
+			display:inline-block;
+			width:200px;
+			margin-right:20px;
+		}
+
+		.SimpleRadio {
+			margin-left:auto;
+			font-size:0;
+			line-height:0;
+			position:relative;
+
+			input {
+				position:absolute;
+				opacity:0;
+
+				&:nth-child(1) {
+					&:checked {
+						~ .Labels {
+							&::after {
+								//outline-color:darken($colorSuccess, 8);
+								background-color:var(--colorSuccess);
+								transform:translate(-33px, 0);
+
+								.Scale-Small& {
+									transform:translate(-26px, 0);
+								}
+							}
+						}
+					}
+				}
+
+				&:nth-child(3) {
+					&:checked {
+						~ .Labels {
+							&::after {
+								//outline-color:darken($colorError, 8);
+								background-color:var(--colorError);
+								transform:translate(33px, 0);
+
+								.Scale-Small& {
+									transform:translate(26px, 0);
+								}
+							}
+						}
+					}
+				}
+
+				&:focus {
+					~ .Labels {
+						&::after {
+							box-shadow:0 0 10px var(--colorInfo);
+							outline:2px solid var(--colorInfo);
+							outline-offset:2px;
+						}
+					}
+				}
+			}
+
+			.Labels {
+				display:inline-block;
+				width:99px;
+				height:33px;
+				border-radius:5px;
+				background-color:var(--colorBright);
+				outline:2px solid darken($colorLight, 8);
+				font-size:0;
+				line-height:0;
+				position:relative;
+				vertical-align:top;
+
+				.Scale-Small& {
+					width:80px;
+					height:28px;
+				}
+
+				.🌚& {
+					outline-color:#{darken($colorBackgroundContentDarkMode, 2)};
+					background-color:darken($colorBackgroundContentDarkMode, 4);
+				}
+
+				&.Animate {
+					&::after {
+						animation:blop .5s infinite ease-in-out;
+					}
+				}
+
+				&::after {
+					content:'';
+					width:31px;
+					height:31px;
+					margin:auto;
+					border-radius:5px;
+					//outline:2px solid darken($colorMedium, 5);
+					//outline-offset:-1px;
+					background-color:var(--colorMedium);
+					position:absolute;
+					top:0;
+					right:0;
+					bottom:0;
+					left:0;
+					transition:background-color .3s ease-in-out .1s, transform .3s ease-in-out .1s;
+					transform:translate(0, 0);
+
+					.Scale-Small& {
+						width:24px;
+						height:24px;
+					}
+
+					@keyframes blop {
+						50% {
+							border-radius:50%;
+							scale:1.5 .5;
+						}
+					}
+
+					.🌚& {
+						outline-color:lighten($colorBackgroundContentDarkMode, 8);
+						background-color:lighten($colorBackgroundContentDarkMode, 4);
+					}
+				}
+
+
+				label {
+					display:inline-block;
+					width:33px;
+					height:100%;
+					font-size:0;
+					line-height:0;
+					position:relative;
+					z-index:1;
+
+					.Scale-Small& {
+						width:26px;
+					}
+				}
+			}
+		}
+	}
+}

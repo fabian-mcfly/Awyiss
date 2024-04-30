@@ -75,7 +75,7 @@ class ConfigurationController extends Controller {
 
 		$la_configuration = $lo_configuration->all()->groupBy('realm')->map(function ($aa_data) use ($lo_configOptions) {
 			return Hash::expand(collection($aa_data)->groupBy(function (Configuration $ao_entity) use ($lo_configOptions) {
-				$la_identifier = array_map(function (string $as_identifier) use ($lo_configOptions) {
+				$la_identifier = array_map(function (string $as_identifier) {
 					return ConfigOptionsProvider::sanitizeIdentifier($as_identifier);
 				}, explode('.', $ao_entity->identifier));
 
@@ -94,10 +94,11 @@ class ConfigurationController extends Controller {
 		}
 
 		$this->set([
-			'aa_configuration' => $la_configuration,
-			'aa_mergedConfiguration' => $la_configOptions,
-			'aa_realms' => Awyiss::getRealms(),
-			'as_selectedScope' => $ls_selectedScope,
+			'configuration' => $la_configuration,
+			'mergedConfiguration' => $la_configOptions,
+			'realms' => Awyiss::getRealms(),
+			'selectedScope' => $ls_selectedScope,
+			'attributes' => $this->Configuration->getAttributes(),
 		]);
 	}
 
@@ -135,9 +136,9 @@ class ConfigurationController extends Controller {
 		$lo_configuration->configOption = $lo_configuration->identifier ? $lo_configOptions->getConfigOption($lo_configuration->realm, $lo_configuration->identifier) : null;
 
 		$this->set([
-			'ao_configuration' => $lo_configuration,
-			'aa_configOptions' => $la_configOptions,
-			'aa_realms' => Awyiss::getRealms(),
+			'configuration' => $lo_configuration,
+			'configOptions' => $la_configOptions,
+			'realms' => Awyiss::getRealms(),
 		]);
 	}
 
@@ -180,9 +181,9 @@ class ConfigurationController extends Controller {
 		$lo_configuration->configOption = $lo_configuration->identifier ? $lo_configOptions->getConfigOption($lo_configuration->realm, $lo_configuration->identifier) : null;
 
 		$this->set([
-			'ao_configuration' => $lo_configuration,
-			'aa_configOptions' => $la_configOptions,
-			'aa_realms' => Awyiss::getRealms(),
+			'configuration' => $lo_configuration,
+			'configOptions' => $la_configOptions,
+			'realms' => Awyiss::getRealms(),
 		]);
 	}
 

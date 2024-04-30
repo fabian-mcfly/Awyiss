@@ -7,7 +7,7 @@ namespace Awyiss\Utility\Content;
 /**
  * Class AwyissColumnSystem
  */
-class AwyissColumnSystem extends AbstractColumnSystem {
+final class AwyissColumnSystem extends AbstractColumnSystem {
 	/**
 	 * @inheritDoc
 	 */

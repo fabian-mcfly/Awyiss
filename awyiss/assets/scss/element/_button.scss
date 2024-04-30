@@ -1,0 +1,226 @@
+
+button,
+.Button {
+	--backgroundColor:var(--colorDark);
+	--colorButtonText:var(--colorBright);
+
+	display:inline-block;
+	width:auto;
+	padding:11px 20px;
+	border:0 none;
+	box-shadow:0 0 10px rgba(0, 0, 0, .25);
+	background-color:var(--backgroundColor);
+	color:var(--colorButtonText);
+	font-family:var(--fontStackHeading);
+	font-size:1.1rem;
+	line-height:30px;
+	text-align:center;
+	text-decoration:none;
+	overflow:hidden;
+	position:relative;
+	z-index:1;
+	vertical-align:top;
+	cursor:pointer;
+	transition:background-color .3s linear, outline-color .1s ease-in-out;
+
+	.Scale-Small & {
+		padding-block:11px 10px;
+	}
+
+	.🌚 & {
+		--backgroundColor:#{lighten($colorSemiDarkDarkMode, 4)};
+		background-image:none;
+	}
+
+	&[disabled] {
+		pointer-events:none;
+		opacity:.1;
+	}
+
+	&:hover {
+		--backgroundColor:var(--colorSuccess);
+		transition-delay:.3s, 0s;
+
+		&::before {
+			opacity:inherit;
+			transition-delay:.1s, 0s;
+		}
+	}
+
+	&:focus {
+		box-shadow:0 0 10px var(--colorInfo);
+		outline:2px solid var(--colorInfo);
+		outline-offset:2px;
+
+		&:hover {
+			box-shadow:0 0 10px var(--colorSuccess);
+			outline-color:transparent;
+		}
+	}
+
+	&::before {
+		@extend %ButtonGlow;
+	}
+
+	.Hover {
+		@extend %HoverEffect;
+	}
+}
+
+.Button {
+	&&-Light {
+		background-color:var(--colorLight);
+	}
+
+	&&-Medium {
+		background-color:var(--colorMedium);
+	}
+
+	&&-Neutral {
+		background-color:var(--colorNeutralLight);
+	}
+
+	&&-Success {
+		background-color:var(--colorSuccess);
+	}
+
+	&&-Info {
+		background-color:var(--colorInfo);
+	}
+
+	&&-Warning {
+		background-color:var(--colorWarning);
+	}
+
+	&&-Error,
+	&&-Delete {
+		background-color:var(--colorError);
+	}
+
+	&-Small {
+		padding:5px 10px 4px;
+		border-radius:4px;
+		font-size:.9rem;
+		line-height:1.5;
+
+		.Scale-Small & {
+			min-height:33px;
+			font-size:1rem;
+			padding-block:4px 5px;
+		}
+	}
+
+	&&-Subtle {
+		--backgroundColor:var(--colorMedium);
+		--colorButtonText:var(--colorLight);
+
+		padding-block:4px 5px;
+		font-size:.8rem;
+
+		&::after {
+			translate:0 1px;
+		}
+	}
+
+	&-Add,
+	&-Close,
+	&-Configure,
+	&-Edit,
+	&-Delete,
+	&-Save,
+	&-SaveClose,
+	&-SaveSystemOrder,
+	&-View {
+		&.Button-Small {
+			&::after {
+				width:auto;
+				height:auto;
+				font-size:20px;
+				border:0 none;
+				line-height:.9;
+				vertical-align:-2px;
+				position:relative;
+				top:-1px;
+			}
+		}
+
+		&::after {
+			@include la('\f067', 22px);
+			display:inline-block;
+			width:28px;
+			height:28px;
+			aspect-ratio:1;
+			margin-left:10px;
+			border-radius:50%;
+			border:2px solid;
+			line-height:24px;
+			vertical-align:0;
+
+			transform:translateY(0);
+
+			.Scale-Small & {
+				transform:translateY(1px);
+			}
+		}
+	}
+
+	&-Close {
+		&::after {
+			content:'\f00d';
+		}
+	}
+
+	&-Configure {
+		&::after {
+			content:'\f013';
+		}
+	}
+
+	&-Edit {
+		&::after {
+			content:'\f044';
+		}
+	}
+
+	&-Delete {
+		&::after {
+			content:'\f2ed';
+		}
+	}
+
+	&-Save,
+	&-SaveClose,
+	&-SaveSystemOrder {
+		&::after {
+			content:'\f00c';
+			font-size:18px;
+			transform:translateY(-1px);
+		}
+	}
+
+	&-SaveClose {
+		&::after {
+			content:'\f0e2';
+			margin-bottom:-1px;
+			line-height:22px;
+			transform:translateY(-2px) rotateX(180deg);
+		}
+	}
+
+	&-Delete,
+	&-SaveSystemOrder {
+		transition:outline-color 0.1s ease-in-out;
+
+		&[disabled] {
+			&::after {
+				//display:none;
+			}
+		}
+	}
+
+	&-View {
+		&::after {
+			content:'\f06e';
+		}
+	}
+}

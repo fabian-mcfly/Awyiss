@@ -304,6 +304,7 @@ class AttributeOptions {
 		if ($lx_validate === false) {
 			return true;
 		}
+		//No validate option set? We need to check the other options
 		elseif ($lx_validate === null) {
 			$lx_disabled = $this->getDisabled(true, $ao_entity);
 
@@ -313,11 +314,26 @@ class AttributeOptions {
 			}
 
 			$lx_value = $ax_value;
-			if (!is_scalar($lx_value) && $lx_value !== null) {
+			if ($ax_value === null) {
+				return true;
+			}
+
+			$la_options = $this->getOptions(true, $ao_entity);
+
+			// If the value is an array, we need to check if all values are valid
+			if (is_array($lx_value)) {
+				$lb_inOptions = count(array_intersect_key($la_options, array_flip($lx_value))) === count($lx_value);
+				$lb_inDisabled = array_intersect($lx_value, (array)$lx_disabled);
+
+
+				return $lb_inOptions && !$lb_inDisabled;
+			}
+
+			if (!is_scalar($lx_value)) {
 				$lx_value = $this->getScalar(true, $lx_value, $ao_entity);
 			}
 
-			$lb_inOptions = array_key_exists($lx_value, $this->getOptions(true, $ao_entity));
+			$lb_inOptions = array_key_exists($lx_value, $la_options);
 			$lb_inDisabled = is_array($lx_disabled) && in_array($lx_value, $lx_disabled) ? $lx_disabled : false;
 
 

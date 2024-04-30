@@ -26,12 +26,23 @@ class LanguagesController extends Controller {
 	public function overview(): void {
 		$this->Authorization->ensure('read');
 
-		$lo_languages = $this->Languages->find()->where($this->getOverviewWhere());
-		$lo_languages = $lo_languages->all()->groupBy('realm');
+		$lo_query = $this->Languages->find()->where($this->getOverviewWhere());
+
+		$lb_paginated = $this->paginate['enabled'];
+		if ($lb_paginated) {
+			$lo_languages = $this->paginate($lo_query);
+		}
+		else {
+			$lo_languages = $lo_query->all();
+			$lo_languagesByRealm = $lo_languages->groupBy('realm');
+		}
 
 		$this->set([
-			'ao_languages' => $lo_languages,
-			'aa_realms' => Awyiss::getRealms(),
+			'languages' => $lo_languages,
+			'languagesByRealm' => $lo_languagesByRealm ?? null,
+			'paginated' => $lb_paginated,
+			'realms' => Awyiss::getRealms(),
+			'attributes' => $this->Languages->getAttributes(),
 		]);
 	}
 
@@ -52,8 +63,8 @@ class LanguagesController extends Controller {
 		}
 
 		$this->set([
-			'ao_language' => $lo_language,
-			'aa_realms' => Awyiss::getRealms(),
+			'language' => $lo_language,
+			'realms' => Awyiss::getRealms(),
 		]);
 	}
 
@@ -81,8 +92,8 @@ class LanguagesController extends Controller {
 		}
 
 		$this->set([
-			'ao_language' => $lo_language,
-			'aa_realms' => Awyiss::getRealms(),
+			'language' => $lo_language,
+			'realms' => Awyiss::getRealms(),
 		]);
 	}
 

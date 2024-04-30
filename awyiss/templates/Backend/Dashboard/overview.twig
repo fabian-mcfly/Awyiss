@@ -1,0 +1,26 @@
+{#
+@var _view \Awyiss\View\BackendView
+#}
+
+<div class="Dashboard Overview">
+	{% block headlineOverview %}
+		<h1>{{ __('headline_overview') }}</h1>
+	{% endblock %}
+
+	<fieldset class="Overview-Fieldset Fieldset-LoggedInAs">
+		<p class="LoggedInAs">{{ __('logged_in_as', IdentityHelper.get('username')) }}</p>
+	</fieldset>
+
+	<fieldset class="Overview-Fieldset Fieldset-QuickActions">
+		<legend>{{ __('quick_actions') }}</legend>
+
+		<ul class="QuickActions">
+			<li class="QuickAction QuickAction-AddPage">
+				<a href="{{ UrlHelper.build({controller: 'user-configuration', action: 'overview', scope: 'system'}) }}" class="Button Button-Add">{{ __('quick_action_add_page') }}</a>
+			</li>
+			<li class="QuickAction QuickAction-UserConfiguration">
+				<a href="{{ UrlHelper.build({controller: 'user-configuration', action: 'overview', scope: 'system'}) }}" class="Button Button-Configure">{{ __('quick_action_user_configuration') }}</a>
+			</li>
+		</ul>
+	</fieldset>
+</div>

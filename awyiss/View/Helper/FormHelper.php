@@ -6,6 +6,7 @@ namespace Awyiss\View\Helper;
 
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\View\StringTemplate;
+use Cake\Datasource\EntityInterface;
 use Cake\Utility\Inflector;
 use Cake\View\Form\EntityContext;
 use Cake\View\Helper\FormHelper as BaseFormHelper;
@@ -132,6 +133,11 @@ class FormHelper extends BaseFormHelper {
 
 		unset($la_options['isCategory']);
 
+		if (isset($la_options['columnSpan'])) {
+			$la_options['templateVars']['columnSpan'] = ' ColumnSpan-' . $la_options['columnSpan'];
+			unset($la_options['columnSpan']);
+		}
+
 		if (in_array($as_fieldName, $this->translatableFields) && count($this->languages) > 1) {
 			$ls_association = '';
 			$ls_fieldName = $as_fieldName;
@@ -210,17 +216,24 @@ class FormHelper extends BaseFormHelper {
 			$ls_association .= '.';
 		}
 
-		//$lo_context = $this->_getContext();
+		$lo_userLanguage = LocaleMiddleware::getLanguage(null);
+
 		foreach ($this->languages as $ls_shortcode => $lo_language) {
 			$la_translatableOptions = [
 				'aria-required' => $la_options['aria-required'] && !count($la_options['controls']),
 				'id' => $this->_domId($as_fieldName . '-Translations[' . $ls_shortcode . ']'),
 				'label' => $lo_language->label,
+				'placeholder' => $la_options['placeholder'] ?? $la_options['val'] ?? null,
 				'required' => $la_options['required'] && !count($la_options['controls']),
 				'type' => $ls_realType,
 				'val' => $this->getSourceValue($ls_association . '_translations.' . $ls_shortcode . '.' . $ls_fieldName),
 			];
 			$la_translatableOptions += $aa_options;
+
+			if ($lo_userLanguage->shortcode === $ls_shortcode) {
+				// If the user's language is the same as the current language, add a class to highlight it.
+				$la_translatableOptions['templateVars']['containerClass'] = ' IsCurrentLanguage';
+			}
 
 			/*if (!count($la_options['controls']) && $lo_context->hasError($as_fieldName)) {
 				$la_translatableOptions = $this->addClass($la_translatableOptions, $this->_config['errorClass']);
@@ -327,12 +340,127 @@ class FormHelper extends BaseFormHelper {
 			$ls_name = substr($ls_name, $li_dashPos + 1);
 		}
 
+
 		return $this->formatTemplate($ls_inputContainerTemplate, [
 			'content' => $aa_options['content'],
 			'error' => $aa_options['error'],
 			'required' => $aa_options['options']['required'] ? ' Required' : '',
 			'type' => ucfirst($aa_options['options']['type']),
 			'templateVars' => ($aa_options['options']['templateVars'] ?? []) + ['identifier' => $ls_name],
+		]);
+	}
+
+
+	/**
+	 * @param string $field
+	 * @return bool
+	 */
+	public function isFieldError(string $field): bool {
+		if (!str_contains($field, '.')) {
+			return $this->_getContext()->hasError($field);
+		}
+
+		$la_parts = explode('.', $field);
+		$ls_field = array_pop($la_parts);
+
+		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+		$lo_entity = $this->_getContext()->entity();
+		$lo_associatedEntity = $lo_entity->get($la_parts[0]);
+
+		if (!$lo_associatedEntity instanceof EntityInterface) {
+			return false;
+		}
+
+
+		return (bool)$lo_associatedEntity->getError($ls_field);
+	}
+
+
+	/**
+	 * @param string $as_field
+	 * @param array|string|null $ax_text
+	 * @param array $aa_options
+	 * @return string
+	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 */
+	public function error(string $as_field, array|string|null $ax_text = null, array $aa_options = []): string {
+		$ls_field = $as_field;
+		if (str_ends_with($ls_field, '._ids')) {
+			$ls_field = substr($ls_field, 0, -5);
+		}
+
+		$la_options = $aa_options + ['escape' => true];
+
+		$lo_context = $this->_getContext();
+		if (!$lo_context->hasError($ls_field) && !str_contains($ls_field, '.')) {
+			return '';
+		}
+
+		if (!str_contains($ls_field, '.')) {
+			$la_error = $lo_context->error($ls_field);
+		}
+		else {
+			$la_parts = explode('.', $ls_field);
+			$ls_field = array_pop($la_parts);
+			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+			$lo_entity = $lo_context->entity();
+			$lo_associatedEntity = $lo_entity->get($la_parts[0]);
+
+			if (!$lo_associatedEntity instanceof EntityInterface) {
+				return '';
+			}
+
+			$la_error = $lo_associatedEntity->getError($ls_field);
+		}
+
+		if (!$la_error) {
+			return '';
+		}
+
+		$lx_text = $ax_text;
+		if (is_array($lx_text)) {
+			$la_tmp = [];
+			foreach ($la_error as $lx_errorKey => $ls_error) {
+				if (isset($lx_text[ $lx_errorKey ])) {
+					$la_tmp[] = $lx_text[ $lx_errorKey ];
+				}
+				elseif (isset($lx_text[ $ls_error ])) {
+					$la_tmp[] = $lx_text[ $ls_error ];
+				}
+				else {
+					$la_tmp[] = $ls_error;
+				}
+			}
+			$lx_text = $la_tmp;
+		}
+
+		if ($lx_text !== null) {
+			$la_error = $lx_text;
+		}
+
+		if ($la_options['escape']) {
+			$la_error = h($la_error);
+			unset($la_options['escape']);
+		}
+
+		if (is_array($la_error)) {
+			if (count($la_error) > 1) {
+				$la_errorTexts = [];
+				foreach ($la_error as $ls_error) {
+					$la_errorTexts[] = $this->formatTemplate('errorItem', ['text' => $ls_error]);
+				}
+				$ls_error = $this->formatTemplate('errorList', [
+					'content' => implode('', $la_errorTexts),
+				]);
+			}
+			else {
+				$ls_error = array_pop($la_error);
+			}
+		}
+
+		return $this->formatTemplate('error', [
+			'content' => $ls_error ?? '',
+			'id' => $this->_domId($ls_field) . '-error',
 		]);
 	}
 

@@ -1,0 +1,11 @@
+#FormLeaveConfirmDialog {
+	&::after {
+		content:attr(data-title, 'Do you really want to leave?');
+	}
+
+	&-Message {
+		width:100%;
+		margin-bottom:$lineHeightMain;
+		flex:0 0 100%;
+	}
+}

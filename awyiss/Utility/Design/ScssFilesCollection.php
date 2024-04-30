@@ -8,6 +8,11 @@ use Cake\I18n\DateTime;
 use SplFileInfo;
 
 
+/**
+ * The ScssFilesCollection holds a collection of SCSS files
+ * and provides methods to work with them.
+ * It is used by the ScssCompiler to hold the files that need to be compiled.
+ */
 class ScssFilesCollection {
 	/**
 	 * @var array<\SplFileInfo> The files.

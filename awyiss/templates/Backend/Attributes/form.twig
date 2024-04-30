@@ -1,139 +1,146 @@
 {#
-@var ao_attribute \Awyiss\Model\Entity\Attribute
-@var aa_availableFieldsets array
-@var aa_availableInputTypes array
-@var aa_availableInputTypes array
-@var aa_availableInputTypes array
-@var ab_translatableDisabled bool
-@var ab_requiredDisabled bool
+@var attribute \Awyiss\Model\Entity\Attribute
+@var availableFieldsets array
+@var availableInputTypes array
+@var availableInputTypes array
+@var availableInputTypes array
+@var translatableDisabled bool
+@var requiredDisabled bool
 @var _view \Awyiss\View\BackendView
 #}
 
-{% block fieldsetPresentation %}
-	<fieldset class="Fieldset-Presentation">
-		<legend>{{ __('fieldset_presentation') }}</legend>
+<div class="Fieldsets">
+	{% block fieldsetPresentation %}
+		<fieldset class="Fieldset-Presentation">
+			<legend>{{ __('fieldset_presentation') }}</legend>
 
-		{% block fieldsetPresentationInner %}
-			{% block formControlActive %}
-				{{ FormHelper.control('active') }}
+			{% block fieldsetPresentationInner %}
+				{% block formControlActive %}
+					{{ FormHelper.control('active', {columnSpan: 6}) }}
+				{% endblock %}
+
+				{% block formControlTranslatable %}
+					{{ FormHelper.control('translatable', {columnSpan: 6, disabled: translatableDisabled}) }}
+				{% endblock %}
+
+				{% block formControlRequired %}
+					{{ FormHelper.control('required', {columnSpan: 6, disabled: requiredDisabled}) }}
+				{% endblock %}
+
+				{% block formControlHasIndex %}
+					{{ FormHelper.control('has_index', {columnSpan: 6}) }}
+				{% endblock %}
+
+				{% block formControlInputType %}
+					{{ FormHelper.control('input_type', {columnSpan: 6, empty: false, options: combine(availableInputTypes, availableInputTypes)}) }}
+				{% endblock %}
+
+				{% block formControlColumnSpan %}
+					{{ FormHelper.control('column_span', {columnSpan: 6, empty: false, options: columnSpans, type: 'select'}) }}
+				{% endblock %}
+
+				{% block fieldsetPresentationAttributes %}
+					{{ AttributesHelper.allControls('presentation') }}
+				{% endblock %}
 			{% endblock %}
+		</fieldset>
+	{% endblock %}
 
-			{% block formControlTranslatable %}
-				{{ FormHelper.control('translatable', {disabled: ab_translatableDisabled}) }}
+	{% block fieldsetConditions %}
+		<fieldset class="Fieldset-Conditions">
+			<legend>{{ __('fieldset_conditions') }}</legend>
+
+			{% block fieldsetConditionsInner %}
+				{% block formControlScope %}
+					{{ CategoriesHelper.control('scope', {'data-form-updater': true}) }}
+				{% endblock %}
+
+				{% block formControlFieldset %}
+					{{ FormHelper.control('fieldset', {
+						columnSpan: 6,
+						empty: false,
+						options: combine(availableFieldsets, availableFieldsets),
+						disabled: attribute.scope == 'contents',
+						'data-form-updater': true
+					}) }}
+				{% endblock %}
+
+				{% block formControlSystemOrder %}
+					{{ SystemOrderHelper.control('system_order', {columnSpan: 6, entity: attribute}) }}
+				{% endblock %}
+
+				{% block fieldsetConditionsAttributes %}
+					{{ AttributesHelper.allControls('conditions') }}
+				{% endblock %}
 			{% endblock %}
+		</fieldset>
+	{% endblock %}
 
-			{% block formControlRequired %}
-				{{ FormHelper.control('required', {disabled: ab_requiredDisabled}) }}
+	{% block fieldsetGeneral %}
+		<fieldset class="Fieldset-General">
+			<legend>{{ __('fieldset_general') }}</legend>
+
+			{% block fieldsetGeneralInner %}
+				{% block formControlTitle %}
+					{{ FormHelper.control('title', {columnSpan: 6}) }}
+				{% endblock %}
+
+				{% block formControlIdentifier %}
+					{{ FormHelper.control('identifier', {columnSpan: 6, 'data-autofill-from-title': 'true'}) }}
+				{% endblock %}
+
+				{% block formControlDefaultValue %}
+					{{ FormHelper.control('default_value', {columnSpan: 6}) }}
+				{% endblock %}
+
+				{% block formControlType %}
+					{{ FormHelper.control('type', {columnSpan: 6}) }}
+				{% endblock %}
+
+				{% block fieldsetGeneralAttributes %}
+					{{ AttributesHelper.allControls('general') }}
+				{% endblock %}
 			{% endblock %}
+		</fieldset>
+	{% endblock %}
 
-			{% block formControlHasIndex %}
-				{{ FormHelper.control('has_index') }}
+	{% block fieldsetContent %}
+		<fieldset class="Fieldset-Content">
+			<legend>{{ __('fieldset_content') }}</legend>
+
+			{% block fieldsetContentInner %}
+				{% block fieldsetContentAttributes %}
+					{{ AttributesHelper.allControls('content') }}
+				{% endblock %}
 			{% endblock %}
+		</fieldset>
+	{% endblock %}
 
-			{% block formControlInputType %}
-				{{ FormHelper.control('input_type', {empty: false, options: combine(aa_availableInputTypes, aa_availableInputTypes)}) }}
+	{% block fieldsetMedia %}
+		<fieldset class="Fieldset-Media">
+			<legend>{{ __('fieldset_media') }}</legend>
+
+			{% block fieldsetMediaInner %}
+				{% block fieldsetMediaAttributes %}
+					{{ AttributesHelper.allControls('media') }}
+				{% endblock %}
 			{% endblock %}
+		</fieldset>
+	{% endblock %}
 
-			{% block fieldsetPresentationAttributes %}
-				{{ AttributesHelper.allControls('presentation') }}
+	{% block fieldsetAttributes %}
+		<fieldset class="Fieldset-Attributes">
+			<legend>{{ __('fieldset_attributes') }}</legend>
+
+			{% block fieldsetAttributesInner %}
+				{% block fieldsetAttributesAttributes %}
+					{{ AttributesHelper.allControls('attributes') }}
+				{% endblock %}
 			{% endblock %}
-		{% endblock %}
-	</fieldset>
-{% endblock %}
+		</fieldset>
+	{% endblock %}
 
-{% block fieldsetConditions %}
-	<fieldset class="Fieldset-Conditions">
-		<legend>{{ __('fieldset_conditions') }}</legend>
-
-		{% block fieldsetConditionsInner %}
-			{% block formControlScope %}
-				{{ CategoriesHelper.control('scope', {'data-form-updater': true}) }}
-			{% endblock %}
-
-			{% block formControlFieldset %}
-				{{ FormHelper.control('fieldset', {
-					empty: false,
-					options: combine(aa_availableFieldsets, aa_availableFieldsets),
-					disabled: ao_attribute.scope == 'contents',
-					'data-form-updater': true
-				}) }}
-			{% endblock %}
-
-			{% block formControlSystemOrder %}
-				{{ SystemOrderHelper.control('system_order', {entity: ao_attribute}) }}
-			{% endblock %}
-
-			{% block fieldsetConditionsAttributes %}
-				{{ AttributesHelper.allControls('conditions') }}
-			{% endblock %}
-		{% endblock %}
-	</fieldset>
-{% endblock %}
-
-{% block fieldsetGeneral %}
-	<fieldset class="Fieldset-General">
-		<legend>{{ __('fieldset_general') }}</legend>
-
-		{% block fieldsetGeneralInner %}
-			{% block formControlTitle %}
-				{{ FormHelper.control('title') }}
-			{% endblock %}
-
-			{% block formControlIdentifier %}
-				{{ FormHelper.control('identifier') }}
-			{% endblock %}
-
-			{% block formControlDefaultValue %}
-				{{ FormHelper.control('default_value') }}
-			{% endblock %}
-
-			{% block formControlType %}
-				{{ FormHelper.control('type') }}
-			{% endblock %}
-
-			{% block fieldsetGeneralAttributes %}
-				{{ AttributesHelper.allControls('general') }}
-			{% endblock %}
-		{% endblock %}
-	</fieldset>
-{% endblock %}
-
-{% block fieldsetContent %}
-	<fieldset class="Fieldset-Content">
-		<legend>{{ __('fieldset_content') }}</legend>
-
-		{% block fieldsetContentInner %}
-			{% block fieldsetContentAttributes %}
-				{{ AttributesHelper.allControls('content') }}
-			{% endblock %}
-		{% endblock %}
-	</fieldset>
-{% endblock %}
-
-{% block fieldsetMedia %}
-	<fieldset class="Fieldset-Media">
-		<legend>{{ __('fieldset_media') }}</legend>
-
-		{% block fieldsetMediaInner %}
-			{% block fieldsetMediaAttributes %}
-				{{ AttributesHelper.allControls('media') }}
-			{% endblock %}
-		{% endblock %}
-	</fieldset>
-{% endblock %}
-
-{% block fieldsetAttributes %}
-	<fieldset class="Fieldset-Attributes">
-		<legend>{{ __('fieldset_attributes') }}</legend>
-
-		{% block fieldsetAttributesInner %}
-			{% block fieldsetAttributesAttributes %}
-				{{ AttributesHelper.allControls('attributes') }}
-			{% endblock %}
-		{% endblock %}
-	</fieldset>
-{% endblock %}
-
-{% block formInputReloadForm %}
-	{{ FormHelper.hidden('reload_form', {val: 0}) }}
-{% endblock %}
+	{% block formInputReloadForm %}
+		{{ FormHelper.hidden('reload_form', {val: 0}) }}
+	{% endblock %}
+</div>

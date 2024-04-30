@@ -1,0 +1,65 @@
+.FlashMessage {
+	--backgroundColor:var(--colorBright);
+	--boxShadowColor:#{adjust-color($colorInfo, $alpha: -.75)};
+	--color:var(--colorInfo);
+
+	display:inline-block;
+	padding:10px 20px 10px 70px;
+	border-radius:5px;
+	border:1px solid;
+	box-shadow:0 0 30px var(--boxShadowColor);
+	background-color:var(--backgroundColor);
+	color:var(--color);
+	position:relative;
+	overflow:hidden;
+
+	.🌚 & {
+		--backgroundColor:var(--colorSemiDark);
+	}
+
+	&.Success {
+		--boxShadowColor:#{adjust-color($colorSuccess, $alpha: -.75)};
+		--color:var(--colorSuccess);
+
+		&::before {
+			content:'\f00c';
+		}
+	}
+
+	&.Error {
+		--boxShadowColor:#{adjust-color($colorError, $alpha: -.75)};
+		--color:var(--colorError);
+
+		&::before {
+			content:'\f00d';
+		}
+	}
+
+	&::before {
+		@include la('\f05a', 30px);
+
+		display:flex;
+		width:calc(#{$lineHeightMain} + 20px);
+		height:100%;
+		border-radius:0 5px 5px 0;
+		background-color:var(--color);
+		color:$colorBright;
+		font-size:1.5rem;
+		text-align:center;
+		line-height:$lineHeightMain;
+		position:absolute;
+		top:0;
+		left:0;
+		align-items:center;
+		justify-content:center;
+	}
+
+	+ .FlashMessage {
+		margin-left:40px;
+	}
+
+	+ .Form,
+	+ .Overview {
+		margin-top:$lineHeightMain * 2;
+	}
+}

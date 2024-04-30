@@ -1,0 +1,312 @@
+%ButtonGlow {
+	content:'';
+	height:10px;
+	border-radius:50%;
+	box-shadow:0 0 15px #ffe935;
+	//noinspection CssInvalidPropertyValue
+	mix-blend-mode:plus-lighter;
+	position:absolute;
+	bottom:-15px;
+	right:10px;
+	left:10px;
+	opacity:0;
+	pointer-events:none;
+	transform:translate(var(--x), var(--y));
+	transition:opacity .3s ease-in-out, transform .1s ease;
+}
+
+%InFieldButton {
+	width:50px;
+	height:50px;
+	border-radius:4px;
+	padding:0;
+	font-size:0;
+	line-height:0;
+	background-color:var(--colorMedium);
+	position:absolute;
+	right:1px;
+	bottom:1px;
+}
+
+%Actions {
+	width:9rem;
+	position:relative;
+	opacity:.1;
+	transition:opacity .3s ease-in-out;
+
+	&:focus-within {
+		opacity:1;
+	}
+
+	.Button {
+		width:100%;
+		margin-top:.25rem;
+
+		&-Delete {
+			width:36px;
+			height:36px;
+			margin-top:0;
+			margin-left:10px;
+			padding:0;
+			font-size:0;
+			line-height:0;
+			position:absolute;
+			bottom:0;
+			left:100%;
+			opacity:0;
+			visibility:hidden;
+			transition:background-color 0s linear, outline-color .1s ease-in-out, opacity .3s ease-in-out, visibility 0s linear .3s;
+
+			.Scale-Small & {
+				width:33px;
+				height:33px;
+				text-indent:-1px;
+			}
+
+			&:hover {
+				&::after {
+					margin-left:0;
+				}
+			}
+
+			&::after {
+				margin-left:0;
+				line-height:36px;
+
+				.Scale-Small & {
+					line-height:30px;
+				}
+			}
+		}
+
+		&:first-child {
+			margin-top:0;
+		}
+	}
+}
+
+%ActionsHover {
+	opacity:1;
+
+	.Button {
+		.🌚 & {
+			--backgroundColor:#{darken($colorSemiDarkDarkMode, 8)};
+		}
+
+		&[disabled] {
+			opacity:.25;
+		}
+	}
+
+	.Button-Delete {
+		opacity:1;
+		visibility:visible;
+		transition-delay:0s;
+
+		&:hover {
+			transition-delay:.3s, 0s, 0s, 0s;
+		}
+	}
+}
+
+%HoverEffect {
+	width:0;
+	height:0;
+	border-radius:50%;
+	background-color:$colorSuccess;
+	position:absolute;
+	top:0;
+	left:0;
+	z-index:-1;
+	pointer-events:none;
+	will-change:width, height;
+
+	transform:translate(-50%, -50%);
+	transition:width .3s ease-in-out, height .3s ease-in-out;
+}
+
+%Input {
+	--backgroundColor:#f2f6f8;
+
+	display:block;
+	width:100%;
+	padding:10px;
+	border:1px solid rgba(0, 0, 0, .1);
+	border-radius:5px;
+	outline:0 none;
+	background-image:url($relativePath + 'img/background-pattern-light.png');
+	background-color:var(--backgroundColor);
+	color:var(--colorText);
+	font-size:1rem;
+	line-height:30px;
+
+	.🌚 & {
+		--backgroundColor:var(--colorSemiDark);
+
+		background-blend-mode:multiply;
+		background-image:url($relativePath + 'img/background-pattern-dark.png');
+		border-color:rgba(255, 255, 255, .1);
+	}
+
+	&[disabled] {
+		opacity:.5;
+		cursor:not-allowed;
+	}
+}
+
+%ButtonsListview {
+	position:relative;
+
+	.Button.Button-ListView {
+		margin:0;
+	}
+
+	.Button-ListView {
+		--backgroundColor:var(--colorMedium);
+
+		width:80px;
+		height:40px;
+		padding:0;
+		box-shadow:none;
+		border-radius:5px 5px 0 0;
+		background-image:none;
+		color:var(--colorBright);
+		font-size:0;
+		line-height:0;
+		text-align:center;
+		position:absolute;
+		bottom:$lineHeightMain * -2;
+		right:20px;
+		//opacity:.5;
+		transition:background-color 0s linear, outline-color 0.1s ease-in-out, opacity .3s ease-in-out;
+
+		.Scale-Small & {
+			padding:0;
+			font-size:0;
+			line-height:0;
+		}
+
+		.🌚 & {
+			--backgroundColor:var(--backgroundColorContent);
+		}
+
+		&[disabled] {
+			//background-color:var(--colorDark);
+			opacity:initial;
+		}
+
+		&:hover {
+			color:var(--colorBright);
+			opacity:1;
+			transition-delay:.3s, 0s, 0s;
+		}
+
+		&::after {
+			@include la('\f0ce', 30px);
+			line-height:40px;
+		}
+	}
+
+	.Button-ListView-PaginatedList {
+		.🌚 & {
+			--backgroundColor:#{darken($colorBackgroundContentDarkMode, 4)};
+		}
+	}
+
+	.Button-ListView-NestedList {
+		--backgroundColor:var(--colorBright);
+		color:var(--colorText);
+
+		right:105px;
+
+		&::after {
+			content:'\f0c9';
+		}
+	}
+}
+
+%EmptyList {
+	content:'';
+	border-radius:5px;
+	background-color:var(--colorBright);
+	background-image:url($relativePath + 'img/preloader-ghost.gif');
+	background-position:center;
+	background-repeat:no-repeat;
+	position:absolute;
+	inset:0;
+	opacity:.25;
+}
+
+%EmptyListDarkMode {
+	background-color:var(--backgroundColorContent);
+	background-image:url($relativePath + 'img/preloader-ghost-dark2.gif');
+	opacity:.1;
+}
+
+
+%ListData {
+	display:flex;
+	min-width:0;
+	flex-wrap:wrap;
+
+	li {
+		margin:0;
+		list-style-type:none;
+		overflow:hidden;
+		text-overflow:ellipsis;
+		white-space:nowrap;
+	}
+
+	.Title {
+		width:calc(100% + 40px);
+		//margin:-.1em 0 -.1em -50px;
+		margin-block:-.1em;
+		font-size:1rem;
+		font-weight:700;
+		line-height:1.2;
+		flex:0 0 100%;
+
+		.Scale-Small & {
+			width:23.5%;
+			margin-right:2%;
+			flex-basis:23.5%;
+		}
+	}
+
+	.DataItem {
+		width:23.5%;
+		margin-top:$lineHeightMain * .5;
+		margin-right:2%;
+		padding-bottom:2px;
+		font-size:.8rem;
+		line-height:1.2;
+		color:var(--colorMedium);
+		transition:color .3s ease-in-out;
+
+		.Scale-Small & {
+			&:nth-child(-n+4) {
+				margin-top:0;
+			}
+		}
+
+		&:hover {
+			color:var(--colorText);
+		}
+
+		&:nth-child(4n) {
+			margin-right:0;
+		}
+	}
+
+	.Label {
+		display:block;
+		font-weight:700;
+	}
+}
+
+%ListActions {
+	@extend %Actions;
+
+	margin-left:auto;
+	align-self:start;
+}

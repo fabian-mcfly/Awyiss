@@ -7,6 +7,7 @@ namespace Awyiss\Configuration\ConfigOptions;
 use Awyiss\Awyiss;
 use Awyiss\Configuration\AbstractConfigOptions;
 use Awyiss\Configuration\ConfigOption;
+use Awyiss\Configuration\ConfigOptions\Trait\TableFieldsTrait;
 use Awyiss\Configuration\ConfigOptionType;
 
 
@@ -14,6 +15,9 @@ use Awyiss\Configuration\ConfigOptionType;
  * Class ContentsConfigOptions
  */
 class ContentsConfigOptions extends AbstractConfigOptions {
+	use TableFieldsTrait;
+
+
 	/**
 	 * @var string Scope of these options
 	 */
@@ -42,10 +46,41 @@ class ContentsConfigOptions extends AbstractConfigOptions {
 					type: ConfigOptionType::Integer,
 				),
 			],
+			'overview' => [
+				'columnView' => [
+					new ConfigOption(
+						defaultValue: true,
+						identifier: 'enabled',
+						localizable: false,
+						nullable: false,
+						personalizable: true,
+						type: ConfigOptionType::Bool,
+					),
+				],
+				new ConfigOption(
+					defaultValue: [
+						'contentTemplateId',
+						'columnWidth',
+						'columnIndent',
+					],
+					identifier: 'displayedFields',
+					localizable: false,
+					personalizable: true,
+					type: ConfigOptionType::ValueCollection,
+					values: function () {
+						$la_fields = $this->getTableFields();
+
+						unset($la_fields['id']);
+
+						return $la_fields;
+					},
+				),
+			],
 			'publicationData' => [
 				new ConfigOption(
 					defaultValue: true,
 					identifier: 'enabled',
+					nullable: false,
 					localizable: false,
 					type: ConfigOptionType::Bool,
 				),

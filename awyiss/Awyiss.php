@@ -47,6 +47,14 @@ class Awyiss extends BaseApplication {
 	 * The name of the backend realm
 	 */
 	final public const REALM_BACKEND = 'Backend';
+	/**
+	 * The version of Awyiss
+	 */
+	final public const VERSION = '0.1.0';
+	/**
+	 * The name of the version
+	 */
+	final public const VERSION_NAME = 'Interface';
 
 
 	/**
@@ -322,7 +330,6 @@ class Awyiss extends BaseApplication {
 
 		$lo_controller = $this->controllerFactory->create($ao_request);
 
-
 		return $this->controllerFactory->invoke($lo_controller);
 	}
 
@@ -361,25 +368,22 @@ class Awyiss extends BaseApplication {
 			if (Configure::read('Awyiss')) {
 				static::addUserConfiguration();
 
-
 				return;
 			}
-			else {
-				/**
-				 * Trigger the creation of the custom configuriation
-				 *
-				 * @see \Awyiss\Event\Backend\ConfigurationListener::createCustomConfiguration()
-				 */
-				$lo_eventManager = EventManager::instance();
-				$lo_eventManager->dispatch('Configuration.createCustomConfiguration');
 
-				Configure::load($ls_fileName, 'default', false);
-				if (Configure::read('Awyiss')) {
-					static::addUserConfiguration();
+			/**
+			 * Trigger the creation of the custom configuriation
+			 *
+			 * @see \Awyiss\Event\Backend\ConfigurationListener::createCustomConfiguration()
+			 */
+			$lo_eventManager = EventManager::instance();
+			$lo_eventManager->dispatch('Configuration.createCustomConfiguration');
 
+			Configure::load($ls_fileName, 'default', false);
+			if (Configure::read('Awyiss')) {
+				static::addUserConfiguration();
 
-					return;
-				}
+				return;
 			}
 		}
 
@@ -503,7 +507,7 @@ class Awyiss extends BaseApplication {
 	 *
 	 * @return void
 	 */
-	protected static function addUserConfiguration(): void {
+	public static function addUserConfiguration(): void {
 		$lo_event = EventManager::instance()->dispatch('Authentication.requestIdentity');
 
 		$lo_identity = $lo_event->getResult();

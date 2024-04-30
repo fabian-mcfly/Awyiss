@@ -1,0 +1,52 @@
+{#
+@var usergroups \Awyiss\Model\Entity\Usergroup[]
+@var _view \Awyiss\View\BackendView
+#}
+
+{% extends '@Backend/element/overview/overview_paginated_list.twig' %}
+
+{% block tableOverviewHeaderAuditInfo %}{% endblock %}
+
+{% block tableOverviewHeadRowInner %}
+	<th class="TableHeader-UsergroupCheckbox"></th>
+	{{ parent() }}
+{% endblock %}
+
+{% block tableOverviewHeaderDisplayedFields %}
+	{% for field in config.Awyiss.Usergroups.Backend.overview.displayedFields %}
+		{% block tableOverviewHeaderDisplayedField %}
+			{{ parent() }}
+		{% endblock %}
+	{% endfor %}
+{% endblock %}
+
+{% block tableOverviewHeaderActions %}{% endblock %}
+
+{% block tableOverviewCellAuditInfo %}{% endblock %}
+
+{% block tableOverviewBodyRowInner %}
+	<td class="TableCell-UsergroupCheckbox">
+		{{ FormHelper.control('usergroups._ids.' ~ entity.id, {
+			hiddenField: false,
+			type: 'checkbox',
+			value: entity.id,
+			label: '',
+			checked: entity.id in (user.usergroups)|column('id'),
+		}) }}
+	</td>
+	{{ parent() }}
+{% endblock %}
+
+{% block tableOverviewCellDisplayedFields %}
+	{% for field in config.Awyiss.Usergroups.Backend.overview.displayedFields %}
+		{% block tableOverviewCellDisplayedField %}
+			{{ parent() }}
+		{% endblock %}
+	{% endfor %}
+{% endblock %}
+
+{% block tableOverviewCellActions %}{% endblock %}
+
+{% block listControlListLimitInner %}{% endblock %}
+
+{% block tableOverviewFootColSpan %}{{ config.Awyiss.Usergroups.Backend.overview.displayedFields|length + 3 }}{% endblock %}

@@ -1,6 +1,44 @@
-@import '_helpers/variables';
+@import 'line-awesome/mixins';
 
-body {
-	color: $a;
-  	background: $b;
-}
+@import 'helper/reset';
+@import 'helper/variables';
+@import 'helper/extendables';
+
+
+@import 'general/fonts';
+@import 'general/general';
+@import 'general/header';
+@import 'general/menu';
+@import 'general/body';
+@import 'general/form';
+@import 'general/footer';
+
+//Base dialog
+@import 'element/dialog';
+
+@import 'element/audit_info';
+@import 'element/button';
+@import 'element/button_area';
+@import 'element/confirm_dialog';
+@import 'element/form_leave_confirm_dialog';
+@import 'element/flash_message';
+@import 'element/link_select';
+@import 'element/list_control';
+@import 'element/nested_list';
+@import 'element/overlay_form';
+@import 'element/seo_snippet';
+@import 'element/table';
+@import 'element/translation_dialog';
+
+@import 'Attributes';
+@import 'Configuration';
+@import 'Contents';
+@import 'ContentTemplates';
+@import 'Dashboard';
+@import 'Languages';
+@import 'Media';
+@import 'MediaFolders';
+@import 'Pages';
+@import 'PageTemplates';
+@import 'Usergroups';
+@import 'Users';

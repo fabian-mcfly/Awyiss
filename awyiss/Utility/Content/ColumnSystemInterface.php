@@ -41,4 +41,10 @@ interface ColumnSystemInterface {
 	 * @return void
 	 */
 	public static function setMaxDenominator(int $maxDenominator): void;
+
+
+	/**
+	 * @return array
+	 */
+	public static function getScssColumnList(): array;
 }

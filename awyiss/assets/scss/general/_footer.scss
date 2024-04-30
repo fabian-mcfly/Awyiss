@@ -1,0 +1,121 @@
+#DarkModeSwitch {
+	--backgroundColor:var(--colorMedium);
+	--colorItems:var(--colorBright);
+
+	box-shadow:0 0 10px rgba(0, 0, 0, .25);
+
+	.🌚 & {
+		--backgroundColor:var(--backgroundColorContent);
+		--colorItems:var(--colorSemiDark);
+	}
+
+	display:flex;
+	width:120px;
+	margin:0 auto;
+	border:2px solid var(--backgroundColor);
+	border-radius:27px;
+	background-color:var(--backgroundColor);
+	overflow:hidden;
+
+	.DarkModeSwitch-Item {
+		width:calc(50% - 1px);
+		margin:0;
+		list-style-type:none;
+		flex:0 0 calc(50% - 1px);
+		opacity:.25;
+		transition:opacity .3s ease-in-out;
+
+		&.Active {
+			opacity:1;
+			pointer-events:none;
+			/*.DarkModeSwitch-Link {
+				background-color:var(--colorSuccess);
+			}*/
+		}
+
+		&:hover {
+			opacity:1;
+
+			.DarkModeSwitch-Link {
+				background-color:var(--colorSuccess);
+				color:var(--colorBright);
+			}
+		}
+	}
+
+	.DarkModeSwitch-Item-On {
+		margin-left:2px;
+	}
+
+	.DarkModeSwitch-Link {
+		display:block;
+		height:40px;
+		border-bottom-width:0;
+		background-color:var(--colorItems);
+		color:var(--colorText);
+		text-align:center;
+		font-size:0;
+		line-height:0;
+		transition:background-color .3s ease-in-out, color .3s ease-in-out;
+
+		&::before {
+			@include la('\f186', 28px);
+			line-height:38px;
+		}
+	}
+
+	.DarkModeSwitch-Link-On {
+		text-indent:-4px;
+
+		&::before {
+			//content:'🌚';
+			//font-size:24px;
+			//line-height:46px;
+		}
+	}
+
+	.DarkModeSwitch-Link-Off {
+		text-indent:4px;
+
+		&::before {
+			//content:'🌞';
+			content:'\f185';
+			line-height:40px;
+		}
+	}
+}
+
+#HiddenFooter {
+	height:200px;
+	padding:40px 0;
+	background-color:var(--colorDark);
+	color:var(--colorBright);
+	text-align:center;
+	position:absolute;
+	bottom:var(--bottomOffset, 0);
+	right:0;
+	left:0;
+	z-index:-2;
+
+	&.Fixed {
+		position:fixed;
+		bottom:0;
+	}
+
+	.Logo {
+		text-align:center;
+
+		img {
+			display:block;
+			margin:auto;
+		}
+
+		&::before {
+			content:'imagined & created by';
+			display:inline-block;
+			margin-bottom:$lineHeightMain * .5;
+			font-size:.8rem;
+			font-style:italic;
+		}
+	}
+}

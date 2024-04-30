@@ -52,8 +52,9 @@ class MenuEntriesController extends Controller {
 		}
 
 		$this->set([
-			'ao_menuEntries' => $lo_menuEntries,
-			'ab_paginated' => $lb_paginated,
+			'menuEntries' => $lo_menuEntries,
+			'paginated' => $lb_paginated,
+			'attributes' => $this->MenuEntries->getAttributes(),
 		]);
 	}
 
@@ -80,9 +81,9 @@ class MenuEntriesController extends Controller {
 		$this->ensurePossibleParentId($lo_menuEntry, $lo_possibleParentMenuEntries);
 
 		$this->set([
-			'ao_menuEntry' => $lo_menuEntry,
-			'ao_possibleParentMenuEntries' => $lo_possibleParentMenuEntries,
-			'as_languageRealm' => Awyiss::REALM_FRONTEND,
+			'menuEntry' => $lo_menuEntry,
+			'possibleParentMenuEntries' => $lo_possibleParentMenuEntries,
+			'languageRealm' => Awyiss::REALM_FRONTEND,
 		]);
 	}
 
@@ -113,9 +114,9 @@ class MenuEntriesController extends Controller {
 		$this->ensurePossibleParentId($lo_menuEntry, $lo_possibleParentMenuEntries);
 
 		$this->set([
-			'ao_menuEntry' => $lo_menuEntry,
-			'ao_possibleParentMenuEntries' => $lo_possibleParentMenuEntries,
-			'as_languageRealm' => Awyiss::REALM_FRONTEND,
+			'menuEntry' => $lo_menuEntry,
+			'possibleParentMenuEntries' => $lo_possibleParentMenuEntries,
+			'languageRealm' => Awyiss::REALM_FRONTEND,
 		]);
 	}
 

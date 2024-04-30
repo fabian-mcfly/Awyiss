@@ -1,0 +1,161 @@
+.UsersController {
+	&.LoginAction {
+		height:100%;
+
+		body {
+			display:flex;
+			min-height:100%;
+			padding-top:0;
+			align-content:center;
+		}
+
+		#LoginMask {
+			display:flex;
+			margin:auto;
+			box-shadow:0 0 10px rgba(0, 0, 0, .25);
+		}
+
+		#Header {
+			width:300px;
+			height:auto;
+			border-radius:5px 0 0 5px;
+			//noinspection CssUnknownTarget
+			background-image:url($relativePath + 'img/awyiss-v1-' + $awyissVersionName + '.jpg');
+			background-color:var(--colorDark);
+			background-position:center;
+			background-size:cover;
+			box-shadow:none;
+			position:relative;
+			inset:0;
+			z-index:0;
+			align-items:center;
+			flex-wrap:wrap;
+
+			&::before {
+				display:none;
+			}
+
+			.LoginLogo {
+				width:auto;
+				height:auto;
+				max-width:220px;
+				margin:0 auto;
+				flex:0 0 100%;
+				filter:brightness(10);
+			}
+
+			.Title {
+				display:block;
+				width:100%;
+				padding:0 40px;
+				box-shadow:none;
+				border-radius:0;
+				border:0 none;
+				background-color:transparent;
+				line-height:1;
+				text-align:center;
+				pointer-events:none;
+				order:2;
+				position:absolute;
+				bottom:20px;
+				left:0;
+
+				&:last-child {
+					font-size:2.5rem;
+
+					&::before {
+						content:'';
+					}
+				}
+
+				&::before {
+					display:block;
+					content:'powered by';
+					font-family:var(--fontStackMain);
+					font-size:.5rem;
+					font-style:italic;
+					font-weight:300;
+					line-height:1;
+				}
+
+				.Version {
+					display:none;
+				}
+			}
+		}
+
+		#Content {
+			min-height:0;
+			margin:0;
+			background-color:$colorBright;
+			border-radius:0 5px 5px 0;
+			padding:calc(40px + 2.5rem + #{$lineHeightMain}) 40px 40px 40px;
+			font-size:0;
+			line-height:0;
+			position:relative;
+			z-index:1;
+		}
+
+		.FlashMessage {
+			font-size:1rem;
+			line-height:$lineHeightMain;
+
+			+ .Form {
+				margin-top:$lineHeightMain;
+			}
+		}
+
+		.Fieldset-Login {
+			display:block;
+			margin-bottom:0;
+			padding:0;
+			border:0 none;
+			box-shadow:none;
+			background-color:transparent;
+			position:static;
+
+			legend {
+				padding:0;
+				background-image:none;
+				background-color:transparent;
+				box-shadow:none;
+				font-family:var(--fontStackHeading);
+				font-size:2.5rem;
+				line-height:1;
+				color:var(--colorText);
+				top:40px;
+				bottom:auto;
+				left:40px;
+			}
+		}
+
+		.FormInputName-LanguageShortcode {
+			display:inline-block;
+			width:120px;
+			margin-bottom:0;
+			vertical-align:bottom;
+		}
+
+		.Submit {
+			display:inline-block;
+			width:200px;
+			margin-left:50px;
+			padding-block:12px 10px;
+			vertical-align:bottom;
+
+			&:hover {
+				&::after {
+					margin-left:20px;
+				}
+			}
+
+			&::after {
+				@include la('\f2f6', 36px);
+				margin-left:10px;
+				line-height:28px;
+				vertical-align:-5px;
+				transition:margin-left .3s ease-in-out;
+			}
+		}
+	}
+}

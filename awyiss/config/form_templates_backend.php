@@ -6,7 +6,7 @@
  */
 return [
 	// Wrapper container for checkboxes.
-	'checkboxWrapper' => '<div class="Input InputType-Checkbox InputName-{{identifier}}">{{label}}</div>',
+	'checkboxWrapper' => '<div class="FormInput FormInputType-Checkbox FormInputName-{{identifier}} {{containerClass}}">{{label}}</div>',
 	// Error message wrapper elements.
 	'error' => '<div class="Error">{{content}}</div>',
 	// Container for error items.
@@ -20,20 +20,26 @@ return [
 	// Generic input element.
 	'input' => '<input type="{{type}}" name="{{name}}" {{attrs}}>',
 	// Container element used by control().
-	'inputContainer' => '<div class="Input InputType-{{type}} InputName-{{identifier}}{{required}}">{{content}}</div>',
+	'inputContainer' => '<div class="FormInput FormInputType-{{type}} FormInputName-{{identifier}}{{required}}{{columnSpan}} {{containerClass}}">{{content}}{{additionalContent}}</div>',
 	// Container element used by control() when a field has an error.
-	'inputContainerError' => '<div class="Input InputType-{{type}} InputName-{{identifier}}{{required}} Error">{{content}}{{error}}</div>',
+	'inputContainerError' => '<div class="FormInput FormInputType-{{type}} FormInputName-{{identifier}}{{required}}{{columnSpan}} {{containerClass}} Error">{{content}}{{error}}{{additionalContent}}</div>',
+	// Label element when inputs are not nested inside the label.
+	'label' => '<label class="Label"{{attrs}}>{{text}}</label>',
 	// Legends created by allControls()
 	'legend' => '<legend class="Legend">{{text}}</legend>',
 	// Multi-Checkbox input set title element.
 	'multicheckboxTitle' => '<legend class="Legend">{{text}}</legend>',
+	// Label element used for radio and multi-checkbox inputs.
+	'nestingLabel' => '{{hidden}}{{input}}<label class="Label"{{attrs}}>{{text}}</label>',
 	// Wrapping container for radio input/label,
 	'radioWrapper' => '{{label}}',
 	// Textarea input element,
 	'textarea' => '<textarea name="{{name}}" {{attrs}}>{{value}}</textarea>',
-	'translatableText' => '{{input}}<div class="TranslatableTexts">{{controls}}</div>',
+	'translatableText' => '{{input}}<div class="TranslatableTexts" data-button-title="{{buttonTitle}}"  data-dialog-title="{{dialogTitle}}" data-dialog-apply="{{dialogApply}}" data-dialog-cancel="{{dialogCancel}}">{{controls}}</div>',
 	// Container for submit buttons.
 	'submitContainer' => '<div class="Submit">{{content}}</div>',
 	// selected class
 	'selectedClass' => 'Selected',
 ];
+
+

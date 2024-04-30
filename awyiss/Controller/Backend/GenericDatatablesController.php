@@ -72,6 +72,22 @@ abstract class GenericDatatablesController extends Controller {
 		$lo_query->where($this->getOverviewWhere());
 		$this->Categories->filterQuery($lo_query, null, !$this->paginate['enabled']);
 
+		// Disable sorting if the current category is the aggregation category or the unassigned category
+		if (
+			$this->Categories->getSelectedCategory() === $this->Categories->getConfig('aggregationKey') ||
+			$this->Categories->getSelectedCategory() === $this->Categories->getConfig('unassignedKey')
+		) {
+			$this->sortable = false;
+
+			/**
+			 * Sort the query by the configured systemOrder field since the default order (system_order asc) could
+			 * result in a wrong order in the aggregation category or the unassigned category.
+			 * This is because the system_order field is not unique and the default order could result in a wrong order.
+			 * What's on position 2 in their own category could be on position 1 or position 10 in the aggregation category.
+			 */
+			// TODO: sort the query by the configured systemOrder field
+		}
+
 		$lb_paginated = $this->paginate['enabled'];
 		if ($lb_paginated) {
 			$lo_records = $this->paginate($lo_query);
@@ -86,13 +102,15 @@ abstract class GenericDatatablesController extends Controller {
 		}
 
 		$this->set([
-			'ao_records' => $lo_records,
-			'ao_datatable' => $this->datatable,
-			'ab_paginated' => $lb_paginated,
-			'ab_nestable' => $this->nestable,
-			'ab_sortable' => $this->sortable,
-			'ab_splitIntoLanguages' => $this->splitIntoLanguages,
-			'ab_translatable' => $this->translatable,
+			'records' => $lo_records,
+			'datatable' => $this->datatable,
+			'paginated' => $lb_paginated,
+			'nestable' => $this->nestable,
+			'sortable' => $this->sortable,
+			'splitIntoLanguages' => $this->splitIntoLanguages,
+			'translatable' => $this->translatable,
+			'attributes' => $this->Datatable->getAttributes(),
+			'isGenericDatatable' => true,
 		]);
 	}
 
@@ -224,15 +242,16 @@ abstract class GenericDatatablesController extends Controller {
 		}
 
 		$this->set([
-			'ao_record' => $ao_entity,
-			'ao_possibleParentRecords' => $lo_possibleParentRecords,
-			'ao_datatable' => $this->datatable,
-			'ab_nestable' => $this->nestable,
-			'ab_sortable' => $this->sortable,
-			'ab_splitIntoLanguages' => $this->splitIntoLanguages,
-			'ab_translatable' => $this->translatable,
-			'as_languageRealm' => Awyiss::REALM_FRONTEND,
-			'localConfig' => LocalConfig::read(),
+			'record' => $ao_entity,
+			'possibleParentRecords' => $lo_possibleParentRecords,
+			'datatable' => $this->datatable,
+			'nestable' => $this->nestable,
+			'sortable' => $this->sortable,
+			'splitIntoLanguages' => $this->splitIntoLanguages,
+			'translatable' => $this->translatable,
+			'languageRealm' => Awyiss::REALM_FRONTEND,
+			'isGenericDatatable' => true,
+			//'localConfig' => LocalConfig::read(),
 		]);
 	}
 
@@ -281,7 +300,7 @@ abstract class GenericDatatablesController extends Controller {
 			$this->isNestableWithCategoriesEnabled();
 		}
 
-		$this->sortable = LocalConfig::read('systemOrder.field') === 'systemOrder';
+		$this->sortable = Inflector::variable(LocalConfig::read('systemOrder.field', 'systemOrder')) === 'systemOrder';
 
 		$this->splitIntoLanguages = LocalConfig::read('splitIntoLanguages');
 		$this->translatable = LocalConfig::read('translatable');
@@ -376,10 +395,10 @@ abstract class GenericDatatablesController extends Controller {
 		$ls_parentName = Inflector::variable('parent ' . $this->getName());
 
 		$lo_viewBuilder->setVars([
-			'ao_' . $ls_entitiesName => $lo_viewBuilder->getVar('ao_records'),
-			'ao_' . $ls_entityName => $lo_viewBuilder->getVar('ao_record'),
-			'ao_' . $ls_threadedName => $lo_viewBuilder->getVar('ao_threadedRecords'),
-			'ao_' . $ls_parentName => $lo_viewBuilder->getVar('ao_parentRecords'),
+			$ls_entitiesName => $lo_viewBuilder->getVar('records'),
+			$ls_entityName => $lo_viewBuilder->getVar('record'),
+			$ls_threadedName => $lo_viewBuilder->getVar('threadedRecords'),
+			$ls_parentName => $lo_viewBuilder->getVar('parentRecords'),
 		]);
 
 		try {

@@ -245,9 +245,9 @@ class CategoriesComponent extends Component {
 	 *
 	 * For `usergroups` as categories for users, the set view vars are
 	 *
-	 * - `aa_usergroups`, containing an array with all usergroups
+	 * - `usergroups`, containing an array with all usergroups
 	 *
-	 * - `ax_selectedUsergroup`, containing the value (id, most of the time) of the currently selected category/usergroup
+	 * - `selectedUsergroup`, containing the value (id, most of the time) of the currently selected category/usergroup
 	 *
 	 * @return void
 	 */
@@ -259,9 +259,9 @@ class CategoriesComponent extends Component {
 		$lo_view = $this->getController()->viewBuilder();
 
 		$ls_identifier = Inflector::underscore($this->getConfig('identifier'));
-		if (str_ends_with($ls_identifier, '_id')) {
+		/*if (str_ends_with($ls_identifier, '_id')) {
 			$ls_identifier = substr($ls_identifier, 0, -3);
-		}
+		}*/
 
 		$ls_variableNamePlural = Inflector::variable(Inflector::pluralize($ls_identifier));
 
@@ -286,11 +286,11 @@ class CategoriesComponent extends Component {
 			'simple' => $this->getCategories(),
 		];
 
-		if (!$lo_view->getVar('aa_' . $ls_variableNamePlural)) {
-			$lo_view->setVar('aa_' . $ls_variableNamePlural, $la_categories);
+		if (!$lo_view->getVar($ls_variableNamePlural)) {
+			$lo_view->setVar($ls_variableNamePlural, $la_categories);
 		}
 
-		$lo_view->setVar('as_categoriesIdentifier', $la_config['identifier']);
+		$lo_view->setVar('categoriesIdentifier', $la_config['identifier']);
 	}
 
 

@@ -384,8 +384,8 @@ class AssetHelper extends Helper {
 		// If there is at least one CSS tag, append the JavaScript code
 		if ($lb_hasCss) {
 			$ls_assetTags .= '<script nonce="' . $ls_nonce . '">
-           		[...document.querySelectorAll("link[data-lazyload]")].map((e) => e.addEventListener("load", (e) => e.target.rel = "stylesheet"));
-        	</script>';
+				[...document.querySelectorAll(\'link[data-lazyload]\')].map(e=>{!performance.getEntriesByType("resource").some(r=>r.name.includes(e.href))?e.addEventListener("load",e=>{e.target.rel="stylesheet"}):e.rel="stylesheet"});
+			</script>';
 		}
 
 
@@ -452,7 +452,7 @@ class AssetHelper extends Helper {
 	 * key, the provided options are used. Otherwise, the default minified value is used.
 	 *
 	 * @param array|string $module The module to add. This can be either a string representing the module, or an array with the module as the key and an array of options as the
-	 *     value.
+	 * 	value.
 	 * @param bool|null $minified (optional) Whether the module is minified. Defaults to the opposite of the debug configuration.
 	 * @return void
 	 */
@@ -513,7 +513,7 @@ class AssetHelper extends Helper {
 	 *
 	 * @param bool $includeScriptTag Determines whether to wrap the import map in a script tag. Defaults to true.
 	 * @return string The import map as a string. If `includeScriptTag` is true, the import map is wrapped in a script tag.
-	 *                Otherwise, the import map is returned as a JSON string.
+	 * 	Otherwise, the import map is returned as a JSON string.
 	 * @throws \Exception
 	 */
 	public function createImportMap(bool $includeScriptTag = true): string {
@@ -525,9 +525,20 @@ class AssetHelper extends Helper {
 			// Remove the .js extension from the module name
 			$ls_cleanModuleName = pathinfo($ls_moduleName, PATHINFO_FILENAME);
 
+			// Files that are deeper than one level must have that nested prepended to the module name
+			if (substr_count($ls_moduleName, '/') > 1) {
+				$la_parts = explode('/', $ls_moduleName);
+				// Remove the first part of the path
+				array_shift($la_parts);
+				// Remove the last part of the path
+				array_pop($la_parts);
+				$ls_cleanModuleName = implode('/', $la_parts) . '/' . $ls_cleanModuleName;
+			}
+
 			// Add the module to the import map
 			$la_importMap['imports'][ $ls_cleanModuleName ] = $this->getAssetPath($ls_moduleName, $la_options);
 		}
+
 
 		// If includeScriptTag is true, wrap the import map in a script tag
 		if ($includeScriptTag) {

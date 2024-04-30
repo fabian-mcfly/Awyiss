@@ -7,6 +7,7 @@ namespace Awyiss\Configuration\ConfigOptions;
 use Awyiss\Awyiss;
 use Awyiss\Configuration\AbstractConfigOptions;
 use Awyiss\Configuration\ConfigOption;
+use Awyiss\Configuration\ConfigOptions\Trait\TableFieldsTrait;
 use Awyiss\Configuration\ConfigOptionType;
 
 
@@ -14,6 +15,9 @@ use Awyiss\Configuration\ConfigOptionType;
  * Provides all configuration options for the PageRoles scope
  */
 class PageRolesConfigOptions extends AbstractConfigOptions {
+	use TableFieldsTrait;
+
+
 	/**
 	 * @var string Scope of these options
 	 */
@@ -32,6 +36,43 @@ class PageRolesConfigOptions extends AbstractConfigOptions {
 				nullable: false,
 				type: ConfigOptionType::Bool,
 			),
+			'overview' => [
+				new ConfigOption(
+					defaultValue: [
+						'identifier',
+						'includeInLinklist',
+					],
+					identifier: 'displayedFields',
+					localizable: false,
+					personalizable: true,
+					type: ConfigOptionType::ValueCollection,
+					values: function () {
+						$la_fields = $this->getTableFields();
+
+						unset($la_fields['id'], $la_fields['title']);
+
+						return $la_fields;
+					},
+				),
+			],
+			'paginate' => [
+				new ConfigOption(
+					defaultValue: false,
+					identifier: 'enabled',
+					localizable: false,
+					nullable: false,
+					personalizable: true,
+					type: ConfigOptionType::Bool,
+				),
+				new ConfigOption(
+					defaultValue: 20,
+					identifier: 'limit',
+					localizable: false,
+					nullable: false,
+					personalizable: true,
+					type: ConfigOptionType::Integer,
+				),
+			],
 		]);
 	}
 }

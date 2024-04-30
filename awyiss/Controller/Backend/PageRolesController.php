@@ -18,6 +18,14 @@ use Cake\Http\Response;
  */
 class PageRolesController extends Controller {
 	/**
+	 * @inheritDoc
+	 */
+	protected array $paginate = [
+		'enabled' => true,
+	];
+
+
+	/**
 	 * Overview method
 	 *
 	 * @throws \Exception
@@ -25,10 +33,20 @@ class PageRolesController extends Controller {
 	public function overview(): void {
 		$this->Authorization->ensure('read');
 
-		$lo_pageRoles = $this->PageRoles->find()->where($this->getOverviewWhere());
+		$lo_query = $this->PageRoles->find()->where($this->getOverviewWhere());
+
+		$lb_paginated = $this->paginate['enabled'];
+		if ($lb_paginated) {
+			$lo_pageRoles = $this->paginate($lo_query);
+		}
+		else {
+			$lo_pageRoles = $lo_query->all();
+		}
 
 		$this->set([
-			'ao_pageRoles' => $lo_pageRoles,
+			'pageRoles' => $lo_pageRoles,
+			'attributes' => $this->PageRoles->getAttributes(),
+			'paginated' => $lb_paginated,
 		]);
 	}
 
@@ -49,7 +67,7 @@ class PageRolesController extends Controller {
 		}
 
 		$this->set([
-			'ao_pageRole' => $lo_pageRole,
+			'pageRole' => $lo_pageRole,
 		]);
 	}
 
@@ -77,7 +95,7 @@ class PageRolesController extends Controller {
 		}
 
 		$this->set([
-			'ao_pageRole' => $lo_pageRole,
+			'pageRole' => $lo_pageRole,
 		]);
 	}
 

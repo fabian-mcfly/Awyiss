@@ -1,7 +1,7 @@
 {#
-@var ao_attributes \Awyiss\Model\Entity\Attribute[]
-@var aa_attributesGroupedByFieldset array
-@var aa_attributeScopes array
+@var attributes \Awyiss\Model\Entity\Attribute[]
+@var attributesGroupedByFieldset array
+@var attributeScopes array
 @var _view \Awyiss\View\BackendView
 @var CategproesHelper \Awyiss\View\Helper\CategoriesHelper
 #}
@@ -18,36 +18,64 @@
 			{% endblock %}
 
 			{% block buttonsOverview %}
-				{% if AuthorizationHelper.isAccessible('create') %}
-					{{ HtmlHelper.link(__('create'), {action: 'add', scope: as_selectedScope}, {class: 'Button'}) }}
+				{% if paginated == false %}
+					<button class="Button Button-SaveSystemOrder" disabled>{{ __d('system', 'save_system_order') }}</button>
 				{% endif %}
+
+				{% if AuthorizationHelper.isAccessible('create') %}
+					{{ HtmlHelper.link(__('create'), {action: 'add', scope: selectedScope}, {class: 'Button Button-Add'}) }}
+				{% endif %}
+
+				{% block listControlOverviewListPaginated %}
+					{{ HtmlHelper.link(__('list_paginated'), {action: 'userConfiguration', identifier: 'paginate.enabled', value: 'true'}, {
+						class: 'Button Button-Small Button-ListView Button-ListView-PaginatedList',
+						disabled: localConfig.paginate.enabled == true
+					}) }}
+				{% endblock %}
+
+				{% block listControlOverviewListNested %}
+					{{ HtmlHelper.link(__('list_nested'), {action: 'userConfiguration', identifier: 'paginate.enabled', value: 'false'}, {
+						class: 'Button Button-Small Button-ListView Button-ListView-NestedList',
+						disabled: localConfig.paginate.enabled == false
+					}) }}
+				{% endblock %}
 			{% endblock %}
 		</div>
 	{% endblock %}
 
-	{% from '@Backend/macro/nested_list.twig' import nestedList %}
-	{% for ls_fieldset in aa_availableFieldsets %}
-		{% block fieldsetOverview %}
-			<fieldset class="Fieldset-Fieldsets">
-				<legend>{{ __('fieldset_' ~ ls_fieldset) }}</legend>
-
-				{% block fieldsetOverviewInner %}
-					{% block listOverview %}
-						{% if aa_attributesGroupedByFieldset[ ls_fieldset ] is defined %}
-							{{ nestedList(aa_attributesGroupedByFieldset[ ls_fieldset ], {
-								contentsEnabled: ab_contentsEnabled,
-								identifier: 'Pages',
-								template: '@Backend/Attributes/overview_nested_list_item.twig',
-							}) }}
-						{% endif %}
-					{% endblock %}
-				{% endblock %}
-			</fieldset>
+	{% if paginated %}
+		{% block paginatedOverview %}
+			{% include '@Backend/Attributes/overview_paginated_list.twig' with _context|merge({records: attributes.items().toArray()}) %}
 		{% endblock %}
-	{% endfor %}
+	{% else %}
+		{% block fieldsetsOverview %}
+			{% for fieldset in availableFieldsets %}
+				{% block fieldsetOverview %}
+					<fieldset class="Fieldset-Fieldset Fieldset-Fieldset-{{ fieldset|camelize }}">
+						<legend>{{ __('fieldset_' ~ fieldset) }}</legend>
+
+						{% block fieldsetOverviewInner %}
+							{% block listOverview %}
+								{% from '@Backend/macro/nested_list.twig' import nestedList %}
+								{{ nestedList(attributesGroupedByFieldset[ fieldset ], _context|merge({
+									data: {
+										nestable: false,
+										fieldset: fieldset,
+									},
+									displayedFields: localConfig.overview.displayedFields,
+									identifier: 'Attributes',
+									template: '@Backend/Attributes/overview_nested_list_item.twig',
+								})) }}
+							{% endblock %}
+						{% endblock %}
+					</fieldset>
+				{% endblock %}
+			{% endfor %}
+		{% endblock %}
+	{% endif %}
 
 	{% block buttonAreaBottom %}
-		<div class="ButtonArea ButtonAreaBottom">
+		<div class="ButtonArea ButtonArea-Bottom">
 			{{ block('categoriesFilterOverview') }}
 
 			{{ block('buttonsOverview') }}

@@ -7,6 +7,7 @@ namespace Awyiss\Configuration\ConfigOptions;
 use Awyiss\Awyiss;
 use Awyiss\Configuration\AbstractConfigOptions;
 use Awyiss\Configuration\ConfigOption;
+use Awyiss\Configuration\ConfigOptions\Trait\TableFieldsTrait;
 use Awyiss\Configuration\ConfigOptionType;
 
 
@@ -14,6 +15,9 @@ use Awyiss\Configuration\ConfigOptionType;
  * Provides all configuration options for the MediaFolders scope
  */
 class MediaFoldersConfigOptions extends AbstractConfigOptions {
+	use TableFieldsTrait;
+
+
 	/**
 	 * @var string Scope of these options
 	 */
@@ -25,6 +29,24 @@ class MediaFoldersConfigOptions extends AbstractConfigOptions {
 	 */
 	public function initializeConfigOptions(): void {
 		$this->add(Awyiss::REALM_BACKEND, [
+			'overview' => [
+				new ConfigOption(
+					defaultValue: [
+						'path',
+					],
+					identifier: 'displayedFields',
+					localizable: false,
+					personalizable: true,
+					type: ConfigOptionType::ValueCollection,
+					values: function () {
+						$la_fields = $this->getTableFields();
+
+						unset($la_fields['id'], $la_fields['title']);
+
+						return $la_fields;
+					},
+				),
+			],
 			'paginate' => [
 				new ConfigOption(
 					defaultValue: true,

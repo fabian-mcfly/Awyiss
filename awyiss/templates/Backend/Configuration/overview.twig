@@ -1,170 +1,56 @@
 {#
-@var aa_configuration array
-@var aa_mergedConfiguration array
-@var aa_configScopes array
-@var as_realms array
+@var configuration array
+@var mergedConfiguration array
+@var configScopes array
+@var realms array
 @var _view \Awyiss\View\BackendView
 #}
 
-{% do AuthorizationHelper.setAdditionalData({scope: as_selectedScope}) %}
+{% do AuthorizationHelper.setAdditionalData({scope: selectedScope}) %}
 
 <div class="Configuration Overview">
-	{% block buttonsOverview %}
-		{% if AuthorizationHelper.isAccessible('create') %}
-			{{ HtmlHelper.link(__('create'), {action: 'add'}, {class: 'Button'}) }}
-		{% endif %}
-	{% endblock %}
-
 	{% block headlineOverview %}
 		<h1>{{ __('headline_overview') }}</h1>
 	{% endblock %}
 
-	{% block categoriesFilterOverview %}
-		{{ CategoriesHelper.filter('scope') }}
+	{% block buttonArea %}
+		<div class="ButtonArea">
+			{% block categoriesFilterOverview %}
+				{{ CategoriesHelper.filter('scope') }}
+			{% endblock %}
+
+			{% block buttonsOverview %}
+				{% if AuthorizationHelper.isAccessible('create') %}
+					{{ HtmlHelper.link(__('create'), {action: 'add'}, {class: 'Button'}) }}
+				{% endif %}
+			{% endblock %}
+		</div>
 	{% endblock %}
 
-	{% for ls_realm in aa_realms %}
-		{% block fieldsetOverview %}
-			<fieldset class="Fieldset-Overview">
-				<legend>{{ __('fieldset_' ~ ls_realm|underscore ) }}</legend>
+	{% block fieldsetsOverview %}
+		{% for realm in realms %}
+			{% block fieldsetOverview %}
+				<fieldset class="Fieldset-Realm{{ realm|camelize }}">
+					<legend>{{ __('fieldset_' ~ realm|underscore ) }}</legend>
 
-				{% block fieldsetOverviewInner %}
-					{% block tableOverview %}
-						<table class="Table-Overview">
-							{% block tableOverviewHead %}
-								<thead>
-									{% block tableOverviewHeadRow %}
-										<tr>
-											{% block tableOverviewHeaderIdentifier %}
-												<th>{{ __('identifier') }}</th>
-											{% endblock %}
-
-											{% block tableOverviewHeaderValue %}
-												<th>{{ __('value') }}</th>
-											{% endblock %}
-
-											{% block tableOverviewHeaderLanguageShortcode %}
-												<th>{{ __('language_shortcode') }}</th>
-											{% endblock %}
-
-											{% block tableOverviewHeaderActions %}
-												<th class="actions"></th>
-											{% endblock %}
-										</tr>
-									{% endblock %}
-								</thead>
-							{% endblock %}
-							{% block tableOverviewBody %}
-								<tbody>
-									{{ _self.recursiveConfigurationListing(aa_mergedConfiguration[ ls_realm ]) }}
-								</tbody>
-							{% endblock %}
-						</table>
+					{% block fieldsetOverviewInner %}
+						{% block listOverview %}
+							{% from '@Backend/Configuration/overview_nested_list.twig' import recursiveConfigurationListing %}
+							{{ recursiveConfigurationListing(mergedConfiguration[ realm ]) }}
+						{% endblock %}
 					{% endblock %}
-				{% endblock %}
-			</fieldset>
-		{% endblock %}
-	{% endfor %}
+				</fieldset>
+			{% endblock %}
+		{% endfor %}
+	{% endblock %}
+
+	{% block buttonAreaBottom %}
+		<div class="ButtonArea ButtonArea-Bottom">
+			{{ block('categoriesFilterOverview') }}
+
+			{{ block('buttonsOverview') }}
+		</div>
+	{% endblock %}
 </div>
 
 {% do AuthorizationHelper.resetAdditionalData() %}
-
-{% macro recursiveConfigurationListing(aa_items, ai_level = 0) %}
-	{% for ls_key, lx_configuration in aa_items %}
-		{% if (lx_configuration is array and lx_configuration[0] is not defined) %}
-			{% block tableOverviewBodyRowGroup %}
-				<tr>
-					<th colspan="4">
-						{% if ai_level > 0 %}
-							{%- for i in range(0, ai_level - 1) %}&ndash; {% endfor -%}
-						{% endif %}
-						{{ ls_key|variable }}
-					</th>
-				</tr>
-			{% endblock %}
-			{{ _self.recursiveConfigurationListing(lx_configuration, ai_level + 1) }}
-		{% elseif lx_configuration is not array %}
-			{# @var lx_configuration \Awyiss\Configuration\ConfigOption #}
-			{% block tableOverviewBodyRowDefault %}
-				<tr style="opacity:.25">
-					{% block tableOverviewCellDefaultIdentifier %}
-						<td>
-							{% if ai_level > 0 %}
-								{%- for i in range(0, ai_level - 1) %}&ndash; {% endfor -%}
-							{% endif %}
-
-							{{ lx_configuration.identifier }}
-
-							{% if lx_configuration.description %}
-								<span class="Description">{{ lx_configuration.description }}</span>
-							{% endif %}
-						</td>
-					{% endblock %}
-
-					{% block tableOverviewCellDefaultValue %}
-						<td>{{ lx_configuration.printableValue ?? '<em>null</em>' }}</td>
-					{% endblock %}
-
-					{% block tableOverviewCellDefaultLanguageShortcode %}
-						<td></td>
-					{% endblock %}
-
-					{% block tableOverviewCellDefaultActions %}
-						<td class="actions"></td>
-					{% endblock %}
-				</tr>
-			{% endblock %}
-		{% else %}
-			{# @var lo_configuration \Awyiss\Model\Entity\Configuration #}
-			{% for lo_configuration in lx_configuration %}
-				{% block tableOverviewBodyRowCustom %}
-					<tr>
-						{% block tableOverviewCellIdentifier %}
-							<td>
-								{% if loop.first %}
-									{% if ai_level > 0 %}
-										{%- for i in range(0, ai_level - 1) %}&ndash; {% endfor -%}
-									{% endif %}
-
-									{{ lo_configuration.identifier|split('.')|slice(-1)|join()|variable }}
-								{% endif %}
-
-								{% set description = lo_configuration.description ?? lo_configuration.configOption.description %}
-								{% if description %}
-									<span class="Description">{{ description }}</span>
-								{% endif %}
-							</td>
-						{% endblock %}
-
-						{% block tableOverviewCellValue %}
-							{% set ls_value = lo_configuration.printableValue %}
-							<td>{{ ls_value ?? '<em>null</em>' }}</td>
-						{% endblock %}
-
-						{% block tableOverviewCellLanguageShortcode %}
-							<td>{{ lo_configuration.language_shortcode is defined ? LocaleHelper.languageTitle(lo_configuration.language_shortcode) : '' }}</td>
-						{% endblock %}
-
-						{% block tableOverviewCellActions %}
-							<td class="actions">
-								{% if AuthorizationHelper.isAccessible('update') %}
-									{{ HtmlHelper.link(__('edit'), {action: 'edit', id: lo_configuration.id}) }}
-								{% endif %}
-
-								{% if AuthorizationHelper.isAccessible('delete') %}
-									{{ HtmlHelper.link(__('delete'), {action: 'delete', id: lo_configuration.id}, {
-				class: 'Button Button-Small Button-Delete',
-				'data-confirm-title': __('confirm_delete_title'),
-				'data-confirm-yes': __('confirm_delete_yes'),
-				'data-confirm-yes-class': 'Button-Delete',
-				'data-confirm-no': __('confirm_delete_no'),
-				'data-confirm': __('confirm_delete', lo_configuration.id) }) }}
-								{% endif %}
-							</td>
-						{% endblock %}
-					</tr>
-				{% endblock %}
-			{% endfor %}
-		{% endif %}
-	{% endfor %}
-{% endmacro %}

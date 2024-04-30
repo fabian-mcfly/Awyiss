@@ -1,0 +1,332 @@
+.MediaController {
+	&:has(#UploadQueue-DropZone.Visible) {
+		overflow:hidden;
+	}
+
+	#UploadQueue {
+		display:none;
+		width:100%;
+		margin-bottom:$lineHeightMain * 2;
+		border-radius:5px;
+		box-shadow:0 0 10px rgba(0, 0, 0, .05);
+		background-color:var(--backgroundColorContent);
+		grid-column:1 / -1;
+
+		&.Visible {
+			display:table;
+		}
+
+		&:not(.Visible) {
+			~ .Overview-Table {
+				margin-top:0;
+
+				th {
+					&:last-child {
+						border-top-right-radius:0;
+					}
+				}
+
+				tfoot {
+					td {
+						&:last-child {
+							border-bottom-right-radius:0;
+						}
+					}
+				}
+			}
+		}
+
+		tr {
+			&:last-child {
+				border-bottom-left-radius:5px;
+				border-bottom-right-radius:5px;
+
+				td {
+					&:first-child {
+						border-bottom-left-radius:5px;
+					}
+
+					&:last-child {
+						border-bottom-right-radius:5px;
+					}
+				}
+			}
+		}
+
+		th {
+			&.TableHeader-Status {
+				width:220px;
+			}
+
+			&:last-child {
+				border-top-right-radius:0;
+			}
+		}
+
+		td {
+			&.TableCell-Name {
+				text-overflow:ellipsis;
+				overflow:hidden;
+				white-space:nowrap;
+			}
+		}
+
+		progress {
+			height:16px;
+			margin-block:5px;
+		}
+	}
+
+	.UploadQueue-Item {
+		&-Error {
+			.TableCell-Status {
+				color:var(--colorError);
+			}
+
+			progress {
+				background-color:var(--colorError);
+
+				&::-webkit-progress-value {
+					background-color:var(--colorError);
+				}
+
+				&::-moz-progress-bar {
+					background-color:var(--colorError);
+					animation-play-state:paused;
+				}
+			}
+		}
+	}
+
+	.Overview-Table {
+		th {
+			&.TableHeader-Preview {
+				width:160px;
+			}
+		}
+
+		td {
+			&.TableCell-Preview {
+				a {
+					border-bottom-width:0;
+				}
+			}
+		}
+
+		img {
+			width:120px;
+			max-width:100%;
+			height:80px;
+			overflow:hidden;
+			object-fit:cover;
+		}
+	}
+}
+
+#UploadQueue-DropZone {
+	display:flex;
+	border-radius:5px;
+	outline:5px solid var(--colorSuccess);
+	background-color:rgba($colorBright, .85);
+	backdrop-filter:blur(5px);
+	font-family:var(--fontStackHeading);
+	font-size:3rem;
+	position:fixed;
+	inset:20px;
+	z-index:18785;
+	opacity:0;
+	visibility:hidden;
+	transition:opacity .3s ease-in-out, visibility 0s linear .3s;
+	align-items:center;
+	justify-content:center;
+
+	.🌚 & {
+		background-color:rgba(lighten($colorBackgroundContentDarkMode, 3), .85);
+	}
+
+	&.Visible {
+		opacity:1;
+		visibility:visible;
+		transition-delay:0s;
+	}
+}
+
+ul#Media-List {
+	display:grid;
+	margin-bottom:$lineHeightMain * 2;
+	padding:40px;
+	border-radius:5px 0 0 5px;
+	background-color:var(--backgroundColorContent);
+	gap:20px;
+	grid-auto-rows:min-content;
+	grid-template-columns:repeat(auto-fill, minmax(10rem, 1fr));
+	grid-column:1 / -1;
+
+	&.FetchInProgress {
+		pointer-events:none;
+
+		.Media-ListItem {
+			opacity:.1;
+		}
+
+		&::before {
+			content:'';
+			display:block;
+			width:220px;
+			height:20px;
+			margin:auto;
+			background-image:url($relativePath + 'img/preloader-dots.gif');
+			background-position:center;
+			background-repeat:no-repeat;
+			position:sticky;
+			top:100px;
+			grid-column:1 / -1;
+
+			.🌚 & {
+				background-image:url($relativePath + 'img/preloader-dots-bright.gif');
+			}
+		}
+	}
+}
+
+.Media-ListItem {
+	min-width:0;
+	aspect-ratio:1;
+	margin:0;
+	border:2px solid var(--colorLight);
+	border-radius:5px;
+	background-color:var(--colorBright);
+	background-image:repeating-conic-gradient(var(--colorLight) 0deg 25%, transparent 0deg 50%);
+	background-size:20px 20px;
+	list-style-type:none;
+	position:relative;
+
+	.🌚 & {
+		--colorLight:#{lighten($colorBackgroundContentDarkMode, 10)};
+
+		border-color:#{lighten($colorBackgroundContentDarkMode, 3)};
+		background-color:#{lighten($colorBackgroundContentDarkMode, 3)};
+
+	}
+
+	&.Selected,
+	&.SortableGhost {
+		--colorLight:#{lighten($colorSuccess, 10)};
+
+		outline:2px solid var(--colorSuccess);
+		outline-offset:-2px;
+		background-color:var(--colorSuccess);
+		color:var(--colorBright);
+	}
+
+	&.SortableGhost {
+		.Actions.Actions {
+			opacity:0;
+		}
+	}
+
+	&:hover {
+		.Actions,
+		.Button-Cancel {
+			opacity:1;
+		}
+	}
+
+	.Actions {
+		position:absolute;
+		top:10px;
+		right:10px;
+		opacity:0;
+		transition:opacity .3s ease-in-out;
+
+		.Button {
+			padding-inline:5px;
+			font-size:0;
+			line-height:0;
+
+			&::after {
+				margin-left:0;
+			}
+		}
+	}
+
+	.Button-Cancel {
+		width:36px;
+		height:36px;
+		margin:auto;
+		padding:0;
+		font-size:0;
+		line-height:0;
+		text-align:center;
+		position:absolute;
+		inset:0;
+		opacity:0;
+		transition:opacity .3s ease-in-out;
+
+		&::after {
+			@include la('\f00d', 24px);
+			line-height:36px;
+		}
+	}
+
+	.Name {
+		padding:10px;
+		background-color:inherit;
+		border-radius:0 0 2px 2px;
+		font-size:14px;
+		line-height:1.1;
+		position:absolute;
+		right:0;
+		bottom:0;
+		left:0;
+		text-overflow:ellipsis;
+		overflow:hidden;
+		white-space:nowrap;
+	}
+
+	.Link {
+		border-bottom-width:0;
+		position:absolute;
+		inset:0;
+	}
+
+	.Preview {
+		display:block;
+
+		.FileType-Icon {
+			margin:auto;
+			position:absolute;
+			inset:0 0 2rem 0;
+		}
+
+		img {
+			display:block;
+			width:100%;
+			aspect-ratio:1;
+			border-radius:5px;
+			object-fit:cover;
+		}
+	}
+
+	.Status {
+		display:block;
+		padding:10px;
+		color:var(--colorError);
+		position:absolute;
+		top:0;
+		right:0;
+		left:0;
+	}
+}
+
+div#MediaFolders-List {
+	display:none;
+}
+
+.SelectionRectangle {
+	border:2px dashed var(--colorSuccess);
+	border-radius:5px;
+	position:absolute;
+	pointer-events:none;
+	z-index:247365;
+}

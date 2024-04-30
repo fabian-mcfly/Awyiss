@@ -1,0 +1,82 @@
+{#
+@var key string|int
+@var entity \Awyiss\Model\Entity\BackendMenuEntry
+@var childrenList string
+@var settings array
+#}
+
+{% extends '@Backend/element/overview/nested_list_item.twig' %}
+
+{% block nestedListItemDataDefaultFields %}
+	<li class="DataItem Identifier">
+		<span class="Label">{{ __('identifier') }}:</span>
+		{% if key is not numeric %}
+			{{ key }}
+		{% else %}
+			-
+		{% endif %}
+	</li>
+	<li class="DataItem Link">
+		<span class="Label">{{ __('link') }}:</span>
+		{% if entity.link is defined and entity.link.url is not empty %}
+			{% if entity.link starts with baseUrl %}
+				{{ HtmlHelper.link(entity.link.url|replace({(baseUrl): ''}), entity.link.url, {target: '_blank'}) }}
+			{% else %}
+				{{ HtmlHelper.link(entity.link.url|replace({(baseUrl): ''}), entity.link.url) }}
+			{% endif %}
+		{% else %}
+			-
+		{% endif %}
+	</li>
+{% endblock %}
+
+{% block nestedListItemAuditInfo %}
+	<div class="AuditInfo{% if key is not numeric %} Hidden{% endif %}" data-id="{{ key }}">
+		{% block nestedListItemAuditInfoList %}
+			<ul class="AuditInfoList">
+				<li><strong>ID:</strong> {{ key }}</li>
+			</ul>
+		{% endblock %}
+	</div>
+{% endblock %}
+
+{% block nestedListActionsEdit %}
+	{% if key is numeric and AuthorizationHelper.isAccessible('update') %}
+		{{ HtmlHelper.link(__('edit'), {action: 'edit', id: key}, {class: 'Button Button-Small Button-Edit'}) }}
+	{% endif %}
+{% endblock %}
+
+{% block nestedListActionsDelete %}
+	{% if key is numeric and AuthorizationHelper.isAccessible('delete') %}
+		{{ HtmlHelper.link(__('delete'), {action: 'delete', id: key}, {
+			class: 'Button Button-Small Button-Delete',
+			'data-confirm-title': __('confirm_delete_title'),
+			'data-confirm-yes': __('confirm_delete_yes'),
+			'data-confirm-yes-class': 'Button-Delete',
+			'data-confirm-no': __('confirm_delete_no'),
+			'data-confirm': __('confirm_delete', key),
+		}) }}
+	{% endif %}
+{% endblock %}
+
+{% block nestedListItem %}
+	<li
+		{% block nestedListItemId -%}
+			id="{{ settings.identifier|pluralize }}-ListItem{{ key }}"
+		{% endblock %}
+		{% block nestedListItemClass -%}
+			class="ListItem {{ settings.identifier }}-ListItem {{ settings.identifier }}-ListItem{{ entity.id -}}
+				{%- if entity.class is defined %} {{ entity.class }}{% endif -%}
+				{%- if entity.active is defined and entity.active == false %} Inactive{% endif -%}
+				{%- if settings.parentsActive is defined and settings.parentsActive == false %} ParentsInactive{% endif -%}
+			"
+		{% endblock %}
+		{%- if key is not numeric %} data-nestable="false" data-sortable="false"{% endif -%}
+	>
+		{% block nestedListItemInner %}
+			{{ parent() }}
+		{% endblock %}
+
+		{{ block('nestedListChildren') }}
+	</li>
+{% endblock %}

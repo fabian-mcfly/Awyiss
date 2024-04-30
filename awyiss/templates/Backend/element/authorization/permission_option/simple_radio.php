@@ -1,9 +1,9 @@
 <?php declare(strict_types=1);
 /**
- * @var SimplePermissionOption $ao_permission
- * @var Entity|null $ao_entity
- * @var string $as_identifier
- * @var string $as_scope
+ * @var SimplePermissionOption $permission
+ * @var Entity|null $entity
+ * @var string $identifier
+ * @var string $scope
  * @var \Awyiss\View\AppView $this
  */
 
@@ -11,11 +11,11 @@
 use Awyiss\Authorization\PermissionOption\SimplePermissionOption;
 use Awyiss\Model\Entity;
 
-$lx_value = $ao_entity->permissions[ $as_identifier ]?->access ?? null;
+$value = $entity->permissions[ $identifier ]?->access ?? null;
 
-if (!empty($as_scope)) {
+if (!empty($scope)) {
 
-	$lx_value = $ao_entity->permissions[ $as_scope ][ $as_identifier ]?->access ?? null;
+	$value = $entity->permissions[ $scope ][ $identifier ]?->access ?? null;
 }
 
-echo $this->Form->radio('permissions[' . $as_scope . '][' . $as_identifier . ']', $ao_permission->getOptions(), ['value' => $lx_value ?? '']);
+echo $this->Form->radio('permissions[' . $scope . '][' . $identifier . ']', $permission->getOptions(), ['value' => $value ?? '']);

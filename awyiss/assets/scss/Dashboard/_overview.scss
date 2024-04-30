@@ -1,0 +1,54 @@
+.DashboardController {
+	#Content {
+		.Overview {
+			grid-template-columns:1fr 400px;
+		}
+
+		h1 {
+			grid-column:1 / -1;
+		}
+	}
+
+	.Overview-Fieldset {
+		display:block;
+		margin-top:$lineHeightMain * 2;
+		row-gap:$lineHeightMain;
+		grid-column:auto / auto;
+
+		&.Fieldset-LoggedInAs,
+		&.Fieldset-QuickActions {
+			align-self:start;
+		}
+
+		&.Fieldset-LoggedInAs {
+			padding-bottom:40px;
+		}
+
+		&.Fieldset-QuickActions {
+
+		}
+
+		.QuickActions {
+			margin-bottom:20px;
+		}
+
+		.QuickAction {
+			margin:20px 0 0 0;
+			list-style-type:none;
+
+			&:first-child {
+				margin-top:0;
+			}
+		}
+
+		.Button {
+			width:100%;
+
+			&-Configure {
+				&::after {
+					content:'\f4fe';
+				}
+			}
+		}
+	}
+}

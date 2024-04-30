@@ -1,0 +1,95 @@
+.SeoRobots {
+	padding-top:1.05rem;
+}
+
+.SeoSnippet {
+	min-height:300px;
+	padding:26px 45px;
+	border:1px solid var(--colorLight);
+	background-image:url($relativePath + 'img/background-seo-snippet.jpg');
+	background-repeat:no-repeat;
+	background-color:#FFFFFF;
+	position:relative;
+
+	.🌚 & {
+		background-image:url($relativePath + 'img/background-seo-snippet-dark.jpg');
+		background-color:#1f1f1f;
+		border-color:var(--colorDark);
+	}
+
+	.SearchTerm {
+		width:auto;
+		height:46px;
+		padding-inline:0;
+		border:0 none;
+		box-shadow:none;
+		background-color:transparent;
+		background-image:none;
+	}
+
+	.LiveData {
+		margin-top:125px;
+	}
+
+	.SnippetFavicon {
+		display:block;
+		width:28px;
+		aspect-ratio:1;
+		margin-right:12px;
+		margin-top:4px;
+		border-radius:50%;
+		overflow:hidden;
+		float:left;
+
+		img {
+			width:28px;
+		}
+	}
+
+	.SnippetTitle {
+		display:block;
+		color:#202124;
+		font-size:14px;
+		line-height:20px;
+		white-space:nowrap;
+
+		.🌚 & {
+			color:#dadce0;
+		}
+	}
+
+	.SnippetUrl {
+		display:block;
+		color:#4d5156;
+		font-size:12px;
+		line-height:18px;
+
+		.🌚 & {
+			color:#dadce0;
+		}
+	}
+
+	.SnippetMetaTitle {
+		display:block;
+		margin-top:10px;
+		margin-bottom:3px;
+		color:#1a0dab;
+		font-family:Arial, sans-serif;
+		font-size:20px;
+		line-height:1.3;
+
+		.🌚 & {
+			color:#99c3ff;
+		}
+	}
+
+	.SnippetMetaDescription {
+		font-family:Arial, sans-serif;
+		font-size:14px;
+		line-height:1.58;
+
+		.🌚 & {
+			color:#bdc1c6;
+		}
+	}
+}

@@ -1,0 +1,13 @@
+.LanguagesController {
+	&.OverviewAction {
+		.Overview-Fieldset {
+			&:first-of-type {
+				border-top-right-radius:0;
+			}
+
+			&:last-of-type {
+				border-bottom-right-radius:0;
+			}
+		}
+	}
+}

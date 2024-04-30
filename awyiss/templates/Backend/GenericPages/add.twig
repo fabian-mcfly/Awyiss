@@ -1,33 +1,13 @@
 {#
-@var ao_page \Awyiss\Model\Entity\Page
-@var ao_pageTemplates \Cake\Collection\CollectionInterface
-@var ao_threadedPages \Cake\Collection\CollectionInterface
-@var ao_possibleParentPages \Cake\Collection\CollectionInterface
-@var as_languageRealm string
+@var page \Awyiss\Model\Entity\Page
+@var parentRecord \Awyiss\Model\Entity\Page
+@var pageTemplates \Cake\Collection\CollectionInterface
+@var threadedPages \Cake\Collection\CollectionInterface
+@var possibleParentPages \Cake\Collection\CollectionInterface
+@var languageRealm string
 @var localConfig array
-@var ab_nestable bool
+@var nestable bool
 @var _view \Awyiss\View\BackendView
 #}
 
-<div class="Pages Form Add">
-	{{ FormHelper.create(ao_page, {method: 'post', idPrefix: 'page'}) }}
-
-	{% block headlineAdd %}
-		<h1>{{ __('headline_add') }}</h1>
-	{% endblock %}
-
-	{% block formAddButtons %}
-		{{ FormHelper.button(__('save')) }}
-		{{ FormHelper.button(__('save_close'), {name: 'submit', value: 'submit_close'}) }}
-	{% endblock %}
-
-	{% block formAdd %}
-		{% include('@Backend/GenericPages/form.twig') %}
-	{% endblock %}
-
-	{% block formAddButtonsBottom %}
-		{{ block('formAddButtons') }}
-	{% endblock %}
-
-	{{ FormHelper.end() -}}
-</div>
+{% extends '@Backend/Pages/add.twig' %}

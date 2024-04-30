@@ -1,0 +1,233 @@
+#MediaOverlay {
+	display:grid;
+	background-image:url($relativePath + 'img/background-pattern-light.png');
+	background-color:var(--backgroundColor);
+	background-position:0 0;
+	position:fixed;
+	inset:0;
+	z-index:1860;
+	opacity:0;
+	visibility:hidden;
+	transition:opacity .3s ease-in-out, visibility 0s linear .3s;
+	grid-template-columns:320px auto;
+	grid-template-rows:80px auto 80px;
+
+	&.FetchInProgress,
+	&.Visible {
+		opacity:1;
+		visibility:visible;
+		transition-delay:0s;
+
+		html:has(&) {
+			overflow:hidden;
+		}
+	}
+
+	&.FetchInProgress {
+		&::before {
+			content:'';
+			display:block;
+			margin:auto;
+			background-image:url($relativePath + 'img/preloader-dots.gif');
+			background-position:center;
+			background-repeat:no-repeat;
+			position:fixed;
+			inset:0;
+			grid-column:1 / -1;
+
+			.🌚 & {
+				background-image:url($relativePath + 'img/preloader-dots-bright.gif');
+			}
+		}
+	}
+
+	.🌚 & {
+		background-image:url($relativePath + 'img/background-pattern-dark.png');
+		background-blend-mode:color-burn;
+	}
+
+	.ButtonArea {
+		width:100%;
+		margin:0;
+		padding-top:14px;
+		grid-area:unquote('1 / 2 / 2 / 3');
+
+		#Content & {
+			margin-bottom:0;
+		}
+
+		.Button {
+			margin-bottom:0;
+		}
+	}
+
+	div#MediaFolders-List {
+		display:block;
+		padding:10px 10px 20px 10px;
+		border:10px solid transparent;
+		border-bottom-width:0;
+		overflow-y:auto;
+		grid-area:unquote('1 / 1 / 3 / 2');
+		scrollbar-color:var(--scrollbarColor);
+		scrollbar-width:thin;
+
+		.🌚 & {
+			--scrollbarColor:var(--backgroundColorContent) var(--colorSemiDark);
+		}
+
+		.Overview-Fieldset {
+			display:block;
+			margin-bottom:$lineHeightMain;
+			margin-top:0;
+			padding:42px 0 0 0;
+			box-shadow:none;
+			border-radius:0;
+			background-color:transparent;
+
+			&:last-child {
+				margin-bottom:0;
+			}
+		}
+
+		legend {
+			width:100%;
+			border-radius:5px;
+			top:0;
+			left:0;
+			bottom:auto;
+		}
+
+		.NestedList {
+			&.Level1 {
+				margin:0;
+			}
+		}
+
+		.ListItem {
+			--dottedLineColor:#{darken($colorLight, 15)};
+			--backgroundColorOdd:var(--colorBright);
+			margin-inline:0;
+			padding-inline:0;
+
+			.🌚 & {
+				--dottedLineColor:#{lighten($colorBackgroundContentDarkMode, 10)};
+				--backgroundColorOdd:#{lighten($colorBackgroundContentDarkMode, 3)};
+			}
+
+			&.Active {
+				> .ListItem-Inner {
+					background-color:var(--colorSuccess);
+					color:var(--colorBright);
+				}
+			}
+
+			&:has(.ListItem) {
+				background-position:22px 16px;
+				background-size:2px 17px;
+			}
+		}
+
+		.ListItem-Inner {
+			display:block;
+			padding-block:12px 13px;
+			cursor:pointer;
+
+			&:not(:hover) {
+				.NestedListToggle {
+					opacity:.5;
+				}
+			}
+
+			&:has(.NestedListToggle) {
+				padding-left:50px;
+				border-top-left-radius:5px;
+			}
+		}
+
+		.NestedListToggle {
+			width:24px;
+			height:24px;
+			margin:auto;
+			border-radius:5px;
+			aspect-ratio:1;
+			top:0;
+			bottom:0;
+			left:9px;
+
+			&::before {
+				font-size:18px;
+				line-height:24px;
+			}
+		}
+
+		.Title {
+			width:100%;
+			margin-block:0;
+			font-weight:400;
+			font-size:.9rem;
+		}
+
+		.Actions {
+			display:none;
+		}
+
+		.MediaFolders-ListItem-Droppable {
+			border-radius:5px;
+			position:absolute;
+			inset:0;
+			overflow:hidden;
+
+			&:has(.Media-ListItem) {
+				box-shadow:0 0 10px var(--colorSuccess);
+				outline:2px solid var(--colorSuccess);
+				outline-offset:-2px;
+			}
+
+			.Media-ListItem {
+				display:none;
+				width:auto;
+				height:100%;
+				margin:auto;
+				background-color:var(--colorSuccess);
+
+				&.SortableChosen {
+					display:block;
+				}
+
+				.Name {
+					display:none;
+				}
+			}
+		}
+	}
+
+	#MediaFolders-AddButton {
+		padding:20px;
+		grid-area:unquote('3 / 1 / 4 / 2');
+
+		.Button {
+			width:100%;
+			height:40px;
+			padding-block:5px 0;
+		}
+	}
+
+	ul#Media-List {
+		margin:0;
+		padding:10px;
+		border-radius:5px 0 0 0;
+		border:10px solid transparent;;
+		grid-area:unquote('2 / 2 / 4 / 3');
+		order:2;
+		overflow-y:auto;
+		scrollbar-color:var(--colorText) var(--colorMedium);
+		scrollbar-width:thin;
+
+		.Actions {
+			.Button-Delete {
+				display:none;
+			}
+		}
+	}
+}
+

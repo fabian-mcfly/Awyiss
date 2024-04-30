@@ -1,0 +1,22 @@
+{#
+@var entity \Awyiss\Model\Entity\Page
+@var settings array
+#}
+
+{% extends '@Backend/element/overview/nested_list_item.twig' %}
+
+{% block nestedListActions %}
+	<span class="Actions">
+		{% block nestedListActionsViewFiles %}
+			{% do AuthorizationHelper.setScope('media') %}
+			{% if AuthorizationHelper.isAccessible('read') %}
+				{{ HtmlHelper.link(__('view_files'), {controller: 'media', action: 'overview', mediaFolderId: entity.id}, {class: 'Button Button-Small Button-View Button-ViewFiles'}) }}
+			{% endif %}
+			{% do AuthorizationHelper.resetScope() %}
+		{% endblock %}
+
+		{{ block('nestedListActionsEdit') }}
+
+		{{ block('nestedListActionsDelete') }}
+	</span>
+{% endblock %}

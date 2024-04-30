@@ -5,6 +5,8 @@ namespace Awyiss\View;
 
 
 use Awyiss\Middleware\LocaleMiddleware;
+use Awyiss\Model\Enum\ProcessStatus;
+use Awyiss\Routing\Router;
 
 
 /**
@@ -15,6 +17,7 @@ class BackendView extends AppView {
 	 * @inheritDoc
 	 * @return void
 	 * @throws \Twig\Error\LoaderError
+	 * @throws \Exception
 	 */
 	public function initialize(): void {
 		parent::initialize();
@@ -32,11 +35,14 @@ class BackendView extends AppView {
 		]);
 		$this->addHelper('Html');
 		$this->addHelper('Locale');
-		$this->addHelper('Paginator', ['templates' => 'paginator_templates']);
+		$this->addHelper('Paginator', [
+			'aliasedFields' => $this->viewVars['paginate']['aliasedFields'] ?? [],
+			'templates' => 'paginator_templates',
+		]);
 		$this->addHelper('SystemOrder', [
-			'field' => $this->viewVars['as_systemOrderField'] ?? null,
-			'relatedColumns' => $this->viewVars['aa_systemOrderRelatedColumns'] ?? null,
-			'options' => $this->viewVars['ao_systemOrderRecords'] ?? null,
+			'field' => $this->viewVars['systemOrderField'] ?? null,
+			'relatedColumns' => $this->viewVars['systemOrderRelatedColumns'] ?? null,
+			'options' => $this->viewVars['systemOrderRecords'] ?? null,
 			'templates' => [
 				'titleOption' => function (mixed $ax_option): string {
 					return __('system_order_after') . ' ' . $ax_option->label;
@@ -51,13 +57,57 @@ class BackendView extends AppView {
 		]);
 
 		/**
-		 * @var \Awyiss\Model\Entity\Language|null $lo_language
-		 * @noinspection PhpUnhandledExceptionInspection
+		 * @var \Awyiss\Model\Entity\Language|null $lo_userLanguage
 		 */
-
-		$lo_language = LocaleMiddleware::getLanguage(null);
-		if ($lo_language) {
-			$this->addHelper('Time', ['outputTimezone' => $lo_language->timezone]);
+		$lo_userLanguage = LocaleMiddleware::getLanguage(null);
+		if ($lo_userLanguage) {
+			$this->addHelper('Time', ['outputTimezone' => $lo_userLanguage->timezone]);
 		}
+
+		$this->addHelper('Url');
+
+
+		// Set login logo path
+		$ls_logoPath = null;
+		$ls_extensions = ['png', 'jpg', 'svg'];
+		$ls_basePath = ROOT . DS . CUSTOM_DIR . DS . 'assets' . DS . 'img' . DS . 'login-logo.';
+		// For each extension, check if the file exists
+		foreach ($ls_extensions as $ls_extension) {
+			$ls_tempPath = $ls_basePath . $ls_extension;
+			if (file_exists($ls_tempPath)) {
+				$ls_logoPath = $ls_tempPath;
+				break;
+			}
+		}
+
+		// If the logo path is set, remove the root path and custom directory from the path
+		$this->set('loginLogoPath', substr_replace($ls_logoPath, '', 0, strlen(ROOT . DS . CUSTOM_DIR) + 1));
+
+		// Unset language properties
+		$lo_frontendLanguage = LocaleMiddleware::getLanguage();
+		if ($lo_frontendLanguage) {
+			unset(
+				$lo_frontendLanguage->realm,
+				$lo_frontendLanguage->systemOrder,
+				$lo_frontendLanguage->active,
+				$lo_frontendLanguage->deleted,
+				$lo_frontendLanguage->createdBy,
+				$lo_frontendLanguage->createdOn,
+				$lo_frontendLanguage->changedBy,
+				$lo_frontendLanguage->changedOn,
+				$lo_frontendLanguage->deletedBy,
+				$lo_frontendLanguage->deletedOn,
+				$lo_frontendLanguage->label,
+			);
+		}
+
+		$lo_twig = $this->getTwig();
+		$lo_twig->addGlobal('baseUrl', Router::url('/', true));
+		$lo_twig->addGlobal('currentPath', $this->getRequest()->getUri()->getPath());
+		$lo_twig->addGlobal('currentUrl', $this->request->getUri()->__toString());
+		$lo_twig->addGlobal('languages', LocaleMiddleware::getLanguages());
+		$lo_twig->addGlobal('language', $lo_frontendLanguage);
+		$lo_twig->addGlobal('languageShortcode', $lo_frontendLanguage?->shortcode);
+		$lo_twig->addGlobal('ProcessStatus', ProcessStatus::class);
 	}
 }
