@@ -63,8 +63,18 @@
 															{% else %}
 																-
 															{% endif %}
+														{% elseif field in ['created_on', 'changed_on'] %}
+															{{ entity.has(field) ? entity.get(field).nice() ?: '-' }}
 														{% else %}
-															{{ entity.get(field) ?: '-' }}
+															{% set value = entity.has(field) ? entity.get(field) : '-' %}
+
+															{% if value is same as true or value is same as 'true' %}
+																<i class="las la-check"></i>
+															{% elseif value is same as false or value is same as 'false' %}
+																<i class="las la-times"></i>
+															{% endif %}
+
+															{{ value }}
 														{% endif %}
 													{% endblock %}
 												{% endblock %}

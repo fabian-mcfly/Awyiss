@@ -84,11 +84,23 @@
 														{% elseif field == 'language_shortcode' %}
 															{{ entity.get(field) ? languages.Frontend[ entity.get(field) ].title : '-' }}
 														{% elseif field == 'page_template_id' %}
-															{{ pageTemplates[ entity.get(field) ] is defined ? pageTemplates[ entity.get(field) ].title : '-' }}
+															{% if entity.pageTemplate is defined %}
+																{{ entity.pageTemplate.label }}
+															{% elseif pageTemplates[ entity.get(field) ] is defined %}
+																{{ pageTemplates[ entity.get(field) ].label }}
+															{% else %}
+																-
+															{% endif %}
 														{% elseif field in ['created_on', 'changed_on'] %}
 															{{ entity.has(field) ? entity.get(field).nice() ?: '-' }}
 														{% else %}
-															{{ entity.has(field) ? entity.get(field) : '-' }}
+															{% set value = entity.has(field) ? entity.get(field) : '-' %}
+															{% if value is same as true or value is same as 'true' %}
+																<i class="las la-check"></i>
+															{% elseif value is same as false or value is same as 'false' %}
+																<i class="las la-times"></i>
+															{% endif %}
+															{{ value }}
 														{% endif %}
 													{% endblock %}
 												{% endif %}
