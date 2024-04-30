@@ -11,6 +11,7 @@ use Awyiss\Core\App;
 use Awyiss\Event\EventManager;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Behavior\Translate\EavStrategy;
+use Awyiss\Model\Entity\Language;
 use Awyiss\ORM\Association\BelongsTo;
 use Awyiss\ORM\Association\BelongsToMany;
 use Awyiss\ORM\Association\HasMany;
@@ -903,6 +904,8 @@ class Table extends BaseTable {
 
 	/**
 	 * Sets specific column types for attributes
+	 *
+	 * @param TableSchemaInterface $ao_schema
 	 */
 	protected function initializeSchema(TableSchemaInterface $ao_schema): void {
 		if (str_starts_with($this->getTable(), 'attributes_')) {
@@ -1004,7 +1007,6 @@ class Table extends BaseTable {
 		if (is_numeric(key($la_finderData))) {
 			return [current($la_finderData), []];
 		}
-
 
 		return [key($la_finderData), current($la_finderData)];
 	}

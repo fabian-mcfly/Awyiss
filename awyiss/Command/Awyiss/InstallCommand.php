@@ -37,7 +37,7 @@ class InstallCommand extends Command {
 	 */
 	protected ConsoleIo $io;
 	/**
-	 * @var string Whether the database connection is valid
+	 * @var bool Whether the database connection is valid
 	 */
 	protected bool $connectionValid = false;
 	/**
@@ -58,6 +58,7 @@ class InstallCommand extends Command {
 	 * @return int
 	 * @throws \Brick\VarExporter\ExportException
 	 * @throws \Random\RandomException
+	 * @throws \ReflectionException
 	 */
 	public function execute(Arguments $args, ConsoleIo $io): int {
 		$this->filesystem = new Filesystem();
@@ -195,7 +196,7 @@ class InstallCommand extends Command {
 
 			$this->io->success('Connected to the database successfully.');
 		}
-		catch (MissingConnectionException $ex) {
+		catch (MissingConnectionException) {
 			$this->connectionValid = false;
 			$this->io->warning('Failed to connect to the database. Please check your database credentials.');
 		}

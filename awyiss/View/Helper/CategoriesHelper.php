@@ -542,8 +542,19 @@ class CategoriesHelper extends Helper {
 			return $la_options;
 		}
 
+		return $this->formatOptionAttributes($la_options, $aa_attributes);
+	}
+
+
+	/**
+	 * @param array $aa_options
+	 * @param array $aa_attributes
+	 * @return array
+	 */
+	protected function formatOptionAttributes(array $aa_options, array $aa_attributes): array {
 		$la_formattedOptions = [];
-		foreach ($la_options as $lx_key => $lx_option) {
+
+		foreach ($aa_options as $lx_key => $lx_option) {
 			if (is_object($lx_option)) {
 				$la_data = [
 					'id' => $lx_option->id,
@@ -553,11 +564,12 @@ class CategoriesHelper extends Helper {
 						$aa_attributes['uriParam'] => $lx_option->id,
 					], ['withoutParams' => ['page']]),
 					'levelPrefix' => str_repeat($aa_attributes['levelPrefix'] ?? '', $lx_option->level ?? 0),
+					'isGrouped' => $aa_attributes['isGrouped'] ?? false,
 				];
 				$la_formattedOptions[ $lx_option->id ] = $la_data;
 			}
 			elseif (is_array($lx_option)) {
-				$la_formattedOptions[ $lx_option['id'] ?? $lx_key ] = $lx_option;
+				$la_formattedOptions[ $lx_option['id'] ?? $lx_key ] = $lx_option + ['isGrouped' => $aa_attributes['isGrouped'] ?? false];
 			}
 			else {
 				$la_data = [
@@ -568,6 +580,7 @@ class CategoriesHelper extends Helper {
 						$aa_attributes['uriParam'] => $lx_key,
 					], ['withoutParams' => ['page']]),
 					'levelPrefix' => null,
+					'isGrouped' => $aa_attributes['isGrouped'] ?? false,
 				];
 
 				$la_formattedOptions[ $lx_key ] = $la_data;

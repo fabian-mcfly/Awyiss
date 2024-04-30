@@ -135,7 +135,7 @@ class FileLoader extends BaseFileLoader {
 	/**
 	 * Find templates with the given name in any of the current set of paths.
 	 *
-	 * @param string $as_name Template as_name
+	 * @param string $as_name Template name
 	 * @return string
 	 * @throws LoaderError
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection

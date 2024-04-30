@@ -183,7 +183,6 @@ class PaginatorHelper extends BasePaginatorHelper {
 
 	/**
 	 * Convenient function to render the pagination element (paginator/pagination.twig)
-	 *
 	 * If there's only one page to display, don't output the pagination.
 	 *
 	 * @return string

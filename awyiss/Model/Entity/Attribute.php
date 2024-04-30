@@ -36,6 +36,28 @@ use Cake\Utility\Text;
  */
 class Attribute extends Entity {
 	/**
+	 * @var array The column spans
+	 */
+	protected static array $columnSpans;
+	/**
+	 * @inheritdoc
+	 */
+	protected static array $fieldMap = [
+		'has_index' => 'hasIndex',
+		'input_type' => 'inputType',
+		'default_value' => 'defaultValue',
+		'column_span' => 'columnSpan',
+		'system_order' => 'systemOrder',
+		'created_by' => 'createdBy',
+		'created_on' => 'createdOn',
+		'changed_by' => 'changedBy',
+		'changed_on' => 'changedOn',
+		'deleted_by' => 'deletedBy',
+		'deleted_on' => 'deletedOn',
+	];
+
+
+	/**
 	 * @inheritDoc
 	 */
 	protected array $_accessible = [

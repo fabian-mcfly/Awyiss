@@ -142,7 +142,6 @@ class Validator extends BaseValidator {
 		$la_errors = [];
 		// Loading default provider in case there is none
 		$this->getProvider('default');
-		//$ls_message = __d('validation', 'invalid_value');
 
 		foreach ($ao_rules as $ls_name => $lo_rule) {
 			$lx_result = $lo_rule->process($aa_data[ $as_field ], $this->_providers, [

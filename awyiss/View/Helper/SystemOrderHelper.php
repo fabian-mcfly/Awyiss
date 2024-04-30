@@ -4,7 +4,6 @@
 namespace Awyiss\View\Helper;
 
 
-use Awyiss\Core\LocalConfig;
 use Awyiss\Model\Behavior\SystemOrderBehavior;
 use Awyiss\Model\Entity;
 use Cake\Core\Exception\CakeException;
@@ -86,7 +85,6 @@ class SystemOrderHelper extends Helper {
 		//Add the provided attributes to the config, so both will be merged
 		$la_attributes = Hash::merge($aa_attributes, $this->getConfig());
 
-
 		//No entity? That's a big problem.
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 		$lo_entity = $la_attributes['entity'] ?? $this->Form->context()?->entity() ?? null;
@@ -112,9 +110,16 @@ class SystemOrderHelper extends Helper {
 			$la_attributes['type'] = 'select';
 		}
 
-		//Unset attributes that shouldn't be part of the generated input
-		unset($la_attributes['entity'], $la_attributes['includeFirst'], $la_attributes['relatedColumns'], $la_attributes['templateClass'], $la_attributes['templates'], $la_attributes['titleFirst']);
-
+		//Unset attributes that shouldn't be part of the generated select
+		unset(
+			$la_attributes['field'],
+			$la_attributes['entity'],
+			$la_attributes['includeFirst'],
+			$la_attributes['relatedColumns'],
+			$la_attributes['templateClass'],
+			$la_attributes['templates'],
+			$la_attributes['titleFirst'],
+		);
 
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 		return $this->Form->control(

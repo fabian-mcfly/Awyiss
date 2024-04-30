@@ -18,7 +18,6 @@ trait TableNamesTrait {
 	/**
 	 * @param string $as_table
 	 * @return array
-	 * @throws \ReflectionException
 	 */
 	protected function getTableNames(): array {
 		if (isset(static::$tableNames)) {

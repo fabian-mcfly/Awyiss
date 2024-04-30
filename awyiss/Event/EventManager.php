@@ -111,7 +111,6 @@ class EventManager extends BaseEventManager {
 			$lb_loaded = EventListenersProvider::loadListener($ls_scope, Awyiss::getRealm());
 			Log::debug(sprintf('Loaded: %s', $lb_loaded ? 'true' : 'false'));
 
-			/** @noinspection PhpUndefinedMethodInspection */
 			if (!$lb_loaded && static::$pageRoleEnum::tryFromName($ls_scope)) {
 				Log::debug(sprintf('Found a page role for scope `%s`', $ls_scope));
 				//Try loading the pages listener from for the current realm

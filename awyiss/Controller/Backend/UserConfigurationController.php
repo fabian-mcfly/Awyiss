@@ -11,10 +11,8 @@ use Awyiss\Configuration\ConfigOptionsProvider;
 use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Model\Entity\UserConfiguration;
 use Awyiss\Routing\Router;
-use Cake\Event\EventManagerInterface;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
-use Cake\Http\ServerRequest;
 use Cake\Utility\Hash;
 
 

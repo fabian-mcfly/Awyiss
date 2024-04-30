@@ -638,7 +638,7 @@ class ContentsController extends Controller {
 		if (
 			$ao_content->parentId &&
 			(
-			 	!in_array($ao_content->parentId, $la_possibleParentIds) ||
+				!in_array($ao_content->parentId, $la_possibleParentIds) ||
 				!isset($la_assignedContentElements['parent_id'])
 			)
 		) {

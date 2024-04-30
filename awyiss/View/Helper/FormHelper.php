@@ -179,6 +179,7 @@ class FormHelper extends BaseFormHelper {
 	 * @param array $aa_options
 	 * @return string
 	 * @throws \ReflectionException
+	 * @throws \Exception
 	 * @noinspection PhpUnused
 	 */
 	public function translatableText(string $as_fieldName, array $aa_options = []): string {

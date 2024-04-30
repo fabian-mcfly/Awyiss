@@ -6,7 +6,6 @@ namespace Awyiss\View\Helper;
 
 use Awyiss\Awyiss;
 use Awyiss\Middleware\LocaleMiddleware;
-use Cake\Event\Event;
 use Cake\View\Helper;
 
 

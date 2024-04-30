@@ -119,7 +119,6 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 			$lb_hydrated = $ax_row instanceof EntityInterface;
 
 			$ax_row['_publicationData'] = [];
-			/** @noinspection PhpUndefinedMethodInspection */
 			foreach ($this->types::cases() as $le_dataType) {
 				$ls_identifier = $le_dataType->value;
 
@@ -186,7 +185,6 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 		/** @var \Awyiss\Model\Entity $ls_entityClass */
 		$ls_entityClass = $this->_table->getEntityClass();
 
-		/** @noinspection PhpUndefinedMethodInspection */
 		foreach ($this->types::cases() as $le_dataType) {
 			$ls_identifier = $le_dataType->value;
 
@@ -326,9 +324,7 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 			};
 		};
 
-
 		$la_matching = $ao_query->getEagerLoader()->getMatching();
-		/** @noinspection PhpUndefinedMethodInspection */
 		foreach ($this->types::cases() as $le_dataType) {
 			$ls_identifier = $le_dataType->value;
 

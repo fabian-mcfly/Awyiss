@@ -42,7 +42,6 @@ class MenuCell extends Cell {
 		// Try to read the menu from the session
 		$ls_menu = $lo_session->read($ls_sessionIdentifier);
 
-
 		// If the menu is in the session, decode it and get the time it was cached
 		if ($ls_menu) {
 			$la_menuData = json_decode($ls_menu, true);
@@ -65,6 +64,7 @@ class MenuCell extends Cell {
 			}
 		}
 		// If the menu data is not in the session or is outdated, regenerate the menu data
+		/** @noinspection PhpUndefinedVariableInspection */
 		if (!$la_menuData || $lo_time < $lo_identity->changedOn) {
 			$lo_menu = new BackendMenu($lo_identity);
 			$la_menuData = $lo_menu->getDynamicMenu();

@@ -35,7 +35,6 @@ class DesignMiddleware implements MiddlewareInterface {
 	/**
 	 * The process method is responsible for handling the request and returning a response.
 	 * It checks if the environment is a production environment and if SCSS files need to be compiled.
-	 *
 	 * If the SCSS files need to be compiled, it uses the ScssCompiler to compile them.
 	 * It then adds the 'design' attribute to the request and passes the request to the next handler.
 	 *
@@ -43,6 +42,7 @@ class DesignMiddleware implements MiddlewareInterface {
 	 * @param RequestHandlerInterface $ao_handler The next handler in the middleware stack
 	 * @return ResponseInterface The response from the handler
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 * @throws \ScssPhp\ScssPhp\Exception\SassException
 	 */
 	public function process(ServerRequestInterface $ao_request, RequestHandlerInterface $ao_handler): ResponseInterface {
 		// Determine the environment the application is running in
@@ -54,7 +54,7 @@ class DesignMiddleware implements MiddlewareInterface {
 
 		// Check if the request has a query parameter to compile SCSS files
 		$la_queryParams = $ao_request->getQueryParams();
-		if ($la_queryParams['compileScss'] ?? false === 'true') {
+		if (($la_queryParams['compileScss'] ?? false) === 'true') {
 			$lb_mustCompile = true;
 		}
 

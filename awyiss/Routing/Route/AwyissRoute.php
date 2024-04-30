@@ -200,7 +200,7 @@ class AwyissRoute extends DashedRoute {
 		/**
 		 * For each key in the route, if the key is 'params', skip it.
 		 * Otherwise, if the key does not exist in the parameters, throw an InvalidArgumentException.
-		 * Add the key surrounded by '{}' to the search array and its corresponding value in the parameters to the replace array.
+		 * Add the key surrounded by '{}' to the search array and its corresponding value in the parameters to the replace-array.
 		 */
 		foreach ($this->keys as $ls_key) {
 			if ($ls_key == 'params') {
@@ -216,10 +216,10 @@ class AwyissRoute extends DashedRoute {
 		}
 
 		/**
-		 * If the template contains '**', add '**' and '%2F' to the search array and the passed parameters string and '/' to the replace array.
+		 * If the template contains '**', add '**' and '%2F' to the search array and the passed parameters string and '/' to the replace-array.
 		 * If the template contains '*', add '*' to the search array.
-		 * If the 'slug' parameter is not empty, add the 'slug' parameter and the passed parameters string (if not empty) separated by '/' to the replace array.
-		 * Otherwise, add the passed parameters string to the replace array.
+		 * If the 'slug' parameter is not empty, add the 'slug' parameter and the passed parameters string (if not empty) separated by '/' to the replace-array.
+		 * Otherwise, add the passed parameters string to the replace-array.
 		 */
 		if (str_contains($this->template, '**')) {
 			array_push($la_search, '**', '%2F');
@@ -407,7 +407,7 @@ class AwyissRoute extends DashedRoute {
 	 * @param string $as_url The URL to complete the scheme for.
 	 * @param array $aa_params The parameters array to use for completing the scheme.
 	 * @param array $aa_query The query array to use for completing the scheme.
-	 * @return string|array The URL with the scheme completed.
+	 * @return array|string The URL with the scheme completed.
 	 */
 	protected function completeUrlScheme(string $as_url, array $aa_params, array $aa_query): string|array {
 		// Initialize the URL.
@@ -484,7 +484,7 @@ class AwyissRoute extends DashedRoute {
 			}
 
 			// Pull out passed args
-			// If the key is not a known key and it is set in the defaults and its value is the same as in the defaults, skip it.
+			// If the key is not a known key, and it is set in the defaults and its value is the same as in the defaults, skip it.
 			$lb_unknownKey = !in_array($lx_key, ['controller', 'action', 'plugin', '#', 'parts', 'pass', 'fullSlug', '_matchedRoute', '_ext']);
 			if ($lb_unknownKey && isset($this->defaults[ $lx_key ]) && $this->defaults[ $lx_key ] === $lx_value) {
 				continue;

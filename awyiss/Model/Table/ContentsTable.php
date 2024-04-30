@@ -470,6 +470,7 @@ class ContentsTable extends Table {
 	 * Checks if all children of the current entity can be moved to the target content area.
 	 *
 	 * @param \Awyiss\Model\Entity\Content $ao_entity
+	 * @param int $ai_pageTemplateId
 	 * @return bool
 	 */
 	protected function childrenCanBeMoved(Content $ao_entity, int $ai_pageTemplateId): bool {
