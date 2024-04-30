@@ -434,12 +434,11 @@ class PagesTable extends Table {
 		$lo_children = $this->getNestedPages($ao_page);
 
 		if (!$lo_children) {
-			return true;
+			return false;
 		}
 
 		$la_pageRoles = array_unique($lo_children->extract('pageRoleId')->toList(), SORT_REGULAR);
 		$la_pageRoles = array_filter($la_pageRoles, fn (PageRoleEnumInterface $ae_pageRole) => $ae_pageRole != $ao_page->pageRoleId);
-
 
 		return (bool)$la_pageRoles;
 	}
