@@ -442,7 +442,7 @@ class SystemOrderBehavior extends Behavior {
 
 		if (isset($this->rememberedData[ $ao_entity->get('id') ])) {
 			/*
-			 * Only after the delete got committed, update the entity's siblings
+			 * Only after the delete statement got committed, update the entity's siblings
 			 */
 			$la_values = $this->rememberedData[ $ao_entity->get('id') ];
 			unset($this->rememberedData[ $ao_entity->get('id') ]);
@@ -881,14 +881,28 @@ class SystemOrderBehavior extends Behavior {
 
 
 	/**
-	 * @param \Cake\ORM\Table|\Awyiss\Model\Table $lo_table
+	 * @param \Awyiss\Model\Table $ao_table
 	 * @param \Cake\Collection\CollectionInterface $ao_records
 	 * @param \Cake\Event\EventInterface|null $ao_event
-	 * @return array|false|iterable
+	 * @param array $additionalWhere
+	 * @return iterable|false
 	 * @throws \Exception
 	 */
-	protected function _rebuildSystemOrder(Table $ao_table, CollectionInterface $ao_records, ?EventInterface $ao_event): false|iterable {
+	protected function _rebuildSystemOrder(Table $ao_table, CollectionInterface $ao_records, ?EventInterface $ao_event, array $additionalWhere = []): iterable|false {
 		$la_relatedColumns = $this->getConfig('relatedColumns');
+
+		if ($additionalWhere) {
+			$la_additionalWhere = $additionalWhere;
+			$ao_records = $ao_records->filter(function (EntityInterface $ao_entity) use ($la_additionalWhere): bool {
+				foreach ($la_additionalWhere as $ls_field => $lx_value) {
+					if ($ao_entity->get($ls_field) !== $lx_value) {
+						return false;
+					}
+				}
+
+				return true;
+			});
+		}
 
 		if ($la_relatedColumns) {
 			$la_relatedColumns = $ao_table->extractAttributeFields($la_relatedColumns, true);

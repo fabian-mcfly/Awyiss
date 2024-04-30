@@ -16,7 +16,7 @@ use Twig\TwigFunction;
  */
 class EnumExtension extends AbstractExtension {
 	/**
-	 * @return TwigFunction[]
+	 * @return array<TwigFunction>
 	 */
 	public function getFunctions(): array {
 		return [
@@ -25,8 +25,15 @@ class EnumExtension extends AbstractExtension {
 	}
 
 
+	/**
+	 * @param string $enumFQN
+	 * @return object
+	 */
 	public function createProxy(string $enumFQN): object {
-		return new class($enumFQN) {
+		return new class ($enumFQN) {
+			/**
+			 * @param string $enum
+			 */
 			public function __construct(private readonly string $enum) {
 				if (!enum_exists($this->enum)) {
 					throw new InvalidArgumentException("$this->enum is not an Enum type and cannot be used in this function");
@@ -34,7 +41,12 @@ class EnumExtension extends AbstractExtension {
 			}
 
 
-			public function __call(string $name, array $arguments) {
+			/**
+			 * @param string $name
+			 * @param array $arguments
+			 * @return mixed
+			 */
+			public function __call(string $name, array $arguments):	mixed {
 				$ls_enumFQN = sprintf('%s::%s', $this->enum, $name);
 
 				if (defined($ls_enumFQN)) {
@@ -45,7 +57,7 @@ class EnumExtension extends AbstractExtension {
 					return $this->enum::$name(...$arguments);
 				}
 
-				throw new BadMethodCallException("Neither \"{$ls_enumFQN}\" nor \"{$ls_enumFQN}::{$name}()\" exist in this runtime.");
+				throw new BadMethodCallException("Neither \"$ls_enumFQN\" nor \"$ls_enumFQN::$name()\" exist in this runtime.");
 			}
 		};
 	}

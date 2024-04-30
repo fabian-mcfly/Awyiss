@@ -333,7 +333,7 @@ class MediaFoldersController extends Controller {
 
 	/**
 	 * @param \Awyiss\Model\Entity\MediaFolder $ao_mediaFolder
-	 * @param \Cake\Collection\CollectionInterface $ao_threadedContents
+	 * @param \Cake\Collection\CollectionInterface $ao_threadedMediaFolders
 	 * @return void
 	 */
 	protected function ensurePossibleParentId(MediaFolder $ao_mediaFolder, CollectionInterface $ao_threadedMediaFolders): void {

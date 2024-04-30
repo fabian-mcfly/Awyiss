@@ -5,7 +5,6 @@ namespace Awyiss\Controller\Backend;
 
 
 use Awyiss\Controller\BackendController as Controller;
-use Awyiss\Model\Entity;
 use Awyiss\Model\Entity\PageTemplate;
 use Awyiss\Routing\Router;
 use Cake\Http\Exception\RedirectException;

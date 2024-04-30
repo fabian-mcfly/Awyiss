@@ -33,6 +33,7 @@ trait AdminTrait {
 	 * Create the admin usergroup if it does not exist
 	 *
 	 * @return \Awyiss\Model\Entity\Usergroup The created or found admin usergroup
+	 * @throws \ReflectionException
 	 */
 	protected function createAdminUsergroup(): Usergroup {
 		/** @var \Awyiss\Model\Table\UsergroupsTable $lo_usersTable */
@@ -68,6 +69,7 @@ trait AdminTrait {
 	 * If no admin username is provided, this method will skip admin user creation.
 	 *
 	 * @return void
+	 * @throws \ReflectionException
 	 */
 	protected function createAdminUser(): void {
 		if (!$this->adminUsername) {
@@ -122,13 +124,13 @@ trait AdminTrait {
 	 * ]
 	 *
 	 * @return array The array of all available permissions
+	 * @throws \ReflectionException
 	 */
 	protected function getPermissions(): array {
 		//permissions[attributes][read] = true;
 		$la_permissions = [];
 
 		// Get all available policies from the AuthorizationService
-		/** @var \Awyiss\Authorization\AuthorizationService $lo_authorizationService */
 		$lo_authorizationService = new AuthorizationService(Awyiss::REALM_BACKEND);
 		$la_policies = $lo_authorizationService->getPolicies();
 		unset($la_policies['user_configuration']);

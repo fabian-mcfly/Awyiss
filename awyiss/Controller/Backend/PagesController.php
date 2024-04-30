@@ -301,7 +301,7 @@ class PagesController extends Controller {
 		$lb_saveAsCopy = (bool)$this->request->getData('save_as_copy');
 
 		$lb_hasDescendantsWithDifferentPageRole = false;
-		if (!$ao_page->isNew() && $this->request->getData('save_as_copy')) {
+		if (!$ao_page->isNew() && $lb_saveAsCopy) {
 			$lb_hasDescendantsWithDifferentPageRole = $this->Pages->hasDescendantsWithDifferentPageRole($ao_page);
 		}
 

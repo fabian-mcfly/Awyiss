@@ -56,6 +56,32 @@ class Content extends Entity {
 	 */
 	protected static array $columnWidths;
 	/**
+	 * @inheritdoc
+	 */
+	protected static array $fieldMap = [
+		'page_id' => 'pageId',
+		'parent_id' => 'parentId',
+		'content_area_id' => 'contentAreaId',
+		'content_template_id' => 'contentTemplateId',
+		'css_class' => 'cssClass',
+		'column_width' => 'columnWidth',
+		'column_indent' => 'columnIndent',
+		'column_last' => 'columnLast',
+		'column_rtl' => 'columnRtl',
+		'duplicate_of' => 'duplicateOf',
+		'system_order' => 'systemOrder',
+		'created_by' => 'createdBy',
+		'created_on' => 'createdOn',
+		'changed_by' => 'changedBy',
+		'changed_on' => 'changedOn',
+		'deleted_by' => 'deletedBy',
+		'deleted_on' => 'deletedOn',
+		'content_area' => 'contentArea',
+		'content_template' => 'contentTemplate',
+		'duplicating_contents' => 'duplicatingContents',
+		'duplicate_of_content' => 'duplicateOfContent',
+	];
+	/**
 	 * @var array The column indents
 	 */
 	protected static array $columnIndents;
@@ -82,32 +108,6 @@ class Content extends Entity {
 		'data' => true,
 		'systemOrder' => true,
 		'active' => true,
-	];
-	/**
-	 * @inheritdoc
-	 */
-	protected static array $fieldMap = [
-		'page_id' => 'pageId',
-		'parent_id' => 'parentId',
-		'content_area_id' => 'contentAreaId',
-		'content_template_id' => 'contentTemplateId',
-		'css_class' => 'cssClass',
-		'column_width' => 'columnWidth',
-		'column_indent' => 'columnIndent',
-		'column_last' => 'columnLast',
-		'column_rtl' => 'columnRtl',
-		'duplicate_of' => 'duplicateOf',
-		'system_order' => 'systemOrder',
-		'created_by' => 'createdBy',
-		'created_on' => 'createdOn',
-		'changed_by' => 'changedBy',
-		'changed_on' => 'changedOn',
-		'deleted_by' => 'deletedBy',
-		'deleted_on' => 'deletedOn',
-		'content_area' => 'contentArea',
-		'content_template' => 'contentTemplate',
-		'duplicating_contents' => 'duplicatingContents',
-		'duplicate_of_content' => 'duplicateOfContent',
 	];
 	/**
 	 * @inheritdoc

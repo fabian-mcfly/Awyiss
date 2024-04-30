@@ -111,6 +111,7 @@ class DefaultValuesBehavior extends Behavior {
 
 		//Set the entity to the attributes entity
 		if ($lo_table->hasAttributes()) {
+			/** @noinspection PhpUndefinedVariableInspection */
 			$lo_entity->{$ls_entityClass::mapField($lo_attributes->getProperty())}->setEntity($lo_entity);
 		}
 

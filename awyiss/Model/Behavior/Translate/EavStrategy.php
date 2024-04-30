@@ -211,7 +211,7 @@ class EavStrategy extends BaseEavStrategy {
 
 			$lo_translation = $lo_translation->extract($this->getConfig('fields'));
 
-			// If now, the current ls_locale property is empty,
+			// If now, the current locale property is empty,
 			// unset it completely.
 			if (empty(array_filter($lo_translation))) {
 				unset($la_translations[ $ls_locale ]);

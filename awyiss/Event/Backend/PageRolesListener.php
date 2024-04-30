@@ -152,7 +152,7 @@ class PageRolesListener implements EventListenerInterface {
 			/** @var \Awyiss\Model\Table $lo_attributesTable */
 			$lo_attributesTable = $lo_tableLocator->get('Attributes');
 
-			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+			/** @noinspection PhpUndefinedMethodInspection */
 			$li_identityId = $lo_attributesTable->getBehavior('Audit')->getIdentity()?->id;
 
 			$lo_queue->createJob(

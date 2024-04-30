@@ -96,7 +96,7 @@ class MediaFoldersListener implements EventListenerInterface {
 		$lo_table = $ao_event->getSubject();
 
 		$ls_field = $lo_table->getSchema()->getColumn('path');
-		$li_length = $ls_field ? $ls_field['length'] : 0;
+		$li_fieldLength = $ls_field ? $ls_field['length'] : 0;
 
 		if (empty($ao_entity->path)) {
 			//Make sure the path is set. Use the title if it's empty.
@@ -135,52 +135,7 @@ class MediaFoldersListener implements EventListenerInterface {
 
 		//When the path has changed
 		if ($ao_entity->isNew() || $ls_path != $ls_originalPath) {
-			$ls_field = $lo_table->getAlias() . '.path';
-
-			$la_conditions = [
-				$ls_field => $ls_path,
-			];
-
-
-			$ls_primaryKey = $lo_table->getPrimaryKey();
-			$li_id = $ao_entity->get($ls_primaryKey);
-			if ($li_id) {
-				$la_conditions['NOT'] = [$lo_table->getAlias() . '.' . $ls_primaryKey => $li_id];
-			}
-
-			/**
-			 * `$la_conditions` holds an array of query conditions that are used to find media folders with the same
-			 * path
-			 * ```
-			 * [
-			 *    "MediaFolders.path" => "new/path/of/the/current/mediafolder"
-			 *    "language_shortcode" => "de"
-			 *    "NOT" => [
-			 *        "MediaFolders.id" => 1234
-			 *    ]
-			 * ]
-			 * ```
-			 */
-
-			$li_i = 1;
-			$ls_suffix = '';
-
-			//As long as a media folder with the same path exists, append an increasing number to the path and try again
-			while ($lo_table->exists($la_conditions)) {
-				$li_i++;
-				$ls_suffix = '-' . $li_i;
-
-				if ($li_length && (mb_strlen($ls_path . $ls_suffix) > $li_length)) {
-					$ls_path = mb_substr($ls_path, 0, $li_length - mb_strlen($ls_suffix));
-				}
-
-				$la_conditions[ $ls_field ] = $ls_path . $ls_suffix;
-			}
-
-			//Append the suffix, if it's not empty
-			if ($ls_suffix) {
-				$ls_path .= $ls_suffix;
-			}
+			$ls_path = $this->ensureUniqueSlug($lo_table, $ao_entity, $ls_path, $li_fieldLength);
 		}
 
 		$ao_entity->set('path', $ls_path, ['setter' => false]);
@@ -424,5 +379,64 @@ class MediaFoldersListener implements EventListenerInterface {
 		$ao_table->Media->saveMany($lo_files->toList(), [
 			'checkRules' => false,
 		]);
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Table\MediaFoldersTable $ao_table
+	 * @param \Awyiss\Model\Entity\MediaFolder $ao_entity
+	 * @param string $as_path
+	 * @param int $ai_fieldLength
+	 * @return string
+	 */
+	protected function ensureUniqueSlug(MediaFoldersTable $ao_table, MediaFolder $ao_entity, string $as_path, int $ai_fieldLength): string {
+		$ls_field = $ao_table->getAlias() . '.path';
+
+		$ls_path = $as_path;
+		$la_conditions = [
+			$ls_field => $ls_path,
+		];
+
+		$ls_primaryKey = $ao_table->getPrimaryKey();
+		$li_id = $ao_entity->get($ls_primaryKey);
+		if ($li_id) {
+			$la_conditions['NOT'] = [$ao_table->getAlias() . '.' . $ls_primaryKey => $li_id];
+		}
+
+		/**
+		 * `$la_conditions` holds an array of query conditions that are used to find media folders with the same
+		 * path
+		 * ```
+		 * [
+		 *    "MediaFolders.path" => "new/path/of/the/current/mediafolder"
+		 *    "language_shortcode" => "de"
+		 *    "NOT" => [
+		 *        "MediaFolders.id" => 1234
+		 *    ]
+		 * ]
+		 * ```
+		 */
+
+		$li_i = 1;
+		$ls_suffix = '';
+
+		//As long as a media folder with the same path exists, append an increasing number to the path and try again
+		while ($ao_table->exists($la_conditions)) {
+			$li_i++;
+			$ls_suffix = '-' . $li_i;
+
+			if ($ai_fieldLength && (mb_strlen($ls_path . $ls_suffix) > $ai_fieldLength)) {
+				$ls_path = mb_substr($ls_path, 0, $ai_fieldLength - mb_strlen($ls_suffix));
+			}
+
+			$la_conditions[ $ls_field ] = $ls_path . $ls_suffix;
+		}
+
+		//Append the suffix, if it's not empty
+		if ($ls_suffix) {
+			$ls_path .= $ls_suffix;
+		}
+
+		return $ls_path;
 	}
 }
