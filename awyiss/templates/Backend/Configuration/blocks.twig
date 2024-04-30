@@ -73,12 +73,13 @@
 {% block formControlTypeValueCollection %}
 	<div class="FormInput FormInputType-ValueCollection FormInputName-Value">
 		<label class="Label">{{ __('value') }}</label>
-		{% set value = configuration.hasValue('value') ? configuration.get('value')|json_decode : configuration.configOption.defaultValue %}
+		{% set currentValue = configuration.hasValue('value') ? configuration.get('value')|json_decode : configuration.configOption.defaultValue %}
+		{% set currentValue = currentValue|map(value => value|underscore) %}
 		<input type="hidden" name="value" value="">
 
 		{% for key, value in configuration.configOption.values(true) %}
 			{{ FormHelper.control('value[]', {
-				checked: key in value,
+				checked: key in currentValue,
 				hiddenField: false,
 				id: 'Configuration-Value-' ~ key|camelize,
 				label: value,
