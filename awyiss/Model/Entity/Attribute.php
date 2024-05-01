@@ -33,6 +33,7 @@ use Cake\Utility\Text;
  * @property \Cake\I18n\DateTime|null $changedOn
  * @property int|null $deletedBy
  * @property \Cake\I18n\DateTime|null $deletedOn
+ * @property array{span: ?\Awyiss\Utility\Content\ColumnInterface} $column
  */
 class Attribute extends Entity {
 	/**

@@ -38,6 +38,8 @@ class AttributesTable extends Table {
 	 * https://regex101.com/r/0h9ziN/1
 	 */
 	public const TYPE_PATTERN = '/^(\w*)(?:\((\d+(?:,\d+)*)+\)+)?$/';
+
+
 	/**
 	 * @var array
 	 */

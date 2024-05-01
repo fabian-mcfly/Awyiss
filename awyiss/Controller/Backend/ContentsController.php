@@ -796,7 +796,7 @@ class ContentsController extends Controller {
 			$ao_content->set($ls_element);
 		}
 
-		$la_contentAttributes = $this->Contents->ContentTemplates->getAvailableContentAttributes();
+		$la_contentAttributes = $this->Contents->ContentTemplates->getAvailableContentAttributes(true);
 		$la_contentAttributes = array_column($la_contentAttributes, 'identifier');
 
 		foreach (

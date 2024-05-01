@@ -58,6 +58,7 @@ button,
 input,
 select,
 textarea {
+	&[disabled],
 	&[readonly] {
 		opacity:.5;
 

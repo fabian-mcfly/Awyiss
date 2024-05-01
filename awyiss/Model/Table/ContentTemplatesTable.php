@@ -162,16 +162,17 @@ class ContentTemplatesTable extends Table {
 
 
 	/**
+	 * @param bool $ab_includeInactive
 	 * @return array<int, array>
 	 */
-	public function getAvailableContentAttributes(): array {
+	public function getAvailableContentAttributes(bool $ab_includeInactive = false): array {
 		if (isset($this->availableContentAttributes)) {
 			return $this->availableContentAttributes;
 		}
 
 		/** @var \Awyiss\Model\Table\AttributesTable $lo_attributesTable */
 		$lo_attributesTable = FactoryLocator::get('Table')->get('Attributes');
-		$this->availableContentAttributes = $lo_attributesTable->find()->where(['scope' => 'contents'])->all()->indexBy('id')->map(function (Attribute $ao_attribute): array {
+		$this->availableContentAttributes = $lo_attributesTable->find($ab_includeInactive ? 'all' : 'active')->where(['scope' => 'contents'])->all()->indexBy('id')->map(function (Attribute $ao_attribute): array {
 			return [
 				'title' => $ao_attribute->title,
 				'label' => $ao_attribute->label,

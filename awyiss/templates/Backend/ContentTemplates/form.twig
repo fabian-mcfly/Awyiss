@@ -128,6 +128,15 @@
 								value: true,
 							}) }}
 						{% endif %}
+
+						{{ FormHelper.control('content_template_elements[' ~ (loop.index0) ~ '][column_span]', {
+							empty: false,
+							label: __('column_span'),
+							options: columnSpans,
+							id: 'ContentTemplate-ContentElements-' ~ availableElement|camelize ~ '-ColumnSpan',
+							type: 'select',
+							val: contentTemplateElement ? contentTemplateElement.columnSpan : false,
+						}) }}
 					</li>
 				{% endblock %}
 
@@ -174,15 +183,22 @@
 							{% endif %}
 						</label>
 
-						{% if contentAttribute.active %}
-							{{ FormHelper.control('content_template_elements[' ~ (loop.index0 + availableContentElements|length) ~ '][required]', {
-								checked: contentTemplateElement ? contentTemplateElement.required : false,
-								label: __('required'),
-								hiddenField: true,
-								id: 'ContentTemplate-ContentAttribute-' ~ contentAttribute.identifier|camelize ~ '-Required',
-								value: true,
-							}) }}
-						{% endif %}
+						{{ FormHelper.control('content_template_elements[' ~ (loop.index0 + availableContentElements|length) ~ '][required]', {
+							checked: contentTemplateElement ? contentTemplateElement.required : false,
+							label: __('required'),
+							hiddenField: true,
+							id: 'ContentTemplate-ContentAttribute-' ~ contentAttribute.identifier|camelize ~ '-Required',
+							value: true,
+						}) }}
+
+						{{ FormHelper.control('content_template_elements[' ~ (loop.index0 + availableContentElements|length) ~ '][column_span]', {
+							empty: false,
+							label: __('column_span'),
+							options: columnSpans,
+							id: 'ContentTemplate-ContentAttribute-' ~ contentAttribute.identifier|camelize ~ '-ColumnSpan',
+							type: 'select',
+							val: contentTemplateElement ? contentTemplateElement.columnSpan : false,
+						}) }}
 					</li>
 				{% endblock %}
 

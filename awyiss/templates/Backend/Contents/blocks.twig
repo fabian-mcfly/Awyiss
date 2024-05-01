@@ -1,10 +1,11 @@
 {% block formControlActive %}
-	{{ FormHelper.control('active') }}
+	{{ FormHelper.control('active', {columnSpan: contentTemplateElement.column.span.numerator}) }}
 {% endblock %}
 
 
 {% block formControlContentTemplateId %}
 	{{ FormHelper.control('content_template_id', {
+		columnSpan: contentTemplateElement.column.span.numerator,
 		empty: false,
 		options: settings.contentTemplates.combine('id', 'title'),
 		'data-form-updater': true,
@@ -14,6 +15,7 @@
 
 {% block formControlLanguageShortcode %}
 	{{ LocaleHelper.control('language_shortcode', {
+		columnSpan: contentTemplateElement.column.span.numerator,
 		languageRealm: settings.languageRealm,
 		val: settings.languageShortcode,
 		'data-form-updater': true,
@@ -22,17 +24,24 @@
 
 
 {% block formControlSystemOrder %}
-	{{ SystemOrderHelper.control('system_order', {entity: settings.content}) }}
+	{{ SystemOrderHelper.control('system_order', {
+		columnSpan: contentTemplateElement.column.span.numerator,
+		entity: settings.content,
+	}) }}
 {% endblock %}
 
 
 {% block formControlPageId %}
-	{{ CategoriesHelper.control('page', {'data-form-updater': true}) }}
+	{{ CategoriesHelper.control('page', {
+		columnSpan: contentTemplateElement.column.span.numerator,
+		'data-form-updater': true,
+	}) }}
 {% endblock %}
 
 
 {% block formControlContentAreaId %}
 	{{ FormHelper.control('content_area_id', {
+		columnSpan: contentTemplateElement.column.span.numerator,
 		disabled: settings.contentAreas.unavailable|column('id'),
 		empty: false,
 		options: combine(settings.contentAreas.all|column('id'), settings.contentAreas.all|column('label')),
@@ -42,28 +51,45 @@
 
 
 {% block formControlColumnWidth %}
-	{{ FormHelper.control('column_width', {columnSpan: 6, empty: false, options: settings.columnWidths, required: contentTemplateElement.required, type: 'select'}) }}
+	{{ FormHelper.control('column_width', {
+		columnSpan: contentTemplateElement.column.span.numerator,
+		empty: false,
+		options: settings.columnWidths,
+		required: contentTemplateElement.required,
+		type: 'select'}
+	) }}
 {% endblock %}
 
 
 {% block formControlColumnIndent %}
-	{{ FormHelper.control('column_indent', {columnSpan: 6, options: settings.columnIndents, required: contentTemplateElement.required, type: 'select'}) }}
+	{{ FormHelper.control('column_indent', {
+		columnSpan: contentTemplateElement.column.span.numerator,
+		options: settings.columnIndents,
+		required: contentTemplateElement.required,
+		type: 'select'}) }}
 {% endblock %}
 
 
 {% block formControlColumnLast %}
-	{{ FormHelper.control('column_last', {columnSpan: 6}) }}
+	{{ FormHelper.control('column_last', {
+		columnSpan: contentTemplateElement.column.span.numerator,
+		required: contentTemplateElement.required,
+	}) }}
 {% endblock %}
 
 
 {% block formControlColumnRtl %}
-	{{ FormHelper.control('column_rtl', {columnSpan: 6}) }}
+	{{ FormHelper.control('column_rtl', {
+		columnSpan: contentTemplateElement.column.span.numerator,
+		required: contentTemplateElement.required,
+	}) }}
 {% endblock %}
 
 
 
 {% block formControlParentId %}
 	{{ FormHelper.control('parent_id', {
+		columnSpan: contentTemplateElement.column.span.numerator,
 		options: hashPrinter(settings.possibleParentContents, 'label', 'id', '- '),
 		required: contentTemplateElement.required,
 		'data-form-updater': true,
@@ -72,30 +98,48 @@
 
 
 {% block formControlTitle %}
-	{{ FormHelper.control('title', {required: contentTemplateElement.required}) }}
+	{{ FormHelper.control('title', {
+		columnSpan: contentTemplateElement.column.span.numerator,
+		required: contentTemplateElement.required,
+	}) }}
 {% endblock %}
 
 
 {% block formControlSubtitle %}
-	{{ FormHelper.control('subtitle', {required: contentTemplateElement.required}) }}
+	{{ FormHelper.control('subtitle', {
+		columnSpan: contentTemplateElement.column.span.numerator,
+		required: contentTemplateElement.required,
+	}) }}
 {% endblock %}
 
 
 {% block formControlText %}
-	{{ FormHelper.control('text', {required: contentTemplateElement.required}) }}
+	{{ FormHelper.control('text', {
+		columnSpan: contentTemplateElement.column.span.numerator,
+		required: contentTemplateElement.required,
+	}) }}
 {% endblock %}
 
 
 {% block formControlDuplicateOf %}
-	{{ FormHelper.control('duplicate_of', {disabled: [content.id], required: contentTemplateElement.required}) }}
+	{{ FormHelper.control('duplicate_of', {
+		columnSpan: contentTemplateElement.column.span.numerator,
+		disabled: [content.id], required: contentTemplateElement.required,
+	}) }}
 {% endblock %}
 
 
 {% block formControlLink %}
-	{{ FormHelper.control('link', {required: contentTemplateElement.required}) }}
+	{{ FormHelper.control('link', {
+		columnSpan: contentTemplateElement.column.span.numerator,
+		required: contentTemplateElement.required,
+	}) }}
 {% endblock %}
 
 
 {% block formControlCssClass %}
-	{{ FormHelper.control('css_class', {required: contentTemplateElement.required}) }}
+	{{ FormHelper.control('css_class', {
+		columnSpan: contentTemplateElement.column.span.numerator,
+		required: contentTemplateElement.required,
+	}) }}
 {% endblock %}

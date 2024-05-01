@@ -51,6 +51,10 @@ class ContentTemplateElements {
 			'default' => '',
 			'limit' => 50,
 			'null' => false,
+		])->addColumn('column_span', 'string', [
+			'default' => '12/12',
+			'limit' => 5,
+			'null' => false,
 		])->addColumn('required', 'boolean', [
 			'default' => false,
 			'limit' => null,

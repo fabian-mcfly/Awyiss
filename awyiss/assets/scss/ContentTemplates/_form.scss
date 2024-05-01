@@ -98,6 +98,7 @@
 		}
 
 		> label,
+		.FormInputType-Select,
 		.FormInputType-Checkbox {
 			display:none;
 		}
@@ -139,7 +140,7 @@
 
 		.ContentElement {
 			display:grid;
-			grid-template-columns:1fr 200px;
+			grid-template-columns:40% 60%;
 
 			&[data-assignable="false"] {
 				.FormInputType-Checkbox {
@@ -147,10 +148,28 @@
 				}
 			}
 
+			.Title {
+				margin-bottom:-.75rem;
+				grid-column:1 / span 2;
+			}
+
+			.FormInputType-Select {
+				display:flex;
+				margin-bottom:0;
+				grid-column:2 / span 1;
+
+				.Label {
+					display:inline-block;
+					width:200px;
+					margin-bottom:0;
+					line-height:52px;
+				}
+			}
+
 			.FormInputType-Checkbox {
 				display:block;
+				margin-top:.3rem;
 				margin-bottom:0;
-				margin-left:auto;
 				white-space:nowrap;
 				grid-column:auto / span 1;
 

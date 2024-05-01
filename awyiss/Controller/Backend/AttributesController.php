@@ -286,6 +286,7 @@ class AttributesController extends Controller {
 
 		$lb_translatableDisabled = in_array($ao_attribute->scope, array_merge($la_pageRoles, ['contents', 'menu_entries', 'pages']));
 		$lb_requiredDisabled = in_array($ao_attribute->scope, ['contents']);
+		$lb_columnSpanDisabled = in_array($ao_attribute->scope, ['contents']);
 
 		$la_columnSpans = $this->Attributes->getColumnSpans();
 		$la_columnSpans = array_map(function (ColumnInterface $ao_column): string {
@@ -300,6 +301,7 @@ class AttributesController extends Controller {
 			'translatableDisabled' => $lb_translatableDisabled,
 			'requiredDisabled' => $lb_requiredDisabled,
 			'columnSpans' => $la_columnSpans,
+			'columnSpanDisabled' => $lb_columnSpanDisabled,
 		]);
 	}
 }

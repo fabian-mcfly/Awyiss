@@ -14,21 +14,12 @@
 
 {% use '@Backend/Contents/blocks.twig' %}
 
-{% set macroSettings = {
-	columnWidths: columnWidths,
-	columnIndents: columnIndents,
-	content: content,
-	contentAreas: contentAreas,
-	contentTemplates: contentTemplates,
-	languageRealm: languageRealm,
-	languageShortcode: languageShortcode,
-	possibleParentContents: possibleParentContents,
-} %}
+{% set macroSettings = _context|merge({}) %}
 
 {% macro renderFormControls(assignedContentTemplateElements = [], settings) %}
 	{% for contentTemplateElement in assignedContentTemplateElements %}
 		{% if contentTemplateElement.identifier[:11] == 'attributes.' %}
-			{{ AttributesHelper.control(contentTemplateElement.identifier[11:], {required: contentTemplateElement.required}) }}
+			{{ AttributesHelper.control(contentTemplateElement.identifier[11:], {columnSpan: contentTemplateElement.column.span.numerator, required: contentTemplateElement.required}) }}
 		{% else %}
 			{{ block('formControl' ~ contentTemplateElement.identifier|camelize) }}
 		{% endif %}

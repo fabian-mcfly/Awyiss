@@ -6,6 +6,7 @@ namespace Awyiss\Model\Table;
 
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
+use Awyiss\Utility\Content\BootstrapColumnSystem;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Validation\Validator;
 
@@ -34,6 +35,20 @@ class ContentTemplateElementsTable extends Table {
 	protected array $audit = [
 		'enabled' => false,
 	];
+	/**
+	 * @var array The column widths
+	 */
+	protected array $columnSpans;
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public function initialize(array $aa_config): void {
+		parent::initialize($aa_config);
+
+		$this->columnSpans = BootstrapColumnSystem::getColumnWidths();
+	}
 
 
 	/**
@@ -101,6 +116,16 @@ class ContentTemplateElementsTable extends Table {
 		]);
 
 
+		$ao_validator->add('columSpan', [
+			'inList' => [
+				'rule' => [
+					'inList',
+					array_keys($this->columnSpans),
+				],
+			],
+		]);
+
+
 		$ao_validator->add('required', [
 			'boolean' => ['rule' => 'boolean'],
 		]);
@@ -125,5 +150,13 @@ class ContentTemplateElementsTable extends Table {
 
 
 		return $ao_rules;
+	}
+
+
+	/**
+	 * @return array
+	 */
+	public function getColumnSpans(): array {
+		return $this->columnSpans;
 	}
 }

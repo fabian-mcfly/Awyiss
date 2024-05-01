@@ -36,7 +36,7 @@
 				{% endblock %}
 
 				{% block formControlColumnSpan %}
-					{{ FormHelper.control('column_span', {columnSpan: 6, empty: false, options: columnSpans, type: 'select'}) }}
+					{{ FormHelper.control('column_span', {columnSpan: 6, disabled: columnSpanDisabled, empty: false, options: columnSpans, type: 'select'}) }}
 				{% endblock %}
 
 				{% block fieldsetPresentationAttributes %}

@@ -5,6 +5,7 @@ namespace Awyiss\Model\Entity;
 
 
 use Awyiss\Model\Entity;
+use Cake\Datasource\FactoryLocator;
 use Cake\Utility\Inflector;
 
 
@@ -16,10 +17,25 @@ use Cake\Utility\Inflector;
  * @property string|null $identifier
  * @property string|null $title
  * @property string|null $fieldset
+ * @property string|null $columnSpan
  * @property bool $required
  * @property \Awyiss\Model\Entity\ContentTemplate $contentTemplate
+ * @property array{span: ?\Awyiss\Utility\Content\ColumnInterface} $column
  */
 class ContentTemplateElement extends Entity {
+	/**
+	 * @var array The column spans
+	 */
+	protected static array $columnSpans;
+	/**
+	 * @inheritDoc
+	 */
+	protected static array $fieldMap = [
+		'column_span' => 'columnSpan',
+		'content_template_id' => 'contentTemplateId',
+	];
+
+
 	/**
 	 * @inheritDoc
 	 */
@@ -28,14 +44,13 @@ class ContentTemplateElement extends Entity {
 		'identifier' => true,
 		'title' => true,
 		'fieldset' => true,
+		'columnSpan' => true,
 		'required' => true,
 	];
 	/**
-	 * @inheritDoc
+	 * @inheritdoc
 	 */
-	protected static array $fieldMap = [
-		'content_template_id' => 'contentTemplateId',
-	];
+	protected array $_virtual = ['column', 'label'];
 
 
 	/**
@@ -52,5 +67,21 @@ class ContentTemplateElement extends Entity {
 		}
 
 		return Inflector::underscore($as_identifier);
+	}
+
+
+	/**
+	 * @return array<string, ?\Awyiss\Utility\Content\ColumnInterface>
+	 */
+	protected function _getColumn(): array {
+		if (!isset(static::$columnSpans)) {
+			/** @var \Awyiss\Model\Table\AttributesTable $lo_table */
+			$lo_table = FactoryLocator::get('Table')->get('Attributes');
+			static::$columnSpans = $lo_table->getColumnSpans();
+		}
+
+		return [
+			'span' => static::$columnSpans[ $this->columnSpan ] ?? reset(static::$columnSpans),
+		];
 	}
 }

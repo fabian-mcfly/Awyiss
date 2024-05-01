@@ -8,6 +8,7 @@ use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Model\Entity\ContentTemplate;
 use Awyiss\Model\Entity\PageTemplate;
 use Awyiss\Routing\Router;
+use Awyiss\Utility\Content\ColumnInterface;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
 
@@ -165,6 +166,7 @@ class ContentTemplatesController extends Controller {
 			'validate' => !$this->request->getData('reload_form'),
 		]);
 
+
 		$ao_contentTemplate->set('contentAreas', []);
 		if (!empty($la_requestData['content_areas'])) {
 			$la_contentAreas = collection(array_column($this->getPageTemplates(false), 'contentAreas'))->unfold();
@@ -287,11 +289,17 @@ class ContentTemplatesController extends Controller {
 			return $lx_aPos <=> $lx_bPos;
 		});
 
+		$la_columnSpans = $this->ContentTemplates->ContentTemplateElements->getColumnSpans();
+		$la_columnSpans = array_map(function (ColumnInterface $ao_column): string {
+			return $ao_column->getLabel();
+		}, $la_columnSpans);
+
 		$this->set([
 			'contentTemplate' => $ao_contentTemplate,
 			'availableContentElements' => $la_availableContentElements,
 			'availableContentAttributes' => $la_availableContentAttributes,
 			'availableFieldsets' => $this->ContentTemplates->getAvailableFieldsets(),
+			'columnSpans' => $la_columnSpans,
 			'pageTemplates' => $this->getPageTemplates(),
 		]);
 	}
