@@ -244,8 +244,8 @@ export default class ResizableContents {
 	 */
 	onEnd() {
 		// Remove the event listeners
-		window.removeEventListener('mousemove', this.boundResize);
-		window.removeEventListener('mouseup', this.boundStop);
+		window.eventHandler.remove('mousemove', this.boundResize);
+		window.eventHandler.remove('mouseup', this.boundStop);
 
 		// Reset the element's width and update its class
 		this.element.style.width = null;
