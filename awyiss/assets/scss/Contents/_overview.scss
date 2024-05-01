@@ -178,8 +178,7 @@
 						}
 					}
 
-					&.Narrow,
-					.Narrow & {
+					.Narrow {
 						width:100%;
 						max-width:285px;
 						flex-basis:auto;
@@ -194,10 +193,9 @@
 					$width:round(($numerator / $denominator) * 1000000) / 1000000;
 					margin-left:#{percentage($width)};
 
-					/*&.Narrow,
-					.Narrow & {
+					.Narrow {
 						margin-left:0;
-					}*/
+					}
 				}
 			}
 		}
