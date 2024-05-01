@@ -5,7 +5,7 @@
 
 	&-Message {
 		width:100%;
-		margin-bottom:$lineHeightMain;
+		margin-bottom:var(--lineHeightMain);
 		flex:0 0 100%;
 	}
 }

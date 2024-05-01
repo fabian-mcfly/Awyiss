@@ -6,7 +6,7 @@
 	#UploadQueue {
 		display:none;
 		width:100%;
-		margin-bottom:$lineHeightMain * 2;
+		margin-bottom:calc(var(--lineHeightMain) * 2);
 		border-radius:5px;
 		box-shadow:0 0 10px rgba(0, 0, 0, .05);
 		background-color:var(--backgroundColorContent);
@@ -127,8 +127,9 @@
 	display:flex;
 	border-radius:5px;
 	outline:5px solid var(--colorSuccess);
-	background-color:rgba($colorBright, .85);
+	background-color:var(--colorBright-Alpha-85);
 	backdrop-filter:blur(5px);
+	//noinspection CssNoGenericFontName
 	font-family:var(--fontStackHeading);
 	font-size:3rem;
 	position:fixed;
@@ -141,7 +142,7 @@
 	justify-content:center;
 
 	.🌚 & {
-		background-color:rgba(lighten($colorBackgroundContentDarkMode, 3), .85);
+		background-color:var(--colorBackgroundContentDarkMode-Darkened-4-Alpha-85);
 	}
 
 	&.Visible {
@@ -153,7 +154,7 @@
 
 ul#Media-List {
 	display:grid;
-	margin-bottom:$lineHeightMain * 2;
+	margin-bottom:calc(var(--lineHeightMain) * 2);
 	padding:40px;
 	border-radius:5px 0 0 5px;
 	background-color:var(--backgroundColorContent);
@@ -202,16 +203,16 @@ ul#Media-List {
 	position:relative;
 
 	.🌚 & {
-		--colorLight:#{lighten($colorBackgroundContentDarkMode, 10)};
+		--colorLight:var(--colorBackgroundContentDarkMode-Lightened-10);
 
-		border-color:#{lighten($colorBackgroundContentDarkMode, 3)};
-		background-color:#{lighten($colorBackgroundContentDarkMode, 3)};
+		border-color:var(--colorBackgroundContentDarkMode-Lightened-4);
+		background-color:var(--colorBackgroundContentDarkMode-Lightened-4);
 
 	}
 
 	&.Selected,
 	&.SortableGhost {
-		--colorLight:#{lighten($colorSuccess, 10)};
+		--colorLight:var(--colorSuccess-Lightened-10);
 
 		outline:2px solid var(--colorSuccess);
 		outline-offset:-2px;

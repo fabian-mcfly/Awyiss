@@ -26,10 +26,10 @@
 					}
 
 					~ td {
-						background-color:rgba($colorSuccess, .25);
+						background-color:var(--colorSuccess-Alpha-10);
 
 						&::before {
-							background-color:rgba(darken($colorSuccess, 8), .25);
+							background-color:var(--colorSuccess-Darkened-8-Alpha-25);
 						}
 					}
 				}

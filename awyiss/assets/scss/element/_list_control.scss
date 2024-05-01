@@ -47,21 +47,21 @@
 }
 
 .Pagination-List {
-	--colorBackground:#{darken($colorMedium, 8)};
-	--colorButtons:#{$colorMedium};
-	--colorText:#FFFFFF;
+	--backgroundColor:var(--colorMedium-Darkened-8);
+	--colorButtons:var(--colorMedium);
+	--colorText:var(--colorBright);
 
 	display:flex;
 	width:fit-content;
 	box-shadow:0 0 10px rgba(0, 0, 0, .05);
 	border-radius:5px;
 	border:2px solid transparent;
-	background-color:var(--colorBackground);
+	background-color:var(--backgroundColor);
 	color:var(--colorText);
 	position:relative;
 
 	.🌚 & {
-		--colorBackground:#{darken($colorBackgroundContentDarkMode, 2)};
+		--backgroundColor:var(--colorBackgroundContentDarkMode-Darkened-2);
 		--colorButtons:var(--backgroundColorContent);
 	}
 

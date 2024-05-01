@@ -1,7 +1,7 @@
 .PagesController,
 .IsGenericPage {
 	.FormInputName-CopyDescendantsWithDifferentPageRole {
-		margin-block:($lineHeightMain * -2) $lineHeightMain * 2;
+		margin-block:calc(var(--lineHeightMain) * -2) calc(var(--lineHeightMain) * 2);
 		grid-column:auto / span 2;
 
 		> .Label {

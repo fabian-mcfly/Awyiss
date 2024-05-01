@@ -1,12 +1,11 @@
 html {
 	--backgroundColor:var(--colorLight);
 	--backgroundColorContent:var(--colorBright);
-	--scrollbarColor:#{$colorMedium} #{$colorBright};
+	--scrollbarColor:var(--colorMedium) var(--colorBright);
 
-	//background-attachment:fixed;
-	//background-image:url($relativePath + 'img/background-pattern-light.png');
 	background-color:var(--backgroundColor);
 	color:var(--colorText);
+	//noinspection CssNoGenericFontName
 	font-family:var(--fontStackMain);
 	font-size:var(--fontSizeMain);
 	font-weight:400;
@@ -26,13 +25,11 @@ html {
 	&.🌚,
 	.🌚 {
 		--backgroundColor:#{desaturate($colorText, 10)};
-		--backgroundColorContent:#{$colorBackgroundContentDarkMode};
+		--backgroundColorContent:var(--colorBackgroundContentDarkMode);
 		--colorLight:#C7CED0;
-		--colorSemiDark:#{$colorSemiDarkDarkMode};
+		--colorSemiDark:var(--colorSemiDarkDarkMode);
 		--colorText:#{$colorLight};
 		--scrollbarColor:var(--backgroundColorContent) var(--colorSemiDark);
-
-		color:var(--colorText);
 	}
 
 	.🌚 {
@@ -73,6 +70,7 @@ body {
 
 h1, h2, h3, h4, h5, h6 {
 	margin-top:2rem;
+	//noinspection CssNoGenericFontName
 	font-family:var(--fontStackHeading);
 	font-size:var(--fontSizeHeading);
 	line-height:var(--lineHeightHeading);

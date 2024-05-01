@@ -87,9 +87,9 @@
 		#Content {
 			min-height:0;
 			margin:0;
-			background-color:$colorBright;
+			background-color:var(--colorBright);
 			border-radius:0 5px 5px 0;
-			padding:calc(40px + 2.5rem + #{$lineHeightMain}) 40px 40px 40px;
+			padding:calc(40px + 2.5rem + var(--lineHeightMain)) 40px 40px 40px;
 			font-size:0;
 			line-height:0;
 			position:relative;
@@ -98,10 +98,10 @@
 
 		.FlashMessage {
 			font-size:1rem;
-			line-height:$lineHeightMain;
+			line-height:var(--lineHeightMain);
 
 			+ .Form {
-				margin-top:$lineHeightMain;
+				margin-top:var(--lineHeightMain);
 			}
 		}
 

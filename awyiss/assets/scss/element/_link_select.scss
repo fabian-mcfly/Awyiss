@@ -32,7 +32,7 @@
 			box-shadow:0 0 10px rgba(0, 0, 0, .25);
 			border-color:transparent;
 			background-color:var(--colorSemiDark);
-			color:$colorBright;
+			color:var(--colorBright);
 			transition-delay:0s;
 
 			.🌚 & {
@@ -81,8 +81,7 @@
 		display:block;
 		padding:10px 60px 12px 20px;
 		border-radius:5px;
-		//border:2px solid #{darken($colorMedium, 8)};
-		background-image:linear-gradient(45deg, #{darken($colorMedium, 8)} 0%, transparent 100%);
+		background-image:linear-gradient(45deg, var(--colorMedium-Darkened-8) 0%, transparent 100%);
 		background-color:var(--colorMedium);
 		color:var(--colorBright);
 		font-size:1rem;
@@ -152,7 +151,7 @@
 		.🌚 & {
 			box-shadow:0 0 10px 0 rgba(0, 0, 0, .4);
 			background-color:var(--backgroundColor);
-			scrollbar-color:#{$colorSemiDark} #{$colorDark};
+			scrollbar-color:var(--colorSemiDark) var(--colorDark);
 		}
 
 		.ButtonArea-Bottom & {
@@ -216,7 +215,7 @@
 			border-bottom-width:0;
 			color:inherit;
 			font-size:1rem;
-			line-height:$lineHeightMain;
+			line-height:var(--lineHeightMain);
 			text-decoration:none;
 			text-overflow:ellipsis;
 			white-space:nowrap;

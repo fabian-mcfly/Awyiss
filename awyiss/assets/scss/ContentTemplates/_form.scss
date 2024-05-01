@@ -27,11 +27,11 @@
 			margin-inline:-10px;
 			padding-inline:10px;
 			overflow-y:auto;
-			scrollbar-color:#{$colorMedium} #{$colorLight};
+			scrollbar-color:var(--colorMedium) var(--colorLight);
 			scrollbar-width:thin;
 
 			.🌚& {
-				scrollbar-color:#{$colorSemiDarkDarkMode} #{$colorText};
+				scrollbar-color:var(--colorSemiDarkDarkMode) var(--colorText);
 			}
 		}
 	}
@@ -66,12 +66,12 @@
 		}
 
 		&[data-assignable="false"] {
-			background-color:rgba($colorNeutralLight, .5);
+			background-color:var(--colorNeutralLight-Alpha-50);
 			color:var(--colorMedium);
 
 			.🌚& {
-				background-color:rgba($colorSemiDarkDarkMode, .1);
-				color:lighten($colorSemiDarkDarkMode, 1);
+				background-color:var(--colorSemiDarkDarkMode-Alpha-10);
+				color:var(--colorSemiDarkDarkMode-Lightened-2);
 			}
 		}
 
@@ -79,7 +79,7 @@
 			background-color:var(--colorLight);
 
 			.🌚& {
-				background-color:lighten($colorSemiDarkDarkMode, 4);
+				background-color:var(--colorSemiDarkDarkMode-Lightened-4);
 			}
 		}
 
@@ -201,7 +201,7 @@
 			border-left:2px solid var(--colorSemiDark);
 
 			.🌚& {
-				border-left-color:darken($colorBackgroundContentDarkMode, 4);
+				border-left-color:var(--colorBackgroundContentDarkMode-Darkened-4);
 			}
 
 			&.Level2 {
@@ -238,7 +238,7 @@
 				overflow:hidden;
 
 				.🌚& {
-					background-color:darken($colorBackgroundContentDarkMode, 4);
+					background-color:var(--colorBackgroundContentDarkMode-Darkened-4);
 				}
 
 				&::after {
@@ -291,7 +291,7 @@
 					background-color:var(--colorLight);
 
 					.🌚& {
-						background-color:lighten($colorSemiDarkDarkMode, 4);
+						background-color:var(--colorSemiDarkDarkMode-Lightened-4);
 					}
 				}
 			}
@@ -304,7 +304,7 @@
 				background-color:var(--colorLight);
 
 				.🌚& {
-					background-color:lighten($colorSemiDarkDarkMode, 4);
+					background-color:var(--colorSemiDarkDarkMode-Lightened-4);
 				}
 			}
 

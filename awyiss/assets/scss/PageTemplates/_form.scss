@@ -7,7 +7,7 @@
 			&.SortableGhost {
 				&::before {
 					content:'';
-					background-color:rgba($colorSuccess, .25);
+					background-color:var(--colorSuccess-Alpha-10);
 					position:absolute;
 					inset:-10px -10px -5px -10px;
 					outline:2px solid var(--colorSuccess);

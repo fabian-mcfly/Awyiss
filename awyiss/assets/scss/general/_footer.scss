@@ -113,7 +113,7 @@
 		&::before {
 			content:'imagined & created by';
 			display:inline-block;
-			margin-bottom:$lineHeightMain * .5;
+			margin-bottom:calc(var(--lineHeightMain) * .5);
 			font-size:.8rem;
 			font-style:italic;
 		}

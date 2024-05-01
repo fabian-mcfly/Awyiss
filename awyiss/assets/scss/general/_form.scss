@@ -1,5 +1,5 @@
 .Form {
-	margin-bottom:$lineHeightMain;
+	margin-bottom:var(--lineHeightMain);
 
 	form {
 		&.FetchInProgress {
@@ -70,13 +70,13 @@ textarea {
 	}
 
 	&:focus {
-		--backgroundColor:$colorBright;
+		--backgroundColor:var(--colorBright);
 
 		border-color:var(--colorSuccess);
-		box-shadow:0 0 10px 5px rgba($colorSuccess, .1);
+		box-shadow:0 0 10px 5px var(--colorSuccess-Alpha-10);
 
 		.🌚 & {
-			--backgroundColor:#{lighten($colorSemiDarkDarkMode, 2)};
+			--backgroundColor:var(--colorSemiDarkDarkMode-Lightened-2);
 		}
 	}
 }
@@ -102,27 +102,27 @@ input {
 			box-shadow:none;
 
 			+ [data-options-for] {
-				--backgroundColor:#{$colorBright};
+				--backgroundColor:var(--colorBright);
 
 				border-color:var(--colorSuccess);
-				box-shadow:0 0 10px 5px rgba($colorSuccess, .1);
+				box-shadow:0 0 10px 5px var(--colorSuccess-Alpha-10);
 				background-color:var(--backgroundColor);
 
 				.🌚 & {
-					--backgroundColor:#{lighten($colorSemiDarkDarkMode, 2)};
+					--backgroundColor:var(--colorSemiDarkDarkMode-Lightened-2);
 				}
 			}
 		}
 	}
 
 	&:has(+ [data-options-for]:focus) {
-		--backgroundColor:#{$colorBright};
+		--backgroundColor:var(--colorBright);
 
 		border-color:var(--colorSuccess);
 		background-color:var(--backgroundColor);
 
 		.🌚 & {
-			--backgroundColor:#{lighten($colorSemiDarkDarkMode, 2)};
+			--backgroundColor:var(--colorSemiDarkDarkMode-Lightened-2);
 		}
 	}
 }
@@ -152,7 +152,7 @@ option {
 		> select,
 		> textarea {
 			border-color:var(--colorError);
-			box-shadow:0 0 10px 5px rgba($colorError, .1);
+			box-shadow:0 0 10px 5px var(--colorError-Alpha-10);
 		}
 	}
 
@@ -165,7 +165,7 @@ option {
 			@extend %InFieldButton;
 
 			&.Revealed {
-				background-color:$colorSuccess;
+				background-color:var(--colorSuccess);
 
 				&::after {
 					content:'\f06e';
@@ -188,7 +188,7 @@ option {
 
 			&.SortableGhost {
 				input {
-					background-color:rgba($colorSuccess, .25);
+					background-color:var(--colorSuccess-Alpha-25);
 					outline:2px solid var(--colorSuccess);
 					outline-offset:-2px;
 				}
@@ -341,7 +341,7 @@ option {
 				+ .Label {
 					&::before {
 						//border-color:var(--colorSuccess);
-						box-shadow:0 0 10px 5px rgba($colorSuccess, .1);
+						box-shadow:0 0 10px 5px var(--colorSuccess-Alpha-10);
 						outline:2px solid var(--colorInfo);
 						outline-offset:2px;
 						//background-color:var(--colorBright);
@@ -417,7 +417,7 @@ option {
 
 			&:nth-last-child(1 of .FormInputType-Checkbox),
 			&:nth-last-child(2 of .FormInputType-Checkbox) {
-				margin-bottom:$lineHeightMain * .5;
+				margin-bottom:calc(var(--lineHeightMain) * .5);
 			}
 		}
 	}
@@ -432,7 +432,7 @@ option {
 					> select,
 					> textarea {
 						border-color:var(--colorError);
-						box-shadow:0 0 10px 5px rgba($colorError, .1);
+						box-shadow:0 0 10px 5px var(--colorError-Alpha-10);
 					}
 				}
 			}
@@ -520,11 +520,11 @@ option {
 		&:focus-within {
 			&::before {
 				border-color:var(--colorSuccess);
-				box-shadow:0 0 10px 5px rgba($colorSuccess, .1);
-				background-color:$colorBright;
+				box-shadow:0 0 10px 5px var(--colorSuccess-Alpha-10);
+				background-color:var(--colorBright);
 
 				.🌚 & {
-					background-color:#{lighten($colorSemiDarkDarkMode, 2)};
+					background-color:var(--colorSemiDarkDarkMode-Lightened-2);
 				}
 			}
 		}

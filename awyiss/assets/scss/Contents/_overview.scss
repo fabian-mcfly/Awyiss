@@ -10,14 +10,14 @@
 
 		&.CannotMoveUpwards {
 			.Button-ColumnView {
-				bottom:$lineHeightMain * -1;
+				bottom:calc(var(--lineHeightMain) * -1);
 			}
 		}
 
 		&.ButtonArea-Bottom {
 			.Button-ColumnView {
 				border-radius:0 0 5px 5px;
-				top:$lineHeightMain * -2;
+				top:calc(var(--lineHeightMain) * -2);
 				bottom:auto;
 			}
 		}
@@ -33,7 +33,7 @@
 			line-height:0;
 			text-align:center;
 			position:absolute;
-			bottom:$lineHeightMain * -2;
+			bottom:calc(var(--lineHeightMain) * -2);
 			right:20px;
 			opacity:.5;
 			transition:opacity .3s ease-in-out;

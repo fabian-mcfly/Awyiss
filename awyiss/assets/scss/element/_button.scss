@@ -28,7 +28,7 @@ button,
 	}
 
 	.🌚 & {
-		--backgroundColor:#{lighten($colorSemiDarkDarkMode, 4)};
+		--backgroundColor:var(--colorSemiDarkDarkMode-Lightened-4);
 		background-image:none;
 	}
 

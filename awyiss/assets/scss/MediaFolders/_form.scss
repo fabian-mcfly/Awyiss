@@ -48,12 +48,12 @@
 			&:focus-within {
 				&::before {
 					border-color:var(--colorSuccess);
-					box-shadow:0 0 10px 5px rgba($colorSuccess, .1);
-					background-color:$colorBright;
+					box-shadow:0 0 10px 5px var(--colorSuccess-Alpha-10);
+					background-color:var(--colorBright);
 
 					.🌚& {
 						border-color:var(--colorSuccess);
-						background-color:#{lighten($colorSemiDarkDarkMode, 2)};
+						background-color:var(--colorSemiDarkDarkMode-Lightened-2);
 					}
 				}
 			}

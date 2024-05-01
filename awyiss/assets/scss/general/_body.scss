@@ -9,16 +9,16 @@
 
 		> .sf-dump {
 			grid-column:1 / -1;
-			margin-bottom:$lineHeightMain * 2;
+			margin-bottom:calc(var(--lineHeightMain) * 2);
 		}
 	}
 
 	.Overview {
 		.ButtonArea {
-			margin-bottom:$lineHeightMain * 2;
+			margin-bottom:calc(var(--lineHeightMain) * 2);
 
 			&.CannotMoveUpwards {
-				margin-bottom:$lineHeightMain;
+				margin-bottom:var(--lineHeightMain);
 			}
 
 			&-Bottom {
@@ -70,14 +70,14 @@
 
 #Content {
 	min-height:calc(100dvh - 80px - 54px - 60px);
-	padding:($lineHeightMain * 2) 40px $lineHeightMain;
+	padding:calc(var(--lineHeightMain) * 2) 40px var(--lineHeightMain);
 }
 
 .Overview-Table,
 .Overview-List,
 fieldset {
 	min-width:0;
-	margin:0 0 ($lineHeightMain * 2) 0;
+	margin:0 0 calc(var(--lineHeightMain) * 2) 0;
 	padding:40px 40px 20px 40px;
 	border-radius:5px;
 	box-shadow:0 0 10px rgba(0, 0, 0, .05);
@@ -88,7 +88,7 @@ fieldset {
 
 .Overview-List,
 .Overview-Table {
-	margin-top:-$lineHeightMain;
+	margin-top:calc(var(--lineHeightMain) * -1);
 	grid-column:1 / -1;
 }
 
@@ -96,7 +96,7 @@ fieldset {
 	grid-column:1 / -1;
 
 	&:not(:has(> legend)) {
-		margin-top:-$lineHeightMain;
+		margin-top:calc(var(--lineHeightMain) * -1);
 	}
 
 	&:not(:has(*)) {
@@ -225,7 +225,7 @@ fieldset {
 }
 
 legend {
-	--gradientColor:#{darken($colorMedium, 8)};
+	--gradientColor:var(--colorMedium-Darkened-8);
 
 	margin:0;
 	padding:5px 20px;

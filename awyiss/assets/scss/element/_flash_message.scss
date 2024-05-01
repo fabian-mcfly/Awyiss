@@ -1,7 +1,7 @@
 .FlashMessage {
 	--backgroundColor:var(--colorBright);
-	--boxShadowColor:#{adjust-color($colorInfo, $alpha: -.75)};
-	--color:var(--colorInfo);
+	--boxShadowColor:var(--colorInfo-Alpha-25);
+	--colorText:var(--colorInfo);
 
 	display:inline-block;
 	padding:10px 20px 10px 70px;
@@ -9,7 +9,7 @@
 	border:1px solid;
 	box-shadow:0 0 30px var(--boxShadowColor);
 	background-color:var(--backgroundColor);
-	color:var(--color);
+	color:var(--colorText);
 	position:relative;
 	overflow:hidden;
 
@@ -18,8 +18,8 @@
 	}
 
 	&.Success {
-		--boxShadowColor:#{adjust-color($colorSuccess, $alpha: -.75)};
-		--color:var(--colorSuccess);
+		--boxShadowColor:var(--colorSuccess-Alpha-25);
+		--colorText:var(--colorSuccess);
 
 		&::before {
 			content:'\f00c';
@@ -27,8 +27,8 @@
 	}
 
 	&.Error {
-		--boxShadowColor:#{adjust-color($colorError, $alpha: -.75)};
-		--color:var(--colorError);
+		--boxShadowColor:--colorError-Alpha-25;
+		--colorText:var(--colorError);
 
 		&::before {
 			content:'\f00d';
@@ -39,14 +39,14 @@
 		@include la('\f05a', 30px);
 
 		display:flex;
-		width:calc(#{$lineHeightMain} + 20px);
+		width:calc(var(--lineHeightMain) + 20px);
 		height:100%;
 		border-radius:0 5px 5px 0;
-		background-color:var(--color);
-		color:$colorBright;
+		background-color:var(--colorText);
+		color:var(--colorBright);
 		font-size:1.5rem;
 		text-align:center;
-		line-height:$lineHeightMain;
+		line-height:var(--lineHeightMain);
 		position:absolute;
 		top:0;
 		left:0;
@@ -60,6 +60,6 @@
 
 	+ .Form,
 	+ .Overview {
-		margin-top:$lineHeightMain * 2;
+		margin-top:calc(var(--lineHeightMain) * 2);
 	}
 }

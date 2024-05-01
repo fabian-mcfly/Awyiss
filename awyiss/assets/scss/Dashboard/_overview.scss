@@ -11,8 +11,8 @@
 
 	.Overview-Fieldset {
 		display:block;
-		margin-top:$lineHeightMain * 2;
-		row-gap:$lineHeightMain;
+		margin-top:calc(var(--lineHeightMain) * 2);
+		row-gap:var(--lineHeightMain);
 		grid-column:auto / auto;
 
 		&.Fieldset-LoggedInAs,

@@ -7,8 +7,8 @@
 	margin-left:40px;
 
 	.🌚 & {
-		--backgroundColorOdd:#{lighten($colorBackgroundContentDarkMode, 3)};
-		--backgroundColorEven:#{lighten($colorBackgroundContentDarkMode, 3)};
+		--backgroundColorOdd:var(--colorBackgroundContentDarkMode-Lightened-4);
+		--backgroundColorEven:var(--colorBackgroundContentDarkMode-Lightened-4);
 	}
 
 	&.FetchInProgress {
@@ -110,11 +110,6 @@
 				&:last-child {
 					margin-bottom:calc(20px - .25rem);
 				}
-
-				> .ListItem-Inner {
-					//border-width:1px;
-					//border-color:darken($colorLight, 5);
-				}
 			}
 		}
 
@@ -179,27 +174,8 @@
 				}
 			}
 
-			/*&:nth-child(2n) {
-				> .ListItem-Inner {
-					&:not(:hover) {
-						background-color:transparent;
-					}
-				}
-			}*/
-
-			/*&:nth-child(2n+1) {
-				> .ListItem-Inner {
-					border-color:darken($colorLight, 5);
-					border-width:1px;
-				}
-			}*/
-
 			&:has(.ListItem) {
 				background-image:none;
-			}
-
-			&:last-child {
-				//margin-bottom:.25rem;
 			}
 
 			&-Inner {
@@ -209,11 +185,11 @@
 				padding:.5rem 10px;
 				border-radius:5px;
 				background-color:transparent;
-				border:1px solid darken($colorLight, 5);
+				border:1px solid var(--colorLight-Darkened-6);
 				cursor:move;
 
 				.🌚 & {
-					border-color:lighten($colorBackgroundContentDarkMode, 4);
+					border-color:var(--colorBackgroundContentDarkMode-Lightened-4);
 				}
 
 				&:hover {
@@ -326,7 +302,7 @@
 	&:not(:has(.ListItem)) {
 		height:0;
 		border-radius:5px;
-		background-color:rgba($colorSuccess, .25);
+		background-color:var(--colorSuccess-Alpha-25);
 		transition:height .3s ease-in-out;
 	}
 
@@ -378,7 +354,7 @@
 			}*/
 
 			> .ListItem-Inner {
-				background-image:repeating-linear-gradient(-45deg, transparent, transparent 10px, rgba(darken($colorLight, 20), .2) 10px, rgba(darken($colorLight, 20), .2) 20px);
+				background-image:repeating-linear-gradient(-45deg, transparent, transparent 10px, var(--colorLight-Darkened-20-Alpha-20) 10px, var(--colorLight-Darkened-20-Alpha-20) 20px);
 
 				.🌚 & {
 					background-image:repeating-linear-gradient(-45deg, rgba(255, 255, 255, .01), rgba(255, 255, 255, .01) 10px, rgba(255, 255, 255, .04) 10px, rgba(255, 255, 255, .04) 20px);
@@ -433,7 +409,7 @@
 		}
 
 		&:has(.ListItem) {
-			--dottedLineColor:#{darken($colorLight, 8)};
+			--dottedLineColor:var(--colorLight-Darkened-8);
 
 			background-image:linear-gradient(0deg, transparent 50%, var(--dottedLineColor) 50%);
 			background-position:72px 16px;
@@ -498,8 +474,6 @@
 		display:grid;
 		padding:1rem 20px;
 		border-radius:5px;
-		//border-left:1px solid darken($gh_colorLight, 5);
-		//border-bottom:1px solid darken($gh_colorLight, 5);
 		background-color:var(--backgroundColorOdd);
 		position:relative;
 		grid-template-columns:auto var(--listItemAuditInfoColumnWidth) var(--listItemLastColumnWidth);
@@ -521,10 +495,10 @@
 
 
 		&:hover {
-			background-color:darken($colorLight, 8);
+			background-color:var(--colorLight-Darkened-8);
 
 			.🌚 & {
-				background-color:lighten($colorSemiDarkDarkMode, 4);
+				background-color:var(--colorSemiDarkDarkMode-Lightened-4);
 			}
 
 			.NestedListToggle,
@@ -589,7 +563,7 @@
 		transition:border-radius .3s ease-in-out, background-color .3s ease-in-out, opacity .3s ease-in-out;
 
 		.🌚 & {
-			background-color:darken($colorSemiDarkDarkMode, 4);
+			background-color:var(--colorSemiDarkDarkMode-Darkened-4);
 
 			&:hover {
 				background-color:var(--colorSuccess);
@@ -656,7 +630,7 @@
 		transition:background-color .3s ease-in-out, opacity .3s ease-in-out;
 
 		.🌚 & {
-			background-color:darken($colorSemiDarkDarkMode, 4);
+			background-color:var(--colorSemiDarkDarkMode-Darkened-4);
 
 			&:hover {
 				background-color:var(--colorSuccess);
@@ -691,7 +665,6 @@
 	}
 
 	.AuditInfo {
-		//margin-top:$lineHeightMain * 1.25;
 		z-index:2;
 	}
 

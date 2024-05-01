@@ -26,10 +26,10 @@
 					}
 
 					~ td {
-						background-color:rgba($colorSuccess, .25);
+						background-color:var(--colorSuccess-Alpha-10);
 
 						&::before {
-							background-color:rgba(darken($colorSuccess, 8), .25);
+							background-color:var(--colorSuccess-Darkened-8-Alpha-25);
 						}
 					}
 				}
@@ -90,7 +90,7 @@
 			overflow:hidden;
 
 			.🌚& {
-				background-color:darken($colorBackgroundContentDarkMode, 4);
+				background-color:var(--colorBackgroundContentDarkMode-Darkened-4);
 			}
 
 			&::after {
@@ -111,7 +111,7 @@
 			border-left:2px solid var(--colorMedium);
 
 			.🌚& {
-				border-left-color:darken($colorBackgroundContentDarkMode, 4);
+				border-left-color:var(--colorBackgroundContentDarkMode-Darkened-4);
 			}
 		}
 
@@ -153,7 +153,6 @@
 					&:checked {
 						~ .Labels {
 							&::after {
-								//outline-color:darken($colorSuccess, 8);
 								background-color:var(--colorSuccess);
 								transform:translate(-33px, 0);
 
@@ -169,7 +168,6 @@
 					&:checked {
 						~ .Labels {
 							&::after {
-								//outline-color:darken($colorError, 8);
 								background-color:var(--colorError);
 								transform:translate(33px, 0);
 
@@ -198,7 +196,7 @@
 				height:33px;
 				border-radius:5px;
 				background-color:var(--colorBright);
-				outline:2px solid darken($colorLight, 8);
+				outline:2px solid var(--colorLight-Darkened-8);
 				font-size:0;
 				line-height:0;
 				position:relative;
@@ -210,8 +208,8 @@
 				}
 
 				.🌚& {
-					outline-color:#{darken($colorBackgroundContentDarkMode, 2)};
-					background-color:darken($colorBackgroundContentDarkMode, 4);
+					outline-color:#{var(--colorBackgroundContentDarkMode-Darkened-2)};
+					background-color:var(--colorBackgroundContentDarkMode-Darkened-4);
 				}
 
 				&.Animate {
@@ -226,8 +224,6 @@
 					height:31px;
 					margin:auto;
 					border-radius:5px;
-					//outline:2px solid darken($colorMedium, 5);
-					//outline-offset:-1px;
 					background-color:var(--colorMedium);
 					position:absolute;
 					top:0;
@@ -250,8 +246,8 @@
 					}
 
 					.🌚& {
-						outline-color:lighten($colorBackgroundContentDarkMode, 8);
-						background-color:lighten($colorBackgroundContentDarkMode, 4);
+						outline-color:var(--colorBackgroundContentDarkMode-Lightened-8);
+						background-color:var(--colorBackgroundContentDarkMode-Lightened-4);
 					}
 				}
 

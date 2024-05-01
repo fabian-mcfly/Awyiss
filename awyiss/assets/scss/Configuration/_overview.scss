@@ -35,14 +35,6 @@
 
 			> .ListItem {
 				border-left-width:0;
-
-				&.ListItem-Category {
-					+ .ListItem {
-						&:not(.ListItem-Category) {
-							//margin-top:$lineHeightMain * 2;
-						}
-					}
-				}
 			}
 		}
 
@@ -52,7 +44,7 @@
 			border-left:2px solid var(--colorMedium);
 
 			.🌚& {
-				border-left-color:darken($colorBackgroundContentDarkMode, 4);
+				border-left-color:var(--colorBackgroundContentDarkMode-Darkened-4);
 			}
 
 			&:has(> .ListItem-Category:first-child) {
@@ -80,10 +72,6 @@
 			&.RepeatedIdentifier {
 				padding-block:12px 10px;
 
-				/*&:has(+ :not(.RepeatedIdentifier)) {
-					padding-bottom:1rem;
-				}*/
-
 				.AuditInfo {
 					margin-top:-15px;
 					top:7px;
@@ -94,10 +82,6 @@
 				}
 			}
 
-			/*&:has(+ .RepeatedIdentifier) {
-				border-bottom-width:0;
-			}*/
-
 			&:not(.RepeatedIdentifier) {
 				&:has(+ .RepeatedIdentifier) {
 					padding-bottom:10px;
@@ -105,51 +89,23 @@
 			}
 
 			&.Odd {
-				//border-left:2px solid var(--colorLight);
-				//border-bottom:2px solid var(--colorLight);
-
-				//.🌚& {
-				//	border-color:var(--colorSemiDark);
-				//}
-
-				/*&:has(+ .RepeatedIdentifier) {
-					border-bottom-width:0;
-				}*/
-
 				+ .Odd {
-					//border-top:1px solid var(--colorNeutralLight);
 					margin-top:1px;
 				}
 			}
-
-			/*&.Even {
-				 background-color:var(--colorLight);
-
-				.🌚& {
-					background-color:var(--colorSemiDark);
-				}
-
-				&:hover {
-					background-color:var(--colorLight);
-
-					.🌚& {
-						background-color:lighten($colorSemiDarkDarkMode, 4);
-					}
-				}
-			}*/
 
 			&:not(.ListItem-Category) {
 				background-color:var(--colorLight);
 
 				.🌚& {
-					background-color:#{lighten($colorBackgroundContentDarkMode, 3)};
+					background-color:var(--colorBackgroundContentDarkMode-Lightened-4);
 				}
 
 				&:hover {
-					background-color:darken($colorLight, 8);
+					background-color:var(--colorLight-Darkened-8);
 
 					.🌚& {
-						background-color:lighten($colorSemiDarkDarkMode, 4);
+						background-color:var(--colorSemiDarkDarkMode-Lightened-4);
 					}
 
 					.DataItem {
@@ -218,7 +174,6 @@
 
 		.ListItem-Category {
 			display:grid;
-			//margin-top:10px;
 			padding:0;
 			border-left-width:0;
 			border-bottom-width:0;
@@ -236,6 +191,7 @@
 				background-color:var(--colorMedium);
 				color:var(--colorBright);
 				font-size:1rem;
+				//noinspection CssNoGenericFontName
 				font-family:var(--fontStackHeading);
 				line-height:1.2;
 				position:sticky;
@@ -244,7 +200,7 @@
 				overflow:hidden;
 
 				.🌚& {
-					background-color:darken($colorBackgroundContentDarkMode, 4);
+					background-color:var(--colorBackgroundContentDarkMode-Darkened-4);
 				}
 
 				&::after {
@@ -262,14 +218,6 @@
 			.List {
 				grid-column:auto / -1;
 			}
-
-			/*> .List {
-				> .Configuration-ListItem {
-					&:first-child {
-						border-top:1px solid darken($gh_colorLight, 5);
-					}
-				}
-			}*/
 		}
 	}
 }

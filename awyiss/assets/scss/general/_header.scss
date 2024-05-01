@@ -2,7 +2,7 @@
 	--backgroundColorMenu:var(--colorDark);
 	--colorBorder:transparent;
 	--colorMenu:#{$colorText};
-	--colorText:#FFFFFF;
+	--colorText:var(--colorBright);
 
 	display:flex;
 	height:100px;
@@ -54,13 +54,14 @@
 		}
 
 		.Yiss {
-			color:$colorSuccess;
+			color:var(--colorSuccess);
 		}
 
 		.Version {
 			padding:5px 0;
 			border-radius:0 0 5px 5px;
 			background-color:var(--colorSuccess);
+			//noinspection CssNoGenericFontName
 			font-family:var(--fontStackMain);
 			font-size:10px;
 			line-height:1;
@@ -248,7 +249,7 @@
 		}
 
 		&:hover {
-			color:$colorSuccess;
+			color:var(--colorSuccess);
 		}
 
 		&::after {

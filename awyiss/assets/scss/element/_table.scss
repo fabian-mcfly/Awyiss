@@ -9,7 +9,7 @@
 
 	.🌚 & {
 		//--backgroundColorOdd:var(--backgroundColorContent);
-		--backgroundColorEven:#{lighten($colorBackgroundContentDarkMode, 3)};
+		--backgroundColorEven:var(--colorBackgroundContentDarkMode-Lightened-4);
 	}
 
 	&.FetchInProgress {
@@ -87,10 +87,10 @@
 
 				&:hover {
 					td {
-						background-color:darken($colorLight, 8);
+						background-color:var(--colorLight-Darkened-8);
 
 						.🌚 & {
-							background-color:lighten($colorSemiDarkDarkMode, 4);
+							background-color:var(--colorSemiDarkDarkMode-Lightened-4);
 						}
 					}
 				}
@@ -101,7 +101,7 @@
 					border-top:2px solid var(--colorBright);
 
 					.🌚 & {
-						border-top-color:#{darken($colorBackgroundContentDarkMode, 2)};
+						border-top-color:#{var(--colorBackgroundContentDarkMode-Darkened-2)};
 					}
 				}
 			}
@@ -120,10 +120,10 @@
 
 			&:hover {
 				td {
-					background-color:darken($colorLight, 8);
+					background-color:var(--colorLight-Darkened-8);
 
 					.🌚 & {
-						background-color:lighten($colorSemiDarkDarkMode, 4);
+						background-color:var(--colorSemiDarkDarkMode-Lightened-4);
 					}
 
 					&:before {
@@ -163,7 +163,7 @@
 		//bottom:-3px;
 
 		.🌚 & {
-			border-bottom-color:#{darken($colorBackgroundContentDarkMode, 2)};
+			border-bottom-color:#{var(--colorBackgroundContentDarkMode-Darkened-2)};
 		}
 
 		&::before {
@@ -179,7 +179,7 @@
 			transition:background-color .3s ease-in-out;
 
 			.🌚 & {
-				background-color:#{darken($colorBackgroundContentDarkMode, 2)};
+				background-color:#{var(--colorBackgroundContentDarkMode-Darkened-2)};
 			}
 		}
 
@@ -198,22 +198,22 @@
 
 	th {
 		padding:10px 60px 10px 20px;
-		border-bottom:3px solid #{darken($colorMedium, 8)};
+		border-bottom:3px solid var(--colorMedium-Darkened-8);
 		border-inline-color:rgba(0, 0, 0, .1);
 		background-color:var(--colorMedium);
 		color:var(--colorBright);
 		transition:border-color .3s ease-in-out, background-color .3s ease-in-out, color .3s ease-in-out;
 
 		.🌚 & {
-			background-color:darken($colorBackgroundContentDarkMode, 4);
+			background-color:var(--colorBackgroundContentDarkMode-Darkened-4);
 		}
 
 		&.Active {
-			border-bottom-color:darken($colorSuccess, 8);
-			background-color:darken($colorMedium, 8);
+			border-bottom-color:var(--colorSuccess-Darkened-8);
+			background-color:var(--colorMedium-Darkened-8);
 
 			.🌚 & {
-				background-color:$colorBackgroundContentDarkMode;
+				background-color:var(--colorBackgroundContentDarkMode);
 			}
 
 			.Sort {
@@ -248,12 +248,12 @@
 
 		&:focus-within,
 		&:has(> .Sort:hover) {
-			border-bottom-color:darken($colorSuccess, 8);
-			background-color:darken($colorMedium, 16);
+			border-bottom-color:var(--colorSuccess-Darkened-8);
+			background-color:var(--colorMedium-Darkened-16);
 			color:var(--colorSuccess);
 
 			.🌚 & {
-				background-color:lighten($colorBackgroundContentDarkMode, 3);
+				background-color:var(--colorBackgroundContentDarkMode-Lightened-4);
 				color:var(--colorBright);
 			}
 		}
@@ -272,11 +272,11 @@
 
 		&::before {
 			height:auto;
-			background-color:#{darken($colorMedium, 8)};
+			background-color:var(--colorMedium-Darkened-8);
 			bottom:-3px;
 
 			.🌚 & {
-				background-color:#{darken($colorBackgroundContentDarkMode, 6)};
+				background-color:var(--colorBackgroundContentDarkMode-Darkened-6);
 			}
 		}
 
@@ -355,13 +355,13 @@
 		td {
 			padding:20px;
 			border-radius:0 0 5px 5px;
-			border-top:3px solid #{darken($colorMedium, 8)};
+			border-top:3px solid var(--colorMedium-Darkened-8);
 			background-color:var(--colorMedium);
 			color:var(--colorBright);
 
 			.🌚 & {
-				border-top-color:#{darken($colorBackgroundContentDarkMode, 2)};
-				background-color:darken($colorBackgroundContentDarkMode, 4);
+				border-top-color:#{var(--colorBackgroundContentDarkMode-Darkened-2)};
+				background-color:var(--colorBackgroundContentDarkMode-Darkened-4);
 			}
 		}
 	}

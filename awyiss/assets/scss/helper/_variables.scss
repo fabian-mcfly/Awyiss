@@ -36,12 +36,61 @@ $columnIndents:[] !default;
 	--colorLight:#{$colorLight};
 	--colorMedium:#{$colorMedium};
 	--colorSemiDark:#{$colorSemiDark};
+	--colorSemiDarkDarkMode:#{$colorSemiDarkDarkMode};
 	--colorDark:#{$colorDark};
 	--colorText:#{$colorText};
 	--colorSuccess:#{$colorSuccess};
 	--colorInfo:#{$colorInfo};
 	--colorWarning:#{$colorWarning};
 	--colorError:#{$colorError};
+	--colorBackgroundContentDarkMode:#{$colorBackgroundContentDarkMode};
+
+	--colorBright-Alpha-85:#{rgba($colorBright, .85)};
+
+	--colorLight-Darkened-6:#{darken($colorLight, 6)};
+	--colorLight-Darkened-8:#{darken($colorLight, 8)};
+	--colorLight-Darkened-16:#{darken($colorLight, 16)};
+
+	--colorNeutralLight-Alpha-50:#{rgba($colorNeutralLight, .5)};
+
+	--colorLight-Darkened-20-Alpha-20:#{rgba(darken($colorLight, 20), .2)};
+
+	--colorMedium-Darkened-8:#{darken($colorMedium, 8)};
+	--colorMedium-Darkened-16:#{darken($colorMedium, 16)};
+
+	--colorSemiDarkDarkMode-Lightened-2:#{lighten($colorSemiDarkDarkMode, 2)};
+	--colorSemiDarkDarkMode-Lightened-4:#{lighten($colorSemiDarkDarkMode, 4)};
+
+	--colorSemiDarkDarkMode-Darkened-4:#{darken($colorSemiDarkDarkMode, 4)};
+	--colorSemiDarkDarkMode-Darkened-8:#{darken($colorSemiDarkDarkMode, 8)};
+
+	--colorSemiDarkDarkMode-Alpha-10:#{rgba($colorSemiDarkDarkMode, .1)};
+
+	--colorBackgroundContentDarkMode-Lightened-4:#{lighten($colorBackgroundContentDarkMode, 4)};
+	--colorBackgroundContentDarkMode-Lightened-8:#{lighten($colorBackgroundContentDarkMode, 8)};
+	--colorBackgroundContentDarkMode-Lightened-10:#{lighten($colorBackgroundContentDarkMode, 10)};
+
+	--colorBackgroundContentDarkMode-Darkened-2:#{darken($colorBackgroundContentDarkMode, 2)};
+	--colorBackgroundContentDarkMode-Darkened-4:#{darken($colorBackgroundContentDarkMode, 4)};
+	--colorBackgroundContentDarkMode-Darkened-6:#{darken($colorBackgroundContentDarkMode, 6)};
+
+	--colorBackgroundContentDarkMode-Darkened-4-Alpha-85:#{rgba(darken($colorBackgroundContentDarkMode, 4), .85)};
+
+	--colorDark-Alpha-50:#{rgba($colorDark, .5)};
+
+	--colorSuccess-Darkened-8:#{darken($colorSuccess, 8)};
+
+	--colorSuccess-Lightened-10:#{lighten($colorSuccess, 10)};
+
+	--colorSuccess-Darkened-8-Alpha-25:#{rgba(darken($colorSuccess, 8), .25)};
+
+	--colorSuccess-Alpha-10:#{rgba($colorSuccess, .1)};
+	--colorSuccess-Alpha-25:#{rgba($colorSuccess, .25)};
+
+	--colorInfo-Alpha-25:#{rgba($colorInfo, .25)};
+
+	--colorError-Alpha-10:#{rgba($colorError, .1)};
+	--colorError-Alpha-25:#{rgba($colorError, .25)};
 
 	--fontStackMain:#{inspect($fontStackMain)};
 	--fontSizeMain:#{$fontSizeMain};

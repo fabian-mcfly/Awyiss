@@ -77,7 +77,7 @@
 
 		.Overview-Fieldset {
 			display:block;
-			margin-bottom:$lineHeightMain;
+			margin-bottom:var(--lineHeightMain);
 			margin-top:0;
 			padding:42px 0 0 0;
 			box-shadow:none;
@@ -104,14 +104,14 @@
 		}
 
 		.ListItem {
-			--dottedLineColor:#{darken($colorLight, 15)};
+			--dottedLineColor:var(--colorLight-Darkened-16);
 			--backgroundColorOdd:var(--colorBright);
 			margin-inline:0;
 			padding-inline:0;
 
 			.🌚 & {
-				--dottedLineColor:#{lighten($colorBackgroundContentDarkMode, 10)};
-				--backgroundColorOdd:#{lighten($colorBackgroundContentDarkMode, 3)};
+				--dottedLineColor:var(--colorBackgroundContentDarkMode-Lightened-10);
+				--backgroundColorOdd:var(--colorBackgroundContentDarkMode-Lightened-4);
 			}
 
 			&.Active {
