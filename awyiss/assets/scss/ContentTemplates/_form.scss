@@ -67,11 +67,17 @@
 
 		&[data-assignable="false"] {
 			background-color:var(--colorNeutralLight-Alpha-50);
-			color:var(--colorMedium);
 
 			.🌚& {
 				background-color:var(--colorSemiDarkDarkMode-Alpha-10);
-				color:var(--colorSemiDarkDarkMode-Lightened-2);
+			}
+
+			.Title {
+				color:var(--colorMedium);
+
+				.🌚& {
+					color:var(--colorSemiDarkDarkMode-Lightened-2);
+				}
 			}
 		}
 
