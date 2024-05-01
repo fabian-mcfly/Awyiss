@@ -103,10 +103,10 @@ class BackendView extends AppView {
 
 		$lo_twig = $this->getTwig();
 		$lo_twig->addGlobal('baseUrl', Router::url('/', true));
+		$lo_twig->addGlobal('currentLanguage', $lo_frontendLanguage);
 		$lo_twig->addGlobal('currentPath', $this->getRequest()->getUri()->getPath());
 		$lo_twig->addGlobal('currentUrl', $this->request->getUri()->__toString());
 		$lo_twig->addGlobal('languages', LocaleMiddleware::getLanguages());
-		$lo_twig->addGlobal('language', $lo_frontendLanguage);
 		$lo_twig->addGlobal('languageShortcode', $lo_frontendLanguage?->shortcode);
 		$lo_twig->addGlobal('ProcessStatus', ProcessStatus::class);
 	}
