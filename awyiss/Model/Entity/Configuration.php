@@ -21,12 +21,24 @@ use Cake\Utility\Inflector;
  * @property string|null $value
  * @property string|null $languageShortcode
  * @property string|null $description
+ * @property int|null $createdBy
+ * @property \Cake\I18n\DateTime|null $createdOn
+ * @property int|null $changedBy
+ * @property \Cake\I18n\DateTime|null $changedOn
+ * @property int|null $deletedBy
+ * @property \Cake\I18n\DateTime|null $deletedOn
  * @property \Awyiss\Model\Entity\Language $language
  * @property mixed $printableValue
  */
 class Configuration extends Entity {
 	protected static array $fieldMap = [
 		'language_shortcode' => 'languageShortcode',
+		'created_by' => 'createdBy',
+		'created_on' => 'createdOn',
+		'changed_by' => 'changedBy',
+		'changed_on' => 'changedOn',
+		'deleted_by' => 'deletedBy',
+		'deleted_on' => 'deletedOn',
 	];
 
 

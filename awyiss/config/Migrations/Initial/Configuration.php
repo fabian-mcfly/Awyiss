@@ -58,6 +58,33 @@ class Configuration {
 			'default' => null,
 			'limit' => 255,
 			'null' => true,
+		])->addColumn('created_by', 'integer', [
+			'default' => null,
+			'limit' => null,
+			'null' => true,
+			'signed' => true,
+		])->addColumn('created_on', 'datetime', [
+			'default' => null,
+			'limit' => null,
+			'null' => true,
+		])->addColumn('changed_by', 'integer', [
+			'default' => null,
+			'limit' => null,
+			'null' => true,
+			'signed' => true,
+		])->addColumn('changed_on', 'datetime', [
+			'default' => null,
+			'limit' => null,
+			'null' => true,
+		])->addColumn('deleted_by', 'integer', [
+			'default' => null,
+			'limit' => null,
+			'null' => true,
+			'signed' => true,
+		])->addColumn('deleted_on', 'datetime', [
+			'default' => null,
+			'limit' => null,
+			'null' => true,
 		])->create();
 	}
 
