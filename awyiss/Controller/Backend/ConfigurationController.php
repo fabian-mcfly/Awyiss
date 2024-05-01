@@ -34,7 +34,7 @@ class ConfigurationController extends Controller {
 	 * @throws \Exception
 	 */
 	public function initialize(): void {
-		$this->selectedRealmSessionIdentifier = 'categories.' . ($this->request->getParam('lang') ?? 'global') . '.' . Inflector::underscore($this->getName()) . '.realm';
+		$this->selectedRealmSessionIdentifier = 'categories.' . Inflector::underscore($this->getName()) . '.realm';
 
 		parent::initialize();
 

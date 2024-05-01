@@ -163,13 +163,22 @@ class CategoriesComponent extends Component {
 		$lo_session = $lo_request->getSession();
 
 		$ls_bindingKey = $this->getConfig('bindingKey', 'id');
+
 		//Remember an identifier that will be used to save the selected category in the session
-		$ls_sessionIdentifier = implode('.', [
-			'categories',
-			($lo_request->getParam('lang') ?? 'global'),
+		$la_identifierParts = ['categories'];
+
+		$lo_schema = $this->table->getSchema();
+		if ($lo_schema->hasColumn('language_shortcode') && $this->table->getAlias() !== 'Configuration') {
+			$la_identifierParts[] = $lo_request->getParam('lang') ?? 'global';
+		}
+
+		$la_identifierParts = array_merge($la_identifierParts, [
 			Inflector::underscore($this->table->getAlias()),
 			Inflector::underscore($ls_identifier),
 		]);
+
+		$ls_sessionIdentifier = implode('.', $la_identifierParts);
+
 		if (!str_ends_with($ls_sessionIdentifier, '_' . $ls_bindingKey) && $this->getConfig('useDatasource')) {
 			$ls_sessionIdentifier .= '_' . $ls_bindingKey;
 		}

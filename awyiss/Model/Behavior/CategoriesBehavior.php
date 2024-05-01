@@ -847,7 +847,7 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 	 * @param \Cake\ORM\Query\SelectQuery $ao_query
 	 * @return void
 	 */
-	protected function _sortQueryBySystemOrderField(SelectQuery $ao_query) {
+	protected function _sortQueryBySystemOrderField(SelectQuery $ao_query): void {
 		$lo_table = $ao_query->getRepository();
 
 		/** @var \Awyiss\Model\Behavior\SystemOrderBehavior $lo_behavior */
