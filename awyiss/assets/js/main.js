@@ -129,9 +129,16 @@ export function addDarkModeSwitcherEvent() {
 		event.preventDefault();
 
 		// Send a fetch request to the URL of the item itself
-		fetch(target.href)
+		fetch(target.href, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+				'X-Requested-With': 'XMLHttpRequest',
+			},
+		})
+		.then(response => response.json())
 		.then(response => {
-			if (!response.ok) {
+			if (!response.success) {
 				throw new Error('Network response was not ok');
 			}
 

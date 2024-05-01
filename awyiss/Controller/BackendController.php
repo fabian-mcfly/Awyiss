@@ -385,10 +385,8 @@ abstract class BackendController extends AppController {
 
 	/**
 	 * Sets user configuration based on the provided url parameters and redirects to the previous page.
-	 *
-	 * @return \Cake\Http\Response
 	 */
-	public function userConfiguration(): Response {
+	public function userConfiguration(): void {
 		$lo_request = Router::getRequest();
 
 		$ls_scope = Inflector::underscore($this->getName());
@@ -433,20 +431,36 @@ abstract class BackendController extends AppController {
 
 		// TODO: Delete the entity if the value is the default value of the config option
 
-		if ($lo_table->save($lo_config)) {
+		$lb_success = $lo_table->save($lo_config);
+		if ($lb_success) {
 			$lo_identity->resetConfiguration();
 		}
 
-		$ls_referer = $lo_request->referer();
-		if ($ls_identifier === 'paginate.limit') {
-			// Remove "page:X" from the referer url
-			$ls_referer = preg_replace('/\/page:\d+/', '', $ls_referer);
+		if ($this->request->is('ajax')) {
+			$this->viewBuilder()->setOption('serialize', ['success', 'message']);
+			$this->set('success', !!$lb_success);
+			$this->set('message', $lb_success ? __d('system', 'user_configuration_saved') : __d('system', 'user_configuration_not_saved'));
 
-			//Remove double slashes
-			$ls_referer = preg_replace('/([^:])\/\//', '$1/', $ls_referer);
+			// Set the view class to JSON
+			$this->viewBuilder()->setClassName('Json');
+
+			if (!$lb_success) {
+				// Setting the response status to 422 Unprocessable Entity
+				$this->response = $this->response->withStatus(422, 'Unable to process entity');
+			}
 		}
+		else {
+			$ls_referer = $lo_request->referer();
+			if ($ls_identifier === 'paginate.limit') {
+				// Remove "page:X" from the referer url
+				$ls_referer = preg_replace('/\/page:\d+/', '', $ls_referer);
 
-		return $this->redirect($ls_referer);
+				//Remove double slashes
+				$ls_referer = preg_replace('/([^:])\/\//', '$1/', $ls_referer);
+			}
+
+			throw new RedirectException($ls_referer, 302);
+		}
 	}
 
 
