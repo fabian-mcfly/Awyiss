@@ -46,6 +46,10 @@ class TranslateBehavior extends BaseTranslateBehavior {
 				$this->languages[ $lo_language->shortcode ] = $lo_language;
 			}
 		}
+
+		if (!$this->getConfig('realm')) {
+			$this->setConfig('realm', LocaleMiddleware::getRealm());
+		}
 	}
 
 

@@ -18,9 +18,24 @@ use Cake\Validation\Validator;
  * and rules based on the config settings for the extending datatable
  */
 abstract class GenericDatatablesTable extends Table {
+	/**
+	 * @var bool|mixed $nestable Whether the records are nestable or not.
+	 */
 	protected bool $nestable;
+	/**
+	 * @var bool|mixed $splitIntoLanguages Whether the records are split into languages or not.
+	 */
 	protected bool $splitIntoLanguages;
+	/**
+	 * @var bool|mixed $translatable Whether the records are translatable or not.
+	 */
 	protected bool $translatable;
+	/**
+	 * @inheritDoc
+	 */
+	protected array $translate = [
+		'realm' => Awyiss::REALM_FRONTEND,
+	];
 
 
 	/**

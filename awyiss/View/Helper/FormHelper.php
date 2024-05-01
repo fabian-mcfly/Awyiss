@@ -4,6 +4,7 @@
 namespace Awyiss\View\Helper;
 
 
+use Awyiss\Awyiss;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\View\StringTemplate;
 use Cake\Datasource\EntityInterface;
@@ -27,25 +28,24 @@ class FormHelper extends BaseFormHelper {
 	 * @var array
 	 */
 	protected array $helpers = ['Attributes', 'Html', 'Locale', 'Url'];
+	/**
+	 * @var array<string, \Awyiss\Model\Entity\Language> List of languages by realm
+	 */
 	protected array $languages = [];
+	/**
+	 * @var array<string> List of fields that are translatable
+	 */
 	protected array $translatableFields = [];
+	/**
+	 * @var mixed|string The realm for the translations
+	 */
+	protected string $languageRealm;
 
 
 	/**
 	 * @inheritDoc
 	 */
 	public function __construct(View $ao_view, array $aa_config = []) {
-		foreach (LocaleMiddleware::getLanguages() as $la_languages) {
-			foreach ($la_languages as $lo_language) {
-				//If a language already exist, and it's active, do not use another one with the same shortcode.
-				if (isset($this->languages[ $lo_language->shortcode ]) && $this->languages[ $lo_language->shortcode ]->active) {
-					continue;
-				}
-
-				$this->languages[ $lo_language->shortcode ] = $lo_language;
-			}
-		}
-
 		parent::__construct(
 			$ao_view,
 			$aa_config + [
@@ -75,8 +75,13 @@ class FormHelper extends BaseFormHelper {
 			return $ls_form;
 		}
 
-		$this->translatableFields = $lo_sourceTable->getBehavior('Translate')->getConfig('fields');
+		$lo_behavior = $lo_sourceTable->getBehavior('Translate');
+		$this->translatableFields = $lo_behavior->getConfig('fields');
+		$this->languageRealm = $lo_behavior->getConfig('realm') ?? Awyiss::REALM_BACKEND;
 
+		foreach (LocaleMiddleware::getLanguages($this->languageRealm) as $lo_language) {
+			$this->languages[ $lo_language->shortcode ] = $lo_language;
+		}
 
 		return $ls_form;
 	}
@@ -217,7 +222,7 @@ class FormHelper extends BaseFormHelper {
 			$ls_association .= '.';
 		}
 
-		$lo_userLanguage = LocaleMiddleware::getLanguage(null);
+		$lo_userLanguage = LocaleMiddleware::getLanguage($this->languageRealm);
 
 		foreach ($this->languages as $ls_shortcode => $lo_language) {
 			$la_translatableOptions = [
@@ -235,11 +240,6 @@ class FormHelper extends BaseFormHelper {
 				// If the user's language is the same as the current language, add a class to highlight it.
 				$la_translatableOptions['templateVars']['containerClass'] = ' IsCurrentLanguage';
 			}
-
-			/*if (!count($la_options['controls']) && $lo_context->hasError($as_fieldName)) {
-				$la_translatableOptions = $this->addClass($la_translatableOptions, $this->_config['errorClass']);
-				//$la_translatableOptions['error'] = $this->error($as_fieldName);
-			}*/
 
 			if ($ls_association === 'attributes.') {
 				$la_translatableOptions['isTranslation'] = true;
