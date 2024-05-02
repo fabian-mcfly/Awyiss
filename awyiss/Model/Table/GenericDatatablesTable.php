@@ -19,15 +19,15 @@ use Cake\Validation\Validator;
  */
 abstract class GenericDatatablesTable extends Table {
 	/**
-	 * @var bool|mixed $nestable Whether the records are nestable or not.
+	 * @var bool $nestable Whether the records are nestable or not.
 	 */
 	protected bool $nestable;
 	/**
-	 * @var bool|mixed $splitIntoLanguages Whether the records are split into languages or not.
+	 * @var bool $splitIntoLanguages Whether the records are split into languages or not.
 	 */
 	protected bool $splitIntoLanguages;
 	/**
-	 * @var bool|mixed $translatable Whether the records are translatable or not.
+	 * @var bool $translatable Whether the records are translatable or not.
 	 */
 	protected bool $translatable;
 	/**
