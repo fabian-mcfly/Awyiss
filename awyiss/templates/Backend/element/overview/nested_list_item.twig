@@ -65,6 +65,8 @@
 															{% endif %}
 														{% elseif field in ['created_on', 'changed_on'] %}
 															{{ entity.has(field) ? entity.get(field).nice() ?: '-' }}
+														{% elseif categories.config.field and field == categories.config.field|underscore %}
+															{{ entity.has(field) ? (categories.simple[ entity.get(field) ] ?? '-') : '-' }}
 														{% else %}
 															{% set value = entity.has(field) ? entity.get(field) : '-' %}
 
