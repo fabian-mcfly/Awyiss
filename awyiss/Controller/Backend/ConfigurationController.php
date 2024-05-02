@@ -11,6 +11,7 @@ use Awyiss\Model\Entity\Configuration;
 use Awyiss\Routing\Router;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
+use Cake\ORM\Query\SelectQuery;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 
@@ -45,6 +46,20 @@ class ConfigurationController extends Controller {
 
 
 	/**
+	 * @inheritDoc
+	 */
+	public function getOverviewQuery(): ?SelectQuery {
+		$lo_query = $this->Configuration->find()->where($this->getOverviewWhere())->orderBy([
+			'identifier' => 'ASC',
+			'language_shortcode' => 'ASC',
+		]);
+		$this->Categories->filterQuery($lo_query, null, !$this->paginate['enabled']);
+
+		return $lo_query;
+	}
+
+
+	/**
 	 * Overview method
 	 *
 	 * @return void|?Response
@@ -60,20 +75,15 @@ class ConfigurationController extends Controller {
 		if (!$this->Authorization->withAdditionalData(['scope' => $ls_selectedScope])->isAccessible('read')) {
 			$this->Flash->error(__('scope_not_accessible'));
 
-
 			return $this->redirect(['action' => 'overview', 'scope' => 'system']);
 		}
-
-		$lo_configuration = $this->Configuration->find()->where($this->getOverviewWhere())->orderBy([
-			'identifier' => 'ASC',
-			'language_shortcode' => 'ASC',
-		]);
-		$this->Categories->filterQuery($lo_configuration, null, !$this->paginate['enabled']);
 
 		$lo_configOptions = ConfigOptionsProvider::loadConfigOptions($ls_selectedScope);
 		$la_configOptions = $lo_configOptions->getConfigOptions();
 
-		$la_configuration = $lo_configuration->all()->groupBy('realm')->map(function ($aa_data) use ($lo_configOptions) {
+		$lo_query = $this->getOverviewQuery();
+
+		$la_configuration = $lo_query->all()->groupBy('realm')->map(function ($aa_data) use ($lo_configOptions) {
 			return Hash::expand(collection($aa_data)->groupBy(function (Configuration $ao_entity) use ($lo_configOptions) {
 				$la_identifier = array_map(function (string $as_identifier) {
 					return ConfigOptionsProvider::sanitizeIdentifier($as_identifier);

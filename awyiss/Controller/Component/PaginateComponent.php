@@ -8,7 +8,9 @@ use Awyiss\Core\App;
 use Awyiss\Datasource\Paging\NumericPaginator;
 use Awyiss\Model\Behavior\TranslateBehavior;
 use Awyiss\Model\Table;
+use BadMethodCallException;
 use Cake\Controller\Component;
+use Cake\Datasource\EntityInterface;
 use Cake\Datasource\Paging\Exception\PageOutOfBoundsException;
 use Cake\Datasource\Paging\PaginatedInterface;
 use Cake\Datasource\QueryInterface;
@@ -26,6 +28,10 @@ class PaginateComponent extends Component {
 	 */
 	protected array $aliasedFields = [];
 	/**
+	 * @var bool
+	 */
+	protected bool $enabled = true;
+	/**
 	 * @var array
 	 */
 	protected array $defaultSortableFields = [];
@@ -39,6 +45,7 @@ class PaginateComponent extends Component {
 		$this->defaultSortableFields = $aa_config['defaultSortableFields'] ?? [];
 		$this->setConfig('defaultSortableFields');
 
+		$this->enabled = $aa_config['enabled'] ?? true;
 		$this->setConfig('enabled');
 	}
 
@@ -52,6 +59,10 @@ class PaginateComponent extends Component {
 		RepositoryInterface|QueryInterface|string|null $ao_object = null,
 		array $aa_settings = []
 	): PaginatedInterface {
+		if (!$this->enabled) {
+			throw new BadMethodCallException('PaginateComponent is disabled');
+		}
+
 		$lo_object = $ao_object;
 		if (!is_object($ao_object)) {
 			$lo_object = $this->getController()->fetchTable($ao_object);
@@ -102,6 +113,10 @@ class PaginateComponent extends Component {
 	 * @return void
 	 */
 	public function beforeRender(): void {
+		if (!$this->enabled) {
+			return;
+		}
+
 		$this->getController()->set('paginate', array_merge(
 			$this->getConfig(),
 			[
@@ -109,6 +124,36 @@ class PaginateComponent extends Component {
 				'defaultSortableFields' => $this->defaultSortableFields,
 			]
 		));
+	}
+
+
+	/**
+	 * Calculates the page position of the entity in the paginated list.
+	 *
+	 * @param \Cake\Datasource\EntityInterface $ao_entity
+	 * @return int|null
+	 */
+	public function calculateEntityPagePosition(EntityInterface $ao_entity): ?int {
+		if (!$this->enabled) {
+			return null;
+		}
+
+		$lo_records = $this->paginate($this->getController()->getOverviewQuery(), [
+			'limit' => 999999,
+			'maxLimit' => 999999,
+		]);
+
+		$li_key = 1;
+		foreach ($lo_records as $lo_record) {
+			if ($lo_record->id === $ao_entity->id) {
+				break;
+			}
+			$li_key++;
+		}
+
+		$li_page = (int)ceil($li_key / $this->getConfig('limit'));
+
+		return $li_page > 1 ? $li_page : null;
 	}
 
 

@@ -57,6 +57,23 @@ class ContentsController extends Controller {
 
 
 	/**
+	 * @inheritDoc
+	 */
+	public function getOverviewQuery(): ?SelectQuery {
+		/**
+		 * Using `$this->Contents->find()` instead of
+		 * `$this->Contents->Pages->loadInto($lo_page, ['Contents'])->contents, $lo_contents->count();`
+		 * because `nestedByContentArea()` works with a Query, not an array.
+		 * This could be changed, but I fail to see any benefits
+		 */
+		$lo_query = $this->Contents->find()->where($this->getOverviewWhere())->contain(['ContentTemplates']);
+		$this->Categories->filterQuery($lo_query, null, !$this->paginate['enabled']);
+
+		return $lo_query;
+	}
+
+
+	/**
 	 * Overview method
 	 *
 	 * @throws \Exception
@@ -66,15 +83,9 @@ class ContentsController extends Controller {
 
 		$this->Authorization->ensure('read');
 
-		/**
-		 * Using `$this->Contents->find()` instead of
-		 * `$this->Contents->Pages->loadInto($lo_page, ['Contents'])->contents, $lo_contents->count();`
-		 * because `nestedByContentArea()` works with a Query, not an array.
-		 * This could be changed, but I fail to see any benefits
-		 */
-		$lo_contents = $this->Contents->find()->where($this->getOverviewWhere())->contain(['ContentTemplates']);
-		$this->Categories->filterQuery($lo_contents, null, !$this->paginate['enabled']);
-		$lo_contents = $lo_contents->formatResults(function (Collection $ao_result): Collection {
+		$lo_query = $this->getOverviewQuery();
+
+		$lo_contents = $lo_query->formatResults(function (Collection $ao_result): Collection {
 			/** @var \Awyiss\Model\Entity\Content $lo_content */
 			foreach ($ao_result as $lo_content) {
 				$lo_content->class = $lo_content->column['width']->getCssClass();

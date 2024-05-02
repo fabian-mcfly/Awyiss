@@ -9,6 +9,7 @@ use Awyiss\Model\Entity\PageTemplate;
 use Awyiss\Routing\Router;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
+use Cake\ORM\Query\SelectQuery;
 
 
 /**
@@ -25,6 +26,17 @@ class PageTemplatesController extends Controller {
 		'defaultSortableFields' => ['used_for_pages'],
 	];
 
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getOverviewQuery(): ?SelectQuery {
+		$lo_query = $this->PageTemplates->find('withUsages')->where($this->getOverviewWhere())->contain(['ContentAreas', 'PageRoles']);
+		$this->Categories->filterQuery($lo_query, null, false);
+
+		return $lo_query;
+	}
+
 	/**
 	 * Overview method
 	 *
@@ -33,8 +45,7 @@ class PageTemplatesController extends Controller {
 	public function overview(): void {
 		$this->Authorization->ensure('read');
 
-		$lo_query = $this->PageTemplates->find('withUsages')->where($this->getOverviewWhere())->contain(['ContentAreas', 'PageRoles']);
-		$this->Categories->filterQuery($lo_query, null, false);
+		$lo_query = $this->getOverviewQuery();
 
 		$lb_paginated = $this->paginate['enabled'];
 		if ($lb_paginated) {
@@ -222,7 +233,11 @@ class PageTemplatesController extends Controller {
 				$this->Flash->success(__($as_method . '_succeeded'));
 
 				if ($this->request->getData('submit') == 'submit_close') {
-					throw new RedirectException(Router::url(['action' => 'overview', 'pageRoleId' => $ao_pageTemplate->pageRoleId], true), 302);
+					throw new RedirectException(Router::url([
+						'action' => 'overview',
+						'pageRoleId' => $ao_pageTemplate->pageRoleId,
+						'page' => $this->Paginate->calculateEntityPagePosition($ao_pageTemplate),
+					], true), 302);
 				}
 
 				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $ao_pageTemplate->id], true), 302);

@@ -10,6 +10,7 @@ use Awyiss\Model\Entity\Language;
 use Awyiss\Routing\Router;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
+use Cake\ORM\Query\SelectQuery;
 
 
 /**
@@ -19,6 +20,14 @@ use Cake\Http\Response;
  */
 class LanguagesController extends Controller {
 	/**
+	 * @inheritDoc
+	 */
+	public function getOverviewQuery(): ?SelectQuery {
+		return $this->Languages->find()->where($this->getOverviewWhere());
+	}
+
+
+	/**
 	 * Overview method
 	 *
 	 * @throws \Exception
@@ -26,7 +35,7 @@ class LanguagesController extends Controller {
 	public function overview(): void {
 		$this->Authorization->ensure('read');
 
-		$lo_query = $this->Languages->find()->where($this->getOverviewWhere());
+		$lo_query = $this->getOverviewQuery();
 
 		$lb_paginated = $this->paginate['enabled'];
 		if ($lb_paginated) {
@@ -157,7 +166,10 @@ class LanguagesController extends Controller {
 				$this->Flash->success(__($as_method . '_succeeded'));
 
 				if ($this->request->getData('submit') == 'submit_close') {
-					throw new RedirectException(Router::url(['action' => 'overview'], true), 302);
+					throw new RedirectException(Router::url([
+						'action' => 'overview',
+						'page' => $this->Paginate->calculateEntityPagePosition($ao_language),
+					], true), 302);
 				}
 
 				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $ao_language->id], true), 302);

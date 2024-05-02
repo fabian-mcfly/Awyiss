@@ -6,6 +6,7 @@ namespace Awyiss\Controller\Backend;
 
 use Awyiss\Controller\BackendController as Controller;
 use Cake\Event\EventInterface;
+use Cake\ORM\Query\SelectQuery;
 
 
 /**
@@ -20,6 +21,14 @@ class ErrorController extends Controller {
 	 */
 	public function initialize(): void {
 		//$this->loadComponent('RequestHandler');
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getOverviewQuery(): ?SelectQuery {
+		return null;
 	}
 
 

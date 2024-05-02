@@ -13,6 +13,7 @@ use Awyiss\Model\Entity\UserConfiguration;
 use Awyiss\Routing\Router;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
+use Cake\ORM\Query\SelectQuery;
 use Cake\Utility\Hash;
 
 
@@ -41,6 +42,20 @@ class UserConfigurationController extends Controller {
 
 
 	/**
+	 * @inheritDoc
+	 */
+	public function getOverviewQuery(): ?SelectQuery {
+		$lo_query = $this->UserConfiguration->find()->where($this->getOverviewWhere())->orderBy([
+			'identifier' => 'ASC',
+		]);
+
+		$this->Categories->filterQuery($lo_query, null, !$this->paginate['enabled']);
+
+		return $lo_query;
+	}
+
+
+	/**
 	 * Overview method
 	 *
 	 * @return void|?Response
@@ -60,17 +75,13 @@ class UserConfigurationController extends Controller {
 			return $this->redirect(['action' => 'overview', 'scope' => 'system']);
 		}
 
-		$lo_configuration = $this->UserConfiguration->find()->where($this->getOverviewWhere())->orderBy([
-			'identifier' => 'ASC',
-		]);
-
-		$this->Categories->filterQuery($lo_configuration, null, !$this->paginate['enabled']);
-
 		$lo_configOptions = ConfigOptionsProvider::loadConfigOptions($ls_selectedScope);
 		$la_configOptions = $lo_configOptions->getConfigOptions();
 
+		$lo_query = $this->getOverviewQuery();
+
 		$la_configuration = Hash::expand(
-			$lo_configuration->all()->groupBy(function (UserConfiguration $ao_entity) use ($lo_configOptions) {
+			$lo_query->all()->groupBy(function (UserConfiguration $ao_entity) use ($lo_configOptions) {
 				$la_identifier = array_map(function (string $as_identifier) {
 					return ConfigOptionsProvider::sanitizeIdentifier($as_identifier);
 				}, explode('.', $ao_entity->identifier));

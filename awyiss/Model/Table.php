@@ -244,7 +244,7 @@ class Table extends BaseTable {
 		else {
 			$this->addAttributesBehavior($ls_sourceTable);
 
-			$this->addBehavior('Audit', $this->audit + ['priority' => 99999]);
+			$this->addBehavior('Audit', $this->audit + ['priority' => 999999]);
 
 			if ($lo_schema->getColumn('deleted')) {
 				$this->addBehavior('SoftDelete', $this->softDelete);
@@ -259,7 +259,7 @@ class Table extends BaseTable {
 			}
 		}
 
-		$this->addBehavior('AutoPrefix', $this->autoPrefix + ['priority' => 99999]);
+		$this->addBehavior('AutoPrefix', $this->autoPrefix + ['priority' => 999999]);
 		$this->addBehavior('DefaultValues', $this->defaultValues);
 
 		if ($this->nest) {

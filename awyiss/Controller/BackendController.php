@@ -21,6 +21,7 @@ use Cake\Datasource\RepositoryInterface;
 use Cake\Event\EventInterface;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
+use Cake\ORM\Query\SelectQuery;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 use Psr\Http\Message\UriInterface;
@@ -30,6 +31,7 @@ use Psr\Http\Message\UriInterface;
  * @property \Authentication\Controller\Component\AuthenticationComponent $Authentication
  * @property \Awyiss\Controller\Component\AuthorizationComponent $Authorization
  * @property \Awyiss\Controller\Component\CategoriesComponent $Categories
+ * @property \Awyiss\Controller\Component\PaginateComponent $Paginate
  * @property \Awyiss\Controller\Component\SystemOrderComponent $SystemOrder
  */
 abstract class BackendController extends AppController {
@@ -162,9 +164,7 @@ abstract class BackendController extends AppController {
 				$this->loadComponent('SystemOrder', $this->systemOrder);
 			}
 
-			if ($this->paginate && ($this->paginate['enabled'] ?? false) === true) {
-				$this->loadComponent('Paginate', $this->paginate);
-			}
+			$this->loadComponent('Paginate', $this->paginate);
 		}
 
 		//Detect the available commands
@@ -199,6 +199,14 @@ abstract class BackendController extends AppController {
 	): PaginatedInterface {
 		return $this->Paginate->paginate($ao_object, $aa_settings);
 	}
+
+
+	/**
+	 * Returns the query used in the overview-method of most controllers.
+	 *
+	 * @return \Cake\ORM\Query\SelectQuery|null
+	 */
+	abstract public function getOverviewQuery(): ?SelectQuery;
 
 
 	/**

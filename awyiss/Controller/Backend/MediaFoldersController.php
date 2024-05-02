@@ -14,6 +14,7 @@ use Cake\Collection\CollectionInterface;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
+use Cake\ORM\Query\SelectQuery;
 use Cake\Utility\Inflector;
 
 
@@ -82,13 +83,9 @@ class MediaFoldersController extends Controller {
 
 
 	/**
-	 * Overview method
-	 *
-	 * @throws \Exception
+	 * @inheritDoc
 	 */
-	public function overview(): void {
-		$this->Authorization->ensure('read');
-
+	public function getOverviewQuery(): ?SelectQuery {
 		$lo_query = $this->MediaFolders->find('forCurrentLanguage');
 
 		if ($this->getOverviewWhere('language_shortcode') !== 'all') {
@@ -100,6 +97,20 @@ class MediaFoldersController extends Controller {
 
 			$lo_query->where($la_overviewWhere);
 		}
+
+		return $lo_query;
+	}
+
+
+	/**
+	 * Overview method
+	 *
+	 * @throws \Exception
+	 */
+	public function overview(): void {
+		$this->Authorization->ensure('read');
+
+		$lo_query = $this->getOverviewQuery();
 
 		$lb_paginated = $this->paginate['enabled'];
 		if ($lb_paginated) {
@@ -249,7 +260,11 @@ class MediaFoldersController extends Controller {
 				}
 
 				if ($this->request->getData('submit') == 'submit_close') {
-					throw new RedirectException(Router::url(['action' => 'overview', 'lang' => $ao_mediaFolder->languageShortcode], true), 302);
+					throw new RedirectException(Router::url([
+						'action' => 'overview',
+						'lang' => $ao_mediaFolder->languageShortcode,
+						'page' => $this->Paginate->calculateEntityPagePosition($ao_mediaFolder),
+					], true), 302);
 				}
 
 				throw new RedirectException(Router::url(['action' => 'edit', 'lang' => $ao_mediaFolder->languageShortcode, 'id' => $ao_mediaFolder->id], true), 302);

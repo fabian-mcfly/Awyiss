@@ -9,6 +9,7 @@ use Awyiss\Model\Entity\Datatable;
 use Awyiss\Routing\Router;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
+use Cake\ORM\Query\SelectQuery;
 
 
 /**
@@ -18,6 +19,14 @@ use Cake\Http\Response;
  */
 class DatatablesController extends Controller {
 	/**
+	 * @inheritDoc
+	 */
+	public function getOverviewQuery(): ?SelectQuery {
+		return $this->Datatables->find()->where($this->getOverviewWhere());
+	}
+
+
+	/**
 	 * Overview method
 	 *
 	 * @throws \Exception
@@ -25,8 +34,8 @@ class DatatablesController extends Controller {
 	public function overview(): void {
 		$this->Authorization->ensure('read');
 
-		$lo_datatables = $this->Datatables->find()->where($this->getOverviewWhere());
-		$lo_datatables = $this->paginate($lo_datatables);
+		$lo_query = $this->getOverviewQuery();
+		$lo_datatables = $this->paginate($lo_query);
 
 		$this->set([
 			'datatables' => $lo_datatables,
@@ -144,7 +153,10 @@ class DatatablesController extends Controller {
 				$this->Flash->success(__($as_method . '_succeeded'));
 
 				if ($this->request->getData('submit') == 'submit_close') {
-					throw new RedirectException(Router::url(['action' => 'overview'], true), 302);
+					throw new RedirectException(Router::url([
+						'action' => 'overview',
+						'page' => $this->Paginate->calculateEntityPagePosition($ao_datatable),
+					], true), 302);
 				}
 
 				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $ao_datatable->id], true), 302);

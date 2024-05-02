@@ -13,6 +13,7 @@ use Awyiss\Routing\Router;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
+use Cake\ORM\Query\SelectQuery;
 use Cake\Utility\Inflector;
 
 
@@ -44,6 +45,17 @@ class MediaController extends Controller {
 
 
 	/**
+	 * @inheritDoc
+	 */
+	public function getOverviewQuery(): ?SelectQuery {
+		$lo_query = $this->Media->find()->where($this->getOverviewWhere());
+		$this->Categories->filterQuery($lo_query, null, !$this->paginate['enabled']);
+
+		return $lo_query;
+	}
+
+
+	/**
 	 * Overview method
 	 *
 	 * @throws \Exception
@@ -51,8 +63,7 @@ class MediaController extends Controller {
 	public function overview(): void {
 		$this->Authorization->ensure('read');
 
-		$lo_query = $this->Media->find()->where($this->getOverviewWhere());
-		$this->Categories->filterQuery($lo_query, null, !$this->paginate['enabled']);
+		$lo_query = $this->getOverviewQuery();
 
 		if ($this->request->getParam('paginate')) {
 			$lb_paginated = ($this->request->getParam('paginate', 'false') === 'true');
@@ -353,7 +364,11 @@ class MediaController extends Controller {
 				$this->Flash->success(__($as_method . '_succeeded'));
 
 				if ($this->request->getData('submit') == 'submit_close') {
-					throw new RedirectException(Router::url(['action' => 'overview', 'mediaFolderId' => $ao_media->mediaFolderId], true), 302);
+					throw new RedirectException(Router::url([
+						'action' => 'overview',
+						'mediaFolderId' => $ao_media->mediaFolderId,
+						'page' => $this->Paginate->calculateEntityPagePosition($ao_media),
+					], true), 302);
 				}
 
 				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $ao_media->id], true), 302);

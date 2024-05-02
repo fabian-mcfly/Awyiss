@@ -7,6 +7,7 @@ namespace Awyiss\Controller\Backend;
 use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Routing\Router;
 use Cake\Http\Exception\RedirectException;
+use Cake\ORM\Query\SelectQuery;
 use Cake\Utility\Inflector;
 
 
@@ -16,6 +17,16 @@ use Cake\Utility\Inflector;
  * @property \Awyiss\Model\Table\AuditTable $Audit
  */
 class AuditController extends Controller {
+	/**
+	 * @inheritDoc
+	 */
+	public function getOverviewQuery(): ?SelectQuery {
+		$lo_query = $this->Audit->find()->where($this->getOverviewWhere());
+
+		return $lo_query;
+	}
+
+
 	/**
 	 * This method handles the info action for the AuditController. It fetches the record
 	 * based on the provided id and scope from the request parameters. If the id or scope

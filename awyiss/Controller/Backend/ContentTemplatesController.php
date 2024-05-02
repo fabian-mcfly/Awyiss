@@ -11,6 +11,7 @@ use Awyiss\Routing\Router;
 use Awyiss\Utility\Content\ColumnInterface;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
+use Cake\ORM\Query\SelectQuery;
 
 
 /**
@@ -29,6 +30,16 @@ class ContentTemplatesController extends Controller {
 
 
 	/**
+	 * @inheritDoc
+	 */
+	public function getOverviewQuery(): ?SelectQuery {
+		$lo_query = $this->ContentTemplates->find('withUsages')->where($this->getOverviewWhere());
+
+		return $lo_query;
+	}
+
+
+	/**
 	 * Overview method
 	 *
 	 * @throws \Exception
@@ -36,7 +47,7 @@ class ContentTemplatesController extends Controller {
 	public function overview(): void {
 		$this->Authorization->ensure('read');
 
-		$lo_query = $this->ContentTemplates->find('withUsages')->where($this->getOverviewWhere());
+		$lo_query = $this->getOverviewQuery();
 
 		$lb_paginated = $this->paginate['enabled'];
 		if ($lb_paginated) {
@@ -195,7 +206,10 @@ class ContentTemplatesController extends Controller {
 				$this->Flash->success(__($as_method . '_succeeded'));
 
 				if ($this->request->getData('submit') == 'submit_close') {
-					throw new RedirectException(Router::url(['action' => 'overview'], true), 302);
+					throw new RedirectException(Router::url([
+						'action' => 'overview',
+						'page' => $this->Paginate->calculateEntityPagePosition($ao_contentTemplate),
+					], true), 302);
 				}
 
 				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $ao_contentTemplate->id], true), 302);

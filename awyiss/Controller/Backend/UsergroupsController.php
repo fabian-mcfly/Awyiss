@@ -9,6 +9,7 @@ use Awyiss\Model\Entity\Usergroup;
 use Awyiss\Routing\Router;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
+use Cake\ORM\Query\SelectQuery;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 
@@ -21,6 +22,22 @@ use Cake\Utility\Inflector;
  */
 class UsergroupsController extends Controller {
 	/**
+	 * @inheritDoc
+	 */
+	protected array $paginate = [
+		'enabled' => true,
+	];
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getOverviewQuery(): ?SelectQuery {
+		return $this->Usergroups->find()->where($this->getOverviewWhere());
+	}
+
+
+	/**
 	 * Overview method
 	 *
 	 * @throws \Exception
@@ -28,8 +45,16 @@ class UsergroupsController extends Controller {
 	public function overview(): void {
 		$this->Authorization->ensure('read');
 
-		$lo_query = $this->Usergroups->find()->where($this->getOverviewWhere());
-		$lo_usergroups = $this->paginate($lo_query);
+		$lo_query = $this->getOverviewQuery();
+
+		$lb_paginated = $this->paginate['enabled'];
+		unset($this->paginate['enabled']);
+		if ($lb_paginated) {
+			$lo_usergroups = $this->paginate($lo_query);
+		}
+		else {
+			$lo_usergroups = $lo_query->all();
+		}
 
 		$this->set([
 			'usergroups' => $lo_usergroups,
@@ -206,7 +231,10 @@ class UsergroupsController extends Controller {
 				$this->Flash->success(__($as_method . '_succeeded'));
 
 				if ($this->request->getData('submit') == 'submit_close') {
-					throw new RedirectException(Router::url(['action' => 'overview'], true), 302);
+					throw new RedirectException(Router::url([
+						'action' => 'overview',
+						'page' => $this->Paginate->calculateEntityPagePosition($ao_usergroup),
+					], true), 302);
 				}
 
 				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $ao_usergroup->id], true), 302);

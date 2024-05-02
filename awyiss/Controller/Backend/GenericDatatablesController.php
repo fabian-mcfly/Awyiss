@@ -15,6 +15,7 @@ use Awyiss\Routing\Router;
 use Cake\Collection\CollectionInterface;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
+use Cake\ORM\Query\SelectQuery;
 use Cake\Utility\Inflector;
 use Cake\View\Exception\MissingTemplateException;
 use RuntimeException;
@@ -55,13 +56,9 @@ abstract class GenericDatatablesController extends Controller {
 
 
 	/**
-	 * Overview method
-	 *
-	 * @throws \Exception
+	 * @inheritDoc
 	 */
-	public function overview(): void {
-		$this->Authorization->ensure('read');
-
+	public function getOverviewQuery(): ?SelectQuery {
 		if ($this->splitIntoLanguages) {
 			$lo_query = $this->Datatable->find('forCurrentLanguage');
 		}
@@ -71,6 +68,20 @@ abstract class GenericDatatablesController extends Controller {
 
 		$lo_query->where($this->getOverviewWhere());
 		$this->Categories->filterQuery($lo_query, null, !$this->paginate['enabled']);
+
+		return $lo_query;
+	}
+
+
+	/**
+	 * Overview method
+	 *
+	 * @throws \Exception
+	 */
+	public function overview(): void {
+		$this->Authorization->ensure('read');
+
+		$lo_query = $this->getOverviewQuery();
 
 		// Disable sorting if the current category is the aggregation category or the unassigned category
 		if (
@@ -200,7 +211,11 @@ abstract class GenericDatatablesController extends Controller {
 					$this->verifyCategorySelection($ao_entity);
 
 					/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-					throw new RedirectException(Router::url(['action' => 'overview', 'lang' => $ao_entity->languageShortcode], true), 302);
+					throw new RedirectException(Router::url([
+						'action' => 'overview',
+						'lang' => $ao_entity->languageShortcode,
+						'page' => $this->Paginate->calculateEntityPagePosition($ao_entity),
+					], true), 302);
 				}
 
 				/** @noinspection PhpPossiblePolymorphicInvocationInspection */

@@ -5,6 +5,7 @@ namespace Awyiss\Controller\Backend;
 
 
 use Awyiss\Controller\BackendController as Controller;
+use Cake\ORM\Query\SelectQuery;
 
 
 /**
@@ -12,6 +13,14 @@ use Awyiss\Controller\BackendController as Controller;
  */
 class DashboardController extends Controller {
 	protected ?string $defaultTable = '';
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getOverviewQuery(): ?SelectQuery {
+		return null;
+	}
 
 
 	/**

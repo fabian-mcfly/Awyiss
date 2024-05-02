@@ -16,6 +16,7 @@ use Awyiss\Routing\Router;
 use Cake\Collection\CollectionInterface;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
+use Cake\ORM\Query\SelectQuery;
 use Cake\Utility\Inflector;
 use Cake\View\Exception\MissingTemplateException;
 use RuntimeException;
@@ -57,6 +58,17 @@ class PagesController extends Controller {
 
 
 	/**
+	 * @inheritDoc
+	 */
+	public function getOverviewQuery(): ?SelectQuery {
+		$lo_query = $this->Pages->find('forCurrentLanguage')->where($this->getOverviewWhere());
+		$this->Categories->filterQuery($lo_query, null, !$this->paginate['enabled']);
+
+		return $lo_query;
+	}
+
+
+	/**
 	 * Overview method
 	 *
 	 * @throws \Exception
@@ -64,8 +76,7 @@ class PagesController extends Controller {
 	public function overview(): void {
 		$this->Authorization->ensure('read');
 
-		$lo_pages = $this->Pages->find('forCurrentLanguage')->where($this->getOverviewWhere());
-		$this->Categories->filterQuery($lo_pages, null, !$this->paginate['enabled']);
+		$lo_query = $this->getOverviewQuery();
 
 		// Disable sorting if the current category is the aggregation category or the unassigned category
 		if (
@@ -78,13 +89,13 @@ class PagesController extends Controller {
 		$lb_paginated = $this->paginate['enabled'];
 		unset($this->paginate['enabled']);
 		if ($lb_paginated) {
-			$lo_pages = $this->paginate($lo_pages);
+			$lo_pages = $this->paginate($lo_query);
 		}
 		elseif ($this->nestable) {
-			$lo_pages = $lo_pages->find('threaded');
+			$lo_pages = $lo_query->find('threaded');
 		}
 		else {
-			$lo_pages = $lo_pages->all();
+			$lo_pages = $lo_query->all();
 		}
 
 		$la_pageTemplates = $this->getPageTemplates()->indexBy('id')->toArray();
@@ -337,7 +348,11 @@ class PagesController extends Controller {
 					 */
 					$this->verifyCategorySelection($ao_page);
 
-					throw new RedirectException(Router::url(['action' => 'overview', 'lang' => $ao_page->languageShortcode], true), 302);
+					throw new RedirectException(Router::url([
+						'action' => 'overview',
+						'lang' => $ao_page->languageShortcode,
+						'page' => $this->Paginate->calculateEntityPagePosition($ao_page),
+					], true), 302);
 				}
 
 				throw new RedirectException(Router::url(['action' => 'edit', 'lang' => $ao_page->languageShortcode, 'id' => $ao_page->id], true), 302);

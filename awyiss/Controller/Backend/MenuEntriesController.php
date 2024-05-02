@@ -12,6 +12,7 @@ use Awyiss\Routing\Router;
 use Cake\Collection\CollectionInterface;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
+use Cake\ORM\Query\SelectQuery;
 
 
 /**
@@ -33,6 +34,17 @@ class MenuEntriesController extends Controller {
 
 
 	/**
+	 * @inheritDoc
+	 */
+	public function getOverviewQuery(): ?SelectQuery {
+		$lo_query = $this->MenuEntries->find()->where($this->getOverviewWhere());
+		$this->Categories->filterQuery($lo_query, null, !$this->paginate['enabled']);
+
+		return $lo_query;
+	}
+
+
+	/**
 	 * Overview method
 	 *
 	 * @throws \Exception
@@ -40,8 +52,7 @@ class MenuEntriesController extends Controller {
 	public function overview(): void {
 		$this->Authorization->ensure('read');
 
-		$lo_query = $this->MenuEntries->find()->where($this->getOverviewWhere());
-		$this->Categories->filterQuery($lo_query, null, !$this->paginate['enabled']);
+		$lo_query = $this->getOverviewQuery();
 
 		$lb_paginated = $this->paginate['enabled'];
 		if ($lb_paginated) {
@@ -203,7 +214,12 @@ class MenuEntriesController extends Controller {
 				$this->Flash->success(__($as_method . '_succeeded'));
 
 				if ($this->request->getData('submit') == 'submit_close') {
-					throw new RedirectException(Router::url(['action' => 'overview', 'lang' => $ao_menuEntry->languageShortcode, 'menuId' => $ao_menuEntry->menuId], true), 302);
+					throw new RedirectException(Router::url([
+						'action' => 'overview',
+						'lang' => $ao_menuEntry->languageShortcode,
+						'menuId' => $ao_menuEntry->menuId,
+						'page' => $this->Paginate->calculateEntityPagePosition($ao_menuEntry),
+					], true), 302);
 				}
 
 				throw new RedirectException(Router::url(['action' => 'edit', 'lang' => $ao_menuEntry->languageShortcode, 'id' => $ao_menuEntry->id], true), 302);

@@ -14,6 +14,7 @@ use Cake\Event\EventInterface;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
 use Cake\I18n\DateTime;
+use Cake\ORM\Query\SelectQuery;
 use Cake\Utility\Hash;
 use Cake\Utility\Security;
 
@@ -30,6 +31,7 @@ class UsersController extends Controller {
 	 * @inheritDoc
 	 */
 	protected array $paginate = [
+		'enabled' => true,
 		'order' => [
 			'username' => 'asc',
 		],
@@ -52,6 +54,17 @@ class UsersController extends Controller {
 
 
 	/**
+	 * @inheritDoc
+	 */
+	public function getOverviewQuery(): ?SelectQuery {
+		$lo_query = $this->Users->find()->where($this->getOverviewWhere());
+		$this->Categories->filterQuery($lo_query, null, false);
+
+		return $lo_query;
+	}
+
+
+	/**
 	 * Overview method
 	 *
 	 * @return void
@@ -60,9 +73,16 @@ class UsersController extends Controller {
 	public function overview(): void {
 		$this->Authorization->ensure('read');
 
-		$lo_users = $this->Users->find()->where($this->getOverviewWhere());
-		$this->Categories->filterQuery($lo_users, null, false);
-		$lo_users = $this->paginate($lo_users);
+		$lo_query = $this->getOverviewQuery();
+
+		$lb_paginated = $this->paginate['enabled'];
+		unset($this->paginate['enabled']);
+		if ($lb_paginated) {
+			$lo_users = $this->paginate($lo_query);
+		}
+		else {
+			$lo_users = $lo_query->all();
+		}
 
 		$this->set([
 			'users' => $lo_users,
@@ -322,7 +342,10 @@ class UsersController extends Controller {
 					 */
 					$this->Categories->verifySelection(null, $la_usergroups);
 
-					throw new RedirectException(Router::url(['action' => 'overview'], true), 302);
+					throw new RedirectException(Router::url([
+						'action' => 'overview',
+						'page' => $this->Paginate->calculateEntityPagePosition($ao_user),
+					], true), 302);
 				}
 
 				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $ao_user->id], true), 302);

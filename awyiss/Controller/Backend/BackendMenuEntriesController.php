@@ -16,6 +16,7 @@ use Cake\Database\Expression\QueryExpression;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
 use Cake\I18n\DateTime;
+use Cake\ORM\Query\SelectQuery;
 
 
 /**
@@ -24,6 +25,16 @@ use Cake\I18n\DateTime;
  * @property \Awyiss\Model\Table\BackendMenuEntriesTable $BackendMenuEntries
  */
 class BackendMenuEntriesController extends Controller {
+	/**
+	 * @inheritDoc
+	 */
+	public function getOverviewQuery(): ?SelectQuery {
+		$lo_query = $this->BackendMenuEntries->find()->where($this->getOverviewWhere());
+
+		return $lo_query;
+	}
+
+
 	/**
 	 * Overview method
 	 *
