@@ -57,7 +57,7 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 			'sortQuery' => 'sortQuery',
 		],
 		'enabled' => false,
-		'fieldname' => null,
+		'field' => null,
 		'finder' => null,
 		'foreignKey' => null,
 		'includeParentCategories' => false,
@@ -103,11 +103,11 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 				$this->setConfig('foreignKey', $lo_association->getForeignKey());
 			}
 
-			if (!$this->getConfig('fieldname')) {
+			if (!$this->getConfig('field')) {
 				/** @var class-string<\Awyiss\Model\Entity> $ls_entityClass */
 				$ls_entityClass = $lo_table->getEntityClass();
 
-				$this->setConfig('fieldname', $ls_entityClass::mapField($lo_association->getForeignKey()));
+				$this->setConfig('field', $ls_entityClass::mapField($lo_association->getForeignKey()));
 			}
 		}
 
@@ -115,8 +115,8 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 			throw new RuntimeException(sprintf('`%s` is missing the identifier attribute for table `%s`', static::class, $lo_table->getAlias()));
 		}
 
-		if (!$this->getConfig('fieldname')) {
-			$this->setConfig('fieldname', Inflector::underscore($this->getConfig('identifier')));
+		if (!$this->getConfig('field')) {
+			$this->setConfig('field', Inflector::underscore($this->getConfig('identifier')));
 		}
 	}
 
@@ -201,7 +201,7 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 		/** @var \Awyiss\Model\Table $lo_table */
 		$lo_table = $this->table();
 
-		return $lo_table->fieldIsAttribute($this->getConfig('fieldname') ?: $this->getConfig('identifier'));
+		return $lo_table->fieldIsAttribute($this->getConfig('field') ?: $this->getConfig('identifier'));
 	}
 
 
@@ -315,7 +315,7 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 			}
 		}
 
-		$ls_column = $this->getConfig('fieldname') ?: $this->getConfig('identifier');
+		$ls_column = $this->getConfig('field') ?: $this->getConfig('identifier');
 
 		/** @var \Awyiss\Model\Table $lo_table */
 		$lo_table = $this->table();
@@ -434,7 +434,7 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 			return $this->getConfig('selectedCategory');
 		}
 
-		$ls_field = $this->getConfig('useDatasource') ? $this->getConfig('fieldname') : $this->getConfig('identifier');
+		$ls_field = $this->getConfig('useDatasource') ? $this->getConfig('field') : $this->getConfig('identifier');
 
 
 		return $ao_entity->get($ls_field);
@@ -766,14 +766,14 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 			return $ao_rules;
 		}
 
-		$ls_fieldName = Inflector::camelize($this->getConfig('fieldname'));
+		$ls_fieldName = Inflector::camelize($this->getConfig('field'));
 		$ls_ruleName = 'valid' . $ls_fieldName;
 
 		/** @var \Awyiss\Model\Table $lo_table */
 		$lo_table = $this->table();
 		$ao_rules->add(function (EntityInterface $ao_entity, array $aa_options) use ($ao_rules, $lo_table): bool {
 			$la_categories = $this->getCategories();
-			$ls_field = $this->getConfig('useDatasource') ? $this->getConfig('fieldname') : $this->getConfig('identifier');
+			$ls_field = $this->getConfig('useDatasource') ? $this->getConfig('field') : $this->getConfig('identifier');
 
 			$lx_value = $ao_entity->get($ls_field);
 
@@ -822,7 +822,7 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 	 */
 	public function buildMarshalMap(Marshaller $ao_marshaller, array $aa_map, array $aa_options): array {
 		if ($this->fieldIsAttribute()) {
-			$ls_column = $this->getConfig('fieldname') ?: $this->getConfig('identifier');
+			$ls_column = $this->getConfig('field') ?: $this->getConfig('identifier');
 
 			return [
 				$ls_column => function (mixed $ax_value, EntityInterface $ao_entity) use ($ls_column): mixed {

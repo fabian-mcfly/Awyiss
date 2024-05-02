@@ -238,7 +238,7 @@ class AttributesHelper extends Helper {
 			$ls_categoryFieldName = null;
 			if ($ls_categoryIdentifier) {
 				$la_categoryOptions = $this->getView()->get(Inflector::variable(Inflector::pluralize($ls_categoryIdentifier)))['config'] ?? [];
-				$ls_categoryFieldName = Inflector::underscore($la_categoryOptions['fieldname']);
+				$ls_categoryFieldName = Inflector::underscore($la_categoryOptions['field']);
 			}
 		}
 

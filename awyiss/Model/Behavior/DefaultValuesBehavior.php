@@ -145,7 +145,7 @@ class DefaultValuesBehavior extends Behavior {
 		/** @var class-string<\Awyiss\Model\Entity> $ls_entityClass */
 		$ls_entityClass = $ao_table->getEntityClass();
 
-		$ls_column = $lo_categories->getConfig('fieldname') ?: $lo_categories->getConfig('identifier');
+		$ls_column = $lo_categories->getConfig('field') ?: $lo_categories->getConfig('identifier');
 		$ls_column = $ls_entityClass::unmapField($ls_column);
 
 

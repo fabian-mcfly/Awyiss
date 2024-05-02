@@ -512,7 +512,7 @@ class PagesController extends Controller {
 	 * @return void
 	 */
 	protected function ensurePossibleParentId(Page $ao_page, CollectionInterface $ao_threadedPages): void {
-		if ($this->Categories->getConfig('enabled') && $this->Categories->getConfig('fieldname') === 'parentId') {
+		if ($this->Categories->getConfig('enabled') && $this->Categories->getConfig('field') === 'parentId') {
 			//No parent id check if categories behavior is enabled and the field is parent id
 			return;
 		}
@@ -584,7 +584,7 @@ class PagesController extends Controller {
 
 		$la_categories = [];
 
-		$ls_field = $this->Categories->getConfig('fieldname');
+		$ls_field = $this->Categories->getConfig('field');
 		if ($ao_page->get($ls_field)) {
 			$la_categories[ $ao_page->get($ls_field) ] = $ls_field;
 

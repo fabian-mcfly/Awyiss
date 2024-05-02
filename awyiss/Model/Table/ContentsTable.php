@@ -59,7 +59,7 @@ class ContentsTable extends Table {
 	protected array $categories = [
 		'allowAggregation' => false,
 		'enabled' => true,
-		'fieldname' => 'pageId',
+		'field' => 'pageId',
 		'identifier' => 'page',
 	];
 	/**

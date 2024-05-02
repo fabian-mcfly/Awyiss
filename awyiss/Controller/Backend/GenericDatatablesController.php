@@ -254,7 +254,7 @@ abstract class GenericDatatablesController extends Controller {
 	 * @return void
 	 */
 	protected function ensurePossibleParentId(Entity $ao_entity, CollectionInterface $ao_threadedRecords): void {
-		if ($this->Categories->getConfig('enabled') && $this->Categories->getConfig('fieldname') === 'parentId') {
+		if ($this->Categories->getConfig('enabled') && $this->Categories->getConfig('field') === 'parentId') {
 			//No parent id check if categories behavior is enabled and the field is parent id
 			return;
 		}
@@ -351,7 +351,7 @@ abstract class GenericDatatablesController extends Controller {
 
 		$la_categories = [];
 
-		$ls_field = $this->Categories->getConfig('fieldname');
+		$ls_field = $this->Categories->getConfig('field');
 		if ($ao_entity->get($ls_field)) {
 			$la_categories[ $ao_entity->get($ls_field) ] = $ls_field;
 

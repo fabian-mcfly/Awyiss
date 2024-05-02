@@ -312,7 +312,7 @@ class CategoriesComponent extends Component {
 			return;
 		}
 
-		$ls_fieldName = $this->getConfig('fieldname');
+		$ls_fieldName = $this->getConfig('field');
 		$lx_selectedCategory = $ao_entity->$ls_fieldName;
 
 		$la_possibleCategories = array_keys($this->getCategories());

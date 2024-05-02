@@ -166,9 +166,9 @@ class CategoriesHelper extends Helper {
 			return '';
 		}
 
-		$ls_fieldName = Inflector::underscore($la_config['fieldname']);
+		$ls_fieldName = Inflector::underscore($la_config['field']);
 
-		$la_config = ['fieldname' => $ls_fieldName] + $la_config;
+		$la_config = ['field' => $ls_fieldName] + $la_config;
 		$la_attributes = $aa_attributes + [
 			'isCategory' => true,
 			'empty' => false,
@@ -271,7 +271,7 @@ class CategoriesHelper extends Helper {
 			return '';
 		}
 
-		$ls_fieldName = Inflector::underscore($la_config['fieldname']);
+		$ls_fieldName = Inflector::underscore($la_config['field']);
 
 		$la_attributes = $aa_attributes + $la_config;
 		$la_attributes += [

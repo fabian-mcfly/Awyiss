@@ -106,7 +106,7 @@ class FormHelper extends BaseFormHelper {
 
 
 	/**
-	 * Generates a translated label text based on the fieldname
+	 * Generates a translated label text based on the field name
 	 *
 	 * @param string $as_fieldName
 	 * @return string

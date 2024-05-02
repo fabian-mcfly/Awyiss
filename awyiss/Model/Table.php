@@ -623,7 +623,7 @@ class Table extends BaseTable {
 		$la_categoriesOptions = $this->getBehavior('Categories')->getConfig();
 
 		if ($la_categoriesOptions['enabled'] === true) {
-			$ls_fieldName = $la_categoriesOptions['fieldname'] ?? $la_categoriesOptions['identifier'] ?? 'category';
+			$ls_fieldName = $la_categoriesOptions['field'] ?? $la_categoriesOptions['identifier'] ?? 'category';
 
 			//Disable the rule check for the NestBehavior if the category field is same as the parent foreign key
 			if (Inflector::underscore($ls_fieldName) === Inflector::underscore($this->nest['parent']['foreignKey'] ?? 'parent_id')) {
