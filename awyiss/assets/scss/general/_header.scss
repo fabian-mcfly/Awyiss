@@ -42,7 +42,7 @@
 		position:relative;
 		flex:0 0 auto;
 
-		&:focus {
+		&:focus-visible {
 			box-shadow:0 0 10px var(--colorSuccess);
 			outline:2px solid var(--colorSuccess);
 		}
@@ -118,7 +118,7 @@
 				transition-delay:.3s;
 			}
 
-			&:focus {
+			&:focus-visible {
 				outline:2px solid var(--colorSuccess);
 				outline-offset:2px;
 				z-index:100;
@@ -185,7 +185,7 @@
 				position:relative;
 				z-index:1;
 
-				&:focus {
+				&:focus-visible {
 					outline:0 none;
 
 					&::before {
@@ -243,7 +243,7 @@
 		line-height:0;
 		z-index:-1;
 
-		&:focus {
+		&:focus-visible {
 			box-shadow:0 0 10px var(--colorSuccess);
 			outline:2px solid var(--colorSuccess);
 		}

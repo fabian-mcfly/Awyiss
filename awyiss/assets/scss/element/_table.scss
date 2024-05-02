@@ -307,7 +307,7 @@
 				}
 			}
 
-			&:focus {
+			&:focus-visible {
 				z-index:10;
 				box-shadow:0 0 10px var(--colorInfo);
 				outline:2px solid var(--colorInfo);

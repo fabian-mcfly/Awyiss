@@ -21,7 +21,7 @@
 
 @mixin sr-only-focusable {
   &:active,
-  &:focus {
+  &:focus-visible {
     clip: auto;
     height: auto;
     margin: 0;

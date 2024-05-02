@@ -62,14 +62,14 @@ textarea {
 	&[readonly] {
 		opacity:.5;
 
-		&:focus {
+		&:focus-visible {
 			border-color:rgba(0, 0, 0, .1);
 			box-shadow:none;
 			background-color:var(--colorLight);
 		}
 	}
 
-	&:focus {
+	&:focus-visible {
 		--backgroundColor:var(--colorBright);
 
 		border-color:var(--colorSuccess);
@@ -98,7 +98,7 @@ input {
 		position:relative;
 		z-index:2;
 
-		&:focus {
+		&:focus-visible {
 			box-shadow:none;
 
 			+ [data-options-for] {
@@ -326,7 +326,7 @@ option {
 					}
 				}
 
-				&:focus {
+				&:focus-visible {
 					+ .Label {
 						&::before {
 							box-shadow:0 0 10px var(--colorInfo);
@@ -337,7 +337,7 @@ option {
 				}
 			}
 
-			&:focus {
+			&:focus-visible {
 				+ .Label {
 					&::before {
 						//border-color:var(--colorSuccess);
@@ -616,7 +616,7 @@ option {
 	position:absolute;
 	z-index:-2;
 
-	&:focus {
+	&:focus-visible {
 		~ .ButtonArea {
 			.Label-SaveAsCopy {
 				box-shadow:0 0 10px var(--colorInfo);

@@ -136,7 +136,9 @@
 	outline:0 none;
 	background-image:url($relativePath + 'img/background-pattern-light.png');
 	background-color:var(--backgroundColor);
+	accent-color:var(--colorSuccess);
 	color:var(--colorText);
+	caret-color:var(--colorSuccess);
 	font-size:1rem;
 	line-height:30px;
 
