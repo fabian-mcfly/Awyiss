@@ -51,6 +51,22 @@ class PaginateComponent extends Component {
 
 
 	/**
+	 * @return void
+	 */
+	public function enable(): void {
+		$this->enabled = true;
+	}
+
+
+	/**
+	 * @return void
+	 */
+	public function disable(): void {
+		$this->enabled = false;
+	}
+
+
+	/**
 	 * @param \Cake\Datasource\RepositoryInterface|\Cake\Datasource\QueryInterface|string|null $ao_object
 	 * @param array $aa_settings
 	 * @return

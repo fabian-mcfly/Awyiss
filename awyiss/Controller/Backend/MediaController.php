@@ -68,6 +68,13 @@ class MediaController extends Controller {
 
 		if ($this->request->getParam('paginate')) {
 			$lb_paginated = ($this->request->getParam('paginate', 'false') === 'true');
+
+			if ($lb_paginated) {
+				$this->Paginate->enable();
+			}
+			else {
+				$this->Paginate->disable();
+			}
 		}
 		else {
 			$lb_paginated = $this->paginate['enabled'];
