@@ -61,9 +61,6 @@ export default class ButtonHandler {
 		this.eventHandler.add('click', this.handleClick.bind(this), window, true);
 		// Add dblclick event listener to the document
 		this.eventHandler.add('dblclick', this.handleDoubleClick.bind(this), window, true);
-		// Add mouseenter and mouseleave event listeners to the document
-		this.eventHandler.add('mouseenter', this.onMouseEnter.bind(this), window, true);
-		this.eventHandler.add('mouseleave', this.onMouseLeave.bind(this), window, true);
 
 	}
 
@@ -152,6 +149,10 @@ export default class ButtonHandler {
 
 		// Set hoverElement as a property of the element
 		element.hoverElement = hoverElement;
+
+		// Add mouseenter and mouseleave event listeners to the document
+		this.eventHandler.add('mouseenter', this.onMouseEnter.bind(this), element);
+		this.eventHandler.add('mouseleave', this.onMouseLeave.bind(this), element);
 
 		// Add the element to the elements array
 		this.elements.push(element);
