@@ -159,6 +159,9 @@ export default class Overlay {
 		new NestedListHandler('ul#MediaFolders-List');
 	}
 
+	/**
+	 * Bind the event to the folder save event.
+	 */
 	bindFolderSaveEvent() {
 		window.eventHandler.add('overlayFormSubmitted', (event) => {
 			const form = event.detail.form;
@@ -204,12 +207,17 @@ export default class Overlay {
 
 		event.preventDefault();
 
+		// Disable the delete buttons
+		this.sortable.deleteButtons.forEach(button => button.disabled = true);
+
 		if (this.mediaList.classList.contains('FetchInProgress')) {
 			return;
 		}
 
 		const listItem = event.currentTarget;
 		const folderId = parseInt(listItem.id.replace(/^\D+/g, ''));
+
+		this.upload.uploadData.media_folder_id = folderId;
 
 		this.mediaList.classList.add('FetchInProgress');
 
