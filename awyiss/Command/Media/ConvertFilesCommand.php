@@ -69,14 +69,86 @@ class ConvertFilesCommand extends Command {
 			return $this->convertNonImages($lo_files, $ao_io, $ao_args->getOption('include-webp'));
 		}
 
-		$lo_files = $this->fetchImageFiles((int)$ao_args->getOption('limit'), $ao_args->getOption('retry-failed'));
+		$lo_files = $this->fetchFilesForWebpConversion((int)$ao_args->getOption('limit'), $ao_args->getOption('retry-failed'));
 
 		if ($lo_files->count()) {
 			return $this->convertImages($lo_files, $ao_io);
 		}
 
+		$lo_files = $this->fetchFilesForAverageColorCalculation((int)$ao_args->getOption('limit'));
+
+		if ($lo_files->count()) {
+			return $this->calculateAverageColors($lo_files, $ao_io);
+		}
+
 		$ao_io->out('No files to process');
 
+
+		return static::CODE_SUCCESS;
+	}
+
+
+	/**
+	 * Calculate the average color of the images
+	 *
+	 * @param \Cake\Datasource\ResultSetInterface $ao_files
+	 * @param \Cake\Console\ConsoleIo $ao_io
+	 * @return int
+	 */
+	protected function calculateAverageColors(ResultSetInterface $ao_files, ConsoleIo $ao_io): int {
+		/** @var \Awyiss\Model\Entity\Media $lo_file */
+		foreach ($ao_files as $lo_file) {
+			$ls_path = $lo_file->isImage() ? $lo_file->pathAbsolute : $lo_file->previewPathAbsolute;
+
+			if (
+				!file_exists($ls_path) ||
+				$lo_file->mimeType === 'image/png'
+			) {
+				// If the file does not exist or is a png, set the average color to a fully transparent black
+				$lo_file->averageColor = '00000000';
+				continue;
+			}
+
+			$lo_image = imagecreatefromstring(file_get_contents($ls_path));
+
+			if (!$lo_image) {
+				$lo_file->averageColor = '00000000';
+				continue;
+			}
+
+			// Resize the imag to 1x1 pixel
+			$lo_pixel = imagecreatetruecolor(1, 1);
+
+			imagecopyresampled($lo_pixel, $lo_image, 0, 0, 0, 0, 1, 1, imagesx($lo_image), imagesy($lo_image));
+			$li_index = imagecolorat($lo_pixel, 0, 0);
+			$la_colors = imagecolorsforindex($lo_pixel, $li_index);
+
+			$lo_file->averageColor = sprintf('%02X%02X%02X%02X', $la_colors['red'], $la_colors['green'], $la_colors['blue'], $la_colors['alpha']);
+
+			imagedestroy($lo_image);
+			$lo_image = null;
+		}
+
+		/** @var \Awyiss\Model\Table\MediaTable $lo_table */
+		$lo_table = $this->fetchTable('Media');
+
+		/**
+		 * If all files have the same webp status, use a simple updateAll command
+		 */
+		$lo_table->updateAll(function (QueryExpression $ao_expression) use ($ao_files) {
+			$lo_averageColorCases = $ao_expression->case();
+
+			/** @var \Awyiss\Model\Entity\Media $lo_file */
+			foreach ($ao_files as $lo_file) {
+				$lo_averageColorCases->when(['id = ' . $lo_file->id])->then($lo_file->averageColor, 'string');
+			}
+
+			return [
+				'average_color' => $lo_averageColorCases,
+			];
+		}, [
+			'id IN' => $ao_files->extract('id')->toArray(),
+		]);
 
 		return static::CODE_SUCCESS;
 	}
@@ -312,11 +384,29 @@ class ConvertFilesCommand extends Command {
 
 
 	/**
+	 * Get files that have no average color set yet
+	 *
+	 * @param int $ai_limit
+	 * @return \Cake\Datasource\ResultSetInterface
+	 */
+	protected function fetchFilesForAverageColorCalculation(int $ai_limit): ResultSetInterface {
+		/** @var \Awyiss\Model\Table\MediaTable $lo_table */
+		$lo_table = $this->fetchTable('Media');
+		$lo_records = $lo_table->find()->where([
+			'average_color IS' => null,
+			'preview IN' => [ProcessStatus::Success, ProcessStatus::NotRequired],
+		])->limit($ai_limit)->all();
+
+		return $lo_records;
+	}
+
+
+	/**
 	 * @param int $ai_limit
 	 * @param bool $ab_retryFailed
 	 * @return \Cake\Datasource\ResultSetInterface
 	 */
-	protected function fetchImageFiles(int $ai_limit, bool $ab_retryFailed): ResultSetInterface {
+	protected function fetchFilesForWebpConversion(int $ai_limit, bool $ab_retryFailed): ResultSetInterface {
 		$la_where = [
 			'webp' => ProcessStatus::Undefined,
 			'preview IN' => [ProcessStatus::Success, ProcessStatus::NotRequired],
@@ -416,14 +506,12 @@ class ConvertFilesCommand extends Command {
 				$ls_inputPath = $ao_file->previewPathAbsolute;
 			}
 
-
 			return [
 				'convert',
 				$ls_inputPath,
 				$ao_file->webpPathAbsolute,
 			];
 		}
-
 
 		return false;
 	}

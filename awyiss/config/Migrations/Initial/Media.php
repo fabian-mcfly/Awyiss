@@ -74,7 +74,7 @@ class Media {
 			'null' => true,
 		])->addColumn('average_color', 'char', [
 			'default' => null,
-			'limit' => 6,
+			'limit' => 8,
 			'null' => true,
 		])->addColumn('preview', 'boolean', [
 			'default' => false,
