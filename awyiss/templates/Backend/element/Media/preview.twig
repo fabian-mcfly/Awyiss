@@ -1,0 +1,24 @@
+{% block mediaPreview %}
+	<div class="Preview">
+		{% if mediaItem.isImage() %}
+			{% block mediaPreviewNativeImage %}
+				<img src="{{ baseUrl }}{{ mediaItem.path }}" alt="{{ mediaItem.name }}">
+			{% endblock %}
+		{% elseif mediaItem.preview == enum(ProcessStatus).Success %}
+			{% block mediaPreviewPreviewImage %}
+				<img src="{{ baseUrl }}{{ mediaItem.previewPath }}" alt="{{ mediaItem.name }}">
+			{% endblock %}
+		{% else %}
+			{% block mediaPreviewNoImage %}
+				<span class="FileType-Icon FileType-Icon-{{ mediaItem.extension|camelize('/') }}
+					{%- if mediaItem.preview != enum(ProcessStatus).Fail %} AwaitingPreview{% endif %}" data-extension="{{ mediaItem.extension }}">
+					{% block mediaPreviewNoImageAwaitingPreview %}
+						{%- if mediaItem.preview != enum(ProcessStatus).Fail %}
+							<img data-src="{{ baseUrl }}{{ mediaItem.previewPath }}" alt="{{ mediaItem.name }}" id="AwaitingPreview{{ mediaItem.id }}">
+						{% endif %}
+					{% endblock %}
+				</span>
+			{% endblock %}
+		{% endif %}
+	</div>
+{% endblock %}

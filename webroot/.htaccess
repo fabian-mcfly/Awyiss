@@ -1,6 +1,8 @@
 <IfModule mod_rewrite.c>
 	RewriteEngine On
 
+	#RewriteBase /
+
 	#Force www
 	#RewriteCond %{HTTP_HOST} !^$
 	#RewriteCond %{HTTP_HOST} !^www\. [NC]
@@ -15,6 +17,11 @@
 	RewriteCond %{REQUEST_FILENAME} !-f
 	RewriteRule ^ index.php [L]
 </IfModule>
+
+
+<FilesMatch "ProgressCheckerWorker\.js$">
+    Header set Service-Worker-Allowed "/"
+</FilesMatch>
 
 
 <IfModule mod_expires.c>

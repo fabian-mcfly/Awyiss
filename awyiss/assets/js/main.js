@@ -11,6 +11,7 @@ import FormUpdater from 'FormUpdater';
 import IdentifierAutofill from 'IdentifierAutofill';
 import InputListManager from 'InputListManager';
 import MediaOverlay from 'Media/Overlay';
+import MediaProgressChecker from 'Media/ProgressChecker';
 import NestedListHandler from 'NestedListHandler';
 import Observer from 'Observer';
 import OverflowMenu from 'OverflowMenu';
@@ -352,6 +353,12 @@ export function initMainOnLoad() {
 	 * @type {FooterReveal}
 	 */
 	window.footerReveal = new FooterReveal();
+
+	/**
+	 * @global
+	 * @type {MediaProgressChecker}
+	 */
+	window.mediaProgressChecker = new MediaProgressChecker();
 
 	// Check if the controller class exists
 	const controllerClass = Array.from(document.documentElement.classList).find(cls => cls.endsWith('Controller'));

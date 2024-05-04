@@ -32,13 +32,9 @@
 {% block tableOverviewCellTitle %}
 	<td class="TableCell-Preview">
 		{% set preview %}
-			{% if entity.isImage %}
-				<img src="{{ baseUrl }}{{ entity.path }}" alt="{{ entity.name }}">
-			{% elseif entity.preview == enum(ProcessStatus).Success %}
-				<img src="{{ baseUrl }}{{ entity.previewPath }}" alt="{{ entity.name }}">
-			{% else %}
-				<span class="FileType-Icon FileType-Icon-{{ entity.extension|camelize('/') }}" data-extension="{{ entity.extension }}"></span>
-			{% endif %}
+			{% include '@Backend/element/Media/preview.twig' with {
+				mediaItem: entity,
+			} %}
 		{% endset %}
 		{{ HtmlHelper.link(preview, entity.path, {
 			escape: false,

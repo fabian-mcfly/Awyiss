@@ -107,7 +107,11 @@
 
 		td {
 			&.TableCell-Preview {
+				text-align:center;
+				overflow:hidden;
+
 				a {
+					display:inline-block;
 					border-bottom-width:0;
 				}
 			}
@@ -307,6 +311,16 @@ ul#Media-List {
 			border-radius:5px;
 			object-fit:cover;
 		}
+
+		.AwaitingPreview {
+			&::before {
+				border-radius:5px;
+			}
+
+			img {
+				display:none;
+			}
+		}
 	}
 
 	.Status {
@@ -322,6 +336,45 @@ ul#Media-List {
 
 div#MediaFolders-List {
 	display:none;
+}
+
+
+.Preview {
+	.FileType-Icon {
+		&.AwaitingPreview {
+			background-color:transparent;
+			border:0 none;
+
+			&::before {
+				background-color:transparent;
+			}
+
+			&::after {
+				display:none;
+			}
+		}
+	}
+}
+
+.AwaitingPreview {
+	&::before {
+		content:'';
+		display:block;
+		width:160px;
+		height:160px;
+		margin:auto;
+		background-color:var(--colorBright);
+		background-image:url($relativePath + 'img/preloader-dots.gif');
+		background-position:center;
+		background-repeat:no-repeat;
+		position:absolute;
+		inset:-999px;
+		z-index:1;
+	}
+
+	img {
+		display:none;
+	}
 }
 
 .SelectionRectangle {

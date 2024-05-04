@@ -1,6 +1,7 @@
 {% block scriptBaseVars %}
 	<script nonce="{{ AssetHelper.getScriptNonce() }}">
 		const baseUrl = '{{ baseUrl }}';
+		const folder = '{{ folder }}';
 		const currentPath = '{{ currentPath }}';
 		const currentUrl = '{{ currentUrl }}';
 		const language = {{ language|json_encode|raw }};
@@ -24,6 +25,7 @@
 		'modules/InputListManager.js',
 		'modules/Media/Overlay.js',
 		'modules/Media/Sortable.js',
+		'modules/Media/ProgressChecker.js',
 		'modules/Media/Upload.js',
 		'modules/MultiSelect.js',
 		'modules/NestedListHandler.js',

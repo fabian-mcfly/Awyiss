@@ -8,6 +8,7 @@ use Awyiss\Awyiss;
 use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Model\Entity\Media;
 use Awyiss\Model\Entity\MediaFolder;
+use Awyiss\Model\Enum\ProcessStatus;
 use Awyiss\Model\Table;
 use Awyiss\Routing\Router;
 use Cake\Database\Expression\QueryExpression;
@@ -296,99 +297,98 @@ class MediaController extends Controller {
 
 
 	/**
-	 * @param \Awyiss\Model\Entity\MediaFolder $ao_mediaFolder
-	 * @param string $as_method
-	 * @param bool $ab_isAjax
+	 * Check the progress of the creation of preview images for the media files
+	 * that do not have a preview image yet
+	 *
 	 * @return void
 	 */
-	protected function save(Media $ao_media, string $as_method = 'add', bool $ab_isAjax = false): void {
-		$la_associated = [];
-		if ($this->Media->hasAttributes()) {
-			$la_associated[] = $this->Media->getAttributesTableName(true);
-			$ao_media->setAccess('attributes', true);
-		}
+	public function checkPreviewProgress(): void {
+		// Increase the maximum execution time to a bit more than 3 minutes
+		set_time_limit(190);
 
-		$la_data = $this->request->getData();
+		session_write_close();
 
-		/** @var \Laminas\Diactoros\UploadedFile $lo_uploadedFile */
-		$lo_uploadedFile = $this->request->getData('file');
+		// Get the start time
+		$li_startTime = time();
 
-		$ls_extension = null;
-		if ($lo_uploadedFile && !$lo_uploadedFile->getError()) {
-			if (empty($la_data['name'])) {
-				$la_data['name'] = $lo_uploadedFile->getClientFilename();
-			}
-			else {
-				$li_dotPos = strrpos($lo_uploadedFile->getClientFilename(), '.');
-				$ls_extension = substr($lo_uploadedFile->getClientFilename(), $li_dotPos + 1);
-			}
-		}
-		elseif (!empty($la_data['name'])) {
-			$ls_extension = $ao_media->extension;
-		}
+		// Set the necessary headers for JSON
+		header('Content-Type: application/json');
+		header('Cache-Control: no-cache');
+		header('Connection: keep-alive');
 
-		if ($ls_extension && !str_ends_with($la_data['name'], $ls_extension)) {
-			$la_data['name'] .= '.' . $ls_extension;
-		}
+		// Initialize an array to store the media files from the last iteration
+		$la_lastRecords = [];
 
-		$this->Media->patchEntity($ao_media, $la_data, [
-			'associated' => $la_associated,
-			'validate' => !$this->request->getData('reload_form'),
-		]);
+		ignore_user_abort(true);
 
-		if ($this->request->is('ajax') && $as_method === 'edit') {
-			$ao_media->file = null;
-		}
-		elseif (
-			!$lo_uploadedFile ||
-			$lo_uploadedFile->getError() === UPLOAD_ERR_INI_SIZE ||
-			$lo_uploadedFile->getError() === UPLOAD_ERR_FORM_SIZE
-		) {
-			$ao_media->setError('file', __df(
-				strtolower($this->getName()),
-				'validation',
-				'error_media_file_size_within_limit'
-			), true);
-		}
+		// Loop for three minutes
+		while (time() - $li_startTime < 180) {
+			if (connection_aborted()) {
+				// Send an "aborted" event
+				$la_data = ['message' => 'aborted'];
+				echo json_encode($la_data);
 
-		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-			$la_options = [];
+				// Flush the output buffer one last time
+				ob_flush();
+				flush();
 
-			if ($ab_isAjax) {
-				$la_options = [
-					'systemOrder' => ['skip' => true],
-				];
+				exit;
 			}
 
-			if ($this->Media->save($ao_media, $la_options)) {
-				$this->Flash->success(__($as_method . '_succeeded'));
+			// Get the media files that do not have a preview image yet
+			$lo_query = $this->Media->find()->where([
+				'preview IN' => [
+					ProcessStatus::Undefined,
+					ProcessStatus::InProgress,
+				],
+			]);
 
-				if ($this->request->getData('submit') == 'submit_close') {
-					throw new RedirectException(Router::url([
-						'action' => 'overview',
-						'mediaFolderId' => $ao_media->mediaFolderId,
-						'page' => $this->Paginate->calculateEntityPagePosition($ao_media),
-					], true), 302);
+			$la_currentRecords = $lo_query->all()->indexBy('id')->toArray();
+
+			// Initialize arrays to store the completed and failed records
+			$la_completed = [];
+			$la_failed = [];
+
+			// Check which media files from the last iteration are no longer in the current records
+			foreach ($la_lastRecords as $li_id => $lo_lastRecord) {
+				if (!isset($la_currentRecords[ $li_id ])) {
+					// The record is either completed or failed
+					if (file_exists($lo_lastRecord->previewPathAbsolute)) {
+						$la_completed[] = $li_id;
+					}
+					else {
+						$la_failed[] = $li_id;
+					}
 				}
-
-				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $ao_media->id], true), 302);
 			}
 
-			$this->Flash->error(__($as_method . '_failed'));
-			foreach ($ao_media->getError('_general') as $ls_error) {
-				$this->Flash->error($ls_error);
+			// Output a message, depending on whether there are still media files that do not have a preview image
+			$la_data = [
+				'message' => !$la_currentRecords ? 'done' : 'waiting',
+				'incomplete' => array_keys($la_currentRecords),
+				'completed' => $la_completed,
+				'failed' => $la_failed,
+			];
+
+			// Echo the JSON encoded data
+			echo json_encode($la_data);
+
+			// Flush the output buffer
+			ob_flush();
+			flush();
+
+			// If there are no more media files that do not have a preview image, break the loop
+			if (!$la_currentRecords) {
+				exit;
 			}
+
+			// Update the last records with the current records
+			$la_lastRecords = $la_currentRecords;
+
+			sleep(5);
 		}
-		else {
-			if ($this->Media->getSystemOrderRelatedColumns($ao_media)) {
-				$ao_media->systemOrder = null;
-			}
-			else {
-				$ao_media->systemOrder = $ao_media->hasOriginal('systemOrder') ? $ao_media->getOriginal('systemOrder') : $ao_media->get('systemOrder');
-			}
-		}
 
-		$this->Categories->ensurePossibleCategory($ao_media);
+		exit;
 	}
 
 
@@ -448,6 +448,105 @@ class MediaController extends Controller {
 
 			$this->redirect(['action' => 'overview']);
 		}
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Entity\MediaFolder $ao_mediaFolder
+	 * @param string $as_method
+	 * @param bool $ab_isAjax
+	 * @return void
+	 */
+	protected function save(Media $ao_media, string $as_method = 'add', bool $ab_isAjax = false): void {
+		$la_associated = [];
+		if ($this->Media->hasAttributes()) {
+			$la_associated[] = $this->Media->getAttributesTableName(true);
+			$ao_media->setAccess('attributes', true);
+		}
+
+		$la_data = $this->request->getData();
+
+		/** @var \Laminas\Diactoros\UploadedFile $lo_uploadedFile */
+		$lo_uploadedFile = $this->request->getData('file');
+
+		$ls_extension = null;
+		if ($lo_uploadedFile && !$lo_uploadedFile->getError()) {
+			if (empty($la_data['name'])) {
+				$la_data['name'] = $lo_uploadedFile->getClientFilename();
+			}
+			else {
+				$li_dotPos = strrpos($lo_uploadedFile->getClientFilename(), '.');
+				$ls_extension = substr($lo_uploadedFile->getClientFilename(), $li_dotPos + 1);
+			}
+		}
+		elseif (!empty($la_data['name'])) {
+			$ls_extension = $ao_media->extension;
+		}
+
+		if ($ls_extension && !str_ends_with($la_data['name'], $ls_extension)) {
+			$la_data['name'] .= '.' . $ls_extension;
+		}
+
+		$this->Media->patchEntity($ao_media, $la_data, [
+			'associated' => $la_associated,
+			'validate' => !$this->request->getData('reload_form'),
+		]);
+
+		if ($this->request->is('ajax') && $as_method === 'edit') {
+			$ao_media->file = null;
+		}
+		elseif (
+			!$lo_uploadedFile || $lo_uploadedFile->getError() === UPLOAD_ERR_INI_SIZE || $lo_uploadedFile->getError() === UPLOAD_ERR_FORM_SIZE
+		) {
+			$ao_media->setError(
+				'file',
+				__df(
+					strtolower($this->getName()),
+					'validation',
+					'error_media_file_size_within_limit'
+				),
+				true
+			);
+		}
+
+		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
+			$la_options = [];
+
+			if ($ab_isAjax) {
+				$la_options = [
+					'systemOrder' => ['skip' => true],
+				];
+			}
+
+			if ($this->Media->save($ao_media, $la_options)) {
+				$this->Flash->success(__($as_method . '_succeeded'));
+
+				if ($this->request->getData('submit') == 'submit_close') {
+					throw new RedirectException(Router::url([
+						'action' => 'overview',
+						'mediaFolderId' => $ao_media->mediaFolderId,
+						'page' => $this->Paginate->calculateEntityPagePosition($ao_media),
+					], true), 302);
+				}
+
+				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $ao_media->id], true), 302);
+			}
+
+			$this->Flash->error(__($as_method . '_failed'));
+			foreach ($ao_media->getError('_general') as $ls_error) {
+				$this->Flash->error($ls_error);
+			}
+		}
+		else {
+			if ($this->Media->getSystemOrderRelatedColumns($ao_media)) {
+				$ao_media->systemOrder = null;
+			}
+			else {
+				$ao_media->systemOrder = $ao_media->hasOriginal('systemOrder') ? $ao_media->getOriginal('systemOrder') : $ao_media->get('systemOrder');
+			}
+		}
+
+		$this->Categories->ensurePossibleCategory($ao_media);
 	}
 
 

@@ -583,9 +583,9 @@ class AssetHelper extends Helper {
 	/**
 	 * Returns the script nonce from the request attributes.
 	 *
-	 * @return string
+	 * @return string|null
 	 */
-	public function getScriptNonce(): string {
+	public function getScriptNonce(): ?string {
 		return $this->getView()->getRequest()->getAttribute('cspScriptNonce');
 	}
 
