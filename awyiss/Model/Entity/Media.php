@@ -100,7 +100,6 @@ class Media extends Entity {
 			'image/png',
 			'image/gif',
 			'image/webp',
-			'image/svg+xml',
 		]);
 	}
 

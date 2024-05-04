@@ -77,6 +77,8 @@ class DetectAvailableCommandsCommand extends Command {
 
 			$lb_imageMagickPdf = $this->testProcess(['convert', 'awyiss/Command/Media/TestFiles/logo-awyiss.pdf', TMP . 'logo-awyiss.jpg'], 'PDF support', $ao_io);
 
+			$lb_imageMagickSvg = $this->testProcess(['convert', 'awyiss/Command/Media/TestFiles/logo-awyiss.svg', TMP . 'logo-awyiss.jpg'], 'SVG support', $ao_io);
+
 			$lb_imageMagickDocx = $this->testProcess(['convert', 'awyiss/Command/Media/TestFiles/logo-awyiss.docx', TMP . 'logo-awyiss.jpg'], 'DOCX support', $ao_io);
 
 			$lb_imageMagickPptx = $this->testProcess(['convert', 'awyiss/Command/Media/TestFiles/logo-awyiss.pptx', TMP . 'logo-awyiss.jpg'], 'PPTX support', $ao_io);
@@ -87,6 +89,7 @@ class DetectAvailableCommandsCommand extends Command {
 
 			$la_imageMagick = [
 				'pdf' => $lb_imageMagickPdf,
+				'svg' => $lb_imageMagickSvg,
 				'doc' => $lb_imageMagickDocx,
 				'docx' => $lb_imageMagickDocx,
 				'ppt' => $lb_imageMagickPptx,
