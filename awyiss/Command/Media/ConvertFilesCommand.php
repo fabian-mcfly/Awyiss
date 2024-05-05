@@ -59,32 +59,48 @@ class ConvertFilesCommand extends Command {
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function execute(Arguments $ao_args, ConsoleIo $ao_io): int {
-		$lo_files = $this->fetchNonImageFiles(
-			(int)$ao_args->getOption('limit'),
-			$ao_args->getOption('retry-failed'),
-			$ao_args->getOption('include-webp')
-		);
+		$li_startTime = time();
+		$lb_errorOccurred = false;
 
-		if ($lo_files->count()) {
-			return $this->convertNonImages($lo_files, $ao_io, $ao_args->getOption('include-webp'));
+		// Keep this job running for 60 seconds to process as many files as possible
+		while (time() - $li_startTime < 60) {
+			$lo_files = $this->fetchNonImageFiles(
+				(int)$ao_args->getOption('limit'),
+				$ao_args->getOption('retry-failed'),
+				$ao_args->getOption('include-webp')
+			);
+
+			if ($lo_files->count()) {
+				$li_result = $this->convertNonImages($lo_files, $ao_io, $ao_args->getOption('include-webp'));
+				if ($li_result !== static::CODE_SUCCESS) {
+					$lb_errorOccurred = true;
+				}
+			}
+
+			$lo_files = $this->fetchFilesForWebpConversion((int)$ao_args->getOption('limit'), $ao_args->getOption('retry-failed'));
+
+			if ($lo_files->count()) {
+				$li_result = $this->convertImages($lo_files, $ao_io);
+				if ($li_result !== static::CODE_SUCCESS) {
+					$lb_errorOccurred = true;
+				}
+			}
+
+			$lo_files = $this->fetchFilesForAverageColorCalculation((int)$ao_args->getOption('limit'));
+
+			if ($lo_files->count()) {
+				$li_result = $this->calculateAverageColors($lo_files, $ao_io);
+				if ($li_result !== static::CODE_SUCCESS) {
+					$lb_errorOccurred = true;
+				}
+			}
+
+			if (!$ao_args->getOption('quiet')) {
+				break;
+			}
 		}
 
-		$lo_files = $this->fetchFilesForWebpConversion((int)$ao_args->getOption('limit'), $ao_args->getOption('retry-failed'));
-
-		if ($lo_files->count()) {
-			return $this->convertImages($lo_files, $ao_io);
-		}
-
-		$lo_files = $this->fetchFilesForAverageColorCalculation((int)$ao_args->getOption('limit'));
-
-		if ($lo_files->count()) {
-			return $this->calculateAverageColors($lo_files, $ao_io);
-		}
-
-		$ao_io->out('No files to process');
-
-
-		return static::CODE_SUCCESS;
+		return $lb_errorOccurred ? static::CODE_ERROR : static::CODE_SUCCESS;
 	}
 
 
