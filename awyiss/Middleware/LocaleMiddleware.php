@@ -173,7 +173,6 @@ class LocaleMiddleware implements MiddlewareInterface {
 			$lo_language = static::getLanguageFromUrl($ls_realm);
 		}
 
-
 		return $lo_language ?? ($ab_fallback ? static::getDefaultLanguage($ls_realm ?? static::$realm) : null);
 	}
 

@@ -6,6 +6,7 @@ use Awyiss\Authorization\Authorization;
 use Awyiss\Awyiss;
 use Awyiss\Middleware\AuthenticationMiddleware;
 use Awyiss\Middleware\AuthorizationMiddleware;
+use Awyiss\Middleware\ConfigMiddleware;
 use Awyiss\Middleware\DesignMiddleware;
 use Awyiss\Middleware\EventListenersMiddleware;
 use Awyiss\Middleware\LocaleMiddleware;
@@ -18,8 +19,6 @@ use Cake\Routing\RouteBuilder;
 /** @var RouteBuilder $ao_routes */
 $ao_routes->prefix('Backend', function (RouteBuilder $ao_routeBuilder): void {
 	$ao_routeBuilder->setRouteClass(AwyissRoute::class);
-
-	Awyiss::setRealm(Awyiss::REALM_BACKEND);
 
 	$ao_routeBuilder->registerMiddleware('csp', new CspMiddleware(
 		[
@@ -43,24 +42,21 @@ $ao_routes->prefix('Backend', function (RouteBuilder $ao_routeBuilder): void {
 	));
 	$ao_routeBuilder->applyMiddleware('csp');
 
-	$ao_routeBuilder->registerMiddleware('eventListeners', new EventListenersMiddleware(Awyiss::getRealm()));
+	$ao_routeBuilder->registerMiddleware('config', new ConfigMiddleware(Awyiss::REALM_BACKEND));
+	$ao_routeBuilder->applyMiddleware('config');
+
+	$ao_routeBuilder->registerMiddleware('eventListeners', new EventListenersMiddleware(Awyiss::REALM_BACKEND));
 	$ao_routeBuilder->applyMiddleware('eventListeners');
 
-	$ao_routeBuilder->registerMiddleware('requestLocale', new LocaleMiddleware(Awyiss::getRealm()));
+	$ao_routeBuilder->registerMiddleware('requestLocale', new LocaleMiddleware(Awyiss::REALM_BACKEND));
 	$ao_routeBuilder->applyMiddleware('requestLocale');
 
-	// Load the configuration as soon as possible
-	Awyiss::loadConfiguration(
-		LocaleMiddleware::getLanguage()->shortcode,
-		LocaleMiddleware::getLanguage(Awyiss::REALM_BACKEND)->shortcode,
-	);
-
 	$lo_authentication = new Authentication(Awyiss::REALM_BACKEND);
-	$ao_routeBuilder->registerMiddleware('authentication', new AuthenticationMiddleware($lo_authentication));
+	$ao_routeBuilder->registerMiddleware('authentication', new AuthenticationMiddleware($lo_authentication, Awyiss::REALM_BACKEND));
 	$ao_routeBuilder->applyMiddleware('authentication');
 
 	$lo_authorization = new Authorization(Awyiss::REALM_BACKEND);
-	$ao_routeBuilder->registerMiddleware('authorization', new AuthorizationMiddleware($lo_authorization));
+	$ao_routeBuilder->registerMiddleware('authorization', new AuthorizationMiddleware($lo_authorization, Awyiss::REALM_BACKEND));
 	$ao_routeBuilder->applyMiddleware('authorization');
 
 	$ao_routeBuilder->registerMiddleware('design', new DesignMiddleware(Awyiss::REALM_BACKEND));

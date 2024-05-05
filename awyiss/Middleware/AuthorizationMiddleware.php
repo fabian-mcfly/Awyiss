@@ -6,7 +6,6 @@ namespace Awyiss\Middleware;
 
 use Awyiss\Authorization\AuthorizationServiceInterface;
 use Awyiss\Authorization\AuthorizationServiceProviderInterface;
-use Awyiss\Awyiss;
 use Awyiss\Event\EventListenersProvider;
 use Awyiss\Routing\Router;
 use Cake\Core\InstanceConfigTrait;
@@ -39,15 +38,16 @@ class AuthorizationMiddleware implements MiddlewareInterface {
 	 * Constructor
 	 *
 	 * @param AuthorizationServiceInterface|AuthorizationServiceProviderInterface $ao_subject Authorization service or application instance.
+	 * @param string $realm
 	 * @param array|null $aa_config Array of configuration settings.
-	 * @throws \InvalidArgumentException|\ReflectionException When invalid subject has been passed.
+	 * @throws \ReflectionException When invalid subject has been passed.
 	 */
-	public function __construct(AuthorizationServiceProviderInterface|AuthorizationServiceInterface $ao_subject, ?array $aa_config = null) {
+	public function __construct(AuthorizationServiceProviderInterface|AuthorizationServiceInterface $ao_subject, string $realm, ?array $aa_config = null) {
 		$this->setConfig($aa_config ?? []);
 
 		$this->subject = $ao_subject;
 
-		EventListenersProvider::loadListener('authorization', Awyiss::getRealm());
+		EventListenersProvider::loadListener('authorization', $realm);
 	}
 
 
