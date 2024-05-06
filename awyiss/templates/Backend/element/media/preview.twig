@@ -1,0 +1,55 @@
+{#
+@var mediaItem \Awyiss\Model\Entity\Media
+@var MediaHelper \Awyiss\View\Helper\MediaHelper
+#}
+
+{% block mediaPreview %}
+	<div class="{{ class }}"{% if id is defined %} id="{{ id }}"{% endif %}>
+		{% if mediaItem.preview == enum(ProcessStatus).Fail %}
+			<span class="FileType-Icon FileType-Icon-{{ mediaItem.extension|camelize('/') }}" data-extension="{{ mediaItem.extension }}"></span>
+		{% else %}
+			{% if resize.width is defined or resize.height is defined %}
+				{% set resizedMediaItem = MediaHelper.resize(mediaItem, resize.width, resize.height, resize.strategy) %}
+			{% endif %}
+
+
+			{% if resizedMediaItem %}
+				{% if resizedMediaItem.status == enum(ProcessStatus).Success %}
+					<img src="{{ baseUrl }}{{ resizedMediaItem.path }}" alt="{{ resizedMediaItem.media.name }}">
+				{% else %}
+					<span
+						class="FileType-Icon FileType-Icon-{{ resizedMediaItem.media.extension|camelize('/') }}
+						{%- if resizedMediaItem.status != enum(ProcessStatus).Fail %} AwaitingResize{% endif %}" data-extension="{{ resizedMediaItem.media.extension }}">
+						{% block mediaPreviewNoImageAwaitingResize %}
+							{%- if resizedMediaItem.status != enum(ProcessStatus).Fail %}
+								<img data-src="{{ baseUrl }}{{ resizedMediaItem.path }}" alt="{{ resizedMediaItem.media.name }}" id="AwaitingResize{{ resizedMediaItem.id }}">
+							{% endif %}
+						{% endblock %}
+					</span>
+				{% endif %}
+			{% else %}
+				{% if mediaItem.isImage() %}
+					{% block mediaPreviewNativeImage %}
+						<img src="{{ baseUrl }}{{ mediaItem.path }}" alt="{{ mediaItem.name }}">
+					{% endblock %}
+				{% elseif mediaItem.preview == enum(ProcessStatus).Success %}
+					{% block mediaPreviewPreviewImage %}
+						<img src="{{ baseUrl }}{{ mediaItem.previewPath }}" alt="{{ mediaItem.name }}">
+					{% endblock %}
+				{% else %}
+					{% block mediaPreviewNoImage %}
+						<span class="FileType-Icon FileType-Icon-{{ mediaItem.extension|camelize('/') }}
+							{%- if mediaItem.preview != enum(ProcessStatus).Fail %} AwaitingPreview{% endif %}" data-extension="{{ mediaItem.extension }}">
+							{% block mediaPreviewNoImageAwaitingPreview %}
+								{%- if mediaItem.preview != enum(ProcessStatus).Fail %}
+									<img data-src="{{ baseUrl }}{{ mediaItem.previewPath }}" alt="{{ mediaItem.name }}" id="AwaitingPreview{{ mediaItem.id }}">
+								{% endif %}
+							{% endblock %}
+						</span>
+					{% endblock %}
+				{% endif %}
+
+			{% endif %}
+		{% endif %}
+	</div>
+{% endblock %}
