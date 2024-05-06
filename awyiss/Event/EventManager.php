@@ -18,6 +18,13 @@ use Cake\Log\Log;
  */
 class EventManager extends BaseEventManager {
 	/**
+	 * @var array The event names that have already been tried to be lazy loaded
+	 */
+	protected static array $lazyLoadAttempts = [
+		'global' => [],
+		'current' => [],
+	];
+	/**
 	 * @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface>
 	 */
 	protected static string $pageRoleEnum;
@@ -100,12 +107,18 @@ class EventManager extends BaseEventManager {
 			return;
 		}
 
-		//Try loading the scope from for the global realm
-		Log::debug(sprintf('Trying to lazyload global event listeners for: `%s` (`%s` fired)', $ls_scope, $as_name));
-		$lb_loaded = EventListenersProvider::loadListener($ls_scope, 'Global');
-		Log::debug(sprintf('Loaded: %s', $lb_loaded ? 'true' : 'false'));
+		if (!in_array($ls_scope, static::$lazyLoadAttempts['global'])) {
+			static::$lazyLoadAttempts['global'][] = $ls_scope;
 
-		if (Awyiss::getRealm()) {
+			//Try loading the scope from for the global realm
+			Log::debug(sprintf('Trying to lazyload global event listeners for: `%s` (`%s` fired)', $ls_scope, $as_name));
+			$lb_loaded = EventListenersProvider::loadListener($ls_scope, 'Global');
+			Log::debug(sprintf('Loaded: %s', $lb_loaded ? 'true' : 'false'));
+		}
+
+		if (Awyiss::getRealm() && !in_array($ls_scope, static::$lazyLoadAttempts['current'])) {
+			static::$lazyLoadAttempts['current'][] = $ls_scope;
+
 			//Try loading the scope from for the current realm
 			Log::debug(sprintf('Trying to lazyload `%s` event listeners for: `%s` (`%s` fired)', Awyiss::getRealm(), $ls_scope, $as_name));
 			$lb_loaded = EventListenersProvider::loadListener($ls_scope, Awyiss::getRealm());
