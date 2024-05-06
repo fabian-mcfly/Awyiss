@@ -23,13 +23,13 @@
 
 					{% if AuthorizationHelper.isAccessible('delete') %}
 						<button
-								class="Button Button-Delete"
-								disabled
-								data-confirm-title="{{ __('confirm_delete_selected_title') }}"
-								data-confirm-yes="{{ __('confirm_delete_yes') }}"
-								data-confirm-yes-class="Button-Delete"
-								data-confirm-no="{{ __('confirm_delete_no') }}"
-								data-confirm="{{ __('confirm_delete_selected', mediaItem.id) }}">{{ __('delete') }}</button>
+							class="Button Button-Delete"
+							disabled
+							data-confirm-title="{{ __('confirm_delete_selected_title') }}"
+							data-confirm-yes="{{ __('confirm_delete_yes') }}"
+							data-confirm-yes-class="Button-Delete"
+							data-confirm-no="{{ __('confirm_delete_no') }}"
+							data-confirm="{{ __('confirm_delete_selected', mediaItem.id) }}">{{ __('delete') }}</button>
 					{% endif %}
 				{% endif %}
 
@@ -53,6 +53,8 @@
 			{% endblock %}
 		</div>
 	{% endblock %}
+
+	{% do MediaHelper.storeItems(media) %}
 
 	{% if paginated %}
 		{% block uploadQueue %}

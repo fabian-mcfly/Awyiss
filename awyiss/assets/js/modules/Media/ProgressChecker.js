@@ -3,7 +3,7 @@
 export default class ProgressChecker {
 	checkerUrls = {
 		preview: `${baseUrl}backend/${languageShortcode}/media/check-preview-progress/`,
-		thumbnail: `${baseUrl}backend/${languageShortcode}/media/check-thumbnail-progress/`,
+		resize: `${baseUrl}backend/${languageShortcode}/media/check-resize-progress/`,
 		webp: `${baseUrl}backend/${languageShortcode}/media/check-webp-progress/`,
 	};
 	/**
@@ -13,7 +13,7 @@ export default class ProgressChecker {
 	worker;
 	workerStateListenerBound = {
 		preview: false,
-		thumbnail: false,
+		resize: false,
 		webp: false,
 	};
 
@@ -30,9 +30,9 @@ export default class ProgressChecker {
 			}
 
 			// Check if there are elements that need to be checked
-			elements = document.querySelectorAll('.AwaitingThumbnail');
+			elements = document.querySelectorAll('.AwaitingResize');
 			if (elements.length > 0) {
-				this.startChecking('thumbnail');
+				this.startChecking('resize');
 			}
 		})
 		.catch((error) => {
@@ -78,9 +78,34 @@ export default class ProgressChecker {
 			this.workerMessageListenerBound = true;
 		}
 
+		let elements;
+
+		if (type === 'preview') {
+			elements = document.querySelectorAll('.AwaitingPreview');
+		}
+		else if (type === 'resize') {
+			elements = document.querySelectorAll('.AwaitingResize')
+		}
+
+		elements = Array.from(elements).map(element => {
+			if (element.id) {
+				return parseInt(element.id.replace(/^\D+/g, ''));
+			}
+
+			let img = element.querySelector('img');
+			if (img && img.id) {
+				return parseInt(img.id.replace(/^\D+/g, ''));
+			}
+
+			return null;
+		});
+
+		elements = elements.filter(element => element !== null);
+
 		// Send a message to the worker to start checking
 		this.worker.active.postMessage({
 			command: 'startChecking',
+			elements: elements,
 			type: type,
 			url: this.checkerUrls[type],
 		});
@@ -98,6 +123,10 @@ export default class ProgressChecker {
 
 		if (event.data.type === 'preview') {
 			this.handlePreviewMessage(event.data.data);
+		}
+
+		if (event.data.type === 'resize') {
+			this.handleResizeMessage(event.data.data);
 		}
 	}
 
@@ -164,6 +193,69 @@ export default class ProgressChecker {
 	}
 
 	/**
+	 * Handle the message from the service worker for resize progress.
+	 * @param {Object} data
+	 */
+	handleResizeMessage(data) {
+		const completed = data.completed || [];
+		completed.forEach(elementId => {
+			const element = document.getElementById(`AwaitingResize${elementId}`);
+			if (element) {
+				element.classList.remove('AwaitingResize');
+
+				let image;
+				// If the element is an image, use it for the image
+				if (element.tagName === 'IMG') {
+					image = element;
+				}
+				else if (element.querySelector('img')) {
+					image = element.querySelector('img');
+				}
+
+				// If there is an image, set the src attribute
+				if (image) {
+					image.src = image.dataset.src;
+
+					if (element.parentElement.classList.contains('AwaitingResize')) {
+						// Replace the parent element with the image
+						element.parentElement.replaceWith(image);
+					}
+				}
+			}
+		});
+
+		// For all the elements that have been checked but failed, remove the AwaitingResize class and the image
+		// noinspection JSUnresolvedReference
+		const failed = data.failed || [];
+		failed.forEach(elementId => {
+			const element = document.getElementById(`AwaitingResize${elementId}`);
+			if (element) {
+				// Check if the element or its parent has the AwaitingResize class and remove it
+				element.parentElement.classList.remove('AwaitingResize');
+
+				// If the element is an image, remove it
+				if (element.tagName === 'IMG') {
+					element.remove();
+				}
+			}
+		});
+
+		if (data.message === 'done') {
+			const elements = document.querySelectorAll('.AwaitingResize');
+			elements.forEach(element => {
+				console.log(element, element.querySelector('img'));
+				element.classList.remove('AwaitingResize');
+
+				// Remove the image from the element since there is no resize available
+				const img = element.querySelector('img');
+				if (img) {
+					img.remove();
+				}
+			});
+		}
+	}
+
+	/**
 	 * Unregister the service worker.
 	 * Normally this is not needed, but it can be useful for debugging.
 	 */
@@ -212,16 +304,16 @@ export default class ProgressChecker {
 		}
 
 		// Check if the added nodes contain any elements that need to be checked, either directly or as descendants of the added nodes
-		let thumbnailCheckRequired = nodes.some(node => {
+		let resizeCheckRequired = nodes.some(node => {
 			if (node.nodeType !== Node.ELEMENT_NODE) {
 				return false;
 			}
 
-			return node.matches('.AwaitingThumbnail') || node.querySelectorAll('.AwaitingThumbnail').length > 0;
+			return node.matches('.AwaitingResize') || node.querySelectorAll('.AwaitingResize').length > 0;
 		});
 
-		if (thumbnailCheckRequired) {
-			this.startChecking('thumbnail');
+		if (resizeCheckRequired) {
+			this.startChecking('resize');
 		}
 	}
 }

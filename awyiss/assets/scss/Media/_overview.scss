@@ -107,6 +107,8 @@
 
 		td {
 			&.TableCell-Preview {
+				font-size:0;
+				line-height:0;
 				text-align:center;
 				overflow:hidden;
 
@@ -312,7 +314,8 @@ ul#Media-List {
 			object-fit:cover;
 		}
 
-		.AwaitingPreview {
+		.AwaitingPreview,
+		.AwaitingResize {
 			&::before {
 				border-radius:5px;
 			}
@@ -341,7 +344,8 @@ div#MediaFolders-List {
 
 .Preview {
 	.FileType-Icon {
-		&.AwaitingPreview {
+		&.AwaitingPreview,
+		&.AwaitingResize {
 			background-color:transparent;
 			border:0 none;
 
@@ -356,7 +360,8 @@ div#MediaFolders-List {
 	}
 }
 
-.AwaitingPreview {
+.AwaitingPreview,
+.AwaitingResize {
 	&::before {
 		content:'';
 		display:block;

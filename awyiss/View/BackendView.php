@@ -5,7 +5,6 @@ namespace Awyiss\View;
 
 
 use Awyiss\Middleware\LocaleMiddleware;
-use Awyiss\Model\Enum\ProcessStatus;
 use Awyiss\Routing\Router;
 
 
@@ -35,6 +34,7 @@ class BackendView extends AppView {
 		]);
 		$this->addHelper('Html');
 		$this->addHelper('Locale');
+		$this->addHelper('Media');
 		$this->addHelper('Paginator', [
 			'aliasedFields' => $this->viewVars['paginate']['aliasedFields'] ?? [],
 			'templates' => 'paginator_templates',
@@ -109,6 +109,5 @@ class BackendView extends AppView {
 		$lo_twig->addGlobal('folder', '/' . ltrim($this->request->getAttribute('base'), '/'));
 		$lo_twig->addGlobal('languages', LocaleMiddleware::getLanguages());
 		$lo_twig->addGlobal('languageShortcode', $lo_frontendLanguage?->shortcode);
-		$lo_twig->addGlobal('ProcessStatus', ProcessStatus::class);
 	}
 }

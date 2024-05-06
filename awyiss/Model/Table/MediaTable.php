@@ -20,6 +20,7 @@ use finfo;
  * Media Model
  *
  * @property \Awyiss\Model\Table\MediaFoldersTable&\Awyiss\ORM\Association\BelongsTo $MediaFolders
+ * @property \Awyiss\Model\Table\MediaFoldersTable&\Awyiss\ORM\Association\HasMany $MediaResizedImages
  * @method \Awyiss\Model\Entity\Media newDefaultEntity(array $aa_additionalData = [], array $aa_options = [])
  * @noinspection PhpUnnecessaryFullyQualifiedNameInspection
  */
@@ -72,6 +73,12 @@ class MediaTable extends Table {
 	public function initializeAssociations(): void {
 		$this->belongsTo('MediaFolders', [
 			'joinType' => 'INNER',
+		]);
+
+		$this->hasMany('MediaResizedImages', [
+			'cascadeCallbacks' => true,
+			'dependent' => true,
+			'saveStrategy' => 'replace',
 		]);
 	}
 

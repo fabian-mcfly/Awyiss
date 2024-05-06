@@ -182,6 +182,7 @@ class MediaListener implements EventListenerInterface {
 	public function afterSave(Event $ao_event, Media $ao_entity, ArrayObject $ao_options): void {
 		if ($ao_entity->file && !$ao_entity->file->getError()) {
 			$ao_entity->deleteConvertedFiles();
+			$ao_entity->deleteResizedFiles();
 
 			$ao_entity->file->moveTo(WWW_ROOT . str_replace('/', DS, $ao_entity->path));
 
@@ -191,6 +192,7 @@ class MediaListener implements EventListenerInterface {
 		}
 		elseif ($ao_entity->hasOriginal('path') && $ao_entity->getOriginal('path') !== $ao_entity->get('path')) {
 			$ao_entity->moveConvertedFiles();
+			$ao_entity->moveResizedFiles();
 
 			rename(
 				WWW_ROOT . str_replace('/', DS, $ao_entity->getOriginal('path')),

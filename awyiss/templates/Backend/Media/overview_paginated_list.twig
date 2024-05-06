@@ -32,9 +32,14 @@
 {% block tableOverviewCellTitle %}
 	<td class="TableCell-Preview">
 		{% set preview %}
-			{% include '@Backend/element/Media/preview.twig' with {
-				mediaItem: entity,
-			} %}
+			{{ MediaHelper.preview(entity, {
+				class: 'Preview',
+				resize: {
+					width: 275,
+					height: 275,
+					strategy: enum(ResizeStrategy).Crop,
+				},
+			}) }}
 		{% endset %}
 		{{ HtmlHelper.link(preview, entity.path, {
 			escape: false,

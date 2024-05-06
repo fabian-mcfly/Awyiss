@@ -5,6 +5,7 @@ namespace Awyiss\Model\Entity;
 
 
 use Awyiss\Model\Entity;
+use Cake\Datasource\FactoryLocator;
 use Cake\Utility\Text;
 
 
@@ -92,6 +93,33 @@ class Media extends Entity {
 
 
 	/**
+	 * @inheritDoc
+	 */
+	protected array $_virtual = [
+		'label',
+		'isImage',
+		'cleanName',
+		'originalCleanName',
+		'extension',
+		'originalExtension',
+		'pathAbsolute',
+		'originalPathAbsolute',
+		'previewName',
+		'originalPreviewName',
+		'previewPath',
+		'originalPreviewPath',
+		'previewPathAbsolute',
+		'originalPreviewPathAbsolute',
+		'webpName',
+		'originalWebpName',
+		'webpPath',
+		'originalWebpPath',
+		'webpPathAbsolute',
+		'originalWebpPathAbsolute',
+	];
+
+
+	/**
 	 * @return bool
 	 */
 	public function isImage(): bool {
@@ -161,6 +189,87 @@ class Media extends Entity {
 	/**
 	 * @return void
 	 */
+	public function moveResizedFiles(): void {
+		/** @var \Awyiss\Model\Table\MediaResizedImagesTable $lo_table */
+		$lo_table = FactoryLocator::get('Table')->get('MediaResizedImages');
+		$lo_query = $lo_table->updateQuery();
+
+		$ls_fileName = $this->name;
+		$ls_fileName = substr($ls_fileName, 0, strrpos($ls_fileName, '.'));
+		$ls_directory = substr($this->path, 0, strrpos($this->path, DS)) . DS . '_resized' . DS;
+		$ls_directory .= $ls_fileName;
+
+		$ls_originalName = $this->hasOriginal('name') ? $this->getOriginal('name') : $this->name;
+		$ls_originalName = substr($ls_originalName, 0, strrpos($ls_originalName, '.'));
+
+		$ls_originalDirectory = substr($this->getOriginal('path'), 0, strrpos($this->getOriginal('path'), DS)) . DS . '_resized' . DS;
+		$ls_originalDirectory .= $ls_originalName;
+
+		/**
+		 * UPDATE media_resized_images SET
+		 * 	name = (CONCAT('newname', substr(name, <strlen(oldname) + 1>))),
+		 * 	path = (CONCAT('newpath', substr(path, <strlen(oldpath) + 1>)))
+		 * WHERE media_id = 1
+		 *
+		 * @noinspection PhpUndefinedMethodInspection
+		 */
+		$lo_query->update('media_resized_images')->set('name', $lo_query->newExpr($lo_query->func()->concat([
+			$ls_fileName,
+			$lo_query->func()->substr([
+				'name' => 'identifier',
+				mb_strlen($ls_originalName) + 1,
+			], [
+				null,
+				'integer',
+			]),
+		])))->set('path', $lo_query->newExpr($lo_query->func()->concat([
+			$ls_directory,
+			$lo_query->func()->substr([
+				'path' => 'identifier',
+				mb_strlen($ls_originalDirectory) + 1,
+			], [
+				null,
+				'integer',
+			]),
+		])))->where(['media_id' => $this->id])->execute();
+
+
+		if ($this->isImage()) {
+			$ls_baseName = $this->originalCleanName ?? $this->cleanName;
+		}
+		else {
+			$ls_baseName = $this->hasOriginal('name') ? $this->getOriginal('name') : $this->name;
+		}
+
+		$ls_globFileName = $ls_baseName . '-\[*\].*';
+
+		$ls_path = $this->getOriginal('path');
+		$ls_path = substr($ls_path, 0, strrpos($ls_path, DS)) . DS . '_resized' . DS;
+
+		$la_resizedFiles = glob($ls_path . $ls_globFileName);
+		if (!is_array($la_resizedFiles) || empty($la_resizedFiles)) {
+			return;
+		}
+
+		$ls_targetPath = $this->path;
+		$ls_targetPath = substr($ls_targetPath, 0, strrpos($ls_targetPath, DS)) . DS . '_resized' . DS;
+
+		foreach ($la_resizedFiles as $ls_filePath) {
+			$ls_targetFileName = $ls_fileName . substr(basename($ls_filePath), strlen($ls_originalName));
+			$ls_targetFilePath = $ls_targetPath . $ls_targetFileName;
+
+			if (!is_dir($ls_targetPath)) {
+				mkdir($ls_targetPath);
+			}
+
+			rename($ls_filePath, $ls_targetFilePath);
+		}
+	}
+
+
+	/**
+	 * @return void
+	 */
 	public function deleteConvertedFiles(): void {
 		$ls_filePath = $this->previewPathAbsolute;
 		if ($ls_filePath && is_file($ls_filePath)) {
@@ -181,6 +290,38 @@ class Media extends Entity {
 		if ($ls_filePath && is_file($ls_filePath)) {
 			unlink($ls_filePath);
 		}
+	}
+
+
+	/**
+	 * @return void
+	 */
+	public function deleteResizedFiles(): void {
+		/** @var \Awyiss\Model\Table\MediaResizedImagesTable $lo_table */
+		$lo_table = FactoryLocator::get('Table')->get('MediaResizedImages');
+		$lo_table->deleteAll([
+			'media_id' => $this->id,
+		]);
+
+		$ls_baseName = $this->isImage() ? $this->cleanName : $this->name;
+
+		$ls_name = $ls_baseName . '-\[*\].*';
+
+		$ls_path = $this->path;
+		$ls_path = substr($ls_path, 0, strrpos($ls_path, DS)) . DS . '_resized' . DS . $ls_name;
+
+		$la_resizedFiles = glob($ls_path);
+		if (is_array($la_resizedFiles) && !empty($la_resizedFiles)) {
+			array_map('unlink', $la_resizedFiles);
+		}
+	}
+
+
+	/**
+	 * @return bool
+	 */
+	protected function _getIsImage(): bool {
+		return $this->isImage();
 	}
 
 

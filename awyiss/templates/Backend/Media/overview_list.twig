@@ -8,7 +8,14 @@
 				{% endif %}
 
 				<li id="Media-ListItem{{ mediaItem.id }}" class="Media-ListItem" title="{{ mediaItem.name }} (ID: {{ mediaItem.id }}{{ imageSizeInfo }})">
-					{% include '@Backend/element/Media/preview.twig' %}
+					{{ MediaHelper.preview(mediaItem, {
+						class: 'Preview',
+						resize: {
+							width: 275,
+							height: 275,
+							strategy: enum(ResizeStrategy).Crop,
+						},
+					}) }}
 					<span class="Name">{{ mediaItem.name }}</span>
 
 					{% block listOverviewMediaItemActions %}

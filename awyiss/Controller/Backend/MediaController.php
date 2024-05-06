@@ -9,6 +9,7 @@ use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Model\Entity\Media;
 use Awyiss\Model\Entity\MediaFolder;
 use Awyiss\Model\Enum\ProcessStatus;
+use Awyiss\Model\Enum\ResizeStrategy;
 use Awyiss\Model\Table;
 use Awyiss\Routing\Router;
 use Cake\Database\Expression\QueryExpression;
@@ -16,6 +17,7 @@ use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
 use Cake\ORM\Query\SelectQuery;
 use Cake\Utility\Inflector;
+use InvalidArgumentException;
 
 
 /**
@@ -114,6 +116,7 @@ class MediaController extends Controller {
 			'languageRealm' => Awyiss::REALM_FRONTEND,
 			'paginated' => $lb_paginated,
 			'attributes' => $this->Media->getAttributes(),
+			'ResizeStrategy' => ResizeStrategy::class,
 		]);
 
 		if ($this->request->is('ajax')) {
@@ -165,6 +168,8 @@ class MediaController extends Controller {
 				$lo_elementView->set([
 					'mediaItem' => $lo_media,
 					'paginate' => ($this->request->getParam('paginate', 'false') === 'true'),
+					'attributes' => $this->Media->getAttributes(),
+					'ResizeStrategy' => ResizeStrategy::class,
 				]);
 
 				$this->set([
@@ -240,6 +245,7 @@ class MediaController extends Controller {
 			$lo_elementView->set([
 				'mediaItem' => $lo_media,
 				'paginate' => ($this->request->getParam('paginate', 'false') === 'true'),
+				'ResizeStrategy' => ResizeStrategy::class,
 			]);
 
 			$this->set([
@@ -310,6 +316,29 @@ class MediaController extends Controller {
 	 * @return void
 	 */
 	public function checkPreviewProgress(): void {
+		$this->checkProgress('preview');
+	}
+
+
+	/**
+	 * Check the progress of the resizing of the images (or preview images) for the media files
+	 *
+	 * @return void
+	 */
+	public function checkResizeProgress(): void {
+		$this->checkProgress('resize');
+	}
+
+
+	/**
+	 * Check the progress and keep the connection alive by sending a JSON encoded array in a loop
+	 * If the connection is aborted, send an "aborted" event.
+	 * If the media files are processed, send a "done" event.
+	 *
+	 * @param string $type
+	 * @return void
+	 */
+	protected function checkProgress(string $type): void {
 		// Increase the maximum execution time to a bit more than 3 minutes
 		set_time_limit(190);
 
@@ -325,6 +354,28 @@ class MediaController extends Controller {
 
 		// Initialize an array to store the media files from the last iteration
 		$la_lastRecords = [];
+
+		// If there are initial elements, remember them for the first iteration
+		// Due to race conditions, the initial elements might have been processed already by the time the loop starts
+		if ($this->request->getData('elements')) {
+			if ($type === 'preview') {
+				// Get the media files that do not have a preview image yet
+				$lo_query = $this->Media->find()->where([
+					'id IN' => $this->request->getData('elements'),
+				]);
+			}
+			elseif ($type === 'resize') {
+				// Get the media files that do not have resized images yet
+				$lo_query = $this->Media->MediaResizedImages->find()->where([
+					'id IN' => $this->request->getData('elements'),
+				]);
+			}
+			else {
+				throw new InvalidArgumentException('Invalid type');
+			}
+
+			$la_lastRecords = $lo_query->all()->indexBy('id')->toArray();
+		}
 
 		ignore_user_abort(true);
 
@@ -342,13 +393,27 @@ class MediaController extends Controller {
 				exit;
 			}
 
-			// Get the media files that do not have a preview image yet
-			$lo_query = $this->Media->find()->where([
-				'preview IN' => [
-					ProcessStatus::Undefined,
-					ProcessStatus::InProgress,
-				],
-			]);
+			if ($type === 'preview') {
+				// Get the media files that do not have a preview image yet
+				$lo_query = $this->Media->find()->where([
+					'preview IN' => [
+						ProcessStatus::Undefined,
+						ProcessStatus::InProgress,
+					],
+				]);
+			}
+			elseif ($type === 'resize') {
+				// Get the media files that do not have resized images yet
+				$lo_query = $this->Media->MediaResizedImages->find()->where([
+					'status IN' => [
+						ProcessStatus::Undefined,
+						ProcessStatus::InProgress,
+					],
+				]);
+			}
+			else {
+				throw new InvalidArgumentException('Invalid type');
+			}
 
 			$la_currentRecords = $lo_query->all()->indexBy('id')->toArray();
 
@@ -357,10 +422,11 @@ class MediaController extends Controller {
 			$la_failed = [];
 
 			// Check which media files from the last iteration are no longer in the current records
+			/** @var \Awyiss\Model\Entity\Media|\Awyiss\Model\Entity\MediaResizedImage $lo_lastRecord */
 			foreach ($la_lastRecords as $li_id => $lo_lastRecord) {
 				if (!isset($la_currentRecords[ $li_id ])) {
 					// The record is either completed or failed
-					if (file_exists($lo_lastRecord->previewPathAbsolute)) {
+					if (file_exists($lo_lastRecord instanceof Media ? $lo_lastRecord->previewPathAbsolute : $lo_lastRecord->pathAbsolute)) {
 						$la_completed[] = $li_id;
 					}
 					else {
@@ -369,7 +435,7 @@ class MediaController extends Controller {
 				}
 			}
 
-			// Output a message, depending on whether there are still media files that do not have a preview image
+			// Output a JSON encoded array with the message, the incomplete records, the completed records and the failed records
 			$la_data = [
 				'message' => !$la_currentRecords ? 'done' : 'waiting',
 				'incomplete' => array_keys($la_currentRecords),
@@ -384,7 +450,7 @@ class MediaController extends Controller {
 			ob_flush();
 			flush();
 
-			// If there are no more media files that do not have a preview image, break the loop
+			// If there are no more media files to process, exit the loop
 			if (!$la_currentRecords) {
 				exit;
 			}

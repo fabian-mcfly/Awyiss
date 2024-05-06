@@ -197,7 +197,7 @@ class MediaFoldersListener implements EventListenerInterface {
 		$lb_parentsActiveChanged = $lb_originalParentsActive !== null && $ao_entity->parentsActive !== $lb_originalParentsActive;
 
 		if (!$ao_entity->isNew() && $lb_pathChanged) {
-			foreach ([$lo_table->getTable(), 'media'] as $ls_table) {
+			foreach ([$lo_table->getTable(), 'media', 'media_resized_images'] as $ls_table) {
 				$this->rebuildDatabasePath($lo_table, $ls_table, $ao_entity, $ls_originalPath);
 			}
 
