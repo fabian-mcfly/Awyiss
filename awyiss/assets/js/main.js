@@ -38,9 +38,20 @@ export async function loadControllerClass(controllerClass) {
 			window[controllerClassVariable] = new module.default();
 		}
 	} catch (error) {
-		if (isGenericPage && controllerClass !== 'PagesController') {
-			// Try to load the generic controller class
-			await loadControllerClass('PagesController');
+		if (
+			error instanceof TypeError &&
+			(
+				error.message.includes(`Resolution of specifier “${controllerClass.slice(0, -10)}”`) ||
+				error.message.includes(`Failed to resolve module specifier '${controllerClass.slice(0, -10)}'`)
+			)
+		) {
+			if (isGenericPage && controllerClass !== 'PagesController') {
+				// Try to load the generic controller class
+				await loadControllerClass('PagesController');
+			}
+		}
+		else {
+			console.error('Error loading controller class:', error, typeof error);
 		}
 	}
 }
@@ -149,6 +160,8 @@ export function addDarkModeSwitcherEvent() {
 
 			// If the fetch request is successful, toggle the class "🌚" on the HTML tag
 			document.documentElement.classList.toggle('🌚', target.classList.contains('DarkModeSwitch-Link-On'));
+
+			document.getElementById('clr-picker')?.classList.toggle('clr-dark', target.classList.contains('DarkModeSwitch-Link-On'));
 
 		})
 		.catch(error => {

@@ -5,3 +5,13 @@
 		}
 	}
 }
+
+#OverlayForm {
+	.Media.Form {
+		.FormInputName-MediaFolderId,
+		.FormInputName-SystemOrder,
+		.FormInputName-File {
+			display:none;
+		}
+	}
+}

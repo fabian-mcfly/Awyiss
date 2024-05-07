@@ -188,7 +188,7 @@ export default class OverlayForm {
 	openOverlay(event) {
 		event.preventDefault();
 
-		const element = event.currentTarget;
+		const element = event.target;
 
 		this.savedIsFormChanged = window.formLeaveConfirmation.isFormChanged;
 		window.formLeaveConfirmation.isFormChanged = false;
@@ -285,6 +285,16 @@ export default class OverlayForm {
 			// Show the overlay
 			this.overlayElement.classList.remove('FetchInProgress');
 			this.overlayElement.classList.add('Visible');
+
+			// When everything is ready, dispatch an event
+			const event = new CustomEvent('overlayFormLoaded', {
+				bubbles: true,
+				cancelable: true,
+				detail: {
+					form: realForm,
+				}
+			});
+			document.dispatchEvent(event);
 		});
 	}
 

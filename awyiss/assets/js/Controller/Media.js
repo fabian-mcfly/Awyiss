@@ -2,6 +2,7 @@
 
 import Sortable from 'Media/Sortable';
 import Upload from 'Media/Upload';
+import Coloris from '../Coloris/Coloris.js';
 
 export default class MediaController {
 	/**
@@ -27,6 +28,33 @@ export default class MediaController {
 	sortable;
 
 	constructor() {
+		if (document.documentElement.classList.contains('OverviewAction')) {
+			this.initOverview();
+		}
+
+		if (document.documentElement.classList.contains('AddAction') || document.documentElement.classList.contains('EditAction')) {
+			this.initForm();
+		}
+	}
+
+	/**
+	 * Initialize the form
+	 * @returns {void}
+	 */
+	initForm() {
+		const coloris = new Coloris({
+			defaultColor: '#00000000',
+			element: document.querySelector('input[name="average_color"]'),
+			theme: 'large',
+			themeMode: document.documentElement.classList.contains('🌚') ? 'dark' : 'light',
+		});
+	}
+
+	/**
+	 * Initialize the overview
+	 * @returns {void}
+	 */
+	initOverview() {
 		const mediaList = document.querySelector(this.selector);
 
 		if (mediaList) {

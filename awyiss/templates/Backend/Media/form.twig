@@ -55,6 +55,12 @@
 					{{ FormHelper.control('alt') }}
 				{% endblock %}
 
+				{% block formControlAverageColor %}
+					{{ FormHelper.control('average_color', {
+						val: (media.averageColor[:1] != '#' ? '#' : '') ~ media.averageColor,
+					}) }}
+				{% endblock %}
+
 				{% block fieldsetGeneralAttributes %}
 					{{ AttributesHelper.allControls('general') }}
 				{% endblock %}

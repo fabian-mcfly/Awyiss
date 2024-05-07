@@ -218,7 +218,7 @@ class MediaController extends Controller {
 			}
 		}
 		catch (RedirectException $lo_exception) {
-			if (!$this->request->is('ajax')) {
+			if (!$this->request->is('ajax') || $this->request->getParam('ajaxForm')) {
 				throw $lo_exception;
 			}
 		}

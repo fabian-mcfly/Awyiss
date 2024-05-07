@@ -51,7 +51,7 @@
 
 	.Form {
 		width:calc(100% - 40px);
-		max-width:1280px;
+		max-width:860px;
 		max-height:80vh;
 		margin:auto;
 		padding-top:52px;
@@ -76,7 +76,7 @@
 			width:100%;
 			height:52px;
 			padding:0 20px;
-			border-radius:5px;
+			border-radius:0 0 5px 5px;
 			background-color:var(--colorDark-Alpha-50);
 			color:var(--colorBright);
 			font-size:.8rem;
@@ -107,6 +107,14 @@
 			overflow-y:auto;
 			scrollbar-color:var(--scrollbarColor);
 			scrollbar-width:thin;
+
+			> .Fieldsets {
+				grid-template-columns:1fr;
+
+				fieldset {
+					grid-column:1 / -1;
+				}
+			}
 		}
 
 		> .Button-SaveClose {

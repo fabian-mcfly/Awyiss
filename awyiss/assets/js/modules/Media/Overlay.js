@@ -4,6 +4,7 @@ import NestedListHandler from 'NestedListHandler';
 import Sortable from 'Media/Sortable';
 import Upload from 'Media/Upload';
 import {Sortable as SortableJS} from '../../SortableJS/sortable.core.esm.js';
+import Coloris from '../../Coloris/Coloris';
 
 export default class Overlay {
 	/**
@@ -122,6 +123,10 @@ export default class Overlay {
 		// Bind the click event to the folder list items
 		this.bindFolderListItemClick();
 
+		this.eventHandler.add('click', this.handleMediaItemClick.bind(this), this.mediaList);
+
+		this.bindOverlayFormLoadedEvent();
+
 		this.bindFolderSaveEvent();
 
 		this.initSortableReceiver();
@@ -160,6 +165,24 @@ export default class Overlay {
 	}
 
 	/**
+	 * Bind the event to the overlay form loaded event.
+	 */
+	bindOverlayFormLoadedEvent() {
+		window.eventHandler.add('overlayFormLoaded', (event) => {
+			const form = event.detail.form.parentElement;
+
+			if (form.classList.contains('Media')) {
+				// After loading the media form, initialize the color picker
+				const coloris = new Coloris({
+					element: form.querySelector('input[name="average_color"]'),
+					theme: 'large',
+					themeMode: document.documentElement.classList.contains('🌚') ? 'dark' : 'light',
+				});
+			}
+		});
+	}
+
+	/**
 	 * Bind the event to the folder save event.
 	 */
 	bindFolderSaveEvent() {
@@ -167,32 +190,34 @@ export default class Overlay {
 			const form = event.detail.form;
 			const formParent = form.parentElement;
 
-			if (!formParent.matches('.MediaFolders.Add')) {
-				return;
+			if (formParent.matches('.MediaFolders.Add')) {
+				// Fetch the folder list again
+				fetch(`/backend/${languageShortcode}/media/overview/paginate:false/`, {
+					headers: {
+						'X-Requested-With': 'XMLHttpRequest',
+					},
+				})
+				.then(response => response.text())
+				.then(html => {
+					// Parse the HTML string into a Document object
+					const parser = new DOMParser();
+					const doc = parser.parseFromString(html, 'text/html');
+
+					const folderList = doc.querySelector('#MediaFolders-List');
+
+					this.folderList.replaceWith(folderList);
+
+					this.folderList = folderList;
+
+					this.bindFolderListItemClick();
+
+					this.initSortableReceiver();
+				});
 			}
-
-			// Fetch the folder list again
-			fetch(`/backend/${languageShortcode}/media/overview/paginate:false/`, {
-				headers: {
-					'X-Requested-With': 'XMLHttpRequest',
-				},
-			})
-			.then(response => response.text())
-			.then(html => {
-				// Parse the HTML string into a Document object
-				const parser = new DOMParser();
-				const doc = parser.parseFromString(html, 'text/html');
-
-				const folderList = doc.querySelector('#MediaFolders-List');
-
-				this.folderList.replaceWith(folderList);
-
-				this.folderList = folderList;
-
-				this.bindFolderListItemClick();
-
-				this.initSortableReceiver();
-			});
+			else if (formParent.matches('.Media.Edit')) {
+				// After updating a file, we need to fetch the media items again
+				this.folderList.querySelector('.Active').dispatchEvent(new Event('click'));
+			}
 		});
 	}
 
@@ -253,6 +278,18 @@ export default class Overlay {
 			listItem.sortable.option('disabled', true);
 		});
 	}
+
+
+	handleMediaItemClick(event) {
+		if (!event.target.matches('.Button-Edit')) {
+			return;
+		}
+
+		event.preventDefault();
+
+		window.overlayForm.openOverlay(event);
+	}
+
 
 	/**
 	 * Initialize the sortable for media items in the folder list

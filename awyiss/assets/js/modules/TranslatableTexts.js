@@ -138,6 +138,10 @@ export default class TranslatableTexts {
 
 		// Add an event listener to the submit event of the form
 		this.eventHandler.add('submit', (event) => {
+			if (event.defaultPrevented) {
+				return;
+			}
+
 			// Prevent the form from being submitted
 			event.preventDefault();
 

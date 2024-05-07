@@ -89,6 +89,10 @@ export default class MultiSelect {
 	 * @param {MouseEvent} event
 	 */
 	handleClick(event) {
+		if (event.defaultPrevented) {
+			return;
+		}
+
 		const selectedItems = this.getSelectedItems();
 
 		const item = event.target.closest(this.itemSelector);

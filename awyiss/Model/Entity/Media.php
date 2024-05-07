@@ -597,6 +597,21 @@ class Media extends Entity {
 
 
 	/**
+	 * Make sure the average does not start with a hash
+	 *
+	 * @param string|null $as_color
+	 * @return string|null
+	 */
+	protected function _setAverageColor(?string $as_color): ?string {
+		if ($as_color === null) {
+			return null;
+		}
+
+		return ltrim($as_color, '#');
+	}
+
+
+	/**
 	 * Make sure the name is always lowercase, dashed and free of special characters
 	 *
 	 * @param string|null $as_path
