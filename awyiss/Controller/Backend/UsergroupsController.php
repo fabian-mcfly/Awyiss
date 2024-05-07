@@ -171,7 +171,9 @@ class UsergroupsController extends Controller {
 		}
 
 		if ($this->Usergroups->delete($lo_usergroup)) {
-			$this->Flash->success(__('delete_succeeded'));
+			if (!$this->request->is('ajax')) {
+				$this->Flash->success(__('delete_succeeded'));
+			}
 		}
 		else {
 			$this->Flash->error(__('delete_failed'));
@@ -228,7 +230,9 @@ class UsergroupsController extends Controller {
 					$lo_session->delete('Backend.menu');
 				}
 
-				$this->Flash->success(__($as_method . '_succeeded'));
+				if (!$this->request->is('ajax')) {
+					$this->Flash->success(__($as_method . '_succeeded'));
+				}
 
 				if ($this->request->getData('submit') == 'submit_close') {
 					throw new RedirectException(Router::url([

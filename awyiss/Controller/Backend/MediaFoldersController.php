@@ -217,7 +217,9 @@ class MediaFoldersController extends Controller {
 		}
 
 		if ($this->MediaFolders->delete($lo_mediaFolder)) {
-			$this->Flash->success(__('delete_succeeded'));
+			if (!$this->request->is('ajax')) {
+				$this->Flash->success(__('delete_succeeded'));
+			}
 		}
 		else {
 			$this->Flash->error(__('delete_failed'));
@@ -251,7 +253,9 @@ class MediaFoldersController extends Controller {
 
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
 			if ($this->MediaFolders->save($ao_mediaFolder, ['asCopy' => (bool)$this->request->getData('save_as_copy')])) {
-				$this->Flash->success(__($as_method . '_succeeded'));
+				if (!$this->request->is('ajax')) {
+					$this->Flash->success(__($as_method . '_succeeded'));
+				}
 
 				$lo_session = $this->request->getSession();
 				$ls_languageShortcode = $ao_mediaFolder->languageShortcode ?? 'global';

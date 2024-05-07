@@ -294,7 +294,9 @@ class MediaController extends Controller {
 		}
 
 		if ($this->Media->delete($lo_media)) {
-			$this->Flash->success(__('delete_succeeded'));
+			if (!$this->request->is('ajax')) {
+				$this->Flash->success(__('delete_succeeded'));
+			}
 		}
 		else {
 			$this->Flash->error(__('delete_failed'));
@@ -592,7 +594,9 @@ class MediaController extends Controller {
 			}
 
 			if ($this->Media->save($ao_media, $la_options)) {
-				$this->Flash->success(__($as_method . '_succeeded'));
+				if (!$this->request->is('ajax')) {
+					$this->Flash->success(__($as_method . '_succeeded'));
+				}
 
 				if ($this->request->getData('submit') == 'submit_close') {
 					throw new RedirectException(Router::url([
@@ -712,7 +716,9 @@ class MediaController extends Controller {
 			$this->Flash->error(__('no_records_selected'));
 		}
 		else {
-			$this->Flash->success(__('delete_succeeded'));
+			if (!$this->request->is('ajax')) {
+				$this->Flash->success(__('delete_succeeded'));
+			}
 		}
 
 		return $this->redirect(['action' => 'overview']);

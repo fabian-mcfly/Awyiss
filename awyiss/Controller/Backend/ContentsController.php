@@ -220,7 +220,9 @@ class ContentsController extends Controller {
 		$this->Authorization->ensure('delete');
 
 		if ($this->Contents->delete($lo_content)) {
-			$this->Flash->success(__('delete_succeeded'));
+			if (!$this->request->is('ajax')) {
+				$this->Flash->success(__('delete_succeeded'));
+			}
 		}
 		else {
 			$this->Flash->error(__('delete_failed'));
@@ -290,7 +292,9 @@ class ContentsController extends Controller {
 		}
 		else {
 			if (!$lo_content->hasErrors()) {
-				$this->Flash->success(__('edit_succeeded'));
+				if (!$this->request->is('ajax')) {
+					$this->Flash->success(__('edit_succeeded'));
+				}
 			}
 			else {
 				$this->Flash->error(__('edit_failed'));
@@ -326,7 +330,9 @@ class ContentsController extends Controller {
 		}
 		else {
 			if ($li_affectedRows) {
-				$this->Flash->success(__d('system', 'system_order_saved'));
+				if (!$this->request->is('ajax')) {
+					$this->Flash->success(__d('system', 'system_order_saved'));
+				}
 			}
 			else {
 				$this->Flash->error(__d('system', 'system_order_not_saved'));
@@ -388,7 +394,9 @@ class ContentsController extends Controller {
 			$this->unsetUnassignedElements($ao_content);
 
 			if ($this->Contents->save($ao_content, ['asCopy' => (bool)$this->request->getData('save_as_copy')])) {
-				$this->Flash->success(__($as_method . '_succeeded'));
+				if (!$this->request->is('ajax')) {
+					$this->Flash->success(__($as_method . '_succeeded'));
+				}
 
 				if ($this->request->getData('submit') == 'submit_close') {
 					throw new RedirectException(Router::url(['action' => 'overview', 'lang' => $this->page->languageShortcode, 'pageId' => $ao_content->pageId], true), 302);

@@ -194,7 +194,9 @@ class PagesController extends Controller {
 				}
 
 				if ($lb_success) {
-					$this->Flash->success(__('add_batch_succeeded'));
+					if (!$this->request->is('ajax')) {
+						$this->Flash->success(__('add_batch_succeeded'));
+					}
 
 					/*
 					 * Make sure the currently selected category is still part of the categories assigned to the user.
@@ -274,7 +276,9 @@ class PagesController extends Controller {
 		}
 
 		if ($this->Pages->delete($lo_page)) {
-			$this->Flash->success(__('delete_succeeded'));
+			if (!$this->request->is('ajax')) {
+				$this->Flash->success(__('delete_succeeded'));
+			}
 		}
 		else {
 			$this->Flash->error(__('delete_failed'));
@@ -338,7 +342,9 @@ class PagesController extends Controller {
 					'copyDescendantsWithDifferentPageRole' => $lb_copyDescendantsWithDifferentPageRole,
 				])
 			) {
-				$this->Flash->success(__($as_method . '_succeeded'));
+				if (!$this->request->is('ajax')) {
+					$this->Flash->success(__($as_method . '_succeeded'));
+				}
 
 				if ($this->request->getData('submit') == 'submit_close') {
 					/*

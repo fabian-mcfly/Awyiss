@@ -240,7 +240,9 @@ class UserConfigurationController extends Controller {
 		}
 
 		if ($this->UserConfiguration->delete($lo_configuration)) {
-			$this->Flash->success(__('delete_succeeded'));
+			if (!$this->request->is('ajax')) {
+				$this->Flash->success(__('delete_succeeded'));
+			}
 		}
 		else {
 			$this->Flash->error(__('delete_failed'));
@@ -280,7 +282,9 @@ class UserConfigurationController extends Controller {
 
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
 			if ($this->UserConfiguration->save($ao_configuration, ['asCopy' => (bool)$this->request->getData('save_as_copy')])) {
-				$this->Flash->success(__($as_method . '_succeeded'));
+				if (!$this->request->is('ajax')) {
+					$this->Flash->success(__($as_method . '_succeeded'));
+				}
 
 				if ($this->request->getData('submit') == 'submit_close') {
 					throw new RedirectException(Router::url(['action' => 'overview', 'scope' => $ao_configuration->scope], true), 302);
