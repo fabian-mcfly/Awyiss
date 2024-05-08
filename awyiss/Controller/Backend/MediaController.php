@@ -567,11 +567,23 @@ class MediaController extends Controller {
 			'validate' => !$this->request->getData('reload_form'),
 		]);
 
-		if ($this->request->is('ajax') && $as_method === 'edit') {
+		if (
+			$as_method === 'edit' &&
+			(
+				$this->request->is('ajax') ||
+				!$this->Authorization->isAccessible('create')
+			)
+		) {
 			$ao_media->file = null;
+
+			if ($ao_media->originalExtension && !str_ends_with($ao_media->name, $ao_media->originalExtension)) {
+				$ao_media->name .= '.' . $ao_media->originalExtension;
+			}
 		}
 		elseif (
-			!$lo_uploadedFile || $lo_uploadedFile->getError() === UPLOAD_ERR_INI_SIZE || $lo_uploadedFile->getError() === UPLOAD_ERR_FORM_SIZE
+			!$lo_uploadedFile ||
+			$lo_uploadedFile->getError() === UPLOAD_ERR_INI_SIZE ||
+			$lo_uploadedFile->getError() === UPLOAD_ERR_FORM_SIZE
 		) {
 			$ao_media->setError(
 				'file',

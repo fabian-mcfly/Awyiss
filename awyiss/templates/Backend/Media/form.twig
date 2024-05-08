@@ -41,11 +41,13 @@
 			<legend>{{ __('fieldset_general') }}</legend>
 
 			{% block fieldsetGeneralInner %}
-				{% block formControlFile %}
-					{{ FormHelper.control('file', {
-						type: 'file',
-					}) }}
-				{% endblock %}
+				{% if AuthorizationHelper.isAccessible('create') %}
+					{% block formControlFile %}
+						{{ FormHelper.control('file', {
+							type: 'file',
+						}) }}
+					{% endblock %}
+				{% endif %}
 
 				{% block formControlName %}
 					{{ FormHelper.control('name', {required: false, val: media.cleanName}) }}

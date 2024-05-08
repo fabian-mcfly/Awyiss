@@ -63,16 +63,24 @@ export default class MediaController {
 				saveSystemOrderButtons: document.querySelectorAll('.Button-SaveSystemOrder')
 			});
 
-			this.upload = new Upload(mediaList, {
-				dropZone: document.querySelector('#UploadQueue-DropZone'),
-				maxFileSize: document.querySelector('#uploadQueueItemTemplate').dataset.maxFileSize,
-				uploadData: {
-					media_folder_id: mediaList.dataset.mediaFolderId,
-				},
-				uploadPath: `/backend/${languageShortcode}/media/add/paginate:false/`
-			});
+			// No add button? Most likely not authorized to add media items
+			if (document.querySelector('.Button-Add')) {
+				this.upload = new Upload(mediaList, {
+					dropZone: document.querySelector('#UploadQueue-DropZone'),
+					maxFileSize: document.querySelector('#uploadQueueItemTemplate').dataset.maxFileSize,
+					uploadData: {
+						media_folder_id: mediaList.dataset.mediaFolderId,
+					},
+					uploadPath: `/backend/${languageShortcode}/media/add/paginate:false/`
+				});
+			}
 		}
 		else {
+			// No add button? Most likely not authorized to add media items
+			if (!document.querySelector('.Button-Add')) {
+				return;
+			}
+
 			const overviewTable = document.querySelector('.Overview-Table');
 			const uploadQueue = document.querySelector('#UploadQueue');
 
