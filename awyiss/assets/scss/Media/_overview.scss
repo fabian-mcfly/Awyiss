@@ -166,7 +166,7 @@ ul#Media-List {
 	background-color:var(--backgroundColorContent);
 	gap:20px;
 	grid-auto-rows:min-content;
-	grid-template-columns:repeat(auto-fill, minmax(10rem, 1fr));
+	grid-template-columns:repeat(auto-fill, minmax(8rem, 1fr));
 	grid-column:1 / -1;
 
 	&.FetchInProgress {
