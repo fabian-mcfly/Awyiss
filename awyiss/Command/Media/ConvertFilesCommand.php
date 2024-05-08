@@ -183,6 +183,9 @@ class ConvertFilesCommand extends Command {
 			$li_index = imagecolorat($lo_pixel, 0, 0);
 			$la_colors = imagecolorsforindex($lo_pixel, $li_index);
 
+			// If alpha is full transparent, set it to FF
+			$la_colors['alpha'] = $la_colors['alpha'] === 0 ? 255 : $la_colors['alpha'];
+
 			$lo_file->averageColor = sprintf('%02X%02X%02X%02X', $la_colors['red'], $la_colors['green'], $la_colors['blue'], $la_colors['alpha']);
 
 			$ao_io->success('Status: Average color calculated successfully (#' . $lo_file->averageColor . ')');

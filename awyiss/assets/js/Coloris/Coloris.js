@@ -10,9 +10,70 @@
 
 export default class Coloris {
 	/**
+	 * @type {HTMLDivElement|null}
+	 */
+	static picker = null;
+
+	/**
 	 * @type {CanvasRenderingContext2D}
 	 */
-	ctx = document.createElement('canvas').getContext('2d');
+	static ctx = document.createElement('canvas').getContext('2d');
+
+	/**
+	 * @type {HTMLDivElement|null}
+	 */
+	static colorArea = null;
+
+	/**
+	 * @type {HTMLDivElement|null}
+	 */
+	static colorMarker = null;
+
+	/**
+	 * @type {HTMLDivElement|null}
+	 */
+	static colorPreview = null;
+
+	/**
+	 * @type {HTMLInputElement|null}
+	 */
+	static colorValue = null;
+
+	/**
+	 * @type {HTMLButtonElement|null}
+	 */
+	static clearButton = null;
+
+	/**
+	 * @type {HTMLButtonElement|null}
+	 */
+	static closeButton = null;
+
+	/**
+	 * @type {HTMLInputElement|null}
+	 */
+	static hueSlider = null;
+
+	/**
+	 * @type {HTMLDivElement|null}
+	 */
+	static hueMarker = null;
+
+	/**
+	 * @type {HTMLInputElement|null}
+	 */
+	static alphaSlider = null;
+
+	/**
+	 * @type {HTMLDivElement|null}
+	 */
+	static alphaMarker = null;
+
+	/**
+	 * @type {HTMLInputElement|null}
+	 */
+	static currentEl = null;
+
 
 	/**
 	 * @type {{r: number, g: number, b: number, h: number, s: number, v: number, a: number}}
@@ -23,66 +84,6 @@ export default class Coloris {
 	 * @type {HTMLElement|null}
 	 */
 	container = null;
-
-	/**
-	 * @type {HTMLDivElement|null}
-	 */
-	picker = null;
-
-	/**
-	 * @type {HTMLDivElement|null}
-	 */
-	colorArea = null;
-
-	/**
-	 * @type {HTMLDivElement|null}
-	 */
-	colorMarker = null;
-
-	/**
-	 * @type {HTMLDivElement|null}
-	 */
-	colorPreview = null;
-
-	/**
-	 * @type {HTMLInputElement|null}
-	 */
-	colorValue = null;
-
-	/**
-	 * @type {HTMLButtonElement|null}
-	 */
-	clearButton = null;
-
-	/**
-	 * @type {HTMLButtonElement|null}
-	 */
-	closeButton = null;
-
-	/**
-	 * @type {HTMLInputElement|null}
-	 */
-	hueSlider = null;
-
-	/**
-	 * @type {HTMLDivElement|null}
-	 */
-	hueMarker = null;
-
-	/**
-	 * @type {HTMLInputElement|null}
-	 */
-	alphaSlider = null;
-
-	/**
-	 * @type {HTMLDivElement|null}
-	 */
-	alphaMarker = null;
-
-	/**
-	 * @type {HTMLInputElement|null}
-	 */
-	currentEl = null;
 
 	/**
 	 * @type {string|null}
@@ -127,7 +128,7 @@ export default class Coloris {
 	/**
 	 * @type {Function}
 	 */
-	boundListeners;
+	boundListeners = this.moveMarker.bind(this);
 
 	settings = {
 		element: '[data-coloris]',
@@ -182,13 +183,7 @@ export default class Coloris {
 	 * Init the color picker.
 	 */
 	init() {
-		// Render the UI
-		this.container = undefined;
-
-		this.boundListeners = this.moveMarker.bind(this);
-
 		this.#buildPicker();
-		this.#initEvents();
 
 		// Bind the picker to the default selector
 		this.bindFields(this.settings.element);
@@ -218,7 +213,7 @@ export default class Coloris {
 					this.settings.element = options.element;
 					this.settings.wrap = options.wrap || this.settings.wrap;
 
-					if (this.picker) {
+					if (Coloris.picker) {
 						this.bindFields(options.element);
 
 						if (options.wrap !== false) {
@@ -230,8 +225,8 @@ export default class Coloris {
 				case 'parent':
 					this.container = options.parent instanceof HTMLElement ? options.parent : document.querySelector(options.parent);
 					if (this.container) {
-						if (this.picker) {
-							this.container.appendChild(this.picker);
+						if (Coloris.picker) {
+							this.container.appendChild(Coloris.picker);
 						}
 
 						this.settings.parent = options.parent;
@@ -254,8 +249,8 @@ export default class Coloris {
 					}
 
 					// Set the theme and color scheme
-					if (this.picker) {
-						this.picker.className = "clr-picker clr-" + this.settings.theme + " clr-" + this.settings.themeMode;
+					if (Coloris.picker) {
+						Coloris.picker.className = "clr-picker clr-" + this.settings.theme + " clr-" + this.settings.themeMode;
 					}
 
 					// Update the color picker's position if inline mode is in use
@@ -287,26 +282,26 @@ export default class Coloris {
 					break;
 				case 'swatches':
 					this.settings.swatches = options.swatches.slice();
-					if (this.picker) {
+					if (Coloris.picker) {
 						this.createSwatches(options);
 					}
 					break;
 				case 'swatchesOnly':
 					this.settings.swatchesOnly = !!options.swatchesOnly;
-					if (this.picker) {
-						this.picker.setAttribute('data-minimal', this.settings.swatchesOnly);
+					if (Coloris.picker) {
+						Coloris.picker.setAttribute('data-minimal', this.settings.swatchesOnly);
 					}
 					break;
 				case 'alpha':
 					this.settings.alpha = !!options.alpha;
-					if (this.picker) {
-						this.picker.setAttribute('data-alpha', this.settings.alpha);
+					if (Coloris.picker) {
+						Coloris.picker.setAttribute('data-alpha', this.settings.alpha);
 					}
 					break;
 				case 'inline':
 					this.settings.inline = !!options.inline;
-					if (this.picker) {
-						this.picker.setAttribute('data-inline', this.settings.inline);
+					if (Coloris.picker) {
+						Coloris.picker.setAttribute('data-inline', this.settings.inline);
 
 						if (this.settings.inline) {
 							const defaultColor = options.defaultColor || this.settings.defaultColor;
@@ -322,8 +317,8 @@ export default class Coloris {
 					if (typeof options.clearButton === 'object') {
 						if (options.clearButton.label) {
 							this.settings.clearLabel = options.clearButton.label;
-							if (this.clearButton) {
-								this.clearButton.innerHTML = this.settings.clearLabel;
+							if (Coloris.clearButton) {
+								Coloris.clearButton.innerHTML = this.settings.clearLabel;
 							}
 						}
 
@@ -331,35 +326,35 @@ export default class Coloris {
 					}
 
 					this.settings.clearButton = !!options.clearButton;
-					if (this.clearButton) {
-						this.clearButton.style.display = this.settings.clearButton ? 'block' : 'none';
+					if (Coloris.clearButton) {
+						Coloris.clearButton.style.display = this.settings.clearButton ? 'block' : 'none';
 					}
 					break;
 				case 'clearLabel':
 					this.settings.clearLabel = options.clearLabel;
-					if (this.clearButton) {
-						this.clearButton.innerHTML = this.settings.clearLabel;
+					if (Coloris.clearButton) {
+						Coloris.clearButton.innerHTML = this.settings.clearLabel;
 					}
 					break;
 				case 'closeButton':
 					this.settings.closeButton = !!options.closeButton;
 
 					if (this.settings.closeButton) {
-						if (this.picker) {
-							this.picker.insertBefore(this.closeButton, this.colorPreview);
+						if (Coloris.picker) {
+							Coloris.picker.insertBefore(Coloris.closeButton, Coloris.colorPreview);
 						}
 					}
 					else {
-						if (this.colorPreview) {
-							this.colorPreview.appendChild(this.closeButton);
+						if (Coloris.colorPreview) {
+							Coloris.colorPreview.appendChild(Coloris.closeButton);
 						}
 					}
 
 					break;
 				case 'closeLabel':
 					this.settings.closeLabel = options.closeLabel;
-					if (this.closeButton) {
-						this.closeButton.innerHTML = this.settings.closeLabel;
+					if (Coloris.closeButton) {
+						Coloris.closeButton.innerHTML = this.settings.closeLabel;
 					}
 					break;
 				case 'a11y':
@@ -375,18 +370,18 @@ export default class Coloris {
 						}
 					}
 
-					if (this.picker && update) {
+					if (Coloris.picker && update) {
 						const openLabel = this.getEl('clr-open-label');
 						const swatchLabel = this.getEl('clr-swatch-label');
 
 						openLabel.innerHTML = this.settings.a11y.open;
 						swatchLabel.innerHTML = this.settings.a11y.swatch;
-						this.closeButton.setAttribute('aria-label', this.settings.a11y.close);
-						this.clearButton.setAttribute('aria-label', this.settings.a11y.clear);
-						this.hueSlider.setAttribute('aria-label', this.settings.a11y.hueSlider);
-						this.alphaSlider.setAttribute('aria-label', this.settings.a11y.alphaSlider);
-						this.colorValue.setAttribute('aria-label', this.settings.a11y.input);
-						this.colorArea.setAttribute('aria-label', this.settings.a11y.instruction);
+						Coloris.closeButton.setAttribute('aria-label', this.settings.a11y.close);
+						Coloris.clearButton.setAttribute('aria-label', this.settings.a11y.clear);
+						Coloris.hueSlider.setAttribute('aria-label', this.settings.a11y.hueSlider);
+						Coloris.alphaSlider.setAttribute('aria-label', this.settings.a11y.alphaSlider);
+						Coloris.colorValue.setAttribute('aria-label', this.settings.a11y.input);
+						Coloris.colorArea.setAttribute('aria-label', this.settings.a11y.instruction);
 					}
 					break;
 				default:
@@ -444,22 +439,6 @@ export default class Coloris {
 		if (typeof selector === 'string' && typeof options === 'object') {
 			this.instances[selector] = options;
 			this.hasInstance = true;
-		}
-	}
-
-	/**
-	 * Remove a virtual instance.
-	 * @param {String} selector The CSS selector of the elements to which the instance is attached.
-	 */
-	removeVirtualInstance(selector) {
-		delete this.instances[selector];
-
-		if (Object.keys(this.instances).length === 0) {
-			this.hasInstance = false;
-
-			if (selector === this.currentInstanceId) {
-				this.resetVirtualInstance();
-			}
 		}
 	}
 
@@ -552,21 +531,21 @@ export default class Coloris {
 		// Apply any per-instance options first
 		this.attachVirtualInstance(event.target);
 
-		this.currentEl = event.target;
-		this.oldColor = this.currentEl.value;
+		Coloris.currentEl = event.target;
+		this.oldColor = Coloris.currentEl.value;
 		this.currentFormat = this.getColorFormatFromStr(this.oldColor);
-		this.picker.classList.add('clr-open');
+		Coloris.picker.classList.add('clr-open');
 
 		this.updatePickerPosition();
 		this.setColorFromStr(this.oldColor);
 
 		if (this.settings.focusInput || this.settings.selectInput) {
-			this.colorValue.focus({preventScroll: true});
-			this.colorValue.setSelectionRange(this.currentEl.selectionStart, this.currentEl.selectionEnd);
+			Coloris.colorValue.focus({preventScroll: true});
+			Coloris.colorValue.setSelectionRange(Coloris.currentEl.selectionStart, Coloris.currentEl.selectionEnd);
 		}
 
 		if (this.settings.selectInput) {
-			this.colorValue.select();
+			Coloris.colorValue.select();
 		}
 
 		// Always focus the first element when using keyboard navigation
@@ -575,7 +554,7 @@ export default class Coloris {
 		}
 
 		// Trigger an "open" event
-		this.currentEl.dispatchEvent(new Event('open', {bubbles: true}));
+		Coloris.currentEl.dispatchEvent(new Event('open', {bubbles: true}));
 	}
 
 	/**
@@ -584,8 +563,8 @@ export default class Coloris {
 	updatePickerPosition() {
 		const parent = this.container;
 		const scrollY = window.scrollY;
-		const pickerWidth = this.picker.offsetWidth;
-		const pickerHeight = this.picker.offsetHeight;
+		const pickerWidth = Coloris.picker.offsetWidth;
+		const pickerHeight = Coloris.picker.offsetHeight;
 		const reposition = {left: false, top: false};
 		let parentStyle, parentMarginTop, parentBorderTop;
 		let offset = {x: 0, y: 0};
@@ -600,7 +579,7 @@ export default class Coloris {
 		}
 
 		if (!this.settings.inline) {
-			const coords = this.currentEl.getBoundingClientRect();
+			const coords = Coloris.currentEl.getBoundingClientRect();
 			let left = coords.x;
 			let top = scrollY + coords.y + coords.height + this.settings.margin;
 
@@ -639,19 +618,19 @@ export default class Coloris {
 				}
 			}
 
-			this.picker.classList.toggle('clr-left', reposition.left);
-			this.picker.classList.toggle('clr-top', reposition.top);
-			this.picker.style.left = left + "px";
-			this.picker.style.top = top + "px";
-			offset.x += this.picker.offsetLeft;
-			offset.y += this.picker.offsetTop;
+			Coloris.picker.classList.toggle('clr-left', reposition.left);
+			Coloris.picker.classList.toggle('clr-top', reposition.top);
+			Coloris.picker.style.left = left + "px";
+			Coloris.picker.style.top = top + "px";
+			offset.x += Coloris.picker.offsetLeft;
+			offset.y += Coloris.picker.offsetTop;
 		}
 
-		this.colorAreaDims = {
-			width: this.colorArea.offsetWidth,
-			height: this.colorArea.offsetHeight,
-			x: this.colorArea.offsetLeft + offset.x,
-			y: this.colorArea.offsetTop + offset.y
+		Coloris.colorAreaDims = {
+			width: Coloris.colorArea.offsetWidth,
+			height: Coloris.colorArea.offsetHeight,
+			x: Coloris.colorArea.offsetLeft + offset.x,
+			y: Coloris.colorArea.offsetTop + offset.y
 		};
 
 	}
@@ -713,48 +692,50 @@ export default class Coloris {
 	 * @param {boolean} [revert] If true, revert the color to the original value.
 	 */
 	closePicker(revert) {
-		if (this.currentEl && !this.settings.inline) {
-			const prevEl = this.currentEl;
-
-			// Revert the color to the original value if needed
-			if (revert) {
-				// This will prevent the "change" event on the colorValue input to execute its handler
-				this.currentEl = undefined;
-
-				if (this.oldColor !== prevEl.value) {
-					prevEl.value = this.oldColor;
-
-					// Trigger an "input" event to force update the thumbnail next to the input field
-					prevEl.dispatchEvent(new Event('input', {bubbles: true}));
-				}
-			}
-
-			// Trigger a "change" event if needed
-			setTimeout(() => {
-				// Add this to the end of the event loop
-				if (this.oldColor !== prevEl.value) {
-					prevEl.dispatchEvent(new Event('change', {bubbles: true}));
-				}
-			});
-
-			// Hide the picker dialog
-			this.picker.classList.remove('clr-open');
-
-			// Reset any previously set per-instance options
-			if (this.hasInstance) {
-				this.resetVirtualInstance();
-			}
-
-			// Trigger a "close" event
-			prevEl.dispatchEvent(new Event('close', {bubbles: true}));
-
-			if (this.settings.focusInput) {
-				prevEl.focus({preventScroll: true});
-			}
-
-			// This essentially marks the picker as closed
-			this.currentEl = undefined;
+		if (!Coloris.currentEl || this.settings.inline) {
+			return;
 		}
+
+		const prevEl = Coloris.currentEl;
+
+		// Revert the color to the original value if needed
+		if (revert) {
+			// This will prevent the "change" event on the colorValue input to execute its handler
+			Coloris.currentEl = undefined;
+
+			if (this.oldColor !== prevEl.value) {
+				prevEl.value = this.oldColor;
+
+				// Trigger an "input" event to force update the thumbnail next to the input field
+				prevEl.dispatchEvent(new Event('input', {bubbles: true}));
+			}
+		}
+
+		// Trigger a "change" event if needed
+		setTimeout(() => {
+			// Add this to the end of the event loop
+			if (this.oldColor !== prevEl.value) {
+				prevEl.dispatchEvent(new Event('change', {bubbles: true}));
+			}
+		});
+
+		// Hide the picker dialog
+		Coloris.picker.classList.remove('clr-open');
+
+		// Reset any previously set per-instance options
+		if (this.hasInstance) {
+			this.resetVirtualInstance();
+		}
+
+		// Trigger a "close" event
+		prevEl.dispatchEvent(new Event('close', {bubbles: true}));
+
+		if (this.settings.focusInput) {
+			prevEl.focus({preventScroll: true});
+		}
+
+		// This essentially marks the picker as closed
+		Coloris.currentEl = undefined;
 	}
 
 	/**
@@ -769,15 +750,15 @@ export default class Coloris {
 		this.updateColor(rgba, hsva);
 
 		// Update the UI
-		this.hueSlider.value = '' + hsva.h;
-		this.picker.style.color = "hsl(" + hsva.h + ", 100%, 50%)";
-		this.hueMarker.style.left = hsva.h / 360 * 100 + "%";
+		Coloris.hueSlider.value = '' + hsva.h;
+		Coloris.picker.style.color = "hsl(" + hsva.h + ", 100%, 50%)";
+		Coloris.hueMarker.style.left = hsva.h / 360 * 100 + "%";
 
-		this.colorMarker.style.left = this.colorAreaDims.width * hsva.s / 100 + "px";
-		this.colorMarker.style.top = this.colorAreaDims.height - this.colorAreaDims.height * hsva.v / 100 + "px";
+		Coloris.colorMarker.style.left = Coloris.colorAreaDims.width * hsva.s / 100 + "px";
+		Coloris.colorMarker.style.top = Coloris.colorAreaDims.height - Coloris.colorAreaDims.height * hsva.v / 100 + "px";
 
-		this.alphaSlider.value = '' + (hsva.a * 100);
-		this.alphaMarker.style.left = hsva.a * 100 + "%";
+		Coloris.alphaSlider.value = '' + (hsva.a * 100);
+		Coloris.alphaMarker.style.left = hsva.a * 100 + "%";
 	}
 
 	/**
@@ -800,18 +781,18 @@ export default class Coloris {
 	 * @param {string} [color] Color value to override the active color.
 	 */
 	pickColor(color) {
-		color = color !== undefined ? color : this.colorValue.value;
+		color = color !== undefined ? color : Coloris.colorValue.value;
 
-		if (this.currentEl) {
-			this.currentEl.value = color;
-			this.currentEl.dispatchEvent(new Event('input', {bubbles: true}));
+		if (Coloris.currentEl) {
+			Coloris.currentEl.value = color;
+			Coloris.currentEl.dispatchEvent(new Event('input', {bubbles: true}));
 		}
 
 		if (this.settings.onChange) {
-			this.settings.onChange.call(window, color, this.currentEl);
+			this.settings.onChange.call(window, color, Coloris.currentEl);
 		}
 
-		document.dispatchEvent(new CustomEvent('coloris:pick', {detail: {color: color, currentEl: this.currentEl}}));
+		document.dispatchEvent(new CustomEvent('coloris:pick', {detail: {color: color, currentEl: Coloris.currentEl}}));
 	}
 
 	/**
@@ -821,10 +802,10 @@ export default class Coloris {
 	 */
 	setColorAtPosition(x, y) {
 		const hsva = {
-			h: this.hueSlider.value * 1,
-			s: x / this.colorAreaDims.width * 100,
-			v: 100 - y / this.colorAreaDims.height * 100,
-			a: this.alphaSlider.value / 100
+			h: Coloris.hueSlider.value * 1,
+			s: x / Coloris.colorAreaDims.width * 100,
+			v: 100 - y / Coloris.colorAreaDims.height * 100,
+			a: Coloris.alphaSlider.value / 100
 		};
 
 		const rgba = this.HSVAtoRGBA(hsva);
@@ -846,7 +827,7 @@ export default class Coloris {
 		value = value.toFixed(1) * 1;
 		label = label.replace('{s}', '' + saturation);
 		label = label.replace('{v}', '' + value);
-		this.colorMarker.setAttribute('aria-label', label);
+		Coloris.colorMarker.setAttribute('aria-label', label);
 	}
 
 	//
@@ -869,8 +850,8 @@ export default class Coloris {
 	 */
 	moveMarker(event) {
 		const pointer = this.getPointerPosition(event);
-		const x = pointer.pageX - this.colorAreaDims.x;
-		let y = pointer.pageY - this.colorAreaDims.y;
+		const x = pointer.pageX - Coloris.colorAreaDims.x;
+		let y = pointer.pageY - Coloris.colorAreaDims.y;
 
 		if (this.container) {
 			y += this.container.scrollTop;
@@ -889,8 +870,8 @@ export default class Coloris {
 	 * @param {number} offsetY The vertical amount to move.
 	 */
 	moveMarkerOnKeydown(offsetX, offsetY) {
-		const x = this.colorMarker.style.left.replace('px', '') * 1 + offsetX;
-		const y = this.colorMarker.style.top.replace('px', '') * 1 + offsetY;
+		const x = Coloris.colorMarker.style.left.replace('px', '') * 1 + offsetX;
+		const y = Coloris.colorMarker.style.top.replace('px', '') * 1 + offsetY;
 
 		this.setMarkerPosition(x, y);
 	}
@@ -902,18 +883,18 @@ export default class Coloris {
 	 */
 	setMarkerPosition(x, y) {
 		// Make sure the marker doesn't go out of bounds
-		x = x < 0 ? 0 : x > this.colorAreaDims.width ? this.colorAreaDims.width : x;
-		y = y < 0 ? 0 : y > this.colorAreaDims.height ? this.colorAreaDims.height : y;
+		x = x < 0 ? 0 : x > Coloris.colorAreaDims.width ? Coloris.colorAreaDims.width : x;
+		y = y < 0 ? 0 : y > Coloris.colorAreaDims.height ? Coloris.colorAreaDims.height : y;
 
 		// Set the position
-		this.colorMarker.style.left = x + "px";
-		this.colorMarker.style.top = y + "px";
+		Coloris.colorMarker.style.left = x + "px";
+		Coloris.colorMarker.style.top = y + "px";
 
 		// Update the color
 		this.setColorAtPosition(x, y);
 
 		// Make sure the marker is focused
-		this.colorMarker.focus();
+		Coloris.colorMarker.focus();
 	}
 
 	/**
@@ -935,19 +916,19 @@ export default class Coloris {
 		const hex = this.RGBAToHex(this.currentColor);
 		const opaqueHex = hex.substring(0, 7);
 
-		this.colorMarker.style.color = opaqueHex;
+		Coloris.colorMarker.style.color = opaqueHex;
 		// noinspection JSUnresolvedReference
-		this.alphaMarker.parentNode.style.color = opaqueHex;
-		this.alphaMarker.style.color = hex;
-		this.colorPreview.style.color = hex;
+		Coloris.alphaMarker.parentNode.style.color = opaqueHex;
+		Coloris.alphaMarker.style.color = hex;
+		Coloris.colorPreview.style.color = hex;
 
 		// Force repaint the color and alpha gradients as a workaround for a Google Chrome bug
-		this.colorArea.style.display = 'none';
-		this.colorArea.offsetHeight;
-		this.colorArea.style.display = '';
-		this.alphaMarker.nextElementSibling.style.display = 'none';
-		this.alphaMarker.nextElementSibling.offsetHeight;
-		this.alphaMarker.nextElementSibling.style.display = '';
+		Coloris.colorArea.style.display = 'none';
+		Coloris.colorArea.offsetHeight;
+		Coloris.colorArea.style.display = '';
+		Coloris.alphaMarker.nextElementSibling.style.display = 'none';
+		Coloris.alphaMarker.nextElementSibling.offsetHeight;
+		Coloris.alphaMarker.nextElementSibling.style.display = '';
 
 		if (format === 'mixed') {
 			format = this.currentColor.a === 1 ? 'hex' : 'rgb';
@@ -958,13 +939,13 @@ export default class Coloris {
 
 		switch (format) {
 			case 'hex':
-				this.colorValue.value = hex;
+				Coloris.colorValue.value = hex;
 				break;
 			case 'rgb':
-				this.colorValue.value = this.RGBAToStr(this.currentColor);
+				Coloris.colorValue.value = this.RGBAToStr(this.currentColor);
 				break;
 			case 'hsl':
-				this.colorValue.value = this.HSLAToStr(this.HSVAtoHSLA(this.currentColor));
+				Coloris.colorValue.value = this.HSLAToStr(this.HSVAtoHSLA(this.currentColor));
 				break;
 		}
 
@@ -977,12 +958,12 @@ export default class Coloris {
 	 * Set the hue when its slider is moved.
 	 */
 	setHue() {
-		const hue = this.hueSlider.value * 1;
-		const x = this.colorMarker.style.left.replace('px', '') * 1;
-		const y = this.colorMarker.style.top.replace('px', '') * 1;
+		const hue = Coloris.hueSlider.value * 1;
+		const x = Coloris.colorMarker.style.left.replace('px', '') * 1;
+		const y = Coloris.colorMarker.style.top.replace('px', '') * 1;
 
-		this.picker.style.color = "hsl(" + hue + ", 100%, 50%)";
-		this.hueMarker.style.left = hue / 360 * 100 + "%";
+		Coloris.picker.style.color = "hsl(" + hue + ", 100%, 50%)";
+		Coloris.hueMarker.style.left = hue / 360 * 100 + "%";
 
 		this.setColorAtPosition(x, y);
 	}
@@ -991,9 +972,9 @@ export default class Coloris {
 	 * Set the alpha when its slider is moved.
 	 */
 	setAlpha() {
-		const alpha = this.alphaSlider.value / 100;
+		const alpha = Coloris.alphaSlider.value / 100;
 
-		this.alphaMarker.style.left = alpha * 100 + "%";
+		Coloris.alphaMarker.style.left = alpha * 100 + "%";
 		this.updateColor({a: alpha});
 		this.pickColor();
 	}
@@ -1104,11 +1085,11 @@ export default class Coloris {
 		let match, rgba;
 
 		// Default to black for invalid color strings
-		this.ctx.fillStyle = '#000000';
+		Coloris.ctx.fillStyle = '#000000';
 
 		// Use canvas to convert the string to a valid color string
-		this.ctx.fillStyle = str;
-		match = regex.exec(this.ctx.fillStyle);
+		Coloris.ctx.fillStyle = str;
+		match = regex.exec(Coloris.ctx.fillStyle);
 
 		if (match) {
 			rgba = {
@@ -1119,7 +1100,7 @@ export default class Coloris {
 			};
 		}
 		else {
-			match = this.ctx.fillStyle.replace('#', '').match(/.{2}/g).map(function (h) {
+			match = Coloris.ctx.fillStyle.replace('#', '').match(/.{2}/g).map(function (h) {
 				return parseInt(h, 16);
 			});
 			rgba = {
@@ -1201,7 +1182,7 @@ export default class Coloris {
 	 * @return {array} The list of focusable DOM elemnts.
 	 */
 	getFocusableElements() {
-		const controls = Array.from(this.picker.querySelectorAll('input, button'));
+		const controls = Array.from(Coloris.picker.querySelectorAll('input, button'));
 
 		return controls.filter(function (node) {
 			return !!node.offsetWidth;
@@ -1242,24 +1223,24 @@ export default class Coloris {
 	}
 
 	#buildPicker() {
-		const picker = document.querySelector('#clr-picker');
+		const picker = this.getEl('clr-picker');
 
 		if (picker) {
-			this.picker = picker;
+			Coloris.picker = picker;
 			return;
 		}
 
-		this.picker = document.createElement('div');
-		this.picker.setAttribute('id', 'clr-picker');
+		Coloris.picker = document.createElement('div');
+		Coloris.picker.setAttribute('id', 'clr-picker');
 
-		this.picker.className = `clr-picker clr-${this.settings.theme} clr-${this.settings.themeMode}`;
+		Coloris.picker.className = `clr-picker clr-${this.settings.theme} clr-${this.settings.themeMode}`;
 
-		this.picker.setAttribute('data-minimal', this.settings.swatchesOnly);
-		this.picker.setAttribute('data-alpha', this.settings.alpha);
-		this.picker.setAttribute('data-inline', this.settings.inline);
+		Coloris.picker.setAttribute('data-minimal', this.settings.swatchesOnly);
+		Coloris.picker.setAttribute('data-alpha', this.settings.alpha);
+		Coloris.picker.setAttribute('data-inline', this.settings.inline);
 
 		// phpcs:disable
-		this.picker.innerHTML = `
+		Coloris.picker.innerHTML = `
 			<input id="clr-color-value" name="clr-color-value" class="clr-color" type="text" value="" spellcheck="false" aria-label="${this.settings.a11y.input}">
 			<div id="clr-color-area" class="clr-gradient" role="application" aria-label="${this.settings.a11y.instruction}">
 				<div id="clr-color-marker" class="clr-marker" tabindex="0"></div>
@@ -1296,23 +1277,23 @@ export default class Coloris {
 		// phpcs:enable
 
 		if (this.container) {
-			this.container.appendChild(this.picker);
+			this.container.appendChild(Coloris.picker);
 		}
 		else {
 			// Append the color picker to the DOM
-			document.body.appendChild(this.picker);
+			document.body.appendChild(Coloris.picker);
 		}
 
 		if (this.settings.swatches) {
 			this.createSwatches(this.settings);
 		}
 
-		this.addListener(this.picker, 'mousedown', event => {
-			this.picker.classList.remove('clr-keyboard-nav');
+		this.addListener(Coloris.picker, 'mousedown', event => {
+			Coloris.picker.classList.remove('clr-keyboard-nav');
 			event.stopPropagation();
 		});
 
-		this.addListener(this.picker, 'click', '.clr-swatches button', event => {
+		this.addListener(Coloris.picker, 'click', '.clr-swatches button', event => {
 			this.setColorFromStr(event.target.textContent);
 			this.pickColor();
 
@@ -1322,9 +1303,11 @@ export default class Coloris {
 		});
 
 		// Reference the UI elements
-		this.alphaMarker = this.getEl('clr-alpha-marker');
-		this.colorPreview = this.getEl('clr-color-preview');
-		this.hueMarker = this.getEl('clr-hue-marker');
+		Coloris.alphaMarker = this.getEl('clr-alpha-marker');
+		Coloris.colorPreview = this.getEl('clr-color-preview');
+		Coloris.hueMarker = this.getEl('clr-hue-marker');
+
+		this.#initEvents();
 	}
 
 	/**
@@ -1341,7 +1324,7 @@ export default class Coloris {
 
 		this.addListener(document, 'mousedown', () => {
 			this.keyboardNav = false;
-			this.picker.classList.remove('clr-keyboard-nav');
+			Coloris.picker.classList.remove('clr-keyboard-nav');
 			this.closePicker();
 		});
 
@@ -1358,7 +1341,7 @@ export default class Coloris {
 			}
 			else if (navKeys.includes(key)) {
 				this.keyboardNav = true;
-				this.picker.classList.add('clr-keyboard-nav');
+				Coloris.picker.classList.add('clr-keyboard-nav');
 			}
 
 			// Trap the focus within the color picker while it's open
@@ -1407,21 +1390,21 @@ export default class Coloris {
 	 * Init the events for the alpha slider
 	 */
 	#initAlphaSliderEvents() {
-		this.alphaSlider = this.getEl('clr-alpha-slider');
+		Coloris.alphaSlider = this.getEl('clr-alpha-slider');
 
-		this.addListener(this.alphaSlider, 'input', this.setAlpha.bind(this));
+		this.addListener(Coloris.alphaSlider, 'input', this.setAlpha.bind(this));
 	}
 
 	/**
 	 * Init the events for the clear button
 	 */
 	#initClearButtonEvents() {
-		this.clearButton = this.getEl('clr-clear');
+		Coloris.clearButton = this.getEl('clr-clear');
 
-		this.clearButton.style.display = this.settings.clearButton ? 'block' : 'none';
-		this.clearButton.innerHTML = this.settings.clearLabel;
+		Coloris.clearButton.style.display = this.settings.clearButton ? 'block' : 'none';
+		Coloris.clearButton.innerHTML = this.settings.clearLabel;
 
-		this.addListener(this.clearButton, 'click', () => {
+		this.addListener(Coloris.clearButton, 'click', () => {
 			this.pickColor('');
 			this.closePicker();
 		});
@@ -1431,18 +1414,18 @@ export default class Coloris {
 	 * Init the events for the close button
 	 */
 	#initCloseButtonEvents() {
-		this.closeButton = this.getEl('clr-close');
+		Coloris.closeButton = this.getEl('clr-close');
 
-		this.closeButton.innerHTML = this.settings.closeLabel;
+		Coloris.closeButton.innerHTML = this.settings.closeLabel;
 
 		if (this.settings.closeButton) {
-			this.picker.insertBefore(this.closeButton, this.colorPreview);
+			Coloris.picker.insertBefore(Coloris.closeButton, Coloris.colorPreview);
 		}
 		else {
-			this.colorPreview.appendChild(this.closeButton);
+			Coloris.colorPreview?.appendChild(Coloris.closeButton);
 		}
 
-		this.addListener(this.closeButton, 'click', () => {
+		this.addListener(Coloris.closeButton, 'click', () => {
 			this.pickColor();
 			this.closePicker();
 		});
@@ -1452,38 +1435,38 @@ export default class Coloris {
 	 * Init events for the color area
 	 */
 	#initColorAreaEvents() {
-		this.colorArea = this.getEl('clr-color-area');
+		Coloris.colorArea = this.getEl('clr-color-area');
 
-		this.addListener(this.colorArea, 'mousedown', () => {
+		this.addListener(Coloris.colorArea, 'mousedown', () => {
 			this.addListener(document, 'mousemove', this.boundListeners);
 		});
 
-		this.addListener(this.colorArea, 'contextmenu', event => {
+		this.addListener(Coloris.colorArea, 'contextmenu', event => {
 			event.preventDefault();
 		});
 
-		this.addListener(this.colorArea, 'touchstart', () => {
+		this.addListener(Coloris.colorArea, 'touchstart', () => {
 			document.addEventListener('touchmove', this.boundListeners, {passive: false});
 		});
 
-		this.addListener(this.colorArea, 'click', this.moveMarker.bind(this));
+		this.addListener(Coloris.colorArea, 'click', this.moveMarker.bind(this));
 	}
 
 	/**
 	 * Init the events for the marker
 	 */
 	#initColorMarkerEvents() {
-		this.colorMarker = this.getEl('clr-color-marker');
+		Coloris.colorMarker = this.getEl('clr-color-marker');
 
-		this.addListener(this.colorMarker, 'mousedown', () => {
+		this.addListener(Coloris.colorMarker, 'mousedown', () => {
 			this.addListener(document, 'mousemove', this.boundListeners);
 		});
 
-		this.addListener(this.colorMarker, 'touchstart', () => {
+		this.addListener(Coloris.colorMarker, 'touchstart', () => {
 			document.addEventListener('touchmove', this.boundListeners, {passive: false});
 		});
 
-		this.addListener(this.colorMarker, 'keydown', event => {
+		this.addListener(Coloris.colorMarker, 'keydown', event => {
 			const movements = {
 				ArrowUp: [0, -1],
 				ArrowDown: [0, 1],
@@ -1502,12 +1485,12 @@ export default class Coloris {
 	 * Init the events for the color value input
 	 */
 	#initColorValueEvents() {
-		this.colorValue = this.getEl('clr-color-value');
+		Coloris.colorValue = this.getEl('clr-color-value');
 
-		this.addListener(this.colorValue, 'change', () => {
-			const value = this.colorValue.value;
+		this.addListener(Coloris.colorValue, 'change', () => {
+			const value = Coloris.colorValue.value;
 
-			if (this.currentEl || this.settings.inline) {
+			if (Coloris.currentEl || this.settings.inline) {
 				const color = value === '' ? value : this.setColorFromStr(value);
 				this.pickColor(color);
 			}
@@ -1518,8 +1501,8 @@ export default class Coloris {
 	 * Init the events for the hue slider
 	 */
 	#initHueSliderEvents() {
-		this.hueSlider = this.getEl('clr-hue-slider');
+		Coloris.hueSlider = this.getEl('clr-hue-slider');
 
-		this.addListener(this.hueSlider, 'input', this.setHue.bind(this));
+		this.addListener(Coloris.hueSlider, 'input', this.setHue.bind(this));
 	}
 }
