@@ -65,6 +65,11 @@ export default class FieldsetManager {
 	 * Checks if each fieldset has visible children and, if not, adds the class 'Hidden' to them.
 	 */
 	checkVisibleChildren(fieldset) {
+		// If the fieldset is not hideable, bail early
+		if (fieldset.dataset.hideable === 'false') {
+			return;
+		}
+
 		const visibleChildren = Array.from(fieldset.children).some(child => child.offsetParent !== null && child.tagName.toLowerCase() !== 'legend');
 		if (!visibleChildren) {
 			fieldset.classList.add('Hidden');
@@ -109,6 +114,11 @@ export default class FieldsetManager {
 			// Check if the node is an element node
 			if (node.nodeType !== Node.ELEMENT_NODE) {
 				return;
+			}
+
+			// Check if the node is a fieldset
+			if (node.tagName.toLowerCase() === 'fieldset') {
+				this.checkVisibleChildren(node);
 			}
 
 			// Select all fieldsets within the node
@@ -203,6 +213,9 @@ export default class FieldsetManager {
 			}
 		});
 		fieldset.dispatchEvent(event);
+
+		// Trigger a resize event to update the layout in case the fieldset contains elements that listen to resize events
+		window.dispatchEvent(new Event('resize'));
 
 		localStorage.setItem('fieldsetStatuses', JSON.stringify(this.fieldsetStatuses));
 
