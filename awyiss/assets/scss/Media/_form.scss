@@ -6,11 +6,160 @@
 	}
 }
 
-#OverlayForm {
-	.Media.Form {
-		.FormInputName-MediaFolderId,
-		.FormInputName-SystemOrder,
-		.FormInputName-File {
+.Media.Form {
+	.Fieldset-Crop {
+		display:block;
+
+		&:not(:has(.CropArea)) {
+			padding-top:100px;
+			text-align:center;
+
+			&::after {
+				content:'';
+				background-image:url($relativePath + 'img/preloader-dots.gif');
+				background-position:center;
+				background-repeat:no-repeat;
+				position:absolute;
+				inset:0 0 40px 0;
+				opacity:1;
+			}
+		}
+
+		p {
+			position:relative;
+			z-index:1;
+		}
+
+		.Button-Fullscreen {
+			font-size:0;
+			line-height:0;
+			position:absolute;
+			top:20px;
+			right:20px;
+
+			&::after {
+				@include la('\f065', 24px);
+			}
+		}
+	}
+
+	.CropArea {
+		background-color:var(--backgroundColorContent);
+		width:100%;
+		aspect-ratio:16 / 9;
+		max-height:calc(100dvh - 200px);
+		background-image:repeating-conic-gradient(var(--colorLight) 0deg 25%, transparent 0deg 50%);
+		background-size:20px 20px;
+		grid-column:1 / -1;
+		position:relative;
+
+		.🌚 & {
+			--colorLight:var(--colorBackgroundContentDarkMode-Lightened-10);
+		}
+
+		&.ResizeInProgress {
+			.Measurements {
+				pointer-events:none;
+			}
+		}
+
+		canvas {
+			display:block;
+			position:relative;
+		}
+
+		.Measurements {
+			display:flex;
+			width:250px;
+			height:26px;
+			margin:0 auto;
+			padding-left:20px;
+			border-radius:5px;
+			background-color:var(--colorDark);
+			color:var(--colorBright);
+			position:absolute;
+			right:0;
+			bottom:10px;
+			left:0;
+			z-index:2;
+			flex-wrap:wrap;
+
+			&::before {
+				@include la('\f565', 16px);
+				line-height:26px;
+				position:absolute;
+				top:0;
+				left:10px;
+				z-index:1;
+				pointer-events:none;
+			}
+
+			&::after {
+				@include la('\f31e', 16px);
+				line-height:26px;
+				position:absolute;
+				top:0;
+				left:135px;
+				z-index:1;
+				pointer-events:none;
+			}
+		}
+
+		.FormInput {
+			margin-bottom:0;
+
+			&.FormInputName-Crop\[width\],
+			&.FormInputName-Crop\[resizeWidth\] {
+				position:relative;
+
+				&::after {
+					content:'x';
+					color:var(--colorBright);
+					font-size:12px;
+					line-height:20px;
+					text-align:center;
+					position:absolute;
+					top:2px;
+					right:-3px;
+					pointer-events:none;
+				}
+			}
+
+			&.FormInputName-Crop\[resizeWidth\] {
+				margin-left:auto;
+			}
+
+			.Label {
+				display:none;
+			}
+
+			input {
+				width:50px;
+				height:26px;
+				padding:0 0 2px 0;
+				border:0 none;
+				background-image:none;
+				background-color:transparent;
+				color:inherit;
+				font-size:12px;
+				line-height:12px;
+				text-align:center;
+				opacity:1;
+				-webkit-appearance:none;
+				-moz-appearance:textfield;
+				appearance:textfield;
+
+				&:focus {
+					box-shadow:none;
+				}
+			}
+		}
+	}
+
+	.FormInputName-MediaFolderId,
+	.FormInputName-SystemOrder,
+	.FormInputName-File {
+		#OverlayForm & {
 			display:none;
 		}
 	}

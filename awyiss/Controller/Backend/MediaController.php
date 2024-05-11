@@ -18,6 +18,7 @@ use Cake\Http\Response;
 use Cake\ORM\Query\SelectQuery;
 use Cake\Utility\Inflector;
 use InvalidArgumentException;
+use Laminas\Diactoros\UploadedFile;
 
 
 /**
@@ -146,7 +147,7 @@ class MediaController extends Controller {
 				}
 			}
 
-			if ($this->request->is('ajax')) {
+			if ($this->request->is('ajax') && !$this->request->getData('reload_form')) {
 				$ls_errorMessage = null;
 				if ($lo_media->hasErrors()) {
 					$la_errors = $lo_media->getErrors();
@@ -190,6 +191,7 @@ class MediaController extends Controller {
 		$this->set([
 			'media' => $lo_media,
 			'languageRealm' => Awyiss::REALM_FRONTEND,
+			'ProcessStatus' => ProcessStatus::class,
 		]);
 	}
 
@@ -223,7 +225,7 @@ class MediaController extends Controller {
 			}
 		}
 
-		if ($this->request->is(['patch', 'post', 'put']) && $this->request->is('ajax')) {
+		if ($this->request->is(['patch', 'post', 'put']) && $this->request->is('ajax') && !$this->request->getData('reload_form')) {
 			$ls_errorMessage = null;
 			if ($lo_media->hasErrors()) {
 				$la_errors = $lo_media->getErrors();
@@ -265,6 +267,8 @@ class MediaController extends Controller {
 		$this->set([
 			'media' => $lo_media,
 			'languageRealm' => Awyiss::REALM_FRONTEND,
+			'ProcessStatus' => ProcessStatus::class,
+			'ResizeStrategy' => ResizeStrategy::class,
 		]);
 	}
 
@@ -531,6 +535,7 @@ class MediaController extends Controller {
 	 * @param string $as_method
 	 * @param bool $ab_isAjax
 	 * @return void
+	 * @throws \Exception
 	 */
 	protected function save(Media $ao_media, string $as_method = 'add', bool $ab_isAjax = false): void {
 		$la_associated = [];
@@ -562,39 +567,17 @@ class MediaController extends Controller {
 			$la_data['name'] .= '.' . $ls_extension;
 		}
 
+		$la_data['crop'] = array_filter($la_data['crop'] ?? [], 'is_numeric');
+		if (count($la_data['crop']) !== 6 || $this->request->getData('reload_form')) {
+			$la_data['crop'] = null;
+		}
+
 		$this->Media->patchEntity($ao_media, $la_data, [
 			'associated' => $la_associated,
 			'validate' => !$this->request->getData('reload_form'),
 		]);
 
-		if (
-			$as_method === 'edit' &&
-			(
-				$this->request->is('ajax') ||
-				!$this->Authorization->isAccessible('create')
-			)
-		) {
-			$ao_media->file = null;
-
-			if ($ao_media->originalExtension && !str_ends_with($ao_media->name, $ao_media->originalExtension)) {
-				$ao_media->name .= '.' . $ao_media->originalExtension;
-			}
-		}
-		elseif (
-			!$lo_uploadedFile ||
-			$lo_uploadedFile->getError() === UPLOAD_ERR_INI_SIZE ||
-			$lo_uploadedFile->getError() === UPLOAD_ERR_FORM_SIZE
-		) {
-			$ao_media->setError(
-				'file',
-				__df(
-					strtolower($this->getName()),
-					'validation',
-					'error_media_file_size_within_limit'
-				),
-				true
-			);
-		}
+		$this->ensureValidFile($as_method, $ao_media, $lo_uploadedFile);
 
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
 			$la_options = [];
@@ -734,5 +717,44 @@ class MediaController extends Controller {
 		}
 
 		return $this->redirect(['action' => 'overview']);
+	}
+
+
+	/**
+	 * @param string $as_method
+	 * @param \Awyiss\Model\Entity\Media $ao_media
+	 * @param \Laminas\Diactoros\UploadedFile|null $ao_uploadedFile
+	 * @return void
+	 * @throws \Exception
+	 */
+	protected function ensureValidFile(string $as_method, Media $ao_media, ?UploadedFile $ao_uploadedFile): void {
+		if (
+			$as_method === 'edit' &&
+			(
+				$this->request->is('ajax') ||
+				!$this->Authorization->isAccessible('create')
+			)
+		) {
+			$ao_media->file = null;
+
+			if ($ao_media->originalExtension && !str_ends_with($ao_media->name, $ao_media->originalExtension)) {
+				$ao_media->name .= '.' . $ao_media->originalExtension;
+			}
+		}
+		elseif (
+			!$ao_uploadedFile ||
+			$ao_uploadedFile->getError() === UPLOAD_ERR_INI_SIZE ||
+			$ao_uploadedFile->getError() === UPLOAD_ERR_FORM_SIZE
+		) {
+			$ao_media->setError(
+				'file',
+				__df(
+					strtolower($this->getName()),
+					'validation',
+					'error_media_file_size_within_limit'
+				),
+				true
+			);
+		}
 	}
 }

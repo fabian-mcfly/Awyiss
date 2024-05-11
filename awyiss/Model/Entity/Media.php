@@ -25,6 +25,7 @@ use Cake\Utility\Text;
  * @property string $averageColor
  * @property \Awyiss\Model\Enum\ProcessStatus|null $preview
  * @property \Awyiss\Model\Enum\ProcessStatus|null $webp
+ * @property array|null $crop
  * @property int $systemOrder
  * @property int|null $createdBy
  * @property \Cake\I18n\DateTime|null $createdOn
@@ -70,6 +71,7 @@ class Media extends Entity {
 		'averageColor' => true,
 		'preview' => true,
 		'webp' => true,
+		'crop' => true,
 		'systemOrder' => true,
 		'file' => true,
 	];

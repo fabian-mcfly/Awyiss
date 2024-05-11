@@ -154,6 +154,7 @@ class ResizedImageManager {
 		ResizeStrategy $strategy = ResizeStrategy::Contain,
 		string $format = 'webp'
 	): ?MediaResizedImage {
+		$this->addMediaItem($media);
 		$this->fetchMissingResizedRecords();
 
 		// Throw an error if both width and height are null
@@ -193,7 +194,7 @@ class ResizedImageManager {
 
 		$lo_resizedImage = static::$mediaResizedImagesTable->newEntityFromMedia($media, $width, $height, $strategy, $format);
 
-		if (!static::$mediaResizedImagesTable->save($lo_resizedImage)) {
+		if (!static::$mediaResizedImagesTable->save($lo_resizedImage, ['associated' => false])) {
 			return null;
 		}
 

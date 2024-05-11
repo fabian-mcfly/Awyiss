@@ -70,6 +70,82 @@
 		</fieldset>
 	{% endblock %}
 
+	{% block fieldsetCrop %}
+		{% if (media.previewPath and media.preview == enum(ProcessStatus).Success) or media.preview == enum(ProcessStatus).NotRequired %}
+			{% set resizedMediaItem = MediaHelper.resize(media, 2560, 2560, enum(ResizeStrategy).Contain) %}
+
+			{% set imagePath = resizedMediaItem and resizedMediaItem.status == enum(ProcessStatus).Success ? resizedMediaItem.path : (media.previewPath ?? media.path) %}
+
+			<fieldset class="Fieldset-Crop" data-hideable="false">
+				<legend>{{ __('fieldset_crop') }}</legend>
+
+				{% block fieldsetCropInner %}
+					{% if (media.crop) %}
+						<p>{{ __('cropping_in_progress') }}</p>
+					{% else %}
+						<div class="CropArea"
+							data-image-src="{{ imagePath }}?t={{ (media.changedOn ?? media.createdOn).timestamp }}"
+							data-image-width="{{ media.width }}"
+							data-image-height="{{ media.height }}">
+							{% block formControlCropMeasurements %}
+								<div class="Measurements">
+									{% block formControlCropWidth %}
+										{{ FormHelper.control('crop[width]', {
+											label: __('crop_width'),
+											max: media.width,
+											type: 'number',
+											val: '',
+										}) }}
+									{% endblock %}
+
+									{% block formControlCropHeight %}
+										{{ FormHelper.control('crop[height]', {
+											label: __('crop_height'),
+											max: media.height,
+											type: 'number',
+											val: '',
+										}) }}
+									{% endblock %}
+									{% block formControlResizeWidth %}
+										{{ FormHelper.control('crop[resize_width]', {
+											label: __('resize_width'),
+											max: media.width,
+											type: 'number',
+											val: '',
+										}) }}
+									{% endblock %}
+
+									{% block formControlResizeHeight %}
+										{{ FormHelper.control('crop[resize_height]', {
+											label: __('resize_height'),
+											max: media.height,
+											type: 'number',
+											val: '',
+										}) }}
+									{% endblock %}
+
+									{% block formControlCropX %}
+										{{ FormHelper.control('crop[x]', {
+											type: 'hidden',
+											val: '',
+										}) }}
+									{% endblock %}
+
+									{% block formControlCropY %}
+										{{ FormHelper.control('crop[y]', {
+											type: 'hidden',
+											val: '',
+										}) }}
+									{% endblock %}
+								</div>
+							{% endblock %}
+						</div>
+					{% endif %}
+				{% endblock %}
+			</fieldset>
+		{% endif %}
+	{% endblock %}
+
 	{% block fieldsetContent %}
 		<fieldset class="Fieldset-Content">
 			<legend>{{ __('fieldset_content') }}</legend>

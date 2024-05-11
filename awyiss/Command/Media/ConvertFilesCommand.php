@@ -68,6 +68,18 @@ class ConvertFilesCommand extends Command {
 		while (time() - $li_startTime < 60) {
 			$li_totalFiles = 0;
 
+			$lo_files = $this->fetchCropFiles((int)$ao_args->getOption('limit'));
+
+			if ($lo_files->count()) {
+				$li_totalFiles += $lo_files->count();
+
+				$li_result = $this->cropImages($lo_files, $ao_io);
+				if ($li_result !== static::CODE_SUCCESS) {
+					$lb_errorOccurred = true;
+					break;
+				}
+			}
+
 			$lo_files = $this->fetchNonImageFiles(
 				(int)$ao_args->getOption('limit'),
 				$ao_args->getOption('retry-failed'),
@@ -445,6 +457,75 @@ class ConvertFilesCommand extends Command {
 
 
 	/**
+	 * @param \Cake\Datasource\ResultSetInterface $ao_files
+	 * @param \Cake\Console\ConsoleIo $ao_io
+	 * @return void
+	 */
+	protected function cropImages(ResultSetInterface $ao_files, ConsoleIo $ao_io): int {
+		/** @var \Awyiss\Model\Entity\Media $lo_file */
+		foreach ($ao_files as $lo_file) {
+			$ao_io->out(sprintf('Cropping file `%s`', $lo_file->path));
+
+			$la_commands = $this->getCommand($lo_file, 'crop');
+
+			$lo_process = new Process($la_commands['original']);
+			$lo_process->run();
+
+			if ($lo_process->isSuccessful()) {
+				$ao_io->success('Status: ' . $lo_process->getExitCodeText());
+
+				// If there's a webp command, run it and crop the webp file as well
+				if ($la_commands['webp']) {
+					$lo_process = new Process($la_commands['webp']);
+					$lo_process->run();
+				}
+
+				$lo_file->width = (float)$lo_file->crop['resize_width'];
+				$lo_file->height = (float)$lo_file->crop['resize_height'];
+				$lo_file->crop = null;
+
+				// Delete all resized files. They will be recreated when needed.
+				// Previously set sizes might no longer be required OR even too large
+				$lo_file->deleteResizedFiles();
+			}
+			else {
+				$ao_io->error('Status: ' . $lo_process->getExitCodeText());
+				$ao_io->out('Command: ' . $lo_process->getCommandLine());
+				$ao_io->out('Message: ' . $lo_process->getErrorOutput(), 0);
+			}
+
+			$ao_io->hr();
+		}
+
+		/** @var \Awyiss\Model\Table\MediaTable $lo_table */
+		$lo_table = $this->fetchTable('Media');
+
+		$lo_table->updateAll(function (QueryExpression $ao_expression) use ($ao_files) {
+			$lo_widthCases = $ao_expression->case();
+			$lo_heightCases = $ao_expression->case();
+			$lo_cropCases = $ao_expression->case();
+
+			/** @var \Awyiss\Model\Entity\Media $lo_file */
+			foreach ($ao_files as $lo_file) {
+				$lo_widthCases->when(['id = ' . $lo_file->id])->then($lo_file->width, 'float');
+				$lo_heightCases->when(['id = ' . $lo_file->id])->then($lo_file->height, 'float');
+				$lo_cropCases->when(['id = ' . $lo_file->id])->then($lo_file->crop, 'integer');
+			}
+
+			return [
+				'width' => $lo_widthCases,
+				'height' => $lo_heightCases,
+				'crop' => $lo_cropCases,
+			];
+		}, [
+			'id IN' => $ao_files->extract('id')->toArray(),
+		]);
+
+		return static::CODE_SUCCESS;
+	}
+
+
+	/**
 	 * This method resizes the images in the ResultSet and updates the status of the files
 	 * Each file is processed individually and resized according to the strategy set in the database
 	 *
@@ -520,6 +601,22 @@ class ConvertFilesCommand extends Command {
 		}
 
 		return static::CODE_SUCCESS;
+	}
+
+
+	/**
+	 * @param int $ai_limit
+	 * @return \Cake\Datasource\ResultSetInterface
+	 */
+	public function fetchCropFiles(int $ai_limit): ResultSetInterface {
+		/** @var \Awyiss\Model\Table\MediaTable $lo_table */
+		$lo_table = $this->fetchTable('Media');
+
+		return $lo_table->find()->where([
+			'crop IS NOT' => null,
+			'preview IN' => [ProcessStatus::Success, ProcessStatus::NotRequired],
+			'webp IN' => [ProcessStatus::Success, ProcessStatus::NotRequired],
+		])->limit($ai_limit)->all();
 	}
 
 
@@ -652,106 +749,207 @@ class ConvertFilesCommand extends Command {
 	 */
 	protected function getCommand(Media|MediaResizedImage $ao_file, string $as_type): array|false {
 		if ($as_type === 'preview') {
-			if (in_array($ao_file->mimeType, ['video/mp4', 'video/x-msvideo'])) {
-				if (!Configure::read('AvailableCommands.ffmpeg')) {
-					return false;
-				}
-
-				$la_command = [
-					'ffmpeg',
-					'-y',
-					'-i',
-					WWW_ROOT . str_replace('/', DS, $ao_file->path),
-					'-vf',
-					'thumbnail',
-					'-frames:v',
-					'1',
-					$ao_file->previewPathAbsolute,
-				];
-			}
-			else {
-				if (!Configure::read('AvailableCommands.imageMagick.' . $ao_file->extension)) {
-					return false;
-				}
-
-				$ls_inputPath = $ao_file->path;
-				if (in_array($ao_file->extension, ['pdf', 'psd'])) {
-					$ls_inputPath .= '[0]';
-				}
-
-				$la_command = [
-					'convert',
-					'-density',
-					300,
-					'-quality',
-					90,
-					'-colorspace',
-					'sRGB',
-					'-alpha',
-					'remove',
-					WWW_ROOT . str_replace('/', DS, $ls_inputPath),
-					$ao_file->previewPathAbsolute,
-				];
-			}
-
-			return $la_command;
+			return $this->getPreviewCommand($ao_file);
 		}
 		elseif ($as_type === 'webp') {
-			$ls_inputPath = $ao_file->pathAbsolute;
-
-			if (!$ao_file->isImage()) {
-				$ls_inputPath = $ao_file->previewPathAbsolute;
-			}
-
-			return [
-				'convert',
-				$ls_inputPath,
-				$ao_file->webpPathAbsolute,
-			];
+			return $this->getWebPCommand($ao_file);
+		}
+		elseif ($as_type === 'crop') {
+			return $this->getCropCommand($ao_file);
 		}
 		elseif ($as_type === 'resize') {
-			$ls_inputPath = $ao_file->media->pathAbsolute;
-
-			if (!$ao_file->media->isImage()) {
-				$ls_inputPath = $ao_file->media->previewPathAbsolute;
-			}
-
-			return match ($ao_file->strategy) {
-				ResizeStrategy::Contain => [
-					'convert',
-					$ls_inputPath,
-					'-resize',
-					$ao_file->width . 'x' . $ao_file->height,
-					$ao_file->pathAbsolute,
-				],
-				ResizeStrategy::Cover => [
-					'convert',
-					$ls_inputPath,
-					'-resize',
-					$ao_file->width . 'x' . $ao_file->height . '^',
-					$ao_file->pathAbsolute,
-				],
-				ResizeStrategy::Crop => [
-					'convert',
-					$ls_inputPath,
-					'-resize',
-					$ao_file->width . 'x' . $ao_file->height . '^',
-					'-gravity',
-					'center',
-					'-extent',
-					$ao_file->width . 'x' . $ao_file->height,
-					$ao_file->pathAbsolute,
-				],
-				ResizeStrategy::Stretch => [
-					'convert',
-					$ls_inputPath,
-					'-resize',
-					$ao_file->width . 'x' . $ao_file->height . '!',
-					$ao_file->pathAbsolute,
-				],
-			};
+			return $this->getResizeCommand($ao_file);
 		}
 
 		return false;
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Entity\MediaResizedImage|\Awyiss\Model\Entity\Media $ao_file
+	 * @return array|false
+	 */
+	protected function getPreviewCommand(MediaResizedImage|Media $ao_file): array|false {
+		if (in_array($ao_file->mimeType, ['video/mp4', 'video/x-msvideo'])) {
+			if (!Configure::read('AvailableCommands.ffmpeg')) {
+				return false;
+			}
+
+			$la_command = [
+				'ffmpeg',
+				'-y',
+				'-i',
+				WWW_ROOT . str_replace('/', DS, $ao_file->path),
+				'-vf',
+				'thumbnail',
+				'-frames:v',
+				'1',
+				$ao_file->previewPathAbsolute,
+			];
+		}
+		else {
+			if (!Configure::read('AvailableCommands.imageMagick.' . $ao_file->extension)) {
+				return false;
+			}
+
+			$ls_inputPath = $ao_file->path;
+			if (in_array($ao_file->extension, ['pdf', 'psd'])) {
+				$ls_inputPath .= '[0]';
+			}
+
+			$la_command = [
+				'convert',
+				'-density',
+				300,
+				'-quality',
+				90,
+				'-colorspace',
+				'sRGB',
+				'-alpha',
+				'remove',
+				WWW_ROOT . str_replace('/', DS, $ls_inputPath),
+				$ao_file->previewPathAbsolute,
+			];
+		}
+
+		return $la_command;
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Entity\MediaResizedImage|\Awyiss\Model\Entity\Media $ao_file
+	 * @return array
+	 */
+	protected function getWebPCommand(MediaResizedImage|Media $ao_file): array {
+		$ls_inputPath = $ao_file->pathAbsolute;
+
+		if (!$ao_file->isImage()) {
+			$ls_inputPath = $ao_file->previewPathAbsolute;
+		}
+
+		return [
+			'convert',
+			$ls_inputPath,
+			$ao_file->webpPathAbsolute,
+		];
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Entity\MediaResizedImage|\Awyiss\Model\Entity\Media $ao_file
+	 * @return array
+	 */
+	protected function getCropCommand(MediaResizedImage|Media $ao_file): array {
+		$ls_inputPath = $ao_file->pathAbsolute;
+		$lb_crop = false;
+		$lb_resize = false;
+
+		if (!$ao_file->isImage()) {
+			$ls_inputPath = $ao_file->previewPathAbsolute;
+		}
+
+		$la_commandOriginal = [
+			'convert',
+			$ls_inputPath,
+		];
+
+		if ($ao_file->width !== (int)$ao_file->crop['width'] || $ao_file->height !== (int)$ao_file->crop['height']) {
+			$lb_crop = true;
+			$la_commandOriginal = array_merge($la_commandOriginal, [
+				'-crop',
+				sprintf('%dx%d+%d+%d', $ao_file->crop['width'], $ao_file->crop['height'], $ao_file->crop['x'], $ao_file->crop['y']),
+			]);
+		}
+
+		if ($ao_file->crop['width'] !== $ao_file->crop['resize_width'] || $ao_file->crop['height'] !== $ao_file->crop['resize_height']) {
+			$lb_resize = true;
+			$la_commandOriginal = array_merge($la_commandOriginal, [
+				'-resize',
+				sprintf('%dx%d', $ao_file->crop['resize_width'], $ao_file->crop['resize_height']),
+			]);
+		}
+
+		$la_commandOriginal[] = $ls_inputPath;
+
+		$la_commandWebp = null;
+		if ($ao_file->webpPathAbsolute) {
+			$la_commandWebp = [
+				'convert',
+				$ao_file->webpPathAbsolute,
+			];
+
+			if ($lb_crop) {
+				$la_commandWebp = array_merge($la_commandWebp, [
+					'-crop',
+					sprintf('%dx%d+%d+%d', $ao_file->crop['width'], $ao_file->crop['height'], $ao_file->crop['x'], $ao_file->crop['y']),
+				]);
+			}
+
+			if ($lb_resize) {
+				$la_commandWebp = array_merge($la_commandWebp, [
+					'-resize',
+					sprintf('%dx%d', $ao_file->crop['resize_width'], $ao_file->crop['resize_height']),
+				]);
+			}
+
+			$la_commandWebp[] = $ao_file->webpPathAbsolute;
+		}
+
+		if (!$lb_crop && !$lb_resize) {
+			$la_commandOriginal = $la_commandWebp = null;
+		}
+
+		return [
+			'original' => $la_commandOriginal,
+			'webp' => $la_commandWebp,
+		];
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Entity\MediaResizedImage|\Awyiss\Model\Entity\Media $ao_file
+	 * @return array
+	 */
+	protected function getResizeCommand(MediaResizedImage|Media $ao_file): array {
+		$ls_inputPath = $ao_file->media->pathAbsolute;
+
+		if (!$ao_file->media->isImage()) {
+			$ls_inputPath = $ao_file->media->previewPathAbsolute;
+		}
+
+		return match ($ao_file->strategy) {
+			ResizeStrategy::Contain => [
+				'convert',
+				$ls_inputPath,
+				'-resize',
+				$ao_file->width . 'x' . $ao_file->height,
+				$ao_file->pathAbsolute,
+			],
+			ResizeStrategy::Cover => [
+				'convert',
+				$ls_inputPath,
+				'-resize',
+				$ao_file->width . 'x' . $ao_file->height . '^',
+				$ao_file->pathAbsolute,
+			],
+			ResizeStrategy::Crop => [
+				'convert',
+				$ls_inputPath,
+				'-resize',
+				$ao_file->width . 'x' . $ao_file->height . '^',
+				'-gravity',
+				'center',
+				'-extent',
+				$ao_file->width . 'x' . $ao_file->height,
+				$ao_file->pathAbsolute,
+			],
+			ResizeStrategy::Stretch => [
+				'convert',
+				$ls_inputPath,
+				'-resize',
+				$ao_file->width . 'x' . $ao_file->height . '!',
+				$ao_file->pathAbsolute,
+			],
+		};
 	}
 }

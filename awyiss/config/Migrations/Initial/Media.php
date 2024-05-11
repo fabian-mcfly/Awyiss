@@ -84,6 +84,10 @@ class Media {
 			'default' => false,
 			'limit' => null,
 			'null' => false,
+		])->addColumn('crop', 'text', [
+			'default' => null,
+			'limit' => 16777215,
+			'null' => true,
 		])->addColumn('system_order', 'integer', [
 			'default' => '0',
 			'limit' => null,

@@ -1,12 +1,19 @@
 // noinspection JSUnusedGlobalSymbols,NpmUsedModulesInstalled
 
 import NestedListHandler from 'NestedListHandler';
+import Crop from 'Media/Crop';
 import Sortable from 'Media/Sortable';
 import Upload from 'Media/Upload';
 import {Sortable as SortableJS} from '../../SortableJS/sortable.core.esm.js';
 import Coloris from '../../Coloris/Coloris';
 
 export default class Overlay {
+	/**
+	 * The crop area instance
+	 * @type {Crop}
+	 */
+	static cropArea = null;
+
 	/**
 	 * The overlay close button
 	 * @type {HTMLElement}
@@ -178,6 +185,16 @@ export default class Overlay {
 					theme: 'large',
 					themeMode: document.documentElement.classList.contains('🌚') ? 'dark' : 'light',
 				});
+
+				const cropAreaElement = document.querySelector('.CropArea');
+				if (cropAreaElement) {
+					if (!Overlay.cropArea) {
+						Overlay.cropArea = new Crop(cropAreaElement);
+					}
+					else {
+						Overlay.cropArea.cropFrame = null;
+					}
+				}
 			}
 		});
 	}
@@ -215,6 +232,7 @@ export default class Overlay {
 				});
 			}
 			else if (formParent.matches('.Media.Edit')) {
+				Overlay.cropArea.cropFrame = null;
 				// After updating a file, we need to fetch the media items again
 				this.folderList.querySelector('.Active').dispatchEvent(new Event('click'));
 			}

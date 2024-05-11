@@ -92,6 +92,10 @@ class MediaHelper extends Helper {
 		ResizeStrategy $strategy = ResizeStrategy::Contain,
 		string $format = 'webp'
 	): ?MediaResizedImage {
+		if (!$media->path) {
+			return null;
+		}
+
 		return static::$resizedImageManager->resize($media, $width, $height, $strategy, $format);
 	}
 }

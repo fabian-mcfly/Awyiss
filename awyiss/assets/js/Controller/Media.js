@@ -1,5 +1,6 @@
 //noinspection JSUnusedGlobalSymbols,NpmUsedModulesInstalled
 
+import Crop from 'Media/Crop';
 import Sortable from 'Media/Sortable';
 import Upload from 'Media/Upload';
 import Coloris from '../Coloris/Coloris.js';
@@ -42,12 +43,26 @@ export default class MediaController {
 	 * @returns {void}
 	 */
 	initForm() {
-		const coloris = new Coloris({
+		new Coloris({
 			defaultColor: '#00000000',
 			element: document.querySelector('input[name="average_color"]'),
 			theme: 'large',
 			themeMode: document.documentElement.classList.contains('🌚') ? 'dark' : 'light',
 		});
+
+		const cropArea = document.querySelector('.CropArea');
+		if (cropArea) {
+			new Crop(cropArea);
+
+			const fileInput = document.querySelector('input[type="file"]');
+			fileInput.addEventListener('change', () => {
+				const fieldset = cropArea.closest('fieldset');
+				// Remove the crop area if it exists
+				if (fieldset) {
+					fieldset.remove();
+				}
+			});
+		}
 	}
 
 	/**

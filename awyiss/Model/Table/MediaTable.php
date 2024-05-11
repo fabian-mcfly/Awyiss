@@ -244,6 +244,7 @@ class MediaTable extends Table {
 
 		$this->getSchema()->setColumnType('preview', EnumType::from(ProcessStatus::class));
 		$this->getSchema()->setColumnType('webp', EnumType::from(ProcessStatus::class));
+		$this->getSchema()->setColumnType('crop', 'json');
 	}
 
 
