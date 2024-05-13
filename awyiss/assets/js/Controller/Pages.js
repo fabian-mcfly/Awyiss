@@ -31,7 +31,12 @@ export default class PagesController {
 		const batchTextArea = document.getElementById('Page-Pages')
 		if (batchTextArea) {
 			import('BatchTextArea').then((BatchTextArea) => {
-				this.batchTextArea = new BatchTextArea.default(batchTextArea);
+				this.batchTextArea = BatchTextArea.default;
+
+				new this.batchTextArea(batchTextArea);
+
+				const observer = window.observer;
+				observer.addObserver(this.observeMutations.bind(this));
 			});
 		}
 	}
@@ -57,6 +62,32 @@ export default class PagesController {
 			// Trigger the input event on the metaTitleInput input field
 			metaTitleInput.dispatchEvent(new Event('input', {bubbles: true}));
 		}, titleInput);
+	}
+
+
+	/**
+	 * Observe mutations in the DOM and initialize the batch text area for new elements.
+	 *
+	 * @param {MutationRecord} mutation - The mutation to observe.
+	 */
+	observeMutations(mutation) {
+		if (!mutation.addedNodes.length > 0) {
+			return;
+		}
+
+		mutation.addedNodes.forEach((node) => {
+			const selector = '#Page-Pages';
+			if (node.nodeType === Node.ELEMENT_NODE) {
+				if (node.matches(selector)) {
+					new this.batchTextArea(node);
+				}
+
+				const elements = node.querySelectorAll(selector);
+				elements.forEach((element) => {
+					new this.batchTextArea(element);
+				});
+			}
+		});
 	}
 }
 
