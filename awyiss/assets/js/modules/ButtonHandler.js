@@ -239,13 +239,14 @@ export default class ButtonHandler {
 		event.preventDefault();
 		event.stopPropagation();
 
-		this.dialog.message.textContent = event.target.dataset.confirm;
+		this.dialog.message.innerHTML = event.target.dataset.confirm;
 		this.dialog.dataset.title = event.target.dataset.confirmTitle ?? 'Confirm';
 
 		// Update the text content of the buttons if they have the data-confirm-yes and data-confirm-no attributes
 		if (event.target.dataset.confirmYes) {
 			// Update the first text node within the button
 			this.dialog.confirmYes.firstChild.nodeValue = event.target.dataset.confirmYes;
+			this.dialog.confirmYes.title = event.target.dataset.confirmYes;
 
 			// Remove all classes except 'Button'
 			this.dialog.confirmYes.className = 'Button';
@@ -258,6 +259,7 @@ export default class ButtonHandler {
 
 		if (event.target.dataset.confirmNo) {
 			this.dialog.confirmNo.firstChild.nodeValue = event.target.dataset.confirmNo;
+			this.dialog.confirmNo.title = event.target.dataset.confirmNo;
 
 			// Remove all classes except 'Button'
 			this.dialog.confirmNo.className = 'Button';
