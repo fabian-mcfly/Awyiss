@@ -5,19 +5,27 @@
  */
 export default class SeoSnippet {
 	/**
-	 * @property {CharCounter} charCounter - An instance of CharCounter
+	 * An instance of CharCounter
+	 *
+	 * @property {CharCounter} charCounter
 	 */
 	charCounter;
 	/**
-	 * @property {EventHandler} eventHandler - An instance of EventHandler
+	 * An instance of EventHandler
+	 *
+	 * @property {EventHandler} eventHandler
 	 */
 	eventHandler = window.eventHandler;
 	/**
-	 * @property {HTMLElement|null} element - The main element
+	 * The main element
+	 *
+	 * @property {HTMLElement|null} element
 	 */
 	element;
 	/**
-	 * @property {object} settings - The settings for the SEO snippet
+	 * The settings for the SEO snippet
+	 *
+	 * @property {object} settings
 	 */
 	settings = {
 		title: {
@@ -30,47 +38,75 @@ export default class SeoSnippet {
 		},
 	};
 	/**
-	 * @property {HTMLElement|null} seo - The SEO element
+	 * The SEO element
+	 *
+	 * @property {HTMLElement|null} seo
 	 */
 	seo = null;
 	/**
-	 * @property {HTMLInputElement|null} pageTitle - The page title input element
+	 * The page title input element
+	 *
+	 * @property {HTMLInputElement|null} pageTitle
 	 */
 	pageTitle = null;
 	/**
-	 * @property {HTMLInputElement|null} metaTitle - The meta title input element
+	 * The meta title input element
+	 *
+	 * @property {HTMLInputElement|null} metaTitle
 	 */
 	metaTitle = null;
 	/**
-	 * @property {HTMLTextAreaElement|null} metaDescription - The meta description textarea element
+	 * The meta description textarea element
+	 *
+	 * @property {HTMLTextAreaElement|null} metaDescription
 	 */
 	metaDescription = null;
 	/**
-	 * @property {HTMLInputElement|null} seoSnippetSearchTerm - The SEO snippet search term input element
+	 * The SEO snippet search term input element
+	 *
+	 * @property {HTMLInputElement|null} seoSnippetSearchTerm
 	 */
 	seoSnippetSearchTerm = null;
 	/**
-	 * @property {HTMLElement|null} preSlug - The slug element
+	 * The slug element
+	 *
+	 * @property {HTMLElement|null} preSlug
 	 */
 	slug = null;
 	/**
-	 * @property {HTMLElement|null} preSlug - The slug element
+	 * The slug element
+	 *
+	 * @property {HTMLElement|null} preSlug
 	 */
 	preSlug = null;
 	/**
-	 * @property {HTMLElement|null} seoSnippetTitle - The SEO snippet title element
+	 * The selector for the main element
+	 *
+	 * @property {string} selector
+	 */
+	selector;
+	/**
+	 * The SEO snippet title element
+	 *
+	 * @property {HTMLElement|null} seoSnippetTitle
 	 */
 	seoSnippetTitle = null;
 	/**
-	 * @property {HTMLElement|null} seoSnippetUrl - The SEO snippet URL element
+	 * The SEO snippet URL element
+	 *
+	 * @property {HTMLElement|null} seoSnippetUrl
 	 */
 	seoSnippetUrl = null;
 	/**
-	 * @property {HTMLElement|null} seoSnippetDescription - The SEO snippet description element
+	 * The SEO snippet description element
+	 *
+	 * @property {HTMLElement|null} seoSnippetDescription
 	 */
 	seoSnippetDescription = null;
 	/**
-	 * @property {HTMLElement|null} seoSnippetSearch - The SEO snippet search element
+	 * The SEO snippet search element
+	 *
+	 * @property {HTMLElement|null} seoSnippetSearch
 	 */
 	seoSnippetSearch = null;
 
@@ -81,11 +117,26 @@ export default class SeoSnippet {
 	 * @param {string} selector - The selector for the main element
 	 */
 	constructor(selector) {
-		this.element = document.querySelector(selector);
+		this.selector = selector;
 
-		// Check if the main element exists
+		this.initElement(document.querySelector(selector));
+
+		const observer = window.observer;
+		observer.addObserver(this.observeForNewInputs.bind(this));
+
+		// Add event listener for input events
+		this.eventHandler.add('input', this.update.bind(this), window);
+	}
+
+	/**
+	 * Initialize the input elements
+	 * @param element
+	 */
+	initElement(element) {
+		this.element = element;
+
 		if (!this.element) {
-			return false;
+			return;
 		}
 
 		// Assign the input elements
@@ -100,9 +151,6 @@ export default class SeoSnippet {
 		this.seoSnippetUrl = this.element.querySelector('.SnippetUrl');
 		this.seoSnippetTitle = this.element.querySelector('.SnippetMetaTitle');
 		this.seoSnippetDescription = this.element.querySelector('.SnippetMetaDescription');
-
-		// Add event listener for input events
-		this.eventHandler.add('input', this.update.bind(this), window);
 
 		// Initialize the character counter
 		this.charCounter = new CharCounter('input[data-charcounter-name], textarea[data-charcounter-name]');
@@ -176,6 +224,26 @@ export default class SeoSnippet {
 		// Return the updated haystack
 		return haystackCopy;
 	}
+
+	observeForNewInputs(mutation) {
+		if (!mutation.addedNodes.length) {
+			return;
+		}
+
+		mutation.addedNodes.forEach((node) => {
+			if (node.nodeType !== Node.ELEMENT_NODE) {
+				return;
+			}
+
+			if (node.matches(this.selector)) {
+				this.initElement(node);
+			}
+
+			if (node.querySelector(this.selector)) {
+				this.initElement(node.querySelector(this.selector));
+			}
+		});
+	}
 }
 
 
@@ -185,9 +253,17 @@ export default class SeoSnippet {
  */
 export class CharCounter {
 	/**
-	 * @property {EventHandler} eventHandler - An instance of EventHandler
+	 * An instance of EventHandler
+	 *
+	 * @property {EventHandler} eventHandler
 	 */
 	eventHandler = window.eventHandler;
+	/**
+	 * The selector for the input elements
+	 *
+	 * @property {string} selector
+	 */
+	selector;
 
 	/**
 	 * Initialize the character counter
@@ -196,6 +272,8 @@ export class CharCounter {
 	 * @param {string} inputSelector - The selector for the input elements
 	 */
 	constructor(inputSelector) {
+		this.selector = inputSelector;
+
 		// Add event listeners for input events on elements with the data-charcounter-i attribute
 		const elements = document.querySelectorAll(inputSelector);
 
