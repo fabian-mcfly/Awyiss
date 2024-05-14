@@ -145,7 +145,7 @@ export default class NestedListHandler {
 			element.sortable = Sortable.create(element, {
 				chosenClass: 'SortableChosen',
 				//draggable: '.ListItem',
-				direction: 'horizontal',
+				//direction: 'horizontal',
 				dataIdAttr: 'id',
 				fallbackOnBody: true,
 				filter: '[data-sortable="false"]',
@@ -154,7 +154,7 @@ export default class NestedListHandler {
 				handle: options.handle ? '.SortableHandle' : '.ListItem-Inner',
 				invertSwap: true,
 				preventOnFilter: false,
-				swapThreshold: .4,
+				swapThreshold: .5,
 				onAdd: (event) => {
 					return this.onAdd(event);
 				},
@@ -213,12 +213,15 @@ export default class NestedListHandler {
 		const items = document.querySelectorAll(`${this.selector} > li`);
 
 		items.forEach(item => {
+			if (item.closest('ul').dataset.receivable === 'false') {
+				return;
+			}
+
 			let childList = Array.from(item.children).find(child => child.tagName === 'UL');
 
 			if (!childList) {
 				childList = document.createElement('ul');
 				item.appendChild(childList);
-
 
 				// Copy classes from parent list to child list
 				const parentList = item.parentElement;
@@ -386,6 +389,12 @@ export default class NestedListHandler {
 		// and if the list it's being moved to is not the same list
 		// noinspection JSUnresolvedReference
 		if (event.from.dataset.movableBetweenGroups === 'false' && event.from !== event.to) {
+			return false;
+		}
+
+		// Check if the list the item is being moved to has the `data-receivable="false"` attribute
+		// noinspection JSUnresolvedReference
+		if (event.to.dataset.receivable === 'false') {
 			return false;
 		}
 	}
