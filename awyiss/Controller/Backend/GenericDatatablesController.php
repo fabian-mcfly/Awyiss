@@ -176,6 +176,43 @@ abstract class GenericDatatablesController extends Controller {
 
 
 	/**
+	 * Delete method
+	 *
+	 * @param int $ai_id
+	 * @return \Cake\Http\Response
+	 * @throws \Exception
+	 */
+	public function delete(int $ai_id): Response {
+		$this->Authorization->ensure('delete');
+
+		$this->request->allowMethod(['get', 'delete']);
+
+		/** @var Datatable $lo_datatable */
+		$lo_datatable = $this->Datatable->findById($ai_id)->first();
+		if (!$lo_datatable) {
+			$this->Flash->error(__df($this->datatable->identifier, 'generic_datatables','record_not_found'));
+
+			return $this->redirect(['action' => 'overview']);
+		}
+
+		if ($this->Datatable->delete($lo_datatable)) {
+			if (!$this->request->is('ajax')) {
+				$this->Flash->success(__df($this->datatable->identifier, 'generic_datatables','delete_succeeded'));
+			}
+		}
+		else {
+			$this->Flash->error(__df($this->datatable->identifier, 'generic_datatables','delete_failed'));
+
+			foreach ($lo_datatable->getError('_general') as $ls_error) {
+				$this->Flash->error($ls_error);
+			}
+		}
+
+		return $this->redirect(['action' => 'overview']);
+	}
+
+
+	/**
 	 * @param \Awyiss\Model\Entity $ao_entity
 	 * @param string $as_method
 	 * @return void
