@@ -251,6 +251,27 @@ class ConfigOption {
 			return $this->getValues(true)[ $lx_value ] ?? $lx_value;
 		}
 
+		if ($this->getType() === ConfigOptionType::ValueCollection) {
+			$la_values = [];
+			$la_possibleValues = $this->getValues(true);
+
+			if (!is_array($lx_value)) {
+				$lx_value = json_decode($lx_value, true);
+			}
+
+			if (!is_array($lx_value)) {
+				$lx_value = [$lx_value];
+			}
+
+			foreach ($lx_value as $ls_key => $ls_value) {
+				if (array_key_exists($ls_value, $la_possibleValues)) {
+					$la_values[ $ls_key ] = $la_possibleValues[ $ls_value ];
+				}
+			}
+
+			return implode(', ', $la_values);
+		}
+
 		return match ($this->type) {
 			ConfigOptionType::Bool => $lx_value ? 'true' : 'false',
 			ConfigOptionType::JsonArray, ConfigOptionType::List, ConfigOptionType::ValueCollection => array_is_list($lx_value) ? implode(', ', $lx_value) : print_r($lx_value, true),

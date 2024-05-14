@@ -42,7 +42,7 @@ class PagesConfigOptions extends AbstractConfigOptions {
 				new ConfigOption(
 					defaultValue: [
 						'slug',
-						'pageTemplateId',
+						'page_template_id',
 					],
 					identifier: 'displayedFields',
 					localizable: false,

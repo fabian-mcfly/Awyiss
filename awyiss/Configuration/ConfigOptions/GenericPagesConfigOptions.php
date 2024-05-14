@@ -109,7 +109,7 @@ class GenericPagesConfigOptions extends AbstractGenericConfigOptions {
 				new ConfigOption(
 					defaultValue: [
 						'slug',
-						'pageTemplateId',
+						'page_template_id',
 					],
 					identifier: 'displayedFields',
 					localizable: false,

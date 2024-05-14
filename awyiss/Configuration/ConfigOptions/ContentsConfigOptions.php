@@ -59,9 +59,9 @@ class ContentsConfigOptions extends AbstractConfigOptions {
 				],
 				new ConfigOption(
 					defaultValue: [
-						'contentTemplateId',
-						'columnWidth',
-						'columnIndent',
+						'content_template_id',
+						'column_width',
+						'column_indent',
 					],
 					identifier: 'displayedFields',
 					localizable: false,

@@ -40,7 +40,7 @@ class PageRolesConfigOptions extends AbstractConfigOptions {
 				new ConfigOption(
 					defaultValue: [
 						'identifier',
-						'includeInLinklist',
+						'include_in_linklist',
 					],
 					identifier: 'displayedFields',
 					localizable: false,
