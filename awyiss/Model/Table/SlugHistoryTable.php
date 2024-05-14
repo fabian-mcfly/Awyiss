@@ -83,7 +83,7 @@ class SlugHistoryTable extends Table {
 	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
 		$ao_rules->add($ao_rules->existsIn(['pageId'], 'Pages'), 'validPageId', [
 			'errorField' => 'pageId',
-			'message' => __d($this->getI18nDomain(), 'error_valid_page_id'),
+			'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_page_id'),
 		]);
 
 

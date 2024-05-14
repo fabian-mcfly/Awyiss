@@ -125,7 +125,7 @@ class DatatablesTable extends Table {
 					$ao_entity->hasOriginal('identifier') &&
 					$ao_entity->get('identifier') !== $ao_entity->getOriginal('identifier')
 				) {
-					return __d($this->getI18nDomain(), 'error_identifier_unchanged');
+					return __df($this->getI18nDomain(), 'validation', 'error_identifier_unchanged');
 				}
 
 				/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $ls_pageRoleEnum */
@@ -140,7 +140,7 @@ class DatatablesTable extends Table {
 						$ls_pageRoleEnum::tryFromName($ao_entity->identifier)
 					)
 				) {
-					return __dfx($this->getI18nDomain(), 'validation', 'datatable', 'error_identifier_allowed');
+					return __df($this->getI18nDomain(), 'validation', 'error_identifier_allowed');
 				}
 
 				$lo_isUnique = $ao_rules->isUnique(['identifier'], [
@@ -149,7 +149,7 @@ class DatatablesTable extends Table {
 				$lb_isUnique = $lo_isUnique($ao_entity, $aa_options);
 
 				if (!$lb_isUnique) {
-					return __dfx($this->getI18nDomain(), 'validation', 'datatable', 'error_identifier_unique');
+					return __df($this->getI18nDomain(), 'validation', 'error_identifier_unique');
 				}
 
 

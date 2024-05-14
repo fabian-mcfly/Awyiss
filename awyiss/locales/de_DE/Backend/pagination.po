@@ -1,0 +1,33 @@
+# Pagination-element translations of Awyiss CMS
+# Copyright 2024 Awyiss <EMAIL@ADDRESS>
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 0.1.0\n"
+"POT-Creation-Date: 2024-05-11 19:35+0000\n"
+"PO-Revision-Date: 2024-05-11 19:35+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+msgid "counter"
+msgstr "Seite {{page}} von {{pages}}<hr>{{count}} Einträge"
+
+msgid "limit_per_page"
+msgstr "Einträge pro Seite"
+
+msgid "page"
+msgstr "Seite"
+
+msgid "first"
+msgstr "Erste Seite"
+
+msgid "previous"
+msgstr "Zurück"
+
+msgid "next"
+msgstr "Weiter"
+
+msgid "last"
+msgstr "Letzte Seite"

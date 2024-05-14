@@ -1,0 +1,44 @@
+{#
+@var entity \Awyiss\Model\Entity\Page
+@var settings array
+#}
+
+{% extends '@Backend/element/overview/nested_list_item.twig' %}
+
+{% block nestedListItemDataDefaultFields %}
+	<li class="DataItem DataItem-Slug">
+		<span class="Label">{{ __df(pageRoleName, 'generic_pages', 'slug') }}:</span>
+		{{ HtmlHelper.link(entity.languageShortcode ~ '/' ~ entity.slug, {
+			lang: entity.languageShortcode,
+			slug: entity.slug,
+			_name: 'Frontend',
+		}, {
+			target: '_blank',
+		}) }}
+	</li>
+{% endblock %}
+
+{% block nestedListItemDataDisplayedFields %}
+	{% for field in displayedFields %}
+		{% if field == 'slug' %}
+		{% else %}
+			{% block nestedListItemDataDisplayedField %}
+				{{ parent() }}
+			{% endblock %}
+		{% endif %}
+	{% endfor %}
+{% endblock %}
+
+{% block nestedListActions %}
+	<span class="Actions">
+		{% block nestedListActionsViewContents %}
+			{% if entity.duplicate_of is empty and AuthorizationHelper.isAccessible('contents') and settings.contentsEnabled == true %}
+				{{ HtmlHelper.link(__df(pageRoleName, 'generic_pages', 'view_contents'), {controller: 'contents', action: 'overview', pageId: entity.id}, {class: 'Button Button-Small Button-View Button-ViewContents'}) }}
+			{% endif %}
+		{% endblock %}
+
+		{{ block('nestedListActionsEdit') }}
+
+		{{ block('nestedListActionsDelete') }}
+	</span>
+{% endblock %}

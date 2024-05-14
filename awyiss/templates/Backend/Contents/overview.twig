@@ -67,6 +67,7 @@
 								contentTemplates: contentTemplates,
 								data: {
 									'content-area': contentAreaId,
+									receivable: contentArea is null ? false : true,
 								},
 								displayedFields: localConfig.overview.displayedFields,
 								identifier: 'Contents',

@@ -86,6 +86,7 @@ class BackendView extends AppView {
 		// Unset language properties
 		$lo_frontendLanguage = LocaleMiddleware::getLanguage();
 		if ($lo_frontendLanguage) {
+			$lo_frontendLanguage = clone $lo_frontendLanguage;
 			unset(
 				$lo_frontendLanguage->realm,
 				$lo_frontendLanguage->systemOrder,

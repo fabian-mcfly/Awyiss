@@ -166,7 +166,7 @@ class BackendMenuEntriesTable extends Table {
 				'ParentBackendMenuEntries',
 				[
 					'errorField' => 'parentId',
-					'message' => __dfx($this->getI18nDomain(), 'validation', 'backend_menu_entries', 'error_valid_parent_id'),
+					'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_parent_id'),
 				]
 			);
 
@@ -198,7 +198,7 @@ class BackendMenuEntriesTable extends Table {
 			],
 			'child_backend_menu_entries' => [
 				[
-					'title' => $as_scope . '::menu_overview',
+					'title' => 'generic_datatables::menu_overview',
 					'link' => $as_controller . '::overview',
 					'access' => [
 						'scope' => $as_scope,
@@ -207,7 +207,7 @@ class BackendMenuEntriesTable extends Table {
 					'system_order' => 1,
 				],
 				[
-					'title' => $as_scope . '::menu_add',
+					'title' => 'generic_datatables::menu_add',
 					'link' => $as_controller . '::add',
 					'access' => [
 						'scope' => $as_scope,
@@ -216,7 +216,7 @@ class BackendMenuEntriesTable extends Table {
 					'system_order' => 2,
 				],
 				[
-					'title' => $as_scope . '::menu_configure',
+					'title' => 'generic_datatables::menu_configure',
 					'link' => 'Configuration::overview::scope:' . $as_scope,
 					'access' => [
 						'scope' => $as_scope,

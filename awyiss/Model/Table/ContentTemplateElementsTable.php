@@ -145,7 +145,7 @@ class ContentTemplateElementsTable extends Table {
 	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
 		$ao_rules->add($ao_rules->existsIn('contentTemplateId', 'ContentTemplates'), 'contentTemplateExists', [
 			'errorField' => 'contentTemplateId',
-			'message' => __d($this->getI18nDomain(), 'error_content_template_exists'),
+			'message' => __df($this->getI18nDomain(), 'validation', 'error_content_template_exists'),
 		]);
 
 

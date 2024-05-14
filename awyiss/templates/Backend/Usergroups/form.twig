@@ -2,6 +2,8 @@
 @var usergroup \Awyiss\Model\Entity\Usergroup
 @var users \Awyiss\Model\Entity\User[]
 @var authorizationPolicies array
+@var datatables array
+@var pageRoles array
 @var _view \Awyiss\View\BackendView
 #}
 
@@ -53,13 +55,16 @@
 	{% if AuthorizationHelper.scopeIsAccessible('Users', [], ['read']) %}
 		{% block fieldsetUsers %}
 			<fieldset class="Fieldset-Users">
-				<legend>{{ __('users') }}</legend>
+				<legend>{{ __('fieldset_users') }}</legend>
 
 				{% block fieldsetUsersInner %}
 					{{ FormHelper.hidden('users._ids', {value: ''}) }}
 
 					{% block userUsergroups %}
-						{% include '@Backend/Usergroups/users_overview_paginated_list.twig' with _context|merge({records: users.items().toArray()}) %}
+						{% include '@Backend/Usergroups/users_overview_paginated_list.twig' with _context|merge({
+							i18nDomain: 'users',
+							records: users.items().toArray(),
+						}) %}
 					{% endblock %}
 				{% endblock %}
 			</fieldset>
@@ -68,23 +73,21 @@
 
 	{% block fieldsetPermissions %}
 		<fieldset class="Fieldset-Permissions">
-			<legend>{{ __('permissions') }}</legend>
+			<legend>{{ __('fieldset_permissions') }}</legend>
 
 			{% block fieldsetPermissionsInner %}
 				{% block usergroupPolicies %}
-					{% for policyClass in authorizationPolicies %}
+					{% for policy in authorizationPolicies %}
 						{% block usergroupPolicy %}
 							<fieldset class="Fieldset-Permission">
-								{% set title = (policyClass is string ? staticCall(policyClass, 'getScope') : policyClass.getScope)|underscore %}
-								<span class="Title" title="{{ title }}">{{ title }}</span>
+								<span class="Title" title="{{ policy.title }}">{{ policy.title }}</span>
 								<div class="Permissions">
 									{% block usergroupPermissions %}
-										{% set permissions = policyClass is string ? staticCall(policyClass, 'getPermissionOptions') : policyClass.getPermissionOptions %}
-										{% for identifier,permission in permissions %}
+										{% for identifier,permission in policy.permissions %}
 											<div class="Permission">
 												{# @var permission \Awyiss\Authorization\Permission\PermissionInterface #}
 												{% block usergroupPermission %}
-													<span class="Label">{{ __(identifier) }}</span>
+													<span class="Label">{{ __df(policy.scope, 'usergroups', 'permission_' ~ identifier) }}</span>
 													{{ AuthorizationHelper.permissionOptions(permission, usergroup, null, 'Usergroups') }}
 												{% endblock %}
 											</div>

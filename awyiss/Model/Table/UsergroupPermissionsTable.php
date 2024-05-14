@@ -123,7 +123,7 @@ class UsergroupPermissionsTable extends Table {
 			'usergroupExists',
 			[
 				'errorField' => 'usergroupId',
-				'message' => __d($this->getI18nDomain(), 'error_usergroup_exists'),
+				'message' => __df($this->getI18nDomain(), 'validation', 'error_usergroup_exists'),
 			]
 		);
 

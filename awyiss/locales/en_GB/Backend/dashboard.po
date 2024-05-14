@@ -1,0 +1,36 @@
+# Dashboard translations of Awyiss CMS
+# Copyright 2024 Awyiss <EMAIL@ADDRESS>
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 0.1.0\n"
+"POT-Creation-Date: 2024-05-11 19:35+0000\n"
+"PO-Revision-Date: 2024-05-11 19:35+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+msgid "meta_title_overview"
+msgstr "Dashboard"
+
+msgid "menu_title"
+msgstr "Dashboard"
+
+msgid "menu_overview"
+msgstr "Overview"
+
+msgid "headline_overview"
+msgstr "Dashboard"
+
+msgid "logged_in_as"
+msgstr "Logged in as &quot;{0}&quot;"
+
+msgid "fieldset_quick_actions"
+msgstr "Quick Access"
+
+msgid "quick_action_add_page"
+msgstr "Add page"
+
+msgid "quick_action_user_configuration"
+msgstr "User settings"

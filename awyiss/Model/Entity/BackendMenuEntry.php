@@ -62,6 +62,25 @@ class BackendMenuEntry extends Entity {
 
 
 	/**
+	 * @param string|null $as_value
+	 * @return string
+	 */
+	protected function _getTitle(?string $as_value = null): string {
+		if (empty($as_value)) {
+			return '';
+		}
+
+		if (str_contains($as_value, '::')) {
+			$la_parts = explode('::', $as_value);
+
+			return __d($la_parts[0], $la_parts[1]);
+		}
+
+		return $as_value;
+	}
+
+
+	/**
 	 * @param mixed $ax_value
 	 * @return mixed
 	 * @noinspection PhpUnused

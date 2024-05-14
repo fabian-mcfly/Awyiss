@@ -1,0 +1,33 @@
+# SEO-element translations of Awyiss CMS
+# Copyright 2024 Awyiss <EMAIL@ADDRESS>
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 0.1.0\n"
+"POT-Creation-Date: 2024-05-11 19:35+0000\n"
+"PO-Revision-Date: 2024-05-11 19:35+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+msgid "fieldset_seo"
+msgstr "Search engine optimization"
+
+msgid "title_empty"
+msgstr "Example title"
+
+msgid "description_empty"
+msgstr "Here you can optionally enter text that Google will display in the search results. Try to encourage the user to click!"
+
+msgid "meta_title"
+msgstr "Meta title"
+
+msgid "meta_description"
+msgstr "Meta description"
+
+msgid "robots_index"
+msgstr "Index"
+
+msgid "robots_follow"
+msgstr "Follow"

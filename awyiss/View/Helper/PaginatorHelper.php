@@ -6,7 +6,9 @@ namespace Awyiss\View\Helper;
 
 use Awyiss\View\StringTemplate;
 use Cake\Utility\Hash;
+use Cake\Utility\Inflector;
 use Cake\View\Helper\PaginatorHelper as BasePaginatorHelper;
+use Cake\View\StringTemplate as BaseStringTemplate;
 use Cake\View\View;
 
 
@@ -59,6 +61,9 @@ class PaginatorHelper extends BasePaginatorHelper {
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function sort(string $as_key, array|string|null $ax_title = null, array $aa_options = []): string {
+		$la_options = $aa_options;
+		$la_options += ['url' => [], 'escape' => true];
+
 		$ls_title = $ax_title;
 		if (empty($ls_title)) {
 			$ls_title = __($as_key);
@@ -66,10 +71,44 @@ class PaginatorHelper extends BasePaginatorHelper {
 
 		// If the key is the current sort key, set the default direction to desc
 		if ($as_key === $this->currentSortKey()) {
-			$aa_options['direction'] = 'desc';
+			$la_options['direction'] = 'desc';
 		}
 
-		return parent::sort($as_key, $ls_title, $aa_options);
+		$ls_url = $la_options['url'];
+		unset($la_options['url']);
+
+		$ls_defaultDir = isset($la_options['direction']) ? strtolower($la_options['direction']) : 'asc';
+		unset($la_options['direction']);
+
+		$ls_sortKey = (string)$this->param('sort');
+		$ls_alias = $this->param('alias');
+		[$ls_table, $ls_field] = explode('.', $as_key . '.');
+		if (!$ls_field) {
+			$ls_field = $ls_table;
+			$ls_table = $ls_alias;
+		}
+		$lb_isSorted = ($ls_sortKey === $ls_table . '.' . $ls_field || $ls_sortKey === $ls_alias . '.' . $as_key || $ls_table . '.' . $ls_field === $ls_alias . '.' . $ls_sortKey);
+
+		$ls_template = 'sort';
+		$ls_dir = $ls_defaultDir;
+		if ($lb_isSorted) {
+			$ls_dir = $this->sortDir() === 'asc' ? 'desc' : 'asc';
+			$ls_template = $ls_dir === 'asc' ? 'sortDesc' : 'sortAsc';
+		}
+
+		$la_paging = [
+			'sort' => $as_key,
+			'direction' => $ls_dir,
+			'page' => 1,
+		];
+
+		$la_vars = [
+			'text' => $la_options['escape'] ? h($ls_title) : $ls_title,
+			'identifier' => Inflector::camelize($as_key),
+			'url' => $this->generateUrl($la_paging, $ls_url),
+		];
+
+		return $this->templater()->format($ls_template, $la_vars);
 	}
 
 
@@ -168,7 +207,7 @@ class PaginatorHelper extends BasePaginatorHelper {
 			$aa_options + [
 				'default' => $li_defaultPerPage,
 				'empty' => false,
-				'label' => __('limit_per_page'),
+				'label' => __d('pagination', 'limit_per_page'),
 				'options' => $la_limits,
 				'type' => 'select',
 				'value' => $this->param('perPage'),
@@ -194,6 +233,59 @@ class PaginatorHelper extends BasePaginatorHelper {
 
 
 		return $this->_View->element('paginator/pagination');
+	}
+
+
+	/**
+	 * Formats a number for the paginator number output.
+	 *
+	 * @param \Cake\View\StringTemplate $templater StringTemplate instance.
+	 * @param array<string, mixed> $options Options from the numbers() method.
+	 * @return string
+	 */
+	protected function _formatNumber(StringTemplate|BaseStringTemplate $templater, array $options): string {
+		$la_vars = [
+			'page' => __d('pagination', 'page'),
+			'text' => $options['text'],
+			'url' => $this->generateUrl(['page' => $options['page']], $options['url']),
+		];
+
+		return $templater->format('number', $la_vars);
+	}
+
+
+	/**
+	 * Generates the numbers for the paginator numbers() method.
+	 *
+	 * @param \Cake\View\StringTemplate $templater StringTemplate instance.
+	 * @param array<string, mixed> $params Params from the numbers() method.
+	 * @param array<string, mixed> $options Options from the numbers() method.
+	 * @return string Markup output.
+	 */
+	protected function _numbers(StringTemplate|BaseStringTemplate $templater, array $params, array $options): string {
+		$ls_out = '';
+		$ls_out .= $options['before'];
+
+		for ($li_i = 1; $li_i <= $params['pageCount']; $li_i++) {
+			if ($li_i === $params['currentPage']) {
+				$ls_out .= $templater->format('current', [
+					'page' => __d('pagination', 'page'),
+					'text' => $this->Number->format($params['currentPage']),
+					'url' => $this->generateUrl(['page' => $li_i], $options['url']),
+				]);
+			}
+			else {
+				$la_vars = [
+					'page' => __d('pagination', 'page'),
+					'text' => $this->Number->format($li_i),
+					'url' => $this->generateUrl(['page' => $li_i], $options['url']),
+				];
+				$ls_out .= $templater->format('number', $la_vars);
+			}
+		}
+		$ls_out .= $options['after'];
+
+		return $ls_out;
 	}
 
 

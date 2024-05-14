@@ -1,0 +1,120 @@
+# Users translations of Awyiss CMS
+# Copyright 2024 Awyiss <EMAIL@ADDRESS>
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 0.1.0\n"
+"POT-Creation-Date: 2024-05-11 19:35+0000\n"
+"PO-Revision-Date: 2024-05-11 19:35+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+msgid "meta_title_overview"
+msgstr "Benutzer"
+
+msgid "meta_title_login"
+msgstr "Anmeldung"
+
+msgid "meta_title_add"
+msgstr "Benutzer hinzufügen"
+
+msgid "meta_title_edit"
+msgstr "Benutzer bearbeiten"
+
+msgid "menu_title"
+msgstr "Benutzer"
+
+msgid "menu_overview"
+msgstr "Übersicht"
+
+msgid "menu_add"
+msgstr "Neuer Benutzer"
+
+msgid "headline_overview"
+msgstr "Benutzer"
+
+msgid "menu_configure"
+msgstr "Konfiguration"
+
+msgid "usergroup_filter_label"
+msgstr "Benutzergruppe"
+
+msgid "user_id_filter_all"
+msgstr "Alle"
+
+msgid "usergroup_filter_unassigned"
+msgstr "Nicht zugeordnet"
+
+msgid "create"
+msgstr "Neuer Benutzer"
+
+msgid "headline_add"
+msgstr "Benutzer hinzufügen"
+
+msgid "add_succeeded"
+msgstr "Der Benutzer wurde erfolgreich hinzugefügt"
+
+msgid "add_failed"
+msgstr "Der Benutzer konnte nicht hinzugefügt werden"
+
+msgid "headline_edit"
+msgstr "Benutzer bearbeiten"
+
+msgid "edit_succeeded"
+msgstr "Der Benutzer wurde erfolgreich aktualisiert"
+
+msgid "edit_failed"
+msgstr "Der Benutzer konnte nicht aktualisiert werden"
+
+msgid "record_not_found"
+msgstr "Der Benutzer wurde nicht gefunden"
+
+msgid "confirm_delete"
+msgstr "Sind Sie sicher, dass Sie diesen Benutzer (ID: {0}) löschen möchten?"
+
+msgid "delete_succeeded"
+msgstr "Der Benutzer wurde erfolgreich gelöscht"
+
+msgid "delete_failed"
+msgstr "Der Benutzer konnte nicht gelöscht werden"
+
+msgid "legend_login"
+msgstr "Anmeldung"
+
+msgid "username"
+msgstr "Benutzername"
+
+msgid "password"
+msgstr "Passwort"
+
+msgid "password_confirm"
+msgstr "Passwort bestätigen"
+
+msgid "show_password"
+msgstr "Passwort anzeigen"
+
+msgid "login"
+msgstr "Anmelden"
+
+msgid "login_failed"
+msgstr "Die Anmeldung ist fehlgeschlagen"
+
+msgid "logout"
+msgstr "Abmelden"
+
+msgid "email"
+msgstr "E-Mail"
+
+msgid "firstname"
+msgstr "Vorname"
+
+msgid "lastname"
+msgstr "Nachname"
+
+msgid "last_login"
+msgstr "Letzte Anmeldung"
+
+msgid "fieldset_usergroups"
+msgstr "Benutzergruppen"

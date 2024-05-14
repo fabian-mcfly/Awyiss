@@ -256,7 +256,7 @@ class ContentTemplatesTable extends Table {
 	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
 		$ao_rules->add($ao_rules->isUnique(['fileName']), 'fileNameUnique', [
 			'errorField' => 'fileName',
-			'message' => __dfx($this->getI18nDomain(), 'validation', 'content_templates', 'error_file_name_unique'),
+			'message' => __df($this->getI18nDomain(), 'validation', 'error_file_name_unique'),
 		]);
 
 
@@ -287,7 +287,7 @@ class ContentTemplatesTable extends Table {
 		}, 'validContentElements', [
 			'errorField' => 'contentTemplateElements',
 			//No domain fallback, since this is a message, specific to content templates.
-			'message' => __d($this->getI18nDomain(), 'error_valid_content_elements'),
+			'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_content_elements'),
 		]);
 
 
@@ -296,7 +296,7 @@ class ContentTemplatesTable extends Table {
 			'noLinkedContents',
 			[
 				'errorField' => '_general',
-				'message' => __d($this->getI18nDomain(), 'error_linked_contents'),
+				'message' => __df($this->getI18nDomain(), 'validation', 'error_linked_contents'),
 			]
 		);
 

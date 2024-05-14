@@ -18,6 +18,17 @@
 	</li>
 {% endblock %}
 
+{% block nestedListItemDataDisplayedFields %}
+	{% for field in displayedFields %}
+		{% if field == 'slug' %}
+		{% else %}
+			{% block nestedListItemDataDisplayedField %}
+				{{ parent() }}
+			{% endblock %}
+		{% endif %}
+	{% endfor %}
+{% endblock %}
+
 {% block nestedListActions %}
 	<span class="Actions">
 		{% block nestedListActionsViewContents %}

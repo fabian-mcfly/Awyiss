@@ -46,7 +46,7 @@
 		{% for realm in realms %}
 			{% block fieldsetOverview %}
 				<fieldset class="Overview-Fieldset">
-					<legend>{{ __('' ~ realm) }}</legend>
+					<legend>{{ __('realm_' ~ realm|underscore) }}</legend>
 					{% block listOverview %}
 						{% from '@Backend/macro/nested_list.twig' import nestedList %}
 						{{ nestedList(languages[ realm ], _context|merge({

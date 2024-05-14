@@ -8,8 +8,10 @@ use Awyiss\Authentication\IdentityAwareTrait;
 use Awyiss\Awyiss;
 use Awyiss\Configuration\ConfigOptionsProvider;
 use Awyiss\Model\Entity\Configuration;
+use Awyiss\Model\Entity\PageRole;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
+use Cake\Datasource\FactoryLocator;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Utility\Inflector;
@@ -58,10 +60,33 @@ class ConfigurationTable extends Table {
 	 * @throws \ReflectionException
 	 */
 	public function buildCategories(): array {
+		/** @var \Awyiss\Model\Table\DatatablesTable $lo_datatablesTable */
+		$lo_datatablesTable = FactoryLocator::get('Table')->get('Datatables');
+		$la_datatables = $lo_datatablesTable->findAllAndCache()->indexBy('identifier')->toArray();
+
+		/** @var \Awyiss\Model\Table\PageRolesTable $lo_pageRolesTable */
+		$lo_pageRolesTable = FactoryLocator::get('Table')->get('PageRoles');
+		$la_pageRoles = $lo_pageRolesTable->findAllAndCache()->indexBy(function (PageRole $ao_pageRole) {
+			return Inflector::pluralize($ao_pageRole->identifier);
+		})->toArray();
+
 		$la_configScopes = [];
 		foreach ($this->getScopes() as $ls_identifier => $ls_className) {
 			$ls_identifier = Inflector::underscore($ls_identifier);
-			$la_configScopes[ $ls_identifier ] = __d($ls_identifier, 'title_menu');
+
+			if (isset($la_pageRoles[ $ls_identifier ]) && $ls_identifier !== 'pages') {
+				$la_configScopes[ $ls_identifier ] = $la_pageRoles[ $ls_identifier ]->label;
+
+				continue;
+			}
+
+			if (isset($la_datatables[ $ls_identifier ])) {
+				$la_configScopes[ $ls_identifier ] = $la_datatables[ $ls_identifier ]->label;
+
+				continue;
+			}
+
+			$la_configScopes[ $ls_identifier ] = __d($ls_identifier, 'menu_title');
 		}
 
 		uasort($la_configScopes, function ($a, $b) {
@@ -180,7 +205,7 @@ class ConfigurationTable extends Table {
 			'identifierUniqueForScope',
 			[
 				'errorField' => 'identifier',
-				'message' => __dfx($this->getI18nDomain(), 'validation', 'configuration', 'error_identifier_unique_for_scope'),
+				'message' => __df($this->getI18nDomain(), 'validation', 'error_identifier_unique_for_scope'),
 			]
 		);
 
@@ -189,7 +214,7 @@ class ConfigurationTable extends Table {
 			return in_array($ao_entity->realm, Awyiss::getRealms(), true);
 		}, 'validRealm', [
 			'errorField' => 'realm',
-			'message' => __d($this->getI18nDomain(), 'error_valid_realm'),
+			'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_realm'),
 		]);
 
 
@@ -232,7 +257,7 @@ class ConfigurationTable extends Table {
 			return $lb_valid;
 		}, 'validValue', [
 			'errorField' => 'value',
-			'message' => __d($this->getI18nDomain(), 'error_valid_value'),
+			'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_value'),
 		]);
 
 
@@ -246,7 +271,7 @@ class ConfigurationTable extends Table {
 				'languageShortcode',
 			], 'Languages', [
 				'errorField' => 'languageShortcode',
-				'message' => __dfx($this->getI18nDomain(), 'validation', 'configuration', 'error_language_exists'),
+				'message' => __df($this->getI18nDomain(), 'validation', 'error_language_exists'),
 			]);
 
 

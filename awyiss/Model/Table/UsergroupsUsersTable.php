@@ -86,13 +86,13 @@ class UsergroupsUsersTable extends Table {
 	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
 		$ao_rules->add($ao_rules->existsIn('usergroupId', 'Usergroups'), 'usergroupExists', [
 			'errorField' => 'usergroupId',
-			'message' => __d($this->getI18nDomain(), 'error_usergroup_exists'),
+			'message' => __df($this->getI18nDomain(), 'validation', 'error_usergroup_exists'),
 		]);
 
 
 		$ao_rules->add($ao_rules->existsIn('userId', 'Users'), 'userExists', [
 			'errorField' => 'userId',
-			'message' => __d($this->getI18nDomain(), 'error_user_exists'),
+			'message' => __df($this->getI18nDomain(), 'validation', 'error_user_exists'),
 		]);
 
 

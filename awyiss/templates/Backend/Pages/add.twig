@@ -7,12 +7,13 @@
 @var languageRealm string
 @var localConfig array
 @var nestable bool
+@var pageRoleName string
 @var _view \Awyiss\View\BackendView
 #}
 
 <div class="Pages Form Add">
 	{% if AuthorizationHelper.isAccessible('read') %}
-		{{ HtmlHelper.link(__('overview'), {action: 'overview', pageId: page.id}, {class: 'BackToOverview'}) }}
+		{{ HtmlHelper.link(__('back_to_overview'), {action: 'overview', pageId: page.id}, {class: 'BackToOverview'}) }}
 	{% endif %}
 
 	{% block headlineAdd %}

@@ -74,7 +74,7 @@
 			{% block fieldsetGeneralInner %}
 				{% block formControlIdentifier %}
 					<div class="FormInput FormInputType-Text FormInputName-Identifier{% if FormHelper.isFieldError('identifier') %} Error{% endif %}">
-						<label for="Configuration-Identifier">{{ __('identifier') }}</label>
+						<label class="Label" for="Configuration-Identifier">{{ __('identifier') }}</label>
 
 						{{ FormHelper.text('identifier', {
 							id: 'Configuration-Identifier',

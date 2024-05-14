@@ -1,0 +1,82 @@
+# ContentTemplates translations of Awyiss CMS
+# Copyright 2024 Awyiss <EMAIL@ADDRESS>
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 0.1.0\n"
+"POT-Creation-Date: 2024-05-11 19:35+0000\n"
+"PO-Revision-Date: 2024-05-11 19:35+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+msgid "meta_title_overview"
+msgstr "Inhaltstemplates"
+
+msgid "meta_title_add"
+msgstr "Inhaltstemplate hinzufügen"
+
+msgid "meta_title_edit"
+msgstr "Inhaltstemplate bearbeiten"
+
+msgid "menu_title"
+msgstr "Inhaltstemplates"
+
+msgid "menu_add"
+msgstr "Neues Inhaltstemplate"
+
+msgid "headline_overview"
+msgstr "Inhaltstemplates"
+
+msgid "create"
+msgstr "Neues Inhaltstemplate"
+
+msgid "headline_add"
+msgstr "Inhaltstemplate hinzufügen"
+
+msgid "add_succeeded"
+msgstr "Das Inhaltstemplate wurde erfolgreich hinzugefügt"
+
+msgid "add_failed"
+msgstr "Das Inhaltstemplate konnte nicht hinzugefügt werden"
+
+msgid "headline_edit"
+msgstr "Inhaltstemplate bearbeiten"
+
+msgid "edit_succeeded"
+msgstr "Das Inhaltstemplate wurde erfolgreich aktualisiert"
+
+msgid "edit_failed"
+msgstr "Das Inhaltstemplate konnte nicht aktualisiert werden"
+
+msgid "record_not_found"
+msgstr "Das Inhaltstemplate wurde nicht gefunden"
+
+msgid "confirm_delete"
+msgstr "Sind Sie sicher, dass Sie diesen Inhaltstemplate (ID: {0}) löschen möchten?"
+
+msgid "delete_succeeded"
+msgstr "Das Inhaltstemplate wurde erfolgreich gelöscht"
+
+msgid "delete_failed"
+msgstr "Das Inhaltstemplate konnte nicht gelöscht werden"
+
+msgid "file_changes_in_progress"
+msgstr "Es ist aktuell eine Dateiänderung in Bearbeitung. Bitte warten Sie, bis dieese abgeschlossen ist."
+
+msgid "file_name"
+msgstr "Dateiname"
+
+msgid "column_span"
+msgstr "Spaltenbreite"
+
+msgid "content_elements_available"
+msgstr "Verfügbare Inhaltselemente"
+
+msgid "assigned_page_templates"
+msgstr "Verfügbar für Seitentemplates"
+
+msgid "used_for_contents"
+msgstr "Verwendungen"
+

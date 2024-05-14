@@ -63,11 +63,14 @@ class LocaleHelper extends Helper {
 		$la_attributes = $aa_attributes + ['type' => 'select'];
 
 		if (empty($aa_attributes['languageRealm'])) {
-			$la_languages = $this->allLanguages();
+			$la_languages = $this->allLanguages(true);
 		}
 		else {
-			$la_languages = $this->languagesForRealm($aa_attributes['languageRealm']);
+			$la_languages = $this->languagesForRealm($aa_attributes['languageRealm'], true);
 		}
+
+		$la_languages = array_filter($la_languages, fn($ao_language) => $ao_language->active);
+		$la_languages = array_map(fn($ao_language) => $ao_language->title, $la_languages);
 
 		$la_attributes['options'] = $la_languages;
 

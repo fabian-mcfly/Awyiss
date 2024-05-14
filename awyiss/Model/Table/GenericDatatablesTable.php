@@ -170,7 +170,7 @@ abstract class GenericDatatablesTable extends Table {
 				'languageExists',
 				[
 					'errorField' => 'languageShortcode',
-					'message' => __dfx($this->getI18nDomain(), 'validation', 'pages', 'error_language_exists'),
+					'message' => __df($this->getI18nDomain(), 'validation', 'error_language_exists'),
 				]
 			);
 		}

@@ -256,7 +256,9 @@ export default class TranslatableTexts {
 
 		// Set the button text
 		this.dialog.confirmApply.firstChild.nodeValue = element.dataset.dialogApply || 'Apply';
+		this.dialog.confirmApply.title = this.dialog.confirmApply.firstChild.nodeValue;
 		this.dialog.confirmCancel.firstChild.nodeValue = element.dataset.dialogCancel || 'Cancel';
+		this.dialog.confirmCancel.title = this.dialog.confirmCancel.firstChild.nodeValue;
 
 		// Store the current element as a property on the dialog
 		this.dialog.currentElement = element;

@@ -165,7 +165,7 @@ class UsersTable extends Table {
 			'usernameUnique',
 			[
 				'errorField' => 'username',
-				'message' => __dfx($this->getI18nDomain(), 'validation', 'username', 'error_username_unique'),
+				'message' => __df($this->getI18nDomain(), 'validation', 'error_username_unique'),
 			]
 		);
 

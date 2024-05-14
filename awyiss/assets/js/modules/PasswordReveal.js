@@ -39,7 +39,7 @@ export default class PasswordReveal {
 	addShowPasswordButton(passwordField) {
 		// Create a new button
 		let showPasswordButton = document.createElement('button');
-		showPasswordButton.textContent = 'Show Password';
+		showPasswordButton.textContent = passwordField.dataset.showPasswordLabel ?? 'Show Password';
 		showPasswordButton.classList.add('RevealPassword');
 
 		// Set the type of the button to 'button' to prevent form submission

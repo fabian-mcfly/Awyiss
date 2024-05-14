@@ -10,7 +10,7 @@
 {% set originalAvailableFieldsets = availableFieldsets %}
 {% set availableFieldsets = [] %}
 {% for fieldset in originalAvailableFieldsets %}
-	{% set availableFieldsets = availableFieldsets|merge({(fieldset): __d('contents', 'fieldset_' ~ fieldset)}) %}
+	{% set availableFieldsets = availableFieldsets|merge({(fieldset): __d(fieldset == 'publication' ? 'publication_data' : 'contents', 'fieldset_' ~ fieldset)}) %}
 {% endfor %}
 
 {% set assignedContentAreas = [] %}

@@ -182,7 +182,7 @@ class LanguagesTable extends Table {
 			'shortcodeUniqueForRealm',
 			[
 				'errorField' => 'shortcode',
-				'message' => __dfx($this->getI18nDomain(), 'validation', 'shortcode', 'error_shortcode_unique_for_realm'),
+				'message' => __df($this->getI18nDomain(), 'validation', 'error_shortcode_unique_for_realm'),
 			]
 		);
 
@@ -191,7 +191,7 @@ class LanguagesTable extends Table {
 			return in_array($ao_entity->realm, Awyiss::getRealms());
 		}, 'validRealm', [
 			'errorField' => 'realm',
-			'message' => __d($this->getI18nDomain(), 'error_valid_realm'),
+			'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_realm'),
 		]);
 
 
@@ -199,7 +199,7 @@ class LanguagesTable extends Table {
 			return in_array($ao_entity->timezone, DateTimeZone::listIdentifiers());
 		}, 'validTimezone', [
 			'errorField' => 'timezone',
-			'message' => __d($this->getI18nDomain(), 'error_valid_timezone'),
+			'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_timezone'),
 		]);
 
 
@@ -207,7 +207,7 @@ class LanguagesTable extends Table {
 			return in_array($ao_entity->locale, ResourceBundle::getLocales(''));
 		}, 'validLocale', [
 			'errorField' => 'locale',
-			'message' => __d($this->getI18nDomain(), 'error_valid_locale'),
+			'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_locale'),
 		]);
 
 
@@ -220,7 +220,7 @@ class LanguagesTable extends Table {
 			'notLastLanguageInRealm',
 			[
 				'errorField' => '_general',
-				'message' => __d($this->getI18nDomain(), 'error_not_last_language_in_realm'),
+				'message' => __df($this->getI18nDomain(), 'validation', 'error_not_last_language_in_realm'),
 			]
 		);
 

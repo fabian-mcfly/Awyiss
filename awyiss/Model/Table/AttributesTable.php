@@ -6,6 +6,7 @@ namespace Awyiss\Model\Table;
 
 use Awyiss\Core\App;
 use Awyiss\Model\Entity\Attribute;
+use Awyiss\Model\Entity\PageRole;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
 use Awyiss\Utility\Content\BootstrapColumnSystem;
@@ -124,11 +125,34 @@ class AttributesTable extends Table {
 	 * @return array
 	 */
 	public function buildCategories(): array {
-		$la_attributeScopes = $this->attributeScopes;
+		/** @var \Awyiss\Model\Table\DatatablesTable $lo_datatablesTable */
+		$lo_datatablesTable = FactoryLocator::get('Table')->get('Datatables');
+		$la_datatables = $lo_datatablesTable->findAllAndCache()->indexBy('identifier')->toArray();
 
-		array_walk($la_attributeScopes, function (&$as_label, $as_identifier): void {
-			$as_label = __d($as_identifier, 'title_menu');
-		});
+		/** @var \Awyiss\Model\Table\PageRolesTable $lo_pageRolesTable */
+		$lo_pageRolesTable = FactoryLocator::get('Table')->get('PageRoles');
+		$la_pageRoles = $lo_pageRolesTable->findAllAndCache()->indexBy(function (PageRole $ao_pageRole) {
+			return Inflector::pluralize($ao_pageRole->identifier);
+		})->toArray();
+
+		$la_attributeScopes = [];
+		foreach ($this->attributeScopes as $ls_identifier => $ls_className) {
+			$ls_identifier = Inflector::underscore($ls_identifier);
+
+			if (isset($la_pageRoles[ $ls_identifier ]) && $ls_identifier !== 'pages') {
+				$la_attributeScopes[ $ls_identifier ] = $la_pageRoles[ $ls_identifier ]->label;
+
+				continue;
+			}
+
+			if (isset($la_datatables[ $ls_identifier ])) {
+				$la_attributeScopes[ $ls_identifier ] = $la_datatables[ $ls_identifier ]->label;
+
+				continue;
+			}
+
+			$la_attributeScopes[ $ls_identifier ] = __d($ls_identifier, 'menu_title');
+		}
 
 		uasort($la_attributeScopes, function ($a, $b) {
 			return strnatcasecmp($a, $b);
@@ -308,7 +332,7 @@ class AttributesTable extends Table {
 			return !in_array($ao_entity->identifier, $la_reservedWords);
 		}, 'validIdentifier', [
 			'errorField' => 'identifier',
-			'message' => __dfx($this->getI18nDomain(), 'validation', 'attributes', 'error_reserved_identifier'),
+			'message' => __df($this->getI18nDomain(), 'validation', 'error_reserved_identifier'),
 		]);
 
 
@@ -317,7 +341,7 @@ class AttributesTable extends Table {
 			'identifierUniqueForScope',
 			[
 				'errorField' => 'identifier',
-				'message' => __dfx($this->getI18nDomain(), 'validation', 'attributes', 'error_identifier_unique_for_scope'),
+				'message' => __df($this->getI18nDomain(), 'validation', 'error_identifier_unique_for_scope'),
 			]
 		);
 
@@ -330,7 +354,7 @@ class AttributesTable extends Table {
 			return in_array($ao_entity->fieldset, $la_availableFieldsets) || $ao_entity->scope === 'contents';
 		}, 'validFieldset', [
 			'errorField' => 'fieldset',
-			'message' => __d($this->getI18nDomain(), 'error_valid_fieldset'),
+			'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_fieldset'),
 		]);
 
 
@@ -342,7 +366,7 @@ class AttributesTable extends Table {
 			return in_array($ao_entity->inputType, $la_availableInputTypes);
 		}, 'validInputType', [
 			'errorField' => 'inputType',
-			'message' => __d($this->getI18nDomain(), 'error_valid_input_type'),
+			'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_input_type'),
 		]);
 
 

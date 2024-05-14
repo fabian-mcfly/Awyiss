@@ -100,7 +100,7 @@ class ContentAreasTable extends Table {
 			'identifierUnique',
 			[
 				'errorField' => 'identifier',
-				'message' => __dfx($this->getI18nDomain(), 'validation', 'content_areas', 'error_identifier_unique'),
+				'message' => __df($this->getI18nDomain(), 'validation', 'error_identifier_unique'),
 			]
 		);
 

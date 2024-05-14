@@ -312,6 +312,7 @@ class ContentTemplatesController extends Controller {
 			return $ao_column->getLabel();
 		}, $la_columnSpans);
 
+
 		$this->set([
 			'contentTemplate' => $ao_contentTemplate,
 			'availableContentElements' => $la_availableContentElements,

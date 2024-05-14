@@ -1,7 +1,7 @@
 {% set controller = _view.getRequest().getParam('controller') -%}
 <!DOCTYPE html>
 <html
-	lang="{{ language.shortcode }}"
+	lang="{{ currentLanguage.shortcode }}"
 	class="
 		{{- controller }}Controller {{ _view.getRequest().getParam('action')|camelize }}Action
 		{%- if isGenericPage %}	IsGenericPage{%- endif -%}
@@ -13,7 +13,18 @@
 		{% block head %}
 			{{ HtmlHelper.charset() }}
 			<meta name="viewport" content="width=device-width, initial-scale=1">
-			<title>{{ fetch('title') }}</title>
+
+			{% set metaTitle = fetch('metaTitle') %}
+			{% if metaTitle == '' %}
+				{% set identifier = 'meta_title_' ~ _view.getRequest().getParam('action') %}
+				{% set metaTitle = __(identifier) %}
+				{% if (metaTitle ends with identifier) %}
+					{% set metaTitle = __d(isGenericDatatable ? 'generic_datatables' : 'generic_pages', identifier, isGenericDatatable ? datatables.title : pageRole.title) %}
+				{% endif %}
+
+				{% set metaTitle = metaTitle ~ config('Awyiss.System.Backend.meta.titleSeparator') ~ config('Awyiss.System.Backend.meta.titleAppendix') %}
+			{% endif %}
+			<title>{{ metaTitle }}</title>
 
 			{% block favicons %}
 				<link rel="apple-touch-icon" sizes="180x180" href="/awyiss/assets/favicons/apple-touch-icon.png">
@@ -72,7 +83,7 @@
 					{% endblock %}
 
 					{% block logout %}
-						<a href="{{ UrlHelper.build({controller: 'users', action: 'logout'}) }}" class="Logout">{{ __d('users', 'logout') }}</a>
+						<a href="{{ UrlHelper.build({controller: 'users', action: 'logout'}) }}" class="Logout" title="{{ __d('users', 'logout') }}">{{ __d('users', 'logout') }}</a>
 					{% endblock %}
 
 					{% block loginLogo %}
@@ -99,13 +110,13 @@
 						{% block darkModeSwitch %}
 							<li class="DarkModeSwitch-Item DarkModeSwitch-Item-Off{% if config.Awyiss.System.Backend.interface.darkMode == false %} Active{% endif %}">
 								<a href="{{ UrlHelper.build({controller: 'dashboard', action: 'userConfiguration', identifier: 'interface.darkMode', value: 'false'}) }}"
-									class="DarkModeSwitch-Link DarkModeSwitch-Link-Off">
+									class="DarkModeSwitch-Link DarkModeSwitch-Link-Off" title="{{ __d('system', 'dark_mode_switch_off') }}">
 									{{ __d('system', 'dark_mode_switch_off') }}
 								</a>
 							</li>
 							<li class="DarkModeSwitch-Item DarkModeSwitch-Item-On{% if config.Awyiss.System.Backend.interface.darkMode == true %} Active{%  endif %}">
 								<a href="{{ UrlHelper.build({controller: 'dashboard', action: 'userConfiguration', identifier: 'interface.darkMode', value: 'true'}) }}"
-									class="DarkModeSwitch-Link DarkModeSwitch-Link-On">
+									class="DarkModeSwitch-Link DarkModeSwitch-Link-On" title="{{ __d('system', 'dark_mode_switch_on') }}">
 									{{ __d('system', 'dark_mode_switch_on') }}
 								</a>
 							</li>
@@ -128,6 +139,12 @@
 			{% endblock %}
 		{% endblock %}
 
-		{{ element('form_leave_confirmation_dialog') }}
+		{% block overlayForm %}
+			{{ element('overlay_form') }}
+		{% endblock %}
+
+		{% block leaveConfirmationDialog %}
+			{{ element('form_leave_confirmation_dialog') }}
+		{% endblock %}
 	</body>
 </html>

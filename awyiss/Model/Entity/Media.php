@@ -15,7 +15,6 @@ use Cake\Utility\Text;
  * @property int $id
  * @property int|null $mediaFolderId
  * @property string $mimeType
- * @property int|null $parentId
  * @property string|null $name
  * @property string|null $path
  * @property string $alt
@@ -60,7 +59,6 @@ class Media extends Entity {
 	 */
 	protected array $_accessible = [
 		'mediaFolderId' => true,
-		'parentId' => true,
 		'name' => true,
 		'path' => true,
 		'alt' => true,
@@ -80,7 +78,6 @@ class Media extends Entity {
 	 */
 	protected static array $fieldMap = [
 		'media_folder_id' => 'mediaFolderId',
-		'parent_id' => 'parentId',
 		'mime_type' => 'mimeType',
 		'meta_data' => 'metaData',
 		'average_color' => 'averageColor',

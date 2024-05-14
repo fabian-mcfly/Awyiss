@@ -1,0 +1,87 @@
+# MediaFolders translations of Awyiss CMS
+# Copyright 2024 Awyiss <EMAIL@ADDRESS>
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 0.1.0\n"
+"POT-Creation-Date: 2024-05-11 19:35+0000\n"
+"PO-Revision-Date: 2024-05-11 19:35+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+msgid "meta_title_overview"
+msgstr "Medienordner"
+
+msgid "meta_title_add"
+msgstr "Medienordner hinzufügen"
+
+msgid "meta_title_edit"
+msgstr "Medienordner bearbeiten"
+
+msgid "menu_title"
+msgstr "Medienordner"
+
+msgid "menu_overview"
+msgstr "Übersicht"
+
+msgid "menu_add"
+msgstr "Neuer Medienordner"
+
+msgid "headline_overview"
+msgstr "Medienordner"
+
+msgid "menu_configure"
+msgstr "Konfiguration"
+
+msgid "create"
+msgstr "Neuer Medienordner"
+
+msgid "language_filter_label"
+msgstr "Sprache"
+
+msgid "all"
+msgstr "Alle"
+
+msgid "global"
+msgstr "Global"
+
+msgid "headline_add"
+msgstr "Medienordner hinzufügen"
+
+msgid "add_succeeded"
+msgstr "Der Medienordner wurde erfolgreich hinzugefügt"
+
+msgid "add_failed"
+msgstr "Der Medienordner konnte nicht hinzugefügt werden"
+
+msgid "headline_edit"
+msgstr "Medienordner bearbeiten"
+
+msgid "edit_succeeded"
+msgstr "Der Medienordner wurde erfolgreich aktualisiert"
+
+msgid "edit_failed"
+msgstr "Der Medienordner konnte nicht aktualisiert werden"
+
+msgid "record_not_found"
+msgstr "Der Medienordner wurde nicht gefunden"
+
+msgid "confirm_delete"
+msgstr "Sind Sie sicher, dass Sie diesen Medienordner (ID: {0}) löschen möchten?"
+
+msgid "delete_succeeded"
+msgstr "Der Medienordner wurde erfolgreich gelöscht"
+
+msgid "delete_failed"
+msgstr "Der Medienordner konnte nicht gelöscht werden"
+
+msgid "view_files"
+msgstr "Dateien anzeigen"
+
+msgid "parent_id"
+msgstr "Unterordner von"
+
+msgid "path"
+msgstr "Pfad"

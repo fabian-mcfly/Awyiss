@@ -268,9 +268,6 @@ class CategoriesComponent extends Component {
 		$lo_view = $this->getController()->viewBuilder();
 
 		$ls_identifier = Inflector::underscore($this->getConfig('identifier'));
-		/*if (str_ends_with($ls_identifier, '_id')) {
-			$ls_identifier = substr($ls_identifier, 0, -3);
-		}*/
 
 		$ls_variableNamePlural = Inflector::variable(Inflector::pluralize($ls_identifier));
 

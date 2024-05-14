@@ -1,6 +1,19 @@
+{#
+@var page \Awyiss\Model\Entity\Page
+@var parentRecord \Awyiss\Model\Entity\Page
+@var pageTemplates \Cake\Collection\CollectionInterface
+@var threadedPages \Cake\Collection\CollectionInterface
+@var possibleParentPages \Cake\Collection\CollectionInterface
+@var languageRealm string
+@var localConfig array
+@var nestable bool
+@var pageRoleName string
+@var _view \Awyiss\View\BackendView
+#}
+
 <div class="Pages Form Edit">
 	{% if AuthorizationHelper.isAccessible('read') %}
-		{{ HtmlHelper.link(__('overview'), {action: 'overview'}, {class: 'BackToOverview'}) }}
+		{{ HtmlHelper.link(__('back_to_overview'), {action: 'overview'}, {class: 'BackToOverview'}) }}
 	{% endif %}
 
 	{% block headlineEdit %}

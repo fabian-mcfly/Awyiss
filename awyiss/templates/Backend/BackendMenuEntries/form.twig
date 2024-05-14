@@ -1,8 +1,8 @@
 {#
+@var backendMenuEntry \Awyiss\Model\Entity\BackendMenuEntry
 @var menu \Awyiss\Utility\Menu
 @var possibleParentMenuEntries \Cake\Collection\CollectionInterface
 @var insertAfterOptions array
-@var backendMenuEntry \Awyiss\Model\Entity\BackendMenuEntry
 @var _view \Awyiss\View\BackendView
 #}
 
@@ -65,7 +65,7 @@
 				{% endblock %}
 
 				{% block formControlAccess %}
-					{{ FormHelper.control('access', {val: backendMenuEntry.access|json_encode}) }}
+					{{ FormHelper.control('access', {val: backendMenuEntry.access ? backendMenuEntry.access|json_encode : ''}) }}
 				{% endblock %}
 
 				{% block fieldsetGeneralAttributes %}

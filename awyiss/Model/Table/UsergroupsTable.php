@@ -104,7 +104,7 @@ class UsergroupsTable extends Table {
 			'titleUnique',
 			[
 				'errorField' => 'title',
-				'message' => __d($this->getI18nDomain(), 'error_title_unique'),
+				'message' => __df($this->getI18nDomain(), 'validation', 'error_title_unique'),
 			]
 		);
 

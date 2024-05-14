@@ -80,6 +80,10 @@ class FormHelper extends BaseFormHelper {
 		$this->languageRealm = $lo_behavior->getConfig('realm') ?? Awyiss::REALM_BACKEND;
 
 		foreach (LocaleMiddleware::getLanguages($this->languageRealm) as $lo_language) {
+			if (!$lo_language->active) {
+				continue;
+			}
+
 			$this->languages[ $lo_language->shortcode ] = $lo_language;
 		}
 
@@ -113,17 +117,15 @@ class FormHelper extends BaseFormHelper {
 	 */
 	public function labelTextFromFieldname(string $as_fieldName): string {
 		$ls_text = $as_fieldName;
+
 		if (str_ends_with($ls_text, '._ids')) {
 			$ls_text = substr($ls_text, 0, -5);
 		}
+
 		if (str_contains($ls_text, '.')) {
 			$ls_fieldElements = explode('.', $ls_text);
 			$ls_text = array_pop($ls_fieldElements);
 		}
-		if (str_ends_with($ls_text, '_id')) {
-			$ls_text = substr($ls_text, 0, -3);
-		}
-
 
 		return __($ls_text);
 	}

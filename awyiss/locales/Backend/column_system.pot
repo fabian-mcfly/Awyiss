@@ -1,0 +1,31 @@
+# ColumnSystem translations of Awyiss CMS
+# Copyright 2024 Awyiss <EMAIL@ADDRESS>
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 0.1.0\n"
+"POT-Creation-Date: 2024-05-11 19:35+0000\n"
+"PO-Revision-Date: 2024-05-11 19:35+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+msgctxt "bootstrap"
+msgid "column_width_full"
+msgstr "Full width"
+
+msgctxt "bootstrap"
+msgid "column_width"
+msgstr "{0}/{1} Column"
+
+msgctxt "awyiss"
+msgid "column_width_full"
+msgstr "Full width"
+
+msgctxt "awyiss"
+msgid "column_width"
+msgstr "{0}/{1} Column"
+
+msgid "column_width"
+msgstr "Column width"

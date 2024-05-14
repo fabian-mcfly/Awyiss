@@ -7,9 +7,11 @@ namespace Awyiss\Model\Table;
 use Awyiss\Authentication\IdentityAwareTrait;
 use Awyiss\Awyiss;
 use Awyiss\Configuration\ConfigOptionsProvider;
+use Awyiss\Model\Entity\PageRole;
 use Awyiss\Model\Entity\UserConfiguration;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
+use Cake\Datasource\FactoryLocator;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Utility\Inflector;
@@ -57,17 +59,38 @@ class UserConfigurationTable extends Table {
 	 * @throws \ReflectionException
 	 */
 	public function buildCategories(): array {
-		$la_configScopes = [];
+		/** @var \Awyiss\Model\Table\DatatablesTable $lo_datatablesTable */
+		$lo_datatablesTable = FactoryLocator::get('Table')->get('Datatables');
+		$la_datatables = $lo_datatablesTable->findAllAndCache()->indexBy('identifier')->toArray();
 
+		/** @var \Awyiss\Model\Table\PageRolesTable $lo_pageRolesTable */
+		$lo_pageRolesTable = FactoryLocator::get('Table')->get('PageRoles');
+		$la_pageRoles = $lo_pageRolesTable->findAllAndCache()->indexBy(function (PageRole $ao_pageRole) {
+			return Inflector::pluralize($ao_pageRole->identifier);
+		})->toArray();
+
+		$la_configScopes = [];
 		foreach ($this->getScopes() as $ls_identifier => $ls_className) {
 			$ls_identifier = Inflector::underscore($ls_identifier);
-			$la_configScopes[ $ls_identifier ] = __d($ls_identifier, 'title_menu');
+
+			if (isset($la_pageRoles[ $ls_identifier ])) {
+				$la_configScopes[ $ls_identifier ] = $la_pageRoles[ $ls_identifier ]->label;
+
+				continue;
+			}
+
+			if (isset($la_datatables[ $ls_identifier ])) {
+				$la_configScopes[ $ls_identifier ] = $la_datatables[ $ls_identifier ]->label;
+
+				continue;
+			}
+
+			$la_configScopes[ $ls_identifier ] = __d($ls_identifier, 'menu_title');
 		}
 
 		uasort($la_configScopes, function ($a, $b) {
 			return strnatcasecmp($a, $b);
 		});
-
 
 		return $la_configScopes;
 	}
@@ -150,7 +173,7 @@ class UserConfigurationTable extends Table {
 					$ao_entity->hasOriginal('userId') &&
 					$ao_entity->get('userId') !== $ao_entity->getOriginal('userId')
 				) {
-					return __d($this->getI18nDomain(), 'error_user_id_unchanged');
+					return __df($this->getI18nDomain(), 'validation', 'error_user_id_unchanged');
 				}
 
 
@@ -177,7 +200,7 @@ class UserConfigurationTable extends Table {
 			'identifierUniqueForScope',
 			[
 				'errorField' => 'identifier',
-				'message' => __dfx($this->getI18nDomain(), 'validation', 'user_configuration', 'error_identifier_unique_for_scope'),
+				'message' => __df($this->getI18nDomain(), 'validation', 'error_identifier_unique_for_scope'),
 			]
 		);
 
@@ -190,7 +213,7 @@ class UserConfigurationTable extends Table {
 			return $lo_configOption && $lo_configOption->isPersonalizable();
 		}, 'configOptionIsPersonalizable', [
 			'errorField' => '_general',
-			'message' => __d($this->getI18nDomain(), 'error_config_option_is_personalizable'),
+			'message' => __df($this->getI18nDomain(), 'validation', 'error_config_option_is_personalizable'),
 		]);
 
 
@@ -228,7 +251,7 @@ class UserConfigurationTable extends Table {
 		'validValue',
 		[
 			'errorField' => 'value',
-			'message' => __d($this->getI18nDomain(), 'error_valid_value'),
+			'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_value'),
 		]);
 
 
@@ -239,7 +262,7 @@ class UserConfigurationTable extends Table {
 			'configOwnedByUser',
 			[
 				'errorField' => '_general',
-				'message' => __d($this->getI18nDomain(), 'error_config_owned_by_user'),
+				'message' => __df($this->getI18nDomain(), 'validation', 'error_config_owned_by_user'),
 			]
 		);
 

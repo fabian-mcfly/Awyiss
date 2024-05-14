@@ -22,7 +22,7 @@
 {% endblock %}
 
 {% block formControlTypeList %}
-	<div class="FormInput FormInputType-List FormInputName-Value">
+	<div class="FormInput FormInputType-List FormInputName-Value" data-list-item-add="{{ __('list_item_add') }}" data-list-item-remove="{{ __('list_item_remove') }}">
 		<label class="Label">{{ __('value') }}</label>
 
 		{% set counter = 0 %}

@@ -7,7 +7,74 @@
 @var languageRealm string
 @var localConfig array
 @var nestable bool
+@var pageRole \Awyiss\Model\Entity\PageRole
+@var pageRoleName string
 @var _view \Awyiss\View\BackendView
 #}
 
-{% extends '@Backend/Pages/add_batch.twig' %}
+{% use '@Backend/GenericPages/form.twig' %}
+
+{% block formControlDuplicateOf %}{% endblock %}
+{% block formControlTitle %}{% endblock %}
+{% block formControlSlug %}{% endblock %}
+{% block formControlMetaTitle %}{% endblock %}
+{% block formControlMetaDescription %}{% endblock %}
+{% block formControlRedirectLink %}{% endblock %}
+
+<div class="Pages Form AddBatch">
+	{% if AuthorizationHelper.isAccessible('read') %}
+		{{ HtmlHelper.link(__('back_to_overview'), {action: 'overview', pageId: page.id}, {class: 'BackToOverview'}) }}
+	{% endif %}
+
+	{% block headlineAddBatch %}
+		<h1>{{ __df(pageRoleName, 'generic_pages', 'headline_add_batch'pageRole.title) }}</h1>
+	{% endblock %}
+
+	{{ FormHelper.create(page, {method: 'post', idPrefix: pageRoleName}) }}
+
+	{% block buttonArea %}
+		<div class="ButtonArea">
+			{% block formAddButtons %}
+				{% if AuthorizationHelper.isAccessible('read') %}
+					{{ FormHelper.button(__('save_close'), {class: 'Button Button-SaveClose', name: 'submit', value: 'submit_close'}) }}
+				{% endif %}
+			{% endblock %}
+		</div>
+	{% endblock %}
+
+	<div class="Fieldsets">
+		{% block formAddBatch %}
+			{{ block("fieldsetPresentation") }}
+
+			{{ block("fieldsetConditions") }}
+
+			{% block fieldsetGeneral %}
+				<fieldset class="Fieldset-General">
+					<legend>{{ __('fieldset_general') }}</legend>
+
+					{% block fieldsetGeneralInner %}
+						{% block formControlPages %}
+							{{ FormHelper.control('pages', {type: 'textarea'}) }}
+						{% endblock %}
+
+						{{ parent() }}
+					{% endblock %}
+				</fieldset>
+			{% endblock %}
+
+			{{ block("fieldsetContent") }}
+
+			{{ block("fieldsetAttributes") }}
+
+			{{ block("formInputReloadForm") }}
+		{% endblock %}
+	</div>
+
+	{% block buttonAreaBottom %}
+		<div class="ButtonArea ButtonArea-Bottom">
+			{{ block('formAddButtons') }}
+		</div>
+	{% endblock %}
+
+	{{ FormHelper.end() }}
+</div>

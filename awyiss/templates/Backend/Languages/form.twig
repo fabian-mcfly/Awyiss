@@ -27,7 +27,11 @@
 
 			{% block fieldsetConditionsInner %}
 				{% block formControlRealm %}
-					{{ FormHelper.control('realm', {empty: false, options: realms, 'data-form-updater': true}) }}
+					{{ FormHelper.control('realm', {
+						empty: false,
+						options: realms,
+						'data-form-updater': true,
+					}) }}
 				{% endblock %}
 
 				{% block formControlSystemOrder %}

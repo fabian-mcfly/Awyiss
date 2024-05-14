@@ -1,0 +1,72 @@
+# Menus translations of Awyiss CMS
+# Copyright 2024 Awyiss <EMAIL@ADDRESS>
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 0.1.0\n"
+"POT-Creation-Date: 2024-05-11 19:35+0000\n"
+"PO-Revision-Date: 2024-05-11 19:35+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+msgid "meta_title_overview"
+msgstr "Menu"
+
+msgid "meta_title_add"
+msgstr "Add Menu"
+
+msgid "meta_title_edit"
+msgstr "Edit Menu"
+
+msgid "menu_title"
+msgstr "Menus"
+
+msgid "menu_overview"
+msgstr "Overview"
+
+msgid "menu_add"
+msgstr "New Menu"
+
+msgid "headline_overview"
+msgstr "Menus"
+
+msgid "menu_configure"
+msgstr "Configuration"
+
+msgid "create"
+msgstr "New Menu"
+
+msgid "headline_add"
+msgstr "Add Menu"
+
+msgid "add_succeeded"
+msgstr "The Menu was successfully added"
+
+msgid "add_failed"
+msgstr "The Menu could not be added"
+
+msgid "headline_edit"
+msgstr "Edit Menu"
+
+msgid "edit_succeeded"
+msgstr "The Menu was successfully updated"
+
+msgid "edit_failed"
+msgstr "The Menu could not be updated"
+
+msgid "record_not_found"
+msgstr "The Menu was not found"
+
+msgid "confirm_delete"
+msgstr "Are you sure you want to delete this Menu (ID: {0})?"
+
+msgid "delete_succeeded"
+msgstr "The Menu was successfully deleted"
+
+msgid "delete_failed"
+msgstr "The Menu could not be deleted"
+
+msgid "view_entries"
+msgstr "View entries"

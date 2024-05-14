@@ -4,6 +4,7 @@
 namespace Awyiss\Configuration\ConfigOptions\Trait;
 
 
+use Awyiss\Model\Table\PagesTable;
 use Cake\Datasource\FactoryLocator;
 use Cake\Utility\Inflector;
 
@@ -39,6 +40,24 @@ trait TableFieldsTrait {
 
 		foreach ($lo_table->getSchema()->columns() as $ls_column) {
 			if (in_array($ls_column, $this->blocklistedTableFields, true)) {
+				continue;
+			}
+
+			if (in_array($ls_column, ['meta_title', 'meta_description', 'robots_index', 'robots_follow'])) {
+				$la_columns[ $ls_column ] = __d('seo', $ls_column);
+
+				continue;
+			}
+
+			if ($lo_table instanceof PagesTable && $lo_table->getAlias() !== 'Pages') {
+				$ls_title = __df(Inflector::underscore($lo_table->getAlias()), 'generic_pages', $ls_column);
+
+				if (str_contains($ls_title, '::')) {
+					$ls_title = __d('system', $ls_column);
+				}
+
+				$la_columns[ $ls_column ] = $ls_title;
+
 				continue;
 			}
 

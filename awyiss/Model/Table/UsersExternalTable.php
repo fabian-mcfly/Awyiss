@@ -18,6 +18,10 @@ class UsersExternalTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
+	public const ATTRIBUTABLE = false;
+	/**
+	 * @inheritDoc
+	 */
 	public const TABLE = 'users_external';
 
 

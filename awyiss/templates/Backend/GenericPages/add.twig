@@ -7,7 +7,43 @@
 @var languageRealm string
 @var localConfig array
 @var nestable bool
+@var pageRole \Awyiss\Model\Entity\PageRole
+@var pageRoleName string
 @var _view \Awyiss\View\BackendView
 #}
 
-{% extends '@Backend/Pages/add.twig' %}
+<div class="Pages Form Add">
+	{% if AuthorizationHelper.isAccessible('read') %}
+		{{ HtmlHelper.link(__('back_to_overview'), {action: 'overview', pageId: page.id}, {class: 'BackToOverview'}) }}
+	{% endif %}
+
+	{% block headlineAdd %}
+		<h1>{{ __df(pageRoleName, 'generic_pages', 'headline_add', pageRole.title) }}</h1>
+	{% endblock %}
+
+	{{ FormHelper.create(page, {method: 'post', idPrefix: pageRoleName}) }}
+
+	{% block buttonArea %}
+		<div class="ButtonArea">
+			{% block formAddButtons %}
+				{{ FormHelper.button(__('save'), {class: 'Button Button-Success Button-Save'}) }}
+
+				{% if AuthorizationHelper.isAccessible('read') %}
+					{{ FormHelper.button(__('save_close'), {class: 'Button Button-SaveClose', name: 'submit', value: 'submit_close'}) }}
+				{% endif %}
+			{% endblock %}
+		</div>
+	{% endblock %}
+
+	{% block formAdd %}
+		{% include('@Backend/GenericPages/form.twig') %}
+	{% endblock %}
+
+	{% block buttonAreaBottom %}
+		<div class="ButtonArea ButtonArea-Bottom">
+			{{ block('formAddButtons') }}
+		</div>
+	{% endblock %}
+
+	{{ FormHelper.end() }}
+</div>

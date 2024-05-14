@@ -11,11 +11,15 @@
 					<tr>
 						{% block tableOverviewHeadRowInner %}
 							{% block tableOverviewHeaderId %}
-								<th class="TableHeader-Id{% if PaginatorHelper.currentSortKey() == 'id' %} Active{% endif %}">{{ PaginatorHelper.sort('id') }}</th>
+								<th class="TableHeader-Id{% if PaginatorHelper.currentSortKey() == 'id' %} Active{% endif %}">
+									{{ PaginatorHelper.sort('id', i18nDomain ? __df(i18nDomain, 'system', 'id') : __('id')) }}
+								</th>
 							{% endblock %}
 
 							{% block tableOverviewHeaderTitle %}
-								<th class="TableHeader-Title{% if PaginatorHelper.currentSortKey() == 'title' %} Active{% endif %}">{{ PaginatorHelper.sort('title') }}</th>
+								<th class="TableHeader-Title{% if PaginatorHelper.currentSortKey() == 'title' %} Active{% endif %}">
+									{{ PaginatorHelper.sort('title', i18nDomain ? __df(i18nDomain, 'system', 'title') : __('title')) }}
+								</th>
 							{% endblock %}
 
 							{% block tableOverviewHeaderDefaultFields %}{% endblock %}
@@ -31,7 +35,9 @@
 										{% else %}
 											{% set field = field|underscore %}
 											<th class="TableHeader-{{ field|camelize }}{% if PaginatorHelper.currentSortKey() == field %} Active{% endif %}">
-												{{ PaginatorHelper.sort(field) }}
+												{{ PaginatorHelper.sort(field,
+													i18nDomain ? __df(i18nDomain, 'system', field) : __(field)
+												) }}
 											</th>
 										{% endif %}
 									{% endblock %}
@@ -126,19 +132,19 @@
 										<div class="Actions">
 											{% block tableOverviewCellActionsUpdate %}
 												{% if AuthorizationHelper.isAccessible('update') %}
-													{{ HtmlHelper.link(__('edit'), {action: 'edit', id: entity.id}, {class: 'Button Button-Small Button-Edit'}) }}
+													{{ HtmlHelper.link(i18nDomain ? __df(i18nDomain, 'system', 'edit') : __('edit'), {action: 'edit', id: entity.id}, {class: 'Button Button-Small Button-Edit'}) }}
 												{% endif %}
 											{% endblock %}
 
 											{% block tableOverviewCellActionsDelete %}
 												{% if AuthorizationHelper.isAccessible('delete') %}
-													{{ HtmlHelper.link(__('delete'), {action: 'delete', id: entity.id}, {
+													{{ HtmlHelper.link(i18nDomain ? __df(i18nDomain, 'system', 'delete') : __('delete'), {action: 'delete', id: entity.id}, {
 														class: 'Button Button-Small Button-Delete',
-														'data-confirm-title': __('confirm_delete_title'),
-														'data-confirm-yes': __('confirm_delete_yes'),
+														'data-confirm-title': i18nDomain ? __df(i18nDomain, 'system', 'confirm_delete_title') : __('confirm_delete_title'),
+														'data-confirm-yes': i18nDomain ? __df(i18nDomain, 'system', 'confirm_delete_yes') : __('confirm_delete_yes'),
 														'data-confirm-yes-class': 'Button-Delete',
-														'data-confirm-no': __('confirm_delete_no'),
-														'data-confirm': __('confirm_delete', entity.id) }) }}
+														'data-confirm-no': i18nDomain ? __df(i18nDomain, 'system', 'confirm_delete_no') : __('confirm_delete_no'),
+														'data-confirm': i18nDomain ? __df(i18nDomain, 'system', 'confirm_delete', entity.id) : __('confirm_delete', entity.id) }) }}
 												{% endif %}
 											{% endblock %}
 										</div>

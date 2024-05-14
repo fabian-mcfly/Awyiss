@@ -32,7 +32,7 @@
 				{% endblock %}
 
 				{% block formControlInputType %}
-					{{ FormHelper.control('input_type', {columnSpan: 6, empty: false, options: combine(availableInputTypes, availableInputTypes)}) }}
+					{{ FormHelper.control('input_type', {columnSpan: 6, empty: false, options: combine(availableInputTypes, availableInputTypes|map(inputType => __('input_type_' ~ inputType)))}) }}
 				{% endblock %}
 
 				{% block formControlColumnSpan %}
@@ -59,7 +59,7 @@
 					{{ FormHelper.control('fieldset', {
 						columnSpan: 6,
 						empty: false,
-						options: combine(availableFieldsets, availableFieldsets),
+						options: combine(availableFieldsets, availableFieldsets|map(fieldset => __('fieldset_' ~ fieldset))),
 						disabled: attribute.scope == 'contents',
 						'data-form-updater': true
 					}) }}

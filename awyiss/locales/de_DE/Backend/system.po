@@ -1,0 +1,228 @@
+# System (and default) translations of Awyiss CMS
+# Copyright 2024 Awyiss <EMAIL@ADDRESS>
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 0.1.0\n"
+"POT-Creation-Date: 2024-05-11 19:35+0000\n"
+"PO-Revision-Date: 2024-05-11 19:35+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+msgid "menu_title"
+msgstr "System"
+
+msgid "menu_configure"
+msgstr "Konfiguration"
+
+msgid "id"
+msgstr "ID"
+
+msgid "title"
+msgstr "Titel"
+
+msgid "edit"
+msgstr "Bearbeiten"
+
+msgid "delete"
+msgstr "Löschen"
+
+msgid "save"
+msgstr "Speichern"
+
+msgid "save_close"
+msgstr "Speichern & Schließen"
+
+msgid "as_copy"
+msgstr "Kopieren"
+
+msgid "save_system_order"
+msgstr "Sortierung speichern"
+
+msgid "cancel"
+msgstr "Abbrechen"
+
+msgid "overview"
+msgstr "Übersicht"
+
+msgid "menu_overview"
+msgstr "Übersicht"
+
+msgid "menu_add"
+msgstr "Neuer Eintrag"
+
+msgid "create"
+msgstr "Neuer Eintrag"
+
+msgid "close"
+msgstr "Schließen"
+
+msgid "list_nested"
+msgstr "Listenansicht"
+
+msgid "list_paginated"
+msgstr "Tabelleansicht"
+
+msgid "back_to_overview"
+msgstr "Zurück zur Übersicht"
+
+msgid "dark_mode_switch_on"
+msgstr "Nachtmodus aktivieren"
+
+msgid "dark_mode_switch_off"
+msgstr "Nachtmodus deaktivieren"
+
+msgid "interface_scale_small"
+msgstr "Klein"
+
+msgid "interface_scale_medium"
+msgstr "Mittel"
+
+msgid "interface_scale_regular"
+msgstr "Normal"
+
+msgid "category_filter_label"
+msgstr "Kategorie"
+
+msgid "parent_id"
+msgstr "Unterpunkt von"
+
+msgid "parent_id_filter_all"
+msgstr "Alle"
+
+msgid "category_filter_unassigned"
+msgstr "Nicht zugeordnet"
+
+msgid "fieldset"
+msgstr "Formularbereich"
+
+msgid "fieldset_presentation"
+msgstr "Darstellung"
+
+msgid "fieldset_conditions"
+msgstr "Positionierung"
+
+msgid "fieldset_general"
+msgstr "Allgemein"
+
+msgid "fieldset_content"
+msgstr "Inhalt"
+
+msgid "fieldset_media"
+msgstr "Medien"
+
+msgid "fieldset_attributes"
+msgstr "Attribute"
+
+msgid "active"
+msgstr "Aktiv"
+
+msgid "parents_active"
+msgstr "Übergeordnete Elemente aktiv"
+
+msgid "inactive"
+msgstr "(inaktiv)"
+
+msgid "required"
+msgstr "Pflichtfeld"
+
+msgid "created_by"
+msgstr "Erstellt von"
+
+msgid "created_on"
+msgstr "Erstellt am"
+
+msgid "changed_by"
+msgstr "Geändert von"
+
+msgid "changed_on"
+msgstr "Geändert am"
+
+msgid "deleted_by"
+msgstr "Gelöscht von"
+
+msgid "deleted_on"
+msgstr "Gelöscht am"
+
+msgid "translatable"
+msgstr "Übersetzbar"
+
+msgid "translations_button_title"
+msgstr "Übersetzen"
+
+msgid "translations_dialog_title"
+msgstr "Übersetzungen für &bdquo;{0}&ldquo;"
+
+msgid "translations_dialog_apply"
+msgstr "Übernehmen"
+
+msgid "translations_dialog_cancel"
+msgstr "Abbrechen"
+
+msgid "confirm_delete_title"
+msgstr "Löschen bestätigen"
+
+msgid "confirm_delete"
+msgstr "Sind Sie sicher, dass Sie diesen Eintrag (ID: {0}) löschen möchten?"
+
+msgid "confirm_delete_yes"
+msgstr "Löschen"
+
+msgid "confirm_delete_no"
+msgstr "Abbrechen"
+
+msgid "language_shortcode"
+msgstr "Sprache"
+
+msgid "system_order"
+msgstr "Sortierung"
+
+msgid "system_order_first"
+msgstr "An den Anfang"
+
+msgid "system_order_after"
+msgstr "Nach"
+
+msgid "system_order_saved"
+msgstr "Die Sortierung wurde erfolgreich gespeichert"
+
+msgid "system_order_not_saved"
+msgstr "Die Sortierung konnte nicht gespeichert werden"
+
+msgid "system_order_not_enabled"
+msgstr "Die Sortierung ist nicht aktiviert"
+
+msgid "system_order_manual_order_is_disabled"
+msgstr "Die manuelle Sortierung ist nicht aktiviert"
+
+msgid "identifier"
+msgstr "Identifikator"
+
+msgid "list_item_add"
+msgstr "Neuer Eintrag"
+
+msgid "list_item_remove"
+msgstr "Eintrag entfernen"
+
+msgid "form_leave_confirmation_dialog_title"
+msgstr "Seite verlassen?"
+
+msgid "form_leave_confirmation_dialog_message"
+msgstr "Möchten Sie die Seite wirklich verlassen? Ihre Änderungen werden nicht gespeichert."
+
+msgid "form_leave_confirmation_dialog_confirm_leave"
+msgstr "Seite verlassen"
+
+msgid "form_leave_confirmation_dialog_confirm_stay"
+msgstr "Abbrechen"
+
+msgid "cant_modify_deleted"
+msgstr "Gelöschte Einträge können nicht bearbeitet werden"
+
+msgid "sort_asc"
+msgstr "Aufsteigend"
+
+msgid "sort_desc"
+msgstr "Absteigend"

@@ -4,6 +4,7 @@
 #}
 
 {% set currentAction = _view.getRequest().getParam('action') %}
+{% set languages = languages|filter(language => language.active) %}
 
 <div class="LanguageSwitcher">
 	<button class="Button LanguageSwitcherLabel">
@@ -17,7 +18,10 @@
 				{% set icon %}
 					<img src="{{ UrlHelper.build('awyiss/assets/img/countries/' ~ language.shortcode ~'.svg') }}" alt="{{ __d('users', 'loginLogo') }}">
 				{% endset %}
-				{{ HtmlHelper.link(icon ~ language.title, {lang: language.shortcode, action: currentAction == 'edit' ? 'overview' : null}, {escape: false}) }}
+				{{ HtmlHelper.link(icon ~ language.title, {lang: language.shortcode, action: currentAction == 'edit' ? 'overview' : null}, {
+					escape: false,
+					title: language.title,
+				}) }}
 			</li>
 		{% endfor %}
 	</ul>

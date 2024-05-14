@@ -47,11 +47,21 @@
 				{% endblock %}
 
 				{% block formControlPassword %}
-					{{ FormHelper.control('password', {columnSpan: 6, type: 'password', value: ''}) }}
+					{{ FormHelper.control('password', {
+						columnSpan: 6,
+						type: 'password',
+						value: '',
+						'data-show-password-label': __d('users', 'show_password'),
+					}) }}
 				{% endblock %}
 
 				{% block formControlPasswordConfirm %}
-					{{ FormHelper.control('password_confirm', {columnSpan: 6, type: 'password', value: ''}) }}
+					{{ FormHelper.control('password_confirm', {
+						columnSpan: 6,
+						type: 'password',
+						value: '',
+						'data-show-password-label': __d('users', 'show_password'),
+					}) }}
 				{% endblock %}
 
 				{% block formControlFirstname %}
@@ -77,7 +87,10 @@
 				{{ FormHelper.hidden('usergroups._ids', {value: ''}) }}
 
 				{% block userUsergroups %}
-					{% include '@Backend/Users/usergroups_overview_paginated_list.twig' with _context|merge({records: usergroups.items().toArray()}) %}
+					{% include '@Backend/Users/usergroups_overview_paginated_list.twig' with _context|merge({
+						i18nDomain: 'usergroups',
+						records: usergroups.items().toArray(),
+					}) %}
 				{% endblock %}
 			{% endblock %}
 		</fieldset>

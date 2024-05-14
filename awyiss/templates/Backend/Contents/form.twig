@@ -93,7 +93,7 @@
 
 			{% block fieldsetDataInner %}
 				{% block formControlData %}
-					<div class="FormInput FormInputType-List FormInputName-Data">
+					<div class="FormInput FormInputType-List FormInputName-Data" data-list-item-add="{{ __('list_item_add') }}" data-list-item-remove="{{ __('list_item_remove') }}">
 						<label class="Label">{{ __('data') }}</label>
 
 						{% set counter = 0 %}

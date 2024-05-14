@@ -291,7 +291,7 @@ class PagesTable extends Table {
 			'languageExists',
 			[
 				'errorField' => 'languageShortcode',
-				'message' => __dfx($this->getI18nDomain(), 'validation', 'pages', 'error_language_exists'),
+				'message' => __df($this->getI18nDomain(), 'validation', 'error_language_exists'),
 			]
 		);
 
@@ -301,7 +301,7 @@ class PagesTable extends Table {
 			'validPageRole',
 			[
 				'errorField' => 'pageRoleId',
-				'message' => __d($this->getI18nDomain(), 'error_valid_page_role'),
+				'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_page_role'),
 			]
 		);
 
@@ -311,7 +311,7 @@ class PagesTable extends Table {
 			'validPageTemplate',
 			[
 				'errorField' => 'pageTemplateId',
-				'message' => __d($this->getI18nDomain(), 'error_valid_page_template'),
+				'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_page_template'),
 			]
 		);
 
@@ -321,7 +321,7 @@ class PagesTable extends Table {
 			'validDuplicateOf',
 			[
 				'errorField' => 'duplicateOf',
-				'message' => __d($this->getI18nDomain(), 'error_valid_duplicate_of'),
+				'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_duplicate_of'),
 			]
 		);
 
@@ -331,7 +331,7 @@ class PagesTable extends Table {
 			$ao_rules->isNotLinkedTo(
 				'Duplicating' . $ls_pageRole,
 				'_general',
-				__d($this->getI18nDomain(), 'error_no_duplicating_pages')
+				__df($this->getI18nDomain(), 'validation', 'error_no_duplicating_pages')
 			),
 			'noDuplicating' . $ls_pageRole
 		);
@@ -341,7 +341,7 @@ class PagesTable extends Table {
 			return !$this->hasDescendantsWithDifferentPageRole($ao_page);
 		}, 'noNestedChildrenWithDifferentPageRole', [
 			'errorField' => '_general',
-			'message' => __d($this->getI18nDomain(), 'error_no_nested_children_with_different_page_role'),
+			'message' => __df($this->getI18nDomain(), 'validation', 'error_no_nested_children_with_different_page_role'),
 		]);
 
 

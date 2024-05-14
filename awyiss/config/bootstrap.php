@@ -173,6 +173,13 @@ Log::setConfig(Configure::consume('Log'));
 Security::setSalt(Configure::consume('Security.salt'));
 TransportFactory::setConfig(Configure::consume('EmailTransport'));
 
+/**
+ * Set the default locale to german
+ * The LocaleMiddleware will overwrite this with the user's language
+ * If german isn't your desired default locale, change it in your custom bootstrap.php
+ */
+ini_set('intl.default_locale', 'de_DE');
+\Cake\I18n\I18n::setLocale('de_DE');
 
 /*
  * Custom Inflector rules, can be set to correctly pluralize or singularize

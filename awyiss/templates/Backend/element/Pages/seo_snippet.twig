@@ -2,6 +2,7 @@
 <div class="ColumnSpan-6 Grid-12">
 	{% block formControlMetaTitle %}
 		{{ FormHelper.control('meta_title', {
+			label: __d('seo', 'meta_title'),
 			placeholder: metaTitlePlaceholder,
 			templateVars: {
 				additionalContent: '<span data-charcounter-name="meta_title" class="CharCounter">' ~ page.metaTitle|length ~ '</span>',
@@ -14,6 +15,7 @@
 
 	{% block formControlMetaDescription %}
 		{{ FormHelper.control('meta_description', {
+			label: __d('seo', 'meta_description'),
 			templateVars: {
 				additionalContent: '<span data-charcounter-name="meta_description" class="CharCounter">' ~ page.metaDescription|length ~ '</span>',
 			},
@@ -22,11 +24,11 @@
 	{% endblock %}
 
 	{% block formControlRobotsIndex %}
-		{{ FormHelper.control('robots_index', {columnSpan: 4}) }}
+		{{ FormHelper.control('robots_index', {columnSpan: 4, label: __d('seo', 'robots_index')}) }}
 	{% endblock %}
 
 	{% block formControlRobotsFollow %}
-		{{ FormHelper.control('robots_follow', {columnSpan: 4}) }}
+		{{ FormHelper.control('robots_follow', {columnSpan: 4, label: __d('seo', 'robots_follow')}) }}
 	{% endblock %}
 </div>
 
@@ -46,7 +48,7 @@
 
 		</span>
 		<span class="SnippetMetaTitle" data-default="{{ __d('seo', 'title_empty') }}">
-			{{ page.meta_title ?? metaTitlePlaceholder ?? __d('seo', 'title_empty') }}
+			{{ page.meta_title ?? __d('seo', 'title_empty') }}
 		</span>
 		<p class="SnippetMetaDescription" data-default="{{ __d('seo', 'description_empty') }}">{{ page.metaDescription ?? __d('seo', 'description_empty') }}</p>
 	</div>

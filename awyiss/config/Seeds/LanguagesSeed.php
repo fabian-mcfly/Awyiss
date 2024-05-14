@@ -47,6 +47,23 @@ class LanguagesSeed extends AbstractSeed {
 				'deleted_by' => null,
 				'deleted_on' => null,
 			],
+			[
+				'id' => 3,
+				'realm' => 'Backend',
+				'shortcode' => 'en',
+				'timezone' => 'Europe/London',
+				'locale' => 'en_GB',
+				'title' => 'English',
+				'system_order' => 2,
+				'active' => 1,
+				'deleted' => 0,
+				'created_by' => 1,
+				'created_on' => (new \Cake\I18n\DateTime('now'))->format('Y-m-d H:i:s'),
+				'changed_by' => null,
+				'changed_on' => null,
+				'deleted_by' => null,
+				'deleted_on' => null,
+			],
 		];
 
 		$lo_table = $this->table('languages');

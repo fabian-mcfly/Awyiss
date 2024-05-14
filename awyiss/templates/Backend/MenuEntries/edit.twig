@@ -7,7 +7,7 @@
 
 <div class="MenuEntries Form Edit">
 	{% if AuthorizationHelper.isAccessible('read') %}
-		{{ HtmlHelper.link(__('overview'), {action: 'overview'}, {class: 'BackToOverview'}) }}
+		{{ HtmlHelper.link(__('back_to_overview'), {action: 'overview'}, {class: 'BackToOverview'}) }}
 	{% endif %}
 
 	{% block headlineEdit %}

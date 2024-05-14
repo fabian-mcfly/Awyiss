@@ -1,0 +1,115 @@
+# Pages translations of Awyiss CMS
+# Copyright 2024 Awyiss <EMAIL@ADDRESS>
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 0.1.0\n"
+"POT-Creation-Date: 2024-05-11 19:35+0000\n"
+"PO-Revision-Date: 2024-05-11 19:35+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+msgid "meta_title_overview"
+msgstr "Pages"
+
+msgid "meta_title_add"
+msgstr "Add Page"
+
+msgid "meta_title_edit"
+msgstr "Edit Page"
+
+msgid "menu_title"
+msgstr "Pages"
+
+msgid "menu_overview"
+msgstr "Overview"
+
+msgid "menu_add"
+msgstr "New Page"
+
+msgid "menu_add_batch"
+msgstr "Add multiple Pages"
+
+msgid "headline_overview"
+msgstr "Pages"
+
+msgid "menu_configure"
+msgstr "Configuration"
+
+msgid "create"
+msgstr "New Page"
+
+msgid "headline_add"
+msgstr "Add Page"
+
+msgid "add_succeeded"
+msgstr "The Page was successfully added"
+
+msgid "add_failed"
+msgstr "The Page could not be added"
+
+msgid "headline_add_batch"
+msgstr "Add multiple Pages"
+
+msgid "add_batch_succeeded"
+msgstr "The Pages were successfully added"
+
+msgid "add_batch_failed"
+msgstr "The Pages could not be added"
+
+msgid "headline_edit"
+msgstr "Edit Page"
+
+msgid "edit_succeeded"
+msgstr "The Page was successfully updated"
+
+msgid "edit_failed"
+msgstr "The Page could not be updated"
+
+msgid "record_not_found"
+msgstr "The Page was not found"
+
+msgid "confirm_delete"
+msgstr "Are you sure you want to delete this Page (ID: {0})?"
+
+msgid "delete_succeeded"
+msgstr "The Page was successfully deleted"
+
+msgid "delete_failed"
+msgstr "The Page could not be deleted"
+
+msgid "view_contents"
+msgstr "View contents"
+
+msgid "page_role_id"
+msgstr "Page role"
+
+msgid "page_template_id"
+msgstr "Page template"
+
+msgid "parent_id"
+msgstr "Subpage of"
+
+msgid "slug"
+msgstr "Slug"
+
+msgid "redirect_link"
+msgstr "Redirect link"
+
+msgid "duplicate_of"
+msgstr "Duplicate of"
+
+msgid "fieldset_menus"
+msgstr "Automatically create menu entry"
+
+msgid "copy_descendants_with_different_page_role"
+msgstr "<strong>Subpages with a different Page role were found</strong>.<br>\n"
+"Do you also want to copy Pages with other roles?"
+
+msgid "copy_descendants_with_different_page_role_no"
+msgstr "Only copy Pages with the same Page role"
+
+msgid "copy_descendants_with_different_page_role_yes"
+msgstr "Also copy Pages with other roles"

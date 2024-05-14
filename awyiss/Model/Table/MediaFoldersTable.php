@@ -168,7 +168,7 @@ class MediaFoldersTable extends Table {
 			'languageExists',
 			[
 				'errorField' => 'languageShortcode',
-				'message' => __dfx($this->getI18nDomain(), 'validation', 'media_folders', 'error_language_exists'),
+				'message' => __df($this->getI18nDomain(), 'validation', 'error_language_exists'),
 			]
 		);
 
@@ -177,19 +177,19 @@ class MediaFoldersTable extends Table {
 			function (MediaFolder $ao_entity, array $aa_options) use ($ao_rules): bool|string {
 				if ($ao_entity->get('id') === 1 && $aa_options['isCopy'] === false) {
 					if ($ao_entity->get('languageShortcode') !== null) {
-						return __d($this->getI18nDomain(), 'error_root_language_shortcode_unchanged');
+						return __df($this->getI18nDomain(), 'validation', 'error_root_language_shortcode_unchanged');
 					}
 
 					if ($ao_entity->get('title') !== 'Media') {
-						return __d($this->getI18nDomain(), 'error_root_title_unchanged');
+						return __df($this->getI18nDomain(), 'validation', 'error_root_title_unchanged');
 					}
 
 					if ($ao_entity->get('parentId') !== null) {
-						return __d($this->getI18nDomain(), 'error_root_parent_id_unchanged');
+						return __df($this->getI18nDomain(), 'validation', 'error_root_parent_id_unchanged');
 					}
 
 					if ($ao_entity->get('path') !== 'media') {
-						return __d($this->getI18nDomain(), 'error_root_path_unchanged');
+						return __df($this->getI18nDomain(), 'validation', 'error_root_path_unchanged');
 					}
 				}
 
@@ -209,7 +209,7 @@ class MediaFoldersTable extends Table {
 			'notNestedUnderRoot',
 			[
 				'errorField' => 'parentId',
-				'message' => __d($this->getI18nDomain(), 'error_not_nested_under_root'),
+				'message' => __df($this->getI18nDomain(), 'validation', 'error_not_nested_under_root'),
 			]
 		);
 
@@ -221,7 +221,7 @@ class MediaFoldersTable extends Table {
 			'notRootDeletion',
 			[
 				'errorField' => '_general',
-				'message' => __d($this->getI18nDomain(), 'error_not_root_deletion'),
+				'message' => __df($this->getI18nDomain(), 'validation', 'error_not_root_deletion'),
 			]
 		);
 

@@ -67,6 +67,15 @@ if (!function_exists('__d')) {
 
 		if ($ls_return === $as_string || empty($ls_return)) {
 			$ls_return = $as_domain . '::' . $as_string;
+
+			// Fallback to system domain
+			if ($as_domain !== 'system') {
+				$ls_fallback = I18n::getTranslator('system')->translate($as_string, $la_args);
+
+				if ($ls_fallback !== $as_string && !empty($ls_fallback)) {
+					$ls_return = $ls_fallback;
+				}
+			}
 		}
 
 

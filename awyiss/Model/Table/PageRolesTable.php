@@ -9,6 +9,7 @@ use Awyiss\Model\Entity\PageRole;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
 use Cake\Datasource\FactoryLocator;
+use Cake\Datasource\ResultSetInterface;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Utility\Inflector;
 use Cake\Validation\Validator;
@@ -27,6 +28,12 @@ class PageRolesTable extends Table {
 	 * @inheritDoc
 	 */
 	public const TABLE = 'page_roles';
+
+
+	/**
+	 * @var \Cake\Datasource\ResultSetInterface
+	 */
+	protected static ResultSetInterface $cachedPageRoles;
 
 
 	/**
@@ -62,6 +69,19 @@ class PageRolesTable extends Table {
 				],
 			],
 		]);
+	}
+
+
+	/**
+	 * @return \Cake\Datasource\ResultSetInterface
+	 */
+	public function findAllAndCache(): ResultSetInterface {
+		if (!isset(static::$cachedPageRoles)) {
+			static::$cachedPageRoles = static::find('translations')->all();
+		}
+
+
+		return static::$cachedPageRoles;
 	}
 
 
@@ -144,7 +164,7 @@ class PageRolesTable extends Table {
 					$ao_entity->hasOriginal('identifier') &&
 					$ao_entity->get('identifier') !== $ao_entity->getOriginal('identifier')
 				) {
-					return __d($this->getI18nDomain(), 'error_identifier_unchanged');
+					return __df($this->getI18nDomain(), 'validation', 'error_identifier_unchanged');
 				}
 
 				$ls_pluralIdentifier = Inflector::pluralize($ao_entity->identifier);
@@ -162,7 +182,7 @@ class PageRolesTable extends Table {
 						$lo_datatables->firstMatch(['active' => true, 'identifier' => $ls_pluralIdentifier])
 					)
 				) {
-					return __dfx($this->getI18nDomain(), 'validation', 'page_role', 'error_identifier_allowed');
+					return __df($this->getI18nDomain(), 'validation', 'error_identifier_allowed');
 				}
 
 				$lo_isUnique = $ao_rules->isUnique(['identifier'], [
@@ -171,7 +191,7 @@ class PageRolesTable extends Table {
 				$lb_isUnique = $lo_isUnique($ao_entity, $aa_options);
 
 				if (!$lb_isUnique) {
-					return __dfx($this->getI18nDomain(), 'validation', 'page_role', 'error_identifier_unique');
+					return __df($this->getI18nDomain(), 'validation', 'error_identifier_unique');
 				}
 
 				return true;
@@ -189,7 +209,7 @@ class PageRolesTable extends Table {
 			'notPageRolePageDeletion',
 			[
 				'errorField' => '_general',
-				'message' => __d($this->getI18nDomain(), 'error_not_page_role_page_deletion'),
+				'message' => __df($this->getI18nDomain(), 'validation', 'error_not_page_role_page_deletion'),
 			]
 		);
 
@@ -198,7 +218,7 @@ class PageRolesTable extends Table {
 			'noLinkedPageTemplates',
 			[
 				'errorField' => '_general',
-				'message' => __d($this->getI18nDomain(), 'error_linked_page_templates'),
+				'message' => __df($this->getI18nDomain(), 'validation', 'error_no_linked_page_templates'),
 			]
 		);
 

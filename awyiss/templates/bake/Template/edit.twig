@@ -6,7 +6,7 @@
 {% set fields = Bake.filterFields(fields, schema, modelObject) %}
 <div class="{{ pluralVar[:1]|upper ~ pluralVar[1:] }} Form {{ action|capitalize }}">
 	{% verbatim %}{% if AuthorizationHelper.isAccessible('read') %}
-		{{ HtmlHelper.link(__('overview'), {action: 'overview'}, {class: 'BackToOverview'}) }}
+		{{ HtmlHelper.link(__('back_to_overview'), {action: 'overview'}, {class: 'BackToOverview'}) }}
 	{% endif %}
 
 	{% block headlineEdit %}

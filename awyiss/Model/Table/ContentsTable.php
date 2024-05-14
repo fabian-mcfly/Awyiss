@@ -334,7 +334,7 @@ class ContentsTable extends Table {
 				]);
 			}
 			catch (RecordNotFoundException | InvalidPrimaryKeyException) {
-				$ao_entity->setError('page_id', __d($this->getI18nDomain(), 'error_valid_page_id'));
+				$ao_entity->setError('page_id', __df($this->getI18nDomain(), 'validation', 'error_valid_page_id'));
 
 				return false;
 			}
@@ -360,7 +360,7 @@ class ContentsTable extends Table {
 			}
 			catch (RecordNotFoundException | InvalidPrimaryKeyException) {
 				//Content template not found
-				$ao_entity->setError('content_template_id', __d($this->getI18nDomain(), 'error_valid_content_template_id'));
+				$ao_entity->setError('content_template_id', __df($this->getI18nDomain(), 'validation', 'error_valid_content_template_id'));
 
 				return false;
 			}
@@ -368,7 +368,7 @@ class ContentsTable extends Table {
 
 			//Content area not found in the content template
 			if (!in_array($ao_entity->contentAreaId, array_column($lo_contentTemplate->contentAreas, 'id'))) {
-				$ao_entity->setError('content_area_id', __d($this->getI18nDomain(), 'error_valid_content_area_id'));
+				$ao_entity->setError('content_area_id', __df($this->getI18nDomain(), 'validation', 'error_valid_content_area_id'));
 
 				return false;
 			}
@@ -376,7 +376,7 @@ class ContentsTable extends Table {
 
 			// Make sure that all children of the current entity can be moved to the target content area as well
 			if (!$this->childrenCanBeMoved($ao_entity, $lo_page->pageTemplateId)) {
-				$ao_entity->setError('content_area_id', __d($this->getI18nDomain(), 'error_valid_content_area_id_for_children'));
+				$ao_entity->setError('content_area_id', __df($this->getI18nDomain(), 'validation', 'error_valid_content_area_id_for_children'));
 
 				return false;
 			}
@@ -431,7 +431,7 @@ class ContentsTable extends Table {
 			return true;
 		}, 'validWidthIndentCombination', [
 			'errorField' => '_general',
-			'message' => __d($this->getI18nDomain(), 'error_valid_width_indent_combination'),
+			'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_width_indent_combination'),
 		]);
 
 
@@ -446,7 +446,7 @@ class ContentsTable extends Table {
 			'validDuplicateOf',
 			[
 				'errorField' => 'duplicateOf',
-				'message' => __d($this->getI18nDomain(), 'error_valid_duplicate_of'),
+				'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_duplicate_of'),
 			]
 		);
 
@@ -456,7 +456,7 @@ class ContentsTable extends Table {
 			$ao_rules->isNotLinkedTo(
 				'DuplicatingContents',
 				'_general',
-				__d($this->getI18nDomain(), 'error_no_duplicating_contents')
+				__df($this->getI18nDomain(), 'validation', 'error_no_duplicating_contents')
 			),
 			'noDuplicatingContents'
 		);

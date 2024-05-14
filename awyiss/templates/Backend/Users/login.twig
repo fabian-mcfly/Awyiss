@@ -16,7 +16,9 @@
 				{% endblock %}
 
 				{% block formControlPassword %}
-					{{ FormHelper.control('password') }}
+					{{ FormHelper.control('password', {
+						'data-show-password-label': __d('users', 'show_password'),
+					}) }}
 				{% endblock %}
 
 				{% block formControlLanguageShortcode %}

@@ -4,6 +4,7 @@
 namespace Awyiss\Model\Table;
 
 
+use Awyiss\Awyiss;
 use Awyiss\Model\Entity\Media;
 use Awyiss\Model\Enum\ProcessStatus;
 use Awyiss\Model\Table;
@@ -46,6 +47,7 @@ class MediaTable extends Table {
 	 */
 	protected array $translate = [
 		'fields' => ['alt'],
+		'realm' => Awyiss::REALM_FRONTEND,
 	];
 
 

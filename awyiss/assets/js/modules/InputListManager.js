@@ -74,11 +74,11 @@ export default class InputListManager {
 			}
 
 			// Add an add button to the form input
-			this.addButton(formInput, 'Add', this.buttonAddClass);
+			this.addButton(formInput, formInput.dataset.listItemAdd, this.buttonAddClass);
 
 			// For each row, add a remove button and disable it if it's the only row
 			rows.forEach((row) => {
-				this.addButton(row, 'Remove', this.buttonRemoveClass);
+				this.addButton(row, formInput.dataset.listItemRemove, this.buttonRemoveClass);
 
 				if (rows.length <= 2) {
 					row.querySelector(`.${this.buttonRemoveClass}`).classList.add('Disabled');

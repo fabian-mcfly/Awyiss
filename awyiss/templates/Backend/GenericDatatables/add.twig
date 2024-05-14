@@ -11,11 +11,11 @@
 
 <div class="GenericDatatables Form Add">
 	{% if AuthorizationHelper.isAccessible('read') %}
-		{{ HtmlHelper.link(__('overview'), {action: 'overview', pageId: page.id}, {class: 'BackToOverview'}) }}
+		{{ HtmlHelper.link(__('back_to_overview'), {action: 'overview', pageId: page.id}, {class: 'BackToOverview'}) }}
 	{% endif %}
 
 	{% block headlineAdd %}
-		<h1>{{ __('headline_add') }}</h1>
+		<h1>{{ __d('generic_datatables', 'headline_add') }}</h1>
 	{% endblock %}
 
 	{{ FormHelper.create(record, {method: 'post', idPrefix: datatable.identifier}) }}

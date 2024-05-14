@@ -50,7 +50,7 @@
 												{% set field = field|underscore %}
 												{% block nestedListItemDataDisplayedFieldDefault %}
 													{% block nestedListItemDataDisplayedFieldDefaultLabel %}
-														<span class="Label">{{ __(field) }}:</span>
+														<span class="Label">{{ i18nDomain ? __df(i18nDomain, 'system', field) :	__(field) }}:</span>
 													{% endblock %}
 													{% block nestedListItemDataDisplayedFieldDefaultValue %}
 														{% if field == 'language_shortcode' %}
@@ -109,13 +109,13 @@
 
 						{% block nestedListActionsDelete %}
 							{% if AuthorizationHelper.isAccessible('delete') %}
-								{{ HtmlHelper.link(__('delete'), {action: 'delete', id: entity.id}, {
+								{{ HtmlHelper.link(i18nDomain ? __df(i18nDomain, 'system', 'delete') : __('delete'), {action: 'delete', id: entity.id}, {
 									class: 'Button Button-Small Button-Delete',
-									'data-confirm-title': __('confirm_delete_title'),
-									'data-confirm-yes': __('confirm_delete_yes'),
+									'data-confirm-title': i18nDomain ? __df(i18nDomain, 'system', 'confirm_delete_title') : __('confirm_delete_title'),
+									'data-confirm-yes': i18nDomain ? __df(i18nDomain, 'system', 'confirm_delete_yes') : __('confirm_delete_yes'),
 									'data-confirm-yes-class': 'Button-Delete',
-									'data-confirm-no': __('confirm_delete_no'),
-									'data-confirm': __('confirm_delete', entity.id) }) }}
+									'data-confirm-no': i18nDomain ? __df(i18nDomain, 'system', 'confirm_delete_no') : __('confirm_delete_no'),
+									'data-confirm': i18nDomain ? __df(i18nDomain, 'system', 'confirm_delete', entity.id) : __('confirm_delete', entity.id) }) }}
 							{% endif %}
 						{% endblock %}
 					</span>

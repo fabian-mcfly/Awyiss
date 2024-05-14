@@ -173,14 +173,14 @@ class PageTemplatesTable extends Table {
 			'fileNameUnique',
 			[
 				'errorField' => 'fileName',
-				'message' => __dfx($this->getI18nDomain(), 'validation', 'page_templates', 'error_file_name_unique'),
+				'message' => __df($this->getI18nDomain(), 'validation', 'error_file_name_unique'),
 			]
 		);
 
 
 		$ao_rules->add($ao_rules->existsIn('contentAreaId', 'ContentAreas'), 'validContentAreas', [
 			'errorField' => 'contentAreas',
-			'message' => __d($this->getI18nDomain(), 'error_valid_content_areas'),
+			'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_content_areas'),
 		]);
 
 
@@ -196,7 +196,7 @@ class PageTemplatesTable extends Table {
 			$lo_linkedTo = $ao_rules->isNotLinkedTo(
 				'Pages',
 				'pageRoleId',
-				__d($this->getI18nDomain(), 'error_no_linked_page_templates')
+				__df($this->getI18nDomain(), 'validation', 'error_no_linked_pages')
 			);
 
 			return $lo_linkedTo($ao_entity, $aa_options);
@@ -208,7 +208,7 @@ class PageTemplatesTable extends Table {
 			'noLinkedPages',
 			[
 				'errorField' => '_general',
-				'message' => __d($this->getI18nDomain(), 'error_linked_pages'),
+				'message' => __df($this->getI18nDomain(), 'validation', 'error_no_linked_pages'),
 			]
 		);
 

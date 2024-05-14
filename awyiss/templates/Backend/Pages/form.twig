@@ -1,7 +1,21 @@
+{#
+@var page \Awyiss\Model\Entity\Page
+@var parentRecord \Awyiss\Model\Entity\Page
+@var pageTemplates \Cake\Collection\CollectionInterface
+@var threadedPages \Cake\Collection\CollectionInterface
+@var possibleParentPages \Cake\Collection\CollectionInterface
+@var languageRealm string
+@var localConfig array
+@var nestable bool
+@var pageRoleName string
+@var _view \Awyiss\View\BackendView
+#}
+
 {% block fieldsets %}
 	<div class="Fieldsets">
 		{% if hasDescendantsWithDifferentPageRole %}
 			{{ FormHelper.control('copy_descendants_with_different_page_role', {
+				escape: false,
 				label: __('copy_descendants_with_different_page_role'),
 				options: {
 					0: __('copy_descendants_with_different_page_role_no'),
@@ -128,7 +142,7 @@
 
 		{% block fieldsetSeo %}
 			<fieldset class="Fieldset-Seo">
-				<legend>{{ __('fieldset_seo') }}</legend>
+				<legend>{{ __d('seo', 'fieldset_seo') }}</legend>
 
 				{% block fieldsetSeoInner %}
 					{{ element('Pages/seo_snippet') }}

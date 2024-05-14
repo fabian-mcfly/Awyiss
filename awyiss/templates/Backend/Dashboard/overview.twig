@@ -8,11 +8,11 @@
 	{% endblock %}
 
 	<fieldset class="Overview-Fieldset Fieldset-LoggedInAs">
-		<p class="LoggedInAs">{{ __('logged_in_as', IdentityHelper.get('username')) }}</p>
+		<p class="LoggedInAs">{{ __('logged_in_as', IdentityHelper.get('username'))|raw }}</p>
 	</fieldset>
 
 	<fieldset class="Overview-Fieldset Fieldset-QuickActions">
-		<legend>{{ __('quick_actions') }}</legend>
+		<legend>{{ __('fieldset_quick_actions') }}</legend>
 
 		<ul class="QuickActions">
 			<li class="QuickAction QuickAction-AddPage">

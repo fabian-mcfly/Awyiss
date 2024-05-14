@@ -4,14 +4,15 @@
 @var _view \Awyiss\View\BackendView
 #}
 
-{% set realms = [] %}
+{% set tempRealms = [] %}
 {% for realm in realms %}
-	{% set realms = realms|merge({(realm): __('realm_' ~ realm|underscore)}) %}
+	{% set tempRealms = tempRealms|merge({(realm): __('realm_' ~ realm|underscore)}) %}
 {% endfor %}
+{% set realms = tempRealms %}
 
 <div class="Languages Form Add">
 	{% if AuthorizationHelper.isAccessible('read') %}
-		{{ HtmlHelper.link(__('overview'), {action: 'overview'}, {class: 'BackToOverview'}) }}
+		{{ HtmlHelper.link(__('back_to_overview'), {action: 'overview'}, {class: 'BackToOverview'}) }}
 	{% endif %}
 
 	{% block headlineAdd %}

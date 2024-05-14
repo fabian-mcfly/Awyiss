@@ -136,7 +136,7 @@
 								<fieldset
 										class="Overview-Fieldset Collapsible{% if languageShortcode not in ['', language.shortcode] %} Collapsed{% endif %}"
 										id="MediaFolder-List-{{ (languageShortcode ?? 'global')|camelize }}">
-									<legend>{{ languages[ languageRealm ][ languageShortcode ] ? languages[ languageRealm ][ languageShortcode ].title : __('global') }}</legend>
+									<legend>{{ languages[ languageRealm ][ languageShortcode ] ? languages[ languageRealm ][ languageShortcode ].title : __('media_folder_global') }}</legend>
 
 									{% block fieldsetOverviewInner %}
 										{% block listFoldersOverview %}

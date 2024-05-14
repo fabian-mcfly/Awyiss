@@ -88,7 +88,9 @@
 						{% endfor %}
 					</ul>
 
-					<div class="FormInput FormInputType-List FormInputType-Default FormInputName-ContentAreasNew ColumnSpan-6">
+					<div class="FormInput FormInputType-List FormInputType-Default FormInputName-ContentAreasNew ColumnSpan-6"
+						data-list-item-add="{{ __('list_item_add') }}"
+						data-list-item-remove="{{ __('list_item_remove') }}">
 						<div class="FormInputType-ListItem">
 							{{ FormHelper.control('content_areas[new][title][0]') }}
 							{{ FormHelper.control('content_areas[new][identifier][0]') }}

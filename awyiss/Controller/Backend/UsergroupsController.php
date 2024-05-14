@@ -5,8 +5,10 @@ namespace Awyiss\Controller\Backend;
 
 
 use Awyiss\Controller\BackendController as Controller;
+use Awyiss\Model\Entity\PageRole;
 use Awyiss\Model\Entity\Usergroup;
 use Awyiss\Routing\Router;
+use Cake\Datasource\FactoryLocator;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
 use Cake\ORM\Query\SelectQuery;
@@ -17,7 +19,6 @@ use Cake\Utility\Inflector;
 /**
  * Usergroups Controller
  *
- * @todo Make labels in the usergroups::permissions-fieldset use the translation of page role names (if page role)
  * @property \Awyiss\Model\Table\UsergroupsTable $Usergroups
  */
 class UsergroupsController extends Controller {
@@ -82,22 +83,7 @@ class UsergroupsController extends Controller {
 
 		$this->formatPermissions($lo_usergroup);
 
-		$lo_users = null;
-		if ($lb_usersScopeIsAccessible) {
-			$lo_query = $this->Usergroups->Users->find();
-			$this->paginate = [
-				'order' => [
-					'username' => 'asc',
-				],
-			];
-			$lo_users = $this->paginate($lo_query);
-		}
-
-		$this->set([
-			'usergroup' => $lo_usergroup,
-			'users' => $lo_users,
-			'authorizationPolicies' => $this->getAuthorizationPolicies(),
-		]);
+		$this->setViewVars($lo_usergroup, $lb_usersScopeIsAccessible);
 	}
 
 
@@ -130,22 +116,7 @@ class UsergroupsController extends Controller {
 
 		$this->formatPermissions($lo_usergroup);
 
-		$lo_users = null;
-		if ($lb_usersScopeIsAccessible) {
-			$lo_query = $this->Usergroups->Users->find();
-			$this->paginate = [
-				'order' => [
-					'username' => 'asc',
-				],
-			];
-			$lo_users = $this->paginate($lo_query);
-		}
-
-		$this->set([
-			'usergroup' => $lo_usergroup,
-			'users' => $lo_users,
-			'authorizationPolicies' => $this->getAuthorizationPolicies(),
-		]);
+		$this->setViewVars($lo_usergroup, $lb_usersScopeIsAccessible);
 	}
 
 
@@ -386,5 +357,72 @@ class UsergroupsController extends Controller {
 		}
 
 		$ao_usergroup->usergroup_permissions = $la_currentPermissions;
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Entity\Usergroup $ao_usergroup
+	 * @param bool $ab_usersScopeIsAccessible
+	 * @return void
+	 * @throws \ReflectionException
+	 */
+	protected function setViewVars(Usergroup $ao_usergroup, bool $ab_usersScopeIsAccessible): void {
+		$lo_users = null;
+		if ($ab_usersScopeIsAccessible) {
+			$lo_query = $this->Usergroups->Users->find();
+			$this->paginate = [
+				'order' => [
+					'username' => 'asc',
+				],
+			];
+			$lo_users = $this->paginate($lo_query);
+		}
+
+		/** @var \Awyiss\Model\Table\DatatablesTable $lo_datatablesTable */
+		$lo_datatablesTable = FactoryLocator::get('Table')->get('Datatables');
+		$la_datatables = $lo_datatablesTable->findAllAndCache()->indexBy('identifier')->toArray();
+
+		/** @var \Awyiss\Model\Table\PageRolesTable $lo_pageRolesTable */
+		$lo_pageRolesTable = FactoryLocator::get('Table')->get('PageRoles');
+		$la_pageRoles = $lo_pageRolesTable->findAllAndCache()->indexBy(function (PageRole $ao_pageRole) {
+			return Inflector::pluralize($ao_pageRole->identifier);
+		})->toArray();
+
+		$la_authorizationPolicies = [];
+		/**
+		 * @var \Awyiss\Authorization\Policy\AbstractGenericPolicy|class-string<\Awyiss\Authorization\Policy\PolicyInterface> $lx_policyClass
+		 */
+		foreach ($this->getAuthorizationPolicies() as $lx_policyClass) {
+			$ls_scope = is_string($lx_policyClass) ? $lx_policyClass::getScope() : $lx_policyClass->getScope();
+
+			if (isset($la_pageRoles[ $ls_scope ])) {
+				$ls_title = $la_pageRoles[ $ls_scope ]->label;
+			}
+			elseif (isset($la_datatables[ $ls_scope ])) {
+				$ls_title = $la_datatables[ $ls_scope ]->label;
+			}
+			else {
+				$ls_title = __d($ls_scope, 'headline_overview');
+			}
+
+			$la_authorizationPolicies[] = [
+				'permissions' => is_string($lx_policyClass) ? $lx_policyClass::getPermissionOptions() : $lx_policyClass->getPermissionOptions(),
+				'scope' => $ls_scope,
+				'title' => $ls_title,
+			];
+		}
+
+		// Sort the policies by title
+		usort($la_authorizationPolicies, function ($ao_a, $ao_b) {
+			return strcasecmp($ao_a['title'], $ao_b['title']);
+		});
+
+		$this->set([
+			'usergroup' => $ao_usergroup,
+			'users' => $lo_users,
+			'authorizationPolicies' => $la_authorizationPolicies,
+			'datatables' => $la_datatables,
+			'pageRoles' => $la_pageRoles,
+		]);
 	}
 }

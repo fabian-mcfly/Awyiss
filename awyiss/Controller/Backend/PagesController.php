@@ -38,6 +38,10 @@ class PagesController extends Controller {
 	 */
 	protected PageRoleEnumInterface $pageRole;
 	/**
+	 * @var string Page role name
+	 */
+	protected string $pageRoleName = 'page';
+	/**
 	 * @var \Cake\Datasource\ResultSetInterface
 	 */
 	protected CollectionInterface $pageTemplates;
@@ -110,6 +114,8 @@ class PagesController extends Controller {
 			'attributes' => $this->Pages->getAttributes(),
 			'pageTemplates' => $la_pageTemplates,
 			'isGenericPage' => $this->pageRole->value !== 1,
+			'pageRole' => $this->Pages->PageRoles->get($this->getPageRole()->value),
+			'pageRoleName' => Inflector::underscore($this->pageRoleName),
 		]);
 	}
 
@@ -195,7 +201,7 @@ class PagesController extends Controller {
 
 				if ($lb_success) {
 					if (!$this->request->is('ajax')) {
-						$this->Flash->success(__('add_batch_succeeded'));
+						$this->Flash->success(__df($this->pageRoleName, 'pages', 'add_batch_succeeded'));
 					}
 
 					/*
@@ -208,7 +214,7 @@ class PagesController extends Controller {
 					throw new RedirectException(Router::url(['action' => 'overview', 'lang' => $lo_page->languageShortcode], true), 302);
 				}
 				else {
-					$this->Flash->error(__('add_batch_failed'));
+					$this->Flash->error(__df($this->pageRoleName, 'pages', 'add_batch_failed'));
 					foreach ($lo_page->getError('_general') as $ls_error) {
 						$this->Flash->error($ls_error);
 					}
@@ -233,7 +239,7 @@ class PagesController extends Controller {
 		$lo_page = $this->Pages->findById($ai_id)->find('translations')->first();
 
 		if (!$lo_page) {
-			$this->Flash->error(__('record_not_found'));
+			$this->Flash->error(__df($this->pageRoleName, 'pages', 'record_not_found'));
 
 
 			return $this->redirect(['action' => 'overview']);
@@ -269,7 +275,7 @@ class PagesController extends Controller {
 		/** @var \Awyiss\Model\Entity\Page $lo_page */
 		$lo_page = $this->Pages->findById($ai_id)->find('translations')->first();
 		if (!$lo_page) {
-			$this->Flash->error(__('record_not_found'));
+			$this->Flash->error(__df($this->pageRoleName, 'pages', 'record_not_found'));
 
 
 			return $this->redirect(['action' => 'overview']);
@@ -277,11 +283,11 @@ class PagesController extends Controller {
 
 		if ($this->Pages->delete($lo_page)) {
 			if (!$this->request->is('ajax')) {
-				$this->Flash->success(__('delete_succeeded'));
+				$this->Flash->success(__df($this->pageRoleName, 'pages', 'delete_succeeded'));
 			}
 		}
 		else {
-			$this->Flash->error(__('delete_failed'));
+			$this->Flash->error(__df($this->pageRoleName, 'pages', 'delete_failed'));
 
 			foreach ($lo_page->getError('_general') as $ls_error) {
 				$this->Flash->error($ls_error);
@@ -343,7 +349,7 @@ class PagesController extends Controller {
 				])
 			) {
 				if (!$this->request->is('ajax')) {
-					$this->Flash->success(__($as_method . '_succeeded'));
+					$this->Flash->success(__df($this->pageRoleName, 'pages', $as_method . '_succeeded'));
 				}
 
 				if ($this->request->getData('submit') == 'submit_close') {
@@ -364,7 +370,7 @@ class PagesController extends Controller {
 				throw new RedirectException(Router::url(['action' => 'edit', 'lang' => $ao_page->languageShortcode, 'id' => $ao_page->id], true), 302);
 			}
 
-			$this->Flash->error(__($as_method . '_failed'));
+			$this->Flash->error(__df($this->pageRoleName, 'pages', $as_method . '_failed'));
 			foreach ($ao_page->getError('_general') as $ls_error) {
 				$this->Flash->error($ls_error);
 			}
@@ -433,6 +439,7 @@ class PagesController extends Controller {
 	 */
 	public function asPageRole(PageRoleEnumInterface $ae_pageRole, string $as_identifier): static {
 		$this->pageRole = $ae_pageRole;
+		$this->pageRoleName = $as_identifier;
 
 		$this->Pages = $this->{$as_identifier} = $this->fetchTable($as_identifier);
 
@@ -589,6 +596,8 @@ class PagesController extends Controller {
 			'menus' => $lo_menus,
 			'isGenericPage' => $this->pageRole->value !== 1,
 			'parentRecord' => $lo_parentRecord ?? null,
+			'pageRole' => $this->Pages->PageRoles->get($this->getPageRole()->value),
+			'pageRoleName' => Inflector::underscore($this->pageRoleName),
 		]);
 	}
 
