@@ -26,6 +26,10 @@
 	position:absolute;
 	right:1px;
 	bottom:1px;
+
+	.Scale-Small & {
+		padding-block:0;
+	}
 }
 
 %Actions {

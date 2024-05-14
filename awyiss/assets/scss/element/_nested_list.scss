@@ -192,6 +192,10 @@
 					border-color:var(--colorBackgroundContentDarkMode-Lightened-4);
 				}
 
+				.Scale-Small & {
+					padding-bottom:.5rem;
+				}
+
 				&:hover {
 					~ .Resizer {
 						opacity:.5;
@@ -231,6 +235,10 @@
 			line-height:0;
 			text-align:right;
 
+			.Scale-Small & {
+				//margin-block:-.25rem;
+			}
+
 			.Button {
 				width:56px;
 				height:36px;
@@ -267,6 +275,10 @@
 		.Resizer {
 			right:5px;
 			top:42px;
+
+			.Scale-Small & {
+				top:38px;
+			}
 		}
 		
 		.ListItem-ContextMenu {
@@ -374,19 +386,21 @@
 		}
 
 		&.ParentsInactive {
+			&:not(.Resizing) {
+				&:hover {
+					> .ListItem-Inner {
+						.Data {
+							opacity:1;
+						}
+					}
+				}
+			}
+
 			> .ListItem-Inner {
 				.Data {
 					font-style:italic;
 					opacity:.25;
 					transition:opacity .3s ease-in-out;
-				}
-			}
-
-			&:hover {
-				> .ListItem-Inner {
-					.Data {
-						opacity:1;
-					}
 				}
 			}
 		}
@@ -396,8 +410,8 @@
 				.AuditInfo,
 				.Data,
 				.Actions {
-					opacity:0;
-					transition-delay:0s, .3s;
+					visibility:hidden;
+					transition-delay:0s;
 				}
 
 				.ResizeInfo {
