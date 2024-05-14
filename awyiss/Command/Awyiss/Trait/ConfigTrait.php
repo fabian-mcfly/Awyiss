@@ -180,19 +180,19 @@ trait ConfigTrait {
 	 */
 	protected function setupDemoAttributeCollection(): void {
 		// Define the path to the ContentsAttributeOptionsCollection.php file
-		$ls_filePath = ROOT . DS . $this->customerName . DS . 'Attributes' . DS . 'AttributeOptionsCollection' . DS . 'ContentsAttributeOptionsCollection.php';
+		$ls_filePath = ROOT . DS . $this->customerName . DS . 'Attribute' . DS . 'AttributeOptionsCollection' . DS . 'ContentsAttributeOptionsCollection.php';
 
 		// Load the contents of the ContentsAttributeOptionsCollection.php file
 		$ls_fileContents = file_get_contents($ls_filePath);
 
 		// Replace the namespace with the camelized version of the given customer name
-		$ls_newNamespace = 'namespace ' . Inflector::camelize($this->customerName) . '\\Attributes\\AttributeOptionsCollection;';
-		$ls_fileContents = str_replace('namespace Customer\\Attributes\\AttributeOptionsCollection;', $ls_newNamespace, $ls_fileContents);
+		$ls_newNamespace = 'namespace ' . Inflector::camelize($this->customerName) . '\\Attribute\\AttributeOptionsCollection;';
+		$ls_fileContents = str_replace('namespace Customer\\Attribute\\AttributeOptionsCollection;', $ls_newNamespace, $ls_fileContents);
 
 		// Write the updated contents back to the ContentsAttributeOptionsCollection.php file
 		file_put_contents($ls_filePath, $ls_fileContents);
 
-		$this->io->success('\Customer\Attributes\AttributeOptionsCollection file updated.');
+		$this->io->success('\Customer\Attribute\AttributeOptionsCollection file updated.');
 	}
 
 

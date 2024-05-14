@@ -1,10 +1,10 @@
 <?php declare(strict_types=1);
 
 
-namespace Customer\Attributes\AttributeOptionsCollection;
+namespace Customer\Attribute\AttributeOptionsCollection;
 
 
-use Awyiss\Attributes\AttributeOptionsCollection;
+use Awyiss\Attribute\AttributeOptionsCollection;
 use Cake\Datasource\EntityInterface;
 
 

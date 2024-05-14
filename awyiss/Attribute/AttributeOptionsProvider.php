@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 
-namespace Awyiss\Attributes;
+namespace Awyiss\Attribute;
 
 
 use Cake\Utility\Inflector;
@@ -169,22 +169,22 @@ class AttributeOptionsProvider {
 		$la_attributeOptionFiles = [];
 
 		$la_paths = [
-			'\\' . CUSTOM_NAMESPACE . '\Attributes\AttributeOptionsCollection\\' => implode(
+			'\\' . CUSTOM_NAMESPACE . '\Attribute\AttributeOptionsCollection\\' => implode(
 				DS,
 				[
 					ROOT,
 					CUSTOM_DIR,
-					'Attributes',
+					'Attribute',
 					'AttributeOptionsCollection',
 					$as_scope . 'AttributeOptionsCollection.php',
 				]
 			),
-			'\Awyiss\Attributes\AttributeOptionsCollection\\' => implode(
+			'\Awyiss\Attribute\AttributeOptionsCollection\\' => implode(
 				DS,
 				[
 					ROOT,
 					APP_DIR,
-					'Attributes',
+					'Attribute',
 					'AttributeOptionsCollection',
 					$as_scope . 'AttributeOptionsCollection.php',
 				]

@@ -5,7 +5,7 @@ namespace Awyiss\Model\Behavior;
 
 
 use ArrayObject;
-use Awyiss\Attributes\AttributeOptionsProvider;
+use Awyiss\Attribute\AttributeOptionsProvider;
 use Awyiss\Core\App;
 use Awyiss\Model\Entity;
 use Awyiss\Model\Table;
@@ -79,7 +79,7 @@ class AttributesBehavior extends Behavior {
 
 
 	/**
-	 * @var array<string, string|\Awyiss\Attributes\AttributeOptionsInterface>
+	 * @var array<string, string|\Awyiss\Attribute\AttributeOptionsInterface>
 	 */
 	protected static array $attributeOptions;
 	/**
@@ -284,7 +284,7 @@ class AttributesBehavior extends Behavior {
 	 * @param RulesChecker|BaseRulesChecker $ao_rules The rules object to be modified.
 	 * @return RulesChecker
 	 * @throws \ReflectionException
-	 * @see \Awyiss\Attributes\AttributeOptions::validateValue
+	 * @see \Awyiss\Attribute\AttributeOptions::validateValue
 	 */
 	public function buildRules(Event $ao_event, RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
 		if (!$this->getConfig('isAttributesTable')) {

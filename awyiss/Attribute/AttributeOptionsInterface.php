@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 
-namespace Awyiss\Attributes;
+namespace Awyiss\Attribute;
 
 
 use Awyiss\Model\Entity;

@@ -4,8 +4,8 @@
 namespace Awyiss\View\Helper;
 
 
-use Awyiss\Attributes\AttributeOptionsInterface;
-use Awyiss\Attributes\AttributeOptionsProvider;
+use Awyiss\Attribute\AttributeOptionsInterface;
+use Awyiss\Attribute\AttributeOptionsProvider;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity\Attribute;
 use Awyiss\Model\Entity\Language;
