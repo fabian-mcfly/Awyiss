@@ -363,9 +363,20 @@ class MediaFoldersController extends Controller {
 
 			$ao_mediaFolder->parentId = reset($la_possibleParentIds);
 
+			if ($ao_mediaFolder->parentId === 1) {
+				$ao_mediaFolder->parentId = null;
+			}
+
 			if ($la_errors) {
 				$ao_mediaFolder->setError('parentId', $la_errors, true);
 			}
+		}
+
+		$lo_request = $this->getRequest();
+		//When the field is part of the request data, overwrite it since it might be outdated
+		if ($lo_request->getData('parent_id') !== null) {
+			$lo_request = $lo_request->withData('parent_id', $ao_mediaFolder->parentId);
+			$this->setRequest($lo_request);
 		}
 	}
 
