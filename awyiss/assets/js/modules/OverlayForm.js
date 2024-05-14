@@ -38,9 +38,9 @@ export default class OverlayForm {
 	 * Add a submit event to the overlay.
 	 */
 	constructor() {
-		this.element = document.getElementById('OverlayForm');
+		this.overlayElement = document.getElementById('OverlayForm');
 
-		if (this.element) {
+		if (this.overlayElement) {
 			// Bind a click event to the close button
 			this.eventHandler.add('click', this.handleCloseButton.bind(this), this.overlayElement.querySelector('.Button-Close'));
 
@@ -267,7 +267,7 @@ export default class OverlayForm {
 			form.append(closeButton);
 
 			// Get the first save button, append it to the form and give it an offset
-			const saveButton = form.querySelector('.Button-SaveClose');
+			let saveButton = form.querySelector('.Button-SaveClose');
 			saveButton.classList.add('Button-Success');
 			saveButton.style.setProperty('--offsetX', closeButton.offsetWidth + 'px');
 			form.append(saveButton);
@@ -281,6 +281,10 @@ export default class OverlayForm {
 				realForm.id = formId;
 			}
 			saveButton.setAttribute('form', formId);
+
+			// Get the second save button
+			saveButton = realForm.querySelector('.Button-SaveClose');
+			saveButton.classList.add('Button-Success');
 
 			// Show the overlay
 			this.overlayElement.classList.remove('FetchInProgress');
