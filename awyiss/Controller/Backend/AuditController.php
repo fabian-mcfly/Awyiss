@@ -4,6 +4,7 @@
 namespace Awyiss\Controller\Backend;
 
 
+use Awyiss\Annotation\NoDirectAccess;
 use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Routing\Router;
 use Cake\Http\Exception\RedirectException;
@@ -20,6 +21,7 @@ class AuditController extends Controller {
 	/**
 	 * @inheritDoc
 	 */
+	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
 		$lo_query = $this->Audit->find()->where($this->getOverviewWhere());
 
@@ -41,6 +43,7 @@ class AuditController extends Controller {
 	 * @return void
 	 * @throws \Cake\Http\Exception\RedirectException If the id or scope is not provided in the request parameters
 	 */
+	#[NoDirectAccess]
 	public function info(): void {
 		$la_parts = $this->request->getParam('parts');
 		$li_id = $la_parts['id'] ?? null;

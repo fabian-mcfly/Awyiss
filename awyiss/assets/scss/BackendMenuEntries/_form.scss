@@ -1,0 +1,56 @@
+.BackendMenuEntries {
+	&.Form {
+		.AccessHelper,
+		.LinkHelper {
+			display:none;
+		}
+
+		.Button-AccessHelper,
+		.Button-LinkHelper {
+			@extend %InFieldButton;
+
+			&::after {
+				@include la('\f023', 24px);
+				line-height:50px;
+			}
+		}
+
+		.Button-LinkHelper {
+			&::after {
+				content:'\f0c1';
+			}
+		}
+	}
+}
+
+#LinkHelperDialog {
+	.FormInputName-UrlParams {
+		.FormInputType-ListItem {
+			display:grid;
+			padding-right:57px;
+			gap:0 5px;
+			grid-template-columns:repeat(2, 1fr);
+		}
+
+		.Button-Remove {
+			width:52px;
+			height:52px;
+			top:0;
+			right:0;
+
+			&.Disabled {
+				opacity:.25;
+				visibility:visible;
+				pointer-events:none;
+			}
+		}
+	}
+}
+
+#LinkHelperDialog,
+#AccessHelperDialog {
+	.FormInputType-Select {
+		width:100%;
+		flex:0 0 100%;
+	}
+}

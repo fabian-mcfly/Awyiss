@@ -4,6 +4,7 @@
 namespace Awyiss\Controller\Backend;
 
 
+use Awyiss\Annotation\NoDirectAccess;
 use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Model\Entity\Datatable;
 use Awyiss\Routing\Router;
@@ -21,6 +22,7 @@ class DatatablesController extends Controller {
 	/**
 	 * @inheritDoc
 	 */
+	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
 		return $this->Datatables->find()->where($this->getOverviewWhere());
 	}

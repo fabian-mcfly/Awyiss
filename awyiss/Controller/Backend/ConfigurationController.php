@@ -4,6 +4,7 @@
 namespace Awyiss\Controller\Backend;
 
 
+use Awyiss\Annotation\NoDirectAccess;
 use Awyiss\Awyiss;
 use Awyiss\Configuration\ConfigOptionsProvider;
 use Awyiss\Controller\BackendController as Controller;
@@ -48,6 +49,7 @@ class ConfigurationController extends Controller {
 	/**
 	 * @inheritDoc
 	 */
+	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
 		$lo_query = $this->Configuration->find()->where($this->getOverviewWhere())->orderBy([
 			'identifier' => 'ASC',

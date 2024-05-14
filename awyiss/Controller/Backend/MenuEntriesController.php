@@ -4,6 +4,7 @@
 namespace Awyiss\Controller\Backend;
 
 
+use Awyiss\Annotation\NoDirectAccess;
 use Awyiss\Awyiss;
 use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Middleware\LocaleMiddleware;
@@ -36,6 +37,7 @@ class MenuEntriesController extends Controller {
 	/**
 	 * @inheritDoc
 	 */
+	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
 		$lo_query = $this->MenuEntries->find()->where($this->getOverviewWhere());
 		$this->Categories->filterQuery($lo_query, null, !$this->paginate['enabled']);
@@ -178,7 +180,7 @@ class MenuEntriesController extends Controller {
 	 * @param MenuEntry $ao_menuEntry
 	 * @return CollectionInterface
 	 */
-	public function getPossibleParentMenuEntries(MenuEntry $ao_menuEntry): CollectionInterface {
+	protected function getPossibleParentMenuEntries(MenuEntry $ao_menuEntry): CollectionInterface {
 		if (!isset($this->threadedMenuEntries)) {
 			$lo_query = $this->MenuEntries->find()->where([
 				'language_shortcode' => $ao_menuEntry->languageShortcode,

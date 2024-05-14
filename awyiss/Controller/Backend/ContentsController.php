@@ -4,6 +4,7 @@
 namespace Awyiss\Controller\Backend;
 
 
+use Awyiss\Annotation\NoDirectAccess;
 use Awyiss\Awyiss;
 use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Middleware\LocaleMiddleware;
@@ -59,6 +60,7 @@ class ContentsController extends Controller {
 	/**
 	 * @inheritDoc
 	 */
+	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
 		/**
 		 * Using `$this->Contents->find()` instead of
@@ -243,6 +245,7 @@ class ContentsController extends Controller {
 	 * @return void
 	 * @throws \Exception
 	 */
+	#[NoDirectAccess]
 	public function saveColumnWidth(): void {
 		$lo_request = Router::getRequest();
 
@@ -308,6 +311,7 @@ class ContentsController extends Controller {
 	/**
 	 * @inheritDoc
 	 */
+	#[NoDirectAccess]
 	public function saveSystemOrder(): void {
 		$lo_request = Router::getRequest();
 		$lo_table = $this->Contents;

@@ -4,6 +4,7 @@
 namespace Awyiss\Controller\Backend;
 
 
+use Awyiss\Annotation\NoDirectAccess;
 use Awyiss\Awyiss;
 use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Middleware\LocaleMiddleware;
@@ -42,6 +43,7 @@ class UsersController extends Controller {
 	 * @inheritDoc
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
+	#[NoDirectAccess]
 	public function beforeFilter(EventInterface $ao_event): void {
 		parent::beforeFilter($ao_event);
 
@@ -56,6 +58,7 @@ class UsersController extends Controller {
 	/**
 	 * @inheritDoc
 	 */
+	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
 		$lo_query = $this->Users->find()->where($this->getOverviewWhere());
 		$this->Categories->filterQuery($lo_query, null, false);

@@ -5,6 +5,7 @@ namespace Awyiss\Authentication;
 
 
 use Authentication\IdentityInterface;
+use Awyiss\Annotation\NoDirectAccess;
 use Awyiss\Event\EventManager;
 use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventManagerInterface;
@@ -26,6 +27,7 @@ trait IdentityAwareTrait {
 	/**
 	 * @inheritDoc
 	 */
+	#[NoDirectAccess]
 	public function getEventManager(): EventManagerInterface {
 		return $this->_eventManager ??= new EventManager();
 	}
@@ -34,6 +36,7 @@ trait IdentityAwareTrait {
 	/**
 	 * @return \Awyiss\Authorization\IdentityPermissionsInterface|null
 	 */
+	#[NoDirectAccess]
 	public function getIdentity(): ?IdentityInterface {
 		if (isset($this->identity)) {
 			return $this->identity;
@@ -52,6 +55,7 @@ trait IdentityAwareTrait {
 	/**
 	 * @param \Awyiss\Authorization\IdentityPermissionsInterface|null $ao_identity
 	 */
+	#[NoDirectAccess]
 	public function setIdentity(?IdentityInterface $ao_identity): static {
 		$this->identity = $ao_identity;
 

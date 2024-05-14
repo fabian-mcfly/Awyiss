@@ -4,6 +4,7 @@
 namespace Awyiss\Controller\Backend;
 
 
+use Awyiss\Annotation\NoDirectAccess;
 use Awyiss\Awyiss;
 use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Model\Entity\Language;
@@ -22,6 +23,7 @@ class LanguagesController extends Controller {
 	/**
 	 * @inheritDoc
 	 */
+	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
 		return $this->Languages->find()->where($this->getOverviewWhere());
 	}

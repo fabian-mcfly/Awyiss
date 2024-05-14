@@ -4,6 +4,7 @@
 namespace Awyiss\Controller\Backend;
 
 
+use Awyiss\Annotation\NoDirectAccess;
 use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Model\Entity\Menu;
 use Awyiss\Routing\Router;
@@ -29,6 +30,7 @@ class MenusController extends Controller {
 	/**
 	 * @inheritDoc
 	 */
+	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
 		$lo_query = $this->Menus->find();
 

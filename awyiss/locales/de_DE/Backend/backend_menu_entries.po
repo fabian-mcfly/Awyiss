@@ -76,3 +76,48 @@ msgstr "Berechtigung"
 
 msgid "external"
 msgstr "Externer Link"
+
+msgid "link_helper_button_text"
+msgstr "Verlinkungsassistent"
+
+msgid "link_helper_dialog_title"
+msgstr "Verlinkung auswählen"
+
+msgid "link_helper_dialog_label_controller"
+msgstr "Controller"
+
+msgid "link_helper_dialog_label_method"
+msgstr "Methode"
+
+msgid "link_helper_dialog_label_url_param_add"
+msgstr "Parameter hinzufügen"
+
+msgid "link_helper_dialog_label_url_param_remove"
+msgstr "Parameter entfernen"
+
+msgid "link_helper_dialog_label_url_params"
+msgstr "Parameter"
+
+msgid "link_helper_dialog_confirm_apply"
+msgstr "Übernehmen"
+
+msgid "link_helper_dialog_confirm_cancel"
+msgstr "Abbrechen"
+
+msgid "access_helper_button_text"
+msgstr "Berechtigungsassistent"
+
+msgid "access_helper_dialog_title"
+msgstr "Berechtigung auswählen"
+
+msgid "access_helper_dialog_label_scope"
+msgstr "Bereich"
+
+msgid "access_helper_dialog_label_permission"
+msgstr "Zugriffsart"
+
+msgid "access_helper_dialog_confirm_apply"
+msgstr "Übernehmen"
+
+msgid "access_helper_dialog_confirm_cancel"
+msgstr "Abbrechen"

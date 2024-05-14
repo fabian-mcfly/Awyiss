@@ -4,6 +4,7 @@
 namespace Awyiss\Controller\Backend;
 
 
+use Awyiss\Annotation\NoDirectAccess;
 use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Model\Entity\ContentTemplate;
 use Awyiss\Model\Entity\PageTemplate;
@@ -32,6 +33,7 @@ class ContentTemplatesController extends Controller {
 	/**
 	 * @inheritDoc
 	 */
+	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
 		$lo_query = $this->ContentTemplates->find('withUsages')->where($this->getOverviewWhere());
 

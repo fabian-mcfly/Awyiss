@@ -3,6 +3,7 @@
 @var menu \Awyiss\Utility\Menu
 @var possibleParentMenuEntries \Cake\Collection\CollectionInterface
 @var insertAfterOptions array
+@var controllers array
 @var _view \Awyiss\View\BackendView
 #}
 
@@ -60,12 +61,37 @@
 					{{ FormHelper.control('title') }}
 				{% endblock %}
 
+				{% set helperFormControl %}
+					<div class="LinkHelper">
+						{{ FormHelper.select('link_helper_options', controllers) }}
+					</div>
+				{% endset %}
+
 				{% block formControlLink %}
-					{{ FormHelper.control('link') }}
+					{{ FormHelper.control('link', {
+						columnSpan: 6,
+						templateVars: {
+							additionalContent: helperFormControl
+						},
+						'data-link-helper-button-text': __('link_helper_button_text'),
+					}) }}
 				{% endblock %}
 
+				{% set helperFormControl %}
+					<div class="AccessHelper">
+						{{ FormHelper.select('access_helper_options', policies) }}
+					</div>
+				{% endset %}
+
 				{% block formControlAccess %}
-					{{ FormHelper.control('access', {val: backendMenuEntry.access ? backendMenuEntry.access|json_encode : ''}) }}
+					{{ FormHelper.control('access', {
+						columnSpan: 6,
+						templateVars: {
+							additionalContent: helperFormControl
+						},
+						val: backendMenuEntry.access ? backendMenuEntry.access|json_encode : '',
+						'data-access-helper-button-text': __('access_helper_button_text'),
+					}) }}
 				{% endblock %}
 
 				{% block fieldsetGeneralAttributes %}
@@ -115,3 +141,52 @@
 		{{ FormHelper.hidden('reload_form', {val: 0}) }}
 	{% endblock %}
 </div>
+
+<dialog id="LinkHelperDialog" data-title="{{ __('link_helper_dialog_title') }}">
+	<div class="FormInput FormInputType-Select FormInputName-LinkHelperController">
+		<label class="Label" for="MenuEntry-LinkHelperController">{{ __('link_helper_dialog_label_controller') }}</label>
+		<select name="link_helper[controller]" id="MenuEntry-LinkHelperController"></select>
+	</div>
+
+	<div class="FormInput FormInputType-Select FormInputName-LinkHelperMethod">
+		<label class="Label" for="MenuEntry-LinkHelperMethod">{{ __('link_helper_dialog_label_method') }}</label>
+		<select name="link_helper[method]" id="MenuEntry-LinkHelperMethod"></select>
+	</div>
+
+	<div class="FormInput FormInputType-List FormInputName-UrlParams" data-list-item-add="{{ __('link_helper_dialog_label_url_param_add') }}" data-list-item-remove="{{ __('link_helper_dialog_label_url_param_remove') }}">
+		<label class="Label">{{ __('link_helper_dialog_label_url_params') }}</label>
+
+		<div class="FormInputType-ListItem FormInputType-ListItem-Default">
+			{{ FormHelper.input('param.0.key') }}
+			{{ FormHelper.input('param.0.value') }}
+		</div>
+	</div>
+
+	<button id="LinkHelperDialog-Button-Apply" class="Button Button-Success Button-Apply">
+		{{ __('link_helper_dialog_confirm_apply') }}
+	</button>
+
+	<button id="LinkHelperDialog-Button-Cancel" class="Button Button-Cancel">
+		{{ __('link_helper_dialog_confirm_cancel') }}
+	</button>
+</dialog>
+
+<dialog id="AccessHelperDialog" data-title="{{ __('access_helper_dialog_title') }}">
+	<div class="FormInput FormInputType-Select FormInputName-AccessHelperScope">
+		<label class="Label" for="MenuEntry-AccessHelperScope">{{ __('access_helper_dialog_label_scope') }}</label>
+		<select name="access_helper[scope]" id="MenuEntry-AccessHelperScope"></select>
+	</div>
+
+	<div class="FormInput FormInputType-Select FormInputName-AccessHelperPermission">
+		<label class="Label" for="MenuEntry-AccessHelperPermission">{{ __('access_helper_dialog_label_permission') }}</label>
+		<select name="access_helper[permission]" id="MenuEntry-AccessHelperPermission"></select>
+	</div>
+
+	<button id="AccessHelperDialog-Button-Apply" class="Button Button-Success Button-Apply">
+		{{ __('access_helper_dialog_confirm_apply') }}
+	</button>
+
+	<button id="AccessHelperDialog-Button-Cancel" class="Button Button-Cancel">
+		{{ __('access_helper_dialog_confirm_cancel') }}
+	</button>
+</dialog>

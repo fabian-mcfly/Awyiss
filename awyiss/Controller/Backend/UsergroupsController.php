@@ -4,6 +4,7 @@
 namespace Awyiss\Controller\Backend;
 
 
+use Awyiss\Annotation\NoDirectAccess;
 use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Model\Entity\PageRole;
 use Awyiss\Model\Entity\Usergroup;
@@ -33,6 +34,7 @@ class UsergroupsController extends Controller {
 	/**
 	 * @inheritDoc
 	 */
+	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
 		return $this->Usergroups->find()->where($this->getOverviewWhere());
 	}
@@ -286,11 +288,11 @@ class UsergroupsController extends Controller {
 
 		$la_authorizationPolicies = $this->getAuthorizationPolicies();
 
-		/** @var \Awyiss\Authorization\Policy\AbstractGenericPolicy|class-string<\Awyiss\Authorization\Policy\PolicyInterface> $lo_authorizationPolicy */
-		foreach ($la_authorizationPolicies as $lo_authorizationPolicy) {
+		/** @var \Awyiss\Authorization\Policy\AbstractGenericPolicy|class-string<\Awyiss\Authorization\Policy\PolicyInterface> $lx_authorizationPolicy */
+		foreach ($la_authorizationPolicies as $lx_authorizationPolicy) {
 			/** @var \Awyiss\Authorization\PermissionOption\PermissionOptionInterface $lo_permission */
-			foreach ((!is_object($lo_authorizationPolicy) ? $lo_authorizationPolicy::getPermissionOptions() : $lo_authorizationPolicy->getPermissionOptions()) as $lo_permission) {
-				$ls_scope = !is_object($lo_authorizationPolicy) ? $lo_authorizationPolicy::getScope() : $lo_authorizationPolicy->getScope();
+			foreach ((!is_object($lx_authorizationPolicy) ? $lx_authorizationPolicy::getPermissionOptions() : $lx_authorizationPolicy->getPermissionOptions()) as $lo_permission) {
+				$ls_scope = !is_object($lx_authorizationPolicy) ? $lx_authorizationPolicy::getScope() : $lx_authorizationPolicy->getScope();
 				$ls_scope = Inflector::underscore($ls_scope);
 
 				$ls_identifier = $lo_permission->getConfig('identifier');

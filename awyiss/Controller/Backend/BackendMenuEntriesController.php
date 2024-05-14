@@ -4,8 +4,11 @@
 namespace Awyiss\Controller\Backend;
 
 
+use Awyiss\Annotation\NoDirectAccess;
 use Awyiss\Controller\BackendController as Controller;
+use Awyiss\Core\App;
 use Awyiss\Model\Entity\BackendMenuEntry;
+use Awyiss\Model\Entity\Datatable;
 use Awyiss\Model\Table;
 use Awyiss\Routing\Router;
 use Awyiss\Utility\Menu\BackendMenu;
@@ -13,10 +16,14 @@ use Awyiss\Utility\Menu\Menu;
 use Awyiss\Utility\Menu\MenuItem;
 use Cake\Collection\CollectionInterface;
 use Cake\Database\Expression\QueryExpression;
+use Cake\Datasource\FactoryLocator;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
 use Cake\I18n\DateTime;
 use Cake\ORM\Query\SelectQuery;
+use Cake\Utility\Inflector;
+use ReflectionClass;
+use ReflectionMethod;
 
 
 /**
@@ -28,6 +35,7 @@ class BackendMenuEntriesController extends Controller {
 	/**
 	 * @inheritDoc
 	 */
+	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
 		$lo_query = $this->BackendMenuEntries->find()->where($this->getOverviewWhere());
 
@@ -66,19 +74,7 @@ class BackendMenuEntriesController extends Controller {
 			$this->save($lo_menuEntry);
 		}
 
-		$lo_menu = new BackendMenu();
-
-		$la_insertAfterOptions = $this->generateMenuSelectOptions($lo_menu->getCustomMenu() ?? $lo_menu->getMenu());
-
-		$lo_possibleParentMenuEntries = $this->getPossibleParentMenuEntries($lo_menuEntry, $lo_menu->getDynamicMenu());
-
-		$this->set([
-			'menu' => $lo_menu,
-			'insertAfterOptions' => $la_insertAfterOptions,
-			'backendMenuEntry' => $lo_menuEntry,
-			'possibleParentMenuEntries' => $lo_possibleParentMenuEntries,
-			'attributes' => $this->BackendMenuEntries->getAttributes(),
-		]);
+		$this->setViewVars($lo_menuEntry);
 	}
 
 
@@ -104,18 +100,7 @@ class BackendMenuEntriesController extends Controller {
 			$this->save($lo_menuEntry, 'edit');
 		}
 
-		$lo_menu = new BackendMenu();
-
-		$la_insertAfterOptions = $this->generateMenuSelectOptions($lo_menu->getCustomMenu() ?? $lo_menu->getMenu());
-
-		$lo_possibleParentMenuEntries = $this->getPossibleParentMenuEntries($lo_menuEntry, $lo_menu->getDynamicMenu());
-
-		$this->set([
-			'menu' => $lo_menu,
-			'insertAfterOptions' => $la_insertAfterOptions,
-			'backendMenuEntry' => $lo_menuEntry,
-			'possibleParentMenuEntries' => $lo_possibleParentMenuEntries,
-		]);
+		$this->setViewVars($lo_menuEntry);
 	}
 
 
@@ -166,7 +151,7 @@ class BackendMenuEntriesController extends Controller {
 	 * @param \Awyiss\Utility\Menu\Menu|null $ao_dynamicMenu
 	 * @return \Cake\Collection\CollectionInterface
 	 */
-	public function getPossibleParentMenuEntries(BackendMenuEntry $ao_menuEntry, ?Menu $ao_dynamicMenu): CollectionInterface {
+	protected function getPossibleParentMenuEntries(BackendMenuEntry $ao_menuEntry, ?Menu $ao_dynamicMenu): CollectionInterface {
 		$lo_listNested = collection($ao_dynamicMenu->toArray());
 
 		//We only want to find threaded pages for an existing entity (id equals not null)
@@ -326,5 +311,153 @@ class BackendMenuEntriesController extends Controller {
 
 
 		return $la_options;
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Entity\BackendMenuEntry $ao_menuEntry
+	 * @return void
+	 */
+	protected function setViewVars(BackendMenuEntry $ao_menuEntry): void {
+		$lo_menu = new BackendMenu();
+
+		$la_insertAfterOptions = $this->generateMenuSelectOptions($lo_menu->getCustomMenu() ?? $lo_menu->getMenu());
+
+		$lo_possibleParentMenuEntries = $this->getPossibleParentMenuEntries($ao_menuEntry, $lo_menu->getDynamicMenu());
+
+		$la_controllers = $this->getControllers();
+
+		$this->set([
+			'menu' => $lo_menu,
+			'insertAfterOptions' => $la_insertAfterOptions,
+			'backendMenuEntry' => $ao_menuEntry,
+			'possibleParentMenuEntries' => $lo_possibleParentMenuEntries,
+			'attributes' => $this->BackendMenuEntries->getAttributes(),
+			'controllers' => $la_controllers,
+			'policies' => $this->getPolicies(),
+		]);
+	}
+
+
+	/**
+	 * @return array
+	 */
+	protected function getControllers(): array {
+		static $la_controllers = [];
+		static $la_blocklistedMethods = [
+			'initialize',
+			'beforeFilter',
+			'beforeRender',
+			'render',
+			'setEventManager',
+			'dispatchEvent',
+		];
+
+		if (!empty($la_controllers)) {
+			return $la_controllers;
+		}
+
+		$la_paths = [
+			'\\' . CUSTOM_NAMESPACE . '\Controller\Backend\\' => implode(DS, [ROOT, CUSTOM_DIR, 'Controller', 'Backend', '*Controller.php',]),
+			'\Awyiss\Controller\Backend\\' => implode(DS, [ROOT, APP_DIR, 'Controller', 'Backend', '*Controller.php']),
+		];
+
+		//Traverse both namespaces
+		foreach ($la_paths as $ls_namespace => $ls_path) {
+			//Look for files with name "*Table.php"
+			foreach (glob($ls_path) as $ls_filePath) {
+				$ls_controllerName = substr($ls_filePath, strrpos($ls_filePath, DS) + 1, -14);
+
+				//If an entry exists or if the table does not allow attributes, skip it
+				if (isset($la_controllers[ $ls_controllerName ])) {
+					continue;
+				}
+
+				$ls_controllerClass = $ls_namespace . $ls_controllerName . 'Controller';
+
+				$lo_reflection = new ReflectionClass($ls_controllerClass);
+
+				$la_methods = array_filter($lo_reflection->getMethods(ReflectionMethod::IS_PUBLIC), function ($ao_method) use ($ls_controllerName, $la_blocklistedMethods) {
+					if (in_array($ao_method->getName(), $la_blocklistedMethods)) {
+						return false;
+					}
+
+					// Check for the NoDirectAccess attribute
+					$la_attributes = $ao_method->getAttributes(NoDirectAccess::class);
+					if (!empty($la_attributes)) {
+						return false;
+					}
+
+					return str_ends_with($ao_method->getDeclaringClass()->getName(), $ls_controllerName . 'Controller');
+				});
+
+				if (empty($la_methods)) {
+					continue;
+				}
+
+				array_walk($la_methods, function (ReflectionMethod &$method) use (&$la_methods) {
+					/** @noinspection PhpVariableNamingConventionInspection */
+					$method = $method->getName();
+				});
+
+				$la_controllers[ $ls_controllerName ] = $la_methods;
+			}
+		}
+
+		/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $ls_pageRoleEnum */
+		$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
+		foreach ($ls_pageRoleEnum::cases() as $le_pageRole) {
+			$ls_name = Inflector::pluralize($le_pageRole->name);
+			if (isset($la_controllers[ $ls_name ])) {
+				continue;
+			}
+
+			$la_controllers[ $ls_name ] = $la_controllers['Pages'];
+		}
+
+		$lo_table = FactoryLocator::get('Table')->get('Datatables');
+		$lo_table->findAllAndCache()->each(function (Datatable $ao_datatable) use (&$la_controllers) {
+			$ls_name = Inflector::camelize($ao_datatable->identifier);
+
+			if (!isset($la_controllers[ $ls_name ])) {
+				$la_controllers[ $ls_name ] = $la_controllers['GenericDatatables'];
+			}
+		});
+
+		unset($la_controllers['GenericDatatables']);
+
+		ksort($la_controllers);
+
+		return $la_controllers;
+	}
+
+
+	/**
+	 * @return array
+	 * @throws \ReflectionException
+	 */
+	protected function getPolicies(): array {
+		/** @var \Awyiss\Authorization\AuthorizationService $lo_authorizationService */
+		$lo_authorizationService = $this->request->getAttribute('authorization');
+		$la_policies = [];
+
+		/**
+		 * @var \Awyiss\Authorization\Policy\AbstractGenericPolicy|class-string<\Awyiss\Authorization\Policy\PolicyInterface> $lx_policyClass
+		 */
+		foreach ($lo_authorizationService->getPolicies() as $ls_scope => $lx_policyClass) {
+			$ls_scope = is_string($lx_policyClass) ? $lx_policyClass::getScope() : $lx_policyClass->getScope();
+
+			$la_permissions = [];
+			foreach (is_string($lx_policyClass) ? $lx_policyClass::getPermissionOptions() : $lx_policyClass->getPermissionOptions() as $ls_identifier => $lo_permissionOption) {
+				$la_permissions[] = $ls_identifier;
+			}
+
+			$la_policies[ $ls_scope ] = $la_permissions;
+		}
+
+		ksort($la_policies);
+
+
+		return $la_policies;
 	}
 }

@@ -5,6 +5,7 @@ namespace Awyiss\Controller\Backend;
 
 
 use AllowDynamicProperties;
+use Awyiss\Annotation\NoDirectAccess;
 use Awyiss\Awyiss;
 use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Core\LocalConfig;
@@ -58,6 +59,7 @@ abstract class GenericDatatablesController extends Controller {
 	/**
 	 * @inheritDoc
 	 */
+	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
 		if ($this->splitIntoLanguages) {
 			$lo_query = $this->Datatable->find('forCurrentLanguage');
@@ -152,8 +154,7 @@ abstract class GenericDatatablesController extends Controller {
 		$lo_entity = $this->Datatable->findById($ai_id)->find('translations')->first();
 
 		if (!$lo_entity) {
-			$this->Flash->error(__('record_not_found'));
-
+			$this->Flash->error(__df($this->datatable->identifier, 'generic_datatables', 'record_not_found'));
 
 			return $this->redirect(['action' => 'overview']);
 		}
@@ -190,18 +191,18 @@ abstract class GenericDatatablesController extends Controller {
 		/** @var Datatable $lo_datatable */
 		$lo_datatable = $this->Datatable->findById($ai_id)->first();
 		if (!$lo_datatable) {
-			$this->Flash->error(__df($this->datatable->identifier, 'generic_datatables','record_not_found'));
+			$this->Flash->error(__df($this->datatable->identifier, 'generic_datatables', 'record_not_found'));
 
 			return $this->redirect(['action' => 'overview']);
 		}
 
 		if ($this->Datatable->delete($lo_datatable)) {
 			if (!$this->request->is('ajax')) {
-				$this->Flash->success(__df($this->datatable->identifier, 'generic_datatables','delete_succeeded'));
+				$this->Flash->success(__df($this->datatable->identifier, 'generic_datatables', 'delete_succeeded'));
 			}
 		}
 		else {
-			$this->Flash->error(__df($this->datatable->identifier, 'generic_datatables','delete_failed'));
+			$this->Flash->error(__df($this->datatable->identifier, 'generic_datatables', 'delete_failed'));
 
 			foreach ($lo_datatable->getError('_general') as $ls_error) {
 				$this->Flash->error($ls_error);
@@ -238,7 +239,7 @@ abstract class GenericDatatablesController extends Controller {
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
 			if ($this->Datatable->save($ao_entity, ['asCopy' => (bool)$this->request->getData('save_as_copy')])) {
 				if (!$this->request->is('ajax')) {
-					$this->Flash->success(__($as_method . '_succeeded'));
+					$this->Flash->success(__df($this->datatable->identifier, 'generic_datatables', $as_method . '_succeeded'));
 				}
 
 				if ($this->request->getData('submit') == 'submit_close') {
@@ -261,7 +262,7 @@ abstract class GenericDatatablesController extends Controller {
 				throw new RedirectException(Router::url(['action' => 'edit', 'lang' => $ao_entity->languageShortcode, 'id' => $ao_entity->id], true), 302);
 			}
 
-			$this->Flash->error(__($as_method . '_failed'));
+			$this->Flash->error(__df($this->datatable->identifier, 'generic_datatables', $as_method . '_failed'));
 			foreach ($ao_entity->getError('_general') as $ls_error) {
 				$this->Flash->error($ls_error);
 			}
@@ -336,6 +337,7 @@ abstract class GenericDatatablesController extends Controller {
 	 * @return \Awyiss\Controller\Backend\GenericDatatablesController
 	 * @throws \ReflectionException
 	 */
+	#[NoDirectAccess]
 	public function forDatatable(Datatable $ao_datatable, string $as_identifier): static {
 		$this->datatable = $ao_datatable;
 

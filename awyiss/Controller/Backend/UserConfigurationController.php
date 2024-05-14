@@ -4,6 +4,7 @@
 namespace Awyiss\Controller\Backend;
 
 
+use Awyiss\Annotation\NoDirectAccess;
 use Awyiss\Authentication\IdentityAwareTrait;
 use Awyiss\Awyiss;
 use Awyiss\Configuration\ConfigOption;
@@ -44,6 +45,7 @@ class UserConfigurationController extends Controller {
 	/**
 	 * @inheritDoc
 	 */
+	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
 		$lo_query = $this->UserConfiguration->find()->where($this->getOverviewWhere())->orderBy([
 			'identifier' => 'ASC',

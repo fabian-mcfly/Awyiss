@@ -5,6 +5,7 @@ namespace Awyiss\Controller\Backend;
 
 
 use AllowDynamicProperties;
+use Awyiss\Annotation\NoDirectAccess;
 use Awyiss\Awyiss;
 use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Core\App;
@@ -64,6 +65,7 @@ class PagesController extends Controller {
 	/**
 	 * @inheritDoc
 	 */
+	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
 		$lo_query = $this->Pages->find('forCurrentLanguage')->where($this->getOverviewWhere());
 		$this->Categories->filterQuery($lo_query, null, !$this->paginate['enabled']);
@@ -437,6 +439,7 @@ class PagesController extends Controller {
 	 * @return \Awyiss\Controller\Backend\PagesController
 	 * @throws \ReflectionException
 	 */
+	#[NoDirectAccess]
 	public function asPageRole(PageRoleEnumInterface $ae_pageRole, string $as_identifier): static {
 		$this->pageRole = $ae_pageRole;
 		$this->pageRoleName = $as_identifier;
@@ -470,6 +473,7 @@ class PagesController extends Controller {
 	/**
 	 * @return \Awyiss\Model\Enum\PageRoleEnumInterface
 	 */
+	#[NoDirectAccess]
 	public function getPageRole(): PageRoleEnumInterface {
 		if (!isset($this->pageRole)) {
 			/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $ls_pageRoleEnum */

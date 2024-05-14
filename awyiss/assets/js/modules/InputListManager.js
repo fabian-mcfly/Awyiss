@@ -234,7 +234,7 @@ export default class InputListManager {
 			}
 
 			// Check if the node itself matches the selector
-			if (node.querySelector(this.selector)) {
+			if (node.matches(this.selector)) {
 				this.initList(node);
 			}
 

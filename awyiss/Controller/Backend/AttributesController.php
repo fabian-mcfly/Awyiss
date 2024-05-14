@@ -4,6 +4,7 @@
 namespace Awyiss\Controller\Backend;
 
 
+use Awyiss\Annotation\NoDirectAccess;
 use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Model\Entity\Attribute;
 use Awyiss\Model\Table;
@@ -43,6 +44,7 @@ class AttributesController extends Controller {
 	/**
 	 * @inheritDoc
 	 */
+	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
 		$lo_query = $this->Attributes->find()->where($this->getOverviewWhere());
 		$this->Categories->filterQuery($lo_query, null, !$this->paginate['enabled']);

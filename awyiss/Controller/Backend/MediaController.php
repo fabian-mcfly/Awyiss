@@ -4,6 +4,7 @@
 namespace Awyiss\Controller\Backend;
 
 
+use Awyiss\Annotation\NoDirectAccess;
 use Awyiss\Awyiss;
 use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Model\Entity\Media;
@@ -51,6 +52,7 @@ class MediaController extends Controller {
 	/**
 	 * @inheritDoc
 	 */
+	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
 		$lo_query = $this->Media->find()->where($this->getOverviewWhere());
 		$this->Categories->filterQuery($lo_query, null, !$this->paginate['enabled']);
@@ -321,6 +323,7 @@ class MediaController extends Controller {
 	 *
 	 * @return void
 	 */
+	#[NoDirectAccess]
 	public function checkPreviewProgress(): void {
 		$this->checkProgress('preview');
 	}
@@ -331,6 +334,7 @@ class MediaController extends Controller {
 	 *
 	 * @return void
 	 */
+	#[NoDirectAccess]
 	public function checkResizeProgress(): void {
 		$this->checkProgress('resize');
 	}
@@ -476,6 +480,7 @@ class MediaController extends Controller {
 	 *
 	 * @return void
 	 */
+	#[NoDirectAccess]
 	public function rebuildSystemOrder(): void {
 		$li_folderid = $this->request->getParam('mediaFolderId');
 

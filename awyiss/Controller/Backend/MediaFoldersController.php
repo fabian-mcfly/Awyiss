@@ -4,6 +4,7 @@
 namespace Awyiss\Controller\Backend;
 
 
+use Awyiss\Annotation\NoDirectAccess;
 use Awyiss\Awyiss;
 use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Middleware\LocaleMiddleware;
@@ -85,6 +86,7 @@ class MediaFoldersController extends Controller {
 	/**
 	 * @inheritDoc
 	 */
+	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
 		$lo_query = $this->MediaFolders->find('forCurrentLanguage');
 
@@ -338,7 +340,7 @@ class MediaFoldersController extends Controller {
 	 * @return \Cake\Collection\CollectionInterface
 	 * @see \Cake\Collection\CollectionTrait::listNested()
 	 */
-	public function getThreadedMediaFolders(MediaFolder $ao_mediaFolder): CollectionInterface {
+	protected function getThreadedMediaFolders(MediaFolder $ao_mediaFolder): CollectionInterface {
 		if (!isset($this->threadedMediaFolders)) {
 			$lo_query = $this->MediaFolders->find('forCurrentLanguage', languageShortcode: $ao_mediaFolder->languageShortcode ?? '_global', includeGlobal: false)
 			->where($this->getOverviewWhere());
