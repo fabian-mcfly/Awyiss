@@ -135,6 +135,10 @@ fieldset {
 	gap:0 40px;
 	grid-auto-rows:min-content;
 	grid-template-columns:repeat(12, 1fr);
+
+	> .sf-dump {
+		grid-column:1 / -1;
+	}
 }
 
 fieldset {
@@ -198,7 +202,7 @@ fieldset {
 	&:focus-within {
 		box-shadow:0 0 10px rgba(0, 0, 0, .25);
 
-		legend {
+		> legend {
 			background-color:var(--colorDark);
 
 			&::after {

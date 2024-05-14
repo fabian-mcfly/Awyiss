@@ -98,6 +98,10 @@
 			color:var(--colorBright);
 		}
 
+		.Scale-Small & {
+			padding-block:7px 9px;
+		}
+
 		&:focus-visible {
 			outline:0 none;
 		}
@@ -123,6 +127,10 @@
 			position:absolute;
 			top:16px;
 			right:20px;
+
+			.Scale-Small & {
+				top:12px;
+			}
 		}
 	}
 

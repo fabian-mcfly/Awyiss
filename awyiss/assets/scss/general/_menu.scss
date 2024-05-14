@@ -124,7 +124,7 @@
 	}
 
 	ul.Level2 {
-		min-width:100%;
+		width:max-content;
 		max-height:calc(100vh - 140px);
 		margin-top:4px;
 		padding:0 10px;
@@ -231,6 +231,7 @@
 	a.Level4,
 	span.Level4 {
 		display:block;
+		width:max-content;
 		padding:5px 0;
 		font-size:.8rem;
 		line-height:1.5;

@@ -58,8 +58,8 @@
 			transition:background-color 0s linear, outline-color .1s ease-in-out, opacity .3s ease-in-out, visibility 0s linear .3s;
 
 			.Scale-Small & {
-				width:33px;
-				height:33px;
+				width:30px;
+				height:30px;
 				text-indent:-1px;
 			}
 
@@ -177,7 +177,7 @@
 		line-height:0;
 		text-align:center;
 		position:absolute;
-		bottom:calc(var(--lineHeightMain) * -2);
+		bottom:calc(var(--lineHeightMain) * -1);
 		right:20px;
 		//opacity:.5;
 		transition:background-color 0s linear, outline-color 0.1s ease-in-out, opacity .3s ease-in-out;

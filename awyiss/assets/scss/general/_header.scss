@@ -35,6 +35,7 @@
 		border-right-width:0;
 		background-color:var(--backgroundColorMenu);
 		color:inherit;
+		//noinspection CssNoGenericFontName
 		font-family:var(--fontStackHeading);
 		font-size:30px;
 		line-height:62px;
@@ -102,12 +103,21 @@
 			display:block;
 			padding:18px 24px;
 			border-radius:5px;
+			background-image:none;
 			background-color:var(--colorMenu);
 			font-size:0;
 			line-height:0;
 			position:relative;
 			overflow:hidden;
 			transition:background-color .3s ease-in-out;
+
+			&.Visible,
+			&:hover,
+			&:focus-visible {
+				.BackgroundImage {
+					opacity:0;
+				}
+			}
 
 			&.Visible {
 				background-color:var(--colorSuccess);
@@ -146,7 +156,7 @@
 			margin-top:4px;
 			position:absolute;
 			top:100%;
-			right:0;
+			left:5px;
 			opacity:0;
 			visibility:hidden;
 			overflow:hidden;
@@ -230,6 +240,7 @@
 			filter:blur(3px);
 			scale:4;
 			opacity:.15;
+			transition:opacity .3s ease-in-out;
 
 			.🌚 & {
 				opacity:.1;

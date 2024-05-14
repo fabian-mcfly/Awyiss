@@ -24,7 +24,7 @@ button,
 	transition:background-color .3s linear, outline-color .1s ease-in-out;
 
 	.Scale-Small & {
-		padding-block:11px 10px;
+		padding-block:7px;
 	}
 
 	.🌚 & {
@@ -104,9 +104,9 @@ button,
 		line-height:1.5;
 
 		.Scale-Small & {
-			min-height:33px;
+			min-height:30px;
 			font-size:1rem;
-			padding-block:4px 5px;
+			padding-block:3px;
 		}
 	}
 

@@ -146,7 +146,7 @@
 
 		.ContentElement {
 			display:grid;
-			grid-template-columns:40% 60%;
+			grid-template-columns:1fr 350px;
 
 			&[data-assignable="false"] {
 				.FormInputType-Checkbox {
@@ -183,7 +183,7 @@
 					line-height:40px;
 
 					&::before {
-						top:11px;
+						top:10px;
 					}
 				}
 			}
@@ -271,7 +271,7 @@
 
 		.ListItem-ContentArea {
 			margin:5px 0 0 0;
-			padding:1rem 20px;
+			padding:1rem 20px .5rem;
 			border-radius:5px;
 			position:relative;
 			list-style-type:none;

@@ -39,18 +39,11 @@
 		}
 	}
 
-	&:has(+ .Overview-Table),
-	&:has(+ .Overview-List) {
+	&:has(+ .Overview-Fieldset) {
 		.Button-ListView {
-			bottom:calc(var(--lineHeightMain) * -1);
+			bottom:calc(var(--lineHeightMain) * -2);
 		}
 	}
-
-	/*&:has(+ .Overview-Table) {
-		.Button-ListView-PaginatedList {
-			background-color:var(--colorLight);
-		}
-	}*/
 
 	&:has(.Button-ListView) {
 		+ .Overview-Table {

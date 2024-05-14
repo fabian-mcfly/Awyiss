@@ -69,6 +69,10 @@
 			grid-template-columns:auto var(--listItemAuditInfoColumnWidth) var(--listItemLastColumnWidth);
 			transition:background-color .3s ease-in-out;
 
+			.Scale-Small& {
+				padding-bottom:.75rem;
+			}
+
 			&.RepeatedIdentifier {
 				padding-block:12px 10px;
 
@@ -105,7 +109,7 @@
 					background-color:var(--colorLight-Darkened-8);
 
 					.🌚& {
-						background-color:var(--colorSemiDarkDarkMode-Lightened-4);
+						background-color:var(--colorSemiDarkDarkMode);
 					}
 
 					.DataItem {
@@ -114,6 +118,12 @@
 
 					.Actions {
 						@extend %ActionsHover;
+
+						.Button {
+							.🌚& {
+								--backgroundColor:var(--colorSemiDarkDarkMode-Darkened-8);
+							}
+						}
 					}
 				}
 
@@ -139,6 +149,10 @@
 			.AuditInfo {
 				margin-top:.1rem;
 				z-index:3;
+
+				.Scale-Small& {
+					margin-top:0;
+				}
 			}
 
 			.Data {
@@ -169,6 +183,20 @@
 				@extend %ListActions;
 
 				align-self:center;
+
+				.Button {
+					&-Delete {
+						.Scale-Small& {
+							width:30px;
+							height:30px;
+							text-indent:-1px;
+
+							&::after {
+								line-height:30px;
+							}
+						}
+					}
+				}
 			}
 		}
 

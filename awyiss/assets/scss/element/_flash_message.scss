@@ -27,7 +27,7 @@
 	}
 
 	&.Error {
-		--boxShadowColor:--colorError-Alpha-25;
+		--boxShadowColor:var(--colorError-Alpha-25);
 		--colorText:var(--colorError);
 
 		&::before {

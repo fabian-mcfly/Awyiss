@@ -98,6 +98,15 @@
 	.Overview-Fieldset {
 		grid-column:1 / span 4;
 
+		&.Overview-Fieldset-Unknown {
+			outline:2px solid var(--colorError);
+			outline-offset:-2px;
+
+			legend {
+				background-color:var(--colorError);
+			}
+		}
+
 		&.Collapsed {
 			/*legend {
 				border-bottom-right-radius:0;

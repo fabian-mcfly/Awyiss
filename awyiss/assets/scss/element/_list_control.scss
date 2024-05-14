@@ -44,6 +44,17 @@
 	font-size:.8rem;
 	line-height:1;
 	text-align:right;
+
+	hr {
+		display:block;
+		width:100px;
+		height:1px;
+		margin:.4em 0 .25em auto;
+		border:0 none;
+		background-color:currentColor;
+		color:inherit;
+		opacity:.1;
+	}
 }
 
 .Pagination-List {

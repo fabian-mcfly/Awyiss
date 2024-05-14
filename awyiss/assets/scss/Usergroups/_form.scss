@@ -1,7 +1,7 @@
 .UsergroupsController {
 	.Form {
 		.Fieldset-Users {
-			padding:20px;
+			padding:0;
 
 			.Overview-Table {
 				margin:0;
@@ -88,6 +88,7 @@
 			top:100px;
 			align-self:start;
 			overflow:hidden;
+			cursor:pointer;
 
 			.🌚& {
 				background-color:var(--colorBackgroundContentDarkMode-Darkened-4);
