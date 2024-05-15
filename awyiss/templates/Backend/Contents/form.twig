@@ -26,102 +26,104 @@
 	{% endfor %}
 {% endmacro %}
 
-<div class="Fieldsets">
-	{% block fieldsetPresentation %}
-		<fieldset class="Fieldset-Presentation">
-			<legend>{{ __('fieldset_presentation') }}</legend>
+{% block fieldsets %}
+	<div class="Fieldsets">
+		{% block fieldsetPresentation %}
+			<fieldset class="Fieldset-Presentation">
+				<legend>{{ __('fieldset_presentation') }}</legend>
 
-			{% block fieldsetPresentationInner %}
-				{{ _self.renderFormControls(contentElementsByFieldset.presentation ?? [], macroSettings) }}
-			{% endblock %}
-		</fieldset>
-	{% endblock %}
-
-	{% block fieldsetConditions %}
-		<fieldset class="Fieldset-Conditions">
-			<legend>{{ __('fieldset_conditions') }}</legend>
-
-			{% block fieldsetConditionsInner %}
-				{{ _self.renderFormControls(contentElementsByFieldset.conditions ?? [], macroSettings) }}
-			{% endblock %}
-		</fieldset>
-	{% endblock %}
-
-	{% block fieldsetGeneral %}
-		<fieldset class="Fieldset-General">
-			<legend>{{ __('fieldset_general') }}</legend>
-
-			{% block fieldsetGeneralInner %}
-				{{ _self.renderFormControls(contentElementsByFieldset.general ?? [], macroSettings) }}
-			{% endblock %}
-		</fieldset>
-	{% endblock %}
-
-	{% block fieldsetContent %}
-		<fieldset class="Fieldset-Content">
-			<legend>{{ __('fieldset_content') }}</legend>
-
-			{% block fieldsetContentInner %}
-				{{ _self.renderFormControls(contentElementsByFieldset.content ?? [], macroSettings) }}
-			{% endblock %}
-		</fieldset>
-	{% endblock %}
-
-	{% block fieldsetMedia %}
-		<fieldset class="Fieldset-Media">
-			<legend>{{ __('fieldset_media') }}</legend>
-
-			{% block fieldsetMediaInner %}
-				{{ _self.renderFormControls(contentElementsByFieldset.media ?? [], macroSettings) }}
-			{% endblock %}
-		</fieldset>
-	{% endblock %}
-
-	{% block fieldsetAttributes %}
-		<fieldset class="Fieldset-Attributes">
-			<legend>{{ __('fieldset_attributes') }}</legend>
-
-			{% block fieldsetAttributesInner %}
-				{{ _self.renderFormControls(contentElementsByFieldset.attributes ?? [], macroSettings) }}
-			{% endblock %}
-		</fieldset>
-	{% endblock %}
-
-	{% block fieldsetData %}
-		<fieldset class="Fieldset-Data">
-			<legend>{{ __('fieldset_data') }}</legend>
-
-			{% block fieldsetDataInner %}
-				{% block formControlData %}
-					<div class="FormInput FormInputType-List FormInputName-Data" data-list-item-add="{{ __('list_item_add') }}" data-list-item-remove="{{ __('list_item_remove') }}">
-						<label class="Label">{{ __('data') }}</label>
-
-						{% set counter = 0 %}
-						{% for key, value in content.data %}
-							<div class="FormInputType-ListItem">
-								{{ FormHelper.input('data.' ~ counter ~ '.key', {val: key}) }}
-								{{ FormHelper.input('data.' ~ counter ~ '.value', {val: value}) }}
-								{% set counter = counter + 1 %}
-							</div>
-						{% endfor %}
-
-						<div class="FormInputType-ListItem FormInputType-ListItem-Default">
-							{{ FormHelper.input('data.' ~ counter ~ '.key') }}
-							{{ FormHelper.input('data.' ~ counter ~ '.value') }}
-						</div>
-					</div>
+				{% block fieldsetPresentationInner %}
+					{{ _self.renderFormControls(contentElementsByFieldset.presentation ?? [], macroSettings) }}
 				{% endblock %}
+			</fieldset>
+		{% endblock %}
 
-				{{ _self.renderFormControls(contentElementsByFieldset.data ?? [], macroSettings) }}
-			{% endblock %}
-		</fieldset>
-	{% endblock %}
+		{% block fieldsetConditions %}
+			<fieldset class="Fieldset-Conditions">
+				<legend>{{ __('fieldset_conditions') }}</legend>
 
-	{% block elementPublicationData %}
-		{{ element('publication_data/fieldset') }}
-	{% endblock %}
+				{% block fieldsetConditionsInner %}
+					{{ _self.renderFormControls(contentElementsByFieldset.conditions ?? [], macroSettings) }}
+				{% endblock %}
+			</fieldset>
+		{% endblock %}
 
-	{% block formInputReloadForm %}
-		{{ FormHelper.hidden('reload_form', {val: 0}) }}
-	{% endblock %}
-</div>
+		{% block fieldsetGeneral %}
+			<fieldset class="Fieldset-General">
+				<legend>{{ __('fieldset_general') }}</legend>
+
+				{% block fieldsetGeneralInner %}
+					{{ _self.renderFormControls(contentElementsByFieldset.general ?? [], macroSettings) }}
+				{% endblock %}
+			</fieldset>
+		{% endblock %}
+
+		{% block fieldsetContent %}
+			<fieldset class="Fieldset-Content">
+				<legend>{{ __('fieldset_content') }}</legend>
+
+				{% block fieldsetContentInner %}
+					{{ _self.renderFormControls(contentElementsByFieldset.content ?? [], macroSettings) }}
+				{% endblock %}
+			</fieldset>
+		{% endblock %}
+
+		{% block fieldsetMedia %}
+			<fieldset class="Fieldset-Media">
+				<legend>{{ __('fieldset_media') }}</legend>
+
+				{% block fieldsetMediaInner %}
+					{{ _self.renderFormControls(contentElementsByFieldset.media ?? [], macroSettings) }}
+				{% endblock %}
+			</fieldset>
+		{% endblock %}
+
+		{% block fieldsetAttributes %}
+			<fieldset class="Fieldset-Attributes">
+				<legend>{{ __('fieldset_attributes') }}</legend>
+
+				{% block fieldsetAttributesInner %}
+					{{ _self.renderFormControls(contentElementsByFieldset.attributes ?? [], macroSettings) }}
+				{% endblock %}
+			</fieldset>
+		{% endblock %}
+
+		{% block fieldsetData %}
+			<fieldset class="Fieldset-Data">
+				<legend>{{ __('fieldset_data') }}</legend>
+
+				{% block fieldsetDataInner %}
+					{% block formControlData %}
+						<div class="FormInput FormInputType-List FormInputName-Data" data-list-item-add="{{ __('list_item_add') }}" data-list-item-remove="{{ __('list_item_remove') }}">
+							<label class="Label">{{ __('data') }}</label>
+
+							{% set counter = 0 %}
+							{% for key, value in content.data %}
+								<div class="FormInputType-ListItem">
+									{{ FormHelper.input('data.' ~ counter ~ '.key', {val: key}) }}
+									{{ FormHelper.input('data.' ~ counter ~ '.value', {val: value}) }}
+									{% set counter = counter + 1 %}
+								</div>
+							{% endfor %}
+
+							<div class="FormInputType-ListItem FormInputType-ListItem-Default">
+								{{ FormHelper.input('data.' ~ counter ~ '.key') }}
+								{{ FormHelper.input('data.' ~ counter ~ '.value') }}
+							</div>
+						</div>
+					{% endblock %}
+
+					{{ _self.renderFormControls(contentElementsByFieldset.data ?? [], macroSettings) }}
+				{% endblock %}
+			</fieldset>
+		{% endblock %}
+
+		{% block elementPublicationData %}
+			{{ element('publication_data/fieldset') }}
+		{% endblock %}
+
+		{% block formInputReloadForm %}
+			{{ FormHelper.hidden('reload_form', {val: 0}) }}
+		{% endblock %}
+	</div>
+{% endblock %}

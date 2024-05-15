@@ -3,186 +3,188 @@
 @var _view \Awyiss\View\BackendView
 #}
 
-<div class="Fieldsets">
-	{% block fieldsetPresentation %}
-		<fieldset class="Fieldset-Presentation">
-			<legend>{{ __('fieldset_presentation') }}</legend>
+{% block fieldsets %}
+	<div class="Fieldsets">
+		{% block fieldsetPresentation %}
+			<fieldset class="Fieldset-Presentation">
+				<legend>{{ __('fieldset_presentation') }}</legend>
 
-			{% block fieldsetPresentationInner %}
-				{% block fieldsetPresentationAttributes %}
-					{{ AttributesHelper.allControls('presentation') }}
-				{% endblock %}
-			{% endblock %}
-		</fieldset>
-	{% endblock %}
-
-	{% block fieldsetConditions %}
-		<fieldset class="Fieldset-Conditions">
-			<legend>{{ __('fieldset_conditions') }}</legend>
-
-			{% block fieldsetConditionsInner %}
-				{% block formControlMediaFolderId %}
-					{{ CategoriesHelper.control('mediaFolder', {groupBy: 'languageShortcode', groupLabels: LocaleHelper.languagesForRealm(languageRealm)|merge({general: 'Global'}), 'data-form-updater': true}) }}
-				{% endblock %}
-
-				{% block formControlSystemOrder %}
-					{{ SystemOrderHelper.control('system_order', {entity: media}) }}
-				{% endblock %}
-
-				{% block fieldsetConditionsAttributes %}
-					{{ AttributesHelper.allControls('conditions') }}
-				{% endblock %}
-			{% endblock %}
-		</fieldset>
-	{% endblock %}
-
-	{% block fieldsetGeneral %}
-		<fieldset class="Fieldset-General">
-			<legend>{{ __('fieldset_general') }}</legend>
-
-			{% block fieldsetGeneralInner %}
-				{% if AuthorizationHelper.isAccessible('create') %}
-					{% block formControlFile %}
-						{{ FormHelper.control('file', {
-							type: 'file',
-						}) }}
+				{% block fieldsetPresentationInner %}
+					{% block fieldsetPresentationAttributes %}
+						{{ AttributesHelper.allControls('presentation') }}
 					{% endblock %}
-				{% endif %}
-
-				{% block formControlName %}
-					{{ FormHelper.control('name', {required: false, val: media.cleanName}) }}
-				{% endblock %}
-
-				{% block formControlAlt %}
-					{{ FormHelper.control('alt') }}
-				{% endblock %}
-
-				{% block formControlAverageColor %}
-					{{ FormHelper.control('average_color', {
-						val: (media.averageColor and media.averageColor[:1] != '#' ? '#' : '') ~ media.averageColor,
-					}) }}
-				{% endblock %}
-
-				{% block fieldsetGeneralAttributes %}
-					{{ AttributesHelper.allControls('general') }}
-				{% endblock %}
-			{% endblock %}
-		</fieldset>
-	{% endblock %}
-
-	{% block fieldsetCrop %}
-		{% if (media.previewPath and media.preview == enum(ProcessStatus).Success) or media.preview == enum(ProcessStatus).NotRequired %}
-			{% set resizedMediaItem = MediaHelper.resize(media, 2560, 2560, enum(ResizeStrategy).Contain) %}
-
-			{% set imagePath = resizedMediaItem and resizedMediaItem.status == enum(ProcessStatus).Success ? resizedMediaItem.path : (media.previewPath ?? media.path) %}
-
-			<fieldset class="Fieldset-Crop" data-hideable="false">
-				<legend>{{ __('fieldset_crop') }}</legend>
-
-				{% block fieldsetCropInner %}
-					{% if (media.crop) %}
-						<p>{{ __('cropping_in_progress') }}</p>
-					{% else %}
-						<div class="CropArea"
-							data-image-src="{{ imagePath }}?t={{ (media.changedOn ?? media.createdOn).timestamp }}"
-							data-image-width="{{ media.width }}"
-							data-image-height="{{ media.height }}">
-							{% block formControlCropMeasurements %}
-								<div class="Measurements">
-									{% block formControlCropWidth %}
-										{{ FormHelper.control('crop[width]', {
-											label: __('crop_width'),
-											max: media.width,
-											type: 'number',
-											val: '',
-										}) }}
-									{% endblock %}
-
-									{% block formControlCropHeight %}
-										{{ FormHelper.control('crop[height]', {
-											label: __('crop_height'),
-											max: media.height,
-											type: 'number',
-											val: '',
-										}) }}
-									{% endblock %}
-									{% block formControlResizeWidth %}
-										{{ FormHelper.control('crop[resize_width]', {
-											label: __('resize_width'),
-											max: media.width,
-											type: 'number',
-											val: '',
-										}) }}
-									{% endblock %}
-
-									{% block formControlResizeHeight %}
-										{{ FormHelper.control('crop[resize_height]', {
-											label: __('resize_height'),
-											max: media.height,
-											type: 'number',
-											val: '',
-										}) }}
-									{% endblock %}
-
-									{% block formControlCropX %}
-										{{ FormHelper.control('crop[x]', {
-											type: 'hidden',
-											val: '',
-										}) }}
-									{% endblock %}
-
-									{% block formControlCropY %}
-										{{ FormHelper.control('crop[y]', {
-											type: 'hidden',
-											val: '',
-										}) }}
-									{% endblock %}
-								</div>
-							{% endblock %}
-						</div>
-					{% endif %}
 				{% endblock %}
 			</fieldset>
-		{% endif %}
-	{% endblock %}
+		{% endblock %}
 
-	{% block fieldsetContent %}
-		<fieldset class="Fieldset-Content">
-			<legend>{{ __('fieldset_content') }}</legend>
+		{% block fieldsetConditions %}
+			<fieldset class="Fieldset-Conditions">
+				<legend>{{ __('fieldset_conditions') }}</legend>
 
-			{% block fieldsetContentInner %}
-				{% block fieldsetContentAttributes %}
-					{{ AttributesHelper.allControls('content') }}
+				{% block fieldsetConditionsInner %}
+					{% block formControlMediaFolderId %}
+						{{ CategoriesHelper.control('mediaFolder', {groupBy: 'languageShortcode', groupLabels: LocaleHelper.languagesForRealm(languageRealm)|merge({general: 'Global'}), 'data-form-updater': true}) }}
+					{% endblock %}
+
+					{% block formControlSystemOrder %}
+						{{ SystemOrderHelper.control('system_order', {entity: media}) }}
+					{% endblock %}
+
+					{% block fieldsetConditionsAttributes %}
+						{{ AttributesHelper.allControls('conditions') }}
+					{% endblock %}
 				{% endblock %}
-			{% endblock %}
-		</fieldset>
-	{% endblock %}
+			</fieldset>
+		{% endblock %}
 
-	{% block fieldsetMedia %}
-		<fieldset class="Fieldset-Media">
-			<legend>{{ __('fieldset_media') }}</legend>
+		{% block fieldsetGeneral %}
+			<fieldset class="Fieldset-General">
+				<legend>{{ __('fieldset_general') }}</legend>
 
-			{% block fieldsetMediaInner %}
-				{% block fieldsetMediaAttributes %}
-					{{ AttributesHelper.allControls('media') }}
+				{% block fieldsetGeneralInner %}
+					{% if AuthorizationHelper.isAccessible('create') %}
+						{% block formControlFile %}
+							{{ FormHelper.control('file', {
+								type: 'file',
+							}) }}
+						{% endblock %}
+					{% endif %}
+
+					{% block formControlName %}
+						{{ FormHelper.control('name', {required: false, val: media.cleanName}) }}
+					{% endblock %}
+
+					{% block formControlAlt %}
+						{{ FormHelper.control('alt') }}
+					{% endblock %}
+
+					{% block formControlAverageColor %}
+						{{ FormHelper.control('average_color', {
+							val: (media.averageColor and media.averageColor[:1] != '#' ? '#' : '') ~ media.averageColor,
+						}) }}
+					{% endblock %}
+
+					{% block fieldsetGeneralAttributes %}
+						{{ AttributesHelper.allControls('general') }}
+					{% endblock %}
 				{% endblock %}
-			{% endblock %}
-		</fieldset>
-	{% endblock %}
+			</fieldset>
+		{% endblock %}
 
-	{% block fieldsetAttributes %}
-		<fieldset class="Fieldset-Attributes">
-			<legend>{{ __('fieldset_attributes') }}</legend>
+		{% block fieldsetCrop %}
+			{% if (media.previewPath and media.preview == enum(ProcessStatus).Success) or media.preview == enum(ProcessStatus).NotRequired %}
+				{% set resizedMediaItem = MediaHelper.resize(media, 2560, 2560, enum(ResizeStrategy).Contain) %}
 
-			{% block fieldsetAttributesInner %}
-				{% block fieldsetAttributesAttributes %}
-					{{ AttributesHelper.allControls('attributes') }}
+				{% set imagePath = resizedMediaItem and resizedMediaItem.status == enum(ProcessStatus).Success ? resizedMediaItem.path : (media.previewPath ?? media.path) %}
+
+				<fieldset class="Fieldset-Crop" data-hideable="false">
+					<legend>{{ __('fieldset_crop') }}</legend>
+
+					{% block fieldsetCropInner %}
+						{% if (media.crop) %}
+							<p>{{ __('cropping_in_progress') }}</p>
+						{% else %}
+							<div class="CropArea"
+								data-image-src="{{ imagePath }}?t={{ (media.changedOn ?? media.createdOn).timestamp }}"
+								data-image-width="{{ media.width }}"
+								data-image-height="{{ media.height }}">
+								{% block formControlCropMeasurements %}
+									<div class="Measurements">
+										{% block formControlCropWidth %}
+											{{ FormHelper.control('crop[width]', {
+												label: __('crop_width'),
+												max: media.width,
+												type: 'number',
+												val: '',
+											}) }}
+										{% endblock %}
+
+										{% block formControlCropHeight %}
+											{{ FormHelper.control('crop[height]', {
+												label: __('crop_height'),
+												max: media.height,
+												type: 'number',
+												val: '',
+											}) }}
+										{% endblock %}
+										{% block formControlResizeWidth %}
+											{{ FormHelper.control('crop[resize_width]', {
+												label: __('resize_width'),
+												max: media.width,
+												type: 'number',
+												val: '',
+											}) }}
+										{% endblock %}
+
+										{% block formControlResizeHeight %}
+											{{ FormHelper.control('crop[resize_height]', {
+												label: __('resize_height'),
+												max: media.height,
+												type: 'number',
+												val: '',
+											}) }}
+										{% endblock %}
+
+										{% block formControlCropX %}
+											{{ FormHelper.control('crop[x]', {
+												type: 'hidden',
+												val: '',
+											}) }}
+										{% endblock %}
+
+										{% block formControlCropY %}
+											{{ FormHelper.control('crop[y]', {
+												type: 'hidden',
+												val: '',
+											}) }}
+										{% endblock %}
+									</div>
+								{% endblock %}
+							</div>
+						{% endif %}
+					{% endblock %}
+				</fieldset>
+			{% endif %}
+		{% endblock %}
+
+		{% block fieldsetContent %}
+			<fieldset class="Fieldset-Content">
+				<legend>{{ __('fieldset_content') }}</legend>
+
+				{% block fieldsetContentInner %}
+					{% block fieldsetContentAttributes %}
+						{{ AttributesHelper.allControls('content') }}
+					{% endblock %}
 				{% endblock %}
-			{% endblock %}
-		</fieldset>
-	{% endblock %}
+			</fieldset>
+		{% endblock %}
 
-	{% block formInputReloadForm %}
-		{{ FormHelper.hidden('reload_form', {val: 0}) }}
-	{% endblock %}
-</div>
+		{% block fieldsetMedia %}
+			<fieldset class="Fieldset-Media">
+				<legend>{{ __('fieldset_media') }}</legend>
+
+				{% block fieldsetMediaInner %}
+					{% block fieldsetMediaAttributes %}
+						{{ AttributesHelper.allControls('media') }}
+					{% endblock %}
+				{% endblock %}
+			</fieldset>
+		{% endblock %}
+
+		{% block fieldsetAttributes %}
+			<fieldset class="Fieldset-Attributes">
+				<legend>{{ __('fieldset_attributes') }}</legend>
+
+				{% block fieldsetAttributesInner %}
+					{% block fieldsetAttributesAttributes %}
+						{{ AttributesHelper.allControls('attributes') }}
+					{% endblock %}
+				{% endblock %}
+			</fieldset>
+		{% endblock %}
+
+		{% block formInputReloadForm %}
+			{{ FormHelper.hidden('reload_form', {val: 0}) }}
+		{% endblock %}
+	</div>
+{% endblock %}

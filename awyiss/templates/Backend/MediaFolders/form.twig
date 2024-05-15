@@ -6,125 +6,127 @@
 @var _view \Awyiss\View\BackendView
 #}
 
-<div class="Fieldsets">
-	{% block fieldsetPresentation %}
-		<fieldset class="Fieldset-Presentation">
-			<legend>{{ __('fieldset_presentation') }}</legend>
+{% block fieldsets %}
+	<div class="Fieldsets">
+		{% block fieldsetPresentation %}
+			<fieldset class="Fieldset-Presentation">
+				<legend>{{ __('fieldset_presentation') }}</legend>
 
-			{% block fieldsetPresentationInner %}
-				{% block formControlActive %}
-					{{ FormHelper.control('active') }}
+				{% block fieldsetPresentationInner %}
+					{% block formControlActive %}
+						{{ FormHelper.control('active') }}
+					{% endblock %}
+
+					{% block fieldsetPresentationAttributes %}
+						{{ AttributesHelper.allControls('presentation') }}
+					{% endblock %}
 				{% endblock %}
+			</fieldset>
+		{% endblock %}
 
-				{% block fieldsetPresentationAttributes %}
-					{{ AttributesHelper.allControls('presentation') }}
+		{% block fieldsetConditions %}
+			<fieldset class="Fieldset-Conditions">
+				<legend>{{ __('fieldset_conditions') }}</legend>
+
+				{% block fieldsetConditionsInner %}
+					{% block formControlLanguageShortcode %}
+						{{ LocaleHelper.control('language_shortcode', {languageRealm: languageRealm, 'data-form-updater': true}) }}
+					{% endblock %}
+
+					{% block formControlParentId %}
+						{{ FormHelper.control('parent_id', {disabled: [1], options: hashPrinter(possibleParentMediaFolders, 'label', 'id', '- '), 'data-form-updater': true}) }}
+					{% endblock %}
+
+					{% block formControlSystemOrder %}
+						{{ SystemOrderHelper.control('system_order', {entity: mediaFolder}) }}
+					{% endblock %}
+
+					{% block fieldsetConditionsAttributes %}
+						{{ AttributesHelper.allControls('conditions') }}
+					{% endblock %}
 				{% endblock %}
-			{% endblock %}
-		</fieldset>
-	{% endblock %}
+			</fieldset>
+		{% endblock %}
 
-	{% block fieldsetConditions %}
-		<fieldset class="Fieldset-Conditions">
-			<legend>{{ __('fieldset_conditions') }}</legend>
+		{% block fieldsetGeneral %}
+			<fieldset class="Fieldset-General">
+				<legend>{{ __('fieldset_general') }}</legend>
 
-			{% block fieldsetConditionsInner %}
-				{% block formControlLanguageShortcode %}
-					{{ LocaleHelper.control('language_shortcode', {languageRealm: languageRealm, 'data-form-updater': true}) }}
+				{% block fieldsetGeneralInner %}
+					{% block formControlTitle %}
+						{{ FormHelper.control('title') }}
+					{% endblock %}
+
+					{% block formControlPath %}
+						{{ FormHelper.control('path', {
+							required: false,
+							readonly: mediaFolder.id == 1,
+							templateVars: {
+								additionalContent: mediaFolder.id == 1 ? '' : '<span class="PrePath">' ~ (parentFolder.path ? parentFolder.path ~ '/' : 'media/') ~ '</span>',
+							},
+							val: mediaFolder.path|split('/')|last,
+							'data-autofill-from-title': 'true',
+							'data-replacement-char': '-'
+						}) }}
+					{% endblock %}
+
+					{% block fieldsetGeneralAttributes %}
+						{{ AttributesHelper.allControls('general') }}
+					{% endblock %}
 				{% endblock %}
+			</fieldset>
+		{% endblock %}
 
-				{% block formControlParentId %}
-					{{ FormHelper.control('parent_id', {disabled: [1], options: hashPrinter(possibleParentMediaFolders, 'label', 'id', '- '), 'data-form-updater': true}) }}
+		{% block fieldsetContent %}
+			<fieldset class="Fieldset-Content">
+				<legend>{{ __('fieldset_content') }}</legend>
+
+				{% block fieldsetContentInner %}
+					{% block fieldsetContentAttributes %}
+						{{ AttributesHelper.allControls('content') }}
+					{% endblock %}
 				{% endblock %}
+			</fieldset>
+		{% endblock %}
 
-				{% block formControlSystemOrder %}
-					{{ SystemOrderHelper.control('system_order', {entity: mediaFolder}) }}
+		{% block fieldsetMedia %}
+			<fieldset class="Fieldset-Media">
+				<legend>{{ __('fieldset_media') }}</legend>
+
+				{% block fieldsetMediaInner %}
+					{% block fieldsetMediaAttributes %}
+						{{ AttributesHelper.allControls('media') }}
+					{% endblock %}
 				{% endblock %}
+			</fieldset>
+		{% endblock %}
 
-				{% block fieldsetConditionsAttributes %}
-					{{ AttributesHelper.allControls('conditions') }}
+		{% block fieldsetAttributes %}
+			<fieldset class="Fieldset-Attributes">
+				<legend>{{ __('fieldset_attributes') }}</legend>
+
+				{% block fieldsetAttributesInner %}
+					{% block fieldsetAttributesAttributes %}
+						{{ AttributesHelper.allControls('attributes') }}
+					{% endblock %}
 				{% endblock %}
-			{% endblock %}
-		</fieldset>
-	{% endblock %}
+			</fieldset>
+		{% endblock %}
 
-	{% block fieldsetGeneral %}
-		<fieldset class="Fieldset-General">
-			<legend>{{ __('fieldset_general') }}</legend>
+		{% block fieldsetData %}
+			<fieldset class="Fieldset-Data">
+				<legend>{{ __('fieldset_data') }}</legend>
 
-			{% block fieldsetGeneralInner %}
-				{% block formControlTitle %}
-					{{ FormHelper.control('title') }}
+				{% block fieldsetDataInner %}
+					{% block fieldsetDataAttributes %}
+						{{ AttributesHelper.allControls('data') }}
+					{% endblock %}
 				{% endblock %}
+			</fieldset>
+		{% endblock %}
 
-				{% block formControlPath %}
-					{{ FormHelper.control('path', {
-						required: false,
-						readonly: mediaFolder.id == 1,
-						templateVars: {
-							additionalContent: mediaFolder.id == 1 ? '' : '<span class="PrePath">' ~ (parentFolder.path ? parentFolder.path ~ '/' : 'media/') ~ '</span>',
-						},
-						val: mediaFolder.path|split('/')|last,
-						'data-autofill-from-title': 'true',
-						'data-replacement-char': '-'
-					}) }}
-				{% endblock %}
-
-				{% block fieldsetGeneralAttributes %}
-					{{ AttributesHelper.allControls('general') }}
-				{% endblock %}
-			{% endblock %}
-		</fieldset>
-	{% endblock %}
-
-	{% block fieldsetContent %}
-		<fieldset class="Fieldset-Content">
-			<legend>{{ __('fieldset_content') }}</legend>
-
-			{% block fieldsetContentInner %}
-				{% block fieldsetContentAttributes %}
-					{{ AttributesHelper.allControls('content') }}
-				{% endblock %}
-			{% endblock %}
-		</fieldset>
-	{% endblock %}
-
-	{% block fieldsetMedia %}
-		<fieldset class="Fieldset-Media">
-			<legend>{{ __('fieldset_media') }}</legend>
-
-			{% block fieldsetMediaInner %}
-				{% block fieldsetMediaAttributes %}
-					{{ AttributesHelper.allControls('media') }}
-				{% endblock %}
-			{% endblock %}
-		</fieldset>
-	{% endblock %}
-
-	{% block fieldsetAttributes %}
-		<fieldset class="Fieldset-Attributes">
-			<legend>{{ __('fieldset_attributes') }}</legend>
-
-			{% block fieldsetAttributesInner %}
-				{% block fieldsetAttributesAttributes %}
-					{{ AttributesHelper.allControls('attributes') }}
-				{% endblock %}
-			{% endblock %}
-		</fieldset>
-	{% endblock %}
-
-	{% block fieldsetData %}
-		<fieldset class="Fieldset-Data">
-			<legend>{{ __('fieldset_data') }}</legend>
-
-			{% block fieldsetDataInner %}
-				{% block fieldsetDataAttributes %}
-					{{ AttributesHelper.allControls('data') }}
-				{% endblock %}
-			{% endblock %}
-		</fieldset>
-	{% endblock %}
-
-	{% block formInputReloadForm %}
-		{{ FormHelper.hidden('reload_form', {val: 0}) }}
-	{% endblock %}
-</div>
+		{% block formInputReloadForm %}
+			{{ FormHelper.hidden('reload_form', {val: 0}) }}
+		{% endblock %}
+	</div>
+{% endblock %}

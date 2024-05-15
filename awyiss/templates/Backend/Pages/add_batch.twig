@@ -41,33 +41,35 @@
 		</div>
 	{% endblock %}
 
-	<div class="Fieldsets">
-		{% block formAddBatch %}
-			{{ block("fieldsetPresentation") }}
+	{% block fieldsets %}
+		<div class="Fieldsets">
+			{% block formAddBatch %}
+				{{ block("fieldsetPresentation") }}
 
-			{{ block("fieldsetConditions") }}
+				{{ block("fieldsetConditions") }}
 
-			{% block fieldsetGeneral %}
-				<fieldset class="Fieldset-General">
-					<legend>{{ __('fieldset_general') }}</legend>
+				{% block fieldsetGeneral %}
+					<fieldset class="Fieldset-General">
+						<legend>{{ __('fieldset_general') }}</legend>
 
-					{% block fieldsetGeneralInner %}
-						{% block formControlPages %}
-							{{ FormHelper.control('pages', {type: 'textarea'}) }}
+						{% block fieldsetGeneralInner %}
+							{% block formControlPages %}
+								{{ FormHelper.control('pages', {type: 'textarea'}) }}
+							{% endblock %}
+
+							{{ parent() }}
 						{% endblock %}
+					</fieldset>
+				{% endblock %}
 
-						{{ parent() }}
-					{% endblock %}
-				</fieldset>
+				{{ block("fieldsetContent") }}
+
+				{{ block("fieldsetAttributes") }}
+
+				{{ block("formInputReloadForm") }}
 			{% endblock %}
-
-			{{ block("fieldsetContent") }}
-
-			{{ block("fieldsetAttributes") }}
-
-			{{ block("formInputReloadForm") }}
-		{% endblock %}
-	</div>
+		</div>
+	{% endblock %}
 
 	{% block buttonAreaBottom %}
 		<div class="ButtonArea ButtonArea-Bottom">

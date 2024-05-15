@@ -4,146 +4,148 @@
 @var _view \Awyiss\View\BackendView
 #}
 
-<div class="Fieldsets">
-	{% block fieldsetPresentation %}
-		<fieldset class="Fieldset-Presentation">
-			<legend>{{ __('fieldset_presentation') }}</legend>
+{% block fieldsets %}
+	<div class="Fieldsets">
+		{% block fieldsetPresentation %}
+			<fieldset class="Fieldset-Presentation">
+				<legend>{{ __('fieldset_presentation') }}</legend>
 
-			{% block fieldsetPresentationInner %}
-				{% block formControlActive %}
-					{{ FormHelper.control('active') }}
-				{% endblock %}
+				{% block fieldsetPresentationInner %}
+					{% block formControlActive %}
+						{{ FormHelper.control('active') }}
+					{% endblock %}
 
-				{% block fieldsetPresentationAttributes %}
-					{{ AttributesHelper.allControls('presentation') }}
-				{% endblock %}
-			{% endblock %}
-		</fieldset>
-	{% endblock %}
-
-	{% block fieldsetConditions %}
-		<fieldset class="Fieldset-Conditions">
-			<legend>{{ __('fieldset_conditions') }}</legend>
-
-			{% block fieldsetConditionsInner %}
-				{% block formControlPageRoleId %}
-					{{ CategoriesHelper.control('page_role') }}
-				{% endblock %}
-
-				{% block formControlSystemOrder %}
-					{{ SystemOrderHelper.control('system_order', {entity: pageTemplate}) }}
-				{% endblock %}
-
-				{% block fieldsetConditionsAttributes %}
-					{{ AttributesHelper.allControls('conditions') }}
-				{% endblock %}
-			{% endblock %}
-		</fieldset>
-	{% endblock %}
-
-	{% block fieldsetGeneral %}
-		<fieldset class="Fieldset-General">
-			<legend>{{ __('fieldset_general') }}</legend>
-
-			{% block fieldsetGeneralInner %}
-				{% block formControlTitle %}
-					{{ FormHelper.control('title') }}
-				{% endblock %}
-
-				{% block formControlFilename %}
-					{{ FormHelper.control('file_name', {'data-autofill-from-title': 'true'}) }}
-				{% endblock %}
-
-				{% block fieldsetGeneralAttributes %}
-					{{ AttributesHelper.allControls('general') }}
-				{% endblock %}
-			{% endblock %}
-		</fieldset>
-	{% endblock %}
-
-	{% block fieldsetContentAreas %}
-		<fieldset class="Fieldset-ContentAreas">
-			<legend>{{ __('fieldset_content_areas') }}</legend>
-
-			{% block fieldsetContentAreasInner %}
-				{% block formControlContentAreas %}
-					{% set assignedContentAreas = pageTemplate.contentAreas ? pageTemplate.contentAreas|column('id') : [] %}
-
-					<ul class="NoList ContentAreas ColumnSpan-6">
-						{% for key, contentArea in contentAreas %}
-							{% block formControlContentArea %}
-								<li>
-									<label for="ContentTemplate-ContentElements-{{ contentArea.identifier|camelize }}">
-										{{ FormHelper.control('content_areas[' ~ key ~'][id]', {
-											checked: contentArea.id in assignedContentAreas,
-											escape: false,
-											hiddenField: false,
-											label: contentArea.label ~ ' (<em>' ~ contentArea.identifier ~ '</em>)',
-											id: 'ContentTemplate-ContentElements-' ~ contentArea.identifier|camelize,
-											value: contentArea.id,
-										}) }}
-									</label>
-								</li>
-							{% endblock %}
-						{% endfor %}
-					</ul>
-
-					<div class="FormInput FormInputType-List FormInputType-Default FormInputName-ContentAreasNew ColumnSpan-6"
-						data-list-item-add="{{ __('list_item_add') }}"
-						data-list-item-remove="{{ __('list_item_remove') }}">
-						<div class="FormInputType-ListItem">
-							{{ FormHelper.control('content_areas[new][title][0]') }}
-							{{ FormHelper.control('content_areas[new][identifier][0]') }}
-						</div>
-					</div>
-
-					{% block fieldsetContentElementsErrors %}
-						{% if contentTemplate.error('contentAreas') %}
-							{{ FormHelper.error('contentAreas') }}
-						{% endif %}
+					{% block fieldsetPresentationAttributes %}
+						{{ AttributesHelper.allControls('presentation') }}
 					{% endblock %}
 				{% endblock %}
-			{% endblock %}
-		</fieldset>
-	{% endblock %}
+			</fieldset>
+		{% endblock %}
 
-	{% block fieldsetContent %}
-		<fieldset class="Fieldset-Content">
-			<legend>{{ __('fieldset_content') }}</legend>
+		{% block fieldsetConditions %}
+			<fieldset class="Fieldset-Conditions">
+				<legend>{{ __('fieldset_conditions') }}</legend>
 
-			{% block fieldsetContentInner %}
-				{% block fieldsetContentAttributes %}
-					{{ AttributesHelper.allControls('content') }}
+				{% block fieldsetConditionsInner %}
+					{% block formControlPageRoleId %}
+						{{ CategoriesHelper.control('page_role') }}
+					{% endblock %}
+
+					{% block formControlSystemOrder %}
+						{{ SystemOrderHelper.control('system_order', {entity: pageTemplate}) }}
+					{% endblock %}
+
+					{% block fieldsetConditionsAttributes %}
+						{{ AttributesHelper.allControls('conditions') }}
+					{% endblock %}
 				{% endblock %}
-			{% endblock %}
-		</fieldset>
-	{% endblock %}
+			</fieldset>
+		{% endblock %}
 
-	{% block fieldsetMedia %}
-		<fieldset class="Fieldset-Media">
-			<legend>{{ __('fieldset_media') }}</legend>
+		{% block fieldsetGeneral %}
+			<fieldset class="Fieldset-General">
+				<legend>{{ __('fieldset_general') }}</legend>
 
-			{% block fieldsetMediaInner %}
-				{% block fieldsetMediaAttributes %}
-					{{ AttributesHelper.allControls('media') }}
+				{% block fieldsetGeneralInner %}
+					{% block formControlTitle %}
+						{{ FormHelper.control('title') }}
+					{% endblock %}
+
+					{% block formControlFilename %}
+						{{ FormHelper.control('file_name', {'data-autofill-from-title': 'true'}) }}
+					{% endblock %}
+
+					{% block fieldsetGeneralAttributes %}
+						{{ AttributesHelper.allControls('general') }}
+					{% endblock %}
 				{% endblock %}
-			{% endblock %}
-		</fieldset>
-	{% endblock %}
+			</fieldset>
+		{% endblock %}
 
-	{% block fieldsetAttributes %}
-		<fieldset class="Fieldset-Attributes">
-			<legend>{{ __('fieldset_attributes') }}</legend>
+		{% block fieldsetContentAreas %}
+			<fieldset class="Fieldset-ContentAreas">
+				<legend>{{ __('fieldset_content_areas') }}</legend>
 
-			{% block fieldsetAttributesInner %}
-				{% block fieldsetAttributesAttributes %}
-					{{ AttributesHelper.allControls('attributes') }}
+				{% block fieldsetContentAreasInner %}
+					{% block formControlContentAreas %}
+						{% set assignedContentAreas = pageTemplate.contentAreas ? pageTemplate.contentAreas|column('id') : [] %}
+
+						<ul class="NoList ContentAreas ColumnSpan-6">
+							{% for key, contentArea in contentAreas %}
+								{% block formControlContentArea %}
+									<li>
+										<label for="ContentTemplate-ContentElements-{{ contentArea.identifier|camelize }}">
+											{{ FormHelper.control('content_areas[' ~ key ~'][id]', {
+												checked: contentArea.id in assignedContentAreas,
+												escape: false,
+												hiddenField: false,
+												label: contentArea.label ~ ' (<em>' ~ contentArea.identifier ~ '</em>)',
+												id: 'ContentTemplate-ContentElements-' ~ contentArea.identifier|camelize,
+												value: contentArea.id,
+											}) }}
+										</label>
+									</li>
+								{% endblock %}
+							{% endfor %}
+						</ul>
+
+						<div class="FormInput FormInputType-List FormInputType-Default FormInputName-ContentAreasNew ColumnSpan-6"
+							data-list-item-add="{{ __('list_item_add') }}"
+							data-list-item-remove="{{ __('list_item_remove') }}">
+							<div class="FormInputType-ListItem">
+								{{ FormHelper.control('content_areas[new][title][0]') }}
+								{{ FormHelper.control('content_areas[new][identifier][0]') }}
+							</div>
+						</div>
+
+						{% block fieldsetContentElementsErrors %}
+							{% if contentTemplate.error('contentAreas') %}
+								{{ FormHelper.error('contentAreas') }}
+							{% endif %}
+						{% endblock %}
+					{% endblock %}
 				{% endblock %}
-			{% endblock %}
-		</fieldset>
-	{% endblock %}
+			</fieldset>
+		{% endblock %}
 
-	{% block formInputReloadForm %}
-		{{ FormHelper.hidden('reload_form', {val: 0}) }}
-	{% endblock %}
-</div>
+		{% block fieldsetContent %}
+			<fieldset class="Fieldset-Content">
+				<legend>{{ __('fieldset_content') }}</legend>
+
+				{% block fieldsetContentInner %}
+					{% block fieldsetContentAttributes %}
+						{{ AttributesHelper.allControls('content') }}
+					{% endblock %}
+				{% endblock %}
+			</fieldset>
+		{% endblock %}
+
+		{% block fieldsetMedia %}
+			<fieldset class="Fieldset-Media">
+				<legend>{{ __('fieldset_media') }}</legend>
+
+				{% block fieldsetMediaInner %}
+					{% block fieldsetMediaAttributes %}
+						{{ AttributesHelper.allControls('media') }}
+					{% endblock %}
+				{% endblock %}
+			</fieldset>
+		{% endblock %}
+
+		{% block fieldsetAttributes %}
+			<fieldset class="Fieldset-Attributes">
+				<legend>{{ __('fieldset_attributes') }}</legend>
+
+				{% block fieldsetAttributesInner %}
+					{% block fieldsetAttributesAttributes %}
+						{{ AttributesHelper.allControls('attributes') }}
+					{% endblock %}
+				{% endblock %}
+			</fieldset>
+		{% endblock %}
+
+		{% block formInputReloadForm %}
+			{{ FormHelper.hidden('reload_form', {val: 0}) }}
+		{% endblock %}
+	</div>
+{% endblock %}

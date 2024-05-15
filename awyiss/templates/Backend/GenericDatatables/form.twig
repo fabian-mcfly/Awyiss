@@ -11,110 +11,112 @@
 @var _view \Awyiss\View\BackendView
 #}
 
-<div class="Fieldsets">
-	{% block fieldsetPresentation %}
-		<fieldset class="Fieldset-Presentation">
-			<legend>{{ __('fieldset_presentation') }}</legend>
+{% block fieldsets %}
+	<div class="Fieldsets">
+		{% block fieldsetPresentation %}
+			<fieldset class="Fieldset-Presentation">
+				<legend>{{ __('fieldset_presentation') }}</legend>
 
-			{% block formControlActive %}
-				{{ FormHelper.control('active') }}
-			{% endblock %}
-
-			{% block fieldsetPresentationInner %}
-				{% block fieldsetPresentationAttributes %}
-					{{ AttributesHelper.allControls('presentation') }}
+				{% block formControlActive %}
+					{{ FormHelper.control('active') }}
 				{% endblock %}
-			{% endblock %}
-		</fieldset>
-	{% endblock %}
 
-	{% block fieldsetConditions %}
-		<fieldset class="Fieldset-Conditions">
-			<legend>{{ __('fieldset_conditions') }}</legend>
-
-			{% block formControlLanguagesShortcode %}
-				{% if (splitIntoLanguages) %}
-					{{ LocaleHelper.control('language_shortcode', {languageRealm: languageRealm}) }}
-				{% endif %}
-			{% endblock %}
-
-			{% block formControlParentId %}
-				{% if (categoriesIdentifier is defined) %}
-					{{ CategoriesHelper.control(categoriesIdentifier) }}
-				{% endif %}
-
-				{% if (nestable and possibleParentRecords is not null) %}
-					{{ FormHelper.control('parent_id', {options: hashPrinter(possibleParentRecords, 'label', 'id', '- ')}) }}
-				{% endif %}
-			{% endblock %}
-
-			{% block formControlSystemOrder %}
-				{% if sortable %}
-					{{ SystemOrderHelper.control('system_order') }}
-				{% endif %}
-			{% endblock %}
-
-			{% block fieldsetConditionsInner %}
-				{% block fieldsetConditionsAttributes %}
-					{{ AttributesHelper.allControls('conditions') }}
+				{% block fieldsetPresentationInner %}
+					{% block fieldsetPresentationAttributes %}
+						{{ AttributesHelper.allControls('presentation') }}
+					{% endblock %}
 				{% endblock %}
-			{% endblock %}
-		</fieldset>
-	{% endblock %}
+			</fieldset>
+		{% endblock %}
 
-	{% block fieldsetGeneral %}
-		<fieldset class="Fieldset-General">
-			<legend>{{ __('fieldset_general') }}</legend>
+		{% block fieldsetConditions %}
+			<fieldset class="Fieldset-Conditions">
+				<legend>{{ __('fieldset_conditions') }}</legend>
 
-			{% block formControlTitle %}
-				{{ FormHelper.control('title') }}
-			{% endblock %}
-
-			{% block fieldsetGeneralInner %}
-				{% block fieldsetGeneralAttributes %}
-					{{ AttributesHelper.allControls('general') }}
+				{% block formControlLanguagesShortcode %}
+					{% if (splitIntoLanguages) %}
+						{{ LocaleHelper.control('language_shortcode', {languageRealm: languageRealm}) }}
+					{% endif %}
 				{% endblock %}
-			{% endblock %}
-		</fieldset>
-	{% endblock %}
 
-	{% block fieldsetContent %}
-		<fieldset class="Fieldset-Content">
-			<legend>{{ __('fieldset_content') }}</legend>
+				{% block formControlParentId %}
+					{% if (categoriesIdentifier is defined) %}
+						{{ CategoriesHelper.control(categoriesIdentifier) }}
+					{% endif %}
 
-			{% block fieldsetContentInner %}
-				{% block fieldsetContentAttributes %}
-					{{ AttributesHelper.allControls('content') }}
+					{% if (nestable and possibleParentRecords is not null) %}
+						{{ FormHelper.control('parent_id', {options: hashPrinter(possibleParentRecords, 'label', 'id', '- ')}) }}
+					{% endif %}
 				{% endblock %}
-			{% endblock %}
-		</fieldset>
-	{% endblock %}
 
-	{% block fieldsetMedia %}
-		<fieldset class="Fieldset-Media">
-			<legend>{{ __('fieldset_media') }}</legend>
-
-			{% block fieldsetMediaInner %}
-				{% block fieldsetMediaAttributes %}
-					{{ AttributesHelper.allControls('media') }}
+				{% block formControlSystemOrder %}
+					{% if sortable %}
+						{{ SystemOrderHelper.control('system_order') }}
+					{% endif %}
 				{% endblock %}
-			{% endblock %}
-		</fieldset>
-	{% endblock %}
 
-	{% block fieldsetAttributes %}
-		<fieldset class="Fieldset-Attributes">
-			<legend>{{ __('fieldset_attributes') }}</legend>
-
-			{% block fieldsetAttributesInner %}
-				{% block fieldsetAttributesAttributes %}
-					{{ AttributesHelper.allControls('attributes') }}
+				{% block fieldsetConditionsInner %}
+					{% block fieldsetConditionsAttributes %}
+						{{ AttributesHelper.allControls('conditions') }}
+					{% endblock %}
 				{% endblock %}
-			{% endblock %}
-		</fieldset>
-	{% endblock %}
+			</fieldset>
+		{% endblock %}
 
-	{% block formInputReloadForm %}
-		{{ FormHelper.hidden('reload_form', {val: 0}) }}
-	{% endblock %}
-</div>
+		{% block fieldsetGeneral %}
+			<fieldset class="Fieldset-General">
+				<legend>{{ __('fieldset_general') }}</legend>
+
+				{% block formControlTitle %}
+					{{ FormHelper.control('title') }}
+				{% endblock %}
+
+				{% block fieldsetGeneralInner %}
+					{% block fieldsetGeneralAttributes %}
+						{{ AttributesHelper.allControls('general') }}
+					{% endblock %}
+				{% endblock %}
+			</fieldset>
+		{% endblock %}
+
+		{% block fieldsetContent %}
+			<fieldset class="Fieldset-Content">
+				<legend>{{ __('fieldset_content') }}</legend>
+
+				{% block fieldsetContentInner %}
+					{% block fieldsetContentAttributes %}
+						{{ AttributesHelper.allControls('content') }}
+					{% endblock %}
+				{% endblock %}
+			</fieldset>
+		{% endblock %}
+
+		{% block fieldsetMedia %}
+			<fieldset class="Fieldset-Media">
+				<legend>{{ __('fieldset_media') }}</legend>
+
+				{% block fieldsetMediaInner %}
+					{% block fieldsetMediaAttributes %}
+						{{ AttributesHelper.allControls('media') }}
+					{% endblock %}
+				{% endblock %}
+			</fieldset>
+		{% endblock %}
+
+		{% block fieldsetAttributes %}
+			<fieldset class="Fieldset-Attributes">
+				<legend>{{ __('fieldset_attributes') }}</legend>
+
+				{% block fieldsetAttributesInner %}
+					{% block fieldsetAttributesAttributes %}
+						{{ AttributesHelper.allControls('attributes') }}
+					{% endblock %}
+				{% endblock %}
+			</fieldset>
+		{% endblock %}
+
+		{% block formInputReloadForm %}
+			{{ FormHelper.hidden('reload_form', {val: 0}) }}
+		{% endblock %}
+	</div>
+{% endblock %}
