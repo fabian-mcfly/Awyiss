@@ -90,15 +90,20 @@ export default class IdentifierAutofill {
 			let input = form.querySelector(`input[name="${title}"]`);
 
 			if (!input) {
-				return;
-			}
+				// Check if the input is inside a translatable text field.
+				// In this case, we need to get the input for the current language as the source
+				const translatableTexts = form.querySelectorAll('.FormInputType-TranslatableText')
+				translatableTexts.forEach(translatableText => {
+					const possibleInput = translatableText.querySelector(`input[name$="[${title}]"]`);
 
-			// Check if the input is inside a translatable text field.
-			// In this case, we need to get the input for the current language as the source
-			const translatableTexts = input.closest('.FormInputType-TranslatableText')
-			if (translatableTexts) {
-				const currentLanguageInput = translatableTexts.querySelector(`.FormInput.IsCurrentLanguage input`);
-				input = currentLanguageInput || input;
+					if (possibleInput) {
+						input = translatableText.querySelector(`.FormInput.IsCurrentLanguage input`);
+					}
+				});
+
+				if (!input) {
+					return;
+				}
 			}
 
 			this.inputs.push({
