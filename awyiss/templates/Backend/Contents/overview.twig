@@ -9,10 +9,10 @@
 #}
 
 {% do AuthorizationHelper.setScope(forScope) %}
-
 <div class="Contents Overview">
 	{% block headlineOverview %}
 		<h1>{{ __('headline_overview') }}</h1>
+		<h2>{{ page.title }}</h2>
 	{% endblock %}
 
 	{% block buttonArea %}

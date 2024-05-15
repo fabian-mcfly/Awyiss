@@ -589,6 +589,7 @@ class ContentsTable extends Table {
 			],
 			fields: [
 				'id',
+				'title',
 				'language_shortcode',
 				'page_role_id',
 				'page_template_id',
