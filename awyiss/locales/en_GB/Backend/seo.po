@@ -27,7 +27,7 @@ msgid "meta_description"
 msgstr "Meta description"
 
 msgid "robots_index"
-msgstr "Index"
+msgstr "Page might be indexed"
 
 msgid "robots_follow"
-msgstr "Follow"
+msgstr "Links might be followed"

@@ -27,7 +27,7 @@ msgid "meta_description"
 msgstr "Meta-Beschreibung"
 
 msgid "robots_index"
-msgstr "Indexieren"
+msgstr "Seite darf indexiert werden"
 
 msgid "robots_follow"
-msgstr "Folgen"
+msgstr "Links auf der Seite dürfen gefolgt werden"
