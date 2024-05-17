@@ -60,7 +60,7 @@
 						{{ FormHelper.control('fieldset', {
 							columnSpan: 6,
 							empty: false,
-							options: combine(availableFieldsets, availableFieldsets|map(fieldset => __('fieldset_' ~ fieldset))),
+							options: combine(availableFieldsets, availableFieldsets|map(fieldset => __d(attribute.scope, 'fieldset_' ~ fieldset))),
 							disabled: attribute.scope == 'contents',
 							'data-form-updater': true
 						}) }}
