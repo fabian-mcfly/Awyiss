@@ -45,7 +45,7 @@ abstract class AbstractPermissionOption implements PermissionOptionInterface {
 	/**
 	 * @inheritDoc
 	 */
-	public function __construct(array $aa_config, PermissionOptionCollection $ao_permissionOptionCollection) {
+	public function __construct(array $config, PermissionOptionCollection $permissionOptionCollection) {
 		$ls_type = static::getType();
 		$ls_testType = strtolower(Text::slug($ls_type, '_'));
 
@@ -59,9 +59,9 @@ abstract class AbstractPermissionOption implements PermissionOptionInterface {
 			);
 		}
 
-		$this->permissionOptionCollection = $ao_permissionOptionCollection;
+		$this->permissionOptionCollection = $permissionOptionCollection;
 
-		$this->setConfig($aa_config);
+		$this->setConfig($config);
 	}
 
 
@@ -101,7 +101,7 @@ abstract class AbstractPermissionOption implements PermissionOptionInterface {
 	 * @inheritDoc
 	 * @throws RuntimeException
 	 */
-	public function setOptions(array $aa_options): static {
+	public function setOptions(array $options): static {
 		throw new RuntimeException(sprintf('`%s` does not allow setting options. Use `%s` instead.', static::class, CallbackPermissionOption::class));
 	}
 

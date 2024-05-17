@@ -81,8 +81,8 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 	/**
 	 * @inheritDoc
 	 */
-	public function initialize(array $aa_config): void {
-		parent::initialize($aa_config);
+	public function initialize(array $config): void {
+		parent::initialize($config);
 
 		/** @var \Awyiss\Model\Table $lo_table */
 		$lo_table = $this->table();
@@ -126,16 +126,16 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 	 * - `finder`
 	 * - `queryConditions`
 	 *
-	 * @param bool $ab_returnRaw
+	 * @param bool $returnRaw
 	 * @return \Cake\Datasource\ResultSetInterface|\Cake\Collection\Iterator\TreeIterator|array|null
 	 */
-	public function getCategories(bool $ab_returnRaw = false): ResultSetInterface|TreeIterator|array|null {
+	public function getCategories(bool $returnRaw = false): ResultSetInterface|TreeIterator|array|null {
 		if (!$this->getConfig('enabled')) {
-			return $ab_returnRaw ? new ResultSet([]) : [];
+			return $returnRaw ? new ResultSet([]) : [];
 		}
 
 		if (isset($this->categories)) {
-			return $this->categories[ $ab_returnRaw ? 'raw' : 'simple' ] ?? null;
+			return $this->categories[ $returnRaw ? 'raw' : 'simple' ] ?? null;
 		}
 
 		if (!$this->getConfig('useDatasource')) {
@@ -172,7 +172,7 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 		}
 
 
-		return $this->categories[ $ab_returnRaw ? 'raw' : 'simple' ];
+		return $this->categories[ $returnRaw ? 'raw' : 'simple' ];
 	}
 
 
@@ -208,17 +208,17 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 	/**
 	 * Add category-related conditions to a given query
 	 *
-	 * @param \Cake\ORM\Query\SelectQuery $ao_query
-	 * @param mixed $ax_selectedCategory
-	 * @param string|null $as_column
+	 * @param \Cake\ORM\Query\SelectQuery $query
+	 * @param mixed $selectedCategory
+	 * @param string|null $column
 	 * @return \Cake\ORM\Query\SelectQuery
 	 */
-	public function filterQuery(SelectQuery $ao_query, mixed $ax_selectedCategory = null, bool $ab_sortAggregation = true): SelectQuery {
+	public function filterQuery(SelectQuery $query, mixed $selectedCategory = null, bool $sortAggregation = true): SelectQuery {
 		if (!$this->getConfig('enabled')) {
-			return $ao_query;
+			return $query;
 		}
 
-		$lx_selectedCategory = $ax_selectedCategory ?? $this->getConfig('selectedCategory');
+		$lx_selectedCategory = $selectedCategory ?? $this->getConfig('selectedCategory');
 
 		//Get the first possible value in case there's no selection
 		if ($lx_selectedCategory === null) {
@@ -230,23 +230,23 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 		if (!$this->getConfig('useDatasource')) {
 			//When category is empty or equals the aggregationKey, e.g. "all", do not add query conditions
 			if (!$lx_selectedCategory || $lx_selectedCategory === $this->getConfig('aggregationKey')) {
-				return $ab_sortAggregation ? $this->sortQuery($ao_query) : $ao_query;
+				return $sortAggregation ? $this->sortQuery($query) : $query;
 			}
 
 
-			return $ao_query->where($this->getQueryConditions($ax_selectedCategory));
+			return $query->where($this->getQueryConditions($selectedCategory));
 		}
 
 		$ls_associationName = $this->getConfig('associationName');
-		if (!$ls_associationName || !$ao_query->getRepository()->hasAssociation($ls_associationName)) {
+		if (!$ls_associationName || !$query->getRepository()->hasAssociation($ls_associationName)) {
 			throw new RuntimeException(sprintf('Cannot filter query without an association in `%s` for table `%s`.', static::class, $this->table()->getAlias()));
 		}
 
-		$lo_association = $ao_query->getRepository()->getAssociation($ls_associationName);
+		$lo_association = $query->getRepository()->getAssociation($ls_associationName);
 
 		//When category is empty or equals the aggregationKey, e.g. "all", do not add query conditions
 		if (!$lx_selectedCategory || $lx_selectedCategory === $this->getConfig('aggregationKey')) {
-			return $ab_sortAggregation ? $this->sortQuery($ao_query) : $ao_query;
+			return $sortAggregation ? $this->sortQuery($query) : $query;
 		}
 
 
@@ -258,43 +258,43 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 				 */
 				$lo_junction = $lo_association->junction();
 				$ls_column = $lo_junction->getPrimaryKey() . ' IS';
-				$ao_query->leftJoinWith($ls_associationName)->where([$lo_junction->getAlias() . '.' . $ls_column => null]);
+				$query->leftJoinWith($ls_associationName)->where([$lo_junction->getAlias() . '.' . $ls_column => null]);
 
 
-				return $ao_query;
+				return $query;
 			}
 
 			//Find records whose category matches the selectedCategory
-			$ao_query->matching($ls_associationName, function (SelectQuery $ao_query) use ($lo_association, $lx_selectedCategory) {
+			$query->matching($ls_associationName, function (SelectQuery $query) use ($lo_association, $lx_selectedCategory) {
 				$lo_junction = $lo_association->junction();
 				$ls_column = $lo_junction->getAssociation($lo_association->getName())->getForeignKey();
 
-				$ao_query->where([$lo_junction->getAlias() . '.' . $ls_column => $lx_selectedCategory]);
+				$query->where([$lo_junction->getAlias() . '.' . $ls_column => $lx_selectedCategory]);
 
 
-				return $ao_query;
+				return $query;
 			});
 		}
 		else {
 			//With a belongsTo-association, the categorization is realized by a simple "column = value"-limitation
-			$ao_query->where($this->getQueryConditions($lx_selectedCategory));
+			$query->where($this->getQueryConditions($lx_selectedCategory));
 		}
 
 
-		return $ao_query;
+		return $query;
 	}
 
 
 	/**
-	 * @param mixed|null $ax_selectedCategory
+	 * @param mixed|null $selectedCategory
 	 * @return array
 	 */
-	public function getQueryConditions(mixed $ax_selectedCategory = null): array {
+	public function getQueryConditions(mixed $selectedCategory = null): array {
 		if (!$this->getConfig('enabled')) {
 			return [];
 		}
 
-		$lx_selectedCategory = $ax_selectedCategory ?? $this->getConfig('selectedCategory');
+		$lx_selectedCategory = $selectedCategory ?? $this->getConfig('selectedCategory');
 
 		//Get the first possible value in case there's no selection
 		if ($lx_selectedCategory === null) {
@@ -353,23 +353,23 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 
 
 	/**
-	 * This method groups the result of the provided query by the column provided via `$as_column`.
+	 * This method groups the result of the provided query by the column provided via `$column`.
 	 * It returns the query with an attached formatResults callback, that groups the resultset by the given column
 	 *
-	 * @param \Cake\ORM\Query\SelectQuery $ao_query
-	 * @param string|null $as_column
-	 * @param string|null $as_associationName
-	 * @param bool $ab_sortByAssociation
+	 * @param \Cake\ORM\Query\SelectQuery $query
+	 * @param string|null $column
+	 * @param string|null $associationName
+	 * @param bool $sortByAssociation
 	 * @return \Cake\ORM\Query\SelectQuery
 	 */
-	public function groupResult(SelectQuery $ao_query, ?string $as_column = null, ?string $as_associationName = null, bool $ab_sortByAssociation = true): SelectQuery {
+	public function groupResult(SelectQuery $query, ?string $column = null, ?string $associationName = null, bool $sortByAssociation = true): SelectQuery {
 		if (!$this->getConfig('enabled')) {
-			return $ao_query;
+			return $query;
 		}
 
-		$ls_column = $as_column;
+		$ls_column = $column;
 		if ($this->getConfig('useDatasource')) {
-			$ls_associationName = $as_associationName ?? $this->getConfig('associationName');
+			$ls_associationName = $associationName ?? $this->getConfig('associationName');
 			if (!$ls_associationName) {
 				throw new RuntimeException(
 					sprintf(
@@ -380,7 +380,7 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 				);
 			}
 
-			$lo_association = $ao_query->getRepository()->getAssociation($ls_associationName);
+			$lo_association = $query->getRepository()->getAssociation($ls_associationName);
 
 			if (empty($ls_column)) {
 				$ls_column = $lo_association->getForeignKey();
@@ -390,7 +390,7 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 			}
 
 			/** @var \Awyiss\Model\Entity $ls_entityClass */
-			$ls_entityClass = $ao_query->getRepository()->getEntityClass();
+			$ls_entityClass = $query->getRepository()->getEntityClass();
 		}
 		else {
 			$ls_entityClass = $this->table()->getEntityClass();
@@ -402,14 +402,14 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 
 		$ls_column = $ls_entityClass::mapField($ls_column);
 
-		if ($ab_sortByAssociation) {
-			$this->sortQuery($ao_query, $as_column, $as_associationName);
+		if ($sortByAssociation) {
+			$this->sortQuery($query, $column, $associationName);
 		}
 
 
-		return $ao_query->formatResults(function (CollectionInterface $ao_collection) use ($ls_column) {
-			return $ao_collection->groupBy(function (EntityInterface $ao_entity) use ($ls_column) {
-				$lx_value = $ao_entity->get($ls_column);
+		return $query->formatResults(function (CollectionInterface $collection) use ($ls_column) {
+			return $collection->groupBy(function (EntityInterface $entity) use ($ls_column) {
+				$lx_value = $entity->get($ls_column);
 
 				if ($lx_value instanceof BackedEnum) {
 					$lx_value = $lx_value->value;
@@ -422,44 +422,44 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 
 
 	/**
-	 * @param \Cake\Datasource\EntityInterface|null $ao_entity
+	 * @param \Cake\Datasource\EntityInterface|null $entity
 	 * @return mixed
 	 */
-	public function getSelectedCategory(?EntityInterface $ao_entity = null): mixed {
+	public function getSelectedCategory(?EntityInterface $entity = null): mixed {
 		if (!$this->getConfig('enabled')) {
 			return null;
 		}
 
-		if (!$ao_entity) {
+		if (!$entity) {
 			return $this->getConfig('selectedCategory');
 		}
 
 		$ls_field = $this->getConfig('useDatasource') ? $this->getConfig('field') : $this->getConfig('identifier');
 
 
-		return $ao_entity->get($ls_field);
+		return $entity->get($ls_field);
 	}
 
 
 	/**
-	 * @param \Cake\ORM\Query\SelectQuery $ao_query
-	 * @param string|null $as_column
-	 * @param string|null $as_associationName
+	 * @param \Cake\ORM\Query\SelectQuery $query
+	 * @param string|null $column
+	 * @param string|null $associationName
 	 * @return \Cake\ORM\Query\SelectQuery
 	 */
-	public function sortQuery(SelectQuery $ao_query, ?string $as_column = null, ?string $as_associationName = null): SelectQuery {
+	public function sortQuery(SelectQuery $query, ?string $column = null, ?string $associationName = null): SelectQuery {
 		if (!$this->getConfig('enabled')) {
-			return $ao_query;
+			return $query;
 		}
 
 		$la_categories = $this->getCategories();
 		if (empty($la_categories)) {
-			return $ao_query;
+			return $query;
 		}
 
-		$ls_column = $as_column;
+		$ls_column = $column;
 		if ($this->getConfig('useDatasource')) {
-			$ls_associationName = $as_associationName ?? $this->getConfig('associationName');
+			$ls_associationName = $associationName ?? $this->getConfig('associationName');
 
 			if (!$ls_associationName) {
 				throw new RuntimeException(
@@ -471,10 +471,10 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 				);
 			}
 
-			$lo_association = $ao_query->getRepository()->getAssociation($ls_associationName);
+			$lo_association = $query->getRepository()->getAssociation($ls_associationName);
 
 			if ($lo_association instanceof BelongsToMany) {
-				return $ao_query;
+				return $query;
 			}
 
 			if (empty($ls_column)) {
@@ -504,17 +504,17 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 		$ls_column = $ls_entityClass::unmapField($ls_column);
 
 		//Remember existing orders
-		$lo_order = $ao_query->clause('order');
+		$lo_order = $query->clause('order');
 
-		$ls_prefixedColumn = $ao_query->getRepository()->getAlias() . '.' . $ls_column;
+		$ls_prefixedColumn = $query->getRepository()->getAlias() . '.' . $ls_column;
 
 		// If the table has a SystemOrder behavior, use the sort field to sort the records
-		if ($ao_query->getRepository()->hasBehavior('SystemOrder')) {
-			$this->_sortQueryBySystemOrderField($ao_query);
+		if ($query->getRepository()->hasBehavior('SystemOrder')) {
+			$this->_sortQueryBySystemOrderField($query);
 		}
 
 		/** @noinspection PhpUndefinedMethodInspection */
-		$ao_query->orderByAsc($ao_query->newExpr($ao_query->func()->FIND_IN_SET([
+		$query->orderByAsc($query->newExpr($query->func()->FIND_IN_SET([
 			$ls_prefixedColumn => 'identifier',
 			implode(',', $la_categoryIdentifiers),
 		])), true);
@@ -527,13 +527,13 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 			dd($lo_order, __FILE__, __LINE__);
 			//Re-add remembered orders
 			/** @noinspection PhpUnreachableStatementInspection */
-			$lo_order->traverse(function ($ao_clause) use ($ao_query): void {
-				$ao_query->orderBy($ao_clause);
+			$lo_order->traverse(function ($clause) use ($query): void {
+				$query->orderBy($clause);
 			});
 		}
 
 
-		return $ao_query;
+		return $query;
 	}
 
 
@@ -557,14 +557,14 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 
 
 	/**
-	 * @param mixed|null $ax_categoryId
-	 * @param array|null $aa_validSelectionValues
+	 * @param mixed|null $categoryId
+	 * @param array|null $validSelectionValues
 	 * @return mixed
 	 */
-	public function verifySelection(mixed $ax_categoryId = null, ?array $aa_validSelectionValues = null): mixed {
-		$lx_categoryId = $ax_categoryId ?: $this->getConfig('selectedCategory');
+	public function verifySelection(mixed $categoryId = null, ?array $validSelectionValues = null): mixed {
+		$lx_categoryId = $categoryId ?: $this->getConfig('selectedCategory');
 
-		if (in_array($lx_categoryId, $aa_validSelectionValues ?? $this->getValidSelectionValues())) {
+		if (in_array($lx_categoryId, $validSelectionValues ?? $this->getValidSelectionValues())) {
 			return $lx_categoryId;
 		}
 
@@ -574,13 +574,13 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 
 
 	/**
-	 * @param int $ai_level
-	 * @param int $ai_maxLevel
+	 * @param int $level
+	 * @param int $maxLevel
 	 * @return \Cake\Collection\CollectionInterface|null
 	 */
-	public function getParentCategories(bool $ab_include = false): ?CollectionInterface {
+	public function getParentCategories(bool $include = false): ?CollectionInterface {
 		if (isset($this->parentCategories)) {
-			if ($ab_include) {
+			if ($include) {
 				$lo_categories = $this->parentCategories->append($this->getCategories(true));
 
 
@@ -623,7 +623,7 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 		$this->parentCategories = $lo_behavior->getCategories(true);
 
 
-		if ($ab_include) {
+		if ($include) {
 			$lo_categories = $this->parentCategories->append($this->getCategories(true));
 
 
@@ -636,10 +636,10 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 
 
 	/**
-	 * @param int $ai_maxLevel
+	 * @param int $maxLevel
 	 * @return void
 	 */
-	public function assignParentCategories(int $ai_maxLevel): void {
+	public function assignParentCategories(int $maxLevel): void {
 		$lo_parentCategories = $this->getParentCategories(true);
 		if (!$lo_parentCategories) {
 			return;
@@ -667,7 +667,7 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 
 			//Check if the entity is an instance of the special class
 			if ($lo_entity instanceof $ls_entityClass) {
-				$li_parentsCount = min($ai_maxLevel, $li_currentDepth);
+				$li_parentsCount = min($maxLevel, $li_currentDepth);
 				$lo_entity->_parents = array_values(array_slice($la_currentPath, -$li_parentsCount, $li_parentsCount, true));
 				$lo_entity->setVirtual(['_parents'], true);
 
@@ -756,14 +756,14 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 
 
 	/**
-	 * @param \Cake\Event\Event $ao_event
-	 * @param \Awyiss\ORM\RulesChecker|\Cake\ORM\RulesChecker $ao_rules
+	 * @param \Cake\Event\Event $event
+	 * @param \Awyiss\ORM\RulesChecker|\Cake\ORM\RulesChecker $rules
 	 * @return \Awyiss\ORM\RulesChecker
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function buildRules(Event $ao_event, RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
+	public function buildRules(Event $event, RulesChecker|BaseRulesChecker $rules): RulesChecker {
 		if (!$this->getConfig('enabled') || !$this->getConfig('buildRules')) {
-			return $ao_rules;
+			return $rules;
 		}
 
 		$ls_fieldName = Inflector::camelize($this->getConfig('field'));
@@ -771,11 +771,11 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 
 		/** @var \Awyiss\Model\Table $lo_table */
 		$lo_table = $this->table();
-		$ao_rules->add(function (EntityInterface $ao_entity, array $aa_options) use ($ao_rules, $lo_table): bool {
+		$rules->add(function (EntityInterface $entity, array $options) use ($rules, $lo_table): bool {
 			$la_categories = $this->getCategories();
 			$ls_field = $this->getConfig('useDatasource') ? $this->getConfig('field') : $this->getConfig('identifier');
 
-			$lx_value = $ao_entity->get($ls_field);
+			$lx_value = $entity->get($ls_field);
 
 			if ($this->getConfig('useDatasource')) {
 				$lo_association = $lo_table->getAssociation($this->getConfig('associationName'));
@@ -808,29 +808,28 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 		]);
 
 
-		return $ao_rules;
+		return $rules;
 	}
 
 
 	/**
 	 * @inheritDoc
-	 * @param \Cake\ORM\Marshaller $ao_marshaller The marhshaller of the table the behavior is attached to.
-	 * @param array $aa_map The property map being built.
-	 * @param array<string, mixed> $aa_options The options array used in the marshalling call.
+	 * @param \Cake\ORM\Marshaller $marshaller The marhshaller of the table the behavior is attached to.
+	 * @param array $map The property map being built.
+	 * @param array<string, mixed> $options The options array used in the marshalling call.
 	 * @return array A map of `[property => callable]` of additional properties to marshal.
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildMarshalMap(Marshaller $ao_marshaller, array $aa_map, array $aa_options): array {
+	public function buildMarshalMap(Marshaller $marshaller, array $map, array $options): array {
 		if ($this->fieldIsAttribute()) {
 			$ls_column = $this->getConfig('field') ?: $this->getConfig('identifier');
 
 			return [
-				$ls_column => function (mixed $ax_value, EntityInterface $ao_entity) use ($ls_column): mixed {
-					$lo_attributes = $ao_entity->get('attributes');
+				$ls_column => function (mixed $value, EntityInterface $entity) use ($ls_column): mixed {
+					$lo_attributes = $entity->get('attributes');
 
-					$lo_attributes->set($ls_column, $ax_value);
+					$lo_attributes->set($ls_column, $value);
 
-					return $ax_value;
+					return $value;
 				},
 			];
 		}
@@ -844,11 +843,11 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 	 * This method is used to sort the query by the system order field, in case the system_order field itself
 	 * is ambiguous
 	 *
-	 * @param \Cake\ORM\Query\SelectQuery $ao_query
+	 * @param \Cake\ORM\Query\SelectQuery $query
 	 * @return void
 	 */
-	protected function _sortQueryBySystemOrderField(SelectQuery $ao_query): void {
-		$lo_table = $ao_query->getRepository();
+	protected function _sortQueryBySystemOrderField(SelectQuery $query): void {
+		$lo_table = $query->getRepository();
 
 		/** @var \Awyiss\Model\Behavior\SystemOrderBehavior $lo_behavior */
 		$lo_behavior = $lo_table->getBehavior('SystemOrder');
@@ -860,9 +859,12 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 		$ls_direction = $lo_behavior->getConfig('direction');
 
 		if (str_starts_with($ls_field, 'attributes.')) {
+			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 			$ls_fieldType = $lo_table->getAttributesTable()->getSchema()->getColumnType(substr($ls_field, 11));
 		}
+		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 		elseif ($lo_table->fieldIsAttribute($ls_field)) {
+			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 			$ls_fieldType = $lo_table->getAttributesTable()->getSchema()->getColumnType($ls_field);
 		}
 		else {
@@ -871,14 +873,14 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 
 		/*
 		 * $lo_records = $lo_query->all()->sortBy(
-		 *	$as_field,
-		 *	$ai_direction,
+		 *	$field,
+		 *	$direction,
 		 *	in_array($ls_fieldType, ['string', 'text', 'char']) ? SORT_NATURAL | SORT_FLAG_CASE : SORT_NUMERIC
 		 * );
 		 */
 
-		 $ao_query->formatResults(function (CollectionInterface $ao_collection) use ($ls_field, $ls_direction, $ls_fieldType) {
-			 return $ao_collection->sortBy(
+		 $query->formatResults(function (CollectionInterface $collection) use ($ls_field, $ls_direction, $ls_fieldType) {
+			 return $collection->sortBy(
 				 $ls_field,
 				 $ls_direction,
 				 in_array($ls_fieldType, ['string', 'text', 'char']) ? SORT_NATURAL | SORT_FLAG_CASE : SORT_NUMERIC

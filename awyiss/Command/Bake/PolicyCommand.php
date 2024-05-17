@@ -41,27 +41,26 @@ class PolicyCommand extends BakeCommand {
 	/**
 	 * Execute the command.
 	 *
-	 * @param Arguments $ao_args The command arguments.
-	 * @param ConsoleIo $ao_io The console io
+	 * @param Arguments $args The command arguments.
+	 * @param ConsoleIo $io The console io
 	 * @return int|null The exit code or null for success
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function execute(Arguments $ao_args, ConsoleIo $ao_io): ?int {
-		$this->extractCommonProperties($ao_args);
-		$ls_name = $ao_args->getArgument('name') ?? '';
+	public function execute(Arguments $args, ConsoleIo $io): ?int {
+		$this->extractCommonProperties($args);
+		$ls_name = $args->getArgument('name') ?? '';
 		$ls_name = $this->_getName($ls_name);
 
 		if (empty($ls_name)) {
 			/** @var \Cake\Database\Connection $lo_connection */
 			$lo_connection = ConnectionManager::get($this->connection);
 			$lo_scanner = new TableScanner($lo_connection);
-			$ao_io->out('Possible policies based on your current database:');
+			$io->out('Possible policies based on your current database:');
 			foreach ($lo_scanner->listUnskipped() as $ls_table) {
 				if (str_starts_with($ls_table, 'attributes_') || in_array($ls_table, $this->blocklistedNames)) {
 					continue;
 				}
 
-				$ao_io->out('- ' . $this->_camelize($ls_table));
+				$io->out('- ' . $this->_camelize($ls_table));
 			}
 
 
@@ -69,7 +68,7 @@ class PolicyCommand extends BakeCommand {
 		}
 
 		if (in_array($ls_name, $this->blocklistedNames)) {
-			$ao_io->err('Error: Name not allowed');
+			$io->err('Error: Name not allowed');
 
 
 			return static::CODE_ERROR;
@@ -77,7 +76,7 @@ class PolicyCommand extends BakeCommand {
 
 		$ls_policy = $this->_camelize($ls_name);
 
-		$this->bake($ls_policy, $ao_args, $ao_io);
+		$this->bake($ls_policy, $args, $io);
 
 
 		return static::CODE_SUCCESS;
@@ -87,46 +86,45 @@ class PolicyCommand extends BakeCommand {
 	/**
 	 * Assembles and writes a Policy file
 	 *
-	 * @param string $as_policyName Policy name already pluralized and correctly cased.
-	 * @param Arguments $ao_args The console arguments
-	 * @param ConsoleIo $ao_io The console io
+	 * @param string $policyName Policy name already pluralized and correctly cased.
+	 * @param Arguments $args The console arguments
+	 * @param ConsoleIo $io The console io
 	 * @return void
 	 */
-	public function bake(string $as_policyName, Arguments $ao_args, ConsoleIo $ao_io): void {
-		$ao_io->quiet(sprintf('Baking policy class for %s...', $as_policyName));
+	public function bake(string $policyName, Arguments $args, ConsoleIo $io): void {
+		$io->quiet(sprintf('Baking policy class for %s...', $policyName));
 
-		$ls_prefix = $this->getPrefix($ao_args);
+		$ls_prefix = $this->getPrefix($args);
 		if ($ls_prefix) {
 			$ls_prefix = '\\' . str_replace('/', '\\', $ls_prefix);
 		}
 
 		//Controllers default to importing AppController from `App`
-		$ls_namespace = Inflector::camelize($ao_args->getOption('namespace') ?: Configure::read('App.namespace'));
+		$ls_namespace = Inflector::camelize($args->getOption('namespace') ?: Configure::read('App.namespace'));
 
 		$la_data = [
-			'name' => $as_policyName,
+			'name' => $policyName,
 			'namespace' => $ls_namespace,
 			'prefix' => $ls_prefix,
 		];
 
 		$ls_contents = $this->createTemplateRenderer()->set($la_data)->generate('Policy/policy');
 
-		$ls_path = $this->getPath($ao_args);
-		$ls_filePath = $ls_path . $as_policyName . 'Policy.php';
+		$ls_path = $this->getPath($args);
+		$ls_filePath = $ls_path . $policyName . 'Policy.php';
 
-		$ao_io->createFile($ls_filePath, $ls_contents, $this->force);
+		$io->createFile($ls_filePath, $ls_contents, $this->force);
 	}
 
 
 	/**
 	 * Gets the option parser instance and configures it.
 	 *
-	 * @param ConsoleOptionParser $ao_parser The option parser to update.
+	 * @param ConsoleOptionParser $parser The option parser to update.
 	 * @return ConsoleOptionParser
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildOptionParser(ConsoleOptionParser $ao_parser): ConsoleOptionParser {
-		$lo_parser = $this->_setCommonOptions($ao_parser);
+	public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser {
+		$lo_parser = $this->_setCommonOptions($parser);
 
 		$lo_parser->setDescription(
 			'Bake a policy skeleton.'

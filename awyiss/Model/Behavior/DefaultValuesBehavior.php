@@ -56,11 +56,11 @@ class DefaultValuesBehavior extends Behavior {
 	 * Returns a new entity for the table the method was called on,
 	 * populated with the default values set in the database.
 	 *
-	 * @param array $aa_additionalData
-	 * @param array $aa_options
+	 * @param array $additionalData
+	 * @param array $options
 	 * @return EntityInterface
 	 */
-	public function newDefaultEntity(array $aa_additionalData = [], array $aa_options = []): EntityInterface {
+	public function newDefaultEntity(array $additionalData = [], array $options = []): EntityInterface {
 		if (!$this->getConfig('enabled')) {
 			//Calling this method when the behavior is disabled results in an exception
 			throw new RuntimeException(sprintf('The method `newDefaultEntity()` is not available since the `%s` Behavior is not enabled', static::class));
@@ -96,18 +96,18 @@ class DefaultValuesBehavior extends Behavior {
 		if (
 			$lo_table->hasBehavior('Categories') &&
 			$lo_table->getBehavior('Categories')->getConfig('enabled') === true &&
-			($aa_options['includeCategory'] ?? true) === true
+			($options['includeCategory'] ?? true) === true
 		) {
 			$this->addCategoryDefault($la_defaults, $lo_table, $lo_attributes ?? null);
 		}
 
-		$la_additionalData = $aa_additionalData;
-		if ($aa_additionalData) {
+		$la_additionalData = $additionalData;
+		if ($additionalData) {
 			//Map the fields in case the additional data contains mapped keys
-			$la_additionalData = $ls_entityClass::unmapFields($aa_additionalData, true);
+			$la_additionalData = $ls_entityClass::unmapFields($additionalData, true);
 		}
 
-		$lo_entity = $this->marshallDefaults($lo_entity, $la_defaults, $la_additionalData, $aa_options);
+		$lo_entity = $this->marshallDefaults($lo_entity, $la_defaults, $la_additionalData, $options);
 
 		//Set the entity to the attributes entity
 		if ($lo_table->hasAttributes()) {
@@ -121,59 +121,61 @@ class DefaultValuesBehavior extends Behavior {
 
 
 	/**
-	 * @param \Cake\Event\EventInterface $ao_event
-	 * @param \ArrayObject $ao_data
-	 * @param \ArrayObject $ao_options
+	 * @param \Cake\Event\EventInterface $event
+	 * @param \ArrayObject $data
+	 * @param \ArrayObject $options
 	 * @return void
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function beforeMarshal(EventInterface $ao_event, ArrayObject $ao_data, ArrayObject $ao_options): void {
-		$this->processArray($ao_data, $this->_table);
+	public function beforeMarshal(EventInterface $event, ArrayObject $data, ArrayObject $options): void {
+		$this->processArray($data, $this->_table);
 	}
 
 
 	/**
-	 * @param array $aa_defaults
-	 * @param \Awyiss\Model\Table $ao_table
-	 * @param \Cake\ORM\Association|null $ao_attributes
+	 * @param array $defaults
+	 * @param \Awyiss\Model\Table $table
+	 * @param \Cake\ORM\Association|null $attributes
 	 * @return void
 	 */
-	protected function addCategoryDefault(array &$aa_defaults, Table $ao_table, ?Association $ao_attributes = null): void {
+	protected function addCategoryDefault(array &$defaults, Table $table, ?Association $attributes = null): void {
 		/** @var \Awyiss\Model\Behavior\CategoriesBehavior $lo_categories */
-		$lo_categories = $ao_table->getBehavior('Categories');
+		$lo_categories = $table->getBehavior('Categories');
 
 		/** @var class-string<\Awyiss\Model\Entity> $ls_entityClass */
-		$ls_entityClass = $ao_table->getEntityClass();
+		$ls_entityClass = $table->getEntityClass();
 
 		$ls_column = $lo_categories->getConfig('field') ?: $lo_categories->getConfig('identifier');
 		$ls_column = $ls_entityClass::unmapField($ls_column);
 
 
-		if ($ao_attributes) {
-			if ($ao_attributes->getSchema()->getColumn($ls_column)) {
-				$aa_defaults[ $ao_attributes->getProperty() ][ $ls_column ] = $lo_categories->getConfig('selectedCategory');
+		if ($attributes) {
+			if ($attributes->getSchema()->getColumn($ls_column)) {
+				/** @noinspection PhpVariableNamingConventionInspection */
+				$defaults[ $attributes->getProperty() ][ $ls_column ] = $lo_categories->getConfig('selectedCategory');
 			}
 		}
 		else {
-			if ($ao_table->getSchema()->getColumn($ls_column)) {
-				$aa_defaults[ $ls_column ] = $lo_categories->getConfig('selectedCategory');
+			if ($table->getSchema()->getColumn($ls_column)) {
+				/** @noinspection PhpVariableNamingConventionInspection */
+				$defaults[ $ls_column ] = $lo_categories->getConfig('selectedCategory');
 			}
 		}
 	}
 
 
 	/**
-	 * @param \Cake\Datasource\EntityInterface $ao_entity
-	 * @param array $aa_data
-	 * @param array $aa_additionalData
-	 * @param array $aa_options
+	 * @param \Cake\Datasource\EntityInterface $entity
+	 * @param array $data
+	 * @param array $additionalData
+	 * @param array $options
 	 * @return \Cake\Datasource\EntityInterface
 	 */
-	protected function marshallDefaults(EntityInterface $ao_entity, array $aa_defaults, array $aa_additionalData, array $aa_options): EntityInterface {
-		/** @var \Awyiss\Model\Entity $ao_entity */
-		$la_defaults = $aa_additionalData + $ao_entity->defaultValues() + $aa_defaults;
+	protected function marshallDefaults(EntityInterface $entity, array $defaults, array $additionalData, array $options): EntityInterface {
+		/** @var \Awyiss\Model\Entity $entity */
+		$la_defaults = $additionalData + $entity->defaultValues() + $defaults;
 
-		$la_options = $aa_options + [
+		$la_options = $options + [
 			'fields' => array_keys($la_defaults),
 			'setter' => false,
 			'validate' => false,
@@ -185,7 +187,7 @@ class DefaultValuesBehavior extends Behavior {
 		$lo_marshaller = $lo_table->marshaller();
 
 
-		return $lo_marshaller->merge($ao_entity, $la_defaults, $la_options);
+		return $lo_marshaller->merge($entity, $la_defaults, $la_options);
 	}
 
 
@@ -193,23 +195,23 @@ class DefaultValuesBehavior extends Behavior {
 	 * Copyright (c) 2024 Awyiss
 	 * Copyright (c) 2019 Mark Scherer
 	 *
-	 * @param \ArrayObject|array $aa_data
-	 * @param \Cake\ORM\Table $ao_table
+	 * @param \ArrayObject|array $data
+	 * @param \Cake\ORM\Table $table
 	 * @return \ArrayObject|array
 	 * @copyright https://github.com/dereuromark/cakephp-shim/tree/master
 	 */
-	protected function processArray(ArrayObject|array $aa_data, Table $ao_table): ArrayObject|array {
+	protected function processArray(ArrayObject|array $data, Table $table): ArrayObject|array {
 		$la_associations = [];
 
 		/** @var class-string<\Awyiss\Model\Entity> $ls_entityClass */
-		$ls_entityClass = $ao_table->getEntityClass();
+		$ls_entityClass = $table->getEntityClass();
 
 		/** @var \Cake\ORM\Association $lo_association */
-		foreach ($ao_table->associations() as $lo_association) {
+		foreach ($table->associations() as $lo_association) {
 			$la_associations[ $ls_entityClass::unmapField($lo_association->getProperty()) ] = $lo_association->getName();
 		}
 
-		$la_data = $aa_data;
+		$la_data = $data;
 		foreach ($la_data as $ls_key => $lx_value) {
 			if (is_numeric($ls_key)) {
 				continue;
@@ -223,13 +225,13 @@ class DefaultValuesBehavior extends Behavior {
 					elseif ($lx_value instanceof EntityInterface) {
 						$lx_value = $this->processEntity(
 							$lx_value,
-							$ao_table->getAssociation($la_associations[ $ls_entityClass::unmapField($ls_key) ])->getTarget()
+							$table->getAssociation($la_associations[ $ls_entityClass::unmapField($ls_key) ])->getTarget()
 						);
 					}
 					else {
 						$lx_value = $this->processArray(
 							$lx_value,
-							$ao_table->getAssociation($la_associations[ $ls_entityClass::unmapField($ls_key) ])->getTarget()
+							$table->getAssociation($la_associations[ $ls_entityClass::unmapField($ls_key) ])->getTarget()
 						);
 					}
 
@@ -239,7 +241,7 @@ class DefaultValuesBehavior extends Behavior {
 				continue;
 			}
 
-			$lb_nullable = Hash::get((array)$ao_table->getSchema()->getColumn($ls_entityClass::unmapField($ls_key)), 'null');
+			$lb_nullable = Hash::get((array)$table->getSchema()->getColumn($ls_entityClass::unmapField($ls_key)), 'null');
 
 			if ($lb_nullable !== true) {
 				continue;
@@ -249,7 +251,7 @@ class DefaultValuesBehavior extends Behavior {
 				continue;
 			}
 
-			$lx_default = Hash::get((array)$ao_table->getSchema()->getColumn($ls_entityClass::unmapField($ls_key)), 'default');
+			$lx_default = Hash::get((array)$table->getSchema()->getColumn($ls_entityClass::unmapField($ls_key)), 'default');
 			$la_data[ $ls_key ] = $lx_default;
 		}
 
@@ -262,20 +264,20 @@ class DefaultValuesBehavior extends Behavior {
 	 * Copyright (c) 2024 Awyiss
 	 * Copyright (c) 2019 Mark Scherer
 	 *
-	 * @param \Awyiss\Model\Entity $ao_entity
-	 * @param \Cake\ORM\Table $ao_table
+	 * @param \Awyiss\Model\Entity $entity
+	 * @param \Cake\ORM\Table $table
 	 * @return \Cake\Datasource\EntityInterface
 	 * @copyright https://github.com/dereuromark/cakephp-shim/tree/master
 	 */
-	protected function processEntity(EntityInterface $ao_entity, Table $ao_table): EntityInterface {
+	protected function processEntity(EntityInterface $entity, Table $table): EntityInterface {
 		$la_associations = [];
 		/** @var \Cake\ORM\Association $lo_association */
-		foreach ($ao_table->associations() as $lo_association) {
-			$la_associations[ $ao_entity::mapField($lo_association->getProperty()) ] = $lo_association->getName();
+		foreach ($table->associations() as $lo_association) {
+			$la_associations[ $entity::mapField($lo_association->getProperty()) ] = $lo_association->getName();
 		}
 
-		foreach ($ao_entity->getDirty() as $ls_field) {
-			$lx_value = $ao_entity->get($ls_field);
+		foreach ($entity->getDirty() as $ls_field) {
+			$lx_value = $entity->get($ls_field);
 
 			if (array_key_exists($ls_field, $la_associations)) {
 				if ($lx_value !== null) {
@@ -283,24 +285,24 @@ class DefaultValuesBehavior extends Behavior {
 						$lx_value = null;
 					}
 					elseif ($lx_value instanceof EntityInterface) {
-						$lx_value = $this->processEntity($lx_value, $ao_table->getAssociation($la_associations[ $ls_field ])->getTarget());
+						$lx_value = $this->processEntity($lx_value, $table->getAssociation($la_associations[ $ls_field ])->getTarget());
 					}
 					elseif (is_array($lx_value) || $lx_value instanceof ArrayObject) {
-						$lx_value = $this->processArray($lx_value, $ao_table->getAssociation($la_associations[ $ls_field ])->getTarget());
+						$lx_value = $this->processArray($lx_value, $table->getAssociation($la_associations[ $ls_field ])->getTarget());
 					}
 
-					$ao_entity->set($ls_field, $lx_value);
+					$entity->set($ls_field, $lx_value);
 				}
 
 				continue;
 			}
 
 
-			if ($ao_entity instanceof Entity) {
-				$ls_field = $ao_entity::unmapField($ls_field);
+			if ($entity instanceof Entity) {
+				$ls_field = $entity::unmapField($ls_field);
 			}
 
-			$lb_nullable = Hash::get((array)$ao_table->getSchema()->getColumn($ls_field), 'null');
+			$lb_nullable = Hash::get((array)$table->getSchema()->getColumn($ls_field), 'null');
 
 			if ($lb_nullable !== true) {
 				continue;
@@ -310,24 +312,24 @@ class DefaultValuesBehavior extends Behavior {
 				continue;
 			}
 
-			$lx_default = Hash::get((array)$ao_table->getSchema()->getColumn($ls_field), 'default');
-			$ao_entity->set($ls_field, $lx_default);
+			$lx_default = Hash::get((array)$table->getSchema()->getColumn($ls_field), 'default');
+			$entity->set($ls_field, $lx_default);
 		}
 
 
-		return $ao_entity;
+		return $entity;
 	}
 
 
 	/**
-	 * @param array $aa_defaults
-	 * @param \Cake\Datasource\SchemaInterface $ao_schema
+	 * @param array $defaults
+	 * @param \Cake\Datasource\SchemaInterface $schema
 	 * @return void
 	 */
-	protected function typecastDefaults(array &$aa_defaults, SchemaInterface $ao_schema): void {
-		$la_typeMap = $ao_schema->typeMap();
+	protected function typecastDefaults(array &$defaults, SchemaInterface $schema): void {
+		$la_typeMap = $schema->typeMap();
 
-		foreach ($aa_defaults as $ls_column => &$lx_default) {
+		foreach ($defaults as $ls_column => &$lx_default) {
 			if (is_null($lx_default)) {
 				//No default value? That's already the entities default.
 				continue;

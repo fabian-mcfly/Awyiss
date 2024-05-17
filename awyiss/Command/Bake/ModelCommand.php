@@ -32,20 +32,19 @@ class ModelCommand extends BaseModelCommand {
 	 * Re-implemented 1:1 but honors the `namespace`-option and leaves out the plugin name from the template
 	 *
 	 * @inheritDoc
-	 * @param Table $ao_model Model name or object
-	 * @param array $aa_data An array to use to generate the Table
-	 * @param Arguments $ao_args CLI Arguments
-	 * @param ConsoleIo $ao_io CLI Input
+	 * @param Table $model Model name or object
+	 * @param array $data An array to use to generate the Table
+	 * @param Arguments $args CLI Arguments
+	 * @param ConsoleIo $io CLI Input
 	 * @return void
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function bakeEntity(Table $ao_model, array $aa_data, Arguments $ao_args, ConsoleIo $ao_io): void {
-		if ($ao_args->getOption('no-entity')) {
+	public function bakeEntity(Table $model, array $data, Arguments $args, ConsoleIo $io): void {
+		if ($args->getOption('no-entity')) {
 			return;
 		}
 
-		$ls_name = $this->_entityName($ao_model->getAlias());
-		$ao_io->out("\n" . sprintf('Baking entity class for %s...', $ls_name)/*, 1, ConsoleIo::NORMAL*/);
+		$ls_name = $this->_entityName($model->getAlias());
+		$io->out("\n" . sprintf('Baking entity class for %s...', $ls_name)/*, 1, ConsoleIo::NORMAL*/);
 
 		$ls_namespace = Configure::read('App.namespace');
 		$ls_pluginPath = '';
@@ -53,27 +52,27 @@ class ModelCommand extends BaseModelCommand {
 			$ls_namespace = $this->_pluginNamespace($this->plugin);
 			$ls_pluginPath = $this->plugin . '.';
 		}
-		elseif ($ao_args->getOption('namespace')) {
-			$ls_namespace = Inflector::underscore($ao_args->getOption('namespace'));
+		elseif ($args->getOption('namespace')) {
+			$ls_namespace = Inflector::underscore($args->getOption('namespace'));
 			$ls_namespace = Inflector::camelize($ls_namespace);
 		}
 
-		$ls_path = $this->getPath($ao_args);
+		$ls_path = $this->getPath($args);
 		$ls_filePath = $ls_path . 'Entity' . DS . $ls_name . '.php';
 
 		$lo_parsedFile = null;
-		if ($ao_args->getOption('update')) {
+		if ($args->getOption('update')) {
 			$lo_parsedFile = $this->parseFile($ls_filePath);
 		}
 
-		$la_data = $aa_data + [
+		$la_data = $data + [
 				'fieldMap' => [],
 				'name' => $ls_name,
 				'namespace' => $ls_namespace,
 				'plugin' => $this->plugin,
 				'pluginPath' => $ls_pluginPath,
 				'primaryKey' => [],
-				'fileBuilder' => new FileBuilder($ao_io, $ls_namespace . '\Model\Entity', $lo_parsedFile),
+				'fileBuilder' => new FileBuilder($io, $ls_namespace . '\Model\Entity', $lo_parsedFile),
 			];
 
 		foreach ($la_data['fields'] as &$ls_field) {
@@ -93,17 +92,17 @@ class ModelCommand extends BaseModelCommand {
 		unset($ls_field);
 
 		$ls_template = 'Model/entity';
-		if ($ao_args->getOption('is-pagerole')) {
+		if ($args->getOption('is-pagerole')) {
 			$ls_template = 'Model/entity_for_pagerole';
 		}
 
 		$ls_contents = $this->createTemplateRenderer()->set($la_data)->generate($ls_template);
 		$ls_contents = str_replace('    ', "\t", $ls_contents);
 
-		$this->writeFile($ao_io, $ls_filePath, $ls_contents, $this->force);
+		$this->writeFile($io, $ls_filePath, $ls_contents, $this->force);
 
 		$ls_emptyFile = $ls_path . 'Entity' . DS . '.gitkeep';
-		$this->deleteEmptyFile($ls_emptyFile, $ao_io);
+		$this->deleteEmptyFile($ls_emptyFile, $io);
 	}
 
 
@@ -111,36 +110,35 @@ class ModelCommand extends BaseModelCommand {
 	 * Re-implemented 1:1 but honors the `namespace`-option and leaves out the plugin name from the template
 	 *
 	 * @inheritDoc
-	 * @param Table $ao_model Model name or object
-	 * @param array $aa_data An array to use to generate the Table
-	 * @param Arguments $ao_args CLI Arguments
-	 * @param ConsoleIo $ao_io CLI Arguments
+	 * @param Table $model Model name or object
+	 * @param array $data An array to use to generate the Table
+	 * @param Arguments $args CLI Arguments
+	 * @param ConsoleIo $io CLI Arguments
 	 * @return void
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function bakeTable(Table $ao_model, array $aa_data, Arguments $ao_args, ConsoleIo $ao_io): void {
-		if ($ao_args->getOption('no-table')) {
+	public function bakeTable(Table $model, array $data, Arguments $args, ConsoleIo $io): void {
+		if ($args->getOption('no-table')) {
 			return;
 		}
 
-		$ls_name = $ao_model->getAlias();
-		$ao_io->out("\n" . sprintf('Baking table class for %s...', $ls_name)/*, 1, ConsoleIo::NORMAL*/);
+		$ls_name = $model->getAlias();
+		$io->out("\n" . sprintf('Baking table class for %s...', $ls_name)/*, 1, ConsoleIo::NORMAL*/);
 
 		$ls_namespace = Configure::read('App.namespace');
 		$ls_pluginPath = '';
 		if ($this->plugin) {
 			$ls_namespace = $this->_pluginNamespace($this->plugin);
 		}
-		elseif ($ao_args->getOption('namespace')) {
-			$ls_namespace = Inflector::underscore($ao_args->getOption('namespace'));
+		elseif ($args->getOption('namespace')) {
+			$ls_namespace = Inflector::underscore($args->getOption('namespace'));
 			$ls_namespace = Inflector::camelize($ls_namespace);
 		}
 
-		$ls_path = $this->getPath($ao_args);
+		$ls_path = $this->getPath($args);
 		$ls_filePath = $ls_path . 'Table' . DS . $ls_name . 'Table.php';
 
 		$lo_parsedFile = null;
-		if ($ao_args->getOption('update')) {
+		if ($args->getOption('update')) {
 			$lo_parsedFile = $this->parseFile($ls_filePath);
 		}
 
@@ -148,12 +146,12 @@ class ModelCommand extends BaseModelCommand {
 			unset($lo_parsedFile->class->constants['ATTRIBUTABLE'], $lo_parsedFile->class->constants['TABLE']);
 		}
 
-		$ls_entity = $this->_entityName($ao_model->getAlias());
-		if ($ao_args->getOption('is-pagerole')) {
+		$ls_entity = $this->_entityName($model->getAlias());
+		if ($args->getOption('is-pagerole')) {
 			$ls_entity = 'Page';
 		}
 
-		$la_data = $aa_data + [
+		$la_data = $data + [
 				'plugin' => $this->plugin,
 				'pluginPath' => $ls_pluginPath,
 				'namespace' => $ls_namespace,
@@ -167,21 +165,21 @@ class ModelCommand extends BaseModelCommand {
 				'rulesChecker' => [],
 				'behaviors' => [],
 				'connection' => $this->connection,
-				'fileBuilder' => new FileBuilder($ao_io, $ls_namespace . '\Model\Table', $lo_parsedFile),
+				'fileBuilder' => new FileBuilder($io, $ls_namespace . '\Model\Table', $lo_parsedFile),
 			];
 
 		$ls_template = 'Model/table';
-		if ($ao_args->getOption('is-datatable')) {
+		if ($args->getOption('is-datatable')) {
 			$ls_template = 'Model/table_for_datatable';
 		}
-		if ($ao_args->getOption('is-pagerole')) {
+		if ($args->getOption('is-pagerole')) {
 			$ls_template = 'Model/table_for_pagerole';
 		}
 
 		$ls_contents = $this->createTemplateRenderer()->set($la_data)->generate($ls_template);
 		$ls_contents = str_replace('    ', "\t", $ls_contents);
 
-		$this->writeFile($ao_io, $ls_filePath, $ls_contents, $this->force);
+		$this->writeFile($io, $ls_filePath, $ls_contents, $this->force);
 
 		// Work around composer caching that classes/files do not exist.
 		// Check for the file as it might not exist in tests.
@@ -191,28 +189,27 @@ class ModelCommand extends BaseModelCommand {
 		$this->getTableLocator()->clear();
 
 		$ls_emptyFile = $ls_path . 'Table' . DS . '.gitkeep';
-		$this->deleteEmptyFile($ls_emptyFile, $ao_io);
+		$this->deleteEmptyFile($ls_emptyFile, $io);
 	}
 
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function getAssociations(Table $ao_table, Arguments $ao_args, ConsoleIo $ao_io): array {
-		$la_allAssociations = parent::getAssociations($ao_table, $ao_args, $ao_io);
+	public function getAssociations(Table $table, Arguments $args, ConsoleIo $io): array {
+		$la_allAssociations = parent::getAssociations($table, $args, $io);
 
 		/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $ls_pageRoleEnum */
 		$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
 
 		if (
-			$ao_args->getOption('for-pagerole') &&
-			$ls_pageRoleEnum::tryFromName($ao_args->getOption('for-pagerole')) &&
+			$args->getOption('for-pagerole') &&
+			$ls_pageRoleEnum::tryFromName($args->getOption('for-pagerole')) &&
 			!empty($la_allAssociations['belongsTo'])
 		) {
 			foreach ($la_allAssociations['belongsTo'] as &$la_association) {
 				if ($la_association['alias'] === 'Pages') {
-					$la_association['alias'] = Inflector::camelize($ao_args->getOption('for-pagerole'));
+					$la_association['alias'] = Inflector::camelize($args->getOption('for-pagerole'));
 				}
 			}
 			unset($la_associations);
@@ -230,14 +227,13 @@ class ModelCommand extends BaseModelCommand {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function getValidation(Table $ao_model, array $aa_associations, Arguments $ao_args): array|false {
-		if ($ao_args->getOption('no-validation')) {
+	public function getValidation(Table $model, array $associations, Arguments $args): array|false {
+		if ($args->getOption('no-validation')) {
 			return [];
 		}
 
-		$lo_schema = $ao_model->getSchema();
+		$lo_schema = $model->getSchema();
 		$la_fields = $lo_schema->columns();
 		if (!$la_fields) {
 			return false;
@@ -247,8 +243,8 @@ class ModelCommand extends BaseModelCommand {
 		$ls_primaryKey = $lo_schema->getPrimaryKey();
 		$lx_foreignKeys = [];
 
-		if (isset($aa_associations['belongsTo'])) {
-			foreach ($aa_associations['belongsTo'] as $la_association) {
+		if (isset($associations['belongsTo'])) {
+			foreach ($associations['belongsTo'] as $la_association) {
 				$lx_foreignKeys[] = $la_association['foreignKey'];
 			}
 		}
@@ -275,13 +271,11 @@ class ModelCommand extends BaseModelCommand {
 	 * {@inheritDoc}
 	 *
 	 * Extends the parent-method with a check for column type 'json'.
-	 *
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function fieldValidation(TableSchemaInterface $ao_schema, string $as_fieldName, array $aa_metaData, array $aa_primaryKey): array {
-		$la_validations = parent::fieldValidation($ao_schema, $as_fieldName, $aa_metaData, $aa_primaryKey);
+	public function fieldValidation(TableSchemaInterface $schema, string $fieldName, array $metaData, array $primaryKey): array {
+		$la_validations = parent::fieldValidation($schema, $fieldName, $metaData, $primaryKey);
 
-		if ($aa_metaData['type'] === 'json') {
+		if ($metaData['type'] === 'json') {
 			$la_validations = [
 				'isArray' => [
 					'rule' => 'array',
@@ -297,12 +291,11 @@ class ModelCommand extends BaseModelCommand {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function getRules(Table $ao_model, array $aa_associations, Arguments $aa_args): array {
-		$la_rules = parent::getRules($ao_model, $aa_associations, $aa_args);
+	public function getRules(Table $model, array $associations, Arguments $args): array {
+		$la_rules = parent::getRules($model, $associations, $args);
 
-		if (str_starts_with($ao_model->getTable(), 'attributes_') && isset($la_rules['page_id'])) {
+		if (str_starts_with($model->getTable(), 'attributes_') && isset($la_rules['page_id'])) {
 			$la_rules['page_id']['options']['skipPageRoleCheck'] = true;
 		}
 
@@ -314,11 +307,10 @@ class ModelCommand extends BaseModelCommand {
 	/**
 	 * We do not want to automatically add behaviors.
 	 *
-	 * @param Table $ao_model
+	 * @param Table $model
 	 * @return array
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function getBehaviors(Table $ao_model): array {
+	public function getBehaviors(Table $model): array {
 		return [];
 	}
 
@@ -327,12 +319,11 @@ class ModelCommand extends BaseModelCommand {
 	 * Adds the `namespace`-option.
 	 *
 	 * @inheritDoc
-	 * @param ConsoleOptionParser $ao_parser
+	 * @param ConsoleOptionParser $parser
 	 * @return ConsoleOptionParser
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildOptionParser(ConsoleOptionParser $ao_parser): ConsoleOptionParser {
-		$lo_parser = parent::buildOptionParser($ao_parser);
+	public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser {
+		$lo_parser = parent::buildOptionParser($parser);
 
 		$lo_parser->addOption('namespace', [
 			'choices' => [
@@ -357,18 +348,19 @@ class ModelCommand extends BaseModelCommand {
 
 
 	/**
-	 * @param array $aa_associations
+	 * @param array $associations
 	 * @return void
 	 */
-	protected function camelbackAssociationKeys(array &$aa_associations): void {
-		foreach ($aa_associations as &$la_association) {
+	protected function camelbackAssociationKeys(array &$associations): void {
+		foreach ($associations as &$la_association) {
 			if (!empty($la_association['foreignKey'])) {
 				if (is_string($la_association['foreignKey'])) {
 					$la_association['foreignKey'] = Inflector::variable($la_association['foreignKey']);
 				}
 				elseif (is_array($la_association['foreignKey'])) {
-					array_walk($la_association['foreignKey'], function (&$as_field): void {
-						$as_field = Inflector::variable($as_field);
+					array_walk($la_association['foreignKey'], function (&$field): void {
+						/** @noinspection PhpVariableNamingConventionInspection */
+						$field = Inflector::variable($field);
 					});
 				}
 			}
@@ -381,15 +373,13 @@ class ModelCommand extends BaseModelCommand {
 	 * {@inheritDoc}
 	 *
 	 * Extends the parent-method with a check for column type 'json'.
-	 *
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	protected function getEmptyMethod(string $as_fieldName, array $aa_metaData, string $as_prefix = 'allow'): string {
-		if ($aa_metaData['type'] == 'json') {
-			return $as_prefix . 'EmptyArray';
+	protected function getEmptyMethod(string $fieldName, array $metaData, string $prefix = 'allow'): string {
+		if ($metaData['type'] == 'json') {
+			return $prefix . 'EmptyArray';
 		}
 
 
-		return parent::getEmptyMethod($as_fieldName, $aa_metaData, $as_prefix);
+		return parent::getEmptyMethod($fieldName, $metaData, $prefix);
 	}
 }

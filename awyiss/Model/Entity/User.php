@@ -172,11 +172,11 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 	/**
 	 * @inheritDoc
 	 */
-	public function scopeIsAccessible(string $as_scope, array $aa_additionalData = [], array|string ...$ax_identifier): bool {
+	public function scopeIsAccessible(string $scope, array $additionalData = [], array|string ...$identifier): bool {
 		$lo_permissionCollection = $this->getPermissionCollection();
 
 
-		return $lo_permissionCollection->scopeIsAccessible($as_scope, $aa_additionalData, ...$ax_identifier);
+		return $lo_permissionCollection->scopeIsAccessible($scope, $additionalData, ...$identifier);
 	}
 
 
@@ -188,22 +188,22 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 			$lo_table = FactoryLocator::get('Table')->get('UserConfiguration');
 			$lo_records = $lo_table->find()->where(['user_id' => $this->id])->all();
 
-			$this->userConfiguration = $lo_records->groupBy(function (UserConfiguration $ao_entity) {
-				return ConfigOptionsProvider::sanitizeScope($ao_entity->scope);
-			})->map(function (array $aa_records) {
-				return Hash::expand(collection($aa_records)->indexBy(function (UserConfiguration $ao_entity) {
-					$la_identifier = array_map(function (string $as_identifier) {
-						return ConfigOptionsProvider::sanitizeIdentifier($as_identifier);
-					}, explode('.', $ao_entity->identifier));
+			$this->userConfiguration = $lo_records->groupBy(function (UserConfiguration $entity) {
+				return ConfigOptionsProvider::sanitizeScope($entity->scope);
+			})->map(function (array $records) {
+				return Hash::expand(collection($records)->indexBy(function (UserConfiguration $entity) {
+					$la_identifier = array_map(function (string $identifier) {
+						return ConfigOptionsProvider::sanitizeIdentifier($identifier);
+					}, explode('.', $entity->identifier));
 
 
 					return implode('.', $la_identifier);
-				})->map(function (UserConfiguration $ao_entity) {
+				})->map(function (UserConfiguration $entity) {
 					return ConfigOptionsProvider::typecastConfigValue(
-						$ao_entity->scope,
+						$entity->scope,
 						Awyiss::REALM_BACKEND,
-						$ao_entity->identifier,
-						$ao_entity->value
+						$entity->identifier,
+						$entity->value
 					);
 				})->toArray());
 			})->toArray();
@@ -248,15 +248,15 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 	/**
 	 * Reset the permission collection when usergroups change
 	 *
-	 * @param array|null $aa_usergroups
+	 * @param array|null $usergroups
 	 * @return array|null
 	 * @see \Awyiss\Model\Entity\User::$usergroups
 	 */
-	protected function _setUsergroups(?array $aa_usergroups): ?array {
+	protected function _setUsergroups(?array $usergroups): ?array {
 		unset($this->permissionCollection);
 
 
-		return $aa_usergroups;
+		return $usergroups;
 	}
 
 
@@ -264,12 +264,12 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 	 * If the provided password is not an empty string, hash it.
 	 * Otherwise, set it to null
 	 *
-	 * @param string|null $as_password
+	 * @param string|null $password
 	 * @return string|null
 	 * @see \Awyiss\Model\Entity\User::$password
 	 */
-	protected function _setPassword(?string $as_password): ?string {
-		if (empty($as_password)) {
+	protected function _setPassword(?string $password): ?string {
+		if (empty($password)) {
 			return null;
 		}
 
@@ -277,6 +277,6 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 		$lo_hasher = new DefaultPasswordHasher();
 
 
-		return $lo_hasher->hash($as_password);
+		return $lo_hasher->hash($password);
 	}
 }

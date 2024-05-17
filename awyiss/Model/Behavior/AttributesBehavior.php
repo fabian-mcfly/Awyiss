@@ -91,10 +91,10 @@ class AttributesBehavior extends Behavior {
 	/**
 	 * Constructor hook method.
 	 *
-	 * @param array<string, mixed> $aa_config The configuration settings provided to this behavior.
+	 * @param array<string, mixed> $config The configuration settings provided to this behavior.
 	 * @return void
 	 */
-	public function initialize(array $aa_config): void {
+	public function initialize(array $config): void {
 		if ($this->getConfig('isAttributesTable')) {
 			return;
 		}
@@ -139,19 +139,19 @@ class AttributesBehavior extends Behavior {
 	/**
 	 * Get all attribute fields from an array.
 	 *
-	 * @param array $aa_fields
-	 * @param bool $ab_inlcudeBaseFields
+	 * @param array $fields
+	 * @param bool $inlcudeBaseFields
 	 * @return array
 	 */
-	public function extractAttributeFields(array $aa_fields, bool $ab_inlcudeBaseFields = false): array {
+	public function extractAttributeFields(array $fields, bool $inlcudeBaseFields = false): array {
 		$la_columns = [];
 
-		foreach ($aa_fields as $ls_column) {
+		foreach ($fields as $ls_column) {
 			if (str_starts_with($ls_column, 'attributes.')) {
 				$la_columns[] = substr($ls_column, 11);
 			}
 
-			if ($ab_inlcudeBaseFields && !str_contains($ls_column, '.')) {
+			if ($inlcudeBaseFields && !str_contains($ls_column, '.')) {
 				$la_columns[] = $ls_column;
 			}
 		}
@@ -164,12 +164,12 @@ class AttributesBehavior extends Behavior {
 	/**
 	 * Adds where clauses for the provided list of attribute fields
 	 *
-	 * @param \Cake\ORM\Query\SelectQuery $ao_query
+	 * @param \Cake\ORM\Query\SelectQuery $query
 	 * @param \Awyiss\Model\Entity $entity
 	 * @param array $keys
 	 * @return \Cake\ORM\Query\SelectQuery
 	 */
-	public function findWithMatchingAttributes(SelectQuery $ao_query, Entity $entity, array $keys): SelectQuery {
+	public function findWithMatchingAttributes(SelectQuery $query, Entity $entity, array $keys): SelectQuery {
 		/** @var \Awyiss\Model\Table $lo_table */
 		$lo_table = $this->table();
 		$ls_attributesTable = $lo_table->getAttributesTableName(true);
@@ -177,7 +177,7 @@ class AttributesBehavior extends Behavior {
 
 		$lo_attributes = $entity->get('attributes');
 		if (!$lo_attributes) {
-			return $ao_query;
+			return $query;
 		}
 
 		foreach ($this->extractAttributeFields($keys, true) as $ls_field) {
@@ -195,16 +195,16 @@ class AttributesBehavior extends Behavior {
 		}
 
 		if ($la_conditions) {
-			$ao_query->where($la_conditions);
+			$query->where($la_conditions);
 		}
 
 
-		return $ao_query;
+		return $query;
 	}
 
 
 	/**
-	 * @param bool $ab_camelized
+	 * @param bool $camelized
 	 * @return \Awyiss\Model\Table
 	 */
 	public function getAttributesTable(): Table {
@@ -214,12 +214,12 @@ class AttributesBehavior extends Behavior {
 
 
 	/**
-	 * @param bool $ab_camelized
+	 * @param bool $camelized
 	 * @return string
 	 * @noinspection PhpUnused
 	 */
-	public function getAttributesTableName(bool $ab_camelized = false): string {
-		return $ab_camelized ? Inflector::camelize($this->attributesTable) : $this->attributesTable;
+	public function getAttributesTableName(bool $camelized = false): string {
+		return $camelized ? Inflector::camelize($this->attributesTable) : $this->attributesTable;
 	}
 
 
@@ -268,8 +268,8 @@ class AttributesBehavior extends Behavior {
 			...$lo_attributesTable->getAvailableFieldsets(),
 		])));
 
-		static::$attributes = $lo_attributesQuery->all()->groupBy('scope')->map(function ($aa_attributes) {
-			return collection($aa_attributes)->indexBy('identifier')->toArray();
+		static::$attributes = $lo_attributesQuery->all()->groupBy('scope')->map(function ($attributes) {
+			return collection($attributes)->indexBy('identifier')->toArray();
 		})->toArray();
 
 		return static::$attributes[ $ls_scope ] ?? [];
@@ -280,19 +280,19 @@ class AttributesBehavior extends Behavior {
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 * Adds `validateValue()`-checks for each attribute
 	 *
-	 * @param Event $ao_event
-	 * @param RulesChecker|BaseRulesChecker $ao_rules The rules object to be modified.
+	 * @param Event $event
+	 * @param RulesChecker|BaseRulesChecker $rules The rules object to be modified.
 	 * @return RulesChecker
 	 * @throws \ReflectionException
 	 * @see \Awyiss\Attribute\AttributeOptions::validateValue
 	 */
-	public function buildRules(Event $ao_event, RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
+	public function buildRules(Event $event, RulesChecker|BaseRulesChecker $rules): RulesChecker {
 		if (!$this->getConfig('isAttributesTable')) {
-			return $ao_rules;
+			return $rules;
 		}
 
 		/** @var \Awyiss\Model\Table $lo_subject */
-		$lo_subject = $ao_event->getSubject();
+		$lo_subject = $event->getSubject();
 		$ls_source = substr($lo_subject->getTable(), 11);
 
 		/** @var AttributeOptionsProvider $ls_attributeOptionsProvider */
@@ -303,8 +303,8 @@ class AttributesBehavior extends Behavior {
 		foreach ($this->getAttributes() as $lo_attribute) {
 			if (!isset($lo_attributeOptions[ $lo_attribute->identifier ])) {
 				if ($lo_attribute->required) {
-					$ao_rules->add(function (Entity $ao_entity/*, array $aa_options*/) use ($lo_attribute): bool|string {
-						return !empty($ao_entity->{$lo_attribute->identifier});
+					$rules->add(function (Entity $entity/*, array $options*/) use ($lo_attribute): bool|string {
+						return !empty($entity->{$lo_attribute->identifier});
 					}, 'validValue' . Inflector::camelize($lo_attribute->identifier), [
 						'errorField' => $lo_attribute->identifier,
 						'message' => __df($ls_source, 'attributes', 'error_valid_value'),
@@ -314,12 +314,12 @@ class AttributesBehavior extends Behavior {
 				continue;
 			}
 
-			$ao_rules->add(function (Entity $ao_entity/*, array $aa_options*/) use ($lo_attribute, $lo_attributeOptions): bool|string {
+			$rules->add(function (Entity $entity/*, array $options*/) use ($lo_attribute, $lo_attributeOptions): bool|string {
 				/**
 				 * @noinspection PhpUndefinedMethodInspection
 				 * @noinspection PhpPossiblePolymorphicInvocationInspection
 				 */
-				return $lo_attributeOptions->validateValue($lo_attribute->identifier, $ao_entity->get($lo_attribute->identifier), $ao_entity->getEntity());
+				return $lo_attributeOptions->validateValue($lo_attribute->identifier, $entity->get($lo_attribute->identifier), $entity->getEntity());
 			}, 'validValue' . Inflector::camelize($lo_attribute->identifier), [
 				'errorField' => $lo_attribute->identifier,
 				'message' => __df($ls_source, 'attributes', 'error_valid_value'),
@@ -327,60 +327,60 @@ class AttributesBehavior extends Behavior {
 		}
 
 
-		return $ao_rules;
+		return $rules;
 	}
 
 
 	/**
-	 * @param EventInterface $ao_event
-	 * @param SelectQuery $ao_query
-	 * @param ArrayObject $ao_options
-	 * @param bool $ab_primary
+	 * @param EventInterface $event
+	 * @param SelectQuery $query
+	 * @param ArrayObject $options
+	 * @param bool $primary
 	 * @return void
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function beforeFind(EventInterface $ao_event, SelectQuery $ao_query, ArrayObject $ao_options, bool $ab_primary): void {
+	public function beforeFind(EventInterface $event, SelectQuery $query, ArrayObject $options, bool $primary): void {
 		if ($this->getConfig('isAttributesTable') || !$this->hasAttributes()) {
 			return;
 		}
 
-		$la_options = Hash::merge($this->getConfig(), Hash::get($ao_options, 'attributes'));
+		$la_options = Hash::merge($this->getConfig(), Hash::get($options, 'attributes'));
 
 		if ($la_options['skip'] === true) {
 			return;
 		}
 
-		/*if ($ao_query->isEagerLoaded()) {
+		/*if ($query->isEagerLoaded()) {
 			throw new RuntimeException('Eager loaded associations should skip the attributes behavior');
 		}*/
 
-		$lb_containsI18n = isset($ao_query->getContain()['I18n']);
+		$lb_containsI18n = isset($query->getContain()['I18n']);
 		if ($lb_containsI18n) {
-			$ao_query->contain([
+			$query->contain([
 				$this->getAttributesTableName(true) => [
 					'finder' => 'translations',
 				],
 			]);
 		}
 		else {
-			$ao_query->contain([
+			$query->contain([
 				$this->getAttributesTableName(true),
 			]);
 		}
 
-		$ao_query->mapReduce(function (array|Entity $ao_entity, int $ai_key, MapReduce $ao_mapReduce) use ($ao_query): void {
-			if (!is_a($ao_entity, Entity::class)) {
-				$ao_mapReduce->emit($ao_entity);
+		$query->mapReduce(function (array|Entity $entity, int $key, MapReduce $mapReduce) use ($query): void {
+			if (!is_a($entity, Entity::class)) {
+				$mapReduce->emit($entity);
 
 
 				return;
 			}
 
-			if (!$ao_entity->attributes) {
+			if (!$entity->attributes) {
 				/** @var \Awyiss\ORM\Association\HasOne|\Awyiss\Model\Table $lo_association */
 				$lo_association = $this->table()->{$this->getAttributesTableName(true)};
 
-				$ao_entity->attributes = $lo_association->newDefaultEntity();
+				$entity->attributes = $lo_association->newDefaultEntity();
 
 				/** @var static $ls_associationEntityClass */
 				$ls_associationEntityClass = $lo_association->getEntityClass();
@@ -388,42 +388,42 @@ class AttributesBehavior extends Behavior {
 				/** @noinspection PhpUndefinedMethodInspection */
 				$ls_foreignKey = $ls_associationEntityClass::mapField($lo_association->getForeignKey());
 
-				$ao_entity->initAttributesField($lo_association, $ls_foreignKey);
+				$entity->initAttributesField($lo_association, $ls_foreignKey);
 			}
 
 			/**
 			 * @noinspection PhpUndefinedMethodInspection
 			 * @noinspection PhpPossiblePolymorphicInvocationInspection
 			 */
-			if (isset($ao_entity->attributes) && !$ao_entity->attributes->getEntity()) {
+			if (isset($entity->attributes) && !$entity->attributes->getEntity()) {
 				/**
 				 * @noinspection PhpUndefinedMethodInspection
 				 * @noinspection PhpPossiblePolymorphicInvocationInspection
 				 */
-				$ao_entity->attributes->setEntity($ao_entity);
+				$entity->attributes->setEntity($entity);
 			}
 
-			$ao_mapReduce->emit($ao_entity);
+			$mapReduce->emit($entity);
 		});
 	}
 
 
 	/**
-	 * @param EventInterface $ao_event
-	 * @param \Awyiss\Model\Entity|\Cake\ORM\Entity $ao_entity
-	 * @param \ArrayObject $ao_options
+	 * @param EventInterface $event
+	 * @param \Awyiss\Model\Entity|\Cake\ORM\Entity $entity
+	 * @param \ArrayObject $options
 	 * @return void
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function beforeCopy(EventInterface $ao_event, Entity|BaseEntity $ao_entity, ArrayObject $ao_options): void {
-		$lo_attributes = $ao_entity->get('attributes');
+	public function beforeCopy(EventInterface $event, Entity|BaseEntity $entity, ArrayObject $options): void {
+		$lo_attributes = $entity->get('attributes');
 
 		if ($this->getConfig('isAttributesTable') || !$lo_attributes) {
 			return;
 		}
 
 		/** @var \Awyiss\Model\Table $lo_table */
-		$lo_table = $ao_event->getSubject();
+		$lo_table = $event->getSubject();
 
 		$lo_attributes->unset((array)$lo_table->getPrimaryKey());
 		$lo_attributes->setNew(true);
@@ -431,12 +431,12 @@ class AttributesBehavior extends Behavior {
 
 
 	/**
-	 * @param EventInterface $ao_event
-	 * @param \Cake\Datasource\EntityInterface $ao_entity
+	 * @param EventInterface $event
+	 * @param \Cake\Datasource\EntityInterface $entity
 	 * @return void
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function beforeSave(EventInterface $ao_event, Entity|BaseEntity $ao_entity/*, ArrayObject $ao_options*/): void {
+	public function beforeSave(EventInterface $event, Entity|BaseEntity $entity/*, ArrayObject $options*/): void {
 		if (!$this->getConfig('isAttributesTable')) {
 			return;
 		}
@@ -446,13 +446,13 @@ class AttributesBehavior extends Behavior {
 				continue;
 			}
 
-			if (!$ao_entity->get($lo_attribute->identifier)) {
-				$ao_entity->setDirty($lo_attribute->identifier, false);
+			if (!$entity->get($lo_attribute->identifier)) {
+				$entity->setDirty($lo_attribute->identifier, false);
 			}
 			else {
-				$ao_entity->set(
+				$entity->set(
 					$lo_attribute->identifier,
-					password_hash($ao_entity->get($lo_attribute->identifier), PASSWORD_BCRYPT, ['cost' => 12])
+					password_hash($entity->get($lo_attribute->identifier), PASSWORD_BCRYPT, ['cost' => 12])
 				);
 			}
 		}
@@ -460,23 +460,23 @@ class AttributesBehavior extends Behavior {
 
 
 	/**
-	 * @param EventInterface $ao_event
-	 * @param \Cake\Datasource\EntityInterface $ao_entity
+	 * @param EventInterface $event
+	 * @param \Cake\Datasource\EntityInterface $entity
 	 * @return void
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function afterSave(EventInterface $ao_event, Entity|BaseEntity $ao_entity/*, ArrayObject $ao_options*/): void {
+	public function afterSave(EventInterface $event, Entity|BaseEntity $entity/*, ArrayObject $options*/): void {
 		if (!$this->hasAttributes()) {
 			return;
 		}
 
 		//If the `attributes`-property was set to false, delete the existings attributes for this entity
-		if (!$ao_entity->isNew() && !$ao_entity->get('attributes')) {
-			$this->table()->loadInto($ao_entity, [$this->getAttributesTableName(true)]);
+		if (!$entity->isNew() && !$entity->get('attributes')) {
+			$this->table()->loadInto($entity, [$this->getAttributesTableName(true)]);
 
-			if (!empty($ao_entity->attributes) && !$ao_entity->attributes->isNew()) {
-				$this->getAttributesTable()->delete($ao_entity->attributes);
-				unset($ao_entity->attributes);
+			if (!empty($entity->attributes) && !$entity->attributes->isNew()) {
+				$this->getAttributesTable()->delete($entity->attributes);
+				unset($entity->attributes);
 			}
 		}
 	}

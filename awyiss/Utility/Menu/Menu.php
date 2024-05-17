@@ -30,18 +30,20 @@ class Menu {
 
 
 	/**
-	 * @param object|iterable $ax_items
-	 * @param array $aa_config
-	 * @param int $ai_level
+	 * @param object|iterable $items
+	 * @param array $config
+	 * @param int $level
 	 * @throws \ReflectionException
 	 */
-	public function __construct(object|iterable $ax_items, array $aa_config = [], int $ai_level = 1) {
-		$la_items = $ax_items;
-		if (!is_array($ax_items)) {
-			$la_items = (array)$ax_items;
+	public function __construct(object|iterable $items, array $config = [], int $level = 1) {
+		$la_items = $items;
+		$la_config = $config;
+
+		if (!is_array($items)) {
+			$la_items = (array)$items;
 		}
 
-		$this->level = $ai_level;
+		$this->level = $level;
 
 		foreach ($la_items as $lx_identifier => $lo_item) {
 			if (!is_string($lx_identifier) && isset($lo_item->id)) {
@@ -52,47 +54,47 @@ class Menu {
 				$lo_item->identifier = $lx_identifier;
 			}
 
-			$this->items[ $lx_identifier ] = new MenuItem($lo_item, $aa_config, $ai_level);
+			$this->items[ $lx_identifier ] = new MenuItem($lo_item, $la_config, $level);
 		}
 
-		if (isset($aa_config['identity'])) {
-			$this->identity = $aa_config['identity'];
+		if (isset($la_config['identity'])) {
+			$this->identity = $la_config['identity'];
 
 			//Make sure to not set the identity in the config to avoid confusion
-			unset($aa_config['identity']);
+			unset($la_config['identity']);
 		}
 
-		$this->setConfig($aa_config);
+		$this->setConfig($la_config);
 	}
 
 
 	/**
-	 * @param array $aa_entries
-	 * @param string $as_identifier
-	 * @param bool $ab_determineVisibility
+	 * @param array $entries
+	 * @param string $identifier
+	 * @param bool $determineVisibility
 	 * @return void
 	 * @throws \ReflectionException
 	 */
-	public function appendEntries(array $aa_entries, string $as_identifier, bool $ab_determineVisibility = true): void {
-		$lo_item = $this->getItem($as_identifier);
+	public function appendEntries(array $entries, string $identifier, bool $determineVisibility = true): void {
+		$lo_item = $this->getItem($identifier);
 
 		if (!$lo_item) {
-			throw new RuntimeException(sprintf('Cannot append entries to an unknown identifier. `%s` given.', $as_identifier));
+			throw new RuntimeException(sprintf('Cannot append entries to an unknown identifier. `%s` given.', $identifier));
 		}
 
-		if (!$aa_entries) {
+		if (!$entries) {
 			throw new RuntimeException('Cannot append empty entries.');
 		}
 
 		$lo_subMenu = $lo_item->getChildren();
 		if (!$lo_subMenu) {
-			$lo_item->setChildren($aa_entries);
+			$lo_item->setChildren($entries);
 		}
 		else {
-			$lo_subMenu->insertEntriesAfter($aa_entries);
+			$lo_subMenu->insertEntriesAfter($entries);
 		}
 
-		if ($ab_determineVisibility) {
+		if ($determineVisibility) {
 			//Only after all elements are updated, the visibility can be calculated
 			$this->determineVisibility();
 		}
@@ -100,13 +102,13 @@ class Menu {
 
 
 	/**
-	 * @param mixed $ax_menuData
+	 * @param mixed $menuData
 	 * @return $this
 	 * @throws \ReflectionException
 	 * @see awyiss/config/menu-extension.schema.json
 	 */
-	public function extend(iterable|object $ax_menuData): static {
-		$la_menuData = (array)$ax_menuData;
+	public function extend(iterable|object $menuData): static {
+		$la_menuData = (array)$menuData;
 
 		foreach ($la_menuData['appendTo'] ?? [] as $ls_identifier => $lx_entries) {
 			$this->appendEntries((array)$lx_entries, $ls_identifier, false);
@@ -125,14 +127,14 @@ class Menu {
 
 
 	/**
-	 * @param string|int $ax_id
-	 * @param bool $ab_deep
+	 * @param string|int $id
+	 * @param bool $deep
 	 * @return \Awyiss\Utility\Menu\MenuItem|null
 	 */
-	public function getItem(string|int $ax_id, bool $ab_deep = true): ?MenuItem {
-		$la_items = $ab_deep ? $this->items() : $this->items;
+	public function getItem(string|int $id, bool $deep = true): ?MenuItem {
+		$la_items = $deep ? $this->items() : $this->items;
 		foreach ($la_items as $lx_identifier => $lo_item) {
-			if ($lx_identifier === $ax_id) {
+			if ($lx_identifier === $id) {
 				return $lo_item;
 			}
 		}
@@ -151,25 +153,25 @@ class Menu {
 
 
 	/**
-	 * @param array $aa_entries
-	 * @param string|null $as_identifier
-	 * @param bool $ab_determineVisibility
+	 * @param array $entries
+	 * @param string|null $identifier
+	 * @param bool $determineVisibility
 	 * @return void
 	 * @throws \ReflectionException
 	 */
-	public function insertEntriesAfter(array $aa_entries, ?string $as_identifier = null, bool $ab_determineVisibility = true): void {
-		if ($as_identifier) {
-			if (!isset($this->items[ $as_identifier ]) && !$this->getItem($as_identifier)) {
-				throw new RuntimeException(sprintf('Cannot insert entries after an unknown identifier. `%s` given.', $as_identifier));
+	public function insertEntriesAfter(array $entries, ?string $identifier = null, bool $determineVisibility = true): void {
+		if ($identifier) {
+			if (!isset($this->items[ $identifier ]) && !$this->getItem($identifier)) {
+				throw new RuntimeException(sprintf('Cannot insert entries after an unknown identifier. `%s` given.', $identifier));
 			}
 		}
 
-		$lo_newMenu = new static($aa_entries, $this->getConfig() + ['identity' => $this->identity], $this->level);
+		$lo_newMenu = new static($entries, $this->getConfig() + ['identity' => $this->identity], $this->level);
 
-		if (!$as_identifier) {
+		if (!$identifier) {
 			$this->items = $lo_newMenu->getItems() + $this->getItems();
 
-			if ($ab_determineVisibility) {
+			if ($determineVisibility) {
 				//Only after all elements are updated, the visibility can be calculated
 				$this->determineVisibility();
 			}
@@ -179,7 +181,7 @@ class Menu {
 		}
 
 
-		if (!isset($this->items[ $as_identifier ])) {
+		if (!isset($this->items[ $identifier ])) {
 			/** @var array<MenuItem> $lo_items */
 			$lo_items = $this->items();
 			foreach ($lo_items as $lo_item) {
@@ -189,14 +191,14 @@ class Menu {
 					continue;
 				}
 
-				if ($lo_children->getItem($as_identifier, false)) {
-					$lo_children->insertEntriesAfter($aa_entries, $as_identifier, false);
+				if ($lo_children->getItem($identifier, false)) {
+					$lo_children->insertEntriesAfter($entries, $identifier, false);
 
 					break;
 				}
 			}
 
-			if ($ab_determineVisibility) {
+			if ($determineVisibility) {
 				//Only after all elements are updated, the visibility can be calculated
 				$this->determineVisibility();
 			}
@@ -208,7 +210,7 @@ class Menu {
 		$li_count = 0;
 		$la_items = $this->getItems();
 		foreach ($la_items as $lx_identifier => $lo_item) {
-			if ($lx_identifier === $as_identifier) {
+			if ($lx_identifier === $identifier) {
 				break;
 			}
 			$li_count++;
@@ -216,7 +218,7 @@ class Menu {
 
 		$this->items = array_slice($la_items, 0, $li_count + 1, true) + $lo_newMenu->getItems() + array_slice($la_items, $li_count);
 
-		if ($ab_determineVisibility) {
+		if ($determineVisibility) {
 			//Only after all elements are updated, the visibility can be calculated
 			$this->determineVisibility();
 		}
@@ -226,11 +228,11 @@ class Menu {
 	/**
 	 * @return Generator|MenuItem
 	 */
-	public function items(int $ai_maxLevel = -1): Generator {
+	public function items(int $maxLevel = -1): Generator {
 		foreach ($this->items as $lx_identifier => $lo_item) {
 			yield $lx_identifier => $lo_item;
 
-			foreach ($lo_item->children($ai_maxLevel) as $lx_childIdentifier => $lo_child) {
+			foreach ($lo_item->children($maxLevel) as $lx_childIdentifier => $lo_child) {
 				yield $lx_childIdentifier => $lo_child;
 			}
 		}
@@ -238,14 +240,14 @@ class Menu {
 
 
 	/**
-	 * @param \Awyiss\Authorization\IdentityPermissionsInterface $ao_identity
+	 * @param \Awyiss\Authorization\IdentityPermissionsInterface $identity
 	 * @return $this
 	 * @throws \ReflectionException
 	 */
-	public function setIdentity(IdentityPermissionsInterface $ao_identity): static {
+	public function setIdentity(IdentityPermissionsInterface $identity): static {
 		foreach ($this->items() as $lo_item) {
 			//Don't let MenuItem::setIdentity loop through nested children since $this->items() already iterates over ALL items
-			$lo_item->setIdentity($ao_identity, false);
+			$lo_item->setIdentity($identity, false);
 		}
 
 		//Only after all elements are updated, the visibility can be calculated

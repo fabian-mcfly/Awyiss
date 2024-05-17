@@ -10,12 +10,12 @@
 /**
  * {{ name }} Model
  *
- * @method \{{ namespace }}\Model\Entity\{{ name|singularize }} newDefaultEntity(array $aa_additionalData = [], array $aa_options = [])
- * @method \Cake\Collection\CollectionInterface|null getNestedChildren(EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
- * @method \Cake\Collection\CollectionInterface|null getChildren(EntityInterface $ao_entity, array $aa_options = [])
- * @method \{{ namespace }}\Model\Entity\{{ name|singularize }} getParent(EntityInterface $ao_entity, array $aa_options = [])
- * @method \Cake\Collection\CollectionInterface|null getParents(EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
- * @method \Cake\Collection\CollectionInterface getPossibleParents(\Awyiss\Model\Entity $ao_entity, \Cake\Collection\CollectionInterface $ao_threadedEntities)
+ * @method \{{ namespace }}\Model\Entity\{{ name|singularize }} newDefaultEntity(array $additionalData = [], array $options = [])
+ * @method \Cake\Collection\CollectionInterface|null getNestedChildren(EntityInterface $entity, array $options = [], int $currentLevel = 0)
+ * @method \Cake\Collection\CollectionInterface|null getChildren(EntityInterface $entity, array $options = [])
+ * @method \{{ namespace }}\Model\Entity\{{ name|singularize }} getParent(EntityInterface $entity, array $options = [])
+ * @method \Cake\Collection\CollectionInterface|null getParents(EntityInterface $entity, array $options = [], int $currentLevel = 0)
+ * @method \Cake\Collection\CollectionInterface getPossibleParents(\Awyiss\Model\Entity $entity, \Cake\Collection\CollectionInterface $threadedEntities)
  */
 class {{ name }}Table extends GenericDatatablesTable {
 {% set userConstants = fileBuilder.classBuilder.userConstants([]) %}

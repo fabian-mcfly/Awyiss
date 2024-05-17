@@ -42,22 +42,22 @@ class MenusListener implements EventListenerInterface {
 
 
 	/**
-	 * @param \Cake\Event\Event $ao_event
-	 * @param \Awyiss\Model\Entity\Menu $ao_entity
-	 * @param \ArrayObject $ao_options
+	 * @param \Cake\Event\Event $event
+	 * @param \Awyiss\Model\Entity\Menu $entity
+	 * @param \ArrayObject $options
 	 * @return void
 	 * @throws \Exception
 	 */
-	public function afterCopy(Event $ao_event, Menu $ao_entity, ArrayObject $ao_options): void {
-		if ($ao_options['_primary'] !== true) {
+	public function afterCopy(Event $event, Menu $entity, ArrayObject $options): void {
+		if ($options['_primary'] !== true) {
 			return;
 		}
 
 		/** @var \Awyiss\Model\Table\MenusTable $lo_table */
-		$lo_table = $ao_event->getSubject();
+		$lo_table = $event->getSubject();
 
 		/** @var \Awyiss\Model\Entity\Menu $lo_originalEntity */
-		$lo_originalEntity = $ao_entity->originalEntity;
+		$lo_originalEntity = $entity->originalEntity;
 
 		$lo_entries = $lo_table->AllMenuEntries->find('threaded', nestingKey: 'childMenuEntries')->where(['menu_id' => $lo_originalEntity->id])->all();
 
@@ -68,7 +68,7 @@ class MenusListener implements EventListenerInterface {
 			$lo_menuEntry->unset(['menuId']);
 			$lo_menuEntry->setNew(true);
 
-			$lo_menuEntry->menuId = $ao_entity->id;
+			$lo_menuEntry->menuId = $entity->id;
 		}
 
 		$lo_table->MenuEntries->saveMany($lo_entries->toList(), [
@@ -78,48 +78,48 @@ class MenusListener implements EventListenerInterface {
 
 
 	/**
-	 * @param \Cake\Event\Event $ao_event
+	 * @param \Cake\Event\Event $event
 	 * @return void
 	 */
-	public function beforeSoftDelete(Event $ao_event): void {
+	public function beforeSoftDelete(Event $event): void {
 		/** @var \Awyiss\Model\Table\MenusTable $lo_table */
-		$lo_table = $ao_event->getSubject();
+		$lo_table = $event->getSubject();
 
 		$lo_table->AllMenuEntries->disableCascadeCallbacks();
 	}
 
 
 	/**
-	 * @param \Cake\Event\Event $ao_event
+	 * @param \Cake\Event\Event $event
 	 * @return void
 	 */
-	public function beforeDelete(Event $ao_event): void {
+	public function beforeDelete(Event $event): void {
 		/** @var \Awyiss\Model\Table\MenusTable $lo_table */
-		$lo_table = $ao_event->getSubject();
+		$lo_table = $event->getSubject();
 
 		$lo_table->AllMenuEntries->disableCascadeCallbacks();
 	}
 
 
 	/**
-	 * @param \Cake\Event\Event $ao_event
+	 * @param \Cake\Event\Event $event
 	 * @return void
 	 */
-	public function afterSoftDelete(Event $ao_event): void {
+	public function afterSoftDelete(Event $event): void {
 		/** @var \Awyiss\Model\Table\MenusTable $lo_table */
-		$lo_table = $ao_event->getSubject();
+		$lo_table = $event->getSubject();
 
 		$lo_table->AllMenuEntries->enableCascadeCallbacks();
 	}
 
 
 	/**
-	 * @param \Cake\Event\Event $ao_event
+	 * @param \Cake\Event\Event $event
 	 * @return void
 	 */
-	public function afterDelete(Event $ao_event): void {
+	public function afterDelete(Event $event): void {
 		/** @var \Awyiss\Model\Table\MenusTable $lo_table */
-		$lo_table = $ao_event->getSubject();
+		$lo_table = $event->getSubject();
 
 		$lo_table->AllMenuEntries->enableCascadeCallbacks();
 	}

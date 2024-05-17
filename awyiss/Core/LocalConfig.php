@@ -19,17 +19,17 @@ class LocalConfig extends Configure {
 	 * Used to read information stored in Configure for a given scope.
 	 * Defaults to the current controller.
 	 *
-	 * @param array|string|null $ax_path
-	 * @param mixed|null $ax_default
-	 * @param string|null $as_scope
+	 * @param array|string|null $path
+	 * @param mixed|null $default
+	 * @param string|null $scope
 	 * @return mixed
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public static function read(string|array|null $ax_path = null, mixed $ax_default = null, ?string $as_scope = null): mixed {
-		$ls_scope = $as_scope ?? Router::getRequest()->getParam('controller');
+	public static function read(string|array|null $path = null, mixed $default = null, ?string $scope = null): mixed {
+		$ls_scope = $scope ?? Router::getRequest()->getParam('controller');
 
-		if ($ax_path) {
-			$la_path = is_array($ax_path) ? $ax_path : explode('.', $ax_path);
+		if ($path) {
+			$la_path = is_array($path) ? $path : explode('.', $path);
 		}
 		else {
 			$la_path = [];
@@ -43,7 +43,7 @@ class LocalConfig extends Configure {
 		);
 
 
-		return parent::read(static::stringify($la_path), $ax_default);
+		return parent::read(static::stringify($la_path), $default);
 	}
 
 
@@ -51,18 +51,18 @@ class LocalConfig extends Configure {
 	 * Used to store a dynamic variable in Configure for a given scope.
 	 * Defaults to the current controller.
 	 *
-	 * @param array|string $ax_config
-	 * @param mixed|null $ax_value
-	 * @param string|null $as_scope
+	 * @param array|string $config
+	 * @param mixed|null $value
+	 * @param string|null $scope
 	 * @return void
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public static function write(array|string $ax_config, mixed $ax_value = null, ?string $as_scope = null): void {
-		$ls_scope = $as_scope ?? Router::getRequest()->getParam('controller');
+	public static function write(array|string $config, mixed $value = null, ?string $scope = null): void {
+		$ls_scope = $scope ?? Router::getRequest()->getParam('controller');
 
-		$la_config = $ax_config;
-		if (!is_array($ax_config)) {
-			$la_config = [$ax_config => $ax_value];
+		$la_config = $config;
+		if (!is_array($config)) {
+			$la_config = [$config => $value];
 		}
 
 		$la_localConfig = [];
@@ -79,17 +79,17 @@ class LocalConfig extends Configure {
 			$la_localConfig = Hash::merge($la_localConfig, [static::stringify($la_path) => $lx_value]);
 		}
 
-		parent::write($la_localConfig, $ax_value);
+		parent::write($la_localConfig, $value);
 	}
 
 
 	/**
 	 * CakePHP's Configure::read wants a string... Why?
 	 *
-	 * @param array $aa_path
+	 * @param array $path
 	 * @return string
 	 */
-	public static function stringify(array $aa_path): string {
-		return implode('.', $aa_path);
+	public static function stringify(array $path): string {
+		return implode('.', $path);
 	}
 }

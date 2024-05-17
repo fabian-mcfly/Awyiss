@@ -14,7 +14,7 @@ use Cake\Validation\Validator;
  * SlugHistory Model
  *
  * @property \Awyiss\Model\Table\PagesTable&\Awyiss\ORM\Association\BelongsTo $Pages
- * @method \Awyiss\Model\Entity\SlugHistory newDefaultEntity(array $aa_additionalData = [], array $aa_options = [])
+ * @method \Awyiss\Model\Entity\SlugHistory newDefaultEntity(array $additionalData = [], array $options = [])
  * @noinspection PhpFullyQualifiedNameUsageInspection
  */
 class SlugHistoryTable extends Table {
@@ -48,45 +48,43 @@ class SlugHistoryTable extends Table {
 	/**
 	 * Returns the default validator object.
 	 *
-	 * @param \Cake\Validation\Validator $ao_validator The validator that can be modified to
+	 * @param \Cake\Validation\Validator $validator The validator that can be modified to
 	 * add some rules to it.
 	 * @return \Cake\Validation\Validator
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function validationDefault(Validator $ao_validator): Validator {
-		parent::validationDefault($ao_validator);
+	public function validationDefault(Validator $validator): Validator {
+		parent::validationDefault($validator);
 
-		$ao_validator->notEmptyString('slug');
-		$ao_validator->add('slug', [
+		$validator->notEmptyString('slug');
+		$validator->add('slug', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'maxLength' => ['rule' => ['maxLength', 1024]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
 
-		$ao_validator->notEmptyString('pageId');
-		$ao_validator->add('pageId', [
+		$validator->notEmptyString('pageId');
+		$validator->add('pageId', [
 			'isInteger' => ['rule' => 'isInteger'],
 			'maxLength' => ['rule' => ['maxLength', 11]],
 		]);
 
-		return $ao_validator;
+		return $validator;
 	}
 
 
 	/**
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 *
-	 * @param BaseRulesChecker $ao_rules The rules object to be modified.
-	 * @param \Awyiss\ORM\RulesChecker|BaseRulesChecker $ao_rules The rules object to be modified.
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 * @param BaseRulesChecker $rules The rules object to be modified.
+	 * @param \Awyiss\ORM\RulesChecker|BaseRulesChecker $rules The rules object to be modified.
 	 */
-	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
-		$ao_rules->add($ao_rules->existsIn(['pageId'], 'Pages'), 'validPageId', [
+	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
+		$rules->add($rules->existsIn(['pageId'], 'Pages'), 'validPageId', [
 			'errorField' => 'pageId',
 			'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_page_id'),
 		]);
 
 
-		return $ao_rules;
+		return $rules;
 	}
 }

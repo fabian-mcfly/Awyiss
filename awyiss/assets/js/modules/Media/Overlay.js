@@ -192,6 +192,7 @@ export default class Overlay {
 						Overlay.cropArea = new Crop(cropAreaElement);
 					}
 					else {
+						// noinspection JSUndefinedPropertyAssignment
 						Overlay.cropArea.cropFrame = null;
 					}
 				}
@@ -232,6 +233,7 @@ export default class Overlay {
 				});
 			}
 			else if (formParent.matches('.Media.Edit')) {
+				// noinspection JSUndefinedPropertyAssignment
 				Overlay.cropArea.cropFrame = null;
 				// After updating a file, we need to fetch the media items again
 				this.folderList.querySelector('.Active').dispatchEvent(new Event('click'));

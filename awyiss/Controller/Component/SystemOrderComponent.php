@@ -109,12 +109,12 @@ class SystemOrderComponent extends Component {
 
 
 	/**
-	 * @param \Awyiss\Controller\AppController $ao_controller
-	 * @param \Cake\View\ViewBuilder $ao_view
+	 * @param \Awyiss\Controller\AppController $controller
+	 * @param \Cake\View\ViewBuilder $view
 	 * @return \Cake\Datasource\ResultSetInterface|null
 	 */
-	protected function autoloadRecords(AppController $ao_controller, ViewBuilder $ao_view): ?ResultSetInterface {
-		$ls_action = $ao_controller->getRequest()->getParam('action');
+	protected function autoloadRecords(AppController $controller, ViewBuilder $view): ?ResultSetInterface {
+		$ls_action = $controller->getRequest()->getParam('action');
 		$lx_autoload = $this->getConfig('autoload');
 
 		//Shall we autoload the records?
@@ -123,7 +123,7 @@ class SystemOrderComponent extends Component {
 		}
 
 		$ls_varName = $this->getConfig('entityName');
-		$lo_entity = $ao_view->getVar($ls_varName);
+		$lo_entity = $view->getVar($ls_varName);
 
 		if (!$lo_entity) {
 			return null;
@@ -135,11 +135,11 @@ class SystemOrderComponent extends Component {
 		//Make sure the system_order property of the found entity is a legit one
 		$this->ensurePossibleSystemOrder($lo_entity);
 
-		$lo_request = $ao_controller->getRequest();
+		$lo_request = $controller->getRequest();
 		//When system_order is part of the request data, overwrite it since it might be outdated
 		if ($lo_request->getData('system_order')) {
 			$lo_request = $lo_request->withData('system_order', $lo_entity->systemOrder);
-			$ao_controller->setRequest($lo_request);
+			$controller->setRequest($lo_request);
 		}
 
 
@@ -151,11 +151,11 @@ class SystemOrderComponent extends Component {
 	 * Load records from the same table as the entity's, limited to specified conditions provided by the
 	 * `SystemOrderBehavior::addQueryConditions()` method.
 	 *
-	 * @param EntityInterface $ao_entity
+	 * @param EntityInterface $entity
 	 * @return ResultSetInterface|null
 	 * @see \Awyiss\Model\Behavior\SystemOrderBehavior::addQueryConditions() method
 	 */
-	public function getRecords(EntityInterface $ao_entity): ?ResultSetInterface {
+	public function getRecords(EntityInterface $entity): ?ResultSetInterface {
 		$lo_controller = $this->getController();
 		/** @var \Awyiss\Model\Table $lo_table */
 		$lo_table = $lo_controller->{$this->getConfig('tableName')};
@@ -168,7 +168,7 @@ class SystemOrderComponent extends Component {
 			return null;
 		}
 
-		$lo_systemOrderQuery = $lo_table->addSystemOrderQueryConditions(null, $ao_entity);
+		$lo_systemOrderQuery = $lo_table->addSystemOrderQueryConditions(null, $entity);
 		$lo_systemOrderRecords = $lo_systemOrderQuery->all();
 
 		$this->setConfig('records', $lo_systemOrderRecords);
@@ -179,7 +179,7 @@ class SystemOrderComponent extends Component {
 
 
 	/**
-	 * Make sure the `system_order` of `$ao_entity` is legit.
+	 * Make sure the `system_order` of `$entity` is legit.
 	 * Possible values are everything between 1 and the highest system order of all records provided/set in the config
 	 *
 	 * For Example: for 4 existing records, possible values are [1-4]
@@ -188,25 +188,25 @@ class SystemOrderComponent extends Component {
 	 *
 	 * For example: for 4 existing records, a new entity can have system_order of [1-5]
 	 *
-	 * @param EntityInterface $ao_entity
-	 * @param ResultSet|null $ao_records
+	 * @param EntityInterface $entity
+	 * @param ResultSet|null $records
 	 * @return void
 	 * @noinspection PhpPossiblePolymorphicInvocationInspection
 	 */
-	public function ensurePossibleSystemOrder(EntityInterface $ao_entity, ?ResultSet $ao_records = null): void {
-		if (!$ao_entity->has('systemOrder') || Inflector::variable($this->getConfig('field', 'systemOrder')) !== 'systemOrder') {
+	public function ensurePossibleSystemOrder(EntityInterface $entity, ?ResultSet $records = null): void {
+		if (!$entity->has('systemOrder') || Inflector::variable($this->getConfig('field', 'systemOrder')) !== 'systemOrder') {
 			return;
 		}
 
-		$lo_records = $ao_records ?? $this->getConfig('records') ?? $this->getRecords($ao_entity);
+		$lo_records = $records ?? $this->getConfig('records') ?? $this->getRecords($entity);
 
 		$li_highestSystemOrder = $lo_records->max('systemOrder')?->systemOrder ?? 0;
 
-		if (!$ao_entity->systemOrder || $ao_entity->isNew()) {
-			$ao_entity->set('systemOrder', $li_highestSystemOrder + 1);
+		if (!$entity->systemOrder || $entity->isNew()) {
+			$entity->set('systemOrder', $li_highestSystemOrder + 1);
 		}
-		elseif ($ao_entity->systemOrder > $li_highestSystemOrder) {
-			$ao_entity->set('systemOrder', $li_highestSystemOrder);
+		elseif ($entity->systemOrder > $li_highestSystemOrder) {
+			$entity->set('systemOrder', $li_highestSystemOrder);
 		}
 	}
 }

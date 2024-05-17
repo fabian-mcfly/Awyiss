@@ -34,10 +34,10 @@ class SingleChoiceSetting implements SettingInterface {
 	/**
 	 * Constructor
 	 *
-	 * @param array $aa_config Configuration settings.
+	 * @param array $config Configuration settings.
 	 */
-	public function __construct(array $aa_config = []) {
-		$this->setConfig($aa_config);
+	public function __construct(array $config = []) {
+		$this->setConfig($config);
 	}
 
 
@@ -50,11 +50,11 @@ class SingleChoiceSetting implements SettingInterface {
 
 
 	/**
-	 * @param string $as_type
+	 * @param string $type
 	 * @return SettingInterface
 	 */
-	public function setType(string $as_type): static {
-		$this->setConfig('type', Inflector::underscore($as_type));
+	public function setType(string $type): static {
+		$this->setConfig('type', Inflector::underscore($type));
 
 
 		return $this;
@@ -70,11 +70,11 @@ class SingleChoiceSetting implements SettingInterface {
 
 
 	/**
-	 * @param array $aa_options
+	 * @param array $options
 	 * @return SettingInterface
 	 */
-	public function setOptions(array $aa_options): static {
-		$this->setConfig('options', $aa_options);
+	public function setOptions(array $options): static {
+		$this->setConfig('options', $options);
 
 
 		return $this;

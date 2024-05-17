@@ -49,10 +49,9 @@ class Seed extends BaseSeed {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	protected function execute(InputInterface $ao_input, OutputInterface $ao_output): int {
-		$lx_seed = $ao_input->getOption('seed');
+	protected function execute(InputInterface $input, OutputInterface $output): int {
+		$lx_seed = $input->getOption('seed');
 		if (!empty($lx_seed)) {
 			if (!is_array($lx_seed)) {
 				$lx_seed = [$lx_seed];
@@ -64,10 +63,10 @@ class Seed extends BaseSeed {
 				}
 			}
 
-			$ao_input->setOption('seed', $lx_seed);
+			$input->setOption('seed', $lx_seed);
 		}
 
 
-		return parent::execute($ao_input, $ao_output);
+		return parent::execute($input, $output);
 	}
 }

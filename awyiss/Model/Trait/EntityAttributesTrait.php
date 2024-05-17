@@ -18,11 +18,11 @@ trait EntityAttributesTrait {
 	/**
 	 * Constructor
 	 *
-	 * @param array $aa_properties
-	 * @param array $aa_options
+	 * @param array $properties
+	 * @param array $options
 	 */
-	public function __construct(array $aa_properties = [], array $aa_options = []) {
-		parent::__construct($aa_properties, $aa_options);
+	public function __construct(array $properties = [], array $options = []) {
+		parent::__construct($properties, $options);
 
 		/** @var \Awyiss\Model\Table $lo_table */
 		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
@@ -38,11 +38,11 @@ trait EntityAttributesTrait {
 	/**
 	 * Sets each of the attribute's values as
 	 *
-	 * @param \Awyiss\ORM\Association\HasOne|\Awyiss\Model\Table $ao_attributesTable
-	 * @param string $as_foreignKey
+	 * @param \Awyiss\ORM\Association\HasOne|\Awyiss\Model\Table $attributesTable
+	 * @param string $foreignKey
 	 * @return void
 	 */
-	public function initAttributesField(HasOne $ao_attributesTable, string $as_foreignKey): void {
+	public function initAttributesField(HasOne $attributesTable, string $foreignKey): void {
 		$lo_attributes = $this->_fields['attributes'] ?? null;
 
 		if (!$lo_attributes || !is_a($lo_attributes, Entity::class)) {
@@ -50,13 +50,13 @@ trait EntityAttributesTrait {
 		}
 
 		$la_translatableFields = [];
-		if ($ao_attributesTable->hasBehavior('Translate')) {
-			$la_translatableFields = $ao_attributesTable->getBehavior('Translate')->getConfig('fields', []);
+		if ($attributesTable->hasBehavior('Translate')) {
+			$la_translatableFields = $attributesTable->getBehavior('Translate')->getConfig('fields', []);
 		}
 
 		/** @var \Cake\Datasource\EntityInterface $lo_attributes */
 		foreach ($lo_attributes->_fields as $ls_key => $lx_value) {
-			if (in_array($ls_key, ['id', $as_foreignKey, '_i18n', '_translations'])) {
+			if (in_array($ls_key, ['id', $foreignKey, '_i18n', '_translations'])) {
 				continue;
 			}
 
@@ -72,24 +72,24 @@ trait EntityAttributesTrait {
 	/**
 	 * @inheritDoc
 	 */
-	public function &get(string $as_field) {
-		if ($as_field === '') {
+	public function &get(string $field) {
+		if ($field === '') {
 			throw new InvalidArgumentException('Cannot get an empty field');
 		}
 
 		$lx_value = null;
 
-		if (isset($this->_fields[ $as_field ])) {
-			$lx_value = &$this->_fields[ $as_field ];
+		if (isset($this->_fields[ $field ])) {
+			$lx_value = &$this->_fields[ $field ];
 		}
 
-		$ls_method = static::_accessor($as_field, 'get');
+		$ls_method = static::_accessor($field, 'get');
 		if ($ls_method) {
 			$lx_value = $this->{$ls_method}($lx_value);
 		}
 
 		//Return a value if found or if an accessor exists.
-		if (!is_null($lx_value) || $ls_method || $as_field === '_translations') {
+		if (!is_null($lx_value) || $ls_method || $field === '_translations') {
 			return $lx_value;
 		}
 
@@ -97,7 +97,7 @@ trait EntityAttributesTrait {
 		 * @noinspection PhpUnnecessaryLocalVariableInspection Does this sound _unnecessary_ to you?
 		 *    Uncaught ParseError: syntax error, unexpected token "&", expecting ";"
 		 */
-		$lx_value = &$this->getFromAttribute($as_field);
+		$lx_value = &$this->getFromAttribute($field);
 
 
 		return $lx_value;
@@ -107,10 +107,10 @@ trait EntityAttributesTrait {
 	/**
 	 * Return the value of a field of the attached attribute entity (or null)
 	 *
-	 * @param string $as_field
+	 * @param string $field
 	 * @return mixed
 	 */
-	public function &getFromAttribute(string $as_field): mixed {
+	public function &getFromAttribute(string $field): mixed {
 		$lx_value = null;
 
 		// No attributes field = no value to fetch from there
@@ -121,7 +121,7 @@ trait EntityAttributesTrait {
 		/** @var \Cake\Datasource\EntityInterface $lo_attributesEntity */
 		$lo_attributesEntity = $this->_fields['attributes'];
 
-		$ls_field = $as_field;
+		$ls_field = $field;
 		if (str_starts_with($ls_field, 'attributes.')) {
 			$ls_field = substr($ls_field, 11);
 		}
@@ -139,25 +139,25 @@ trait EntityAttributesTrait {
 
 	/**
 	 * @inheritDoc
-	 * @param array|string $ax_field
-	 * @param mixed|null $ax_value
-	 * @param array $aa_options
+	 * @param array|string $field
+	 * @param mixed|null $value
+	 * @param array $options
 	 * @return \Cake\Datasource\EntityInterface
 	 */
-	public function set(array|string $ax_field, mixed $ax_value = null, array $aa_options = []): EntityInterface {
-		if (is_string($ax_field) && in_array($ax_field, ['_locale', '_translations'])) {
+	public function set(array|string $field, mixed $value = null, array $options = []): EntityInterface {
+		if (is_string($field) && in_array($field, ['_locale', '_translations'])) {
 			/** @noinspection PhpIncompatibleReturnTypeInspection */
-			return parent::set($ax_field, $ax_value, $aa_options);
+			return parent::set($field, $value, $options);
 		}
 
-		$lx_field = $ax_field;
+		$lx_field = $field;
 
 		if (($this->_fields['attributes'] ?? null) instanceof Entity) {
 			/** @var Entity $lo_attributes */
 			$lo_attributes = $this->_fields['attributes'];
 
 			if (is_string($lx_field) && $lo_attributes->has($lx_field)) {
-				$lo_attributes->set($lx_field, $ax_value, $aa_options);
+				$lo_attributes->set($lx_field, $value, $options);
 
 				return $this;
 			}
@@ -174,12 +174,12 @@ trait EntityAttributesTrait {
 					}
 				}
 
-				$lo_attributes->set($la_attributeFields, $ax_value, $aa_options);
+				$lo_attributes->set($la_attributeFields, $value, $options);
 			}
 		}
 
 
 		/** @noinspection PhpIncompatibleReturnTypeInspection */
-		return parent::set($lx_field, $ax_value, $aa_options);
+		return parent::set($lx_field, $value, $options);
 	}
 }

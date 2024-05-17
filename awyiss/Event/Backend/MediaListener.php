@@ -52,19 +52,19 @@ class MediaListener implements EventListenerInterface {
 	 * Before saving a file, make sure its name is unique, path is set
 	 * image dimensions are known and file extension matches the mimetype
 	 *
-	 * @param \Cake\Event\EventInterface $ao_event
-	 * @param \Awyiss\Model\Entity\Media $ao_entity
-	 * @param \ArrayObject $ao_options
+	 * @param \Cake\Event\EventInterface $event
+	 * @param \Awyiss\Model\Entity\Media $entity
+	 * @param \ArrayObject $options
 	 * @return void
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function beforeSave(Event $ao_event, Media $ao_entity, ArrayObject $ao_options): void {
+	public function beforeSave(Event $event, Media $entity, ArrayObject $options): void {
 		/** @var \Awyiss\Model\Table\MediaTable $lo_table */
-		$lo_table = $ao_event->getSubject();
-		$lb_isNew = $ao_entity->isNew();
+		$lo_table = $event->getSubject();
+		$lb_isNew = $entity->isNew();
 
 		// If the systemOrder is the only dirty field, we don't need to do anything
-		if ($ao_entity->getDirty() === ['systemOrder']) {
+		if ($entity->getDirty() === ['systemOrder']) {
 			return;
 		}
 
@@ -77,19 +77,19 @@ class MediaListener implements EventListenerInterface {
 			static::$mediaFolders = $lo_mediaFolderse->indexBy('id')->toArray();
 		}
 
-		if (!isset(static::$media[ $ao_entity->mediaFolderId ])) {
+		if (!isset(static::$media[ $entity->mediaFolderId ])) {
 			/** @var \Cake\Collection\Iterator\TreeIterator $lo_mediaFolderse */
-			$lo_media = $lo_table->find()->where(['media_folder_id' => $ao_entity->mediaFolderId])->all();
-			static::$media[ $ao_entity->mediaFolderId ] = $lo_media->indexBy('name')->toArray();
+			$lo_media = $lo_table->find()->where(['media_folder_id' => $entity->mediaFolderId])->all();
+			static::$media[ $entity->mediaFolderId ] = $lo_media->indexBy('name')->toArray();
 		}
 
-		if (!$ao_entity->extension) {
-			$la_knownExtensions = Configure::read('MimeTypes.' . str_replace('.', '-', $ao_entity->mimeType));
+		if (!$entity->extension) {
+			$la_knownExtensions = Configure::read('MimeTypes.' . str_replace('.', '-', $entity->mimeType));
 
 			if (!$la_knownExtensions) {
-				$ao_event->stopPropagation();
+				$event->stopPropagation();
 
-				$ao_entity->setError(
+				$entity->setError(
 					'name',
 					__df(strtolower($lo_table->getI18nDomain()), 'validation', 'error_media_has_file_extension'),
 					true
@@ -99,47 +99,47 @@ class MediaListener implements EventListenerInterface {
 				return;
 			}
 
-			$ao_entity->name .= '.' . current($la_knownExtensions);
+			$entity->name .= '.' . current($la_knownExtensions);
 		}
 
-		if ($ao_entity->file && !$ao_entity->file->getError()) {
-			$lo_stream = $ao_entity->file->getStream();
+		if ($entity->file && !$entity->file->getError()) {
+			$lo_stream = $entity->file->getStream();
 			$ls_tempName = $lo_stream->getMetadata('uri');
 
-			if ($ao_entity->isImage()) {
-				if ($ao_entity->mimeType === 'image/svg+xml') {
+			if ($entity->isImage()) {
+				if ($entity->mimeType === 'image/svg+xml') {
 					$la_dimensions = $this->getSvgDimensions(file_get_contents($ls_tempName));
 
-					$ao_entity->width = $la_dimensions['width'];
-					$ao_entity->height = $la_dimensions['height'];
+					$entity->width = $la_dimensions['width'];
+					$entity->height = $la_dimensions['height'];
 				}
 				else {
 					$la_imageSize = getimagesize($ls_tempName);
 
-					$ao_entity->width = $la_imageSize[0];
-					$ao_entity->height = $la_imageSize[1];
+					$entity->width = $la_imageSize[0];
+					$entity->height = $la_imageSize[1];
 				}
 
-				$ao_entity->preview = ProcessStatus::NotRequired;
-				/*if ($ao_entity->mimeType !== 'image/webp') {
+				$entity->preview = ProcessStatus::NotRequired;
+				/*if ($entity->mimeType !== 'image/webp') {
 					$la_exifData = exif_read_data($ls_tempName, '', true);
 				}*/
 			}
 			else {
-				$ao_entity->width = null;
-				$ao_entity->height = null;
-				$ao_entity->preview = ProcessStatus::Undefined;
+				$entity->width = null;
+				$entity->height = null;
+				$entity->preview = ProcessStatus::Undefined;
 			}
 
-			$ao_entity->webp = in_array($ao_entity->mimeType, ['image/webp', 'image/svg+xml']) ? ProcessStatus::NotRequired : ProcessStatus::Undefined;
+			$entity->webp = in_array($entity->mimeType, ['image/webp', 'image/svg+xml']) ? ProcessStatus::NotRequired : ProcessStatus::Undefined;
 
 			if ($lb_isNew && LocalConfig::read('upload.autoOverwrite', false, 'Media') === true) {
-				$lo_currentMedia = static::$media[ $ao_entity->mediaFolderId ][ $ao_entity->name ] ?? null;
+				$lo_currentMedia = static::$media[ $entity->mediaFolderId ][ $entity->name ] ?? null;
 				if ($lo_currentMedia) {
-					$ao_entity->setNew(false);
-					$ao_entity->set([
+					$entity->setNew(false);
+					$entity->set([
 						'id' => $lo_currentMedia->id,
-						'alt' => $ao_entity->alt ?? $lo_currentMedia->alt,
+						'alt' => $entity->alt ?? $lo_currentMedia->alt,
 						'systemOrder' => $lo_currentMedia->systemOrder,
 						'createdBy' => $lo_currentMedia->createdBy,
 						'createdOn' => $lo_currentMedia->createdOn,
@@ -147,107 +147,107 @@ class MediaListener implements EventListenerInterface {
 						'guard' => false,
 					]);
 
-					$ao_entity->setDirty('systemOrder', false);
+					$entity->setDirty('systemOrder', false);
 
 					if ($lo_currentMedia->attributes) {
-						$ao_entity->attributes = $lo_currentMedia->attributes;
+						$entity->attributes = $lo_currentMedia->attributes;
 					}
 				}
 			}
 			else {
-				$this->ensureUniqueFileName($lo_table, $ao_entity);
+				$this->ensureUniqueFileName($lo_table, $entity);
 			}
 		}
-		elseif ($ao_entity->isDirty('name') || $ao_entity->isDirty('mediaFolderId')) {
-			$this->ensureUniqueFileName($lo_table, $ao_entity);
+		elseif ($entity->isDirty('name') || $entity->isDirty('mediaFolderId')) {
+			$this->ensureUniqueFileName($lo_table, $entity);
 		}
 
 		$ls_path = 'media/';
 
-		if (isset(static::$mediaFolders[ $ao_entity->mediaFolderId ])) {
-			$ls_path = static::$mediaFolders[ $ao_entity->mediaFolderId ]->path . '/';
+		if (isset(static::$mediaFolders[ $entity->mediaFolderId ])) {
+			$ls_path = static::$mediaFolders[ $entity->mediaFolderId ]->path . '/';
 		}
 
-		$ao_entity->path = $ls_path . $ao_entity->name;
+		$entity->path = $ls_path . $entity->name;
 	}
 
 
 	/**
-	 * @param \Cake\Event\Event $ao_event
-	 * @param \Awyiss\Model\Entity\Media $ao_entity
-	 * @param \ArrayObject $ao_options
+	 * @param \Cake\Event\Event $event
+	 * @param \Awyiss\Model\Entity\Media $entity
+	 * @param \ArrayObject $options
 	 * @return void
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function afterSave(Event $ao_event, Media $ao_entity, ArrayObject $ao_options): void {
-		if ($ao_entity->file && !$ao_entity->file->getError()) {
-			$ao_entity->deleteConvertedFiles();
-			$ao_entity->deleteResizedFiles();
+	public function afterSave(Event $event, Media $entity, ArrayObject $options): void {
+		if ($entity->file && !$entity->file->getError()) {
+			$entity->deleteConvertedFiles();
+			$entity->deleteResizedFiles();
 
-			$ao_entity->file->moveTo(WWW_ROOT . str_replace('/', DS, $ao_entity->path));
+			$entity->file->moveTo(WWW_ROOT . str_replace('/', DS, $entity->path));
 
-			if ($ao_entity->hasOriginal('path') && $ao_entity->getOriginal('path') !== $ao_entity->get('path')) {
-				unlink(WWW_ROOT . str_replace('/', DS, $ao_entity->getOriginal('path')));
+			if ($entity->hasOriginal('path') && $entity->getOriginal('path') !== $entity->get('path')) {
+				unlink(WWW_ROOT . str_replace('/', DS, $entity->getOriginal('path')));
 			}
 		}
-		elseif ($ao_entity->hasOriginal('path') && $ao_entity->getOriginal('path') !== $ao_entity->get('path')) {
-			$ao_entity->moveConvertedFiles();
-			$ao_entity->moveResizedFiles();
+		elseif ($entity->hasOriginal('path') && $entity->getOriginal('path') !== $entity->get('path')) {
+			$entity->moveConvertedFiles();
+			$entity->moveResizedFiles();
 
 			rename(
-				WWW_ROOT . str_replace('/', DS, $ao_entity->getOriginal('path')),
-				WWW_ROOT . str_replace('/', DS, $ao_entity->get('path'))
+				WWW_ROOT . str_replace('/', DS, $entity->getOriginal('path')),
+				WWW_ROOT . str_replace('/', DS, $entity->get('path'))
 			);
 		}
 	}
 
 
 	/**
-	 * @param \Cake\Event\Event $ao_event
-	 * @param \Awyiss\Model\Entity\Media $ao_entity
-	 * @param \ArrayObject $ao_options
+	 * @param \Cake\Event\Event $event
+	 * @param \Awyiss\Model\Entity\Media $entity
+	 * @param \ArrayObject $options
 	 * @return void
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function afterDelete(Event $ao_event, Media $ao_entity, ArrayObject $ao_options): void {
-		$ls_sourceFile = $ao_entity->path;
+	public function afterDelete(Event $event, Media $entity, ArrayObject $options): void {
+		$ls_sourceFile = $entity->path;
 		if ($ls_sourceFile && is_file($ls_sourceFile)) {
 			unlink($ls_sourceFile);
 		}
 
-		$ao_entity->deleteConvertedFiles();
+		$entity->deleteConvertedFiles();
 	}
 
 
 	/**
-	 * @param \Awyiss\Model\Table\MediaTable $ao_table
-	 * @param \Awyiss\Model\Entity\Media $ao_entity
+	 * @param \Awyiss\Model\Table\MediaTable $table
+	 * @param \Awyiss\Model\Entity\Media $entity
 	 * @return void
 	 */
-	protected function ensureUniqueFileName(MediaTable $ao_table, Media $ao_entity): void {
-		$ls_extension = $ao_entity->extension;
-		$ls_fileName = $ao_entity->cleanName;
+	protected function ensureUniqueFileName(MediaTable $table, Media $entity): void {
+		$ls_extension = $entity->extension;
+		$ls_fileName = $entity->cleanName;
 
 		$la_conditions = [
-			'name' => $ao_entity->name,
-			'media_folder_id' => $ao_entity->mediaFolderId,
+			'name' => $entity->name,
+			'media_folder_id' => $entity->mediaFolderId,
 		];
 
-		$ls_primaryKey = $ao_table->getPrimaryKey();
-		$li_id = $ao_entity->get($ls_primaryKey);
+		$ls_primaryKey = $table->getPrimaryKey();
+		$li_id = $entity->get($ls_primaryKey);
 		if ($li_id) {
-			$la_conditions['NOT'] = [$ao_table->getAlias() . '.' . $ls_primaryKey => $li_id];
+			$la_conditions['NOT'] = [$table->getAlias() . '.' . $ls_primaryKey => $li_id];
 		}
 
 
-		$ls_field = $ao_table->getSchema()->getColumn('slug');
+		$ls_field = $table->getSchema()->getColumn('slug');
 		$li_length = $ls_field ? $ls_field['length'] : 0;
 
 		$li_i = 1;
 		$ls_suffix = '';
 
 		//As long as a page with the same slug exists, append an increasing number to the slug and try again
-		while ($ao_table->exists($la_conditions)) {
+		while ($table->exists($la_conditions)) {
 			$li_i++;
 			$ls_suffix = '-' . $li_i;
 
@@ -260,20 +260,20 @@ class MediaListener implements EventListenerInterface {
 
 		//Append the suffix, if it's not empty
 		if ($ls_suffix) {
-			$ao_entity->name = $ls_fileName . $ls_suffix . '.' . $ls_extension;
+			$entity->name = $ls_fileName . $ls_suffix . '.' . $ls_extension;
 		}
 	}
 
 
 	/**
-	 * @param string $as_fileContents
+	 * @param string $fileContents
 	 * @return array
 	 */
-	protected function getSvgDimensions(string $as_fileContents): array {
+	protected function getSvgDimensions(string $fileContents): array {
 		$lf_width = $lf_height = null;
 
 		/** @noinspection RegExpRedundantEscape */
-		preg_match('/viewbox="(?<sizes>[0-9\. ]*)"/i', $as_fileContents, $la_matches);
+		preg_match('/viewbox="(?<sizes>[0-9\. ]*)"/i', $fileContents, $la_matches);
 		if (!empty($la_matches['sizes'])) {
 			$la_coordinates = explode(' ', $la_matches['sizes'], 4);
 
@@ -281,7 +281,7 @@ class MediaListener implements EventListenerInterface {
 			$lf_height = (float)$la_coordinates[3];
 		}
 		else {
-			preg_match('/<svg[^>]*\s(width|height)="(\d+)"\s.*?(width|height)="(\d+)"/', $as_fileContents, $la_matches);
+			preg_match('/<svg[^>]*\s(width|height)="(\d+)"\s.*?(width|height)="(\d+)"/', $fileContents, $la_matches);
 			if ($la_matches) {
 				if (strtolower($la_matches[1]) === 'width') {
 					$lf_width = (float)$la_matches[2];

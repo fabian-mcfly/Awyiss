@@ -34,19 +34,19 @@ class MediaConfigOptions extends AbstractConfigOptions {
 				localizable: false,
 				nullable: false,
 				type: ConfigOptionType::List,
-				typecast: function (array|string|null $aa_values): ?array {
-					if ($aa_values === null) {
+				typecast: function (array|string|null $values): ?array {
+					if ($values === null) {
 						return null;
 					}
 
-					$la_values = $aa_values;
+					$la_values = $values;
 
 					if (!is_array($la_values)) {
 						$la_values = json_decode($la_values, true);
 					}
 
 					if (!is_array($la_values)) {
-						$la_values = [$aa_values];
+						$la_values = [$values];
 					}
 
 					$la_values = array_filter(array_map('intval', $la_values));

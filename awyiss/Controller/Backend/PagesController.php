@@ -234,11 +234,11 @@ class PagesController extends Controller {
 	 * @return \Cake\Http\Response|void
 	 * @throws \Exception
 	 */
-	public function edit(int $ai_id) {
+	public function edit(int $id) {
 		$this->Authorization->ensure('update');
 
 		/** @var \Awyiss\Model\Entity\Page $lo_page */
-		$lo_page = $this->Pages->findById($ai_id)->find('translations')->first();
+		$lo_page = $this->Pages->findById($id)->find('translations')->first();
 
 		if (!$lo_page) {
 			$this->Flash->error(__df($this->pageRoleName, 'pages', 'record_not_found'));
@@ -265,17 +265,17 @@ class PagesController extends Controller {
 	/**
 	 * Delete method
 	 *
-	 * @param int $ai_id
+	 * @param int $id
 	 * @return \Cake\Http\Response
 	 * @throws \Exception
 	 */
-	public function delete(int $ai_id): Response {
+	public function delete(int $id): Response {
 		$this->Authorization->ensure('delete');
 
 		$this->request->allowMethod(['get', 'delete']);
 
 		/** @var \Awyiss\Model\Entity\Page $lo_page */
-		$lo_page = $this->Pages->findById($ai_id)->find('translations')->first();
+		$lo_page = $this->Pages->findById($id)->find('translations')->first();
 		if (!$lo_page) {
 			$this->Flash->error(__df($this->pageRoleName, 'pages', 'record_not_found'));
 
@@ -302,22 +302,22 @@ class PagesController extends Controller {
 
 
 	/**
-	 * @param \Awyiss\Model\Entity\Page $ao_page
-	 * @param string $as_method
+	 * @param \Awyiss\Model\Entity\Page $page
+	 * @param string $method
 	 * @return void
 	 */
-	protected function save(Page $ao_page, string $as_method = 'add'): void {
+	protected function save(Page $page, string $method = 'add'): void {
 		$la_associated = [];
 		if ($this->Pages->hasAttributes()) {
 			$la_associated[] = $this->Pages->getAttributesTableName(true);
-			$ao_page->setAccess('attributes', true);
+			$page->setAccess('attributes', true);
 		}
 
 		$lb_saveAsCopy = (bool)$this->request->getData('save_as_copy');
 
 		$lb_hasDescendantsWithDifferentPageRole = false;
-		if (!$ao_page->isNew() && $lb_saveAsCopy) {
-			$lb_hasDescendantsWithDifferentPageRole = $this->Pages->hasDescendantsWithDifferentPageRole($ao_page);
+		if (!$page->isNew() && $lb_saveAsCopy) {
+			$lb_hasDescendantsWithDifferentPageRole = $this->Pages->hasDescendantsWithDifferentPageRole($page);
 		}
 
 		$lb_copyDescendantsWithDifferentPageRole = $this->request->getData('copy_descendants_with_different_page_role');
@@ -325,14 +325,14 @@ class PagesController extends Controller {
 			$lb_copyDescendantsWithDifferentPageRole = (bool)$lb_copyDescendantsWithDifferentPageRole;
 		}
 
-		$this->Pages->patchEntity($ao_page, ['page_role_id' => $this->getPageRole()->value] + $this->request->getData(), [
+		$this->Pages->patchEntity($page, ['page_role_id' => $this->getPageRole()->value] + $this->request->getData(), [
 			'associated' => $la_associated,
 			'validate' => !$this->request->getData('reload_form'),
 		]);
 
 		$this->Categories->setConfig('finder', [
 			'forCurrentLanguage' => [
-				'entity' => $ao_page,
+				'entity' => $page,
 			],
 		]);
 
@@ -345,13 +345,13 @@ class PagesController extends Controller {
 			)
 		) {
 			if (
-				$this->Pages->save($ao_page, [
+				$this->Pages->save($page, [
 					'asCopy' => $lb_saveAsCopy,
 					'copyDescendantsWithDifferentPageRole' => $lb_copyDescendantsWithDifferentPageRole,
 				])
 			) {
 				if (!$this->request->is('ajax')) {
-					$this->Flash->success(__df($this->pageRoleName, 'pages', $as_method . '_succeeded'));
+					$this->Flash->success(__df($this->pageRoleName, 'pages', $method . '_succeeded'));
 				}
 
 				if ($this->request->getData('submit') == 'submit_close') {
@@ -360,20 +360,20 @@ class PagesController extends Controller {
 					 * Otherwise it would show a site without the modified user, which could be a bit confusing.
 					 *
 					 */
-					$this->verifyCategorySelection($ao_page);
+					$this->verifyCategorySelection($page);
 
 					throw new RedirectException(Router::url([
 						'action' => 'overview',
-						'lang' => $ao_page->languageShortcode,
-						'page' => $this->Paginate->calculateEntityPagePosition($ao_page),
+						'lang' => $page->languageShortcode,
+						'page' => $this->Paginate->calculateEntityPagePosition($page),
 					], true), 302);
 				}
 
-				throw new RedirectException(Router::url(['action' => 'edit', 'lang' => $ao_page->languageShortcode, 'id' => $ao_page->id], true), 302);
+				throw new RedirectException(Router::url(['action' => 'edit', 'lang' => $page->languageShortcode, 'id' => $page->id], true), 302);
 			}
 
-			$this->Flash->error(__df($this->pageRoleName, 'pages', $as_method . '_failed'));
-			foreach ($ao_page->getError('_general') as $ls_error) {
+			$this->Flash->error(__df($this->pageRoleName, 'pages', $method . '_failed'));
+			foreach ($page->getError('_general') as $ls_error) {
 				$this->Flash->error($ls_error);
 			}
 		}
@@ -409,17 +409,17 @@ class PagesController extends Controller {
 	 * Return a collection of pages for the currently set languageShortcode,
 	 * using `\Cake\Collection\CollectionTrait::listNested()` to be used in a form-select
 	 *
-	 * @param \Awyiss\Model\Entity\Page $ao_page
+	 * @param \Awyiss\Model\Entity\Page $page
 	 * @return \Cake\Collection\CollectionInterface
 	 * @see \Cake\Collection\CollectionTrait::listNested()
 	 */
-	protected function getThreadedPages(Page $ao_page): CollectionInterface {
+	protected function getThreadedPages(Page $page): CollectionInterface {
 		if (!isset($this->threadedPages)) {
-			$lo_query = $this->Pages->find('forCurrentLanguage', languageShortcode: $ao_page->languageShortcode)
+			$lo_query = $this->Pages->find('forCurrentLanguage', languageShortcode: $page->languageShortcode)
 			->where(
 				$this->getOverviewWhere() +
 				$this->Categories->getQueryConditions(
-					$this->Categories->getSelectedCategory($ao_page)
+					$this->Categories->getSelectedCategory($page)
 				)
 			);
 
@@ -434,17 +434,17 @@ class PagesController extends Controller {
 	 * Uses this controller with another page_role_id/identifier, so we don't need to bake one for every page role.
 	 * This is supposed to only handle non-existing controllers as a fallback.
 	 *
-	 * @param \Awyiss\Model\Enum\PageRoleEnumInterface $ae_pageRole
-	 * @param string $as_identifier
+	 * @param \Awyiss\Model\Enum\PageRoleEnumInterface $pageRole
+	 * @param string $identifier
 	 * @return \Awyiss\Controller\Backend\PagesController
 	 * @throws \ReflectionException
 	 */
 	#[NoDirectAccess]
-	public function asPageRole(PageRoleEnumInterface $ae_pageRole, string $as_identifier): static {
-		$this->pageRole = $ae_pageRole;
-		$this->pageRoleName = $as_identifier;
+	public function asPageRole(PageRoleEnumInterface $pageRole, string $identifier): static {
+		$this->pageRole = $pageRole;
+		$this->pageRoleName = $identifier;
 
-		$this->Pages = $this->{$as_identifier} = $this->fetchTable($as_identifier);
+		$this->Pages = $this->{$identifier} = $this->fetchTable($identifier);
 
 		$this->nestable = LocalConfig::read('nest.enabled');
 		if ($this->nestable) {
@@ -457,9 +457,9 @@ class PagesController extends Controller {
 		$lo_authorizationService = $this->getRequest()->getAttribute('authorization');
 		$ls_policyClass = $lo_authorizationService->getPolicy($this->Authorization->getScope(), $this->Authorization->getConfig('policiesRealm'));
 
-		$this->Authorization->setScope($as_identifier);/*->setPolicyClass($ls_policyClass ?: $lo_policyClass)*/
+		$this->Authorization->setScope($identifier);/*->setPolicyClass($ls_policyClass ?: $lo_policyClass)*/
 
-		$this->SystemOrder->setConfig('entityName', Inflector::variable(Inflector::singularize($as_identifier)));
+		$this->SystemOrder->setConfig('entityName', Inflector::variable(Inflector::singularize($identifier)));
 
 		$this->set([
 			'policyClass' => $ls_policyClass,
@@ -490,10 +490,8 @@ class PagesController extends Controller {
 	 * Try to render the view using the default render-method
 	 * If this fails because the view template could not be found, try again with a view-template
 	 * in templates/Backend/GenericPages
-	 *
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function render(?string $as_template = null, ?string $as_layout = null): Response {
+	public function render(?string $template = null, ?string $layout = null): Response {
 		$lo_viewBuilder = $this->viewBuilder();
 
 		if ($this->getName() !== 'Pages') {
@@ -511,7 +509,7 @@ class PagesController extends Controller {
 		}
 
 		try {
-			$ls_contents = parent::render($as_template, $as_layout);
+			$ls_contents = parent::render($template, $layout);
 		}
 		catch (MissingTemplateException) {
 			$la_templatePathParts = explode('/', $lo_viewBuilder->getTemplatePath());
@@ -519,7 +517,7 @@ class PagesController extends Controller {
 
 			$lo_viewBuilder->setTemplatePath(implode('/', $la_templatePathParts) . '/GenericPages');
 
-			$ls_contents = parent::render($as_template, $as_layout);
+			$ls_contents = parent::render($template, $layout);
 		}
 
 
@@ -539,42 +537,42 @@ class PagesController extends Controller {
 
 
 	/**
-	 * @param \Awyiss\Model\Entity\Page $ao_page
-	 * @param \Cake\Collection\CollectionInterface $ao_threadedContents
+	 * @param \Awyiss\Model\Entity\Page $page
+	 * @param \Cake\Collection\CollectionInterface $threadedContents
 	 * @return void
 	 */
-	protected function ensurePossibleParentId(Page $ao_page, CollectionInterface $ao_threadedPages): void {
+	protected function ensurePossibleParentId(Page $page, CollectionInterface $threadedPages): void {
 		if ($this->Categories->getConfig('enabled') && $this->Categories->getConfig('field') === 'parentId') {
 			//No parent id check if categories behavior is enabled and the field is parent id
 			return;
 		}
 
-		$la_possibleParentIds = $ao_threadedPages->extract('id')->toList();
+		$la_possibleParentIds = $threadedPages->extract('id')->toList();
 
-		if (!empty($ao_page->parentId) && !in_array($ao_page->parentId, $la_possibleParentIds)) {
-			$la_errors = $ao_page->getError('parentId');
+		if (!empty($page->parentId) && !in_array($page->parentId, $la_possibleParentIds)) {
+			$la_errors = $page->getError('parentId');
 
-			$ao_page->parentId = reset($la_possibleParentIds);
+			$page->parentId = reset($la_possibleParentIds);
 
 			if ($la_errors) {
-				$ao_page->setError('parentId', $la_errors, true);
+				$page->setError('parentId', $la_errors, true);
 			}
 		}
 	}
 
 
 	/**
-	 * @param \Awyiss\Model\Entity\Page $ao_page
+	 * @param \Awyiss\Model\Entity\Page $page
 	 * @return void
 	 */
-	protected function setViewVars(Page $ao_page): void {
-		$this->Categories->ensurePossibleCategory($ao_page);
+	protected function setViewVars(Page $page): void {
+		$this->Categories->ensurePossibleCategory($page);
 
-		$lo_threadedPages = $this->getThreadedPages($ao_page);
+		$lo_threadedPages = $this->getThreadedPages($page);
 
 		if ($this->nestable) {
-			$lo_possibleParentPages = $this->Pages->getPossibleParents($ao_page, $lo_threadedPages);
-			$this->ensurePossibleParentId($ao_page, $lo_possibleParentPages);
+			$lo_possibleParentPages = $this->Pages->getPossibleParents($page, $lo_threadedPages);
+			$this->ensurePossibleParentId($page, $lo_possibleParentPages);
 		}
 		else {
 			$lo_possibleParentPages = null;
@@ -583,12 +581,12 @@ class PagesController extends Controller {
 		$lo_menus = $this->fetchTable('Menus')->find('active')->all();
 
 		// Get the parent page if it exists
-		if ($ao_page->parentId) {
-			$lo_parentRecord = $this->Pages->find('all', skipPageRoleCheck: true)->where(['id' => $ao_page->parentId])->first();
+		if ($page->parentId) {
+			$lo_parentRecord = $this->Pages->find('all', skipPageRoleCheck: true)->where(['id' => $page->parentId])->first();
 		}
 
 		$this->set([
-			'page' => $ao_page,
+			'page' => $page,
 			'pageTemplates' => $this->getPageTemplates(),
 			'contentsEnabled' => LocalConfig::read('contents.enabled'),
 			'threadedPages' => $lo_threadedPages,
@@ -607,11 +605,11 @@ class PagesController extends Controller {
 
 
 	/**
-	 * @param \Awyiss\Model\Entity\Page $ao_page
+	 * @param \Awyiss\Model\Entity\Page $page
 	 * @return void
 	 * @noinspection DuplicatedCode
 	 */
-	protected function verifyCategorySelection(Page $ao_page): void {
+	protected function verifyCategorySelection(Page $page): void {
 		if (!$this->Categories->getConfig('enabled')) {
 			return;
 		}
@@ -619,8 +617,8 @@ class PagesController extends Controller {
 		$la_categories = [];
 
 		$ls_field = $this->Categories->getConfig('field');
-		if ($ao_page->get($ls_field)) {
-			$la_categories[ $ao_page->get($ls_field) ] = $ls_field;
+		if ($page->get($ls_field)) {
+			$la_categories[ $page->get($ls_field) ] = $ls_field;
 
 			if ($this->Categories->getConfig('allowAggregation')) {
 				$la_categories += [$this->Categories->getConfig('aggregationKey') => 'dummy'];
@@ -639,27 +637,28 @@ class PagesController extends Controller {
 
 
 	/**
-	 * @param string $as_text
-	 * @param array $aa_requestData
+	 * @param string $text
+	 * @param array $requestData
 	 * @return \Cake\Collection\CollectionInterface
 	 */
-	protected function buildEntitiesFromIndentedRows(string $as_text, array $aa_requestData): CollectionInterface {
+	protected function buildEntitiesFromIndentedRows(string $text, array $requestData): CollectionInterface {
 		$li_currentId = 1;
 		$la_parentStack = []; //Stack to keep track of the parent at each level
 		$la_sortCounter = []; // Array to keep track of the sort order at each level
 		$lo_entities = collection([]);
 
-		$li_rootParentId = $aa_requestData['parent_id'] ?: null;
-		unset($aa_requestData['parent_id']);
-		$li_firstSystemOrder = $aa_requestData['system_order'];
-		unset($aa_requestData['system_order']);
+		$li_rootParentId = $requestData['parent_id'] ?: null;
+		$li_firstSystemOrder = $requestData['system_order'];
+
+		/** @noinspection PhpVariableNamingConventionInspection */
+		unset($requestData['parent_id'], $requestData['system_order']);
 
 		$la_associated = [];
 		if ($this->Pages->hasAttributes()) {
 			$la_associated[] = $this->Pages->getAttributesTableName(true);
 		}
 
-		foreach (explode("\n", $as_text) as $ls_title) {
+		foreach (explode("\n", $text) as $ls_title) {
 			$ls_title = rtrim($ls_title);
 			$ls_title = ltrim($ls_title, " \n\r\v\0");
 			$li_level = substr_count($ls_title, "\t");
@@ -697,7 +696,7 @@ class PagesController extends Controller {
 				'tempParentId' => $li_level === 0 ? null : $li_parentId,
 				'systemOrder' => $la_sortCounter[ $li_level ] + ($li_level === 0 ? $li_firstSystemOrder : 0),
 			];
-			$la_data += $aa_requestData;
+			$la_data += $requestData;
 
 			$this->Pages->patchEntity(
 				$lo_entity,

@@ -22,8 +22,8 @@ class AwyissExtension extends AbstractExtension {
 	 */
 	public function getFilters(): array {
 		return [
-			new TwigFilter('json_decode', function (string $as_json): ?array {
-				$la_return = json_decode($as_json, true);
+			new TwigFilter('json_decode', function (string $json): ?array {
+				$la_return = json_decode($json, true);
 
 
 				// If the JSON is invalid, return null
@@ -40,16 +40,16 @@ class AwyissExtension extends AbstractExtension {
 	 */
 	public function getFunctions(): array {
 		return [
-			new TwigFunction('combine', function (array $aa_keys, array $aa_values): array {
-				return array_combine($aa_keys, $aa_values);
+			new TwigFunction('combine', function (array $keys, array $values): array {
+				return array_combine($keys, $values);
 			}),
 
 			new TwigFunction('dump', function (): void {
 				dump(...func_get_args());
 			}),
 
-			new TwigFunction('getClass', function (object $ao_class): string {
-				return get_class($ao_class);
+			new TwigFunction('getClass', function (object $class): string {
+				return get_class($class);
 			}),
 
 			new TwigFunction('__', '__'),
@@ -65,12 +65,12 @@ class AwyissExtension extends AbstractExtension {
 
 			new TwigFunction(
 				'hashPrinter',
-				function (CollectionInterface|array $ax_data, string $as_value, string $as_key, string $as_spacer = '- ', int $ai_levelOffset = 0): array {
-					$la_data = is_array($ax_data) ? $ax_data : $ax_data->toList();
+				function (CollectionInterface|array $data, string $value, string $key, string $spacer = '- ', int $levelOffset = 0): array {
+					$la_data = is_array($data) ? $data : $data->toList();
 
 					$la_return = [];
 					foreach ($la_data as $lx_key => $lx_item) {
-						$la_return[ $as_key === 'key' ? $lx_key : $lx_item[ $as_key ] ] = str_repeat($as_spacer, $lx_item['level'] - $ai_levelOffset) . $lx_item[ $as_value ];
+						$la_return[ $key === 'key' ? $lx_key : $lx_item[ $key ] ] = str_repeat($spacer, $lx_item['level'] - $levelOffset) . $lx_item[ $value ];
 					}
 
 
@@ -78,10 +78,11 @@ class AwyissExtension extends AbstractExtension {
 				}
 			),
 
-			new TwigFunction('naturalSort', function (array $aa_data, int|string|null $as_key = null): array {
-				uasort($aa_data, function ($a, $b) use ($as_key) {
-					if (!empty($as_key)) {
-						return strnatcasecmp($a[ $as_key ], $b[ $as_key ]);
+			new TwigFunction('naturalSort', function (array $data, int|string|null $key = null): array {
+				/** @noinspection PhpVariableNamingConventionInspection */
+				uasort($data, function ($a, $b) use ($key) {
+					if (!empty($key)) {
+						return strnatcasecmp($a[ $key ], $b[ $key ]);
 					}
 
 
@@ -89,12 +90,12 @@ class AwyissExtension extends AbstractExtension {
 				});
 
 
-				return $aa_data;
+				return $data;
 			}),
 
-			new TwigFunction('staticCall', function (string $as_class, string $as_method, ...$aa_args): mixed {
-				if (class_exists($as_class) && method_exists($as_class, $as_method)) {
-					return call_user_func_array([$as_class, $as_method], $aa_args);
+			new TwigFunction('staticCall', function (string $class, string $method, ...$args): mixed {
+				if (class_exists($class) && method_exists($class, $method)) {
+					return call_user_func_array([$class, $method], $args);
 				}
 
 
@@ -111,20 +112,20 @@ class AwyissExtension extends AbstractExtension {
 	 */
 	public function getTests(): array {
 		return [
-			new TwigTest('array', function ($ax_value): bool {
-				return is_array($ax_value);
+			new TwigTest('array', function ($value): bool {
+				return is_array($value);
 			}),
 
-			new TwigTest('instanceOf', function ($ao_object, $ax_class): bool {
-				return $ao_object instanceof $ax_class;
+			new TwigTest('instanceOf', function ($object, $class): bool {
+				return $object instanceof $class;
 			}),
 
-			new TwigTest('numeric', function ($ax_value): bool {
-				return is_numeric($ax_value);
+			new TwigTest('numeric', function ($value): bool {
+				return is_numeric($value);
 			}),
 
-			new TwigTest('string', function ($ax_value): bool {
-				return is_string($ax_value);
+			new TwigTest('string', function ($value): bool {
+				return is_string($value);
 			}),
 		];
 	}

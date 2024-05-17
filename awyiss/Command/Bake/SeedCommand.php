@@ -22,12 +22,11 @@ class SeedCommand extends BaseBakeSeedCommand {
 	 *
 	 * Adds the `folder`-option
 	 *
-	 * @param ConsoleOptionParser $ao_parser
+	 * @param ConsoleOptionParser $parser
 	 * @return ConsoleOptionParser
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildOptionParser(ConsoleOptionParser $ao_parser): ConsoleOptionParser {
-		$lo_parser = parent::buildOptionParser($ao_parser);
+	public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser {
+		$lo_parser = parent::buildOptionParser($parser);
 
 		$lo_parser->addOption('folder', [
 			'help' => 'The folder to save the migration in.',

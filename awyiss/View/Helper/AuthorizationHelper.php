@@ -37,12 +37,12 @@ class AuthorizationHelper extends Helper {
 
 
 	/**
-	 * @param array $aa_data
+	 * @param array $data
 	 * @return $this
 	 * @noinspection PhpUnused
 	 */
-	public function setAdditionalData(array $aa_data): static {
-		$this->setConfig('additionalData', $aa_data, false);
+	public function setAdditionalData(array $data): static {
+		$this->setConfig('additionalData', $data, false);
 
 
 		return $this;
@@ -82,12 +82,12 @@ class AuthorizationHelper extends Helper {
 	/**
 	 * Save the given identity to the config
 	 *
-	 * @param IdentityPermissionsInterface $ao_identity
+	 * @param IdentityPermissionsInterface $identity
 	 * @return $this
 	 * @noinspection PhpUnused
 	 */
-	public function setIdentity(IdentityPermissionsInterface $ao_identity): static {
-		$this->setConfig('identity', $ao_identity);
+	public function setIdentity(IdentityPermissionsInterface $identity): static {
+		$this->setConfig('identity', $identity);
 
 
 		return $this;
@@ -129,12 +129,12 @@ class AuthorizationHelper extends Helper {
 	/**
 	 * Returns the currently set scope
 	 *
-	 * @param string $as_scope
+	 * @param string $scope
 	 * @return $this
 	 * @noinspection PhpUnused
 	 */
-	public function setScope(string $as_scope): static {
-		$ls_scope = Inflector::underscore($as_scope);
+	public function setScope(string $scope): static {
+		$ls_scope = Inflector::underscore($scope);
 		$ls_scope = Inflector::singularize($ls_scope);
 		$ls_scope = Inflector::pluralize($ls_scope);
 
@@ -163,16 +163,16 @@ class AuthorizationHelper extends Helper {
 	 * For a list of given identifiers, return true or false whether they're accessible inside the current scope
 	 * for the current identity.
 	 *
-	 * See \Awyiss\Authorization\Permission\PermissionCollection::scopeIsAccessible() how $ax_identifier is used.
+	 * See \Awyiss\Authorization\Permission\PermissionCollection::scopeIsAccessible() how $identifier is used.
 	 *
-	 * @param array|string ...$ax_identifier
+	 * @param array|string ...$identifier
 	 * @return bool
 	 * @throws \Exception
 	 * @see \Awyiss\Authorization\Permission\PermissionCollection::scopeIsAccessible()
 	 * @noinspection PhpUnused
 	 */
-	public function isAccessible(string|array ...$ax_identifier): bool {
-		return $this->scopeIsAccessible($this->getScope(), [], ...$ax_identifier);
+	public function isAccessible(string|array ...$identifier): bool {
+		return $this->scopeIsAccessible($this->getScope(), [], ...$identifier);
 	}
 
 
@@ -180,19 +180,19 @@ class AuthorizationHelper extends Helper {
 	 * For a list of given identifiers, return true or false whether they're accessible inside the given scope
 	 * for the given identity.
 	 *
-	 * See \Awyiss\Authorization\Permission\PermissionCollection::scopeIsAccessible() how $ax_identifier is used.
+	 * See \Awyiss\Authorization\Permission\PermissionCollection::scopeIsAccessible() how $identifier is used.
 	 *
 	 * @throws \Exception
 	 * @see \Awyiss\Authorization\Permission\PermissionCollection::scopeIsAccessible()
 	 */
-	public function scopeIsAccessible(string $as_scope, array $aa_additionalData = [], string|array ...$ax_identifier): ?bool {
+	public function scopeIsAccessible(string $scope, array $additionalData = [], string|array ...$identifier): ?bool {
 		//Get the currently assigned permissions from the identity object, resp. their permission collection
 		$lo_identity = $this->getIdentity();
 
-		$la_additionalData = $aa_additionalData ?: $this->getConfig('additionalData');
+		$la_additionalData = $additionalData ?: $this->getConfig('additionalData');
 
 
-		return $lo_identity->scopeIsAccessible($as_scope, $la_additionalData, ...$ax_identifier);
+		return $lo_identity->scopeIsAccessible($scope, $la_additionalData, ...$identifier);
 	}
 
 
@@ -202,35 +202,35 @@ class AuthorizationHelper extends Helper {
 	 * If no filename was provided, use the type and the preferred input of the permission.
 	 * For example `element\authorization\permission\simple_radio`
 	 *
-	 * @param PermissionOptionInterface $ao_permission
-	 * @param Entity|null $ao_entity
-	 * @param string|null $as_fileName
-	 * @param string|null $as_subDir
+	 * @param PermissionOptionInterface $permission
+	 * @param Entity|null $entity
+	 * @param string|null $fileName
+	 * @param string|null $subDir
 	 * @return string
 	 * @noinspection PhpUnused
 	 */
-	public function permissionOptions(PermissionOptionInterface $ao_permission, ?Entity $ao_entity = null, ?string $as_fileName = null, ?string $as_subDir = null): string {
+	public function permissionOptions(PermissionOptionInterface $permission, ?Entity $entity = null, ?string $fileName = null, ?string $subDir = null): string {
 		$ls_subDir = 'authorization' . DS . 'permission_option';
-		if (!empty($as_subDir)) {
-			$ls_subDir = trim($as_subDir, DS) . DS . $ls_subDir;
+		if (!empty($subDir)) {
+			$ls_subDir = trim($subDir, DS) . DS . $ls_subDir;
 		}
 
-		$ls_fileName = $as_fileName;
+		$ls_fileName = $fileName;
 		if (empty($ls_fileName)) {
-			$ls_fileName = $ao_permission->getType();
-			$ls_fileName .= '_' . $ao_permission->getConfig('preferredInput')->value;
+			$ls_fileName = $permission->getType();
+			$ls_fileName .= '_' . $permission->getConfig('preferredInput')->value;
 		}
 
 		//This should never happen, but you never know.
-		if (!$ao_permission->getConfig('identifier')) {
-			throw new RuntimeException(sprintf('Permission `%s` requires an identifier to be representable.', $ao_permission::class));
+		if (!$permission->getConfig('identifier')) {
+			throw new RuntimeException(sprintf('Permission `%s` requires an identifier to be representable.', $permission::class));
 		}
 
 		$la_viewData = [
-			'permission' => $ao_permission,
-			'entity' => $ao_entity,
-			'scope' => Inflector::underscore($ao_permission->getPermissionOptionCollection()->getScope()),
-			'identifier' => Inflector::underscore($ao_permission->getConfig('identifier')),
+			'permission' => $permission,
+			'entity' => $entity,
+			'scope' => Inflector::underscore($permission->getPermissionOptionCollection()->getScope()),
+			'identifier' => Inflector::underscore($permission->getConfig('identifier')),
 		];
 
 

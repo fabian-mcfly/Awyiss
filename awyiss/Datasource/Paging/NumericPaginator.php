@@ -18,11 +18,11 @@ class NumericPaginator extends BaseNumericPaginator {
 	/**
 	 * Re-implementation of the original method to sanitize the data before passing it to the parent method.
 	 *
-	 * @param array $aa_data
+	 * @param array $data
 	 * @return void
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection*/
-	protected function addSortingParams(array $aa_data): void {
-		$la_data = $aa_data;
+	 */
+	protected function addSortingParams(array $data): void {
+		$la_data = $data;
 
 		if (isset($la_data['options']['sort']) && is_array($la_data['options']['sort'])) {
 			$la_data['options']['sort'] = current($la_data['options']['sort']);
@@ -51,20 +51,21 @@ class NumericPaginator extends BaseNumericPaginator {
 	}
 
 	/**
-	 * @param \Cake\Datasource\RepositoryInterface $ao_object
-	 * @param \Cake\Datasource\QueryInterface|null $ao_query
-	 * @param array $aa_data
+	 * @param \Cake\Datasource\RepositoryInterface $object
+	 * @param \Cake\Datasource\QueryInterface|null $query
+	 * @param array $data
 	 * @return \Cake\Datasource\QueryInterface
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	protected function getQuery(RepositoryInterface $ao_object, ?QueryInterface $ao_query, array $aa_data): QueryInterface {
-		$la_options = $aa_data['options'];
+	protected function getQuery(RepositoryInterface $object, ?QueryInterface $query, array $data): QueryInterface {
+		$la_options = $data['options'];
 		$la_queryOptions = array_intersect_key(
 			$la_options,
 			['order' => null, 'page' => null, 'limit' => null],
 		);
 
-		if ($ao_query === null) {
+		$lo_query = $query;
+
+		if ($lo_query === null) {
 			$la_args = [];
 			$lx_finder = !empty($la_options['finder']) ? $la_options['finder'] : 'all';
 			if (is_array($lx_finder)) {
@@ -72,7 +73,7 @@ class NumericPaginator extends BaseNumericPaginator {
 				$lx_finder = key($lx_finder);
 			}
 
-			$ao_query = $ao_object->find($lx_finder, ...$la_args);
+			$lo_query = $object->find($lx_finder, ...$la_args);
 		}
 
 		foreach ($la_queryOptions['order'] as $ls_field => $lx_directionOrCoalesce) {
@@ -80,36 +81,35 @@ class NumericPaginator extends BaseNumericPaginator {
 				$la_fields = array_map(function ($field) {
 					return new IdentifierExpression($field);
 				}, $lx_directionOrCoalesce['fields']);
-				$lo_expr = $ao_query->func()->coalesce($la_fields);
+				$lo_expr = $lo_query->func()->coalesce($la_fields);
 
 				if ($lx_directionOrCoalesce['direction'] === 'asc') {
-					$ao_query->orderByAsc($lo_expr);
+					$lo_query->orderByAsc($lo_expr);
 				}
 				else {
-					$ao_query->orderByDesc($lo_expr);
+					$lo_query->orderByDesc($lo_expr);
 				}
 			}
 			else {
-				$ao_query->orderBy([$ls_field => $lx_directionOrCoalesce]);
+				$lo_query->orderBy([$ls_field => $lx_directionOrCoalesce]);
 			}
 		}
 		unset($la_queryOptions['order']);
 
-		$ao_query->applyOptions($la_queryOptions);
+		$lo_query->applyOptions($la_queryOptions);
 
-		return $ao_query;
+		return $lo_query;
 	}
 
 	/**
 	 * Re-implementation of the original method to allow for sorting by multiple fields.
 	 *
-	 * @param \Cake\Datasource\RepositoryInterface $ao_object
-	 * @param array $aa_options
+	 * @param \Cake\Datasource\RepositoryInterface $object
+	 * @param array $options
 	 * @return array
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	protected function validateSort(RepositoryInterface $ao_object, array $aa_options): array {
-		$la_options = $aa_options;
+	protected function validateSort(RepositoryInterface $object, array $options): array {
+		$la_options = $options;
 
 		if (isset($la_options['sort'])) {
 			$ls_direction = null;
@@ -122,7 +122,7 @@ class NumericPaginator extends BaseNumericPaginator {
 
 			$la_defaultOrder = isset($la_options['order']) && is_array($la_options['order']) ? $la_options['order'] : [];
 			if ($la_defaultOrder && is_string($la_options['sort']) && !str_contains($la_options['sort'], '.')) {
-				$la_defaultOrder = $this->_removeAliases($la_defaultOrder, $ao_object->getAlias());
+				$la_defaultOrder = $this->_removeAliases($la_defaultOrder, $object->getAlias());
 			}
 
 			if (is_array($la_options['sort'])) {
@@ -184,7 +184,7 @@ class NumericPaginator extends BaseNumericPaginator {
 			$la_options['sort'] = key($la_options['order']);
 		}
 
-		$la_options['order'] = $this->prefix($ao_object, $la_options['order'], $lb_sortAllowed);
+		$la_options['order'] = $this->prefix($object, $la_options['order'], $lb_sortAllowed);
 
 		return $la_options;
 	}

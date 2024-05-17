@@ -113,31 +113,31 @@ class Attribute extends Entity {
 	/**
 	 * Make sure the identifier is always lowercase, underscored and free of special characters
 	 *
-	 * @param string|null $as_identifier
+	 * @param string|null $identifier
 	 * @return string|null
 	 * @see \Awyiss\Model\Entity\Attribute::$identifier
 	 */
-	protected function _setIdentifier(?string $as_identifier): ?string {
-		if ($as_identifier === null) {
+	protected function _setIdentifier(?string $identifier): ?string {
+		if ($identifier === null) {
 			return null;
 		}
 
-		return mb_strtolower(Text::slug($as_identifier, ['replacement' => '_']));
+		return mb_strtolower(Text::slug($identifier, ['replacement' => '_']));
 	}
 
 
 	/**
 	 * Make sure the scope is always lowercase, underscored and free of special characters
 	 *
-	 * @param string|null $as_scope
+	 * @param string|null $scope
 	 * @return string|null
 	 * @see \Awyiss\Model\Entity\Attribute::$scope
 	 */
-	protected function _setScope(?string $as_scope): ?string {
-		if ($as_scope === null) {
+	protected function _setScope(?string $scope): ?string {
+		if ($scope === null) {
 			return null;
 		}
 
-		return mb_strtolower(Text::slug($as_scope, ['replacement' => '_']));
+		return mb_strtolower(Text::slug($scope, ['replacement' => '_']));
 	}
 }

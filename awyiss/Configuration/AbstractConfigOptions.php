@@ -47,21 +47,21 @@ abstract class AbstractConfigOptions implements ConfigOptionsInterface {
 
 
 	/**
-	 * @param string $as_realm
-	 * @param ConfigOption|array $ax_configOption
+	 * @param string $realm
+	 * @param ConfigOption|array $configOption
 	 * @return $this
 	 */
-	public function add(string $as_realm, array|ConfigOption $ax_configOption): static {
-		if (!in_array($as_realm, Awyiss::getRealms())) {
+	public function add(string $realm, array|ConfigOption $configOption): static {
+		if (!in_array($realm, Awyiss::getRealms())) {
 			throw new InvalidArgumentException(
 				sprintf(
 					'The realm is not valid. `%s` given.',
-					$as_realm
+					$realm
 				)
 			);
 		}
 
-		$this->realms[ $as_realm ]->add($ax_configOption);
+		$this->realms[ $realm ]->add($configOption);
 
 
 		return $this;
@@ -71,31 +71,31 @@ abstract class AbstractConfigOptions implements ConfigOptionsInterface {
 	/**
 	 * @inheritDoc
 	 */
-	public function getConfigOptions(?string $as_realm = null): ConfigOptionCollection|array {
-		if ($as_realm === null) {
+	public function getConfigOptions(?string $realm = null): ConfigOptionCollection|array {
+		if ($realm === null) {
 			return $this->realms;
 		}
 
-		if (!isset($this->realms[ $as_realm ])) {
-			throw new InvalidArgumentException(sprintf('The realm is not valid. `%s` given.', $as_realm));
+		if (!isset($this->realms[ $realm ])) {
+			throw new InvalidArgumentException(sprintf('The realm is not valid. `%s` given.', $realm));
 		}
 
 
-		return $this->realms[ $as_realm ];
+		return $this->realms[ $realm ];
 	}
 
 
 	/**
 	 * @inheritDoc
 	 */
-	public function getConfigOption(string $as_realm, string|array $ax_path): ?ConfigOption {
-		$la_configOptions = $this->realms[ $as_realm ] ?? [];
+	public function getConfigOption(string $realm, string|array $path): ?ConfigOption {
+		$la_configOptions = $this->realms[ $realm ] ?? [];
 
 		if (empty($la_configOptions)) {
 			return null;
 		}
 
-		$la_path = $this->sanitizePath($ax_path);
+		$la_path = $this->sanitizePath($path);
 
 		$lo_configOption = Hash::get($la_configOptions, $la_path);
 
@@ -109,18 +109,18 @@ abstract class AbstractConfigOptions implements ConfigOptionsInterface {
 
 
 	/**
-	 * @param array|string $ax_path
+	 * @param array|string $path
 	 * @return array
 	 */
-	public function sanitizePath(array|string $ax_path): array {
-		$la_identifierPath = $ax_path;
-		if (!is_array($ax_path)) {
-			$la_identifierPath = explode('.', $ax_path);
+	public function sanitizePath(array|string $path): array {
+		$la_identifierPath = $path;
+		if (!is_array($path)) {
+			$la_identifierPath = explode('.', $path);
 		}
 
 
-		return array_map(function ($as_pathFragment) {
-			return ConfigOptionsProvider::sanitizeIdentifier($as_pathFragment);
+		return array_map(function ($pathFragment) {
+			return ConfigOptionsProvider::sanitizeIdentifier($pathFragment);
 		}, $la_identifierPath);
 	}
 
@@ -129,14 +129,14 @@ abstract class AbstractConfigOptions implements ConfigOptionsInterface {
 	 * @inheritDoc
 	 */
 	public function validateConfigValue(
-		string $as_realm,
-		array|string $ax_path,
-		mixed $ax_value,
-		?string $as_languageShortcode = null,
-		bool $ab_fallbackValidity = true
+		string $realm,
+		array|string $path,
+		mixed $value,
+		?string $languageShortcode = null,
+		bool $fallbackValidity = true
 	): bool|string {
 		try {
-			$lo_configOption = $this->getConfigOption($as_realm, $ax_path);
+			$lo_configOption = $this->getConfigOption($realm, $path);
 		}
 		catch (InvalidArgumentException) {
 			return false;
@@ -149,11 +149,11 @@ abstract class AbstractConfigOptions implements ConfigOptionsInterface {
 			 *
 			 * This is also the case if the given identifier points to a ConfigOptionsCollection instead of a ConfigOption
 			 */
-			return $ab_fallbackValidity;
+			return $fallbackValidity;
 		}
 
 
-		return $lo_configOption->validateConfigValue($ax_value, $as_languageShortcode);
+		return $lo_configOption->validateConfigValue($value, $languageShortcode);
 	}
 
 
@@ -161,24 +161,24 @@ abstract class AbstractConfigOptions implements ConfigOptionsInterface {
 	 * @inheritDoc
 	 */
 	public function typecastConfigValue(
-		string $as_realm,
-		array|string $ax_path,
-		mixed $ax_value,
-		?string $as_languageShortcode = null,
+		string $realm,
+		array|string $path,
+		mixed $value,
+		?string $languageShortcode = null,
 	): mixed {
 		try {
-			$lo_configOption = $this->getConfigOption($as_realm, $ax_path);
+			$lo_configOption = $this->getConfigOption($realm, $path);
 		}
 		catch (InvalidArgumentException) {
 			return null;
 		}
 
 		if (!($lo_configOption instanceof ConfigOption)) {
-			return $ax_value;
+			return $value;
 		}
 
 
-		return $lo_configOption->typecastConfigValue($ax_value, $as_languageShortcode);
+		return $lo_configOption->typecastConfigValue($value, $languageShortcode);
 	}
 
 

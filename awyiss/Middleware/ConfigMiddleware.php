@@ -11,6 +11,10 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
 
+/**
+ * Middleware to load the configuration for the realm the middleware was loaded with,
+ * as well as the selected frontend language
+ */
 class ConfigMiddleware implements MiddlewareInterface {
 	/**
 	 * @var string
@@ -19,10 +23,10 @@ class ConfigMiddleware implements MiddlewareInterface {
 
 
 	/**
-	 * @param string $as_realm
+	 * @param string $realm
 	 */
-	public function __construct(string $as_realm) {
-		$this->realm = $as_realm;
+	public function __construct(string $realm) {
+		$this->realm = $realm;
 	}
 
 

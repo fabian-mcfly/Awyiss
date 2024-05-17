@@ -47,11 +47,10 @@ class ColumnParser extends BaseColumnParser {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function parseFields(array $aa_arguments): array {
+	public function parseFields(array $arguments): array {
 		$la_fields = [];
-		$la_arguments = $this->validArguments($aa_arguments);
+		$la_arguments = $this->validArguments($arguments);
 		foreach ($la_arguments as $ls_field) {
 			preg_match($this->regexpParseColumn, $ls_field, $la_matches);
 			$ls_field = $la_matches[1];
@@ -100,12 +99,12 @@ class ColumnParser extends BaseColumnParser {
 
 
 	/**
-	 * @param string $as_field
-	 * @param string $as_type
+	 * @param string $field
+	 * @param string $type
 	 * @return array
 	 */
-	public function getTypeAndLengthAndDefault(string $as_field, string $as_type): array {
-		if ($as_type && preg_match($this->regexpParseField, $as_type, $la_matches)) {
+	public function getTypeAndLengthAndDefault(string $field, string $type): array {
+		if ($type && preg_match($this->regexpParseField, $type, $la_matches)) {
 			if (str_contains($la_matches[2], ',')) {
 				$la_matches[2] = explode(',', $la_matches[2]);
 			}
@@ -115,7 +114,7 @@ class ColumnParser extends BaseColumnParser {
 		}
 
 		/** @var string $ls_fieldType */
-		$ls_fieldType = $this->getType($as_field, $as_type);
+		$ls_fieldType = $this->getType($field, $type);
 		$li_length = $this->getLength($ls_fieldType);
 
 

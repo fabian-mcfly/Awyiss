@@ -44,91 +44,91 @@ class PageRolesListener implements EventListenerInterface {
 
 
 	/**
-	 * @param \Cake\Event\Event $ao_event
-	 * @param \Awyiss\Model\Entity\PageRole $ao_entity
+	 * @param \Cake\Event\Event $event
+	 * @param \Awyiss\Model\Entity\PageRole $entity
 	 * @return void
 	 */
-	public function beforeSave(Event $ao_event, PageRole $ao_entity): void {
+	public function beforeSave(Event $event, PageRole $entity): void {
 		//If the page role has an attributes table and there is a table change in progress, stop the event.
-		$ls_attributesTable = 'attributes_' . Inflector::tableize($ao_entity->identifier);
+		$ls_attributesTable = 'attributes_' . Inflector::tableize($entity->identifier);
 		$la_tables = ConnectionManager::get('default')->getSchemaCollection()->listTables();
 		if (in_array($ls_attributesTable, $la_tables)) {
 			/** @var \Queue\Model\Table\QueuedJobsTable $lo_queue */
 			$lo_queue = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
 			if ($lo_queue->isQueued('attributes::table_changes')) {
-				$ao_event->stopPropagation();
-				$ao_entity->setError('_general', __d('attributes', 'table_changes_in_progress'));
+				$event->stopPropagation();
+				$entity->setError('_general', __d('attributes', 'table_changes_in_progress'));
 			}
 		}
 	}
 
 
 	/**
-	 * @param Event $ao_event
-	 * @param PageRole $ao_entity
+	 * @param Event $event
+	 * @param PageRole $entity
 	 * @return void
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function afterSave(Event $ao_event, PageRole $ao_entity): void {
+	public function afterSave(Event $event, PageRole $entity): void {
 		//Create backend menu entries for the new page role
-		$this->createBackendMenuEntries($ao_entity);
+		$this->createBackendMenuEntries($entity);
 	}
 
 
 	/**
-	 * @param Event $ao_event
-	 * @param PageRole $ao_entity
+	 * @param Event $event
+	 * @param PageRole $entity
 	 * @noinspection PhpUnused
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function afterSaveCommit(Event $ao_event, PageRole $ao_entity): void {
+	public function afterSaveCommit(Event $event, PageRole $entity): void {
 		$this->bakePageRoleEnum();
 
-		$this->bakePageRoleModel($ao_entity);
+		$this->bakePageRoleModel($entity);
 	}
 
 
 	/**
-	 * @param Event $ao_event
-	 * @param PageRole $ao_entity
+	 * @param Event $event
+	 * @param PageRole $entity
 	 * @noinspection PhpUnused
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function afterSoftDelete(Event $ao_event, PageRole $ao_entity): void {
+	public function afterSoftDelete(Event $event, PageRole $entity): void {
 		$lo_tableLocator = FactoryLocator::get('Table');
 
 		$lo_menuEntries = $lo_tableLocator->get('BackendMenuEntries');
 		$lo_menuEntries->deleteAll([
 			'OR' => [
-				'link LIKE' => Inflector::tableize($ao_entity->identifier) . '::%',
-				'link' => 'Configuration::overview::scope:' . Inflector::pluralize($ao_entity->identifier),
+				'link LIKE' => Inflector::tableize($entity->identifier) . '::%',
+				'link' => 'Configuration::overview::scope:' . Inflector::pluralize($entity->identifier),
 			],
 		]);
 
 		$lo_configuration = $lo_tableLocator->get('Configuration');
 		$lo_configuration->deleteAll([
-			'scope' => Inflector::pluralize($ao_entity->identifier),
+			'scope' => Inflector::pluralize($entity->identifier),
 		]);
 
 		$lo_configuration = $lo_tableLocator->get('I18n');
 		$lo_configuration->deleteAll([
-			'model' => Inflector::pluralize($ao_entity->identifier),
+			'model' => Inflector::pluralize($entity->identifier),
 		]);
 
 		$lo_usergroupPermissions = $lo_tableLocator->get('UsergroupPermissions');
 		$lo_usergroupPermissions->deleteAll([
-			'scope' => Inflector::pluralize($ao_entity->identifier),
+			'scope' => Inflector::pluralize($entity->identifier),
 		]);
 	}
 
 
 	/**
-	 * @param Event $ao_event
-	 * @param PageRole $ao_entity
+	 * @param Event $event
+	 * @param PageRole $entity
 	 * @noinspection PhpUnused
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function afterSoftDeleteCommit(Event $ao_event, PageRole $ao_entity): void {
+	public function afterSoftDeleteCommit(Event $event, PageRole $entity): void {
 		$lo_tableLocator = FactoryLocator::get('Table');
 
 		$this->bakePageRoleEnum();
@@ -136,17 +136,17 @@ class PageRolesListener implements EventListenerInterface {
 		/** @var \Queue\Model\Table\QueuedJobsTable $lo_queue */
 		$lo_queue = $lo_tableLocator->get('Queue.QueuedJobs');
 
-		$ls_filePath = implode(DS, [ROOT, CUSTOM_DIR, 'Model', 'Entity', Inflector::classify($ao_entity->identifier) . '.php']);
+		$ls_filePath = implode(DS, [ROOT, CUSTOM_DIR, 'Model', 'Entity', Inflector::classify($entity->identifier) . '.php']);
 		if (file_exists($ls_filePath)) {
 			unlink($ls_filePath);
 		}
 
-		$ls_filePath = implode(DS, [ROOT, CUSTOM_DIR, 'Model', 'Table', Inflector::camelize(Inflector::tableize($ao_entity->identifier)) . 'Table.php']);
+		$ls_filePath = implode(DS, [ROOT, CUSTOM_DIR, 'Model', 'Table', Inflector::camelize(Inflector::tableize($entity->identifier)) . 'Table.php']);
 		if (file_exists($ls_filePath)) {
 			unlink($ls_filePath);
 		}
 
-		$ls_attributesTable = 'attributes_' . Inflector::tableize($ao_entity->identifier);
+		$ls_attributesTable = 'attributes_' . Inflector::tableize($entity->identifier);
 		$la_tables = ConnectionManager::get('default')->getSchemaCollection()->listTables();
 		if (in_array($ls_attributesTable, $la_tables)) {
 			/** @var \Awyiss\Model\Table $lo_attributesTable */
@@ -158,7 +158,7 @@ class PageRolesListener implements EventListenerInterface {
 			$lo_queue->createJob(
 				'AttributesDelete',
 				[
-					'identifier' => Inflector::tableize($ao_entity->identifier),
+					'identifier' => Inflector::tableize($entity->identifier),
 					'identityId' => $li_identityId,
 				],
 				[
@@ -225,24 +225,24 @@ class PageRolesListener implements EventListenerInterface {
 
 
 	/**
-	 * @param PageRole $ao_entity
+	 * @param PageRole $entity
 	 * @return void
 	 */
-	private function bakePageRoleModel(PageRole $ao_entity): void {
-		if ($ao_entity->identifier === 'page' || !$ao_entity->isNew()) {
+	private function bakePageRoleModel(PageRole $entity): void {
+		if ($entity->identifier === 'page' || !$entity->isNew()) {
 			return;
 		}
 
 		/** @var \Queue\Model\Table\QueuedJobsTable $lo_queue */
 		$lo_queue = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
 
-		if ($lo_queue->isQueued('system::create_page_role_model_' . $ao_entity->identifier)) {
+		if ($lo_queue->isQueued('system::create_page_role_model_' . $entity->identifier)) {
 			return;
 		}
 
 		$la_commands = [];
 
-		$ls_command = 'bin/cake bake model ' . Inflector::camelize(Inflector::pluralize($ao_entity->identifier));
+		$ls_command = 'bin/cake bake model ' . Inflector::camelize(Inflector::pluralize($entity->identifier));
 		$ls_command .= ' --namespace ' . CUSTOM_NAMESPACE;
 
 		$ls_command .= ' --force';
@@ -269,26 +269,26 @@ class PageRolesListener implements EventListenerInterface {
 		], [
 			'group' => 'general',
 			'priority' => 1,
-			'reference' => 'system::create_page_role_model_' . $ao_entity->identifier,
+			'reference' => 'system::create_page_role_model_' . $entity->identifier,
 		]);
 	}
 
 
 	/**
-	 * @param PageRole $ao_entity
+	 * @param PageRole $entity
 	 * @return void
 	 */
-	protected function createBackendMenuEntries(PageRole $ao_entity): void {
-		if (!Configure::read('Awyiss.PageRoles.Backend.autoCreateMenuEntries') || !$ao_entity->isNew() || $ao_entity->identifier === 'page') {
+	protected function createBackendMenuEntries(PageRole $entity): void {
+		if (!Configure::read('Awyiss.PageRoles.Backend.autoCreateMenuEntries') || !$entity->isNew() || $entity->identifier === 'page') {
 			return;
 		}
 
 		/** @var \Awyiss\Model\Table\BackendMenuEntriesTable $lo_menuEntriesTable */
 		$lo_menuEntriesTable = $this->fetchTable('BackendMenuEntries');
 
-		$ls_scope = Inflector::pluralize($ao_entity->identifier);
+		$ls_scope = Inflector::pluralize($entity->identifier);
 		$ls_controller = Inflector::camelize($ls_scope);
 
-		$lo_menuEntriesTable->createEntries($ao_entity, $ls_controller, $ls_scope);
+		$lo_menuEntriesTable->createEntries($entity, $ls_controller, $ls_scope);
 	}
 }

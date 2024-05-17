@@ -20,14 +20,12 @@ class I18nExtractCommand extends BaseI18nExtractCommand {
 	 * Added
 	 * - '__df' => ['domain', 'fallback', 'context', 'singular'],
 	 * - '__dfx' => ['domain', 'fallback', 'context', 'singular'],
-	 *
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	protected function _extractTokens(Arguments $ao_args, ConsoleIo $ao_io): void {
+	protected function _extractTokens(Arguments $args, ConsoleIo $io): void {
 		/** @var \Cake\Command\Helper\ProgressHelper $lo_progress */
-		$lo_progress = $ao_io->helper('progress');
+		$lo_progress = $io->helper('progress');
 		$lo_progress->init(['total' => count($this->_files)]);
-		$lb_isVerbose = $ao_args->getOption('verbose');
+		$lb_isVerbose = $args->getOption('verbose');
 
 		$la_functions = [
 			'__' => ['singular'],
@@ -46,7 +44,7 @@ class I18nExtractCommand extends BaseI18nExtractCommand {
 		foreach ($this->_files as $ls_filePath) {
 			$this->_file = $ls_filePath;
 			if ($lb_isVerbose) {
-				$ao_io->verbose(sprintf('Processing %s...', $ls_filePath));
+				$io->verbose(sprintf('Processing %s...', $ls_filePath));
 			}
 
 			$ls_code = file_get_contents($ls_filePath);
@@ -68,7 +66,7 @@ class I18nExtractCommand extends BaseI18nExtractCommand {
 				unset($la_allTokens);
 
 				foreach ($la_functions as $ls_functionName => $la_map) {
-					$this->_parse($ao_io, $ls_functionName, $la_map);
+					$this->_parse($io, $ls_functionName, $la_map);
 				}
 			}
 

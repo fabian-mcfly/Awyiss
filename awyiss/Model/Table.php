@@ -41,20 +41,20 @@ use RuntimeException;
 /**
  * Base Table
  *
- * @method \Cake\ORM\Query\SelectQuery findById(int $ai_id)
- * @method \Cake\ORM\Query\SelectQuery addSystemOrderQueryConditions(?SelectQuery $ao_query, \Cake\Datasource\EntityInterface $ao_entity)
+ * @method \Cake\ORM\Query\SelectQuery findById(int $id)
+ * @method \Cake\ORM\Query\SelectQuery addSystemOrderQueryConditions(?SelectQuery $query, \Cake\Datasource\EntityInterface $entity)
  * @method \Awyiss\Authorization\AuthorizationServiceInterface getAuthorizationService()
- * @method int getHighestSystemOrder(\Cake\Datasource\EntityInterface $ao_entity)
+ * @method int getHighestSystemOrder(\Cake\Datasource\EntityInterface $entity)
  * @method string|\Awyiss\Authorization\Policy\AbstractGenericPolicy|null getPolicyClass()
- * @method array getSystemOrderRelatedColumns(?\Cake\Datasource\EntityInterface $ao_entity = null)
- * @method array extractAttributeFields(array $aa_fields, bool $ab_inlcudeBaseFields = false)
+ * @method array getSystemOrderRelatedColumns(?\Cake\Datasource\EntityInterface $entity = null)
+ * @method array extractAttributeFields(array $fields, bool $inlcudeBaseFields = false)
  * @method array getAttributes()
  * @method \Awyiss\Model\Table getAttributesTable()
- * @method string getAttributesTableName(bool $ab_camelized = false)
+ * @method string getAttributesTableName(bool $camelized = false)
  * @method bool hasAttributes()
- * @method \Cake\Datasource\ResultSetInterface|array|null getCategories(bool $ab_returnRaw = false)
- * @method \Awyiss\Model\Entity newDefaultEntity(array $aa_additionalData = [])
- * @method \Cake\Collection\CollectionInterface listNested(\Cake\ORM\Query\SelectQuery $ao_query)
+ * @method \Cake\Datasource\ResultSetInterface|array|null getCategories(bool $returnRaw = false)
+ * @method \Awyiss\Model\Entity newDefaultEntity(array $additionalData = [])
+ * @method \Cake\Collection\CollectionInterface listNested(\Cake\ORM\Query\SelectQuery $query)
  * @noinspection PhpFullyQualifiedNameUsageInspection
  */
 class Table extends BaseTable {
@@ -186,12 +186,12 @@ class Table extends BaseTable {
 	/**
 	 * @inheritDoc
 	 */
-	public function __construct(array $aa_config = []) {
+	public function __construct(array $config = []) {
 		if (($this->_defaultConfig['implementedEvents'] ?? null) === null) {
 			$this->setConfig('implementedEvents', $this->defaultEvents);
 		}
 
-		parent::__construct($aa_config + ['eventManager' => new EventManager()]);
+		parent::__construct($config + ['eventManager' => new EventManager()]);
 	}
 
 
@@ -199,7 +199,7 @@ class Table extends BaseTable {
 	 * @inheritDoc
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function initialize(array $aa_config): void {
+	public function initialize(array $config): void {
 		if (static::TABLE) {
 			$this->setTable(static::TABLE);
 		}
@@ -270,8 +270,8 @@ class Table extends BaseTable {
 			$this->addBehavior('PublicationData', $this->publicationData);
 		}
 
-		if (!empty($aa_config['translateLanguage']) && !empty($this->translate['fields'])) {
-			$this->addTranslateBehavior($aa_config['translateLanguage']);
+		if (!empty($config['translateLanguage']) && !empty($this->translate['fields'])) {
+			$this->addTranslateBehavior($config['translateLanguage']);
 		}
 
 		$this->initializeSchema($lo_schema);
@@ -279,48 +279,48 @@ class Table extends BaseTable {
 
 
 	/**
-	 * @param SelectQuery $ao_query
+	 * @param SelectQuery $query
 	 * @return SelectQuery
 	 * @noinspection PhpUnused
 	 */
-	public function findTranslations(SelectQuery $ao_query): SelectQuery {
+	public function findTranslations(SelectQuery $query): SelectQuery {
 		if ($this->hasBehavior('Translate')) {
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-			return $this->getBehavior('Translate')->findTranslations($ao_query);
+			return $this->getBehavior('Translate')->findTranslations($query);
 		}
 
 
-		return $ao_query;
+		return $query;
 	}
 
 
 	/**
-	 * @param SelectQuery $ao_query
-	 * @param array $aa_options
+	 * @param SelectQuery $query
+	 * @param array $options
 	 * @return SelectQuery
 	 * @noinspection PhpUnused
 	 */
-	public function findActive(SelectQuery $ao_query): SelectQuery {
+	public function findActive(SelectQuery $query): SelectQuery {
 		if (!$this->getSchema()->getColumn('active')) {
 			throw new RuntimeException(sprintf('Cannot use `findActive` on table `%s` ', $this->getAlias()));
 		}
 
-		$ao_query->where(['active' => true]);
+		$query->where(['active' => true]);
 
 
-		return $ao_query;
+		return $query;
 	}
 
 
 	/**
-	 * @param \Cake\ORM\Query\SelectQuery $ao_query
+	 * @param \Cake\ORM\Query\SelectQuery $query
 	 * @param string|null $languageShortcode
 	 * @param \Awyiss\Model\Entity\MediaFolder|null $entity
 	 * @param bool $includeGlobal
 	 * @return \Cake\ORM\Query\SelectQuery
 	 * @throws \Exception
 	 */
-	public function findForCurrentLanguage(SelectQuery $ao_query, ?string $languageShortcode = null, ?Entity $entity = null, bool $includeGlobal = true): SelectQuery {
+	public function findForCurrentLanguage(SelectQuery $query, ?string $languageShortcode = null, ?Entity $entity = null, bool $includeGlobal = true): SelectQuery {
 		$ls_languageShortcode = $languageShortcode ?? LocaleMiddleware::getLanguage()->shortcode;
 
 		if ($ls_languageShortcode === '_global') {
@@ -332,7 +332,7 @@ class Table extends BaseTable {
 		}
 
 		if ($includeGlobal && $ls_languageShortcode) {
-			return $ao_query->where([
+			return $query->where([
 				'OR' => [
 					'language_shortcode' => $ls_languageShortcode,
 					'language_shortcode IS' => null,
@@ -341,7 +341,7 @@ class Table extends BaseTable {
 		}
 
 
-		return $ao_query->where([
+		return $query->where([
 			'language_shortcode' . ($ls_languageShortcode ? '' : ' IS') => $ls_languageShortcode,
 		]);
 	}
@@ -386,16 +386,15 @@ class Table extends BaseTable {
 	 *
 	 * Re-implemented 1:1 so it'll use \Awyiss\ORM\Association\BelongsTo
 	 *
-	 * @param string $as_associated
-	 * @param array $aa_options
+	 * @param string $associated
+	 * @param array $options
 	 * @return BelongsTo
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function belongsTo(string $as_associated, array $aa_options = []): BelongsTo {
-		$aa_options += ['sourceTable' => $this];
+	public function belongsTo(string $associated, array $options = []): BelongsTo {
+		$la_options = $options + ['sourceTable' => $this];
 
 		/** @var BelongsTo $lo_association */
-		$lo_association = $this->_associations->load(BelongsTo::class, $as_associated, $aa_options);
+		$lo_association = $this->_associations->load(BelongsTo::class, $associated, $la_options);
 
 
 		return $lo_association;
@@ -407,16 +406,15 @@ class Table extends BaseTable {
 	 *
 	 * Re-implemented 1:1 so it'll use \Awyiss\ORM\Association\hasOne
 	 *
-	 * @param string $as_associated
-	 * @param array $aa_options
+	 * @param string $associated
+	 * @param array $options
 	 * @return HasOne
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function hasOne(string $as_associated, array $aa_options = []): HasOne {
-		$aa_options += ['sourceTable' => $this];
+	public function hasOne(string $associated, array $options = []): HasOne {
+		$la_options = $options + ['sourceTable' => $this];
 
 		/** @var HasOne $lo_association */
-		$lo_association = $this->_associations->load(HasOne::class, $as_associated, $aa_options);
+		$lo_association = $this->_associations->load(HasOne::class, $associated, $la_options);
 
 
 		return $lo_association;
@@ -428,16 +426,15 @@ class Table extends BaseTable {
 	 *
 	 * Re-implemented 1:1 so it'll use \Awyiss\ORM\Association\HasMany
 	 *
-	 * @param string $as_associated
-	 * @param array $aa_options
+	 * @param string $associated
+	 * @param array $options
 	 * @return HasOne
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function hasMany(string $as_associated, array $aa_options = []): HasMany {
-		$aa_options += ['sourceTable' => $this];
+	public function hasMany(string $associated, array $options = []): HasMany {
+		$la_options = $options + ['sourceTable' => $this];
 
 		/** @var HasMany $lo_association */
-		$lo_association = $this->_associations->load(HasMany::class, $as_associated, $aa_options);
+		$lo_association = $this->_associations->load(HasMany::class, $associated, $la_options);
 
 
 		return $lo_association;
@@ -449,16 +446,15 @@ class Table extends BaseTable {
 	 *
 	 * Re-implemented 1:1 so it'll use \Awyiss\ORM\Association\BelongsToMany
 	 *
-	 * @param string $as_associated
-	 * @param array $aa_options
+	 * @param string $associated
+	 * @param array $options
 	 * @return HasOne
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function belongsToMany(string $as_associated, array $aa_options = []): BelongsToMany {
-		$aa_options += ['sourceTable' => $this];
+	public function belongsToMany(string $associated, array $options = []): BelongsToMany {
+		$la_options = $options + ['sourceTable' => $this];
 
 		/** @var BelongsToMany $lo_association */
-		$lo_association = $this->_associations->load(BelongsToMany::class, $as_associated, $aa_options);
+		$lo_association = $this->_associations->load(BelongsToMany::class, $associated, $la_options);
 
 
 		return $lo_association;
@@ -469,22 +465,21 @@ class Table extends BaseTable {
 	 * Returns true if there is any record in this repository matching the specified conditions.
 	 * Does the same as \Cake\ORM\Table::exists but accepts an array of options as the second parameter
 	 *
-	 * @param \Cake\Database\Expression\QueryExpression|\Closure|array|string|null $aa_conditions
-	 * @param array $aa_options
+	 * @param \Cake\Database\Expression\QueryExpression|\Closure|array|string|null $conditions
+	 * @param array $options
 	 * @return bool
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function exists(QueryExpression|Closure|array|string|null $aa_conditions, array $aa_options = []): bool {
-		$lx_finder = $aa_options['finder'] ?? 'all';
+	public function exists(QueryExpression|Closure|array|string|null $conditions, array $options = []): bool {
+		$lx_finder = $options['finder'] ?? 'all';
 		[$lx_finder, $la_options] = $this->_extractFinder($lx_finder);
 
-		$la_options = array_merge($la_options, $aa_options);
+		$la_options = array_merge($la_options, $options);
 		unset($la_options['finder']);
 
 		$lo_results = $this->find($lx_finder)
 			->applyOptions($la_options)
 			->select(['existing' => 1])
-			->where($aa_conditions)
+			->where($conditions)
 			->limit(1)
 			->disableHydration()
 			->toArray();
@@ -497,17 +492,16 @@ class Table extends BaseTable {
 	/**
 	 * Returns the default validator object.
 	 *
-	 * @param Validator $ao_validator The validator that can be modified to add some rules to it.
+	 * @param Validator $validator The validator that can be modified to add some rules to it.
 	 * @return Validator
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function validationDefault(BaseValidator $ao_validator): BaseValidator {
+	public function validationDefault(BaseValidator $validator): BaseValidator {
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		$ao_validator->setI18nDomain($this->getI18nDomain());
-		$ao_validator->setStopOnFailure();
+		$validator->setI18nDomain($this->getI18nDomain());
+		$validator->setStopOnFailure();
 
 
-		return $ao_validator;
+		return $validator;
 	}
 
 
@@ -529,16 +523,16 @@ class Table extends BaseTable {
 	/**
 	 * Build a list of events based on the given config
 	 *
-	 * @param Table|Behavior $ao_instance
-	 * @param mixed $aa_eventMap
-	 * @param mixed $ai_priority
+	 * @param Table|Behavior $instance
+	 * @param mixed $eventMap
+	 * @param mixed $priority
 	 * @return array
 	 */
-	public function buildEventMap(Table|Behavior $ao_instance, array $aa_eventMap, ?int $ai_priority = null): array {
+	public function buildEventMap(Table|Behavior $instance, array $eventMap, ?int $priority = null): array {
 		$la_eventMap = [];
-		$li_priority = $ai_priority;
+		$li_priority = $priority;
 
-		foreach ($aa_eventMap as $ls_event => $lx_callable) {
+		foreach ($eventMap as $ls_event => $lx_callable) {
 			if (is_array($lx_callable)) {
 				if (isset($lx_callable['priority'])) {
 					$li_priority = $lx_callable['priority'];
@@ -547,7 +541,7 @@ class Table extends BaseTable {
 				$lx_callable = $lx_callable['callable'] ?? null;
 			}
 
-			if ((is_string($lx_callable) && !method_exists($ao_instance, $lx_callable)) || (!is_string($lx_callable) && !is_callable($lx_callable))) {
+			if ((is_string($lx_callable) && !method_exists($instance, $lx_callable)) || (!is_string($lx_callable) && !is_callable($lx_callable))) {
 				continue;
 			}
 
@@ -577,14 +571,14 @@ class Table extends BaseTable {
 	/**
 	 * Returns whether the field is one of the attributes
 	 *
-	 * @param string $as_field
+	 * @param string $field
 	 * @return bool
 	 */
-	public function fieldIsAttribute(string $as_field): bool {
+	public function fieldIsAttribute(string $field): bool {
 		/** @var \Awyiss\Model\Entity $ls_entityClass */
 		$ls_entityClass = $this->getEntityClass();
 
-		$ls_column = $ls_entityClass::unmapField($as_field);
+		$ls_column = $ls_entityClass::unmapField($field);
 
 		//If the column isn't part of the table, just assume it's part of the attributes table.
 		if (!$this->getSchema()->getColumn($ls_column) && $this->hasAttributes()) {
@@ -661,42 +655,42 @@ class Table extends BaseTable {
 
 	/**
 	 * @inheritDoc
-	 * @param \Cake\Datasource\EntityInterface $ao_entity
-	 * @param array $aa_options
+	 * @param \Cake\Datasource\EntityInterface $entity
+	 * @param array $options
 	 * @return \Cake\Datasource\EntityInterface|false
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function save(EntityInterface $ao_entity, array $aa_options = []): EntityInterface|false {
-		$la_options = $aa_options;
+	public function save(EntityInterface $entity, array $options = []): EntityInterface|false {
+		$la_options = $options;
 		$la_options['isCopy'] ??= false;
 		$la_options['asCopy'] ??= false;
 
 		if ($la_options['asCopy'] === true || $la_options['isCopy'] === true) {
 			/** @noinspection PhpDynamicFieldDeclarationInspection */
-			$ao_entity->originalEntity = clone $ao_entity;
-			$ao_entity->setVirtual(['originalEntity']);
+			$entity->originalEntity = clone $entity;
+			$entity->setVirtual(['originalEntity']);
 
 			/** @noinspection PhpUndefinedFieldInspection */
-			if ($ao_entity->originalPrimaryKeys) {
+			if ($entity->originalPrimaryKeys) {
 				/** @noinspection PhpUndefinedFieldInspection */
-				$ao_entity->originalEntity->set($ao_entity->originalPrimaryKeys, ['guard' => false]);
-				$ao_entity->unset('originalPrimaryKeys');
+				$entity->originalEntity->set($entity->originalPrimaryKeys, ['guard' => false]);
+				$entity->unset('originalPrimaryKeys');
 			}
 
-			if ($ao_entity->originalEntity->isDirty()) {
-				$ao_entity->originalEntity->set(
-					$ao_entity->originalEntity->extractOriginalChanged(
-						$ao_entity->originalEntity->getOriginalFields()
+			if ($entity->originalEntity->isDirty()) {
+				$entity->originalEntity->set(
+					$entity->originalEntity->extractOriginalChanged(
+						$entity->originalEntity->getOriginalFields()
 					)
 				);
 
-				$ao_entity->originalEntity->clean();
+				$entity->originalEntity->clean();
 			}
 		}
 
 		if ($la_options['asCopy'] === true) {
-			$ao_entity->unset((array)$this->getPrimaryKey());
-			$ao_entity->setNew(true);
+			$entity->unset((array)$this->getPrimaryKey());
+			$entity->setNew(true);
 
 			$la_options['isCopy'] = true;
 		}
@@ -704,7 +698,7 @@ class Table extends BaseTable {
 		unset($la_options['asCopy']);
 
 
-		return parent::save($ao_entity, $la_options);
+		return parent::save($entity, $la_options);
 	}
 
 
@@ -714,17 +708,17 @@ class Table extends BaseTable {
 	 * any one of the records fails to save due to failed validation or database
 	 * error.
 	 *
-	 * @param iterable<\Cake\Datasource\EntityInterface> $ax_entities Entities to save.
-	 * @param array<string, mixed> $aa_options Options used when calling Table::save() for each entity.
+	 * @param iterable<\Cake\Datasource\EntityInterface> $entities Entities to save.
+	 * @param array<string, mixed> $options Options used when calling Table::save() for each entity.
 	 * @return iterable<\Cake\Datasource\EntityInterface>|false False on failure, entities list on success.
 	 * @throws \Exception
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function saveMany(iterable $ax_entities, array $aa_options = []): iterable|false {
-		$la_options = $aa_options + ['transaction' => true];
+	public function saveMany(iterable $entities, array $options = []): iterable|false {
+		$la_options = $options + ['transaction' => true];
 
 		try {
-			return $this->_saveMany($ax_entities, $la_options);
+			return $this->_saveMany($entities, $la_options);
 		}
 		catch (PersistenceFailedException $ex) {
 			if ($la_options['transaction'] === false) {
@@ -740,16 +734,16 @@ class Table extends BaseTable {
 	 * Implemented nearly 1:1 but honors the `transaction`-option.
 	 * If set to false, the save calls will not be handled inside a transaction
 	 *
-	 * @param iterable<\Cake\Datasource\EntityInterface> $ax_entities Entities to save.
-	 * @param array<string, mixed> $aa_options Options used when calling Table::save() for each entity.
+	 * @param iterable<\Cake\Datasource\EntityInterface> $entities Entities to save.
+	 * @param array<string, mixed> $options Options used when calling Table::save() for each entity.
 	 * @return iterable<\Cake\Datasource\EntityInterface> Entities list.
 	 * @throws \Exception If an entity couldn't be saved.
 	 * @throws \Cake\ORM\Exception\PersistenceFailedException If an entity couldn't be saved.
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	protected function _saveMany(iterable $ax_entities, array $aa_options = []): iterable {
+	protected function _saveMany(iterable $entities, array $options = []): iterable {
 		$la_options = new ArrayObject(
-			$aa_options + [
+			$options + [
 				'atomic' => true,
 				'checkRules' => true,
 				'_primary' => true,
@@ -772,10 +766,10 @@ class Table extends BaseTable {
 		/** @var \Cake\Datasource\EntityInterface|null $lo_failed */
 		$lo_failed = null;
 		try {
-			$lc_saveMany = function () use ($ax_entities, $la_options, &$la_isNew, &$lo_failed): bool {
+			$lc_saveMany = function () use ($entities, $la_options, &$la_isNew, &$lo_failed): bool {
 				// Cache array cast since options are the same for each entity
 				$la_options = (array)$la_options;
-				foreach ($ax_entities as $lx_key => $lo_entity) {
+				foreach ($entities as $lx_key => $lo_entity) {
 					$la_isNew[ $lx_key ] = $lo_entity->isNew();
 					if ($this->save($lo_entity, $la_options) === false) {
 						$lo_failed = $lo_entity;
@@ -797,23 +791,23 @@ class Table extends BaseTable {
 			}
 		}
 		catch (Exception $ex) {
-			$lc_cleanupOnFailure($ax_entities);
+			$lc_cleanupOnFailure($entities);
 
 			throw $ex;
 		}
 
 		if ($lo_failed !== null) {
-			$lc_cleanupOnFailure($ax_entities);
+			$lc_cleanupOnFailure($entities);
 
 			throw new PersistenceFailedException($lo_failed, ['saveMany']);
 		}
 
-		$lc_cleanupOnSuccess = function (EntityInterface $ao_entity) use (&$lc_cleanupOnSuccess): void {
-			$ao_entity->clean();
-			$ao_entity->setNew(false);
+		$lc_cleanupOnSuccess = function (EntityInterface $entity) use (&$lc_cleanupOnSuccess): void {
+			$entity->clean();
+			$entity->setNew(false);
 
-			foreach (array_keys($ao_entity->toArray()) as $ls_field) {
-				$lx_value = $ao_entity->get($ls_field);
+			foreach (array_keys($entity->toArray()) as $ls_field) {
+				$lx_value = $entity->get($ls_field);
 
 				if ($lx_value instanceof EntityInterface) {
 					$lc_cleanupOnSuccess($lx_value);
@@ -827,7 +821,7 @@ class Table extends BaseTable {
 		};
 
 		if ($this->_transactionCommitted($la_options['atomic'], $la_options['_primary'])) {
-			foreach ($ax_entities as $lo_entity) {
+			foreach ($entities as $lo_entity) {
 				$this->dispatchEvent('Model.afterSaveCommit', [
 					'entity' => $lo_entity,
 					'options' => $la_options,
@@ -840,7 +834,7 @@ class Table extends BaseTable {
 		}
 
 
-		return $ax_entities;
+		return $entities;
 	}
 
 
@@ -849,43 +843,43 @@ class Table extends BaseTable {
 	 * Returns false, if it was stopped.
 	 *
 	 * @inheritDoc
-	 * @param \Cake\Datasource\EntityInterface $ao_entity
-	 * @param \ArrayObject $ao_options
+	 * @param \Cake\Datasource\EntityInterface $entity
+	 * @param \ArrayObject $options
 	 * @return bool
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	protected function _onSaveSuccess(EntityInterface $ao_entity, ArrayObject $ao_options): bool {
+	protected function _onSaveSuccess(EntityInterface $entity, ArrayObject $options): bool {
 		$lx_success = $this->_associations->saveChildren(
 			$this,
-			$ao_entity,
-			$ao_options['associated'],
-			['_primary' => false] + $ao_options->getArrayCopy()
+			$entity,
+			$options['associated'],
+			['_primary' => false] + $options->getArrayCopy()
 		);
 
 
-		if (!$lx_success && $ao_options['atomic']) {
+		if (!$lx_success && $options['atomic']) {
 			return false;
 		}
 
-		$lo_event = $this->dispatchEvent('Model.afterSave', ['entity' => $ao_entity, 'options' => $ao_options]);
+		$lo_event = $this->dispatchEvent('Model.afterSave', ['entity' => $entity, 'options' => $options]);
 		if ($lo_event->isStopped()) {
 			$lx_errors = $lo_event->getResult();
 			if (!is_array($lx_errors)) {
 				$lx_errors = ['_general' => $lx_errors];
 			}
 
-			$ao_entity->setErrors($lx_errors);
+			$entity->setErrors($lx_errors);
 			return false;
 		}
 
-		if ($ao_options['atomic'] && !$this->getConnection()->inTransaction()) {
+		if ($options['atomic'] && !$this->getConnection()->inTransaction()) {
 			throw new RolledbackTransactionException(['table' => static::class]);
 		}
 
-		if (!$ao_options['atomic'] && !$ao_options['_primary']) {
-			$ao_entity->clean();
-			$ao_entity->setNew(false);
-			$ao_entity->setSource($this->getRegistryAlias());
+		if (!$options['atomic'] && !$options['_primary']) {
+			$entity->clean();
+			$entity->setNew(false);
+			$entity->setSource($this->getRegistryAlias());
 		}
 
 
@@ -905,19 +899,19 @@ class Table extends BaseTable {
 	/**
 	 * Sets specific column types for attributes
 	 *
-	 * @param TableSchemaInterface $ao_schema
+	 * @param TableSchemaInterface $schema
 	 */
-	protected function initializeSchema(TableSchemaInterface $ao_schema): void {
+	protected function initializeSchema(TableSchemaInterface $schema): void {
 		if (str_starts_with($this->getTable(), 'attributes_')) {
 			foreach ($this->getAttributes() as $lo_attribute) {
-				$la_column = $ao_schema->getColumn($lo_attribute->identifier);
+				$la_column = $schema->getColumn($lo_attribute->identifier);
 				if ($lo_attribute->type === 'json') {
-					$ao_schema->setColumnType($lo_attribute->identifier, 'json');
+					$schema->setColumnType($lo_attribute->identifier, 'json');
 				}
 
 				if ($la_column['default'] !== $lo_attribute->defaultValue) {
 					$la_column['default'] = $lo_attribute->defaultValue;
-					$ao_schema->addColumn($lo_attribute->identifier, $la_column);
+					$schema->addColumn($lo_attribute->identifier, $la_column);
 				}
 			}
 		}
@@ -925,13 +919,13 @@ class Table extends BaseTable {
 
 
 	/**
-	 * @param string|null $as_sourceTable
+	 * @param string|null $sourceTable
 	 * @return void
 	 */
-	protected function addAttributesBehavior(?string $as_sourceTable = null): void {
-		if ($as_sourceTable) {
+	protected function addAttributesBehavior(?string $sourceTable = null): void {
+		if ($sourceTable) {
 			$la_options = ['isAttributesTable' => false] + $this->attributes + [
-				'sourceTable' => $as_sourceTable,
+				'sourceTable' => $sourceTable,
 				'foreignKey' => Inflector::singularize($this->getTable()) . '_id',
 			];
 		}
@@ -941,7 +935,7 @@ class Table extends BaseTable {
 
 		$this->addBehavior('Attributes', $la_options);
 
-		if ($as_sourceTable) {
+		if ($sourceTable) {
 			return;
 		}
 
@@ -997,12 +991,12 @@ class Table extends BaseTable {
 	 * ]);
 	 * ```
 	 *
-	 * @param array|string $ax_finderData The finder name or an array having the name as key
+	 * @param array|string $finderData The finder name or an array having the name as key
 	 * and options as value.
 	 * @return array
 	 */
-	protected function _extractFinder(array|string $ax_finderData): array {
-		$la_finderData = (array)$ax_finderData;
+	protected function _extractFinder(array|string $finderData): array {
+		$la_finderData = (array)$finderData;
 
 		if (is_numeric(key($la_finderData))) {
 			return [current($la_finderData), []];

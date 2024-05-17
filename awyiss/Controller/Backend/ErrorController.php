@@ -37,10 +37,10 @@ class ErrorController extends Controller {
 	/**
 	 * beforeRender callback.
 	 *
-	 * @param EventInterface<\Cake\Controller\Controller> $ao_event Event.
+	 * @param EventInterface<\Cake\Controller\Controller> $event Event.
 	 * @return void
 	 */
-	public function beforeRender(EventInterface $ao_event): void {
+	public function beforeRender(EventInterface $event): void {
 		$lo_builder = $this->viewBuilder();
 		//$ls_templatePath = 'Error';
 

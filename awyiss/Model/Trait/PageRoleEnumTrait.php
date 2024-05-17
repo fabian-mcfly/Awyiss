@@ -15,9 +15,9 @@ trait PageRoleEnumTrait {
 	/**
 	 * @inheritDoc
 	 */
-	public static function tryFromName(string $as_name): ?PageRoleEnumInterface {
+	public static function tryFromName(string $name): ?PageRoleEnumInterface {
 		$la_pageRoles = static::cases();
-		$ls_name = Inflector::camelize(Inflector::singularize($as_name));
+		$ls_name = Inflector::camelize(Inflector::singularize($name));
 
 		$li_offset = array_search($ls_name, array_column($la_pageRoles, 'name'));
 		if ($li_offset === false) {

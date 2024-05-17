@@ -147,11 +147,11 @@ abstract class GenericDatatablesController extends Controller {
 	 * @return \Cake\Http\Response|void
 	 * @throws \Exception
 	 */
-	public function edit(int $ai_id) {
+	public function edit(int $id) {
 		$this->Authorization->ensure('update');
 
 		/** @var \Awyiss\Model\Entity $lo_entity */
-		$lo_entity = $this->Datatable->findById($ai_id)->find('translations')->first();
+		$lo_entity = $this->Datatable->findById($id)->find('translations')->first();
 
 		if (!$lo_entity) {
 			$this->Flash->error(__df($this->datatable->identifier, 'generic_datatables', 'record_not_found'));
@@ -179,17 +179,17 @@ abstract class GenericDatatablesController extends Controller {
 	/**
 	 * Delete method
 	 *
-	 * @param int $ai_id
+	 * @param int $id
 	 * @return \Cake\Http\Response
 	 * @throws \Exception
 	 */
-	public function delete(int $ai_id): Response {
+	public function delete(int $id): Response {
 		$this->Authorization->ensure('delete');
 
 		$this->request->allowMethod(['get', 'delete']);
 
 		/** @var Datatable $lo_datatable */
-		$lo_datatable = $this->Datatable->findById($ai_id)->first();
+		$lo_datatable = $this->Datatable->findById($id)->first();
 		if (!$lo_datatable) {
 			$this->Flash->error(__df($this->datatable->identifier, 'generic_datatables', 'record_not_found'));
 
@@ -214,32 +214,32 @@ abstract class GenericDatatablesController extends Controller {
 
 
 	/**
-	 * @param \Awyiss\Model\Entity $ao_entity
-	 * @param string $as_method
+	 * @param \Awyiss\Model\Entity $entity
+	 * @param string $method
 	 * @return void
 	 */
-	protected function save(Entity $ao_entity, string $as_method = 'add'): void {
+	protected function save(Entity $entity, string $method = 'add'): void {
 		$la_associated = [];
 		if ($this->Datatable->hasAttributes()) {
 			$la_associated[] = $this->Datatable->getAttributesTableName(true);
-			$ao_entity->setAccess('attributes', true);
+			$entity->setAccess('attributes', true);
 		}
 
-		$this->Datatable->patchEntity($ao_entity, $this->request->getData(), [
+		$this->Datatable->patchEntity($entity, $this->request->getData(), [
 			'associated' => $la_associated,
 			'validate' => !$this->request->getData('reload_form'),
 		]);
 
 		$this->Categories->setConfig('finder', [
 			'forCurrentLanguage' => [
-				'entity' => $ao_entity,
+				'entity' => $entity,
 			],
 		]);
 
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-			if ($this->Datatable->save($ao_entity, ['asCopy' => (bool)$this->request->getData('save_as_copy')])) {
+			if ($this->Datatable->save($entity, ['asCopy' => (bool)$this->request->getData('save_as_copy')])) {
 				if (!$this->request->is('ajax')) {
-					$this->Flash->success(__df($this->datatable->identifier, 'generic_datatables', $as_method . '_succeeded'));
+					$this->Flash->success(__df($this->datatable->identifier, 'generic_datatables', $method . '_succeeded'));
 				}
 
 				if ($this->request->getData('submit') == 'submit_close') {
@@ -248,22 +248,22 @@ abstract class GenericDatatablesController extends Controller {
 					 * Otherwise it would show a site without the modified user, which could be a bit confusing.
 					 *
 					 */
-					$this->verifyCategorySelection($ao_entity);
+					$this->verifyCategorySelection($entity);
 
 					/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 					throw new RedirectException(Router::url([
 						'action' => 'overview',
-						'lang' => $ao_entity->languageShortcode,
-						'page' => $this->Paginate->calculateEntityPagePosition($ao_entity),
+						'lang' => $entity->languageShortcode,
+						'page' => $this->Paginate->calculateEntityPagePosition($entity),
 					], true), 302);
 				}
 
 				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-				throw new RedirectException(Router::url(['action' => 'edit', 'lang' => $ao_entity->languageShortcode, 'id' => $ao_entity->id], true), 302);
+				throw new RedirectException(Router::url(['action' => 'edit', 'lang' => $entity->languageShortcode, 'id' => $entity->id], true), 302);
 			}
 
-			$this->Flash->error(__df($this->datatable->identifier, 'generic_datatables', $as_method . '_failed'));
-			foreach ($ao_entity->getError('_general') as $ls_error) {
+			$this->Flash->error(__df($this->datatable->identifier, 'generic_datatables', $method . '_failed'));
+			foreach ($entity->getError('_general') as $ls_error) {
 				$this->Flash->error($ls_error);
 			}
 		}
@@ -271,25 +271,25 @@ abstract class GenericDatatablesController extends Controller {
 
 
 	/**
-	 * @param \Awyiss\Model\Entity $ao_record
+	 * @param \Awyiss\Model\Entity $record
 	 * @return void
 	 */
-	protected function setViewVars(Entity $ao_entity): void {
-		$this->Categories->ensurePossibleCategory($ao_entity);
+	protected function setViewVars(Entity $entity): void {
+		$this->Categories->ensurePossibleCategory($entity);
 
 		if ($this->nestable) {
-			$lo_threadedRecords = $this->getThreadedRecords($ao_entity);
+			$lo_threadedRecords = $this->getThreadedRecords($entity);
 
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-			$lo_possibleParentRecords = $this->Datatable->getPossibleParents($ao_entity, $lo_threadedRecords);
-			$this->ensurePossibleParentId($ao_entity, $lo_possibleParentRecords);
+			$lo_possibleParentRecords = $this->Datatable->getPossibleParents($entity, $lo_threadedRecords);
+			$this->ensurePossibleParentId($entity, $lo_possibleParentRecords);
 		}
 		else {
 			$lo_possibleParentRecords = null;
 		}
 
 		$this->set([
-			'record' => $ao_entity,
+			'record' => $entity,
 			'possibleParentRecords' => $lo_possibleParentRecords,
 			'datatable' => $this->datatable,
 			'nestable' => $this->nestable,
@@ -304,25 +304,25 @@ abstract class GenericDatatablesController extends Controller {
 
 
 	/**
-	 * @param \Awyiss\Model\Entity $ao_entity
-	 * @param \Cake\Collection\CollectionInterface $ao_threadedContents
+	 * @param \Awyiss\Model\Entity $entity
+	 * @param \Cake\Collection\CollectionInterface $threadedContents
 	 * @return void
 	 */
-	protected function ensurePossibleParentId(Entity $ao_entity, CollectionInterface $ao_threadedRecords): void {
+	protected function ensurePossibleParentId(Entity $entity, CollectionInterface $threadedRecords): void {
 		if ($this->Categories->getConfig('enabled') && $this->Categories->getConfig('field') === 'parentId') {
 			//No parent id check if categories behavior is enabled and the field is parent id
 			return;
 		}
 
-		$la_possibleParentIds = $ao_threadedRecords->extract('id')->toList();
+		$la_possibleParentIds = $threadedRecords->extract('id')->toList();
 
-		if (!empty($ao_entity->parentId) && !in_array($ao_entity->parentId, $la_possibleParentIds)) {
-			$la_errors = $ao_entity->getError('parentId');
+		if (!empty($entity->parentId) && !in_array($entity->parentId, $la_possibleParentIds)) {
+			$la_errors = $entity->getError('parentId');
 
-			$ao_entity->parentId = reset($la_possibleParentIds);
+			$entity->parentId = reset($la_possibleParentIds);
 
 			if ($la_errors) {
-				$ao_entity->setError('parentId', $la_errors, true);
+				$entity->setError('parentId', $la_errors, true);
 			}
 		}
 	}
@@ -332,16 +332,16 @@ abstract class GenericDatatablesController extends Controller {
 	 * Uses this controller with another datatable, so we don't need to bake one for every single one.
 	 * This is supposed to only handle non-existing controllers as a fallback.
 	 *
-	 * @param \Awyiss\Model\Entity\Datatable $ao_datatable
-	 * @param string $as_identifier
+	 * @param \Awyiss\Model\Entity\Datatable $datatable
+	 * @param string $identifier
 	 * @return \Awyiss\Controller\Backend\GenericDatatablesController
 	 * @throws \ReflectionException
 	 */
 	#[NoDirectAccess]
-	public function forDatatable(Datatable $ao_datatable, string $as_identifier): static {
-		$this->datatable = $ao_datatable;
+	public function forDatatable(Datatable $datatable, string $identifier): static {
+		$this->datatable = $datatable;
 
-		$this->Datatable = $this->{$as_identifier} = $this->fetchTable($as_identifier);
+		$this->Datatable = $this->{$identifier} = $this->fetchTable($identifier);
 
 		$this->nestable = LocalConfig::read('nest.enabled');
 		if ($this->nestable) {
@@ -357,9 +357,9 @@ abstract class GenericDatatablesController extends Controller {
 		$lo_authorizationService = $this->getRequest()->getAttribute('authorization');
 		$ls_policyClass = $lo_authorizationService->getPolicy($this->Authorization->getScope(), $this->Authorization->getConfig('policiesRealm'));
 
-		$this->Authorization->setScope($as_identifier);
+		$this->Authorization->setScope($identifier);
 
-		$this->SystemOrder->setConfig('entityName', Inflector::variable(Inflector::singularize($as_identifier)));
+		$this->SystemOrder->setConfig('entityName', Inflector::variable(Inflector::singularize($identifier)));
 
 		$this->set([
 			'policyClass' => $ls_policyClass,
@@ -374,16 +374,16 @@ abstract class GenericDatatablesController extends Controller {
 	 * Return a collection of records for the currently set languageShortcode,
 	 * using `\Cake\Collection\CollectionTrait::listNested()` to be used in a form-select
 	 *
-	 * @param \Awyiss\Model\Entity $ao_entity
+	 * @param \Awyiss\Model\Entity $entity
 	 * @return \Cake\Collection\CollectionInterface
 	 * @see \Cake\Collection\CollectionTrait::listNested()
 	 */
-	protected function getThreadedRecords(Entity $ao_entity): CollectionInterface {
+	protected function getThreadedRecords(Entity $entity): CollectionInterface {
 		if (!isset($this->threadedRecords)) {
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-			$lo_query = $this->Datatable->find('forCurrentLanguage', languageShortcode: $ao_entity->languageShortcode, includeGlobal: false)->where(
+			$lo_query = $this->Datatable->find('forCurrentLanguage', languageShortcode: $entity->languageShortcode, includeGlobal: false)->where(
 				$this->getOverviewWhere() + $this->Categories->getQueryConditions(
-					$this->Categories->getSelectedCategory($ao_entity)
+					$this->Categories->getSelectedCategory($entity)
 				)
 			);
 
@@ -396,11 +396,11 @@ abstract class GenericDatatablesController extends Controller {
 
 
 	/**
-	 * @param \Awyiss\Model\Entity $ao_entity
+	 * @param \Awyiss\Model\Entity $entity
 	 * @return void
 	 * @noinspection DuplicatedCode
 	 */
-	protected function verifyCategorySelection(Entity $ao_entity): void {
+	protected function verifyCategorySelection(Entity $entity): void {
 		if (!$this->Categories->getConfig('enabled')) {
 			return;
 		}
@@ -408,8 +408,8 @@ abstract class GenericDatatablesController extends Controller {
 		$la_categories = [];
 
 		$ls_field = $this->Categories->getConfig('field');
-		if ($ao_entity->get($ls_field)) {
-			$la_categories[ $ao_entity->get($ls_field) ] = $ls_field;
+		if ($entity->get($ls_field)) {
+			$la_categories[ $entity->get($ls_field) ] = $ls_field;
 
 			if ($this->Categories->getConfig('allowAggregation')) {
 				$la_categories += [$this->Categories->getConfig('aggregationKey') => 'dummy'];
@@ -431,10 +431,8 @@ abstract class GenericDatatablesController extends Controller {
 	 * Try to render the view using the default render-method
 	 * If this fails because the view template could not be found, try again with a view-template
 	 * in templates/Backend/GenericDatatables
-	 *
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function render(?string $as_template = null, ?string $as_layout = null): Response {
+	public function render(?string $template = null, ?string $layout = null): Response {
 		$lo_viewBuilder = $this->viewBuilder();
 
 		$ls_entitiesName = Inflector::variable($this->getName());
@@ -450,7 +448,7 @@ abstract class GenericDatatablesController extends Controller {
 		]);
 
 		try {
-			$ls_contents = parent::render($as_template, $as_layout);
+			$ls_contents = parent::render($template, $layout);
 		}
 		catch (MissingTemplateException) {
 			$la_templatePathParts = explode('/', $lo_viewBuilder->getTemplatePath());
@@ -458,7 +456,7 @@ abstract class GenericDatatablesController extends Controller {
 
 			$lo_viewBuilder->setTemplatePath(implode('/', $la_templatePathParts) . '/GenericDatatables');
 
-			$ls_contents = parent::render($as_template, $as_layout);
+			$ls_contents = parent::render($template, $layout);
 		}
 
 

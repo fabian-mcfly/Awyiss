@@ -32,9 +32,7 @@ class MenusController extends Controller {
 	 */
 	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
-		$lo_query = $this->Menus->find();
-
-		return $lo_query;
+		return $this->Menus->find();
 	}
 
 
@@ -91,11 +89,11 @@ class MenusController extends Controller {
 	 * @return \Cake\Http\Response|void
 	 * @throws \Exception
 	 */
-	public function edit(int $ai_id) {
+	public function edit(int $id) {
 		$this->Authorization->ensure('update');
 
 		/** @var Menu $lo_menu */
-		$lo_menu = $this->Menus->findById($ai_id)->find('translations')->first();
+		$lo_menu = $this->Menus->findById($id)->find('translations')->first();
 		if (!$lo_menu) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -116,17 +114,17 @@ class MenusController extends Controller {
 	/**
 	 * Delete method
 	 *
-	 * @param int $ai_id
+	 * @param int $id
 	 * @return Response
 	 * @throws \Exception
 	 */
-	public function delete(int $ai_id): Response {
+	public function delete(int $id): Response {
 		$this->Authorization->ensure('delete');
 
 		$this->request->allowMethod(['get', 'delete']);
 
 		/** @var Menu $lo_menu */
-		$lo_menu = $this->Menus->findById($ai_id)->find('translations')->first();
+		$lo_menu = $this->Menus->findById($id)->find('translations')->first();
 		if (!$lo_menu) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -153,41 +151,41 @@ class MenusController extends Controller {
 
 
 	/**
-	 * @param Menu $ao_menu
-	 * @param string $as_method
+	 * @param Menu $menu
+	 * @param string $method
 	 * @return void
 	 * @throws RedirectException
 	 */
-	protected function save(Menu $ao_menu, string $as_method = 'add'): void {
+	protected function save(Menu $menu, string $method = 'add'): void {
 		$la_associated = [];
 		if ($this->Menus->hasAttributes()) {
 			$la_associated[] = $this->Menus->getAttributesTableName(true);
-			$ao_menu->setAccess('attributes', true);
+			$menu->setAccess('attributes', true);
 		}
 
-		$this->Menus->patchEntity($ao_menu, $this->request->getData(), [
+		$this->Menus->patchEntity($menu, $this->request->getData(), [
 			'associated' => $la_associated,
 			'validate' => !$this->request->getData('reload_form'),
 		]);
 
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-			if ($this->Menus->save($ao_menu, ['asCopy' => (bool)$this->request->getData('save_as_copy')])) {
+			if ($this->Menus->save($menu, ['asCopy' => (bool)$this->request->getData('save_as_copy')])) {
 				if (!$this->request->is('ajax')) {
-					$this->Flash->success(__($as_method . '_succeeded'));
+					$this->Flash->success(__($method . '_succeeded'));
 				}
 
 				if ($this->request->getData('submit') == 'submit_close') {
 					throw new RedirectException(Router::url([
 						'action' => 'overview',
-						'page' => $this->Paginate->calculateEntityPagePosition($ao_menu),
+						'page' => $this->Paginate->calculateEntityPagePosition($menu),
 					], true), 302);
 				}
 
-				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $ao_menu->id], true), 302);
+				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $menu->id], true), 302);
 			}
 
-			$this->Flash->error(__($as_method . '_failed'));
-			foreach ($ao_menu->getError('_general') as $ls_error) {
+			$this->Flash->error(__($method . '_failed'));
+			foreach ($menu->getError('_general') as $ls_error) {
 				$this->Flash->error($ls_error);
 			}
 		}

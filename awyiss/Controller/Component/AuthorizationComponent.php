@@ -15,20 +15,20 @@ use RuntimeException;
  * This component provides and handles Authorization-specific logic.
  * It provides methods to set and retreive an identity nad the scope that will be used to check for access.
  *
- * - `ensureOne(string ...$as_identifier)`
+ * - `ensureOne(string ...$identifier)`
  *   Called to ensure one of the provided identifiers is accessible
  *
- * - `ensureAll(string ...$as_identifier)`
+ * - `ensureAll(string ...$identifier)`
  *   Called to ensure all the provided identifiers is accessible
  *
- * - `ensure(string|array ...$ax_identifier)`
+ * - `ensure(string|array ...$identifier)`
  *   Called to ensure one of the provided identifiers is accessible. Allows providing not only strings as identifiers
  *   but arrays as well.
  *
- * - `isAccessible(string|array ...$ax_identifier)`
+ * - `isAccessible(string|array ...$identifier)`
  *   Returns true or false, depending on the accessibility of the provided identifier(s).
  *
- * - `scopeIsAccessible(string $as_scope, ?IdentityPermissionsInterface $ao_identity = null, ?array $aa_additionalData = null, string|array ...$ax_identifier)`
+ * - `scopeIsAccessible(string $scope, ?IdentityPermissionsInterface $identity = null, ?array $additionalData = null, string|array ...$identifier)`
  *   Returns true or false, depending on the accessibility of the provided identifier(s) for the provided scope and identity
  *
  * @method \Awyiss\Controller\AppController getController()
@@ -55,12 +55,11 @@ class AuthorizationComponent extends Component {
 	/**
 	 * Is called when the component is initialized
 	 *
-	 * @param array<string, mixed> $aa_config The configuration settings provided to this component.
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 * @param array<string, mixed> $config The configuration settings provided to this component.
 	 */
-	public function initialize(array $aa_config): void {
-		if (!empty($aa_config['scope'])) {
-			$this->defaultScope = $aa_config['scope'];
+	public function initialize(array $config): void {
+		if (!empty($config['scope'])) {
+			$this->defaultScope = $config['scope'];
 		}
 	}
 
@@ -75,12 +74,12 @@ class AuthorizationComponent extends Component {
 
 
 	/**
-	 * @param array $aa_data
+	 * @param array $data
 	 * @return $this
 	 * @noinspection PhpUnused
 	 */
-	public function setAdditionalData(array $aa_data): static {
-		$this->setConfig('additionalData', $aa_data, false);
+	public function setAdditionalData(array $data): static {
+		$this->setConfig('additionalData', $data, false);
 
 
 		return $this;
@@ -100,18 +99,18 @@ class AuthorizationComponent extends Component {
 
 
 	/**
-	 * Returns a new instance of the AuthorizationComponent with the data in `$aa_data` set.
+	 * Returns a new instance of the AuthorizationComponent with the data in `$data` set.
 	 *
 	 * With this clone it's possible to check access with a different settings than the currently set ones,
 	 * without the need to reset the settings after the check.
 	 *
-	 * @param array $aa_data
+	 * @param array $data
 	 * @return $this
 	 * @noinspection PhpUnused
 	 */
-	public function withAdditionalData(array $aa_data): static {
+	public function withAdditionalData(array $data): static {
 		$lo_new = clone $this;
-		$lo_new->setConfig('additionalData', $aa_data);
+		$lo_new->setConfig('additionalData', $data);
 
 
 		return $lo_new;
@@ -139,12 +138,12 @@ class AuthorizationComponent extends Component {
 	/**
 	 * Save the given identity to the config
 	 *
-	 * @param IdentityPermissionsInterface $ao_identity
+	 * @param IdentityPermissionsInterface $identity
 	 * @return $this
 	 * @noinspection PhpUnused
 	 */
-	public function setIdentity(IdentityPermissionsInterface $ao_identity): static {
-		$this->setConfig('identity', $ao_identity);
+	public function setIdentity(IdentityPermissionsInterface $identity): static {
+		$this->setConfig('identity', $identity);
 
 
 		return $this;
@@ -157,15 +156,15 @@ class AuthorizationComponent extends Component {
 	 * With this clone it's possible to check access for a different identity than the default one provided by _getIdentity(),
 	 * without the need to reset the identity after checking the access for a different one.
 	 *
-	 * @param IdentityPermissionsInterface $ao_identity
+	 * @param IdentityPermissionsInterface $identity
 	 * @return $this
 	 * @noinspection PhpUnused
 	 */
-	public function withIdentity(IdentityPermissionsInterface $ao_identity): static {
+	public function withIdentity(IdentityPermissionsInterface $identity): static {
 		$this->resetIdentity();
 
 		$lo_new = clone $this;
-		$lo_new->setConfig('identity', $ao_identity);
+		$lo_new->setConfig('identity', $identity);
 
 
 		return $lo_new;
@@ -212,11 +211,11 @@ class AuthorizationComponent extends Component {
 	/**
 	 * Set the scope to be used for checking permissions.
 	 *
-	 * @param string $as_scope
+	 * @param string $scope
 	 * @return $this
 	 */
-	public function setScope(string $as_scope): static {
-		$ls_scope = Inflector::underscore($as_scope);
+	public function setScope(string $scope): static {
+		$ls_scope = Inflector::underscore($scope);
 		$ls_scope = Inflector::singularize($ls_scope);
 		$ls_scope = Inflector::pluralize($ls_scope);
 
@@ -233,11 +232,11 @@ class AuthorizationComponent extends Component {
 	 * With this clone it's possible to check access for a different scope than the controller's,
 	 * without the need to reset the scope after checking the access for a different one.
 	 *
-	 * @param string $as_scope
+	 * @param string $scope
 	 * @return $this
 	 * @noinspection PhpUnused
 	 */
-	public function forScope(string $as_scope): static {
+	public function forScope(string $scope): static {
 		$this->resetScope();
 
 		//Remember the defaultScope
@@ -248,7 +247,7 @@ class AuthorizationComponent extends Component {
 
 		//Clone the current instance and set the scope to the provided value
 		$lo_new = clone $this;
-		$lo_new->setScope($as_scope);
+		$lo_new->setScope($scope);
 
 		//Reset the defaultScope for the current instance
 		$this->defaultScope = $ls_defaultScope;
@@ -277,14 +276,14 @@ class AuthorizationComponent extends Component {
 	 *
 	 * No access results in an exception.
 	 *
-	 * @param string ...$as_identifier
+	 * @param string ...$identifier
 	 * @return void
 	 * @throws ForbiddenException
 	 * @throws \Exception
 	 * @noinspection PhpUnused
 	 */
-	public function ensureOne(string ...$as_identifier): void {
-		$this->ensure($as_identifier);
+	public function ensureOne(string ...$identifier): void {
+		$this->ensure($identifier);
 	}
 
 
@@ -294,14 +293,14 @@ class AuthorizationComponent extends Component {
 	 *
 	 * No access results in an exception.
 	 *
-	 * @param string ...$as_identifier
+	 * @param string ...$identifier
 	 * @return void
 	 * @throws ForbiddenException
 	 * @throws \Exception
 	 * @noinspection PhpUnused
 	 */
-	public function ensureAll(string ...$as_identifier): void {
-		$this->ensure(...$as_identifier);
+	public function ensureAll(string ...$identifier): void {
+		$this->ensure(...$identifier);
 	}
 
 
@@ -311,18 +310,18 @@ class AuthorizationComponent extends Component {
 	 *
 	 * No access results in an exception.
 	 *
-	 * See \Awyiss\Authorization\Permission\PermissionCollection::scopeIsAccessible() how $ax_identifier is used.
+	 * See \Awyiss\Authorization\Permission\PermissionCollection::scopeIsAccessible() how $identifier is used.
 	 *
-	 * @param array|string ...$ax_identifier
+	 * @param array|string ...$identifier
 	 * @return void
 	 * @throws ForbiddenException
 	 * @throws \Exception
 	 * @see \Awyiss\Authorization\Permission\PermissionCollection::scopeIsAccessible()
 	 */
-	public function ensure(string|array ...$ax_identifier): void {
+	public function ensure(string|array ...$identifier): void {
 		$ls_scope = $this->getScope();
 
-		$ls_isAccessible = $this->scopeIsAccessible($ls_scope, [], ...$ax_identifier);
+		$ls_isAccessible = $this->scopeIsAccessible($ls_scope, [], ...$identifier);
 		if (!$ls_isAccessible) {
 			throw new ForbiddenException();
 		}
@@ -333,39 +332,39 @@ class AuthorizationComponent extends Component {
 	 * For a list of given identifiers, return true or false whether they're accessible inside the current scope
 	 * for the current identity.
 	 *
-	 * See \Awyiss\Authorization\Permission\PermissionCollection::scopeIsAccessible() how $ax_identifier is used.
+	 * See \Awyiss\Authorization\Permission\PermissionCollection::scopeIsAccessible() how $identifier is used.
 	 *
-	 * @param array|string ...$ax_identifier
+	 * @param array|string ...$identifier
 	 * @return bool
 	 * @throws \Exception
 	 * @see \Awyiss\Authorization\Permission\PermissionCollection::scopeIsAccessible()
 	 * @noinspection PhpUnused
 	 */
-	public function isAccessible(string|array ...$ax_identifier): bool {
-		return $this->scopeIsAccessible($this->getScope(), [], ...$ax_identifier);
+	public function isAccessible(string|array ...$identifier): bool {
+		return $this->scopeIsAccessible($this->getScope(), [], ...$identifier);
 	}
 
 
 	/**
 	 * Checks if the provided identifiers are accessible by the provided identity for the provided scope.
 	 *
-	 * See \Awyiss\Authorization\Permission\PermissionCollection::scopeIsAccessible() how $ax_identifier is used.
+	 * See \Awyiss\Authorization\Permission\PermissionCollection::scopeIsAccessible() how $identifier is used.
 	 *
-	 * @param string $as_scope
-	 * @param array $aa_additionalData
-	 * @param array|string ...$ax_identifier
+	 * @param string $scope
+	 * @param array $additionalData
+	 * @param array|string ...$identifier
 	 * @return bool
 	 * @throws \Exception
 	 * @see \Awyiss\Authorization\Permission\PermissionCollection::scopeIsAccessible()
 	 */
-	public function scopeIsAccessible(string $as_scope, array $aa_additionalData = [], string|array ...$ax_identifier): bool {
+	public function scopeIsAccessible(string $scope, array $additionalData = [], string|array ...$identifier): bool {
 		//Get the currently assigned permissions from the identity object, resp. their permissions collection
 		$lo_identity = $this->getIdentity();
 
-		$la_additionalData = $aa_additionalData ?: $this->getConfig('additionalData');
+		$la_additionalData = $additionalData ?: $this->getConfig('additionalData');
 
 
-		return $lo_identity->scopeIsAccessible($as_scope, $la_additionalData, ...$ax_identifier);
+		return $lo_identity->scopeIsAccessible($scope, $la_additionalData, ...$identifier);
 	}
 
 

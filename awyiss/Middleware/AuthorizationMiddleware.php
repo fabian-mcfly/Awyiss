@@ -37,15 +37,15 @@ class AuthorizationMiddleware implements MiddlewareInterface {
 	/**
 	 * Constructor
 	 *
-	 * @param AuthorizationServiceInterface|AuthorizationServiceProviderInterface $ao_subject Authorization service or application instance.
+	 * @param AuthorizationServiceInterface|AuthorizationServiceProviderInterface $subject Authorization service or application instance.
 	 * @param string $realm
-	 * @param array|null $aa_config Array of configuration settings.
+	 * @param array|null $config Array of configuration settings.
 	 * @throws \ReflectionException When invalid subject has been passed.
 	 */
-	public function __construct(AuthorizationServiceProviderInterface|AuthorizationServiceInterface $ao_subject, string $realm, ?array $aa_config = null) {
-		$this->setConfig($aa_config ?? []);
+	public function __construct(AuthorizationServiceProviderInterface|AuthorizationServiceInterface $subject, string $realm, ?array $config = null) {
+		$this->setConfig($config ?? []);
 
-		$this->subject = $ao_subject;
+		$this->subject = $subject;
 
 		EventListenersProvider::loadListener('authorization', $realm);
 	}
@@ -53,13 +53,12 @@ class AuthorizationMiddleware implements MiddlewareInterface {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function process(ServerRequestInterface $ao_request, RequestHandlerInterface $ao_handler): ResponseInterface {
-		$lo_service = $this->getAuthorizationService($ao_request);
-		$lo_service->setAuthenticationService($ao_request->getAttribute('authentication'));
+	public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface {
+		$lo_service = $this->getAuthorizationService($request);
+		$lo_service->setAuthenticationService($request->getAttribute('authentication'));
 
-		$lo_request = $ao_request->withAttribute('authorization', $lo_service);
+		$lo_request = $request->withAttribute('authorization', $lo_service);
 		/** @noinspection PhpParamsInspection */
 		Router::setRequest($lo_request);
 
@@ -68,22 +67,22 @@ class AuthorizationMiddleware implements MiddlewareInterface {
 		], $this);
 
 
-		return $ao_handler->handle($lo_request);
+		return $handler->handle($lo_request);
 	}
 
 
 	/**
 	 * Returns AuthorizationServiceInterface instance.
 	 *
-	 * @param ServerRequestInterface $ao_request Server request.
+	 * @param ServerRequestInterface $request Server request.
 	 * @return AuthorizationServiceInterface
 	 * @throws RuntimeException When authentication method has not been defined.
 	 */
-	protected function getAuthorizationService(ServerRequestInterface $ao_request): AuthorizationServiceInterface {
+	protected function getAuthorizationService(ServerRequestInterface $request): AuthorizationServiceInterface {
 		$lo_subject = $this->subject;
 
 		if ($lo_subject instanceof AuthorizationServiceProviderInterface) {
-			$lo_subject = $lo_subject->getAuthorizationService($ao_request);
+			$lo_subject = $lo_subject->getAuthorizationService($request);
 		}
 
 		if (!$lo_subject instanceof AuthorizationServiceInterface) {

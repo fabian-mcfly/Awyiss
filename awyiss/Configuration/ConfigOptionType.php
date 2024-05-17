@@ -29,12 +29,12 @@ enum ConfigOptionType {
 	/**
 	 * Validates the provided value to be of the correct type for the enum.
 	 *
-	 * @param mixed $ax_value
-	 * @param bool $ab_isNullable
+	 * @param mixed $value
+	 * @param bool $isNullable
 	 * @return string|bool
 	 */
-	public function validate(mixed $ax_value, bool $ab_isNullable = false): bool|string {
-		if ($ab_isNullable && $ax_value === null) {
+	public function validate(mixed $value, bool $isNullable = false): bool|string {
+		if ($isNullable && $value === null) {
 			return true;
 		}
 
@@ -46,19 +46,19 @@ enum ConfigOptionType {
 				 * since the \Model\Entity\Configuration saves everything as a string
 				 * and does not differentiate between the type here.
 				 */
-				return is_bool($ax_value) || in_array($ax_value, [1, 0, '1', '0'], true);
+				return is_bool($value) || in_array($value, [1, 0, '1', '0'], true);
 
 			case self::Float:
-				return is_float($ax_value) || ($ax_value === (float)$ax_value);
+				return is_float($value) || ($value === (float)$value);
 
 			case self::Integer:
-				return is_int($ax_value) || ($ax_value === (int)$ax_value);
+				return is_int($value) || ($value === (int)$value);
 
 			case self::List:
 			case self::JsonArray:
 			case self::JsonObject:
 				try {
-					$la_value = json_decode($ax_value, true, 512, JSON_THROW_ON_ERROR);
+					$la_value = json_decode($value, true, 512, JSON_THROW_ON_ERROR);
 				}
 				catch (Exception | TypeError) {
 					return false;
@@ -71,7 +71,7 @@ enum ConfigOptionType {
 				throw new RuntimeException(sprintf('Cannot validate case `%s` in `%s` in the enum directly. Use `\Awyiss\Configuration\ConfigOption::validateConfigValue` instead.', $this->name, self::class));
 
 			case self::String:
-				return is_string($ax_value);
+				return is_string($value);
 		}
 
 
@@ -80,14 +80,14 @@ enum ConfigOptionType {
 
 
 	/**
-	 * Casts the provided `$ax_value` to the correct type
+	 * Casts the provided `$value` to the correct type
 	 *
-	 * @param mixed $ax_value
-	 * @param bool $ab_isNullable
+	 * @param mixed $value
+	 * @param bool $isNullable
 	 * @return mixed
 	 */
-	public function cast(mixed $ax_value, bool $ab_isNullable = false): mixed {
-		if ($ab_isNullable && $ax_value === null) {
+	public function cast(mixed $value, bool $isNullable = false): mixed {
+		if ($isNullable && $value === null) {
 			return null;
 		}
 
@@ -96,12 +96,12 @@ enum ConfigOptionType {
 		 * @noinspection PhpTernaryExpressionCanBeReplacedWithConditionInspection
 		 */
 		return match ($this) {
-			self::Bool => $ax_value === 'false' ? false : boolval($ax_value),
-			self::Float => floatval($ax_value),
-			self::Integer => intval($ax_value),
-			self::List, self::JsonArray, self::ValueCollection => json_decode($ax_value ?? '', true),
-			self::JsonObject => json_decode($ax_value ?? ''),
-			self::String => strval($ax_value),
+			self::Bool => $value === 'false' ? false : boolval($value),
+			self::Float => floatval($value),
+			self::Integer => intval($value),
+			self::List, self::JsonArray, self::ValueCollection => json_decode($value ?? '', true),
+			self::JsonObject => json_decode($value ?? ''),
+			self::String => strval($value),
 		};
 	}
 }

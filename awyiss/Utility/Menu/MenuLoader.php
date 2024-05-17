@@ -16,15 +16,15 @@ use RuntimeException;
  */
 class MenuLoader {
 	/**
-	 * @param object $ao_data
-	 * @param array $aa_config
+	 * @param object $data
+	 * @param array $config
 	 * @return bool
 	 * @throws \ReflectionException
 	 */
-	public static function validateData(object $ao_data, array $aa_config): bool {
+	public static function validateData(object $data, array $config): bool {
 		$lo_factory = null;
-		$lx_schema = $aa_config['schema'] ?? null;
-		$ls_schemaPath = $aa_config['schemaPath'] ?? null;
+		$lx_schema = $config['schema'] ?? null;
+		$ls_schemaPath = $config['schemaPath'] ?? null;
 		if ($ls_schemaPath) {
 			$lx_schema = static::loadJsonFile($ls_schemaPath);
 
@@ -39,7 +39,7 @@ class MenuLoader {
 
 		// Validate
 		$lo_validator = new Validator($lo_factory);
-		$lo_validator->validate($ao_data, $lx_schema);
+		$lo_validator->validate($data, $lx_schema);
 
 		if (!$lo_validator->isValid()) {
 			return false;
@@ -51,25 +51,27 @@ class MenuLoader {
 
 
 	/**
-	 * @param object $ao_data
-	 * @param array $aa_config
+	 * @param object $data
+	 * @param array $config
 	 * @return \Awyiss\Utility\Menu\Menu
 	 * @throws \ReflectionException
 	 */
-	public static function fromObject(object $ao_data, array $aa_config = []): Menu {
-		$lb_validateUniqueIdentifiers = $aa_config['validate']['uniqueIdentifiers'] ?? false;
+	public static function fromObject(object $data, array $config = []): Menu {
+		$lb_validateUniqueIdentifiers = $config['validate']['uniqueIdentifiers'] ?? false;
 
-		if (isset($aa_config['validate'])) {
-			$lb_valid = static::validateData($ao_data, $aa_config['validate']);
+		$la_config = $config;
+
+		if (isset($la_config['validate'])) {
+			$lb_valid = static::validateData($data, $la_config['validate']);
 			if (!$lb_valid) {
 				throw new RuntimeException('The data is not valid according to the specified schema');
 			}
 		}
 
 		//Validate-config is not needed inside the menu
-		unset($aa_config['validate']);
+		unset($la_config['validate']);
 
-		$lo_menu = new Menu((array)$ao_data, $aa_config, 1);
+		$lo_menu = new Menu((array)$data, $la_config, 1);
 
 		if ($lb_validateUniqueIdentifiers) {
 			$la_knownIdentifiers = [];
@@ -88,45 +90,45 @@ class MenuLoader {
 
 
 	/**
-	 * @param string $as_filePath
-	 * @param array $aa_config
+	 * @param string $filePath
+	 * @param array $config
 	 * @return \Awyiss\Utility\Menu\Menu
 	 * @throws \ReflectionException
 	 */
-	public static function fromJsonFile(string $as_filePath, array $aa_config = []): Menu {
-		$lo_data = static::loadJsonFile($as_filePath);
+	public static function fromJsonFile(string $filePath, array $config = []): Menu {
+		$lo_data = static::loadJsonFile($filePath);
 
 
-		return static::fromObject($lo_data, $aa_config);
+		return static::fromObject($lo_data, $config);
 	}
 
 
 	/**
-	 * @param string $as_jsonString
-	 * @param array $aa_config
+	 * @param string $jsonString
+	 * @param array $config
 	 * @return \Awyiss\Utility\Menu\Menu
 	 * @throws \ReflectionException
 	 */
-	public static function fromJsonString(string $as_jsonString, array $aa_config = []): Menu {
-		$lo_data = static::loadJsonString($as_jsonString);
+	public static function fromJsonString(string $jsonString, array $config = []): Menu {
+		$lo_data = static::loadJsonString($jsonString);
 
 
-		return static::fromObject($lo_data, $aa_config);
+		return static::fromObject($lo_data, $config);
 	}
 
 
 	/**
-	 * @param string $as_filePath
+	 * @param string $filePath
 	 * @return object
 	 */
-	public static function loadJsonFile(string $as_filePath): object {
-		$as_filePath = realpath($as_filePath);
+	public static function loadJsonFile(string $filePath): object {
+		$ls_filePath = realpath($filePath);
 
-		if (!file_exists($as_filePath)) {
-			throw new RuntimeException(sprintf('File `%s` does not exist.', $as_filePath));
+		if (!file_exists($ls_filePath)) {
+			throw new RuntimeException(sprintf('File `%s` does not exist.', $ls_filePath));
 		}
 
-		$ls_jsonString = file_get_contents($as_filePath);
+		$ls_jsonString = file_get_contents($ls_filePath);
 
 
 		return static::loadJsonString($ls_jsonString);
@@ -134,11 +136,11 @@ class MenuLoader {
 
 
 	/**
-	 * @param string $as_jsonString
+	 * @param string $jsonString
 	 * @return object
 	 */
-	public static function loadJsonString(string $as_jsonString): object {
-		$lo_data = json_decode($as_jsonString);
+	public static function loadJsonString(string $jsonString): object {
+		$lo_data = json_decode($jsonString);
 		if (json_last_error() !== JSON_ERROR_NONE) {
 			throw new RuntimeException('Invalid JSON string.');
 		}

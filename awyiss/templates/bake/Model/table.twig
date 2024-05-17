@@ -18,7 +18,7 @@
 /**
  * {{ name }} Model
  *
- * @method \{{ namespace }}\Model\Entity\{{ name|singularize }} newDefaultEntity(array $aa_additionalData = [], array $aa_options = [])
+ * @method \{{ namespace }}\Model\Entity\{{ name|singularize }} newDefaultEntity(array $additionalData = [], array $options = [])
  */
 class {{ name }}Table extends Table{{ fileBuilder.classBuilder.implements ? ' implements ' ~ fileBuilder.classBuilder.implements|join(', ') : '' }} {
 {% set userConstants = fileBuilder.classBuilder.userConstants([]) %}
@@ -46,8 +46,8 @@ class {{ name }}Table extends Table{{ fileBuilder.classBuilder.implements ? ' im
 	/**
 	 * @inheritDoc
 	 */
-	public function initialize(array $aa_config): void {
-		parent::initialize($aa_config);
+	public function initialize(array $config): void {
+		parent::initialize($config);
 
 {%- if primaryKey %}
 	{%- if primaryKey is iterable and primaryKey|length > 1 %}
@@ -95,18 +95,18 @@ class {{ name }}Table extends Table{{ fileBuilder.classBuilder.implements ? ' im
 	/**
 	 * Returns the default validator object.
 	 *
-	 * @param \Cake\Validation\Validator $ao_validator The validator that can be modified to
+	 * @param \Cake\Validation\Validator $validator The validator that can be modified to
 	 * add some rules to it.
 	 * @return \Cake\Validation\Validator
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function validationDefault(Validator $ao_validator): Validator {
-		parent::validationDefault($ao_validator);
+	public function validationDefault(Validator $validator): Validator {
+		parent::validationDefault($validator);
 
 {% for field, rules in validation %}
 {% set validationMethods = Bake.getValidationMethods(field, rules) %}
 {% if validationMethods %}
-		$ao_validator
+		$validator
 {% for validationMethod in validationMethods %}
 {% if loop.last %}
 {% set validationMethod = validationMethod ~ ';' %}
@@ -116,7 +116,7 @@ class {{ name }}Table extends Table{{ fileBuilder.classBuilder.implements ? ' im
 
 {% endif %}
 {% endfor %}
-		return $ao_validator;
+		return $validator;
 	}
 {% endif %}
 
@@ -127,11 +127,11 @@ class {{ name }}Table extends Table{{ fileBuilder.classBuilder.implements ? ' im
 	/**
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 *
-	 * @param \Cake\ORM\RulesChecker $ao_rules The rules object to be modified.
-	 * @param \Awyiss\ORM\RulesChecker|\Cake\ORM\RulesChecker $ao_rules The rules object to be modified.
+	 * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
+	 * @param \Awyiss\ORM\RulesChecker|\Cake\ORM\RulesChecker $rules The rules object to be modified.
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildRules(RulesChecker|\Cake\ORM\RulesChecker $ao_rules): RulesChecker {
+	public function buildRules(RulesChecker|\Cake\ORM\RulesChecker $rules): RulesChecker {
 {% for field, rule in rulesChecker %}
 {% set fields = rule.fields is defined ? Bake.exportArray(rule.fields) : Bake.exportVar(field) %}
 {% set options = '' %}
@@ -139,11 +139,11 @@ class {{ name }}Table extends Table{{ fileBuilder.classBuilder.implements ? ' im
 {%~ set options = (loop.first ? '[' : options) ~ "'#{optionName}' => " ~ Bake.exportVar(optionValue) ~ (loop.last ? ']' : ', ') %}
 {% endfor %}
 {% if rule.fields[0] != 'parentId' %}
-		$ao_rules->add($ao_rules->{{ rule.name }}({{ fields|raw }}{{ (rule.extra|default ? ", '#{rule.extra}'" : '')|raw }}{{ (options ? ', ' ~ options : '')|raw }}), 'valid{{ rule.fields[0]|camelize }}', ['errorField' => '{{ rule.fields[0]|variable }}']);
+		$rules->add($rules->{{ rule.name }}({{ fields|raw }}{{ (rule.extra|default ? ", '#{rule.extra}'" : '')|raw }}{{ (options ? ', ' ~ options : '')|raw }}), 'valid{{ rule.fields[0]|camelize }}', ['errorField' => '{{ rule.fields[0]|variable }}']);
 {% endif %}
 {% endfor %}
 
-		return $ao_rules;
+		return $rules;
 	}
 {% endif %}
 

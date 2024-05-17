@@ -12,7 +12,7 @@ use Cake\Validation\Validator;
 /**
  * Audit Model
  *
- * @method \Awyiss\Model\Entity\Audit newDefaultEntity(array $aa_additionalData = [], array $aa_options = [])
+ * @method \Awyiss\Model\Entity\Audit newDefaultEntity(array $additionalData = [], array $options = [])
  * @noinspection PhpFullyQualifiedNameUsageInspection
  */
 class AuditTable extends Table {
@@ -37,15 +37,15 @@ class AuditTable extends Table {
 	/**
 	 * Returns the default validator object.
 	 *
-	 * @param Validator $ao_validator The validator that can be modified to
+	 * @param Validator $validator The validator that can be modified to
 	 * add some rules to it.
 	 * @return Validator
 	 */
-	public function validationDefault(Validator $ao_validator): Validator {
-		parent::validationDefault($ao_validator);
+	public function validationDefault(Validator $validator): Validator {
+		parent::validationDefault($validator);
 
 
-		$ao_validator->requirePresence([
+		$validator->requirePresence([
 			'scope',
 			'parentId',
 			'transactionId',
@@ -55,95 +55,95 @@ class AuditTable extends Table {
 		], 'create');
 
 
-		$ao_validator->add('id', [
+		$validator->add('id', [
 			'isInteger' => ['rule' => 'isInteger'],
 			'maxLength' => ['rule' => ['maxLength', 11]],
 		]);
 
 
-		$ao_validator->notEmptyString('scope');
-		$ao_validator->add('scope', [
+		$validator->notEmptyString('scope');
+		$validator->add('scope', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'maxLength' => ['rule' => ['maxLength', 50]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
 
 
-		$ao_validator->add('parentId', [
+		$validator->add('parentId', [
 			'isInteger' => ['rule' => 'isInteger'],
 		]);
 
 
-		$ao_validator->notEmptyString('transactionId');
-		$ao_validator->add('transactionId', [
+		$validator->notEmptyString('transactionId');
+		$validator->add('transactionId', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'maxLength' => ['rule' => ['maxLength', 36]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
 
 
-		$ao_validator->notEmptyString('type');
-		$ao_validator->add('type', [
+		$validator->notEmptyString('type');
+		$validator->add('type', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'inList' => ['rule' => ['inList', ['u', 'd']]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
 
 
-		$ao_validator->add('dataOld', [
+		$validator->add('dataOld', [
 			'isArray' => ['rule' => 'isArray'],
 			'maxLengthBytes' => [
-				'rule' => function ($ax_value) {
-					return strlen(json_encode($ax_value)) <= 16777215;
+				'rule' => function ($value) {
+					return strlen(json_encode($value)) <= 16777215;
 				},
 			],
 		]);
 
 
-		$ao_validator->add('dataNew', [
+		$validator->add('dataNew', [
 			'isArray' => ['rule' => 'isArray'],
 			'maxLengthBytes' => [
-				'rule' => function ($ax_value) {
-					return strlen(json_encode($ax_value)) <= 16777215;
+				'rule' => function ($value) {
+					return strlen(json_encode($value)) <= 16777215;
 				},
 			],
 		]);
 
 
-		$ao_validator->add('diff', [
+		$validator->add('diff', [
 			'isArray' => ['rule' => 'isArray'],
 			'maxLengthBytes' => [
-				'rule' => function ($ax_value) {
-					return strlen(json_encode($ax_value)) <= 16777215;
+				'rule' => function ($value) {
+					return strlen(json_encode($value)) <= 16777215;
 				},
 			],
 		]);
 
 
-		$ao_validator->notEmptyDateTime('createdOn');
-		$ao_validator->add('createdOn', [
+		$validator->notEmptyDateTime('createdOn');
+		$validator->add('createdOn', [
 			'dateTime' => ['rule' => 'dateTime'],
 		]);
 
 
-		$ao_validator->notEmptyString('createdBy');
-		$ao_validator->add('createdBy', [
+		$validator->notEmptyString('createdBy');
+		$validator->add('createdBy', [
 			'isInteger' => ['rule' => 'isInteger'],
 		]);
 
 
-		return $ao_validator;
+		return $validator;
 	}
 
 
 	/**
 	 * @inheritDoc
 	 */
-	protected function initializeSchema(TableSchemaInterface $ao_schema): void {
-		parent::initializeSchema($ao_schema);
+	protected function initializeSchema(TableSchemaInterface $schema): void {
+		parent::initializeSchema($schema);
 
-		$ao_schema->setColumnType('data_old', 'json');
-		$ao_schema->setColumnType('data_new', 'json');
-		$ao_schema->setColumnType('diff', 'json');
+		$schema->setColumnType('data_old', 'json');
+		$schema->setColumnType('data_new', 'json');
+		$schema->setColumnType('diff', 'json');
 	}
 }

@@ -23,6 +23,11 @@ export default class Coloris {
 	 * @type {HTMLDivElement|null}
 	 */
 	static colorArea = null;
+	/**
+	 * @type {HTMLDivElement|null}
+	 * @type {{width: number, height: number, x: number, y: number}}
+	 */
+	static colorAreaDims = {};
 
 	/**
 	 * @type {HTMLDivElement|null}

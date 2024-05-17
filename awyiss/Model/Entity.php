@@ -40,16 +40,16 @@ class Entity extends BaseEntity {
 
 
 	/**
-	 * @param array $aa_properties
-	 * @param array $aa_options
+	 * @param array $properties
+	 * @param array $options
 	 */
-	public function __construct(array $aa_properties = [], array $aa_options = []) {
-		$la_properties = $this->mapFields($aa_properties, true);
+	public function __construct(array $properties = [], array $options = []) {
+		$la_properties = $this->mapFields($properties, true);
 
 		//Remember the original field names here.
 		$this->setOriginalField(array_keys($la_properties));
 
-		parent::__construct($la_properties, $aa_options);
+		parent::__construct($la_properties, $options);
 
 		if (isset($this->_fields['attributes']) && $this->getSource()) {
 			/** @var Table $lo_table */
@@ -79,10 +79,9 @@ class Entity extends BaseEntity {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function &get(string $as_field): mixed {
-		$ls_field = $as_field;
+	public function &get(string $field): mixed {
+		$ls_field = $field;
 		$ls_field = static::mapField($ls_field);
 
 		/** @noinspection PhpUnnecessaryLocalVariableInspection ... stupid PhpStorm */
@@ -95,22 +94,21 @@ class Entity extends BaseEntity {
 
 	/**
 	 * @inheritDoc
-	 * @param array|string $ax_field
-	 * @param mixed|null $ax_value
-	 * @param array $aa_options
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 * @param array|string $field
+	 * @param mixed|null $value
+	 * @param array $options
 	 */
-	public function set(array|string $ax_field, mixed $ax_value = null, array $aa_options = []): EntityInterface {
-		$lx_field = $ax_field;
+	public function set(array|string $field, mixed $value = null, array $options = []): EntityInterface {
+		$lx_field = $field;
 		if (is_string($lx_field)) {
 			$lx_field = static::mapField($lx_field);
 		}
-		elseif (is_array($ax_field) && $ax_field) {
-			$lx_field = static::mapFields($ax_field, true);
+		elseif (is_array($field) && $field) {
+			$lx_field = static::mapFields($field, true);
 		}
 
 
-		return $this->setOrSetAttribute($lx_field, $ax_value, $aa_options);
+		return $this->setOrSetAttribute($lx_field, $value, $options);
 	}
 
 
@@ -137,12 +135,12 @@ class Entity extends BaseEntity {
 	/**
 	 * Enables the audit flag that allows the AuditBehavior to track changes to this entity
 	 *
-	 * @param bool $ab_audit
+	 * @param bool $audit
 	 * @return $this
 	 * @noinspection PhpUnused
 	 */
-	public function enableAudit(bool $ab_audit = true): static {
-		$this->_audit = $ab_audit;
+	public function enableAudit(bool $audit = true): static {
+		$this->_audit = $audit;
 
 
 		return $this;

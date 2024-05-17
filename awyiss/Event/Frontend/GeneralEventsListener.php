@@ -36,12 +36,12 @@ class GeneralEventsListener implements EventListenerInterface {
 	/**
 	 * Before saving a page, make sure its slug is unique.
 	 *
-	 * @param EventInterface $ao_event
-	 * @param \Awyiss\Model\Entity\Media $ao_entity
-	 * @param \ArrayObject $ao_options
+	 * @param EventInterface $event
+	 * @param \Awyiss\Model\Entity\Media $entity
+	 * @param \ArrayObject $options
 	 */
-	public function beforeSave(EventInterface $ao_event, EntityInterface $ao_entity/*, ArrayObject $ao_options*/): void {
-		$ao_event->stopPropagation();
-		$ao_entity->setError('_general', 'Saving inside the Frontend Realm is not allowed.');
+	public function beforeSave(EventInterface $event, EntityInterface $entity/*, ArrayObject $options*/): void {
+		$event->stopPropagation();
+		$entity->setError('_general', 'Saving inside the Frontend Realm is not allowed.');
 	}
 }

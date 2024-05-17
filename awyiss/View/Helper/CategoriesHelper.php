@@ -65,11 +65,11 @@ class CategoriesHelper extends Helper {
 
 
 	/**
-	 * @param View $ao_view
-	 * @param array $aa_config
+	 * @param View $view
+	 * @param array $config
 	 */
-	public function __construct(View $ao_view, array $aa_config = []) {
-		$la_config = $aa_config;
+	public function __construct(View $view, array $config = []) {
+		$la_config = $config;
 
 		//Add the default widgets to those that may be present in the provided config
 		$la_widgets = $this->defaultWidgets;
@@ -81,7 +81,7 @@ class CategoriesHelper extends Helper {
 			unset($la_config['widgets']);
 		}
 
-		parent::__construct($ao_view, $la_config);
+		parent::__construct($view, $la_config);
 
 		$lo_widgetLocator = new WidgetLocator($this->templater(), $this->_View, $la_widgets);
 		$this->setWidgetLocator($lo_widgetLocator);
@@ -91,11 +91,11 @@ class CategoriesHelper extends Helper {
 	/**
 	 * Set the widget locator the helper will use.
 	 *
-	 * @param WidgetLocator $ao_widgetLocator The locator instance to set.
+	 * @param WidgetLocator $widgetLocator The locator instance to set.
 	 * @return $this
 	 */
-	public function setWidgetLocator(WidgetLocator $ao_widgetLocator): static {
-		$this->widgetLocator = $ao_widgetLocator;
+	public function setWidgetLocator(WidgetLocator $widgetLocator): static {
+		$this->widgetLocator = $widgetLocator;
 
 
 		return $this;
@@ -108,14 +108,14 @@ class CategoriesHelper extends Helper {
 	 * This is a lower level method. For built-in widgets, you should be using
 	 * methods like `control`, `select`, and `filter`.
 	 *
-	 * @param string $as_name The name of the widget. e.g. 'control'.
-	 * @param array $aa_data The data to render.
+	 * @param string $name The name of the widget. e.g. 'control'.
+	 * @param array $data The data to render.
 	 * @return string
 	 */
-	public function widget(string $as_name, array $aa_data = []): string {
-		$la_data = $aa_data;
+	public function widget(string $name, array $data = []): string {
+		$la_data = $data;
 
-		$lo_widget = $this->widgetLocator->get($as_name);
+		$lo_widget = $this->widgetLocator->get($name);
 
 
 		/**
@@ -153,13 +153,13 @@ class CategoriesHelper extends Helper {
 	 *   of attributes for the label tag. `selected` will be added to any classes e.g. `class => 'myclass'` where
 	 *   widget is checked
 	 *
-	 * @param string|null $as_identifier
-	 * @param array $aa_attributes
+	 * @param string|null $identifier
+	 * @param array $attributes
 	 * @return string
 	 * @see \Cake\View\Helper\FormHelper::control()
 	 */
-	public function control(string $as_identifier, array $aa_attributes = []): string {
-		$ls_identifier = Inflector::underscore($as_identifier);
+	public function control(string $identifier, array $attributes = []): string {
+		$ls_identifier = Inflector::underscore($identifier);
 		$la_config = $this->getConfiguration($ls_identifier);
 
 		if (empty($la_config) || !$la_config['enabled']) {
@@ -169,7 +169,7 @@ class CategoriesHelper extends Helper {
 		$ls_fieldName = Inflector::underscore($la_config['field']);
 
 		$la_config = ['field' => $ls_fieldName] + $la_config;
-		$la_attributes = $aa_attributes + [
+		$la_attributes = $attributes + [
 			'isCategory' => true,
 			'empty' => false,
 			'groupBy' => false,
@@ -202,21 +202,21 @@ class CategoriesHelper extends Helper {
 					$lx_options = collection($lx_options);
 				}
 
-				$lx_options = $lx_options->groupBy(function (mixed $ax_element) use ($ls_groupBy) {
-					if ($ax_element instanceof EntityInterface) {
-						if (is_array($ax_element->$ls_groupBy)) {
-							return implode(' - ', array_map(function (EntityInterface $ao_entity) {
+				$lx_options = $lx_options->groupBy(function (mixed $element) use ($ls_groupBy) {
+					if ($element instanceof EntityInterface) {
+						if (is_array($element->$ls_groupBy)) {
+							return implode(' - ', array_map(function (EntityInterface $entity) {
 								/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-								return $ao_entity->label;
-							}, $ax_element->$ls_groupBy));
+								return $entity->label;
+							}, $element->$ls_groupBy));
 						}
 
 
-						return $ax_element->$ls_groupBy ?? '';
+						return $element->$ls_groupBy ?? '';
 					}
 
 
-					return $ax_element[ $ls_groupBy ] ?? '';
+					return $element[ $ls_groupBy ] ?? '';
 				});
 
 				$la_attributes['options'] = [];
@@ -258,13 +258,13 @@ class CategoriesHelper extends Helper {
 	 * - `unassignedKey` The value of an additional option that's used for showing items without any category.
 	 * - `val` The value of the currently selected category.
 	 *
-	 * @param string|null $as_identifier
-	 * @param iterable $ax_options
-	 * @param array $aa_attributes
+	 * @param string|null $identifier
+	 * @param iterable $options
+	 * @param array $attributes
 	 * @return string
 	 */
-	public function filter(string $as_identifier, ?iterable $ax_options = null, array $aa_attributes = []): string {
-		$ls_identifier = Inflector::underscore($as_identifier);
+	public function filter(string $identifier, ?iterable $options = null, array $attributes = []): string {
+		$ls_identifier = Inflector::underscore($identifier);
 		$la_config = $this->getConfiguration($ls_identifier);
 
 		if (empty($la_config) || !$la_config['enabled']) {
@@ -273,7 +273,7 @@ class CategoriesHelper extends Helper {
 
 		$ls_fieldName = Inflector::underscore($la_config['field']);
 
-		$la_attributes = $aa_attributes + $la_config;
+		$la_attributes = $attributes + $la_config;
 		$la_attributes += [
 			'aggregationLabel' => __($ls_fieldName . '_filter_all'),
 			'disabled' => false,
@@ -289,7 +289,7 @@ class CategoriesHelper extends Helper {
 			$la_attributes['id'] = 'LinkSelect-' . Inflector::camelize($this->_domId($ls_identifier), '-');
 		}
 
-		$la_attributes['options'] = $ax_options;
+		$la_attributes['options'] = $options;
 		if (!$la_attributes['options']) {
 			$la_attributes['options'] = $this->getCategories($ls_identifier, true);
 		}
@@ -302,28 +302,28 @@ class CategoriesHelper extends Helper {
 
 
 	/**
-	 * @param string $as_identifier
-	 * @param iterable|null $ax_options
-	 * @param array $aa_attributes
+	 * @param string $identifier
+	 * @param iterable|null $options
+	 * @param array $attributes
 	 * @return string
 	 */
-	public function linkSelect(string $as_identifier, ?iterable $ax_options = null, array $aa_attributes = []): string {
-		$la_attributes = $aa_attributes;
+	public function linkSelect(string $identifier, ?iterable $options = null, array $attributes = []): string {
+		$la_attributes = $attributes;
 		$la_attributes += [
 			'disabled' => false,
 			'escape' => true,
 			'id' => true,
-			'label' => __($as_identifier . '_filter_label'),
+			'label' => __($identifier . '_filter_label'),
 			'levelPrefix' => '- ',
-			'uriParam' => Inflector::variable($as_identifier),
+			'uriParam' => Inflector::variable($identifier),
 			'val' => null,
 		];
 
 		if (isset($la_attributes['id']) && $la_attributes['id'] === true) {
-			$la_attributes['id'] = 'LinkSelect-' . Inflector::camelize($this->_domId($as_identifier), '-');
+			$la_attributes['id'] = 'LinkSelect-' . Inflector::camelize($this->_domId($identifier), '-');
 		}
 
-		$la_attributes['options'] = $ax_options;
+		$la_attributes['options'] = $options;
 		$la_attributes = $this->buildOptions($la_attributes);
 
 
@@ -332,11 +332,11 @@ class CategoriesHelper extends Helper {
 
 
 	/**
-	 * @param string $as_identifier
+	 * @param string $identifier
 	 * @return array
 	 */
-	public function getConfiguration(string $as_identifier): array {
-		$ls_name = Inflector::variable(Inflector::pluralize($as_identifier));
+	public function getConfiguration(string $identifier): array {
+		$ls_name = Inflector::variable(Inflector::pluralize($identifier));
 		$la_categories = $this->getView()->get($ls_name);
 
 		if ($la_categories instanceof PaginatedResultSet) {
@@ -351,15 +351,15 @@ class CategoriesHelper extends Helper {
 	/**
 	 * For a list of given names, return the first found `categories.raw` or `categories.simple`-value in the `categories`-view var
 	 *
-	 * @param string $as_identifier
-	 * @param bool $ab_preferRaw
+	 * @param string $identifier
+	 * @param bool $preferRaw
 	 * @return iterable|null
 	 */
-	public function getCategories(string $as_identifier, bool $ab_preferRaw = false): ?iterable {
-		$ls_name = Inflector::variable(Inflector::pluralize($as_identifier));
+	public function getCategories(string $identifier, bool $preferRaw = false): ?iterable {
+		$ls_name = Inflector::variable(Inflector::pluralize($identifier));
 		$la_categories = $this->getView()->get($ls_name);
 
-		if ($ab_preferRaw) {
+		if ($preferRaw) {
 			$lx_return = $la_categories['raw'];
 		}
 
@@ -375,11 +375,11 @@ class CategoriesHelper extends Helper {
 	/**
 	 * For a list of given names, return the first found `selectedCategory`-value in the `categories`-view va
 	 *
-	 * @param string $as_identifier
+	 * @param string $identifier
 	 * @return mixed
 	 */
-	public function getSelectedCategory(string $as_identifier): mixed {
-		$ls_name = Inflector::variable(Inflector::pluralize($as_identifier));
+	public function getSelectedCategory(string $identifier): mixed {
+		$ls_name = Inflector::variable(Inflector::pluralize($identifier));
 		$la_categories = $this->getView()->get($ls_name);
 
 		return $la_categories['selected'] ?? null;
@@ -387,12 +387,12 @@ class CategoriesHelper extends Helper {
 
 
 	/**
-	 * @param array $aa_attributes
-	 * @param array $aa_config
+	 * @param array $attributes
+	 * @param array $config
 	 * @return array
 	 */
-	protected function buildOptions(array $aa_attributes, array $aa_config = []): array {
-		$la_attributes = $aa_attributes;
+	protected function buildOptions(array $attributes, array $config = []): array {
+		$la_attributes = $attributes;
 		$la_attributes += [
 			'allowUnassigned' => false,
 			'allowAggregation' => false,
@@ -404,7 +404,7 @@ class CategoriesHelper extends Helper {
 		if ($lx_options) {
 			$ls_groupBy = $la_attributes['groupBy'] ?? null;
 
-			if (!$ls_groupBy && !empty($aa_config['includeParentCategories'])) {
+			if (!$ls_groupBy && !empty($config['includeParentCategories'])) {
 				$ls_groupBy = '_parents';
 			}
 
@@ -413,13 +413,13 @@ class CategoriesHelper extends Helper {
 					$lx_options = collection($lx_options);
 				}
 
-				$la_options = $lx_options->groupBy(function (mixed $ax_element) use ($ls_groupBy, &$la_attributes) {
-					if ($ax_element instanceof EntityInterface) {
-						if (is_array($ax_element->$ls_groupBy)) {
-							$ls_path = implode(' - ', array_map(function (EntityInterface $ao_entity) {
+				$la_options = $lx_options->groupBy(function (mixed $element) use ($ls_groupBy, &$la_attributes) {
+					if ($element instanceof EntityInterface) {
+						if (is_array($element->$ls_groupBy)) {
+							$ls_path = implode(' - ', array_map(function (EntityInterface $entity) {
 								/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-								return $ao_entity->label;
-							}, $ax_element->$ls_groupBy));
+								return $entity->label;
+							}, $element->$ls_groupBy));
 
 							$la_attributes['groupLabels'][ $ls_path ] ??= $ls_path;
 
@@ -428,11 +428,11 @@ class CategoriesHelper extends Helper {
 						}
 
 
-						return $ax_element->$ls_groupBy ?? '';
+						return $element->$ls_groupBy ?? '';
 					}
 
 
-					return $ax_element[ $ls_groupBy ] ?? '';
+					return $element[ $ls_groupBy ] ?? '';
 				})->toArray();
 
 				$la_attributes['options'] = [];
@@ -488,99 +488,99 @@ class CategoriesHelper extends Helper {
 
 
 	/**
-	 * @param array $ax_options
-	 * @param array $aa_attributes
-	 * @param bool $ab_forLinkSelect
+	 * @param array $options
+	 * @param array $attributes
+	 * @param bool $forLinkSelect
 	 * @return array
 	 */
-	protected function formatOptions(iterable $ax_options, array $aa_attributes, bool $ab_forLinkSelect = false): array {
-		if ($ax_options instanceof TreeIterator) {
-			if ($ab_forLinkSelect) {
-				$la_options = $ax_options->toList();
+	protected function formatOptions(iterable $options, array $attributes, bool $forLinkSelect = false): array {
+		if ($options instanceof TreeIterator) {
+			if ($forLinkSelect) {
+				$la_options = $options->toList();
 				$la_options = array_combine(array_column($la_options, 'id'), $la_options);
 			}
 			else {
-				$la_options = $ax_options->printer(
-					...($aa_attributes['printer'] ?? [
+				$la_options = $options->printer(
+					...($attributes['printer'] ?? [
 						'label',
 						'id',
-						$aa_attributes['levelPrefix'] ?? '- ',
+						$attributes['levelPrefix'] ?? '- ',
 					])
 				)->toArray();
 			}
 		}
-		elseif ($ax_options instanceof CollectionInterface) {
-			$la_combinator = array_values($aa_attributes['combinator'] ?? [
+		elseif ($options instanceof CollectionInterface) {
+			$la_combinator = array_values($attributes['combinator'] ?? [
 				'id',
 				'label',
 				null,
 			]);
 
 			$la_options = [];
-			foreach ($ax_options as $lx_option) {
+			foreach ($options as $lx_option) {
 				$ls_title = $lx_option->{$la_combinator[1]};
 
 				if ($lx_option->level ?? null) {
-					$ls_title = str_repeat($aa_attributes['levelPrefix'] ?? '- ', $lx_option->level) . $ls_title;
+					$ls_title = str_repeat($attributes['levelPrefix'] ?? '- ', $lx_option->level) . $ls_title;
 				}
 
 				$la_options[ $lx_option->{$la_combinator[0]} ] = $ls_title;
 			}
 		}
-		elseif (is_array($ax_options)) {
-			$la_options = $ax_options;
+		elseif (is_array($options)) {
+			$la_options = $options;
 
-			if ($aa_attributes['buildNested'] ?? null === true) {
-				$la_options = $this->formatOptions(collection($ax_options), $aa_attributes, $ab_forLinkSelect);
+			if ($attributes['buildNested'] ?? null === true) {
+				$la_options = $this->formatOptions(collection($options), $attributes, $forLinkSelect);
 			}
 		}
 		else {
-			throw new RuntimeException(sprintf('Cannot build options for type `%s`.', gettype($ax_options)));
+			throw new RuntimeException(sprintf('Cannot build options for type `%s`.', gettype($options)));
 		}
 
-		if (!$ab_forLinkSelect) {
+		if (!$forLinkSelect) {
 			return $la_options;
 		}
 
-		return $this->formatOptionAttributes($la_options, $aa_attributes);
+		return $this->formatOptionAttributes($la_options, $attributes);
 	}
 
 
 	/**
-	 * @param array $aa_options
-	 * @param array $aa_attributes
+	 * @param array $options
+	 * @param array $attributes
 	 * @return array
 	 */
-	protected function formatOptionAttributes(array $aa_options, array $aa_attributes): array {
+	protected function formatOptionAttributes(array $options, array $attributes): array {
 		$la_formattedOptions = [];
 
-		foreach ($aa_options as $lx_key => $lx_option) {
+		foreach ($options as $lx_key => $lx_option) {
 			if (is_object($lx_option)) {
 				$la_data = [
 					'id' => $lx_option->id,
 					'title' => $lx_option->label ?? $lx_option->title,
 					'link' => $this->Url->build([
-						'_name' => $aa_attributes['routeName'] ?? null,
-						$aa_attributes['uriParam'] => $lx_option->id,
+						'_name' => $attributes['routeName'] ?? null,
+						$attributes['uriParam'] => $lx_option->id,
 					], ['withoutParams' => ['page']]),
-					'levelPrefix' => str_repeat($aa_attributes['levelPrefix'] ?? '', $lx_option->level ?? 0),
-					'isGrouped' => $aa_attributes['isGrouped'] ?? false,
+					'levelPrefix' => str_repeat($attributes['levelPrefix'] ?? '', $lx_option->level ?? 0),
+					'isGrouped' => $attributes['isGrouped'] ?? false,
 				];
 				$la_formattedOptions[ $lx_option->id ] = $la_data;
 			}
 			elseif (is_array($lx_option)) {
-				$la_formattedOptions[ $lx_option['id'] ?? $lx_key ] = $lx_option + ['isGrouped' => $aa_attributes['isGrouped'] ?? false];
+				$la_formattedOptions[ $lx_option['id'] ?? $lx_key ] = $lx_option + ['isGrouped' => $attributes['isGrouped'] ?? false];
 			}
 			else {
 				$la_data = [
 					'id' => null,
 					'title' => $lx_option,
 					'link' => $this->Url->build([
-						'_name' => $aa_attributes['routeName'] ?? null,
-						$aa_attributes['uriParam'] => $lx_key,
+						'_name' => $attributes['routeName'] ?? null,
+						$attributes['uriParam'] => $lx_key,
 					], ['withoutParams' => ['page']]),
 					'levelPrefix' => null,
-					'isGrouped' => $aa_attributes['isGrouped'] ?? false,
+					'isGrouped' => $attributes['isGrouped'] ?? false,
 				];
 
 				$la_formattedOptions[ $lx_key ] = $la_data;

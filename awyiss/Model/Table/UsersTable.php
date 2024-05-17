@@ -16,7 +16,7 @@ use Cake\Validation\Validator;
  * Users Model
  *
  * @property \Awyiss\Model\Table\UsergroupsTable&\Awyiss\ORM\Association\BelongsToMany $Usergroups
- * @method \Awyiss\Model\Entity\User newDefaultEntity(array $aa_additionalData = [], array $aa_options = [])
+ * @method \Awyiss\Model\Entity\User newDefaultEntity(array $additionalData = [], array $options = [])
  * @noinspection PhpFullyQualifiedNameUsageInspection
  */
 class UsersTable extends Table {
@@ -55,8 +55,8 @@ class UsersTable extends Table {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function findActive(SelectQuery $ao_query): SelectQuery {
-		$ao_query->where([
+	public function findActive(SelectQuery $query): SelectQuery {
+		$query->where([
 			'active' => 1,
 			'OR' => [
 				'failed_attempts <' => 5,
@@ -65,42 +65,42 @@ class UsersTable extends Table {
 		]);
 
 
-		return $ao_query;
+		return $query;
 	}
 
 
 	/**
 	 * Returns the default validator object.
 	 *
-	 * @param Validator $ao_validator The validator that can be modified to
+	 * @param Validator $validator The validator that can be modified to
 	 * add some rules to it.
 	 * @return Validator
 	 */
-	public function validationDefault(Validator $ao_validator): Validator {
-		parent::validationDefault($ao_validator);
+	public function validationDefault(Validator $validator): Validator {
+		parent::validationDefault($validator);
 
 
-		$ao_validator->requirePresence([
+		$validator->requirePresence([
 			'username',
 			'password',
 		], 'create');
 
 
-		$ao_validator->add('id', [
+		$validator->add('id', [
 			'isInteger' => ['rule' => 'isInteger'],
 			'maxLength' => ['rule' => ['maxLength', 11]],
 		]);
 
 
-		$ao_validator->notEmptyString('username');
-		$ao_validator->add('username', [
+		$validator->notEmptyString('username');
+		$validator->add('username', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'maxLength' => ['rule' => ['maxLength', 50]],
 		]);
 
 
-		$ao_validator->allowEmptyString('password', null, 'update');
-		$ao_validator->add('password', [
+		$validator->allowEmptyString('password', null, 'update');
+		$validator->add('password', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'minLength' => ['rule' => ['minLength', 8]],
 			'maxLength' => ['rule' => ['maxLength', 100]],
@@ -108,60 +108,59 @@ class UsersTable extends Table {
 		]);
 
 
-		$ao_validator->add('failedAttempts', [
+		$validator->add('failedAttempts', [
 			'isInteger' => ['rule' => 'isInteger'],
 			'maxLength' => ['rule' => ['maxLength', 1]],
 		]);
 
 
-		$ao_validator->allowEmptyDateTime('lastLogin');
-		$ao_validator->add('lastLogin', [
+		$validator->allowEmptyDateTime('lastLogin');
+		$validator->add('lastLogin', [
 			'dateTime' => ['rule' => 'dateTime'],
 		]);
 
 
-		$ao_validator->add('firstname', [
+		$validator->add('firstname', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'maxLength' => ['rule' => ['maxLength', 50]],
 		]);
 
 
-		$ao_validator->add('lastname', [
+		$validator->add('lastname', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'maxLength' => ['rule' => ['maxLength', 50]],
 		]);
 
 
-		$ao_validator->add('email', [
+		$validator->add('email', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'maxLength' => ['rule' => ['maxLength', 50]],
 		]);
 
 
-		$ao_validator->add('active', [
+		$validator->add('active', [
 			'boolean' => ['rule' => 'boolean'],
 		]);
 
 
-		$ao_validator->add('deleted', [
+		$validator->add('deleted', [
 			'boolean' => ['rule' => 'boolean'],
 		]);
 
 
-		return $ao_validator;
+		return $validator;
 	}
 
 
 	/**
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 *
-	 * @param RulesChecker|BaseRulesChecker $ao_rules The rules object to be modified.
+	 * @param RulesChecker|BaseRulesChecker $rules The rules object to be modified.
 	 * @return RulesChecker
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
-		$ao_rules->add(
-			$ao_rules->isUnique(['username']),
+	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
+		$rules->add(
+			$rules->isUnique(['username']),
 			'usernameUnique',
 			[
 				'errorField' => 'username',
@@ -170,8 +169,8 @@ class UsersTable extends Table {
 		);
 
 
-		$ao_rules->add(
-			$ao_rules->isUnique(['email'], ['allowMultipleNulls' => true]),
+		$rules->add(
+			$rules->isUnique(['email'], ['allowMultipleNulls' => true]),
 			'emailUnique',
 			[
 				'errorField' => 'email',
@@ -180,6 +179,6 @@ class UsersTable extends Table {
 		);
 
 
-		return $ao_rules;
+		return $rules;
 	}
 }

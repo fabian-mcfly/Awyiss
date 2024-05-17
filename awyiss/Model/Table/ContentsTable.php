@@ -36,12 +36,12 @@ use RuntimeException;
  * @property \Awyiss\Model\Table\ContentsTable&\Awyiss\ORM\Association\HasMany $ChildContents
  * @property \Awyiss\Model\Table\ContentsTable&\Awyiss\ORM\Association\HasMany $DuplicatingContents
  * @property \Awyiss\Model\Table\ContentsTable&\Awyiss\ORM\Association\BelongsTo $DuplicateOfContents
- * @method \Awyiss\Model\Entity\Content newDefaultEntity(array $aa_additionalData = [], array $aa_options = [])
- * @method \Cake\Collection\CollectionInterface|null getNestedChildren(\Cake\Datasource\EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
- * @method \Cake\Collection\CollectionInterface|null getChildren(\Cake\Datasource\EntityInterface $ao_entity, array $aa_options = [])
- * @method \Awyiss\Model\Entity\Content getParent(\Cake\Datasource\EntityInterface $ao_entity, array $aa_options = [])
- * @method \Cake\Collection\CollectionInterface|null getParents(\Cake\Datasource\EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
- * @method \Cake\Collection\CollectionInterface getPossibleParents(\Awyiss\Model\Entity $ao_entity, \Cake\Collection\CollectionInterface $ao_threadedEntities)
+ * @method \Awyiss\Model\Entity\Content newDefaultEntity(array $additionalData = [], array $options = [])
+ * @method \Cake\Collection\CollectionInterface|null getNestedChildren(\Cake\Datasource\EntityInterface $entity, array $options = [], int $currentLevel = 0)
+ * @method \Cake\Collection\CollectionInterface|null getChildren(\Cake\Datasource\EntityInterface $entity, array $options = [])
+ * @method \Awyiss\Model\Entity\Content getParent(\Cake\Datasource\EntityInterface $entity, array $options = [])
+ * @method \Cake\Collection\CollectionInterface|null getParents(\Cake\Datasource\EntityInterface $entity, array $options = [], int $currentLevel = 0)
+ * @method \Cake\Collection\CollectionInterface getPossibleParents(\Awyiss\Model\Entity $entity, \Cake\Collection\CollectionInterface $threadedEntities)
  */
 class ContentsTable extends Table {
 	use LogTrait;
@@ -103,10 +103,10 @@ class ContentsTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public function initialize(array $aa_config): void {
+	public function initialize(array $config): void {
 		$this->customConfigProperties[] = 'columnSystem';
 
-		parent::initialize($aa_config);
+		parent::initialize($config);
 
 		$this->initializeColumnSystem();
 	}
@@ -180,79 +180,79 @@ class ContentsTable extends Table {
 	/**
 	 * Returns the default validator object.
 	 *
-	 * @param \Awyiss\Validation\Validator $ao_validator The validator that can be modified to
+	 * @param \Awyiss\Validation\Validator $validator The validator that can be modified to
 	 * add some rules to it.
 	 * @return \Awyiss\Validation\Validator
 	 */
-	public function validationDefault(BaseValidator $ao_validator): BaseValidator {
-		parent::validationDefault($ao_validator);
+	public function validationDefault(BaseValidator $validator): BaseValidator {
+		parent::validationDefault($validator);
 
 
-		$ao_validator->requirePresence([
+		$validator->requirePresence([
 			'pageId',
 			'contentAreaId',
 			'contentTemplateId',
 		], 'create');
 
 
-		$ao_validator->add('id', [
+		$validator->add('id', [
 			'isInteger' => ['rule' => 'isInteger'],
 			'maxLength' => ['rule' => ['maxLength', 11]],
 		]);
 
 
-		$ao_validator->notEmptyString('pageId');
-		$ao_validator->add('pageId', [
+		$validator->notEmptyString('pageId');
+		$validator->add('pageId', [
 			'isInteger' => ['rule' => 'isInteger'],
 			'maxLength' => ['rule' => ['maxLength', 11]],
 		]);
 
 
-		$ao_validator->add('parentId', [
+		$validator->add('parentId', [
 			'isInteger' => ['rule' => 'isInteger'],
 			'maxLength' => ['rule' => ['maxLength', 11]],
 		]);
 
 
-		$ao_validator->add('title', [
+		$validator->add('title', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'maxLength' => ['rule' => ['maxLength', 255]],
 		]);
 
 
-		$ao_validator->add('subtitle', [
+		$validator->add('subtitle', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'maxLength' => ['rule' => ['maxLength', 255]],
 		]);
 
 
-		$ao_validator->add('text', [
+		$validator->add('text', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'maxLengthBytes' => ['rule' => ['maxLengthBytes', 65535]],
 		]);
 
 
-		$ao_validator->add('link', [
+		$validator->add('link', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'maxLength' => ['rule' => ['maxLength', 255]],
 		]);
 
 
-		$ao_validator->notEmptyString('contentAreaId');
-		$ao_validator->add('contentAreaId', [
+		$validator->notEmptyString('contentAreaId');
+		$validator->add('contentAreaId', [
 			'isScalar' => ['rule' => 'isInteger'],
 			'maxLength' => ['rule' => ['maxLength', 11]],
 		]);
 
 
-		$ao_validator->notEmptyString('contentTemplateId');
-		$ao_validator->add('contentTemplateId', [
+		$validator->notEmptyString('contentTemplateId');
+		$validator->add('contentTemplateId', [
 			'isInteger' => ['rule' => 'isInteger'],
 			'maxLength' => ['rule' => ['maxLength', 11]],
 		]);
 
 
-		$ao_validator->add('columnWidth', [
+		$validator->add('columnWidth', [
 			'inList' => [
 				'rule' => [
 					'inList',
@@ -262,7 +262,7 @@ class ContentsTable extends Table {
 		]);
 
 
-		$ao_validator->add('columnIndent', [
+		$validator->add('columnIndent', [
 			'inList' => [
 				'rule' => [
 					'inList',
@@ -272,56 +272,55 @@ class ContentsTable extends Table {
 		]);
 
 
-		$ao_validator->add('cssClass', [
+		$validator->add('cssClass', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'maxLength' => ['rule' => ['maxLength', 255]],
 		]);
 
 
-		$ao_validator->add('duplicateOf', [
+		$validator->add('duplicateOf', [
 			'isInteger' => ['rule' => 'isInteger'],
 			'maxLength' => ['rule' => ['maxLength', 11]],
 		]);
 
 
-		$ao_validator->add('data', [
+		$validator->add('data', [
 			'isArray' => ['rule' => 'isArray'],
 			'maxLengthBytes' => [
-				'rule' => function (array $aa_value): bool {
-					return strlen(json_encode($aa_value)) <= 65535;
+				'rule' => function (array $value): bool {
+					return strlen(json_encode($value)) <= 65535;
 				},
 			],
 		]);
 
 
-		$ao_validator->add('systemOrder', [
+		$validator->add('systemOrder', [
 			'isInteger' => ['rule' => 'isInteger'],
 		]);
 
 
-		$ao_validator->add('active', [
+		$validator->add('active', [
 			'boolean' => ['rule' => 'boolean'],
 		]);
 
 
-		$ao_validator->add('deleted', [
+		$validator->add('deleted', [
 			'boolean' => ['rule' => 'boolean'],
 		]);
 
 
-		return $ao_validator;
+		return $validator;
 	}
 
 
 	/**
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 *
-	 * @param RulesChecker|BaseRulesChecker $ao_rules The rules object to be modified.
+	 * @param RulesChecker|BaseRulesChecker $rules The rules object to be modified.
 	 * @return RulesChecker
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): BaseRulesChecker {
-		$ao_rules->add(function (Content $ao_entity/*, array $aa_options*/): bool {
+	public function buildRules(RulesChecker|BaseRulesChecker $rules): BaseRulesChecker {
+		$rules->add(function (Content $entity/*, array $options*/): bool {
 			/**
 			 * Retreive the page and the assigned page template.
 			 *
@@ -329,12 +328,12 @@ class ContentsTable extends Table {
 			 */
 			try {
 				/** @var Page $lo_page */
-				$lo_page = $this->{$this->getPageRole()->tableAlias()}->get($ao_entity->pageId, contain: [
+				$lo_page = $this->{$this->getPageRole()->tableAlias()}->get($entity->pageId, contain: [
 					'PageTemplates',
 				]);
 			}
 			catch (RecordNotFoundException | InvalidPrimaryKeyException) {
-				$ao_entity->setError('page_id', __df($this->getI18nDomain(), 'validation', 'error_valid_page_id'));
+				$entity->setError('page_id', __df($this->getI18nDomain(), 'validation', 'error_valid_page_id'));
 
 				return false;
 			}
@@ -347,11 +346,11 @@ class ContentsTable extends Table {
 			try {
 				/** @var ContentTemplate $lo_contentTemplate */
 				$lo_contentTemplate = $this->ContentTemplates->get(
-					$ao_entity->contentTemplateId,
+					$entity->contentTemplateId,
 					contain: [
 						'ContentAreas' => [
-							'queryBuilder' => function (SelectQuery $ao_query) use ($lo_page) {
-								return $ao_query->where(['ContentTemplateContentAreas.page_template_id' => $lo_page->pageTemplateId]);
+							'queryBuilder' => function (SelectQuery $query) use ($lo_page) {
+								return $query->where(['ContentTemplateContentAreas.page_template_id' => $lo_page->pageTemplateId]);
 							},
 						],
 						'ContentTemplateElements',
@@ -360,23 +359,23 @@ class ContentsTable extends Table {
 			}
 			catch (RecordNotFoundException | InvalidPrimaryKeyException) {
 				//Content template not found
-				$ao_entity->setError('content_template_id', __df($this->getI18nDomain(), 'validation', 'error_valid_content_template_id'));
+				$entity->setError('content_template_id', __df($this->getI18nDomain(), 'validation', 'error_valid_content_template_id'));
 
 				return false;
 			}
 
 
 			//Content area not found in the content template
-			if (!in_array($ao_entity->contentAreaId, array_column($lo_contentTemplate->contentAreas, 'id'))) {
-				$ao_entity->setError('content_area_id', __df($this->getI18nDomain(), 'validation', 'error_valid_content_area_id'));
+			if (!in_array($entity->contentAreaId, array_column($lo_contentTemplate->contentAreas, 'id'))) {
+				$entity->setError('content_area_id', __df($this->getI18nDomain(), 'validation', 'error_valid_content_area_id'));
 
 				return false;
 			}
 
 
 			// Make sure that all children of the current entity can be moved to the target content area as well
-			if (!$this->childrenCanBeMoved($ao_entity, $lo_page->pageTemplateId)) {
-				$ao_entity->setError('content_area_id', __df($this->getI18nDomain(), 'validation', 'error_valid_content_area_id_for_children'));
+			if (!$this->childrenCanBeMoved($entity, $lo_page->pageTemplateId)) {
+				$entity->setError('content_area_id', __df($this->getI18nDomain(), 'validation', 'error_valid_content_area_id_for_children'));
 
 				return false;
 			}
@@ -386,19 +385,19 @@ class ContentsTable extends Table {
 			$lo_validator = new $this->_validatorClass();
 			$lo_validator->setI18nDomain($this->getI18nDomain());
 
-			$la_data = $ao_entity->extract();
-			if (!empty($ao_entity->attributes)) {
+			$la_data = $entity->extract();
+			if (!empty($entity->attributes)) {
 				/** @var \Awyiss\Validation\Validator $lo_attributesValidator */
 				$lo_attributesValidator = new $this->_validatorClass();
 				$lo_attributesValidator->setI18nDomain($this->getI18nDomain());
 
-				$la_data['attributes'] = $ao_entity->attributes->extract();
+				$la_data['attributes'] = $entity->attributes->extract();
 			}
 
-			$this->validateInputFields($ao_entity, $lo_validator, $lo_attributesValidator ?? null, $lo_contentTemplate);
+			$this->validateInputFields($entity, $lo_validator, $lo_attributesValidator ?? null, $lo_contentTemplate);
 
 			//Validate the entity using the
-			$la_errors = $lo_validator->validate($la_data, $ao_entity->isNew());
+			$la_errors = $lo_validator->validate($la_data, $entity->isNew());
 
 			/** @noinspection PhpUndefinedMethodInspection */
 			$la_errors = $this->getEntityClass()::mapFields($la_errors, true);
@@ -406,21 +405,21 @@ class ContentsTable extends Table {
 			if ($this->hasAttributes() && !empty($la_errors['attributes'])) {
 				/** @noinspection PhpUndefinedMethodInspection */
 				$la_errors['attributes'] = $this->getAttributesTable()->getEntityClass()::mapFields($la_errors['attributes'], true);
-				$ao_entity->attributes->setErrors($la_errors['attributes']);
+				$entity->attributes->setErrors($la_errors['attributes']);
 			}
 
-			$ao_entity->setErrors($la_errors);
+			$entity->setErrors($la_errors);
 
 
 			return empty($la_errors);
 		}, 'validContentArea');
 
 
-		$ao_rules->add(function (Content $ao_entity): bool {
+		$rules->add(function (Content $entity): bool {
 			/** @var \Awyiss\Utility\Content\ColumnInterface $lo_width */
-			$lo_width = $ao_entity->column['width'];
+			$lo_width = $entity->column['width'];
 			/** @var \Awyiss\Utility\Content\ColumnInterface $lo_indent */
-			$lo_indent = $ao_entity->column['indent'];
+			$lo_indent = $entity->column['indent'];
 
 			$lf_totalWidth = $lo_width->getPercentage() + ($lo_indent?->getPercentage() ?? 0);
 
@@ -435,8 +434,8 @@ class ContentsTable extends Table {
 		]);
 
 
-		$ao_rules->add(
-			$ao_rules->existsIn(
+		$rules->add(
+			$rules->existsIn(
 				'duplicateOf',
 				'DuplicateOfContents',
 				[
@@ -452,8 +451,8 @@ class ContentsTable extends Table {
 
 
 		//Ensure that a content has no linked duplicating contents when deleting it.
-		$ao_rules->addDelete(
-			$ao_rules->isNotLinkedTo(
+		$rules->addDelete(
+			$rules->isNotLinkedTo(
 				'DuplicatingContents',
 				'_general',
 				__df($this->getI18nDomain(), 'validation', 'error_no_duplicating_contents')
@@ -462,29 +461,29 @@ class ContentsTable extends Table {
 		);
 
 
-		return $ao_rules;
+		return $rules;
 	}
 
 
 	/**
 	 * Checks if all children of the current entity can be moved to the target content area.
 	 *
-	 * @param \Awyiss\Model\Entity\Content $ao_entity
-	 * @param int $ai_pageTemplateId
+	 * @param \Awyiss\Model\Entity\Content $entity
+	 * @param int $pageTemplateId
 	 * @return bool
 	 */
-	protected function childrenCanBeMoved(Content $ao_entity, int $ai_pageTemplateId): bool {
-		$li_contentAreaId = $ao_entity->contentAreaId;
+	protected function childrenCanBeMoved(Content $entity, int $pageTemplateId): bool {
+		$li_contentAreaId = $entity->contentAreaId;
 
 		// Get all children of the current entity
-		$lo_children = $ao_entity->getNestedChildren([
+		$lo_children = $entity->getNestedChildren([
 			'contain' => [
 				'ContentTemplates' => [
 					'ContentAreas' => [
-						'queryBuilder' => function (SelectQuery $ao_query) use ($li_contentAreaId, $ai_pageTemplateId) {
-							return $ao_query->where([
+						'queryBuilder' => function (SelectQuery $query) use ($li_contentAreaId, $pageTemplateId) {
+							return $query->where([
 								'ContentTemplateContentAreas.content_area_id' => $li_contentAreaId,
-								'ContentTemplateContentAreas.page_template_id' => $ai_pageTemplateId,
+								'ContentTemplateContentAreas.page_template_id' => $pageTemplateId,
 							]);
 						},
 					],
@@ -509,8 +508,8 @@ class ContentsTable extends Table {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function groupByContentArea(SelectQuery|CollectionInterface $ax_data): CollectionInterface {
-		$lo_data = is_a($ax_data, SelectQuery::class) ? $ax_data->all() : $ax_data;
+	public function groupByContentArea(SelectQuery|CollectionInterface $data): CollectionInterface {
+		$lo_data = is_a($data, SelectQuery::class) ? $data->all() : $data;
 
 		foreach ($lo_data->groupBy('contentAreaId') as $ls_contentArea => $la_contents) {
 			$lo_data->$ls_contentArea = new Collection($la_contents);
@@ -525,12 +524,12 @@ class ContentsTable extends Table {
 	 * Groups the result of a query by their `contentAreaId`-value and returns a new collection with all
 	 * contents nested and an added `level`-property.
 	 *
-	 * @param SelectQuery $ao_query
+	 * @param SelectQuery $query
 	 * @return CollectionInterface
 	 */
-	public function nestedByContentArea(SelectQuery $ao_query): CollectionInterface {
-		return $ao_query->find('threaded')->all()->groupBy('contentAreaId')->map(function (array $aa_contents): CollectionInterface {
-			$lo_contents = (new Collection($aa_contents))->listNested();
+	public function nestedByContentArea(SelectQuery $query): CollectionInterface {
+		return $query->find('threaded')->all()->groupBy('contentAreaId')->map(function (array $contents): CollectionInterface {
+			$lo_contents = (new Collection($contents))->listNested();
 
 			/** @var Content $lo_content */
 			foreach ($lo_contents as $lo_content) {
@@ -548,10 +547,10 @@ class ContentsTable extends Table {
 	/**
 	 * Return a Page-object with the page role and page template associations
 	 *
-	 * @param int $ai_pageId
+	 * @param int $pageId
 	 * @return Page
 	 */
-	public function getPage(int $ai_pageId): Page {
+	public function getPage(int $pageId): Page {
 		$lo_tableLocator = FactoryLocator::get('Table');
 
 		/** @var Table $lo_pages */
@@ -559,7 +558,7 @@ class ContentsTable extends Table {
 
 		/** @var Page $lo_page */
 		$lo_page = $lo_pages->get(
-			$ai_pageId,
+			$pageId,
 			attributes: ['skip' => true],
 			contain: [
 				'PageTemplates' => [
@@ -606,14 +605,14 @@ class ContentsTable extends Table {
 	/**
 	 * Sets this table to run the access check of the 'Pages'-association with a specific page role.
 	 *
-	 * @param \Awyiss\Model\Enum\PageRoleEnumInterface $ae_pageRole
-	 * @param bool $ab_initializePages
+	 * @param \Awyiss\Model\Enum\PageRoleEnumInterface $pageRole
+	 * @param bool $initializePages
 	 * @return void
 	 * @throws \Exception
 	 */
-	public function forPageRole(PageRoleEnumInterface $ae_pageRole, bool $ab_initializePages = true): void {
-		if ($ab_initializePages) {
-			$this->belongsTo($ae_pageRole->tableAlias(), [
+	public function forPageRole(PageRoleEnumInterface $pageRole, bool $initializePages = true): void {
+		if ($initializePages) {
+			$this->belongsTo($pageRole->tableAlias(), [
 				'bindingKey' => 'id',
 				'finder' => 'forCurrentLanguage',
 				'foreignKey' => 'page_id',
@@ -623,15 +622,15 @@ class ContentsTable extends Table {
 
 			/** @var \Awyiss\Model\Behavior\CategoriesBehavior $lo_behavior */
 			$lo_behavior = $this->getBehavior('Categories');
-			$lo_behavior->setConfig('associationName', $ae_pageRole->tableAlias())->resetCategories();
+			$lo_behavior->setConfig('associationName', $pageRole->tableAlias())->resetCategories();
 		}
 
-		$this->setPageRole($ae_pageRole);
-		$this->setForScope($ae_pageRole->tableName());
+		$this->setPageRole($pageRole);
+		$this->setForScope($pageRole->tableName());
 
 		if ($this->getAlias() === 'Contents') {
-			$this->ChildContents->forPageRole($ae_pageRole, $ab_initializePages);
-			$this->ParentContents->forPageRole($ae_pageRole, $ab_initializePages);
+			$this->ChildContents->forPageRole($pageRole, $initializePages);
+			$this->ParentContents->forPageRole($pageRole, $initializePages);
 		}
 	}
 
@@ -655,11 +654,11 @@ class ContentsTable extends Table {
 	/**
 	 * Sets the scope the authorization behavior has to check.
 	 *
-	 * @param string $as_scope
+	 * @param string $scope
 	 * @noinspection PhpPossiblePolymorphicInvocationInspection
 	 */
-	protected function setForScope(string $as_scope): void {
-		$this->forScope = Inflector::underscore(Inflector::pluralize($as_scope));
+	protected function setForScope(string $scope): void {
+		$this->forScope = Inflector::underscore(Inflector::pluralize($scope));
 	}
 
 
@@ -672,11 +671,11 @@ class ContentsTable extends Table {
 
 
 	/**
-	 * @param \Awyiss\Model\Enum\PageRoleEnumInterface $as_pageRoleName
+	 * @param \Awyiss\Model\Enum\PageRoleEnumInterface $pageRoleName
 	 * @return ContentsTable
 	 */
-	protected function setPageRole(PageRoleEnumInterface $ae_pageRoleName): static {
-		$this->pageRole = $ae_pageRoleName;
+	protected function setPageRole(PageRoleEnumInterface $pageRoleName): static {
+		$this->pageRole = $pageRoleName;
 
 
 		return $this;
@@ -702,28 +701,28 @@ class ContentsTable extends Table {
 
 
 	/**
-	 * @param \Awyiss\Model\Entity\Content $ao_entity
-	 * @param \Awyiss\Validation\Validator $ao_validator
-	 * @param \Awyiss\Validation\Validator|null $ao_attributesValidator
-	 * @param \Awyiss\Model\Entity\ContentTemplate $ao_contentTemplate
+	 * @param \Awyiss\Model\Entity\Content $entity
+	 * @param \Awyiss\Validation\Validator $validator
+	 * @param \Awyiss\Validation\Validator|null $attributesValidator
+	 * @param \Awyiss\Model\Entity\ContentTemplate $contentTemplate
 	 * @return void
 	 */
-	protected function validateInputFields(Content $ao_entity, Validator $ao_validator, ?Validator $ao_attributesValidator, ContentTemplate $ao_contentTemplate): void {
+	protected function validateInputFields(Content $entity, Validator $validator, ?Validator $attributesValidator, ContentTemplate $contentTemplate): void {
 		$la_contentAttributes = $this->ContentTemplates->getAvailableContentAttributes();
 		$la_contentAttributes = array_combine(
 			array_column($la_contentAttributes, 'identifier'),
 			$la_contentAttributes
 		);
 
-		$this->validateAssignedElements($ao_contentTemplate, $ao_entity, $ao_validator, $la_contentAttributes, $ao_attributesValidator);
+		$this->validateAssignedElements($contentTemplate, $entity, $validator, $la_contentAttributes, $attributesValidator);
 
-		$this->validateUnassignedElements($ao_contentTemplate, $ao_entity, $ao_validator);
+		$this->validateUnassignedElements($contentTemplate, $entity, $validator);
 
-		if (isset($ao_attributesValidator)) {
-			$this->validateUnassignedAttributes($ao_contentTemplate, $ao_entity, $la_contentAttributes, $ao_attributesValidator);
+		if (isset($attributesValidator)) {
+			$this->validateUnassignedAttributes($contentTemplate, $entity, $la_contentAttributes, $attributesValidator);
 
-			if ($ao_attributesValidator->count()) {
-				$ao_validator->addNested('attributes', $ao_attributesValidator);
+			if ($attributesValidator->count()) {
+				$validator->addNested('attributes', $attributesValidator);
 			}
 		}
 	}
@@ -732,36 +731,36 @@ class ContentsTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	protected function initializeSchema(TableSchemaInterface $ao_schema): void {
-		parent::initializeSchema($ao_schema);
+	protected function initializeSchema(TableSchemaInterface $schema): void {
+		parent::initializeSchema($schema);
 
-		$ao_schema->setColumnType('data', 'json');
+		$schema->setColumnType('data', 'json');
 	}
 
 
 	/**
-	 * @param \Awyiss\Model\Entity\ContentTemplate $ao_contentTemplate
-	 * @param \Awyiss\Model\Entity\Content $ao_entity
-	 * @param array $aa_contentAttributes
-	 * @param \Awyiss\Validation\Validator $ao_attributesValidator
+	 * @param \Awyiss\Model\Entity\ContentTemplate $contentTemplate
+	 * @param \Awyiss\Model\Entity\Content $entity
+	 * @param array $contentAttributes
+	 * @param \Awyiss\Validation\Validator $attributesValidator
 	 * @return void
 	 */
-	protected function validateUnassignedAttributes(ContentTemplate $ao_contentTemplate, Content $ao_entity, array $aa_contentAttributes, ?Validator $ao_attributesValidator): void {
-		$la_attributes = array_keys($aa_contentAttributes);
+	protected function validateUnassignedAttributes(ContentTemplate $contentTemplate, Content $entity, array $contentAttributes, ?Validator $attributesValidator): void {
+		$la_attributes = array_keys($contentAttributes);
 
 		foreach (
 			array_diff(
 				$la_attributes,
-				$this->ContentTemplates->getAssignedContentAttributes($ao_contentTemplate)
+				$this->ContentTemplates->getAssignedContentAttributes($contentTemplate)
 			) as $ls_element
 		) {
-			if (!$ao_entity->attributes->isDirty($ls_element)) {
+			if (!$entity->attributes->isDirty($ls_element)) {
 				continue;
 			}
 
-			$ao_attributesValidator->add($ls_element, 'isEmpty', [
-				'rule' => function (mixed $ax_value): bool {
-					return empty($ax_value) && !in_array($ax_value, [false, '0', 0], true);
+			$attributesValidator->add($ls_element, 'isEmpty', [
+				'rule' => function (mixed $value): bool {
+					return empty($value) && !in_array($value, [false, '0', 0], true);
 				},
 			]);
 		}
@@ -769,26 +768,26 @@ class ContentsTable extends Table {
 
 
 	/**
-	 * @param \Awyiss\Model\Entity\ContentTemplate $ao_contentTemplate
-	 * @param \Awyiss\Model\Entity\Content $ao_entity
-	 * @param \Awyiss\Validation\Validator $ao_validator
+	 * @param \Awyiss\Model\Entity\ContentTemplate $contentTemplate
+	 * @param \Awyiss\Model\Entity\Content $entity
+	 * @param \Awyiss\Validation\Validator $validator
 	 * @return void
 	 */
-	protected function validateUnassignedElements(ContentTemplate $ao_contentTemplate, Content $ao_entity, Validator $ao_validator): void {
+	protected function validateUnassignedElements(ContentTemplate $contentTemplate, Content $entity, Validator $validator): void {
 		foreach (
 			array_diff(
 				array_keys($this->ContentTemplates->getAvailableContentElements()),
-				array_column($ao_contentTemplate->contentTemplateElements, 'identifier')
+				array_column($contentTemplate->contentTemplateElements, 'identifier')
 			) as $ls_element
 		) {
-			if ($ao_entity->getError($ls_element)) {
+			if ($entity->getError($ls_element)) {
 				continue;
 			}
 
 			if ($ls_element === 'column_width') {
 				$la_columnWidths = $this->getColumnWidths();
 
-				$ao_validator->add($ls_element, [
+				$validator->add($ls_element, [
 					'equalTo' => [
 						'rule' => ['equalTo', key($la_columnWidths)],
 					],
@@ -798,7 +797,7 @@ class ContentsTable extends Table {
 			}
 
 			if ($ls_element === 'column_last') {
-				$ao_validator->add($ls_element, [
+				$validator->add($ls_element, [
 					'equalTo' => [
 						'rule' => ['equalTo', false],
 					],
@@ -808,7 +807,7 @@ class ContentsTable extends Table {
 			}
 
 			if ($ls_element === 'column_rtl') {
-				$ao_validator->add($ls_element, [
+				$validator->add($ls_element, [
 					'equalTo' => [
 						'rule' => ['equalTo', false],
 					],
@@ -817,9 +816,9 @@ class ContentsTable extends Table {
 				continue;
 			}
 
-			$ao_validator->add($ls_element, 'isEmpty', [
-				'rule' => function (mixed $ax_value): bool {
-					return empty($ax_value) && !in_array($ax_value, [false, '0', 0], true);
+			$validator->add($ls_element, 'isEmpty', [
+				'rule' => function (mixed $value): bool {
+					return empty($value) && !in_array($value, [false, '0', 0], true);
 				},
 			]);
 		}
@@ -827,55 +826,55 @@ class ContentsTable extends Table {
 
 
 	/**
-	 * @param \Awyiss\Model\Entity\ContentTemplate $ao_contentTemplate
-	 * @param \Awyiss\Model\Entity\Content $ao_entity
-	 * @param \Awyiss\Validation\Validator $ao_validator
-	 * @param array $aa_contentAttributes
-	 * @param \Awyiss\Validation\Validator $ao_attributesValidator
+	 * @param \Awyiss\Model\Entity\ContentTemplate $contentTemplate
+	 * @param \Awyiss\Model\Entity\Content $entity
+	 * @param \Awyiss\Validation\Validator $validator
+	 * @param array $contentAttributes
+	 * @param \Awyiss\Validation\Validator $attributesValidator
 	 * @return void
 	 */
 	protected function validateAssignedElements(
-		ContentTemplate $ao_contentTemplate,
-		Content $ao_entity,
-		Validator $ao_validator,
-		array $aa_contentAttributes,
-		?Validator $ao_attributesValidator
+		ContentTemplate $contentTemplate,
+		Content $entity,
+		Validator $validator,
+		array $contentAttributes,
+		?Validator $attributesValidator
 	): void {
 		//Traverse all elements that are available inside the content template
-		foreach ($ao_contentTemplate->contentTemplateElements as $lo_contentTemplateElement) {
+		foreach ($contentTemplate->contentTemplateElements as $lo_contentTemplateElement) {
 			if (!str_starts_with($lo_contentTemplateElement->identifier, 'attributes.')) {
 				if ($lo_contentTemplateElement->required === true) {
 					//If the element is marked as required, add a requirePresence check and do not allow an empty string as value
-					$ao_validator->requirePresence($lo_contentTemplateElement->identifier)->notEmptyString($lo_contentTemplateElement->identifier);
+					$validator->requirePresence($lo_contentTemplateElement->identifier)->notEmptyString($lo_contentTemplateElement->identifier);
 					//TODO check if notEmptyString is enough. Some fields might need notEmpty*
 				}
 
 				continue;
 			}
 
-			if (!$ao_attributesValidator) {
+			if (!$attributesValidator) {
 				continue;
 			}
 
 			$ls_identifier = substr($lo_contentTemplateElement->identifier, 11);
 
-			if ($ao_entity->attributes->getError($ls_identifier)) {
+			if ($entity->attributes->getError($ls_identifier)) {
 				continue;
 			}
 
 			if ($lo_contentTemplateElement->required === true) {
-				$ao_attributesValidator->requirePresence($ls_identifier);
+				$attributesValidator->requirePresence($ls_identifier);
 
-				switch ($aa_contentAttributes[ $ls_identifier ]['inputType']) {
+				switch ($contentAttributes[ $ls_identifier ]['inputType']) {
 					case 'checkbox':
-						$ao_attributesValidator->add($ls_identifier, [
+						$attributesValidator->add($ls_identifier, [
 							'checkboxChecked' => [
 								'rule' => ['equalTo', true],
 							],
 						]);
 						break;
 					default:
-						$ao_attributesValidator->notEmptyString($ls_identifier);
+						$attributesValidator->notEmptyString($ls_identifier);
 				}
 			}
 		}

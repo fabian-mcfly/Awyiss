@@ -66,54 +66,54 @@ class PagesListener implements EventListenerInterface {
 	/**
 	 * Add a where-condition that limits all results to the page role set for this model
 	 *
-	 * @param Event $ao_event
-	 * @param \Cake\ORM\Query\SelectQuery $ao_query
-	 * @param \ArrayObject $ao_options
+	 * @param Event $event
+	 * @param \Cake\ORM\Query\SelectQuery $query
+	 * @param \ArrayObject $options
 	 * @return void
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function beforeFind(Event $ao_event, SelectQuery $ao_query, ArrayObject $ao_options): void {
+	public function beforeFind(Event $event, SelectQuery $query, ArrayObject $options): void {
 		/** @var \Awyiss\Model\Table\PagesTable $lo_table */
-		$lo_table = $ao_event->getSubject();
+		$lo_table = $event->getSubject();
 
-		if (($ao_options['skipPageRoleCheck'] ?? false) === true) {
+		if (($options['skipPageRoleCheck'] ?? false) === true) {
 			/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $ls_pageRoleEnum */
 			$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
 
-			$ls_prefixedColumn = $ao_query->getRepository()->getAlias() . '.page_role_id';
+			$ls_prefixedColumn = $query->getRepository()->getAlias() . '.page_role_id';
 
 			/** @noinspection PhpUndefinedMethodInspection */
-			$ao_query->orderByAsc($ao_query->newExpr($ao_query->func()->FIND_IN_SET([
+			$query->orderByAsc($query->newExpr($query->func()->FIND_IN_SET([
 				$ls_prefixedColumn => 'identifier',
-				implode(',', array_map(function (PageRoleEnumInterface $ae_pageRole) {
-					return $ae_pageRole->value;
+				implode(',', array_map(function (PageRoleEnumInterface $pageRole) {
+					return $pageRole->value;
 				}, $ls_pageRoleEnum::cases())),
 			])), true);
 		}
 		else {
-			$ao_query->where(['page_role_id' => $lo_table->getPageRole()]);
+			$query->where(['page_role_id' => $lo_table->getPageRole()]);
 		}
 	}
 
 
 	/**
-	 * @param \Cake\Event\Event $ao_event
-	 * @param \Awyiss\Model\Entity\Page $ao_entity
-	 * @param \ArrayObject $ao_options
+	 * @param \Cake\Event\Event $event
+	 * @param \Awyiss\Model\Entity\Page $entity
+	 * @param \ArrayObject $options
 	 * @return void
 	 */
-	public function beforeCopy(Event $ao_event, Page $ao_entity, ArrayObject $ao_options): void {
-		if ($ao_options['_primary'] !== true) {
+	public function beforeCopy(Event $event, Page $entity, ArrayObject $options): void {
+		if ($options['_primary'] !== true) {
 			return;
 		}
 
 		/** @var \Awyiss\Model\Table\PagesTable $lo_table */
-		$lo_table = $ao_event->getSubject();
+		$lo_table = $event->getSubject();
 
 		/** @var \Awyiss\Model\Entity\Page $lo_originalEntity */
-		$lo_originalEntity = $ao_entity->originalEntity;
+		$lo_originalEntity = $entity->originalEntity;
 
-		if (($ao_options['copyDescendantsWithDifferentPageRole'] ?? false) === true) {
+		if (($options['copyDescendantsWithDifferentPageRole'] ?? false) === true) {
 			$lo_children = $lo_table->getNestedPages($lo_originalEntity);
 		}
 		else {
@@ -136,12 +136,12 @@ class PagesListener implements EventListenerInterface {
 			$lo_childPage->unset((array)$lo_table->getPrimaryKey());
 			$lo_childPage->setNew(true);
 
-			$lo_childPage->set($ao_entity->extract($la_relatedColumns));
+			$lo_childPage->set($entity->extract($la_relatedColumns));
 		}
 
 		$ls_childrenPropertyName = 'child' . $lo_table->getAlias();
 		$ls_childrenAssociationName = Inflector::camelize($ls_childrenPropertyName);
-		$ao_entity->{$ls_childrenPropertyName} = $lo_nestedChildren;
+		$entity->{$ls_childrenPropertyName} = $lo_nestedChildren;
 
 		$lo_table->{$ls_childrenAssociationName}->getBehavior('Nest')->setConfig('buildRules', false);
 		$lo_table->{$ls_childrenAssociationName}->getBehavior('Categories')->setConfig('buildRules', false);
@@ -151,61 +151,61 @@ class PagesListener implements EventListenerInterface {
 	/**
 	 * Before saving a page, make sure its slug is unique.
 	 *
-	 * @param Event $ao_event
-	 * @param \Awyiss\Model\Entity\Page $ao_entity
-	 * @param ArrayObject $ao_options
+	 * @param Event $event
+	 * @param \Awyiss\Model\Entity\Page $entity
+	 * @param ArrayObject $options
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function beforeSave(Event $ao_event, Page $ao_entity, ArrayObject $ao_options): void {
+	public function beforeSave(Event $event, Page $entity, ArrayObject $options): void {
 		/** @var \Awyiss\Model\Table\PagesTable $lo_table */
-		$lo_table = $ao_event->getSubject();
+		$lo_table = $event->getSubject();
 
 		$ls_field = $lo_table->getSchema()->getColumn('slug');
 		$li_length = $ls_field ? $ls_field['length'] : 0;
 
-		if (empty($ao_entity->slug)) {
+		if (empty($entity->slug)) {
 			//Make sure the slug is set. Use the title if it's empty.
-			$ao_entity->set('slug', $ao_entity->title);
+			$entity->set('slug', $entity->title);
 		}
 
 		if (
-			!$ao_entity->isDirty('slug') &&
-			!$ao_entity->isDirty('languageShortcode') &&
-			!$ao_entity->isDirty('parentId')
+			!$entity->isDirty('slug') &&
+			!$entity->isDirty('languageShortcode') &&
+			!$entity->isDirty('parentId')
 		) {
 			//If neither the slug, the language nor the parent id have changed, skip the slug logic
 			return;
 		}
 
 		$ls_preSlug = '';
-		if (!empty($ao_entity->parentId)) {
+		if (!empty($entity->parentId)) {
 			/** @var \Awyiss\Model\Entity\Page $lo_parentPage */
-			$lo_parentPage = $lo_table->get($ao_entity->parentId, skipPageRoleCheck: true);
+			$lo_parentPage = $lo_table->get($entity->parentId, skipPageRoleCheck: true);
 			//If there's a parent page, add its slug the one of the current page
 			$ls_preSlug = trim($lo_parentPage->slug, '/') . '/';
 
-			$ao_entity->parentsActive = $lo_parentPage->active && $lo_parentPage->parentsActive;
+			$entity->parentsActive = $lo_parentPage->active && $lo_parentPage->parentsActive;
 		}
-		elseif ($ao_entity->parentsActive !== true) {
-			$ao_entity->parentsActive = true;
+		elseif ($entity->parentsActive !== true) {
+			$entity->parentsActive = true;
 		}
 
-		$la_parts = explode('/', $ao_entity->slug);
+		$la_parts = explode('/', $entity->slug);
 		$ls_slug = end($la_parts);
 		$ls_slug = $ls_preSlug . $ls_slug;
 
-		$ls_originalSlug = $ao_entity->hasOriginal('slug') ? $ao_entity->getOriginal('slug') : null;
+		$ls_originalSlug = $entity->hasOriginal('slug') ? $entity->getOriginal('slug') : null;
 		//When the slug has changed
-		if ($ao_entity->isNew() || $ls_slug != $ls_originalSlug) {
+		if ($entity->isNew() || $ls_slug != $ls_originalSlug) {
 			$ls_field = $lo_table->getAlias() . '.slug';
 
 			$la_conditions = [
 				$ls_field => $ls_slug,
-				'language_shortcode' => $ao_entity->languageShortcode,
+				'language_shortcode' => $entity->languageShortcode,
 			];
 
 			$ls_primaryKey = $lo_table->getPrimaryKey();
-			$li_id = $ao_entity->get($ls_primaryKey);
+			$li_id = $entity->get($ls_primaryKey);
 			if ($li_id) {
 				$la_conditions['NOT'] = [$lo_table->getAlias() . '.' . $ls_primaryKey => $li_id];
 			}
@@ -245,26 +245,26 @@ class PagesListener implements EventListenerInterface {
 			}
 		}
 
-		$ao_entity->set('slug', $ls_slug, ['setter' => false]);
-		if (!$ao_entity->isNew() && $ls_slug === $ls_originalSlug) {
-			$ao_entity->setDirty('slug', false);
+		$entity->set('slug', $ls_slug, ['setter' => false]);
+		if (!$entity->isNew() && $ls_slug === $ls_originalSlug) {
+			$entity->setDirty('slug', false);
 		}
 	}
 
 
 	/**
-	 * @param Event $ao_event
-	 * @param \Awyiss\Model\Entity\Page $ao_entity
-	 * @param ArrayObject $ao_options
+	 * @param Event $event
+	 * @param \Awyiss\Model\Entity\Page $entity
+	 * @param ArrayObject $options
 	 * @noinspection PhpUnusedParameterInspection
 	 * @throws \Exception
 	 */
-	public function afterCopy(Event $ao_event, Page $ao_entity, ArrayObject $ao_options): void {
+	public function afterCopy(Event $event, Page $entity, ArrayObject $options): void {
 		/** @var \Awyiss\Model\Table\PagesTable $lo_table */
-		$lo_table = $ao_event->getSubject();
+		$lo_table = $event->getSubject();
 
 		/** @var \Awyiss\Model\Entity\Page $lo_originalEntity */
-		$lo_originalEntity = $ao_entity->originalEntity;
+		$lo_originalEntity = $entity->originalEntity;
 
 		$lo_entries = $lo_table->Contents->find('threaded', nestingKey: 'childContents')->where(['page_id' => $lo_originalEntity->id])->all();
 
@@ -275,7 +275,7 @@ class PagesListener implements EventListenerInterface {
 			$lo_content->unset(['pageId']);
 			$lo_content->setNew(true);
 
-			$lo_content->pageId = $ao_entity->id;
+			$lo_content->pageId = $entity->id;
 		}
 
 		$lo_table->Contents->saveMany($lo_entries->toList(), [
@@ -285,44 +285,44 @@ class PagesListener implements EventListenerInterface {
 
 
 	/**
-	 * @param Event $ao_event
-	 * @param \Awyiss\Model\Entity\Page $ao_entity
-	 * @param ArrayObject $ao_options
+	 * @param Event $event
+	 * @param \Awyiss\Model\Entity\Page $entity
+	 * @param ArrayObject $options
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function afterSave(Event $ao_event, Page $ao_entity, ArrayObject $ao_options): void {
-		foreach ($ao_entity->addMenuEntry ?? [] as $li_menuId) {
-			$this->addMenuEntry($li_menuId, $ao_entity);
+	public function afterSave(Event $event, Page $entity, ArrayObject $options): void {
+		foreach ($entity->addMenuEntry ?? [] as $li_menuId) {
+			$this->addMenuEntry($li_menuId, $entity);
 		}
 
-		if ($ao_entity->isNew()) {
+		if ($entity->isNew()) {
 			return;
 		}
 
 		/** @var \Awyiss\Model\Table\PagesTable $lo_table */
-		$lo_table = $ao_event->getSubject();
+		$lo_table = $event->getSubject();
 
-		$ls_originalSlug = $ao_entity->hasOriginal('slug') ? $ao_entity->getOriginal('slug') : null;
-		$lb_slugChanged = $ls_originalSlug && $ao_entity->slug !== $ls_originalSlug;
+		$ls_originalSlug = $entity->hasOriginal('slug') ? $entity->getOriginal('slug') : null;
+		$lb_slugChanged = $ls_originalSlug && $entity->slug !== $ls_originalSlug;
 
-		$lb_originalActive = $ao_entity->hasOriginal('active') ? $ao_entity->getOriginal('active') : null;
-		$lb_activeChanged = $lb_originalActive !== null && $ao_entity->active !== $lb_originalActive;
+		$lb_originalActive = $entity->hasOriginal('active') ? $entity->getOriginal('active') : null;
+		$lb_activeChanged = $lb_originalActive !== null && $entity->active !== $lb_originalActive;
 
-		$lb_originalParentsActive = $ao_entity->hasOriginal('parentsActive') ? $ao_entity->getOriginal('parentsActive') : null;
-		$lb_parentsActiveChanged = $lb_originalParentsActive !== null && $ao_entity->parentsActive !== $lb_originalParentsActive;
+		$lb_originalParentsActive = $entity->hasOriginal('parentsActive') ? $entity->getOriginal('parentsActive') : null;
+		$lb_parentsActiveChanged = $lb_originalParentsActive !== null && $entity->parentsActive !== $lb_originalParentsActive;
 
-		$ls_originalLanguage = $ao_entity->hasOriginal('languageShortcode') ? $ao_entity->getOriginal('languageShortcode') : null;
-		$lb_languageChanged = $ls_originalLanguage && $ao_entity->languageShortcode !== $ls_originalLanguage;
+		$ls_originalLanguage = $entity->hasOriginal('languageShortcode') ? $entity->getOriginal('languageShortcode') : null;
+		$lb_languageChanged = $ls_originalLanguage && $entity->languageShortcode !== $ls_originalLanguage;
 
 		if ($lb_languageChanged || $lb_slugChanged) {
-			$this->createHistoricalSlugs($lo_table, $ao_entity, $ls_originalLanguage, $ls_originalSlug);
-			$this->updateMenuEntries($ao_entity, $ls_originalLanguage, $ls_originalSlug);
+			$this->createHistoricalSlugs($lo_table, $entity, $ls_originalLanguage, $ls_originalSlug);
+			$this->updateMenuEntries($entity, $ls_originalLanguage, $ls_originalSlug);
 		}
 
 		if ($lb_slugChanged || $lb_activeChanged || $lb_parentsActiveChanged) {
 			$this->updateDescendants(
 				$lo_table,
-				$ao_entity,
+				$entity,
 				$ls_originalLanguage,
 				$lb_slugChanged,
 				$ls_originalSlug,
@@ -334,13 +334,13 @@ class PagesListener implements EventListenerInterface {
 
 
 	/**
-	 * @param \Cake\Event\Event $ao_event
+	 * @param \Cake\Event\Event $event
 	 * @return void
 	 * @throws \Exception
 	 */
-	public function beforeSoftDelete(Event $ao_event): void {
+	public function beforeSoftDelete(Event $event): void {
 		/** @var \Awyiss\Model\Table\PagesTable $lo_table */
-		$lo_table = $ao_event->getSubject();
+		$lo_table = $event->getSubject();
 
 		$lo_table->Contents->disableCascadeCallbacks();
 		$lo_table->Contents->forPageRole($lo_table->getPageRole(), false);
@@ -348,13 +348,13 @@ class PagesListener implements EventListenerInterface {
 
 
 	/**
-	 * @param \Cake\Event\Event $ao_event
+	 * @param \Cake\Event\Event $event
 	 * @return void
 	 * @throws \Exception
 	 */
-	public function beforeDelete(Event $ao_event): void {
+	public function beforeDelete(Event $event): void {
 		/** @var \Awyiss\Model\Table\PagesTable $lo_table */
-		$lo_table = $ao_event->getSubject();
+		$lo_table = $event->getSubject();
 
 		$lo_table->Contents->disableCascadeCallbacks();
 		$lo_table->Contents->forPageRole($lo_table->getPageRole(), false);
@@ -362,52 +362,52 @@ class PagesListener implements EventListenerInterface {
 
 
 	/**
-	 * @param \Cake\Event\Event $ao_event
+	 * @param \Cake\Event\Event $event
 	 * @return void
 	 */
-	public function afterSoftDelete(Event $ao_event): void {
+	public function afterSoftDelete(Event $event): void {
 		/** @var \Awyiss\Model\Table\PagesTable $lo_table */
-		$lo_table = $ao_event->getSubject();
+		$lo_table = $event->getSubject();
 
 		$lo_table->Contents->enableCascadeCallbacks();
 	}
 
 
 	/**
-	 * @param \Cake\Event\Event $ao_event
+	 * @param \Cake\Event\Event $event
 	 * @return void
 	 */
-	public function afterDelete(Event $ao_event): void {
+	public function afterDelete(Event $event): void {
 		/** @var \Awyiss\Model\Table\PagesTable $lo_table */
-		$lo_table = $ao_event->getSubject();
+		$lo_table = $event->getSubject();
 
 		$lo_table->Contents->enableCascadeCallbacks();
 	}
 
 
 	/**
-	 * @param int $ai_menuId
-	 * @param \Awyiss\Model\Entity\Page $ao_entity
+	 * @param int $menuId
+	 * @param \Awyiss\Model\Entity\Page $entity
 	 * @return void
 	 */
-	protected function addMenuEntry(int $ai_menuId, Page $ao_entity): void {
+	protected function addMenuEntry(int $menuId, Page $entity): void {
 		/** @var \Awyiss\Model\Table\MenuEntriesTable $lo_table */
 		$lo_table = $this->fetchTable('MenuEntries');
 		$lo_menuEntry = $lo_table->newDefaultEntity([
-			'languageShortcode' => $ao_entity->languageShortcode,
-			'link' => $ao_entity->languageShortcode . '/' . $ao_entity->slug,
-			'menuId' => $ai_menuId,
-			'title' => $ao_entity->title,
+			'languageShortcode' => $entity->languageShortcode,
+			'link' => $entity->languageShortcode . '/' . $entity->slug,
+			'menuId' => $menuId,
+			'title' => $entity->title,
 		]);
 
-		if (str_contains($ao_entity->slug, '/')) {
-			$ls_testSlug = $ao_entity->languageShortcode . '/';
-			$ls_testSlug .= substr($ao_entity->slug, 0, strrpos($ao_entity->slug, '/'));
+		if (str_contains($entity->slug, '/')) {
+			$ls_testSlug = $entity->languageShortcode . '/';
+			$ls_testSlug .= substr($entity->slug, 0, strrpos($entity->slug, '/'));
 
 			$lo_records = $lo_table->find()->where([
-				'language_shortcode' => $ao_entity->languageShortcode,
+				'language_shortcode' => $entity->languageShortcode,
 				'link' => $ls_testSlug,
-				'menu_id' => $ai_menuId,
+				'menu_id' => $menuId,
 			])->all();
 
 			if ($lo_records->count()) {
@@ -422,25 +422,25 @@ class PagesListener implements EventListenerInterface {
 
 
 	/**
-	 * @param \Awyiss\Model\Table\PagesTable $ao_table
-	 * @param \Awyiss\Model\Entity\Page $ao_entity
-	 * @param mixed $as_originalLanguage
-	 * @param mixed $as_originalSlug
+	 * @param \Awyiss\Model\Table\PagesTable $table
+	 * @param \Awyiss\Model\Entity\Page $entity
+	 * @param mixed $originalLanguage
+	 * @param mixed $originalSlug
 	 * @return void
 	 */
-	protected function createHistoricalSlugs(PagesTable $ao_table, Page $ao_entity, ?string $as_originalLanguage, ?string $as_originalSlug): void {
-		$lo_records = $ao_table->find('all', skipPageRoleCheck: true)->where(function (QueryExpression $ao_expression) use ($as_originalSlug) {
-			return $ao_expression->like('slug', $as_originalSlug . '/%');
+	protected function createHistoricalSlugs(PagesTable $table, Page $entity, ?string $originalLanguage, ?string $originalSlug): void {
+		$lo_records = $table->find('all', skipPageRoleCheck: true)->where(function (QueryExpression $expression) use ($originalSlug) {
+			return $expression->like('slug', $originalSlug . '/%');
 		})->all();
 
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 		$li_userId = $this->getIdentity()?->id;
 		$ld_now = new DateTime('now');
 
-		$lo_query = $ao_table->SlugHistory->insertQuery()->insert(['slug', 'page_id', 'created_by', 'created_on']);
+		$lo_query = $table->SlugHistory->insertQuery()->insert(['slug', 'page_id', 'created_by', 'created_on']);
 		$lo_query->values([
-			'slug' => ($as_originalLanguage ?? $ao_entity->languageShortcode) . '/' . $as_originalSlug,
-			'page_id' => $ao_entity->id,
+			'slug' => ($originalLanguage ?? $entity->languageShortcode) . '/' . $originalSlug,
+			'page_id' => $entity->id,
 			'created_by' => $li_userId,
 			'created_on' => $ld_now,
 		]);
@@ -464,39 +464,39 @@ class PagesListener implements EventListenerInterface {
 
 
 	/**
-	 * @param \Awyiss\Model\Table\PagesTable $ao_table
-	 * @param \Awyiss\Model\Entity\Page $ao_entity
-	 * @param string|null $as_originalLanguage
-	 * @param bool $ab_slugChanged
-	 * @param string|null $as_originalSlug
-	 * @param bool $ab_activeChanged
-	 * @param bool $ab_parentsActiveChanged
+	 * @param \Awyiss\Model\Table\PagesTable $table
+	 * @param \Awyiss\Model\Entity\Page $entity
+	 * @param string|null $originalLanguage
+	 * @param bool $slugChanged
+	 * @param string|null $originalSlug
+	 * @param bool $activeChanged
+	 * @param bool $parentsActiveChanged
 	 * @return void
 	 */
 	protected function updateDescendants(
-		PagesTable $ao_table,
-		Page $ao_entity,
-		?string $as_originalLanguage,
-		bool $ab_slugChanged,
-		?string $as_originalSlug,
-		bool $ab_activeChanged,
-		bool $ab_parentsActiveChanged
+		PagesTable $table,
+		Page $entity,
+		?string $originalLanguage,
+		bool $slugChanged,
+		?string $originalSlug,
+		bool $activeChanged,
+		bool $parentsActiveChanged
 	): void {
-		$lo_query = $ao_table->updateQuery()->where([
-			'language_shortcode' => $as_originalLanguage ?? $ao_entity->languageShortcode,
+		$lo_query = $table->updateQuery()->where([
+			'language_shortcode' => $originalLanguage ?? $entity->languageShortcode,
 		]);
 
-		if ($ab_slugChanged) {
+		if ($slugChanged) {
 			/**
 			 * UPDATE pages SET slug = (CONCAT('newslug', substr(slug, '8')))
 			 *
 			 * @noinspection PhpUndefinedMethodInspection
 			 */
 			$lo_query->set('slug', $lo_query->newExpr($lo_query->func()->concat([
-				$ao_entity->slug,
+				$entity->slug,
 				$lo_query->func()->substr([
 					'slug' => 'identifier',
-					mb_strlen($as_originalSlug) + 1,
+					mb_strlen($originalSlug) + 1,
 				], [
 					null,
 					'integer',
@@ -504,21 +504,21 @@ class PagesListener implements EventListenerInterface {
 			])));
 		}
 
-		if ($ab_activeChanged || $ab_parentsActiveChanged) {
-			$lb_parentsActive = $ao_entity->active && $ao_entity->parentsActive;
+		if ($activeChanged || $parentsActiveChanged) {
+			$lb_parentsActive = $entity->active && $entity->parentsActive;
 
 			if ($lb_parentsActive) {
 				/**
 				 * When updating all pages with the same slug (LIKE 'oldslug/%'), do not set the parents_active to true
 				 * for pages that descendants of inactive sites.
 				 */
-				$lo_subPages = $ao_table->find('all', skipPageRoleCheck: true)->where(function (QueryExpression $ao_expression) use ($ao_entity, $as_originalSlug) {
-					return $ao_expression->like('slug', ($as_originalSlug ?? $ao_entity->slug) . '/%');
+				$lo_subPages = $table->find('all', skipPageRoleCheck: true)->where(function (QueryExpression $expression) use ($entity, $originalSlug) {
+					return $expression->like('slug', ($originalSlug ?? $entity->slug) . '/%');
 				})->where(['active' => false])->all();
 
 				foreach ($lo_subPages as $lo_subPage) {
-					$lo_query->where(function (QueryExpression $ao_expression/*, Query $ao_query*/) use ($lo_subPage) {
-						return $ao_expression->notLike('slug', $lo_subPage->slug . '/%');
+					$lo_query->where(function (QueryExpression $expression/*, Query $query*/) use ($lo_subPage) {
+						return $expression->notLike('slug', $lo_subPage->slug . '/%');
 					});
 				}
 			}
@@ -530,8 +530,8 @@ class PagesListener implements EventListenerInterface {
 		/**
 		 * WHERE slug LIKE 'oldslug/%'
 		 */
-		$lo_query->where(function (QueryExpression $ao_expression/*, Query $ao_query*/) use ($ao_entity, $as_originalSlug) {
-			return $ao_expression->like('slug', ($as_originalSlug ?? $ao_entity->slug) . '/%');
+		$lo_query->where(function (QueryExpression $expression/*, Query $query*/) use ($entity, $originalSlug) {
+			return $expression->like('slug', ($originalSlug ?? $entity->slug) . '/%');
 		});
 
 		$lo_query->execute();
@@ -539,12 +539,12 @@ class PagesListener implements EventListenerInterface {
 
 
 	/**
-	 * @param \Awyiss\Model\Entity\Page $ao_entity
-	 * @param string|null $as_originalLanguage
-	 * @param string|null $as_originalSlug
+	 * @param \Awyiss\Model\Entity\Page $entity
+	 * @param string|null $originalLanguage
+	 * @param string|null $originalSlug
 	 * @return void
 	 */
-	protected function updateMenuEntries(Page $ao_entity, ?string $as_originalLanguage, ?string $as_originalSlug): void {
+	protected function updateMenuEntries(Page $entity, ?string $originalLanguage, ?string $originalSlug): void {
 		/** @var \Awyiss\Model\Table\MenuEntriesTable $lo_table */
 		$lo_table = $this->fetchTable('MenuEntries');
 
@@ -556,10 +556,10 @@ class PagesListener implements EventListenerInterface {
 		 * @noinspection PhpUndefinedMethodInspection
 		 */
 		$lo_query->set('link', $lo_query->newExpr($lo_query->func()->concat([
-			$ao_entity->languageShortcode . '/' . $ao_entity->slug,
+			$entity->languageShortcode . '/' . $entity->slug,
 			$lo_query->func()->substr([
 				'link' => 'identifier',
-				mb_strlen($as_originalSlug) + 4,
+				mb_strlen($originalSlug) + 4,
 			], [
 				null,
 				'integer',
@@ -577,14 +577,14 @@ class PagesListener implements EventListenerInterface {
 		 */
 		$lo_query->where([
 			'OR' => [
-				function (QueryExpression $ao_expression/*, Query $ao_query*/) use ($ao_entity, $as_originalLanguage, $as_originalSlug) {
-					return $ao_expression->like('link', ($as_originalLanguage ?? $ao_entity->languageShortcode) . '/' . ($as_originalSlug ?? $ao_entity->slug) . '/%');
+				function (QueryExpression $expression/*, Query $query*/) use ($entity, $originalLanguage, $originalSlug) {
+					return $expression->like('link', ($originalLanguage ?? $entity->languageShortcode) . '/' . ($originalSlug ?? $entity->slug) . '/%');
 				},
-				function (QueryExpression $ao_expression/*, Query $ao_query*/) use ($ao_entity, $as_originalLanguage, $as_originalSlug) {
-					return $ao_expression->like('link', ($as_originalLanguage ?? $ao_entity->languageShortcode) . '/' . ($as_originalSlug ?? $ao_entity->slug) . '#%');
+				function (QueryExpression $expression/*, Query $query*/) use ($entity, $originalLanguage, $originalSlug) {
+					return $expression->like('link', ($originalLanguage ?? $entity->languageShortcode) . '/' . ($originalSlug ?? $entity->slug) . '#%');
 				},
 				[
-					'link' => ($as_originalLanguage ?? $ao_entity->languageShortcode) . '/' . ($as_originalSlug ?? $ao_entity->slug),
+					'link' => ($originalLanguage ?? $entity->languageShortcode) . '/' . ($originalSlug ?? $entity->slug),
 				],
 			],
 		]);

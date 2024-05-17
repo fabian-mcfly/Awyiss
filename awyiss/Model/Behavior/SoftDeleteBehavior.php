@@ -52,11 +52,11 @@ class SoftDeleteBehavior extends Behavior {
 	/**
 	 * Constructor hook method.
 	 *
-	 * @param array<string, mixed> $aa_config The configuration settings provided to this behavior.
+	 * @param array<string, mixed> $config The configuration settings provided to this behavior.
 	 * @return void
 	 */
-	public function initialize(array $aa_config): void {
-		parent::initialize($aa_config);
+	public function initialize(array $config): void {
+		parent::initialize($config);
 
 		//If the behavior is loaded for a table without a 'deleted'-column, disable it.
 		if (!$this->table()->getSchema()->getColumn('deleted')) {
@@ -68,100 +68,100 @@ class SoftDeleteBehavior extends Behavior {
 	/**
 	 * A finder that allows retreiving deleted entities
 	 *
-	 * @param SelectQuery $ao_query
-	 * @param array $aa_options
+	 * @param SelectQuery $query
+	 * @param array $options
 	 * @return SelectQuery
 	 * @noinspection PhpUnused
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function findDeleted(SelectQuery $ao_query, array $aa_options = []): SelectQuery {
+	public function findDeleted(SelectQuery $query, array $options = []): SelectQuery {
 		if (!$this->getConfig('enabled')) {
-			return $ao_query;
+			return $query;
 		}
 
-		$ao_query->where([
+		$query->where([
 			$this->table()->getAlias() . '.deleted' => true,
 		])->applyOptions([
 			'softDelete' => ['includeDeleted' => true],
-		] + $aa_options);
+		] + $options);
 
 
-		return $ao_query;
+		return $query;
 	}
 
 
 	/**
 	 * A finder that allows retreiving regular and deleted entities in the same query
 	 *
-	 * @param SelectQuery $ao_query
-	 * @param array $aa_options
+	 * @param SelectQuery $query
+	 * @param array $options
 	 * @return SelectQuery
 	 * @noinspection PhpUnused
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function findWithDeleted(SelectQuery $ao_query, array $aa_options = []): SelectQuery {
+	public function findWithDeleted(SelectQuery $query, array $options = []): SelectQuery {
 		if (!$this->getConfig('enabled')) {
-			return $ao_query;
+			return $query;
 		}
 
-		$ao_query->where([
+		$query->where([
 			$this->table()->getAlias() . '.deleted IN' => [false, true],
 		])->applyOptions([
 			'softDelete' => ['includeDeleted' => true],
-		] + $aa_options);
+		] + $options);
 
 
-		return $ao_query;
+		return $query;
 	}
 
 
 	/**
 	 * When building the rules, add a rule that doesn't allow updating deleted items
 	 *
-	 * @param EventInterface $ao_event
-	 * @param RulesChecker $ao_rules
+	 * @param EventInterface $event
+	 * @param RulesChecker $rules
 	 * @return RulesChecker
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function buildRules(EventInterface $ao_event, RulesChecker $ao_rules): RulesChecker {
+	public function buildRules(EventInterface $event, RulesChecker $rules): RulesChecker {
 		if (!$this->getConfig('enabled')) {
-			return $ao_rules;
+			return $rules;
 		}
 
-		$ao_rules->addUpdate(function (EntityInterface $ao_entity, array $aa_options): ?bool {
-			return !$ao_entity->hasOriginal('deleted') || !$ao_entity->getOriginal('deleted');
+		$rules->addUpdate(function (EntityInterface $entity, array $options): ?bool {
+			return !$entity->hasOriginal('deleted') || !$entity->getOriginal('deleted');
 		}, 'softDelete', [
 			'errorField' => '_general',
 			'message' => __d('system', 'cant_modify_deleted'),
 		]);
 
 
-		return $ao_rules;
+		return $rules;
 	}
 
 
 	/**
 	 * When looking for entities, add the check for `deleted` = false
 	 *
-	 * @param EventInterface $ao_event
-	 * @param SelectQuery $ao_query
-	 * @param ArrayObject $ao_options
-	 * @param bool $ab_primary
+	 * @param EventInterface $event
+	 * @param SelectQuery $query
+	 * @param ArrayObject $options
+	 * @param bool $primary
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function beforeFind(EventInterface $ao_event, SelectQuery $ao_query, ArrayObject $ao_options, bool $ab_primary): void {
+	public function beforeFind(EventInterface $event, SelectQuery $query, ArrayObject $options, bool $primary): void {
 		if (!$this->getConfig('enabled')) {
 			return;
 		}
 
-		$la_options = Hash::merge($this->getConfig(), Hash::get($ao_options, 'softDelete'));
+		$la_options = Hash::merge($this->getConfig(), Hash::get($options, 'softDelete'));
 
 		//Shall we include deleted items? Do nothing
 		if ($la_options['includeDeleted'] ?? false) {
 			return;
 		}
 
-		$ao_query->where([
+		$query->where([
 			$this->table()->getAlias() . '.deleted' => false,
 		]);
 	}
@@ -170,62 +170,62 @@ class SoftDeleteBehavior extends Behavior {
 	/**
 	 * Intercept the deletion of entities and call `softDelete()`
 	 *
-	 * @param EventInterface $ao_event
-	 * @param EntityInterface $ao_entity
-	 * @param ArrayObject $ao_options
+	 * @param EventInterface $event
+	 * @param EntityInterface $entity
+	 * @param ArrayObject $options
 	 * @return null
 	 * @noinspection PhpUnused
 	 */
-	public function beforeDelete(EventInterface $ao_event, EntityInterface $ao_entity, ArrayObject $ao_options): void {
+	public function beforeDelete(EventInterface $event, EntityInterface $entity, ArrayObject $options): void {
 		if (!$this->getConfig('enabled')) {
 			return;
 		}
 
-		$lo_options = new ArrayObject(Hash::merge($this->getConfig(), Hash::get($ao_options, 'softDelete')));
+		$lo_options = new ArrayObject(Hash::merge($this->getConfig(), Hash::get($options, 'softDelete')));
 
 		if ($lo_options['skip'] === true) {
 			return;
 		}
 
-		$lo_options = $ao_options;
+		$lo_options = $options;
 		if ($lo_options->offsetExists('checkRules')) {
 			$lo_options->offsetUnset('checkRules');
 		}
 
 		//Call softDelete. If it fails, throw an exception
-		if (!$this->softDelete($ao_entity, $lo_options, $ao_event)) {
-			throw new RuntimeException(sprintf('Could not soft-delete entity of type `%s`', $ao_entity::class));
+		if (!$this->softDelete($entity, $lo_options, $event)) {
+			throw new RuntimeException(sprintf('Could not soft-delete entity of type `%s`', $entity::class));
 		}
 
 		//Stop the beforeDelete event
-		$ao_event->stopPropagation();
-		$ao_event->setResult(true);
+		$event->stopPropagation();
+		$event->setResult(true);
 	}
 
 
 	/**
-	 * @param EventInterface $ao_event
-	 * @param EntityInterface $ao_entity
-	 * @param ArrayObject $ao_options
+	 * @param EventInterface $event
+	 * @param EntityInterface $entity
+	 * @param ArrayObject $options
 	 * @return void
 	 * @noinspection PhpUnused
 	 */
-	public function afterDeleteCommit(EventInterface $ao_event, EntityInterface $ao_entity, ArrayObject $ao_options): void {
+	public function afterDeleteCommit(EventInterface $event, EntityInterface $entity, ArrayObject $options): void {
 		if (!$this->getConfig('enabled')) {
 			return;
 		}
 
-		$lo_options = new ArrayObject(Hash::merge($this->getConfig(), Hash::get($ao_options, 'softDelete')));
+		$lo_options = new ArrayObject(Hash::merge($this->getConfig(), Hash::get($options, 'softDelete')));
 
 		$lo_event = $this->table()->dispatchEvent('Model.afterSoftDeleteCommit', [
-			'entity' => $ao_entity,
+			'entity' => $entity,
 			'options' => $lo_options,
 		]);
 
 		//If the 'Model.afterSoftDeleteCommit' event was stopped, stop the afterDeleteCommit event as well
 		if ($lo_event->isStopped()) {
-			$ao_event->stopPropagation();
-			$ao_event->setResult($lo_event->getResult());
+			$event->stopPropagation();
+			$event->setResult($lo_event->getResult());
 		}
 	}
 
@@ -233,13 +233,13 @@ class SoftDeleteBehavior extends Behavior {
 	/**
 	 * Set the `delete`-column to true and call `Model.beforeSoftDelete` and `Model.afterSoftDelete` events
 	 *
-	 * @param EntityInterface $ao_entity
-	 * @param ArrayObject|array $ao_options
-	 * @param EventInterface|null $ao_event
+	 * @param EntityInterface $entity
+	 * @param ArrayObject|array $options
+	 * @param EventInterface|null $event
 	 * @return bool
 	 * @noinspection PhpUnused
 	 */
-	public function softDelete(EntityInterface $ao_entity, ArrayObject $ao_options, ?EventInterface $ao_event = null): bool {
+	public function softDelete(EntityInterface $entity, ArrayObject $options, ?EventInterface $event = null): bool {
 		$lo_table = $this->table();
 
 		$la_defaults = [
@@ -248,7 +248,7 @@ class SoftDeleteBehavior extends Behavior {
 			'systemOrder' => ['skip' => true],
 			'_primary' => true,
 		];
-		$lo_options = $ao_options;
+		$lo_options = $options;
 
 		foreach ($la_defaults as $ls_key => $lx_value) {
 			if (!$lo_options->offsetExists($ls_key)) {
@@ -259,23 +259,23 @@ class SoftDeleteBehavior extends Behavior {
 		/**
 		 * Set the `deleted`-column
 		 */
-		$ao_entity->set('deleted', true);
+		$entity->set('deleted', true);
 
 		$lo_event = $lo_table->dispatchEvent('Model.beforeSoftDelete', [
-			'entity' => $ao_entity,
+			'entity' => $entity,
 			'options' => $lo_options,
 		]);
 
 		//If the 'Model.beforeSoftDelete' event was stopped, stop the softDelete event as well
-		if ($lo_event->isStopped() && $ao_event) {
+		if ($lo_event->isStopped() && $event) {
 			/**
 			 * Set the `deleted`-column
 			 */
-			$ao_entity->set('deleted', false);
-			$ao_entity->setDirty('deleted', false);
+			$entity->set('deleted', false);
+			$entity->setDirty('deleted', false);
 
-			$ao_event->stopPropagation();
-			$ao_event->setResult($lo_event->getResult());
+			$event->stopPropagation();
+			$event->setResult($lo_event->getResult());
 
 
 			return false;
@@ -286,8 +286,8 @@ class SoftDeleteBehavior extends Behavior {
 
 		//No primary key set? Throw an exception since we can't delete new entities
 		foreach ($la_primaryKeys as $ls_field) {
-			if (!$ao_entity->has($ls_field)) {
-				throw new RuntimeException(sprintf('Missing property `%s` in entity `%s`.', $ls_field, $ao_entity::class));
+			if (!$entity->has($ls_field)) {
+				throw new RuntimeException(sprintf('Missing property `%s` in entity `%s`.', $ls_field, $entity::class));
 			}
 		}
 
@@ -295,20 +295,20 @@ class SoftDeleteBehavior extends Behavior {
 		/** @var Association $lo_association */
 		foreach ($lo_table->associations() as $lo_association) {
 			if ($this->isRecursable($lo_association)) {
-				$lo_association->cascadeDelete($ao_entity, ['_primary' => false] + $lo_options->getArrayCopy());
+				$lo_association->cascadeDelete($entity, ['_primary' => false] + $lo_options->getArrayCopy());
 			}
 		}
 
 		//Save the entity but skip both the authorization and the system order behavior
 		$la_options = ['checkRules' => false] + (array)$lo_options;
-		if ($lo_table->save($ao_entity, $la_options)) {
+		if ($lo_table->save($entity, $la_options)) {
 			$lo_table->dispatchEvent('Model.afterSoftDelete', [
-				'entity' => $ao_entity,
+				'entity' => $entity,
 				'options' => new ArrayObject(['systemOrder' => []] + $la_options),
 			]);
 
 			//Clean the entity because it's saved and therefore no longer dirty.
-			$ao_entity->clean();
+			$entity->clean();
 
 
 			return true;
@@ -320,13 +320,13 @@ class SoftDeleteBehavior extends Behavior {
 
 
 	/**
-	 * @param Association $ao_association
+	 * @param Association $association
 	 * @return bool
 	 */
-	protected function isRecursable(Association $ao_association): bool {
+	protected function isRecursable(Association $association): bool {
 		$lo_table = $this->table();
 
-		if ($ao_association->isOwningSide($lo_table) && $ao_association->getDependent() && $ao_association->getCascadeCallbacks()) {
+		if ($association->isOwningSide($lo_table) && $association->getDependent() && $association->getCascadeCallbacks()) {
 			return true;
 		}
 

@@ -23,7 +23,7 @@ class ContentsAttributeOptionsCollection extends AttributeOptionsCollection {
 	public function initializeAttributeOptions(): void {
 		$this->add([
 			'backgroundColor' => [
-				'options' => function (/*EntityInterface $ao_entity, array &$aa_currentOptions*/): array {
+				'options' => function (/*EntityInterface $entity, array &$currentOptions*/): array {
 					//Return a list of dummy colors (css class names) and their labels
 					return [
 						'primary' => 'Primary',

@@ -34,48 +34,48 @@ class PublicationDataTable extends Table {
 	/**
 	 * Returns the default validator object.
 	 *
-	 * @param \Cake\Validation\Validator $ao_validator The validator that can be modified to add some rules to it.
+	 * @param \Cake\Validation\Validator $validator The validator that can be modified to add some rules to it.
 	 * @return \Cake\Validation\Validator
 	 */
-	public function validationDefault(Validator $ao_validator): Validator {
-		parent::validationDefault($ao_validator);
+	public function validationDefault(Validator $validator): Validator {
+		parent::validationDefault($validator);
 
 
-		$ao_validator->add('scope', [
+		$validator->add('scope', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'maxLength' => ['rule' => ['maxLength', 50]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
 
 
-		$ao_validator->notEmptyString('foreignId');
-		$ao_validator->add('foreignId', [
+		$validator->notEmptyString('foreignId');
+		$validator->add('foreignId', [
 			'isInteger' => ['rule' => 'isInteger'],
 			'maxLength' => ['rule' => ['maxLength', 11]],
 		]);
 
 
-		$ao_validator->notEmptyString('type');
-		$ao_validator->add('type', [
+		$validator->notEmptyString('type');
+		$validator->add('type', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'maxLength' => ['rule' => ['maxLength', 20]],
 		]);
 
 
-		$ao_validator->add('dateTime', [
+		$validator->add('dateTime', [
 			'dateTime' => ['rule' => 'dateTime'],
 		]);
 
 
-		return $ao_validator;
+		return $validator;
 	}
 
 
 	/**
 	 * @inheritDoc
 	 */
-	protected function initializeSchema(TableSchemaInterface $ao_schema): void {
-		parent::initializeSchema($ao_schema);
+	protected function initializeSchema(TableSchemaInterface $schema): void {
+		parent::initializeSchema($schema);
 
 		$this->getSchema()->setColumnType('type', EnumType::from(PublicationDataType::class));
 	}

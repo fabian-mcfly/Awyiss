@@ -28,24 +28,23 @@ class RoutingMiddleware extends BaseRoutingMiddleware {
 	 *        $lo_request = $lo_request->withQueryParams($la_queryParams);
 	 *
 	 * @inheritDoc
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function process(ServerRequestInterface $ao_request, RequestHandlerInterface $ao_handler): ResponseInterface {
+	public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface {
 		$this->loadRoutes();
 		try {
-			assert($ao_request instanceof ServerRequest);
-			Router::setRequest($ao_request);
-			$la_params = (array)$ao_request->getAttribute('params', []);
+			assert($request instanceof ServerRequest);
+			Router::setRequest($request);
+			$la_params = (array)$request->getAttribute('params', []);
 			$la_middlewareNames = [];
 			if (empty($la_params['controller'])) {
-				$la_params = Router::parseRequest($ao_request) + $la_params;
+				$la_params = Router::parseRequest($request) + $la_params;
 				if (isset($la_params['_middleware'])) {
 					$la_middlewareNames = $la_params['_middleware'];
 				}
 				$lo_route = $la_params['_route'];
 				unset($la_params['_middleware'], $la_params['_route']);
 
-				$lo_request = $ao_request->withAttribute('route', $lo_route);
+				$lo_request = $request->withAttribute('route', $lo_route);
 				$lo_request = $lo_request->withAttribute('params', $la_params);
 
 				$la_queryParams = $la_params['parts'] ?? [];
@@ -62,7 +61,7 @@ class RoutingMiddleware extends BaseRoutingMiddleware {
 
 		$la_matchingMiddlewares = Router::getRouteCollection()->getMiddleware($la_middlewareNames);
 		if (!$la_matchingMiddlewares) {
-			return $ao_handler->handle($lo_request ?? $ao_request);
+			return $handler->handle($lo_request ?? $request);
 		}
 
 		$lo_container = $this->app instanceof ContainerApplicationInterface ? $this->app->getContainer() : null;
@@ -71,6 +70,6 @@ class RoutingMiddleware extends BaseRoutingMiddleware {
 
 
 		/** @noinspection PhpUndefinedVariableInspection */
-		return $lo_runner->run($lo_middlewareQueue, $lo_request, $ao_handler);
+		return $lo_runner->run($lo_middlewareQueue, $lo_request, $handler);
 	}
 }

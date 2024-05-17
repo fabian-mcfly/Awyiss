@@ -52,16 +52,16 @@ class Menu extends Entity {
 	/**
 	 * Make sure the identifier is always lowercase, underscored and free of special characters
 	 *
-	 * @param string|null $as_identifier
+	 * @param string|null $identifier
 	 * @return string|null
 	 * @see \Awyiss\Model\Entity\Menu::$identifier
 	 */
-	protected function _setIdentifier(?string $as_identifier): ?string {
-		if ($as_identifier === null) {
+	protected function _setIdentifier(?string $identifier): ?string {
+		if ($identifier === null) {
 			return null;
 		}
 
-		$ls_identifier = Text::slug($as_identifier, ['replacement' => '_']);
+		$ls_identifier = Text::slug($identifier, ['replacement' => '_']);
 
 
 		return mb_strtolower($ls_identifier);

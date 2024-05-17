@@ -11,17 +11,17 @@
 	/**
 	 * Delete method
 	 *
-	 * @param int $ai_id
+	 * @param int $id
 	 * @return \Cake\Http\Response
 	 * @throws \Exception
 	 */
-	public function delete(int $ai_id): Response {
+	public function delete(int $id): Response {
 		$this->Authorization->ensure('delete');
 
 		$this->request->allowMethod(['get', 'delete']);
 
 		/** @var {{ entityClassName }} $lo_{{ singularName }} */
-		$lo_{{ singularName }} = $this->{{ currentModelName }}->findById($ai_id)->first();
+		$lo_{{ singularName }} = $this->{{ currentModelName }}->findById($id)->first();
 		if (! $lo_{{ singularName }}) {
 			$this->Flash->error(__('record_not_found'));
 

@@ -11,7 +11,7 @@ use Cake\Validation\Validator;
 /**
  * UsersExternal Model
  *
- * @method \Awyiss\Model\Entity\UsersExternal newDefaultEntity(array $aa_additionalData = [], array $aa_options = [])
+ * @method \Awyiss\Model\Entity\UsersExternal newDefaultEntity(array $additionalData = [], array $options = [])
  * @noinspection PhpFullyQualifiedNameUsageInspection
  */
 class UsersExternalTable extends Table {
@@ -28,25 +28,25 @@ class UsersExternalTable extends Table {
 	/**
 	 * Returns the default validator object.
 	 *
-	 * @param Validator $ao_validator The validator that can be modified to
+	 * @param Validator $validator The validator that can be modified to
 	 * add some rules to it.
 	 * @return Validator
 	 */
-	public function validationDefault(Validator $ao_validator): Validator {
-		parent::validationDefault($ao_validator);
+	public function validationDefault(Validator $validator): Validator {
+		parent::validationDefault($validator);
 
 
-		$ao_validator->add('id', [
+		$validator->add('id', [
 			'isInteger' => ['rule' => 'isInteger'],
 			'maxLength' => ['rule' => ['maxLength', 11]],
 		]);
 
-		//$ao_validator->integer('id')->allowEmptyString('id', null, 'create');
-		$ao_validator->scalar('provider')->maxLength('provider', 50)->requirePresence('provider', 'create')->notEmptyString('provider');
-		$ao_validator->scalar('username')->maxLength('username', 50)->requirePresence('username', 'create')->notEmptyString('username');
-		$ao_validator->dateTime('lastLogin')->notEmptyDateTime('lastLogin');
+		//$validator->integer('id')->allowEmptyString('id', null, 'create');
+		$validator->scalar('provider')->maxLength('provider', 50)->requirePresence('provider', 'create')->notEmptyString('provider');
+		$validator->scalar('username')->maxLength('username', 50)->requirePresence('username', 'create')->notEmptyString('username');
+		$validator->dateTime('lastLogin')->notEmptyDateTime('lastLogin');
 
 
-		return $ao_validator;
+		return $validator;
 	}
 }

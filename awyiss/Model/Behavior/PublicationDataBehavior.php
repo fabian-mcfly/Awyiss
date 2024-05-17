@@ -56,25 +56,25 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 
 	/**
 	 * @inheritDoc
-	 * @param Table $ao_table
-	 * @param array $aa_config
+	 * @param Table $table
+	 * @param array $config
 	 */
-	public function __construct(Table $ao_table, array $aa_config = []) {
-		$la_config = $aa_config + [
-			'referenceName' => $this->getScope($ao_table),
-			'tableLocator' => $ao_table->associations()->getTableLocator(),
+	public function __construct(Table $table, array $config = []) {
+		$la_config = $config + [
+			'referenceName' => $this->getScope($table),
+			'tableLocator' => $table->associations()->getTableLocator(),
 		];
 
-		parent::__construct($ao_table, $la_config);
+		parent::__construct($table, $la_config);
 	}
 
 
 	/**
-	 * @param array $aa_config
+	 * @param array $config
 	 * @return void
 	 */
-	public function initialize(array $aa_config): void {
-		parent::initialize($aa_config);
+	public function initialize(array $config): void {
+		parent::initialize($config);
 
 		if (!$this->getConfig('enabled')) {
 			return;
@@ -90,14 +90,14 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 
 
 	/**
-	 * @param Table $ao_table The table class to get a reference name for.
+	 * @param Table $table The table class to get a reference name for.
 	 * @return string
 	 */
-	protected function getScope(Table $ao_table): string {
-		$ls_name = namespaceSplit($ao_table::class);
+	protected function getScope(Table $table): string {
+		$ls_name = namespaceSplit($table::class);
 		$ls_name = substr((string)end($ls_name), 0, -5);
 		if (empty($ls_name)) {
-			$ls_name = $ao_table->getTable() ?: $ao_table->getAlias();
+			$ls_name = $table->getTable() ?: $table->getAlias();
 		}
 
 
@@ -106,70 +106,72 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 
 
 	/**
-	 * @param CollectionInterface $ao_results
+	 * @param CollectionInterface $results
 	 * @return CollectionInterface
 	 */
-	protected function rowMapper(CollectionInterface $ao_results): CollectionInterface {
-		return $ao_results->map(function (EntityInterface|array|null $ax_row): EntityInterface|array|null {
-			if ($ax_row === null) {
+	protected function rowMapper(CollectionInterface $results): CollectionInterface {
+		return $results->map(function (EntityInterface|array|null $row): EntityInterface|array|null {
+			$lx_row = $row;
+
+			if ($lx_row === null) {
 				return null;
 			}
 
 			$ls_alias = $this->_table->getAlias();
-			$lb_hydrated = $ax_row instanceof EntityInterface;
+			$lb_hydrated = $lx_row instanceof EntityInterface;
 
-			$ax_row['_publicationData'] = [];
+			$lx_row['_publicationData'] = [];
 			foreach ($this->types::cases() as $le_dataType) {
 				$ls_identifier = $le_dataType->value;
 
 				$ls_name = 'publication_' . $ls_identifier;
 
 				/** @var \Awyiss\Model\Entity\PublicationData $lo_publicationData */
-				$lo_publicationData = $ax_row[ '_' . $ls_name ];
+				$lo_publicationData = $lx_row[ '_' . $ls_name ];
 
 				$ls_matchingAlias = Inflector::camelize($ls_alias . '_' . $ls_name);
-				if (isset($ax_row['_matchingData'][ $ls_matchingAlias ])) {
-					$lo_publicationData = $ax_row['_matchingData'][ $ls_matchingAlias ];
-					unset($ax_row['_matchingData'][ $ls_matchingAlias ]);
+				if (isset($lx_row['_matchingData'][ $ls_matchingAlias ])) {
+					$lo_publicationData = $lx_row['_matchingData'][ $ls_matchingAlias ];
+					unset($lx_row['_matchingData'][ $ls_matchingAlias ]);
 					if (!$lo_publicationData->id) {
-						unset($ax_row[ $ls_name ]);
+						unset($lx_row[ $ls_name ]);
 						continue;
 					}
 				}
 
-				$ax_row['_publicationData'][] = $lo_publicationData;
+				$lx_row['_publicationData'][] = $lo_publicationData;
 
 				if (is_array($lo_publicationData)) {
-					$ax_row[ $ls_name ] = $lo_publicationData['date_time'];
+					$lx_row[ $ls_name ] = $lo_publicationData['date_time'];
 				}
 				else {
-					$ax_row[ $ls_name ] = $lo_publicationData?->dateTime;
+					$lx_row[ $ls_name ] = $lo_publicationData?->dateTime;
 				}
 
 				if ($lb_hydrated) {
-					$ax_row->setDirty($ls_name, false);
-					$ax_row->setVirtual([$ls_name], true);
+					$lx_row->setDirty($ls_name, false);
+					$lx_row->setVirtual([$ls_name], true);
 				}
 
-				unset($ax_row[ '_' . $ls_name ]);
+				unset($lx_row[ '_' . $ls_name ]);
 			}
 
 			if ($lb_hydrated) {
-				$ax_row['_publicationData'] = array_filter($ax_row['_publicationData']);
+				$lx_row['_publicationData'] = array_filter($lx_row['_publicationData']);
 
-				$ax_row['_publicationData'] = array_combine(
-					array_map(fn (PublicationData $ao_publicationData) => $ao_publicationData->type->value, $ax_row['_publicationData']),
-					$ax_row['_publicationData']
+				$lx_row['_publicationData'] = array_combine(
+					array_map(fn (PublicationData $publicationData) => $publicationData->type->value, $lx_row['_publicationData']),
+					$lx_row['_publicationData']
 				);
-				$ax_row->setDirty('_publicationData', false);
+				$lx_row->setDirty('_publicationData', false);
 			}
 
-			if (empty($ax_row['_matchingData'])) {
-				unset($ax_row['_matchingData']);
+			if (empty($lx_row['_matchingData'])) {
+				unset($lx_row['_matchingData']);
 			}
 
 
-			return $ax_row;
+			return $lx_row;
 		});
 	}
 
@@ -244,15 +246,15 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 	 * - `end`: When set, the record must have its end date after this date.
 	 * - `at`: When set, the record must be published at this date.
 	 *
-	 * @param \Cake\ORM\Query\SelectQuery $ao_query
+	 * @param \Cake\ORM\Query\SelectQuery $query
 	 * @param \Cake\I18n\DateTime|null $start
 	 * @param \Cake\I18n\DateTime|null $end
 	 * @param \Cake\I18n\DateTime|null $at
 	 * @return \Cake\ORM\Query\SelectQuery
 	 */
-	public function findPublished(SelectQuery $ao_query, ?DateTime $start = null, ?DateTime $end = null, ?DateTime $at = null): SelectQuery {
+	public function findPublished(SelectQuery $query, ?DateTime $start = null, ?DateTime $end = null, ?DateTime $at = null): SelectQuery {
 		if (!$this->getConfig('enabled')) {
-			return $ao_query;
+			return $query;
 		}
 
 		//$ls_timezone = LocaleMiddleware::getLanguage(null)->timezone;
@@ -260,17 +262,17 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 
 		$ls_alias = $this->_table->getAlias();
 
-		if ($ao_query->isAutoFieldsEnabled() === null) {
-			$ao_query->enableAutoFields();
+		if ($query->isAutoFieldsEnabled() === null) {
+			$query->enableAutoFields();
 		}
 
 		$ls_name = Inflector::camelize($ls_alias . '_publication_data_start');
-		$ao_query->select($this->_table->$ls_name);
+		$query->select($this->_table->$ls_name);
 
 		$lo_startDate = $start ?? $lo_date;
 		//$lo_startDate->setTimezone($ls_timezone);
 
-		$ao_query->leftJoinWith($ls_name)->where([
+		$query->leftJoinWith($ls_name)->where([
 			'OR' => [
 				$ls_name . '.date_time IS ' => null,
 				$ls_name . '.date_time <= ' => $lo_startDate,
@@ -278,12 +280,12 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 		]);
 
 		$ls_name = Inflector::camelize($ls_alias . '_publication_data_end');
-		$ao_query->select($this->_table->$ls_name);
+		$query->select($this->_table->$ls_name);
 
 		$lo_endDate = $end ?? $lo_date;
 		//$lo_endDate = $lo_endDate->setTimezone($ls_timezone);
 
-		$ao_query->leftJoinWith($ls_name)->where([
+		$query->leftJoinWith($ls_name)->where([
 			'OR' => [
 				$ls_name . '.date_time >= ' => $lo_endDate,
 				$ls_name . '.date_time IS ' => null,
@@ -291,40 +293,40 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 		]);
 
 
-		return $ao_query;
+		return $query;
 	}
 
 
 	/**
-	 * @param EventInterface $ao_event
+	 * @param EventInterface $event
 	 * @param SelectQuery $query
-	 * @param ArrayObject $ao_options
+	 * @param ArrayObject $options
 	 * @return void
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function beforeFind(EventInterface $ao_event, SelectQuery $ao_query, ArrayObject $ao_options): void {
+	public function beforeFind(EventInterface $event, SelectQuery $query, ArrayObject $options): void {
 		if (!$this->getConfig('enabled')) {
 			return;
 		}
 
 		$la_contain = [];
 		$ls_alias = $this->_table->getAlias();
-		$la_select = $ao_query->clause('select');
+		$la_select = $query->clause('select');
 
-		$lc_conditions = function (string $as_field, SelectQuery $ao_query, array $aa_select) {
-			return function (SelectQuery $ao_q) use ($as_field, $ao_query, $aa_select) {
+		$lc_conditions = function (string $field, SelectQuery $query, array $select) {
+			return function (SelectQuery $q) use ($field, $query, $select) {
 				if (
-					$ao_query->isAutoFieldsEnabled() !== false || in_array($as_field, $aa_select, true) || in_array($this->_table->aliasField($as_field), $aa_select, true)
+					$query->isAutoFieldsEnabled() !== false || in_array($field, $select, true) || in_array($this->_table->aliasField($field), $select, true)
 				) {
-					$ao_q->select(['id', 'foreign_id', 'type', 'date_time']);
+					$q->select(['id', 'foreign_id', 'type', 'date_time']);
 				}
 
 
-				return $ao_q;
+				return $q;
 			};
 		};
 
-		$la_matching = $ao_query->getEagerLoader()->getMatching();
+		$la_matching = $query->getEagerLoader()->getMatching();
 		foreach ($this->types::cases() as $le_dataType) {
 			$ls_identifier = $le_dataType->value;
 
@@ -334,11 +336,11 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 				continue;
 			}
 
-			$la_contain[ $ls_name ]['queryBuilder'] = $lc_conditions($ls_identifier, $ao_query, $la_select);
+			$la_contain[ $ls_name ]['queryBuilder'] = $lc_conditions($ls_identifier, $query, $la_select);
 		}
 
-		$ao_query->contain($la_contain);
-		$ao_query->formatResults(fn (CollectionInterface $ao_results) => $this->rowMapper($ao_results), $ao_query::PREPEND);
+		$query->contain($la_contain);
+		$query->formatResults(fn (CollectionInterface $results) => $this->rowMapper($results), $query::PREPEND);
 	}
 
 

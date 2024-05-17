@@ -19,11 +19,11 @@ class PaginatorHelper extends BasePaginatorHelper {
 	/**
 	 * Constructor. Overridden to merge passed args with URL options.
 	 *
-	 * @param View $ao_view The View this helper is being attached to.
-	 * @param array<string, mixed> $aa_config Configuration settings for the helper.
+	 * @param View $view The View this helper is being attached to.
+	 * @param array<string, mixed> $config Configuration settings for the helper.
 	 */
-	public function __construct(View $ao_view, array $aa_config = []) {
-		parent::__construct($ao_view, $aa_config + ['templateClass' => StringTemplate::class,]);
+	public function __construct(View $view, array $config = []) {
+		parent::__construct($view, $config + ['templateClass' => StringTemplate::class,]);
 
 		$la_query = $this->_View->getRequest()->getParam('parts', []);
 
@@ -39,38 +39,36 @@ class PaginatorHelper extends BasePaginatorHelper {
 
 	/**
 	 * @inheritDoc
-	 * @param array $aa_options
+	 * @param array $options
 	 * @return string|null
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function meta(array $aa_options = []): ?string {
+	public function meta(array $options = []): ?string {
 		if (!isset($this->paginated)) {
 			return null;
 		}
 
-		return parent::meta($aa_options);
+		return parent::meta($options);
 	}
 
 
 	/**
 	 * @inheritDoc
-	 * @param string $as_key
-	 * @param array|string|null $ax_title
-	 * @param array $aa_options
+	 * @param string $key
+	 * @param array|string|null $title
+	 * @param array $options
 	 * @return string
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function sort(string $as_key, array|string|null $ax_title = null, array $aa_options = []): string {
-		$la_options = $aa_options;
+	public function sort(string $key, array|string|null $title = null, array $options = []): string {
+		$la_options = $options;
 		$la_options += ['url' => [], 'escape' => true];
 
-		$ls_title = $ax_title;
+		$ls_title = $title;
 		if (empty($ls_title)) {
-			$ls_title = __($as_key);
+			$ls_title = __($key);
 		}
 
 		// If the key is the current sort key, set the default direction to desc
-		if ($as_key === $this->currentSortKey()) {
+		if ($key === $this->currentSortKey()) {
 			$la_options['direction'] = 'desc';
 		}
 
@@ -82,12 +80,12 @@ class PaginatorHelper extends BasePaginatorHelper {
 
 		$ls_sortKey = (string)$this->param('sort');
 		$ls_alias = $this->param('alias');
-		[$ls_table, $ls_field] = explode('.', $as_key . '.');
+		[$ls_table, $ls_field] = explode('.', $key . '.');
 		if (!$ls_field) {
 			$ls_field = $ls_table;
 			$ls_table = $ls_alias;
 		}
-		$lb_isSorted = ($ls_sortKey === $ls_table . '.' . $ls_field || $ls_sortKey === $ls_alias . '.' . $as_key || $ls_table . '.' . $ls_field === $ls_alias . '.' . $ls_sortKey);
+		$lb_isSorted = ($ls_sortKey === $ls_table . '.' . $ls_field || $ls_sortKey === $ls_alias . '.' . $key || $ls_table . '.' . $ls_field === $ls_alias . '.' . $ls_sortKey);
 
 		$ls_template = 'sort';
 		$ls_dir = $ls_defaultDir;
@@ -97,14 +95,14 @@ class PaginatorHelper extends BasePaginatorHelper {
 		}
 
 		$la_paging = [
-			'sort' => $as_key,
+			'sort' => $key,
 			'direction' => $ls_dir,
 			'page' => 1,
 		];
 
 		$la_vars = [
 			'text' => $la_options['escape'] ? h($ls_title) : $ls_title,
-			'identifier' => Inflector::camelize($as_key),
+			'identifier' => Inflector::camelize($key),
 			'url' => $this->generateUrl($la_paging, $ls_url),
 		];
 
@@ -139,15 +137,14 @@ class PaginatorHelper extends BasePaginatorHelper {
 
 	/**
 	 * @inheritDoc
-	 * @param array $aa_options
-	 * @param array $aa_url
+	 * @param array $options
+	 * @param array $url
 	 * @return array
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function generateUrlParams(array $aa_options = [], array $aa_url = []): array {
+	public function generateUrlParams(array $options = [], array $url = []): array {
 		$la_params = $this->_View->getRequest()->getParam('parts');
 
-		foreach ($aa_options as $lx_key => $lx_value) {
+		foreach ($options as $lx_key => $lx_value) {
 			$lx_key = str_replace('_', '-', $lx_key);
 			if (gettype($lx_value) === 'string') {
 				$lx_value = str_replace('_', '-', $lx_value);
@@ -157,8 +154,8 @@ class PaginatorHelper extends BasePaginatorHelper {
 		}
 
 		$la_params += ['page' => null, 'limit' => null, 'sort' => null, 'direction' => null];
-		$la_params = Hash::filter($la_params, function ($ax_value): bool {
-			return $ax_value !== null;
+		$la_params = Hash::filter($la_params, function ($value): bool {
+			return $value !== null;
 		});
 
 		//If the sorting-column and -direction equal their default value, set both to false, so they won't be part of the generated URI
@@ -171,7 +168,7 @@ class PaginatorHelper extends BasePaginatorHelper {
 		}
 
 		//If the page parameter is empty or if it's page one, set it to false, so it won't be part of the generated URI
-		if (!empty($aa_options['page']) && $aa_options['page'] === 1) {
+		if (!empty($options['page']) && $options['page'] === 1) {
 			$la_params['page'] = false;
 		}
 
@@ -181,14 +178,13 @@ class PaginatorHelper extends BasePaginatorHelper {
 
 
 	/**
-	 * @param array $aa_limits
-	 * @param int|null $ai_default
+	 * @param array $limits
+	 * @param int|null $default
 	 * @param array $options
 	 * @return string
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function limitControl(array $aa_limits = [], ?int $ai_default = null, array $aa_options = []): string {
-		$la_limits = $aa_limits ?: [
+	public function limitControl(array $limits = [], ?int $default = null, array $options = []): string {
+		$la_limits = $limits ?: [
 			'20' => '20',
 			'50' => '50',
 			'100' => '100',
@@ -198,13 +194,13 @@ class PaginatorHelper extends BasePaginatorHelper {
 
 		natsort($la_limits);
 
-		$li_defaultPerPage = $ai_default ?? $this->paginated()->perPage();
+		$li_defaultPerPage = $default ?? $this->paginated()->perPage();
 
 		$ls_output = $this->Form->create(null, ['url' => ['action' => 'userConfiguration']]);
 		$ls_output .= $this->Form->hidden('identifier', ['val' => 'paginate.limit']);
 		$ls_output .= $this->Form->control(
 			'value',
-			$aa_options + [
+			$options + [
 				'default' => $li_defaultPerPage,
 				'empty' => false,
 				'label' => __d('pagination', 'limit_per_page'),

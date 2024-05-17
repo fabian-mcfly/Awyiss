@@ -16,30 +16,30 @@ use Cake\View\Helper;
  */
 class FlashHelper extends Helper {
 	/**
-	 * When calling this method with '*' as `$as_key`, it will return all flash messages, no matter they key they
+	 * When calling this method with '*' as `$key`, it will return all flash messages, no matter they key they
 	 * have been set with.
 	 *
 	 * This allows the backend to display messages after redirecting to a different controller.
 	 *
-	 * @param string $as_key
-	 * @param array $aa_options
+	 * @param string $key
+	 * @param array $options
 	 * @return string|null
 	 * @see Helper\FlashHelper::render
 	 */
-	public function render(string $as_key = '*', array $aa_options = []): ?string {
+	public function render(string $key = '*', array $options = []): ?string {
 		$lo_flash = $this->_View->getRequest()->getFlash();
 
-		if ($as_key === '*') {
+		if ($key === '*') {
 			$la_controllerMessage = [];
 			foreach (($this->_View->getRequest()->getSession()->read('Flash') ?? []) as $ls_key => $la_messages) {
 				$la_controllerMessage += $lo_flash->consume($ls_key);
 			}
 
-			$la_globalMessages = $lo_flash->consume($as_key) ?? [];
+			$la_globalMessages = $lo_flash->consume($key) ?? [];
 			$la_messages = array_filter(array_merge($la_controllerMessage, $la_globalMessages));
 		}
 		else {
-			$la_messages = $lo_flash->consume($as_key);
+			$la_messages = $lo_flash->consume($key);
 		}
 
 		if (!$la_messages) {
@@ -48,7 +48,7 @@ class FlashHelper extends Helper {
 
 		$ls_messages = '';
 		foreach ($la_messages as $la_message) {
-			$la_message = $aa_options + $la_message;
+			$la_message = $options + $la_message;
 
 			if (!isset($la_message['params']['escape']) || $la_message['params']['escape'] !== false) {
 				$la_message['message'] = h($la_message['message']);

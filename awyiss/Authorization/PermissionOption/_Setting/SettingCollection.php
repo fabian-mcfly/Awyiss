@@ -19,11 +19,11 @@ class SettingCollection extends ObjectRegistry {
 	 * @var array<SettingInterface>
 	 */
 	protected array $_loaded = [];
-	/*public function render (\Cake\View\View $ao_view, ?string $as_prePath = null): string {
+	/*public function render (\Cake\View\View $view, ?string $prePath = null): string {
 		$ls_settings = '';
 
 		foreach ($this->_loaded as $lo_setting) {
-			$ls_settings .= $lo_setting->render($ao_view, $as_prePath);
+			$ls_settings .= $lo_setting->render($view, $prePath);
 		}
 
 		return $ls_settings;
@@ -33,16 +33,15 @@ class SettingCollection extends ObjectRegistry {
 	/**
 	 * Creates Setting instance.
 	 *
-	 * @param object|string $as_class Setting class.
-	 * @param string $as_alias Setting alias.
-	 * @param array $aa_config Config array.
+	 * @param object|string $class Setting class.
+	 * @param string $alias Setting alias.
+	 * @param array $config Config array.
 	 * @return SettingInterface
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	protected function _create(object|string $as_class, string $as_alias, array $aa_config): SettingInterface {
-		$lo_setting = new $as_class($aa_config);
+	protected function _create(object|string $class, string $alias, array $config): SettingInterface {
+		$lo_setting = new $class($config);
 		if (!($lo_setting instanceof SettingInterface)) {
-			throw new RuntimeException(sprintf('Setting class `%s` must implement `%s`.', $as_class, SettingInterface::class));
+			throw new RuntimeException(sprintf('Setting class `%s` must implement `%s`.', $class, SettingInterface::class));
 		}
 
 
@@ -53,13 +52,12 @@ class SettingCollection extends ObjectRegistry {
 	/**
 	 * Resolves permission class name.
 	 *
-	 * @param string $as_class Class name to be resolved.
+	 * @param string $class Class name to be resolved.
 	 * @return string|null
 	 * @psalm-return class-string|null
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	protected function _resolveClassName(string $as_class): ?string {
-		$ls_className = App::className($as_class);
+	protected function _resolveClassName(string $class): ?string {
+		$ls_className = App::className($class);
 
 
 		return is_string($ls_className) ? $ls_className : null;
@@ -67,12 +65,11 @@ class SettingCollection extends ObjectRegistry {
 
 
 	/**
-	 * @param string $as_class Missing class.
-	 * @param string|null $as_plugin Class plugin.
+	 * @param string $class Missing class.
+	 * @param string|null $plugin Class plugin.
 	 * @return void
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	protected function _throwMissingClassError(string $as_class, ?string $as_plugin): void {
-		throw new RuntimeException(sprintf('Setting class `%s` was not found.', $as_class));
+	protected function _throwMissingClassError(string $class, ?string $plugin): void {
+		throw new RuntimeException(sprintf('Setting class `%s` was not found.', $class));
 	}
 }

@@ -21,12 +21,12 @@ use Cake\Validation\Validator;
  * @property \Awyiss\Model\Table\MediaFoldersTable&\Awyiss\ORM\Association\BelongsTo $ParentMediaFolders
  * @property \Awyiss\Model\Table\MediaFoldersTable&\Awyiss\ORM\Association\HasMany $ChildMediaFolders
  * @property \Awyiss\Model\Table\MediaTable&\Awyiss\ORM\Association\HasMany $Media
- * @method \Awyiss\Model\Entity\MediaFolder newDefaultEntity(array $aa_additionalData = [], array $aa_options = [])
- * @method \Cake\Collection\CollectionInterface|null getNestedChildren(MediaFolder $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
- * @method \Cake\Collection\CollectionInterface|null getChildren(MediaFolder $ao_entity, array $aa_options = [])
- * @method \Awyiss\Model\Entity\MediaFolder getParent(MediaFolder $ao_entity, array $aa_options = [])
- * @method \Cake\Collection\CollectionInterface|null getParents(MediaFolder $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
- * @method \Cake\Collection\CollectionInterface getPossibleParents(\Awyiss\Model\Entity $ao_entity, \Cake\Collection\CollectionInterface $ao_threadedEntities)
+ * @method \Awyiss\Model\Entity\MediaFolder newDefaultEntity(array $additionalData = [], array $options = [])
+ * @method \Cake\Collection\CollectionInterface|null getNestedChildren(MediaFolder $entity, array $options = [], int $currentLevel = 0)
+ * @method \Cake\Collection\CollectionInterface|null getChildren(MediaFolder $entity, array $options = [])
+ * @method \Awyiss\Model\Entity\MediaFolder getParent(MediaFolder $entity, array $options = [])
+ * @method \Cake\Collection\CollectionInterface|null getParents(MediaFolder $entity, array $options = [], int $currentLevel = 0)
+ * @method \Cake\Collection\CollectionInterface getPossibleParents(\Awyiss\Model\Entity $entity, \Cake\Collection\CollectionInterface $threadedEntities)
  * @noinspection PhpFullyQualifiedNameUsageInspection
  */
 class MediaFoldersTable extends Table {
@@ -72,99 +72,98 @@ class MediaFoldersTable extends Table {
 	/**
 	 * Returns the default validator object.
 	 *
-	 * @param Validator $ao_validator The validator that can be modified to
+	 * @param Validator $validator The validator that can be modified to
 	 * add some rules to it.
 	 * @return Validator
 	 */
-	public function validationDefault(Validator $ao_validator): Validator {
-		parent::validationDefault($ao_validator);
+	public function validationDefault(Validator $validator): Validator {
+		parent::validationDefault($validator);
 
 
-		$ao_validator->requirePresence([
+		$validator->requirePresence([
 			'languageShortcode',
 			'path',
 			'title',
 		], 'create');
 
 
-		$ao_validator->add('id', [
+		$validator->add('id', [
 			'isInteger' => ['rule' => 'isInteger'],
 			'maxLength' => ['rule' => ['maxLength', 11]],
 		]);
 
 
-		$ao_validator->add('parentId', [
+		$validator->add('parentId', [
 			'isInteger' => ['rule' => 'isInteger'],
 			'maxLength' => ['rule' => ['maxLength', 11]],
 		]);
 
 
-		$ao_validator->add('languageShortcode', [
+		$validator->add('languageShortcode', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'ascii' => ['rule' => 'ascii'],
 			'exactLength' => [
-				'rule' => function ($as_shortcode) {
-					return strlen($as_shortcode) == 2;
+				'rule' => function ($shortcode) {
+					return strlen($shortcode) == 2;
 				},
 			],
 		]);
 
 
-		$ao_validator->notEmptyString('path');
-		$ao_validator->add('path', [
+		$validator->notEmptyString('path');
+		$validator->add('path', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'maxLength' => ['rule' => ['maxLength', 1024]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
 
 
-		$ao_validator->notEmptyString('title');
-		$ao_validator->add('title', [
+		$validator->notEmptyString('title');
+		$validator->add('title', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'maxLength' => ['rule' => ['maxLength', 100]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
 
 
-		$ao_validator->add('systemOrder', [
+		$validator->add('systemOrder', [
 			'isInteger' => ['rule' => 'isInteger'],
 		]);
 
 
-		$ao_validator->add('hidden', [
+		$validator->add('hidden', [
 			'boolean' => ['rule' => 'boolean'],
 		]);
 
 
-		$ao_validator->add('active', [
+		$validator->add('active', [
 			'boolean' => ['rule' => 'boolean'],
 		]);
 
 
-		$ao_validator->add('parentsActive', [
+		$validator->add('parentsActive', [
 			'boolean' => ['rule' => 'boolean'],
 		]);
 
 
-		$ao_validator->add('deleted', [
+		$validator->add('deleted', [
 			'boolean' => ['rule' => 'boolean'],
 		]);
 
 
-		return $ao_validator;
+		return $validator;
 	}
 
 
 	/**
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 *
-	 * @param RulesChecker|BaseRulesChecker $ao_rules The rules object to be modified.
+	 * @param RulesChecker|BaseRulesChecker $rules The rules object to be modified.
 	 * @return RulesChecker
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
-		$ao_rules->add(
-			$ao_rules->existsIn('languageShortcode', 'Languages'),
+	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
+		$rules->add(
+			$rules->existsIn('languageShortcode', 'Languages'),
 			'languageExists',
 			[
 				'errorField' => 'languageShortcode',
@@ -173,22 +172,22 @@ class MediaFoldersTable extends Table {
 		);
 
 
-		$ao_rules->add(
-			function (MediaFolder $ao_entity, array $aa_options) use ($ao_rules): bool|string {
-				if ($ao_entity->get('id') === 1 && $aa_options['isCopy'] === false) {
-					if ($ao_entity->get('languageShortcode') !== null) {
+		$rules->add(
+			function (MediaFolder $entity, array $options) use ($rules): bool|string {
+				if ($entity->get('id') === 1 && $options['isCopy'] === false) {
+					if ($entity->get('languageShortcode') !== null) {
 						return __df($this->getI18nDomain(), 'validation', 'error_root_language_shortcode_unchanged');
 					}
 
-					if ($ao_entity->get('title') !== 'Media') {
+					if ($entity->get('title') !== 'Media') {
 						return __df($this->getI18nDomain(), 'validation', 'error_root_title_unchanged');
 					}
 
-					if ($ao_entity->get('parentId') !== null) {
+					if ($entity->get('parentId') !== null) {
 						return __df($this->getI18nDomain(), 'validation', 'error_root_parent_id_unchanged');
 					}
 
-					if ($ao_entity->get('path') !== 'media') {
+					if ($entity->get('path') !== 'media') {
 						return __df($this->getI18nDomain(), 'validation', 'error_root_path_unchanged');
 					}
 				}
@@ -202,9 +201,9 @@ class MediaFoldersTable extends Table {
 		);
 
 
-		$ao_rules->add(
-			function (MediaFolder $ao_entity/*, array $aa_options*/) use ($ao_rules): bool|string {
-				return $ao_entity->get('parentId') !== 1;
+		$rules->add(
+			function (MediaFolder $entity/*, array $options*/) use ($rules): bool|string {
+				return $entity->get('parentId') !== 1;
 			},
 			'notNestedUnderRoot',
 			[
@@ -214,9 +213,9 @@ class MediaFoldersTable extends Table {
 		);
 
 
-		$ao_rules->addDelete(
-			function (MediaFolder $ao_entity/*, array $aa_options*/): bool {
-				return $ao_entity->id !== 1;
+		$rules->addDelete(
+			function (MediaFolder $entity/*, array $options*/): bool {
+				return $entity->id !== 1;
 			},
 			'notRootDeletion',
 			[
@@ -226,33 +225,33 @@ class MediaFoldersTable extends Table {
 		);
 
 
-		return $ao_rules;
+		return $rules;
 	}
 
 
 	/**
 	 * @inheritDoc
 	 */
-	protected function initializeSchema(TableSchemaInterface $ao_schema): void {
-		parent::initializeSchema($ao_schema);
+	protected function initializeSchema(TableSchemaInterface $schema): void {
+		parent::initializeSchema($schema);
 
-		$ao_schema->setColumnType('meta_data', 'json');
+		$schema->setColumnType('meta_data', 'json');
 	}
 
 
 	/**
-	 * @param \Cake\ORM\Query\SelectQuery $ao_query
-	 * @param array $aa_options
+	 * @param \Cake\ORM\Query\SelectQuery $query
+	 * @param array $options
 	 * @return \Cake\ORM\Query\SelectQuery
 	 * @noinspection PhpUnused
 	 */
-	public function findActive(SelectQuery $ao_query): SelectQuery {
-		$ao_query->where([
+	public function findActive(SelectQuery $query): SelectQuery {
+		$query->where([
 			'active' => true,
 			'parents_active' => true,
 		]);
 
 
-		return $ao_query;
+		return $query;
 	}
 }

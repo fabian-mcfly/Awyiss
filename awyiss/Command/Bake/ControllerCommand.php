@@ -33,35 +33,35 @@ class ControllerCommand extends BaseControllerCommand {
 	 *
 	 * It also changes the default actions: No 'index'- and 'view'-, but 'overview'- and 'save'-method.
 	 *
-	 * @param string $as_controllerName Controller name already pluralized and correctly cased.
-	 * @param Arguments $ao_args The console arguments
-	 * @param ConsoleIo $ao_io The console io
+	 * @param string $controllerName Controller name already pluralized and correctly cased.
+	 * @param Arguments $args The console arguments
+	 * @param ConsoleIo $io The console io
 	 * @return void
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function bake(string $as_controllerName, Arguments $ao_args, ConsoleIo $ao_io): void {
-		$ao_io->quiet(sprintf('Baking controller class for %s...', $as_controllerName));
+	public function bake(string $controllerName, Arguments $args, ConsoleIo $io): void {
+		$io->quiet(sprintf('Baking controller class for %s...', $controllerName));
 
 		$la_actions = [];
-		if (!$ao_args->getOption('no-actions') && !$ao_args->getOption('actions')) {
+		if (!$args->getOption('no-actions') && !$args->getOption('actions')) {
 			$la_actions = ['overview', 'add', 'edit', 'delete', 'save'];
 		}
-		if ($ao_args->getOption('actions')) {
-			$la_actions = array_map('trim', explode(',', $ao_args->getOption('actions')));
+		if ($args->getOption('actions')) {
+			$la_actions = array_map('trim', explode(',', $args->getOption('actions')));
 			$la_actions = array_filter($la_actions);
 		}
 
-		$la_helpers = $this->getHelpers($ao_args);
-		$la_components = $this->getComponents($ao_args);
+		$la_helpers = $this->getHelpers($args);
+		$la_components = $this->getComponents($args);
 
-		$ls_prefix = $this->getPrefix($ao_args);
+		$ls_prefix = $this->getPrefix($args);
 		if ($ls_prefix) {
 			$ls_prefix = '\\' . str_replace('/', '\\', $ls_prefix);
 		}
 
 		// Controllers default to importing AppController from `Awyiss`
 		$ls_baseNamespace = 'Awyiss';
-		$ls_namespace = Inflector::camelize($ao_args->getOption('namespace') ?: Configure::read('App.namespace'));
+		$ls_namespace = Inflector::camelize($args->getOption('namespace') ?: Configure::read('App.namespace'));
 		if ($this->plugin) {
 			$ls_namespace = $this->_pluginNamespace($this->plugin);
 
@@ -72,7 +72,7 @@ class ControllerCommand extends BaseControllerCommand {
 			}
 		}
 
-		$ls_currentModelName = $as_controllerName;
+		$ls_currentModelName = $controllerName;
 		$ls_plugin = $this->plugin;
 		if ($ls_plugin) {
 			$ls_plugin .= '.';
@@ -89,10 +89,10 @@ class ControllerCommand extends BaseControllerCommand {
 
 		$ls_pluralName = $this->_variableName($ls_currentModelName);
 		$ls_singularName = $this->_singularName($ls_currentModelName);
-		$ls_singularHumanName = $this->_singularHumanName($as_controllerName);
-		$ls_pluralHumanName = $this->_variableName($as_controllerName);
+		$ls_singularHumanName = $this->_singularHumanName($controllerName);
+		$ls_pluralHumanName = $this->_variableName($controllerName);
 
-		$ls_defaultModel = App::className($as_controllerName, 'Model/Table', 'Table');
+		$ls_defaultModel = App::className($controllerName, 'Model/Table', 'Table');
 		if (!class_exists($ls_defaultModel)) {
 			$ls_defaultModel = null;
 		}
@@ -115,10 +115,10 @@ class ControllerCommand extends BaseControllerCommand {
 			'singularHumanName' => $ls_singularHumanName,
 			'singularName' => $ls_singularName,
 		];
-		$la_data['name'] = $as_controllerName;
+		$la_data['name'] = $controllerName;
 
-		$this->bakeController($as_controllerName, $la_data, $ao_args, $ao_io);
-		$this->bakeTest($as_controllerName, $ao_args, $ao_io);
+		$this->bakeController($controllerName, $la_data, $args, $io);
+		$this->bakeTest($controllerName, $args, $io);
 	}
 
 
@@ -127,13 +127,13 @@ class ControllerCommand extends BaseControllerCommand {
 	 *
 	 * @param string $ls_controllerName
 	 * @param array $data
-	 * @param \Cake\Console\Arguments $ao_args
-	 * @param \Cake\Console\ConsoleIo $ao_io
+	 * @param \Cake\Console\Arguments $args
+	 * @param \Cake\Console\ConsoleIo $io
 	 * @return void
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function bakeController(string $ls_controllerName, array $aa_data, Arguments $ao_args, ConsoleIo $ao_io): void {
-		$la_data = $aa_data + [
+	public function bakeController(string $ls_controllerName, array $data, Arguments $args, ConsoleIo $io): void {
+		$la_data = $data + [
 			'name' => null,
 			'namespace' => null,
 			'prefix' => null,
@@ -146,10 +146,10 @@ class ControllerCommand extends BaseControllerCommand {
 
 		$ls_contents = $this->createTemplateRenderer()->set($la_data)->generate('Controller/controller');
 
-		$ls_path = $this->getPath($ao_args);
+		$ls_path = $this->getPath($args);
 		$ls_fileName = $ls_path . $ls_controllerName . 'Controller.php';
 
-		$ao_io->createFile($ls_fileName, $ls_contents, $this->force);
+		$io->createFile($ls_fileName, $ls_contents, $this->force);
 	}
 
 
@@ -158,11 +158,11 @@ class ControllerCommand extends BaseControllerCommand {
 	 *
 	 * Adds the `namespace`-option.
 	 *
-	 * @param ConsoleOptionParser $ao_parser The console option parser
+	 * @param ConsoleOptionParser $parser The console option parser
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildOptionParser(ConsoleOptionParser $ao_parser): ConsoleOptionParser {
-		$lo_parser = parent::buildOptionParser($ao_parser);
+	public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser {
+		$lo_parser = parent::buildOptionParser($parser);
 
 		$lo_parser->addOption('namespace', [
 			'choices' => [

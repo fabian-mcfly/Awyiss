@@ -17,7 +17,7 @@ use Cake\Validation\Validator;
  * UsergroupPermissions Model
  *
  * @property \Awyiss\Model\Table\UsergroupsTable&\Awyiss\ORM\Association\BelongsTo $Usergroups
- * @method \Awyiss\Model\Entity\UsergroupPermission newDefaultEntity(array $aa_additionalData = [], array $aa_options = [])
+ * @method \Awyiss\Model\Entity\UsergroupPermission newDefaultEntity(array $additionalData = [], array $options = [])
  * @noinspection PhpFullyQualifiedNameUsageInspection
  */
 class UsergroupPermissionsTable extends Table {
@@ -44,79 +44,78 @@ class UsergroupPermissionsTable extends Table {
 	/**
 	 * Returns the default validator object.
 	 *
-	 * @param Validator $ao_validator The validator that can be modified to
+	 * @param Validator $validator The validator that can be modified to
 	 * add some rules to it.
 	 * @return Validator
 	 */
-	public function validationDefault(Validator $ao_validator): Validator {
-		parent::validationDefault($ao_validator);
+	public function validationDefault(Validator $validator): Validator {
+		parent::validationDefault($validator);
 
 
-		$ao_validator->requirePresence([
+		$validator->requirePresence([
 			'scope',
 			'identifier',
 		], 'create');
 
 
-		$ao_validator->add('id', [
+		$validator->add('id', [
 			'isInteger' => ['rule' => 'isInteger'],
 			'maxLength' => ['rule' => ['maxLength', 11]],
 		]);
 
 
-		$ao_validator->add('usergroupId', [
+		$validator->add('usergroupId', [
 			'isInteger' => ['rule' => 'isInteger'],
 			'maxLength' => ['rule' => ['maxLength', 11]],
 		]);
 
 
-		$ao_validator->notEmptyString('scope');
-		$ao_validator->add('scope', [
+		$validator->notEmptyString('scope');
+		$validator->add('scope', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'maxLength' => ['rule' => ['maxLength', 50]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
 
 
-		$ao_validator->notEmptyString('identifier');
-		$ao_validator->add('identifier', [
+		$validator->notEmptyString('identifier');
+		$validator->add('identifier', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'maxLength' => ['rule' => ['maxLength', 50]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
 
 
-		$ao_validator->add('access', [
+		$validator->add('access', [
 			'isInteger' => ['rule' => 'isInteger'],
 			'maxLength' => ['rule' => ['maxLength', 1]],
 		]);
 
 
-		$ao_validator->allowEmptyArray('settings');
-		$ao_validator->add('settings', [
+		$validator->allowEmptyArray('settings');
+		$validator->add('settings', [
 			'isArray' => ['rule' => 'isArray'],
 			'maxLengthBytes' => [
-				'rule' => function ($ax_value) {
-					return strlen(json_encode($ax_value)) <= 65535;
+				'rule' => function ($value) {
+					return strlen(json_encode($value)) <= 65535;
 				},
 			],
 		]);
 
 
-		return $ao_validator;
+		return $validator;
 	}
 
 
 	/**
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 *
-	 * @param RulesChecker|BaseRulesChecker $ao_rules The rules object to be modified.
+	 * @param RulesChecker|BaseRulesChecker $rules The rules object to be modified.
 	 * @return RulesChecker
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
-		$ao_rules->add(
-			$ao_rules->existsIn(
+	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
+		$rules->add(
+			$rules->existsIn(
 				'usergroup_id',
 				'Usergroups'
 			),
@@ -128,18 +127,18 @@ class UsergroupPermissionsTable extends Table {
 		);
 
 
-		return $ao_rules;
+		return $rules;
 	}
 
 
 	/**
 	 * @inheritDoc
 	 */
-	protected function initializeSchema(TableSchemaInterface $ao_schema): void {
-		parent::initializeSchema($ao_schema);
+	protected function initializeSchema(TableSchemaInterface $schema): void {
+		parent::initializeSchema($schema);
 
-		//$ao_schema->setColumnType('access', 'integer');
-		$ao_schema->setColumnType('access', EnumType::from(PermissionAccess::class));
-		$ao_schema->setColumnType('settings', 'json');
+		//$schema->setColumnType('access', 'integer');
+		$schema->setColumnType('access', EnumType::from(PermissionAccess::class));
+		$schema->setColumnType('settings', 'json');
 	}
 }

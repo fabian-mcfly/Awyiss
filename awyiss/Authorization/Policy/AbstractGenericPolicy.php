@@ -24,10 +24,10 @@ abstract class AbstractGenericPolicy {
 	/**
 	 * Sets the scope for this policy only when creating an instance
 	 *
-	 * @param string $as_scope
+	 * @param string $scope
 	 */
-	public function __construct(string $as_scope) {
-		$this->scope = AuthorizationService::sanitizeScope($as_scope);
+	public function __construct(string $scope) {
+		$this->scope = AuthorizationService::sanitizeScope($scope);
 	}
 
 
@@ -58,19 +58,19 @@ abstract class AbstractGenericPolicy {
 
 
 	/**
-	 * Returns one `PermissionInterface` for the provided `$as_identifier`, otherwise null
+	 * Returns one `PermissionInterface` for the provided `$identifier`, otherwise null
 	 *
-	 * @param string $as_identifier
+	 * @param string $identifier
 	 * @return PermissionOptionInterface|null
 	 * @throws \Exception
 	 * @throws \RuntimeException
 	 */
-	public function getPermissionOption(string $as_identifier): ?PermissionOptionInterface {
+	public function getPermissionOption(string $identifier): ?PermissionOptionInterface {
 		if (!isset($this->permissionOptionCollection)) {
 			$this->permissionOptionCollection = $this->loadPermissionOptions();
 		}
 
-		$ls_identifier = AuthorizationService::sanitizeIdentifier($as_identifier);
+		$ls_identifier = AuthorizationService::sanitizeIdentifier($identifier);
 
 		if ($this->permissionOptionCollection->has($ls_identifier)) {
 			return $this->permissionOptionCollection->get($ls_identifier);

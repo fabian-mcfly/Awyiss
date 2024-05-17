@@ -188,16 +188,15 @@ abstract class BackendController extends AppController {
 
 	/**
 	 * @inheritDoc
-	 * @param \Cake\Datasource\RepositoryInterface|\Cake\Datasource\QueryInterface|string|null $ao_object
-	 * @param array $aa_settings
+	 * @param \Cake\Datasource\RepositoryInterface|\Cake\Datasource\QueryInterface|string|null $object
+	 * @param array $settings
 	 * @return \Cake\Datasource\Paging\PaginatedInterface
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function paginate(
-		RepositoryInterface|QueryInterface|string|null $ao_object = null,
-		array $aa_settings = []
+		RepositoryInterface|QueryInterface|string|null $object = null,
+		array $settings = []
 	): PaginatedInterface {
-		return $this->Paginate->paginate($ao_object, $aa_settings);
+		return $this->Paginate->paginate($object, $settings);
 	}
 
 
@@ -212,22 +211,22 @@ abstract class BackendController extends AppController {
 	/**
 	 * Returns the set where-clauses used in the overview-method of most controllers.
 	 *
-	 * When $ax_key is empty, the whole array is returned.
+	 * When $key is empty, the whole array is returned.
 	 *
-	 * When $ax_key is set, the corresponding value is returned if set, otherwise null.
+	 * When $key is set, the corresponding value is returned if set, otherwise null.
 	 *
-	 * @param string|null $ax_key
-	 * @param null $ax_default
+	 * @param string|null $key
+	 * @param null $default
 	 * @return mixed
 	 */
-	public function getOverviewWhere(?string $ax_key = null, null $ax_default = null): mixed {
+	public function getOverviewWhere(?string $key = null, null $default = null): mixed {
 		if (!isset($this->overviewWhere)) {
 			$this->overviewWhere = [];
 			$this->initializeOverviewWhere();
 		}
 
-		if ($ax_key) {
-			return $this->overviewWhere[ Inflector::underscore($ax_key) ] ?? $ax_default;
+		if ($key) {
+			return $this->overviewWhere[ Inflector::underscore($key) ] ?? $default;
 		}
 
 		return $this->overviewWhere;
@@ -237,17 +236,17 @@ abstract class BackendController extends AppController {
 	/**
 	 * Sets the where-clauses used in the overview-method of most controllers.
 	 *
-	 * @param array|string $ax_key
-	 * @param mixed $ax_value
+	 * @param array|string $key
+	 * @param mixed $value
 	 * @return BackendController
 	 * @noinspection PhpUnused
 	 */
-	public function setOverviewWhere(string|array $ax_key, mixed $ax_value = null): static {
-		if (is_string($ax_key)) {
-			$this->overviewWhere[ $ax_key ] = $ax_value;
+	public function setOverviewWhere(string|array $key, mixed $value = null): static {
+		if (is_string($key)) {
+			$this->overviewWhere[ $key ] = $value;
 		}
 		else {
-			$this->overviewWhere = $ax_key;
+			$this->overviewWhere = $key;
 		}
 
 		return $this;
@@ -431,11 +430,10 @@ abstract class BackendController extends AppController {
 	/**
 	 * beforeRender callback.
 	 *
-	 * @param EventInterface<\Cake\Controller\Controller> $ao_event Event.
+	 * @param EventInterface<\Cake\Controller\Controller> $event Event.
 	 * @return void
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function beforeRender(EventInterface $ao_event): void {
+	public function beforeRender(EventInterface $event): void {
 		$this->set('config', Configure::read());
 		$this->set('localConfig', LocalConfig::read());
 
@@ -470,18 +468,18 @@ abstract class BackendController extends AppController {
 
 
 	/**
-	 * @param array $aa_requestData
-	 * @param \Awyiss\Model\Table $ao_table
+	 * @param array $requestData
+	 * @param \Awyiss\Model\Table $table
 	 * @return int
 	 */
-	protected function _saveSystemOrder(array $aa_requestData, Table $ao_table): int {
+	protected function _saveSystemOrder(array $requestData, Table $table): int {
 		/*
 		 * Build an array of the order data
 		 * In the first level, the key is the parent id, the value is an array of the child ids
 		 * In the second level, the value is the child id, the key is the order, offset by -1
 		 */
 		$la_orderData = [];
-		foreach ($aa_requestData as $li_parentId => $la_children) {
+		foreach ($requestData as $li_parentId => $la_children) {
 			foreach ($la_children as $li_order => $li_id) {
 				$la_orderData[] = [
 					'id' => $li_id,
@@ -491,12 +489,12 @@ abstract class BackendController extends AppController {
 			}
 		}
 
-		$lo_schema = $ao_table->getSchema();
+		$lo_schema = $table->getSchema();
 
 		/** @noinspection PhpUnnecessaryLocalVariableInspection */
-		$li_affectedRows = $ao_table->updateAll(function (QueryExpression $ao_expression) use ($la_orderData, $lo_schema) {
-			$lo_parentCase = $ao_expression->case();
-			$lo_systemOrderCase = $ao_expression->case();
+		$li_affectedRows = $table->updateAll(function (QueryExpression $expression) use ($la_orderData, $lo_schema) {
+			$lo_parentCase = $expression->case();
+			$lo_systemOrderCase = $expression->case();
 
 			foreach ($la_orderData as $la_data) {
 				$lo_parentCase->when(['id' => $la_data['id']])->then($la_data['parentId'], 'integer');

@@ -16,20 +16,20 @@ trait OperationsPathTrait {
 	/**
 	 * Added a logic that honors the `folder`-option and modifies the path accordingly.
 	 *
-	 * @param \Symfony\Component\Console\Input\InputInterface $ao_input Input of the current command.
-	 * @param string $as_default Default folder to set if no folder option is found in the $ao_input param
+	 * @param \Symfony\Component\Console\Input\InputInterface $input Input of the current command.
+	 * @param string $default Default folder to set if no folder option is found in the $input param
 	 * @return string
 	 * @see \Migrations\Util\UtilTrait::getOperationsPath
 	 */
-	protected function getOperationsPath(InputInterface $ao_input, string $as_default = 'Migrations'): string {
-		$ls_path = APP . 'config' . DS . $as_default;
+	protected function getOperationsPath(InputInterface $input, string $default = 'Migrations'): string {
+		$ls_path = APP . 'config' . DS . $default;
 
-		$ls_plugin = $this->getPlugin($ao_input);
+		$ls_plugin = $this->getPlugin($input);
 		if ($ls_plugin !== null) {
-			$ls_path = Plugin::path($ls_plugin) . 'config' . DS . $as_default;
+			$ls_path = Plugin::path($ls_plugin) . 'config' . DS . $default;
 		}
-		elseif ($ao_input->getOption('folder')) {
-			$ls_path = $ao_input->getOption('folder');
+		elseif ($input->getOption('folder')) {
+			$ls_path = $input->getOption('folder');
 			if (!in_array(substr($ls_path, 0, 1), ['/', DS])) {
 				$ls_path = ROOT . DS . $ls_path;
 			}

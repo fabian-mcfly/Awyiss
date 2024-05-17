@@ -70,16 +70,16 @@ class DatatablesController extends Controller {
 	/**
 	 * Edit method
 	 *
-	 * @param int $ai_id
+	 * @param int $id
 	 * @return \Cake\Http\Response|void
 	 * @throws \Exception
 	 */
-	public function edit(int $ai_id) {
+	public function edit(int $id) {
 		$this->Authorization->ensure('update');
 
 		$lo_datatables = $this->Datatables->findAllAndCache();
 		/** @var Datatable $lo_datatable */
-		$lo_datatable = $lo_datatables->firstMatch(['id' => $ai_id]);
+		$lo_datatable = $lo_datatables->firstMatch(['id' => $id]);
 
 		if (! $lo_datatable) {
 			$this->Flash->error(__('record_not_found'));
@@ -100,17 +100,17 @@ class DatatablesController extends Controller {
 	/**
 	 * Delete method
 	 *
-	 * @param int $ai_id
+	 * @param int $id
 	 * @return \Cake\Http\Response
 	 * @throws \Exception
 	 */
-	public function delete(int $ai_id): Response {
+	public function delete(int $id): Response {
 		$this->Authorization->ensure('delete');
 
 		$this->request->allowMethod(['get', 'delete']);
 
 		/** @var Datatable $lo_datatable */
-		$lo_datatable = $this->Datatables->findById($ai_id)->first();
+		$lo_datatable = $this->Datatables->findById($id)->first();
 		if (! $lo_datatable) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -135,41 +135,41 @@ class DatatablesController extends Controller {
 
 
 	/**
-	 * @param Datatable $ao_datatable
-	 * @param string $as_method
+	 * @param Datatable $datatable
+	 * @param string $method
 	 * @return void
 	 * @throws \Cake\Http\Exception\RedirectException
 	 */
-	protected function save(Datatable $ao_datatable, string $as_method = 'add'): void {
+	protected function save(Datatable $datatable, string $method = 'add'): void {
 		$la_associated = [];
 		if ($this->Datatables->hasAttributes()) {
 			$la_associated[] = $this->Datatables->getAttributesTableName(true);
-			$ao_datatable->setAccess('attributes', true);
+			$datatable->setAccess('attributes', true);
 		}
 
-		$this->Datatables->patchEntity($ao_datatable, $this->request->getData(), [
+		$this->Datatables->patchEntity($datatable, $this->request->getData(), [
 			'associated' => $la_associated,
 			'validate' => !$this->request->getData('reload_form'),
 		]);
 
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-			if ($this->Datatables->save($ao_datatable, ['asCopy' => (bool)$this->request->getData('save_as_copy')])) {
+			if ($this->Datatables->save($datatable, ['asCopy' => (bool)$this->request->getData('save_as_copy')])) {
 				if (!$this->request->is('ajax')) {
-					$this->Flash->success(__($as_method . '_succeeded'));
+					$this->Flash->success(__($method . '_succeeded'));
 				}
 
 				if ($this->request->getData('submit') == 'submit_close') {
 					throw new RedirectException(Router::url([
 						'action' => 'overview',
-						'page' => $this->Paginate->calculateEntityPagePosition($ao_datatable),
+						'page' => $this->Paginate->calculateEntityPagePosition($datatable),
 					], true), 302);
 				}
 
-				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $ao_datatable->id], true), 302);
+				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $datatable->id], true), 302);
 			}
 
-			$this->Flash->error(__($as_method . '_failed'));
-			foreach ($ao_datatable->getError('_general') as $ls_error) {
+			$this->Flash->error(__($method . '_failed'));
+			foreach ($datatable->getError('_general') as $ls_error) {
 				$this->Flash->error($ls_error);
 			}
 		}

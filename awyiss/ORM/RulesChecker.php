@@ -29,14 +29,14 @@ class RulesChecker extends BaseRulesChecker {
 	 * @inheritDoc
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function add(callable $ao_rule, array|string|null $ax_name = null, array $aa_options = []): static {
-		$ls_name = is_string($ax_name) ? $ax_name : $this->extractName($ax_name);
+	public function add(callable $rule, array|string|null $name = null, array $options = []): static {
+		$ls_name = is_string($name) ? $name : $this->extractName($name);
 
 		if (isset($this->_rules[ $ls_name ])) {
 			throw new RuntimeException(sprintf('Cannot redefine rule name. `%s` already exists.', $ls_name));
 		}
 
-		$this->_rules[ $ls_name ] = $this->_addError($ao_rule, $ls_name, $aa_options);
+		$this->_rules[ $ls_name ] = $this->_addError($rule, $ls_name, $options);
 
 
 		return $this;
@@ -47,14 +47,14 @@ class RulesChecker extends BaseRulesChecker {
 	 * @inheritDoc
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function addCreate(callable $ao_rule, array|string|null $ax_name = null, array $aa_options = []): static {
-		$ls_name = is_string($ax_name) ? $ax_name : $this->extractName($ax_name);
+	public function addCreate(callable $rule, array|string|null $name = null, array $options = []): static {
+		$ls_name = is_string($name) ? $name : $this->extractName($name);
 
 		if (isset($this->_createRules[ $ls_name ]) || isset($this->_rules[ $ls_name ])) {
 			throw new RuntimeException(sprintf('Cannot redefine create rule name. `%s` already exists.', $ls_name));
 		}
 
-		$this->_createRules[ $ls_name ] = $this->_addError($ao_rule, $ls_name, $aa_options);
+		$this->_createRules[ $ls_name ] = $this->_addError($rule, $ls_name, $options);
 
 
 		return $this;
@@ -65,14 +65,14 @@ class RulesChecker extends BaseRulesChecker {
 	 * @inheritDoc
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function addUpdate(callable $ao_rule, array|string|null $ax_name = null, array $aa_options = []): static {
-		$ls_name = is_string($ax_name) ? $ax_name : $this->extractName($ax_name);
+	public function addUpdate(callable $rule, array|string|null $name = null, array $options = []): static {
+		$ls_name = is_string($name) ? $name : $this->extractName($name);
 
 		if (isset($this->_updateRules[ $ls_name ]) || isset($this->_rules[ $ls_name ])) {
 			throw new RuntimeException(sprintf('Cannot redefine update rule name. `%s` already exists.', $ls_name));
 		}
 
-		$this->_updateRules[ $ls_name ] = $this->_addError($ao_rule, $ls_name, $aa_options);
+		$this->_updateRules[ $ls_name ] = $this->_addError($rule, $ls_name, $options);
 
 
 		return $this;
@@ -83,14 +83,14 @@ class RulesChecker extends BaseRulesChecker {
 	 * @inheritDoc
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function addDelete(callable $ao_rule, array|string|null $ax_name = null, array $aa_options = []): static {
-		$ls_name = is_string($ax_name) ? $ax_name : $this->extractName($ax_name);
+	public function addDelete(callable $rule, array|string|null $name = null, array $options = []): static {
+		$ls_name = is_string($name) ? $name : $this->extractName($name);
 
 		if (isset($this->_deleteRules[ $ls_name ])) {
 			throw new RuntimeException(sprintf('Cannot redefine delete rule name. `%s` already exists.', $ls_name));
 		}
 
-		$this->_deleteRules[ $ls_name ] = $this->_addError($ao_rule, $ls_name, $aa_options);
+		$this->_deleteRules[ $ls_name ] = $this->_addError($rule, $ls_name, $options);
 
 
 		return $this;
@@ -100,10 +100,10 @@ class RulesChecker extends BaseRulesChecker {
 	/**
 	 * Returns whether a rule with the given name exists in any of the possible rulesets
 	 *
-	 * @param string $as_ruleName
+	 * @param string $ruleName
 	 * @return bool
 	 */
-	public function exists(string $as_ruleName): bool {
+	public function exists(string $ruleName): bool {
 		/** @var array<\Cake\Datasource\RuleInvoker> $la_rules */
 		$la_rules = Hash::merge(
 			$this->_rules,
@@ -112,32 +112,32 @@ class RulesChecker extends BaseRulesChecker {
 			$this->_deleteRules,
 		);
 
-		return array_key_exists($as_ruleName, $la_rules);
+		return array_key_exists($ruleName, $la_rules);
 	}
 
 
 	/**
 	 * @inheritDoc
-	 * @param array|string $ax_fields
-	 * @param BaseTable|Association|string $ax_table
-	 * @param array|string|null $ax_options
+	 * @param array|string $fields
+	 * @param BaseTable|Association|string $table
+	 * @param array|string|null $options
 	 * @return RuleInvoker
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function existsIn(array|string $ax_fields, BaseTable|Association|string $ax_table, array|string|null $ax_options = null): RuleInvoker {
-		$la_options = is_array($ax_options) ? $ax_options : ['message' => $ax_options];
+	public function existsIn(array|string $fields, BaseTable|Association|string $table, array|string|null $options = null): RuleInvoker {
+		$la_options = is_array($options) ? $options : ['message' => $options];
 		$ls_message = $la_options['message'] ?? null ?: __d('validation', 'error_exists_in');
 		unset($la_options['message']);
 
-		if (!empty($ax_options['errorField'])) {
-			$ls_errorField = $ax_options['errorField'];
+		if (!empty($options['errorField'])) {
+			$ls_errorField = $options['errorField'];
 		}
 		else {
-			$ls_errorField = is_string($ax_fields) ? $ax_fields : current($ax_fields);
+			$ls_errorField = is_string($fields) ? $fields : current($fields);
 		}
 
 
-		$la_fields = (array)$ax_fields;
+		$la_fields = (array)$fields;
 		if (($this->_options['repository'] ?? null)) {
 			$ls_entityClass = $this->_options['repository']->getEntityClass() ?? null;
 			if ($ls_entityClass) {
@@ -146,21 +146,21 @@ class RulesChecker extends BaseRulesChecker {
 		}
 
 
-		return $this->_addError(new ExistsIn($la_fields, $ax_table, $la_options), '_existsIn', ['errorField' => $ls_errorField, 'message' => $ls_message]);
+		return $this->_addError(new ExistsIn($la_fields, $table, $la_options), '_existsIn', ['errorField' => $ls_errorField, 'message' => $ls_message]);
 	}
 
 
 	/**
 	 * @inheritDoc
-	 * @param array $aa_fields
-	 * @param array|string|null $ax_options
+	 * @param array $fields
+	 * @param array|string|null $options
 	 * @return RuleInvoker
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function isUnique(array $aa_fields, array|string|null $ax_options = null): RuleInvoker {
-		$la_options = is_array($ax_options) ? $ax_options : ['message' => $ax_options];
+	public function isUnique(array $fields, array|string|null $options = null): RuleInvoker {
+		$la_options = is_array($options) ? $options : ['message' => $options];
 
-		$la_fields = $aa_fields;
+		$la_fields = $fields;
 		if (($this->_options['repository'] ?? null)) {
 			$ls_entityClass = $this->_options['repository']->getEntityClass() ?? null;
 			if ($ls_entityClass) {
@@ -182,21 +182,21 @@ class RulesChecker extends BaseRulesChecker {
 
 	/**
 	 * @inheritDoc
-	 * @param string $as_field
-	 * @param int $ai_count
-	 * @param string $as_operator
-	 * @param string|null $as_message
+	 * @param string $field
+	 * @param int $count
+	 * @param string $operator
+	 * @param string|null $message
 	 * @return RuleInvoker
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function validCount(string $as_field, int $ai_count = 0, string $as_operator = '>', ?string $as_message = null): RuleInvoker {
-		$ls_message = $as_message;
+	public function validCount(string $field, int $count = 0, string $operator = '>', ?string $message = null): RuleInvoker {
+		$ls_message = $message;
 		if (!$ls_message) {
-			$ls_message = __d('validation', 'error_valid_count', [$as_operator, $ai_count]);
+			$ls_message = __d('validation', 'error_valid_count', [$operator, $count]);
 		}
 
 
-		return parent::validCount($as_field, $ai_count, $as_operator, $ls_message);
+		return parent::validCount($field, $count, $operator, $ls_message);
 	}
 
 
@@ -204,49 +204,49 @@ class RulesChecker extends BaseRulesChecker {
 	 * Re-implemented to use a proper fallback error message
 	 *
 	 * @inheritDoc
-	 * @param Association|string $ax_association
-	 * @param string|null $as_errorField
-	 * @param string|null $as_message
-	 * @param string $as_linkStatus
-	 * @param string $as_ruleName
+	 * @param Association|string $association
+	 * @param string|null $errorField
+	 * @param string|null $message
+	 * @param string $linkStatus
+	 * @param string $ruleName
 	 * @return RuleInvoker
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	protected function _addLinkConstraintRule(
-		Association|string $ax_association,
-		?string $as_errorField,
-		?string $as_message,
-		string $as_linkStatus,
-		string $as_ruleName
+		Association|string $association,
+		?string $errorField,
+		?string $message,
+		string $linkStatus,
+		string $ruleName
 	): RuleInvoker {
-		if ($ax_association instanceof Association) {
-			$ls_associationAlias = $ax_association->getName();
+		if ($association instanceof Association) {
+			$ls_associationAlias = $association->getName();
 		}
 		else {
-			$ls_associationAlias = $ax_association;
+			$ls_associationAlias = $association;
 		}
 
-		$ls_message = $as_message;
+		$ls_message = $message;
 		if (!$ls_message) {
 			$ls_message = __d('validation', 'error_link_constraint_rule', $ls_associationAlias);
 		}
 
 
-		return parent::_addLinkConstraintRule($ax_association, $as_errorField, $ls_message, $as_linkStatus, $as_ruleName);
+		return parent::_addLinkConstraintRule($association, $errorField, $ls_message, $linkStatus, $ruleName);
 	}
 
 
 	/**
 	 * Extract the name from the options array
 	 *
-	 * @param array|null $aa_options
+	 * @param array|null $options
 	 * @return string
 	 */
-	protected function extractName(?array $aa_options): string {
-		if ($aa_options === null || empty($aa_options['name'])) {
+	protected function extractName(?array $options): string {
+		if ($options === null || empty($options['name'])) {
 			throw new RuntimeException(sprintf('Missing option `name` in `%s`', static::class));
 		}
 
-		return $aa_options['name'];
+		return $options['name'];
 	}
 }

@@ -53,16 +53,16 @@ class Datatable extends Entity {
 	/**
 	 * Make sure the identifier is always lowercase, underscored and free of special characters
 	 *
-	 * @param string|null $as_identifier
+	 * @param string|null $identifier
 	 * @return string|null
 	 * @see \Awyiss\Model\Entity\PageRole::$identifier
 	 */
-	protected function _setIdentifier(?string $as_identifier): ?string {
-		if ($as_identifier === null) {
+	protected function _setIdentifier(?string $identifier): ?string {
+		if ($identifier === null) {
 			return null;
 		}
 
-		$ls_identifier = preg_replace('/\d/', '', $as_identifier);
+		$ls_identifier = preg_replace('/\d/', '', $identifier);
 
 		$ls_identifier = Text::slug($ls_identifier, ['replacement' => '_']);
 

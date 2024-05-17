@@ -20,7 +20,7 @@ use Cake\Validation\Validator;
  * @property \Awyiss\Model\Table\ContentsTable&\Awyiss\ORM\Association\HasMany $Contents
  * @property \Awyiss\Model\Table\ContentAreasTable&\Awyiss\ORM\Association\BelongsToMany $ContentAreas
  * @property \Awyiss\Model\Table\ContentTemplateElementsTable&\Awyiss\ORM\Association\HasMany $ContentTemplateElements
- * @method \Awyiss\Model\Entity\ContentTemplate newDefaultEntity(array $aa_additionalData = [], array $aa_options = [])
+ * @method \Awyiss\Model\Entity\ContentTemplate newDefaultEntity(array $additionalData = [], array $options = [])
  * @noinspection PhpUnnecessaryFullyQualifiedNameInspection
  */
 class ContentTemplatesTable extends Table {
@@ -100,16 +100,16 @@ class ContentTemplatesTable extends Table {
 
 
 	/**
-	 * @param SelectQuery $ao_query
-	 * @param array $aa_options
+	 * @param SelectQuery $query
+	 * @param array $options
 	 * @return \Cake\ORM\Query\SelectQuery
 	 * @noinspection PhpUnused
 	 */
-	public function findWithUsages(SelectQuery $ao_query): SelectQuery {
-		return $ao_query->enableAutoFields()->select([
-			'used_for_contents' => $ao_query->func()->count('Contents.id'),
-		])->leftJoinWith('Contents', function (SelectQuery $ao_query) {
-			return $ao_query->applyOptions([
+	public function findWithUsages(SelectQuery $query): SelectQuery {
+		return $query->enableAutoFields()->select([
+			'used_for_contents' => $query->func()->count('Contents.id'),
+		])->leftJoinWith('Contents', function (SelectQuery $query) {
+			return $query->applyOptions([
 				'attributes' => [
 					'skip' => true,
 				],
@@ -135,20 +135,20 @@ class ContentTemplatesTable extends Table {
 
 
 	/**
-	 * @param ContentTemplate $ao_contentTemplate
+	 * @param ContentTemplate $contentTemplate
 	 * @return array
 	 */
-	public function getAssignedContentAttributes(ContentTemplate $ao_contentTemplate): array {
+	public function getAssignedContentAttributes(ContentTemplate $contentTemplate): array {
 		$la_availableContentAttributes = $this->getAvailableContentAttributes();
 
-		if (!isset($ao_contentTemplate->contentTemplateElements)) {
+		if (!isset($contentTemplate->contentTemplateElements)) {
 			//Load ContentTemplateAreas in case the entity is missing that key
-			$this->loadInto($ao_contentTemplate, [
+			$this->loadInto($contentTemplate, [
 				'ContentTemplateElements',
 			]);
 		}
 
-		$la_availableContentElementIdentifiers = array_column($ao_contentTemplate->contentTemplateElements, 'identifier');
+		$la_availableContentElementIdentifiers = array_column($contentTemplate->contentTemplateElements, 'identifier');
 		$la_assignedContentAttributes = [];
 		foreach ($la_availableContentAttributes as $la_attribute) {
 			if (in_array('attributes.' . $la_attribute['identifier'], $la_availableContentElementIdentifiers)) {
@@ -162,24 +162,24 @@ class ContentTemplatesTable extends Table {
 
 
 	/**
-	 * @param bool $ab_includeInactive
+	 * @param bool $includeInactive
 	 * @return array<int, array>
 	 */
-	public function getAvailableContentAttributes(bool $ab_includeInactive = false): array {
+	public function getAvailableContentAttributes(bool $includeInactive = false): array {
 		if (isset($this->availableContentAttributes)) {
 			return $this->availableContentAttributes;
 		}
 
 		/** @var \Awyiss\Model\Table\AttributesTable $lo_attributesTable */
 		$lo_attributesTable = FactoryLocator::get('Table')->get('Attributes');
-		$this->availableContentAttributes = $lo_attributesTable->find($ab_includeInactive ? 'all' : 'active')->where(['scope' => 'contents'])->all()->indexBy('id')->map(function (Attribute $ao_attribute): array {
+		$this->availableContentAttributes = $lo_attributesTable->find($includeInactive ? 'all' : 'active')->where(['scope' => 'contents'])->all()->indexBy('id')->map(function (Attribute $attribute): array {
 			return [
-				'title' => $ao_attribute->title,
-				'label' => $ao_attribute->label,
-				'identifier' => $ao_attribute->identifier,
-				'active' => $ao_attribute->active,
-				'type' => $ao_attribute->type,
-				'inputType' => $ao_attribute->inputType,
+				'title' => $attribute->title,
+				'label' => $attribute->label,
+				'identifier' => $attribute->identifier,
+				'active' => $attribute->active,
+				'type' => $attribute->type,
+				'inputType' => $attribute->inputType,
 			];
 		})->toArray();
 
@@ -191,80 +191,79 @@ class ContentTemplatesTable extends Table {
 	/**
 	 * Returns the default validator object.
 	 *
-	 * @param Validator $ao_validator The validator that can be modified to
+	 * @param Validator $validator The validator that can be modified to
 	 * add some rules to it.
 	 * @return Validator
 	 */
-	public function validationDefault(Validator $ao_validator): Validator {
-		parent::validationDefault($ao_validator);
+	public function validationDefault(Validator $validator): Validator {
+		parent::validationDefault($validator);
 
 
-		$ao_validator->requirePresence([
+		$validator->requirePresence([
 			'title',
 			'fileName',
 		], 'create');
 
 
-		$ao_validator->add('id', [
+		$validator->add('id', [
 			'isInteger' => ['rule' => 'isInteger'],
 			'maxLength' => ['rule' => ['maxLength', 11]],
 		]);
 
 
-		$ao_validator->notEmptyString('title');
-		$ao_validator->add('title', [
+		$validator->notEmptyString('title');
+		$validator->add('title', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'maxLength' => ['rule' => ['maxLength', 100]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
 
 
-		$ao_validator->notEmptyString('fileName');
-		$ao_validator->add('fileName', [
+		$validator->notEmptyString('fileName');
+		$validator->add('fileName', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'maxLength' => ['rule' => ['maxLength', 100]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
 
 
-		$ao_validator->add('systemOrder', [
+		$validator->add('systemOrder', [
 			'isInteger' => ['rule' => 'isInteger'],
 		]);
 
 
-		$ao_validator->add('active', [
+		$validator->add('active', [
 			'boolean' => ['rule' => 'boolean'],
 		]);
 
 
-		$ao_validator->add('deleted', [
+		$validator->add('deleted', [
 			'boolean' => ['rule' => 'boolean'],
 		]);
 
 
-		return $ao_validator;
+		return $validator;
 	}
 
 
 	/**
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 *
-	 * @param RulesChecker|BaseRulesChecker $ao_rules The rules object to be modified.
+	 * @param RulesChecker|BaseRulesChecker $rules The rules object to be modified.
 	 * @return RulesChecker
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
-		$ao_rules->add($ao_rules->isUnique(['fileName']), 'fileNameUnique', [
+	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
+		$rules->add($rules->isUnique(['fileName']), 'fileNameUnique', [
 			'errorField' => 'fileName',
 			'message' => __df($this->getI18nDomain(), 'validation', 'error_file_name_unique'),
 		]);
 
 
-		$ao_rules->add(function (ContentTemplate $ao_entity): bool {
+		$rules->add(function (ContentTemplate $entity): bool {
 			$lb_valid = true;
 
 			$la_availableAttributes = array_column($this->getAvailableContentAttributes(), 'identifier');
-			foreach ($ao_entity->contentTemplateElements as $lo_assignedContentElement) {
+			foreach ($entity->contentTemplateElements as $lo_assignedContentElement) {
 				if (str_starts_with($lo_assignedContentElement->identifier, 'attributes.')) {
 					$ls_identifier = substr($lo_assignedContentElement->identifier, 11);
 
@@ -291,8 +290,8 @@ class ContentTemplatesTable extends Table {
 		]);
 
 
-		$ao_rules->addDelete(
-			$ao_rules->isNotLinkedTo('Contents', 'contents'),
+		$rules->addDelete(
+			$rules->isNotLinkedTo('Contents', 'contents'),
 			'noLinkedContents',
 			[
 				'errorField' => '_general',
@@ -300,6 +299,6 @@ class ContentTemplatesTable extends Table {
 			]
 		);
 
-		return $ao_rules;
+		return $rules;
 	}
 }

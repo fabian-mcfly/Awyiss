@@ -63,16 +63,16 @@ class PageTemplate extends Entity {
 	/**
 	 * Make sure the filename is always lowercase, underscored and free of special characters
 	 *
-	 * @param string|null $as_fileName
+	 * @param string|null $fileName
 	 * @return string|null
 	 * @see \Awyiss\Model\Entity\PageTemplate::$filename
 	 */
-	protected function _setFileName(?string $as_fileName): ?string {
-		if ($as_fileName === null) {
+	protected function _setFileName(?string $fileName): ?string {
+		if ($fileName === null) {
 			return null;
 		}
 
-		$ls_fileName = Text::slug($as_fileName, ['replacement' => '_']);
+		$ls_fileName = Text::slug($fileName, ['replacement' => '_']);
 
 
 		return mb_strtolower($ls_fileName);
@@ -80,14 +80,14 @@ class PageTemplate extends Entity {
 
 
 	/**
-	 * @param mixed $ax_pageRoleId
+	 * @param mixed $pageRoleId
 	 * @return \Awyiss\Model\Enum\PageRoleEnumInterface|int|null
 	 */
-	protected function _setPageRoleId(mixed $ax_pageRoleId): PageRoleEnumInterface|int|null {
-		if (is_string($ax_pageRoleId)) {
-			return (int)$ax_pageRoleId;
+	protected function _setPageRoleId(mixed $pageRoleId): PageRoleEnumInterface|int|null {
+		if (is_string($pageRoleId)) {
+			return (int)$pageRoleId;
 		}
 
-		return $ax_pageRoleId;
+		return $pageRoleId;
 	}
 }

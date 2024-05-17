@@ -26,34 +26,34 @@ class UserConfigurationPolicy extends AbstractPolicy {
 
 
 	/**
-	 * @param bool|null $ab_accessible
-	 * @param mixed $ax_access
-	 * @param mixed $ax_settings
-	 * @param array $aa_additionalData
-	 * @param PermissionCollection $ao_permissionCollection
+	 * @param bool|null $accessible
+	 * @param mixed $access
+	 * @param mixed $settings
+	 * @param array $additionalData
+	 * @param PermissionCollection $permissionCollection
 	 * @return bool|null
 	 * @throws \ReflectionException
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public static function callback(?bool $ab_accessible, mixed $ax_access, mixed $ax_settings, array $aa_additionalData, PermissionCollection $ao_permissionCollection): ?bool {
-		$lb_accessible = $ab_accessible;
+	public static function callback(?bool $accessible, mixed $access, mixed $settings, array $additionalData, PermissionCollection $permissionCollection): ?bool {
+		$lb_accessible = $accessible;
 
 		//Only if the identifier itself is accessible, we must check the scope. So exit here already if it's not accessible.
 		if (!$lb_accessible) {
 			return $lb_accessible;
 		}
 
-		if (!array_key_exists('scope', $aa_additionalData)) {
+		if (!array_key_exists('scope', $additionalData)) {
 			throw new RuntimeException(sprintf('CallbackPermission in `%s` requires additional data (`scope`)', static::class));
 		}
 
-		$ls_scope = $aa_additionalData['scope'];
+		$ls_scope = $additionalData['scope'];
 		if (!$ls_scope) {
 			return $lb_accessible;
 		}
 
 		if (!in_array(strtolower($ls_scope), ['contents', 'system'], true)) {
-			$lb_accessible = $ao_permissionCollection->scopeIsAccessible($ls_scope, [], ['read', 'create', 'update', 'configure']);
+			$lb_accessible = $permissionCollection->scopeIsAccessible($ls_scope, [], ['read', 'create', 'update', 'configure']);
 		}
 
 		return $lb_accessible;

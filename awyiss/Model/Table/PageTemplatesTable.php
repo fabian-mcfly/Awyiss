@@ -21,7 +21,7 @@ use Cake\Validation\Validator;
  * @property \Awyiss\Model\Table\ContentAreasTable&\Awyiss\ORM\Association\BelongsToMany $ContentAreas
  * @property \Awyiss\Model\Table\PageRolesTable&\Awyiss\ORM\Association\BelongsTo $PageRoles
  * @property \Awyiss\Model\Table\PagesTable&\Awyiss\ORM\Association\HasMany $Pages
- * @method \Awyiss\Model\Entity\PageTemplate newDefaultEntity(array $aa_additionalData = [], array $aa_options = [])
+ * @method \Awyiss\Model\Entity\PageTemplate newDefaultEntity(array $additionalData = [], array $options = [])
  * @noinspection PhpUnnecessaryFullyQualifiedNameInspection
  */
 class PageTemplatesTable extends Table {
@@ -76,16 +76,16 @@ class PageTemplatesTable extends Table {
 
 
 	/**
-	 * @param SelectQuery $ao_query
-	 * @param array $aa_options
+	 * @param SelectQuery $query
+	 * @param array $options
 	 * @return \Cake\ORM\Query\SelectQuery
 	 * @noinspection PhpUnused
 	 */
-	public function findWithUsages(SelectQuery $ao_query): SelectQuery {
-		return $ao_query->enableAutoFields()->select([
-			'used_for_pages' => $ao_query->func()->count('Pages.id'),
-		])->leftJoinWith('Pages', function (SelectQuery $ao_query) {
-			return $ao_query->applyOptions([
+	public function findWithUsages(SelectQuery $query): SelectQuery {
+		return $query->enableAutoFields()->select([
+			'used_for_pages' => $query->func()->count('Pages.id'),
+		])->leftJoinWith('Pages', function (SelectQuery $query) {
+			return $query->applyOptions([
 				'attributes' => [
 					'skip' => true,
 				],
@@ -97,79 +97,78 @@ class PageTemplatesTable extends Table {
 	/**
 	 * Returns the default validator object.
 	 *
-	 * @param Validator $ao_validator The validator that can be modified to
+	 * @param Validator $validator The validator that can be modified to
 	 * add some rules to it.
 	 * @return Validator
 	 */
-	public function validationDefault(Validator $ao_validator): Validator {
-		parent::validationDefault($ao_validator);
+	public function validationDefault(Validator $validator): Validator {
+		parent::validationDefault($validator);
 
 
-		$ao_validator->requirePresence([
+		$validator->requirePresence([
 			'pageRoleId',
 			'title',
 			'fileName',
 		], 'create');
 
 
-		$ao_validator->add('id', [
+		$validator->add('id', [
 			'isInteger' => ['rule' => 'isInteger'],
 			'maxLength' => ['rule' => ['maxLength', 11]],
 		]);
 
 
-		$ao_validator->notEmptyString('pageRoleId');
-		$ao_validator->add('pageRoleId', [
+		$validator->notEmptyString('pageRoleId');
+		$validator->add('pageRoleId', [
 			'isInteger' => ['rule' => 'isInteger'],
 			'maxLength' => ['rule' => ['maxLength', 11]],
 		]);
 
 
-		$ao_validator->notEmptyString('title');
-		$ao_validator->add('title', [
+		$validator->notEmptyString('title');
+		$validator->add('title', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'maxLength' => ['rule' => ['maxLength', 100]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
 
 
-		$ao_validator->notEmptyString('fileName');
-		$ao_validator->add('fileName', [
+		$validator->notEmptyString('fileName');
+		$validator->add('fileName', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'maxLength' => ['rule' => ['maxLength', 100]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
 
 
-		$ao_validator->add('systemOrder', [
+		$validator->add('systemOrder', [
 			'isInteger' => ['rule' => 'isInteger'],
 		]);
 
 
-		$ao_validator->add('active', [
+		$validator->add('active', [
 			'boolean' => ['rule' => 'boolean'],
 		]);
 
 
-		$ao_validator->add('deleted', [
+		$validator->add('deleted', [
 			'boolean' => ['rule' => 'boolean'],
 		]);
 
 
-		return $ao_validator;
+		return $validator;
 	}
 
 
 	/**
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 *
-	 * @param RulesChecker|BaseRulesChecker $ao_rules The rules object to be modified.
+	 * @param RulesChecker|BaseRulesChecker $rules The rules object to be modified.
 	 * @return RulesChecker
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
-		$ao_rules->add(
-			$ao_rules->isUnique(['fileName']),
+	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
+		$rules->add(
+			$rules->isUnique(['fileName']),
 			'fileNameUnique',
 			[
 				'errorField' => 'fileName',
@@ -178,33 +177,33 @@ class PageTemplatesTable extends Table {
 		);
 
 
-		$ao_rules->add($ao_rules->existsIn('contentAreaId', 'ContentAreas'), 'validContentAreas', [
+		$rules->add($rules->existsIn('contentAreaId', 'ContentAreas'), 'validContentAreas', [
 			'errorField' => 'contentAreas',
 			'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_content_areas'),
 		]);
 
 
-		$ao_rules->addUpdate(function (PageTemplate $ao_entity, array $aa_options) use ($ao_rules): bool {
+		$rules->addUpdate(function (PageTemplate $entity, array $options) use ($rules): bool {
 			if (
-				$aa_options['isCopy'] === true ||
-				!$ao_entity->hasOriginal('pageRoleId') ||
-				$ao_entity->get('pageRoleId') === $ao_entity->getOriginal('pageRoleId')
+				$options['isCopy'] === true ||
+				!$entity->hasOriginal('pageRoleId') ||
+				$entity->get('pageRoleId') === $entity->getOriginal('pageRoleId')
 			) {
 				return true;
 			}
 
-			$lo_linkedTo = $ao_rules->isNotLinkedTo(
+			$lo_linkedTo = $rules->isNotLinkedTo(
 				'Pages',
 				'pageRoleId',
 				__df($this->getI18nDomain(), 'validation', 'error_no_linked_pages')
 			);
 
-			return $lo_linkedTo($ao_entity, $aa_options);
+			return $lo_linkedTo($entity, $options);
 		}, 'noLinkedPageTemplates');
 
 
-		$ao_rules->addDelete(
-			$ao_rules->isNotLinkedTo('Pages', 'pages'),
+		$rules->addDelete(
+			$rules->isNotLinkedTo('Pages', 'pages'),
 			'noLinkedPages',
 			[
 				'errorField' => '_general',
@@ -213,15 +212,15 @@ class PageTemplatesTable extends Table {
 		);
 
 
-		return $ao_rules;
+		return $rules;
 	}
 
 
 	/**
 	 * @inheritDoc
 	 */
-	protected function initializeSchema(TableSchemaInterface $ao_schema): void {
-		parent::initializeSchema($ao_schema);
+	protected function initializeSchema(TableSchemaInterface $schema): void {
+		parent::initializeSchema($schema);
 
 		/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $ls_pageRoleEnum */
 		$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');

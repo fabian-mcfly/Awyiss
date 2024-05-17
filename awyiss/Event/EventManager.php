@@ -31,13 +31,12 @@ class EventManager extends BaseEventManager {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 * @throws \ReflectionException
 	 */
-	public function dispatch(EventInterface|string $ax_event): EventInterface {
-		$lo_event = $ax_event;
-		if (is_string($ax_event)) {
-			$lo_event = new Event($ax_event);
+	public function dispatch(EventInterface|string $event): EventInterface {
+		$lo_event = $event;
+		if (is_string($event)) {
+			$lo_event = new Event($event);
 		}
 
 		if (!$this->listeners($lo_event->getName())) {
@@ -54,16 +53,16 @@ class EventManager extends BaseEventManager {
 	 * - the global realm
 	 * - the current Awyiss realm
 	 *
-	 * @param string $as_name
+	 * @param string $name
 	 * @return void
 	 * @throws \ReflectionException
 	 */
-	protected function lazyLoadListeners(string $as_name): void {
+	protected function lazyLoadListeners(string $name): void {
 		if (!isset(static::$pageRoleEnum)) {
 			static::$pageRoleEnum = App::className('PageRole', 'Model/Enum');
 		}
 
-		$la_parts = explode('.', $as_name);
+		$la_parts = explode('.', $name);
 
 		if (!$la_parts) {
 			return;
@@ -111,7 +110,7 @@ class EventManager extends BaseEventManager {
 			static::$lazyLoadAttempts['global'][] = $ls_scope;
 
 			//Try loading the scope from for the global realm
-			Log::debug(sprintf('Trying to lazyload global event listeners for: `%s` (`%s` fired)', $ls_scope, $as_name));
+			Log::debug(sprintf('Trying to lazyload global event listeners for: `%s` (`%s` fired)', $ls_scope, $name));
 			$lb_loaded = EventListenersProvider::loadListener($ls_scope, 'Global');
 			Log::debug(sprintf('Loaded: %s', $lb_loaded ? 'true' : 'false'));
 		}
@@ -120,7 +119,7 @@ class EventManager extends BaseEventManager {
 			static::$lazyLoadAttempts['current'][] = $ls_scope;
 
 			//Try loading the scope from for the current realm
-			Log::debug(sprintf('Trying to lazyload `%s` event listeners for: `%s` (`%s` fired)', Awyiss::getRealm(), $ls_scope, $as_name));
+			Log::debug(sprintf('Trying to lazyload `%s` event listeners for: `%s` (`%s` fired)', Awyiss::getRealm(), $ls_scope, $name));
 			$lb_loaded = EventListenersProvider::loadListener($ls_scope, Awyiss::getRealm());
 			Log::debug(sprintf('Loaded: %s', $lb_loaded ? 'true' : 'false'));
 

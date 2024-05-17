@@ -107,11 +107,11 @@ class MenuEntriesController extends Controller {
 	 * @return \Cake\Http\Response|void
 	 * @throws \Exception
 	 */
-	public function edit(int $ai_id) {
+	public function edit(int $id) {
 		$this->Authorization->ensure('update');
 
 		/** @var MenuEntry $lo_menuEntry */
-		$lo_menuEntry = $this->MenuEntries->findById($ai_id)->find('translations')->first();
+		$lo_menuEntry = $this->MenuEntries->findById($id)->find('translations')->first();
 		if (!$lo_menuEntry) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -137,17 +137,17 @@ class MenuEntriesController extends Controller {
 	/**
 	 * Delete method
 	 *
-	 * @param int $ai_id
+	 * @param int $id
 	 * @return Response
 	 * @throws \Exception
 	 */
-	public function delete(int $ai_id): Response {
+	public function delete(int $id): Response {
 		$this->Authorization->ensure('delete');
 
 		$this->request->allowMethod(['get', 'delete']);
 
 		/** @var MenuEntry $lo_menuEntry */
-		$lo_menuEntry = $this->MenuEntries->findById($ai_id)->find('translations')->first();
+		$lo_menuEntry = $this->MenuEntries->findById($id)->find('translations')->first();
 		if (!$lo_menuEntry) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -177,75 +177,75 @@ class MenuEntriesController extends Controller {
 	 * Returns a collection of possible parent menu entries for the given menu entry
 	 * to prevent circular references
 	 *
-	 * @param MenuEntry $ao_menuEntry
+	 * @param MenuEntry $menuEntry
 	 * @return CollectionInterface
 	 */
-	protected function getPossibleParentMenuEntries(MenuEntry $ao_menuEntry): CollectionInterface {
+	protected function getPossibleParentMenuEntries(MenuEntry $menuEntry): CollectionInterface {
 		if (!isset($this->threadedMenuEntries)) {
 			$lo_query = $this->MenuEntries->find()->where([
-				'language_shortcode' => $ao_menuEntry->languageShortcode,
-				'menu_id' => $ao_menuEntry->menuId,
+				'language_shortcode' => $menuEntry->languageShortcode,
+				'menu_id' => $menuEntry->menuId,
 			]);
 
 			$this->threadedMenuEntries = $this->MenuEntries->listNested($lo_query);
 		}
 
 
-		return $this->MenuEntries->getPossibleParents($ao_menuEntry, $this->threadedMenuEntries);
+		return $this->MenuEntries->getPossibleParents($menuEntry, $this->threadedMenuEntries);
 	}
 
 
 	/**
-	 * @param MenuEntry $ao_menuEntry
-	 * @param string $as_method
+	 * @param MenuEntry $menuEntry
+	 * @param string $method
 	 * @return void
 	 * @throws RedirectException
 	 */
-	protected function save(MenuEntry $ao_menuEntry, string $as_method = 'add'): void {
+	protected function save(MenuEntry $menuEntry, string $method = 'add'): void {
 		$la_associated = [];
 		if ($this->MenuEntries->hasAttributes()) {
 			$la_associated[] = $this->MenuEntries->getAttributesTableName(true);
-			$ao_menuEntry->setAccess('attributes', true);
+			$menuEntry->setAccess('attributes', true);
 		}
 
-		$this->MenuEntries->patchEntity($ao_menuEntry, $this->request->getData(), [
+		$this->MenuEntries->patchEntity($menuEntry, $this->request->getData(), [
 			'associated' => $la_associated,
 			'validate' => !$this->request->getData('reload_form'),
 		]);
 
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-			if ($this->MenuEntries->save($ao_menuEntry, ['asCopy' => (bool)$this->request->getData('save_as_copy')])) {
+			if ($this->MenuEntries->save($menuEntry, ['asCopy' => (bool)$this->request->getData('save_as_copy')])) {
 				if (!$this->request->is('ajax')) {
-					$this->Flash->success(__($as_method . '_succeeded'));
+					$this->Flash->success(__($method . '_succeeded'));
 				}
 
 				if ($this->request->getData('submit') == 'submit_close') {
 					throw new RedirectException(Router::url([
 						'action' => 'overview',
-						'lang' => $ao_menuEntry->languageShortcode,
-						'menuId' => $ao_menuEntry->menuId,
-						'page' => $this->Paginate->calculateEntityPagePosition($ao_menuEntry),
+						'lang' => $menuEntry->languageShortcode,
+						'menuId' => $menuEntry->menuId,
+						'page' => $this->Paginate->calculateEntityPagePosition($menuEntry),
 					], true), 302);
 				}
 
-				throw new RedirectException(Router::url(['action' => 'edit', 'lang' => $ao_menuEntry->languageShortcode, 'id' => $ao_menuEntry->id], true), 302);
+				throw new RedirectException(Router::url(['action' => 'edit', 'lang' => $menuEntry->languageShortcode, 'id' => $menuEntry->id], true), 302);
 			}
 
-			$this->Flash->error(__($as_method . '_failed'));
-			foreach ($ao_menuEntry->getError('_general') as $ls_error) {
+			$this->Flash->error(__($method . '_failed'));
+			foreach ($menuEntry->getError('_general') as $ls_error) {
 				$this->Flash->error($ls_error);
 			}
 		}
 		else {
-			if ($this->MenuEntries->getSystemOrderRelatedColumns($ao_menuEntry)) {
-				$ao_menuEntry->systemOrder = null;
+			if ($this->MenuEntries->getSystemOrderRelatedColumns($menuEntry)) {
+				$menuEntry->systemOrder = null;
 			}
 			else {
-				$ao_menuEntry->systemOrder = $ao_menuEntry->hasOriginal('systemOrder') ? $ao_menuEntry->getOriginal('systemOrder') : $ao_menuEntry->get('systemOrder');
+				$menuEntry->systemOrder = $menuEntry->hasOriginal('systemOrder') ? $menuEntry->getOriginal('systemOrder') : $menuEntry->get('systemOrder');
 			}
 		}
 
-		$this->Categories->ensurePossibleCategory($ao_menuEntry);
+		$this->Categories->ensurePossibleCategory($menuEntry);
 	}
 
 
@@ -263,20 +263,20 @@ class MenuEntriesController extends Controller {
 
 
 	/**
-	 * @param \Awyiss\Model\Entity\MenuEntry $ao_menuEntry
-	 * @param \Cake\Collection\CollectionInterface $ao_threadedMenuEntries
+	 * @param \Awyiss\Model\Entity\MenuEntry $menuEntry
+	 * @param \Cake\Collection\CollectionInterface $threadedMenuEntries
 	 * @return void
 	 */
-	protected function ensurePossibleParentId(MenuEntry $ao_menuEntry, CollectionInterface $ao_threadedMenuEntries): void {
-		$la_possibleParentIds = $ao_threadedMenuEntries->extract('id')->toList();
+	protected function ensurePossibleParentId(MenuEntry $menuEntry, CollectionInterface $threadedMenuEntries): void {
+		$la_possibleParentIds = $threadedMenuEntries->extract('id')->toList();
 
-		if (!empty($ao_menuEntry->parentId) && !in_array($ao_menuEntry->parentId, $la_possibleParentIds)) {
-			$la_errors = $ao_menuEntry->getError('parentId');
+		if (!empty($menuEntry->parentId) && !in_array($menuEntry->parentId, $la_possibleParentIds)) {
+			$la_errors = $menuEntry->getError('parentId');
 
-			$ao_menuEntry->set('parentId', null, ['setter' => false]);
+			$menuEntry->set('parentId', null, ['setter' => false]);
 
 			if ($la_errors) {
-				$ao_menuEntry->setError('parentId', $la_errors, true);
+				$menuEntry->setError('parentId', $la_errors, true);
 			}
 		}
 	}

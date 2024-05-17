@@ -26,10 +26,10 @@ interface SettingInterface {
 
 
 	/**
-	 * @param string $as_type
+	 * @param string $type
 	 * @return $this
 	 */
-	public function setType(string $as_type): static;
+	public function setType(string $type): static;
 
 
 	/**
@@ -39,8 +39,8 @@ interface SettingInterface {
 
 
 	/**
-	 * @param array $aa_options
+	 * @param array $options
 	 * @return $this
 	 */
-	public function setOptions(array $aa_options): static;
+	public function setOptions(array $options): static;
 }

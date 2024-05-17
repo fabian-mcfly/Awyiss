@@ -23,11 +23,11 @@ interface SettingPermissionOptionInterface {
 	/**
 	 * Sets the `SettingCollection` for this Permission
 	 *
-	 * @param SettingCollection $ao_settings
+	 * @param SettingCollection $settings
 	 * @return $this
 	 * @noinspection PhpUnused
 	 */
-	public function setSettings(SettingCollection $ao_settings): static;
+	public function setSettings(SettingCollection $settings): static;
 	/*
 	protected SettingCollection $settingCollection;
 
@@ -39,8 +39,8 @@ interface SettingPermissionOptionInterface {
 
 		return $this->settingCollection;
 	}
-	public function setSettings (SettingCollection $ao_settings): static {
-		$this->settingCollection = $ao_settings;
+	public function setSettings (SettingCollection $settings): static {
+		$this->settingCollection = $settings;
 
 		return $this;
 	}

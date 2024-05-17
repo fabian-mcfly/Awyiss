@@ -33,29 +33,27 @@ class ProxyIdentifier extends AbstractIdentifier {
 	/**
 	 * Identifies a user or service by the passed credentials using the `remoteResolver` setting.
 	 *
-	 * @param array $aa_credentials Authentication credentials
+	 * @param array $credentials Authentication credentials
 	 * @return ArrayAccess|array|null
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function identify(array $aa_credentials): ArrayAccess|array|null {
+	public function identify(array $credentials): ArrayAccess|array|null {
 		$this->setConfig('resolver', $this->getConfig('remoteResolver'));
 
 
-		return $this->getResolver()->find($aa_credentials);
+		return $this->getResolver()->find($credentials);
 	}
 
 
 	/**
 	 * Identifies a user or service by the passed credentials using the `localResolver` setting.
 	 *
-	 * @param array $aa_credentials Authentication credentials
+	 * @param array $credentials Authentication credentials
 	 * @return ArrayAccess|array|null
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function reidentify(array $aa_credentials): ArrayAccess|array|null {
+	public function reidentify(array $credentials): ArrayAccess|array|null {
 		$this->setConfig('resolver', $this->getConfig('localResolver'));
 
 
-		return $this->getResolver()->find($aa_credentials);
+		return $this->getResolver()->find($credentials);
 	}
 }

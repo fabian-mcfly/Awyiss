@@ -20,7 +20,7 @@ use InvalidArgumentException;
 /**
  * MediaResizedImages Model
  *
- * @method \Awyiss\Model\Entity\MediaResizedImage newDefaultEntity(array $aa_additionalData = [], array $aa_options = [])
+ * @method \Awyiss\Model\Entity\MediaResizedImage newDefaultEntity(array $additionalData = [], array $options = [])
  */
 class MediaResizedImagesTable extends Table {
 	/**
@@ -36,8 +36,8 @@ class MediaResizedImagesTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public function initialize(array $aa_config): void {
-		parent::initialize($aa_config);
+	public function initialize(array $config): void {
+		parent::initialize($config);
 
 		$this->belongsTo('Media', [
 			'joinType' => 'INNER',
@@ -90,69 +90,67 @@ class MediaResizedImagesTable extends Table {
 	/**
 	 * Returns the default validator object.
 	 *
-	 * @param \Cake\Validation\Validator $ao_validator The validator that can be modified to
+	 * @param \Cake\Validation\Validator $validator The validator that can be modified to
 	 * add some rules to it.
 	 * @return \Cake\Validation\Validator
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function validationDefault(Validator $ao_validator): Validator {
-		parent::validationDefault($ao_validator);
+	public function validationDefault(Validator $validator): Validator {
+		parent::validationDefault($validator);
 
 
-		$ao_validator->requirePresence([
+		$validator->requirePresence([
 			'mediaId',
 			'name',
 			'strategy',
 		], 'create');
 
 
-		$ao_validator->add('id', [
+		$validator->add('id', [
 			'isInteger' => ['rule' => 'isInteger'],
 			'maxLength' => ['rule' => ['maxLength', 11]],
 		]);
 
 
-		$ao_validator->notEmptyString('mediaId');
-		$ao_validator->add('mediaId', [
+		$validator->notEmptyString('mediaId');
+		$validator->add('mediaId', [
 			'isInteger' => ['rule' => 'isInteger'],
 			'maxLength' => ['rule' => ['maxLength', 11]],
 		]);
 
 
-		$ao_validator->notEmptyString('name');
-		$ao_validator->add('name', [
+		$validator->notEmptyString('name');
+		$validator->add('name', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'maxLength' => ['rule' => ['maxLength', 100]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
 
 
-		$ao_validator->enum('strategy', ResizeStrategy::class);
+		$validator->enum('strategy', ResizeStrategy::class);
 
 
-		return $ao_validator;
+		return $validator;
 	}
 
 
 	/**
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 *
-	 * @param \Cake\ORM\RulesChecker $ao_rules The rules object to be modified.
-	 * @param \Awyiss\ORM\RulesChecker|\Cake\ORM\RulesChecker $ao_rules The rules object to be modified.
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
+	 * @param \Awyiss\ORM\RulesChecker|\Cake\ORM\RulesChecker $rules The rules object to be modified.
 	 */
-	public function buildRules(RulesChecker $ao_rules): RulesChecker {
-		$ao_rules->add($ao_rules->existsIn(['mediaId'], 'Media'), 'validMediaId', ['errorField' => 'mediaId']);
+	public function buildRules(RulesChecker $rules): RulesChecker {
+		$rules->add($rules->existsIn(['mediaId'], 'Media'), 'validMediaId', ['errorField' => 'mediaId']);
 
-		return $ao_rules;
+		return $rules;
 	}
 
 
 	/**
 	 * @inheritDoc
 	 */
-	protected function initializeSchema(TableSchemaInterface $ao_schema): void {
-		parent::initializeSchema($ao_schema);
+	protected function initializeSchema(TableSchemaInterface $schema): void {
+		parent::initializeSchema($schema);
 
 		$this->getSchema()->setColumnType('strategy', EnumType::from(ResizeStrategy::class));
 		$this->getSchema()->setColumnType('status', EnumType::from(ProcessStatus::class));

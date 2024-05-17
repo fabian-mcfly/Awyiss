@@ -45,8 +45,8 @@ class AuthorizationService implements AuthorizationServiceInterface {
 	/**
 	 * @inheritDoc
 	 */
-	public function __construct(string $as_realm) {
-		$this->realm = $as_realm;
+	public function __construct(string $realm) {
+		$this->realm = $realm;
 	}
 
 
@@ -61,8 +61,8 @@ class AuthorizationService implements AuthorizationServiceInterface {
 	/**
 	 * @inheritDoc
 	 */
-	public function setAuthenticationService(AuthenticationServiceInterface $ao_authenticationService): static {
-		$this->authenticationService = $ao_authenticationService;
+	public function setAuthenticationService(AuthenticationServiceInterface $authenticationService): static {
+		$this->authenticationService = $authenticationService;
 
 
 		return $this;
@@ -81,8 +81,8 @@ class AuthorizationService implements AuthorizationServiceInterface {
 	 * @inheritDoc
 	 * @throws \ReflectionException
 	 */
-	public function getPolicies(?string $as_realm = null): array {
-		$ls_realm = $as_realm ?: $this->realm;
+	public function getPolicies(?string $realm = null): array {
+		$ls_realm = $realm ?: $this->realm;
 
 		$this->findPolicy('*', $ls_realm);
 
@@ -95,9 +95,9 @@ class AuthorizationService implements AuthorizationServiceInterface {
 	 * @inheritDoc
 	 * @throws \ReflectionException
 	 */
-	public function getPolicy(string $as_scope, ?string $as_realm = null): AbstractGenericPolicy|string|null {
-		$ls_realm = $as_realm ?: $this->realm;
-		$ls_scope = static::sanitizeScope($as_scope);
+	public function getPolicy(string $scope, ?string $realm = null): AbstractGenericPolicy|string|null {
+		$ls_realm = $realm ?: $this->realm;
+		$ls_scope = static::sanitizeScope($scope);
 
 		if (!isset($this->policies[ $ls_realm ])) {
 			$this->policies[ $ls_realm ] = [];
@@ -112,33 +112,33 @@ class AuthorizationService implements AuthorizationServiceInterface {
 
 
 	/**
-	 * @param string $as_scope
-	 * @param string $as_realm
+	 * @param string $scope
+	 * @param string $realm
 	 * @return array<string, \Awyiss\Authorization\Policy\AbstractGenericPolicy|class-string<\Awyiss\Authorization\Policy\PolicyInterface>>
 	 * @throws \ReflectionException
 	 */
-	protected function findPolicy(string $as_scope, string $as_realm): void {
+	protected function findPolicy(string $scope, string $realm): void {
 		$ls_scope = null;
-		$ls_className = $as_scope;
+		$ls_className = $scope;
 		if ($ls_className !== '*') {
-			$ls_scope = static::sanitizeScope($as_scope);
+			$ls_scope = static::sanitizeScope($scope);
 			$ls_className = Inflector::camelize($ls_scope);
 		}
 
 		$la_paths = [];
 
 		if (defined('CUSTOM_NAMESPACE')) {
-			$la_paths[ '\\' . CUSTOM_NAMESPACE . '\Authorization\Policy\\' . $as_realm . '\\' ] = implode(DS, [
+			$la_paths[ '\\' . CUSTOM_NAMESPACE . '\Authorization\Policy\\' . $realm . '\\' ] = implode(DS, [
 				ROOT,
 				CUSTOM_DIR,
 				'Authorization',
 				'Policy',
-				$as_realm,
+				$realm,
 				$ls_className . 'Policy.php',
 			]);
 		}
 
-		$la_paths['\Awyiss\Authorization\Policy\\' . $as_realm . '\\'] = implode(DS, [ROOT, APP_DIR, 'Authorization', 'Policy', $as_realm, $ls_className . 'Policy.php']);
+		$la_paths['\Awyiss\Authorization\Policy\\' . $realm . '\\'] = implode(DS, [ROOT, APP_DIR, 'Authorization', 'Policy', $realm, $ls_className . 'Policy.php']);
 
 		foreach ($la_paths as $ls_namespace => $ls_path) {
 			foreach (glob($ls_path) as $ls_filePath) {
@@ -151,7 +151,7 @@ class AuthorizationService implements AuthorizationServiceInterface {
 				/** @var PolicyInterface $ls_policyClass */
 				$ls_policyScope = $ls_policyClass::getScope();
 
-				if (isset($this->policies[ $as_realm ][ $ls_policyScope ])) {
+				if (isset($this->policies[ $realm ][ $ls_policyScope ])) {
 					continue;
 				}
 
@@ -161,7 +161,7 @@ class AuthorizationService implements AuthorizationServiceInterface {
 					throw new RuntimeException(sprintf('The provided Policy class `%s` does not implement the `%s` interface.', $ls_policyClass, PolicyInterface::class));
 				}
 
-				$this->policies[ $as_realm ][ $ls_policyScope ] = $ls_policyClass;
+				$this->policies[ $realm ][ $ls_policyScope ] = $ls_policyClass;
 			}
 		}
 
@@ -172,13 +172,13 @@ class AuthorizationService implements AuthorizationServiceInterface {
 			$ls_policyScope = static::sanitizeScope($le_pageRole->name);
 
 			if (
-				isset($this->policies[ $as_realm ][ $ls_policyScope ]) ||
+				isset($this->policies[ $realm ][ $ls_policyScope ]) ||
 				($ls_className !== '*' && $ls_policyScope !== $ls_scope)
 			) {
 				continue;
 			}
 
-			$this->policies[ $as_realm ][ $ls_policyScope ] = new GenericPagesPolicy($ls_policyScope);
+			$this->policies[ $realm ][ $ls_policyScope ] = new GenericPagesPolicy($ls_policyScope);
 		}
 
 
@@ -186,27 +186,27 @@ class AuthorizationService implements AuthorizationServiceInterface {
 			//Get all datatables from the database because we want them to have a generic policy too
 			/** @var \Awyiss\Model\Table\DatatablesTable $lo_table */
 			$lo_table = FactoryLocator::get('Table')->get('Datatables');
-			$this->datatables = $lo_table->findAllAndCache()->indexBy(function (Datatable $ao_datatable) {
-				return static::sanitizeScope($ao_datatable->identifier);
-			})->filter(function (Datatable $ao_datatable) {
+			$this->datatables = $lo_table->findAllAndCache()->indexBy(function (Datatable $datatable) {
+				return static::sanitizeScope($datatable->identifier);
+			})->filter(function (Datatable $datatable) {
 				/** @var \Awyiss\Model\Table $lo_datatableTable */
-				$lo_datatableTable = FactoryLocator::get('Table')->get(Inflector::camelize($ao_datatable->identifier));
+				$lo_datatableTable = FactoryLocator::get('Table')->get(Inflector::camelize($datatable->identifier));
 
 
 				return $lo_datatableTable::ATTRIBUTABLE;
-			})->map(function (Datatable $ao_datatable) {
-				return new GenericDatatablesPolicy($ao_datatable->identifier);
+			})->map(function (Datatable $datatable) {
+				return new GenericDatatablesPolicy($datatable->identifier);
 			})->toArray();
 		}
 
 
 		if ($ls_scope) {
 			if (isset($this->datatables[ $ls_scope ])) {
-				$this->policies[ $as_realm ][ $ls_scope ] = $this->datatables[ $ls_scope ];
+				$this->policies[ $realm ][ $ls_scope ] = $this->datatables[ $ls_scope ];
 			}
 		}
 		else {
-			$this->policies[ $as_realm ] += $this->datatables;
+			$this->policies[ $realm ] += $this->datatables;
 		}
 	}
 
@@ -215,11 +215,11 @@ class AuthorizationService implements AuthorizationServiceInterface {
 	 * Sanitize the provided scope by removing all non-ascii characters
 	 * Returns an underscored string
 	 *
-	 * @param string $as_scope
+	 * @param string $scope
 	 * @return string
 	 */
-	public static function sanitizeScope(string $as_scope): string {
-		$ls_scope = Text::slug($as_scope, '_');
+	public static function sanitizeScope(string $scope): string {
+		$ls_scope = Text::slug($scope, '_');
 		$ls_scope = Inflector::singularize($ls_scope);
 		$ls_scope = Inflector::pluralize($ls_scope);
 
@@ -232,10 +232,10 @@ class AuthorizationService implements AuthorizationServiceInterface {
 	 * Sanitize the provided identifier by removing all non-ascii characters
 	 * Returns a camelBacked string
 	 *
-	 * @param string $as_identifier
+	 * @param string $identifier
 	 * @return string
 	 */
-	public static function sanitizeIdentifier(string $as_identifier): string {
-		return Inflector::variable(Text::slug($as_identifier, '_'));
+	public static function sanitizeIdentifier(string $identifier): string {
+		return Inflector::variable(Text::slug($identifier, '_'));
 	}
 }

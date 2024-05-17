@@ -36,30 +36,30 @@ abstract class AttributeOptionsCollection extends ArrayIterator implements Attri
 	 * Adds a AttributeOptionsCollection or a set of elements, containing nested AttributeOptionsCollection or
 	 * AttributeOptionsCollection to this collection
 	 *
-	 * @param AttributeOptions|array<int|string, AttributeOptions> $ax_attributeOption
+	 * @param AttributeOptions|array<int|string, AttributeOptions> $attributeOption
 	 * @return $this
 	 */
-	public function add(array|AttributeOptions $ax_attributeOption): static {
+	public function add(array|AttributeOptions $attributeOption): static {
 		/*
-		 * If the provided value for `$ax_attributeOption` is an instance of `AttributeOptionsCollection`,
+		 * If the provided value for `$attributeOption` is an instance of `AttributeOptionsCollection`,
 		 * add it to the current collection
 		 */
-		if ($ax_attributeOption instanceof AttributeOptions) {
-			$ls_identifier = $ax_attributeOption->getIdentifier();
+		if ($attributeOption instanceof AttributeOptions) {
+			$ls_identifier = $attributeOption->getIdentifier();
 
 			//We cannot have the same identifier more than once inside this collection
 			if ($this->offsetExists($ls_identifier)) {
 				throw new RuntimeException(sprintf('The identifier `%s` is already in use.', $ls_identifier));
 			}
 
-			$this->offsetSet($ls_identifier, $ax_attributeOption);
+			$this->offsetSet($ls_identifier, $attributeOption);
 
 
 			return $this;
 		}
 
 		//Traverse the provided array
-		foreach ($ax_attributeOption as $lx_key => $lx_attributeOption) {
+		foreach ($attributeOption as $lx_key => $lx_attributeOption) {
 			//If the current value is an instance of AttributeOptionsCollection, add it as is
 			if ($lx_attributeOption instanceof AttributeOptions) {
 				$this->add($lx_attributeOption);
@@ -86,26 +86,26 @@ abstract class AttributeOptionsCollection extends ArrayIterator implements Attri
 	/**
 	 * @inheritDoc
 	 */
-	public function getAttributeOptions(string $as_identifier, array $aa_currentOptions = [], ?ContextInterface $ao_context = null): array {
-		$ls_identifier = AttributeOptionsProvider::sanitizeIdentifier($as_identifier);
+	public function getAttributeOptions(string $identifier, array $currentOptions = [], ?ContextInterface $context = null): array {
+		$ls_identifier = AttributeOptionsProvider::sanitizeIdentifier($identifier);
 
 		/** @var AttributeOptions $lo_attributeOptions */
 		$lo_attributeOptions = Hash::get($this, $ls_identifier);
 		if (!$lo_attributeOptions) {
-			return $aa_currentOptions;
+			return $currentOptions;
 		}
 
 
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		return $lo_attributeOptions->buildOptions($aa_currentOptions, $ao_context->entity());
+		return $lo_attributeOptions->buildOptions($currentOptions, $context->entity());
 	}
 
 
 	/**
 	 * @inheritDoc
 	 */
-	public function validateValue(string $as_identifier, mixed $ax_value, ?Entity $ao_entity = null): bool|string {
-		$ls_identifier = AttributeOptionsProvider::sanitizeIdentifier($as_identifier);
+	public function validateValue(string $identifier, mixed $value, ?Entity $entity = null): bool|string {
+		$ls_identifier = AttributeOptionsProvider::sanitizeIdentifier($identifier);
 
 		/** @var AttributeOptions $lo_attributeOptions */
 		$lo_attributeOptions = Hash::get($this, $ls_identifier);
@@ -114,7 +114,7 @@ abstract class AttributeOptionsCollection extends ArrayIterator implements Attri
 		}
 
 
-		return $lo_attributeOptions->validateValue($ax_value, $ao_entity);
+		return $lo_attributeOptions->validateValue($value, $entity);
 	}
 
 

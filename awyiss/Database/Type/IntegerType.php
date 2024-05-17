@@ -15,17 +15,16 @@ use Cake\Database\Type\IntegerType as BaseIntegerType;
  */
 class IntegerType extends BaseIntegerType {
 	/**
-	 * @param mixed $ax_value
-	 * @param \Cake\Database\Driver $ao_driver
+	 * @param mixed $value
+	 * @param \Cake\Database\Driver $driver
 	 * @return int|null
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function toDatabase(mixed $ax_value, Driver $ao_driver): ?int {
-		if ($ax_value === null || $ax_value === '') {
+	public function toDatabase(mixed $value, Driver $driver): ?int {
+		if ($value === null || $value === '') {
 			return null;
 		}
 
-		$lx_value = $ax_value;
+		$lx_value = $value;
 
 		if ($lx_value instanceof BackedEnum) {
 			$lx_value = $lx_value->value;

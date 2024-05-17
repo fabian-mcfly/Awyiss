@@ -107,11 +107,11 @@ class PageTemplatesController extends Controller {
 	 * @return \Cake\Http\Response|void
 	 * @throws \Exception
 	 */
-	public function edit(int $ai_id) {
+	public function edit(int $id) {
 		$this->Authorization->ensure('update');
 
 		/** @var PageTemplate $lo_pageTemplate */
-		$lo_pageTemplate = $this->PageTemplates->findById($ai_id)->find('translations')->contain(['ContentAreas'])->first();
+		$lo_pageTemplate = $this->PageTemplates->findById($id)->find('translations')->contain(['ContentAreas'])->first();
 		if (!$lo_pageTemplate) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -144,17 +144,17 @@ class PageTemplatesController extends Controller {
 	/**
 	 * Delete method
 	 *
-	 * @param int $ai_id
+	 * @param int $id
 	 * @return Response
 	 * @throws \Exception
 	 */
-	public function delete(int $ai_id): Response {
+	public function delete(int $id): Response {
 		$this->Authorization->ensure('delete');
 
 		$this->request->allowMethod(['get', 'delete']);
 
 		/** @var PageTemplate $lo_pageTemplate */
-		$lo_pageTemplate = $this->PageTemplates->findById($ai_id)->find('translations')->first();
+		$lo_pageTemplate = $this->PageTemplates->findById($id)->find('translations')->first();
 		if (!$lo_pageTemplate) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -181,15 +181,15 @@ class PageTemplatesController extends Controller {
 
 
 	/**
-	 * @param PageTemplate $ao_pageTemplate
-	 * @param string $as_method
+	 * @param PageTemplate $pageTemplate
+	 * @param string $method
 	 * @return void
 	 */
-	protected function save(PageTemplate $ao_pageTemplate, string $as_method = 'add'): void {
+	protected function save(PageTemplate $pageTemplate, string $method = 'add'): void {
 		$la_associated = [];
 		if ($this->PageTemplates->hasAttributes()) {
 			$la_associated[] = $this->PageTemplates->getAttributesTableName(true);
-			$ao_pageTemplate->setAccess('attributes', true);
+			$pageTemplate->setAccess('attributes', true);
 		}
 
 		$la_requestData = $this->request->getData();
@@ -200,13 +200,14 @@ class PageTemplatesController extends Controller {
 				$la_newContentAreas = $this->createContentArea($la_requestData['content_areas']['new']);
 			}
 
-			$la_requestData['content_areas'] = array_values(array_filter($la_requestData['content_areas'], function (array $aa_element) {
-				return !empty($aa_element['id']);
+			$la_requestData['content_areas'] = array_values(array_filter($la_requestData['content_areas'], function (array $element) {
+				return !empty($element['id']);
 			}));
 
 			$li_systemOrder = 1;
-			array_walk($la_requestData['content_areas'], function (array &$aa_contentArea) use (&$li_systemOrder): void {
-				$aa_contentArea['_joinData']['system_order'] = $li_systemOrder;
+			array_walk($la_requestData['content_areas'], function (array &$contentArea) use (&$li_systemOrder): void {
+				/** @noinspection PhpVariableNamingConventionInspection */
+				$contentArea['_joinData']['system_order'] = $li_systemOrder;
 				$li_systemOrder++;
 			});
 
@@ -220,7 +221,7 @@ class PageTemplatesController extends Controller {
 			}
 		}
 
-		$this->PageTemplates->patchEntity($ao_pageTemplate, $la_requestData, [
+		$this->PageTemplates->patchEntity($pageTemplate, $la_requestData, [
 			'associated' => array_merge($la_associated, [
 				'ContentAreas' => [
 					'fields' => ['_joinData'],
@@ -233,44 +234,44 @@ class PageTemplatesController extends Controller {
 		]);
 
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-			if ($this->PageTemplates->save($ao_pageTemplate, ['asCopy' => (bool)$this->request->getData('save_as_copy')])) {
+			if ($this->PageTemplates->save($pageTemplate, ['asCopy' => (bool)$this->request->getData('save_as_copy')])) {
 				if (!$this->request->is('ajax')) {
-					$this->Flash->success(__($as_method . '_succeeded'));
+					$this->Flash->success(__($method . '_succeeded'));
 				}
 
 				if ($this->request->getData('submit') == 'submit_close') {
 					throw new RedirectException(Router::url([
 						'action' => 'overview',
-						'pageRoleId' => $ao_pageTemplate->pageRoleId,
-						'page' => $this->Paginate->calculateEntityPagePosition($ao_pageTemplate),
+						'pageRoleId' => $pageTemplate->pageRoleId,
+						'page' => $this->Paginate->calculateEntityPagePosition($pageTemplate),
 					], true), 302);
 				}
 
-				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $ao_pageTemplate->id], true), 302);
+				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $pageTemplate->id], true), 302);
 			}
 
-			$this->Flash->error(__($as_method . '_failed'));
-			foreach ($ao_pageTemplate->getError('_general') as $ls_error) {
+			$this->Flash->error(__($method . '_failed'));
+			foreach ($pageTemplate->getError('_general') as $ls_error) {
 				$this->Flash->error($ls_error);
 			}
 		}
 		else {
-			$ao_pageTemplate->systemOrder = null;
+			$pageTemplate->systemOrder = null;
 		}
 
-		$this->Categories->ensurePossibleCategory($ao_pageTemplate);
+		$this->Categories->ensurePossibleCategory($pageTemplate);
 	}
 
 
 	/**
-	 * @param array $aa_data
+	 * @param array $data
 	 * @return array<\Awyiss\Model\Entity>
 	 */
-	protected function createContentArea(array $aa_data): array {
+	protected function createContentArea(array $data): array {
 		$la_newContentAreas = [];
 
-		foreach ($aa_data['title'] as $li_key => $ls_title) {
-			$ls_identifier = $aa_data['identifier'][ $li_key ] ?? null;
+		foreach ($data['title'] as $li_key => $ls_title) {
+			$ls_identifier = $data['identifier'][ $li_key ] ?? null;
 
 			if (!$ls_title && !$ls_identifier) {
 				continue;

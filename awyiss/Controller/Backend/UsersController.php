@@ -41,11 +41,10 @@ class UsersController extends Controller {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	#[NoDirectAccess]
-	public function beforeFilter(EventInterface $ao_event): void {
-		parent::beforeFilter($ao_event);
+	public function beforeFilter(EventInterface $event): void {
+		parent::beforeFilter($event);
 
 		$this->Authentication->allowUnauthenticated(['login', 'logout']);
 
@@ -130,11 +129,11 @@ class UsersController extends Controller {
 	 * @return \Cake\Http\Response|void
 	 * @throws \Exception
 	 */
-	public function edit(int $ai_id) {
+	public function edit(int $id) {
 		$this->Authorization->ensure('update');
 
 		/** @var User $lo_user */
-		$lo_user = $this->Users->findById($ai_id)->find('translations')->contain(['Usergroups'])->first();
+		$lo_user = $this->Users->findById($id)->find('translations')->contain(['Usergroups'])->first();
 		if (!$lo_user) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -164,16 +163,16 @@ class UsersController extends Controller {
 	/**
 	 * Delete method
 	 *
-	 * @param int $ai_id
+	 * @param int $id
 	 * @return Response
 	 * @throws \Exception
 	 */
-	public function delete(int $ai_id): Response {
+	public function delete(int $id): Response {
 		$this->Authorization->ensure('delete');
 
 		$this->request->allowMethod(['get', 'delete']);
 
-		$lo_user = $this->Users->findById($ai_id)->find('translations')->first();
+		$lo_user = $this->Users->findById($id)->find('translations')->first();
 		if (!$lo_user) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -297,15 +296,15 @@ class UsersController extends Controller {
 
 
 	/**
-	 * @param User $ao_user
-	 * @param string $as_method
+	 * @param User $user
+	 * @param string $method
 	 * @return void
 	 */
-	protected function save(User $ao_user, string $as_method = 'add'): void {
+	protected function save(User $user, string $method = 'add'): void {
 		$la_associated = [];
 		if ($this->Users->hasAttributes()) {
 			$la_associated[] = $this->Users->getAttributesTableName(true);
-			$ao_user->setAccess('attributes', true);
+			$user->setAccess('attributes', true);
 		}
 
 		$la_data = $this->request->getData();
@@ -316,22 +315,22 @@ class UsersController extends Controller {
 
 		$la_associated['Usergroups'] = ['onlyIds' => true];
 
-		$this->Users->patchEntity($ao_user, $la_data, [
+		$this->Users->patchEntity($user, $la_data, [
 			'associated' => $la_associated,
 			'validate' => !$this->request->getData('reload_form'),
 		]);
 
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-			if ($this->Users->save($ao_user, ['asCopy' => (bool)$this->request->getData('save_as_copy')])) {
+			if ($this->Users->save($user, ['asCopy' => (bool)$this->request->getData('save_as_copy')])) {
 				if (!$this->request->is('ajax')) {
-					$this->Flash->success(__($as_method . '_succeeded'));
+					$this->Flash->success(__($method . '_succeeded'));
 				}
 
 				if ($this->request->getData('submit') == 'submit_close') {
 					$la_usergroups = [];
 
-					if ($ao_user->usergroups) {
-						$la_usergroups = Hash::combine($ao_user->usergroups, '{n}.id', '{n}.label');
+					if ($user->usergroups) {
+						$la_usergroups = Hash::combine($user->usergroups, '{n}.id', '{n}.label');
 
 						if ($this->Categories->getConfig('allowAggregation')) {
 							$la_usergroups += [$this->Categories->getConfig('aggregationKey') => 'dummy'];
@@ -351,15 +350,15 @@ class UsersController extends Controller {
 
 					throw new RedirectException(Router::url([
 						'action' => 'overview',
-						'page' => $this->Paginate->calculateEntityPagePosition($ao_user),
+						'page' => $this->Paginate->calculateEntityPagePosition($user),
 					], true), 302);
 				}
 
-				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $ao_user->id], true), 302);
+				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $user->id], true), 302);
 			}
 
-			$this->Flash->error(__($as_method . '_failed'));
-			foreach ($ao_user->getError('_general') as $ls_error) {
+			$this->Flash->error(__($method . '_failed'));
+			foreach ($user->getError('_general') as $ls_error) {
 				$this->Flash->error($ls_error);
 			}
 		}

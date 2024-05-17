@@ -85,13 +85,13 @@ class ConfigurationController extends Controller {
 
 		$lo_query = $this->getOverviewQuery();
 
-		$la_configuration = $lo_query->all()->groupBy('realm')->map(function ($aa_data) use ($lo_configOptions) {
-			return Hash::expand(collection($aa_data)->groupBy(function (Configuration $ao_entity) use ($lo_configOptions) {
-				$la_identifier = array_map(function (string $as_identifier) {
-					return ConfigOptionsProvider::sanitizeIdentifier($as_identifier);
-				}, explode('.', $ao_entity->identifier));
+		$la_configuration = $lo_query->all()->groupBy('realm')->map(function ($data) use ($lo_configOptions) {
+			return Hash::expand(collection($data)->groupBy(function (Configuration $entity) use ($lo_configOptions) {
+				$la_identifier = array_map(function (string $identifier) {
+					return ConfigOptionsProvider::sanitizeIdentifier($identifier);
+				}, explode('.', $entity->identifier));
 
-				$ao_entity->configOption = $lo_configOptions->getConfigOption($ao_entity->realm, implode('.', $la_identifier));
+				$entity->configOption = $lo_configOptions->getConfigOption($entity->realm, implode('.', $la_identifier));
 
 				return implode('.', $la_identifier);
 			})->toArray());
@@ -161,13 +161,13 @@ class ConfigurationController extends Controller {
 	 * @return \Cake\Http\Response|void
 	 * @throws \Exception
 	 */
-	public function edit(int $ai_id) {
+	public function edit(int $id) {
 		$this->Authorization->setAdditionalData([
 			'scope' => '',
 		])->ensure('update');
 
 		/** @var Configuration $lo_configuration */
-		$lo_configuration = $this->Configuration->findById($ai_id)->find('translations')->first();
+		$lo_configuration = $this->Configuration->findById($id)->find('translations')->first();
 		if (!$lo_configuration) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -203,11 +203,11 @@ class ConfigurationController extends Controller {
 	/**
 	 * Delete method
 	 *
-	 * @param int $ai_id
+	 * @param int $id
 	 * @return Response
 	 * @throws \Exception
 	 */
-	public function delete(int $ai_id): Response {
+	public function delete(int $id): Response {
 		$this->Authorization->setAdditionalData([
 			'scope' => '',
 		])->ensure('delete');
@@ -215,7 +215,7 @@ class ConfigurationController extends Controller {
 		$this->request->allowMethod(['get', 'delete']);
 
 		/** @var Configuration $lo_configuration */
-		$lo_configuration = $this->Configuration->findById($ai_id)->find('translations')->first();
+		$lo_configuration = $this->Configuration->findById($id)->find('translations')->first();
 		if (!$lo_configuration) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -241,16 +241,16 @@ class ConfigurationController extends Controller {
 
 
 	/**
-	 * @param Configuration $ao_configuration
-	 * @param string $as_method
+	 * @param Configuration $configuration
+	 * @param string $method
 	 * @return void
 	 * @throws \Exception
 	 */
-	protected function save(Configuration $ao_configuration, string $as_method = 'add'): void {
+	protected function save(Configuration $configuration, string $method = 'add'): void {
 		$la_associated = [];
 		if ($this->Configuration->hasAttributes()) {
 			$la_associated[] = $this->Configuration->getAttributesTableName(true);
-			$ao_configuration->setAccess('attributes', true);
+			$configuration->setAccess('attributes', true);
 		}
 
 		$la_data = $this->request->getData();
@@ -259,39 +259,39 @@ class ConfigurationController extends Controller {
 			$la_data['value'] = json_encode(array_values($la_data['value']));
 		}
 
-		$this->Configuration->patchEntity($ao_configuration, $la_data, [
+		$this->Configuration->patchEntity($configuration, $la_data, [
 			'associated' => $la_associated,
 			'validate' => !$this->request->getData('reload_form'),
 		]);
 
-		if (!$this->Authorization->withAdditionalData(['scope' => $ao_configuration->scope])->isAccessible('read')) {
+		if (!$this->Authorization->withAdditionalData(['scope' => $configuration->scope])->isAccessible('read')) {
 			$this->Flash->error(__('scope_not_accessible'));
 
 			throw new RedirectException(Router::url(['action' => 'overview'], true), 302);
 		}
 
 		$lo_session = $this->request->getSession();
-		$lo_session->write($this->selectedRealmSessionIdentifier, $ao_configuration->realm);
+		$lo_session->write($this->selectedRealmSessionIdentifier, $configuration->realm);
 
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-			if ($this->Configuration->save($ao_configuration, ['asCopy' => (bool)$this->request->getData('save_as_copy')])) {
+			if ($this->Configuration->save($configuration, ['asCopy' => (bool)$this->request->getData('save_as_copy')])) {
 				if (!$this->request->is('ajax')) {
-					$this->Flash->success(__($as_method . '_succeeded'));
+					$this->Flash->success(__($method . '_succeeded'));
 				}
 
 				if ($this->request->getData('submit') == 'submit_close') {
-					throw new RedirectException(Router::url(['action' => 'overview', 'scope' => $ao_configuration->scope], true), 302);
+					throw new RedirectException(Router::url(['action' => 'overview', 'scope' => $configuration->scope], true), 302);
 				}
 
-				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $ao_configuration->id], true), 302);
+				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $configuration->id], true), 302);
 			}
 
-			$this->Flash->error(__($as_method . '_failed'));
-			foreach ($ao_configuration->getError('_general') as $ls_error) {
+			$this->Flash->error(__($method . '_failed'));
+			foreach ($configuration->getError('_general') as $ls_error) {
 				$this->Flash->error($ls_error);
 			}
 		}
 
-		$this->Categories->ensurePossibleCategory($ao_configuration);
+		$this->Categories->ensurePossibleCategory($configuration);
 	}
 }

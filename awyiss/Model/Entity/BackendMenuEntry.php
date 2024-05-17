@@ -62,36 +62,36 @@ class BackendMenuEntry extends Entity {
 
 
 	/**
-	 * @param string|null $as_value
+	 * @param string|null $value
 	 * @return string
 	 */
-	protected function _getTitle(?string $as_value = null): string {
-		if (empty($as_value)) {
+	protected function _getTitle(?string $value = null): string {
+		if (empty($value)) {
 			return '';
 		}
 
-		if (str_contains($as_value, '::')) {
-			$la_parts = explode('::', $as_value);
+		if (str_contains($value, '::')) {
+			$la_parts = explode('::', $value);
 
 			return __d($la_parts[0], $la_parts[1]);
 		}
 
-		return $as_value;
+		return $value;
 	}
 
 
 	/**
-	 * @param mixed $ax_value
+	 * @param mixed $value
 	 * @return mixed
 	 * @noinspection PhpUnused
 	 */
-	public function _setAccess(mixed $ax_value): mixed {
-		if (empty($ax_value)) {
+	public function _setAccess(mixed $value): mixed {
+		if (empty($value)) {
 			return null;
 		}
 
 
-		return is_string($ax_value) ? json_decode($ax_value) : $ax_value;
+		return is_string($value) ? json_decode($value) : $value;
 	}
 
 
@@ -100,58 +100,58 @@ class BackendMenuEntry extends Entity {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function getChildren(array $aa_options = []): ?CollectionInterface {
+	public function getChildren(array $options = []): ?CollectionInterface {
 		/** @var \Awyiss\Model\Table\BackendMenuEntriesTable $lo_table */
 		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
 
 
-		return $lo_table->getChildren($this, $aa_options);
+		return $lo_table->getChildren($this, $options);
 	}
 
 
 	/**
 	 * Get all children, and their children, and their children, and their children of the current entity. And its children.
 	 *
-	 * @param array $aa_options
-	 * @param int $ai_currentLevel
+	 * @param array $options
+	 * @param int $currentLevel
 	 * @return \Cake\Collection\CollectionInterface|null
 	 */
-	public function getNestedChildren(array $aa_options = [], int $ai_currentLevel = 0): ?CollectionInterface {
+	public function getNestedChildren(array $options = [], int $currentLevel = 0): ?CollectionInterface {
 		/** @var \Awyiss\Model\Table\BackendMenuEntriesTable $lo_table */
 		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
 
 
-		return $lo_table->getNestedChildren($this, $aa_options, $ai_currentLevel);
+		return $lo_table->getNestedChildren($this, $options, $currentLevel);
 	}
 
 
 	/**
 	 * Get the parent page of the current entity
 	 *
-	 * @param array $aa_options
+	 * @param array $options
 	 * @return \Awyiss\Model\Entity\BackendMenuEntry|null
 	 */
-	public function getParent(array $aa_options = []): ?self {
+	public function getParent(array $options = []): ?self {
 		/** @var \Awyiss\Model\Table\BackendMenuEntriesTable $lo_table */
 		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
 
 
-		return $lo_table->getParent($this, $aa_options);
+		return $lo_table->getParent($this, $options);
 	}
 
 
 	/**
 	 * Get all the parent page and all of its parents pages of the current entity
 	 *
-	 * @param array $aa_options
-	 * @param int $ai_currentLevel
+	 * @param array $options
+	 * @param int $currentLevel
 	 * @return \Cake\Collection\CollectionInterface|null
 	 */
-	public function getParents(array $aa_options = [], int $ai_currentLevel = 0): ?CollectionInterface {
+	public function getParents(array $options = [], int $currentLevel = 0): ?CollectionInterface {
 		/** @var \Awyiss\Model\Table\BackendMenuEntriesTable $lo_table */
 		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
 
 
-		return $lo_table->getParents($this, $aa_options, $ai_currentLevel);
+		return $lo_table->getParents($this, $options, $currentLevel);
 	}
 }

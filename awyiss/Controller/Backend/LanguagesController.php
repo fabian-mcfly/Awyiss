@@ -86,11 +86,11 @@ class LanguagesController extends Controller {
 	 * @return \Cake\Http\Response|void
 	 * @throws \Exception
 	 */
-	public function edit(int $ai_id) {
+	public function edit(int $id) {
 		$this->Authorization->ensure('update');
 
 		/** @var Language $lo_language */
-		$lo_language = $this->Languages->findById($ai_id)->find('translations')->first();
+		$lo_language = $this->Languages->findById($id)->find('translations')->first();
 		if (!$lo_language) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -112,17 +112,17 @@ class LanguagesController extends Controller {
 	/**
 	 * Delete method
 	 *
-	 * @param int $ai_id
+	 * @param int $id
 	 * @return Response
 	 * @throws \Exception
 	 */
-	public function delete(int $ai_id): Response {
+	public function delete(int $id): Response {
 		$this->Authorization->ensure('delete');
 
 		$this->request->allowMethod(['get', 'delete']);
 
 		/** @var Language $lo_language */
-		$lo_language = $this->Languages->findById($ai_id)->find('translations')->first();
+		$lo_language = $this->Languages->findById($id)->find('translations')->first();
 		if (!$lo_language) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -149,49 +149,49 @@ class LanguagesController extends Controller {
 
 
 	/**
-	 * @param Language $ao_language
-	 * @param string $as_method
+	 * @param Language $language
+	 * @param string $method
 	 * @return void
 	 */
-	protected function save(Language $ao_language, string $as_method = 'add'): void {
+	protected function save(Language $language, string $method = 'add'): void {
 		$la_associated = [];
 		if ($this->Languages->hasAttributes()) {
 			$la_associated[] = $this->Languages->getAttributesTableName(true);
-			$ao_language->setAccess('attributes', true);
+			$language->setAccess('attributes', true);
 		}
 
-		$this->Languages->patchEntity($ao_language, $this->request->getData(), [
+		$this->Languages->patchEntity($language, $this->request->getData(), [
 			'associated' => $la_associated,
 			'validate' => !$this->request->getData('reload_form'),
 		]);
 
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-			if ($this->Languages->save($ao_language, ['asCopy' => (bool)$this->request->getData('save_as_copy')])) {
+			if ($this->Languages->save($language, ['asCopy' => (bool)$this->request->getData('save_as_copy')])) {
 				if (!$this->request->is('ajax')) {
-					$this->Flash->success(__($as_method . '_succeeded'));
+					$this->Flash->success(__($method . '_succeeded'));
 				}
 
 				if ($this->request->getData('submit') == 'submit_close') {
 					throw new RedirectException(Router::url([
 						'action' => 'overview',
-						'page' => $this->Paginate->calculateEntityPagePosition($ao_language),
+						'page' => $this->Paginate->calculateEntityPagePosition($language),
 					], true), 302);
 				}
 
-				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $ao_language->id], true), 302);
+				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $language->id], true), 302);
 			}
 
-			$this->Flash->error(__($as_method . '_failed'));
-			foreach ($ao_language->getError('_general') as $ls_error) {
+			$this->Flash->error(__($method . '_failed'));
+			foreach ($language->getError('_general') as $ls_error) {
 				$this->Flash->error($ls_error);
 			}
 		}
 		else {
-			if ($this->Languages->getSystemOrderRelatedColumns($ao_language)) {
-				$ao_language->systemOrder = null;
+			if ($this->Languages->getSystemOrderRelatedColumns($language)) {
+				$language->systemOrder = null;
 			}
 			else {
-				$ao_language->systemOrder = $ao_language->getOriginal('systemOrder');
+				$language->systemOrder = $language->getOriginal('systemOrder');
 			}
 		}
 	}

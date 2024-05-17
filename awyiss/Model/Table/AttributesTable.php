@@ -22,7 +22,7 @@ use ReflectionClass;
 /**
  * Attributes Model
  *
- * @method \Awyiss\Model\Entity\Attribute newDefaultEntity(array $aa_additionalData = [], array $aa_options = [])
+ * @method \Awyiss\Model\Entity\Attribute newDefaultEntity(array $additionalData = [], array $options = [])
  * @noinspection PhpUnnecessaryFullyQualifiedNameInspection
  */
 class AttributesTable extends Table {
@@ -114,8 +114,8 @@ class AttributesTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public function initialize(array $aa_config): void {
-		parent::initialize($aa_config);
+	public function initialize(array $config): void {
+		parent::initialize($config);
 
 		$this->columnSpans = BootstrapColumnSystem::getColumnWidths();
 	}
@@ -131,8 +131,8 @@ class AttributesTable extends Table {
 
 		/** @var \Awyiss\Model\Table\PageRolesTable $lo_pageRolesTable */
 		$lo_pageRolesTable = FactoryLocator::get('Table')->get('PageRoles');
-		$la_pageRoles = $lo_pageRolesTable->findAllAndCache()->indexBy(function (PageRole $ao_pageRole) {
-			return Inflector::pluralize($ao_pageRole->identifier);
+		$la_pageRoles = $lo_pageRolesTable->findAllAndCache()->indexBy(function (PageRole $pageRole) {
+			return Inflector::pluralize($pageRole->identifier);
 		})->toArray();
 
 		$la_attributeScopes = [];
@@ -165,52 +165,52 @@ class AttributesTable extends Table {
 	/**
 	 * Returns the default validator object.
 	 *
-	 * @param Validator $ao_validator The validator that can be modified to
+	 * @param Validator $validator The validator that can be modified to
 	 * add some rules to it.
 	 * @return Validator
 	 */
-	public function validationDefault(Validator $ao_validator): Validator {
-		parent::validationDefault($ao_validator);
+	public function validationDefault(Validator $validator): Validator {
+		parent::validationDefault($validator);
 
 
-		$ao_validator->requirePresence([
+		$validator->requirePresence([
 			'scope',
 			'title',
 			'identifier',
 		], 'create');
 
 
-		$ao_validator->add('id', [
+		$validator->add('id', [
 			'isInteger' => ['rule' => 'isInteger'],
 			'maxLength' => ['rule' => ['maxLength', 11]],
 		]);
 
 
-		$ao_validator->notEmptyString('scope');
-		$ao_validator->add('scope', [
+		$validator->notEmptyString('scope');
+		$validator->add('scope', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'maxLength' => ['rule' => ['maxLength', 50]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
 
 
-		$ao_validator->notEmptyString('title');
-		$ao_validator->add('title', [
+		$validator->notEmptyString('title');
+		$validator->add('title', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'maxLength' => ['rule' => ['maxLength', 100]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
 
 
-		$ao_validator->notEmptyString('identifier');
-		$ao_validator->add('identifier', [
+		$validator->notEmptyString('identifier');
+		$validator->add('identifier', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'maxLength' => ['rule' => ['maxLength', 50]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
 
 
-		$ao_validator->add('type', [
+		$validator->add('type', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'maxLength' => ['rule' => ['maxLength', 20]],
 			'notBlank' => ['rule' => 'notBlank'],
@@ -218,43 +218,43 @@ class AttributesTable extends Table {
 		]);
 
 
-		$ao_validator->add('hasIndex', [
+		$validator->add('hasIndex', [
 			'boolean' => ['rule' => 'boolean'],
 		]);
 
 
-		$ao_validator->notEmptyString('fieldset');
-		$ao_validator->add('fieldset', [
+		$validator->notEmptyString('fieldset');
+		$validator->add('fieldset', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'maxLength' => ['rule' => ['maxLength', 20]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
 
 
-		$ao_validator->add('inputType', [
+		$validator->add('inputType', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'maxLength' => ['rule' => ['maxLength', 30]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
 
 
-		$ao_validator->add('defaultValue', [
+		$validator->add('defaultValue', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'maxLength' => ['rule' => ['maxLength', 100]],
 		]);
 
 
-		$ao_validator->add('required', [
+		$validator->add('required', [
 			'boolean' => ['rule' => 'boolean'],
 		]);
 
 
-		$ao_validator->add('translatable', [
+		$validator->add('translatable', [
 			'boolean' => ['rule' => 'boolean'],
 		]);
 
 
-		$ao_validator->add('columSpan', [
+		$validator->add('columSpan', [
 			'inList' => [
 				'rule' => [
 					'inList',
@@ -264,39 +264,38 @@ class AttributesTable extends Table {
 		]);
 
 
-		$ao_validator->add('systemOrder', [
+		$validator->add('systemOrder', [
 			'isInteger' => ['rule' => 'isInteger'],
 		]);
 
 
-		$ao_validator->add('active', [
+		$validator->add('active', [
 			'boolean' => ['rule' => 'boolean'],
 		]);
 
 
-		$ao_validator->add('deleted', [
+		$validator->add('deleted', [
 			'boolean' => ['rule' => 'boolean'],
 		]);
 
 
-		return $ao_validator;
+		return $validator;
 	}
 
 
 	/**
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 *
-	 * @param RulesChecker|BaseRulesChecker $ao_rules The rules object to be modified.
+	 * @param RulesChecker|BaseRulesChecker $rules The rules object to be modified.
 	 * @return RulesChecker
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
-		$ao_rules->add(function (Attribute $ao_entity) {
-			if (!$ao_entity->getError('scope')) {
-				$lx_table = $this->getAvailableScopes()[ $ao_entity->scope ];
+	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
+		$rules->add(function (Attribute $entity) {
+			if (!$entity->getError('scope')) {
+				$lx_table = $this->getAvailableScopes()[ $entity->scope ];
 				/** @var Table $lo_table */
 				$lo_table = is_string($lx_table) ? FactoryLocator::get('Table')->get($lx_table) : $lx_table;
-				if ($lo_table->getSchema()->getColumn($ao_entity->identifier)) {
+				if ($lo_table->getSchema()->getColumn($entity->identifier)) {
 					return false;
 				}
 			}
@@ -329,15 +328,15 @@ class AttributesTable extends Table {
 			}
 
 
-			return !in_array($ao_entity->identifier, $la_reservedWords);
+			return !in_array($entity->identifier, $la_reservedWords);
 		}, 'validIdentifier', [
 			'errorField' => 'identifier',
 			'message' => __df($this->getI18nDomain(), 'validation', 'error_reserved_identifier'),
 		]);
 
 
-		$ao_rules->add(
-			$ao_rules->isUnique(['identifier', 'scope']),
+		$rules->add(
+			$rules->isUnique(['identifier', 'scope']),
 			'identifierUniqueForScope',
 			[
 				'errorField' => 'identifier',
@@ -346,40 +345,40 @@ class AttributesTable extends Table {
 		);
 
 
-		$ao_rules->add(function (Attribute $ao_entity/*, array $aa_options*/): bool {
+		$rules->add(function (Attribute $entity/*, array $options*/): bool {
 			$la_availableFieldsets = $this->getAvailableFieldsets();
 
 
 			//Check if the provided fieldset is valid. For scope `contents`, always return true
-			return in_array($ao_entity->fieldset, $la_availableFieldsets) || $ao_entity->scope === 'contents';
+			return in_array($entity->fieldset, $la_availableFieldsets) || $entity->scope === 'contents';
 		}, 'validFieldset', [
 			'errorField' => 'fieldset',
 			'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_fieldset'),
 		]);
 
 
-		$ao_rules->add(function (Attribute $ao_entity/*, array $aa_options*/): bool {
+		$rules->add(function (Attribute $entity/*, array $options*/): bool {
 			$la_availableInputTypes = $this->getAvailableInputTypes();
 
 
 			//Check if the provided scope can have attributes
-			return in_array($ao_entity->inputType, $la_availableInputTypes);
+			return in_array($entity->inputType, $la_availableInputTypes);
 		}, 'validInputType', [
 			'errorField' => 'inputType',
 			'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_input_type'),
 		]);
 
 
-		return $ao_rules;
+		return $rules;
 	}
 
 
 	/**
-	 * @param string|null $as_scope A scope to specify the available fieldsets.
+	 * @param string|null $scope A scope to specify the available fieldsets.
 	 * @return array
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function getAvailableFieldsets(?string $as_scope = null): array {
+	public function getAvailableFieldsets(?string $scope = null): array {
 		if (!isset($this->availableFieldsets)) {
 			$this->availableFieldsets = $this->defaultAvailableFieldsets;
 		}

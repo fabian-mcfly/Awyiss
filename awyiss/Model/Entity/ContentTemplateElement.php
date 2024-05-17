@@ -56,17 +56,17 @@ class ContentTemplateElement extends Entity {
 	/**
 	 * In the database, the identifier exists as an underscored string
 	 *
-	 * @param string|null $as_identifier
+	 * @param string|null $identifier
 	 * @return string|null
 	 * @noinspection PhpUnused
 	 * @see \Awyiss\Model\Entity\ContentTemplateElement::$identifier
 	 */
-	public function _setIdentifier(?string $as_identifier): ?string {
-		if ($as_identifier === null) {
+	public function _setIdentifier(?string $identifier): ?string {
+		if ($identifier === null) {
 			return null;
 		}
 
-		return Inflector::underscore($as_identifier);
+		return Inflector::underscore($identifier);
 	}
 
 

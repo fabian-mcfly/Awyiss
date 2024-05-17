@@ -25,15 +25,14 @@ class TranslateBehavior extends BaseTranslateBehavior {
 	/**
 	 * Initialize hook
 	 *
-	 * @param array<string, mixed> $aa_config The config for this behavior.
+	 * @param array<string, mixed> $config The config for this behavior.
 	 * @return void
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function initialize(array $aa_config): void {
-		parent::initialize($aa_config);
+	public function initialize(array $config): void {
+		parent::initialize($config);
 
-		if (isset($aa_config['locale'])) {
-			$this->getStrategy()->setLocale($aa_config['locale']);
+		if (isset($config['locale'])) {
+			$this->getStrategy()->setLocale($config['locale']);
 		}
 
 		foreach (LocaleMiddleware::getLanguages() as $la_languages) {
@@ -54,35 +53,34 @@ class TranslateBehavior extends BaseTranslateBehavior {
 
 
 	/**
-	 * @param EventInterface $ao_event
-	 * @param ArrayObject $ao_data
-	 * @param ArrayObject $ao_options
+	 * @param EventInterface $event
+	 * @param ArrayObject $data
+	 * @param ArrayObject $options
 	 * @return void
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function beforeMarshal(EventInterface $ao_event, ArrayObject $ao_data, ArrayObject $ao_options): void {
+	public function beforeMarshal(EventInterface $event, ArrayObject $data, ArrayObject $options): void {
 		$ls_firstLanguageShortcode = array_key_first($this->languages);
 
-		if (empty($ao_data['_translations'])) {
+		if (empty($data['_translations'])) {
 			return;
 		}
 
 		foreach ($this->getConfig('fields') as $ls_field) {
-			$ls_defaultTranslation = $ao_data['_translations'][ $ls_firstLanguageShortcode ][ $ls_field ] ?? null;
-			$ao_data[ $ls_field ] = $ls_defaultTranslation;
+			$ls_defaultTranslation = $data['_translations'][ $ls_firstLanguageShortcode ][ $ls_field ] ?? null;
+			/** @noinspection PhpVariableNamingConventionInspection */
+			$data[ $ls_field ] = $ls_defaultTranslation;
 		}
 	}
 
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	protected function referenceName(Table $ao_table): string {
-		$ls_name = namespaceSplit($ao_table::class);
+	protected function referenceName(Table $table): string {
+		$ls_name = namespaceSplit($table::class);
 		$ls_name = substr((string)end($ls_name), 0, -5);
 		if (empty($ls_name)) {
-			$ls_name = $ao_table->getTable() ?: $ao_table->getAlias();
+			$ls_name = $table->getTable() ?: $table->getAlias();
 		}
 
 

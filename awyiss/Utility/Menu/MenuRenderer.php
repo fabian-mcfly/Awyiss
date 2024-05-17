@@ -60,13 +60,13 @@ class MenuRenderer {
 	/**
 	 * Constructor
 	 *
-	 * @param Menu $ao_menu Menu object to render.
-	 * @param array $aa_config Configuration options for rendering.
+	 * @param Menu $menu Menu object to render.
+	 * @param array $config Configuration options for rendering.
 	 */
-	public function __construct(Menu $ao_menu, array $aa_config = []) {
-		$this->menu = $ao_menu;
+	public function __construct(Menu $menu, array $config = []) {
+		$this->menu = $menu;
 
-		$this->setConfig($aa_config);
+		$this->setConfig($config);
 
 		$this->templates = new StringTemplate();
 		$this->templates->add($this->getConfig('templates'));
@@ -74,14 +74,14 @@ class MenuRenderer {
 
 
 	/**
-	 * @param string $as_menuIdentifier
+	 * @param string $menuIdentifier
 	 * @param string $ls_list
 	 * @return string
 	 */
-	public function render(string $as_menuIdentifier = '', string $as_list = ''): string {
-		$this->identifier = $as_menuIdentifier ?: $this->menu->getConfig('identifier') ?: 'Default';
+	public function render(string $menuIdentifier = '', string $list = ''): string {
+		$this->identifier = $menuIdentifier ?: $this->menu->getConfig('identifier') ?: 'Default';
 
-		$ls_list = $as_list;
+		$ls_list = $list;
 		if (empty($ls_list)) {
 			$ls_list = $this->renderList();
 		}
@@ -104,26 +104,26 @@ class MenuRenderer {
 	/**
 	 * Renders the menu as HTML.
 	 *
-	 * @param \Awyiss\Utility\Menu\Menu|\Awyiss\Utility\Menu\MenuItem|string|null $ax_items
+	 * @param \Awyiss\Utility\Menu\Menu|\Awyiss\Utility\Menu\MenuItem|string|null $items
 	 * @param int $level
 	 * @param int|null $maxLevel
 	 * @return string
 	 */
-	public function renderList(Menu|MenuItem|string|null $ax_items = null, int $level = 1, ?int $ai_maxLevel = null): string {
-		if (is_string($ax_items)) {
-			$lo_items = [$this->menu->getItem($ax_items)];
+	public function renderList(Menu|MenuItem|string|null $items = null, int $level = 1, ?int $maxLevel = null): string {
+		if (is_string($items)) {
+			$lo_items = [$this->menu->getItem($items)];
 		}
-		elseif ($ax_items instanceof MenuItem) {
-			$lo_items = [$ax_items];
+		elseif ($items instanceof MenuItem) {
+			$lo_items = [$items];
 		}
-		elseif ($ax_items instanceof Menu) {
-			$lo_items = $ax_items->getItems();
+		elseif ($items instanceof Menu) {
+			$lo_items = $items->getItems();
 		}
 		else {
 			$lo_items = $this->menu->getItems();
 		}
 
-		$li_maxLevel = $ai_maxLevel ?? $this->getConfig('maxLevel');
+		$li_maxLevel = $maxLevel ?? $this->getConfig('maxLevel');
 
 		$ls_content = '';
 		foreach ($lo_items as $lo_item) {
@@ -162,39 +162,39 @@ class MenuRenderer {
 	 *
 	 * @param MenuItem $item The menu item to render.
 	 * @param int $level The current depth level.
-	 * @param int $ai_maxLevel The maximum depth level to render.
+	 * @param int $maxLevel The maximum depth level to render.
 	 * @return string Rendered HTML for the menu item.
 	 */
-	protected function renderItem(MenuItem $ao_item, int $ai_level = 1, int $ai_maxLevel = 1): string {
-		if ($ai_level > $ai_maxLevel) {
+	protected function renderItem(MenuItem $item, int $level = 1, int $maxLevel = 1): string {
+		if ($level > $maxLevel) {
 			return '';
 		}
 
-		if (!$ao_item->isVisible()) {
+		if (!$item->isVisible()) {
 			return '';
 		}
 
-		if ($this->getConfig('activeOnly') && !$ao_item->getActive()) {
+		if ($this->getConfig('activeOnly') && !$item->getActive()) {
 			return '';
 		}
 
 		$ls_childrenContent = '';
-		$lo_items = $ao_item->getChildren();
+		$lo_items = $item->getChildren();
 		if ($lo_items) {
-			$ls_childrenContent .= $this->renderList($lo_items, $ai_level + 1, $ai_maxLevel);
+			$ls_childrenContent .= $this->renderList($lo_items, $level + 1, $maxLevel);
 		}
 
-		$lx_identifier = $ao_item->getIdentifier() ?? $ao_item->getTitle();
+		$lx_identifier = $item->getIdentifier() ?? $item->getTitle();
 
 		$la_data = [
-			'active' => $ao_item->isCurrentRoute($this->currentRoute) || $ao_item->hasCurrentRoute($this->currentRoute) ? ' Active' : '',
+			'active' => $item->isCurrentRoute($this->currentRoute) || $item->hasCurrentRoute($this->currentRoute) ? ' Active' : '',
 			'identifier' => !is_string($lx_identifier) ? $lx_identifier : Inflector::camelize(Text::slug($lx_identifier, '_')),
-			'level' => $ai_level,
-			'title' => $ao_item->getTitle(),
+			'level' => $level,
+			'title' => $item->getTitle(),
 		];
 
-		$lo_link = $ao_item->getLink();
-		if ($lo_link && $ao_item->isAccessible()) {
+		$lo_link = $item->getLink();
+		if ($lo_link && $item->isAccessible()) {
 			$la_data += [
 				'attributes' => $this->templates->formatAttributes($lo_link->attributes),
 				'url' => $lo_link->url,
@@ -211,7 +211,7 @@ class MenuRenderer {
 			'children' => $ls_childrenContent,
 			'hasSubmenu' => $ls_childrenContent !== '' ? ' HasSubmenu' : '',
 			'identifier' => $la_data['identifier'],
-			'level' => $ai_level,
+			'level' => $level,
 			'link' => $ls_link,
 			'title' => $la_data['title'],
 		];
@@ -224,18 +224,18 @@ class MenuRenderer {
 	/**
 	 * Formats a given type (list, item, link) using either a custom formatter or a template.
 	 *
-	 * @param string $as_type The type of content to format.
-	 * @param array $aa_data The data to use in the formatter or template.
+	 * @param string $type The type of content to format.
+	 * @param array $data The data to use in the formatter or template.
 	 * @return string The formatted content.
 	 */
-	protected function format(string $as_type, array $aa_data): string {
-		$lc_formatter = $this->getConfig('formatters.' . $as_type);
+	protected function format(string $type, array $data): string {
+		$lc_formatter = $this->getConfig('formatters.' . $type);
 
 		if (is_callable($lc_formatter)) {
-			return $lc_formatter($aa_data, $this->menu);
+			return $lc_formatter($data, $this->menu);
 		}
 
 
-		return $this->templates->format($as_type, $aa_data);
+		return $this->templates->format($type, $data);
 	}
 }

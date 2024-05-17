@@ -53,11 +53,11 @@ trait IdentityAwareTrait {
 
 
 	/**
-	 * @param \Awyiss\Authorization\IdentityPermissionsInterface|null $ao_identity
+	 * @param \Awyiss\Authorization\IdentityPermissionsInterface|null $identity
 	 */
 	#[NoDirectAccess]
-	public function setIdentity(?IdentityInterface $ao_identity): static {
-		$this->identity = $ao_identity;
+	public function setIdentity(?IdentityInterface $identity): static {
+		$this->identity = $identity;
 
 
 		return $this;

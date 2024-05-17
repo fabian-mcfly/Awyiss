@@ -40,7 +40,7 @@ use Cake\Http\Response;
 {% endfor %}
 
 {%- if 'overview' in actions %}
- * @method {{ entityClassName }}[]|\Cake\Datasource\ResultSetInterface paginate($ao_object = null, array $aa_settings = [])
+ * @method {{ entityClassName }}[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
 {% endif %}
  */
 class {{ name }}Controller extends Controller {

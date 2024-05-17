@@ -40,68 +40,68 @@ class EventListenersProvider {
 
 
 	/**
-	 * @param string $as_realm
+	 * @param string $realm
 	 * @return array
 	 * @throws \ReflectionException
 	 * @noinspection PhpUnused
 	 */
-	public static function getListeners(string $as_realm): array {
-		static::$eventListeners[ $as_realm ] = static::findListener('*', $as_realm);
+	public static function getListeners(string $realm): array {
+		static::$eventListeners[ $realm ] = static::findListener('*', $realm);
 
 
-		return static::$eventListeners[ $as_realm ] ?? [];
+		return static::$eventListeners[ $realm ] ?? [];
 	}
 
 
 	/**
-	 * @param string $as_scope
-	 * @param string $as_realm
+	 * @param string $scope
+	 * @param string $realm
 	 * @return string|null
 	 * @throws \ReflectionException
 	 */
-	public static function getListener(string $as_scope, string $as_realm): ?string {
-		$ls_scope = static::sanitizeScope($as_scope);
+	public static function getListener(string $scope, string $realm): ?string {
+		$ls_scope = static::sanitizeScope($scope);
 
-		if (!isset(static::$eventListeners[ $as_realm ])) {
-			static::$eventListeners[ $as_realm ] = [];
+		if (!isset(static::$eventListeners[ $realm ])) {
+			static::$eventListeners[ $realm ] = [];
 		}
 
-		if (empty(static::$eventListeners[ $as_realm ][ $ls_scope ])) {
-			static::$eventListeners[ $as_realm ] += static::findListener($ls_scope, $as_realm);
+		if (empty(static::$eventListeners[ $realm ][ $ls_scope ])) {
+			static::$eventListeners[ $realm ] += static::findListener($ls_scope, $realm);
 		}
 
 
-		return static::$eventListeners[ $as_realm ][ $ls_scope ] ?? null;
+		return static::$eventListeners[ $realm ][ $ls_scope ] ?? null;
 	}
 
 
 	/**
-	 * @param string $as_scope
-	 * @param string $as_realm
+	 * @param string $scope
+	 * @param string $realm
 	 * @return bool
 	 * @throws \ReflectionException
 	 */
-	public static function loadListener(string $as_scope, string $as_realm): bool {
-		$ls_scope = static::sanitizeScope($as_scope);
+	public static function loadListener(string $scope, string $realm): bool {
+		$ls_scope = static::sanitizeScope($scope);
 
-		if (!isset(static::$loadedListeners[ $as_realm ])) {
-			static::$loadedListeners[ $as_realm ] = [];
+		if (!isset(static::$loadedListeners[ $realm ])) {
+			static::$loadedListeners[ $realm ] = [];
 		}
 
-		if (array_key_exists($ls_scope, static::$loadedListeners[ $as_realm ])) {
-			return static::$loadedListeners[ $as_realm ][ $ls_scope ];
+		if (array_key_exists($ls_scope, static::$loadedListeners[ $realm ])) {
+			return static::$loadedListeners[ $realm ][ $ls_scope ];
 		}
 
-		$ls_listenerClass = static::getListener($ls_scope, $as_realm);
+		$ls_listenerClass = static::getListener($ls_scope, $realm);
 
 		if (!$ls_listenerClass) {
-			static::$loadedListeners[ $as_realm ][ $ls_scope ] = false;
+			static::$loadedListeners[ $realm ][ $ls_scope ] = false;
 
 
 			return false;
 		}
 
-		static::$loadedListeners[ $as_realm ][ $ls_scope ] = true;
+		static::$loadedListeners[ $realm ][ $ls_scope ] = true;
 
 		EventManager::instance()->on(new $ls_listenerClass());
 
@@ -114,28 +114,28 @@ class EventListenersProvider {
 	 * Sanitize the provided scope by removing all non-ascii characters
 	 * Returns a camelBacked string
 	 *
-	 * @param string $as_scope
+	 * @param string $scope
 	 * @return string
 	 */
-	public static function sanitizeScope(string $as_scope): string {
-		return Inflector::camelize(Text::slug($as_scope, '_'));
+	public static function sanitizeScope(string $scope): string {
+		return Inflector::camelize(Text::slug($scope, '_'));
 	}
 
 
 	/**
-	 * @param string $as_scope
-	 * @param string $as_realm
+	 * @param string $scope
+	 * @param string $realm
 	 * @return array
 	 * @throws \ReflectionException
 	 */
-	protected static function findListener(string $as_scope, string $as_realm): array {
+	protected static function findListener(string $scope, string $realm): array {
 		$la_paths = [];
 
 		if (defined('CUSTOM_NAMESPACE')) {
-			$la_paths['\\' . CUSTOM_NAMESPACE . '\Event\\' . $as_realm . '\\'] = implode(DS, [ROOT, CUSTOM_DIR, 'Event', $as_realm, $as_scope . 'Listener.php']);
+			$la_paths['\\' . CUSTOM_NAMESPACE . '\Event\\' . $realm . '\\'] = implode(DS, [ROOT, CUSTOM_DIR, 'Event', $realm, $scope . 'Listener.php']);
 		}
 
-		$la_paths['\Awyiss\Event\\' . $as_realm . '\\'] = implode(DS, [ROOT, APP_DIR, 'Event', $as_realm, $as_scope . 'Listener.php']);
+		$la_paths['\Awyiss\Event\\' . $realm . '\\'] = implode(DS, [ROOT, APP_DIR, 'Event', $realm, $scope . 'Listener.php']);
 
 		$la_listeners = [];
 		foreach ($la_paths as $ls_namespace => $ls_path) {

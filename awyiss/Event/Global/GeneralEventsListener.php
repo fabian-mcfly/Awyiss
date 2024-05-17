@@ -45,24 +45,24 @@ class GeneralEventsListener implements EventListenerInterface {
 
 
 	/**
-	 * @param Event $ao_event
+	 * @param Event $event
 	 * @return string
 	 * @noinspection PhpUnused
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function awyissGetRealm(Event $ao_event): string {
+	public function awyissGetRealm(Event $event): string {
 		return $this->realm;
 	}
 
 
 	/**
-	 * @param Event $ao_event
+	 * @param Event $event
 	 * @return void
 	 * @throws \ReflectionException
 	 * @noinspection PhpUnused
 	 */
-	public function awyissSetRealm(Event $ao_event): void {
-		$this->realm = $ao_event->getData('realm');
+	public function awyissSetRealm(Event $event): void {
+		$this->realm = $event->getData('realm');
 
 		if ($this->initializedModels) {
 			dd(__LINE__, __FILE__, debug_backtrace(2), $this->initializedModels);
@@ -79,14 +79,14 @@ class GeneralEventsListener implements EventListenerInterface {
 	 * For every model that is loaded, load the event listener if the realm is known
 	 * If not, save the model to be handled in `awyissSetRealm()`
 	 *
-	 * @param Event $ao_event
+	 * @param Event $event
 	 * @return void
 	 * @noinspection PhpUnused
 	 * @throws \ReflectionException
 	 */
-	public function modelInitialize(Event $ao_event): void {
+	public function modelInitialize(Event $event): void {
 		/** @var Table $lo_model */
-		$lo_model = $ao_event->getSubject();
+		$lo_model = $event->getSubject();
 
 		if ($lo_model instanceof Table) {
 			if (!isset($this->realm)) {

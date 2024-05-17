@@ -69,12 +69,12 @@ class MenuEntry extends Entity {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function getChildren(array $aa_options = []): ?CollectionInterface {
+	public function getChildren(array $options = []): ?CollectionInterface {
 		/** @var \Awyiss\Model\Table\MenuEntriesTable $lo_table */
 		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
 
 
-		return $lo_table->getChildren($this, $aa_options);
+		return $lo_table->getChildren($this, $options);
 	}
 
 
@@ -83,12 +83,12 @@ class MenuEntry extends Entity {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function getNestedChildren(array $aa_options = [], int $ai_currentLevel = 0): ?CollectionInterface {
+	public function getNestedChildren(array $options = [], int $currentLevel = 0): ?CollectionInterface {
 		/** @var \Awyiss\Model\Table\MenuEntriesTable $lo_table */
 		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
 
 
-		return $lo_table->getNestedChildren($this, $aa_options, $ai_currentLevel);
+		return $lo_table->getNestedChildren($this, $options, $currentLevel);
 	}
 
 
@@ -97,12 +97,12 @@ class MenuEntry extends Entity {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function getParent(array $aa_options = []): ?self {
+	public function getParent(array $options = []): ?self {
 		/** @var \Awyiss\Model\Table\MenuEntriesTable $lo_table */
 		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
 
 
-		return $lo_table->getParent($this, $aa_options);
+		return $lo_table->getParent($this, $options);
 	}
 
 
@@ -111,11 +111,11 @@ class MenuEntry extends Entity {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function getParents(array $aa_options = [], int $ai_currentLevel = 0): ?CollectionInterface {
+	public function getParents(array $options = [], int $currentLevel = 0): ?CollectionInterface {
 		/** @var \Awyiss\Model\Table\MenuEntriesTable $lo_table */
 		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
 
 
-		return $lo_table->getParents($this, $aa_options, $ai_currentLevel);
+		return $lo_table->getParents($this, $options, $currentLevel);
 	}
 }

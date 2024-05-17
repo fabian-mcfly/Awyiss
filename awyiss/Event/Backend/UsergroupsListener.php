@@ -44,16 +44,16 @@ class UsergroupsListener implements EventListenerInterface {
 	 * Set the `changedOn`-field for all associated users.
 	 * This will allow the SessionAuthenticator to reset the usergroups for every logged-in user on the next page request
 	 *
-	 * @param Event $ao_event
-	 * @param \Awyiss\Model\Entity\Usergroup $ao_entity
+	 * @param Event $event
+	 * @param \Awyiss\Model\Entity\Usergroup $entity
 	 * @return void
 	 * @throws \Exception
 	 */
-	public function afterSave(Event $ao_event, Usergroup $ao_entity): void {
+	public function afterSave(Event $event, Usergroup $entity): void {
 		$lo_usersTable = $this->fetchTable('Users');
 
-		$lo_query = $lo_usersTable->find()->matching('Usergroups', function (SelectQuery $ao_query) use ($ao_entity) {
-			return $ao_query->find('withDeleted')->where(['Usergroups.id' => $ao_entity->id]);
+		$lo_query = $lo_usersTable->find()->matching('Usergroups', function (SelectQuery $query) use ($entity) {
+			return $query->find('withDeleted')->where(['Usergroups.id' => $entity->id]);
 		});
 
 		$lo_users = $lo_query->all();
@@ -68,10 +68,10 @@ class UsergroupsListener implements EventListenerInterface {
 
 		$lo_now = DateTime::now();
 		//Decrease the system order of all records
-		$lo_users->each(function (User $ao_user) use ($lo_now, $lo_currentUser): void {
-			$ao_user->changedOn = $lo_now;
+		$lo_users->each(function (User $user) use ($lo_now, $lo_currentUser): void {
+			$user->changedOn = $lo_now;
 
-			if ($ao_user->id === $lo_currentUser->id) {
+			if ($user->id === $lo_currentUser->id) {
 				$lo_currentUser->usergroups = null;
 			}
 		});
@@ -88,8 +88,8 @@ class UsergroupsListener implements EventListenerInterface {
 			]);
 		}
 		catch (PersistenceFailedException $ex) {
-			$ao_event->stopPropagation();
-			$ao_event->setResult($ex->getEntity()->getErrors());
+			$event->stopPropagation();
+			$event->setResult($ex->getEntity()->getErrors());
 		}
 	}
 }

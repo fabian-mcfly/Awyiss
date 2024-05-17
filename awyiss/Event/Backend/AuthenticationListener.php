@@ -61,14 +61,14 @@ class AuthenticationListener implements EventListenerInterface {
 	/**
 	 * After authentication, set the Identity in every model's AuditBehavior
 	 *
-	 * @param Event $ao_event
-	 * @param AuthenticatorInterface $ao_authenticator
-	 * @param IdentityInterface $ao_identity
+	 * @param Event $event
+	 * @param AuthenticatorInterface $authenticator
+	 * @param IdentityInterface $identity
 	 * @noinspection PhpUnused
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function authenticationAfterAuthenticate(Event $ao_event, AuthenticatorInterface $ao_authenticator, IdentityInterface $ao_identity): void {
-		$this->identity = $ao_identity;
+	public function authenticationAfterAuthenticate(Event $event, AuthenticatorInterface $authenticator, IdentityInterface $identity): void {
+		$this->identity = $identity;
 
 		/** @var \Awyiss\Authentication\IdentityAwareTrait $lo_class */
 		foreach ($this->initializedClasses['identity'] as $lo_class) {
@@ -89,13 +89,13 @@ class AuthenticationListener implements EventListenerInterface {
 
 
 	/**
-	 * @param \Cake\Event\Event $ao_event
+	 * @param \Cake\Event\Event $event
 	 * @return void
 	 */
-	public function authenticationRequestIdentity(Event $ao_event): void {
+	public function authenticationRequestIdentity(Event $event): void {
 		try {
 			/** @var Table $lo_model */
-			$lo_class = $ao_event->getSubject();
+			$lo_class = $event->getSubject();
 		}
 		catch (CakeException) {
 			$lo_class = null;
@@ -107,11 +107,11 @@ class AuthenticationListener implements EventListenerInterface {
 			}
 			else {
 				$lo_class->setIdentity($this->identity);
-				$ao_event->setResult($this->identity);
+				$event->setResult($this->identity);
 			}
 		}
 		elseif (isset($this->identity)) {
-			$ao_event->setResult($this->identity);
+			$event->setResult($this->identity);
 		}
 	}
 
@@ -120,14 +120,14 @@ class AuthenticationListener implements EventListenerInterface {
 	 * The authentication process might require a URL.
 	 * For example, the `FormAuthenticator::class` requires one to work.
 	 *
-	 * @param Event $ao_event
+	 * @param Event $event
 	 * @return void
 	 * @throws \Exception
 	 * @noinspection PhpUnused
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function authenticationRequestLoginUrl(Event $ao_event): void {
-		$ao_event->setResult(Router::url([
+	public function authenticationRequestLoginUrl(Event $event): void {
+		$event->setResult(Router::url([
 			'_name' => Awyiss::REALM_BACKEND,
 			'lang' => LocaleMiddleware::getLanguage()->shortcode,
 			'controller' => 'Users',
@@ -143,14 +143,14 @@ class AuthenticationListener implements EventListenerInterface {
 	 * - the Identity in the AuditBehavior, if the Identity is known
 	 * If not, save the model to be handled in `authenticationAfterAuthenticate`.
 	 *
-	 * @param Event $ao_event
+	 * @param Event $event
 	 * @return void
 	 * @noinspection PhpUnused
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function modelInitialize(Event $ao_event): void {
+	public function modelInitialize(Event $event): void {
 		/** @var Table $lo_model */
-		$lo_model = $ao_event->getSubject();
+		$lo_model = $event->getSubject();
 
 		if ($lo_model instanceof Table) {
 			if (!isset($this->identity)) {

@@ -34,11 +34,11 @@ class TableLocator extends BaseTableLocator {
 
 
 	/**
-	 * @param Language|null $ao_language
+	 * @param Language|null $language
 	 * @return TableLocator
 	 */
-	public function setTranslateLanguage(?Language $ao_language): static {
-		$this->translateLanguage = $ao_language;
+	public function setTranslateLanguage(?Language $language): static {
+		$this->translateLanguage = $language;
 
 
 		return $this;
@@ -48,13 +48,12 @@ class TableLocator extends BaseTableLocator {
 	/**
 	 * @inheritDoc
 	 * @throws \ReflectionException
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	protected function createInstance(string $as_alias, array $aa_options): BaseTable {
-		EventListenersProvider::loadListener($as_alias, 'Global');
+	protected function createInstance(string $alias, array $options): BaseTable {
+		EventListenersProvider::loadListener($alias, 'Global');
 
 
-		return parent::createInstance($as_alias, $aa_options + ['translateLanguage' => $this->getTranslateLanguage()]);
+		return parent::createInstance($alias, $options + ['translateLanguage' => $this->getTranslateLanguage()]);
 	}
 
 
@@ -63,22 +62,22 @@ class TableLocator extends BaseTableLocator {
 	 * so it'll use \Awyiss\Core\App::className to find the class
 	 *
 	 * @inheritDoc
-	 * @param string $as_alias The alias name you want to get. Should be in CamelCase format.
-	 * @param array<string, mixed> $aa_options Table options array.
+	 * @param string $alias The alias name you want to get. Should be in CamelCase format.
+	 * @param array<string, mixed> $options Table options array.
 	 * @return string|null
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	protected function _getClassName(string $as_alias, array $aa_options = []): ?string {
-		if (empty($aa_options['className'])) {
-			$aa_options['className'] = $as_alias;
+	protected function _getClassName(string $alias, array $options = []): ?string {
+		if (empty($options['className'])) {
+			/** @noinspection PhpVariableNamingConventionInspection */
+			$options['className'] = $alias;
 		}
 
-		if (str_contains($aa_options['className'], '\\') && class_exists($aa_options['className'])) {
-			return $aa_options['className'];
+		if (str_contains($options['className'], '\\') && class_exists($options['className'])) {
+			return $options['className'];
 		}
 
 		foreach ($this->locations as $ls_location) {
-			$ls_className = App::className($aa_options['className'], $ls_location, 'Table');
+			$ls_className = App::className($options['className'], $ls_location, 'Table');
 			if ($ls_className !== null) {
 				return $ls_className;
 			}

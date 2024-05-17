@@ -52,24 +52,24 @@ class Permission {
 
 
 	/**
-	 * @param string $as_scope
-	 * @param string $as_identifier
-	 * @param mixed|null $ax_access
-	 * @param mixed $ax_settings
+	 * @param string $scope
+	 * @param string $identifier
+	 * @param mixed|null $access
+	 * @param mixed $settings
 	 */
-	public function __construct(string $as_scope, string $as_identifier, mixed $ax_access = null, mixed $ax_settings = []) {
-		if (empty($as_scope)) {
+	public function __construct(string $scope, string $identifier, mixed $access = null, mixed $settings = []) {
+		if (empty($scope)) {
 			throw new RuntimeException(sprintf('Scope must not be empty in `%s`.', static::class));
 		}
 
-		if (empty($as_identifier)) {
+		if (empty($identifier)) {
 			throw new RuntimeException(sprintf('Identifier must not be empty in `%s`.', static::class));
 		}
 
-		$this->access = $ax_access;
-		$this->identifier = AuthorizationService::sanitizeIdentifier($as_identifier);
-		$this->scope = AuthorizationService::sanitizeScope($as_scope);
-		$this->settings = $ax_settings;
+		$this->access = $access;
+		$this->identifier = AuthorizationService::sanitizeIdentifier($identifier);
+		$this->scope = AuthorizationService::sanitizeScope($scope);
+		$this->settings = $settings;
 	}
 
 
@@ -84,11 +84,11 @@ class Permission {
 
 
 	/**
-	 * @param AuthorizationService|null $ao_authorizationService
+	 * @param AuthorizationService|null $authorizationService
 	 * @return Permission
 	 */
-	public function setAuthorizationService(?AuthorizationService $ao_authorizationService): static {
-		$this->authorizationService = $ao_authorizationService;
+	public function setAuthorizationService(?AuthorizationService $authorizationService): static {
+		$this->authorizationService = $authorizationService;
 
 
 		return $this;
@@ -124,21 +124,21 @@ class Permission {
 	/**
 	 * Sets the policy to be used by the permission
 	 *
-	 * @param \Awyiss\Authorization\Policy\PolicyInterface|\Awyiss\Authorization\Policy\AbstractGenericPolicy|string|null $ax_policyClass
+	 * @param \Awyiss\Authorization\Policy\PolicyInterface|\Awyiss\Authorization\Policy\AbstractGenericPolicy|string|null $policyClass
 	 * @return $this
 	 * @throws \ReflectionException
 	 * @noinspection PhpUnused
 	 */
-	public function setPolicyClass(string|PolicyInterface|AbstractGenericPolicy|null $ax_policyClass = null): static {
-		if (is_string($ax_policyClass)) {
-			$lo_reflection = new ReflectionClass($ax_policyClass);
+	public function setPolicyClass(string|PolicyInterface|AbstractGenericPolicy|null $policyClass = null): static {
+		if (is_string($policyClass)) {
+			$lo_reflection = new ReflectionClass($policyClass);
 
 			if (!$lo_reflection->implementsInterface(PolicyInterface::class)) {
-				throw new RuntimeException(sprintf('The provided Policy class `%s` does not implement the `%s` interface.', $ax_policyClass, PolicyInterface::class));
+				throw new RuntimeException(sprintf('The provided Policy class `%s` does not implement the `%s` interface.', $policyClass, PolicyInterface::class));
 			}
 		}
 
-		$this->policyClass = $ax_policyClass;
+		$this->policyClass = $policyClass;
 
 
 		return $this;
@@ -169,13 +169,13 @@ class Permission {
 	 * Retreives the PermissionOption from the currently set policy class
 	 * and checks the access
 	 *
-	 * @param array $aa_additionalData
-	 * @param PermissionCollection $ao_permissionCollection
+	 * @param array $additionalData
+	 * @param PermissionCollection $permissionCollection
 	 * @return bool|null
 	 * @throws \ReflectionException
 	 * @throws \Exception
 	 */
-	public function isAccessible(array $aa_additionalData, PermissionCollection $ao_permissionCollection): ?bool {
+	public function isAccessible(array $additionalData, PermissionCollection $permissionCollection): ?bool {
 		$lx_policyClass = $this->getPolicyClass();
 
 		if (!$lx_policyClass) {
@@ -198,24 +198,24 @@ class Permission {
 		}
 
 
-		return $lo_permissionOption->isAccessible($this->getAccess(), $this->getSettings(), $aa_additionalData, $ao_permissionCollection);
+		return $lo_permissionOption->isAccessible($this->getAccess(), $this->getSettings(), $additionalData, $permissionCollection);
 	}
 
 
 	/**
-	 * @param array $aa_permission
+	 * @param array $permission
 	 * @return static
 	 */
-	public static function createFromArray(array $aa_permission): static {
-		return new static($aa_permission['scope'] ?? '', $aa_permission['identifier'] ?? '', $aa_permission['access'] ?? null, $aa_permission['settings'] ?? null);
+	public static function createFromArray(array $permission): static {
+		return new static($permission['scope'] ?? '', $permission['identifier'] ?? '', $permission['access'] ?? null, $permission['settings'] ?? null);
 	}
 
 
 	/**
-	 * @param PermissionInterface $ao_permission
+	 * @param PermissionInterface $permission
 	 * @return static
 	 */
-	public static function createFromObject(PermissionInterface $ao_permission): static {
-		return new static($ao_permission->getScope(), $ao_permission->getIdentifier(), $ao_permission->getAccess(), $ao_permission->getSettings());
+	public static function createFromObject(PermissionInterface $permission): static {
+		return new static($permission->getScope(), $permission->getIdentifier(), $permission->getAccess(), $permission->getSettings());
 	}
 }

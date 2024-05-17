@@ -38,15 +38,15 @@ class GeneralEventsListener implements EventListenerInterface {
 
 
 	/**
-	 * @param \Cake\Event\EventInterface $ao_event
-	 * @param \Cake\Console\Arguments $ao_args
+	 * @param \Cake\Event\EventInterface $event
+	 * @param \Cake\Console\Arguments $args
 	 * @return void
 	 */
-	public function afterCommandExecute(EventInterface $ao_event, Arguments $ao_args): void {
+	public function afterCommandExecute(EventInterface $event, Arguments $args): void {
 		/** @var \Cake\Command\Command $foo */
-		$lo_command = $ao_event->getSubject();
+		$lo_command = $event->getSubject();
 
-		if ($lo_command::class === EnumCommand::class && $ao_args->getOption('is-pagerole')) {
+		if ($lo_command::class === EnumCommand::class && $args->getOption('is-pagerole')) {
 			/**
 			 * Trigger the creation of the custom configuriation
 			 *
@@ -65,12 +65,12 @@ class GeneralEventsListener implements EventListenerInterface {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function beforeRenderControllerController(Event $ao_event): void {
-		/** @var \Cake\View\View $ao_view */
-		$ao_view = $ao_event->getSubject();
+	public function beforeRenderControllerController(Event $event): void {
+		/** @var \Cake\View\View $lo_view */
+		$lo_view = $event->getSubject();
 
-		if ($ao_view->get('actions') == ['index', 'view', 'add', 'edit', 'delete']) {
-			$ao_view->set('actions', ['overview', 'add', 'edit', 'delete', 'save']);
+		if ($lo_view->get('actions') == ['index', 'view', 'add', 'edit', 'delete']) {
+			$lo_view->set('actions', ['overview', 'add', 'edit', 'delete', 'save']);
 		}
 	}
 }

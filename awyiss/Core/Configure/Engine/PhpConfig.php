@@ -22,11 +22,11 @@ class PhpConfig extends BasePhpConfig {
 	/**
 	 * Constructor for PHP Config file reading.
 	 *
-	 * @param string|null $as_path The path to read config files from.
+	 * @param string|null $path The path to read config files from.
 	 * @noinspection PhpMissingParentConstructorInspection
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function __construct(?string $as_path = null) {
+	public function __construct(?string $path = null) {
 		$this->_path = null ?? CONFIG;
 
 		if (defined('CUSTOM_NAMESPACE')) {
@@ -37,11 +37,10 @@ class PhpConfig extends BasePhpConfig {
 
 
 	/**
-	 * @param string $as_key
+	 * @param string $key
 	 * @return array
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function read(string $as_key): array {
+	public function read(string $key): array {
 		//$la_paths = $this->_path ? [$this->_path] : $this->paths;
 		$la_paths = $this->paths;
 		$la_return = [];
@@ -53,7 +52,7 @@ class PhpConfig extends BasePhpConfig {
 			 */
 			$this->_path = $ls_path;
 			try {
-				$ls_filePath = $this->_getFilePath($as_key, true);
+				$ls_filePath = $this->_getFilePath($key, true);
 			}
 			catch (CakeException $ex) {
 				continue;
@@ -68,7 +67,7 @@ class PhpConfig extends BasePhpConfig {
 				$la_return = Hash::merge($la_return, $la_fileReturn);
 			}
 			else {
-				throw new CakeException(sprintf('Config file "%s" did not return an array', $as_key . '.php'));
+				throw new CakeException(sprintf('Config file "%s" did not return an array', $key . '.php'));
 			}
 		}
 
@@ -84,26 +83,26 @@ class PhpConfig extends BasePhpConfig {
 
 
 	/**
-	 * Converts the provided $aa_data into a string of PHP code that can
+	 * Converts the provided $data into a string of PHP code that can
 	 * be used saved into a file and loaded later.
 	 *
-	 * @param string $as_key The identifier to write to.
-	 * @param array $aa_data Data to dump.
+	 * @param string $key The identifier to write to.
+	 * @param array $data Data to dump.
 	 * @return bool Success
 	 * @throws \Brick\VarExporter\ExportException
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function dump(string $as_key, array $aa_data): bool {
+	public function dump(string $key, array $data): bool {
 		$ls_contents = '<?php declare(strict_types=1);' . PHP_EOL . PHP_EOL . 'return ';
 
-		ksort($aa_data, SORT_NATURAL | SORT_FLAG_CASE);
+		/** @noinspection PhpVariableNamingConventionInspection */
+		ksort($data, SORT_NATURAL | SORT_FLAG_CASE);
 
-		$ls_contents .= VarExporter::export($aa_data, VarExporter::TRAILING_COMMA_IN_ARRAY);
+		$ls_contents .= VarExporter::export($data, VarExporter::TRAILING_COMMA_IN_ARRAY);
 		$ls_contents .= ';';
 		$ls_contents = str_replace('    ', "\t", $ls_contents);
 
 
-		$ls_key = $as_key;
+		$ls_key = $key;
 		$ls_folder = ENV_CUSTOM_CONFIG;
 
 		if (str_contains($ls_key, '.')) {

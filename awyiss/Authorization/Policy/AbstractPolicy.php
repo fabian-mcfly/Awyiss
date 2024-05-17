@@ -52,12 +52,12 @@ abstract class AbstractPolicy implements PolicyInterface {
 	 * @inheritDoc
 	 * @throws \Exception
 	 */
-	public static function getPermissionOption(string $as_identifier): ?PermissionOptionInterface {
+	public static function getPermissionOption(string $identifier): ?PermissionOptionInterface {
 		if (!isset(static::$permissionOptionCollection)) {
 			static::$permissionOptionCollection = static::loadPermissionOptions();
 		}
 
-		$ls_identifier = AuthorizationService::sanitizeIdentifier($as_identifier);
+		$ls_identifier = AuthorizationService::sanitizeIdentifier($identifier);
 
 		if (static::$permissionOptionCollection->has($ls_identifier)) {
 			return static::$permissionOptionCollection->get($ls_identifier);

@@ -38,16 +38,16 @@ class LanguagesListener implements EventListenerInterface {
 
 
 	/**
-	 * @param \Cake\Event\Event $ao_event
-	 * @param \Awyiss\Model\Entity\Language $ao_entity
+	 * @param \Cake\Event\Event $event
+	 * @param \Awyiss\Model\Entity\Language $entity
 	 * @return void
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function afterSaveCommit(Event $ao_event, Language $ao_entity): void {
+	public function afterSaveCommit(Event $event, Language $entity): void {
 		if (
-			$ao_entity->isNew() ||
-			$ao_entity->isDirty('realm') ||
-			$ao_entity->isDirty('shortcode')
+			$entity->isNew() ||
+			$entity->isDirty('realm') ||
+			$entity->isDirty('shortcode')
 		) {
 			/**
 			 * Trigger the creation of the custom configuriation
@@ -61,15 +61,15 @@ class LanguagesListener implements EventListenerInterface {
 
 
 	/**
-	 * @param \Cake\Event\Event $ao_event
-	 * @param \Awyiss\Model\Entity\Language $ao_entity
+	 * @param \Cake\Event\Event $event
+	 * @param \Awyiss\Model\Entity\Language $entity
 	 * @return void
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function beforeSoftDelete(Event $ao_event, Language $ao_entity): void {
-		if ($ao_entity->realm === Awyiss::REALM_FRONTEND) {
+	public function beforeSoftDelete(Event $event, Language $entity): void {
+		if ($entity->realm === Awyiss::REALM_FRONTEND) {
 			/** @var \Awyiss\Model\Table\LanguagesTable $lo_table */
-			$lo_table = $ao_event->getSubject();
+			$lo_table = $event->getSubject();
 			$lo_table->MenuEntries->setDependent(true);
 			$lo_table->Pages->setDependent(true);
 			$lo_table->Pages->ChildPages->setDependent(false)->setCascadeCallbacks(false);
@@ -78,14 +78,14 @@ class LanguagesListener implements EventListenerInterface {
 
 
 	/**
-	 * @param \Cake\Event\Event $ao_event
-	 * @param \Awyiss\Model\Entity\Language $ao_entity
+	 * @param \Cake\Event\Event $event
+	 * @param \Awyiss\Model\Entity\Language $entity
 	 * @return void
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function afterSoftDelete(Event $ao_event, Language $ao_entity): void {
+	public function afterSoftDelete(Event $event, Language $entity): void {
 		/** @var \Awyiss\Model\Table\LanguagesTable $lo_table */
-		$lo_table = $ao_event->getSubject();
+		$lo_table = $event->getSubject();
 		$lo_table->MenuEntries->setDependent(false);
 		$lo_table->Pages->setDependent(false);
 		$lo_table->Pages->ChildPages->setDependent(true)->setCascadeCallbacks(true);

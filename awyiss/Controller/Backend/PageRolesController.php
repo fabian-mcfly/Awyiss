@@ -89,11 +89,11 @@ class PageRolesController extends Controller {
 	 * @return \Cake\Http\Response|void
 	 * @throws \Exception
 	 */
-	public function edit(int $ai_id) {
+	public function edit(int $id) {
 		$this->Authorization->ensure('update');
 
 		/** @var PageRole $lo_pageRole */
-		$lo_pageRole = $this->PageRoles->findById($ai_id)->find('translations')->first();
+		$lo_pageRole = $this->PageRoles->findById($id)->find('translations')->first();
 		if (!$lo_pageRole) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -114,17 +114,17 @@ class PageRolesController extends Controller {
 	/**
 	 * Delete method
 	 *
-	 * @param int $ai_id
+	 * @param int $id
 	 * @return Response
 	 * @throws \Exception
 	 */
-	public function delete(int $ai_id): Response {
+	public function delete(int $id): Response {
 		$this->Authorization->ensure('delete');
 
 		$this->request->allowMethod(['get', 'delete']);
 
 		/** @var PageRole $lo_pageRole */
-		$lo_pageRole = $this->PageRoles->findById($ai_id)->find('translations')->first();
+		$lo_pageRole = $this->PageRoles->findById($id)->find('translations')->first();
 		if (!$lo_pageRole) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -151,40 +151,40 @@ class PageRolesController extends Controller {
 
 
 	/**
-	 * @param PageRole $ao_pageRole
-	 * @param string $as_method
+	 * @param PageRole $pageRole
+	 * @param string $method
 	 * @return void
 	 */
-	protected function save(PageRole $ao_pageRole, string $as_method = 'add'): void {
+	protected function save(PageRole $pageRole, string $method = 'add'): void {
 		$la_associated = [];
 		if ($this->PageRoles->hasAttributes()) {
 			$la_associated[] = $this->PageRoles->getAttributesTableName(true);
-			$ao_pageRole->setAccess('attributes', true);
+			$pageRole->setAccess('attributes', true);
 		}
 
-		$this->PageRoles->patchEntity($ao_pageRole, $this->request->getData(), [
+		$this->PageRoles->patchEntity($pageRole, $this->request->getData(), [
 			'associated' => $la_associated,
 			'validate' => !$this->request->getData('reload_form'),
 		]);
 
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-			if ($this->PageRoles->save($ao_pageRole, ['asCopy' => (bool)$this->request->getData('save_as_copy')])) {
+			if ($this->PageRoles->save($pageRole, ['asCopy' => (bool)$this->request->getData('save_as_copy')])) {
 				if (!$this->request->is('ajax')) {
-					$this->Flash->success(__($as_method . '_succeeded'));
+					$this->Flash->success(__($method . '_succeeded'));
 				}
 
 				if ($this->request->getData('submit') == 'submit_close') {
 					throw new RedirectException(Router::url([
 						'action' => 'overview',
-						'page' => $this->Paginate->calculateEntityPagePosition($ao_pageRole),
+						'page' => $this->Paginate->calculateEntityPagePosition($pageRole),
 					], true), 302);
 				}
 
-				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $ao_pageRole->id], true), 302);
+				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $pageRole->id], true), 302);
 			}
 
-			$this->Flash->error(__($as_method . '_failed'));
-			foreach ($ao_pageRole->getError('_general') as $ls_error) {
+			$this->Flash->error(__($method . '_failed'));
+			foreach ($pageRole->getError('_general') as $ls_error) {
 				$this->Flash->error($ls_error);
 			}
 		}

@@ -58,23 +58,22 @@ class Authentication implements AuthenticationServiceProviderInterface {
 
 
 	/**
-	 * @param string $as_realm
+	 * @param string $realm
 	 */
-	public function __construct(string $as_realm) {
-		$this->realm = $as_realm;
+	public function __construct(string $realm) {
+		$this->realm = $realm;
 	}
 
 
 	/**
-	 * @param ServerRequestInterface $ao_request
+	 * @param ServerRequestInterface $request
 	 * @return AuthenticationServiceInterface
 	 * @throws Exception
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function getAuthenticationService(ServerRequestInterface $ao_request): AuthenticationServiceInterface {
+	public function getAuthenticationService(ServerRequestInterface $request): AuthenticationServiceInterface {
 		if ($this->realm === Awyiss::REALM_BACKEND) {
 			if (!isset($this->service)) {
-				$this->service = $this->getBackendAuthenticationService($ao_request);
+				$this->service = $this->getBackendAuthenticationService($request);
 			}
 
 
@@ -98,19 +97,19 @@ class Authentication implements AuthenticationServiceProviderInterface {
 	/**
 	 * Registers default Authenticators if not disabled, sorts all Authenticators by priority and adds them to the `AuthenticationServiceInterface`
 	 *
-	 * @param AuthenticationServiceInterface $ao_service
-	 * @param ServerRequestInterface $ao_request
+	 * @param AuthenticationServiceInterface $service
+	 * @param ServerRequestInterface $request
 	 * @throws Exception
 	 * @see AuthenticationServiceInterface::loadAuthenticator
 	 */
-	protected function loadAuthenticators(AuthenticationServiceInterface $ao_service, ServerRequestInterface $ao_request): void {
+	protected function loadAuthenticators(AuthenticationServiceInterface $service, ServerRequestInterface $request): void {
 		if (!static::$disableDefaultAuthenticators) {
-			$this->addDefaultAuthenticators($ao_service, $ao_request);
+			$this->addDefaultAuthenticators($service, $request);
 		}
 
 		$la_authenticators = static::$authenticators;
-		usort($la_authenticators, function ($aa_a, $aa_b) {
-			return $aa_a['priority'] <=> $aa_b['priority'];
+		usort($la_authenticators, function ($a, $b) {
+			return $a['priority'] <=> $b['priority'];
 		});
 
 		foreach ($la_authenticators as $la_authenticator) {
@@ -134,7 +133,7 @@ class Authentication implements AuthenticationServiceProviderInterface {
 				}
 			}
 
-			$ao_service->loadAuthenticator($lx_authenticator['name'], $lx_authenticator['config']);
+			$service->loadAuthenticator($lx_authenticator['name'], $lx_authenticator['config']);
 		}
 	}
 
@@ -145,7 +144,7 @@ class Authentication implements AuthenticationServiceProviderInterface {
 	 * @throws Exception
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	protected function addDefaultAuthenticators(AuthenticationServiceInterface $ao_service, ServerRequestInterface $ao_request): void {
+	protected function addDefaultAuthenticators(AuthenticationServiceInterface $service, ServerRequestInterface $request): void {
 		$this->addAuthenticator(SessionAuthenticator::class, [
 			'identify' => function ($lx_user) {
 				if ($lx_user instanceof User || $lx_user instanceof UsersExternal) {
@@ -186,18 +185,18 @@ class Authentication implements AuthenticationServiceProviderInterface {
 	/**
 	 * Registers the default identifiers if not disabled, sorts all Identifiers by priority and adds them to the `AuthenticationServiceInterface`
 	 *
-	 * @param AuthenticationServiceInterface $ao_service
-	 * @param ServerRequestInterface $ao_request
+	 * @param AuthenticationServiceInterface $service
+	 * @param ServerRequestInterface $request
 	 * @throws Exception
 	 */
-	protected function loadIdentifiers(AuthenticationServiceInterface $ao_service, ServerRequestInterface $ao_request): void {
+	protected function loadIdentifiers(AuthenticationServiceInterface $service, ServerRequestInterface $request): void {
 		if (!static::$disableDefaultIdentifiers) {
-			$this->addDefaultIdentifiers($ao_service, $ao_request);
+			$this->addDefaultIdentifiers($service, $request);
 		}
 
 		$la_identifiers = static::$identifiers;
-		usort($la_identifiers, function ($aa_a, $aa_b) {
-			return $aa_a['priority'] <=> $aa_b['priority'];
+		usort($la_identifiers, function ($a, $b) {
+			return $a['priority'] <=> $b['priority'];
 		});
 
 		foreach ($la_identifiers as $la_identifier) {
@@ -221,7 +220,7 @@ class Authentication implements AuthenticationServiceProviderInterface {
 				}
 			}
 
-			$ao_service->loadIdentifier($lx_identifier['name'], $lx_identifier['config']);
+			$service->loadIdentifier($lx_identifier['name'], $lx_identifier['config']);
 		}
 	}
 
@@ -231,7 +230,7 @@ class Authentication implements AuthenticationServiceProviderInterface {
 	 *
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	protected function addDefaultIdentifiers(AuthenticationServiceInterface $ao_service, ServerRequestInterface $ao_request): void {
+	protected function addDefaultIdentifiers(AuthenticationServiceInterface $service, ServerRequestInterface $request): void {
 		$this->addIdentifier(PasswordIdentifier::class, [
 			'resolver' => [
 				'className' => OrmResolver::class,
@@ -244,12 +243,12 @@ class Authentication implements AuthenticationServiceProviderInterface {
 	/**
 	 * Returns a backend-specific AuthenticationServiceInterface
 	 *
-	 * @param ServerRequestInterface $ao_request
+	 * @param ServerRequestInterface $request
 	 * @return AuthenticationServiceInterface
 	 * @throws Exception
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	protected function getBackendAuthenticationService(ServerRequestInterface $ao_request): AuthenticationServiceInterface {
+	protected function getBackendAuthenticationService(ServerRequestInterface $request): AuthenticationServiceInterface {
 		$lo_service = new AuthenticationService();
 
 		//$lb_isLogoutPage = strtolower(Router::getRequest()->getParam('controller') . '/' . Router::getRequest()->getParam('action')) === 'users/logout';
@@ -266,8 +265,8 @@ class Authentication implements AuthenticationServiceProviderInterface {
 			'queryParam' => null,
 		]);
 
-		$this->loadAuthenticators($lo_service, $ao_request);
-		$this->loadIdentifiers($lo_service, $ao_request);
+		$this->loadAuthenticators($lo_service, $request);
+		$this->loadIdentifiers($lo_service, $request);
 
 
 		return $lo_service;
@@ -277,24 +276,24 @@ class Authentication implements AuthenticationServiceProviderInterface {
 	/**
 	 * Registers an Authenticators to the list of available Authenticators.
 	 *
-	 * @param callable|string $ax_authenticator
-	 * @param array $aa_config
-	 * @param int $ai_priority
+	 * @param callable|string $authenticator
+	 * @param array $config
+	 * @param int $priority
 	 */
-	public static function addAuthenticator(string|callable $ax_authenticator, array $aa_config = [], int $ai_priority = 100): void {
-		if (is_string($ax_authenticator)) {
+	public static function addAuthenticator(string|callable $authenticator, array $config = [], int $priority = 100): void {
+		if (is_string($authenticator)) {
 			static::$authenticators[] = [
 				'authenticator' => [
-					'name' => $ax_authenticator,
-					'config' => $aa_config,
+					'name' => $authenticator,
+					'config' => $config,
 				],
-				'priority' => $ai_priority,
+				'priority' => $priority,
 			];
 		}
 		else {
 			static::$authenticators[] = [
-				'authenticator' => $ax_authenticator,
-				'priority' => $ai_priority,
+				'authenticator' => $authenticator,
+				'priority' => $priority,
 			];
 		}
 	}
@@ -303,35 +302,35 @@ class Authentication implements AuthenticationServiceProviderInterface {
 	/**
 	 * Disable the default authenticators for Session and Form
 	 *
-	 * @param bool $ab_disableDefaultAuthenticators
+	 * @param bool $disableDefaultAuthenticators
 	 * @noinspection PhpUnused
 	 */
-	public static function disableDefaultAuthenticators(bool $ab_disableDefaultAuthenticators): void {
-		static::$disableDefaultAuthenticators = $ab_disableDefaultAuthenticators;
+	public static function disableDefaultAuthenticators(bool $disableDefaultAuthenticators): void {
+		static::$disableDefaultAuthenticators = $disableDefaultAuthenticators;
 	}
 
 
 	/**
 	 * Registers an identifier
 	 *
-	 * @param callable|string $ax_identifier
-	 * @param array $aa_config
-	 * @param int $ai_priority
+	 * @param callable|string $identifier
+	 * @param array $config
+	 * @param int $priority
 	 */
-	public static function addIdentifier(string|callable $ax_identifier, array $aa_config = [], int $ai_priority = 100): void {
-		if (is_string($ax_identifier)) {
+	public static function addIdentifier(string|callable $identifier, array $config = [], int $priority = 100): void {
+		if (is_string($identifier)) {
 			static::$identifiers[] = [
 				'identifier' => [
-					'name' => $ax_identifier,
-					'config' => $aa_config,
+					'name' => $identifier,
+					'config' => $config,
 				],
-				'priority' => $ai_priority,
+				'priority' => $priority,
 			];
 		}
 		else {
 			static::$identifiers[] = [
-				'identifier' => $ax_identifier,
-				'priority' => $ai_priority,
+				'identifier' => $identifier,
+				'priority' => $priority,
 			];
 		}
 	}
@@ -340,10 +339,10 @@ class Authentication implements AuthenticationServiceProviderInterface {
 	/**
 	 * Disable the default identifier (PasswordIdentifier)
 	 *
-	 * @param bool $ab_disableDefaultIdentifiers
+	 * @param bool $disableDefaultIdentifiers
 	 * @noinspection PhpUnused
 	 */
-	public static function disableDefaultIdentifiers(bool $ab_disableDefaultIdentifiers): void {
-		static::$disableDefaultIdentifiers = $ab_disableDefaultIdentifiers;
+	public static function disableDefaultIdentifiers(bool $disableDefaultIdentifiers): void {
+		static::$disableDefaultIdentifiers = $disableDefaultIdentifiers;
 	}
 }

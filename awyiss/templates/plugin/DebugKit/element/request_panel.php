@@ -11,9 +11,9 @@
  */
 
 if (!empty($la_data)) {
-	array_walk($la_data, function (&$as_value, $as_key) {
-		if (in_array($as_key, ['password', 'password_confirm', 'pass'])) {
-			$as_value = '****** (value hidden)';
+	array_walk($la_data, function (&$value, $key) {
+		if (in_array($key, ['password', 'password_confirm', 'pass'])) {
+			$value = '****** (value hidden)';
 		}
 	});
 }

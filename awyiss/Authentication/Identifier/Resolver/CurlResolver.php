@@ -51,26 +51,26 @@ class CurlResolver implements ResolverInterface {
 
 
 	/**
-	 * @param array $aa_config
+	 * @param array $config
 	 */
-	public function __construct(array $aa_config = []) {
-		$this->setConfig($aa_config);
+	public function __construct(array $config = []) {
+		$this->setConfig($config);
 	}
 
 
 	/**
 	 * Create a cURL request to the URL in the config and returns the data provided by the remote URL.
 	 *
-	 * @param array $aa_credentials Find conditions.
-	 * @param string $as_type Condition type. Can be `AND` or `OR`.
+	 * @param array $credentials Find conditions.
+	 * @param string $type Condition type. Can be `AND` or `OR`.
 	 * @return \ArrayAccess|array||null
 	 * @throws Exception
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function find(array $aa_credentials, string $as_type = self::TYPE_AND): array|ArrayAccess|null {
+	public function find(array $credentials, string $type = self::TYPE_AND): array|ArrayAccess|null {
 		$lx_url = $this->_config['url'] ?? null;
 		if (is_callable($lx_url)) {
-			$lx_url = $lx_url($aa_credentials);
+			$lx_url = $lx_url($credentials);
 		}
 
 		if (empty($lx_url)) {
@@ -85,7 +85,7 @@ class CurlResolver implements ResolverInterface {
 			case self::TYPE_POST:
 				$lx_requestData = $this->_config['requestData'];
 				if (is_callable($lx_requestData)) {
-					$lx_requestData = $lx_requestData($aa_credentials);
+					$lx_requestData = $lx_requestData($credentials);
 				}
 
 				curl_setopt($lo_curlHandle, CURLOPT_POST, true);

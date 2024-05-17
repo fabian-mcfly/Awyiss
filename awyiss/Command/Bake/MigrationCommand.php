@@ -37,11 +37,11 @@ class MigrationCommand extends BaseBakeMigrationCommand {
 	 * Also allow renaming fields using the alter_field-action
 	 *
 	 * @inheritDoc
-	 * @param Arguments $ao_arguments
+	 * @param Arguments $arguments
 	 * @return array
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function templateData(Arguments $ao_arguments): array {
+	public function templateData(Arguments $arguments): array {
 		$ls_className = $this->_name;
 		$ls_namespace = Configure::read('App.namespace');
 		$ls_pluginPath = '';
@@ -50,7 +50,7 @@ class MigrationCommand extends BaseBakeMigrationCommand {
 			$ls_pluginPath = $this->plugin . '.';
 		}
 
-		$la_arguments = $ao_arguments->getArguments();
+		$la_arguments = $arguments->getArguments();
 		unset($la_arguments[0]);
 		$lo_columnParser = new ColumnParser();
 		$la_fields = $lo_columnParser->parseFields($la_arguments);
@@ -130,41 +130,41 @@ class MigrationCommand extends BaseBakeMigrationCommand {
 	 *
 	 * Re-implemented `\Migrations\Command\BakeSimpleMigrationCommand::bake()` because it's not possible to call a parent's parent.
 	 *
-	 * @param string $as_name
-	 * @param Arguments $ao_arguments
-	 * @param ConsoleIo $ao_io
+	 * @param string $name
+	 * @param Arguments $arguments
+	 * @param ConsoleIo $io
 	 * @return void
 	 * @see \Migrations\Command\BakeSimpleMigrationCommand::bake()
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function bake(string $as_name, Arguments $ao_arguments, ConsoleIo $ao_io): void {
+	public function bake(string $name, Arguments $arguments, ConsoleIo $io): void {
 		EventManager::instance()->on('Bake.initialize', function (Event $event): void {
 			$event->getSubject()->loadHelper('Migrations.Migration');
 		});
 
 
-		$this->_name = $as_name;
-		$ls_path = $this->getPath($ao_arguments);
+		$this->_name = $name;
+		$ls_path = $this->getPath($arguments);
 
 		//Remember the name of the table
 		[, $ls_table] = $this->detectAction($this->_name);
 
-		$this->io = $ao_io;
+		$this->io = $io;
 
 		//If migration(s) with the same name already exist(s)
 		$la_migrationWithSameName = glob($ls_path . '*_' . $this->_name . '.php');
 		if (!empty($la_migrationWithSameName)) {
 			//Shell the migration be overwritten?
-			if ($ao_arguments->getOption('force')) {
+			if ($arguments->getOption('force')) {
 				//If so, delete all existing migrations
-				$ao_io->info(sprintf('A migration with the name `%s` already exists, it will be deleted.', $this->_name));
+				$io->info(sprintf('A migration with the name `%s` already exists, it will be deleted.', $this->_name));
 				foreach ($la_migrationWithSameName as $ls_migration) {
-					$ao_io->info(sprintf('Deleting migration file `%s`...', $ls_migration));
+					$io->info(sprintf('Deleting migration file `%s`...', $ls_migration));
 					if (unlink($ls_migration)) {
-						$ao_io->success(sprintf('Deleted `%s`', $ls_migration));
+						$io->success(sprintf('Deleted `%s`', $ls_migration));
 					}
 					else {
-						$ao_io->err(sprintf('An error occurred while deleting `%s`', $ls_migration));
+						$io->err(sprintf('An error occurred while deleting `%s`', $ls_migration));
 					}
 				}
 			}
@@ -184,7 +184,7 @@ class MigrationCommand extends BaseBakeMigrationCommand {
 
 		$lo_renderer = new TemplateRenderer($this->theme);
 		$lo_renderer->set('name', $this->_name);
-		$lo_renderer->set($this->templateData($ao_arguments));
+		$lo_renderer->set($this->templateData($arguments));
 
 		/*
 		 * Manually set the remembered name of the table as a view variable, since versionizing a migration will
@@ -197,10 +197,10 @@ class MigrationCommand extends BaseBakeMigrationCommand {
 		$ls_contents = $lo_renderer->generate($this->template());
 
 		$ls_filePath = $ls_path . $this->fileName($this->_name);
-		$this->createFile($ls_filePath, $ls_contents, $ao_arguments, $ao_io);
+		$this->createFile($ls_filePath, $ls_contents, $arguments, $io);
 
 		$ls_emptyFile = $ls_path . '.gitkeep';
-		$this->deleteEmptyFile($ls_emptyFile, $ao_io);
+		$this->deleteEmptyFile($ls_emptyFile, $io);
 	}
 
 
@@ -209,12 +209,12 @@ class MigrationCommand extends BaseBakeMigrationCommand {
 	 *
 	 * Adds the `folder`-option
 	 *
-	 * @param ConsoleOptionParser $ao_parser
+	 * @param ConsoleOptionParser $parser
 	 * @return ConsoleOptionParser
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildOptionParser(ConsoleOptionParser $ao_parser): ConsoleOptionParser {
-		$lo_parser = parent::buildOptionParser($ao_parser);
+	public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser {
+		$lo_parser = parent::buildOptionParser($parser);
 
 		$lo_parser->addOption('folder', [
 			'help' => 'The folder to save the migration in.',

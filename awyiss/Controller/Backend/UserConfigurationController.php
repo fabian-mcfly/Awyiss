@@ -83,12 +83,12 @@ class UserConfigurationController extends Controller {
 		$lo_query = $this->getOverviewQuery();
 
 		$la_configuration = Hash::expand(
-			$lo_query->all()->groupBy(function (UserConfiguration $ao_entity) use ($lo_configOptions) {
-				$la_identifier = array_map(function (string $as_identifier) {
-					return ConfigOptionsProvider::sanitizeIdentifier($as_identifier);
-				}, explode('.', $ao_entity->identifier));
+			$lo_query->all()->groupBy(function (UserConfiguration $entity) use ($lo_configOptions) {
+				$la_identifier = array_map(function (string $identifier) {
+					return ConfigOptionsProvider::sanitizeIdentifier($identifier);
+				}, explode('.', $entity->identifier));
 
-				$ao_entity->configOption = $lo_configOptions->getConfigOption('Backend', implode('.', $la_identifier));
+				$entity->configOption = $lo_configOptions->getConfigOption('Backend', implode('.', $la_identifier));
 
 				return implode('.', $la_identifier);
 			})->toArray()
@@ -103,16 +103,16 @@ class UserConfigurationController extends Controller {
 		}
 		unset($la_configOptions[ Awyiss::REALM_FRONTEND ]);
 
-		$la_configOptions[ Awyiss::REALM_BACKEND ] = Hash::filter($la_configOptions[ Awyiss::REALM_BACKEND ], function (array|ConfigOption|UserConfiguration $ax_configOptions) {
-			if (is_array($ax_configOptions)) {
-				return !empty($ax_configOptions);
+		$la_configOptions[ Awyiss::REALM_BACKEND ] = Hash::filter($la_configOptions[ Awyiss::REALM_BACKEND ], function (array|ConfigOption|UserConfiguration $configOptions) {
+			if (is_array($configOptions)) {
+				return !empty($configOptions);
 			}
 
-			if ($ax_configOptions instanceof UserConfiguration) {
+			if ($configOptions instanceof UserConfiguration) {
 				return true;
 			}
 
-			return $ax_configOptions->isPersonalizable();
+			return $configOptions->isPersonalizable();
 		});
 
 		$this->set([
@@ -147,13 +147,13 @@ class UserConfigurationController extends Controller {
 		$lo_configOptions = ConfigOptionsProvider::loadConfigOptions($lo_configuration->scope);
 		$la_configOptions = $lo_configOptions->getConfigOptions(Awyiss::REALM_BACKEND);
 
-		$la_configOptions = Hash::filter($la_configOptions->toArray(), function (array|ConfigOption $ax_configOptions) {
-			if (is_array($ax_configOptions)) {
-				return !empty($ax_configOptions);
+		$la_configOptions = Hash::filter($la_configOptions->toArray(), function (array|ConfigOption $configOptions) {
+			if (is_array($configOptions)) {
+				return !empty($configOptions);
 			}
 
 
-			return $ax_configOptions->isPersonalizable();
+			return $configOptions->isPersonalizable();
 		});
 
 		$lo_configuration->configOption = $lo_configuration->identifier ? $lo_configOptions->getConfigOption('Backend', $lo_configuration->identifier) : null;
@@ -171,13 +171,13 @@ class UserConfigurationController extends Controller {
 	 * @return \Cake\Http\Response|void
 	 * @throws \Exception
 	 */
-	public function edit(int $ai_id) {
+	public function edit(int $id) {
 		$this->Authorization->setAdditionalData([
 			'scope' => '',
 		])->ensure('update');
 
 		/** @var \Awyiss\Model\Entity\UserConfiguration $lo_configuration */
-		$lo_configuration = $this->UserConfiguration->findById($ai_id)->find('translations')->where(['user_id' => $this->getIdentity()->getIdentifier()])->first();
+		$lo_configuration = $this->UserConfiguration->findById($id)->find('translations')->where(['user_id' => $this->getIdentity()->getIdentifier()])->first();
 		if (!$lo_configuration) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -200,13 +200,13 @@ class UserConfigurationController extends Controller {
 		$lo_configOptions = ConfigOptionsProvider::loadConfigOptions($lo_configuration->scope);
 		$la_configOptions = $lo_configOptions->getConfigOptions(Awyiss::REALM_BACKEND);
 
-		$la_configOptions = Hash::filter($la_configOptions->toArray(), function (array|ConfigOption $ax_configOptions) {
-			if (is_array($ax_configOptions)) {
-				return !empty($ax_configOptions);
+		$la_configOptions = Hash::filter($la_configOptions->toArray(), function (array|ConfigOption $configOptions) {
+			if (is_array($configOptions)) {
+				return !empty($configOptions);
 			}
 
 
-			return $ax_configOptions->isPersonalizable();
+			return $configOptions->isPersonalizable();
 		});
 
 		$lo_configuration->configOption = $lo_configuration->identifier ? $lo_configOptions->getConfigOption('Backend', $lo_configuration->identifier) : null;
@@ -221,11 +221,11 @@ class UserConfigurationController extends Controller {
 	/**
 	 * Delete method
 	 *
-	 * @param int $ai_id
+	 * @param int $id
 	 * @return Response
 	 * @throws \Exception
 	 */
-	public function delete(int $ai_id): Response {
+	public function delete(int $id): Response {
 		$this->Authorization->setAdditionalData([
 			'scope' => '',
 		])->ensure('delete');
@@ -233,7 +233,7 @@ class UserConfigurationController extends Controller {
 		$this->request->allowMethod(['get', 'delete']);
 
 		/** @var \Awyiss\Model\Entity\UserConfiguration $lo_configuration */
-		$lo_configuration = $this->UserConfiguration->findById($ai_id)->find('translations')->first();
+		$lo_configuration = $this->UserConfiguration->findById($id)->find('translations')->first();
 		if (!$lo_configuration) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -259,49 +259,49 @@ class UserConfigurationController extends Controller {
 
 
 	/**
-	 * @param \Awyiss\Model\Entity\UserConfiguration $ao_configuration
-	 * @param string $as_method
+	 * @param \Awyiss\Model\Entity\UserConfiguration $configuration
+	 * @param string $method
 	 * @return void
 	 * @throws \Exception
 	 */
-	protected function save(UserConfiguration $ao_configuration, string $as_method = 'add'): void {
+	protected function save(UserConfiguration $configuration, string $method = 'add'): void {
 		$la_associated = [];
 		if ($this->UserConfiguration->hasAttributes()) {
 			$la_associated[] = $this->UserConfiguration->getAttributesTableName(true);
-			$ao_configuration->setAccess('attributes', true);
+			$configuration->setAccess('attributes', true);
 		}
 
-		$this->UserConfiguration->patchEntity($ao_configuration, $this->request->getData() + ['userId' => $this->getIdentity()->getIdentifier()], [
+		$this->UserConfiguration->patchEntity($configuration, $this->request->getData() + ['userId' => $this->getIdentity()->getIdentifier()], [
 			'associated' => $la_associated,
 			'validate' => !$this->request->getData('reload_form'),
 		]);
 
-		if (!$this->Authorization->withAdditionalData(['scope' => $ao_configuration->scope])->isAccessible('read')) {
+		if (!$this->Authorization->withAdditionalData(['scope' => $configuration->scope])->isAccessible('read')) {
 			$this->Flash->error(__('scope_not_accessible'));
 
 			throw new RedirectException(Router::url(['action' => 'overview'], true), 302);
 		}
 
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-			if ($this->UserConfiguration->save($ao_configuration, ['asCopy' => (bool)$this->request->getData('save_as_copy')])) {
+			if ($this->UserConfiguration->save($configuration, ['asCopy' => (bool)$this->request->getData('save_as_copy')])) {
 				if (!$this->request->is('ajax')) {
-					$this->Flash->success(__($as_method . '_succeeded'));
+					$this->Flash->success(__($method . '_succeeded'));
 				}
 
 				if ($this->request->getData('submit') == 'submit_close') {
-					throw new RedirectException(Router::url(['action' => 'overview', 'scope' => $ao_configuration->scope], true), 302);
+					throw new RedirectException(Router::url(['action' => 'overview', 'scope' => $configuration->scope], true), 302);
 				}
 
-				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $ao_configuration->id], true), 302);
+				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $configuration->id], true), 302);
 			}
 
-			$this->Flash->error(__($as_method . '_failed'));
-			foreach ($ao_configuration->getError('_general') as $ls_error) {
+			$this->Flash->error(__($method . '_failed'));
+			foreach ($configuration->getError('_general') as $ls_error) {
 				$this->Flash->error($ls_error);
 			}
 		}
 
-		$this->Categories->ensurePossibleCategory($ao_configuration);
+		$this->Categories->ensurePossibleCategory($configuration);
 	}
 
 

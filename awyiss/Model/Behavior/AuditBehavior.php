@@ -79,11 +79,11 @@ class AuditBehavior extends Behavior {
 	/**
 	 * Initialize the behavior with the provided configuration.
 	 *
-	 * @param array $aa_config The configuration array.
+	 * @param array $config The configuration array.
 	 * @return void
 	 */
-	public function initialize(array $aa_config): void {
-		parent::initialize($aa_config);
+	public function initialize(array $config): void {
+		parent::initialize($config);
 
 		// Get the table and schema for the current model
 		$lo_table = $this->table();
@@ -146,28 +146,29 @@ class AuditBehavior extends Behavior {
 		}
 
 		// Handle _matchingData
-		$query->formatResults(function (CollectionInterface $ao_results) {
-			return $ao_results->map(function (EntityInterface|array|null $ax_row) {
+		$query->formatResults(function (CollectionInterface $results) {
+			return $results->map(function (EntityInterface|array|null $row) {
+				$lx_row = $row;
 				// Skip the row if it does not have _matchingData
-				if (!$ax_row || !isset($ax_row['_matchingData'])) {
-					return $ax_row;
+				if (!$lx_row || !isset($lx_row['_matchingData'])) {
+					return $lx_row;
 				}
 
 				// Iterate over the matching data
-				foreach ($ax_row['_matchingData'] as $ls_matchingKey => $lo_user) {
+				foreach ($lx_row['_matchingData'] as $ls_matchingKey => $lo_user) {
 					// Modify the row data based on the matching data
 					$ls_property = Inflector::variable($ls_matchingKey);
-					$ax_row[ $ls_property ] = $lo_user->username;
-					unset($ax_row['_matchingData'][ $ls_matchingKey ]);
+					$lx_row[ $ls_property ] = $lo_user->username;
+					unset($lx_row['_matchingData'][ $ls_matchingKey ]);
 				}
 
 				// Remove the _matchingData key if it is empty
-				if (empty($ax_row['_matchingData'])) {
-					unset($ax_row['_matchingData']);
+				if (empty($lx_row['_matchingData'])) {
+					unset($lx_row['_matchingData']);
 				}
 
 
-				return $ax_row;
+				return $lx_row;
 			});
 		});
 
@@ -177,60 +178,60 @@ class AuditBehavior extends Behavior {
 
 
 	/**
-	 * @param EventInterface $ao_event
-	 * @param Validator $ao_validator
-	 * @param string $as_name
+	 * @param EventInterface $event
+	 * @param Validator $validator
+	 * @param string $name
 	 * @return Validator
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function buildValidator(EventInterface $ao_event, Validator $ao_validator, string $as_name): Validator {
-		$ao_validator->allowEmptyDateTime('createdOn');
-		$ao_validator->add('createdOn', [
+	public function buildValidator(EventInterface $event, Validator $validator, string $name): Validator {
+		$validator->allowEmptyDateTime('createdOn');
+		$validator->add('createdOn', [
 			'dateTime' => ['rule' => 'dateTime'],
 		]);
 
-		$ao_validator->allowEmptyString('createdBy');
-		$ao_validator->add('createdBy', [
+		$validator->allowEmptyString('createdBy');
+		$validator->add('createdBy', [
 			'isInteger' => ['rule' => 'isInteger'],
 		]);
 
-		$ao_validator->allowEmptyDateTime('changedOn');
-		$ao_validator->add('changedOn', [
+		$validator->allowEmptyDateTime('changedOn');
+		$validator->add('changedOn', [
 			'dateTime' => ['rule' => 'dateTime'],
 		]);
 
-		$ao_validator->allowEmptyString('changedBy');
-		$ao_validator->add('changedBy', [
+		$validator->allowEmptyString('changedBy');
+		$validator->add('changedBy', [
 			'isInteger' => ['rule' => 'isInteger'],
 		]);
 
-		$ao_validator->allowEmptyDateTime('deletedOn');
-		$ao_validator->add('deletedOn', [
+		$validator->allowEmptyDateTime('deletedOn');
+		$validator->add('deletedOn', [
 			'dateTime' => ['rule' => 'dateTime'],
 		]);
 
-		$ao_validator->allowEmptyString('deletedBy');
-		$ao_validator->add('deletedBy', [
+		$validator->allowEmptyString('deletedBy');
+		$validator->add('deletedBy', [
 			'isInteger' => ['rule' => 'isInteger'],
 		]);
 
 
-		return $ao_validator;
+		return $validator;
 	}
 
 
 	/**
-	 * @param EventInterface $ao_event
-	 * @param Entity $ao_entity
-	 * @param ArrayObject $ao_options
+	 * @param EventInterface $event
+	 * @param Entity $entity
+	 * @param ArrayObject $options
 	 * @return void
 	 * @throws \Exception
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function beforeDelete(EventInterface $ao_event, Entity $ao_entity, ArrayObject $ao_options): void {
-		if (!isset($ao_options['transactionId'])) {
-			$ao_options['transactionId'] = vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex(random_bytes(16)), 4));
-			//Text::uuid()
+	public function beforeDelete(EventInterface $event, Entity $entity, ArrayObject $options): void {
+		if (!isset($options['transactionId'])) {
+			/** @noinspection PhpVariableNamingConventionInspection */
+			$options['transactionId'] = vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex(random_bytes(16)), 4));
 		}
 	}
 
@@ -238,90 +239,91 @@ class AuditBehavior extends Behavior {
 	/**
 	 * Before saving set information when creating, updating or deleting.
 	 *
-	 * @param EventInterface $ao_event
-	 * @param Entity $ao_entity
-	 * @param ArrayObject $ao_options
+	 * @param EventInterface $event
+	 * @param Entity $entity
+	 * @param ArrayObject $options
 	 * @throws \Exception
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function beforeCopy(EventInterface $ao_event, Entity $ao_entity, ArrayObject $ao_options): void {
-		$ao_entity->unset(['createdOn', 'changedOn', 'changedBy', 'changedOn']);
+	public function beforeCopy(EventInterface $event, Entity $entity, ArrayObject $options): void {
+		$entity->unset(['createdOn', 'changedOn', 'changedBy', 'changedOn']);
 	}
 
 
 	/**
 	 * Before saving set information when creating, updating or deleting.
 	 *
-	 * @param EventInterface $ao_event
-	 * @param Entity $ao_entity
-	 * @param ArrayObject $ao_options
+	 * @param EventInterface $event
+	 * @param Entity $entity
+	 * @param ArrayObject $options
 	 * @throws \Exception
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function beforeSave(EventInterface $ao_event, Entity $ao_entity, ArrayObject $ao_options): void {
-		if (!isset($ao_options['transactionId'])) {
-			$ao_options['transactionId'] = vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex(random_bytes(16)), 4));
+	public function beforeSave(EventInterface $event, Entity $entity, ArrayObject $options): void {
+		if (!isset($options['transactionId'])) {
+			/** @noinspection PhpVariableNamingConventionInspection */
+			$options['transactionId'] = vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex(random_bytes(16)), 4));
 		}
 
-		$la_options = Hash::merge($this->getConfig(), Hash::get($ao_options, 'audit'));
+		$la_options = Hash::merge($this->getConfig(), Hash::get($options, 'audit'));
 
 		if ($la_options['skip'] === true) {
 			return;
 		}
 
-		$lb_isNew = $ao_entity->isNew();
+		$lb_isNew = $entity->isNew();
 		$li_identityId = $this->getIdentityId();
 		$lo_schema = $this->table()->getSchema();
 
-		if (empty($ao_entity->deleted)) {
+		if (empty($entity->deleted)) {
 			if ($lb_isNew && $lo_schema->getColumn('created_on') && $la_options['setTimeOnCreate']) {
 				//If the item is new, and if config wants it, set the create-info on this entity
-				$this->setCreateInfo($ao_entity, $li_identityId, $lo_schema);
+				$this->setCreateInfo($entity, $li_identityId, $lo_schema);
 			}
 			elseif (!$lb_isNew && $lo_schema->getColumn('changed_on') && $la_options['setTimeOnUpdate']) {
 				//If the item is not new, and if config wants it, set the update-info on this entity
-				$this->setUpdateInfo($ao_entity, $li_identityId, $lo_schema);
+				$this->setUpdateInfo($entity, $li_identityId, $lo_schema);
 			}
 		}
-		//elseif ($lo_schema->getColumn('deleted') && ! empty($ao_entity->deleted) && ( ! $ao_entity->hasOriginal('deleted') || $ao_entity->deleted != $ao_entity->getOriginal('deleted'))) {
-		elseif ($lo_schema->getColumn('deleted') && (!$ao_entity->hasOriginal('deleted') || $ao_entity->deleted != $ao_entity->getOriginal('deleted'))) {
+		//elseif ($lo_schema->getColumn('deleted') && ! empty($entity->deleted) && ( ! $entity->hasOriginal('deleted') || $entity->deleted != $entity->getOriginal('deleted'))) {
+		elseif ($lo_schema->getColumn('deleted') && (!$entity->hasOriginal('deleted') || $entity->deleted != $entity->getOriginal('deleted'))) {
 			//A soft delete will set the `deleted`-property. If this happens, and the config wants it, set the delete-info on this entity
 			if ($lo_schema->getColumn('deleted_on') && $la_options['setTimeOnDelete']) {
-				$this->setDeleteInfo($ao_entity, $li_identityId, $lo_schema);
+				$this->setDeleteInfo($entity, $li_identityId, $lo_schema);
 			}
 		}
 
-		if ($ao_entity->isNew() || !$ao_entity->allowsAudit()) {
+		if ($entity->isNew() || !$entity->allowsAudit()) {
 			return;
 		}
 
-		$this->auditData[ $ao_entity->id ] = $this->buildEntityData($ao_entity);
+		$this->auditData[ $entity->id ] = $this->buildEntityData($entity);
 	}
 
 
 	/**
 	 * Before saving set information when creating, updating or deleting.
 	 *
-	 * @param EventInterface $ao_event
-	 * @param Entity $ao_entity
-	 * @param ArrayObject $ao_options
+	 * @param EventInterface $event
+	 * @param Entity $entity
+	 * @param ArrayObject $options
 	 */
-	public function afterSave(EventInterface $ao_event, Entity $ao_entity, ArrayObject $ao_options): void {
+	public function afterSave(EventInterface $event, Entity $entity, ArrayObject $options): void {
 		if (!$this->getConfig('enabled')) {
 			return;
 		}
 
-		if ($ao_entity->isNew() || !$ao_entity->allowsAudit()) {
+		if ($entity->isNew() || !$entity->allowsAudit()) {
 			return;
 		}
 
-		$la_options = Hash::merge($this->getConfig(), Hash::get($ao_options, 'audit'));
+		$la_options = Hash::merge($this->getConfig(), Hash::get($options, 'audit'));
 
 		if ($la_options['skip'] === true) {
 			return;
 		}
 
-		$la_entityData = $this->auditData[ $ao_entity->id ];
+		$la_entityData = $this->auditData[ $entity->id ];
 		//No difference? Do nothing.
 		if (empty($la_entityData) || empty($la_entityData['changes']['old']) && empty($la_entityData['changes']['new'])) {
 			return;
@@ -331,10 +333,10 @@ class AuditBehavior extends Behavior {
 
 		//Set the data to be used in `newEntity`
 		$la_auditData = [
-			'transactionId' => $ao_options['transactionId'],
-			'type' => !empty($ao_entity->deleted) ? 'd' : 'u',
-			'scope' => $ao_event->getSubject()->getTable(),
-			'parentId' => $ao_entity->get('id'),
+			'transactionId' => $options['transactionId'],
+			'type' => !empty($entity->deleted) ? 'd' : 'u',
+			'scope' => $event->getSubject()->getTable(),
+			'parentId' => $entity->get('id'),
 			'dataOld' => $la_entityData['old'],
 			'dataNew' => $la_entityData['new'],
 			'diff' => $la_entityData['changes'],
@@ -351,39 +353,39 @@ class AuditBehavior extends Behavior {
 			throw new RuntimeException('Could not save audit.');
 		}
 
-		unset($this->auditData[ $ao_entity->id ]);
+		unset($this->auditData[ $entity->id ]);
 	}
 
 
 	/**
 	 * Sets the identity
 	 *
-	 * @param IdentityInterface $ao_identity
+	 * @param IdentityInterface $identity
 	 * @return void
 	 * @noinspection PhpUnused
 	 */
-	public function setIdentity(IdentityInterface $ao_identity): void {
-		$this->identity = $ao_identity;
+	public function setIdentity(IdentityInterface $identity): void {
+		$this->identity = $identity;
 	}
 
 
 	/**
-	 * @param string $as_name
-	 * @param array $aa_entityData
+	 * @param string $name
+	 * @param array $entityData
 	 * @return array
 	 */
-	protected function auditField(string $as_name, array $aa_entityData): array {
-		$lx_oldData = $aa_entityData['old'][ $as_name ] ?? null;
-		$lx_newData = $aa_entityData['new'][ $as_name ] ?? null;
+	protected function auditField(string $name, array $entityData): array {
+		$lx_oldData = $entityData['old'][ $name ] ?? null;
+		$lx_newData = $entityData['new'][ $name ] ?? null;
 
 		if ($lx_oldData === $lx_newData) {
-			return $aa_entityData;
+			return $entityData;
 		}
 
-		$la_entityData = $aa_entityData;
+		$la_entityData = $entityData;
 
-		$la_entityData['changes']['old'][ $as_name ] = $lx_oldData;
-		$la_entityData['changes']['new'][ $as_name ] = $lx_newData;
+		$la_entityData['changes']['old'][ $name ] = $lx_oldData;
+		$la_entityData['changes']['new'][ $name ] = $lx_newData;
 
 
 		return $la_entityData;
@@ -391,44 +393,44 @@ class AuditBehavior extends Behavior {
 
 
 	/**
-	 * @param Entity $ao_entity
-	 * @param string $as_field
-	 * @param Association|false $ao_association
-	 * @param array $aa_entityData
+	 * @param Entity $entity
+	 * @param string $field
+	 * @param Association|false $association
+	 * @param array $entityData
 	 * @return array
 	 */
-	protected function auditAssociation(Entity $ao_entity, string $as_field, Association|false $ao_association, array $aa_entityData): array {
-		$la_entityData = $aa_entityData;
+	protected function auditAssociation(Entity $entity, string $field, Association|false $association, array $entityData): array {
+		$la_entityData = $entityData;
 
-		if (!$ao_association || ($ao_association->getCascadeCallbacks() && $ao_association->hasBehavior('Audit') && $ao_association->getBehavior('Audit')->getConfig('enabled'))) {
+		if (!$association || ($association->getCascadeCallbacks() && $association->hasBehavior('Audit') && $association->getBehavior('Audit')->getConfig('enabled'))) {
 			/**
 			 * No association (set to false in getAssociations) or one with cascadeCallbacks = true
 			 * means that property must not be part of the audit data.
 			 * Assocations with cascadeCallbacks set to true will have their own `afterSave`-event, creating a separat audit
 			 */
-			unset($la_entityData['old'][ $as_field ], $la_entityData['new'][ $as_field ]);
+			unset($la_entityData['old'][ $field ], $la_entityData['new'][ $field ]);
 
 
 			return $la_entityData;
 		}
 
-		if ($ao_association->type() == Association::ONE_TO_MANY) {
-			$la_entityData = $this->cleanHasManyAssociationData($ao_entity, $as_field, $ao_association, $la_entityData);
+		if ($association->type() == Association::ONE_TO_MANY) {
+			$la_entityData = $this->cleanHasManyAssociationData($entity, $field, $association, $la_entityData);
 		}
-		/*elseif ($ao_association->type() === Association::MANY_TO_ONE) {
-			$this->cleanBelongsToAssociationData($ao_entity, $as_field, $ao_association, $la_entityData);
+		/*elseif ($association->type() === Association::MANY_TO_ONE) {
+			$this->cleanBelongsToAssociationData($entity, $field, $association, $la_entityData);
 		}*/
-		elseif ($ao_association->type() === Association::MANY_TO_MANY) {
-			/*if ($ao_association->hasThrough()) {
-				$la_entityData = $this->cleanHasManyThroughAssociationData($ao_entity, $as_field, $ao_association, $la_entityData);
+		elseif ($association->type() === Association::MANY_TO_MANY) {
+			/*if ($association->hasThrough()) {
+				$la_entityData = $this->cleanHasManyThroughAssociationData($entity, $field, $association, $la_entityData);
 			}
 			else {
-				$la_entityData = $this->cleanBelongsToManyAssociationData($ao_entity, $as_field, $ao_association, $la_entityData);
+				$la_entityData = $this->cleanBelongsToManyAssociationData($entity, $field, $association, $la_entityData);
 			}*/
-			$la_entityData = $this->cleanBelongsToManyAssociationData($ao_entity, $as_field, $ao_association, $la_entityData);
+			$la_entityData = $this->cleanBelongsToManyAssociationData($entity, $field, $association, $la_entityData);
 		}
-		elseif ($ao_association->type() === Association::ONE_TO_ONE) {
-			$la_entityData = $this->cleanHasOneAssociationData($ao_entity, $as_field, $ao_association, $la_entityData);
+		elseif ($association->type() === Association::ONE_TO_ONE) {
+			$la_entityData = $this->cleanHasOneAssociationData($entity, $field, $association, $la_entityData);
 		}
 
 
@@ -437,32 +439,32 @@ class AuditBehavior extends Behavior {
 
 
 	/**
-	 * @param Entity $ao_entity
-	 * @param array $aa_entityData
+	 * @param Entity $entity
+	 * @param array $entityData
 	 * @return array
 	 */
-	protected function auditTranslations(Entity $ao_entity, array $aa_entityData): array {
-		if (!$ao_entity->getSource()) {
-			return $aa_entityData;
+	protected function auditTranslations(Entity $entity, array $entityData): array {
+		if (!$entity->getSource()) {
+			return $entityData;
 		}
 
 		/** @var \Awyiss\Model\Table $lo_sourceTable */
-		$lo_sourceTable = $this->fetchTable($ao_entity->getSource());
+		$lo_sourceTable = $this->fetchTable($entity->getSource());
 		$la_translate = $lo_sourceTable->getConfig('translate');
 		if (!$la_translate) {
-			return $aa_entityData;
+			return $entityData;
 		}
 
 		$la_newTranslations = [];
 		/** @var Entity $lo_translatedEntity */
-		foreach (($ao_entity->_translations ?? []) as $ls_languageShortcode => $lo_translatedEntity) {
+		foreach (($entity->_translations ?? []) as $ls_languageShortcode => $lo_translatedEntity) {
 			$la_newTranslations[ $ls_languageShortcode ] = $lo_translatedEntity->extract($la_translate['fields'], false, false);
 		}
 
 		$la_oldTranslations = [];
-		if ($ao_entity->hasOriginal('_translations')) {
+		if ($entity->hasOriginal('_translations')) {
 			/** @var Entity $lo_translatedEntity */
-			foreach ($ao_entity->getOriginal('_translations') as $ls_languageShortcode => $lo_translatedEntity) {
+			foreach ($entity->getOriginal('_translations') as $ls_languageShortcode => $lo_translatedEntity) {
 				foreach ($la_translate['fields'] as $ls_field) {
 					if ($lo_translatedEntity->hasOriginal($ls_field)) {
 						$lx_value = $lo_translatedEntity->getOriginal($ls_field);
@@ -476,7 +478,7 @@ class AuditBehavior extends Behavior {
 			}
 		}
 
-		$la_entityData = $aa_entityData;
+		$la_entityData = $entityData;
 
 		//Even if the translations are the same, they have to make their way into the db as plain arrays, not entities
 		$la_entityData['old']['_translations'] = $la_oldTranslations;
@@ -515,33 +517,33 @@ class AuditBehavior extends Behavior {
 	/**
 	 * Set the info for a new entity
 	 *
-	 * @param Entity $ao_entity
-	 * @param int|null $ai_identityId
-	 * @param TableSchemaInterface $ao_schema
+	 * @param Entity $entity
+	 * @param int|null $identityId
+	 * @param TableSchemaInterface $schema
 	 * @return void
 	 */
-	protected function setCreateInfo(Entity $ao_entity, ?int $ai_identityId, TableSchemaInterface $ao_schema): void {
-		$ao_entity->set('createdOn', DateTime::now());
-		if ($ai_identityId && $ao_schema->getColumn('created_by')) {
-			$ao_entity->set('createdBy', $ai_identityId);
+	protected function setCreateInfo(Entity $entity, ?int $identityId, TableSchemaInterface $schema): void {
+		$entity->set('createdOn', DateTime::now());
+		if ($identityId && $schema->getColumn('created_by')) {
+			$entity->set('createdBy', $identityId);
 		}
 
-		$ao_entity->unset(['changedOn', 'changedBy']);
+		$entity->unset(['changedOn', 'changedBy']);
 	}
 
 
 	/**
 	 * Set the info for an existing entity
 	 *
-	 * @param Entity $ao_entity
-	 * @param int|null $ai_identityId
-	 * @param TableSchemaInterface $ao_schema
+	 * @param Entity $entity
+	 * @param int|null $identityId
+	 * @param TableSchemaInterface $schema
 	 * @return void
 	 */
-	protected function setUpdateInfo(Entity $ao_entity, ?int $ai_identityId, TableSchemaInterface $ao_schema): void {
-		$ao_entity->set('changedOn', DateTime::now());
-		if ($ai_identityId && $ao_schema->getColumn('changed_by')) {
-			$ao_entity->set('changedBy', $ai_identityId);
+	protected function setUpdateInfo(Entity $entity, ?int $identityId, TableSchemaInterface $schema): void {
+		$entity->set('changedOn', DateTime::now());
+		if ($identityId && $schema->getColumn('changed_by')) {
+			$entity->set('changedBy', $identityId);
 		}
 	}
 
@@ -549,15 +551,15 @@ class AuditBehavior extends Behavior {
 	/**
 	 * Set the info for a deleted entity
 	 *
-	 * @param Entity $ao_entity
-	 * @param int|null $ai_identityId
-	 * @param TableSchemaInterface $ao_schema
+	 * @param Entity $entity
+	 * @param int|null $identityId
+	 * @param TableSchemaInterface $schema
 	 * @return void
 	 */
-	protected function setDeleteInfo(Entity $ao_entity, ?int $ai_identityId, TableSchemaInterface $ao_schema): void {
-		$ao_entity->set('deletedOn', DateTime::now());
-		if ($ai_identityId && $ao_schema->getColumn('deleted_by')) {
-			$ao_entity->set('deletedBy', $ai_identityId);
+	protected function setDeleteInfo(Entity $entity, ?int $identityId, TableSchemaInterface $schema): void {
+		$entity->set('deletedOn', DateTime::now());
+		if ($identityId && $schema->getColumn('deleted_by')) {
+			$entity->set('deletedBy', $identityId);
 		}
 	}
 
@@ -584,37 +586,37 @@ class AuditBehavior extends Behavior {
 
 
 	/**
-	 * @param Entity $ao_entity
-	 * @param string $as_field
-	 * @param Association|HasOne $ao_association
-	 * @param array $aa_entityData
+	 * @param Entity $entity
+	 * @param string $field
+	 * @param Association|HasOne $association
+	 * @param array $entityData
 	 * @return array
 	 */
-	protected function cleanHasOneAssociationData(Entity $ao_entity, string $as_field, Association|HasOne $ao_association, array $aa_entityData): array {
-		$la_keys = (array)$ao_association->getBindingKey();
+	protected function cleanHasOneAssociationData(Entity $entity, string $field, Association|HasOne $association, array $entityData): array {
+		$la_keys = (array)$association->getBindingKey();
 		/** @var Entity $ls_entityClass */
-		$ls_entityClass = $ao_association->getSource()->getEntityClass();
+		$ls_entityClass = $association->getSource()->getEntityClass();
 		$la_keys = $ls_entityClass::mapFields($la_keys);
 
-		$la_foreignKeys = (array)$ao_association->getForeignKey();
+		$la_foreignKeys = (array)$association->getForeignKey();
 		/** @var Entity $ls_entityClass */
-		$ls_entityClass = $ao_association->getTarget()->getEntityClass();
+		$ls_entityClass = $association->getTarget()->getEntityClass();
 		$la_foreignKeys = $ls_entityClass::mapFields($la_foreignKeys);
 
 		$la_keys = array_flip(array_merge($la_keys, $la_foreignKeys));
 
 		//$lo_entity->extract($la_keys, false, false)
-		$lo_associatedEntity = $ao_entity->get($as_field);
+		$lo_associatedEntity = $entity->get($field);
 
 		$la_newData = [];
-		$la_entityData = $aa_entityData;
+		$la_entityData = $entityData;
 		if ($lo_associatedEntity instanceof Entity) {
 			$la_newData = $lo_associatedEntity->extract(null, false, false);
 			$la_newData = array_diff_key($la_newData, $la_keys);
 
 			if (!$lo_associatedEntity->isDirty()) {
-				$la_entityData['old'][ $as_field ] = $la_newData;
-				$la_entityData['new'][ $as_field ] = $la_newData;
+				$la_entityData['old'][ $field ] = $la_newData;
+				$la_entityData['new'][ $field ] = $la_newData;
 
 
 				return $la_entityData;
@@ -622,10 +624,10 @@ class AuditBehavior extends Behavior {
 		}
 
 		$la_oldData = [];
-		if (!$ao_entity->hasOriginal($as_field)) {
+		if (!$entity->hasOriginal($field)) {
 			/** @var Entity $lo_entity */
-			$lo_entity = $ao_entity->get($as_field);
-			if (is_a($lo_entity, 'Awyiss\Model\Entity') && !$ao_entity->get($as_field)->isNew()) {
+			$lo_entity = $entity->get($field);
+			if (is_a($lo_entity, 'Awyiss\Model\Entity') && !$entity->get($field)->isNew()) {
 				$la_oldData = array_diff_key($lo_entity->getOriginalValues(), $la_keys);
 			}
 			else {
@@ -634,11 +636,11 @@ class AuditBehavior extends Behavior {
 				}
 
 				//Do not fuck around with the original entity;
-				$lo_clonedEntity = clone $ao_entity;
-				$this->table()->loadInto($lo_clonedEntity, [$ao_association->getName()]);
-				if ($lo_clonedEntity->get($as_field)) {
-					//$aa_oldData[ $as_field ] = $lo_clonedEntity->get($as_field);
-					$la_oldData = $lo_clonedEntity->get($as_field)->getOriginalValues();
+				$lo_clonedEntity = clone $entity;
+				$this->table()->loadInto($lo_clonedEntity, [$association->getName()]);
+				if ($lo_clonedEntity->get($field)) {
+					//$oldData[ $field ] = $lo_clonedEntity->get($field);
+					$la_oldData = $lo_clonedEntity->get($field)->getOriginalValues();
 				}
 			}
 
@@ -649,15 +651,15 @@ class AuditBehavior extends Behavior {
 		}
 
 		//Even if the translations are the same, they have to make their way into the db as plain arrays, not entities
-		$la_entityData['old'][ $as_field ] = $la_oldData;
-		$la_entityData['new'][ $as_field ] = $la_newData;
+		$la_entityData['old'][ $field ] = $la_oldData;
+		$la_entityData['new'][ $field ] = $la_newData;
 
 		if ($la_oldData === $la_newData) {
 			return $la_entityData;
 		}
 
-		$la_entityData['changes']['old'][ $as_field ] = $la_oldData;
-		$la_entityData['changes']['new'][ $as_field ] = $la_newData;
+		$la_entityData['changes']['old'][ $field ] = $la_oldData;
+		$la_entityData['changes']['new'][ $field ] = $la_newData;
 
 
 		return $la_entityData;
@@ -665,27 +667,27 @@ class AuditBehavior extends Behavior {
 
 
 	/**
-	 * @param Entity $ao_entity
-	 * @param string $as_field
-	 * @param Association|HasMany $ao_association
-	 * @param array $aa_entityData
+	 * @param Entity $entity
+	 * @param string $field
+	 * @param Association|HasMany $association
+	 * @param array $entityData
 	 * @return array
 	 */
-	protected function cleanHasManyAssociationData(Entity $ao_entity, string $as_field, Association|HasMany $ao_association, array $aa_entityData): array {
-		$la_keys = (array)$ao_association->getBindingKey();
+	protected function cleanHasManyAssociationData(Entity $entity, string $field, Association|HasMany $association, array $entityData): array {
+		$la_keys = (array)$association->getBindingKey();
 		/** @var Entity $ls_entityClass */
-		$ls_entityClass = $ao_association->getSource()->getEntityClass();
+		$ls_entityClass = $association->getSource()->getEntityClass();
 		$la_keys = $ls_entityClass::mapFields($la_keys);
 
-		$la_foreignKeys = (array)$ao_association->getForeignKey();
+		$la_foreignKeys = (array)$association->getForeignKey();
 		/** @var Entity $ls_entityClass */
-		$ls_entityClass = $ao_association->getTarget()->getEntityClass();
+		$ls_entityClass = $association->getTarget()->getEntityClass();
 		$la_foreignKeys = $ls_entityClass::mapFields($la_foreignKeys);
 
 		$la_keys = array_flip(array_merge($la_keys, $la_foreignKeys));
 
-		$la_oldData = $aa_entityData['old'][ $as_field ] ?? null;
-		$la_newData = $aa_entityData['new'][ $as_field ] ?? null;
+		$la_oldData = $entityData['old'][ $field ] ?? null;
+		$la_newData = $entityData['new'][ $field ] ?? null;
 
 		if ($la_newData) {
 			/** @var Entity $lo_entity */
@@ -694,16 +696,16 @@ class AuditBehavior extends Behavior {
 			}
 		}
 
-		if (!$ao_entity->hasOriginal($as_field)) {
+		if (!$entity->hasOriginal($field)) {
 			if (!isset($la_newData)) {
-				return $aa_entityData;
+				return $entityData;
 			}
 
 			//Do not fuck around with the original entity;
-			$lo_clonedEntity = clone $ao_entity;
-			$lo_clonedEntity->unset($as_field);
-			$this->table()->loadInto($lo_clonedEntity, [$ao_association->getName()]);
-			$la_oldData = $lo_clonedEntity->get($as_field);
+			$lo_clonedEntity = clone $entity;
+			$lo_clonedEntity->unset($field);
+			$this->table()->loadInto($lo_clonedEntity, [$association->getName()]);
+			$la_oldData = $lo_clonedEntity->get($field);
 		}
 
 		if ($la_oldData) {
@@ -713,31 +715,31 @@ class AuditBehavior extends Behavior {
 			}
 		}
 
-		$la_entityData = $aa_entityData;
+		$la_entityData = $entityData;
 
 		//Even if the translations are the same, they have to make their way into the db as plain arrays, not entities
-		$la_entityData['old'][ $as_field ] = $la_oldData;
-		$la_entityData['new'][ $as_field ] = $la_newData;
+		$la_entityData['old'][ $field ] = $la_oldData;
+		$la_entityData['new'][ $field ] = $la_newData;
 
 		if ($la_oldData === $la_newData) {
 			return $la_entityData;
 		}
 
-		$la_entityData['changes']['old'][ $as_field ] = $la_oldData;
-		$la_entityData['changes']['new'][ $as_field ] = $la_newData;
+		$la_entityData['changes']['old'][ $field ] = $la_oldData;
+		$la_entityData['changes']['new'][ $field ] = $la_newData;
 
 
 		return $la_entityData;
 	}
 
 
-	/*protected function cleanHasManyThroughAssociationData (Entity $ao_entity, string $as_field, Association|BelongsToMany $ao_association, array $aa_entityData): array {
+	/*protected function cleanHasManyThroughAssociationData (Entity $entity, string $field, Association|BelongsToMany $association, array $entityData): array {
 		$ls_joinDataProperty = '_joinData';
-		$la_keys = (array)$ao_association->getBindingKey();
+		$la_keys = (array)$association->getBindingKey();
 		$la_keys[] = $ls_joinDataProperty;
 
-		$la_oldData = $aa_entityData['old'][ $as_field ] ?? null;
-		$la_newData = $aa_entityData['new'][ $as_field ] ?? null;
+		$la_oldData = $entityData['old'][ $field ] ?? null;
+		$la_newData = $entityData['new'][ $field ] ?? null;
 
 		if ($la_newData) {
 			foreach ($la_newData as $li_key => $lo_entity) {
@@ -754,41 +756,41 @@ class AuditBehavior extends Behavior {
 
 		dd($la_newData);
 
-		return $aa_entityData;
+		return $entityData;
 	}*/
 
 
 	/**
-	 * @param Entity $ao_entity
-	 * @param string $as_field
-	 * @param Association|BelongsToMany $ao_association
-	 * @param array $aa_entityData
+	 * @param Entity $entity
+	 * @param string $field
+	 * @param Association|BelongsToMany $association
+	 * @param array $entityData
 	 * @return array
 	 * @noinspection PhpFunctionCyclomaticComplexityInspection
 	 */
-	protected function cleanBelongsToManyAssociationData(Entity $ao_entity, string $as_field, Association|BelongsToMany $ao_association, array $aa_entityData): array {
-		$la_keys = (array)$ao_association->getBindingKey();
+	protected function cleanBelongsToManyAssociationData(Entity $entity, string $field, Association|BelongsToMany $association, array $entityData): array {
+		$la_keys = (array)$association->getBindingKey();
 		if (count($la_keys) > 1) {
 			dd('ohoh', $la_keys, __FILE__, __LINE__);
 		}
 
 		$ls_joinKey = '_joinData';
 		$la_junctionKeys = [];
-		$lb_hasThrough = $ao_association->hasThrough();
+		$lb_hasThrough = $association->hasThrough();
 		if ($lb_hasThrough) {
 			$la_junctionKeys = [
-				$ao_association->getBindingKey(),
-				$ao_association->getForeignKey(),
-				$ao_association->getTargetForeignKey(),
+				$association->getBindingKey(),
+				$association->getForeignKey(),
+				$association->getTargetForeignKey(),
 			];
 		}
 
-		/*array_walk($la_keys, function(&$as_key) {
-			$as_key = Inflector::variable($as_key);
+		/*array_walk($la_keys, function(&$key) {
+			$key = Inflector::variable($key);
 		});*/
 
-		$la_oldData = $aa_entityData['old'][ $as_field ] ?? null;
-		$la_newData = $aa_entityData['new'][ $as_field ] ?? null;
+		$la_oldData = $entityData['old'][ $field ] ?? null;
+		$la_newData = $entityData['new'][ $field ] ?? null;
 
 		if ($la_newData) {
 			foreach ($la_newData as $li_key => $lo_entity) {
@@ -814,15 +816,15 @@ class AuditBehavior extends Behavior {
 			$la_newData = array_filter($la_newData);
 		}
 
-		if (!$ao_entity->hasOriginal($as_field)) {
+		if (!$entity->hasOriginal($field)) {
 			if (!isset($la_newData)) {
 				return [];
 			}
 
 			//Do not fuck around with the original entity;
-			$lo_clonedEntity = clone $ao_entity;
-			$this->table()->loadInto($lo_clonedEntity, [$ao_association->getName()]);
-			$la_oldData = $lo_clonedEntity->get($as_field);
+			$lo_clonedEntity = clone $entity;
+			$this->table()->loadInto($lo_clonedEntity, [$association->getName()]);
+			$la_oldData = $lo_clonedEntity->get($field);
 		}
 
 		if ($la_oldData ?? null) {
@@ -851,18 +853,18 @@ class AuditBehavior extends Behavior {
 			});
 		}*/
 
-		$la_entityData = $aa_entityData;
+		$la_entityData = $entityData;
 
 		//Even if the translations are the same, they have to make their way into the db as plain arrays, not entities
-		$la_entityData['old'][ $as_field ] = $la_oldData;
-		$la_entityData['new'][ $as_field ] = $la_newData;
+		$la_entityData['old'][ $field ] = $la_oldData;
+		$la_entityData['new'][ $field ] = $la_newData;
 
 		if ($la_oldData === $la_newData) {
 			return $la_entityData;
 		}
 
-		$la_entityData['changes']['old'][ $as_field ] = $la_oldData;
-		$la_entityData['changes']['new'][ $as_field ] = $la_newData;
+		$la_entityData['changes']['old'][ $field ] = $la_oldData;
+		$la_entityData['changes']['new'][ $field ] = $la_newData;
 
 
 		return $la_entityData;
@@ -870,13 +872,13 @@ class AuditBehavior extends Behavior {
 
 
 	/**
-	 * @param Entity $ao_entity
+	 * @param Entity $entity
 	 * @return array
 	 */
-	protected function buildEntityData(Entity $ao_entity): array {
+	protected function buildEntityData(Entity $entity): array {
 		$la_entityData = [
-			'old' => $ao_entity->getOriginalValues(),
-			'new' => $ao_entity->extract(null, false, false),
+			'old' => $entity->getOriginalValues(),
+			'new' => $entity->extract(null, false, false),
 			'changes' => [
 				'old' => [],
 				'new' => [],
@@ -896,12 +898,12 @@ class AuditBehavior extends Behavior {
 			}
 
 			if (array_key_exists($ls_field, $la_associationTypes)) {
-				$la_entityData = $this->auditAssociation($ao_entity, $ls_field, $la_associationTypes[ $ls_field ], $la_entityData);
+				$la_entityData = $this->auditAssociation($entity, $ls_field, $la_associationTypes[ $ls_field ], $la_entityData);
 				continue;
 			}
 
 			if ($ls_field === '_translations') {
-				$la_entityData = $this->auditTranslations($ao_entity, $la_entityData);
+				$la_entityData = $this->auditTranslations($entity, $la_entityData);
 				continue;
 			}
 
@@ -911,8 +913,8 @@ class AuditBehavior extends Behavior {
 		//$la_data = Hash::diff($la_oldData, $la_newData);
 		//$la_data = array_diff_key($la_data, array_flip($this->getConfig('ignoredColumns')));
 		//$la_data = array_intersect_key($la_data, $la_oldData);
-		//$la_data = $this->auditAssociations($ao_entity, $la_associationTypes, $la_oldData, $la_newData, $la_data);
-		//$this->auditAttributes($ao_entity, $la_oldData, $la_newData, $la_data);
+		//$la_data = $this->auditAssociations($entity, $la_associationTypes, $la_oldData, $la_newData, $la_data);
+		//$this->auditAttributes($entity, $la_oldData, $la_newData, $la_data);
 
 		//No difference? Do nothing.
 		if (empty($la_entityData['changes']['old']) && empty($la_entityData['changes']['new'])) {

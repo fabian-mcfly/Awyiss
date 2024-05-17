@@ -27,36 +27,36 @@ class CallbackPermissionOption extends SimplePermissionOption {
 
 
 	/**
-	 * @param array $aa_config
-	 * @param PermissionOptionCollection $ao_permissionOptionCollection
+	 * @param array $config
+	 * @param PermissionOptionCollection $permissionOptionCollection
 	 */
-	public function __construct(array $aa_config, PermissionOptionCollection $ao_permissionOptionCollection) {
-		parent::__construct($aa_config, $ao_permissionOptionCollection);
+	public function __construct(array $config, PermissionOptionCollection $permissionOptionCollection) {
+		parent::__construct($config, $permissionOptionCollection);
 
-		if (isset($aa_config['callbacks'])) {
-			$this->setCallbacks($aa_config['callbacks']);
+		if (isset($config['callbacks'])) {
+			$this->setCallbacks($config['callbacks']);
 		}
 	}
 
 
 	/**
-	 * @param string $as_event
+	 * @param string $event
 	 * @return callable|null
 	 * @noinspection PhpUnused
 	 */
-	public function getCallback(string $as_event): ?callable {
-		return $this->callbacks[ $as_event ] ?? null;
+	public function getCallback(string $event): ?callable {
+		return $this->callbacks[ $event ] ?? null;
 	}
 
 
 	/**
 	 * Sets the callback to be used by the permission
 	 *
-	 * @param mixed $ax_callback
+	 * @param mixed $callback
 	 * @return $this
 	 */
-	public function setCallback(string $as_event, callable $ax_callback): static {
-		$this->callbacks[ $as_event ] = $ax_callback;
+	public function setCallback(string $event, callable $callback): static {
+		$this->callbacks[ $event ] = $callback;
 
 
 		return $this;
@@ -75,11 +75,11 @@ class CallbackPermissionOption extends SimplePermissionOption {
 	/**
 	 * Sets the callback to be used by the permission
 	 *
-	 * @param mixed $aa_callbacks
+	 * @param mixed $callbacks
 	 * @return $this
 	 */
-	public function setCallbacks(array $aa_callbacks): static {
-		foreach ($aa_callbacks as $ls_event => $lc_callback) {
+	public function setCallbacks(array $callbacks): static {
+		foreach ($callbacks as $ls_event => $lc_callback) {
 			$this->setCallback($ls_event, $lc_callback);
 		}
 
@@ -94,12 +94,12 @@ class CallbackPermissionOption extends SimplePermissionOption {
 	 * Additionally, get a callable from the configuration and call it.
 	 * This allows the callback to define additional logic for the accessibility of the permission
 	 */
-	public function isAccessible(mixed $ax_access, mixed $ax_settings, array $aa_additionalData, PermissionCollection $ao_permissionCollection): ?bool {
-		$lb_accessible = parent::isAccessible($ax_access, $ax_settings, $aa_additionalData, $ao_permissionCollection);
+	public function isAccessible(mixed $access, mixed $settings, array $additionalData, PermissionCollection $permissionCollection): ?bool {
+		$lb_accessible = parent::isAccessible($access, $settings, $additionalData, $permissionCollection);
 
 		$lc_callback = null;
-		if (!empty($aa_additionalData['event'])) {
-			$lc_callback = $this->getCallback($aa_additionalData['event']);
+		if (!empty($additionalData['event'])) {
+			$lc_callback = $this->getCallback($additionalData['event']);
 		}
 
 		//If the callback for the given event is not set, fall back to the general one. To disable one event completely, its callback needs to be false
@@ -108,7 +108,7 @@ class CallbackPermissionOption extends SimplePermissionOption {
 		}
 
 		if ($lc_callback) {
-			$lb_accessible = call_user_func($lc_callback, $lb_accessible, $ax_access, $ax_settings, $aa_additionalData, $ao_permissionCollection);
+			$lb_accessible = call_user_func($lc_callback, $lb_accessible, $access, $settings, $additionalData, $permissionCollection);
 		}
 
 

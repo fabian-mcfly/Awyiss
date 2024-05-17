@@ -37,15 +37,14 @@ class AuthenticationService extends BaseAuthenticationService {
 
 	/**
 	 * @inheritDoc
-	 * @param ServerRequestInterface $ao_request The request.
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 * @param ServerRequestInterface $request The request.
 	 * @noinspection PhpMissingParentCallCommonInspection
 	 */
-	public function authenticate(ServerRequestInterface $ao_request): ResultInterface {
+	public function authenticate(ServerRequestInterface $request): ResultInterface {
 		$lx_result = null;
 		/** @var \Authentication\Authenticator\AuthenticatorInterface $lo_authenticator */
 		foreach ($this->authenticators() as $lo_authenticator) {
-			$lx_result = $lo_authenticator->authenticate($ao_request);
+			$lx_result = $lo_authenticator->authenticate($request);
 			if ($lx_result->isValid()) {
 				$this->_successfulAuthenticator = $lo_authenticator;
 
@@ -61,7 +60,7 @@ class AuthenticationService extends BaseAuthenticationService {
 			}
 
 			if ($lo_authenticator instanceof StatelessInterface) {
-				$lo_authenticator->unauthorizedChallenge($ao_request);
+				$lo_authenticator->unauthorizedChallenge($request);
 			}
 		}
 
@@ -78,37 +77,35 @@ class AuthenticationService extends BaseAuthenticationService {
 
 	/**
 	 * @inheritDoc
-	 * @param ServerRequestInterface $ao_request The request
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 * @param ServerRequestInterface $request The request
 	 */
-	public function getUnauthenticatedRedirectUrl(ServerRequestInterface $ao_request): ?string {
+	public function getUnauthenticatedRedirectUrl(ServerRequestInterface $request): ?string {
 		/*
 		 * This one's hacky and needs a serious rework but works for now
 		 * We write the current Uri to the session since we don't like having an uri-encoded
 		 * paramter containing the old path. That looks amateurish.
 		 */
 
-		$lo_uri = $ao_request->getUri();
+		$lo_uri = $request->getUri();
 		$ls_redirectUri = $lo_uri->getPath();
 
 		/** @var \Cake\Http\Session $lo_session */
-		$lo_session = $ao_request->getAttribute('session');
+		$lo_session = $request->getAttribute('session');
 		$lo_session->write('unauthenticatedRedirectUrl', $ls_redirectUri);
 
 
-		return parent::getUnauthenticatedRedirectUrl($ao_request);
+		return parent::getUnauthenticatedRedirectUrl($request);
 	}
 
 
 	/**
 	 * @inheritDoc
-	 * @param ServerRequestInterface $ao_request The request
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 * @param ServerRequestInterface $request The request
 	 * @noinspection PhpMissingParentCallCommonInspection
 	 */
-	public function getLoginRedirect(ServerRequestInterface $ao_request): ?string {
+	public function getLoginRedirect(ServerRequestInterface $request): ?string {
 		/** @var \Cake\Http\Session $lo_session */
-		$lo_session = $ao_request->getAttribute('session');
+		$lo_session = $request->getAttribute('session');
 
 
 		return $lo_session->read('unauthenticatedRedirectUrl');

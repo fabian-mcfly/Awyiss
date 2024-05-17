@@ -43,13 +43,13 @@ class AttributeOptionsProvider {
 	 * @throws \ReflectionException
 	 * @noinspection PhpUnused
 	 */
-	public static function getAttributeOptionsFiles(bool $ab_returnLoaded = false): array {
+	public static function getAttributeOptionsFiles(bool $returnLoaded = false): array {
 		if (!static::$foundAll) {
-			static::$attributeOptions = static::findAttributeOptionsFiles('*', $ab_returnLoaded);
+			static::$attributeOptions = static::findAttributeOptionsFiles('*', $returnLoaded);
 			static::$foundAll = true;
 		}
 
-		if ($ab_returnLoaded) {
+		if ($returnLoaded) {
 			return static::$loadedAttributeOptions;
 		}
 
@@ -61,21 +61,21 @@ class AttributeOptionsProvider {
 	/**
 	 * Returns an instance of a AttributeOptionsCollection class with the provided scope or null
 	 *
-	 * @param class-string<AttributeOptionsInterface>|string $as_scope
+	 * @param class-string<AttributeOptionsInterface>|string $scope
 	 * @return AttributeOptionsInterface|null
 	 * @throws \ReflectionException
 	 * @noinspection PhpUnused
 	 */
-	public static function loadAttributeOptions(string $as_scope): ?AttributeOptionsInterface {
-		$ls_scope = static::sanitizeScope($as_scope);
+	public static function loadAttributeOptions(string $scope): ?AttributeOptionsInterface {
+		$ls_scope = static::sanitizeScope($scope);
 
 		if (array_key_exists($ls_scope, static::$loadedAttributeOptions)) {
 			return static::$loadedAttributeOptions[ $ls_scope ];
 		}
 
-		if (class_exists($as_scope)) {
-			$ls_scope = $as_scope::getScope();
-			$ls_attributeOptionsClass = $as_scope;
+		if (class_exists($scope)) {
+			$ls_scope = $scope::getScope();
+			$ls_attributeOptionsClass = $scope;
 
 			if (array_key_exists($ls_scope, static::$loadedAttributeOptions)) {
 				return static::$loadedAttributeOptions[ $ls_scope ];
@@ -102,19 +102,19 @@ class AttributeOptionsProvider {
 	/**
 	 * Returns the found AttributeOptionsCollection class for the provided scope or null
 	 *
-	 * @param string $as_scope
-	 * @param bool $ab_returnLoaded
+	 * @param string $scope
+	 * @param bool $returnLoaded
 	 * @return AttributeOptionsInterface|string|null
 	 * @throws \ReflectionException
 	 */
-	public static function getAttributeOptionsFile(string $as_scope, bool $ab_returnLoaded = false): string|AttributeOptionsInterface|null {
-		$ls_scope = static::sanitizeScope($as_scope);
+	public static function getAttributeOptionsFile(string $scope, bool $returnLoaded = false): string|AttributeOptionsInterface|null {
+		$ls_scope = static::sanitizeScope($scope);
 
 		if (empty(static::$attributeOptions[ $ls_scope ])) {
-			static::$attributeOptions += static::findAttributeOptionsFiles($ls_scope, $ab_returnLoaded);
+			static::$attributeOptions += static::findAttributeOptionsFiles($ls_scope, $returnLoaded);
 		}
 
-		if ($ab_returnLoaded) {
+		if ($returnLoaded) {
 			return static::$loadedAttributeOptions[ $ls_scope ] ?? null;
 		}
 
@@ -127,11 +127,11 @@ class AttributeOptionsProvider {
 	 * Sanitize the provided scope by removing all non-ascii characters
 	 * Returns a camelBacked string
 	 *
-	 * @param string $as_scope
+	 * @param string $scope
 	 * @return string
 	 */
-	public static function sanitizeScope(string $as_scope): string {
-		$ls_scope = Text::slug($as_scope, '_');
+	public static function sanitizeScope(string $scope): string {
+		$ls_scope = Text::slug($scope, '_');
 		$ls_scope = Inflector::singularize($ls_scope);
 		$ls_scope = Inflector::pluralize($ls_scope);
 
@@ -144,28 +144,28 @@ class AttributeOptionsProvider {
 	 * Sanitize the provided identifier by removing all non-ascii characters
 	 * Returns a camelBacked string
 	 *
-	 * @param string $as_identifier
+	 * @param string $identifier
 	 * @return string
 	 */
-	public static function sanitizeIdentifier(string $as_identifier): string {
-		return Inflector::variable(Text::slug($as_identifier, '_'));
+	public static function sanitizeIdentifier(string $identifier): string {
+		return Inflector::variable(Text::slug($identifier, '_'));
 	}
 
 
 	/**
 	 * Finds all AttributeOptionsCollection classes in both the Awyiss and the custom namespace for a given name.
 	 *
-	 * `$as_scope` can be "*" to return all files.
+	 * `$scope` can be "*" to return all files.
 	 *
 	 * If a AttributeOptionsCollection class exists in both namespaces, the one from the custom namespace is returned,
 	 * the Awyiss one is ignored.
 	 *
-	 * @param string $as_scope
-	 * @param bool $ab_load
+	 * @param string $scope
+	 * @param bool $load
 	 * @return array<string, class-string<AttributeOptionsInterface>>
 	 * @throws \ReflectionException
 	 */
-	protected static function findAttributeOptionsFiles(string $as_scope, bool $ab_load = false): array {
+	protected static function findAttributeOptionsFiles(string $scope, bool $load = false): array {
 		$la_attributeOptionFiles = [];
 
 		$la_paths = [
@@ -176,7 +176,7 @@ class AttributeOptionsProvider {
 					CUSTOM_DIR,
 					'Attribute',
 					'AttributeOptionsCollection',
-					$as_scope . 'AttributeOptionsCollection.php',
+					$scope . 'AttributeOptionsCollection.php',
 				]
 			),
 			'\Awyiss\Attribute\AttributeOptionsCollection\\' => implode(
@@ -186,7 +186,7 @@ class AttributeOptionsProvider {
 					APP_DIR,
 					'Attribute',
 					'AttributeOptionsCollection',
-					$as_scope . 'AttributeOptionsCollection.php',
+					$scope . 'AttributeOptionsCollection.php',
 				]
 			),
 		];
@@ -221,7 +221,7 @@ class AttributeOptionsProvider {
 					continue;
 				}
 
-				if ($ab_load) {
+				if ($load) {
 					static::loadAttributeOptions($ls_attributeOptionsClass);
 				}
 

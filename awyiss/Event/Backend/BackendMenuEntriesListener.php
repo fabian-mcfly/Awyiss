@@ -35,21 +35,21 @@ class BackendMenuEntriesListener implements EventListenerInterface {
 
 
 	/**
-	 * @param \Cake\Event\Event $ao_event
-	 * @param \Awyiss\Model\Entity\BackendMenuEntry $ao_entity
-	 * @param \ArrayObject $ao_options
+	 * @param \Cake\Event\Event $event
+	 * @param \Awyiss\Model\Entity\BackendMenuEntry $entity
+	 * @param \ArrayObject $options
 	 * @return void
 	 */
-	public function beforeCopy(Event $ao_event, BackendMenuEntry $ao_entity, ArrayObject $ao_options): void {
-		if ($ao_options['_primary'] !== true) {
+	public function beforeCopy(Event $event, BackendMenuEntry $entity, ArrayObject $options): void {
+		if ($options['_primary'] !== true) {
 			return;
 		}
 
 		/** @var \Awyiss\Model\Table\MenuEntriesTable $lo_table */
-		$lo_table = $ao_event->getSubject();
+		$lo_table = $event->getSubject();
 
 		/** @var \Awyiss\Model\Entity\BackendMenuEntry $lo_originalEntity */
-		$lo_originalEntity = $ao_entity->originalEntity;
+		$lo_originalEntity = $entity->originalEntity;
 		$lo_children = $lo_originalEntity->getNestedChildren();
 
 		if (!$lo_children?->count()) {
@@ -67,6 +67,6 @@ class BackendMenuEntriesListener implements EventListenerInterface {
 			$lo_childBackendMenuEntry->setNew(true);
 		}
 
-		$ao_entity->childBackendMenuEntries = $lo_nestedChildren;
+		$entity->childBackendMenuEntries = $lo_nestedChildren;
 	}
 }

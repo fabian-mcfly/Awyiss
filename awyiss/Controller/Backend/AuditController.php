@@ -23,9 +23,7 @@ class AuditController extends Controller {
 	 */
 	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
-		$lo_query = $this->Audit->find()->where($this->getOverviewWhere());
-
-		return $lo_query;
+		return $this->Audit->find()->where($this->getOverviewWhere());
 	}
 
 

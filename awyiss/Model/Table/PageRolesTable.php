@@ -20,7 +20,7 @@ use Cake\Validation\Validator;
  *
  * @property \Awyiss\Model\Table\PageTemplatesTable&\Awyiss\ORM\Association\HasOne $PageTemplates
  * @property \Awyiss\Model\Table\PagesTable&\Awyiss\ORM\Association\HasMany $Pages
- * @method \Awyiss\Model\Entity\PageRole newDefaultEntity(array $aa_additionalData = [], array $aa_options = [])
+ * @method \Awyiss\Model\Entity\PageRole newDefaultEntity(array $additionalData = [], array $options = [])
  * @noinspection PhpUnnecessaryFullyQualifiedNameInspection
  */
 class PageRolesTable extends Table {
@@ -88,96 +88,95 @@ class PageRolesTable extends Table {
 	/**
 	 * Returns the default validator object.
 	 *
-	 * @param Validator $ao_validator The validator that can be modified to
+	 * @param Validator $validator The validator that can be modified to
 	 * add some rules to it.
 	 * @return Validator
 	 * @noinspection DuplicatedCode
 	 */
-	public function validationDefault(Validator $ao_validator): Validator {
-		parent::validationDefault($ao_validator);
+	public function validationDefault(Validator $validator): Validator {
+		parent::validationDefault($validator);
 
 
-		$ao_validator->requirePresence([
+		$validator->requirePresence([
 			'title',
 			'identifier',
 		], 'create');
 
 
-		$ao_validator->add('id', [
+		$validator->add('id', [
 			'isInteger' => ['rule' => 'isInteger'],
 			'maxLength' => ['rule' => ['maxLength', 11]],
 		]);
 
 
-		$ao_validator->notEmptyString('title');
-		$ao_validator->add('title', [
+		$validator->notEmptyString('title');
+		$validator->add('title', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'maxLength' => ['rule' => ['maxLength', 50]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
 
 
-		$ao_validator->notEmptyString('identifier');
-		$ao_validator->add('identifier', [
+		$validator->notEmptyString('identifier');
+		$validator->add('identifier', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'maxLength' => ['rule' => ['maxLength', 50]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
 
 
-		$ao_validator->add('includeInLinklist', [
+		$validator->add('includeInLinklist', [
 			'boolean' => ['rule' => 'boolean'],
 		]);
 
 
-		$ao_validator->add('systemOrder', [
+		$validator->add('systemOrder', [
 			'isInteger' => ['rule' => 'isInteger'],
 		]);
 
 
-		$ao_validator->add('active', [
+		$validator->add('active', [
 			'boolean' => ['rule' => 'boolean'],
 		]);
 
 
-		$ao_validator->add('deleted', [
+		$validator->add('deleted', [
 			'boolean' => ['rule' => 'boolean'],
 		]);
 
 
-		return $ao_validator;
+		return $validator;
 	}
 
 
 	/**
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 *
-	 * @param RulesChecker|BaseRulesChecker $ao_rules The rules object to be modified.
+	 * @param RulesChecker|BaseRulesChecker $rules The rules object to be modified.
 	 * @return RulesChecker
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
-		$ao_rules->add(
-			function (PageRole $ao_entity, array $aa_options) use ($ao_rules): bool|string {
+	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
+		$rules->add(
+			function (PageRole $entity, array $options) use ($rules): bool|string {
 				if (
-					$aa_options['isCopy'] === false &&
-					$ao_entity->hasOriginal('identifier') &&
-					$ao_entity->get('identifier') !== $ao_entity->getOriginal('identifier')
+					$options['isCopy'] === false &&
+					$entity->hasOriginal('identifier') &&
+					$entity->get('identifier') !== $entity->getOriginal('identifier')
 				) {
 					return __df($this->getI18nDomain(), 'validation', 'error_identifier_unchanged');
 				}
 
-				$ls_pluralIdentifier = Inflector::pluralize($ao_entity->identifier);
+				$ls_pluralIdentifier = Inflector::pluralize($entity->identifier);
 
 				/** @var \Awyiss\Model\Table\DatatablesTable $lo_datatablesTable */
 				$lo_datatablesTable = FactoryLocator::get('Table')->get('Datatables');
 				$lo_datatables = $lo_datatablesTable->findAllAndCache();
 
 				if (
-					$ao_entity->isDirty('identifier') &&
+					$entity->isDirty('identifier') &&
 					(
-						str_starts_with($ao_entity->identifier, 'attributes_') ||
-						in_array($ao_entity->identifier, $this->blocklistedIdentifiers) ||
+						str_starts_with($entity->identifier, 'attributes_') ||
+						in_array($entity->identifier, $this->blocklistedIdentifiers) ||
 						App::className(Inflector::camelize($ls_pluralIdentifier), 'Controller/Backend', 'Controller') ||
 						$lo_datatables->firstMatch(['active' => true, 'identifier' => $ls_pluralIdentifier])
 					)
@@ -185,10 +184,10 @@ class PageRolesTable extends Table {
 					return __df($this->getI18nDomain(), 'validation', 'error_identifier_allowed');
 				}
 
-				$lo_isUnique = $ao_rules->isUnique(['identifier'], [
+				$lo_isUnique = $rules->isUnique(['identifier'], [
 					'errorField' => '_dummy',
 				]);
-				$lb_isUnique = $lo_isUnique($ao_entity, $aa_options);
+				$lb_isUnique = $lo_isUnique($entity, $options);
 
 				if (!$lb_isUnique) {
 					return __df($this->getI18nDomain(), 'validation', 'error_identifier_unique');
@@ -202,9 +201,9 @@ class PageRolesTable extends Table {
 			]
 		);
 
-		$ao_rules->addDelete(
-			function (PageRole $ao_entity/*, array $aa_options*/): bool {
-				return $ao_entity->identifier !== 'page';
+		$rules->addDelete(
+			function (PageRole $entity/*, array $options*/): bool {
+				return $entity->identifier !== 'page';
 			},
 			'notPageRolePageDeletion',
 			[
@@ -213,8 +212,8 @@ class PageRolesTable extends Table {
 			]
 		);
 
-		$ao_rules->addDelete(
-			$ao_rules->isNotLinkedTo('PageTemplates', 'page_templates'),
+		$rules->addDelete(
+			$rules->isNotLinkedTo('PageTemplates', 'page_templates'),
 			'noLinkedPageTemplates',
 			[
 				'errorField' => '_general',
@@ -223,6 +222,6 @@ class PageRolesTable extends Table {
 		);
 
 
-		return $ao_rules;
+		return $rules;
 	}
 }

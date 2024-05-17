@@ -24,12 +24,11 @@ use Symfony\Component\Process\Process;
 class ConvertFilesCommand extends Command {
 	/**
 	 * @inheritDoc
-	 * @param \Cake\Console\ConsoleOptionParser $ao_parser
+	 * @param \Cake\Console\ConsoleOptionParser $parser
 	 * @return \Cake\Console\ConsoleOptionParser
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildOptionParser(ConsoleOptionParser $ao_parser): ConsoleOptionParser {
-		$lo_parser = parent::buildOptionParser($ao_parser);
+	public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser {
+		$lo_parser = parent::buildOptionParser($parser);
 
 		$lo_parser->addOption('include-webp', [
 			'boolean' => true,
@@ -55,12 +54,11 @@ class ConvertFilesCommand extends Command {
 
 	/**
 	 * @inheritDoc
-	 * @param \Cake\Console\Arguments $ao_args
-	 * @param \Cake\Console\ConsoleIo $ao_io
+	 * @param \Cake\Console\Arguments $args
+	 * @param \Cake\Console\ConsoleIo $io
 	 * @return int
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function execute(Arguments $ao_args, ConsoleIo $ao_io): int {
+	public function execute(Arguments $args, ConsoleIo $io): int {
 		$li_startTime = time();
 		$lb_errorOccurred = false;
 
@@ -68,12 +66,12 @@ class ConvertFilesCommand extends Command {
 		while (time() - $li_startTime < 60) {
 			$li_totalFiles = 0;
 
-			$lo_files = $this->fetchCropFiles((int)$ao_args->getOption('limit'));
+			$lo_files = $this->fetchCropFiles((int)$args->getOption('limit'));
 
 			if ($lo_files->count()) {
 				$li_totalFiles += $lo_files->count();
 
-				$li_result = $this->cropImages($lo_files, $ao_io);
+				$li_result = $this->cropImages($lo_files, $io);
 				if ($li_result !== static::CODE_SUCCESS) {
 					$lb_errorOccurred = true;
 					break;
@@ -81,51 +79,51 @@ class ConvertFilesCommand extends Command {
 			}
 
 			$lo_files = $this->fetchNonImageFiles(
-				(int)$ao_args->getOption('limit'),
-				$ao_args->getOption('retry-failed'),
-				$ao_args->getOption('include-webp')
+				(int)$args->getOption('limit'),
+				$args->getOption('retry-failed'),
+				$args->getOption('include-webp')
 			);
 
 			if ($lo_files->count()) {
 				$li_totalFiles += $lo_files->count();
 
-				$li_result = $this->convertNonImages($lo_files, $ao_io, $ao_args->getOption('include-webp'));
+				$li_result = $this->convertNonImages($lo_files, $io, $args->getOption('include-webp'));
 				if ($li_result !== static::CODE_SUCCESS) {
 					$lb_errorOccurred = true;
 					break;
 				}
 			}
 
-			$lo_files = $this->fetchFilesForWebpConversion((int)$ao_args->getOption('limit'), $ao_args->getOption('retry-failed'));
+			$lo_files = $this->fetchFilesForWebpConversion((int)$args->getOption('limit'), $args->getOption('retry-failed'));
 
 			if ($lo_files->count()) {
 				$li_totalFiles += $lo_files->count();
 
-				$li_result = $this->convertImages($lo_files, $ao_io);
+				$li_result = $this->convertImages($lo_files, $io);
 				if ($li_result !== static::CODE_SUCCESS) {
 					$lb_errorOccurred = true;
 					break;
 				}
 			}
 
-			$lo_files = $this->fetchFilesForResizing((int)$ao_args->getOption('limit'), $ao_args->getOption('retry-failed'));
+			$lo_files = $this->fetchFilesForResizing((int)$args->getOption('limit'), $args->getOption('retry-failed'));
 
 			if ($lo_files->count()) {
 				$li_totalFiles += $lo_files->count();
 
-				$li_result = $this->resizeImages($lo_files, $ao_io);
+				$li_result = $this->resizeImages($lo_files, $io);
 				if ($li_result !== static::CODE_SUCCESS) {
 					$lb_errorOccurred = true;
 					break;
 				}
 			}
 
-			$lo_files = $this->fetchFilesForAverageColorCalculation((int)$ao_args->getOption('limit'));
+			$lo_files = $this->fetchFilesForAverageColorCalculation((int)$args->getOption('limit'));
 
 			if ($lo_files->count()) {
 				$li_totalFiles += $lo_files->count();
 
-				$li_result = $this->calculateAverageColors($lo_files, $ao_io);
+				$li_result = $this->calculateAverageColors($lo_files, $io);
 				if ($li_result !== static::CODE_SUCCESS) {
 					$lb_errorOccurred = true;
 					break;
@@ -134,7 +132,7 @@ class ConvertFilesCommand extends Command {
 
 			// If the script is running in quiet mode, break the loop if no files were found
 			// This is just an assumption that the script was called manually and should not run indefinitely
-			if (!$ao_args->getOption('quiet')) {
+			if (!$args->getOption('quiet')) {
 				break;
 			}
 
@@ -151,19 +149,19 @@ class ConvertFilesCommand extends Command {
 	/**
 	 * Calculate the average color of the images
 	 *
-	 * @param \Cake\Datasource\ResultSetInterface $ao_files
-	 * @param \Cake\Console\ConsoleIo $ao_io
+	 * @param \Cake\Datasource\ResultSetInterface $files
+	 * @param \Cake\Console\ConsoleIo $io
 	 * @return int
 	 */
-	protected function calculateAverageColors(ResultSetInterface $ao_files, ConsoleIo $ao_io): int {
+	protected function calculateAverageColors(ResultSetInterface $files, ConsoleIo $io): int {
 		/** @var \Awyiss\Model\Entity\Media $lo_file */
-		foreach ($ao_files as $lo_file) {
+		foreach ($files as $lo_file) {
 			$ls_path = $lo_file->isImage() ? $lo_file->pathAbsolute : $lo_file->previewPathAbsolute;
 
-			$ao_io->out(sprintf('Calculating average color for file `%s`', $lo_file->path));
+			$io->out(sprintf('Calculating average color for file `%s`', $lo_file->path));
 
 			if (!file_exists($ls_path)) {
-				$ao_io->error('Status: File does not exist');
+				$io->error('Status: File does not exist');
 
 				// If the file does not exist or is a png, set the average color to a fully transparent black
 				$lo_file->averageColor = '00000000';
@@ -171,7 +169,7 @@ class ConvertFilesCommand extends Command {
 			}
 
 			if ($lo_file->mimeType === 'image/png') {
-				$ao_io->info('Status: Cannot calculate average color for png files');
+				$io->info('Status: Cannot calculate average color for png files');
 
 				// If the file does not exist or is a png, set the average color to a fully transparent black
 				$lo_file->averageColor = '00000000';
@@ -181,8 +179,8 @@ class ConvertFilesCommand extends Command {
 			$lo_image = imagecreatefromstring(file_get_contents($ls_path));
 
 			if (!$lo_image) {
-				$ao_io->error('Status: Cannot create image from file');
-				$ao_io->hr();
+				$io->error('Status: Cannot create image from file');
+				$io->hr();
 
 				$lo_file->averageColor = '00000000';
 				continue;
@@ -200,12 +198,12 @@ class ConvertFilesCommand extends Command {
 
 			$lo_file->averageColor = sprintf('%02X%02X%02X%02X', $la_colors['red'], $la_colors['green'], $la_colors['blue'], $la_colors['alpha']);
 
-			$ao_io->success('Status: Average color calculated successfully (#' . $lo_file->averageColor . ')');
+			$io->success('Status: Average color calculated successfully (#' . $lo_file->averageColor . ')');
 
 			imagedestroy($lo_image);
 			$lo_image = null;
 
-			$ao_io->hr();
+			$io->hr();
 		}
 
 		/** @var \Awyiss\Model\Table\MediaTable $lo_table */
@@ -214,11 +212,11 @@ class ConvertFilesCommand extends Command {
 		/**
 		 * If all files have the same webp status, use a simple updateAll command
 		 */
-		$lo_table->updateAll(function (QueryExpression $ao_expression) use ($ao_files) {
-			$lo_averageColorCases = $ao_expression->case();
+		$lo_table->updateAll(function (QueryExpression $expression) use ($files) {
+			$lo_averageColorCases = $expression->case();
 
 			/** @var \Awyiss\Model\Entity\Media $lo_file */
-			foreach ($ao_files as $lo_file) {
+			foreach ($files as $lo_file) {
 				$lo_averageColorCases->when(['id = ' . $lo_file->id])->then($lo_file->averageColor, 'string');
 			}
 
@@ -226,7 +224,7 @@ class ConvertFilesCommand extends Command {
 				'average_color' => $lo_averageColorCases,
 			];
 		}, [
-			'id IN' => $ao_files->extract('id')->toArray(),
+			'id IN' => $files->extract('id')->toArray(),
 		]);
 
 		return static::CODE_SUCCESS;
@@ -234,40 +232,39 @@ class ConvertFilesCommand extends Command {
 
 
 	/**
-	 * @param \Cake\Datasource\ResultSetInterface $ao_args
-	 * @param \Cake\Console\ConsoleIo $ao_io
+	 * @param \Cake\Datasource\ResultSetInterface $args
+	 * @param \Cake\Console\ConsoleIo $io
 	 * @return int
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	protected function convertImages(ResultSetInterface $ao_files, ConsoleIo $ao_io): int {
+	protected function convertImages(ResultSetInterface $files, ConsoleIo $io): int {
 		/** @var \Awyiss\Model\Entity\Media $lo_file */
-		foreach ($ao_files as $lo_file) {
-			$ao_io->out(sprintf('Creating webp image for file `%s`', $lo_file->path));
+		foreach ($files as $lo_file) {
+			$io->out(sprintf('Creating webp image for file `%s`', $lo_file->path));
 
 			$lo_process = $this->convertToWebp($lo_file);
 
 			if ($lo_process === false) {
-				$ao_io->error('Status: Cannot create webp file');
+				$io->error('Status: Cannot create webp file');
 			}
 			elseif ($lo_process->isSuccessful()) {
-				$ao_io->success('Status: ' . $lo_process->getExitCodeText());
+				$io->success('Status: ' . $lo_process->getExitCodeText());
 				$lo_file->webp = ProcessStatus::Success;
 			}
 			else {
-				$ao_io->error('Status: ' . $lo_process->getExitCodeText());
-				$ao_io->out('Command: ' . $lo_process->getCommandLine());
-				$ao_io->out('Message: ' . $lo_process->getErrorOutput(), 0);
+				$io->error('Status: ' . $lo_process->getExitCodeText());
+				$io->out('Command: ' . $lo_process->getCommandLine());
+				$io->out('Message: ' . $lo_process->getErrorOutput(), 0);
 
 				$lo_file->webp = ProcessStatus::Fail;
 			}
 
-			$ao_io->hr();
+			$io->hr();
 		}
 
 		/** @var \Awyiss\Model\Table\MediaTable $lo_table */
 		$lo_table = $this->fetchTable('Media');
 
-		$la_webpStatus = array_unique($ao_files->extract('webp')->toArray(), SORT_REGULAR);
+		$la_webpStatus = array_unique($files->extract('webp')->toArray(), SORT_REGULAR);
 		if (count($la_webpStatus) === 1) {
 			/**
 			 * If all files have the same webp status, use a simple updateAll command
@@ -275,15 +272,15 @@ class ConvertFilesCommand extends Command {
 			$lo_table->updateAll([
 				'webp' => $la_webpStatus[0],
 			], [
-				'id IN' => $ao_files->extract('id')->toArray(),
+				'id IN' => $files->extract('id')->toArray(),
 			]);
 		}
 		else {
-			$lo_table->updateAll(function (QueryExpression $ao_expression) use ($ao_files) {
-				$lo_webpCases = $ao_expression->case();
+			$lo_table->updateAll(function (QueryExpression $expression) use ($files) {
+				$lo_webpCases = $expression->case();
 
 				/** @var \Awyiss\Model\Entity\Media $lo_file */
-				foreach ($ao_files as $lo_file) {
+				foreach ($files as $lo_file) {
 					$lo_webpCases->when(['id = ' . $lo_file->id])->then($lo_file->webp->value, 'integer');
 				}
 
@@ -291,7 +288,7 @@ class ConvertFilesCommand extends Command {
 					'webp' => $lo_webpCases,
 				];
 			}, [
-				'id IN' => $ao_files->extract('id')->toArray(),
+				'id IN' => $files->extract('id')->toArray(),
 			]);
 		}
 
@@ -301,20 +298,20 @@ class ConvertFilesCommand extends Command {
 
 
 	/**
-	 * @param \Cake\Datasource\ResultSetInterface $ao_files
-	 * @param \Cake\Console\ConsoleIo $ao_io
-	 * @param bool $ab_includeWebp
+	 * @param \Cake\Datasource\ResultSetInterface $files
+	 * @param \Cake\Console\ConsoleIo $io
+	 * @param bool $includeWebp
 	 * @return int
 	 */
-	protected function convertNonImages(ResultSetInterface $ao_files, ConsoleIo $ao_io, bool $ab_includeWebp): int {
+	protected function convertNonImages(ResultSetInterface $files, ConsoleIo $io, bool $includeWebp): int {
 		/** @var \Awyiss\Model\Entity\Media $lo_file */
-		foreach ($ao_files as $lo_file) {
-			$ao_io->out(sprintf('Creating preview for file `%s`', $lo_file->path));
+		foreach ($files as $lo_file) {
+			$io->out(sprintf('Creating preview for file `%s`', $lo_file->path));
 
 			$ls_previewPathAbsolute = $lo_file->previewPathAbsolute;
 			if (!$ls_previewPathAbsolute) {
-				$ao_io->error('Status: Cannot convert file without a path');
-				$ao_io->hr();
+				$io->error('Status: Cannot convert file without a path');
+				$io->hr();
 
 				continue;
 			}
@@ -326,8 +323,8 @@ class ConvertFilesCommand extends Command {
 			$la_command = $this->getCommand($lo_file, 'preview');
 
 			if (!$la_command) {
-				$ao_io->warning(sprintf('Status: Cannot convert filetype `%s`', $lo_file->extension));
-				$ao_io->hr();
+				$io->warning(sprintf('Status: Cannot convert filetype `%s`', $lo_file->extension));
+				$io->hr();
 
 				$lo_file->preview = ProcessStatus::Fail;
 				$lo_file->webp = ProcessStatus::Fail;
@@ -338,7 +335,7 @@ class ConvertFilesCommand extends Command {
 			$lo_process = new Process($la_command);
 			$lo_process->run();
 			if ($lo_process->isSuccessful()) {
-				$ao_io->success('Status: ' . $lo_process->getExitCodeText());
+				$io->success('Status: ' . $lo_process->getExitCodeText());
 
 				$la_imageSize = getimagesize($ls_previewPathAbsolute);
 
@@ -346,40 +343,40 @@ class ConvertFilesCommand extends Command {
 				$lo_file->height = $la_imageSize[1];
 				$lo_file->preview = ProcessStatus::Success;
 
-				if ($ab_includeWebp) {
-					$ao_io->out(sprintf('Creating WebP file for file `%s`', $lo_file->path));
+				if ($includeWebp) {
+					$io->out(sprintf('Creating WebP file for file `%s`', $lo_file->path));
 
 					$lo_webpStatusProcess = $this->convertToWebp($lo_file);
 
 					if ($lo_webpStatusProcess === false) {
-						$ao_io->error('Status: Cannot create webp file');
+						$io->error('Status: Cannot create webp file');
 					}
 					elseif ($lo_webpStatusProcess->isSuccessful()) {
-						$ao_io->success('Status: ' . $lo_webpStatusProcess->getExitCodeText());
+						$io->success('Status: ' . $lo_webpStatusProcess->getExitCodeText());
 						$lo_file->webp = ProcessStatus::Success;
 					}
 					else {
-						$ao_io->error('Status: ' . $lo_webpStatusProcess->getExitCodeText());
+						$io->error('Status: ' . $lo_webpStatusProcess->getExitCodeText());
 						$lo_file->webp = ProcessStatus::Fail;
 					}
 				}
 			}
 			else {
-				$ao_io->error('Status: ' . $lo_process->getExitCodeText());
-				$ao_io->out('Command: ' . $lo_process->getCommandLine());
-				$ao_io->out('Message: ' . $lo_process->getErrorOutput(), 0);
+				$io->error('Status: ' . $lo_process->getExitCodeText());
+				$io->out('Command: ' . $lo_process->getCommandLine());
+				$io->out('Message: ' . $lo_process->getErrorOutput(), 0);
 
 				$lo_file->preview = ProcessStatus::Fail;
 				$lo_file->webp = ProcessStatus::Undefined;
 			}
 
-			$ao_io->hr();
+			$io->hr();
 		}
 
 		/** @var \Awyiss\Model\Table\MediaTable $lo_table */
 		$lo_table = $this->fetchTable('Media');
 
-		$la_previewStatus = array_unique($ao_files->extract('preview')->toArray(), SORT_REGULAR);
+		$la_previewStatus = array_unique($files->extract('preview')->toArray(), SORT_REGULAR);
 		/**
 		 * If all files have the same preview status "failed", use a simple updateAll command
 		 * This also means no webp was created, even though it was requested.
@@ -390,26 +387,26 @@ class ConvertFilesCommand extends Command {
 				'preview' => $la_previewStatus[0],
 				'webp' => ProcessStatus::Undefined,
 			], [
-				'id IN' => $ao_files->extract('id')->toArray(),
+				'id IN' => $files->extract('id')->toArray(),
 			]);
 		}
 		else {
-			$lo_table->updateAll(function (QueryExpression $ao_expression) use ($ao_files, $ab_includeWebp) {
-				$lo_widthCases = $ao_expression->case();
-				$lo_heightCases = $ao_expression->case();
-				$lo_previewCases = $ao_expression->case();
+			$lo_table->updateAll(function (QueryExpression $expression) use ($files, $includeWebp) {
+				$lo_widthCases = $expression->case();
+				$lo_heightCases = $expression->case();
+				$lo_previewCases = $expression->case();
 
-				if ($ab_includeWebp) {
-					$lo_webpCases = $ao_expression->case();
+				if ($includeWebp) {
+					$lo_webpCases = $expression->case();
 				}
 
 				/** @var \Awyiss\Model\Entity\Media $lo_file */
-				foreach ($ao_files as $lo_file) {
+				foreach ($files as $lo_file) {
 					$lo_widthCases->when(['id = ' . $lo_file->id])->then($lo_file->width, 'float');
 					$lo_heightCases->when(['id = ' . $lo_file->id])->then($lo_file->height, 'float');
 					$lo_previewCases->when(['id = ' . $lo_file->id])->then($lo_file->preview->value, 'integer');
 
-					if ($ab_includeWebp) {
+					if ($includeWebp) {
 						$lo_webpCases->when(['id = ' . $lo_file->id])->then($lo_file->webp->value, 'integer');
 					}
 				}
@@ -420,13 +417,13 @@ class ConvertFilesCommand extends Command {
 					'preview' => $lo_previewCases,
 				];
 
-				if ($ab_includeWebp) {
+				if ($includeWebp) {
 					$la_cases['webp'] = $lo_webpCases;
 				}
 
 				return $la_cases;
 			}, [
-				'id IN' => $ao_files->extract('id')->toArray(),
+				'id IN' => $files->extract('id')->toArray(),
 			]);
 		}
 
@@ -435,11 +432,11 @@ class ConvertFilesCommand extends Command {
 
 
 	/**
-	 * @param \Awyiss\Model\Entity\Media $ao_file
+	 * @param \Awyiss\Model\Entity\Media $file
 	 * @return \Symfony\Component\Process\Process|false
 	 */
-	protected function convertToWebp(Media $ao_file): Process|false {
-		$ls_webpPathAbsolute = $ao_file->webpPathAbsolute;
+	protected function convertToWebp(Media $file): Process|false {
+		$ls_webpPathAbsolute = $file->webpPathAbsolute;
 
 		if (!$ls_webpPathAbsolute) {
 			return false;
@@ -449,7 +446,7 @@ class ConvertFilesCommand extends Command {
 			mkdir(dirname($ls_webpPathAbsolute));
 		}
 
-		$lo_process = new Process($this->getCommand($ao_file, 'webp'));
+		$lo_process = new Process($this->getCommand($file, 'webp'));
 		$lo_process->run();
 
 		return $lo_process;
@@ -457,14 +454,14 @@ class ConvertFilesCommand extends Command {
 
 
 	/**
-	 * @param \Cake\Datasource\ResultSetInterface $ao_files
-	 * @param \Cake\Console\ConsoleIo $ao_io
+	 * @param \Cake\Datasource\ResultSetInterface $files
+	 * @param \Cake\Console\ConsoleIo $io
 	 * @return void
 	 */
-	protected function cropImages(ResultSetInterface $ao_files, ConsoleIo $ao_io): int {
+	protected function cropImages(ResultSetInterface $files, ConsoleIo $io): int {
 		/** @var \Awyiss\Model\Entity\Media $lo_file */
-		foreach ($ao_files as $lo_file) {
-			$ao_io->out(sprintf('Cropping file `%s`', $lo_file->path));
+		foreach ($files as $lo_file) {
+			$io->out(sprintf('Cropping file `%s`', $lo_file->path));
 
 			$la_commands = $this->getCommand($lo_file, 'crop');
 
@@ -472,7 +469,7 @@ class ConvertFilesCommand extends Command {
 			$lo_process->run();
 
 			if ($lo_process->isSuccessful()) {
-				$ao_io->success('Status: ' . $lo_process->getExitCodeText());
+				$io->success('Status: ' . $lo_process->getExitCodeText());
 
 				// If there's a webp command, run it and crop the webp file as well
 				if ($la_commands['webp']) {
@@ -489,24 +486,24 @@ class ConvertFilesCommand extends Command {
 				$lo_file->deleteResizedFiles();
 			}
 			else {
-				$ao_io->error('Status: ' . $lo_process->getExitCodeText());
-				$ao_io->out('Command: ' . $lo_process->getCommandLine());
-				$ao_io->out('Message: ' . $lo_process->getErrorOutput(), 0);
+				$io->error('Status: ' . $lo_process->getExitCodeText());
+				$io->out('Command: ' . $lo_process->getCommandLine());
+				$io->out('Message: ' . $lo_process->getErrorOutput(), 0);
 			}
 
-			$ao_io->hr();
+			$io->hr();
 		}
 
 		/** @var \Awyiss\Model\Table\MediaTable $lo_table */
 		$lo_table = $this->fetchTable('Media');
 
-		$lo_table->updateAll(function (QueryExpression $ao_expression) use ($ao_files) {
-			$lo_widthCases = $ao_expression->case();
-			$lo_heightCases = $ao_expression->case();
-			$lo_cropCases = $ao_expression->case();
+		$lo_table->updateAll(function (QueryExpression $expression) use ($files) {
+			$lo_widthCases = $expression->case();
+			$lo_heightCases = $expression->case();
+			$lo_cropCases = $expression->case();
 
 			/** @var \Awyiss\Model\Entity\Media $lo_file */
-			foreach ($ao_files as $lo_file) {
+			foreach ($files as $lo_file) {
 				$lo_widthCases->when(['id = ' . $lo_file->id])->then($lo_file->width, 'float');
 				$lo_heightCases->when(['id = ' . $lo_file->id])->then($lo_file->height, 'float');
 				$lo_cropCases->when(['id = ' . $lo_file->id])->then($lo_file->crop, 'integer');
@@ -518,7 +515,7 @@ class ConvertFilesCommand extends Command {
 				'crop' => $lo_cropCases,
 			];
 		}, [
-			'id IN' => $ao_files->extract('id')->toArray(),
+			'id IN' => $files->extract('id')->toArray(),
 		]);
 
 		return static::CODE_SUCCESS;
@@ -529,18 +526,18 @@ class ConvertFilesCommand extends Command {
 	 * This method resizes the images in the ResultSet and updates the status of the files
 	 * Each file is processed individually and resized according to the strategy set in the database
 	 *
-	 * @param \Cake\Datasource\ResultSetInterface $ao_files
-	 * @param \Cake\Console\ConsoleIo $ao_io
+	 * @param \Cake\Datasource\ResultSetInterface $files
+	 * @param \Cake\Console\ConsoleIo $io
 	 * @return int
 	 */
-	protected function resizeImages(ResultSetInterface $ao_files, ConsoleIo $ao_io): int {
+	protected function resizeImages(ResultSetInterface $files, ConsoleIo $io): int {
 		/** @var \Awyiss\Model\Entity\MediaResizedImage $lo_file */
-		foreach ($ao_files as $lo_file) {
-			$ao_io->out(sprintf('Resizing file `%s` to `%s', $lo_file->media->path, $lo_file->path));
+		foreach ($files as $lo_file) {
+			$io->out(sprintf('Resizing file `%s` to `%s', $lo_file->media->path, $lo_file->path));
 
 			if (!$lo_file->media->isImage() && $lo_file->media->preview === ProcessStatus::Fail) {
-				$ao_io->error('Status: Cannot resize non-image file without a preview');
-				$ao_io->hr();
+				$io->error('Status: Cannot resize non-image file without a preview');
+				$io->hr();
 
 				$lo_file->status = ProcessStatus::Fail;
 				continue;
@@ -554,25 +551,25 @@ class ConvertFilesCommand extends Command {
 			$lo_process->run();
 
 			if ($lo_process->isSuccessful()) {
-				$ao_io->success('Status: ' . $lo_process->getExitCodeText());
+				$io->success('Status: ' . $lo_process->getExitCodeText());
 
 				$lo_file->status = ProcessStatus::Success;
 			}
 			else {
-				$ao_io->error('Status: ' . $lo_process->getExitCodeText());
-				$ao_io->out('Command: ' . $lo_process->getCommandLine());
-				$ao_io->out('Message: ' . $lo_process->getErrorOutput(), 0);
+				$io->error('Status: ' . $lo_process->getExitCodeText());
+				$io->out('Command: ' . $lo_process->getCommandLine());
+				$io->out('Message: ' . $lo_process->getErrorOutput(), 0);
 
 				$lo_file->status = ProcessStatus::Fail;
 			}
 
-			$ao_io->hr();
+			$io->hr();
 		}
 
 		/** @var \Awyiss\Model\Table\MediaResizedImagesTable $lo_table */
 		$lo_table = $this->fetchTable('MediaResizedImages');
 
-		$la_status = array_unique($ao_files->extract('status')->toArray(), SORT_REGULAR);
+		$la_status = array_unique($files->extract('status')->toArray(), SORT_REGULAR);
 		/**
 		 * If all files have the same status "failed", use a simple updateAll command
 		 */
@@ -580,15 +577,15 @@ class ConvertFilesCommand extends Command {
 			$lo_table->updateAll([
 				'status' => ProcessStatus::Fail,
 			], [
-				'id IN' => $ao_files->extract('id')->toArray(),
+				'id IN' => $files->extract('id')->toArray(),
 			]);
 		}
 		else {
-			$lo_table->updateAll(function (QueryExpression $ao_expression) use ($ao_files) {
-				$lo_statusCases = $ao_expression->case();
+			$lo_table->updateAll(function (QueryExpression $expression) use ($files) {
+				$lo_statusCases = $expression->case();
 
 				/** @var \Awyiss\Model\Entity\MediaResizedImage $lo_file */
-				foreach ($ao_files as $lo_file) {
+				foreach ($files as $lo_file) {
 					$lo_statusCases->when(['id = ' . $lo_file->id])->then($lo_file->status->value, 'integer');
 				}
 
@@ -596,7 +593,7 @@ class ConvertFilesCommand extends Command {
 					'status' => $lo_statusCases,
 				];
 			}, [
-				'id IN' => $ao_files->extract('id')->toArray(),
+				'id IN' => $files->extract('id')->toArray(),
 			]);
 		}
 
@@ -605,10 +602,10 @@ class ConvertFilesCommand extends Command {
 
 
 	/**
-	 * @param int $ai_limit
+	 * @param int $limit
 	 * @return \Cake\Datasource\ResultSetInterface
 	 */
-	public function fetchCropFiles(int $ai_limit): ResultSetInterface {
+	public function fetchCropFiles(int $limit): ResultSetInterface {
 		/** @var \Awyiss\Model\Table\MediaTable $lo_table */
 		$lo_table = $this->fetchTable('Media');
 
@@ -616,22 +613,22 @@ class ConvertFilesCommand extends Command {
 			'crop IS NOT' => null,
 			'preview IN' => [ProcessStatus::Success, ProcessStatus::NotRequired],
 			'webp IN' => [ProcessStatus::Success, ProcessStatus::NotRequired],
-		])->limit($ai_limit)->all();
+		])->limit($limit)->all();
 	}
 
 
 	/**
-	 * @param int $ai_limit
-	 * @param bool $ab_retryFailed
-	 * @param bool $ab_includeWebp
+	 * @param int $limit
+	 * @param bool $retryFailed
+	 * @param bool $includeWebp
 	 * @return \Cake\Datasource\ResultSetInterface
 	 */
-	protected function fetchNonImageFiles(int $ai_limit, bool $ab_retryFailed, bool $ab_includeWebp): ResultSetInterface {
+	protected function fetchNonImageFiles(int $limit, bool $retryFailed, bool $includeWebp): ResultSetInterface {
 		$la_where = [
 			'preview' => ProcessStatus::Undefined,
 		];
 
-		if ($ab_retryFailed) {
+		if ($retryFailed) {
 			$la_where['preview'] = ProcessStatus::Fail;
 		}
 
@@ -639,51 +636,51 @@ class ConvertFilesCommand extends Command {
 			'preview',
 		];
 
-		if ($ab_includeWebp) {
+		if ($includeWebp) {
 			$la_processStatusColumns[] = 'webp';
 		}
 
 
-		return $this->fetchFiles($la_where, $ai_limit, $la_processStatusColumns);
+		return $this->fetchFiles($la_where, $limit, $la_processStatusColumns);
 	}
 
 
 	/**
 	 * Get files that have no average color set yet
 	 *
-	 * @param int $ai_limit
+	 * @param int $limit
 	 * @return \Cake\Datasource\ResultSetInterface
 	 */
-	protected function fetchFilesForAverageColorCalculation(int $ai_limit): ResultSetInterface {
+	protected function fetchFilesForAverageColorCalculation(int $limit): ResultSetInterface {
 		/** @var \Awyiss\Model\Table\MediaTable $lo_table */
 		$lo_table = $this->fetchTable('Media');
 
 		return $lo_table->find()->where([
 			'average_color IS' => null,
 			'preview IN' => [ProcessStatus::Success, ProcessStatus::NotRequired],
-		])->limit($ai_limit)->all();
+		])->limit($limit)->all();
 	}
 
 
 	/**
 	 * Fetch files that need to be resized
 	 *
-	 * @param int $ai_limit
-	 * @param bool $ab_retryFailed
+	 * @param int $limit
+	 * @param bool $retryFailed
 	 * @return \Cake\Datasource\ResultSetInterface
 	 */
-	protected function fetchFilesForResizing(int $ai_limit, bool $ab_retryFailed): ResultSetInterface {
+	protected function fetchFilesForResizing(int $limit, bool $retryFailed): ResultSetInterface {
 		$la_where = [
 			'status' => ProcessStatus::Undefined,
 		];
 
-		if ($ab_retryFailed) {
+		if ($retryFailed) {
 			$la_where['status'] = ProcessStatus::Fail;
 		}
 
 		/** @var \Awyiss\Model\Table\MediaResizedImagesTable $lo_table */
 		$lo_table = $this->fetchTable('MediaResizedImages');
-		$lo_records = $lo_table->find()->where($la_where)->contain(['Media'])->limit($ai_limit)->all();
+		$lo_records = $lo_table->find()->where($la_where)->contain(['Media'])->limit($limit)->all();
 
 		if ($lo_records->count()) {
 			$lo_table->updateAll([
@@ -698,38 +695,38 @@ class ConvertFilesCommand extends Command {
 
 
 	/**
-	 * @param int $ai_limit
-	 * @param bool $ab_retryFailed
+	 * @param int $limit
+	 * @param bool $retryFailed
 	 * @return \Cake\Datasource\ResultSetInterface
 	 */
-	protected function fetchFilesForWebpConversion(int $ai_limit, bool $ab_retryFailed): ResultSetInterface {
+	protected function fetchFilesForWebpConversion(int $limit, bool $retryFailed): ResultSetInterface {
 		$la_where = [
 			'webp' => ProcessStatus::Undefined,
 			'preview IN' => [ProcessStatus::Success, ProcessStatus::NotRequired],
 		];
 
-		if ($ab_retryFailed) {
+		if ($retryFailed) {
 			$la_where['webp'] = ProcessStatus::Fail;
 		}
 
-		return $this->fetchFiles($la_where, $ai_limit, ['webp']);
+		return $this->fetchFiles($la_where, $limit, ['webp']);
 	}
 
 
 	/**
-	 * @param array $aa_where
-	 * @param int $ai_limit
-	 * @param array $aa_processStatusColumns
+	 * @param array $where
+	 * @param int $limit
+	 * @param array $processStatusColumns
 	 * @return \Cake\Datasource\ResultSetInterface
 	 */
-	protected function fetchFiles(array $aa_where, int $ai_limit, array $aa_processStatusColumns): ResultSetInterface {
+	protected function fetchFiles(array $where, int $limit, array $processStatusColumns): ResultSetInterface {
 		/** @var \Awyiss\Model\Table\MediaTable $lo_table */
 		$lo_table = $this->fetchTable('Media');
-		$lo_records = $lo_table->find()->where($aa_where)->limit($ai_limit)->all();
+		$lo_records = $lo_table->find()->where($where)->limit($limit)->all();
 
 		if ($lo_records->count()) {
 			$la_processStatusColumns = [];
-			foreach ($aa_processStatusColumns as $ls_column) {
+			foreach ($processStatusColumns as $ls_column) {
 				$la_processStatusColumns[ $ls_column ] = ProcessStatus::InProgress;
 			}
 
@@ -743,22 +740,22 @@ class ConvertFilesCommand extends Command {
 
 
 	/**
-	 * @param \Awyiss\Model\Entity\Media|\Awyiss\Model\Entity\MediaResizedImage $ao_file
-	 * @param string $as_outputFilePath
+	 * @param \Awyiss\Model\Entity\Media|\Awyiss\Model\Entity\MediaResizedImage $file
+	 * @param string $outputFilePath
 	 * @return array<int, string>|false
 	 */
-	protected function getCommand(Media|MediaResizedImage $ao_file, string $as_type): array|false {
-		if ($as_type === 'preview') {
-			return $this->getPreviewCommand($ao_file);
+	protected function getCommand(Media|MediaResizedImage $file, string $type): array|false {
+		if ($type === 'preview') {
+			return $this->getPreviewCommand($file);
 		}
-		elseif ($as_type === 'webp') {
-			return $this->getWebPCommand($ao_file);
+		elseif ($type === 'webp') {
+			return $this->getWebPCommand($file);
 		}
-		elseif ($as_type === 'crop') {
-			return $this->getCropCommand($ao_file);
+		elseif ($type === 'crop') {
+			return $this->getCropCommand($file);
 		}
-		elseif ($as_type === 'resize') {
-			return $this->getResizeCommand($ao_file);
+		elseif ($type === 'resize') {
+			return $this->getResizeCommand($file);
 		}
 
 		return false;
@@ -766,11 +763,11 @@ class ConvertFilesCommand extends Command {
 
 
 	/**
-	 * @param \Awyiss\Model\Entity\MediaResizedImage|\Awyiss\Model\Entity\Media $ao_file
+	 * @param \Awyiss\Model\Entity\MediaResizedImage|\Awyiss\Model\Entity\Media $file
 	 * @return array|false
 	 */
-	protected function getPreviewCommand(MediaResizedImage|Media $ao_file): array|false {
-		if (in_array($ao_file->mimeType, ['video/mp4', 'video/x-msvideo'])) {
+	protected function getPreviewCommand(MediaResizedImage|Media $file): array|false {
+		if (in_array($file->mimeType, ['video/mp4', 'video/x-msvideo'])) {
 			if (!Configure::read('AvailableCommands.ffmpeg')) {
 				return false;
 			}
@@ -779,21 +776,21 @@ class ConvertFilesCommand extends Command {
 				'ffmpeg',
 				'-y',
 				'-i',
-				WWW_ROOT . str_replace('/', DS, $ao_file->path),
+				WWW_ROOT . str_replace('/', DS, $file->path),
 				'-vf',
 				'thumbnail',
 				'-frames:v',
 				'1',
-				$ao_file->previewPathAbsolute,
+				$file->previewPathAbsolute,
 			];
 		}
 		else {
-			if (!Configure::read('AvailableCommands.imageMagick.' . $ao_file->extension)) {
+			if (!Configure::read('AvailableCommands.imageMagick.' . $file->extension)) {
 				return false;
 			}
 
-			$ls_inputPath = $ao_file->path;
-			if (in_array($ao_file->extension, ['pdf', 'psd'])) {
+			$ls_inputPath = $file->path;
+			if (in_array($file->extension, ['pdf', 'psd'])) {
 				$ls_inputPath .= '[0]';
 			}
 
@@ -808,7 +805,7 @@ class ConvertFilesCommand extends Command {
 				'-alpha',
 				'remove',
 				WWW_ROOT . str_replace('/', DS, $ls_inputPath),
-				$ao_file->previewPathAbsolute,
+				$file->previewPathAbsolute,
 			];
 		}
 
@@ -817,35 +814,35 @@ class ConvertFilesCommand extends Command {
 
 
 	/**
-	 * @param \Awyiss\Model\Entity\MediaResizedImage|\Awyiss\Model\Entity\Media $ao_file
+	 * @param \Awyiss\Model\Entity\MediaResizedImage|\Awyiss\Model\Entity\Media $file
 	 * @return array
 	 */
-	protected function getWebPCommand(MediaResizedImage|Media $ao_file): array {
-		$ls_inputPath = $ao_file->pathAbsolute;
+	protected function getWebPCommand(MediaResizedImage|Media $file): array {
+		$ls_inputPath = $file->pathAbsolute;
 
-		if (!$ao_file->isImage()) {
-			$ls_inputPath = $ao_file->previewPathAbsolute;
+		if (!$file->isImage()) {
+			$ls_inputPath = $file->previewPathAbsolute;
 		}
 
 		return [
 			'convert',
 			$ls_inputPath,
-			$ao_file->webpPathAbsolute,
+			$file->webpPathAbsolute,
 		];
 	}
 
 
 	/**
-	 * @param \Awyiss\Model\Entity\MediaResizedImage|\Awyiss\Model\Entity\Media $ao_file
+	 * @param \Awyiss\Model\Entity\MediaResizedImage|\Awyiss\Model\Entity\Media $file
 	 * @return array
 	 */
-	protected function getCropCommand(MediaResizedImage|Media $ao_file): array {
-		$ls_inputPath = $ao_file->pathAbsolute;
+	protected function getCropCommand(MediaResizedImage|Media $file): array {
+		$ls_inputPath = $file->pathAbsolute;
 		$lb_crop = false;
 		$lb_resize = false;
 
-		if (!$ao_file->isImage()) {
-			$ls_inputPath = $ao_file->previewPathAbsolute;
+		if (!$file->isImage()) {
+			$ls_inputPath = $file->previewPathAbsolute;
 		}
 
 		$la_commandOriginal = [
@@ -853,46 +850,46 @@ class ConvertFilesCommand extends Command {
 			$ls_inputPath,
 		];
 
-		if ($ao_file->width !== (int)$ao_file->crop['width'] || $ao_file->height !== (int)$ao_file->crop['height']) {
+		if ($file->width !== (int)$file->crop['width'] || $file->height !== (int)$file->crop['height']) {
 			$lb_crop = true;
 			$la_commandOriginal = array_merge($la_commandOriginal, [
 				'-crop',
-				sprintf('%dx%d+%d+%d', $ao_file->crop['width'], $ao_file->crop['height'], $ao_file->crop['x'], $ao_file->crop['y']),
+				sprintf('%dx%d+%d+%d', $file->crop['width'], $file->crop['height'], $file->crop['x'], $file->crop['y']),
 			]);
 		}
 
-		if ($ao_file->crop['width'] !== $ao_file->crop['resize_width'] || $ao_file->crop['height'] !== $ao_file->crop['resize_height']) {
+		if ($file->crop['width'] !== $file->crop['resize_width'] || $file->crop['height'] !== $file->crop['resize_height']) {
 			$lb_resize = true;
 			$la_commandOriginal = array_merge($la_commandOriginal, [
 				'-resize',
-				sprintf('%dx%d', $ao_file->crop['resize_width'], $ao_file->crop['resize_height']),
+				sprintf('%dx%d', $file->crop['resize_width'], $file->crop['resize_height']),
 			]);
 		}
 
 		$la_commandOriginal[] = $ls_inputPath;
 
 		$la_commandWebp = null;
-		if ($ao_file->webpPathAbsolute) {
+		if ($file->webpPathAbsolute) {
 			$la_commandWebp = [
 				'convert',
-				$ao_file->webpPathAbsolute,
+				$file->webpPathAbsolute,
 			];
 
 			if ($lb_crop) {
 				$la_commandWebp = array_merge($la_commandWebp, [
 					'-crop',
-					sprintf('%dx%d+%d+%d', $ao_file->crop['width'], $ao_file->crop['height'], $ao_file->crop['x'], $ao_file->crop['y']),
+					sprintf('%dx%d+%d+%d', $file->crop['width'], $file->crop['height'], $file->crop['x'], $file->crop['y']),
 				]);
 			}
 
 			if ($lb_resize) {
 				$la_commandWebp = array_merge($la_commandWebp, [
 					'-resize',
-					sprintf('%dx%d', $ao_file->crop['resize_width'], $ao_file->crop['resize_height']),
+					sprintf('%dx%d', $file->crop['resize_width'], $file->crop['resize_height']),
 				]);
 			}
 
-			$la_commandWebp[] = $ao_file->webpPathAbsolute;
+			$la_commandWebp[] = $file->webpPathAbsolute;
 		}
 
 		if (!$lb_crop && !$lb_resize) {
@@ -907,48 +904,48 @@ class ConvertFilesCommand extends Command {
 
 
 	/**
-	 * @param \Awyiss\Model\Entity\MediaResizedImage|\Awyiss\Model\Entity\Media $ao_file
+	 * @param \Awyiss\Model\Entity\MediaResizedImage|\Awyiss\Model\Entity\Media $file
 	 * @return array
 	 */
-	protected function getResizeCommand(MediaResizedImage|Media $ao_file): array {
-		$ls_inputPath = $ao_file->media->pathAbsolute;
+	protected function getResizeCommand(MediaResizedImage|Media $file): array {
+		$ls_inputPath = $file->media->pathAbsolute;
 
-		if (!$ao_file->media->isImage()) {
-			$ls_inputPath = $ao_file->media->previewPathAbsolute;
+		if (!$file->media->isImage()) {
+			$ls_inputPath = $file->media->previewPathAbsolute;
 		}
 
-		return match ($ao_file->strategy) {
+		return match ($file->strategy) {
 			ResizeStrategy::Contain => [
 				'convert',
 				$ls_inputPath,
 				'-resize',
-				$ao_file->width . 'x' . $ao_file->height,
-				$ao_file->pathAbsolute,
+				$file->width . 'x' . $file->height,
+				$file->pathAbsolute,
 			],
 			ResizeStrategy::Cover => [
 				'convert',
 				$ls_inputPath,
 				'-resize',
-				$ao_file->width . 'x' . $ao_file->height . '^',
-				$ao_file->pathAbsolute,
+				$file->width . 'x' . $file->height . '^',
+				$file->pathAbsolute,
 			],
 			ResizeStrategy::Crop => [
 				'convert',
 				$ls_inputPath,
 				'-resize',
-				$ao_file->width . 'x' . $ao_file->height . '^',
+				$file->width . 'x' . $file->height . '^',
 				'-gravity',
 				'center',
 				'-extent',
-				$ao_file->width . 'x' . $ao_file->height,
-				$ao_file->pathAbsolute,
+				$file->width . 'x' . $file->height,
+				$file->pathAbsolute,
 			],
 			ResizeStrategy::Stretch => [
 				'convert',
 				$ls_inputPath,
 				'-resize',
-				$ao_file->width . 'x' . $ao_file->height . '!',
-				$ao_file->pathAbsolute,
+				$file->width . 'x' . $file->height . '!',
+				$file->pathAbsolute,
 			],
 		};
 	}

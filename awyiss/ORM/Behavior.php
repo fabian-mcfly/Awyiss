@@ -38,11 +38,11 @@ class Behavior extends BaseBehavior {
 
 	/**
 	 * @inheritDoc
-	 * @param Table $ao_table
-	 * @param array $aa_config
+	 * @param Table $table
+	 * @param array $config
 	 */
-	public function __construct(Table $ao_table, array $aa_config = []) {
-		parent::__construct($ao_table, $aa_config);
+	public function __construct(Table $table, array $config = []) {
+		parent::__construct($table, $config);
 
 		$la_implementedMethods = $this->getConfig('implementedMethods');
 		if (empty($la_implementedMethods)) {
@@ -58,9 +58,8 @@ class Behavior extends BaseBehavior {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function initialize(array $aa_config): void {
+	public function initialize(array $config): void {
 	}
 
 

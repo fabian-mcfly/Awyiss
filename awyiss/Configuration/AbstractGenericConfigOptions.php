@@ -26,8 +26,8 @@ abstract class AbstractGenericConfigOptions extends AbstractConfigOptions {
 	 *
 	 * @noinspection PhpMissingParentConstructorInspection
 	 */
-	public function __construct(string $as_scope) {
-		$this->dynamicScope = ConfigOptionsProvider::sanitizeScope($as_scope);
+	public function __construct(string $scope) {
+		$this->dynamicScope = ConfigOptionsProvider::sanitizeScope($scope);
 
 		foreach (Awyiss::getRealms() as $ls_realm) {
 			$this->realms[ $ls_realm ] = new ConfigOptionCollection();
@@ -46,11 +46,11 @@ abstract class AbstractGenericConfigOptions extends AbstractConfigOptions {
 
 
 	/**
-	 * @param string|null $as_pageRole
+	 * @param string|null $pageRole
 	 * @return $this
 	 */
-	public function setDynamicScope(?string $as_pageRole): static {
-		$this->dynamicScope = $as_pageRole;
+	public function setDynamicScope(?string $pageRole): static {
+		$this->dynamicScope = $pageRole;
 
 
 		return $this;

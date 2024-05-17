@@ -135,11 +135,11 @@ class ConfigOption {
 
 
 	/**
-	 * @param mixed $ax_defaultValue
+	 * @param mixed $defaultValue
 	 * @return self
 	 */
-	public function setDefaultValue(mixed $ax_defaultValue): static {
-		$this->defaultValue = $ax_defaultValue;
+	public function setDefaultValue(mixed $defaultValue): static {
+		$this->defaultValue = $defaultValue;
 
 
 		return $this;
@@ -155,11 +155,11 @@ class ConfigOption {
 
 
 	/**
-	 * @param string $as_description
+	 * @param string $description
 	 * @return ConfigOption
 	 */
-	public function setDescription(string $as_description): static {
-		$this->description = $as_description;
+	public function setDescription(string $description): static {
+		$this->description = $description;
 
 
 		return $this;
@@ -175,11 +175,11 @@ class ConfigOption {
 
 
 	/**
-	 * @param string $as_identifier
+	 * @param string $identifier
 	 * @return self
 	 */
-	public function setIdentifier(string $as_identifier): static {
-		$this->identifier = Inflector::variable($as_identifier);
+	public function setIdentifier(string $identifier): static {
+		$this->identifier = Inflector::variable($identifier);
 
 
 		return $this;
@@ -195,28 +195,28 @@ class ConfigOption {
 
 
 	/**
-	 * @param bool $ab_localizable
+	 * @param bool $localizable
 	 */
-	public function setLocalizable(bool $ab_localizable): void {
-		$this->localizable = $ab_localizable;
+	public function setLocalizable(bool $localizable): void {
+		$this->localizable = $localizable;
 	}
 
 
 	/**
-	 * @param bool $ab_localized
+	 * @param bool $localized
 	 * @return bool
 	 */
-	public function isNullable(bool $ab_localized = false): bool {
-		return $this->nullable[ $ab_localized ? 'localized' : 'global' ];
+	public function isNullable(bool $localized = false): bool {
+		return $this->nullable[ $localized ? 'localized' : 'global' ];
 	}
 
 
 	/**
-	 * @param bool $ab_nullable
-	 * @param bool $ab_localized
+	 * @param bool $nullable
+	 * @param bool $localized
 	 */
-	public function setNullable(bool $ab_nullable, bool $ab_localized = false): void {
-		$this->nullable[ $ab_localized ? 'localized' : 'global' ] = $ab_nullable;
+	public function setNullable(bool $nullable, bool $localized = false): void {
+		$this->nullable[ $localized ? 'localized' : 'global' ] = $nullable;
 	}
 
 
@@ -229,11 +229,11 @@ class ConfigOption {
 
 
 	/**
-	 * @param bool $ab_nullable
-	 * @param bool $ab_localized
+	 * @param bool $nullable
+	 * @param bool $localized
 	 */
-	public function setPersonalizable(bool $ab_personalizable): void {
-		$this->personalizable = $ab_personalizable;
+	public function setPersonalizable(bool $personalizable): void {
+		$this->personalizable = $personalizable;
 	}
 
 
@@ -290,11 +290,11 @@ class ConfigOption {
 
 
 	/**
-	 * @param string|null $as_title
+	 * @param string|null $title
 	 * @return $this
 	 */
-	public function setTitle(?string $as_title): static {
-		$this->title = $as_title;
+	public function setTitle(?string $title): static {
+		$this->title = $title;
 
 
 		return $this;
@@ -309,11 +309,11 @@ class ConfigOption {
 
 
 	/**
-	 * @param ConfigOptionType $ae_type
+	 * @param ConfigOptionType $type
 	 * @return self
 	 */
-	public function setType(ConfigOptionType $ae_type): static {
-		$this->type = $ae_type;
+	public function setType(ConfigOptionType $type): static {
+		$this->type = $type;
 
 
 		return $this;
@@ -329,11 +329,11 @@ class ConfigOption {
 
 
 	/**
-	 * @param callable|null $ae_type
+	 * @param callable|null $type
 	 * @return self
 	 */
-	public function setTypecast(?callable $ac_type): static {
-		$this->typecast = $ac_type;
+	public function setTypecast(?callable $type): static {
+		$this->typecast = $type;
 
 
 		return $this;
@@ -341,24 +341,24 @@ class ConfigOption {
 
 
 	/**
-	 * Validates the provided `$ax_value` to match the type stored in `self::$type`.
+	 * Validates the provided `$value` to match the type stored in `self::$type`.
 	 *
 	 * Returns
 	 * - true for a valid value or
 	 * - false for invalid ones or
 	 * - an error message string if a value is not localizable or empty but not nullable
 	 *
-	 * @param mixed $ax_value
-	 * @param string|null $as_languageShortcode
+	 * @param mixed $value
+	 * @param string|null $languageShortcode
 	 * @return string|bool
 	 */
-	public function validateConfigValue(mixed $ax_value, ?string $as_languageShortcode = null): bool|string {
-		if ($as_languageShortcode !== null && $as_languageShortcode !== '' && !$this->isLocalizable()) {
+	public function validateConfigValue(mixed $value, ?string $languageShortcode = null): bool|string {
+		if ($languageShortcode !== null && $languageShortcode !== '' && !$this->isLocalizable()) {
 			return __d('configuration', 'error_option_not_localizable');
 		}
 
-		if ($ax_value === null) {
-			if (!$this->isNullable($as_languageShortcode !== null)) {
+		if ($value === null) {
+			if (!$this->isNullable($languageShortcode !== null)) {
 				return __d('configuration', 'error_option_not_nullable');
 			}
 
@@ -373,7 +373,7 @@ class ConfigOption {
 			$this->getType() === ConfigOptionType::ListValue ||
 			$this->getType() === ConfigOptionType::ValueCollection
 		) {
-			$lx_values = $this->getValues(true, $as_languageShortcode);
+			$lx_values = $this->getValues(true, $languageShortcode);
 			if (!$lx_values) {
 				throw new RuntimeException(sprintf('Cannot validate option `%s` with type `%s` without a list of values', $this->identifier, ConfigOptionType::ListValue->name));
 			}
@@ -381,27 +381,27 @@ class ConfigOption {
 
 
 		if ($this->getType() === ConfigOptionType::Enum) {
-			if (!is_string($ax_value) && !is_int($ax_value)) {
+			if (!is_string($value) && !is_int($value)) {
 				return false;
 			}
 
 
 			/** @var \BackedEnum $lx_values */
-			return (bool)$lx_values::tryFrom($ax_value);
+			return (bool)$lx_values::tryFrom($value);
 		}
 
 		if ($this->getType() === ConfigOptionType::ListKey) {
 			/** @noinspection PhpUndefinedVariableInspection */
-			return array_key_exists($ax_value, $lx_values);
+			return array_key_exists($value, $lx_values);
 		}
 
 		if ($this->getType() === ConfigOptionType::ListValue) {
 			/** @noinspection PhpUndefinedVariableInspection */
-			return in_array($ax_value, $lx_values, true);
+			return in_array($value, $lx_values, true);
 		}
 
 		if ($this->getType() === ConfigOptionType::ValueCollection) {
-			$la_values = $ax_value;
+			$la_values = $value;
 			if (!is_array($la_values)) {
 				$la_values = json_decode($la_values, true);
 			}
@@ -413,20 +413,20 @@ class ConfigOption {
 		}
 
 
-		return $this->getType()->validate($ax_value, $this->isNullable($as_languageShortcode !== null));
+		return $this->getType()->validate($value, $this->isNullable($languageShortcode !== null));
 	}
 
 
 	/**
-	 * Casts the provided `$ax_value` to a type, specified in `self::$type`
+	 * Casts the provided `$value` to a type, specified in `self::$type`
 	 *
-	 * @param mixed $ax_value
-	 * @param string|null $as_languageShortcode
+	 * @param mixed $value
+	 * @param string|null $languageShortcode
 	 * @return mixed
 	 */
-	public function typecastConfigValue(mixed $ax_value, ?string $as_languageShortcode = null): mixed {
+	public function typecastConfigValue(mixed $value, ?string $languageShortcode = null): mixed {
 		if ($this->getTypecast()) {
-			return $this->getTypecast()($ax_value, $as_languageShortcode);
+			return $this->getTypecast()($value, $languageShortcode);
 		}
 
 		if (
@@ -435,7 +435,7 @@ class ConfigOption {
 			$this->getType() === ConfigOptionType::ListValue ||
 			$this->getType() === ConfigOptionType::ValueCollection
 		) {
-			$lx_values = $this->getValues(true, $as_languageShortcode);
+			$lx_values = $this->getValues(true, $languageShortcode);
 			if (!$lx_values) {
 				throw new RuntimeException(sprintf('Cannot typecast option `%s` with type `%s` without a list of values', $this->identifier, $this->getType()->name));
 			}
@@ -443,25 +443,25 @@ class ConfigOption {
 
 		if ($this->getType() === ConfigOptionType::Enum) {
 			/** @noinspection PhpUndefinedVariableInspection */
-			return $this->typecastEnum($ax_value, $lx_values);
+			return $this->typecastEnum($value, $lx_values);
 		}
 
 		if ($this->getType() === ConfigOptionType::ListKey) {
 			/** @noinspection PhpUndefinedVariableInspection */
-			return $this->typecastListKey($ax_value, $lx_values);
+			return $this->typecastListKey($value, $lx_values);
 		}
 
 		if ($this->getType() === ConfigOptionType::ListValue) {
 			/** @noinspection PhpUndefinedVariableInspection */
-			return $this->typecastListValue($ax_value, $lx_values);
+			return $this->typecastListValue($value, $lx_values);
 		}
 
 		if ($this->getType() === ConfigOptionType::ValueCollection) {
 			/** @noinspection PhpUndefinedVariableInspection */
-			return $this->typecastValueCollection($ax_value, $lx_values);
+			return $this->typecastValueCollection($value, $lx_values);
 		}
 
-		$lx_value = $this->getType()->cast($ax_value, $this->isNullable($as_languageShortcode !== null));
+		$lx_value = $this->getType()->cast($value, $this->isNullable($languageShortcode !== null));
 
 		if ($lx_value === null) {
 			return null;
@@ -475,13 +475,13 @@ class ConfigOption {
 	/**
 	 * @return callable|array|class-string|null
 	 */
-	public function getValues(bool $ab_returnEvaluated = false, ?string $as_languageShortcode = null): array|callable|string|null {
-		if ($ab_returnEvaluated) {
+	public function getValues(bool $returnEvaluated = false, ?string $languageShortcode = null): array|callable|string|null {
+		if ($returnEvaluated) {
 			if (is_string($this->values) && !enum_exists($this->values)) {
 				return $this->values->cases();
 			}
 			elseif (is_callable($this->values)) {
-				return call_user_func($this->values, $as_languageShortcode);
+				return call_user_func($this->values, $languageShortcode);
 			}
 		}
 
@@ -490,15 +490,15 @@ class ConfigOption {
 
 
 	/**
-	 * @param callable|array|class-string|null $ax_values
+	 * @param callable|array|class-string|null $values
 	 * @return $this
 	 */
-	public function setValues(array|callable|string|null $ax_values): static {
-		if (is_string($ax_values) && !enum_exists($ax_values)) {
-			throw new RuntimeException(sprintf('Provided values must be an array or a valid enum. `%s` given.', gettype($ax_values)));
+	public function setValues(array|callable|string|null $values): static {
+		if (is_string($values) && !enum_exists($values)) {
+			throw new RuntimeException(sprintf('Provided values must be an array or a valid enum. `%s` given.', gettype($values)));
 		}
 
-		$this->values = $ax_values;
+		$this->values = $values;
 
 
 		return $this;
@@ -506,68 +506,68 @@ class ConfigOption {
 
 
 	/**
-	 * @param mixed $ax_value
-	 * @param mixed $ax_values
+	 * @param mixed $value
+	 * @param mixed $values
 	 * @return \BackedEnum|null
 	 */
-	protected function typecastEnum(mixed $ax_value, mixed $ax_values): mixed {
+	protected function typecastEnum(mixed $value, mixed $values): mixed {
 		//If the value already is a case of the provided enum class, return it
 		/** @noinspection PhpUndefinedVariableInspection */
-		if ($ax_value instanceof $ax_values) {
-			return $ax_value;
+		if ($value instanceof $values) {
+			return $value;
 		}
 
-		if (!is_string($ax_value) && !is_int($ax_value)) {
+		if (!is_string($value) && !is_int($value)) {
 			return null;
 		}
 
-		/** @var \BackedEnum $ax_values */
-		return $ax_values::tryFrom($ax_value);
+		/** @var \BackedEnum $values */
+		return $values::tryFrom($value);
 	}
 
 
 	/**
-	 * @param mixed $ax_value
-	 * @param mixed $ax_values
+	 * @param mixed $value
+	 * @param mixed $values
 	 * @return mixed
 	 */
-	protected function typecastListKey(mixed $ax_value, mixed $ax_values): mixed {
+	protected function typecastListKey(mixed $value, mixed $values): mixed {
 		/** @noinspection PhpUndefinedVariableInspection */
-		if (in_array($ax_value, array_keys($ax_values), true)) {
-			return $ax_value;
+		if (in_array($value, array_keys($values), true)) {
+			return $value;
 		}
 
-		foreach ([array_keys($ax_values), $ax_values] as $la_values) {
+		foreach ([array_keys($values), $values] as $la_values) {
 			/** @noinspection PhpUndefinedVariableInspection */
-			return $this->typecastListValue($ax_value, $la_values);
+			return $this->typecastListValue($value, $la_values);
 		}
 	}
 
 
 	/**
-	 * @param mixed $ax_value
-	 * @param mixed $ax_values
+	 * @param mixed $value
+	 * @param mixed $values
 	 * @return mixed
 	 */
-	protected function typecastListValue(mixed $ax_value, mixed $ax_values): mixed {
+	protected function typecastListValue(mixed $value, mixed $values): mixed {
 		/** @noinspection PhpUndefinedVariableInspection */
-		if (in_array($ax_value, $ax_values, true)) {
-			return $ax_value;
+		if (in_array($value, $values, true)) {
+			return $value;
 		}
 
-		$lx_key = array_search($ax_value, $ax_values);
+		$lx_key = array_search($value, $values);
 
-		return $lx_key !== false ? $ax_values[ $lx_key ] : null;
+		return $lx_key !== false ? $values[ $lx_key ] : null;
 	}
 
 
 	/**
-	 * @param mixed $ax_value
-	 * @param mixed $ax_values
+	 * @param mixed $value
+	 * @param mixed $values
 	 * @return mixed
 	 */
-	protected function typecastValueCollection(mixed $ax_value, mixed $ax_values): mixed {
-		$la_values = $ax_value;
+	protected function typecastValueCollection(mixed $value, mixed $values): mixed {
+		$la_values = $value;
 		if (!is_array($la_values)) {
 			$la_values = $la_values ? json_decode($la_values, true) : [];
 		}
@@ -576,8 +576,8 @@ class ConfigOption {
 			$la_values = [$la_values];
 		}
 
-		// Remove all items that aren't keys in $ax_values
-		$la_values = array_intersect($la_values, array_keys($ax_values));
+		// Remove all items that aren't keys in $values
+		$la_values = array_intersect($la_values, array_keys($values));
 
 		return $la_values ?: null;
 	}

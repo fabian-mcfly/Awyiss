@@ -18,21 +18,21 @@ trait UtilTrait {
 	 *
 	 * Added a logic that honors the `namespace`-option and modifies the path accordingly.
 	 *
-	 * @param Arguments $ao_args Arguments instance to read the prefix option from.
+	 * @param Arguments $args Arguments instance to read the prefix option from.
 	 * @return string Path to output.
 	 */
-	public function getPath(Arguments $ao_args, string $as_basePath = APP): string {
+	public function getPath(Arguments $args, string $basePath = APP): string {
 		$ls_pathFragment = rtrim($this->pathFragment ?? '', '\\' . DS) . DS;
-		$ls_path = $as_basePath;
+		$ls_path = $basePath;
 		if ($this->plugin) {
 			$ls_path = $this->_pluginPath($this->plugin) . $ls_pathFragment;
 		}
-		elseif ($ao_args->getOption('namespace')) {
-			$ls_namespace = Inflector::dasherize($ao_args->getOption('namespace'));
+		elseif ($args->getOption('namespace')) {
+			$ls_namespace = Inflector::dasherize($args->getOption('namespace'));
 			$ls_path = ROOT . DS . $ls_namespace . DS . $ls_pathFragment;
 		}
-		elseif ($ao_args->getOption('folder')) {
-			$ls_path = rtrim($ao_args->getOption('folder'), '\\' . DS) . DS;
+		elseif ($args->getOption('folder')) {
+			$ls_path = rtrim($args->getOption('folder'), '\\' . DS) . DS;
 			if (!in_array($ls_path[0], ['/', DS])) {
 				$ls_path = ROOT . DS . $ls_path;
 			}
@@ -41,7 +41,7 @@ trait UtilTrait {
 			$ls_path .= $ls_pathFragment;
 		}
 
-		$ls_prefix = $this->getPrefix($ao_args);
+		$ls_prefix = $this->getPrefix($args);
 		if ($ls_prefix) {
 			$ls_path .= $ls_prefix . DS;
 		}

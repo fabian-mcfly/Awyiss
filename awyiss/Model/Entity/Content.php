@@ -120,12 +120,12 @@ class Content extends Entity {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function getChildren(array $aa_options = []): ?CollectionInterface {
+	public function getChildren(array $options = []): ?CollectionInterface {
 		/** @var \Awyiss\Model\Table\ContentsTable $lo_table */
 		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
 
 
-		return $lo_table->getChildren($this, $aa_options);
+		return $lo_table->getChildren($this, $options);
 	}
 
 
@@ -134,12 +134,12 @@ class Content extends Entity {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function getNestedChildren(array $aa_options = [], int $ai_currentLevel = 0): ?CollectionInterface {
+	public function getNestedChildren(array $options = [], int $currentLevel = 0): ?CollectionInterface {
 		/** @var \Awyiss\Model\Table\ContentsTable $lo_table */
 		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
 
 
-		return $lo_table->getNestedChildren($this, $aa_options, $ai_currentLevel);
+		return $lo_table->getNestedChildren($this, $options, $currentLevel);
 	}
 
 
@@ -148,12 +148,12 @@ class Content extends Entity {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function getParent(array $aa_options = []): ?self {
+	public function getParent(array $options = []): ?self {
 		/** @var \Awyiss\Model\Table\ContentsTable $lo_table */
 		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
 
 
-		return $lo_table->getParent($this, $aa_options);
+		return $lo_table->getParent($this, $options);
 	}
 
 
@@ -162,20 +162,20 @@ class Content extends Entity {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function getParents(array $aa_options = [], int $ai_currentLevel = 0): ?CollectionInterface {
+	public function getParents(array $options = [], int $currentLevel = 0): ?CollectionInterface {
 		/** @var \Awyiss\Model\Table\ContentsTable $lo_table */
 		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
 
 
-		return $lo_table->getParents($this, $aa_options, $ai_currentLevel);
+		return $lo_table->getParents($this, $options, $currentLevel);
 	}
 
 
 	/**
-	 * @param bool $ab_includeHtml
+	 * @param bool $includeHtml
 	 * @return string
 	 */
-	public function getForcedTitle(bool $ab_includeHtml = true): string {
+	public function getForcedTitle(bool $includeHtml = true): string {
 		$la_fields = ['duplicateOf', 'title', 'subtitle', 'text', 'subtitle', 'text', 'cssClass', 'contentTemplateId'];
 
 		$ls_title = 'Content';
@@ -217,12 +217,12 @@ class Content extends Entity {
 				}
 
 				if ($lo_template) {
-					$ls_title = 'Template: ' . ($ab_includeHtml ? '<em>' . $lo_template->label . '</em>' : $lo_template->label);
+					$ls_title = 'Template: ' . ($includeHtml ? '<em>' . $lo_template->label . '</em>' : $lo_template->label);
 					break;
 				}
 			}
 
-			if ($ls_column === 'cssClass' && $ab_includeHtml) {
+			if ($ls_column === 'cssClass' && $includeHtml) {
 				$ls_title = '<em>' . $ls_title . '</em>';
 				break;
 			}
@@ -278,36 +278,36 @@ class Content extends Entity {
 
 
 	/**
-	 * @param bool|null $ab_last
+	 * @param bool|null $last
 	 * @return bool
 	 */
-	protected function _setColumnLast(?bool $ab_last = null): bool {
-		return (bool)$ab_last;
+	protected function _setColumnLast(?bool $last = null): bool {
+		return (bool)$last;
 	}
 
 
 	/**
-	 * @param bool|null $ab_rtl
+	 * @param bool|null $rtl
 	 * @return bool
 	 */
-	protected function _setColumnRtl(?bool $ab_rtl = null): bool {
-		return (bool)$ab_rtl;
+	protected function _setColumnRtl(?bool $rtl = null): bool {
+		return (bool)$rtl;
 	}
 
 
 	/**
 	 * Make sure no empty array finds its way into the db
 	 *
-	 * @param array|null $aa_data
+	 * @param array|null $data
 	 * @return array|null
 	 * @noinspection PhpUnused
 	 */
-	protected function _setData(?array $aa_data): ?array {
-		if (empty($aa_data)) {
+	protected function _setData(?array $data): ?array {
+		if (empty($data)) {
 			return null;
 		}
 
 
-		return $aa_data;
+		return $data;
 	}
 }

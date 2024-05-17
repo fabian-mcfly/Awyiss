@@ -53,13 +53,13 @@ class ConfigOptionsProvider {
 	 * @throws \ReflectionException
 	 * @noinspection PhpUnused
 	 */
-	public static function getConfigOptionsFiles(bool $ab_returnLoaded = false): array {
+	public static function getConfigOptionsFiles(bool $returnLoaded = false): array {
 		if (!static::$foundAll) {
 			static::findConfigOptionsFile('*');
 			static::$foundAll = true;
 		}
 
-		if ($ab_returnLoaded) {
+		if ($returnLoaded) {
 			if (!static::$loadedAll) {
 				foreach (static::$configOptions as $ls_scope => $ls_configOptions) {
 					static::$loadedConfigOptions[ $ls_scope ] = static::loadConfigOptions($ls_scope);
@@ -80,19 +80,19 @@ class ConfigOptionsProvider {
 	/**
 	 * Returns the found ConfigOptions class for the provided scope or null
 	 *
-	 * @param string $as_scope
-	 * @param bool $ab_returnLoaded
+	 * @param string $scope
+	 * @param bool $returnLoaded
 	 * @return \Awyiss\Configuration\ConfigOptionsInterface|\Awyiss\Model\Enum\PageRoleEnumInterface|string|null
 	 * @throws \ReflectionException
 	 */
-	public static function getConfigOptionsFile(string $as_scope, bool $ab_returnLoaded = false): ConfigOptionsInterface|PageRoleEnumInterface|string|null {
-		$ls_scope = static::sanitizeScope($as_scope);
+	public static function getConfigOptionsFile(string $scope, bool $returnLoaded = false): ConfigOptionsInterface|PageRoleEnumInterface|string|null {
+		$ls_scope = static::sanitizeScope($scope);
 
 		if (!isset(static::$configOptions[ $ls_scope ])) {
 			static::findConfigOptionsFile($ls_scope);
 		}
 
-		if ($ab_returnLoaded) {
+		if ($returnLoaded) {
 			if (!isset(static::$loadedConfigOptions[ $ls_scope ])) {
 				static::$loadedConfigOptions[ $ls_scope ] = static::loadConfigOptions($ls_scope);
 			}
@@ -107,15 +107,15 @@ class ConfigOptionsProvider {
 	/**
 	 * Returns an instance of a ConfigOptions class with the provided scope or null
 	 *
-	 * @param class-string<ConfigOptionsInterface>|string $as_configOptionScope
+	 * @param class-string<ConfigOptionsInterface>|string $configOptionScope
 	 * @return ConfigOptionsInterface|null
 	 * @throws \ReflectionException
 	 */
-	public static function loadConfigOptions(string $as_configOptionScope): ?ConfigOptionsInterface {
-		if (str_contains($as_configOptionScope, '\\')) {
-			if (class_exists($as_configOptionScope)) {
-				$ls_scope = $as_configOptionScope::getScope();
-				$lx_configurationClass = $as_configOptionScope;
+	public static function loadConfigOptions(string $configOptionScope): ?ConfigOptionsInterface {
+		if (str_contains($configOptionScope, '\\')) {
+			if (class_exists($configOptionScope)) {
+				$ls_scope = $configOptionScope::getScope();
+				$lx_configurationClass = $configOptionScope;
 
 				if (array_key_exists($ls_scope, static::$loadedConfigOptions)) {
 					return static::$loadedConfigOptions[ $ls_scope ];
@@ -126,7 +126,7 @@ class ConfigOptionsProvider {
 			}
 		}
 		else {
-			$ls_scope = static::sanitizeScope($as_configOptionScope);
+			$ls_scope = static::sanitizeScope($configOptionScope);
 
 			if (array_key_exists($ls_scope, static::$loadedConfigOptions)) {
 				return static::$loadedConfigOptions[ $ls_scope ];
@@ -163,57 +163,57 @@ class ConfigOptionsProvider {
 	 *
 	 * Returns a string with an error message if the value is not valid.
 	 *
-	 * @param string $as_scope
-	 * @param string $as_realm
-	 * @param string $as_identifier
-	 * @param mixed $ax_value
-	 * @param string|null $as_languageShortcode
+	 * @param string $scope
+	 * @param string $realm
+	 * @param string $identifier
+	 * @param mixed $value
+	 * @param string|null $languageShortcode
 	 * @return string|bool
 	 * @throws \ReflectionException
 	 * @noinspection PhpUnused
 	 */
-	public static function validateConfigValue(string $as_scope, string $as_realm, string $as_identifier, mixed $ax_value, ?string $as_languageShortcode = null): bool|string {
-		$lo_configuration = static::loadConfigOptions($as_scope);
+	public static function validateConfigValue(string $scope, string $realm, string $identifier, mixed $value, ?string $languageShortcode = null): bool|string {
+		$lo_configuration = static::loadConfigOptions($scope);
 
 		if (!$lo_configuration) {
 			return false;
 		}
 
 
-		return $lo_configuration->validateConfigValue($as_realm, $as_identifier, $ax_value, $as_languageShortcode);
+		return $lo_configuration->validateConfigValue($realm, $identifier, $value, $languageShortcode);
 	}
 
 
 	/**
 	 * Loads a configuration class for the given scope and  cast the provided value to it's correct type for the given identifier
 	 *
-	 * @param string $as_scope
-	 * @param string $as_realm
-	 * @param string $ax_identifierPath
-	 * @param mixed $ax_value
-	 * @param string|null $as_languageShortcode
+	 * @param string $scope
+	 * @param string $realm
+	 * @param string $identifierPath
+	 * @param mixed $value
+	 * @param string|null $languageShortcode
 	 * @return mixed
 	 * @throws \ReflectionException
 	 */
 	public static function typecastConfigValue(
-		string $as_scope,
-		string $as_realm,
-		string $ax_identifierPath,
-		mixed $ax_value,
-		?string $as_languageShortcode = null,
+		string $scope,
+		string $realm,
+		string $identifierPath,
+		mixed $value,
+		?string $languageShortcode = null,
 	): mixed {
-		$lo_configuration = static::loadConfigOptions($as_scope);
+		$lo_configuration = static::loadConfigOptions($scope);
 
 		if (!$lo_configuration) {
-			return $ax_value;
+			return $value;
 		}
 
 
 		return $lo_configuration->typecastConfigValue(
-			$as_realm,
-			$ax_identifierPath,
-			$ax_value,
-			$as_languageShortcode,
+			$realm,
+			$identifierPath,
+			$value,
+			$languageShortcode,
 		);
 	}
 
@@ -222,11 +222,11 @@ class ConfigOptionsProvider {
 	 * Sanitize the provided scope by removing all non-ascii characters
 	 * Returns a CamelCased string
 	 *
-	 * @param string $as_scope
+	 * @param string $scope
 	 * @return string
 	 */
-	public static function sanitizeScope(string $as_scope): string {
-		$ls_scope = Text::slug($as_scope, '_');
+	public static function sanitizeScope(string $scope): string {
+		$ls_scope = Text::slug($scope, '_');
 		$ls_scope = Inflector::singularize($ls_scope);
 		$ls_scope = Inflector::pluralize($ls_scope);
 
@@ -239,32 +239,32 @@ class ConfigOptionsProvider {
 	 * Sanitize the provided identifier by removing all non-ascii characters
 	 * Returns a camelBacked string
 	 *
-	 * @param string $as_identifier
+	 * @param string $identifier
 	 * @return string
 	 */
-	public static function sanitizeIdentifier(string $as_identifier): string {
-		return Inflector::variable(Text::slug($as_identifier, '_'));
+	public static function sanitizeIdentifier(string $identifier): string {
+		return Inflector::variable(Text::slug($identifier, '_'));
 	}
 
 
 	/**
 	 * Finds all ConfigOptions classes in both, the Awyiss and the custom namespace, for a given identifier.
-	 * `$as_scope` can be "*" to return all files.
+	 * `$scope` can be "*" to return all files.
 	 *
 	 * If a ConfigOptions class exists in both namespaces, the one from the custom namespace is returned,
 	 * the Awyiss one is ignored.
 	 *
 	 * For page roles, no ConfigOptionsInterface is returned but the \Awyiss\Model\Enum\PageRole case
 	 *
-	 * @param string $as_scope
+	 * @param string $scope
 	 * @return void
 	 * @throws \ReflectionException
 	 */
-	protected static function findConfigOptionsFile(string $as_scope): void {
+	protected static function findConfigOptionsFile(string $scope): void {
 		$ls_scope = null;
-		$ls_className = $as_scope;
+		$ls_className = $scope;
 		if ($ls_className !== '*') {
-			$ls_scope = static::sanitizeScope($as_scope);
+			$ls_scope = static::sanitizeScope($scope);
 			$ls_className = Inflector::camelize($ls_scope);
 		}
 
@@ -335,10 +335,10 @@ class ConfigOptionsProvider {
 			$lo_connection = ConnectionManager::get('default');
 			$la_results = $lo_connection->selectQuery('*', 'datatables')->where(['deleted' => 0])->execute()->fetchAll('assoc');
 
-			static::$datatables = collection($la_results)->indexBy(function (array $aa_record) {
-				return static::sanitizeScope($aa_record['identifier']);
-			})->map(function (array $aa_record) {
-				return new GenericDatatablesConfigOptions($aa_record['identifier']);
+			static::$datatables = collection($la_results)->indexBy(function (array $record) {
+				return static::sanitizeScope($record['identifier']);
+			})->map(function (array $record) {
+				return new GenericDatatablesConfigOptions($record['identifier']);
 			})->toArray();
 		}
 

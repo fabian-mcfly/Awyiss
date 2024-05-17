@@ -598,32 +598,32 @@ class Media extends Entity {
 	/**
 	 * Make sure the average does not start with a hash
 	 *
-	 * @param string|null $as_color
+	 * @param string|null $color
 	 * @return string|null
 	 */
-	protected function _setAverageColor(?string $as_color): ?string {
-		if ($as_color === null) {
+	protected function _setAverageColor(?string $color): ?string {
+		if ($color === null) {
 			return null;
 		}
 
-		return ltrim($as_color, '#');
+		return ltrim($color, '#');
 	}
 
 
 	/**
 	 * Make sure the name is always lowercase, dashed and free of special characters
 	 *
-	 * @param string|null $as_path
+	 * @param string|null $path
 	 * @return string|null
 	 * @see \Awyiss\Model\Entity\Page::$path
 	 */
-	protected function _setName(?string $as_path): ?string {
-		if ($as_path === null) {
+	protected function _setName(?string $path): ?string {
+		if ($path === null) {
 			return null;
 		}
 
 		//Get rid of all chained file suffixes, like ".foo.bar" in filename.foo.bar.jpg
-		$la_parts = explode('.', $as_path);
+		$la_parts = explode('.', $path);
 		$ls_extension = count($la_parts) > 1 ? end($la_parts) : null;
 
 		$ls_path = Text::slug($la_parts[0]);

@@ -24,8 +24,8 @@ class SimplePermissionOption extends AbstractPermissionOption {
 	/**
 	 * @inheritDoc
 	 */
-	public function __construct(array $aa_config, PermissionOptionCollection $ao_permissionOptionCollection) {
-		parent::__construct($aa_config, $ao_permissionOptionCollection);
+	public function __construct(array $config, PermissionOptionCollection $permissionOptionCollection) {
+		parent::__construct($config, $permissionOptionCollection);
 
 		$this->options = [
 			'granted' => PermissionAccess::Granted,
@@ -38,8 +38,8 @@ class SimplePermissionOption extends AbstractPermissionOption {
 	/**
 	 * @inheritDoc
 	 */
-	public function harmonizeOptionValue(mixed $ax_value): ?PermissionAccess {
-		$lx_value = $ax_value !== '' && $ax_value !== null ? (int)$ax_value : null;
+	public function harmonizeOptionValue(mixed $value): ?PermissionAccess {
+		$lx_value = $value !== '' && $value !== null ? (int)$value : null;
 
 		if ($lx_value === null) {
 			return null;
@@ -53,11 +53,11 @@ class SimplePermissionOption extends AbstractPermissionOption {
 	/**
 	 * @inheritDoc
 	 */
-	public function isAccessible(mixed $ax_access, mixed $ax_settings, array $aa_additionalData, PermissionCollection $ao_permissionCollection): ?bool {
-		$lx_access = $ax_access;
+	public function isAccessible(mixed $access, mixed $settings, array $additionalData, PermissionCollection $permissionCollection): ?bool {
+		$lx_access = $access;
 
 		if (!$lx_access instanceof PermissionAccess) {
-			$lx_access = $this->harmonizeOptionValue($ax_access);
+			$lx_access = $this->harmonizeOptionValue($access);
 		}
 
 		if ($lx_access === PermissionAccess::Granted) {

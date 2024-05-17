@@ -35,18 +35,18 @@ class EnumCommand extends BaseBakeEnumCommand {
 	/**
 	 * Get template data.
 	 *
-	 * @param \Cake\Console\Arguments $ao_args The arguments for the command
+	 * @param \Cake\Console\Arguments $args The arguments for the command
 	 * @return array
 	 * @phpstan-return array<string, mixed>
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function templateData(Arguments $ao_args): array {
-		$la_data = parent::templateData($ao_args);
+	public function templateData(Arguments $args): array {
+		$la_data = parent::templateData($args);
 
-		$ls_namespace = Inflector::camelize($ao_args->getOption('namespace') ?: Configure::read('App.namespace'));
+		$ls_namespace = Inflector::camelize($args->getOption('namespace') ?: Configure::read('App.namespace'));
 		$la_data['namespace'] = $ls_namespace;
 
-		$la_data['isPageRole'] = $ao_args->getOption('is-pagerole');
+		$la_data['isPageRole'] = $args->getOption('is-pagerole');
 
 
 		return $la_data;
@@ -55,16 +55,16 @@ class EnumCommand extends BaseBakeEnumCommand {
 
 	/**
 	 * @inheritDoc
-	 * @param string $as_name
-	 * @param \Cake\Console\Arguments $ao_args
-	 * @param \Cake\Console\ConsoleIo $ao_io
+	 * @param string $name
+	 * @param \Cake\Console\Arguments $args
+	 * @param \Cake\Console\ConsoleIo $io
 	 * @return void
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	protected function bake(string $as_name, Arguments $ao_args, ConsoleIo $ao_io): void {
-		$ls_name = Inflector::camelize($as_name);
+	protected function bake(string $name, Arguments $args, ConsoleIo $io): void {
+		$ls_name = Inflector::camelize($name);
 
-		parent::bake($ls_name, $ao_args, $ao_io);
+		parent::bake($ls_name, $args, $io);
 	}
 
 
@@ -72,12 +72,12 @@ class EnumCommand extends BaseBakeEnumCommand {
 	 * Adds the `namespace`-option.
 	 *
 	 * @inheritDoc
-	 * @param ConsoleOptionParser $ao_parser
+	 * @param ConsoleOptionParser $parser
 	 * @return ConsoleOptionParser
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildOptionParser(ConsoleOptionParser $ao_parser): ConsoleOptionParser {
-		$lo_parser = parent::buildOptionParser($ao_parser);
+	public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser {
+		$lo_parser = parent::buildOptionParser($parser);
 
 		$lo_parser->addOption('namespace', [
 			'choices' => [

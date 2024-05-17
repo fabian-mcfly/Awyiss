@@ -14,10 +14,10 @@ interface PageRoleEnumInterface extends BackedEnum {
 	/**
 	 * Try to get a case from the name. Returns the page role id if found
 	 *
-	 * @param string $as_name
+	 * @param string $name
 	 * @return int|null
 	 */
-	public static function tryFromName(string $as_name): ?PageRoleEnumInterface;
+	public static function tryFromName(string $name): ?PageRoleEnumInterface;
 
 
 	/**

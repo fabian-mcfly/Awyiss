@@ -68,40 +68,42 @@ class MenuItem implements ArrayAccess {
 
 
 	/**
-	 * @param object $ao_data
-	 * @param array $aa_config
-	 * @param int $ai_level
+	 * @param object $data
+	 * @param array $config
+	 * @param int $level
 	 * @throws \ReflectionException
 	 */
-	public function __construct(object $ao_data, array $aa_config = [], int $ai_level = 1) {
-		$this->access = $ao_data->access ?? null;
-		$this->active = $ao_data->active ?? true;
-		$this->identifier = $ao_data->identifier ?? null;
-		$this->identity = $aa_config['identity'] ?? null;
-		$this->level = $ai_level;
-		$this->link = $ao_data->link;
-		$this->title = $ao_data->title;
+	public function __construct(object $data, array $config = [], int $level = 1) {
+		$la_config = $config;
 
-		if ($ao_data instanceof BackendMenuEntry) {
+		$this->access = $data->access ?? null;
+		$this->active = $data->active ?? true;
+		$this->identifier = $data->identifier ?? null;
+		$this->identity = $la_config['identity'] ?? null;
+		$this->level = $level;
+		$this->link = $data->link;
+		$this->title = $data->title;
+
+		if ($data instanceof BackendMenuEntry) {
 			if ($this->access) {
 				$this->access = (object)$this->access;
 			}
 
-			$this->convertEntityLink($ao_data);
+			$this->convertEntityLink($data);
 		}
 
-		if (!empty($ao_data->children)) {
-			$this->setChildren($ao_data->children, $aa_config);
+		if (!empty($data->children)) {
+			$this->setChildren($data->children, $la_config);
 		}
 
-		if (isset($aa_config['identity'])) {
-			$this->setIdentity($aa_config['identity']);
+		if (isset($la_config['identity'])) {
+			$this->setIdentity($la_config['identity']);
 
 			//Make sure to not set the identity in the config to avoid confusion
-			unset($aa_config['identity']);
+			unset($la_config['identity']);
 		}
 
-		$this->setConfig($aa_config);
+		$this->setConfig($la_config);
 	}
 
 
@@ -119,22 +121,22 @@ class MenuItem implements ArrayAccess {
 	/**
 	 * Checks if the menu item is accessible by a specific identity.
 	 *
-	 * @param \Awyiss\Authorization\IdentityPermissionsInterface|null $ao_identity The identity to check accessibility for.
+	 * @param \Awyiss\Authorization\IdentityPermissionsInterface|null $identity The identity to check accessibility for.
 	 * @return bool|null Returns true if the menu item is accessible by the provided identity, false otherwise.
 	 * If the accessibility is not set, it returns null.
 	 * @throws \ReflectionException If the class does not exist.
 	 */
-	public function isAccessibleBy(?IdentityPermissionsInterface $ao_identity = null): ?bool {
+	public function isAccessibleBy(?IdentityPermissionsInterface $identity = null): ?bool {
 		//No access settings means the item is always accessible
 		if (!isset($this->access)) {
 			return true;
 		}
 
-		if (!isset($this->identity) && !$ao_identity) {
+		if (!isset($this->identity) && !$identity) {
 			return null;
 		}
 
-		$lo_identity = $ao_identity;
+		$lo_identity = $identity;
 		if (!$lo_identity) {
 			$lo_identity = $this->identity;
 		}
@@ -147,11 +149,11 @@ class MenuItem implements ArrayAccess {
 	/**
 	 * Sets the accessibility of the menu item.
 	 *
-	 * @param bool|null $ab_isAccessible The accessibility to set.
+	 * @param bool|null $isAccessible The accessibility to set.
 	 * @return $this Returns the current instance.
 	 */
-	public function setAccessible(?bool $ab_isAccessible): static {
-		$this->accessible = $ab_isAccessible;
+	public function setAccessible(?bool $isAccessible): static {
+		$this->accessible = $isAccessible;
 
 
 		return $this;
@@ -229,15 +231,15 @@ class MenuItem implements ArrayAccess {
 	/**
 	 * Generates the children of the menu item.
 	 *
-	 * @param int $ai_maxLevel The maximum level of children to generate.
+	 * @param int $maxLevel The maximum level of children to generate.
 	 * @return Generator|MenuItem A generator that yields the children of the menu item.
 	 */
-	public function children(int $ai_maxLevel = -1): Generator {
+	public function children(int $maxLevel = -1): Generator {
 		if ($this->children === null) {
 			return;
 		}
 
-		foreach ($this->children->items($ai_maxLevel) as $lx_identifier => $lo_childItem) {
+		foreach ($this->children->items($maxLevel) as $lx_identifier => $lo_childItem) {
 			yield $lx_identifier => $lo_childItem;
 		}
 	}
@@ -256,21 +258,23 @@ class MenuItem implements ArrayAccess {
 	/**
 	 * Sets the children of the menu item.
 	 *
-	 * @param object|iterable $ax_children The children to set.
-	 * @param array|null $aa_config The configuration for the children.
+	 * @param object|iterable $children The children to set.
+	 * @param array|null $config The configuration for the children.
 	 * @return void
 	 * @throws \ReflectionException
 	 */
-	public function setChildren(object|iterable $ax_children, ?array $aa_config = null): void {
-		if ($aa_config === null) {
-			$aa_config = $this->getConfig();
+	public function setChildren(object|iterable $children, ?array $config = null): void {
+		$la_config = $config;
+
+		if ($la_config === null) {
+			$la_config = $this->getConfig();
 		}
 
-		if (!array_key_exists('identity', $aa_config)) {
-			$aa_config['identity'] = $this->identity;
+		if (!array_key_exists('identity', $la_config)) {
+			$la_config['identity'] = $this->identity;
 		}
 
-		$this->children = new Menu($ax_children, $aa_config, $this->level + 1);
+		$this->children = new Menu($children, $la_config, $this->level + 1);
 	}
 
 
@@ -295,14 +299,14 @@ class MenuItem implements ArrayAccess {
 	/**
 	 * Sets the identity of the menu item.
 	 *
-	 * @param \Awyiss\Authorization\IdentityPermissionsInterface $ao_identity The identity to set.
+	 * @param \Awyiss\Authorization\IdentityPermissionsInterface $identity The identity to set.
 	 * @param bool $deep Whether to set the identity deeply.
 	 * @return $this
 	 * @throws \ReflectionException
 	 */
-	public function setIdentity(IdentityPermissionsInterface $ao_identity, bool $deep = true): static {
-		$this->identity = $ao_identity;
-		$this->accessible = $this->isAccessibleBy($ao_identity);
+	public function setIdentity(IdentityPermissionsInterface $identity, bool $deep = true): static {
+		$this->identity = $identity;
+		$this->accessible = $this->isAccessibleBy($identity);
 
 		if (!$deep) {
 			return $this;
@@ -310,7 +314,7 @@ class MenuItem implements ArrayAccess {
 
 		if ($this->hasChildren()) {
 			foreach ($this->getChildren() as $lo_child) {
-				$lo_child->setIdentity($ao_identity);
+				$lo_child->setIdentity($identity);
 			}
 		}
 
@@ -401,12 +405,12 @@ class MenuItem implements ArrayAccess {
 	/**
 	 * Determines the visibility of the menu item.
 	 *
-	 * @param bool $ab_reset Whether to reset the visibility.
+	 * @param bool $reset Whether to reset the visibility.
 	 * @return bool|null The visibility of the menu item.
 	 */
-	public function determineVisibility(bool $ab_reset = false): ?bool {
+	public function determineVisibility(bool $reset = false): ?bool {
 		// If reset is false and visible property is not null, use the current visibility
-		if (!$ab_reset && $this->visible !== null) {
+		if (!$reset && $this->visible !== null) {
 			return $this->visible;
 		}
 
@@ -419,7 +423,7 @@ class MenuItem implements ArrayAccess {
 			// Check the visibility of child items
 			foreach ($lo_children->items() as $lo_child) {
 				// Determine and set visibility for each child
-				$lb_childIsVisible = $lo_child->determineVisibility($ab_reset);
+				$lb_childIsVisible = $lo_child->determineVisibility($reset);
 
 				// If any child is visible, set the parent item to be visible as well
 				if ($lb_childIsVisible) {
@@ -468,26 +472,26 @@ class MenuItem implements ArrayAccess {
 	/**
 	 * Gets a property of the menu item.
 	 *
-	 * @param string $as_field The property to get.
+	 * @param string $field The property to get.
 	 * @return mixed The value of the property.
 	 */
-	public function __get(string $as_field): mixed {
-		$ls_method = 'get' . Inflector::camelize($as_field);
+	public function __get(string $field): mixed {
+		$ls_method = 'get' . Inflector::camelize($field);
 		if (method_exists($this, $ls_method)) {
 			return $this->$ls_method();
 		}
 
-		throw new RuntimeException(sprintf('Unknown field `%s` in `%s`', $as_field, static::class));
+		throw new RuntimeException(sprintf('Unknown field `%s` in `%s`', $field, static::class));
 	}
 
 
 	/**
 	 * Converts the link of the menu item from a BackendMenuEntry.
 	 *
-	 * @param \Awyiss\Model\Entity\BackendMenuEntry $ao_data The BackendMenuEntry to convert from.
+	 * @param \Awyiss\Model\Entity\BackendMenuEntry $data The BackendMenuEntry to convert from.
 	 * @return void
 	 */
-	protected function convertEntityLink(BackendMenuEntry $ao_data): void {
+	protected function convertEntityLink(BackendMenuEntry $data): void {
 		if (empty($this->link)) {
 			$this->link = null;
 
@@ -500,7 +504,7 @@ class MenuItem implements ArrayAccess {
 				'url' => !str_contains($this->link, '//') ? Router::url($this->link) : $this->link,
 			];
 
-			if ($ao_data->external) {
+			if ($data->external) {
 				$la_linkData['attributes'] = [
 					'target' => '_blank',
 				];
@@ -522,8 +526,8 @@ class MenuItem implements ArrayAccess {
 				$la_innerParts = explode(':', $lx_value);
 				$la_params[ $la_innerParts[0] ] = $la_innerParts[1] ?? null;
 			}
-			$la_params = array_filter($la_params, function ($ax_value) {
-				return $ax_value !== null;
+			$la_params = array_filter($la_params, function ($value) {
+				return $value !== null;
 			});
 		}
 
@@ -534,7 +538,7 @@ class MenuItem implements ArrayAccess {
 			] + $la_params,
 		];
 
-		if ($ao_data->external) {
+		if ($data->external) {
 			$la_linkData['attributes'] = [
 				'target' => '_blank',
 			];

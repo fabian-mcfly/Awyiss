@@ -71,6 +71,7 @@
 				&::before {
 					display:block;
 					content:'powered by';
+					//noinspection CssNoGenericFontName
 					font-family:var(--fontStackMain);
 					font-size:.5rem;
 					font-style:italic;
@@ -119,6 +120,7 @@
 				background-image:none;
 				background-color:transparent;
 				box-shadow:none;
+				//noinspection CssNoGenericFontName
 				font-family:var(--fontStackHeading);
 				font-size:2.5rem;
 				line-height:1;

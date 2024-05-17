@@ -237,6 +237,7 @@ legend {
 	background-image:linear-gradient(45deg, var(--gradientColor) 0%, transparent 100%);
 	background-color:var(--colorMedium);
 	color:var(--colorBright);
+	//noinspection CssNoGenericFontName
 	font-family:var(--fontStackHeading);
 	font-size:1rem;
 	line-height:inherit;

@@ -47,18 +47,18 @@ class PageTemplatesListener implements EventListenerInterface {
 	 *
 	 * This is neccesary since a second file rename job could interfere with the first one.
 	 *
-	 * @param Event $ao_event
-	 * @param PageTemplate $ao_entity
+	 * @param Event $event
+	 * @param PageTemplate $entity
 	 * @return void
 	 */
-	public function beforeSave(Event $ao_event, PageTemplate $ao_entity): void {
-		if ($ao_entity->hasOriginal('fileName') && $ao_entity->fileName != $ao_entity->getOriginal('fileName')) {
+	public function beforeSave(Event $event, PageTemplate $entity): void {
+		if ($entity->hasOriginal('fileName') && $entity->fileName != $entity->getOriginal('fileName')) {
 			/** @var \Queue\Model\Table\QueuedJobsTable $lo_queue */
 			$lo_queue = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
 
 			if ($lo_queue->isQueued('page_templates::file_changes')) {
-				$ao_event->stopPropagation();
-				$ao_entity->setError('_general', __d('page_templates', 'file_changes_in_progress'));
+				$event->stopPropagation();
+				$entity->setError('_general', __d('page_templates', 'file_changes_in_progress'));
 			}
 		}
 	}
@@ -70,12 +70,12 @@ class PageTemplatesListener implements EventListenerInterface {
 	 * - create a template if it's new
 	 * - rename the template if it already exists
 	 *
-	 * @param Event $ao_event
-	 * @param PageTemplate $ao_entity
+	 * @param Event $event
+	 * @param PageTemplate $entity
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function afterSaveCommit(Event $ao_event, PageTemplate $ao_entity): void {
-		$ls_fileName = Text::slug($ao_entity->fileName, ['replacement' => '_']);
+	public function afterSaveCommit(Event $event, PageTemplate $entity): void {
+		$ls_fileName = Text::slug($entity->fileName, ['replacement' => '_']);
 		$ls_fileName = trim($ls_fileName, '_');
 		$ls_extension = '.twig';
 
@@ -90,9 +90,9 @@ class PageTemplatesListener implements EventListenerInterface {
 
 		$ls_filePath = $ls_folderPath . $ls_fileName . $ls_extension;
 
-		if ($ao_entity->hasOriginal('fileName') && $ao_entity->fileName != $ao_entity->getOriginal('fileName')) {
+		if ($entity->hasOriginal('fileName') && $entity->fileName != $entity->getOriginal('fileName')) {
 			//After changing the filename in the database, we also need to move (read: rename) the existing file
-			$ls_currentFileName = Text::slug($ao_entity->getOriginal('fileName'), ['replacement' => '_']);
+			$ls_currentFileName = Text::slug($entity->getOriginal('fileName'), ['replacement' => '_']);
 			$ls_currentFilePath = $ls_folderPath . $ls_currentFileName . $ls_extension;
 			$lb_fileExists = file_exists($ls_currentFilePath);
 			if ($lb_fileExists) {
@@ -132,13 +132,13 @@ class PageTemplatesListener implements EventListenerInterface {
 	 * - prepend '_deleted-'
 	 * - append '-' and the current timestamp
 	 *
-	 * @param Event $ao_event
-	 * @param PageTemplate $ao_entity
+	 * @param Event $event
+	 * @param PageTemplate $entity
 	 * @noinspection PhpUnused
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function afterSoftDelete(Event $ao_event, PageTemplate $ao_entity): void {
-		$ls_fileName = Text::slug($ao_entity->fileName, ['replacement' => '_']);
+	public function afterSoftDelete(Event $event, PageTemplate $entity): void {
+		$ls_fileName = Text::slug($entity->fileName, ['replacement' => '_']);
 		$ls_fileName = trim($ls_fileName, '_');
 		$ls_extension = '.twig';
 

@@ -19,33 +19,32 @@ class StringType extends BaseType {
 	/**
 	 * Convert string data into the database format.
 	 *
-	 * @param mixed $ax_value The value to convert.
-	 * @param \Cake\Database\Driver $ao_driver The driver instance to convert with.
+	 * @param mixed $value The value to convert.
+	 * @param \Cake\Database\Driver $driver The driver instance to convert with.
 	 * @return string|null
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function toDatabase(mixed $ax_value, Driver $ao_driver): ?string {
-		if ($ax_value === null || is_string($ax_value)) {
-			return $ax_value;
+	public function toDatabase(mixed $value, Driver $driver): ?string {
+		if ($value === null || is_string($value)) {
+			return $value;
 		}
 
-		if ($ax_value instanceof Stringable) {
-			return (string)$ax_value;
+		if ($value instanceof Stringable) {
+			return (string)$value;
 		}
 
-		if (is_scalar($ax_value)) {
-			return (string)$ax_value;
+		if (is_scalar($value)) {
+			return (string)$value;
 		}
 
-		if ($ax_value instanceof BackedEnum && is_string($ax_value->value)) {
-			return $ax_value->value;
+		if ($value instanceof BackedEnum && is_string($value->value)) {
+			return $value->value;
 		}
 
 		throw new InvalidArgumentException(
 			sprintf(
 				'Cannot convert value `%s` of type `%s` to string',
-				print_r($ax_value, true),
-				get_debug_type($ax_value)
+				print_r($value, true),
+				get_debug_type($value)
 			)
 		);
 	}

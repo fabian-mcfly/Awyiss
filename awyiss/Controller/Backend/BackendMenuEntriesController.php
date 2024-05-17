@@ -37,9 +37,7 @@ class BackendMenuEntriesController extends Controller {
 	 */
 	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
-		$lo_query = $this->BackendMenuEntries->find()->where($this->getOverviewWhere());
-
-		return $lo_query;
+		return $this->BackendMenuEntries->find()->where($this->getOverviewWhere());
 	}
 
 
@@ -84,11 +82,11 @@ class BackendMenuEntriesController extends Controller {
 	 * @return \Cake\Http\Response|void
 	 * @throws \Exception
 	 */
-	public function edit(int $ai_id) {
+	public function edit(int $id) {
 		$this->Authorization->ensure('update');
 
 		/** @var BackendMenuEntry $lo_menuEntry */
-		$lo_menuEntry = $this->BackendMenuEntries->findById($ai_id)->find('translations')->first();
+		$lo_menuEntry = $this->BackendMenuEntries->findById($id)->find('translations')->first();
 		if (!$lo_menuEntry) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -107,17 +105,17 @@ class BackendMenuEntriesController extends Controller {
 	/**
 	 * Delete method
 	 *
-	 * @param int $ai_id
+	 * @param int $id
 	 * @return Response
 	 * @throws \Exception
 	 */
-	public function delete(int $ai_id): Response {
+	public function delete(int $id): Response {
 		$this->Authorization->ensure('delete');
 
 		$this->request->allowMethod(['get', 'delete']);
 
 		/** @var BackendMenuEntry $lo_menuEntry */
-		$lo_menuEntry = $this->BackendMenuEntries->findById($ai_id)->find('translations')->first();
+		$lo_menuEntry = $this->BackendMenuEntries->findById($id)->find('translations')->first();
 		if (!$lo_menuEntry) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -147,15 +145,15 @@ class BackendMenuEntriesController extends Controller {
 	 * Returns a Collection of all possible parent ids for the given menu entry
 	 * to prevent circular references
 	 *
-	 * @param BackendMenuEntry $ao_menuEntry
-	 * @param \Awyiss\Utility\Menu\Menu|null $ao_dynamicMenu
+	 * @param BackendMenuEntry $menuEntry
+	 * @param \Awyiss\Utility\Menu\Menu|null $dynamicMenu
 	 * @return \Cake\Collection\CollectionInterface
 	 */
-	protected function getPossibleParentMenuEntries(BackendMenuEntry $ao_menuEntry, ?Menu $ao_dynamicMenu): CollectionInterface {
-		$lo_listNested = collection($ao_dynamicMenu->toArray());
+	protected function getPossibleParentMenuEntries(BackendMenuEntry $menuEntry, ?Menu $dynamicMenu): CollectionInterface {
+		$lo_listNested = collection($dynamicMenu->toArray());
 
 		//We only want to find threaded pages for an existing entity (id equals not null)
-		$li_originalId = $ao_menuEntry->get('id');
+		$li_originalId = $menuEntry->get('id');
 		if (!$li_originalId) {
 			return $lo_listNested;
 		}
@@ -163,15 +161,15 @@ class BackendMenuEntriesController extends Controller {
 		$li_foundAtLevel = null;
 
 		/** @noinspection PhpUnnecessaryLocalVariableInspection */
-		$lo_possibleParents = $lo_listNested->filter(function (MenuItem $ao_item, string|int $ax_identifier) use ($li_originalId, &$li_foundAtLevel) {
-			if (gettype($ax_identifier) === 'string') {
+		$lo_possibleParents = $lo_listNested->filter(function (MenuItem $item, string|int $identifier) use ($li_originalId, &$li_foundAtLevel) {
+			if (gettype($identifier) === 'string') {
 				return true;
 			}
 
-			if ($ax_identifier === $li_originalId) {
-				$li_foundAtLevel = $ao_item->getLevel();
+			if ($identifier === $li_originalId) {
+				$li_foundAtLevel = $item->getLevel();
 			}
-			elseif (is_null($li_foundAtLevel) || $ao_item->getLevel() <= $li_foundAtLevel) {
+			elseif (is_null($li_foundAtLevel) || $item->getLevel() <= $li_foundAtLevel) {
 				$li_foundAtLevel = null;
 
 
@@ -188,20 +186,20 @@ class BackendMenuEntriesController extends Controller {
 
 
 	/**
-	 * @param array $aa_requestData
-	 * @param \Awyiss\Model\Table $ao_table
+	 * @param array $requestData
+	 * @param \Awyiss\Model\Table $table
 	 * @return int
 	 */
-	protected function _saveSystemOrder(array $aa_requestData, Table $ao_table): int {
+	protected function _saveSystemOrder(array $requestData, Table $table): int {
 		$lo_identity = $this->getIdentity();
 
 		/** @noinspection PhpUnnecessaryLocalVariableInspection */
-		$li_affectedRows = $ao_table->updateAll(function (QueryExpression $ao_expression) use ($aa_requestData, $lo_identity) {
-			$lo_insertAfterIdCase = $ao_expression->case();
-			$lo_parentIdCase = $ao_expression->case();
-			$lo_systemOrderCase = $ao_expression->case();
+		$li_affectedRows = $table->updateAll(function (QueryExpression $expression) use ($requestData, $lo_identity) {
+			$lo_insertAfterIdCase = $expression->case();
+			$lo_parentIdCase = $expression->case();
+			$lo_systemOrderCase = $expression->case();
 
-			foreach ($aa_requestData as $la_data) {
+			foreach ($requestData as $la_data) {
 				$li_id = (int)$la_data['id'];
 
 				$lo_insertAfterIdCase->when(['id' => $li_id])->then($la_data['insertAfterId'], 'string');
@@ -219,7 +217,7 @@ class BackendMenuEntriesController extends Controller {
 				'deleted_on' => DateTime::now(),
 			];
 		}, [
-			'id IN' => array_keys($aa_requestData),
+			'id IN' => array_keys($requestData),
 		]);
 
 
@@ -229,58 +227,58 @@ class BackendMenuEntriesController extends Controller {
 
 
 	/**
-	 * @param BackendMenuEntry $ao_menuEntry
-	 * @param string $as_method
+	 * @param BackendMenuEntry $menuEntry
+	 * @param string $method
 	 * @return void
 	 * @throws RedirectException
 	 */
-	protected function save(BackendMenuEntry $ao_menuEntry, string $as_method = 'add'): void {
+	protected function save(BackendMenuEntry $menuEntry, string $method = 'add'): void {
 		$la_associated = [];
 		if ($this->BackendMenuEntries->hasAttributes()) {
 			$la_associated[] = $this->BackendMenuEntries->getAttributesTableName(true);
-			$ao_menuEntry->setAccess('attributes', true);
+			$menuEntry->setAccess('attributes', true);
 		}
 
-		$this->BackendMenuEntries->patchEntity($ao_menuEntry, $this->request->getData(), [
+		$this->BackendMenuEntries->patchEntity($menuEntry, $this->request->getData(), [
 			'associated' => $la_associated,
 			'validate' => !$this->request->getData('reload_form'),
 		]);
 
-		if (!empty($ao_menuEntry->parentId)) {
-			$ao_menuEntry->insertAfterId = null;
+		if (!empty($menuEntry->parentId)) {
+			$menuEntry->insertAfterId = null;
 
 			$lo_request = $this->getRequest();
 			//When insertAfterId is part of the request data, overwrite it because it's might be outdated
 			if ($lo_request->getData('insert_after_id') !== null) {
-				$lo_request = $lo_request->withData('insert_after_id', $ao_menuEntry->insertAfterId);
+				$lo_request = $lo_request->withData('insert_after_id', $menuEntry->insertAfterId);
 				$this->setRequest($lo_request);
 			}
 		}
 
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-			if ($this->BackendMenuEntries->save($ao_menuEntry, ['asCopy' => (bool)$this->request->getData('save_as_copy')])) {
+			if ($this->BackendMenuEntries->save($menuEntry, ['asCopy' => (bool)$this->request->getData('save_as_copy')])) {
 				if (!$this->request->is('ajax')) {
-					$this->Flash->success(__($as_method . '_succeeded'));
+					$this->Flash->success(__($method . '_succeeded'));
 				}
 
 				if ($this->request->getData('submit') == 'submit_close') {
 					throw new RedirectException(Router::url(['action' => 'overview'], true), 302);
 				}
 
-				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $ao_menuEntry->id], true), 302);
+				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $menuEntry->id], true), 302);
 			}
 
-			$this->Flash->error(__($as_method . '_failed'));
-			foreach ($ao_menuEntry->getError('_general') as $ls_error) {
+			$this->Flash->error(__($method . '_failed'));
+			foreach ($menuEntry->getError('_general') as $ls_error) {
 				$this->Flash->error($ls_error);
 			}
 		}
 		else {
-			if ($this->BackendMenuEntries->getSystemOrderRelatedColumns($ao_menuEntry)) {
-				$ao_menuEntry->systemOrder = null;
+			if ($this->BackendMenuEntries->getSystemOrderRelatedColumns($menuEntry)) {
+				$menuEntry->systemOrder = null;
 			}
 			else {
-				$ao_menuEntry->systemOrder = $ao_menuEntry->hasOriginal('systemOrder') ? $ao_menuEntry->getOriginal('systemOrder') : $ao_menuEntry->get('systemOrder');
+				$menuEntry->systemOrder = $menuEntry->hasOriginal('systemOrder') ? $menuEntry->getOriginal('systemOrder') : $menuEntry->get('systemOrder');
 			}
 		}
 	}
@@ -298,14 +296,14 @@ class BackendMenuEntriesController extends Controller {
 
 
 	/**
-	 * @param \Awyiss\Utility\Menu\Menu $ao_menu
+	 * @param \Awyiss\Utility\Menu\Menu $menu
 	 * @return array
 	 */
-	protected function generateMenuSelectOptions(Menu $ao_menu): array {
+	protected function generateMenuSelectOptions(Menu $menu): array {
 		$la_options = [];
 
 		/** @var MenuItem $lo_item */
-		foreach ($ao_menu->items() as $ls_identifier => $lo_item) {
+		foreach ($menu->items() as $ls_identifier => $lo_item) {
 			$la_options[ $ls_identifier ] = str_repeat('- ', $lo_item->getLevel() - 1) . $lo_item->getLabel();
 		}
 
@@ -315,22 +313,23 @@ class BackendMenuEntriesController extends Controller {
 
 
 	/**
-	 * @param \Awyiss\Model\Entity\BackendMenuEntry $ao_menuEntry
+	 * @param \Awyiss\Model\Entity\BackendMenuEntry $menuEntry
 	 * @return void
+	 * @throws \ReflectionException
 	 */
-	protected function setViewVars(BackendMenuEntry $ao_menuEntry): void {
+	protected function setViewVars(BackendMenuEntry $menuEntry): void {
 		$lo_menu = new BackendMenu();
 
 		$la_insertAfterOptions = $this->generateMenuSelectOptions($lo_menu->getCustomMenu() ?? $lo_menu->getMenu());
 
-		$lo_possibleParentMenuEntries = $this->getPossibleParentMenuEntries($ao_menuEntry, $lo_menu->getDynamicMenu());
+		$lo_possibleParentMenuEntries = $this->getPossibleParentMenuEntries($menuEntry, $lo_menu->getDynamicMenu());
 
 		$la_controllers = $this->getControllers();
 
 		$this->set([
 			'menu' => $lo_menu,
 			'insertAfterOptions' => $la_insertAfterOptions,
-			'backendMenuEntry' => $ao_menuEntry,
+			'backendMenuEntry' => $menuEntry,
 			'possibleParentMenuEntries' => $lo_possibleParentMenuEntries,
 			'attributes' => $this->BackendMenuEntries->getAttributes(),
 			'controllers' => $la_controllers,
@@ -341,6 +340,7 @@ class BackendMenuEntriesController extends Controller {
 
 	/**
 	 * @return array
+	 * @throws \ReflectionException
 	 */
 	protected function getControllers(): array {
 		static $la_controllers = [];
@@ -377,18 +377,18 @@ class BackendMenuEntriesController extends Controller {
 
 				$lo_reflection = new ReflectionClass($ls_controllerClass);
 
-				$la_methods = array_filter($lo_reflection->getMethods(ReflectionMethod::IS_PUBLIC), function ($ao_method) use ($ls_controllerName, $la_blocklistedMethods) {
-					if (in_array($ao_method->getName(), $la_blocklistedMethods)) {
+				$la_methods = array_filter($lo_reflection->getMethods(ReflectionMethod::IS_PUBLIC), function ($method) use ($ls_controllerName, $la_blocklistedMethods) {
+					if (in_array($method->getName(), $la_blocklistedMethods)) {
 						return false;
 					}
 
 					// Check for the NoDirectAccess attribute
-					$la_attributes = $ao_method->getAttributes(NoDirectAccess::class);
+					$la_attributes = $method->getAttributes(NoDirectAccess::class);
 					if (!empty($la_attributes)) {
 						return false;
 					}
 
-					return str_ends_with($ao_method->getDeclaringClass()->getName(), $ls_controllerName . 'Controller');
+					return str_ends_with($method->getDeclaringClass()->getName(), $ls_controllerName . 'Controller');
 				});
 
 				if (empty($la_methods)) {
@@ -415,9 +415,10 @@ class BackendMenuEntriesController extends Controller {
 			$la_controllers[ $ls_name ] = $la_controllers['Pages'];
 		}
 
+		/** @var \Awyiss\Model\Table\DatatablesTable $lo_table */
 		$lo_table = FactoryLocator::get('Table')->get('Datatables');
-		$lo_table->findAllAndCache()->each(function (Datatable $ao_datatable) use (&$la_controllers) {
-			$ls_name = Inflector::camelize($ao_datatable->identifier);
+		$lo_table->findAllAndCache()->each(function (Datatable $datatable) use (&$la_controllers) {
+			$ls_name = Inflector::camelize($datatable->identifier);
 
 			if (!isset($la_controllers[ $ls_name ])) {
 				$la_controllers[ $ls_name ] = $la_controllers['GenericDatatables'];
@@ -435,6 +436,7 @@ class BackendMenuEntriesController extends Controller {
 	/**
 	 * @return array
 	 * @throws \ReflectionException
+	 * @throws \Exception
 	 */
 	protected function getPolicies(): array {
 		/** @var \Awyiss\Authorization\AuthorizationService $lo_authorizationService */
@@ -444,7 +446,7 @@ class BackendMenuEntriesController extends Controller {
 		/**
 		 * @var \Awyiss\Authorization\Policy\AbstractGenericPolicy|class-string<\Awyiss\Authorization\Policy\PolicyInterface> $lx_policyClass
 		 */
-		foreach ($lo_authorizationService->getPolicies() as $ls_scope => $lx_policyClass) {
+		foreach ($lo_authorizationService->getPolicies() as $lx_policyClass) {
 			$ls_scope = is_string($lx_policyClass) ? $lx_policyClass::getScope() : $lx_policyClass->getScope();
 
 			$la_permissions = [];

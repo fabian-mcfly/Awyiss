@@ -39,13 +39,12 @@ class TranslatableTextWidget extends BasicWidget {
 	 *
 	 * All other keys will be converted into HTML attributes.
 	 *
-	 * @param array<string, mixed> $aa_data The data to build a textarea with.
-	 * @param \Cake\View\Form\ContextInterface $ao_context The current form context.
+	 * @param array<string, mixed> $data The data to build a textarea with.
+	 * @param \Cake\View\Form\ContextInterface $context The current form context.
 	 * @return string HTML elements.
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function render(array $aa_data, ContextInterface $ao_context): string {
-		$la_data = $aa_data + $this->mergeDefaults($aa_data, $ao_context);
+	public function render(array $data, ContextInterface $context): string {
+		$la_data = $data + $this->mergeDefaults($data, $context);
 
 		$la_data += ['readonly' => true];
 

@@ -15,7 +15,7 @@ use Cake\Validation\Validator;
  *
  * @property \Awyiss\Model\Table\UsergroupsTable&\Awyiss\ORM\Association\BelongsTo $Usergroups
  * @property \Awyiss\Model\Table\UsersTable&\Awyiss\ORM\Association\BelongsTo $Users
- * @method \Awyiss\Model\Entity\UsergroupsUser newDefaultEntity(array $aa_additionalData = [], array $aa_options = [])
+ * @method \Awyiss\Model\Entity\UsergroupsUser newDefaultEntity(array $additionalData = [], array $options = [])
  * @noinspection PhpFullyQualifiedNameUsageInspection
  */
 class UsergroupsUsersTable extends Table {
@@ -46,56 +46,55 @@ class UsergroupsUsersTable extends Table {
 	/**
 	 * Returns the default validator object.
 	 *
-	 * @param Validator $ao_validator The validator that can be modified to
+	 * @param Validator $validator The validator that can be modified to
 	 * add some rules to it.
 	 * @return Validator
 	 */
-	public function validationDefault(Validator $ao_validator): Validator {
-		parent::validationDefault($ao_validator);
+	public function validationDefault(Validator $validator): Validator {
+		parent::validationDefault($validator);
 
 
-		$ao_validator->add('id', [
+		$validator->add('id', [
 			'isInteger' => ['rule' => 'isInteger'],
 			'maxLength' => ['rule' => ['maxLength', 11]],
 		]);
 
 
-		$ao_validator->add('usergroupId', [
+		$validator->add('usergroupId', [
 			'isInteger' => ['rule' => 'isInteger'],
 			'maxLength' => ['rule' => ['maxLength', 11]],
 		]);
 
 
-		$ao_validator->add('userId', [
+		$validator->add('userId', [
 			'isInteger' => ['rule' => 'isInteger'],
 			'maxLength' => ['rule' => ['maxLength', 11]],
 		]);
 
 
-		return $ao_validator;
+		return $validator;
 	}
 
 
 	/**
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 *
-	 * @param RulesChecker|BaseRulesChecker $ao_rules The rules object to be modified.
+	 * @param RulesChecker|BaseRulesChecker $rules The rules object to be modified.
 	 * @return RulesChecker
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
-		$ao_rules->add($ao_rules->existsIn('usergroupId', 'Usergroups'), 'usergroupExists', [
+	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
+		$rules->add($rules->existsIn('usergroupId', 'Usergroups'), 'usergroupExists', [
 			'errorField' => 'usergroupId',
 			'message' => __df($this->getI18nDomain(), 'validation', 'error_usergroup_exists'),
 		]);
 
 
-		$ao_rules->add($ao_rules->existsIn('userId', 'Users'), 'userExists', [
+		$rules->add($rules->existsIn('userId', 'Users'), 'userExists', [
 			'errorField' => 'userId',
 			'message' => __df($this->getI18nDomain(), 'validation', 'error_user_exists'),
 		]);
 
 
-		return $ao_rules;
+		return $rules;
 	}
 }

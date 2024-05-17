@@ -21,7 +21,7 @@ use Cake\Validation\Validator;
 /**
  * User-specific Configuration Model
  *
- * @method \Awyiss\Model\Entity\UserConfiguration newDefaultEntity(array $aa_additionalData = [], array $aa_options = [])
+ * @method \Awyiss\Model\Entity\UserConfiguration newDefaultEntity(array $additionalData = [], array $options = [])
  * @noinspection PhpUnnecessaryFullyQualifiedNameInspection
  */
 class UserConfigurationTable extends Table {
@@ -65,8 +65,8 @@ class UserConfigurationTable extends Table {
 
 		/** @var \Awyiss\Model\Table\PageRolesTable $lo_pageRolesTable */
 		$lo_pageRolesTable = FactoryLocator::get('Table')->get('PageRoles');
-		$la_pageRoles = $lo_pageRolesTable->findAllAndCache()->indexBy(function (PageRole $ao_pageRole) {
-			return Inflector::pluralize($ao_pageRole->identifier);
+		$la_pageRoles = $lo_pageRolesTable->findAllAndCache()->indexBy(function (PageRole $pageRole) {
+			return Inflector::pluralize($pageRole->identifier);
 		})->toArray();
 
 		$la_configScopes = [];
@@ -109,69 +109,68 @@ class UserConfigurationTable extends Table {
 	/**
 	 * Returns the default validator object.
 	 *
-	 * @param Validator $ao_validator The validator that can be modified to
+	 * @param Validator $validator The validator that can be modified to
 	 * add some rules to it.
 	 * @return Validator
 	 */
-	public function validationDefault(Validator $ao_validator): Validator {
-		parent::validationDefault($ao_validator);
+	public function validationDefault(Validator $validator): Validator {
+		parent::validationDefault($validator);
 
-		$ao_validator->requirePresence([
+		$validator->requirePresence([
 			'userId',
 			'scope',
 			'identifier',
 		], 'create');
 
 
-		$ao_validator->add('id', [
+		$validator->add('id', [
 			'isInteger' => ['rule' => 'isInteger'],
 			'maxLength' => ['rule' => ['maxLength', 11]],
 		]);
 
 
-		$ao_validator->add('userId', [
+		$validator->add('userId', [
 			'isInteger' => ['rule' => 'isInteger'],
 			'maxLength' => ['rule' => ['maxLength', 11]],
 		]);
 
 
-		$ao_validator->add('scope', [
+		$validator->add('scope', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'maxLength' => ['rule' => ['maxLength', 50]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
 
 
-		$ao_validator->add('identifier', [
+		$validator->add('identifier', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'maxLength' => ['rule' => ['maxLength', 50]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
 
 
-		$ao_validator->add('value', [
+		$validator->add('value', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'maxLength' => ['rule' => ['maxLength', 255]],
 		]);
 
 
-		return $ao_validator;
+		return $validator;
 	}
 
 
 	/**
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 *
-	 * @param RulesChecker|BaseRulesChecker $ao_rules The rules object to be modified.
+	 * @param RulesChecker|BaseRulesChecker $rules The rules object to be modified.
 	 * @return RulesChecker
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
-		$ao_rules->add(
-			function (UserConfiguration $ao_entity/*, array $aa_options*/) use ($ao_rules): bool|string {
+	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
+		$rules->add(
+			function (UserConfiguration $entity/*, array $options*/) use ($rules): bool|string {
 				if (
-					$ao_entity->hasOriginal('userId') &&
-					$ao_entity->get('userId') !== $ao_entity->getOriginal('userId')
+					$entity->hasOriginal('userId') &&
+					$entity->get('userId') !== $entity->getOriginal('userId')
 				) {
 					return __df($this->getI18nDomain(), 'validation', 'error_user_id_unchanged');
 				}
@@ -186,8 +185,8 @@ class UserConfigurationTable extends Table {
 		);
 
 
-		$ao_rules->add(
-			$ao_rules->isUnique(
+		$rules->add(
+			$rules->isUnique(
 				[
 					'scope',
 					'identifier',
@@ -205,9 +204,9 @@ class UserConfigurationTable extends Table {
 		);
 
 
-		$ao_rules->add(function (UserConfiguration $ao_entity/*, array $aa_options*/) use ($ao_rules): bool {
-			$lo_configuration = ConfigOptionsProvider::loadConfigOptions($ao_entity->scope);
-			$lo_configOption = $lo_configuration?->getConfigOption(Awyiss::REALM_BACKEND, $ao_entity->identifier);
+		$rules->add(function (UserConfiguration $entity/*, array $options*/) use ($rules): bool {
+			$lo_configuration = ConfigOptionsProvider::loadConfigOptions($entity->scope);
+			$lo_configOption = $lo_configuration?->getConfigOption(Awyiss::REALM_BACKEND, $entity->identifier);
 
 
 			return $lo_configOption && $lo_configOption->isPersonalizable();
@@ -218,29 +217,29 @@ class UserConfigurationTable extends Table {
 
 
 		//Validate the provided value for the scope, identifier and language.
-		$ao_rules->add(function (UserConfiguration $ao_entity/*, array $aa_options*/): bool|string {
+		$rules->add(function (UserConfiguration $entity/*, array $options*/): bool|string {
 			$lb_valid = ConfigOptionsProvider::validateConfigValue(
-				$ao_entity->scope,
+				$entity->scope,
 				Awyiss::REALM_BACKEND,
-				$ao_entity->identifier,
-				$ao_entity->value
+				$entity->identifier,
+				$entity->value
 			);
 
 			if (!$lb_valid) {
 				$lx_value = ConfigOptionsProvider::typecastConfigValue(
-					$ao_entity->scope,
+					$entity->scope,
 					Awyiss::REALM_BACKEND,
-					$ao_entity->identifier,
-					$ao_entity->value
+					$entity->identifier,
+					$entity->value
 				);
 
 				//A typecast to null cannot be valid if the initial value wasn't null.
 				//This happens when one tries to json_decode a string, for example.
-				if ($ao_entity->value !== null && $lx_value !== null) {
+				if ($entity->value !== null && $lx_value !== null) {
 					$lb_valid = ConfigOptionsProvider::validateConfigValue(
-						$ao_entity->scope,
+						$entity->scope,
 						Awyiss::REALM_BACKEND,
-						$ao_entity->identifier,
+						$entity->identifier,
 						$lx_value
 					);
 				}
@@ -255,9 +254,9 @@ class UserConfigurationTable extends Table {
 		]);
 
 
-		$ao_rules->addDelete(
-			function (UserConfiguration $ao_entity/*, array $aa_options*/): bool {
-				return $ao_entity->userId === $this->getIdentity()->getIdentifier();
+		$rules->addDelete(
+			function (UserConfiguration $entity/*, array $options*/): bool {
+				return $entity->userId === $this->getIdentity()->getIdentifier();
 			},
 			'configOwnedByUser',
 			[
@@ -267,7 +266,7 @@ class UserConfigurationTable extends Table {
 		);
 
 
-		return $ao_rules;
+		return $rules;
 	}
 
 

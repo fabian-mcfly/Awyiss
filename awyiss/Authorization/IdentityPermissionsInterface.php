@@ -23,14 +23,14 @@ interface IdentityPermissionsInterface {
 	 * For a list of given identifiers, return true or false whether they're accessible inside the given scope
 	 * for the given identity.
 	 *
-	 * See \Awyiss\Authorization\Permission\PermissionCollection::scopeIsAccessible() how $ax_identifier is used.
+	 * See \Awyiss\Authorization\Permission\PermissionCollection::scopeIsAccessible() how $identifier is used.
 	 *
-	 * @param string $as_scope
-	 * @param array $aa_additionalData
-	 * @param array|string ...$ax_identifier
+	 * @param string $scope
+	 * @param array $additionalData
+	 * @param array|string ...$identifier
 	 * @return bool
 	 * @throws \ReflectionException
 	 * @see PermissionCollection::scopeIsAccessible
 	 */
-	public function scopeIsAccessible(string $as_scope, array $aa_additionalData = [], string|array ...$ax_identifier): bool;
+	public function scopeIsAccessible(string $scope, array $additionalData = [], string|array ...$identifier): bool;
 }

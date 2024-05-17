@@ -69,12 +69,12 @@ class MediaFolder extends Entity {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function getChildren(array $aa_options = []): ?CollectionInterface {
+	public function getChildren(array $options = []): ?CollectionInterface {
 		/** @var \Awyiss\Model\Table\MediaFoldersTable $lo_table */
 		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
 
 
-		return $lo_table->getChildren($this, $aa_options);
+		return $lo_table->getChildren($this, $options);
 	}
 
 
@@ -83,12 +83,12 @@ class MediaFolder extends Entity {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function getNestedChildren(array $aa_options = [], int $ai_currentLevel = 0): ?CollectionInterface {
+	public function getNestedChildren(array $options = [], int $currentLevel = 0): ?CollectionInterface {
 		/** @var \Awyiss\Model\Table\MediaFoldersTable $lo_table */
 		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
 
 
-		return $lo_table->getNestedChildren($this, $aa_options, $ai_currentLevel);
+		return $lo_table->getNestedChildren($this, $options, $currentLevel);
 	}
 
 
@@ -97,12 +97,12 @@ class MediaFolder extends Entity {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function getParent(array $aa_options = []): ?self {
+	public function getParent(array $options = []): ?self {
 		/** @var \Awyiss\Model\Table\MediaFoldersTable $lo_table */
 		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
 
 
-		return $lo_table->getParent($this, $aa_options);
+		return $lo_table->getParent($this, $options);
 	}
 
 
@@ -111,32 +111,32 @@ class MediaFolder extends Entity {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function getParents(array $aa_options = [], int $ai_currentLevel = 0): ?CollectionInterface {
+	public function getParents(array $options = [], int $currentLevel = 0): ?CollectionInterface {
 		/** @var \Awyiss\Model\Table\MediaFoldersTable $lo_table */
 		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
 
 
-		return $lo_table->getParents($this, $aa_options, $ai_currentLevel);
+		return $lo_table->getParents($this, $options, $currentLevel);
 	}
 
 
 	/**
 	 * Make sure the path is always lowercase, dashed and free of special characters
 	 *
-	 * @param string|null $as_path
+	 * @param string|null $path
 	 * @return string|null
 	 * @see \Awyiss\Model\Entity\Page::$path
 	 */
-	protected function _setPath(?string $as_path): ?string {
-		if ($as_path === null) {
+	protected function _setPath(?string $path): ?string {
+		if ($path === null) {
 			return null;
 		}
 
 		if ($this->deleted) {
-			return $as_path;
+			return $path;
 		}
 
-		$ls_path = Text::slug($as_path, ['preserve' => '/']);
+		$ls_path = Text::slug($path, ['preserve' => '/']);
 		$ls_path = trim($ls_path, '/');
 
 		if (str_contains($ls_path, '/')) {

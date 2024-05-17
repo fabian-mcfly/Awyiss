@@ -31,10 +31,10 @@ interface PolicyInterface {
 
 
 	/**
-	 * Returns one `PermissionOptionInterface` for the provided `$as_identifier`, otherwise null
+	 * Returns one `PermissionOptionInterface` for the provided `$identifier`, otherwise null
 	 *
-	 * @param string $as_identifier
+	 * @param string $identifier
 	 * @return PermissionOptionInterface|null
 	 */
-	public static function getPermissionOption(string $as_identifier): ?PermissionOptionInterface;
+	public static function getPermissionOption(string $identifier): ?PermissionOptionInterface;
 }

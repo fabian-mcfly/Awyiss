@@ -22,7 +22,7 @@ use finfo;
  *
  * @property \Awyiss\Model\Table\MediaFoldersTable&\Awyiss\ORM\Association\BelongsTo $MediaFolders
  * @property \Awyiss\Model\Table\MediaFoldersTable&\Awyiss\ORM\Association\HasMany $MediaResizedImages
- * @method \Awyiss\Model\Entity\Media newDefaultEntity(array $aa_additionalData = [], array $aa_options = [])
+ * @method \Awyiss\Model\Entity\Media newDefaultEntity(array $additionalData = [], array $options = [])
  * @noinspection PhpUnnecessaryFullyQualifiedNameInspection
  */
 class MediaTable extends Table {
@@ -88,104 +88,103 @@ class MediaTable extends Table {
 	/**
 	 * Returns the default validator object.
 	 *
-	 * @param Validator $ao_validator The validator that can be modified to
+	 * @param Validator $validator The validator that can be modified to
 	 * add some rules to it.
 	 * @return Validator
 	 */
-	public function validationDefault(Validator $ao_validator): Validator {
-		parent::validationDefault($ao_validator);
+	public function validationDefault(Validator $validator): Validator {
+		parent::validationDefault($validator);
 
 
-		$ao_validator->requirePresence([
+		$validator->requirePresence([
 			'mediaFolderId',
 			'name',
 			'file',
 		], 'create');
 
 
-		$ao_validator->add('id', [
+		$validator->add('id', [
 			'isInteger' => ['rule' => 'isInteger'],
 			'maxLength' => ['rule' => ['maxLength', 11]],
 		]);
 
 
-		$ao_validator->notEmptyString('mediaFolderId');
-		$ao_validator->add('mediaFolderId', [
+		$validator->notEmptyString('mediaFolderId');
+		$validator->add('mediaFolderId', [
 			'isInteger' => ['rule' => 'isInteger'],
 			'maxLength' => ['rule' => ['maxLength', 11]],
 		]);
 
 
-		$ao_validator->notEmptyString('name');
-		$ao_validator->add('name', [
+		$validator->notEmptyString('name');
+		$validator->add('name', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'maxLength' => ['rule' => ['maxLength', 100]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
 
 
-		$ao_validator->add('alt', [
+		$validator->add('alt', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'maxLength' => ['rule' => ['maxLength', 255]],
 		]);
 
 
-		$ao_validator->add('metaData', [
+		$validator->add('metaData', [
 			'isArray' => ['rule' => 'isArray'],
 			'maxLengthBytes' => [
-				'rule' => function ($ax_value) {
-					return strlen(json_encode($ax_value)) <= 16777215;
+				'rule' => function ($value) {
+					return strlen(json_encode($value)) <= 16777215;
 				},
 			],
 		]);
 
 
-		$ao_validator->add('systemOrder', [
+		$validator->add('systemOrder', [
 			'isInteger' => ['rule' => 'isInteger'],
 		]);
 
 
-		$ao_validator->notEmptyFile('file', null, 'create');
-		$ao_validator->add('file', [
+		$validator->notEmptyFile('file', null, 'create');
+		$validator->add('file', [
 			'uploadedFile' => ['rule' => 'uploadedFile'],
 		]);
 
 
-		return $ao_validator;
+		return $validator;
 	}
 
 
 	/**
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 *
-	 * @param RulesChecker|BaseRulesChecker $ao_rules The rules object to be modified.
+	 * @param RulesChecker|BaseRulesChecker $rules The rules object to be modified.
 	 * @return RulesChecker
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
-		$ao_rules->add(
-			function (Media $ao_entity): bool|string {
-				if (!$ao_entity->file || $ao_entity->file?->getError()) {
+	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
+		$rules->add(
+			function (Media $entity): bool|string {
+				if (!$entity->file || $entity->file?->getError()) {
 					return true;
 				}
 
-				$ls_extension = $ao_entity->extension;
+				$ls_extension = $entity->extension;
 
 				if (!$ls_extension) {
 					return __df($this->getI18nDomain(), 'validation', 'error_media_has_file_extension');
 				}
 
-				$lo_stream = $ao_entity->file->getStream();
+				$lo_stream = $entity->file->getStream();
 				$ls_tempName = $lo_stream->getMetadata('uri');
 
-				$ao_entity->mimeType = static::getFinfo()->file($ls_tempName, FILEINFO_MIME_TYPE);
+				$entity->mimeType = static::getFinfo()->file($ls_tempName, FILEINFO_MIME_TYPE);
 
 				$ls_knownExtensions = static::getFinfo()->file($ls_tempName, FILEINFO_EXTENSION);
 				$la_knownExtensions = explode('/', $ls_knownExtensions);
 
 				if ($ls_knownExtensions === '???' || !in_array($ls_extension, $la_knownExtensions)) {
 					//Fallback if extension isn't known for the mimetype
-					$la_knownExtensions = Configure::read('MimeTypes.' . str_replace('.', '-', $ao_entity->mimeType));
+					$la_knownExtensions = Configure::read('MimeTypes.' . str_replace('.', '-', $entity->mimeType));
 				}
 
 				if (empty($la_knownExtensions) || !in_array($ls_extension, $la_knownExtensions)) {
@@ -194,7 +193,7 @@ class MediaTable extends Table {
 						'validation',
 						'error_media_mime_type_matches_extension',
 						$ls_extension,
-						$ao_entity->mimeType
+						$entity->mimeType
 					);
 				}
 
@@ -207,7 +206,7 @@ class MediaTable extends Table {
 		);
 
 
-		return $ao_rules;
+		return $rules;
 	}
 
 
@@ -241,8 +240,8 @@ class MediaTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	protected function initializeSchema(TableSchemaInterface $ao_schema): void {
-		parent::initializeSchema($ao_schema);
+	protected function initializeSchema(TableSchemaInterface $schema): void {
+		parent::initializeSchema($schema);
 
 		$this->getSchema()->setColumnType('preview', EnumType::from(ProcessStatus::class));
 		$this->getSchema()->setColumnType('webp', EnumType::from(ProcessStatus::class));

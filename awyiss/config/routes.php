@@ -6,11 +6,11 @@ use Awyiss\Routing\Route\AwyissRoute;
 use Cake\Routing\RouteBuilder;
 
 
-/** @var RouteBuilder $ao_routes */
-$ao_routes->scope('/', function (RouteBuilder $ao_routes): void {
-	$ao_routes->setRouteClass(AwyissRoute::class);
+/** @var RouteBuilder $routes */
+$routes->scope('/', function (RouteBuilder $routes): void {
+	$routes->setRouteClass(AwyissRoute::class);
 
-	$ao_routes->connect(
+	$routes->connect(
 		'/{lang}/{slug}',
 		['prefix' => 'Frontend', 'controller' => 'frontend', 'action' => 'index'],
 		['_name' => Awyiss::REALM_FRONTEND]
@@ -18,5 +18,5 @@ $ao_routes->scope('/', function (RouteBuilder $ao_routes): void {
 	->setPatterns(['lang' => '[a-z]{2}'])
 	->setPersist(['lang', 'slug']);
 
-	$ao_routes->connect('/*', ['prefix' => 'Frontend', 'controller' => 'frontend', 'action' => 'noLanguageFound']);
+	$routes->connect('/*', ['prefix' => 'Frontend', 'controller' => 'frontend', 'action' => 'noLanguageFound']);
 });

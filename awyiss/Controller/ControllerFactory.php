@@ -27,42 +27,41 @@ class ControllerFactory extends BaseControllerFactory {
 	/**
 	 * Create a controller for a given request.
 	 *
-	 * @param ServerRequestInterface $ao_request The request to build a controller for.
+	 * @param ServerRequestInterface $request The request to build a controller for.
 	 * @return Controller
 	 * @throws \Psr\Container\ContainerExceptionInterface
 	 * @throws \Psr\Container\NotFoundExceptionInterface
 	 * @throws \ReflectionException
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 * @noinspection PhpParamsInspection //somehow PhpStorm does not realize that ServerRequest extends ServerRequestInterface
 	 */
-	public function create(ServerRequestInterface $ao_request): Controller {
-		$ls_className = $this->getControllerClass($ao_request);
+	public function create(ServerRequestInterface $request): Controller {
+		$ls_className = $this->getControllerClass($request);
 
 		//No className means no class exists for the current request
 		if ($ls_className === null) {
 			//Try to get a controller based on \Awyiss\Controller\Backend\PagesController::class
-			$lo_controller = $this->tryGenericController($ao_request);
+			$lo_controller = $this->tryGenericController($request);
 			if ($lo_controller) {
 				return $lo_controller;
 			}
 		}
 
 		if ($ls_className === null) {
-			throw $this->missingController($ao_request);
+			throw $this->missingController($request);
 		}
 
 		$lo_reflection = new ReflectionClass($ls_className);
 		if ($lo_reflection->isAbstract()) {
-			throw $this->missingController($ao_request);
+			throw $this->missingController($request);
 		}
 
 		//If the controller has a container definition add the request as a service.
 		if ($this->container->has($ls_className)) {
-			$this->container->add(ServerRequest::class, $ao_request);
+			$this->container->add(ServerRequest::class, $request);
 			$lo_controller = $this->container->get($ls_className);
 		}
 		else {
-			$lo_controller = $lo_reflection->newInstance($ao_request);
+			$lo_controller = $lo_reflection->newInstance($request);
 		}
 
 
@@ -75,18 +74,16 @@ class ControllerFactory extends BaseControllerFactory {
 	 *
 	 * Reimplemented this method 1:1 from \Cake\Controller\ControllerFactory::getControllerClass,
 	 * so it'll use \Awyiss\Core\App::className in the return-statement
-	 *
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function getControllerClass(ServerRequest $ao_request): ?string {
+	public function getControllerClass(ServerRequest $request): ?string {
 		$ls_pluginPath = '';
 		$ls_namespace = 'Controller';
-		$ls_controller = $ao_request->getParam('controller', '');
-		if ($ao_request->getParam('plugin')) {
-			$ls_pluginPath = $ao_request->getParam('plugin') . '.';
+		$ls_controller = $request->getParam('controller', '');
+		if ($request->getParam('plugin')) {
+			$ls_pluginPath = $request->getParam('plugin') . '.';
 		}
-		if ($ao_request->getParam('prefix')) {
-			$ls_namespace .= '/' . $ao_request->getParam('prefix');
+		if ($request->getParam('prefix')) {
+			$ls_namespace .= '/' . $request->getParam('prefix');
 		}
 		$ls_firstChar = substr($ls_controller, 0, 1);
 
@@ -94,7 +91,7 @@ class ControllerFactory extends BaseControllerFactory {
 		// controller names as they allow direct references to
 		// be created.
 		if (str_contains($ls_controller, '\\') || str_contains($ls_controller, '/') || str_contains($ls_controller, '.') || $ls_firstChar === strtolower($ls_firstChar)) {
-			throw $this->missingController($ao_request);
+			throw $this->missingController($request);
 		}
 
 
@@ -111,11 +108,11 @@ class ControllerFactory extends BaseControllerFactory {
 	 * @throws \ReflectionException
 	 * @see \Awyiss\Controller\Backend\PagesController::asPageRole()
 	 */
-	public function tryGenericController(ServerRequest $ao_request): ?Controller {
+	public function tryGenericController(ServerRequest $request): ?Controller {
 		$ls_namespace = 'Controller';
-		$ls_controller = $ao_request->getParam('controller', '');
-		if ($ao_request->getParam('prefix')) {
-			$ls_prefix = $ao_request->getParam('prefix');
+		$ls_controller = $request->getParam('controller', '');
+		if ($request->getParam('prefix')) {
+			$ls_prefix = $request->getParam('prefix');
 
 			$ls_namespace .= '\\' . $ls_prefix;
 		}
@@ -131,7 +128,7 @@ class ControllerFactory extends BaseControllerFactory {
 		$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
 		$le_pageRole = $ls_pageRoleEnum::tryFromName($ls_singular);
 		if ($le_pageRole) {
-			return $this->buildGenericPageController($ls_controller, $ls_namespace, $ao_request, $le_pageRole);
+			return $this->buildGenericPageController($ls_controller, $ls_namespace, $request, $le_pageRole);
 		}
 
 
@@ -145,7 +142,7 @@ class ControllerFactory extends BaseControllerFactory {
 		]);
 
 		if ($lo_datatable) {
-			return $this->buildGenericDatatablesController($ls_controller, $ls_namespace, $ao_request, $lo_datatable);
+			return $this->buildGenericDatatablesController($ls_controller, $ls_namespace, $request, $lo_datatable);
 		}
 
 
@@ -154,26 +151,26 @@ class ControllerFactory extends BaseControllerFactory {
 
 
 	/**
-	 * @param string $as_controller
-	 * @param string $as_namespace
-	 * @param \Cake\Http\ServerRequest $ao_request
-	 * @param \Awyiss\Model\Entity\Datatable $ao_datatable
+	 * @param string $controller
+	 * @param string $namespace
+	 * @param \Cake\Http\ServerRequest $request
+	 * @param \Awyiss\Model\Entity\Datatable $datatable
 	 * @return \Awyiss\Controller\Backend\GenericDatatablesController
 	 * @throws \ReflectionException
 	 * @noinspection PhpUndefinedClassInspection
 	 * @noinspection PhpMethodParametersCountMismatchInspection
 	 */
 	protected function buildGenericDatatablesController(
-		string $as_controller,
-		string $as_namespace,
-		ServerRequest $ao_request,
-		Datatable $ao_datatable
+		string $controller,
+		string $namespace,
+		ServerRequest $request,
+		Datatable $datatable
 	): Controller {
 		/** @var \Cake\Controller\Controller::class $ls_baseController */
-		$ls_baseController = App::className('GenericDatatablesBase', $as_namespace, 'Controller');
+		$ls_baseController = App::className('GenericDatatablesBase', $namespace, 'Controller');
 		if (!$ls_baseController) {
 			/** @var \Awyiss\Controller\Backend\GenericDatatablesController::class $ls_baseController */
-			$ls_baseController = App::className('GenericDatatables', $as_namespace, 'Controller');
+			$ls_baseController = App::className('GenericDatatables', $namespace, 'Controller');
 		}
 
 		/*
@@ -193,8 +190,8 @@ class ControllerFactory extends BaseControllerFactory {
 		 * @var \Awyiss\Controller\Backend\GenericDatatablesController $lo_controller
 		 */
 		//phpcs:disable SlevomatCodingStandard.Classes.EmptyLinesAroundClassBraces, Squiz.WhiteSpace.ScopeClosingBrace
-		$lo_controller = new class ($ao_request) extends GenericDatatablesBase { };
-		$lo_controller->forDatatable($ao_datatable, $as_controller);
+		$lo_controller = new class ($request) extends GenericDatatablesBase { };
+		$lo_controller->forDatatable($datatable, $controller);
 		//phpcs:enable
 
 
@@ -203,26 +200,26 @@ class ControllerFactory extends BaseControllerFactory {
 
 
 	/**
-	 * @param string $as_controller
-	 * @param string $as_namespace
-	 * @param \Cake\Http\ServerRequest $ao_request
-	 * @param \Awyiss\Model\Enum\PageRoleEnumInterface $ae_pageRole
+	 * @param string $controller
+	 * @param string $namespace
+	 * @param \Cake\Http\ServerRequest $request
+	 * @param \Awyiss\Model\Enum\PageRoleEnumInterface $pageRole
 	 * @return \Awyiss\Controller\Backend\PagesController
 	 * @throws \ReflectionException
 	 * @noinspection PhpUndefinedClassInspection
 	 * @noinspection PhpMethodParametersCountMismatchInspection
 	 */
 	protected function buildGenericPageController(
-		string $as_controller,
-		string $as_namespace,
-		ServerRequest $ao_request,
-		PageRoleEnumInterface $ae_pageRole
+		string $controller,
+		string $namespace,
+		ServerRequest $request,
+		PageRoleEnumInterface $pageRole
 	): Controller {
 		/** @var \Cake\Controller\Controller::class $ls_baseController */
-		$ls_baseController = App::className('GenericPagesBase', $as_namespace, 'Controller');
+		$ls_baseController = App::className('GenericPagesBase', $namespace, 'Controller');
 		if (!$ls_baseController) {
 			/** @var \Awyiss\Controller\Backend\PagesController::class $ls_baseController */
-			$ls_baseController = App::className('Pages', $as_namespace, 'Controller');
+			$ls_baseController = App::className('Pages', $namespace, 'Controller');
 		}
 
 		/*
@@ -242,8 +239,8 @@ class ControllerFactory extends BaseControllerFactory {
 		 * @var \Awyiss\Controller\Backend\PagesController $lo_controller
 		 */
 		//phpcs:disable SlevomatCodingStandard.Classes.EmptyLinesAroundClassBraces, Squiz.WhiteSpace.ScopeClosingBrace
-		$lo_controller = new class ($ao_request) extends GenericPagesBase { };
-		$lo_controller->asPageRole($ae_pageRole, $as_controller);
+		$lo_controller = new class ($request) extends GenericPagesBase { };
+		$lo_controller->asPageRole($pageRole, $controller);
 		//phpcs:enable
 
 

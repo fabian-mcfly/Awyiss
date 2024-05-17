@@ -44,14 +44,14 @@ class BackendView extends AppView {
 			'relatedColumns' => $this->viewVars['systemOrderRelatedColumns'] ?? null,
 			'options' => $this->viewVars['systemOrderRecords'] ?? null,
 			'templates' => [
-				'titleOption' => function (mixed $ax_option): string {
-					return __('system_order_after') . ' ' . $ax_option->label;
+				'titleOption' => function (mixed $option): string {
+					return __('system_order_after') . ' ' . $option->label;
 				},
-				'titleOptionCurrent' => function (mixed $ax_option): string {
-					return $ax_option->label;
+				'titleOptionCurrent' => function (mixed $option): string {
+					return $option->label;
 				},
-				'titleOptionSelected' => function (mixed $ax_option): string {
-					return '-> ' . __('system_order_after') . ' ' . $ax_option->label;
+				'titleOptionSelected' => function (mixed $option): string {
+					return '-> ' . __('system_order_after') . ' ' . $option->label;
 				},
 			],
 		]);

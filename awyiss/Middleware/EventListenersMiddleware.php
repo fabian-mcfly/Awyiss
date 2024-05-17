@@ -19,25 +19,24 @@ class EventListenersMiddleware implements MiddlewareInterface {
 
 
 	/**
-	 * @param string|null $as_realm
+	 * @param string|null $realm
 	 */
-	public function __construct(?string $as_realm = null) {
-		$this->realm = $as_realm;
+	public function __construct(?string $realm = null) {
+		$this->realm = $realm;
 	}
 
 
 	/**
 	 * @inheritDoc
 	 * @throws \ReflectionException
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function process(ServerRequestInterface $ao_request, RequestHandlerInterface $ao_handler): ResponseInterface {
+	public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface {
 		EventListenersProvider::loadListener('general_events', $this->getRealm());
 
-		$lo_request = $ao_request->withAttribute('eventListeners', $this);
+		$lo_request = $request->withAttribute('eventListeners', $this);
 
 
-		return $ao_handler->handle($lo_request);
+		return $handler->handle($lo_request);
 	}
 
 

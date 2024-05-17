@@ -31,12 +31,12 @@ use Cake\Validation\Validator;
  * @property \Awyiss\Model\Table\PagesTable&\Awyiss\ORM\Association\HasMany $ChildPages
  * @property \Awyiss\Model\Table\ContentsTable&\Awyiss\ORM\Association\HasMany $Contents
  * @property \Awyiss\Model\Table\PagesTable&\Awyiss\ORM\Association\HasMany $SlugHistory
- * @method \Awyiss\Model\Entity\Page newDefaultEntity(array $aa_additionalData = [], array $aa_options = [])
- * @method \Cake\Collection\CollectionInterface|null getNestedChildren(\Awyiss\Model\Entity\Page $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
- * @method \Cake\Collection\CollectionInterface|null getChildren(\Awyiss\Model\Entity\Page $ao_entity, array $aa_options = [])
- * @method \Awyiss\Model\Entity\Page getParent(\Awyiss\Model\Entity\Page $ao_entity, array $aa_options = [])
- * @method \Cake\Collection\CollectionInterface|null getParents(\Awyiss\Model\Entity\Page $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
- * @method \Cake\Collection\CollectionInterface getPossibleParents(\Awyiss\Model\Entity $ao_entity, \Cake\Collection\CollectionInterface $ao_threadedEntities)
+ * @method \Awyiss\Model\Entity\Page newDefaultEntity(array $additionalData = [], array $options = [])
+ * @method \Cake\Collection\CollectionInterface|null getNestedChildren(\Awyiss\Model\Entity\Page $entity, array $options = [], int $currentLevel = 0)
+ * @method \Cake\Collection\CollectionInterface|null getChildren(\Awyiss\Model\Entity\Page $entity, array $options = [])
+ * @method \Awyiss\Model\Entity\Page getParent(\Awyiss\Model\Entity\Page $entity, array $options = [])
+ * @method \Cake\Collection\CollectionInterface|null getParents(\Awyiss\Model\Entity\Page $entity, array $options = [], int $currentLevel = 0)
+ * @method \Cake\Collection\CollectionInterface getPossibleParents(\Awyiss\Model\Entity $entity, \Cake\Collection\CollectionInterface $threadedEntities)
  */
 class PagesTable extends Table {
 	/**
@@ -75,7 +75,7 @@ class PagesTable extends Table {
 	 * @inheritDoc
 	 * @throws \Exception
 	 */
-	public function initialize(array $aa_config): void {
+	public function initialize(array $config): void {
 		/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $ls_pageRoleEnum */
 		$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
 
@@ -83,7 +83,7 @@ class PagesTable extends Table {
 
 		$this->pageRole = $ls_pageRoleEnum::tryFromName(substr(end($la_parts), 0, -5));
 
-		parent::initialize($aa_config);
+		parent::initialize($config);
 	}
 
 
@@ -142,15 +142,15 @@ class PagesTable extends Table {
 	/**
 	 * Returns the default validator object.
 	 *
-	 * @param Validator $ao_validator The validator that can be modified to
+	 * @param Validator $validator The validator that can be modified to
 	 * add some rules to it.
 	 * @return Validator
 	 */
-	public function validationDefault(Validator $ao_validator): Validator {
-		parent::validationDefault($ao_validator);
+	public function validationDefault(Validator $validator): Validator {
+		parent::validationDefault($validator);
 
 
-		$ao_validator->requirePresence([
+		$validator->requirePresence([
 			'languageShortcode',
 			'slug',
 			'title',
@@ -159,47 +159,47 @@ class PagesTable extends Table {
 		], 'create');
 
 
-		$ao_validator->add('id', [
+		$validator->add('id', [
 			'isInteger' => ['rule' => 'isInteger'],
 			'maxLength' => ['rule' => ['maxLength', 11]],
 		]);
 
 
-		$ao_validator->add('parentId', [
+		$validator->add('parentId', [
 			'isInteger' => ['rule' => 'isInteger'],
 			'maxLength' => ['rule' => ['maxLength', 11]],
 		]);
 
 
-		$ao_validator->notEmptyString('languageShortcode');
-		$ao_validator->add('languageShortcode', [
+		$validator->notEmptyString('languageShortcode');
+		$validator->add('languageShortcode', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'ascii' => ['rule' => 'ascii'],
 			'exactLength' => [
-				'rule' => function ($as_shortcode) {
-					return strlen($as_shortcode) == 2;
+				'rule' => function ($shortcode) {
+					return strlen($shortcode) == 2;
 				},
 			],
 		]);
 
 
-		$ao_validator->notEmptyString('slug');
-		$ao_validator->add('slug', [
+		$validator->notEmptyString('slug');
+		$validator->add('slug', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'maxLength' => ['rule' => ['maxLength', 1024]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
 
 
-		$ao_validator->notEmptyString('title');
-		$ao_validator->add('title', [
+		$validator->notEmptyString('title');
+		$validator->add('title', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'maxLength' => ['rule' => ['maxLength', 100]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
 
 
-		$ao_validator->add('redirectLink', [
+		$validator->add('redirectLink', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'maxLength' => ['rule' => ['maxLength', 255]],
 			'notBlank' => ['rule' => 'notBlank'],
@@ -207,87 +207,86 @@ class PagesTable extends Table {
 		]);
 
 
-		$ao_validator->add('metaTitle', [
+		$validator->add('metaTitle', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'maxLength' => ['rule' => ['maxLength', 100]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
 
 
-		$ao_validator->add('metaDescription', [
+		$validator->add('metaDescription', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'maxLengthBytes' => ['rule' => ['maxLengthBytes', 65535]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
 
 
-		$ao_validator->add('robotsIndex', [
+		$validator->add('robotsIndex', [
 			'boolean' => ['rule' => 'boolean'],
 		]);
 
 
-		$ao_validator->add('robotsFollow', [
+		$validator->add('robotsFollow', [
 			'boolean' => ['rule' => 'boolean'],
 		]);
 
 
-		$ao_validator->notEmptyString('pageRoleId');
-		$ao_validator->add('pageRoleId', [
+		$validator->notEmptyString('pageRoleId');
+		$validator->add('pageRoleId', [
 			'isInteger' => ['rule' => 'isInteger'],
 			'maxLength' => ['rule' => ['maxLength', 11]],
 		]);
 
 
-		$ao_validator->notEmptyString('pageTemplateId');
-		$ao_validator->add('pageTemplateId', [
+		$validator->notEmptyString('pageTemplateId');
+		$validator->add('pageTemplateId', [
 			'isInteger' => ['rule' => 'isInteger'],
 			'maxLength' => ['rule' => ['maxLength', 11]],
 		]);
 
 
-		$ao_validator->add('duplicateOf', [
+		$validator->add('duplicateOf', [
 			'isInteger' => ['rule' => 'isInteger'],
 			'maxLength' => ['rule' => ['maxLength', 11]],
 		]);
 
 
-		$ao_validator->add('systemOrder', [
+		$validator->add('systemOrder', [
 			'isInteger' => ['rule' => 'isInteger'],
 		]);
 
 
-		$ao_validator->add('active', [
+		$validator->add('active', [
 			'boolean' => ['rule' => 'boolean'],
 		]);
 
 
-		$ao_validator->add('parentsActive', [
+		$validator->add('parentsActive', [
 			'boolean' => ['rule' => 'boolean'],
 		]);
 
 
-		$ao_validator->add('deleted', [
+		$validator->add('deleted', [
 			'boolean' => ['rule' => 'boolean'],
 		]);
 
 
-		return $ao_validator;
+		return $validator;
 	}
 
 
 	/**
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 *
-	 * @param RulesChecker|BaseRulesChecker $ao_rules The rules object to be modified.
+	 * @param RulesChecker|BaseRulesChecker $rules The rules object to be modified.
 	 * @return RulesChecker
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
+	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
 		$ls_pageRole = Inflector::camelize(Inflector::pluralize($this->pageRole->name));
 
 
-		$ao_rules->add(
-			$ao_rules->existsIn('languageShortcode', 'Languages'),
+		$rules->add(
+			$rules->existsIn('languageShortcode', 'Languages'),
 			'languageExists',
 			[
 				'errorField' => 'languageShortcode',
@@ -296,8 +295,8 @@ class PagesTable extends Table {
 		);
 
 
-		$ao_rules->add(
-			$ao_rules->existsIn('pageRoleId', 'PageRoles'),
+		$rules->add(
+			$rules->existsIn('pageRoleId', 'PageRoles'),
 			'validPageRole',
 			[
 				'errorField' => 'pageRoleId',
@@ -306,8 +305,8 @@ class PagesTable extends Table {
 		);
 
 
-		$ao_rules->add(
-			$ao_rules->existsIn(['pageTemplateId', 'page_role_id'], 'PageTemplates'),
+		$rules->add(
+			$rules->existsIn(['pageTemplateId', 'page_role_id'], 'PageTemplates'),
 			'validPageTemplate',
 			[
 				'errorField' => 'pageTemplateId',
@@ -316,8 +315,8 @@ class PagesTable extends Table {
 		);
 
 
-		$ao_rules->add(
-			$ao_rules->existsIn('duplicateOf', 'DuplicateOf' . $ls_pageRole),
+		$rules->add(
+			$rules->existsIn('duplicateOf', 'DuplicateOf' . $ls_pageRole),
 			'validDuplicateOf',
 			[
 				'errorField' => 'duplicateOf',
@@ -327,8 +326,8 @@ class PagesTable extends Table {
 
 
 		//Ensure that a page has no linked duplicating pages when deleting it.
-		$ao_rules->addDelete(
-			$ao_rules->isNotLinkedTo(
+		$rules->addDelete(
+			$rules->isNotLinkedTo(
 				'Duplicating' . $ls_pageRole,
 				'_general',
 				__df($this->getI18nDomain(), 'validation', 'error_no_duplicating_pages')
@@ -337,15 +336,15 @@ class PagesTable extends Table {
 		);
 
 
-		$ao_rules->addDelete(function (Page $ao_page/*, array $aa_options = []*/): bool {
-			return !$this->hasDescendantsWithDifferentPageRole($ao_page);
+		$rules->addDelete(function (Page $page/*, array $options = []*/): bool {
+			return !$this->hasDescendantsWithDifferentPageRole($page);
 		}, 'noNestedChildrenWithDifferentPageRole', [
 			'errorField' => '_general',
 			'message' => __df($this->getI18nDomain(), 'validation', 'error_no_nested_children_with_different_page_role'),
 		]);
 
 
-		return $ao_rules;
+		return $rules;
 	}
 
 
@@ -374,8 +373,8 @@ class PagesTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	protected function initializeSchema(TableSchemaInterface $ao_schema): void {
-		parent::initializeSchema($ao_schema);
+	protected function initializeSchema(TableSchemaInterface $schema): void {
+		parent::initializeSchema($schema);
 
 		$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
 
@@ -384,28 +383,28 @@ class PagesTable extends Table {
 
 
 	/**
-	 * @param \Cake\ORM\Query\SelectQuery $ao_query
-	 * @param array $aa_options
+	 * @param \Cake\ORM\Query\SelectQuery $query
+	 * @param array $options
 	 * @return \Cake\ORM\Query\SelectQuery
 	 * @noinspection PhpUnused
 	 */
-	public function findActive(SelectQuery $ao_query): SelectQuery {
-		$ao_query->where([
+	public function findActive(SelectQuery $query): SelectQuery {
+		$query->where([
 			'active' => true,
 			'parents_active' => true,
 		]);
 
 
-		return $ao_query;
+		return $query;
 	}
 
 
 	/**
-	 * @param \Awyiss\Model\Entity\Page $ao_page
+	 * @param \Awyiss\Model\Entity\Page $page
 	 * @return \Cake\Collection\CollectionInterface|null
 	 */
-	public function getNestedPages(Page $ao_page): ?CollectionInterface {
-		$lo_children = $this->getNestedChildren($ao_page, [
+	public function getNestedPages(Page $page): ?CollectionInterface {
+		$lo_children = $this->getNestedChildren($page, [
 			'forceEnable' => true,
 			'finder' => [
 				'all' => [
@@ -427,18 +426,18 @@ class PagesTable extends Table {
 
 
 	/**
-	 * @param \Awyiss\Model\Entity\Page $ao_page
+	 * @param \Awyiss\Model\Entity\Page $page
 	 * @return bool
 	 */
-	public function hasDescendantsWithDifferentPageRole(Page $ao_page): bool {
-		$lo_children = $this->getNestedPages($ao_page);
+	public function hasDescendantsWithDifferentPageRole(Page $page): bool {
+		$lo_children = $this->getNestedPages($page);
 
 		if (!$lo_children) {
 			return false;
 		}
 
 		$la_pageRoles = array_unique($lo_children->extract('pageRoleId')->toList(), SORT_REGULAR);
-		$la_pageRoles = array_filter($la_pageRoles, fn (PageRoleEnumInterface $ae_pageRole) => $ae_pageRole != $ao_page->pageRoleId);
+		$la_pageRoles = array_filter($la_pageRoles, fn (PageRoleEnumInterface $pageRole) => $pageRole != $page->pageRoleId);
 
 		return (bool)$la_pageRoles;
 	}

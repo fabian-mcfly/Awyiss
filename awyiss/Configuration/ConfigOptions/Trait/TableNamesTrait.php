@@ -16,7 +16,7 @@ trait TableNamesTrait {
 
 
 	/**
-	 * @param string $as_table
+	 * @param string $table
 	 * @return array
 	 */
 	protected function getTableNames(): array {

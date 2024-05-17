@@ -27,10 +27,9 @@ class TemplateAllCommand extends BaseTemplateAllCommand {
 	 * Adds the `folder`-option.
 	 *
 	 * @inheritDoc
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildOptionParser(ConsoleOptionParser $ao_parser): ConsoleOptionParser {
-		$lo_parser = parent::buildOptionParser($ao_parser);
+	public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser {
+		$lo_parser = parent::buildOptionParser($parser);
 
 		$lo_parser->addOption('folder', [
 			'help' => 'The folder to save the templates in. Defaults to the the first item in config `App.paths.templates`.',

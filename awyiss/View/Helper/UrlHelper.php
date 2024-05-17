@@ -22,14 +22,13 @@ class UrlHelper extends BaseUrlHelper {
 
 	/**
 	 * @inheritDoc
-	 * @param array|string|null $ax_url
-	 * @param array $aa_options
+	 * @param array|string|null $url
+	 * @param array $options
 	 * @return string
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function build(array|string|null $ax_url = null, array $aa_options = []): string {
-		$lx_url = $ax_url;
-		$la_options = $aa_options + [
+	public function build(array|string|null $url = null, array $options = []): string {
+		$lx_url = $url;
+		$la_options = $options + [
 			'fullBase' => false,
 			'escape' => true,
 		];
@@ -63,13 +62,13 @@ class UrlHelper extends BaseUrlHelper {
 
 
 	/**
-	 * @param array $aa_options
-	 * @param mixed $aa_params
+	 * @param array $options
+	 * @param mixed $params
 	 * @return array
 	 */
-	protected function buildParameters(array $aa_options, mixed $aa_params): array {
-		$la_options = $aa_options;
-		$la_params = $aa_params;
+	protected function buildParameters(array $options, mixed $params): array {
+		$la_options = $options;
+		$la_params = $params;
 
 		$la_currentParts = [];
 		foreach (($this->_View->getRequest()->getParam('parts') ?: []) as $lx_key => $lx_value) {

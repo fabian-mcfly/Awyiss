@@ -24,11 +24,11 @@ class BackendMenu {
 
 
 	/**
-	 * @param \Awyiss\Authorization\IdentityPermissionsInterface|null $ao_identity
+	 * @param \Awyiss\Authorization\IdentityPermissionsInterface|null $identity
 	 * @throws \ReflectionException
 	 */
-	public function __construct(?IdentityPermissionsInterface $ao_identity = null) {
-		$this->identity = $ao_identity;
+	public function __construct(?IdentityPermissionsInterface $identity = null) {
+		$this->identity = $identity;
 
 		$this->createMenu();
 
@@ -113,11 +113,11 @@ class BackendMenu {
 		/** @var \Awyiss\Model\Table\BackendMenuEntriesTable $lo_table */
 		$lo_table = $this->fetchTable('BackendMenuEntries');
 
-		$la_menuEntries = $lo_table->find('threaded')->all()->groupBy(function (BackendMenuEntry $ao_entity) {
-			return $ao_entity->parentId ? 'appendTo' : 'insertAfter';
-		})->map(function (array $aa_menuEntries) {
-			return collection($aa_menuEntries)->groupBy(function (BackendMenuEntry $ao_entity) {
-				return $ao_entity->parentId ?? $ao_entity->insertAfterId ?? '';
+		$la_menuEntries = $lo_table->find('threaded')->all()->groupBy(function (BackendMenuEntry $entity) {
+			return $entity->parentId ? 'appendTo' : 'insertAfter';
+		})->map(function (array $menuEntries) {
+			return collection($menuEntries)->groupBy(function (BackendMenuEntry $entity) {
+				return $entity->parentId ?? $entity->insertAfterId ?? '';
 			})->toArray();
 		})->toArray();
 

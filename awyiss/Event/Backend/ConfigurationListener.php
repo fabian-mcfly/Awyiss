@@ -45,50 +45,50 @@ class ConfigurationListener implements EventListenerInterface {
 
 
 	/**
-	 * @param \Cake\Event\Event $ao_event
-	 * @param \Awyiss\Model\Entity\Configuration $ao_entity
+	 * @param \Cake\Event\Event $event
+	 * @param \Awyiss\Model\Entity\Configuration $entity
 	 * @return void
 	 * @noinspection PhpUnusedParameterInspection
 	 * @throws \ReflectionException
 	 */
-	public function beforeRules(Event $ao_event, Configuration $ao_entity): void {
-		$ao_entity->value = ConfigOptionsProvider::typecastConfigValue(
-			$ao_entity->scope,
-			$ao_entity->realm,
-			$ao_entity->identifier,
-			$ao_entity->value,
-			$ao_entity->languageShortcode
+	public function beforeRules(Event $event, Configuration $entity): void {
+		$entity->value = ConfigOptionsProvider::typecastConfigValue(
+			$entity->scope,
+			$entity->realm,
+			$entity->identifier,
+			$entity->value,
+			$entity->languageShortcode
 		);
 
-		if (in_array(getType($ao_entity->value), ['array', 'object'])) {
-			$ao_entity->value = json_encode($ao_entity->value);
+		if (in_array(getType($entity->value), ['array', 'object'])) {
+			$entity->value = json_encode($entity->value);
 		}
 	}
 
 
 	/**
-	 * @param \Cake\Event\Event $ao_event
-	 * @param \Awyiss\Model\Entity\Configuration $ao_entity
+	 * @param \Cake\Event\Event $event
+	 * @param \Awyiss\Model\Entity\Configuration $entity
 	 * @return void
 	 * @noinspection PhpUnusedParameterInspection
 	 * @throws \Exception
 	 */
-	public function afterSaveCommit(Event $ao_event, Configuration $ao_entity): void {
-		$this->unnestEntries($ao_event, $ao_entity);
-		$this->rebuildSystemOrder($ao_event, $ao_entity);
+	public function afterSaveCommit(Event $event, Configuration $entity): void {
+		$this->unnestEntries($event, $entity);
+		$this->rebuildSystemOrder($event, $entity);
 		$this->createCustomConfiguration();
 	}
 
 
 	/**
-	 * @param \Cake\Event\Event $ao_event
-	 * @param \Awyiss\Model\Entity\Configuration $ao_entity
+	 * @param \Cake\Event\Event $event
+	 * @param \Awyiss\Model\Entity\Configuration $entity
 	 * @return void
 	 * @noinspection PhpUnusedParameterInspection
 	 * @throws \Exception
 	 */
-	public function afterDelete(Event $ao_event, Configuration $ao_entity): void {
-		$this->unnestEntries($ao_event, $ao_entity, true);
+	public function afterDelete(Event $event, Configuration $entity): void {
+		$this->unnestEntries($event, $entity, true);
 		$this->createCustomConfiguration();
 	}
 
@@ -138,38 +138,38 @@ class ConfigurationListener implements EventListenerInterface {
 
 
 	/**
-	 * @param \Cake\Event\Event $ao_event
-	 * @param \Awyiss\Model\Entity\Configuration $ao_entity
-	 * @param bool $ab_deleted
+	 * @param \Cake\Event\Event $event
+	 * @param \Awyiss\Model\Entity\Configuration $entity
+	 * @param bool $deleted
 	 * @return void
 	 * @throws \ReflectionException
 	 */
-	protected function unnestEntries(Event $ao_event, Configuration $ao_entity, bool $ab_deleted = false): void {
-		if ($ao_entity->identifier !== 'nest.enabled') {
+	protected function unnestEntries(Event $event, Configuration $entity, bool $deleted = false): void {
+		if ($entity->identifier !== 'nest.enabled') {
 			return;
 		}
 
 		$lb_defaultNest = false;
-		if ($ab_deleted) {
-			$lo_configuration = ConfigOptionsProvider::loadConfigOptions($ao_entity->scope);
-			$lo_configOption = $lo_configuration?->getConfigOption(Awyiss::REALM_BACKEND, $ao_entity->identifier);
+		if ($deleted) {
+			$lo_configuration = ConfigOptionsProvider::loadConfigOptions($entity->scope);
+			$lo_configOption = $lo_configuration?->getConfigOption(Awyiss::REALM_BACKEND, $entity->identifier);
 
 			$lb_defaultNest = $lo_configOption?->getDefaultValue() ?? false;
 		}
 
 		if (
 			(
-				$ab_deleted &&
+				$deleted &&
 				!$lb_defaultNest
 			) ||
 			(
-				!$ab_deleted &&
-				$ao_entity->isDirty('value') &&
-				!$ao_entity->value
+				!$deleted &&
+				$entity->isDirty('value') &&
+				!$entity->value
 			)
 		) {
 			/** @var \Awyiss\Model\Table $lo_table */
-			$lo_table = FactoryLocator::get('Table')->get(Inflector::camelize($ao_entity->scope));
+			$lo_table = FactoryLocator::get('Table')->get(Inflector::camelize($entity->scope));
 
 			if (!$lo_table->hasBehavior('Nest')) {
 				return;
@@ -192,54 +192,54 @@ class ConfigurationListener implements EventListenerInterface {
 			$ls_field = LocalConfig::read([
 				'systemOrder',
 				'field',
-			], 'systemOrder', Inflector::camelize($ao_entity->scope));
+			], 'systemOrder', Inflector::camelize($entity->scope));
 
 			$li_direction = LocalConfig::read([
 				'systemOrder',
 				'direction',
-			], SORT_ASC, Inflector::camelize($ao_entity->scope));
+			], SORT_ASC, Inflector::camelize($entity->scope));
 
 			if ($lo_table->hasBehavior('SystemOrder')) {
 				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-				$lo_table->getBehavior('SystemOrder')->rebuildSystemOrder($ls_field, $li_direction, $ao_event);
+				$lo_table->getBehavior('SystemOrder')->rebuildSystemOrder($ls_field, $li_direction, $event);
 			}
 		}
 	}
 
 
 	/**
-	 * @param \Cake\Event\Event $ao_event
-	 * @param \Awyiss\Model\Entity\Configuration $ao_entity
+	 * @param \Cake\Event\Event $event
+	 * @param \Awyiss\Model\Entity\Configuration $entity
 	 * @return void
 	 */
-	protected function rebuildSystemOrder(Event $ao_event, Configuration $ao_entity): void {
+	protected function rebuildSystemOrder(Event $event, Configuration $entity): void {
 		if (
-			$ao_entity->identifier === 'system_order.field' &&
-			$ao_entity->isDirty('value') &&
-			Inflector::variable($ao_entity->value) !== 'systemOrder'
+			$entity->identifier === 'system_order.field' &&
+			$entity->isDirty('value') &&
+			Inflector::variable($entity->value) !== 'systemOrder'
 		) {
 			$li_direction = Configure::read(implode('.', [
 				'Awyiss',
-				Inflector::camelize($ao_entity->scope),
+				Inflector::camelize($entity->scope),
 				Awyiss::getRealm(),
 				'systemOrder',
 				'direction',
 			]));
 
 			/** @var \Awyiss\Model\Table $lo_table */
-			$lo_table = FactoryLocator::get('Table')->get(Inflector::camelize($ao_entity->scope));
+			$lo_table = FactoryLocator::get('Table')->get(Inflector::camelize($entity->scope));
 			if ($lo_table->hasBehavior('SystemOrder')) {
 				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-				$lo_table->getBehavior('SystemOrder')->rebuildSystemOrder($ao_entity->value, $li_direction, $ao_event);
+				$lo_table->getBehavior('SystemOrder')->rebuildSystemOrder($entity->value, $li_direction, $event);
 			}
 		}
 		elseif (
-			$ao_entity->identifier === 'system_order.direction' &&
-			$ao_entity->isDirty('value')
+			$entity->identifier === 'system_order.direction' &&
+			$entity->isDirty('value')
 		) {
 			$ls_field = Configure::read(implode('.', [
 				'Awyiss',
-				Inflector::camelize($ao_entity->scope),
+				Inflector::camelize($entity->scope),
 				Awyiss::getRealm(),
 				'systemOrder',
 				'field',
@@ -251,10 +251,10 @@ class ConfigurationListener implements EventListenerInterface {
 			}
 
 			/** @var \Awyiss\Model\Table $lo_table */
-			$lo_table = FactoryLocator::get('Table')->get(Inflector::camelize($ao_entity->scope));
+			$lo_table = FactoryLocator::get('Table')->get(Inflector::camelize($entity->scope));
 			if ($lo_table->hasBehavior('SystemOrder')) {
 				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-				$lo_table->getBehavior('SystemOrder')->rebuildSystemOrder($ls_field, (int)$ao_entity->value, $ao_event);
+				$lo_table->getBehavior('SystemOrder')->rebuildSystemOrder($ls_field, (int)$entity->value, $event);
 			}
 		}
 	}

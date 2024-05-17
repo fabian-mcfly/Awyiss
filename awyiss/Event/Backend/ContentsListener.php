@@ -35,21 +35,21 @@ class ContentsListener implements EventListenerInterface {
 
 
 	/**
-	 * @param \Cake\Event\Event $ao_event
-	 * @param \Awyiss\Model\Entity\Content $ao_entity
-	 * @param \ArrayObject $ao_options
+	 * @param \Cake\Event\Event $event
+	 * @param \Awyiss\Model\Entity\Content $entity
+	 * @param \ArrayObject $options
 	 * @return void
 	 */
-	public function beforeCopy(Event $ao_event, Content $ao_entity, ArrayObject $ao_options): void {
-		if ($ao_options['_primary'] !== true) {
+	public function beforeCopy(Event $event, Content $entity, ArrayObject $options): void {
+		if ($options['_primary'] !== true) {
 			return;
 		}
 
 		/** @var \Awyiss\Model\Table\ContentsTable $lo_table */
-		$lo_table = $ao_event->getSubject();
+		$lo_table = $event->getSubject();
 
 		/** @var \Awyiss\Model\Entity\Content $lo_originalEntity */
-		$lo_originalEntity = $ao_entity->originalEntity;
+		$lo_originalEntity = $entity->originalEntity;
 		$lo_children = $lo_originalEntity->getNestedChildren();
 
 		if (!$lo_children?->count()) {
@@ -68,10 +68,10 @@ class ContentsListener implements EventListenerInterface {
 			$lo_childContent->unset((array)$lo_table->getPrimaryKey());
 			$lo_childContent->setNew(true);
 
-			$lo_childContent->set($ao_entity->extract($la_relatedColumns));
+			$lo_childContent->set($entity->extract($la_relatedColumns));
 		}
 
-		$ao_entity->childContents = $lo_nestedChildren;
+		$entity->childContents = $lo_nestedChildren;
 
 		$lo_table->ChildContents->getBehavior('Nest')->setConfig('buildRules', false);
 	}

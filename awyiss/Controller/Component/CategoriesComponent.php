@@ -43,25 +43,23 @@ class CategoriesComponent extends Component {
 
 	/**
 	 * @inheritDoc
-	 * @param array $aa_config
+	 * @param array $config
 	 * @return void
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function __construct(ComponentRegistry $ao_registry, array $aa_config) {
+	public function __construct(ComponentRegistry $registry, array $config) {
 		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
-		$this->table = $ao_registry->getController()->fetchTable();
+		$this->table = $registry->getController()->fetchTable();
 
-		parent::__construct($ao_registry, $aa_config);
+		parent::__construct($registry, $config);
 	}
 
 
 	/**
-	 * @param array $aa_config
+	 * @param array $config
 	 * @return void
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function initialize(array $aa_config): void {
-		parent::initialize($aa_config);
+	public function initialize(array $config): void {
+		parent::initialize($config);
 
 		if (!$this->getConfig('uriParam')) {
 			$ls_identifier = $this->getConfig('identifier');
@@ -89,53 +87,52 @@ class CategoriesComponent extends Component {
 	/**
 	 * Proxy the config
 	 *
-	 * @param string|null $as_key
-	 * @param mixed|null $ax_default
+	 * @param string|null $key
+	 * @param mixed|null $default
 	 * @return mixed
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function getConfig(?string $as_key = null, mixed $ax_default = null): mixed {
-		if ($as_key === null) {
+	public function getConfig(?string $key = null, mixed $default = null): mixed {
+		if ($key === null) {
 			return Hash::merge(parent::getConfig(), $this->table->getBehavior('Categories')->getConfig());
 		}
 
-		if (array_key_exists($as_key, $this->_defaultConfig)) {
-			return parent::getConfig($as_key, $ax_default);
+		if (array_key_exists($key, $this->_defaultConfig)) {
+			return parent::getConfig($key, $default);
 		}
 
-		return $this->table->getBehavior('Categories')->getConfig($as_key, $ax_default);
+		return $this->table->getBehavior('Categories')->getConfig($key, $default);
 	}
 
 
 	/**
 	 * Proxy the config
 	 *
-	 * @param array|string $ax_key
-	 * @param mixed|null $ax_value
-	 * @param bool $ab_merge
+	 * @param array|string $key
+	 * @param mixed|null $value
+	 * @param bool $merge
 	 * @return \Awyiss\Controller\Component\CategoriesComponent
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function setConfig(array|string $ax_key, mixed $ax_value = null, bool $ab_merge = true): static {
-		if (is_string($ax_key)) {
-			if (array_key_exists($ax_key, $this->_defaultConfig)) {
-				parent::setConfig($ax_key, $ax_value, $ab_merge);
+	public function setConfig(array|string $key, mixed $value = null, bool $merge = true): static {
+		$lx_key = $key;
+		if (is_string($lx_key)) {
+			if (array_key_exists($lx_key, $this->_defaultConfig)) {
+				parent::setConfig($lx_key, $value, $merge);
 
 
 				return $this;
 			}
 		}
 		else {
-			foreach ($ax_key as $ls_key => $lx_value) {
+			foreach ($lx_key as $ls_key => $lx_value) {
 				if (array_key_exists($ls_key, $this->_defaultConfig)) {
-					parent::setConfig($ls_key, $lx_value, $ab_merge);
-					unset($ax_key[ $ls_key ]);
+					parent::setConfig($ls_key, $lx_value, $merge);
+					unset($lx_key[ $ls_key ]);
 				}
 			}
 		}
 
 
-		$this->table->getBehavior('Categories')->setConfig($ax_key, $ax_value, $ab_merge);
+		$this->table->getBehavior('Categories')->setConfig($lx_key, $value, $merge);
 
 
 		return $this;
@@ -301,22 +298,22 @@ class CategoriesComponent extends Component {
 
 
 	/**
-	 * @param \Cake\Datasource\EntityInterface $ao_entity
+	 * @param \Cake\Datasource\EntityInterface $entity
 	 * @return void
 	 */
-	public function ensurePossibleCategory(EntityInterface $ao_entity): void {
+	public function ensurePossibleCategory(EntityInterface $entity): void {
 		if (!$this->getConfig('enabled')) {
 			return;
 		}
 
 		$ls_fieldName = $this->getConfig('field');
-		$lx_selectedCategory = $ao_entity->$ls_fieldName;
+		$lx_selectedCategory = $entity->$ls_fieldName;
 
 		$la_possibleCategories = array_keys($this->getCategories());
 
 		if (!in_array($lx_selectedCategory, $la_possibleCategories, true)) {
-			/** @var \Awyiss\Model\Entity $ao_entity */
-			$lo_entity = $this->fieldIsAttribute() && $ao_entity->attributes ? $ao_entity->attributes : $ao_entity;
+			/** @var \Awyiss\Model\Entity $entity */
+			$lo_entity = $this->fieldIsAttribute() && $entity->attributes ? $entity->attributes : $entity;
 
 			$la_errors = $lo_entity->getError($ls_fieldName);
 
@@ -331,7 +328,7 @@ class CategoriesComponent extends Component {
 		$ls_fieldName = Inflector::underscore($ls_fieldName);
 		//When the field is part of the request data, overwrite it since it might be outdated
 		if ($lo_request->getData($ls_fieldName) !== null) {
-			$lo_request = $lo_request->withData($ls_fieldName, $ao_entity->$ls_fieldName);
+			$lo_request = $lo_request->withData($ls_fieldName, $entity->$ls_fieldName);
 			$this->getController()->setRequest($lo_request);
 		}
 	}
@@ -350,13 +347,13 @@ class CategoriesComponent extends Component {
 	/**
 	 * Add category-related conditions to a given query
 	 *
-	 * @param SelectQuery $ao_query
-	 * @param mixed $ax_selectedCategory
-	 * @param string|null $as_column
+	 * @param SelectQuery $query
+	 * @param mixed $selectedCategory
+	 * @param string|null $column
 	 * @return SelectQuery
 	 */
-	public function filterQuery(SelectQuery $ao_query, mixed $ax_selectedCategory = null, bool $ab_sortAggregation = true): SelectQuery {
-		return $this->getBehavior()->filterQuery($ao_query, $ax_selectedCategory, $ab_sortAggregation);
+	public function filterQuery(SelectQuery $query, mixed $selectedCategory = null, bool $sortAggregation = true): SelectQuery {
+		return $this->getBehavior()->filterQuery($query, $selectedCategory, $sortAggregation);
 	}
 
 
@@ -374,96 +371,96 @@ class CategoriesComponent extends Component {
 	 * - `finder`
 	 * - `queryConditions`
 	 *
-	 * @param bool $ab_returnRaw
+	 * @param bool $returnRaw
 	 * @return \Cake\Datasource\ResultSetInterface|\Cake\Collection\Iterator\TreeIterator|array|null
 	 */
-	public function getCategories(bool $ab_returnRaw = false): ResultSetInterface|TreeIterator|array|null {
+	public function getCategories(bool $returnRaw = false): ResultSetInterface|TreeIterator|array|null {
 		if (!$this->getConfig('enabled')) {
-			return $ab_returnRaw ? new ResultSet([]) : [];
+			return $returnRaw ? new ResultSet([]) : [];
 		}
 
 
-		return $this->getBehavior()->getCategories($ab_returnRaw);
+		return $this->getBehavior()->getCategories($returnRaw);
 	}
 
 
 	/**
-	 * @param mixed|null $ax_selectedCategory
+	 * @param mixed|null $selectedCategory
 	 * @return array
 	 */
-	public function getQueryConditions(mixed $ax_selectedCategory = null): array {
-		return $this->getBehavior()->getQueryConditions($ax_selectedCategory);
+	public function getQueryConditions(mixed $selectedCategory = null): array {
+		return $this->getBehavior()->getQueryConditions($selectedCategory);
 	}
 
 
 	/**
-	 * @param \Cake\Datasource\EntityInterface|null $ao_entity
+	 * @param \Cake\Datasource\EntityInterface|null $entity
 	 * @return mixed
 	 */
-	public function getSelectedCategory(?EntityInterface $ao_entity = null): mixed {
-		return $this->getBehavior()->getSelectedCategory($ao_entity);
+	public function getSelectedCategory(?EntityInterface $entity = null): mixed {
+		return $this->getBehavior()->getSelectedCategory($entity);
 	}
 
 
 	/**
-	 * This method groups the result of the provided query by the column provided via `$as_column`.
+	 * This method groups the result of the provided query by the column provided via `$column`.
 	 * It returns the query with an attached formatResults callback, that groups the resultset by the given column
 	 *
-	 * @param SelectQuery $ao_query
-	 * @param string|null $as_column
-	 * @param string|null $as_associationName
-	 * @param bool $ab_sortByAssociation
+	 * @param SelectQuery $query
+	 * @param string|null $column
+	 * @param string|null $associationName
+	 * @param bool $sortByAssociation
 	 * @return SelectQuery
 	 */
-	public function groupResult(SelectQuery $ao_query, ?string $as_column = null, ?string $as_associationName = null, bool $ab_sortByAssociation = true): SelectQuery {
+	public function groupResult(SelectQuery $query, ?string $column = null, ?string $associationName = null, bool $sortByAssociation = true): SelectQuery {
 		if (!$this->getConfig('enabled')) {
-			return $ao_query;
+			return $query;
 		}
 
 
-		return $this->getBehavior()->groupResult($ao_query, $as_column, $as_associationName, $ab_sortByAssociation);
+		return $this->getBehavior()->groupResult($query, $column, $associationName, $sortByAssociation);
 	}
 
 
 	/**
-	 * @param SelectQuery $ao_query
-	 * @param string|null $as_column
-	 * @param string|null $as_associationName
+	 * @param SelectQuery $query
+	 * @param string|null $column
+	 * @param string|null $associationName
 	 * @return SelectQuery
 	 */
-	public function sortQuery(SelectQuery $ao_query, ?string $as_column = null, ?string $as_associationName = null): SelectQuery {
+	public function sortQuery(SelectQuery $query, ?string $column = null, ?string $associationName = null): SelectQuery {
 		if (!$this->getConfig('enabled')) {
-			return $ao_query;
+			return $query;
 		}
 
 
-		return $this->getBehavior()->sortQuery($ao_query, $as_column, $as_associationName);
+		return $this->getBehavior()->sortQuery($query, $column, $associationName);
 	}
 
 
 	/**
 	 * Verify the selected category.
 	 * If that fails, set it to the first available or initiate a redirect if either
-	 * `$ab_redirect` or `redirectOnInvalidSelection` is true
+	 * `$redirect` or `redirectOnInvalidSelection` is true
 	 *
-	 * @param mixed $ax_categoryId
-	 * @param array|null $aa_categories
-	 * @param bool|null $ab_redirect
+	 * @param mixed $categoryId
+	 * @param array|null $categories
+	 * @param bool|null $redirect
 	 * @return mixed
 	 */
-	public function verifySelection(mixed $ax_categoryId = null, ?array $aa_categories = null, ?bool $ab_redirect = null): mixed {
+	public function verifySelection(mixed $categoryId = null, ?array $categories = null, ?bool $redirect = null): mixed {
 		if (!$this->getConfig('enabled')) {
 			return null;
 		}
 
-		$la_categories = $aa_categories ? array_keys($aa_categories) : $this->getBehavior()->getValidSelectionValues();
-		$lx_verifiedSelection = $this->getBehavior()->verifySelection($ax_categoryId, $la_categories);
+		$la_categories = $categories ? array_keys($categories) : $this->getBehavior()->getValidSelectionValues();
+		$lx_verifiedSelection = $this->getBehavior()->verifySelection($categoryId, $la_categories);
 
 		if (
 			$lx_verifiedSelection === false &&
 			(
-				$ab_redirect === true ||
-				($this->getConfig('redirectOnInvalidSelection') && $ab_redirect !== false)
+				$redirect === true ||
+				($this->getConfig('redirectOnInvalidSelection') && $redirect !== false)
 			)
 		) {
 			throw new RedirectException(Router::url([

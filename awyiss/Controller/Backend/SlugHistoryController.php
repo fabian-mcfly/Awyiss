@@ -97,15 +97,15 @@ class SlugHistoryController extends Controller {
 	/**
 	 * Edit method
 	 *
-	 * @param int $ai_id
+	 * @param int $id
 	 * @return \Cake\Http\Response|void
 	 * @throws \Exception
 	 */
-	public function edit(int $ai_id) {
+	public function edit(int $id) {
 		$this->Authorization->ensure('update');
 
 		/** @var SlugHistory $lo_slugHistory */
-		$lo_slugHistory = $this->SlugHistory->findById($ai_id)->find('translations')->first();
+		$lo_slugHistory = $this->SlugHistory->findById($id)->find('translations')->first();
 		if (! $lo_slugHistory) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -128,17 +128,17 @@ class SlugHistoryController extends Controller {
 	/**
 	 * Delete method
 	 *
-	 * @param int $ai_id
+	 * @param int $id
 	 * @return \Cake\Http\Response
 	 * @throws \Exception
 	 */
-	public function delete(int $ai_id): Response {
+	public function delete(int $id): Response {
 		$this->Authorization->ensure('delete');
 
 		$this->request->allowMethod(['get', 'delete']);
 
 		/** @var SlugHistory $lo_slugHistory */
-		$lo_slugHistory = $this->SlugHistory->findById($ai_id)->first();
+		$lo_slugHistory = $this->SlugHistory->findById($id)->first();
 		if (! $lo_slugHistory) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -164,41 +164,41 @@ class SlugHistoryController extends Controller {
 
 
 	/**
-	 * @param SlugHistory $ao_slugHistory
-	 * @param string $as_method
+	 * @param SlugHistory $slugHistory
+	 * @param string $method
 	 * @return void
 	 * @throws \Cake\Http\Exception\RedirectException
 	 */
-	protected function save(SlugHistory $ao_slugHistory, string $as_method = 'add'): void {
+	protected function save(SlugHistory $slugHistory, string $method = 'add'): void {
 		$la_associated = [];
 		if ($this->SlugHistory->hasAttributes()) {
 			$la_associated[] = $this->SlugHistory->getAttributesTableName(true);
-			$ao_slugHistory->setAccess('attributes', true);
+			$slugHistory->setAccess('attributes', true);
 		}
 
-		$this->SlugHistory->patchEntity($ao_slugHistory, $this->request->getData(), [
+		$this->SlugHistory->patchEntity($slugHistory, $this->request->getData(), [
 			'associated' => $la_associated,
 			'validate' => !$this->request->getData('reload_form'),
 		]);
 
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-			if ($this->SlugHistory->save($ao_slugHistory, ['asCopy' => (bool)$this->request->getData('save_as_copy')])) {
+			if ($this->SlugHistory->save($slugHistory, ['asCopy' => (bool)$this->request->getData('save_as_copy')])) {
 				if (!$this->request->is('ajax')) {
-					$this->Flash->success(__($as_method . '_succeeded'));
+					$this->Flash->success(__($method . '_succeeded'));
 				}
 
 				if ($this->request->getData('submit') == 'submit_close') {
 					throw new RedirectException(Router::url([
 						'action' => 'overview',
-						'page' => $this->Paginate->calculateEntityPagePosition($ao_slugHistory),
+						'page' => $this->Paginate->calculateEntityPagePosition($slugHistory),
 					], true), 302);
 				}
 
-				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $ao_slugHistory->id], true), 302);
+				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $slugHistory->id], true), 302);
 			}
 
-			$this->Flash->error(__($as_method . '_failed'));
-			foreach ($ao_slugHistory->getError('_general') as $ls_error) {
+			$this->Flash->error(__($method . '_failed'));
+			foreach ($slugHistory->getError('_general') as $ls_error) {
 				$this->Flash->error($ls_error);
 			}
 		}

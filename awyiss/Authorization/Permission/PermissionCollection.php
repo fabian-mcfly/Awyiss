@@ -34,13 +34,13 @@ class PermissionCollection {
 
 
 	/**
-	 * @param AuthorizationService|null $ao_authorizationService
-	 * @param array<\Awyiss\Model\Entity\UsergroupPermission|array{scope: string, identifier: string, access: mixed, settings: mixed}> $aa_permissions
+	 * @param AuthorizationService|null $authorizationService
+	 * @param array<\Awyiss\Model\Entity\UsergroupPermission|array{scope: string, identifier: string, access: mixed, settings: mixed}> $permissions
 	 */
-	public function __construct(?AuthorizationService $ao_authorizationService, array $aa_permissions = []) {
-		$this->authorizationService = $ao_authorizationService;
+	public function __construct(?AuthorizationService $authorizationService, array $permissions = []) {
+		$this->authorizationService = $authorizationService;
 
-		foreach ($aa_permissions as $lx_permission) {
+		foreach ($permissions as $lx_permission) {
 			if ($lx_permission instanceof Permission) {
 				$this->add($lx_permission);
 			}
@@ -69,15 +69,15 @@ class PermissionCollection {
 	/**
 	 * Adds a new permission to the collection of permission.
 	 *
-	 * If `$ax_scope` is a string, `$as_identifier` needs to be provided
+	 * If `$scope` is a string, `$identifier` needs to be provided
 	 *
-	 * @param Permission $ao_permission
+	 * @param Permission $permission
 	 * @return $this
 	 */
-	public function add(Permission $ao_permission): static {
-		$ao_permission->setAuthorizationService($this->authorizationService);
+	public function add(Permission $permission): static {
+		$permission->setAuthorizationService($this->authorizationService);
 
-		$this->permissions[ $ao_permission->getScope() ][ $ao_permission->getIdentifier() ][] = $ao_permission;
+		$this->permissions[ $permission->getScope() ][ $permission->getIdentifier() ][] = $permission;
 
 
 		return $this;
@@ -98,27 +98,27 @@ class PermissionCollection {
 	 * Returns true or false, whether a scope (and optional identifier) exists in the collection of permission
 	 *
 	 * @noinspection PhpUnused
-	 * @param string $as_scope
-	 * @param string|null $as_identifier
+	 * @param string $scope
+	 * @param string|null $identifier
 	 * @return bool
 	 */
-	public function hasPermissions(string $as_scope, ?string $as_identifier = null): bool {
-		return $this->getPermissions($as_scope, $as_identifier) !== null;
+	public function hasPermissions(string $scope, ?string $identifier = null): bool {
+		return $this->getPermissions($scope, $identifier) !== null;
 	}
 
 
 	/**
 	 * Returns the permission for the given scope (and optional identifier)
 	 *
-	 * @param string $as_scope
-	 * @param string|null $as_identifier
+	 * @param string $scope
+	 * @param string|null $identifier
 	 * @return array<array<string, Permission[]>>|array<string, Permission[]>|null
 	 */
-	public function getPermissions(string $as_scope, ?string $as_identifier = null): ?array {
-		$ls_scope = AuthorizationService::sanitizeScope($as_scope);
+	public function getPermissions(string $scope, ?string $identifier = null): ?array {
+		$ls_scope = AuthorizationService::sanitizeScope($scope);
 
-		if ($as_identifier) {
-			$ls_identifier = AuthorizationService::sanitizeIdentifier($as_identifier);
+		if ($identifier) {
+			$ls_identifier = AuthorizationService::sanitizeIdentifier($identifier);
 
 
 			return $this->permissions[ $ls_scope ][ $ls_identifier ] ?? null;
@@ -137,7 +137,7 @@ class PermissionCollection {
 	 * - forbidden if it returns false
 	 * - indifferent if it returns null
 	 *
-	 * `$ax_identifier` captures all remaining arguments provided to `scopeIsAccessible`,
+	 * `$identifier` captures all remaining arguments provided to `scopeIsAccessible`,
 	 * which are then used to checked accesibility.
 	 *
 	 * - Providing a list of arguments, for example `scopeIsAccessible(..., 'read', 'create', 'update', 'delete')` means
@@ -151,25 +151,25 @@ class PermissionCollection {
 	 * For example `scopeIsAccessible(..., ['read', 'create'], ['update', 'delete'])` will return true when either `read` or `create`
 	 * AND either `update` OR `delete` is accessible.
 	 *
-	 * @param string $as_scope
-	 * @param array $aa_additionalData
-	 * @param array|string ...$ax_identifier
+	 * @param string $scope
+	 * @param array $additionalData
+	 * @param array|string ...$identifier
 	 * @return bool
 	 * @throws \ReflectionException
 	 */
-	public function scopeIsAccessible(string $as_scope, array $aa_additionalData = [], string|array ...$ax_identifier): bool {
+	public function scopeIsAccessible(string $scope, array $additionalData = [], string|array ...$identifier): bool {
 		/*
 		 * Traverse the provided identifiers and remember the accessibility in $lx_policyClass,
 		 * using the identity's currently assigned permissions.
 		 *
 		 */
 		$la_accessible = [];
-		foreach ($ax_identifier as $lx_identifier) {
+		foreach ($identifier as $lx_identifier) {
 			if (!is_array($lx_identifier)) {
 				$lx_identifier = [$lx_identifier];
 			}
 
-			$la_accessible[] = $this->identifierIsAccessible($as_scope, $aa_additionalData, ...$lx_identifier);
+			$la_accessible[] = $this->identifierIsAccessible($scope, $additionalData, ...$lx_identifier);
 		}
 
 		//If true is part of the result, and the result is only true, and nothing but true, access is granted.
@@ -186,27 +186,27 @@ class PermissionCollection {
 	/**
 	 * Return true or false depending on whether one of the provided identifiers is accessible
 	 *
-	 * @param string $as_scope
-	 * @param array $aa_additionalData
-	 * @param array|array<string> $aa_identifier
+	 * @param string $scope
+	 * @param array $additionalData
+	 * @param array|array<string> $identifier
 	 * @return bool|null
 	 * @throws \ReflectionException
 	 */
-	protected function identifierIsAccessible(string $as_scope, array $aa_additionalData = [], string|array ...$aa_identifier): ?bool {
+	protected function identifierIsAccessible(string $scope, array $additionalData = [], string|array ...$identifier): ?bool {
 		$la_accessible = [];
 
-		//Traverse the identifiers and check if it's accessible, given the collection of permissions for `$as_scope`
-		foreach ($aa_identifier as $ls_identifier) {
+		//Traverse the identifiers and check if it's accessible, given the collection of permissions for `$scope`
+		foreach ($identifier as $ls_identifier) {
 			if (!is_string($ls_identifier)) {
 				throw new RuntimeException(sprintf('The identifier is invalid. Expected `string`, `%s` given', gettype($ls_identifier)));
 			}
 
-			$la_permissions = $this->getPermissions($as_scope, $ls_identifier);
+			$la_permissions = $this->getPermissions($scope, $ls_identifier);
 			if (!$la_permissions) {
 				continue;
 			}
 
-			$la_accessible[] = $this->permissionsAreAccessible($la_permissions, $aa_additionalData);
+			$la_accessible[] = $this->permissionsAreAccessible($la_permissions, $additionalData);
 		}
 
 		//If true is part of the result access is granted.
@@ -221,20 +221,20 @@ class PermissionCollection {
 
 
 	/**
-	 * @param array<Permission> $aa_permissions
-	 * @param array $aa_additionalData
+	 * @param array<Permission> $permissions
+	 * @param array $additionalData
 	 * @return bool|null
 	 * @throws \ReflectionException
 	 */
-	protected function permissionsAreAccessible(array $aa_permissions, array $aa_additionalData = []): ?bool {
+	protected function permissionsAreAccessible(array $permissions, array $additionalData = []): ?bool {
 		$la_accessible = [];
 
-		foreach ($aa_permissions as $lo_permission) {
+		foreach ($permissions as $lo_permission) {
 			if (!($lo_permission instanceof Permission)) {
 				throw new RuntimeException(sprintf('The permission is invalid. Expected instance of `%s`, `%s` given', Permission::class, gettype($lo_permission)));
 			}
 
-			$la_accessible[] = $lo_permission->isAccessible($aa_additionalData, $this);
+			$la_accessible[] = $lo_permission->isAccessible($additionalData, $this);
 		}
 
 		if (in_array(false, $la_accessible, true)) {

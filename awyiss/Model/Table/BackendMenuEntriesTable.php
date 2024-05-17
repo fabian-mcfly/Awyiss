@@ -19,12 +19,12 @@ use Cake\Validation\Validator;
  *
  * @property \Awyiss\Model\Table\BackendMenuEntriesTable&\Awyiss\ORM\Association\BelongsTo $ParentBackendMenuEntries
  * @property \Awyiss\Model\Table\BackendMenuEntriesTable&\Awyiss\ORM\Association\HasMany $ChildBackendMenuEntries
- * @method \Awyiss\Model\Entity\BackendMenuEntry newDefaultEntity(array $aa_additionalData = [], array $aa_options = [])
- * @method \Cake\Collection\CollectionInterface|null getNestedChildren(\Cake\Datasource\EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
- * @method \Cake\Collection\CollectionInterface|null getChildren(\Cake\Datasource\EntityInterface $ao_entity, array $aa_options = [])
- * @method \Awyiss\Model\Entity\BackendMenuEntry getParent(\Cake\Datasource\EntityInterface $ao_entity, array $aa_options = [])
- * @method \Cake\Collection\CollectionInterface|null getParents(\Cake\Datasource\EntityInterface $ao_entity, array $aa_options = [], int $ai_currentLevel = 0)
- * @method \Cake\Collection\CollectionInterface getPossibleParents(\Awyiss\Model\Entity $ao_entity, \Cake\Collection\CollectionInterface $ao_threadedEntities)
+ * @method \Awyiss\Model\Entity\BackendMenuEntry newDefaultEntity(array $additionalData = [], array $options = [])
+ * @method \Cake\Collection\CollectionInterface|null getNestedChildren(\Cake\Datasource\EntityInterface $entity, array $options = [], int $currentLevel = 0)
+ * @method \Cake\Collection\CollectionInterface|null getChildren(\Cake\Datasource\EntityInterface $entity, array $options = [])
+ * @method \Awyiss\Model\Entity\BackendMenuEntry getParent(\Cake\Datasource\EntityInterface $entity, array $options = [])
+ * @method \Cake\Collection\CollectionInterface|null getParents(\Cake\Datasource\EntityInterface $entity, array $options = [], int $currentLevel = 0)
+ * @method \Cake\Collection\CollectionInterface getPossibleParents(\Awyiss\Model\Entity $entity, \Cake\Collection\CollectionInterface $threadedEntities)
  * @noinspection PhpFullyQualifiedNameUsageInspection
  */
 class BackendMenuEntriesTable extends Table {
@@ -60,94 +60,93 @@ class BackendMenuEntriesTable extends Table {
 	/**
 	 * Returns the default validator object.
 	 *
-	 * @param Validator $ao_validator The validator that can be modified to
+	 * @param Validator $validator The validator that can be modified to
 	 * add some rules to it.
 	 * @return Validator
 	 */
-	public function validationDefault(Validator $ao_validator): Validator {
-		parent::validationDefault($ao_validator);
+	public function validationDefault(Validator $validator): Validator {
+		parent::validationDefault($validator);
 
 
-		$ao_validator->requirePresence([
+		$validator->requirePresence([
 			'title',
 		], 'create');
 
 
-		$ao_validator->add('id', [
+		$validator->add('id', [
 			'isInteger' => ['rule' => 'isInteger'],
 			'maxLength' => ['rule' => ['maxLength', 11]],
 		]);
 
 
-		$ao_validator->allowEmptyString('parentId');
-		$ao_validator->add('parentId', [
+		$validator->allowEmptyString('parentId');
+		$validator->add('parentId', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'maxLength' => ['rule' => ['maxLength', 50]],
 		]);
 
 
-		$ao_validator->allowEmptyString('insertAfterId');
-		$ao_validator->add('insertAfterId', [
+		$validator->allowEmptyString('insertAfterId');
+		$validator->add('insertAfterId', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'maxLength' => ['rule' => ['maxLength', 50]],
 		]);
 
 
-		$ao_validator->notEmptyString('title');
-		$ao_validator->add('title', [
+		$validator->notEmptyString('title');
+		$validator->add('title', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'maxLength' => ['rule' => ['maxLength', 100]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
 
 
-		$ao_validator->add('link', [
+		$validator->add('link', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'maxLength' => ['rule' => ['maxLength', 255]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
 
 
-		$ao_validator->add('external', [
+		$validator->add('external', [
 			'boolean' => ['rule' => 'boolean'],
 		]);
 
 
-		$ao_validator->add('systemOrder', [
+		$validator->add('systemOrder', [
 			'isInteger' => ['rule' => 'isInteger'],
 		]);
 
 
-		$ao_validator->add('active', [
+		$validator->add('active', [
 			'boolean' => ['rule' => 'boolean'],
 		]);
 
 
-		$ao_validator->add('deleted', [
+		$validator->add('deleted', [
 			'boolean' => ['rule' => 'boolean'],
 		]);
 
 
-		return $ao_validator;
+		return $validator;
 	}
 
 
 	/**
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 *
-	 * @param RulesChecker|BaseRulesChecker $ao_rules The rules object to be modified.
+	 * @param RulesChecker|BaseRulesChecker $rules The rules object to be modified.
 	 * @return RulesChecker
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
-		$ao_rules->add(function (BackendMenuEntry $ao_entity, array $aa_options) use ($ao_rules): bool {
+	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
+		$rules->add(function (BackendMenuEntry $entity, array $options) use ($rules): bool {
 			static $lo_menu;
 
-			if (!$aa_options['checkRules']) {
+			if (!$options['checkRules']) {
 				dd(__FILE__, __LINE__);
 			}
 
-			$lx_parentId = $ao_entity->get('parentId');
+			$lx_parentId = $entity->get('parentId');
 			if (!$lx_parentId) {
 				return true;
 			}
@@ -161,7 +160,7 @@ class BackendMenuEntriesTable extends Table {
 				return (bool)($lo_menu->getCustomMenu() ?? $lo_menu->getMenu())->getItem($lx_parentId);
 			}
 
-			$lo_existsIn = $ao_rules->existsIn(
+			$lo_existsIn = $rules->existsIn(
 				'parentId',
 				'ParentBackendMenuEntries',
 				[
@@ -171,55 +170,55 @@ class BackendMenuEntriesTable extends Table {
 			);
 
 
-			return $lo_existsIn($ao_entity, $aa_options);
+			return $lo_existsIn($entity, $options);
 		}, 'validParentId');
 
 
-		return $ao_rules;
+		return $rules;
 	}
 
 
 	/**
-	 * @param \Awyiss\Model\Entity $ao_entity
-	 * @param string $as_controller
-	 * @param string $as_scope
-	 * @param string $as_insertAfterId
+	 * @param \Awyiss\Model\Entity $entity
+	 * @param string $controller
+	 * @param string $scope
+	 * @param string $insertAfterId
 	 * @return void
 	 */
-	public function createEntries(Entity $ao_entity, string $as_controller, string $as_scope, string $as_insertAfterId = 'pages'): void {
+	public function createEntries(Entity $entity, string $controller, string $scope, string $insertAfterId = 'pages'): void {
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 		$la_data = [
-			'title' => $ao_entity->title,
-			'insert_after_id' => $as_insertAfterId,
-			'link' => $as_controller . '::overview',
+			'title' => $entity->title,
+			'insert_after_id' => $insertAfterId,
+			'link' => $controller . '::overview',
 			'access' => [
-				'scope' => $as_scope,
+				'scope' => $scope,
 				'identifier' => 'read',
 			],
 			'child_backend_menu_entries' => [
 				[
 					'title' => 'generic_datatables::menu_overview',
-					'link' => $as_controller . '::overview',
+					'link' => $controller . '::overview',
 					'access' => [
-						'scope' => $as_scope,
+						'scope' => $scope,
 						'identifier' => 'read',
 					],
 					'system_order' => 1,
 				],
 				[
 					'title' => 'generic_datatables::menu_add',
-					'link' => $as_controller . '::add',
+					'link' => $controller . '::add',
 					'access' => [
-						'scope' => $as_scope,
+						'scope' => $scope,
 						'identifier' => 'create',
 					],
 					'system_order' => 2,
 				],
 				[
 					'title' => 'generic_datatables::menu_configure',
-					'link' => 'Configuration::overview::scope:' . $as_scope,
+					'link' => 'Configuration::overview::scope:' . $scope,
 					'access' => [
-						'scope' => $as_scope,
+						'scope' => $scope,
 						'identifier' => 'configure',
 					],
 					'system_order' => 3,
@@ -227,9 +226,9 @@ class BackendMenuEntriesTable extends Table {
 			],
 		];
 
-		if (isset($ao_entity->_translations)) {
+		if (isset($entity->_translations)) {
 			/** @var \Awyiss\Model\Entity $lo_translation */
-			foreach ($ao_entity->_translations as $ls_shortcode => $lo_translation) {
+			foreach ($entity->_translations as $ls_shortcode => $lo_translation) {
 				$la_data['_translations'][ $ls_shortcode ] = $lo_translation->extract([], false, false);
 			}
 		}
@@ -251,9 +250,9 @@ class BackendMenuEntriesTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	protected function initializeSchema(TableSchemaInterface $ao_schema): void {
-		parent::initializeSchema($ao_schema);
+	protected function initializeSchema(TableSchemaInterface $schema): void {
+		parent::initializeSchema($schema);
 
-		$ao_schema->setColumnType('access', 'json');
+		$schema->setColumnType('access', 'json');
 	}
 }

@@ -22,12 +22,12 @@ class ConfigOptionCollection extends ArrayIterator {
 	/**
 	 * Construct a new ConfigOptionsCollection
 	 *
-	 * @param string|null $as_identifier
+	 * @param string|null $identifier
 	 * @noinspection PhpMissingParentConstructorInspection
 	 */
-	public function __construct(?string $as_identifier = null) {
-		if ($as_identifier) {
-			$this->identifier = ConfigOptionsProvider::sanitizeIdentifier($as_identifier);
+	public function __construct(?string $identifier = null) {
+		if ($identifier) {
+			$this->identifier = ConfigOptionsProvider::sanitizeIdentifier($identifier);
 		}
 	}
 
@@ -35,30 +35,30 @@ class ConfigOptionCollection extends ArrayIterator {
 	/**
 	 * Adds a ConfigOption or a set of elements, containing nested ConfigOptions or ConfigOptionsCollection to this collection
 	 *
-	 * @param ConfigOption|array<int|string, ConfigOptionCollection|ConfigOption|array> $ax_configOption
+	 * @param ConfigOption|array<int|string, ConfigOptionCollection|ConfigOption|array> $configOption
 	 * @return $this
 	 */
-	public function add(array|ConfigOption $ax_configOption): static {
+	public function add(array|ConfigOption $configOption): static {
 		/*
-		 * If the provided value for `$ax_configOption` is an instance of `ConfigOption`,
+		 * If the provided value for `$configOption` is an instance of `ConfigOption`,
 		 * add it to the current collection
 		 */
-		if ($ax_configOption instanceof ConfigOption) {
-			$ls_identifier = $ax_configOption->getIdentifier();
+		if ($configOption instanceof ConfigOption) {
+			$ls_identifier = $configOption->getIdentifier();
 
 			//We cannot have the same identifier more than once inside this collection
 			if ($this->offsetExists($ls_identifier)) {
 				throw new RuntimeException(sprintf('The identifier `%s` is already in use.', $ls_identifier));
 			}
 
-			$this->offsetSet($ls_identifier, $ax_configOption);
+			$this->offsetSet($ls_identifier, $configOption);
 
 
 			return $this;
 		}
 
 		//Traverse the provided array
-		foreach ($ax_configOption as $lx_key => $lx_configOption) {
+		foreach ($configOption as $lx_key => $lx_configOption) {
 			//If the key is a string, add a new sub-collection with that given identifier, containing everything in $lx_configOption
 			if (is_string($lx_key)) {
 				$lo_collection = new ConfigOptionCollection($lx_key);
@@ -95,17 +95,17 @@ class ConfigOptionCollection extends ArrayIterator {
 	 * Adds the given ConfigOptionsCollection as a sub-collection to the current one.
 	 * If the identifier of the ConfigOptionsCollection already exists in the current one, a `RuntimeException` is thrown.
 	 *
-	 * @param ConfigOptionCollection $ao_configOptionsCollection
+	 * @param ConfigOptionCollection $configOptionsCollection
 	 * @return $this
 	 * @throws RuntimeException
 	 */
-	public function addCollection(ConfigOptionCollection $ao_configOptionsCollection): static {
-		$ls_identifier = $ao_configOptionsCollection->getIdentifier();
+	public function addCollection(ConfigOptionCollection $configOptionsCollection): static {
+		$ls_identifier = $configOptionsCollection->getIdentifier();
 
 		if ($this->offsetExists($ls_identifier)) {
 			$lx_offset = $this->offsetGet($ls_identifier);
 			if ($lx_offset instanceof ConfigOptionCollection) {
-				foreach ($ao_configOptionsCollection->getArrayCopy() as $lx_configOptions) {
+				foreach ($configOptionsCollection->getArrayCopy() as $lx_configOptions) {
 					if ($lx_configOptions instanceof ConfigOptionCollection) {
 						$lx_offset->addCollection($lx_configOptions);
 					}
@@ -121,7 +121,7 @@ class ConfigOptionCollection extends ArrayIterator {
 			throw new RuntimeException(sprintf('The identifier `%s` is already in use.', $ls_identifier));
 		}
 
-		$this->offsetSet($ls_identifier, $ao_configOptionsCollection);
+		$this->offsetSet($ls_identifier, $configOptionsCollection);
 
 
 		return $this;
@@ -137,22 +137,22 @@ class ConfigOptionCollection extends ArrayIterator {
 
 
 	/**
-	 * @param string ...$aa_pathParts
+	 * @param string ...$pathParts
 	 * @return array
 	 */
-	public function getConfigOptions(string ...$aa_pathParts): array {
+	public function getConfigOptions(string ...$pathParts): array {
 		$la_configOptions = [];
 
 		foreach ($this as $lo_configOption) {
 			if ($lo_configOption instanceof ConfigOptionCollection) {
-				$la_pathParts = $aa_pathParts;
+				$la_pathParts = $pathParts;
 				$la_pathParts[] = Inflector::variable($lo_configOption->getIdentifier());
 				$la_configOptions += $lo_configOption->getConfigOptions(...$la_pathParts);
 			}
 			else {
 				$ls_key = '';
-				if (!empty($aa_pathParts)) {
-					$ls_key .= implode('.', $aa_pathParts) . '.';
+				if (!empty($pathParts)) {
+					$ls_key .= implode('.', $pathParts) . '.';
 				}
 				$ls_key .= Inflector::variable($lo_configOption->getIdentifier());
 

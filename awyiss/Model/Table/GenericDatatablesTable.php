@@ -41,7 +41,7 @@ abstract class GenericDatatablesTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public function __construct(array $aa_config = []) {
+	public function __construct(array $config = []) {
 		$ls_scope = Inflector::camelize($this->getTable());
 
 		$this->nestable = LocalConfig::read('nest.enabled', false, $ls_scope);
@@ -60,14 +60,14 @@ abstract class GenericDatatablesTable extends Table {
 			$this->translate['fields'][] = 'title';
 		}
 
-		parent::__construct($aa_config);
+		parent::__construct($config);
 	}
 
 	/**
 	 * @inheritDoc
 	 */
-	public function initialize(array $aa_config): void {
-		parent::initialize($aa_config);
+	public function initialize(array $config): void {
+		parent::initialize($config);
 
 		if (!$this->translatable && $this->hasAttributes()) {
 			$lo_attributesTable = $this->getAttributesTable();
@@ -94,79 +94,77 @@ abstract class GenericDatatablesTable extends Table {
 	/**
 	 * Returns the default validator object.
 	 *
-	 * @param \Cake\Validation\Validator $ao_validator The validator that can be modified to
+	 * @param \Cake\Validation\Validator $validator The validator that can be modified to
 	 * add some rules to it.
 	 * @return \Cake\Validation\Validator
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function validationDefault(Validator $ao_validator): Validator {
-		parent::validationDefault($ao_validator);
+	public function validationDefault(Validator $validator): Validator {
+		parent::validationDefault($validator);
 
 
-		$ao_validator->add('id', [
+		$validator->add('id', [
 			'isInteger' => ['rule' => 'isInteger'],
 			'maxLength' => ['rule' => ['maxLength', 11]],
 		]);
 
 
-		$ao_validator->add('parentId', [
+		$validator->add('parentId', [
 			'isInteger' => ['rule' => 'isInteger'],
 			'maxLength' => ['rule' => ['maxLength', 11]],
 		]);
 
 
 		if ($this->splitIntoLanguages) {
-			$ao_validator->notEmptyString('languageShortcode');
-			$ao_validator->add('languageShortcode', [
+			$validator->notEmptyString('languageShortcode');
+			$validator->add('languageShortcode', [
 				'isScalar' => ['rule' => 'isScalar'],
 				'ascii' => ['rule' => 'ascii'],
 				'exactLength' => [
-					'rule' => function ($as_shortcode) {
-						return strlen($as_shortcode) == 2;
+					'rule' => function ($shortcode) {
+						return strlen($shortcode) == 2;
 					},
 				],
 			]);
 		}
 
 
-		$ao_validator->notEmptyString('title');
-		$ao_validator->add('title', [
+		$validator->notEmptyString('title');
+		$validator->add('title', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'maxLength' => ['rule' => ['maxLength', 255]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
 
 
-		$ao_validator->add('systemOrder', [
+		$validator->add('systemOrder', [
 			'isInteger' => ['rule' => 'isInteger'],
 		]);
 
 
-		$ao_validator->add('active', [
+		$validator->add('active', [
 			'boolean' => ['rule' => 'boolean'],
 		]);
 
 
-		$ao_validator->add('deleted', [
+		$validator->add('deleted', [
 			'boolean' => ['rule' => 'boolean'],
 		]);
 
 
-		return $ao_validator;
+		return $validator;
 	}
 
 
 	/**
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 *
-	 * @param \Awyiss\ORM\RulesChecker|\Cake\ORM\RulesChecker $ao_rules The rules object to be modified.
+	 * @param \Awyiss\ORM\RulesChecker|\Cake\ORM\RulesChecker $rules The rules object to be modified.
 	 * @return \Awyiss\ORM\RulesChecker
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
+	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
 		if ($this->splitIntoLanguages) {
-			$ao_rules->add(
-				$ao_rules->existsIn('languageShortcode', 'Languages'),
+			$rules->add(
+				$rules->existsIn('languageShortcode', 'Languages'),
 				'languageExists',
 				[
 					'errorField' => 'languageShortcode',
@@ -176,6 +174,6 @@ abstract class GenericDatatablesTable extends Table {
 		}
 
 
-		return $ao_rules;
+		return $rules;
 	}
 }

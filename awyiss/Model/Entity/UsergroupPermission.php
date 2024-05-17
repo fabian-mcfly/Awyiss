@@ -43,32 +43,32 @@ class UsergroupPermission extends Entity implements PermissionInterface {
 	/**
 	 * In the database, the scope exists as an underscored string
 	 *
-	 * @param string|null $as_scope
+	 * @param string|null $scope
 	 * @return string|null
 	 * @see \Awyiss\Model\Entity\UsergroupPermission::$scope
 	 */
-	public function _setScope(?string $as_scope): ?string {
-		if ($as_scope === null) {
+	public function _setScope(?string $scope): ?string {
+		if ($scope === null) {
 			return null;
 		}
 
-		return Inflector::underscore($as_scope);
+		return Inflector::underscore($scope);
 	}
 
 
 	/**
 	 * In the database, the identifier exists as an underscored string
 	 *
-	 * @param string|null $as_identifier
+	 * @param string|null $identifier
 	 * @return string|null
 	 * @see \Awyiss\Model\Entity\UsergroupPermission::$identifier
 	 */
-	public function _setIdentifier(?string $as_identifier): ?string {
-		if ($as_identifier === null) {
+	public function _setIdentifier(?string $identifier): ?string {
+		if ($identifier === null) {
 			return null;
 		}
 
-		return Inflector::underscore($as_identifier);
+		return Inflector::underscore($identifier);
 	}
 
 

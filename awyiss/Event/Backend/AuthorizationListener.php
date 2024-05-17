@@ -41,13 +41,13 @@ class AuthorizationListener implements EventListenerInterface {
 	/**
 	 * After the authorization middleware was processed, set the AuthorizationService in every model's AuthorizationBehavior
 	 *
-	 * @param Event $ao_event
-	 * @param AuthorizationServiceInterface $ao_authorizationService
+	 * @param Event $event
+	 * @param AuthorizationServiceInterface $authorizationService
 	 * @noinspection PhpUnused
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function authorizationMiddlewareAfterProcess(Event $ao_event, AuthorizationServiceInterface $ao_authorizationService): void {
-		$this->authorizationService = $ao_authorizationService;
+	public function authorizationMiddlewareAfterProcess(Event $event, AuthorizationServiceInterface $authorizationService): void {
+		$this->authorizationService = $authorizationService;
 	}
 
 
@@ -55,13 +55,13 @@ class AuthorizationListener implements EventListenerInterface {
 	 * The event `Authorization.requestAuthorizationService` asks for an AuthorizationService instance.
 	 * Return it, in case it is set.
 	 *
-	 * @param Event $ao_event
+	 * @param Event $event
 	 * @noinspection PhpUnused
 	 * @noinspection PhpUnusedParameterInspection
 	 */
-	public function requestAuthorizationService(Event $ao_event): void {
+	public function requestAuthorizationService(Event $event): void {
 		if (isset($this->authorizationService)) {
-			$ao_event->setResult($this->authorizationService);
+			$event->setResult($this->authorizationService);
 		}
 	}
 }

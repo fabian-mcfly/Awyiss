@@ -20,12 +20,11 @@ use Symfony\Component\Process\Process;
 class DetectAvailableCommandsCommand extends Command {
 	/**
 	 * @inheritDoc
-	 * @param \Cake\Console\ConsoleOptionParser $ao_parser
+	 * @param \Cake\Console\ConsoleOptionParser $parser
 	 * @return \Cake\Console\ConsoleOptionParser
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildOptionParser(ConsoleOptionParser $ao_parser): ConsoleOptionParser {
-		$lo_parser = parent::buildOptionParser($ao_parser);
+	public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser {
+		$lo_parser = parent::buildOptionParser($parser);
 
 		$lo_parser->addOption('retry', [
 			'boolean' => true,
@@ -38,54 +37,53 @@ class DetectAvailableCommandsCommand extends Command {
 	}
 
 	/**
-	 * @param \Cake\Console\Arguments $ao_args
-	 * @param \Cake\Console\ConsoleIo $ao_io
+	 * @param \Cake\Console\Arguments $args
+	 * @param \Cake\Console\ConsoleIo $io
 	 * @return int
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function execute(Arguments $ao_args, ConsoleIo $ao_io): int {
-		if (Configure::read('AvailableCommands') && !$ao_args->getOption('retry')) {
-			$ao_io->out('Commands already detected.');
+	public function execute(Arguments $args, ConsoleIo $io): int {
+		if (Configure::read('AvailableCommands') && !$args->getOption('retry')) {
+			$io->out('Commands already detected.');
 
 
 			return static::CODE_SUCCESS;
 		}
 
-		return $this->detectCommands($ao_io);
+		return $this->detectCommands($io);
 	}
 
 
 	/**
-	 * @param \Cake\Console\ConsoleIo $ao_io
+	 * @param \Cake\Console\ConsoleIo $io
 	 * @return int
 	 */
-	protected function detectCommands(ConsoleIo $ao_io): int {
-		$ao_io->out('Testing ffmpg... ', 0);
+	protected function detectCommands(ConsoleIo $io): int {
+		$io->out('Testing ffmpg... ', 0);
 		$lb_ffmpeg = $this->testProcess(['ffmpeg', '-version']);
 		if ($lb_ffmpeg) {
-			$ao_io->success('ffmpg available');
+			$io->success('ffmpg available');
 		}
 		else {
-			$ao_io->error('ffmpg not available');
+			$io->error('ffmpg not available');
 		}
 
-		$ao_io->out('Testing ImageMagick (`convert`)... ', 0);
+		$io->out('Testing ImageMagick (`convert`)... ', 0);
 		$lb_imageMagick = $this->testProcess(['convert', '-version']);
 		$la_imageMagick = false;
 		if ($lb_imageMagick) {
-			$ao_io->success('convert available');
+			$io->success('convert available');
 
-			$lb_imageMagickPdf = $this->testProcess(['convert', 'awyiss/Command/Media/TestFiles/logo-awyiss.pdf', TMP . 'logo-awyiss.jpg'], 'PDF support', $ao_io);
+			$lb_imageMagickPdf = $this->testProcess(['convert', 'awyiss/Command/Media/TestFiles/logo-awyiss.pdf', TMP . 'logo-awyiss.jpg'], 'PDF support', $io);
 
-			$lb_imageMagickSvg = $this->testProcess(['convert', 'awyiss/Command/Media/TestFiles/logo-awyiss.svg', TMP . 'logo-awyiss.jpg'], 'SVG support', $ao_io);
+			$lb_imageMagickSvg = $this->testProcess(['convert', 'awyiss/Command/Media/TestFiles/logo-awyiss.svg', TMP . 'logo-awyiss.jpg'], 'SVG support', $io);
 
-			$lb_imageMagickDocx = $this->testProcess(['convert', 'awyiss/Command/Media/TestFiles/logo-awyiss.docx', TMP . 'logo-awyiss.jpg'], 'DOCX support', $ao_io);
+			$lb_imageMagickDocx = $this->testProcess(['convert', 'awyiss/Command/Media/TestFiles/logo-awyiss.docx', TMP . 'logo-awyiss.jpg'], 'DOCX support', $io);
 
-			$lb_imageMagickPptx = $this->testProcess(['convert', 'awyiss/Command/Media/TestFiles/logo-awyiss.pptx', TMP . 'logo-awyiss.jpg'], 'PPTX support', $ao_io);
+			$lb_imageMagickPptx = $this->testProcess(['convert', 'awyiss/Command/Media/TestFiles/logo-awyiss.pptx', TMP . 'logo-awyiss.jpg'], 'PPTX support', $io);
 
-			$lb_imageMagickPsd = $this->testProcess(['convert', 'awyiss/Command/Media/TestFiles/logo-awyiss.psd', TMP . 'logo-awyiss.jpg'], 'PSD support', $ao_io);
+			$lb_imageMagickPsd = $this->testProcess(['convert', 'awyiss/Command/Media/TestFiles/logo-awyiss.psd', TMP . 'logo-awyiss.jpg'], 'PSD support', $io);
 
-			$lb_imageMagickXlxs = $this->testProcess(['convert', 'awyiss/Command/Media/TestFiles/logo-awyiss.xlsx', TMP . 'logo-awyiss.jpg'], 'XLSX support', $ao_io);
+			$lb_imageMagickXlxs = $this->testProcess(['convert', 'awyiss/Command/Media/TestFiles/logo-awyiss.xlsx', TMP . 'logo-awyiss.jpg'], 'XLSX support', $io);
 
 			$la_imageMagick = [
 				'pdf' => $lb_imageMagickPdf,
@@ -100,15 +98,15 @@ class DetectAvailableCommandsCommand extends Command {
 			];
 		}
 		else {
-			$ao_io->error('convert not available');
-			$ao_io->out('Skipping specific file type detection for `convert`...');
+			$io->error('convert not available');
+			$io->out('Skipping specific file type detection for `convert`...');
 		}
 
 		if (file_exists(TMP . 'logo-awyiss.jpg')) {
 			unlink(TMP . 'logo-awyiss.jpg');
 		}
 
-		$ao_io->out('Writing config... ', 0);
+		$io->out('Writing config... ', 0);
 
 		//Remember the current config
 		$la_rememberedConfig = Configure::read();
@@ -128,7 +126,7 @@ class DetectAvailableCommandsCommand extends Command {
 		//Dump the config to a file
 		Configure::dump('awyiss');
 
-		$ao_io->out('Done');
+		$io->out('Done');
 
 		Configure::clear();
 		Configure::write($la_rememberedConfig);
@@ -139,32 +137,32 @@ class DetectAvailableCommandsCommand extends Command {
 
 
 	/**
-	 * @param array $aa_command
-	 * @param string|null $as_type
-	 * @param \Cake\Console\ConsoleIo|null $ao_io
+	 * @param array $command
+	 * @param string|null $type
+	 * @param \Cake\Console\ConsoleIo|null $io
 	 * @return bool
 	 */
-	protected function testProcess(array $aa_command, ?string $as_type = null, ?ConsoleIo $ao_io = null): bool {
-		if ($as_type && $ao_io) {
-			$ao_io->out(sprintf('Testing %s... ', $as_type), 0);
+	protected function testProcess(array $command, ?string $type = null, ?ConsoleIo $io = null): bool {
+		if ($type && $io) {
+			$io->out(sprintf('Testing %s... ', $type), 0);
 		}
 
-		$lo_process = new Process($aa_command);
+		$lo_process = new Process($command);
 
 		try {
 			$lo_process->mustRun();
 		}
 		catch (ProcessFailedException) {
-			if ($as_type && $ao_io) {
-				$ao_io->error(sprintf('%s not available', $as_type));
+			if ($type && $io) {
+				$io->error(sprintf('%s not available', $type));
 			}
 
 
 			return false;
 		}
 
-		if ($as_type && $ao_io) {
-			$ao_io->success(sprintf('%s available', $as_type));
+		if ($type && $io) {
+			$io->success(sprintf('%s available', $type));
 		}
 
 		return true;

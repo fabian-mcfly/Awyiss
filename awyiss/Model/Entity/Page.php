@@ -104,12 +104,12 @@ class Page extends Entity {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function getChildren(array $aa_options = []): ?CollectionInterface {
+	public function getChildren(array $options = []): ?CollectionInterface {
 		/** @var \Awyiss\Model\Table\PagesTable $lo_table */
 		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
 
 
-		return $lo_table->getChildren($this, $aa_options);
+		return $lo_table->getChildren($this, $options);
 	}
 
 
@@ -118,12 +118,12 @@ class Page extends Entity {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function getNestedChildren(array $aa_options = [], int $ai_currentLevel = 0): ?CollectionInterface {
+	public function getNestedChildren(array $options = [], int $currentLevel = 0): ?CollectionInterface {
 		/** @var \Awyiss\Model\Table\PagesTable $lo_table */
 		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
 
 
-		return $lo_table->getNestedChildren($this, $aa_options, $ai_currentLevel);
+		return $lo_table->getNestedChildren($this, $options, $currentLevel);
 	}
 
 
@@ -132,12 +132,12 @@ class Page extends Entity {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function getParent(array $aa_options = []): ?self {
+	public function getParent(array $options = []): ?self {
 		/** @var \Awyiss\Model\Table\PagesTable $lo_table */
 		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
 
 
-		return $lo_table->getParent($this, $aa_options);
+		return $lo_table->getParent($this, $options);
 	}
 
 
@@ -146,25 +146,25 @@ class Page extends Entity {
 	 *
 	 * @noinspection PhpUnused
 	 */
-	public function getParents(array $aa_options = [], int $ai_currentLevel = 0): ?CollectionInterface {
+	public function getParents(array $options = [], int $currentLevel = 0): ?CollectionInterface {
 		/** @var \Awyiss\Model\Table\PagesTable $lo_table */
 		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
 
 
-		return $lo_table->getParents($this, $aa_options, $ai_currentLevel);
+		return $lo_table->getParents($this, $options, $currentLevel);
 	}
 
 
 	/**
-	 * @param array|null $aa_menuIds
+	 * @param array|null $menuIds
 	 * @return array|null
 	 */
-	protected function _setAddMenuEntry(?array $aa_menuIds): ?array {
-		if (!$aa_menuIds) {
+	protected function _setAddMenuEntry(?array $menuIds): ?array {
+		if (!$menuIds) {
 			return null;
 		}
 
-		$la_menuIds = $aa_menuIds;
+		$la_menuIds = $menuIds;
 		foreach ($la_menuIds as &$lx_menuId) {
 			$lx_menuId = (int)$lx_menuId;
 		}
@@ -175,32 +175,32 @@ class Page extends Entity {
 
 
 	/**
-	 * @param mixed $ax_pageRoleId
+	 * @param mixed $pageRoleId
 	 * @return \Awyiss\Model\Enum\PageRoleEnumInterface|int|null
 	 */
-	protected function _setPageRoleId(mixed $ax_pageRoleId): PageRoleEnumInterface|int|null {
-		if (is_string($ax_pageRoleId)) {
-			return (int)$ax_pageRoleId;
+	protected function _setPageRoleId(mixed $pageRoleId): PageRoleEnumInterface|int|null {
+		if (is_string($pageRoleId)) {
+			return (int)$pageRoleId;
 		}
 
 
-		return $ax_pageRoleId;
+		return $pageRoleId;
 	}
 
 
 	/**
 	 * Make sure the slug is always lowercase, dashed and free of special characters
 	 *
-	 * @param string|null $as_slug
+	 * @param string|null $slug
 	 * @return string|null
 	 * @see \Awyiss\Model\Entity\Page::$slug
 	 */
-	protected function _setSlug(?string $as_slug): ?string {
-		if ($as_slug === null) {
+	protected function _setSlug(?string $slug): ?string {
+		if ($slug === null) {
 			return null;
 		}
 
-		$ls_slug = Text::slug($as_slug, ['preserve' => '/']);
+		$ls_slug = Text::slug($slug, ['preserve' => '/']);
 		$ls_slug = trim($ls_slug, '/');
 
 		if (str_contains($ls_slug, '/')) {

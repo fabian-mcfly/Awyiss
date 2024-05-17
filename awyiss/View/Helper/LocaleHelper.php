@@ -24,23 +24,23 @@ class LocaleHelper extends Helper {
 	 *
 	 * It first looks for a frontend-language, then a backend-language and falls back to null.
 	 *
-	 * @param string|null $as_shortcode
-	 * @param array|null $aa_languagesByShortcode
+	 * @param string|null $shortcode
+	 * @param array|null $languagesByShortcode
 	 * @return string|null
 	 * @noinspection PhpUnused
 	 */
-	public function languageTitle(?string $as_shortcode = null, ?array $aa_languagesByShortcode = null): ?string {
-		if (!$as_shortcode) {
+	public function languageTitle(?string $shortcode = null, ?array $languagesByShortcode = null): ?string {
+		if (!$shortcode) {
 			return null;
 		}
 
-		$la_languages = $aa_languagesByShortcode ?: LocaleMiddleware::getLanguagesByShortcode();
-		if (!isset($la_languages [ $as_shortcode ])) {
+		$la_languages = $languagesByShortcode ?: LocaleMiddleware::getLanguagesByShortcode();
+		if (!isset($la_languages [ $shortcode ])) {
 			return null;
 		}
 
 
-		return ($la_languages [ $as_shortcode ][ Awyiss::REALM_FRONTEND ] ?? $la_languages [ $as_shortcode ][ Awyiss::REALM_BACKEND ])?->title ?? null;
+		return ($la_languages [ $shortcode ][ Awyiss::REALM_FRONTEND ] ?? $la_languages [ $shortcode ][ Awyiss::REALM_BACKEND ])?->title ?? null;
 	}
 
 
@@ -54,30 +54,30 @@ class LocaleHelper extends Helper {
 	 * - `languageRealm` If the realm is set and found as a valid language realm (e.g. 'frontend' or 'backend'),
 	 * the options consist only of languages of this realm. Otherwise, it will use all realms.
 	 *
-	 * @param string|null $as_fieldName
-	 * @param array $aa_attributes
+	 * @param string|null $fieldName
+	 * @param array $attributes
 	 * @return string
 	 * @see FormHelper::control
 	 */
-	public function control(?string $as_fieldName = null, array $aa_attributes = []): string {
-		$la_attributes = $aa_attributes + ['type' => 'select'];
+	public function control(?string $fieldName = null, array $attributes = []): string {
+		$la_attributes = $attributes + ['type' => 'select'];
 
-		if (empty($aa_attributes['languageRealm'])) {
+		if (empty($attributes['languageRealm'])) {
 			$la_languages = $this->allLanguages(true);
 		}
 		else {
-			$la_languages = $this->languagesForRealm($aa_attributes['languageRealm'], true);
+			$la_languages = $this->languagesForRealm($attributes['languageRealm'], true);
 		}
 
-		$la_languages = array_filter($la_languages, fn($ao_language) => $ao_language->active);
-		$la_languages = array_map(fn($ao_language) => $ao_language->title, $la_languages);
+		$la_languages = array_filter($la_languages, fn($language) => $language->active);
+		$la_languages = array_map(fn($language) => $language->title, $la_languages);
 
 		$la_attributes['options'] = $la_languages;
 
 		unset($la_attributes['languageRealm']);
 
 
-		return $this->Form->control($as_fieldName, $la_attributes);
+		return $this->Form->control($fieldName, $la_attributes);
 	}
 
 
@@ -104,14 +104,14 @@ class LocaleHelper extends Helper {
 
 
 	/**
-	 * @param string $as_realm
+	 * @param string $realm
 	 * @param bool $raw
 	 * @return array
 	 */
-	public function languagesForRealm(string $as_realm, bool $raw = false): array {
+	public function languagesForRealm(string $realm, bool $raw = false): array {
 		$la_languages = [];
 
-		foreach (LocaleMiddleware::getLanguages($as_realm) as $ls_shortcode => $lo_language) {
+		foreach (LocaleMiddleware::getLanguages($realm) as $ls_shortcode => $lo_language) {
 			$la_languages[ $ls_shortcode ] = $raw ? $lo_language : $lo_language->title;
 		}
 

@@ -22,17 +22,17 @@ class Authorization implements AuthorizationServiceProviderInterface {
 	/**
 	 * Set the realm only when creating a class instance
 	 *
-	 * @param string $as_realm
+	 * @param string $realm
 	 */
-	public function __construct(string $as_realm) {
-		$this->realm = $as_realm;
+	public function __construct(string $realm) {
+		$this->realm = $realm;
 	}
 
 
 	/**
 	 * @inheritDoc
 	 */
-	public function getAuthorizationService(ServerRequestInterface $ao_request): AuthorizationServiceInterface {
+	public function getAuthorizationService(ServerRequestInterface $request): AuthorizationServiceInterface {
 		return new AuthorizationService($this->realm);
 	}
 }

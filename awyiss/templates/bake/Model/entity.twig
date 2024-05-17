@@ -87,8 +87,8 @@ class {{ name }} extends Entity{{ fileBuilder.classBuilder.implements ? ' implem
 {% set generatedMethods = generatedMethods|merge(['setEntity']) %}
 
 
-	public function setEntity (?Entity $ao_entity = null): static {
-		$this->entity = $ao_entity;
+	public function setEntity (?Entity $entity = null): static {
+		$this->entity = $entity;
 
 
 		return $this;

@@ -25,10 +25,10 @@ class DesignMiddleware implements MiddlewareInterface {
 	/**
 	 * DesignMiddleware constructor.
 	 *
-	 * @param string|null $as_realm The realm the middleware should be constructed with
+	 * @param string|null $realm The realm the middleware should be constructed with
 	 */
-	public function __construct(?string $as_realm = null) {
-		$this->realm = $as_realm;
+	public function __construct(?string $realm = null) {
+		$this->realm = $realm;
 	}
 
 
@@ -38,13 +38,12 @@ class DesignMiddleware implements MiddlewareInterface {
 	 * If the SCSS files need to be compiled, it uses the ScssCompiler to compile them.
 	 * It then adds the 'design' attribute to the request and passes the request to the next handler.
 	 *
-	 * @param ServerRequestInterface $ao_request The request to be processed
-	 * @param RequestHandlerInterface $ao_handler The next handler in the middleware stack
+	 * @param ServerRequestInterface $request The request to be processed
+	 * @param RequestHandlerInterface $handler The next handler in the middleware stack
 	 * @return ResponseInterface The response from the handler
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 * @throws \ScssPhp\ScssPhp\Exception\SassException
 	 */
-	public function process(ServerRequestInterface $ao_request, RequestHandlerInterface $ao_handler): ResponseInterface {
+	public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface {
 		// Determine the environment the application is running in
 		$ls_configEnv = defined('CONFIG_ENV') ? CONFIG_ENV : 'production';
 
@@ -53,7 +52,7 @@ class DesignMiddleware implements MiddlewareInterface {
 		$lb_mustCompile = $lb_showExepctions;
 
 		// Check if the request has a query parameter to compile SCSS files
-		$la_queryParams = $ao_request->getQueryParams();
+		$la_queryParams = $request->getQueryParams();
 		if (($la_queryParams['compileScss'] ?? false) === 'true') {
 			$lb_mustCompile = true;
 		}
@@ -64,9 +63,9 @@ class DesignMiddleware implements MiddlewareInterface {
 		}
 
 		// Add the 'design' attribute to the request
-		$lo_request = $ao_request->withAttribute('design', $this);
+		$lo_request = $request->withAttribute('design', $this);
 
-		return $ao_handler->handle($lo_request);
+		return $handler->handle($lo_request);
 	}
 
 
@@ -75,13 +74,13 @@ class DesignMiddleware implements MiddlewareInterface {
 	 * It uses the ScssCompiler to discover the SCSS files in the realm and compile them.
 	 * The method takes a boolean parameter to determine if exceptions should be shown.
 	 *
-	 * @param bool $ab_showExepctions
+	 * @param bool $showExepctions
 	 * @return void
 	 * @throws \ScssPhp\ScssPhp\Exception\SassException
 	 */
-	public function compileScss(bool $ab_showExepctions): void {
+	public function compileScss(bool $showExepctions): void {
 		// Set the exception handling for the ScssCompiler
-		ScssCompiler::showExceptions($ab_showExepctions);
+		ScssCompiler::showExceptions($showExepctions);
 
 		// Discover the SCSS files in the realm
 		$la_files = ScssCompiler::discoverRealmFiles($this->realm);

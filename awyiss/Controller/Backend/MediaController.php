@@ -93,18 +93,18 @@ class MediaController extends Controller {
 		}
 
 		$lo_mediaFolders = $this->Media->MediaFolders->find('active')->find('threaded')->all();
-		$la_mediaFolders = $lo_mediaFolders->groupBy(function (MediaFolder $ao_element) {
-			return $ao_element->languageShortcode ?? '';
+		$la_mediaFolders = $lo_mediaFolders->groupBy(function (MediaFolder $element) {
+			return $element->languageShortcode ?? '';
 		})->toArray();
 
 		$ls_currentLanguageShortcode = $this->request->getParam('lang');
 		// Sort the grouped media folders by the global and the current language first
-		uksort($la_mediaFolders, function ($as_a, $as_b) use ($ls_currentLanguageShortcode) {
-			if ($as_a === '' || $as_a === $ls_currentLanguageShortcode) {
+		uksort($la_mediaFolders, function ($a, $b) use ($ls_currentLanguageShortcode) {
+			if ($a === '' || $a === $ls_currentLanguageShortcode) {
 				return -1;
 			}
 
-			if ($as_b === '' || $as_b === $ls_currentLanguageShortcode) {
+			if ($b === '' || $b === $ls_currentLanguageShortcode) {
 				return 1;
 			}
 
@@ -204,12 +204,12 @@ class MediaController extends Controller {
 	 * @return \Cake\Http\Response|void
 	 * @throws \Exception
 	 */
-	public function edit(int $ai_id) {
+	public function edit(int $id) {
 		$this->Authorization->ensure('update');
 
 		try {
 			/** @var \Awyiss\Model\Entity\Media $lo_media */
-			$lo_media = $this->Media->findById($ai_id)->find('translations')->first();
+			$lo_media = $this->Media->findById($id)->find('translations')->first();
 
 			if (!$lo_media) {
 				$this->Flash->error(__('record_not_found'));
@@ -278,21 +278,21 @@ class MediaController extends Controller {
 	/**
 	 * Delete method
 	 *
-	 * @param ?int $ai_id
+	 * @param ?int $id
 	 * @return Response
 	 * @throws \Exception
 	 */
-	public function delete(?int $ai_id = null): Response {
+	public function delete(?int $id = null): Response {
 		$this->Authorization->ensure('delete');
 
 		$this->request->allowMethod(['get', 'delete']);
 
-		if (!$ai_id && $this->request->getMethod() === 'DELETE') {
+		if (!$id && $this->request->getMethod() === 'DELETE') {
 			return $this->_deleteMultiple();
 		}
 
 		/** @var Media $lo_media */
-		$lo_media = $this->Media->findById($ai_id)->find('translations')->first();
+		$lo_media = $this->Media->findById($id)->find('translations')->first();
 		if (!$lo_media) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -536,17 +536,17 @@ class MediaController extends Controller {
 
 
 	/**
-	 * @param \Awyiss\Model\Entity\MediaFolder $ao_mediaFolder
-	 * @param string $as_method
-	 * @param bool $ab_isAjax
+	 * @param \Awyiss\Model\Entity\MediaFolder $mediaFolder
+	 * @param string $method
+	 * @param bool $isAjax
 	 * @return void
 	 * @throws \Exception
 	 */
-	protected function save(Media $ao_media, string $as_method = 'add', bool $ab_isAjax = false): void {
+	protected function save(Media $media, string $method = 'add', bool $isAjax = false): void {
 		$la_associated = [];
 		if ($this->Media->hasAttributes()) {
 			$la_associated[] = $this->Media->getAttributesTableName(true);
-			$ao_media->setAccess('attributes', true);
+			$media->setAccess('attributes', true);
 		}
 
 		$la_data = $this->request->getData();
@@ -565,7 +565,7 @@ class MediaController extends Controller {
 			}
 		}
 		elseif (!empty($la_data['name'])) {
-			$ls_extension = $ao_media->extension;
+			$ls_extension = $media->extension;
 		}
 
 		if ($ls_extension && !str_ends_with($la_data['name'], $ls_extension)) {
@@ -577,64 +577,64 @@ class MediaController extends Controller {
 			$la_data['crop'] = null;
 		}
 
-		$this->Media->patchEntity($ao_media, $la_data, [
+		$this->Media->patchEntity($media, $la_data, [
 			'associated' => $la_associated,
 			'validate' => !$this->request->getData('reload_form'),
 		]);
 
-		$this->ensureValidFile($as_method, $ao_media, $lo_uploadedFile);
+		$this->ensureValidFile($method, $media, $lo_uploadedFile);
 
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
 			$la_options = [];
 
-			if ($ab_isAjax) {
+			if ($isAjax) {
 				$la_options = [
 					'systemOrder' => ['skip' => true],
 				];
 			}
 
-			if ($this->Media->save($ao_media, $la_options)) {
+			if ($this->Media->save($media, $la_options)) {
 				if (!$this->request->is('ajax')) {
-					$this->Flash->success(__($as_method . '_succeeded'));
+					$this->Flash->success(__($method . '_succeeded'));
 				}
 
 				if ($this->request->getData('submit') == 'submit_close') {
 					throw new RedirectException(Router::url([
 						'action' => 'overview',
-						'mediaFolderId' => $ao_media->mediaFolderId,
-						'page' => $this->Paginate->calculateEntityPagePosition($ao_media),
+						'mediaFolderId' => $media->mediaFolderId,
+						'page' => $this->Paginate->calculateEntityPagePosition($media),
 					], true), 302);
 				}
 
-				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $ao_media->id], true), 302);
+				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $media->id], true), 302);
 			}
 
-			$this->Flash->error(__($as_method . '_failed'));
-			foreach ($ao_media->getError('_general') as $ls_error) {
+			$this->Flash->error(__($method . '_failed'));
+			foreach ($media->getError('_general') as $ls_error) {
 				$this->Flash->error($ls_error);
 			}
 		}
 		else {
-			if ($this->Media->getSystemOrderRelatedColumns($ao_media)) {
-				$ao_media->systemOrder = null;
+			if ($this->Media->getSystemOrderRelatedColumns($media)) {
+				$media->systemOrder = null;
 			}
 			else {
-				$ao_media->systemOrder = $ao_media->hasOriginal('systemOrder') ? $ao_media->getOriginal('systemOrder') : $ao_media->get('systemOrder');
+				$media->systemOrder = $media->hasOriginal('systemOrder') ? $media->getOriginal('systemOrder') : $media->get('systemOrder');
 			}
 		}
 
-		$this->Categories->ensurePossibleCategory($ao_media);
+		$this->Categories->ensurePossibleCategory($media);
 	}
 
 
 	/**
 	 * @inheritDoc
 	 */
-	protected function _saveSystemOrder(array $aa_requestData, Table $ao_table): int {
+	protected function _saveSystemOrder(array $requestData, Table $table): int {
 		$li_mediaFolderId = $this->request->getData('media_folder_id');
 
 		$la_orderData = [];
-		foreach ($aa_requestData as $li_index => $li_mediaId) {
+		foreach ($requestData as $li_index => $li_mediaId) {
 			$la_orderData[] = [
 				'id' => $li_mediaId,
 				'mediaFolderId' => (int)$li_mediaFolderId,
@@ -643,9 +643,9 @@ class MediaController extends Controller {
 		}
 
 		/** @noinspection PhpUnnecessaryLocalVariableInspection */
-		$li_affectedRows = $ao_table->updateAll(function (QueryExpression $ao_expression) use ($la_orderData) {
-			$lo_folderCase = $ao_expression->case();
-			$lo_systemOrderCase = $ao_expression->case();
+		$li_affectedRows = $table->updateAll(function (QueryExpression $expression) use ($la_orderData) {
+			$lo_folderCase = $expression->case();
+			$lo_systemOrderCase = $expression->case();
 
 			foreach ($la_orderData as $la_data) {
 				$lo_folderCase->when(['id' => $la_data['id']])->then($la_data['mediaFolderId'], 'integer');
@@ -726,32 +726,32 @@ class MediaController extends Controller {
 
 
 	/**
-	 * @param string $as_method
-	 * @param \Awyiss\Model\Entity\Media $ao_media
-	 * @param \Laminas\Diactoros\UploadedFile|null $ao_uploadedFile
+	 * @param string $method
+	 * @param \Awyiss\Model\Entity\Media $media
+	 * @param \Laminas\Diactoros\UploadedFile|null $uploadedFile
 	 * @return void
 	 * @throws \Exception
 	 */
-	protected function ensureValidFile(string $as_method, Media $ao_media, ?UploadedFile $ao_uploadedFile): void {
+	protected function ensureValidFile(string $method, Media $media, ?UploadedFile $uploadedFile): void {
 		if (
-			$as_method === 'edit' &&
+			$method === 'edit' &&
 			(
 				$this->request->is('ajax') ||
 				!$this->Authorization->isAccessible('create')
 			)
 		) {
-			$ao_media->file = null;
+			$media->file = null;
 
-			if ($ao_media->originalExtension && !str_ends_with($ao_media->name, $ao_media->originalExtension)) {
-				$ao_media->name .= '.' . $ao_media->originalExtension;
+			if ($media->originalExtension && !str_ends_with($media->name, $media->originalExtension)) {
+				$media->name .= '.' . $media->originalExtension;
 			}
 		}
 		elseif (
-			!$ao_uploadedFile ||
-			$ao_uploadedFile->getError() === UPLOAD_ERR_INI_SIZE ||
-			$ao_uploadedFile->getError() === UPLOAD_ERR_FORM_SIZE
+			!$uploadedFile ||
+			$uploadedFile->getError() === UPLOAD_ERR_INI_SIZE ||
+			$uploadedFile->getError() === UPLOAD_ERR_FORM_SIZE
 		) {
-			$ao_media->setError(
+			$media->setError(
 				'file',
 				__df(
 					strtolower($this->getName()),

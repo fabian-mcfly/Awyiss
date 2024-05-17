@@ -54,17 +54,17 @@ class UserConfiguration extends Entity {
 	/**
 	 * Make sure the identifier is always underscored
 	 *
-	 * @param string|null $as_identifier
+	 * @param string|null $identifier
 	 * @return string|null
 	 * @see \Awyiss\Model\Entity\UserConfiguration::$identifier
 	 */
-	protected function _setIdentifier(?string $as_identifier): ?string {
-		if ($as_identifier === null) {
+	protected function _setIdentifier(?string $identifier): ?string {
+		if ($identifier === null) {
 			return null;
 		}
 
 
-		return Inflector::underscore($as_identifier);
+		return Inflector::underscore($identifier);
 	}
 
 
@@ -103,16 +103,16 @@ class UserConfiguration extends Entity {
 	/**
 	 * Make sure the scope is always lowercase, underscored and free of special characters
 	 *
-	 * @param string|null $as_scope
+	 * @param string|null $scope
 	 * @return string|null
 	 * @see \Awyiss\Model\Entity\UserConfiguration::$scope
 	 */
-	protected function _setScope(?string $as_scope): ?string {
-		if ($as_scope === null) {
+	protected function _setScope(?string $scope): ?string {
+		if ($scope === null) {
 			return null;
 		}
 
-		$ls_scope = Inflector::underscore($as_scope);
+		$ls_scope = Inflector::underscore($scope);
 		$ls_scope = Inflector::singularize($ls_scope);
 		$ls_scope = Inflector::pluralize($ls_scope);
 
@@ -124,11 +124,11 @@ class UserConfiguration extends Entity {
 	/**
 	 * If the provided value is false, set the value to 0
 	 *
-	 * @param mixed $ax_value
+	 * @param mixed $value
 	 * @return mixed
 	 * @see \Awyiss\Model\Entity\UserConfiguration::$value
 	 */
-	protected function _setValue(mixed $ax_value): mixed {
-		return $ax_value === false ? 0 : $ax_value;
+	protected function _setValue(mixed $value): mixed {
+		return $value === false ? 0 : $value;
 	}
 }

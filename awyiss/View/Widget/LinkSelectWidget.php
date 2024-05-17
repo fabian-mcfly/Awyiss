@@ -31,13 +31,12 @@ class LinkSelectWidget extends BasicWidget {
 
 	/**
 	 * @inheritDoc
-	 * @param array $aa_data
-	 * @param ContextInterface $ao_context
+	 * @param array $data
+	 * @param ContextInterface $context
 	 * @return string
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function render(array $aa_data, ContextInterface $ao_context): string {
-		$la_data = $this->mergeDefaults($aa_data, $ao_context);
+	public function render(array $data, ContextInterface $context): string {
+		$la_data = $this->mergeDefaults($data, $context);
 
 		//Render the options
 		$la_listItems = $this->renderOptions($la_data);
@@ -89,11 +88,10 @@ class LinkSelectWidget extends BasicWidget {
 
 	/**
 	 * @inheritDoc
-	 * @param array $aa_data
+	 * @param array $data
 	 * @return array|array<string>
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function secureFields(array $aa_data): array {
+	public function secureFields(array $data): array {
 		return [];
 	}
 
@@ -101,56 +99,57 @@ class LinkSelectWidget extends BasicWidget {
 	/**
 	 * Helper method for deciding what options are selected.
 	 *
-	 * @param string $as_key
-	 * @param mixed $ax_selected
+	 * @param string $key
+	 * @param mixed $selected
 	 * @return bool
+	 * @noinspection PhpVariableNamingConventionInspection
 	 */
-	protected function isSelected(string $as_key, mixed $ax_selected): bool {
-		if ($ax_selected === null) {
+	protected function isSelected(string $key, mixed $selected): bool {
+		if ($selected === null) {
 			return false;
 		}
 
-		if (!is_array($ax_selected)) {
-			$ax_selected = $ax_selected === false ? '0' : $ax_selected;
+		if (!is_array($selected)) {
+			$selected = $selected === false ? '0' : $selected;
 
 
-			return $as_key === (string)$ax_selected;
+			return $key === (string)$selected;
 		}
 
-		$lb_strict = !is_numeric($as_key);
+		$lb_strict = !is_numeric($key);
 
 
-		return in_array($as_key, $ax_selected, $lb_strict);
+		return in_array($key, $selected, $lb_strict);
 	}
 
 
 	/**
 	 * Helper method for deciding what options are disabled.
 	 *
-	 * @param string $as_key The key to test.
-	 * @param array<string>|null $aa_disabled The disabled values.
+	 * @param string $key The key to test.
+	 * @param array<string>|null $disabled The disabled values.
 	 * @return bool
 	 */
-	protected function isDisabled(string $as_key, ?array $aa_disabled): bool {
-		if ($aa_disabled === null) {
+	protected function isDisabled(string $key, ?array $disabled): bool {
+		if ($disabled === null) {
 			return false;
 		}
 
-		$lb_strict = !is_numeric($as_key);
+		$lb_strict = !is_numeric($key);
 
 
-		return in_array($as_key, $aa_disabled, $lb_strict);
+		return in_array($key, $disabled, $lb_strict);
 	}
 
 
 	/**
-	 * Returns an array of rendered templates for every option in `$aa_data['options']`
+	 * Returns an array of rendered templates for every option in `$data['options']`
 	 *
-	 * @param array $aa_data
+	 * @param array $data
 	 * @return array
 	 */
-	protected function renderOptions(array $aa_data): array {
-		$la_data = $aa_data;
+	protected function renderOptions(array $data): array {
+		$la_data = $data;
 
 		//Make sure the options are an array
 		if ($la_data['options'] instanceof Traversable) {
@@ -175,11 +174,11 @@ class LinkSelectWidget extends BasicWidget {
 	/**
 	 * Returns the rendered selected option
 	 *
-	 * @param array $aa_data
+	 * @param array $data
 	 * @return string
 	 */
-	protected function renderSelectedOption(array $aa_data): string {
-		$la_data = $aa_data;
+	protected function renderSelectedOption(array $data): string {
+		$la_data = $data;
 
 		$la_selectedOption = (array)$la_data['options'][ $la_data['val'] ];
 
@@ -190,18 +189,18 @@ class LinkSelectWidget extends BasicWidget {
 
 
 	/**
-	 * @param array $aa_data
-	 * @param array $aa_optionAttributes
+	 * @param array $data
+	 * @param array $optionAttributes
 	 * @return array
 	 */
-	protected function setGroupLabelTitle(array $aa_data, array $aa_optionAttributes): array {
-		$la_optionAttributes = $aa_optionAttributes;
+	protected function setGroupLabelTitle(array $data, array $optionAttributes): array {
+		$la_optionAttributes = $optionAttributes;
 
-		if (!empty($aa_data['groupLabels'][ $la_optionAttributes['title'] ?: 'general' ])) {
-			$ls_groupLabel = $aa_data['groupLabels'][ $la_optionAttributes['title'] ?: 'general' ];
+		if (!empty($data['groupLabels'][ $la_optionAttributes['title'] ?: 'general' ])) {
+			$ls_groupLabel = $data['groupLabels'][ $la_optionAttributes['title'] ?: 'general' ];
 		}
 		else {
-			$ls_groupLabel = __($aa_data['identifier'] . '_grouplabel_' . ($la_optionAttributes['title'] ?: 'general'));
+			$ls_groupLabel = __($data['identifier'] . '_grouplabel_' . ($la_optionAttributes['title'] ?: 'general'));
 		}
 
 		$la_optionAttributes['title'] = $ls_groupLabel;
@@ -214,18 +213,18 @@ class LinkSelectWidget extends BasicWidget {
 	/**
 	 * Builds the options for the select widget.
 	 *
-	 * @param array $aa_data
-	 * @param mixed $ax_selected
-	 * @param mixed $ax_disabled
-	 * @param bool $ax_escape
+	 * @param array $data
+	 * @param mixed $selected
+	 * @param mixed $disabled
+	 * @param bool $escape
 	 * @return array
 	 */
-	protected function buildOptions(array $aa_data, mixed $ax_selected, mixed $ax_disabled, bool $ax_escape): array {
+	protected function buildOptions(array $data, mixed $selected, mixed $disabled, bool $escape): array {
 		$la_options = [];
-		foreach ($aa_data['options'] as $lx_key => $lx_value) {
-			$la_optionAttributes = $this->createOptionAttributes($lx_key, $lx_value, $aa_data);
-			$la_optionAttributes = $this->addClassesToOption($la_optionAttributes, $lx_key, $ax_selected, $ax_disabled, $aa_data);
-			$la_options[] = $this->formatOption($la_optionAttributes, $ax_escape, $lx_key, $ax_disabled);
+		foreach ($data['options'] as $lx_key => $lx_value) {
+			$la_optionAttributes = $this->createOptionAttributes($lx_key, $lx_value, $data);
+			$la_optionAttributes = $this->addClassesToOption($la_optionAttributes, $lx_key, $selected, $disabled, $data);
+			$la_options[] = $this->formatOption($la_optionAttributes, $escape, $lx_key, $disabled);
 		}
 
 		return $la_options;
@@ -235,38 +234,39 @@ class LinkSelectWidget extends BasicWidget {
 	/**
 	 * Creates the basic option attributes.
 	 *
-	 * @param mixed $ax_key
-	 * @param mixed $ax_value
-	 * @param array $aa_data
+	 * @param mixed $key
+	 * @param mixed $value
+	 * @param array $data
 	 * @return array
 	 */
-	protected function createOptionAttributes(mixed &$ax_key, mixed $ax_value, array $aa_data): array {
+	protected function createOptionAttributes(mixed &$key, mixed $value, array $data): array {
 		$la_optionAttributes = [
 			'templateVars' => [],
-			'title' => $ax_value,
+			'title' => $value,
 			'label' => null,
 			'levelPrefix' => '',
-			'value' => $ax_key,
+			'value' => $key,
 		];
 
-		if (is_array($ax_value) && isset($ax_value['title'])) {
-			$la_optionAttributes = $ax_value;
-			if (isset($ax_value['value'])) {
-				$ax_key = $la_optionAttributes['value'];
+		if (is_array($value) && isset($value['title'])) {
+			$la_optionAttributes = $value;
+			if (isset($value['value'])) {
+				/** @noinspection PhpVariableNamingConventionInspection */
+				$key = $la_optionAttributes['value'];
 			}
 			else {
-				$la_optionAttributes['value'] = $ax_key;
+				$la_optionAttributes['value'] = $key;
 			}
 
 			if ($la_optionAttributes['isGroupLabel'] ?? null === true) {
-				$la_optionAttributes = $this->setGroupLabelTitle($aa_data, $la_optionAttributes);
+				$la_optionAttributes = $this->setGroupLabelTitle($data, $la_optionAttributes);
 			}
 		}
 
 		if (!isset($la_optionAttributes['templateVars'])) {
 			$la_optionAttributes['templateVars'] = [];
 		}
-		$la_optionAttributes['templateVars']['identifier'] = $aa_data['identifier'];
+		$la_optionAttributes['templateVars']['identifier'] = $data['identifier'];
 
 		return $la_optionAttributes;
 	}
@@ -275,15 +275,15 @@ class LinkSelectWidget extends BasicWidget {
 	/**
 	 * Adds classes to the option attributes.
 	 *
-	 * @param array $aa_optionAttributes
-	 * @param mixed $ax_key
-	 * @param mixed $ax_selected
-	 * @param mixed $ax_disabled
-	 * @param array $aa_data
+	 * @param array $optionAttributes
+	 * @param mixed $key
+	 * @param mixed $selected
+	 * @param mixed $disabled
+	 * @param array $data
 	 * @return array
 	 */
-	protected function addClassesToOption(array $aa_optionAttributes, mixed $ax_key, mixed $ax_selected, mixed $ax_disabled, array $aa_data): array {
-		$la_optionAttributes = $this->_templates->addClass($aa_optionAttributes, 'Item');
+	protected function addClassesToOption(array $optionAttributes, mixed $key, mixed $selected, mixed $disabled, array $data): array {
+		$la_optionAttributes = $this->_templates->addClass($optionAttributes, 'Item');
 		$ls_classText = 'Item-' . Text::slug(Inflector::camelize($la_optionAttributes['title']), ['replacement' => '']);
 		$la_optionAttributes = $this->_templates->addClass($la_optionAttributes, $ls_classText);
 
@@ -291,17 +291,17 @@ class LinkSelectWidget extends BasicWidget {
 			$ls_classText = 'Item-' . Text::slug(Inflector::camelize((string)$la_optionAttributes['id']), ['replacement' => '']);
 			$la_optionAttributes = $this->_templates->addClass($la_optionAttributes, $ls_classText);
 
-			if (!empty($aa_data['id'])) {
-				$la_optionAttributes['id'] = $aa_data['id'] . $ls_classText;
+			if (!empty($data['id'])) {
+				$la_optionAttributes['id'] = $data['id'] . $ls_classText;
 			}
 		}
 
-		if ($this->isSelected((string)$ax_key, $ax_selected)) {
-			$la_optionAttributes = $this->_templates->addClass($la_optionAttributes, $aa_data['selectedClass'] ?? 'Active');
+		if ($this->isSelected((string)$key, $selected)) {
+			$la_optionAttributes = $this->_templates->addClass($la_optionAttributes, $data['selectedClass'] ?? 'Active');
 		}
 
-		if ($this->isDisabled((string)$ax_key, $ax_disabled)) {
-			$la_optionAttributes = $this->_templates->addClass($la_optionAttributes, $aa_data['disabledClass'] ?? 'Disabled');
+		if ($this->isDisabled((string)$key, $disabled)) {
+			$la_optionAttributes = $this->_templates->addClass($la_optionAttributes, $data['disabledClass'] ?? 'Disabled');
 		}
 
 		if ($la_optionAttributes['isGroupLabel'] ?? null === true) {
@@ -321,29 +321,29 @@ class LinkSelectWidget extends BasicWidget {
 	/**
 	 * Formats the option for output.
 	 *
-	 * @param array $aa_optionAttributes
-	 * @param bool $ax_escape
-	 * @param mixed $ax_key
-	 * @param mixed $ax_disabled
+	 * @param array $optionAttributes
+	 * @param bool $escape
+	 * @param mixed $key
+	 * @param mixed $disabled
 	 * @return string
 	 */
-	protected function formatOption(array $aa_optionAttributes, bool $ax_escape, mixed $ax_key, mixed $ax_disabled): string {
+	protected function formatOption(array $optionAttributes, bool $escape, mixed $key, mixed $disabled): string {
 		$ls_template = 'option';
-		if ($this->isDisabled((string)$ax_key, $ax_disabled)) {
+		if ($this->isDisabled((string)$key, $disabled)) {
 			$ls_template = 'optionDisabled';
 		}
 
-		if ($aa_optionAttributes['isGroupLabel'] ?? null === true) {
+		if ($optionAttributes['isGroupLabel'] ?? null === true) {
 			$ls_template = 'groupLabel';
 		}
 
 		return $this->_templates->format($ls_template, [
-			'attrs' => $this->_templates->formatAttributes($aa_optionAttributes, ['title', 'value', 'link', 'levelPrefix', 'isGroupLabel', 'groupLabels']),
-			'templateVars' => $aa_optionAttributes['templateVars'],
-			'title' => $ax_escape ? h($aa_optionAttributes['title']) : $aa_optionAttributes['title'],
-			'levelPrefix' => $ax_escape ? h($aa_optionAttributes['levelPrefix']) : $aa_optionAttributes['levelPrefix'],
-			'value' => $ax_escape ? h($aa_optionAttributes['value']) : $aa_optionAttributes['value'],
-			'link' => $aa_optionAttributes['link'],
+			'attrs' => $this->_templates->formatAttributes($optionAttributes, ['title', 'value', 'link', 'levelPrefix', 'isGroupLabel', 'groupLabels']),
+			'templateVars' => $optionAttributes['templateVars'],
+			'title' => $escape ? h($optionAttributes['title']) : $optionAttributes['title'],
+			'levelPrefix' => $escape ? h($optionAttributes['levelPrefix']) : $optionAttributes['levelPrefix'],
+			'value' => $escape ? h($optionAttributes['value']) : $optionAttributes['value'],
+			'link' => $optionAttributes['link'],
 		]);
 	}
 }

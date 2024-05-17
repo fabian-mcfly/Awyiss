@@ -18,7 +18,7 @@ use Cake\Validation\Validator;
  * @property \Awyiss\Model\Table\ContentAreasTable&\Awyiss\ORM\Association\BelongsTo $ContentAreas
  * @property \Awyiss\Model\Table\ContentTemplatesTable&\Awyiss\ORM\Association\BelongsTo $ContentTemplates
  * @property \Awyiss\Model\Table\PageTemplatesTable&\Awyiss\ORM\Association\BelongsTo $PageTemplates
- * @method \Awyiss\Model\Entity\ContentTemplateContentArea newDefaultEntity(array $aa_additionalData = [], array $aa_options = [])
+ * @method \Awyiss\Model\Entity\ContentTemplateContentArea newDefaultEntity(array $additionalData = [], array $options = [])
  * @noinspection PhpUnnecessaryFullyQualifiedNameInspection
  */
 class ContentTemplateContentAreasTable extends Table {
@@ -55,87 +55,85 @@ class ContentTemplateContentAreasTable extends Table {
 	/**
 	 * Returns the default validator object.
 	 *
-	 * @param Validator $ao_validator The validator that can be modified to
+	 * @param Validator $validator The validator that can be modified to
 	 * add some rules to it.
 	 * @return Validator
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function validationDefault(Validator $ao_validator): Validator {
-		parent::validationDefault($ao_validator);
+	public function validationDefault(Validator $validator): Validator {
+		parent::validationDefault($validator);
 
 
-		$ao_validator->requirePresence([
+		$validator->requirePresence([
 			//'contentTemplateId',
 			//'contentAreaId',
 			'pageTemplateId',
 		], 'create');
 
 
-		$ao_validator->add('id', [
+		$validator->add('id', [
 			'isInteger' => ['rule' => 'isInteger'],
 			'maxLength' => ['rule' => ['maxLength', 11]],
 		]);
 
 
-		$ao_validator->notEmptyString('contentTemplateId');
-		$ao_validator->add('contentTemplateId', [
+		$validator->notEmptyString('contentTemplateId');
+		$validator->add('contentTemplateId', [
 			'isInteger' => ['rule' => 'isInteger'],
 			'maxLength' => ['rule' => ['maxLength', 11]],
 		]);
 
 
-		$ao_validator->notEmptyString('contentAreaId');
-		$ao_validator->add('contentAreaId', [
+		$validator->notEmptyString('contentAreaId');
+		$validator->add('contentAreaId', [
 			'isInteger' => ['rule' => 'isInteger'],
 			'maxLength' => ['rule' => ['maxLength', 11]],
 		]);
 
 
-		$ao_validator->notEmptyString('pageTemplateId');
-		$ao_validator->add('pageTemplateId', [
+		$validator->notEmptyString('pageTemplateId');
+		$validator->add('pageTemplateId', [
 			'isInteger' => ['rule' => 'isInteger'],
 			'maxLength' => ['rule' => ['maxLength', 11]],
 		]);
 
 
-		return $ao_validator;
+		return $validator;
 	}
 
 
 	/**
 	 * Returns a RulesChecker object after modifying the one that was supplied.
 	 *
-	 * @param BaseRulesChecker $ao_rules The rules object to be modified.
-	 * @param RulesChecker|BaseRulesChecker $ao_rules The rules object to be modified.
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+	 * @param BaseRulesChecker $rules The rules object to be modified.
+	 * @param RulesChecker|BaseRulesChecker $rules The rules object to be modified.
 	 */
-	public function buildRules(RulesChecker|BaseRulesChecker $ao_rules): RulesChecker {
-		$ao_rules->add($ao_rules->existsIn('contentTemplateId', 'ContentTemplates'), 'contentTemplateExists', [
+	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
+		$rules->add($rules->existsIn('contentTemplateId', 'ContentTemplates'), 'contentTemplateExists', [
 			'errorField' => 'contentTemplateId',
 			'message' => __df($this->getI18nDomain(), 'validation', 'error_content_template_exists'),
 		]);
 
 
-		$ao_rules->add($ao_rules->existsIn('contentAreaId', 'ContentAreas'), 'contentAreaExists', [
+		$rules->add($rules->existsIn('contentAreaId', 'ContentAreas'), 'contentAreaExists', [
 			'errorField' => 'contentAreaId',
 			'message' => __df($this->getI18nDomain(), 'validation', 'error_content_area_exists'),
 		]);
 
 
-		$ao_rules->add($ao_rules->existsIn('pageTemplateId', 'PageTemplates'), 'pageTemplateExists', [
+		$rules->add($rules->existsIn('pageTemplateId', 'PageTemplates'), 'pageTemplateExists', [
 			'errorField' => 'pageTemplateId',
 			'message' => __df($this->getI18nDomain(), 'validation', 'error_page_template_exists'),
 		]);
 
 
-		$ao_rules->add(function (ContentTemplateContentArea $ao_entity/*, array $aa_options*/): bool {
+		$rules->add(function (ContentTemplateContentArea $entity/*, array $options*/): bool {
 			/** @var \Awyiss\Model\Table\PageTemplateContentAreasTable $lo_pageTemplateContentAreasTable */
 			$lo_pageTemplateContentAreasTable = FactoryLocator::get('Table')->get('PageTemplateContentAreas');
 
 
 			return (bool)$lo_pageTemplateContentAreasTable->find()->where([
-				'page_template_id' => $ao_entity->pageTemplateId,
-				'content_area_id' => $ao_entity->contentAreaId,
+				'page_template_id' => $entity->pageTemplateId,
+				'content_area_id' => $entity->contentAreaId,
 			])->first();
 		}, 'contentTemplateContentAreas', [
 			'errorField' => '_general',
@@ -143,6 +141,6 @@ class ContentTemplateContentAreasTable extends Table {
 		]);
 
 
-		return $ao_rules;
+		return $rules;
 	}
 }

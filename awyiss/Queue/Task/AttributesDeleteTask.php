@@ -35,10 +35,9 @@ class AttributesDeleteTask extends Task/* implements AddInterface*/ {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function run(array $aa_data, int $ai_jobId): void {
-		$ls_attributesTable = 'attributes_' . $aa_data['identifier'];
+	public function run(array $data, int $jobId): void {
+		$ls_attributesTable = 'attributes_' . $data['identifier'];
 
 		$ls_tableFile = ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Table' . DS . Inflector::camelize($ls_attributesTable) . 'Table.php';
 		$ls_entityFile = ROOT . DS . CUSTOM_DIR . DS . 'Model' . DS . 'Entity' . DS . Inflector::classify($ls_attributesTable) . '.php';
@@ -60,10 +59,10 @@ class AttributesDeleteTask extends Task/* implements AddInterface*/ {
 		//Update all records
 		$lo_attributesTable->updateAll([
 			'deleted' => true,
-			'deleted_by' => $aa_data['identityId'],
+			'deleted_by' => $data['identityId'],
 			'deleted_on' => DateTime::now(),
 		], [
-			'scope' => Inflector::tableize($aa_data['identifier']),
+			'scope' => Inflector::tableize($data['identifier']),
 		]);
 
 

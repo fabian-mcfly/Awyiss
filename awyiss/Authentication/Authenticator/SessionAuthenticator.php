@@ -32,13 +32,12 @@ class SessionAuthenticator extends BaseSessionAuthenticator {
 	 * and to use `reidentify`-method on `\Awyiss\Authentication\Identifier\IdentifierCollection::reidentify()`
 	 *
 	 * @see \Awyiss\Authentication\Identifier\IdentifierCollection::reidentify
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 * @noinspection PhpMissingParentCallCommonInspection
 	 */
-	public function authenticate(ServerRequestInterface $ao_request): ResultInterface {
+	public function authenticate(ServerRequestInterface $request): ResultInterface {
 		$ls_sessionKey = $this->getConfig('sessionKey');
 		/** @var \Cake\Http\Session $lo_session */
-		$lo_session = $ao_request->getAttribute('session');
+		$lo_session = $request->getAttribute('session');
 		/** @var \Awyiss\Model\Entity\User|\Awyiss\Model\Entity\UsersExternal $lo_user */
 		$lo_user = $lo_session->read($ls_sessionKey);
 
