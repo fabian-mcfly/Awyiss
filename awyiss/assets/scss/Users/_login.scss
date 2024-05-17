@@ -90,7 +90,7 @@
 			margin:0;
 			background-color:var(--colorBright);
 			border-radius:0 5px 5px 0;
-			padding:calc(40px + 2.5rem + var(--lineHeightMain)) 40px 40px 40px;
+			padding:40px;
 			font-size:0;
 			line-height:0;
 			position:relative;
@@ -115,19 +115,8 @@
 			background-color:transparent;
 			position:static;
 
-			legend {
-				padding:0;
-				background-image:none;
-				background-color:transparent;
-				box-shadow:none;
-				//noinspection CssNoGenericFontName
-				font-family:var(--fontStackHeading);
-				font-size:2.5rem;
-				line-height:1;
-				color:var(--colorText);
-				top:40px;
-				bottom:auto;
-				left:40px;
+			h1 {
+				margin-bottom:var(--lineHeightMain);
 			}
 		}
 
