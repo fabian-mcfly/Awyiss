@@ -39,6 +39,12 @@
 			display:none;
 		}
 
+		&.MenuItem-System {
+			ul.Level3 {
+				display:none;
+			}
+		}
+
 		&:last-child {
 			margin-right:0;
 			border-right-width:0;
