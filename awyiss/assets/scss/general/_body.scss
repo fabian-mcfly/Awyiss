@@ -15,7 +15,7 @@
 
 	.Overview {
 		.ButtonArea {
-			margin-bottom:calc(var(--lineHeightMain) * 2);
+			margin-bottom:calc(var(--lineHeightMain) * 1);
 
 			&.CannotMoveUpwards {
 				margin-bottom:var(--lineHeightMain);
@@ -88,7 +88,7 @@ fieldset {
 
 .Overview-List,
 .Overview-Table {
-	margin-top:calc(var(--lineHeightMain) * -1);
+	//margin-top:calc(var(--lineHeightMain) * -1);
 	grid-column:1 / -1;
 }
 
@@ -96,7 +96,7 @@ fieldset {
 	grid-column:1 / -1;
 
 	&:not(:has(> legend)) {
-		margin-top:calc(var(--lineHeightMain) * -1);
+		//margin-top:calc(var(--lineHeightMain) * -1);
 	}
 
 	&:not(:has(*)) {
@@ -296,7 +296,7 @@ legend {
 		content:'';
 		height:10px;
 		border-radius:50%;
-		box-shadow:0 0 15px var(--colorInfo);
+		box-shadow:0 0 15px 1px var(--colorInfo);
 		//noinspection CssInvalidPropertyValue
 		mix-blend-mode:plus-lighter;
 		position:absolute;

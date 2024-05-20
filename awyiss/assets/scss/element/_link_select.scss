@@ -110,7 +110,7 @@
 			content:'';
 			height:10px;
 			border-radius:50%;
-			box-shadow:0 0 15px var(--colorInfo);
+			box-shadow:0 0 15px 1px var(--colorInfo);
 			//noinspection CssInvalidPropertyValue
 			mix-blend-mode:plus-lighter;
 			position:absolute;
@@ -159,7 +159,7 @@
 		.🌚 & {
 			box-shadow:0 0 10px 0 rgba(0, 0, 0, .4);
 			background-color:var(--backgroundColor);
-			scrollbar-color:var(--colorSemiDark) var(--colorDark);
+			scrollbar-color:var(--colorDark) var(--colorBackgroundContentDarkMode-Lightened-10);
 		}
 
 		.ButtonArea-Bottom & {

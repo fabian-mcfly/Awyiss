@@ -264,6 +264,10 @@ textarea {
 			font-size:0;
 			line-height:0;
 
+			.Scale-Small & {
+				width:100%;
+			}
+
 			&::after {
 				width:24px;
 				height:24px;
@@ -681,6 +685,10 @@ textarea {
 				text-indent:-5px;
 				vertical-align:-6px;
 				transform:translateY(-1px);
+
+				.Scale-Small & {
+					vertical-align:-7px;
+				}
 			}
 
 			.Hover {

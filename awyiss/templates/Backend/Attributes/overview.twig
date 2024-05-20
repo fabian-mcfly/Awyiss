@@ -51,8 +51,10 @@
 		{% block fieldsetsOverview %}
 			{% for fieldset in availableFieldsets %}
 				{% block fieldsetOverview %}
-					<fieldset class="Fieldset-Fieldset Fieldset-Fieldset-{{ fieldset|camelize }}">
-						<legend>{{ __('fieldset_' ~ fieldset) }}</legend>
+					<fieldset class="Overview-Fieldset Overview-Fieldset-{{ (fieldset ?: 'undefined')|camelize }}">
+						{% if fieldset is not empty %}
+							<legend>{{ __('fieldset_' ~ fieldset) }}</legend>
+						{% endif %}
 
 						{% block fieldsetOverviewInner %}
 							{% block listOverview %}

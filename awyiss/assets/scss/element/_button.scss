@@ -25,7 +25,7 @@ button,
 	transition:background-color .3s linear, outline-color .1s ease-in-out;
 
 	.Scale-Small & {
-		padding-block:7px;
+		padding-block:7px 6px;
 	}
 
 	.🌚 & {
@@ -160,7 +160,7 @@ button,
 			transform:translateY(0);
 
 			.Scale-Small & {
-				transform:translateY(1px);
+				//transform:translateY(.5px);
 			}
 		}
 	}

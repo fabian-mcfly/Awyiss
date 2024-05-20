@@ -372,6 +372,12 @@
 		padding:10px;
 	}
 
+	.TableCell-AuditInfo {
+		.Scale-Small & {
+			padding-block:0;
+		}
+	}
+
 	.TableHeader-Id,
 	.TableCell-Id {
 		width:100px;
@@ -391,6 +397,12 @@
 
 		.Scale-Small & {
 			width:calc(11rem + 40px);
+		}
+	}
+
+	.TableCell-Actions {
+		.Scale-Small & {
+			padding-block:4px;
 		}
 	}
 
