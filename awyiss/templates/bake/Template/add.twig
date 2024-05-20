@@ -15,17 +15,25 @@
 
 	{% verbatim %}{{{% endverbatim %} FormHelper.create({{ singularVar }}, {method: 'post', idPrefix: '{{ singularVar }}'}) {% verbatim %}}}{% endverbatim %}
 
-	{% verbatim %}{% block formAddButtons %}
-		{{ FormHelper.button(__('save')) }}
-		{{ FormHelper.button(__('save_close'), {name: 'submit', value: 'submit_close'}) }}
+	{% verbatim %}{% block buttonArea %}
+		<div class="ButtonArea">
+			{% block formAddButtons %}
+				{{ FormHelper.button(__('save'), {class: 'Button Button-Success Button-Save'}) }}
+				{% if AuthorizationHelper.isAccessible('read') %}
+					{{ FormHelper.button(__('save_close'), {class: 'Button Button-SaveClose', name: 'submit', value: 'submit_close'}) }}
+				{% endif %}
+			{% endblock %}
+		</div>
 	{% endblock %}{% endverbatim %}
 
 	{% verbatim %}{% block formAdd %}
 		{% include('@Backend/{% endverbatim %}{{ modelClass }}{% verbatim %}/form.twig') %}
 	{% endblock %}
 
-	{% block formAddButtonsBottom %}
-		{{ block('formAddButtons') }}
+	{% block buttonAreaBottom %}
+		<div class="ButtonArea ButtonArea-Bottom">
+			{{ block('formAddButtons') }}
+		</div>
 	{% endblock %}
 
 	{{ FormHelper.end() }}{% endverbatim %}

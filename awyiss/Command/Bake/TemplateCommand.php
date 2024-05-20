@@ -128,7 +128,7 @@ class TemplateCommand extends BaseTemplateCommand {
 		$lo_renderer->set('indexColumns', $li_indexColumns);
 
 
-		return $lo_renderer->generate('Template/' . $action);
+		return $lo_renderer->generate('template/' . $action);
 	}
 
 

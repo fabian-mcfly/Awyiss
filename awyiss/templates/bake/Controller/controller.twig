@@ -14,6 +14,7 @@
 namespace {{ namespace }}\Controller{{ prefix }};
 
 
+use Awyiss\Annotation\NoDirectAccess;
 {% if prefix and prefix == '\\Backend' %}
 use {{ baseNamespace }}\Controller\BackendController as Controller;
 {% elseif plugin %}
@@ -25,6 +26,7 @@ use {{ baseNamespace }}\Model\Entity\{{ entityClassName }};
 use Awyiss\Routing\Router;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
+use Cake\ORM\Query\SelectQuery;
 
 
 /**
@@ -60,10 +62,18 @@ class {{ name }}Controller extends Controller {
 		$this->viewBuilder()->setHelpers({{ Bake.exportArray(helpers)|raw }});
 {% endif %}
 	}
-{% if actions|length %}{{ "\n" }}{% endif %}
+
 {% endif %}
+	/**
+	 * @inheritDoc
+	 */
+	#[NoDirectAccess]
+	public function getOverviewQuery(): ?SelectQuery {
+		return $this->{{ name }}->find()->where($this->getOverviewWhere());
+	}
+{% if actions|length %}{{ "\n\n" }}{% endif %}
 {%- for action in actions %}
-	{% if loop.index > 1 %}{{ "\n" }}{% endif %}
+	{% if loop.index > 1 %}{{ "\n\n" }}{% endif %}
 	{{- element('Controller/' ~ action) -}}
 {% endfor %}
 }

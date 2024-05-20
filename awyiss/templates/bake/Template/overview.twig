@@ -9,95 +9,24 @@
 		<h1>{{ __('headline_overview') }}</h1>
 	{% endblock %}{% endverbatim %}
 
-	{% verbatim %}{% block buttonsOverview %}
+	{% verbatim %}{% block buttonArea %}
 		<div class="ButtonArea">
-			{% if AuthorizationHelper.isAccessible('create') %}
-				{{ HtmlHelper.link(__('create'), {action: 'add'}, {class: 'Button'}) }}
-			{% endif %}
+			{% block buttonsOverview %}
+				{% if AuthorizationHelper.isAccessible('create') %}
+					{{ HtmlHelper.link(__('create'), {action: 'add'}, {class : 'Button Button-Add'}) }}
+				{% endif %}
+			{% endblock %}
 		</div>
-	{% endblock %}{% endverbatim %}
+	{% endblock %}
 
-	{% verbatim %}{% block tableOverview %}{% endverbatim %}
-		<table>
-			{% verbatim %}{% block tableOverviewHead %}{% endverbatim %}
-				<thead>
-					{% verbatim %}{% block tableOverviewHeadRow %}{% endverbatim %}
-						<tr>
-{% for field in fields %}
-{% if field not in ['system_order', 'deleted', 'created_on', 'created_by', 'changed_on', 'changed_by', 'deleted_on', 'deleted_by'] %}
-							{% verbatim %}{% block tableOverviewHeader{% endverbatim %}{{ field|camelize }}{% verbatim %} %}{% endverbatim %}
-								<th>{% verbatim %}{{ PaginatorHelper.sort('{% endverbatim %}{{ field }}{% verbatim %}') }}{% endverbatim %}</th>
-							{% verbatim %}{% endblock %}{% endverbatim %}
+	{% block paginatedOverview %}
+		{% include '@Backend/element/overview/overview_paginated_list.twig' with _context|merge({records: {% endverbatim %}{{ pluralVar }}{% verbatim %}.items().toArray()}) %}
+	{% endblock %}
 
-{% endif %}
-{% endfor %}
-							{% verbatim %}{% block tableOverviewHeaderActions %}{% endverbatim %}
-								<th class="actions"></th>
-							{% verbatim %}{% endblock %}{% endverbatim %}
-						</tr>
-					{% verbatim %}{% endblock %}{% endverbatim %}
-				</thead>
-			{% verbatim %}{% endblock %}{% endverbatim %}
-			{% verbatim %}{% block tableOverviewBody %}{% endverbatim %}
-				<tbody>
-					{% verbatim %}{#{% endverbatim %} @var {{ singularVar }} \{{ entityClass }} {% verbatim %}#}{% endverbatim %}
-					{% verbatim %}{% for {% endverbatim %}{{ singularVar }}{% verbatim %} in {% endverbatim %}{{ pluralVar }}{% verbatim %} %}{% endverbatim %}
-						{% verbatim %}{% block tableOverviewBodyRow %}{% endverbatim %}
-							<tr>
-{% for field in fields %}
-{% if field not in ['system_order', 'deleted', 'created_on', 'created_by', 'changed_on', 'changed_by', 'deleted_on', 'deleted_by'] %}
-								{% verbatim %}{% block tableOverviewCell{% endverbatim %}{{ field|camelize }}{% verbatim %} %}{% endverbatim %}
-{% set isKey = false %}
-{% if associations.BelongsTo is defined %}
-{% for alias, details in associations.BelongsTo %}
-{% if field == details.foreignKey %}
-{% set isKey = true %}
-									<td>
-										{% verbatim %}{% if {% endverbatim %}{{ singularVar }}{% verbatim %}.has('{% endverbatim %}{{ details.property }}{% verbatim %}') %}{% endverbatim %}
-											{% verbatim %}{{ HtmlHelper.link({% endverbatim %}{{ singularVar ~ '.' ~ details.property ~ '.' ~ details.displayField }}{% verbatim %}, {controller: '{% endverbatim %}{{ details.controller }}{% verbatim %}', action: 'view', id: {% endverbatim %}{{ singularVar ~ '.' ~ details.property ~ '.' ~ details.primaryKey[0] }}{% verbatim %}}) }}{% endverbatim %}
-										{% verbatim %}{% endif %}{% endverbatim %}
-									</td>
-{% endif %}
-{% endfor %}
-{% endif %}
-{% if isKey is not same as(true) %}
-{% set columnData = Bake.columnData(field, schema) %}
-{% if columnData.type in ['integer', 'float', 'decimal', 'biginteger', 'smallinteger', 'tinyinteger'] %}
-									<td>{% verbatim %}{{ helper_Number_format({% endverbatim %}{{ singularVar ~ '.' ~ field }}{% verbatim %}) }}{% endverbatim %}</td>
-{% elseif columnData.type in ['json'] %}
-									<td>{% verbatim %}{{ {% endverbatim %}{{ singularVar }}.{{ field }}{% verbatim %}|join(', ') }}{% endverbatim %}</td>
-{% else %}
-									<td>{% verbatim %}{{ {% endverbatim %}{{ singularVar }}.{{ field }} {% verbatim %}}}{% endverbatim %}</td>
-{% endif %}
-{% endif %}
-								{% verbatim %}{% endblock %}{% endverbatim %}
-
-{% endif %}
-{% endfor %}
-{% set pk = 'singularVar ~ '.' ~ primaryKey[0] %}
-								{% verbatim %}{% block tableOverviewCellActions %}{% endverbatim %}
-									<td class="actions">
-										{% verbatim %}{% if AuthorizationHelper.isAccessible('update') %}
-											{{ HtmlHelper.link(__('edit'), {action: 'edit', id: {% endverbatim %}{{ pk }}{% verbatim %}}) }}
-										{% endif %}
-										{% if AuthorizationHelper.isAccessible('delete') %}
-											{{ HtmlHelper.link(__('delete'), {action: 'delete', id: {% endverbatim %}{{ pk }}{% verbatim %}}, {
-				class: 'Button Button-Small Button-Delete',
-				'data-confirm-title': __('confirm_delete_title'),
-				'data-confirm-yes': __('confirm_delete_yes'),
-				'data-confirm-yes-class': 'Button-Delete',
-				'data-confirm-no': __('confirm_delete_no'),
-				'data-confirm': __('confirm_delete', {% endverbatim %}{{ pk }}{% verbatim %}) }) }}
-										{% endif %}{% endverbatim %}
-									</td>
-								{% verbatim %}{% endblock %}{% endverbatim %}
-							</tr>
-						{% verbatim %}{% endblock %}{% endverbatim %}
-					{% verbatim %}{% endfor %}{% endverbatim %}
-				</tbody>
-			{% verbatim %}{% endblock %}{% endverbatim %}
-		</table>
-	{% verbatim %}{% endblock %}{% endverbatim %}
-
-	{% verbatim %}{{ PaginatorHelper.render() }}{% endverbatim %}
+	{% block buttonAreaBottom %}
+		<div class="ButtonArea ButtonArea-Bottom">
+			{{ block('buttonsOverview') }}
+		</div>
+	{% endblock %}
+	{% endverbatim %}
 </div>
