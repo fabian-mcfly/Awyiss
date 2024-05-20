@@ -28,18 +28,6 @@ class Datatable extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected array $_accessible = [
-		'title' => true,
-		'identifier' => true,
-		'active' => true,
-	];
-	/**
-	 * Entity to be passed to the validation of attributes
-	 */
-	protected ?Entity $entity = null;
-	/**
-	 * @inheritDoc
-	 */
 	protected static array $fieldMap = [
 		'created_by' => 'createdBy',
 		'created_on' => 'createdOn',
@@ -47,6 +35,16 @@ class Datatable extends Entity {
 		'changed_on' => 'changedOn',
 		'deleted_by' => 'deletedBy',
 		'deleted_on' => 'deletedOn',
+	];
+
+
+	/**
+	 * @inheritDoc
+	 */
+	protected array $_accessible = [
+		'title' => true,
+		'identifier' => true,
+		'active' => true,
 	];
 
 

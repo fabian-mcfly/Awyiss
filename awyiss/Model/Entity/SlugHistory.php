@@ -24,19 +24,6 @@ class SlugHistory extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected array $_accessible = [
-		'slug' => true,
-		'pageId' => true,
-	];
-	/**
-	 * Entity to be passed to the validation of attributes
-	 */
-	protected ?Entity $entity = null;
-
-
-	/**
-	 * @inheritDoc
-	 */
 	protected static array $fieldMap = [
 		'page_id' => 'pageId',
 		'created_by' => 'createdBy',
@@ -45,5 +32,14 @@ class SlugHistory extends Entity {
 		'changed_on' => 'changedOn',
 		'deleted_by' => 'deletedBy',
 		'deleted_on' => 'deletedOn',
+	];
+
+
+	/**
+	 * @inheritDoc
+	 */
+	protected array $_accessible = [
+		'slug' => true,
+		'pageId' => true,
 	];
 }

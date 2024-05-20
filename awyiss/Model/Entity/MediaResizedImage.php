@@ -35,18 +35,6 @@ class MediaResizedImage extends Entity {
 		'strategy' => true,
 		'status' => true,
 	];
-	/**
-	 * Entity to be passed to the validation of attributes
-	 */
-	protected ?Entity $entity = null;
-
-
-	/**
-	 * @inheritDoc
-	 */
-	protected static array $fieldMap = [
-		'media_id' => 'mediaId',
-	];
 
 
 	/**

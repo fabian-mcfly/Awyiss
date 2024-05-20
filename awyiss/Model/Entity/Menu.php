@@ -29,14 +29,6 @@ class Menu extends Entity {
 	/**
 	 * @inheritDoc
 	 */
-	protected array $_accessible = [
-		'title' => true,
-		'identifier' => true,
-		'active' => true,
-	];
-	/**
-	 * @inheritDoc
-	 */
 	protected static array $fieldMap = [
 		'created_by' => 'createdBy',
 		'created_on' => 'createdOn',
@@ -46,6 +38,16 @@ class Menu extends Entity {
 		'deleted_on' => 'deletedOn',
 		'menu_entries' => 'menuEntries',
 		'all_menu_entries' => 'allMenuEntries',
+	];
+
+
+	/**
+	 * @inheritDoc
+	 */
+	protected array $_accessible = [
+		'title' => true,
+		'identifier' => true,
+		'active' => true,
 	];
 
 
