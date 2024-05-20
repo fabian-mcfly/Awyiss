@@ -44,9 +44,20 @@ export default class ResizableContents {
 	/**
 	 * The list items min width threshold to be considered narrow.
 	 * Narrow items will have a class "Narrow" added and be styled accordingly.
+	 * This class restores a minimum width to the item, removes the indent.
+	 *
+	 * Narrow items will also have only narrow children.
+	 *
 	 * @type {number}
 	 */
-	narrowWidthThreshold = 285;
+	narrowWidthThreshold = 250;
+	/**
+	 * The list items min width threshold to be considered risky narrow.
+	 * Risky narrow items will only have narrow children.
+	 *
+	 * @type {number}
+	 */
+	narrowWidthRiskyThreshold = 350;
 	/**
 	 * @property {string} selector - The selector for the nested list.
 	 */
@@ -318,16 +329,26 @@ export default class ResizableContents {
 
 		// Check if the element is narrow
 		const isNarrow = element.offsetWidth < this.narrowWidthThreshold;
+		const isRiskyNarrow = element.offsetWidth < this.narrowWidthRiskyThreshold;
 
 		// Add the class "Narrow" to the element if it is narrow
-		if (isNarrow) {
-			element.classList.add('Narrow');
-		}
+		if (isNarrow || isRiskyNarrow) {
+			if (isNarrow) {
+				element.classList.add('Narrow');
+			}
 
-		// Trigger the narrow class on all nested children
-		const nestedItems = element.querySelectorAll(`:scope > ${this.selector} > .ListItem`);
-		nestedItems.forEach(nestedItem => {
-			this.setNarrowClass(nestedItem);
-		});
+			// Force the narrow class on all nested children
+			const nestedItems = element.querySelectorAll(`:scope ${this.selector} > .ListItem`);
+			nestedItems.forEach(nestedItem => {
+				nestedItem.classList.add('Narrow');
+			});
+		}
+		else {
+			// Calculate the narrow class on all nested children
+			const nestedItems = element.querySelectorAll(`:scope > ${this.selector} > .ListItem`);
+			nestedItems.forEach(nestedItem => {
+				this.setNarrowClass(nestedItem);
+			});
+		}
 	}
 }
