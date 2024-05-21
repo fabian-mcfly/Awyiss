@@ -55,6 +55,10 @@ class TemplateCommand extends BaseTemplateCommand {
 
 		$la_vars = $this->_loadController($io);
 
+		if ($args->getOption('prefix') === 'Frontend') {
+			return static::CODE_SUCCESS;
+		}
+
 		try {
 			$ls_content = $this->getContent($args, $io, 'form', $la_vars);
 			$this->bake($args, $io, 'form', $ls_content);
