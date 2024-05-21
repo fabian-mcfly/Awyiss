@@ -102,6 +102,11 @@ export default class TranslatableTexts {
 	 * @param {HTMLElement} element - The element to add the translate-button to.
 	 */
 	addTranslateButton(element) {
+		const oldButton = element.parentElement.querySelector('.ShowTranslationDialog');
+		if (oldButton) {
+			oldButton.remove();
+		}
+
 		// Create a new button element
 		const button = document.createElement('button');
 		button.classList.add('Button', 'Button-Medium', this.buttonClass);
@@ -130,7 +135,7 @@ export default class TranslatableTexts {
 		const form = element.closest('form');
 
 		// If the element is not enclosed within a form, exit the function early
-		if (!form) {
+		if (!form || form.submitListenerAdded) {
 			return;
 		}
 
@@ -183,6 +188,8 @@ export default class TranslatableTexts {
 				form.reportValidity();
 			}
 		}, form);
+
+		form.submitListenerAdded = true;
 	}
 
 	/**
@@ -298,6 +305,9 @@ export default class TranslatableTexts {
 				// Add a listener to the form submit event for the child element
 				this.addFormSubmitListener(childElement);
 			});
+
+			// Get all elements with the TranslatableTexts class
+			this.elements = Array.from(document.querySelectorAll(this.elementSelector));
 		});
 	}
 }
