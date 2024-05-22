@@ -215,7 +215,10 @@ class FormHelper extends BaseFormHelper {
 		$ls_association = '';
 		$ls_fieldName = $fieldName;
 		if (str_contains($ls_fieldName, '.')) {
-			[$ls_association, $ls_fieldName] = explode('.', $ls_fieldName);
+			$la_parts = explode('.', $ls_fieldName);
+			$ls_fieldName = array_pop($la_parts);
+
+			$ls_association = implode('.', $la_parts);
 			$ls_association .= '.';
 		}
 
@@ -391,17 +394,18 @@ class FormHelper extends BaseFormHelper {
 			return '';
 		}
 
-		if (!str_contains($ls_field, '.')) {
+		if (!str_contains($ls_field, '.') || $lo_context->error($ls_field)) {
 			$la_error = $lo_context->error($ls_field);
 		}
 		else {
 			$la_parts = explode('.', $ls_field);
 			$ls_field = array_pop($la_parts);
-			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+			/** @var \Awyiss\Model\Entity $lo_entity */
 			$lo_entity = $lo_context->entity();
-			$lo_associatedEntity = $lo_entity->get($la_parts[0]);
+			$lo_associatedEntity = $lo_entity->get(implode('.', $la_parts));
 
 			if (!$lo_associatedEntity instanceof EntityInterface) {
+
 				return '';
 			}
 
