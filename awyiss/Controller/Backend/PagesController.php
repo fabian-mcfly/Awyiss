@@ -585,6 +585,9 @@ class PagesController extends Controller {
 			$lo_parentRecord = $this->Pages->find('all', skipPageRoleCheck: true)->where(['id' => $page->parentId])->first();
 		}
 
+		$lo_pageTemplates = $this->getPageTemplates();
+		$this->ensurePossibleTemplate($page, $lo_pageTemplates);
+
 		$this->set([
 			'page' => $page,
 			'pageTemplates' => $lo_pageTemplates,
@@ -721,6 +724,35 @@ class PagesController extends Controller {
 
 
 		return $lo_entities->nest('tempId', 'tempParentId', 'child' . $ls_pageRole);
+	}
+
+
+	/**
+	 * @param Page $page
+	 * @param CollectionInterface $pageTemplates
+	 * @return void
+	 */
+	protected function ensurePossibleTemplate(Page $page, CollectionInterface $pageTemplates): void {
+		if (!$page->pageTemplateId || !$pageTemplates->firstMatch(['id' => $page->pageTemplateId])) {
+			$la_errors = $page->getError('pageTemplateId');
+
+			$page->pageTemplate = $pageTemplates->first();
+			$page->pageTemplateId = $page->pageTemplate?->id;
+
+			if ($la_errors) {
+				$page->setError('pageTemplateId', $la_errors);
+			}
+		}
+		elseif (!$page->pageTemplate) {
+			$page->pageTemplate = $pageTemplates->firstMatch(['id' => $page->pageTemplateId]);
+		}
+
+		$lo_request = $this->getRequest();
+		//When page_template_id is part of the request data, overwrite it since it might be outdated
+		if ($lo_request->getData('page_template_id') !== null) {
+			$lo_request = $lo_request->withData('page_template_id', $page->pageTemplateId);
+			$this->setRequest($lo_request);
+		}
 	}
 
 
