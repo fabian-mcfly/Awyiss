@@ -53,14 +53,15 @@
 			{% block fieldsetOverview %}
 				{% if pageTemplatesGroupdByPageRole[ pageRoleId ] is defined or selectedPageRoleId == 'all' or selectedPageRoleId == pageRoleId %}
 					<fieldset class="Overview-Fieldset">
+						<legend>
+							{% if AuthorizationHelper.scopeIsAccessible('PageRoles', [], ['read']) %}
+								{{ HtmlHelper.link(pageRole, {controller: 'PageRoles', action: 'edit', id: pageRoleId}) }}
+							{% else %}
+								{{ pageRole }}
+							{% endif %}
+						</legend>
+
 						{% block fieldsetOverviewInner %}
-							<legend>
-								{% if AuthorizationHelper.scopeIsAccessible('PageRoles', [], ['read']) %}
-									{{ HtmlHelper.link(pageRole, {controller: 'PageRoles', action: 'edit', id: pageRoleId}) }}
-								{% else %}
-									{{ pageRole }}
-								{% endif %}
-							</legend>
 							{% block listOverview %}
 								{% from '@Backend/macro/nested_list.twig' import nestedList %}
 								{{ nestedList(pageTemplatesGroupdByPageRole[ pageRoleId ], _context|merge({

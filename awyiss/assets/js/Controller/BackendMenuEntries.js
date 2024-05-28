@@ -39,7 +39,7 @@ export default class BackendMenuEntriesController {
 	/**
 	 * Initialize the overview related functionality.
 	 */
-	initOverlay() {
+	initOverview() {
 		window.nestedListHandler.getOrder = this.getNestedListOrder;
 	}
 

@@ -12,7 +12,7 @@ msgstr ""
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
 msgid "meta_title_overview"
-msgstr "Menü"
+msgstr "Menüs"
 
 msgid "meta_title_add"
 msgstr "Menü hinzufügen"

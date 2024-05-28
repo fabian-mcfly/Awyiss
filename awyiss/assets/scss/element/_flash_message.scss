@@ -60,6 +60,6 @@
 
 	+ .Form,
 	+ .Overview {
-		margin-top:calc(var(--lineHeightMain) * 2);
+		margin-top:var(--lineHeightMain);
 	}
 }

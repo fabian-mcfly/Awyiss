@@ -86,6 +86,10 @@ class Configuration {
 			'limit' => null,
 			'null' => true,
 		])->create();
+
+		$this->migration->table('configuration')
+		->changeComment('Do not alter values in scope, identifier, type and/or required')
+		->save();
 	}
 
 

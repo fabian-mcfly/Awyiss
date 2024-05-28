@@ -154,6 +154,10 @@ class Attributes  {
 				'name' => 'scope',
 			]
 		)->create();
+
+		$this->migration->table('configuration')
+		->changeComment('Changing data in here has no immediate effect due to caching (customer/config/awyiss.php)')
+		->save();
 	}
 
 

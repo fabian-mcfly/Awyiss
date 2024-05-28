@@ -27,6 +27,10 @@
 	right:1px;
 	bottom:1px;
 
+	.🌚 & {
+		background-color:var(--backgroundColor);
+	}
+
 	.Scale-Small & {
 		padding-block:0;
 	}
