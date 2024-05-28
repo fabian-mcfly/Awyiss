@@ -99,12 +99,12 @@ export default class InputListManager {
 				filter: '.Button-Add, .Label',
 				ghostClass: 'SortableGhost',
 				handle: '.SortableHandle',
-				onEnd: function () {
+				/*onEnd: function () {
 					// Get the first input in the element
-					const firstInput = formInput.querySelector('input');
+					const firstInput = formInput.querySelector('input, select');
 					// Trigger an input event on the first input
 					firstInput.dispatchEvent(new Event('input', {bubbles: true}));
-				},
+				},*/
 			});
 		});
 	}
@@ -170,16 +170,56 @@ export default class InputListManager {
 		const newRow = lastRow.cloneNode(true);
 
 		// Get all inputs in the new row
-		const inputs = newRow.querySelectorAll('input');
+		const inputs = newRow.querySelectorAll('input, select, textarea');
 
+		let newIndex = 0;
 		// Clear the input values in the new row and update their names
 		inputs.forEach((input) => {
-			input.value = '';
+			// If the input is not hidden, clear the value
+			if (input.type !== 'hidden') {
+				input.value = '';
+			}
+
 			const name = input.name;
+
+			// If the name contains "[_translations]", remove the placeholder
+			if (name.includes('[_translations]')) {
+				input.placeholder = '';
+			}
+
 			//noinspection RegExpRedundantEscape
-			const newIndex = parseInt(name.match(/\[(\d+)\]/)[1], 10) + 1;
+			newIndex = parseInt(name.match(/\[(\d+)\]/)[1], 10) + 1;
 			//noinspection RegExpRedundantEscape
 			input.name = name.replace(/\[\d+\]/, `[${newIndex}]`);
+		});
+
+		const formElements = newRow.querySelectorAll('.FormInput');
+
+		formElements.forEach((formElement) => {
+			// Get the class name that starts with "FormInputName"
+			const className = Array.from(formElement.classList).find(name => name.startsWith("FormInputName"));
+
+			// Check if the class contains a number prefixed by a hyphen and followed by a hyphen
+			if (className.match(/-\d+-/)) {
+				// Replace the number with the new index
+				const newClassName = className.replace(/-\d+-/, `-${newIndex}-`);
+
+				// Replace the class name
+				formElement.classList.replace(className, newClassName);
+			}
+
+			// Find ids and for attributes that also contain a number separated by a hyphen in all children
+			const ids = formElement.querySelectorAll('[id]');
+			ids.forEach((id) => {
+				// Replace the number with the new index
+				id.id = id.id.replace(/-\d+-/, `-${newIndex}-`);
+			});
+
+			const fors = formElement.querySelectorAll('[for]');
+			fors.forEach((forElement) => {
+				// Replace the number with the new index
+				forElement.htmlFor = forElement.htmlFor.replace(/-\d+-/, `-${newIndex}-`);
+			});
 		});
 
 		// Find the remove button in the new row
@@ -191,7 +231,7 @@ export default class InputListManager {
 		formInput.insertBefore(newRow, button);
 
 		// Trigger an input event on the first input in the first new input
-		inputs[0].dispatchEvent(new Event('input', {bubbles: true}));
+		//inputs[0].dispatchEvent(new Event('input', {bubbles: true}));
 	}
 
 	/**
@@ -211,8 +251,8 @@ export default class InputListManager {
 		const rows = formInput.querySelectorAll(`.${this.elementClass}`);
 
 		// Get the first row input and trigger an input event
-		const firstInput = formInput.querySelector('input');
-		firstInput.dispatchEvent(new Event('input', {bubbles: true}));
+		//const firstInput = formInput.querySelector('input, select');
+		//firstInput.dispatchEvent(new Event('input', {bubbles: true}));
 
 		button.parentElement.remove();
 

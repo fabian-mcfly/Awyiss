@@ -154,3 +154,12 @@ msgstr "Zum Hochladen hier ablegen"
 
 msgid "media_folder_global"
 msgstr "Global"
+
+msgid "select_file"
+msgstr "Datei auswählen"
+
+msgid "remove_file"
+msgstr "Datei entfernen"
+
+msgid "use_files"
+msgstr "Datei(en) verwenden"

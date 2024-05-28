@@ -2,6 +2,7 @@
 
 import NestedListHandler from 'NestedListHandler';
 import Crop from 'Media/Crop';
+import Selectors from 'Media/Selectors';
 import Sortable from 'Media/Sortable';
 import Upload from 'Media/Upload';
 import {Sortable as SortableJS} from '../../SortableJS/sortable.core.esm.js';
@@ -39,6 +40,13 @@ export default class Overlay {
 	 * @type {HTMLElement}
 	 */
 	mediaList;
+	/**
+	 * The element that opened the overlay.
+	 * Will receive the selected media item when clicking on the use button.
+	 *
+	 * @type {HTMLElement|null}
+	 */
+	opener = null;
 
 	/**
 	 * Initialize the media overlay.
@@ -55,6 +63,10 @@ export default class Overlay {
 		for (const link of links) {
 			this.eventHandler.add('click', this.openOverlay.bind(this), link);
 		}
+
+		// Initialize the selectors
+		this.selectors = new Selectors();
+		this.selectors.overlay = this;
 	}
 
 	/**
@@ -62,10 +74,12 @@ export default class Overlay {
 	 * When the close button is clicked, the overlay will be hidden.
 	 */
 	bindCloseButton() {
+		this.closeButton = this.element.querySelector('.Button-Close');
+
 		// Bind a click event to the close button
 		window.eventHandler.add('click', () => {
 			this.element.classList.remove('Visible');
-		}, this.element.querySelector('.Button-Close'));
+		}, this.closeButton);
 	}
 
 	/**
@@ -131,6 +145,7 @@ export default class Overlay {
 		this.bindFolderListItemClick();
 
 		this.eventHandler.add('click', this.handleMediaItemClick.bind(this), this.mediaList);
+		this.eventHandler.add('dblclick', this.handleMediaItemDoubleClick.bind(this), this.mediaList);
 
 		this.bindOverlayFormLoadedEvent();
 
@@ -139,6 +154,37 @@ export default class Overlay {
 		this.initSortableReceiver();
 
 		this.initUpload();
+
+		// If the opener exists, select the media item in the overlay
+		// noinspection JSUnresolvedReference
+		if (this.opener?.mediaIdInput) {
+			// noinspection JSUnresolvedReference
+			const mediaId = this.opener.mediaIdInput.value;
+			const mediaItem = this.mediaList.querySelector(`#Media-ListItem${mediaId}`);
+			if (mediaItem) {
+				mediaItem.classList.add('Selected');
+			}
+		}
+
+		const useButtons = this.element.querySelectorAll('.Button-UseFiles');
+		useButtons.forEach(button => {
+			this.eventHandler.add('click', () => {
+				if (typeof this.opener.useMedia !== 'function') {
+					return;
+				}
+
+				// Find all selected items
+				const selectedItems = this.mediaList.querySelectorAll('.Media-ListItem.Selected');
+
+				selectedItems.forEach(item => {
+					this.opener.useMedia(item);
+					item.classList.remove('Selected');
+				});
+
+				// Close the overlay
+				this.closeButton.dispatchEvent(new MouseEvent('click'));
+			}, button);
+		});
 	}
 
 	/**
@@ -149,12 +195,28 @@ export default class Overlay {
 	openOverlay(event) {
 		event.preventDefault();
 
+		// noinspection JSUnresolvedReference
+		this.opener = event.detail.opener || null;
+
 		if (!this.element) {
 			this.initOverlay();
 		}
 		else {
 			// Show the overlay
 			this.element.classList.add('Visible');
+
+			// If the opener exists, select the media item in the overlay
+			// noinspection JSUnresolvedReference
+			if (this.opener?.mediaIdInput) {
+				// noinspection JSUnresolvedReference
+				const mediaId = this.opener.mediaIdInput.value;
+				const mediaItem = this.mediaList.querySelector(`#Media-ListItem${mediaId}`);
+				if (mediaItem) {
+					mediaItem.classList.add('Selected');
+				}
+			}
+
+			this.sortable.toggleButtonState(this.sortable.multiSelection.getSelectedItems().length);
 		}
 	}
 
@@ -180,6 +242,7 @@ export default class Overlay {
 
 			if (form.classList.contains('Media')) {
 				// After loading the media form, initialize the color picker
+				// noinspection JSUnusedLocalSymbols
 				const coloris = new Coloris({
 					element: form.querySelector('input[name="average_color"]'),
 					theme: 'large',
@@ -299,7 +362,12 @@ export default class Overlay {
 		});
 	}
 
-
+	/**
+	 * Handle the click event on a media item.
+	 * If the click event is on the edit button, open the overlay form.
+	 *
+	 * @param {MouseEvent} event
+	 */
 	handleMediaItemClick(event) {
 		if (!event.target.matches('.Button-Edit')) {
 			return;
@@ -310,6 +378,31 @@ export default class Overlay {
 		window.overlayForm.openOverlay(event);
 	}
 
+	/**
+	 * Handle the double click event on a media item.
+	 *
+	 * @param {MouseEvent} event
+	 */
+	handleMediaItemDoubleClick(event) {
+		if (!event.target.closest('.Media-ListItem') || !this.opener) {
+			return;
+		}
+
+		// If the opener has a useMedia method, call it with the media item.
+		// noinspection JSUnresolvedReference
+		if (typeof this.opener.useMedia === 'function') {
+			// noinspection JSUnresolvedReference
+			this.opener.useMedia(event.target.closest('.Media-ListItem'));
+
+			// Find all selected items
+			const selectedItems = this.mediaList.querySelectorAll('.Media-ListItem.Selected');
+			selectedItems.forEach(item => item.classList.remove('Selected'));
+
+			// Close the overlay
+			this.closeButton.dispatchEvent(new MouseEvent('click'));
+		}
+	}
+
 
 	/**
 	 * Initialize the sortable for media items in the folder list
@@ -317,8 +410,10 @@ export default class Overlay {
 	initSortableReceiver() {
 		this.sortable = new Sortable(this.mediaList, {
 			deleteButtons: this.element.querySelectorAll('.ButtonArea .Button-Delete'),
-			saveSystemOrderButtons: this.element.querySelectorAll('.Button-SaveSystemOrder')
+			saveSystemOrderButtons: this.element.querySelectorAll('.Button-SaveSystemOrder'),
+			useFilesButtons: this.element.querySelectorAll('.Button-UseFiles'),
 		});
+		this.sortable.overlay = this;
 
 		// For all folders, add a faux sortable list
 		const folders = this.folderList.querySelectorAll('.MediaFolders-ListItem');

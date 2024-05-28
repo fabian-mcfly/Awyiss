@@ -35,10 +35,20 @@ export default class Sortable {
 	 */
 	multiSelection;
 	/**
+	 * The overlay instance.
+	 * @type {Overlay}
+	 */
+	overlay = null;
+	/**
 	 * A NodeList of all the save order buttons in the document.
 	 * @property {NodeListOf<Element>}
 	 */
 	saveOrderButtons;
+	/**
+	 * A NodeList of all the use files buttons in the document.
+	 * @property {NodeListOf<Element>}
+	 */
+	useFilesButtons;
 
 	/**
 	 * @param {HTMLElement} mediaList
@@ -50,6 +60,7 @@ export default class Sortable {
 		const defaultSettings = {
 			deleteButtons: document.querySelectorAll('.Button-Delete'),
 			saveOrderButtons: document.querySelectorAll('.Button-SaveSystemOrder'),
+			useFilesButtons: document.querySelectorAll('.Button-UseFiles'),
 		}
 
 		for (const key in defaultSettings) {
@@ -123,7 +134,7 @@ export default class Sortable {
 				this.saveSystemOrder();
 			}
 
-			this.toggleDeleteButtons(this.multiSelection.getSelectedItems().length);
+			this.toggleButtonState(this.multiSelection.getSelectedItems().length);
 		}, element);
 
 		// noinspection JSUnresolvedReference
@@ -182,7 +193,7 @@ export default class Sortable {
 			this.isDefaultOrder(true);
 
 			// Disable the delete buttons if there are no items in the list
-			this.toggleDeleteButtons(0);
+			this.toggleButtonState(0);
 		}
 	}
 
@@ -248,7 +259,7 @@ export default class Sortable {
 				item.remove();
 			});
 
-			this.toggleDeleteButtons(this.multiSelection.getSelectedItems().length);
+			this.toggleButtonState(this.multiSelection.getSelectedItems().length);
 		})
 		.catch(error => {
 			console.error('There has been a problem with the fetch operation:', error);
@@ -326,14 +337,18 @@ export default class Sortable {
 	selectionChanged(event) {
 		const selectedItems = event.detail.selectedItems;
 
-		this.toggleDeleteButtons(selectedItems.length);
+		this.toggleButtonState(selectedItems.length);
 	};
 
 	/**
 	 * Toggle the delete buttons based on the number of selected items
 	 * @param {int} selectedItemsLength
 	 */
-	toggleDeleteButtons(selectedItemsLength) {
+	toggleButtonState(selectedItemsLength) {
+		this.useFilesButtons.forEach(button => {
+			button.disabled = selectedItemsLength === 0 || !this.overlay.opener;
+		});
+
 		this.deleteButtons.forEach(button => {
 			button.disabled = selectedItemsLength === 0;
 		});

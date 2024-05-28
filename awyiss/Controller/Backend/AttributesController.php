@@ -120,7 +120,7 @@ class AttributesController extends Controller {
 		$this->Authorization->ensure('update');
 
 		/** @var Attribute $lo_attribute */
-		$lo_attribute = $this->Attributes->findById($id)->find('translations')->first();
+		$lo_attribute = $this->Attributes->findById($id)->find('translations')->find('mediaAssignments')->find('mediaCompositeAssignments')->first();
 		if (!$lo_attribute) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -149,7 +149,7 @@ class AttributesController extends Controller {
 		$this->request->allowMethod(['get', 'delete']);
 
 		/** @var Attribute $lo_attribute */
-		$lo_attribute = $this->Attributes->findById($id)->find('translations')->first();
+		$lo_attribute = $this->Attributes->findById($id)->first();
 		if (!$lo_attribute) {
 			$this->Flash->error(__('record_not_found'));
 

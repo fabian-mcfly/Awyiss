@@ -32,6 +32,7 @@ use Cake\Utility\Text;
  * @property \Cake\I18n\DateTime|null $changedOn
  * @property int|null $deletedBy
  * @property \Cake\I18n\DateTime|null $deletedOn
+ * @property \Awyiss\Model\Entity\MediaAssignment[] $mediaAssignments
  * @property \Awyiss\Model\Entity\MediaFolder $mediaFolder
  * @property \Laminas\Diactoros\UploadedFile|null $file
  * @property string|null $cleanName

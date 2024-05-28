@@ -120,11 +120,17 @@
 				<legend>{{ __('fieldset_media') }}</legend>
 
 				{% block fieldsetMediaInner %}
+					{{ cell('Backend/MediaComposites', [usergroup]) }}
+
 					{% block fieldsetMediaAttributes %}
 						{{ AttributesHelper.allControls('media') }}
 					{% endblock %}
 				{% endblock %}
 			</fieldset>
+		{% endblock %}
+
+		{% block fieldsetMediaCompositeAssignments %}
+			{{ cell('Backend/MediaComposites::compositeAssignments', [usergroup]) }}
 		{% endblock %}
 
 		{% block fieldsetAttributes %}

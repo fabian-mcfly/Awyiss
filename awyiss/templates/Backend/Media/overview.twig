@@ -93,6 +93,8 @@
 		{% if isAjax %}
 			<div id="MediaOverlay" class="Visible">
 				<div class="ButtonArea">
+					<button class="Button Button-Success Button-UseFiles" disabled>{{ __d('media', 'use_files') }}</button>
+
 					<button class="Button Button-SaveSystemOrder" disabled>{{ __d('system', 'save_system_order') }}</button>
 
 					{% if AuthorizationHelper.isAccessible('delete') %}

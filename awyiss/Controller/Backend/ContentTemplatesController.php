@@ -94,7 +94,7 @@ class ContentTemplatesController extends Controller {
 		$this->Authorization->ensure('update');
 
 		/** @var ContentTemplate $lo_contentTemplate */
-		$lo_contentTemplate = $this->ContentTemplates->findById($id)->find('translations')->contain([
+		$lo_contentTemplate = $this->ContentTemplates->findById($id)->find('translations')->find('mediaAssignments')->find('mediaCompositeAssignments')->contain([
 			'ContentAreas',
 			'ContentTemplateElements',
 		])->first();
@@ -126,7 +126,7 @@ class ContentTemplatesController extends Controller {
 		$this->request->allowMethod(['get', 'delete']);
 
 		/** @var ContentTemplate $lo_contentTemplate */
-		$lo_contentTemplate = $this->ContentTemplates->findById($id)->find('translations')->first();
+		$lo_contentTemplate = $this->ContentTemplates->findById($id)->first();
 		if (!$lo_contentTemplate) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -178,7 +178,6 @@ class ContentTemplatesController extends Controller {
 			'associated' => $la_associated,
 			'validate' => !$this->request->getData('reload_form'),
 		]);
-
 
 		$contentTemplate->set('contentAreas', []);
 		if (!empty($la_requestData['content_areas'])) {

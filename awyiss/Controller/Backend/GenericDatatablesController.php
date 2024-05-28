@@ -151,7 +151,7 @@ abstract class GenericDatatablesController extends Controller {
 		$this->Authorization->ensure('update');
 
 		/** @var \Awyiss\Model\Entity $lo_entity */
-		$lo_entity = $this->Datatable->findById($id)->find('translations')->first();
+		$lo_entity = $this->Datatable->findById($id)->find('translations')->find('mediaAssignments')->find('mediaCompositeAssignments')->first();
 
 		if (!$lo_entity) {
 			$this->Flash->error(__df($this->datatable->identifier, 'generic_datatables', 'record_not_found'));

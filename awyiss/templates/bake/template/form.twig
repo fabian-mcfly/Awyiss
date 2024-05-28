@@ -42,6 +42,8 @@
 		{% block fieldsetGeneral %}
 			<fieldset class="Fieldset-General">
 				<legend>{{ __('fieldset_general') }}</legend>
+
+				{% block fieldsetGeneralInner %}
 		{% endverbatim %}
 		{% for field in fields %}
 		{%- if field not in ['deleted', 'created_on', 'created_by', 'changed_on', 'changed_by', 'deleted_on', 'deleted_by']|merge(primaryKey) %}
@@ -90,7 +92,6 @@
 		{%- endif %}
 		{%- endfor %}
 		{% verbatim %}
-				{% block fieldsetGeneralInner %}
 					{% block fieldsetGeneralAttributes %}
 						{{ AttributesHelper.allControls('general') }}
 					{% endblock %}
@@ -115,11 +116,17 @@
 				<legend>{{ __('fieldset_media') }}</legend>
 
 				{% block fieldsetMediaInner %}
+					{{ cell('Backend/MediaComposites', [{% endverbatim %}{{ singularVar }}{% verbatim %}]) }}
+
 					{% block fieldsetMediaAttributes %}
 						{{ AttributesHelper.allControls('media') }}
 					{% endblock %}
 				{% endblock %}
 			</fieldset>
+		{% endblock %}
+
+		{% block fieldsetMediaCompositeAssignments %}
+			{{ cell('Backend/MediaComposites::compositeAssignments', [{% endverbatim %}{{ singularVar }}{% verbatim %}]) }}
 		{% endblock %}
 
 		{% block fieldsetAttributes %}

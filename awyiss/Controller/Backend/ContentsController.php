@@ -178,7 +178,7 @@ class ContentsController extends Controller {
 	 */
 	public function edit(int $id) {
 		/** @var Content $lo_content */
-		$lo_content = $this->Contents->findById($id)->find('translations')->first();
+		$lo_content = $this->Contents->findById($id)->find('translations')->find('mediaAssignments')->find('mediaCompositeAssignments')->first();
 		if (!$lo_content) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -209,7 +209,7 @@ class ContentsController extends Controller {
 		$this->request->allowMethod(['get', 'delete']);
 
 		/** @var Content $lo_content */
-		$lo_content = $this->Contents->findById($id)->find('translations')->first();
+		$lo_content = $this->Contents->findById($id)->first();
 		if (!$lo_content) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -822,6 +822,7 @@ class ContentsController extends Controller {
 	protected function setViewVars(Content $content): void {
 		$lo_contentTemplates = $this->getContentTemplates();
 		$this->ensurePossibleTemplate($content, $lo_contentTemplates);
+
 		/** @var \Awyiss\Model\Entity\ContentTemplate $lo_selectedContentTemplate */
 		$lo_selectedContentTemplate = $lo_contentTemplates->firstMatch(['id' => $content->contentTemplateId]);
 

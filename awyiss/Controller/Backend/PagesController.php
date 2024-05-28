@@ -238,7 +238,7 @@ class PagesController extends Controller {
 		$this->Authorization->ensure('update');
 
 		/** @var \Awyiss\Model\Entity\Page $lo_page */
-		$lo_page = $this->Pages->findById($id)->find('translations')->first();
+		$lo_page = $this->Pages->findById($id)->find('translations')->find('mediaAssignments')->find('mediaCompositeAssignments')->first();
 
 		if (!$lo_page) {
 			$this->Flash->error(__df($this->pageRoleName, 'pages', 'record_not_found'));
@@ -275,7 +275,7 @@ class PagesController extends Controller {
 		$this->request->allowMethod(['get', 'delete']);
 
 		/** @var \Awyiss\Model\Entity\Page $lo_page */
-		$lo_page = $this->Pages->findById($id)->find('translations')->first();
+		$lo_page = $this->Pages->findById($id)->first();
 		if (!$lo_page) {
 			$this->Flash->error(__df($this->pageRoleName, 'pages', 'record_not_found'));
 
@@ -587,7 +587,7 @@ class PagesController extends Controller {
 
 		$this->set([
 			'page' => $page,
-			'pageTemplates' => $this->getPageTemplates(),
+			'pageTemplates' => $lo_pageTemplates,
 			'contentsEnabled' => LocalConfig::read('contents.enabled'),
 			'threadedPages' => $lo_threadedPages,
 			'possibleParentPages' => $lo_possibleParentPages,

@@ -154,3 +154,12 @@ msgstr "Drop here to upload"
 
 msgid "media_folder_global"
 msgstr "Global"
+
+msgid "select_file"
+msgstr "Select file"
+
+msgid "remove_file"
+msgstr "Remove file"
+
+msgid "use_files"
+msgstr "Use file(s)"

@@ -1,0 +1,232 @@
+{#
+@var mediaComposite \Awyiss\Model\Entity\MediaComposite
+@var mediaSelectors \Awyiss\Model\Entity\MediaSelector[]
+@var assignableModels array
+@var columnSpans array
+@var languageRealm string
+@var systemOrderField string
+@var _view \Awyiss\View\BackendView
+#}
+
+{% set entities = combine(assignableModels|keys, assignableModels|map(assignableModel => assignableModel.entities)) %}
+
+{% block fieldsets %}
+	<div class="Fieldsets">
+		{% block fieldsetPresentation %}
+			<fieldset class="Fieldset-Presentation">
+				<legend>{{ __('fieldset_presentation') }}</legend>
+
+				{% block fieldsetPresentationInner %}
+					{% block formControlActive %}
+						{{ FormHelper.control('active') }}
+					{% endblock %}
+
+					{% block formControlColumnSpan %}
+						{{ FormHelper.control('column_span', {columnSpan: 6, disabled: columnSpanDisabled, empty: false, options: columnSpans, type: 'select'}) }}
+					{% endblock %}
+
+					{% block fieldsetPresentationAttributes %}
+						{{ AttributesHelper.allControls('presentation') }}
+					{% endblock %}
+				{% endblock %}
+			</fieldset>
+		{% endblock %}
+
+		{% block fieldsetConditions %}
+			<fieldset class="Fieldset-Conditions">
+				<legend>{{ __('fieldset_conditions') }}</legend>
+
+				{% block fieldsetConditionsInner %}
+					{% block formControlSystemOrder %}
+						{% if systemOrderField|variable == 'systemOrder' %}
+							{{ SystemOrderHelper.control('system_order') }}
+						{% endif %}
+					{% endblock %}
+
+					{% block fieldsetConditionsAttributes %}
+						{{ AttributesHelper.allControls('conditions') }}
+					{% endblock %}
+				{% endblock %}
+			</fieldset>
+		{% endblock %}
+
+		{% block fieldsetGeneral %}
+			<fieldset class="Fieldset-General">
+				<legend>{{ __('fieldset_general') }}</legend>
+		
+				{% block fieldsetGeneralInner %}
+					{% block formControlTitle %}
+						{{ FormHelper.control('title') }}
+					{% endblock %}
+
+					{% block formControlIdentifier %}
+						{{ FormHelper.control('identifier', {'data-autofill-from-title': 'true'}) }}
+					{% endblock %}
+
+					{% block fieldsetGeneralAttributes %}
+						{{ AttributesHelper.allControls('general') }}
+					{% endblock %}
+				{% endblock %}
+			</fieldset>
+		{% endblock %}
+
+		{% block fieldsetMediaSelectors %}
+			<fieldset class="Fieldset-MediaSelectors">
+				<legend>{{ __('fieldset_media_selectors') }}</legend>
+				{% block fieldsetMediaSelectorsInner %}
+					{% block formControlMediaSelectors %}
+						<div
+							class="FormInput FormInputType-List FormInputName-MediaCompositeSelectors" data-list-item-add="{{ __('list_item_add') }}"
+							data-list-item-remove="{{ __('list_item_remove') }}">
+
+							{% set mediaSelectors = combine(mediaSelectors|keys, mediaSelectors|map(mediaSelector => mediaSelector.label)) %}
+
+							{% set counter = 0 %}
+							{% for key, mediaCompositeSelector in mediaComposite.mediaCompositeSelectors %}
+								<div class="FormInputType-ListItem">
+									{{ FormHelper.control('media_composite_selectors.' ~ counter ~ '.media_selector_id', {
+										options: mediaSelectors,
+										required: true,
+									}) }}
+
+									{{ FormHelper.control('media_composite_selectors.' ~ counter ~ '.title', {
+										required: true,
+										type: languages.Backend|filter(language => language.active)|length > 1 ? 'translatableText' : null,
+									}) }}
+
+									{{ FormHelper.control('media_composite_selectors.' ~ counter ~ '.identifier', {
+										required: true,
+									}) }}
+
+									{{ FormHelper.control('media_composite_selectors.' ~ counter ~ '.column_span', {
+										options: columnSpans,
+										required: true,
+									}) }}
+
+									<div class="AdditionalOptions">
+										{{ FormHelper.control('media_composite_selectors.' ~ counter ~ '.required', {
+											checked: mediaCompositeSelector.required,
+											type: checkbox,
+										}) }}
+									</div>
+									{% set counter = counter + 1 %}
+								</div>
+							{% endfor %}
+
+							<div class="FormInputType-ListItem FormInputType-ListItem-Default">
+								{{ FormHelper.control('media_composite_selectors.' ~ counter ~ '.media_selector_id', {
+									options: mediaSelectors,
+									required: true,
+									val: '',
+								}) }}
+
+								{{ FormHelper.control('media_composite_selectors.' ~ counter ~ '.title', {
+									required: true,
+									type: languages.Backend|filter(language => language.active)|length > 1 ? 'translatableText' : null,
+								}) }}
+
+								{{ FormHelper.control('media_composite_selectors.' ~ counter ~ '.identifier', {
+									required: true,
+								}) }}
+
+								{{ FormHelper.control('media_composite_selectors.' ~ counter ~ '.column_span', {
+									options: columnSpans,
+									required: true,
+									val: '',
+								}) }}
+
+								<div class="AdditionalOptions">
+									{{ FormHelper.control('media_composite_selectors.' ~ counter ~ '.required', {
+										type: checkbox,
+									}) }}
+								</div>
+							</div>
+						</div>
+					{% endblock %}
+				{% endblock %}
+			</fieldset>
+		{% endblock %}
+
+		{% block fieldsetAssignableModels %}
+			<fieldset class="Fieldset-AssignableModels">
+				<legend>{{ __('fieldset_assignable_models') }}</legend>
+				{% block fieldsetAssignableModelsInner %}
+					{% block formControlAssignableModels %}
+						<div
+							class="FormInput FormInputType-List FormInputName-MediaCompAssignableModels" data-list-item-add="{{ __('list_item_add') }}"
+							data-list-item-remove="{{ __('list_item_remove') }}">
+
+							{% set models = combine(assignableModels|keys, assignableModels|map(assignableModel => assignableModel.label)) %}
+
+							{% set counter = 0 %}
+							{% for key, mediaCompositeAssignment in mediaComposite.mediaCompositeAssignments %}
+								<div class="FormInputType-ListItem">
+									{{ FormHelper.control('media_composite_assignments.' ~ counter ~ '.scope', {
+										options: models,
+										required: true,
+									}) }}
+
+									{{ FormHelper.control('media_composite_assignments.' ~ counter ~ '.foreign_key', {
+										disabled: entities[ mediaCompositeAssignment.scope ]|length == 0,
+										options: entities[ mediaCompositeAssignment.scope ],
+										required: true,
+									}) }}
+								</div>
+								{% set counter = counter + 1 %}
+							{% endfor %}
+
+							<div class="FormInputType-ListItem FormInputType-ListItem-Default">
+								{{ FormHelper.control('media_composite_assignments.' ~ counter ~ '.scope', {
+									options: models,
+									required: true,
+									val: '',
+								}) }}
+
+								{{ FormHelper.control('media_composite_assignments.' ~ counter ~ '.foreign_key', {
+									disabled: true,
+									options: [],
+									required: true,
+									val: '',
+								}) }}
+							</div>
+						</div>
+					{% endblock %}
+				{% endblock %}
+			</fieldset>
+		{% endblock %}
+
+		{% block fieldsetContent %}
+			<fieldset class="Fieldset-Content">
+				<legend>{{ __('fieldset_content') }}</legend>
+
+				{% block fieldsetContentInner %}
+					{% block fieldsetContentAttributes %}
+						{{ AttributesHelper.allControls('content') }}
+					{% endblock %}
+				{% endblock %}
+			</fieldset>
+		{% endblock %}
+
+		{% block fieldsetAttributes %}
+			<fieldset class="Fieldset-Attributes">
+				<legend>{{ __('fieldset_attributes') }}</legend>
+
+				{% block fieldsetAttributesInner %}
+					{% block fieldsetAttributesAttributes %}
+						{{ AttributesHelper.allControls('attributes') }}
+					{% endblock %}
+				{% endblock %}
+			</fieldset>
+		{% endblock %}
+
+		{% block formInputReloadForm %}
+			{{ FormHelper.hidden('reload_form', {val: 0}) }}
+		{% endblock %}
+	</div>
+{% endblock %}
+
+{% block scriptAssignableModelVars %}
+	<script nonce="{{ AssetHelper.getScriptNonce() }}">
+		const assignableModelEntities = {{ entities|json_encode|raw }};
+	</script>
+{% endblock %}

@@ -1,0 +1,22 @@
+{#
+@var entity \Awyiss\Model\Entity
+@var composites \Cake\Datasource\ResultSetDecorator
+@var assignedComposites \Cake\Collection\Collection
+#}
+
+{% for assignedComposite in assignedComposites %}
+	{% set composite = composites.firstMatch({id: assignedComposite.mediaCompositeId}) %}
+	{% if composite and composite.mediaCompositeSelectors %}
+		<div class="FormInput FormInputType-MediaComposite MediaComposite ColumnSpan-{{ composite.column.span.numerator }}">
+			{% for mediaCompositeSelector in composite.mediaCompositeSelectors %}
+				{{ element('media/selector/' ~ mediaCompositeSelector.mediaSelector.identifier, {
+					columnSpan: mediaCompositeSelector.column.span.numerator,
+					composite: composite,
+					compositeSelector: mediaCompositeSelector,
+					entity: entity,
+					label: mediaCompositeSelector.title
+				}) }}
+			{% endfor %}
+		</div>
+	{% endif %}
+{% endfor %}

@@ -1,0 +1,24 @@
+# MediaCompositeAssignments translations of Awyiss CMS
+# Copyright 2024 Awyiss <EMAIL@ADDRESS>
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 0.1.0\n"
+"POT-Creation-Date: 2024-05-20 16:45+0000\n"
+"PO-Revision-Date: 2024-05-20 16:45+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+msgid "error_assignment_allows_model_level"
+msgstr "Dieser Bereich erlaubt keine Zuweisungen auf Bereichs-Ebene."
+
+msgid "error_assignment_allows_entity_level"
+msgstr "Dieser Bereich erlaubt keine Zuweisungen auf Eintrags-Ebene."
+
+msgid "error_assignment_invalid_entity"
+msgstr "Ungültiger Eintrag."
+
+msgid "error_media_composite_unique_for_scope"
+msgstr "Dieser Eintrag existiert bereits für diesen Bereich."

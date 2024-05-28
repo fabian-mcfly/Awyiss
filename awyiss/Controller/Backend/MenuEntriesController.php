@@ -111,7 +111,7 @@ class MenuEntriesController extends Controller {
 		$this->Authorization->ensure('update');
 
 		/** @var MenuEntry $lo_menuEntry */
-		$lo_menuEntry = $this->MenuEntries->findById($id)->find('translations')->first();
+		$lo_menuEntry = $this->MenuEntries->findById($id)->find('translations')->find('mediaAssignments')->find('mediaCompositeAssignments')->first();
 		if (!$lo_menuEntry) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -147,7 +147,7 @@ class MenuEntriesController extends Controller {
 		$this->request->allowMethod(['get', 'delete']);
 
 		/** @var MenuEntry $lo_menuEntry */
-		$lo_menuEntry = $this->MenuEntries->findById($id)->find('translations')->first();
+		$lo_menuEntry = $this->MenuEntries->findById($id)->first();
 		if (!$lo_menuEntry) {
 			$this->Flash->error(__('record_not_found'));
 

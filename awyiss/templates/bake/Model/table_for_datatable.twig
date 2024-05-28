@@ -2,6 +2,7 @@
 {{ element('file_header', {
 	namespace: fileBuilder.namespace,
 	classImports: fileBuilder.classImports([
+		'Awyiss\\Annotation\\MediaCompositeAssignable;',
 		'Awyiss\\Model\\Table\\GenericDatatablesTable',
 		'Cake\\Datasource\\EntityInterface',
 	]),
@@ -17,6 +18,7 @@
  * @method \Cake\Collection\CollectionInterface|null getParents(EntityInterface $entity, array $options = [], int $currentLevel = 0)
  * @method \Cake\Collection\CollectionInterface getPossibleParents(\Awyiss\Model\Entity $entity, \Cake\Collection\CollectionInterface $threadedEntities)
  */
+#[MediaCompositeAssignable(MediaCompositeAssignable::MODEL_LEVEL)]
 class {{ name }}Table extends GenericDatatablesTable {
 {% set userConstants = fileBuilder.classBuilder.userConstants([]) %}
 {% if userConstants.TABLE is not defined %}

@@ -86,7 +86,7 @@ class BackendMenuEntriesController extends Controller {
 		$this->Authorization->ensure('update');
 
 		/** @var BackendMenuEntry $lo_menuEntry */
-		$lo_menuEntry = $this->BackendMenuEntries->findById($id)->find('translations')->first();
+		$lo_menuEntry = $this->BackendMenuEntries->findById($id)->find('translations')->find('mediaAssignments')->find('mediaCompositeAssignments')->first();
 		if (!$lo_menuEntry) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -115,7 +115,7 @@ class BackendMenuEntriesController extends Controller {
 		$this->request->allowMethod(['get', 'delete']);
 
 		/** @var BackendMenuEntry $lo_menuEntry */
-		$lo_menuEntry = $this->BackendMenuEntries->findById($id)->find('translations')->first();
+		$lo_menuEntry = $this->BackendMenuEntries->findById($id)->first();
 		if (!$lo_menuEntry) {
 			$this->Flash->error(__('record_not_found'));
 

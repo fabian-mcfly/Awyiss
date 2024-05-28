@@ -1,0 +1,83 @@
+<?php declare(strict_types=1);
+
+
+/**
+ * Class MediaCompositeSelectors
+ */
+class MediaCompositeSelectors {
+	/**
+	 * @var \Initial $migration The migration that is being migrated
+	 */
+	protected \Initial $migration;
+
+
+	/**
+	 * Constructor
+	 *
+	 * @param \Initial $migration The migration that is being migrated
+	 */
+	public function __construct(Initial $migration) {
+		$this->migration = $migration;
+	}
+
+
+	/**
+	 * Migrate Up.
+	 *
+	 * @return void
+	 * @noinspection PhpMethodNamingConventionInspection
+	 */
+	public function up(): void {
+		$this->migration->table('media_composite_selectors')->addColumn('id', 'integer', [
+			'autoIncrement' => true,
+			'default' => null,
+			'limit' => null,
+			'null' => false,
+			'signed' => true,
+		])->addPrimaryKey(['id'])->addColumn('media_composite_id', 'integer', [
+			'limit' => 11,
+			'null' => false,
+		])->addColumn('media_selector_id', 'integer', [
+			'limit' => 11,
+			'null' => false,
+		])->addColumn('title', 'string', [
+			'default' => null,
+			'limit' => 50,
+			'null' => false,
+		])->addColumn('identifier', 'string', [
+			'default' => null,
+			'limit' => 50,
+			'null' => false,
+		])->addColumn('column_span', 'string', [
+			'default' => '12/12',
+			'limit' => 5,
+			'null' => false,
+		])->addColumn('required', 'boolean', [
+			'default' => false,
+			'limit' => null,
+			'null' => false,
+		])->addIndex(
+			[
+				'identifier',
+			], [
+				'name' => 'identifier',
+			]
+		)->addIndex(
+			[
+				'system_order',
+			], [
+				'name' => 'system_order',
+			]
+		)->create();
+	}
+
+
+	/**
+	 * Migrate Down.
+	 *
+	 * @return void
+	 */
+	public function down(): void {
+		$this->migration->table('media_composite_selectors')->drop()->save();
+	}
+}

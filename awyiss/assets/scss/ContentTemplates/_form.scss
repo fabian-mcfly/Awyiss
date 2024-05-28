@@ -1,9 +1,9 @@
 .ContentTemplatesController {
 	.Fieldset-ContentElements {
-		grid-template-columns:repeat(3, 1fr);
 		padding:0;
 		box-shadow:none;
 		background-color:transparent;
+		grid-template-columns:repeat(3, 1fr);
 	}
 
 	.Fieldset-ContentElements-Available,
@@ -22,9 +22,34 @@
 		top:160px;
 		grid-column:1 / 1;
 
-		.ContentElements-List {
+		&:not(:has(.Item)) {
+			padding-bottom:40px;
+
+			&:has(.SortableDragging) {
+				background-color:#D5F1E5;
+
+				.🌚& {
+					background-color:var(--colorSemiDark)
+				}
+			}
+
+			&::after {
+				@extend %EmptyList;
+
+				.🌚& {
+					@extend %EmptyListDarkMode;
+
+				}
+			}
+
+			.List {
+				height:40px;
+			}
+		}
+
+		.List {
 			max-height:calc(100dvh - 240px);
-			margin-inline:-10px;
+			margin:-5px -10px 0;
 			padding-inline:10px;
 			overflow-y:auto;
 			scrollbar-color:var(--colorMedium) var(--colorLight);
@@ -36,7 +61,7 @@
 		}
 	}
 
-	.ContentElement {
+	.Item {
 		margin:5px 0 0 0;
 		padding:3px 20px 7px;
 		border-radius:5px;
@@ -114,7 +139,7 @@
 		grid-column:2 / -1;
 
 		&:not(.Collapsed) {
-			&:not(:has(.ContentElement)) {
+			&:not(:has(.Item)) {
 				padding-bottom:40px;
 
 				&:has(.SortableDragging) {
@@ -134,7 +159,7 @@
 					}
 				}
 
-				.ContentElements-List {
+				.List {
 					height:40px;
 				}
 			}

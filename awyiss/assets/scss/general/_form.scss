@@ -191,7 +191,8 @@ textarea {
 			position:relative;
 
 			&.SortableGhost {
-				input {
+				input,
+				select {
 					background-color:var(--colorSuccess-Alpha-25);
 					outline:2px solid var(--colorSuccess);
 					outline-offset:-2px;
@@ -445,6 +446,12 @@ textarea {
 		}
 	}
 
+	&Type-MediaComposite {
+		display:grid;
+		gap:0 40px;
+		grid-template-columns:repeat(12, 1fr);
+	}
+
 	&Type-TranslatableText {
 		margin-bottom:0;
 
@@ -501,6 +508,10 @@ textarea {
 			position:absolute;
 			top:1.05rem;
 			right:1px;
+
+			.🌚 & {
+				background-color:var(--backgroundColor);
+			}
 
 			.Scale-Small & {
 				padding-block:0;
@@ -620,10 +631,11 @@ textarea {
 		line-height:1;
 	}
 
-	div.Error {
+	> div.Error {
 		padding-inline:5px;
 		color:var(--colorError);
 		font-size:.8rem;
+		line-height:1.5;
 	}
 
 	.CharCounter {
@@ -632,6 +644,149 @@ textarea {
 		position:absolute;
 		right:20px;
 		bottom:20px;
+	}
+}
+
+.Fieldset-MediaCompositeAssignments {
+	padding:0;
+	box-shadow:none;
+	background-color:transparent;
+	grid-template-columns:repeat(2, 1fr);
+
+	> .Fieldset-MediaComposites-Available {
+		grid-column:1 / 1;
+	}
+
+	> .Fieldset-MediaComposites-Assigned {
+		grid-column:auto / -1;
+	}
+
+	.Item {
+		margin:5px 0 0 0;
+		padding:3px 20px 7px;
+		border-radius:5px;
+		background-color:var(--colorNeutralLight);
+		list-style-type:none;
+		transition:background-color .3s ease-in-out;
+		cursor:move;
+
+		.🌚& {
+			background-color:var(--colorSemiDark);
+		}
+
+		&.SortableGhost {
+			outline:2px solid var(--colorSuccess);
+			outline-offset:-2px;
+
+			&,
+			.🌚&,
+			.🌚&[data-assignable="false"],
+			.🌚&:hover {
+				background-color:var(--colorSuccess);
+			}
+
+			&:hover {
+				background-color:var(--colorSuccess);
+			}
+		}
+
+		&[data-assignable="false"] {
+			background-color:var(--colorNeutralLight-Alpha-50);
+
+			.🌚& {
+				background-color:var(--colorSemiDarkDarkMode-Alpha-10);
+			}
+
+			.Title {
+				color:var(--colorMedium);
+
+				.🌚& {
+					color:var(--colorSemiDarkDarkMode-Lightened-2);
+				}
+			}
+		}
+
+		&:hover {
+			background-color:var(--colorLight);
+
+			.🌚& {
+				background-color:var(--colorSemiDarkDarkMode-Lightened-4);
+			}
+		}
+
+		.Title {
+			display:block;
+			line-height:40px;
+
+			label,
+			input {
+				pointer-events:none;
+			}
+
+			input {
+				display:none;
+			}
+		}
+
+		> label,
+		.FormInputType-Select,
+		.FormInputType-Checkbox {
+			display:none;
+		}
+	}
+}
+
+.Fieldset-MediaComposites-Available,
+.Fieldset-MediaComposites-Assigned {
+	display:block;
+	padding:20px;
+
+	&.Collapsed {
+		padding-block:0;
+	}
+
+	&:not(:has(.Item)) {
+		padding-bottom:40px;
+
+		&:has(.SortableDragging) {
+			background-color:#D5F1E5;
+
+			.🌚& {
+				background-color:var(--colorSemiDark)
+			}
+		}
+
+		&::after {
+			@extend %EmptyList;
+
+			.🌚& {
+				@extend %EmptyListDarkMode;
+
+			}
+		}
+
+		.List {
+			height:40px;
+		}
+	}
+}
+
+.Fieldset-MediaComposites-Available {
+	margin-bottom:0;
+	position:sticky;
+	top:160px;
+
+	.List {
+		max-height:calc(100dvh - 240px);
+		margin:-5px -10px 0;
+		padding-inline:10px;
+		overflow-y:auto;
+		scrollbar-color:var(--colorMedium) var(--colorLight);
+		scrollbar-width:thin;
+
+		.🌚& {
+			scrollbar-color:var(--colorSemiDarkDarkMode) var(--colorText);
+		}
 	}
 }
 

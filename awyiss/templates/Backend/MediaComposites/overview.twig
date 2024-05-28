@@ -1,0 +1,66 @@
+{#
+@var mediaComposites Awyiss\Model\Entity\MediaComposite[]
+@var _view \Awyiss\View\BackendView
+#}
+
+<div class="MediaComposites Overview">
+	{% block headlineOverview %}
+		<h1>{{ __('headline_overview') }}</h1>
+	{% endblock %}
+
+	{% block buttonArea %}
+		<div class="ButtonArea">
+			{% block buttonsOverview %}
+				{% if paginated == false %}
+					<button class="Button Button-SaveSystemOrder" disabled>{{ __d('system', 'save_system_order') }}</button>
+				{% endif %}
+
+				{% if AuthorizationHelper.isAccessible('create') %}
+					{{ HtmlHelper.link(__('create'), {action: 'add'}, {class : 'Button Button-Add'}) }}
+				{% endif %}
+
+				{% block listControlOverviewListPaginated %}
+					{{ HtmlHelper.link(__('list_paginated'), {action: 'userConfiguration', identifier: 'paginate.enabled', value: 'true'}, {
+						class: 'Button Button-Small Button-ListView Button-ListView-PaginatedList',
+						disabled: localConfig.paginate.enabled == true
+					}) }}
+				{% endblock %}
+
+				{% block listControlOverviewListNested %}
+					{{ HtmlHelper.link(__('list_nested'), {action: 'userConfiguration', identifier: 'paginate.enabled', value: 'false'}, {
+						class: 'Button Button-Small Button-ListView Button-ListView-NestedList',
+						disabled: localConfig.paginate.enabled == false
+					}) }}
+				{% endblock %}
+			{% endblock %}
+		</div>
+	{% endblock %}
+
+	{% if paginated %}
+		{% block paginatedOverview %}
+			{% include '@Backend/element/overview/overview_paginated_list.twig' with _context|merge({records: mediaComposites.items().toArray()}) %}
+		{% endblock %}
+	{% else %}
+			{% block fieldsetOverview %}
+			<fieldset class="Overview-Fieldset">
+				{% block listOverview %}
+					{% from '@Backend/macro/nested_list.twig' import nestedList %}
+					{{ nestedList(mediaComposites, _context|merge({
+						data: {
+							nestable: false,
+						},
+						displayedFields: localConfig.overview.displayedFields,
+						identifier: 'MediaComposites',
+					})) }}
+				{% endblock %}
+			</fieldset>
+		{% endblock %}
+	{% endif %}
+
+	{% block buttonAreaBottom %}
+		<div class="ButtonArea ButtonArea-Bottom">
+			{{ block('buttonsOverview') }}
+		</div>
+	{% endblock %}
+	
+</div>

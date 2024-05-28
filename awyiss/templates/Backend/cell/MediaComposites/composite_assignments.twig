@@ -1,0 +1,57 @@
+{#
+@var entity \Awyiss\Model\Entity
+@var availableComposites \Cake\Datasource\ResultSetDecorator
+@var assignedComposites \Awyiss\Model\Entity\MediaCompositeAssignment[]
+#}
+
+<fieldset class="Fieldset-MediaCompositeAssignments">
+	{% block formControlMediaComposites %}
+		{% set assignedCompositeIds = assignedComposites|column('media_composite_id') %}
+		{% set elementCounter = 0 %}
+		{% set fieldsetElements = {} %}
+
+		<fieldset class="Fieldset-MediaComposites-Available Collapsible">
+			<legend>{{ __('media_composites_available') }}</legend>
+			<ul class="List MediaComposites-List SortableList">
+				{% for availableComposite in availableComposites %}
+					{% if availableComposite.id not in assignedCompositeIds %}
+						<li class="Item MediaComposite">
+							<span class="Title">
+								{{ FormHelper.checkbox('media_composite_assignments[' ~ loop.index0 ~ '][media_composite_id]', {
+									checked: false,
+									hiddenField: false,
+									id: 'MediaComposite-Composite-' ~ availableComposite.identifier|camelize,
+									value: availableComposite.id,
+								}) }}
+
+								{{ availableComposite.label }}
+							</span>
+						</li>
+					{% endif %}
+				{% endfor %}
+			</ul>
+		</fieldset>
+
+		<fieldset class="Fieldset-MediaComposites-Assigned Collapsible">
+			<legend>{{ __('media_composites_assigned') }}</legend>
+
+			<ul class="List MediaComposites-List SortableList">
+				{% for availableComposite in availableComposites %}
+					{% if availableComposite.id in assignedCompositeIds %}
+						<li class="Item MediaComposite">
+							<span class="Title">
+								{{ FormHelper.checkbox('media_composite_assignments[' ~ loop.index0 ~ '][media_composite_id]', {
+									checked: true,
+									id: 'MediaComposite-Composite-' ~ availableComposite.identifier|camelize,
+									value: availableComposite.id,
+								}) }}
+
+								{{ availableComposite.label }}
+							</span>
+						</li>
+					{% endif %}
+				{% endfor %}
+			</ul>
+		</fieldset>
+	{% endblock %}
+</fieldset>

@@ -28,7 +28,9 @@
 
 				{% block fieldsetConditionsInner %}
 					{% block formControlPageRoleId %}
-						{{ CategoriesHelper.control('page_role') }}
+						{{ CategoriesHelper.control('page_role', {
+							'data-form-updater': true,
+						}) }}
 					{% endblock %}
 
 					{% block formControlSystemOrder %}
@@ -125,11 +127,17 @@
 				<legend>{{ __('fieldset_media') }}</legend>
 
 				{% block fieldsetMediaInner %}
+					{{ cell('Backend/MediaComposites', [pageTemplate]) }}
+
 					{% block fieldsetMediaAttributes %}
 						{{ AttributesHelper.allControls('media') }}
 					{% endblock %}
 				{% endblock %}
 			</fieldset>
+		{% endblock %}
+
+		{% block fieldsetMediaCompositeAssignments %}
+			{{ cell('Backend/MediaComposites::compositeAssignments', [pageTemplate]) }}
 		{% endblock %}
 
 		{% block fieldsetAttributes %}

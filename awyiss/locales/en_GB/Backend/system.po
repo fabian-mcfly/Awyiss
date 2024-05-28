@@ -226,3 +226,9 @@ msgstr "Ascending"
 
 msgid "sort_desc"
 msgstr "Descending"
+
+msgid "media_composites_available"
+msgstr "Available Media Composites"
+
+msgid "media_composites_assigned"
+msgstr "Assigned Media Composites"

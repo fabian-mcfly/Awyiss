@@ -13,6 +13,7 @@ use Cake\Datasource\FactoryLocator;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
 use Cake\ORM\Locator\LocatorAwareTrait;
+use Cake\Utility\Inflector;
 use Exception;
 
 
@@ -251,7 +252,7 @@ class MediaFoldersListener implements EventListenerInterface {
 	 * @return void
 	 */
 	protected function rebuildDatabasePath(string $table, MediaFolder $entity, mixed $ls_originalPath): void {
-		$lo_query = FactoryLocator::get('Table')->get($table)->updateQuery();
+		$lo_query = FactoryLocator::get('Table')->get(Inflector::camelize($table))->updateQuery();
 
 		/**
 		 * UPDATE media_folders SET path = (CONCAT('newpath', substr(path, '8'))) WHERE path LIKE 'oldpath/%'

@@ -17,11 +17,11 @@
 			<fieldset class="Fieldset-Presentation">
 				<legend>{{ __('fieldset_presentation') }}</legend>
 
-				{% block formControlActive %}
-					{{ FormHelper.control('active') }}
-				{% endblock %}
-
 				{% block fieldsetPresentationInner %}
+					{% block formControlActive %}
+						{{ FormHelper.control('active') }}
+					{% endblock %}
+
 					{% block fieldsetPresentationAttributes %}
 						{{ AttributesHelper.allControls('presentation') }}
 					{% endblock %}
@@ -33,29 +33,29 @@
 			<fieldset class="Fieldset-Conditions">
 				<legend>{{ __('fieldset_conditions') }}</legend>
 
-				{% block formControlLanguagesShortcode %}
-					{% if (splitIntoLanguages) %}
-						{{ LocaleHelper.control('language_shortcode', {languageRealm: languageRealm}) }}
-					{% endif %}
-				{% endblock %}
-
-				{% block formControlParentId %}
-					{% if (categoriesIdentifier is defined) %}
-						{{ CategoriesHelper.control(categoriesIdentifier) }}
-					{% endif %}
-
-					{% if (nestable and possibleParentRecords is not null) %}
-						{{ FormHelper.control('parent_id', {options: hashPrinter(possibleParentRecords, 'label', 'id', '- ')}) }}
-					{% endif %}
-				{% endblock %}
-
-				{% block formControlSystemOrder %}
-					{% if sortable %}
-						{{ SystemOrderHelper.control('system_order') }}
-					{% endif %}
-				{% endblock %}
-
 				{% block fieldsetConditionsInner %}
+					{% block formControlLanguagesShortcode %}
+						{% if (splitIntoLanguages) %}
+							{{ LocaleHelper.control('language_shortcode', {languageRealm: languageRealm}) }}
+						{% endif %}
+					{% endblock %}
+
+					{% block formControlParentId %}
+						{% if (categoriesIdentifier is defined) %}
+							{{ CategoriesHelper.control(categoriesIdentifier) }}
+						{% endif %}
+
+						{% if (nestable and possibleParentRecords is not null) %}
+							{{ FormHelper.control('parent_id', {options: hashPrinter(possibleParentRecords, 'label', 'id', '- ')}) }}
+						{% endif %}
+					{% endblock %}
+
+					{% block formControlSystemOrder %}
+						{% if sortable %}
+							{{ SystemOrderHelper.control('system_order') }}
+						{% endif %}
+					{% endblock %}
+
 					{% block fieldsetConditionsAttributes %}
 						{{ AttributesHelper.allControls('conditions') }}
 					{% endblock %}
@@ -67,11 +67,11 @@
 			<fieldset class="Fieldset-General">
 				<legend>{{ __('fieldset_general') }}</legend>
 
-				{% block formControlTitle %}
-					{{ FormHelper.control('title') }}
-				{% endblock %}
-
 				{% block fieldsetGeneralInner %}
+					{% block formControlTitle %}
+						{{ FormHelper.control('title') }}
+					{% endblock %}
+
 					{% block fieldsetGeneralAttributes %}
 						{{ AttributesHelper.allControls('general') }}
 					{% endblock %}
@@ -96,11 +96,17 @@
 				<legend>{{ __('fieldset_media') }}</legend>
 
 				{% block fieldsetMediaInner %}
+					{{ cell('Backend/MediaComposites', [record]) }}
+
 					{% block fieldsetMediaAttributes %}
 						{{ AttributesHelper.allControls('media') }}
 					{% endblock %}
 				{% endblock %}
 			</fieldset>
+		{% endblock %}
+
+		{% block fieldsetMediaCompositeAssignments %}
+			{{ cell('Backend/MediaComposites::compositeAssignments', [record]) }}
 		{% endblock %}
 
 		{% block fieldsetAttributes %}

@@ -210,7 +210,7 @@ class MediaFoldersController extends Controller {
 		$this->request->allowMethod(['get', 'delete']);
 
 		/** @var \Awyiss\Model\Entity\MediaFolder $lo_mediaFolder */
-		$lo_mediaFolder = $this->MediaFolders->findById($id)->find('translations')->first();
+		$lo_mediaFolder = $this->MediaFolders->findById($id)->first();
 		if (!$lo_mediaFolder) {
 			$this->Flash->error(__('record_not_found'));
 

@@ -89,18 +89,6 @@
 			</fieldset>
 		{% endblock %}
 
-		{% block fieldsetMedia %}
-			<fieldset class="Fieldset-Media">
-				<legend>{{ __('fieldset_media') }}</legend>
-
-				{% block fieldsetMediaInner %}
-					{% block fieldsetMediaAttributes %}
-						{{ AttributesHelper.allControls('media') }}
-					{% endblock %}
-				{% endblock %}
-			</fieldset>
-		{% endblock %}
-
 		{% block fieldsetAttributes %}
 			<fieldset class="Fieldset-Attributes">
 				<legend>{{ __('fieldset_attributes') }}</legend>

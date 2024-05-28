@@ -197,7 +197,6 @@ class Table extends BaseTable {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function initialize(array $config): void {
 		if (static::TABLE) {
@@ -256,6 +255,11 @@ class Table extends BaseTable {
 
 			if ($lo_schema->getColumn('system_order')) {
 				$this->addBehavior('SystemOrder', $this->systemOrder);
+			}
+
+			if (!str_starts_with($this->getTable(), 'media')) {
+				$this->addBehavior('MediaAssignment');
+				$this->addBehavior('MediaCompositeAssignment');
 			}
 		}
 
@@ -658,7 +662,6 @@ class Table extends BaseTable {
 	 * @param \Cake\Datasource\EntityInterface $entity
 	 * @param array $options
 	 * @return \Cake\Datasource\EntityInterface|false
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function save(EntityInterface $entity, array $options = []): EntityInterface|false {
 		$la_options = $options;
@@ -712,7 +715,6 @@ class Table extends BaseTable {
 	 * @param array<string, mixed> $options Options used when calling Table::save() for each entity.
 	 * @return iterable<\Cake\Datasource\EntityInterface>|false False on failure, entities list on success.
 	 * @throws \Exception
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function saveMany(iterable $entities, array $options = []): iterable|false {
 		$la_options = $options + ['transaction' => true];
@@ -739,7 +741,6 @@ class Table extends BaseTable {
 	 * @return iterable<\Cake\Datasource\EntityInterface> Entities list.
 	 * @throws \Exception If an entity couldn't be saved.
 	 * @throws \Cake\ORM\Exception\PersistenceFailedException If an entity couldn't be saved.
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	protected function _saveMany(iterable $entities, array $options = []): iterable {
 		$la_options = new ArrayObject(
@@ -765,11 +766,12 @@ class Table extends BaseTable {
 
 		/** @var \Cake\Datasource\EntityInterface|null $lo_failed */
 		$lo_failed = null;
+		$lx_entities = &$entities;
 		try {
-			$lc_saveMany = function () use ($entities, $la_options, &$la_isNew, &$lo_failed): bool {
+			$lc_saveMany = function () use ($lx_entities, $la_options, &$la_isNew, &$lo_failed): bool {
 				// Cache array cast since options are the same for each entity
 				$la_options = (array)$la_options;
-				foreach ($entities as $lx_key => $lo_entity) {
+				foreach ($lx_entities as $lx_key => $lo_entity) {
 					$la_isNew[ $lx_key ] = $lo_entity->isNew();
 					if ($this->save($lo_entity, $la_options) === false) {
 						$lo_failed = $lo_entity;
@@ -791,13 +793,13 @@ class Table extends BaseTable {
 			}
 		}
 		catch (Exception $ex) {
-			$lc_cleanupOnFailure($entities);
+			$lc_cleanupOnFailure($lx_entities);
 
 			throw $ex;
 		}
 
 		if ($lo_failed !== null) {
-			$lc_cleanupOnFailure($entities);
+			$lc_cleanupOnFailure($lx_entities);
 
 			throw new PersistenceFailedException($lo_failed, ['saveMany']);
 		}
@@ -821,7 +823,7 @@ class Table extends BaseTable {
 		};
 
 		if ($this->_transactionCommitted($la_options['atomic'], $la_options['_primary'])) {
-			foreach ($entities as $lo_entity) {
+			foreach ($lx_entities as $lo_entity) {
 				$this->dispatchEvent('Model.afterSaveCommit', [
 					'entity' => $lo_entity,
 					'options' => $la_options,
@@ -834,7 +836,7 @@ class Table extends BaseTable {
 		}
 
 
-		return $entities;
+		return $lx_entities;
 	}
 
 
@@ -846,7 +848,6 @@ class Table extends BaseTable {
 	 * @param \Cake\Datasource\EntityInterface $entity
 	 * @param \ArrayObject $options
 	 * @return bool
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	protected function _onSaveSuccess(EntityInterface $entity, ArrayObject $options): bool {
 		$lx_success = $this->_associations->saveChildren(

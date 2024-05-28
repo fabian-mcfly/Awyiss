@@ -88,7 +88,7 @@
 
 				{% set content %}
 					{% block formControlContentElement %}
-						<li class="ContentElement ContentElement-Default" data-assignable="{{ assignable == false ? 'false' : 'true' }}">
+						<li class="Item ContentElement ContentElement-Default" data-assignable="{{ assignable == false ? 'false' : 'true' }}">
 							<span class="Title Title-Default">
 								{% if assignable == false %}
 									{{ FormHelper.hidden('content_template_elements[' ~ loop.index0 ~ '][identifier]', {
@@ -158,7 +158,7 @@
 				{% set key = contentTemplateElement ? contentTemplateElement.fieldset : 'unused' %}
 				{% set content %}
 					{% block formControlContentAttribute %}
-						<li class="ContentElement ContentElement-Attribute">
+						<li class="Item ContentElement ContentElement-Attribute">
 							<span class="Title Title-Attribute">
 								{{ FormHelper.checkbox('content_template_elements[' ~ (loop.index0 + availableContentElements|length) ~ '][identifier]', {
 									checked: 'attributes.' ~ contentAttribute.identifier in assignedContentElements,
@@ -220,7 +220,7 @@
 					{% block formControlContentElements %}
 						<fieldset class="Fieldset-ContentElements-Available RowSpan-{{ availableFieldsets|length }} Collapsible">
 							<legend>{{ __('content_elements_available') }}</legend>
-							<ul class="ContentElements-List" data-fieldset="unused">
+							<ul class="List ContentElements-List SortableList" data-fieldset="unused">
 								{{ fieldsetElements.unused|join('')|raw }}
 							</ul>
 						</fieldset>
@@ -228,7 +228,8 @@
 						{% for key, fieldset in availableFieldsets %}
 							<fieldset class="Fieldset-Fieldset Fieldset-Fieldset-{{ key|camelize }} Collapsible">
 								<legend>{{ fieldset }}</legend>
-								<ul class="ContentElements-List" data-fieldset="{{ key }}">
+
+								<ul class="List ContentElements-List SortableList" data-fieldset="{{ key }}">
 									{{ fieldsetElements[ key ]|join('')|raw }}
 								</ul>
 							</fieldset>
@@ -239,7 +240,7 @@
 		{% endblock %}
 
 		{% block fieldsetContentAreas %}
-			<fieldset class="Fieldset-PageTemplates">
+			<fieldset class="Fieldset-ContentAreas">
 				<legend>{{ __('assigned_page_templates') }}</legend>
 
 				{% block fieldsetContentAreasErrors %}
@@ -318,11 +319,17 @@
 				<legend>{{ __('fieldset_media') }}</legend>
 
 				{% block fieldsetMediaInner %}
+					{{ cell('Backend/MediaComposites', [contentTemplate]) }}
+
 					{% block fieldsetMediaAttributes %}
 						{{ AttributesHelper.allControls('media') }}
 					{% endblock %}
 				{% endblock %}
 			</fieldset>
+		{% endblock %}
+
+		{% block fieldsetMediaCompositeAssignments %}
+			{{ cell('Backend/MediaComposites::compositeAssignments', [contentTemplate]) }}
 		{% endblock %}
 
 		{% block fieldsetAttributes %}

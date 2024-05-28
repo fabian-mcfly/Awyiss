@@ -90,7 +90,7 @@ class LanguagesController extends Controller {
 		$this->Authorization->ensure('update');
 
 		/** @var Language $lo_language */
-		$lo_language = $this->Languages->findById($id)->find('translations')->first();
+		$lo_language = $this->Languages->findById($id)->find('translations')->find('mediaAssignments')->find('mediaCompositeAssignments')->first();
 		if (!$lo_language) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -122,7 +122,7 @@ class LanguagesController extends Controller {
 		$this->request->allowMethod(['get', 'delete']);
 
 		/** @var Language $lo_language */
-		$lo_language = $this->Languages->findById($id)->find('translations')->first();
+		$lo_language = $this->Languages->findById($id)->first();
 		if (!$lo_language) {
 			$this->Flash->error(__('record_not_found'));
 

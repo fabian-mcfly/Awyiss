@@ -133,7 +133,7 @@ class UsersController extends Controller {
 		$this->Authorization->ensure('update');
 
 		/** @var User $lo_user */
-		$lo_user = $this->Users->findById($id)->find('translations')->contain(['Usergroups'])->first();
+		$lo_user = $this->Users->findById($id)->find('translations')->find('mediaAssignments')->find('mediaCompositeAssignments')->contain(['Usergroups'])->first();
 		if (!$lo_user) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -172,7 +172,7 @@ class UsersController extends Controller {
 
 		$this->request->allowMethod(['get', 'delete']);
 
-		$lo_user = $this->Users->findById($id)->find('translations')->first();
+		$lo_user = $this->Users->findById($id)->first();
 		if (!$lo_user) {
 			$this->Flash->error(__('record_not_found'));
 

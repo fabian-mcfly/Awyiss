@@ -1,0 +1,51 @@
+.MediaCompositesController {
+	.FormInputName-MediaCompositeSelectors,
+	.FormInputName-MediaCompAssignableModels {
+		.FormInputType-ListItem {
+			display:grid;
+			margin-bottom:20px;
+			padding-right:57px;
+			gap:5px;
+			//grid-template-columns:repeat(3, 1fr) 200px 200px;
+			grid-template-columns:repeat(4, 1fr);
+
+			.FormInput {
+				grid-column:auto / auto;
+				margin-bottom:0;
+
+				&Type-Checkbox {
+					margin-top:36px;
+				}
+			}
+
+			.SortableHandle {
+				top:calc(1rem + 7px);
+				bottom:auto;
+			}
+
+			.Button-Remove {
+				width:52px;
+				height:52px;
+				top:calc(1rem + 1px);
+				right:0;
+				bottom:auto;
+
+				&.Disabled {
+					opacity:.25;
+					visibility:visible;
+					pointer-events:none;
+				}
+			}
+		}
+
+		.AdditionalOptions {
+			display:none;
+		}
+	}
+
+	.FormInputName-MediaCompAssignableModels {
+		.FormInputType-ListItem {
+			grid-template-columns:repeat(2, 1fr);
+		}
+	}
+}

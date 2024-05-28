@@ -4,6 +4,7 @@
 namespace Awyiss\Model\Table;
 
 
+use Awyiss\Annotation\MediaCompositeAssignable;
 use Awyiss\Model\Entity\Attribute;
 use Awyiss\Model\Entity\ContentTemplate;
 use Awyiss\Model\Table;
@@ -23,6 +24,7 @@ use Cake\Validation\Validator;
  * @method \Awyiss\Model\Entity\ContentTemplate newDefaultEntity(array $additionalData = [], array $options = [])
  * @noinspection PhpUnnecessaryFullyQualifiedNameInspection
  */
+#[MediaCompositeAssignable(MediaCompositeAssignable::ENTITY_LEVEL)]
 class ContentTemplatesTable extends Table {
 	/**
 	 * @inheritDoc

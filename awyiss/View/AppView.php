@@ -107,8 +107,14 @@ class AppView extends TwigView {
 		// Get the Twig instance.
 		$lo_twig = $this->getTwig();
 
+		$la_globals = $lo_twig->getGlobals();
+
 		// Set the helper instances to the view.
 		foreach ($this->helpers()->loaded() as $ls_helper) {
+			if (isset($la_globals[ $ls_helper . 'Helper' ])) {
+				continue;
+			}
+
 			$lo_helper = $this->helperClass($ls_helper);
 
 			$this->helperCache[ $ls_helper ] = $lo_helper;

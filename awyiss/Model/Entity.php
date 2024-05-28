@@ -74,6 +74,14 @@ class Entity extends BaseEntity {
 		if (!array_key_exists('_publicationData', $this->_accessible)) {
 			$this->setAccess('_publicationData', true);
 		}
+
+		if (!array_key_exists('mediaAssignments', $this->_accessible)) {
+			$this->setAccess('mediaAssignments', true);
+		}
+
+		if (!array_key_exists('mediaCompositeAssignments', $this->_accessible)) {
+			$this->setAccess('mediaCompositeAssignments', true);
+		}
 	}
 
 

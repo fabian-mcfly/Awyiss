@@ -292,7 +292,7 @@ class MediaController extends Controller {
 		}
 
 		/** @var Media $lo_media */
-		$lo_media = $this->Media->findById($id)->find('translations')->first();
+		$lo_media = $this->Media->findById($id)->first();
 		if (!$lo_media) {
 			$this->Flash->error(__('record_not_found'));
 

@@ -10,6 +10,7 @@ import FormLeaveConfirmation from 'FormLeaveConfirmation';
 import FormUpdater from 'FormUpdater';
 import IdentifierAutofill from 'IdentifierAutofill';
 import InputListManager from 'InputListManager';
+import MediaComposites from 'Media/Composites';
 import MediaOverlay from 'Media/Overlay';
 import MediaProgressChecker from 'Media/ProgressChecker';
 import NestedListHandler from 'NestedListHandler';
@@ -279,6 +280,12 @@ export async function initMainOnReady() {
 	 * @type {InputListManager}
 	 */
 	window.inputListManager = new InputListManager();
+
+	/**
+	 * @global
+	 * @type {MediaComposites}
+	 */
+	window.mediaComposites = new MediaComposites();
 
 	/**
 	 * @global
