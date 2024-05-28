@@ -70,13 +70,10 @@ class FormHelper extends BaseFormHelper {
 		}
 
 		$lo_sourceTable = $lo_context->fetchTable($lo_context->entity()->getSource());
-		if (!$lo_sourceTable->hasBehavior('Translate')) {
-			return $ls_form;
-		}
 
-		$lo_behavior = $lo_sourceTable->getBehavior('Translate');
-		$this->translatableFields = $lo_behavior->getConfig('fields');
-		$this->languageRealm = $lo_behavior->getConfig('realm') ?? Awyiss::REALM_BACKEND;
+		$lo_behavior = $lo_sourceTable->hasBehavior('Translate') ? $lo_sourceTable->getBehavior('Translate') : null;
+		$this->translatableFields = $lo_behavior?->getConfig('fields') ?? [];
+		$this->languageRealm = $lo_behavior?->getConfig('realm') ?? Awyiss::REALM_BACKEND;
 
 		foreach (LocaleMiddleware::getLanguages($this->languageRealm) as $lo_language) {
 			if (!$lo_language->active) {
@@ -405,7 +402,6 @@ class FormHelper extends BaseFormHelper {
 			$lo_associatedEntity = $lo_entity->get(implode('.', $la_parts));
 
 			if (!$lo_associatedEntity instanceof EntityInterface) {
-
 				return '';
 			}
 
