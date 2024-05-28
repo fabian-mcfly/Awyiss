@@ -7,6 +7,7 @@ namespace Awyiss\Controller\Component;
 use Awyiss\Model\Behavior\CategoriesBehavior;
 use Awyiss\Model\Table;
 use Awyiss\Routing\Router;
+use BackedEnum;
 use Cake\Collection\Iterator\TreeIterator;
 use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
@@ -308,6 +309,10 @@ class CategoriesComponent extends Component {
 
 		$ls_fieldName = $this->getConfig('field');
 		$lx_selectedCategory = $entity->$ls_fieldName;
+
+		if ($lx_selectedCategory instanceof BackedEnum) {
+			$lx_selectedCategory = $lx_selectedCategory->value;
+		}
 
 		$la_possibleCategories = array_keys($this->getCategories());
 
