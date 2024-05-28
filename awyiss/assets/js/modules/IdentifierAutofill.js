@@ -94,7 +94,7 @@ export default class IdentifierAutofill {
 				// In this case, we need to get the input for the current language as the source
 				const translatableTexts = form.querySelectorAll('.FormInputType-TranslatableText')
 				translatableTexts.forEach(translatableText => {
-					const possibleInput = translatableText.querySelector(`input[name$="[${title}]"]`);
+					const possibleInput = translatableText.querySelector(`input[name^="_translations"][name$="[${title}]"]`);
 
 					if (possibleInput) {
 						input = translatableText.querySelector(`.FormInput.IsCurrentLanguage input`);
