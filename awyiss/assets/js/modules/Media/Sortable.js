@@ -1,7 +1,7 @@
 // noinspection JSUnusedGlobalSymbols,NpmUsedModulesInstalled
 
 import MultiSelect from 'MultiSelect';
-import {Sortable as SortableJS} from '../../SortableJS/sortable.core.esm.js';
+import {Sortable as SortableJS} from 'SortableJS/sortable';
 
 export default class Sortable {
 	/**

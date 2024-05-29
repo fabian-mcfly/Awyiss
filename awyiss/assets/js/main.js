@@ -32,7 +32,7 @@ export async function loadControllerClass(controllerClass) {
 
 	try {
 		// Dynamically import the controller class
-		const module = await import(`${controllerClass.slice(0, -10)}`);
+		const module = await import(controllerClass);
 		if (typeof module.default === 'function') {
 			// Create a new instance of the controller class and save it to a global variable (camelCased)
 			const controllerClassVariable = controllerClass.charAt(0).toLowerCase() + controllerClass.slice(1);
@@ -42,8 +42,8 @@ export async function loadControllerClass(controllerClass) {
 		if (
 			error instanceof TypeError &&
 			(
-				error.message.includes(`Resolution of specifier “${controllerClass.slice(0, -10)}”`) ||
-				error.message.includes(`Failed to resolve module specifier '${controllerClass.slice(0, -10)}'`)
+				error.message.includes(`Resolution of specifier “${controllerClass}”`) ||
+				error.message.includes(`Failed to resolve module specifier '${controllerClass}'`)
 			)
 		) {
 			if (isGenericPage && controllerClass !== 'PagesController') {

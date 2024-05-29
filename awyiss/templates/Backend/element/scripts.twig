@@ -41,9 +41,11 @@
 		'modules/TitleSetter.js',
 		'modules/TranslatableTexts.js',
 		'Controller/' ~ controller ~ '.js',
+		'Coloris/Coloris.js',
+		'SortableJS/sortable.js',
 	]) %}
 
-	{% if controller != 'Pages' %}
+	{% if isGenericPage and controller != 'Pages' %}
 		{% do AssetHelper.addJsModule([
 			'Controller/Pages.js',
 		]) %}

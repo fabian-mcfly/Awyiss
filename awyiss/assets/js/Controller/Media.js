@@ -3,7 +3,7 @@
 import Crop from 'Media/Crop';
 import Sortable from 'Media/Sortable';
 import Upload from 'Media/Upload';
-import Coloris from '../Coloris/Coloris.js';
+import Coloris from 'Coloris/Coloris';
 
 export default class MediaController {
 	/**

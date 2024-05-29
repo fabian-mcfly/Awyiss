@@ -1,7 +1,7 @@
 //noinspection JSUnusedGlobalSymbols
 
 // Core SortableJS (without default plugins)
-import Sortable from '../SortableJS/sortable.core.esm.js';
+import Sortable from 'SortableJS/sortable';
 
 /**
  * Class to manage FormInputType-List rows

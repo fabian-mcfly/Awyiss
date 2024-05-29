@@ -526,19 +526,28 @@ class AssetHelper extends Helper {
 			$ls_cleanModuleName = pathinfo($ls_moduleName, PATHINFO_FILENAME);
 
 			// Files that are deeper than one level must have that nested prepended to the module name
-			if (substr_count($ls_moduleName, '/') > 1) {
+			if (substr_count($ls_moduleName, '/') > 0) {
 				$la_parts = explode('/', $ls_moduleName);
-				// Remove the first part of the path
-				array_shift($la_parts);
+
+				$ls_folder = $la_parts[0];
+				if (in_array($la_parts[0], ['modules', 'Controller'])) {
+					// Remove the first part of the path
+					array_shift($la_parts);
+				}
+
 				// Remove the last part of the path
 				array_pop($la_parts);
-				$ls_cleanModuleName = implode('/', $la_parts) . '/' . $ls_cleanModuleName;
+
+				$ls_cleanModuleName = ($la_parts ? implode('/', $la_parts) . '/' : '') . $ls_cleanModuleName;
+
+				if ($ls_folder === 'Controller') {
+					$ls_cleanModuleName .= 'Controller';
+				}
 			}
 
 			// Add the module to the import map
 			$la_importMap['imports'][ $ls_cleanModuleName ] = $this->getAssetPath($ls_moduleName, $la_options);
 		}
-
 
 		// If includeScriptTag is true, wrap the import map in a script tag
 		if ($includeScriptTag) {

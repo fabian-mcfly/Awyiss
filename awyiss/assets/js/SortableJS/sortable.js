@@ -1,5 +1,5 @@
 /**!
- * Sortable 1.15.2
+ * Sortable 1.15.2 (sortable.core.esm.js)
  * @author	RubaXa   <trash@rubaxa.org>
  * @author	owenm    <owen23355@gmail.com>
  * @license MIT

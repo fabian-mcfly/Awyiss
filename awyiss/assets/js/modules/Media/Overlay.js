@@ -5,8 +5,8 @@ import Crop from 'Media/Crop';
 import Selectors from 'Media/Selectors';
 import Sortable from 'Media/Sortable';
 import Upload from 'Media/Upload';
-import {Sortable as SortableJS} from '../../SortableJS/sortable.core.esm.js';
-import Coloris from '../../Coloris/Coloris';
+import {Sortable as SortableJS} from 'SortableJS/sortable';
+import Coloris from 'Coloris/Coloris';
 
 export default class Overlay {
 	/**

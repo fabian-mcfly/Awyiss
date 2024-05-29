@@ -1,6 +1,6 @@
 // noinspection JSUnusedGlobalSymbols
 
-import Sortable from '../../SortableJS/sortable.core.esm.js';
+import Sortable from 'SortableJS/sortable';
 
 export default class Selectors {
 	/**
