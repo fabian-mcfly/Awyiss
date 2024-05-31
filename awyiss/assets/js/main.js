@@ -18,6 +18,7 @@ import Observer from 'Observer';
 import OverflowMenu from 'OverflowMenu';
 import OverlayForm from 'OverlayForm';
 import PasswordReveal from 'PasswordReveal';
+import TinyMCELoader from 'TinyMCE/Loader';
 import TitleSetter from 'TitleSetter';
 import TranslatableTexts from 'TranslatableTexts';
 
@@ -310,6 +311,12 @@ export async function initMainOnReady() {
 	 * @type {PasswordReveal}
 	 */
 	window.passwordReveal = new PasswordReveal();
+
+	/**
+	 * @global
+	 * @type {TinyMCELoader}
+	 */
+	window.tinyMCELoader = new TinyMCELoader();
 
 	/**
 	 * @global

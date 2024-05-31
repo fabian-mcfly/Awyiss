@@ -12,23 +12,25 @@
  * 		{% do helper_Asset_add('custom.js', {type: 'module'}) %}
  *
  * If you want to use the default main.js and add some custom script, uncomment the following lines:
- *
- * window.mainJsIsImported = true;
- *
- * import { initMain } from '../../../awyiss/assets/js/main.js';
- *
- * console.log('Custom Main.js loaded');
- *
- * // If document is still loading, wait for it to complete
- * if (document.readyState === 'loading') {
- * 	document.addEventListener('DOMContentLoaded', initMainOnReady);
- * }
- * else {
- * 	// DOMContentLoaded has already fired
- * 	initMainOnReady();
- * }
- *
- * window.onload = function() {
- * 	initMainOnLoad();
- * }
  */
+
+/*
+window.mainJsIsImported = true;
+
+import('../../../awyiss/assets/js/main.js').then(({initMainOnReady, initMainOnLoad}) => {
+	console.log('Custom Main.js loaded');
+
+	// If document is still loading, wait for it to complete
+	if (document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', initMainOnReady);
+	}
+	else {
+		// DOMContentLoaded has already fired
+		initMainOnReady();
+	}
+
+	window.onload = function () {
+		initMainOnLoad();
+	}
+});
+*/

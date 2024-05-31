@@ -4,6 +4,7 @@
 namespace Awyiss\View;
 
 
+use Awyiss\Awyiss;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Routing\Router;
 
@@ -83,23 +84,25 @@ class BackendView extends AppView {
 		// If the logo path is set, remove the root path and custom directory from the path
 		$this->set('loginLogoPath', substr_replace($ls_logoPath, '', 0, strlen(ROOT . DS . CUSTOM_DIR) + 1));
 
+
+		$lo_blocklistedProperties = ['realm', 'systemOrder', 'active', 'deleted', 'createdBy', 'createdOn', 'changedBy', 'changedOn', 'deletedBy', 'deletedOn', 'label'];
 		// Unset language properties
 		$lo_frontendLanguage = LocaleMiddleware::getLanguage();
 		if ($lo_frontendLanguage) {
 			$lo_frontendLanguage = clone $lo_frontendLanguage;
-			unset(
-				$lo_frontendLanguage->realm,
-				$lo_frontendLanguage->systemOrder,
-				$lo_frontendLanguage->active,
-				$lo_frontendLanguage->deleted,
-				$lo_frontendLanguage->createdBy,
-				$lo_frontendLanguage->createdOn,
-				$lo_frontendLanguage->changedBy,
-				$lo_frontendLanguage->changedOn,
-				$lo_frontendLanguage->deletedBy,
-				$lo_frontendLanguage->deletedOn,
-				$lo_frontendLanguage->label,
-			);
+
+			foreach ($lo_blocklistedProperties as $ls_property) {
+				unset($lo_frontendLanguage->{$ls_property});
+			}
+		}
+
+		$lo_backendLanguage = LocaleMiddleware::getLanguage(Awyiss::REALM_BACKEND);
+		if ($lo_backendLanguage) {
+			$lo_backendLanguage = clone $lo_backendLanguage;
+
+			foreach ($lo_blocklistedProperties as $ls_property) {
+				unset($lo_backendLanguage->{$ls_property});
+			}
 		}
 
 		$lo_twig = $this->getTwig();
@@ -110,5 +113,6 @@ class BackendView extends AppView {
 		$lo_twig->addGlobal('folder', '/' . ltrim($this->request->getAttribute('base'), '/'));
 		$lo_twig->addGlobal('languages', LocaleMiddleware::getLanguages());
 		$lo_twig->addGlobal('languageShortcode', $lo_frontendLanguage?->shortcode);
+		$lo_twig->addGlobal('userLanguage', $lo_backendLanguage);
 	}
 }

@@ -82,6 +82,10 @@ export default class ButtonHandler {
 	 *  If not provided, the element itself will be used as the hoverParent.
 	 */
 	addElement(element, hoverSelector) {
+		if (element.closest('.tox-listboxfield')) {
+			return;
+		}
+
 		/**
 		 * Find the hoverParent within the element
 		 *
@@ -119,8 +123,7 @@ export default class ButtonHandler {
 		this.eventHandler.add('mousemove', event => {
 			const rect = hoverParent.getBoundingClientRect();
 			const parentWidth = hoverParent.offsetWidth;
-			const pseudoElementWidth = parentWidth - 20; // Calculate the width of the pseudo-element
-			let x = event.clientX - rect.left - pseudoElementWidth / 2; // Center the x-coordinate
+			let x = event.clientX - rect.left - parentWidth / 2; // Center the x-coordinate
 
 			// Initialize y at its maximum value (0, since we want to go from 0 to -15)
 			let y = 0;

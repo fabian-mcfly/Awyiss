@@ -201,11 +201,15 @@ class AssetHelper extends Helper {
 			$ls_nonce = $this->getView()->getRequest()->getAttribute('cspStyleNonce');
 		}
 
+		if ($ls_nonce) {
+			$ls_nonce = 'nonce="' . $ls_nonce . '"';
+		}
+
 		// If the extension is not recognized, try to determine it from the url, if it's an url
 		if ($ls_extension === 'woff' || $ls_extension === 'woff2' || $ls_extension === 'ttf') {
 			if ($lazyLoad) {
 				// Generate a <link> tag with rel="preload" for the font
-				return '<link nonce="' . $ls_nonce . '" rel="preload" href="' . $assetPath . '" as="font" type="font/' . $ls_extension . '"
+				return '<link ' . $ls_nonce . ' rel="preload" href="' . $assetPath . '" as="font" type="font/' . $ls_extension . '"
 					crossorigin' . $ls_additionalAttributes . '>' . PHP_EOL;
 			}
 
@@ -216,26 +220,26 @@ class AssetHelper extends Helper {
 		// If the asset is critical, generate a <script> tag for JavaScript files and a <link> tag with rel="stylesheet" for CSS files
 		if ($options['critical']) {
 			if ($ls_extension === 'js') {
-				return '<script nonce="' . $ls_nonce . '" src="' . $assetPath . '"' . $ls_additionalAttributes . '></script>' . PHP_EOL;
+				return '<script ' . $ls_nonce . ' src="' . $assetPath . '"' . $ls_additionalAttributes . '></script>' . PHP_EOL;
 			}
 
 
-			return '<link nonce="' . $ls_nonce . '" rel="stylesheet" type="text/css" href="' . $assetPath . '"' . $ls_additionalAttributes . '/>' . PHP_EOL;
+			return '<link ' . $ls_nonce . ' rel="stylesheet" type="text/css" href="' . $assetPath . '"' . $ls_additionalAttributes . '/>' . PHP_EOL;
 		}
 
 		// If the asset is a JavaScript file, generate a <script> tag with the async attribute
 		if ($ls_extension === 'js') {
-			return '<script nonce="' . $ls_nonce . '" async src="' . $assetPath . '"' . $ls_additionalAttributes . '></script>' . PHP_EOL;
+			return '<script ' . $ls_nonce . ' async src="' . $assetPath . '"' . $ls_additionalAttributes . '></script>' . PHP_EOL;
 		}
 
 		// If the asset is a CSS file and lazy loading is enabled, generate a <link> tag with rel="preload"
 		if ($lazyLoad) {
-			return '<link nonce="' . $ls_nonce . '" rel="preload" href="' . $assetPath . '" as="style"' . $ls_additionalAttributes . ' data-lazyload="true">' . PHP_EOL;
+			return '<link ' . $ls_nonce . ' rel="preload" href="' . $assetPath . '" as="style"' . $ls_additionalAttributes . ' data-lazyload="true">' . PHP_EOL;
 		}
 
 
 		// If none of the above conditions are met, generate a <link> tag with rel="stylesheet" for the asset
-		return '<link nonce="' . $ls_nonce . '" rel="stylesheet" type="text/css" href="' . $assetPath . '"' . $ls_additionalAttributes . '/>' . PHP_EOL;
+		return '<link ' . $ls_nonce . ' rel="stylesheet" type="text/css" href="' . $assetPath . '"' . $ls_additionalAttributes . '/>' . PHP_EOL;
 	}
 
 
@@ -381,9 +385,14 @@ class AssetHelper extends Helper {
 		}
 
 		$ls_nonce = $this->getView()->getRequest()->getAttribute('cspScriptNonce');
+
+		if ($ls_nonce) {
+			$ls_nonce = ' nonce="' . $ls_nonce . '"';
+		}
+
 		// If there is at least one CSS tag, append the JavaScript code
 		if ($lb_hasCss) {
-			$ls_assetTags .= '<script nonce="' . $ls_nonce . '">
+			$ls_assetTags .= '<script' . $ls_nonce . '>
 				[...document.querySelectorAll(\'link[data-lazyload]\')].map(e=>{!performance.getEntriesByType("resource").some(r=>r.name.includes(e.href))?e.addEventListener("load",e=>{e.target.rel="stylesheet"}):e.rel="stylesheet"});
 			</script>';
 		}
@@ -553,8 +562,11 @@ class AssetHelper extends Helper {
 		if ($includeScriptTag) {
 			$ls_nonce = $this->getView()->getRequest()->getAttribute('cspScriptNonce');
 
+			if ($ls_nonce) {
+				$ls_nonce = ' nonce="' . $ls_nonce . '"';
+			}
 
-			return '<script type="importmap" nonce="' . $ls_nonce . '">' . json_encode($la_importMap) . '</script>';
+			return '<script type="importmap"' . $ls_nonce . '>' . json_encode($la_importMap) . '</script>';
 		}
 
 

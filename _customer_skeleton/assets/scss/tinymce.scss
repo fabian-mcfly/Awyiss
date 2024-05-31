@@ -1,0 +1,16 @@
+/**
+ * Content styles
+ */
+.mce-content-body {
+	audio,
+	details,
+	embed,
+	img,
+	object,
+	table,
+	video {
+		&[data-mce-selected] {
+			outline-color:#63D1A5;
+		}
+	}
+}

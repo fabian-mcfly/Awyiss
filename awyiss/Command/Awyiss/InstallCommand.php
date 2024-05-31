@@ -228,6 +228,7 @@ class InstallCommand extends Command {
 	 */
 	protected function createDirectoriesAndSymlinks(): void {
 		$this->filesystem->symlink(ROOT . DS . 'awyiss' . DS . 'assets', WWW_ROOT . 'awyiss' . DS . 'assets');
+		$this->filesystem->symlink(ROOT . DS . 'vendor' . DS . 'tinymce' . DS . 'tinymce', WWW_ROOT . 'awyiss' . DS . 'assets' . DS . 'js' . DS . 'TinyMCE' . DS . 'tinymce');
 		$this->filesystem->symlink(ROOT . DS . $this->customerName . DS . 'assets', WWW_ROOT . 'assets');
 	}
 

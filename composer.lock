@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e3c15eb2f6ad9eb1ab43a17122e56deb",
+    "content-hash": "4fb149caad0eca782b3d811830d5fe50",
     "packages": [
         {
             "name": "brick/varexporter",
@@ -3042,6 +3042,65 @@
                 }
             ],
             "time": "2024-02-01T13:17:36+00:00"
+        },
+        {
+            "name": "tinymce/tinymce",
+            "version": "7.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/tinymce/tinymce-dist.git",
+                "reference": "f671e05aca24ac73298ae4922b34607b634d59f4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/tinymce/tinymce-dist/zipball/f671e05aca24ac73298ae4922b34607b634d59f4",
+                "reference": "f671e05aca24ac73298ae4922b34607b634d59f4",
+                "shasum": ""
+            },
+            "type": "component",
+            "extra": {
+                "component": {
+                    "scripts": [
+                        "tinymce.js",
+                        "plugins/*/plugin.js",
+                        "themes/*/theme.js",
+                        "models/*/model.js",
+                        "icons/*/icons.js"
+                    ],
+                    "files": [
+                        "tinymce.min.js",
+                        "plugins/*/plugin.min.js",
+                        "themes/*/theme.min.js",
+                        "models/*/model.min.js",
+                        "skins/**",
+                        "icons/*/icons.min.js"
+                    ]
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "description": "Web based JavaScript HTML WYSIWYG editor control.",
+            "homepage": "https://www.tiny.cloud/",
+            "keywords": [
+                "contenteditable",
+                "editing",
+                "html",
+                "javascript",
+                "rich editor",
+                "rich text",
+                "rich text editor",
+                "richtext",
+                "rte",
+                "text",
+                "tinymce",
+                "wysiwyg"
+            ],
+            "support": {
+                "source": "https://github.com/tinymce/tinymce-dist/tree/7.1.1"
+            },
+            "time": "2024-05-22T08:18:50+00:00"
         },
         {
             "name": "twig/markdown-extra",
@@ -6598,6 +6657,7 @@
         "php": ">=8.2",
         "ext-curl": "*",
         "ext-fileinfo": "*",
+        "ext-gd": "*",
         "ext-intl": "*",
         "ext-posix": "*"
     },

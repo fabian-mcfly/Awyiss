@@ -22,6 +22,22 @@ $routes->prefix('Backend', function (RouteBuilder $routeBuilder): void {
 
 	$routeBuilder->registerMiddleware('csp', new CspMiddleware(
 		[
+			'connect-src' => [
+				'self' => true,
+				'blob' => true,
+			],
+			'default-src' => [],
+			'font-src' => [
+				'self' =>  true,
+			],
+			'frame-src' => [
+				'self' => true,
+			],
+			'img-src' => [
+				'blob' => true,
+				'self' => true,
+				'data' => true
+			],
 			'script-src' => [
 				'allow' => Configure::read('Csp.scriptSrc.allow'),
 				'self' => true,
@@ -31,7 +47,19 @@ $routes->prefix('Backend', function (RouteBuilder $routeBuilder): void {
 			'style-src' => [
 				'allow' => Configure::read('Csp.styleSrc.allow'),
 				'self' => true,
-				'unsafe-inline' => false,
+				'unsafe-inline' => true,
+				'unsafe-eval' => false,
+			],
+			'style-src-attr' => [
+				'allow' => Configure::read('Csp.styleSrc.allow'),
+				'self' => true,
+				'unsafe-inline' => true,
+				'unsafe-eval' => false,
+			],
+			'style-src-elem' => [
+				'allow' => Configure::read('Csp.styleSrc.allow'),
+				'self' => true,
+				'unsafe-inline' => true,
 				'unsafe-eval' => false,
 			],
 		],

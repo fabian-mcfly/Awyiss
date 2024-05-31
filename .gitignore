@@ -1,4 +1,5 @@
 /awyiss/assets/css/*
+/awyiss/assets/js/TinyMCE/tinymce/
 /logs/*
 /tmp/*
 /vendor/*

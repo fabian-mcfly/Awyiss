@@ -72,6 +72,7 @@
 		h2 {
 			margin-top:0;
 			color:var(--colorMedium);
+			grid-column:1 / -1;
 		}
 
 		&:has(.SortableChosen[data-nestable="false"]) {
