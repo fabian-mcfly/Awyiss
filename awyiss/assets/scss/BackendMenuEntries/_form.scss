@@ -12,6 +12,10 @@
 			&::after {
 				@include la('\f023', 24px);
 				line-height:50px;
+
+				.Scale-Small & {
+					line-height:40px;
+				}
 			}
 		}
 

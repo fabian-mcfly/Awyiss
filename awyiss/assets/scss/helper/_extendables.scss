@@ -27,6 +27,11 @@
 	right:1px;
 	bottom:1px;
 
+	.Scale-Small & {
+		width:40px;
+		height:40px;
+	}
+
 	.🌚 & {
 		background-color:var(--backgroundColor);
 	}
@@ -150,6 +155,10 @@
 	font-family:inherit;
 	font-size:1rem;
 	line-height:30px;
+
+	.Scale-Small & {
+		padding-block:5px;
+	}
 
 	.🌚 & {
 		--backgroundColor:var(--colorSemiDark);

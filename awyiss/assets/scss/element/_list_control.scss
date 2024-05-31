@@ -23,11 +23,20 @@
 			padding:0;
 			line-height:50px;
 			order:2;
+
+			.Scale-Small & {
+				line-height:40px;
+			}
 		}
 
 		select {
 			width:72px;
 			text-align:center;
+
+			.Scale-Small & {
+				width:57px;
+				padding-inline:5px;
+			}
 		}
 	}
 }

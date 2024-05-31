@@ -26,6 +26,10 @@
 			gap:0 5px;
 			grid-template-columns:repeat(2, 1fr);
 
+			.Scale-Small& {
+				padding-right:47px;
+			}
+
 			&:nth-child(1) {
 				.SortableHandle {
 					transform:translateY(1rem);
@@ -61,6 +65,11 @@
 			height:52px;
 			top:0;
 			right:0;
+
+			.Scale-Small& {
+				width:42px;
+				height:42px;
+			}
 
 			&.Disabled {
 				opacity:.25;

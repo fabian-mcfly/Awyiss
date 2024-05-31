@@ -40,6 +40,16 @@
 		margin:-1rem -20px 0;
 		grid-column:1 / span 12;
 
+		.Scale-Small & {
+			margin:0 0 20px 0;
+
+			/*&[data-nestable="false"] {
+				.SortableHandle {
+					top:18px;
+				}
+			}*/
+		}
+
 		&.SortableDragging {
 			&:has(.SortableChosen[data-nestable="false"]) {
 				.NestedList {
@@ -324,6 +334,11 @@
 		list-style-type:none;
 		position:relative;
 
+		.Scale-Small & {
+			margin-left:-32px;
+			padding-left:32px;
+		}
+
 		&.SortableChosen {
 			.NestedList {
 				&:not(:has(.ListItem)) {
@@ -433,6 +448,10 @@
 			.🌚 & {
 				--dottedLineColor:var(--colorSemiDark);
 			}
+
+			.Scale-Small & {
+				background-position:52px 16px;
+			}
 		}
 
 		&:nth-child(2n+1) {
@@ -497,7 +516,7 @@
 			padding-bottom:.75rem;
 		}
 
-		&:has(> .NestedListToggle) {
+		&:has(> .NestedListToggle:not(.Hidden)) {
 			&:hover {
 				border-top-left-radius:0;
 			}
@@ -577,7 +596,7 @@
 		transition:border-radius .3s ease-in-out, background-color .3s ease-in-out, opacity .3s ease-in-out;
 
 		.🌚 & {
-			background-color:var(--colorSemiDarkDarkMode-Darkened-4);
+			background-color:var(--colorSemiDarkDarkMode-Lightened-4);
 
 			&:hover {
 				background-color:var(--colorSuccess);
@@ -587,7 +606,7 @@
 		.Scale-Small & {
 			width:30px;
 			height:30px;
-			left:-30px;
+			left:-31px;
 		}
 
 		&.Hidden {
@@ -644,7 +663,7 @@
 		transition:background-color .3s ease-in-out, opacity .3s ease-in-out;
 
 		.🌚 & {
-			background-color:var(--colorSemiDarkDarkMode-Darkened-4);
+			background-color:var(--colorSemiDarkDarkMode-Lightened-4);
 
 			&:hover {
 				background-color:var(--colorSuccess);
@@ -655,7 +674,7 @@
 			width:30px;
 			height:30px;
 			top:30px;
-			left:-30px;
+			left:-31px;
 		}
 
 		&:has(+ .NestedListToggle:not(.Hidden)) {
@@ -680,6 +699,10 @@
 
 	.AuditInfo {
 		z-index:2;
+
+		.Scale-Small & {
+			top:-2px;
+		}
 	}
 
 	.Data {

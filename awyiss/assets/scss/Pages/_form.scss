@@ -1,5 +1,7 @@
 .PagesController,
 .IsGenericPage {
+
+
 	.FormInputName-CopyDescendantsWithDifferentPageRole {
 		margin-block:calc(var(--lineHeightMain) * -2) calc(var(--lineHeightMain) * 2);
 		padding-bottom:10px;
@@ -22,6 +24,10 @@
 		&:not(.Collapsed) {
 			&:not(:has(> legend:last-child)) {
 				padding-bottom:10px;
+
+				.Scale-Small& {
+					padding-bottom:0;
+				}
 			}
 		}
 	}

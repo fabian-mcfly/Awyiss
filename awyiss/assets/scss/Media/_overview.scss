@@ -168,6 +168,10 @@ ul#Media-List {
 	grid-template-columns:repeat(auto-fill, minmax(8rem, 1fr));
 	grid-column:1 / -1;
 
+	.Scale-Small & {
+		padding:20px;
+	}
+
 	&.FetchInProgress {
 		pointer-events:none;
 

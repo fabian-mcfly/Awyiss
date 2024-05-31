@@ -30,6 +30,21 @@ body {
 		&.tox-tinymce {
 			border-radius:5px;
 			border:1px solid rgba(0, 0, 0, .1);
+
+			&.tox-fullscreen {
+				html:has(&) {
+					overflow:hidden;
+				}
+
+				.tox-editor-header {
+					padding-block:0;
+					transform:translateY(-100px);
+				}
+
+				.tox-editor-container {
+					background-color:var(--colorBright);
+				}
+			}
 		}
 
 		&:not(.tox-tinymce-inline) {

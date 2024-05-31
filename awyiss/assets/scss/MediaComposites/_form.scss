@@ -9,6 +9,10 @@
 			//grid-template-columns:repeat(3, 1fr) 200px 200px;
 			grid-template-columns:repeat(4, 1fr);
 
+			.Scale-Small& {
+				padding-right:47px;
+			}
+
 			.FormInput {
 				grid-column:auto / auto;
 				margin-bottom:0;
@@ -29,6 +33,11 @@
 				top:calc(1rem + 1px);
 				right:0;
 				bottom:auto;
+
+				.Scale-Small& {
+					width:42px;
+					height:42px;
+				}
 
 				&.Disabled {
 					opacity:.25;

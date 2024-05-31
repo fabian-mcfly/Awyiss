@@ -7,6 +7,10 @@
 	border-collapse:separate;
 	table-layout:fixed;
 
+	.Scale-Small & {
+		padding:0;
+	}
+
 	.🌚 & {
 		//--backgroundColorOdd:var(--backgroundColorContent);
 		--backgroundColorEven:var(--colorBackgroundContentDarkMode-Lightened-4);
@@ -393,10 +397,11 @@
 	.TableCell-Actions {
 		width:calc(9rem + 40px);
 		padding-block:10px;
+		padding-right:20px;
 		overflow:visible;
 
 		.Scale-Small & {
-			width:calc(11rem + 40px);
+			width:calc(9frem + 40px);
 		}
 	}
 
@@ -413,9 +418,8 @@
 	.Actions {
 		@extend %Actions;
 
-
 		.Scale-Small & {
-			width:11rem;
+			width:9rem;
 		}
 	}
 }

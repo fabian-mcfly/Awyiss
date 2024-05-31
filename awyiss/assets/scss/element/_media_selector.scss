@@ -133,9 +133,12 @@
 			@extend %Input;
 
 			display:grid;
-			padding:10px;
 			gap:10px;
 			grid-template-columns:repeat(auto-fill, minmax(100px, 1fr));
+
+			.Scale-Small & {
+				padding-inline:5px;
+			}
 		}
 
 		.MediaSelector-MediaSelect {

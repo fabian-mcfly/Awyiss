@@ -106,8 +106,8 @@ button,
 
 		.Scale-Small & {
 			min-height:30px;
+			padding:3px 5px;
 			font-size:1rem;
-			padding-block:3px;
 		}
 	}
 
@@ -117,6 +117,15 @@ button,
 
 		padding-block:4px 5px;
 		font-size:.8rem;
+
+		.🌚 & {
+			--colorButtonText:var(--colorBright);
+		}
+
+		.Scale-Small & {
+			font-size:.9rem;
+			padding-inline:10px;
+		}
 
 		&::after {
 			translate:0 1px;

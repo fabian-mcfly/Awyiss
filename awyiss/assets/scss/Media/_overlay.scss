@@ -226,6 +226,10 @@
 		scrollbar-color:var(--colorText) var(--colorMedium);
 		scrollbar-width:thin;
 
+		.🌚 & {
+			scrollbar-color:var(--colorSemiDark) var(--colorBackgroundContentDarkMode-Darkened-4-Alpha-85);
+		}
+
 		.Actions {
 			.Button-Delete {
 				display:none;

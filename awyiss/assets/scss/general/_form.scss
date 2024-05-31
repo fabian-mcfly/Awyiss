@@ -130,9 +130,19 @@ input {
 select {
 	height:52px;
 	padding-block:0;
+	scrollbar-color:var(--scrollbarColor);
+	scrollbar-width:thin;
+
+	.Scale-Small & {
+		height:42px;
+	}
 
 	&[data-options-for] {
 		margin-top:-52px;
+
+		.Scale-Small & {
+			margin-top:-42px;
+		}
 	}
 }
 
@@ -252,6 +262,10 @@ textarea {
 			&::after {
 				@include la('\f00d', 24px);
 				line-height:50px;
+
+				.Scale-Small & {
+					line-height:40px;
+				}
 			}
 
 			.Hover {
@@ -374,6 +388,10 @@ textarea {
 				min-height:26.5px; // Don't ask...
 				position:relative;
 				padding-left:34px;
+
+				.Scale-Small & {
+					min-height:22px;
+				}
 
 				&:last-of-type {
 					margin-bottom:0;
@@ -515,11 +533,17 @@ textarea {
 
 			.Scale-Small & {
 				padding-block:0;
+				width:40px;
+				height:40px;
 			}
 
 			&::after {
 				@include la('\f0ac', 30px);
 				line-height:50px;
+
+				.Scale-Small & {
+					line-height:40px;
+				}
 			}
 		}
 	}
@@ -574,6 +598,10 @@ textarea {
 			top:1rem;
 			left:0;
 			pointer-events:none;
+
+			.Scale-Small & {
+				height:42px;
+			}
 		}
 
 		.Label.Label {
@@ -581,6 +609,11 @@ textarea {
 			padding-bottom:calc(52px + .25rem);
 			margin-bottom:-52px;
 			flex:0 0 100%;
+
+			.Scale-Small & {
+				padding-bottom:calc(42px + .25rem);
+				margin-bottom:-42px;
+			}
 		}
 
 		input {
@@ -608,6 +641,10 @@ textarea {
 			z-index:1;
 			cursor:default;
 			pointer-events:none;
+
+			.Scale-Small & {
+				line-height:40px;
+			}
 		}
 
 		div.Error {
@@ -652,6 +689,10 @@ textarea {
 	box-shadow:none;
 	background-color:transparent;
 	grid-template-columns:repeat(2, 1fr);
+
+	.Scale-Small & {
+		padding:0;
+	}
 
 	> .Fieldset-MediaComposites-Available {
 		grid-column:1 / 1;
@@ -741,6 +782,10 @@ textarea {
 	display:block;
 	padding:20px;
 
+	.Scale-Small & {
+		padding-bottom:20px;
+	}
+
 	&.Collapsed {
 		padding-block:0;
 	}
@@ -751,7 +796,7 @@ textarea {
 		&:has(.SortableDragging) {
 			background-color:#D5F1E5;
 
-			.🌚& {
+			.🌚 & {
 				background-color:var(--colorSemiDark)
 			}
 		}
@@ -759,7 +804,7 @@ textarea {
 		&::after {
 			@extend %EmptyList;
 
-			.🌚& {
+			.🌚 & {
 				@extend %EmptyListDarkMode;
 
 			}

@@ -84,6 +84,10 @@ fieldset {
 	background-color:var(--backgroundColorContent);
 	border:0 none;
 	position:relative;
+
+	.Scale-Small & {
+		padding:20px 20px 0 20px;
+	}
 }
 
 .Overview-List,
