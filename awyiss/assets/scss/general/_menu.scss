@@ -203,6 +203,10 @@
 		padding:10px 0;
 		line-height:1.5;
 
+		.Scale-Small & {
+			padding-block:5px;
+		}
+
 		&.Active,
 		&:hover {
 			color:var(--colorSuccess);

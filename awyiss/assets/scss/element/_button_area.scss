@@ -36,6 +36,10 @@
 			border-radius:0 0 5px 5px;
 			top:calc(var(--lineHeightMain) * -2);
 			bottom:auto;
+
+			.Scale-Small & {
+				margin-top:0;
+			}
 		}
 	}
 

@@ -84,7 +84,9 @@
 			border-radius:0 0 5px 5px;
 			background-color:var(--colorDark-Alpha-50);
 			color:var(--colorBright);
-			font-size:.8rem;
+			//noinspection CssNoGenericFontName
+			font-family:var(--fontStackHeading);
+			font-size:1rem;
 			line-height:52px;
 			position:absolute;
 			top:0;
