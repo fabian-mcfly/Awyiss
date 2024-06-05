@@ -1,0 +1,111 @@
+# Design translations of Awyiss CMS
+# Copyright 2024 Awyiss <EMAIL@ADDRESS>
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 0.1.0\n"
+"POT-Creation-Date: 2024-06-04 06:42+0000\n"
+"PO-Revision-Date: 2024-06-04 06:42+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+msgid "meta_title_overview"
+msgstr "Design"
+
+msgid "menu_title"
+msgstr "Design"
+
+msgid "headline_overview"
+msgstr "Design"
+
+msgid "fieldset_fonts"
+msgstr "Schriftarten"
+
+msgid "fieldset_colors"
+msgstr "Farben"
+
+msgid "fieldset_variables"
+msgstr "Variablen"
+
+msgid "custom_font_name"
+msgstr "Benutzerdefinierte Schriftart"
+
+msgid "font_name_main"
+msgstr "Hauptschriftart"
+
+msgid "font_stack_fallback_main"
+msgstr "Schriftart-Stack"
+
+msgid "font_weight_main"
+msgstr "Schriftstärke"
+
+msgid "font_style_main"
+msgstr "Schriftstil"
+
+msgid "font_size_main"
+msgstr "Schriftgröße"
+
+msgid "line_height_main"
+msgstr "Zeilenhöhe"
+
+msgid "font_size_clamp_main"
+msgstr "Schriftgröße (Clamp)"
+
+msgid "font_name_alternative"
+msgstr "Alternativschriftart"
+
+msgid "font_stack_fallback_alternative"
+msgstr "Schriftart-Stack"
+
+msgid "font_weight_alternative"
+msgstr "Schriftstärke"
+
+msgid "font_style_alternative"
+msgstr "Schriftstil"
+
+msgid "font_size_alternative"
+msgstr "Schriftgröße"
+
+msgid "line_height_alternative"
+msgstr "Zeilenhöhe"
+
+msgid "color"
+msgstr "Farbe {0}"
+
+msgid "default"
+msgstr "Standard"
+
+msgid "normal"
+msgstr "Normal"
+
+msgid "italic"
+msgstr "Kursiv"
+
+msgid "page_width"
+msgstr "Seitenbreite"
+
+msgid "page_padding"
+msgstr "Seitenabstand"
+
+msgid "menu_breakpoint"
+msgstr "Breakpoint Menü"
+
+msgid "singlecolumn_breakpoint"
+msgstr "Breakpoint Einspaltigkeit"
+
+msgid "column_margin"
+msgstr "Spaltenabstand"
+
+msgid "permission_load"
+msgstr "Daten laden"
+
+msgid "save"
+msgstr "Speichern"
+
+msgid "permission_save"
+msgstr "Speichern"
+
+msgid "save_succeeded"
+msgstr "Das Design wurde erfolgreich gespeichert"

@@ -3,6 +3,7 @@
 import AuditInfo from 'AuditInfo';
 import ButtonArea from 'ButtonArea';
 import ButtonHandler from 'ButtonHandler';
+import ColorPicker from 'ColorPicker';
 import EventHandler from 'EventHandler';
 import FieldsetManager from 'FieldsetManager';
 import FooterReveal from 'FooterReveal';
@@ -164,7 +165,6 @@ export function addDarkModeSwitcherEvent() {
 			document.documentElement.classList.toggle('🌚', target.classList.contains('DarkModeSwitch-Link-On'));
 
 			document.getElementById('clr-picker')?.classList.toggle('clr-dark', target.classList.contains('DarkModeSwitch-Link-On'));
-
 		})
 		.catch(error => {
 			console.error('There has been a problem with your fetch operation:', error);
@@ -251,6 +251,12 @@ export async function initMainOnReady() {
 		'.Pagination-List .Arrow',
 		'.LanguageSwitcherLabel',
 	]);
+
+	/**
+	 * @global
+	 * @type {ColorPicker}
+	 */
+	window.colorPicker = new ColorPicker();
 
 	/**
 	 * @global

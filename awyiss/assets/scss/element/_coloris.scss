@@ -325,8 +325,9 @@ input.clr-color {
 	padding:0 20px;
 	border:0;
 	border-radius:5px;
-	color:#fff;
+	background-image:none;
 	background-color:#666;
+	color:#fff;
 	font-family:inherit;
 	font-size:12px;
 	font-weight:400;
@@ -433,6 +434,7 @@ input.clr-color {
 
 	input {
 		margin:0;
+		padding-right:60px;
 		direction:ltr;
 	}
 

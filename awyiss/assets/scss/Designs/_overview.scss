@@ -1,0 +1,97 @@
+.DesignsController {
+	.Overview {
+		> form {
+			grid-column:1 / -1;
+		}
+	}
+
+	.FormInputType-Font {
+		margin-bottom:40px;
+		padding-bottom:20px;
+		border-bottom:1px solid rgba(0, 0, 0, .1);
+
+		&:last-child {
+			margin-bottom:0;
+			padding-bottom:0;
+			border-bottom:none;
+		}
+	}
+
+	.FormInputType-Color {
+		grid-column:auto / span 2;
+	}
+
+	.FormInputType-Number,
+	.FormInputType-Range {
+		grid-column:auto / span 4;
+
+		.ForcedUnit,
+		.FormInputType-Select {
+			position:absolute;
+			bottom:0;
+			right:0;
+		}
+
+		.ForcedUnit {
+			width:40px;
+			line-height:32px;
+			text-align:right;
+		}
+
+		.FormInputType-Select {
+			width:70px;
+			margin-bottom:0;
+
+			.Label {
+				display:none;
+			}
+
+			select {
+				height:32px;
+				padding-block:0;
+				line-height:30px;
+			}
+		}
+	}
+
+	.FormInputType-Range {
+		padding-bottom:var(--lineHeightMain);
+
+		&:has(.ForcedUnit) {
+			input {
+				&[type="text"] {
+					right:40px;
+				}
+			}
+		}
+
+		input {
+			&[type="range"] {
+				margin-bottom:calc(var(--lineHeightMain)  * .25);
+				padding:0;
+			}
+
+			&[type="text"] {
+				width:auto;
+				padding-block:0;
+				line-height:30px;
+				text-align:center;
+				position:absolute;
+				right:80px;
+				bottom:0;
+				left:0;
+			}
+		}
+	}
+
+	.FormInputName-FontStyleMain,
+	.FormInputName-FontWeightMain,
+	.FormInputName-FontSizeMain,
+	.FormInputName-LineHeightMain,
+	.FormInputName-FontStyleAlternative,
+	.FormInputName-FontWeightAlternative,
+	.FormInputName-FontSizeAlternative,
+	.FormInputName-LineHeightAlternative {
+		grid-column:auto / span 6;
+	}
+}

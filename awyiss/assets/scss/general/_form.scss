@@ -170,6 +170,50 @@ textarea {
 		}
 	}
 
+	&Type-Font {
+		display:grid;
+		margin-bottom:0;
+		align-items:start;
+		gap:0 40px;
+		grid-template-columns:repeat(12, 1fr);
+
+		.FormInputType-CustomFontName {
+			display:none;
+			margin-top:5px;
+
+			&.Visible {
+				display:block;
+			}
+		}
+
+		.FormInputType-FontVariants {
+			margin-top:var(--lineHeightMain);
+			margin-bottom:0;
+		}
+
+		.FormInputType-AdditionalVariables {
+			display:grid;
+			margin-bottom:0;
+			gap:0 20px;
+			grid-template-columns:repeat(12, 1fr);
+		}
+	}
+
+	&Type-FontVariants {
+		display:grid;
+		gap:0 40px;
+		grid-template-columns:repeat(auto-fill, minmax(70px, 1fr));
+
+		.FormInputType-Checkbox {
+			grid-column:auto / auto;
+
+			> .Label[for] {
+				padding-left:28px;
+				font-size:16px;
+			}
+		}
+	}
+
 	&Type-Password {
 		input {
 			padding-right:50px;
@@ -554,7 +598,6 @@ textarea {
 		&:has(+ .FormInputName-PageId) {
 			grid-column:auto / span 6;
 		}
-
 	}
 
 	&Name-Slug {

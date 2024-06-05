@@ -101,6 +101,10 @@ fieldset {
 
 	&:not(:has(> legend)) {
 		//margin-top:calc(var(--lineHeightMain) * -1);
+
+		h1 + & {
+			margin-top:var(--lineHeightMain);
+		}
 	}
 
 	&:not(:has(*)) {
@@ -114,6 +118,10 @@ fieldset {
 
 			}
 		}
+	}
+
+	h1 + & {
+		margin-top:calc(var(--lineHeightMain) * 2);
 	}
 }
 

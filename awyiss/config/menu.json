@@ -428,6 +428,21 @@
 		"link": null,
 		"access": null,
 		"children": {
+			"designs": {
+				"title": {
+					"translate": ["designs", "menu_title"]
+				},
+				"link": {
+					"url": {
+						"controller": "Designs",
+						"action": "overview"
+					}
+				},
+				"access": {
+					"scope": "designs",
+					"identifier": "read"
+				}
+			},
 			"languages": {
 				"title": {
 					"translate": ["languages", "menu_title"]

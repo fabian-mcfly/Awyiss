@@ -1,0 +1,172 @@
+{#
+@var fontStacks array
+@var fontWeights array
+@var options array
+@var units array
+@var variable string
+@var variables string
+@var webfonts array
+@var _view \Awyiss\View\BackendView
+#}
+
+{% block formControlColor %}
+	{% set label = __(variable|underscore) %}
+	{% if '::' in label %}
+		{% set label = __('color', '$' ~ variable) %}
+	{% endif %}
+
+	{{ FormHelper.control(variable|underscore, {
+		label: label,
+		type: 'color',
+		val: design.settings[ variable|underscore ] ?? options.value,
+	}) }}
+{% endblock %}
+
+{% block formControlFontName %}
+	<div class="FormInput FormInputType-Font FormInputName-{{ variable|camelize }}Group">
+		{% block formControlFontNameSelect %}
+			{% set fontSelectOptions = {
+				'': options.value ? options.value ~ ' (' ~ __('default') ~ ')' : '',
+				'custom': __('custom_font_name'),
+			} %}
+			{% for category, fonts in webfonts %}
+				{% set fontOptions = [] %}
+				{% for font in fonts %}
+					{% set fontOptions = fontOptions|merge({
+						(font.id): font.name,
+					}) %}
+				{% endfor %}
+
+				{% set fontSelectOptions = fontSelectOptions|merge({
+					(category): fontOptions,
+				}) %}
+			{% endfor %}
+
+			{% set customFontName %}
+				<div class="FormInput FormInputType-CustomFontName FormInputName-CustomFontName{{ variable|camelize }}">
+					{{ FormHelper.control('custom[' ~ variable|underscore ~ ']', {
+						label: false,
+						val: design.settings[ variable|underscore ].font.name and design.settings[ variable|underscore ].font.id is not defined ? design.settings[ variable|underscore ].font.name : ''
+					}) }}
+				</div>
+			{% endset %}
+
+			{% set fontVariants %}
+				{% block fontVariants %}
+					<div class="FormInput FormInputType-FontVariants FormInputName-FontVariant{{ variable|camelize }}Group">
+						{% for i in 1..9 %}
+							{{ FormHelper.control('font_variants[' ~ variable|underscore ~ '][]', {
+								checked: (i * 100) in design.settings[ variable|underscore ].variants,
+								hiddenField: false,
+								id: 'FontVariant' ~ variable|camelize ~ (i * 100),
+								label: (i * 100) ~ '',
+								type: 'checkbox',
+								value: i * 100,
+							}) }}
+							{{ FormHelper.control('font_variants[' ~ variable|underscore ~ '][]', {
+								checked: (i * 100) ~ 'i' in design.settings[ variable|underscore ].variants,
+								hiddenField: false,
+								id: 'FontVariant' ~ variable|camelize ~  (i * 100) ~ 'i',
+								label: (i * 100) ~ 'i',
+								type: 'checkbox',
+								value: (i * 100) ~ 'i',
+							}) }}
+						{% endfor %}
+					</div>
+				{% endblock %}
+			{% endset %}
+
+			{{ FormHelper.control(variable|underscore, {
+				columnSpan: 6,
+				empty: false,
+				options: fontSelectOptions,
+				templateVars: {
+					additionalContent: customFontName ~ fontVariants,
+				},
+				val: design.settings[ variable|underscore ].font.id ?? (design.settings[ variable|underscore ].font.name ? 'custom' : options.value),
+			}) }}
+		{% endblock %}
+
+		{% block formControlFontNameAdditionalVariables %}
+			{% if options.associatedVariables is not empty %}
+				<div class="FormInput FormInputType-AdditionalVariables FormInputName-{{ variable|camelize }}AdditionalVariables ColumnSpan-6">
+					{% for variable, options in options.associatedVariables %}
+						{% block formControlFontNameAdditionalVariable %}
+							{{ block('formControl' ~ options.type.name) }}
+						{% endblock %}
+					{% endfor %}
+				</div>
+			{% endif %}
+		{% endblock %}
+	</div>
+{% endblock %}
+
+{% block formControlFontStack %}
+	{{ FormHelper.control(variable|underscore, {
+		empty: false,
+		options: {'': options.value|replace({',': ', '})  ~ ' (' ~ __('default') ~ ')'}|merge(fontStacks),
+		val: design.settings[ variable|underscore ] ?? options.value,
+	}) }}
+{% endblock %}
+
+{% block formControlFontWeight %}
+	{{ FormHelper.control(variable|underscore, {
+		empty: false,
+		options: fontWeights,
+		val: design.settings[ variable|underscore ] ?? options.value,
+	}) }}
+{% endblock %}
+
+{% block formControlNumber %}
+	{% set unit %}
+		{% if options.forcedUnit %}
+			<span class="ForcedUnit">{{ options.forcedUnit }}</span>
+		{% else %}
+			{{ FormHelper.control(variable|underscore ~ '_unit', {
+				empty: false,
+				options: combine(options.units|keys, options.units|keys),
+				val: design.settings[ variable|underscore ~ '_unit' ] ?? options.unit,
+				'data-units': options.units|json_encode,
+			}) }}
+		{% endif %}
+	{% endset %}
+
+	{% set output = '' %}
+	{% if options.inputType == 'range' %}
+		{% set output %}
+			<input type="text" name="{{ variable|underscore }}" value="{{ design.settings[ variable|underscore ] ?? options.value }}">
+		{% endset %}
+	{% endif %}
+
+	{% set currentUnit = options.forcedUnit ? options.forcedUnit : variables[ variable ].unit %}
+
+	{{ FormHelper.control(variable|underscore, {
+		empty: false,
+		min: options.units[ options.unit ].range.min,
+		max: options.units[ options.unit ].range.max,
+		step: options.units[ options.unit ].step,
+		templateVars: {
+			additionalContent: unit ~ output,
+		},
+		type: options.inputType ? options.inputType : 'number',
+		val: design.settings[ variable|underscore ] ?? options.value,
+	}) }}
+{% endblock %}
+
+{% block formControlString %}
+	{% set optionValues = null %}
+	{% if options.options %}
+		{% set optionValues = [] %}
+		{% for value in options.options %}
+			{% set optionValues = optionValues|merge({
+				(value): __(value),
+			}) %}
+		{% endfor %}
+	{% endif %}
+
+	{{ FormHelper.control(variable|underscore, {
+		empty: false,
+		options: optionValues,
+		val: design.settings[ variable|underscore ] ?? options.value,
+	}) }}
+{% endblock %}

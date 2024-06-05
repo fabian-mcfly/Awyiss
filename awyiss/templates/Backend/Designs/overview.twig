@@ -1,0 +1,61 @@
+{#
+@var design \Awyiss\Model\Entity\Design
+@var fontStacks array
+@var fontWeights array
+@var units array
+@var variables array
+@var webfonts array
+@var _view \Awyiss\View\BackendView
+#}
+
+{% use '@Backend/Designs/blocks.twig' %}
+
+<div class="Design Overview">
+	{% block headlineOverview %}
+		<h1>{{ __('headline_overview') }}</h1>
+	{% endblock %}
+
+	{{ FormHelper.create(design, {method: 'post', idPrefix: 'design'}) }}
+
+	{{ FormHelper.checkbox('save_as_copy', {id: 'SaveAsCopy', value: true}) }}
+
+	{% block buttonArea %}
+		<div class="ButtonArea">
+			{% block buttonsOverview %}
+				{% if AuthorizationHelper.isAccessible('save') %}
+					{{ FormHelper.button(__('save'), {class: 'Button Button-Success Button-Save'}) }}
+				{% endif %}
+			{% endblock %}
+		</div>
+	{% endblock %}
+
+	{% block fieldsetOverview %}
+		{% for category, variables in variables %}
+			<fieldset class="Overview-Fieldset Fieldset-{{ category|camelize }} Collapsible">
+				<legend>{{ __('fieldset_' ~ category) }}</legend>
+				{% block fieldsetOverviewInner %}
+					{% for key, options in variables %}
+						{% set variable = key %}
+						{{ block('formControl' ~ options.type.name) }}
+					{% endfor %}
+				{% endblock %}
+			</fieldset>
+		{% endfor %}
+	{% endblock %}
+
+	{% block buttonAreaBottom %}
+		<div class="ButtonArea ButtonArea-Bottom">
+			{{ block('buttonsOverview') }}
+		</div>
+	{% endblock %}
+
+	{% block formInputReloadForm %}
+		{{ FormHelper.hidden('reload_form', {val: 0}) }}
+	{% endblock %}
+
+	{{ FormHelper.end() }}
+</div>
+
+<script nonce="{{ AssetHelper.getScriptNonce() }}">
+	const webfonts = {{ webfonts|json_encode|raw }};
+</script>

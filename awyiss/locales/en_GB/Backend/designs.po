@@ -1,0 +1,111 @@
+# Design translations of Awyiss CMS
+# Copyright 2024 Awyiss <EMAIL@ADDRESS>
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 0.1.0\n"
+"POT-Creation-Date: 2024-06-04 06:42+0000\n"
+"PO-Revision-Date: 2024-06-04 06:42+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+msgid "meta_title_overview"
+msgstr "Design"
+
+msgid "menu_title"
+msgstr "Design"
+
+msgid "headline_overview"
+msgstr "Design"
+
+msgid "fieldset_fonts"
+msgstr "Fonts"
+
+msgid "fieldset_colors"
+msgstr "Colors"
+
+msgid "fieldset_variables"
+msgstr "Variables"
+
+msgid "custom_font_name"
+msgstr "Custom font"
+
+msgid "font_name_main"
+msgstr "Main font"
+
+msgid "font_stack_fallback_main"
+msgstr "Font stack"
+
+msgid "font_weight_main"
+msgstr "Font weight"
+
+msgid "font_style_main"
+msgstr "Font style"
+
+msgid "font_size_main"
+msgstr "Font size"
+
+msgid "line_height_main"
+msgstr "Line height"
+
+msgid "font_size_clamp_main"
+msgstr "Font size clamp"
+
+msgid "font_name_alternative"
+msgstr "Alternative font"
+
+msgid "font_stack_fallback_alternative"
+msgstr "Font stack"
+
+msgid "font_weight_alternative"
+msgstr "Font weight"
+
+msgid "font_style_alternative"
+msgstr "Font style"
+
+msgid "font_size_alternative"
+msgstr "Font size"
+
+msgid "line_height_alternative"
+msgstr "Line height"
+
+msgid "color"
+msgstr "Color {0}"
+
+msgid "default"
+msgstr "Default"
+
+msgid "normal"
+msgstr "Normal"
+
+msgid "italic"
+msgstr "Italic"
+
+msgid "page_width"
+msgstr "Page width"
+
+msgid "page_padding"
+msgstr "Page padding"
+
+msgid "menu_breakpoint"
+msgstr "Breakpoint menu"
+
+msgid "singlecolumn_breakpoint"
+msgstr "Breakpoint single column"
+
+msgid "column_margin"
+msgstr "Column margin"
+
+msgid "permission_load"
+msgstr "Load data"
+
+msgid "save"
+msgstr "Save"
+
+msgid "permission_save"
+msgstr "Save"
+
+msgid "save_succeeded"
+msgstr "The design was successfully saved."
