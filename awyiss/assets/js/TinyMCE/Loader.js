@@ -197,7 +197,11 @@ export default class Loader {
 	 * @param editor
 	 */
 	setup(editor) {
-
+		editor.once('Dirty', event => {
+			if (typeof window.formLeaveConfirmation === 'object') {
+				window.formLeaveConfirmation.formChanged();
+			}
+		});
 	}
 
 	/**

@@ -15,6 +15,11 @@ export default class FormLeaveConfirmation {
 	 */
 	eventHandler = window.eventHandler;
 	/**
+	 * Tracks the state of events bound to the document.
+	 * @type {boolean}
+	 */
+	eventsBound = false;
+	/**
 	 * A flag indicating whether a form has been changed.
 	 * @type {boolean}
 	 */
@@ -34,17 +39,12 @@ export default class FormLeaveConfirmation {
 	}
 
 	/**
-	 * Handle input events on form elements.
-	 * @param event
+	 * Bind events to the document.
 	 */
-	handleInputEvent(event) {
-		// Check if the input event is triggered by a form element
-		if (!event.target.form || this.isFormChanged) {
+	bindEvents() {
+		if (this.eventsBound) {
 			return;
 		}
-
-		// Mark the form as changed if any input changes
-		this.isFormChanged = true;
 
 		// Custom handling for clicks on links within the document for a better user experience
 		window.eventHandler.add('click', this.handleNavigationAttempt.bind(this), window, {}, 999);
@@ -57,10 +57,37 @@ export default class FormLeaveConfirmation {
 	}
 
 	/**
+	 * Set the status of the form and bind events to the document.
+	 */
+	formChanged() {
+		// Mark the form as changed if any input changes
+		this.isFormChanged = true;
+
+		this.bindEvents();
+	}
+
+	/**
+	 * Handle input events on form elements.
+	 * @param event
+	 */
+	handleInputEvent(event) {
+		// Check if the input event is triggered by a form element
+		if (!event.target.form || this.isFormChanged) {
+			return;
+		}
+
+		// Mark the form as changed if any input changes
+		this.isFormChanged = true;
+
+		this.bindEvents();
+	}
+
+	/**
 	 * Handle navigation attempts by intercepting clicks on links within the document.
 	 * @param event
 	 */
 	handleNavigationAttempt(event) {
+
 		if (event.defaultPrevented || event.sentFromFormLeaveConfirmDialog || event.target.tagName !== 'A' || !this.isFormChanged) {
 			return;
 		}

@@ -207,7 +207,7 @@ export class LinkHelper {
 			this.element.value += paramString ? `::${paramString}` : '';
 
 			// Mark the form as changed
-			window.formLeaveConfirmation.isFormChanged = true;
+			window.formLeaveConfirmation.formChanged();
 
 			// Close the dialog
 			this.dialog.close();
@@ -401,7 +401,7 @@ export class AccessHelper {
 			this.element.value = `{"scope":"${scope}","identifier":"${permission}"}`;
 
 			// Mark the form as changed
-			window.formLeaveConfirmation.isFormChanged = true;
+			window.formLeaveConfirmation.formChanged();
 
 			// Close the dialog
 			this.dialog.close();
