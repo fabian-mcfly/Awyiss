@@ -576,6 +576,17 @@ class MediaController extends Controller {
 		if (count($la_data['crop']) !== 6 || $this->request->getData('reload_form')) {
 			$la_data['crop'] = null;
 		}
+		else {
+			// If crop values and resize values are the same as the original values, set crop to null
+			if (
+				$media->width === (float)$la_data['crop']['width'] &&
+				$media->width === (float)$la_data['crop']['resize_width'] &&
+				$media->height === (float)$la_data['crop']['height'] &&
+				$media->height === (float)$la_data['crop']['resize_height']
+			) {
+				$la_data['crop'] = null;
+			}
+		}
 
 		$this->Media->patchEntity($media, $la_data, [
 			'associated' => $la_associated,
