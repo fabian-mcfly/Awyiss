@@ -11,6 +11,7 @@
 		"ext-gd": "*",
 		"ext-intl": "*",
 		"ext-posix": "*",
+		"ext-zip": "*",
 		"cakephp/authentication": "^3.0.2",
 		"cakephp/bake": "^3.0.0",
 		"cakephp/cakephp": "^5.0.1",
