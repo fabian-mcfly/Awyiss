@@ -175,12 +175,18 @@ export default class InputListManager {
 		let newIndex = 0;
 		// Clear the input values in the new row and update their names
 		inputs.forEach((input) => {
+			const name = input.name;
+
 			// If the input is not hidden, clear the value
 			if (input.type !== 'hidden') {
 				input.value = '';
 			}
-
-			const name = input.name;
+			else {
+				// If the name ends in "][id]", remove the value as well as it's the id of an assigned entity
+				if (name.endsWith('][id]')) {
+					input.value = '';
+				}
+			}
 
 			// If the name contains "[_translations]", remove the placeholder
 			if (name.includes('[_translations]')) {
