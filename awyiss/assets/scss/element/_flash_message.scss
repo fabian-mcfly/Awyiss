@@ -3,7 +3,8 @@
 	--boxShadowColor:var(--colorInfo-Alpha-25);
 	--colorText:var(--colorInfo);
 
-	display:inline-block;
+	width:fit-content;
+	margin-top:calc(var(--lineHeightMain) * -1);
 	padding:10px 20px 10px 70px;
 	border-radius:5px;
 	border:1px solid;
@@ -55,7 +56,7 @@
 	}
 
 	+ .FlashMessage {
-		margin-left:40px;
+		margin-top:var(--lineHeightMain);
 	}
 
 	+ .Form,
