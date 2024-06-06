@@ -158,8 +158,14 @@ class MediaListener implements EventListenerInterface {
 				$this->ensureUniqueFileName($lo_table, $entity);
 			}
 		}
-		elseif ($entity->isDirty('name') || $entity->isDirty('mediaFolderId')) {
-			$this->ensureUniqueFileName($lo_table, $entity);
+		else {
+			if ($entity->file && $entity->file->getError()) {
+				$entity->file = null;
+			}
+
+			if ($entity->isDirty('name') || $entity->isDirty('mediaFolderId')) {
+				$this->ensureUniqueFileName($lo_table, $entity);
+			}
 		}
 
 		$ls_path = 'media/';
