@@ -59,7 +59,12 @@ export default class Selectors {
 				filter: '.MediaSelector-MediaSelect',
 				ghostClass: 'SortableGhost',
 				swapThreshold: .6,
-				onMove: function (event) {
+				onEnd: () => {
+					if (typeof window.formLeaveConfirmation === 'object') {
+						window.formLeaveConfirmation.formChanged();
+					}
+				},
+				onMove: event => {
 					if (event.related.matches('.MediaSelector-MediaSelect')) {
 						return false;
 					}
@@ -135,6 +140,10 @@ export default class Selectors {
 
 		// Add the media item into the preview area but before the add button
 		element.preview.insertBefore(mediaListItem, element.selector);
+
+		if (typeof window.formLeaveConfirmation === 'object') {
+			window.formLeaveConfirmation.formChanged();
+		}
 	}
 
 
@@ -169,6 +178,10 @@ export default class Selectors {
 		element.preview.appendChild(mediaListItem);
 
 		element.mediaIdInput.value = id;
+
+		if (typeof window.formLeaveConfirmation === 'object') {
+			window.formLeaveConfirmation.formChanged();
+		}
 	}
 
 	/**
@@ -177,6 +190,10 @@ export default class Selectors {
 	 */
 	removeMedia(element, event) {
 		if (element.matches(this.singleMediaSelector)) {
+			if (typeof window.formLeaveConfirmation === 'object') {
+				window.formLeaveConfirmation.formChanged();
+			}
+
 			element.preview.querySelectorAll('.Media-ListItem').forEach(media => media.remove());
 			element.mediaIdInput.value = '';
 
@@ -184,6 +201,10 @@ export default class Selectors {
 		}
 
 		if (event.target.matches('.MediaSelector-Remove')) {
+			if (typeof window.formLeaveConfirmation === 'object') {
+				window.formLeaveConfirmation.formChanged();
+			}
+
 			event.target.closest('.Media-ListItem').remove();
 		}
 	}
