@@ -92,6 +92,9 @@ msgstr "Seitentemplate"
 msgid "parent_id"
 msgstr "Unterseite von"
 
+msgid "title"
+msgstr "Titel"
+
 msgid "slug"
 msgstr "Slug"
 

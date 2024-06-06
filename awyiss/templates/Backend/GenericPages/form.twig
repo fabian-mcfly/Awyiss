@@ -68,7 +68,11 @@
 						{% endif %}
 
 						{% if nestable and possibleParentPages is not null %}
-							{{ FormHelper.control('parent_id', {options: hashPrinter(possibleParentPages, 'label', 'id', '- '), 'data-form-updater': true}) }}
+							{{ FormHelper.control('parent_id', {
+								label: __df(pageRoleName, 'generic_pages', 'parent_id'),
+								options: hashPrinter(possibleParentPages, 'label', 'id', '- '),
+								'data-form-updater': true
+							}) }}
 						{% endif %}
 					{% endblock %}
 
@@ -91,11 +95,14 @@
 
 				{% block fieldsetGeneralInner %}
 					{% block formControlTitle %}
-						{{ FormHelper.control('title') }}
+						{{ FormHelper.control('title', {
+							label: __df(pageRoleName, 'generic_pages', 'title'),
+						}) }}
 					{% endblock %}
 
 					{% block formControlSlug %}
 						{{ FormHelper.control('slug', {
+							label: __df(pageRoleName, 'generic_pages', 'slug'),
 							required: false,
 							templateVars: {
 								additionalContent: parentRecord.slug ? '<span class="PreSlug">' ~ (parentRecord.slug ~ '/') ~ '</span>' : '',
@@ -191,7 +198,13 @@
 
 				{# @var menu \Awyiss\Model\Entity\Menu #}
 				{% for key, menu in menus %}
-					{{ FormHelper.control('add_menu_entry[' ~ key ~ ']', {columnSpan: 2, hiddenField: false, label: menu.label, type: 'checkbox', value: menu.id}) }}
+					{{ FormHelper.control('add_menu_entry[' ~ key ~ ']', {
+						columnSpan: 2,
+						hiddenField: false,
+						label: menu.label,
+						type: 'checkbox',
+						value: menu.id
+					}) }}
 				{% endfor %}
 			</fieldset>
 		{% endblock %}

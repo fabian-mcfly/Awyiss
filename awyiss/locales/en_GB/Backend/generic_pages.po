@@ -92,6 +92,9 @@ msgstr "Page template"
 msgid "parent_id"
 msgstr "Subpage of"
 
+msgid "title"
+msgstr "Title"
+
 msgid "slug"
 msgstr "Slug"
 
