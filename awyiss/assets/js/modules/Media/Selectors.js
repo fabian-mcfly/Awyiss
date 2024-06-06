@@ -1,4 +1,4 @@
-// noinspection JSUnusedGlobalSymbols
+// noinspection JSUnusedGlobalSymbols,NpmUsedModulesInstalled
 
 import Sortable from 'SortableJS/sortable';
 
@@ -109,6 +109,7 @@ export default class Selectors {
 		const template = document.querySelector('template');
 
 		// Clone the media item
+		// noinspection DuplicatedCode
 		const mediaListItem = document.createElement('div');
 		mediaListItem.classList.add('Media-ListItem');
 		mediaListItem.title = media.title;
@@ -139,6 +140,7 @@ export default class Selectors {
 		mediaIdInput.value = id;
 
 		// Add the media item into the preview area but before the add button
+		// noinspection JSUnresolvedReference
 		element.preview.insertBefore(mediaListItem, element.selector);
 
 		if (typeof window.formLeaveConfirmation === 'object') {
@@ -156,6 +158,7 @@ export default class Selectors {
 		element.querySelectorAll('.Media-ListItem').forEach(media => media.remove());
 
 		// Clone the media item
+		// noinspection DuplicatedCode
 		const mediaListItem = document.createElement('div');
 		mediaListItem.classList.add('Media-ListItem');
 		mediaListItem.title = media.title;
@@ -175,8 +178,10 @@ export default class Selectors {
 		const id = parseInt(media.getAttribute('id').replace(/\D/g, ''));
 
 		// Add the media item to the selector
+		// noinspection JSUnresolvedReference
 		element.preview.appendChild(mediaListItem);
 
+		// noinspection JSUnresolvedReference
 		element.mediaIdInput.value = id;
 
 		if (typeof window.formLeaveConfirmation === 'object') {
@@ -194,7 +199,9 @@ export default class Selectors {
 				window.formLeaveConfirmation.formChanged();
 			}
 
+			// noinspection JSUnresolvedReference
 			element.preview.querySelectorAll('.Media-ListItem').forEach(media => media.remove());
+			// noinspection JSUnresolvedReference
 			element.mediaIdInput.value = '';
 
 			return;

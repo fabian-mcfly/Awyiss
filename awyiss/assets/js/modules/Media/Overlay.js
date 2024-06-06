@@ -44,7 +44,7 @@ export default class Overlay {
 	 * The element that opened the overlay.
 	 * Will receive the selected media item when clicking on the use button.
 	 *
-	 * @type {HTMLElement|null}
+	 * @type {HTMLElement|function|null}
 	 */
 	opener = null;
 
@@ -169,6 +169,27 @@ export default class Overlay {
 		const useButtons = this.element.querySelectorAll('.Button-UseFiles');
 		useButtons.forEach(button => {
 			this.eventHandler.add('click', () => {
+				if (typeof this.opener === 'function') {
+					// Find all selected items
+					const firstSelectedItem = this.mediaList.querySelector('.Media-ListItem.Selected');
+
+					const link = firstSelectedItem.querySelector('.Link');
+
+					let href = link.href;
+
+					if (href.indexOf(baseUrl) === 0) {
+						href = href.substring(baseUrl.length);
+					}
+
+					this.opener(href);
+
+					// Close the overlay
+					this.closeButton.dispatchEvent(new MouseEvent('click'));
+
+					return;
+				}
+
+				// noinspection JSUnresolvedReference
 				if (typeof this.opener.useMedia !== 'function') {
 					return;
 				}
@@ -177,6 +198,7 @@ export default class Overlay {
 				const selectedItems = this.mediaList.querySelectorAll('.Media-ListItem.Selected');
 
 				selectedItems.forEach(item => {
+					// noinspection JSUnresolvedReference
 					this.opener.useMedia(item);
 					item.classList.remove('Selected');
 				});
@@ -197,6 +219,8 @@ export default class Overlay {
 
 		// noinspection JSUnresolvedReference
 		this.opener = event.detail.opener || null;
+
+		console.log(this.opener, typeof this.opener);
 
 		if (!this.element) {
 			this.initOverlay();
@@ -385,6 +409,24 @@ export default class Overlay {
 	 */
 	handleMediaItemDoubleClick(event) {
 		if (!event.target.closest('.Media-ListItem') || !this.opener) {
+			return;
+		}
+
+		if (typeof this.opener === 'function') {
+			const element = event.target.closest('.Media-ListItem');
+			const link = element.querySelector('.Link');
+
+			let href = link.href;
+
+			if (href.indexOf(baseUrl) === 0) {
+				href = href.substring(baseUrl.length);
+			}
+
+			this.opener(href);
+
+			// Close the overlay
+			this.closeButton.dispatchEvent(new MouseEvent('click'));
+
 			return;
 		}
 

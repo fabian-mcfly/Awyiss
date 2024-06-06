@@ -25,6 +25,7 @@ export default class Loader {
 		document_base_url: baseUrl,
 		fix_list_elements: true,
 		branding: false,
+		file_picker_callback: callback => this.filePickerCallback(callback),
 		init_instance_callback: editor => this.initInstanceCallback(editor),
 		license_key: 'gpl',
 		link_assume_external_targets: 'https',
@@ -197,7 +198,7 @@ export default class Loader {
 	 * @param editor
 	 */
 	setup(editor) {
-		editor.once('Dirty', event => {
+		editor.once('Dirty', () => {
 			if (typeof window.formLeaveConfirmation === 'object') {
 				window.formLeaveConfirmation.formChanged();
 			}
@@ -277,5 +278,20 @@ export default class Loader {
 				}
 			}
 		};
+	}
+
+	/**
+	 * Callback for the file picker
+	 * @param callback
+	 */
+	filePickerCallback(callback) {
+		const openEvent = new CustomEvent('overlay.open', {
+			detail: {
+				opener: callback,
+			},
+		});
+
+		// noinspection JSUnresolvedReference
+		window.mediaOverlay.openOverlay(openEvent)
 	}
 }

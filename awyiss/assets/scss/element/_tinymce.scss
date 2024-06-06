@@ -422,6 +422,49 @@ body {
 						grid-column:1 / -1;
 					}
 				}
+
+				.tox-form__controls-h-stack {
+					position:relative;
+				}
+
+				.tox-browse-url {
+					width:50px;
+					height:50px;
+					padding:0;
+					border-radius:4px;
+					border:0 none;
+					font-size:0;
+					line-height:0;
+					text-align:center;
+					background-color:var(--colorMedium);
+					position:absolute;
+					right:1px;
+					bottom:1px;
+
+					&.tox-browse-url {
+						margin-left:0;
+					}
+
+					.Scale-Small & {
+						width:40px;
+						height:40px;
+						padding-block:0;
+					}
+
+					.🌚 & {
+						background-color:var(--backgroundColor);
+					}
+
+					&:focus {
+						background-color:var(--colorMedium);
+					}
+
+					.tox-icon {
+						display:block;
+						width:24px;
+						margin-inline:auto;
+					}
+				}
 			}
 
 			&--wordcount {
