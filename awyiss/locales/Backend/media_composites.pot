@@ -85,3 +85,6 @@ msgstr "Scope"
 
 msgid "foreign_key"
 msgstr "Entity"
+
+msgid "error_linked_media_assignments"
+msgstr "The Media Composite cannot be deleted because it is still in use"

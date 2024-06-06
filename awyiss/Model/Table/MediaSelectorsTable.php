@@ -119,6 +119,16 @@ class MediaSelectorsTable extends Table {
 		);
 
 
+		$rules->addDelete(
+			$rules->isNotLinkedTo('MediaCompositeSelectors', 'mediaCompositeSelectors'),
+			'noLinkedMediaCompositeSelectors',
+			[
+				'errorField' => '_general',
+				'message' => __df($this->getI18nDomain(), 'validation', 'error_linked_media_composite_selectors'),
+			]
+		);
+
+
 		return $rules;
 	}
 }

@@ -67,3 +67,6 @@ msgstr "The Media Selector was successfully deleted"
 
 msgid "delete_failed"
 msgstr "The Media Selector could not be deleted"
+
+msgid "error_linked_media_composite_selectors"
+msgstr "The Media Selector cannot be deleted because it is still in use"

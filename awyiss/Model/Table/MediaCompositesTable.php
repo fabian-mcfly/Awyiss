@@ -169,6 +169,15 @@ class MediaCompositesTable extends Table {
 			]
 		);
 
+		$rules->addDelete(
+			$rules->isNotLinkedTo('MediaAssignments', 'mediaAssignments'),
+			'noLinkedMediaAssignments',
+			[
+				'errorField' => '_general',
+				'message' => __df($this->getI18nDomain(), 'validation', 'error_linked_media_assignments'),
+			]
+		);
+
 		return $rules;
 	}
 

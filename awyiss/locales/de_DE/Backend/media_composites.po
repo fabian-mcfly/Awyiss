@@ -85,3 +85,6 @@ msgstr "Bereich"
 
 msgid "foreign_key"
 msgstr "Eintrag"
+
+msgid "error_linked_media_assignments"
+msgstr "Das Medienelement kann nicht gelöscht werden, da es noch in Verwendung ist"
