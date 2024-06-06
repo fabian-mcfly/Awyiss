@@ -23,6 +23,8 @@ class PublicationDataTable extends Table {
 	 * @inheritDoc
 	 */
 	public const TABLE = 'publication_data';
+
+
 	/**
 	 * @inheritDoc
 	 */

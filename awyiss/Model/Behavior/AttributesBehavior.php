@@ -438,6 +438,12 @@ class AttributesBehavior extends Behavior {
 	 */
 	public function beforeSave(EventInterface $event, Entity|BaseEntity $entity/*, ArrayObject $options*/): void {
 		if (!$this->getConfig('isAttributesTable')) {
+			if ($this->getAttributes() && $entity->get('attributes')) {
+				if ($entity->get('attributes')->isDirty()) {
+					$entity->setDirty('attributes');
+				}
+			}
+
 			return;
 		}
 

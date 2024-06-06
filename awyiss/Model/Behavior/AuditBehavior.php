@@ -417,21 +417,103 @@ class AuditBehavior extends Behavior {
 		if ($association->type() == Association::ONE_TO_MANY) {
 			$la_entityData = $this->cleanHasManyAssociationData($entity, $field, $association, $la_entityData);
 		}
-		/*elseif ($association->type() === Association::MANY_TO_ONE) {
-			$this->cleanBelongsToAssociationData($entity, $field, $association, $la_entityData);
-		}*/
 		elseif ($association->type() === Association::MANY_TO_MANY) {
-			/*if ($association->hasThrough()) {
-				$la_entityData = $this->cleanHasManyThroughAssociationData($entity, $field, $association, $la_entityData);
-			}
-			else {
-				$la_entityData = $this->cleanBelongsToManyAssociationData($entity, $field, $association, $la_entityData);
-			}*/
 			$la_entityData = $this->cleanBelongsToManyAssociationData($entity, $field, $association, $la_entityData);
 		}
 		elseif ($association->type() === Association::ONE_TO_ONE) {
 			$la_entityData = $this->cleanHasOneAssociationData($entity, $field, $association, $la_entityData);
 		}
+
+
+		return $la_entityData;
+	}
+
+
+	/**
+	 * @param Entity $entity
+	 * @param array $entityData
+	 * @return array
+	 */
+	protected function auditMediaAssignments(Entity $entity, array $entityData): array {
+		if (!$entity->getSource()) {
+			return $entityData;
+		}
+
+		$la_entityData = $entityData;
+
+		$la_newData = [];
+
+		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+		if ($entity->mediaAssignments) {
+			$lo_sourceTable = $this->fetchTable($entity->getSource());
+			$lo_clonedEntity = clone $entity;
+
+			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+			$lo_sourceTable->getBehavior('MediaAssignment')->rebuildMediaAssignments($lo_clonedEntity);
+
+			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+			foreach ($lo_clonedEntity->mediaAssignments as $ls_compositeIdentifier => $la_compositeAssignments) {
+				foreach ($la_compositeAssignments as $ls_selectorIdentifier => $lx_selectorAssignments) {
+					if ($lx_selectorAssignments instanceof Entity) {
+						$la_newData[ $ls_compositeIdentifier ][ $ls_selectorIdentifier ] = $lx_selectorAssignments->extract(null, false, false);
+						continue;
+					}
+
+					foreach ($lx_selectorAssignments as $li_key => $lo_mediaAssignment) {
+						$la_newData[ $ls_compositeIdentifier ][ $ls_selectorIdentifier ][ $li_key ] = $lo_mediaAssignment->extract(null, false, false);
+					}
+				}
+			}
+		}
+
+		$la_blocklistedFields = [
+			'id',
+			'foreignKey',
+			'deleted',
+			'createdBy',
+			'createdOn',
+			'changedBy',
+			'changedOn',
+			'deletedBy',
+			'deletedOn',
+			'media',
+		];
+
+		$la_oldData = [];
+		if ($entity->hasOriginal('mediaAssignments')) {
+			/** @var Entity $lo_mediaAssignment */
+			foreach ($entity->getOriginal('mediaAssignments') as $ls_compositeIdentifier => $la_compositeAssignments) {
+				foreach ($la_compositeAssignments as $ls_selectorIdentifier => $lx_selectorAssignments) {
+					if ($lx_selectorAssignments instanceof Entity) {
+						$la_values = $lx_selectorAssignments->extract(null, false, false);
+
+						$la_values = array_diff_key($la_values, array_flip($la_blocklistedFields));
+
+						$la_oldData[ $ls_compositeIdentifier ][ $ls_selectorIdentifier ] = $la_values;
+						continue;
+					}
+
+					foreach ($lx_selectorAssignments as $li_key => $lo_mediaAssignment) {
+						$la_values = $lo_mediaAssignment->extract(null, false, false);
+
+						$la_values = array_diff_key($la_values, array_flip($la_blocklistedFields));
+
+						$la_oldData[ $ls_compositeIdentifier ][ $ls_selectorIdentifier ][ $li_key ] = $la_values;
+					}
+				}
+			}
+		}
+
+		//Even if the translations are the same, they have to make their way into the db as plain arrays, not entities
+		$la_entityData['old']['mediaAssignments'] = $la_oldData;
+		$la_entityData['new']['mediaAssignments'] = $la_newData;
+
+		if ($la_oldData === $la_newData) {
+			return $la_entityData;
+		}
+
+		$la_entityData['changes']['old']['mediaAssignments'] = $la_oldData;
+		$la_entityData['changes']['new']['mediaAssignments'] = $la_newData;
 
 
 		return $la_entityData;
@@ -573,7 +655,7 @@ class AuditBehavior extends Behavior {
 		foreach ($this->_table->associations() as $lo_association) {
 			$ls_property = Inflector::variable($lo_association->getProperty());
 
-			if ($lo_association->getTarget()->getTable() === 'i18n') {
+			if (in_array($lo_association->getTarget()->getTable(), ['i18n', 'media_assignments'])) {
 				$lo_association = false;
 			}
 
@@ -618,7 +700,6 @@ class AuditBehavior extends Behavior {
 				$la_entityData['old'][ $field ] = $la_newData;
 				$la_entityData['new'][ $field ] = $la_newData;
 
-
 				return $la_entityData;
 			}
 		}
@@ -631,8 +712,8 @@ class AuditBehavior extends Behavior {
 				$la_oldData = array_diff_key($lo_entity->getOriginalValues(), $la_keys);
 			}
 			else {
-				if (empty($la_newData)) {
-					return [];
+				if (!isset($la_newData)) {
+					return $entityData;
 				}
 
 				//Do not fuck around with the original entity;
@@ -733,33 +814,6 @@ class AuditBehavior extends Behavior {
 	}
 
 
-	/*protected function cleanHasManyThroughAssociationData (Entity $entity, string $field, Association|BelongsToMany $association, array $entityData): array {
-		$ls_joinDataProperty = '_joinData';
-		$la_keys = (array)$association->getBindingKey();
-		$la_keys[] = $ls_joinDataProperty;
-
-		$la_oldData = $entityData['old'][ $field ] ?? null;
-		$la_newData = $entityData['new'][ $field ] ?? null;
-
-		if ($la_newData) {
-			foreach ($la_newData as $li_key => $lo_entity) {
-				if ($lo_entity instanceof Entity) {
-					$la_newData[ $li_key ] = $lo_entity->extract($la_keys, false, false);
-				}
-				else {
-					$la_newData[ $li_key ] = $lo_entity;
-				}
-			}
-
-			$la_newData = array_filter($la_newData);
-		}
-
-		dd($la_newData);
-
-		return $entityData;
-	}*/
-
-
 	/**
 	 * @param Entity $entity
 	 * @param string $field
@@ -818,7 +872,7 @@ class AuditBehavior extends Behavior {
 
 		if (!$entity->hasOriginal($field)) {
 			if (!isset($la_newData)) {
-				return [];
+				return $entityData;
 			}
 
 			//Do not fuck around with the original entity;
@@ -887,6 +941,7 @@ class AuditBehavior extends Behavior {
 
 
 		$la_allFields = array_keys(array_merge($la_entityData['old'], $la_entityData['new']));
+		$la_allFields = array_diff($la_allFields, $entity->getVirtual());
 		$la_ignoredFields = $this->getConfig('ignoredFields');
 
 		$la_associationTypes = $this->getAssociations();
@@ -897,8 +952,8 @@ class AuditBehavior extends Behavior {
 				continue;
 			}
 
-			if (array_key_exists($ls_field, $la_associationTypes)) {
-				$la_entityData = $this->auditAssociation($entity, $ls_field, $la_associationTypes[ $ls_field ], $la_entityData);
+			if ($ls_field === 'mediaAssignments') {
+				$la_entityData = $this->auditMediaAssignments($entity, $la_entityData);
 				continue;
 			}
 
@@ -907,20 +962,18 @@ class AuditBehavior extends Behavior {
 				continue;
 			}
 
+			if (array_key_exists($ls_field, $la_associationTypes)) {
+				$la_entityData = $this->auditAssociation($entity, $ls_field, $la_associationTypes[ $ls_field ], $la_entityData);
+				continue;
+			}
+
 			$la_entityData = $this->auditField($ls_field, $la_entityData);
 		}
-
-		//$la_data = Hash::diff($la_oldData, $la_newData);
-		//$la_data = array_diff_key($la_data, array_flip($this->getConfig('ignoredColumns')));
-		//$la_data = array_intersect_key($la_data, $la_oldData);
-		//$la_data = $this->auditAssociations($entity, $la_associationTypes, $la_oldData, $la_newData, $la_data);
-		//$this->auditAttributes($entity, $la_oldData, $la_newData, $la_data);
 
 		//No difference? Do nothing.
 		if (empty($la_entityData['changes']['old']) && empty($la_entityData['changes']['new'])) {
 			return [];
 		}
-
 
 		return $la_entityData;
 	}
