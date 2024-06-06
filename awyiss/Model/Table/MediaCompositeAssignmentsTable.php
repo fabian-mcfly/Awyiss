@@ -32,6 +32,14 @@ class MediaCompositeAssignmentsTable extends Table {
 	 * @inheritDoc
 	 */
 	public function initializeAssociations(): void {
+		$this->hasMany('MediaAssignments', [
+			'bindingKey' => 'media_composite_id',
+			'cascadeCallbacks' => true,
+			'dependent' => true,
+			'foreignKey' => 'media_composite_id',
+			'saveStrategy' => 'replace',
+		]);
+
 		$this->belongsTo('MediaComposites', [
 			'joinType' => 'INNER',
 		]);

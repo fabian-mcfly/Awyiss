@@ -84,6 +84,9 @@
 							{% set counter = 0 %}
 							{% for key, mediaCompositeSelector in mediaComposite.mediaCompositeSelectors %}
 								<div class="FormInputType-ListItem">
+									{{ FormHelper.hidden('media_composite_selectors.' ~ counter ~ '.id', {
+										val: mediaCompositeSelector.id,
+									}) }}
 									{{ FormHelper.control('media_composite_selectors.' ~ counter ~ '.media_selector_id', {
 										options: mediaSelectors,
 										required: true,
@@ -114,6 +117,9 @@
 							{% endfor %}
 
 							<div class="FormInputType-ListItem FormInputType-ListItem-Default">
+								{{ FormHelper.hidden('media_composite_selectors.' ~ counter ~ '.id', {
+									val: '',
+								}) }}
 								{{ FormHelper.control('media_composite_selectors.' ~ counter ~ '.media_selector_id', {
 									options: mediaSelectors,
 									required: true,
@@ -161,6 +167,10 @@
 							{% set counter = 0 %}
 							{% for key, mediaCompositeAssignment in mediaComposite.mediaCompositeAssignments %}
 								<div class="FormInputType-ListItem">
+									{{ FormHelper.hidden('media_composite_assignments.' ~ counter ~ '.id', {
+										val: mediaCompositeAssignment.id,
+									}) }}
+
 									{{ FormHelper.control('media_composite_assignments.' ~ counter ~ '.scope', {
 										options: models,
 										required: true,
@@ -176,6 +186,10 @@
 							{% endfor %}
 
 							<div class="FormInputType-ListItem FormInputType-ListItem-Default">
+								{{ FormHelper.hidden('media_composite_assignments.' ~ counter ~ '.id', {
+									val: '',
+								}) }}
+
 								{{ FormHelper.control('media_composite_assignments.' ~ counter ~ '.scope', {
 									options: models,
 									required: true,
