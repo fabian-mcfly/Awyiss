@@ -33,6 +33,20 @@ class MediaAssignmentsTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
+	protected array $audit = [
+		'enabled' => false,
+	];
+	/**
+	 * @inheritDoc
+	 */
+	protected array $systemOrder = [
+		'relatedColumns' => ['media_composite_id', 'media_composite_selector_identifier', 'scope', 'foreign_key'],
+	];
+
+
+	/**
+	 * @inheritDoc
+	 */
 	public function initializeAssociations(): void {
 		$this->belongsTo('MediaComposites', [
 			'foreignKey' => 'media_composite_id',

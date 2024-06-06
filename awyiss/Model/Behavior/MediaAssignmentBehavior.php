@@ -232,8 +232,9 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 				$lo_marshaller = $this->assignmentsTable->marshaller();
 
 				foreach ($values as $li_mediaCompositeId => $la_compositeData) {
-					$li_systemOrder = 1;
 					foreach ($la_compositeData as $ls_mediaCompositeSelectorIdentifier => $la_mediaIds) {
+						$li_systemOrder = 1;
+
 						if (isset($la_mediaIds['media_id'])) {
 							$la_mediaIds = [$la_mediaIds['media_id']];
 						}
@@ -244,7 +245,7 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 
 							$la_data['mediaCompositeId'] = $li_mediaCompositeId;
 							$la_data['mediaCompositeSelectorIdentifier'] = $ls_mediaCompositeSelectorIdentifier;
-							$la_data['mediaId'] = $li_mediaId;
+							$la_data['mediaId'] = (int)$li_mediaId;
 							$la_data['scope'] = $this->getConfig('referenceName');
 							$la_data['systemOrder'] = $li_systemOrder;
 
