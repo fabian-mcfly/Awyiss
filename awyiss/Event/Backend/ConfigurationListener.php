@@ -182,12 +182,19 @@ class ConfigurationListener implements EventListenerInterface {
 				return;
 			}
 
+			// If the column is the same as the foreign key of the Categories behavior, we don't need to unnest the entries
+			if ($lo_table->hasBehavior('Categories')) {
+				$ls_foreignKey = $lo_table->getBehavior('Categories')->getConfig('foreignKey');
+				if (Inflector::underscore($ls_foreignKey) === Inflector::underscore($ls_column)) {
+					return;
+				}
+			}
+
 			$lo_table->updateAll([
 				$ls_column => null,
 			], [
 				$ls_column . ' IS NOT' => null,
 			]);
-
 
 			$ls_field = LocalConfig::read([
 				'systemOrder',
