@@ -415,13 +415,20 @@ class PagesController extends Controller {
 	 */
 	protected function getThreadedPages(Page $page): CollectionInterface {
 		if (!isset($this->threadedPages)) {
+			$la_categoryQueryConditions = $this->Categories->getQueryConditions($this->Categories->getSelectedCategory($page));
+			/*
+			 * Remove parent_id from the conditions.
+			 * Threaded pages are used for the parent_id and duplicate_of select box.
+			 *
+			 * For duplicate_of, the parent_id limitation is not needed. Duplicating a page with a different parent is allowed.
+			 * For the parent_id select box, the limitation doesn't apply since nesting is only possible if the category behavior
+			 * - is disabled or
+			 * - not using the parent_id field
+			 */
+			unset($la_categoryQueryConditions['parent_id'], $la_categoryQueryConditions['parentId']);
+
 			$lo_query = $this->Pages->find('forCurrentLanguage', languageShortcode: $page->languageShortcode)
-			->where(
-				$this->getOverviewWhere() +
-				$this->Categories->getQueryConditions(
-					$this->Categories->getSelectedCategory($page)
-				)
-			);
+			->where($this->getOverviewWhere() + $la_categoryQueryConditions);
 
 			$this->threadedPages = $this->Pages->listNested($lo_query);
 		}
