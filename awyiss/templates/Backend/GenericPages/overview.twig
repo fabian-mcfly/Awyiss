@@ -50,7 +50,10 @@
 
 	{% if paginated %}
 		{% block paginatedOverview %}
-			{% include '@Backend/GenericPages/overview_paginated_list.twig' with _context|merge({records: pages.items().toArray()}) %}
+			{% include '@Backend/GenericPages/overview_paginated_list.twig' with _context|merge({
+				i18nDomain: 'generic_pages',
+				records: pages.items().toArray(),
+			}) %}
 		{% endblock %}
 	{% else %}
 		{% block listOverview %}
@@ -63,6 +66,7 @@
 						'movable-between-groups': false,
 					},
 					displayedFields: localConfig.overview.displayedFields,
+					i18nDomain: 'generic_pages',
 					identifier: 'Pages',
 					template: '@Backend/GenericPages/overview_nested_list_item.twig',
 				})) }}
