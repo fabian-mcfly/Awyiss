@@ -120,6 +120,10 @@
 				cursor:default;
 				pointer-events:none;
 
+				.🌚 & {
+					background-color:var(--colorBackgroundContentDarkMode);
+				}
+
 				.Scale-Small & {
 					line-height:40px;
 				}

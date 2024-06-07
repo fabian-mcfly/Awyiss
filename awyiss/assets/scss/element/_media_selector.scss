@@ -19,7 +19,7 @@
 			cursor:pointer;
 
 			.🌚 & {
-				--colorLight:var(--colorBackgroundContentDarkMode-Lightened-10);
+				--colorLight:var(--colorDark-Alpha-50);
 
 				border-color:var(--colorBackgroundContentDarkMode-Lightened-4);
 				background-color:var(--colorBackgroundContentDarkMode-Lightened-4);
