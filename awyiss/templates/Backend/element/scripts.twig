@@ -1,6 +1,7 @@
 {% block scriptBaseVars %}
 	<script nonce="{{ AssetHelper.getScriptNonce() }}">
 		const baseUrl = '{{ baseUrl }}';
+		const editor = '{{ config.Awyiss.System.Backend.interface.editor }}';
 		const folder = '{{ folder }}';
 		const currentPath = '{{ currentPath }}';
 		const currentUrl = '{{ currentUrl }}';
@@ -45,9 +46,22 @@
 		'Controller/' ~ controller ~ '.js',
 		'Coloris/Coloris.js',
 		'SortableJS/sortable.js',
-		'TinyMCE/CustomSettings.js',
-		'TinyMCE/Loader.js',
 	]) %}
+
+	{% if config.Awyiss.System.Backend.interface.editor == 'jodit' %}
+		{% do AssetHelper.addJsModule([
+			'Jodit/CustomSettings.js',
+			'Jodit/Loader.js',
+		]) %}
+		<link nonce="{{ AssetHelper.getStyleNonce() }}" href="{{ baseUrl }}awyiss/assets/js/Jodit/jodit/jodit.min.css" rel="stylesheet" type="text/css">
+		<script nonce="{{ AssetHelper.getScriptNonce() }}" src="{{ baseUrl }}awyiss/assets/js/Jodit/jodit/jodit.min.js"></script>
+	{% elseif config.Awyiss.System.Backend.interface.editor == 'tinymce' %}
+		{% do AssetHelper.addJsModule([
+			'TinyMCE/CustomSettings.js',
+			'TinyMCE/Loader.js',
+		]) %}
+		<script nonce="{{ AssetHelper.getScriptNonce() }}" src="{{ baseUrl }}awyiss/assets/js/TinyMCE/tinymce/tinymce.min.js"></script>
+	{% endif %}
 
 	{% if isGenericPage and controller != 'Pages' %}
 		{% do AssetHelper.addJsModule([
@@ -55,6 +69,5 @@
 		]) %}
 	{% endif %}
 
-	<script nonce="{{ AssetHelper.getScriptNonce() }}" src="{{ baseUrl }}awyiss/assets/js/TinyMCE/tinymce/tinymce.min.js"></script>
 	{% do AssetHelper.add('main.js', {type: 'module'}) %}
 {% endblock %}

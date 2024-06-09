@@ -1,0 +1,393 @@
+:root {
+	--jd-border-radius-default:5px;
+	--jd-color-border:transparent;
+	--jd-color-button-background-hover-opacity40:#{$colorSuccess};
+	--jd-color-button-background-hover:#{$colorSuccess};
+	--jd-color-icon:#{$colorBright};
+	--jd-color-panel:#{$colorMedium};
+	--jd-color-source-area:#{$colorSemiDark};
+	--jd-color-text-icons:#{$colorBright};
+	--jd-font-default:inherit;
+	--jd-font-size-default:16px;
+}
+
+.🌚 {
+	--jd-color-panel:var(--colorSemiDark);
+}
+
+.jodit {
+	--scrollbarColor:var(--colorMedium-Darkened-16) var(--colorSemiDarkDarkMode);
+}
+
+.jodit-container {
+	&:not(.jodit_inline) {
+		border-color:rgba(0, 0, 0, .1);
+
+		.🌚 & {
+			background-color:var(--colorSemiDark);
+			border-color:rgba(255, 255, 255, 0.1);
+		}
+	}
+}
+
+.jodit-ui-button {
+	--backgroundColor:var(--colorDark);
+
+	height:auto;
+	padding:11px 20px;
+	box-shadow:0 0 10px rgba(0, 0, 0, .25);
+	background-color:var(--backgroundColor);
+	color:var(--colorBright);
+	font-size:1.1rem;
+
+	.Scale-Small & {
+		padding-block:6px 6px;
+	}
+
+	.🌚 & {
+		--backgroundColor:var(--colorSemiDarkDarkMode-Lightened-4);
+	}
+
+	&:hover,
+	&:focus {
+		&:not([disabled]) {
+			background-color:var(--colorSuccess);
+			color:var(--colorBright);
+			outline:0 none;
+		}
+	}
+
+	&:focus-visible {
+		&:not([disabled]) {
+			box-shadow:0 0 10px var(--colorInfo);
+			outline:2px solid var(--colorInfo);
+			outline-offset:2px;
+		}
+	}
+
+	&_variant_primary {
+		background-color:var(--colorSuccess);
+
+		&:hover,
+		&:focus {
+			&:not([disabled]) {
+				background-color:var(--colorSuccess);
+				outline:0 none;
+			}
+		}
+
+		&:focus-visible {
+			&:not([disabled]) {
+				box-shadow:0 0 10px var(--colorInfo);
+				outline:2px solid var(--colorInfo);
+				outline-offset:2px;
+			}
+		}
+	}
+
+	.jodit-ui-button__text {
+		font-family:inherit;
+		font-size:inherit;
+	}
+}
+
+.jodit-toolbar-editor-collection {
+	padding:5px 7px 3px;
+}
+
+.jodit-ui-separator {
+	margin-inline:5px;
+}
+
+.jodit-toolbar-button {
+	border:0 none;
+
+	&__button {
+		font-family:inherit;
+		line-height:inherit;
+	}
+
+	&__text {
+		line-height:inherit;
+	}
+
+	&__trigger,
+	&__button {
+		background-color:var(--colorMedium-Darkened-8);
+		color:var(--jd-color-icon);
+		opacity:inherit;
+		fill:currentColor;
+
+		.🌚 & {
+			background-color:var(--colorDark);
+		}
+	}
+}
+
+.jodit-popup {
+	border-radius:var(--jd-border-radius-default);
+	box-shadow:0 0 10px 5px var(--colorSuccess-Alpha-10);
+	overflow:hidden;
+
+	&__content {
+		--jd-color-default:var(--colorBright);
+		--jd-color-label:var(--colorBright);
+
+		background-color:var(--colorSemiDark);
+		color:var(--jd-color-default);
+		scrollbar-color:var(--scrollbarColor);
+		scrollbar-width:thin;
+
+		&:has(input[name="url"]) {
+			.jodit-ui-input {
+				width:400px;
+			}
+		}
+
+		.🌚 & {
+			background-color:var(--colorMedium);
+		}
+
+		.jodit-toolbar-editor-collection {
+			padding:0;
+		}
+
+		.jodit-toolbar-button {
+			&[ref="h1"],
+			&[ref="h2"],
+			&[ref="h3"],
+			&[ref="h4"],
+			&[ref="h5"],
+			&[ref="h6"],
+			&[ref="p"],
+			&[ref="blockquote"],
+			&[ref="pre"] {
+				width:100%;
+				margin-inline:0;
+
+				.jodit-toolbar-button__button {
+					background-color:transparent;
+					padding:10px 10px;
+					text-align:left;
+					white-space:nowrap;
+					transition-delay:0s;
+
+					&:not([disabled]) {
+						&[aria-pressed="true"] {
+							background-color:var(--colorSuccess);
+						}
+
+						&:hover {
+							background-color:var(--jd-color-button-background-hover);
+						}
+					}
+
+					&::before,
+					.Hover {
+						display:none;
+					}
+				}
+			}
+
+			.jodit-toolbar-button__button {
+				padding:5px 10px;
+			}
+		}
+
+		h1, h2, h3, h4, h5, h6 {
+			font-family:inherit;
+			line-height:inherit;
+		}
+
+		h1 {
+			font-size:36px;
+		}
+
+		h2 {
+			font-size:30px;
+		}
+
+		h3 {
+			font-size:24px;
+		}
+
+		h4 {
+			font-size:20px;
+		}
+
+		h5 {
+			font-size:18px;
+		}
+
+		h6 {
+			font-size:16px;
+		}
+
+		.jodit-ui-input__wrapper {
+			background-color:transparent;
+			border:0 none;
+		}
+
+		.jodit-ui-input__input {
+			height:auto;
+			border-radius:5px;
+			border:1px solid rgba(255, 255, 255, .2);
+			background-blend-mode:multiply;
+			background-color:var(--colorBackgroundContentDarkMode-Lightened-8);
+			background-image:url($relativePath + 'img/background-pattern-dark.png');
+			color:var(--colorBright);
+			line-height:3;
+
+			&:focus-visible {
+				border-color:var(--colorSuccess);
+			}
+		}
+
+		.jodit-ui-checkbox__label {
+
+		}
+	}
+}
+
+.jodit-form__table-creator-box {
+	--jd-color-border:rgba(255, 255, 255, .15);
+
+	color:var(--colorBright);
+	line-height:0;
+}
+
+.jodit-source,
+.jodit-source__mirror {
+	scrollbar-color:var(--scrollbarColor);
+	scrollbar-width:thin;
+}
+
+.jodit-workplace {
+	+ .jodit-status-bar {
+		height:30px;
+
+		&:not(:empty) {
+			padding:5px 10px;
+			border-top-width:0;
+		}
+	}
+}
+
+.jodit-xpath__item {
+	height:auto;
+
+	a {
+		padding-block:3px;
+		border-bottom-width:0;
+		color:inherit;
+
+		&:hover {
+			--jd-color-background-gray:var(--colorSuccess);
+			color:var(--colorBright);
+		}
+	}
+}
+
+.jodit-dialog {
+	&_resizable_true {
+		.jodit-dialog__resizer {
+			display:none;
+		}
+	}
+
+	&_prompt {
+		max-width:none;
+		padding:0;
+
+		label {
+			margin-bottom:0;
+		}
+	}
+
+	&__overlay {
+		background-color:rgba(0, 0, 0, .25);
+		backdrop-filter:blur(5px);
+		pointer-events:none;
+
+		.🌚 & {
+			background-color:rgba(0, 0, 0, .5);
+		}
+	}
+
+	&__header {
+		min-height:52px;
+
+		&-title,
+		&-toolbar {
+			padding-inline:20px;
+			color:var(--colorBright);
+			//noinspection CssNoGenericFontName
+			font-family:var(--fontStackHeading);
+			font-size:1rem;
+			line-height:52px;
+			position:relative;
+			z-index:3;
+		}
+
+		&::before,
+		&::after {
+			content:'';
+			width:100%;
+			height:52px;
+			padding:0 20px;
+			border-radius:5px 5px;
+			background-color:var(--colorDark-Alpha-50);
+			color:var(--colorBright);
+			position:absolute;
+			top:0;
+			left:0;
+		}
+
+		&::before {
+			background-image:url($relativePath + 'img/awyiss-v1-' + $awyissVersionName + '.jpg');
+			background-color:var(--colorDark);
+			background-position:center;
+			background-size:cover;
+		}
+	}
+
+	&__panel {
+		border-radius:5px;
+		box-shadow:0 0 10px rgba(0, 0, 0, .25);
+
+		.🌚 & {
+			background-color:var(--colorDark);
+		}
+	}
+
+	&__content {
+		padding:40px;
+		font-size:1rem;
+		line-height:var(--lineHeightMain);
+		scrollbar-color:var(--scrollbarColor);
+		scrollbar-width:thin;
+
+		.Scale-Small & {
+			padding:20px;
+		}
+	}
+
+	&__footer {
+		padding:0 40px 40px 40px;
+
+		.Scale-Small & {
+			padding:0 20px 20px 20px;
+		}
+	}
+}
+
+.jodit-toolbar-collection_mode_horizontal,
+.jodit-toolbar-editor-collection_mode_horizontal {
+	&::after {
+		display:none;
+	}
+}
+
+.jodit-resizer {
+	display:none;
+}

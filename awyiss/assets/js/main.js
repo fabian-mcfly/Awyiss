@@ -19,7 +19,6 @@ import Observer from 'Observer';
 import OverflowMenu from 'OverflowMenu';
 import OverlayForm from 'OverlayForm';
 import PasswordReveal from 'PasswordReveal';
-import TinyMCELoader from 'TinyMCE/Loader';
 import TitleSetter from 'TitleSetter';
 import TranslatableTexts from 'TranslatableTexts';
 
@@ -57,6 +56,93 @@ export async function loadControllerClass(controllerClass) {
 			console.error('Error loading controller class:', error, typeof error);
 		}
 	}
+}
+
+/**
+ * Add a click event listener to the dark mode switcher
+ * This event listener toggles the class "🌚" on the HTML tag
+ * and saves the user's preference in the database
+ */
+export function addDarkModeSwitcherEvent() {
+	// Get all .DarkModeSwitch-Link elements
+	const darkModeSwitchLinks = Array.from(document.querySelectorAll('.DarkModeSwitch-Link'));
+
+	// Add a click event listener to each .DarkModeSwitch-Link element
+	window.eventHandler.add('click', function (event) {
+		const target = event.target;
+
+		// Check if the target is one of the .DarkModeSwitch-Link elements
+		if (!darkModeSwitchLinks.includes(target)) {
+			return;
+		}
+
+		event.preventDefault();
+
+		// Send a fetch request to the URL of the item itself
+		fetch(target.href, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+				'X-Requested-With': 'XMLHttpRequest',
+			},
+		})
+		.then(response => response.json())
+		.then(response => {
+			if (!response.success) {
+				throw new Error('Network response was not ok');
+			}
+
+			target.closest('#DarkModeSwitch').querySelector('.Active')?.classList.remove('Active');
+
+			target.parentElement.classList.add('Active');
+
+			// If the fetch request is successful, toggle the class "🌚" on the HTML tag
+			document.documentElement.classList.toggle('🌚', target.classList.contains('DarkModeSwitch-Link-On'));
+
+			document.getElementById('clr-picker')?.classList.toggle('clr-dark', target.classList.contains('DarkModeSwitch-Link-On'));
+		})
+		.catch(error => {
+			console.error('There has been a problem with your fetch operation:', error);
+		});
+	}, window, true);
+}
+
+/**
+ * Add a click event listener to the language switcher
+ * This event listener toggles the visibility of the language switcher
+ */
+export function addLanguageSwitcherEvent() {
+	const languageSwitcher = document.querySelector('.LanguageSwitcher');
+	if (!languageSwitcher) {
+		return;
+	}
+
+	// Toggle the visible classn on .Languages when clicking .LanguageSwitcherLabel;
+	// Remove it when clicking outside .Languages
+	window.eventHandler.add('click', function (event) {
+		const languageSwitcherLabel = languageSwitcher.querySelector('.LanguageSwitcherLabel');
+		const languages = languageSwitcher.querySelector('.Languages');
+
+		// Toggle the visible class on .Languages when clicking .LanguageSwitcherLabel or its children
+		if (event.target === languageSwitcherLabel || languageSwitcherLabel.contains(event.target)) {
+			languageSwitcherLabel.classList.toggle('Visible');
+			languages.classList.toggle('Visible');
+		}
+		else if (!event.target.closest('.Languages')) {
+			languageSwitcherLabel.classList.remove('Visible');
+			languages.classList.remove('Visible');
+		}
+	});
+
+	// Find all images and create a duplicate of them as background images
+	const images = languageSwitcher.querySelectorAll('img');
+	images.forEach((image) => {
+		const clone = image.cloneNode();
+		clone.classList.add('BackgroundImage');
+
+		// Add the background image to the parent element
+		image.parentElement.appendChild(clone);
+	});
 }
 
 /**
@@ -110,6 +196,10 @@ export function addTabAutocompleteEvent() {
 	});
 }
 
+/**
+ * Add a change event listener to the pagination form
+ * This event listener submits the form when the value of the select element for items per page changes
+ */
 export function handlePaginationForm() {
 	const paginateForm = document.querySelector('.ListControl-Item-ListLimit form');
 	if (!paginateForm) {
@@ -128,82 +218,26 @@ export function handlePaginationForm() {
 	}, paginateForm);
 }
 
-export function addDarkModeSwitcherEvent() {
-	// Get all .DarkModeSwitch-Link elements
-	const darkModeSwitchLinks = Array.from(document.querySelectorAll('.DarkModeSwitch-Link'));
+/**
+ * Load the configured rich text editor
+ * @param {string} editor - The identifier of the rich text editor to load
+ * @returns {Promise<void>}
+ */
+export async function loadTextEditor(editor) {
+	if (editor === 'jodit') {
+		// Load the Loader class
+		const {default: JoditLoader} = await import('Jodit/Loader');
 
-	// Add a click event listener to each .DarkModeSwitch-Link element
-	window.eventHandler.add('click', function (event) {
-		const target = event.target;
-
-		// Check if the target is one of the .DarkModeSwitch-Link elements
-		if (!darkModeSwitchLinks.includes(target)) {
-			return;
-		}
-
-		event.preventDefault();
-
-		// Send a fetch request to the URL of the item itself
-		fetch(target.href, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/x-www-form-urlencoded',
-				'X-Requested-With': 'XMLHttpRequest',
-			},
-		})
-		.then(response => response.json())
-		.then(response => {
-			if (!response.success) {
-				throw new Error('Network response was not ok');
-			}
-
-			target.closest('#DarkModeSwitch').querySelector('.Active')?.classList.remove('Active');
-
-			target.parentElement.classList.add('Active');
-
-			// If the fetch request is successful, toggle the class "🌚" on the HTML tag
-			document.documentElement.classList.toggle('🌚', target.classList.contains('DarkModeSwitch-Link-On'));
-
-			document.getElementById('clr-picker')?.classList.toggle('clr-dark', target.classList.contains('DarkModeSwitch-Link-On'));
-		})
-		.catch(error => {
-			console.error('There has been a problem with your fetch operation:', error);
-		});
-	}, window, true);
-}
-
-export function addLanguageSwitcherEvent() {
-	const languageSwitcher = document.querySelector('.LanguageSwitcher');
-	if (!languageSwitcher) {
-		return;
+		// Create a new instance of the Loader class
+		new JoditLoader();
 	}
+	else if (editor === 'tinymce') {
+		// Load the Loader class
+		const {default: TinyMCELoader} = await import('TinyMCE/Loader');
 
-	// Toggle the visible classn on .Languages when clicking .LanguageSwitcherLabel;
-	// Remove it when clicking outside .Languages
-	window.eventHandler.add('click', function (event) {
-		const languageSwitcherLabel = languageSwitcher.querySelector('.LanguageSwitcherLabel');
-		const languages = languageSwitcher.querySelector('.Languages');
-
-		// Toggle the visible class on .Languages when clicking .LanguageSwitcherLabel or its children
-		if (event.target === languageSwitcherLabel || languageSwitcherLabel.contains(event.target)) {
-			languageSwitcherLabel.classList.toggle('Visible');
-			languages.classList.toggle('Visible');
-		}
-		else if (!event.target.closest('.Languages')) {
-			languageSwitcherLabel.classList.remove('Visible');
-			languages.classList.remove('Visible');
-		}
-	});
-
-	// Find all images and create a duplicate of them as background images
-	const images = languageSwitcher.querySelectorAll('img');
-	images.forEach((image) => {
-		const clone = image.cloneNode();
-		clone.classList.add('BackgroundImage');
-
-		// Add the background image to the parent element
-		image.parentElement.appendChild(clone);
-	});
+		// Create a new instance of the Loader class
+		new TinyMCELoader();
+	}
 }
 
 /**
@@ -320,12 +354,6 @@ export async function initMainOnReady() {
 
 	/**
 	 * @global
-	 * @type {TinyMCELoader}
-	 */
-	window.tinyMCELoader = new TinyMCELoader();
-
-	/**
-	 * @global
 	 * @type {TitleSetter}
 	 */
 	window.titleSetter = new TitleSetter('DataItem');
@@ -336,6 +364,12 @@ export async function initMainOnReady() {
 	 */
 	window.translatableTexts = new TranslatableTexts();
 
+	// Add the dark mode switcher event
+	addDarkModeSwitcherEvent();
+
+	// Add the language switcher event
+	addLanguageSwitcherEvent();
+
 	// Scroll to active item in custom selects on mouseenter
 	addLinkSelectMouseEvent();
 
@@ -345,9 +379,9 @@ export async function initMainOnReady() {
 	// Handle pagination form
 	handlePaginationForm();
 
-	addDarkModeSwitcherEvent();
-
-	addLanguageSwitcherEvent();
+	// Load the configured rich text editor
+	// noinspection ES6MissingAwait
+	loadTextEditor(editor);
 
 	// Check if the controller class exists
 	const controllerClass = Array.from(document.documentElement.classList).find(cls => cls.endsWith('Controller'));
@@ -438,7 +472,7 @@ export function initMainOnLoad() {
 // Check if the main.js is imported in the custom main.js
 //noinspection JSUnresolvedReference
 if (!window.mainJsIsImported) {
-	// If document is still loading, wait for it to complete
+	// If document is still loading, add the "ready" event listener
 	if (document.readyState === 'loading') {
 		document.addEventListener('DOMContentLoaded', initMainOnReady);
 	}

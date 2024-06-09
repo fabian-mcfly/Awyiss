@@ -56,6 +56,19 @@ class SystemConfigOptions extends AbstractConfigOptions {
 					type: ConfigOptionType::Bool,
 				),
 				new ConfigOption(
+					defaultValue: 'plain',
+					identifier: 'editor',
+					localizable: false,
+					nullable: false,
+					personalizable: true,
+					type: ConfigOptionType::ListKey,
+					values: [
+						'plain' => __d('system', 'interface_editor_plain'),
+						'jodit' => __d('system', 'interface_editor_jodit'),
+						'tinymce' => __d('system', 'interface_editor_tinymce'),
+					],
+				),
+				new ConfigOption(
 					defaultValue: 'regular',
 					identifier: 'scale',
 					localizable: false,

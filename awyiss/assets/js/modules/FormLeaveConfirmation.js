@@ -87,8 +87,11 @@ export default class FormLeaveConfirmation {
 	 * @param event
 	 */
 	handleNavigationAttempt(event) {
-
 		if (event.defaultPrevented || event.sentFromFormLeaveConfirmDialog || event.target.tagName !== 'A' || !this.isFormChanged) {
+			return;
+		}
+
+		if (event.target.closest('.jodit')) {
 			return;
 		}
 

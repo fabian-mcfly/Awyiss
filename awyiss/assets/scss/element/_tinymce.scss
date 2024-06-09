@@ -22,6 +22,8 @@ body {
 	}
 
 	.tox {
+		--scrollbarColor:var(--colorMedium-Darkened-16) var(--colorSemiDarkDarkMode);
+
 		box-sizing:inherit;
 		font-family:inherit;
 		font-size:inherit;
@@ -184,6 +186,8 @@ body {
 			box-shadow:0 0 10px rgba(0, 0, 0, .1);
 			background-color:var(--colorSemiDark);
 			position:relative;
+			scrollbar-color:var(--scrollbarColor);
+			scrollbar-width:thin;
 
 			.🌚 & {
 				background-color:var(--colorMedium);

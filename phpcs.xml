@@ -7,7 +7,9 @@
 	<exclude-pattern>./awyiss/assets/css/*</exclude-pattern>
 	<exclude-pattern>./awyiss/assets/js/Coloris/*</exclude-pattern>
 	<exclude-pattern>./awyiss/assets/js/SortableJS/*</exclude-pattern>
-	<exclude-pattern>./awyiss/assets/js/TinyMCE/*</exclude-pattern>
+	<exclude-pattern>./awyiss/assets/js/Jodit/jodit/*</exclude-pattern>
+	<exclude-pattern>./awyiss/assets/js/TinyMCE/langs/*</exclude-pattern>
+	<exclude-pattern>./awyiss/assets/js/TinyMCE/tinymce/*</exclude-pattern>
 	<exclude-pattern>./awyiss/config/*</exclude-pattern>
 	<exclude-pattern>./awyiss/templates/*</exclude-pattern>
 	<exclude-pattern>./tmp/*</exclude-pattern>

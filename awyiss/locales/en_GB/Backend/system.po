@@ -74,6 +74,15 @@ msgstr "Enable Dark Mode"
 msgid "dark_mode_switch_off"
 msgstr "Disable Dark Mode"
 
+msgid "interface_editor_plain"
+msgstr "Plain"
+
+msgid "interface_editor_jodit"
+msgstr "Jodit"
+
+msgid "interface_editor_tinymce"
+msgstr "TinyMCE"
+
 msgid "interface_scale_small"
 msgstr "Small"
 

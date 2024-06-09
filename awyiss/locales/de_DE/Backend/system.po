@@ -74,6 +74,15 @@ msgstr "Nachtmodus aktivieren"
 msgid "dark_mode_switch_off"
 msgstr "Nachtmodus deaktivieren"
 
+msgid "interface_editor_plain"
+msgstr "Einfach"
+
+msgid "interface_editor_jodit"
+msgstr "Jodit"
+
+msgid "interface_editor_tinymce"
+msgstr "TinyMCE"
+
 msgid "interface_scale_small"
 msgstr "Klein"
 

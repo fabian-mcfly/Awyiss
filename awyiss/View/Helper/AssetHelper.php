@@ -612,6 +612,16 @@ class AssetHelper extends Helper {
 
 
 	/**
+	 * Returns the style nonce from the request attributes.
+	 *
+	 * @return string|null
+	 */
+	public function getStyleNonce(): ?string {
+		return $this->getView()->getRequest()->getAttribute('cspStyleNonce');
+	}
+
+
+	/**
 	 * Sets the HTTP2 preload headers for all assets.
 	 *
 	 * @return void
