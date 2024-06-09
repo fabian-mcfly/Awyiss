@@ -42,12 +42,6 @@
 
 		.Scale-Small & {
 			margin:0 0 20px 0;
-
-			/*&[data-nestable="false"] {
-				.SortableHandle {
-					top:18px;
-				}
-			}*/
 		}
 
 		&.SortableDragging {
@@ -69,40 +63,6 @@
 		&:not(:has(.ListItem)) {
 			background-color:transparent;
 		}
-
-		> .ListItem {
-			/*&:nth-child(2n+1) {
-				> .ListItem-Inner {
-					border-left-width:0;
-				}
-			}*/
-
-			&:last-child {
-				//margin-bottom:20px;
-
-				> .ListItem-Inner {
-					//border-bottom-width:0;
-				}
-
-				&:has(.ListItem) {
-					//margin-bottom:20px;
-
-					/*&:not(:has(> .NestedList.Collapsed)) {
-						> .ListItem-Inner {
-							border-bottom-width:2px;
-						}
-					}*/
-
-					/*> .ListItem-Inner {
-						border-bottom-width:2px;
-					}*/
-				}
-			}
-
-			> .ListItem-Inner {
-				//border-left-width:0;
-			}
-		}
 	}
 
 	&&-Compact {
@@ -115,12 +75,6 @@
 			padding-bottom:20px;
 			margin-inline:-25px;
 			padding-block:0;
-
-			> .ListItem {
-				&:last-child {
-					margin-bottom:calc(20px - .25rem);
-				}
-			}
 		}
 
 		&:not(:has(.ListItem)) {
@@ -129,8 +83,8 @@
 		}
 
 		.ListItem {
-			margin:0;
-			padding:.25rem 5px;
+			margin:0 0 .25rem 0;
+			padding:0 5px;
 
 			&.Narrow {
 				> .ListItem-Inner {
@@ -245,10 +199,6 @@
 			line-height:0;
 			text-align:right;
 
-			.Scale-Small & {
-				//margin-block:-.25rem;
-			}
-
 			.Button {
 				width:56px;
 				height:36px;
@@ -284,10 +234,10 @@
 
 		.Resizer {
 			right:5px;
-			top:42px;
+			top:38px;
 
 			.Scale-Small & {
-				top:38px;
+				top:34px;
 			}
 		}
 		
@@ -317,10 +267,6 @@
 		display:none;
 	}
 
-	.🌚 & {
-		//--backgroundColorEven:var(--colorSemiDark);
-	}
-
 	&:not(:has(.ListItem)) {
 		height:0;
 		border-radius:5px;
@@ -348,38 +294,18 @@
 		}
 
 		&.SortableGhost {
-			//&,
-			//&:nth-child(2):not(:hover) {
-				> .ListItem-Inner {
-					background-color:var(--colorSuccess);
-					outline:2px solid var(--colorSuccess);
-					outline-offset:-2px;
+			> .ListItem-Inner {
+				background-color:var(--colorSuccess);
+				outline:2px solid var(--colorSuccess);
+				outline-offset:-2px;
 
-					.🌚 & {
-						background-color:var(--colorSuccess);
-					}
+				.🌚 & {
+					background-color:var(--colorSuccess);
 				}
-			//}
+			}
 		}
 
 		&.Inactive {
-			&:nth-child(2n) {
-				> .ListItem-Inner {
-					/*&,
-					&:hover {
-						background-color:transparent;
-					}*/
-				}
-			}
-
-			/*&:hover {
-				> .ListItem-Inner {
-					.Data {
-						opacity:1;
-					}
-				}
-			}*/
-
 			> .ListItem-Inner {
 				background-image:repeating-linear-gradient(-45deg, transparent, transparent 10px, var(--colorLight-Darkened-20-Alpha-20) 10px, var(--colorLight-Darkened-20-Alpha-20) 20px);
 
@@ -454,49 +380,8 @@
 			}
 		}
 
-		&:nth-child(2n+1) {
-			/*&:has(.ListItem) {
-				&:has(> .NestedList.Collapsed) {
-					> .ListItem-Inner {
-						border-bottom-width:0;
-					}
-				}
-
-				> .ListItem-Inner {
-					border-bottom:2px solid var(--colorLight);
-				}
-			}*/
-
-			/*> .ListItem-Inner {
-				border-left:2px solid var(--colorLight);
-				border-bottom:2px solid var(--colorLight);
-
-				.🌚 & {
-					border-color:var(--colorSemiDark);
-				}
-			}*/
-		}
-
-		/*&:nth-child(2n) {
-			> .ListItem-Inner {
-				&:not(:hover) {
-					background-color:var(--backgroundColorEven);
-				}
-			}
-		}*/
-
 		&:first-child {
 			margin-top:0;
-		}
-
-		&:last-child {
-			//margin-bottom:20px;
-
-			/*&:has(> .NestedList.Collapsed) {
-				> .ListItem-Inner {
-					border-bottom-width:0;
-				}
-			}*/
 		}
 	}
 
@@ -734,6 +619,5 @@
 		&:hover {
 			opacity:1;
 		}
-
 	}
 }

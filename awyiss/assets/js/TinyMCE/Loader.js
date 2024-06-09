@@ -153,6 +153,7 @@ export default class Loader {
 		tinymce.init(settings).then((editor) => {
 			element.tinymce = editor[0];
 
+			// noinspection JSUnresolvedReference
 			this.extendTinyMCE(element.tinymce);
 		});
 	}
@@ -247,6 +248,7 @@ export default class Loader {
 			});
 		});
 
+		// noinspection DuplicatedCode
 		for (const node of mutation.addedNodes) {
 			if (node.nodeType !== Node.ELEMENT_NODE) {
 				continue;

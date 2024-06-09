@@ -1,6 +1,7 @@
 //noinspection JSUnusedGlobalSymbols
 
 // Core SortableJS (without default plugins)
+// noinspection NpmUsedModulesInstalled
 import Sortable from 'SortableJS/sortable';
 
 /**
@@ -144,17 +145,15 @@ export default class NestedListHandler {
 
 			element.sortable = Sortable.create(element, {
 				chosenClass: 'SortableChosen',
-				//draggable: '.ListItem',
-				//direction: 'horizontal',
+				//direction: 'vertical',
 				dataIdAttr: 'id',
-				fallbackOnBody: true,
 				filter: '[data-sortable="false"]',
 				ghostClass: 'SortableGhost',
 				group: groupName,
 				handle: options.handle ? '.SortableHandle' : '.ListItem-Inner',
 				invertSwap: true,
 				preventOnFilter: false,
-				swapThreshold: .5,
+				swapThreshold: .9,
 				onAdd: (event) => {
 					return this.onAdd(event);
 				},
