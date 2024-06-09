@@ -14,6 +14,7 @@ use Cake\Utility\Text;
  * @property int $id
  * @property string|null $title
  * @property string|null $fileName
+ * @property bool $inContentRow
  * @property int $systemOrder
  * @property bool $active
  * @property bool $deleted
@@ -34,6 +35,7 @@ class ContentTemplate extends Entity {
 	protected array $_accessible = [
 		'title' => true,
 		'fileName' => true,
+		'inContentRow' => true,
 		'systemOrder' => true,
 		'active' => true,
 		'contentTemplateElements' => true,
@@ -46,6 +48,7 @@ class ContentTemplate extends Entity {
 		'file_name' => 'fileName',
 		'content_template_elements' => 'contentTemplateElements',
 		'content_areas' => 'contentAreas',
+		'in_content_row' => 'inContentRow',
 		'system_order' => 'systemOrder',
 		'created_by' => 'createdBy',
 		'created_on' => 'createdOn',

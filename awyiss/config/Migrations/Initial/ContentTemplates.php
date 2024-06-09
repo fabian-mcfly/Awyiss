@@ -42,6 +42,10 @@ class ContentTemplates {
 			'default' => null,
 			'limit' => 100,
 			'null' => false,
+		])->addColumn('in_content_row', 'boolean', [
+			'default' => true,
+			'limit' => null,
+			'null' => false,
 		])->addColumn('system_order', 'integer', [
 			'default' => '0',
 			'limit' => null,

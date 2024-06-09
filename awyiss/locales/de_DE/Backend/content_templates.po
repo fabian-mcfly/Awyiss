@@ -68,6 +68,9 @@ msgstr "Es ist aktuell eine Dateiänderung in Bearbeitung. Bitte warten Sie, bis
 msgid "file_name"
 msgstr "Dateiname"
 
+msgid "in_content_row"
+msgstr "In Content Row"
+
 msgid "column_span"
 msgstr "Spaltenbreite"
 

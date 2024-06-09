@@ -30,6 +30,10 @@
 						{{ FormHelper.control('active') }}
 					{% endblock %}
 
+					{% block formControlInContentRow %}
+						{{ FormHelper.control('in_content_row') }}
+					{% endblock %}
+
 					{% block fieldsetPresentationAttributes %}
 						{{ AttributesHelper.allControls('presentation') }}
 					{% endblock %}

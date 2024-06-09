@@ -68,6 +68,9 @@ msgstr "A file change is currently in progress. Please wait until it is complete
 msgid "file_name"
 msgstr "File Name"
 
+msgid "in_content_row"
+msgstr "In Content Row"
+
 msgid "column_span"
 msgstr "Column Width"
 
