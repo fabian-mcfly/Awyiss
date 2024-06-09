@@ -9,6 +9,7 @@ use Awyiss\Command\Awyiss\Trait\ConfigTrait;
 use Cake\Command\Command;
 use Cake\Console\Arguments;
 use Cake\Console\ConsoleIo;
+use Cake\Console\ConsoleOptionParser;
 use Cake\Database\Exception\MissingConnectionException;
 use Cake\Datasource\ConnectionManager;
 use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
@@ -64,6 +65,15 @@ class InstallCommand extends Command {
 		$this->filesystem = new Filesystem();
 		$this->io = $io;
 
+		// If the user just wants to rebuild the symlinks, do that and exit
+		if ($args->getOption('rebuild-symlinks')) {
+			$this->createDirectoriesAndSymlinks();
+
+			$this->io->success('Symlinks rebuilt.');
+
+			return static::CODE_SUCCESS;
+		}
+
 		// Check if the dummy folder exists
 		$this->checkDummyFolder();
 
@@ -114,6 +124,21 @@ class InstallCommand extends Command {
 
 
 		return static::CODE_SUCCESS;
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	protected function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser {
+		$lo_parser = parent::buildOptionParser($parser);
+
+		$lo_parser->addOption('rebuild-symlinks', [
+			'help' => 'Rebuild the symlinks for the assets. Setting this argument will skip the installation process.',
+			'boolean' => true,
+		]);
+
+		return $lo_parser;
 	}
 
 
@@ -227,6 +252,15 @@ class InstallCommand extends Command {
 	 * Create directories and symlinks for the assets
 	 */
 	protected function createDirectoriesAndSymlinks(): void {
+		if (!isset($this->customerName)) {
+			if (!defined('CUSTOM_DIR')) {
+				$this->io->abort('Invalid customer name.');
+			}
+			else {
+				$this->customerName = CUSTOM_DIR;
+			}
+		}
+
 		$this->filesystem->symlink(ROOT . DS . 'awyiss' . DS . 'assets', WWW_ROOT . 'awyiss' . DS . 'assets');
 		$this->filesystem->symlink(ROOT . DS . 'vendor' . DS . 'tinymce' . DS . 'tinymce', WWW_ROOT . 'awyiss' . DS . 'assets' . DS . 'js' . DS . 'TinyMCE' . DS . 'tinymce');
 		$this->filesystem->symlink(ROOT . DS . $this->customerName . DS . 'assets', WWW_ROOT . 'assets');
