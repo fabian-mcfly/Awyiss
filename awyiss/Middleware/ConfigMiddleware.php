@@ -5,6 +5,7 @@ namespace Awyiss\Middleware;
 
 
 use Awyiss\Awyiss;
+use Exception;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -41,11 +42,19 @@ class ConfigMiddleware implements MiddlewareInterface {
 	public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface {
 		Awyiss::setRealm($this->realm);
 
+		$ls_frontendLanguage = LocaleMiddleware::getLanguage()?->shortcode;
+		$ls_backendLanguage = LocaleMiddleware::getLanguage($this->realm)?->shortcode;
+
+		if (!$ls_frontendLanguage) {
+			throw new Exception('No frontend language found');
+		}
+
+		if (!$ls_backendLanguage) {
+			throw new Exception('No backend language found');
+		}
+
 		// Load the configuration as soon as possible
-		Awyiss::loadConfiguration(
-			LocaleMiddleware::getLanguage()->shortcode,
-			LocaleMiddleware::getLanguage($this->realm)->shortcode,
-		);
+		Awyiss::loadConfiguration($ls_frontendLanguage, $ls_backendLanguage);
 
 		return $handler->handle($request);
 	}

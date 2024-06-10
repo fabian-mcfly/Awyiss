@@ -13,7 +13,6 @@ use Cake\Datasource\FactoryLocator;
 use Cake\I18n\I18n;
 use Cake\I18n\Package;
 use Cake\ORM\Locator\LocatorAwareTrait;
-use Exception;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -88,7 +87,7 @@ class LocaleMiddleware implements MiddlewareInterface {
 	 * @param ServerRequestInterface $request
 	 * @param RequestHandlerInterface $handler
 	 * @return ResponseInterface
-	 * @throws Exception
+	 * @throws \Exception
 	 */
 	public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface {
 		if (!in_array(static::$realm, Awyiss::getRealms())) {
@@ -106,17 +105,10 @@ class LocaleMiddleware implements MiddlewareInterface {
 			$lo_fileLoader = new MessagesFileLoader($ls_domain, $locale, 'po');
 			$lo_default = $lo_fileLoader();
 
-
 			return new Package('default', null, $lo_default->getMessages());
 		});
 
-		$lo_language = null;
-		if (static::$retrievalStrategy[ static::getRealm() ] === self::SOURCE_URL) {
-			$lo_language = static::getLanguageFromUrl(static::getRealm());
-		}
-		elseif (static::$retrievalStrategy[ static::getRealm() ] === self::SOURCE_SESSION) {
-			$lo_language = static::getLanguageFromSession(static::getRealm());
-		}
+		$lo_language = static::getLanguage(Awyiss::getRealm());
 
 		if ($lo_language) {
 			ini_set('intl.default_locale', $lo_language->locale);
@@ -141,10 +133,10 @@ class LocaleMiddleware implements MiddlewareInterface {
 
 	/**
 	 * @param string|null $realm
-	 * @param bool $fallback
+	 * @param bool $fallback If true, the default language will be returned if no language is found
 	 * @param string $retrievalStategy
 	 * @return Language|null
-	 * @throws Exception
+	 * @throws \Exception
 	 */
 	public static function getLanguage(?string $realm = Awyiss::REALM_FRONTEND, bool $fallback = true, string $retrievalStategy = self::SOURCE_AUTO): ?Language {
 		if (!static::$languagesLoaded) {
@@ -165,6 +157,7 @@ class LocaleMiddleware implements MiddlewareInterface {
 			$ls_retrievalStategy = static::$retrievalStrategy[ $ls_realm ];
 		}
 
+		$lo_language = null;
 		if ($ls_retrievalStategy === static::SOURCE_SESSION) {
 			$lo_language = static::getLanguageFromSession($ls_realm);
 		}
@@ -285,15 +278,17 @@ class LocaleMiddleware implements MiddlewareInterface {
 			/** @var Language $lo_language */
 			static::$languages[ $lo_language->realm ][ $lo_language->shortcode ] = $lo_language;
 
-			if (!isset(static::$defaultLanguages[ $lo_language->realm ])) {
-				static::$defaultLanguages[ $lo_language->realm ] = $lo_language;
-			}
+			if ($lo_language->active) {
+				if (!isset(static::$defaultLanguages[ $lo_language->realm ])) {
+					static::$defaultLanguages[ $lo_language->realm ] = $lo_language;
+				}
 
-			if (!isset(static::$languagesByShortcode[ $lo_language->shortcode ])) {
-				static::$languagesByShortcode[ $lo_language->shortcode ] = [
-					Awyiss::REALM_FRONTEND => null,
-					Awyiss::REALM_BACKEND => null,
-				];
+				if (!isset(static::$languagesByShortcode[ $lo_language->shortcode ])) {
+					static::$languagesByShortcode[ $lo_language->shortcode ] = [
+						Awyiss::REALM_FRONTEND => null,
+						Awyiss::REALM_BACKEND => null,
+					];
+				}
 			}
 
 			static::$languagesByShortcode[ $lo_language->shortcode ][ $lo_language->realm ] = $lo_language;
@@ -304,7 +299,7 @@ class LocaleMiddleware implements MiddlewareInterface {
 
 
 	/**
-	 * @throws Exception
+	 * @throws \Exception
 	 * @noinspection PhpUnused
 	 */
 	protected static function getLanguageFromUrl(?string $realm = null): ?Language {
@@ -317,16 +312,11 @@ class LocaleMiddleware implements MiddlewareInterface {
 		$ls_langShortcode = Router::getRequest()?->getParam('lang');
 		$lo_language = static::getLanguages($ls_realm)[ $ls_langShortcode ] ?? null;
 
-		if (!$lo_language) {
-			$lo_language = current(static::getLanguages($ls_realm)) ?? null;
+		if ($lo_language && $lo_language->active) {
+			return $lo_language;
 		}
 
-		if (!$lo_language) {
-			throw new Exception(__d('languages', 'language_shortcode_not_found'), 404);
-		}
-
-
-		return $lo_language;
+		return null;
 	}
 
 
@@ -351,6 +341,9 @@ class LocaleMiddleware implements MiddlewareInterface {
 
 		$ls_languageShortcode = $lo_session->read(static::getSessionIdentifier());
 
+		if (!$ls_languageShortcode) {
+			return null;
+		}
 
 		return static::$languages[ $ls_realm ][ $ls_languageShortcode ] ?? null;
 	}

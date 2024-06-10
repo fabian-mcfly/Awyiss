@@ -32,7 +32,6 @@ use Cake\Utility\Inflector;
 use Composer\Autoload\ClassLoader;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use UnexpectedValueException;
 
 
 /**
@@ -336,23 +335,18 @@ class Awyiss extends BaseApplication {
 	 * The filename is the underscored name of the custom namespace,
 	 * followed by the frontend language and the backend language, both in square brackets.
 	 *
-	 * For example:
-	 * `example_customer[de][en].php`
-	 *
-	 * @throws \Exception
+	 * @param string $frontendLanguage
+	 * @param string $backendLanguage
+	 * @param bool $forceReload
+	 * @throws \ReflectionException
 	 */
-	public static function loadConfiguration(?string $frontendLanguage = null, ?string $backendLanguage = null, bool $forceReload = false): void {
+	public static function loadConfiguration(string $frontendLanguage, string $backendLanguage, bool $forceReload = false): void {
 		/** @var \Awyiss\Model\Table\ConfigurationTable $lo_configurationTable */
 		$lo_configurationTable = FactoryLocator::get('Table')->get('Configuration');
 
 		$ls_fileName = Inflector::underscore(CUSTOM_NAMESPACE);
-		if ($frontendLanguage) {
-			$ls_fileName .= '[' . $frontendLanguage . ']';
-
-			if ($backendLanguage) {
-				$ls_fileName .= '[' . $backendLanguage . ']';
-			}
-		}
+		$ls_fileName .= '[' . $frontendLanguage . ']';
+		$ls_fileName .= '[' . $backendLanguage . ']';
 
 		if (!$forceReload) {
 			/*
@@ -384,27 +378,22 @@ class Awyiss extends BaseApplication {
 
 		Configure::delete('Awyiss');
 
-		if ($frontendLanguage && $backendLanguage) {
-			$lo_query = $lo_configurationTable->find()->enableHydration(false);
-			$lo_query->where(function (QueryExpression $exp) use ($frontendLanguage, $backendLanguage) {
-				return $exp->or([
-					['language_shortcode IS' => null],
-					$exp->and([['realm' => Awyiss::REALM_BACKEND], ['language_shortcode' => $backendLanguage]]),
-					$exp->and([['realm' => Awyiss::REALM_FRONTEND], ['language_shortcode' => $frontendLanguage]]),
-				]);
-			});
-
-			$lo_query->orderBy([
-				'scope' => 'ASC',
-				'realm' => 'ASC',
-				'identifier' => 'ASC',
-				'language_shortcode IS null' => 'ASC',
-				'language_shortcode' => 'ASC',
+		$lo_query = $lo_configurationTable->find()->enableHydration(false);
+		$lo_query->where(function (QueryExpression $exp) use ($frontendLanguage, $backendLanguage) {
+			return $exp->or([
+				['language_shortcode IS' => null],
+				$exp->and([['realm' => Awyiss::REALM_BACKEND], ['language_shortcode' => $backendLanguage]]),
+				$exp->and([['realm' => Awyiss::REALM_FRONTEND], ['language_shortcode' => $frontendLanguage]]),
 			]);
-		}
-		else {
-			throw new UnexpectedValueException(sprintf('Expected string values for frontend and backend language. `%s`/`%s` given', gettype($frontendLanguage), gettype($backendLanguage)));
-		}
+		});
+
+		$lo_query->orderBy([
+			'scope' => 'ASC',
+			'realm' => 'ASC',
+			'identifier' => 'ASC',
+			'language_shortcode IS null' => 'ASC',
+			'language_shortcode' => 'ASC',
+		]);
 
 		$la_config = [];
 		foreach ($lo_query->all() as $la_item) {
