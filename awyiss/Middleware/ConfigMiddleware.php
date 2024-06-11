@@ -18,20 +18,6 @@ use Psr\Http\Server\RequestHandlerInterface;
  */
 class ConfigMiddleware implements MiddlewareInterface {
 	/**
-	 * @var string
-	 */
-	protected string $realm;
-
-
-	/**
-	 * @param string $realm
-	 */
-	public function __construct(string $realm) {
-		$this->realm = $realm;
-	}
-
-
-	/**
 	 * Load the configuration for the realm the middleware was loaded with, as well as the selected frontend language
 	 *
 	 * @param \Psr\Http\Message\ServerRequestInterface $request
@@ -40,10 +26,8 @@ class ConfigMiddleware implements MiddlewareInterface {
 	 * @throws \Exception
 	 */
 	public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface {
-		Awyiss::setRealm($this->realm);
-
 		$ls_frontendLanguage = LocaleMiddleware::getLanguage()?->shortcode;
-		$ls_backendLanguage = LocaleMiddleware::getLanguage($this->realm)?->shortcode;
+		$ls_backendLanguage = LocaleMiddleware::getLanguage(Awyiss::REALM_BACKEND)?->shortcode;
 
 		if (!$ls_frontendLanguage) {
 			throw new Exception('No frontend language found');

@@ -4,6 +4,7 @@
 namespace Awyiss\Middleware;
 
 
+use Awyiss\Awyiss;
 use Awyiss\Utility\Design\ScssCompiler;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -16,22 +17,6 @@ use Psr\Http\Server\RequestHandlerInterface;
  * It implements the MiddlewareInterface and is responsible for handling the design-related aspects of the application.
  */
 class DesignMiddleware implements MiddlewareInterface {
-	/**
-	 * @var string|null $realm The realm the middleware was loaded with
-	 */
-	protected ?string $realm = null;
-
-
-	/**
-	 * DesignMiddleware constructor.
-	 *
-	 * @param string|null $realm The realm the middleware should be constructed with
-	 */
-	public function __construct(?string $realm = null) {
-		$this->realm = $realm;
-	}
-
-
 	/**
 	 * The process method is responsible for handling the request and returning a response.
 	 * It checks if the environment is a production environment and if SCSS files need to be compiled.
@@ -75,15 +60,16 @@ class DesignMiddleware implements MiddlewareInterface {
 	 * The method takes a boolean parameter to determine if exceptions should be shown.
 	 *
 	 * @param bool $showExepctions
+	 * @param string|null $realm
 	 * @return void
 	 * @throws \ScssPhp\ScssPhp\Exception\SassException
 	 */
-	public function compileScss(bool $showExepctions): void {
+	public function compileScss(bool $showExepctions, ?string $realm = null): void {
 		// Set the exception handling for the ScssCompiler
 		ScssCompiler::showExceptions($showExepctions);
 
 		// Discover the SCSS files in the realm
-		$la_files = ScssCompiler::discoverRealmFiles($this->realm);
+		$la_files = ScssCompiler::discoverRealmFiles($realm ?? Awyiss::getRealm());
 
 		// Compile the SCSS files
 		ScssCompiler::compileFolders($la_files);

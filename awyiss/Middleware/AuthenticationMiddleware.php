@@ -4,10 +4,12 @@
 namespace Awyiss\Middleware;
 
 
-use Authentication\AuthenticationServiceInterface;
-use Authentication\AuthenticationServiceProviderInterface;
 use Authentication\Middleware\AuthenticationMiddleware as BaseAuthenticationMiddleware;
+use Awyiss\Awyiss;
 use Awyiss\Event\EventListenersProvider;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
 
 /**
@@ -15,14 +17,12 @@ use Awyiss\Event\EventListenersProvider;
  */
 class AuthenticationMiddleware extends BaseAuthenticationMiddleware {
 	/**
-	 * @param AuthenticationServiceInterface|AuthenticationServiceProviderInterface $subject
-	 * @param string $realm
+	 * @inheritDoc
 	 * @throws \ReflectionException
-	 * @noinspection PhpMissingParentConstructorInspection
 	 */
-	public function __construct(AuthenticationServiceInterface|AuthenticationServiceProviderInterface $subject, string $realm) {
-		$this->subject = $subject;
+	public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface {
+		EventListenersProvider::loadListener('authentication', Awyiss::getRealm());
 
-		EventListenersProvider::loadListener('authentication', $realm);
+		return parent::process($request, $handler);
 	}
 }

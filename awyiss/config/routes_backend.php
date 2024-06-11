@@ -6,13 +6,8 @@ use Awyiss\Authorization\Authorization;
 use Awyiss\Awyiss;
 use Awyiss\Middleware\AuthenticationMiddleware;
 use Awyiss\Middleware\AuthorizationMiddleware;
-use Awyiss\Middleware\ConfigMiddleware;
-use Awyiss\Middleware\DesignMiddleware;
-use Awyiss\Middleware\EventListenersMiddleware;
-use Awyiss\Middleware\LocaleMiddleware;
+use Awyiss\Middleware\RealmMiddleware;
 use Awyiss\Routing\Route\AwyissRoute;
-use Cake\Core\Configure;
-use Cake\Http\Middleware\CspMiddleware;
 use Cake\Routing\RouteBuilder;
 
 
@@ -20,84 +15,42 @@ use Cake\Routing\RouteBuilder;
 $routes->prefix('Backend', function (RouteBuilder $routeBuilder): void {
 	$routeBuilder->setRouteClass(AwyissRoute::class);
 
-	$routeBuilder->registerMiddleware('csp', new CspMiddleware(
-		[
-			'connect-src' => [
-				'self' => true,
-				'blob' => true,
-			],
-			'default-src' => [],
-			'font-src' => [
-				'self' =>  true,
-			],
-			'frame-src' => [
-				'self' => true,
-			],
-			'img-src' => [
-				'blob' => true,
-				'self' => true,
-				'data' => true
-			],
-			'script-src' => [
-				'allow' => Configure::read('Csp.scriptSrc.allow'),
-				'self' => true,
-				'unsafe-inline' => false,
-				'unsafe-eval' => false,
-			],
-			'style-src' => [
-				'allow' => Configure::read('Csp.styleSrc.allow'),
-				'self' => true,
-				'unsafe-inline' => true,
-				'unsafe-eval' => false,
-			],
-			'style-src-attr' => [
-				'allow' => Configure::read('Csp.styleSrc.allow'),
-				'self' => true,
-				'unsafe-inline' => true,
-				'unsafe-eval' => false,
-			],
-			'style-src-elem' => [
-				'allow' => Configure::read('Csp.styleSrc.allow'),
-				'self' => true,
-				'unsafe-inline' => true,
-				'unsafe-eval' => false,
-			],
-		],
-		[
-			'scriptNonce' => true,
-			'styleNonce' => true,
-		]
-	));
-	$routeBuilder->applyMiddleware('csp');
+	$routeBuilder->registerMiddleware('backendRealm', new RealmMiddleware(Awyiss::REALM_BACKEND));
+	$routeBuilder->applyMiddleware('backendRealm');
 
-	$routeBuilder->registerMiddleware('config', new ConfigMiddleware(Awyiss::REALM_BACKEND));
+	// Load the configuration as early as possible to make it available for all other middleware
 	$routeBuilder->applyMiddleware('config');
 
-	$routeBuilder->registerMiddleware('eventListeners', new EventListenersMiddleware(Awyiss::REALM_BACKEND));
+	// Load the event listeners as early as possible to possibly listen to middleware events
 	$routeBuilder->applyMiddleware('eventListeners');
 
-	$routeBuilder->registerMiddleware('requestLocale', new LocaleMiddleware(Awyiss::REALM_BACKEND));
-	$routeBuilder->applyMiddleware('requestLocale');
-
 	$lo_authentication = new Authentication(Awyiss::REALM_BACKEND);
-	$routeBuilder->registerMiddleware('authentication', new AuthenticationMiddleware($lo_authentication, Awyiss::REALM_BACKEND));
-	$routeBuilder->applyMiddleware('authentication');
+	$routeBuilder->registerMiddleware('backendAuthentication', new AuthenticationMiddleware($lo_authentication));
+	$routeBuilder->applyMiddleware('backendAuthentication');
 
 	$lo_authorization = new Authorization(Awyiss::REALM_BACKEND);
-	$routeBuilder->registerMiddleware('authorization', new AuthorizationMiddleware($lo_authorization, Awyiss::REALM_BACKEND));
-	$routeBuilder->applyMiddleware('authorization');
+	$routeBuilder->registerMiddleware('backendAuthorization', new AuthorizationMiddleware($lo_authorization));
+	$routeBuilder->applyMiddleware('backendAuthorization');
 
-	$routeBuilder->registerMiddleware('design', new DesignMiddleware(Awyiss::REALM_BACKEND));
+	$routeBuilder->applyMiddleware('csp');
+
 	$routeBuilder->applyMiddleware('design');
 
-	$routeBuilder->connect('/{lang}/{controller}/{action}/id:{id}/*')->setPatterns([
+	$routeBuilder->applyMiddleware('requestLocale');
+
+	$routeBuilder->connect('/{lang}/{controller}/{action}/id:{id}/*')
+	->setPatterns([
 		'lang' => '[a-zA-Z]{2}',
 		'controller' => '[a-zA-Z0-9-_]+',
 		'action' => '(edit|delete)',
 		'id' => '[0-9]+',
 	])->setPass(['id'])->setPersist(['lang', 'controller']);
 
-	$routeBuilder->connect('/{lang}/{controller}/{action}/*', ['action' => 'overview'], ['_name' => Awyiss::REALM_BACKEND])->setPatterns([
+	$routeBuilder->connect(
+		'/{lang}/{controller}/{action}/*',
+		['action' => 'overview'],
+		['_name' => Awyiss::REALM_BACKEND]
+	)->setPatterns([
 		'lang' => '[a-zA-Z]{2}',
 		'controller' => '[a-zA-Z0-9-_]+',
 		'action' => '[a-zA-Z0-9-_]+',

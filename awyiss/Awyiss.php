@@ -228,33 +228,11 @@ class Awyiss extends BaseApplication {
 		// Only load routes if the router is empty
 		if (!Router::routes()) {
 			/**
-			 * This logic is tricky: we first need to load backend-related routes
+			 * Load the general routes
 			 * - for the environment
 			 * - for the custom_dir
 			 * - for Awyiss
 			 */
-
-			if (defined('CUSTOM_CONFIG')) {
-				$ls_file = ENV_CUSTOM_CONFIG . 'routes_backend.php';
-				if (is_file($ls_file)) {
-					require_once $ls_file;
-				}
-
-				$ls_file = CUSTOM_CONFIG . 'routes_backend.php';
-				if (is_file($ls_file)) {
-					require_once $ls_file;
-				}
-			}
-
-			require $this->configDir . 'routes_backend.php';
-
-			/**
-			 * Now after the backend-related routes were loaded, we can load general routes
-			 * - for the environment
-			 * - for the custom_dir
-			 * - for Awyiss
-			 */
-
 			if (defined('CUSTOM_CONFIG')) {
 				$ls_file = ENV_CUSTOM_CONFIG . 'routes.php';
 				if (is_file($ls_file)) {
@@ -268,15 +246,26 @@ class Awyiss extends BaseApplication {
 			}
 
 			require $this->configDir . 'routes.php';
+
 			/**
-			 * The reason we're doing this is that a custom config might overwrite routes for the frontend using the * placeholder
-			 * which are required for the Awyiss backend
-			 *
-			 * But since we want to be able to set custom backend routes in the custom config as well,
-			 * we cannot load the custom config in between the backend and the regular routes.
-			 *
-			 * Sorry?
+			 * Load the backend-related routes
+			 * - for the environment
+			 * - for the custom_dir
+			 * - for Awyiss
 			 */
+			if (defined('CUSTOM_CONFIG')) {
+				$ls_file = ENV_CUSTOM_CONFIG . 'routes_backend.php';
+				if (is_file($ls_file)) {
+					require_once $ls_file;
+				}
+
+				$ls_file = CUSTOM_CONFIG . 'routes_backend.php';
+				if (is_file($ls_file)) {
+					require_once $ls_file;
+				}
+			}
+
+			require $this->configDir . 'routes_backend.php';
 		}
 	}
 
