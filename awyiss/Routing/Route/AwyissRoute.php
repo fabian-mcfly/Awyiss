@@ -83,7 +83,8 @@ class AwyissRoute extends DashedRoute {
 
 		// Initializing the 'pass', 'parts', 'slug', and 'fullSlug' keys of the route array.
 		$la_route['pass'] = $la_route['parts'] = [];
-		$la_route['slug'] = $la_route['fullSlug'] = '';
+		$la_route['slug'] ??= '';
+		$la_route['fullSlug'] ??= '';
 
 		// Assigning any remaining default values to the route array.
 		foreach ($la_defaults as $lx_key => $lx_value) {
