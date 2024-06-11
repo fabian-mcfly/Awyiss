@@ -88,7 +88,7 @@ class PagesListener implements EventListenerInterface {
 				implode(',', array_map(function (PageRoleEnumInterface $pageRole) {
 					return $pageRole->value;
 				}, $ls_pageRoleEnum::cases())),
-			])), true);
+			])));
 		}
 		else {
 			$query->where(['page_role_id' => $lo_table->getPageRole()]);
