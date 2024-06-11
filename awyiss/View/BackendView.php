@@ -57,16 +57,7 @@ class BackendView extends AppView {
 			],
 		]);
 
-		/**
-		 * @var \Awyiss\Model\Entity\Language|null $lo_userLanguage
-		 */
-		$lo_userLanguage = LocaleMiddleware::getLanguage(null);
-		if ($lo_userLanguage) {
-			$this->addHelper('Time', ['outputTimezone' => $lo_userLanguage->timezone]);
-		}
-
 		$this->addHelper('Url');
-
 
 		// Set login logo path
 		$ls_logoPath = null;
@@ -84,7 +75,6 @@ class BackendView extends AppView {
 		// If the logo path is set, remove the root path and custom directory from the path
 		$this->set('loginLogoPath', substr_replace($ls_logoPath, '', 0, strlen(ROOT . DS . CUSTOM_DIR) + 1));
 
-
 		$lo_blocklistedProperties = ['realm', 'systemOrder', 'active', 'deleted', 'createdBy', 'createdOn', 'changedBy', 'changedOn', 'deletedBy', 'deletedOn', 'label'];
 		// Unset language properties
 		$lo_frontendLanguage = LocaleMiddleware::getLanguage();
@@ -98,6 +88,8 @@ class BackendView extends AppView {
 
 		$lo_backendLanguage = LocaleMiddleware::getLanguage(Awyiss::REALM_BACKEND);
 		if ($lo_backendLanguage) {
+			$this->addHelper('Time', ['outputTimezone' => $lo_backendLanguage->timezone]);
+
 			$lo_backendLanguage = clone $lo_backendLanguage;
 
 			foreach ($lo_blocklistedProperties as $ls_property) {
