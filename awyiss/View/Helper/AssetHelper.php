@@ -76,7 +76,8 @@ class AssetHelper extends Helper {
 	 * - minified: A boolean indicating whether the asset is minified.
 	 * - critical: A boolean indicating whether the asset is critical.
 	 * - priority: An integer indicating the priority of the asset. Higher numbers indicate higher priority.
-	 * If the asset is already in the array, it will not be added again.
+	 *
+	 * The minified option defaults to true for production environments, false for development environments.
 	 *
 	 * @param array|string $asset The asset to add. This can be either a string representing the asset, or an array with the asset as the key and an array of options as the value.
 	 * @param array $attributes
@@ -330,13 +331,8 @@ class AssetHelper extends Helper {
 
 
 	/**
-	 * Generates a string of HTML tags for the specified type of assets.
-	 * This method retrieves the assets of the specified type from the assets array. If the assets array is empty, it returns an empty string.
-	 * The assets are then sorted by priority using the sortAssetsByPriority method. The method then iterates over each asset. If the 'critical' option of the asset does not match
-	 * the specified criticality, the asset is skipped. For each valid asset, the method retrieves the asset path using the getAssetPath method. If the asset path is null, the
-	 * asset is skipped. For each valid asset with a valid path, the method generates an HTML tag using the createAssetTag method. The generated tag is appended to the asset tags
-	 * string. If the includeNoScript parameter is true, the method appends the result of the getNoScriptTags method (which generates a string of HTML tags for non-JavaScript
-	 * assets, wrapped in a <noscript> tag) to the asset tags string. Finally, the method returns the asset tags string.
+	 * Generates HTML tags for assets based on type for a given criticality.
+	 * Optionally includes a <noscript> tag with tags for non-JavaScript assets.
 	 *
 	 * @param string $type The type of assets to generate tags for. Defaults to 'all'.
 	 * @param bool|null $critical (optional) Whether to generate tags for critical assets. If null, tags are generated for all assets. Defaults to null.
@@ -391,7 +387,7 @@ class AssetHelper extends Helper {
 		}
 
 		// If there is at least one CSS tag, append the JavaScript code
-		if ($lb_hasCss) {
+		if ($lb_hasCss && $ls_assetTags) {
 			$ls_assetTags .= '<script' . $ls_nonce . '>
 				[...document.querySelectorAll(\'link[data-lazyload]\')].map(e=>{!performance.getEntriesByType("resource").some(r=>r.name.includes(e.href))?e.addEventListener("load",e=>{e.target.rel="stylesheet"}):e.rel="stylesheet"});
 			</script>';
@@ -404,20 +400,15 @@ class AssetHelper extends Helper {
 
 	/**
 	 * Generates a string of HTML tags for non-JavaScript assets, wrapped in a <noscript> tag.
-	 * This method is used to generate fallback content for users who have JavaScript disabled in their browser. It generates a string of HTML tags for all non-JavaScript assets,
-	 * and wraps this string in a <noscript> tag. The generated tags are sorted by priority, with higher priority assets appearing first.
-	 * The method first retrieves the assets of the specified type from the assets array. If the assets array is empty, it returns an empty string.
-	 * The method then sorts the assets by priority using the sortAssetsByPriority method. It then iterates over each asset. If the asset is a JavaScript file, it is skipped.
-	 * For each non-JavaScript asset, the method retrieves the asset path using the getAssetPath method. If the asset path is null, the asset is skipped.
-	 * For each valid non-JavaScript asset, the method generates an HTML tag using the createAssetTag method, with the third parameter (lazyLoad) set to false. The generated tag
-	 * is appended to the asset tags string.
-	 * Finally, the method returns the asset tags string, wrapped in a <noscript> tag.
+	 * All assets are included by default, but you can specify the type of assets to include by passing a type parameter.
+	 * You can also specify the criticality of the assets to include by passing a critical parameter.
 	 *
 	 * @param string $type The type of assets to generate tags for. Defaults to 'all'.
+	 * @param bool|null $critical
 	 * @return string A string of HTML tags for non-JavaScript assets, wrapped in a <noscript> tag.
 	 * @throws \Exception
 	 */
-	public function getNoScriptTags(string $type = 'all'): string {
+	public function getNoScriptTags(string $type = 'all', ?bool $critical = null): string {
 		$la_assets = $this->assets[ $type ] ?? [];
 
 		if (empty($la_assets)) {
@@ -435,6 +426,11 @@ class AssetHelper extends Helper {
 				continue;
 			}
 
+			// Skip the asset if the criticality does not match the specified criticality
+			if ($critical !== null && $la_options['critical'] !== $critical) {
+				continue;
+			}
+
 			// Get the asset path
 			$ls_assetPath = $this->getAssetPath($ls_asset, $la_options);
 
@@ -447,18 +443,20 @@ class AssetHelper extends Helper {
 			$ls_assetTags .= $this->createAssetTag($ls_assetPath, $la_options, false);
 		}
 
+		if ($ls_assetTags) {
+			// Return the asset tags string, wrapped in a <noscript> tag
+			return '<noscript>' . $ls_assetTags . '</noscript>';
+		}
 
-		// Return the asset tags string, wrapped in a <noscript> tag
-		return '<noscript>' . $ls_assetTags . '</noscript>';
+		return '';
 	}
 
 
 	/**
 	 * Adds a JavaScript module to the `jsModules` array.
-	 * This method accepts a module name and a boolean indicating whether the module is minified. If the minified parameter is not provided,
-	 * it defaults to the opposite of the debug configuration. The method then checks if the module is an array. If it's not, it converts it to an array.
-	 * The method then iterates over each module. If the module is not already in the `jsModules` array, it adds it. If the module options is an array and contains a 'minified'
-	 * key, the provided options are used. Otherwise, the default minified value is used.
+	 * The module can be minified based on the provided or default configuration.
+	 *
+	 * The minified option defaults to true for production environments, false for development environments.
 	 *
 	 * @param array|string $module The module to add. This can be either a string representing the module, or an array with the module as the key and an array of options as the
 	 * 	value.
@@ -512,12 +510,15 @@ class AssetHelper extends Helper {
 
 	/**
 	 * Creates an import map for JavaScript modules and returns it as a string.
+	 *
 	 * This method initializes an import map with an empty 'imports' array. It then iterates over each JavaScript module
 	 * stored in the `jsModules` property of the class. For each module, it retrieves the asset path using the `getAssetPath`
 	 * method and adds it to the import map.
+	 *
 	 * If the `includeScriptTag` parameter is true, the method wraps the import map in a script tag of type "importmap" and
 	 * returns it as a string. The script tag includes a nonce attribute for Content Security Policy (CSP), which is retrieved
 	 * from the request attributes.
+	 *
 	 * If the `includeScriptTag` parameter is false, the method returns the import map as a JSON string.
 	 *
 	 * @param bool $includeScriptTag Determines whether to wrap the import map in a script tag. Defaults to true.
@@ -566,7 +567,11 @@ class AssetHelper extends Helper {
 				$ls_nonce = ' nonce="' . $ls_nonce . '"';
 			}
 
-			return '<script type="importmap"' . $ls_nonce . '>' . json_encode($la_importMap) . '</script>';
+			if (!empty($la_importMap['imports'])) {
+				return '<script type="importmap"' . $ls_nonce . '>' . json_encode($la_importMap) . '</script>';
+			}
+
+			return '';
 		}
 
 
