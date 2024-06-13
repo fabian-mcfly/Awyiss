@@ -4,6 +4,7 @@
 namespace Awyiss\Twig\Extension;
 
 
+use Awyiss\Utility\Inflector;
 use Cake\Collection\CollectionInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
@@ -28,6 +29,18 @@ class AwyissExtension extends AbstractExtension {
 
 				// If the JSON is invalid, return null
 				return !is_array($la_return) ? null : $la_return;
+			}),
+
+			new TwigFilter('ucparts', function (string $string, string|bool $delimiter = true): string {
+				return Inflector::ucparts($string, $delimiter);
+			}),
+
+			new TwigFilter('prefixNumericClass', function (string $string): string {
+				if (preg_match('/^\d/', $string)) {
+					return 'Page' . $string;
+				}
+
+				return $string;
 			}),
 		];
 	}
