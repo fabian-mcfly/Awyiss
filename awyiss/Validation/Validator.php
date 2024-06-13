@@ -98,7 +98,7 @@ class Validator extends BaseValidator {
 			return null;
 		}
 
-		$ls_defaultMessage = __dfx($this->i18nDomain, 'validation', $field, 'error_required');
+		$ls_defaultMessage = __df($this->i18nDomain, 'validation', 'error_required');
 
 
 		return $this->_presenceMessages[ $ls_field ] ?? $ls_defaultMessage;
@@ -117,7 +117,7 @@ class Validator extends BaseValidator {
 			return null;
 		}
 
-		$ls_defaultMessage = __dfx($this->i18nDomain, 'validation', $field, 'error_not_empty');
+		$ls_defaultMessage = __df($this->i18nDomain, 'validation', 'error_not_empty');
 
 		foreach ($this->_fields[ $ls_field ] as $lo_rule) {
 			if ($lo_rule->get('rule') === 'notBlank' && $lo_rule->get('message')) {
@@ -194,7 +194,7 @@ class Validator extends BaseValidator {
 				$la_pass[ $ls_name ] = $lx_pass;
 			}
 
-			$la_errors[ $ls_name ] = __dfx($this->i18nDomain, 'validation', $ls_name, 'error_' . Inflector::underscore($ls_name), $la_pass);
+			$la_errors[ $ls_name ] = __df($this->i18nDomain, 'validation', 'error_' . Inflector::underscore($ls_name), $la_pass);
 
 			if ($lo_rule->isLast()) {
 				break;

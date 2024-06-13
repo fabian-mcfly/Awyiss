@@ -11,6 +11,9 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
+msgid "error_not_empty"
+msgstr "This field cannot be empty"
+
 msgid "error_reserved_identifier"
 msgstr "This identifier is reserved"
 
