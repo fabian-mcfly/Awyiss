@@ -8,6 +8,8 @@ use Awyiss\Event\EventListenerTrait;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
 use Cake\Event\EventListenerInterface;
+use DebugKit\Model\Entity\Panel;
+use DebugKit\Model\Entity\Request;
 
 
 /**
@@ -41,6 +43,13 @@ class GeneralEventsListener implements EventListenerInterface {
 	 * @param \ArrayObject $options
 	 */
 	public function beforeSave(EventInterface $event, EntityInterface $entity/*, ArrayObject $options*/): void {
+		if (
+			$entity instanceof Panel ||
+			$entity instanceof Request
+		) {
+			return;
+		}
+
 		$event->stopPropagation();
 		$entity->setError('_general', 'Saving inside the Frontend Realm is not allowed.');
 	}
