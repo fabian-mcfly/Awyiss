@@ -23,6 +23,8 @@ class AwyissExtension extends AbstractExtension {
 	 */
 	public function getFilters(): array {
 		return [
+			new TwigFilter('data_attr', [$this, 'htmlDataAttributes']),
+
 			new TwigFilter('json_decode', function (string $json): ?array {
 				$la_return = json_decode($json, true);
 
@@ -141,5 +143,23 @@ class AwyissExtension extends AbstractExtension {
 				return is_string($value);
 			}),
 		];
+	}
+
+
+	/**
+	 * @param array|null $attributes
+	 * @return string
+	 */
+	public function htmlDataAttributes(?array $attributes): string {
+		if (!$attributes) {
+			return '';
+		}
+
+		$la_htmlParts = [];
+		foreach ($attributes as $lx_key => $lx_value) {
+			$la_htmlParts[] = sprintf('data-%s="%s"', $lx_key, htmlspecialchars($lx_value, ENT_QUOTES, 'UTF-8'));
+		}
+
+		return implode(' ', $la_htmlParts);
 	}
 }
