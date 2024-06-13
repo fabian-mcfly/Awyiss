@@ -44,7 +44,7 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 			'rebuildMediaAssignments' => 'rebuildMediaAssignments',
 		],
 		'referenceName' => '',
-		'strategy' => 'subquery',
+		'strategy' => 'select',
 		'tableLocator' => null,
 	];
 	/**
