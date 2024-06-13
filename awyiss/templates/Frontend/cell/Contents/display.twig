@@ -1,0 +1,7 @@
+{% if contents and includeWrapper %}
+	<div id="{{ identifier }}">
+		{{ contents|raw }}
+	</div>
+{% else %}
+	{{ contents|raw }}
+{% endif %}
