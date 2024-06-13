@@ -1,0 +1,27 @@
+{#
+@var page \Awyiss\Model\Entity\Page
+@var pageRoleEnum \Awyiss\Model\Enum\PageRoleEnumInterface
+@var baseUrl string
+@var currentLanguage \Awyiss\Model\Entity\Language
+@var currentPath string
+@var currentUrl string
+@var folder string
+@var languages \Awyiss\Model\Entity\Language[]
+@var languageShortcode string
+@var _view \Awyiss\View\FrontendView
+#}
+
+{% include '@Frontend/element/header.twig' %}
+
+<main id="ContentArea">
+	{{ cell('Frontend/Contents', [
+		'ContentArea',
+		page,
+		{
+			includeWrapper: false,
+			viewVars: _context,
+		}
+	]) }}
+</main>
+
+{% include '@Frontend/element/footer.twig' %}
