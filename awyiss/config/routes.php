@@ -2,21 +2,120 @@
 
 
 use Awyiss\Awyiss;
+use Awyiss\Middleware\ConfigMiddleware;
+use Awyiss\Middleware\DesignMiddleware;
+use Awyiss\Middleware\EventListenersMiddleware;
+use Awyiss\Middleware\LocaleMiddleware;
+use Awyiss\Middleware\RealmMiddleware;
 use Awyiss\Routing\Route\AwyissRoute;
+use Cake\Core\Configure;
+use Cake\Http\Middleware\CspMiddleware;
 use Cake\Routing\RouteBuilder;
 
 
 /** @var RouteBuilder $routes */
-$routes->scope('/', function (RouteBuilder $routes): void {
-	$routes->setRouteClass(AwyissRoute::class);
 
-	$routes->connect(
-		'/{lang}/{slug}',
-		['prefix' => 'Frontend', 'controller' => 'frontend', 'action' => 'index'],
-		['_name' => Awyiss::REALM_FRONTEND]
+$routes->registerMiddleware('config', new ConfigMiddleware());
+$routes->registerMiddleware(
+	'csp',
+	new CspMiddleware(
+		[
+			'connect-src' => [
+				'self' => true,
+				'blob' => true,
+			],
+			'default-src' => [],
+			'font-src' => [
+				'self' => true,
+			],
+			'frame-src' => [
+				'self' => true,
+			],
+			'img-src' => [
+				'blob' => true,
+				'self' => true,
+				'data' => true
+			],
+			'script-src' => [
+				'allow' => Configure::read('Csp.scriptSrc.allow'),
+				'self' => true,
+				'unsafe-inline' => false,
+				'unsafe-eval' => false,
+			],
+			'style-src' => [
+				'allow' => Configure::read('Csp.styleSrc.allow'),
+				'self' => true,
+				'unsafe-inline' => true,
+				'unsafe-eval' => false,
+			],
+			'style-src-attr' => [
+				'allow' => Configure::read('Csp.styleSrc.allow'),
+				'self' => true,
+				'unsafe-inline' => true,
+				'unsafe-eval' => false,
+			],
+			'style-src-elem' => [
+				'allow' => Configure::read('Csp.styleSrc.allow'),
+				'self' => true,
+				'unsafe-inline' => true,
+				'unsafe-eval' => false,
+			],
+		], [
+			'scriptNonce' => true,
+			'styleNonce' => true,
+		]
 	)
-	->setPatterns(['lang' => '[a-z]{2}'])
-	->setPersist(['lang', 'slug']);
+);
+$routes->registerMiddleware('eventListeners', new EventListenersMiddleware());
+$routes->registerMiddleware('design', new DesignMiddleware());
+$routes->registerMiddleware('requestLocale', new LocaleMiddleware());
 
-	$routes->connect('/*', ['prefix' => 'Frontend', 'controller' => 'frontend', 'action' => 'noLanguageFound']);
+
+$routes->scope('/', function (RouteBuilder $routeBuilder): void {
+	$routeBuilder->setRouteClass(AwyissRoute::class);
+
+	$routeBuilder->registerMiddleware('frontendRealm', new RealmMiddleware(Awyiss::REALM_FRONTEND));
+	$routeBuilder->applyMiddleware('frontendRealm');
+
+	// Load the configuration as early as possible to make it available for all other middleware
+	$routeBuilder->applyMiddleware('config');
+
+	// Load the event listeners as early as possible to possibly listen to middleware events
+	$routeBuilder->applyMiddleware('eventListeners');
+
+	$routeBuilder->applyMiddleware('csp');
+
+	$routeBuilder->applyMiddleware('design');
+
+	$routeBuilder->applyMiddleware('requestLocale');
+
+	$routeBuilder->connect(
+		'/{lang}/{slug}/*',
+		['prefix' => 'Frontend', 'controller' => 'Frontend', 'action' => 'index'],
+		['_name' => Awyiss::REALM_FRONTEND]
+	)->setPatterns([
+		'lang' => '[a-z]{2}',
+		'slug' => '[^:]{3,}',
+	])->setPersist(['lang', 'slug']);
+
+	$routeBuilder->connect(
+		'/{lang}/*',
+		['prefix' => 'Frontend', 'controller' => 'Frontend', 'action' => 'incompleteUrl'],
+		['_name' => Awyiss::REALM_FRONTEND . 'LanguageRoot']
+	)->setPatterns([
+		'lang' => '[a-z]{2}',
+	])->setPersist(['lang']);
+
+	$routeBuilder->connect(
+		'/{slug}/*',
+		['prefix' => 'Frontend', 'controller' => 'Frontend', 'action' => 'incompleteUrl'],
+	)->setPatterns([
+		'slug' => '[^:]{3,}',
+	])->setPersist(['slug']);
+
+	$routeBuilder->connect(
+		'/*',
+		['prefix' => 'Frontend', 'controller' => 'Frontend', 'action' => 'incompleteUrl'],
+		['_name' => Awyiss::REALM_FRONTEND . 'Root']
+	);
 });
