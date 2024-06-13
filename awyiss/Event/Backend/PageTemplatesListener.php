@@ -80,7 +80,7 @@ class PageTemplatesListener implements EventListenerInterface {
 		$ls_extension = '.twig';
 
 		$la_templatePaths = Configure::read('App.paths.templates');
-		$ls_folderPath = $la_templatePaths['customer'] . 'Frontend' . DS . 'pages' . DS;
+		$ls_folderPath = $la_templatePaths['customer'] . 'Frontend' . DS . 'page' . DS;
 
 		$la_commands = [];
 
@@ -105,7 +105,7 @@ class PageTemplatesListener implements EventListenerInterface {
 
 		//If the file does not exist, we create one based on a twig-template for frontent page templates
 		if (!$lb_fileExists) {
-			$la_commands[] = 'bin/cake bake template page_templates page_template ' . $ls_fileName . ' --prefix Frontend --controller pages';
+			$la_commands[] = 'bin/cake bake template page_templates page_template ' . $ls_fileName . ' --prefix Frontend --controller page';
 			$la_commands[] = 'chmod 0750 ' . $ls_filePath;
 		}
 
@@ -143,7 +143,7 @@ class PageTemplatesListener implements EventListenerInterface {
 		$ls_extension = '.twig';
 
 		$la_templatePaths = Configure::read('App.paths.templates');
-		$ls_folderPath = $la_templatePaths['customer'] . 'Frontend' . DS . 'pages' . DS;
+		$ls_folderPath = $la_templatePaths['customer'] . 'Frontend' . DS . 'page' . DS;
 
 		$ls_filePath = $ls_folderPath . $ls_fileName . $ls_extension;
 
