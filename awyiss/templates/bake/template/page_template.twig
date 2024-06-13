@@ -1,7 +1,18 @@
 {% verbatim %}{#
 @var page \Awyiss\Model\Entity\Page
-@var pageTemplate \Awyiss\Model\Entity\PageTemplate
+@var pageRoleEnum \Awyiss\Model\Enum\PageRoleEnumInterface
+@var baseUrl string
+@var currentLanguage \Awyiss\Model\Entity\Language
+@var currentPath string
+@var currentUrl string
+@var folder string
+@var languages \Awyiss\Model\Entity\Language[]
+@var languageShortcode string
 @var _view \Awyiss\View\FrontendView
-#}{% endverbatim %}
+#}
 
-<!-- Here be dragons -->
+{% include '@Frontend/element/header.twig' %}
+
+{{ cell('Frontend/Contents', ['ContentArea', page, {viewVars: _context}]) }}
+
+{% include '@Frontend/element/footer.twig' %}{% endverbatim %}
