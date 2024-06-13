@@ -78,6 +78,14 @@ abstract class AbstractColumn implements ColumnInterface,  JsonSerializable {
 	/**
 	 * @inheritDoc
 	 */
+	public function getFactor(): float {
+		return $this->numerator / $this->denominator;
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
 	public function getFraction(): string {
 		return $this->fraction;
 	}

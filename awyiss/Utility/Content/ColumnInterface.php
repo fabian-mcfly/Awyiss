@@ -34,6 +34,12 @@ interface ColumnInterface {
 
 
 	/**
+	 * @return float
+	 */
+	public function getFactor(): float;
+
+
+	/**
 	 * @return string
 	 */
 	public function getFraction(): string;
