@@ -60,19 +60,24 @@ class AppView extends TwigView {
 			/** @var FileLoader $lo_loader */
 			$lo_loader = $lo_twig->getLoader();
 
-			if (defined('CUSTOM_DIR')) {
-				$lo_loader->addPath(ROOT . DS . CUSTOM_DIR . DS . 'templates' . DS, CUSTOM_NAMESPACE);
-			}
-
 			$lo_loader->addPath(ROOT . DS . APP_DIR . DS . 'templates' . DS, Configure::read('App.namespace'));
 
 			if (defined('CUSTOM_DIR')) {
+				$lo_loader->addPath(ROOT . DS . CUSTOM_DIR . DS . 'templates' . DS, CUSTOM_NAMESPACE);
+
+				$lo_loader->setPaths([
+					ROOT . DS . CUSTOM_DIR . DS . 'templates' . DS . 'Frontend' . DS,
+					ROOT . DS . APP_DIR . DS . 'templates' . DS . 'Frontend' . DS,
+				], 'Frontend');
+
 				$lo_loader->setPaths([
 					ROOT . DS . CUSTOM_DIR . DS . 'templates' . DS . 'Backend' . DS,
 					ROOT . DS . APP_DIR . DS . 'templates' . DS . 'Backend' . DS,
 				], 'Backend');
 			}
 			else {
+				$lo_loader->addPath(ROOT . DS . APP_DIR . DS . 'templates' . DS . 'Frontend' . DS, 'Frontend');
+
 				$lo_loader->addPath(ROOT . DS . APP_DIR . DS . 'templates' . DS . 'Backend' . DS, 'Backend');
 			}
 
