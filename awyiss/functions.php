@@ -35,8 +35,8 @@ function nonceDump(mixed ...$vars): mixed {
 
 	$ls_output = ob_get_clean();
 
-	$ls_scriptNonce = Router::getRequest()->getAttribute('cspScriptNonce');
-	$ls_styleNonce = Router::getRequest()->getAttribute('cspStyleNonce');
+	$ls_scriptNonce = Router::getRequest()?->getAttribute('cspScriptNonce');
+	$ls_styleNonce = Router::getRequest()?->getAttribute('cspStyleNonce');
 	// Add nonce to the script tag
 	$ls_output = str_replace('<script>', '<script nonce="' . $ls_scriptNonce . '">', $ls_output);
 	$ls_output = str_replace('<style>', '<style nonce="' . $ls_styleNonce . '">', $ls_output);
