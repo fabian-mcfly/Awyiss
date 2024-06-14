@@ -144,7 +144,7 @@ class Content extends Entity {
 
 
 	/**
-	 * Get the parent page of the current entity
+	 * Get the parent content of the current entity
 	 *
 	 * @noinspection PhpUnused
 	 */
@@ -158,7 +158,7 @@ class Content extends Entity {
 
 
 	/**
-	 * Get all the parent page and all of its parents pages of the current entity
+	 * Get all the parent content and all of its parents contents of the current entity
 	 *
 	 * @noinspection PhpUnused
 	 */
