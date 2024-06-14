@@ -76,7 +76,6 @@ return [
 		'default' => [
 			'className' => FileEngine::class,
 			'path' => CACHE,
-			'url' => env('CACHE_DEFAULT_URL'),
 		],
 
 		'_cake_core_' => [
@@ -85,7 +84,6 @@ return [
 			'path' => CACHE . 'persistent' . DS,
 			'prefix' => 'awyiss_core_',
 			'serialize' => true,
-			'url' => env('CACHE_CAKECORE_URL'),
 		],
 
 		'_cake_model_' => [
@@ -94,7 +92,6 @@ return [
 			'path' => CACHE . 'models' . DS,
 			'prefix' => 'awyiss_model_',
 			'serialize' => true,
-			'url' => env('CACHE_CAKEMODEL_URL'),
 		],
 	],
 
