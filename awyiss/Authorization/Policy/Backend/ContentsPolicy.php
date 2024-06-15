@@ -11,7 +11,7 @@ use Awyiss\Configuration\ConfigOptionsProvider;
 
 
 /**
- * Permission for the ContentTemplates scope of the backend
+ * Permission for the Contents scope of the backend
  */
 class ContentsPolicy extends AbstractPolicy {
 	/**

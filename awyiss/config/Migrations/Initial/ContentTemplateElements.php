@@ -2,7 +2,7 @@
 
 
 /**
- * Class ContentTemplateContentAreas
+ * Class ContentTemplateElements
  */
 class ContentTemplateElements {
 	/**

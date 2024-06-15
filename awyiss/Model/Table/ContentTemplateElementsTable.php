@@ -12,7 +12,7 @@ use Cake\Validation\Validator;
 
 
 /**
- * UsergroupPermissions Model
+ * ContentTemplateElements Model
  *
  * @property \Awyiss\Model\Table\ContentTemplatesTable&\Awyiss\ORM\Association\BelongsTo $ContentTemplates
  * @method \Awyiss\Model\Entity\UsergroupPermission newDefaultEntity(array $additionalData = [], array $options = [])

@@ -10,7 +10,7 @@ use Cake\Utility\Inflector;
 
 
 /**
- * UsergroupPermission Entity
+ * ContentTemplateElement Entity
  *
  * @property int $id
  * @property int|null $contentTemplateId
