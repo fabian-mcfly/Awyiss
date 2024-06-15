@@ -16,18 +16,21 @@ class MigrationsDispatcher extends BaseMigrationsDispatcher {
 	/**
 	 * Uses \AwyissBake\Command\Phinx\Migrate
 	 *
-	 * @see \Awyiss\Command\Phinx\Migrate
-	 * @var array
+	 * @inheritDoc
+	 * @return array<string, string>
+	 * @psalm-return array<string, class-string<\Phinx\Console\Command\AbstractCommand>|class-string<\Migrations\Command\Phinx\BaseCommand>>
 	 */
-	public static array $phinxCommands = [
-		//'Create' => Phinx\Create::class,
-		//'Dump' => Phinx\Dump::class,
-		//'MarkMigrated' => Phinx\MarkMigrated::class,
-		'Migrate' => Migrate::class,
-		//'Rollback' => Phinx\Rollback::class,
-		'Seed' => Seed::class,
-		//'Status' => Phinx\Status::class,
-		//'CacheBuild' => Phinx\CacheBuild::class,
-		//'CacheClear' => Phinx\CacheClear::class,
-	];
+	public static function getCommands(): array {
+		return [
+			//'Create' => Phinx\Create::class,
+			//'Dump' => Phinx\Dump::class,
+			//'MarkMigrated' => Phinx\MarkMigrated::class,
+			'Migrate' => Migrate::class,
+			//'Rollback' => Phinx\Rollback::class,
+			'Seed' => Seed::class,
+			//'Status' => Phinx\Status::class,
+			//'CacheBuild' => Phinx\CacheBuild::class,
+			//'CacheClear' => Phinx\CacheClear::class,
+		];
+	}
 }

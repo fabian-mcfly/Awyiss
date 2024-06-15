@@ -29,8 +29,11 @@ class MigrationsCommand extends BaseMigrationsCommand {
 		}
 
 		$lo_parser = self::_getOptionParser();
+		$ls_className = MigrationsDispatcher::getCommands()[ static::$commandName ];
 		/** @var \Phinx\Console\Command\Migrate $lo_command */
-		$lo_command = new MigrationsDispatcher::$phinxCommands[ static::$commandName ]();
+		$lo_command = new $ls_className();
+
+		// Skip conversions for new commands.
 		$lo_parser->setDescription($lo_command->getDescription());
 		$lo_definition = $lo_command->getDefinition();
 
@@ -89,8 +92,9 @@ class MigrationsCommand extends BaseMigrationsCommand {
 			return 'migrations';
 		}
 
-		$lo_command = new MigrationsDispatcher::$phinxCommands[ static::$commandName ]();
-		$ls_name = $lo_command->getName();
+		$ls_className = MigrationsDispatcher::getCommands()[ static::$commandName ];
+		$lo_command = new $ls_className();
+		$ls_name = (string)$lo_command->getName();
 
 
 		return 'migrations ' . $ls_name;
