@@ -282,24 +282,25 @@ class AssetHelper extends Helper {
 		}
 
 		foreach ($this->realmFolders[ $this->realm ] as $ls_key => $ls_folder) {
+			$lb_minified = $options['minified'] ?? false;
+
 			$ls_assetPath = $ls_folder . $ls_subPath . '/' . $asset;
 			if (!file_exists($ls_assetPath)) {
 				continue;
 			}
 
+			if (str_ends_with($ls_assetPath, '.min.' . $ls_extension)) {
+				$lb_minified = false;
+			}
+
 			// Convert the filesystem path to a path relative to the application's base path
-			if ($ls_key === 'customer') {
-				$ls_relativePath = str_replace(realpath(ROOT . DS . CUSTOM_DIR), '', realpath($ls_assetPath));
-			}
-			else {
-				$ls_relativePath = str_replace(realpath(ROOT), '', realpath($ls_assetPath));
-			}
+			$ls_relativePath = str_replace(realpath(ROOT), '', realpath($ls_assetPath));
 
 			// Check if the file is minified and append ".min" to the filename before the extension if it is
 			$ls_fileName = substr($ls_relativePath, 0, -strlen($ls_extension));
 
 			// If the file should be minified, append "min" to the filename before the extension
-			if ($options['minified'] ?? false) {
+			if ($lb_minified) {
 				$ls_fileName .= 'min.';
 
 				$ls_minifiedPath = ROOT . $ls_fileName . $ls_extension;
@@ -317,6 +318,9 @@ class AssetHelper extends Helper {
 				$li_modTime = filemtime($ls_assetPath);
 			}
 
+			if ($ls_key === 'customer' && str_starts_with($ls_fileName, DS . CUSTOM_DIR . DS)) {
+				$ls_fileName = substr($ls_fileName, strlen(DS . CUSTOM_DIR));
+			}
 
 			// Generate a URL for the asset using CakePHP's Router and ppend the modification time to the filename
 			return $this->checkedAssets[ $asset ] = Router::url($ls_fileName . $li_modTime . '.' . $ls_extension, true);
@@ -535,6 +539,11 @@ class AssetHelper extends Helper {
 			// Remove the .js extension from the module name
 			$ls_cleanModuleName = pathinfo($ls_moduleName, PATHINFO_FILENAME);
 
+			// If the module is minified, remove the ".min" part from the filename
+			if (str_ends_with($ls_cleanModuleName, '.min')) {
+				$ls_cleanModuleName = substr($ls_cleanModuleName, 0, -4);
+			}
+
 			// Files that are deeper than one level must have that nested prepended to the module name
 			if (substr_count($ls_moduleName, '/') > 0) {
 				$la_parts = explode('/', $ls_moduleName);
@@ -710,6 +719,7 @@ class AssetHelper extends Helper {
 		if ($lo_minifier !== null) {
 			try {
 				$lo_minifier->minify($targetPath);
+				chmod($targetPath, 0764);
 			}
 			catch (Exception $ex) {
 				// Write the debug log
