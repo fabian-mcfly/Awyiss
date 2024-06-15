@@ -183,22 +183,6 @@
 					}
 				}
 			},
-			"media_configure": {
-				"title": {
-					"translate": ["media", "menu_configure"]
-				},
-				"link": {
-					"url": {
-						"controller": "Configuration",
-						"action": "overview",
-						"scope": "media"
-					}
-				},
-				"access": {
-					"scope": "media",
-					"identifier": "configure"
-				}
-			},
 			"media_composites": {
 				"title": {
 					"translate": ["media_composites", "menu_title"]
@@ -323,6 +307,22 @@
 							}
 						}
 					}
+				}
+			},
+			"media_configure": {
+				"title": {
+					"translate": ["media", "menu_configure"]
+				},
+				"link": {
+					"url": {
+						"controller": "Configuration",
+						"action": "overview",
+						"scope": "media"
+					}
+				},
+				"access": {
+					"scope": "media",
+					"identifier": "configure"
 				}
 			}
 		}
@@ -569,24 +569,16 @@
 					}
 				}
 			},
-			"page_templates": {
+			"templates": {
 				"title": {
-					"translate": ["page_templates", "menu_title"]
+					"translate": ["system", "menu_title_templates"]
 				},
-				"link": {
-					"url": {
-						"controller": "PageTemplates",
-						"action": "overview"
-					}
-				},
-				"access": {
-					"scope": "page_templates",
-					"identifier": "read"
-				},
+				"link": null,
+				"access": null,
 				"children": {
-					"page_templates_overview": {
+					"page_templates": {
 						"title": {
-							"translate": ["page_templates", "menu_overview"]
+							"translate": ["page_templates", "menu_title"]
 						},
 						"link": {
 							"url": {
@@ -595,61 +587,61 @@
 							}
 						},
 						"access": {
-							"scope": "PageTemplates",
+							"scope": "page_templates",
 							"identifier": "read"
+						},
+						"children": {
+							"page_templates_overview": {
+								"title": {
+									"translate": ["page_templates", "menu_overview"]
+								},
+								"link": {
+									"url": {
+										"controller": "PageTemplates",
+										"action": "overview"
+									}
+								},
+								"access": {
+									"scope": "PageTemplates",
+									"identifier": "read"
+								}
+							},
+							"page_templates_add": {
+								"title": {
+									"translate": ["page_templates", "menu_add"]
+								},
+								"link": {
+									"url": {
+										"controller": "PageTemplates",
+										"action": "add"
+									}
+								},
+								"access": {
+									"scope": "page_templates",
+									"identifier": "create"
+								}
+							},
+							"page_templates_configure": {
+								"title": {
+									"translate": ["page_templates", "menu_configure"]
+								},
+								"link": {
+									"url": {
+										"controller": "Configuration",
+										"action": "overview",
+										"scope": "page-templates"
+									}
+								},
+								"access": {
+									"scope": "page_templates",
+									"identifier": "configure"
+								}
+							}
 						}
 					},
-					"page_templates_add": {
+					"content_templates": {
 						"title": {
-							"translate": ["page_templates", "menu_add"]
-						},
-						"link": {
-							"url": {
-								"controller": "PageTemplates",
-								"action": "add"
-							}
-						},
-						"access": {
-							"scope": "page_templates",
-							"identifier": "create"
-						}
-					},
-					"page_templates_configure": {
-						"title": {
-							"translate": ["page_templates", "menu_configure"]
-						},
-						"link": {
-							"url": {
-								"controller": "Configuration",
-								"action": "overview",
-								"scope": "page-templates"
-							}
-						},
-						"access": {
-							"scope": "page_templates",
-							"identifier": "configure"
-						}
-					}
-				}
-			},
-			"content_templates": {
-				"title": {
-					"translate": ["content_templates", "menu_title"]
-				},
-				"link": {
-					"url": {
-						"controller": "ContentTemplates",
-						"action": "overview"
-					}
-				},
-				"access": {
-					"scope": "content_templates",
-					"identifier": "read"
-				},
-				"children": {
-					"content_templates_overview": {
-						"title": {
-							"translate": ["content_templates", "menu_overview"]
+							"translate": ["content_templates", "menu_title"]
 						},
 						"link": {
 							"url": {
@@ -658,39 +650,56 @@
 							}
 						},
 						"access": {
-							"scope": "ContentTemplates",
+							"scope": "content_templates",
 							"identifier": "read"
-						}
-					},
-					"content_templates_add": {
-						"title": {
-							"translate": ["content_templates", "menu_add"]
 						},
-						"link": {
-							"url": {
-								"controller": "ContentTemplates",
-								"action": "add"
+						"children": {
+							"content_templates_overview": {
+								"title": {
+									"translate": ["content_templates", "menu_overview"]
+								},
+								"link": {
+									"url": {
+										"controller": "ContentTemplates",
+										"action": "overview"
+									}
+								},
+								"access": {
+									"scope": "ContentTemplates",
+									"identifier": "read"
+								}
+							},
+							"content_templates_add": {
+								"title": {
+									"translate": ["content_templates", "menu_add"]
+								},
+								"link": {
+									"url": {
+										"controller": "ContentTemplates",
+										"action": "add"
+									}
+								},
+								"access": {
+									"scope": "content_templates",
+									"identifier": "create"
+								}
+							},
+							"content_templates_configure": {
+								"title": {
+									"translate": ["content_templates", "menu_configure"]
+								},
+								"link": {
+									"url": {
+										"controller": "Configuration",
+										"action": "overview",
+										"scope": "content-templates"
+									}
+								},
+								"access": {
+									"scope": "content_templates",
+									"identifier": "configure"
+								}
 							}
-						},
-						"access": {
-							"scope": "content_templates",
-							"identifier": "create"
-						}
-					},
-					"content_templates_configure": {
-						"title": {
-							"translate": ["content_templates", "menu_configure"]
-						},
-						"link": {
-							"url": {
-								"controller": "Configuration",
-								"action": "overview",
-								"scope": "content-templates"
-							}
-						},
-						"access": {
-							"scope": "content_templates",
-							"identifier": "configure"
 						}
 					}
 				}
@@ -738,56 +747,6 @@
 						"access": {
 							"scope": "attributes",
 							"identifier": "create"
-						}
-					}
-				}
-			},
-			"configuration": {
-				"title": {
-					"translate": ["configuration", "menu_title"]
-				},
-				"link": {
-					"url": {
-						"controller": "Configuration",
-						"action": "overview"
-					}
-				},
-				"access": {
-					"scope": "configuration",
-					"identifier": "read",
-					"additionalData": {"scope": ""}
-				},
-				"children": {
-					"configuration_overview": {
-						"title": {
-							"translate": ["configuration", "menu_overview"]
-						},
-						"link": {
-							"url": {
-								"controller": "Configuration",
-								"action": "overview"
-							}
-						},
-						"access": {
-							"scope": "Configuration",
-							"identifier": "read",
-							"additionalData": {"scope": ""}
-						}
-					},
-					"configuration_add": {
-						"title": {
-							"translate": ["configuration", "menu_add"]
-						},
-						"link": {
-							"url": {
-								"controller": "Configuration",
-								"action": "add"
-							}
-						},
-						"access": {
-							"scope": "configuration",
-							"identifier": "create",
-							"additionalData": {"scope": ""}
 						}
 					}
 				}
@@ -900,6 +859,69 @@
 							"identifier": "create"
 						}
 					},
+					"usergroups": {
+						"title": {
+							"translate": ["usergroups", "menu_title"]
+						},
+						"link": {
+							"url": {
+								"controller": "Usergroups",
+								"action": "overview"
+							}
+						},
+						"access": {
+							"scope": "usergroups",
+							"identifier": "read"
+						},
+						"children": {
+							"usergroups_overview": {
+								"title": {
+									"translate": ["usergroups", "menu_overview"]
+								},
+								"link": {
+									"url": {
+										"controller": "Usergroups",
+										"action": "overview"
+									}
+								},
+								"access": {
+									"scope": "Usergroups",
+									"identifier": "read"
+								}
+							},
+							"usergroups_add": {
+								"title": {
+									"translate": ["usergroups", "menu_add"]
+								},
+								"link": {
+									"url": {
+										"controller": "Usergroups",
+										"action": "add"
+									}
+								},
+								"access": {
+									"scope": "usergroups",
+									"identifier": "create"
+								}
+							},
+							"usergroups_configure": {
+								"title": {
+									"translate": ["usergroups", "menu_configure"]
+								},
+								"link": {
+									"url": {
+										"controller": "Configuration",
+										"action": "overview",
+										"scope": "usergroups"
+									}
+								},
+								"access": {
+									"scope": "usergroups",
+									"identifier": "configure"
+								}
+							}
+						}
+					},
 					"users_configure": {
 						"title": {
 							"translate": ["users", "menu_configure"]
@@ -918,65 +940,52 @@
 					}
 				}
 			},
-			"usergroups": {
+			"configuration": {
 				"title": {
-					"translate": ["usergroups", "menu_title"]
+					"translate": ["configuration", "menu_title"]
 				},
 				"link": {
 					"url": {
-						"controller": "Usergroups",
+						"controller": "Configuration",
 						"action": "overview"
 					}
 				},
 				"access": {
-					"scope": "usergroups",
-					"identifier": "read"
+					"scope": "configuration",
+					"identifier": "read",
+					"additionalData": {"scope": ""}
 				},
 				"children": {
-					"usergroups_overview": {
+					"configuration_overview": {
 						"title": {
-							"translate": ["usergroups", "menu_overview"]
-						},
-						"link": {
-							"url": {
-								"controller": "Usergroups",
-								"action": "overview"
-							}
-						},
-						"access": {
-							"scope": "Usergroups",
-							"identifier": "read"
-						}
-					},
-					"usergroups_add": {
-						"title": {
-							"translate": ["usergroups", "menu_add"]
-						},
-						"link": {
-							"url": {
-								"controller": "Usergroups",
-								"action": "add"
-							}
-						},
-						"access": {
-							"scope": "usergroups",
-							"identifier": "create"
-						}
-					},
-					"usergroups_configure": {
-						"title": {
-							"translate": ["usergroups", "menu_configure"]
+							"translate": ["configuration", "menu_overview"]
 						},
 						"link": {
 							"url": {
 								"controller": "Configuration",
-								"action": "overview",
-								"scope": "usergroups"
+								"action": "overview"
 							}
 						},
 						"access": {
-							"scope": "usergroups",
-							"identifier": "configure"
+							"scope": "Configuration",
+							"identifier": "read",
+							"additionalData": {"scope": ""}
+						}
+					},
+					"configuration_add": {
+						"title": {
+							"translate": ["configuration", "menu_add"]
+						},
+						"link": {
+							"url": {
+								"controller": "Configuration",
+								"action": "add"
+							}
+						},
+						"access": {
+							"scope": "configuration",
+							"identifier": "create",
+							"additionalData": {"scope": ""}
 						}
 					}
 				}

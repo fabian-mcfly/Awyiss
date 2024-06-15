@@ -39,12 +39,6 @@
 			display:none;
 		}
 
-		&.MenuItem-System {
-			ul.Level3 {
-				display:none;
-			}
-		}
-
 		&:last-child {
 			margin-right:0;
 			border-right-width:0;
@@ -125,13 +119,15 @@
 		}
 	}
 
-	span.Level1 {
+	span.Level1,
+	span.Level2,
+	span.Level3,
+	span.Level4 {
 		cursor:default;
 	}
 
 	ul.Level2 {
 		width:max-content;
-		max-height:calc(100vh - 140px);
 		margin-top:4px;
 		padding:0 10px;
 		box-shadow:0 0 10px rgba(0, 0, 0, .25);
@@ -143,35 +139,26 @@
 		left:0;
 		opacity:0;
 		visibility:hidden;
-		overflow-y:auto;
-
 		transition:opacity .3s ease-in-out, visibility 0s linear .3s;
-
-		scrollbar-color:var(--colorSuccess) var(--colorMenu);
-		scrollbar-width:thin;
 
 		.🌚 & {
 			background-color:var(--colorMenu);
-		}
-
-		&::-webkit-scrollbar {
-			width:6px;
-		}
-
-		&::-webkit-scrollbar-thumb {
-			background-color:var(--colorSuccess);
 		}
 	}
 
 	li.Level2 {
 		border-bottom:1px solid rgba(255, 255, 255, .1);
 
+		&:hover {
+			ul.Level3 {
+				opacity:inherit;
+				visibility:inherit;
+				transition-delay:0s;
+			}
+		}
+
 		&:last-child {
 			border-bottom-width:0;
-
-			ul.Level3 {
-				margin-bottom:20px;
-			}
 		}
 	}
 
@@ -207,7 +194,13 @@
 			padding-block:5px;
 		}
 
-		&.Active,
+		&.Active {
+			color:var(--colorSuccess);
+			outline:0 none;
+		}
+	}
+
+	a.Level2 {
 		&:hover {
 			color:var(--colorSuccess);
 			outline:0 none;
@@ -218,12 +211,43 @@
 	ul.Level4 {
 		margin-bottom:1.25em;
 		margin-left:10px;
-		padding:5px 20px;
+		padding:7px 20px 10px;
 		border-radius:5px;
 		background-color:var(--colorMenu);
+		position:absolute;
+		top:-1px;
+		left:100%;
+		opacity:0;
+		visibility:hidden;
+		transition:opacity .3s ease-in-out, visibility 0s linear .3s;
+
+		&::before {
+			content:'';
+			width:10px;
+			height:100%;
+			position:absolute;
+			top:0;
+			left:-10px;
+		}
 
 		.🌚 & {
 			background-color:var(--backgroundColorMenu);
+		}
+	}
+
+	li.Level3 {
+		&:last-child {
+			ul.Level4 {
+				margin-bottom:5px;
+			}
+		}
+
+		&:hover {
+			ul.Level4 {
+				opacity:inherit;
+				visibility:inherit;
+				transition-delay:0s;
+			}
 		}
 	}
 
@@ -254,7 +278,11 @@
 	}
 
 	ul.Level4 {
-		background-color:rgba(0, 0, 0, .25)
+		background-color:var(--backgroundColorMenu);
+
+		.🌚 & {
+			background-color:var(--colorMenu);
+		}
 	}
 
 	ul.Level5 {
