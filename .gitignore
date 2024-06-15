@@ -1,4 +1,6 @@
 /awyiss/assets/css/*
+/awyiss/assets/js/*.min.js
+/awyiss/assets/js/**/*.min.js
 /awyiss/assets/js/TinyMCE/tinymce/
 /logs/*
 /tmp/*
