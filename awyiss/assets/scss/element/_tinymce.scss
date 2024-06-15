@@ -524,7 +524,8 @@ body {
 				}
 
 				.tox-button {
-					display:none;
+					visibility:hidden;
+					pointer-events:none;
 				}
 			}
 
