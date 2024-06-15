@@ -163,7 +163,7 @@ class ContentTemplateElementsSeed extends AbstractSeed {
 				'identifier' => 'content_template_id',
 				'title' => '',
 				'fieldset' => 'presentation',
-				'required' => 0,
+				'required' => 1,
 			],
 			[
 				'id' => 21,

@@ -125,11 +125,22 @@
 							</label>
 
 							{% if availableElement != 'duplicate_of' %}
+								{% set hidden %}
+									{% if availableElement == 'content_template_id' %}
+										{{ FormHelper.hidden('content_template_elements[' ~ loop.index0 ~ '][required]', {
+											value: true,
+										}) }}
+									{% endif %}
+								{% endset %}
 								{{ FormHelper.control('content_template_elements[' ~ loop.index0 ~ '][required]', {
-									checked: contentTemplateElement ? contentTemplateElement.required : false,
+									checked: availableElement == 'content_template_id' ? true : (contentTemplateElement ? contentTemplateElement.required : false),
+									disabled: availableElement == 'content_template_id',
 									label: __('required'),
-									hiddenField: true,
+									hiddenField: availableElement != 'content_template_id',
 									id: 'ContentTemplate-ContentElements-' ~ availableElement|camelize ~ '-Required',
+									templateVars: {
+										additionalContent: hidden,
+									},
 									value: true,
 								}) }}
 							{% endif %}

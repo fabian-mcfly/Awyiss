@@ -6,7 +6,7 @@
  */
 return [
 	// Wrapper container for checkboxes.
-	'checkboxWrapper' => '<div class="FormInput FormInputType-Checkbox FormInputName-{{identifier}} {{containerClass}}">{{label}}</div>',
+	'checkboxWrapper' => '<div class="FormInput FormInputType-Checkbox FormInputName-{{identifier}} {{containerClass}}">{{label}}{{additionalContent}}</div>',
 	// Error message wrapper elements.
 	'error' => '<div class="Error">{{content}}</div>',
 	// Container for error items.
