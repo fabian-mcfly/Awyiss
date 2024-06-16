@@ -5,6 +5,8 @@ namespace Awyiss\Model\Behavior\Translate;
 
 
 use ArrayObject;
+use Cake\Collection\Collection;
+use Cake\Collection\CollectionInterface;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
 use Cake\ORM\Behavior\Translate\EavStrategy as BaseEavStrategy;
@@ -181,6 +183,49 @@ class EavStrategy extends BaseEavStrategy {
 		}
 
 		$entity->unset('_i18n');
+	}
+
+
+	/**
+	 * 1:1 reimplementation of the original method, but adds the `source` field to the translation entity
+	 *
+	 * @inheritDoc
+	 * @param \Cake\Collection\CollectionInterface $results Results to modify.
+	 * @return \Cake\Collection\CollectionInterface
+	 */
+	public function groupTranslations(CollectionInterface $results): CollectionInterface {
+		return $results->map(function ($row) {
+			if (!$row instanceof EntityInterface) {
+				return $row;
+			}
+
+			$la_translations = (array)$row->get('_i18n');
+			if (!$la_translations && $row->get('_translations')) {
+				return $row;
+			}
+
+			$lo_grouped = new Collection($la_translations);
+
+			$la_result = [];
+			foreach ($lo_grouped->combine('field', 'content', 'locale') as $ls_locale => $la_keys) {
+				$ls_entityClass = $this->table->getEntityClass();
+				$lo_translation = new $ls_entityClass($la_keys + ['locale' => $ls_locale], [
+					'markNew' => false,
+					'useSetters' => false,
+					'markClean' => true,
+					'source' => $row->getSource(),
+				]);
+				$la_result[ $ls_locale ] = $lo_translation;
+			}
+
+			$la_options = ['setter' => false, 'guard' => false];
+			$row->set('_translations', $la_result, $la_options);
+			$row->setDirty('_translations', false);
+			/** @noinspection PhpVariableNamingConventionInspection */
+			unset($row['_i18n']);
+
+			return $row;
+		});
 	}
 
 

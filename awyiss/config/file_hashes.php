@@ -24,6 +24,7 @@ return [
 		'\\Cake\\ORM\\Behavior\\TranslateBehavior::referenceName' => 'cc59bb272ae75d37e4474948451921c5',
 		'\\Cake\\ORM\\Behavior\\Translate\\EavStrategy::afterSave' => '876c8235f10bb15d216ed8b5ddc9e86e',
 		'\\Cake\\ORM\\Behavior\\Translate\\EavStrategy::beforeSave' => 'fc7817dde556348b595e8877406a6150',
+		'\\Cake\\ORM\\Behavior\\Translate\\EavStrategy::groupTranslations' => 'a14785132c03b857a5ec209c0dd663bd',
 		'\\Cake\\ORM\\Behavior\\Translate\\EavStrategy::unsetEmptyFields' => '7706c1247c1b995762053511b0b7faee',
 		'\\Cake\\ORM\\Locator\\TableLocator::_getClassName' => '9528b583e6de7a781d58fb1600f49caa',
 		'\\Cake\\ORM\\Marshaller::merge' => '813d7c7cce3e10ef7d92518ec9f1b908',
