@@ -172,9 +172,19 @@ export default class Loader {
 	 * @param {HTMLElement} element
 	 */
 	async initElement(element) {
+		if (element.closest('.TranslatableTexts') && !element.closest('.IsCurrentLanguage')) {
+			return;
+		}
+
 		await this.initSettings();
 
 		const settings = {...this.settings};
+
+		if (element.closest('#TranslationDialog')) {
+			settings.toolbarSticky = false;
+			settings.buttons = settings.buttons.filter(button => button !== 'fullsize');
+			settings.shadowRoot = element.closest('#TranslationDialog');
+		}
 
 		element.addEventListener('change', function () {
 			if (window.formLeaveConfirmation) {
@@ -231,6 +241,23 @@ export default class Loader {
 	 * @param {MutationRecord} mutation - The mutation record
 	 */
 	async observeForNewInputs(mutation) {
+		// Remove the editor if the element is removed
+		mutation.removedNodes.forEach((node) => {
+			if (node.nodeType !== Node.ELEMENT_NODE) {
+				return;
+			}
+
+			if (node.matches(this.selector) && node.jodit) {
+				node.jodit.destruct();
+			}
+
+			node.querySelectorAll(this.selector).forEach((element) => {
+				if (element.jodit) {
+					element.jodit.destruct();
+				}
+			});
+		});
+
 		// noinspection DuplicatedCode
 		for (const node of mutation.addedNodes) {
 			if (node.nodeType !== Node.ELEMENT_NODE) {

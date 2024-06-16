@@ -159,10 +159,10 @@ export default class TranslatableTexts {
 			event.preventDefault();
 
 			// Get the required input element
-			const requiredInput = element.querySelector('input[required], textarea[required], select[required]');
+			const requiredInput = element.querySelector('input[name][required], textarea[name][required], select[name][required]');
 			// If the required input is empty, set its value to the value of the current language
 			if (requiredInput) {
-				const currentLanguageElement = element.querySelector('.IsCurrentLanguage input, .IsCurrentLanguage textarea, .IsCurrentLanguage select');
+				const currentLanguageElement = element.querySelector('.IsCurrentLanguage input[name], .IsCurrentLanguage textarea[name], .IsCurrentLanguage select[name]');
 				if (requiredInput.tagName === 'TEXTAREA') {
 					if (requiredInput.innerHTML === '') {
 						requiredInput.innerHTML = currentLanguageElement.innerHTML;
@@ -216,7 +216,7 @@ export default class TranslatableTexts {
 		const element = this.dialog.currentElement;
 
 		// Get all input, textarea, and select elements in the dialog
-		const formElements = this.dialog.querySelectorAll('input, textarea, select');
+		const formElements = this.dialog.querySelectorAll('input[name], textarea[name], select[name]');
 		formElements.forEach((inputField) => {
 			// Get the corresponding form element in the document
 			const name = inputField.name;
@@ -241,9 +241,20 @@ export default class TranslatableTexts {
 					else {
 						correspondingInputField.innerHTML = inputField.tinymce.getContent();
 					}
+					correspondingInputField.value = inputField.tinymce.getContent();
+				}
+				else if (inputField.jodit) {
+					if (correspondingInputField.jodit) {
+						correspondingInputField.jodit.setEditorValue(inputField.jodit.getEditorValue());
+					}
+					else {
+						correspondingInputField.innerHTML = inputField.jodit.getEditorValue();
+					}
+					correspondingInputField.value = inputField.jodit.getEditorValue();
 				}
 				else {
 					correspondingInputField.innerHTML = inputField.innerHTML;
+					correspondingInputField.value = inputField.value;
 				}
 			}
 			else {
@@ -295,7 +306,6 @@ export default class TranslatableTexts {
 		// Store the current element as a property on the dialog
 		this.dialog.currentElement = element;
 
-		// Show the dialog
 		this.dialog.showModal();
 
 		// Scroll the form to the top
@@ -310,8 +320,8 @@ export default class TranslatableTexts {
 	cloneFormInput(formInput) {
 		const clonedInput = formInput.cloneNode(true);
 
-		const originalInputField = formInput.querySelector('input, textarea, select');
-		const clonedInputField = clonedInput.querySelector('input, textarea, select');
+		const originalInputField = formInput.querySelector('input[name], textarea[name], select[name]');
+		const clonedInputField = clonedInput.querySelector('input[name], textarea[name], select[name]');
 
 		// Set the value of the cloned input field to the value of the original input field
 		if (originalInputField.type === 'checkbox' || originalInputField.type === 'radio') {
@@ -330,12 +340,15 @@ export default class TranslatableTexts {
 			clonedInputField.value = originalInputField.value;
 		}
 
-		const editor = clonedInput.querySelector('.tox-tinymce');
+		const editor = clonedInput.querySelector('.tox-tinymce, .jodit-container');
 		if (editor) {
-			const textarea = editor.previousElementSibling;
+			const textarea = editor.parentElement.querySelector('textarea[name]');
 			textarea.style.display = '';
 
-			if (originalInputField.tinymce) {
+			if (originalInputField.jodit) {
+				textarea.innerHTML = originalInputField.jodit.getEditorValue();
+			}
+			else if (originalInputField.tinymce) {
 				textarea.innerHTML = originalInputField.tinymce.getContent();
 			}
 
@@ -344,7 +357,7 @@ export default class TranslatableTexts {
 			textarea.id = `Editor-${randomString}`;
 
 			// Find the label for the editor and set the "for" attribute to the new textarea ID
-			const label = textarea.previousElementSibling;
+			const label = editor.parentElement.querySelector('label')
 			label.setAttribute('for', textarea.id);
 
 			editor.remove();

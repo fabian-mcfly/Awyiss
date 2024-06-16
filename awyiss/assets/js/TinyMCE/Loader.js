@@ -49,6 +49,7 @@ export default class Loader {
 		smart_paste: false,
 		style_formats_autohide: true,
 		suffix: '.min',
+		table_advtab: false,
 		table_appearance_options: false,
 		table_cell_advtab: false,
 		table_default_attributes: {},
@@ -152,7 +153,13 @@ export default class Loader {
 
 		const settings = {...this.settings};
 
+		if (element.closest('#TranslationDialog')) {
+			settings.ui_mode = 'split';
+		}
+
 		settings.target = element;
+
+		element.placeholder = '';
 
 		tinymce.init(settings).then((editor) => {
 			element.tinymce = editor[0];
@@ -297,6 +304,8 @@ export default class Loader {
 
 			editor.windowManager._originalOpen(config, params);
 
+			console.log(config.title);
+
 			const dialog = document.querySelector('.tox-dialog');
 
 			if (dialog) {
@@ -304,6 +313,11 @@ export default class Loader {
 
 				if (opener) {
 					dialog.classList.add(`tox-dialog--${opener}`);
+				}
+
+				const container = editor.targetElm.closest('#TranslationDialog');
+				if (container) {
+					container.appendChild(dialog.closest('.tox-tinymce-aux'));
 				}
 			}
 		};
