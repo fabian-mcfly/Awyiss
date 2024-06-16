@@ -3,6 +3,23 @@
 		content:attr(data-title, 'Translation');
 	}
 
+	.TranslationDialog-Form {
+		display:flex;
+		height:100%;
+		max-height:calc(80vh - 52px);
+		padding:30px;
+		border:10px solid transparent;
+		flex-wrap:wrap;
+		justify-content:space-between;
+		overflow:auto;
+		scrollbar-color:var(--scrollbarColor);
+		scrollbar-width:thin;
+
+		.Scale-Small & {
+			padding:10px;
+		}
+	}
+
 	.FormInput {
 		width:100%;
 		flex:0 0 100%;

@@ -7,9 +7,9 @@ dialog {
 	box-shadow:0 0 10px rgba(0, 0, 0, .25);
 	background-color:var(--colorBright);
 	color:var(--colorText);
+	align-content:flex-start;
 	flex-wrap:wrap;
 	justify-content:space-between;
-	align-content:flex-start;
 	scrollbar-color:var(--scrollbarColor);
 	scrollbar-width:thin;
 
@@ -23,6 +23,10 @@ dialog {
 
 	&[open] {
 		display:flex;
+
+		html:has(&) {
+			overflow:hidden;
+		}
 	}
 
 	&::backdrop {

@@ -531,16 +531,23 @@ body {
 
 			&__content {
 				&-js {
+					--scrollbarColor:var(--colorMedium) var(--colorBright);
 					max-height:calc(80dvh - 52px);
 					margin-inline:-40px;
-					padding:40px;
+					padding:30px 30px 0 30px;
+					border:10px solid transparent;
+					border-bottom-width:0;
 					overflow:hidden auto;
 					scrollbar-color:var(--scrollbarColor);
 					scrollbar-width:thin;
 
+					.🌚 {
+						--scrollbarColor:var(--backgroundColorContent) var(--colorSemiDark);
+					}
+
 					.Scale-Small & {
 						margin-inline:-20px;
-						padding:20px;
+						padding:10px 10px 0 10px;
 					}
 				}
 			}
@@ -558,7 +565,7 @@ body {
 			}
 
 			&__footer {
-				padding:0;
+				padding:40px 0 0 0;
 				background-color:transparent;
 				flex-wrap:wrap;
 

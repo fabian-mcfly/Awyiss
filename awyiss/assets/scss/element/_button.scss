@@ -17,6 +17,7 @@ button,
 	line-height:30px;
 	text-align:center;
 	text-decoration:none;
+	transform:translateZ(0); // Prevents incorrect position of the text when the viewport height is uneven
 	overflow:hidden;
 	position:relative;
 	z-index:1;
@@ -132,6 +133,7 @@ button,
 		}
 	}
 
+	@at-root #TranslationDialog-Apply,
 	&-Add,
 	&-Close,
 	&-Configure,
@@ -202,6 +204,7 @@ button,
 	&-Delete {
 		&::after {
 			content:'\f2ed';
+			text-indent:-1px;
 
 			.Scale-Small & {
 				text-indent:-1px;
@@ -209,6 +212,7 @@ button,
 		}
 	}
 
+	@at-root #TranslationDialog-Apply,
 	&-Save,
 	&-SaveClose,
 	&-SaveSystemOrder {

@@ -60,32 +60,38 @@ export default class TranslatableTexts {
 		if (!this.dialog) {
 			// Create dialog and its child elements
 			this.dialog = document.createElement('dialog');
-			this.dialog.message = document.createElement('p');
-			this.dialog.confirmApply = document.createElement('button');
-			this.dialog.confirmCancel = document.createElement('button');
-
-			// Set IDs for later use
 			this.dialog.id = 'TranslationDialog';
+
+			// Form wrapper
+			this.dialog.form = document.createElement('div');
+			this.dialog.form.classList.add('TranslationDialog-Form');
+			this.dialog.appendChild(this.dialog.form);
+
+			// Message
+			this.dialog.message = document.createElement('p');
 			this.dialog.message.id = 'TranslationDialog-Message';
+			this.dialog.form.appendChild(this.dialog.message);
+
+			// Confirm button
+			this.dialog.confirmApply = document.createElement('button');
 			this.dialog.confirmApply.id = 'TranslationDialog-Apply';
 			this.dialog.confirmApply.classList.add('Button', 'Button-Success');
-			this.dialog.confirmCancel.id = 'TranslationDialog-Cancel';
-			this.dialog.confirmCancel.classList.add('Button', 'Button-Error');
-
-			// Set button text
 			this.dialog.confirmApply.textContent = 'Apply';
-			this.dialog.confirmCancel.textContent = 'Cancel';
+			this.dialog.form.appendChild(this.dialog.confirmApply);
 
-			// Append elements to dialog
-			this.dialog.appendChild(this.dialog.message);
-			this.dialog.appendChild(this.dialog.confirmApply);
-			this.dialog.appendChild(this.dialog.confirmCancel);
+			// Cancel button
+			this.dialog.confirmCancel = document.createElement('button');
+			this.dialog.confirmCancel.id = 'TranslationDialog-Cancel';
+			this.dialog.confirmCancel.classList.add('Button', 'Button-Cancel');
+			this.dialog.confirmCancel.textContent = 'Cancel';
+			this.dialog.form.appendChild(this.dialog.confirmCancel);
 
 			// Append dialog to body
 			document.body.appendChild(this.dialog);
 		}
 		else {
 			// If the dialog already exists, get its child elements
+			this.dialog.form = document.getElementById('TranslationDialog-Form');
 			this.dialog.message = document.getElementById('TranslationDialog-Message');
 			this.dialog.confirmApply = document.getElementById('TranslationDialog-Apply');
 			this.dialog.confirmCancel = document.getElementById('TranslationDialog-Cancel');
@@ -255,7 +261,8 @@ export default class TranslatableTexts {
 			else {
 				clonedInput.value = input.value;
 			}
-			this.dialog.insertBefore(clonedInput, this.dialog.querySelector('button'));
+
+			this.dialog.form.insertBefore(clonedInput, this.dialog.form.querySelector(':scope > button'));
 		});
 
 		// Set the dialog title
