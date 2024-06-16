@@ -307,7 +307,7 @@ tinymce.addI18n("de_DE", {
 	"Row properties": "Zeileneigenschaften",
 	"Row type": "Zeilentyp",
 	"Rows": "Zeilen",
-	"Save": "Speichern",
+	"Save": "Übernehmen",
 	"Save (if save plugin activated)": "Speichern (wenn Save-Plugin aktiviert ist)",
 	"Scope": "Bereich",
 	"Search": "Suchen",

@@ -99,7 +99,9 @@ export default class TranslatableTexts {
 
 		// Add event listeners
 		window.eventHandler.add('click', this.applyChanges.bind(this), this.dialog.confirmApply);
-		window.eventHandler.add('click', () => this.dialog.close(), this.dialog.confirmCancel);
+		window.eventHandler.add('click', this.closeDialog.bind(this), this.dialog.confirmCancel);
+
+		window.eventHandler.add('close', this.closeDialog.bind(this), this.dialog);
 	}
 
 	/**
@@ -159,16 +161,23 @@ export default class TranslatableTexts {
 			// Get the required input element
 			const requiredInput = element.querySelector('input[required], textarea[required], select[required]');
 			// If the required input is empty, set its value to the value of the current language
-			if (requiredInput && requiredInput.value === '') {
+			if (requiredInput) {
 				const currentLanguageElement = element.querySelector('.IsCurrentLanguage input, .IsCurrentLanguage textarea, .IsCurrentLanguage select');
-				if (requiredInput.type === 'checkbox' || requiredInput.type === 'radio') {
-					requiredInput.checked = currentLanguageElement.checked;
+				if (requiredInput.tagName === 'TEXTAREA') {
+					if (requiredInput.innerHTML === '') {
+						requiredInput.innerHTML = currentLanguageElement.innerHTML;
+					}
 				}
-				else if (requiredInput.tagName === 'SELECT') {
-					requiredInput.selectedIndex = currentLanguageElement.selectedIndex;
-				}
-				else {
-					requiredInput.value = currentLanguageElement.value;
+				else if (requiredInput.value === '') {
+					if (requiredInput.tagName === 'SELECT') {
+						requiredInput.selectedIndex = currentLanguageElement.selectedIndex;
+					}
+					else if (requiredInput.type === 'checkbox' || requiredInput.type === 'radio') {
+						requiredInput.checked = currentLanguageElement.checked;
+					}
+					else {
+						requiredInput.value = currentLanguageElement.value;
+					}
 				}
 			}
 
@@ -208,33 +217,56 @@ export default class TranslatableTexts {
 
 		// Get all input, textarea, and select elements in the dialog
 		const formElements = this.dialog.querySelectorAll('input, textarea, select');
-		formElements.forEach((formElement) => {
+		formElements.forEach((inputField) => {
 			// Get the corresponding form element in the document
-			const name = formElement.name;
-			const correspondingFormElement = element.querySelector(`input[name="${name}"], textarea[name="${name}"], select[name="${name}"]`);
+			const name = inputField.name;
+			const correspondingInputField = element.querySelector(`input[name="${name}"], textarea[name="${name}"], select[name="${name}"]`);
 
 			// If the corresponding form element exists, set its value to the value of the form element in the dialog
-			if (!correspondingFormElement) {
+			if (!correspondingInputField) {
 				return;
 			}
 
-			if (formElement.type === 'checkbox' || formElement.type === 'radio') {
-				correspondingFormElement.checked = formElement.checked;
+			if (inputField.type === 'checkbox' || inputField.type === 'radio') {
+				correspondingInputField.checked = inputField.checked;
 			}
-			else if (formElement.tagName === 'SELECT') {
-				correspondingFormElement.selectedIndex = formElement.selectedIndex;
+			else if (inputField.tagName === 'SELECT') {
+				correspondingInputField.selectedIndex = inputField.selectedIndex;
+			}
+			else if (inputField.tagName === 'TEXTAREA') {
+				if (inputField.tinymce) {
+					if (correspondingInputField.tinymce) {
+						correspondingInputField.tinymce.setContent(inputField.tinymce.getContent());
+					}
+					else {
+						correspondingInputField.innerHTML = inputField.tinymce.getContent();
+					}
+				}
+				else {
+					correspondingInputField.innerHTML = inputField.innerHTML;
+				}
 			}
 			else {
-				correspondingFormElement.value = formElement.value;
+				correspondingInputField.value = inputField.value;
 			}
 
 			// Dispatch the input event on the corresponding form element
 			const event = new Event('input', {bubbles: true});
-			correspondingFormElement.dispatchEvent(event);
+			correspondingInputField.dispatchEvent(event);
 		});
 
 		// Close the dialog
 		this.dialog.close();
+	}
+
+	/**
+	 * Closes the dialog and removes all .FormInput elements from the dialog.
+	 */
+	closeDialog() {
+		this.dialog.close();
+
+		// Remove existing .FormInput elements from the dialog
+		this.dialog.querySelectorAll('.FormInput').forEach(node => node.remove());
 	}
 
 	/**
@@ -243,26 +275,12 @@ export default class TranslatableTexts {
 	 * @param {HTMLElement} element
 	 */
 	handleTranslateButtonClick(element) {
-		// Remove existing .FormInput elements from the dialog
-		this.dialog.querySelectorAll('.FormInput').forEach(node => node.remove());
-
 		// Get the .FormInput elements from the clicked element
 		const formInputs = element.querySelectorAll('.FormInput');
 
-		// Insert each .FormInput before the first button in the dialog
+		// Clone each .FormInput element and insert it into the dialog
 		formInputs.forEach(input => {
-			const clonedInput = input.cloneNode(true);
-			if (input.type === 'checkbox' || input.type === 'radio') {
-				clonedInput.checked = input.checked;
-			}
-			else if (input.tagName === 'SELECT') {
-				clonedInput.selectedIndex = input.selectedIndex;
-			}
-			else {
-				clonedInput.value = input.value;
-			}
-
-			this.dialog.form.insertBefore(clonedInput, this.dialog.form.querySelector(':scope > button'));
+			this.cloneFormInput(input);
 		});
 
 		// Set the dialog title
@@ -279,6 +297,61 @@ export default class TranslatableTexts {
 
 		// Show the dialog
 		this.dialog.showModal();
+
+		// Scroll the form to the top
+		this.dialog.form.scrollTo(0, 0);
+	}
+
+	/**
+	 * Clones the given input element and appends it to the dialog.
+	 *
+	 * @param {HTMLElement} formInput
+	 */
+	cloneFormInput(formInput) {
+		const clonedInput = formInput.cloneNode(true);
+
+		const originalInputField = formInput.querySelector('input, textarea, select');
+		const clonedInputField = clonedInput.querySelector('input, textarea, select');
+
+		// Set the value of the cloned input field to the value of the original input field
+		if (originalInputField.type === 'checkbox' || originalInputField.type === 'radio') {
+			clonedInputField.checked = originalInputField.checked;
+		}
+		else if (originalInputField.tagName === 'SELECT') {
+			clonedInputField.selectedIndex = originalInputField.selectedIndex;
+		}
+		else if (originalInputField.tagName === 'TEXTAREA') {
+			clonedInputField.innerHTML = originalInputField.innerHTML;
+			if (originalInputField.dataset.editor) {
+				clonedInputField.placeholder = '';
+			}
+		}
+		else {
+			clonedInputField.value = originalInputField.value;
+		}
+
+		const editor = clonedInput.querySelector('.tox-tinymce');
+		if (editor) {
+			const textarea = editor.previousElementSibling;
+			textarea.style.display = '';
+
+			if (originalInputField.tinymce) {
+				textarea.innerHTML = originalInputField.tinymce.getContent();
+			}
+
+			// Append a unique ID to the textarea
+			const randomString = Math.random().toString(36).substring(2, 15);
+			textarea.id = `Editor-${randomString}`;
+
+			// Find the label for the editor and set the "for" attribute to the new textarea ID
+			const label = textarea.previousElementSibling;
+			label.setAttribute('for', textarea.id);
+
+			editor.remove();
+		}
+
+		// Insert each clone before the first button in the dialog
+		this.dialog.form.insertBefore(clonedInput, this.dialog.form.querySelector(':scope > button'));
 	}
 
 	/**

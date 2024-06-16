@@ -530,6 +530,12 @@ textarea {
 			}
 		}
 
+		&:has(.tox) {
+			.ShowTranslationDialog {
+				z-index:2;
+			}
+		}
+
 		> input,
 		> select,
 		> textarea {
@@ -537,10 +543,6 @@ textarea {
 		}
 
 		.TranslatableTexts {
-			&:has(+ .ShowTranslationDialog) {
-				//padding-right:72px;
-			}
-
 			.FormInput {
 				display:none;
 

@@ -144,6 +144,10 @@ export default class Loader {
 	 * @param {HTMLElement} element
 	 */
 	async initElement(element) {
+		if (element.closest('.TranslatableTexts') && !element.closest('.IsCurrentLanguage')) {
+			return;
+		}
+
 		await this.initSettings();
 
 		const settings = {...this.settings};
@@ -164,6 +168,10 @@ export default class Loader {
 	 * @param editor
 	 */
 	initInstanceCallback(editor) {
+		editor.on('blur', function () {
+			editor.targetElm.innerHTML = editor.getContent();
+		});
+
 		editor.on('focus', function () {
 			// noinspection JSUnresolvedReference
 			if (!this.wasFocusedBefore) {

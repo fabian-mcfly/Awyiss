@@ -1,4 +1,16 @@
 #TranslationDialog {
+	padding:52px 0 0;
+	overflow:hidden;
+
+	&:has(.tox-tinymce) {
+		width:100%;
+		max-width:1024px;
+	}
+
+	&[open] {
+		display:block;
+	}
+
 	&::after {
 		content:attr(data-title, 'Translation');
 	}
