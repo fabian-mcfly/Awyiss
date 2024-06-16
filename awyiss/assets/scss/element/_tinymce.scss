@@ -421,9 +421,10 @@ body {
 				.tox-form__group {
 					min-width:0;
 					margin-bottom:0;
+					grid-column:1 / -1;
 
-					&:nth-child(-n+3) {
-						grid-column:1 / -1;
+					&:has(.tox-listboxfield) {
+						grid-column:auto;
 					}
 				}
 
@@ -471,6 +472,29 @@ body {
 						display:block;
 						width:24px;
 						margin-inline:auto;
+					}
+				}
+			}
+
+			&--tableprops {
+				.tox-dialog {
+					&__body {
+						&-nav {
+							padding:0 40px 0 0;
+
+							&-item {
+								color:inherit;
+								font-size:inherit;
+
+								&:focus {
+									background-color:var(--colorSuccess-Alpha-10);
+								}
+
+								&--active {
+									border-bottom-color:var(--colorSuccess);
+								}
+							}
+						}
 					}
 				}
 			}
