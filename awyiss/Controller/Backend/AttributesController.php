@@ -75,7 +75,7 @@ class AttributesController extends Controller {
 		$ls_selectedScope = $this->Categories->getSelectedCategory();
 
 		$la_availableFieldsets = [''];
-		if ($ls_selectedScope !== 'contents') {
+		if (!in_array($ls_selectedScope, ['contents', 'widgets'])) {
 			$la_availableFieldsets = $this->Attributes->getAvailableFieldsets($ls_selectedScope);
 		}
 
@@ -299,7 +299,7 @@ class AttributesController extends Controller {
 		$la_availableFieldsets = $this->Attributes->getAvailableFieldsets($attribute->scope);
 		$this->ensurePossibleFieldset($attribute, $la_availableFieldsets);
 
-		if ($attribute->scope === 'contents') {
+		if (in_array($attribute->scope, ['contents', 'widgets'])) {
 			$attribute->fieldset = '';
 		}
 
@@ -308,8 +308,8 @@ class AttributesController extends Controller {
 		}));
 
 		$lb_translatableDisabled = in_array($attribute->scope, array_merge($la_pageRoles, ['contents', 'menu_entries', 'pages']));
-		$lb_requiredDisabled = in_array($attribute->scope, ['contents']);
-		$lb_columnSpanDisabled = in_array($attribute->scope, ['contents']);
+		$lb_requiredDisabled = in_array($attribute->scope, ['contents', 'widgets']);
+		$lb_columnSpanDisabled = in_array($attribute->scope, ['contents', 'widgets']);
 
 		$la_columnSpans = $this->Attributes->getColumnSpans();
 		$la_columnSpans = array_map(function (ColumnInterface $column): string {

@@ -1,0 +1,88 @@
+{#
+@var widgets \Awyiss\Model\Entity\Widget[]
+@var widgetTemplates array
+@var _view \Awyiss\View\BackendView
+#}
+
+<div class="Widgets Overview">
+	{% block headlineOverview %}
+		<h1>{{ __('headline_overview') }}</h1>
+	{% endblock %}
+
+	{% block buttonArea %}
+		<div class="ButtonArea">
+			{% block buttonsOverview %}
+				<button class="Button Button-SaveSystemOrder" disabled>{{ __d('system', 'save_system_order') }}</button>
+
+				{% if AuthorizationHelper.isAccessible('create') %}
+					{{ HtmlHelper.link(__('create'), {action: 'add'}, {class : 'Button Button-Add'}) }}
+				{% endif %}
+
+				{{ HtmlHelper.link(__('overview_list_with_columns'), {
+					action: 'userConfiguration',
+					identifier: 'overview.columnView.enabled',
+					value: 'true'
+				}, {
+					class: 'Button Button-Small Button-ColumnView Button-ColumnView-Enable',
+					disabled: localConfig.overview.columnView.enabled == true,
+				}) }}
+
+				{{ HtmlHelper.link(__('overview_list_linear'), {
+					action: 'userConfiguration',
+					identifier: 'overview.columnView.enabled',
+					value: 'false'
+				}, {
+					class: 'Button Button-Small Button-ColumnView Button-ColumnView-Disable',
+					disabled: localConfig.overview.columnView.enabled == false,
+				}) }}
+			{% endblock %}
+		</div>
+	{% endblock %}
+
+	{% block fieldsetsOverview %}
+		{% set widgetsByIdentifier = widgets %}
+		{% for identifier, widgets in widgetsByIdentifier %}
+			{% block fieldsetOverview %}
+				<fieldset class="Overview-Fieldset" data-identifier="{{ identifier }}">
+					<legend>{{ identifier }}</legend>
+
+					{% block fieldsetOverviewInner %}
+						{% block listOverview %}
+							{% from '@Backend/macro/nested_list.twig' import nestedList %}
+							{{ nestedList(widgets, _context|merge({
+								class: localConfig.overview.columnView.enabled == true ? 'NestedList-Compact ColumnSystem-' ~ columnSystemName : null,
+								widgetTemplates: widgetTemplates,
+								data: {
+									'identifier': identifier,
+								},
+								displayedFields: localConfig.overview.displayedFields,
+								identifier: 'Widgets',
+								template: '@Backend/Widgets/overview_nested_list_item.twig',
+							})) }}
+						{% endblock %}
+					{% endblock %}
+				</fieldset>
+			{% endblock %}
+		{% else %}
+			{% block fieldsetOverviewEmpty %}
+				<fieldset class="Overview-Fieldset">
+
+				</fieldset>
+			{% endblock %}
+		{% endfor %}
+	{% endblock %}
+
+	{% block buttonAreaBottom %}
+		<div class="ButtonArea ButtonArea-Bottom">
+			{{ block('buttonsOverview') }}
+		</div>
+	{% endblock %}
+</div>
+
+{% block scriptColumnSystemVars %}
+	<script nonce="{{ AssetHelper.getScriptNonce() }}">
+		const columnWidths = {{ columnWidths|values|json_encode|raw }};
+		const columnIndents = {{ columnIndents|values|json_encode|raw }};
+		const columnSystemName = '{{ columnSystemName }}';
+	</script>
+{% endblock %}

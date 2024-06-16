@@ -1,0 +1,67 @@
+{#
+@var entity \Awyiss\Model\Entity\Widget
+@var settings array
+#}
+
+{% extends '@Backend/element/overview/nested_list_item.twig' %}
+
+{% block nestedListItemDataTitle %}
+	<li class="Title">{{ entity.forcedTitle|raw }}</li>
+{% endblock %}
+
+{% block nestedListItemDataDisplayedFieldDefaultValue %}
+	{% if field == 'widget_template_id' %}
+		{{ entity.widgetTemplate.label }}
+	{% elseif field == 'column_width' %}
+		{{ entity.column.width.label }}
+	{% elseif field == 'column_indent' %}
+		{{ entity.column.indent.label }}
+	{% elseif field in ['column_rtl', 'column_last', 'active'] %}
+		{{ entity.get(field) ? '<i class="las la-check"></i>' : '<i class="las la-times"></i>' }}
+	{% elseif field == 'data' %}
+		{%- for key, value in entity.get(field) %}
+			{{- key }}: {{ value }}{% if loop.last == false %}, {% endif %}
+		{% endfor %}
+	{% else %}
+		{{ entity.get(field) ?: '-' }}
+	{% endif %}
+{% endblock %}
+
+{% block nestedListItem %}
+	{% set widgetTemplate = settings.widgetTemplates[ entity.widgetTemplateId ] ?? null  %}
+	<li
+		{{ block('nestedListItemId') }}
+		{{ block('nestedListItemClass') }}
+		{%- if widgetTemplate.widgetTemplateElements.parent_id is not defined %}
+			data-nestable="false"
+		{%- elseif widgetTemplate.widgetTemplateElements.parent_id.required %}
+			data-disallow-top-level="true"
+		{%- endif %}
+		{%- if widgetTemplate.widgetTemplateElements.column_width is not defined %}
+			data-resizable="false"
+		{%- endif %}
+		data-column-width-class="{{ entity.column.width.cssClass }}"
+		data-max-column-width="{{ 1 - entity.column.indent.percentage }}"
+		>
+		{% block nestedListItemInner %}
+			<div
+				{{ block('nestedListItemInnerClass') }}
+				title="{{ entity.forcedTitle|striptags }} ({{ entity.column.width.label -}}
+				{%- if entity.column.indent.label %} / {{ entity.column.indent.label }}{% endif %})"
+				>
+
+				{% block nestedListItemData %}
+					{{ parent() }}
+				{% endblock %}
+
+				{{ block('nestedListItemAuditInfo') }}
+
+				{{ block('nestedListActions') }}
+			</div>
+		{% endblock %}
+
+		{% block nestedListChildren %}
+			{{ parent() }}
+		{% endblock %}
+	</li>
+{% endblock %}

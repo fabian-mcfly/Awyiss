@@ -1,0 +1,31 @@
+{#
+@var entity \Awyiss\Model\Entity\Attribute
+@var attributes \Awyiss\Model\Entity\Attribute[]
+@var attributesGroupedByFieldset array
+@var attributeScopes array
+@var _view \Awyiss\View\BackendView
+@var CategproesHelper \Awyiss\View\Helper\CategoriesHelper
+#}
+
+{% extends '@Backend/element/overview/overview_paginated_list.twig' %}
+
+{% block tableOverviewHeaderDefaultFields %}
+	<th class="TableHeader-UsedForWidgets{% if PaginatorHelper.currentSortKey() == 'used_for_widgets' %} Active{% endif %}">{{ PaginatorHelper.sort('used_for_widgets') }}</th>
+{% endblock %}
+
+{% block tableOverviewCellDefaultFields %}
+	<td class="TableCell-UsedForWidgets">{{ entity.usedForWidgets }}</td>
+{% endblock %}
+
+{% block tableOverviewCellActionsDelete %}
+	{% if entity.usedForWidgets == 0 %}
+		{{ parent() }}
+	{% else %}
+		{% if AuthorizationHelper.isAccessible('delete') %}
+			<!--suppress HtmlUnknownAttribute -->
+			<a class="Button Button-Small Button-Delete" disabled>{{ __('delete') }}</a>
+		{% endif %}
+	{% endif %}
+{% endblock %}
+
+{% block tableOverviewFootColSpan %}{{ localConfig.overview.displayedFields|length + 5 }}{% endblock %}

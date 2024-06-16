@@ -61,7 +61,7 @@
 							columnSpan: 6,
 							empty: false,
 							options: combine(availableFieldsets, availableFieldsets|map(fieldset => __d(attribute.scope, 'fieldset_' ~ fieldset))),
-							disabled: attribute.scope == 'contents',
+							disabled: attribute.scope in ['contents', 'widgets'],
 							'data-form-updater': true
 						}) }}
 					{% endblock %}

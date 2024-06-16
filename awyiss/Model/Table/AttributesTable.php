@@ -349,8 +349,8 @@ class AttributesTable extends Table {
 			$la_availableFieldsets = $this->getAvailableFieldsets();
 
 
-			//Check if the provided fieldset is valid. For scope `contents`, always return true
-			return in_array($entity->fieldset, $la_availableFieldsets) || $entity->scope === 'contents';
+			//Check if the provided fieldset is valid. For scope `contents` and `widgets`, always return true
+			return in_array($entity->fieldset, $la_availableFieldsets) || in_array($entity->scope, ['contents', 'widgets']);
 		}, 'validFieldset', [
 			'errorField' => 'fieldset',
 			'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_fieldset'),

@@ -1,0 +1,127 @@
+{% block formControlActive %}
+	{{ FormHelper.control('active', {columnSpan: widgetTemplateElement.column.span.numerator}) }}
+{% endblock %}
+
+
+{% block formControlIdentifier %}
+	{{ FormHelper.control('identifier', {
+		columnSpan: widgetTemplateElement.column.span.numerator,
+		'data-form-updater': true,
+	}) }}
+{% endblock %}
+
+
+{% block formControlWidgetTemplateId %}
+	{{ FormHelper.control('widget_template_id', {
+		columnSpan: widgetTemplateElement.column.span.numerator,
+		empty: false,
+		options: settings.widgetTemplates.combine('id', 'title'),
+		'data-form-updater': true,
+	}) }}
+{% endblock %}
+
+
+{% block formControlLanguageShortcode %}
+	{{ LocaleHelper.control('language_shortcode', {
+		columnSpan: widgetTemplateElement.column.span.numerator,
+		languageRealm: settings.languageRealm,
+		val: settings.languageShortcode,
+		'data-form-updater': true,
+	}) }}
+{% endblock %}
+
+
+{% block formControlSystemOrder %}
+	{{ SystemOrderHelper.control('system_order', {
+		columnSpan: widgetTemplateElement.column.span.numerator,
+		entity: settings.widget,
+	}) }}
+{% endblock %}
+
+
+{% block formControlColumnWidth %}
+	{{ FormHelper.control('column_width', {
+		columnSpan: widgetTemplateElement.column.span.numerator,
+		empty: false,
+		options: settings.columnWidths,
+		required: widgetTemplateElement.required,
+		type: 'select'}
+	) }}
+{% endblock %}
+
+
+{% block formControlColumnIndent %}
+	{{ FormHelper.control('column_indent', {
+		columnSpan: widgetTemplateElement.column.span.numerator,
+		options: settings.columnIndents,
+		required: widgetTemplateElement.required,
+		type: 'select'}) }}
+{% endblock %}
+
+
+{% block formControlColumnLast %}
+	{{ FormHelper.control('column_last', {
+		columnSpan: widgetTemplateElement.column.span.numerator,
+		required: widgetTemplateElement.required,
+	}) }}
+{% endblock %}
+
+
+{% block formControlColumnRtl %}
+	{{ FormHelper.control('column_rtl', {
+		columnSpan: widgetTemplateElement.column.span.numerator,
+		required: widgetTemplateElement.required,
+	}) }}
+{% endblock %}
+
+
+
+{% block formControlParentId %}
+	{{ FormHelper.control('parent_id', {
+		columnSpan: widgetTemplateElement.column.span.numerator,
+		options: hashPrinter(settings.possibleParentWidgets, 'label', 'id', '- '),
+		required: widgetTemplateElement.required,
+		'data-form-updater': true,
+	}) }}
+{% endblock %}
+
+
+{% block formControlTitle %}
+	{{ FormHelper.control('title', {
+		columnSpan: widgetTemplateElement.column.span.numerator,
+		required: widgetTemplateElement.required,
+	}) }}
+{% endblock %}
+
+
+{% block formControlSubtitle %}
+	{{ FormHelper.control('subtitle', {
+		columnSpan: widgetTemplateElement.column.span.numerator,
+		required: widgetTemplateElement.required,
+	}) }}
+{% endblock %}
+
+
+{% block formControlText %}
+	{{ FormHelper.control('text', {
+		columnSpan: widgetTemplateElement.column.span.numerator,
+		required: widgetTemplateElement.required,
+		'data-editor': true,
+	}) }}
+{% endblock %}
+
+
+{% block formControlLink %}
+	{{ FormHelper.control('link', {
+		columnSpan: widgetTemplateElement.column.span.numerator,
+		required: widgetTemplateElement.required,
+	}) }}
+{% endblock %}
+
+
+{% block formControlCssClass %}
+	{{ FormHelper.control('css_class', {
+		columnSpan: widgetTemplateElement.column.span.numerator,
+		required: widgetTemplateElement.required,
+	}) }}
+{% endblock %}

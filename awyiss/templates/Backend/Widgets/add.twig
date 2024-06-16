@@ -1,0 +1,45 @@
+{#
+@var widget \Awyiss\Model\Entity\Widget
+@var widgetTemplates \Cake\Collection\CollectionInterface
+@var possibleParentWidgets \Cake\Collection\CollectionInterface
+@var assignedAttributes array
+@var widgetElementsByFieldset WidgetTemplateElement[]
+@var languageRealm string
+@var languageShortcode string
+@var _view \Awyiss\View\BackendView
+#}
+
+<div class="Widgets Form Add">
+	{% if AuthorizationHelper.isAccessible('read') %}
+		{{ HtmlHelper.link(__('back_to_overview'), {action: 'overview'}, {class: 'BackToOverview'}) }}
+	{% endif %}
+
+	{% block headlineAdd %}
+		<h1>{{ __('headline_add') }}</h1>
+	{% endblock %}
+
+	{{ FormHelper.create(widget, {method: 'post', idPrefix: 'widget'}) }}
+
+	{% block buttonArea %}
+		<div class="ButtonArea">
+			{% block formAddButtons %}
+				{{ FormHelper.button(__('save'), {class: 'Button Button-Success Button-Save'}) }}
+				{% if AuthorizationHelper.isAccessible('read') %}
+					{{ FormHelper.button(__('save_close'), {class: 'Button Button-SaveClose', name: 'submit', value: 'submit_close'}) }}
+				{% endif %}
+			{% endblock %}
+		</div>
+	{% endblock %}
+
+	{% block formAdd %}
+		{% include('@Backend/Widgets/form.twig') %}
+	{% endblock %}
+
+	{% block buttonAreaBottom %}
+		<div class="ButtonArea ButtonArea-Bottom">
+			{{ block('formAddButtons') }}
+		</div>
+	{% endblock %}
+
+	{{ FormHelper.end() }}
+</div>

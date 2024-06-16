@@ -1,0 +1,43 @@
+{#
+@var widgetTemplate \Awyiss\Model\Entity\WidgetTemplate
+@var availableWidgetElements array
+@var availableWidgetAttributes array
+@var availableFieldsets array
+@var pageTemplates
+@var _view \Awyiss\View\BackendView
+#}
+
+<div class="WidgetTemplates Form Add">
+	{% if AuthorizationHelper.isAccessible('read') %}
+		{{ HtmlHelper.link(__('back_to_overview'), {action: 'overview', pageId: page.id}, {class: 'BackToOverview'}) }}
+	{% endif %}
+
+	{% block headlineAdd %}
+		<h1>{{ __('headline_add') }}</h1>
+	{% endblock %}
+
+	{{ FormHelper.create(widgetTemplate, {method: 'post', idPrefix: 'widget_template'}) }}
+
+	{% block buttonArea %}
+		<div class="ButtonArea">
+			{% block formAddButtons %}
+				{{ FormHelper.button(__('save'), {class: 'Button Button-Success Button-Save'}) }}
+				{% if AuthorizationHelper.isAccessible('read') %}
+					{{ FormHelper.button(__('save_close'), {class: 'Button Button-SaveClose', name: 'submit', value: 'submit_close'}) }}
+				{% endif %}
+			{% endblock %}
+		</div>
+	{% endblock %}
+
+	{% block formAdd %}
+		{% include('@Backend/WidgetTemplates/form.twig') %}
+	{% endblock %}
+
+	{% block buttonAreaBottom %}
+		<div class="ButtonArea ButtonArea-Bottom">
+			{{ block('formAddButtons') }}
+		</div>
+	{% endblock %}
+
+	{{ FormHelper.end() }}
+</div>

@@ -56,10 +56,10 @@ class AttributesListener implements EventListenerInterface {
 		/** @var \Awyiss\Model\Table\AttributesTable $lo_table */
 		$lo_table = $event->getSubject();
 
-		if ($entity->scope === 'contents') {
-			//For contents, the content template decides where an attribute will go
+		if (in_array($entity->scope, ['contents', 'widgets'])) {
+			//For contents & widgets, the content template decides where an attribute will go
 			$entity->fieldset = '';
-			//For contents, the content template decides whether an attribute is required
+			//For contents & widgets, the content template decides whether an attribute is required
 			$entity->required = false;
 		}
 

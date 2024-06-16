@@ -1,0 +1,217 @@
+.WidgetTemplatesController {
+	.Fieldset-WidgetElements {
+		padding:0;
+		box-shadow:none;
+		background-color:transparent;
+		grid-template-columns:repeat(3, 1fr);
+	}
+
+	.Fieldset-WidgetElements-Available,
+	.Fieldset-Fieldset {
+		display:block;
+		padding:20px;
+
+		&.Collapsed {
+			padding-block:0;
+		}
+	}
+
+	.Fieldset-WidgetElements-Available {
+		margin-bottom:0;
+		position:sticky;
+		top:160px;
+		grid-column:1 / 1;
+
+		&:not(:has(.Item)) {
+			padding-bottom:40px;
+
+			&:has(.SortableDragging) {
+				background-color:#D5F1E5;
+
+				.🌚& {
+					background-color:var(--colorSemiDark)
+				}
+			}
+
+			&::after {
+				@extend %EmptyList;
+
+				.🌚& {
+					@extend %EmptyListDarkMode;
+
+				}
+			}
+
+			.List {
+				height:40px;
+			}
+		}
+
+		.List {
+			max-height:calc(100dvh - 240px);
+			margin:-5px -10px 0;
+			padding-inline:10px;
+			overflow-y:auto;
+			scrollbar-color:var(--colorMedium) var(--colorLight);
+			scrollbar-width:thin;
+
+			.🌚& {
+				scrollbar-color:var(--colorSemiDark) var(--colorBackgroundWidgetDarkMode-Darkened-4-Alpha-85);
+			}
+		}
+	}
+
+	.Item {
+		margin:5px 0 0 0;
+		padding:3px 20px 7px;
+		border-radius:5px;
+		background-color:var(--colorNeutralLight);
+		list-style-type:none;
+		transition:background-color .3s ease-in-out;
+		cursor:move;
+
+		.🌚& {
+			background-color:var(--colorSemiDark);
+		}
+
+		.Scale-Small& {
+			padding-bottom:3px;
+		}
+
+		&.SortableGhost {
+			outline:2px solid var(--colorSuccess);
+			outline-offset:-2px;
+
+			&,
+			.🌚&,
+			.🌚&[data-assignable="false"],
+			.🌚&:hover {
+				background-color:var(--colorSuccess);
+			}
+
+			&:hover {
+				background-color:var(--colorSuccess);
+			}
+		}
+
+		&[data-assignable="false"] {
+			background-color:var(--colorNeutralLight-Alpha-50);
+
+			.🌚& {
+				background-color:var(--colorSemiDarkDarkMode-Darkened-4);
+			}
+
+			.Title {
+				color:var(--colorMedium);
+			}
+		}
+
+		&:hover {
+			background-color:var(--colorLight);
+
+			.🌚& {
+				background-color:var(--colorSemiDarkDarkMode-Lightened-4);
+			}
+		}
+
+		.Title {
+			display:block;
+			line-height:40px;
+
+			label,
+			input {
+				pointer-events:none;
+			}
+
+			input {
+				display:none;
+			}
+		}
+
+		> label,
+		.FormInputType-Select,
+		.FormInputType-Checkbox {
+			display:none;
+		}
+	}
+
+	.Fieldset-Fieldset {
+		grid-column:2 / -1;
+
+		&:not(.Collapsed) {
+			&:not(:has(.Item)) {
+				padding-bottom:40px;
+
+				&:has(.SortableDragging) {
+					background-color:#D5F1E5;
+
+					.🌚& {
+						background-color:var(--colorSemiDark)
+					}
+				}
+
+				&::after {
+					@extend %EmptyList;
+
+					.🌚& {
+						@extend %EmptyListDarkMode;
+
+					}
+				}
+
+				.List {
+					height:40px;
+				}
+			}
+		}
+
+		&:last-child {
+			margin-bottom:0;
+		}
+
+		.WidgetElement {
+			display:grid;
+			grid-template-columns:1fr 350px;
+
+			&[data-assignable="false"] {
+				.FormInputType-Checkbox {
+					color:var(--colorText);
+				}
+			}
+
+			.Title {
+				margin-bottom:-.75rem;
+				grid-column:1 / span 2;
+			}
+
+			.FormInputType-Select {
+				display:flex;
+				margin-bottom:0;
+				grid-column:2 / span 1;
+
+				.Label {
+					display:inline-block;
+					width:200px;
+					margin-bottom:0;
+					line-height:52px;
+				}
+			}
+
+			.FormInputType-Checkbox {
+				display:block;
+				margin-top:.3rem;
+				margin-bottom:0;
+				white-space:nowrap;
+				grid-column:auto / span 1;
+
+				label {
+					line-height:40px;
+
+					&::before {
+						top:10px;
+					}
+				}
+			}
+		}
+	}
+}

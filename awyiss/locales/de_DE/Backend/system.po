@@ -14,6 +14,9 @@ msgstr ""
 msgid "menu_title"
 msgstr "System"
 
+msgid "menu_title_templates"
+msgstr "Templates"
+
 msgid "menu_configure"
 msgstr "Konfiguration"
 

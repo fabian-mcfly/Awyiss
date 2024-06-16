@@ -1,0 +1,108 @@
+# Widgets translations of Awyiss CMS
+# Copyright 2024 Awyiss <EMAIL@ADDRESS>
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 0.1.0\n"
+"POT-Creation-Date: 2024-06-14 20:05+0000\n"
+"PO-Revision-Date: 2024-06-14 20:05+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+msgid "meta_title_overview"
+msgstr "Widgets"
+
+msgid "meta_title_add"
+msgstr "Widget hinzufügen"
+
+msgid "meta_title_edit"
+msgstr "Widget bearbeiten"
+
+msgid "menu_title"
+msgstr "Widgets"
+
+msgid "menu_add"
+msgstr "Neues Widget"
+
+msgid "headline_overview"
+msgstr "Widgets"
+
+msgid "create"
+msgstr "Neues Widget"
+
+msgid "headline_add"
+msgstr "Widget hinzufügen"
+
+msgid "add_succeeded"
+msgstr "Das Widget wurde erfolgreich hinzugefügt"
+
+msgid "add_failed"
+msgstr "Das Widget konnte nicht hinzugefügt werden"
+
+msgid "headline_edit"
+msgstr "Widget bearbeiten"
+
+msgid "edit_succeeded"
+msgstr "Das Widget wurde erfolgreich aktualisiert"
+
+msgid "edit_failed"
+msgstr "Das Widget konnte nicht aktualisiert werden"
+
+msgid "record_not_found"
+msgstr "Das Widget wurde nicht gefunden"
+
+msgid "confirm_delete"
+msgstr "Sind Sie sicher, dass Sie dieses Widget (ID: {0}) löschen möchten?"
+
+msgid "delete_succeeded"
+msgstr "Das Widget wurde erfolgreich gelöscht"
+
+msgid "delete_failed"
+msgstr "Das Widget konnte nicht gelöscht werden"
+
+msgid "overview_list_linear"
+msgstr "Listen-Darstellung"
+
+msgid "overview_list_with_columns"
+msgstr "Spalten-Darstellung"
+
+msgid "identifier"
+msgstr "Identifikator"
+
+msgid "widget_template_id"
+msgstr "Widgettemplate"
+
+msgid "parent_id"
+msgstr "Unterpunkt von"
+
+msgid "subtitle"
+msgstr "Untertitel"
+
+msgid "text"
+msgstr "Text"
+
+msgid "link"
+msgstr "Link"
+
+msgid "column_width"
+msgstr "Spaltenbreite"
+
+msgid "column_indent"
+msgstr "Spalten-Einrückung"
+
+msgid "column_last"
+msgstr "Letztes Inhalt in der Zeile"
+
+msgid "column_rtl"
+msgstr "Rechts-nach-links"
+
+msgid "css_class"
+msgstr "CSS-Klasse"
+
+msgid "fieldset_data"
+msgstr "Data-Attribute"
+
+msgid "data"
+msgstr "Data-Attribute"

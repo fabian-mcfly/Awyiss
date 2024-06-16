@@ -428,6 +428,21 @@
 		"link": null,
 		"access": null,
 		"children": {
+			"widgets": {
+				"title": {
+					"translate": ["widgets", "menu_title"]
+				},
+				"link": {
+					"url": {
+						"controller": "Widgets",
+						"action": "overview"
+					}
+				},
+				"access": {
+					"scope": "widgets",
+					"identifier": "read"
+				}
+			},
 			"designs": {
 				"title": {
 					"translate": ["designs", "menu_title"]
@@ -697,6 +712,69 @@
 								},
 								"access": {
 									"scope": "content_templates",
+									"identifier": "configure"
+								}
+							}
+						}
+					},
+					"widget_templates": {
+						"title": {
+							"translate": ["widget_templates", "menu_title"]
+						},
+						"link": {
+							"url": {
+								"controller": "WidgetTemplates",
+								"action": "overview"
+							}
+						},
+						"access": {
+							"scope": "widget_templates",
+							"identifier": "read"
+						},
+						"children": {
+							"widget_templates_overview": {
+								"title": {
+									"translate": ["widget_templates", "menu_overview"]
+								},
+								"link": {
+									"url": {
+										"controller": "WidgetTemplates",
+										"action": "overview"
+									}
+								},
+								"access": {
+									"scope": "WidgetTemplates",
+									"identifier": "read"
+								}
+							},
+							"widget_templates_add": {
+								"title": {
+									"translate": ["widget_templates", "menu_add"]
+								},
+								"link": {
+									"url": {
+										"controller": "WidgetTemplates",
+										"action": "add"
+									}
+								},
+								"access": {
+									"scope": "widget_templates",
+									"identifier": "create"
+								}
+							},
+							"widget_templates_configure": {
+								"title": {
+									"translate": ["widget_templates", "menu_configure"]
+								},
+								"link": {
+									"url": {
+										"controller": "Configuration",
+										"action": "overview",
+										"scope": "widget-templates"
+									}
+								},
+								"access": {
+									"scope": "widget_templates",
 									"identifier": "configure"
 								}
 							}

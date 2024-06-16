@@ -1,0 +1,209 @@
+.WidgetsController {
+	#Content {
+		.Button-ColumnView {
+			margin:0;
+		}
+	}
+
+	.ButtonArea {
+		position:relative;
+
+		&.CannotMoveUpwards {
+			.Button-ColumnView {
+				bottom:calc(var(--lineHeightMain) * -1);
+			}
+		}
+
+		&.ButtonArea-Bottom {
+			.Button-ColumnView {
+				border-radius:0 0 5px 5px;
+				top:calc(var(--lineHeightMain) * -2);
+				bottom:auto;
+			}
+		}
+
+		.Button-ColumnView {
+			width:80px;
+			height:40px;
+			padding:0;
+			box-shadow:none;
+			border-radius:5px 5px 0 0;
+			background-color:var(--colorMedium);
+			font-size:0;
+			line-height:0;
+			text-align:center;
+			position:absolute;
+			bottom:calc(var(--lineHeightMain) * -1);
+			right:20px;
+			opacity:.5;
+			transition:opacity .3s ease-in-out;
+
+			&[disabled] {
+				background-color:var(--colorDark);
+				opacity:initial;
+			}
+
+			&:hover {
+				opacity:1;
+			}
+
+			&::after {
+				@include la('\f0c9', 30px);
+				line-height:40px;
+			}
+		}
+
+		.Button-ColumnView-Enable {
+			right:105px;
+
+			&::after {
+				content:'\f009';
+			}
+		}
+	}
+
+	.Overview {
+		&:has(.SortableChosen[data-nestable="false"]) {
+			ul.Widgets-List {
+				&:not(:has(.ListItem)) {
+					--emptyListHeight:40px;
+					background-color:transparent;
+				}
+			}
+		}
+
+		&:has(.SortableChosen[data-disallow-top-level="true"]) {
+			.Overview-Fieldset {
+				&:has(.SortableDragging) {
+					background-color:var(--backgroundColorContent);
+
+					.🌚& {
+						background-color:var(--backgroundColorContent);
+					}
+				}
+			}
+
+			ul.Widgets-List {
+				&.Level1 {
+					&:not(:has(.ListItem)) {
+						--emptyListHeight:40px;
+						background-color:transparent;
+					}
+
+				}
+			}
+		}
+	}
+
+	.Overview-Fieldset {
+		grid-column:1 / span 4;
+
+		&.Overview-Fieldset-Unknown {
+			outline:2px solid var(--colorError);
+			outline-offset:-2px;
+
+			legend {
+				background-color:var(--colorError);
+			}
+		}
+
+		&.Collapsed {
+			/*legend {
+				border-bottom-right-radius:0;
+			}*/
+
+			.NestedList-Compact {
+				display:none;
+			}
+		}
+
+		&:first-of-type {
+			border-top-right-radius:0;
+		}
+
+		&:last-of-type {
+			border-bottom-right-radius:0;
+		}
+
+		&:not(.Collapsed) {
+			&:not(:has(.ListItem)) {
+				padding-bottom:40px;
+
+				&:has(.SortableDragging) {
+					background-color:#D5F1E5;
+
+					.🌚& {
+						background-color:var(--colorSemiDark)
+					}
+				}
+
+				&::after {
+					@extend %EmptyList;
+
+					.🌚& {
+						@extend %EmptyListDarkMode;
+
+					}
+				}
+
+				.Widgets-List {
+					margin-left:-52px;
+					height:40px;
+
+					&.SortableDragging {
+						--emptyListHeight:60px;
+					}
+
+					&.NestedList-Compact {
+						margin-left:0;
+					}
+				}
+			}
+		}
+	}
+
+	.NestedList-Compact {
+		display:flex;
+		flex-wrap:wrap;
+
+		.ListItem {
+			@each $columnWidth in $columnWidths {
+				&.#{map-get($columnWidth, 'class')} {
+					$numerator:map-get($columnWidth, 'numerator');
+					$denominator:map-get($columnWidth, 'denominator');
+					$width:round(($numerator / $denominator) * 1000000) / 1000000;
+					width:#{percentage($width)};
+					flex:0 0 #{percentage($width)};
+
+					@if $width < .5 {
+						.Title,
+						.ListItem-Inner .Title {
+							font-size:.6rem;
+						}
+					}
+					@else if $width < 1 {
+						.Title {
+							font-size:.8rem;
+						}
+					}
+				}
+			}
+
+			@each $column in $columnIndents {
+				&.#{map-get($column, 'class')} {
+					$numerator:map-get($column, 'numerator');
+					$denominator:map-get($column, 'denominator');
+					$width:round(($numerator / $denominator) * 1000000) / 1000000;
+					margin-left:#{percentage($width)};
+				}
+			}
+
+
+			&.Narrow {
+				width:100%;
+				margin-left:0;
+				flex-basis:auto;
+			}
+		}
+	}
+}
