@@ -17,7 +17,7 @@
 #}
 
 <div class="{{ content.cssClass }}" {{ content.data|data_attr|raw }} id="Content{{ content.id }}">
-	<!-- Here be dragons -->
+	{{ content.text|raw }}
 
 	{% if children %}
 		<div class="Children">
