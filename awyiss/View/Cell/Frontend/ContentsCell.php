@@ -81,11 +81,9 @@ class ContentsCell extends Cell {
 		 * Either because it's not active (allowed to happen)
 		 * or because it's not part of the same page. (shouldn't happen)
 		 */
-		$lo_contents = $lo_contents->filter(function ($content) {
-			return $content->parent_id === null;
+		$lo_contents = $lo_contents->filter(function (Content $content) {
+			return $content->parentId === null;
 		})->compile();
-
-		$this->set($options['viewVars']);
 
 		$this->prepareContents($lo_contents, (float)$la_options['columnWidth']);
 
