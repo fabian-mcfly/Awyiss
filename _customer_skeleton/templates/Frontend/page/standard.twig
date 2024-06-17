@@ -14,14 +14,7 @@
 {% include '@Frontend/element/header.twig' %}
 
 <main id="ContentArea">
-	{{ cell('Frontend/Contents', [
-		'ContentArea',
-		page,
-		{
-			includeWrapper: false,
-			viewVars: _context,
-		}
-	]) }}
+	{{ content('ContentArea', {includeWrapper: false}) }}
 </main>
 
 {% include '@Frontend/element/footer.twig' %}
