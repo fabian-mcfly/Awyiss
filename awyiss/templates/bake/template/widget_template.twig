@@ -1,9 +1,27 @@
 {% verbatim %}{#
-@var widget \Awyiss\Model\Entity\Widget
-@var widgetTemplate \Awyiss\Model\Entity\WidgetTemplate
+@var widget \Awyiss\Model\Entity\Content
+@var children string
+@var page \Awyiss\Model\Entity\Page
+@var baseUrl string
+@var currentLanguage \Awyiss\Model\Entity\Language
+@var currentPath string
+@var currentUrl string
+@var folder string
+@var languages \Awyiss\Model\Entity\Language[]
+@var languageShortcode string
 @var _view \Awyiss\View\FrontendView
+
+// In case you need to set a class for the row, you can do it like this:
+{%- do _view.setRowClass('FlexRow') -%}
+
 #}{% endverbatim %}
 
-<div class="{% verbatim %}{{ widget.cssClass }}{% endverbatim %}"{% verbatim %}{{ widget.data }}{% endverbatim %} id="Widget{% verbatim %}{{ widget.id }}{% endverbatim %}">
+<div class="{% verbatim %}{{ widget.cssClass }}{% endverbatim %}"{% verbatim %} {{ widget.data|data_attr|raw }}{% endverbatim %} id="Widget{% verbatim %}{{ widget.id }}{% endverbatim %}">
 	<!-- Here be dragons -->
+
+	{% verbatim %}{% if children %}{% endverbatim %}
+	<div class="Children">
+		{% verbatim %}{{ children|raw }}{% endverbatim %}
+	</div>
+	{% verbatim %}{% endif %}{% endverbatim %}
 </div>

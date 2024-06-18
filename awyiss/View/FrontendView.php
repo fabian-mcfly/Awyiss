@@ -8,6 +8,7 @@ use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Routing\Router;
 use Awyiss\Utility\Inflector;
 use Awyiss\View\Exception\MissingContentException;
+use Awyiss\View\Exception\MissingWidgetException;
 use Generator;
 
 
@@ -21,6 +22,12 @@ class FrontendView extends AppView {
 	 * @var string
 	 */
 	public const TYPE_CONTENT = 'content';
+	/**
+	 * Constant for view file type 'content'
+	 *
+	 * @var string
+	 */
+	public const TYPE_WIDGET = 'widget';
 
 
 	/**
@@ -40,6 +47,15 @@ class FrontendView extends AppView {
 	 * @var string
 	 */
 	protected string $contentCache = 'default';
+	/**
+	 * The Cache configuration View will use to store cached widgets. Changing this will change
+	 * the default configuration widgets are stored under. You can also choose a cache config
+	 * per element.
+	 *
+	 * @see \Cake\View\View::widget()
+	 * @var string
+	 */
+	protected string $widgetCache = 'default';
 
 
 	/**
@@ -47,6 +63,7 @@ class FrontendView extends AppView {
 	 * @return void
 	 * @throws \Twig\Error\LoaderError
 	 * @throws \Exception
+	 * @noinspection DuplicatedCode
 	 */
 	public function initialize(): void {
 		parent::initialize();
@@ -101,26 +118,6 @@ class FrontendView extends AppView {
 		$lo_twig->addGlobal('languageShortcode', $lo_frontendLanguage?->shortcode);
 	}
 
-
-	/**
-	 * @param bool $flex
-	 * @return $this
-	 */
-	public function enableFlexRow(bool $flex = true): static {
-		static::$flexRow = $flex;
-
-		return $this;
-	}
-
-
-	/**
-	 * @return $this
-	 */
-	public function disableFlexRow(): static {
-		static::$flexRow = false;
-
-		return $this;
-	}
 
 	/**
 	 * 1:1 implementation of \Cake\View\View::element() with the only difference being the template path
@@ -270,24 +267,188 @@ class FrontendView extends AppView {
 	 * @triggers View.afterRender $this, [$file, $content]
 	 */
 	protected function _renderContent(string $file, array $data, array $options): string {
+		return $this->renderContentOrWidget('content', $options['callbacks'], $file, $data);
+	}
+
+
+	/**
+	 * 1:1 implementation of \Cake\View\View::element() with the only difference being the template path
+	 *
+	 * @param string $name Name of template file in the `templates/widget/` folder
+	 * @param array $data Array of data to be made available to the rendered view (i.e. the Widget)
+	 * @param array<string, mixed> $options Array of options. Possible keys are:
+	 * - `cache` - Can either be `true`, to enable caching using the config in View::$widgetCache. Or an array
+	 *   If an array, the following keys can be used:
+	 *   - `config` - Used to store the cached widget in a custom cache configuration.
+	 *   - `key` - Used to define the key used in the Cache::write(). It will be prefixed with `widget_`
+	 * - `callbacks` - Set to true to fire beforeRender and afterRender helper callbacks for this widget.
+	 *   Defaults to false.
+	 * - `ignoreMissing` - Used to allow missing widgets. Set to true to not throw exceptions.
+	 * - `plugin` - setting to false will force to use the application's widget from plugin templates, when the
+	 *   plugin has widget with same name. Defaults to true
+	 * @return string Rendered Widget
+	 * @throws \Awyiss\View\Exception\MissingWidgetException When a widget is missing and `ignoreMissing`
+	 *   is false.
+	 * @psalm-param array{cache?:array|true, callbacks?:bool, plugin?:string|false, ignoreMissing?:bool} $options
+	 */
+	public function widget(string $name, array $data = [], array $options = []): string {
+		$la_options = $options + ['callbacks' => false, 'cache' => null, 'plugin' => null, 'ignoreMissing' => false];
+		if (isset($la_options['cache'])) {
+			$la_options['cache'] = $this->_widgetCache(
+				$name,
+				$data,
+				array_diff_key($la_options, ['callbacks' => false, 'plugin' => null, 'ignoreMissing' => null])
+			);
+		}
+
+		$lb_pluginCheck = $la_options['plugin'] !== false;
+		$ls_file = $this->_getWidgetFileName($name, $lb_pluginCheck);
+		if ($ls_file && $la_options['cache']) {
+			return $this->cache(function () use ($ls_file, $data, $la_options): void {
+				echo $this->_renderWidget($ls_file, $data, $la_options);
+			}, $la_options['cache']);
+		}
+		if ($ls_file) {
+			return $this->_renderWidget($ls_file, $data, $la_options);
+		}
+
+		if ($la_options['ignoreMissing']) {
+			return '';
+		}
+
+		[$ls_plugin, $ls_widgetName] = $this->pluginSplit($name, $lb_pluginCheck);
+		$la_paths = iterator_to_array($this->getWidgetPaths($ls_plugin));
+		throw new MissingWidgetException([$name . $this->_ext, $ls_widgetName . $this->_ext], $la_paths);
+	}
+
+
+	/**
+	 * Generate the cache configuration options for a widget.
+	 *
+	 * @param string $name Widget name
+	 * @param array $data Data
+	 * @param array<string, mixed> $options Widget options
+	 * @return array<string, mixed> Widget Cache configuration.
+	 * @psalm-return array{key:string, config:string}
+	 */
+	protected function _widgetCache(string $name, array $data, array $options): array {
+		if (isset($options['cache']['key'], $options['cache']['config'])) {
+			/** @psalm-var array{key:string, config:string} $la_cache */
+			$la_cache = $options['cache'];
+			$la_cache['key'] = 'widget_' . $la_cache['key'];
+
+			return $la_cache;
+		}
+
+		[$ls_plugin, $ls_name] = $this->pluginSplit($name);
+
+		$ls_pluginKey = null;
+		if ($ls_plugin) {
+			$ls_pluginKey = str_replace('/', '_', Inflector::underscore($ls_plugin));
+		}
+		$ls_widgetKey = str_replace(['\\', '/'], '_', $ls_name);
+
+		$la_cache = $options['cache'];
+		/** @noinspection PhpVariableNamingConventionInspection */
+		unset($options['cache']);
+		$la_keys = array_merge(
+			[$ls_pluginKey, $ls_widgetKey],
+			array_keys($options),
+			array_keys($data)
+		);
+		$la_config = [
+			'config' => $this->widgetCache,
+			'key' => implode('_', $la_keys),
+		];
+		if (is_array($la_cache)) {
+			$la_config = $la_cache + $la_config;
+		}
+		$la_config['key'] = 'widget_' . $la_config['key'];
+
+		/** @var array{config: string, key: string} */
+		return $la_config;
+	}
+
+
+	/**
+	 * Finds a widget filename, returns false on failure.
+	 *
+	 * @param string $name The name of the widget to find.
+	 * @param bool $pluginCheck - if false will ignore the request's plugin if parsed plugin is not loaded
+	 * @return string|false Either a string to the widget filename or false when one can't be found.
+	 */
+	protected function _getWidgetFileName(string $name, bool $pluginCheck = true): string|false {
+		[$ls_plugin, $ls_name] = $this->pluginSplit($name, $pluginCheck);
+
+		$ls_name .= $this->_ext;
+		foreach ($this->getWidgetPaths($ls_plugin) as $ls_path) {
+			if (is_file($ls_path . $ls_name)) {
+				return $ls_path . $ls_name;
+			}
+		}
+
+		return false;
+	}
+
+
+	/**
+	 * Get an iterator for widget paths.
+	 *
+	 * @param string|null $plugin The plugin to fetch paths for.
+	 * @return \Generator
+	 */
+	protected function getWidgetPaths(?string $plugin): Generator {
+		$la_widgetPaths = $this->_getSubPaths(static::TYPE_WIDGET);
+		foreach ($this->_paths($plugin) as $ls_path) {
+			foreach ($la_widgetPaths as $ls_subdir) {
+				yield $ls_path . $ls_subdir . DIRECTORY_SEPARATOR;
+			}
+		}
+	}
+
+
+	/**
+	 * Renders a widget and fires the before and afterRender callbacks for it
+	 * and writes to the cache if a cache is used
+	 *
+	 * @param string $file Widget file path
+	 * @param array $data Data to render
+	 * @param array<string, mixed> $options Widget options
+	 * @return string
+	 * @triggers View.beforeRender $this, [$file]
+	 * @triggers View.afterRender $this, [$file, $widget]
+	 */
+	protected function _renderWidget(string $file, array $data, array $options): string {
+		return $this->renderContentOrWidget('widget', $options['callbacks'], $file, $data);
+	}
+
+
+	/**
+	 * @param string $type
+	 * @param bool $callbacks
+	 * @param string $file
+	 * @param array $data
+	 * @return string
+	 */
+	protected function renderContentOrWidget(string $type, bool $callbacks, string $file, array $data): string {
 		$ls_current = $this->_current;
 		$ls_restore = $this->_currentType;
-		$this->_currentType = static::TYPE_CONTENT;
+		$this->_currentType = $type === 'widget' ? static::TYPE_WIDGET : static::TYPE_CONTENT;
 
-		if ($options['callbacks']) {
+		if ($callbacks) {
 			$this->dispatchEvent('View.beforeRender', [$file]);
 		}
 
-		$ls_content = $this->_render($file, array_merge($this->viewVars, $data));
+		$ls_widget = $this->_render($file, array_merge($this->viewVars, $data));
 
-		if ($options['callbacks']) {
-			$this->dispatchEvent('View.afterRender', [$file, $ls_content]);
+		if ($callbacks) {
+			$this->dispatchEvent('View.afterRender', [$file, $ls_widget]);
 		}
 
 		$this->_currentType = $ls_restore;
 		$this->_current = $ls_current;
 
-		return $ls_content;
+		return $ls_widget;
 	}
 
 
