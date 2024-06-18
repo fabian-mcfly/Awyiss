@@ -37,6 +37,7 @@ class FrontendController extends AppController {
 
 	/**
 	 * @return void
+	 * @throws \Exception
 	 */
 	public function index(): void {
 		$ls_slug = $this->request->getParam('slug');
@@ -137,6 +138,7 @@ class FrontendController extends AppController {
 	/**
 	 * @param \Awyiss\Model\Entity\Page|null $page
 	 * @return void
+	 * @throws \Exception
 	 */
 	protected function handlePage(?Page $page): void {
 		// If no page was found, return a 404 error
@@ -194,10 +196,15 @@ class FrontendController extends AppController {
 	 *
 	 * @param \Awyiss\Model\Entity\Page $page
 	 * @return void
+	 * @throws \Exception
 	 */
 	protected function redirectIfNotNormalized(Page $page): void {
 		$ls_languageShortcode = $this->request->getParam('lang');
 		$ls_slug = $this->request->getParam('slug');
+		$la_params = $this->request->getQueryParams();
+		if ($la_params && $ls_slug) {
+			$ls_slug = rtrim($ls_slug, '/') . '/';
+		}
 
 		if ($ls_languageShortcode) {
 			if (!$ls_slug) {
@@ -206,14 +213,20 @@ class FrontendController extends AppController {
 				 * If it is, redirect to the domain without the language.
 				 */
 				if ($ls_languageShortcode === LocaleMiddleware::getDefaultLanguage()->shortcode) {
-					throw new RedirectException(
-						Router::url(['_name' => 'FrontendRoot', ...$this->request->getQueryParams()], true),
-						301
-					);
+					$ls_url = Router::url(['_name' => 'FrontendRoot', ...$this->request->getQueryParams(), '?' => $this->request->getParam('?'),], true);
+
+					throw new RedirectException($ls_url, 301);
 				}
 
 				if (!str_ends_with($this->request->getPath(), '/')) {
-					throw new RedirectException(Router::url($this->request->getPath() . '/', true), 301);
+					$ls_url = Router::url([
+						'_name' => 'FrontendLanguageRoot',
+						'lang' => $ls_languageShortcode,
+						'?' => $this->request->getParam('?'),
+						...$this->request->getQueryParams(),
+					], true);
+
+					throw new RedirectException($ls_url, 301);
 				}
 				else {
 					return;
@@ -229,14 +242,16 @@ class FrontendController extends AppController {
 					$la_url = [
 						'_name' => 'FrontendLanguageRoot',
 						'lang' => $ls_languageShortcode,
+						'?' => $this->request->getParam('?'),
 						...$this->request->getQueryParams(),
 					];
 
 					// For the default language, the language is not included in the URL
 					if ($ls_languageShortcode === LocaleMiddleware::getDefaultLanguage()->shortcode) {
 						$la_url = [
-							'_name' => 'FrontendRoot',
+							'?' => $this->request->getParam('?'),
 							...$this->request->getQueryParams(),
+							'_name' => 'FrontendRoot',
 						];
 					}
 
@@ -245,15 +260,35 @@ class FrontendController extends AppController {
 			}
 		}
 
-		$ls_realUrl = $page->languageShortcode . '/' . $page->slug . '/';
-		$ls_testUrl = $ls_languageShortcode . '/' . $ls_slug;
+		$ls_testUrl = $page->languageShortcode . '/' . $page->slug . '/';
+		$ls_currentUrl = $ls_languageShortcode . '/' . $ls_slug;
 
 		// If the URL does not match the normalized URL, redirect to the normalized URL
 		if (
-			$ls_realUrl !== $ls_testUrl &&
-			$ls_testUrl !== '/'
+			!str_ends_with($this->request->getPath(), '/') ||
+			(
+				$ls_testUrl !== $ls_currentUrl &&
+				$ls_currentUrl !== '/' &&
+				$ls_currentUrl !== '//'
+			)
 		) {
-			throw new RedirectException(Router::url($ls_realUrl, true), 301);
+			if (!trim($ls_currentUrl, '/')) {
+				$ls_realUrl = Router::url([
+					'?' => $this->request->getParam('?'),
+					...$this->request->getQueryParams(),
+					'_name' => 'FrontendRoot',
+				]);
+			}
+			else {
+				$ls_realUrl = Router::url([
+					'lang' => $page->languageShortcode,
+					'slug' => $page->slug,
+					'?' => $this->request->getParam('?'),
+					...$this->request->getQueryParams(),
+				]);
+			}
+
+			throw new RedirectException($ls_realUrl, 301);
 		}
 	}
 }
