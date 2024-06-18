@@ -126,12 +126,17 @@ class ScssCompiler {
 			return null;
 		}
 
+		$lo_scssVariableProvider = new ScssVariableProvider(Configure::read('Design'));
+
 		// Compile all main files from the ScssFilesCollection object
 		$la_compiledCss = [];
 		foreach ($files->getMainFiles() as $lo_file) {
-			$la_compiledCss[] = self::compileScss($lo_file, $basePath, $vars, $returnCss);
-		}
+			$lo_scssVariableProvider->setScssFiles([$lo_file->getPathname()]);
 
+			$lb_includeColumnSystem = isset($lo_scssVariableProvider->getInternalVariables()['includeColumnSystem']);
+
+			$la_compiledCss[] = self::compileScss($lo_file, $basePath, $vars, $returnCss, $lb_includeColumnSystem);
+		}
 
 		// Return the compiled CSS content
 		return $la_compiledCss;
@@ -259,11 +264,11 @@ class ScssCompiler {
 	 * @param string $basePath
 	 * @param array $vars The variables to be passed to the SCSS compiler.
 	 * @param bool $returnCss If true, returns the compiled CSS content; otherwise, writes it to the file system.
+	 * @param bool $includeColumnSystem
 	 * @return \ScssPhp\ScssPhp\CompilationResult|string|false
 	 * @throws \ScssPhp\ScssPhp\Exception\SassException
-	 * @throws \Exception
 	 */
-	public static function compileScss(SplFileInfo $file, string $basePath, array $vars, bool $returnCss): CompilationResult|string|false {
+	public static function compileScss(SplFileInfo $file, string $basePath, array $vars, bool $returnCss, bool $includeColumnSystem = false): CompilationResult|string|false {
 		// Make sure it's a .scss file.
 		if ($file->getExtension() !== 'scss') {
 			throw new InvalidArgumentException(sprintf('The file `%s` is not a valid SCSS file.', $file->getBasename()));
@@ -302,9 +307,32 @@ class ScssCompiler {
 			]);
 		}
 
+		$ls_fileContents = '';
+
+		/**
+		 * `Backend` is hardcoded here since both frontend and backend use the same column system.
+		 *
+		 * @var \Awyiss\Utility\Content\ColumnSystemInterface $ls_columnSystemClassName
+		 */
+		$ls_columnSystemClassName = Configure::read('Awyiss.Contents.Backend.columnSystem.className');
+		$la_columnSystemFilePaths = $ls_columnSystemClassName::getScssFilePaths();
+		if ($includeColumnSystem && !empty($la_columnSystemFilePaths['pre'])) {
+			foreach ($la_columnSystemFilePaths['pre'] as $ls_columnSystemFilePath) {
+				$ls_fileContents .= sprintf('@import \'%s\';' . PHP_EOL, $ls_columnSystemFilePath);
+			}
+		}
+
 		try {
+			$ls_fileContents .= file_get_contents($file->getPathname());
+
+			if ($includeColumnSystem && !empty($la_columnSystemFilePaths['pre'])) {
+				foreach ($la_columnSystemFilePaths['post'] as $ls_columnSystemFilePath) {
+					$ls_fileContents .= sprintf('@import \'%s\';' . PHP_EOL, $ls_columnSystemFilePath);
+				}
+			}
+
 			// Suppressing the error isn't ideal, but the library has a flaw with attribute selectors.
-			$lo_compilationResult = @$lo_scssCompiler->compileFile($file->getPathname()); // phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged
+			$lo_compilationResult = @$lo_scssCompiler->compileString($ls_fileContents, $file->getPathname()); // phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged
 
 			if ($returnCss) {
 				// If caller requests the CSS content, return it directly.
@@ -353,7 +381,11 @@ class ScssCompiler {
 	 * @return array<string, array<array<string, string|int>>>
 	 */
 	protected static function getColumnSystemVariables(): array {
-		/** @var \Awyiss\Utility\Content\ColumnSystemInterface $ls_columnSystemClassName */
+		/**
+		 * `Backend` is hardcoded here since both frontend and backend use the same column system.
+		 *
+		 * @var \Awyiss\Utility\Content\ColumnSystemInterface $ls_columnSystemClassName
+		 */
 		$ls_columnSystemClassName = Configure::read('Awyiss.Contents.Backend.columnSystem.className');
 
 		$la_widths = [];
@@ -363,6 +395,7 @@ class ScssCompiler {
 				'class' => $lo_column->getCssClass(),
 				'numerator' => $lo_column->getNumerator(),
 				'denominator' => $lo_column->getDenominator(),
+				'percentage' => $lo_column->getFactor() * 100,
 			];
 		}
 
@@ -371,12 +404,15 @@ class ScssCompiler {
 				'class' => $lo_column->getCssClass(),
 				'numerator' => $lo_column->getNumerator(),
 				'denominator' => $lo_column->getDenominator(),
+				'percentage' => $lo_column->getFactor() * 100,
 			];
 		}
 
 		return [
-			'$columnWidths' => static::arrayToScssMap($la_widths),
-			'$columnIndents' => static::arrayToScssMap($la_indents),
+			'columnSystem' => $ls_columnSystemClassName::getName(),
+			'columnWidths' => static::arrayToScssMap($la_widths),
+			'columnIndents' => static::arrayToScssMap($la_indents),
+			'maxColumns' => $ls_columnSystemClassName::getMaxDenominator(),
 		];
 	}
 
