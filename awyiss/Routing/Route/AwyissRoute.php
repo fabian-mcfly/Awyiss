@@ -224,17 +224,11 @@ class AwyissRoute extends DashedRoute {
 		}
 		elseif (str_contains($this->template, '*')) {
 			$la_search[] = '*';
-			if (!empty($params['slug'])) {
-				$la_replace[] = $params['slug'] . (!empty($ls_pass) ? '/' . $ls_pass : null);
-			}
-			else {
-				$la_replace[] = $ls_pass;
-			}
+			$la_replace[] = $ls_pass;
 		}
 
 		// Replace keys surrounded by {} in the url with their corresponding values.
 		$ls_url = str_replace($la_search, $la_replace, $ls_url);
-
 
 		// Complete the url scheme and return the url.
 		return $this->completeUrlScheme($ls_url, $params, $query);
@@ -436,14 +430,14 @@ class AwyissRoute extends DashedRoute {
 			$ls_url = $ls_scheme . '://' . $ls_host . $ls_url;
 		}
 
-		// If the '_ext' key is set in the parameters array or the query array is not empty, remove any trailing slashes from the URL.
-		if (!empty($params['_ext']) || !empty($query)) {
-			$ls_url = rtrim($ls_url, '/');
-		}
-
+		$ls_url = rtrim($ls_url, '/');
 		// If the '_ext' key is set in the parameters array, append it to the URL with a '.'.
 		if (!empty($params['_ext'])) {
 			$ls_url .= '.' . $params['_ext'];
+		}
+		else {
+			// Make sure the URL ends with a slash if it doesn't contain a query string.
+			$ls_url = rtrim($ls_url, '/') . '/';
 		}
 
 		/**
@@ -454,7 +448,6 @@ class AwyissRoute extends DashedRoute {
 		if (!empty($query)) {
 			$ls_url .= rtrim('?' . http_build_query($query), '?');
 		}
-
 
 		// Return the URL.
 		return $ls_url;
