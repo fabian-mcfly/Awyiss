@@ -134,6 +134,17 @@ class AwyissExtension extends AbstractExtension {
 
 				return null;
 			}),
+
+			new TwigFunction(
+				'widget',
+				function (array $context, string $name, array $data = [], array $options = []) {
+					$la_options = ['viewVars' => $context];
+					$la_options = Hash::merge($la_options, $options);
+
+					return $context['_view']->cell('Frontend/Widgets', [$name, $la_options]);
+				},
+				['needs_context' => true, 'is_safe' => ['all']]
+			),
 		];
 	}
 
