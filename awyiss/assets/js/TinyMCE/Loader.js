@@ -238,6 +238,25 @@ export default class Loader {
 				window.formLeaveConfirmation.formChanged();
 			}
 		});
+
+		editor.on('keydown', function (e) {
+			if (e.keyCode === 9) { // Tab key
+				let content = this.getContent({format: 'text'}).trim();
+				if (content === 'lorem') {
+					e.preventDefault();
+					let dummyText = `<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid, animi commodi cum dolor enim et expedita impedit libero magni, modi nulla, quae quia quibusdam quis rem
+						suscipit tempora vero voluptatem?</p>
+						<p>Aliquam consectetur delectus maiores voluptates. Ad aliquid commodi ea, est impedit incidunt ipsam iusto laudantium maxime modi mollitia nostrum odio officia optio
+						pariatur perspiciatis quo, sint tenetur ullam unde voluptatibus?</p>`;
+					this.setContent(dummyText);
+
+					// Move the cursor to the end
+					let lastNode = this.getBody().lastChild;
+					this.selection.select(lastNode);
+					this.selection.collapse(false);
+				}
+			}
+		});
 	}
 
 	/**
@@ -303,8 +322,6 @@ export default class Loader {
 			};
 
 			editor.windowManager._originalOpen(config, params);
-
-			console.log(config.title);
 
 			const dialog = document.querySelector('.tox-dialog');
 
