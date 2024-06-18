@@ -190,7 +190,7 @@ class ContentsCell extends Cell {
 			}
 
 			// Get the real column width of the content
-			$lf_columnWidth = $lo_content->realColumnWidth;
+			$lf_columnWidth = 100 * $lo_content->column['width']->getFactor();
 
 			// If the content has a column indent, add the width of the indent to the current column width
 			if ($lo_content->column['indent']) {
@@ -314,6 +314,10 @@ class ContentsCell extends Cell {
 
 		if ($content->column['indent']) {
 			$content->cssClass .= ' ' . $content->column['indent']?->getCssClass();
+		}
+
+		if ($content->columnRtl) {
+			$content->cssClass .= ' Column-Rtl';
 		}
 
 		if ($ls_cssClass) {
