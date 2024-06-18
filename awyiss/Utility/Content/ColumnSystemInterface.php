@@ -47,4 +47,18 @@ interface ColumnSystemInterface {
 	 * @return array
 	 */
 	public static function getScssColumnList(): array;
+
+
+	/**
+	 * Returns the SCSS file paths for the column system
+	 * The array should have two keys: 'pre' and 'post'
+	 *
+	 * Elements in the 'pre' array will be included before the regular SCSS files
+	 * Elements in the 'post' array will be included after the regular SCSS files
+	 *
+	 * The paths can either be absolute or relative to the SCSS directory, with or without the .scss extension
+	 *
+	 * @return array{pre: string[], post: string[]} The SCSS file paths
+	 */
+	public static function getScssFilePaths(): array;
 }
