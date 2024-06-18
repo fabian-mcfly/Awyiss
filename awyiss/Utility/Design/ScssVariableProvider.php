@@ -374,7 +374,7 @@ class ScssVariableProvider {
 	 * @return bool
 	 */
 	protected function variableIsBlocklisted(string $key): bool {
-		$la_blocklistedVariables = $this->getConfig('blocklistedVariables');
+		$la_blocklistedVariables = $this->getConfig('blocklistedVariables', []);
 
 		if (in_array($key, $la_blocklistedVariables)) {
 			return true;
