@@ -11,6 +11,9 @@
 @var languageShortcode string
 @var _view \Awyiss\View\FrontendView
 #}
-<div class="ContentRow {{ class }}">
+
+{% set class = 'ContentRow ' ~ class %}
+
+<div class="{{ class|trim }}">
 	{{ contents|raw }}
 </div>
