@@ -18,7 +18,7 @@
 	{{ FormHelper.control(variable|underscore, {
 		label: label,
 		type: 'color',
-		val: design.settings[ variable|underscore ] ?? options.value,
+		val: design.settings[ variable ] ?? options.value,
 	}) }}
 {% endblock %}
 
@@ -46,7 +46,7 @@
 				<div class="FormInput FormInputType-CustomFontName FormInputName-CustomFontName{{ variable|camelize }}">
 					{{ FormHelper.control('custom[' ~ variable|underscore ~ ']', {
 						label: false,
-						val: design.settings[ variable|underscore ].font.name and design.settings[ variable|underscore ].font.id is not defined ? design.settings[ variable|underscore ].font.name : ''
+						val: design.settings[ variable ].font.name and design.settings[ variable ].font.id is not defined ? design.settings[ variable ].font.name : ''
 					}) }}
 				</div>
 			{% endset %}
@@ -56,7 +56,7 @@
 					<div class="FormInput FormInputType-FontVariants FormInputName-FontVariant{{ variable|camelize }}Group">
 						{% for i in 1..9 %}
 							{{ FormHelper.control('font_variants[' ~ variable|underscore ~ '][]', {
-								checked: (i * 100) in design.settings[ variable|underscore ].variants,
+								checked: (i * 100) in design.settings[ variable ].variants,
 								hiddenField: false,
 								id: 'FontVariant' ~ variable|camelize ~ (i * 100),
 								label: (i * 100) ~ '',
@@ -64,7 +64,7 @@
 								value: i * 100,
 							}) }}
 							{{ FormHelper.control('font_variants[' ~ variable|underscore ~ '][]', {
-								checked: (i * 100) ~ 'i' in design.settings[ variable|underscore ].variants,
+								checked: (i * 100) ~ 'i' in design.settings[ variable ].variants,
 								hiddenField: false,
 								id: 'FontVariant' ~ variable|camelize ~  (i * 100) ~ 'i',
 								label: (i * 100) ~ 'i',
@@ -83,7 +83,7 @@
 				templateVars: {
 					additionalContent: customFontName ~ fontVariants,
 				},
-				val: design.settings[ variable|underscore ].font.id ?? (design.settings[ variable|underscore ].font.name ? 'custom' : options.value),
+				val: design.settings[ variable ].font.id ?? (design.settings[ variable ].font.name ? 'custom' : options.value),
 			}) }}
 		{% endblock %}
 
@@ -105,7 +105,7 @@
 	{{ FormHelper.control(variable|underscore, {
 		empty: false,
 		options: {'': options.value|replace({',': ', '})  ~ ' (' ~ __('default') ~ ')'}|merge(fontStacks),
-		val: design.settings[ variable|underscore ] ?? options.value,
+		val: design.settings[ variable ] ?? options.value,
 	}) }}
 {% endblock %}
 
@@ -113,7 +113,7 @@
 	{{ FormHelper.control(variable|underscore, {
 		empty: false,
 		options: fontWeights,
-		val: design.settings[ variable|underscore ] ?? options.value,
+		val: design.settings[ variable ] ?? options.value,
 	}) }}
 {% endblock %}
 
@@ -134,7 +134,7 @@
 	{% set output = '' %}
 	{% if options.inputType == 'range' %}
 		{% set output %}
-			<input type="text" name="{{ variable|underscore }}" value="{{ design.settings[ variable|underscore ] ?? options.value }}">
+			<input type="text" name="{{ variable|underscore }}" value="{{ design.settings[ variable ] ?? options.value }}">
 		{% endset %}
 	{% endif %}
 
@@ -149,7 +149,7 @@
 			additionalContent: unit ~ output,
 		},
 		type: options.inputType ? options.inputType : 'number',
-		val: design.settings[ variable|underscore ] ?? options.value,
+		val: design.settings[ variable ] ?? options.value,
 	}) }}
 {% endblock %}
 
@@ -167,6 +167,6 @@
 	{{ FormHelper.control(variable|underscore, {
 		empty: false,
 		options: optionValues,
-		val: design.settings[ variable|underscore ] ?? options.value,
+		val: design.settings[ variable ] ?? options.value,
 	}) }}
 {% endblock %}
