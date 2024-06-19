@@ -125,7 +125,7 @@
 			{{ FormHelper.control(variable|underscore ~ '_unit', {
 				empty: false,
 				options: combine(options.units|keys, options.units|keys),
-				val: design.settings[ variable|underscore ~ '_unit' ] ?? options.unit,
+				val: design.settings[ variable ~ 'Unit' ] ?? options.unit,
 				'data-units': options.units|json_encode,
 			}) }}
 		{% endif %}
