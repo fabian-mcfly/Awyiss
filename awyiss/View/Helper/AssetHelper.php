@@ -51,6 +51,10 @@ class AssetHelper extends Helper {
 	 */
 	protected array $jsModules = [];
 	/**
+	 * @var array $noScriptAssets An array of assets to include in a <noscript> tag.
+	 */
+	protected array $noScriptAssets = [];
+	/**
 	 * @var string $realm The realm of the application. This is used to determine the base path for assets.
 	 */
 	protected string $realm;
@@ -128,6 +132,43 @@ class AssetHelper extends Helper {
 
 
 	/**
+	 * Simplified add method for adding assets that will only be included in the <noscript> tag.
+	 * NoScript assets are never critical.
+	 *
+	 * @param array|string $asset
+	 * @param array $attributes
+	 * @param bool|null $minified
+	 * @param int $priority
+	 * @return void
+	 */
+	public function addNoScriptAsset(array|string $asset, array $attributes = [], ?bool $minified = null, int $priority = 10): void {
+		// Determines if the asset is minified based on the provided value or the application's debug configuration
+		$lb_minified = $minified ?? !Configure::read('debug', false);
+
+		// If the provided asset is an array, use it as is. Otherwise, create an array with the asset as the key and an array of options as the value.
+		$la_assets = is_array($asset) ? $asset : [$asset => ['minified' => $lb_minified, 'attributes' => $attributes, 'priority' => $priority]];
+
+		foreach ($la_assets as $lx_key => $lx_value) {
+			// If the key is a string, use it as the filename. Otherwise, use the value as the filename.
+			$ls_fileName = is_string($lx_key) ? $lx_key : $lx_value;
+
+			// If the filename is already in the 'all' assets array, skip this iteration
+			if (in_array($ls_fileName, $this->noScriptAssets)) {
+				continue;
+			}
+
+			// If the value is an array, use it as the options. Otherwise, create an array of options with the provided values.
+			$la_options = is_array($lx_value) ? $lx_value : ['minified' => $lb_minified, 'priority' => $priority];
+
+			// Merge the options with a default options array to ensure all keys are present
+			$la_options = array_merge(['minified' => false, 'critical' => false, 'attributes' => false, 'priority' => 10], $la_options);
+
+			$this->noScriptAssets[ $ls_fileName ] = $la_options;
+		}
+	}
+
+
+	/**
 	 * Removes an asset from the assets array.
 	 * This method removes an asset from the assets array. It first checks if the asset is an array or a string.
 	 * If the asset is a string, it is converted to an array. The method then iterates over each asset in the array.
@@ -164,6 +205,7 @@ class AssetHelper extends Helper {
 			unset($this->assets['all'][ $ls_asset ]);
 			unset($this->assets[ $ls_extension ]['critical'][ $ls_asset ]);
 			unset($this->assets[ $ls_extension ]['nonCritical'][ $ls_asset ]);
+			unset($this->noScriptAssets[ $ls_asset ]);
 		}
 	}
 
@@ -413,7 +455,7 @@ class AssetHelper extends Helper {
 	 * @throws \Exception
 	 */
 	public function getNoScriptTags(string $type = 'all', ?bool $critical = null): string {
-		$la_assets = $this->assets[ $type ] ?? [];
+		$la_assets = array_merge($this->assets[ $type ] ?? [], $this->noScriptAssets);
 
 		if (empty($la_assets)) {
 			return '';
