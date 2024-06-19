@@ -92,8 +92,10 @@ class ContentsCell extends Cell {
 		// Set the view variables
 		$this->set([
 			'contents' => $ls_contents,
+			'page' => $page,
 			'identifier' => $contentArea,
 			'includeWrapper' => $la_options['includeWrapper'],
+			...$la_options['viewVars'],
 		]);
 	}
 
