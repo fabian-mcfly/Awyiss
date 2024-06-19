@@ -9,7 +9,45 @@
 @var languageShortcode string
 @var _view \Awyiss\View\FrontendView
 #}
-<script nonce="{{ AssetHelper.getScriptNonce() }}">
-	document.documentElement.classList.remove('NoJS');
-	document.documentElement.classList.add('JS');
-</script>
+
+{% block scriptsAdd %}
+	{% do AssetHelper.add('webfontloader.js') %}
+{% endblock %}
+
+{% block script %}
+	<script nonce="{{ AssetHelper.getScriptNonce() }}">
+		{% block scriptBaseVars %}
+			const baseUrl = '{{ baseUrl }}';
+			const folder = '{{ folder }}';
+			const currentPath = '{{ currentPath }}';
+			const currentUrl = '{{ currentUrl }}';
+			const language = {{ currentLanguage|json_encode|raw }};
+		{% endblock %}
+
+		document.documentElement.classList.remove('NoJS');
+		document.documentElement.classList.add('JS');
+
+		{% block webFontConfig %}
+			{% if webfont is not empty %}
+				{% set webfontFamilies = [] %}
+				{% for webfont in webfont %}
+					{% set family = webfont.name %}
+					{% if webfont.variants is not empty %}
+						{% set family = family ~ ':' ~ webfont.variants|join(',') %}
+					{% endif %}
+
+					{% set webfontFamilies = webfontFamilies|merge([family]) %}
+				{% endfor %}
+
+				WebFontConfig = {
+					custom: {
+						families: {{ webfontFamilies|json_encode|raw }},
+						urls: [baseUrl + 'assets/css/webfonts.css']
+					},
+				};
+
+				{% do AssetHelper.addNoScriptAsset('webfonts.css') %}
+			{% endif %}
+		{% endblock %}
+	</script>
+{% endblock %}
