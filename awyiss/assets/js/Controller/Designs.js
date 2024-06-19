@@ -85,6 +85,8 @@ export default class DesignsController {
 		}, rangeInput);
 
 		this.eventHandler.add('input', () => {
+			input.value = input.value.replace(/,/g, '.');
+			input.value = input.value.replace(/[^0-9.]/g, '');
 			rangeInput.value = input.value;
 		}, input);
 
