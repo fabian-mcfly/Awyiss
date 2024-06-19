@@ -186,6 +186,10 @@ class MenuRenderer {
 
 		$lx_identifier = $item->getIdentifier() ?? $item->getTitle();
 
+		if (!isset($this->currentRoute)) {
+			$this->currentRoute = '';
+		}
+
 		$la_data = [
 			'active' => $item->isCurrentRoute($this->currentRoute) || $item->hasCurrentRoute($this->currentRoute) ? ' Active' : '',
 			'identifier' => !is_string($lx_identifier) ? $lx_identifier : Inflector::camelize(Text::slug($lx_identifier, '_')),
