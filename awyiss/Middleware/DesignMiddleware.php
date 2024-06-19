@@ -119,7 +119,7 @@ class DesignMiddleware implements MiddlewareInterface {
 
 			$la_variables[ $ls_key ] = $lx_value;
 
-			if (isset($lo_design->settings[ $ls_key . 'Unit' ])) {
+			if (!empty($lx_value) && isset($lo_design->settings[ $ls_key . 'Unit' ])) {
 				$la_variables[ $ls_key ] .= $lo_design->settings[ $ls_key . 'Unit' ];
 			}
 		}
