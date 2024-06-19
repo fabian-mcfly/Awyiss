@@ -381,7 +381,7 @@ class AssetHelper extends Helper {
 
 		// If the includeNoScript parameter is true, append the result of the getNoScriptTags method to the asset tags string
 		if ($includeNoScript) {
-			$ls_assetTags .= $this->getNoScriptTags($type);
+			$ls_assetTags .= $this->getNoScriptTags($type, $critical);
 		}
 
 		$ls_nonce = $this->getView()->getRequest()->getAttribute('cspScriptNonce');
