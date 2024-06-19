@@ -222,6 +222,10 @@ class DesignsController extends Controller {
 			}
 
 			$la_requestData['settings'][ $ls_key ] = $lx_value;
+
+			if (isset($la_variableOptions['forcedUnit'])) {
+				$la_requestData['settings'][ $ls_key . 'Unit' ] = $la_variableOptions['forcedUnit'];
+			}
 		}
 
 		return $la_requestData;
