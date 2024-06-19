@@ -24,7 +24,9 @@ $routes->registerMiddleware(
 				'self' => true,
 				'blob' => true,
 			],
-			'default-src' => [],
+			'default-src' => [
+				'self' => true,
+			],
 			'font-src' => [
 				'self' => true,
 			],
