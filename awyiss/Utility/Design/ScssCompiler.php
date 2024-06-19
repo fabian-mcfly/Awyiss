@@ -118,14 +118,6 @@ class ScssCompiler {
 			return null;
 		}
 
-		// Get a collection of css files in the sibling directory of ScssFilesCollection::$folderPath
-		$lo_cssFiles = self::discoverFiles(dirname($files->getFolderPath()) . DS . 'css');
-
-		// If the css files are newer than the scss files, return null.
-		if ($lo_cssFiles->getLastModified() && $lo_cssFiles->getLastModified()->greaterThan($files->getLastModified())) {
-			return null;
-		}
-
 		$lo_scssVariableProvider = new ScssVariableProvider(Configure::read('Design'));
 
 		// Compile all main files from the ScssFilesCollection object
@@ -157,6 +149,20 @@ class ScssCompiler {
 	public static function compileFolders(array $folders, array $vars = [], bool $returnCss = false): array {
 		$la_return = [];
 
+		$la_variables = $vars;
+		foreach ($la_variables as $ls_key => $lx_value) {
+			if (is_array($lx_value)) {
+				if (isset($lx_value['font'])) {
+					$lx_value = 'inspect(' . $lx_value['font']['name'] . ')';
+				}
+				else {
+					$lx_value = implode(' ', $lx_value);
+				}
+			}
+
+			$la_variables[ $ls_key ] = $lx_value;
+		}
+
 		foreach ($folders as $ls_folderPath => $lo_files) {
 			// If the value is not an instance of ScssFilesCollection, skip it.
 			if (!$lo_files instanceof ScssFilesCollection) {
@@ -164,7 +170,7 @@ class ScssCompiler {
 			}
 
 			// Compile the SCSS files in the folder and store the result in the return array.
-			$la_return[ $ls_folderPath ] = static::compile($lo_files, $ls_folderPath, $vars, $returnCss);
+			$la_return[ $ls_folderPath ] = static::compile($lo_files, $ls_folderPath, $la_variables, $returnCss);
 		}
 
 
