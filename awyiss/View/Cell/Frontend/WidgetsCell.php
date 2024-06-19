@@ -86,7 +86,9 @@ class WidgetsCell extends Cell {
 
 		// Set the view variables
 		$this->set([
+			'identifier' => $identifier,
 			'widgets' => $ls_widgets,
+			...$la_options['viewVars'],
 		]);
 	}
 
