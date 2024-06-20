@@ -111,6 +111,21 @@ class AwyissExtension extends AbstractExtension {
 				}
 			),
 
+			new TwigFunction(
+				'menu',
+				function (array $context, string $name, array $options = []) {
+					if (empty($context['languageShortcode']) || strlen($context['languageShortcode']) !== 2) {
+						throw new InvalidArgumentException('The "menu" function requires languageShortcode string in the context.');
+					}
+
+					$la_options = ['viewVars' => $context];
+					$la_options = Hash::merge($la_options, $options);
+
+					return $context['_view']->cell('Frontend/Menu', [$name, $context['languageShortcode'], $la_options]);
+				},
+				['needs_context' => true, 'is_safe' => ['all']]
+			),
+
 			new TwigFunction('naturalSort', function (array $data, int|string|null $key = null): array {
 				/** @noinspection PhpVariableNamingConventionInspection */
 				uasort($data, function ($a, $b) use ($key) {
