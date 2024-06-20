@@ -311,6 +311,26 @@ class MenuItem implements ArrayAccess {
 
 
 	/**
+	 * Gets the entity of the menu item.
+	 *
+	 * @return \Awyiss\Model\Entity
+	 */
+	public function getEntity(): Entity {
+		return $this->entity;
+	}
+
+
+	/**
+	 * Checks if the menu item has an entity.
+	 *
+	 * @return bool
+	 */
+	public function hasEntity(): bool {
+		return isset($this->entity);
+	}
+
+
+	/**
 	 * Sets the identity of the menu item.
 	 *
 	 * @param \Awyiss\Authorization\IdentityPermissionsInterface $identity The identity to set.
