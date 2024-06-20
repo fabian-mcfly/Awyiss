@@ -140,7 +140,7 @@ class ScssVariableProvider {
 				 * Non-default variables cannot be overridden by the user
 				 */
 				if (in_array($name, $this->defaultVarNames)) {
-					$this->internalVars[ $name ] = $lo_env->storeUnreduced[ $name ];
+					$this->internalVars[ $name ] = $lo_env->storeUnreduced[ str_replace('-', '_', $name) ];
 				}
 			}
 
@@ -174,7 +174,8 @@ class ScssVariableProvider {
 			}
 
 			$lo_compiler->addImportPath(dirname($ls_scssFile));
-			$lo_compiler->compileFile($ls_scssFile);
+			// Suppressing the error isn't ideal, but the library has a flaw with attribute selectors.
+			@$lo_compiler->compileFile($ls_scssFile); // phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged
 		}
 
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
