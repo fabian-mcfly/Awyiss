@@ -63,6 +63,7 @@ return [
 		'vendor/cakephp/cakephp/src/ORM/Table.php' => 'cbf6925e0ab9e1965b03f221b4174cc0',
 		'vendor/cakephp/cakephp/src/Routing/Route/DashedRoute.php' => 'd580f32c590dc3f6337ee858fe98bda0',
 		'vendor/cakephp/cakephp/src/Validation/Validator.php' => '3c8099b10834fbbaed2f04b3b8e3f32b',
+		'vendor/cakephp/cakephp/src/View/CellTrait.php' => '30052ac2403a705287ba1c46c00395a7',
 		'vendor/cakephp/cakephp/src/View/Helper/PaginatorHelper.php' => '13ad3558b41e36a96f35927f44ed7f15',
 		'vendor/cakephp/migrations/src/MigrationsDispatcher.php' => 'f9f7d391c539f66c6feaeefe81764fb6',
 		'vendor/cakephp/migrations/src/Util/UtilTrait.php' => 'e61e54494b309ceda8fa229ce496bdbb',

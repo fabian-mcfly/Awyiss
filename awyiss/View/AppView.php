@@ -5,11 +5,14 @@ namespace Awyiss\View;
 
 
 use Awyiss\Awyiss;
+use Awyiss\Core\App;
 use Awyiss\Twig\Extension\AwyissExtension;
 use Awyiss\Twig\Extension\EnumExtension;
 use Awyiss\Twig\FileLoader;
 use Cake\Core\Configure;
 use Cake\TwigView\View\TwigView;
+use Cake\View\Cell;
+use Cake\View\Exception\MissingCellException;
 use Cake\View\Helper;
 use Twig\Loader\LoaderInterface;
 use Twig\Markup;
@@ -99,6 +102,37 @@ class AppView extends TwigView {
 			'VERSION' => Awyiss::VERSION,
 			'VERSION_NAME' => Awyiss::VERSION_NAME,
 		]);
+	}
+
+
+	/**
+	 * 1:1 reimplemented from \Cake\View\CellTrait to use \Awyiss\Core\App
+	 * instead of \Cake\Core\App for `App::className` to allow custom classes
+	 * overriding the Awyiss cells.
+	 *
+	 * @inheritDoc
+	 * @see \Cake\View\CellTrait::cell()
+	 */
+	public function cell(string $cell, array $data = [], array $options = []): Cell {
+		$la_parts = explode('::', $cell);
+
+		if (count($la_parts) === 2) {
+			[$ls_pluginAndCell, $ls_action] = [$la_parts[0], $la_parts[1]];
+		}
+		else {
+			[$ls_pluginAndCell, $ls_action] = [$la_parts[0], 'display'];
+		}
+
+		[$ls_plugin] = pluginSplit($ls_pluginAndCell);
+		$ls_className = App::className($ls_pluginAndCell, 'View/Cell', 'Cell');
+
+		if (!$ls_className) {
+			throw new MissingCellException(['className' => $ls_pluginAndCell . 'Cell']);
+		}
+
+		$la_options = ['action' => $ls_action, 'args' => $data] + $options;
+
+		return $this->_createCell($ls_className, $ls_action, $ls_plugin, $la_options);
 	}
 
 
