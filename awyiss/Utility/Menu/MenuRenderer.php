@@ -195,6 +195,7 @@ class MenuRenderer {
 
 		$la_data = [
 			'active' => $item->isCurrentRoute($this->currentRoute) || $item->hasCurrentRoute($this->currentRoute) ? ' Active' : '',
+			'children' => $ls_childrenContent,
 			'identifier' => !is_string($lx_identifier) ? $lx_identifier : Inflector::camelize(Text::slug($lx_identifier, '_')),
 			'level' => $level,
 			'title' => $item->getTitle(),
@@ -241,7 +242,7 @@ class MenuRenderer {
 		$lc_formatter = $this->getConfig('formatters.' . $type);
 
 		if (is_callable($lc_formatter)) {
-			return $lc_formatter($data, $this->menu);
+			return $lc_formatter($data, $this->templates, $this->menu);
 		}
 
 
