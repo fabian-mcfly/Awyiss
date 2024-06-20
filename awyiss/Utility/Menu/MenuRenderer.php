@@ -33,7 +33,7 @@ class MenuRenderer {
 		'maxLevel' => PHP_INT_MAX,
 		'templates' => [
 			'menu' => '<nav id="Menu-{{identifier}}">' . PHP_EOL . '{{list}}</nav>' . PHP_EOL,
-			'list' => '<ul class="Level{{level}}">' . PHP_EOL . '{{content}}</ul>' . PHP_EOL,
+			'list' => '<ul class="Level{{level}}{{identifier}}">' . PHP_EOL . '{{content}}</ul>' . PHP_EOL,
 			'item' => '<li class="Level{{level}}{{active}}{{hasSubmenu}} MenuItem-{{identifier}}">' . PHP_EOL . '{{link}}{{children}}</li>' . PHP_EOL,
 			'link' => '<a href="{{url}}" class="Level{{level}}{{active}} MenuItem-{{identifier}}"{{attributes}}>{{title}}</a>' . PHP_EOL,
 			'noLink' => '<span class="Level{{level}}{{active}}">{{title}}</span>' . PHP_EOL,
@@ -141,6 +141,9 @@ class MenuRenderer {
 			'menuConfig' => $this->menu->getConfig(),
 		];
 
+		if ($level === 1 && isset($this->identifier)) {
+			$la_data['identifier'] = ' Menu-' . $this->identifier;
+		}
 
 		return $this->format('list', $la_data);
 	}
@@ -195,6 +198,7 @@ class MenuRenderer {
 			'identifier' => !is_string($lx_identifier) ? $lx_identifier : Inflector::camelize(Text::slug($lx_identifier, '_')),
 			'level' => $level,
 			'title' => $item->getTitle(),
+			'item' => $item,
 		];
 
 		$lo_link = $item->getLink();
@@ -218,6 +222,7 @@ class MenuRenderer {
 			'level' => $level,
 			'link' => $ls_link,
 			'title' => $la_data['title'],
+			'item' => $item,
 		];
 
 
