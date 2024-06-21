@@ -6,8 +6,10 @@
 @var includeWrapper bool
 #}
 
-{% if includeWrapper %}
-	{{ renderer.render(identifier|ucparts(false))|raw }}
-{% else %}
-	{{ renderer.renderList(menu)|raw}}
+{% if menuEntries.count() %}
+	{% if includeWrapper %}
+		{{ renderer.render(identifier|ucparts(false))|raw }}
+	{% else %}
+		{{ renderer.renderList(menu)|raw}}
+	{% endif %}
 {% endif %}
