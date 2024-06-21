@@ -29,11 +29,7 @@ class WebfontProvider {
 	 * @param array $webfonts
 	 */
 	public function __construct() {
-		$this->webfonts = Cache::read('webfonts') ?? [];
-
-		if (!$this->webfonts) {
-			$this->fetchWebfonts();
-		}
+		$this->webfonts = Cache::remember('webfonts', fn() => $this->fetchWebfonts(), 'persistent');
 	}
 
 
@@ -41,9 +37,9 @@ class WebfontProvider {
 	 * Fetches the webfonts from the google-webfonts-helper
 	 * and stores them in the $webfonts property
 	 *
-	 * @return void
+	 * @return array<string, array{category: string, id: string, name: string, popularity: int, variants: array, version: string}>
 	 */
-	protected function fetchWebfonts(): void {
+	protected function fetchWebfonts(): array {
 		$la_apiResult = json_decode(file_get_contents($this->fontApiUrl), true);
 
 		if (json_last_error() !== JSON_ERROR_NONE) {
@@ -72,7 +68,7 @@ class WebfontProvider {
 
 		Cache::write('webfonts', $la_webfonts);
 
-		$this->webfonts = $la_webfonts;
+		return $la_webfonts;
 	}
 
 
