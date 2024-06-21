@@ -131,6 +131,17 @@ class DesignMiddleware implements MiddlewareInterface {
 
 
 	/**
+	 * Resets the design variables.
+	 * This is useful when the design variables need to be reloaded.
+	 *
+	 * @return void
+	 */
+	public function resetDesignVariables(): void {
+		unset($this->designVariables);
+	}
+
+
+	/**
 	 * Returns an array of files, filtered to exclude files that are older than the compiled CSS files.
 	 *
 	 * @param array $files
