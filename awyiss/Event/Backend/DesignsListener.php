@@ -4,8 +4,10 @@
 namespace Awyiss\Event\Backend;
 
 
+use Awyiss\Awyiss;
 use Awyiss\Event\EventListenerTrait;
 use Awyiss\Model\Entity\Design;
+use Awyiss\Routing\Router;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
 use Cake\ORM\Locator\LocatorAwareTrait;
@@ -67,5 +69,9 @@ class DesignsListener implements EventListenerInterface {
 			'priority' => 1,
 			'reference' => 'designs::webfont_download',
 		]);
+
+		/** @var \Awyiss\Middleware\DesignMiddleware $lo_designMiddleware */
+		$lo_designMiddleware = Router::getRequest()->getAttribute('design');
+		$lo_designMiddleware->compileScss(true, Awyiss::REALM_FRONTEND);
 	}
 }

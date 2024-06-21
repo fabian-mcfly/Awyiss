@@ -48,7 +48,7 @@ class DesignMiddleware implements MiddlewareInterface {
 
 		// If the SCSS files need to be compiled, compile them
 		if ($lb_shouldCompile || $lb_mustCompile) {
-			$this->compileScss($lb_mustCompile, $lb_showExceptions);
+			$this->compileScss($lb_mustCompile, null, $lb_showExceptions);
 		}
 
 		// Add the 'design' attribute to the request
@@ -64,12 +64,12 @@ class DesignMiddleware implements MiddlewareInterface {
 	 * Otherwise, the SCSS files will be compiled if they are newer than the compiled CSS files.
 	 *
 	 * @param bool $mustCompile
-	 * @param bool $showExceptions
 	 * @param string|null $realm
+	 * @param bool $showExceptions
 	 * @return void
 	 * @throws \ScssPhp\ScssPhp\Exception\SassException
 	 */
-	public function compileScss(bool $mustCompile = false, bool $showExceptions = false, ?string $realm = null): void {
+	public function compileScss(bool $mustCompile = false, ?string $realm = null, bool $showExceptions = false): void {
 		// Set the exception handling for the ScssCompiler
 		ScssCompiler::showExceptions($showExceptions);
 
