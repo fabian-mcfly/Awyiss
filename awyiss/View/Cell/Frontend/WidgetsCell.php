@@ -197,7 +197,7 @@ class WidgetsCell extends Cell {
 			 * or if the widget - including potential indentation - would exceed the row width.
 			 * If that is the case, render the current row and reset the row widgets.
 			 */
-			if ($lf_currentWidth >= 100 || $lf_currentWidth + $lf_columnWidth >= 100) {
+			if ($lf_currentWidth > 100 || $lf_currentWidth + $lf_columnWidth > 100) {
 				if ($ls_rowContents) {
 					$ls_widgets .= $this->renderContentRow($ls_rowContents);
 				}

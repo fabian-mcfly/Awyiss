@@ -204,7 +204,7 @@ class ContentsCell extends Cell {
 			 * or if the content - including potential indentation - would exceed the row width.
 			 * If that is the case, render the current row and reset the row contents.
 			 */
-			if ($lf_currentWidth >= 100 || $lf_currentWidth + $lf_columnWidth >= 100) {
+			if ($lf_currentWidth > 100 || $lf_currentWidth + $lf_columnWidth > 100) {
 				if ($ls_rowContents) {
 					$ls_contents .= $this->renderContentRow($ls_rowContents);
 				}
