@@ -435,6 +435,7 @@ abstract class BackendController extends AppController {
 	 */
 	public function beforeRender(EventInterface $event): void {
 		$this->set('config', Configure::read());
+		$this->set('designVariables', $this->getDesignVariables());
 		$this->set('localConfig', LocalConfig::read());
 
 		// Disable the layout for ajax requests
@@ -518,5 +519,18 @@ abstract class BackendController extends AppController {
 
 
 		return $li_affectedRows;
+	}
+
+
+	/**
+	 * Returns an array of variables, set via DesignController, that can be used in the SCSS files.
+	 *
+	 * @return array
+	 */
+	protected function getDesignVariables(): array {
+		/** @var \Awyiss\Middleware\DesignMiddleware $lo_designMiddleware */
+		$lo_designMiddleware = $this->request->getAttribute('design');
+
+		return $lo_designMiddleware->getDesignVariables();
 	}
 }

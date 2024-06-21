@@ -1,6 +1,7 @@
 {% block scriptBaseVars %}
 	<script nonce="{{ AssetHelper.getScriptNonce() }}">
 		const baseUrl = '{{ baseUrl }}';
+		const designVariables = {{ designVariables|json_encode|raw }};
 		const editor = '{{ config.Awyiss.System.Backend.interface.editor }}';
 		const folder = '{{ folder }}';
 		const currentPath = '{{ currentPath }}';

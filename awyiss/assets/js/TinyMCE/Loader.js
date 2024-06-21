@@ -210,9 +210,9 @@ export default class Loader {
 			const {default: CustomSettings} = await import('TinyMCE/CustomSettings');
 
 			if (CustomSettings) {
-				const customSettings = new CustomSettings(language, userLanguage);
-				this.settings = customSettings.getSettings(this.settings);
-				this.styleFormats = customSettings.getStyleFormats(this.styleFormats);
+				const customSettings = new CustomSettings(language, userLanguage, designVariables, designVariables);
+				this.settings = customSettings.getSettings(this.settings, designVariables);
+				this.styleFormats = customSettings.getStyleFormats(this.styleFormats, designVariables);
 			}
 
 			this.settings.style_formats = this.styleFormats;
