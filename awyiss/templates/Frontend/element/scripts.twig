@@ -39,7 +39,8 @@
 					{% set webfontFamilies = webfontFamilies|merge([family]) %}
 				{% endfor %}
 
-				WebFontConfig = {
+				const webfonts = {{ webfont|json_encode|raw }};
+				window.WebFontConfig = {
 					custom: {
 						families: {{ webfontFamilies|json_encode|raw }},
 						urls: [baseUrl + 'assets/css/webfonts.css']
