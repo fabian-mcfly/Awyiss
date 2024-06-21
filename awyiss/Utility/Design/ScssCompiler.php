@@ -51,7 +51,7 @@ class ScssCompiler {
 
 		// Initialize the array of realm folders
 		$la_realmFolders = Configure::read('App.paths.assets');
-		$la_realmFolders = $la_realmFolders[ Awyiss::getRealm() ] ?? [];
+		$la_realmFolders = $la_realmFolders[ $realm ] ?? [];
 
 		// Initialize the array of realm files
 		$la_realmFiles = [];
