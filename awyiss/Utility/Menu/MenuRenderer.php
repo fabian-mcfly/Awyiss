@@ -156,7 +156,7 @@ class MenuRenderer {
 	 * @return void
 	 */
 	public function setCurrentRoute(string $currentRoute): void {
-		$this->currentRoute = $currentRoute;
+		$this->currentRoute = rtrim($currentRoute, '/');
 	}
 
 
