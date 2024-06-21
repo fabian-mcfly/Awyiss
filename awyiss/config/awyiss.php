@@ -78,8 +78,15 @@ return [
 			'path' => CACHE,
 		],
 
+		'persistent' => [
+			'className' => FileEngine::class,
+			'duration' => '+1 years',
+			'path' => CACHE . 'persistent' . DS,
+			'prefix' => 'persistent_',
+		],
+
 		'_cake_core_' => [
-			'className' => FileEngine::class, //set to null to disable
+			'className' => FileEngine::class,
 			'duration' => '+1 years',
 			'path' => CACHE . 'persistent' . DS,
 			'prefix' => 'awyiss_core_',
