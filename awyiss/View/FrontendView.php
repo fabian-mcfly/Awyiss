@@ -9,6 +9,7 @@ use Awyiss\Routing\Router;
 use Awyiss\Utility\Inflector;
 use Awyiss\View\Exception\MissingContentException;
 use Awyiss\View\Exception\MissingWidgetException;
+use Cake\Core\Configure;
 use Generator;
 
 
@@ -113,6 +114,7 @@ class FrontendView extends AppView {
 		$lo_twig->addGlobal('currentLanguage', $lo_frontendLanguage);
 		$lo_twig->addGlobal('currentPath', $this->getRequest()->getUri()->getPath());
 		$lo_twig->addGlobal('currentUrl', $this->request->getUri()->__toString());
+		$lo_twig->addGlobal('environment', Configure::read('debug') ? 'Env-' . Inflector::ucparts(CONFIG_ENV) : 'l');
 		$lo_twig->addGlobal('folder', '/' . ltrim($this->request->getAttribute('base'), '/'));
 		$lo_twig->addGlobal('languages', LocaleMiddleware::getLanguages());
 		$lo_twig->addGlobal('languageShortcode', $lo_frontendLanguage?->shortcode);
