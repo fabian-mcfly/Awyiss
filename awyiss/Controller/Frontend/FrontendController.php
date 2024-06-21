@@ -309,12 +309,12 @@ class FrontendController extends AppController {
 			return $la_webfontData;
 		}
 
-		foreach ($la_variables as $lx_value) {
+		foreach ($la_variables as $ls_variable => $lx_value) {
 			if (!is_array($lx_value) || !isset($lx_value['font']['name'])) {
 				continue;
 			}
 
-			$la_webfontData[] = [
+			$la_webfontData[ $ls_variable ] = [
 				'name' => $lx_value['font']['name'],
 				'variants' => $lx_value['variants'] ?? [],
 			];
