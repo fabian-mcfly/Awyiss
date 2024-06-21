@@ -193,16 +193,25 @@ class MenuItem implements ArrayAccess {
 	public function isCurrentRoute(string $currentRoute): bool {
 		static $ls_fullBaseUrl;
 
+		if (empty($currentRoute)) {
+			return false;
+		}
+
 		$ls_testUrl = $this->getLink()?->url;
 		if (!$ls_testUrl) {
 			return false;
 		}
 
+		$ls_testUrl = rtrim($ls_testUrl, '/');
+
 		if (!isset($ls_fullBaseUrl)) {
 			$ls_fullBaseUrl = Router::fullBaseUrl();
 		}
 
-		$ls_testUrl = substr_replace($ls_testUrl, '', 0, strlen($ls_fullBaseUrl));
+		if (str_starts_with($ls_testUrl, $ls_fullBaseUrl)) {
+			$ls_testUrl = substr_replace($ls_testUrl, '', 0, strlen($ls_fullBaseUrl));
+		}
+
 		if ($ls_testUrl === $currentRoute) {
 			return true;
 		}
@@ -214,7 +223,7 @@ class MenuItem implements ArrayAccess {
 				return !str_contains($segment, ':');
 			});
 
-			$ls_cleanRoute = '/' . implode('/', $la_segments) . '/';
+			$ls_cleanRoute = '/' . implode('/', $la_segments);
 
 
 			return $ls_testUrl === $ls_cleanRoute;
@@ -411,7 +420,6 @@ class MenuItem implements ArrayAccess {
 		else {
 			$this->link->attributes = (array)$this->link->attributes;
 		}
-
 
 		return $this->link;
 	}
