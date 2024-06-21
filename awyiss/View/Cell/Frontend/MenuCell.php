@@ -5,11 +5,13 @@ namespace Awyiss\View\Cell\Frontend;
 
 
 use Awyiss\Model\Entity\MenuEntry;
+use Awyiss\Utility\Inflector;
 use Awyiss\Utility\Menu\Menu;
 use Awyiss\Utility\Menu\MenuRenderer;
 use Cake\Collection\CollectionInterface;
 use Cake\Datasource\FactoryLocator;
 use Cake\View\Cell;
+use Cake\View\StringTemplate;
 
 
 /**
@@ -25,6 +27,7 @@ class MenuCell extends Cell {
 	public function display(string $identifier, string $languageShortcode, array $options = []): void {
 		$la_options = $options + [
 			'includeWrapper' => true,
+			'currentRoute' => $this->request->getRequestTarget(),
 			'viewVars' => [],
 		];
 
@@ -34,13 +37,27 @@ class MenuCell extends Cell {
 		$lo_menuEntries = $this->getMenuEntries($identifier, $languageShortcode);
 
 		$lo_menu = new Menu($lo_menuEntries->toArray());
-		$lo_renderer = new MenuRenderer($lo_menu);
+		$lo_renderer = new MenuRenderer($lo_menu, [
+			'formatters' => [
+				'item' => $this->renderItem(...),
+				'link' => $this->renderContent(...),
+				'noLink' => $this->renderContent(...),
+			],
+			'templates' => [
+				'item' => '<li class="Level{{level}}{{active}}{{hasSubmenu}} {{identifier}}" id="MenuItem-{{id}}">' . PHP_EOL . '{{submenuTrigger}}{{link}}{{children}}</li>' . PHP_EOL,
+				'link' => '<a href="{{url}}" class="Level{{level}}{{active}} {{identifier}}"{{attributes}}>{{title}}</a>' . PHP_EOL,
+				'noLink' => '<span class="Level{{level}}{{active}} {{identifier}}">{{title}}</span>' . PHP_EOL,
+			],
+		]);
+
+		$lo_renderer->setCurrentRoute($la_options['currentRoute']);
 
 		$this->set([
 			'identifier' => $identifier,
 			'menuEntries' => $lo_menuEntries,
 			'menu' => $lo_menu,
 			'renderer' => $lo_renderer,
+			'currentRoute' => $la_options['currentRoute'],
 			'includeWrapper' => !!$la_options['includeWrapper'],
 			...$la_options['viewVars'],
 		]);
@@ -64,5 +81,44 @@ class MenuCell extends Cell {
 		return $lo_menuEntries->filter(function (MenuEntry $content) {
 			return $content->parentId === null;
 		})->compile();
+	}
+
+
+	/**
+	 * @param array $data
+	 * @return string
+	 */
+	public function renderItem(array $data, StringTemplate $template): string {
+		$la_data = $data;
+
+		$la_data['id'] = $data['item']->getEntity()->id;
+		$la_data['identifier'] = Inflector::ucparts($data['title'], false);
+
+		if (!empty($la_data['children'])) {
+			$la_data['submenuTrigger'] = '<input type="checkbox" id="SubmenuTrigger-' . $la_data['id'] .  '" class="SubmenuTrigger" />' . PHP_EOL .
+				'<label for="SubmenuTrigger-' . $la_data['id'] .  '" class="SubmenuTrigger-Label"></label>';
+		}
+
+		return $template->format('item', $la_data);
+	}
+
+
+	/**
+	 * @param array $data
+	 * @return string
+	 */
+	public function renderContent(array $data, StringTemplate $template): string {
+		$la_data = $data;
+
+		if (isset($data['url'])) {
+			$ls_template = 'link';
+		}
+		else {
+			$ls_template = 'link';
+		}
+
+		$la_data['identifier'] = Inflector::ucparts($data['title'], false);
+
+		return $template->format($ls_template, $la_data);
 	}
 }
