@@ -16,6 +16,9 @@
 	{% set htmlClass = page.slug|split('/')|map(e => e|ucparts)|map(e => e|prefixNumericClass)|join(' ')|trim -%}
 	{% set htmlClass = htmlClass ~ ' PageRole-' ~ page.pageRoleId.name|ucparts -%}
 	{% set htmlClass = htmlClass ~ ' ' ~ page.pageRoleId.name|ucparts ~ 'Template-' ~ page.pageTemplate.fileName|ucparts  -%}
+	{% if environment %}
+		{% set htmlClass = htmlClass ~ ' ' ~ environment -%}
+	{% endif -%}
 {%- endif -%}
 <!DOCTYPE html>
 <html lang="{{ page.language.shortcode }}" id="Page{{ page.id }}" class="NoJS {{ htmlClass }}">
