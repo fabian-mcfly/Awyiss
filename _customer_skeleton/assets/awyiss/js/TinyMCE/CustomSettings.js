@@ -50,27 +50,41 @@ export default class CustomSettings {
 	 */
 	userLanguage;
 
-	constructor(language, userLanguage) {
-
+	/**
+	 *
+	 * @param {string} language
+	 * @param {string} userLanguage
+	 * @param {Object} designVariables
+	 */
+	constructor(language, userLanguage, designVariables) {
+		/*
+		 * Insert alternative font at offset 1 in styleFormats[0].items
+		 * if `fontNameAlternative` is set in designVariables and not empty
+		 */
+		if (designVariables.fontNameAlternative) {
+			this.styleFormats[0].items.splice(1, 0, {title: 'Schmuckschrift', selector: 'p, h1, h2, h3, h4, h5, h6, li', classes: 'FontAlternative'});
+		}
 	}
 
 	/**
 	 * Returns the custom settings, merged with the default settings
 	 *
-	 * @param defaultSettings
+	 * @param {Object} defaultSettings
+	 * @param {Object} designVariables
 	 * @returns {*}
 	 */
-	getSettings(defaultSettings) {
+	getSettings(defaultSettings, designVariables) {
 		return {...defaultSettings, ...this.settings};
 	}
 
 	/**
 	 * Returns the custom style formats, merged with the default style formats
 	 *
-	 * @param defaultStyleFormats
+	 * @param {Object} defaultStyleFormats
+	 * @param {Object} designVariables
 	 * @returns {Array}
 	 */
-	getStyleFormats(defaultStyleFormats) {
+	getStyleFormats(defaultStyleFormats, designVariables) {
 		return [...defaultStyleFormats, ...this.styleFormats];
 	}
 }
