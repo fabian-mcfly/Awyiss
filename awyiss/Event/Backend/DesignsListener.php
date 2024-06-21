@@ -72,6 +72,7 @@ class DesignsListener implements EventListenerInterface {
 
 		/** @var \Awyiss\Middleware\DesignMiddleware $lo_designMiddleware */
 		$lo_designMiddleware = Router::getRequest()->getAttribute('design');
+		$lo_designMiddleware->resetDesignVariables();
 		$lo_designMiddleware->compileScss(true, Awyiss::REALM_FRONTEND);
 	}
 }
