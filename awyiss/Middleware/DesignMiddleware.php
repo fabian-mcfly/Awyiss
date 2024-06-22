@@ -6,7 +6,9 @@ namespace Awyiss\Middleware;
 
 use Awyiss\Awyiss;
 use Awyiss\Utility\Design\ScssCompiler;
+use Awyiss\Utility\Design\ScssFilesCollection;
 use Cake\Datasource\FactoryLocator;
+use Exception;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -88,8 +90,20 @@ class DesignMiddleware implements MiddlewareInterface {
 			return;
 		}
 
-		// Compile the SCSS files
-		ScssCompiler::compileFolders($la_files, $this->getDesignVariables());
+		try {
+			// Compile the SCSS files
+			$la_result = ScssCompiler::compileFolders($la_files, $this->getDesignVariables());
+		}
+		catch (Exception $ex) {
+			$this->resetFileTimes($la_files);
+
+			throw $ex;
+		}
+
+		// Reset the last modified times of the files if the result contains at least one `false`
+		if (in_array(false, $la_result, true)) {
+			$this->resetFileTimes($la_files);
+		}
 	}
 
 	/**
@@ -164,5 +178,37 @@ class DesignMiddleware implements MiddlewareInterface {
 		}
 
 		return $la_files;
+	}
+
+
+	/**
+	 * Resets the last modified times of the CSS files to the last modified time of the SCSS files.
+	 * This is useful when compilation fails for some files, as the newest css files will be used
+	 * to determine if the SCSS files need to be recompiled.
+	 *
+	 * @param array $files
+	 * @return void
+	 */
+	protected function resetFileTimes(array $files): void {
+		foreach ($files as $ls_folderPath => $lo_files) {
+			// If the value is not an instance of ScssFilesCollection, skip it.
+			if (!$lo_files instanceof ScssFilesCollection) {
+				continue;
+			}
+
+			$li_lastModified = $lo_files->getLastModified()->subSeconds(10)->timestamp;
+
+			foreach ($lo_files->getMainFiles() as $lo_file) {
+				// Set the css file path based on the scss file
+				$ls_cssFilename = substr($lo_file->getFilename(), 0, -4) . 'css';
+
+				// Replace 'scss' with 'css' in the file path to get the css folder path
+				$ls_cssFolderPath = rtrim(str_replace($ls_folderPath . 'scss', $ls_folderPath . 'css', $lo_file->getPath()), DS) . DS;
+
+				if (file_exists($ls_cssFolderPath . $ls_cssFilename)) {
+					touch($ls_cssFolderPath . $ls_cssFilename, $li_lastModified);
+				}
+			}
+		}
 	}
 }
