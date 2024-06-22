@@ -60,7 +60,6 @@ class ScssCompiler {
 			$la_realmFiles[ $ls_folderPath ] = static::discoverFiles($ls_folderPath . 'scss');
 		}
 
-
 		// Return the array of realm files
 		return $la_realmFiles;
 	}
@@ -95,7 +94,6 @@ class ScssCompiler {
 				$lo_filesCollection->addFile($lo_file);
 			}
 		}
-
 
 		// Return the ScssFilesCollection object.
 		return $lo_filesCollection;
@@ -173,7 +171,6 @@ class ScssCompiler {
 			$la_return[ $ls_folderPath ] = static::compile($lo_files, $ls_folderPath, $la_variables, $returnCss);
 		}
 
-
 		// Return the array of compilation results.
 		return $la_return;
 	}
@@ -202,64 +199,7 @@ class ScssCompiler {
 			static::$compiler->setOutputStyle(OutputStyle::EXPANDED);
 		}
 
-
 		return static::$compiler;
-	}
-
-
-	/**
-	 * Prepares and merges SCSS variables for the compiler.
-	 * This method prepares the SCSS variables by merging default values, application settings,
-	 * and user-defined overrides. It handles special cases, such as font names, by appropriately
-	 * formatting them for SCSS compilation.
-	 *
-	 * @param array $userVars Custom variables provided for the compilation.
-	 * @return array The complete and processed array of variables for the SCSS compiler.
-	 */
-	protected static function prepareVariables(array $userVars): array {
-		// Define default SCSS variables and their values.
-		$la_defaultVars = [
-			'$pageWidth' => '1200px',
-			'$pagePadding' => '15px',
-			'$singlecolumnBreakpoint' => '768px',
-			'$menuBreakpoint' => '1024px',
-			'$columnMargin' => '30px',
-			// Add more defaults as necessary.
-		];
-
-		// Map of high-level variable names to their actual SCSS variable names.
-		$la_varMapping = [
-			'frontend_fullwidth' => '$gi_page_width',
-			'frontend_fullwidth_padding' => '$gi_page_padding',
-			'frontend_singlecolumn_breakpoint' => '$gi_singlecolumn_breakpoint',
-			'frontend_menu_breakpoint' => '$gi_menu_breakpoint',
-			'frontend_column_margin' => '$gi_column_margin',
-			'frontend_font_main' => '$gs_font_name_main',
-			'frontend_font_alternative' => '$gs_font_name_alternative',
-		];
-
-		// Process user variables and map them to their actual SCSS variable names.
-		foreach ($userVars as $ls_key => $ls_value) {
-			if (array_key_exists($ls_key, $la_varMapping)) {
-				$ls_scssVarName = $la_varMapping[ $ls_key ];
-
-				// Special handling for font names to ensure they're formatted correctly.
-				if (in_array($ls_scssVarName, ['$gs_font_name_main', '$gs_font_name_alternative']) && !empty($ls_value)) {
-					$ls_value = str_replace('+', ' ', "quote('" . $ls_value . "')");
-				}
-
-				$la_defaultVars[ $ls_scssVarName ] = $ls_value;
-			}
-		}
-
-		// Optionally add more complex logic here, such as pulling in variables from a config file
-		// or environment variables, checking for defined constants, etc.
-		// Example:
-		// if (defined('CUSTOM_VARIABLE')) {
-		//     $defaultVars['$custom_variable'] = constant('CUSTOM_VARIABLE');
-		// }
-
-		return $la_defaultVars;
 	}
 
 
@@ -368,13 +308,10 @@ class ScssCompiler {
 
 				// Otherwise show a short message.
 				echo 'Cannot compile SCSS file `' . $file->getBasename() . '`';
-				exit;
 			}
-
 
 			return false;
 		}
-
 
 		// Return the compilation result.
 		return $lo_compilationResult;
