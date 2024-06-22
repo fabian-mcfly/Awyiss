@@ -47,6 +47,8 @@ class MediaAssignment extends Entity {
 		'created_by_user' => 'createdByUser',
 		'changed_by_user' => 'changedByUser',
 		'deleted_by_user' => 'deletedByUser',
+		'media_element_assignment' => 'mediaElementAssignment',
+		'media_element_selector' => 'mediaElementSelector',
 		'media_element' => 'mediaElement',
 		'media_element_assignment' => 'mediaElementAssignment',
 		'media_element_selector' => 'mediaElementSelector',
