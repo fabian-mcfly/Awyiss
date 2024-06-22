@@ -58,7 +58,7 @@ class ContentsCell extends Cell {
 
 		$lo_contentsTable = $this->fetchTable('Contents');
 
-		$lo_query = $lo_contentsTable->find('active')->find('threaded');
+		$lo_query = $lo_contentsTable->find('active')->find('threaded')->find('mediaAssignments', includeCompositeSelector: true);
 		$lo_query->where([
 			'Contents.page_id' => $page->id,
 			'ContentAreas.identifier' => $contentArea,
@@ -68,7 +68,6 @@ class ContentsCell extends Cell {
 		$lo_query->contain([
 			'ContentAreas',
 			'ContentTemplates',
-			'MediaAssignments',
 		]);
 
 		$lo_contents = $lo_query->all();

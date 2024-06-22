@@ -55,7 +55,7 @@ class WidgetsCell extends Cell {
 
 		$lo_widgetsTable = $this->fetchTable('Widgets');
 
-		$lo_query = $lo_widgetsTable->find('active')->find('threaded');
+		$lo_query = $lo_widgetsTable->find('active')->find('threaded')->find('mediaAssignments', includeCompositeSelector: true);
 		$lo_query->where([
 			'Widgets.identifier' => $identifier,
 		]);
@@ -63,7 +63,6 @@ class WidgetsCell extends Cell {
 		// Contain WidgetTemplates and MediaAssignments
 		$lo_query->contain([
 			'WidgetTemplates',
-			'MediaAssignments',
 		]);
 
 		$lo_widgets = $lo_query->all();
