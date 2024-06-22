@@ -39,7 +39,7 @@ export default class CustomSettings {
 		{
 			title: 'Links',
 			items: [
-				{title: 'Externer Link ohne Icon', selector: 'a[target]', classes: 'NoIcon'},
+				{title: 'Externer Link ohne Icon', selector: 'a[target]', classes: 'NoExternalLinkIcon'},
 				{title: 'Button', selector: 'a, button', classes: 'Button'}
 			]
 		}
