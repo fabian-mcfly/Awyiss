@@ -169,7 +169,7 @@ class ResizedImageManager {
 			}
 			// If the strategy is "contain" and no height is set, check if a resized image with a width below a certain threshold exists
 			else {
-				$lo_resizedImage = $this->findWithinThreshold($media, $width, $format);
+				$lo_resizedImage = $this->findWithinThreshold($media, $width, $format, $strategy);
 
 				if ($lo_resizedImage) {
 					if (!$lo_resizedImage->media) {
@@ -233,19 +233,25 @@ class ResizedImageManager {
 
 	/**
 	 * Find a resized image with a width below a certain threshold
+	 * If a strategy is provided, the image must have the same strategy
 	 *
 	 * @param \Awyiss\Model\Entity\Media $media
 	 * @param int|null $width
 	 * @param string $format
+	 * @param \Awyiss\Model\Enum\ResizeStrategy|null $strategy
 	 * @return \Awyiss\Model\Entity\MediaResizedImage|null
 	 */
-	public function findWithinThreshold(Media $media, ?int $width, string $format): ?MediaResizedImage {
+	public function findWithinThreshold(Media $media, ?int $width, string $format, ?ResizeStrategy $strategy = null): ?MediaResizedImage {
 		$lo_resizedImages = static::$resizedRecords[ $media->id ] ?? [];
 
 		$li_threshold = ceil($width * 1.1);
 
 		/** @var \Awyiss\Model\Entity\MediaResizedImage $lo_resizedImage */
 		foreach ($lo_resizedImages as $lo_resizedImage) {
+			if ($strategy && $lo_resizedImage->strategy !== $strategy) {
+				continue;
+			}
+
 			if ($lo_resizedImage->width >= $width && $lo_resizedImage->width <= $li_threshold && $lo_resizedImage->extension === $format) {
 				return $lo_resizedImage;
 			}
