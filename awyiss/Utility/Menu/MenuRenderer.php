@@ -141,7 +141,11 @@ class MenuRenderer {
 			'menuConfig' => $this->menu->getConfig(),
 		];
 
-		if ($level === 1 && isset($this->identifier)) {
+		if ($level === 1) {
+			if (empty($this->identifier)) {
+				$this->identifier = $this->getConfig('identifier') ?: 'Default';
+			}
+
 			$la_data['identifier'] = ' Menu-' . $this->identifier;
 		}
 
