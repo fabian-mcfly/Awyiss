@@ -17,7 +17,11 @@
 #}
 
 <div class="{{ content.cssClass }}" {{ content.data|data_attr|raw }} id="Content{{ content.id }}">
-	{{ content.text|raw }}
+	{% if content.text %}
+		<div class="Text">
+			{{ content.text|raw }}
+		</div>
+	{% endif %}
 
 	{% if children %}
 		<div class="Children">
