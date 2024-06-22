@@ -24,6 +24,9 @@ use Awyiss\Model\Entity;
  * @property \Cake\I18n\DateTime|null $changedOn
  * @property int|null $deletedBy
  * @property \Cake\I18n\DateTime|null $deletedOn
+ * @property \Awyiss\Model\Entity\MediaComposite $mediaComposite
+ * @property \Awyiss\Model\Entity\MediaCompositeAssignment[] $mediaCompositeAssignment
+ * @property \Awyiss\Model\Entity\MediaCompositeSelector[] $mediaCompositeSelector
  */
 class MediaAssignment extends Entity {
 	/**
@@ -45,6 +48,8 @@ class MediaAssignment extends Entity {
 		'changed_by_user' => 'changedByUser',
 		'deleted_by_user' => 'deletedByUser',
 		'media_composite' => 'mediaComposite',
+		'media_composite_assignment' => 'mediaCompositeAssignment',
+		'media_composite_selector' => 'mediaCompositeSelector',
 	];
 	/**
 	 * @inheritDoc

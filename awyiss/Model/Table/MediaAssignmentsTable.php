@@ -56,6 +56,16 @@ class MediaAssignmentsTable extends Table {
 		$this->belongsTo('MediaCompositeAssignments', [
 			'bindingKey' => [
 				'media_composite_id',
+			],
+			'foreignKey' => [
+				'media_composite_id',
+			],
+			'joinType' => 'INNER',
+		]);
+
+		$this->belongsTo('MediaCompositeSelectors', [
+			'bindingKey' => [
+				'media_composite_id',
 				'identifier',
 			],
 			'foreignKey' => [
