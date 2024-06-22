@@ -51,6 +51,7 @@ class MenuCell extends Cell {
 		]);
 
 		$lo_renderer->setCurrentRoute($la_options['currentRoute']);
+		$lo_renderer->setConfig('identifier', Inflector::ucparts($identifier, false));
 
 		$this->set([
 			'identifier' => $identifier,
