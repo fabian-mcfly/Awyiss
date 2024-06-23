@@ -78,10 +78,6 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 
 		$this->_tableLocator = $this->getConfig('tableLocator');
 
-		if (str_starts_with($this->table()->getTable(), 'media')) {
-			return;
-		}
-
 		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
 		$this->assignmentsTable = $this->getTableLocator()->get('MediaAssignments', ['allowFallbackClass' => false]);
 
