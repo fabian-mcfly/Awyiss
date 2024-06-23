@@ -8,6 +8,7 @@ use Awyiss\Model\Entity;
 use Awyiss\Model\Entity\Widget;
 use Awyiss\View\Cell\Frontend\Trait\ContentElementTrait;
 use Cake\View\Cell;
+use RuntimeException;
 
 
 /**
@@ -29,6 +30,17 @@ class WidgetsCell extends Cell {
 			'columnWidth' => 100.00,
 			'viewVars' => [],
 		];
+
+		if (!isset($la_options['pageWidth'])) {
+			$la_options['pageWidth'] = $this->findPageWidth($la_options);
+
+			if ($la_options['pageWidth'] === null) {
+				throw new RuntimeException('Cannot determine page width. Please provide a page width when rendering widgets');
+			}
+		}
+		elseif ($la_options['pageWidth'] !== null) {
+			$la_options['pageWidth'] = (float)$la_options['pageWidth'];
+		}
 
 		$this->view->set([
 			'identifier' => $identifier,
@@ -64,7 +76,7 @@ class WidgetsCell extends Cell {
 			return $widget->parentId === null;
 		})->compile();
 
-		$this->prepareEntities($lo_widgets, (float)$la_options['columnWidth']);
+		$this->prepareEntities($lo_widgets, (float)$la_options['columnWidth'], $la_options['pageWidth']);
 
 		$ls_widgets = $this->buildContents($lo_widgets->toArray());
 

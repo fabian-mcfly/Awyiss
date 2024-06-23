@@ -9,6 +9,7 @@ use Awyiss\Model\Entity\Content;
 use Awyiss\Model\Entity\Page;
 use Awyiss\View\Cell\Frontend\Trait\ContentElementTrait;
 use Cake\View\Cell;
+use RuntimeException;
 
 
 /**
@@ -32,6 +33,17 @@ class ContentsCell extends Cell {
 			'includeWrapper' => true,
 			'viewVars' => [],
 		];
+
+		if (!isset($la_options['pageWidth'])) {
+			$la_options['pageWidth'] = $this->findPageWidth($la_options);
+
+			if ($la_options['pageWidth'] === null) {
+				throw new RuntimeException('Cannot determine page width. Please provide a page width when rendering contents');
+			}
+		}
+		elseif ($la_options['pageWidth'] !== null) {
+			$la_options['pageWidth'] = (float)$la_options['pageWidth'];
+		}
 
 		$this->view->set([
 			'page' => $page,
@@ -69,7 +81,7 @@ class ContentsCell extends Cell {
 			return $content->parentId === null;
 		})->compile();
 
-		$this->prepareEntities($lo_contents, (float)$la_options['columnWidth']);
+		$this->prepareEntities($lo_contents, (float)$la_options['columnWidth'], $la_options['pageWidth']);
 
 		$ls_contents = $this->buildContents($lo_contents->toArray());
 
