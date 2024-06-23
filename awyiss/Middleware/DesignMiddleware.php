@@ -111,7 +111,7 @@ class DesignMiddleware implements MiddlewareInterface {
 	 *
 	 * @return array
 	 */
-	public function getDesignVariables(bool $raw = false): array {
+	public function getDesignVariables(): array {
 		if (isset($this->designVariables)) {
 			return $this->designVariables;
 		}
@@ -121,30 +121,13 @@ class DesignMiddleware implements MiddlewareInterface {
 		$lo_design = $lo_designTable->find()->where(['in_use' => true])->first();
 
 		if (!$lo_design) {
+			$this->designVariables = [];
 			return [];
 		}
 
-		if ($raw) {
-			return $lo_design->settings;
-		}
+		$this->designVariables = $lo_design->settings;
 
-		$la_variables = [];
-
-		foreach ($lo_design->settings as $ls_key => $lx_value) {
-			if (str_ends_with($ls_key, 'Unit')) {
-				continue;
-			}
-
-			$la_variables[ $ls_key ] = $lx_value;
-
-			if (!empty($lx_value) && isset($lo_design->settings[ $ls_key . 'Unit' ])) {
-				$la_variables[ $ls_key ] .= $lo_design->settings[ $ls_key . 'Unit' ];
-			}
-		}
-
-		$this->designVariables = $la_variables;
-
-		return $la_variables;
+		return $this->designVariables;
 	}
 
 

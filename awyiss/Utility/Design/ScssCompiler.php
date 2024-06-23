@@ -148,6 +148,12 @@ class ScssCompiler {
 		$la_return = [];
 
 		$la_variables = $vars;
+
+
+		if ($la_variables) {
+			$la_variables = static::normalizeVariables($la_variables);
+		}
+
 		foreach ($la_variables as $ls_key => $lx_value) {
 			if (is_array($lx_value)) {
 				if (isset($lx_value['font'])) {
@@ -383,5 +389,30 @@ class ScssCompiler {
 		}
 
 		return rtrim($ls_result, ', ') . ')';
+	}
+
+
+	/**
+	 * Normalizes the variables by adding the units to values
+	 *
+	 * @param array $variables
+	 * @return array
+	 */
+	protected static function normalizeVariables(array $variables): array {
+		$la_variables = [];
+
+		foreach ($variables as $ls_key => $lx_value) {
+			if (str_ends_with($ls_key, 'Unit')) {
+				continue;
+			}
+
+			$la_variables[ $ls_key ] = $lx_value;
+
+			if (!empty($lx_value) && isset($variables[ $ls_key . 'Unit' ])) {
+				$la_variables[ $ls_key ] .= $variables[ $ls_key . 'Unit' ];
+			}
+		}
+
+		return $la_variables;
 	}
 }
