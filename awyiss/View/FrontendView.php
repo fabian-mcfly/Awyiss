@@ -114,6 +114,7 @@ class FrontendView extends AppView {
 		$lo_twig->addGlobal('currentLanguage', $lo_frontendLanguage);
 		$lo_twig->addGlobal('currentPath', $this->getRequest()->getUri()->getPath());
 		$lo_twig->addGlobal('currentUrl', $this->request->getUri()->__toString());
+		$lo_twig->addGlobal('designSettings', $this->getRequest()->getAttribute('design')->getDesignVariables(true));
 		$lo_twig->addGlobal('environment', Configure::read('debug') ? 'Env-' . Inflector::ucparts(CONFIG_ENV) : 'l');
 		$lo_twig->addGlobal('folder', '/' . ltrim($this->request->getAttribute('base'), '/'));
 		$lo_twig->addGlobal('languages', LocaleMiddleware::getLanguages());

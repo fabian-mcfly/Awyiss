@@ -111,7 +111,7 @@ class DesignMiddleware implements MiddlewareInterface {
 	 *
 	 * @return array
 	 */
-	public function getDesignVariables(): array {
+	public function getDesignVariables(bool $raw = false): array {
 		if (isset($this->designVariables)) {
 			return $this->designVariables;
 		}
@@ -122,6 +122,10 @@ class DesignMiddleware implements MiddlewareInterface {
 
 		if (!$lo_design) {
 			return [];
+		}
+
+		if ($raw) {
+			return $lo_design->settings;
 		}
 
 		$la_variables = [];

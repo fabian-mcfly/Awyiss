@@ -35,10 +35,27 @@ trait ContentElementTrait {
 
 
 	/**
+	 * Attempt to find the width of the page by
+	 * - checking the view vars for a page width
+	 *
+	 * @param array $options
+	 * @return float|null
+	 */
+	protected function findPageWidth(array $options): ?float {
+		if (isset($options['viewVars']['designSettings']['pageWidth'])) {
+			return (float)$options['viewVars']['designSettings']['pageWidth'];
+		}
+
+		return null;
+	}
+
+
+	/**
 	 * @param \Cake\Collection\CollectionInterface $entities
 	 * @param float $columnWidth
+	 * @param float|null $baseWidth
 	 */
-	protected function prepareEntities(CollectionInterface $entities, float $columnWidth = 100.00): void {
+	protected function prepareEntities(CollectionInterface $entities, float $columnWidth = 100.00, ?float $baseWidth = null): void {
 		if (!$entities->count()) {
 			return;
 		}
