@@ -8,12 +8,14 @@ use Awyiss\Model\Entity;
 use Awyiss\Model\Entity\Content;
 use Awyiss\Model\Entity\Widget;
 use Awyiss\Utility\Inflector;
+use Awyiss\Utility\Media\ResizedImageManager;
 use Awyiss\View\FrontendView;
 use Cake\Collection\CollectionInterface;
 use Cake\Core\Configure;
 use Cake\Event\EventManagerInterface;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
+use Cake\ORM\Query\SelectQuery;
 
 
 /**
@@ -21,6 +23,14 @@ use Cake\Http\ServerRequest;
  * for Frontend content elements (content and widgets)
  */
 trait ContentElementTrait {
+	/**
+	 * @var \Awyiss\Utility\Media\ResizedImageManager $resizedImageManager
+	 */
+	protected static ResizedImageManager $resizedImageManager;
+
+	/**
+	 * @var \Awyiss\View\FrontendView $view
+	 */
 	protected FrontendView $view;
 
 
@@ -30,7 +40,40 @@ trait ContentElementTrait {
 	public function __construct(ServerRequest $request, Response $response, ?EventManagerInterface $eventManager = null, array $cellOptions = []) {
 		parent::__construct($request, $response, $eventManager, $cellOptions);
 
+		if (!isset(static::$resizedImageManager)) {
+			static::$resizedImageManager = new ResizedImageManager();
+		}
+
 		$this->view = new FrontendView($request, $response);
+	}
+
+
+	/**
+	 * Fetch all used media items and add them to the ResizedImageManager
+	 *
+	 * @param \Cake\Collection\CollectionInterface $entities
+	 * @param string $scope
+	 * @return void
+	 */
+	protected function addMediaItems(CollectionInterface $entities, string $scope): void {
+		$lo_entities = $entities->listNested()->compile(false);
+		$la_entityIds = $lo_entities->extract('id')->toArray();
+
+		if (!$la_entityIds) {
+			return;
+		}
+
+		$lo_mediaTable = $this->fetchTable('Media');
+		$lo_query = $lo_mediaTable->find()->matching('MediaAssignments', function (SelectQuery $query) use ($la_entityIds, $scope) {
+			return $query->where([
+				'MediaAssignments.foreign_key IN' => $la_entityIds,
+				'MediaAssignments.scope' => $scope,
+			]);
+		})
+		->contain(['MediaResizedImages'])
+		->distinct('Media.id');
+
+		static::$resizedImageManager->setMediaItems($lo_query->all()->toArray());
 	}
 
 

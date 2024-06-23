@@ -76,6 +76,8 @@ class WidgetsCell extends Cell {
 			return $widget->parentId === null;
 		})->compile();
 
+		$this->addMediaItems($lo_widgets, 'widgets');
+
 		$this->prepareEntities($lo_widgets, (float)$la_options['columnWidth'], $la_options['pageWidth']);
 
 		$ls_widgets = $this->buildContents($lo_widgets->toArray());
