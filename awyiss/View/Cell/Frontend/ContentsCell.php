@@ -81,6 +81,8 @@ class ContentsCell extends Cell {
 			return $content->parentId === null;
 		})->compile();
 
+		$this->addMediaItems($lo_contents, 'contents');
+
 		$this->prepareEntities($lo_contents, (float)$la_options['columnWidth'], $la_options['pageWidth']);
 
 		$ls_contents = $this->buildContents($lo_contents->toArray());
