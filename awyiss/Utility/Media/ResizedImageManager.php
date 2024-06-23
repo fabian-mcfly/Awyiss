@@ -77,6 +77,10 @@ class ResizedImageManager {
 	 */
 	public function addMediaItem(Media $mediaItem): void {
 		static::$mediaItems[ $mediaItem->id ] = $mediaItem;
+
+		if ($mediaItem->mediaResizedImages) {
+			static::$resizedRecords[ $mediaItem->id ] = $mediaItem->mediaResizedImages;
+		}
 	}
 
 
@@ -98,6 +102,11 @@ class ResizedImageManager {
 		foreach ($mediaItems as $lx_mediaItem) {
 			if ($lx_mediaItem instanceof Media) {
 				static::$mediaItems[ $lx_mediaItem->id ] = $lx_mediaItem;
+
+				if ($lx_mediaItem->mediaResizedImages) {
+					static::$resizedRecords[ $lx_mediaItem->id ] = $lx_mediaItem->mediaResizedImages;
+				}
+
 				continue;
 			}
 
