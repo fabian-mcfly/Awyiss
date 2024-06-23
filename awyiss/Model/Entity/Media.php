@@ -34,6 +34,7 @@ use Cake\Utility\Text;
  * @property \Cake\I18n\DateTime|null $deletedOn
  * @property \Awyiss\Model\Entity\MediaAssignment[] $mediaAssignments
  * @property \Awyiss\Model\Entity\MediaFolder $mediaFolder
+ * @property \Awyiss\Model\Entity\MediaResizedImage|null $mediaResizedImages
  * @property \Laminas\Diactoros\UploadedFile|null $file
  * @property string|null $cleanName
  * @property string|null $originalCleanName
@@ -89,6 +90,7 @@ class Media extends Entity {
 		'changed_on' => 'changedOn',
 		'deleted_by' => 'deletedBy',
 		'deleted_on' => 'deletedOn',
+		'media_resized_images' => 'mediaResizedImages',
 	];
 
 
