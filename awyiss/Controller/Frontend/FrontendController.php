@@ -171,7 +171,6 @@ class FrontendController extends AppController {
 		$this->set([
 			'page' => $page,
 			'pageRoleEnum' => $ls_pageRoleEnum,
-			'webfont' => $this->getWebfontData(),
 		]);
 
 		$this->viewBuilder()
@@ -290,36 +289,5 @@ class FrontendController extends AppController {
 
 			throw new RedirectException($ls_realUrl, 301);
 		}
-	}
-
-
-	/**
-	 * Get the data for the webfont from the design settings
-	 *
-	 * @return array
-	 */
-	protected function getWebfontData(): array {
-		/** @var \Awyiss\Middleware\DesignMiddleware $lo_designMiddleware */
-		$lo_designMiddleware = $this->getRequest()->getAttribute('design');
-		$la_variables = $lo_designMiddleware->getDesignVariables();
-
-		$la_webfontData = [];
-
-		if (!$la_variables) {
-			return $la_webfontData;
-		}
-
-		foreach ($la_variables as $ls_variable => $lx_value) {
-			if (!is_array($lx_value) || !isset($lx_value['font']['name'])) {
-				continue;
-			}
-
-			$la_webfontData[ $ls_variable ] = [
-				'name' => $lx_value['font']['name'],
-				'variants' => $lx_value['variants'] ?? [],
-			];
-		}
-
-		return $la_webfontData;
 	}
 }
