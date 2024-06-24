@@ -34,15 +34,15 @@ class ContentsCell extends Cell {
 			'viewVars' => [],
 		];
 
-		if (!isset($la_options['pageWidth'])) {
-			$la_options['pageWidth'] = $this->findPageWidth($la_options);
+		if (!isset($la_options['fullWidth'])) {
+			$la_options['fullWidth'] = $this->findFullWidth($la_options);
 
-			if ($la_options['pageWidth'] === null) {
+			if ($la_options['fullWidth'] === null) {
 				throw new RuntimeException('Cannot determine page width. Please provide a page width when rendering contents');
 			}
 		}
-		elseif ($la_options['pageWidth'] !== null) {
-			$la_options['pageWidth'] = (float)$la_options['pageWidth'];
+		elseif ($la_options['fullWidth'] !== null) {
+			$la_options['fullWidth'] = (float)$la_options['fullWidth'];
 		}
 
 		$this->view->set([
@@ -83,12 +83,13 @@ class ContentsCell extends Cell {
 
 		$this->addMediaItems($lo_contents, 'contents');
 
-		$this->prepareEntities($lo_contents, (float)$la_options['columnWidth'], $la_options['pageWidth']);
+		$this->prepareEntities($lo_contents, (float)$la_options['columnWidth'], $la_options['fullWidth']);
 
 		$ls_contents = $this->buildContents($lo_contents->toArray());
 
 		// Set the view variables
 		$this->set([
+			'fullWidth' => $la_options['fullWidth'],
 			'contents' => $ls_contents,
 			'page' => $page,
 			'identifier' => $contentArea,
