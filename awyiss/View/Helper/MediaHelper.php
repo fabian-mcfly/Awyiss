@@ -32,6 +32,11 @@ class MediaHelper extends Helper {
 		if (!isset(static::$resizedImageManager)) {
 			static::$resizedImageManager = new ResizedImageManager();
 		}
+
+		/** @var \Twig\Environment $lo_twig */
+		$lo_twig = $this->getView()->getTwig();
+		$lo_twig->addGlobal('ProcessStatus', ProcessStatus::class);
+		$lo_twig->addGlobal('ResizeStrategy', ResizeStrategy::class,);
 	}
 
 
@@ -63,8 +68,6 @@ class MediaHelper extends Helper {
 	public function preview(Media $media, array $viewData = []): string {
 		$la_defaults = [
 			'resize' => null,
-			'ProcessStatus' => ProcessStatus::class,
-			'ResizeStrategy' => ResizeStrategy::class,
 		];
 
 		$la_viewData = array_merge($la_defaults, $viewData, [

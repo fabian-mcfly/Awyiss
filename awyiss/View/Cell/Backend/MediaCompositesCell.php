@@ -4,8 +4,6 @@
 namespace Awyiss\View\Cell\Backend;
 
 
-use Awyiss\Model\Enum\ProcessStatus;
-use Awyiss\Model\Enum\ResizeStrategy;
 use Awyiss\Model\Table;
 use Cake\Collection\Collection;
 use Cake\Datasource\EntityInterface;
@@ -83,8 +81,6 @@ class MediaCompositesCell extends Cell {
 			'composites' => $lo_composites,
 			'entity' => $entity,
 			'assignedComposites' => $lo_assignedComposites,
-			'ProcessStatus' => ProcessStatus::class,
-			'ResizeStrategy' => ResizeStrategy::class,
 		]);
 	}
 

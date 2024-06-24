@@ -10,7 +10,6 @@ use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Model\Entity\Media;
 use Awyiss\Model\Entity\MediaFolder;
 use Awyiss\Model\Enum\ProcessStatus;
-use Awyiss\Model\Enum\ResizeStrategy;
 use Awyiss\Model\Table;
 use Awyiss\Routing\Router;
 use Cake\Database\Expression\QueryExpression;
@@ -119,7 +118,6 @@ class MediaController extends Controller {
 			'languageRealm' => Awyiss::REALM_FRONTEND,
 			'paginated' => $lb_paginated,
 			'attributes' => $this->Media->getAttributes(),
-			'ResizeStrategy' => ResizeStrategy::class,
 		]);
 
 		if ($this->request->is('ajax')) {
@@ -172,7 +170,6 @@ class MediaController extends Controller {
 					'mediaItem' => $lo_media,
 					'paginate' => ($this->request->getParam('paginate', 'false') === 'true'),
 					'attributes' => $this->Media->getAttributes(),
-					'ResizeStrategy' => ResizeStrategy::class,
 				]);
 
 				$this->set([
@@ -193,7 +190,6 @@ class MediaController extends Controller {
 		$this->set([
 			'media' => $lo_media,
 			'languageRealm' => Awyiss::REALM_FRONTEND,
-			'ProcessStatus' => ProcessStatus::class,
 		]);
 	}
 
@@ -249,7 +245,6 @@ class MediaController extends Controller {
 			$lo_elementView->set([
 				'mediaItem' => $lo_media,
 				'paginate' => ($this->request->getParam('paginate', 'false') === 'true'),
-				'ResizeStrategy' => ResizeStrategy::class,
 			]);
 
 			$this->set([
@@ -269,8 +264,6 @@ class MediaController extends Controller {
 		$this->set([
 			'media' => $lo_media,
 			'languageRealm' => Awyiss::REALM_FRONTEND,
-			'ProcessStatus' => ProcessStatus::class,
-			'ResizeStrategy' => ResizeStrategy::class,
 		]);
 	}
 
