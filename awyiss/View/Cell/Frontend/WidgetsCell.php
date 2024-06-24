@@ -31,15 +31,15 @@ class WidgetsCell extends Cell {
 			'viewVars' => [],
 		];
 
-		if (!isset($la_options['pageWidth'])) {
-			$la_options['pageWidth'] = $this->findPageWidth($la_options);
+		if (!isset($la_options['fullWidth'])) {
+			$la_options['fullWidth'] = $this->findFullWidth($la_options);
 
-			if ($la_options['pageWidth'] === null) {
+			if ($la_options['fullWidth'] === null) {
 				throw new RuntimeException('Cannot determine page width. Please provide a page width when rendering widgets');
 			}
 		}
-		elseif ($la_options['pageWidth'] !== null) {
-			$la_options['pageWidth'] = (float)$la_options['pageWidth'];
+		elseif ($la_options['fullWidth'] !== null) {
+			$la_options['fullWidth'] = (float)$la_options['fullWidth'];
 		}
 
 		$this->view->set([
@@ -78,12 +78,13 @@ class WidgetsCell extends Cell {
 
 		$this->addMediaItems($lo_widgets, 'widgets');
 
-		$this->prepareEntities($lo_widgets, (float)$la_options['columnWidth'], $la_options['pageWidth']);
+		$this->prepareEntities($lo_widgets, (float)$la_options['columnWidth'], $la_options['fullWidth']);
 
 		$ls_widgets = $this->buildContents($lo_widgets->toArray());
 
 		// Set the view variables
 		$this->set([
+			'fullWidth' => $la_options['fullWidth'],
 			'identifier' => $identifier,
 			'widgets' => $ls_widgets,
 			...$la_options['viewVars'],

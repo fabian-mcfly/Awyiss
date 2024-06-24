@@ -28,6 +28,7 @@ trait ContentElementTrait {
 	 */
 	protected static ResizedImageManager $resizedImageManager;
 
+
 	/**
 	 * @var \Awyiss\View\FrontendView $view
 	 */
@@ -84,7 +85,11 @@ trait ContentElementTrait {
 	 * @param array $options
 	 * @return float|null
 	 */
-	protected function findPageWidth(array $options): ?float {
+	protected function findFullWidth(array $options): ?float {
+		if (isset($options['viewVars']['fullWidth'])) {
+			return (float)$options['viewVars']['fullWidth'];
+		}
+
 		if (isset($options['viewVars']['designSettings']['pageWidth'])) {
 			return (float)$options['viewVars']['designSettings']['pageWidth'];
 		}
@@ -96,9 +101,9 @@ trait ContentElementTrait {
 	/**
 	 * @param \Cake\Collection\CollectionInterface $entities
 	 * @param float $columnWidth
-	 * @param float|null $baseWidth
+	 * @param float|null $fullWidth
 	 */
-	protected function prepareEntities(CollectionInterface $entities, float $columnWidth = 100.00, ?float $baseWidth = null): void {
+	protected function prepareEntities(CollectionInterface $entities, float $columnWidth = 100.00, ?float $fullWidth = null): void {
 		if (!$entities->count()) {
 			return;
 		}
