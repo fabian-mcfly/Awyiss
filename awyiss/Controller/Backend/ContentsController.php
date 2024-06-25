@@ -178,7 +178,7 @@ class ContentsController extends Controller {
 	 */
 	public function edit(int $id) {
 		/** @var Content $lo_content */
-		$lo_content = $this->Contents->findById($id)->find('translations')->find('mediaAssignments')->find('mediaCompositeAssignments')->first();
+		$lo_content = $this->Contents->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
 		if (!$lo_content) {
 			$this->Flash->error(__('record_not_found'));
 

@@ -14,7 +14,7 @@ use Cake\Validation\Validator;
  * MediaSelectors Model
  *
  * @method \Awyiss\Model\Entity\MediaSelector newDefaultEntity(array $additionalData = [], array $options = [])
- * @property \Awyiss\Model\Table\MediaCompositeSelectorsTable&\Awyiss\ORM\Association\HasMany $MediaCompositeSelectors
+ * @property \Awyiss\Model\Table\MediaElementSelectorsTable&\Awyiss\ORM\Association\HasMany $MediaElementSelectors
  * @noinspection PhpFullyQualifiedNameUsageInspection
  */
 class MediaSelectorsTable extends Table {
@@ -40,7 +40,7 @@ class MediaSelectorsTable extends Table {
 	 * @inheritDoc
 	 */
 	public function initializeAssociations(): void {
-		$this->hasMany('MediaCompositeSelectors', [
+		$this->hasMany('MediaElementSelectors', [
 			'cascadeCallbacks' => true,
 			'dependent' => true,
 			'saveStrategy' => 'replace',
@@ -120,11 +120,11 @@ class MediaSelectorsTable extends Table {
 
 
 		$rules->addDelete(
-			$rules->isNotLinkedTo('MediaCompositeSelectors', 'mediaCompositeSelectors'),
-			'noLinkedMediaCompositeSelectors',
+			$rules->isNotLinkedTo('MediaElementSelectors', 'mediaElementSelectors'),
+			'noLinkedMediaElementSelectors',
 			[
 				'errorField' => '_general',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_linked_media_composite_selectors'),
+				'message' => __df($this->getI18nDomain(), 'validation', 'error_linked_media_element_selectors'),
 			]
 		);
 

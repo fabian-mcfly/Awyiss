@@ -183,64 +183,64 @@
 					}
 				}
 			},
-			"media_composites": {
+			"media_elements": {
 				"title": {
-					"translate": ["media_composites", "menu_title"]
+					"translate": ["media_elements", "menu_title"]
 				},
 				"link": {
 					"url": {
-						"controller": "MediaComposites",
+						"controller": "MediaElements",
 						"action": "overview"
 					}
 				},
 				"access": {
-					"scope": "media_composites",
+					"scope": "media_elements",
 					"identifier": "read"
 				},
 				"children": {
-					"media_composites_overview": {
+					"media_elements_overview": {
 						"title": {
-							"translate": ["media_composites", "menu_overview"]
+							"translate": ["media_elements", "menu_overview"]
 						},
 						"link": {
 							"url": {
-								"controller": "MediaComposites",
+								"controller": "MediaElements",
 								"action": "overview"
 							}
 						},
 						"access": {
-							"scope": "MediaComposites",
+							"scope": "MediaElements",
 							"identifier": "read"
 						}
 					},
-					"media_composites_add": {
+					"media_elements_add": {
 						"title": {
-							"translate": ["media_composites", "menu_add"]
+							"translate": ["media_elements", "menu_add"]
 						},
 						"link": {
 							"url": {
-								"controller": "MediaComposites",
+								"controller": "MediaElements",
 								"action": "add"
 							}
 						},
 						"access": {
-							"scope": "media_composites",
+							"scope": "media_elements",
 							"identifier": "create"
 						}
 					},
-					"media_composites_configure": {
+					"media_elements_configure": {
 						"title": {
-							"translate": ["media_composites", "menu_configure"]
+							"translate": ["media_elements", "menu_configure"]
 						},
 						"link": {
 							"url": {
 								"controller": "Configuration",
 								"action": "overview",
-								"scope": "media-composites"
+								"scope": "media-elements"
 							}
 						},
 						"access": {
-							"scope": "media_composites",
+							"scope": "media_elements",
 							"identifier": "configure"
 						}
 					},

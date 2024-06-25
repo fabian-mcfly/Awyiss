@@ -105,7 +105,7 @@ class SlugHistoryController extends Controller {
 		$this->Authorization->ensure('update');
 
 		/** @var SlugHistory $lo_slugHistory */
-		$lo_slugHistory = $this->SlugHistory->findById($id)->find('translations')->find('mediaAssignments')->find('mediaCompositeAssignments')->first();
+		$lo_slugHistory = $this->SlugHistory->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
 		if (! $lo_slugHistory) {
 			$this->Flash->error(__('record_not_found'));
 

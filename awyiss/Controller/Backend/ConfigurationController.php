@@ -167,7 +167,7 @@ class ConfigurationController extends Controller {
 		])->ensure('update');
 
 		/** @var Configuration $lo_configuration */
-		$lo_configuration = $this->Configuration->findById($id)->find('translations')->find('mediaAssignments')->find('mediaCompositeAssignments')->first();
+		$lo_configuration = $this->Configuration->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
 		if (!$lo_configuration) {
 			$this->Flash->error(__('record_not_found'));
 

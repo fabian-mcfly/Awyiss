@@ -94,7 +94,7 @@ class ContentTemplatesController extends Controller {
 		$this->Authorization->ensure('update');
 
 		/** @var ContentTemplate $lo_contentTemplate */
-		$lo_contentTemplate = $this->ContentTemplates->findById($id)->find('translations')->find('mediaAssignments')->find('mediaCompositeAssignments')->contain([
+		$lo_contentTemplate = $this->ContentTemplates->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->contain([
 			'ContentAreas',
 			'ContentTemplateElements',
 		])->first();

@@ -93,7 +93,7 @@ class WidgetTemplatesController extends Controller {
 		$this->Authorization->ensure('update');
 
 		/** @var \Awyiss\Model\Entity\WidgetTemplate $lo_widgetTemplate */
-		$lo_widgetTemplate = $this->WidgetTemplates->findById($id)->find('translations')->find('mediaAssignments')->find('mediaCompositeAssignments')
+		$lo_widgetTemplate = $this->WidgetTemplates->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')
 		->contain([
 			'WidgetTemplateElements',
 		])->first();

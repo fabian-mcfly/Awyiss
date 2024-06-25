@@ -68,5 +68,5 @@ msgstr "Der Medienselektor wurde erfolgreich gelöscht"
 msgid "delete_failed"
 msgstr "Der Medienselektor konnte nicht gelöscht werden"
 
-msgid "error_linked_media_composite_selectors"
+msgid "error_linked_media_element_selectors"
 msgstr "Der Medienselektor kann nicht gelöscht werden, da er noch in Verwendung ist"

@@ -1,0 +1,113 @@
+<?php declare(strict_types=1);
+
+
+/**
+ * Class MediaElements
+ */
+class MediaElements {
+	/**
+	 * @var \Initial $migration The migration that is being migrated
+	 */
+	protected \Initial $migration;
+
+
+	/**
+	 * Constructor
+	 *
+	 * @param \Initial $migration The migration that is being migrated
+	 */
+	public function __construct(Initial $migration) {
+		$this->migration = $migration;
+	}
+
+
+	/**
+	 * Migrate Up.
+	 *
+	 * @return void
+	 * @noinspection PhpMethodNamingConventionInspection
+	 */
+	public function up(): void {
+		$this->migration->table('media_elements')->addColumn('id', 'integer', [
+			'autoIncrement' => true,
+			'default' => null,
+			'limit' => null,
+			'null' => false,
+			'signed' => true,
+		])->addPrimaryKey(['id'])->addColumn('title', 'string', [
+			'default' => null,
+			'limit' => 50,
+			'null' => false,
+		])->addColumn('identifier', 'string', [
+			'default' => null,
+			'limit' => 50,
+			'null' => false,
+		])->addColumn('column_span', 'string', [
+			'default' => '12/12',
+			'limit' => 5,
+			'null' => false,
+		])->addColumn('system_order', 'integer', [
+			'default' => '0',
+			'limit' => null,
+			'null' => false,
+			'signed' => true,
+		])->addColumn('active', 'boolean', [
+			'default' => true,
+			'limit' => null,
+			'null' => false,
+		])->addColumn('deleted', 'boolean', [
+			'default' => false,
+			'limit' => null,
+			'null' => false,
+		])->addColumn('created_by', 'integer', [
+			'default' => null,
+			'limit' => null,
+			'null' => true,
+			'signed' => true,
+		])->addColumn('created_on', 'datetime', [
+			'default' => null,
+			'limit' => null,
+			'null' => true,
+		])->addColumn('changed_by', 'integer', [
+			'default' => null,
+			'limit' => null,
+			'null' => true,
+			'signed' => true,
+		])->addColumn('changed_on', 'datetime', [
+			'default' => null,
+			'limit' => null,
+			'null' => true,
+		])->addColumn('deleted_by', 'integer', [
+			'default' => null,
+			'limit' => null,
+			'null' => true,
+			'signed' => true,
+		])->addColumn('deleted_on', 'datetime', [
+			'default' => null,
+			'limit' => null,
+			'null' => true,
+		])->addIndex(
+			[
+				'identifier',
+			], [
+				'name' => 'identifier',
+			]
+		)->addIndex(
+			[
+				'system_order',
+			], [
+				'name' => 'system_order',
+			]
+		)->create();
+	}
+
+
+	/**
+	 * Migrate Down.
+	 *
+	 * @return void
+	 */
+	public function down(): void {
+		$this->migration->table('media_elements')->drop()->save();
+	}
+}

@@ -4,7 +4,7 @@
 namespace Awyiss\Model\Table;
 
 
-use Awyiss\Annotation\MediaCompositeAssignable;
+use Awyiss\Annotation\MediaElementAssignable;
 use Awyiss\Model\Entity\Attribute;
 use Awyiss\Model\Entity\WidgetTemplate;
 use Awyiss\Model\Table;
@@ -23,7 +23,7 @@ use Cake\Validation\Validator;
  * @method \Awyiss\Model\Entity\WidgetTemplate newDefaultEntity(array $additionalData = [], array $options = [])
  * @noinspection PhpUnnecessaryFullyQualifiedNameInspection
  */
-#[MediaCompositeAssignable(MediaCompositeAssignable::ENTITY_LEVEL)]
+#[MediaElementAssignable(MediaElementAssignable::ENTITY_LEVEL)]
 class WidgetTemplatesTable extends Table {
 	/**
 	 * @inheritDoc

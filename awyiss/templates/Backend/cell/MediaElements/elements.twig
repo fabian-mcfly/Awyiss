@@ -1,0 +1,22 @@
+{#
+@var entity \Awyiss\Model\Entity
+@var elements \Cake\Datasource\ResultSetDecorator
+@var assignedElements \Cake\Collection\Collection
+#}
+
+{% for assignedElement in assignedElements %}
+	{% set element = elements.firstMatch({id: assignedElement.mediaElementId}) %}
+	{% if element and element.mediaElementSelectors %}
+		<div class="FormInput FormInputType-MediaElement MediaElement ColumnSpan-{{ element.column.span.numerator }}">
+			{% for mediaElementSelector in element.mediaElementSelectors %}
+				{{ element('media/selector/' ~ mediaElementSelector.mediaSelector.identifier, {
+					columnSpan: mediaElementSelector.column.span.numerator,
+					element: element,
+					elementSelector: mediaElementSelector,
+					entity: entity,
+					label: mediaElementSelector.title
+				}) }}
+			{% endfor %}
+		</div>
+	{% endif %}
+{% endfor %}

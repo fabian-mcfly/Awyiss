@@ -238,7 +238,7 @@ class PagesController extends Controller {
 		$this->Authorization->ensure('update');
 
 		/** @var \Awyiss\Model\Entity\Page $lo_page */
-		$lo_page = $this->Pages->findById($id)->find('translations')->find('mediaAssignments')->find('mediaCompositeAssignments')->first();
+		$lo_page = $this->Pages->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
 
 		if (!$lo_page) {
 			$this->Flash->error(__df($this->pageRoleName, 'pages', 'record_not_found'));

@@ -508,7 +508,7 @@ textarea {
 		}
 	}
 
-	&Type-MediaComposite {
+	&Type-MediaElement {
 		display:grid;
 		gap:0 40px;
 		grid-template-columns:repeat(12, 1fr);
@@ -733,7 +733,7 @@ textarea {
 	}
 }
 
-.Fieldset-MediaCompositeAssignments {
+.Fieldset-MediaElementAssignments {
 	padding:0;
 	box-shadow:none;
 	background-color:transparent;
@@ -743,11 +743,11 @@ textarea {
 		padding:0;
 	}
 
-	> .Fieldset-MediaComposites-Available {
+	> .Fieldset-MediaElements-Available {
 		grid-column:1 / 1;
 	}
 
-	> .Fieldset-MediaComposites-Assigned {
+	> .Fieldset-MediaElements-Assigned {
 		grid-column:auto / -1;
 	}
 
@@ -826,8 +826,8 @@ textarea {
 	}
 }
 
-.Fieldset-MediaComposites-Available,
-.Fieldset-MediaComposites-Assigned {
+.Fieldset-MediaElements-Available,
+.Fieldset-MediaElements-Assigned {
 	display:block;
 	padding:20px;
 
@@ -865,7 +865,7 @@ textarea {
 	}
 }
 
-.Fieldset-MediaComposites-Available {
+.Fieldset-MediaElements-Available {
 	margin-bottom:0;
 	position:sticky;
 	top:160px;

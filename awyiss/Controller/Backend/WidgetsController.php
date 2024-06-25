@@ -127,7 +127,7 @@ class WidgetsController extends Controller {
 		$this->Authorization->ensure('update');
 
 		/** @var Widget $lo_widget */
-		$lo_widget = $this->Widgets->findById($id)->find('translations')->find('mediaAssignments')->find('mediaCompositeAssignments')->first();
+		$lo_widget = $this->Widgets->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
 		if (!$lo_widget) {
 			$this->Flash->error(__('record_not_found'));
 
