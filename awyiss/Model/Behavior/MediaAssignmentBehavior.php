@@ -104,14 +104,14 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 	 * @param \Cake\ORM\Query\SelectQuery $query
 	 * @return \Cake\ORM\Query\SelectQuery
 	 */
-	public function findMediaAssignments(SelectQuery $query, bool $includeCompositeSelector = false): SelectQuery {
+	public function findMediaAssignments(SelectQuery $query, bool $includeElementSelector = false): SelectQuery {
 		if (!$this->getConfig('enabled')) {
 			return $query;
 		}
 
-		if ($includeCompositeSelector) {
+		if ($includeElementSelector) {
 			$query->contain([
-				'MediaAssignments.MediaCompositeSelectors.MediaSelectors',
+				'MediaAssignments.MediaElementSelectors.MediaSelectors',
 			]);
 		}
 

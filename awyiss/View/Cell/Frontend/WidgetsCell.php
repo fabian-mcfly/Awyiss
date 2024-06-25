@@ -52,7 +52,7 @@ class WidgetsCell extends Cell {
 
 		$lo_widgetsTable = $this->fetchTable('Widgets');
 
-		$lo_query = $lo_widgetsTable->find('active')->find('threaded')->find('mediaAssignments', includeCompositeSelector: true);
+		$lo_query = $lo_widgetsTable->find('active')->find('threaded')->find('mediaAssignments', includeElementSelector: true);
 		$lo_query->where([
 			'Widgets.identifier' => $identifier,
 		]);
