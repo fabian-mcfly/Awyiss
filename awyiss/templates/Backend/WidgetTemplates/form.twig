@@ -263,7 +263,7 @@
 				<legend>{{ __('fieldset_media') }}</legend>
 
 				{% block fieldsetMediaInner %}
-					{{ cell('Backend/MediaComposites', [widgetTemplate]) }}
+					{{ cell('Backend/MediaElements', [widgetTemplate]) }}
 
 					{% block fieldsetMediaAttributes %}
 						{{ AttributesHelper.allControls('media') }}
@@ -272,8 +272,8 @@
 			</fieldset>
 		{% endblock %}
 
-		{% block fieldsetMediaCompositeAssignments %}
-			{{ cell('Backend/MediaComposites::compositeAssignments', [widgetTemplate]) }}
+		{% block fieldsetMediaElementAssignments %}
+			{{ cell('Backend/MediaElements::elementAssignments', [widgetTemplate]) }}
 		{% endblock %}
 
 		{% block fieldsetAttributes %}

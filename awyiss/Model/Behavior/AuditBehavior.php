@@ -452,15 +452,15 @@ class AuditBehavior extends Behavior {
 			$lo_sourceTable->getBehavior('MediaAssignment')->rebuildMediaAssignments($lo_clonedEntity);
 
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-			foreach ($lo_clonedEntity->mediaAssignments as $ls_compositeIdentifier => $la_compositeAssignments) {
-				foreach ($la_compositeAssignments as $ls_selectorIdentifier => $lx_selectorAssignments) {
+			foreach ($lo_clonedEntity->mediaAssignments as $ls_elementIdentifier => $la_elementAssignments) {
+				foreach ($la_elementAssignments as $ls_selectorIdentifier => $lx_selectorAssignments) {
 					if ($lx_selectorAssignments instanceof Entity) {
-						$la_newData[ $ls_compositeIdentifier ][ $ls_selectorIdentifier ] = $lx_selectorAssignments->extract(null, false, false);
+						$la_newData[ $ls_elementIdentifier ][ $ls_selectorIdentifier ] = $lx_selectorAssignments->extract(null, false, false);
 						continue;
 					}
 
 					foreach ($lx_selectorAssignments as $li_key => $lo_mediaAssignment) {
-						$la_newData[ $ls_compositeIdentifier ][ $ls_selectorIdentifier ][ $li_key ] = $lo_mediaAssignment->extract(null, false, false);
+						$la_newData[ $ls_elementIdentifier ][ $ls_selectorIdentifier ][ $li_key ] = $lo_mediaAssignment->extract(null, false, false);
 					}
 				}
 			}
@@ -482,14 +482,14 @@ class AuditBehavior extends Behavior {
 		$la_oldData = [];
 		if ($entity->hasOriginal('mediaAssignments')) {
 			/** @var Entity $lo_mediaAssignment */
-			foreach ($entity->getOriginal('mediaAssignments') as $ls_compositeIdentifier => $la_compositeAssignments) {
-				foreach ($la_compositeAssignments as $ls_selectorIdentifier => $lx_selectorAssignments) {
+			foreach ($entity->getOriginal('mediaAssignments') as $ls_elementIdentifier => $la_elementAssignments) {
+				foreach ($la_elementAssignments as $ls_selectorIdentifier => $lx_selectorAssignments) {
 					if ($lx_selectorAssignments instanceof Entity) {
 						$la_values = $lx_selectorAssignments->extract(null, false, false);
 
 						$la_values = array_diff_key($la_values, array_flip($la_blocklistedFields));
 
-						$la_oldData[ $ls_compositeIdentifier ][ $ls_selectorIdentifier ] = $la_values;
+						$la_oldData[ $ls_elementIdentifier ][ $ls_selectorIdentifier ] = $la_values;
 						continue;
 					}
 
@@ -498,7 +498,7 @@ class AuditBehavior extends Behavior {
 
 						$la_values = array_diff_key($la_values, array_flip($la_blocklistedFields));
 
-						$la_oldData[ $ls_compositeIdentifier ][ $ls_selectorIdentifier ][ $li_key ] = $la_values;
+						$la_oldData[ $ls_elementIdentifier ][ $ls_selectorIdentifier ][ $li_key ] = $la_values;
 					}
 				}
 			}

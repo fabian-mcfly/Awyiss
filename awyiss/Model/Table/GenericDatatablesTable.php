@@ -4,7 +4,7 @@
 namespace Awyiss\Model\Table;
 
 
-use Awyiss\Annotation\MediaCompositeAssignable;
+use Awyiss\Annotation\MediaElementAssignable;
 use Awyiss\Awyiss;
 use Awyiss\Core\LocalConfig;
 use Awyiss\Model\Table;
@@ -18,7 +18,7 @@ use Cake\Validation\Validator;
  * Base class for generic datatables that provides a default validation
  * and rules based on the config settings for the extending datatable
  */
-#[MediaCompositeAssignable(MediaCompositeAssignable::ENTITY_LEVEL)]
+#[MediaElementAssignable(MediaElementAssignable::ENTITY_LEVEL)]
 abstract class GenericDatatablesTable extends Table {
 	/**
 	 * @var bool $nestable Whether the records are nestable or not.

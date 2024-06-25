@@ -111,7 +111,7 @@ class PageTemplatesController extends Controller {
 		$this->Authorization->ensure('update');
 
 		/** @var PageTemplate $lo_pageTemplate */
-		$lo_pageTemplate = $this->PageTemplates->findById($id)->find('translations')->find('mediaAssignments')->find('mediaCompositeAssignments')->contain(['ContentAreas'])->first();
+		$lo_pageTemplate = $this->PageTemplates->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->contain(['ContentAreas'])->first();
 		if (!$lo_pageTemplate) {
 			$this->Flash->error(__('record_not_found'));
 

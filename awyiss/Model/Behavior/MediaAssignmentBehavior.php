@@ -4,8 +4,8 @@
 namespace Awyiss\Model\Behavior;
 
 
-use Awyiss\Model\Entity\MediaComposite;
-use Awyiss\Model\Entity\MediaCompositeSelector;
+use Awyiss\Model\Entity\MediaElement;
+use Awyiss\Model\Entity\MediaElementSelector;
 use Awyiss\Model\Entity\MediaSelector;
 use Awyiss\Model\Table;
 use Awyiss\ORM\Behavior;
@@ -26,7 +26,7 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 	use LocatorAwareTrait;
 
 
-	protected static array $mediaComposites;
+	protected static array $mediaElements;
 
 
 	/**
@@ -129,15 +129,15 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 		$la_mediaAssignments = [];
 
 		foreach (($entity['mediaAssignments'] ?? []) as $lo_mediaAssignment) {
-			$lo_composite = static::$mediaComposites[ $lo_mediaAssignment->mediaCompositeId ];
-			$ls_compositeIdentifier = $lo_composite->identifier;
+			$lo_element = static::$mediaElements[ $lo_mediaAssignment->mediaElementId ];
+			$ls_elementIdentifier = $lo_element->identifier;
 
-			$lo_selector = $lo_composite->mediaSelectors[ $lo_mediaAssignment->mediaCompositeSelectorIdentifier ];
+			$lo_selector = $lo_element->mediaSelectors[ $lo_mediaAssignment->mediaElementSelectorIdentifier ];
 			if ($lo_selector->identifier === 'multi_file') {
-				$la_mediaAssignments[ $ls_compositeIdentifier ][ $lo_mediaAssignment->mediaCompositeSelectorIdentifier ][] = $lo_mediaAssignment;
+				$la_mediaAssignments[ $ls_elementIdentifier ][ $lo_mediaAssignment->mediaElementSelectorIdentifier ][] = $lo_mediaAssignment;
 			}
 			else {
-				$la_mediaAssignments[ $ls_compositeIdentifier ][ $lo_mediaAssignment->mediaCompositeSelectorIdentifier ] = $lo_mediaAssignment;
+				$la_mediaAssignments[ $ls_elementIdentifier ][ $lo_mediaAssignment->mediaElementSelectorIdentifier ] = $lo_mediaAssignment;
 			}
 		}
 
@@ -169,22 +169,22 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 	 * @return \Cake\Collection\CollectionInterface
 	 */
 	protected function rowMapper(CollectionInterface $results): CollectionInterface {
-		if (!isset(static::$mediaComposites)) {
-			$lo_composites = $this->fetchTable('MediaComposites')->find()->contain([
-				'MediaCompositeSelectors' => [
+		if (!isset(static::$mediaElements)) {
+			$lo_elements = $this->fetchTable('MediaElements')->find()->contain([
+				'MediaElementSelectors' => [
 					'MediaSelectors',
 				],
 			])->all()->indexBy('id');
 
-			static::$mediaComposites = $lo_composites->each(function (MediaComposite $composite): void {
-				$lo_selectors = collection($composite->mediaCompositeSelectors);
-				$lo_selectors = $lo_selectors->indexBy(function (MediaCompositeSelector $selector): string {
+			static::$mediaElements = $lo_elements->each(function (MediaElement $element): void {
+				$lo_selectors = collection($element->mediaElementSelectors);
+				$lo_selectors = $lo_selectors->indexBy(function (MediaElementSelector $selector): string {
 					return $selector->identifier;
-				})->map(function (MediaCompositeSelector $selector): MediaSelector {
+				})->map(function (MediaElementSelector $selector): MediaSelector {
 					return $selector->mediaSelector;
 				});
 
-				$composite->mediaSelectors = $lo_selectors->toArray();
+				$element->mediaSelectors = $lo_selectors->toArray();
 			})->toArray();
 		}
 
@@ -231,8 +231,8 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 				$la_errors = [];
 				$lo_marshaller = $this->assignmentsTable->marshaller();
 
-				foreach ($values as $li_mediaCompositeId => $la_compositeData) {
-					foreach ($la_compositeData as $ls_mediaCompositeSelectorIdentifier => $la_mediaIds) {
+				foreach ($values as $li_mediaElementId => $la_elementData) {
+					foreach ($la_elementData as $ls_mediaElementSelectorIdentifier => $la_mediaIds) {
 						$li_systemOrder = 1;
 
 						if (isset($la_mediaIds['media_id'])) {
@@ -243,8 +243,8 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 							/** @var \Awyiss\Model\Entity\MediaAssignment $lo_entity */
 							$lo_entity = $this->assignmentsTable->newEmptyEntity();
 
-							$la_data['mediaCompositeId'] = $li_mediaCompositeId;
-							$la_data['mediaCompositeSelectorIdentifier'] = $ls_mediaCompositeSelectorIdentifier;
+							$la_data['mediaElementId'] = $li_mediaElementId;
+							$la_data['mediaElementSelectorIdentifier'] = $ls_mediaElementSelectorIdentifier;
 							$la_data['mediaId'] = (int)$li_mediaId;
 							$la_data['scope'] = $this->getConfig('referenceName');
 							$la_data['systemOrder'] = $li_systemOrder;

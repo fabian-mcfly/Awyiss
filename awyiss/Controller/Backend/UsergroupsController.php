@@ -104,7 +104,7 @@ class UsergroupsController extends Controller {
 		if ($lb_usersScopeIsAccessible) {
 			$la_contain[] = 'Users';
 		}
-		$lo_usergroup = $this->Usergroups->findById($id)->find('translations')->find('mediaAssignments')->find('mediaCompositeAssignments')->contain($la_contain)->first();
+		$lo_usergroup = $this->Usergroups->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->contain($la_contain)->first();
 		if (!$lo_usergroup) {
 			$this->Flash->error(__('record_not_found'));
 

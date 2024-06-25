@@ -11,8 +11,8 @@ use Awyiss\Model\Entity;
  * MediaAssignment Entity
  *
  * @property int $id
- * @property int $mediaCompositeId
- * @property string $mediaCompositeSelectorIdentifier
+ * @property int $mediaElementId
+ * @property string $mediaElementSelectorIdentifier
  * @property int $mediaId
  * @property string $scope
  * @property int $foreignKey
@@ -30,8 +30,8 @@ class MediaAssignment extends Entity {
 	 * @inheritDoc
 	 */
 	protected static array $fieldMap = [
-		'media_composite_id' => 'mediaCompositeId',
-		'media_composite_selector_identifier' => 'mediaCompositeSelectorIdentifier',
+		'media_element_id' => 'mediaElementId',
+		'media_element_selector_identifier' => 'mediaElementSelectorIdentifier',
 		'media_id' => 'mediaId',
 		'foreign_key' => 'foreignKey',
 		'system_order' => 'systemOrder',
@@ -44,14 +44,14 @@ class MediaAssignment extends Entity {
 		'created_by_user' => 'createdByUser',
 		'changed_by_user' => 'changedByUser',
 		'deleted_by_user' => 'deletedByUser',
-		'media_composite' => 'mediaComposite',
+		'media_element' => 'mediaElement',
 	];
 	/**
 	 * @inheritDoc
 	 */
 	protected array $_accessible = [
-		'mediaCompositeId' => true,
-		'mediaCompositeSelectorIdentifier' => true,
+		'mediaElementId' => true,
+		'mediaElementSelectorIdentifier' => true,
 		'mediaId' => true,
 		'scope' => true,
 		'foreignKey' => true,

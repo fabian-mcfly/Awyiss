@@ -70,15 +70,15 @@
 				<legend>{{ __('fieldset_media') }}</legend>
 
 				{% block fieldsetMediaInner %}
-					{{ cell('Backend/MediaComposites', [widget]) }}
+					{{ cell('Backend/MediaElements', [widget]) }}
 
 					{{ _self.renderFormControls(widgetElementsByFieldset.media ?? [], macroSettings) }}
 				{% endblock %}
 			</fieldset>
 		{% endblock %}
 
-		{% block fieldsetMediaCompositeAssignments %}
-			{{ cell('Backend/MediaComposites::compositeAssignments', [widget]) }}
+		{% block fieldsetMediaElementAssignments %}
+			{{ cell('Backend/MediaElements::elementAssignments', [widget]) }}
 		{% endblock %}
 
 		{% block fieldsetAttributes %}

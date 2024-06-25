@@ -259,7 +259,7 @@ class Table extends BaseTable {
 
 			if (!str_starts_with($this->getTable(), 'media')) {
 				$this->addBehavior('MediaAssignment');
-				$this->addBehavior('MediaCompositeAssignment');
+				$this->addBehavior('MediaElementAssignment');
 			}
 		}
 

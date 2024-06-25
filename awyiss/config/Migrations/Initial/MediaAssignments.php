@@ -33,10 +33,10 @@ class MediaAssignments {
 			'limit' => null,
 			'null' => false,
 			'signed' => true,
-		])->addPrimaryKey(['id'])->addColumn('media_composite_id', 'integer', [
+		])->addPrimaryKey(['id'])->addColumn('media_element_id', 'integer', [
 			'limit' => 11,
 			'null' => false,
-		])->addColumn('media_composite_selector_identifier', 'string', [
+		])->addColumn('media_element_selector_identifier', 'string', [
 			'limit' => 50,
 			'null' => false,
 		])->addColumn('media_id', 'integer', [
@@ -60,9 +60,9 @@ class MediaAssignments {
 			'null' => false,
 		])->addIndex(
 			[
-				'media_composite_id',
+				'media_element_id',
 			], [
-				'name' => 'media_composite_id',
+				'name' => 'media_element_id',
 			]
 		)->addIndex(
 			[

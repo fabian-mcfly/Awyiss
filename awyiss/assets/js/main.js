@@ -11,7 +11,7 @@ import FormLeaveConfirmation from 'FormLeaveConfirmation';
 import FormUpdater from 'FormUpdater';
 import IdentifierAutofill from 'IdentifierAutofill';
 import InputListManager from 'InputListManager';
-import MediaComposites from 'Media/Composites';
+import MediaElements from 'Media/Elements';
 import MediaOverlay from 'Media/Overlay';
 import MediaProgressChecker from 'Media/ProgressChecker';
 import NestedListHandler from 'NestedListHandler';
@@ -324,9 +324,9 @@ export async function initMainOnReady() {
 
 	/**
 	 * @global
-	 * @type {MediaComposites}
+	 * @type {MediaElements}
 	 */
-	window.mediaComposites = new MediaComposites();
+	window.mediaElements = new MediaElements();
 
 	/**
 	 * @global

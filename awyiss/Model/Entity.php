@@ -79,8 +79,8 @@ class Entity extends BaseEntity {
 			$this->setAccess('mediaAssignments', true);
 		}
 
-		if (!array_key_exists('mediaCompositeAssignments', $this->_accessible)) {
-			$this->setAccess('mediaCompositeAssignments', true);
+		if (!array_key_exists('mediaElementAssignments', $this->_accessible)) {
+			$this->setAccess('mediaElementAssignments', true);
 		}
 	}
 

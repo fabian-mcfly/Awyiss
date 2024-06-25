@@ -14,8 +14,8 @@ use Cake\Validation\Validator;
  * MediaAssignments Model
  *
  * @method \Awyiss\Model\Entity\MediaAssignment newDefaultEntity(array $additionalData = [], array $options = [])
- * @property \Awyiss\Model\Table\MediaCompositesTable&\Awyiss\ORM\Association\BelongsTo $MediaComposites
- * @property \Awyiss\Model\Table\MediaCompositeAssignmentsTable&\Awyiss\ORM\Association\BelongsTo $MediaCompositeAssignments
+ * @property \Awyiss\Model\Table\MediaElementsTable&\Awyiss\ORM\Association\BelongsTo $MediaElements
+ * @property \Awyiss\Model\Table\MediaElementAssignmentsTable&\Awyiss\ORM\Association\BelongsTo $MediaElementAssignments
  * @property \Awyiss\Model\Table\MediaTable&\Awyiss\ORM\Association\BelongsTo $Media
  * @noinspection PhpFullyQualifiedNameUsageInspection
  */
@@ -40,7 +40,7 @@ class MediaAssignmentsTable extends Table {
 	 * @inheritDoc
 	 */
 	protected array $systemOrder = [
-		'relatedColumns' => ['media_composite_id', 'media_composite_selector_identifier', 'scope', 'foreign_key'],
+		'relatedColumns' => ['media_element_id', 'media_element_selector_identifier', 'scope', 'foreign_key'],
 	];
 
 
@@ -48,19 +48,19 @@ class MediaAssignmentsTable extends Table {
 	 * @inheritDoc
 	 */
 	public function initializeAssociations(): void {
-		$this->belongsTo('MediaComposites', [
-			'foreignKey' => 'media_composite_id',
+		$this->belongsTo('MediaElements', [
+			'foreignKey' => 'media_element_id',
 			'joinType' => 'INNER',
 		]);
 
-		$this->belongsTo('MediaCompositeAssignments', [
+		$this->belongsTo('MediaElementAssignments', [
 			'bindingKey' => [
-				'media_composite_id',
+				'media_element_id',
 				'identifier',
 			],
 			'foreignKey' => [
-				'media_composite_id',
-				'media_composite_selector_identifier',
+				'media_element_id',
+				'media_element_selector_identifier',
 			],
 			'joinType' => 'INNER',
 		]);
@@ -88,15 +88,15 @@ class MediaAssignmentsTable extends Table {
 		]);
 
 
-		$validator->notEmptyString('mediaCompositeId');
-		$validator->add('mediaCompositeId', [
+		$validator->notEmptyString('mediaElementId');
+		$validator->add('mediaElementId', [
 			'isInteger' => ['rule' => 'isInteger'],
 			'maxLength' => ['rule' => ['maxLength', 11]],
 		]);
 
 
-		$validator->notEmptyString('mediaCompositeSelectorIdentifier');
-		$validator->add('mediaCompositeSelectorIdentifier', [
+		$validator->notEmptyString('mediaElementSelectorIdentifier');
+		$validator->add('mediaElementSelectorIdentifier', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'maxLength' => ['rule' => ['maxLength', 50]],
 			'notBlank' => ['rule' => 'notBlank'],
@@ -140,10 +140,10 @@ class MediaAssignmentsTable extends Table {
 	 * @return \Awyiss\ORM\RulesChecker
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
-		// TODO: rework to use media_composite_assignments for the entity's table
-		$rules->add($rules->existsIn('mediaCompositeId', 'MediaComposites'), 'mediaCompositeExists', [
-			'errorField' => 'mediaCompositeId',
-			'message' => __df($this->getI18nDomain(), 'validation', 'error_media_composite_exists'),
+		// TODO: rework to use media_element_assignments for the entity's table
+		$rules->add($rules->existsIn('mediaElementId', 'MediaElements'), 'mediaElementExists', [
+			'errorField' => 'mediaElementId',
+			'message' => __df($this->getI18nDomain(), 'validation', 'error_media_element_exists'),
 		]);
 
 		$rules->add($rules->existsIn('mediaId', 'Media'), 'mediaExists', [

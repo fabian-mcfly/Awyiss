@@ -93,7 +93,7 @@ class PageRolesController extends Controller {
 		$this->Authorization->ensure('update');
 
 		/** @var PageRole $lo_pageRole */
-		$lo_pageRole = $this->PageRoles->findById($id)->find('translations')->find('mediaAssignments')->find('mediaCompositeAssignments')->first();
+		$lo_pageRole = $this->PageRoles->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
 		if (!$lo_pageRole) {
 			$this->Flash->error(__('record_not_found'));
 
