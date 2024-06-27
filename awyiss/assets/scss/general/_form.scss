@@ -429,13 +429,8 @@ textarea {
 			}
 
 			&[for] {
-				min-height:26.5px; // Don't ask...
 				position:relative;
 				padding-left:34px;
-
-				.Scale-Small & {
-					min-height:22px;
-				}
 
 				&:last-of-type {
 					margin-bottom:0;
@@ -452,7 +447,7 @@ textarea {
 					line-height:20px;
 					text-align:center;
 					position:absolute;
-					top:-2px;
+					top:-3px;
 					left:0;
 
 					.Scale-Small & {
