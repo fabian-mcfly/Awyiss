@@ -9,7 +9,6 @@ use Awyiss\Model\Entity\Content;
 use Awyiss\Model\Entity\Widget;
 use Awyiss\Utility\Inflector;
 use Awyiss\Utility\Media\ResizedImageManager;
-use Awyiss\View\FrontendView;
 use Cake\Collection\CollectionInterface;
 use Cake\Core\Configure;
 use Cake\Event\EventManagerInterface;
@@ -30,12 +29,6 @@ trait ContentElementTrait {
 
 
 	/**
-	 * @var \Awyiss\View\FrontendView $view
-	 */
-	protected FrontendView $view;
-
-
-	/**
 	 * @inheritDoc
 	 */
 	public function __construct(ServerRequest $request, Response $response, ?EventManagerInterface $eventManager = null, array $cellOptions = []) {
@@ -45,7 +38,7 @@ trait ContentElementTrait {
 			static::$resizedImageManager = new ResizedImageManager();
 		}
 
-		$this->view = new FrontendView($request, $response);
+		$this->View = $this->createView('Frontend');
 	}
 
 
@@ -101,9 +94,8 @@ trait ContentElementTrait {
 	/**
 	 * @param \Cake\Collection\CollectionInterface $entities
 	 * @param float $columnWidth
-	 * @param float|null $fullWidth
 	 */
-	protected function prepareEntities(CollectionInterface $entities, float $columnWidth = 100.00, ?float $fullWidth = null): void {
+	protected function prepareEntities(CollectionInterface $entities, float $columnWidth = 100.00): void {
 		if (!$entities->count()) {
 			return;
 		}
@@ -268,12 +260,12 @@ trait ContentElementTrait {
 	 * @return string
 	 */
 	protected function renderContentRow(string $contents): string {
-		$ls_contentRow = $this->view->element('content_row', [
+		$ls_contentRow = $this->View->element('content_row', [
 			'contents' => $contents,
-			'class' => $this->view::$rowClass,
+			'class' => $this->View::$rowClass,
 		]);
 
-		$this->view::$rowClass = '';
+		$this->View::$rowClass = '';
 
 		return $ls_contentRow;
 	}
@@ -325,16 +317,16 @@ trait ContentElementTrait {
 	protected function setRealColumnWidth(Content|Widget $entity, float $columnWidth): void {
 		$entity->setVirtual(['realColumnWidth']);
 
-		if (!$entity->parentWidgets) {
+		$ls_property = $entity instanceof Widget ? 'parentWidgets' : 'parentContents';
+
+		if (!$entity->$ls_property) {
 			$entity->realColumnWidth = $columnWidth * $entity->column['width']->getFactor();
 
 			return;
 		}
 
-		/**
-		 * @var \Awyiss\Model\Entity\Content|\Awyiss\Model\Entity\Widget $lo_parent
-		 */
-		$lo_parent = $entity instanceof Widget ? end($entity->parentWidgets) : end($entity->parentContents);
+		/** @var \Awyiss\Model\Entity\Content|\Awyiss\Model\Entity\Widget $lo_parent */
+		$lo_parent = end($entity->$ls_property);
 
 		$entity->realColumnWidth = $lo_parent->realColumnWidth * $entity->column['width']->getFactor();
 	}
