@@ -8,6 +8,7 @@ use Awyiss\Model\Entity\Media;
 use Awyiss\Model\Entity\MediaResizedImage;
 use Awyiss\Model\Enum\ProcessStatus;
 use Awyiss\Model\Enum\ResizeStrategy;
+use Awyiss\Utility\Media\MediaRenderOptions;
 use Awyiss\Utility\Media\ResizedImageManager;
 use Cake\Collection\Collection;
 use Cake\Datasource\Paging\PaginatedResultSet;
@@ -81,24 +82,46 @@ class MediaHelper extends Helper {
 	/**
 	 * Return the resized media element for the given media item
 	 *
+	 * If `strictSize` is set to false (default), an image will be
+	 * returned that might be larger than the requested size to not
+	 * create versions of it for approximately the same size.
+	 *
 	 * @param \Awyiss\Model\Entity\Media $media
-	 * @param int|null $width
-	 * @param int|null $height
+	 * @param float|int|null $width
+	 * @param float|int|null $height
 	 * @param \Awyiss\Model\Enum\ResizeStrategy $strategy
 	 * @param string $format
+	 * @param bool $strictSize
+	 * @param bool $allowUpscale
+	 * @param \Awyiss\Utility\Media\MediaRenderOptions|null $renderOptions
 	 * @return \Awyiss\Model\Entity\MediaResizedImage|null
+	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function resize(
 		Media $media,
-		?int $width = null,
-		?int $height = null,
+		?MediaRenderOptions $renderOptions = null,
+		float|int|null $width = null,
+		float|int|null $height = null,
 		ResizeStrategy $strategy = ResizeStrategy::Contain,
-		string $format = 'webp'
+		string $format = 'webp',
+		bool $strictSize = false,
+		bool $allowUpscale = false,
 	): ?MediaResizedImage {
-		if (!$media->path) {
-			return null;
+		if (!$renderOptions) {
+			$la_vars = get_defined_vars();
+			unset($la_vars['renderOptions']);
+
+			return static::$resizedImageManager->resize(...$la_vars);
 		}
 
-		return static::$resizedImageManager->resize($media, $width, $height, $strategy, $format);
+		return static::$resizedImageManager->resize(
+			$media,
+			$renderOptions->getWidth(),
+			$renderOptions->getHeight(),
+			$renderOptions->getResizeStrategy(),
+			$format,
+			$renderOptions->getStrictSize(),
+			$renderOptions->getAllowUpscale(),
+		);
 	}
 }
