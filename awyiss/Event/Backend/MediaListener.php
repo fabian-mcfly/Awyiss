@@ -121,9 +121,12 @@ class MediaListener implements EventListenerInterface {
 				}
 
 				$entity->preview = ProcessStatus::NotRequired;
-				/*if ($entity->mimeType !== 'image/webp') {
-					$la_exifData = exif_read_data($ls_tempName, '', true);
-				}*/
+
+				if (empty($entity->crop)) {
+					$entity->crop = [
+						'rotate' => 'auto',
+					];
+				}
 			}
 			else {
 				$entity->width = null;
@@ -221,6 +224,7 @@ class MediaListener implements EventListenerInterface {
 			unlink($ls_sourceFile);
 		}
 
+		$entity->deleteResizedFiles();
 		$entity->deleteConvertedFiles();
 	}
 

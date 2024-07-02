@@ -477,13 +477,18 @@ class ConvertFilesCommand extends Command {
 					$lo_process->run();
 				}
 
-				$lo_file->width = (float)$lo_file->crop['resize_width'];
-				$lo_file->height = (float)$lo_file->crop['resize_height'];
-				$lo_file->crop = null;
+				$la_imageSize = getimagesize($lo_file->isImage() ? $lo_file->pathAbsolute : $lo_file->previewPathAbsolute);
 
-				// Delete all resized files. They will be recreated when needed.
-				// Previously set sizes might no longer be required OR even too large
-				$lo_file->deleteResizedFiles();
+				$lo_file->width = $la_imageSize[0];
+				$lo_file->height = $la_imageSize[1];
+
+				if (!empty($lo_file->crop['resize_width']) || !empty($lo_file->crop['resize_height'])) {
+					// Delete all resized files. They will be recreated when needed.
+					// Previously set sizes might no longer be required OR even too large
+					$lo_file->deleteResizedFiles();
+				}
+
+				$lo_file->crop = null;
 			}
 			else {
 				$io->error('Status: ' . $lo_process->getExitCodeText());
@@ -612,7 +617,6 @@ class ConvertFilesCommand extends Command {
 		return $lo_table->find()->where([
 			'crop IS NOT' => null,
 			'preview IN' => [ProcessStatus::Success, ProcessStatus::NotRequired],
-			'webp IN' => [ProcessStatus::Success, ProcessStatus::NotRequired],
 		])->limit($limit)->all();
 	}
 
@@ -841,8 +845,28 @@ class ConvertFilesCommand extends Command {
 		$lb_crop = false;
 		$lb_resize = false;
 
-		if (!$file->isImage()) {
+		if ($file instanceof Media && !$file->isImage()) {
 			$ls_inputPath = $file->previewPathAbsolute;
+		}
+
+		if (isset($file->crop['rotate']) && $file->crop['rotate'] === 'auto') {
+			$la_commandWebp = null;
+			if ($file->webpPathAbsolute && file_exists($file->webpPathAbsolute)) {
+				$la_commandWebp = [
+					'mogrify',
+					'-auto-orient',
+					$file->webpPathAbsolute,
+				];
+			}
+
+			return [
+				'original' => [
+					'mogrify',
+					'-auto-orient',
+					$ls_inputPath,
+				],
+				'webp' => $la_commandWebp,
+			];
 		}
 
 		$la_commandOriginal = [
@@ -869,7 +893,7 @@ class ConvertFilesCommand extends Command {
 		$la_commandOriginal[] = $ls_inputPath;
 
 		$la_commandWebp = null;
-		if ($file->webpPathAbsolute) {
+		if ($file->webpPathAbsolute && file_exists($file->webpPathAbsolute)) {
 			$la_commandWebp = [
 				'convert',
 				$file->webpPathAbsolute,
