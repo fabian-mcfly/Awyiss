@@ -220,8 +220,6 @@ export default class Overlay {
 		// noinspection JSUnresolvedReference
 		this.opener = event.detail.opener || null;
 
-		console.log(this.opener, typeof this.opener);
-
 		if (!this.element) {
 			this.initOverlay();
 		}
