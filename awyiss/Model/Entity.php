@@ -17,7 +17,8 @@ use Cake\Utility\Inflector;
  * Page Entity
  *
  * @property string $label
- * @property ?\Cake\Datasource\EntityInterface $attributes
+ * @property \Cake\Datasource\EntityInterface|null $attributes
+ * @property array|null $mediaAssignments
  */
 class Entity extends BaseEntity {
 	use EntityAttributesTrait {
