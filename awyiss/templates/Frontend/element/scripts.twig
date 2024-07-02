@@ -18,12 +18,15 @@
 #}
 
 {% block scriptsAdd %}
-	{% do AssetHelper.add('webfontloader.js') %}
+	{% do AssetHelper.addJsModule('LazyLoad/lazyload.js') %}
+	{% do AssetHelper.add('WebfontLoader/webfontloader.js') %}
+	{% do AssetHelper.add('main.js', {type: 'module'}) %}
 {% endblock %}
 
 {% block script %}
 	<script nonce="{{ AssetHelper.getScriptNonce() }}">
 		{% block scriptBaseVars %}
+			const Awyiss = {{ Awyiss|json_encode|raw }};
 			const baseUrl = '{{ baseUrl }}';
 			const folder = '{{ folder }}';
 			const currentPath = '{{ currentPath }}';
