@@ -99,7 +99,9 @@ class Media extends Entity {
 	 */
 	protected array $_virtual = [
 		'label',
+		'isAudio',
 		'isImage',
+		'isVideo',
 		'cleanName',
 		'originalCleanName',
 		'extension',
@@ -119,6 +121,19 @@ class Media extends Entity {
 		'webpPathAbsolute',
 		'originalWebpPathAbsolute',
 	];
+
+
+	/**
+	 * return bool
+	 */
+	public function isAudio(): bool {
+		return in_array($this->mimeType, [
+			'audio/mpeg',
+			'audio/ogg',
+			'audio/wav',
+			'audio/webm',
+		]);
+	}
 
 
 	/**
@@ -142,12 +157,23 @@ class Media extends Entity {
 			return false;
 		}
 
-
 		return in_array($this->getOriginal('mimeType'), [
 			'image/jpeg',
 			'image/png',
 			'image/gif',
 			'image/webp',
+		]);
+	}
+
+
+	/**
+	 * @return bool
+	 */
+	public function isVideo(): bool {
+		return in_array($this->mimeType, [
+			'video/mp4',
+			'video/ogg',
+			'video/webm',
 		]);
 	}
 
