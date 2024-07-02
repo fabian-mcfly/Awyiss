@@ -108,9 +108,21 @@ class ContentsCell extends Cell {
 	 * @return string
 	 */
 	protected function renderContentElement(Entity $entity, string $children): string {
-		return $this->view->content($entity->contentTemplate->fileName, [
+		/**
+		 * @var \Awyiss\Utility\Media\MediaRenderOptions $lo_mediaRenderOptions
+		 * @noinspection PhpPossiblePolymorphicInvocationInspection
+		 */
+		$lo_mediaRenderOptions = $this->View->helpers()->get('Media')->mediaRenderOptions(
+			baseWidth: $this->View->get('fullWidth'),
+			breakpoints: Configure::read('Awyiss.Media.Frontend.defaultBreakpoints'),
+			columnWidth: $entity->realColumnWidth,
+			selector: '#Content' . $entity->id,
+		);
+
+		return $this->View->content($entity->contentTemplate->fileName, [
 			'content' => $entity,
 			'children' => $children,
+			'mediaRenderOptions' => $lo_mediaRenderOptions,
 		]);
 	}
 }

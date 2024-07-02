@@ -24,6 +24,8 @@
 #}
 
 <div class="{{ content.cssClass }}" {{ content.data|data_attr|raw }} id="Content{{ content.id }}">
+	{{ MediaHelper.element('standard', content.mediaAssignments, mediaRenderOptions) }}
+
 	{% if content.text %}
 		<div class="Text">
 			{{ content.text|raw }}
