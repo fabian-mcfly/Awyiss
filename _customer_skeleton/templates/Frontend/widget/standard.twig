@@ -1,5 +1,5 @@
 {#
-@var widget \Awyiss\Model\Entity\Widget
+@var widget \Awyiss\Model\Entity\Content
 @var children string
 @var page \Awyiss\Model\Entity\Page
 @var baseUrl string
@@ -17,13 +17,15 @@
 @var MediaHelper \Awyiss\View\Helper\MediaHelper
 @var UrlHelper \Awyiss\View\Helper\UrlHelper
 @var TimeHelper \Awyiss\View\Helper\TimeHelper
+@var mediaRenderOptions \Awyiss\Utility\Media\MediaRenderOptions
 
 // In case you need to set a class for the row, you can do it like this:
 {%- do _view.setRowClass('FlexRow') -%}
-
 #}
 
-<div class="{{ widget.cssClass }}" {{ widget.data|data_attr|raw }} id="Widget{{ widget.id }}">
+<div class="{{ widget.cssClass }}" {{ widget.data|data_attr|raw }} id="Content{{ widget.id }}">
+	{{ MediaHelper.element('standard', widget.mediaAssignments, mediaRenderOptions) }}
+
 	{% if widget.text %}
 		<div class="Text">
 			{{ widget.text|raw }}
