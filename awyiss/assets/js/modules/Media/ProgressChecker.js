@@ -243,7 +243,6 @@ export default class ProgressChecker {
 		if (data.message === 'done') {
 			const elements = document.querySelectorAll('.AwaitingResize');
 			elements.forEach(element => {
-				console.log(element, element.querySelector('img'));
 				element.classList.remove('AwaitingResize');
 
 				// Remove the image from the element since there is no resize available
