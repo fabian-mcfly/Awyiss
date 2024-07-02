@@ -8,6 +8,7 @@ use Awyiss\Model\Entity;
 use Awyiss\Model\Entity\Content;
 use Awyiss\Model\Entity\Page;
 use Awyiss\View\Cell\Frontend\Trait\ContentElementTrait;
+use Cake\Core\Configure;
 use Cake\View\Cell;
 use RuntimeException;
 
@@ -41,17 +42,15 @@ class ContentsCell extends Cell {
 				throw new RuntimeException('Cannot determine page width. Please provide a page width when rendering contents');
 			}
 		}
-		elseif ($la_options['fullWidth'] !== null) {
+		else {
 			$la_options['fullWidth'] = (float)$la_options['fullWidth'];
 		}
 
-		$this->view->set([
+		$this->View->set([
+			'fullWidth' => $la_options['fullWidth'],
 			'page' => $page,
 			...$la_options['viewVars'],
 		]);
-
-		// Set the template for the view
-		$this->viewBuilder()->setTemplatePath('Frontend/cell/Contents');
 
 		$lo_contentsTable = $this->fetchTable('Contents');
 
@@ -83,7 +82,7 @@ class ContentsCell extends Cell {
 
 		$this->addMediaItems($lo_contents, 'contents');
 
-		$this->prepareEntities($lo_contents, (float)$la_options['columnWidth'], $la_options['fullWidth']);
+		$this->prepareEntities($lo_contents, (float)$la_options['columnWidth']);
 
 		$ls_contents = $this->buildContents($lo_contents->toArray());
 
@@ -96,6 +95,9 @@ class ContentsCell extends Cell {
 			'includeWrapper' => $la_options['includeWrapper'],
 			...$la_options['viewVars'],
 		]);
+
+		// Set the template for the view
+		$this->viewBuilder()->setTemplatePath('Frontend/cell/Contents');
 	}
 
 

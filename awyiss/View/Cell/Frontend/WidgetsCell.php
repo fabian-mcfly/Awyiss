@@ -7,6 +7,7 @@ namespace Awyiss\View\Cell\Frontend;
 use Awyiss\Model\Entity;
 use Awyiss\Model\Entity\Widget;
 use Awyiss\View\Cell\Frontend\Trait\ContentElementTrait;
+use Cake\Core\Configure;
 use Cake\View\Cell;
 use RuntimeException;
 
@@ -38,17 +39,15 @@ class WidgetsCell extends Cell {
 				throw new RuntimeException('Cannot determine page width. Please provide a page width when rendering widgets');
 			}
 		}
-		elseif ($la_options['fullWidth'] !== null) {
+		else {
 			$la_options['fullWidth'] = (float)$la_options['fullWidth'];
 		}
 
-		$this->view->set([
+		$this->View->set([
+			'fullWidth' => $la_options['fullWidth'],
 			'identifier' => $identifier,
 			...$la_options['viewVars'],
 		]);
-
-		// Set the template for the view
-		$this->viewBuilder()->setTemplatePath('Frontend/cell/Widgets');
 
 		$lo_widgetsTable = $this->fetchTable('Widgets');
 
@@ -78,7 +77,7 @@ class WidgetsCell extends Cell {
 
 		$this->addMediaItems($lo_widgets, 'widgets');
 
-		$this->prepareEntities($lo_widgets, (float)$la_options['columnWidth'], $la_options['fullWidth']);
+		$this->prepareEntities($lo_widgets, (float)$la_options['columnWidth']);
 
 		$ls_widgets = $this->buildContents($lo_widgets->toArray());
 
@@ -89,6 +88,9 @@ class WidgetsCell extends Cell {
 			'widgets' => $ls_widgets,
 			...$la_options['viewVars'],
 		]);
+
+		// Set the template for the view
+		$this->viewBuilder()->setTemplatePath('Frontend/cell/Widgets');
 	}
 
 
