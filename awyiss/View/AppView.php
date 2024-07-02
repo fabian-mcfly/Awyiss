@@ -205,10 +205,13 @@ class AppView extends TwigView {
 			 * @throws \BadMethodCallException
 			 */
 			public function __call(string $method, array $args): mixed {
-				/*if (!method_exists($this->helper, $method)) {
-					throw new BadMethodCallException(sprintf('The method "%s" does not exist on the helper.', $method));
-				}*/
-				$lx_result = call_user_func([$this->helper, $method], ...$args);
+				$ls_method = $method;
+
+				if (!method_exists($this->helper, $ls_method)) {
+					$ls_method = 'get' . ucfirst($method);
+				}
+
+				$lx_result = call_user_func([$this->helper, $ls_method], ...$args);
 
 				if (is_string($lx_result) && str_contains($lx_result, '<') && str_contains($lx_result, '>')) {
 					return new Markup($lx_result, 'UTF-8');
