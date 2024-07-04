@@ -5,6 +5,10 @@
 	<file>./awyiss</file>
 
 	<exclude-pattern>./awyiss/assets/css/*</exclude-pattern>
+	<exclude-pattern>./awyiss/assets/css/*.min.css</exclude-pattern>
+	<exclude-pattern>./awyiss/assets/css/**/*.min.css</exclude-pattern>
+	<exclude-pattern>./awyiss/assets/js/*.min.js</exclude-pattern>
+	<exclude-pattern>./awyiss/assets/js/**/*.min.js</exclude-pattern>
 	<exclude-pattern>./awyiss/assets/js/Coloris/*</exclude-pattern>
 	<exclude-pattern>./awyiss/assets/js/SortableJS/*</exclude-pattern>
 	<exclude-pattern>./awyiss/assets/js/Jodit/jodit/*</exclude-pattern>
