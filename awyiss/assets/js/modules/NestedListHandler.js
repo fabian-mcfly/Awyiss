@@ -63,22 +63,39 @@ export default class NestedListHandler {
 		this.selector = selector;
 		this.saveOrderButtons = document.querySelectorAll('.Button-SaveSystemOrder');
 
-		const element = document.querySelector(this.selector);
-		if (!element) {
+		const elements = document.querySelectorAll(`${this.selector}.Level1`);
+		if (!elements.length) {
 			return;
 		}
 
 		// Load all nested list states from localStorage
 		this.nestedListStates = JSON.parse(localStorage.getItem('nestedListStates')) || {};
 
+		// Loop through each nested list element
+		elements.forEach(element => {
+			this.initList(element);
+		});
+
+		// Add an event listener to the save buttons
+		this.saveOrderButtons.forEach(button => {
+			this.eventHandler.add('click', (event) => this.saveOrderButtonHandler(event), button);
+		});
+	}
+
+	/**
+	 * Initialize the nested list
+	 *
+	 * @param {HTMLElement} element - The nested list element
+	 */
+	initList(element) {
 		// Check if the "nestable" data attribute is set to "false"
 		if (element.dataset.nestable !== 'false') {
 			// Add a child list to each list item that doesn't already have one
-			this.addEmptyChildLists();
+			this.addEmptyChildLists(element.querySelectorAll(`.ListItem`));
 		}
 
 		if (!element.classList.contains('NestedList-Compact')) {
-			const items = document.querySelectorAll(`${this.selector} > li`);
+			const items = element.querySelectorAll(`.ListItem`);
 
 			// Add toggle buttons to all list items
 			this.addToggleButtons(items);
@@ -95,30 +112,27 @@ export default class NestedListHandler {
 		if (element.dataset.sortable !== 'false') {
 			this.defaultOrder = this.getOrderWithLevels();
 
-			// Initialize SortableJS
-			this.initSortable({
-				groupName: element.id,
-				handle: !element.classList.contains('NestedList-Compact'),
-			});
+			// Create an array of all nested list elements, including the current element
+			let elements = [element];
+			elements.push(...element.querySelectorAll('.NestedList'));
 
-			// Add an event listener to the save buttons
-			this.saveOrderButtons.forEach(button => {
-				this.eventHandler.add('click', this.buttonHandler.bind(this), button);
+			// Initialize SortableJS
+			this.initSortable(elements, {
+				groupName: element.id,
+				handle: element.classList.contains('NestedList-Compact') ? '.ListItem-Inner' : '.SortableHandle',
 			});
 		}
 	}
 
 	/**
 	 * Initialize the sortable list
+	 * @param {NodeListOf<Element>} elements - The list elements to initialize
 	 * @param {Object} options - The options for the SortableJS instance
 	 */
-	initSortable(options) {
-		const elements = document.querySelectorAll(this.selector);
+	initSortable(elements, options) {
 		if (!elements.length) {
 			return;
 		}
-
-		options.handle = options.handle || false;
 
 		// Loop through each nested list element and initialize SortableJS
 		elements.forEach(element => {
@@ -150,24 +164,25 @@ export default class NestedListHandler {
 				filter: '[data-sortable="false"]',
 				ghostClass: 'SortableGhost',
 				group: groupName,
-				handle: options.handle ? '.SortableHandle' : '.ListItem-Inner',
+				handle: options.handle || false,
 				invertSwap: true,
 				preventOnFilter: false,
+				sort: options.sort ?? true,
 				swapThreshold: .9,
 				onAdd: (event) => {
-					return this.onAdd(event);
+					return options.onAdd ? options.onAdd(event) : this.onAdd(event);
 				},
 				onEnd: (event) => {
-					return this.onEnd(event);
+					return options.onEnd ? options.onEnd(event) : this.onEnd(event);
 				},
 				onMove: (event) => {
-					return this.onMove(event);
+					return options.onMove ? options.onMove(event) : this.onMove(event);
 				},
 				onRemove: (event) => {
-					return this.onRemove(event);
+					return options.onRemove ? options.onRemove(event) : this.onRemove(event);
 				},
 				onStart: (event) => {
-					return this.onStart(event);
+					return options.onStart ? options.onStart(event) : this.onStart(event);
 				},
 			});
 		});
@@ -207,23 +222,22 @@ export default class NestedListHandler {
 
 	/**
 	 * Add a child list to each list item that doesn't already have one
+	 * @param {NodeListOf<Element>} elements - The list items
 	 */
-	addEmptyChildLists() {
-		const items = document.querySelectorAll(`${this.selector} > li`);
-
-		items.forEach(item => {
-			if (item.closest('ul').dataset.receivable === 'false') {
+	addEmptyChildLists(elements) {
+		elements.forEach(element => {
+			if (element.closest('ul').dataset.receivable === 'false') {
 				return;
 			}
 
-			let childList = Array.from(item.children).find(child => child.tagName === 'UL');
+			let childList = Array.from(element.children).find(child => child.tagName === 'UL');
 
 			if (!childList) {
 				childList = document.createElement('ul');
-				item.appendChild(childList);
+				element.appendChild(childList);
 
 				// Copy classes from parent list to child list
-				const parentList = item.parentElement;
+				const parentList = element.parentElement;
 				childList.className = parentList.className;
 
 				// Increase the "LevelX" class by one
@@ -240,12 +254,13 @@ export default class NestedListHandler {
 
 	/**
 	 * Add toggle buttons to all list items
-	 * @param {NodeListOf<Element>} items - The list items
+	 *
+	 * @param {NodeListOf<Element>} elements - The list items
 	 */
-	addToggleButtons(items) {
-		items.forEach(item => {
-			// Check if the list item has a direct nested list child
-			const childList = Array.from(item.children).find(child => child.tagName === 'UL');
+	addToggleButtons(elements) {
+		elements.forEach(element => {
+			// Check if the list element has a direct nested list child
+			const childList = Array.from(element.children).find(child => child.tagName === 'UL');
 
 			// If no child list, return
 			if (!childList) {
@@ -260,15 +275,15 @@ export default class NestedListHandler {
 			// Set the type attribute to 'button' to prevent form submission
 			button.type = 'button';
 
-			// Select the .ListItem-Inner child of the list item
-			const listItemInner = item.querySelector('.ListItem-Inner');
+			// Select the .ListItem-Inner child of the list element
+			const listItemInner = element.querySelector('.ListItem-Inner');
 			if (listItemInner) {
 				// Prepend the handle to the .ListItem-Inner child
 				listItemInner.prepend(button);
 			}
 
 			// Set the initial state
-			const state = this.nestedListStates[item.id];
+			const state = this.nestedListStates[element.id];
 
 			// Check the state of the child list and the stored state in localStorage
 			if (childList.children.length === 0) {
@@ -277,16 +292,16 @@ export default class NestedListHandler {
 			}
 			else {
 				// noinspection JSUnresolvedReference
-				if (state === 'Collapsed' || (!state && item.dataset.collapsedInitial === 'true')) {
+				if (state === 'Collapsed' || (!state && element.dataset.collapsedInitial === 'true')) {
 					// If the stored state is 'Collapsed', add the 'Collapsed' class to both the button and the child list
 					button.classList.add('Collapsed');
 					childList.classList.add('Collapsed');
 				}
 					// If the stored state is not 'Collapsed' and the child list is not empty, remove the 'Collapsed' class from both the button and the child list
-				// unless the list item has the data attribute "collapsedInitial" set to "true"
+				// unless the list element has the data attribute "collapsedInitial" set to "true"
 				else {
 					// noinspection JSUnresolvedReference
-					if (!item.dataset.collapsedInitial) {
+					if (!element.dataset.collapsedInitial) {
 						button.classList.remove('Collapsed');
 						childList.classList.remove('Collapsed');
 					}
@@ -299,7 +314,7 @@ export default class NestedListHandler {
 	 * Proxy method for the save method, so the save method can be overridden
 	 * @param {Event} event - The event object
 	 */
-	buttonHandler(event) {
+	saveOrderButtonHandler(event) {
 		event.preventDefault();
 		this.saveSystemOrder();
 	}
@@ -592,8 +607,10 @@ export default class NestedListHandler {
 
 	/**
 	 * Save the current order by making a POST request
+	 * @param {HTMLElement} element - The element to get the order and controller name from
+	 * @returns {Promise<void>}
 	 */
-	saveSystemOrder() {
+	saveSystemOrder(element) {
 		// Get the current order of all list items
 		const order = this.getOrder();
 
@@ -601,8 +618,10 @@ export default class NestedListHandler {
 			return;
 		}
 
+		element = element || document.querySelector(this.selector);
+
 		// Get the controller name from the id of the first level nested list item
-		let controller = document.querySelector(`${this.selector} > li`).id.split('-')[0];
+		let controller = element.querySelector(':scope > li').id.split('-')[0];
 		// Convert the controller name to kebab-case
 		controller = controller.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
 
@@ -616,7 +635,7 @@ export default class NestedListHandler {
 		document.body.classList.add('FetchInProgress');
 
 		// Make a POST request to the '/save-order' URL with the current order and the controller name
-		fetch(`/backend/${languageShortcode}/${controller}/save-system-order/`, {
+		return fetch(`/backend/${languageShortcode}/${controller}/save-system-order/`, {
 			method: 'POST',
 			headers: {
 				'Accept': 'application/json',
@@ -645,7 +664,8 @@ export default class NestedListHandler {
 		})
 		.catch(error => {
 			console.error('There has been a problem with the fetch operation:', error);
-		}).finally(() => {
+		})
+		.finally(() => {
 			// Remove the class from the element(s) to show that the save operation is complete
 			elements.forEach(element => {
 				element.classList.remove('FetchInProgress');
@@ -659,13 +679,22 @@ export default class NestedListHandler {
 
 	/**
 	 * Get the order of all list items
+	 * @param {HTMLElement} element - The element to get the order from
 	 * @returns {Object}
 	 */
-	getOrder() {
+	getOrder(element) {
 		let order = {};
 
-		// Select all lists
-		const lists = document.querySelectorAll(this.selector);
+		let lists;
+		if (element) {
+			// Select all lists
+			lists = [element];
+			lists.push(...element.querySelectorAll(this.selector));
+		}
+		else {
+			// Select all lists
+			lists = document.querySelectorAll(this.selector);
+		}
 
 		// Loop through each list
 		lists.forEach(list => {
@@ -673,9 +702,9 @@ export default class NestedListHandler {
 			const parentListItem = list.closest('.ListItem');
 
 			// Get the order of the list items using the toArray method of SortableJS
-			let items = list.sortable.toArray();
+			let items = list.sortable?.toArray();
 
-			if (!items.length) {
+			if (!items?.length) {
 				return;
 			}
 
