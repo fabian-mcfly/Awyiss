@@ -299,6 +299,12 @@ class ScssCompiler {
 				// Write the compiled CSS content and the source map to the file system.
 				file_put_contents($ls_cssFolderPath . $ls_cssFilename, $lo_compilationResult->getCss());
 				file_put_contents($ls_cssFolderPath . $ls_cssFilename . '.map', $lo_compilationResult->getSourceMap());
+
+				// If a minified version of the compiled file exists, remove it
+				$ls_minifiedCssFilename = substr($ls_cssFilename, 0, -4) . '.min.css';
+				if (file_exists($ls_cssFolderPath . $ls_minifiedCssFilename)) {
+					unlink($ls_cssFolderPath . $ls_minifiedCssFilename);
+				}
 			}
 		}
 		catch (Exception $ex) {
