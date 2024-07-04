@@ -8,6 +8,7 @@ use Awyiss\Configuration\ConfigOptionsProvider;
 use Awyiss\Controller\ControllerFactory;
 use Awyiss\Event\EventListenersProvider;
 use Awyiss\Event\EventManager;
+use Awyiss\Middleware\ErrorHandlerMiddleware;
 use Awyiss\Middleware\RoutingMiddleware;
 use Awyiss\Model\Table;
 use Awyiss\ORM\Locator\TableLocator;
@@ -201,7 +202,7 @@ class Awyiss extends BaseApplication {
 	 * @return MiddlewareQueue The updated middleware queue.
 	 */
 	public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue {
-		//$middlewareQueue->add(new ErrorHandlerMiddleware(Configure::read('Error'), $this));
+		$middlewareQueue->add(new ErrorHandlerMiddleware(Configure::read('Error'), $this));
 
 		if (Configure::read('debug')) {
 			$middlewareQueue->add(new AssetMiddleware([
