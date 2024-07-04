@@ -9,6 +9,7 @@ use Awyiss\Awyiss;
 use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity\MenuEntry;
+use Awyiss\Model\Table;
 use Awyiss\Routing\Router;
 use Cake\Collection\CollectionInterface;
 use Cake\Http\Exception\RedirectException;
@@ -68,6 +69,7 @@ class MenuEntriesController extends Controller {
 			'menuEntries' => $lo_menuEntries,
 			'paginated' => $lb_paginated,
 			'attributes' => $this->MenuEntries->getAttributes(),
+			'pages' => $this->findLinkablePages(),
 		]);
 	}
 
@@ -97,6 +99,7 @@ class MenuEntriesController extends Controller {
 			'menuEntry' => $lo_menuEntry,
 			'possibleParentMenuEntries' => $lo_possibleParentMenuEntries,
 			'languageRealm' => Awyiss::REALM_FRONTEND,
+			'pages' => $this->findLinkablePages(true),
 		]);
 	}
 
@@ -130,6 +133,7 @@ class MenuEntriesController extends Controller {
 			'menuEntry' => $lo_menuEntry,
 			'possibleParentMenuEntries' => $lo_possibleParentMenuEntries,
 			'languageRealm' => Awyiss::REALM_FRONTEND,
+			'pages' => $this->findLinkablePages(true),
 		]);
 	}
 
@@ -250,6 +254,41 @@ class MenuEntriesController extends Controller {
 
 
 	/**
+	 * @param array $requestData
+	 * @param \Awyiss\Model\Table $table
+	 * @return int
+	 */
+	protected function _saveSystemOrder(array $requestData, Table $table): int {
+		$la_newIds = [];
+
+		if (!empty($requestData['new_entries'])) {
+			foreach ($requestData['new_entries'] as $li_key => $la_data) {
+				$lo_entity = $table->newDefaultEntity($la_data);
+
+				if ($table->save($lo_entity)) {
+					$la_newIds[ $li_key ] = $lo_entity->id;
+				}
+			}
+		}
+
+		$la_requestData = [];
+
+		// Replace all new entries with their new ids in the order array
+		foreach ($requestData['order'] as $li_parentId => $la_entryIds) {
+			if (isset($la_newIds[ $li_parentId ])) {
+				$li_parentId = $la_newIds[ $li_parentId ];
+			}
+
+			foreach ($la_entryIds as $li_key => $li_entryId) {
+				$la_requestData[ $li_parentId ][ $li_key ] = $la_newIds[ $li_entryId ] ?? $li_entryId;
+			}
+		}
+
+		return parent::_saveSystemOrder($la_requestData, $table);
+	}
+
+
+	/**
 	 * @inheritDoc
 	 * @throws \Exception
 	 */
@@ -279,5 +318,28 @@ class MenuEntriesController extends Controller {
 				$menuEntry->setError('parentId', $la_errors, true);
 			}
 		}
+	}
+
+
+	/**
+	 * @param bool $listNested
+	 * @return \Cake\Collection\CollectionInterface
+	 */
+	protected function findLinkablePages(bool $listNested = false): CollectionInterface {
+		$lo_pages = $this->fetchTable('Pages')->find('forCurrentLanguage')->find('threaded')->all();
+
+		if ($listNested) {
+			$lo_pages = $lo_pages->listNested();
+
+			/** @var \Awyiss\Model\Entity\Page $lo_page */
+			foreach ($lo_pages as $lo_page) {
+				$lo_page->setVirtual(['level']);
+				//Add the current depth as a level-property to the entity
+				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+				$lo_page->level = $lo_pages->getDepth();
+			}
+		}
+
+		return $lo_pages;
 	}
 }

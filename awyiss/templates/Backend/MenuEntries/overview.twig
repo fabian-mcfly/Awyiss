@@ -1,6 +1,7 @@
 {#
 @var menuEntries \Awyiss\Model\Entity\MenuEntry[]|Cake\Datasource\Paging\PaginatedResultSet
 @var paginated bool
+@var pages \Cake\Collection\CollectionInterface
 @var _view \Awyiss\View\BackendView
 #}
 
@@ -54,10 +55,26 @@
 			{% include '@Backend/element/overview/overview_paginated_list.twig' with _context|merge({records: menuEntries.items().toArray()}) %}
 		{% endblock %}
 	{% else %}
+		{% block listPages %}
+			<div class="Overview-List Pages-List">
+				{% from '@Backend/macro/nested_list.twig' import nestedList %}
+				{{ nestedList(pages, _context|merge({
+					identifier: 'Page',
+					template: '@Backend/MenuEntries/overview_nested_list_page_item.twig',
+					data: {
+						nestable: false,
+						sortable: false,
+					},
+				})) }}
+			</div>
+		{% endblock %}
 		{% block listOverview %}
 			<div class="Overview-List">
 				{% from '@Backend/macro/nested_list.twig' import nestedList %}
 				{{ nestedList(menuEntries, _context|merge({
+					data: {
+						'menu-id': selectedMenuId,
+					},
 					displayedFields: localConfig.overview.displayedFields,
 					identifier: 'MenuEntry',
 				})) }}
