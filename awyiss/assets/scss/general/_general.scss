@@ -100,6 +100,18 @@ table {
 	width:100%;
 }
 
+code {
+	display:block;
+	margin-block:calc(var(--lineHeightMain) * 2);
+	padding:20px;
+	border-radius:5px;
+	background-color:var(--colorDark);
+	color:var(--colorBright);
+	font-family:Consolas, "Liberation Mono", "Courier New", monospace;
+	font-size:16px;
+	line-height:1.2;
+}
+
 ::-moz-selection {
 	background-color:var(--colorSuccess);
 	color:var(--colorBright);

@@ -6,6 +6,7 @@ namespace Awyiss\Controller\Backend;
 
 use Awyiss\Annotation\NoDirectAccess;
 use Awyiss\Controller\BackendController as Controller;
+use Cake\Core\Configure;
 use Cake\Event\EventInterface;
 use Cake\ORM\Query\SelectQuery;
 
@@ -15,13 +16,10 @@ use Cake\ORM\Query\SelectQuery;
  */
 class ErrorController extends Controller {
 	/**
-	 * Initialization hook method.
-	 *
-	 * @return void
-	 * @throws \Exception
+	 * @inheritDoc
 	 */
 	public function initialize(): void {
-		//$this->loadComponent('RequestHandler');
+		// Do not initialize the parent class
 	}
 
 
@@ -41,15 +39,15 @@ class ErrorController extends Controller {
 	 * @return void
 	 */
 	public function beforeRender(EventInterface $event): void {
+		parent::beforeRender($event);
+
+		if (Configure::read('debug')) {
+			return;
+		}
+
 		$lo_builder = $this->viewBuilder();
-		//$ls_templatePath = 'Error';
 
-		//if ($this->request->getParam('prefix') //&& in_array($lo_builder->getTemplate(), ['error400', 'error500', 'runtimeError', 'typeError'], true)) {
-		$la_parts = explode(DS, (string)$lo_builder->getTemplatePath(), -1);
-		$ls_templatePath = implode(DS, $la_parts) . DS . 'Error';
-		//}
-
-		$lo_builder->setTemplatePath($ls_templatePath);
-		#dd('layout: ' . $lo_builder->getLayout(), 'layout-path: ' . $lo_builder->getLayoutPath(), 'theme: ' . $lo_builder->getTheme(), 'options: ', $lo_builder->getOptions(), 'name: ' . $lo_builder->getName(), 'classname: ' . $lo_builder->getClassName(), 'template: ' . $lo_builder->getTemplate(), 'templatePath: ' . $lo_builder->getTemplatePath(), $ls_templatePath);
+		$lo_builder->setTemplatePath('Backend/Error');
+		$lo_builder->setClassName('Backend');
 	}
 }

@@ -1,0 +1,11 @@
+{#
+@var _view \Awyiss\View\BackendView
+#}
+
+{% do _view.assign('metaTitle', __d('system', 'headline_error_500') ~ config('Awyiss.System.Backend.meta.titleSeparator') ~ config('Awyiss.System.Backend.meta.titleAppendix')) %}
+{% do _view.assign('controllerName', 'Error') %}
+
+<h1>{{ __d('system', 'headline_error_500') }}</h1>
+<p>{{ __d('system', 'subtitle_error_500') }}</p>
+
+<code>{{ staticCall('\\Cake\\Error\\Debugger', 'formatHtmlMessage', error.message)|raw }}</code>

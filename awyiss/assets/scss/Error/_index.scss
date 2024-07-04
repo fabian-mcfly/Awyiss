@@ -1,0 +1,23 @@
+html.ErrorController {
+	&.🌚 {
+		#Content {
+			img {
+				filter:drop-shadow(0 0 50px rgba(255, 255, 255, .2))
+			}
+		}
+	}
+
+	#Content {
+		text-align:center;
+
+		h1 {
+			margin-inline:auto;
+		}
+
+		img {
+			display:block;
+			margin:calc(var(--lineHeightMain) * 2) auto;
+			filter:drop-shadow(0 0 50px rgba(31, 44, 57, .2));
+		}
+	}
+}

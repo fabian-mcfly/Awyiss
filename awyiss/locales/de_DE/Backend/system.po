@@ -244,3 +244,15 @@ msgstr "Verfügbare Medienelemente"
 
 msgid "media_elements_assigned"
 msgstr "Zugewiesene Medienelemente"
+
+msgid "headline_error_400"
+msgstr "Fehler 404"
+
+msgid "subtitle_error_400"
+msgstr "Die gewünschte Seite konnte nicht gefunden werden."
+
+msgid "headline_error_500"
+msgstr "Fehler"
+
+msgid "subtitle_error_500"
+msgstr "Etwas ist schiefgelaufen. Bitte kontaktieren Sie den Administrator."

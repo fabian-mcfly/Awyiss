@@ -1,4 +1,4 @@
-{% set controller = _view.getRequest().getParam('controller') -%}
+{% set controller = fetch('controllerName') ?: _view.getRequest().getParam('controller') -%}
 <!DOCTYPE html>
 <html
 	lang="{{ currentLanguage.shortcode }}"
@@ -7,7 +7,7 @@
 		{%- if isGenericPage %}	IsGenericPage{%- endif -%}
 		{%- if isGenericDatatable %} IsGenericDatatable{%- endif -%}
 		{%- if config.Awyiss.System.Backend.interface.darkMode == true %} 🌚{% endif -%}
-		{%- if config.Awyiss.System.Backend.interface.scale != 'regular' %} Scale-{{ config.Awyiss.System.Backend.interface.scale|camelize }}{% endif -%}
+		{%- if config.Awyiss.System.Backend.interface.scale and config.Awyiss.System.Backend.interface.scale != 'regular' %} Scale-{{ config.Awyiss.System.Backend.interface.scale|camelize }}{% endif -%}
 	">
 	<head>
 		{% block head %}
@@ -20,7 +20,7 @@
 			{% if metaTitle == '' %}
 				{% set identifier = 'meta_title_' ~ _view.getRequest().getParam('action') %}
 				{% set metaTitle = __(identifier) %}
-				{% if (metaTitle ends with identifier) %}
+				{% if (metaTitle ends with 'identifier') %}
 					{% set metaTitle = __d(isGenericDatatable ? 'generic_datatables' : 'generic_pages', identifier, isGenericDatatable ? datatables.title : pageRole.title) %}
 				{% endif %}
 

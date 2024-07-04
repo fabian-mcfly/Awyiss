@@ -18,7 +18,6 @@ use Cake\Core\ContainerInterface;
 use Cake\Core\Plugin;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Datasource\FactoryLocator;
-use Cake\Error\Middleware\ErrorHandlerMiddleware;
 use Cake\Event\Event;
 use Cake\Event\EventManagerInterface;
 use Cake\Http\BaseApplication;
@@ -202,7 +201,7 @@ class Awyiss extends BaseApplication {
 	 * @return MiddlewareQueue The updated middleware queue.
 	 */
 	public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue {
-		$middlewareQueue->add(new ErrorHandlerMiddleware(Configure::read('Error'), $this));
+		//$middlewareQueue->add(new ErrorHandlerMiddleware(Configure::read('Error'), $this));
 
 		if (Configure::read('debug')) {
 			$middlewareQueue->add(new AssetMiddleware([
