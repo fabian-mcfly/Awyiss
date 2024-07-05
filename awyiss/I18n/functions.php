@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 
 
+use Awyiss\Awyiss;
 use Awyiss\Routing\Router;
 use Cake\I18n\I18n;
 use Cake\Utility\Inflector;
@@ -33,7 +34,7 @@ if (!function_exists('__')) {
 			$ls_return = __d($ls_controller, $string, $la_args);
 		}
 		else {
-			$ls_return = I18n::getTranslator('system')->translate($string, $la_args);
+			$ls_return = I18n::getTranslator(Awyiss::getRealm() . '/system')->translate($string, $la_args);
 		}
 
 
@@ -63,14 +64,18 @@ if (!function_exists('__d')) {
 			$la_args = $args[0];
 		}
 
-		$ls_return = I18n::getTranslator($domain)->translate($string, $la_args);
+		$ls_domain = $domain;
+		if (!str_contains($domain, '/')) {
+			$ls_domain = Awyiss::getRealm() . '/' . $domain;
+		}
+		$ls_return = I18n::getTranslator($ls_domain)->translate($string, $la_args);
 
 		if ($ls_return === $string || empty($ls_return)) {
 			$ls_return = $domain . '::' . $string;
 
 			// Fallback to system domain
 			if ($domain !== 'system') {
-				$ls_fallback = I18n::getTranslator('system')->translate($string, $la_args);
+				$ls_fallback = I18n::getTranslator(Awyiss::getRealm() . '/system')->translate($string, $la_args);
 
 				if ($ls_fallback !== $string && !empty($ls_fallback)) {
 					$ls_return = $ls_fallback;
@@ -107,10 +112,18 @@ if (!function_exists('__df')) {
 			$la_args = $args[0];
 		}
 
-		$ls_return = I18n::getTranslator($domain)->translate($string, $la_args);
+		$ls_domain = $domain;
+		if (!str_contains($domain, '/')) {
+			$ls_domain = Awyiss::getRealm() . '/' . $domain;
+		}
+		$ls_return = I18n::getTranslator($ls_domain)->translate($string, $la_args);
 
 		if ($ls_return === $string || empty($ls_return)) {
-			$ls_return = I18n::getTranslator($fallbackDomain)->translate($string, $la_args);
+			$ls_fallbackDomain = $fallbackDomain;
+			if (!str_contains($fallbackDomain, '/')) {
+				$ls_fallbackDomain = Awyiss::getRealm() . '/' . $fallbackDomain;
+			}
+			$ls_return = I18n::getTranslator($ls_fallbackDomain)->translate($string, $la_args);
 		}
 
 		if ($ls_return === $string || empty($ls_return)) {
@@ -215,7 +228,7 @@ if (!function_exists('__x')) {
 			$ls_return = __d($ls_controller, $string, ['_context' => $context] + $la_args);
 		}
 		else {
-			$ls_return = I18n::getTranslator('system')->translate($string, ['_context' => $context] + $la_args);
+			$ls_return = I18n::getTranslator(Awyiss::getRealm() . '/system')->translate($string, ['_context' => $context] + $la_args);
 		}
 
 
