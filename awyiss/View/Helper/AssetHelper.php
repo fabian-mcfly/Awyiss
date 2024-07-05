@@ -111,7 +111,7 @@ class AssetHelper extends Helper {
 			$la_options = is_array($lx_value) ? $lx_value : ['minified' => $lb_minified, 'critical' => $critical, 'priority' => $priority];
 
 			// Merge the options with a default options array to ensure all keys are present
-			$la_options = array_merge(['minified' => false, 'critical' => false, 'attributes' => false, 'priority' => 10], $la_options);
+			$la_options = array_merge(['minified' => false, 'critical' => false, 'attributes' => [], 'priority' => 10], $la_options);
 
 			// If the asset is critical, set the key to 'critical'. Otherwise, set it to 'nonCritical'.
 			$lx_key = $la_options['critical'] ? 'critical' : 'nonCritical';
@@ -121,6 +121,11 @@ class AssetHelper extends Helper {
 
 			// If the extension is a font type, set the extension to 'font'.
 			$ls_extension = in_array($ls_extension, ['woff', 'woff2', 'ttf']) ? 'font' : $ls_extension;
+
+			if (is_array($la_options['attributes']) && isset($la_options['attributes']['realm'])) {
+				$la_options['realm'] = $la_options['attributes']['realm'];
+				unset($la_options['attributes']['realm']);
+			}
 
 			// Add the asset to the 'all' assets array
 			$this->assets['all'][ $ls_fileName ] = $la_options;
@@ -161,7 +166,7 @@ class AssetHelper extends Helper {
 			$la_options = is_array($lx_value) ? $lx_value : ['minified' => $lb_minified, 'priority' => $priority];
 
 			// Merge the options with a default options array to ensure all keys are present
-			$la_options = array_merge(['minified' => false, 'critical' => false, 'attributes' => false, 'priority' => 10], $la_options);
+			$la_options = array_merge(['minified' => false, 'critical' => false, 'attributes' => [], 'priority' => 10], $la_options);
 
 			$this->noScriptAssets[ $ls_fileName ] = $la_options;
 		}
@@ -212,11 +217,14 @@ class AssetHelper extends Helper {
 
 	/**
 	 * Generates an HTML tag for the given asset.
-	 * This method generates an HTML tag for the asset located at the given path. The type of tag generated depends on the type of the asset.
-	 * If the asset is a font (woff, woff2, ttf), and the lazyLoad parameter is true, a <link> tag with rel="preload" is generated.
-	 * If the asset is a JavaScript file, a <script> tag is generated. If the 'critical' option of the asset is true, the tag is generated without the async attribute.
-	 * If the asset is a CSS file, a <link> tag with rel="stylesheet" is generated. If the 'critical' option of the asset is true, the tag is generated without the onload
-	 * attribute. The method returns the generated tag as a string.
+	 *
+	 * If the asset is a font (woff, woff2, ttf), a `<link>`-tag with `rel="preload"` is generated.
+	 *
+	 * If the asset is a JavaScript file, a `<script>`-tag is generated.
+	 * If the 'critical' option of the asset is true, the tag is generated without the `async`-attribute.
+	 *
+	 * If the asset is a CSS file, a `<link>`-tag with `rel="stylesheet"` is generated.
+	 * If the 'critical'-option of the asset is true, the tag is generated without the `onload`-attribute.
 	 *
 	 * @param string $assetPath The path to the asset. This should be a full URL.
 	 * @param array $options An array of options for the asset. This should include a 'critical' key with a boolean value indicating whether the asset is critical.
@@ -229,7 +237,7 @@ class AssetHelper extends Helper {
 
 		// Generate the additional attributes string
 		$ls_additionalAttributes = '';
-		if (isset($options['attributes']) && is_array($options['attributes'])) {
+		if (!empty($options['attributes']) && is_array($options['attributes'])) {
 			foreach ($options['attributes'] as $ls_attributeName => $lx_attributeValue) {
 				$ls_additionalAttributes .= ' ' . $ls_attributeName . '="' . htmlspecialchars($lx_attributeValue, ENT_QUOTES, 'UTF-8') . '"';
 			}
@@ -248,16 +256,10 @@ class AssetHelper extends Helper {
 			$ls_nonce = 'nonce="' . $ls_nonce . '"';
 		}
 
-		// If the extension is not recognized, try to determine it from the url, if it's an url
+		// If the extension is a font type, generate a <link> tag with rel="preload" for the font
 		if ($ls_extension === 'woff' || $ls_extension === 'woff2' || $ls_extension === 'ttf') {
-			if ($lazyLoad) {
-				// Generate a <link> tag with rel="preload" for the font
-				return '<link ' . $ls_nonce . ' rel="preload" href="' . $assetPath . '" as="font" type="font/' . $ls_extension . '"
-					crossorigin' . $ls_additionalAttributes . '>' . PHP_EOL;
-			}
-
-
-			return '';
+			// Generate a <link> tag with rel="preload" for the font
+			return '<link ' . $ls_nonce . ' rel="preload" href="' . $assetPath . '" as="font" type="font/' . $ls_extension . '" crossorigin' . $ls_additionalAttributes . '>' . PHP_EOL;
 		}
 
 		// If the asset is critical, generate a <script> tag for JavaScript files and a <link> tag with rel="stylesheet" for CSS files
@@ -266,20 +268,22 @@ class AssetHelper extends Helper {
 				return '<script ' . $ls_nonce . ' src="' . $assetPath . '"' . $ls_additionalAttributes . '></script>' . PHP_EOL;
 			}
 
-
 			return '<link ' . $ls_nonce . ' rel="stylesheet" type="text/css" href="' . $assetPath . '"' . $ls_additionalAttributes . '/>' . PHP_EOL;
 		}
 
-		// If the asset is a JavaScript file, generate a <script> tag with the async attribute
+		// If the asset is a JavaScript file, generate a <script> tag
 		if ($ls_extension === 'js') {
-			return '<script ' . $ls_nonce . ' async src="' . $assetPath . '"' . $ls_additionalAttributes . '></script>' . PHP_EOL;
+			if ($lazyLoad) {
+				return '<script ' . $ls_nonce . ' async src="' . $assetPath . '"' . $ls_additionalAttributes . '></script>' . PHP_EOL;
+			}
+
+			return '<script ' . $ls_nonce . ' src="' . $assetPath . '"' . $ls_additionalAttributes . '></script>' . PHP_EOL;
 		}
 
 		// If the asset is a CSS file and lazy loading is enabled, generate a <link> tag with rel="preload"
 		if ($lazyLoad) {
 			return '<link ' . $ls_nonce . ' rel="preload" href="' . $assetPath . '" as="style"' . $ls_additionalAttributes . ' data-lazyload="true">' . PHP_EOL;
 		}
-
 
 		// If none of the above conditions are met, generate a <link> tag with rel="stylesheet" for the asset
 		return '<link ' . $ls_nonce . ' rel="stylesheet" type="text/css" href="' . $assetPath . '"' . $ls_additionalAttributes . '/>' . PHP_EOL;
@@ -323,7 +327,9 @@ class AssetHelper extends Helper {
 			$ls_subPath = 'font';
 		}
 
-		foreach ($this->realmFolders[ $this->realm ] as $ls_key => $ls_folder) {
+		$ls_realm = $options['realm'] ?? $this->realm;
+
+		foreach ($this->realmFolders[ $ls_realm ] as $ls_key => $ls_folder) {
 			$lb_minified = $options['minified'] ?? false;
 
 			$ls_assetPath = $ls_folder . $ls_subPath . '/' . $asset;
