@@ -1,0 +1,38 @@
+@import 'line-awesome/mixins';
+
+@import 'helper/reset';
+@import 'helper/variables';
+@import 'helper/extendables';
+
+@import 'general/fonts';
+@import 'general/general';
+@import 'general/body';
+
+body {
+	padding:0;
+}
+
+#Content {
+	display:flex;
+	min-height:100dvh;
+	padding:40px;
+	text-align:center;
+	align-content:center;
+	flex-wrap:wrap;
+	justify-content:center;
+	overflow-y:auto;
+
+	> * {
+		flex:0 0 100%;
+	}
+
+	img {
+		max-width:100%;
+		margin-block:calc(var(--lineHeightMain) * 2);
+		flex:0 0 auto;
+	}
+}
+
+h1 {
+	margin:0 auto;
+}
