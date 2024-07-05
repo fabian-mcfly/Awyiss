@@ -9,22 +9,29 @@
 @var languages \Awyiss\Model\Entity\Language[]
 @var languageShortcode string
 @var _view \Awyiss\View\FrontendView
+@var AssetHelper \Awyiss\View\Helper\AssetHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+@var HtmlHelper \Awyiss\View\Helper\HtmlHelper
+@var LocaleHelper \Awyiss\View\Helper\LocaleHelper
+@var MediaHelper \Awyiss\View\Helper\MediaHelper
+@var UrlHelper \Awyiss\View\Helper\UrlHelper
+@var TimeHelper \Awyiss\View\Helper\TimeHelper
 #}
-{% block html %}
-{%- set htmlClass = fetch('htmlClass') -%}
-{%- if htmlClass == '' -%}
-	{% set htmlClass = page.slug|split('/')|map(e => e|ucparts)|map(e => e|prefixNumericClass)|join(' ')|trim -%}
-	{% set htmlClass = htmlClass ~ ' PageRole-' ~ page.pageRoleId.name|ucparts -%}
-	{% set htmlClass = htmlClass ~ ' ' ~ page.pageRoleId.name|ucparts ~ 'Template-' ~ page.pageTemplate.fileName|ucparts  -%}
-	{% if environment %}
-		{% set htmlClass = htmlClass ~ ' ' ~ environment -%}
-	{% endif -%}
+{%- block html %}
+{%- set htmlClass = fetch('htmlClass') %}
+{%- if htmlClass == '' %}
+	{%- set htmlClass = page.slug|split('/')|map(e => e|ucparts)|map(e => e|prefixNumericClass)|join(' ')|trim %}
+	{%- set htmlClass = htmlClass ~ ' PageRole-' ~ page.pageRoleId.name|ucparts %}
+	{%- set htmlClass = htmlClass ~ ' ' ~ page.pageRoleId.name|ucparts ~ 'Template-' ~ page.pageTemplate.fileName|ucparts %}
+	{%- if environment %}
+		{%- set htmlClass = htmlClass ~ ' ' ~ environment %}
+	{%- endif %}
 {%- endif -%}
 <!DOCTYPE html>
 <html lang="{{ page.language.shortcode }}" id="Page{{ page.id }}" class="NoJS {{ htmlClass }}">
 	{% block head %}
 		<head>
-			{% block headInner %}
+			{% block headInner -%}
 				{% block meta %}
 					{{ HtmlHelper.charset() }}
 					<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -61,6 +68,15 @@
 				{% block baseUrl %}
 					<base href="{{ baseUrl }}">
 				{% endblock %}
+
+				{% set canonical = fetch('canonical') -%}
+				{%- if canonical == '' and page.duplicateOf and page.duplicate.slug != '404' -%}
+					{% set canonical = UrlHelper.build({lang: page.duplicate.languageShortcode, slug: page.duplicate.slug}) -%}
+				{%- endif %}
+
+				{% if canonical != '' %}
+					<link rel="canonical" href="{{ canonical }}">
+				{%- endif %}
 
 				{% block favicons %}
 					<link rel="apple-touch-icon" sizes="180x180" href="{{ baseUrl }}assets/favicon/apple-touch-icon.png">
