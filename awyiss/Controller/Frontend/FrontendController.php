@@ -11,6 +11,7 @@ use Awyiss\Event\EventListenersProvider;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity\Page;
 use Awyiss\Routing\Router;
+use Cake\Http\Exception\NotFoundException;
 use Cake\Http\Exception\RedirectException;
 use Cake\ORM\Locator\LocatorAwareTrait;
 
@@ -83,14 +84,20 @@ class FrontendController extends AppController {
 	/**
 	 * @param string|null $languageShortcode
 	 * @param string|null $slug
+	 * @param array $where
 	 * @return \Awyiss\Model\Entity\Page|null
 	 * @throws \Exception
 	 */
-	protected function findPage(?string $languageShortcode = null, ?string $slug = null): ?Page {
+	protected function findPage(?string $languageShortcode = null, ?string $slug = null, array $where = []): ?Page {
 		/** @var \Awyiss\Model\Table\PagesTable $lo_pagesTable */
 		$lo_pagesTable = $this->fetchTable('Pages');
 
 		$lo_query = $lo_pagesTable->find('all', softDelete: ['includeDeleted' => !!$slug], skipPageRoleCheck: true);
+
+		// Add additional where conditions
+		if ($where) {
+			$lo_query->where($where);
+		}
 
 		// Include the languages in the query, including deleted languages
 		$lo_query->contain([
@@ -141,40 +148,59 @@ class FrontendController extends AppController {
 	 * @throws \Exception
 	 */
 	protected function handlePage(?Page $page): void {
-		// If no page was found, return a 404 error
-		if (!$page) {
-			$this->response = $this->response->withStatus(404);
-			$this->render('error404');
-			return;
+		$lb_isErrorPage = false;
+		$lo_page = $page;
+
+		if (!$lo_page) {
+			// Try to find an entry in the slug history
+			$this->historyRedirect(trim($this->request->getPath(), '/'));
 		}
 
-		// If the page or the language of the page is deleted, return a 410 error
-		if ($page->deleted || $page->language->deleted) {
-			$this->response = $this->response->withStatus(410);
-			$this->render('error410');
-			return;
+		/*
+		 * If the page or the language of the page is deleted,
+		 * It must be active, not deleted and in the same language as the current.
+		 */
+		if ($lo_page && ($lo_page->deleted || $lo_page->language->deleted)) {
+			// Try to find an entry in the slug history
+			$this->historyRedirect($lo_page->languageShortcode . '/' . $lo_page->slug);
+
+			// Find the 410 page for the current language
+			$lo_page = $this->findPage($lo_page->languageShortcode, '410', ['active' => true, 'deleted' => false]);
+			$lb_isErrorPage = true;
+
+			if (!$lo_page) {
+				throw new NotFoundException();
+			}
+		}
+		/*
+		 * If no page was found, check if a 404 page exists.
+		 * It must be active, not deleted and in the same language as the current.
+		 */
+		if (!$lo_page || !$lo_page->active || !$lo_page->parentsActive || !$lo_page->language->active) {
+			// Find the 404 page for the current language
+			$lo_page = $this->findPage(LocaleMiddleware::getLanguage()->shortcode, '404', ['active' => true, 'deleted' => false]);
+			$lb_isErrorPage = true;
+
+			if (!$lo_page) {
+				throw new NotFoundException();
+			}
 		}
 
-		// If the page, the page's parents or the language of the page is not active, return a 404 error
-		if (!$page->active || !$page->parentsActive || !$page->language->active) {
-			$this->response = $this->response->withStatus(404);
-			$this->render('error404');
-			return;
+		if (!$lb_isErrorPage) {
+			// Redirect to a normalized URL if the current URL does not match the normalized URL
+			$this->redirectIfNotNormalized($lo_page);
 		}
-
-		// Redirect to a normalized URL if the current URL does not match the normalized URL
-		$this->redirectIfNotNormalized($page);
 
 		/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $ls_pageRoleEnum */
 		$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
 
 		$this->set([
-			'page' => $page,
+			'page' => $lo_page,
 			'pageRoleEnum' => $ls_pageRoleEnum,
 		]);
 
 		$this->viewBuilder()
-		->setTemplate($page->pageTemplate->fileName)
+		->setTemplate($lo_page->pageTemplate->fileName)
 		->setTemplatePath('Frontend/page');
 	}
 
@@ -286,6 +312,56 @@ class FrontendController extends AppController {
 					...$this->request->getQueryParams(),
 				]);
 			}
+
+			throw new RedirectException($ls_realUrl, 301);
+		}
+	}
+
+
+	/**
+	 * Redirects to current page if the URL is found in the slug history
+	 *
+	 * @param string $url
+	 * @return void
+	 */
+	protected function historyRedirect(string $url): void {
+		$lo_historyTable = $this->fetchTable('SlugHistory');
+
+		$ls_url = preg_replace('/[^a-zA-Z0-9\/:\-]/', '', $url);
+
+		$la_urls = [$ls_url];
+
+		// Check if the URL contains parameters, remove them
+		if (str_contains($ls_url, ':')) {
+			$la_parts = explode('/', $ls_url);
+			$ls_url = '';
+			foreach ($la_parts as $ls_part) {
+				if (!str_contains($ls_part, ':')) {
+					$ls_url .= $ls_part . '/';
+				}
+			}
+
+			$la_urls[] = rtrim($ls_url, '/');
+		}
+
+		$lo_query = $lo_historyTable->find('all')
+			->where(['slug IN' => $la_urls])
+			->contain(['Pages'])
+			->limit(1);
+
+		/** @noinspection PhpUndefinedMethodInspection */
+		$lo_query->orderByAsc($lo_query->newExpr($lo_query->func()->FIND_IN_SET([
+			'SlugHistory.slug' => 'identifier',
+			implode(',', $la_urls),
+		])), true);
+
+		$lo_record = $lo_query->first();
+
+		if ($lo_record?->page) {
+			$ls_realUrl = Router::url([
+				'lang' => $lo_record->page->languageShortcode,
+				'slug' => $lo_record->page->slug,
+			]);
 
 			throw new RedirectException($ls_realUrl, 301);
 		}
