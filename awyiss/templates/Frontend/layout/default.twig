@@ -60,6 +60,8 @@
 						{%- endif -%}
 					{% endblock %}
 
+					<meta name="robots" content="{{ page.robotsIndex ? 'index' : 'noindex' }},{{ page.robotsFollow ? 'follow' : 'nofollow' }}">
+
 					{%- if config('Awyiss.System.Frontend.meta.googleSiteVerification') %}
 						<meta name="google-site-verification" content="{{ config('Awyiss.System.Frontend.meta.googleSiteVerification') }}">
 					{%- endif %}
