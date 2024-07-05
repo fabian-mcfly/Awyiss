@@ -110,7 +110,17 @@
 	{% block body %}
 		<body>
 			{% block bodyInner %}
-				{{ fetch('content') }}
+				{% block bodyHeader %}
+					{% include '@Frontend/element/header.twig' %}
+				{% endblock %}
+
+				{% block bodyContent %}
+					{{ fetch('content') }}
+				{% endblock %}
+
+				{% block bodyFooter %}
+					{% include '@Frontend/element/footer.twig' %}
+				{% endblock %}
 
 				{%- block bodyAssetTags -%}
 					{{- AssetHelper.getTags('all', false) -}}
