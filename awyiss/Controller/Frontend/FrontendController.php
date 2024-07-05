@@ -11,6 +11,7 @@ use Awyiss\Event\EventListenersProvider;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity\Page;
 use Awyiss\Routing\Router;
+use Awyiss\Utility\Inflector;
 use Cake\Http\Exception\NotFoundException;
 use Cake\Http\Exception\RedirectException;
 use Cake\ORM\Locator\LocatorAwareTrait;
@@ -101,6 +102,7 @@ class FrontendController extends AppController {
 
 		// Include the languages in the query, including deleted languages
 		$lo_query->contain([
+			'DuplicateOfPage',
 			'Languages' => [
 				'finder' => $languageShortcode ? 'withDeleted' : 'all',
 			],
@@ -193,6 +195,9 @@ class FrontendController extends AppController {
 
 		/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $ls_pageRoleEnum */
 		$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
+
+		// Make sure the page is of the correct entity class (page role specific)
+		$lo_page = $this->ensureCorrectEntityType($lo_page, $ls_pageRoleEnum);
 
 		$this->set([
 			'page' => $lo_page,
@@ -365,5 +370,34 @@ class FrontendController extends AppController {
 
 			throw new RedirectException($ls_realUrl, 301);
 		}
+	}
+
+
+	/**
+	 * Check if the page has the page role "page".
+	 * IF that's not the case, fetch the record again using the correct table.
+	 *
+	 * @param \Awyiss\Model\Entity\Page $page
+	 * @param class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $pageRoleEnum
+	 * @return \Awyiss\Model\Entity\Page
+	 */
+	protected function ensureCorrectEntityType(Page $page, string $pageRoleEnum): Page {
+		if ($page->pageRoleId === $pageRoleEnum::Page) {
+			return $page;
+		}
+
+		$ls_pageRole = Inflector::pluralize($page->pageRoleId->name);
+		$lo_table = $this->fetchTable($ls_pageRole);
+
+		$lo_query = $lo_table->find('all')->where(['id' => $page->id])->limit(1);
+
+		// Include the languages in the query, including deleted languages
+		$lo_query->contain([
+			'DuplicateOf' . $page->pageRoleId->name,
+			'Languages',
+			'PageTemplates',
+		]);
+
+		return $lo_query->first();
 	}
 }
