@@ -56,7 +56,7 @@ class ContentsCell extends Cell {
 
 		$lo_query = $lo_contentsTable->find('active')->find('threaded')->find('mediaAssignments', includeElementSelector: true, useMediaEntity: true);
 		$lo_query->where([
-			'Contents.page_id' => $page->id,
+			'Contents.page_id' => $page->duplicateOf ?? $page->id,
 			'ContentAreas.identifier' => $contentArea,
 		]);
 
