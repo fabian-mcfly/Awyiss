@@ -360,12 +360,14 @@ class PagesTable extends Table {
 			'cascadeCallbacks' => true,
 			'dependent' => true,
 			'foreignKey' => 'id',
+			'propertyName' => 'duplicated_by',
 		]);
 
-		$this->belongsTo('DuplicateOf' . $ls_pageRole, [
+		$this->belongsTo('DuplicateOf' . Inflector::camelize($this->pageRole->name), [
 			'bindingKey' => 'id',
 			'className' => $ls_pageRole,
 			'foreignKey' => 'duplicate_of',
+			'propertyName' => 'duplicate',
 		]);
 	}
 
