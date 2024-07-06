@@ -95,7 +95,7 @@ class AssetHelper extends Helper {
 		$lb_minified = $minified ?? !Configure::read('debug', false);
 
 		// If the provided asset is an array, use it as is. Otherwise, create an array with the asset as the key and an array of options as the value.
-		$la_assets = is_array($asset) ? $asset : [$asset => ['minified' => $lb_minified, 'critical' => $critical, 'attributes' => $attributes, 'priority' => $priority]];
+		$la_assets = is_array($asset) ? $asset : [$asset];
 
 		// Iterate over each asset
 		foreach ($la_assets as $lx_key => $lx_value) {
@@ -108,10 +108,10 @@ class AssetHelper extends Helper {
 			}
 
 			// If the value is an array, use it as the options. Otherwise, create an array of options with the provided values.
-			$la_options = is_array($lx_value) ? $lx_value : ['minified' => $lb_minified, 'critical' => $critical, 'priority' => $priority];
+			$la_options = is_array($lx_value) ? $lx_value : [];
 
 			// Merge the options with a default options array to ensure all keys are present
-			$la_options = array_merge(['minified' => false, 'critical' => false, 'attributes' => [], 'priority' => 10], $la_options);
+			$la_options = array_merge(['minified' => $lb_minified, 'critical' => $critical, 'attributes' => $attributes, 'priority' => $priority], $la_options);
 
 			// If the asset is critical, set the key to 'critical'. Otherwise, set it to 'nonCritical'.
 			$lx_key = $la_options['critical'] ? 'critical' : 'nonCritical';
