@@ -92,6 +92,11 @@ $routes->scope('/', function (RouteBuilder $routeBuilder): void {
 	$routeBuilder->applyMiddleware('requestLocale');
 
 	$routeBuilder->connect(
+		'/sitemap',
+		['prefix' => 'Frontend', 'controller' => 'Sitemap', 'action' => 'index'],
+	)->setExtensions(['xml']);
+
+	$routeBuilder->connect(
 		'/{lang}/{slug}/*',
 		['prefix' => 'Frontend', 'controller' => 'Frontend', 'action' => 'index'],
 		['_name' => Awyiss::REALM_FRONTEND]
