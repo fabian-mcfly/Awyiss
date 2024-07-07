@@ -183,7 +183,7 @@ class DesignMiddleware implements MiddlewareInterface {
 				continue;
 			}
 
-			$li_lastModified = $lo_files->getLastModified()->subSeconds(10)->timestamp;
+			$li_lastModified = $lo_files->getLastModified()?->subSeconds(10)->timestamp;
 
 			foreach ($lo_files->getMainFiles() as $lo_file) {
 				// Set the css file path based on the scss file
