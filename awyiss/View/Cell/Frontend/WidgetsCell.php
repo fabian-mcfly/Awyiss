@@ -51,7 +51,7 @@ class WidgetsCell extends Cell {
 
 		$lo_widgetsTable = $this->fetchTable('Widgets');
 
-		$lo_query = $lo_widgetsTable->find('active')->find('threaded')->find('mediaAssignments', includeElementSelector: true, useMediaEntity: true);
+		$lo_query = $lo_widgetsTable->find('active')->find('published')->find('threaded')->find('mediaAssignments', includeElementSelector: true, useMediaEntity: true);
 		$lo_query->where([
 			'Widgets.identifier' => $identifier,
 		]);
@@ -112,6 +112,7 @@ class WidgetsCell extends Cell {
 			selector: '#Widget' . $entity->id,
 		);
 
+		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 		return $this->View->widget($entity->widgetTemplate->fileName, [
 			'widget' => $entity,
 			'children' => $children,

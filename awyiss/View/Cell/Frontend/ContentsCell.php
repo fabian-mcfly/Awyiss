@@ -54,7 +54,7 @@ class ContentsCell extends Cell {
 
 		$lo_contentsTable = $this->fetchTable('Contents');
 
-		$lo_query = $lo_contentsTable->find('active')->find('threaded')->find('mediaAssignments', includeElementSelector: true, useMediaEntity: true);
+		$lo_query = $lo_contentsTable->find('active')->find('published')->find('threaded')->find('mediaAssignments', includeElementSelector: true, useMediaEntity: true);
 		$lo_query->where([
 			'Contents.page_id' => $page->duplicateOf ?? $page->id,
 			'ContentAreas.identifier' => $contentArea,
@@ -119,6 +119,7 @@ class ContentsCell extends Cell {
 			selector: '#Content' . $entity->id,
 		);
 
+		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 		return $this->View->content($entity->contentTemplate->fileName, [
 			'content' => $entity,
 			'children' => $children,

@@ -95,7 +95,7 @@ class FrontendController extends AppController {
 		/** @var \Awyiss\Model\Table\PagesTable $lo_pagesTable */
 		$lo_pagesTable = $this->fetchTable('Pages');
 
-		$lo_query = $lo_pagesTable->find('all', softDelete: ['includeDeleted' => !!$slug], skipPageRoleCheck: true);
+		$lo_query = $lo_pagesTable->find('published', softDelete: ['includeDeleted' => !!$slug], skipPageRoleCheck: true);
 
 		// Add additional where conditions
 		if ($where) {
@@ -200,6 +200,16 @@ class FrontendController extends AppController {
 
 		// Make sure the page is of the correct entity class (page role specific)
 		$lo_page = $this->ensureCorrectEntityType($lo_page, $ls_pageRoleEnum);
+
+		// If there is no page, it's most likely not published
+		if (!$lo_page) {
+			// Find the 404 page for the current language
+			$lo_page = $this->findPage(LocaleMiddleware::getLanguage()->shortcode, '404', ['active' => true, 'deleted' => false]);
+
+			if (!$lo_page) {
+				throw new NotFoundException();
+			}
+		}
 
 		$this->set([
 			'page' => $lo_page,
@@ -385,9 +395,9 @@ class FrontendController extends AppController {
 	 *
 	 * @param \Awyiss\Model\Entity\Page $page
 	 * @param class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $pageRoleEnum
-	 * @return \Awyiss\Model\Entity\Page
+	 * @return \Awyiss\Model\Entity\Page|null
 	 */
-	protected function ensureCorrectEntityType(Page $page, string $pageRoleEnum): Page {
+	protected function ensureCorrectEntityType(Page $page, string $pageRoleEnum): ?Page {
 		if ($page->pageRoleId === $pageRoleEnum::Page) {
 			return $page;
 		}
@@ -395,7 +405,7 @@ class FrontendController extends AppController {
 		$ls_pageRole = Inflector::pluralize($page->pageRoleId->name);
 		$lo_table = $this->fetchTable($ls_pageRole);
 
-		$lo_query = $lo_table->find('all')->where(['id' => $page->id])->limit(1);
+		$lo_query = $lo_table->find('published')->where(['id' => $page->id])->limit(1);
 
 		// Include the languages in the query, including deleted languages
 		$lo_query->contain([
@@ -411,6 +421,7 @@ class FrontendController extends AppController {
 	/**
 	 * @param \Awyiss\Model\Entity\Page $page
 	 * @return void
+	 * @throws \ReflectionException
 	 */
 	protected function loadFrontendEditor(Page $page): void {
 		if (!Configure::read('Awyiss.System.Frontend.editor')) {

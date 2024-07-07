@@ -316,7 +316,7 @@ class PagesTable extends Table {
 
 
 		$rules->add(
-			$rules->existsIn('duplicateOf', 'DuplicateOf' . $ls_pageRole),
+			$rules->existsIn('duplicateOf', 'DuplicateOf' . Inflector::camelize($this->pageRole->name)),
 			'validDuplicateOf',
 			[
 				'errorField' => 'duplicateOf',

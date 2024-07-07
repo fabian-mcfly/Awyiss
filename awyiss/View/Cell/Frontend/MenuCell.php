@@ -8,6 +8,7 @@ use Awyiss\Model\Entity\MenuEntry;
 use Awyiss\Utility\Inflector;
 use Awyiss\Utility\Menu\Menu;
 use Awyiss\Utility\Menu\MenuRenderer;
+use Cake\Collection\Collection;
 use Cake\Collection\CollectionInterface;
 use Cake\Datasource\FactoryLocator;
 use Cake\View\Cell;
@@ -21,6 +22,7 @@ class MenuCell extends Cell {
 	/**
 	 * @param string $identifier
 	 * @param string $languageShortcode
+	 * @param array $options
 	 * @return void
 	 * @throws \ReflectionException
 	 */
@@ -71,12 +73,20 @@ class MenuCell extends Cell {
 	 * @return \Cake\Collection\CollectionInterface
 	 */
 	protected function getMenuEntries(string $identifier, string $languageShortcode): CollectionInterface {
+		$lo_menusTable = FactoryLocator::get('Table')->get('Menus');
+		/** @var \Awyiss\Model\Entity\Menu $lo_menu */
+		$lo_menu = $lo_menusTable->find('active')->find('published')->where([
+			'identifier' => $identifier,
+		])->first();
+
+		if (!$lo_menu) {
+			return new Collection([]);
+		}
+
 		$lo_menuEntriesTable = FactoryLocator::get('Table')->get('MenuEntries');
-		$lo_menuEntries = $lo_menuEntriesTable->find('active')->find('threaded')->where([
+		$lo_menuEntries = $lo_menuEntriesTable->find('active')->find('published')->find('threaded')->where([
+			'menu_id' => $lo_menu->id,
 			'language_shortcode' => $languageShortcode,
-			'Menus.identifier' => $identifier,
-		])->contain([
-			'Menus',
 		])->all();
 
 		return $lo_menuEntries->filter(function (MenuEntry $content) {
@@ -87,6 +97,7 @@ class MenuCell extends Cell {
 
 	/**
 	 * @param array $data
+	 * @param \Cake\View\StringTemplate $template
 	 * @return string
 	 */
 	public function renderItem(array $data, StringTemplate $template): string {
@@ -106,6 +117,7 @@ class MenuCell extends Cell {
 
 	/**
 	 * @param array $data
+	 * @param \Cake\View\StringTemplate $template
 	 * @return string
 	 */
 	public function renderContent(array $data, StringTemplate $template): string {
@@ -115,7 +127,7 @@ class MenuCell extends Cell {
 			$ls_template = 'link';
 		}
 		else {
-			$ls_template = 'link';
+			$ls_template = 'noLink';
 		}
 
 		$la_data['identifier'] = Inflector::ucparts($data['title'], false);
