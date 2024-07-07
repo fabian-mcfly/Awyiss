@@ -253,11 +253,11 @@ class AwyissRoute extends DashedRoute {
 				if (str_contains($ls_part, ':')) {
 					$lb_foundParams = true;
 					[$ls_key, $ls_value] = explode(':', $ls_part);
-					// Underscore and then camelCase the value.
-					$ls_value = Inflector::underscore($ls_value);
+					// camelBack the value.
+					$ls_value = Inflector::variable($ls_value);
 
-					// Underscore and then camelCase the key.
-					$ls_key = Inflector::variable(Inflector::underscore($ls_key));
+					// camelBack the key.
+					$ls_key = Inflector::variable($ls_key);
 
 					// If the key does not exist in the route array, add it.
 					if (!array_key_exists($ls_key, $la_route)) {
@@ -280,11 +280,10 @@ class AwyissRoute extends DashedRoute {
 			// Implode the 'parts' array into a string, separating each part with a '/'.
 			$la_route['fullSlug'] = implode('/', array_map(function ($value, $key) {
 				if (is_numeric($key)) {
-					return $value;
+					return Inflector::dasherize($value);
 				}
 
-
-				return $key . ':' . $value;
+				return $key . ':' . Inflector::dasherize($value);
 			}, $la_route['parts'], array_keys($la_route['parts'])));
 
 			// Unset the '_args_' key from the route array.
