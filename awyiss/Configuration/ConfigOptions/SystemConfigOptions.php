@@ -27,7 +27,7 @@ class SystemConfigOptions extends AbstractConfigOptions {
 		$this->add(Awyiss::REALM_FRONTEND, [
 			new ConfigOption(
 				defaultValue: true,
-				identifier: 'editlinks',
+				identifier: 'editor',
 				localizable: false,
 				nullable: false,
 				type: ConfigOptionType::Bool,

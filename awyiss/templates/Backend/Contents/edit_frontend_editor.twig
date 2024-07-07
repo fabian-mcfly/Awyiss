@@ -1,0 +1,45 @@
+{#
+@var content \Awyiss\Model\Entity\Content
+@var contentTemplates \Cake\Collection\CollectionInterface
+@var possibleParentContents \Cake\Collection\CollectionInterface
+@var page \Awyiss\Model\Entity\Page
+@var assignedAttributes array
+@var contentAreas array
+@var contentElementsByFieldset ContentTemplateElement[]
+@var forScope string
+@var languageRealm string
+@var languageShortcode string
+@var _view \Awyiss\View\BackendView
+#}
+
+{% do AuthorizationHelper.setScope(forScope) %}
+
+<div class="Contents Form Edit EditFrontendEditor" data-title="{{ __('headline_edit') }}">
+	{% block buttonArea %}
+		<div class="ButtonArea">
+			{% block formEditButtons %}
+				{{ FormHelper.button(__('save'), {class: 'Button Button-Success Button-Save', form: 'EditFrontendEditor'}) }}
+			{% endblock %}
+
+			{{ FormHelper.button(__('close'), {class: 'Button Button-Close'}) }}
+		</div>
+	{% endblock %}
+
+	{{ FormHelper.create(content, {method: 'post', id: 'EditFrontendEditor', idPrefix: 'content'}) }}
+
+	{% block flashMessages %}
+		{{ FlashHelper.render() }}
+	{% endblock %}
+
+	{% block formEdit %}
+		{% include('@Backend/Contents/form.twig') %}
+	{% endblock %}
+
+	{% block buttonAreaBottom %}
+		<div class="ButtonArea ButtonArea-Bottom">
+			{{ block('formEditButtons') }}
+		</div>
+	{% endblock %}
+
+	{{ FormHelper.end() }}
+</div>

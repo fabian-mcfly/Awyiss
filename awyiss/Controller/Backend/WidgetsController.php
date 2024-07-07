@@ -138,6 +138,12 @@ class WidgetsController extends Controller {
 			$this->save($lo_widget, 'edit');
 		}
 
+		if ($this->request->getParam('mode') === 'frontendEditor') {
+			$this->viewBuilder()
+			->setTemplate('edit_frontend_editor')
+			->setLayout('frontend_editor');
+		}
+
 		$this->setViewVars($lo_widget);
 	}
 
@@ -528,7 +534,7 @@ class WidgetsController extends Controller {
 		foreach (
 			array_diff(
 				array_keys($this->Widgets->WidgetTemplates->getAvailableWidgetElements()),
-				array_column($lo_widgetTemplate->widgetTemplateElements, 'identifier')
+				array_column($lo_widgetTemplate->widgetTemplateElements ?? [], 'identifier')
 			) as $ls_element
 		) {
 			if ($ls_element === 'column_width') {

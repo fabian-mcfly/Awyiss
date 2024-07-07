@@ -20,6 +20,20 @@ export default class WidgetsController {
 	resizeableContent;
 
 	constructor() {
+		if (document.documentElement.classList.contains('OverviewAction')) {
+			this.initOverview();
+		}
+
+		if (document.querySelector('.Form.EditFrontendEditor')) {
+			// Find the close button and send an event to the parent window
+			const closeButton = document.querySelector('.Button-Close');
+			closeButton.addEventListener('click', () => {
+				window.parent.postMessage('closeFrontendEditor', '*');
+			});
+		}
+	}
+
+	initOverview() {
 		const nestedListHandler = window.nestedListHandler;
 
 		nestedListHandler.setGroupIdentifierAttribute((list, items) => {

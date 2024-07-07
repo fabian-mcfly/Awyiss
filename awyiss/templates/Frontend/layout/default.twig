@@ -67,20 +67,20 @@
 					{%- endif %}
 				{% endblock %}
 
-				{% block baseUrl %}
+				{%- block baseUrl -%}
 					<base href="{{ baseUrl }}">
-				{% endblock %}
+				{%- endblock -%}
 
-				{% set canonical = fetch('canonical') -%}
+				{%- set canonical = fetch('canonical') -%}
 				{%- if canonical == '' and page.duplicateOf and page.duplicate.slug != '404' -%}
 					{% set canonical = UrlHelper.build({lang: page.duplicate.languageShortcode, slug: page.duplicate.slug}) -%}
 				{%- endif %}
 
-				{% if canonical != '' %}
+				{%- if canonical != '' -%}
 					<link rel="canonical" href="{{ canonical }}">
-				{%- endif %}
+				{%- endif -%}
 
-				{% block favicons %}
+				{%- block favicons -%}
 					<link rel="apple-touch-icon" sizes="180x180" href="{{ baseUrl }}assets/favicon/apple-touch-icon.png">
 					<link rel="icon" type="image/png" sizes="32x32" href="{{ baseUrl }}assets/favicon/favicon-32x32.png">
 					<link rel="icon" type="image/png" sizes="16x16" href="{{ baseUrl }}assets/favicon/favicon-16x16.png">
@@ -90,7 +90,7 @@
 					<meta name="msapplication-TileColor" content="#ffffff">
 					<meta name="msapplication-config" content="{{ baseUrl }}assets/favicon/browserconfig.xml">
 					<meta name="theme-color" content="#ffffff">
-				{% endblock %}
+				{%- endblock -%}
 
 				{%- block headStylesheets -%}
 					{%- do AssetHelper.add('full.css', [], true) -%}
@@ -98,6 +98,12 @@
 
 				{%- block headScripts -%}
 					{{- element('scripts', {page: page}) -}}
+				{%- endblock -%}
+
+				{%- block frontendEditorConfig -%}
+					{% if frontendEditorConfig %}
+						{% do AssetHelper.add(['frontend_editor.css', 'frontend_editor.js'], {realm: 'Backend'}) %}
+					{% endif %}
 				{%- endblock -%}
 
 				{%- block headAssetTags -%}

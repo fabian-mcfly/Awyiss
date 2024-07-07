@@ -4,6 +4,7 @@
 namespace Awyiss\Controller\Frontend;
 
 
+use Awyiss\Authorization\IdentityPermissionsInterface;
 use Awyiss\Awyiss;
 use Awyiss\Controller\AppController;
 use Awyiss\Core\App;
@@ -12,6 +13,7 @@ use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity\Page;
 use Awyiss\Routing\Router;
 use Awyiss\Utility\Inflector;
+use Cake\Core\Configure;
 use Cake\Http\Exception\NotFoundException;
 use Cake\Http\Exception\RedirectException;
 use Cake\ORM\Locator\LocatorAwareTrait;
@@ -203,6 +205,10 @@ class FrontendController extends AppController {
 			'page' => $lo_page,
 			'pageRoleEnum' => $ls_pageRoleEnum,
 		]);
+
+		if ($this->request->getSession()->read('Auth')) {
+			$this->loadFrontendEditor($lo_page);
+		}
 
 		$this->viewBuilder()
 		->setTemplate($lo_page->pageTemplate->fileName)
@@ -399,5 +405,38 @@ class FrontendController extends AppController {
 		]);
 
 		return $lo_query->first();
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Entity\Page $page
+	 * @return void
+	 */
+	protected function loadFrontendEditor(Page $page): void {
+		if (!Configure::read('Awyiss.System.Frontend.editor')) {
+			return;
+		}
+
+		$lo_identity = $this->request->getSession()->read('Auth');
+
+		if (!$lo_identity instanceof IdentityPermissionsInterface) {
+			return;
+		}
+
+		$lb_contentsEditable = $lo_identity->permissionCollection->scopeIsAccessible($page->pageRoleId->name, [], 'contents');
+		$lb_widgetsEditable = $lo_identity->permissionCollection->scopeIsAccessible('Widgets', [], 'update');
+		$lb_menuEntriesEditable = $lo_identity->permissionCollection->scopeIsAccessible('MenuEntries', [], 'update');
+
+		if (!$lb_contentsEditable && !$lb_widgetsEditable && !$lb_menuEntriesEditable) {
+			return;
+		}
+
+		$this->set([
+			'frontendEditorConfig' => [
+				'contents' => ['enabled' => $lb_contentsEditable],
+				'widgets' => ['enabled' => $lb_widgetsEditable],
+				'menuEntries' => ['enabled' => $lb_menuEntriesEditable],
+			],
+		]);
 	}
 }

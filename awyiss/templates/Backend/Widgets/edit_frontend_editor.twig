@@ -1,0 +1,40 @@
+{#
+@var widget \Awyiss\Model\Entity\Widget
+@var widgetTemplates \Cake\Collection\CollectionInterface
+@var possibleParentWidgets \Cake\Collection\CollectionInterface
+@var assignedAttributes array
+@var widgetElementsByFieldset WidgetTemplateElement[]
+@var languageRealm string
+@var languageShortcode string
+@var _view \Awyiss\View\BackendView
+#}
+
+<div class="Widgets Form Edit EditFrontendEditor" data-title="{{ __('headline_edit') }}">
+	{% block buttonArea %}
+		<div class="ButtonArea">
+			{% block formEditButtons %}
+				{{ FormHelper.button(__('save'), {class: 'Button Button-Success Button-Save', form: 'EditFrontendEditor'}) }}
+			{% endblock %}
+
+			{{ FormHelper.button(__('close'), {class: 'Button Button-Close'}) }}
+		</div>
+	{% endblock %}
+
+	{{ FormHelper.create(widget, {method: 'post', id: 'EditFrontendEditor', idPrefix: 'widget'}) }}
+
+	{% block flashMessages %}
+		{{ FlashHelper.render() }}
+	{% endblock %}
+
+	{% block formEdit %}
+		{% include('@Backend/Widgets/form.twig') %}
+	{% endblock %}
+
+	{% block buttonAreaBottom %}
+		<div class="ButtonArea ButtonArea-Bottom">
+			{{ block('formEditButtons') }}
+		</div>
+	{% endblock %}
+
+	{{ FormHelper.end() }}
+</div>

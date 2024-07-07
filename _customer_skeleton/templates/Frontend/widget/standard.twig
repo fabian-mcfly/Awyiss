@@ -23,7 +23,7 @@
 {%- do _view.setRowClass('FlexRow') -%}
 #}
 
-<div class="{{ widget.cssClass }}" {{ widget.data|data_attr|raw }} id="Content{{ widget.id }}">
+<div class="{{ widget.cssClass }}" {{ widget.data|data_attr|raw }} id="Widget{{ widget.id }}">
 	{{ MediaHelper.element('standard', widget.mediaAssignments, mediaRenderOptions) }}
 
 	{% if widget.text %}

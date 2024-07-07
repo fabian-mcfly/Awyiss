@@ -44,7 +44,7 @@ class MenuCell extends Cell {
 				'noLink' => $this->renderContent(...),
 			],
 			'templates' => [
-				'item' => '<li class="Level{{level}}{{active}}{{hasSubmenu}} {{identifier}}" id="MenuItem-{{id}}">' . PHP_EOL . '{{submenuTrigger}}{{link}}{{children}}</li>' . PHP_EOL,
+				'item' => '<li class="Level{{level}}{{active}}{{hasSubmenu}} {{identifier}}" id="MenuItem{{id}}">' . PHP_EOL . '{{submenuTrigger}}{{link}}{{children}}</li>' . PHP_EOL,
 				'link' => '<a href="{{url}}" class="Level{{level}}{{active}} {{identifier}}"{{attributes}}>{{title}}</a>' . PHP_EOL,
 				'noLink' => '<span class="Level{{level}}{{active}} {{identifier}}">{{title}}</span>' . PHP_EOL,
 			],
