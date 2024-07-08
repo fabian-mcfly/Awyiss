@@ -8,6 +8,7 @@ use Awyiss\Model\Entity\Media;
 use Awyiss\Model\Entity\MediaResizedImage;
 use Awyiss\Model\Enum\ProcessStatus;
 use Awyiss\Model\Enum\ResizeStrategy;
+use Awyiss\Utility\Inflector;
 use Awyiss\Utility\Media\MediaRenderOptions;
 use Awyiss\Utility\Media\ResizedImageManager;
 use Cake\Collection\Collection;
@@ -77,7 +78,7 @@ class MediaHelper extends Helper {
 			return '';
 		}
 
-		return $this->getView()->element('media/' . $name, [
+		return $this->getView()->element('media/' . Inflector::underscore($name), [
 			'mediaAssignments' => $mediaAssignments[ $name ],
 			'mediaRenderOptions' => $mediaRenderOptions ?? $this->getMediaRenderOptions(),
 			'options' => $options,
@@ -129,7 +130,7 @@ class MediaHelper extends Helper {
 
 		$ls_path = $lo_file?->path;
 		if (!$ls_path) {
-			$ls_path = $media->isImage() ? $media->path : $media->previewPath;
+			$ls_path = $media->isImage() ? ($media->webpPath ?? $media->path) : $media->previewPath;
 		}
 
 		$li_imageHeight = $this->calculateHeight($media, $mediaRenderOptions, $li_width ?? null);
@@ -275,7 +276,7 @@ class MediaHelper extends Helper {
 
 		$ls_path = $lo_file?->path;
 		if (!$ls_path) {
-			$ls_path = $media->isImage() ? $media->path : $media->previewPath;
+			$ls_path = $media->isImage() ? ($media->webpPath ?? $media->path) : $media->previewPath;
 		}
 
 		$la_attributes['width'] = $li_width ?? $lo_file?->width ?? $media->width;
@@ -562,7 +563,7 @@ class MediaHelper extends Helper {
 
 		$ls_lastPath = $lo_file?->path;
 		if (!$ls_lastPath) {
-			$ls_lastPath = $media->isImage() ? $media->path : $media->previewPath;
+			$ls_lastPath = $media->isImage() ? ($media->webpPath ?? $media->path) : $media->previewPath;
 		}
 
 		if ($mediaRenderOptions->getSingleColumnBreakpoint()) {
@@ -597,7 +598,7 @@ class MediaHelper extends Helper {
 				$ls_path = $lo_resizedImage->path;
 			}
 			else {
-				$ls_path = $media->isImage() ? $media->path : $media->previewPath;
+				$ls_path = $media->isImage() ? ($media->webpPath ?? $media->path) : $media->previewPath;
 			}
 
 			if (!$removeDuplicates || $ls_lastPath !== $ls_path) {
