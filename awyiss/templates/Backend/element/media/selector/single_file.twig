@@ -4,7 +4,7 @@
 	<div class="MediaSelector-Preview">
 		<span class="MediaSelector-MediaSelect">{{ __d('media', 'select_file') }}</span>
 
-		{% set mediaItem = entity.mediaAssignments[ element.identifier ][ elementSelector.identifier|variable ].media ?? null %}
+		{% set mediaItem = entity.mediaAssignments[ element.identifier|variable ][ elementSelector.identifier|variable ].media ?? null %}
 		{% if mediaItem %}
 			{% set imageSizeInfo = '' %}
 			{% if mediaItem.mimeType in ['image/gif', 'image/jpeg', 'image/png', 'image/webp'] or mediaItem.preview %}
@@ -28,6 +28,6 @@
 	<button class="Button Button-Delete Button-Small MediaSelector-Remove" type="button">{{ __d('media', 'remove_file') }}</button>
 
 	{{ FormHelper.input('media_assignments[' ~ element.id ~ '][' ~ elementSelector.identifier ~ '][media_id]', {
-		value: entity.mediaAssignments[ element.identifier ][ elementSelector.identifier|variable ].mediaId,
+		value: entity.mediaAssignments[ element.identifier|variable ][ elementSelector.identifier|variable ].mediaId,
 	}) }}
 </div>

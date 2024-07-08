@@ -2,7 +2,7 @@
 	<label>{{ label }}</label>
 
 	<div class="MediaSelector-Preview">
-		{% set mediaAssignments = entity.mediaAssignments[ element.identifier ][ elementSelector.identifier|variable ] ?? [] %}
+		{% set mediaAssignments = entity.mediaAssignments[ element.identifier|variable ][ elementSelector.identifier|variable ] ?? [] %}
 		{% for mediaAssignment in mediaAssignments %}
 			{% set mediaItem = mediaAssignment.media %}
 			{% set imageSizeInfo = '' %}
@@ -35,7 +35,7 @@
 	<template>
 		<button class="Button Button-Delete Button-Small MediaSelector-Remove" type="button">{{ __d('media', 'remove_file') }}</button>
 
-		{{ FormHelper.hidden('media_assignments[' ~ element.id ~ '][' ~ elementSelector.identifier|variable ~ '][]', {
+		{{ FormHelper.hidden('media_assignments[' ~ element.id ~ '][' ~ elementSelector.identifier ~ '][]', {
 			value: '',
 		}) }}
 	</template>

@@ -144,7 +144,7 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 		/** @var \Awyiss\Model\Entity\MediaAssignment $lo_mediaAssignment */
 		foreach (($entity['mediaAssignments'] ?? []) as $lo_mediaAssignment) {
 			$lo_element = static::$mediaElements[ $lo_mediaAssignment->mediaElementId ];
-			$ls_elementIdentifier = $lo_element->identifier;
+			$ls_elementIdentifier = Inflector::variable($lo_element->identifier);
 
 			$lo_selector = $lo_element->mediaSelectors[ $lo_mediaAssignment->mediaElementSelectorIdentifier ];
 			$ls_identifier = Inflector::variable($lo_mediaAssignment->mediaElementSelectorIdentifier);
