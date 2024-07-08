@@ -92,7 +92,7 @@ msgstr "Seitenabstand"
 msgid "menu_breakpoint"
 msgstr "Breakpoint Menü"
 
-msgid "singlecolumn_breakpoint"
+msgid "single_column_breakpoint"
 msgstr "Breakpoint Einspaltigkeit"
 
 msgid "column_margin"

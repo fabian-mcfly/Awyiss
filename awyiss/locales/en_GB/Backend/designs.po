@@ -92,7 +92,7 @@ msgstr "Page padding"
 msgid "menu_breakpoint"
 msgstr "Breakpoint menu"
 
-msgid "singlecolumn_breakpoint"
+msgid "single_column_breakpoint"
 msgstr "Breakpoint single column"
 
 msgid "column_margin"

@@ -92,6 +92,26 @@ trait ContentElementTrait {
 
 
 	/**
+	 * Attempt to find the single column breakpoint by
+	 * - checking the view vars for a single column breakpoint setting
+	 *
+	 * @param array $options
+	 * @return float|null
+	 */
+	protected function findSingleColumnBreakpoint(array $options): ?float {
+		if (isset($options['viewVars']['singleColumnBreakpoint'])) {
+			return (float)$options['viewVars']['singleColumnBreakpoint'];
+		}
+
+		if (isset($options['viewVars']['designSettings']['singleColumnBreakpoint'])) {
+			return (float)$options['viewVars']['designSettings']['singleColumnBreakpoint'];
+		}
+
+		return null;
+	}
+
+
+	/**
 	 * @param \Cake\Collection\CollectionInterface $entities
 	 * @param float $columnWidth
 	 */

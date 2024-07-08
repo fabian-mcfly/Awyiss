@@ -43,9 +43,17 @@ class WidgetsCell extends Cell {
 			$la_options['fullWidth'] = (float)$la_options['fullWidth'];
 		}
 
+		if (!array_key_exists('singleColumnBreakpoint', $la_options)) {
+			$la_options['singleColumnBreakpoint'] = $this->findSingleColumnBreakpoint($la_options);
+		}
+		elseif ($la_options['singleColumnBreakpoint'] !== null) {
+			$la_options['singleColumnBreakpoint'] = (float)$la_options['singleColumnBreakpoint'];
+		}
+
 		$this->View->set([
 			'fullWidth' => $la_options['fullWidth'],
 			'identifier' => $identifier,
+			'singleColumnBreakpoint' => $la_options['singleColumnBreakpoint'],
 			...$la_options['viewVars'],
 		]);
 
@@ -85,6 +93,7 @@ class WidgetsCell extends Cell {
 		$this->set([
 			'fullWidth' => $la_options['fullWidth'],
 			'identifier' => $identifier,
+			'singleColumnBreakpoint' => $la_options['singleColumnBreakpoint'],
 			'widgets' => $ls_widgets,
 			...$la_options['viewVars'],
 		]);
@@ -110,6 +119,7 @@ class WidgetsCell extends Cell {
 			breakpoints: Configure::read('Awyiss.Media.Frontend.defaultBreakpoints'),
 			columnWidth: $entity->realColumnWidth,
 			selector: '#Widget' . $entity->id,
+			singleColumnBreakpoint: $this->View->get('singleColumnBreakpoint'),
 		);
 
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */

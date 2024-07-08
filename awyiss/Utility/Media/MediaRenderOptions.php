@@ -24,6 +24,7 @@ class MediaRenderOptions {
 	 * @param \Awyiss\Model\Enum\ResizeStrategy $resizeStrategy
 	 * @param bool $responsive
 	 * @param string|null $selector
+	 * @param float|int|false|null $singleColumnBreakpoint
 	 * @param bool $strictSize
 	 * @param float|int|null $width
 	 */
@@ -39,6 +40,7 @@ class MediaRenderOptions {
 		protected ResizeStrategy $resizeStrategy = ResizeStrategy::Contain,
 		protected bool $responsive = true,
 		protected ?string $selector = null,
+		protected float|int|false|null $singleColumnBreakpoint = null,
 		protected bool $strictSize = false,
 		protected float|int|null $width = null,
 	) {
@@ -54,6 +56,10 @@ class MediaRenderOptions {
 
 		if (is_int($this->height)) {
 			$this->height = (float)$this->height;
+		}
+
+		if (is_int($this->singleColumnBreakpoint)) {
+			$this->singleColumnBreakpoint = (float)$this->singleColumnBreakpoint;
 		}
 
 		if (is_int($this->width)) {
@@ -147,6 +153,14 @@ class MediaRenderOptions {
 	 */
 	public function getSelector(): ?string {
 		return $this->selector;
+	}
+
+
+	/**
+	 * @return float|false|null
+	 */
+	public function getSingleColumnBreakpoint(): float|false|null {
+		return $this->singleColumnBreakpoint;
 	}
 
 
@@ -279,6 +293,15 @@ class MediaRenderOptions {
 
 
 	/**
+	 * @param float|int|false|null $singleColumnBreakpoint
+	 * @return $this
+	 */
+	public function withSingleColumnBreakpoint(float|int|false|null $singleColumnBreakpoint): static {
+		return $this->with(['singleColumnBreakpoint' => $singleColumnBreakpoint]);
+	}
+
+
+	/**
 	 * @param bool $strictSize
 	 * @return $this
 	 */
@@ -317,7 +340,7 @@ class MediaRenderOptions {
 	 * @param array|float|int $value
 	 * @return @array<float, array{baseWidth: float|null, breakpoint: float, columnWidth: float|null, width: float|null, height: float|null, resizeStrategy: \Awyiss\Model\Enum\ResizeStrategy|null}> $breakpoints
 	 */
-	protected static function normalizeBreakpoint(string|float|int $key, array|float|int $value): array {
+	public static function normalizeBreakpoint(string|float|int $key, array|float|int $value): array {
 		$la_options = [
 			'baseWidth' => null,
 			'breakpoint' => (float)$key,
@@ -367,7 +390,7 @@ class MediaRenderOptions {
 	 * @param array $breakpoints
 	 * @return array
 	 */
-	protected static function normalizeBreakpoints(array $breakpoints): array {
+	public static function normalizeBreakpoints(array $breakpoints): array {
 		$la_breakpoints = [];
 
 		foreach ($breakpoints as $lx_key => $lx_value) {

@@ -398,6 +398,7 @@ class MediaHelper extends Helper {
 	 * @param \Awyiss\Model\Enum\ResizeStrategy $resizeStrategy
 	 * @param bool $responsive
 	 * @param string|null $selector
+	 * @param float|int|false|null $singleColumnBreakpoint
 	 * @param bool $strictSize
 	 * @param float|int|null $width
 	 * @return \Awyiss\Utility\Media\MediaRenderOptions
@@ -415,6 +416,7 @@ class MediaHelper extends Helper {
 		ResizeStrategy $resizeStrategy = ResizeStrategy::Contain,
 		bool $responsive = true,
 		?string $selector = null,
+		float|int|false|null $singleColumnBreakpoint = null,
 		bool $strictSize = false,
 		float|int|null $width = null,
 	): MediaRenderOptions {
@@ -561,6 +563,22 @@ class MediaHelper extends Helper {
 		$ls_lastPath = $lo_file?->path;
 		if (!$ls_lastPath) {
 			$ls_lastPath = $media->isImage() ? $media->path : $media->previewPath;
+		}
+
+		if ($mediaRenderOptions->getSingleColumnBreakpoint()) {
+			$lf_singleColumnBreakpoint = $mediaRenderOptions->getSingleColumnBreakpoint();
+
+			// Remove a possible breakpoint with the same value
+			$la_breakpoints = array_filter($la_breakpoints, fn($la_breakpoint) => $la_breakpoint['breakpoint'] !== $lf_singleColumnBreakpoint);
+
+			$la_breakpoints[] = $this->mediaRenderOptions::normalizeBreakpoint($lf_singleColumnBreakpoint, [
+				'columnWidth' => 100,
+			]);
+
+			// Reorder the breakpoints by breakpoint value
+			usort($la_breakpoints, function (array $a, array $b): int {
+				return $b['breakpoint'] <=> $a['breakpoint'];
+			});
 		}
 
 		foreach ($la_breakpoints as $la_breakpoint) {

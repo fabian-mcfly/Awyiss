@@ -46,9 +46,17 @@ class ContentsCell extends Cell {
 			$la_options['fullWidth'] = (float)$la_options['fullWidth'];
 		}
 
+		if (!array_key_exists('singleColumnBreakpoint', $la_options)) {
+			$la_options['singleColumnBreakpoint'] = $this->findSingleColumnBreakpoint($la_options);
+		}
+		elseif ($la_options['singleColumnBreakpoint'] !== null) {
+			$la_options['singleColumnBreakpoint'] = (float)$la_options['singleColumnBreakpoint'];
+		}
+
 		$this->View->set([
 			'fullWidth' => $la_options['fullWidth'],
 			'page' => $page,
+			'singleColumnBreakpoint' => $la_options['singleColumnBreakpoint'],
 			...$la_options['viewVars'],
 		]);
 
@@ -88,11 +96,12 @@ class ContentsCell extends Cell {
 
 		// Set the view variables
 		$this->set([
-			'fullWidth' => $la_options['fullWidth'],
 			'contents' => $ls_contents,
-			'page' => $page,
+			'fullWidth' => $la_options['fullWidth'],
 			'identifier' => $contentArea,
 			'includeWrapper' => $la_options['includeWrapper'],
+			'page' => $page,
+			'singleColumnBreakpoint' => $la_options['singleColumnBreakpoint'],
 			...$la_options['viewVars'],
 		]);
 
@@ -117,6 +126,7 @@ class ContentsCell extends Cell {
 			breakpoints: Configure::read('Awyiss.Media.Frontend.defaultBreakpoints'),
 			columnWidth: $entity->realColumnWidth,
 			selector: '#Content' . $entity->id,
+			singleColumnBreakpoint: $this->View->get('singleColumnBreakpoint'),
 		);
 
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
