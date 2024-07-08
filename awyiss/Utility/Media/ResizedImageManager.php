@@ -198,6 +198,14 @@ class ResizedImageManager {
 			}
 		}
 
+		// If the width and height are the same as the original, return null
+		if (
+			(!$width || $width == $media->width) &&
+			(!$height || $height == $media->height)
+		) {
+			return null;
+		}
+
 		// If the image is not allowed to be upscaled, check if the requested size is larger than the original
 		if (!$allowUpscale) {
 			// If that's the case, return null
