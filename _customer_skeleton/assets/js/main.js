@@ -15,8 +15,9 @@ function initMainOnReady() {
 	window.lazyLoad = new LazyLoad({
 		class_loaded: 'Loaded',
 		class_loading: 'Loading',
-		class_entered: '',
+		class_entered: 'Visible',
 		class_error: '',
+		class_exited: '',
 		elements_selector: '.Lazyload',
 	});
 
