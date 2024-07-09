@@ -371,17 +371,13 @@ abstract class BackendController extends AppController {
 		$la_config = [
 			'user_id' => $lo_identity->id,
 			'scope' => $ls_scope,
-			'identifier' => $ls_identifier,
+			'identifier' => Inflector::underscore($ls_identifier),
 		];
 
 		//Get the UserConfiguration table and fetch a matching config
 		/** @var \Awyiss\Model\Table $lo_table */
 		$lo_table = $this->fetchTable('UserConfiguration');
-		$lo_config = $lo_table->find()->where([
-			'user_id' => $lo_identity->id,
-			'scope' => $ls_scope,
-			'identifier' => $ls_identifier,
-		])->first();
+		$lo_config = $lo_table->find()->where($la_config)->first();
 
 		if (!$lo_config) {
 			$lo_config = $lo_table->newDefaultEntity();
