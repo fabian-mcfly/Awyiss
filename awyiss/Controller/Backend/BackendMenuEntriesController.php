@@ -33,6 +33,27 @@ use ReflectionMethod;
  */
 class BackendMenuEntriesController extends Controller {
 	/**
+	 * @var string|null Session identifier for the selected insert_after_id
+	 */
+	protected ?string $selectedInsertAfterIdSessionIdentifier = null;
+	/**
+	 * @var string|null Session identifier for the selected parent_id
+	 */
+	protected ?string $selectedParentIdSessionIdentifier = null;
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public function initialize(): void {
+		parent::initialize();
+
+		$this->selectedInsertAfterIdSessionIdentifier = Inflector::underscore($this->getName()) . '.' . ($this->request->getParam('lang') ?? 'global') . '.insert_after_id';
+		$this->selectedParentIdSessionIdentifier = Inflector::underscore($this->getName()) . '.' . ($this->request->getParam('lang') ?? 'global') . '.parent_id';
+	}
+
+
+	/**
 	 * @inheritDoc
 	 */
 	#[NoDirectAccess]
@@ -66,7 +87,11 @@ class BackendMenuEntriesController extends Controller {
 	public function add(): void {
 		$this->Authorization->ensure('create');
 
-		$lo_menuEntry = $this->BackendMenuEntries->newDefaultEntity();
+		$lo_session = $this->request->getSession();
+		$lo_menuEntry = $this->BackendMenuEntries->newDefaultEntity([
+			'insertAfterId' => $lo_session->read($this->selectedInsertAfterIdSessionIdentifier),
+			'parentId' => $lo_session->read($this->selectedParentIdSessionIdentifier),
+		]);
 
 		if ($this->request->is('post')) {
 			$this->save($lo_menuEntry);
@@ -260,6 +285,11 @@ class BackendMenuEntriesController extends Controller {
 				if (!$this->request->is('ajax')) {
 					$this->Flash->success(__($method . '_succeeded'));
 				}
+
+				// Remember the parent id for the next entry
+				$lo_session = $this->request->getSession();
+				$lo_session->write($this->selectedInsertAfterIdSessionIdentifier, $menuEntry->insertAfterId);
+				$lo_session->write($this->selectedParentIdSessionIdentifier, $menuEntry->parentId);
 
 				if ($this->request->getData('submit') == 'submit_close') {
 					throw new RedirectException(Router::url(['action' => 'overview'], true), 302);

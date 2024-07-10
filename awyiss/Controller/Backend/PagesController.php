@@ -47,6 +47,10 @@ class PagesController extends Controller {
 	 */
 	protected CollectionInterface $pageTemplates;
 	/**
+	 * @var string|null Session identifier for the selected parent_id
+	 */
+	protected ?string $selectedParentIdSessionIdentifier = null;
+	/**
 	 * @var bool Manual sorting enabled
 	 */
 	protected bool $sortable = true;
@@ -60,6 +64,16 @@ class PagesController extends Controller {
 	 * @var \Cake\Collection\Iterator\TreeIterator
 	 */
 	protected CollectionInterface $threadedPages;
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public function initialize(): void {
+		parent::initialize();
+
+		$this->selectedParentIdSessionIdentifier = Inflector::underscore($this->getName()) . '.' . ($this->request->getParam('lang') ?? 'global') . '.parent_id';
+	}
 
 
 	/**
@@ -131,9 +145,11 @@ class PagesController extends Controller {
 	public function add(): void {
 		$this->Authorization->ensure('create');
 
+		$lo_session = $this->request->getSession();
 		$lo_page = $this->Pages->newDefaultEntity([
 			'languageShortcode' => LocaleMiddleware::getLanguage()->shortcode,
 			'pageRoleId' => $this->getPageRole(),
+			'parentId' => $lo_session->read($this->selectedParentIdSessionIdentifier),
 		]);
 
 		if ($this->request->is('post')) {
@@ -353,6 +369,10 @@ class PagesController extends Controller {
 				if (!$this->request->is('ajax')) {
 					$this->Flash->success(__df($this->pageRoleName, 'pages', $method . '_succeeded'));
 				}
+
+				// Remember the parent id for the next entry
+				$lo_session = $this->request->getSession();
+				$lo_session->write($this->selectedParentIdSessionIdentifier, $page->parentId);
 
 				if ($this->request->getData('submit') == 'submit_close') {
 					/*

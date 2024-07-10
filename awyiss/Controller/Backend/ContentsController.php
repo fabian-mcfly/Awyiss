@@ -52,9 +52,28 @@ class ContentsController extends Controller {
 	 */
 	protected Page $page;
 	/**
+	 * @var string|null Session identifier for the selected content_area_id
+	 */
+	protected ?string $selectedContentAreaIdSessionIdentifier = null;
+	/**
+	 * @var string|null Session identifier for the selected parent_id
+	 */
+	protected ?string $selectedParentIdSessionIdentifier = null;
+	/**
 	 * @var CollectionInterface
 	 */
 	protected CollectionInterface $threadedContents;
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public function initialize(): void {
+		parent::initialize();
+
+		$this->selectedContentAreaIdSessionIdentifier = Inflector::underscore($this->getName()) . '.' . ($this->request->getParam('lang') ?? 'global') . '.content_area_id';
+		$this->selectedParentIdSessionIdentifier = Inflector::underscore($this->getName()) . '.' . ($this->request->getParam('lang') ?? 'global') . '.parent_id';
+	}
 
 
 	/**
@@ -157,8 +176,11 @@ class ContentsController extends Controller {
 
 		$this->Authorization->ensure('create');
 
+		$lo_session = $this->request->getSession();
 		$lo_content = $this->Contents->newDefaultEntity([
 			'pageId' => $li_pageId,
+			'contentAreaId' => $lo_session->read($this->selectedContentAreaIdSessionIdentifier),
+			'parentId' => $lo_session->read($this->selectedParentIdSessionIdentifier),
 		]);
 
 		if ($this->request->is('post')) {
@@ -388,6 +410,11 @@ class ContentsController extends Controller {
 				if (!$this->request->is('ajax')) {
 					$this->Flash->success(__($method . '_succeeded'));
 				}
+
+				// Remember the parent id for the next entry
+				$lo_session = $this->request->getSession();
+				$lo_session->write($this->selectedContentAreaIdSessionIdentifier, $content->contentAreaId);
+				$lo_session->write($this->selectedParentIdSessionIdentifier, $content->parentId);
 
 				if ($this->request->getData('submit') == 'submit_close') {
 					throw new RedirectException(Router::url(['action' => 'overview', 'lang' => $this->page->languageShortcode, 'pageId' => $content->pageId], true), 302);

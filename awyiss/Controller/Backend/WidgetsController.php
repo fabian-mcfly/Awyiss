@@ -11,6 +11,7 @@ use Awyiss\Model\Entity\WidgetTemplate;
 use Awyiss\Model\Table;
 use Awyiss\Routing\Router;
 use Awyiss\Utility\Content\ColumnInterface;
+use Awyiss\Utility\Inflector;
 use Cake\Collection\Collection;
 use Cake\Collection\CollectionInterface;
 use Cake\Database\Expression\QueryExpression;
@@ -26,6 +27,14 @@ use Cake\ORM\Query\SelectQuery;
  */
 class WidgetsController extends Controller {
 	/**
+	 * @var string|null Session identifier for the selected identifier
+	 */
+	protected ?string $selectedIdentifierSessionIdentifier = null;
+	/**
+	 * @var string|null Session identifier for the selected parent_id
+	 */
+	protected ?string $selectedParentIdSessionIdentifier = null;
+	/**
 	 * @var CollectionInterface
 	 */
 	protected CollectionInterface $widgetTemplates;
@@ -33,6 +42,17 @@ class WidgetsController extends Controller {
 	 * @var CollectionInterface
 	 */
 	protected CollectionInterface $threadedWidgets;
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public function initialize(): void {
+		parent::initialize();
+
+		$this->selectedIdentifierSessionIdentifier = Inflector::underscore($this->getName()) . '.' . ($this->request->getParam('lang') ?? 'global') . '.identifier';
+		$this->selectedParentIdSessionIdentifier = Inflector::underscore($this->getName()) . '.' . ($this->request->getParam('lang') ?? 'global') . '.parent_id';
+	}
 
 
 	/**
@@ -106,7 +126,11 @@ class WidgetsController extends Controller {
 	public function add(): void {
 		$this->Authorization->ensure('create');
 
-		$lo_widget = $this->Widgets->newDefaultEntity();
+		$lo_session = $this->request->getSession();
+		$lo_widget = $this->Widgets->newDefaultEntity([
+			'identifier' => $lo_session->read($this->selectedIdentifierSessionIdentifier),
+			'parentId' => $lo_session->read($this->selectedParentIdSessionIdentifier),
+		]);
 
 		if ($this->request->is('post')) {
 			$this->save($lo_widget);
@@ -321,6 +345,11 @@ class WidgetsController extends Controller {
 				if (!$this->request->is('ajax')) {
 					$this->Flash->success(__($method . '_succeeded'));
 				}
+
+				// Remember the parent id for the next entry
+				$lo_session = $this->request->getSession();
+				$lo_session->write($this->selectedIdentifierSessionIdentifier, $widget->identifier);
+				$lo_session->write($this->selectedParentIdSessionIdentifier, $widget->parentId);
 
 				if ($this->request->getData('submit') == 'submit_close') {
 					throw new RedirectException(Router::url(['action' => 'overview'], true), 302);

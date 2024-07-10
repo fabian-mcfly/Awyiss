@@ -31,9 +31,23 @@ class MenuEntriesController extends Controller {
 		'uriParam' => 'menu-id',
 	];
 	/**
+	 * @var string|null Session identifier for the selected parent_id
+	 */
+	protected ?string $selectedParentIdSessionIdentifier = null;
+	/**
 	 * @var CollectionInterface
 	 */
 	protected CollectionInterface $threadedMenuEntries;
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public function initialize(): void {
+		parent::initialize();
+
+		$this->selectedParentIdSessionIdentifier = 'menu_entries.' . ($this->request->getParam('lang') ?? 'global') . '.parent_id';
+	}
 
 
 	/**
@@ -57,6 +71,7 @@ class MenuEntriesController extends Controller {
 		$this->Authorization->ensure('read');
 
 		if ($this->request->getParam('menuIdentifier')) {
+			/** @noinspection PhpUndefinedMethodInspection */
 			$lo_menu = $this->fetchTable('Menus')->findByIdentifier(Inflector::underscore($this->request->getParam('menuIdentifier')))->first();
 			if ($lo_menu) {
 				throw new RedirectException(Router::url([
@@ -94,9 +109,11 @@ class MenuEntriesController extends Controller {
 	public function add(): void {
 		$this->Authorization->ensure('create');
 
+		$lo_session = $this->request->getSession();
 		$lo_menuEntry = $this->MenuEntries->newDefaultEntity([
-			'language_shortcode' => $this->getOverviewWhere('language_shortcode'),
-			'menu_id' => $this->request->getParam('menuId') ?? $this->Categories->getSelectedCategory(),
+			'languageShortcode' => $this->getOverviewWhere('language_shortcode'),
+			'menuId' => $this->request->getParam('menuId') ?? $this->Categories->getSelectedCategory(),
+			'parentId' => $lo_session->read($this->selectedParentIdSessionIdentifier),
 		]);
 
 		if ($this->request->is('post')) {
@@ -233,6 +250,10 @@ class MenuEntriesController extends Controller {
 				if (!$this->request->is('ajax')) {
 					$this->Flash->success(__($method . '_succeeded'));
 				}
+
+				// Remember the parent id for the next entry
+				$lo_session = $this->request->getSession();
+				$lo_session->write($this->selectedParentIdSessionIdentifier, $menuEntry->parentId);
 
 				if ($this->request->getData('submit') == 'submit_close') {
 					throw new RedirectException(Router::url([
