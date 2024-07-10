@@ -5,6 +5,14 @@
 		}
 	}
 
+	&:has(.FlashMessage) {
+		.Overview {
+			h1 {
+				margin-top:0;
+			}
+		}
+	}
+
 	.ButtonArea {
 		position:relative;
 

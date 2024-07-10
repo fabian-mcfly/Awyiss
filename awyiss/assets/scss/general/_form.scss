@@ -116,13 +116,16 @@ input {
 	}
 
 	&:has(+ [data-options-for]:focus) {
-		--backgroundColor:var(--colorBright);
+		&,
+		+ [data-options-for]:focus {
+			--backgroundColor:var(--colorBright);
 
-		border-color:var(--colorSuccess);
-		background-color:var(--backgroundColor);
+			border-color:var(--colorSuccess);
+			background-color:var(--backgroundColor);
 
-		.🌚 & {
-			--backgroundColor:var(--colorSemiDarkDarkMode-Lightened-2);
+			.🌚 & {
+				--backgroundColor:var(--colorSemiDarkDarkMode-Lightened-2);
+			}
 		}
 	}
 }
