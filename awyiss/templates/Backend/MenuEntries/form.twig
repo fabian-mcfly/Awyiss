@@ -64,8 +64,18 @@
 						{{ FormHelper.control('title') }}
 					{% endblock %}
 
+					{% set helperFormControl %}
+						{{ FormHelper.select('link_helper_options', pages.printer('label', 'link', '- '), {
+							'data-options-for': 'MenuEntry-Link',
+						}) }}
+					{% endset %}
+
 					{% block formControlLink %}
-						{{ FormHelper.control('link') }}
+						{{ FormHelper.control('link', {
+							templateVars: {
+								additionalContent: helperFormControl
+							},
+						}) }}
 					{% endblock %}
 
 					{% block fieldsetGeneralAttributes %}

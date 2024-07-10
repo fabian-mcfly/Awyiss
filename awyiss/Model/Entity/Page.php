@@ -155,6 +155,14 @@ class Page extends Entity {
 
 
 	/**
+	 * @return string|null
+	 */
+	protected function _getLink(): ?string {
+		return $this->languageShortcode . '/' . $this->slug;
+	}
+
+
+	/**
 	 * @param array|null $menuIds
 	 * @return array|null
 	 */
