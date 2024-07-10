@@ -212,7 +212,7 @@ class Widget extends Entity {
 		}
 
 
-		return $ls_inactive . $ls_title;
+		return $ls_inactive . strip_tags(html_entity_decode($ls_title));
 	}
 
 	/**

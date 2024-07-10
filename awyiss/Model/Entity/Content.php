@@ -242,8 +242,7 @@ class Content extends Entity {
 			$ls_inactive = __d('contents', 'inactive') . ' ';
 		}
 
-
-		return $ls_inactive . $ls_title;
+		return $ls_inactive . strip_tags(html_entity_decode($ls_title));
 	}
 
 
