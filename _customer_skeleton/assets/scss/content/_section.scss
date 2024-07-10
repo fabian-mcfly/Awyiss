@@ -1,0 +1,37 @@
+.Template-Section {
+	--sectionMarginBlock:0 #{$lineHeightMain * 4};
+	--sectionPaddingBlock:0;
+	margin-block:var(--sectionMarginBlock);
+	padding-block:var(--sectionPaddingBlock);
+
+	&.BackgroundColor {
+		--sectionPaddingBlock:calc(var(--lineHeightMain) * 4);
+		padding-inline:0;
+		transform:skewY(-2deg);
+	}
+
+	&.BackgroundImage {
+		--sectionPaddingBlock:calc(var(--lineHeightMain) * 4);
+		position:relative;
+		overflow:hidden;
+
+		&::before {
+			content:'';
+			background-position:center;
+			background-repeat:no-repeat;
+			background-size:cover;
+			position:absolute;
+			inset:-25px;
+			filter:blur(15px);
+			opacity:.5;
+		}
+	}
+
+	&:first-child {
+		--sectionPaddingBlock:#{$lineHeightMain * 4} 0;
+	}
+
+	> .ContentRow {
+		@extend %ContentRow;
+	}
+}

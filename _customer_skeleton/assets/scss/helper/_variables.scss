@@ -1,3 +1,6 @@
+// Just needs to exists. The value is not important.
+$includeColumnSystem:true !default;
+
 $fontNameMain:Helvetica !default;
 $fontStackFallbackMain:Arial, Geneva, sans-serif !default;
 $fontStackMain:quote($fontNameMain), $fontStackFallbackMain;
@@ -16,16 +19,57 @@ $fontStyleAlternative:'normal' !default;
 $fontSizeAlternative:1em !default;
 $lineHeightAlternative:1.5rem !default;
 
-$colorText:#202C39 !default;
-$colorDark:#131a21 !default;
-$colorMedium:#7E8B99 !default;
-$colorLight:#EDF2F4 !default;
+$colorText:#043a4f !default;
+$colorDark:#101820 !default;
+$colorMedium:#686e77 !default;
+$colorLight:#f2f5f6 !default;
 $colorBright:#FFFFFF !default;
-$colorMain:#63d1a5 !default;
-$colorContrast:#FFC53A !default;
+$colorMain:#17bbe1 !default;
+$colorContrast:#d22e45 !default;
 
 $pageWidth:1280px !default;
 $pagePadding:50px !default;
 $columnMargin:3% !default;
 $menuBreakpoint:768px !default;
 $singleColumnBreakpoint:860px !default;
+
+:root {
+	--fontNameMain:'#{inspect($fontNameMain)}';
+	--fontStackFallbackMain:#{inspect($fontStackFallbackMain)};
+	--fontStackMain:#{inspect($fontStackMain)};
+	--fontWeightMain:#{$fontWeightMain};
+	--fontStyleMain:#{$fontStyleMain};
+	--fontSizeMain:#{$fontSizeMain};
+	--lineHeightMain:#{$lineHeightMain};
+
+	@if variable-exists(fontNameAlternative) and $fontNameAlternative != '' {
+		--fontNameAlternative:'#{inspect($fontNameAlternative)}';
+		--fontStackFallbackAlternative:#{inspect($fontStackFallbackAlternative)};
+		--fontStackAlternative:#{inspect($fontStackAlternative)};
+		--fontWeightAlternative:#{$fontWeightAlternative};
+		--fontStyleAlternative:#{$fontStyleAlternative};
+		--fontSizeAlternative:#{$fontSizeAlternative};
+		--lineHeightAlternative:#{$lineHeightAlternative};
+	}
+
+	--colorText:#{$colorText};
+	--colorDark:#{$colorDark};
+	--colorMedium:#{$colorMedium};
+	--colorLight:#{$colorLight};
+	--colorBright:#{$colorBright};
+	--colorMain:#{$colorMain};
+	--colorContrast:#{$colorContrast};
+
+	--pageWidth:#{$pageWidth};
+	--pagePadding:#{$pagePadding * 2};
+	--elementPadding:#{$pagePadding};
+	--headerHeight:80px;
+	--menuBreakpoint:#{$menuBreakpoint};
+	--singleColumnBreakpoint:#{$singleColumnBreakpoint};
+	--columnMargin:#{$columnMargin};
+	--contentRowGap:calc(var(--lineHeightMain) * 2);
+
+	@media (max-width:$pageWidth) {
+		--pagePadding:#{$pagePadding};
+	}
+}

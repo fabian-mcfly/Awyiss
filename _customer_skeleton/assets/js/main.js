@@ -1,3 +1,4 @@
+import Headroom from 'Headroom/headroom';
 import LazyLoad from 'LazyLoad/lazyload';
 
 
@@ -20,6 +21,33 @@ function initMainOnReady() {
 		class_exited: '',
 		elements_selector: '.Lazyload',
 	});
+
+	const header = document.getElementById('HeaderArea');
+	if (header) {
+		var headroom = new Headroom(header, {
+			offset: header.offsetHeight + 40,
+			tolerance: 5,
+			classes: {
+				// When element is initialised
+				initial: 'Headroom',
+				// When scrolling up
+				pinned: 'Pinned',
+				// When scrolling down
+				unpinned: 'Unpinned',
+				// When above offset
+				top: 'Top',
+				// When below offset
+				notTop: 'Scrolled',
+				// When at bottom of scroll area
+				bottom: "Bottom",
+				// When not at bottom of scroll area
+				notBottom: "NotBottom",
+				// When frozen method has been called
+				frozen: "Frozen",
+			}
+		});
+		headroom.init();
+	}
 
 	// Remove the "ready" event listener
 	document.removeEventListener('DOMContentLoaded', initMainOnReady);

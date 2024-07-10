@@ -1,0 +1,112 @@
+@layer columnSystem {
+	.ContentRow {
+		--elementMargin:var(--columnMargin, 0);
+
+		display:flex;
+		flex-wrap:wrap;
+
+		&:has(.Column-Rtl) {
+			justify-content:flex-end;
+		}
+	}
+
+	.ContentElement,
+	.WidgetElement {
+		width:var(--elementWidth, 100%);
+		margin-left:var(--elementMargin);
+		position:relative;
+		align-self:flex-start;
+		flex:0 0 var(--elementWidth, 100%);
+
+		&.FlexAlign-Top,
+		&.FlexAlign-FlexStart {
+			align-self:flex-start;
+		}
+
+		&.FlexAlign-Center {
+			align-self:center;
+		}
+
+		&.FlexAlign-Bottom,
+		&.FlexAlign-FlexEnd {
+			align-self:flex-end;
+		}
+
+		&.FlexAlign-Stretch {
+			align-self:stretch;
+		}
+
+		&.Centered {
+			&:last-of-type & {
+				&:first-of-type {
+					margin-inline:auto;
+				}
+			}
+		}
+
+		&.Column-Rtl {
+			//noinspection SassScssUnresolvedVariable
+			@for $i from 1 through $maxColumns {
+				&:nth-child(#{$i}) {
+					order:$maxColumns - $i + 1;
+				}
+			}
+
+			&:first-child {
+				margin-left:var(--columnMargin, 0);
+			}
+
+			~ .ContentElement {
+				&:last-child {
+					margin-left:0;
+				}
+			}
+		}
+
+		&:not([class*='ColumnIndent-']):first-child {
+			margin-left:0;
+		}
+	}
+
+	$combinedSelector:null;
+	$variables:();
+	@each $column in $columnWidths {
+		$class:'.#{map-get($column, 'class')}';
+		$combinedSelector:join($combinedSelector, $class, comma);
+		$numerator:map-get($column, 'numerator');
+		$denominator:map-get($column, 'denominator');
+		$width:columnWidth($numerator, $denominator, $columnMargin);
+
+		$variables:map-merge($variables, ('--columnWidth#{str-slice($class, 9)}': #{$width}));
+
+		#{$class} {
+			--elementWidth:var(--columnWidth#{str-slice($class, 9)});
+		}
+	}
+
+	@each $column in $columnIndents {
+		$class:'.#{map-get($column, 'class')}';
+		$numerator:map-get($column, 'numerator');
+		$denominator:map-get($column, 'denominator');
+		$width:#{columnWidth($numerator, $denominator, $columnMargin, true)};
+
+		$variables:map-merge($variables, ('--columnIndent#{str-slice($class, 15)}': #{$width}));
+
+		#{$class} {
+			--elementMargin:var(--columnIndent#{str-slice($class, 15)});
+		}
+	}
+
+	:root {
+		@each $key, $value in $variables {
+			#{$key}:#{$value};
+		}
+	}
+
+	#{$combinedSelector} {
+		@media screen AND (max-width:$singleColumnBreakpoint) {
+			--elementWidth:100%;
+			--elementMargin:0;
+		}
+	}
+}

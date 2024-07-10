@@ -18,6 +18,7 @@
 #}
 
 {% block scriptsAdd %}
+	{% do AssetHelper.addJsModule('Headroom/headroom.js') %}
 	{% do AssetHelper.addJsModule('LazyLoad/lazyload.js') %}
 	{% do AssetHelper.add('WebfontLoader/webfontloader.js') %}
 	{% do AssetHelper.add('main.js', {type: 'module'}) %}

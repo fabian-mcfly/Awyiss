@@ -1,0 +1,134 @@
+#MainMenuTrigger {
+	position:absolute;
+	visibility:hidden;
+}
+
+.MainMenuTrigger-Open {
+	display:none;
+}
+
+.SubmenuTrigger,
+.SubmenuTrigger-Label {
+	display:none;
+}
+
+.Menu-Main {
+	display:flex;
+	height:100%;
+	margin-top:0;
+	padding-right:calc(var(--elementPadding) - 20px);
+	position:absolute;
+	top:0;
+	right:0;
+
+	li.Level1 {
+		margin:0 0 0 20px;
+		padding:18px 20px 0;
+		list-style-type:none;
+		position:relative;
+
+		&.Active {
+			a.Level1,
+			span.Level1 {
+				color:var(--colorMain);
+			}
+		}
+
+		&.Kontakt {
+			padding-inline:0;
+
+			a.Level1,
+			span.Level1 {
+
+			}
+		}
+
+		&:first-child {
+			margin-left:0;
+		}
+
+		&:hover {
+			ul.Level2 {
+				opacity:inherit;
+				visibility:inherit;
+			}
+		}
+	}
+
+	a.Level1,
+	span.Level1 {
+		display:block;
+		color:var(--colorMedium);
+		padding-top:1px;
+		font-size:1rem;
+		font-weight:700;
+		line-height:40px;
+		text-decoration-thickness:.1em;
+		text-underline-offset:3px;
+
+		&.Kontakt {
+			padding:1px 20px 3px;
+			border-radius:5px;
+			border-bottom-width:0;
+			background-color:var(--colorContrast);
+			color:var(--colorBright);
+			line-height:40px;
+			text-decoration:none;
+			transition:background-color .3s ease-in-out;
+
+			&:hover {
+				background-color:var(--colorMain);
+			}
+		}
+	}
+
+	ul.Level2 {
+		margin-top:10px;
+		padding:15px 20px;
+		border-radius:5px;
+		box-shadow:0 0 20px rgba(0, 0, 0, .05), 0 5px 10px rgba(0, 0, 0, .05);
+		background-color:var(--colorMain);
+		background-image:linear-gradient(20deg, transparent 20%, var(--colorText) 300%);
+		position:absolute;
+		top:100%;
+		left:0;
+		opacity:0;
+		visibility:hidden;
+		transition:opacity .3s ease-in-out, visibility .3s ease-in-out;
+
+		&::before {
+			content:'';
+			width:100%;
+			height:10px;
+			position:absolute;
+			top:-10px;
+			left:0;
+		}
+	}
+
+	li.Level2 {
+		margin:0;
+		padding:5px 0;
+		list-style-type:none;
+	}
+
+	a.Level2,
+	span.Level2 {
+		display:block;
+		padding:5px 0;
+		color:var(--colorBright);
+		font-size:1rem;
+		font-weight:700;
+		line-height:1;
+		text-decoration-thickness:.1em;
+		white-space:nowrap;
+
+		&.Active {
+			text-decoration-color:currentColor;
+		}
+	}
+
+	ul.Level3 {
+		display:none;
+	}
+}

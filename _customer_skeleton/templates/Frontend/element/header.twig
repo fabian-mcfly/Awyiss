@@ -1,0 +1,25 @@
+{#
+@var page \Awyiss\Model\Entity\Page
+@var pageRoleEnum \Awyiss\Model\Enum\PageRoleEnumInterface
+@var baseUrl string
+@var currentLanguage \Awyiss\Model\Entity\Language
+@var currentPath string
+@var currentUrl string
+@var folder string
+@var languages \Awyiss\Model\Entity\Language[]
+@var languageShortcode string
+@var _view \Awyiss\View\FrontendView
+#}
+
+{% extends '@Frontend/element/_header.twig' %}
+
+{% block logo %}
+	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 468.373 131.233" width="468.373" height="131.233">
+		<polygon
+				points="468.373 69.124 468.373 .346 0 0 0 68.779 228 68.779 228 88.779 247.111 117.223 281.778 126.557 312.894 107.32 305.914 71.343 308.578 68.779 468.373 69.124"
+				stroke-width="0"/>
+		<use xlink:href="{{ baseUrl }}assets/img/logo-aquatrek-logistics.svg#Text" class="Text"/>
+		<use xlink:href="{{ baseUrl }}assets/img/logo-aquatrek-logistics.svg#Anchor" class="Anchor"/>
+		<use xlink:href="{{ baseUrl }}assets/img/logo-aquatrek-logistics.svg#Wave" class="Wave"/>
+	</svg>
+{% endblock %}

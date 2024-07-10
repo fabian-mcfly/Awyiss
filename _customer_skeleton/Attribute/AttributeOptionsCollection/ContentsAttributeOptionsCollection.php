@@ -20,22 +20,35 @@ class ContentsAttributeOptionsCollection extends AttributeOptionsCollection {
 	 *
 	 * @return void
 	 */
-	public function initializeAttributeOptions(): void {
+	public function initializeAttributeOptions (): void {
 		$this->add([
 			'backgroundColor' => [
-				'options' => function (/*EntityInterface $entity, array &$currentOptions*/): array {
-					//Return a list of dummy colors (css class names) and their labels
-					return [
-						'primary' => 'Primary',
-						'secondary' => 'Secondry',
-						'success' => 'Success',
-						'danger' => 'Danger',
-						'warning' => 'Warning',
-						'info' => 'Info',
-						'light' => 'Light',
-						'dark' => 'Dark',
+				/*'disabled' => function(EntityInterface $entity, array &$currentOptions) {
+					$lo_date = new FrozenDate('now', $currentOptions['timezone'] ?? NULL);
+
+					for ($i = 0; $i <= 5; $i++) {
+						$lo_date = $lo_date->modify('+2 days');
+						$la_options[] = $lo_date->format('Y-m-d');
+					}
+
+					return $la_options;
+				},*/
+				'options' => function(EntityInterface $entity, &$currentOptions) {
+					$la_options = [
+						'text' => 'Text',
+						'dark' => 'Dunkel',
+						'medium' => 'Mittel',
+						'light' => 'Hell',
+						'main' => 'Hauptfarbe',
+						'contrast' => 'Kontrastfarbe',
 					];
+
+					return $la_options;
 				},
+				/*'validate' => function() {
+					return FALSE;
+				},
+				'value' => '',*/
 			],
 		]);
 	}

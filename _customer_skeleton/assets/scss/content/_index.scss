@@ -1,0 +1,61 @@
+.ContentRow {
+	margin-top:var(--contentRowGap);
+
+	&:first-of-type {
+		margin-top:0;
+	}
+}
+
+.ContentElement,
+.WidgetElement {
+	@media screen AND (max-width:#{$singleColumnBreakpoint}) {
+		margin-top:var(--contentRowGap);
+	}
+
+	&.BackgroundColor {
+		padding:var(--elementPadding);
+		background-color:var(--backgroundColor, transparent);
+		color:var(--textColor);
+	}
+
+	&.BackgroundColor-Text {
+		--backgroundColor:var(--colorText);
+		--textColor:var(--colorBright);
+	}
+
+	&.BackgroundColor-Dark {
+		--backgroundColor:var(--colorDark);
+		--textColor:var(--colorBright);
+	}
+
+	&.BackgroundColor-Medium {
+		--backgroundColor:var(--colorMedium);
+		--textColor:var(--colorBright);
+	}
+
+	&.BackgroundColor-Light {
+		--backgroundColor:var(--colorLight);
+		--textColor:var(--colorText);
+	}
+
+	&.BackgroundColor-Main {
+		--backgroundColor:var(--colorMain);
+		--textColor:var(--colorBright);
+	}
+
+	&.BackgroundColor-Contrast {
+		--backgroundColor:var(--colorContrast);
+		--textColor:var(--colorBright);
+	}
+
+
+	&:first-of-type {
+		@media screen AND (max-width:#{$singleColumnBreakpoint}) {
+			margin-top:0;
+		}
+	}
+}
+
+@import 'content_areas';
+@import 'section';
+@import 'standard';

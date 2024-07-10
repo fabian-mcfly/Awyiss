@@ -17,28 +17,19 @@
 @var MediaHelper \Awyiss\View\Helper\MediaHelper
 @var UrlHelper \Awyiss\View\Helper\UrlHelper
 @var TimeHelper \Awyiss\View\Helper\TimeHelper
-@var mediaRenderOptions \Awyiss\Utility\Media\MediaRenderOptions
-
-// In case you need to set a class for the row, you can do it like this:
-{%- do _view.setRowClass('FlexRow') -%}
 #}
+
 {% set cssClass = content.cssClass %}
 {% if content.backgroundColor %}
 	{% set cssClass = cssClass ~ ' BackgroundColor BackgroundColor-' ~ content.backgroundColor|ucparts(false) %}
 {% endif %}
 
-<div class="{{ cssClass }}" {{ content.data|data_attr|raw }} id="Content{{ content.id }}">
-	{{ MediaHelper.element('standard', content.mediaAssignments, mediaRenderOptions) }}
+{% set backgroundImage = MediaHelper.element('backgroundImage', content.mediaAssignments, mediaRenderOptions) %}
+{% if backgroundImage %}
+	{% set cssClass = cssClass ~ ' BackgroundImage Lazyload' %}
+{% endif %}
 
-	{% if content.text %}
-		<div class="Text">
-			{{ content.text|raw }}
-		</div>
-	{% endif %}
-
-	{% if children %}
-		<div class="Children">
-			{{ children|raw }}
-		</div>
-	{% endif %}
-</div>
+<section class="{{ cssClass }}" {{ content.data|data_attr|raw }} id="Content{{ content.id }}">
+	{{ backgroundImage }}
+	{{ children|raw }}
+</section>
