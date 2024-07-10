@@ -39,6 +39,8 @@ use Cake\Datasource\FactoryLocator;
  * @property \Awyiss\Model\Entity\Widget $parentWidget
  * @property \Awyiss\Model\Entity\Widget[] $childWidgets
  * @property array{width: \Awyiss\Utility\Content\ColumnInterface, indent: ?\Awyiss\Utility\Content\ColumnInterface} $column
+ * @property array|null $parentContents
+ * @property float|null $realColumnWidth
  */
 class Widget extends Entity {
 	/**

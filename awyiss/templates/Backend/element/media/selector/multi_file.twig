@@ -2,7 +2,7 @@
 	<label>{{ label }}</label>
 
 	<div class="MediaSelector-Preview">
-		{% set mediaAssignments = entity.mediaAssignments[ element.identifier ][ elementSelector.identifier ] ?? [] %}
+		{% set mediaAssignments = entity.mediaAssignments[ element.identifier|variable ][ elementSelector.identifier|variable ] ?? [] %}
 		{% for mediaAssignment in mediaAssignments %}
 			{% set mediaItem = mediaAssignment.media %}
 			{% set imageSizeInfo = '' %}

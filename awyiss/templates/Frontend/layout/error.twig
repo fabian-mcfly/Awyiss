@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		{% block headMetaTags %}
+			<meta charset="UTF-8">
+			<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+			<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+			<meta http-equiv="X-UA-Compatible" content="ie=edge">
+		{% endblock %}
+
+		{% block headTitleTag %}
+			<title>{{ fetch('metaTitle') ?: 'Error' }}</title>
+		{% endblock %}
+
+		{% block baseUrl %}
+			<base href="{{ baseUrl }}">
+		{% endblock %}
+
+		{% block favicons %}
+			<link rel="apple-touch-icon" sizes="180x180" href="{{ baseUrl }}assets/favicon/apple-touch-icon.png">
+			<link rel="icon" type="image/png" sizes="32x32" href="{{ baseUrl }}assets/favicon/favicon-32x32.png">
+			<link rel="icon" type="image/png" sizes="16x16" href="{{ baseUrl }}assets/favicon/favicon-16x16.png">
+			<link rel="manifest" href="{{ baseUrl }}assets/favicon/site.webmanifest">
+			<link rel="mask-icon" href="{{ baseUrl }}assets/favicon/safari-pinned-tab.svg" color="#63d1a5">
+			<link rel="shortcut icon" href="{{ baseUrl }}assets/favicon/favicon.ico">
+			<meta name="msapplication-TileColor" content="#ffffff">
+			<meta name="msapplication-config" content="{{ baseUrl }}assets/favicon/browserconfig.xml">
+			<meta name="theme-color" content="#ffffff">
+		{% endblock %}
+
+		{% block headStylesheets %}
+			{% do AssetHelper.add('frontend_error.css', {realm: 'Backend'}, true) %}
+		{% endblock %}
+
+		{% block headScriptBaseVars %}
+			<script nonce="{{ AssetHelper.getScriptNonce() }}">
+				const Awyiss = {{ Awyiss|json_encode|raw }};
+				const baseUrl = '{{ baseUrl }}';
+				const designVariables = {{ designVariables|json_encode|raw }};
+				const folder = '{{ folder }}';
+				const currentPath = '{{ currentPath }}';
+				const currentUrl = '{{ currentUrl }}';
+				const language = {{ currentLanguage|json_encode|raw }};
+				const languageShortcode = '{{ languageShortcode }}';
+			</script>
+		{% endblock %}
+
+		{% block headAssetTags %}
+			{{ AssetHelper.createImportMap() }}
+			{{ AssetHelper.getTags() }}
+		{% endblock %}
+	</head>
+	<body>
+		{% block content %}
+			<main id="Content">
+				{{ fetch('content') }}
+			</main>
+		{% endblock %}
+		<script nonce="{{ AssetHelper.getScriptNonce() }}">
+			console.log(
+				'%cAW%cYISS%cVersion %s "%s"',
+				'padding-top:3px; padding-left:20px; border-radius:5px 0 0 5px; background-color:#131a21; color:#FFFFFF; font-family:\'2f media\', Bebas Neue, Impact, Arial Display; font-size:30px; line-height:45px; text-transform:uppercase;',
+				'padding-top:3px; padding-right:20px; border-radius:0 5px 5px 0;  background-color:#131a21; color:#63d1a5; font-family:\'2f media\', Bebas Neue, Impact, Arial Display; font-size:30px; line-height:45px; text-transform:uppercase;',
+				'padding-left:20px; color:#202C39; line-height:45px;',
+				Awyiss.VERSION,
+				Awyiss.VERSION_NAME,
+			);
+		</script>
+	</body>
+</html>

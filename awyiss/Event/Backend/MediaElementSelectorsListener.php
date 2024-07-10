@@ -42,7 +42,7 @@ class MediaElementSelectorsListener implements EventListenerInterface {
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function afterSave(Event $event, MediaElementSelector $entity): void {
-		if (!$entity->isDirty('identifier')) {
+		if (!$entity->isDirty('identifier') || $entity->isNew()) {
 			return;
 		}
 

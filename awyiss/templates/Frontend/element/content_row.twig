@@ -1,0 +1,19 @@
+{#
+@var contents string
+@var class string
+@var page \Awyiss\Model\Entity\Page
+@var baseUrl string
+@var currentLanguage \Awyiss\Model\Entity\Language
+@var currentPath string
+@var currentUrl string
+@var folder string
+@var languages \Awyiss\Model\Entity\Language[]
+@var languageShortcode string
+@var _view \Awyiss\View\FrontendView
+#}
+
+{% set class = 'ContentRow ' ~ class %}
+
+<div class="{{ class|trim }}">
+	{{ contents|raw }}
+</div>

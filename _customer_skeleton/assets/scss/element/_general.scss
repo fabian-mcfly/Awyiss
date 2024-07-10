@@ -1,0 +1,255 @@
+::-moz-selection {
+	background-color:var(--colorMain);
+	color:var(--colorBright);
+	text-shadow:1px 1px 0 rgba(0, 0, 0, .1);
+}
+
+::selection {
+	background-color:var(--colorMain);
+	color:var(--colorBright);
+	text-shadow:1px 1px 0 rgba(0, 0, 0, .1);
+}
+
+html {
+	background-blend-mode:color-burn;
+	background-color:var(--colorLight);
+	//noinspection CssUnknownTarget
+	background-image:url('../img/background-pattern.png');
+	color:var(--colorText);
+	//noinspection CssNoGenericFontName
+	font-family:var(--fontStackFallbackMain);
+	font-size:var(--fontSizeMain);
+	@if ($fontStyleMain != 'normal') {
+		font-style:var(--fontStyleMain);
+	}
+	@if ($fontWeightMain != '400') {
+		font-weight:var(--fontWeightMain);
+	}
+	letter-spacing:-.5px;
+
+	&.NoJS,
+	&.wf-active {
+		//noinspection CssNoGenericFontName
+		font-family:var(--fontStackMain);
+	}
+}
+
+body {
+	padding-top:calc(var(--headerHeight) + 25px);
+	line-height:var(--lineHeightMain);
+	position:relative;
+}
+
+blockquote {
+	@extend %FontAlternative;
+
+	font-style:italic;
+	font-size:1.5rem;
+	line-height:1.4;
+
+	> :first-child {
+		&::before {
+			content:'\201E';
+		}
+	}
+
+	> :last-child {
+		&::after {
+			content:'\201C';
+		}
+	}
+}
+
+picture {
+	font-size:0;
+	line-height:0;
+}
+
+img {
+	&.Lazyload {
+		color:#000000;
+
+		&::before {
+			content:attr(alt);
+			display:block;
+			aspect-ratio:var(--imageAspectRatio);
+			padding:20px;
+			background-color:var(--imageBackgroundColor);
+			font-size:1rem;
+			line-height:1;
+			text-overflow:ellipsis;
+			overflow:hidden;
+			white-space:nowrap;
+		}
+	}
+
+	&[data-src] {
+		&.Loaded {
+			width:auto;
+		}
+
+		.NoJS & {
+			display:none;
+		}
+	}
+
+	.NoJS & {
+		width:auto;
+	}
+}
+
+a {
+	color:var(--colorMain);
+	text-decoration:underline solid transparent .05em;
+	text-underline-offset:2px;
+	transition:color .3s ease-in-out, text-decoration .3s ease-in-out;
+
+	&:hover {
+		text-decoration-color:currentColor;
+	}
+
+	@layer externalIcons {
+		&[target] {
+			&:not(.NoExternalLinkIcon) {
+				margin-right:.25em;
+
+				&[href$="gif"],
+				&[href$="jpg"],
+				&[href$="jpeg"],
+				&[href$="png"],
+				&[href$="svg"],
+				&[href$="webp"] {
+					&::after {
+						content:'\f03e';
+					}
+				}
+
+				&[href$=".pdf"] {
+					&::after {
+						content:'\f1c1';
+					}
+				}
+
+				&[href$=".mp4"],
+				&[href*="vimeo.com"],
+				&[href*="youtu.be"],
+				&[href*="youtube.com"],
+				&[href*="youtube-nocookie.com"] {
+					&::after {
+						content:'\f04b';
+					}
+				}
+
+				&[href*="facebook."],
+				&[href*="instagram."],
+				&[href*="plus.google."],
+				&[href*="twitter."],
+				&[href*="xing."],
+				&[href*="linkedin."],
+				&[href*="vimeo.com"],
+				&[href*="youtu.be"],
+				&[href*="youtube.com"],
+				&[href*="youtube-nocookie.com"] {
+					margin-left:.25em;
+
+					&::before {
+						@include fa(var(--icon));
+						margin-right:.25em;
+						font-weight:400;
+						vertical-align:middle;
+					}
+				}
+
+				&[href*="facebook."] {
+					--icon:'\f09a';
+				}
+
+				&[href*="instagram."] {
+					--icon:'\f16d';
+				}
+
+				&[href*="x.com"] {
+					--icon:'\e61b';
+				}
+
+				&[href*="xing."] {
+					--icon:'\f168';
+				}
+
+				&[href*="linkedin."] {
+					--icon:'\f08c';
+				}
+
+				&[href*="vimeo.com"] {
+					--icon:'\f40a';
+				}
+
+				&[href*="youtu.be"],
+				&[href*="youtube.com"],
+				&[href*="youtube-nocookie.com"] {
+					--icon:'\f167';
+				}
+
+				&::after {
+					@include fa('\f14c', .75rem);
+					margin-left:.25em;
+					vertical-align:middle;
+				}
+			}
+		}
+	}
+}
+
+h1, h2, h3, h4, h5, h6 {
+	font:inherit;
+
+	a {
+		color:inherit;
+	}
+}
+
+h1, p.Textsize-LikeH1 {
+	font-size:3rem;
+	font-weight:700;
+	letter-spacing:-1px;
+	line-height:1.2;
+}
+
+h2, p.Textsize-LikeH2 {
+	font-size:2.25rem;
+	font-weight:700;
+	letter-spacing:-1px;
+	line-height:1.2;
+}
+
+h3, p.Textsize-LikeH3 {
+	font-size:1.75rem;
+	font-weight:400;
+	letter-spacing:-1px;
+	line-height:1.2;
+}
+
+h4, p.Textsize-LikeH4 {
+	font-size:1.25rem;
+	font-weight:700;
+	letter-spacing:-1px;
+	line-height:1.2;
+}
+
+.FontAlternative {
+	@extend %FontAlternative;
+}
+
+.Uppercase {
+	text-transform:uppercase;
+}
+
+.Textcolor-Main {
+	--textcolor:var(--colorMain);
+	color:var(--textcolor);
+}
+
+.Textcolor-Contrast {
+	--textcolor:var(--colorContrast);
+	color:var(--textcolor);
+}

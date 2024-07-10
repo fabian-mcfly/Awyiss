@@ -136,24 +136,26 @@ export default class NestedListHandler {
 
 		// Loop through each nested list element and initialize SortableJS
 		elements.forEach(element => {
-			// Add handle to each list item in the current element
-			Array.from(element.children).forEach(item => {
-				if (item.dataset.sortable === 'false' || !options.handle) {
-					return;
-				}
+			if (options.handle === '.SortableHandle') {
+				// Add handle to each list item in the current element
+				Array.from(element.children).forEach(item => {
+					if (item.dataset.sortable === 'false' || !options.handle) {
+						return;
+					}
 
-				// Create a new handle
-				const handle = document.createElement('div');
-				handle.className = 'SortableHandle';
-				handle.textContent = '::'; // Or any other content you want the handle to have
+					// Create a new handle
+					const handle = document.createElement('div');
+					handle.className = 'SortableHandle';
+					handle.textContent = '::'; // Or any other content you want the handle to have
 
-				// Select the .ListItem-Inner child of the list item
-				const listItemInner = item.querySelector('.ListItem-Inner');
-				if (listItemInner) {
-					// Prepend the handle to the .ListItem-Inner child
-					listItemInner.prepend(handle);
-				}
-			});
+					// Select the .ListItem-Inner child of the list item
+					const listItemInner = item.querySelector('.ListItem-Inner');
+					if (listItemInner) {
+						// Prepend the handle to the .ListItem-Inner child
+						listItemInner.prepend(handle);
+					}
+				});
+			}
 
 			const groupName = element.dataset.sortableGroup ?? options.groupName;
 

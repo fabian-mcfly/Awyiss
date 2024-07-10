@@ -78,10 +78,6 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 
 		$this->_tableLocator = $this->getConfig('tableLocator');
 
-		if (str_starts_with($this->table()->getTable(), 'media')) {
-			return;
-		}
-
 		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
 		$this->assignmentsTable = $this->getTableLocator()->get('MediaAssignments', ['allowFallbackClass' => false]);
 
@@ -105,39 +101,71 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 
 
 	/**
+	 * Find media assignments when querying a table.
+	 * This finder will automatically fetch the media assignments for the entity.
+	 * If `includeElementSelector` is set to true, the media selectors will be included as well.
+	 * If `useMediaEntity` is set to true, the media entity will be used instead of
+	 * the media assignment entity as the value of the media assignment identifier
+	 * The regular media assignment entity will still be available
+	 * in an underscored version of the media element identifier.
+	 *
 	 * @param \Cake\ORM\Query\SelectQuery $query
+	 * @param bool $includeElementSelector
+	 * @param bool $useMediaEntity
 	 * @return \Cake\ORM\Query\SelectQuery
 	 */
-	public function findMediaAssignments(SelectQuery $query): SelectQuery {
+	public function findMediaAssignments(SelectQuery $query, bool $includeElementSelector = false, bool $useMediaEntity = false): SelectQuery {
 		if (!$this->getConfig('enabled')) {
 			return $query;
+		}
+
+		if ($includeElementSelector) {
+			$query->contain([
+				'MediaAssignments.MediaElementSelectors.MediaSelectors',
+			]);
 		}
 
 		return $query->contain([
 			'MediaAssignments' => [
 				'Media',
 			],
-		])->formatResults(fn (CollectionInterface $results) => $this->rowMapper($results), $query::PREPEND);
+		])->formatResults(fn (CollectionInterface $results) => $this->rowMapper($results, $useMediaEntity), $query::PREPEND);
 	}
 
 
 	/**
 	 * @param \Cake\Datasource\EntityInterface|array $entity
+	 * @param bool $useMediaEntity
 	 * @return \Cake\Datasource\EntityInterface|array
 	 */
-	public function rebuildMediaAssignments(EntityInterface|array $entity): EntityInterface|array {
+	public function rebuildMediaAssignments(EntityInterface|array $entity, bool $useMediaEntity = false): EntityInterface|array {
 		$la_mediaAssignments = [];
 
+		/** @var \Awyiss\Model\Entity\MediaAssignment $lo_mediaAssignment */
 		foreach (($entity['mediaAssignments'] ?? []) as $lo_mediaAssignment) {
 			$lo_element = static::$mediaElements[ $lo_mediaAssignment->mediaElementId ];
-			$ls_elementIdentifier = $lo_element->identifier;
+			$ls_elementIdentifier = Inflector::variable($lo_element->identifier);
 
 			$lo_selector = $lo_element->mediaSelectors[ $lo_mediaAssignment->mediaElementSelectorIdentifier ];
+			$ls_identifier = Inflector::variable($lo_mediaAssignment->mediaElementSelectorIdentifier);
+
 			if ($lo_selector->identifier === 'multi_file') {
-				$la_mediaAssignments[ $ls_elementIdentifier ][ $lo_mediaAssignment->mediaElementSelectorIdentifier ][] = $lo_mediaAssignment;
+				if ($useMediaEntity) {
+					$la_mediaAssignments[ $ls_elementIdentifier ][ $ls_identifier ][] = $lo_mediaAssignment->media;
+					$la_mediaAssignments[ $ls_elementIdentifier ][ '_' . $ls_identifier ][] = $lo_mediaAssignment;
+				}
+				else {
+					$la_mediaAssignments[ $ls_elementIdentifier ][ $ls_identifier ][] = $lo_mediaAssignment;
+				}
 			}
 			else {
-				$la_mediaAssignments[ $ls_elementIdentifier ][ $lo_mediaAssignment->mediaElementSelectorIdentifier ] = $lo_mediaAssignment;
+				if ($useMediaEntity) {
+					$la_mediaAssignments[ $ls_elementIdentifier ][ $ls_identifier ] = $lo_mediaAssignment->media;
+					$la_mediaAssignments[ $ls_elementIdentifier ][ '_' . $ls_identifier ] = $lo_mediaAssignment;
+				}
+				else {
+					$la_mediaAssignments[ $ls_elementIdentifier ][ $ls_identifier ] = $lo_mediaAssignment;
+				}
 			}
 		}
 
@@ -166,9 +194,10 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 
 	/**
 	 * @param \Cake\Collection\CollectionInterface $results
+	 * @param bool $useMediaEntity
 	 * @return \Cake\Collection\CollectionInterface
 	 */
-	protected function rowMapper(CollectionInterface $results): CollectionInterface {
+	protected function rowMapper(CollectionInterface $results, bool $useMediaEntity = false): CollectionInterface {
 		if (!isset(static::$mediaElements)) {
 			$lo_elements = $this->fetchTable('MediaElements')->find()->contain([
 				'MediaElementSelectors' => [
@@ -188,14 +217,14 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 			})->toArray();
 		}
 
-		return $results->map(function (EntityInterface|array|null $row): EntityInterface|array|null {
+		return $results->map(function (EntityInterface|array|null $row) use ($useMediaEntity): EntityInterface|array|null {
 			$lx_row = $row;
 
 			if ($lx_row === null || empty($lx_row['mediaAssignments'])) {
 				return $lx_row;
 			}
 
-			$lx_row = $this->rebuildMediaAssignments($lx_row);
+			$lx_row = $this->rebuildMediaAssignments($lx_row, $useMediaEntity);
 
 			if ($row instanceof EntityInterface) {
 				$row->setDirty('mediaAssignments', false);

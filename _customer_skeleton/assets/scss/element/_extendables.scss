@@ -1,0 +1,41 @@
+%FontAlternative {
+	@if variable-exists(fontNameAlternative) and $fontNameAlternative != '' {
+		//noinspection CssNoGenericFontName
+		font-family:var(--fontStackFallbackAlternative);
+		@if ($fontSizeAlternative != '') {
+			font-size:var(--fontSizeAlternative);
+		}
+		@if ($fontStyleAlternative != 'normal' or $fontStyleMain != 'normal') {
+			font-style:var(--fontStyleAlternative);
+		}
+		@if ($fontWeightAlternative != '400' or $fontWeightMain != '400') {
+			font-weight:var(--fontWeightAlternative);
+		}
+		@if ($lineHeightAlternative != '') {
+			line-height:var(--lineHeightAlternative);
+		}
+
+		.wf-active &,
+		.NoJS & {
+			//noinspection CssNoGenericFontName
+			font-family:var(--fontStackAlternative);
+		}
+
+		// In TinyMCE instances, the webfont is loaded via import, so we need to set the font-family here
+		#tinymce & {
+			//noinspection CssNoGenericFontName
+			font-family:var(--fontStackAlternative);
+		}
+
+	}
+}
+
+%ContentRow {
+	max-width:calc(var(--pageWidth) + 2 * var(--pagePadding));
+	margin-inline:auto;
+	padding-inline:var(--pagePadding);
+
+	@media screen and (max-width:1024px) {
+		padding-inline:calc(var(--pagePadding) * .5);
+	}
+}

@@ -5,6 +5,7 @@ namespace Awyiss\Event\Frontend;
 
 
 use Awyiss\Event\EventListenerTrait;
+use Awyiss\Model\Entity\MediaResizedImage;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
 use Cake\Event\EventListenerInterface;
@@ -45,7 +46,8 @@ class GeneralEventsListener implements EventListenerInterface {
 	public function beforeSave(EventInterface $event, EntityInterface $entity/*, ArrayObject $options*/): void {
 		if (
 			$entity instanceof Panel ||
-			$entity instanceof Request
+			$entity instanceof Request ||
+			$entity instanceof MediaResizedImage
 		) {
 			return;
 		}

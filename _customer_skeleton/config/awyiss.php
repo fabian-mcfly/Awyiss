@@ -19,7 +19,7 @@ return [
 		 * If a variable name contains a regex pattern but the exact variable name
 		 * is set in the variableMapping, the variable will still be shown.
 		 */
-		'blocklistedVariables' => [],
+		'blocklistedVariables' => ['includeColumnSystem'],
 		'fontStacks' => [
 			'sans-serif' => [
 				'Arial, Helvetica, sans-serif',

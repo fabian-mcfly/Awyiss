@@ -194,6 +194,12 @@ class ContentsController extends Controller {
 			$this->save($lo_content, 'edit');
 		}
 
+		if ($this->request->getParam('mode') === 'frontendEditor') {
+			$this->viewBuilder()
+			->setTemplate('edit_frontend_editor')
+			->setLayout('frontend_editor');
+		}
+
 		$this->setViewVars($lo_content);
 	}
 
@@ -786,7 +792,7 @@ class ContentsController extends Controller {
 		foreach (
 			array_diff(
 				array_keys($this->Contents->ContentTemplates->getAvailableContentElements()),
-				array_column($lo_contentTemplate->contentTemplateElements, 'identifier')
+				array_column($lo_contentTemplate->contentTemplateElements ?? [], 'identifier')
 			) as $ls_element
 		) {
 			if ($ls_element === 'column_width') {

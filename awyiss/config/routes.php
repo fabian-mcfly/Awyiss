@@ -6,6 +6,7 @@ use Awyiss\Middleware\ConfigMiddleware;
 use Awyiss\Middleware\DesignMiddleware;
 use Awyiss\Middleware\EventListenersMiddleware;
 use Awyiss\Middleware\LocaleMiddleware;
+use Awyiss\Middleware\RealmMiddleware;
 use Awyiss\Routing\Route\AwyissRoute;
 use Cake\Core\Configure;
 use Cake\Http\Middleware\CspMiddleware;
@@ -23,7 +24,9 @@ $routes->registerMiddleware(
 				'self' => true,
 				'blob' => true,
 			],
-			'default-src' => [],
+			'default-src' => [
+				'self' => true,
+			],
 			'font-src' => [
 				'self' => true,
 			],
@@ -70,17 +73,56 @@ $routes->registerMiddleware('design', new DesignMiddleware());
 $routes->registerMiddleware('requestLocale', new LocaleMiddleware());
 
 
-/** @var RouteBuilder $routes */
-$routes->scope('/', function (RouteBuilder $routes): void {
-	$routes->setRouteClass(AwyissRoute::class);
+$routes->scope('/', function (RouteBuilder $routeBuilder): void {
+	$routeBuilder->setRouteClass(AwyissRoute::class);
 
-	$routes->connect(
-		'/{lang}/{slug}',
-		['prefix' => 'Frontend', 'controller' => 'frontend', 'action' => 'index'],
+	$routeBuilder->registerMiddleware('frontendRealm', new RealmMiddleware(Awyiss::REALM_FRONTEND));
+	$routeBuilder->applyMiddleware('frontendRealm');
+
+	// Load the configuration as early as possible to make it available for all other middleware
+	$routeBuilder->applyMiddleware('config');
+
+	// Load the event listeners as early as possible to possibly listen to middleware events
+	$routeBuilder->applyMiddleware('eventListeners');
+
+	$routeBuilder->applyMiddleware('csp');
+
+	$routeBuilder->applyMiddleware('design');
+
+	$routeBuilder->applyMiddleware('requestLocale');
+
+	$routeBuilder->connect(
+		'/sitemap',
+		['prefix' => 'Frontend', 'controller' => 'Sitemap', 'action' => 'index'],
+	)->setExtensions(['xml']);
+
+	$routeBuilder->connect(
+		'/{lang}/{slug}/*',
+		['prefix' => 'Frontend', 'controller' => 'Frontend', 'action' => 'index'],
 		['_name' => Awyiss::REALM_FRONTEND]
-	)
-	->setPatterns(['lang' => '[a-z]{2}'])
-	->setPersist(['lang', 'slug']);
+	)->setPatterns([
+		'lang' => '[a-z]{2}',
+		'slug' => '[^:]{3,}',
+	])->setPersist(['lang', 'slug']);
 
-	$routes->connect('/*', ['prefix' => 'Frontend', 'controller' => 'frontend', 'action' => 'noLanguageFound']);
+	$routeBuilder->connect(
+		'/{lang}/*',
+		['prefix' => 'Frontend', 'controller' => 'Frontend', 'action' => 'incompleteUrl'],
+		['_name' => Awyiss::REALM_FRONTEND . 'LanguageRoot']
+	)->setPatterns([
+		'lang' => '[a-z]{2}',
+	])->setPersist(['lang']);
+
+	$routeBuilder->connect(
+		'/{slug}/*',
+		['prefix' => 'Frontend', 'controller' => 'Frontend', 'action' => 'incompleteUrl'],
+	)->setPatterns([
+		'slug' => '[^:]{3,}',
+	])->setPersist(['slug']);
+
+	$routeBuilder->connect(
+		'/*',
+		['prefix' => 'Frontend', 'controller' => 'Frontend', 'action' => 'incompleteUrl'],
+		['_name' => Awyiss::REALM_FRONTEND . 'Root']
+	);
 });

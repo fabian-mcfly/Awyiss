@@ -179,6 +179,10 @@ class DesignsController extends Controller {
 
 		$lo_internalVariables = new Collection($internalVariables);
 
+		// Create a map of the internal variables and their underscored names
+		$la_underscoredNames = array_map(fn ($key) => Inflector::underscore($key), array_keys($internalVariables));
+		$la_variableMap = array_combine($la_underscoredNames, array_keys($internalVariables));
+
 		foreach ($requestData as $ls_key => $lx_value) {
 			if (in_array($ls_key, ['custom', 'font_variants', 'save_as_copy', 'reload_form'])) {
 				continue;
@@ -209,7 +213,19 @@ class DesignsController extends Controller {
 				}
 			}
 
+			$ls_key = $la_variableMap[ $ls_key ] ?? $ls_key;
+
+			if (str_ends_with($ls_key, '_unit')) {
+				$ls_key = substr($ls_key, 0, -5);
+				$ls_key = $la_variableMap[ $ls_key ] ?? $ls_key;
+				$ls_key .= 'Unit';
+			}
+
 			$la_requestData['settings'][ $ls_key ] = $lx_value;
+
+			if (!empty($lx_value) && isset($la_variableOptions['forcedUnit'])) {
+				$la_requestData['settings'][ $ls_key . 'Unit' ] = $la_variableOptions['forcedUnit'];
+			}
 		}
 
 		return $la_requestData;

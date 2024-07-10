@@ -34,6 +34,7 @@ use Cake\Utility\Text;
  * @property \Cake\I18n\DateTime|null $deletedOn
  * @property \Awyiss\Model\Entity\MediaAssignment[] $mediaAssignments
  * @property \Awyiss\Model\Entity\MediaFolder $mediaFolder
+ * @property \Awyiss\Model\Entity\MediaResizedImage|null $mediaResizedImages
  * @property \Laminas\Diactoros\UploadedFile|null $file
  * @property string|null $cleanName
  * @property string|null $originalCleanName
@@ -89,6 +90,7 @@ class Media extends Entity {
 		'changed_on' => 'changedOn',
 		'deleted_by' => 'deletedBy',
 		'deleted_on' => 'deletedOn',
+		'media_resized_images' => 'mediaResizedImages',
 	];
 
 
@@ -97,7 +99,9 @@ class Media extends Entity {
 	 */
 	protected array $_virtual = [
 		'label',
+		'isAudio',
 		'isImage',
+		'isVideo',
 		'cleanName',
 		'originalCleanName',
 		'extension',
@@ -117,6 +121,19 @@ class Media extends Entity {
 		'webpPathAbsolute',
 		'originalWebpPathAbsolute',
 	];
+
+
+	/**
+	 * return bool
+	 */
+	public function isAudio(): bool {
+		return in_array($this->mimeType, [
+			'audio/mpeg',
+			'audio/ogg',
+			'audio/wav',
+			'audio/webm',
+		]);
+	}
 
 
 	/**
@@ -140,12 +157,23 @@ class Media extends Entity {
 			return false;
 		}
 
-
 		return in_array($this->getOriginal('mimeType'), [
 			'image/jpeg',
 			'image/png',
 			'image/gif',
 			'image/webp',
+		]);
+	}
+
+
+	/**
+	 * @return bool
+	 */
+	public function isVideo(): bool {
+		return in_array($this->mimeType, [
+			'video/mp4',
+			'video/ogg',
+			'video/webm',
 		]);
 	}
 

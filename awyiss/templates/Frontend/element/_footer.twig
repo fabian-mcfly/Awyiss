@@ -1,0 +1,71 @@
+{#
+@var page \Awyiss\Model\Entity\Page
+@var pageRoleEnum \Awyiss\Model\Enum\PageRoleEnumInterface
+@var baseUrl string
+@var currentLanguage \Awyiss\Model\Entity\Language
+@var currentPath string
+@var currentUrl string
+@var folder string
+@var languages \Awyiss\Model\Entity\Language[]
+@var languageShortcode string
+@var _view \Awyiss\View\FrontendView
+#}
+
+{% block footer %}
+	<footer id="FooterArea">
+		{% block footerMainRow %}
+			<div class="Main">
+				{% block logoRow %}
+					<div class="ContentRow">
+						<div class="ContentElement Column-100">
+							{% block logoLink %}
+								<a href="{{ logoLink }}" class="Logo">
+									{% block logo %}
+
+									{% endblock %}
+								</a>
+							{% endblock %}
+						</div>
+					</div>
+				{% endblock %}
+				{% block addressRow %}
+					<div class="ContentRow">
+						{% block address %}
+							<div class="ContentElement Column-60 Address">
+								{{ widget('footer-address', {columnWidth: 60}) }}
+							</div>
+						{% endblock %}
+						{% block menu %}
+							<div class="ContentElement Column-40 Menu">
+								{{ menu('footer', {includeWrapper: false}) }}
+							</div>
+						{% endblock %}
+					</div>
+				{% endblock %}
+				{% block metaRow %}
+					<div class="ContentRow SocialMedia-Legal">
+						{% block socialMedia %}
+							<div class="ContentElement Column-50 SocialMedia">
+								{{ menu('social_media', {includeWrapper: false}) }}
+							</div>
+						{% endblock %}
+						{% block legal %}
+							<div class="ContentElement Column-50 Legal">
+								{{ menu('legal', {includeWrapper: false}) }}
+							</div>
+						{% endblock %}
+					</div>
+				{% endblock %}
+			</div>
+		{% endblock %}
+		{% block footerAwyissRow %}
+			<div class="Awyiss">
+				<a href="#">
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 458.776 107.959">
+						<use xlink:href="{{ baseUrl }}assets/img/logo-awyiss-cms.svg#Logo"/>
+					</svg>
+				</a>
+			</div>
+		{% endblock %}
+	</footer>
+{% endblock %}

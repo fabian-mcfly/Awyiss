@@ -4,8 +4,11 @@
 namespace Awyiss\Twig\Extension;
 
 
+use Awyiss\Model\Entity\Page;
 use Awyiss\Utility\Inflector;
 use Cake\Collection\CollectionInterface;
+use Cake\Utility\Hash;
+use InvalidArgumentException;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
@@ -23,7 +26,7 @@ class AwyissExtension extends AbstractExtension {
 	 */
 	public function getFilters(): array {
 		return [
-			new TwigFilter('data_attr', [$this, 'htmlDataAttributes']),
+			new TwigFilter('data_attr', $this->htmlDataAttributes(...)),
 
 			new TwigFilter('json_decode', function (string $json): ?array {
 				$la_return = json_decode($json, true);
@@ -59,6 +62,21 @@ class AwyissExtension extends AbstractExtension {
 				return array_combine($keys, $values);
 			}),
 
+			new TwigFunction(
+				'content',
+				function (array $context, string $name, array $options = []) {
+					if (empty($context['page']) || !$context['page'] instanceof Page) {
+						throw new InvalidArgumentException('The "content" function requires a Page entity in the context.');
+					}
+
+					$la_options = ['viewVars' => $context];
+					$la_options = Hash::merge($la_options, $options);
+
+					return $context['_view']->cell('Frontend/Contents', [$name, $context['page'], $la_options]);
+				},
+				['needs_context' => true, 'is_safe' => ['all']]
+			),
+
 			new TwigFunction('dump', function (): void {
 				dump(...func_get_args());
 			}),
@@ -93,6 +111,21 @@ class AwyissExtension extends AbstractExtension {
 				}
 			),
 
+			new TwigFunction(
+				'menu',
+				function (array $context, string $name, array $options = []) {
+					if (empty($context['languageShortcode']) || strlen($context['languageShortcode']) !== 2) {
+						throw new InvalidArgumentException('The "menu" function requires languageShortcode string in the context.');
+					}
+
+					$la_options = ['viewVars' => $context];
+					$la_options = Hash::merge($la_options, $options);
+
+					return $context['_view']->cell('Frontend/Menu', [$name, $context['languageShortcode'], $la_options]);
+				},
+				['needs_context' => true, 'is_safe' => ['all']]
+			),
+
 			new TwigFunction('naturalSort', function (array $data, int|string|null $key = null): array {
 				/** @noinspection PhpVariableNamingConventionInspection */
 				uasort($data, function ($a, $b) use ($key) {
@@ -116,6 +149,17 @@ class AwyissExtension extends AbstractExtension {
 
 				return null;
 			}),
+
+			new TwigFunction(
+				'widget',
+				function (array $context, string $name, array $data = [], array $options = []) {
+					$la_options = ['viewVars' => $context];
+					$la_options = Hash::merge($la_options, $options);
+
+					return $context['_view']->cell('Frontend/Widgets', [$name, $la_options]);
+				},
+				['needs_context' => true, 'is_safe' => ['all']]
+			),
 		];
 	}
 

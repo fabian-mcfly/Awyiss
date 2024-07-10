@@ -1,0 +1,58 @@
+@function strip-unit($number) {
+	@if unitless($number) {
+		@return $number;
+	} @else {
+		@return $number / ($number * 0 + 1);
+	}
+}
+
+@function columnWidth ($nominator, $denominator, $margin:0, $isIndent:false) {
+	$unit:unit($margin);
+	$margin:strip-unit($margin);
+
+	@if ($unit == '%' or $unit == '') {
+		$width:floor((((100 - $margin * ($denominator - 1)) / $denominator) * $nominator + (($nominator - 1) * $margin)) * 100) / 100 * 1%;
+
+		@if $isIndent {
+			@return $width + $margin;
+		} @else {
+			@return $width;
+		}
+	} @else {
+		$width:#{floor((100 / $denominator) * $nominator * 100%) / 100};
+		$subtractMargin:#{$margin / $denominator * ($denominator - $nominator)}#{$unit};
+
+		@if $isIndent {
+			@return calc(#{$width} - #{$subtractMargin} + #{$margin}#{$unit});
+		} @else {
+			@return calc(#{$width} - #{$subtractMargin});
+		}
+	}
+}
+
+@mixin Columns($margin:$columnMargin) {
+	$variables:();
+	@each $column in $columnWidths {
+		$class:'.#{map-get($column, 'class')}';
+		$numerator:map-get($column, 'numerator');
+		$denominator:map-get($column, 'denominator');
+		$width:columnWidth($numerator, $denominator, $margin);
+
+		$variables:map-merge($variables, ('--columnWidth#{str-slice($class, 9)}': #{$width}));
+	}
+
+	@each $column in $columnIndents {
+		$class:'.#{map-get($column, 'class')}';
+		$numerator:map-get($column, 'numerator');
+		$denominator:map-get($column, 'denominator');
+		$width:#{columnWidth($numerator, $denominator, $margin, true)};
+
+		$variables:map-merge($variables, ('--columnIndent#{str-slice($class, 15)}': #{$width}));
+	}
+
+	& {
+		@each $key, $value in $variables {
+			#{$key}:#{$value};
+		}
+	}
+}

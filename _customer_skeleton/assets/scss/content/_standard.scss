@@ -1,0 +1,36 @@
+.Template-Standard {
+	&.BackgroundColor {
+		border-radius:5px;
+	}
+
+	> .Image {
+		a {
+			text-decoration:none;
+		}
+
+		img {
+			box-shadow:0 0 5px rgba(0, 0, 0, .1);
+			border-radius:5px;
+
+			&::before {
+				border-radius:5px;
+			}
+		}
+	}
+
+	> .Text {
+		margin-top:calc(var(--contentRowGap) * .5);
+
+		&:first-child {
+			margin-top:0;
+		}
+	}
+
+	> .Children {
+		margin-top:var(--contentRowGap);
+
+		&:first-child {
+			margin-top:0;
+		}
+	}
+}

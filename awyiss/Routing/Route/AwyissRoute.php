@@ -224,17 +224,11 @@ class AwyissRoute extends DashedRoute {
 		}
 		elseif (str_contains($this->template, '*')) {
 			$la_search[] = '*';
-			if (!empty($params['slug'])) {
-				$la_replace[] = $params['slug'] . (!empty($ls_pass) ? '/' . $ls_pass : null);
-			}
-			else {
-				$la_replace[] = $ls_pass;
-			}
+			$la_replace[] = $ls_pass;
 		}
 
 		// Replace keys surrounded by {} in the url with their corresponding values.
 		$ls_url = str_replace($la_search, $la_replace, $ls_url);
-
 
 		// Complete the url scheme and return the url.
 		return $this->completeUrlScheme($ls_url, $params, $query);
@@ -259,11 +253,11 @@ class AwyissRoute extends DashedRoute {
 				if (str_contains($ls_part, ':')) {
 					$lb_foundParams = true;
 					[$ls_key, $ls_value] = explode(':', $ls_part);
-					// Underscore and then camelCase the value.
-					$ls_value = Inflector::underscore($ls_value);
+					// camelBack the value.
+					$ls_value = Inflector::variable($ls_value);
 
-					// Underscore and then camelCase the key.
-					$ls_key = Inflector::variable(Inflector::underscore($ls_key));
+					// camelBack the key.
+					$ls_key = Inflector::variable($ls_key);
 
 					// If the key does not exist in the route array, add it.
 					if (!array_key_exists($ls_key, $la_route)) {
@@ -286,11 +280,10 @@ class AwyissRoute extends DashedRoute {
 			// Implode the 'parts' array into a string, separating each part with a '/'.
 			$la_route['fullSlug'] = implode('/', array_map(function ($value, $key) {
 				if (is_numeric($key)) {
-					return $value;
+					return Inflector::dasherize($value);
 				}
 
-
-				return $key . ':' . $value;
+				return $key . ':' . Inflector::dasherize($value);
 			}, $la_route['parts'], array_keys($la_route['parts'])));
 
 			// Unset the '_args_' key from the route array.
@@ -436,14 +429,14 @@ class AwyissRoute extends DashedRoute {
 			$ls_url = $ls_scheme . '://' . $ls_host . $ls_url;
 		}
 
-		// If the '_ext' key is set in the parameters array or the query array is not empty, remove any trailing slashes from the URL.
-		if (!empty($params['_ext']) || !empty($query)) {
-			$ls_url = rtrim($ls_url, '/');
-		}
-
+		$ls_url = rtrim($ls_url, '/');
 		// If the '_ext' key is set in the parameters array, append it to the URL with a '.'.
 		if (!empty($params['_ext'])) {
 			$ls_url .= '.' . $params['_ext'];
+		}
+		else {
+			// Make sure the URL ends with a slash if it doesn't contain a query string.
+			$ls_url = rtrim($ls_url, '/') . '/';
 		}
 
 		/**
@@ -454,7 +447,6 @@ class AwyissRoute extends DashedRoute {
 		if (!empty($query)) {
 			$ls_url .= rtrim('?' . http_build_query($query), '?');
 		}
-
 
 		// Return the URL.
 		return $ls_url;

@@ -1,0 +1,16 @@
+{#
+@var identifier string
+@var menuEntries \Cake\Collection\Collection
+@var menu \Awyiss\Utility\Menu\Menu
+@var renderer \Awyiss\Utility\Menu\MenuRenderer
+@var currentRoute string
+@var includeWrapper bool
+#}
+
+{% if menuEntries.count() %}
+	{% if includeWrapper %}
+		{{ renderer.render(identifier|ucparts(false))|raw }}
+	{% else %}
+		{{ renderer.renderList(menu)|raw}}
+	{% endif %}
+{% endif %}

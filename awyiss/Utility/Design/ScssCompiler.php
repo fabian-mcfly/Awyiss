@@ -51,7 +51,7 @@ class ScssCompiler {
 
 		// Initialize the array of realm folders
 		$la_realmFolders = Configure::read('App.paths.assets');
-		$la_realmFolders = $la_realmFolders[ Awyiss::getRealm() ] ?? [];
+		$la_realmFolders = $la_realmFolders[ $realm ] ?? [];
 
 		// Initialize the array of realm files
 		$la_realmFiles = [];
@@ -59,7 +59,6 @@ class ScssCompiler {
 		foreach ($la_realmFolders as $ls_folderPath) {
 			$la_realmFiles[ $ls_folderPath ] = static::discoverFiles($ls_folderPath . 'scss');
 		}
-
 
 		// Return the array of realm files
 		return $la_realmFiles;
@@ -96,7 +95,6 @@ class ScssCompiler {
 			}
 		}
 
-
 		// Return the ScssFilesCollection object.
 		return $lo_filesCollection;
 	}
@@ -118,20 +116,17 @@ class ScssCompiler {
 			return null;
 		}
 
-		// Get a collection of css files in the sibling directory of ScssFilesCollection::$folderPath
-		$lo_cssFiles = self::discoverFiles(dirname($files->getFolderPath()) . DS . 'css');
-
-		// If the css files are newer than the scss files, return null.
-		if ($lo_cssFiles->getLastModified() && $lo_cssFiles->getLastModified()->greaterThan($files->getLastModified())) {
-			return null;
-		}
+		$lo_scssVariableProvider = new ScssVariableProvider(Configure::read('Design'));
 
 		// Compile all main files from the ScssFilesCollection object
 		$la_compiledCss = [];
 		foreach ($files->getMainFiles() as $lo_file) {
-			$la_compiledCss[] = self::compileScss($lo_file, $basePath, $vars, $returnCss);
-		}
+			$lo_scssVariableProvider->setScssFiles([$lo_file->getPathname()]);
 
+			$lb_includeColumnSystem = isset($lo_scssVariableProvider->getInternalVariables()['includeColumnSystem']);
+
+			$la_compiledCss[] = self::compileScss($lo_file, $basePath, $vars, $returnCss, $lb_includeColumnSystem);
+		}
 
 		// Return the compiled CSS content
 		return $la_compiledCss;
@@ -152,6 +147,26 @@ class ScssCompiler {
 	public static function compileFolders(array $folders, array $vars = [], bool $returnCss = false): array {
 		$la_return = [];
 
+		$la_variables = $vars;
+
+
+		if ($la_variables) {
+			$la_variables = static::normalizeVariables($la_variables);
+		}
+
+		foreach ($la_variables as $ls_key => $lx_value) {
+			if (is_array($lx_value)) {
+				if (isset($lx_value['font'])) {
+					$lx_value = 'inspect(' . $lx_value['font']['name'] . ')';
+				}
+				else {
+					$lx_value = implode(' ', $lx_value);
+				}
+			}
+
+			$la_variables[ $ls_key ] = $lx_value;
+		}
+
 		foreach ($folders as $ls_folderPath => $lo_files) {
 			// If the value is not an instance of ScssFilesCollection, skip it.
 			if (!$lo_files instanceof ScssFilesCollection) {
@@ -159,9 +174,8 @@ class ScssCompiler {
 			}
 
 			// Compile the SCSS files in the folder and store the result in the return array.
-			$la_return[ $ls_folderPath ] = static::compile($lo_files, $ls_folderPath, $vars, $returnCss);
+			$la_return[ $ls_folderPath ] = static::compile($lo_files, $ls_folderPath, $la_variables, $returnCss);
 		}
-
 
 		// Return the array of compilation results.
 		return $la_return;
@@ -191,64 +205,7 @@ class ScssCompiler {
 			static::$compiler->setOutputStyle(OutputStyle::EXPANDED);
 		}
 
-
 		return static::$compiler;
-	}
-
-
-	/**
-	 * Prepares and merges SCSS variables for the compiler.
-	 * This method prepares the SCSS variables by merging default values, application settings,
-	 * and user-defined overrides. It handles special cases, such as font names, by appropriately
-	 * formatting them for SCSS compilation.
-	 *
-	 * @param array $userVars Custom variables provided for the compilation.
-	 * @return array The complete and processed array of variables for the SCSS compiler.
-	 */
-	protected static function prepareVariables(array $userVars): array {
-		// Define default SCSS variables and their values.
-		$la_defaultVars = [
-			'$pageWidth' => '1200px',
-			'$pagePadding' => '15px',
-			'$singlecolumnBreakpoint' => '768px',
-			'$menuBreakpoint' => '1024px',
-			'$columnMargin' => '30px',
-			// Add more defaults as necessary.
-		];
-
-		// Map of high-level variable names to their actual SCSS variable names.
-		$la_varMapping = [
-			'frontend_fullwidth' => '$gi_page_width',
-			'frontend_fullwidth_padding' => '$gi_page_padding',
-			'frontend_singlecolumn_breakpoint' => '$gi_singlecolumn_breakpoint',
-			'frontend_menu_breakpoint' => '$gi_menu_breakpoint',
-			'frontend_column_margin' => '$gi_column_margin',
-			'frontend_font_main' => '$gs_font_name_main',
-			'frontend_font_alternative' => '$gs_font_name_alternative',
-		];
-
-		// Process user variables and map them to their actual SCSS variable names.
-		foreach ($userVars as $ls_key => $ls_value) {
-			if (array_key_exists($ls_key, $la_varMapping)) {
-				$ls_scssVarName = $la_varMapping[ $ls_key ];
-
-				// Special handling for font names to ensure they're formatted correctly.
-				if (in_array($ls_scssVarName, ['$gs_font_name_main', '$gs_font_name_alternative']) && !empty($ls_value)) {
-					$ls_value = str_replace('+', ' ', "quote('" . $ls_value . "')");
-				}
-
-				$la_defaultVars[ $ls_scssVarName ] = $ls_value;
-			}
-		}
-
-		// Optionally add more complex logic here, such as pulling in variables from a config file
-		// or environment variables, checking for defined constants, etc.
-		// Example:
-		// if (defined('CUSTOM_VARIABLE')) {
-		//     $defaultVars['$custom_variable'] = constant('CUSTOM_VARIABLE');
-		// }
-
-		return $la_defaultVars;
 	}
 
 
@@ -259,11 +216,11 @@ class ScssCompiler {
 	 * @param string $basePath
 	 * @param array $vars The variables to be passed to the SCSS compiler.
 	 * @param bool $returnCss If true, returns the compiled CSS content; otherwise, writes it to the file system.
+	 * @param bool $includeColumnSystem
 	 * @return \ScssPhp\ScssPhp\CompilationResult|string|false
 	 * @throws \ScssPhp\ScssPhp\Exception\SassException
-	 * @throws \Exception
 	 */
-	public static function compileScss(SplFileInfo $file, string $basePath, array $vars, bool $returnCss): CompilationResult|string|false {
+	public static function compileScss(SplFileInfo $file, string $basePath, array $vars, bool $returnCss, bool $includeColumnSystem = false): CompilationResult|string|false {
 		// Make sure it's a .scss file.
 		if ($file->getExtension() !== 'scss') {
 			throw new InvalidArgumentException(sprintf('The file `%s` is not a valid SCSS file.', $file->getBasename()));
@@ -302,9 +259,32 @@ class ScssCompiler {
 			]);
 		}
 
+		$ls_fileContents = '';
+
+		/**
+		 * `Backend` is hardcoded here since both frontend and backend use the same column system.
+		 *
+		 * @var \Awyiss\Utility\Content\ColumnSystemInterface $ls_columnSystemClassName
+		 */
+		$ls_columnSystemClassName = Configure::read('Awyiss.Contents.Backend.columnSystem.className');
+		$la_columnSystemFilePaths = $ls_columnSystemClassName::getScssFilePaths();
+		if ($includeColumnSystem && !empty($la_columnSystemFilePaths['pre'])) {
+			foreach ($la_columnSystemFilePaths['pre'] as $ls_columnSystemFilePath) {
+				$ls_fileContents .= sprintf('@import \'%s\';' . PHP_EOL, $ls_columnSystemFilePath);
+			}
+		}
+
 		try {
+			$ls_fileContents .= file_get_contents($file->getPathname());
+
+			if ($includeColumnSystem && !empty($la_columnSystemFilePaths['pre'])) {
+				foreach ($la_columnSystemFilePaths['post'] as $ls_columnSystemFilePath) {
+					$ls_fileContents .= sprintf('@import \'%s\';' . PHP_EOL, $ls_columnSystemFilePath);
+				}
+			}
+
 			// Suppressing the error isn't ideal, but the library has a flaw with attribute selectors.
-			$lo_compilationResult = @$lo_scssCompiler->compileFile($file->getPathname()); // phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged
+			$lo_compilationResult = @$lo_scssCompiler->compileString($ls_fileContents, $file->getPathname()); // phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged
 
 			if ($returnCss) {
 				// If caller requests the CSS content, return it directly.
@@ -319,6 +299,12 @@ class ScssCompiler {
 				// Write the compiled CSS content and the source map to the file system.
 				file_put_contents($ls_cssFolderPath . $ls_cssFilename, $lo_compilationResult->getCss());
 				file_put_contents($ls_cssFolderPath . $ls_cssFilename . '.map', $lo_compilationResult->getSourceMap());
+
+				// If a minified version of the compiled file exists, remove it
+				$ls_minifiedCssFilename = substr($ls_cssFilename, 0, -4) . '.min.css';
+				if (file_exists($ls_cssFolderPath . $ls_minifiedCssFilename)) {
+					unlink($ls_cssFolderPath . $ls_minifiedCssFilename);
+				}
 			}
 		}
 		catch (Exception $ex) {
@@ -334,13 +320,10 @@ class ScssCompiler {
 
 				// Otherwise show a short message.
 				echo 'Cannot compile SCSS file `' . $file->getBasename() . '`';
-				exit;
 			}
-
 
 			return false;
 		}
-
 
 		// Return the compilation result.
 		return $lo_compilationResult;
@@ -353,7 +336,11 @@ class ScssCompiler {
 	 * @return array<string, array<array<string, string|int>>>
 	 */
 	protected static function getColumnSystemVariables(): array {
-		/** @var \Awyiss\Utility\Content\ColumnSystemInterface $ls_columnSystemClassName */
+		/**
+		 * `Backend` is hardcoded here since both frontend and backend use the same column system.
+		 *
+		 * @var \Awyiss\Utility\Content\ColumnSystemInterface $ls_columnSystemClassName
+		 */
 		$ls_columnSystemClassName = Configure::read('Awyiss.Contents.Backend.columnSystem.className');
 
 		$la_widths = [];
@@ -363,6 +350,7 @@ class ScssCompiler {
 				'class' => $lo_column->getCssClass(),
 				'numerator' => $lo_column->getNumerator(),
 				'denominator' => $lo_column->getDenominator(),
+				'percentage' => $lo_column->getFactor() * 100,
 			];
 		}
 
@@ -371,12 +359,15 @@ class ScssCompiler {
 				'class' => $lo_column->getCssClass(),
 				'numerator' => $lo_column->getNumerator(),
 				'denominator' => $lo_column->getDenominator(),
+				'percentage' => $lo_column->getFactor() * 100,
 			];
 		}
 
 		return [
-			'$columnWidths' => static::arrayToScssMap($la_widths),
-			'$columnIndents' => static::arrayToScssMap($la_indents),
+			'columnSystem' => $ls_columnSystemClassName::getName(),
+			'columnWidths' => static::arrayToScssMap($la_widths),
+			'columnIndents' => static::arrayToScssMap($la_indents),
+			'maxColumns' => $ls_columnSystemClassName::getMaxDenominator(),
 		];
 	}
 
@@ -404,5 +395,30 @@ class ScssCompiler {
 		}
 
 		return rtrim($ls_result, ', ') . ')';
+	}
+
+
+	/**
+	 * Normalizes the variables by adding the units to values
+	 *
+	 * @param array $variables
+	 * @return array
+	 */
+	protected static function normalizeVariables(array $variables): array {
+		$la_variables = [];
+
+		foreach ($variables as $ls_key => $lx_value) {
+			if (str_ends_with($ls_key, 'Unit')) {
+				continue;
+			}
+
+			$la_variables[ $ls_key ] = $lx_value;
+
+			if (!empty($lx_value) && isset($variables[ $ls_key . 'Unit' ])) {
+				$la_variables[ $ls_key ] .= $variables[ $ls_key . 'Unit' ];
+			}
+		}
+
+		return $la_variables;
 	}
 }

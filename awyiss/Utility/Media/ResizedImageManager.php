@@ -6,6 +6,7 @@ namespace Awyiss\Utility\Media;
 
 use Awyiss\Model\Entity\Media;
 use Awyiss\Model\Entity\MediaResizedImage;
+use Awyiss\Model\Enum\ProcessStatus;
 use Awyiss\Model\Enum\ResizeStrategy;
 use Awyiss\Model\Table\MediaResizedImagesTable;
 use Awyiss\Model\Table\MediaTable;
@@ -77,6 +78,10 @@ class ResizedImageManager {
 	 */
 	public function addMediaItem(Media $mediaItem): void {
 		static::$mediaItems[ $mediaItem->id ] = $mediaItem;
+
+		if ($mediaItem->mediaResizedImages) {
+			static::$resizedRecords[ $mediaItem->id ] = $mediaItem->mediaResizedImages;
+		}
 	}
 
 
@@ -98,6 +103,11 @@ class ResizedImageManager {
 		foreach ($mediaItems as $lx_mediaItem) {
 			if ($lx_mediaItem instanceof Media) {
 				static::$mediaItems[ $lx_mediaItem->id ] = $lx_mediaItem;
+
+				if ($lx_mediaItem->mediaResizedImages) {
+					static::$resizedRecords[ $lx_mediaItem->id ] = $lx_mediaItem->mediaResizedImages;
+				}
+
 				continue;
 			}
 
@@ -141,48 +151,77 @@ class ResizedImageManager {
 
 	/**
 	 * @param \Awyiss\Model\Entity\Media $media
-	 * @param int|null $width
-	 * @param int|null $height
+	 * @param float|int|null $width
+	 * @param float|int|null $height
 	 * @param \Awyiss\Model\Enum\ResizeStrategy $strategy
 	 * @param string $format
+	 * @param bool $strictSize
+	 * @param bool $allowUpscale
 	 * @return \Awyiss\Model\Entity\MediaResizedImage|null
 	 */
 	public function resize(
 		Media $media,
-		?int $width = null,
-		?int $height = null,
+		float|int|null $width = null,
+		float|int|null $height = null,
 		ResizeStrategy $strategy = ResizeStrategy::Contain,
-		string $format = 'webp'
+		string $format = 'webp',
+		bool $strictSize = false,
+		bool $allowUpscale = false,
 	): ?MediaResizedImage {
-		$this->addMediaItem($media);
-		$this->fetchMissingResizedRecords();
+		if (
+			!$media->path ||
+			// If the media item is an SVG, return null
+			$media->mimeType === 'image/svg+xml' ||
+			// If the media item requires a preview (not an image) but the preview is not yet created, return null
+			($media->preview !== ProcessStatus::NotRequired && $media->preview !== ProcessStatus::Success)
+		) {
+			return null;
+		}
 
 		// Throw an error if both width and height are null
 		if ($width === null && $height === null) {
 			throw new InvalidArgumentException('Either width or height must be set.');
 		}
 
-		if (!$height) {
-			// If the strategy isn't contain and no height is set, throw an error
+		// Add the media item to the static storage
+		$this->addMediaItem($media);
+		$this->fetchMissingResizedRecords();
+
+		/**
+		 * If the width or height is not set, check if the strategy is "contain",
+		 * otherwise throw an error
+		 */
+		if (!$width || !$height) {
+			// If the strategy isn't contain, throw an error
 			if ($strategy !== ResizeStrategy::Contain) {
-				throw new InvalidArgumentException('Height must be set when using a strategy other than contain.');
-			}
-			// If the strategy is "contain" and no height is set, check if a resized image with a width below a certain threshold exists
-			else {
-				$lo_resizedImage = $this->findWithinThreshold($media, $width, $format);
-
-				if ($lo_resizedImage) {
-					if (!$lo_resizedImage->media) {
-						$lo_resizedImage->media = $media;
-					}
-
-					return $lo_resizedImage;
-				}
+				throw new InvalidArgumentException('Both width and height must be set if the resize strategy is not "contain".');
 			}
 		}
 
+		// If the width and height are the same as the original, return null
+		if (
+			(!$width || $width == $media->width) &&
+			(!$height || $height == $media->height)
+		) {
+			return null;
+		}
+
+		// If the image is not allowed to be upscaled, check if the requested size is larger than the original
+		if (!$allowUpscale) {
+			// If that's the case, return null
+			if (
+				($width && $width > $media->width) ||
+				($height && $height > $media->height)
+			) {
+				return null;
+			}
+		}
+
+		$li_width = $width ? (int)$width : null;
+		$li_height = $height ? (int)$height : null;
+
 		// Check if the media item is already resized
-		$lo_resizedImage = $this->findResizedImage($media, $width, $height, $strategy, $format);
+		$lo_resizedImage = $this->findResizedImage($media, $li_width, $li_height, $strategy, $format, $strictSize);
 
 		if ($lo_resizedImage) {
 			if (!$lo_resizedImage->media) {
@@ -192,7 +231,7 @@ class ResizedImageManager {
 			return $lo_resizedImage;
 		}
 
-		$lo_resizedImage = static::$mediaResizedImagesTable->newEntityFromMedia($media, $width, $height, $strategy, $format);
+		$lo_resizedImage = static::$mediaResizedImagesTable->newEntityFromMedia($media, $li_width, $li_height, $strategy, $format);
 
 		if (!static::$mediaResizedImagesTable->save($lo_resizedImage, ['associated' => false])) {
 			return null;
@@ -232,21 +271,38 @@ class ResizedImageManager {
 
 
 	/**
-	 * Find a resized image with a width below a certain threshold
+	 * Find a resized image with a size larger than the given one,
+	 * but within a certain threshold.
+	 * If a strategy is provided, the image must have the same strategy
 	 *
 	 * @param \Awyiss\Model\Entity\Media $media
 	 * @param int|null $width
+	 * @param int|null $height
 	 * @param string $format
+	 * @param \Awyiss\Model\Enum\ResizeStrategy|null $strategy
 	 * @return \Awyiss\Model\Entity\MediaResizedImage|null
 	 */
-	public function findWithinThreshold(Media $media, ?int $width, string $format): ?MediaResizedImage {
+	public function findWithinThreshold(Media $media, ?int $width, ?int $height, string $format, ?ResizeStrategy $strategy = null): ?MediaResizedImage {
 		$lo_resizedImages = static::$resizedRecords[ $media->id ] ?? [];
 
-		$li_threshold = ceil($width * 1.1);
+		$li_widthThreshold = $width ? ceil($width * 1.1) : null;
+		$li_heightThreshold = $height ? ceil($height * 1.1) : null;
 
 		/** @var \Awyiss\Model\Entity\MediaResizedImage $lo_resizedImage */
 		foreach ($lo_resizedImages as $lo_resizedImage) {
-			if ($lo_resizedImage->width >= $width && $lo_resizedImage->width <= $li_threshold && $lo_resizedImage->extension === $format) {
+			if ($strategy && $lo_resizedImage->strategy !== $strategy) {
+				continue;
+			}
+
+			if ($width && ($lo_resizedImage->width < $width || $lo_resizedImage->width > $li_widthThreshold)) {
+				continue;
+			}
+
+			if ($height && ($lo_resizedImage->height < $height || $lo_resizedImage->height > $li_heightThreshold)) {
+				continue;
+			}
+
+			if ($lo_resizedImage->extension === $format) {
 				return $lo_resizedImage;
 			}
 		}
@@ -263,14 +319,35 @@ class ResizedImageManager {
 	 * @param int|null $height
 	 * @param \Awyiss\Model\Enum\ResizeStrategy $strategy
 	 * @param string $format
+	 * @param bool $strictSize
 	 * @return \Awyiss\Model\Entity\MediaResizedImage|null
 	 */
-	protected function findResizedImage(Media $media, ?int $width, ?int $height, ResizeStrategy $strategy, string $format): ?MediaResizedImage {
+	protected function findResizedImage(
+		Media $media,
+		?int $width,
+		?int $height,
+		ResizeStrategy $strategy,
+		string $format,
+		bool $strictSize = false,
+	): ?MediaResizedImage {
 		$lo_resizedImages = static::$resizedRecords[ $media->id ] ?? [];
 
 		/** @var \Awyiss\Model\Entity\MediaResizedImage $lo_resizedImage */
 		foreach ($lo_resizedImages as $lo_resizedImage) {
 			if ($lo_resizedImage->width === $width && $lo_resizedImage->height === $height && $lo_resizedImage->strategy === $strategy && $lo_resizedImage->extension === $format) {
+				return $lo_resizedImage;
+			}
+		}
+
+		// If the size doesn't have to be strict, check if there is a resized image within a certain threshold
+		if (!$strictSize) {
+			$lo_resizedImage = $this->findWithinThreshold($media, $width, $height, $format, $strategy);
+
+			if ($lo_resizedImage) {
+				if (!$lo_resizedImage->media) {
+					$lo_resizedImage->media = $media;
+				}
+
 				return $lo_resizedImage;
 			}
 		}

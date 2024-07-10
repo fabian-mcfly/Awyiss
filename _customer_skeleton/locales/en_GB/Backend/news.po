@@ -1,0 +1,8 @@
+msgid "meta_title_overview"
+msgstr "News"
+
+msgid "meta_title_add"
+msgstr "Add News"
+
+msgid "meta_title_edit"
+msgstr "Edit News"

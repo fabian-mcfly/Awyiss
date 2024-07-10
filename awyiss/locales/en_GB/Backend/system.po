@@ -246,13 +246,13 @@ msgid "media_elements_assigned"
 msgstr "Assigned Media Elements"
 
 msgid "headline_error_400"
-msgstr "Error 404"
+msgstr "Spooky!"
 
 msgid "subtitle_error_400"
-msgstr "The requested page could not be found."
+msgstr "Whoa! Where have we landed? The page could not be found."
 
 msgid "headline_error_500"
-msgstr "Error"
+msgstr "It's haunted here!"
 
 msgid "subtitle_error_500"
-msgstr "Something went wrong. Please contact the administrator."
+msgstr "Boh! Something seems to have gone wrong. Please try again later."

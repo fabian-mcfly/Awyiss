@@ -708,7 +708,7 @@ class AuditBehavior extends Behavior {
 		if (!$entity->hasOriginal($field)) {
 			/** @var Entity $lo_entity */
 			$lo_entity = $entity->get($field);
-			if (is_a($lo_entity, 'Awyiss\Model\Entity') && !$entity->get($field)->isNew()) {
+			if ($lo_entity instanceof Entity && !$entity->get($field)->isNew()) {
 				$la_oldData = array_diff_key($lo_entity->getOriginalValues(), $la_keys);
 			}
 			else {
@@ -719,8 +719,7 @@ class AuditBehavior extends Behavior {
 				//Do not fuck around with the original entity;
 				$lo_clonedEntity = clone $entity;
 				$this->table()->loadInto($lo_clonedEntity, [$association->getName()]);
-				if ($lo_clonedEntity->get($field)) {
-					//$oldData[ $field ] = $lo_clonedEntity->get($field);
+				if ($lo_clonedEntity->get($field) instanceof Entity) {
 					$la_oldData = $lo_clonedEntity->get($field)->getOriginalValues();
 				}
 			}

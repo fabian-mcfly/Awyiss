@@ -165,6 +165,18 @@ class ContentsTable extends Table {
 
 
 	/**
+	 * @param \Cake\ORM\Query\SelectQuery $query
+	 * @param array $options
+	 * @return \Cake\ORM\Query\SelectQuery
+	 */
+	public function findLatestForPages(SelectQuery $query, array $options): SelectQuery {
+		return $query->select(['page_id', 'id', 'changed_on', 'created_on'])
+		->orderBy(['changed_on' => 'DESC', 'created_on' => 'DESC'])
+		->distinct(['page_id'])->groupBy('page_id');
+	}
+
+
+	/**
 	 * @return void
 	 */
 	protected function initializeColumnSystem(): void {

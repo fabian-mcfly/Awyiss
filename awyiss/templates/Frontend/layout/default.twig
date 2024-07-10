@@ -1,0 +1,138 @@
+{#
+@var page \Awyiss\Model\Entity\Page
+@var pageRoleEnum \Awyiss\Model\Enum\PageRoleEnumInterface
+@var baseUrl string
+@var currentLanguage \Awyiss\Model\Entity\Language
+@var currentPath string
+@var currentUrl string
+@var folder string
+@var languages \Awyiss\Model\Entity\Language[]
+@var languageShortcode string
+@var _view \Awyiss\View\FrontendView
+@var AssetHelper \Awyiss\View\Helper\AssetHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+@var HtmlHelper \Awyiss\View\Helper\HtmlHelper
+@var LocaleHelper \Awyiss\View\Helper\LocaleHelper
+@var MediaHelper \Awyiss\View\Helper\MediaHelper
+@var UrlHelper \Awyiss\View\Helper\UrlHelper
+@var TimeHelper \Awyiss\View\Helper\TimeHelper
+#}
+{%- block html %}
+{%- set htmlClass = fetch('htmlClass') %}
+{%- if htmlClass == '' %}
+	{%- set htmlClass = page.slug|split('/')|map(e => e|ucparts)|map(e => e|prefixNumericClass)|join(' ')|trim %}
+	{%- set htmlClass = htmlClass ~ ' PageRole-' ~ page.pageRoleId.name|ucparts %}
+	{%- set htmlClass = htmlClass ~ ' ' ~ page.pageRoleId.name|ucparts ~ 'Template-' ~ page.pageTemplate.fileName|ucparts %}
+	{%- if environment %}
+		{%- set htmlClass = htmlClass ~ ' ' ~ environment %}
+	{%- endif %}
+{%- endif -%}
+<!DOCTYPE html>
+<html lang="{{ page.language.shortcode }}" id="Page{{ page.id }}" class="NoJS {{ htmlClass }}">
+	{% block head %}
+		<head>
+			{% block headInner -%}
+				{% block meta %}
+					{{ HtmlHelper.charset() }}
+					<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+					<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+					<meta http-equiv="X-UA-Compatible" content="ie=edge">
+					{% block metaTitle -%}
+						{% set metaTitle = fetch('metaTitle') -%}
+						{% if metaTitle == '' -%}
+							{% set metaTitle = page.metaTitle -%}
+							{% if metaTitle is empty -%}
+								{% set metaTitle = page.title -%}
+								{% set metaTitle = metaTitle ~ config('Awyiss.System.Frontend.meta.titleSeparator') ~ config('Awyiss.System.Frontend.meta.titleAppendix') -%}
+							{% endif -%}
+						{% endif -%}
+						<title>{{ metaTitle }}</title>
+						<meta property="og:title" content="{{ metaTitle }}">
+					{% endblock %}
+					{% block metaDescription %}
+						{%- set metaDescription = fetch('metaDescription') -%}
+						{%- if metaDescription == '' -%}
+							{%- set metaDescription = page.metaDescription -%}
+						{%- endif -%}
+						{%- if metaDescription is not empty -%}
+							<meta name="description" content="{{ metaDescription }}">
+							<meta property="og:description"	content="{{ metaDescription }}">
+						{%- endif -%}
+					{% endblock %}
+
+					<meta name="robots" content="{{ page.robotsIndex ? 'index' : 'noindex' }},{{ page.robotsFollow ? 'follow' : 'nofollow' }}">
+
+					{%- if config('Awyiss.System.Frontend.meta.googleSiteVerification') %}
+						<meta name="google-site-verification" content="{{ config('Awyiss.System.Frontend.meta.googleSiteVerification') }}">
+					{%- endif %}
+				{% endblock %}
+
+				{%- block baseUrl -%}
+					<base href="{{ baseUrl }}">
+				{%- endblock -%}
+
+				{%- set canonical = fetch('canonical') -%}
+				{%- if canonical == '' and page.duplicateOf and page.duplicate.slug != '404' -%}
+					{% set canonical = UrlHelper.build({lang: page.duplicate.languageShortcode, slug: page.duplicate.slug}) -%}
+				{%- endif %}
+
+				{%- if canonical != '' -%}
+					<link rel="canonical" href="{{ canonical }}">
+				{%- endif -%}
+
+				{%- block favicons -%}
+					<link rel="apple-touch-icon" sizes="180x180" href="{{ baseUrl }}assets/favicon/apple-touch-icon.png">
+					<link rel="icon" type="image/png" sizes="32x32" href="{{ baseUrl }}assets/favicon/favicon-32x32.png">
+					<link rel="icon" type="image/png" sizes="16x16" href="{{ baseUrl }}assets/favicon/favicon-16x16.png">
+					<link rel="manifest" href="{{ baseUrl }}assets/favicon/site.webmanifest">
+					<link rel="mask-icon" href="{{ baseUrl }}assets/favicon/safari-pinned-tab.svg" color="#63d1a5">
+					<link rel="shortcut icon" href="{{ baseUrl }}assets/favicon/favicon.ico">
+					<meta name="msapplication-TileColor" content="#ffffff">
+					<meta name="msapplication-config" content="{{ baseUrl }}assets/favicon/browserconfig.xml">
+					<meta name="theme-color" content="#ffffff">
+				{%- endblock -%}
+
+				{%- block headStylesheets -%}
+					{%- do AssetHelper.add('full.css', [], true) -%}
+				{%- endblock -%}
+
+				{%- block headScripts -%}
+					{{- element('scripts', {page: page}) -}}
+				{%- endblock -%}
+
+				{%- block frontendEditorConfig -%}
+					{% if frontendEditorConfig %}
+						{% do AssetHelper.add(['frontend_editor.css', 'frontend_editor.js'], {realm: 'Backend'}) %}
+					{% endif %}
+				{%- endblock -%}
+
+				{%- block headAssetTags -%}
+					{{- AssetHelper.createImportMap() -}}
+					{{- AssetHelper.getTags('all', true) -}}
+				{%- endblock -%}
+			{%- endblock -%}
+		</head>
+	{% endblock %}
+	{% block body %}
+		<body>
+			{% block bodyInner %}
+				{% block bodyHeader %}
+					{% include '@Frontend/element/header.twig' %}
+				{% endblock %}
+
+				{% block bodyContent %}
+					{{ fetch('content') }}
+				{% endblock %}
+
+				{% block bodyFooter %}
+					{% include '@Frontend/element/footer.twig' %}
+				{% endblock %}
+
+				{%- block bodyAssetTags -%}
+					{{- AssetHelper.getTags('all', false) -}}
+				{%- endblock %}
+			{% endblock %}
+		</body>
+	{% endblock %}
+</html>
+{% endblock %}

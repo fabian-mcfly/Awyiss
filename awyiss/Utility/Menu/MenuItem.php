@@ -6,7 +6,9 @@ namespace Awyiss\Utility\Menu;
 
 use ArrayAccess;
 use Awyiss\Authorization\IdentityPermissionsInterface;
+use Awyiss\Model\Entity;
 use Awyiss\Model\Entity\BackendMenuEntry;
+use Awyiss\Model\Entity\MenuEntry;
 use Awyiss\Routing\Router;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Utility\Inflector;
@@ -41,6 +43,10 @@ class MenuItem implements ArrayAccess {
 	 * @var array
 	 */
 	protected array $_defaultConfig = [];
+	/**
+	 * @var \Awyiss\Model\Entity
+	 */
+	protected Entity $entity;
 	/**
 	 * @var string|int|null
 	 */
@@ -84,12 +90,16 @@ class MenuItem implements ArrayAccess {
 		$this->link = $data->link;
 		$this->title = $data->title;
 
-		if ($data instanceof BackendMenuEntry) {
-			if ($this->access) {
-				$this->access = (object)$this->access;
+		if ($data instanceof MenuEntry || $data instanceof BackendMenuEntry) {
+			if ($data instanceof BackendMenuEntry) {
+				if ($this->access) {
+					$this->access = (object)$this->access;
+				}
 			}
 
 			$this->convertEntityLink($data);
+
+			$this->entity = $data;
 		}
 
 		if (!empty($data->children)) {
@@ -114,6 +124,10 @@ class MenuItem implements ArrayAccess {
 	 * If the accessibility is not set, it returns null.
 	 */
 	public function isAccessible(): ?bool {
+		if ($this->accessible === null && ($this->entity ?? null) instanceof MenuEntry) {
+			return true;
+		}
+
 		return $this->accessible;
 	}
 
@@ -179,16 +193,25 @@ class MenuItem implements ArrayAccess {
 	public function isCurrentRoute(string $currentRoute): bool {
 		static $ls_fullBaseUrl;
 
+		if (empty($currentRoute)) {
+			return false;
+		}
+
 		$ls_testUrl = $this->getLink()?->url;
 		if (!$ls_testUrl) {
 			return false;
 		}
 
+		$ls_testUrl = rtrim($ls_testUrl, '/');
+
 		if (!isset($ls_fullBaseUrl)) {
 			$ls_fullBaseUrl = Router::fullBaseUrl();
 		}
 
-		$ls_testUrl = substr_replace($ls_testUrl, '', 0, strlen($ls_fullBaseUrl));
+		if (str_starts_with($ls_testUrl, $ls_fullBaseUrl)) {
+			$ls_testUrl = substr_replace($ls_testUrl, '', 0, strlen($ls_fullBaseUrl));
+		}
+
 		if ($ls_testUrl === $currentRoute) {
 			return true;
 		}
@@ -200,7 +223,7 @@ class MenuItem implements ArrayAccess {
 				return !str_contains($segment, ':');
 			});
 
-			$ls_cleanRoute = '/' . implode('/', $la_segments) . '/';
+			$ls_cleanRoute = '/' . implode('/', $la_segments);
 
 
 			return $ls_testUrl === $ls_cleanRoute;
@@ -297,6 +320,26 @@ class MenuItem implements ArrayAccess {
 
 
 	/**
+	 * Gets the entity of the menu item.
+	 *
+	 * @return \Awyiss\Model\Entity
+	 */
+	public function getEntity(): Entity {
+		return $this->entity;
+	}
+
+
+	/**
+	 * Checks if the menu item has an entity.
+	 *
+	 * @return bool
+	 */
+	public function hasEntity(): bool {
+		return isset($this->entity);
+	}
+
+
+	/**
 	 * Sets the identity of the menu item.
 	 *
 	 * @param \Awyiss\Authorization\IdentityPermissionsInterface $identity The identity to set.
@@ -378,7 +421,6 @@ class MenuItem implements ArrayAccess {
 			$this->link->attributes = (array)$this->link->attributes;
 		}
 
-
 		return $this->link;
 	}
 
@@ -451,6 +493,11 @@ class MenuItem implements ArrayAccess {
 	 * @return bool|null The visibility of the menu item.
 	 */
 	public function isVisible(): ?bool {
+		// If the item is a menu entry, it is always visible
+		if ($this->entity ?? null instanceof MenuEntry) {
+			return true;
+		}
+
 		return $this->visible;
 	}
 
@@ -488,10 +535,10 @@ class MenuItem implements ArrayAccess {
 	/**
 	 * Converts the link of the menu item from a BackendMenuEntry.
 	 *
-	 * @param \Awyiss\Model\Entity\BackendMenuEntry $data The BackendMenuEntry to convert from.
+	 * @param \Awyiss\Model\Entity\MenuEntry|\Awyiss\Model\Entity\BackendMenuEntry $data The BackendMenuEntry to convert from.
 	 * @return void
 	 */
-	protected function convertEntityLink(BackendMenuEntry $data): void {
+	protected function convertEntityLink(MenuEntry|BackendMenuEntry $data): void {
 		if (empty($this->link)) {
 			$this->link = null;
 
@@ -499,7 +546,7 @@ class MenuItem implements ArrayAccess {
 			return;
 		}
 
-		if (!str_contains($this->link, '::')) {
+		if (!str_contains($this->link, '::') || $data instanceof MenuEntry) {
 			$la_linkData = [
 				'url' => !str_contains($this->link, '//') ? Router::url($this->link) : $this->link,
 			];

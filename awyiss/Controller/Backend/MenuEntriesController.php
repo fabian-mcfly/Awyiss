@@ -11,6 +11,7 @@ use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity\MenuEntry;
 use Awyiss\Model\Table;
 use Awyiss\Routing\Router;
+use Awyiss\Utility\Inflector;
 use Cake\Collection\CollectionInterface;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
@@ -54,6 +55,16 @@ class MenuEntriesController extends Controller {
 	 */
 	public function overview(): void {
 		$this->Authorization->ensure('read');
+
+		if ($this->request->getParam('menuIdentifier')) {
+			$lo_menu = $this->fetchTable('Menus')->findByIdentifier(Inflector::underscore($this->request->getParam('menuIdentifier')))->first();
+			if ($lo_menu) {
+				throw new RedirectException(Router::url([
+					'action' => 'overview',
+					'menuId' => $lo_menu->id,
+				], true), 302);
+			}
+		}
 
 		$lo_query = $this->getOverviewQuery();
 

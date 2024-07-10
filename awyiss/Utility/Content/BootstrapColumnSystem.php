@@ -137,6 +137,14 @@ class BootstrapColumnSystem implements ColumnSystemInterface {
 	/**
 	 * @inheritDoc
 	 */
+	public static function getScssFilePaths(): array {
+		return [];
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
 	public static function getName(): string {
 		return 'Bootstrap';
 	}

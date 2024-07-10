@@ -24,6 +24,10 @@ use Awyiss\Model\Entity;
  * @property \Cake\I18n\DateTime|null $changedOn
  * @property int|null $deletedBy
  * @property \Cake\I18n\DateTime|null $deletedOn
+ * @property \Awyiss\Model\Entity\MediaElement $mediaElement
+ * @property \Awyiss\Model\Entity\MediaElementAssignment[] $mediaElementAssignment
+ * @property \Awyiss\Model\Entity\MediaElementSelector[] $mediaElementSelector
+ * @property \Awyiss\Model\Entity\Media|null $media
  */
 class MediaAssignment extends Entity {
 	/**
@@ -45,6 +49,8 @@ class MediaAssignment extends Entity {
 		'changed_by_user' => 'changedByUser',
 		'deleted_by_user' => 'deletedByUser',
 		'media_element' => 'mediaElement',
+		'media_element_assignment' => 'mediaElementAssignment',
+		'media_element_selector' => 'mediaElementSelector',
 	];
 	/**
 	 * @inheritDoc

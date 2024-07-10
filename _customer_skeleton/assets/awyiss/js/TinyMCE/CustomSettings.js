@@ -12,7 +12,8 @@ export default class CustomSettings {
 	 */
 	settings = {
 		content_css: [
-			'assets/css/tinymce.css',
+			// Use a random timestamp to prevent caching in the frontend editor iframe
+			'assets/css/tinymce.' + this.generateRandomTimestamp() + '.css',
 		],
 		font_css: [],
 	};
@@ -24,6 +25,8 @@ export default class CustomSettings {
 		{
 			title: 'Text',
 			items: [
+				{title: 'Hauptfarbe', inline: 'span', classes: 'Textcolor-Main'},
+				{title: 'Kontrastfarbe', inline: 'span', classes: 'Textcolor-Contrast'},
 				{title: 'Großbuchstaben', inline: 'span', classes: 'Uppercase'},
 				{
 					title: 'Größe',
@@ -39,7 +42,7 @@ export default class CustomSettings {
 		{
 			title: 'Links',
 			items: [
-				{title: 'Externer Link ohne Icon', selector: 'a[target]', classes: 'NoIcon'},
+				{title: 'Externer Link ohne Icon', selector: 'a[target]', classes: 'NoExternalLinkIcon'},
 				{title: 'Button', selector: 'a, button', classes: 'Button'}
 			]
 		}
@@ -50,27 +53,52 @@ export default class CustomSettings {
 	 */
 	userLanguage;
 
-	constructor(language, userLanguage) {
-
+	/**
+	 *
+	 * @param {string} language
+	 * @param {string} userLanguage
+	 * @param {Object} designVariables
+	 */
+	constructor(language, userLanguage, designVariables) {
+		/*
+		 * Insert alternative font at offset 1 in styleFormats[0].items
+		 * if `fontNameAlternative` is set in designVariables and not empty
+		 */
+		if (designVariables.fontNameAlternative) {
+			this.styleFormats[0].items.splice(2, 0, {title: 'Schmuckschrift', selector: 'p, h1, h2, h3, h4, h5, h6, li', classes: 'FontAlternative'});
+		}
 	}
 
 	/**
 	 * Returns the custom settings, merged with the default settings
 	 *
-	 * @param defaultSettings
+	 * @param {Object} defaultSettings
+	 * @param {Object} designVariables
 	 * @returns {*}
 	 */
-	getSettings(defaultSettings) {
+	getSettings(defaultSettings, designVariables) {
 		return {...defaultSettings, ...this.settings};
 	}
 
 	/**
 	 * Returns the custom style formats, merged with the default style formats
 	 *
-	 * @param defaultStyleFormats
+	 * @param {Object} defaultStyleFormats
+	 * @param {Object} designVariables
 	 * @returns {Array}
 	 */
-	getStyleFormats(defaultStyleFormats) {
+	getStyleFormats(defaultStyleFormats, designVariables) {
 		return [...defaultStyleFormats, ...this.styleFormats];
+	}
+
+	/**
+	 * Generates a random timestamp
+	 * @returns {number}
+	 */
+	generateRandomTimestamp() {
+		const now = new Date();
+		const randomOffset = Math.floor(Math.random() * 1000000000); // Generate a random number of milliseconds
+		const randomDate = new Date(now.getTime() + randomOffset);
+		return Math.floor(randomDate.getTime() / 1000); // Return the Unix timestamp
 	}
 }

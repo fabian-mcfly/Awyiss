@@ -93,7 +93,7 @@ class LocaleMiddleware implements MiddlewareInterface {
 		I18n::config('_fallback', function ($domain, $locale) {
 			$ls_domain = $domain;
 			if (!str_contains($ls_domain, '/')) {
-				$ls_domain = static::getRealm() . DS . $ls_domain;
+				$ls_domain = static::getRealm() . '/' . $ls_domain;
 			}
 
 			$lo_fileLoader = new MessagesFileLoader($ls_domain, $locale, 'po');

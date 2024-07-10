@@ -1,0 +1,2 @@
+msgid "menu_trigger_open"
+msgstr "Menu"
