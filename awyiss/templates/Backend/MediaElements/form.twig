@@ -99,6 +99,7 @@
 
 									{{ FormHelper.control('media_element_selectors.' ~ counter ~ '.identifier', {
 										required: true,
+										'data-autofill-from-title': 'true',
 									}) }}
 
 									{{ FormHelper.control('media_element_selectors.' ~ counter ~ '.column_span', {
@@ -133,6 +134,7 @@
 
 								{{ FormHelper.control('media_element_selectors.' ~ counter ~ '.identifier', {
 									required: true,
+									'data-autofill-from-title': 'true',
 								}) }}
 
 								{{ FormHelper.control('media_element_selectors.' ~ counter ~ '.column_span', {

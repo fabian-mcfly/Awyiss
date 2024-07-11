@@ -89,21 +89,52 @@ export default class IdentifierAutofill {
 
 			let input = form.querySelector(`input[name="${title}"]`);
 
+			// If no input was found, the name of the element ends with `]` and the input is inside a list item, try to find the input in the list item
+			if (!input && element.name.endsWith(']')) {
+				const listItem = element.closest('.FormInputType-ListItem');
+
+				// Find the last opening bracket in the name
+				const lastOpeningBracket = element.name.lastIndexOf('[');
+
+				// Extract the name of the input
+				const inputName = element.name.substring(0, lastOpeningBracket + 1) + title + ']';
+				const possibleInput = listItem.querySelector(`input[name^="${inputName}"]`);
+
+				if (possibleInput) {
+					input = possibleInput;
+				}
+			}
+
 			if (!input) {
+				let parent = form;
+
+				const listItem = element.closest('.FormInputType-ListItem');
+				if (listItem) {
+					parent = listItem;
+				}
+
 				// Check if the input is inside a translatable text field.
 				// In this case, we need to get the input for the current language as the source
-				const translatableTexts = form.querySelectorAll('.FormInputType-TranslatableText')
+				const translatableTexts = parent.querySelectorAll('.FormInputType-TranslatableText');
+
 				translatableTexts.forEach(translatableText => {
-					const possibleInput = translatableText.querySelector(`input[name^="_translations"][name$="[${title}]"]`);
+					let possibleInput = translatableText.querySelector(`input[name^="_translations"][name$="[${title}]"]`);
+
+					if (!possibleInput) {
+						// Find the last opening bracket in the name
+						const lastOpeningBracket = element.name.lastIndexOf('[');
+						const inputName = element.name.substring(0, lastOpeningBracket + 1) + '_translations]';
+						possibleInput = translatableText.querySelector(`input[name^="${inputName}"][name$="[${title}]"]`);
+					}
 
 					if (possibleInput) {
 						input = translatableText.querySelector(`.FormInput.IsCurrentLanguage input`);
 					}
 				});
+			}
 
-				if (!input) {
-					return;
-				}
+			if (!input) {
+				return;
 			}
 
 			this.inputs.push({
