@@ -65,12 +65,12 @@ if (!function_exists('__d')) {
 		}
 
 		$ls_domain = $domain;
-		if (!str_contains($domain, '/')) {
+		if (!str_contains($domain, '/') && $domain !== 'cake') {
 			$ls_domain = Awyiss::getRealm() . '/' . $domain;
 		}
 		$ls_return = I18n::getTranslator($ls_domain)->translate($string, $la_args);
 
-		if ($ls_return === $string || empty($ls_return)) {
+		if (($ls_return === $string || empty($ls_return)) && $domain !== 'cake') {
 			$ls_return = $domain . '::' . $string;
 
 			// Fallback to system domain
