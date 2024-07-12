@@ -129,12 +129,12 @@ class FrontendEditor {
 		this.overlay = document.createElement('div');
 		this.overlay.id = 'AwyissFrontendEditor';
 
-		const inner = document.createElement('div');
-		inner.classList.add('Inner');
-		this.overlay.appendChild(inner);
+		this.overlay.inner = document.createElement('div');
+		this.overlay.inner.classList.add('Inner');
+		this.overlay.appendChild(this.overlay.inner);
 
 		this.iframe = document.createElement('iframe');
-		inner.appendChild(this.iframe);
+		this.overlay.inner.appendChild(this.iframe);
 
 		document.body.appendChild(this.overlay);
 
@@ -270,7 +270,7 @@ class FrontendEditor {
 		this.editLink.classList.remove('Visible');
 		this.highlightElement.classList.remove('Visible');
 
-		this.iframe.src = url + 'mode:frontend-editor/';
+		this.iframe.contentWindow.location.replace(url + 'mode:frontend-editor/');
 		this.overlay.classList.add('Visible');
 	}
 
@@ -280,8 +280,12 @@ class FrontendEditor {
 	 * @returns {void}
 	 */
 	hideOverlay() {
-		this.iframe.src = '';
 		this.overlay.classList.remove('Visible');
+
+		// Remove the iframe and create a new one
+		this.iframe.remove();
+		this.iframe = document.createElement('iframe');
+		this.overlay.inner.appendChild(this.iframe);
 	}
 
 	/**
