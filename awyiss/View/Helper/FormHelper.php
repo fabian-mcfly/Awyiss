@@ -10,6 +10,7 @@ use Awyiss\View\StringTemplate;
 use Cake\Datasource\EntityInterface;
 use Cake\Utility\Inflector;
 use Cake\View\Form\EntityContext;
+use Cake\View\Form\NullContext;
 use Cake\View\Helper\FormHelper as BaseFormHelper;
 use Cake\View\View;
 
@@ -359,6 +360,10 @@ class FormHelper extends BaseFormHelper {
 		$la_parts = explode('.', $field);
 		$ls_field = array_pop($la_parts);
 
+		if ($this->_getContext() instanceof NullContext) {
+			return false;
+		}
+
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 		$lo_entity = $this->_getContext()->entity();
 		$lo_associatedEntity = $lo_entity->get($la_parts[0]);
@@ -395,6 +400,10 @@ class FormHelper extends BaseFormHelper {
 			$la_error = $lo_context->error($ls_field);
 		}
 		else {
+			if ($lo_context instanceof NullContext) {
+				return '';
+			}
+
 			$la_parts = explode('.', $ls_field);
 			$ls_field = array_pop($la_parts);
 			/** @var \Awyiss\Model\Entity $lo_entity */
