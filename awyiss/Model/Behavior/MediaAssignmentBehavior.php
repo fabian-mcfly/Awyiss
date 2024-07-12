@@ -143,6 +143,11 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 
 		/** @var \Awyiss\Model\Entity\MediaAssignment $lo_mediaAssignment */
 		foreach (($entity['mediaAssignments'] ?? []) as $lo_mediaAssignment) {
+			if (is_array($lo_mediaAssignment)) {
+				// Seems like the media assignments have already been rebuilt
+				return $entity;
+			}
+
 			$lo_element = static::$mediaElements[ $lo_mediaAssignment->mediaElementId ];
 			$ls_elementIdentifier = Inflector::variable($lo_element->identifier);
 
