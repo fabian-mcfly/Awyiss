@@ -35,6 +35,9 @@ class ConfigOptionsProvider {
 	 * @var bool
 	 */
 	protected static bool $foundAll = false;
+	/**
+	 * @var bool
+	 */
 	protected static bool $loadedAll = false;
 
 
@@ -292,7 +295,7 @@ class ConfigOptionsProvider {
 
 				if (!$lo_reflection->implementsInterface(ConfigOptionsInterface::class)) {
 					throw new RuntimeException(
-						sprintf('The provided Configuration class `%s` does not extend the `%s` class.', $ls_configurationClass, ConfigOptionsInterface::class)
+						sprintf('The provided Configuration class `%s` does not implement `%s`.', $ls_configurationClass, ConfigOptionsInterface::class)
 					);
 				}
 
