@@ -2,7 +2,8 @@
 	&.Form {
 		fieldset {
 			&.Collapsed {
-				.FormInputName-Path {
+				.FormInputName-Path,
+				.FormInputName-LanguageShortcode {
 					display:none;
 				}
 			}
