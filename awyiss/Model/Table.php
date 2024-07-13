@@ -910,7 +910,7 @@ class Table extends BaseTable {
 					$schema->setColumnType($lo_attribute->identifier, 'json');
 				}
 
-				if ($la_column['default'] !== $lo_attribute->defaultValue) {
+				if (($la_column['default'] ?? null) !== $lo_attribute->defaultValue) {
 					$la_column['default'] = $lo_attribute->defaultValue;
 					$schema->addColumn($lo_attribute->identifier, $la_column);
 				}
