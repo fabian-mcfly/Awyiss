@@ -119,8 +119,8 @@ class MediaHelper extends Helper {
 			return '<style>' . $lo_mediaRenderOptions->getSelector() . ' { ' . $ls_backgroundColorStyle . ' }</style>';
 		}
 
-		// If no width or height is set, use the column width
-		if (!$mediaRenderOptions->getWidth() && !$mediaRenderOptions->getHeight()) {
+		// If responsive is set, use the column width
+		if ($mediaRenderOptions->getResponsive()) {
 			$li_width = $this->getPixelColumnWidth($lo_mediaRenderOptions);
 			$lo_file = $this->resize($media, renderOptions: $lo_mediaRenderOptions->withWidth($li_width));
 		}
@@ -133,23 +133,24 @@ class MediaHelper extends Helper {
 			$ls_path = $media->isImage() ? ($media->webpPath ?? $media->path) : $media->previewPath;
 		}
 
-		$li_imageHeight = $this->calculateHeight($media, $mediaRenderOptions, $li_width ?? null);
-		$lf_aspectRatio = round(($lo_file?->width ?? $media->width) / $li_imageHeight, 2);
+		$lf_aspectRatio = round(($lo_file?->realWidth ?? $media->width) / ($lo_file?->realHeight ?? $media->height), 2);
 
 		/** @noinspection CssUnknownTarget */
 		$ls_output = '<style>';
 		$ls_output .= $lo_mediaRenderOptions->getSelector() . ' { --backgroundAspectRatio:' . $lf_aspectRatio . ';';
-		$ls_output .= ' --backgroundImageHeight:' . $li_imageHeight . 'px;';
+		$ls_output .= ' --backgroundImageHeight:' . ($lo_file?->realHeight ?? $media->height) . 'px;';
 		$ls_output .= ' background-image:url(\'' . $ls_path . '\');';
 		$ls_output .= $ls_backgroundColorStyle . ' }';
 
 		$la_breakpointFiles = [];
 		if ($lo_mediaRenderOptions->getResponsive()) {
 			$la_breakpointFiles = $this->getResponsiveImages($media, $lo_mediaRenderOptions, true);
+			$la_breakpointFiles = array_reverse($la_breakpointFiles, true);
 		}
+
 		foreach ($la_breakpointFiles as $li_breakpoint => $lo_file) {
 			$ls_path = $lo_file->path;
-			$lf_aspectRatio = round($lo_file->width / $lo_file->height, 2);
+			$lf_aspectRatio = round(($lo_file->realWidth ?? $lo_file->width) / ($lo_file->realHeight ?? $lo_file->height), 2);
 
 			$ls_output .= PHP_EOL . '@media (max-width:' . $li_breakpoint . 'px) { ';
 			$ls_output .= $lo_mediaRenderOptions->getSelector() . ' { --backgroundAspectRatio:' . $lf_aspectRatio . ';';
@@ -265,8 +266,8 @@ class MediaHelper extends Helper {
 			return $this->simpleImageTag($media->path, $la_attributes, $media->averageColor, $lo_mediaRenderOptions);
 		}
 
-		// If no width or height is set, use the column width
-		if (!$lo_mediaRenderOptions->getWidth() && !$lo_mediaRenderOptions->getHeight()) {
+		// If responsive is set, use the column width
+		if ($lo_mediaRenderOptions->getResponsive()) {
 			$li_width = $this->getPixelColumnWidth($lo_mediaRenderOptions);
 			$lo_file = $this->resize($media, renderOptions: $lo_mediaRenderOptions->withWidth($li_width));
 		}
@@ -279,8 +280,8 @@ class MediaHelper extends Helper {
 			$ls_path = $media->isImage() ? ($media->webpPath ?? $media->path) : $media->previewPath;
 		}
 
-		$la_attributes['width'] = $li_width ?? $lo_file?->width ?? $media->width;
-		$la_attributes['height'] = $this->calculateHeight($media, $lo_mediaRenderOptions, $li_width ?? null);
+		$la_attributes['width'] = $lo_file?->realWidth ?? $media->width;
+		$la_attributes['height'] = $lo_file?->realHeight ?? $media->height;
 
 		return $this->simpleImageTag($ls_path, $la_attributes, $media->averageColor, $lo_mediaRenderOptions);
 	}
@@ -534,7 +535,7 @@ class MediaHelper extends Helper {
 	 * @param \Awyiss\Model\Entity\Media $media
 	 * @param \Awyiss\Utility\Media\MediaRenderOptions $mediaRenderOptions
 	 * @param bool $removeDuplicates
-	 * @return array
+	 * @return array<int, \Awyiss\Model\Entity\MediaResizedImage|\Awyiss\Model\Entity\Media>
 	 */
 	public function getResponsiveImages(Media $media, MediaRenderOptions $mediaRenderOptions, bool $removeDuplicates = false): array {
 		$la_breakpointFiles = [];
@@ -602,10 +603,6 @@ class MediaHelper extends Helper {
 			}
 
 			if (!$removeDuplicates || $ls_lastPath !== $ls_path) {
-				if ($lo_resizedImage && !$lo_resizedImage->height) {
-					$lo_resizedImage->height = $this->calculateHeight($media, $lo_mediaRenderOptions, $lo_resizedImage->width);
-				}
-
 				$la_breakpointFiles[ $la_breakpoint['breakpoint'] ] = $lo_resizedImage ?? $media;
 			}
 
@@ -671,32 +668,6 @@ class MediaHelper extends Helper {
 		}
 
 		return $lo_mediaRenderOptions->withWidth($li_width)->withHeight($li_height);
-	}
-
-
-	/**
-	 * @param \Awyiss\Model\Entity\Media $media
-	 * @param \Awyiss\Utility\Media\MediaRenderOptions|null $mediaRenderOptions
-	 * @param float|null $width
-	 * @return float|int
-	 */
-	protected function calculateHeight(Media $media, ?MediaRenderOptions $mediaRenderOptions, float|int|null $width = null): int {
-		// Get the height of the image as requested
-		$li_imageHeight = (int)$mediaRenderOptions->getHeight();
-
-		// If the height is not set, use the height of the image, based on the aspect ratio and the requested width
-		if (!$li_imageHeight) {
-			$li_width = (int)($width ?? $mediaRenderOptions->getWidth());
-
-			if ($li_width && $li_width < $media->width) {
-				$li_imageHeight = (int)($media->height / $media->width * $li_width);
-			}
-			else {
-				$li_imageHeight = (int)$media->height;
-			}
-		}
-
-		return $li_imageHeight;
 	}
 
 
