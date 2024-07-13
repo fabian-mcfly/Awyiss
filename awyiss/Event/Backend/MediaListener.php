@@ -13,6 +13,7 @@ use Awyiss\Model\Table\MediaTable;
 use Cake\Core\Configure;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
+use Imagick;
 
 
 /**
@@ -57,6 +58,8 @@ class MediaListener implements EventListenerInterface {
 	 * @param \ArrayObject $options
 	 * @return void
 	 * @noinspection PhpUnusedParameterInspection
+	 * @throws \ImagickException
+	 * @noinspection PhpComposerExtensionStubsInspection
 	 */
 	public function beforeSave(Event $event, Media $entity, ArrayObject $options): void {
 		/** @var \Awyiss\Model\Table\MediaTable $lo_table */
@@ -114,7 +117,7 @@ class MediaListener implements EventListenerInterface {
 					$entity->height = $la_dimensions['height'];
 				}
 				else {
-					$la_imageSize = getimagesize($ls_tempName);
+					$la_imageSize = $this->getImageSize($ls_tempName);
 
 					$entity->width = $la_imageSize[0];
 					$entity->height = $la_imageSize[1];
@@ -308,6 +311,36 @@ class MediaListener implements EventListenerInterface {
 		return [
 			'width' => $lf_width,
 			'height' => $lf_height,
+		];
+	}
+
+
+	/**
+	 * Returns the dimensions of an image
+	 * using the getimagesize function if available,
+	 *
+	 * @param mixed $tempName
+	 * @return array|false
+	 * @throws \ImagickException
+	 * @noinspection PhpComposerExtensionStubsInspection
+	 */
+	protected function getImageSize(mixed $tempName): array|false {
+		if (function_exists('getimagesize')) {
+			return getimagesize($tempName);
+		}
+
+		$la_imageSize = [null, null];
+
+		if (!class_exists('Imagick')) {
+			return $la_imageSize;
+		}
+
+		$lo_imagick = new Imagick();
+		$lo_imagick->pingImage($tempName);
+
+		return [
+			$lo_imagick->getImageWidth(),
+			$lo_imagick->getImageHeight(),
 		];
 	}
 }

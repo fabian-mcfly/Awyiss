@@ -57,6 +57,16 @@ class MediaResizedImages {
 			'limit' => 5,
 			'null' => true,
 			'signed' => true,
+		])->addColumn('real_width', 'integer', [
+			'default' => null,
+			'null' => true,
+			'limit' => 5,
+			'signed' => true,
+		])->addColumn('real_height', 'integer', [
+			'default' => null,
+			'limit' => 5,
+			'null' => true,
+			'signed' => true,
 		])->addColumn('strategy', 'boolean', [
 			'default' => false,
 			'limit' => null,

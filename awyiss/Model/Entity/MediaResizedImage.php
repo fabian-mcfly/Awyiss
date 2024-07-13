@@ -16,6 +16,8 @@ use Awyiss\Model\Entity;
  * @property string $path
  * @property int|null $width
  * @property int|null $height
+ * @property int|null $realWidth
+ * @property int|null $realHeight
  * @property \Awyiss\Model\Enum\ResizeStrategy|null $strategy
  * @property \Awyiss\Model\Enum\ProcessStatus|null $status
  * @property \Awyiss\Model\Entity\Media|null $media
@@ -28,6 +30,8 @@ class MediaResizedImage extends Entity {
 	 */
 	protected static array $fieldMap = [
 		'media_id' => 'mediaId',
+		'real_width' => 'realWidth',
+		'real_height' => 'realHeight',
 	];
 
 
@@ -40,6 +44,8 @@ class MediaResizedImage extends Entity {
 		'path' => true,
 		'width' => true,
 		'height' => true,
+		'realWidth' => true,
+		'realHeight' => true,
 		'strategy' => true,
 		'status' => true,
 	];
@@ -51,6 +57,8 @@ class MediaResizedImage extends Entity {
 	protected array $_virtual = [
 		'extension',
 		'pathAbsolute',
+		'realWidth',
+		'realHeight',
 	];
 
 

@@ -176,22 +176,15 @@ class ConvertFilesCommand extends Command {
 				continue;
 			}
 
-			$lo_image = imagecreatefromstring(file_get_contents($ls_path));
+			$la_colors = $this->calculateAverageColor($ls_path);
 
-			if (!$lo_image) {
-				$io->error('Status: Cannot create image from file');
+			if (!$la_colors) {
+				$io->error('Status: Cannot calculate average color for file');
 				$io->hr();
 
 				$lo_file->averageColor = '00000000';
 				continue;
 			}
-
-			// Resize the imag to 1x1 pixel
-			$lo_pixel = imagecreatetruecolor(1, 1);
-
-			imagecopyresampled($lo_pixel, $lo_image, 0, 0, 0, 0, 1, 1, imagesx($lo_image), imagesy($lo_image));
-			$li_index = imagecolorat($lo_pixel, 0, 0);
-			$la_colors = imagecolorsforindex($lo_pixel, $li_index);
 
 			// If alpha is full transparent, set it to FF
 			$la_colors['alpha'] = $la_colors['alpha'] === 0 ? 255 : $la_colors['alpha'];
@@ -199,9 +192,6 @@ class ConvertFilesCommand extends Command {
 			$lo_file->averageColor = sprintf('%02X%02X%02X%02X', $la_colors['red'], $la_colors['green'], $la_colors['blue'], $la_colors['alpha']);
 
 			$io->success('Status: Average color calculated successfully (#' . $lo_file->averageColor . ')');
-
-			imagedestroy($lo_image);
-			$lo_image = null;
 
 			$io->hr();
 		}
@@ -228,6 +218,83 @@ class ConvertFilesCommand extends Command {
 		]);
 
 		return static::CODE_SUCCESS;
+	}
+
+
+	/**
+	 * @param string $path
+	 * @return array|false
+	 */
+	protected function calculateAverageColor(string $path): array|false {
+		if (function_exists('imagecreatefromstring')) {
+			return $this->calculateAverageColorGD($path);
+		}
+
+		return $this->calculateAverageColorIM($path);
+	}
+
+
+	/**
+	 * Calculate the average color of an image using the ImageMagick command line tool
+	 *
+	 * @param string $path
+	 * @return array|false
+	 */
+	protected function calculateAverageColorIM(string $path): array|false {
+		$lo_process = new Process([
+			'convert',
+			$path,
+			'-resize',
+			'1x1!',
+			'-format',
+			'%[fx:int(255*r+.5)],%[fx:int(255*g+.5)],%[fx:int(255*b+.5)]',
+			'info:-',
+		]);
+
+		$lo_process->run();
+
+		if (!$lo_process->isSuccessful()) {
+			return false;
+		}
+
+		$la_colors = explode(',', $lo_process->getOutput());
+
+		return [
+			'red' => (int)$la_colors[0],
+			'green' => (int)$la_colors[1],
+			'blue' => (int)$la_colors[2],
+			'alpha' => 255,
+		];
+	}
+
+
+	/**
+	 * Calculate the average color of an image using the GD library
+	 *
+	 * @param string $path
+	 * @return array|false
+	 */
+	protected function calculateAverageColorGD(string $path): array|false {
+		$lo_image = imagecreatefromstring(file_get_contents($path));
+
+		if (!$lo_image) {
+			return false;
+		}
+
+		// Resize the imag to 1x1 pixel
+		$lo_pixel = imagecreatetruecolor(1, 1);
+
+		imagecopyresampled($lo_pixel, $lo_image, 0, 0, 0, 0, 1, 1, imagesx($lo_image), imagesy($lo_image));
+		$li_index = imagecolorat($lo_pixel, 0, 0);
+		$la_colors = imagecolorsforindex($lo_pixel, $li_index);
+
+		// Free up memory
+		imagedestroy($lo_image);
+		imagedestroy($lo_pixel);
+		$lo_image = null; //phpcs:ignore
+		$lo_pixel = null; //phpcs:ignore
+
+		return $la_colors;
 	}
 
 
@@ -337,10 +404,10 @@ class ConvertFilesCommand extends Command {
 			if ($lo_process->isSuccessful()) {
 				$io->success('Status: ' . $lo_process->getExitCodeText());
 
-				$la_imageSize = getimagesize($ls_previewPathAbsolute);
+				$la_imageSize = $this->getRealImageSize($ls_previewPathAbsolute);
 
-				$lo_file->width = $la_imageSize[0];
-				$lo_file->height = $la_imageSize[1];
+				$lo_file->width = $la_imageSize[0] ?? null;
+				$lo_file->height = $la_imageSize[1] ?? null;
 				$lo_file->preview = ProcessStatus::Success;
 
 				if ($includeWebp) {
@@ -477,10 +544,10 @@ class ConvertFilesCommand extends Command {
 					$lo_process->run();
 				}
 
-				$la_imageSize = getimagesize($lo_file->isImage() ? $lo_file->pathAbsolute : $lo_file->previewPathAbsolute);
+				$la_imageSize = $this->getRealImageSize($lo_file->isImage() ? $lo_file->pathAbsolute : $lo_file->previewPathAbsolute);
 
-				$lo_file->width = $la_imageSize[0];
-				$lo_file->height = $la_imageSize[1];
+				$lo_file->width = $la_imageSize[0] ?? null;
+				$lo_file->height = $la_imageSize[1] ?? null;
 
 				if (!empty($lo_file->crop['resize_width']) || !empty($lo_file->crop['resize_height'])) {
 					// Delete all resized files. They will be recreated when needed.
@@ -558,6 +625,10 @@ class ConvertFilesCommand extends Command {
 			if ($lo_process->isSuccessful()) {
 				$io->success('Status: ' . $lo_process->getExitCodeText());
 
+				$la_imageSize = $this->getRealImageSize($lo_file->pathAbsolute);
+
+				$lo_file->realWidth = $la_imageSize[0] ?? null;
+				$lo_file->realHeight = $la_imageSize[1] ?? null;
 				$lo_file->status = ProcessStatus::Success;
 			}
 			else {
@@ -587,14 +658,20 @@ class ConvertFilesCommand extends Command {
 		}
 		else {
 			$lo_table->updateAll(function (QueryExpression $expression) use ($files) {
+				$lo_realWidthCases = $expression->case();
+				$lo_realHeightCases = $expression->case();
 				$lo_statusCases = $expression->case();
 
 				/** @var \Awyiss\Model\Entity\MediaResizedImage $lo_file */
 				foreach ($files as $lo_file) {
+					$lo_realWidthCases->when(['id = ' . $lo_file->id])->then($lo_file->realWidth, 'integer');
+					$lo_realHeightCases->when(['id = ' . $lo_file->id])->then($lo_file->realHeight, 'integer');
 					$lo_statusCases->when(['id = ' . $lo_file->id])->then($lo_file->status->value, 'integer');
 				}
 
 				return [
+					'real_width' => $lo_realWidthCases,
+					'real_height' => $lo_realHeightCases,
 					'status' => $lo_statusCases,
 				];
 			}, [
@@ -972,5 +1049,30 @@ class ConvertFilesCommand extends Command {
 				$file->pathAbsolute,
 			],
 		};
+	}
+
+
+	/**
+	 * Return the real size of an image
+	 * Uses getimagesize if available, otherwise falls back to the identify command
+	 *
+	 * @param string $imagePath
+	 * @return array
+	 */
+	protected function getRealImageSize(string $imagePath): array {
+		if (function_exists('getimagesize')) {
+			return getimagesize($imagePath);
+		}
+
+		$lo_process = new Process([
+			'identify',
+			'-format',
+			'%wx%h',
+			$imagePath,
+		]);
+
+		$lo_process->run();
+
+		return explode('x', $lo_process->getOutput());
 	}
 }
