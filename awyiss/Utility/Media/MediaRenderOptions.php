@@ -5,6 +5,8 @@ namespace Awyiss\Utility\Media;
 
 
 use Awyiss\Model\Enum\ResizeStrategy;
+use Awyiss\Utility\Inflector;
+use InvalidArgumentException;
 
 
 /**
@@ -21,7 +23,7 @@ class MediaRenderOptions {
 	 * @param float|int $columnWidth
 	 * @param float|int|null $height
 	 * @param float|null $minBreakpoint
-	 * @param \Awyiss\Model\Enum\ResizeStrategy $resizeStrategy
+	 * @param \Awyiss\Model\Enum\ResizeStrategy|string|int $resizeStrategy
 	 * @param bool $responsive
 	 * @param string|null $selector
 	 * @param float|int|false|null $singleColumnBreakpoint
@@ -37,7 +39,7 @@ class MediaRenderOptions {
 		protected float|int $columnWidth = 100.00,
 		protected float|int|null $height = null,
 		protected ?float $minBreakpoint = null,
-		protected ResizeStrategy $resizeStrategy = ResizeStrategy::Contain,
+		protected ResizeStrategy|string|int $resizeStrategy = ResizeStrategy::Contain,
 		protected bool $responsive = true,
 		protected ?string $selector = null,
 		protected float|int|false|null $singleColumnBreakpoint = null,
@@ -56,6 +58,20 @@ class MediaRenderOptions {
 
 		if (is_int($this->height)) {
 			$this->height = (float)$this->height;
+		}
+
+		// If the resize strategy is a string, check if it is a valid enum case (name, not value)
+		if (is_string($this->resizeStrategy)) {
+			$ls_resizeStrategy = ResizeStrategy::class . '::' . Inflector::camelize($this->resizeStrategy);
+
+			if (!defined($ls_resizeStrategy)) {
+				throw new InvalidArgumentException('Invalid resize strategy: ' . $this->resizeStrategy);
+			}
+
+			$this->resizeStrategy = constant($ls_resizeStrategy);
+		}
+		elseif (is_int($this->resizeStrategy)) {
+			$this->resizeStrategy = ResizeStrategy::from($this->resizeStrategy);
 		}
 
 		if (is_int($this->singleColumnBreakpoint)) {
@@ -266,10 +282,10 @@ class MediaRenderOptions {
 
 
 	/**
-	 * @param \Awyiss\Model\Enum\ResizeStrategy $resizeStrategy
+	 * @param \Awyiss\Model\Enum\ResizeStrategy|string|int $resizeStrategy
 	 * @return $this
 	 */
-	public function withResizeStrategy(ResizeStrategy $resizeStrategy): static {
+	public function withResizeStrategy(ResizeStrategy|string|int $resizeStrategy): static {
 		return $this->with(['resizeStrategy' => $resizeStrategy]);
 	}
 

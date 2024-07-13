@@ -397,7 +397,7 @@ class MediaHelper extends Helper {
 	 * @param float|int $columnWidth
 	 * @param float|int|null $height
 	 * @param float|null $minBreakpoint
-	 * @param \Awyiss\Model\Enum\ResizeStrategy $resizeStrategy
+	 * @param \Awyiss\Model\Enum\ResizeStrategy|string|int $resizeStrategy
 	 * @param bool $responsive
 	 * @param string|null $selector
 	 * @param float|int|false|null $singleColumnBreakpoint
@@ -415,7 +415,7 @@ class MediaHelper extends Helper {
 		float|int $columnWidth = 100.00,
 		float|int|null $height = null,
 		?float $minBreakpoint = null,
-		ResizeStrategy $resizeStrategy = ResizeStrategy::Contain,
+		ResizeStrategy|string|int $resizeStrategy = ResizeStrategy::Contain,
 		bool $responsive = true,
 		?string $selector = null,
 		float|int|false|null $singleColumnBreakpoint = null,
