@@ -209,6 +209,10 @@ class FrontendEditor {
 			size.left += 20;
 		}
 
+		if (size.top < 0) {
+			size.top = 10;
+		}
+
 		// Set the size and position of the highlight element
 		this.highlightElement.style.width = `${size.width}px`;
 		this.highlightElement.style.height = `${size.height}px`;
