@@ -23,7 +23,7 @@ use MatthiasMullie\Minify;
  * The class also provides methods for sorting assets by priority and for generating fallback content
  * for users who have JavaScript disabled in their browser.
  *
- * @extends Helper
+ * @extends \Cake\View\Helper
  */
 class AssetHelper extends Helper {
 	/**

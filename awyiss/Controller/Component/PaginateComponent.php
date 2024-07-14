@@ -21,6 +21,9 @@ use Cake\Utility\Inflector;
 
 /**
  * Class PaginateComponent
+ *
+ * @method \Awyiss\Controller\AppController getController()
+ * @noinspection PhpFullyQualifiedNameUsageInspection
  */
 class PaginateComponent extends Component {
 	/**

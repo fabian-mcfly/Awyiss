@@ -129,7 +129,7 @@ class LocaleMiddleware implements MiddlewareInterface {
 	 * @param string|null $realm
 	 * @param bool $fallback If true, the default language will be returned if no language is found
 	 * @param string $retrievalStategy
-	 * @return Language|null
+	 * @return \Awyiss\Model\Entity\Language|null
 	 * @throws \Exception
 	 */
 	public static function getLanguage(?string $realm = Awyiss::REALM_FRONTEND, bool $fallback = true, string $retrievalStategy = self::SOURCE_AUTO): ?Language {

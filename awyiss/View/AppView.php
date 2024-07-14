@@ -21,15 +21,17 @@ use Twig\Markup;
 /**
  * Application View
  *
+ * @property \Awyiss\View\Helper\AssetHelper $Asset
+ * @property \Awyiss\View\Helper\AttributesHelper $Attributes
  * @property \Awyiss\View\Helper\AuthorizationHelper $Authorization
  * @property \Awyiss\View\Helper\CategoriesHelper $Categories
  * @property \Awyiss\View\Helper\FlashHelper $Flash
  * @property \Awyiss\View\Helper\FormHelper $Form
  * @property \Awyiss\View\Helper\LocaleHelper $Locale
+ * @property \Awyiss\View\Helper\MediaHelper $Media
  * @property \Awyiss\View\Helper\PaginatorHelper $Paginator
  * @property \Awyiss\View\Helper\SystemOrderHelper $SystemOrder
  * @property \Awyiss\View\Helper\UrlHelper $Url
- * @property \Awyiss\View\Helper\AttributesHelper $Attributes
  */
 class AppView extends TwigView {
 	/**

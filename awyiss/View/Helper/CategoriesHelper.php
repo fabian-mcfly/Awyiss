@@ -21,9 +21,9 @@ use RuntimeException;
 /**
  * Helper class that provides methods related to the Categories-logic in the views
  *
- * @property FormHelper $Form
- * @property PaginatorHelper $Paginator
- * @property UrlHelper $Url
+ * @property \Awyiss\View\Helper\FormHelper $Form
+ * @property \Awyiss\View\Helper\PaginatorHelper $Paginator
+ * @property \Awyiss\View\Helper\UrlHelper $Url
  */
 class CategoriesHelper extends Helper {
 	use IdGeneratorTrait;

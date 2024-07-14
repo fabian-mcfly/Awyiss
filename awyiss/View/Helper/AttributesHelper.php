@@ -19,7 +19,7 @@ use RuntimeException;
 /**
  * Helper class that provides methods related to the Authorization-logic in the views
  *
- * @property FormHelper $Form
+ * @property \Awyiss\View\Helper\FormHelper $Form
  */
 class AttributesHelper extends Helper {
 	/**
