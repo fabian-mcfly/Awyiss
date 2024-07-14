@@ -12,6 +12,7 @@ use Awyiss\Model\Entity\Content;
 use Awyiss\Model\Entity\ContentTemplate;
 use Awyiss\Model\Entity\Page;
 use Awyiss\Model\Table;
+use Awyiss\Module\ModulesProvider;
 use Awyiss\Routing\Router;
 use Awyiss\Utility\Content\ColumnInterface;
 use Cake\Collection\Collection;
@@ -372,6 +373,40 @@ class ContentsController extends Controller {
 
 			throw new RedirectException(Router::url(['action' => 'overview'], true), 302);
 		}
+	}
+
+
+	/**
+	 * Show a form to configure a module
+	 *
+	 * @return void
+	 * @throws \ReflectionException
+	 */
+	public function moduleConfiguration() {
+		$this->Categories->disable();
+
+		/** @var array<string, class-string<\Awyiss\Module\ModuleInterface>> $la_moduleFiles */
+		$la_moduleFiles = ModulesProvider::getModuleFiles();
+
+		// Get the title of each module
+		$la_modules = array_map(function (string $moduleClass) {
+			return $moduleClass::getTitle();
+		}, $la_moduleFiles);
+
+
+		$lo_frontendLanguage = LocaleMiddleware::getLanguage();
+		$lo_backendLanguage = LocaleMiddleware::getLanguage(Awyiss::REALM_BACKEND);
+
+		$this->set([
+			'module_identifier' => $this->request->getData('module_identifier'),
+			'frontendLanguage' => $lo_frontendLanguage,
+			'userLanguage' => $lo_backendLanguage,
+			'modules' => $la_modules,
+			'moduleClass' => $la_moduleFiles[ $this->request->getData('module_identifier') ] ?? null,
+			'settings' => $this->request->getData('settings') ?? [],
+		]);
+
+		$this->viewBuilder()->setLayout('frontend_editor');
 	}
 
 

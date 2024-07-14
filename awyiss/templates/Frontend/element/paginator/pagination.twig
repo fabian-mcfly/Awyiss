@@ -1,0 +1,11 @@
+{% block paginator %}
+	{% block pagination %}
+		<ul class="Pagination-List">
+			{{ PaginatorHelper.first(__d('pagination', 'first')) }}
+			{{ PaginatorHelper.prev(__d('pagination', 'previous')) }}
+			{{ PaginatorHelper.numbers() }}
+			{{ PaginatorHelper.next(__d('pagination', 'next')) }}
+			{{ PaginatorHelper.last(__d('pagination', 'last')) }}
+		</ul>
+	{% endblock %}
+{% endblock %}

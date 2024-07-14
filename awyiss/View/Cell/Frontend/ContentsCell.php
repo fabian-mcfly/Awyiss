@@ -129,6 +129,9 @@ class ContentsCell extends Cell {
 			singleColumnBreakpoint: $this->View->get('singleColumnBreakpoint'),
 		);
 
+		// Parse the module
+		$this->parseModule($entity, $lo_mediaRenderOptions);
+
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 		return $this->View->content($entity->contentTemplate->fileName, [
 			'content' => $entity,

@@ -122,6 +122,9 @@ class WidgetsCell extends Cell {
 			singleColumnBreakpoint: $this->View->get('singleColumnBreakpoint'),
 		);
 
+		// Parse the module
+		$this->parseModule($entity, $lo_mediaRenderOptions);
+
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 		return $this->View->widget($entity->widgetTemplate->fileName, [
 			'widget' => $entity,

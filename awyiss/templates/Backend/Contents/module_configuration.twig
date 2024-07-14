@@ -1,0 +1,54 @@
+{#
+@var module_identifier string
+@var frontendLanguage \Awyiss\Model\Entity\Language
+@var userLanguage \Awyiss\Model\Entity\Language
+@var modules array
+@var moduleClass class-string<\Awyiss\Module\ModuleInterface>
+@var settings array
+@var _view \Awyiss\View\BackendView
+#}
+
+<div class="Contents Form ModuleConfiguration" data-title="{{ __('headline_module_configuration') }}">
+	{% block buttonArea %}
+		<div class="ButtonArea">
+			{% block formModuleConfigurationButtons %}
+				{{ FormHelper.button(__('save'), {class: 'Button Button-Success Button-Save', form: 'ModuleConfiguration'}) }}
+			{% endblock %}
+
+			{{ FormHelper.button(__('close'), {class: 'Button Button-Close'}) }}
+		</div>
+	{% endblock %}
+
+	{{ FormHelper.create(null, {method: 'post', id: 'ModuleConfiguration', idPrefix: 'moduleConfiguration'}) }}
+
+	{% block flashMessages %}
+		{{ FlashHelper.render() }}
+	{% endblock %}
+
+	<fieldset class="Fieldsets">
+		{{ FormHelper.control('module_identifier', {
+			type: 'select',
+			options: modules,
+			value: module_identifier,
+			'data-form-updater': true,
+		}) }}
+
+		{% block formModuleConfiguration %}
+			{% if moduleClass %}
+				{{ staticCall(moduleClass, 'renderForm', _view, frontendLanguage, userLanguage, settings)|raw }}
+			{% endif %}
+		{% endblock %}
+	</fieldset>
+
+	{% block buttonAreaBottom %}
+		<div class="ButtonArea ButtonArea-Bottom">
+			{{ block('formModuleConfigurationButtons') }}
+		</div>
+	{% endblock %}
+
+	{% block formInputReloadForm %}
+		{{ FormHelper.hidden('reload_form', {val: 0}) }}
+	{% endblock %}
+
+	{{ FormHelper.end() }}
+</div>

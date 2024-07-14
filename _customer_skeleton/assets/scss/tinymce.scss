@@ -37,7 +37,41 @@ body {
 	table,
 	video {
 		&[data-mce-selected] {
+
+		}
+	}
+
+	[contentEditable="false"] {
+		&[data-mce-selected] {
 			outline-color:#63D1A5;
+		}
+	}
+
+	//noinspection CssInvalidHtmlTagReference
+	module.mceNonEditable {
+		@extend p;
+
+		display:flex;
+		width:100%;
+		padding:20px;
+		border-radius:5px;
+		background-image:linear-gradient(90deg, darken(#63D1A5, 10), #63D1A5);
+		color:#FFFFFF;
+		font-size:0;
+		line-height:0;
+		overflow:hidden;
+		cursor:default;
+
+		&[data-mce-selected] {
+			cursor:default;
+			outline-offset:2px;
+		}
+
+		&::before {
+			content:attr(data-label);
+			font-size:20px;
+			font-weight:700;
+			line-height:1;
 		}
 	}
 }

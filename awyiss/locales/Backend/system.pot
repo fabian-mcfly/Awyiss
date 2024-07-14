@@ -256,3 +256,6 @@ msgstr "It's haunted here!"
 
 msgid "subtitle_error_500"
 msgstr "Boh! Something seems to have gone wrong. Please try again later."
+
+msgid "title_tag"
+msgstr "Title-Tag"

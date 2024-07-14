@@ -7,9 +7,11 @@
 	"require": {
 		"php": ">=8.2",
 		"ext-curl": "*",
+		"ext-dom": "*",
 		"ext-fileinfo": "*",
 		"ext-gd": "*",
 		"ext-intl": "*",
+		"ext-libxml": "*",
 		"ext-posix": "*",
 		"ext-zip": "*",
 		"cakephp/authentication": "^3.0.2",

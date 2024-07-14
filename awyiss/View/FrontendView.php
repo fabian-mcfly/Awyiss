@@ -78,7 +78,9 @@ class FrontendView extends AppView {
 		$this->addHelper('Html');
 		$this->addHelper('Locale');
 		$this->addHelper('Media');
-
+		$this->addHelper('Paginator', [
+			'templates' => 'paginator_templates',
+		]);
 		$this->addHelper('Url');
 
 		// Set login logo path

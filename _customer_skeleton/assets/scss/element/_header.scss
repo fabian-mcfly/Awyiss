@@ -16,10 +16,14 @@
 
 	&.Headroom {
 		position:fixed;
-		transition:transform .3s ease-in-out;
+		transition:box-shadow .3s ease-in-out, transform .3s ease-in-out;
 
 		&.Unpinned {
 			transform:translateY(-120px);
+		}
+
+		&.Scrolled {
+			box-shadow:0 0 50px rgba(0, 0, 0, .1), 0 5px 10px rgba(0, 0, 0, .25);
 		}
 	}
 

@@ -432,5 +432,6 @@ tinymce.addI18n("de_DE", {
 	"yuan character, in hong kong and taiwan": "Yuanzeichen in Hongkong und Taiwan",
 	"{0} characters": "{0}\xa0Zeichen",
 	"{0} columns, {1} rows": "{0} Spalten, {1} Zeilen",
-	"{0} words": "{0} W\xf6rter"
+	"{0} words": "{0} W\xf6rter",
+	"Module": "Modul"
 });

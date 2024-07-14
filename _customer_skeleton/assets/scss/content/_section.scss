@@ -4,14 +4,24 @@
 	margin-block:var(--sectionMarginBlock);
 	padding-block:var(--sectionPaddingBlock);
 
-	&.BackgroundColor {
+	&.BackgroundColor,
+	&.BackgroundImage {
 		--sectionPaddingBlock:calc(var(--lineHeightMain) * 4);
-		padding-inline:0;
+
+		padding:var(--sectionPaddingBlock) 0;
+
+		&:has(+ .BackgroundColor),
+		&:has(+ .BackgroundImage),
+		&:last-child {
+			margin-bottom:0;
+		}
+	}
+
+	&.BackgroundColor-Text {
 		transform:skewY(-2deg);
 	}
 
 	&.BackgroundImage {
-		--sectionPaddingBlock:calc(var(--lineHeightMain) * 4);
 		position:relative;
 		overflow:hidden;
 
@@ -28,7 +38,8 @@
 	}
 
 	&:first-child {
-		--sectionPaddingBlock:#{$lineHeightMain * 4} 0;
+		margin-top:calc(var(--headerHeight) * -1 - 25px);
+		padding-top:calc(var(--lineHeightMain) * 4 + var(--headerHeight) + 25px);
 	}
 
 	> .ContentRow {

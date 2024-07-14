@@ -20,6 +20,9 @@ msgstr "Add Content"
 msgid "meta_title_edit"
 msgstr "Edit Content"
 
+msgid "meta_title_module_configuration"
+msgstr "Module Configuration"
+
 msgid "menu_title"
 msgstr "Contents"
 
@@ -52,6 +55,9 @@ msgstr "The content was successfully updated"
 
 msgid "edit_failed"
 msgstr "The content could not be updated"
+
+msgid "headline_module_configuration"
+msgstr "Module Configuration"
 
 msgid "record_not_found"
 msgstr "The content was not found"
@@ -118,3 +124,6 @@ msgstr "Data Attributes"
 
 msgid "data"
 msgstr "Data Attributes"
+
+msgid "module_identifier"
+msgstr "Module"

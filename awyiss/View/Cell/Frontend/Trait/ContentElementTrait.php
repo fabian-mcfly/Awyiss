@@ -4,10 +4,13 @@
 namespace Awyiss\View\Cell\Frontend\Trait;
 
 
+use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity;
 use Awyiss\Model\Entity\Content;
 use Awyiss\Model\Entity\Widget;
+use Awyiss\Module\ModulesProvider;
 use Awyiss\Utility\Inflector;
+use Awyiss\Utility\Media\MediaRenderOptions;
 use Awyiss\Utility\Media\ResizedImageManager;
 use Cake\Collection\CollectionInterface;
 use Cake\Core\Configure;
@@ -15,6 +18,8 @@ use Cake\Event\EventManagerInterface;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\ORM\Query\SelectQuery;
+use DOMDocument;
+use DOMXPath;
 
 
 /**
@@ -262,6 +267,64 @@ trait ContentElementTrait {
 
 
 		return $ls_contentElements;
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Entity $entity
+	 * @return void
+	 */
+	public function parseModule(Entity $entity, MediaRenderOptions $mediaRenderOptions): void {
+		static $la_modules;
+
+		if (!str_contains($entity->text ?? '', '<module')) {
+			return;
+		}
+
+		if (!isset($la_modules)) {
+			$la_modules = ModulesProvider::getModuleFiles();
+		}
+
+		// Create a new DOMDocument instance
+		$lo_dom = new DOMDocument();
+
+		// Suppress errors due to malformed HTML
+		libxml_use_internal_errors(true);
+
+		// Load the HTML string into the DOMDocument
+		$lo_dom->loadHTML($entity->text);
+
+		// Clear any errors collected during loadHTML
+		libxml_clear_errors();
+
+		// Create an XPath instance
+		$lo_xpath = new DOMXPath($lo_dom);
+
+		// Find all <module> tags
+		$lo_moduleTags = $lo_xpath->query('//module');
+
+		// Iterate over the <module> tags
+		foreach ($lo_moduleTags as $lo_moduleTag) {
+			// Get the value of the data-identifier attribute
+			$ls_identifier = $lo_moduleTag->getAttribute('data-identifier');
+			// Get the text content of the <module> tag
+			$la_settings = json_decode($lo_moduleTag->textContent ?? '', true);
+
+			if (isset($la_modules[ $ls_identifier ])) {
+				/** @var class-string<\Awyiss\Module\ModuleInterface> $ls_moduleClass */
+				$ls_moduleClass = $la_modules[ $ls_identifier ];
+
+				/** @noinspection PhpParamsInspection */
+				$ls_moduleOutput = $ls_moduleClass::render($la_settings, $this->View, $mediaRenderOptions, $entity, LocaleMiddleware::getLanguage());
+
+				if ($ls_moduleOutput) {
+					$entity->text = str_replace($lo_moduleTag->ownerDocument->saveHTML($lo_moduleTag), $ls_moduleOutput, $entity->text);
+				}
+				else {
+					$entity->text = str_replace($lo_moduleTag->ownerDocument->saveHTML($lo_moduleTag), '', $entity->text);
+				}
+			}
+		}
 	}
 
 

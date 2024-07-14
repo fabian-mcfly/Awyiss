@@ -1,0 +1,132 @@
+.Pagination-List {
+	--colorButtons:var(--colorMedium);
+	--colorText:var(--colorBright);
+
+	display:flex;
+	border-radius:5px;
+	color:var(--colorText);
+	position:relative;
+	justify-content:center;
+
+	.BackgroundColor & {
+		box-shadow:0 0 10px rgba(0, 0, 0, .05);
+		padding:calc(var(--elementPadding) * .5) var(--elementPadding);
+		background-color:var(--colorDark);
+	}
+
+	.BackgroundColor-Dark & {
+		background-color:var(--colorLight);
+	}
+
+	li {
+		margin:0 1px;
+		list-style-type:none;
+		vertical-align:top;
+
+		&.Sort-First,
+		&.Sort-Prev,
+		&.Sort-Next,
+		&.Sort-Last {
+			font-size:0;
+			line-height:0;
+		}
+
+		&.Sort-First {
+			.Arrow {
+				&::before {
+					content:'\f100';
+				}
+			}
+		}
+
+		&.Sort-Next {
+			.Arrow {
+				&::before {
+					content:'\f105';
+				}
+			}
+		}
+
+		&.Sort-Last {
+			.Arrow {
+				&::before {
+					content:'\f101';
+				}
+			}
+		}
+
+		&.Sort-Current {
+			.Number {
+				background-color:var(--colorMain);
+
+				&::after {
+					opacity:inherit;
+					transition-delay:.1s, 0s;
+				}
+			}
+		}
+
+		&.Disabled {
+			.Arrow {
+				opacity:.25;
+				pointer-events:none;
+			}
+		}
+
+		&:first-child {
+			margin-left:0;
+		}
+
+		&:last-child {
+			margin-right:0;
+		}
+	}
+
+	a {
+		text-decoration:none;
+	}
+
+	.Arrow,
+	.Number {
+		display:block;
+		width:42px;
+		border-bottom-width:0;
+		border-radius:5px;
+		background-color:var(--colorButtons);
+		color:var(--colorText);
+		font-size:.9rem;
+		font-weight:700;
+		line-height:42px;
+		text-align:center;
+		position:relative;
+		z-index:1;
+		overflow:hidden;
+		transition:background-color .3s ease-in-out, color .3s ease-in-out;
+
+		&:hover {
+			background-color:var(--colorMain);
+
+			&::after {
+				opacity:inherit;
+				transition-delay:.1s, 0s;
+			}
+		}
+
+		&:focus-visible {
+			box-shadow:0 0 10px var(--colorSuccess);
+			outline:2px solid var(--colorSuccess);
+			outline-offset:2px;
+			z-index:2;
+		}
+	}
+
+	.Arrow {
+		font-size:inherit;
+		line-height:inherit;
+
+		&::before {
+			@include fa('\f104', .9rem);
+			line-height:42px;
+		}
+	}
+}

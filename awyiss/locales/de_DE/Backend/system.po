@@ -256,3 +256,6 @@ msgstr "Hier spukt es!"
 
 msgid "subtitle_error_500"
 msgstr "Buhuhu! Da ist wohl etwas schief gelaufen. Bitte versuche es später noch einmal."
+
+msgid "title_tag"
+msgstr "Titel-Tag"

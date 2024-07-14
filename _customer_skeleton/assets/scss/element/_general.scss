@@ -26,6 +26,7 @@ html {
 		font-weight:var(--fontWeightMain);
 	}
 	letter-spacing:-.5px;
+	scrollbar-width:thin;
 
 	&.NoJS,
 	&.wf-active {
@@ -196,6 +197,30 @@ a {
 					vertical-align:middle;
 				}
 			}
+		}
+	}
+}
+
+.Button {
+	display:inline-block;
+	padding:.5em 1em;
+	border-radius:5px;
+	border:2px solid;
+	color:inherit;
+	font-weight:700;
+	line-height:1;
+	text-decoration:none;
+	transition:border-color .3s ease-in-out,background-color .3s ease-in-out, color .3s ease-in-out;
+
+	&:hover {
+		border-color:var(--colorMain);
+		background-color:var(--colorMain);
+		color:var(--colorBright);
+
+		.BackgroundColor & {
+			border-color:var(--textColor);
+			background-color:var(--textColor);
+			color:var(--backgroundColor);
 		}
 	}
 }

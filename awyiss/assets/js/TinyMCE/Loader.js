@@ -19,10 +19,16 @@ export default class Loader {
 	 * @type {object}
 	 */
 	settings = {
+		autoresize_bottom_margin: 0,
 		charmap_append: [
 			[173, 'soft hyphen']
 		],
+		custom_elements: 'module',
 		document_base_url: baseUrl,
+		extended_valid_elements: 'module[class]',
+		external_plugins: {
+			awyissModule: '../awyiss_module.js'
+		},
 		fix_list_elements: true,
 		branding: false,
 		file_picker_callback: callback => this.filePickerCallback(callback),
@@ -39,9 +45,9 @@ export default class Loader {
 		min_height: 300,
 		object_resizing: false,
 		paste_as_text: true,
-		paste_block_drop: true,
+		paste_block_drop: false,
 		paste_data_images: false,
-		plugins: 'anchor autolink autoresize charmap code fullscreen link lists nonbreaking table visualblocks visualchars wordcount',
+		plugins: 'anchor autolink autoresize awyissModule charmap code fullscreen link lists nonbreaking table visualblocks visualchars wordcount',
 		relative_urls: true,
 		setup: (editor) => this.setup(editor),
 		shortcuts: [],
@@ -59,7 +65,7 @@ export default class Loader {
 		table_row_advtab: false,
 		table_sizing_mode: 'responsive',
 		table_use_colgroups: false,
-		toolbar1: 'undo redo | copy cut paste pastetext | bold italic underline strikethrough styles removeformat | aligncenter alignright alignjustify outdent indent',
+		toolbar1: 'undo redo | copy cut paste pastetext | bold italic underline strikethrough styles removeformat | aligncenter alignright alignjustify outdent indent | awyissModule',
 		toolbar2: 'link unlink anchor | blockquote bullist numlist | hr subscript superscript nonbreaking charmap | table | visualblocks visualchars | wordcount code | fullscreen',
 		toolbar_sticky: true,
 		toolbar_sticky_offset: 100,
@@ -321,7 +327,7 @@ export default class Loader {
 				'Word Count': 'wordcount',
 			};
 
-			editor.windowManager._originalOpen(config, params);
+			const instance = editor.windowManager._originalOpen(config, params);
 
 			const dialog = document.querySelector('.tox-dialog');
 
@@ -337,6 +343,8 @@ export default class Loader {
 					container.appendChild(dialog.closest('.tox-tinymce-aux'));
 				}
 			}
+
+			return instance;
 		};
 	}
 
