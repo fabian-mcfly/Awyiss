@@ -5,11 +5,13 @@ namespace Awyiss\Utility\Media;
 
 
 use Awyiss\Model\Entity\Media;
+use Awyiss\Model\Entity\MediaAssignment;
 use Awyiss\Model\Entity\MediaResizedImage;
 use Awyiss\Model\Enum\ProcessStatus;
 use Awyiss\Model\Enum\ResizeStrategy;
 use Awyiss\Model\Table\MediaResizedImagesTable;
 use Awyiss\Model\Table\MediaTable;
+use Cake\Datasource\EntityInterface;
 use Cake\Datasource\FactoryLocator;
 use InvalidArgumentException;
 
@@ -47,25 +49,9 @@ class ResizedImageManager {
 
 
 	/**
-	 * ResizedImageManager constructor.
-	 */
-	public function __construct() {
-		if (!isset(static::$mediaTable)) {
-			/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
-			static::$mediaTable = FactoryLocator::get('Table')->get('Media');
-		}
-
-		if (!isset(static::$mediaResizedImagesTable)) {
-			/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
-			static::$mediaResizedImagesTable = FactoryLocator::get('Table')->get('MediaResizedImages');
-		}
-	}
-
-
-	/**
 	 * @return array
 	 */
-	public function getMediaItems(): array {
+	public static function getMediaItems(): array {
 		return static::$mediaItems;
 	}
 
@@ -76,11 +62,51 @@ class ResizedImageManager {
 	 * @param \Awyiss\Model\Entity\Media $mediaItem
 	 * @return void
 	 */
-	public function addMediaItem(Media $mediaItem): void {
+	public static function addMediaItem(Media $mediaItem): void {
 		static::$mediaItems[ $mediaItem->id ] = $mediaItem;
 
 		if ($mediaItem->mediaResizedImages) {
 			static::$resizedRecords[ $mediaItem->id ] = $mediaItem->mediaResizedImages;
+		}
+	}
+
+
+	/**
+	 * Add media items from an entity to the static storage
+	 *
+	 * @param \Cake\Datasource\EntityInterface $entity
+	 * @return void
+	 */
+	public static function addMediaItemsFromEntity(EntityInterface $entity): void {
+		if (!$entity->mediaAssignments) {
+			return;
+		}
+
+		$la_mediaElements = [];
+		foreach ($entity->mediaAssignments as $la_assignments) {
+			foreach ($la_assignments as $ls_identifier => $lo_media) {
+				if (str_starts_with($ls_identifier, '_')) {
+					continue;
+				}
+
+				if ($lo_media instanceof Media) {
+					$la_mediaElements[] = $lo_media;
+				}
+				elseif ($lo_media instanceof MediaAssignment && $lo_media->media) {
+					$la_mediaElements[] = $lo_media->media;
+				}
+				elseif (is_array($lo_media)) {
+					foreach ($lo_media as $lo_mediaItem) {
+						if ($lo_mediaItem instanceof Media) {
+							$la_mediaElements[] = $lo_mediaItem;
+						}
+					}
+				}
+			}
+		}
+
+		if ($la_mediaElements) {
+			static::setMediaItems($la_mediaElements);
 		}
 	}
 
@@ -92,7 +118,7 @@ class ResizedImageManager {
 	 * @param bool $merge Whether to merge the media items with the existing ones or set them as the new ones
 	 * @return void
 	 */
-	public function setMediaItems(array $mediaItems, bool $merge = true): void {
+	public static function setMediaItems(array $mediaItems, bool $merge = true): void {
 		$la_itemsToFetch = [];
 
 		if (!$merge) {
@@ -111,6 +137,10 @@ class ResizedImageManager {
 				continue;
 			}
 
+			if (!is_numeric($lx_mediaItem)) {
+				continue;
+			}
+
 			// If the media item is an id and not in the static storage, add it to the list of items to fetch
 			if (!isset(static::$mediaItems[ $lx_mediaItem ])) {
 				$la_itemsToFetch[] = $lx_mediaItem;
@@ -118,6 +148,11 @@ class ResizedImageManager {
 		}
 
 		if ($la_itemsToFetch) {
+			if (!isset(static::$mediaTable)) {
+				/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
+				static::$mediaTable = FactoryLocator::get('Table')->get('Media');
+			}
+
 			$lo_records = static::$mediaTable->find()->where(['id IN' => $la_itemsToFetch])->all();
 
 			/** @var \Awyiss\Model\Entity\Media $lo_record */
@@ -134,7 +169,7 @@ class ResizedImageManager {
 	 * @param int $mediaId
 	 * @return array<\Awyiss\Model\Entity\MediaResizedImage>|null
 	 */
-	public function getResizedItem(int $mediaId): ?array {
+	public static function getResizedItem(int $mediaId): ?array {
 		return static::$resizedRecords[ $mediaId ] ?? null;
 	}
 
@@ -144,7 +179,7 @@ class ResizedImageManager {
 	 *
 	 * @return array<int, array<\Awyiss\Model\Entity\MediaResizedImage>>
 	 */
-	public function getResizedItems(): array {
+	public static function getResizedItems(): array {
 		return static::$resizedRecords;
 	}
 
@@ -159,7 +194,7 @@ class ResizedImageManager {
 	 * @param bool $allowUpscale
 	 * @return \Awyiss\Model\Entity\MediaResizedImage|null
 	 */
-	public function resize(
+	public static function resize(
 		Media $media,
 		float|int|null $width = null,
 		float|int|null $height = null,
@@ -184,8 +219,8 @@ class ResizedImageManager {
 		}
 
 		// Add the media item to the static storage
-		$this->addMediaItem($media);
-		$this->fetchMissingResizedRecords();
+		static::addMediaItem($media);
+		static::fetchMissingResizedRecords();
 
 		/**
 		 * If the width or height is not set, check if the strategy is "contain",
@@ -221,7 +256,7 @@ class ResizedImageManager {
 		$li_height = $height ? (int)$height : null;
 
 		// Check if the media item is already resized
-		$lo_resizedImage = $this->findResizedImage($media, $li_width, $li_height, $strategy, $format, $strictSize);
+		$lo_resizedImage = static::findResizedImage($media, $li_width, $li_height, $strategy, $format, $strictSize);
 
 		if ($lo_resizedImage) {
 			if (!$lo_resizedImage->media) {
@@ -229,6 +264,11 @@ class ResizedImageManager {
 			}
 
 			return $lo_resizedImage;
+		}
+
+		if (!isset(static::$mediaResizedImagesTable)) {
+			/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
+			static::$mediaResizedImagesTable = FactoryLocator::get('Table')->get('MediaResizedImages');
 		}
 
 		$lo_resizedImage = static::$mediaResizedImagesTable->newEntityFromMedia($media, $li_width, $li_height, $strategy, $format);
@@ -248,11 +288,16 @@ class ResizedImageManager {
 	 *
 	 * @return void
 	 */
-	protected function fetchMissingResizedRecords(): void {
+	protected static function fetchMissingResizedRecords(): void {
 		$la_missingMediaIds = array_keys(array_diff_key(static::$mediaItems, static::$resizedRecords));
 
 		// Fetch all missing resized records
 		if ($la_missingMediaIds) {
+			if (!isset(static::$mediaResizedImagesTable)) {
+				/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
+				static::$mediaResizedImagesTable = FactoryLocator::get('Table')->get('MediaResizedImages');
+			}
+
 			$lo_resizedRecords = static::$mediaResizedImagesTable->find()->where(['media_id IN' => $la_missingMediaIds])->all();
 
 			// Group the fetched records by media id
@@ -282,7 +327,7 @@ class ResizedImageManager {
 	 * @param \Awyiss\Model\Enum\ResizeStrategy|null $strategy
 	 * @return \Awyiss\Model\Entity\MediaResizedImage|null
 	 */
-	public function findWithinThreshold(Media $media, ?int $width, ?int $height, string $format, ?ResizeStrategy $strategy = null): ?MediaResizedImage {
+	public static function findWithinThreshold(Media $media, ?int $width, ?int $height, string $format, ?ResizeStrategy $strategy = null): ?MediaResizedImage {
 		$lo_resizedImages = static::$resizedRecords[ $media->id ] ?? [];
 
 		$li_widthThreshold = $width ? ceil($width * 1.1) : null;
@@ -322,7 +367,7 @@ class ResizedImageManager {
 	 * @param bool $strictSize
 	 * @return \Awyiss\Model\Entity\MediaResizedImage|null
 	 */
-	protected function findResizedImage(
+	protected static function findResizedImage(
 		Media $media,
 		?int $width,
 		?int $height,
@@ -341,7 +386,7 @@ class ResizedImageManager {
 
 		// If the size doesn't have to be strict, check if there is a resized image within a certain threshold
 		if (!$strictSize) {
-			$lo_resizedImage = $this->findWithinThreshold($media, $width, $height, $format, $strategy);
+			$lo_resizedImage = static::findWithinThreshold($media, $width, $height, $format, $strategy);
 
 			if ($lo_resizedImage) {
 				if (!$lo_resizedImage->media) {

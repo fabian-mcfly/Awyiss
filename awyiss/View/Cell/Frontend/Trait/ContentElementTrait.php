@@ -28,20 +28,10 @@ use DOMXPath;
  */
 trait ContentElementTrait {
 	/**
-	 * @var \Awyiss\Utility\Media\ResizedImageManager $resizedImageManager
-	 */
-	protected static ResizedImageManager $resizedImageManager;
-
-
-	/**
 	 * @inheritDoc
 	 */
 	public function __construct(ServerRequest $request, Response $response, ?EventManagerInterface $eventManager = null, array $cellOptions = []) {
 		parent::__construct($request, $response, $eventManager, $cellOptions);
-
-		if (!isset(static::$resizedImageManager)) {
-			static::$resizedImageManager = new ResizedImageManager();
-		}
 
 		$this->View = $this->createView('Frontend');
 	}
@@ -72,7 +62,7 @@ trait ContentElementTrait {
 		->contain(['MediaResizedImages'])
 		->distinct('Media.id');
 
-		static::$resizedImageManager->setMediaItems($lo_query->all()->toArray());
+		ResizedImageManager::setMediaItems($lo_query->all()->toArray());
 	}
 
 

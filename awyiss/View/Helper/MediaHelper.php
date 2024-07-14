@@ -24,10 +24,6 @@ use InvalidArgumentException;
  */
 class MediaHelper extends Helper {
 	/**
-	 * @var \Awyiss\Utility\Media\ResizedImageManager $resizedImageManager
-	 */
-	protected static ResizedImageManager $resizedImageManager;
-	/**
 	 * @inheritDoc
 	 */
 	protected array $helpers = ['Html'];
@@ -45,10 +41,6 @@ class MediaHelper extends Helper {
 	 * @return void
 	 */
 	public function initialize(array $config): void {
-		if (!isset(static::$resizedImageManager)) {
-			static::$resizedImageManager = new ResizedImageManager();
-		}
-
 		$this->mediaRenderOptions = $this->mediaRenderOptions();
 
 		/** @var \Twig\Environment $lo_twig */
@@ -447,7 +439,7 @@ class MediaHelper extends Helper {
 			$la_mediaItems = $mediaItems->toArray();
 		}
 
-		static::$resizedImageManager->setMediaItems($la_mediaItems);
+		ResizedImageManager::setMediaItems($la_mediaItems);
 	}
 
 
@@ -503,10 +495,10 @@ class MediaHelper extends Helper {
 			$la_vars = get_defined_vars();
 			unset($la_vars['renderOptions']);
 
-			return static::$resizedImageManager->resize(...$la_vars);
+			return ResizedImageManager::resize(...$la_vars);
 		}
 
-		return static::$resizedImageManager->resize(
+		return ResizedImageManager::resize(
 			$media,
 			$renderOptions->getWidth(),
 			$renderOptions->getHeight(),
