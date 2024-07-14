@@ -133,7 +133,10 @@ class MediaHelper extends Helper {
 			$ls_path = $media->isImage() ? ($media->webpPath ?? $media->path) : $media->previewPath;
 		}
 
-		$lf_aspectRatio = round(($lo_file?->realWidth ?? $media->width) / ($lo_file?->realHeight ?? $media->height), 2);
+		$lf_aspectRatio = 1;
+		if (($lo_file?->realWidth ?? $media->width) && ($lo_file?->realHeight ?? $media->height)) {
+			$lf_aspectRatio = round(($lo_file?->realWidth ?? $media->width) / ($lo_file?->realHeight ?? $media->height), 2);
+		}
 
 		/** @noinspection CssUnknownTarget */
 		$ls_output = '<style>';
@@ -150,7 +153,11 @@ class MediaHelper extends Helper {
 
 		foreach ($la_breakpointFiles as $li_breakpoint => $lo_file) {
 			$ls_path = $lo_file->path;
-			$lf_aspectRatio = round(($lo_file->realWidth ?? $lo_file->width) / ($lo_file->realHeight ?? $lo_file->height), 2);
+
+			$lf_aspectRatio = 1;
+			if (($lo_file->realWidth ?? $lo_file->width) && ($lo_file->realHeight ?? $lo_file->height)) {
+				$lf_aspectRatio = round(($lo_file->realWidth ?? $lo_file->width) / ($lo_file->realHeight ?? $lo_file->height), 2);
+			}
 
 			$ls_output .= PHP_EOL . '@media (max-width:' . $li_breakpoint . 'px) { ';
 			$ls_output .= $lo_mediaRenderOptions->getSelector() . ' { --backgroundAspectRatio:' . $lf_aspectRatio . ';';
@@ -692,7 +699,7 @@ class MediaHelper extends Helper {
 		}
 
 		/** @noinspection CssUnresolvedCustomProperty */
-		return '<style>#' . $id . '::before { --imageAspectRatio: ' . round($width / $height, 2) . ';' . $ls_backgroundColorStyle . ' }</style>';
+		return '<style>#' . $id . '::before { --imageAspectRatio: ' . round(($width ?? 1) / ($height ?? 1), 2) . ';' . $ls_backgroundColorStyle . ' }</style>';
 	}
 
 
