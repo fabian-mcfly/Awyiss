@@ -462,7 +462,7 @@ class FrontendController extends AppController {
 		$ls_pageRole = Inflector::pluralize($page->pageRoleId->name);
 		$lo_table = $this->fetchTable($ls_pageRole);
 
-		$lo_query = $lo_table->find('published')->where(['id' => $page->id])->limit(1);
+		$lo_query = $lo_table->find('published')->find('mediaAssignments', useMediaEntity: true)->where(['id' => $page->id])->limit(1);
 
 		// Include the languages in the query, including deleted languages
 		$lo_query->contain([
