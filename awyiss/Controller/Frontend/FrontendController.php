@@ -13,6 +13,7 @@ use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity\Page;
 use Awyiss\Routing\Router;
 use Awyiss\Utility\Inflector;
+use Awyiss\Utility\Media\MediaRenderOptions;
 use Cake\Core\Configure;
 use Cake\Http\Exception\NotFoundException;
 use Cake\Http\Exception\RedirectException;
@@ -21,6 +22,11 @@ use Cake\ORM\Locator\LocatorAwareTrait;
 
 /**
  * Frontend Controller that handles all page requests
+ *
+ * For every found, active and published page, the controller will call
+ * a method with the name of the page role in snake_case.
+ *
+ * @see \Awyiss\Controller\Frontend\FrontendController::news()
  */
 class FrontendController extends AppController {
 	use LocatorAwareTrait;
@@ -36,6 +42,51 @@ class FrontendController extends AppController {
 		EventListenersProvider::loadListener($this->getName(), Awyiss::REALM_FRONTEND);
 
 		$this->viewBuilder()->setClassName('Frontend');
+	}
+
+
+	/**
+	 * This method is called when a page with the page role "page" is requested
+	 * and after the page has been found and checked for its status.
+	 *
+	 * @param \Awyiss\Model\Entity\Page $page
+	 * @return void
+	 */
+	public function news(Page $page): void {
+		/** @var \Awyiss\Model\Table\PagesTable $lo_newsTable */
+		$lo_newsTable = $this->fetchTable('News');
+
+		$lo_query = $lo_newsTable->find('active')->find('published', skipPageRoleCheck: true);
+		$lo_query->where(['id' => $page->parentId]);
+		$lo_newsCategory = $lo_query->first();
+
+		$la_where = [
+			'parent_id' => $page->parentId,
+			'system_order <' => $page->systemOrder,
+		];
+		$lo_newer = $lo_newsTable->find('active')->find('published')->where($la_where)->orderBy(['system_order' => 'DESC'])->limit(1)->first();
+
+		$la_where = [
+			'parent_id' => $page->parentId,
+			'system_order >' => $page->systemOrder,
+		];
+		$lo_older = $lo_newsTable->find('active')->find('published')->where($la_where)->orderBy(['system_order' => 'DESC'])->limit(1)->first();
+
+
+		$la_designVariables = $this->getRequest()->getAttribute('design')->getDesignVariables();
+
+		$lo_mediaRenderOptions = new MediaRenderOptions(
+			baseWidth: intval($la_designVariables['pageWidth'] ?? 1920),
+			breakpoints: Configure::read('Awyiss.Media.Frontend.defaultBreakpoints'),
+			singleColumnBreakpoint: intval($la_designVariables['singleColumnBreakpoint'] ?? 768),
+		);
+
+		$this->set([
+			'category' => $lo_newsCategory,
+			'newer' => $lo_newer,
+			'older' => $lo_older,
+			'mediaRenderOptions' => $lo_mediaRenderOptions,
+		]);
 	}
 
 
@@ -223,6 +274,12 @@ class FrontendController extends AppController {
 		$this->viewBuilder()
 		->setTemplate($lo_page->pageTemplate->fileName)
 		->setTemplatePath('Frontend/page');
+
+		// Call the page role specific method
+		$ls_methodName = Inflector::underscore($lo_page->pageRoleId->name);
+		if (method_exists($this, $ls_methodName)) {
+			$this->{$ls_methodName}($lo_page);
+		}
 	}
 
 
