@@ -61,26 +61,29 @@ class FrontendController extends AppController {
 		$lo_query->where(['id' => $page->parentId]);
 		$lo_newsCategory = $lo_query->first();
 
-		$la_where = [
+		$lo_newer = $lo_newsTable->find('active')->find('published')->find('mediaAssignments', useMediaEntity: true)
+		->where([
 			'parent_id' => $page->parentId,
 			'system_order <' => $page->systemOrder,
-		];
-		$lo_newer = $lo_newsTable->find('active')->find('published')->where($la_where)->orderBy(['system_order' => 'DESC'])->limit(1)->first();
+		])
+		->orderBy(['system_order' => 'DESC'])
+		->limit(1)->first();
 
-		$la_where = [
+		$lo_older = $lo_newsTable->find('active')->find('published')->find('mediaAssignments', useMediaEntity: true)
+		->where([
 			'parent_id' => $page->parentId,
 			'system_order >' => $page->systemOrder,
-		];
-		$lo_older = $lo_newsTable->find('active')->find('published')->where($la_where)->orderBy(['system_order' => 'DESC'])->limit(1)->first();
+		])
+		->orderBy(['system_order' => 'ASC'])
+		->limit(1)->first();
 
+		if ($lo_newer) {
+			ResizedImageManager::addMediaItemsFromEntity($lo_newer);
+		}
 
-		$la_designVariables = $this->getRequest()->getAttribute('design')->getDesignVariables();
-
-		$lo_mediaRenderOptions = new MediaRenderOptions(
-			baseWidth: intval($la_designVariables['pageWidth'] ?? 1920),
-			breakpoints: Configure::read('Awyiss.Media.Frontend.defaultBreakpoints'),
-			singleColumnBreakpoint: intval($la_designVariables['singleColumnBreakpoint'] ?? 768),
-		);
+		if ($lo_older) {
+			ResizedImageManager::addMediaItemsFromEntity($lo_older);
+		}
 
 		$this->set([
 			'category' => $lo_newsCategory,
