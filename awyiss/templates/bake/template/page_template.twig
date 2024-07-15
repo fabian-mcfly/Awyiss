@@ -18,4 +18,24 @@
 @var TimeHelper \Awyiss\View\Helper\TimeHelper
 #}
 
-{{ content('ContentArea') }}{% endverbatim %}
+{% endverbatim %}
+{%- if isCategory %}
+{%- verbatim %}<main id="ContentArea">
+	<section class="ContentElement Template-Section">
+		<div class="ContentRow">
+			<div class="ContentElement Template-Standard">
+				<div class="Text">
+					<h1 class="Title">{{ page.title }}</h1>
+					{{ module('{% endverbatim %}{{ action[0:-8]|variable }}{% verbatim %}Listing', {
+						paginate: true,
+						entity: page,
+					}) }}
+				</div>
+			</div>
+		</div>
+	</section>
+</main>{% endverbatim %}
+{%- else %}
+{% verbatim %}{{ content('ContentArea') }}
+{% endverbatim %}
+{%- endif %}

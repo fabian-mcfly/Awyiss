@@ -131,6 +131,11 @@ class TemplateCommand extends BaseTemplateCommand {
 
 		$lo_renderer->set('indexColumns', $li_indexColumns);
 
+		// If the template to bake is a page template,
+		if ($args->getOption('prefix') === 'Frontend' && $args->getOption('controller') === 'page') {
+			$lo_renderer->set('action', $args->getArgument('action'));
+			$lo_renderer->set('isCategory', str_ends_with($args->getArgument('action'), 'category'));
+		}
 
 		return $lo_renderer->generate('template/' . $action);
 	}
