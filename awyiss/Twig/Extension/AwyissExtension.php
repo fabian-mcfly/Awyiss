@@ -4,9 +4,13 @@
 namespace Awyiss\Twig\Extension;
 
 
+use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity\Page;
+use Awyiss\Module\ModulesProvider;
 use Awyiss\Utility\Inflector;
+use Awyiss\Utility\Media\MediaRenderOptions;
 use Cake\Collection\CollectionInterface;
+use Cake\Core\Configure;
 use Cake\Utility\Hash;
 use InvalidArgumentException;
 use Twig\Extension\AbstractExtension;
@@ -126,6 +130,8 @@ class AwyissExtension extends AbstractExtension {
 				['needs_context' => true, 'is_safe' => ['all']]
 			),
 
+			new TwigFunction('module', $this->moduleFunction(...), ['needs_context' => true, 'is_safe' => ['all']]),
+
 			new TwigFunction('naturalSort', function (array $data, int|string|null $key = null): array {
 				/** @noinspection PhpVariableNamingConventionInspection */
 				uasort($data, function ($a, $b) use ($key) {
@@ -205,5 +211,51 @@ class AwyissExtension extends AbstractExtension {
 		}
 
 		return implode(' ', $la_htmlParts);
+	}
+
+
+	/**
+	 * @param array $context
+	 * @param string $name
+	 * @param array $options
+	 * @return string
+	 */
+	public function moduleFunction(array $context, string $name, array $options = []): string {
+		static $la_modules;
+
+		if (empty($context['_view'])) {
+			throw new InvalidArgumentException('The "module" function requires a View object in the context.');
+		}
+
+		if (!isset($la_modules)) {
+			$la_modules = ModulesProvider::getModuleFiles();
+		}
+
+		// Get the value of the data-identifier attribute
+		$ls_identifier = Inflector::variable($name);
+
+		if (!isset($la_modules[ $ls_identifier ])) {
+			return '';
+		}
+
+		/** @var class-string<\Awyiss\Module\ModuleInterface> $ls_moduleClass */
+		$ls_moduleClass = $la_modules[ $ls_identifier ];
+
+		$lo_mediaRenderOptions = $context['mediaRenderOptions'] ?? null;
+		if (!$lo_mediaRenderOptions && !empty($context['designSettings'])) {
+			$la_designVariables = $context['designSettings'];
+
+			$lo_mediaRenderOptions = new MediaRenderOptions(
+				baseWidth: intval($la_designVariables['pageWidth'] ?? 1920),
+				breakpoints: Configure::read('Awyiss.Media.Frontend.defaultBreakpoints'),
+				singleColumnBreakpoint: intval($la_designVariables['singleColumnBreakpoint'] ?? 768),
+			);
+		}
+
+		$lo_entity = $options['entity'] ?? null;
+
+		$lo_language = $context['language'] ?? $context['currentLanguage'] ?? LocaleMiddleware::getLanguage();
+
+		return $ls_moduleClass::render($options, $context['_view'], $lo_mediaRenderOptions, $lo_entity, $lo_language);
 	}
 }
