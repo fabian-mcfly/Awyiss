@@ -4,11 +4,14 @@
 namespace Awyiss\Module;
 
 
+use Awyiss\Core\App;
 use Awyiss\Datasource\Paging\NumericPaginator;
 use Awyiss\Model\Entity;
 use Awyiss\Model\Entity\Language;
+use Awyiss\Model\Entity\Page;
 use Awyiss\Routing\Router;
 use Awyiss\Utility\Media\MediaRenderOptions;
+use Awyiss\Utility\Media\ResizedImageManager;
 use Awyiss\View\BackendView;
 use Awyiss\View\FrontendView;
 use Cake\Datasource\FactoryLocator;
@@ -151,6 +154,20 @@ class NewsListingModule implements ModuleInterface {
 
 		if (isset($lo_newsTable->getAttributes()['inTeaser'])) {
 			$lo_query->where(['in_teaser' => true]);
+		}
+
+		if (isset($settings['categories'])) {
+			if (is_array($settings['categories'])) {
+				$lo_query->where(['parent_id IN' => $settings['categories']]);
+			}
+		}
+		elseif ($entity instanceof Page) {
+			/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $ls_pageRoleEnum */
+			$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
+
+			if ($entity->pageRoleId === $ls_pageRoleEnum::Newscategory) {
+				$lo_query->where(['parent_id' => $entity->id]);
+			}
 		}
 
 		if ($lb_paginate) {
