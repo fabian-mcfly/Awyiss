@@ -14,6 +14,7 @@ use Awyiss\Model\Entity\Page;
 use Awyiss\Routing\Router;
 use Awyiss\Utility\Inflector;
 use Awyiss\Utility\Media\MediaRenderOptions;
+use Awyiss\Utility\Media\ResizedImageManager;
 use Cake\Core\Configure;
 use Cake\Http\Exception\NotFoundException;
 use Cake\Http\Exception\RedirectException;
@@ -260,6 +261,8 @@ class FrontendController extends AppController {
 				throw new NotFoundException();
 			}
 		}
+
+		ResizedImageManager::addMediaItemsFromEntity($lo_page);
 
 		$la_designVariables = $this->getRequest()->getAttribute('design')->getDesignVariables();
 

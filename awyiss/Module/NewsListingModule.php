@@ -178,6 +178,10 @@ class NewsListingModule implements ModuleInterface {
 			$lo_news = $lo_query->all();
 		}
 
+		foreach ($lo_news as $lo_newsItem) {
+			ResizedImageManager::addMediaItemsFromEntity($lo_newsItem);
+		}
+
 		return $view->element('module/news_listing', [
 			'entity' => $entity,
 			'frontendLanguage' => $frontendLanguage,
