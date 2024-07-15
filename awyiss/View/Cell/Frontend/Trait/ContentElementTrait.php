@@ -296,23 +296,26 @@ trait ContentElementTrait {
 		// Iterate over the <module> tags
 		foreach ($lo_moduleTags as $lo_moduleTag) {
 			// Get the value of the data-identifier attribute
-			$ls_identifier = $lo_moduleTag->getAttribute('data-identifier');
+			$ls_identifier = Inflector::variable($lo_moduleTag->getAttribute('data-identifier'));
+
 			// Get the text content of the <module> tag
 			$la_settings = json_decode($lo_moduleTag->textContent ?? '', true);
 
-			if (isset($la_modules[ $ls_identifier ])) {
-				/** @var class-string<\Awyiss\Module\ModuleInterface> $ls_moduleClass */
-				$ls_moduleClass = $la_modules[ $ls_identifier ];
+			if (!isset($la_modules[ $ls_identifier ])) {
+				continue;
+			}
 
-				/** @noinspection PhpParamsInspection */
-				$ls_moduleOutput = $ls_moduleClass::render($la_settings, $this->View, $mediaRenderOptions, $entity, LocaleMiddleware::getLanguage());
+			/** @var class-string<\Awyiss\Module\ModuleInterface> $ls_moduleClass */
+			$ls_moduleClass = $la_modules[ $ls_identifier ];
 
-				if ($ls_moduleOutput) {
-					$entity->text = str_replace($lo_moduleTag->ownerDocument->saveHTML($lo_moduleTag), $ls_moduleOutput, $entity->text);
-				}
-				else {
-					$entity->text = str_replace($lo_moduleTag->ownerDocument->saveHTML($lo_moduleTag), '', $entity->text);
-				}
+			/** @noinspection PhpParamsInspection */
+			$ls_moduleOutput = $ls_moduleClass::render($la_settings, $this->View, $mediaRenderOptions, $entity, LocaleMiddleware::getLanguage());
+
+			if ($ls_moduleOutput) {
+				$entity->text = str_replace($lo_moduleTag->ownerDocument->saveHTML($lo_moduleTag), $ls_moduleOutput, $entity->text);
+			}
+			else {
+				$entity->text = str_replace($lo_moduleTag->ownerDocument->saveHTML($lo_moduleTag), '', $entity->text);
 			}
 		}
 	}
