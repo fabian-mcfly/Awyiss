@@ -85,7 +85,6 @@ class FrontendController extends AppController {
 			'category' => $lo_newsCategory,
 			'newer' => $lo_newer,
 			'older' => $lo_older,
-			'mediaRenderOptions' => $lo_mediaRenderOptions,
 		]);
 	}
 
@@ -262,9 +261,18 @@ class FrontendController extends AppController {
 			}
 		}
 
+		$la_designVariables = $this->getRequest()->getAttribute('design')->getDesignVariables();
+
+		$lo_mediaRenderOptions = new MediaRenderOptions(
+			baseWidth: intval($la_designVariables['pageWidth'] ?? 1920),
+			breakpoints: Configure::read('Awyiss.Media.Frontend.defaultBreakpoints'),
+			singleColumnBreakpoint: intval($la_designVariables['singleColumnBreakpoint'] ?? 768),
+		);
+
 		$this->set([
 			'page' => $lo_page,
 			'pageRoleEnum' => $ls_pageRoleEnum,
+			'mediaRenderOptions' => $lo_mediaRenderOptions,
 		]);
 
 		if ($this->request->getSession()->read('Auth')) {
