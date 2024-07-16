@@ -44,6 +44,10 @@
 			}
 		}
 
+		&:not([class*='ColumnIndent-']):first-child {
+			margin-left:0;
+		}
+
 		&.Column-Rtl {
 			//noinspection SassScssUnresolvedVariable
 			@for $i from 1 through $maxColumns {
@@ -61,10 +65,6 @@
 					margin-left:0;
 				}
 			}
-		}
-
-		&:not([class*='ColumnIndent-']):first-child {
-			margin-left:0;
 		}
 	}
 

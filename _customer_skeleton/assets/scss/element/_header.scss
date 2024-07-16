@@ -1,5 +1,5 @@
 #HeaderArea {
-	--borderRadius:10px;
+	--borderRadius:5px;
 
 	max-width:calc(var(--pageWidth) + var(--pagePadding));
 	margin-inline:auto;
@@ -37,8 +37,9 @@
 		padding:15px calc(var(--elementPadding) - 20px) 0;
 		border-radius:var(--borderRadius);
 		border-bottom-width:0;
-		color:var(--colorMain);
-		fill:var(--colorMedium);
+		background-color:var(--colorText);
+		color:var(--colorBright);
+		fill:var(--colorContrast);
 		position:relative;
 
 		svg {

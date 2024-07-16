@@ -38,6 +38,11 @@
 		--textColor:var(--colorText);
 	}
 
+	&.BackgroundColor-Bright {
+		--backgroundColor:var(--colorBright);
+		--textColor:var(--colorText);
+	}
+
 	&.BackgroundColor-Main {
 		--backgroundColor:var(--colorMain);
 		--textColor:var(--colorBright);
@@ -47,7 +52,6 @@
 		--backgroundColor:var(--colorContrast);
 		--textColor:var(--colorBright);
 	}
-
 
 	&:first-of-type {
 		@media screen AND (max-width:#{$singleColumnBreakpoint}) {
