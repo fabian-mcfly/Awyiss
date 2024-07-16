@@ -92,7 +92,15 @@ class MenuCell extends Cell {
 	 */
 	protected function getMenuEntries(string $identifier, string $languageShortcode): CollectionInterface {
 		$lo_menusTable = FactoryLocator::get('Table')->get('Menus');
-		/** @var \Awyiss\Model\Entity\Menu $lo_menu */
+
+		/**
+		 * Load the menu
+		 * A `contains` for the menu entries does not save any queries,
+		 * as the menu entries are loaded with translations and publication data,
+		 * requiring a more complex query.
+		 *
+		 * @var \Awyiss\Model\Entity\Menu $lo_menu
+		 */
 		$lo_menu = $lo_menusTable->find('active')->find('published')->where([
 			'identifier' => $identifier,
 		])->first();
