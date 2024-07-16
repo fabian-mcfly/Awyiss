@@ -85,6 +85,12 @@ class FrontendController extends AppController {
 			ResizedImageManager::addMediaItemsFromEntity($lo_older);
 		}
 
+		/** @var \Awyiss\Model\Entity\Media $lo_titleMedia */
+		$lo_titleMedia = $page->mediaAssignments['titleAndTeaserImage']['titleMedia'] ?? null;
+		if ($lo_titleMedia) {
+			$this->set('ogImage', Router::url('/', true) . ($lo_titleMedia->isImage() ? $lo_titleMedia->path : $lo_titleMedia->previewPath));
+		}
+
 		$this->set([
 			'category' => $lo_newsCategory,
 			'newer' => $lo_newer,

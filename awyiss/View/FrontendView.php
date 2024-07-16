@@ -504,4 +504,44 @@ class FrontendView extends AppView {
 
 		return $la_webfontData;
 	}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public function renderLayout(string $content, ?string $layout = null): string {
+		$this->setOgImage();
+
+		return parent::renderLayout($content, $layout);
+	}
+
+
+	/**
+	 * @return void
+	 */
+	protected function setOgImage(): void {
+		if ($this->fetch('ogImage') || $this->get('ogImage')) {
+			return;
+		}
+
+		// Set login logo path
+		$ls_logoPath = null;
+		$ls_extensions = ['png', 'jpg', 'svg'];
+		$ls_basePath = ROOT . DS . CUSTOM_DIR . DS . 'assets' . DS . 'img' . DS . 'login-logo.';
+		// For each extension, check if the file exists
+		foreach ($ls_extensions as $ls_extension) {
+			$ls_tempPath = $ls_basePath . $ls_extension;
+			if (file_exists($ls_tempPath)) {
+				$ls_logoPath = $ls_tempPath;
+				break;
+			}
+		}
+
+		if (!$ls_logoPath) {
+			return;
+		}
+
+		// If the logo path is set, remove the root path and custom directory from the path
+		$this->set('ogImage', Router::url('/', true) . substr_replace($ls_logoPath, '', 0, strlen(ROOT . DS . CUSTOM_DIR) + 1));
+	}
 }

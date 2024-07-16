@@ -92,6 +92,8 @@
 					<meta name="theme-color" content="#ffffff">
 				{%- endblock -%}
 
+				<meta property="og:image" content="{{ fetch('ogImage') ?: ogImage }}">
+
 				{%- block headStylesheets -%}
 					{%- do AssetHelper.add('full.css', [], true) -%}
 				{%- endblock -%}
