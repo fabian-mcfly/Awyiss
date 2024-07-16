@@ -72,8 +72,10 @@ class BackendView extends AppView {
 			}
 		}
 
-		// If the logo path is set, remove the root path and custom directory from the path
-		$this->set('loginLogoPath', substr_replace($ls_logoPath, '', 0, strlen(ROOT . DS . CUSTOM_DIR) + 1));
+		if ($ls_logoPath) {
+			// If the logo path is set, remove the root path and custom directory from the path
+			$this->set('loginLogoPath', substr_replace($ls_logoPath, '', 0, strlen(ROOT . DS . CUSTOM_DIR) + 1));
+		}
 
 		$lo_blocklistedProperties = ['realm', 'systemOrder', 'active', 'deleted', 'createdBy', 'createdOn', 'changedBy', 'changedOn', 'deletedBy', 'deletedOn', 'label'];
 		// Unset language properties
