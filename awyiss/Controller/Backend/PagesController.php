@@ -341,7 +341,13 @@ class PagesController extends Controller {
 			$lb_copyDescendantsWithDifferentPageRole = (bool)$lb_copyDescendantsWithDifferentPageRole;
 		}
 
-		$this->Pages->patchEntity($page, ['page_role_id' => $this->getPageRole()->value] + $this->request->getData(), [
+		$la_data = $this->request->getData();
+
+		if (empty($la_data['slug'])) {
+			$la_data['slug'] = $la_data['title'] ?? null;
+		}
+
+		$this->Pages->patchEntity($page, ['page_role_id' => $this->getPageRole()->value] + $la_data, [
 			'associated' => $la_associated,
 			'validate' => !$this->request->getData('reload_form'),
 		]);
