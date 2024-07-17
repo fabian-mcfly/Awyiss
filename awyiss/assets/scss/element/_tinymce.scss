@@ -425,6 +425,20 @@ body {
 
 					&:has(.tox-listboxfield) {
 						grid-column:auto;
+
+						&:last-child {
+							grid-column:1 / -1;
+
+							.tox-listbox--select {
+								min-width:100%;
+
+								.tox-listbox__select-label {
+									overflow:hidden;
+									text-overflow:ellipsis;
+									white-space:nowrap;
+								}
+							}
+						}
 					}
 				}
 
@@ -682,6 +696,24 @@ body {
 						font-family:ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, 'DejaVu Sans Mono', monospace;
 						font-size:12px;
 						line-height:1.75;
+					}
+				}
+			}
+		}
+
+		.tox-confirm-dialog {
+			.tox-dialog__footer-start {
+				display:none;
+			}
+
+			.tox-dialog__footer-end {
+				.tox-button--secondary {
+					order:2;
+
+					+ .tox-button {
+						background-color:var(--colorSuccess);
+						margin-left:0;
+						order:1;
 					}
 				}
 			}

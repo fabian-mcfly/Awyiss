@@ -318,6 +318,56 @@ class PagesController extends Controller {
 
 
 	/**
+	 * Return a list of pages for the currently set languageShortcode
+	 *
+	 * @return void
+	 */
+	public function linkList(): void {
+		// Get all page roles that can be included in the link list
+		$la_pageRoles = $this->fetchTable('PageRoles')->find('active')->where(['include_in_linklist' => true])->all()->indexBy('id')->toArray();
+
+		$lo_query = $this->Pages->find('active')->find('forCurrentLanguage', skipPageRoleCheck: true)->where([
+			'page_role_id IN' => array_keys($la_pageRoles),
+		]);
+
+		$lo_pagesByPageRole = $lo_query->all()->groupBy('pageRoleId');
+
+		$la_pagesByPageRole = [];
+		$ls_baseUrl = Router::url('/', true);
+		/** @var array<int, \Awyiss\Model\Entity\Page> $la_pages */
+		foreach ($lo_pagesByPageRole as $li_pageRoleId => $la_pages) {
+			$lo_pages = collection($la_pages)->nest('id', 'parentId')->listNested();
+
+			$la_pages = [];
+			foreach ($lo_pages as $lo_page) {
+				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+				$la_pages[] = [
+					'title' => str_repeat('- ', $lo_pages->getDepth()) . $lo_page->title,
+					'slug' => $lo_page->slug,
+					'languageShortcode' => $lo_page->languageShortcode,
+					'link' => $ls_baseUrl . $lo_page->languageShortcode . '/' . $lo_page->slug,
+				];
+			}
+
+			$la_pagesByPageRole[ $li_pageRoleId ] = [
+				'pageRole' => $la_pageRoles[ $li_pageRoleId ],
+				'links' => $la_pages,
+			];
+		}
+
+		if ($this->request->accepts('application/json')) {
+			$this->viewBuilder()->setOption('serialize', ['success', 'data']);
+
+			$this->set('success', true);
+			$this->set('data', $la_pagesByPageRole);
+
+			// Set the view class to JSON
+			$this->viewBuilder()->setClassName('Json');
+		}
+	}
+
+
+	/**
 	 * @param \Awyiss\Model\Entity\Page $page
 	 * @param string $method
 	 * @return void

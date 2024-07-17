@@ -10,6 +10,11 @@ export default class Loader {
 	 */
 	isModuleLoading = false;
 	/**
+	 * The link list for the TinyMCE editor
+	 * @type {Array}
+	 */
+	linkList = null;
+	/**
 	 * The selector for the TinyMCE editor
 	 * @type {string}
 	 */
@@ -19,6 +24,8 @@ export default class Loader {
 	 * @type {object}
 	 */
 	settings = {
+		anchor_bottom: false,
+		anchor_top: false,
 		autoresize_bottom_margin: 0,
 		charmap_append: [
 			[173, 'soft hyphen']
@@ -34,13 +41,17 @@ export default class Loader {
 		file_picker_callback: callback => this.filePickerCallback(callback),
 		init_instance_callback: editor => this.initInstanceCallback(editor),
 		license_key: 'gpl',
-		link_assume_external_targets: 'https',
 		link_context_toolbar: true,
+		link_list: async(success) => { // called on link dialog open
+			const links = await this.fetchPageLinks();
+			success(links);
+		},
 		link_rel_list: [
 			{title: ' ', value: ''},
 			{title: 'Lightbox', value: 'lightbox'},
 			{title: 'nofollow', value: 'nofollow'},
 		],
+		link_title: false,
 		menubar: false,
 		min_height: 300,
 		object_resizing: false,
@@ -329,6 +340,8 @@ export default class Loader {
 
 			const instance = editor.windowManager._originalOpen(config, params);
 
+			console.log(config.title);
+
 			const dialog = document.querySelector('.tox-dialog');
 
 			if (dialog) {
@@ -361,5 +374,71 @@ export default class Loader {
 
 		// noinspection JSUnresolvedReference
 		window.mediaOverlay.openOverlay(openEvent)
+	}
+
+	/**
+	 * Fetch the page links for the link dialog
+	 * @returns {Object}
+	 */
+	async fetchPageLinks() {
+		if (this.linkList) {
+			return this.linkList;
+		}
+
+		const response = await fetch(
+			`${baseUrl}backend/${languageShortcode}/pages/link-list/`,
+			{
+				method: 'GET',
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'application/json',
+					'X-Requested-With': 'XMLHttpRequest',
+				},
+			}
+		);
+
+		const responseData = await response.json();
+
+		if (responseData.success) {
+			const data = responseData.data;
+
+			// If data has only one key, there is no need to show nested links
+			if (Object.keys(data).length === 1) {
+				let links = data[ Object.keys(data)[0] ].links;
+
+				// Transform each item of that single key into an object with keys `title` and `value` (link)
+				links = links.map((link) => {
+					return {
+						title: link.title,
+						value: link.link,
+					};
+				})
+
+				this.linkList = links;
+
+				return links;
+			}
+
+			// If data has multiple keys, show nested links. Each key is a page role
+			const links = [];
+
+			Object.keys(data).forEach((roleData) => {
+				// noinspection JSUnresolvedReference
+				const pageRole = {title: data[roleData].pageRole.title, menu: []};
+
+				data[roleData].links.forEach((link) => {
+					pageRole.menu.push({
+						title: link.title,
+						value: link.link,
+					});
+				});
+
+				links.push(pageRole);
+			});
+
+			this.linkList = links;
+
+			return links;
+		}
 	}
 }
