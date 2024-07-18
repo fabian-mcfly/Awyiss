@@ -363,8 +363,6 @@ class PagesTable extends Table {
 		$this->hasMany('Duplicating' . $ls_pageRole, [
 			'bindingKey' => 'duplicate_of',
 			'className' => $ls_pageRole,
-			'cascadeCallbacks' => true,
-			'dependent' => true,
 			'foreignKey' => 'id',
 			'propertyName' => 'duplicated_by',
 		]);

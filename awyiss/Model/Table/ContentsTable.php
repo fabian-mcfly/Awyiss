@@ -127,8 +127,6 @@ class ContentsTable extends Table {
 		$this->hasMany('DuplicatingContents', [
 			'bindingKey' => 'duplicate_of',
 			'className' => 'Contents',
-			'cascadeCallbacks' => true,
-			'dependent' => true,
 			'foreignKey' => 'id',
 		]);
 
