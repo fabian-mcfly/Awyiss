@@ -83,6 +83,9 @@ msgstr "Invalid content elements"
 msgid "error_linked_contents"
 msgstr "There are still contents that use this template"
 
+msgid "error_linked_widgets"
+msgstr "There are still widgets that use this template"
+
 msgid "error_identifier_unchanged"
 msgstr "The identifier cannot be changed"
 

@@ -60,7 +60,7 @@ msgid "error_valid_duplicate_of"
 msgstr "Ungültige Duplikation von"
 
 msgid "error_no_duplicating_contents"
-msgstr "Dieser Inhalts wird von einem anderen Inhalt dupliziert"
+msgstr "Dieser Inhalt wird von einem anderen Inhalt dupliziert"
 
 msgid "error_content_template_exists"
 msgstr "Dieses Inhaltstemplate existiert nicht"
@@ -82,6 +82,9 @@ msgstr "Ungültige Inhaltselemente"
 
 msgid "error_linked_contents"
 msgstr "Es existieren noch Inhalte, die dieses Template verwenden"
+
+msgid "error_linked_widgets"
+msgstr "Es existieren noch Widgets, die dieses Template verwenden"
 
 msgid "error_identifier_unchanged"
 msgstr "Der Identifikator darf nicht geändert werden"
