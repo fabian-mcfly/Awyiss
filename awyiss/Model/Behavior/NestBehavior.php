@@ -205,9 +205,27 @@ class NestBehavior extends Behavior {
 
 		$lo_association = $this->getAssociation('children');
 
-		$lx_finder = $options['finder'] ?? $this->getConfig('children.finder');
+		$lo_query = $lo_association->find();
 
-		$lo_query = $lo_association->find($lx_finder, $entity, $this->getConfig('relatedColumns'));
+		$lx_finder = $options['finder'] ?? $this->getConfig('children.finder');
+		if ($lx_finder) {
+			$lo_query = $lo_association->find($lx_finder, entity: $entity, relatedColumns: $this->getConfig('relatedColumns'));
+		}
+
+		if (!empty($options['finders']) && is_array($options['finders'])) {
+			foreach ($options['finders'] as $lx_finder => $lx_options) {
+				if (is_int($lx_finder)) {
+					$lo_query->find($lx_options);
+				}
+				else {
+					$lo_query->find($lx_finder, ...$lx_options);
+				}
+			}
+		}
+
+		if (!empty($options['where'])) {
+			$lo_query->where($options['where']);
+		}
 
 		if (!empty($options['contain'])) {
 			$lo_query->contain($options['contain']);
@@ -279,9 +297,26 @@ class NestBehavior extends Behavior {
 
 		$lo_association = $this->getAssociation('parent');
 
-		$lx_finder = $options['finder'] ?? $this->getConfig('parent.finder');
+		$lo_query = $lo_association->find();
 
-		$lo_query = $lo_association->find($lx_finder, $entity, $this->getConfig('relatedColumns'));
+		$lx_finder = $options['finder'] ?? $this->getConfig('parent.finder');
+		if ($lx_finder) {
+			$lo_query = $lo_association->find($lx_finder, entity: $entity, relatedColumns: $this->getConfig('relatedColumns'));
+		}
+
+		if (!empty($options['finders']) && is_array($options['finders'])) {
+			foreach ($options['finders'] as $lx_finder => $lx_options) {
+				if (is_int($lx_finder)) {
+					$lo_query->find($lx_options);
+				}
+				else {
+					$lo_query->find($lx_finder, $lx_options);
+				}
+			}
+		}
+		if (!empty($options['where'])) {
+			$lo_query->where($options['where']);
+		}
 
 		if (!empty($options['contain'])) {
 			$lo_query->contain($options['contain']);
@@ -761,7 +796,7 @@ class NestBehavior extends Behavior {
 
 		$lx_finder = $options['finder'] ?? $this->getConfig('parent.finder');
 		if ($lx_finder) {
-			$lo_query->find($lx_finder, entity: $entity, relatedColumns: $this->getConfig('relatedColumns'));
+			$lo_query = $lo_association->find($lx_finder, entity: $entity, relatedColumns: $this->getConfig('relatedColumns'));
 		}
 
 		$ls_nestingKey = Inflector::variable($this->getConfig('parent.associationName'));
