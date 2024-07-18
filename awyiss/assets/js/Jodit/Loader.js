@@ -20,6 +20,9 @@ export default class Loader {
 	 * @type {object}
 	 */
 	settings = {
+		allowTags: {
+			module: true // Allow "module" as a valid tag
+		},
 		beautifyHTML: false,
 		buttons: [
 			'undo', 'redo', '|', 'cut', 'copy', 'paste', '|',
@@ -52,7 +55,7 @@ export default class Loader {
 					});
 				}
 			},
-			'center', 'right', 'justify', 'outdent', 'indent', '\n',
+			'center', 'right', 'justify', 'outdent', 'indent', '|', 'awyissModuleConfig', '\n',
 			'link', 'unlink', '|', 'ul', 'ol', '|', 'hr', 'superscript', 'subscript',
 			{
 				icon: 'insertNbsp',
@@ -97,6 +100,12 @@ export default class Loader {
 			'speech-recognize', 'spellcheck', 'video', 'resize-cells', 'print', 'preview', 'powered-by-jodit', 'paste-storage',
 			'placeholder', 'mobile', 'media', 'line-height', 'limit', 'image-properties', 'image-processor', 'image', 'color'
 		],
+		events: {
+			submit: function (command, a) {
+				console.log('command: ', command);
+				console.log('a: ', command);
+			},
+		},
 		i18n: {
 			de: {
 				'Class name': 'CSS-Klasse',
@@ -232,6 +241,9 @@ export default class Loader {
 			this.isModuleLoading = false;
 		}
 
+		// noinspection NpmUsedModulesInstalled
+		await import('Jodit/awyiss_module');
+
 		this.settingsSet = true;
 	}
 
@@ -248,11 +260,13 @@ export default class Loader {
 			}
 
 			if (node.matches(this.selector) && node.jodit) {
+				// noinspection JSUnresolvedReference
 				node.jodit.destruct();
 			}
 
 			node.querySelectorAll(this.selector).forEach((element) => {
 				if (element.jodit) {
+					// noinspection JSUnresolvedReference
 					element.jodit.destruct();
 				}
 			});

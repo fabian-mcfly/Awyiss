@@ -12,7 +12,8 @@ export default class CustomSettings {
 	 */
 	settings = {
 		iframeCSSLinks: [
-			'assets/css/jodit.css',
+			// Use a random timestamp to prevent caching in the frontend editor iframe
+			'assets/css/jodit.' + this.generateRandomTimestamp() + '.css',
 		],
 	};
 	/**
@@ -48,5 +49,16 @@ export default class CustomSettings {
 	 */
 	getStyleFormats(defaultStyleFormats) {
 		return {...defaultStyleFormats, ...this.styleFormats};
+	}
+
+	/**
+	 * Generates a random timestamp
+	 * @returns {number}
+	 */
+	generateRandomTimestamp() {
+		const now = new Date();
+		const randomOffset = Math.floor(Math.random() * 1000000000); // Generate a random number of milliseconds
+		const randomDate = new Date(now.getTime() + randomOffset);
+		return Math.floor(randomDate.getTime() / 1000); // Return the Unix timestamp
 	}
 }

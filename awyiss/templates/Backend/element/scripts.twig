@@ -52,6 +52,7 @@
 
 	{% if config.Awyiss.System.Backend.interface.editor == 'jodit' %}
 		{% do AssetHelper.addJsModule([
+			'Jodit/awyiss_module.js',
 			'Jodit/CustomSettings.js',
 			'Jodit/Loader.js',
 		]) %}
