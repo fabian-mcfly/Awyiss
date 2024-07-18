@@ -175,6 +175,30 @@ class ContentsTable extends Table {
 
 
 	/**
+	 * Returns a list of keys that are allowed for a content
+	 * when duplicating another content.
+	 *
+	 * All other keys will be taken from the duplicated content.
+	 *
+	 * @return array
+	 */
+	public function getAllowedKeyForDuplicating(): array {
+		return [
+			'active',
+			'pageId',
+			'contentAreaId',
+			'parentId',
+			'columnWidth',
+			'columnIndent',
+			'columnLast',
+			'columnRtl',
+			'duplicateOf',
+			'systemOrder',
+		];
+	}
+
+
+	/**
 	 * @return void
 	 */
 	protected function initializeColumnSystem(): void {
@@ -855,9 +879,16 @@ class ContentsTable extends Table {
 		array $contentAttributes,
 		?Validator $attributesValidator
 	): void {
+		$la_allowedKeyForDuplicating = $this->getAllowedKeyForDuplicating();
+
 		//Traverse all elements that are available inside the content template
 		foreach ($contentTemplate->contentTemplateElements as $lo_contentTemplateElement) {
 			if (!str_starts_with($lo_contentTemplateElement->identifier, 'attributes.')) {
+				// If the content is a duplicate of another content, only require those fields that are allowed for this content
+				if ($entity->duplicateOf && !in_array($lo_contentTemplateElement->identifier, $la_allowedKeyForDuplicating)) {
+					continue;
+				}
+
 				if ($lo_contentTemplateElement->required === true) {
 					//If the element is marked as required, add a requirePresence check and do not allow an empty string as value
 					$validator->requirePresence($lo_contentTemplateElement->identifier)->notEmptyString($lo_contentTemplateElement->identifier);
@@ -867,7 +898,12 @@ class ContentsTable extends Table {
 				continue;
 			}
 
-			if (!$attributesValidator) {
+			/**
+			 * If no validator for the attributes is set,
+			 * or is duplicating another content,
+			 * skip the validation of attributes
+			 */
+			if (!$attributesValidator || $entity->duplicateOf) {
 				continue;
 			}
 

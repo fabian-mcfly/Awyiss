@@ -125,7 +125,9 @@
 {% block formControlDuplicateOf %}
 	{{ FormHelper.control('duplicate_of', {
 		columnSpan: contentTemplateElement.column.span.numerator,
-		disabled: [content.id], required: contentTemplateElement.required,
+		disabled: [content.id],
+		required: contentTemplateElement.required,
+		'data-form-updater': true,
 	}) }}
 {% endblock %}
 

@@ -427,6 +427,17 @@ class ContentsController extends Controller {
 
 		$la_data = $this->formatDataAttributes($la_data);
 
+		if (isset($la_data['duplicate_of'])) {
+			/** @var \Awyiss\Model\Entity\Content $lo_duplicateOf */
+			$lo_duplicateOf = $this->Contents->findById($la_data['duplicate_of'])->first();
+			if ($lo_duplicateOf) {
+				$la_data['content_template_id'] = $lo_duplicateOf->contentTemplateId;
+			}
+			else {
+				$la_data['content_template_id'] = $this->getContentTemplates()->first()->id;
+			}
+		}
+
 		$this->Contents->patchEntity($content, $la_data, [
 			'associated' => $la_associated,
 			'validate' => !$this->request->getData('reload_form'),
@@ -919,6 +930,11 @@ class ContentsController extends Controller {
 			return $column->getLabel();
 		}, $la_columnIndents);
 
+		$la_allowedKeys = [];
+		if ($content->duplicateOf) {
+			$la_allowedKeys = $this->Contents->getAllowedKeyForDuplicating();
+		}
+
 		$this->set([
 			'content' => $content,
 			'contentTemplates' => $lo_contentTemplates,
@@ -932,6 +948,7 @@ class ContentsController extends Controller {
 			'languageShortcode' => $ls_languageShortcode,
 			'columnWidths' => $la_columnWidths,
 			'columnIndents' => $la_columnIndents,
+			'allowedKeys' => $la_allowedKeys,
 		]);
 	}
 

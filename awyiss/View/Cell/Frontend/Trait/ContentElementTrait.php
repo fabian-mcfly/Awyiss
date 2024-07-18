@@ -119,10 +119,37 @@ trait ContentElementTrait {
 		$lo_lastEntity = null;
 		$la_parentEntities = [];
 
+		/** @var \Awyiss\Model\Table\ContentsTable $lo_table */
+		$lo_table = $this->fetchTable('Contents');
+
+		$la_blocklistedKeys = array_merge($lo_table->getAllowedKeyForDuplicating(), [
+			'id',
+			'contentTemplateId',
+			'createdBy',
+			'createdOn',
+			'changedBy',
+			'changedOn',
+			'deletedBy',
+			'deletedOn',
+			'contentTemplate',
+			'contentArea',
+			'children',
+			'level',
+		]);
+
 		/**
 		 * @var \Awyiss\Model\Entity\Content|\Awyiss\Model\Entity\Widget $lo_entity
 		 */
 		foreach ($lo_entities as $lo_entity) {
+			// If the content has a duplicated one, use some data from the duplicated content
+			if ($lo_entity->duplicateOfContent) {
+				$la_data = $lo_entity->duplicateOfContent->extract(null, false, false);
+				$la_data = array_diff_key($la_data, array_flip($la_blocklistedKeys));
+
+				$lo_entity->set($la_data);
+			}
+
+
 			$lo_entity->setVirtual(['level']);
 			//Add the current depth as a level-property to the entity
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
@@ -262,7 +289,10 @@ trait ContentElementTrait {
 
 	/**
 	 * @param \Awyiss\Model\Entity $entity
+	 * @param \Awyiss\Utility\Media\MediaRenderOptions $mediaRenderOptions
 	 * @return void
+	 * @throws \ReflectionException
+	 * @throws \Exception
 	 */
 	public function parseModule(Entity $entity, MediaRenderOptions $mediaRenderOptions): void {
 		static $la_modules;
@@ -282,6 +312,7 @@ trait ContentElementTrait {
 		libxml_use_internal_errors(true);
 
 		// Load the HTML string into the DOMDocument
+		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 		$lo_dom->loadHTML($entity->text);
 
 		// Clear any errors collected during loadHTML
@@ -312,9 +343,11 @@ trait ContentElementTrait {
 			$ls_moduleOutput = $ls_moduleClass::render($la_settings, $this->View, $mediaRenderOptions, $entity, LocaleMiddleware::getLanguage());
 
 			if ($ls_moduleOutput) {
+				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 				$entity->text = str_replace($lo_moduleTag->ownerDocument->saveHTML($lo_moduleTag), $ls_moduleOutput, $entity->text);
 			}
 			else {
+				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 				$entity->text = str_replace($lo_moduleTag->ownerDocument->saveHTML($lo_moduleTag), '', $entity->text);
 			}
 		}
@@ -336,11 +369,13 @@ trait ContentElementTrait {
 	 * @return string
 	 */
 	protected function renderContentRow(string $contents): string {
+		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 		$ls_contentRow = $this->View->element('content_row', [
 			'contents' => $contents,
 			'class' => $this->View::$rowClass,
 		]);
 
+		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 		$this->View::$rowClass = '';
 
 		return $ls_contentRow;
