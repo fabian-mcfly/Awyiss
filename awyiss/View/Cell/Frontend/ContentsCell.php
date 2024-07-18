@@ -8,7 +8,9 @@ use Awyiss\Model\Entity;
 use Awyiss\Model\Entity\Content;
 use Awyiss\Model\Entity\Page;
 use Awyiss\View\Cell\Frontend\Trait\ContentElementTrait;
+use Cake\Collection\CollectionInterface;
 use Cake\Core\Configure;
+use Cake\ORM\Query\SelectQuery;
 use Cake\View\Cell;
 use RuntimeException;
 
@@ -60,18 +62,11 @@ class ContentsCell extends Cell {
 			...$la_options['viewVars'],
 		]);
 
-		$lo_contentsTable = $this->fetchTable('Contents');
+		$lo_query = $this->getContentsQuery();
 
-		$lo_query = $lo_contentsTable->find('active')->find('published')->find('threaded')->find('mediaAssignments', includeElementSelector: true, useMediaEntity: true);
 		$lo_query->where([
 			'Contents.page_id' => $page->duplicateOf ?? $page->id,
 			'ContentAreas.identifier' => $contentArea,
-		]);
-
-		// Contain ContentAreas and ContentTemplates
-		$lo_query->contain([
-			'ContentAreas',
-			'ContentTemplates',
 		]);
 
 		$lo_contents = $lo_query->all();
@@ -89,6 +84,8 @@ class ContentsCell extends Cell {
 		})->compile();
 
 		$this->addMediaItems($lo_contents, 'contents');
+
+		$this->addDuplicates($lo_contents);
 
 		$this->prepareEntities($lo_contents, (float)$la_options['columnWidth']);
 
@@ -138,5 +135,93 @@ class ContentsCell extends Cell {
 			'children' => $children,
 			'mediaRenderOptions' => $lo_mediaRenderOptions,
 		]);
+	}
+
+
+	/**
+	 * Add duplicated contents and their children to the entities.
+	 *
+	 * @param \Cake\Collection\CollectionInterface $contents
+	 * @return void
+	 */
+	protected function addDuplicates(CollectionInterface $contents): void {
+		$lo_contents = $contents->listNested();
+
+		$la_duplicatingEntities = [];
+		/** @var \Awyiss\Model\Entity\Content $lo_entity */
+		foreach ($lo_contents as $lo_entity) {
+			if ($lo_entity->duplicateOf) {
+				$la_duplicatingEntities[] = $lo_entity;
+			}
+		}
+
+		if (!$la_duplicatingEntities) {
+			return;
+		}
+
+		$la_duplicatedIds = array_column($la_duplicatingEntities, 'duplicateOf');
+
+		$lo_query = $this->getContentsQuery();
+		$lo_query->where([
+			'Contents.id IN' => $la_duplicatedIds,
+		]);
+		$la_duplicatedEntities = $lo_query->all()->indexBy('id')->toArray();
+
+		/** @var \Awyiss\Model\Entity\Content $lo_entity */
+		foreach ($la_duplicatingEntities as $lo_entity) {
+			if (empty($la_duplicatedEntities[ $lo_entity->duplicateOf ])) {
+				continue;
+			}
+
+			/** @var \Awyiss\Model\Entity\Content $lo_duplicatedEntity */
+			$lo_duplicatedEntity = $la_duplicatedEntities[ $lo_entity->duplicateOf ];
+			$lo_entity->set('duplicateOfContent', $lo_duplicatedEntity);
+
+			// If the duplicating content has children, we don't need to fetch children for the duplicated content
+			if (!empty($lo_entity->children)) {
+				continue;
+			}
+
+			$lo_children = $lo_duplicatedEntity->getNestedChildren([
+				'contain' => [
+					'ContentAreas',
+					'ContentTemplates',
+				],
+				'finders' => [
+					'active',
+					'published',
+					'mediaAssignments' => [
+						'includeElementSelector' => true,
+						'useMediaEntity' => true,
+					],
+				],
+			]);
+
+			if ($lo_children->count()) {
+				$lo_children = $lo_children->nest('id', 'parent_id');
+				foreach ($lo_children as $lo_child) {
+					$lo_child->parentId = $lo_entity->id;
+				}
+			}
+
+			$lo_entity->set('children', $lo_children->toList());
+		}
+	}
+
+
+	/**
+	 * @return \Cake\ORM\Query\SelectQuery
+	 */
+	protected function getContentsQuery(): SelectQuery {
+		$lo_contentsTable = $this->fetchTable('Contents');
+		$lo_query = $lo_contentsTable->find('active')->find('published')->find('threaded')->find('mediaAssignments', includeElementSelector: true, useMediaEntity: true);
+
+		// Contain ContentAreas and ContentTemplates
+		$lo_query->contain([
+			'ContentAreas',
+			'ContentTemplates',
+		]);
+
+		return $lo_query;
 	}
 }
