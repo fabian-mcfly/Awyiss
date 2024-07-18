@@ -39,7 +39,6 @@ export default class WidgetsController {
 		nestedListHandler.setGroupIdentifierAttribute((list, items) => {
 			const identifier =list.closest('fieldset').dataset.identifier;
 
-			console.log(items);
 			items.forEach((item, index) => {
 				items[index] = {
 					id: item,

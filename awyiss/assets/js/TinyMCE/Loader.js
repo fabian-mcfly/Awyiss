@@ -340,8 +340,6 @@ export default class Loader {
 
 			const instance = editor.windowManager._originalOpen(config, params);
 
-			console.log(config.title);
-
 			const dialog = document.querySelector('.tox-dialog');
 
 			if (dialog) {

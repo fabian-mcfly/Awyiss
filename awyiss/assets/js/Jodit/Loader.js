@@ -100,12 +100,6 @@ export default class Loader {
 			'speech-recognize', 'spellcheck', 'video', 'resize-cells', 'print', 'preview', 'powered-by-jodit', 'paste-storage',
 			'placeholder', 'mobile', 'media', 'line-height', 'limit', 'image-properties', 'image-processor', 'image', 'color'
 		],
-		events: {
-			submit: function (command, a) {
-				console.log('command: ', command);
-				console.log('a: ', command);
-			},
-		},
 		i18n: {
 			de: {
 				'Class name': 'CSS-Klasse',

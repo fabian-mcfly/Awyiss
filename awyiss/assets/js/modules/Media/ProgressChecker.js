@@ -265,10 +265,10 @@ export default class ProgressChecker {
 			this.worker.unregister()
 			.then((success) => {
 				if (success) {
-					console.log('Unregistration of the Service Worker succeeded.');
+					console.info('Unregistration of the Service Worker succeeded.');
 				}
 				else {
-					console.log('Unregistration of the Service Worker failed.');
+					console.error('Unregistration of the Service Worker failed.');
 				}
 			})
 			.catch((error) => {
