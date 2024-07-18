@@ -13,6 +13,7 @@ use Awyiss\ORM\RulesChecker;
 use Cake\Collection\CollectionInterface;
 use Cake\Database\Schema\TableSchemaInterface;
 use Cake\Database\Type\EnumType;
+use Cake\Datasource\FactoryLocator;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Utility\Inflector;
@@ -327,12 +328,17 @@ class PagesTable extends Table {
 
 		//Ensure that a page has no linked duplicating pages when deleting it.
 		$rules->addDelete(
-			$rules->isNotLinkedTo(
-				'Duplicating' . $ls_pageRole,
-				'_general',
-				__df($this->getI18nDomain(), 'validation', 'error_no_duplicating_pages')
-			),
-			'noDuplicating' . $ls_pageRole
+			function (Page $entity): bool {
+				/** @var \Awyiss\Model\Table\PagesTable $lo_table */
+				$lo_table = FactoryLocator::get('Table')->get('Pages');
+
+				return !$lo_table->exists(['duplicate_of' => $entity->id]);
+			},
+			'noDuplicating' . $ls_pageRole,
+			[
+				'errorField' => '_general',
+				'message' => __df($this->getI18nDomain(), 'validation', 'error_no_duplicating_pages'),
+			]
 		);
 
 
