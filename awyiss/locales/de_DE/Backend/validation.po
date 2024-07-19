@@ -196,3 +196,6 @@ msgstr "Der Inhalt darf keinen Inhalt auf derselben Seite duplizieren"
 
 msgid "error_circular_duplicating"
 msgstr "Ein Element darf kein anderes Element duplizieren, das es selbst dupliziert"
+
+msgid "error_children_not_duplicating_contents_on_same_page"
+msgstr "Untergeordnete Inhalte duplizieren Inhalte der Zielseite"

@@ -469,17 +469,24 @@ class ContentsTable extends Table {
 
 
 		$rules->add(
-			$rules->existsIn(
-				'duplicateOf',
-				'DuplicateOfContents',
-				[
-					'allowNullableNulls' => true,
-				],
-			),
+			function (Content $entity, array $options) use ($rules) {
+				$lx_valid = $this->checkValidDuplicateRules($entity, $options, $rules);
+
+				if ($lx_valid !== true && !$entity->duplicateOf) {
+					/**
+					 * If the entity is not a duplicate of another content but
+					 * the validation failed, set the error message to the general error field.
+					 *
+					 * Most likely, the entity itself does not have a duplicateOf field
+					 */
+					$entity->setError('_general', $lx_valid);
+				}
+
+				return $lx_valid;
+			},
 			'validDuplicateOf',
 			[
 				'errorField' => 'duplicateOf',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_duplicate_of'),
 			]
 		);
 
@@ -929,5 +936,60 @@ class ContentsTable extends Table {
 				}
 			}
 		}
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Entity\Content $entity
+	 * @param array $options
+	 * @param \Awyiss\ORM\RulesChecker $rules
+	 * @return string|bool
+	 */
+	protected function checkValidDuplicateRules(Content $entity, array $options, RulesChecker $rules): string|bool {
+		// Get all children of the current entity
+		$la_nestedChildren = $entity->getNestedChildren()->toArray();
+		$la_duplicatedContentIds = array_column($la_nestedChildren, 'duplicateOf');
+
+		if (!$entity->duplicateOf && !$la_duplicatedContentIds) {
+			return true;
+		}
+
+		if (!empty($entity->duplicateOf)) {
+			// Disallow self-duplicating contents
+			if (!$entity->isNew() && $entity->id === $entity->duplicateOf) {
+				return __df($this->getI18nDomain(), 'validation', 'error_not_self_duplicating');
+			}
+
+			/** @var \Awyiss\Model\Entity\Content $lo_duplicateOf */
+			$lo_duplicateOf = $this->findById($entity->duplicateOf)->first();
+
+			// Disallow duplicating contents that do not exist
+			if (!$lo_duplicateOf) {
+				return __df($this->getI18nDomain(), 'validation', 'error_valid_duplicate_of');
+			}
+
+			// Disallow duplicating contents that are not on the same page
+			if ($lo_duplicateOf->pageId === $entity->pageId) {
+				return __df($this->getI18nDomain(), 'validation', 'error_duplicate_not_on_same_page');
+			}
+
+			// Disallow circular duplicating
+			if (!$entity->isNew() && $lo_duplicateOf->duplicateOf === $entity->id) {
+				return __df($this->getI18nDomain(), 'validation', 'error_circular_duplicating');
+			}
+		}
+
+		if ($la_duplicatedContentIds) {
+			$la_duplicatedContents = $this->find()->where(['id IN' => $la_duplicatedContentIds])->all()->indexBy('id')->toArray();
+
+			/** @var \Awyiss\Model\Entity\Content $lo_duplicatedContent */
+			foreach ($la_duplicatedContents as $lo_duplicatedContent) {
+				if ($lo_duplicatedContent->pageId === $entity->pageId) {
+					return __df($this->getI18nDomain(), 'validation', 'error_children_not_duplicating_contents_on_same_page');
+				}
+			}
+		}
+
+		return true;
 	}
 }
