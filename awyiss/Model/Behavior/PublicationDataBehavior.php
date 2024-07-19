@@ -10,6 +10,7 @@ use Awyiss\Model\Enum\PublicationDataType;
 use Awyiss\Model\Table;
 use Awyiss\ORM\Behavior;
 use Cake\Collection\CollectionInterface;
+use Cake\Database\TypeFactory;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
 use Cake\I18n\DateTime;
@@ -82,7 +83,6 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 
 		$this->_tableLocator = $this->getConfig('tableLocator');
 
-		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
 		$this->publicationDataTable = $this->getTableLocator()->get('PublicationData', ['allowFallbackClass' => false]);
 
 		$this->setupAssociations();
@@ -211,7 +211,6 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 			/** @noinspection PhpClassConstantAccessedViaChildClassInspection */
 			$this->_table->hasOne($ls_name, [
 				'conditions' => $la_conditions,
-
 				'foreignKey' => 'foreign_id',
 				'joinType' => SelectQuery::JOIN_TYPE_LEFT,
 				'propertyName' => '_publication_' . $ls_identifier,
@@ -401,9 +400,8 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 					}
 
 					$la_data['type'] = $ls_type;
-					$la_data['date_time'] = $la_data['date_time'] ? new DateTime($la_data['date_time']) : null;
+					$la_data['date_time'] = $la_data['date_time'] ? TypeFactory::build('datetime')->marshal($la_data['date_time']) : null;
 					$la_data['scope'] = $this->getConfig('referenceName');
-
 
 					$lo_marshaller->merge($la_publicationData[ $ls_type ], $la_data, $la_options);
 
@@ -419,7 +417,6 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 				}
 
 				$entity->setDirty('_publicationData');
-
 
 				return $la_publicationData;
 			},
