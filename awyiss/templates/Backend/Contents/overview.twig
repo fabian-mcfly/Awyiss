@@ -11,6 +11,8 @@
 {% do AuthorizationHelper.setScope(forScope) %}
 <div class="Contents Overview">
 	{% block headlineOverview %}
+		{{ HtmlHelper.link(__('back_to_overview'), {controller: page.pageRoleId.name|pluralize, action: 'overview'}, {class: 'BackToOverview'}) }}
+
 		<h1>{{ __('headline_overview') }}</h1>
 		<h2>{{ page.title }}</h2>
 	{% endblock %}
@@ -22,6 +24,10 @@
 			{% endblock %}
 
 			{% block buttonsOverview %}
+				{% if AuthorizationHelper.isAccessible('update') %}
+					{{ HtmlHelper.link(__('edit'), {controller: page.pageRoleId.name|pluralize, action: 'edit', id: page.id}, {class: 'Button Button-Edit'}) }}
+				{% endif %}
+
 				<button class="Button Button-SaveSystemOrder" disabled>{{ __d('system', 'save_system_order') }}</button>
 
 				{% if AuthorizationHelper.isAccessible('create') %}
