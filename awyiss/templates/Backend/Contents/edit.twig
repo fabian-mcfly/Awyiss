@@ -17,7 +17,7 @@
 
 <div class="Contents Form Edit">
 	{% if AuthorizationHelper.isAccessible('read') %}
-		{{ HtmlHelper.link(__('back_to_overview'), {action: 'overview', pageId: page.id}, {class: 'BackToOverview'}) }}
+		{{ HtmlHelper.link(__('back_to_overview'), {action: 'overview', pageId: content.getOriginal('pageId', true)}, {class: 'BackToOverview'}) }}
 	{% endif %}
 
 	{% block headlineEdit %}
