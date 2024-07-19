@@ -229,7 +229,17 @@ class Content extends Entity {
 				break;
 			}
 
-			$ls_title = trim(strip_tags(str_replace('&nbsp;', '', (string)$ls_title)));
+			// Multiline titles should only show the first line
+			if (str_contains($ls_title, PHP_EOL)) {
+				$ls_title = substr($ls_title, 0, strpos($ls_title, PHP_EOL));
+			}
+
+			// If there is a <module> tag in the title, replace it with the module identifier (data-identifier attribute)
+			if (str_contains($ls_title, '<module')) {
+				$ls_title = preg_replace('/<module[^>]*data-identifier="([^"]*)"[^>]*>.*?<\/module>/', 'Module: <em>$1</em>', $ls_title);
+			}
+
+			$ls_title = trim(strip_tags(html_entity_decode(str_replace(['&nbsp;', '<br>'], ' ', (string)$ls_title))));
 			$ls_title = mb_strlen($ls_title) > 100 ? mb_substr($ls_title, 0, 100) . '...' : $ls_title;
 
 			if (!empty($ls_title)) {
@@ -242,7 +252,7 @@ class Content extends Entity {
 			$ls_inactive = __d('contents', 'inactive') . ' ';
 		}
 
-		return $ls_inactive . strip_tags(html_entity_decode($ls_title));
+		return $ls_inactive . $ls_title;
 	}
 
 
