@@ -15,6 +15,9 @@ class AwyissModule {
 		this.dialog = null;
 	}
 
+	/**
+	 * Create the dialog element.
+	 */
 	createDialog() {
 		this.dialog = document.createElement('dialog');
 		this.dialog.id = 'ModuleConfigurationOverlay';
@@ -36,6 +39,12 @@ class AwyissModule {
 		document.body.appendChild(this.dialog);
 	}
 
+	/**
+	 * Fetch the module configuration form.
+	 * @param {string} identifier
+	 * @param {Object} settings
+	 * @returns {Promise<Element>}
+	 */
 	async fetchModuleConfiguration(identifier, settings) {
 		const response = await fetch(`${baseUrl}backend/${languageShortcode}/contents/module-configuration/`, {
 			method: 'POST',
@@ -57,6 +66,14 @@ class AwyissModule {
 		return doc.querySelector('#Content')?.querySelector('.Form');
 	}
 
+	/**
+	 * Open the overlay to configure the module.
+	 *
+	 * @param {Event} event
+	 * @param {tinymce.Editor} editor
+	 * @param {HTMLElement} node
+	 * @returns {Promise<void>}
+	 */
 	async openOverlay(event, node) {
 		if (!this.dialog) {
 			this.createDialog();
@@ -86,6 +103,11 @@ class AwyissModule {
 		this.dialog.appendChild(form);
 	}
 
+	/**
+	 * Handle the click event on the dialog.
+	 *
+	 * @param {MouseEvent} event
+	 */
 	handleDialogClick(event) {
 		if (event.target.matches('.Button-Save')) {
 			event.preventDefault();
@@ -106,6 +128,11 @@ class AwyissModule {
 		}
 	}
 
+	/**
+	 * Use the settings from the dialog to update the module node.
+	 *
+	 * @returns {void}
+	 */
 	useModuleSettings() {
 		const identifierSelect = this.dialog.querySelector('select[name="module_identifier"]');
 		const identifier = identifierSelect.value;
@@ -156,6 +183,12 @@ class AwyissModule {
 		}
 	}
 
+	/**
+	 * Clean up module tags.
+	 * Unwrap modules from block elements.
+	 *
+	 * @returns {void}
+	 */
 	cleanModuleTags(event, clean = false) {
 		const target = event.target;
 
