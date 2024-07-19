@@ -122,7 +122,7 @@
 		{% endblock %}
 
 		{% block elementPublicationData %}
-			{{ element('publication_data/fieldset') }}
+			{{ element('publication_data/fieldset', {fields: AttributesHelper.allControls('publication')}) }}
 		{% endblock %}
 
 		{% block formInputReloadForm %}
