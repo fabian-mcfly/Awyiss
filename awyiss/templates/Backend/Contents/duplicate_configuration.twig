@@ -1,0 +1,93 @@
+{#
+@var page \Awyiss\Model\Entity\Page
+@var duplicateOfPage \Awyiss\Model\Entity\Page
+@var forScope string
+@var _view \Awyiss\View\BackendView
+@var AssetHelper \Awyiss\View\Helper\AssetHelper
+@var AttributesHelper \Awyiss\View\Helper\AttributesHelper
+@var AuthorizationHelper \Awyiss\View\Helper\AuthorizationHelper
+@var CategoriesHelper \Awyiss\View\Helper\CategoriesHelper
+@var FlashHelper \Awyiss\View\Helper\FlashHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+@var HtmlHelper \Awyiss\View\Helper\HtmlHelper
+@var LocaleHelper \Awyiss\View\Helper\LocaleHelper
+@var MediaHelper \Awyiss\View\Helper\MediaHelper
+@var PaginatorHelper \Awyiss\View\Helper\PaginatorHelper
+@var SystemOrderHelper \Awyiss\View\Helper\SystemOrderHelper
+@var UrlHelper \Awyiss\View\Helper\UrlHelper
+#}
+
+{% do AuthorizationHelper.setScope(forScope) %}
+
+<div class="Contents Form DuplicateConfiguration" data-title="{{ __('headline_duplicate_configuration') }}">
+	{% block buttonArea %}
+		<div class="ButtonArea">
+			{% block formDuplicateConfigurationButtons %}
+				{{ FormHelper.button(__('save'), {class: 'Button Button-Success Button-Save', form: 'DuplicateConfiguration'}) }}
+			{% endblock %}
+
+			{{ FormHelper.button(__('close'), {class: 'Button Button-Close'}) }}
+		</div>
+	{% endblock %}
+
+	{{ FormHelper.create(null, {method: 'post', id: 'DuplicateConfiguration', idPrefix: 'duplicateConfiguration'}) }}
+
+	{% block flashMessages %}
+		{{ FlashHelper.render() }}
+	{% endblock %}
+	<fieldset class="Fieldsets">
+		{{ FormHelper.control('duplicate_of_page_id', {
+			type: 'select',
+			options: CategoriesHelper.categories('page'),
+			disabled: [page.id],
+			value: duplicateOfPage.id,
+			'data-form-updater': true,
+		}) }}
+
+		{% block formDuplicateContents %}
+			{% for contentAreaId, contentArea in contentAreas %}
+				{% block fieldsetContentArea %}
+					{% if contentArea is not null %}
+						<fieldset class="Overview-Fieldset" data-content-area-id="{{ contentAreaId }}">
+							{% if contentArea is null %}
+								<legend>{{ __('unknown_content_area') }}</legend>
+							{% else %}
+								<legend>{{ contentArea }}</legend>
+							{% endif %}
+
+							{% block fieldsetContentAreaInner %}
+								{% block listOverview %}
+									{% from '@Backend/macro/nested_list.twig' import nestedList %}
+									{{ nestedList(contents[ contentAreaId ], _context|merge({
+										class: localConfig.overview.columnView.enabled == true ? 'NestedList-Compact ColumnSystem-' ~ columnSystemName : null,
+										contentTemplates: contentTemplates,
+										data: {
+											'content-area': contentAreaId,
+											sortable: false,
+										},
+										displayedFields: localConfig.overview.displayedFields,
+										identifier: 'Contents',
+										template: '@Backend/Contents/duplicate_configuration_nested_list_item.twig',
+									})) }}
+								{% endblock %}
+							{% endblock %}
+						</fieldset>
+					{% endif %}
+				{% endblock %}
+			{% endfor %}
+		{% endblock %}
+	</fieldset>
+
+	{% block buttonAreaBottom %}
+		<div class="ButtonArea ButtonArea-Bottom">
+			{{ block('formDuplicateConfigurationButtons') }}
+		</div>
+	{% endblock %}
+
+	{% block formInputReloadForm %}
+		{{ FormHelper.hidden('content_template_id', {val: contentTemplateId}) }}
+		{{ FormHelper.hidden('reload_form', {val: 0}) }}
+	{% endblock %}
+
+	{{ FormHelper.end() }}
+</div>

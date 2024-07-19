@@ -24,6 +24,10 @@ export default class ContentsController {
 			this.initOverview();
 		}
 
+		if (document.documentElement.classList.contains('AddAction') || document.documentElement.classList.contains('EditAction')) {
+			this.initForm();
+		}
+
 		if (document.querySelector('.Form.EditFrontendEditor')) {
 			// Find the close button and send an event to the parent window
 			const closeButton = document.querySelector('.Button-Close');
@@ -33,6 +37,20 @@ export default class ContentsController {
 		}
 	}
 
+	/**
+	 * Initialize the logic for the form.
+	 */
+	initForm() {
+		const duplicateOfConfiguration = new DuplicateOfConfiguration();
+	}
+
+	/**
+	 * Initialize the logic for the overview.
+	 *
+	 * Enable resizing of the contents,
+	 * disallow moving contents into areas they are not allowed to be in
+	 * and add a context menu to the list items when they are narrow.
+	 */
 	initOverview() {
 		const nestedListHandler = window.nestedListHandler;
 
@@ -135,6 +153,206 @@ export default class ContentsController {
 			const nestedList = fieldset.querySelector('.NestedList');
 			if (nestedList && this.resizeableContent && !event.detail.isCollapsed) {
 				this.resizeableContent.resetListItemWidths();
+			}
+		});
+	}
+}
+
+class DuplicateOfConfiguration {
+	/**
+	 * @type {HTMLDialogElement} overlay - The overlay element.
+	 */
+	dialog;
+	/**
+	 * @type {HTMLInputElement} duplicateOfInput - The input field for the duplicate of
+	 */
+	duplicateOfInput;
+	/**
+	 * @type {boolean} isFormChanged - Whether the form has been changed.
+	 */
+	isFormChanged = false;
+
+	constructor() {
+		this.duplicateOfInput = document.getElementById('Content-DuplicateOf');
+		this.duplicateOfInput.instantUpdate = true;
+		this.duplicateOfInput.addEventListener('click', event => this.openOverlay(event));
+
+		this.isFormChanged = window.formLeaveConfirmation.isFormChanged;
+
+		const observer = window.observer;
+		observer.addObserver(this.observeMutations.bind(this));
+	}
+
+	/**
+	 * Create the dialog element.
+	 */
+	createDialog() {
+		this.dialog = document.createElement('dialog');
+		this.dialog.id = 'DuplicateConfigurationOverlay';
+
+		this.dialog.addEventListener('close', () => {
+			// Remove all children from the dialog
+			while (this.dialog.firstChild) {
+				this.dialog.removeChild(this.dialog.firstChild);
+			}
+
+			// Reset the form changed status
+			window.formLeaveConfirmation.isFormChanged = this.isFormChanged;
+		});
+
+		this.dialog.addEventListener('click', event => this.handleDialogClick(event));
+
+		this.dialog.addEventListener('dblclick', event => {
+
+			// If the target is a checkbox, use
+			if (event.target.matches('label')) {
+				const checkbox = event.target.querySelector('input[type="checkbox"]');
+
+				this.duplicateOfInput.value = checkbox.value || '';
+				this.isFormChanged = true;
+
+				// Trigger an input event
+				const inputEvent = new Event('input', {
+					bubbles: true,
+				});
+				this.duplicateOfInput.dispatchEvent(inputEvent);
+
+				this.dialog.close();
+			}
+		});
+
+		this.dialog.addEventListener('keypress', event => {
+			// Prevent the dialog from closing when pressing the enter key
+			if (event.key === 'Enter') {
+				event.preventDefault();
+			}
+		});
+
+		// Append dialog to body
+		document.body.appendChild(this.dialog);
+	}
+
+
+	/**
+	 * Fetch the duplicate configuration form.
+	 * @returns {Promise<Element>}
+	 */
+	async fetchDuplicateConfiguration() {
+		const response = await fetch(`${baseUrl}backend/${languageShortcode}/contents/duplicate-configuration/page-id:${this.duplicateOfInput.dataset.pageId}/`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				'X-Requested-With': 'XMLHttpRequest',
+			},
+			body: JSON.stringify({
+				duplicate_of_page_id: this.duplicateOfInput.dataset.duplicateOfPageId,
+				duplicate_of: this.duplicateOfInput.value,
+				content_template_id: this.duplicateOfInput.dataset.contentTemplateId,
+			}),
+		});
+
+		const html = await response.text();
+
+		const parser = new DOMParser();
+		const doc = parser.parseFromString(html, "text/html");
+
+		return doc.querySelector('#Content')?.querySelector('.Form');
+	}
+
+	/**
+	 * Open the overlay to configure the module.
+	 *
+	 * @param {Event} event
+	 * @param {tinymce.Editor} editor
+	 * @param {HTMLElement} node
+	 * @returns {Promise<void>}
+	 */
+	async openOverlay(event, editor, node) {
+		if (!this.dialog) {
+			this.createDialog();
+		}
+
+		this.dialog.showModal();
+
+		const form = await this.fetchDuplicateConfiguration();
+
+		if (!form) {
+			return;
+		}
+
+		form.classList.remove('Contents');
+		this.dialog.appendChild(form);
+	}
+
+	/**
+	 * Handle the click event on the dialog.
+	 *
+	 * @param {MouseEvent} event
+	 */
+	handleDialogClick(event) {
+		if (event.target.matches('.Button-Save')) {
+			event.preventDefault();
+
+			// Get the ckecked checkbox and use its value
+			const checked = this.dialog.querySelector('input[type="checkbox"]:checked');
+			this.duplicateOfInput.value = checked?.value || '';
+			this.isFormChanged = true;
+
+			// Trigger an input event
+			const inputEvent = new Event('input', {
+				bubbles: true,
+			});
+			this.duplicateOfInput.dispatchEvent(inputEvent);
+
+			this.dialog.close();
+
+			return;
+		}
+
+		// If the click event was on an input, uncheck all other checkboxes
+		if (event.target.matches('input[name="duplicate_of"]')) {
+			const checkbox = event.target;
+			const checked = this.dialog.querySelectorAll('input[type="checkbox"]:checked');
+
+			for (const item of checked) {
+				if (item !== checkbox) {
+					item.checked = false;
+				}
+			}
+		}
+
+		if (event.target.matches('.Button-Close')) {
+			event.preventDefault();
+			this.dialog.close();
+		}
+	}
+
+	/**
+	 * Observe mutations in the DOM and set up the duplicate of configuration.
+	 *
+	 * @param {MutationRecord} mutation - The mutation to observe.
+	 */
+	observeMutations(mutation) {
+		if (!mutation.addedNodes.length > 0) {
+			return;
+		}
+
+		mutation.addedNodes.forEach((node) => {
+			const selector = '#Content-DuplicateOf';
+
+			if (node.nodeType === Node.ELEMENT_NODE) {
+				if (node.matches(selector)) {
+					this.duplicateOfInput = node;
+					this.duplicateOfInput.instantUpdate = true;
+					this.duplicateOfInput.addEventListener('click', event => this.openOverlay(event));
+				}
+
+				const elements = node.querySelectorAll(selector);
+				elements.forEach((element) => {
+					this.duplicateOfInput = element;
+					this.duplicateOfInput.instantUpdate = true;
+					this.duplicateOfInput.addEventListener('click', event => this.openOverlay(event));
+				});
 			}
 		});
 	}

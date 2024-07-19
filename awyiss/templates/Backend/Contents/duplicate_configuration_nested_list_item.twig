@@ -1,0 +1,56 @@
+{#
+@var entity \Awyiss\Model\Entity\Content
+@var settings array
+#}
+
+{% extends '@Backend/element/overview/nested_list_item.twig' %}
+
+{% block nestedListItemDataTitle %}
+	<li class="Title">{{ entity.forcedTitle|raw }}</li>
+{% endblock %}
+
+{% block nestedListItemDataDisplayedFieldDefaultValue %}{% endblock %}
+{% block nestedListItemDataDisplayedFields %}{% endblock %}
+
+{% block nestedListItem %}
+	{% set contentTemplate = settings.contentTemplates[ entity.contentTemplateId ] ?? null  %}
+	<li
+		{{ block('nestedListItemId') }}
+		{{ block('nestedListItemClass') }}
+		{%- if contentTemplate.contentTemplateElements.parent_id is not defined %}
+			data-nestable="false"
+		{%- elseif contentTemplate.contentTemplateElements.parent_id.required %}
+			data-disallow-top-level="true"
+		{%- endif %}
+		{%- if contentTemplate.contentTemplateElements.column_width is not defined %}
+			data-resizable="false"
+		{%- endif %}
+		data-content-area-ids="{{ contentTemplate.contentAreaIds|json_encode }}"
+		data-column-width-class="{{ entity.column.width.cssClass }}"
+		data-max-column-width="{{ 1 - entity.column.indent.percentage }}"
+		>
+		{% block nestedListItemInner %}
+			<div
+				{{ block('nestedListItemInnerClass') }}
+				title="{{ entity.forcedTitle }} ({{ entity.column.width.label -}}
+				{%- if entity.column.indent.label %} / {{ entity.column.indent.label }}{% endif %})"
+				>
+
+				{% block nestedListItemData %}
+					{{ parent() }}
+				{% endblock %}
+
+
+				{% if entity.contentTemplateId == settings.contentTemplateId %}
+					<label>
+						<input type="checkbox" name="duplicate_of" value="{{ entity.id }}"{% if entity.id == duplicateOf%} checked{% endif %}>
+					</label>
+				{% endif %}
+			</div>
+		{% endblock %}
+
+		{% block nestedListChildren %}
+			{{ parent() }}
+		{% endblock %}
+	</li>
+{% endblock %}

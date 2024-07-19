@@ -101,11 +101,52 @@
 		.Fieldset-PublicationData {
 			display:none;
 		}
+
+		.FormInputName-DuplicateOf {
+			.Button {
+				display:none;
+			}
+		}
 	}
 
 	.Fieldset-Data,
 	.Fieldset-PublicationData {
 		grid-column:auto / span 2;
+	}
+
+	.FormInputName-DuplicateOf {
+		input {
+			cursor:pointer;
+			font-size:0;
+		}
+
+		output {
+			padding-right:72px;
+			border:0 none;
+			background:none;
+			position:absolute;
+			top:1.05rem;
+			left:0;
+			overflow:hidden;
+			text-overflow:ellipsis;
+			white-space:nowrap;
+			pointer-events:none;
+		}
+
+		.Button {
+			@extend %InFieldButton;
+
+			position:absolute;
+			top:calc(1.05rem + 1px);
+			right:1px;
+
+			&::after {
+				margin-left:0;
+				font-size:30px;
+				border:0 none;
+				line-height:50px;
+			}
+		}
 	}
 
 	.FormInputName-Data {

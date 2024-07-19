@@ -123,11 +123,23 @@
 
 
 {% block formControlDuplicateOf %}
+	{% set output %}
+		<output>{{ settings.content.duplicateOfContent.label ?: '&nbsp;' }}</output>
+		{% if settings.content.duplicateOfContent %}
+			{{ HtmlHelper.link(__('edit'), {action: 'edit', id: settings.content.duplicateOfContent.id}, {class: 'Button Button-Edit Button-Medium'}) }}
+		{% endif %}
+	{% endset %}
+
 	{{ FormHelper.control('duplicate_of', {
 		columnSpan: contentTemplateElement.column.span.numerator,
-		disabled: [content.id],
 		required: contentTemplateElement.required,
+		templateVars: {
+			additionalContent: output,
+		},
 		'data-form-updater': true,
+		'data-duplicate-of-page-id': settings.content.duplicateOfContent.pageId,
+		'data-page-id': settings.content.pageId,
+		'data-content-template-id': settings.content.contentTemplateId,
 	}) }}
 {% endblock %}
 

@@ -20,6 +20,9 @@ msgstr "Add Content"
 msgid "meta_title_edit"
 msgstr "Edit Content"
 
+msgid "meta_title_duplicate_configuration"
+msgstr "Duplicate Content"
+
 msgid "meta_title_module_configuration"
 msgstr "Module Configuration"
 
@@ -56,6 +59,9 @@ msgstr "The content was successfully updated"
 msgid "edit_failed"
 msgstr "The content could not be updated"
 
+msgid "headline_duplicate_configuration"
+msgstr "Duplicate content"
+
 msgid "headline_module_configuration"
 msgstr "Module Configuration"
 
@@ -64,6 +70,9 @@ msgstr "The content was not found"
 
 msgid "confirm_delete"
 msgstr "Are you sure you want to delete this content (ID: {0})?"
+
+msgid "duplicate_of_page_id"
+msgstr "Source page"
 
 msgid "delete_succeeded"
 msgstr "The content was successfully deleted"

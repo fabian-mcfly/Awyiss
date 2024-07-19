@@ -20,6 +20,9 @@ msgstr "Add Content"
 msgid "meta_title_edit"
 msgstr "Edit Content"
 
+msgid "meta_title_duplicate_configuration"
+msgstr "Duplicate Content"
+
 msgid "meta_title_module_configuration"
 msgstr "Module Configuration"
 
@@ -55,6 +58,9 @@ msgstr "The content was successfully updated"
 
 msgid "edit_failed"
 msgstr "The content could not be updated"
+
+msgid "headline_duplicate_configuration"
+msgstr "Duplicate content"
 
 msgid "headline_module_configuration"
 msgstr "Module Configuration"
@@ -124,6 +130,9 @@ msgstr "Data Attributes"
 
 msgid "data"
 msgstr "Data Attributes"
+
+msgid "duplicate_of_page_id"
+msgstr "Source page"
 
 msgid "module_identifier"
 msgstr "Module"

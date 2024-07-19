@@ -377,6 +377,86 @@ class ContentsController extends Controller {
 
 
 	/**
+	 * Show a form to configure a duplicateOf field
+	 *
+	 * @return void
+	 * @throws \ReflectionException
+	 */
+	public function duplicateConfiguration() {
+		$li_pageId = (int)$this->request->getParam('pageId');
+		$this->forPage($li_pageId);
+
+		$this->Authorization->ensure('read');
+
+		$lo_duplicateOfPage = null;
+
+		if ($this->request->is('post') && $this->request->getData('duplicate_of_page_id')) {
+			$lo_duplicateOfPage = $this->getPage((int)$this->request->getData('duplicate_of_page_id'));
+
+			if ($lo_duplicateOfPage) {
+				$lo_query = $this->Contents->find()->where(['page_id' => $lo_duplicateOfPage->id])->contain(['ContentTemplates']);
+
+				$lo_contents = $lo_query->formatResults(function (Collection $result): Collection {
+					/** @var \Awyiss\Model\Entity\Content $lo_content */
+					foreach ($result as $lo_content) {
+						$lo_content->class = $lo_content->column['width']->getCssClass();
+
+						if ($lo_content->column['indent']) {
+							$lo_content->class .= ' ' . $lo_content->column['indent']->getCssClass();
+						}
+
+						if ($lo_content->columnRtl) {
+							$lo_content->class .= ' Column-RTL';
+						}
+
+						if ($lo_content->columnLast) {
+							$lo_content->class .= ' Column-Last';
+						}
+					}
+
+					return $result;
+				})->find('threaded')->all();
+
+				$la_contents = $lo_contents->groupBy('contentAreaId')->toArray();
+
+				$la_contentAreas = array_combine(array_column($this->page->pageTemplate->contentAreas, 'id'), array_column($this->page->pageTemplate->contentAreas, 'label'));
+				$la_unknownContentAreas = array_diff_key($la_contents, $la_contentAreas);
+				foreach ($la_unknownContentAreas as $li_contentAreaId => $lo_contents) {
+					$la_contentAreas[ $li_contentAreaId ] = null;
+				}
+
+				$la_contentTemplates = $this->getContentTemplates()->indexBy('id')->toArray();
+				array_map(function (ContentTemplate $contentTemplate) {
+					// Build an array of assigned content elements, indexed by their identifier
+					$contentTemplate->contentTemplateElements = collection($contentTemplate->contentTemplateElements)->indexBy('identifier')->toArray();
+					// Build an array of assigned content areas, indexed by their id
+					$contentTemplate->contentAreaIds = collection($contentTemplate->contentAreas)->filter(function ($contentArea) {
+						return $contentArea->_joinData->pageTemplateId === $this->page->pageTemplateId;
+					})->extract('id')->unique()->toList();
+				}, $la_contentTemplates);
+
+				$this->set([
+					'contents' => $la_contents,
+					'contentAreas' => $la_contentAreas,
+					'unknownContentAreas' => $la_unknownContentAreas,
+					'attributes' => $this->Contents->getAttributes(),
+				]);
+			}
+		}
+
+		$this->set([
+			'page' => $this->page,
+			'forScope' => $this->Contents->getForScope(),
+			'duplicateOfPage' => $lo_duplicateOfPage,
+			'duplicateOf' => $this->request->getData('duplicate_of'),
+			'contentTemplateId' => $this->request->getData('content_template_id'),
+		]);
+
+		$this->viewBuilder()->setLayout('overlay_configuration');
+	}
+
+
+	/**
 	 * Show a form to configure a module
 	 *
 	 * @return void
@@ -406,7 +486,7 @@ class ContentsController extends Controller {
 			'settings' => $this->request->getData('settings') ?? [],
 		]);
 
-		$this->viewBuilder()->setLayout('frontend_editor');
+		$this->viewBuilder()->setLayout('overlay_configuration');
 	}
 
 
@@ -427,6 +507,7 @@ class ContentsController extends Controller {
 
 		$la_data = $this->formatDataAttributes($la_data);
 
+		$lo_duplicateOf = null;
 		if (isset($la_data['duplicate_of'])) {
 			/** @var \Awyiss\Model\Entity\Content $lo_duplicateOf */
 			$lo_duplicateOf = $this->Contents->findById($la_data['duplicate_of'])->first();
@@ -442,6 +523,10 @@ class ContentsController extends Controller {
 			'associated' => $la_associated,
 			'validate' => !$this->request->getData('reload_form'),
 		]);
+
+		if ($lo_duplicateOf && $lo_duplicateOf->pageId === $content->pageId) {
+			$content->duplicateOf = null;
+		}
 
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
 			if ($content->isDirty('pageId')) {
@@ -544,7 +629,6 @@ class ContentsController extends Controller {
 				$lo_parentCase->when(['id' => $la_data['id']])->then($la_data['parentId'], 'integer');
 				$lo_systemOrderCase->when(['id' => $la_data['id']])->then($la_data['systemOrder'], 'integer');
 			}
-
 
 			return [
 				'content_area_id' => $lo_contentAreaCase,
@@ -933,6 +1017,12 @@ class ContentsController extends Controller {
 		$la_allowedKeys = [];
 		if ($content->duplicateOf) {
 			$la_allowedKeys = $this->Contents->getAllowedKeyForDuplicating();
+
+			$content->duplicateOfContent = $this->Contents->findById($content->duplicateOf)->first();
+
+			if (!$content->duplicateOfContent || $content->duplicateOfContent->id !== $content->duplicateOf) {
+				$content->duplicateOfContent = null;
+			}
 		}
 
 		$this->set([
