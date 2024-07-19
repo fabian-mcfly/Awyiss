@@ -158,6 +158,11 @@ class FormHelper extends BaseFormHelper {
 			}
 		}
 
+		if (!isset($la_options['timezone']) && $this->_inputType($fieldName, $la_options) === 'datetime') {
+			$lo_language = $la_options['language'] ?? LocaleMiddleware::getLanguage(null);
+			$la_options['timezone'] = $lo_language->timezone;
+		}
+
 
 		return parent::control($fieldName, $la_options);
 	}
