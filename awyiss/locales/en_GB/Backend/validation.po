@@ -188,3 +188,11 @@ msgstr "The count does not match {0}{1}"
 msgid "error_link_constraint_rule"
 msgstr "Cannot modify row: a constraint for the `{0}` association fails."
 
+msgid "error_not_self_duplicating"
+msgstr "An element cannot duplicate itself"
+
+msgid "error_duplicate_not_on_same_page"
+msgstr "The element cannot duplicate an element on the same page"
+
+msgid "error_circular_duplicating"
+msgstr "An element cannot duplicate an element that duplicates the original element"

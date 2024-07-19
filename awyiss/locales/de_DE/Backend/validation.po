@@ -188,3 +188,11 @@ msgstr "Die Anzahl stimmt nicht überein {0}{1}"
 msgid "error_link_constraint_rule"
 msgstr "Zeile kann nicht geändert werden: Eine Beschränkung für die `{0}`-Verknüpfung ist fehlgeschlagen."
 
+msgid "error_not_self_duplicating"
+msgstr "Ein Element darf sich nicht selbst duplizieren"
+
+msgid "error_duplicate_not_on_same_page"
+msgstr "Der Inhalt darf keinen Inhalt auf derselben Seite duplizieren"
+
+msgid "error_circular_duplicating"
+msgstr "Ein Element darf kein anderes Element duplizieren, das es selbst dupliziert"

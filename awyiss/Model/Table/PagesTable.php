@@ -316,14 +316,30 @@ class PagesTable extends Table {
 		);
 
 
-		$rules->add(
-			$rules->existsIn('duplicateOf', 'DuplicateOf' . Inflector::camelize($this->pageRole->name)),
-			'validDuplicateOf',
-			[
-				'errorField' => 'duplicateOf',
-				'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_duplicate_of'),
-			]
-		);
+		$rules->add(function (Page $entity, array $options) use ($rules): bool|string {
+			if (empty($entity->duplicateOf)) {
+				return true;
+			}
+
+			if (!$entity->isNew() && $entity->id === $entity->duplicateOf) {
+				return __df($this->getI18nDomain(), 'validation', 'error_not_self_duplicating');
+			}
+
+			/** @var \Awyiss\Model\Entity\Page $lo_duplicateOf */
+			$lo_duplicateOf = $this->findById($entity->duplicateOf)->first();
+
+			if (!$lo_duplicateOf) {
+				return __df($this->getI18nDomain(), 'validation', 'error_valid_duplicate_of');
+			}
+
+			if (!$entity->isNew() && $lo_duplicateOf->duplicateOf === $entity->id) {
+				return __df($this->getI18nDomain(), 'validation', 'error_circular_duplicating');
+			}
+
+			return true;
+		}, 'validDuplicateOf', [
+			'errorField' => 'duplicateOf',
+		]);
 
 
 		//Ensure that a page has no linked duplicating pages when deleting it.
