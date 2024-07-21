@@ -101,6 +101,9 @@ msgstr "Spaltenabstand"
 msgid "permission_load"
 msgstr "Daten laden"
 
+msgid "preview"
+msgstr "Vorschau"
+
 msgid "save"
 msgstr "Speichern"
 
@@ -109,3 +112,6 @@ msgstr "Speichern"
 
 msgid "save_succeeded"
 msgstr "Das Design wurde erfolgreich gespeichert"
+
+msgid "preview_mode"
+msgstr "Vorschau-Modus"

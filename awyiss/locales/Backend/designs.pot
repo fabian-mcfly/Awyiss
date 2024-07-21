@@ -101,6 +101,9 @@ msgstr "Column margin"
 msgid "permission_load"
 msgstr "Load data"
 
+msgid "preview"
+msgstr "Preview"
+
 msgid "save"
 msgstr "Save"
 
@@ -109,3 +112,6 @@ msgstr "Save"
 
 msgid "save_succeeded"
 msgstr "The design was successfully saved."
+
+msgid "preview_mode"
+msgstr "Preview mode"

@@ -57,6 +57,10 @@ class Designs {
 				'default' => false,
 				'limit' => null,
 				'null' => false,
+			])->addColumn('is_preview', 'boolean', [
+				'default' => false,
+				'limit' => null,
+				'null' => false,
 			])->addColumn('deleted', 'boolean', [
 				'default' => false,
 				'limit' => null,

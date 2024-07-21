@@ -2,6 +2,8 @@
 @var design \Awyiss\Model\Entity\Design
 @var fontStacks array
 @var fontWeights array
+@var preview \Awyiss\Model\Entity\Design|null
+@var previewIdentifier string
 @var units array
 @var variables array
 @var webfonts array
@@ -15,32 +17,46 @@
 		<h1>{{ __('headline_overview') }}</h1>
 	{% endblock %}
 
-	{{ FormHelper.create(design, {method: 'post', idPrefix: 'design'}) }}
+	{{ FormHelper.create(preview ?? design, {method: 'post', idPrefix: 'design'}) }}
 
 	{{ FormHelper.checkbox('save_as_copy', {id: 'SaveAsCopy', value: true}) }}
 
 	{% block buttonArea %}
 		<div class="ButtonArea">
 			{% block buttonsOverview %}
+				{% if design.isPreview %}
+					{{ FormHelper.button(__('cancel'), {class: 'Button Button-Cancel', name: 'cancel'}) }}
+				{% endif %}
+
+				{{ FormHelper.button(__('preview'), {class: 'Button Button-View', name: 'preview', value: design.isPreview ? design.identifier : ''}) }}
+
 				{% if AuthorizationHelper.isAccessible('save') %}
-					{{ FormHelper.button(__('save'), {class: 'Button Button-Success Button-Save'}) }}
+					{{ FormHelper.button(__('save'), {class: 'Button Button-Success Button-Save', name: 'save', value: design.isPreview ? design.identifier : ''}) }}
 				{% endif %}
 			{% endblock %}
 		</div>
 	{% endblock %}
 
-	{% block fieldsetOverview %}
-		{% for category, variables in variables %}
-			<fieldset class="Overview-Fieldset Fieldset-{{ category|camelize }} Collapsible">
-				<legend>{{ __('fieldset_' ~ category) }}</legend>
-				{% block fieldsetOverviewInner %}
-					{% for key, options in variables %}
-						{% set variable = key %}
-						{{ block('formControl' ~ options.type.name) }}
-					{% endfor %}
-				{% endblock %}
-			</fieldset>
-		{% endfor %}
+	{% block fieldsetsOverview %}
+		<div class="Fieldsets">
+			{% block fieldsetOverview %}
+				{% for category, variables in variables %}
+					<fieldset class="Overview-Fieldset Fieldset-{{ category|camelize }} Collapsible">
+						<legend>{{ __('fieldset_' ~ category) }}</legend>
+						{% block fieldsetOverviewInner %}
+							{% for key, options in variables %}
+								{% set variable = key %}
+								{{ block('formControl' ~ options.type.name) }}
+							{% endfor %}
+						{% endblock %}
+					</fieldset>
+				{% endfor %}
+			{% endblock %}
+		</div>
+	{% endblock %}
+
+	{% block previewOverview %}
+		<iframe src="{{ baseUrl }}" id="Preview"></iframe>
 	{% endblock %}
 
 	{% block buttonAreaBottom %}

@@ -291,6 +291,10 @@ class FrontendController extends AppController {
 			$this->loadFrontendEditor($lo_page);
 		}
 
+		if ($this->request->getSession()->read('designPreviewIdentifier')) {
+			$this->loadDesignPreview();
+		}
+
 		$this->viewBuilder()
 		->setTemplate($lo_page->pageTemplate->fileName)
 		->setTemplatePath('Frontend/page');
@@ -492,6 +496,38 @@ class FrontendController extends AppController {
 		]);
 
 		return $lo_query->first();
+	}
+
+
+	/**
+	 * @return void
+	 */
+	protected function loadDesignPreview(): void {
+		$ls_designPreviewIdentifier = $this->request->getSession()->read('designPreviewIdentifier');
+
+		$lo_designTable = $this->fetchTable('Designs');
+		$lo_design = $lo_designTable->find('all')->where([
+			'identifier' => $ls_designPreviewIdentifier,
+			'is_preview' => true,
+		])->first();
+
+		if ($lo_design) {
+			$this->set('designPreview', $lo_design);
+
+			$la_webfontData = [];
+			foreach ($lo_design->settings as $ls_variable => $lx_value) {
+				if (!is_array($lx_value) || !isset($lx_value['font']['name'])) {
+					continue;
+				}
+
+				$la_webfontData[ $ls_variable ] = [
+					'name' => $lx_value['font']['name'],
+					'variants' => $lx_value['variants'] ?? [],
+				];
+			}
+
+			$this->set('designPreviewWebfonts', $la_webfontData);
+		}
 	}
 
 

@@ -25,3 +25,6 @@ msgstr "Boh! Something seems to have gone wrong. Please try again later."
 
 msgid "read_more"
 msgstr "Read more"
+
+msgid "preview_mode"
+msgstr "Preview mode"

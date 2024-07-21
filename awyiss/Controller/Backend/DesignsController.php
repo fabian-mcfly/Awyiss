@@ -8,16 +8,19 @@ use Awyiss\Annotation\NoDirectAccess;
 use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Model\Entity\Design;
 use Awyiss\Routing\Router;
+use Awyiss\Utility\Design\ScssCompiler;
 use Awyiss\Utility\Design\ScssVariableProvider;
 use Awyiss\Utility\Design\ScssVariableType;
 use Awyiss\Utility\Design\WebfontProvider;
 use Cake\Collection\Collection;
 use Cake\Core\Configure;
 use Cake\Http\Exception\RedirectException;
+use Cake\I18n\DateTime;
 use Cake\ORM\Query\SelectQuery;
 use Cake\Utility\Inflector;
 use Cake\Utility\Security;
 use Exception;
+use SplFileInfo;
 
 
 /**
@@ -55,11 +58,27 @@ class DesignsController extends Controller {
 		$lo_webfontProvider = new WebfontProvider();
 		$la_webfonts = $lo_webfontProvider->getWebfonts();
 
+		$lo_preview = null;
 		if ($this->request->is(['patch', 'post', 'put'])) {
-			$this->save($lo_design, $la_internalVariables, $la_webfonts);
+			if ($this->request->getData('cancel') !== null) {
+				$this->cancelPreview();
+			}
+
+			if ($this->request->getData('preview') === null) {
+				$this->save($lo_design, $la_internalVariables, $la_webfonts);
+			}
+			else {
+				$lo_preview = $this->savePreviewData($la_internalVariables, $la_webfonts, isset($lo_scssVariableProvider->getInternalVariables()['includeColumnSystem']));
+			}
 		}
 
-		/*
+		// If the design is a preview, save its identifier in the session
+		if ($lo_design->isPreview) {
+			$lo_session = $this->request->getSession();
+			$lo_session->write('designPreviewIdentifier', $lo_design->identifier);
+		}
+
+		/**
 		 * Nest the variables that are associated with others
 		 * The associated variables will be removed from the main array.
 		 */
@@ -96,6 +115,8 @@ class DesignsController extends Controller {
 			'design' => $lo_design,
 			'fontStacks' => $la_fontStacks,
 			'fontWeights' => $la_fontWeights,
+			'preview' => $lo_preview ,
+			'previewIdentifier' => $lo_preview ? $lo_preview->identifier : null,
 			'units' => $lo_scssVariableProvider->getConfig('units'),
 			'variables' => $la_variables,
 			'webfonts' => $la_webfonts,
@@ -121,11 +142,17 @@ class DesignsController extends Controller {
 			'validate' => !$this->request->getData('reload_form'),
 		]);
 
+		$design->inUse = true;
+		$design->isPreview = false;
+
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
 			if ($this->Designs->save($design, ['asCopy' => (bool)$this->request->getData('save_as_copy')])) {
 				if (!$this->request->is('ajax')) {
 					$this->Flash->success(__('save_succeeded'));
 				}
+
+				$lo_session = $this->request->getSession();
+				$lo_session->delete('designPreviewIdentifier');
 
 				throw new RedirectException(Router::url(['action' => 'overview', 'identifier' => $design->identifier], true), 302);
 			}
@@ -184,7 +211,7 @@ class DesignsController extends Controller {
 		$la_variableMap = array_combine($la_underscoredNames, array_keys($internalVariables));
 
 		foreach ($requestData as $ls_key => $lx_value) {
-			if (in_array($ls_key, ['custom', 'font_variants', 'save_as_copy', 'reload_form'])) {
+			if (in_array($ls_key, ['custom', 'font_variants', 'save_as_copy', 'reload_form', 'preview', 'save'])) {
 				continue;
 			}
 
@@ -239,8 +266,26 @@ class DesignsController extends Controller {
 	protected function ensureIdentifier(): Design {
 		$this->loadDesigns();
 
-		if (!$this->request->getParam('identifier')) {
-			$ls_identifier = $this->designs->first()->get('identifier');
+		if (!$this->request->getParam('identifier') && !$this->request->getParam('preview')) {
+			/** @var \Awyiss\Model\Entity\User $lo_identity */
+			$lo_identity = $this->request->getAttribute('identity');
+
+			// Check if the user has a preview design
+			$ls_identifier = $this->designs->firstMatch([
+				'isPreview' => true,
+				'createdBy' => $lo_identity->id,
+			])?->get('identifier');
+
+			if ($ls_identifier) {
+				// If the user has a preview design, redirect to the overview page
+				throw new RedirectException(Router::url([
+					'action' => 'overview',
+					'preview' => $ls_identifier,
+				], true), 302);
+			}
+
+			// If the user does not have a preview design, redirect to the first design in use
+			$ls_identifier = $this->designs->firstMatch(['inUse' => true])->get('identifier');
 
 			throw new RedirectException(Router::url([
 				'action' => 'overview',
@@ -248,11 +293,25 @@ class DesignsController extends Controller {
 			], true), 302);
 		}
 
+		if ($this->request->getParam('preview')) {
+			$lo_design = $this->designs->firstMatch([
+				'identifier' => $this->request->getParam('preview'),
+				'isPreview' => true,
+			]);
+
+			if ($lo_design) {
+				return $lo_design;
+			}
+		}
+
 		$ls_identifier = $this->request->getParam('identifier');
 
 		// Get the design by its identifier
 		/** @var \Awyiss\Model\Entity\Design $lo_design */
-		$lo_design = $this->designs->firstMatch(['identifier' => $ls_identifier]);
+		$lo_design = $this->designs->firstMatch([
+			'identifier' => $ls_identifier,
+			'inUse' => true,
+		]);
 
 		if (!$lo_design) {
 			$lo_design = $this->designs->firstMatch(['inUse' => true]);
@@ -300,5 +359,109 @@ class DesignsController extends Controller {
 
 			$this->designs = $this->designs->append([$lo_design])->compile();
 		}
+	}
+
+
+	/**
+	 * @param array $internalVariables
+	 * @param array $webfonts
+	 * @param bool $includeColumnSystem
+	 * @return \Awyiss\Model\Entity\Design|null
+	 * @throws \ScssPhp\ScssPhp\Exception\SassException
+	 */
+	protected function savePreviewData(array $internalVariables, array $webfonts, bool $includeColumnSystem = false): ?Design {
+		$la_previewData = $this->request->getData();
+		$la_previewData = $this->normalizeRequestData($la_previewData, $internalVariables, $webfonts);
+
+		$lo_preview = null;
+		if ($this->request->getData('preview')) {
+			$lo_preview = $this->Designs->findByIdentifier($this->request->getData('preview'))->first();
+		}
+
+		if (!$lo_preview) {
+			/** @var \Awyiss\Model\Entity\User $lo_identity */
+			$lo_identity = $this->request->getAttribute('identity');
+
+			$lo_now = new DateTime('now');
+
+			$lo_preview = $this->Designs->newDefaultEntity([
+				'identifier' => Security::randomString(12),
+				'title' => sprintf('Preview (%s, %s)', $lo_identity->username, $lo_now->format('Y-m-d H:i')),
+				'inUse' => false,
+				'isPreview' => true,
+			]);
+		}
+
+		$ls_css = '';
+		$la_realmFolders = Configure::read('App.paths.assets.Frontend');
+		$la_variables = $this->normaleizeVariables($la_previewData['settings']);
+
+		foreach (Configure::read('Design.previewScssFiles', []) as $ls_scssFile) {
+			foreach ($la_realmFolders as $ls_basePath) {
+				if (!str_starts_with($ls_scssFile, $ls_basePath)) {
+					continue;
+				}
+
+				// compileScss expects SplFileInfo, not a string, so convert it
+				$ls_scssFile = new SplFileInfo($ls_scssFile);
+
+				$ls_css .= ScssCompiler::compileScss($ls_scssFile, $ls_basePath, $la_variables, true, $includeColumnSystem) . PHP_EOL;
+			}
+		}
+
+		$this->Designs->patchEntity($lo_preview, $la_previewData, ['validate' => false]);
+
+		$lo_preview->css = $ls_css;
+
+		if ($this->Designs->save($lo_preview)) {
+			throw new RedirectException(Router::url(['action' => 'overview', 'preview' => $lo_preview->identifier, '#' => 'Preview'], true), 302);
+		}
+
+		return null;
+	}
+
+
+	/**
+	 * @param mixed $vars
+	 * @return array
+	 */
+	protected function normaleizeVariables(mixed $vars) {
+		$la_variables = $vars;
+		$la_variables = ScssCompiler::normalizeVariables($la_variables);
+
+		foreach ($la_variables as $ls_key => $lx_value) {
+			if (is_array($lx_value)) {
+				if (isset($lx_value['font'])) {
+					$lx_value = 'inspect(' . $lx_value['font']['name'] . ')';
+				}
+				else {
+					$lx_value = implode(' ', $lx_value);
+				}
+			}
+
+			$la_variables[ $ls_key ] = $lx_value;
+		}
+
+		return $la_variables;
+	}
+
+
+	/**
+	 * @return void
+	 */
+	protected function cancelPreview(): void {
+		$lo_session = $this->request->getSession();
+
+		$ls_identifier = $lo_session->read('designPreviewIdentifier');
+		if ($ls_identifier) {
+			$lo_design = $this->Designs->findByIdentifier($ls_identifier)->first();
+			if ($lo_design) {
+				$this->Designs->delete($lo_design);
+			}
+		}
+
+		$lo_session->delete('designPreviewIdentifier');
+
+		throw new RedirectException(Router::url(['action' => 'overview'], true), 302);
 	}
 }

@@ -17,6 +17,7 @@ use Awyiss\Model\Entity;
  * @property array|null $settings
  * @property string|null $css
  * @property bool $inUse
+ * @property bool $isPreview
  * @property bool $deleted
  * @property int|null $createdBy
  * @property \Cake\I18n\DateTime|null $createdOn
@@ -31,6 +32,7 @@ class Design extends Entity {
 	 */
 	protected static array $fieldMap = [
 		'in_use' => 'inUse',
+		'is_preview' => 'isPreview',
 		'created_by' => 'createdBy',
 		'created_on' => 'createdOn',
 		'changed_by' => 'changedBy',
@@ -48,5 +50,6 @@ class Design extends Entity {
 		'settings' => true,
 		'css' => true,
 		'inUse' => true,
+		'isPreview' => true,
 	];
 }

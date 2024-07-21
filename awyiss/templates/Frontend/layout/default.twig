@@ -134,6 +134,10 @@
 					{{- AssetHelper.getTags('all', false) -}}
 				{%- endblock %}
 			{% endblock %}
+
+			{% block designPreview %}
+				{% include '@Frontend/element/design_preview.twig' %}
+			{% endblock %}
 		</body>
 	{% endblock %}
 </html>
