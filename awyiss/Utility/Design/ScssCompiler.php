@@ -149,7 +149,6 @@ class ScssCompiler {
 
 		$la_variables = $vars;
 
-
 		if ($la_variables) {
 			$la_variables = static::normalizeVariables($la_variables);
 		}
@@ -404,7 +403,7 @@ class ScssCompiler {
 	 * @param array $variables
 	 * @return array
 	 */
-	protected static function normalizeVariables(array $variables): array {
+	public static function normalizeVariables(array $variables): array {
 		$la_variables = [];
 
 		foreach ($variables as $ls_key => $lx_value) {
