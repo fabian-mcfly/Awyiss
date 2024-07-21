@@ -131,6 +131,18 @@ return [
 		'editor' => 'phpstorm',
 	],
 
+	'Design' => [
+		/**
+		 * Blocklisted variables that should not be shown in the designer.
+		 * If a variable name contains a regex pattern but the exact variable name
+		 * is set in the variableMapping, the variable will still be shown.
+		 */
+		'blocklistedVariables' => [],
+		'fontStacks' => [],
+		'units' => [],
+		'variableMapping' => [],
+	],
+
 	/*
 	 * See `Cake\Mailer\Email` for more information.
 	 */
