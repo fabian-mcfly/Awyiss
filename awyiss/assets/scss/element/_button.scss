@@ -105,6 +105,12 @@ button,
 		font-size:.9rem;
 		line-height:1.5;
 
+		&.Button-Edit {
+			&::after {
+				content:'\f044';
+			}
+		}
+
 		.Scale-Small & {
 			min-height:30px;
 			padding:3px 5px;
@@ -197,7 +203,7 @@ button,
 
 	&-Edit {
 		&::after {
-			content:'\f044';
+			content:'\f304';
 		}
 	}
 
