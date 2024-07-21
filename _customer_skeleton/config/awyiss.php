@@ -11,6 +11,19 @@ use Cake\Mailer\Transport\MailTransport;
 
 
 return [
+	'Csp' => [
+		'fontSrc' => [
+			'allow' => [
+				'https://fonts.gstatic.com',
+			],
+		],
+		'styleSrcElem' => [
+			'allow' => [
+				'https://fonts.googleapis.com',
+			],
+		],
+	],
+
 	'debug' => false,
 
 	'Design' => [
@@ -51,6 +64,9 @@ return [
 				'Lucida Handwriting, cursive',
 				'Brush Script MT, cursive',
 			],
+		],
+		'previewScssFiles' => [
+			ROOT . DS . CUSTOM_DIR . '/assets/scss/full.scss',
 		],
 		'scssFiles' => [
 			ROOT . DS . CUSTOM_DIR . '/assets/scss/helper/_variables.scss',
