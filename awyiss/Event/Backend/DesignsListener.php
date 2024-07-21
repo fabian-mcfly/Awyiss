@@ -32,6 +32,7 @@ class DesignsListener implements EventListenerInterface {
 	 */
 	public function implementedEvents(): array {
 		return [
+			'Model.Designs.afterSave' => 'afterSave',
 			'Model.Designs.afterSaveCommit' => 'afterSaveCommit',
 		];
 	}
@@ -43,7 +44,40 @@ class DesignsListener implements EventListenerInterface {
 	 * @return void
 	 * @noinspection PhpUnusedParameterInspection
 	 */
+	public function afterSave(Event $event, Design $entity): void {
+		// If the design is not in use, we don't need to do anything
+		if (!$entity->inUse) {
+			return;
+		}
+
+		// If the design is in use, we need to check if it was changed
+		if (!$entity->hasOriginal('inUse') || $entity->getOriginal('inUse') === $entity->inUse) {
+			return;
+		}
+
+		// If the design should be in use, other designs should be set to not in use
+		if ($entity->inUse) {
+			$lo_designs = $this->fetchTable('Designs');
+			$lo_designs->updateAll([
+				'in_use' => false,
+			], [
+				'id !=' => $entity->id,
+			]);
+		}
+	}
+
+
+	/**
+	 * @param \Cake\Event\Event $event
+	 * @param \Awyiss\Model\Entity\Datatable $entity
+	 * @return void
+	 * @noinspection PhpUnusedParameterInspection
+	 */
 	public function afterSaveCommit(Event $event, Design $entity): void {
+		if (!$entity->inUse) {
+			return;
+		}
+
 		$la_settings = $entity->settings;
 		$la_fonts = [];
 
