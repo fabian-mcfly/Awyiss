@@ -116,7 +116,7 @@ class FrontendEditor {
 	createHighlightElement() {
 		// Create a new element for highlighting
 		this.highlightElement = document.createElement('div');
-		this.highlightElement.id = 'FrontendEditorHighlight';
+		this.highlightElement.id = 'AwyissFrontendEditorHighlight';
 		document.body.appendChild(this.highlightElement);
 	}
 
