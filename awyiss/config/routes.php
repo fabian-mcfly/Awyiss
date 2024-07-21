@@ -21,19 +21,24 @@ $routes->registerMiddleware(
 	new CspMiddleware(
 		[
 			'connect-src' => [
+				'allow' => Configure::read('Csp.connectSrc.allow'),
 				'self' => true,
 				'blob' => true,
 			],
 			'default-src' => [
+				'allow' => Configure::read('Csp.defaultSrc.allow'),
 				'self' => true,
 			],
 			'font-src' => [
+				'allow' => Configure::read('Csp.fontSrc.allow'),
 				'self' => true,
 			],
 			'frame-src' => [
+				'allow' => Configure::read('Csp.frameSrc.allow'),
 				'self' => true,
 			],
 			'img-src' => [
+				'allow' => Configure::read('Csp.imgSrc.allow'),
 				'blob' => true,
 				'self' => true,
 				'data' => true
@@ -51,13 +56,13 @@ $routes->registerMiddleware(
 				'unsafe-eval' => false,
 			],
 			'style-src-attr' => [
-				'allow' => Configure::read('Csp.styleSrc.allow'),
+				'allow' => Configure::read('Csp.styleSrcAttr.allow'),
 				'self' => true,
 				'unsafe-inline' => true,
 				'unsafe-eval' => false,
 			],
 			'style-src-elem' => [
-				'allow' => Configure::read('Csp.styleSrc.allow'),
+				'allow' => Configure::read('Csp.styleSrcElem.allow'),
 				'self' => true,
 				'unsafe-inline' => true,
 				'unsafe-eval' => false,
