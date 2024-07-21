@@ -27,7 +27,6 @@ class WebfontDownloadTask extends Task {
 	 */
 	public function run(array $data, int $jobId): void {
 		$la_fonts = $data['fonts'] ?? [];
-		$lb_downloadedFonts = false;
 
 		if (!$la_fonts) {
 			return;
@@ -97,13 +96,9 @@ class WebfontDownloadTask extends Task {
 
 			// Remove the zip file
 			unlink($ls_downloadPath);
-
-			$lb_downloadedFonts = true;
 		}
 
-		if ($lb_downloadedFonts) {
-			$this->generateScssFile($la_fonts);
-		}
+		$this->generateScssFile($la_fonts);
 	}
 
 
