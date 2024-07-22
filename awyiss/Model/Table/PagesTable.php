@@ -357,6 +357,42 @@ class PagesTable extends Table {
 		);
 
 
+		$rules->addDelete(function (Page $page/*, array $options = []*/): string|bool {
+			/** @var \Awyiss\Model\Table\ContentsTable $lo_table */
+			$lo_table = FactoryLocator::get('Table')->get('Contents');
+
+			// Get all contents of the current page
+			$la_contents = $lo_table->find()->where(['page_id' => $page->id])->all()->indexBy('id')->toArray();
+			$la_contentIds = array_keys($la_contents);
+
+			if ($la_contentIds) {
+				// Find contents that duplicate the current page's contents
+				if ($lo_table->find()->where(['duplicate_of IN' => $la_contentIds])->count()) {
+					return false;
+				}
+			}
+
+			$la_nestedChildren = $page->getNestedChildren()->toArray();
+			$la_nestedChildrenIds = array_values(array_map(fn (Page $page) => $page->id, $la_nestedChildren));
+
+			// Get all contents of all nested children
+			$la_contents = $lo_table->find()->where(['page_id IN' => $la_nestedChildrenIds])->all()->indexBy('id')->toArray();
+			$la_contentIds = array_keys($la_contents);
+
+			if ($la_contentIds) {
+				// Find contents that duplicate the children page's contents
+				if ($lo_table->find()->where(['duplicate_of IN' => $la_contentIds])->count()) {
+					return false;
+				}
+			}
+
+			return true;
+		}, 'noDuplicatedContents', [
+			'errorField' => '_general',
+			'message' => __df($this->getI18nDomain(), 'validation', 'error_no_duplicated_contents'),
+		]);
+
+
 		$rules->addDelete(function (Page $page/*, array $options = []*/): bool {
 			return !$this->hasDescendantsWithDifferentPageRole($page);
 		}, 'noNestedChildrenWithDifferentPageRole', [
