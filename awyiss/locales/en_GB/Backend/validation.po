@@ -199,3 +199,6 @@ msgstr "An element cannot duplicate an element that duplicates the original elem
 
 msgid "error_children_not_duplicating_contents_on_same_page"
 msgstr "Children duplicate contents on the selected page"
+
+msgid "error_no_duplicated_children"
+msgstr "Children of this element are used as duplicates"

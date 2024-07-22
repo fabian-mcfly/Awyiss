@@ -495,11 +495,27 @@ class ContentsTable extends Table {
 
 		//Ensure that a content has no linked duplicating contents when deleting it.
 		$rules->addDelete(
-			function (Content $entity): bool {
+			function (Content $entity): string|bool {
 				/** @var \Awyiss\Model\Table\ContentsTable $lo_table */
 				$lo_table = FactoryLocator::get('Table')->get('Contents');
 
-				return !$lo_table->exists(['duplicate_of' => $entity->id]);
+				if ($lo_table->exists(['duplicate_of' => $entity->id])) {
+					return false;
+				}
+
+				// Get all children of the current entity
+				$la_nestedChildren = $entity->getNestedChildren()->toArray();
+				$la_childrenContentIds = array_column($la_nestedChildren, 'id');
+
+				if ($la_childrenContentIds) {
+					$li_duplicatingContents = $lo_table->find()->where(['duplicate_of IN' => $la_childrenContentIds])->count();
+
+					if ($li_duplicatingContents) {
+						return __df($this->getI18nDomain(), 'validation', 'error_no_duplicated_children');
+					}
+				}
+
+				return true;
 			},
 			'noDuplicatingContents',
 			[

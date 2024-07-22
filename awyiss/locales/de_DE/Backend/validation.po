@@ -199,3 +199,6 @@ msgstr "Ein Element darf kein anderes Element duplizieren, das es selbst duplizi
 
 msgid "error_children_not_duplicating_contents_on_same_page"
 msgstr "Untergeordnete Inhalte duplizieren Inhalte der Zielseite"
+
+msgid "error_no_duplicated_children"
+msgstr "Untergeordnete Inhalte werden als Duplikate verwendet"
