@@ -72,6 +72,7 @@ class WidgetTemplatesListener implements EventListenerInterface {
 	 * @param Event $event
 	 * @param \Awyiss\Model\Entity\WidgetTemplate $entity
 	 * @noinspection PhpUnusedParameterInspection
+	 * @noinspection DuplicatedCode
 	 */
 	public function afterSaveCommit(Event $event, WidgetTemplate $entity): void {
 		$ls_fileName = Text::slug($entity->fileName, ['replacement' => '_']);

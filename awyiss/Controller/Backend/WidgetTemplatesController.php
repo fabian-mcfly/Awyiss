@@ -210,10 +210,12 @@ class WidgetTemplatesController extends Controller {
 			$widgetTemplate->widgetTemplateElements = collection($widgetTemplate->widgetTemplateElements)->indexBy('identifier')->toArray();
 		}
 
+		$lo_widgetTemplate = $widgetTemplate;
+
 		// Sort the available widget elements by the order of the assigned widget template elements
 		$la_availableWidgetElements = $this->WidgetTemplates->getAvailableWidgetElements();
-		uksort($la_availableWidgetElements, function ($a, $b) use ($widgetTemplate) {
-			$la_keys = array_keys($widgetTemplate->widgetTemplateElements ?? []);
+		uksort($la_availableWidgetElements, function ($a, $b) use ($lo_widgetTemplate) {
+			$la_keys = array_keys($lo_widgetTemplate->widgetTemplateElements ?? []);
 			$lx_aPos = array_search($a, $la_keys);
 			$lx_bPos = array_search($b, $la_keys);
 
@@ -233,8 +235,8 @@ class WidgetTemplatesController extends Controller {
 
 		// Sort the available widget attributes by the order of the assigned widget template elements
 		$la_availableWidgetAttributes = $this->WidgetTemplates->getAvailableWidgetAttributes();
-		uasort($la_availableWidgetAttributes, function ($a, $b) use ($widgetTemplate) {
-			$la_keys = array_keys($widgetTemplate->widgetTemplateElements ?? []);
+		uasort($la_availableWidgetAttributes, function ($a, $b) use ($lo_widgetTemplate) {
+			$la_keys = array_keys($lo_widgetTemplate->widgetTemplateElements ?? []);
 			$ls_aIdentifier = 'attributes.' . $a['identifier'];
 			$ls_bIdentifier = 'attributes.' . $b['identifier'];
 

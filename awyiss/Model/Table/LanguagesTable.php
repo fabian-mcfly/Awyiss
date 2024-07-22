@@ -211,7 +211,7 @@ class LanguagesTable extends Table {
 
 
 		$rules->addDelete(
-			function (Language $entity) use ($rules): bool {
+			function (Language $entity): bool {
 				$li_count = $this->find()->where(['realm' => $entity->realm])->count();
 
 				return $li_count > 1;

@@ -218,13 +218,14 @@ class BackendMenuEntriesController extends Controller {
 	protected function _saveSystemOrder(array $requestData, Table $table): int {
 		$lo_identity = $this->getIdentity();
 
+		$la_requestData = $requestData;
 		/** @noinspection PhpUnnecessaryLocalVariableInspection */
-		$li_affectedRows = $table->updateAll(function (QueryExpression $expression) use ($requestData, $lo_identity) {
+		$li_affectedRows = $table->updateAll(function (QueryExpression $expression) use ($la_requestData, $lo_identity) {
 			$lo_insertAfterIdCase = $expression->case();
 			$lo_parentIdCase = $expression->case();
 			$lo_systemOrderCase = $expression->case();
 
-			foreach ($requestData as $la_data) {
+			foreach ($la_requestData as $la_data) {
 				$li_id = (int)$la_data['id'];
 
 				$lo_insertAfterIdCase->when(['id' => $li_id])->then($la_data['insertAfterId'], 'string');

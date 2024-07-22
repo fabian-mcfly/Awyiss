@@ -157,11 +157,14 @@ class FrontendView extends AppView {
 
 		$lb_pluginCheck = $la_options['plugin'] !== false;
 		$ls_file = $this->_getContentFileName($name, $lb_pluginCheck);
+
 		if ($ls_file && $la_options['cache']) {
-			return $this->cache(function () use ($ls_file, $data, $la_options): void {
-				echo $this->_renderContent($ls_file, $data, $la_options);
+			$la_data = $data;
+			return $this->cache(function () use ($ls_file, $la_data, $la_options): void {
+				echo $this->_renderContent($ls_file, $la_data, $la_options);
 			}, $la_options['cache']);
 		}
+
 		if ($ls_file) {
 			return $this->_renderContent($ls_file, $data, $la_options);
 		}
@@ -310,8 +313,9 @@ class FrontendView extends AppView {
 		$lb_pluginCheck = $la_options['plugin'] !== false;
 		$ls_file = $this->_getWidgetFileName($name, $lb_pluginCheck);
 		if ($ls_file && $la_options['cache']) {
-			return $this->cache(function () use ($ls_file, $data, $la_options): void {
-				echo $this->_renderWidget($ls_file, $data, $la_options);
+			$la_data = $data;
+			return $this->cache(function () use ($ls_file, $la_data, $la_options): void {
+				echo $this->_renderWidget($ls_file, $la_data, $la_options);
 			}, $la_options['cache']);
 		}
 		if ($ls_file) {

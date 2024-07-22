@@ -444,7 +444,8 @@ class NestBehavior extends Behavior {
 
 		$ls_foreignKey = $this->getConfig('parent.foreignKey');
 
-		$rules->add(function (EntityInterface $entity, array $options) use ($rules, $ls_foreignKey): string|bool {
+		$lo_rules = $rules;
+		$rules->add(function (EntityInterface $entity, array $options) use ($lo_rules, $ls_foreignKey): string|bool {
 			if (!$entity->get($ls_foreignKey)) {
 				return true;
 			}
@@ -477,7 +478,7 @@ class NestBehavior extends Behavior {
 				]);
 			}
 
-			$lo_existsIn = $rules->existsIn($la_foreignKeys, $lo_association, ['errorField' => '_dummy']);
+			$lo_existsIn = $lo_rules->existsIn($la_foreignKeys, $lo_association, ['errorField' => '_dummy']);
 
 			if ($entity->isNew()) {
 				$lb_exists = $lo_existsIn($entity, $options);

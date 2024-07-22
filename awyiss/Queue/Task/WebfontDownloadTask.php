@@ -8,6 +8,10 @@ use Queue\Queue\Task;
 use ZipArchive;
 
 
+/**
+ * WebfontDownloadTask
+ * Download webfonts from the external API, unzip them and generate the SCSS file
+ */
 class WebfontDownloadTask extends Task {
 	/**
 	 * @inheritDoc

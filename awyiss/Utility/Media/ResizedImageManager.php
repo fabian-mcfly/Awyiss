@@ -78,11 +78,13 @@ class ResizedImageManager {
 	 * @return void
 	 */
 	public static function addMediaItemsFromEntity(EntityInterface $entity): void {
+		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 		if (!$entity->mediaAssignments) {
 			return;
 		}
 
 		$la_mediaElements = [];
+		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 		foreach ($entity->mediaAssignments as $la_assignments) {
 			foreach ($la_assignments as $ls_identifier => $lo_media) {
 				if (str_starts_with($ls_identifier, '_')) {
@@ -222,34 +224,10 @@ class ResizedImageManager {
 		static::addMediaItem($media);
 		static::fetchMissingResizedRecords();
 
-		/**
-		 * If the width or height is not set, check if the strategy is "contain",
-		 * otherwise throw an error
-		 */
-		if (!$width || !$height) {
-			// If the strategy isn't contain, throw an error
-			if ($strategy !== ResizeStrategy::Contain) {
-				throw new InvalidArgumentException('Both width and height must be set if the resize strategy is not "contain".');
-			}
-		}
+		$lb_canBeResized = static::fileCanBeResized($media, $width, $height, $strategy, $allowUpscale);
 
-		// If the width and height are the same as the original, return null
-		if (
-			(!$width || $width == $media->width) &&
-			(!$height || $height == $media->height)
-		) {
+		if (!$lb_canBeResized) {
 			return null;
-		}
-
-		// If the image is not allowed to be upscaled, check if the requested size is larger than the original
-		if (!$allowUpscale) {
-			// If that's the case, return null
-			if (
-				($width && $width > $media->width) ||
-				($height && $height > $media->height)
-			) {
-				return null;
-			}
 		}
 
 		$li_width = $width ? (int)$width : null;
@@ -266,12 +244,7 @@ class ResizedImageManager {
 			return $lo_resizedImage;
 		}
 
-		if (!isset(static::$mediaResizedImagesTable)) {
-			/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
-			static::$mediaResizedImagesTable = FactoryLocator::get('Table')->get('MediaResizedImages');
-		}
-
-		$lo_resizedImage = static::$mediaResizedImagesTable->newEntityFromMedia($media, $li_width, $li_height, $strategy, $format);
+		$lo_resizedImage = static::newMediaResizedImage($media, $li_width, $li_height, $strategy, $format);
 
 		if (!static::$mediaResizedImagesTable->save($lo_resizedImage, ['associated' => false])) {
 			return null;
@@ -398,5 +371,64 @@ class ResizedImageManager {
 		}
 
 		return null;
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Entity\Media $media
+	 * @param int|null $li_width
+	 * @param int|null $li_height
+	 * @param \Awyiss\Model\Enum\ResizeStrategy $strategy
+	 * @param string $format
+	 * @return \Awyiss\Model\Entity\MediaResizedImage
+	 */
+	protected static function newMediaResizedImage(Media $media, ?int $li_width, ?int $li_height, ResizeStrategy $strategy, string $format): MediaResizedImage {
+		if (!isset(static::$mediaResizedImagesTable)) {
+			/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
+			static::$mediaResizedImagesTable = FactoryLocator::get('Table')->get('MediaResizedImages');
+		}
+
+		return static::$mediaResizedImagesTable->newEntityFromMedia($media, $li_width, $li_height, $strategy, $format);
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Entity\Media $media
+	 * @param float|int|null $width
+	 * @param float|int|null $height
+	 * @param \Awyiss\Model\Enum\ResizeStrategy $strategy
+	 * @param bool $allowUpscale
+	 * @return void
+	 */
+	protected static function fileCanBeResized(Media $media, float|int|null $width, float|int|null $height, ResizeStrategy $strategy, bool $allowUpscale): bool {
+		/**
+		 * If the width or height is not set, check if the strategy is "contain",
+		 * otherwise throw an error
+		 */
+		if (!$width || !$height) {
+			// If the strategy isn't contain, throw an error
+			if ($strategy !== ResizeStrategy::Contain) {
+				throw new InvalidArgumentException('Both width and height must be set if the resize strategy is not "contain".');
+			}
+		}
+
+		// If the width and height are the same as the original, return null
+		if (
+			(!$width || $width == $media->width) && (!$height || $height == $media->height)
+		) {
+			return false;
+		}
+
+		// If the image is not allowed to be upscaled, check if the requested size is larger than the original
+		if (!$allowUpscale) {
+			// If that's the case, return null
+			if (
+				($width && $width > $media->width) || ($height && $height > $media->height)
+			) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 }

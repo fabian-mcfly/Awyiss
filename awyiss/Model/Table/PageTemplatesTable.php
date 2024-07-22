@@ -102,6 +102,7 @@ class PageTemplatesTable extends Table {
 	 * @param Validator $validator The validator that can be modified to
 	 * add some rules to it.
 	 * @return Validator
+	 * @noinspection DuplicatedCode
 	 */
 	public function validationDefault(Validator $validator): Validator {
 		parent::validationDefault($validator);
@@ -185,7 +186,8 @@ class PageTemplatesTable extends Table {
 		]);
 
 
-		$rules->addUpdate(function (PageTemplate $entity, array $options) use ($rules): bool {
+		$lo_rules = $rules;
+		$rules->addUpdate(function (PageTemplate $entity, array $options) use ($lo_rules): bool {
 			if (
 				$options['isCopy'] === true ||
 				!$entity->hasOriginal('pageRoleId') ||
@@ -194,7 +196,7 @@ class PageTemplatesTable extends Table {
 				return true;
 			}
 
-			$lo_linkedTo = $rules->isNotLinkedTo(
+			$lo_linkedTo = $lo_rules->isNotLinkedTo(
 				'Pages',
 				'pageRoleId',
 				__df($this->getI18nDomain(), 'validation', 'error_no_linked_pages')

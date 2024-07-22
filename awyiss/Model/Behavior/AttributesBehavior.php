@@ -368,7 +368,7 @@ class AttributesBehavior extends Behavior {
 			]);
 		}
 
-		$query->mapReduce(function (array|Entity $entity, int $key, MapReduce $mapReduce) use ($query): void {
+		$query->mapReduce(function (array|Entity $entity, int $key, MapReduce $mapReduce): void {
 			if (!is_a($entity, Entity::class)) {
 				$mapReduce->emit($entity);
 

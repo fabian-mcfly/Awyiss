@@ -170,6 +170,7 @@ class UserConfigurationController extends Controller {
 	 *
 	 * @return \Cake\Http\Response|void
 	 * @throws \Exception
+	 * @noinspection DuplicatedCode
 	 */
 	public function edit(int $id) {
 		$this->Authorization->setAdditionalData([

@@ -128,6 +128,7 @@ class FormHelper extends BaseFormHelper {
 
 	/**
 	 * @inheritDoc
+	 * @throws \Exception
 	 */
 	public function control(string $fieldName, array $options = []): string {
 		$la_options = $options;
@@ -411,7 +412,10 @@ class FormHelper extends BaseFormHelper {
 
 			$la_parts = explode('.', $ls_field);
 			$ls_field = array_pop($la_parts);
-			/** @var \Awyiss\Model\Entity $lo_entity */
+			/**
+			 * @var \Awyiss\Model\Entity $lo_entity
+			 * @noinspection PhpPossiblePolymorphicInvocationInspection
+			 */
 			$lo_entity = $lo_context->entity();
 			$lo_associatedEntity = $lo_entity->get(implode('.', $la_parts));
 

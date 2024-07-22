@@ -903,8 +903,9 @@ class SystemOrderBehavior extends Behavior {
 		if ($la_relatedColumns) {
 			$la_relatedColumns = $table->extractAttributeFields($la_relatedColumns, true);
 			$la_groupedItems = $records->groupBy(function (EntityInterface $entity) use ($la_relatedColumns) {
-				$la_values = array_map(function (string $field) use ($entity) {
-					$lx_value = $entity->get($field);
+				$lo_entity = $entity;
+				$la_values = array_map(function (string $field) use ($lo_entity) {
+					$lx_value = $lo_entity->get($field);
 
 					if ($lx_value instanceof BackedEnum) {
 						$lx_value = $lx_value->value;

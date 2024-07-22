@@ -111,14 +111,7 @@ class MediaHelper extends Helper {
 			return '<style>' . $lo_mediaRenderOptions->getSelector() . ' { ' . $ls_backgroundColorStyle . ' }</style>';
 		}
 
-		// If responsive is set, use the column width
-		if ($mediaRenderOptions->getResponsive()) {
-			$li_width = $this->getPixelColumnWidth($lo_mediaRenderOptions);
-			$lo_file = $this->resize($media, renderOptions: $lo_mediaRenderOptions->withWidth($li_width));
-		}
-		else {
-			$lo_file = $this->resize($media, renderOptions: $lo_mediaRenderOptions);
-		}
+		$lo_file = $this->getMediaResizedImage($media, $lo_mediaRenderOptions);
 
 		$ls_path = $lo_file?->path;
 		if (!$ls_path) {
@@ -130,41 +123,12 @@ class MediaHelper extends Helper {
 			$lf_aspectRatio = round(($lo_file?->realWidth ?? $media->width) / ($lo_file?->realHeight ?? $media->height), 2);
 		}
 
-		/** @noinspection CssUnknownTarget */
-		$ls_output = '<style>';
-		$ls_output .= $lo_mediaRenderOptions->getSelector() . ' { --backgroundAspectRatio:' . $lf_aspectRatio . ';';
-		$ls_output .= ' --backgroundImageHeight:' . ($lo_file?->realHeight ?? $media->height) . 'px;';
-		$ls_output .= ' background-image:url(\'' . $ls_path . '\');';
-		$ls_output .= $ls_backgroundColorStyle . ' }';
-
-		$la_breakpointFiles = [];
-		if ($lo_mediaRenderOptions->getResponsive()) {
-			$la_breakpointFiles = $this->getResponsiveImages($media, $lo_mediaRenderOptions, true);
-			$la_breakpointFiles = array_reverse($la_breakpointFiles, true);
-		}
-
-		foreach ($la_breakpointFiles as $li_breakpoint => $lo_file) {
-			$ls_path = $lo_file->path;
-
-			$lf_aspectRatio = 1;
-			if (($lo_file->realWidth ?? $lo_file->width) && ($lo_file->realHeight ?? $lo_file->height)) {
-				$lf_aspectRatio = round(($lo_file->realWidth ?? $lo_file->width) / ($lo_file->realHeight ?? $lo_file->height), 2);
-			}
-
-			$ls_output .= PHP_EOL . '@media (max-width:' . $li_breakpoint . 'px) { ';
-			$ls_output .= $lo_mediaRenderOptions->getSelector() . ' { --backgroundAspectRatio:' . $lf_aspectRatio . ';';
-			$ls_output .= ' --backgroundImageHeight:' . $lo_file->height . 'px;';
-			$ls_output .= ' background-image:url(\'' . $ls_path . '\'); } }';
-		}
-
-		$ls_output .= '</style>';
-
-		return $ls_output;
+		return $this->getBackgroundStyleTag($lo_file, $media, $lo_mediaRenderOptions, $ls_path, $lf_aspectRatio, $ls_backgroundColorStyle);
 	}
 
 
 	/**
-	 * Returns an html tag, depending on the type of media.
+	 * Returns a html tag, depending on the type of media.
 	 *
 	 * - For images, the tag will be a picture tag if responsive is set to true.
 	 *  In both cases, the image will be resized to the column width or fixed width and height
@@ -266,13 +230,7 @@ class MediaHelper extends Helper {
 		}
 
 		// If responsive is set, use the column width
-		if ($lo_mediaRenderOptions->getResponsive()) {
-			$li_width = $this->getPixelColumnWidth($lo_mediaRenderOptions);
-			$lo_file = $this->resize($media, renderOptions: $lo_mediaRenderOptions->withWidth($li_width));
-		}
-		else {
-			$lo_file = $this->resize($media, renderOptions: $lo_mediaRenderOptions);
-		}
+		$lo_file = $this->getMediaResizedImage($media, $lo_mediaRenderOptions);
 
 		$ls_path = $lo_file?->path;
 		if (!$ls_path) {
@@ -553,13 +511,7 @@ class MediaHelper extends Helper {
 		$lf_lastColumnWidth = $mediaRenderOptions->getColumnWidth();
 		$lf_newColumnWidth = null;
 
-		if ($mediaRenderOptions->getResponsive()) {
-			$li_width = $this->getPixelColumnWidth($mediaRenderOptions);
-			$lo_file = $this->resize($media, renderOptions: $mediaRenderOptions->withWidth($li_width));
-		}
-		else {
-			$lo_file = $this->resize($media, renderOptions: $mediaRenderOptions);
-		}
+		$lo_file = $this->getMediaResizedImage($media, $mediaRenderOptions);
 
 		$ls_lastPath = $lo_file?->path;
 		if (!$ls_lastPath) {
@@ -691,7 +643,7 @@ class MediaHelper extends Helper {
 		}
 
 		/** @noinspection CssUnresolvedCustomProperty */
-		return '<style>#' . $id . '::before { --imageAspectRatio: ' . round(($width ?? 1) / ($height ?? 1), 2) . ';' . $ls_backgroundColorStyle . ' }</style>';
+		return '<style>#' . $id . '::before { --imageAspectRatio: ' . round($width / $height, 2) . ';' . $ls_backgroundColorStyle . ' }</style>';
 	}
 
 
@@ -723,5 +675,74 @@ class MediaHelper extends Helper {
 		return '<img data-src="' . $path . '"' . $ls_attributes . '>' . PHP_EOL .
 			   '<noscript><img src="' . $path . '"' . $ls_noScriptAttributes . '></noscript>' . PHP_EOL .
 			   $ls_placeholderStyleTag . PHP_EOL;
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Entity\Media $media
+	 * @param \Awyiss\Utility\Media\MediaRenderOptions|null $mediaRenderOptions
+	 * @return \Awyiss\Model\Entity\MediaResizedImage|null
+	 */
+	protected function getMediaResizedImage(Media $media, ?MediaRenderOptions $mediaRenderOptions): ?MediaResizedImage {
+		// If responsive is set, use the column width
+		if ($mediaRenderOptions->getResponsive()) {
+			$li_width = $this->getPixelColumnWidth($mediaRenderOptions);
+			$lo_file = $this->resize($media, renderOptions: $mediaRenderOptions->withWidth($li_width));
+		}
+		else {
+			$lo_file = $this->resize($media, renderOptions: $mediaRenderOptions);
+		}
+
+		return $lo_file;
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Entity\MediaResizedImage|null $resizedFile
+	 * @param \Awyiss\Model\Entity\Media $media
+	 * @param \Awyiss\Utility\Media\MediaRenderOptions $mediaRenderOptions
+	 * @param string|null $filePath
+	 * @param float|int $aspectRatio
+	 * @param string $backgroundColorStyle
+	 * @return string
+	 */
+	protected function getBackgroundStyleTag(
+		?MediaResizedImage $resizedFile,
+		Media $media,
+		MediaRenderOptions $mediaRenderOptions,
+		?string $filePath,
+		float|int $aspectRatio,
+		string $backgroundColorStyle
+	): string {
+		/** @noinspection CssUnknownTarget */
+		$ls_output = '<style>';
+		$ls_output .= $mediaRenderOptions->getSelector() . ' { --backgroundAspectRatio:' . $aspectRatio . ';';
+		$ls_output .= ' --backgroundImageHeight:' . ($resizedFile?->realHeight ?? $media->height) . 'px;';
+		$ls_output .= ' background-image:url(\'' . $filePath . '\');';
+		$ls_output .= $backgroundColorStyle . ' }';
+
+		$la_breakpointFiles = [];
+		if ($mediaRenderOptions->getResponsive()) {
+			$la_breakpointFiles = $this->getResponsiveImages($media, $mediaRenderOptions, true);
+			$la_breakpointFiles = array_reverse($la_breakpointFiles, true);
+		}
+
+		foreach ($la_breakpointFiles as $li_breakpoint => $lo_file) {
+			$ls_filePath = $lo_file->path;
+
+			$lf_aspectRatio = 1;
+			if (($lo_file->realWidth ?? $lo_file->width) && ($lo_file->realHeight ?? $lo_file->height)) {
+				$lf_aspectRatio = round(($lo_file->realWidth ?? $lo_file->width) / ($lo_file->realHeight ?? $lo_file->height), 2);
+			}
+
+			$ls_output .= PHP_EOL . '@media (max-width:' . $li_breakpoint . 'px) { ';
+			$ls_output .= $mediaRenderOptions->getSelector() . ' { --backgroundAspectRatio:' . $lf_aspectRatio . ';';
+			$ls_output .= ' --backgroundImageHeight:' . $lo_file->height . 'px;';
+			$ls_output .= ' background-image:url(\'' . $ls_filePath . '\'); } }';
+		}
+
+		$ls_output .= '</style>';
+
+		return $ls_output;
 	}
 }

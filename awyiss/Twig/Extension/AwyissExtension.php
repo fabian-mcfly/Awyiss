@@ -133,10 +133,11 @@ class AwyissExtension extends AbstractExtension {
 			new TwigFunction('module', $this->moduleFunction(...), ['needs_context' => true, 'is_safe' => ['all']]),
 
 			new TwigFunction('naturalSort', function (array $data, int|string|null $key = null): array {
+				$lx_key = $key;
 				/** @noinspection PhpVariableNamingConventionInspection */
-				uasort($data, function ($a, $b) use ($key) {
-					if (!empty($key)) {
-						return strnatcasecmp($a[ $key ], $b[ $key ]);
+				uasort($data, function ($a, $b) use ($lx_key) {
+					if (!empty($lx_key)) {
+						return strnatcasecmp($a[ $lx_key ], $b[ $lx_key ]);
 					}
 
 
@@ -219,6 +220,8 @@ class AwyissExtension extends AbstractExtension {
 	 * @param string $name
 	 * @param array $options
 	 * @return string
+	 * @throws \ReflectionException
+	 * @throws \Exception
 	 */
 	public function moduleFunction(array $context, string $name, array $options = []): string {
 		static $la_modules;

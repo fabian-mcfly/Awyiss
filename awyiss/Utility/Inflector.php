@@ -39,7 +39,7 @@ class Inflector extends CakeInflector {
 		$ls_string = ucwords(strtolower($string));
 
 		foreach (['-', '\'', '_', ' '] as $ls_delimiter) {
-			if (strpos($ls_string, $ls_delimiter) === false) {
+			if (!str_contains($ls_string, $ls_delimiter)) {
 				continue;
 			}
 

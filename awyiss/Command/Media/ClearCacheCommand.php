@@ -196,17 +196,19 @@ class ClearCacheCommand extends Command {
 		/** @var \Awyiss\Model\Table\MediaTable $lo_table */
 		$lo_table = $this->fetchTable('Media');
 
-		return $lo_table->updateAll(function (QueryExpression $expression) use ($type) {
+		$ls_type = $type;
+
+		return $lo_table->updateAll(function (QueryExpression $expression) use ($ls_type) {
 			$la_cases = [];
 
-			if (in_array($type, ['all', 'previews'])) {
+			if (in_array($ls_type, ['all', 'previews'])) {
 				$lo_previewCases = $expression->case()->when([
 					'preview !=' => ProcessStatus::NotRequired->value,
 				])->then(ProcessStatus::Undefined->value, 'integer')->else(ProcessStatus::NotRequired->value, 'integer');
 				$la_cases['preview'] = $lo_previewCases;
 			}
 
-			if (in_array($type, ['all', 'webp'])) {
+			if (in_array($ls_type, ['all', 'webp'])) {
 				$lo_webpCases = $expression->case()->when([
 					'webp !=' => ProcessStatus::NotRequired->value,
 				])->then(ProcessStatus::Undefined->value, 'integer')->else(ProcessStatus::NotRequired->value, 'integer');

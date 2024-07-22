@@ -218,6 +218,7 @@ class ScssCompiler {
 	 * @param bool $includeColumnSystem
 	 * @return \ScssPhp\ScssPhp\CompilationResult|string|false
 	 * @throws \ScssPhp\ScssPhp\Exception\SassException
+	 * @throws \Exception
 	 */
 	public static function compileScss(SplFileInfo $file, string $basePath, array $vars, bool $returnCss, bool $includeColumnSystem = false): CompilationResult|string|false {
 		// Make sure it's a .scss file.

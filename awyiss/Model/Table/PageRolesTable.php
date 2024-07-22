@@ -156,8 +156,9 @@ class PageRolesTable extends Table {
 	 * @return RulesChecker
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
+		$lo_rules = $rules;
 		$rules->add(
-			function (PageRole $entity, array $options) use ($rules): bool|string {
+			function (PageRole $entity, array $options) use ($lo_rules): bool|string {
 				if (
 					$options['isCopy'] === false &&
 					$entity->hasOriginal('identifier') &&
@@ -184,7 +185,7 @@ class PageRolesTable extends Table {
 					return __df($this->getI18nDomain(), 'validation', 'error_identifier_allowed');
 				}
 
-				$lo_isUnique = $rules->isUnique(['identifier'], [
+				$lo_isUnique = $lo_rules->isUnique(['identifier'], [
 					'errorField' => '_dummy',
 				]);
 				$lb_isUnique = $lo_isUnique($entity, $options);

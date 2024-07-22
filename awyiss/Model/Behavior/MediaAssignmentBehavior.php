@@ -78,7 +78,6 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 
 		$this->_tableLocator = $this->getConfig('tableLocator');
 
-		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
 		$this->assignmentsTable = $this->getTableLocator()->get('MediaAssignments', ['allowFallbackClass' => false]);
 
 		/** @var \Awyiss\Model\Entity $ls_entityClass */
@@ -222,14 +221,15 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 			})->toArray();
 		}
 
-		return $results->map(function (EntityInterface|array|null $row) use ($useMediaEntity): EntityInterface|array|null {
+		$lb_useMediaEntity = $useMediaEntity;
+		return $results->map(function (EntityInterface|array|null $row) use ($lb_useMediaEntity): EntityInterface|array|null {
 			$lx_row = $row;
 
 			if ($lx_row === null || empty($lx_row['mediaAssignments'])) {
 				return $lx_row;
 			}
 
-			$lx_row = $this->rebuildMediaAssignments($lx_row, $useMediaEntity);
+			$lx_row = $this->rebuildMediaAssignments($lx_row, $lb_useMediaEntity);
 
 			if ($row instanceof EntityInterface) {
 				$row->setDirty('mediaAssignments', false);

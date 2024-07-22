@@ -53,10 +53,11 @@ trait ContentElementTrait {
 		}
 
 		$lo_mediaTable = $this->fetchTable('Media');
-		$lo_query = $lo_mediaTable->find()->matching('MediaAssignments', function (SelectQuery $query) use ($la_entityIds, $scope) {
+		$ls_scope = $scope;
+		$lo_query = $lo_mediaTable->find()->matching('MediaAssignments', function (SelectQuery $query) use ($la_entityIds, $ls_scope) {
 			return $query->where([
 				'MediaAssignments.foreign_key IN' => $la_entityIds,
-				'MediaAssignments.scope' => $scope,
+				'MediaAssignments.scope' => $ls_scope,
 			]);
 		})
 		->contain(['MediaResizedImages'])
@@ -194,6 +195,7 @@ trait ContentElementTrait {
 	 * @param array $entities
 	 * @param bool $noContentRow
 	 * @return string
+	 * @throws \ReflectionException
 	 */
 	protected function buildContents(array $entities, bool $noContentRow = false): string {
 		if (!$entities) {

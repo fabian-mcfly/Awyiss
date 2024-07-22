@@ -17,7 +17,8 @@ use Cake\ORM\Query\SelectQuery;
  * MediaSelectors Controller
  *
  * @property \Awyiss\Model\Table\MediaSelectorsTable $MediaSelectors
- * @method MediaSelector[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
+ * @method \Awyiss\Model\Entity\MediaSelector[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
+ * @noinspection PhpFullyQualifiedNameUsageInspection
  */
 class MediaSelectorsController extends Controller {
 	/**

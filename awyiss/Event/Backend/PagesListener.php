@@ -429,8 +429,9 @@ class PagesListener implements EventListenerInterface {
 	 * @return void
 	 */
 	protected function createHistoricalSlugs(PagesTable $table, Page $entity, ?string $originalLanguage, ?string $originalSlug): void {
-		$lo_records = $table->find('all', skipPageRoleCheck: true)->where(function (QueryExpression $expression) use ($originalSlug) {
-			return $expression->like('slug', $originalSlug . '/%');
+		$ls_originalSlug = $originalSlug;
+		$lo_records = $table->find('all', skipPageRoleCheck: true)->where(function (QueryExpression $expression) use ($ls_originalSlug) {
+			return $expression->like('slug', $ls_originalSlug . '/%');
 		})->all();
 
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
@@ -504,6 +505,9 @@ class PagesListener implements EventListenerInterface {
 			])));
 		}
 
+		$lo_entity = $entity;
+		$ls_originalSlug = $originalSlug;
+
 		if ($activeChanged || $parentsActiveChanged) {
 			$lb_parentsActive = $entity->active && $entity->parentsActive;
 
@@ -512,8 +516,8 @@ class PagesListener implements EventListenerInterface {
 				 * When updating all pages with the same slug (LIKE 'oldslug/%'), do not set the parents_active to true
 				 * for pages that descendants of inactive sites.
 				 */
-				$lo_subPages = $table->find('all', skipPageRoleCheck: true)->where(function (QueryExpression $expression) use ($entity, $originalSlug) {
-					return $expression->like('slug', ($originalSlug ?? $entity->slug) . '/%');
+				$lo_subPages = $table->find('all', skipPageRoleCheck: true)->where(function (QueryExpression $expression) use ($lo_entity, $ls_originalSlug) {
+					return $expression->like('slug', ($ls_originalSlug ?? $lo_entity->slug) . '/%');
 				})->where(['active' => false])->all();
 
 				foreach ($lo_subPages as $lo_subPage) {
@@ -530,8 +534,8 @@ class PagesListener implements EventListenerInterface {
 		/**
 		 * WHERE slug LIKE 'oldslug/%'
 		 */
-		$lo_query->where(function (QueryExpression $expression/*, Query $query*/) use ($entity, $originalSlug) {
-			return $expression->like('slug', ($originalSlug ?? $entity->slug) . '/%');
+		$lo_query->where(function (QueryExpression $expression/*, Query $query*/) use ($lo_entity, $ls_originalSlug) {
+			return $expression->like('slug', ($ls_originalSlug ?? $lo_entity->slug) . '/%');
 		});
 
 		$lo_query->execute();
@@ -566,6 +570,10 @@ class PagesListener implements EventListenerInterface {
 			]),
 		])));
 
+		$lo_entity = $entity;
+		$ls_originalLanguage = $originalLanguage;
+		$ls_originalSlug = $originalSlug;
+
 		/**
 		 * WHERE
 		 * 	link LIKE 'xx/oldslug/%'
@@ -577,14 +585,14 @@ class PagesListener implements EventListenerInterface {
 		 */
 		$lo_query->where([
 			'OR' => [
-				function (QueryExpression $expression/*, Query $query*/) use ($entity, $originalLanguage, $originalSlug) {
-					return $expression->like('link', ($originalLanguage ?? $entity->languageShortcode) . '/' . ($originalSlug ?? $entity->slug) . '/%');
+				function (QueryExpression $expression/*, Query $query*/) use ($lo_entity, $ls_originalLanguage, $ls_originalSlug) {
+					return $expression->like('link', ($ls_originalLanguage ?? $lo_entity->languageShortcode) . '/' . ($ls_originalSlug ?? $lo_entity->slug) . '/%');
 				},
-				function (QueryExpression $expression/*, Query $query*/) use ($entity, $originalLanguage, $originalSlug) {
-					return $expression->like('link', ($originalLanguage ?? $entity->languageShortcode) . '/' . ($originalSlug ?? $entity->slug) . '#%');
+				function (QueryExpression $expression/*, Query $query*/) use ($lo_entity, $ls_originalLanguage, $ls_originalSlug) {
+					return $expression->like('link', ($ls_originalLanguage ?? $lo_entity->languageShortcode) . '/' . ($ls_originalSlug ?? $lo_entity->slug) . '#%');
 				},
 				[
-					'link' => ($originalLanguage ?? $entity->languageShortcode) . '/' . ($originalSlug ?? $entity->slug),
+					'link' => ($ls_originalLanguage ?? $lo_entity->languageShortcode) . '/' . ($ls_originalSlug ?? $lo_entity->slug),
 				],
 			],
 		]);

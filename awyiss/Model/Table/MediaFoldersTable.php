@@ -173,7 +173,7 @@ class MediaFoldersTable extends Table {
 
 
 		$rules->add(
-			function (MediaFolder $entity, array $options) use ($rules): bool|string {
+			function (MediaFolder $entity, array $options): bool|string {
 				if ($entity->get('id') === 1 && $options['isCopy'] === false) {
 					if ($entity->get('languageShortcode') !== null) {
 						return __df($this->getI18nDomain(), 'validation', 'error_root_language_shortcode_unchanged');
@@ -202,7 +202,7 @@ class MediaFoldersTable extends Table {
 
 
 		$rules->add(
-			function (MediaFolder $entity/*, array $options*/) use ($rules): bool|string {
+			function (MediaFolder $entity/*, array $options*/): bool|string {
 				return $entity->get('parentId') !== 1;
 			},
 			'notNestedUnderRoot',

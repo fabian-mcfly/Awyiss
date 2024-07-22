@@ -167,7 +167,7 @@ class UserConfigurationTable extends Table {
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
 		$rules->add(
-			function (UserConfiguration $entity/*, array $options*/) use ($rules): bool|string {
+			function (UserConfiguration $entity/*, array $options*/): bool|string {
 				if (
 					$entity->hasOriginal('userId') &&
 					$entity->get('userId') !== $entity->getOriginal('userId')
@@ -204,7 +204,7 @@ class UserConfigurationTable extends Table {
 		);
 
 
-		$rules->add(function (UserConfiguration $entity/*, array $options*/) use ($rules): bool {
+		$rules->add(function (UserConfiguration $entity/*, array $options*/): bool {
 			$lo_configuration = ConfigOptionsProvider::loadConfigOptions($entity->scope);
 			$lo_configOption = $lo_configuration?->getConfigOption(Awyiss::REALM_BACKEND, $entity->identifier);
 

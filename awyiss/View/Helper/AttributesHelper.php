@@ -389,7 +389,7 @@ class AttributesHelper extends Helper {
 				throw new RuntimeException(sprintf('Missing language for translation of `%s`', $ls_field));
 			}
 
-			if (in_array($options['type'], ['datetime'])) {
+			if ($options['type'] == 'datetime') {
 				/** @noinspection PhpVariableNamingConventionInspection */
 				$options['timezone'] = $lo_language->timezone;
 			}
@@ -444,7 +444,7 @@ class AttributesHelper extends Helper {
 			$la_options['label'] = $attributeFields[ $fieldName ]->label;
 		}
 
-		if (!isset($la_options['timezone']) && in_array($la_options['type'], ['datetime'])) {
+		if (!isset($la_options['timezone']) && $la_options['type'] == 'datetime') {
 			$la_options['timezone'] = $lo_language->timezone;
 		}
 

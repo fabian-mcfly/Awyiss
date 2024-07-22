@@ -316,22 +316,16 @@ abstract class BackendController extends AppController {
 			}
 		}
 
-		/** @noinspection DuplicatedCode */
 		$li_affectedRows = $this->_saveSystemOrder($lo_request->getData('order'), $lo_table);
 
 		if ($this->request->accepts('application/json')) {
 			$this->viewBuilder()->setOption('serialize', ['success', 'message']);
 
-			$this->set('success', $li_affectedRows !== false);
+			$this->set('success', true);
 			$this->set('message', $li_affectedRows > 0 ? __d('system', 'system_order_saved') : __d('system', 'system_order_not_saved'));
 
 			// Set the view class to JSON
 			$this->viewBuilder()->setClassName('Json');
-
-			if ($li_affectedRows === false) {
-				// Setting the response status to 422 Unprocessable Entity
-				$this->response = $this->response->withStatus(422, 'Unable to process entity');
-			}
 		}
 		else {
 			if ($li_affectedRows) {

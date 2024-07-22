@@ -70,6 +70,7 @@ class DesignMiddleware implements MiddlewareInterface {
 	 * @param bool $showExceptions
 	 * @return void
 	 * @throws \ScssPhp\ScssPhp\Exception\SassException
+	 * @throws \Exception
 	 */
 	public function compileScss(bool $mustCompile = false, ?string $realm = null, bool $showExceptions = false): void {
 		// Set the exception handling for the ScssCompiler

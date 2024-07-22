@@ -261,10 +261,12 @@ class ContentTemplatesController extends Controller {
 			$contentTemplate->contentTemplateElements = collection($contentTemplate->contentTemplateElements)->indexBy('identifier')->toArray();
 		}
 
+		$lo_contentTemplate = $contentTemplate;
+
 		// Sort the available content elements by the order of the assigned content template elements
 		$la_availableContentElements = $this->ContentTemplates->getAvailableContentElements();
-		uksort($la_availableContentElements, function ($a, $b) use ($contentTemplate) {
-			$la_keys = array_keys($contentTemplate->contentTemplateElements ?? []);
+		uksort($la_availableContentElements, function ($a, $b) use ($lo_contentTemplate) {
+			$la_keys = array_keys($lo_contentTemplate->contentTemplateElements ?? []);
 			$lx_aPos = array_search($a, $la_keys);
 			$lx_bPos = array_search($b, $la_keys);
 
@@ -284,8 +286,8 @@ class ContentTemplatesController extends Controller {
 
 		// Sort the available content attributes by the order of the assigned content template elements
 		$la_availableContentAttributes = $this->ContentTemplates->getAvailableContentAttributes();
-		uasort($la_availableContentAttributes, function ($a, $b) use ($contentTemplate) {
-			$la_keys = array_keys($contentTemplate->contentTemplateElements ?? []);
+		uasort($la_availableContentAttributes, function ($a, $b) use ($lo_contentTemplate) {
+			$la_keys = array_keys($lo_contentTemplate->contentTemplateElements ?? []);
 			$ls_aIdentifier = 'attributes.' . $a['identifier'];
 			$ls_bIdentifier = 'attributes.' . $b['identifier'];
 

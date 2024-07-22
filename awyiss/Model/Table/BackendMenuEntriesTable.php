@@ -63,6 +63,7 @@ class BackendMenuEntriesTable extends Table {
 	 * @param Validator $validator The validator that can be modified to
 	 * add some rules to it.
 	 * @return Validator
+	 * @noinspection DuplicatedCode
 	 */
 	public function validationDefault(Validator $validator): Validator {
 		parent::validationDefault($validator);
@@ -139,7 +140,8 @@ class BackendMenuEntriesTable extends Table {
 	 * @return RulesChecker
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
-		$rules->add(function (BackendMenuEntry $entity, array $options) use ($rules): bool {
+		$lo_rules = $rules;
+		$rules->add(function (BackendMenuEntry $entity, array $options) use ($lo_rules): bool {
 			static $lo_menu;
 
 			if (!$options['checkRules']) {
@@ -160,7 +162,7 @@ class BackendMenuEntriesTable extends Table {
 				return (bool)($lo_menu->getCustomMenu() ?? $lo_menu->getMenu())->getItem($lx_parentId);
 			}
 
-			$lo_existsIn = $rules->existsIn(
+			$lo_existsIn = $lo_rules->existsIn(
 				'parentId',
 				'ParentBackendMenuEntries',
 				[

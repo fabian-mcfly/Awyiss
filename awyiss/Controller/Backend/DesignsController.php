@@ -116,7 +116,7 @@ class DesignsController extends Controller {
 			'fontStacks' => $la_fontStacks,
 			'fontWeights' => $la_fontWeights,
 			'preview' => $lo_preview ,
-			'previewIdentifier' => $lo_preview ? $lo_preview->identifier : null,
+			'previewIdentifier' => $lo_preview?->identifier,
 			'units' => $lo_scssVariableProvider->getConfig('units'),
 			'variables' => $la_variables,
 			'webfonts' => $la_webfonts,
@@ -375,6 +375,7 @@ class DesignsController extends Controller {
 
 		$lo_preview = null;
 		if ($this->request->getData('preview')) {
+			/** @noinspection PhpUndefinedMethodInspection */
 			$lo_preview = $this->Designs->findByIdentifier($this->request->getData('preview'))->first();
 		}
 
@@ -422,10 +423,10 @@ class DesignsController extends Controller {
 
 
 	/**
-	 * @param mixed $vars
+	 * @param array $vars
 	 * @return array
 	 */
-	protected function normaleizeVariables(mixed $vars) {
+	protected function normaleizeVariables(array $vars): array {
 		$la_variables = $vars;
 		$la_variables = ScssCompiler::normalizeVariables($la_variables);
 
@@ -454,6 +455,7 @@ class DesignsController extends Controller {
 
 		$ls_identifier = $lo_session->read('designPreviewIdentifier');
 		if ($ls_identifier) {
+			/** @noinspection PhpUndefinedMethodInspection */
 			$lo_design = $this->Designs->findByIdentifier($ls_identifier)->first();
 			if ($lo_design) {
 				$this->Designs->delete($lo_design);

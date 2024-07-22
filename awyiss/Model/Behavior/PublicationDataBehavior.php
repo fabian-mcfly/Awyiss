@@ -313,9 +313,13 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 		$la_select = $query->clause('select');
 
 		$lc_conditions = function (string $field, SelectQuery $query, array $select) {
-			return function (SelectQuery $q) use ($field, $query, $select) {
+			$ls_field = $field;
+			$lo_query = $query;
+			$la_select = $select;
+
+			return function (SelectQuery $q) use ($ls_field, $lo_query, $la_select) {
 				if (
-					$query->isAutoFieldsEnabled() !== false || in_array($field, $select, true) || in_array($this->_table->aliasField($field), $select, true)
+					$lo_query->isAutoFieldsEnabled() !== false || in_array($ls_field, $la_select, true) || in_array($this->_table->aliasField($ls_field), $la_select, true)
 				) {
 					$q->select(['id', 'foreign_id', 'type', 'date_time']);
 				}

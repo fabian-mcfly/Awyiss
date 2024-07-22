@@ -73,6 +73,7 @@ class ContentTemplatesListener implements EventListenerInterface {
 	 * @param Event $event
 	 * @param ContentTemplate $entity
 	 * @noinspection PhpUnusedParameterInspection
+	 * @noinspection DuplicatedCode
 	 */
 	public function afterSaveCommit(Event $event, ContentTemplate $entity): void {
 		$ls_fileName = Text::slug($entity->fileName, ['replacement' => '_']);

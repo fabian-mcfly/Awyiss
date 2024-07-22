@@ -536,55 +536,10 @@ class MediaController extends Controller {
 	 * @throws \Exception
 	 */
 	protected function save(Media $media, string $method = 'add', bool $isAjax = false): void {
-		$la_associated = [];
-		if ($this->Media->hasAttributes()) {
-			$la_associated[] = $this->Media->getAttributesTableName(true);
-			$media->setAccess('attributes', true);
-		}
-
-		$la_data = $this->request->getData();
+		$this->patchEntity($media);
 
 		/** @var \Laminas\Diactoros\UploadedFile $lo_uploadedFile */
 		$lo_uploadedFile = $this->request->getData('file');
-
-		$ls_extension = null;
-		if ($lo_uploadedFile && !$lo_uploadedFile->getError()) {
-			if (empty($la_data['name'])) {
-				$la_data['name'] = $lo_uploadedFile->getClientFilename();
-			}
-			else {
-				$li_dotPos = strrpos($lo_uploadedFile->getClientFilename(), '.');
-				$ls_extension = substr($lo_uploadedFile->getClientFilename(), $li_dotPos + 1);
-			}
-		}
-		elseif (!empty($la_data['name'])) {
-			$ls_extension = $media->extension;
-		}
-
-		if ($ls_extension && !str_ends_with($la_data['name'], $ls_extension)) {
-			$la_data['name'] .= '.' . $ls_extension;
-		}
-
-		$la_data['crop'] = array_filter($la_data['crop'] ?? [], 'is_numeric');
-		if (count($la_data['crop']) !== 6 || $this->request->getData('reload_form')) {
-			$la_data['crop'] = null;
-		}
-		else {
-			// If crop values and resize values are the same as the original values, set crop to null
-			if (
-				$media->width === (float)$la_data['crop']['width'] &&
-				$media->width === (float)$la_data['crop']['resize_width'] &&
-				$media->height === (float)$la_data['crop']['height'] &&
-				$media->height === (float)$la_data['crop']['resize_height']
-			) {
-				$la_data['crop'] = null;
-			}
-		}
-
-		$this->Media->patchEntity($media, $la_data, [
-			'associated' => $la_associated,
-			'validate' => !$this->request->getData('reload_form'),
-		]);
 
 		$this->ensureValidFile($method, $media, $lo_uploadedFile);
 
@@ -765,5 +720,62 @@ class MediaController extends Controller {
 				true
 			);
 		}
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Entity\Media $media
+	 * @return void
+	 */
+	protected function patchEntity(Media $media): void {
+		$la_associated = [];
+		if ($this->Media->hasAttributes()) {
+			$la_associated[] = $this->Media->getAttributesTableName(true);
+			$media->setAccess('attributes', true);
+		}
+
+		$la_data = $this->request->getData();
+
+		/** @var \Laminas\Diactoros\UploadedFile $lo_uploadedFile */
+		$lo_uploadedFile = $this->request->getData('file');
+
+		$ls_extension = null;
+		if ($lo_uploadedFile && !$lo_uploadedFile->getError()) {
+			if (empty($la_data['name'])) {
+				$la_data['name'] = $lo_uploadedFile->getClientFilename();
+			}
+			else {
+				$li_dotPos = strrpos($lo_uploadedFile->getClientFilename(), '.');
+				$ls_extension = substr($lo_uploadedFile->getClientFilename(), $li_dotPos + 1);
+			}
+		}
+		elseif (!empty($la_data['name'])) {
+			$ls_extension = $media->extension;
+		}
+
+		if ($ls_extension && !str_ends_with($la_data['name'], $ls_extension)) {
+			$la_data['name'] .= '.' . $ls_extension;
+		}
+
+		$la_data['crop'] = array_filter($la_data['crop'] ?? [], 'is_numeric');
+		if (count($la_data['crop']) !== 6 || $this->request->getData('reload_form')) {
+			$la_data['crop'] = null;
+		}
+		else {
+			// If crop values and resize values are the same as the original values, set crop to null
+			if (
+				$media->width === (float)$la_data['crop']['width'] &&
+				$media->width === (float)$la_data['crop']['resize_width'] &&
+				$media->height === (float)$la_data['crop']['height'] &&
+				$media->height === (float)$la_data['crop']['resize_height']
+			) {
+				$la_data['crop'] = null;
+			}
+		}
+
+		$this->Media->patchEntity($media, $la_data, [
+			'associated' => $la_associated,
+			'validate' => !$this->request->getData('reload_form'),
+		]);
 	}
 }

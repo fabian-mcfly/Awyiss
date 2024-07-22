@@ -18,6 +18,7 @@ class BackendView extends AppView {
 	 * @return void
 	 * @throws \Twig\Error\LoaderError
 	 * @throws \Exception
+	 * @noinspection DuplicatedCode
 	 */
 	public function initialize(): void {
 		parent::initialize();

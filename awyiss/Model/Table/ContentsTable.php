@@ -167,7 +167,7 @@ class ContentsTable extends Table {
 	 * @param array $options
 	 * @return \Cake\ORM\Query\SelectQuery
 	 */
-	public function findLatestForPages(SelectQuery $query, array $options): SelectQuery {
+	public function findLatestForPages(SelectQuery $query): SelectQuery {
 		return $query->select(['page_id', 'id', 'changed_on', 'created_on'])
 		->orderBy(['changed_on' => 'DESC', 'created_on' => 'DESC'])
 		->distinct(['page_id'])->groupBy('page_id');
@@ -217,6 +217,7 @@ class ContentsTable extends Table {
 	 * @param \Awyiss\Validation\Validator $validator The validator that can be modified to
 	 * add some rules to it.
 	 * @return \Awyiss\Validation\Validator
+	 * @noinspection DuplicatedCode
 	 */
 	public function validationDefault(BaseValidator $validator): BaseValidator {
 		parent::validationDefault($validator);
@@ -352,6 +353,7 @@ class ContentsTable extends Table {
 	 *
 	 * @param RulesChecker|BaseRulesChecker $rules The rules object to be modified.
 	 * @return RulesChecker
+	 * @noinspection DuplicatedCode
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $rules): BaseRulesChecker {
 		$rules->add(function (Content $entity/*, array $options*/): bool {
@@ -469,8 +471,8 @@ class ContentsTable extends Table {
 
 
 		$rules->add(
-			function (Content $entity, array $options) use ($rules) {
-				$lx_valid = $this->checkValidDuplicateRules($entity, $options, $rules);
+			function (Content $entity) {
+				$lx_valid = $this->checkValidDuplicateRules($entity);
 
 				if ($lx_valid !== true && !$entity->duplicateOf) {
 					/**
@@ -520,16 +522,17 @@ class ContentsTable extends Table {
 	 */
 	protected function childrenCanBeMoved(Content $entity, int $pageTemplateId): bool {
 		$li_contentAreaId = $entity->contentAreaId;
+		$li_pageTemplateId = $pageTemplateId;
 
 		// Get all children of the current entity
 		$lo_children = $entity->getNestedChildren([
 			'contain' => [
 				'ContentTemplates' => [
 					'ContentAreas' => [
-						'queryBuilder' => function (SelectQuery $query) use ($li_contentAreaId, $pageTemplateId) {
+						'queryBuilder' => function (SelectQuery $query) use ($li_contentAreaId, $li_pageTemplateId) {
 							return $query->where([
 								'ContentTemplateContentAreas.content_area_id' => $li_contentAreaId,
-								'ContentTemplateContentAreas.page_template_id' => $pageTemplateId,
+								'ContentTemplateContentAreas.page_template_id' => $li_pageTemplateId,
 							]);
 						},
 					],
@@ -818,6 +821,7 @@ class ContentsTable extends Table {
 	 * @param \Awyiss\Model\Entity\Content $entity
 	 * @param \Awyiss\Validation\Validator $validator
 	 * @return void
+	 * @noinspection DuplicatedCode
 	 */
 	protected function validateUnassignedElements(ContentTemplate $contentTemplate, Content $entity, Validator $validator): void {
 		foreach (
@@ -945,7 +949,7 @@ class ContentsTable extends Table {
 	 * @param \Awyiss\ORM\RulesChecker $rules
 	 * @return string|bool
 	 */
-	protected function checkValidDuplicateRules(Content $entity, array $options, RulesChecker $rules): string|bool {
+	protected function checkValidDuplicateRules(Content $entity): string|bool {
 		// Get all children of the current entity
 		$la_nestedChildren = $entity->getNestedChildren()->toArray();
 		$la_duplicatedContentIds = array_column($la_nestedChildren, 'duplicateOf');

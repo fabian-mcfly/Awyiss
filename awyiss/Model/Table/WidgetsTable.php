@@ -156,6 +156,7 @@ class WidgetsTable extends Table {
 	 * @param \Awyiss\Validation\Validator $validator The validator that can be modified to
 	 * add some rules to it.
 	 * @return \Awyiss\Validation\Validator
+	 * @noinspection DuplicatedCode
 	 */
 	public function validationDefault(BaseValidator $validator): BaseValidator {
 		parent::validationDefault($validator);
@@ -301,6 +302,7 @@ class WidgetsTable extends Table {
 			}
 
 			/** @var \Awyiss\Validation\Validator $lo_validator */
+			/** @noinspection DuplicatedCode */
 			$lo_validator = new $this->_validatorClass();
 			$lo_validator->setI18nDomain($this->getI18nDomain());
 
@@ -451,6 +453,7 @@ class WidgetsTable extends Table {
 	 * @param \Awyiss\Model\Entity\Widget $entity
 	 * @param \Awyiss\Validation\Validator $validator
 	 * @return void
+	 * @noinspection DuplicatedCode
 	 */
 	protected function validateUnassignedElements(WidgetTemplate $widgetTemplate, Widget $entity, Validator $validator): void {
 		foreach (

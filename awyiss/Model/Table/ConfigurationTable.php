@@ -260,12 +260,13 @@ class ConfigurationTable extends Table {
 		]);
 
 
-		$rules->add(function (Configuration $entity, array $options) use ($rules): bool {
+		$lo_rules = $rules;
+		$rules->add(function (Configuration $entity, array $options) use ($lo_rules): bool {
 			if (!$entity->get('languageShortcode')) {
 				return true;
 			}
 
-			$lo_existsIn = $rules->existsIn([
+			$lo_existsIn = $lo_rules->existsIn([
 				'realm',
 				'languageShortcode',
 			], 'Languages', [

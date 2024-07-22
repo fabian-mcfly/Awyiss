@@ -29,6 +29,7 @@ class ContentsCell extends Cell {
 	 * @param \Awyiss\Model\Entity\Page $page
 	 * @param array $options
 	 * @return void
+	 * @throws \ReflectionException
 	 */
 	public function display(string $contentArea, Page $page, array $options = []): void {
 		$la_options = $options + [
@@ -112,6 +113,7 @@ class ContentsCell extends Cell {
 	 * @param \Awyiss\Model\Entity\Content $entity
 	 * @param string $children
 	 * @return string
+	 * @throws \ReflectionException
 	 */
 	protected function renderContentElement(Entity $entity, string $children): string {
 		/**

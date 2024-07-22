@@ -289,13 +289,16 @@ class MediaFoldersListener implements EventListenerInterface {
 
 		$lb_parentsActive = $entity->active && $entity->parentsActive;
 
+		$lo_entity = $entity;
+		$ls_originalPath = $originalPath;
+
 		if ($lb_parentsActive) {
 			/**
 			 * When updating all media folders with the same path (LIKE 'oldpath/%'), do not set the parents_active to true
 			 * for media folders that descendants of inactive sites.
 			 */
-			$lo_subFolders = $table->find('all', skipPageRoleCheck: true)->where(function (QueryExpression $expression) use ($entity, $originalPath) {
-				return $expression->like('path', ($originalPath ?? $entity->path) . '/%');
+			$lo_subFolders = $table->find('all', skipPageRoleCheck: true)->where(function (QueryExpression $expression) use ($lo_entity, $ls_originalPath) {
+				return $expression->like('path', ($ls_originalPath ?? $lo_entity->path) . '/%');
 			})->where(['active' => false])->all();
 
 			foreach ($lo_subFolders as $lo_subFolder) {
@@ -310,8 +313,8 @@ class MediaFoldersListener implements EventListenerInterface {
 		/**
 		 * WHERE path LIKE 'oldpath/%'
 		 */
-		$lo_query->where(function (QueryExpression $expression/*, Query $query*/) use ($entity, $originalPath) {
-			return $expression->like('path', ($originalPath ?? $entity->path) . '/%');
+		$lo_query->where(function (QueryExpression $expression/*, Query $query*/) use ($lo_entity, $ls_originalPath) {
+			return $expression->like('path', ($ls_originalPath ?? $lo_entity->path) . '/%');
 		});
 
 		$lo_query->execute();

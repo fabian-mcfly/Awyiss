@@ -534,7 +534,6 @@ class FrontendController extends AppController {
 	/**
 	 * @param \Awyiss\Model\Entity\Page $page
 	 * @return void
-	 * @throws \ReflectionException
 	 */
 	protected function loadFrontendEditor(Page $page): void {
 		if (!Configure::read('Awyiss.System.Frontend.editor')) {
@@ -547,9 +546,9 @@ class FrontendController extends AppController {
 			return;
 		}
 
-		$lb_contentsEditable = $lo_identity->permissionCollection->scopeIsAccessible($page->pageRoleId->name, [], 'contents');
-		$lb_widgetsEditable = $lo_identity->permissionCollection->scopeIsAccessible('Widgets', [], 'update');
-		$lb_menuEntriesEditable = $lo_identity->permissionCollection->scopeIsAccessible('MenuEntries', [], 'update');
+		$lb_contentsEditable = $lo_identity->get('permissionCollection')->scopeIsAccessible($page->pageRoleId->name, [], 'contents');
+		$lb_widgetsEditable = $lo_identity->get('permissionCollection')->scopeIsAccessible('Widgets', [], 'update');
+		$lb_menuEntriesEditable = $lo_identity->get('permissionCollection')->scopeIsAccessible('MenuEntries', [], 'update');
 
 		if (!$lb_contentsEditable && !$lb_widgetsEditable && !$lb_menuEntriesEditable) {
 			return;

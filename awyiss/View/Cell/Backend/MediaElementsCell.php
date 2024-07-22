@@ -49,6 +49,7 @@ class MediaElementsCell extends Cell {
 
 		if ($lo_behavior->getConfig('assignable.modelLevel')) {
 			// Get all assigned elements on the model level
+			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 			$lo_assignedElements = $lo_assignedElements->append($lo_table->MediaElementAssignments->find()->all());
 		}
 
@@ -67,14 +68,17 @@ class MediaElementsCell extends Cell {
 		}
 
 		if ($entity->isDirty('mediaAssignments')) {
+			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 			$la_mediaIds = array_column($entity->mediaAssignments, 'media_id');
 			if ($la_mediaIds) {
 				$la_media = $this->fetchTable('Media')->find()->where(['id IN' => $la_mediaIds])->all()->indexBy('id')->toArray();
 
+				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 				foreach ($entity->mediaAssignments as $lo_mediaAssignment) {
 					$lo_mediaAssignment->media = $la_media[ $lo_mediaAssignment->mediaId ];
 				}
 
+				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 				$lo_table->getBehavior('MediaAssignment')->rebuildMediaAssignments($entity);
 			}
 		}

@@ -72,6 +72,7 @@ class DesignsListener implements EventListenerInterface {
 	 * @param \Awyiss\Model\Entity\Datatable $entity
 	 * @return void
 	 * @noinspection PhpUnusedParameterInspection
+	 * @throws \ScssPhp\ScssPhp\Exception\SassException
 	 */
 	public function afterSaveCommit(Event $event, Design $entity): void {
 		if (!$entity->inUse) {

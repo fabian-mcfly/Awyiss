@@ -156,6 +156,7 @@ class CategoriesHelper extends Helper {
 	 * @param string|null $identifier
 	 * @param array $attributes
 	 * @return string
+	 * @throws \Exception
 	 * @see \Cake\View\Helper\FormHelper::control()
 	 */
 	public function control(string $identifier, array $attributes = []): string {

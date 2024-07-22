@@ -22,7 +22,6 @@ use ReflectionClass;
  * @property \Awyiss\Model\Table\MediaAssignmentsTable&\Awyiss\ORM\Association\HasMany $MediaAssignments
  * @property \Awyiss\Model\Table\MediaElementSelectorsTable&\Awyiss\ORM\Association\HasMany $MediaElementAssignments
  * @property \Awyiss\Model\Table\MediaElementSelectorsTable&\Awyiss\ORM\Association\HasMany $MediaElementSelectors
- * @noinspection PhpUnnecessaryFullyQualifiedNameInspection
  * @noinspection PhpFullyQualifiedNameUsageInspection
  */
 class MediaElementsTable extends Table {
@@ -192,8 +191,8 @@ class MediaElementsTable extends Table {
 
 	/**
 	 * Get the available models for element assignment
-	 * Model level means that the model is assignable to a element
-	 * Entity level means that the entity of the model is assignable to a element
+	 * Model level means that the model is assignable to an element
+	 * Entity level means that the entity of the model is assignable to an element
 	 *
 	 * @param bool $includeEntities
 	 * @param bool $allowGrouping

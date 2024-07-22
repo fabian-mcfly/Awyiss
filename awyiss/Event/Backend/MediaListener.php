@@ -98,7 +98,6 @@ class MediaListener implements EventListenerInterface {
 					true
 				);
 
-
 				return;
 			}
 
@@ -106,59 +105,12 @@ class MediaListener implements EventListenerInterface {
 		}
 
 		if ($entity->file && !$entity->file->getError()) {
-			$lo_stream = $entity->file->getStream();
-			$ls_tempName = $lo_stream->getMetadata('uri');
-
-			if ($entity->isImage()) {
-				if ($entity->mimeType === 'image/svg+xml') {
-					$la_dimensions = $this->getSvgDimensions(file_get_contents($ls_tempName));
-
-					$entity->width = $la_dimensions['width'];
-					$entity->height = $la_dimensions['height'];
-				}
-				else {
-					$la_imageSize = $this->getImageSize($ls_tempName);
-
-					$entity->width = $la_imageSize[0];
-					$entity->height = $la_imageSize[1];
-				}
-
-				$entity->preview = ProcessStatus::NotRequired;
-
-				if (empty($entity->crop)) {
-					$entity->crop = [
-						'rotate' => 'auto',
-					];
-				}
-			}
-			else {
-				$entity->width = null;
-				$entity->height = null;
-				$entity->preview = ProcessStatus::Undefined;
-			}
+			$this->setDimensions($entity);
 
 			$entity->webp = in_array($entity->mimeType, ['image/webp', 'image/svg+xml']) ? ProcessStatus::NotRequired : ProcessStatus::Undefined;
 
 			if ($lb_isNew && LocalConfig::read('upload.autoOverwrite', false, 'Media') === true) {
-				$lo_currentMedia = static::$media[ $entity->mediaFolderId ][ $entity->name ] ?? null;
-				if ($lo_currentMedia) {
-					$entity->setNew(false);
-					$entity->set([
-						'id' => $lo_currentMedia->id,
-						'alt' => $entity->alt ?? $lo_currentMedia->alt,
-						'systemOrder' => $lo_currentMedia->systemOrder,
-						'createdBy' => $lo_currentMedia->createdBy,
-						'createdOn' => $lo_currentMedia->createdOn,
-					], [
-						'guard' => false,
-					]);
-
-					$entity->setDirty('systemOrder', false);
-
-					if ($lo_currentMedia->attributes) {
-						$entity->attributes = $lo_currentMedia->attributes;
-					}
-				}
+				$this->useExistingsFileData($entity);
 			}
 			else {
 				$this->ensureUniqueFileName($lo_table, $entity);
@@ -342,5 +294,71 @@ class MediaListener implements EventListenerInterface {
 			$lo_imagick->getImageWidth(),
 			$lo_imagick->getImageHeight(),
 		];
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Entity\Media $entity
+	 * @return void
+	 * @throws \ImagickException
+	 */
+	protected function setDimensions(Media $entity): void {
+		$lo_stream = $entity->file->getStream();
+		$ls_tempName = $lo_stream->getMetadata('uri');
+
+		if ($entity->isImage()) {
+			if ($entity->mimeType === 'image/svg+xml') {
+				$la_dimensions = $this->getSvgDimensions(file_get_contents($ls_tempName));
+
+				$entity->width = $la_dimensions['width'];
+				$entity->height = $la_dimensions['height'];
+			}
+			else {
+				$la_imageSize = $this->getImageSize($ls_tempName);
+
+				$entity->width = $la_imageSize[0];
+				$entity->height = $la_imageSize[1];
+			}
+
+			$entity->preview = ProcessStatus::NotRequired;
+
+			if (empty($entity->crop)) {
+				$entity->crop = [
+					'rotate' => 'auto',
+				];
+			}
+		}
+		else {
+			$entity->width = null;
+			$entity->height = null;
+			$entity->preview = ProcessStatus::Undefined;
+		}
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Entity\Media $entity
+	 * @return void
+	 */
+	protected function useExistingsFileData(Media $entity): void {
+		$lo_currentMedia = static::$media[ $entity->mediaFolderId ][ $entity->name ] ?? null;
+		if ($lo_currentMedia) {
+			$entity->setNew(false);
+			$entity->set([
+				'id' => $lo_currentMedia->id,
+				'alt' => $entity->alt ?? $lo_currentMedia->alt,
+				'systemOrder' => $lo_currentMedia->systemOrder,
+				'createdBy' => $lo_currentMedia->createdBy,
+				'createdOn' => $lo_currentMedia->createdOn,
+			], [
+				'guard' => false,
+			]);
+
+			$entity->setDirty('systemOrder', false);
+
+			if ($lo_currentMedia->attributes) {
+				$entity->attributes = $lo_currentMedia->attributes;
+			}
+		}
 	}
 }

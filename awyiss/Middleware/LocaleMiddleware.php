@@ -63,7 +63,7 @@ class LocaleMiddleware implements MiddlewareInterface {
 	 */
 	protected static array $languagesByShortcode = [];
 	/**
-	 * @var string|null $realm The realm the middleware was loaded with
+	 * @var string $realm The realm the middleware was loaded with
 	 */
 	protected static string $realm;
 	/**
@@ -250,6 +250,7 @@ class LocaleMiddleware implements MiddlewareInterface {
 
 
 	/**
+	 * @param string|null $realm
 	 * @return string
 	 */
 	public static function getSessionIdentifier(?string $realm = null): string {

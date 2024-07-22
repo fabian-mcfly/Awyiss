@@ -525,10 +525,11 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 		 */
 		if (!empty($lo_order)) {
 			dd($lo_order, __FILE__, __LINE__);
-			//Re-add remembered orders
 			/** @noinspection PhpUnreachableStatementInspection */
-			$lo_order->traverse(function ($clause) use ($query): void {
-				$query->orderBy($clause);
+			$lo_query = $query;
+			//Re-add remembered orders
+			$lo_order->traverse(function ($clause) use ($lo_query): void {
+				$lo_query->orderBy($clause);
 			});
 		}
 
@@ -771,7 +772,7 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 
 		/** @var \Awyiss\Model\Table $lo_table */
 		$lo_table = $this->table();
-		$rules->add(function (EntityInterface $entity, array $options) use ($rules, $lo_table): bool {
+		$rules->add(function (EntityInterface $entity, array $options) use ($lo_table): bool {
 			$la_categories = $this->getCategories();
 			$ls_field = $this->getConfig('useDatasource') ? $this->getConfig('field') : $this->getConfig('identifier');
 

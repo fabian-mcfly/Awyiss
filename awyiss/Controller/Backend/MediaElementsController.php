@@ -19,7 +19,8 @@ use Cake\ORM\Query\SelectQuery;
  * MediaElements Controller
  *
  * @property \Awyiss\Model\Table\MediaElementsTable $MediaElements
- * @method MediaElement[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
+ * @method \Awyiss\Model\Entity\MediaElement[]|\Cake\Datasource\ResultSetInterface paginate($object = null, array $settings = [])
+ * @noinspection PhpFullyQualifiedNameUsageInspection
  */
 class MediaElementsController extends Controller {
 	/**
@@ -148,7 +149,7 @@ class MediaElementsController extends Controller {
 	 * @param MediaElement $mediaElement
 	 * @param string $method
 	 * @return void
-	 * @throws \Cake\Http\Exception\RedirectException
+	 * @throws \Cake\Http\Exception\RedirectException|\Exception
 	 */
 	protected function save(MediaElement $mediaElement, string $method = 'add'): void {
 		$la_associated = [];
@@ -215,6 +216,7 @@ class MediaElementsController extends Controller {
 	/**
 	 * @param \Awyiss\Model\Entity\MediaElement $mediaElement
 	 * @return void
+	 * @throws \ReflectionException
 	 */
 	protected function setViewVars(MediaElement $mediaElement): void {
 		$la_mediaSelectors = $this->fetchTable('MediaSelectors')->find()->all()->indexBy('id')->toArray();

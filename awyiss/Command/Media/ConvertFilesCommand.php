@@ -199,14 +199,15 @@ class ConvertFilesCommand extends Command {
 		/** @var \Awyiss\Model\Table\MediaTable $lo_table */
 		$lo_table = $this->fetchTable('Media');
 
+		$lo_files = $files;
 		/**
 		 * If all files have the same webp status, use a simple updateAll command
 		 */
-		$lo_table->updateAll(function (QueryExpression $expression) use ($files) {
+		$lo_table->updateAll(function (QueryExpression $expression) use ($lo_files) {
 			$lo_averageColorCases = $expression->case();
 
 			/** @var \Awyiss\Model\Entity\Media $lo_file */
-			foreach ($files as $lo_file) {
+			foreach ($lo_files as $lo_file) {
 				$lo_averageColorCases->when(['id = ' . $lo_file->id])->then($lo_file->averageColor, 'string');
 			}
 
@@ -343,11 +344,12 @@ class ConvertFilesCommand extends Command {
 			]);
 		}
 		else {
-			$lo_table->updateAll(function (QueryExpression $expression) use ($files) {
+			$lo_files = $files;
+			$lo_table->updateAll(function (QueryExpression $expression) use ($lo_files) {
 				$lo_webpCases = $expression->case();
 
 				/** @var \Awyiss\Model\Entity\Media $lo_file */
-				foreach ($files as $lo_file) {
+				foreach ($lo_files as $lo_file) {
 					$lo_webpCases->when(['id = ' . $lo_file->id])->then($lo_file->webp->value, 'integer');
 				}
 
@@ -458,22 +460,25 @@ class ConvertFilesCommand extends Command {
 			]);
 		}
 		else {
-			$lo_table->updateAll(function (QueryExpression $expression) use ($files, $includeWebp) {
+			$lo_files = $files;
+			$lb_includeWebp = $includeWebp;
+
+			$lo_table->updateAll(function (QueryExpression $expression) use ($lo_files, $lb_includeWebp) {
 				$lo_widthCases = $expression->case();
 				$lo_heightCases = $expression->case();
 				$lo_previewCases = $expression->case();
 
-				if ($includeWebp) {
+				if ($lb_includeWebp) {
 					$lo_webpCases = $expression->case();
 				}
 
 				/** @var \Awyiss\Model\Entity\Media $lo_file */
-				foreach ($files as $lo_file) {
+				foreach ($lo_files as $lo_file) {
 					$lo_widthCases->when(['id = ' . $lo_file->id])->then($lo_file->width, 'float');
 					$lo_heightCases->when(['id = ' . $lo_file->id])->then($lo_file->height, 'float');
 					$lo_previewCases->when(['id = ' . $lo_file->id])->then($lo_file->preview->value, 'integer');
 
-					if ($includeWebp) {
+					if ($lb_includeWebp) {
 						$lo_webpCases->when(['id = ' . $lo_file->id])->then($lo_file->webp->value, 'integer');
 					}
 				}
@@ -484,7 +489,7 @@ class ConvertFilesCommand extends Command {
 					'preview' => $lo_previewCases,
 				];
 
-				if ($includeWebp) {
+				if ($lb_includeWebp) {
 					$la_cases['webp'] = $lo_webpCases;
 				}
 
@@ -569,13 +574,14 @@ class ConvertFilesCommand extends Command {
 		/** @var \Awyiss\Model\Table\MediaTable $lo_table */
 		$lo_table = $this->fetchTable('Media');
 
-		$lo_table->updateAll(function (QueryExpression $expression) use ($files) {
+		$lo_files = $files;
+		$lo_table->updateAll(function (QueryExpression $expression) use ($lo_files) {
 			$lo_widthCases = $expression->case();
 			$lo_heightCases = $expression->case();
 			$lo_cropCases = $expression->case();
 
 			/** @var \Awyiss\Model\Entity\Media $lo_file */
-			foreach ($files as $lo_file) {
+			foreach ($lo_files as $lo_file) {
 				$lo_widthCases->when(['id = ' . $lo_file->id])->then($lo_file->width, 'float');
 				$lo_heightCases->when(['id = ' . $lo_file->id])->then($lo_file->height, 'float');
 				$lo_cropCases->when(['id = ' . $lo_file->id])->then($lo_file->crop, 'integer');
@@ -657,13 +663,14 @@ class ConvertFilesCommand extends Command {
 			]);
 		}
 		else {
-			$lo_table->updateAll(function (QueryExpression $expression) use ($files) {
+			$lo_files = $files;
+			$lo_table->updateAll(function (QueryExpression $expression) use ($lo_files) {
 				$lo_realWidthCases = $expression->case();
 				$lo_realHeightCases = $expression->case();
 				$lo_statusCases = $expression->case();
 
 				/** @var \Awyiss\Model\Entity\MediaResizedImage $lo_file */
-				foreach ($files as $lo_file) {
+				foreach ($lo_files as $lo_file) {
 					$lo_realWidthCases->when(['id = ' . $lo_file->id])->then($lo_file->realWidth, 'integer');
 					$lo_realHeightCases->when(['id = ' . $lo_file->id])->then($lo_file->realHeight, 'integer');
 					$lo_statusCases->when(['id = ' . $lo_file->id])->then($lo_file->status->value, 'integer');

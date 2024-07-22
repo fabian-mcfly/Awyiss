@@ -68,6 +68,7 @@ class WidgetsController extends Controller {
 	 * Overview method
 	 *
 	 * @throws \Exception
+	 * @noinspection DuplicatedCode
 	 */
 	public function overview(): void {
 		$this->Authorization->ensure('read');
@@ -214,6 +215,7 @@ class WidgetsController extends Controller {
 	 *
 	 * @return void
 	 * @throws \Exception
+	 * @noinspection DuplicatedCode
 	 */
 	#[NoDirectAccess]
 	public function saveColumnWidth(): void {
@@ -279,6 +281,7 @@ class WidgetsController extends Controller {
 
 	/**
 	 * @inheritDoc
+	 * @noinspection DuplicatedCode
 	 */
 	#[NoDirectAccess]
 	public function saveSystemOrder(): void {
@@ -290,16 +293,11 @@ class WidgetsController extends Controller {
 		if ($this->request->accepts('application/json')) {
 			$this->viewBuilder()->setOption('serialize', ['success', 'message']);
 
-			$this->set('success', $li_affectedRows !== false);
+			$this->set('success', true);
 			$this->set('message', $li_affectedRows > 0 ? __d('system', 'system_order_saved') : __d('system', 'system_order_not_saved'));
 
 			// Set the view class to JSON
 			$this->viewBuilder()->setClassName('Json');
-
-			if ($li_affectedRows === false) {
-				// Setting the response status to 422 Unprocessable Entity
-				$this->response = $this->response->withStatus(422, 'Unable to process entity');
-			}
 		}
 		else {
 			if ($li_affectedRows) {
@@ -484,6 +482,7 @@ class WidgetsController extends Controller {
 	 * @param CollectionInterface $threadedWidgets
 	 * @param \Awyiss\Model\Entity\WidgetTemplate|null $selectedWidgetTemplate
 	 * @return void
+	 * @noinspection DuplicatedCode
 	 */
 	protected function ensurePossibleParentId(Widget $widget, CollectionInterface $threadedWidgets, ?WidgetTemplate $selectedWidgetTemplate): void {
 		// Extract all possible parent ids
@@ -638,6 +637,7 @@ class WidgetsController extends Controller {
 	/**
 	 * @param array $data
 	 * @return array
+	 * @noinspection DuplicatedCode
 	 */
 	protected function formatDataAttributes(array $data): array {
 		$la_data = $data;

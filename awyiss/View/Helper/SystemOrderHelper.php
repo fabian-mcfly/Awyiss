@@ -63,17 +63,16 @@ class SystemOrderHelper extends Helper {
 
 	/**
 	 * Returns an input (default: select) containing all possible positions for an entity
-	 *
 	 * ### Options
 	 * - `entity` The entity the system order is for
 	 * - `options` All possible options. If empty, try fetching the `systemOrderRecords`-var from the view
 	 * - `relatedColumns` The columns related to the system order. If empty, try fetching the `systemOrderRelatedColumns`-var from the view
-	 *
 	 * For more options, see FormHelper::control()
 	 *
 	 * @param string|null $fieldName
 	 * @param array $attributes
 	 * @return string
+	 * @throws \Exception
 	 * @see FormHelper::control
 	 */
 	public function control(?string $fieldName = null, array $attributes = []): string {

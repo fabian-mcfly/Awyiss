@@ -57,6 +57,7 @@ class LocaleHelper extends Helper {
 	 * @param string|null $fieldName
 	 * @param array $attributes
 	 * @return string
+	 * @throws \Exception
 	 * @see FormHelper::control
 	 */
 	public function control(?string $fieldName = null, array $attributes = []): string {

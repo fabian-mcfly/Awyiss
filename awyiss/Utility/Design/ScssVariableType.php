@@ -4,6 +4,9 @@
 namespace Awyiss\Utility\Design;
 
 
+/**
+ * Enum for the types of an SCSS variable.
+ */
 enum ScssVariableType {
 	case Color;
 	case FontName;

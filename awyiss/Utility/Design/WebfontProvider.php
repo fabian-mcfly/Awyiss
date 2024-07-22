@@ -9,7 +9,7 @@ use RuntimeException;
 
 
 /**
- * Basic webfont provider for google fonts using
+ * Basic webfont provider for Google fonts using
  * google-webfonts-helper by Mario Ranftl
  *
  * @see https://gwfh.mranftl.com

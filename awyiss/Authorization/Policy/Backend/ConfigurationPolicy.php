@@ -142,11 +142,11 @@ class ConfigurationPolicy extends AbstractPolicy {
 			);
 		}
 
+		$lo_permissionCollection = $permissionCollection;
 		//Apply a mapReduce call that'll remove all entities from the query, except those that are re-added using the `emit()`-method
-		$lo_query->mapReduce(function (Configuration|array $entity, int $key, MapReduce $mapReduce) use ($permissionCollection): void {
+		$lo_query->mapReduce(function (Configuration|array $entity, int $key, MapReduce $mapReduce) use ($lo_permissionCollection): void {
 			if (!$entity instanceof Configuration || strtolower($entity->scope) === 'system') {
 				$mapReduce->emit($entity);
-
 
 				return;
 			}
@@ -156,7 +156,7 @@ class ConfigurationPolicy extends AbstractPolicy {
 			$ls_scope = AuthorizationService::sanitizeScope($entity->scope);
 
 			if (!array_key_exists($ls_scope, $la_checkedScopes)) {
-				$la_checkedScopes[ $ls_scope ] = $permissionCollection->scopeIsAccessible($entity->scope, [], 'configure');
+				$la_checkedScopes[ $ls_scope ] = $lo_permissionCollection->scopeIsAccessible($entity->scope, [], 'configure');
 			}
 
 			//If the scope is accessible, append it to the final list of results

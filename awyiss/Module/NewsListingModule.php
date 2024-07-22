@@ -209,8 +209,6 @@ class NewsListingModule implements ModuleInterface {
 			'sortableFields' => [],
 		];
 
-		$lo_news = $lo_paginator->paginate($query, $la_params, $la_settings);
-
-		return $lo_news;
+		return $lo_paginator->paginate($query, $la_params, $la_settings);
 	}
 }

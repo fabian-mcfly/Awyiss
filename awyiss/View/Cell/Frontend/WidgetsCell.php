@@ -25,6 +25,7 @@ class WidgetsCell extends Cell {
 	 * @param string $identifier
 	 * @param array $options
 	 * @return void
+	 * @throws \ReflectionException
 	 */
 	public function display(string $identifier, array $options = []): void {
 		$la_options = $options + [
@@ -108,6 +109,7 @@ class WidgetsCell extends Cell {
 	 * @param \Awyiss\Model\Entity\Widget $entity
 	 * @param string $children
 	 * @return string
+	 * @throws \ReflectionException
 	 */
 	protected function renderContentElement(Entity $entity, string $children): string {
 		/**

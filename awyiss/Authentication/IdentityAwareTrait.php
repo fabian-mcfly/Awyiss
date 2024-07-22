@@ -54,6 +54,7 @@ trait IdentityAwareTrait {
 
 	/**
 	 * @param \Awyiss\Authorization\IdentityPermissionsInterface|null $identity
+	 * @noinspection PhpAttributeCanBeAddedToOverriddenMemberInspection
 	 */
 	#[NoDirectAccess]
 	public function setIdentity(?IdentityInterface $identity): static {

@@ -99,6 +99,7 @@ class ContentsController extends Controller {
 	 * Overview method
 	 *
 	 * @throws \Exception
+	 * @noinspection DuplicatedCode
 	 */
 	public function overview(): void {
 		$this->forPage((int)$this->request->getParam('pageId'));
@@ -273,6 +274,7 @@ class ContentsController extends Controller {
 	 *
 	 * @return void
 	 * @throws \Exception
+	 * @noinspection DuplicatedCode
 	 */
 	#[NoDirectAccess]
 	public function saveColumnWidth(): void {
@@ -339,6 +341,7 @@ class ContentsController extends Controller {
 
 	/**
 	 * @inheritDoc
+	 * @noinspection DuplicatedCode
 	 */
 	#[NoDirectAccess]
 	public function saveSystemOrder(): void {
@@ -350,16 +353,11 @@ class ContentsController extends Controller {
 		if ($this->request->accepts('application/json')) {
 			$this->viewBuilder()->setOption('serialize', ['success', 'message']);
 
-			$this->set('success', $li_affectedRows !== false);
+			$this->set('success', true);
 			$this->set('message', $li_affectedRows > 0 ? __d('system', 'system_order_saved') : __d('system', 'system_order_not_saved'));
 
 			// Set the view class to JSON
 			$this->viewBuilder()->setClassName('Json');
-
-			if ($li_affectedRows === false) {
-				// Setting the response status to 422 Unprocessable Entity
-				$this->response = $this->response->withStatus(422, 'Unable to process entity');
-			}
 		}
 		else {
 			if ($li_affectedRows) {
@@ -380,9 +378,10 @@ class ContentsController extends Controller {
 	 * Show a form to configure a duplicateOf field
 	 *
 	 * @return void
-	 * @throws \ReflectionException
+	 * @throws \ReflectionException|\Exception
+	 * @noinspection DuplicatedCode
 	 */
-	public function duplicateConfiguration() {
+	public function duplicateConfiguration(): void {
 		$li_pageId = (int)$this->request->getParam('pageId');
 		$this->forPage($li_pageId);
 
@@ -393,55 +392,53 @@ class ContentsController extends Controller {
 		if ($this->request->is('post') && $this->request->getData('duplicate_of_page_id')) {
 			$lo_duplicateOfPage = $this->getPage((int)$this->request->getData('duplicate_of_page_id'));
 
-			if ($lo_duplicateOfPage) {
-				$lo_query = $this->Contents->find()->where(['page_id' => $lo_duplicateOfPage->id])->contain(['ContentTemplates']);
+			$lo_query = $this->Contents->find()->where(['page_id' => $lo_duplicateOfPage->id])->contain(['ContentTemplates']);
 
-				$lo_contents = $lo_query->formatResults(function (Collection $result): Collection {
-					/** @var \Awyiss\Model\Entity\Content $lo_content */
-					foreach ($result as $lo_content) {
-						$lo_content->class = $lo_content->column['width']->getCssClass();
+			$lo_contents = $lo_query->formatResults(function (Collection $result): Collection {
+				/** @var \Awyiss\Model\Entity\Content $lo_content */
+				foreach ($result as $lo_content) {
+					$lo_content->class = $lo_content->column['width']->getCssClass();
 
-						if ($lo_content->column['indent']) {
-							$lo_content->class .= ' ' . $lo_content->column['indent']->getCssClass();
-						}
-
-						if ($lo_content->columnRtl) {
-							$lo_content->class .= ' Column-RTL';
-						}
-
-						if ($lo_content->columnLast) {
-							$lo_content->class .= ' Column-Last';
-						}
+					if ($lo_content->column['indent']) {
+						$lo_content->class .= ' ' . $lo_content->column['indent']->getCssClass();
 					}
 
-					return $result;
-				})->find('threaded')->all();
+					if ($lo_content->columnRtl) {
+						$lo_content->class .= ' Column-RTL';
+					}
 
-				$la_contents = $lo_contents->groupBy('contentAreaId')->toArray();
-
-				$la_contentAreas = array_combine(array_column($this->page->pageTemplate->contentAreas, 'id'), array_column($this->page->pageTemplate->contentAreas, 'label'));
-				$la_unknownContentAreas = array_diff_key($la_contents, $la_contentAreas);
-				foreach ($la_unknownContentAreas as $li_contentAreaId => $lo_contents) {
-					$la_contentAreas[ $li_contentAreaId ] = null;
+					if ($lo_content->columnLast) {
+						$lo_content->class .= ' Column-Last';
+					}
 				}
 
-				$la_contentTemplates = $this->getContentTemplates()->indexBy('id')->toArray();
-				array_map(function (ContentTemplate $contentTemplate) {
-					// Build an array of assigned content elements, indexed by their identifier
-					$contentTemplate->contentTemplateElements = collection($contentTemplate->contentTemplateElements)->indexBy('identifier')->toArray();
-					// Build an array of assigned content areas, indexed by their id
-					$contentTemplate->contentAreaIds = collection($contentTemplate->contentAreas)->filter(function ($contentArea) {
-						return $contentArea->_joinData->pageTemplateId === $this->page->pageTemplateId;
-					})->extract('id')->unique()->toList();
-				}, $la_contentTemplates);
+				return $result;
+			})->find('threaded')->all();
 
-				$this->set([
-					'contents' => $la_contents,
-					'contentAreas' => $la_contentAreas,
-					'unknownContentAreas' => $la_unknownContentAreas,
-					'attributes' => $this->Contents->getAttributes(),
-				]);
+			$la_contents = $lo_contents->groupBy('contentAreaId')->toArray();
+
+			$la_contentAreas = array_combine(array_column($this->page->pageTemplate->contentAreas, 'id'), array_column($this->page->pageTemplate->contentAreas, 'label'));
+			$la_unknownContentAreas = array_diff_key($la_contents, $la_contentAreas);
+			foreach ($la_unknownContentAreas as $li_contentAreaId => $lo_contents) {
+				$la_contentAreas[ $li_contentAreaId ] = null;
 			}
+
+			$la_contentTemplates = $this->getContentTemplates()->indexBy('id')->toArray();
+			array_map(function (ContentTemplate $contentTemplate) {
+				// Build an array of assigned content elements, indexed by their identifier
+				$contentTemplate->contentTemplateElements = collection($contentTemplate->contentTemplateElements)->indexBy('identifier')->toArray();
+				// Build an array of assigned content areas, indexed by their id
+				$contentTemplate->contentAreaIds = collection($contentTemplate->contentAreas)->filter(function ($contentArea) {
+					return $contentArea->_joinData->pageTemplateId === $this->page->pageTemplateId;
+				})->extract('id')->unique()->toList();
+			}, $la_contentTemplates);
+
+			$this->set([
+				'contents' => $la_contents,
+				'contentAreas' => $la_contentAreas,
+				'unknownContentAreas' => $la_unknownContentAreas,
+				'attributes' => $this->Contents->getAttributes(),
+			]);
 		}
 
 		$this->set([
@@ -461,8 +458,9 @@ class ContentsController extends Controller {
 	 *
 	 * @return void
 	 * @throws \ReflectionException
+	 * @throws \Exception
 	 */
-	public function moduleConfiguration() {
+	public function moduleConfiguration(): void {
 		$this->Categories->disable();
 
 		/** @var array<string, class-string<\Awyiss\Module\ModuleInterface>> $la_moduleFiles */
@@ -793,6 +791,7 @@ class ContentsController extends Controller {
 	 * @param CollectionInterface $threadedContents
 	 * @param \Awyiss\Model\Entity\ContentTemplate|null $selectedContentTemplate
 	 * @return void
+	 * @noinspection DuplicatedCode
 	 */
 	protected function ensurePossibleParentId(Content $content, CollectionInterface $threadedContents, ?ContentTemplate $selectedContentTemplate): void {
 		// Extract all possible parent ids
@@ -1046,6 +1045,7 @@ class ContentsController extends Controller {
 	/**
 	 * @param array $data
 	 * @return array
+	 * @noinspection DuplicatedCode
 	 */
 	protected function formatDataAttributes(array $data): array {
 		$la_data = $data;

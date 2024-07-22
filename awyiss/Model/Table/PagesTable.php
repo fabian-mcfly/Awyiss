@@ -315,8 +315,7 @@ class PagesTable extends Table {
 			]
 		);
 
-
-		$rules->add(function (Page $entity, array $options) use ($rules): bool|string {
+		$rules->add(function (Page $entity): bool|string {
 			if (empty($entity->duplicateOf)) {
 				return true;
 			}

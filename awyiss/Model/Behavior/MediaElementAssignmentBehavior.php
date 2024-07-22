@@ -101,7 +101,6 @@ class MediaElementAssignmentBehavior extends Behavior implements PropertyMarshal
 			'modelLevel' => (bool)($lo_attributeInstance->level & MediaElementAssignable::MODEL_LEVEL),
 		]);
 
-		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
 		$this->assignmentsTable = $this->getTableLocator()->get('MediaElementAssignments', ['allowFallbackClass' => false]);
 
 		/** @var \Awyiss\Model\Entity $ls_entityClass */
