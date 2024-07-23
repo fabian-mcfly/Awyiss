@@ -48,8 +48,9 @@
 	}
 
 	h1, h2, h3, h4, h5, h6 {
-		max-inline-size:80%;
+		//max-inline-size:80%;
 		font:inherit;
+		text-wrap:balance;
 
 		.Env-Development & {
 			&:hover {

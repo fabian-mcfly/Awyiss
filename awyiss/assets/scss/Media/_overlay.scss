@@ -223,10 +223,10 @@
 		grid-area:unquote('2 / 2 / 4 / 3');
 		order:2;
 		overflow-y:auto;
-		scrollbar-color:var(--colorText) var(--colorMedium);
+		scrollbar-color:var(--colorMedium) var(--colorLight);
 		scrollbar-width:thin;
 
-		.🌚 & {
+		.🌚& {
 			scrollbar-color:var(--colorSemiDark) var(--colorBackgroundContentDarkMode-Darkened-4-Alpha-85);
 		}
 
