@@ -381,6 +381,11 @@ export default class Overlay {
 
 			listItem.classList.add('Active');
 			listItem.sortable.option('disabled', true);
+
+			this.sortable.saveOrderButtons.forEach(button => {
+				button.disabled = true;
+				button.classList.toggle('Button-Success', false);
+			});
 		});
 	}
 
