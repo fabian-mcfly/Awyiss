@@ -20,4 +20,18 @@ class MediaPolicy extends AbstractPolicy {
 	 * @var string
 	 */
 	protected static string $scope;
+
+
+	/**
+	 * Use the basic CRUD permissions and remove the 'update' permission
+	 *
+	 * @inheritDoc
+	 */
+	protected static function loadPermissionOptions(): PermissionOptionCollection {
+		$lo_permissionOptions = parent::loadPermissionOptions();
+
+		$lo_permissionOptions->unload('update');
+
+		return $lo_permissionOptions;
+	}
 }

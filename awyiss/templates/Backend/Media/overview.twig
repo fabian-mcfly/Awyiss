@@ -97,6 +97,15 @@
 
 					<button class="Button Button-SaveSystemOrder" disabled>{{ __d('system', 'save_system_order') }}</button>
 
+					{% if AuthorizationHelper.isAccessible('create') %}
+						<div class="Button Button-Add">
+							{{ __('create') }}
+							<form action="{{ _view.url({action: 'add'}) }}" method="post" enctype="multipart/form-data" class="Form Form-Upload">
+								<input type="file" name="files[]" multiple>
+							</form>
+						</div>
+					{% endif %}
+
 					{% if AuthorizationHelper.isAccessible('delete') %}
 						<button
 							class="Button Button-Delete"

@@ -1,5 +1,6 @@
 {% block listOverview %}
-	<ul id="Media-List" data-media-folder-id="{{ selectedMediaFolderId }}">
+	<ul id="Media-List" data-media-folder-id="{{ selectedMediaFolderId }}"
+		data-can-create="{{ AuthorizationHelper.isAccessible('create') ? 1 : 0 }}">
 		{% for mediaItem in media %}
 			{% block listOverviewMediaItem %}
 				{% set imageSizeInfo = '' %}
@@ -21,7 +22,7 @@
 					{% block listOverviewMediaItemActions %}
 						<span class="Actions">
 							{% block listOverviewMediaItemActionsUpdate %}
-								{% if AuthorizationHelper.isAccessible('update') %}
+								{% if AuthorizationHelper.isAccessible('create') %}
 									{{ HtmlHelper.link(__('edit'), {action: 'edit', id: mediaItem.id}, {class: 'Button Button-Small Button-Edit'}) }}
 								{% endif %}
 							{% endblock %}

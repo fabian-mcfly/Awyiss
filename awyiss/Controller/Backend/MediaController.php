@@ -201,7 +201,7 @@ class MediaController extends Controller {
 	 * @throws \Exception
 	 */
 	public function edit(int $id) {
-		$this->Authorization->ensure('update');
+		$this->Authorization->ensure('create');
 
 		try {
 			/** @var \Awyiss\Model\Entity\Media $lo_media */
@@ -695,8 +695,8 @@ class MediaController extends Controller {
 		if (
 			$method === 'edit' &&
 			(
-				$this->request->is('ajax') ||
-				!$this->Authorization->isAccessible('create')
+				$this->request->is('ajax') || // When editing via AJAX, no file upload is allowed
+				!$this->Authorization->isAccessible('create') // When in normal edit mode, no file upload is allowed if the user does not have the create permission
 			)
 		) {
 			$media->file = null;

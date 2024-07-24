@@ -495,7 +495,12 @@ export default class Overlay {
 	 * Initialize the upload dropzone & queue.
 	 */
 	initUpload() {
+		if (!parseInt(this.mediaList.dataset.canCreate)) {
+			return;
+		}
+
 		this.upload = new Upload(this.mediaList, {
+			addForm: this.element.querySelector('.Button-Add form'),
 			dropZone: this.element.querySelector('#UploadQueue-DropZone'),
 			maxFileSize: this.element.querySelector('#uploadQueueItemTemplate').dataset.maxFileSize,
 			uploadData: {

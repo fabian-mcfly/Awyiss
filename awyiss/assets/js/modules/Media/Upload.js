@@ -11,6 +11,11 @@ export default class Upload {
 	 */
 	activeUploads = 0;
 	/**
+	 * The form element.
+	 * @type {HTMLElement}
+	 */
+	addForm;
+	/**
 	 * The maximum number of concurrent uploads.
 	 * @type {number}
 	 */
@@ -71,6 +76,7 @@ export default class Upload {
 
 		// Override default settings with user settings
 		const defaultSettings = {
+			addForm: null,
 			concurrentUploads: 5,
 			dropZone: null,
 			listItemClass: 'Media-ListItem',
@@ -85,6 +91,7 @@ export default class Upload {
 		}
 
 		this.initDropZone();
+		this.initForm();
 	}
 
 	/**
@@ -137,6 +144,28 @@ export default class Upload {
 
 			this.dropZone.classList.remove('Visible');
 		}, this.dropZone);
+	}
+
+	initForm() {
+		if (!this.addForm) {
+			return;
+		}
+
+		// On change of the file input, upload the file
+		this.eventHandler.add('change', (event) => {
+			const startIndex = (this.mediaList.dataset.systemOrderStartIndex || this.mediaList.children.length) * 1 + 1 + this.queue.length;
+
+			const files = Array.from(event.target.files);
+			files.forEach((file, index) => {
+				const xhr = new XMLHttpRequest();
+				const queueItem = this.createQueueItem(file, xhr, startIndex + index);
+				(this.queueElement || this.mediaList).appendChild(queueItem.element);
+
+				this.queue.push(queueItem);
+			});
+
+			this.processQueue();
+		}, this.addForm);
 	}
 
 	/**
