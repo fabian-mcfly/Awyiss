@@ -363,25 +363,27 @@ class PagesTable extends Table {
 
 			// Get all contents of the current page
 			$la_contents = $lo_table->find()->where(['page_id' => $page->id])->all()->indexBy('id')->toArray();
-			$la_contentIds = array_keys($la_contents);
 
-			if ($la_contentIds) {
+			if ($la_contents) {
 				// Find contents that duplicate the current page's contents
-				if ($lo_table->find()->where(['duplicate_of IN' => $la_contentIds])->count()) {
+				if ($lo_table->find()->where(['duplicate_of IN' => array_keys($la_contents)])->count()) {
 					return false;
 				}
 			}
 
 			$la_nestedChildren = $page->getNestedChildren()->toArray();
+
+			if (!$la_nestedChildren) {
+				return true;
+			}
+
 			$la_nestedChildrenIds = array_values(array_map(fn (Page $page) => $page->id, $la_nestedChildren));
 
 			// Get all contents of all nested children
 			$la_contents = $lo_table->find()->where(['page_id IN' => $la_nestedChildrenIds])->all()->indexBy('id')->toArray();
-			$la_contentIds = array_keys($la_contents);
-
-			if ($la_contentIds) {
+			if ($la_contents) {
 				// Find contents that duplicate the children page's contents
-				if ($lo_table->find()->where(['duplicate_of IN' => $la_contentIds])->count()) {
+				if ($lo_table->find()->where(['duplicate_of IN' => array_keys($la_contents)])->count()) {
 					return false;
 				}
 			}
