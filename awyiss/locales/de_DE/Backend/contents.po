@@ -136,3 +136,9 @@ msgstr "Quellseite"
 
 msgid "module_identifier"
 msgstr "Modul"
+
+msgid "title_tag"
+msgstr "Titel-Tag"
+
+msgid "subtitle_tag"
+msgstr "Untertitel-Tag"

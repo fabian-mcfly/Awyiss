@@ -98,19 +98,65 @@
 
 
 {% block formControlTitle %}
+	{% set titleTag = '' %}
+	{% if assignedContentTemplateElements.titleTag is defined %}
+		{% set titleTag %}
+			{{ FormHelper.control('title_tag', {
+				options: {
+					'h1': 'h1',
+					'h2': 'h2',
+					'h3': 'h3',
+					'h4': 'h4',
+					'h5': 'h5',
+					'h6': 'h6',
+					'p': 'p',
+				},
+			}) }}
+		{% endset %}
+	{% endif %}
+
 	{{ FormHelper.control('title', {
 		columnSpan: contentTemplateElement.column.span.numerator,
 		required: contentTemplateElement.required,
+		templateVars: {
+			additionalContent: titleTag,
+		}
 	}) }}
 {% endblock %}
+
+
+{% block formControlTitleTag %}{% endblock %}
 
 
 {% block formControlSubtitle %}
+	{% set subtitleTag = '' %}
+	{% if assignedContentTemplateElements.subtitleTag is defined %}
+		{% set subtitleTag %}
+			{{ FormHelper.control('subtitle_tag', {
+				options: {
+					'h1': 'h1',
+					'h2': 'h2',
+					'h3': 'h3',
+					'h4': 'h4',
+					'h5': 'h5',
+					'h6': 'h6',
+					'p': 'p',
+				},
+			}) }}
+		{% endset %}
+	{% endif %}
+
 	{{ FormHelper.control('subtitle', {
 		columnSpan: contentTemplateElement.column.span.numerator,
 		required: contentTemplateElement.required,
+		templateVars: {
+			additionalContent: subtitleTag,
+		}
 	}) }}
 {% endblock %}
+
+
+{% block formControlSubtitleTag %}{% endblock %}
 
 
 {% block formControlText %}

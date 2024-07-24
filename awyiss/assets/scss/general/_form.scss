@@ -552,6 +552,13 @@ textarea {
 			}
 		}
 
+		&:has(.FormInputName-TitleTag),
+		&:has(.FormInputName-SubtitleTag) {
+			.ShowTranslationDialog {
+				right:141px;
+			}
+		}
+
 		&:has(.tox) {
 			.ShowTranslationDialog {
 				z-index:2;

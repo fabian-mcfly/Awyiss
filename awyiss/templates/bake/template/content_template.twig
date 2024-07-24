@@ -26,10 +26,31 @@
 
 <div class="{% verbatim %}{{ content.cssClass }}{% endverbatim %}"{% verbatim %} {{ content.data|data_attr|raw }}{% endverbatim %} id="Content{% verbatim %}{{ content.id }}{% endverbatim %}">
 	<!-- Here be dragons -->
+	{% verbatim %}
+	{% if content.title %}
+		{% set tag = content.titleTag ?? 'div' %}
+		<{{ tag }} class="Title" id={{ content.title|ucparts(false) }}>
+			{{ content.title|raw }}
+		</{{ tag }}>
+	{% endif %}
 
-	{% verbatim %}{% if children %}{% endverbatim %}
-		<div class="Children">
-			{% verbatim %}{{ children|raw }}{% endverbatim %}
+	{% if content.subtitle %}
+		{% set tag = content.subtitleTag ?? 'div' %}
+		<{{ tag }} class="Subtitle" id={{ content.subtitle|ucparts(false) }}>
+			{{ content.subtitle|raw }}
+		</{{ tag }}>
+	{% endif %}
+
+	{% if content.text %}
+		<div class="Text">
+			{{ content.text|raw }}
 		</div>
-	{% verbatim %}{% endif %}{% endverbatim %}
+	{% endif %}
+
+	{% if children %}
+		<div class="Children">
+			{{ children|raw }}
+		</div>
+	{% endif %}
+	{% endverbatim %}
 </div>

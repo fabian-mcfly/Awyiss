@@ -136,3 +136,9 @@ msgstr "Data Attributes"
 
 msgid "module_identifier"
 msgstr "Module"
+
+msgid "title_tag"
+msgstr "Title-Tag"
+
+msgid "subtitle_tag"
+msgstr "Subtitle-Tag"

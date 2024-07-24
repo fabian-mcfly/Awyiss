@@ -10,6 +10,7 @@ use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity\Content;
 use Awyiss\Model\Entity\ContentTemplate;
+use Awyiss\Model\Entity\ContentTemplateElement;
 use Awyiss\Model\Entity\Page;
 use Awyiss\Model\Table;
 use Awyiss\Module\ModulesProvider;
@@ -1001,6 +1002,12 @@ class ContentsController extends Controller {
 		$la_contentElementsByFieldset = [];
 		if (!empty($lo_selectedContentTemplate->contentTemplateElements)) {
 			$la_contentElementsByFieldset = collection($lo_selectedContentTemplate->contentTemplateElements)->groupBy('fieldset')->toArray();
+
+			foreach ($la_contentElementsByFieldset as $ls_fieldset => $la_contentElements) {
+				$la_contentElementsByFieldset[ $ls_fieldset ] = collection($la_contentElements)->indexBy(function (ContentTemplateElement $entity) {
+					return Inflector::variable($entity->identifier);
+				})->toArray();
+			}
 		}
 
 		$la_columnWidths = $this->Contents->getColumnWidths();

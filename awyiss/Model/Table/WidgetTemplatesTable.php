@@ -46,7 +46,9 @@ class WidgetTemplatesTable extends Table {
 		'column_last' => true,
 		'column_rtl' => true,
 		'title' => true,
+		'title_tag' => true,
 		'subtitle' => true,
+		'subtitle_tag' => true,
 		'text' => true,
 		'link' => true,
 	];

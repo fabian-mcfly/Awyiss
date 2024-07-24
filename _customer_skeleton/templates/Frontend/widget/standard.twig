@@ -26,6 +26,20 @@
 <div class="{{ widget.cssClass }}" {{ widget.data|data_attr|raw }} id="Widget{{ widget.id }}">
 	{{ MediaHelper.element('standard', widget.mediaAssignments, mediaRenderOptions) }}
 
+	{% if widget.title %}
+		{% set tag = widget.titleTag ?? 'div' %}
+		<{{ tag }} class="Title" id={{ widget.title|ucparts(false) }}>
+			{{ widget.title|raw }}
+		</{{ tag }}>
+	{% endif %}
+
+	{% if widget.subtitle %}
+		{% set tag = widget.subtitleTag ?? 'div' %}
+		<{{ tag }} class="Subtitle" id={{ widget.subtitle|ucparts(false) }}>
+			{{ widget.subtitle|raw }}
+		</{{ tag }}>
+	{% endif %}
+
 	{% if widget.text %}
 		<div class="Text">
 			{{ widget.text|raw }}

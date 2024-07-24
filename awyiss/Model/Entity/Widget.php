@@ -17,7 +17,9 @@ use Cake\Datasource\FactoryLocator;
  * @property int|null $widgetTemplateId
  * @property int|null $parentId
  * @property string|null $title
+ * @property string|null $titleTag
  * @property string|null $subtitle
+ * @property string|null $subtitleTag
  * @property string|null $text
  * @property string|null $link
  * @property string $columnWidth
@@ -39,7 +41,7 @@ use Cake\Datasource\FactoryLocator;
  * @property \Awyiss\Model\Entity\Widget $parentWidget
  * @property \Awyiss\Model\Entity\Widget[] $childWidgets
  * @property array{width: \Awyiss\Utility\Content\ColumnInterface, indent: ?\Awyiss\Utility\Content\ColumnInterface} $column
- * @property array|null $parentContents
+ * @property array|null $parentWidgets
  * @property float|null $realColumnWidth
  */
 class Widget extends Entity {
@@ -57,6 +59,8 @@ class Widget extends Entity {
 	protected static array $fieldMap = [
 		'parent_id' => 'parentId',
 		'widget_template_id' => 'widgetTemplateId',
+		'title_tag' => 'titleTag',
+		'subtitle_tag' => 'subtitleTag',
 		'css_class' => 'cssClass',
 		'column_width' => 'columnWidth',
 		'column_indent' => 'columnIndent',
@@ -82,7 +86,9 @@ class Widget extends Entity {
 		'identifier' => true,
 		'parentId' => true,
 		'title' => true,
+		'titleTag' => true,
 		'subtitle' => true,
+		'subtitleTag' => true,
 		'text' => true,
 		'link' => true,
 		'widgetTemplateId' => true,
@@ -160,6 +166,7 @@ class Widget extends Entity {
 	/**
 	 * @param bool $includeHtml
 	 * @return string
+	 * @noinspection DuplicatedCode
 	 */
 	public function getForcedTitle(bool $includeHtml = true): string {
 		$la_fields = ['title', 'subtitle', 'text', 'subtitle', 'text', 'cssClass', 'widgetTemplateId'];
@@ -198,10 +205,16 @@ class Widget extends Entity {
 				break;
 			}
 
-			$ls_title = trim(strip_tags(str_replace('&nbsp;', '', (string)$ls_title)));
-			$ls_title = mb_strlen($ls_title) > 100 ? mb_substr($ls_title, 0, 100) . '...' : $ls_title;
+			$ls_title = $this->cleanTitle($ls_title);
 
 			if (!empty($ls_title)) {
+				if ($ls_column === 'title' && $this->titleTag) {
+					$ls_title = '(' . $this->titleTag . ') ' . $ls_title;
+				}
+				elseif ($ls_column === 'subtitle' && $this->subtitleTag) {
+					$ls_title = '(' . $this->subtitleTag . ') ' . $ls_title;
+				}
+
 				break;
 			}
 		}
@@ -211,8 +224,7 @@ class Widget extends Entity {
 			$ls_inactive = __d('widgets', 'inactive') . ' ';
 		}
 
-
-		return $ls_inactive . strip_tags(html_entity_decode($ls_title));
+		return $ls_inactive . $ls_title;
 	}
 
 	/**
@@ -279,5 +291,31 @@ class Widget extends Entity {
 
 
 		return $data;
+	}
+
+
+	/**
+	 * @param string $title
+	 * @return string
+	 * @noinspection DuplicatedCode
+	 */
+	protected function cleanTitle(string $title): string {
+		$ls_title = $title;
+
+		// Multiline titles should only show the first line
+		if (str_contains($ls_title, PHP_EOL)) {
+			$ls_title = substr($ls_title, 0, strpos($ls_title, PHP_EOL));
+		}
+
+		// If there is a <module> tag in the title, replace it with the module identifier (data-identifier attribute)
+		if (str_contains($ls_title, '<module')) {
+			$ls_title = preg_replace('/<module[^>]*data-identifier="([^"]*)"[^>]*>.*?<\/module>/', 'Module: <em>$1</em>', $ls_title);
+		}
+
+		$ls_title = trim(strip_tags(html_entity_decode(str_replace(['&nbsp;', '<br>'], ' ', (string)$ls_title))));
+		/** @noinspection PhpUnnecessaryLocalVariableInspection */
+		$ls_title = mb_strlen($ls_title) > 100 ? mb_substr($ls_title, 0, 100) . '...' : $ls_title;
+
+		return $ls_title;
 	}
 }

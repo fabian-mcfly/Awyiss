@@ -30,6 +30,20 @@
 <div class="{{ cssClass }}" {{ content.data|data_attr|raw }} id="Content{{ content.id }}">
 	{{ MediaHelper.element('standard', content.mediaAssignments, mediaRenderOptions) }}
 
+	{% if content.title %}
+		{% set tag = content.titleTag ?? 'div' %}
+		<{{ tag }} class="Title" id={{ content.title|ucparts(false) }}>
+			{{ content.title|raw }}
+		</{{ tag }}>
+	{% endif %}
+
+	{% if content.subtitle %}
+		{% set tag = content.subtitleTag ?? 'div' %}
+		<{{ tag }} class="Subtitle" id={{ content.subtitle|ucparts(false) }}>
+			{{ content.subtitle|raw }}
+		</{{ tag }}>
+	{% endif %}
+
 	{% if content.text %}
 		<div class="Text">
 			{{ content.text|raw }}

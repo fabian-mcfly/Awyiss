@@ -75,7 +75,6 @@
 {% endblock %}
 
 
-
 {% block formControlParentId %}
 	{{ FormHelper.control('parent_id', {
 		columnSpan: widgetTemplateElement.column.span.numerator,
@@ -87,19 +86,65 @@
 
 
 {% block formControlTitle %}
+	{% set titleTag = '' %}
+	{% if assignedWidgetTemplateElements.titleTag is defined %}
+		{% set titleTag %}
+			{{ FormHelper.control('title_tag', {
+				options: {
+					'h1': 'h1',
+					'h2': 'h2',
+					'h3': 'h3',
+					'h4': 'h4',
+					'h5': 'h5',
+					'h6': 'h6',
+					'p': 'p',
+				},
+			}) }}
+		{% endset %}
+	{% endif %}
+
 	{{ FormHelper.control('title', {
 		columnSpan: widgetTemplateElement.column.span.numerator,
 		required: widgetTemplateElement.required,
+		templateVars: {
+			additionalContent: titleTag,
+		}
 	}) }}
 {% endblock %}
+
+
+{% block formControlTitleTag %}{% endblock %}
 
 
 {% block formControlSubtitle %}
+	{% set subtitleTag = '' %}
+	{% if assignedWidgetTemplateElements.subtitleTag is defined %}
+		{% set subtitleTag %}
+			{{ FormHelper.control('subtitle_tag', {
+				options: {
+					'h1': 'h1',
+					'h2': 'h2',
+					'h3': 'h3',
+					'h4': 'h4',
+					'h5': 'h5',
+					'h6': 'h6',
+					'p': 'p',
+				},
+			}) }}
+		{% endset %}
+	{% endif %}
+
 	{{ FormHelper.control('subtitle', {
 		columnSpan: widgetTemplateElement.column.span.numerator,
 		required: widgetTemplateElement.required,
+		templateVars: {
+			additionalContent: subtitleTag,
+		}
 	}) }}
 {% endblock %}
+
+
+{% block formControlSubtitleTag %}{% endblock %}
 
 
 {% block formControlText %}

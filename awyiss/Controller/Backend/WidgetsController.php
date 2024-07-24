@@ -8,6 +8,7 @@ use Awyiss\Annotation\NoDirectAccess;
 use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Model\Entity\Widget;
 use Awyiss\Model\Entity\WidgetTemplate;
+use Awyiss\Model\Entity\WidgetTemplateElement;
 use Awyiss\Model\Table;
 use Awyiss\Routing\Router;
 use Awyiss\Utility\Content\ColumnInterface;
@@ -610,6 +611,12 @@ class WidgetsController extends Controller {
 		$la_widgetElementsByFieldset = [];
 		if (!empty($lo_selectedWidgetTemplate->widgetTemplateElements)) {
 			$la_widgetElementsByFieldset = collection($lo_selectedWidgetTemplate->widgetTemplateElements)->groupBy('fieldset')->toArray();
+
+			foreach ($la_widgetElementsByFieldset as $ls_fieldset => $la_widgetElements) {
+				$la_widgetElementsByFieldset[ $ls_fieldset ] = collection($la_widgetElements)->indexBy(function (WidgetTemplateElement $entity) {
+					return Inflector::variable($entity->identifier);
+				})->toArray();
+			}
 		}
 
 		$la_columnWidths = $this->Widgets->getColumnWidths();

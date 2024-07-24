@@ -86,7 +86,7 @@
 
 				{% set widget %}
 					{% block formControlWidgetElement %}
-						<li class="Item WidgetElement WidgetElement-Default" data-assignable="{{ assignable == false ? 'false' : 'true' }}">
+						<li class="Item WidgetElement WidgetElement-{{ availableElement|camelize }} WidgetElement-Default" data-assignable="{{ assignable == false ? 'false' : 'true' }}">
 							<span class="Title Title-Default">
 								{% if assignable == false %}
 									{{ FormHelper.hidden('widget_template_elements[' ~ loop.index0 ~ '][identifier]', {

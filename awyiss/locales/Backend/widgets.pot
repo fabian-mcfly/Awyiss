@@ -103,3 +103,9 @@ msgstr "Data Attributes"
 
 msgid "data"
 msgstr "Data Attributes"
+
+msgid "title_tag"
+msgstr "Title-Tag"
+
+msgid "subtitle_tag"
+msgstr "Subtitle-Tag"

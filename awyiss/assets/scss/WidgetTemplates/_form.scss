@@ -62,6 +62,7 @@
 	}
 
 	.Item {
+		min-height:50px;
 		margin:5px 0 0 0;
 		padding:3px 20px 7px;
 		border-radius:5px;
@@ -172,6 +173,13 @@
 		.WidgetElement {
 			display:grid;
 			grid-template-columns:1fr 350px;
+
+			&.WidgetElement-TitleTag,
+			&.WidgetElement-SubtitleTag {
+				.FormInput {
+					display:none;
+				}
+			}
 
 			&[data-assignable="false"] {
 				.FormInputType-Checkbox {

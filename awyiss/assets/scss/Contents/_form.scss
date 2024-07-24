@@ -149,6 +149,26 @@
 		}
 	}
 
+	.FormInputName-Title {
+		&:has(.FormInputName-TitleTag) {
+			padding-right:140px;
+		}
+	}
+
+	.FormInputName-Subtitle {
+		&:has(.FormInputName-SubtitleTag) {
+			padding-right:140px;
+		}
+	}
+
+	.FormInputName-TitleTag,
+	.FormInputName-SubtitleTag {
+		width:120px;
+		position:absolute;
+		top:0;
+		right:0;
+	}
+
 	.FormInputName-Data {
 		.FormInputType-ListItem {
 			display:grid;

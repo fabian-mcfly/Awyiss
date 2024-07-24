@@ -18,7 +18,9 @@ use Cake\Datasource\FactoryLocator;
  * @property int|null $contentTemplateId
  * @property int|null $parentId
  * @property string|null $title
+ * @property string|null $titleTag
  * @property string|null $subtitle
+ * @property string|null $subtitleTag
  * @property string|null $text
  * @property string|null $link
  * @property string $columnWidth
@@ -65,6 +67,8 @@ class Content extends Entity {
 		'parent_id' => 'parentId',
 		'content_area_id' => 'contentAreaId',
 		'content_template_id' => 'contentTemplateId',
+		'title_tag' => 'titleTag',
+		'subtitle_tag' => 'subtitleTag',
 		'css_class' => 'cssClass',
 		'column_width' => 'columnWidth',
 		'column_indent' => 'columnIndent',
@@ -96,7 +100,9 @@ class Content extends Entity {
 		'pageId' => true,
 		'parentId' => true,
 		'title' => true,
+		'titleTag' => true,
 		'subtitle' => true,
+		'subtitleTag' => true,
 		'text' => true,
 		'link' => true,
 		'contentAreaId' => true,
@@ -176,6 +182,7 @@ class Content extends Entity {
 	/**
 	 * @param bool $includeHtml
 	 * @return string
+	 * @noinspection DuplicatedCode
 	 */
 	public function getForcedTitle(bool $includeHtml = true): string {
 		$la_fields = ['duplicateOf', 'title', 'subtitle', 'text', 'subtitle', 'text', 'cssClass', 'contentTemplateId'];
@@ -193,13 +200,7 @@ class Content extends Entity {
 			$ls_title = $this->$ls_column;
 
 			if ($ls_column === 'duplicateOf') {
-				$lo_content = $this->duplicateOfContent;
-				if (!$lo_content) {
-					$lo_table = FactoryLocator::get('Table')->get($this->getSource());
-					$lo_table->loadInto($this, ['DuplicateOfContents']);
-					/** @noinspection PhpConditionAlreadyCheckedInspection */
-					$lo_content = $this->duplicateOfContent;
-				}
+				$lo_content = $this->loadDuplicatedContent();
 
 				if ($lo_content) {
 					$ls_title = __('duplicate_of') . ': ' . $lo_content->label . ' (ID: ' . $lo_content->id . ')';
@@ -208,15 +209,7 @@ class Content extends Entity {
 			}
 
 			if ($ls_column === 'contentTemplateId') {
-				$lo_template = $this->contentTemplate;
-				if (!$lo_template) {
-					if (!isset(static::$contentTemplates)) {
-						$lo_table = FactoryLocator::get('Table')->get('ContentTemplates');
-						static::$contentTemplates = $lo_table->find()->all()->indexBy('id')->toArray();
-					}
-
-					$lo_template = $this->contentTemplate = static::$contentTemplates[ $this->contentTemplateId ] ?? null;
-				}
+				$lo_template = $this->contentTemplate ?? $this->loadContentTemplate();
 
 				if ($lo_template) {
 					$ls_title = 'Template: ' . ($includeHtml ? '<em>' . $lo_template->label . '</em>' : $lo_template->label);
@@ -232,6 +225,13 @@ class Content extends Entity {
 			$ls_title = $this->cleanTitle($ls_title);
 
 			if (!empty($ls_title)) {
+				if ($ls_column === 'title' && $this->titleTag) {
+					$ls_title = '(' . $this->titleTag . ') ' . $ls_title;
+				}
+				elseif ($ls_column === 'subtitle' && $this->subtitleTag) {
+					$ls_title = '(' . $this->subtitleTag . ') ' . $ls_title;
+				}
+
 				break;
 			}
 		}
@@ -315,6 +315,7 @@ class Content extends Entity {
 	/**
 	 * @param string $title
 	 * @return string
+	 * @noinspection DuplicatedCode
 	 */
 	protected function cleanTitle(string $title): string {
 		$ls_title = $title;
@@ -334,5 +335,35 @@ class Content extends Entity {
 		$ls_title = mb_strlen($ls_title) > 100 ? mb_substr($ls_title, 0, 100) . '...' : $ls_title;
 
 		return $ls_title;
+	}
+
+
+	/**
+	 * @return \Awyiss\Model\Entity\ContentTemplate|null
+	 */
+	protected function loadContentTemplate(): ?ContentTemplate {
+		if (!isset(static::$contentTemplates)) {
+			$lo_table = FactoryLocator::get('Table')->get('ContentTemplates');
+			static::$contentTemplates = $lo_table->find()->all()->indexBy('id')->toArray();
+		}
+
+		return $this->contentTemplate = static::$contentTemplates[ $this->contentTemplateId ] ?? null;
+	}
+
+
+	/**
+	 * @return \Awyiss\Model\Entity\Content|null
+	 */
+	protected function loadDuplicatedContent(): ?Content {
+		$lo_content = $this->duplicateOfContent;
+
+		if (!$lo_content) {
+			$lo_table = FactoryLocator::get('Table')->get($this->getSource());
+			$lo_table->loadInto($this, ['DuplicateOfContents']);
+			/** @noinspection PhpConditionAlreadyCheckedInspection */
+			$lo_content = $this->duplicateOfContent;
+		}
+
+		return $lo_content;
 	}
 }

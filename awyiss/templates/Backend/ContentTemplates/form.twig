@@ -92,7 +92,7 @@
 
 				{% set content %}
 					{% block formControlContentElement %}
-						<li class="Item ContentElement ContentElement-Default" data-assignable="{{ assignable == false ? 'false' : 'true' }}">
+						<li class="Item ContentElement ContentElement-{{ availableElement|camelize }} ContentElement-Default" data-assignable="{{ assignable == false ? 'false' : 'true' }}">
 							<span class="Title Title-Default">
 								{% if assignable == false %}
 									{{ FormHelper.hidden('content_template_elements[' ~ loop.index0 ~ '][identifier]', {

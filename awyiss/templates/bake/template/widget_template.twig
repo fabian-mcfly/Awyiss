@@ -27,9 +27,31 @@
 <div class="{% verbatim %}{{ widget.cssClass }}{% endverbatim %}"{% verbatim %} {{ widget.data|data_attr|raw }}{% endverbatim %} id="Widget{% verbatim %}{{ widget.id }}{% endverbatim %}">
 	<!-- Here be dragons -->
 
-	{% verbatim %}{% if children %}{% endverbatim %}
+	{% verbatim %}
+	{% if widget.title %}
+		{% set tag = widget.titleTag ?? 'div' %}
+		<{{ tag }} class="Title" id={{ widget.title|ucparts(false) }}>
+			{{ widget.title|raw }}
+		</{{ tag }}>
+	{% endif %}
+
+	{% if widget.subtitle %}
+		{% set tag = widget.subtitleTag ?? 'div' %}
+		<{{ tag }} class="Subtitle" id={{ widget.subtitle|ucparts(false) }}>
+			{{ widget.subtitle|raw }}
+		</{{ tag }}>
+	{% endif %}
+
+	{% if widget.text %}
+		<div class="Text">
+			{{ widget.text|raw }}
+		</div>
+	{% endif %}
+
+	{% if children %}
 	<div class="Children">
-		{% verbatim %}{{ children|raw }}{% endverbatim %}
+		{{ children|raw }}
 	</div>
-	{% verbatim %}{% endif %}{% endverbatim %}
+	{% endif %}
+	{% endverbatim %}
 </div>
