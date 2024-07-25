@@ -12,6 +12,8 @@
 	#RewriteCond %{HTTPS} !=on
 	#RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
+	RewriteRule ^favicon\.ico$ assets/favicon/favicon.ico [L]
+
 	RewriteRule ^((awyiss|assets|assets/awyiss)/(js|css|font)/([^/]+)/)?(.+)\.\d{10}(\.min)?\.([a-zA-Z0-9]*)$ $1$5.$7 [L]
 
 	RewriteCond %{REQUEST_FILENAME} !-f
