@@ -340,7 +340,7 @@ class DefaultValuesBehavior extends Behavior {
 				$lx_default = match ($la_typeMap[ $ls_column ]) {
 					'boolean' => boolval($lx_default),
 					'date' => $lx_default ? new Date($lx_default) : null,
-					'datetime' => $lx_default ? new DateTime($lx_default) : null,
+					'datetime' => $lx_default && $lx_default !== 'current_timestamp()' ? new DateTime($lx_default) : null,
 					'float' => floatval($lx_default),
 					'integer' => intval($lx_default),
 					'json' => json_decode(trim($lx_default, '\'')),
