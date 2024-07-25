@@ -1,6 +1,7 @@
 {#
 @var records Cake\Datasource\EntityInterface[]
 @var _view \Awyiss\View\BackendView
+@var PaginatorHelper \Awyiss\View\Helper\PaginatorHelper
 #}
 
 {% block tableOverview %}
@@ -11,13 +12,13 @@
 					<tr>
 						{% block tableOverviewHeadRowInner %}
 							{% block tableOverviewHeaderId %}
-								<th class="TableHeader-Id{% if PaginatorHelper.currentSortKey() == 'id' %} Active{% endif %}">
+								<th class="TableHeader-Id{% if PaginatorHelper.isCurrentSortKey('id') %} Active{% endif %}">
 									{{ PaginatorHelper.sort('id', i18nDomain ? __df(i18nDomain, 'system', 'id') : __('id')) }}
 								</th>
 							{% endblock %}
 
 							{% block tableOverviewHeaderTitle %}
-								<th class="TableHeader-Title{% if PaginatorHelper.currentSortKey() == 'title' %} Active{% endif %}">
+								<th class="TableHeader-Title{% if PaginatorHelper.isCurrentSortKey('title') %} Active{% endif %}">
 									{{ PaginatorHelper.sort('title', i18nDomain ? __df(i18nDomain, 'system', 'title') : __('title')) }}
 								</th>
 							{% endblock %}
@@ -29,12 +30,12 @@
 									{% block tableOverviewHeaderDisplayedField %}
 										{% if field starts with 'attributes.' %}
 											{% set field = field|slice(11)|underscore %}
-											<th class="TableHeader-{{ field|camelize }}{% if PaginatorHelper.currentSortKey() == field %} Active{% endif %}">
+											<th class="TableHeader-{{ field|camelize }}{% if PaginatorHelper.isCurrentSortKey(field) %} Active{% endif %}">
 												{{ PaginatorHelper.sort(field, attributes[field].label) }}
 											</th>
 										{% else %}
 											{% set field = field|underscore %}
-											<th class="TableHeader-{{ field|camelize }}{% if PaginatorHelper.currentSortKey() == field %} Active{% endif %}">
+											<th class="TableHeader-{{ field|camelize }}{% if PaginatorHelper.isCurrentSortKey(field) %} Active{% endif %}">
 												{{ PaginatorHelper.sort(field,
 													i18nDomain ? __df(i18nDomain, 'system', field) : __(field)
 												) }}
@@ -61,7 +62,7 @@
 				{# @var entity \Cake\Datasource\EntityInterface #}
 				{% for entity in records %}
 					{% block tableOverviewBodyRow %}
-						<tr class="{%- if entity.active == false %} Inactive{% endif -%}{%- if entity.parentsActive is defined and entity.parentsActive == false %} ParentsInactive{% endif %}">
+						<tr class="{%- if entity.active is defined and entity.active == false %} Inactive{% endif -%}{%- if entity.parentsActive is defined and entity.parentsActive == false %} ParentsInactive{% endif %}">
 							{% block tableOverviewBodyRowInner %}
 								{% block tableOverviewCellId %}
 									<td class="TableCell-Id">{{ entity.id }}</td>

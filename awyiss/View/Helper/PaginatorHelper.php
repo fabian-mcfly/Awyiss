@@ -62,13 +62,15 @@ class PaginatorHelper extends BasePaginatorHelper {
 		$la_options = $options;
 		$la_options += ['url' => [], 'escape' => true];
 
+		$ls_key = Inflector::underscore($key);
+
 		$ls_title = $title;
 		if (empty($ls_title)) {
-			$ls_title = __($key);
+			$ls_title = __($ls_key);
 		}
 
 		// If the key is the current sort key, set the default direction to desc
-		if ($key === $this->currentSortKey()) {
+		if ($this->isCurrentSortKey($ls_key)) {
 			$la_options['direction'] = 'desc';
 		}
 
@@ -78,14 +80,14 @@ class PaginatorHelper extends BasePaginatorHelper {
 		$ls_defaultDir = isset($la_options['direction']) ? strtolower($la_options['direction']) : 'asc';
 		unset($la_options['direction']);
 
-		$ls_sortKey = (string)$this->param('sort');
+		$ls_sortKey = Inflector::underscore((string)$this->param('sort'));
 		$ls_alias = $this->param('alias');
-		[$ls_table, $ls_field] = explode('.', $key . '.');
+		[$ls_table, $ls_field] = explode('.', $ls_key . '.');
 		if (!$ls_field) {
 			$ls_field = $ls_table;
 			$ls_table = $ls_alias;
 		}
-		$lb_isSorted = ($ls_sortKey === $ls_table . '.' . $ls_field || $ls_sortKey === $ls_alias . '.' . $key || $ls_table . '.' . $ls_field === $ls_alias . '.' . $ls_sortKey);
+		$lb_isSorted = ($ls_sortKey === $ls_table . '.' . $ls_field || $ls_sortKey === $ls_alias . '.' . $ls_key || $ls_table . '.' . $ls_field === $ls_alias . '.' . $ls_sortKey);
 
 		$ls_template = 'sort';
 		$ls_dir = $ls_defaultDir;
@@ -95,18 +97,35 @@ class PaginatorHelper extends BasePaginatorHelper {
 		}
 
 		$la_paging = [
-			'sort' => $key,
+			'sort' => $ls_key,
 			'direction' => $ls_dir,
 			'page' => 1,
 		];
 
 		$la_vars = [
 			'text' => $la_options['escape'] ? h($ls_title) : $ls_title,
-			'identifier' => Inflector::camelize($key),
+			'identifier' => Inflector::camelize($ls_key),
 			'url' => $this->generateUrl($la_paging, $ls_url),
 		];
 
 		return $this->templater()->format($ls_template, $la_vars);
+	}
+
+
+	/**
+	 * Returns whether the given key is the current sort key
+	 *
+	 * @param string $key
+	 * @return bool
+	 */
+	public function isCurrentSortKey(string $key): bool {
+		$ls_currentKey = $this->currentSortKey();
+
+		if (!$ls_currentKey) {
+			return false;
+		}
+
+		return Inflector::underscore($key) === Inflector::underscore($ls_currentKey);
 	}
 
 

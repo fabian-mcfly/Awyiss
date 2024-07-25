@@ -4,13 +4,13 @@
 @var attributesGroupedByFieldset array
 @var attributeScopes array
 @var _view \Awyiss\View\BackendView
-@var CategproesHelper \Awyiss\View\Helper\CategoriesHelper
+@var CategoriesHelper \Awyiss\View\Helper\CategoriesHelper
 #}
 
 {% extends '@Backend/element/overview/overview_paginated_list.twig' %}
 
 {% block tableOverviewHeaderDefaultFields %}
-	<th class="TableHeader-UsedForWidgets{% if PaginatorHelper.currentSortKey() == 'used_for_widgets' %} Active{% endif %}">{{ PaginatorHelper.sort('used_for_widgets') }}</th>
+	<th class="TableHeader-UsedForWidgets{% if PaginatorHelper.isCurrentSortKey('usedForWidgets') %} Active{% endif %}">{{ PaginatorHelper.sort('usedForWidgets') }}</th>
 {% endblock %}
 
 {% block tableOverviewCellDefaultFields %}

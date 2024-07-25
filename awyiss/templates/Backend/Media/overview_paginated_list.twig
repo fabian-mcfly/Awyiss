@@ -3,6 +3,7 @@
 @var mediaFolders array
 @var paginated bool
 @var _view \Awyiss\View\BackendView
+@var PaginatorHelper \Awyiss\View\Helper\PaginatorHelper
 #}
 
 {% extends '@Backend/element/overview/overview_paginated_list.twig' %}
@@ -26,7 +27,7 @@
 
 {% block tableOverviewHeaderTitle %}
 	<th class="TableHeader-Preview">{{ __('preview') }}</th>
-	<th class="TableHeader-Name{% if PaginatorHelper.currentSortKey() == 'name' %} Active{% endif %}">{{ PaginatorHelper.sort('name') }}</th>
+	<th class="TableHeader-Name{% if PaginatorHelper.isCurrentSortKey('name') %} Active{% endif %}">{{ PaginatorHelper.sort('name') }}</th>
 {% endblock %}
 
 {% block tableOverviewCellTitle %}

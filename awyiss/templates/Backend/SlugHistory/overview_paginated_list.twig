@@ -4,7 +4,7 @@
 @var attributesGroupedByFieldset array
 @var attributeScopes array
 @var _view \Awyiss\View\BackendView
-@var CategproesHelper \Awyiss\View\Helper\CategoriesHelper
+@var CategoriesHelper \Awyiss\View\Helper\CategoriesHelper
 #}
 
 {% extends '@Backend/element/overview/overview_paginated_list.twig' %}
@@ -13,8 +13,8 @@
 {% block tableOverviewCellTitle %}{% endblock %}
 
 {% block tableOverviewHeaderDefaultFields %}
-	<th class="TableHeader-Slug{% if PaginatorHelper.currentSortKey() == 'slug' %} Active{% endif %}">{{ PaginatorHelper.sort('slug') }}</th>
-	<th class="TableHeader-Page{% if PaginatorHelper.currentSortKey() == 'page_title' %} Active{% endif %}">{{ PaginatorHelper.sort('page_title') }}</th>
+	<th class="TableHeader-Slug{% if PaginatorHelper.isCurrentSortKey('slug') %} Active{% endif %}">{{ PaginatorHelper.sort('slug') }}</th>
+	<th class="TableHeader-Page{% if PaginatorHelper.isCurrentSortKey('pageTitle') %} Active{% endif %}">{{ PaginatorHelper.sort('pageTitle') }}</th>
 {% endblock %}
 
 

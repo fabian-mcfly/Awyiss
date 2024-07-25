@@ -112,6 +112,23 @@ class PaginateComponent extends Component {
 		$this->modifyPaginateParams($la_params, $la_settings, $lo_table, $lo_object);
 		unset($la_settings['className'], $la_settings['defaultSortableFields']);
 
+		if (isset($la_params['sort'])) {
+			if (is_array($la_params['sort'])) {
+				$la_params['sort'] = array_map(function ($field) {
+					if (!str_contains($field, '.')) {
+						return Inflector::underscore($field);
+					}
+
+					$la_parts = explode('.', $field);
+
+					return $la_parts[0] . '.' . Inflector::underscore($la_parts[1]);
+				}, $la_params['sort']);
+			}
+			else {
+				$la_params['sort'] = Inflector::underscore($la_params['sort']);
+			}
+		}
+
 		try {
 			$lo_results = $lo_paginator->paginate(
 				$lo_object,
@@ -229,12 +246,16 @@ class PaginateComponent extends Component {
 		// Make sure the sortableFields are set
 		if (empty($settings['sortableFields'])) {
 			/** @noinspection PhpVariableNamingConventionInspection */
-			$settings['sortableFields'] = array_unique(
-				array_merge(
-					$this->defaultSortableFields,
-					$table->getSchema()->columns(),
-				)
+			$settings['sortableFields'] = array_merge($this->defaultSortableFields,	$table->getSchema()->columns());
+
+			/** @noinspection PhpVariableNamingConventionInspection */
+			$settings['sortableFields'] = array_map(
+				fn($field) => Inflector::underscore($field),
+				$settings['sortableFields']
 			);
+
+			/** @noinspection PhpVariableNamingConventionInspection */
+			$settings['sortableFields'] = array_unique($settings['sortableFields']);
 		}
 
 		if ($isContain) {
