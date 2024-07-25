@@ -94,6 +94,10 @@ class PaginateComponent extends Component {
 			],
 		];
 
+		if (isset($la_settings['defaultSortableFields'])) {
+			$this->defaultSortableFields = $la_settings['defaultSortableFields'];
+		}
+
 		/** @var class-string<\Awyiss\Datasource\Paging\NumericPaginator> $lo_paginator */
 		$ls_paginatorClass = App::className(
 			$la_settings['className'] ?? NumericPaginator::class,
