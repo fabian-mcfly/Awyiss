@@ -9,6 +9,10 @@
 		}
 	}
 
+	.StatusCells {
+		grid-column:auto / auto;
+	}
+
 	.Overview-Fieldset {
 		display:block;
 		margin-top:calc(var(--lineHeightMain) * 2);
@@ -26,6 +30,24 @@
 
 		&.Fieldset-QuickActions {
 
+		}
+
+		&.Fieldset-PagesNotFoundStatus {
+			padding-bottom:40px;
+
+			.Overview-Table {
+				margin-bottom:0;
+			}
+
+			.TableHeader-Actions {
+				width:240px;
+			}
+
+			.TableCell-Actions {
+				.Actions {
+					width:100%;
+				}
+			}
 		}
 
 		.QuickActions {

@@ -212,6 +212,8 @@ class UsersController extends Controller {
 			if ($this->request->is('post')) {
 				$lo_user = $this->Authentication->getIdentity()->getOriginalData();
 
+				$lo_lastLogin = $lo_user->lastLogin;
+
 				if ($lo_user instanceof User) {
 					//Track lastLogin and reset the failed login attempts
 					$lo_user->set([
@@ -232,6 +234,7 @@ class UsersController extends Controller {
 				/** @var \Cake\Http\Session $lo_session */
 				$lo_session = $this->request->getAttribute('session');
 				$lo_session->write(LocaleMiddleware::getSessionIdentifier(), $this->request->getData('language_shortcode'));
+				$lo_session->write('Backend.lastLogin', $lo_lastLogin);
 			}
 
 			$ls_redirectUri = $this->Authentication->getLoginRedirect() ?? Router::url([

@@ -19,6 +19,8 @@ use Cake\Core\Configure;
 use Cake\Http\Exception\NotFoundException;
 use Cake\Http\Exception\RedirectException;
 use Cake\ORM\Locator\LocatorAwareTrait;
+use DateTime;
+use Jaybizzle\CrawlerDetect\CrawlerDetect;
 
 
 /**
@@ -228,6 +230,8 @@ class FrontendController extends AppController {
 			// Try to find an entry in the slug history
 			$this->historyRedirect($lo_page->languageShortcode . '/' . $lo_page->slug);
 
+			$this->track404();
+
 			// Find the 410 page for the current language
 			$lo_page = $this->findPage($lo_page->languageShortcode, '410', ['active' => true, 'deleted' => false]);
 			$lb_isErrorPage = true;
@@ -241,6 +245,8 @@ class FrontendController extends AppController {
 		 * It must be active, not deleted and in the same language as the current.
 		 */
 		if (!$lo_page || !$lo_page->active || !$lo_page->parentsActive || !$lo_page->language->active) {
+			$this->track404();
+
 			// Find the 404 page for the current language
 			$lo_page = $this->findPage(LocaleMiddleware::getLanguage()->shortcode, '404', ['active' => true, 'deleted' => false]);
 			$lb_isErrorPage = true;
@@ -263,6 +269,8 @@ class FrontendController extends AppController {
 
 		// If there is no page, it's most likely not published
 		if (!$lo_page) {
+			$this->track404();
+
 			// Find the 404 page for the current language
 			$lo_page = $this->findPage(LocaleMiddleware::getLanguage()->shortcode, '404', ['active' => true, 'deleted' => false]);
 
@@ -561,5 +569,58 @@ class FrontendController extends AppController {
 				'menuEntries' => ['enabled' => $lb_menuEntriesEditable],
 			],
 		]);
+	}
+
+
+	/**
+	 * @return void
+	 */
+	protected function track404(): void {
+		static $lb_tracked;
+
+		if (!isset($lb_tracked)) {
+			$lb_tracked = true;
+		}
+		else {
+			return;
+		}
+
+		$ls_languageShortcode = $this->request->getParam('lang');
+		$ls_slug = $ls_languageShortcode . '/' . $this->request->getParam('slug');
+		$ls_slug = trim($ls_slug, '/');
+		$ls_slug = '/' . $ls_slug . '/';
+
+		/**
+		 * Check if an entry for the current slug already exists within the last 5 minutes
+		 * If it does, don't track it again
+		 *
+		 * @var \Awyiss\Model\Table\PagesNotFoundTable $lo_pagesNotFoundTable
+		 */
+		$lo_pagesNotFoundTable = $this->fetchTable('PagesNotFound');
+		if ($lo_pagesNotFoundTable->exists(['slug' => $ls_slug, 'created_on >' => new DateTime('-5 minutes')])) {
+			return;
+		}
+
+
+		$lb_isRobot = $this->isRobot();
+
+		$lo_notFound = $lo_pagesNotFoundTable->newDefaultEntity([
+			'slug' => $ls_slug,
+			'referrer' => $this->request->referer(),
+			'isRobot' => $lb_isRobot,
+		]);
+
+		$lo_pagesNotFoundTable->save($lo_notFound, ['allowFrontendSave' => true]);
+	}
+
+
+	/**
+	 * @return bool
+	 */
+	protected function isRobot(): bool {
+		$ls_userAgent = $this->request->getHeaderLine('User-Agent');
+		$lo_crawlerDetect = new CrawlerDetect();
+
+		return $lo_crawlerDetect->isCrawler($ls_userAgent);
 	}
 }

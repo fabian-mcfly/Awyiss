@@ -80,6 +80,18 @@ h1, h2, h3, h4, h5, h6 {
 	}
 }
 
+h3 {
+	font-size:calc(var(--fontSizeHeading) * .8);
+}
+
+h4 {
+	font-size:calc(var(--fontSizeHeading) * .6);
+}
+
+h5 {
+	font-size:calc(var(--fontSizeHeading) * .4);
+}
+
 a {
 	color:var(--colorSuccess);
 	text-decoration:none;

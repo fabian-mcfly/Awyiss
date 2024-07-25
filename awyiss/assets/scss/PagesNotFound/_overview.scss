@@ -1,0 +1,45 @@
+.PagesNotFoundController {
+	.TableHeader-IsRobot,
+	.TableHeader-CreatedOn,
+	.TableHeader-FirstOccurrence,
+	.TableHeader-LastOccurrence,
+	.TableHeader-Occurrences {
+		width:min-content;
+	}
+
+	.TableHeader-Actions {
+		width:240px;
+	}
+
+	.TableHeader-CreatedOn,
+	.TableHeader-FirstOccurrence,
+	.TableHeader-LastOccurrence {
+		min-width:205px;
+	}
+
+	.TableCell-Slug,
+	.TableCell-Referrer {
+		/*font-size:14px;
+		line-height:1.2;*/
+		word-break:break-word;
+	}
+
+	.TableCell-IsRobot,
+	.TableCell-IsRobot,
+	.TableCell-Occurrences {
+		text-align:center;
+	}
+
+	.TableCell-CreatedOn,
+	.TableCell-CreatedOn,
+	.TableCell-FirstOccurrence,
+	.TableCell-LastOccurrence {
+		text-align:right;
+	}
+
+	.TableCell-Actions {
+		.Actions {
+			width:100%;
+		}
+	}
+}

@@ -7,9 +7,16 @@
 		<h1>{{ __('headline_overview') }}</h1>
 	{% endblock %}
 
-	<fieldset class="Overview-Fieldset Fieldset-LoggedInAs">
-		<p class="LoggedInAs">{{ __('logged_in_as', IdentityHelper.get('username'))|raw }}</p>
-	</fieldset>
+	<div class="StatusCells">
+		<fieldset class="Overview-Fieldset Fieldset-LoggedInAs">
+			<p class="LoggedInAs">
+				<strong>{{ __('logged_in_as', IdentityHelper.get('username'))|raw }}.</strong><br>
+				{{ __('last_login', TimeHelper.nice(lastLogin)) }}
+			</p>
+		</fieldset>
+
+		{{ cell('Backend/PagesNotFoundStatus') }}
+	</div>
 
 	<fieldset class="Overview-Fieldset Fieldset-QuickActions">
 		<legend>{{ __('fieldset_quick_actions') }}</legend>

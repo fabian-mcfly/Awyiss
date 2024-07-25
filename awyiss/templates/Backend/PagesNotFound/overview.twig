@@ -1,0 +1,29 @@
+{#
+@var pagesNotFound Awyiss\Model\Entity\PagesNotFound[]
+@var grouped bool
+@var _view \Awyiss\View\BackendView
+#}
+
+<div class="PagesNotFound Overview">
+	{% block headlineOverview %}
+		<h1>{{ __('headline_overview') }}</h1>
+	{% endblock %}
+
+	{% block buttonArea %}
+		<div class="ButtonArea">
+			{% block buttonsOverview %}
+				{{ HtmlHelper.link(__('group_entries'), {grouped: grouped ? false : 'true'}, {class: 'Button Button-Toggle' ~ (grouped ? ' Button-Toggle-Active' : '')}) }}
+			{% endblock %}
+		</div>
+	{% endblock %}
+
+	{% block paginatedOverview %}
+		{% include '@Backend/PagesNotFound/overview_paginated_list.twig' with _context|merge({records: pagesNotFound.items().toArray()}) %}
+	{% endblock %}
+
+	{% block buttonAreaBottom %}
+		<div class="ButtonArea ButtonArea-Bottom">
+			{{ block('buttonsOverview') }}
+		</div>
+	{% endblock %}
+</div>

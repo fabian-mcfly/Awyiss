@@ -87,6 +87,21 @@
 					"identifier": "read"
 				}
 			},
+			"pages_not_found": {
+				"title": {
+					"translate": ["pages_not_found", "menu_title"]
+				},
+				"link": {
+					"url": {
+						"controller": "PagesNotFound",
+						"action": "overview"
+					}
+				},
+				"access": {
+					"scope": "pages_not_found",
+					"identifier": "read"
+				}
+			},
 			"pages_configure": {
 				"title": {
 					"translate": ["pages", "menu_configure"]

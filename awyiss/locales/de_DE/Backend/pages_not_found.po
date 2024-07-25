@@ -1,0 +1,48 @@
+# PagesNotFound translations of Awyiss CMS
+# Copyright 2024 Awyiss <EMAIL@ADDRESS>
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 0.1.0\n"
+"POT-Creation-Date: 2024-07-25 13:59+0000\n"
+"PO-Revision-Date: 2024-07-25 13:59+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+msgid "meta_title_overview"
+msgstr "404 Tracking"
+
+msgid "menu_title"
+msgstr "404 Tracking"
+
+msgid "headline_overview"
+msgstr "404 Tracking"
+
+msgid "headline_status_cell"
+msgstr "Neue 404 Fehler"
+
+msgid "slug"
+msgstr "Url"
+
+msgid "referrer"
+msgstr "Referrer"
+
+msgid "is_robot"
+msgstr "Robot/Crawler"
+
+msgid "occurrences"
+msgstr "Einträge"
+
+msgid "first_occurrence"
+msgstr "Erstes Vorkommen"
+
+msgid "last_occurrence"
+msgstr "Letztes Vorkommen"
+
+msgid "group_entries"
+msgstr "Einträge gruppieren"
+
+msgid "create_redirect"
+msgstr "Weiterleitung erstellen"

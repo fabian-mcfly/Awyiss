@@ -26,6 +26,9 @@ msgstr "Dashboard"
 msgid "logged_in_as"
 msgstr "Logged in as &quot;{0}&quot;"
 
+msgid "last_login"
+msgstr "Last login on {0}"
+
 msgid "fieldset_quick_actions"
 msgstr "Quick Access"
 

@@ -29,5 +29,11 @@ class DashboardController extends Controller {
 	 * @return void
 	 */
 	public function overview(): void {
+		$lo_session = $this->request->getSession();
+		$lo_lastLogin = $lo_session->read('Backend.lastLogin');
+
+		$this->set([
+			'lastLogin' => $lo_lastLogin,
+		]);
 	}
 }

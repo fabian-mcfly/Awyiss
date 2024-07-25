@@ -1,0 +1,91 @@
+{#
+@var pagesNotFound \Awyiss\Model\Entity\PagesNotFound[]|\Cake\Datasource\Paging\PaginatedResultSet
+@var entity \Awyiss\Model\Entity\PagesNotFound
+@var _view \Awyiss\View\BackendView
+@var AuthorizationHelper \Awyiss\View\Helper\AuthorizationHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+@var HtmlHelper \Cake\View\Helper\HtmlHelper
+@var TextHelper \Cake\View\Helper\TextHelper
+@var UrlHelper \Awyiss\View\Helper\UrlHelper
+#}
+
+{% extends '@Backend/element/overview/overview_paginated_list.twig' %}
+
+{% set canCreateSlugHistory = AuthorizationHelper.scopeIsAccessible('slugHistory', [], 'create') %}
+
+{% block tableOverviewHeaderTitle %}{% endblock %}
+{% block tableOverviewHeaderDefaultFields %}
+	<th class="TableHeader-Slug{% if PaginatorHelper.isCurrentSortKey('slug') %} Active{% endif %}">
+		{{ PaginatorHelper.sort('slug', i18nDomain ? __df(i18nDomain, 'system', 'slug') : __('slug')) }}
+	</th>
+	{% if grouped == false %}
+		<th class="TableHeader-Referrer{% if PaginatorHelper.isCurrentSortKey('referrer') %} Active{% endif %}">
+			{{ PaginatorHelper.sort('referrer', i18nDomain ? __df(i18nDomain, 'system', 'referrer') : __('referrer')) }}
+		</th>
+		<th class="TableHeader-IsRobot{% if PaginatorHelper.isCurrentSortKey('isRobot') %} Active{% endif %}">
+			{{ PaginatorHelper.sort('isRobot', i18nDomain ? __df(i18nDomain, 'system', 'is_robot') : __('is_robot')) }}
+		</th>
+		<th class="TableHeader-CreatedOn{% if PaginatorHelper.isCurrentSortKey('createdOn') %} Active{% endif %}">
+			{{ PaginatorHelper.sort('createdOn', i18nDomain ? __df(i18nDomain, 'system', 'created_on') : __('created_on')) }}
+		</th>
+	{% else %}
+		<th class="TableHeader-Occurrences{% if PaginatorHelper.isCurrentSortKey('occurrences') %} Active{% endif %}">
+			{{ PaginatorHelper.sort('occurrences', i18nDomain ? __df(i18nDomain, 'system', 'is_robot') : __('occurrences')) }}
+		</th>
+		<th class="TableHeader-FirstOccurrence{% if PaginatorHelper.isCurrentSortKey('firstOccurrence') %} Active{% endif %}">
+			{{ PaginatorHelper.sort('firstOccurrence', i18nDomain ? __df(i18nDomain, 'system', 'created_on') : __('first_occurrence')) }}
+		</th>
+		<th class="TableHeader-LastOccurrence{% if PaginatorHelper.isCurrentSortKey('lastOccurrence') %} Active{% endif %}">
+			{{ PaginatorHelper.sort('lastOccurrence', i18nDomain ? __df(i18nDomain, 'system', 'created_on') : __('last_occurrence')) }}
+		</th>
+	{% endif %}
+{% endblock %}
+{% block tableOverviewHeaderAuditInfo %}{% endblock %}
+{% block tableOverviewHeaderActions %}
+	{% if canCreateSlugHistory %}
+		<th class="TableHeader-Actions"></th>
+	{% endif %}
+{% endblock %}
+
+{% block tableOverviewCellTitle %}{% endblock %}
+{% block tableOverviewCellDefaultFields %}
+	<td class="TableCell-Slug" title="{{ entity.slug }}">{{ entity.slug }}</td>
+	{% if grouped == false %}
+		<td class="TableCell-Referrer">
+			{% if entity.referrer %}
+				{% set linkText = entity.referrer %}
+				{% if linkText|length > 50 %}
+					{% set linkText = linkText|slice(0, 50) ~ '...' %}
+				{% endif %}
+
+				{{ HtmlHelper.link(linkText, entity.referrer, {rel: 'noreferrer', target: '_blank', title: entity.referrer}) }}
+			{% endif %}
+		</td>
+		<td class="TableCell-IsRobot">
+			{% if entity.isRobot %}
+				<i class="las la-check"></i>
+			{% else %}
+				<i class="las la-times"></i>
+			{% endif %}
+		</td>
+		<td class="TableCell-CreatedOn">{{ TimeHelper.nice(entity.createdOn) }}</td>
+	{% else %}
+		<td class="TableCell-Occurrences">{{ entity.occurrences }}</td>
+		<td class="TableCell-FirstOccurrence">{{ TimeHelper.nice(entity.firstOccurrence) }}</td>
+		<td class="TableCell-LastOccurrence">{{ TimeHelper.nice(entity.lastOccurrence) }}</td>
+	{% endif %}
+{% endblock %}
+{% block tableOverviewCellAuditInfo %}{% endblock %}
+{% block tableOverviewCellActions %}
+	{% if canCreateSlugHistory %}
+		<td class="TableCell-Actions">
+			<form class="Actions" method="post" action="{{ UrlHelper.build({controller: 'SlugHistory', action: 'add'}) }}">
+				{{ FormHelper.button(__('create_redirect'), {class: 'Button Button-Small Button-Add', name: 'submit', value: 'submit'}) }}
+				{{ FormHelper.hidden('reload_form', {val: 1}) }}
+				{{ FormHelper.hidden('slug', {val: entity.slug|trim('/')}) }}
+			</form>
+		</td>
+	{% endif %}
+{% endblock %}
+
+{% block tableOverviewFootColSpan %}{{ localConfig.overview.displayedFields|length + 5 + (canCreateSlugHistory ? 1 : 0) }}{% endblock %}
