@@ -266,10 +266,11 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 		}
 
 		$ls_name = Inflector::camelize($ls_alias . '_publication_data_start');
-		$query->select($this->_table->$ls_name);
+		if ($query->isAutoFieldsEnabled() !== false) {
+			$query->select($this->_table->$ls_name);
+		}
 
 		$lo_startDate = $start ?? $lo_date;
-		//$lo_startDate->setTimezone($ls_timezone);
 
 		$query->leftJoinWith($ls_name)->where([
 			'OR' => [
@@ -279,7 +280,9 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 		]);
 
 		$ls_name = Inflector::camelize($ls_alias . '_publication_data_end');
-		$query->select($this->_table->$ls_name);
+		if ($query->isAutoFieldsEnabled() !== false) {
+			$query->select($this->_table->$ls_name);
+		}
 
 		$lo_endDate = $end ?? $lo_date;
 		//$lo_endDate = $lo_endDate->setTimezone($ls_timezone);
