@@ -4,6 +4,7 @@
 namespace Awyiss\Event\Frontend;
 
 
+use ArrayObject;
 use Awyiss\Event\EventListenerTrait;
 use Awyiss\Model\Entity\MediaResizedImage;
 use Cake\Datasource\EntityInterface;
@@ -43,12 +44,16 @@ class GeneralEventsListener implements EventListenerInterface {
 	 * @param \Awyiss\Model\Entity\Media $entity
 	 * @param \ArrayObject $options
 	 */
-	public function beforeSave(EventInterface $event, EntityInterface $entity/*, ArrayObject $options*/): void {
+	public function beforeSave(EventInterface $event, EntityInterface $entity, ArrayObject $options): void {
 		if (
 			$entity instanceof Panel ||
 			$entity instanceof Request ||
 			$entity instanceof MediaResizedImage
 		) {
+			return;
+		}
+
+		if (isset($options['allowFrontendSave']) && $options['allowFrontendSave']) {
 			return;
 		}
 
