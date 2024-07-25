@@ -119,7 +119,7 @@ export default class AuditInfo {
 		}
 		const id = element.dataset.id;
 
-		fetch(`/backend/${languageShortcode}/audit/info/scope:${scope}/id:${id}`, {
+		fetch(`/backend/${languageShortcode}/audit/info/scope:${scope}/id:${id}/`, {
 			headers: {
 				'Accept': 'application/json',
 				'X-Requested-With': 'XMLHttpRequest'

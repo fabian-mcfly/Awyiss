@@ -14,7 +14,7 @@
 
 {% block tableOverviewCellDisplayedFieldDefaultValue %}
 	{% if field == 'last_login' %}
-		{{ entity.last_login ? entity.last_login.nice() : '-' }}
+		{{ entity.lastLogin ? TimeHelper.nice(entity.lastLogin) : '-' }}
 	{% else %}
 		{{ parent() }}
 	{% endif %}

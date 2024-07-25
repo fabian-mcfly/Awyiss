@@ -5,7 +5,9 @@ namespace Awyiss\Controller\Backend;
 
 
 use Awyiss\Annotation\NoDirectAccess;
+use Awyiss\Awyiss;
 use Awyiss\Controller\BackendController as Controller;
+use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Routing\Router;
 use Cake\Http\Exception\RedirectException;
 use Cake\ORM\Query\SelectQuery;
@@ -75,12 +77,14 @@ class AuditController extends Controller {
 				$ls_changedByUser = $lo_record->get('changedBy') ? __('user_unknown') : __('user_system');
 			}
 
+			$lo_backendLanguage = LocaleMiddleware::getLanguage(Awyiss::REALM_BACKEND);
+
 			// Set the data to be serialized
 			$this->set([
 				'createdBy' => $ls_createdByUser,
-				'createdOn' => $lo_record->get('createdOn')?->nice(),
+				'createdOn' => $lo_record->get('createdOn')?->nice($lo_backendLanguage->timezone),
 				'changedBy' => $ls_changedByUser,
-				'changedOn' => $lo_record->get('changedOn')?->nice(),
+				'changedOn' => $lo_record->get('changedOn')?->nice($lo_backendLanguage->timezone),
 				'created' => __('created_info_label'),
 				'changed' => __('changed_info_label'),
 			]);
