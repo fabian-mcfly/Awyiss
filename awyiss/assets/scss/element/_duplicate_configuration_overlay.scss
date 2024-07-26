@@ -106,6 +106,14 @@
 			box-shadow:none;
 			grid-column:1 / -1;
 
+			&:not(.Collapsed) {
+				&:not(:has(.ListItem)) {
+					.Contents-List {
+						height:72px;
+					}
+				}
+			}
+
 			&:first-of-type {
 				margin-top:calc(var(--lineHeightMain) * 2);
 			}
