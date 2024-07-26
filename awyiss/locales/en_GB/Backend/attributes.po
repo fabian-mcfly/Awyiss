@@ -23,6 +23,9 @@ msgstr "Edit Attribut"
 msgid "menu_title"
 msgstr "Attributes"
 
+msgid "menu_add"
+msgstr "New Attribute"
+
 msgid "headline_overview"
 msgstr "Attributes"
 
