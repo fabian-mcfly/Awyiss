@@ -205,3 +205,6 @@ msgstr "Untergeordnete Inhalte werden als Duplikate verwendet"
 
 msgid "error_no_duplicated_contents"
 msgstr "Untergeordnete Inhalte werden als Duplikate verwendet"
+
+msgid "error_exact_length"
+msgstr "Die Länge dieses Werts muss genau {0} sein"

@@ -114,6 +114,7 @@ class MenuEntriesTable extends Table {
 			'isScalar' => ['rule' => 'isScalar'],
 			'ascii' => ['rule' => 'ascii'],
 			'exactLength' => [
+				'message' => __df($this->getI18nDomain(), 'validation', 'error_exact_length', 2),
 				'rule' => function (string $shortcode): bool {
 					return strlen($shortcode) == 2;
 				},
