@@ -1,4 +1,4 @@
-{% macro recursiveConfigurationListing(configItems, level = 0) %}
+{% macro recursiveConfigurationListing(configItems, level = 0, vars) %}
 	<ol class="Configuration-List List Level{{ level + 1 }}">
 		{% for identifier, configItem in configItems %}
 			{% if (configItem is array and configItem[0] is not defined) %}
@@ -7,7 +7,7 @@
 						<span class="Title">
 							{{ identifier|variable }}
 						</span>
-						{{ _self.recursiveConfigurationListing(configItem, level + 1) }}
+						{{ _self.recursiveConfigurationListing(configItem, level + 1, vars) }}
 					</li>
 				{% endblock %}
 			{% else %}
@@ -22,7 +22,7 @@
 					{% endif %}
 				{% endif %}
 
-				{# @var configuration \Awyiss\Model\Entity\Configuration|\Awyiss\Configuration\ConfigOption #}
+				{# @var configuration \Awyiss\Model\Entity\Configuration|\Awyiss\Model\Entity\UserConfiguration|\Awyiss\Configuration\ConfigOption #}
 				{% block listOverviewItem %}
 					{% for key, configuration in configItem %}
 						{% set isDefault = firstIsDefault == true and key == 0 %}
@@ -66,7 +66,7 @@
 							<div class="AuditInfo Hidden"></div>
 
 							{% block listOverviewActions %}
-								{% if isDefault == false %}
+								{% if isDefault == false and configuration.isGlobal == false %}
 									<span class="Actions">
 										{% if AuthorizationHelper.isAccessible('update') %}
 											{{ HtmlHelper.link(__('edit'), {action: 'edit', id: configuration.id}, {class: 'Button Button-Small Button-Edit'}) }}

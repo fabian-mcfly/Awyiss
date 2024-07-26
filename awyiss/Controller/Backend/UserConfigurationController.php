@@ -8,8 +8,10 @@ use Awyiss\Annotation\NoDirectAccess;
 use Awyiss\Authentication\IdentityAwareTrait;
 use Awyiss\Awyiss;
 use Awyiss\Configuration\ConfigOption;
+use Awyiss\Configuration\ConfigOptionsInterface;
 use Awyiss\Configuration\ConfigOptionsProvider;
 use Awyiss\Controller\BackendController as Controller;
+use Awyiss\Model\Entity\Configuration;
 use Awyiss\Model\Entity\UserConfiguration;
 use Awyiss\Routing\Router;
 use Cake\Http\Exception\RedirectException;
@@ -80,6 +82,8 @@ class UserConfigurationController extends Controller {
 		$lo_configOptions = ConfigOptionsProvider::loadConfigOptions($ls_selectedScope);
 		$la_configOptions = $lo_configOptions->getConfigOptions();
 
+		$la_globalConfiguration = $this->getGlobalConfiguration($lo_configOptions);
+
 		$lo_query = $this->getOverviewQuery();
 
 		$la_configuration = Hash::expand(
@@ -88,7 +92,8 @@ class UserConfigurationController extends Controller {
 					return ConfigOptionsProvider::sanitizeIdentifier($identifier);
 				}, explode('.', $entity->identifier));
 
-				$entity->configOption = $lo_configOptions->getConfigOption('Backend', implode('.', $la_identifier));
+				$ls_path = implode('.', $la_identifier);
+				$entity->configOption = $lo_configOptions->getConfigOption('Backend', $ls_path);
 
 				return implode('.', $la_identifier);
 			})->toArray()
@@ -99,11 +104,11 @@ class UserConfigurationController extends Controller {
 		 * @var \Awyiss\Configuration\ConfigOptionCollection $lo_configOptions
 		 */
 		foreach ($la_configOptions as $ls_realm => $lo_configOptions) {
-			$la_configOptions[ $ls_realm ] = Hash::merge([], $lo_configOptions->toArray(), $la_configuration);
+			$la_configOptions[ $ls_realm ] = Hash::merge([], $lo_configOptions->toArray(), $la_globalConfiguration, $la_configuration);
 		}
 		unset($la_configOptions[ Awyiss::REALM_FRONTEND ]);
 
-		$la_configOptions[ Awyiss::REALM_BACKEND ] = Hash::filter($la_configOptions[ Awyiss::REALM_BACKEND ], function (array|ConfigOption|UserConfiguration $configOptions) {
+		$la_configOptions[ Awyiss::REALM_BACKEND ] = Hash::filter($la_configOptions[ Awyiss::REALM_BACKEND ], function (array|ConfigOption|Configuration|UserConfiguration $configOptions) {
 			if (is_array($configOptions)) {
 				return !empty($configOptions);
 			}
@@ -112,12 +117,18 @@ class UserConfigurationController extends Controller {
 				return true;
 			}
 
+			if ($configOptions instanceof Configuration) {
+				$configOptions->isGlobal = true;
+				return $configOptions->configOption?->isPersonalizable() ?? false;
+			}
+
 			return $configOptions->isPersonalizable();
 		});
 
 		$this->set([
 			'configuration' => $la_configuration,
 			'mergedConfiguration' => $la_configOptions,
+			'globalConfiguration' => $la_globalConfiguration,
 			'selectedScope' => $ls_selectedScope,
 			'attributes' => $this->UserConfiguration->getAttributes(),
 		]);
@@ -311,5 +322,36 @@ class UserConfigurationController extends Controller {
 	 */
 	protected function initializeOverviewWhere(): void {
 		$this->overviewWhere['user_id'] = $this->getIdentity()->getIdentifier();
+	}
+
+
+	/**
+	 * Get global configuration for the current scope
+	 *
+	 * @param \Awyiss\Configuration\ConfigOptionsInterface|null $configOptions
+	 * @return array
+	 */
+	protected function getGlobalConfiguration(?ConfigOptionsInterface $configOptions): array {
+		$lo_configTable = $this->fetchTable('Configuration');
+		$lo_query = $lo_configTable->find()->orderBy([
+			'identifier' => 'ASC',
+			'language_shortcode' => 'ASC',
+		]);
+
+		$this->Categories->filterQuery($lo_query, null, !$this->paginate['enabled']);
+
+		$lo_configOptions = $configOptions;
+		$la_configuration = $lo_query->all()->groupBy(function (Configuration $entity) use ($lo_configOptions) {
+			$la_identifier = array_map(function (string $identifier) use ($lo_configOptions) {
+				return ConfigOptionsProvider::sanitizeIdentifier($identifier);
+			}, explode('.', $entity->identifier));
+
+			$ls_path = implode('.', $la_identifier);
+			$entity->configOption = $lo_configOptions->getConfigOption('Backend', $ls_path);
+
+			return implode('.', $la_identifier);
+		})->toArray();
+
+		return Hash::expand($la_configuration);
 	}
 }

@@ -2,6 +2,7 @@
 @var configuration array
 @var mergedConfiguration array
 @var configScopes array
+@var globalConfiguration array
 @var realms array
 @var _view \Awyiss\View\BackendView
 #}
@@ -32,7 +33,7 @@
 			{% block fieldsetOverviewInner %}
 				{% block listOverview %}
 					{% from '@Backend/UserConfiguration/overview_nested_list.twig' import recursiveConfigurationListing %}
-					{{ recursiveConfigurationListing(mergedConfiguration['Backend']) }}
+					{{ recursiveConfigurationListing(mergedConfiguration['Backend'], 0, _context) }}
 				{% endblock %}
 			{% endblock %}
 		</fieldset>
