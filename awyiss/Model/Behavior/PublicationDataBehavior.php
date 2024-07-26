@@ -120,6 +120,11 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 			$ls_alias = $this->_table->getAlias();
 			$lb_hydrated = $lx_row instanceof EntityInterface;
 
+			// If the row is already hydrated, we can skip the following steps
+			if (isset($lx_row['_publicationData'])) {
+				return $lx_row;
+			}
+
 			$lx_row['_publicationData'] = [];
 			foreach ($this->types::cases() as $le_dataType) {
 				$ls_identifier = $le_dataType->value;
@@ -169,7 +174,6 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 			if (empty($lx_row['_matchingData'])) {
 				unset($lx_row['_matchingData']);
 			}
-
 
 			return $lx_row;
 		});
