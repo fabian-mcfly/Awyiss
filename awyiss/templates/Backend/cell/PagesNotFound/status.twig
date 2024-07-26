@@ -9,7 +9,7 @@
 	{% if accessible %}
 		{% set canCreateSlugHistory = AuthorizationHelper.scopeIsAccessible('slugHistory', [], 'create') %}
 
-		<fieldset class="Overview-Fieldset Fieldset-PagesNotFoundStatus StatusCell">
+		<fieldset class="Overview-Fieldset Fieldset-PagesNotFoundStatus StatusCell Collapsible">
 			<legend>{{ __d('pages_not_found', 'headline_status_cell') }}</legend>
 
 			{% block fieldsetOverviewInner %}
