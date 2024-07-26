@@ -46,3 +46,6 @@ msgstr "Einträge gruppieren"
 
 msgid "create_redirect"
 msgstr "Weiterleitung erstellen"
+
+msgid "delete_succeeded"
+msgstr "Der Eintrag wurde erfolgreich gelöscht"

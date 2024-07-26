@@ -77,13 +77,22 @@
 {% endblock %}
 {% block tableOverviewCellAuditInfo %}{% endblock %}
 {% block tableOverviewCellActions %}
-	{% if canCreateSlugHistory %}
+	{% if canCreateSlugHistory or grouped == false %}
 		<td class="TableCell-Actions">
-			<form class="Actions" method="post" action="{{ UrlHelper.build({controller: 'SlugHistory', action: 'add'}) }}">
-				{{ FormHelper.button(__('create_redirect'), {class: 'Button Button-Small Button-Add', name: 'submit', value: 'submit'}) }}
-				{{ FormHelper.hidden('reload_form', {val: 1}) }}
-				{{ FormHelper.hidden('slug', {val: entity.slug|trim('/')}) }}
-			</form>
+			<div class="Actions">
+				{% if canCreateSlugHistory %}
+					<form method="post" action="{{ UrlHelper.build({controller: 'SlugHistory', action: 'add'}) }}">
+						{{ FormHelper.button(__('create_redirect'), {class: 'Button Button-Small Button-Add', name: 'submit', value: 'submit'}) }}
+						{{ FormHelper.hidden('reload_form', {val: 1}) }}
+						{{ FormHelper.hidden('slug', {val: entity.slug|trim('/')}) }}
+					</form>
+				{% endif %}
+				{% if grouped == false %}
+					{% block tableOverviewCellActionsDelete %}
+						{{ parent() }}
+					{% endblock %}
+				{% endif %}
+			</div>
 		</td>
 	{% endif %}
 {% endblock %}

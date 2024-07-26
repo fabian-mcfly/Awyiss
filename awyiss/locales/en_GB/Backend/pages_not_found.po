@@ -46,3 +46,6 @@ msgstr "Group entries"
 
 msgid "create_redirect"
 msgstr "Create redirect"
+
+msgid "delete_succeeded"
+msgstr "The entry was successfully deleted"
