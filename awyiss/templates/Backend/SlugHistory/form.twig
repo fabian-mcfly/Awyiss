@@ -1,6 +1,8 @@
 {#
 @var slugHistory Awyiss\Model\Entity\SlugHistory
 @var languageRealm string
+@var deletedPages \Cake\Collection\CollectionInterface
+@var threadedPages \Cake\Collection\CollectionInterface
 @var _view \Awyiss\View\BackendView
 #}
 
@@ -35,7 +37,17 @@
 				<legend>{{ __('fieldset_general') }}</legend>
 
 				{% block formControlSlug %}
-					{{ FormHelper.control('slug') }}
+					{% set deletedPages %}
+						{{ FormHelper.select('slug_options', hashPrinter(deletedPages, 'title', 'link'), {
+							'data-options-for': 'SlugHistory-Slug',
+						}) }}
+					{% endset %}
+
+					{{ FormHelper.control('slug', {
+						templateVars: {
+							additionalContent: deletedPages,
+						},
+					}) }}
 				{% endblock %}
 
 				{% block formControlPageId %}

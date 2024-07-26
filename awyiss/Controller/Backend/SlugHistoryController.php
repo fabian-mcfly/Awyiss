@@ -6,6 +6,7 @@ namespace Awyiss\Controller\Backend;
 
 use Awyiss\Annotation\NoDirectAccess;
 use Awyiss\Controller\BackendController as Controller;
+use Awyiss\Model\Entity\Page;
 use Awyiss\Model\Entity\SlugHistory;
 use Awyiss\Routing\Router;
 use Cake\Collection\CollectionInterface;
@@ -85,10 +86,13 @@ class SlugHistoryController extends Controller {
 			$this->save($lo_slugHistory);
 		}
 
+		$lo_deletedPages = $this->getDeletedPages();
+
 		$lo_threadedPages = $this->getThreadedPages();
 
 		$this->set([
 			'slugHistory' => $lo_slugHistory,
+			'deletedPages' => $lo_deletedPages,
 			'threadedPages' => $lo_threadedPages->toList(),
 		]);
 	}
@@ -116,10 +120,13 @@ class SlugHistoryController extends Controller {
 			$this->save($lo_slugHistory, 'edit');
 		}
 
+		$lo_deletedPages = $this->getDeletedPages();
+
 		$lo_threadedPages = $this->getThreadedPages();
 
 		$this->set([
 			'slugHistory' => $lo_slugHistory,
+			'deletedPages' => $lo_deletedPages,
 			'threadedPages' => $lo_threadedPages->toList(),
 		]);
 	}
@@ -221,5 +228,28 @@ class SlugHistoryController extends Controller {
 
 
 		return $this->threadedPages;
+	}
+
+
+	/**
+	 * Get a collection of pages that have been deleted but are not in the slug history
+	 *
+	 * @return \Cake\Collection\CollectionInterface
+	 */
+	protected function getDeletedPages(): CollectionInterface {
+		$lo_historyPageIdQuery = $this->SlugHistory->find()->select('page_id');
+		$lo_pagesSlugQuery = $this->SlugHistory->Pages->find('all', skipPageRoleCheck: true)->disableAutoFields()->select('slug');
+
+		$lo_pages = $this->SlugHistory->Pages->find('deleted', skipPageRoleCheck: true)->select(function ($query) {
+			return ['slug' => $query->func()->concat(['language_shortcode' => 'identifier', '/', 'slug' => 'identifier'])];
+		})->enableAutoFields()->where(function ($exp) use ($lo_historyPageIdQuery, $lo_pagesSlugQuery) {
+			return $exp->notIn('id', $lo_historyPageIdQuery)->notIn('slug', $lo_pagesSlugQuery);
+		})->orderBy('title')->all();
+
+		$lo_pages = $lo_pages->each(function (Page $page) {
+			$page->set('title', $page->label . ' (' . $page->languageShortcode . '/' . $page->slug . ')');
+		});
+
+		return $lo_pages;
 	}
 }

@@ -114,7 +114,7 @@ input[type="radio"] {
 }
 
 input {
-	&:has(+ [data-options-for]) {
+	&:has(+ select[data-options-for]) {
 		width:calc(100% - 52px)	;
 		border-radius:5px 0 0 5px;
 		border-right-width:0;
@@ -125,7 +125,7 @@ input {
 		&:focus-visible {
 			box-shadow:none;
 
-			+ [data-options-for] {
+			+ select[data-options-for] {
 				--backgroundColor:var(--colorBright);
 
 				border-color:var(--colorSuccess);
@@ -139,9 +139,9 @@ input {
 		}
 	}
 
-	&:has(+ [data-options-for]:focus) {
+	&:has(+ select[data-options-for]:focus) {
 		&,
-		+ [data-options-for]:focus {
+		+ select[data-options-for]:focus {
 			--backgroundColor:var(--colorBright);
 
 			border-color:var(--colorSuccess);
@@ -632,103 +632,105 @@ textarea {
 	}
 
 	&Name-Slug {
-		display:flex;
-		flex-wrap:wrap;
+		&:not(:has(select[data-options-for])) {
+			display:flex;
+			flex-wrap:wrap;
 
-		&.Error {
-			&,
+			&.Error {
+				&,
+				&:focus-within {
+					&::before {
+						border-color:var(--colorError);
+						box-shadow:0 0 10px 5px rgba(202, 46, 85, 0.1);
+					}
+				}
+
+				input {
+					box-shadow:none;
+				}
+			}
+
 			&:focus-within {
 				&::before {
-					border-color:var(--colorError);
-					box-shadow:0 0 10px 5px rgba(202, 46, 85, 0.1);
+					border-color:var(--colorSuccess);
+					box-shadow:0 0 10px 5px var(--colorSuccess-Alpha-10);
+					background-color:var(--colorBright);
+
+					.🌚 & {
+						background-color:var(--colorSemiDarkDarkMode-Lightened-2);
+					}
+				}
+			}
+
+			&::before {
+				@extend %Input;
+
+				content:'';
+				width:100%;
+				height:52px;
+				display:block;
+				position:absolute;
+				top:1rem;
+				left:0;
+				pointer-events:none;
+
+				.Scale-Small & {
+					height:42px;
+				}
+			}
+
+			.Label.Label {
+				width:100%;
+				padding-bottom:calc(52px + .25rem);
+				margin-bottom:-52px;
+				flex:0 0 100%;
+
+				.Scale-Small & {
+					padding-bottom:calc(42px + .25rem);
+					margin-bottom:-42px;
 				}
 			}
 
 			input {
+				width:auto;
+				border:0 none;
 				box-shadow:none;
+				background-color:transparent;
+				background-image:none;
+				position:relative;
+				z-index:1;
+				flex:1 1 auto;
+				order:3;
 			}
-		}
 
-		&:focus-within {
-			&::before {
-				border-color:var(--colorSuccess);
-				box-shadow:0 0 10px 5px var(--colorSuccess-Alpha-10);
-				background-color:var(--colorBright);
+			.PreSlug {
+				margin:0 0 1px 1px;
+				padding:0 10px;
+				border-radius:5px 0 0 5px;
+				box-shadow:-3px 0 4px inset rgba(0, 0, 0, .25);
+				background-color:var(--colorMedium);
+				color:var(--colorBright);
+				font-size:.8rem;
+				line-height:50px;
+				position:relative;
+				z-index:1;
+				cursor:default;
+				pointer-events:none;
 
 				.🌚 & {
-					background-color:var(--colorSemiDarkDarkMode-Lightened-2);
+					background-color:var(--colorBackgroundContentDarkMode);
+				}
+
+				.Scale-Small & {
+					line-height:40px;
 				}
 			}
-		}
 
-		&::before {
-			@extend %Input;
-
-			content:'';
-			width:100%;
-			height:52px;
-			display:block;
-			position:absolute;
-			top:1rem;
-			left:0;
-			pointer-events:none;
-
-			.Scale-Small & {
-				height:42px;
+			div.Error {
+				width:100%;
+				flex:0 0 100%;
+				order:4;
 			}
-		}
-
-		.Label.Label {
-			width:100%;
-			padding-bottom:calc(52px + .25rem);
-			margin-bottom:-52px;
-			flex:0 0 100%;
-
-			.Scale-Small & {
-				padding-bottom:calc(42px + .25rem);
-				margin-bottom:-42px;
-			}
-		}
-
-		input {
-			width:auto;
-			border:0 none;
-			box-shadow:none;
-			background-color:transparent;
-			background-image:none;
-			position:relative;
-			z-index:1;
-			flex:1 1 auto;
-			order:3;
-		}
-
-		.PreSlug {
-			margin:0 0 1px 1px;
-			padding:0 10px;
-			border-radius:5px 0 0 5px;
-			box-shadow:-3px 0 4px inset rgba(0, 0, 0, .25);
-			background-color:var(--colorMedium);
-			color:var(--colorBright);
-			font-size:.8rem;
-			line-height:50px;
-			position:relative;
-			z-index:1;
-			cursor:default;
-			pointer-events:none;
-
-			.🌚 & {
-				background-color:var(--colorBackgroundContentDarkMode);
-			}
-
-			.Scale-Small & {
-				line-height:40px;
-			}
-		}
-
-		div.Error {
-			width:100%;
-			flex:0 0 100%;
-			order:4;
 		}
 	}
 
