@@ -17,6 +17,7 @@
 
 				{%- if entity.parentsActive is defined and entity.parentsActive == false %} ParentsInactive
 				{%- elseif settings.parentsActive is defined and settings.parentsActive == false %} ParentsInactive{% endif -%}
+				{%- if entity.isPublished() is same as false %} NotPublished{% endif %}
 			"
 		{%- endblock %}
 		>

@@ -8,6 +8,7 @@ use Awyiss\Model\Trait\EntityAttributesTrait;
 use Awyiss\Model\Trait\EntityFieldMapTrait;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\FactoryLocator;
+use Cake\I18n\DateTime;
 use Cake\ORM\Behavior\Translate\TranslateTrait;
 use Cake\ORM\Entity as BaseEntity;
 use Cake\Utility\Inflector;
@@ -166,6 +167,35 @@ class Entity extends BaseEntity {
 
 
 		return $this;
+	}
+
+
+	/**
+	 * @return bool|null
+	 */
+	public function isPublished(): ?bool {
+		/**
+		 * No publication dara or empty publication data means either
+		 * - the table has no publication data behavior
+		 * - the entity has no publication data
+		 *
+		 * In both cases the entity is considered published
+		 */
+		if (empty($this->_publicationData)) {
+			return null;
+		}
+
+		$lo_now = new DateTime();
+
+		if ($this->publicationStart && $this->publicationStart > $lo_now) {
+			return false;
+		}
+
+		if ($this->publicationEnd && $this->publicationEnd < $lo_now) {
+			return false;
+		}
+
+		return true;
 	}
 
 

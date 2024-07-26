@@ -62,7 +62,11 @@
 				{# @var entity \Cake\Datasource\EntityInterface #}
 				{% for entity in records %}
 					{% block tableOverviewBodyRow %}
-						<tr class="{%- if entity.active is defined and entity.active == false %} Inactive{% endif -%}{%- if entity.parentsActive is defined and entity.parentsActive == false %} ParentsInactive{% endif %}">
+						<tr class="
+							{%- if entity.active is defined and entity.active == false %} Inactive{% endif -%}
+							{%- if entity.parentsActive is defined and entity.parentsActive == false %} ParentsInactive{% endif %}
+							{%- if entity.isPublished() is same as false %} NotPublished{% endif %}">
+
 							{% block tableOverviewBodyRowInner %}
 								{% block tableOverviewCellId %}
 									<td class="TableCell-Id">{{ entity.id }}</td>
