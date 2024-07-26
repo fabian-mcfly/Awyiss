@@ -36,6 +36,14 @@ class Inflector extends CakeInflector {
 	 * @return string
 	 */
 	public static function ucparts(string $string, string|bool $delimiter = true): string {
+		$ls_cacheKey = __FUNCTION__ . '__' . (is_bool($delimiter) ? (int)$delimiter : $delimiter);
+
+		$lx_result = static::_cache($ls_cacheKey, $string);
+
+		if ($lx_result !== false) {
+			return $lx_result;
+		}
+
 		$ls_string = ucwords(strtolower($string));
 
 		foreach (['-', '\'', '_', ' '] as $ls_delimiter) {
@@ -48,6 +56,8 @@ class Inflector extends CakeInflector {
 				array_map('ucfirst', explode($ls_delimiter, $ls_string))
 			);
 		}
+
+		static::_cache($ls_cacheKey, $string, $ls_string);
 
 		return $ls_string;
 	}
