@@ -106,6 +106,10 @@ class AttributesController extends Controller {
 			$this->save($lo_attribute);
 		}
 
+		if (!$lo_attribute->scope) {
+			$lo_attribute->scope = key($this->Categories->getCategories());
+		}
+
 		$this->setViewVars($lo_attribute);
 	}
 
