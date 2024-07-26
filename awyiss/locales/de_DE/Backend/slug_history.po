@@ -76,3 +76,22 @@ msgstr "Seite"
 
 msgid "page_title"
 msgstr "Seite"
+
+
+msgid "status"
+msgstr "Status-Code"
+
+msgid "status_301"
+msgstr "301 Dauerhafte Weiterleitung"
+
+msgid "status_302"
+msgstr "302 Temporäre Weiterleitung"
+
+msgid "status_307"
+msgstr "307 Temporäre Weiterleitung (beibehalten der Anfragemethode)"
+
+msgid "status_308"
+msgstr "308 Dauerhafte Weiterleitung (beibehalten der Anfragemethode)"
+
+msgid "error_valid_status"
+msgstr "Der Status-Code ist ungültig"

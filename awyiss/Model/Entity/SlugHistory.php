@@ -13,6 +13,7 @@ use Awyiss\Model\Entity;
  * @property int $id
  * @property string $slug
  * @property int $pageId
+ * @property int|null $status
  * @property int|null $createdBy
  * @property \Cake\I18n\DateTime|null $createdOn
  * @property int|null $changedBy
@@ -41,5 +42,6 @@ class SlugHistory extends Entity {
 	protected array $_accessible = [
 		'slug' => true,
 		'pageId' => true,
+		'status' => true,
 	];
 }

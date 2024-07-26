@@ -39,9 +39,23 @@
 				{% endblock %}
 
 				{% block formControlPageId %}
-					{{ FormHelper.control('page_id', {options: hashPrinter(threadedPages, 'label', 'id', '- ')}) }}
+					{{ FormHelper.control('page_id', {
+						columnSpan: 9,
+						options: hashPrinter(threadedPages, 'label', 'id', '- '),
+					}) }}
 				{% endblock %}
 
+				{% block formControlStatus %}
+					{{ FormHelper.control('status', {
+						columnSpan: 3,
+						options: {
+							301: __('status_301'),
+							302: __('status_302'),
+							307: __('status_307'),
+							308: __('status_308'),
+						},
+					}) }}
+				{% endblock %}
 
 				{% block fieldsetGeneralInner %}
 					{% block fieldsetGeneralAttributes %}

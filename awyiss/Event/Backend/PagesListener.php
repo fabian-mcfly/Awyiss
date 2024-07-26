@@ -430,21 +430,25 @@ class PagesListener implements EventListenerInterface {
 	 */
 	protected function createHistoricalSlugs(PagesTable $table, Page $entity, ?string $originalLanguage, ?string $originalSlug): void {
 		$ls_originalSlug = $originalSlug;
-		$lo_records = $table->find('all', skipPageRoleCheck: true)->where(function (QueryExpression $expression) use ($ls_originalSlug) {
-			return $expression->like('slug', $ls_originalSlug . '/%');
-		})->all();
 
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 		$li_userId = $this->getIdentity()?->id;
 		$ld_now = new DateTime('now');
 
-		$lo_query = $table->SlugHistory->insertQuery()->insert(['slug', 'page_id', 'created_by', 'created_on']);
+		// Create a new historical slug entry for the original slug of the provided page
+		$lo_query = $table->SlugHistory->insertQuery()->insert(['slug', 'page_id', 'status', 'created_by', 'created_on']);
 		$lo_query->values([
 			'slug' => ($originalLanguage ?? $entity->languageShortcode) . '/' . $originalSlug,
 			'page_id' => $entity->id,
+			'status' => 308,
 			'created_by' => $li_userId,
 			'created_on' => $ld_now,
 		]);
+
+		// Find all pages whose slug starts with the original slug of the provided page
+		$lo_records = $table->find('all', skipPageRoleCheck: true)->where(function (QueryExpression $expression) use ($ls_originalSlug) {
+			return $expression->like('slug', $ls_originalSlug . '/%');
+		})->all();
 
 		if (!$lo_records->count()) {
 			$lo_query->execute();
@@ -452,11 +456,17 @@ class PagesListener implements EventListenerInterface {
 			return;
 		}
 
-		/** @var \Awyiss\Model\Entity\Page $lo_page */
+		/**
+		 * For each page that has a slug that starts with the original slug of the provided page,
+		 * create a new historical slug entry.
+		 *
+		 * @var \Awyiss\Model\Entity\Page $lo_page
+		 */
 		foreach ($lo_records as $lo_page) {
 			$lo_query->values([
 				'slug' => $lo_page->languageShortcode . '/' . $lo_page->slug,
 				'page_id' => $lo_page->id,
+				'status' => 308,
 				'created_by' => $li_userId,
 				'created_on' => $ld_now,
 			]);

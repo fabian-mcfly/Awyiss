@@ -465,6 +465,7 @@ class FrontendController extends AppController {
 			implode(',', $la_urls),
 		])), true);
 
+		/** @var \Awyiss\Model\Entity\SlugHistory $lo_record */
 		$lo_record = $lo_query->first();
 
 		if ($lo_record?->page) {
@@ -473,7 +474,7 @@ class FrontendController extends AppController {
 				'slug' => $lo_record->page->slug,
 			]);
 
-			throw new RedirectException($ls_realUrl, 301);
+			throw new RedirectException($ls_realUrl, $lo_record->status);
 		}
 	}
 

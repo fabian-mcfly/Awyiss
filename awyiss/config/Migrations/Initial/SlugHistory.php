@@ -40,8 +40,13 @@ class SlugHistory {
 			'null' => false,
 		])->addColumn('page_id', 'integer', [
 			'default' => null,
-			'limit' => null,
+			'limit' => 11,
 			'null' => false,
+			'signed' => true,
+		])->addColumn('status', 'integer', [
+			'default' => null,
+			'limit' => 3,
+			'null' => true,
 			'signed' => true,
 		])->addColumn('created_by', 'integer', [
 			'default' => null,

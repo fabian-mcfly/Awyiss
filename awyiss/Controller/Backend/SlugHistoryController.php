@@ -104,7 +104,7 @@ class SlugHistoryController extends Controller {
 	public function edit(int $id) {
 		$this->Authorization->ensure('update');
 
-		/** @var SlugHistory $lo_slugHistory */
+		/** @var \Awyiss\Model\Entity\SlugHistory $lo_slugHistory */
 		$lo_slugHistory = $this->SlugHistory->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
 		if (! $lo_slugHistory) {
 			$this->Flash->error(__('record_not_found'));
@@ -137,7 +137,7 @@ class SlugHistoryController extends Controller {
 
 		$this->request->allowMethod(['get', 'delete']);
 
-		/** @var SlugHistory $lo_slugHistory */
+		/** @var \Awyiss\Model\Entity\SlugHistory $lo_slugHistory */
 		$lo_slugHistory = $this->SlugHistory->findById($id)->first();
 		if (! $lo_slugHistory) {
 			$this->Flash->error(__('record_not_found'));
@@ -164,7 +164,7 @@ class SlugHistoryController extends Controller {
 
 
 	/**
-	 * @param SlugHistory $slugHistory
+	 * @param \Awyiss\Model\Entity\SlugHistory $slugHistory
 	 * @param string $method
 	 * @return void
 	 * @throws \Cake\Http\Exception\RedirectException

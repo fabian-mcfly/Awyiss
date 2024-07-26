@@ -4,6 +4,7 @@
 namespace Awyiss\Model\Table;
 
 
+use Awyiss\Model\Entity\SlugHistory;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
@@ -15,7 +16,6 @@ use Cake\Validation\Validator;
  *
  * @property \Awyiss\Model\Table\PagesTable&\Awyiss\ORM\Association\BelongsTo $Pages
  * @method \Awyiss\Model\Entity\SlugHistory newDefaultEntity(array $additionalData = [], array $options = [])
- * @noinspection PhpFullyQualifiedNameUsageInspection
  */
 class SlugHistoryTable extends Table {
 	/**
@@ -68,6 +68,17 @@ class SlugHistoryTable extends Table {
 			'maxLength' => ['rule' => ['maxLength', 11]],
 		]);
 
+		$validator->notEmptyString('status');
+		$validator->add('status', [
+			'isInteger' => ['rule' => 'isInteger'],
+			'exactLength' => [
+				'message' => __df($this->getI18nDomain(), 'validation', 'error_exact_length', 3),
+				'rule' => function ($status) {
+					return strlen($status) == 3;
+				},
+			],
+		]);
+
 		return $validator;
 	}
 
@@ -84,6 +95,12 @@ class SlugHistoryTable extends Table {
 			'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_page_id'),
 		]);
 
+		$rules->add(function (SlugHistory $entity) {
+			return in_array($entity->status, [301, 302, 307, 308], true);
+		}, 'validStatus', [
+			'errorField' => 'status',
+			'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_status'),
+		]);
 
 		return $rules;
 	}
