@@ -447,6 +447,8 @@ class PagesListener implements EventListenerInterface {
 		]);
 
 		if (!$lo_records->count()) {
+			$lo_query->execute();
+
 			return;
 		}
 
