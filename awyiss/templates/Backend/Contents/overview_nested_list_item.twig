@@ -47,7 +47,7 @@
 		{% block nestedListItemInner %}
 			<div
 				{{ block('nestedListItemInnerClass') }}
-				title="{{ entity.forcedTitle }} ({{ entity.column.width.label -}}
+				title="{{ entity.forcedTitle|striptags }} ({{ entity.column.width.label -}}
 				{%- if entity.column.indent.label %} / {{ entity.column.indent.label }}{% endif %})"
 				>
 
