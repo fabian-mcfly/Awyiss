@@ -146,12 +146,12 @@ export function addLanguageSwitcherEvent() {
 }
 
 /**
- * Add a mouseenter event listener to the custom select elements
- * This event listener scrolls to the active item in the custom select
+ * Add a mouseenter event listener to the link select elements
+ * This event listener scrolls to the active item in the link select
  * @returns {void}
  */
 export function addLinkSelectMouseEvent() {
-	// Scroll to the active item in the custom select
+	// Scroll to the active item in the link select
 	window.eventHandler.add('mouseenter', function (event) {
 		// Bail early if event.target does not match '.LinkSelect'
 		if (!(event.target instanceof Element && event.target.matches('.LinkSelect'))) {
@@ -370,7 +370,7 @@ export async function initMainOnReady() {
 	// Add the language switcher event
 	addLanguageSwitcherEvent();
 
-	// Scroll to active item in custom selects on mouseenter
+	// Scroll to active item in link selects on mouseenter
 	addLinkSelectMouseEvent();
 
 	// Tab autocomplete for placeholders

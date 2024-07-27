@@ -12,9 +12,9 @@ use Traversable;
 
 
 /**
- * Input widget for creating a custom select with links instead of dropdown-options.
+ * Input widget for creating a link select with links instead of dropdown-options.
  * This class is usually used internally by `\Awyiss\View\Helper\CategoriesHelper`,
- * it but can be used to generate standalone custom selects.
+ * it but can be used to generate standalone link selects.
  */
 class LinkSelectWidget extends BasicWidget {
 	protected array $defaults = [
