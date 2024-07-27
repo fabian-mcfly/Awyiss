@@ -174,8 +174,11 @@ class DuplicateOfConfiguration {
 
 	constructor() {
 		this.duplicateOfInput = document.getElementById('Content-DuplicateOf');
-		this.duplicateOfInput.instantUpdate = true;
-		this.duplicateOfInput.addEventListener('click', event => this.openOverlay(event));
+
+		if (this.duplicateOfInput) {
+			this.duplicateOfInput.instantUpdate = true;
+			this.duplicateOfInput.addEventListener('click', event => this.openOverlay(event));
+		}
 
 		this.isFormChanged = window.formLeaveConfirmation.isFormChanged;
 
