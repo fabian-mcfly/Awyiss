@@ -25,6 +25,11 @@ export default class ButtonArea {
 	 */
 	h1;
 	/**
+	 * The first h2 element.
+	 * @type {HTMLHeadingElement}
+	 */
+	h2;
+	/**
 	 * The parent of the h1 and button area elements.
 	 * @type {HTMLElement}
 	 */
@@ -38,6 +43,7 @@ export default class ButtonArea {
 	constructor() {
 		// The first h1 element
 		this.h1 = document.querySelector('h1');
+		this.h2 = document.querySelector('h2');
 
 		// The first .ButtonArea element
 		this.buttonArea = document.querySelector('.ButtonArea');
@@ -63,7 +69,10 @@ export default class ButtonArea {
 	 * @returns {void}
 	 */
 	checkWidths() {
-		if (this.h1.offsetWidth + this.buttonArea.offsetWidth + 40 <= this.parent.offsetWidth) {
+		// Widest element is either h1 or h2
+		const widestElement = this.h1.offsetWidth > this.h2.offsetWidth ? this.h1 : this.h2;
+
+		if (widestElement.offsetWidth + this.buttonArea.offsetWidth + 40 <= this.parent.offsetWidth) {
 			// If the widths fit, add the class 'CannotMoveUpwards' to the .ButtonArea element
 			this.buttonArea.classList.remove('CannotMoveUpwards');
 		}
