@@ -29,7 +29,7 @@
 	<td class="TableCell-Actions">
 		<div class="Actions">
 			{% block tableOverviewCellActionsViewContents %}
-				{% if entity.duplicate_of is empty and AuthorizationHelper.isAccessible('contents') and contentsEnabled == true %}
+				{% if entity.hasContentTemplate() and entity.duplicate_of is empty and AuthorizationHelper.isAccessible('contents') and contentsEnabled == true %}
 					{{ HtmlHelper.link(__('view_contents'), {controller: 'contents', action: 'overview', pageId: entity.id}, {class: 'Button Button-Small Button-View Button-ViewContents'}) }}
 				{% endif %}
 			{% endblock %}

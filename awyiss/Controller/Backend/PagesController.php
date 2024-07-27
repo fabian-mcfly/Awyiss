@@ -96,7 +96,7 @@ class PagesController extends Controller {
 	public function overview(): void {
 		$this->Authorization->ensure('read');
 
-		$lo_query = $this->getOverviewQuery();
+		$lo_query = $this->getOverviewQuery()->contain(['PageTemplates.ContentAreas.ContentTemplates']);
 
 		// Disable sorting if the current category is the aggregation category or the unassigned category
 		if (

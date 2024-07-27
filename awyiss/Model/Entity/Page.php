@@ -232,4 +232,25 @@ class Page extends Entity {
 			'pageRoleId' => $ls_pageRoleEnum::tryFromName(end($la_parts)),
 		];
 	}
+
+
+	/**
+	 * Check if the page has a content template that is usable
+	 * in the current page template
+	 *
+	 * @return bool|null
+	 */
+	public function hasContentTemplate(): ?bool {
+		if (!$this->pageTemplate?->contentAreas) {
+			return null;
+		}
+
+		foreach ($this->pageTemplate->contentAreas as $lo_contentArea) {
+			if ($lo_contentArea->contentTemplates) {
+				return true;
+			}
+		}
+
+		return false;
+	}
 }

@@ -22,6 +22,7 @@ use Awyiss\Model\Entity;
  * @property int|null $deletedBy
  * @property \Cake\I18n\DateTime|null $deletedOn
  * @property \Awyiss\Model\Entity\PageTemplate[] $pageTemplates
+ * @property \Awyiss\Model\Entity\ContentTemplate[] $contentTemplates
  * @property \Awyiss\Model\Entity\ContentTemplateContentArea|\Awyiss\Model\Entity\PageTemplateContentArea $_joinData
  * @property \Awyiss\Model\Entity\ContentArea[] $contentAreas
  */
