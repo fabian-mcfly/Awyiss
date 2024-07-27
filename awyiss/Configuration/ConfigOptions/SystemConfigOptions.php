@@ -46,6 +46,19 @@ class SystemConfigOptions extends AbstractConfigOptions {
 
 
 		$this->add(Awyiss::REALM_BACKEND, [
+			new ConfigOption(
+				defaultValue: 'strict',
+				identifier: 'htmlCleaning',
+				localizable: false,
+				nullable: false,
+				personalizable: false,
+				type: ConfigOptionType::ListKey,
+				values: [
+					'none' => __d('system', 'html_cleaning_none'),
+					'moderate' => __d('system', 'html_cleaning_moderate'),
+					'strict' => __d('system', 'html_cleaning_strict'),
+				],
+			),
 			'interface' => [
 				new ConfigOption(
 					defaultValue: false,

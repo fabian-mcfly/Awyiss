@@ -308,14 +308,14 @@ trait ContentElementTrait {
 		}
 
 		// Create a new DOMDocument instance
-		$lo_dom = new DOMDocument();
+		$lo_dom = new DOMDocument('1.0', 'UTF-8');
 
 		// Suppress errors due to malformed HTML
 		libxml_use_internal_errors(true);
 
 		// Load the HTML string into the DOMDocument
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		$lo_dom->loadHTML($entity->text);
+		$lo_dom->loadHTML('<!DOCTYPE html>' . $entity->text);
 
 		// Clear any errors collected during loadHTML
 		libxml_clear_errors();

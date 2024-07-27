@@ -7,6 +7,8 @@ namespace Awyiss\Event\Backend;
 use ArrayObject;
 use Awyiss\Event\EventListenerTrait;
 use Awyiss\Model\Entity\Content;
+use Awyiss\Utility\Content\HtmlCleaner;
+use Cake\Core\Configure;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
 
@@ -29,8 +31,29 @@ class ContentsListener implements EventListenerInterface {
 	 */
 	public function implementedEvents(): array {
 		return [
+			'Model.Contents.beforeRules' => 'beforeRules',
 			'Model.Contents.beforeCopy' => 'beforeCopy',
 		];
+	}
+
+
+	/**
+	 * @param \Cake\Event\Event $event
+	 * @param \Awyiss\Model\Entity\Content $entity
+	 * @param \ArrayObject $options
+	 * @return void
+	 * @throws \DOMException
+	 * @noinspection PhpUnusedParameterInspection
+	 */
+	public function beforeRules(Event $event, Content $entity, ArrayObject $options): void {
+		// Do not clean HTML if this is not the primary entity
+		if ($options['_primary'] === false) {
+			return;
+		}
+
+		if (Configure::read('Awyiss.System.Backend.htmlCleaning') !== 'none') {
+			HtmlCleaner::clean($entity, Configure::read('Awyiss.System.Backend.htmlCleaning'));
+		}
 	}
 
 
