@@ -267,6 +267,14 @@ abstract class GenericDatatablesController extends Controller {
 				$this->Flash->error($ls_error);
 			}
 		}
+		elseif ($this->Datatable->hasBehavior('SystemOrder')) {
+			if ($this->Datatable->getSystemOrderRelatedColumns($entity)) {
+				$entity->systemOrder = null;
+			}
+			else {
+				$entity->systemOrder = $entity->hasOriginal('systemOrder') ? $entity->getOriginal('systemOrder') : $entity->get('systemOrder');
+			}
+		}
 	}
 
 

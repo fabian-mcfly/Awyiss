@@ -223,6 +223,14 @@ class ContentTemplatesController extends Controller {
 				$this->Flash->error($ls_error);
 			}
 		}
+		else {
+			if ($this->ContentTemplates->getSystemOrderRelatedColumns($contentTemplate)) {
+				$contentTemplate->systemOrder = null;
+			}
+			else {
+				$contentTemplate->systemOrder = $contentTemplate->hasOriginal('systemOrder') ? $contentTemplate->getOriginal('systemOrder') : $contentTemplate->get('systemOrder');
+			}
+		}
 	}
 
 

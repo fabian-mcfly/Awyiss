@@ -33,4 +33,12 @@
 				$this->Flash->error($ls_error);
 			}
 		}
+		elseif ($this->{{ currentModelName }}->hasBehavior('SystemOrder')) {
+			if ($this->{{ currentModelName }}->getSystemOrderRelatedColumns(${{ singularName }})) {
+				${{ singularName }}->systemOrder = null;
+			}
+			else {
+				${{ singularName }}->systemOrder = ${{ singularName }}->hasOriginal('systemOrder') ? ${{ singularName }}->getOriginal('systemOrder') : ${{ singularName }}->get('systemOrder');
+			}
+		}
 	}

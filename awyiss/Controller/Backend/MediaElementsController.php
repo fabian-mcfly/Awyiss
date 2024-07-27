@@ -210,6 +210,14 @@ class MediaElementsController extends Controller {
 				$this->Flash->error($ls_error);
 			}
 		}
+		else {
+			if ($this->MediaElements->getSystemOrderRelatedColumns($mediaElement)) {
+				$mediaElement->systemOrder = null;
+			}
+			else {
+				$mediaElement->systemOrder = $mediaElement->hasOriginal('systemOrder') ? $mediaElement->getOriginal('systemOrder') : $mediaElement->get('systemOrder');
+			}
+		}
 	}
 
 

@@ -188,5 +188,13 @@ class PageRolesController extends Controller {
 				$this->Flash->error($ls_error);
 			}
 		}
+		else {
+			if ($this->PageRoles->getSystemOrderRelatedColumns($pageRole)) {
+				$pageRole->systemOrder = null;
+			}
+			else {
+				$pageRole->systemOrder = $pageRole->hasOriginal('systemOrder') ? $pageRole->getOriginal('systemOrder') : $pageRole->get('systemOrder');
+			}
+		}
 	}
 }

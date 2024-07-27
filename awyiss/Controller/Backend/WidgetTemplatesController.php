@@ -198,6 +198,14 @@ class WidgetTemplatesController extends Controller {
 				$this->Flash->error($ls_error);
 			}
 		}
+		else {
+			if ($this->WidgetTemplates->getSystemOrderRelatedColumns($widgetTemplate)) {
+				$widgetTemplate->systemOrder = null;
+			}
+			else {
+				$widgetTemplate->systemOrder = $widgetTemplate->hasOriginal('systemOrder') ? $widgetTemplate->getOriginal('systemOrder') : $widgetTemplate->get('systemOrder');
+			}
+		}
 	}
 
 

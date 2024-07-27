@@ -238,6 +238,14 @@ class PagesController extends Controller {
 					}
 				}
 			}
+			else {
+				if ($this->Pages->getSystemOrderRelatedColumns($lo_page)) {
+					$lo_page->systemOrder = null;
+				}
+				else {
+					$lo_page->systemOrder = $lo_page->hasOriginal('systemOrder') ? $lo_page->getOriginal('systemOrder') : $lo_page->get('systemOrder');
+				}
+			}
 		}
 
 		$this->setViewVars($lo_page);
@@ -451,6 +459,14 @@ class PagesController extends Controller {
 			$this->Flash->error(__df($this->pageRoleName, 'pages', $method . '_failed'));
 			foreach ($page->getError('_general') as $ls_error) {
 				$this->Flash->error($ls_error);
+			}
+		}
+		elseif ($this->request->getData('reload_form')) {
+			if ($this->Pages->getSystemOrderRelatedColumns($page)) {
+				$page->systemOrder = null;
+			}
+			else {
+				$page->systemOrder = $page->hasOriginal('systemOrder') ? $page->getOriginal('systemOrder') : $page->get('systemOrder');
 			}
 		}
 

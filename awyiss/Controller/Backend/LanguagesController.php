@@ -191,7 +191,7 @@ class LanguagesController extends Controller {
 				$language->systemOrder = null;
 			}
 			else {
-				$language->systemOrder = $language->getOriginal('systemOrder');
+				$language->systemOrder = $language->hasOriginal('systemOrder') ? $language->getOriginal('systemOrder') : $language->get('systemOrder');
 			}
 		}
 	}

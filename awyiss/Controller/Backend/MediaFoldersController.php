@@ -282,7 +282,12 @@ class MediaFoldersController extends Controller {
 			}
 		}
 		else {
-			$mediaFolder->systemOrder = null;
+			if ($this->MediaFolders->getSystemOrderRelatedColumns($mediaFolder)) {
+				$mediaFolder->systemOrder = null;
+			}
+			else {
+				$mediaFolder->systemOrder = $mediaFolder->hasOriginal('systemOrder') ? $mediaFolder->getOriginal('systemOrder') : $mediaFolder->get('systemOrder');
+			}
 		}
 	}
 

@@ -256,7 +256,12 @@ class PageTemplatesController extends Controller {
 			}
 		}
 		else {
-			$pageTemplate->systemOrder = null;
+			if ($this->PageTemplates->getSystemOrderRelatedColumns($pageTemplate)) {
+				$pageTemplate->systemOrder = null;
+			}
+			else {
+				$pageTemplate->systemOrder = $pageTemplate->hasOriginal('systemOrder') ? $pageTemplate->getOriginal('systemOrder') : $pageTemplate->get('systemOrder');
+			}
 		}
 
 		$this->Categories->ensurePossibleCategory($pageTemplate);

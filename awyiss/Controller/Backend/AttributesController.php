@@ -219,6 +219,14 @@ class AttributesController extends Controller {
 				$this->Flash->error($ls_error);
 			}
 		}
+		else {
+			if ($this->Attributes->getSystemOrderRelatedColumns($attribute)) {
+				$attribute->systemOrder = null;
+			}
+			else {
+				$attribute->systemOrder = $attribute->hasOriginal('systemOrder') ? $attribute->getOriginal('systemOrder') : $attribute->get('systemOrder');
+			}
+		}
 
 		$this->Categories->ensurePossibleCategory($attribute);
 	}
