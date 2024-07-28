@@ -44,7 +44,7 @@ use RuntimeException;
  * @method \Cake\ORM\Query\SelectQuery findById(int $id)
  * @method \Cake\ORM\Query\SelectQuery addSystemOrderQueryConditions(?SelectQuery $query, \Cake\Datasource\EntityInterface $entity)
  * @method \Awyiss\Authorization\AuthorizationServiceInterface getAuthorizationService()
- * @method int getAuditCount(\Cake\Datasource\EntityInterface $entity)
+ * @method int countAuditCount(\Cake\Datasource\EntityInterface $entity)
  * @method array<\Awyiss\Model\Entity\Audit> getAuditData(\Cake\Datasource\EntityInterface $entity)
  * @method int getHighestSystemOrder(\Cake\Datasource\EntityInterface $entity)
  * @method string|\Awyiss\Authorization\Policy\AbstractGenericPolicy|null getPolicyClass()
