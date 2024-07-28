@@ -57,8 +57,12 @@ class HtmlCleaner {
 	public static function clean(EntityInterface $entity, string $method = self::CLEAN_STRICT, array $fields = []): void {
 		$la_fields = $fields ?: static::getDefaultFields($entity);
 
+		if ($method === 'none') {
+			return;
+		}
+
 		foreach ($la_fields as $ls_field) {
-			if (!$entity->isDirty($ls_field) || $method === 'none') {
+			if (!$entity->get($ls_field) || !is_string($entity->get($ls_field)) || !$entity->isDirty($ls_field)) {
 				continue;
 			}
 
