@@ -14,7 +14,6 @@ use Awyiss\Authentication\Authenticator\SessionAuthenticator;
 use Awyiss\Awyiss;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity\User;
-use Awyiss\Model\Entity\UsersExternal;
 use Awyiss\Routing\Router;
 use Cake\Event\EventDispatcherTrait;
 use Cake\I18n\DateTime;
@@ -147,25 +146,15 @@ class Authentication implements AuthenticationServiceProviderInterface {
 	protected function addDefaultAuthenticators(AuthenticationServiceInterface $service, ServerRequestInterface $request): void {
 		$this->addAuthenticator(SessionAuthenticator::class, [
 			'identify' => function ($lx_user) {
-				if ($lx_user instanceof User || $lx_user instanceof UsersExternal) {
+				if ($lx_user instanceof User) {
 					//Set last_login
 					$lo_checkTime = DateTime::now()->subMinutes(1);
 					if ($lo_checkTime >= $lx_user->lastLogin) {
 						$lx_user->set('lastLogin', DateTime::now());
 
-						if ($lx_user instanceof UsersExternal) {
-							return [
-								'id' => $lx_user->id,
-								'provider_id' => $lx_user->provider_id,
-								'username' => $lx_user->username,
-							];
-						}
-
-
 						return true;
 					}
 				}
-
 
 				return false;
 			},

@@ -64,7 +64,7 @@ class UsergroupsListener implements EventListenerInterface {
 			return;
 		}
 
-		/** @var \Awyiss\Model\Entity\User|\Awyiss\Model\Entity\UsersExternal $lo_currentUser */
+		/** @var \Awyiss\Model\Entity\User $lo_currentUser */
 		$lo_currentUser = $this->getIdentity();
 
 		$lo_now = DateTime::now();

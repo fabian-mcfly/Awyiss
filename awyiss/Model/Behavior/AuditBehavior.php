@@ -8,7 +8,6 @@ use ArrayObject;
 use Authentication\IdentityInterface;
 use Awyiss\Authentication\IdentityAwareTrait;
 use Awyiss\Model\Entity;
-use Awyiss\Model\Entity\UsersExternal;
 use Awyiss\ORM\Association\BelongsToMany;
 use Awyiss\ORM\Association\HasMany;
 use Awyiss\ORM\Association\HasOne;
@@ -586,11 +585,6 @@ class AuditBehavior extends Behavior {
 	protected function getIdentityId(): ?int {
 		$lo_identity = $this->getIdentity();
 		$li_identityId = $lo_identity?->getIdentifier();
-
-		if ($lo_identity instanceof UsersExternal) {
-			$li_identityId *= -1;
-		}
-
 
 		return $li_identityId;
 	}

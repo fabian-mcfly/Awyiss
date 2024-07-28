@@ -2043,66 +2043,6 @@ namespace PHPSTORM_META {
 	);
 
 	expectedArguments(
-		\Awyiss\Model\Entity\UsersExternal::get(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\UsersExternal'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\UsersExternal::getError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\UsersExternal'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\UsersExternal::getInvalidField(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\UsersExternal'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\UsersExternal::getOriginal(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\UsersExternal'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\UsersExternal::has(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\UsersExternal'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\UsersExternal::hasValue(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\UsersExternal'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\UsersExternal::isDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\UsersExternal'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\UsersExternal::isEmpty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\UsersExternal'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\UsersExternal::setDirty(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\UsersExternal'),
-	);
-
-	expectedArguments(
-		\Awyiss\Model\Entity\UsersExternal::setError(),
-		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\UsersExternal'),
-	);
-
-	expectedArguments(
 		\Awyiss\Model\Entity\Widget::get(),
 		0,
 		argumentsSet('entityFields:Awyiss\Model\Entity\Widget'),
@@ -2544,7 +2484,6 @@ namespace PHPSTORM_META {
 			'Usergroups' => \Awyiss\Model\Table\UsergroupsTable::class,
 			'UsergroupsUsers' => \Awyiss\Model\Table\UsergroupsUsersTable::class,
 			'Users' => \Awyiss\Model\Table\UsersTable::class,
-			'UsersExternal' => \Awyiss\Model\Table\UsersExternalTable::class,
 			'WidgetTemplateElements' => \Awyiss\Model\Table\WidgetTemplateElementsTable::class,
 			'WidgetTemplates' => \Awyiss\Model\Table\WidgetTemplatesTable::class,
 			'Widgets' => \Awyiss\Model\Table\WidgetsTable::class,
@@ -2650,7 +2589,6 @@ namespace PHPSTORM_META {
 			'Usergroups' => \Awyiss\Model\Table\UsergroupsTable::class,
 			'UsergroupsUsers' => \Awyiss\Model\Table\UsergroupsUsersTable::class,
 			'Users' => \Awyiss\Model\Table\UsersTable::class,
-			'UsersExternal' => \Awyiss\Model\Table\UsersExternalTable::class,
 			'WidgetTemplateElements' => \Awyiss\Model\Table\WidgetTemplateElementsTable::class,
 			'WidgetTemplates' => \Awyiss\Model\Table\WidgetTemplatesTable::class,
 			'Widgets' => \Awyiss\Model\Table\WidgetsTable::class,
@@ -2698,7 +2636,6 @@ namespace PHPSTORM_META {
 			'Usergroups' => \Awyiss\Model\Table\UsergroupsTable::class,
 			'UsergroupsUsers' => \Awyiss\Model\Table\UsergroupsUsersTable::class,
 			'Users' => \Awyiss\Model\Table\UsersTable::class,
-			'UsersExternal' => \Awyiss\Model\Table\UsersExternalTable::class,
 			'WidgetTemplateElements' => \Awyiss\Model\Table\WidgetTemplateElementsTable::class,
 			'WidgetTemplates' => \Awyiss\Model\Table\WidgetTemplatesTable::class,
 			'Widgets' => \Awyiss\Model\Table\WidgetsTable::class,
@@ -2768,7 +2705,6 @@ namespace PHPSTORM_META {
 			'Usergroups' => \Cake\ORM\Association\BelongsToMany::class,
 			'UsergroupsUsers' => \Cake\ORM\Association\BelongsToMany::class,
 			'Users' => \Cake\ORM\Association\BelongsToMany::class,
-			'UsersExternal' => \Cake\ORM\Association\BelongsToMany::class,
 			'WidgetTemplateElements' => \Cake\ORM\Association\BelongsToMany::class,
 			'WidgetTemplates' => \Cake\ORM\Association\BelongsToMany::class,
 			'Widgets' => \Cake\ORM\Association\BelongsToMany::class,
@@ -2816,7 +2752,6 @@ namespace PHPSTORM_META {
 			'Usergroups' => \Cake\ORM\Association\BelongsTo::class,
 			'UsergroupsUsers' => \Cake\ORM\Association\BelongsTo::class,
 			'Users' => \Cake\ORM\Association\BelongsTo::class,
-			'UsersExternal' => \Cake\ORM\Association\BelongsTo::class,
 			'WidgetTemplateElements' => \Cake\ORM\Association\BelongsTo::class,
 			'WidgetTemplates' => \Cake\ORM\Association\BelongsTo::class,
 			'Widgets' => \Cake\ORM\Association\BelongsTo::class,
@@ -2887,7 +2822,6 @@ namespace PHPSTORM_META {
 			'Usergroups' => \Cake\ORM\Association\HasMany::class,
 			'UsergroupsUsers' => \Cake\ORM\Association\HasMany::class,
 			'Users' => \Cake\ORM\Association\HasMany::class,
-			'UsersExternal' => \Cake\ORM\Association\HasMany::class,
 			'WidgetTemplateElements' => \Cake\ORM\Association\HasMany::class,
 			'WidgetTemplates' => \Cake\ORM\Association\HasMany::class,
 			'Widgets' => \Cake\ORM\Association\HasMany::class,
@@ -2935,7 +2869,6 @@ namespace PHPSTORM_META {
 			'Usergroups' => \Cake\ORM\Association\HasOne::class,
 			'UsergroupsUsers' => \Cake\ORM\Association\HasOne::class,
 			'Users' => \Cake\ORM\Association\HasOne::class,
-			'UsersExternal' => \Cake\ORM\Association\HasOne::class,
 			'WidgetTemplateElements' => \Cake\ORM\Association\HasOne::class,
 			'WidgetTemplates' => \Cake\ORM\Association\HasOne::class,
 			'Widgets' => \Cake\ORM\Association\HasOne::class,
@@ -5496,17 +5429,6 @@ namespace PHPSTORM_META {
 	);
 
 	registerArgumentsSet(
-		'entityFields:Awyiss\Model\Entity\UsersExternal',
-		'id',
-		'label',
-		'last_login',
-		'media_assignments',
-		'provider',
-		'provider_id',
-		'username',
-	);
-
-	registerArgumentsSet(
 		'entityFields:Awyiss\Model\Entity\Widget',
 		'active',
 		'changed_by',
@@ -5686,7 +5608,6 @@ namespace PHPSTORM_META {
 		'usergroups',
 		'usergroups_users',
 		'users',
-		'users_external',
 		'widget_template_elements',
 		'widget_templates',
 		'widgets',

@@ -38,7 +38,7 @@ class SessionAuthenticator extends BaseSessionAuthenticator {
 		$ls_sessionKey = $this->getConfig('sessionKey');
 		/** @var \Cake\Http\Session $lo_session */
 		$lo_session = $request->getAttribute('session');
-		/** @var \Awyiss\Model\Entity\User|\Awyiss\Model\Entity\UsersExternal $lo_user */
+		/** @var \Awyiss\Model\Entity\User $lo_user */
 		$lo_user = $lo_session->read($ls_sessionKey);
 
 		if (empty($lo_user)) {
@@ -59,7 +59,7 @@ class SessionAuthenticator extends BaseSessionAuthenticator {
 				}
 			}
 
-			/** @var \Awyiss\Model\Entity\User|\Awyiss\Model\Entity\UsersExternal $lo_reidentifiedUser */
+			/** @var \Awyiss\Model\Entity\User $lo_reidentifiedUser */
 			$lo_reidentifiedUser = $this->_identifier->reidentify($la_credentials);
 
 			if (empty($lo_reidentifiedUser)) {

@@ -193,7 +193,7 @@ class UsergroupsController extends Controller {
 
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
 			if ($this->Usergroups->save($usergroup, ['asCopy' => (bool)$this->request->getData('save_as_copy')])) {
-				/** @var \Awyiss\Model\Entity\User|\Awyiss\Model\Entity\UsersExternal $lo_currentUser */
+				/** @var \Awyiss\Model\Entity\User $lo_currentUser */
 				$lo_session = $this->request->getSession();
 				$lo_currentUser = $lo_session->read('Auth');
 				$li_userId = $lo_currentUser?->id;

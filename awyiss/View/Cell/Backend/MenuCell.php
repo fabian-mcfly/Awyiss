@@ -103,7 +103,7 @@ class MenuCell extends Cell {
 	 * Retreive the identity attribute from the current request
 	 */
 	protected function _getIdentity(): IdentityPermissionsInterface {
-		/** @var IdentityPermissionsInterface|\Awyiss\Model\Entity\User|\Awyiss\Model\Entity\UsersExternal $lo_identity */
+		/** @var IdentityPermissionsInterface|\Awyiss\Model\Entity\User $lo_identity */
 		$lo_identity = $this->request->getAttribute('identity');
 		if (!($lo_identity instanceof IdentityPermissionsInterface)) {
 			throw new RuntimeException(sprintf('Object `%s` does not implement `%s`', get_class($lo_identity), IdentityPermissionsInterface::class));

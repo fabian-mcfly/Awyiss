@@ -372,7 +372,7 @@ class AuthorizationComponent extends Component {
 	 * Retreive the IdentityInterface from the request.
 	 */
 	protected function _getIdentity(): IdentityPermissionsInterface {
-		/** @var IdentityPermissionsInterface|\Awyiss\Model\Entity\User|\Awyiss\Model\Entity\UsersExternal $lo_identity */
+		/** @var IdentityPermissionsInterface $lo_identity */
 		$lo_identity = $this->getController()->getRequest()->getAttribute('identity');
 		if (!($lo_identity instanceof IdentityPermissionsInterface)) {
 			throw new RuntimeException(sprintf('Object `%s` does not implement `%s`', get_class($lo_identity), IdentityPermissionsInterface::class));

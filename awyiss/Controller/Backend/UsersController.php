@@ -9,7 +9,6 @@ use Awyiss\Awyiss;
 use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity\User;
-use Awyiss\Model\Entity\UsersExternal;
 use Awyiss\Routing\Router;
 use Cake\Event\EventInterface;
 use Cake\Http\Exception\RedirectException;
@@ -222,13 +221,6 @@ class UsersController extends Controller {
 					], ['guard' => false]);
 
 					$this->Users->save($lo_user, ['audit' => ['skip' => true]]);
-				}
-				elseif ($lo_user instanceof UsersExternal) {
-					$lo_usersExternal = $this->fetchTable('UsersExternal');
-					//Track lastLogin
-					$lo_user->set('lastLogin', DateTime::now());
-
-					$lo_usersExternal->save($lo_user, ['audit' => ['skip' => true]]);
 				}
 
 				/** @var \Cake\Http\Session $lo_session */
