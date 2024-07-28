@@ -73,7 +73,7 @@
 							{% if isDefault %}
 								<div class="AuditInfo Hidden"></div>
 							{% else %}
-								<div class="AuditInfo" data-id="{{ configuration.id }}">
+								<div class="AuditInfo" data-id="{{ configuration.id }}" title="">
 									<ul class="AuditInfoList">
 										<li><strong>ID:</strong> {{ configuration.id }}</li>
 										{% set description = configuration.description ?? configuration.configOption.description %}
