@@ -315,6 +315,7 @@ class ContentTemplatesController extends Controller {
 			// Compare the positions
 			return $lx_aPos <=> $lx_bPos;
 		});
+		$la_availableContentAttributes = array_combine(array_column($la_availableContentAttributes, 'identifier'), $la_availableContentAttributes);
 
 		$la_columnSpans = $this->ContentTemplates->ContentTemplateElements->getColumnSpans();
 		$la_columnSpans = array_map(function (ColumnInterface $column): string {

@@ -162,9 +162,9 @@
 				{% endset %}
 
 				{% if fieldsetElements[key] is not defined %}
-					{% set fieldsetElements = fieldsetElements|merge({(key): [content]}) %}
+					{% set fieldsetElements = fieldsetElements|merge({(key): {(availableElement): content}}) %}
 				{% else %}
-					{% set fieldsetElements = fieldsetElements|merge({(key): fieldsetElements[key]|merge([content])}) %}
+					{% set fieldsetElements = fieldsetElements|merge({(key): fieldsetElements[key]|merge({(availableElement): content})}) %}
 				{% endif %}
 			{% endfor %}
 
@@ -218,15 +218,15 @@
 						</li>
 					{% endblock %}
 
-					{% if availableElement in assignedContentElements %}
+					{% if 'attributes.' ~ contentAttribute.identifier in assignedContentElements %}
 						{% set elementCounter = elementCounter + 1 %}
 					{% endif %}
 				{% endset %}
 
 				{% if fieldsetElements[key] is not defined %}
-					{% set fieldsetElements = fieldsetElements|merge({(key): [content]}) %}
+					{% set fieldsetElements = fieldsetElements|merge({(key): {('attributes.' ~ contentAttribute.identifier): content}}) %}
 				{% else %}
-					{% set fieldsetElements = fieldsetElements|merge({(key): fieldsetElements[key]|merge([content])}) %}
+					{% set fieldsetElements = fieldsetElements|merge({(key): fieldsetElements[key]|merge({('attributes.' ~ contentAttribute.identifier): content})}) %}
 				{% endif %}
 			{% endfor %}
 
@@ -245,7 +245,13 @@
 								<legend>{{ fieldset }}</legend>
 
 								<ul class="List ContentElements-List SortableList" data-fieldset="{{ key }}">
-									{{ fieldsetElements[ key ]|join('')|raw }}
+									{% if fieldsetElements[key] is defined %}
+										{% for assignedContentElement in assignedContentElements %}
+											{% if fieldsetElements[key][assignedContentElement] is defined %}
+												{{ fieldsetElements[key][assignedContentElement]|raw }}
+											{% endif %}
+										{% endfor %}
+									{% endif %}
 								</ul>
 							</fieldset>
 						{% endfor %}
