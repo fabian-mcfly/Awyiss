@@ -53,6 +53,10 @@ class AuditBehavior extends Behavior {
 			'beforeDelete',
 			'afterSave',
 		],
+		'implementedMethods' => [
+			'countAuditData' => 'countAuditData',
+			'getAuditData' => 'getAuditData',
+		],
 		'ignoredFields' => [
 			'createdOn',
 			'createdBy',
@@ -173,6 +177,42 @@ class AuditBehavior extends Behavior {
 
 
 		return $query;
+	}
+
+
+	/**
+	 * Returns the audit data count for the provided entity.
+	 *
+	 * @param \Cake\Datasource\EntityInterface $entity
+	 * @return int
+	 */
+	public function countAuditData(EntityInterface $entity): int {
+		return $this->_auditDataQuery($entity)->count();
+	}
+
+
+	/**
+	 * Returns the audit data for the provided entity.
+	 *
+	 * @param \Cake\Datasource\EntityInterface $entity
+	 * @return array
+	 */
+	public function getAuditData(EntityInterface $entity): array {
+		return $this->_auditDataQuery($entity)->toArray();
+	}
+
+
+	/**
+	 * @param \Cake\Datasource\EntityInterface $entity
+	 * @return \Cake\ORM\Query\SelectQuery
+	 */
+	protected function _auditDataQuery(EntityInterface $entity): SelectQuery {
+		$lo_auditModel = $this->getTableLocator()->get('Audit');
+
+		return $lo_auditModel->find('all')->where([
+			'scope' => $this->table()->getTable(),
+			'parent_id' => $entity->get('id'),
+		])->contain(['Users'])->orderBy(['Audit.created_on' => 'DESC']);
 	}
 
 
@@ -584,9 +624,8 @@ class AuditBehavior extends Behavior {
 	 */
 	protected function getIdentityId(): ?int {
 		$lo_identity = $this->getIdentity();
-		$li_identityId = $lo_identity?->getIdentifier();
 
-		return $li_identityId;
+		return $lo_identity?->getIdentifier();
 	}
 
 
