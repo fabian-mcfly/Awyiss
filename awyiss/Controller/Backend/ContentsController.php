@@ -226,6 +226,8 @@ class ContentsController extends Controller {
 		}
 
 		$this->setViewVars($lo_content);
+
+		$this->set('auditDataCount', $this->Contents->countAuditData($lo_content));
 	}
 
 
@@ -382,6 +384,7 @@ class ContentsController extends Controller {
 	 * @throws \ReflectionException|\Exception
 	 * @noinspection DuplicatedCode
 	 */
+	#[NoDirectAccess]
 	public function duplicateConfiguration(): void {
 		$li_pageId = (int)$this->request->getParam('pageId');
 		$this->forPage($li_pageId);
@@ -461,6 +464,7 @@ class ContentsController extends Controller {
 	 * @throws \ReflectionException
 	 * @throws \Exception
 	 */
+	#[NoDirectAccess]
 	public function moduleConfiguration(): void {
 		$this->Categories->disable();
 
