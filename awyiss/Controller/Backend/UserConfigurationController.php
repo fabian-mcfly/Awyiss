@@ -125,6 +125,10 @@ class UserConfigurationController extends Controller {
 			return $configOptions->isPersonalizable();
 		});
 
+		// Deeply clean the array and remove Configuration objects if a UserConfiguration object exists in the same array
+		$la_configOptions[ Awyiss::REALM_BACKEND ] = $this->cleanConfigurationArray($la_configOptions[ Awyiss::REALM_BACKEND ]);
+
+
 		$this->set([
 			'configuration' => $la_configuration,
 			'mergedConfiguration' => $la_configOptions,
@@ -353,5 +357,29 @@ class UserConfigurationController extends Controller {
 		})->toArray();
 
 		return Hash::expand($la_configuration);
+	}
+
+	/**
+	 * Deeply clean the array and remove Configuration objects if a UserConfiguration object exists in the same array
+	 *
+	 * @param array $configurations
+	 * @return array
+	 */
+	protected function cleanConfigurationArray(array $configurations): array {
+		$la_configurations = $configurations;
+
+		foreach ($la_configurations as $ls_key => $lx_configOptions) {
+			if (is_array($lx_configOptions)) {
+				if (isset($lx_configOptions[0]) && $lx_configOptions[0] instanceof Configuration && count($la_configurations[ $ls_key ]) > 1) {
+					unset($la_configurations[ $ls_key ][0]);
+					$la_configurations[ $ls_key ] = array_values($la_configurations[ $ls_key ]);
+				}
+				else {
+					$la_configurations[ $ls_key ] = $this->cleanConfigurationArray($lx_configOptions);
+				}
+			}
+		}
+
+		return $la_configurations;
 	}
 }
