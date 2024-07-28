@@ -2,19 +2,25 @@
 
 import ResizableContents from 'ResizableContents';
 
+/**
+ * Class to handle the contents overview and form.
+ */
 export default class ContentsController {
 	/**
 	 * The event handler instance.
+	 *
 	 * @type {EventHandler}
 	 */
 	eventHandler = window.eventHandler;
 	/**
 	 * The context menu instance.
+	 *
 	 * @type {HTMLElement}
 	 */
 	contextMenu;
 	/**
 	 * The resizable handler instance.
+	 *
 	 * @type {ResizableContents}
 	 */
 	resizeableContent;
@@ -39,6 +45,8 @@ export default class ContentsController {
 
 	/**
 	 * Initialize the logic for the form.
+	 *
+	 * @returns {void}
 	 */
 	initForm() {
 		const duplicateOfConfiguration = new DuplicateOfConfiguration();
@@ -50,6 +58,8 @@ export default class ContentsController {
 	 * Enable resizing of the contents,
 	 * disallow moving contents into areas they are not allowed to be in
 	 * and add a context menu to the list items when they are narrow.
+	 *
+	 * @returns {void}
 	 */
 	initOverview() {
 		const nestedListHandler = window.nestedListHandler;
@@ -158,17 +168,26 @@ export default class ContentsController {
 	}
 }
 
-class DuplicateOfConfiguration {
+/**
+ * Class to handle the configuration of the duplicate of field.
+ */
+export class DuplicateOfConfiguration {
 	/**
-	 * @type {HTMLDialogElement} overlay - The overlay element.
+	 * The overlay element.
+	 *
+	 * @type {HTMLDialogElement} overlay
 	 */
 	dialog;
 	/**
-	 * @type {HTMLInputElement} duplicateOfInput - The input field for the duplicate of
+	 * The input field for the duplicate of
+	 *
+	 * @type {HTMLInputElement} duplicateOfInput
 	 */
 	duplicateOfInput;
 	/**
-	 * @type {boolean} isFormChanged - Whether the form has been changed.
+	 * Whether the form has been changed when opening the overlay.
+	 *
+	 * @type {boolean} isFormChanged
 	 */
 	isFormChanged = false;
 
@@ -180,14 +199,14 @@ class DuplicateOfConfiguration {
 			this.duplicateOfInput.addEventListener('click', event => this.openOverlay(event));
 		}
 
-		this.isFormChanged = window.formLeaveConfirmation.isFormChanged;
-
 		const observer = window.observer;
 		observer.addObserver(this.observeMutations.bind(this));
 	}
 
 	/**
 	 * Create the dialog element.
+	 *
+	 * @returns {void}
 	 */
 	createDialog() {
 		this.dialog = document.createElement('dialog');
@@ -238,6 +257,7 @@ class DuplicateOfConfiguration {
 
 	/**
 	 * Fetch the duplicate configuration form.
+	 *
 	 * @returns {Promise<Element>}
 	 */
 	async fetchDuplicateConfiguration() {
@@ -262,6 +282,7 @@ class DuplicateOfConfiguration {
 		return doc.querySelector('#Content')?.querySelector('.Form');
 	}
 
+
 	/**
 	 * Open the overlay to configure the module.
 	 *
@@ -271,6 +292,8 @@ class DuplicateOfConfiguration {
 	 * @returns {Promise<void>}
 	 */
 	async openOverlay(event, editor, node) {
+		this.isFormChanged = window.formLeaveConfirmation.isFormChanged;
+
 		if (!this.dialog) {
 			this.createDialog();
 		}
@@ -286,6 +309,7 @@ class DuplicateOfConfiguration {
 		form.classList.remove('Contents');
 		this.dialog.appendChild(form);
 	}
+
 
 	/**
 	 * Handle the click event on the dialog.
@@ -329,6 +353,7 @@ class DuplicateOfConfiguration {
 			this.dialog.close();
 		}
 	}
+
 
 	/**
 	 * Observe mutations in the DOM and set up the duplicate of configuration.
