@@ -35,6 +35,17 @@ class AuditTable extends Table {
 
 
 	/**
+	 * @inheritDoc
+	 */
+	public function initializeAssociations(): void {
+		$this->belongsTo('Users', [
+			'foreignKey' => 'created_by',
+			'joinType' => 'INNER',
+		]);
+	}
+
+
+	/**
 	 * Returns the default validator object.
 	 *
 	 * @param Validator $validator The validator that can be modified to
