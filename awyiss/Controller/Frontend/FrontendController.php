@@ -591,6 +591,11 @@ class FrontendController extends AppController {
 		$ls_slug = trim($ls_slug, '/');
 		$ls_slug = '/' . $ls_slug . '/';
 
+		// Don't track resized or preview images
+		if (str_contains($ls_slug, '/_resized') || str_contains($ls_slug, '_preview/')) {
+			return;
+		}
+
 		/**
 		 * Check if an entry for the current slug already exists within the last 5 minutes
 		 * If it does, don't track it again
