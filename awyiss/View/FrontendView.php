@@ -4,6 +4,7 @@
 namespace Awyiss\View;
 
 
+use Awyiss\Awyiss;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Routing\Router;
 use Awyiss\Utility\Inflector;
@@ -102,7 +103,12 @@ class FrontendView extends AppView {
 		// Unset language properties
 		$lo_frontendLanguage = LocaleMiddleware::getLanguage();
 		if ($lo_frontendLanguage) {
-			$this->addHelper('Time', ['outputTimezone' => $lo_frontendLanguage->timezone]);
+			$ls_timezone = Configure::read('Awyiss.System.' . Awyiss::getRealm() . '.timezone');
+			if ($ls_timezone === 'auto') {
+				$ls_timezone = $lo_frontendLanguage->timezone;
+			}
+
+			$this->addHelper('Time', ['outputTimezone' => $ls_timezone]);
 
 			$lo_frontendLanguage = clone $lo_frontendLanguage;
 

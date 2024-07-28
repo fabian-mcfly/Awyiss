@@ -8,6 +8,7 @@ use Awyiss\Awyiss;
 use Awyiss\Configuration\AbstractConfigOptions;
 use Awyiss\Configuration\ConfigOption;
 use Awyiss\Configuration\ConfigOptionType;
+use DateTimeZone;
 
 
 /**
@@ -112,6 +113,20 @@ class SystemConfigOptions extends AbstractConfigOptions {
 					identifier: 'titleSeparator',
 				),
 			],
+			new ConfigOption(
+				defaultValue: 'auto',
+				identifier: 'timezone',
+				localizable: false,
+				nullable: false,
+				personalizable: true,
+				type: ConfigOptionType::ListKey,
+				values: function () {
+					$la_timezones = DateTimeZone::listIdentifiers();
+					$la_timezones = array_combine($la_timezones, $la_timezones);
+
+					return ['auto' => __d('system', 'timezone_automatic')] + $la_timezones;
+				},
+			),
 		]);
 	}
 }

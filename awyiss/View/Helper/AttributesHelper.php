@@ -6,10 +6,12 @@ namespace Awyiss\View\Helper;
 
 use Awyiss\Attribute\AttributeOptionsInterface;
 use Awyiss\Attribute\AttributeOptionsProvider;
+use Awyiss\Awyiss;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity\Attribute;
 use Awyiss\Model\Entity\Language;
 use Cake\Collection\Collection;
+use Cake\Core\Configure;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 use Cake\View\Helper;
@@ -390,8 +392,17 @@ class AttributesHelper extends Helper {
 			}
 
 			if ($options['type'] == 'datetime') {
+				$ls_timezone = Configure::read('Awyiss.System.' . Awyiss::getRealm() . '.timezone');
+				if ($ls_timezone === 'auto') {
+					$ls_timezone = $lo_language->timezone;
+				}
+
 				/** @noinspection PhpVariableNamingConventionInspection */
-				$options['timezone'] = $lo_language->timezone;
+				$options['timezone'] = $ls_timezone;
+				/** @noinspection PhpVariableNamingConventionInspection */
+				$options['templateVars']['additionalContent'] ??= '';
+				/** @noinspection PhpVariableNamingConventionInspection */
+				$options['templateVars']['additionalContent'] .= '<span class="Timezone">' . $ls_timezone . '</span>';
 			}
 
 			$ls_field = '_translations.' . $lo_language->shortcode . '.' . $ls_field;
@@ -445,7 +456,15 @@ class AttributesHelper extends Helper {
 		}
 
 		if (!isset($la_options['timezone']) && $la_options['type'] == 'datetime') {
-			$la_options['timezone'] = $lo_language->timezone;
+			$ls_timezone = Configure::read('Awyiss.System.' . Awyiss::getRealm() . '.timezone');
+			if ($ls_timezone === 'auto') {
+				$ls_timezone = $lo_language->timezone;
+			}
+
+			$la_options['timezone'] = $ls_timezone;
+
+			$la_options['templateVars']['additionalContent'] ??= '';
+			$la_options['templateVars']['additionalContent'] .= '<span class="Timezone">' . $ls_timezone . '</span>';
 		}
 
 		if (!isset($la_options['required']) || $la_options['required'] !== false) {

@@ -9,6 +9,7 @@ use Awyiss\Awyiss;
 use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Routing\Router;
+use Cake\Core\Configure;
 use Cake\Http\Exception\RedirectException;
 use Cake\ORM\Query\SelectQuery;
 use Cake\Utility\Inflector;
@@ -41,7 +42,7 @@ class AuditController extends Controller {
 	 * otherwise they are set to 'Unknown'.
 	 *
 	 * @return void
-	 * @throws \Cake\Http\Exception\RedirectException If the id or scope is not provided in the request parameters
+	 * @throws \Cake\Http\Exception\RedirectException|\Exception If the id or scope is not provided in the request parameters
 	 */
 	#[NoDirectAccess]
 	public function info(): void {
@@ -77,14 +78,17 @@ class AuditController extends Controller {
 				$ls_changedByUser = $lo_record->get('changedBy') ? __('user_unknown') : __('user_system');
 			}
 
-			$lo_backendLanguage = LocaleMiddleware::getLanguage(Awyiss::REALM_BACKEND);
+			$ls_timezone = Configure::read('Awyiss.System.' . Awyiss::getRealm() . '.timezone');
+			if ($ls_timezone === 'auto') {
+				$ls_timezone = LocaleMiddleware::getLanguage(Awyiss::REALM_BACKEND)->timezone;
+			}
 
 			// Set the data to be serialized
 			$this->set([
 				'createdBy' => $ls_createdByUser,
-				'createdOn' => $lo_record->get('createdOn')?->nice($lo_backendLanguage->timezone),
+				'createdOn' => $lo_record->get('createdOn')?->nice($ls_timezone),
 				'changedBy' => $ls_changedByUser,
-				'changedOn' => $lo_record->get('changedOn')?->nice($lo_backendLanguage->timezone),
+				'changedOn' => $lo_record->get('changedOn')?->nice($ls_timezone),
 				'created' => __('created_info_label'),
 				'changed' => __('changed_info_label'),
 			]);

@@ -95,6 +95,9 @@ msgstr "Mittel"
 msgid "interface_scale_regular"
 msgstr "Normal"
 
+msgid "timezone_automatic"
+msgstr "Automatisch"
+
 msgid "category_filter_label"
 msgstr "Kategorie"
 

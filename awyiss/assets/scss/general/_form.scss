@@ -197,6 +197,50 @@ textarea {
 		}
 	}
 
+	&Type-Datetime {
+		display:flex;
+		flex-wrap:wrap;
+
+		.Label {
+			width:100%;
+			flex:0 0 100%;
+		}
+
+		input {
+			width:auto;
+			border-top-right-radius:0;
+			border-bottom-right-radius:0;
+			flex:1 1 auto;
+			order:2;
+		}
+
+		div.Error {
+			width:100%;
+			flex:0 0 100%;
+			order:4;
+		}
+
+		.Timezone {
+			padding:0 10px;
+			border-radius:0 5px 5px 0;
+			box-shadow:-3px 0 4px inset rgba(0, 0, 0, .25);
+			background-color:var(--colorMedium);
+			color:var(--colorBright);
+			font-size:.8rem;
+			line-height:52px;
+			order:3;
+			cursor:default;
+
+			.🌚 & {
+				background-color:var(--colorBackgroundContentDarkMode);
+			}
+
+			.Scale-Small & {
+				line-height:40px;
+			}
+		}
+	}
+
 	&Type-Font {
 		display:grid;
 		margin-bottom:0;

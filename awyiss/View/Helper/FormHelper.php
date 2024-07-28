@@ -7,6 +7,7 @@ namespace Awyiss\View\Helper;
 use Awyiss\Awyiss;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\View\StringTemplate;
+use Cake\Core\Configure;
 use Cake\Datasource\EntityInterface;
 use Cake\Utility\Inflector;
 use Cake\View\Form\EntityContext;
@@ -160,8 +161,16 @@ class FormHelper extends BaseFormHelper {
 		}
 
 		if (!isset($la_options['timezone']) && $this->_inputType($fieldName, $la_options) === 'datetime') {
-			$lo_language = $la_options['language'] ?? LocaleMiddleware::getLanguage(null);
-			$la_options['timezone'] = $lo_language->timezone;
+			$ls_timezone = Configure::read('Awyiss.System.' . Awyiss::getRealm() . '.timezone');
+			if ($ls_timezone === 'auto') {
+				$lo_language = $la_options['language'] ?? LocaleMiddleware::getLanguage(null);
+				$ls_timezone = $lo_language->timezone;
+			}
+
+			$la_options['timezone'] = $ls_timezone;
+
+			$la_options['templateVars']['additionalContent'] ??= '';
+			$la_options['templateVars']['additionalContent'] .= '<span class="Timezone">' . $ls_timezone . '</span>';
 		}
 
 

@@ -8,6 +8,7 @@ use Awyiss\Awyiss;
 use Awyiss\I18n\MessagesFileLoader;
 use Awyiss\Model\Entity\Language;
 use Awyiss\Routing\Router;
+use Cake\Core\Configure;
 use Cake\Database\TypeFactory;
 use Cake\Datasource\FactoryLocator;
 use Cake\I18n\I18n;
@@ -107,7 +108,14 @@ class LocaleMiddleware implements MiddlewareInterface {
 		if ($lo_language) {
 			ini_set('intl.default_locale', $lo_language->locale);
 			I18n::setLocale($lo_language->locale);
-			TypeFactory::build('datetime')->setUserTimezone($lo_language->timezone);
+
+			$ls_timezone = Configure::read('Awyiss.System.' . static::getRealm() . '.timezone');
+			if ($ls_timezone !== 'auto') {
+				TypeFactory::build('datetime')->setUserTimezone($ls_timezone);
+			}
+			else {
+				TypeFactory::build('datetime')->setUserTimezone($lo_language->timezone);
+			}
 
 			$lo_tableLocator = FactoryLocator::get('Table');
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */

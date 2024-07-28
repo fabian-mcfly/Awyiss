@@ -7,6 +7,7 @@ namespace Awyiss\View;
 use Awyiss\Awyiss;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Routing\Router;
+use Cake\Core\Configure;
 
 
 /**
@@ -91,7 +92,12 @@ class BackendView extends AppView {
 
 		$lo_backendLanguage = LocaleMiddleware::getLanguage(Awyiss::REALM_BACKEND);
 		if ($lo_backendLanguage) {
-			$this->addHelper('Time', ['outputTimezone' => $lo_backendLanguage->timezone]);
+			$ls_timezone = Configure::read('Awyiss.System.' . Awyiss::getRealm() . '.timezone');
+			if ($ls_timezone === 'auto') {
+				$ls_timezone = $lo_backendLanguage->timezone;
+			}
+
+			$this->addHelper('Time', ['outputTimezone' => $ls_timezone]);
 
 			$lo_backendLanguage = clone $lo_backendLanguage;
 
