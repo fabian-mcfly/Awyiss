@@ -507,7 +507,7 @@ class ContentsController extends Controller {
 		$la_data = $this->formatDataAttributes($la_data);
 
 		$lo_duplicateOf = null;
-		if (isset($la_data['duplicate_of'])) {
+		if (!empty($la_data['duplicate_of'])) {
 			/** @var \Awyiss\Model\Entity\Content $lo_duplicateOf */
 			$lo_duplicateOf = $this->Contents->findById($la_data['duplicate_of'])->first();
 			if ($lo_duplicateOf) {
