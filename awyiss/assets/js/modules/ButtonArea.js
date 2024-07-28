@@ -70,7 +70,7 @@ export default class ButtonArea {
 	 */
 	checkWidths() {
 		// Widest element is either h1 or h2
-		const widestElement = this.h1.offsetWidth > this.h2.offsetWidth ? this.h1 : this.h2;
+		const widestElement = this.h1.offsetWidth > (this.h2?.offsetWidth ?? 0) ? this.h1 : this.h2;
 
 		if (widestElement.offsetWidth + this.buttonArea.offsetWidth + 40 <= this.parent.offsetWidth) {
 			// If the widths fit, add the class 'CannotMoveUpwards' to the .ButtonArea element
