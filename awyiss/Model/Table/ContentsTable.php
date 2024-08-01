@@ -18,7 +18,6 @@ use Cake\Database\Schema\TableSchemaInterface;
 use Cake\Datasource\Exception\InvalidPrimaryKeyException;
 use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Datasource\FactoryLocator;
-use Cake\Log\LogTrait;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Utility\Inflector;
@@ -44,9 +43,6 @@ use RuntimeException;
  * @method \Cake\Collection\CollectionInterface getPossibleParents(\Awyiss\Model\Entity $entity, \Cake\Collection\CollectionInterface $threadedEntities)
  */
 class ContentsTable extends Table {
-	use LogTrait;
-
-
 	/**
 	 * @inheritDoc
 	 */
