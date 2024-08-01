@@ -130,7 +130,7 @@ class Content extends Entity {
 	 */
 	public function getChildren(array $options = []): ?CollectionInterface {
 		/** @var \Awyiss\Model\Table\ContentsTable $lo_table */
-		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
+		$lo_table = FactoryLocator::get('Table')->get('Contents');
 
 
 		return $lo_table->getChildren($this, $options);
@@ -144,7 +144,7 @@ class Content extends Entity {
 	 */
 	public function getNestedChildren(array $options = [], int $currentLevel = 0): ?CollectionInterface {
 		/** @var \Awyiss\Model\Table\ContentsTable $lo_table */
-		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
+		$lo_table = FactoryLocator::get('Table')->get('Contents');
 
 
 		return $lo_table->getNestedChildren($this, $options, $currentLevel);
@@ -158,7 +158,7 @@ class Content extends Entity {
 	 */
 	public function getParent(array $options = []): ?self {
 		/** @var \Awyiss\Model\Table\ContentsTable $lo_table */
-		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
+		$lo_table = FactoryLocator::get('Table')->get('Contents');
 
 
 		return $lo_table->getParent($this, $options);
@@ -172,7 +172,7 @@ class Content extends Entity {
 	 */
 	public function getParents(array $options = [], int $currentLevel = 0): ?CollectionInterface {
 		/** @var \Awyiss\Model\Table\ContentsTable $lo_table */
-		$lo_table = FactoryLocator::get('Table')->get($this->getSource());
+		$lo_table = FactoryLocator::get('Table')->get('Contents');
 
 
 		return $lo_table->getParents($this, $options, $currentLevel);
@@ -203,7 +203,7 @@ class Content extends Entity {
 				$lo_content = $this->loadDuplicatedContent();
 
 				if ($lo_content) {
-					$ls_title = __('duplicate_of') . ': ' . $lo_content->label . ' (ID: ' . $lo_content->id . ')';
+					$ls_title = __d('contents', 'duplicate_of') . ': ' . $lo_content->label . ' (ID: ' . $lo_content->id . ')';
 					break;
 				}
 			}
@@ -222,7 +222,7 @@ class Content extends Entity {
 				break;
 			}
 
-			$ls_title = $this->cleanTitle($ls_title);
+			$ls_title = $this->cleanTitle((string)$ls_title);
 
 			if (!empty($ls_title)) {
 				if ($ls_column === 'title' && $this->titleTag) {
@@ -251,7 +251,7 @@ class Content extends Entity {
 	protected function _getColumn(): array {
 		if (!isset(static::$columnWidths)) {
 			/** @var \Awyiss\Model\Table\ContentsTable $lo_table */
-			$lo_table = FactoryLocator::get('Table')->get($this->getSource());
+			$lo_table = FactoryLocator::get('Table')->get('Contents');
 			static::$columnWidths = $lo_table->getColumnWidths();
 			static::$columnIndents = $lo_table->getColumnIndents();
 		}
@@ -358,7 +358,7 @@ class Content extends Entity {
 		$lo_content = $this->duplicateOfContent;
 
 		if (!$lo_content) {
-			$lo_table = FactoryLocator::get('Table')->get($this->getSource());
+			$lo_table = FactoryLocator::get('Table')->get('Contents');
 			$lo_table->loadInto($this, ['DuplicateOfContents']);
 			/** @noinspection PhpConditionAlreadyCheckedInspection */
 			$lo_content = $this->duplicateOfContent;
