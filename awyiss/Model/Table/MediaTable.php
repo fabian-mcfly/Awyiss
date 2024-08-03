@@ -80,9 +80,7 @@ class MediaTable extends Table {
 			'saveStrategy' => 'replace',
 		]);
 
-		$this->belongsTo('MediaFolders', [
-			'joinType' => 'INNER',
-		]);
+		$this->belongsTo('MediaFolders');
 
 		$this->hasMany('MediaResizedImages', [
 			'cascadeCallbacks' => true,

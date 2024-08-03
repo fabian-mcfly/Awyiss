@@ -64,15 +64,12 @@ class MenuEntriesTable extends Table {
 	 * @inheritDoc
 	 */
 	public function initializeAssociations(): void {
-		$this->belongsTo('Menus', [
-			'joinType' => 'INNER',
-		]);
+		$this->belongsTo('Menus');
 
 		$this->belongsTo('Languages', [
 			'bindingKey' => 'shortcode',
 			'conditions' => ['realm' => Awyiss::REALM_FRONTEND],
 			'foreignKey' => 'language_shortcode',
-			'joinType' => 'INNER',
 		]);
 	}
 

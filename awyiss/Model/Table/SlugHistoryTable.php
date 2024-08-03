@@ -32,7 +32,6 @@ class SlugHistoryTable extends Table {
 	 * @inheritDoc
 	 */
 	public function initializeAssociations(): void {
-
 		$this->belongsTo('Pages', [
 			'finder' => [
 				'all' => [
@@ -40,7 +39,6 @@ class SlugHistoryTable extends Table {
 				],
 			],
 			'foreignKey' => 'page_id',
-			'joinType' => 'INNER',
 		]);
 	}
 

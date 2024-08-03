@@ -105,19 +105,15 @@ class PagesTable extends Table {
 			'bindingKey' => 'shortcode',
 			'conditions' => ['realm' => Awyiss::REALM_FRONTEND],
 			'foreignKey' => 'language_shortcode',
-			'joinType' => 'INNER',
 		]);
 
-		$this->belongsTo('PageRoles', [
-			'joinType' => 'INNER',
-		]);
+		$this->belongsTo('PageRoles');
 
 		$this->belongsTo('PageTemplates', [
 			'bindingKey' => [
 				'id',
 				'page_role_id',
 			],
-			'joinType' => 'INNER',
 			'foreignKey' => [
 				'page_template_id',
 				'page_role_id',

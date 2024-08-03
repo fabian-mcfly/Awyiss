@@ -107,9 +107,7 @@ class WidgetsTable extends Table {
 	 * @inheritDoc
 	 */
 	public function initializeAssociations(): void {
-		$this->belongsTo('WidgetTemplates', [
-			'joinType' => 'INNER',
-		]);
+		$this->belongsTo('WidgetTemplates');
 	}
 
 

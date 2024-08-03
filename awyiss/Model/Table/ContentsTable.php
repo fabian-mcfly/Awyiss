@@ -116,9 +116,7 @@ class ContentsTable extends Table {
 			'joinType' => 'INNER',
 		]);
 
-		$this->belongsTo('ContentTemplates', [
-			'joinType' => 'INNER',
-		]);
+		$this->belongsTo('ContentTemplates');
 
 		$this->hasMany('DuplicatingContents', [
 			'bindingKey' => 'duplicate_of',
@@ -677,7 +675,6 @@ class ContentsTable extends Table {
 				'bindingKey' => 'id',
 				'finder' => 'forCurrentLanguage',
 				'foreignKey' => 'page_id',
-				'joinType' => 'INNER',
 				'propertyName' => 'page',
 			]);
 

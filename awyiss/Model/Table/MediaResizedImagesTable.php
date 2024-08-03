@@ -39,9 +39,7 @@ class MediaResizedImagesTable extends Table {
 	public function initialize(array $config): void {
 		parent::initialize($config);
 
-		$this->belongsTo('Media', [
-			'joinType' => 'INNER',
-		]);
+		$this->belongsTo('Media');
 	}
 
 

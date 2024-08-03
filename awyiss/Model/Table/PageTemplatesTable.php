@@ -63,9 +63,7 @@ class PageTemplatesTable extends Table {
 			'through' => 'PageTemplateContentAreas',
 		]);
 
-		$this->belongsTo('PageRoles', [
-			'joinType' => 'INNER',
-		]);
+		$this->belongsTo('PageRoles');
 
 		$this->hasMany('Pages', [
 			'finder' => [

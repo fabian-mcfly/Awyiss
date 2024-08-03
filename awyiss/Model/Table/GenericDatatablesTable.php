@@ -88,7 +88,6 @@ abstract class GenericDatatablesTable extends Table {
 			'bindingKey' => 'shortcode',
 			'conditions' => ['realm' => Awyiss::REALM_FRONTEND],
 			'foreignKey' => 'language_shortcode',
-			'joinType' => 'INNER',
 		]);
 	}
 
