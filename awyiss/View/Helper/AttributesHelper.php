@@ -204,7 +204,7 @@ class AttributesHelper extends Helper {
 		$this->prepareValue($fieldName, $la_options);
 
 		if ($attributeOptions) {
-			$la_options = $attributeOptions->getAttributeOptions($fieldName, $la_options, $this->Form->context());
+			$la_options = $attributeOptions->getAttributeOptionsAttributes($fieldName, $la_options, $this->Form->context());
 		}
 
 		$ls_field = $fieldName;

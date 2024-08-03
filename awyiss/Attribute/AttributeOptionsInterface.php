@@ -24,6 +24,15 @@ interface AttributeOptionsInterface {
 
 
 	/**
+	 * Returns the options for the given identifier
+	 *
+	 * @param string $identifier
+	 * @return \Awyiss\Attribute\AttributeOptions|null
+	 */
+	public function getAttributeOption(string $identifier): ?AttributeOptions;
+
+
+	/**
 	 * Return the options found under the path provided.
 	 *
 	 * @param string $identifier
@@ -33,7 +42,7 @@ interface AttributeOptionsInterface {
 	 * @see AttributeOptions
 	 * @see \Cake\Utility\Hash::get()
 	 */
-	public function getAttributeOptions(string $identifier, array $currentOptions = [], ?ContextInterface $context = null): array;
+	public function getAttributeOptionsAttributes(string $identifier, array $currentOptions = [], ?ContextInterface $context = null): array;
 
 
 	/**

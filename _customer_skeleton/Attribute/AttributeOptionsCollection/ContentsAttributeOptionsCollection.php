@@ -23,7 +23,7 @@ class ContentsAttributeOptionsCollection extends AttributeOptionsCollection {
 	public function initializeAttributeOptions (): void {
 		$this->add([
 			'backgroundColor' => [
-				/*'disabled' => function(EntityInterface $entity, array &$currentOptions) {
+				/*'disabled' => function(?EntityInterface $entity, array &$currentOptions) {
 					$lo_date = new FrozenDate('now', $currentOptions['timezone'] ?? NULL);
 
 					for ($i = 0; $i <= 5; $i++) {
@@ -33,7 +33,7 @@ class ContentsAttributeOptionsCollection extends AttributeOptionsCollection {
 
 					return $la_options;
 				},*/
-				'options' => function(EntityInterface $entity, &$currentOptions) {
+				'options' => function(?EntityInterface $entity, &$currentOptions) {
 					$la_options = [
 						'text' => 'Text',
 						'dark' => 'Dunkel',

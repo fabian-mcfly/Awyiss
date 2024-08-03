@@ -86,18 +86,29 @@ abstract class AttributeOptionsCollection extends ArrayIterator implements Attri
 	/**
 	 * @inheritDoc
 	 */
-	public function getAttributeOptions(string $identifier, array $currentOptions = [], ?ContextInterface $context = null): array {
+	public function getAttributeOption(string $identifier): ?AttributeOptions {
+		$ls_identifier = AttributeOptionsProvider::sanitizeIdentifier($identifier);
+
+		/** @var AttributeOptions $lo_attributeOptions */
+		return Hash::get($this, $ls_identifier);
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getAttributeOptionsAttributes(string $identifier, array $currentOptions = [], ?ContextInterface $context = null): array {
 		$ls_identifier = AttributeOptionsProvider::sanitizeIdentifier($identifier);
 
 		/** @var AttributeOptions $lo_attributeOptions */
 		$lo_attributeOptions = Hash::get($this, $ls_identifier);
+
 		if (!$lo_attributeOptions) {
 			return $currentOptions;
 		}
 
-
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		return $lo_attributeOptions->buildOptions($currentOptions, $context->entity());
+		return $lo_attributeOptions->buildOptions($currentOptions, $context?->entity());
 	}
 
 

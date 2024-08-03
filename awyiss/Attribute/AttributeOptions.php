@@ -124,10 +124,10 @@ class AttributeOptions {
 
 	/**
 	 * @param array $currentOptions
-	 * @param \Cake\View\Form\ContextInterface $entity
+	 * @param \Awyiss\Model\Entity|null $entity
 	 * @return array
 	 */
-	public function buildOptions(array $currentOptions, Entity $entity): array {
+	public function buildOptions(array $currentOptions, ?Entity $entity): array {
 		$la_currentOptions = $currentOptions;
 
 		$lx_disabled = $this->getDisabled(true, $entity, $la_currentOptions);
@@ -157,8 +157,10 @@ class AttributeOptions {
 
 
 	/**
+	 * @param bool $evaluate
+	 * @param \Awyiss\Model\Entity|null $entity
+	 * @param array $currentOptions
 	 * @return callable|array|bool
-	 * @noinspection PhpUnused
 	 */
 	public function getDisabled(bool $evaluate = false, ?Entity $entity = null, array &$currentOptions = []): mixed {
 		if ($evaluate && is_callable($this->disabled)) {
