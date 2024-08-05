@@ -148,11 +148,16 @@ class AwyissExtension extends AbstractExtension {
 				return $data;
 			}),
 
-			new TwigFunction('staticCall', function (string $class, string $method, ...$args): mixed {
-				if (class_exists($class) && method_exists($class, $method)) {
+			new TwigFunction('staticCall', function (string|object $class, string $method, ...$args): mixed {
+				if (
+					(
+						(is_string($class) && class_exists($class)) ||
+						(is_object($class))
+					) &&
+					method_exists($class, $method)
+				) {
 					return call_user_func_array([$class, $method], $args);
 				}
-
 
 				return null;
 			}),
