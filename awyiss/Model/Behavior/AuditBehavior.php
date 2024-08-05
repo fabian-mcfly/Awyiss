@@ -46,6 +46,7 @@ class AuditBehavior extends Behavior {
 	 */
 	protected array $_defaultConfig = [
 		'enabled' => true,
+		'historyFields' => null,
 		'implementedEvents' => [
 			'buildValidator',
 			'beforeCopy',
@@ -56,6 +57,7 @@ class AuditBehavior extends Behavior {
 		'implementedMethods' => [
 			'countAuditData' => 'countAuditData',
 			'getAuditData' => 'getAuditData',
+			'getAuditHistoryFields' => 'getHistoryFields',
 		],
 		'ignoredFields' => [
 			'createdOn',
@@ -64,6 +66,8 @@ class AuditBehavior extends Behavior {
 			'changedBy',
 			'deletedOn',
 			'deletedBy',
+			'publicationStart',
+			'publicationEnd',
 			'_i18n',
 			'_locale',
 			'_joinData',
@@ -103,6 +107,17 @@ class AuditBehavior extends Behavior {
 
 		if ($lo_schema->hasColumn('deleted_by')) {
 			$this->addAssociation('DeletedBy');
+		}
+
+		if ($this->getConfig('historyFields') === null) {
+			/** @var class-string<\Awyiss\Model\Entity> $ls_entityClass */
+			$ls_entityClass = $this->table()->getEntityClass();
+
+			$la_fields = $ls_entityClass::mapFields($lo_schema->columns());
+
+			$la_fields = array_diff($la_fields, $this->getConfig('ignoredFields'), ['id']);
+
+			$this->setConfig('historyFields', $la_fields);
 		}
 	}
 
@@ -199,6 +214,16 @@ class AuditBehavior extends Behavior {
 	 */
 	public function getAuditData(EntityInterface $entity): array {
 		return $this->_auditDataQuery($entity)->toArray();
+	}
+
+
+	/**
+	 * Returns the history fields for the table.
+	 *
+	 * @return array
+	 */
+	public function getHistoryFields(): array {
+		return $this->getConfig('historyFields');
 	}
 
 
@@ -554,6 +579,62 @@ class AuditBehavior extends Behavior {
 		$la_entityData['changes']['old']['mediaAssignments'] = $la_oldData;
 		$la_entityData['changes']['new']['mediaAssignments'] = $la_newData;
 
+
+		return $la_entityData;
+	}
+
+
+	/**
+	 * @param Entity $entity
+	 * @param array $entityData
+	 * @return array
+	 */
+	protected function auditPublicationData(Entity $entity, array $entityData): array {
+		if (!$entity->getSource()) {
+			return $entityData;
+		}
+
+		$la_oldData = $la_newData = ['start' => ['date_time' => null], 'end' => ['date_time' => null]];
+		if ($entity->hasOriginal('_publicationData')) {
+			/** @var \Awyiss\Model\Entity\PublicationData $lo_publicationData */
+			foreach ($entity->getOriginal('_publicationData') as $lo_publicationData) {
+				$lx_date = $lo_publicationData->hasOriginal('dateTime') ? $lo_publicationData->getOriginal('dateTime') : $lo_publicationData->get('dateTime');
+
+				if ($lx_date) {
+					$lx_date = $lx_date->format('Y-m-d H:i:s');
+				}
+
+				$la_oldData[ $lo_publicationData->type->value ] = [
+					'dateTime' => $lx_date ?: null,
+				];
+			}
+		}
+
+		/** @var \Awyiss\Model\Entity\PublicationData $lo_publicationData */
+		foreach ($entity->_publicationData as $lo_publicationData) {
+			$lx_date = $lo_publicationData->has('dateTime') ? $lo_publicationData->get('dateTime') : null;
+
+			if ($lx_date) {
+				$lx_date = $lx_date->format('Y-m-d H:i:s');
+			}
+
+			$la_newData[ $lo_publicationData->type->value ] = [
+				'dateTime' => $lx_date ?: null,
+			];
+		}
+
+		$la_entityData = $entityData;
+
+		//Even if the translations are the same, they have to make their way into the db as plain arrays, not entities
+		$la_entityData['old']['_publicationData'] = $la_oldData;
+		$la_entityData['new']['_publicationData'] = $la_newData;
+
+		if ($la_oldData === $la_newData) {
+			return $la_entityData;
+		}
+
+		$la_entityData['changes']['old']['_publicationData'] = $la_oldData;
+		$la_entityData['changes']['new']['_publicationData'] = $la_newData;
 
 		return $la_entityData;
 	}
@@ -971,10 +1052,17 @@ class AuditBehavior extends Behavior {
 			],
 		];
 
-
 		$la_allFields = array_keys(array_merge($la_entityData['old'], $la_entityData['new']));
 		$la_allFields = array_diff($la_allFields, $entity->getVirtual());
 		$la_ignoredFields = $this->getConfig('ignoredFields');
+
+		foreach ($entity->getVirtual() as $ls_virtualField) {
+			unset(
+				$la_entityData['old'][ $ls_virtualField ],
+				$la_entityData['new'][ $ls_virtualField ],
+				$la_allFields[ $ls_virtualField ],
+			);
+		}
 
 		$la_associationTypes = $this->getAssociations();
 
@@ -986,6 +1074,11 @@ class AuditBehavior extends Behavior {
 
 			if ($ls_field === 'mediaAssignments') {
 				$la_entityData = $this->auditMediaAssignments($entity, $la_entityData);
+				continue;
+			}
+
+			if ($ls_field === '_publicationData') {
+				$la_entityData = $this->auditPublicationData($entity, $la_entityData);
 				continue;
 			}
 
@@ -1006,6 +1099,23 @@ class AuditBehavior extends Behavior {
 		if (empty($la_entityData['changes']['old']) && empty($la_entityData['changes']['new'])) {
 			return [];
 		}
+
+		// Sort all arrays
+		$lc_sort = function ($a, $b) {
+			if (str_starts_with($a, '_')) {
+				return 1;
+			}
+			if (str_starts_with($b, '_')) {
+				return -1;
+			}
+
+			return $a <=> $b;
+		};
+
+		uksort($la_entityData['old'], $lc_sort);
+		uksort($la_entityData['new'], $lc_sort);
+		uksort($la_entityData['changes']['old'], $lc_sort);
+		uksort($la_entityData['changes']['new'], $lc_sort);
 
 		return $la_entityData;
 	}
