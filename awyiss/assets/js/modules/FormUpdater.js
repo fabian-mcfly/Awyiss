@@ -158,13 +158,18 @@ export default class FormUpdater {
 
 			form.querySelector('.Fieldsets').replaceWith(newForm.querySelector('.Fieldsets'));
 
-			const newFocusElement = newForm.querySelector(`#${this.lastFocusedElementId}`) || newForm.querySelector(`[name="${this.lastFocusedElementId}"]`);
-			if (newFocusElement) {
-				newFocusElement.focus();
-				// Check if the newFocusElement is an input or textarea before calling setSelectionRange
-				if (['input', 'textarea'].includes(newFocusElement.tagName.toLowerCase())) {
-					newFocusElement.setSelectionRange(newFocusElement.value.length, newFocusElement.value.length);
+			try {
+				const newFocusElement = newForm.querySelector(`#${this.lastFocusedElementId}`) || newForm.querySelector(`[name="${this.lastFocusedElementId}"]`);
+				if (newFocusElement) {
+					newFocusElement.focus();
+					// Check if the newFocusElement is an input or textarea before calling setSelectionRange
+					if (['input', 'textarea'].includes(newFocusElement.tagName.toLowerCase())) {
+						newFocusElement.setSelectionRange(newFocusElement.value.length, newFocusElement.value.length);
+					}
 				}
+			}
+			catch (error) {
+				// Do nothing
 			}
 		})
 		.catch(error => console.error('Error:', error))
