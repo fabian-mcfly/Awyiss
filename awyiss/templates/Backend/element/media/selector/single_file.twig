@@ -28,6 +28,8 @@
 	<button class="Button Button-Delete Button-Small MediaSelector-Remove" type="button">{{ __d('media', 'remove_file') }}</button>
 
 	{{ FormHelper.input('media_assignments[' ~ element.id ~ '][' ~ elementSelector.identifier ~ '][media_id]', {
+		type: 'text',
 		value: entity.mediaAssignments[ element.identifier|variable ][ elementSelector.identifier|variable ].mediaId,
+		'data-form-updater': true,
 	}) }}
 </div>
