@@ -451,7 +451,6 @@ class AuditBehavior extends Behavior {
 		$la_entityData['changes']['old'][ $name ] = $lx_oldData;
 		$la_entityData['changes']['new'][ $name ] = $lx_newData;
 
-
 		return $la_entityData;
 	}
 
@@ -487,7 +486,6 @@ class AuditBehavior extends Behavior {
 		elseif ($association->type() === Association::ONE_TO_ONE) {
 			$la_entityData = $this->cleanHasOneAssociationData($entity, $field, $association, $la_entityData);
 		}
-
 
 		return $la_entityData;
 	}
@@ -579,7 +577,6 @@ class AuditBehavior extends Behavior {
 		$la_entityData['changes']['old']['mediaAssignments'] = $la_oldData;
 		$la_entityData['changes']['new']['mediaAssignments'] = $la_newData;
 
-
 		return $la_entityData;
 	}
 
@@ -652,22 +649,34 @@ class AuditBehavior extends Behavior {
 
 		/** @var \Awyiss\Model\Table $lo_sourceTable */
 		$lo_sourceTable = $this->fetchTable($entity->getSource());
-		$la_translate = $lo_sourceTable->getConfig('translate');
-		if (!$la_translate) {
+		if (!$lo_sourceTable->hasBehavior('Translate')) {
+			/** @noinspection PhpVariableNamingConventionInspection */
+			unset($entityData['old']['_translations'], $entityData['new']['_translations'], $entityData['changes']['old']['_translations'], $entityData['changes']['new']['_translations']);
+
+			return $entityData;
+		}
+
+		$la_translateFields = $lo_sourceTable->getBehavior('Translate')->getConfig('fields');
+
+		if (!$la_translateFields) {
+			/** @noinspection PhpVariableNamingConventionInspection */
+			unset($entityData['old']['_translations'], $entityData['new']['_translations'], $entityData['changes']['old']['_translations'], $entityData['changes']['new']['_translations']);
+
 			return $entityData;
 		}
 
 		$la_newTranslations = [];
 		/** @var Entity $lo_translatedEntity */
 		foreach (($entity->_translations ?? []) as $ls_languageShortcode => $lo_translatedEntity) {
-			$la_newTranslations[ $ls_languageShortcode ] = $lo_translatedEntity->extract($la_translate['fields'], false, false);
+			$la_newTranslations[ $ls_languageShortcode ] = $lo_translatedEntity->extract($la_translateFields, false, false);
 		}
 
-		$la_oldTranslations = [];
-		if ($entity->hasOriginal('_translations')) {
+		$la_oldTranslations = $entity->hasOriginal('_translations') ? $entity->getOriginal('_translations') : $entity->get('_translations');
+		if ($la_oldTranslations) {
 			/** @var Entity $lo_translatedEntity */
-			foreach ($entity->getOriginal('_translations') as $ls_languageShortcode => $lo_translatedEntity) {
-				foreach ($la_translate['fields'] as $ls_field) {
+			foreach ($la_oldTranslations as $ls_languageShortcode => $lo_translatedEntity) {
+				$la_oldTranslations[ $ls_languageShortcode ] = [];
+				foreach ($la_translateFields as $ls_field) {
 					if ($lo_translatedEntity->hasOriginal($ls_field)) {
 						$lx_value = $lo_translatedEntity->getOriginal($ls_field);
 					}
@@ -692,7 +701,6 @@ class AuditBehavior extends Behavior {
 
 		$la_entityData['changes']['old']['_translations'] = $la_oldTranslations;
 		$la_entityData['changes']['new']['_translations'] = $la_newTranslations;
-
 
 		return $la_entityData;
 	}
@@ -775,7 +783,6 @@ class AuditBehavior extends Behavior {
 
 			$la_associations[ $ls_property ] = $lo_association;
 		}
-
 
 		return $la_associations;
 	}
