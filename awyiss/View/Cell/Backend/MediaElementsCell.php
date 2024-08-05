@@ -75,7 +75,7 @@ class MediaElementsCell extends Cell {
 
 				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 				foreach ($entity->mediaAssignments as $lo_mediaAssignment) {
-					$lo_mediaAssignment->media = $la_media[ $lo_mediaAssignment->mediaId ];
+					$lo_mediaAssignment->media = $la_media[ $lo_mediaAssignment->mediaId ] ?? null;
 				}
 
 				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
