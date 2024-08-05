@@ -281,12 +281,12 @@ export default class InputListManager {
 
 			// Check if the node itself matches the selector
 			if (node.matches(this.selector)) {
-				this.initList(node);
+				this.initList(node.parentNode);
 			}
 
 			// Check if any child of the node matches the selector
 			node.querySelectorAll(this.selector).forEach((child) => {
-				this.initList(child);
+				this.initList(child.parentNode);
 			});
 		});
 	}
