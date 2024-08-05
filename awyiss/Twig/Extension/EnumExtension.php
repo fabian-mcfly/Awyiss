@@ -4,10 +4,12 @@
 namespace Awyiss\Twig\Extension;
 
 
+use BackedEnum;
 use BadMethodCallException;
 use InvalidArgumentException;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
+use Twig\TwigTest;
 
 
 /**
@@ -21,6 +23,20 @@ class EnumExtension extends AbstractExtension {
 	public function getFunctions(): array {
 		return [
 			new TwigFunction('enum', [$this, 'createProxy']),
+		];
+	}
+
+
+	/**
+	 * Returns a list of tests to add to the existing list.
+	 *
+	 * @return array<\Twig\TwigTest>
+	 */
+	public function getTests(): array {
+		return [
+			new TwigTest('enum', function ($value): bool {
+				return $value instanceof BackedEnum;
+			}),
 		];
 	}
 
