@@ -171,6 +171,9 @@ class WidgetsController extends Controller {
 		}
 
 		$this->setViewVars($lo_widget);
+
+		/** @noinspection PhpUndefinedMethodInspection */
+		$this->set('auditDataCount', $this->Widgets->countAuditData($lo_widget));
 	}
 
 

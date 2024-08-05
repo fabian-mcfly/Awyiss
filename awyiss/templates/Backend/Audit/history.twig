@@ -1,0 +1,425 @@
+{#
+@var entity \Awyiss\Model\Entity
+@var audits \Awyiss\Model\Entity\Audit[]
+@var historyFields array<string>
+@var schema \Cake\Database\Schema\TableSchemaInterface
+@var scope string
+@var attributes array<string, \Awyiss\Model\Entity\Attribute>
+@var attributeOptionsCollection \Awyiss\Attribute\AttributeOptionsCollection
+@var attributesSchema \Cake\Database\Schema\TableSchemaInterface
+@var associations array<string, array{name: string, property: string}>
+@var media Awyiss\Model\Entity\Media[]
+@var mediaElements Awyiss\Model\Entity\MediaElement[]
+@var isAjax bool
+@var publicationDataEnabled bool
+@var languages Awyiss\Model\Entity\Language[]
+@var translatableFields array
+@var translatableAttributes array
+@var _view \Awyiss\View\BackendView
+@var AssetHelper \Awyiss\View\Helper\AssetHelper
+@var AttributesHelper \Awyiss\View\Helper\AttributesHelper
+@var AuthorizationHelper \Awyiss\View\Helper\AuthorizationHelper
+@var CategoriesHelper \Awyiss\View\Helper\CategoriesHelper
+@var FlashHelper \Awyiss\View\Helper\FlashHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+@var HtmlHelper \Cake\View\Helper\HtmlHelper
+@var LocaleHelper \Awyiss\View\Helper\LocaleHelper
+@var MediaHelper \Awyiss\View\Helper\MediaHelper
+@var PaginatorHelper \Awyiss\View\Helper\PaginatorHelper
+@var SystemOrderHelper \Awyiss\View\Helper\SystemOrderHelper
+@var TimeHelper \Cake\View\Helper\TimeHelper
+@var UrlHelper \Awyiss\View\Helper\UrlHelper
+#}
+
+{% macro tableHistoryBodyMediaRow(entity, audit, mediaElement, settings) %}
+	{#
+	Macro to render a table row for media elements in history data.
+	@var entity \Awyiss\Model\Entity
+	@var audit \Awyiss\Model\Entity\Audit
+	@var mediaElement \Awyiss\Model\Entity\MediaElement
+	@var settings array
+	#}
+
+	{% set oldData = audit.dataOld %}
+	{% set identifier = mediaElement.identifier|variable %}
+
+	<tr>
+		<td colspan="2" class="TableCell-MediaElement-Label">
+			{{ mediaElement.label }}
+		</td>
+		<td class="TableCell-MediaElement-Label TableCell-CurrentValue TableCell-MediaElement-CurrentValue"></td>
+	</tr>
+	{% for mediaSelector in mediaElement.mediaElementSelectors  %}
+		{% set currentValue = entity.mediaAssignments[ identifier ][ mediaSelector.identifier|variable ].mediaId %}
+		{% set oldValue = oldData.mediaAssignments[ identifier ][ mediaSelector.identifier|variable ].mediaId %}
+		{% set inputName = 'media_assignments[' ~ mediaElement.id ~ '][' ~ mediaSelector.identifier ~ ']' %}
+
+		{% if mediaSelector.mediaSelector.identifier == 'multi_file' %}
+			{% set inputName = inputName ~ '[]' %}
+			{% set currentValue = entity.mediaAssignments[ identifier ][ mediaSelector.identifier|variable ] %}
+			{% set currentValue = currentValue ? currentValue|column('mediaId') : null %}
+
+			{% set oldValue = oldData.mediaAssignments[ identifier ][ mediaSelector.identifier|variable ] %}
+			{% set oldValue = oldValue ? oldValue|column('mediaId') : null %}
+		{% else %}
+			{% set inputName = inputName ~ '[media_id]' %}
+		{% endif %}
+
+		{% set changed = oldValue != currentValue %}
+
+		<tr{% if changed %}  class="ValueChanged"{% endif %} data-field="{{ inputName }}">
+			<td class="TableCell-Field">
+				{{ mediaSelector.label }}
+			</td>
+			<td class="TableCell-OldValue">
+				{% if oldValue is array %}
+					{% set revertable = false %}
+					{% for mediaId in oldValue %}
+						{% if settings.media[ mediaId ] is defined %}
+							{% set revertable = true %}
+							<a href="{{ baseUrl }}{{ settings.media[ mediaId ].path }}" target="_blank">{{ settings.media[ mediaId ].path }}</a> (ID: {{ mediaId }})<br>
+
+							<input type="text" value="{{ mediaId }}" name="media_assignments[{{ mediaElement.id }}][{{ mediaSelector.identifier }}][]">
+						{% else %}
+							{{ __('unknown_file') }} (ID: {{ mediaId }})<br>
+						{% endif %}
+					{% else %}
+						{% set revertable = true %}
+					{% endfor %}
+
+					{% if revertable and changed and settings.isAjax %}
+						<button type="button" class="Button Button-Revert">{{ __('revert_value') }}</button>
+					{% endif %}
+				{% else %}
+					{% set revertable = true %}
+					{% if oldValue is not null %}
+						{% if settings.media[ oldValue ] is defined %}
+							<a href="{{ baseUrl }}{{ settings.media[ oldValue ].path }}" target="_blank">{{ settings.media[ oldValue ].path }}</a> (ID: {{ oldValue }})
+						{% else %}
+							{% set revertable = false %}
+							{{ __('unknown_file') }} (ID: {{ oldValue }})
+						{% endif %}
+					{% endif %}
+
+					{% if revertable %}
+						<input type="text" value="{{ oldValue is array ? oldValue|json_encode : oldValue }}" name="media_assignments[{{ mediaElement.id }}][{{ mediaSelector.identifier }}][media_id]">
+
+						{% if changed and settings.isAjax %}
+							<button type="button" class="Button Button-Revert">{{ __('revert_value') }}</button>
+						{% endif %}
+					{% endif %}
+				{% endif %}
+			</td>
+			<td class="TableCell-CurrentValue">
+				{% if currentValue is array %}
+					{% for mediaId in currentValue %}
+						{% if settings.media[ mediaId ] is defined %}
+							<a href="{{ baseUrl }}{{ settings.media[ mediaId ].path }}" target="_blank">{{ settings.media[ mediaId ].path }}</a> (ID: {{ mediaId }})<br>
+						{% else %}
+							{{ __('unknown_file') }} (ID: {{ mediaId }})<br>
+						{% endif %}
+					{% endfor %}
+				{% elseif currentValue is not null %}
+					{% if settings.media[ currentValue ] is defined %}
+						<a href="{{ baseUrl }}{{ settings.media[ currentValue ].path }}" target="_blank">{{ settings.media[ currentValue ].path }}</a> (ID: {{ currentValue }})
+					{% else %}
+						{{ __('unknown_file') }} (ID: {{ currentValue }})
+					{% endif %}
+				{% endif %}
+			</td>
+		</tr>
+	{% endfor %}
+{% endmacro %}
+
+{% macro tableHistoryBodyRow(entity, schema, scope, field, audit, associations, attribute, language, settings) %}
+	{#
+	Macro to render a table row for history data.
+	@var entity \Awyiss\Model\Entity
+	@var schema \Cake\Database\Schema\TableSchemaInterface
+	@var scope string
+	@var field string
+	@var audit \Awyiss\Model\Entity\Audit
+	@var associations array<string, array{name: string, property: string}>
+	@var attribute \Awyiss\Model\Entity\Attribute|null
+	@var language \Awyiss\Model\Entity\Language|null
+	@var settings array
+	#}
+	{% set columnType = schema.columnType(staticCall(entity, 'unmapField', field)) %}
+
+	{% set isAttribute = attribute is not empty %}
+	{% set isLanguage = language is not empty %}
+
+	{% set inputName = field|underscore %}
+	{% if isAttribute %}
+		{% set inputName = 'attributes[' ~ field|underscore ~ ']' %}
+	{% endif %}
+
+	{% set oldData = isAttribute ? (audit.dataOld['attributes'] ?? []) : audit.dataOld %}
+
+	{% if isLanguage %}
+		{% set oldData = oldData['_translations'][ language.shortcode ] %}
+		{% set entity = isAttribute ? (entity.get('attributes').get('_translations')[ language.shortcode ] ?? null) : (entity.get('_translations')[ language.shortcode ] ?? null) %}
+
+		{% set inputName = '_translations[' ~ language.shortcode ~ '][' ~ field|underscore ~']' %}
+
+		{% if isAttribute %}
+			{% set inputName = 'attributes[_translations][' ~ language.shortcode ~ '][' ~ field|underscore ~']' %}
+			{% endif %}
+	{% endif %}
+
+	{% set isHtml = false %}
+	{% set changed = oldData[ field ] != entity.get(field) %}
+	{% if entity.get(field) is enum %}
+		{% set changed = oldData[ field ] != entity.get(field).value %}
+	{% elseif isAttribute and oldData[ field ] is empty and entity.get(field) is empty %}
+		{% set changed = false %}
+	{% endif %}
+
+	{% set options = isAttribute ? (settings.attributeOptionsCollection.getAttributeOption(field).getOptions(field) ?? []) : [] %}
+
+	{%- set oldValue %}
+		{%- if associations[ field ] is defined %}
+			{%- set associationField = associations[ field ]['property'] %}
+			{%- if oldData[ field ] is not empty and changed == false %}
+				{{- entity.get(associationField).label }}
+				{%- if entity.get( associationField) %} (ID: {{ entity.get(associationField).id }}){% endif %}
+			{%- elseif oldData[ field ] %}
+				{%- if oldData[ associationField ] is defined %}
+					{{- oldData[ associationField ].label ?? __('unknown_entity') }}
+					{%- if oldData[ associationField ] %} (ID: {{ oldData[ associationField ].id }}){% endif %}
+				{% else %}
+					{{- __('unknown_entity') }} (ID: {{ oldData[ field ] }})
+				{%- endif %}
+			{%- endif %}
+		{%- elseif columnType == 'boolean' %}
+			{{- oldData[ field ] ? '<i class="las la-check"></i>' : '<i class="las la-times"></i>' }}
+		{%- elseif columnType == 'datetime' %}
+			{{- oldData[ field ] ? TimeHelper.nice(oldData[ field ]) ?: '' }}
+		{%- elseif columnType == 'json' %}
+			{{- oldData[ field ] is not empty ? oldData[ field ]|json_encode : '' }}
+		{%- elseif columnType == 'string' and field == 'language_shortcode' %}
+			{{- oldData[ field ] ? languages.Frontend[ oldData[ field ] ].title : '' }}
+		{%- elseif field == 'columnWidth' %}
+			{{- oldData['column'].width.label }}
+		{%- elseif field == 'columnIndent' %}
+			{{- oldData['column'].indent.label }}
+		{% elseif (scope in ['contents', 'widgets'] and field == 'text') or (isAttribute and attribute.inputType == 'texteditor') %}
+			<code>{{- oldData[ field ] }}</code>
+			{% set isHtml = true %}
+		{% elseif isAttribute and settings.attributeOptionsCollection %}
+			{{- options[ oldData[ field ] ] ?? '' }}
+		{%- else %}
+			{{- oldData[ field ] ?? '' }}
+		{%- endif %}
+	{%- endset %}
+
+	{% set realOldValue = oldData[ field ] %}
+
+	{%- set currentValue %}
+
+		{%- if associations[ field ] is defined %}
+			{%- set associationField = associations[ field ]['property'] %}
+			{{- entity.get(associationField).label }}
+			{%- if entity.get(associationField) %} (ID: {{ entity.get(associationField).id }}){% endif %}
+		{%- elseif columnType == 'boolean' %}
+			{{- entity.get(field) ? '<i class="las la-check"></i>' : '<i class="las la-times"></i>' }}
+		{%- elseif columnType == 'datetime' %}
+			{{- entity.has(field) ? TimeHelper.nice(entity.get(field)) ?: '' }}
+		{%- elseif columnType == 'json' %}
+			{{- entity.get(field) is not empty ? entity.get(field)|json_encode : '' }}
+		{%- elseif field == 'columnWidth' %}
+			{{- entity.column.width.label }}
+		{%- elseif field == 'columnIndent' %}
+			{{- entity.column.indent.label }}
+		{% elseif (scope in ['contents', 'widgets'] and field == 'text') or (isAttribute and attribute.inputType == 'texteditor') %}
+			<code>{{- entity.get(field) }}</code>
+		{% elseif isAttribute and settings.attributeOptionsCollection %}
+			{{- options[ entity.get(field) ] ?? '' }}
+		{%- else %}
+			{{- entity.get(field) }}
+		{%- endif %}
+	{%- endset %}
+
+	<tr class="{% if changed %} ValueChanged{% endif %}{% if isHtml %} ValueIsHtml{% endif %}" data-field="{{ inputName }}">
+		<td class="TableCell-Field">
+			{% if isLanguage %}
+				{{ language.label }}
+			{% elseif isAttribute %}
+				{{ attribute.label }}
+			{% else %}
+				{{ __d(scope, field|underscore) }}
+			{% endif %}
+		</td>
+		<td class="TableCell-OldValue">
+			{{ oldValue }}
+
+			{% if realOldValue is array %}
+				{% for key, value in realOldValue %}
+					<input type="text" value="{{ key }}" name="{% if isAttribute %}attributes[{{ field|underscore }}]{% else %}{{ field|underscore }}[{{ loop.index0 }}][key]{% endif %}">
+					<input type="text" value="{{ value }}" name="{% if isAttribute %}attributes[{{ field|underscore }}]{% else %}{{ field|underscore }}[{{ loop.index0 }}][value]{% endif %}">
+				{% endfor %}
+			{% else %}
+				<input type="text" value="{{ realOldValue }}" name="{% if isAttribute %}attributes[{{ field|underscore }}]{% else %}{{ field|underscore }}{% endif %}">
+			{% endif %}
+			{% if changed and settings.isAjax %}
+				<button type="button" class="Button Button-Revert">{{ __('revert_value') }}</button>
+			{% endif %}
+		</td>
+		<td class="TableCell-CurrentValue">
+			{{ currentValue }}
+		</td>
+	</tr>
+{% endmacro %}
+
+<div class="Contents History">
+	{% block headlineHistory %}
+		<h1>{{ __('headline_history') }}</h1>
+		<h2>{{ entity.label }}</h2>
+	{% endblock %}
+
+	{% if isAjax %}
+		<div class="Inner" data-title="{{ __('headline_history') }} - {{ entity.label }}">
+			{% block buttonArea %}
+				<div class="ButtonArea">
+					{{ FormHelper.button(__('close'), {class: 'Button Button-Close'}) }}
+				</div>
+			{% endblock %}
+	{% endif %}
+
+	{% block tablesHistory %}
+		<div class="AuditHistory-Tables">
+			{% for audit in audits %}
+				{% block tableHistory %}
+					<table class="Overview-Table AuditHistory-Table" data-date-time="{{ TimeHelper.nice(audit.createdOn) }}" data-timestamp="{{ audit.createdOn.timestamp }}">
+						{% block tableHistoryHead %}
+							<thead>
+								{% block tableHistoryHeadRow %}
+									<tr>
+										{% block tableHistoryHeadRowInner %}
+											{% block tableHistoryHeaderField %}
+												<th class="TableHeader-Field">{{ __('field') }}</th>
+											{% endblock %}
+											{% block tableHistoryHeaderOldValue %}
+												<th class="TableHeader-OldValue">{{ __('old_value') }}</th>
+											{% endblock %}
+
+											{% block tableHistoryHeaderCurrentValue %}
+												<th class="TableHeader-CurrentValue">
+													{{ __('current_value') }}
+												</th>
+											{% endblock %}
+										{% endblock %}
+									</tr>
+								{% endblock %}
+							</thead>
+						{% endblock %}
+						{% block tableHistoryBody %}
+							<tbody>
+								{% block tableHistoryBodyRow %}
+									{% for field in historyFields %}
+										{% if field in translatableFields %}
+											<tr>
+												<td colspan="2" class="TableCell-Translation-Label">
+													{{ __d(scope, field|underscore) }}
+												</td>
+												<td class="TableCell-Translation-Label TableCell-CurrentValue TableCell-Translation-CurrentValue"></td>
+											</tr>
+											{% for language in languages %}
+												{{ _self.tableHistoryBodyRow(entity, schema, scope, field, audit, associations, null, language, _context) }}
+											{% endfor %}
+										{% else %}
+											{{ _self.tableHistoryBodyRow(entity, schema, scope, field, audit, associations, null, null, _context) }}
+										{% endif %}
+									{% endfor %}
+
+									{% for field, attribute in attributes %}
+										{% if field in translatableAttributes %}
+											<tr>
+												<td colspan="2" class="TableCell-Translation-Label">
+													{{ attribute.label }}
+												</td>
+												<td class="TableCell-Translation-Label TableCell-CurrentValue TableCell-Translation-CurrentValue"></td>
+											</tr>
+											{% for language in languages %}
+												{{ _self.tableHistoryBodyRow(entity, attributesSchema, scope, field|variable, audit, associations, attribute, language, _context) }}
+											{% endfor %}
+										{% else %}
+											{{ _self.tableHistoryBodyRow(entity, attributesSchema, scope, field|variable, audit, associations, attribute, null, _context) }}
+										{% endif %}
+									{% endfor %}
+
+									{% if publicationDataEnabled %}
+										<tr>
+											<td colspan="2" class="TableCell-PublicationData-Label">
+												{{ __d('publication_data', 'fieldset_publication') }}
+											</td>
+											<td class="TableCell-PublicationData-Label TableCell-CurrentValue TableCell-PublicationData-CurrentValue"></td>
+										</tr>
+
+										{% set oldData = audit.dataOld %}
+										{% set oldValue = oldData._publicationData.start.dateTime %}
+										{% set changed = oldValue != (entity.publicationStart ? entity.publicationStart.format('Y-m-d H:i:s') : null) %}
+										<tr{% if changed %} class="ValueChanged"{% endif %} data-field="_publication_data[start][date_time]">
+											<td class="TableCell-Field">{{ __d('publication_data', 'date_time_start') }}</td>
+											<td class="TableCell-OldValue">
+												{{ oldValue ? TimeHelper.nice(oldValue) : '' }}
+
+												<input type="text" value="{{ oldValue }}" name="_publication_data[start][date_time]">
+
+												{% if changed and isAjax %}
+													<button type="button" class="Button Button-Revert">{{ __('revert_value') }}</button>
+												{% endif %}
+											</td>
+											<td class="TableCell-CurrentValue">
+												{{ entity.publicationStart ? TimeHelper.nice(entity.publicationStart) : '' }}
+											</td>
+										</tr>
+
+										{% set oldValue = oldData._publicationData.end.dateTime %}
+										{% set changed = oldValue != (entity.publicationEnd ? entity.publicationEnd.format('Y-m-d H:i:s') : null) %}
+										<tr{% if changed %} class="ValueChanged"{% endif %} data-field="_publication_data[end][date_time]">
+											<td class="TableCell-Field">{{ __d('publication_data', 'date_time_end') }}</td>
+											<td class="TableCell-OldValue">
+												{{ oldValue ? TimeHelper.nice(oldValue) : '' }}
+
+												<input type="text" value="{{ oldValue }}" name="_publication_data[end][date_time]">
+
+												{% if changed and isAjax %}
+													<button type="button" class="Button Button-Revert">{{ __('revert_value') }}</button>
+												{% endif %}
+											</td>
+											<td class="TableCell-CurrentValue">
+												{{ entity.publicationEnd ? TimeHelper.nice(entity.publicationEnd) : '' }}
+											</td>
+										</tr>
+									{% endif %}
+
+									{% for mediaElement in mediaElements %}
+										{{ _self.tableHistoryBodyMediaRow(entity, audit, mediaElement, _context) }}
+									{% endfor %}
+								{% endblock %}
+
+							</tbody>
+						{% endblock %}
+						{% block tableHistoryFoot %}
+							<tfoot>
+								{% block tableHistoryFootRow %}
+									<tr>
+										{% block tableHistoryFooterInfo %}
+											<td colspan="2" class="TableFooter-Info">
+												{{ __('history_entry_info', TimeHelper.nice(audit.createdOn), audit.user ? audit.user.username : (audit.createdBy ? __('user_unknown') : __('user_system'))) }}
+											</td>
+											<td class="TableFooter-CurrentValue"></td>
+										{% endblock %}
+									</tr>
+								{% endblock %}
+							</tfoot>
+						{% endblock %}
+					</table>
+				{% endblock %}
+			{% endfor %}
+		</div>
+	{% endblock %}
+
+	{% if isAjax %}</div>{% endif %}
+</div>

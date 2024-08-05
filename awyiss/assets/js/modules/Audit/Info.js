@@ -36,6 +36,9 @@ export default class AuditInfo {
 
 		const elements = document.querySelectorAll(this.elementSelector);
 		this.bindEvents(elements);
+
+		const observer = window.observer;
+		observer.addObserver(this.observeMutations.bind(this));
 	}
 
 	/**
@@ -151,6 +154,34 @@ export default class AuditInfo {
 			setTimeout(() => {
 				element.classList.remove('NoDelay');
 			}, 500);
+		});
+	}
+
+	/**
+	 * This method is responsible for observing mutations in the DOM.
+	 *
+	 * @param {MutationRecord} mutation - The mutation to observe.
+	 */
+	observeMutations(mutation) {
+		if (!mutation.addedNodes.length > 0) {
+			return;
+		}
+
+		// Iterate over each added node
+		mutation.addedNodes.forEach(node => {
+			if (node.nodeType !== Node.ELEMENT_NODE) {
+				return;
+			}
+
+			// If the node matches the element selector, bind the events
+			if (node.matches(this.elementSelector)) {
+				this.bindEvents(node);
+			}
+
+			const elements = node.querySelectorAll(this.elementSelector);
+			if (elements) {
+				this.bindEvents(elements);
+			}
 		});
 	}
 }

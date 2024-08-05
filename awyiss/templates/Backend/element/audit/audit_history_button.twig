@@ -1,0 +1,30 @@
+{#
+@var entity \Awyiss\Model\Entity
+@var auditDataCount int
+@var _view \Awyiss\View\BackendView
+@var AssetHelper \Awyiss\View\Helper\AssetHelper
+@var AttributesHelper \Awyiss\View\Helper\AttributesHelper
+@var AuthorizationHelper \Awyiss\View\Helper\AuthorizationHelper
+@var CategoriesHelper \Awyiss\View\Helper\CategoriesHelper
+@var FlashHelper \Awyiss\View\Helper\FlashHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+@var HtmlHelper \Cake\View\Helper\HtmlHelper
+@var LocaleHelper \Awyiss\View\Helper\LocaleHelper
+@var MediaHelper \Awyiss\View\Helper\MediaHelper
+@var PaginatorHelper \Awyiss\View\Helper\PaginatorHelper
+@var SystemOrderHelper \Awyiss\View\Helper\SystemOrderHelper
+@var UrlHelper \Awyiss\View\Helper\UrlHelper
+#}
+
+{% if auditDataCount %}
+	{{ HtmlHelper.link(__d('audit', 'show_history') ~ ('<span class="Count">' ~ auditDataCount ~ '</span>'), {
+		controller: 'audit',
+		action: 'history',
+		scope: entity.source|underscore,
+		id: entity.id
+	}, {
+		class: 'Button Button-History Button-AuditHistory',
+		escape: false,
+		title: __d('audit', 'show_history'),
+	}) }}
+{% endif %}

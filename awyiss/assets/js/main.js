@@ -1,6 +1,6 @@
 //noinspection NpmUsedModulesInstalled
 
-import AuditInfo from 'AuditInfo';
+import Audit from 'Audit/Audit';
 import ButtonArea from 'ButtonArea';
 import ButtonHandler from 'ButtonHandler';
 import ColorPicker from 'ColorPicker';
@@ -266,9 +266,9 @@ export async function initMainOnReady() {
 
 	/**
 	 * @global
-	 * @type {AuditInfo}
+	 * @type {Audit}
 	 */
-	window.auditInfo = new AuditInfo();
+	window.audit = new Audit();
 
 	/**
 	 * @global

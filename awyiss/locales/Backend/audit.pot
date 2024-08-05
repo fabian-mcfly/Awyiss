@@ -11,11 +11,44 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
+msgid "headline_history"
+msgstr "Audit-History"
+
+msgid "meta_title_history"
+msgstr "Audit-History"
+
 msgid "created_info_label"
 msgstr "Created:"
 
 msgid "changed_info_label"
 msgstr "Changed:"
 
+msgid "user_unknown"
+msgstr "Deleted user"
+
 msgid "user_system"
 msgstr "System / Unknown user"
+
+msgid "show_history"
+msgstr "History"
+
+msgid "history_entry_info"
+msgstr "Changed on {0} ({1})"
+
+msgid "field"
+msgstr "Field"
+
+msgid "old_value"
+msgstr "Old value"
+
+msgid "current_value"
+msgstr "Current value"
+
+msgid "unknown_entity"
+msgstr "Unknown element"
+
+msgid "unknown_file"
+msgstr "Unknown file"
+
+msgid "revert_value"
+msgstr "Revert value"

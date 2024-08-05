@@ -40,7 +40,6 @@ class AuditTable extends Table {
 	public function initializeAssociations(): void {
 		$this->belongsTo('Users', [
 			'foreignKey' => 'created_by',
-			'joinType' => 'INNER',
 		]);
 	}
 

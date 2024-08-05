@@ -15,7 +15,10 @@
 
 {% block scriptsAdd %}
 	{% do AssetHelper.addJsModule([
-		'modules/AuditInfo.js',
+		'modules/Audit/Audit.js',
+		'modules/Audit/History.js',
+		'modules/Audit/HistoryTables.js',
+		'modules/Audit/Info.js',
 		'modules/BatchTextArea.js',
 		'modules/ButtonArea.js',
 		'modules/ButtonHandler.js',

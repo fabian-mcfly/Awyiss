@@ -59,6 +59,22 @@
 			}
 		}
 
+		&:last-child {
+			tr {
+				&:last-child {
+					td {
+						&:first-child {
+							border-radius:0 0 0 5px;
+						}
+
+						&:last-child {
+							border-radius:0 0 5px 0;
+						}
+					}
+				}
+			}
+		}
+
 		tr {
 			background-color:var(--backgroundColorOdd);
 			transition:background-color .3s ease-in-out;

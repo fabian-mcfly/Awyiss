@@ -1,0 +1,28 @@
+//noinspection SassScssUnresolvedVariable
+@layer reset, columnSystem;
+
+@import 'helper/reset';
+@import 'helper/variables';
+
+@import 'font-awesome/mixins';
+@import 'font-awesome/webfont';
+
+@import 'element/extendables';
+@import 'element/general';
+
+@import 'webfonts';
+
+html {
+	padding:var(--lineHeightMain) calc(var(--pagePadding) * .5);
+	background-image:none;
+	background-color:transparent;
+	//noinspection CssNoGenericFontName
+	font-family:var(--fontStackMain);
+}
+
+body {
+	padding:0;
+	background-image:none;
+	background-color:transparent;
+	font-family:inherit;
+}

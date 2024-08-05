@@ -46,6 +46,7 @@ use RuntimeException;
  * @method \Awyiss\Authorization\AuthorizationServiceInterface getAuthorizationService()
  * @method int countAuditCount(\Cake\Datasource\EntityInterface $entity)
  * @method array<\Awyiss\Model\Entity\Audit> getAuditData(\Cake\Datasource\EntityInterface $entity)
+ * @method array<string> getAuditHistoryFields()
  * @method int getHighestSystemOrder(\Cake\Datasource\EntityInterface $entity)
  * @method string|\Awyiss\Authorization\Policy\AbstractGenericPolicy|null getPolicyClass()
  * @method array getSystemOrderRelatedColumns(?\Cake\Datasource\EntityInterface $entity = null)

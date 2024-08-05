@@ -70,12 +70,28 @@ button,
 }
 
 .Button {
-	&&-Light {
-		background-color:var(--colorLight);
+	&&-Delete,
+	&&-Error {
+		background-color:var(--colorError);
 	}
 
+	&&-History,
 	&&-Medium {
 		background-color:var(--colorMedium);
+	}
+
+	&&-History {
+		.Hover {
+			background-color:var(--colorInfo);
+		}
+	}
+
+	&&-Info {
+		background-color:var(--colorInfo);
+	}
+
+	&&-Light {
+		background-color:var(--colorLight);
 	}
 
 	&&-Neutral {
@@ -86,17 +102,8 @@ button,
 		background-color:var(--colorSuccess);
 	}
 
-	&&-Info {
-		background-color:var(--colorInfo);
-	}
-
 	&&-Warning {
 		background-color:var(--colorWarning);
-	}
-
-	&&-Error,
-	&&-Delete {
-		background-color:var(--colorError);
 	}
 
 	&-Small {
@@ -143,8 +150,9 @@ button,
 	&-Add,
 	&-Close,
 	&-Configure,
-	&-Edit,
 	&-Delete,
+	&-Edit,
+	&-History,
 	&-Save,
 	&-SaveClose,
 	&-SaveSystemOrder,
@@ -201,12 +209,6 @@ button,
 		}
 	}
 
-	&-Edit {
-		&::after {
-			content:'\f304';
-		}
-	}
-
 	&-Delete {
 		&::after {
 			content:'\f2ed';
@@ -215,6 +217,18 @@ button,
 			.Scale-Small & {
 				text-indent:-1px;
 			}
+		}
+	}
+
+	&-Edit {
+		&::after {
+			content:'\f304';
+		}
+	}
+
+	&-History {
+		&::after {
+			content:'\f1da';
 		}
 	}
 

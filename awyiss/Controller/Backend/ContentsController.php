@@ -227,6 +227,7 @@ class ContentsController extends Controller {
 
 		$this->setViewVars($lo_content);
 
+		/** @noinspection PhpUndefinedMethodInspection */
 		$this->set('auditDataCount', $this->Contents->countAuditData($lo_content));
 	}
 

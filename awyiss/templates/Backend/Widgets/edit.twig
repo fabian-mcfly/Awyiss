@@ -25,8 +25,12 @@
 	{% block buttonArea %}
 		<div class="ButtonArea">
 			{% block formEditButtons %}
+				{{ element('audit/audit_history_button', {entity: widget}) }}
+
 				<label for="SaveAsCopy" class="Button Button-SaveAsCopy Label-SaveAsCopy">{{ __('as_copy') }}</label>
+
 				{{ FormHelper.button(__('save'), {class: 'Button Button-Success Button-Save'}) }}
+
 				{% if AuthorizationHelper.isAccessible('read') %}
 					{{ FormHelper.button(__('save_close'), {class: 'Button Button-SaveClose', name: 'submit', value: 'submit_close'}) }}
 				{% endif %}

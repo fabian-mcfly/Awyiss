@@ -1,0 +1,152 @@
+#AuditHistoryDialog {
+	width:calc(100% - 40px);
+	max-width:1280px;
+	height:fit-content;
+	min-height:80px;
+	max-height:80dvh;
+	padding:0;
+	overflow:hidden;
+
+	&:not(:has(.AuditHistory-Tables)) {
+		background-image:url($relativePath + 'img/preloader-dots.gif');
+		background-position:center;
+		background-repeat:no-repeat;
+
+		.🌚 & {
+			background-image:url($relativePath + 'img/preloader-dots-bright.gif');
+		}
+
+		&::before {
+			display:none;
+		}
+	}
+
+	&:focus-visible {
+		outline:0 none;
+	}
+
+	&::before {
+		content:'';
+		width:auto;
+		height:120px;
+		backdrop-filter:blur(5px);
+		background-color:transparent;
+		background-image:none;
+		position:absolute;
+		inset:52px 40px auto 40px;
+		z-index:1;
+		pointer-events:none;
+		mask-image:linear-gradient(to bottom, black 70%, transparent 100%);
+	}
+
+	&::after {
+		display:none;
+	}
+
+	.Inner {
+		width:100%;
+		height:100%;
+		margin-bottom:0;
+		padding:72px 20px 20px 20px;
+		overflow:hidden;
+
+		&::before,
+		&::after {
+			content:attr(data-title, 'Form');
+			width:100%;
+			height:52px;
+			padding:0 20px;
+			border-radius:0 0 5px 5px;
+			background-color:var(--colorDark-Alpha-50);
+			color:var(--colorBright);
+			//noinspection CssNoGenericFontName
+			font-family:var(--fontStackHeading);
+			font-size:1rem;
+			line-height:52px;
+			position:absolute;
+			top:0;
+			left:0;
+			z-index:5;
+		}
+
+		&::before {
+			content:'';
+			background-image:url($relativePath + 'img/awyiss-v1-' + $awyissVersionName + '.jpg');
+			background-color:var(--colorDark);
+			background-position:center;
+			background-size:cover;
+		}
+
+		> .ButtonArea {
+			margin:0;
+			padding:2px;
+			position:absolute;
+			top:0;
+			right:0;
+			z-index:6;
+
+			.Button {
+				width:auto;
+				height:48px;
+				margin-right:20px;
+				line-height:26px;
+				background-color:transparent;
+
+				&:last-child {
+					margin-right:0;
+				}
+			}
+		}
+
+		.AuditHistory-Tables {
+			display:block;
+			height:100%;
+			max-height:calc(80dvh - 112px);
+			padding:20px;
+			overflow-y:auto;
+			scrollbar-color:var(--scrollbarColor);
+			scrollbar-width:thin;
+		}
+	}
+
+	.AuditHistory-Slider-Controls {
+		margin-top:0;
+		top:0;
+	}
+
+	.TableHeader-CurrentValue,
+	.TableCell-CurrentValue,
+	.TableFooter-CurrentValue {
+		display:none;
+	}
+
+	tr {
+		&:hover {
+			.Button-Revert {
+				opacity:1;
+			}
+		}
+	}
+
+	a {
+		border-bottom:1px solid;
+	}
+
+	.Button-Revert {
+		width:auto;
+		padding:0 5px;
+		background-color:var(--colorMedium);
+		font-size:0;
+		line-height:0;
+		position:absolute;
+		top:10px;
+		right:20px;
+		opacity:.5;
+		transition:background-color .3s linear, outline-color .1s ease-in-out, opacity .3s linear;
+
+		&::after {
+			@include la('\f2ea', 24px);
+			line-height:36px;
+		}
+	}
+}

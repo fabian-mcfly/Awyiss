@@ -1,0 +1,277 @@
+.AuditController {
+	.Contents.History {
+		h1 {
+
+			font-size:1.25rem;
+			line-height:1;
+		}
+
+		h2 {
+			margin-top:0;
+			color:var(--colorMedium);
+		}
+	}
+}
+
+.AuditHistory-Tables {
+}
+
+.AuditHistory-Slider {
+	--slideOffset:0;
+
+	display:flex;
+	height:var(--slideHeight, 'auto');
+	margin-top:calc(var(--lineHeightMain) * 2);
+	border-radius:5px;
+	overflow:hidden;
+	flex-direction:row-reverse;
+
+	.AuditHistory-Table {
+		width:100%;
+		margin-top:0;
+		//noinspection CssInvalidFunction
+		transform:translateX(calc(var(--slideOffset) * 100% * -1));
+		transition:transform .5s linear;
+		align-self:flex-start;
+		flex:0 0 100%;
+	}
+}
+
+.AuditHistory-Slider-Controls {
+	display:grid;
+	border-radius:5px;
+	background-color:var(--colorMedium);
+	margin-top:calc(var(--lineHeightMain) * 2);
+	gap:20px;
+	grid-template-columns:40px auto 40px;
+	position:sticky;
+	top:100px;
+	z-index:5;
+
+	.🌚 & {
+		background-color:var(--colorBackgroundContentDarkMode-Darkened-4);
+	}
+}
+
+.AuditHistory-Slider-Prev,
+.AuditHistory-Slider-Next {
+	background-color:var(--colorMedium-Darkened-8);
+
+	height:40px;
+	aspect-ratio:1;
+	padding:0;
+	font-size:0;
+	line-height:0;
+
+	.🌚 & {
+		background-color:var(--backgroundColor);
+	}
+
+	&::after {
+		@include la('\f137', 1.5rem);
+		line-height:40px;
+	}
+}
+
+.AuditHistory-Slider-Next {
+	&::after {
+		content:'\f138';
+	}
+}
+
+.AuditHistory-Slider-Range {
+	--stepCount:var(--steps, 2);
+	--thumbWidth:20px;
+
+	height:20px;
+	padding:5px 0;
+	border:0 none;
+	background-color:transparent;
+	background-image:linear-gradient(to right, var(--colorMedium-Darkened-8) 0%, var(--colorMedium-Darkened-8) 1px, transparent 1px, transparent 100%);
+	background-position:calc(var(--thumbWidth) / 2) 0;
+	background-size:calc((100% - var(--thumbWidth)) / (var(--stepCount) - 1)) 100%;
+	align-self:center;
+	cursor:e-resize;
+	-webkit-appearance:none;
+
+	.🌚 & {
+		background-color:transparent;
+		background-image:linear-gradient(to right, var(--colorMedium-Darkened-8) 0%, var(--colorMedium-Darkened-8) 1px, transparent 1px, transparent 100%);
+	}
+
+	&[max="0"] {
+		opacity:0;
+		visibility:hidden;
+	}
+
+	&::-moz-range-track {
+		width:100%;
+		height:10px;
+		padding:0;
+		border-radius:5px;
+		background-color:var(--colorSuccess-Darkened-8);
+		background-image:repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(0, 0, 0, .1) 10px, rgba(0, 0, 0, .1) 20px),
+		repeating-linear-gradient(-45deg, transparent 0, transparent 10px, rgba(0, 0, 0, .11) 10px, rgba(0, 0, 0, .11) 20px);
+		background-repeat:repeat-x;
+		background-position:0 0, 0 5px;
+		background-size:38px 5px;
+		animation:backgroundMove 4s linear infinite;
+
+		@keyframes backgroundMove {
+			to {
+				background-position:38px 0, 38px 5px;
+			}
+		}
+	}
+
+	&::-webkit-slider-runnable-track {
+		-webkit-appearance:none;
+		width:100%;
+		height:10px;
+		padding:0;
+		border-radius:5px;
+		background-color:var(--colorSuccess-Darkened-8);
+		background-image:repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(0, 0, 0, .1) 10px, rgba(0, 0, 0, .1) 20px),
+		repeating-linear-gradient(-45deg, transparent 0, transparent 10px, rgba(0, 0, 0, .11) 10px, rgba(0, 0, 0, .11) 20px);
+		background-repeat:repeat-x;
+		background-position:0 0, 0 5px;
+		background-size:38px 5px;
+		-webkit-animation:backgroundMove 4s linear infinite;
+
+		@-webkit-keyframes backgroundMove {
+			to {
+				background-position:38px 0, 38px 5px;
+			}
+		}
+	}
+
+	&::-moz-range-thumb {
+		width:20px;
+		aspect-ratio:1;
+		border:0 none;
+		border-radius:5px;
+		background-color:var(--colorSuccess);
+	}
+
+	&::-webkit-slider-thumb {
+		-webkit-appearance:none;
+		width:20px;
+		margin-top:-5px;
+		aspect-ratio:1;
+		border:0 none;
+		border-radius:5px;
+		background-color:var(--colorSuccess);
+	}
+
+	&::-moz-range-progress {
+		height:10px;
+		border-radius:5px 0 0 5px;
+		background-color:var(--colorMedium-Darkened-8);
+	}
+}
+
+.AuditHistory-Table {
+	margin-top:calc(var(--lineHeightMain) * 2);
+
+	tr {
+		&.ValueChanged {
+			&,
+			&:nth-child(2n) {
+				&:hover {
+					td {
+						background-color:color-mix(in srgb, var(--colorWarning), #FFFFFF 25%);
+					}
+				}
+			}
+
+			td {
+				background-color:color-mix(in srgb, var(--colorWarning), #FFFFFF 75%);
+			}
+		}
+
+		&.ViewCode {
+			.TableCell-OldValue,
+			.TableCell-CurrentValue {
+				code {
+					display:block;
+				}
+
+				iframe {
+					display:none;
+				}
+			}
+		}
+	}
+
+	.TableHeader-Info {
+		background-color:var(--colorMedium-Darkened-8);
+		border-bottom-width:0;
+	}
+
+	.TableHeader-Field {
+		width:300px;
+	}
+
+	.TableCell-MediaElement-Label,
+	.TableCell-PublicationData-Label,
+	.TableCell-Translation-Label {
+		padding-block:5px;
+		border-bottom:3px solid var(--colorMedium-Darkened-8);
+		background-color:var(--colorMedium);
+		color:var(--colorBright);
+		pointer-events:none;
+
+		&::before {
+			display:none;
+		}
+	}
+
+	.TableCell-OldValue {
+		width:calc((100% - 300px) * .5);
+
+		input {
+			display:none;
+		}
+	}
+
+	.TableCell-OldValue,
+	.TableCell-CurrentValue {
+		&:has(code) {
+			padding:0;
+		}
+	}
+
+	.TableFooter-Info {
+		border-bottom-right-radius:0;
+	}
+
+	.TableFooter-CurrentValue {
+		border-bottom-left-radius:0;
+	}
+
+	.AuditHistory-Table-ToggleButton {
+		font-size:0;
+		line-height:0;
+		position:absolute;
+		top:15px;
+		right:20px;
+
+		&::after {
+			content:'\f121';
+			margin-left:0;
+		}
+	}
+
+	code {
+		display:none;
+		margin:15px 20px;
+		white-space:pre-wrap;
+	}
+
+	iframe {
+		display:block;
+		width:100%;
+		border-radius:5px;
+		border:0 none;
+	}
+}
