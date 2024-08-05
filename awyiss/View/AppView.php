@@ -209,7 +209,7 @@ class AppView extends TwigView {
 			public function __call(string $method, array $args): mixed {
 				$ls_method = $method;
 
-				if (!method_exists($this->helper, $ls_method)) {
+				if (!method_exists($this->helper, $ls_method) && !method_exists($this->helper, '__call')) {
 					$ls_method = 'get' . ucfirst($method);
 				}
 
