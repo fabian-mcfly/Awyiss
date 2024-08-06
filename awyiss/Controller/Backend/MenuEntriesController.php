@@ -295,6 +295,7 @@ class MenuEntriesController extends Controller {
 
 		if (!empty($requestData['new_entries'])) {
 			foreach ($requestData['new_entries'] as $li_key => $la_data) {
+				$la_data = array_intersect_key($la_data, array_flip(['menu_id', 'title', 'link', 'active', 'language_shortcode']));
 				$lo_entity = $table->newDefaultEntity($la_data);
 
 				if ($table->save($lo_entity)) {
