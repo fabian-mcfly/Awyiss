@@ -28,7 +28,7 @@ so they can be passed to the template
 		{% set settings = settings|merge({parentsActive: true}) %}
 	{% endif %}
 
-	<ul {% if settings.level == 1 %} id="{{ settings.identifier|pluralize }}-List" {% endif -%}
+	<ul {% if settings.level == 1 %} id="{{ settings.identifier|pluralize }}-List" data-controller="{{ settings.identifier|pluralize|dasherize }}"{% endif -%}
 		class="{{ settings.identifier|pluralize }}-List NestedList Level{{ settings.level }} {{ settings.class }}"
 		{%- if settings.data is defined %}
 			{%- for key, value in settings.data %} data-{{ key }}="{{ value == false ? 'false' : (value is same as(true) ? 'true' : value) }}"{%- endfor %}

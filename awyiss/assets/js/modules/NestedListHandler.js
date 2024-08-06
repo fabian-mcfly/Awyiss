@@ -622,10 +622,8 @@ export default class NestedListHandler {
 
 		element = element || document.querySelector(this.selector);
 
-		// Get the controller name from the id of the first level nested list item
-		let controller = element.querySelector(':scope > li').id.split('-')[0];
-		// Convert the controller name to kebab-case
-		controller = controller.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
+		// Get the controller name
+		let controller = element.dataset.controller;
 
 		// Add a class to the element(s) to show that a reload operation is in progress
 		const elements = Array.from(document.querySelectorAll(`${this.selector}.Level1`));

@@ -1,6 +1,7 @@
 {% block listOverview %}
 	<ul id="Media-List" data-media-folder-id="{{ selectedMediaFolderId }}"
-		data-can-create="{{ AuthorizationHelper.isAccessible('create') ? 1 : 0 }}">
+		data-can-create="{{ AuthorizationHelper.isAccessible('create') ? 1 : 0 }}"
+		data-controller="media">
 		{% for mediaItem in media %}
 			{% block listOverviewMediaItem %}
 				{% set imageSizeInfo = '' %}
