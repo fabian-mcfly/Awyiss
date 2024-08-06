@@ -400,6 +400,10 @@ class HtmlCleaner {
 
 				$lo_newPTag = $dom->createElement('p', '&nbsp;');
 				$lo_pTag->parentNode->insertBefore($lo_newPTag, $lo_pTag);
+
+				// Create a new \r\n text node
+				$lo_newTextNode = $dom->createTextNode("\r\n");
+				$lo_pTag->parentNode->insertBefore($lo_newTextNode, $lo_pTag);
 			}
 
 			// As long as the last child of the <p>-tag is a <br>-tag, remove it and append a <p>-tag
