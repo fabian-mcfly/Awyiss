@@ -123,23 +123,23 @@
 								}) }}
 								{{ FormHelper.control('media_element_selectors.' ~ counter ~ '.media_selector_id', {
 									options: mediaSelectors,
-									required: true,
+									required: false,
 									val: '',
 								}) }}
 
 								{{ FormHelper.control('media_element_selectors.' ~ counter ~ '.title', {
-									required: true,
+									required: false,
 									type: languages.Backend|filter(language => language.active)|length > 1 ? 'translatableText' : null,
 								}) }}
 
 								{{ FormHelper.control('media_element_selectors.' ~ counter ~ '.identifier', {
-									required: true,
+									required: false,
 									'data-autofill-from-title': 'true',
 								}) }}
 
 								{{ FormHelper.control('media_element_selectors.' ~ counter ~ '.column_span', {
 									options: columnSpans,
-									required: true,
+									required: false,
 									val: '',
 								}) }}
 
@@ -175,13 +175,13 @@
 
 									{{ FormHelper.control('media_element_assignments.' ~ counter ~ '.scope', {
 										options: models,
-										required: true,
+										required: false,
 									}) }}
 
 									{{ FormHelper.control('media_element_assignments.' ~ counter ~ '.foreign_key', {
 										disabled: entities[ mediaElementAssignment.scope ]|length == 0,
 										options: entities[ mediaElementAssignment.scope ],
-										required: true,
+										required: false,
 									}) }}
 								</div>
 								{% set counter = counter + 1 %}
@@ -194,14 +194,14 @@
 
 								{{ FormHelper.control('media_element_assignments.' ~ counter ~ '.scope', {
 									options: models,
-									required: true,
+									required: false,
 									val: '',
 								}) }}
 
 								{{ FormHelper.control('media_element_assignments.' ~ counter ~ '.foreign_key', {
 									disabled: true,
 									options: [],
-									required: true,
+									required: false,
 									val: '',
 								}) }}
 							</div>
