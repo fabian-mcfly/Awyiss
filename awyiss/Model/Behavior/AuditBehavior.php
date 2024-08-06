@@ -823,6 +823,14 @@ class AuditBehavior extends Behavior {
 
 				return $la_entityData;
 			}
+
+			if (isset($la_newData['_translations'])) {
+				/** @var \Awyiss\Model\Entity $lo_translation */
+				foreach ($la_newData['_translations'] as $ls_languageShortcode => $lo_translation) {
+					$la_newData['_translations'][ $ls_languageShortcode ] = array_diff_key($lo_translation->extract(null, false, false), $la_keys);
+					unset($la_newData['_translations'][ $ls_languageShortcode ]['locale']);
+				}
+			}
 		}
 
 		$la_oldData = [];
@@ -846,10 +854,20 @@ class AuditBehavior extends Behavior {
 			}
 
 			$la_oldData = array_diff_key($la_oldData, $la_keys);
+
+			if (isset($la_oldData['_translations'])) {
+				/** @var \Awyiss\Model\Entity $lo_translation */
+				foreach ($la_oldData['_translations'] as $ls_languageShortcode => $lo_translation) {
+					$la_oldData['_translations'][ $ls_languageShortcode ] = array_diff_key($lo_translation->extractOriginal(null, false, false), $la_keys);
+					unset($la_oldData['_translations'][ $ls_languageShortcode ]['locale']);
+				}
+			}
 		}
 		elseif ($lo_associatedEntity) {
 			$la_oldData = array_diff_key($lo_associatedEntity->getOriginalValues(), $la_keys);
 		}
+
+		unset($la_oldData['_locale'], $la_newData['_locale']);
 
 		//Even if the translations are the same, they have to make their way into the db as plain arrays, not entities
 		$la_entityData['old'][ $field ] = $la_oldData;
