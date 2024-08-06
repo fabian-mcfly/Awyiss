@@ -76,13 +76,9 @@ export default class InputListManager {
 			// Add an add button to the form input
 			this.addButton(formInput, formInput.dataset.listItemAdd, this.buttonAddClass);
 
-			// For each row, add a remove button and disable it if it's the only row
+			// For each row, add a remove button
 			rows.forEach((row) => {
 				this.addButton(row, formInput.dataset.listItemRemove, this.buttonRemoveClass);
-
-				if (rows.length <= 2) {
-					row.querySelector(`.${this.buttonRemoveClass}`).classList.add('Disabled');
-				}
 
 				// Create a new handler element
 				const handler = document.createElement('div');
@@ -158,11 +154,6 @@ export default class InputListManager {
 		// Get all the rows in the form input
 		const rows = formInput.querySelectorAll(`.${this.elementClass}`);
 
-		// If there is currently only one row, enable the remove button
-		if (rows.length === 1) {
-			rows[0].querySelector(`.${this.buttonRemoveClass}`).classList.remove('Disabled');
-		}
-
 		// Get the last row in the form input
 		const lastRow = rows[rows.length - 1];
 
@@ -228,11 +219,6 @@ export default class InputListManager {
 			});
 		});
 
-		// Find the remove button in the new row
-		const removeButton = newRow.querySelector(`.${this.buttonRemoveClass}`);
-		// Remove the disabled class from the remove button
-		removeButton.classList.remove('Disabled');
-
 		// Insert the new row before the button
 		formInput.insertBefore(newRow, button);
 
@@ -245,28 +231,27 @@ export default class InputListManager {
 	 * @param {HTMLElement} button - Button that was clicked
 	 */
 	handleRemove(button) {
-		// If the button is not disabled and there is more than one row, remove the clicked button's parent element
-		if (button.classList.contains('Disabled')) {
-			return;
-		}
-
 		// Get the form input that contains the button
 		const formInput = button.parentElement.parentElement;
 
 		// Get all the rows in the form input
 		const rows = formInput.querySelectorAll(`.${this.elementClass}`);
+		const row = button.parentElement;
 
-		// Get the first row input and trigger an input event
-		//const firstInput = formInput.querySelector('input, select');
-		//firstInput.dispatchEvent(new Event('input', {bubbles: true}));
+		// If there is only one row, clear the values instead of removing the row
+		if (rows.length === 1) {
+			const inputs = row.querySelectorAll('input, select, textarea');
 
-		button.parentElement.remove();
-
-		// If there is only one row left, disable the remove button
-		if (rows.length === 2) {
-			const remainingRow = formInput.querySelector(`.${this.elementClass}`);
-			remainingRow.querySelector(`.${this.buttonRemoveClass}`).classList.add('Disabled');
+			inputs.forEach((input) => {
+				// If the input is not hidden, clear the value
+				input.value = '';
+			});
 		}
+		else {
+			button.parentElement.remove();
+		}
+
+		window.formLeaveConfirmation.formChanged();
 	}
 
 	/**
