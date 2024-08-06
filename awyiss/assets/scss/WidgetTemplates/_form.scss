@@ -14,6 +14,10 @@
 		&.Collapsed {
 			padding-block:0;
 		}
+
+		legend {
+			margin-left:0;
+		}
 	}
 
 	.Fieldset-WidgetElements-Available {
@@ -56,7 +60,7 @@
 			scrollbar-width:thin;
 
 			.🌚& {
-				scrollbar-color:var(--colorSemiDark) var(--colorBackgroundWidgetDarkMode-Darkened-4-Alpha-85);
+				scrollbar-color:var(--colorSemiDark) oklch(from var(--colorBackgroundContentDarkMode) calc(l - 0.0473) calc(c - 0.005) calc(h + 1.12) / .85);
 			}
 		}
 	}
@@ -96,10 +100,10 @@
 		}
 
 		&[data-assignable="false"] {
-			background-color:var(--colorNeutralLight-Alpha-50);
+			background-color:color-mix(in srgb, var(--colorNeutralLight), transparent 50%);
 
 			.🌚& {
-				background-color:var(--colorSemiDarkDarkMode-Darkened-4);
+				background-color:oklch(from var(--colorSemiDarkDarkMode) calc(l - 0.0403) calc(c - 0.004) calc(h + 0.88));
 			}
 
 			.Title {
@@ -111,7 +115,7 @@
 			background-color:var(--colorLight);
 
 			.🌚& {
-				background-color:var(--colorSemiDarkDarkMode-Lightened-4);
+				background-color:oklch(from var(--colorSemiDarkDarkMode) calc(l + 0.0389) calc(c + 0.004) calc(h - 0.55));
 			}
 		}
 

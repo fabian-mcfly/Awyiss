@@ -281,6 +281,7 @@ export async function initMainOnReady() {
 		},
 		'button',
 		'.Button',
+		'legend',
 		'.Pagination-List .Number',
 		'.Pagination-List .Arrow',
 		'.LanguageSwitcherLabel',

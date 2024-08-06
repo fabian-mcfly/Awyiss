@@ -67,7 +67,7 @@
 }
 
 .Pagination-List {
-	--backgroundColor:var(--colorMedium-Darkened-8);
+	--backgroundColor:oklch(from var(--colorMedium) calc(l - 0.0683) calc(c + 0.001) calc(h - 1.9));
 	--colorButtons:var(--colorMedium);
 	--colorText:var(--colorBright);
 
@@ -81,7 +81,7 @@
 	position:relative;
 
 	.🌚 & {
-		--backgroundColor:var(--colorBackgroundContentDarkMode-Darkened-2);
+		--backgroundColor:oklch(from var(--colorBackgroundContentDarkMode) calc(l - 0.0216) calc(c - 0.002) calc(h - 1.95));
 		--colorButtons:var(--backgroundColorContent);
 	}
 

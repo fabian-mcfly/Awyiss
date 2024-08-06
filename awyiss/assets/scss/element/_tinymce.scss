@@ -22,7 +22,7 @@ body {
 	}
 
 	.tox {
-		--scrollbarColor:var(--colorMedium-Darkened-16) var(--colorSemiDarkDarkMode);
+		--scrollbarColor:oklch(from var(--colorMedium) calc(l - 0.1400) calc(c - 0.002) calc(h + 0.39)) var(--colorSemiDarkDarkMode);
 
 		box-sizing:inherit;
 		font-family:inherit;
@@ -131,7 +131,7 @@ body {
 			height:36px;
 			margin-block:0;
 			border-radius:5px;
-			background-color:var(--colorMedium-Darkened-8);
+			background-color:oklch(from var(--colorMedium) calc(l - 0.0683) calc(c + 0.001) calc(h - 1.9));
 			position:relative;
 
 			.🌚 & {
@@ -230,7 +230,7 @@ body {
 			}
 
 			.tox-collection__item--enabled {
-				background-color:var(--colorMedium-Darkened-16);
+				background-color:oklch(from var(--colorMedium) calc(l - 0.1400) calc(c - 0.002) calc(h + 0.39));
 			}
 
 			.tox-collection__item--active {
@@ -255,7 +255,7 @@ body {
 		}
 
 		.tox-insert-table-picker {
-			background-color:var(--colorMedium-Darkened-8);
+			background-color:oklch(from var(--colorMedium) calc(l - 0.0683) calc(c + 0.001) calc(h - 1.9));
 
 			.tox-insert-table-picker__selected {
 				background-color:var(--colorMedium);
@@ -285,7 +285,7 @@ body {
 
 				.tox-toolbar-textfield {
 					border-radius:5px;
-					background-color:var(--colorMedium-Darkened-8);
+					background-color:oklch(from var(--colorMedium) calc(l - 0.0683) calc(c + 0.001) calc(h - 1.9));
 
 					.🌚 & {
 						background-color:var(--colorBackgroundContentDarkMode)
@@ -355,7 +355,7 @@ body {
 								font-size:inherit;
 
 								&:focus {
-									background-color:var(--colorSuccess-Alpha-10);
+									background-color:color-mix(in srgb, var(--colorSuccess), transparent 90%);
 								}
 
 								&--active {
@@ -501,7 +501,7 @@ body {
 								font-size:inherit;
 
 								&:focus {
-									background-color:var(--colorSuccess-Alpha-10);
+									background-color:color-mix(in srgb, var(--colorSuccess), transparent 90%);
 								}
 
 								&--active {
@@ -543,7 +543,7 @@ body {
 				&::after {
 					content:'';
 					border-radius:5px;
-					background-color:var(--colorDark-Alpha-50);
+					background-color:color-mix(in srgb, var(--colorDark), transparent 50%);
 					position:absolute;
 					inset:0;
 				}
@@ -750,13 +750,13 @@ body {
 					outline:0 none;
 					border:1px solid var(--colorSuccess);
 					border-radius:5px;
-					box-shadow:0 0 10px 5px var(--colorSuccess-Alpha-10);
+					box-shadow:0 0 10px 5px color-mix(in srgb, var(--colorSuccess), transparent 90%);
 					background-color:var(--backgroundColor);
 					color:var(--colorText);
 					font-family:inherit;
 
 					.🌚 & {
-						--backgroundColor:var(--colorSemiDarkDarkMode-Lightened-2);
+						--backgroundColor:oklch(from var(--colorSemiDarkDarkMode) calc(l + 0.0196) calc(c + 0.002) calc(h - 0.3));
 					}
 				}
 			}

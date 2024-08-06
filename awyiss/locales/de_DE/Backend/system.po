@@ -59,6 +59,12 @@ msgstr "Neuer Eintrag"
 msgid "create"
 msgstr "Neuer Eintrag"
 
+msgid "apply"
+msgstr "Übernehmen"
+
+msgid "cancel"
+msgstr "Abbrechen"
+
 msgid "close"
 msgstr "Schließen"
 

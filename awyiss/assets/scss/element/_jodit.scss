@@ -16,7 +16,7 @@
 }
 
 .jodit {
-	--scrollbarColor:var(--colorMedium-Darkened-16) var(--colorSemiDarkDarkMode);
+	--scrollbarColor:oklch(from var(--colorMedium) calc(l - 0.1400) calc(c - 0.002) calc(h + 0.39)) var(--colorSemiDarkDarkMode);
 }
 
 .jodit-container {
@@ -45,7 +45,7 @@
 	}
 
 	.🌚 & {
-		--backgroundColor:var(--colorSemiDarkDarkMode-Lightened-4);
+		--backgroundColor:oklch(from var(--colorSemiDarkDarkMode) calc(l + 0.0389) calc(c + 0.004) calc(h - 0.55));
 	}
 
 	&:hover,
@@ -113,7 +113,7 @@
 
 	&__trigger,
 	&__button {
-		background-color:var(--colorMedium-Darkened-8);
+		background-color:oklch(from var(--colorMedium) calc(l - 0.0683) calc(c + 0.001) calc(h - 1.9));
 		color:var(--jd-color-icon);
 		opacity:inherit;
 		fill:currentColor;
@@ -126,7 +126,7 @@
 
 .jodit-popup {
 	border-radius:var(--jd-border-radius-default);
-	box-shadow:0 0 10px 5px var(--colorSuccess-Alpha-10);
+	box-shadow:0 0 10px 5px color-mix(in srgb, var(--colorSuccess), transparent 90%);
 	overflow:hidden;
 
 	&__content {
@@ -233,7 +233,7 @@
 			border-radius:5px;
 			border:1px solid rgba(255, 255, 255, .2);
 			background-blend-mode:multiply;
-			background-color:var(--colorBackgroundContentDarkMode-Lightened-8);
+			background-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l + 0.0847) calc(c + 0.009) calc(h + 1.53));
 			background-image:url($relativePath + 'img/background-pattern-dark.png');
 			color:var(--colorBright);
 			line-height:3;
@@ -336,7 +336,7 @@
 			height:52px;
 			padding:0 20px;
 			border-radius:5px 5px;
-			background-color:var(--colorDark-Alpha-50);
+			background-color:color-mix(in srgb, var(--colorDark), transparent 50%);
 			color:var(--colorBright);
 			position:absolute;
 			top:0;

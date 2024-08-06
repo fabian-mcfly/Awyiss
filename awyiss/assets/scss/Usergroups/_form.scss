@@ -3,6 +3,10 @@
 		.Fieldset-Users {
 			padding:0;
 
+			legend {
+				margin-left:20px;
+			}
+
 			.Overview-Table {
 				margin:0;
 			}
@@ -26,10 +30,10 @@
 					}
 
 					~ td {
-						background-color:var(--colorSuccess-Alpha-10);
+						background-color:color-mix(in srgb, var(--colorSuccess), transparent 90%);
 
 						&::before {
-							background-color:var(--colorSuccess-Darkened-8-Alpha-25);
+							background-color:oklch(from var(--colorSuccess) calc(l - .0368) calc(c + .018) calc(h - 2.03) / .25);
 						}
 					}
 				}
@@ -60,6 +64,10 @@
 	.Fieldset-Permissions {
 		padding-inline:20px;
 		row-gap:2rem;
+
+		legend {
+			margin-left:0;
+		}
 	}
 
 	.Fieldset-Permission {
@@ -92,7 +100,7 @@
 			cursor:pointer;
 
 			.🌚& {
-				background-color:var(--colorBackgroundContentDarkMode-Darkened-4);
+				background-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l - 0.0473) calc(c - 0.005) calc(h + 1.12));
 			}
 
 			&::after {
@@ -113,7 +121,7 @@
 			border-left:2px solid var(--colorMedium);
 
 			.🌚& {
-				border-left-color:var(--colorBackgroundContentDarkMode-Darkened-4);
+				border-left-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l - 0.0473) calc(c - 0.005) calc(h + 1.12));
 			}
 		}
 
@@ -197,7 +205,7 @@
 				height:33px;
 				border-radius:5px;
 				background-color:var(--colorBright);
-				outline:2px solid var(--colorLight-Darkened-8);
+				outline:2px solid oklch(from var(--colorLight) calc(l - 0.0588) calc(c + 0.009) calc(h + 1.05));
 				font-size:0;
 				line-height:0;
 				position:relative;
@@ -209,8 +217,8 @@
 				}
 
 				.🌚& {
-					outline-color:#{var(--colorBackgroundContentDarkMode-Darkened-2)};
-					background-color:var(--colorBackgroundContentDarkMode-Darkened-4);
+					outline-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l - 0.0216) calc(c - 0.002) calc(h - 1.95));
+					background-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l - 0.0473) calc(c - 0.005) calc(h + 1.12));
 				}
 
 				&.Animate {
@@ -247,8 +255,8 @@
 					}
 
 					.🌚& {
-						outline-color:var(--colorBackgroundContentDarkMode-Lightened-8);
-						background-color:var(--colorBackgroundContentDarkMode-Lightened-4);
+						outline-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l + 0.0847) calc(c + 0.009) calc(h + 1.53));
+						background-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l + 0.0448) calc(c + 0.005) calc(h - 0.4));
 					}
 				}
 

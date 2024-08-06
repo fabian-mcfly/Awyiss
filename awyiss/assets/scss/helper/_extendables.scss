@@ -101,7 +101,7 @@
 
 	.Button {
 		.🌚 & {
-			--backgroundColor:var(--colorSemiDarkDarkMode-Darkened-8);
+			--backgroundColor:oklch(from var(--colorSemiDarkDarkMode) calc(l - 0.0833) calc(c - 0.007) calc(h - 3.11));
 		}
 
 		&[disabled] {
@@ -227,7 +227,7 @@
 
 	.Button-ListView-PaginatedList {
 		.🌚 & {
-			--backgroundColor:var(--colorBackgroundContentDarkMode-Darkened-4);
+			--backgroundColor:oklch(from var(--colorBackgroundContentDarkMode) calc(l - 0.0473) calc(c - 0.005) calc(h + 1.12));
 		}
 	}
 

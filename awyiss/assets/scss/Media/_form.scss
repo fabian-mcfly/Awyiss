@@ -54,7 +54,7 @@
 		position:relative;
 
 		.🌚 & {
-			--colorLight:var(--colorBackgroundContentDarkMode-Lightened-10);
+			--colorLight:oklch(from var(--colorBackgroundContentDarkMode) calc(l + 0.1041) calc(c + 0.011) calc(h + 2.24));
 		}
 
 		&.ResizeInProgress {

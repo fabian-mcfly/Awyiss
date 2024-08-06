@@ -40,7 +40,7 @@
 			height:52px;
 			padding:0 20px;
 			border-radius:0 0 5px 5px;
-			background-color:var(--colorDark-Alpha-50);
+			background-color:color-mix(in srgb, var(--colorDark), transparent 50%);
 			color:var(--colorBright);
 			//noinspection CssNoGenericFontName
 			font-family:var(--fontStackHeading);
@@ -134,7 +134,7 @@
 
 					&:has(input:checked) {
 						border-color:var(--colorSuccess);
-						background-color:var(--colorSuccess-Alpha-25);
+						background-color:color-mix(in srgb, var(--colorSuccess), transparent 75%);
 					}
 				}
 			}

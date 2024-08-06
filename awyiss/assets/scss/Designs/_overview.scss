@@ -21,6 +21,12 @@
 		}
 	}
 
+	.ButtonArea {
+		&:not(.ButtonArea-Bottom) {
+			margin-bottom:10px;
+		}
+	}
+
 	.FormInputType-Font {
 		margin-bottom:40px;
 		padding-bottom:20px;

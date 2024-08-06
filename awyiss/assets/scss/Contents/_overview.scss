@@ -37,18 +37,29 @@
 			box-shadow:none;
 			border-radius:5px 5px 0 0;
 			background-color:var(--colorMedium);
+			background-image:none;
 			font-size:0;
 			line-height:0;
 			text-align:center;
 			position:absolute;
 			bottom:calc(var(--lineHeightMain) * -1);
 			right:20px;
-			opacity:.5;
+			opacity:.25;
 			transition:opacity .3s ease-in-out;
 
+			.🌚& {
+				background-color:var(--backgroundColorContent);
+			}
+
 			&[disabled] {
-				background-color:var(--colorDark);
-				opacity:initial;
+				background-color:var(--colorBright);
+				color:var(--colorText);
+				opacity:1;
+
+				.🌚& {
+					background-color:var(--backgroundColorContent);
+					color:var(--colorBright);
+				}
 			}
 
 			&:hover {
@@ -72,7 +83,7 @@
 
 	.Overview {
 		.BackToOverview {
-		margin-top:calc(var(--lineHeightMain) * -1);
+			margin-top:calc(var(--lineHeightMain) * -1);
 		}
 
 		h1 {
@@ -122,11 +133,11 @@
 		grid-column:1 / span 4;
 
 		&.Overview-Fieldset-Unknown {
-			outline:2px solid var(--colorError);
-			outline-offset:-2px;
+			border:2px solid var(--colorError);
 
 			legend {
 				background-color:var(--colorError);
+				color:var(--colorBright);
 			}
 		}
 

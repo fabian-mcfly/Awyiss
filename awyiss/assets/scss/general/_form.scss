@@ -73,10 +73,10 @@ textarea {
 		--backgroundColor:var(--colorBright);
 
 		border-color:var(--colorSuccess);
-		box-shadow:0 0 10px 5px var(--colorSuccess-Alpha-10);
+		box-shadow:0 0 10px 5px color-mix(in srgb, var(--colorSuccess), transparent 90%);
 
 		.🌚 & {
-			--backgroundColor:var(--colorSemiDarkDarkMode-Lightened-2);
+			--backgroundColor:oklch(from var(--colorSemiDarkDarkMode) calc(l + 0.0196) calc(c + 0.002) calc(h - 0.3));
 		}
 	}
 }
@@ -97,10 +97,10 @@ select {
 		--backgroundColor:var(--colorBright);
 
 		border-color:var(--colorSuccess);
-		box-shadow:0 0 10px 5px var(--colorSuccess-Alpha-10);
+		box-shadow:0 0 10px 5px color-mix(in srgb, var(--colorSuccess), transparent 90%);
 
 		.🌚 & {
-			--backgroundColor:var(--colorSemiDarkDarkMode-Lightened-2);
+			--backgroundColor:oklch(from var(--colorSemiDarkDarkMode) calc(l + 0.0196) calc(c + 0.002) calc(h - 0.3));
 		}
 	}
 }
@@ -129,11 +129,11 @@ input {
 				--backgroundColor:var(--colorBright);
 
 				border-color:var(--colorSuccess);
-				box-shadow:0 0 10px 5px var(--colorSuccess-Alpha-10);
+				box-shadow:0 0 10px 5px color-mix(in srgb, var(--colorSuccess), transparent 90%);
 				background-color:var(--backgroundColor);
 
 				.🌚 & {
-					--backgroundColor:var(--colorSemiDarkDarkMode-Lightened-2);
+					--backgroundColor:oklch(from var(--colorSemiDarkDarkMode) calc(l + 0.0196) calc(c + 0.002) calc(h - 0.3));
 				}
 			}
 		}
@@ -148,7 +148,7 @@ input {
 			background-color:var(--backgroundColor);
 
 			.🌚 & {
-				--backgroundColor:var(--colorSemiDarkDarkMode-Lightened-2);
+				--backgroundColor:oklch(from var(--colorSemiDarkDarkMode) calc(l + 0.0196) calc(c + 0.002) calc(h - 0.3));
 			}
 		}
 	}
@@ -193,50 +193,30 @@ textarea {
 		> select,
 		> textarea {
 			border-color:var(--colorError);
-			box-shadow:0 0 10px 5px var(--colorError-Alpha-10);
+			box-shadow:0 0 10px 5px color-mix(in srgb, var(--colorError), transparent 90%);
 		}
 	}
 
 	&Type-Datetime {
-		display:flex;
-		flex-wrap:wrap;
-
-		.Label {
-			width:100%;
-			flex:0 0 100%;
-		}
-
 		input {
-			width:auto;
 			border-top-right-radius:0;
-			border-bottom-right-radius:0;
-			flex:1 1 auto;
-			order:2;
-		}
-
-		div.Error {
-			width:100%;
-			flex:0 0 100%;
-			order:4;
 		}
 
 		.Timezone {
 			padding:0 10px;
-			border-radius:0 5px 5px 0;
-			box-shadow:-3px 0 4px inset rgba(0, 0, 0, .25);
+			border-radius:5px 5px 0 0;
 			background-color:var(--colorMedium);
 			color:var(--colorBright);
-			font-size:.8rem;
-			line-height:52px;
+			font-size:12px;
+			line-height:1.05rem;
 			order:3;
+			position:absolute;
+			top:0;
+			right:0;
 			cursor:default;
 
 			.🌚 & {
 				background-color:var(--colorBackgroundContentDarkMode);
-			}
-
-			.Scale-Small & {
-				line-height:40px;
 			}
 		}
 	}
@@ -318,7 +298,7 @@ textarea {
 			&.SortableGhost {
 				input,
 				select {
-					background-color:var(--colorSuccess-Alpha-25);
+					background-color:color-mix(in srgb, var(--colorSuccess), transparent 75%);
 					outline:2px solid var(--colorSuccess);
 					outline-offset:-2px;
 				}
@@ -479,7 +459,7 @@ textarea {
 				+ .Label {
 					&::before {
 						//border-color:var(--colorSuccess);
-						box-shadow:0 0 10px 5px var(--colorSuccess-Alpha-10);
+						box-shadow:0 0 10px 5px color-mix(in srgb, var(--colorSuccess), transparent 90%);
 						outline:2px solid var(--colorInfo);
 						outline-offset:2px;
 						//background-color:var(--colorBright);
@@ -590,7 +570,7 @@ textarea {
 					> select,
 					> textarea {
 						border-color:var(--colorError);
-						box-shadow:0 0 10px 5px var(--colorError-Alpha-10);
+						box-shadow:0 0 10px 5px color-mix(in srgb, var(--colorError), transparent 90%);
 					}
 				}
 			}
@@ -697,11 +677,11 @@ textarea {
 			&:focus-within {
 				&::before {
 					border-color:var(--colorSuccess);
-					box-shadow:0 0 10px 5px var(--colorSuccess-Alpha-10);
+					box-shadow:0 0 10px 5px color-mix(in srgb, var(--colorSuccess), transparent 90%);
 					background-color:var(--colorBright);
 
 					.🌚 & {
-						background-color:var(--colorSemiDarkDarkMode-Lightened-2);
+						background-color:oklch(from var(--colorSemiDarkDarkMode) calc(l + 0.0196) calc(c + 0.002) calc(h - 0.3));
 					}
 				}
 			}
@@ -856,17 +836,17 @@ textarea {
 		}
 
 		&[data-assignable="false"] {
-			background-color:var(--colorNeutralLight-Alpha-50);
+			background-color:color-mix(in srgb, var(--colorNeutralLight), transparent 50%);
 
 			.🌚& {
-				background-color:var(--colorSemiDarkDarkMode-Alpha-10);
+				background-color:color-mix(in srgb, var(--colorNeutralLight), transparent 90%);
 			}
 
 			.Title {
 				color:var(--colorMedium);
 
 				.🌚& {
-					color:var(--colorSemiDarkDarkMode-Lightened-2);
+					color:oklch(from var(--colorSemiDarkDarkMode) calc(l + 0.0196) calc(c + 0.002) calc(h - 0.3));
 				}
 			}
 		}
@@ -875,7 +855,7 @@ textarea {
 			background-color:var(--colorLight);
 
 			.🌚& {
-				background-color:var(--colorSemiDarkDarkMode-Lightened-4);
+				background-color:oklch(from var(--colorSemiDarkDarkMode) calc(l + 0.0389) calc(c + 0.004) calc(h - 0.55));
 			}
 		}
 
@@ -937,6 +917,10 @@ textarea {
 		.List {
 			height:40px;
 		}
+	}
+
+	legend {
+		margin-left:0;
 	}
 }
 

@@ -48,7 +48,7 @@
 			border-left:2px solid var(--colorMedium);
 
 			.🌚& {
-				border-left-color:var(--colorBackgroundContentDarkMode-Darkened-4);
+				border-left-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l - 0.0473) calc(c - 0.005) calc(h + 1.12));
 			}
 
 			&:has(> .ListItem-Category:first-child) {
@@ -106,11 +106,11 @@
 				background-color:var(--colorLight);
 
 				.🌚& {
-					background-color:var(--colorBackgroundContentDarkMode-Lightened-4);
+					background-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l + 0.0448) calc(c + 0.005) calc(h - 0.4));
 				}
 
 				&:hover {
-					background-color:var(--colorLight-Darkened-8);
+					background-color:oklch(from var(--colorLight) calc(l - 0.0588) calc(c + 0.009) calc(h + 1.05));
 
 					.🌚& {
 						background-color:var(--colorSemiDarkDarkMode);
@@ -125,7 +125,7 @@
 
 						.Button {
 							.🌚& {
-								--backgroundColor:var(--colorSemiDarkDarkMode-Darkened-8);
+								--backgroundColor:oklch(from var(--colorSemiDarkDarkMode) calc(l - 0.0833) calc(c - 0.007) calc(h - 3.11));
 							}
 						}
 					}
@@ -242,7 +242,7 @@
 				overflow:hidden;
 
 				.🌚& {
-					background-color:var(--colorBackgroundContentDarkMode-Darkened-4);
+					background-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l - 0.0473) calc(c - 0.005) calc(h + 1.12));
 				}
 
 				&::after {

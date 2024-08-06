@@ -3,6 +3,10 @@
 		.Fieldset-Usergroups {
 			padding:0;
 
+			legend {
+				margin-left:20px;
+			}
+
 			.Overview-Table {
 				margin:0;
 			}
@@ -26,10 +30,10 @@
 					}
 
 					~ td {
-						background-color:var(--colorSuccess-Alpha-10);
+						background-color:color-mix(in srgb, var(--colorSuccess), transparent 90%);
 
 						&::before {
-							background-color:var(--colorSuccess-Darkened-8-Alpha-25);
+							background-color:oklch(from var(--colorSuccess) calc(l - .0368) calc(c + .018) calc(h - 2.03) / .25);
 						}
 					}
 				}

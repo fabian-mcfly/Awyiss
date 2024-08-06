@@ -59,6 +59,12 @@ msgstr "New Record"
 msgid "create"
 msgstr "New Record"
 
+msgid "apply"
+msgstr "Apply"
+
+msgid "cancel"
+msgstr "Cancel"
+
 msgid "close"
 msgstr "Close"
 

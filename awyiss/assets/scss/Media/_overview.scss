@@ -131,7 +131,7 @@
 	display:flex;
 	border-radius:5px;
 	outline:5px solid var(--colorSuccess);
-	background-color:var(--colorBright-Alpha-85);
+	background-color:color-mix(in srgb, var(--colorBright), transparent 85%);
 	backdrop-filter:blur(5px);
 	//noinspection CssNoGenericFontName
 	font-family:var(--fontStackHeading);
@@ -146,7 +146,7 @@
 	justify-content:center;
 
 	.🌚 & {
-		background-color:var(--colorBackgroundContentDarkMode-Darkened-4-Alpha-85);
+		background-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l - 0.0473) calc(c - 0.005) calc(h + 1.12) / .85);
 	}
 
 	&.Visible {
@@ -212,15 +212,15 @@ ul#Media-List {
 	position:relative;
 
 	.🌚 & {
-		--colorLight:var(--colorBackgroundContentDarkMode-Lightened-10);
+		--colorLight:oklch(from var(--colorBackgroundContentDarkMode) calc(l + 0.1041) calc(c + 0.011) calc(h + 2.24));
 
-		border-color:var(--colorBackgroundContentDarkMode-Lightened-4);
-		background-color:var(--colorBackgroundContentDarkMode-Lightened-4);
+		border-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l + 0.0448) calc(c + 0.005) calc(h - 0.4));
+		background-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l + 0.0448) calc(c + 0.005) calc(h - 0.4));
 	}
 
 	&.Selected,
 	&.SortableGhost {
-		--colorLight:var(--colorSuccess-Lightened-10);
+		--colorLight:color-mix(in srgb, var(--colorSuccess), #FFFFFF 25%);
 
 		outline:2px solid var(--colorSuccess);
 		outline-offset:-2px;

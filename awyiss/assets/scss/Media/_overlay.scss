@@ -113,10 +113,11 @@
 
 		legend {
 			width:100%;
+			margin-left:0;
 			border-radius:5px;
+			position:absolute;
 			top:0;
 			left:0;
-			bottom:auto;
 		}
 
 		.NestedList {
@@ -126,13 +127,13 @@
 		}
 
 		.ListItem {
-			--dottedLineColor:var(--colorLight-Darkened-16);
+			--dottedLineColor:oklch(from var(--colorLight) calc(l - 0.1215) calc(c + 0.017) calc(h + 1.45));
 			--backgroundColorOdd:var(--colorBright);
 			margin-inline:0;
 			padding-inline:0;
 
 			.🌚 & {
-				--dottedLineColor:var(--colorBackgroundContentDarkMode-Lightened-8);
+				--dottedLineColor:oklch(from var(--colorBackgroundContentDarkMode) calc(l + 0.0847) calc(c + 0.009) calc(h + 1.53));
 				--backgroundColorOdd:var(--colorBackgroundContentDarkMode);
 			}
 
@@ -249,7 +250,7 @@
 		scrollbar-width:thin;
 
 		.🌚& {
-			scrollbar-color:var(--colorSemiDark) var(--colorBackgroundContentDarkMode-Darkened-4-Alpha-85);
+			scrollbar-color:var(--colorSemiDark) oklch(from var(--colorBackgroundContentDarkMode) calc(l - 0.0473) calc(c - 0.005) calc(h + 1.12) / .85);
 		}
 
 		.Actions {

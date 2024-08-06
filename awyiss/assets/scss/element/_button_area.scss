@@ -2,7 +2,7 @@
 	@extend %ButtonsListview;
 
 	width:fit-content;
-	margin:-52px -20px calc(var(--lineHeightMain) * 2) auto;
+	margin:-52px -20px var(--lineHeightMain) auto;
 	font-size:0;
 	line-height:0;
 	text-align:right;
@@ -99,6 +99,10 @@
 			border-top-right-radius:0;
 			border-bottom-right-radius:0;
 		}
+	}
+
+	&:has(+ fieldset legend) {
+		margin-bottom:10px;
 	}
 
 	.Button,

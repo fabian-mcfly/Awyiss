@@ -30,7 +30,7 @@ button,
 	}
 
 	.🌚 & {
-		--backgroundColor:var(--colorSemiDarkDarkMode-Lightened-4);
+		--backgroundColor:oklch(from var(--colorSemiDarkDarkMode) calc(l + 0.0389) calc(c + 0.004) calc(h - 0.55));
 		background-image:none;
 	}
 

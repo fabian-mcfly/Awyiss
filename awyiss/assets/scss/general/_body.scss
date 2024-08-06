@@ -15,8 +15,6 @@
 
 	.Overview {
 		.ButtonArea {
-			margin-bottom:calc(var(--lineHeightMain) * 1);
-
 			&.CannotMoveUpwards {
 				margin-bottom:var(--lineHeightMain);
 			}
@@ -90,6 +88,11 @@ fieldset {
 	.Scale-Small & {
 		padding:20px 20px 0 20px;
 	}
+}
+
+.Overview-List,
+fieldset {
+	padding-top:20px;
 }
 
 .Overview-List,
@@ -175,31 +178,21 @@ fieldset {
 	}
 
 	&.Collapsed {
-		height:0;
-		padding-block:0;
+		height:40px;
+		padding-block:10px;
 
 		> *:not(legend) {
 			display:none;
+
+			&.FormInputName-Slug {
+				&:not(:has(select[data-options-for])) {
+					display:none;
+				}
+			}
 		}
 
 		&:has(> legend:last-child) {
 			padding-bottom:0;
-		}
-
-		legend {
-			border-radius:5px;
-			//background-color:var(--backgroundColorContent);
-			//color:var(--colorText);
-			right:0;
-			left:0;
-
-			.🌚 & {
-				background-color:var(--colorDark);
-			}
-
-			&:hover {
-				color:var(--colorBright);
-			}
 		}
 	}
 
@@ -219,15 +212,7 @@ fieldset {
 		box-shadow:0 0 10px rgba(0, 0, 0, .25);
 
 		> legend {
-			background-color:var(--colorDark);
-
-			&::after {
-				opacity:inherit;
-
-				.🌚 & {
-					opacity:.25;
-				}
-			}
+			box-shadow:0 0 10px rgba(0, 0, 0, .25);
 		}
 	}
 
@@ -245,28 +230,23 @@ fieldset {
 }
 
 legend {
-	--gradientColor:var(--colorMedium-Darkened-8);
-
-	margin:0;
+	margin:0 0 0 -20px;
 	padding:5px 20px;
-	border-radius:5px 5px 0 0;
-	background-image:linear-gradient(45deg, var(--gradientColor) 0%, transparent 100%);
-	background-color:var(--colorMedium);
-	color:var(--colorBright);
+	border-radius:5px ;
+	box-shadow:0 0 10px rgba(0, 0, 0, .05);
+	background-color:var(--colorBright);
+	color:var(--colorSemiDark);
 	//noinspection CssNoGenericFontName
 	font-family:var(--fontStackHeading);
 	font-size:1rem;
 	line-height:inherit;
 	overflow:hidden;
-	position:absolute;
-	bottom:100%;
-	left:20px;
+	position:relative;
+	z-index:1;
 	cursor:default;
-	transition:background-color .3s ease-in-out, color .3s ease-in-out, right .3s ease-in-out, left .3s ease-in-out;
+	transition:background-color .3s ease-in-out, color .3s ease-in-out, box-shadow .3s ease-in-out;
 
 	.🌚 & {
-		--gradientColor:#{darken(desaturate($colorText, 10), 8)};
-
 		background-color:var(--backgroundColor);
 		color:var(--colorLight);
 	}
@@ -278,7 +258,8 @@ legend {
 		cursor:pointer;
 
 		&:hover {
-			background-color:var(--colorSemiDark);
+			background-color:var(--colorSuccess);
+			color:var(--colorBright);
 
 			&::before {
 				opacity:1;
@@ -308,20 +289,21 @@ legend {
 		}
 	}
 
-	&::after {
-		content:'';
-		height:10px;
-		border-radius:50%;
-		box-shadow:0 0 15px 1px var(--colorInfo);
-		//noinspection CssInvalidPropertyValue
-		mix-blend-mode:plus-lighter;
-		position:absolute;
-		bottom:-15px;
-		right:10px;
-		left:10px;
-		opacity:0;
+	&:hover {
+		transition-delay:.3s, 0s;
 
-		transition:opacity .3s ease-in-out;
+		&::after {
+			opacity:inherit;
+			transition-delay:.1s, 0s;
+		}
+	}
+
+	&::after {
+		@extend %ButtonGlow;
+	}
+
+	.Hover {
+		@extend %HoverEffect;
 	}
 
 	a {

@@ -11,12 +11,12 @@
 .FormInputName-MetaDescription {
 	.SeoLengthWarning {
 		border-color:var(--colorWarning);
-		box-shadow:0 0 10px 5px var(--colorWarning-Alpha-10);
+		box-shadow:0 0 10px 5px color-mix(in srgb, var(--colorWarning), transparent 90%);
 	}
 
 	.SeoLengthError {
 		border-color:var(--colorError);
-		box-shadow:0 0 10px 5px var(--colorError-Alpha-10);
+		box-shadow:0 0 10px 5px color-mix(in srgb, var(--colorError), transparent 90%);
 	}
 }
 

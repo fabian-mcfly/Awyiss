@@ -7,8 +7,8 @@
 	margin-left:40px;
 
 	.🌚 & {
-		--backgroundColorOdd:var(--colorBackgroundContentDarkMode-Lightened-4);
-		--backgroundColorEven:var(--colorBackgroundContentDarkMode-Lightened-4);
+		--backgroundColorOdd:oklch(from var(--colorBackgroundContentDarkMode) calc(l + 0.0448) calc(c + 0.005) calc(h - 0.4));
+		--backgroundColorEven:oklch(from var(--colorBackgroundContentDarkMode) calc(l + 0.0448) calc(c + 0.005) calc(h - 0.4));
 	}
 
 	&.FetchInProgress {
@@ -37,7 +37,7 @@
 	}
 
 	&.Level1 {
-		margin:-1rem -20px 0;
+		margin:0 -20px;
 		grid-column:1 / span 12;
 
 		.Scale-Small & {
@@ -158,11 +158,11 @@
 				padding:.5rem 10px;
 				border-radius:5px;
 				background-color:transparent;
-				border:1px solid var(--colorLight-Darkened-6);
+				border:1px solid oklch(from var(--colorLight) calc(l - 0.0454) calc(c + 0.006) calc(h + 0.07));
 				cursor:move;
 
 				.🌚 & {
-					border-color:var(--colorBackgroundContentDarkMode-Lightened-4);
+					border-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l + 0.0448) calc(c + 0.005) calc(h - 0.4));
 				}
 
 				.Scale-Small & {
@@ -279,7 +279,7 @@
 	&:not(:has(.ListItem)) {
 		height:0;
 		border-radius:5px;
-		background-color:var(--colorSuccess-Alpha-25);
+		background-color:color-mix(in srgb, var(--colorSuccess), transparent 75%);
 		transition:height .3s ease-in-out;
 	}
 
@@ -317,7 +317,8 @@
 		&.Inactive,
 		&.NotPublished {
 			> .ListItem-Inner {
-				background-image:repeating-linear-gradient(-45deg, transparent, transparent 10px, var(--colorLight-Darkened-20-Alpha-20) 10px, var(--colorLight-Darkened-20-Alpha-20) 20px);
+				--gradientColor:oklch(from var(--colorLight) calc(l - 0.1514) calc(c + 0.021) calc(h + 0.85) / .2);
+				background-image:repeating-linear-gradient(-45deg, transparent, transparent 10px, var(--gradientColor) 10px, var(--gradientColor) 20px);
 
 				.🌚 & {
 					background-image:repeating-linear-gradient(-45deg, rgba(255, 255, 255, .01), rgba(255, 255, 255, .01) 10px, rgba(255, 255, 255, .04) 10px, rgba(255, 255, 255, .04) 20px);
@@ -375,7 +376,7 @@
 		}
 
 		&:has(.ListItem) {
-			--dottedLineColor:var(--colorLight-Darkened-8);
+			--dottedLineColor:oklch(from var(--colorLight) calc(l - 0.0588) calc(c + 0.009) calc(h + 1.05));
 
 			background-image:linear-gradient(0deg, transparent 50%, var(--dottedLineColor) 50%);
 			background-position:72px 16px;
@@ -424,10 +425,10 @@
 
 
 		&:hover {
-			background-color:var(--colorLight-Darkened-8);
+			background-color:oklch(from var(--colorLight) calc(l - 0.0588) calc(c + 0.009) calc(h + 1.05));
 
 			.🌚 & {
-				background-color:var(--colorSemiDarkDarkMode-Lightened-4);
+				background-color:oklch(from var(--colorSemiDarkDarkMode) calc(l + 0.0389) calc(c + 0.004) calc(h - 0.55));
 			}
 
 			.NestedListToggle,
@@ -492,7 +493,7 @@
 		transition:border-radius .3s ease-in-out, background-color .3s ease-in-out, opacity .3s ease-in-out;
 
 		.🌚 & {
-			background-color:var(--colorSemiDarkDarkMode-Lightened-4);
+			background-color:oklch(from var(--colorSemiDarkDarkMode) calc(l + 0.0389) calc(c + 0.004) calc(h - 0.55));
 
 			&:hover {
 				background-color:var(--colorSuccess);
@@ -559,7 +560,7 @@
 		transition:background-color .3s ease-in-out, opacity .3s ease-in-out;
 
 		.🌚 & {
-			background-color:var(--colorSemiDarkDarkMode-Lightened-4);
+			background-color:oklch(from var(--colorSemiDarkDarkMode) calc(l + 0.0389) calc(c + 0.004) calc(h - 0.55));
 
 			&:hover {
 				background-color:var(--colorSuccess);

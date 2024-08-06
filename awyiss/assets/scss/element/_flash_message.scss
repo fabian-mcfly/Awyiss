@@ -1,6 +1,6 @@
 .FlashMessage {
 	--backgroundColor:var(--colorBright);
-	--boxShadowColor:var(--colorInfo-Alpha-25);
+	--boxShadowColor:color-mix(in srgb, var(--colorInfo), transparent 75%);
 	--colorText:var(--colorInfo);
 
 	width:fit-content;
@@ -19,7 +19,7 @@
 	}
 
 	&.Success {
-		--boxShadowColor:var(--colorSuccess-Alpha-25);
+		--boxShadowColor:color-mix(in srgb, var(--colorSuccess), transparent 75%);
 		--colorText:var(--colorSuccess);
 
 		&::before {
@@ -28,7 +28,7 @@
 	}
 
 	&.Error {
-		--boxShadowColor:var(--colorError-Alpha-25);
+		background-color:color-mix(in srgb, var(--colorError), transparent 75%);
 		--colorText:var(--colorError);
 
 		&::before {
