@@ -136,8 +136,8 @@ export default class HistoryTables {
 		const current = slider.children[ slider.children.length - 1 - index ];
 		const dateTime = current.dataset.dateTime;
 
-		const range = slider.parentElement.querySelector('.AuditHistory-Slider-Range');
-		range.title = dateTime;
+		const controls = slider.parentElement.querySelector('.AuditHistory-Slider-Controls');
+		controls.title = dateTime;
 
 		// Toggle the buttons
 		const prev = slider.parentElement.querySelector('.AuditHistory-Slider-Prev');
