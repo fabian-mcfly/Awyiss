@@ -208,3 +208,6 @@ msgstr "Contents of this page are used as duplicates"
 
 msgid "error_exact_length"
 msgstr "The length of this value must be exactly {0}"
+
+msgid "error_is_integer"
+msgstr "This value must be an number"
