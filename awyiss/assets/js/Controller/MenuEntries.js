@@ -131,6 +131,7 @@ export default class MenuEntriesController {
 								menu_id: parseInt(rootList.dataset.menuId),
 								title: element.dataset.title,
 								link: element.dataset.link,
+								active: element.classList.contains('Inactive') ? 0 : 1,
 								language_shortcode: languageShortcode,
 							};
 
