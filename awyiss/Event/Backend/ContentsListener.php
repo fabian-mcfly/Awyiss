@@ -5,9 +5,9 @@ namespace Awyiss\Event\Backend;
 
 
 use ArrayObject;
+use Awyiss\Core\App;
 use Awyiss\Event\EventListenerTrait;
 use Awyiss\Model\Entity\Content;
-use Awyiss\Utility\Content\HtmlCleaner;
 use Cake\Core\Configure;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
@@ -52,7 +52,9 @@ class ContentsListener implements EventListenerInterface {
 		}
 
 		if (Configure::read('Awyiss.System.Backend.htmlCleaning') !== 'none') {
-			HtmlCleaner::clean($entity, Configure::read('Awyiss.System.Backend.htmlCleaning'));
+			/** @var \Awyiss\Utility\Content\HtmlCleaner $ls_className */
+			$ls_className = App::className('HtmlCleaner', 'Utility/Content');
+			$ls_className::clean($entity, Configure::read('Awyiss.System.Backend.htmlCleaning'));
 		}
 	}
 
