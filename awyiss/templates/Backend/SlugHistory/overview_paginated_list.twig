@@ -26,7 +26,7 @@
 			<td class="TableCell-Slug">{{ entity.slug }}</td>
 
 			<td class="TableCell-Page">
-				{% if entity.has('page') %}
+				{% if entity.page %}
 					{{ entity.page.title }}<br>
 					{{ HtmlHelper.link(entity.page.languageShortcode ~ '/' ~ entity.page.slug, {
 						lang: entity.page.languageShortcode,
