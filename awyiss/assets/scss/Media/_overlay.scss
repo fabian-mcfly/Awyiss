@@ -12,6 +12,10 @@
 	grid-template-columns:320px auto;
 	grid-template-rows:80px auto 80px;
 
+	.Scale-Small & {
+		grid-template-rows:72px auto 80px;
+	}
+
 	&.FetchInProgress,
 	&.Visible {
 		opacity:1;

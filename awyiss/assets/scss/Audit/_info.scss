@@ -137,5 +137,9 @@ div.AuditInfo {
 		z-index:1;
 		opacity:0;
 		transition:background-color .3s ease-in-out, color .3s ease-in-out, opacity .3s ease-in-out;
+
+		.Scale-Small & {
+			top:7px;
+		}
 	}
 }

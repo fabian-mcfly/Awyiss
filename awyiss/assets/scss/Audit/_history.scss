@@ -48,6 +48,22 @@
 	top:100px;
 	z-index:5;
 
+	&::before {
+		content:attr(title);
+		width:fit-content;
+		margin:auto;
+		padding:5px 20px 2px;
+		border-radius:5px 5px 0 0;
+		background-color:inherit;
+		color:var(--colorBright);
+		font-size:12px;
+		line-height:12px;
+		position:absolute;
+		right:0;
+		bottom:100%;
+		left:0;
+	}
+
 	.🌚 & {
 		background-color:var(--colorBackgroundContentDarkMode-Darkened-4);
 	}
@@ -70,6 +86,10 @@
 	&::after {
 		@include la('\f137', 1.5rem);
 		line-height:40px;
+
+		.Scale-Small & {
+			line-height:28px;
+		}
 	}
 }
 
@@ -87,7 +107,7 @@
 	padding:5px 0;
 	border:0 none;
 	background-color:transparent;
-	background-image:linear-gradient(to right, var(--colorMedium-Darkened-8) 0%, var(--colorMedium-Darkened-8) 1px, transparent 1px, transparent 100%);
+	background-image:linear-gradient(to right, var(--colorMedium-Darkened-8) 0%, var(--colorMedium-Darkened-8) 2px, transparent 2px, transparent 100%);
 	background-position:calc(var(--thumbWidth) / 2) 0;
 	background-size:calc((100% - var(--thumbWidth)) / (var(--stepCount) - 1)) 100%;
 	align-self:center;
@@ -96,7 +116,7 @@
 
 	.🌚 & {
 		background-color:transparent;
-		background-image:linear-gradient(to right, var(--colorMedium-Darkened-8) 0%, var(--colorMedium-Darkened-8) 1px, transparent 1px, transparent 100%);
+		background-image:linear-gradient(to right, var(--colorMedium-Darkened-8) 0%, var(--colorMedium-Darkened-8) 2px, transparent 2px, transparent 100%);
 	}
 
 	&[max="0"] {
@@ -180,12 +200,20 @@
 				&:hover {
 					td {
 						background-color:color-mix(in srgb, var(--colorWarning), #FFFFFF 25%);
+
+						.🌚 & {
+							background-color:color-mix(in srgb, var(--colorWarning), var(--colorBackgroundContentDarkMode) 25%);
+						}
 					}
 				}
 			}
 
 			td {
 				background-color:color-mix(in srgb, var(--colorWarning), #FFFFFF 75%);
+
+				.🌚 & {
+					background-color:color-mix(in srgb, var(--colorWarning), var(--colorBackgroundContentDarkMode) 75%);
+				}
 			}
 		}
 
@@ -220,6 +248,10 @@
 		background-color:var(--colorMedium);
 		color:var(--colorBright);
 		pointer-events:none;
+
+		.🌚 & {
+			background-color:var(--colorBackgroundContentDarkMode-Darkened-4)
+		}
 
 		&::before {
 			display:none;
