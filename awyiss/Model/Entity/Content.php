@@ -185,19 +185,29 @@ class Content extends Entity {
 	 * @noinspection DuplicatedCode
 	 */
 	public function getForcedTitle(bool $includeHtml = true): string {
-		$la_fields = ['duplicateOf', 'title', 'subtitle', 'text', 'subtitle', 'text', 'cssClass', 'contentTemplateId'];
+		$la_fields = ['duplicateOf', 'title', 'subtitle', 'text', 'subtitle', 'text', 'mediaAssignments', 'cssClass', 'contentTemplateId'];
 
 		$ls_title = 'Content';
 
 		foreach ($la_fields as $ls_column) {
 			if (
 				empty($this->$ls_column) ||
-				(!in_array($ls_column, ['duplicateOf', 'cssClass', 'contentTemplateId']) && strlen(trim(strip_tags(str_replace('&nbsp;', '', (string)$this->$ls_column)))) === 0)
+				(!in_array($ls_column, ['duplicateOf', 'mediaAssignments', 'cssClass', 'contentTemplateId']) && strlen(trim(strip_tags(str_replace('&nbsp;', '', (string)$this->$ls_column)))) === 0)
 			) {
 				continue;
 			}
 
 			$ls_title = $this->$ls_column;
+
+			if ($ls_column === 'mediaAssignments') {
+				if ($this->mediaAssignments) {
+					$ls_title = $this->getFirstMediaElementTitle();
+
+					break;
+				}
+
+				continue;
+			}
 
 			if ($ls_column === 'duplicateOf') {
 				$lo_content = $this->loadDuplicatedContent();
@@ -365,5 +375,27 @@ class Content extends Entity {
 		}
 
 		return $lo_content;
+	}
+
+
+	/**
+	 * @return string|null
+	 */
+	protected function getFirstMediaElementTitle(): ?string {
+		// Get the first media element
+		$la_medias = current($this->mediaAssignments);
+		// Get the first assigned media
+		$lx_media = current($la_medias);
+
+		// If the media is an array, get the first element
+		if (is_array($lx_media)) {
+			$lo_media = current($lx_media);
+		}
+		else {
+			$lo_media = $lx_media;
+		}
+
+		/** @var \Awyiss\Model\Entity\Media $lo_media */
+		return $lo_media->name;
 	}
 }

@@ -15,6 +15,7 @@ use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\ORM\Marshaller;
 use Cake\ORM\PropertyMarshalInterface;
 use Cake\ORM\Query\SelectQuery;
+use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 
 
@@ -118,6 +119,10 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 			return $query;
 		}
 
+		if (!isset(static::$mediaElements)) {
+			$this->buildElements();
+		}
+
 		if ($includeElementSelector) {
 			$query->contain([
 				'MediaAssignments.MediaElementSelectors.MediaSelectors',
@@ -125,9 +130,21 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 		}
 
 		return $query->contain([
-			'MediaAssignments' => [
-				'Media',
-			],
+			'MediaAssignments' => function (SelectQuery $query) {
+				$query->orderByAsc($query->newExpr($query->func()->FIND_IN_SET([
+					'media_element_id' => 'identifier',
+					implode(',', array_reverse(static::$mediaElements)),
+				])), true);
+
+				$la_identifiers = array_unique(Hash::extract(static::$mediaElements, '{n}.mediaElementSelectors.{n}.identifier'));
+
+				$query->orderByAsc($query->newExpr($query->func()->FIND_IN_SET([
+					'media_element_selector_identifier' => 'identifier',
+					implode(',', $la_identifiers),
+				])), true);
+
+				return $query->contain(['Media']);
+			},
 		])->formatResults(fn (CollectionInterface $results) => $this->rowMapper($results, $useMediaEntity), $query::PREPEND);
 	}
 
@@ -203,22 +220,7 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 	 */
 	protected function rowMapper(CollectionInterface $results, bool $useMediaEntity = false): CollectionInterface {
 		if (!isset(static::$mediaElements)) {
-			$lo_elements = $this->fetchTable('MediaElements')->find()->contain([
-				'MediaElementSelectors' => [
-					'MediaSelectors',
-				],
-			])->all()->indexBy('id');
-
-			static::$mediaElements = $lo_elements->each(function (MediaElement $element): void {
-				$lo_selectors = collection($element->mediaElementSelectors);
-				$lo_selectors = $lo_selectors->indexBy(function (MediaElementSelector $selector): string {
-					return $selector->identifier;
-				})->map(function (MediaElementSelector $selector): MediaSelector {
-					return $selector->mediaSelector;
-				});
-
-				$element->mediaSelectors = $lo_selectors->toArray();
-			})->toArray();
+			$this->buildElements();
 		}
 
 		$lb_useMediaEntity = $useMediaEntity;
@@ -311,5 +313,30 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 				return $la_mediaAssignments;
 			},
 		];
+	}
+
+
+	/**
+	 * Build the media elements array
+	 *
+	 * @return void
+	 */
+	protected function buildElements(): void {
+		$lo_elements = $this->fetchTable('MediaElements')->find()->contain([
+			'MediaElementSelectors' => [
+				'MediaSelectors',
+			],
+		])->all()->indexBy('id');
+
+		static::$mediaElements = $lo_elements->each(function (MediaElement $element): void {
+			$lo_selectors = collection($element->mediaElementSelectors);
+			$lo_selectors = $lo_selectors->indexBy(function (MediaElementSelector $selector): string {
+				return $selector->identifier;
+			})->map(function (MediaElementSelector $selector): MediaSelector {
+				return $selector->mediaSelector;
+			});
+
+			$element->mediaSelectors = $lo_selectors->toArray();
+		})->toArray();
 	}
 }

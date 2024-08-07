@@ -109,7 +109,7 @@ class ContentsController extends Controller {
 
 		$lo_query = $this->getOverviewQuery();
 
-		$lo_contents = $lo_query->formatResults(function (Collection $result): Collection {
+		$lo_contents = $lo_query->find('mediaAssignments', useMediaEntity: true)->formatResults(function (Collection $result): Collection {
 			/** @var \Awyiss\Model\Entity\Content $lo_content */
 			foreach ($result as $lo_content) {
 				$lo_content->class = $lo_content->column['width']->getCssClass();
@@ -397,7 +397,7 @@ class ContentsController extends Controller {
 		if ($this->request->is('post') && $this->request->getData('duplicate_of_page_id')) {
 			$lo_duplicateOfPage = $this->getPage((int)$this->request->getData('duplicate_of_page_id'));
 
-			$lo_query = $this->Contents->find()->where(['page_id' => $lo_duplicateOfPage->id])->contain(['ContentTemplates']);
+			$lo_query = $this->Contents->find()->find('mediaAssignments', useMediaEntity: true)->where(['page_id' => $lo_duplicateOfPage->id])->contain(['ContentTemplates']);
 
 			$lo_contents = $lo_query->formatResults(function (Collection $result): Collection {
 				/** @var \Awyiss\Model\Entity\Content $lo_content */
@@ -705,7 +705,7 @@ class ContentsController extends Controller {
 				return new Collection([]);
 			}
 
-			$lo_query = $this->Contents->find()->where([
+			$lo_query = $this->Contents->find()->find('mediaAssignments', useMediaEntity: true)->where([
 				'page_id' => $content->pageId,
 				'content_area_id' => $content->contentAreaId,
 			]);
@@ -1029,7 +1029,7 @@ class ContentsController extends Controller {
 		if ($content->duplicateOf) {
 			$la_allowedKeys = $this->Contents->getAllowedKeyForDuplicating();
 
-			$content->duplicateOfContent = $this->Contents->findById($content->duplicateOf)->first();
+			$content->duplicateOfContent = $this->Contents->findById($content->duplicateOf)->find('mediaAssignments', useMediaEntity: true)->first();
 
 			if (!$content->duplicateOfContent || $content->duplicateOfContent->id !== $content->duplicateOf) {
 				$content->duplicateOfContent = null;

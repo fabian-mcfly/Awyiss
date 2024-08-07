@@ -76,7 +76,7 @@ class WidgetsController extends Controller {
 
 		$lo_query = $this->getOverviewQuery();
 
-		$lo_widgets = $lo_query->formatResults(function (Collection $result): Collection {
+		$lo_widgets = $lo_query->find('mediaAssignments', useMediaEntity: true)->formatResults(function (Collection $result): Collection {
 			/** @var \Awyiss\Model\Entity\Widget $lo_widget */
 			foreach ($result as $lo_widget) {
 				$lo_widget->class = $lo_widget->column['width']->getCssClass();
@@ -470,7 +470,7 @@ class WidgetsController extends Controller {
 				return new Collection([]);
 			}
 
-			$lo_query = $this->Widgets->find()->where([
+			$lo_query = $this->Widgets->find()->find('mediaAssignments', useMediaEntity: true)->where([
 				'identifier' => $widget->identifier,
 			]);
 

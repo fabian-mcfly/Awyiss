@@ -169,30 +169,32 @@ class Widget extends Entity {
 	 * @noinspection DuplicatedCode
 	 */
 	public function getForcedTitle(bool $includeHtml = true): string {
-		$la_fields = ['title', 'subtitle', 'text', 'subtitle', 'text', 'cssClass', 'widgetTemplateId'];
+		$la_fields = ['title', 'subtitle', 'text', 'subtitle', 'text', 'mediaAssignments', 'cssClass', 'widgetTemplateId'];
 
 		$ls_title = 'Widget';
 
 		foreach ($la_fields as $ls_column) {
 			if (
 				empty($this->$ls_column) ||
-				(!in_array($ls_column, ['cssClass', 'widgetTemplateId']) && strlen(trim(strip_tags(str_replace('&nbsp;', '', (string)$this->$ls_column)))) === 0)
+				(!in_array($ls_column, ['mediaAssignments', 'cssClass', 'widgetTemplateId']) && strlen(trim(strip_tags(str_replace('&nbsp;', '', (string)$this->$ls_column)))) === 0)
 			) {
 				continue;
 			}
 
 			$ls_title = $this->$ls_column;
 
-			if ($ls_column === 'widgetTemplateId') {
-				$lo_template = $this->widgetTemplate;
-				if (!$lo_template) {
-					if (!isset(static::$widgetTemplates)) {
-						$lo_table = FactoryLocator::get('Table')->get('widgetTemplates');
-						static::$widgetTemplates = $lo_table->find()->all()->indexBy('id')->toArray();
-					}
+			if ($ls_column === 'mediaAssignments') {
+				if ($this->mediaAssignments) {
+					$ls_title = $this->getFirstMediaElementTitle();
 
-					$lo_template = $this->widgetTemplate = static::$widgetTemplates[ $this->widgetTemplateId ] ?? null;
+					break;
 				}
+
+				continue;
+			}
+
+			if ($ls_column === 'widgetTemplateId') {
+				$lo_template = $this->widgetTemplate ?? $this->loadWidgetTemplate();
 
 				if ($lo_template) {
 					$ls_title = 'Template: ' . ($includeHtml ? '<em>' . $lo_template->label . '</em>' : $lo_template->label);
@@ -317,5 +319,40 @@ class Widget extends Entity {
 		$ls_title = mb_strlen($ls_title) > 100 ? mb_substr($ls_title, 0, 100) . '...' : $ls_title;
 
 		return $ls_title;
+	}
+
+
+	/**
+	 * @return string|null
+	 */
+	protected function getFirstMediaElementTitle(): ?string {
+		// Get the first media element
+		$la_medias = current($this->mediaAssignments);
+		// Get the first assigned media
+		$lx_media = current($la_medias);
+
+		// If the media is an array, get the first element
+		if (is_array($lx_media)) {
+			$lo_media = current($lx_media);
+		}
+		else {
+			$lo_media = $lx_media;
+		}
+
+		/** @var \Awyiss\Model\Entity\Media $lo_media */
+		return $lo_media->name;
+	}
+
+
+	/**
+	 * @return \Awyiss\Model\Entity\WidgetTemplate|null
+	 */
+	protected function loadWidgetTemplate(): ?WidgetTemplate {
+		if (!isset(static::$widgetTemplates)) {
+			$lo_table = FactoryLocator::get('Table')->get('widgetTemplates');
+			static::$widgetTemplates = $lo_table->find()->all()->indexBy('id')->toArray();
+		}
+
+		return $this->widgetTemplate = static::$widgetTemplates[ $this->widgetTemplateId ] ?? null;
 	}
 }
