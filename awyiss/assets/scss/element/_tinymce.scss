@@ -607,6 +607,10 @@ body {
 				background-color:transparent;
 				flex-wrap:wrap;
 
+				.Scale-Small & {
+					padding-top:20px;
+				}
+
 				&-end {
 					width:100%;
 					flex:0 0 100%;
@@ -622,6 +626,10 @@ body {
 					font-size:1.1rem;
 					font-weight:400;
 					line-height:30px;
+
+					.Scale-Small & {
+						padding-block:6px;
+					}
 
 					&[data-mce-name="Save"] {
 						background-color:var(--colorSuccess);
@@ -645,7 +653,7 @@ body {
 							transform:translateY(-1px);
 
 							.Scale-Small & {
-								//transform:translateY(.5px);
+								transform:translateY(0);
 							}
 						}
 					}

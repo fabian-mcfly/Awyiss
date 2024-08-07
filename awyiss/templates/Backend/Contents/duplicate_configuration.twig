@@ -26,7 +26,7 @@
 				{{ FormHelper.button(__('apply'), {class: 'Button Button-Success Button-Save', form: 'DuplicateConfiguration'}) }}
 			{% endblock %}
 
-			{{ FormHelper.button(__('close'), {class: 'Button Button-Close'}) }}
+			{{ FormHelper.button(__('cancel'), {class: 'Button Button-Close'}) }}
 		</div>
 	{% endblock %}
 
@@ -81,6 +81,8 @@
 	{% block buttonAreaBottom %}
 		<div class="ButtonArea ButtonArea-Bottom">
 			{{ block('formDuplicateConfigurationButtons') }}
+
+			{{ FormHelper.button(__('cancel'), {class: 'Button Button-Close Button-Cancel'}) }}
 		</div>
 	{% endblock %}
 

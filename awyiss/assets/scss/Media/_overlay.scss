@@ -113,9 +113,7 @@
 
 		legend {
 			width:100%;
-			margin-left:0;
 			border-radius:5px;
-			position:absolute;
 			top:0;
 			left:0;
 		}
@@ -156,9 +154,9 @@
 			box-shadow:0 0 10px rgba(0, 0, 0, .05);
 			cursor:pointer;
 
-			&:not(:hover) {
+			&:hover {
 				.NestedListToggle {
-					opacity:.5;
+					opacity:1;
 				}
 			}
 
@@ -172,11 +170,16 @@
 			width:24px;
 			height:24px;
 			margin:auto;
-			border-radius:5px;
+			border-radius:0 5px 5px 0;
 			aspect-ratio:1;
 			top:0;
 			bottom:0;
-			left:9px;
+			left:0;
+			opacity:.5;
+
+			&.Collapsed {
+				opacity:1;
+			}
 
 			&::before {
 				font-size:18px;

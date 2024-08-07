@@ -9,14 +9,10 @@
 	.Fieldset-ContentElements-Available,
 	.Fieldset-Fieldset {
 		display:block;
-		padding:20px;
+		padding-inline:20px;
 
-		&.Collapsed {
-			padding-block:0;
-		}
-
-		legend {
-			margin-left:0;
+		.Scale-Small& {
+			padding-bottom:20px;
 		}
 	}
 
@@ -25,6 +21,12 @@
 		position:sticky;
 		top:160px;
 		grid-column:1 / 1;
+
+		.Scale-Small& {
+			&:not(.Collapsed) {
+				padding-bottom:20px;
+			}
+		}
 
 		&:not(:has(.Item)) {
 			padding-bottom:40px;
@@ -53,7 +55,7 @@
 
 		.List {
 			max-height:calc(100dvh - 240px);
-			margin:-5px -10px 0;
+			margin:0 -10px 0;
 			padding-inline:10px;
 			overflow-y:auto;
 			scrollbar-color:var(--colorMedium) var(--colorLight);
@@ -109,6 +111,10 @@
 			.Title {
 				color:var(--colorMedium);
 			}
+		}
+
+		&:first-child {
+			margin-top:0;
 		}
 
 		&:hover {
@@ -241,7 +247,7 @@
 		.PageTemplates-List {
 			padding:5px;
 			border-radius:5px;
-			border-left:2px solid var(--colorSemiDark);
+			border-left:2px solid var(--colorMedium);
 
 			.🌚& {
 				border-left-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l - 0.0473) calc(c - 0.005) calc(h + 1.12));
@@ -270,7 +276,7 @@
 				margin-block:13px;
 				padding:1rem 20px;
 				border-radius:5px 0 0 5px;
-				background-color:var(--colorSemiDark);
+				background-color:var(--colorMedium);
 				color:var(--colorBright);
 				font-size:1rem;
 				//noinspection CssNoGenericFontName
@@ -313,7 +319,8 @@
 
 		.ListItem-ContentArea {
 			margin:5px 0 0 0;
-			padding:1rem 20px;
+			padding:0;
+			background-color:var(--colorLight);
 			border-radius:5px;
 			position:relative;
 			list-style-type:none;
@@ -323,7 +330,11 @@
 				padding-block:.75rem;
 			}
 
-			&:nth-child(2n+1) {
+			.🌚& {
+				background-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l + 0.0448) calc(c + 0.005) calc(h - 0.4));
+			}
+
+			/*&:nth-child(2n+1) {
 				border-left:2px solid var(--colorNeutralLight);
 				border-bottom:2px solid var(--colorNeutralLight);
 
@@ -346,23 +357,40 @@
 						background-color:oklch(from var(--colorSemiDarkDarkMode) calc(l + 0.0389) calc(c + 0.004) calc(h - 0.55));
 					}
 				}
-			}
+			}*/
 
 			&:first-child {
 				margin-top:0;
 			}
 
 			&:hover {
-				background-color:var(--colorLight);
+				background-color:oklch(from var(--colorLight) calc(l - 0.0588) calc(c + 0.009) calc(h + 1.05));
 
 				.🌚& {
-					background-color:oklch(from var(--colorSemiDarkDarkMode) calc(l + 0.0389) calc(c + 0.004) calc(h - 0.55));
+					background-color:var(--colorSemiDarkDarkMode);
 				}
 			}
 
 			.FormInput {
 				margin-bottom:0;
 				min-height:0;
+
+				.Label {
+					padding:1rem 20px 1rem 60px;
+
+					.Scale-Small& {
+						padding-block:.5rem;
+					}
+
+					&::before {
+						top:.9rem;
+						left:20px;
+
+						.Scale-Small& {
+							top:.2rem;
+						}
+					}
+				}
 			}
 		}
 	}

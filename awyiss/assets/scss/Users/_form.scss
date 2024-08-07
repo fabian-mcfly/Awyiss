@@ -3,16 +3,16 @@
 		.Fieldset-Usergroups {
 			padding:0;
 
-			legend {
-				margin-left:20px;
-			}
-
 			.Overview-Table {
 				margin:0;
 			}
 
 			tr {
 				position:relative;
+			}
+
+			th {
+				padding-top:20px;
 			}
 
 			.TableHeader-UsergroupCheckbox {

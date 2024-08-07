@@ -2,6 +2,10 @@
 	padding:52px 0 0;
 	overflow:hidden;
 
+	.Scale-Small & {
+		padding-top:42px;
+	}
+
 	&:has(.jodit-container),
 	&:has(.tox-tinymce) {
 		width:100%;

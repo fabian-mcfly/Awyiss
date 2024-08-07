@@ -133,27 +133,49 @@
 			}
 		}
 
-		> .Button-SaveClose {
+		> .Button-SaveClose,
+		> .Button-Close {
 			height:48px;
-			margin-right:20px;
-			line-height:26px;
 			background-color:transparent;
+			line-height:26px;
 			position:absolute;
 			top:2px;
+
+			.Scale-Small & {
+				height:38px;
+				padding-block:0;
+			}
+		}
+
+		> .Button-SaveClose {
+			margin-right:20px;
 			right:var(--offsetX, 20px);
 		}
 
-		.Button-Close {
-			height:48px;
-			background-color:transparent;
-			line-height:26px;
-			position:absolute;
-			top:2px;
+		> .Button-Close {
 			right:2px;
 		}
 	}
 
 	> .Button-Close {
 		display:none;
+	}
+
+	.ButtonArea {
+		&.ButtonArea-Bottom {
+			display:flex;
+			width:100%;
+			margin-bottom:0;
+			margin-left:0;
+
+			.Button {
+				margin-right:0;
+				margin-bottom:0;
+
+				&:first-child {
+					margin-right:auto;
+				}
+			}
+		}
 	}
 }

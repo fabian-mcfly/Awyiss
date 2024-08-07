@@ -82,7 +82,7 @@ export default class TranslatableTexts {
 			// Cancel button
 			this.dialog.confirmCancel = document.createElement('button');
 			this.dialog.confirmCancel.id = 'TranslationDialog-Cancel';
-			this.dialog.confirmCancel.classList.add('Button', 'Button-Cancel');
+			this.dialog.confirmCancel.classList.add('Button', 'Button-Close', 'Button-Cancel');
 			this.dialog.confirmCancel.textContent = 'Cancel';
 			this.dialog.form.appendChild(this.dialog.confirmCancel);
 

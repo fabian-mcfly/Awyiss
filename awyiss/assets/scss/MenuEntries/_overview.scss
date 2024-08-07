@@ -1,7 +1,6 @@
 .MenuEntriesController {
 	&.OverviewAction {
 		.Overview-List {
-
 			&.Pages-List {
 				padding:0;
 				border-radius:5px;
@@ -20,8 +19,9 @@
 			display:block;
 			max-height:calc(100dvh - 300px);
 			margin:0;
-			padding:10px 10px 10px 10px;
-			border:10px solid transparent;
+			padding:0 10px 0 0;
+			border:20px solid transparent;
+			border-right-width:10px;
 			overflow-y:auto;
 			scrollbar-color:var(--scrollbarColor);
 			scrollbar-width:thin;

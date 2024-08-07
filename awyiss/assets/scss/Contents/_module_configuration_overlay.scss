@@ -33,6 +33,10 @@
 		padding:72px 20px 20px 20px;
 		overflow:hidden;
 
+		.Scale-Small & {
+			padding:52px 10px 10px 10px;
+		}
+
 		&::before,
 		&::after {
 			content:attr(data-title, 'Form');
@@ -49,6 +53,11 @@
 			position:absolute;
 			top:0;
 			left:0;
+
+			.Scale-Small & {
+				height:42px;
+				line-height:42px;
+			}
 		}
 
 		&::before {
@@ -73,6 +82,10 @@
 				line-height:26px;
 				background-color:transparent;
 
+				.Scale-Small & {
+					height:38px;
+				}
+
 				&:last-child {
 					margin-right:0;
 				}
@@ -87,11 +100,15 @@
 			overflow-y:auto;
 			scrollbar-color:var(--scrollbarColor);
 			scrollbar-width:thin;
+
+			.Scale-Small & {
+				padding:10px;
+			}
 		}
 
 		.Fieldsets {
 			display:grid;
-			margin:0 0 var(--lineHeightMain) 0;
+			margin:0 0 20px 0;
 			padding:0;
 			box-shadow:none;
 			background-color:transparent;
@@ -99,13 +116,26 @@
 			gap:0 40px;
 			grid-auto-rows:min-content;
 			grid-template-columns: repeat(12, 1fr);
+
+			.Scale-Small & {
+				margin-bottom:0;
+			}
 		}
 
 		.ButtonArea {
 			&.ButtonArea-Bottom {
-				&,
+				display:flex;
+				width:100%;
+				margin-right:0;
+				margin-bottom:0;
+
 				.Button {
+					margin-right:0;
 					margin-bottom:0;
+
+					&:first-child {
+						margin-right:auto;
+					}
 				}
 			}
 		}

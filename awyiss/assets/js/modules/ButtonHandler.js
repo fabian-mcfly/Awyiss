@@ -194,7 +194,7 @@ export default class ButtonHandler {
 			this.dialog.confirmYes.id = 'ConfirmDialog-Button-Yes';
 			this.dialog.confirmYes.classList.add('Button');
 			this.dialog.confirmNo.id = 'ConfirmDialog-Button-No';
-			this.dialog.confirmNo.classList.add('Button');
+			this.dialog.confirmNo.classList.add('Button', 'Button-Close');
 
 			// Set button text
 			this.dialog.confirmYes.textContent = 'Yes';
@@ -265,7 +265,7 @@ export default class ButtonHandler {
 			this.dialog.confirmNo.title = event.target.dataset.confirmNo;
 
 			// Remove all classes except 'Button'
-			this.dialog.confirmNo.className = 'Button';
+			this.dialog.confirmNo.className = 'Button Button-Close';
 
 			// Add the no class to the button, if it exists
 			if (event.target.dataset.confirmNoClass) {

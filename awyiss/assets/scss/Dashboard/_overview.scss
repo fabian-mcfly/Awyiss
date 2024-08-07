@@ -25,15 +25,11 @@
 		}
 
 		&.Fieldset-LoggedInAs {
-			padding-bottom:40px;
+			padding-block:40px;
 
 			.Scale-Small& {
-				padding-bottom:20px;
+				padding-block:20px;
 			}
-		}
-
-		&.Fieldset-QuickActions {
-
 		}
 
 		&.Fieldset-PagesNotFoundStatus {
@@ -41,6 +37,10 @@
 
 			.Overview-Table {
 				margin-bottom:0;
+			}
+
+			th {
+				padding-top:30px;
 			}
 
 			.TableHeader-Actions {

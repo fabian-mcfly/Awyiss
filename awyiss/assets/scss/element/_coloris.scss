@@ -414,6 +414,10 @@ input.clr-color {
 			cursor:pointer;
 			pointer-events:initial;
 
+			.Scale-Small & {
+				height:40px;
+			}
+
 			&::before,
 			.Hover {
 				display:none;

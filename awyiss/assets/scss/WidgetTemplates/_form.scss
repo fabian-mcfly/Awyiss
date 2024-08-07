@@ -9,14 +9,10 @@
 	.Fieldset-WidgetElements-Available,
 	.Fieldset-Fieldset {
 		display:block;
-		padding:20px;
+		padding-inline:20px;
 
-		&.Collapsed {
-			padding-block:0;
-		}
-
-		legend {
-			margin-left:0;
+		.Scale-Small& {
+			padding-bottom:20px;
 		}
 	}
 
@@ -25,6 +21,12 @@
 		position:sticky;
 		top:160px;
 		grid-column:1 / 1;
+
+		.Scale-Small& {
+			&:not(.Collapsed) {
+				padding-bottom:20px;
+			}
+		}
 
 		&:not(:has(.Item)) {
 			padding-bottom:40px;
@@ -53,7 +55,7 @@
 
 		.List {
 			max-height:calc(100dvh - 240px);
-			margin:-5px -10px 0;
+			margin:0 -10px 0;
 			padding-inline:10px;
 			overflow-y:auto;
 			scrollbar-color:var(--colorMedium) var(--colorLight);
@@ -74,6 +76,10 @@
 		list-style-type:none;
 		transition:background-color .3s ease-in-out;
 		cursor:move;
+
+		&:first-child {
+			margin-top:0;
+		}
 
 		.🌚& {
 			background-color:var(--colorSemiDark);
@@ -109,6 +115,10 @@
 			.Title {
 				color:var(--colorMedium);
 			}
+		}
+
+		&:first-child {
+			margin-top:0;
 		}
 
 		&:hover {

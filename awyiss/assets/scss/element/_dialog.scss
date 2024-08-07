@@ -1,5 +1,5 @@
 dialog {
-	width:480px;
+	width:540px;
 	max-height:80vh;
 	margin:auto;
 	padding:92px 40px 40px 40px;
@@ -15,7 +15,8 @@ dialog {
 	scrollbar-width:thin;
 
 	.Scale-Small & {
-		padding:72px 20px 20px 20px;
+		width:480px;
+		padding:62px 20px 20px 20px;
 	}
 
 	.🌚 & {
@@ -51,6 +52,11 @@ dialog {
 		position:absolute;
 		top:0;
 		left:0;
+
+		.Scale-Small & {
+			height:42px;
+			line-height:42px;
+		}
 	}
 
 	&::before {
@@ -62,10 +68,11 @@ dialog {
 	}
 
 	.Button {
-		width:9rem;
+		width:11rem;
+		padding-inline:5px;
 
 		.Scale-Small & {
-			width:11rem;
+			width:12rem;
 		}
 	}
 }

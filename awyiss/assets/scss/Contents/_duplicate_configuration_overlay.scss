@@ -33,6 +33,10 @@
 		padding:72px 20px 20px 20px;
 		overflow:hidden;
 
+		.Scale-Small & {
+			padding:52px 10px 10px 10px;
+		}
+
 		&::before,
 		&::after {
 			content:attr(data-title, 'Form');
@@ -49,6 +53,11 @@
 			position:absolute;
 			top:0;
 			left:0;
+
+			.Scale-Small & {
+				height:42px;
+				line-height:42px;
+			}
 		}
 
 		&::before {
@@ -73,6 +82,10 @@
 				line-height:26px;
 				background-color:transparent;
 
+				.Scale-Small & {
+					height:38px;
+				}
+
 				&:last-child {
 					margin-right:0;
 				}
@@ -87,6 +100,10 @@
 			overflow-y:auto;
 			scrollbar-color:var(--scrollbarColor);
 			scrollbar-width:thin;
+
+			.Scale-Small & {
+				padding:10px;
+			}
 		}
 
 		.Fieldsets {
@@ -101,8 +118,17 @@
 			grid-template-columns:repeat(12, 1fr);
 		}
 
+		.FormInputName-DuplicateOfPageId {
+			&:last-child {
+				margin-bottom:0;
+			}
+		}
+
 		.Overview-Fieldset {
-			padding:0;
+			padding:30px 10px 10px;
+			border-radius:5px;
+			background-color:transparent;
+			border:1px solid rgba(0, 0, 0, .1);
 			box-shadow:none;
 			grid-column:1 / -1;
 
@@ -115,7 +141,7 @@
 			}
 
 			&:first-of-type {
-				margin-top:calc(var(--lineHeightMain) * 2);
+				margin-top:var(--lineHeightMain);
 			}
 
 			&:last-of-type {
@@ -173,9 +199,18 @@
 
 		.ButtonArea {
 			&.ButtonArea-Bottom {
-				&,
+				display:flex;
+				width:100%;
+				margin-right:0;
+				margin-bottom:0;
+
 				.Button {
+					margin-right:0;
 					margin-bottom:0;
+
+					&:first-child {
+						margin-right:auto;
+					}
 				}
 			}
 		}

@@ -283,7 +283,6 @@ textarea {
 
 			&::after {
 				@include la('\f070', 24px);
-				line-height:50px;
 			}
 		}
 	}
@@ -393,6 +392,10 @@ textarea {
 	&Type-Radio {
 		&:last-of-type {
 			margin-bottom:10px;
+
+			.Scale-Small & {
+				margin-bottom:20px;
+			}
 		}
 
 		> input {
@@ -746,7 +749,7 @@ textarea {
 				}
 
 				.Scale-Small & {
-					line-height:40px;
+					line-height:42px;
 				}
 			}
 
@@ -851,6 +854,10 @@ textarea {
 			}
 		}
 
+		&:first-child {
+			margin-top:0;
+		}
+
 		&:hover {
 			background-color:var(--colorLight);
 
@@ -884,14 +891,10 @@ textarea {
 .Fieldset-MediaElements-Available,
 .Fieldset-MediaElements-Assigned {
 	display:block;
-	padding:20px;
+	padding-inline:20px;
 
 	.Scale-Small & {
 		padding-bottom:20px;
-	}
-
-	&.Collapsed {
-		padding-block:0;
 	}
 
 	&:not(:has(.Item)) {
@@ -905,22 +908,20 @@ textarea {
 			}
 		}
 
-		&::after {
-			@extend %EmptyList;
+		&:not(.Collapsed) {
+			&::after {
+				@extend %EmptyList;
 
-			.🌚 & {
-				@extend %EmptyListDarkMode;
+				.🌚 & {
+					@extend %EmptyListDarkMode;
 
+				}
 			}
 		}
 
 		.List {
 			height:40px;
 		}
-	}
-
-	legend {
-		margin-left:0;
 	}
 }
 
@@ -931,7 +932,7 @@ textarea {
 
 	.List {
 		max-height:calc(100dvh - 240px);
-		margin:-5px -10px 0;
+		margin:0 -10px 0;
 		padding-inline:10px;
 		overflow-y:auto;
 		scrollbar-color:var(--colorMedium) var(--colorLight);

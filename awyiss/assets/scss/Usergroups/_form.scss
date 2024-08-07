@@ -3,16 +3,16 @@
 		.Fieldset-Users {
 			padding:0;
 
-			legend {
-				margin-left:20px;
-			}
-
 			.Overview-Table {
 				margin:0;
 			}
 
 			tr {
 				position:relative;
+			}
+
+			th {
+				padding-top:20px;
 			}
 
 			.TableHeader-UserCheckbox {
@@ -65,8 +65,8 @@
 		padding-inline:20px;
 		row-gap:2rem;
 
-		legend {
-			margin-left:0;
+		&:not(.Collapsed) {
+			padding-bottom:40px;
 		}
 	}
 

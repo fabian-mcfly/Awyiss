@@ -16,7 +16,7 @@
 	.Overview {
 		.ButtonArea {
 			&.CannotMoveUpwards {
-				margin-bottom:var(--lineHeightMain);
+				//margin-bottom:var(--lineHeightMain);
 			}
 
 			&-Bottom {
@@ -86,13 +86,8 @@ fieldset {
 	position:relative;
 
 	.Scale-Small & {
-		padding:20px 20px 0 20px;
+		padding:30px 20px 0 20px;
 	}
-}
-
-.Overview-List,
-fieldset {
-	padding-top:20px;
 }
 
 .Overview-List,
@@ -106,6 +101,7 @@ fieldset {
 
 	&:not(:has(> legend)) {
 		//margin-top:calc(var(--lineHeightMain) * -1);
+		padding-top:20px;
 
 		h1 + & {
 			margin-top:var(--lineHeightMain);
@@ -131,6 +127,12 @@ fieldset {
 }
 
 .Overview-List {
+	padding-top:20px;
+
+	.Scale-Small & {
+		padding-top:20px;
+	}
+
 	&:not(:has(.ListItem)) {
 		height:80px;
 
@@ -230,7 +232,7 @@ fieldset {
 }
 
 legend {
-	margin:0 0 0 -20px;
+	margin:0;
 	padding:5px 20px;
 	border-radius:5px ;
 	box-shadow:0 0 10px rgba(0, 0, 0, .05);
@@ -239,12 +241,18 @@ legend {
 	//noinspection CssNoGenericFontName
 	font-family:var(--fontStackHeading);
 	font-size:1rem;
-	line-height:inherit;
+	line-height:30px;
 	overflow:hidden;
-	position:relative;
-	z-index:1;
+	position:absolute;
+	top:-20px;
+	left:20px;
+	z-index:2;
 	cursor:default;
 	transition:background-color .3s ease-in-out, color .3s ease-in-out, box-shadow .3s ease-in-out;
+
+	.Scale-Small & {
+		margin-left:0;
+	}
 
 	.🌚 & {
 		background-color:var(--backgroundColor);

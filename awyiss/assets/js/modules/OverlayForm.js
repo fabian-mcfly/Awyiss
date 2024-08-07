@@ -167,6 +167,13 @@ export default class OverlayForm {
 			const newForm = new DOMParser().parseFromString(html, 'text/html').querySelector('form');
 
 			form.querySelector('.Fieldsets').replaceWith(newForm.querySelector('.Fieldsets'));
+
+			// Get the close button
+			const closeButton = this.overlayElement.querySelector('.Button-Close').cloneNode(true);
+			// Bind a click event to the close button
+			this.eventHandler.add('click', this.handleCloseButton.bind(this), closeButton);
+			// Append a clone of the close button to the form
+			form.querySelector('.ButtonArea.Bottom').append(closeButton.cloneNode(true));
 		})
 		.catch(error => console.error('Error:', error))
 		.finally(() => {
@@ -285,6 +292,13 @@ export default class OverlayForm {
 			// Get the second save button
 			saveButton = realForm.querySelector('.Button-SaveClose');
 			saveButton.classList.add('Button-Success');
+
+			// Add a clone of the close button to the form
+			const closeButtonClone = closeButton.cloneNode(true);
+			closeButtonClone.type = 'button';
+			// Bind a click event to the close button
+			this.eventHandler.add('click', this.handleCloseButton.bind(this), closeButtonClone);
+			saveButton.parentElement.append(closeButtonClone);
 
 			// Show the overlay
 			this.overlayElement.classList.remove('FetchInProgress');

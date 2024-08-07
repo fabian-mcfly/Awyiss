@@ -153,6 +153,7 @@ button,
 	&-Delete,
 	&-Edit,
 	&-History,
+	&-Leave,
 	&-Save,
 	&-SaveClose,
 	&-SaveSystemOrder,
@@ -200,6 +201,7 @@ button,
 	&-Close {
 		&::after {
 			content:'\f00d';
+			vertical-align:-1px;
 		}
 	}
 
@@ -229,6 +231,16 @@ button,
 	&-History {
 		&::after {
 			content:'\f1da';
+		}
+	}
+
+	&-Leave {
+		&::after {
+			content:'\f2f5';
+			border:0 none;
+			font-size:30px;
+			vertical-align:-3px;
+			rotate:180deg;
 		}
 	}
 

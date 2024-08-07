@@ -85,6 +85,7 @@
 				//margin-top:0;
 			}
 		}
+
 		+ .Overview-Fieldset {
 			&:first-of-type {
 				border-top-right-radius:0;
@@ -99,10 +100,6 @@
 			border-top-right-radius:0;
 			border-bottom-right-radius:0;
 		}
-	}
-
-	&:has(+ fieldset legend) {
-		margin-bottom:10px;
 	}
 
 	.Button,
