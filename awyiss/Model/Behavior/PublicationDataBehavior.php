@@ -229,7 +229,7 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 			'conditions' => [
 				$ls_targetAlias . '.scope' => $this->getConfig('referenceName'),
 			],
-			'cascadeDelete' => true,
+			'cascadeCallbacks' => true,
 			'dependent' => true,
 			'foreignKey' => 'foreign_id',
 			'propertyName' => '_publication_data',

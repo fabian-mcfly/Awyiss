@@ -88,7 +88,7 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 			'conditions' => [
 				'MediaAssignments.scope' => $this->getScope($this->table()),
 			],
-			'cascadeDelete' => true,
+			'cascadeCallbacks' => true,
 			'dependent' => true,
 			'foreignKey' => 'foreign_key',
 			'propertyName' => 'media_assignments',

@@ -37,7 +37,7 @@ class MediaElementSelectorsListener implements EventListenerInterface {
 
 	/**
 	 * @param \Cake\Event\Event $event
-	 * @param \Awyiss\Model\Entity\Language $entity
+	 * @param \Awyiss\Model\Entity\MediaElementSelector $entity
 	 * @return void
 	 * @noinspection PhpUnusedParameterInspection
 	 */
