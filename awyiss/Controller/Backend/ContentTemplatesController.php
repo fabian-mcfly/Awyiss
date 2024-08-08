@@ -96,11 +96,15 @@ class ContentTemplatesController extends Controller {
 		/** @var ContentTemplate $lo_contentTemplate */
 		$lo_contentTemplate = $this->ContentTemplates->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->contain([
 			'ContentAreas',
-			'ContentTemplateElements',
+			'ContentTemplateElements' => [
+				'queryBuilder' => function (SelectQuery $query) {
+					return $query->find('translations');
+				},
+			],
 		])->first();
+
 		if (!$lo_contentTemplate) {
 			$this->Flash->error(__('record_not_found'));
-
 
 			return $this->redirect(['action' => 'overview']);
 		}
@@ -265,10 +269,6 @@ class ContentTemplatesController extends Controller {
 	 * @return void
 	 */
 	protected function setViewVars(ContentTemplate $contentTemplate): void {
-		if ($contentTemplate->contentTemplateElements) {
-			$contentTemplate->contentTemplateElements = collection($contentTemplate->contentTemplateElements)->indexBy('identifier')->toArray();
-		}
-
 		$lo_contentTemplate = $contentTemplate;
 
 		// Sort the available content elements by the order of the assigned content template elements

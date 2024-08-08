@@ -44,9 +44,9 @@ class ContentTemplateElements {
 			'limit' => 61,
 			'null' => false,
 		])->addColumn('title', 'string', [
-			'default' => '',
+			'default' => null,
 			'limit' => 100,
-			'null' => false,
+			'null' => true,
 		])->addColumn('fieldset', 'string', [
 			'default' => '',
 			'limit' => 50,

@@ -78,12 +78,16 @@
 		{% endblock %}
 
 		{% block fieldsetContentElements %}
-			{% set assignedContentElements = (contentTemplate.contentTemplateElements ?? [])|column('identifier') %}
+			{% set assignedContentElements = [] %}
+			{% if contentTemplate.contentTemplateElements %}
+				{% set assignedContentElements = combine(contentTemplate.contentTemplateElements|column('identifier'), contentTemplate.contentTemplateElements) %}
+			{% endif %}
+
 			{% set elementCounter = 0 %}
 			{% set fieldsetElements = {} %}
 
 			{% for availableElement, assignable in availableContentElements %}
-				{% set contentTemplateElement = availableElement in assignedContentElements ? contentTemplate.contentTemplateElements[ availableElement ] : null %}
+				{% set contentTemplateElement = assignedContentElements[ availableElement ] %}
 				{% set key = contentTemplateElement ? contentTemplateElement.fieldset : 'unused' %}
 
 				{% if assignable == false and key == 'unused' %}
@@ -95,12 +99,12 @@
 						<li class="Item ContentElement ContentElement-{{ availableElement|camelize }} ContentElement-Default" data-assignable="{{ assignable == false ? 'false' : 'true' }}">
 							<span class="Title Title-Default">
 								{% if assignable == false %}
-									{{ FormHelper.hidden('content_template_elements[' ~ loop.index0 ~ '][identifier]', {
+									{{ FormHelper.hidden('content_template_elements.' ~ loop.index0 ~ '.identifier', {
 										value: availableElement,
 									}) }}
 								{% endif %}
-								{{ FormHelper.checkbox('content_template_elements[' ~ loop.index0 ~ '][identifier]', {
-									checked: assignable == false or availableElement in assignedContentElements,
+								{{ FormHelper.checkbox('content_template_elements.' ~ loop.index0 ~ '.identifier', {
+									checked: assignable == false or assignedContentElements[ availableElement ],
 									disabled: assignable == false,
 									hiddenField: false,
 									id: 'ContentTemplate-ContentElements-' ~ availableElement|camelize,
@@ -112,8 +116,9 @@
 							</span>
 
 							<label for="ContentTemplate-ContentElements-{{ availableElement|camelize }}-Fieldset">
-								{{ FormHelper.select('content_template_elements[' ~ loop.index0 ~ '][fieldset]', availableFieldsets, {
+								{{ FormHelper.select('content_template_elements.' ~ loop.index0 ~ '.fieldset', availableFieldsets, {
 									id: 'ContentTemplate-ContentElements-' ~ availableElement|camelize ~ '-Fieldset',
+									required: false,
 									val: contentTemplateElement ? contentTemplateElement.fieldset : (assignable == false ? availableFieldsets|keys|first : null),
 								}) }}
 
@@ -124,15 +129,21 @@
 								{% endif %}
 							</label>
 
+							{% if (contentTemplateElement) %}
+								{{ FormHelper.hidden('content_template_elements.' ~ loop.index0 ~ '.id', {
+									val: contentTemplateElement.id,
+								}) }}
+							{% endif %}
+
 							{% if availableElement != 'duplicate_of' %}
 								{% set hidden %}
 									{% if availableElement == 'content_template_id' %}
-										{{ FormHelper.hidden('content_template_elements[' ~ loop.index0 ~ '][required]', {
+										{{ FormHelper.hidden('content_template_elements.' ~ loop.index0 ~ '.required', {
 											value: true,
 										}) }}
 									{% endif %}
 								{% endset %}
-								{{ FormHelper.control('content_template_elements[' ~ loop.index0 ~ '][required]', {
+								{{ FormHelper.control('content_template_elements.' ~ loop.index0 ~ '.required', {
 									checked: availableElement == 'content_template_id' ? true : (contentTemplateElement ? contentTemplateElement.required : false),
 									disabled: availableElement == 'content_template_id',
 									label: __('required'),
@@ -145,7 +156,7 @@
 								}) }}
 							{% endif %}
 
-							{{ FormHelper.control('content_template_elements[' ~ (loop.index0) ~ '][column_span]', {
+							{{ FormHelper.control('content_template_elements.' ~ loop.index0 ~ '.column_span', {
 								empty: false,
 								label: __('column_span'),
 								options: columnSpans,
@@ -153,10 +164,19 @@
 								type: 'select',
 								val: contentTemplateElement ? contentTemplateElement.columnSpan : false,
 							}) }}
+
+							{{ FormHelper.control('content_template_elements.' ~ loop.index0 ~ '.title', {
+								label: __('title'),
+								id: 'ContentTemplate-ContentElements-' ~ availableElement|camelize ~ '-Title',
+								type: 'translatableText',
+								templateVars: {
+									dialogTitle: __d('system', 'translations_dialog_title', __('title')),
+								},
+							}) }}
 						</li>
 					{% endblock %}
 
-					{% if availableElement in assignedContentElements %}
+					{% if assignedContentElements[ availableElement ] %}
 						{% set elementCounter = elementCounter + 1 %}
 					{% endif %}
 				{% endset %}
@@ -169,14 +189,14 @@
 			{% endfor %}
 
 			{% for contentAttribute in availableContentAttributes %}
-				{% set contentTemplateElement = 'attributes.' ~ contentAttribute.identifier in assignedContentElements ? contentTemplate.contentTemplateElements[ 'attributes.' ~ contentAttribute.identifier ] : null %}
+				{% set contentTemplateElement = assignedContentElements[ 'attributes.' ~ contentAttribute.identifier ] %}
 				{% set key = contentTemplateElement ? contentTemplateElement.fieldset : 'unused' %}
 				{% set content %}
 					{% block formControlContentAttribute %}
 						<li class="Item ContentElement ContentElement-Attribute">
 							<span class="Title Title-Attribute">
-								{{ FormHelper.checkbox('content_template_elements[' ~ (loop.index0 + availableContentElements|length) ~ '][identifier]', {
-									checked: 'attributes.' ~ contentAttribute.identifier in assignedContentElements,
+								{{ FormHelper.checkbox('content_template_elements.' ~ (loop.index0 + availableContentElements|length) ~ '.identifier', {
+									checked: assignedContentElements[ 'attributes.' ~ contentAttribute.identifier ] ? true : false,
 									hiddenField: false,
 									id: 'ContentTemplate-ContentAttribute-' ~ contentAttribute.identifier|camelize,
 									readonly: true,
@@ -187,8 +207,9 @@
 							</span>
 
 							<label for="ContentTemplate-ContentAttribute-{{ contentAttribute.identifier|camelize }}-Fieldset">
-								{{ FormHelper.select('content_template_elements[' ~ (loop.index0 + availableContentElements|length) ~ '][fieldset]', availableFieldsets, {
+								{{ FormHelper.select('content_template_elements.' ~ (loop.index0 + availableContentElements|length) ~ '.fieldset', availableFieldsets, {
 									id: 'ContentTemplate-ContentAttribute-' ~ contentAttribute.identifier|camelize ~ '-Fieldset',
+									required: false,
 									val: contentTemplateElement ? contentTemplateElement.fieldset : null,
 								}) }}
 
@@ -199,7 +220,7 @@
 								{% endif %}
 							</label>
 
-							{{ FormHelper.control('content_template_elements[' ~ (loop.index0 + availableContentElements|length) ~ '][required]', {
+							{{ FormHelper.control('content_template_elements.' ~ (loop.index0 + availableContentElements|length) ~ '.required', {
 								checked: contentTemplateElement ? contentTemplateElement.required : false,
 								label: __('required'),
 								hiddenField: true,
@@ -207,7 +228,7 @@
 								value: true,
 							}) }}
 
-							{{ FormHelper.control('content_template_elements[' ~ (loop.index0 + availableContentElements|length) ~ '][column_span]', {
+							{{ FormHelper.control('content_template_elements.' ~ (loop.index0 + availableContentElements|length) ~ '.column_span', {
 								empty: false,
 								label: __('column_span'),
 								options: columnSpans,
@@ -218,7 +239,7 @@
 						</li>
 					{% endblock %}
 
-					{% if 'attributes.' ~ contentAttribute.identifier in assignedContentElements %}
+					{% if 'attributes.' ~ assignedContentElements[ contentAttribute.identifier ] %}
 						{% set elementCounter = elementCounter + 1 %}
 					{% endif %}
 				{% endset %}
@@ -246,9 +267,9 @@
 
 								<ul class="List ContentElements-List SortableList" data-fieldset="{{ key }}">
 									{% if fieldsetElements[key] is defined %}
-										{% for assignedContentElement in assignedContentElements %}
-											{% if fieldsetElements[key][assignedContentElement] is defined %}
-												{{ fieldsetElements[key][assignedContentElement]|raw }}
+										{% for identifier, assignedContentElement in assignedContentElements %}
+											{% if fieldsetElements[ key ][ identifier ] is defined %}
+												{{ fieldsetElements[ key ][ identifier ]|raw }}
 											{% endif %}
 										{% endfor %}
 									{% endif %}
@@ -294,7 +315,7 @@
 																	<li class="ListItem ListItem-ContentArea">
 																		{% set key = loop.parent.loop.parent.loop.index0 ~ loop.parent.loop.index0 ~ key %}
 
-																		{{ FormHelper.control('content_areas[' ~ key ~ '][content_area_id]', {
+																		{{ FormHelper.control('content_areas.' ~ key ~ '.content_area_id', {
 																			checked: (pageTemplate.id ~ '_' ~ contentArea.id) in assignedContentAreas,
 																			hiddenField: false,
 																			id: 'ContentTemplate-ContentAreas-' ~ pageTemplate.fileName|camelize ~'-' ~ contentArea.identifier|camelize,
@@ -303,7 +324,7 @@
 																			value: contentArea.id,
 																		}) }}
 
-																		{{ FormHelper.hidden('content_areas[' ~ key ~'][page_template_id]', {
+																		{{ FormHelper.hidden('content_areas.' ~ key ~'.page_template_id', {
 																			value: pageTemplate.id
 																		}) }}
 																	</li>

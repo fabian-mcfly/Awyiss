@@ -1,5 +1,8 @@
 {% block formControlActive %}
-	{{ FormHelper.control('active', {columnSpan: contentTemplateElement.column.span.numerator}) }}
+	{{ FormHelper.control('active', {
+		columnSpan: contentTemplateElement.column.span.numerator,
+		label: contentTemplateElement.title,
+	}) }}
 {% endblock %}
 
 
@@ -7,6 +10,7 @@
 	{{ FormHelper.control('content_template_id', {
 		columnSpan: contentTemplateElement.column.span.numerator,
 		empty: false,
+		label: contentTemplateElement.title,
 		options: settings.contentTemplates.combine('id', 'title'),
 		'data-form-updater': true,
 	}) }}
@@ -16,6 +20,7 @@
 {% block formControlLanguageShortcode %}
 	{{ LocaleHelper.control('language_shortcode', {
 		columnSpan: contentTemplateElement.column.span.numerator,
+		label: contentTemplateElement.title,
 		languageRealm: settings.languageRealm,
 		val: settings.languageShortcode,
 		'data-form-updater': true,
@@ -27,6 +32,7 @@
 	{{ SystemOrderHelper.control('system_order', {
 		columnSpan: contentTemplateElement.column.span.numerator,
 		entity: settings.content,
+		label: contentTemplateElement.title,
 	}) }}
 {% endblock %}
 
@@ -34,6 +40,7 @@
 {% block formControlPageId %}
 	{{ CategoriesHelper.control('page', {
 		columnSpan: contentTemplateElement.column.span.numerator,
+		label: contentTemplateElement.title,
 		'data-form-updater': true,
 	}) }}
 {% endblock %}
@@ -44,6 +51,7 @@
 		columnSpan: contentTemplateElement.column.span.numerator,
 		disabled: settings.contentAreas.unavailable|column('id'),
 		empty: false,
+		label: contentTemplateElement.title,
 		options: combine(settings.contentAreas.all|column('id'), settings.contentAreas.all|column('label')),
 		'data-form-updater': true,
 	}) }}
@@ -54,6 +62,7 @@
 	{{ FormHelper.control('column_width', {
 		columnSpan: contentTemplateElement.column.span.numerator,
 		empty: false,
+		label: contentTemplateElement.title,
 		options: settings.columnWidths,
 		required: contentTemplateElement.required,
 		type: 'select'}
@@ -64,6 +73,7 @@
 {% block formControlColumnIndent %}
 	{{ FormHelper.control('column_indent', {
 		columnSpan: contentTemplateElement.column.span.numerator,
+		label: contentTemplateElement.title,
 		options: settings.columnIndents,
 		required: contentTemplateElement.required,
 		type: 'select'}) }}
@@ -73,6 +83,7 @@
 {% block formControlColumnLast %}
 	{{ FormHelper.control('column_last', {
 		columnSpan: contentTemplateElement.column.span.numerator,
+		label: contentTemplateElement.title,
 		required: contentTemplateElement.required,
 	}) }}
 {% endblock %}
@@ -81,6 +92,7 @@
 {% block formControlColumnRtl %}
 	{{ FormHelper.control('column_rtl', {
 		columnSpan: contentTemplateElement.column.span.numerator,
+		label: contentTemplateElement.title,
 		required: contentTemplateElement.required,
 	}) }}
 {% endblock %}
@@ -90,6 +102,7 @@
 {% block formControlParentId %}
 	{{ FormHelper.control('parent_id', {
 		columnSpan: contentTemplateElement.column.span.numerator,
+		label: contentTemplateElement.title,
 		options: hashPrinter(settings.possibleParentContents, 'label', 'id', '- '),
 		required: contentTemplateElement.required,
 		'data-form-updater': true,
@@ -117,6 +130,7 @@
 
 	{{ FormHelper.control('title', {
 		columnSpan: contentTemplateElement.column.span.numerator,
+		label: contentTemplateElement.title,
 		required: contentTemplateElement.required,
 		templateVars: {
 			additionalContent: titleTag,
@@ -148,6 +162,7 @@
 
 	{{ FormHelper.control('subtitle', {
 		columnSpan: contentTemplateElement.column.span.numerator,
+		label: contentTemplateElement.title,
 		required: contentTemplateElement.required,
 		templateVars: {
 			additionalContent: subtitleTag,
@@ -162,6 +177,7 @@
 {% block formControlText %}
 	{{ FormHelper.control('text', {
 		columnSpan: contentTemplateElement.column.span.numerator,
+		label: contentTemplateElement.title,
 		required: contentTemplateElement.required,
 		'data-editor': true,
 	}) }}
@@ -178,6 +194,7 @@
 
 	{{ FormHelper.control('duplicate_of', {
 		columnSpan: contentTemplateElement.column.span.numerator,
+		label: contentTemplateElement.title,
 		required: contentTemplateElement.required,
 		templateVars: {
 			additionalContent: output,
@@ -194,6 +211,7 @@
 {% block formControlLink %}
 	{{ FormHelper.control('link', {
 		columnSpan: contentTemplateElement.column.span.numerator,
+		label: contentTemplateElement.title,
 		required: contentTemplateElement.required,
 	}) }}
 {% endblock %}
@@ -202,6 +220,7 @@
 {% block formControlCssClass %}
 	{{ FormHelper.control('css_class', {
 		columnSpan: contentTemplateElement.column.span.numerator,
+		label: contentTemplateElement.title,
 		required: contentTemplateElement.required,
 	}) }}
 {% endblock %}

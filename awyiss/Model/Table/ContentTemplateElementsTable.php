@@ -39,6 +39,12 @@ class ContentTemplateElementsTable extends Table {
 	 * @var array The column widths
 	 */
 	protected array $columnSpans;
+	/**
+	 * @inheritDoc
+	 */
+	protected array $translate = [
+		'fields' => ['title'],
+	];
 
 
 	/**

@@ -70,7 +70,7 @@
 	.Item {
 		min-height:50px;
 		margin:5px 0 0 0;
-		padding:3px 20px 7px;
+		padding:5px 20px;
 		border-radius:5px;
 		background-color:var(--colorNeutralLight);
 		list-style-type:none;
@@ -127,7 +127,7 @@
 
 		.Title {
 			display:block;
-			line-height:40px;
+			line-height:52px;
 
 			label,
 			input {
@@ -140,6 +140,7 @@
 		}
 
 		> label,
+		.FormInputType-TranslatableText,
 		.FormInputType-Select,
 		.FormInputType-Checkbox {
 			display:none;
@@ -182,7 +183,8 @@
 
 		.ContentElement {
 			display:grid;
-			grid-template-columns:1fr 350px;
+			gap:0 40px;
+			grid-template-columns:2fr 1fr 2fr 52px;
 
 			&.ContentElement-TitleTag,
 			&.ContentElement-SubtitleTag {
@@ -198,14 +200,44 @@
 			}
 
 			.Title {
-				margin-bottom:-.75rem;
-				grid-column:1 / span 2;
+				grid-column:1 / span 1;
+			}
+
+			.FormInputType-TranslatableText {
+				display:block;
+				grid-column:4 / span 1;
+
+				&:has(input[value]) {
+					.ShowTranslationDialog {
+						background-color:var(--colorSuccess);
+					}
+				}
+
+				> .Label {
+					display:none;
+				}
+
+				.FormInputType-Text {
+					&.IsCurrentLanguage {
+						> input {
+							display:none;
+						}
+					}
+				}
+
+				.ShowTranslationDialog {
+					width:52px;
+					height:52px;
+					margin-top:0;
+					top:0;
+					right:0;
+				}
 			}
 
 			.FormInputType-Select {
 				display:flex;
 				margin-bottom:0;
-				grid-column:2 / span 1;
+				grid-column:3 / span 1;
 
 				.Label {
 					display:inline-block;
@@ -220,7 +252,7 @@
 				margin-top:.3rem;
 				margin-bottom:0;
 				white-space:nowrap;
-				grid-column:auto / span 1;
+				grid-column:2 / span 1;
 
 				label {
 					line-height:40px;
@@ -245,9 +277,11 @@
 		}
 
 		.PageTemplates-List {
+			display:grid;
 			padding:5px;
 			border-radius:5px;
 			border-left:2px solid var(--colorMedium);
+			align-content:center;
 
 			.🌚& {
 				border-left-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l - 0.0473) calc(c - 0.005) calc(h + 1.12));

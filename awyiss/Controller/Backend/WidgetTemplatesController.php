@@ -95,11 +95,15 @@ class WidgetTemplatesController extends Controller {
 		/** @var \Awyiss\Model\Entity\WidgetTemplate $lo_widgetTemplate */
 		$lo_widgetTemplate = $this->WidgetTemplates->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')
 		->contain([
-			'WidgetTemplateElements',
+			'WidgetTemplateElements' => [
+				'queryBuilder' => function (SelectQuery $query) {
+					return $query->find('translations');
+				},
+			],
 		])->first();
+
 		if (!$lo_widgetTemplate) {
 			$this->Flash->error(__('record_not_found'));
-
 
 			return $this->redirect(['action' => 'overview']);
 		}
@@ -214,10 +218,6 @@ class WidgetTemplatesController extends Controller {
 	 * @return void
 	 */
 	protected function setViewVars(WidgetTemplate $widgetTemplate): void {
-		if ($widgetTemplate->widgetTemplateElements) {
-			$widgetTemplate->widgetTemplateElements = collection($widgetTemplate->widgetTemplateElements)->indexBy('identifier')->toArray();
-		}
-
 		$lo_widgetTemplate = $widgetTemplate;
 
 		// Sort the available widget elements by the order of the assigned widget template elements
