@@ -6,6 +6,7 @@ namespace Awyiss\Model\Behavior;
 
 use Awyiss\Annotation\MediaElementAssignable;
 use Awyiss\Awyiss;
+use Awyiss\Model\Entity\MediaElementAssignment;
 use Awyiss\Model\Table;
 use Awyiss\ORM\Behavior;
 use Cake\Datasource\EntityInterface;
@@ -110,7 +111,7 @@ class MediaElementAssignmentBehavior extends Behavior implements PropertyMarshal
 			'conditions' => [
 				'MediaElementAssignments.scope' => $this->getScope($this->table()),
 			],
-			'cascadeDelete' => true,
+			'cascadeCallbacks' => true,
 			'dependent' => true,
 			'foreignKey' => 'foreign_key',
 			'propertyName' => 'media_element_assignments',
@@ -178,8 +179,16 @@ class MediaElementAssignmentBehavior extends Behavior implements PropertyMarshal
 				$lo_marshaller = $this->assignmentsTable->marshaller();
 
 				foreach ($values as $la_data) {
-					/** @var \Awyiss\Model\Entity\MediaElementAssignment $lo_entity */
-					$lo_entity = $this->assignmentsTable->newEmptyEntity();
+					/** @var \Awyiss\Model\Entity\MediaElementAssignment|null $lo_entity */
+					$lo_entity = null;
+					if (!empty($la_data['id'])) {
+						// Find the existing entity, if any, in `mediaElementAssignments`
+						$lo_entity = array_filter($entity->mediaElementAssignments, fn(MediaElementAssignment $entity) => $entity->id === (int)$la_data['id'])[0] ?? null;
+					}
+
+					if (!$lo_entity) {
+						$lo_entity = $this->assignmentsTable->newEmptyEntity();
+					}
 
 					$la_data['scope'] = $this->getConfig('referenceName');
 

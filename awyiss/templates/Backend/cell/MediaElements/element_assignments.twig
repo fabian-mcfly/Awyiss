@@ -4,6 +4,8 @@
 @var assignedElements \Awyiss\Model\Entity\MediaElementAssignment[]
 #}
 
+{% set assignedElements = combine(assignedElements|column('media_element_id'), assignedElements) %}
+
 <fieldset class="Fieldset-MediaElementAssignments">
 	{% block formControlMediaElements %}
 		{% set assignedElementIds = assignedElements|column('media_element_id') %}
@@ -38,12 +40,17 @@
 			<ul class="List MediaElements-List SortableList">
 				{% for availableElement in availableElements %}
 					{% if availableElement.id in assignedElementIds %}
+						{% set assignedElement = assignedElements[ availableElement.id ] %}
 						<li class="Item MediaElement">
 							<span class="Title">
 								{{ FormHelper.checkbox('media_element_assignments[' ~ loop.index0 ~ '][media_element_id]', {
 									checked: true,
 									id: 'MediaElement-Element-' ~ availableElement.identifier|camelize,
 									value: availableElement.id,
+								}) }}
+
+								{{ FormHelper.hidden('media_element_assignments[' ~ loop.index0 ~ '][id]', {
+									value: assignedElement.id,
 								}) }}
 
 								{{ availableElement.label }}
