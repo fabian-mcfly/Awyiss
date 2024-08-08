@@ -95,6 +95,9 @@
 									{{ FormHelper.control('media_element_selectors.' ~ counter ~ '.title', {
 										required: true,
 										type: languages.Backend|filter(language => language.active)|length > 1 ? 'translatableText' : null,
+										templateVars: {
+											dialogTitle: __d('system', 'translations_dialog_title', __('title')),
+										},
 									}) }}
 
 									{{ FormHelper.control('media_element_selectors.' ~ counter ~ '.identifier', {
