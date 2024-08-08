@@ -268,3 +268,15 @@ msgstr "Buhuhu! Da ist wohl etwas schief gelaufen. Bitte versuche es später noc
 
 msgid "title_tag"
 msgstr "Titel-Tag"
+
+msgid "login_logo"
+msgstr "Login Logo"
+
+msgid "html_cleaning_none"
+msgstr "Deaktiviert"
+
+msgid "html_cleaning_moderate"
+msgstr "Moderat"
+
+msgid "html_cleaning_strict"
+msgstr "Strikt"

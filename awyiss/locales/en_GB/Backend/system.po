@@ -268,3 +268,15 @@ msgstr "Boh! Something seems to have gone wrong. Please try again later."
 
 msgid "title_tag"
 msgstr "Title-Tag"
+
+msgid "login_logo"
+msgstr "Login Logo"
+
+msgid "html_cleaning_none"
+msgstr "Inactive"
+
+msgid "html_cleaning_moderate"
+msgstr "Moderate"
+
+msgid "html_cleaning_strict"
+msgstr "Strict"

@@ -8,7 +8,7 @@
 
 <div class="LanguageSwitcher">
 	<button class="Button LanguageSwitcherLabel">
-		<img src="{{ UrlHelper.build('awyiss/assets/img/countries/' ~ currentLanguage.shortcode ~'.svg') }}" alt="{{ __d('users', 'loginLogo') }}">
+		<img src="{{ UrlHelper.build('awyiss/assets/img/countries/' ~ currentLanguage.shortcode ~'.svg') }}" alt="{{ currentLanguage.title }}">
 		{{ currentLanguage.title }}
 	</button>
 
@@ -16,7 +16,7 @@
 		{% for language in languages %}
 			<li class="Language{% if language.shortcode == currentLanguage.shortcode %} Active{% endif %}">
 				{% set icon %}
-					<img src="{{ UrlHelper.build('awyiss/assets/img/countries/' ~ language.shortcode ~'.svg') }}" alt="{{ __d('users', 'loginLogo') }}">
+					<img src="{{ UrlHelper.build('awyiss/assets/img/countries/' ~ language.shortcode ~'.svg') }}" alt="{{ language.title }}">
 				{% endset %}
 				{{ HtmlHelper.link(icon ~ language.title, {lang: language.shortcode, action: currentAction == 'edit' ? 'overview' : null}, {
 					escape: false,
