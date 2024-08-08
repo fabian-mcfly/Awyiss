@@ -68,7 +68,7 @@ class TranslateBehavior extends BaseTranslateBehavior {
 		foreach ($this->getConfig('fields') as $ls_field) {
 			$ls_defaultTranslation = $data['_translations'][ $ls_firstLanguageShortcode ][ $ls_field ] ?? null;
 			/** @noinspection PhpVariableNamingConventionInspection */
-			$data[ $ls_field ] = $ls_defaultTranslation;
+			$data[ $ls_field ] = $ls_defaultTranslation ?: null;
 		}
 	}
 
