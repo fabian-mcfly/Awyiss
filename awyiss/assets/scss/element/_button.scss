@@ -239,8 +239,13 @@ button,
 			content:'\f2f5';
 			border:0 none;
 			font-size:30px;
-			vertical-align:-3px;
+			vertical-align:-1px;
 			rotate:180deg;
+			transform:translateY(2px);
+
+			.Scale-Small & {
+				vertical-align:-2px;
+			}
 		}
 	}
 
