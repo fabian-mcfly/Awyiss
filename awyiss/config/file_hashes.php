@@ -19,7 +19,6 @@ return [
 		'\\Cake\\Datasource\\Paging\\NumericPaginator::_prefix' => 'db8f2f2d3caba1a6ec165b4d3dbe73b3',
 		'\\Cake\\Datasource\\Paging\\NumericPaginator::getQuery' => '8e1922ec82754f66f9ed7f79baca32e9',
 		'\\Cake\\Datasource\\Paging\\NumericPaginator::validateSort' => '2ba756971537fe2585ea0ecb71456857',
-		'\\Cake\\Error\\Middleware\\ErrorHandlerMiddleware::process' => 'd816c40a761a91a65419838700ac8788',
 		'\\Cake\\I18n\\MessagesFileLoader::__invoke' => 'ab8bb9bb6c666c25ddbd7d213af2df90',
 		'\\Cake\\ORM\\Behavior\\TranslateBehavior::beforeMarshal' => 'fed13bdeccb8f795184a82cdc1d714f8',
 		'\\Cake\\ORM\\Behavior\\TranslateBehavior::referenceName' => 'cc59bb272ae75d37e4474948451921c5',
