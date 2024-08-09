@@ -64,7 +64,7 @@ class EavStrategy extends BaseEavStrategy {
 
 		// No additional translation records need to be saved,
 		// as the entity is in the default locale.
-		if ($lb_noBundled && $ls_locale === $this->getConfig('defaultLocale')) {
+		if ($lb_noBundled) {
 			return;
 		}
 
@@ -267,6 +267,7 @@ class EavStrategy extends BaseEavStrategy {
 		// unset it completely and return
 		if (empty($entity->get('_translations'))) {
 			$entity->unset('_translations');
+			$entity->unset('_i18n');
 		}
 	}
 }
