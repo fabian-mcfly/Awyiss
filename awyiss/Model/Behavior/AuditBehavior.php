@@ -236,7 +236,7 @@ class AuditBehavior extends Behavior {
 
 		return $lo_auditModel->find('all')->where([
 			'scope' => $this->table()->getTable(),
-			'parent_id' => $entity->get('id'),
+			'foreign_key' => $entity->get('id'),
 		])->contain(['Users'])->orderBy(['Audit.created_on' => 'DESC']);
 	}
 
@@ -400,7 +400,7 @@ class AuditBehavior extends Behavior {
 			'transactionId' => $options['transactionId'],
 			'type' => !empty($entity->deleted) ? 'd' : 'u',
 			'scope' => $event->getSubject()->getTable(),
-			'parentId' => $entity->get('id'),
+			'foreignKey' => $entity->get('id'),
 			'dataOld' => $la_entityData['old'],
 			'dataNew' => $la_entityData['new'],
 			'diff' => $la_entityData['changes'],

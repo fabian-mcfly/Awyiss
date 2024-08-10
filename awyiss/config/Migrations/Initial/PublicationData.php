@@ -38,7 +38,7 @@ class PublicationData {
 			'default' => null,
 			'limit' => 50,
 			'null' => false,
-		])->addColumn('foreign_id', 'integer', [
+		])->addColumn('foreign_key', 'integer', [
 			'default' => null,
 			'limit' => null,
 			'null' => false,
@@ -53,7 +53,7 @@ class PublicationData {
 			'null' => true,
 		])->addIndex(
 			[
-				'foreign_id',
+				'foreign_key',
 				'scope',
 			], [
 				'name' => 'DATE_TYPE',

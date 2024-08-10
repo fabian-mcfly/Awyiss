@@ -12,7 +12,7 @@ use Awyiss\Model\Entity;
  *
  * @property int $id
  * @property string $scope
- * @property int $foreignId
+ * @property int $foreignKey
  * @property \Awyiss\Model\Enum\PublicationDataType $type
  * @property \Cake\I18n\DateTime|null $dateTime
  */
@@ -22,7 +22,7 @@ class PublicationData extends Entity {
 	 */
 	protected array $_accessible = [
 		'scope' => true,
-		'foreignId' => true,
+		'foreignKey' => true,
 		'type' => true,
 		'dateTime' => true,
 	];
@@ -31,6 +31,6 @@ class PublicationData extends Entity {
 	 */
 	protected static array $fieldMap = [
 		'date_time' => 'dateTime',
-		'foreign_id' => 'foreignId',
+		'foreign_key' => 'foreignKey',
 	];
 }

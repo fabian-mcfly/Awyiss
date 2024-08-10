@@ -38,7 +38,7 @@ class Audit {
 			'default' => null,
 			'limit' => 50,
 			'null' => false,
-		])->addColumn('parent_id', 'integer', [
+		])->addColumn('foreign_key', 'integer', [
 			'default' => null,
 			'limit' => null,
 			'null' => false,

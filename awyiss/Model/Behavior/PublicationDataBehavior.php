@@ -215,7 +215,7 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 			/** @noinspection PhpClassConstantAccessedViaChildClassInspection */
 			$this->_table->hasOne($ls_name, [
 				'conditions' => $la_conditions,
-				'foreignKey' => 'foreign_id',
+				'foreignKey' => 'foreign_key',
 				'joinType' => SelectQuery::JOIN_TYPE_LEFT,
 				'propertyName' => '_publication_' . $ls_identifier,
 				'targetTable' => $lo_fieldTable,
@@ -231,7 +231,7 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 			],
 			'cascadeCallbacks' => true,
 			'dependent' => true,
-			'foreignKey' => 'foreign_id',
+			'foreignKey' => 'foreign_key',
 			'propertyName' => '_publication_data',
 			'saveStrategy' => 'replace',
 			'strategy' => 'subquery',
@@ -328,7 +328,7 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 				if (
 					$lo_query->isAutoFieldsEnabled() !== false || in_array($ls_field, $la_select, true) || in_array($this->_table->aliasField($ls_field), $la_select, true)
 				) {
-					$q->select(['id', 'foreign_id', 'type', 'date_time']);
+					$q->select(['id', 'foreign_key', 'type', 'date_time']);
 				}
 
 

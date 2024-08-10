@@ -105,7 +105,7 @@ class AuditController extends Controller {
 
 		// Get the audit history of the record
 		$lo_audits = $this->Audit->find()->where([
-			'parent_id' => $li_id,
+			'foreign_key' => $li_id,
 			'scope' => $ls_scope,
 		])->contain(['Users'])->orderBy(['Audit.created_on' => 'desc'])->all();
 

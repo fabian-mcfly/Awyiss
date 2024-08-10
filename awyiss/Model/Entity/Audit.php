@@ -12,7 +12,7 @@ use Awyiss\Model\Entity;
  *
  * @property int $id
  * @property string|null $scope
- * @property int|null $parentId
+ * @property int|null $foreignKey
  * @property string|null $transactionId
  * @property string|null $type
  * @property array|null $dataOld
@@ -27,7 +27,7 @@ class Audit extends Entity {
 	 */
 	protected array $_accessible = [
 		'scope' => true,
-		'parentId' => true,
+		'foreignKey' => true,
 		'transactionId' => true,
 		'type' => true,
 		'dataOld' => true,
@@ -41,7 +41,7 @@ class Audit extends Entity {
 	 */
 	protected static array $fieldMap = [
 		'transaction_id' => 'transactionId',
-		'parent_id' => 'parentId',
+		'foreign_key' => 'foreignKey',
 		'data_old' => 'dataOld',
 		'data_new' => 'dataNew',
 		'created_by' => 'createdBy',

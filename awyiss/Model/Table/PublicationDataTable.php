@@ -50,8 +50,8 @@ class PublicationDataTable extends Table {
 		]);
 
 
-		$validator->notEmptyString('foreignId');
-		$validator->add('foreignId', [
+		$validator->notEmptyString('foreignKey');
+		$validator->add('foreignKey', [
 			'isInteger' => ['rule' => 'isInteger'],
 			'maxLength' => ['rule' => ['maxLength', 11]],
 		]);

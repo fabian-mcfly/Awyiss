@@ -57,7 +57,7 @@ class AuditTable extends Table {
 
 		$validator->requirePresence([
 			'scope',
-			'parentId',
+			'foreignKey',
 			'transactionId',
 			'type',
 			'createdOn',
@@ -79,7 +79,7 @@ class AuditTable extends Table {
 		]);
 
 
-		$validator->add('parentId', [
+		$validator->add('foreignKey', [
 			'isInteger' => ['rule' => 'isInteger'],
 		]);
 
