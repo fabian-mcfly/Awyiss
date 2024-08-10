@@ -85,7 +85,19 @@ class WidgetTemplates {
 			'default' => null,
 			'limit' => null,
 			'null' => true,
-		])->create();
+		])->addIndex(
+			[
+				'active',
+			], [
+				'name' => 'active',
+			]
+		)->addIndex(
+			[
+				'deleted',
+			], [
+				'name' => 'deleted',
+			]
+		)->create();
 	}
 
 

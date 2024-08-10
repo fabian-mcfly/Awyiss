@@ -87,6 +87,24 @@ class PageTemplates {
 			'default' => null,
 			'limit' => null,
 			'null' => true,
-		])->create();
+		])->addIndex(
+			[
+				'page_role_id',
+			], [
+				'name' => 'page_role_id',
+			]
+		)->addIndex(
+			[
+				'active',
+			], [
+				'name' => 'active',
+			]
+		)->addIndex(
+			[
+				'deleted',
+			], [
+				'name' => 'deleted',
+			]
+		)->create();
 	}
 }

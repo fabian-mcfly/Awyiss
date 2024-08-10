@@ -44,7 +44,19 @@ class UsergroupsUsers {
 			'limit' => null,
 			'null' => false,
 			'signed' => true,
-		])->create();
+		])->addIndex(
+			[
+				'usergroup_id',
+			], [
+				'name' => 'usergroup_id',
+			]
+		)->addIndex(
+			[
+				'user_id',
+			], [
+				'name' => 'user_id',
+			]
+		)->create();
 	}
 
 

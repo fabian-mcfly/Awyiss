@@ -83,6 +83,18 @@ class MediaSelectors {
 			], [
 				'name' => 'identifier',
 			]
+		)->addIndex(
+			[
+				'active',
+			], [
+				'name' => 'active',
+			]
+		)->addIndex(
+			[
+				'deleted',
+			], [
+				'name' => 'deleted',
+			]
 		)->create();
 	}
 

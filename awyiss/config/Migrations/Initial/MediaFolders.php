@@ -99,7 +99,43 @@ class MediaFolders {
 			'default' => null,
 			'limit' => null,
 			'null' => true,
-		])->create();
+		])->addIndex(
+			[
+				'parent_id',
+			], [
+				'name' => 'parent_id',
+			]
+		)->addIndex(
+			[
+				'language_shortcode',
+			], [
+				'name' => 'language_shortcode',
+			]
+		)->addIndex(
+			[
+				'path',
+			], [
+				'name' => 'path',
+			]
+		)->addIndex(
+			[
+				'active',
+			], [
+				'name' => 'active',
+			]
+		)->addIndex(
+			[
+				'parents_active',
+			], [
+				'name' => 'parents_active',
+			]
+		)->addIndex(
+			[
+				'deleted',
+			], [
+				'name' => 'deleted',
+			]
+		)->create();
 	}
 
 

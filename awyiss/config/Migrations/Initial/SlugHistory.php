@@ -75,7 +75,19 @@ class SlugHistory {
 			'default' => null,
 			'limit' => null,
 			'null' => true,
-		])->create();
+		])->addIndex(
+			[
+				'slug',
+			], [
+				'name' => 'slug',
+			]
+		)->addIndex(
+			[
+				'page_id',
+			], [
+				'name' => 'page_id',
+			]
+		)->create();
 	}
 
 

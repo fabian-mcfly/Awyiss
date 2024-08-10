@@ -86,7 +86,25 @@ class PageRoles {
 			'default' => null,
 			'limit' => null,
 			'null' => true,
-		])->create();
+		])->addIndex(
+			[
+				'identifier',
+			], [
+				'name' => 'identifier',
+			]
+		)->addIndex(
+			[
+				'active',
+			], [
+				'name' => 'active',
+			]
+		)->addIndex(
+			[
+				'deleted',
+			], [
+				'name' => 'deleted',
+			]
+		)->create();
 	}
 
 

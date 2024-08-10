@@ -72,7 +72,20 @@ class Audit {
 			'default' => null,
 			'limit' => null,
 			'null' => true,
-		])->create();
+		])->addIndex(
+			[
+				'scope',
+				'foreign_key',
+			], [
+				'name' => 'scope',
+			]
+		)->addIndex(
+			[
+				'transaction_id',
+			], [
+				'name' => 'transaction_id',
+			]
+		)->create();
 	}
 
 

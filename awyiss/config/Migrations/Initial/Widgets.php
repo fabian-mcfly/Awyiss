@@ -33,7 +33,7 @@ class Widgets {
 			'limit' => null,
 			'null' => false,
 			'signed' => true,
-		])->addColumn('identifier', 'string', [
+		])->addPrimaryKey(['id'])->addColumn('identifier', 'string', [
 			'default' => null,
 			'limit' => 50,
 			'null' => false,
@@ -127,7 +127,37 @@ class Widgets {
 			'default' => null,
 			'limit' => null,
 			'null' => true,
-		])->create();
+		])->addIndex(
+			[
+				'identifier',
+			], [
+				'name' => 'identifier',
+			]
+		)->addIndex(
+			[
+				'widget_template_id',
+			], [
+				'name' => 'widget_template_id',
+			]
+		)->addIndex(
+			[
+				'parent_id',
+			], [
+				'name' => 'parent_id',
+			]
+		)->addIndex(
+			[
+				'active',
+			], [
+				'name' => 'active',
+			]
+		)->addIndex(
+			[
+				'deleted',
+			], [
+				'name' => 'deleted',
+			]
+		)->create();
 	}
 
 

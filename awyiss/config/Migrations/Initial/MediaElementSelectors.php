@@ -64,9 +64,15 @@ class MediaElementSelectors {
 			]
 		)->addIndex(
 			[
-				'system_order',
+				'media_element_id',
 			], [
-				'name' => 'system_order',
+				'name' => 'media_element_id',
+			]
+		)->addIndex(
+			[
+				'media_selector_id',
+			], [
+				'name' => 'media_selector_id',
 			]
 		)->create();
 	}

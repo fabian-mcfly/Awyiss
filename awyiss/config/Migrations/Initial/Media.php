@@ -140,9 +140,15 @@ class Media {
 			]
 		)->addIndex(
 			[
-				'system_order',
+				'preview',
 			], [
-				'name' => 'system_order',
+				'name' => 'preview',
+			]
+		)->addIndex(
+			[
+				'webp',
+			], [
+				'name' => 'webp',
 			]
 		)->create();
 	}

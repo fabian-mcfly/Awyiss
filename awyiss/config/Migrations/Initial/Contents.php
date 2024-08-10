@@ -147,7 +147,43 @@ class Contents {
 			'default' => null,
 			'limit' => null,
 			'null' => true,
-		])->create();
+		])->addIndex(
+			[
+				'page_id',
+			], [
+				'name' => 'page_id',
+			]
+		)->addIndex(
+			[
+				'content_area_id',
+			], [
+				'name' => 'content_area_id',
+			]
+		)->addIndex(
+			[
+				'content_template_id',
+			], [
+				'name' => 'content_template_id',
+			]
+		)->addIndex(
+			[
+				'parent_id',
+			], [
+				'name' => 'parent_id',
+			]
+		)->addIndex(
+			[
+				'active',
+			], [
+				'name' => 'active',
+			]
+		)->addIndex(
+			[
+				'deleted',
+			], [
+				'name' => 'deleted',
+			]
+		)->create();
 	}
 
 

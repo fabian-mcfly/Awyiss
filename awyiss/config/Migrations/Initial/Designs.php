@@ -92,7 +92,31 @@ class Designs {
 				'default' => null,
 				'limit' => null,
 				'null' => true,
-			])->create();
+			])->addIndex(
+			[
+				'identifier',
+			], [
+				'name' => 'identifier',
+			]
+		)->addIndex(
+			[
+				'in_use',
+			], [
+				'name' => 'in_use',
+			]
+		)->addIndex(
+			[
+				'is_preview',
+			], [
+				'name' => 'is_preview',
+			]
+		)->addIndex(
+			[
+				'deleted',
+			], [
+				'name' => 'deleted',
+			]
+		)->create();
 	}
 
 

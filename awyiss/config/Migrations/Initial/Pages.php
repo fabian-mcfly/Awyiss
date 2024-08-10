@@ -130,7 +130,55 @@ class Pages {
 			'default' => null,
 			'limit' => null,
 			'null' => true,
-		])->create();
+		])->addIndex(
+			[
+				'page_role_id',
+			], [
+				'name' => 'page_role_id',
+			]
+		)->addIndex(
+			[
+				'page_template_id',
+			], [
+				'name' => 'page_template_id',
+			]
+		)->addIndex(
+			[
+				'parent_id',
+			], [
+				'name' => 'parent_id',
+			]
+		)->addIndex(
+			[
+				'language_shortcode',
+			], [
+				'name' => 'language_shortcode',
+			]
+		)->addIndex(
+			[
+				'slug',
+			], [
+				'name' => 'slug',
+			]
+		)->addIndex(
+			[
+				'active',
+			], [
+				'name' => 'active',
+			]
+		)->addIndex(
+			[
+				'parents_active',
+			], [
+				'name' => 'parents_active',
+			]
+		)->addIndex(
+			[
+				'deleted',
+			], [
+				'name' => 'deleted',
+			]
+		)->create();
 	}
 
 

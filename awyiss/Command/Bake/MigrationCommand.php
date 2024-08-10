@@ -142,6 +142,7 @@ class MigrationCommand extends BaseBakeMigrationCommand {
 			$event->getSubject()->loadHelper('Migrations.Migration');
 		});
 
+		$this->pathFragment .= DS . $arguments->getOption('source');
 
 		$this->_name = $name;
 		$ls_path = $this->getPath($arguments);

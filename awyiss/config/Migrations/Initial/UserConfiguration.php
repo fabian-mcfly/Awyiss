@@ -51,7 +51,25 @@ class UserConfiguration {
 			'default' => null,
 			'limit' => 255,
 			'null' => true,
-		])->create();
+		])->addIndex(
+			[
+				'user_id',
+			], [
+				'name' => 'user_id',
+			]
+		)->addIndex(
+			[
+				'scope',
+			], [
+				'name' => 'scope',
+			]
+		)->addIndex(
+			[
+				'identifier',
+			], [
+				'name' => 'identifier',
+			]
+		)->create();
 	}
 
 

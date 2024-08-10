@@ -49,6 +49,18 @@ class PageTemplateContentAreas {
 			'limit' => null,
 			'null' => false,
 			'signed' => true,
-		])->create();
+		])->addIndex(
+			[
+				'page_template_id',
+			], [
+				'name' => 'page_template_id',
+			]
+		)->addIndex(
+			[
+				'content_area_id',
+			], [
+				'name' => 'content_area_id',
+			]
+		)->create();
 	}
 }

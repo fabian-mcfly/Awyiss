@@ -51,7 +51,13 @@ class PagesNotFound {
 			'default' => 'current_timestamp()',
 			'limit' => null,
 			'null' => true,
-		])->create();
+		])->addIndex(
+			[
+				'slug',
+			], [
+				'name' => 'slug',
+			]
+		)->create();
 	}
 
 

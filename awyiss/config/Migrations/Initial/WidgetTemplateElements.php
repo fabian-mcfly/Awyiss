@@ -59,7 +59,19 @@ class WidgetTemplateElements {
 			'default' => false,
 			'limit' => null,
 			'null' => false,
-		])->create();
+		])->addIndex(
+			[
+				'widget_template_id',
+			], [
+				'name' => 'widget_template_id',
+			]
+		)->addIndex(
+			[
+				'identifier',
+			], [
+				'name' => 'identifier',
+			]
+		)->create();
 	}
 
 

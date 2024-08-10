@@ -94,7 +94,31 @@ class Languages {
 			'default' => null,
 			'limit' => null,
 			'null' => true,
-		])->create();
+		])->addIndex(
+			[
+				'realm',
+			], [
+				'name' => 'realm',
+			]
+		)->addIndex(
+			[
+				'shortcode',
+			], [
+				'name' => 'shortcode',
+			]
+		)->addIndex(
+			[
+				'active',
+			], [
+				'name' => 'active',
+			]
+		)->addIndex(
+			[
+				'deleted',
+			], [
+				'name' => 'deleted',
+			]
+		)->create();
 	}
 
 

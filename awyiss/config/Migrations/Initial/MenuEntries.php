@@ -112,6 +112,24 @@ class MenuEntries {
 			], [
 				'name' => 'parent_id',
 			]
+		)->addIndex(
+			[
+				'language_shortcode',
+			], [
+				'name' => 'language_shortcode',
+			]
+		)->addIndex(
+			[
+				'active',
+			], [
+				'name' => 'active',
+			]
+		)->addIndex(
+			[
+				'deleted',
+			], [
+				'name' => 'deleted',
+			]
 		)->create();
 	}
 

@@ -59,7 +59,19 @@ class ContentTemplateElements {
 			'default' => false,
 			'limit' => null,
 			'null' => false,
-		])->create();
+		])->addIndex(
+			[
+				'content_template_id',
+			], [
+				'name' => 'content_template_id',
+			]
+		)->addIndex(
+			[
+				'identifier',
+			], [
+				'name' => 'identifier',
+			]
+		)->create();
 	}
 
 

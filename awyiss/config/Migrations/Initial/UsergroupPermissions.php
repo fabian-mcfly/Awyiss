@@ -55,7 +55,25 @@ class UsergroupPermissions {
 			'default' => null,
 			'limit' => null,
 			'null' => true,
-		])->create();
+		])->addIndex(
+			[
+				'usergroup_id',
+			], [
+				'name' => 'usergroup_id',
+			]
+		)->addIndex(
+			[
+				'scope',
+			], [
+				'name' => 'scope',
+			]
+		)->addIndex(
+			[
+				'identifier',
+			], [
+				'name' => 'identifier',
+			]
+		)->create();
 	}
 
 

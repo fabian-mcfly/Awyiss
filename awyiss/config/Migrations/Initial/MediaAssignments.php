@@ -40,8 +40,13 @@ class MediaAssignments {
 			'limit' => 50,
 			'null' => false,
 		])->addColumn('media_id', 'integer', [
+			'default' => null,
 			'limit' => 11,
-			'null' => false,
+			'null' => true,
+		])->addColumn('media_folder_id', 'integer', [
+			'default' => null,
+			'limit' => 11,
+			'null' => true,
 		])->addColumn('scope', 'string', [
 			'limit' => 50,
 			'null' => false,
@@ -66,10 +71,35 @@ class MediaAssignments {
 			]
 		)->addIndex(
 			[
+				'media_element_selector_identifier',
+			], [
+				'name' => 'media_element_selector_identifier',
+			]
+		)->addIndex(
+			[
+				'media_element_id',
+				'media_element_selector_identifier',
+			], [
+				'name' => 'media_element_media_element_selector',
+			]
+		)->addIndex(
+			[
 				'scope',
 				'foreign_key',
 			], [
 				'name' => 'scope_foreign_key',
+			]
+		)->addIndex(
+			[
+				'media_id',
+			], [
+				'name' => 'media_id',
+			]
+		)->addIndex(
+			[
+				'media_folder_id',
+			], [
+				'name' => 'media_folder_id',
 			]
 		)->create();
 	}

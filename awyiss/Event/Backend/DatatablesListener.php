@@ -221,12 +221,12 @@ class DatatablesListener implements EventListenerInterface {
 		$ls_migrationsPath = ' --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations';
 
 		$la_columns = [
-			'parent_id:integer?[11]',
-			'language_shortcode:char?[2]',
+			'parent_id:integer?[11]:index',
+			'language_shortcode:char?[2]:index',
 			'title:string?[255]',
 			'system_order:integer[11](0)',
-			'active:tinyinteger[1](1)',
-			'deleted:tinyinteger[1](0)',
+			'active:tinyinteger[1](1):index',
+			'deleted:tinyinteger[1](0):index',
 			'created_by:integer?[11]',
 			'created_on:datetime?',
 			'changed_by:integer?[11]',

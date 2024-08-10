@@ -107,7 +107,7 @@ class AttributesTask extends Task/* implements AddInterface*/ {
 			//The target attributes-table does not exist
 			if (!$lb_tableExists) {
 				//Bake a `create`-migration that also adds the parent id-column and the column for the attribute-entity
-				$la_commands[] = 'bin/cake bake migration create_' . $ls_attributesTable . ' ' . $ls_foreignKey . ':integer[11] ' . $ls_column . $ls_migrationsPath;
+				$la_commands[] = 'bin/cake bake migration create_' . $ls_attributesTable . ' ' . $ls_foreignKey . ':integer[11]:index ' . $ls_column . $ls_migrationsPath;
 			}
 			else {
 				$this->buildAlterTableCommands($la_commands, $data, $la_diff, $lb_changedScope, $ls_column, $ls_migrationsPath);

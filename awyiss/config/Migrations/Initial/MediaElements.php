@@ -94,9 +94,15 @@ class MediaElements {
 			]
 		)->addIndex(
 			[
-				'system_order',
+				'active',
 			], [
-				'name' => 'system_order',
+				'name' => 'active',
+			]
+		)->addIndex(
+			[
+				'deleted',
+			], [
+				'name' => 'deleted',
 			]
 		)->create();
 	}

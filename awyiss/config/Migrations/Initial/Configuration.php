@@ -85,7 +85,31 @@ class Configuration {
 			'default' => null,
 			'limit' => null,
 			'null' => true,
-		])->create();
+		])->addIndex(
+			[
+				'realm',
+			], [
+				'name' => 'realm',
+			]
+		)->addIndex(
+			[
+				'scope',
+			], [
+				'name' => 'scope',
+			]
+		)->addIndex(
+			[
+				'identifier',
+			], [
+				'name' => 'identifier',
+			]
+		)->addIndex(
+			[
+				'language_shortcode',
+			], [
+				'name' => 'language_shortcode',
+			]
+		)->create();
 
 		$this->migration->table('configuration')
 		->changeComment('Do not alter values in scope, identifier, type and/or required')

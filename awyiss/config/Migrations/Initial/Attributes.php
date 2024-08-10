@@ -127,7 +127,7 @@ class Attributes  {
 			[
 				'identifier',
 			], [
-				'name' => 'key',
+				'name' => 'identifier',
 			]
 		)->addIndex(
 			[
@@ -143,20 +143,14 @@ class Attributes  {
 			]
 		)->addIndex(
 			[
-				'system_order',
-			], [
-				'name' => 'system_order',
-			]
-		)->addIndex(
-			[
 				'scope',
 			], [
 				'name' => 'scope',
 			]
 		)->create();
 
-		$this->migration->table('configuration')
-		->changeComment('Changing data in here has no immediate effect due to caching (customer/config/awyiss.php)')
+		$this->migration->table('attributes')
+		->changeComment('Do not alter values in scope, identifier, type and/or required')
 		->save();
 	}
 
