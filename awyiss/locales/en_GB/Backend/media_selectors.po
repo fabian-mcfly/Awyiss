@@ -70,3 +70,6 @@ msgstr "The Media Selector could not be deleted"
 
 msgid "error_linked_media_element_selectors"
 msgstr "The Media Selector cannot be deleted because it is still in use"
+
+msgid "error_not_default_selector_deletion"
+msgstr "The default Media Selector cannot be deleted"

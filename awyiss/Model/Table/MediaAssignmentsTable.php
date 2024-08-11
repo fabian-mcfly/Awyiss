@@ -77,7 +77,10 @@ class MediaAssignmentsTable extends Table {
 
 		$this->belongsTo('Media', [
 			'foreignKey' => 'media_id',
-			'joinType' => 'INNER',
+		]);
+
+		$this->belongsTo('MediaFolders', [
+			'foreignKey' => 'media_folder_id',
 		]);
 	}
 

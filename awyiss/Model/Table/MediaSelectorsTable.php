@@ -4,6 +4,7 @@
 namespace Awyiss\Model\Table;
 
 
+use Awyiss\Model\Entity\MediaSelector;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
@@ -13,9 +14,8 @@ use Cake\Validation\Validator;
 /**
  * MediaSelectors Model
  *
- * @method \Awyiss\Model\Entity\MediaSelector newDefaultEntity(array $additionalData = [], array $options = [])
+ * @method MediaSelector newDefaultEntity(array $additionalData = [], array $options = [])
  * @property \Awyiss\Model\Table\MediaElementSelectorsTable&\Awyiss\ORM\Association\HasMany $MediaElementSelectors
- * @noinspection PhpFullyQualifiedNameUsageInspection
  */
 class MediaSelectorsTable extends Table {
 	/**
@@ -125,6 +125,18 @@ class MediaSelectorsTable extends Table {
 			[
 				'errorField' => '_general',
 				'message' => __df($this->getI18nDomain(), 'validation', 'error_linked_media_element_selectors'),
+			]
+		);
+
+
+		$rules->addDelete(
+			function (MediaSelector $entity/*, array $options*/): bool {
+				return $entity->id >= 10;
+			},
+			'notDefaultSelectorDeletion',
+			[
+				'errorField' => '_general',
+				'message' => __df($this->getI18nDomain(), 'validation', 'error_not_default_selector_deletion'),
 			]
 		);
 

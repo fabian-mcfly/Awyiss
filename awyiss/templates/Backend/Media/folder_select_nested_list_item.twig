@@ -1,0 +1,21 @@
+{#
+@var entity \Awyiss\Model\Entity\Page
+@var settings array
+#}
+
+{% extends '@Backend/element/overview/nested_list_item.twig' %}
+
+{% block nestedListItem %}
+	<li {{ block('nestedListItemId') }} {{ block('nestedListItemClass') }} data-collapsed-initial="true" data-language-shortcode="{{ entity.languageShortcode }}">
+		{% block nestedListItemInner %}
+			<label{% block nestedListItemInnerClass %} class="{{ settings.identifier }}-ListItem-Inner ListItem-Inner"{% endblock %} title="{{ entity.title }}">
+				<input type="checkbox" name="media_folder_id" value="{{ entity.id }}"{% if entity.id == selectedMediaFolderId %} checked{% endif %}>
+				{{ block('nestedListItemData') }}
+			</label>
+		{% endblock %}
+
+		{% block nestedListChildren %}
+			{{ childrenList }}
+		{% endblock %}
+	</li>
+{% endblock %}

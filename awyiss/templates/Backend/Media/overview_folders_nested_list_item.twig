@@ -13,6 +13,12 @@
 	</span>
 {% endblock %}
 
+{% block nestedListActionsEdit %}
+	{% if AuthorizationHelper.isAccessible('update') %}
+		{{ HtmlHelper.link(__('edit'), {controller: 'MediaFolders', action: 'edit', id: entity.id}, {class: 'Button Button-Small Button-Edit'}) }}
+	{% endif %}
+{% endblock %}
+
 {% block nestedListItem %}
 	{% if selectedMediaFolderId == entity.id %}
 		{% set entity = entity.set('class', 'Active') %}

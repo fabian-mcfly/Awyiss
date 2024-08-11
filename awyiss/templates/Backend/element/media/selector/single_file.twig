@@ -1,5 +1,26 @@
-<div class="FormInput FormInputType-MediaSelector MediaSelector MediaSelector-SingleMedia ColumnSpan-{{ columnSpan }}">
-	<label>{{ label }}</label>
+{#
+@var columnSpan string
+@var element \Awyiss\Model\Entity\MediaElement
+@var elementSelector \Awyiss\Model\Entity\MediaElementSelector
+@var entity \Awyiss\Model\Entity
+@var label string
+@var _view \Awyiss\View\BackendView
+@var AssetHelper \Awyiss\View\Helper\AssetHelper
+@var AttributesHelper \Awyiss\View\Helper\AttributesHelper
+@var AuthorizationHelper \Awyiss\View\Helper\AuthorizationHelper
+@var CategoriesHelper \Awyiss\View\Helper\CategoriesHelper
+@var FlashHelper \Awyiss\View\Helper\FlashHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+@var HtmlHelper \Cake\View\Helper\HtmlHelper
+@var LocaleHelper \Awyiss\View\Helper\LocaleHelper
+@var MediaHelper \Awyiss\View\Helper\MediaHelper
+@var PaginatorHelper \Awyiss\View\Helper\PaginatorHelper
+@var SystemOrderHelper \Awyiss\View\Helper\SystemOrderHelper
+@var UrlHelper \Awyiss\View\Helper\UrlHelper
+#}
+
+<div class="FormInput FormInputType-MediaSelector MediaSelector MediaSelector-SingleFile ColumnSpan-{{ columnSpan }}">
+	<label class="Label">{{ label }}</label>
 
 	<div class="MediaSelector-Preview">
 		<span class="MediaSelector-MediaSelect">{{ __d('media', 'select_file') }}</span>
@@ -27,9 +48,12 @@
 
 	<button class="Button Button-Delete Button-Small MediaSelector-Remove" type="button">{{ __d('media', 'remove_file') }}</button>
 
-	{{ FormHelper.input('media_assignments[' ~ element.id ~ '][' ~ elementSelector.identifier ~ '][media_id]', {
+	{{ FormHelper.input('media_assignments.' ~ element.id ~ '.' ~ elementSelector.identifier ~ '.media_id', {
+		required: false,
 		type: 'text',
 		value: entity.mediaAssignments[ element.identifier|variable ][ elementSelector.identifier|variable ].mediaId,
 		'data-form-updater': true,
 	}) }}
+
+	{{ FormHelper.error('media_assignments.' ~ element.identifier|variable ~ '.' ~ elementSelector.identifier|variable ~ '.media_id') }}
 </div>

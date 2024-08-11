@@ -70,3 +70,6 @@ msgstr "Der Medienselektor konnte nicht gelöscht werden"
 
 msgid "error_linked_media_element_selectors"
 msgstr "Der Medienselektor kann nicht gelöscht werden, da er noch in Verwendung ist"
+
+msgid "error_not_default_selector_deletion"
+msgstr "Der Standard-Medienselektor kann nicht gelöscht werden"

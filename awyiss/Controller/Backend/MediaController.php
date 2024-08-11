@@ -469,6 +469,45 @@ class MediaController extends Controller {
 
 
 	/**
+	 * Show a form to select a folder
+	 *
+	 * @return void
+	 * @throws \ReflectionException|\Exception
+	 */
+	#[NoDirectAccess]
+	public function folderSelect(): void {
+		$this->Authorization->ensure('read');
+
+		$lo_mediaFolders = $this->Media->MediaFolders->find('active')->find('threaded')->all();
+		$la_mediaFolders = $lo_mediaFolders->groupBy(function (MediaFolder $element) {
+			return $element->languageShortcode ?? '';
+		})->toArray();
+
+		$ls_currentLanguageShortcode = $this->request->getParam('lang');
+		// Sort the grouped media folders by the global and the current language first
+		uksort($la_mediaFolders, function ($a, $b) use ($ls_currentLanguageShortcode) {
+			if ($a === '' || $a === $ls_currentLanguageShortcode) {
+				return -1;
+			}
+
+			if ($b === '' || $b === $ls_currentLanguageShortcode) {
+				return 1;
+			}
+
+			return 0;
+		});
+
+		$this->set([
+			'groupedMediaFolders' => $la_mediaFolders,
+			'languageRealm' => Awyiss::REALM_FRONTEND,
+			'mediaFolderId' => $this->request->getData('media_folder_id'),
+		]);
+
+		$this->viewBuilder()->setLayout('overlay_configuration');
+	}
+
+
+	/**
 	 * Rebuild the system order to ensure that there are no gaps in the order
 	 *
 	 * @return void

@@ -211,3 +211,6 @@ msgstr "The length of this value must be exactly {0}"
 
 msgid "error_is_integer"
 msgstr "This value must be an number"
+
+msgid "error_media_exists"
+msgstr "This media does not exist"

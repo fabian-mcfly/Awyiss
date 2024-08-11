@@ -199,7 +199,7 @@ export default class AuditHistory {
 
 			// Check if the input is a multi-media input
 			if (inputName.startsWith('media_assignments[') && inputName.endsWith('[]')) {
-				this.useMultiMedia(inputName, row);
+				this.useMultiFile(inputName, row);
 			}
 			// Check if the input is a data input
 			else if (inputName === 'data') {
@@ -267,7 +267,7 @@ export default class AuditHistory {
 	 * @param {string} inputName - The name of the input element
 	 * @param {HTMLElement} row - The row element
 	 */
-	useMultiMedia(inputName, row) {
+	useMultiFile(inputName, row) {
 		// If the input is a multi file selector, remove all existing files and add the new ones
 		const inputs = this.form.querySelectorAll(`[name="${inputName}"]`);
 

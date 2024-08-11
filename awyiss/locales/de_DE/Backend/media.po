@@ -32,6 +32,9 @@ msgstr "Neue Datei"
 msgid "headline_overview"
 msgstr "Media"
 
+msgid "headline_media_folder_select"
+msgstr "Medienorder auswählen"
+
 msgid "menu_configure"
 msgstr "Konfiguration"
 
@@ -157,6 +160,9 @@ msgstr "Global"
 
 msgid "select_file"
 msgstr "Datei auswählen"
+
+msgid "add_files"
+msgstr "Datei(en) hinzufügen"
 
 msgid "remove_file"
 msgstr "Datei entfernen"

@@ -13,7 +13,8 @@ use Awyiss\Model\Entity;
  * @property int $id
  * @property int $mediaElementId
  * @property string $mediaElementSelectorIdentifier
- * @property int $mediaId
+ * @property int|null $mediaId
+ * @property int|null $mediaFolderId
  * @property string $scope
  * @property int $foreignKey
  * @property int $systemOrder
@@ -28,6 +29,7 @@ use Awyiss\Model\Entity;
  * @property \Awyiss\Model\Entity\MediaElementAssignment[] $mediaElementAssignment
  * @property \Awyiss\Model\Entity\MediaElementSelector[] $mediaElementSelector
  * @property \Awyiss\Model\Entity\Media|null $media
+ * @property \Awyiss\Model\Entity\MediaFolder|null $mediaFolder
  */
 class MediaAssignment extends Entity {
 	/**
@@ -37,6 +39,7 @@ class MediaAssignment extends Entity {
 		'media_element_id' => 'mediaElementId',
 		'media_element_selector_identifier' => 'mediaElementSelectorIdentifier',
 		'media_id' => 'mediaId',
+		'media_folder_id' => 'mediaFolderId',
 		'foreign_key' => 'foreignKey',
 		'system_order' => 'systemOrder',
 		'created_by' => 'createdBy',
@@ -51,6 +54,7 @@ class MediaAssignment extends Entity {
 		'media_element' => 'mediaElement',
 		'media_element_assignment' => 'mediaElementAssignment',
 		'media_element_selector' => 'mediaElementSelector',
+		'media_folder' => 'mediaFolder',
 	];
 	/**
 	 * @inheritDoc
@@ -59,6 +63,7 @@ class MediaAssignment extends Entity {
 		'mediaElementId' => true,
 		'mediaElementSelectorIdentifier' => true,
 		'mediaId' => true,
+		'mediaFolderId' => true,
 		'scope' => true,
 		'foreignKey' => true,
 		'systemOrder' => true,

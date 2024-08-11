@@ -96,6 +96,13 @@ class MediaSelectors {
 				'name' => 'deleted',
 			]
 		)->create();
+
+		$this->migration->table('media_selectors')
+		->getColumn('id')
+		->setIncrement(10);
+
+		/** @noinspection SqlDialectInspection, SqlNoDataSourceInspection */
+		$this->migration->execute('ALTER TABLE `media_selectors` AUTO_INCREMENT=10');
 	}
 
 

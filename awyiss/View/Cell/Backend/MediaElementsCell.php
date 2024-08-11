@@ -4,6 +4,7 @@
 namespace Awyiss\View\Cell\Backend;
 
 
+use Awyiss\Authorization\IdentityPermissionsInterface;
 use Awyiss\Model\Enum\ProcessStatus;
 use Awyiss\Model\Enum\ResizeStrategy;
 use Awyiss\Model\Table;
@@ -11,6 +12,7 @@ use Cake\Collection\Collection;
 use Cake\Datasource\EntityInterface;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\View\Cell;
+use RuntimeException;
 
 
 /**
@@ -31,12 +33,15 @@ class MediaElementsCell extends Cell {
 	 * @return void
 	 */
 	public function display(EntityInterface $entity): void {
+		// Get the user's identity and session
+		$lo_identity = $this->_getIdentity();
+
 		// Set the template for the view
 		$this->viewBuilder()->setTemplatePath('Backend/cell/MediaElements')->setTemplate('elements');
 
 		/** @var \Awyiss\Model\Table $lo_table */
 		$lo_table = $this->fetchTable($entity->getSource());
-		if (!$lo_table->hasBehavior('MediaElementAssignment')) {
+		if (!$lo_table->hasBehavior('MediaElementAssignment') || !$lo_identity->scopeIsAccessible('media', [], 'read')) {
 			$this->viewBuilder()->setTemplate('element_disabled');
 			return;
 		}
@@ -69,7 +74,7 @@ class MediaElementsCell extends Cell {
 
 		if ($entity->isDirty('mediaAssignments')) {
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-			$la_mediaIds = array_column($entity->mediaAssignments, 'media_id');
+			$la_mediaIds = array_column($entity->mediaAssignments, 'mediaId');
 			if ($la_mediaIds) {
 				$la_media = $this->fetchTable('Media')->find()->where(['id IN' => $la_mediaIds])->all()->indexBy('id')->toArray();
 
@@ -195,5 +200,20 @@ class MediaElementsCell extends Cell {
 
 		/** @noinspection PhpIncompatibleReturnTypeInspection */
 		return $lo_relatedEntityElements->compile();
+	}
+
+
+	/**
+	 * Retreive the identity attribute from the current request
+	 */
+	protected function _getIdentity(): IdentityPermissionsInterface {
+		/** @var IdentityPermissionsInterface|\Awyiss\Model\Entity\User $lo_identity */
+		$lo_identity = $this->request->getAttribute('identity');
+		if (!($lo_identity instanceof IdentityPermissionsInterface)) {
+			throw new RuntimeException(sprintf('Object `%s` does not implement `%s`', get_class($lo_identity), IdentityPermissionsInterface::class));
+		}
+
+
+		return $lo_identity;
 	}
 }

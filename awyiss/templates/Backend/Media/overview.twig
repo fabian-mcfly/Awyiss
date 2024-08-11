@@ -138,7 +138,7 @@
 		{% endblock %}
 
 		{% if isAjax %}
-			{% from '@Backend/macro/nested_list.twig' import nestedList %}
+				{% from '@Backend/macro/nested_list.twig' import nestedList %}
 				{% do AuthorizationHelper.setScope('MediaFolders') %}
 				{% block mediaFolders %}
 					<div id="MediaFolders-List"{# class="🌚" #}>

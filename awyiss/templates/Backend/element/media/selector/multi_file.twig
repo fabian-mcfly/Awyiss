@@ -1,5 +1,26 @@
-<div class="FormInput FormInputType-MediaSelector MediaSelector MediaSelector-MultiMedia ColumnSpan-{{ columnSpan }}">
-	<label>{{ label }}</label>
+{#
+@var columnSpan string
+@var element \Awyiss\Model\Entity\MediaElement
+@var elementSelector \Awyiss\Model\Entity\MediaElementSelector
+@var entity \Awyiss\Model\Entity
+@var label string
+@var _view \Awyiss\View\BackendView
+@var AssetHelper \Awyiss\View\Helper\AssetHelper
+@var AttributesHelper \Awyiss\View\Helper\AttributesHelper
+@var AuthorizationHelper \Awyiss\View\Helper\AuthorizationHelper
+@var CategoriesHelper \Awyiss\View\Helper\CategoriesHelper
+@var FlashHelper \Awyiss\View\Helper\FlashHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+@var HtmlHelper \Cake\View\Helper\HtmlHelper
+@var LocaleHelper \Awyiss\View\Helper\LocaleHelper
+@var MediaHelper \Awyiss\View\Helper\MediaHelper
+@var PaginatorHelper \Awyiss\View\Helper\PaginatorHelper
+@var SystemOrderHelper \Awyiss\View\Helper\SystemOrderHelper
+@var UrlHelper \Awyiss\View\Helper\UrlHelper
+#}
+
+<div class="FormInput FormInputType-MediaSelector MediaSelector MediaSelector-MultiFile ColumnSpan-{{ columnSpan }}">
+	<label class="Label">{{ label }}</label>
 
 	<div class="MediaSelector-Preview">
 		{% set mediaAssignments = entity.mediaAssignments[ element.identifier|variable ][ elementSelector.identifier|variable ] ?? [] %}
@@ -23,7 +44,7 @@
 
 				<button class="Button Button-Delete Button-Small MediaSelector-Remove" type="button">{{ __d('media', 'remove_file') }}</button>
 
-				{{ FormHelper.hidden('media_assignments[' ~ element.id ~ '][' ~ elementSelector.identifier ~ '][]', {
+				{{ FormHelper.hidden('media_assignments.' ~ element.id ~ '.' ~ elementSelector.identifier ~ '[]', {
 					value: mediaAssignment.mediaId,
 				}) }}
 			</div>
@@ -35,7 +56,7 @@
 	<template>
 		<button class="Button Button-Delete Button-Small MediaSelector-Remove" type="button">{{ __d('media', 'remove_file') }}</button>
 
-		{{ FormHelper.hidden('media_assignments[' ~ element.id ~ '][' ~ elementSelector.identifier ~ '][]', {
+		{{ FormHelper.hidden('media_assignments.' ~ element.id ~ '.' ~ elementSelector.identifier ~ '[]', {
 			value: '',
 		}) }}
 	</template>

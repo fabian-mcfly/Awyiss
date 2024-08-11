@@ -143,7 +143,7 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 					implode(',', $la_identifiers),
 				])), true);
 
-				return $query->contain(['Media']);
+				return $query->contain(['Media', 'MediaFolders']);
 			},
 		])->formatResults(fn (CollectionInterface $results) => $this->rowMapper($results, $useMediaEntity), $query::PREPEND);
 	}
@@ -177,6 +177,15 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 				}
 				else {
 					$la_mediaAssignments[ $ls_elementIdentifier ][ $ls_identifier ][] = $lo_mediaAssignment;
+				}
+			}
+			elseif ($lo_selector->identifier === 'folder') {
+				if ($useMediaEntity) {
+					$la_mediaAssignments[ $ls_elementIdentifier ][ $ls_identifier ] = $lo_mediaAssignment->mediaFolder;
+					$la_mediaAssignments[ $ls_elementIdentifier ][ '_' . $ls_identifier ] = $lo_mediaAssignment;
+				}
+				else {
+					$la_mediaAssignments[ $ls_elementIdentifier ][ $ls_identifier ] = $lo_mediaAssignment;
 				}
 			}
 			else {
@@ -275,13 +284,24 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 							$la_mediaIds = [$la_mediaIds['media_id']];
 						}
 
+						$lb_isFolder = false;
+						if (!empty($la_mediaIds['media_folder_id'])) {
+							$lb_isFolder = true;
+							$la_mediaIds = [$la_mediaIds['media_folder_id']];
+						}
+
 						foreach ($la_mediaIds as $li_mediaId) {
+							if (empty($li_mediaId)) {
+								continue;
+							}
+
 							/** @var \Awyiss\Model\Entity\MediaAssignment $lo_entity */
 							$lo_entity = $this->assignmentsTable->newEmptyEntity();
 
 							$la_data['mediaElementId'] = $li_mediaElementId;
 							$la_data['mediaElementSelectorIdentifier'] = $ls_mediaElementSelectorIdentifier;
-							$la_data['mediaId'] = (int)$li_mediaId;
+							$la_data['mediaId'] = !$lb_isFolder ? (int)$li_mediaId : null;
+							$la_data['mediaFolderId'] = $lb_isFolder ? (int)$li_mediaId : null;
 							$la_data['scope'] = $this->getConfig('referenceName');
 							$la_data['systemOrder'] = $li_systemOrder;
 
@@ -290,10 +310,6 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 							$la_dataErrors = $lo_entity->getErrors();
 							if ($la_dataErrors) {
 								$la_errors[] = $la_dataErrors;
-							}
-
-							if (empty($lo_entity->mediaId)) {
-								continue;
 							}
 
 							$la_mediaAssignments[] = $lo_entity;
