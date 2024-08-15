@@ -19,6 +19,7 @@ class MediaElementSelectorsSeed extends AbstractSeed {
                 'identifier' => 'title_media',
                 'column_span' => '6/12',
                 'required' => 0,
+                'system_order' => 1,
             ],
             [
                 'id' => 2,
@@ -28,6 +29,7 @@ class MediaElementSelectorsSeed extends AbstractSeed {
                 'identifier' => 'teaser_media',
                 'column_span' => '6/12',
                 'required' => 0,
+				'system_order' => 2,
             ],
             [
                 'id' => 3,
@@ -37,6 +39,7 @@ class MediaElementSelectorsSeed extends AbstractSeed {
                 'identifier' => 'media',
                 'column_span' => '6/12',
                 'required' => 0,
+				'system_order' => 1,
             ],
             [
                 'id' => 4,
@@ -46,6 +49,7 @@ class MediaElementSelectorsSeed extends AbstractSeed {
                 'identifier' => 'lightbox_media',
                 'column_span' => '6/12',
                 'required' => 0,
+				'system_order' => 2,
             ],
             [
                 'id' => 5,
@@ -55,6 +59,7 @@ class MediaElementSelectorsSeed extends AbstractSeed {
                 'identifier' => 'media',
                 'column_span' => '12/12',
                 'required' => 0,
+				'system_order' => 1,
             ],
         ];
 

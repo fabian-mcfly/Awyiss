@@ -56,6 +56,11 @@ class MediaElementSelectors {
 			'default' => false,
 			'limit' => null,
 			'null' => false,
+		])->addColumn('system_order', 'integer', [
+			'default' => '0',
+			'limit' => null,
+			'null' => false,
+			'signed' => true,
 		])->addIndex(
 			[
 				'identifier',

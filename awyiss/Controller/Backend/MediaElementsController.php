@@ -161,7 +161,9 @@ class MediaElementsController extends Controller {
 		$la_requestData = $this->request->getData();
 
 		if (!empty($la_requestData['media_element_selectors'])) {
-			$la_requestData['media_element_selectors'] = array_filter($la_requestData['media_element_selectors'], function ($element) {
+			$la_requestData['media_element_selectors'] = array_map(function ($element) {
+				static $li_systemOrder = 1;
+
 				if (empty($element['media_selector_id']) || empty($element['identifier'])) {
 					return false;
 				}
@@ -171,8 +173,13 @@ class MediaElementsController extends Controller {
 					return false;
 				}
 
-				return true;
-			});
+				/** @noinspection PhpVariableNamingConventionInspection */
+				$element['system_order'] = $li_systemOrder;
+				$li_systemOrder++;
+
+				return $element;
+			}, $la_requestData['media_element_selectors']);
+			$la_requestData['media_element_selectors'] = array_filter($la_requestData['media_element_selectors']);
 
 			$la_associated[] = 'MediaElementSelectors';
 		}

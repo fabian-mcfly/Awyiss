@@ -175,6 +175,15 @@ class ContentTemplatesController extends Controller {
 				return !empty($element['identifier']);
 			});
 
+			$la_requestData['content_template_elements'] = array_map(function ($element) {
+				static $li_systemOrder = 1;
+
+				/** @noinspection PhpVariableNamingConventionInspection */
+				$element['system_order'] = $li_systemOrder++;
+
+				return $element;
+			}, $la_requestData['content_template_elements']);
+
 			$la_associated[] = 'ContentTemplateElements';
 		}
 

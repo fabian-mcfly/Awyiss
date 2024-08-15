@@ -19,6 +19,7 @@ use Cake\Utility\Inflector;
  * @property string|null $fieldset
  * @property string|null $columnSpan
  * @property bool $required
+ * @property int $systemOrder
  * @property \Awyiss\Model\Entity\ContentTemplate $contentTemplate
  * @property array{span: ?\Awyiss\Utility\Content\ColumnInterface} $column
  */
@@ -33,6 +34,7 @@ class ContentTemplateElement extends Entity {
 	protected static array $fieldMap = [
 		'column_span' => 'columnSpan',
 		'content_template_id' => 'contentTemplateId',
+		'system_order' => 'systemOrder',
 	];
 
 
@@ -46,6 +48,7 @@ class ContentTemplateElement extends Entity {
 		'fieldset' => true,
 		'columnSpan' => true,
 		'required' => true,
+		'systemOrder' => true,
 	];
 	/**
 	 * @inheritdoc

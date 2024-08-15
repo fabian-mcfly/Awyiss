@@ -20,6 +20,7 @@ class WidgetTemplateElementsSeed extends AbstractSeed {
 				'title' => '',
 				'fieldset' => 'presentation',
 				'required' => 0,
+				'system_order' => 1,
 			],
 			[
 				'id' => 2,
@@ -28,6 +29,7 @@ class WidgetTemplateElementsSeed extends AbstractSeed {
 				'title' => '',
 				'fieldset' => 'presentation',
 				'required' => 1,
+				'system_order' => 2,
 			],
 			[
 				'id' => 3,
@@ -36,6 +38,7 @@ class WidgetTemplateElementsSeed extends AbstractSeed {
 				'title' => '',
 				'fieldset' => 'conditions',
 				'required' => 1,
+				'system_order' => 3,
 			],
 			[
 				'id' => 4,
@@ -44,6 +47,7 @@ class WidgetTemplateElementsSeed extends AbstractSeed {
 				'title' => '',
 				'fieldset' => 'conditions',
 				'required' => 0,
+				'system_order' => 4,
 			],
 			[
 				'id' => 5,
@@ -52,6 +56,7 @@ class WidgetTemplateElementsSeed extends AbstractSeed {
 				'title' => '',
 				'fieldset' => 'conditions',
 				'required' => 1,
+				'system_order' => 5,
 			],
 			[
 				'id' => 6,
@@ -60,6 +65,7 @@ class WidgetTemplateElementsSeed extends AbstractSeed {
 				'title' => '',
 				'fieldset' => 'presentation',
 				'required' => 0,
+				'system_order' => 6,
 			],
 			[
 				'id' => 7,
@@ -68,6 +74,7 @@ class WidgetTemplateElementsSeed extends AbstractSeed {
 				'title' => '',
 				'fieldset' => 'presentation',
 				'required' => 0,
+				'system_order' => 7,
 			],
 			[
 				'id' => 8,
@@ -76,6 +83,7 @@ class WidgetTemplateElementsSeed extends AbstractSeed {
 				'title' => '',
 				'fieldset' => 'presentation',
 				'required' => 0,
+				'system_order' => 8,
 			],
 			[
 				'id' => 9,
@@ -84,6 +92,7 @@ class WidgetTemplateElementsSeed extends AbstractSeed {
 				'title' => '',
 				'fieldset' => 'widget',
 				'required' => 0,
+				'system_order' => 9,
 			],
 		];
 

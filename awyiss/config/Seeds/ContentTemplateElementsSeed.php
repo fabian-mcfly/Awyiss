@@ -20,6 +20,7 @@ class ContentTemplateElementsSeed extends AbstractSeed {
 				'title' => '',
 				'fieldset' => 'presentation',
 				'required' => 0,
+				'system_order' => 1,
 			],
 			[
 				'id' => 2,
@@ -28,6 +29,7 @@ class ContentTemplateElementsSeed extends AbstractSeed {
 				'title' => '',
 				'fieldset' => 'presentation',
 				'required' => 0,
+				'system_order' => 2,
 			],
 			[
 				'id' => 3,
@@ -36,6 +38,7 @@ class ContentTemplateElementsSeed extends AbstractSeed {
 				'title' => '',
 				'fieldset' => 'conditions',
 				'required' => 0,
+				'system_order' => 3,
 			],
 			[
 				'id' => 4,
@@ -44,6 +47,7 @@ class ContentTemplateElementsSeed extends AbstractSeed {
 				'title' => '',
 				'fieldset' => 'conditions',
 				'required' => 0,
+				'system_order' => 4,
 			],
 			[
 				'id' => 5,
@@ -52,6 +56,7 @@ class ContentTemplateElementsSeed extends AbstractSeed {
 				'title' => '',
 				'fieldset' => 'conditions',
 				'required' => 0,
+				'system_order' => 5,
 			],
 			[
 				'id' => 6,
@@ -60,6 +65,7 @@ class ContentTemplateElementsSeed extends AbstractSeed {
 				'title' => '',
 				'fieldset' => 'conditions',
 				'required' => 0,
+				'system_order' => 6,
 			],
 			[
 				'id' => 7,
@@ -68,6 +74,7 @@ class ContentTemplateElementsSeed extends AbstractSeed {
 				'title' => '',
 				'fieldset' => 'conditions',
 				'required' => 1,
+				'system_order' => 7,
 			],
 			[
 				'id' => 8,
@@ -76,6 +83,7 @@ class ContentTemplateElementsSeed extends AbstractSeed {
 				'title' => '',
 				'fieldset' => 'presentation',
 				'required' => 0,
+				'system_order' => 8,
 			],
 			[
 				'id' => 9,
@@ -84,6 +92,7 @@ class ContentTemplateElementsSeed extends AbstractSeed {
 				'title' => '',
 				'fieldset' => 'presentation',
 				'required' => 0,
+				'system_order' => 9,
 			],
 			[
 				'id' => 10,
@@ -92,6 +101,7 @@ class ContentTemplateElementsSeed extends AbstractSeed {
 				'title' => '',
 				'fieldset' => 'presentation',
 				'required' => 0,
+				'system_order' => 10,
 			],
 			[
 				'id' => 11,
@@ -100,6 +110,7 @@ class ContentTemplateElementsSeed extends AbstractSeed {
 				'title' => '',
 				'fieldset' => 'presentation',
 				'required' => 0,
+				'system_order' => 11,
 			],
 			[
 				'id' => 12,
@@ -108,6 +119,7 @@ class ContentTemplateElementsSeed extends AbstractSeed {
 				'title' => '',
 				'fieldset' => 'presentation',
 				'required' => 0,
+				'system_order' => 12,
 			],
 			[
 				'id' => 13,
@@ -116,6 +128,7 @@ class ContentTemplateElementsSeed extends AbstractSeed {
 				'title' => '',
 				'fieldset' => 'content',
 				'required' => 0,
+				'system_order' => 13,
 			],
 			[
 				'id' => 14,
@@ -124,6 +137,7 @@ class ContentTemplateElementsSeed extends AbstractSeed {
 				'title' => '',
 				'fieldset' => 'content',
 				'required' => 0,
+				'system_order' => 14,
 			],
 			[
 				'id' => 15,
@@ -132,6 +146,7 @@ class ContentTemplateElementsSeed extends AbstractSeed {
 				'title' => '',
 				'fieldset' => 'content',
 				'required' => 0,
+				'system_order' => 15,
 			],
 			[
 				'id' => 16,
@@ -140,6 +155,7 @@ class ContentTemplateElementsSeed extends AbstractSeed {
 				'title' => '',
 				'fieldset' => 'media',
 				'required' => 0,
+				'system_order' => 16,
 			],
 			[
 				'id' => 17,
@@ -148,6 +164,7 @@ class ContentTemplateElementsSeed extends AbstractSeed {
 				'title' => '',
 				'fieldset' => 'presentation',
 				'required' => 0,
+				'system_order' => 17,
 			],
 			[
 				'id' => 19,
@@ -156,6 +173,7 @@ class ContentTemplateElementsSeed extends AbstractSeed {
 				'title' => '',
 				'fieldset' => 'presentation',
 				'required' => 0,
+				'system_order' => 1,
 			],
 			[
 				'id' => 20,
@@ -164,6 +182,7 @@ class ContentTemplateElementsSeed extends AbstractSeed {
 				'title' => '',
 				'fieldset' => 'presentation',
 				'required' => 1,
+				'system_order' => 2,
 			],
 			[
 				'id' => 21,
@@ -172,6 +191,7 @@ class ContentTemplateElementsSeed extends AbstractSeed {
 				'title' => '',
 				'fieldset' => 'conditions',
 				'required' => 0,
+				'system_order' => 3,
 			],
 			[
 				'id' => 22,
@@ -180,6 +200,7 @@ class ContentTemplateElementsSeed extends AbstractSeed {
 				'title' => '',
 				'fieldset' => 'conditions',
 				'required' => 0,
+				'system_order' => 4,
 			],
 			[
 				'id' => 23,
@@ -188,6 +209,7 @@ class ContentTemplateElementsSeed extends AbstractSeed {
 				'title' => '',
 				'fieldset' => 'conditions',
 				'required' => 0,
+				'system_order' => 5,
 			],
 			[
 				'id' => 24,
@@ -196,6 +218,7 @@ class ContentTemplateElementsSeed extends AbstractSeed {
 				'title' => '',
 				'fieldset' => 'conditions',
 				'required' => 0,
+				'system_order' => 6,
 			],
 			[
 				'id' => 25,
@@ -204,6 +227,7 @@ class ContentTemplateElementsSeed extends AbstractSeed {
 				'title' => '',
 				'fieldset' => 'presentation',
 				'required' => 0,
+				'system_order' => 7,
 			],
 		];
 

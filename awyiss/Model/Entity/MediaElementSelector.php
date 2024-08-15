@@ -18,6 +18,7 @@ use Cake\Datasource\FactoryLocator;
  * @property string|null $identifier
  * @property string|null $columnSpan
  * @property bool $required
+ * @property int $systemOrder
  * @property \Awyiss\Model\Entity\MediaAssignment[] $mediaAssignments
  * @property \Awyiss\Model\Entity\MediaElement $mediaElement
  * @property \Awyiss\Model\Entity\MediaSelector $mediaSelector
@@ -36,6 +37,7 @@ class MediaElementSelector extends Entity {
 		'media_selector_id' => 'mediaSelectorId',
 		'column_span' => 'columnSpan',
 		'media_selector' => 'mediaSelector',
+		'system_order' => 'systemOrder',
 	];
 
 
@@ -49,6 +51,7 @@ class MediaElementSelector extends Entity {
 		'identifier' => true,
 		'columnSpan' => true,
 		'required' => true,
+		'systemOrder' => true,
 	];
 
 

@@ -59,6 +59,11 @@ class ContentTemplateElements {
 			'default' => false,
 			'limit' => null,
 			'null' => false,
+		])->addColumn('system_order', 'integer', [
+			'default' => '0',
+			'limit' => null,
+			'null' => false,
+			'signed' => true,
 		])->addIndex(
 			[
 				'content_template_id',
