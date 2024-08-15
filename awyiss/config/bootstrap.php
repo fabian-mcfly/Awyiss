@@ -18,9 +18,11 @@ require __DIR__ . '/paths.php';
 require CORE_PATH . 'config' . DS . 'bootstrap.php';
 
 
+use Awyiss\Awyiss;
 use Awyiss\Core\Configure\Engine\PhpConfig;
 use Awyiss\Database\Type\IntegerType;
 use Awyiss\Database\Type\StringType;
+use Awyiss\I18n\MessagesFileLoader;
 use Awyiss\Routing\Router;
 use Cake\Cache\Cache;
 use Cake\Core\Configure;
@@ -28,6 +30,8 @@ use Cake\Database\TypeFactory;
 use Cake\Datasource\ConnectionManager;
 use Cake\Error\ErrorTrap;
 use Cake\Error\ExceptionTrap;
+use Cake\I18n\I18n;
+use Cake\I18n\Package;
 use Cake\Log\Log;
 use Cake\Mailer\Mailer;
 use Cake\Mailer\TransportFactory;
@@ -179,7 +183,19 @@ TransportFactory::setConfig(Configure::consume('EmailTransport'));
  * If german isn't your desired default locale, change it in your custom bootstrap.php
  */
 ini_set('intl.default_locale', 'de_DE');
-\Cake\I18n\I18n::setLocale('de_DE');
+I18n::setLocale('de_DE');
+
+I18n::config('_fallback', function ($domain, $locale) {
+	$ls_domain = $domain;
+	if (!str_contains($ls_domain, '/')) {
+		$ls_domain = Awyiss::getRealm() . '/' . $ls_domain;
+	}
+
+	$lo_fileLoader = new MessagesFileLoader($ls_domain, $locale, 'po');
+	$lo_default = $lo_fileLoader();
+
+	return new Package('default', null, $lo_default->getMessages());
+});
 
 /*
  * Custom Inflector rules, can be set to correctly pluralize or singularize

@@ -5,14 +5,12 @@ namespace Awyiss\Middleware;
 
 
 use Awyiss\Awyiss;
-use Awyiss\I18n\MessagesFileLoader;
 use Awyiss\Model\Entity\Language;
 use Awyiss\Routing\Router;
 use Cake\Core\Configure;
 use Cake\Database\TypeFactory;
 use Cake\Datasource\FactoryLocator;
 use Cake\I18n\I18n;
-use Cake\I18n\Package;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -90,18 +88,6 @@ class LocaleMiddleware implements MiddlewareInterface {
 		}
 
 		static::loadLanguages();
-
-		I18n::config('_fallback', function ($domain, $locale) {
-			$ls_domain = $domain;
-			if (!str_contains($ls_domain, '/')) {
-				$ls_domain = static::getRealm() . '/' . $ls_domain;
-			}
-
-			$lo_fileLoader = new MessagesFileLoader($ls_domain, $locale, 'po');
-			$lo_default = $lo_fileLoader();
-
-			return new Package('default', null, $lo_default->getMessages());
-		});
 
 		$lo_language = static::getLanguage(static::getRealm());
 

@@ -65,8 +65,8 @@ if (!function_exists('__d')) {
 		}
 
 		$ls_domain = $domain;
-		if (!str_contains($domain, '/') && $domain !== 'cake') {
-			$ls_domain = Awyiss::getRealm() . '/' . $domain;
+		if (!str_contains($ls_domain, '/') && $ls_domain !== 'cake') {
+			$ls_domain = Awyiss::getRealm() . '/' . Inflector::underscore($ls_domain);
 		}
 		$ls_return = I18n::getTranslator($ls_domain)->translate($string, $la_args);
 
@@ -113,15 +113,15 @@ if (!function_exists('__df')) {
 		}
 
 		$ls_domain = $domain;
-		if (!str_contains($domain, '/')) {
-			$ls_domain = Awyiss::getRealm() . '/' . $domain;
+		if (!str_contains($ls_domain, '/')) {
+			$ls_domain = Awyiss::getRealm() . '/' . Inflector::underscore($ls_domain);
 		}
 		$ls_return = I18n::getTranslator($ls_domain)->translate($string, $la_args);
 
 		if ($ls_return === $string || empty($ls_return)) {
 			$ls_fallbackDomain = $fallbackDomain;
-			if (!str_contains($fallbackDomain, '/')) {
-				$ls_fallbackDomain = Awyiss::getRealm() . '/' . $fallbackDomain;
+			if (!str_contains($ls_fallbackDomain, '/')) {
+				$ls_fallbackDomain = Awyiss::getRealm() . '/' . Inflector::underscore($ls_fallbackDomain);
 			}
 			$ls_return = I18n::getTranslator($ls_fallbackDomain)->translate($string, $la_args);
 		}
