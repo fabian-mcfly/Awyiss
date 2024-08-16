@@ -240,7 +240,7 @@ class MediaFoldersListener implements EventListenerInterface {
 	 */
 	public function beforeSoftDelete(Event $event, MediaFolder $entity, ArrayObject $options): void {
 		if ($options['_primary'] ?? null === true) {
-			$entity->path = substr_replace($entity->path, '/_deleted_', strrpos($entity->path, '/'), 1);
+			$entity->path = substr_replace($entity->path, '/_deleted_', strrpos($entity->path, '/'), 1) . '_' . time();
 		}
 	}
 
