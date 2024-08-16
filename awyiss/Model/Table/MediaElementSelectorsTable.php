@@ -66,13 +66,13 @@ class MediaElementSelectorsTable extends Table {
 		$this->hasMany('MediaAssignments', [
 			'bindingKey' => [
 				'media_element_id',
-				'media_element_selector_identifier',
+				'identifier',
 			],
 			'cascadeCallbacks' => true,
 			'dependent' => true,
 			'foreignKey' => [
 				'media_element_id',
-				'identifier',
+				'media_element_selector_identifier',
 			],
 			'saveStrategy' => 'replace',
 		]);

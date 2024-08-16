@@ -55,15 +55,21 @@ class MediaFoldersTable extends Table {
 	 * @inheritDoc
 	 */
 	public function initializeAssociations(): void {
+		$this->belongsTo('Languages', [
+			'bindingKey' => 'shortcode',
+			'conditions' => ['realm' => Awyiss::REALM_FRONTEND],
+			'foreignKey' => 'language_shortcode',
+		]);
+
 		$this->hasMany('Media', [
 			'cascadeCallbacks' => true,
 			'dependent' => true,
 		]);
 
-		$this->belongsTo('Languages', [
-			'bindingKey' => 'shortcode',
-			'conditions' => ['realm' => Awyiss::REALM_FRONTEND],
-			'foreignKey' => 'language_shortcode',
+		$this->hasMany('MediaAssignments', [
+			'cascadeCallbacks' => true,
+			'dependent' => true,
+			'saveStrategy' => 'replace',
 		]);
 	}
 
