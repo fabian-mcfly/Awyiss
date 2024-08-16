@@ -40,8 +40,7 @@
 					{{ parent() }}
 				{% endblock %}
 
-
-				{% if entity.contentTemplateId == settings.contentTemplateId %}
+				{% if entity.contentTemplateId == settings.contentTemplateId and entity.duplicateOf is empty %}
 					<label>
 						<input type="checkbox" name="duplicate_of" value="{{ entity.id }}"{% if entity.id == duplicateOf%} checked{% endif %}>
 					</label>

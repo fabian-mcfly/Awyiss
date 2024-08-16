@@ -191,6 +191,12 @@ msgstr "Zeile kann nicht geändert werden: Eine Beschränkung für die `{0}`-Ver
 msgid "error_not_self_duplicating"
 msgstr "Ein Element darf sich nicht selbst duplizieren"
 
+msgid "error_not_duplicating_duplicated"
+msgstr "Ein Element darf kein Element duplizieren wenn es selbst dupliziert wird"
+
+msgid "error_not_duplicating_duplicating"
+msgstr "Ein Element darf kein duplizierendes Element duplizieren"
+
 msgid "error_duplicate_not_on_same_page"
 msgstr "Der Inhalt darf keinen Inhalt auf derselben Seite duplizieren"
 

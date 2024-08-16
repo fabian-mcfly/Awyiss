@@ -185,26 +185,28 @@
 
 
 {% block formControlDuplicateOf %}
-	{% set output %}
-		<output>{{ settings.content.duplicateOfContent.label ?: '&nbsp;' }}</output>
-		{% if settings.content.duplicateOfContent %}
-			{{ HtmlHelper.link(__('edit'), {action: 'edit', id: settings.content.duplicateOfContent.id}, {class: 'Button Button-Edit Button-Medium'}) }}
-		{% endif %}
-	{% endset %}
+	{% if settings.isDuplicated != true %}
+		{% set output %}
+			<output>{{ settings.content.duplicateOfContent.label ?: '&nbsp;' }}</output>
+			{% if settings.content.duplicateOfContent %}
+				{{ HtmlHelper.link(__('edit'), {action: 'edit', id: settings.content.duplicateOfContent.id}, {class: 'Button Button-Edit Button-Medium'}) }}
+			{% endif %}
+		{% endset %}
 
-	{{ FormHelper.control('duplicate_of', {
-		columnSpan: contentTemplateElement.column.span.numerator,
-		label: contentTemplateElement.title,
-		required: contentTemplateElement.required,
-		templateVars: {
-			additionalContent: output,
-		},
-		type: 'text',
-		'data-form-updater': true,
-		'data-duplicate-of-page-id': settings.content.duplicateOfContent.pageId,
-		'data-page-id': settings.content.pageId,
-		'data-content-template-id': settings.content.contentTemplateId,
-	}) }}
+		{{ FormHelper.control('duplicate_of', {
+			columnSpan: contentTemplateElement.column.span.numerator,
+			label: contentTemplateElement.title,
+			required: contentTemplateElement.required,
+			templateVars: {
+				additionalContent: output,
+			},
+			type: 'text',
+			'data-form-updater': true,
+			'data-duplicate-of-page-id': settings.content.duplicateOfContent.pageId,
+			'data-page-id': settings.content.pageId,
+			'data-content-template-id': settings.content.contentTemplateId,
+		}) }}
+	{% endif %}
 {% endblock %}
 
 

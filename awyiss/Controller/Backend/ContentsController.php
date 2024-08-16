@@ -229,6 +229,7 @@ class ContentsController extends Controller {
 
 		/** @noinspection PhpUndefinedMethodInspection */
 		$this->set('auditDataCount', $this->Contents->countAuditData($lo_content));
+		$this->set('isDuplicated', $this->Contents->exists(['duplicate_of' => $lo_content->id]));
 	}
 
 

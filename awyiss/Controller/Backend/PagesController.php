@@ -283,6 +283,8 @@ class PagesController extends Controller {
 		}
 
 		$this->setViewVars($lo_page);
+
+		$this->set('isDuplicated', $this->Pages->exists(['duplicate_of' => $lo_page->id]));
 	}
 
 

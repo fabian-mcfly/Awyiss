@@ -8,6 +8,7 @@
 @var localConfig array
 @var nestable bool
 @var pageRoleName string
+@var isDuplicated bool|null
 @var _view \Awyiss\View\BackendView
 #}
 
@@ -102,7 +103,7 @@
 					{% endblock %}
 
 					{% block formControlDuplicateOf %}
-						{{ FormHelper.control('duplicate_of', {columnSpan: 6, disabled: [page.id], options: threadedPages.printer('label', 'id', '- ')}) }}
+						{{ FormHelper.control('duplicate_of', {columnSpan: 6, disabled: isDuplicated ? true : [page.id], options: threadedPages.printer('label', 'id', '- ')}) }}
 					{% endblock %}
 
 					{% block formControlRedirectLink %}
