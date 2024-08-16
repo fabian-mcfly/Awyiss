@@ -127,7 +127,7 @@
 
 		.Permission {
 			display:flex;
-			padding:15px;
+			padding:10px 15px;
 			border-radius:5px;
 
 			.Scale-Small& {
@@ -163,10 +163,10 @@
 						~ .Labels {
 							&::after {
 								background-color:var(--colorSuccess);
-								transform:translate(-33px, 0);
+								transform:translate(33px, 0);
 
 								.Scale-Small& {
-									transform:translate(-26px, 0);
+									transform:translate(26px, 0);
 								}
 							}
 						}
@@ -178,10 +178,10 @@
 						~ .Labels {
 							&::after {
 								background-color:var(--colorError);
-								transform:translate(33px, 0);
+								transform:translate(-33px, 0);
 
 								.Scale-Small& {
-									transform:translate(26px, 0);
+									transform:translate(-26px, 0);
 								}
 							}
 						}
@@ -201,19 +201,20 @@
 
 			.Labels {
 				display:inline-block;
-				width:99px;
-				height:33px;
+				width:120px;
+				height:16px;
+				margin-top:7px;
 				border-radius:5px;
 				background-color:var(--colorBright);
-				outline:2px solid oklch(from var(--colorLight) calc(l - 0.0588) calc(c + 0.009) calc(h + 1.05));
+				outline:1px solid oklch(from var(--colorLight) calc(l - 0.0588) calc(c + 0.009) calc(h + 1.05));
 				font-size:0;
 				line-height:0;
 				position:relative;
 				vertical-align:top;
 
 				.Scale-Small& {
-					width:80px;
-					height:28px;
+					width:87px;
+					margin-top:4px;
 				}
 
 				.🌚& {
@@ -229,9 +230,10 @@
 
 				&::after {
 					content:'';
-					width:31px;
-					height:31px;
+					width:26px;
+					height:26px;
 					margin:auto;
+					outline:1px solid var(--colorBright);
 					border-radius:5px;
 					background-color:var(--colorMedium);
 					position:absolute;
@@ -243,8 +245,8 @@
 					transform:translate(0, 0);
 
 					.Scale-Small& {
-						width:24px;
-						height:24px;
+						width:20px;
+						height:20px;
 					}
 
 					@keyframes blop {
@@ -260,18 +262,19 @@
 					}
 				}
 
-
 				label {
 					display:inline-block;
-					width:33px;
-					height:100%;
+					width:40px;
+					aspect-ratio:1;
 					font-size:0;
 					line-height:0;
 					position:relative;
 					z-index:1;
+					transform:translateY(-12px);
 
 					.Scale-Small& {
-						width:26px;
+						width:29px;
+						transform:translateY(-7px);
 					}
 				}
 			}

@@ -34,9 +34,9 @@
 		{% block optionsLabels %}
 			<span class="Labels">
 				{% block optionsLabelsInner %}
-					{% block optionGrantedLabel %}
-						<label for="{{ label ~ '-' ~ options.granted.value }}" title="{{ __d('authorization', 'simple_permission_option_granted') }}">
-							{{ __d('authorization', 'simple_permission_option_granted') }}
+					{% block optionDeniedLabel %}
+						<label for="{{ label ~ '-' ~ options.denied.value }}" title="{{ __d('authorization', 'simple_permission_option_denied') }}">
+							{{ __d('authorization', 'simple_permission_option_denied') }}
 						</label>
 					{% endblock %}
 
@@ -46,9 +46,9 @@
 						</label>
 					{% endblock %}
 
-					{% block optionDeniedLabel %}
-						<label for="{{ label ~ '-' ~ options.denied.value }}" title="{{ __d('authorization', 'simple_permission_option_denied') }}">
-							{{ __d('authorization', 'simple_permission_option_denied') }}
+					{% block optionGrantedLabel %}
+						<label for="{{ label ~ '-' ~ options.granted.value }}" title="{{ __d('authorization', 'simple_permission_option_granted') }}">
+							{{ __d('authorization', 'simple_permission_option_granted') }}
 						</label>
 					{% endblock %}
 				{% endblock %}
