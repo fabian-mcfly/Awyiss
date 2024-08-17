@@ -20,7 +20,7 @@
 			{% if metaTitle == '' %}
 				{% set identifier = 'meta_title_' ~ _view.getRequest().getParam('action')|underscore %}
 				{% set metaTitle = __(identifier) %}
-				{% if (metaTitle ends with 'identifier') %}
+				{% if metaTitle ends with identifier %}
 					{% set metaTitle = __d(isGenericDatatable ? 'generic_datatables' : 'generic_pages', identifier, isGenericDatatable ? datatables.title : pageRole.title) %}
 				{% endif %}
 
