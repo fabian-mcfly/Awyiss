@@ -55,5 +55,9 @@
 		'data-form-updater': true,
 	}) }}
 
+	{{ FormHelper.hidden('media_assignments.' ~ element.id ~ '.' ~ elementSelector.identifier ~ '.id', {
+		value: entity.mediaAssignments[ element.identifier|variable ][ elementSelector.identifier|variable ].id,
+	}) }}
+
 	{{ FormHelper.error('media_assignments.' ~ element.identifier|variable ~ '.' ~ elementSelector.identifier|variable ~ '.media_id') }}
 </div>

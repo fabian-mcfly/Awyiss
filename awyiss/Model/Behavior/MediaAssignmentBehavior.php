@@ -259,6 +259,7 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 	 * @param array $map
 	 * @param array $options
 	 * @return array
+	 * @throws \ReflectionException
 	 */
 	public function buildMarshalMap(Marshaller $marshaller, array $map, array $options): array {
 		if (!$this->getConfig('enabled') || ($options['mediaAssignments'] ?? true) === false) {
@@ -283,18 +284,23 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 				$la_errors = [];
 				$lo_marshaller = $this->assignmentsTable->marshaller();
 
-				foreach ($values as $li_mediaElementId => $la_elementData) {
-					foreach ($la_elementData as $ls_mediaElementSelectorIdentifier => $la_mediaIds) {
+				foreach ($values as $li_mediaElementId => $la_elementsData) {
+					foreach ($la_elementsData as $ls_mediaElementSelectorIdentifier => $la_elementData) {
 						$li_systemOrder = 1;
-
-						if (isset($la_mediaIds['media_id'])) {
-							$la_mediaIds = [$la_mediaIds['media_id']];
-						}
-
 						$lb_isFolder = false;
-						if (!empty($la_mediaIds['media_folder_id'])) {
+
+						if (array_is_list($la_elementData)) {
+							$la_mediaIds = $la_elementData;
+						}
+						elseif (isset($la_elementData['media_id'])) {
+							$la_mediaIds = [$la_elementData['media_id']];
+						}
+						elseif (!empty($la_elementData['media_folder_id'])) {
 							$lb_isFolder = true;
-							$la_mediaIds = [$la_mediaIds['media_folder_id']];
+							$la_mediaIds = [$la_elementData['media_folder_id']];
+						}
+						else {
+							continue;
 						}
 
 						foreach ($la_mediaIds as $li_mediaId) {
@@ -304,6 +310,10 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 
 							/** @var \Awyiss\Model\Entity\MediaAssignment $lo_entity */
 							$lo_entity = $this->assignmentsTable->newEmptyEntity();
+
+							if (!empty($la_elementData['id'])) {
+								$lo_entity->id = $la_elementData['id'];
+							}
 
 							$la_data['mediaElementId'] = $li_mediaElementId;
 							$la_data['mediaElementSelectorIdentifier'] = $ls_mediaElementSelectorIdentifier;
