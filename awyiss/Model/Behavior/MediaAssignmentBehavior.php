@@ -4,6 +4,7 @@
 namespace Awyiss\Model\Behavior;
 
 
+use Awyiss\Authentication\IdentityAwareTrait;
 use Awyiss\Model\Entity\MediaElement;
 use Awyiss\Model\Entity\MediaElementSelector;
 use Awyiss\Model\Entity\MediaSelector;
@@ -24,6 +25,7 @@ use Cake\Utility\Inflector;
  * This makes writing out the table name obsolete when using joins.
  */
 class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterface {
+	use IdentityAwareTrait;
 	use LocatorAwareTrait;
 
 
@@ -260,6 +262,11 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 	 */
 	public function buildMarshalMap(Marshaller $marshaller, array $map, array $options): array {
 		if (!$this->getConfig('enabled') || ($options['mediaAssignments'] ?? true) === false) {
+			return [];
+		}
+
+		$lo_identity = $this->getIdentity();
+		if (!$lo_identity || !$lo_identity->scopeIsAccessible('Media', [], 'read')) {
 			return [];
 		}
 
