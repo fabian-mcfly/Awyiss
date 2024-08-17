@@ -5,6 +5,7 @@ namespace Awyiss\Model\Table;
 
 
 use Awyiss\Annotation\MediaElementAssignable;
+use Awyiss\Model\Entity\MediaElement;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
 use Awyiss\Utility\Content\BootstrapColumnSystem;
@@ -174,6 +175,17 @@ class MediaElementsTable extends Table {
 			[
 				'errorField' => '_general',
 				'message' => __df($this->getI18nDomain(), 'validation', 'error_linked_media_assignments'),
+			]
+		);
+
+		$rules->addDelete(
+			function (MediaElement $entity/*, array $options*/): bool {
+				return $entity->id >= 10;
+			},
+			'notDefaultElementDeletion',
+			[
+				'errorField' => '_general',
+				'message' => __df($this->getI18nDomain(), 'validation', 'error_not_default_element_deletion'),
 			]
 		);
 

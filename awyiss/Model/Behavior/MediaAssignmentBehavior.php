@@ -4,7 +4,10 @@
 namespace Awyiss\Model\Behavior;
 
 
+use ArrayObject;
 use Awyiss\Authentication\IdentityAwareTrait;
+use Awyiss\Core\LocalConfig;
+use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity\MediaElement;
 use Awyiss\Model\Entity\MediaElementSelector;
 use Awyiss\Model\Entity\MediaSelector;
@@ -12,6 +15,7 @@ use Awyiss\Model\Table;
 use Awyiss\ORM\Behavior;
 use Cake\Collection\CollectionInterface;
 use Cake\Datasource\EntityInterface;
+use Cake\Event\EventInterface;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\ORM\Marshaller;
 use Cake\ORM\PropertyMarshalInterface;
@@ -40,6 +44,10 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 	 */
 	protected array $_defaultConfig = [
 		'enabled' => true,
+		'implementedEvents' => [
+			'beforeSave',
+			'afterSave',
+		],
 		'implementedFinders' => [
 			'mediaAssignments' => 'findMediaAssignments',
 		],
@@ -133,6 +141,7 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 
 		return $query->contain([
 			'MediaAssignments' => function (SelectQuery $query) {
+				/** @noinspection PhpUndefinedMethodInspection */
 				$query->orderByAsc($query->newExpr($query->func()->FIND_IN_SET([
 					'media_element_id' => 'identifier',
 					implode(',', array_reverse(static::$mediaElements)),
@@ -140,6 +149,7 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 
 				$la_identifiers = array_unique(Hash::extract(static::$mediaElements, '{n}.mediaElementSelectors.{n}.identifier'));
 
+				/** @noinspection PhpUndefinedMethodInspection */
 				$query->orderByAsc($query->newExpr($query->func()->FIND_IN_SET([
 					'media_element_selector_identifier' => 'identifier',
 					implode(',', $la_identifiers),
@@ -251,7 +261,6 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 			return $lx_row;
 		});
 	}
-
 
 
 	/**
@@ -371,5 +380,73 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 
 			$element->mediaSelectors = $lo_selectors->toArray();
 		})->toArray();
+	}
+
+
+	/**
+	 * @param EventInterface $event
+	 * @param \Cake\Datasource\EntityInterface $entity
+	 * @return void
+	 * @noinspection PhpUnusedParameterInspection
+	 * @throws \ReflectionException
+	 */
+	public function beforeSave(EventInterface $event, EntityInterface $entity/*, ArrayObject $options*/): void {
+		$lo_identity = $this->getIdentity();
+		// If the user doesn't have access to the media scope, remove the media assignments from the entity
+		if (!$lo_identity || !$lo_identity->scopeIsAccessible('Media', [], 'read')) {
+			unset($entity->mediaAssignments);
+		}
+	}
+
+
+	/**
+	 * @param EventInterface $event
+	 * @param \Cake\Datasource\EntityInterface $entity
+	 * @param \ArrayObject $options
+	 * @return void
+	 * @throws \Exception
+	 * @noinspection PhpUnusedParameterInspection
+	 */
+	public function afterSave(EventInterface $event, EntityInterface $entity, ArrayObject $options): void {
+		if (!LocalConfig::read('mediaFolders.autoCreate', false, $entity->getSource())) {
+			return;
+		}
+
+		/** @var \Awyiss\Model\Table\MediaAssignmentsTable $lo_mediaAssignmentsTable */
+		$lo_mediaAssignmentsTable = $this->fetchTable('MediaAssignments');
+		$lo_existingAssignment = $lo_mediaAssignmentsTable->find()->where([
+			'media_element_id' => 0,
+			'media_element_selector_identifier' => 'hidden_folder',
+			'foreign_key' => $entity->id,
+			'scope' => $this->getConfig('referenceName'),
+		])->contain(['MediaFolders'])->first();
+
+		if ($lo_existingAssignment) {
+			return;
+		}
+
+		/** @var \Awyiss\Model\Table\MediaFoldersTable $lo_mediaFoldersTable */
+		$lo_mediaFoldersTable = $this->fetchTable('MediaFolders');
+		$lo_folder = $lo_mediaFoldersTable->newDefaultEntity([
+			'hidden' => true,
+			'languageShortcode' => $entity->languageShortcode ?? LocaleMiddleware::getLanguage()->shortcode,
+			'title' => $entity->title ?? 'HiddenFolder' . $entity->id,
+		]);
+
+		if (!$lo_mediaFoldersTable->save($lo_folder)) {
+			return;
+		}
+
+		$lo_mediaFoldersTable->dispatchEvent('Model.MediaFolders.afterSaveCommit', ['entity' => $lo_folder, 'options' => $options]);
+
+		$lo_assignment = $lo_mediaAssignmentsTable->newDefaultEntity([
+			'media_element_id' => 0,
+			'media_element_selector_identifier' => 'hidden_folder',
+			'media_folder_id' => $lo_folder->id,
+			'foreign_key' => $entity->id,
+			'scope' => $this->getConfig('referenceName'),
+		]);
+
+		$lo_mediaAssignmentsTable->save($lo_assignment);
 	}
 }

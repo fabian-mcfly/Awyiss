@@ -5,6 +5,7 @@ namespace Awyiss\View\Cell\Backend;
 
 
 use Awyiss\Authorization\IdentityPermissionsInterface;
+use Awyiss\Core\LocalConfig;
 use Awyiss\Model\Enum\ProcessStatus;
 use Awyiss\Model\Enum\ResizeStrategy;
 use Awyiss\Model\Table;
@@ -31,6 +32,7 @@ class MediaElementsCell extends Cell {
 	/**
 	 * @param \Cake\Datasource\EntityInterface $entity
 	 * @return void
+	 * @throws \ReflectionException
 	 */
 	public function display(EntityInterface $entity): void {
 		// Get the user's identity and session
@@ -43,6 +45,7 @@ class MediaElementsCell extends Cell {
 		$lo_table = $this->fetchTable($entity->getSource());
 		if (!$lo_table->hasBehavior('MediaElementAssignment') || !$lo_identity->scopeIsAccessible('media', [], 'read')) {
 			$this->viewBuilder()->setTemplate('element_disabled');
+
 			return;
 		}
 
@@ -89,9 +92,10 @@ class MediaElementsCell extends Cell {
 		}
 
 		$this->set([
+			'assignedElements' => $lo_assignedElements,
+			'autoCreateFolder' => LocalConfig::read('mediaFolders.autoCreate', false, $entity->getSource()),
 			'elements' => $lo_elements,
 			'entity' => $entity,
-			'assignedElements' => $lo_assignedElements,
 			'ProcessStatus' => ProcessStatus::class,
 			'ResizeStrategy' => ResizeStrategy::class,
 		]);
@@ -137,7 +141,9 @@ class MediaElementsCell extends Cell {
 	 */
 	protected function getElements(): Collection {
 		if (!isset(static::$elements)) {
-			static::$elements = $this->fetchTable('MediaElements')->find('active')->contain([
+			static::$elements = $this->fetchTable('MediaElements')->find('active')
+			->where(['id >' => 0])
+			->contain([
 				'MediaElementSelectors' => [
 					'MediaSelectors',
 				],

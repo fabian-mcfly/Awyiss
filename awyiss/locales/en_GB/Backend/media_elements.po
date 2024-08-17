@@ -88,3 +88,6 @@ msgstr "Entity"
 
 msgid "error_linked_media_assignments"
 msgstr "The Media Element cannot be deleted because it is still in use"
+
+msgid "error_not_default_element_deletion"
+msgstr "The default Media Element cannot be deleted"

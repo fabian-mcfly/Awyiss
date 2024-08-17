@@ -102,6 +102,12 @@
 
 				{% block nestedListActions %}
 					<span class="Actions">
+						{% block nestedListActionsGallery %}
+							{% if entity.mediaAssignments.hiddenFolder.hiddenFolder %}
+								{{ HtmlHelper.link(__('view_gallery'), {controller: 'media', action: 'overview', mediaFolderId: entity.mediaAssignments.hiddenFolder.hiddenFolder.mediaFolderId}, {class: 'Button Button-Small Button-View'}) }}
+							{% endif %}
+						{% endblock %}
+
 						{% block nestedListActionsEdit %}
 							{% if AuthorizationHelper.isAccessible('update') %}
 								{{ HtmlHelper.link(__('edit'), {action: 'edit', id: entity.id}, {class: 'Button Button-Small Button-Edit'}) }}

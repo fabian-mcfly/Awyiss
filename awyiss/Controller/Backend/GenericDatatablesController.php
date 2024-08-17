@@ -83,7 +83,7 @@ abstract class GenericDatatablesController extends Controller {
 	public function overview(): void {
 		$this->Authorization->ensure('read');
 
-		$lo_query = $this->getOverviewQuery();
+		$lo_query = $this->getOverviewQuery()->find('mediaAssignments');
 
 		// Disable sorting if the current category is the aggregation category or the unassigned category
 		if (

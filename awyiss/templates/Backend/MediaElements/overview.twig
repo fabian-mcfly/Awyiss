@@ -38,7 +38,7 @@
 
 	{% if paginated %}
 		{% block paginatedOverview %}
-			{% include '@Backend/element/overview/overview_paginated_list.twig' with _context|merge({records: mediaElements.items().toArray()}) %}
+			{% include '@Backend/MediaElements/overview_paginated_list.twig' with _context|merge({records: mediaElements.items().toArray()}) %}
 		{% endblock %}
 	{% else %}
 			{% block fieldsetOverview %}
@@ -51,6 +51,7 @@
 						},
 						displayedFields: localConfig.overview.displayedFields,
 						identifier: 'MediaElements',
+						template: '@Backend/MediaElements/overview_nested_list_item.twig',
 					})) }}
 				{% endblock %}
 			</fieldset>

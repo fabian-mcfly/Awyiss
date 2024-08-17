@@ -1,7 +1,7 @@
 {#
-@var entity \Awyiss\Model\Entity
-@var elements \Cake\Datasource\ResultSetDecorator
 @var assignedElements \Cake\Collection\Collection
+@var elements \Cake\Datasource\ResultSetDecorator
+@var entity \Awyiss\Model\Entity
 #}
 
 {% for assignedElement in assignedElements %}
@@ -20,3 +20,8 @@
 		</div>
 	{% endif %}
 {% endfor %}
+
+{% if autoCreateFolder and entity.mediaAssignments.hiddenFolder.hiddenFolder.mediaFolderId %}
+	<input type="hidden" name="media_assignments[0][hidden_folder][id]" value="{{ entity.mediaAssignments.hiddenFolder.hiddenFolder.id }}">
+	<input type="hidden" name="media_assignments[0][hidden_folder][media_folder_id]" value="{{ entity.mediaAssignments.hiddenFolder.hiddenFolder.mediaFolderId }}">
+{% endif %}

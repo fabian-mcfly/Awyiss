@@ -50,6 +50,9 @@ msgstr "Cancel"
 msgid "overview"
 msgstr "Overview"
 
+msgid "view_gallery"
+msgstr "View Gallery"
+
 msgid "menu_overview"
 msgstr "Overview"
 

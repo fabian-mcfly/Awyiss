@@ -50,6 +50,9 @@ msgstr "Abbrechen"
 msgid "overview"
 msgstr "Übersicht"
 
+msgid "view_gallery"
+msgstr "Galerie anzeigen"
+
 msgid "menu_overview"
 msgstr "Übersicht"
 

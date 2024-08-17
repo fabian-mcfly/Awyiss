@@ -80,6 +80,15 @@ class GenericDatatablesConfigOptions extends AbstractGenericConfigOptions {
 					type: ConfigOptionType::Bool,
 				),
 			],
+			'mediaFolders' => [
+				new ConfigOption(
+					defaultValue: false,
+					identifier: 'autoCreate',
+					localizable: false,
+					nullable: false,
+					type: ConfigOptionType::Bool
+				),
+			],
 			'overview' => [
 				new ConfigOption(
 					defaultValue: [],

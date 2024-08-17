@@ -142,13 +142,13 @@
 				{% do AuthorizationHelper.setScope('MediaFolders') %}
 				{% block mediaFolders %}
 					<div id="MediaFolders-List"{# class="🌚" #}>
+						{% set currentLanguageShortcode = languageShortcode %}
 						{% for languageShortcode, mediaFolders in groupedMediaFolders %}
 							{% block fieldsetOverview %}
 								<fieldset
-										class="Overview-Fieldset Collapsible{% if languageShortcode not in ['', language.shortcode] %} Collapsed{% endif %}"
+										class="Overview-Fieldset Collapsible{% if languageShortcode not in ['', language.shortcode] and languageShortcode != currentLanguageShortcode %} Collapsed{% endif %}"
 										id="MediaFolder-List-{{ (languageShortcode ?? 'global')|camelize }}">
 									<legend>{{ languages[ languageRealm ][ languageShortcode ] ? languages[ languageRealm ][ languageShortcode ].title : __('media_folder_global') }}</legend>
-
 									{% block fieldsetOverviewInner %}
 										{% block listFoldersOverview %}
 											{{ nestedList(mediaFolders, _context|merge({

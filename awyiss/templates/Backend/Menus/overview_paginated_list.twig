@@ -18,6 +18,8 @@
 				{% do AuthorizationHelper.resetScope() %}
 			{% endblock %}
 
+			{{ block('tableOverviewCellActionsGallery') }}
+
 			{{ block('tableOverviewCellActionsUpdate') }}
 
 			{{ block('tableOverviewCellActionsDelete') }}

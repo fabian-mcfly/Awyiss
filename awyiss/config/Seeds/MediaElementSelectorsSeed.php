@@ -13,6 +13,16 @@ class MediaElementSelectorsSeed extends AbstractSeed {
 		$la_data = [
             [
                 'id' => 1,
+                'media_element_id' => 0,
+                'media_selector_id' => 3,
+                'title' => 'Hidden Folder',
+                'identifier' => 'hidden_folder',
+                'column_span' => '12/12',
+                'required' => 0,
+                'system_order' => 0,
+            ],
+            [
+                'id' => 2,
                 'media_element_id' => 2,
                 'media_selector_id' => 1,
                 'title' => 'Titelbild',
@@ -22,7 +32,7 @@ class MediaElementSelectorsSeed extends AbstractSeed {
                 'system_order' => 1,
             ],
             [
-                'id' => 2,
+                'id' => 3,
                 'media_element_id' => 2,
                 'media_selector_id' => 1,
                 'title' => 'Alternatives Teaserbild',
@@ -32,7 +42,7 @@ class MediaElementSelectorsSeed extends AbstractSeed {
 				'system_order' => 2,
             ],
             [
-                'id' => 3,
+                'id' => 4,
                 'media_element_id' => 1,
                 'media_selector_id' => 1,
                 'title' => 'Datei',
@@ -42,7 +52,7 @@ class MediaElementSelectorsSeed extends AbstractSeed {
 				'system_order' => 1,
             ],
             [
-                'id' => 4,
+                'id' => 5,
                 'media_element_id' => 1,
                 'media_selector_id' => 1,
                 'title' => 'Lightbox-Datei',
@@ -52,7 +62,7 @@ class MediaElementSelectorsSeed extends AbstractSeed {
 				'system_order' => 2,
             ],
             [
-                'id' => 5,
+                'id' => 6,
                 'media_element_id' => 3,
                 'media_selector_id' => 2,
                 'title' => 'Galerie',

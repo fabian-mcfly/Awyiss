@@ -33,6 +33,19 @@ class MediaElementsController extends Controller {
 
 
 	/**
+	 * @inheritDoc
+	 * @throws \Exception
+	 */
+	protected function initializeOverviewWhere(): void {
+		$this->overviewWhere = [
+			'id >' => 0,
+		];
+
+		parent::initializeOverviewWhere();
+	}
+
+
+	/**
 	 * Overview method
 	 *
 	 * @throws \Exception

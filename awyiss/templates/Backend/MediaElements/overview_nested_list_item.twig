@@ -1,0 +1,12 @@
+{#
+@var entity \Awyiss\Model\Entity\MediaElement
+@var settings array
+#}
+
+{% extends '@Backend/element/overview/nested_list_item.twig' %}
+
+{% block nestedListActionsDelete %}
+	{% if entity.id >= 10 %}
+		{{ parent() }}
+	{% endif %}
+{% endblock %}

@@ -1,0 +1,16 @@
+{#
+@var records \Awyiss\Model\Entity\MediaSelector[]|\Cake\Datasource\Paging\PaginatedResultSet
+@var localConfig array
+@var nestable bool
+@var paginated bool
+@var sortable bool
+@var _view \Awyiss\View\BackendView
+#}
+
+{% extends '@Backend/element/overview/overview_paginated_list.twig' %}
+
+{% block tableOverviewCellActionsDelete %}
+	{% if entity.id >= 10 %}
+		{{ parent() }}
+	{% endif %}
+{% endblock %}

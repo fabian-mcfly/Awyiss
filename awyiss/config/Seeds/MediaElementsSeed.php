@@ -12,6 +12,21 @@ class MediaElementsSeed extends AbstractSeed {
 	public function run(): void {
 		$la_data = [
             [
+                'id' => -1,
+                'title' => 'Hidden Folder',
+                'identifier' => 'hidden_folder',
+                'column_span' => '12/12',
+                'system_order' => 0,
+                'active' => 1,
+                'deleted' => 0,
+                'created_by' => 1,
+                'created_on' => (new \Cake\I18n\DateTime('now'))->format('Y-m-d H:i:s'),
+                'changed_by' => NULL,
+                'changed_on' => NULL,
+                'deleted_by' => NULL,
+                'deleted_on' => NULL,
+            ],
+            [
                 'id' => 1,
                 'title' => 'Standard',
                 'identifier' => 'standard',
@@ -60,5 +75,8 @@ class MediaElementsSeed extends AbstractSeed {
 
 		$lo_table = $this->table('media_elements');
 		$lo_table->insert($la_data)->save();
+
+		/** @noinspection PhpArgumentWithoutNamedIdentifierInspection,SqlDialectInspection,SqlNoDataSourceInspection */
+		$this->execute('UPDATE media_elements SET id = 0 WHERE id = ?', [-1]);
 	}
 }

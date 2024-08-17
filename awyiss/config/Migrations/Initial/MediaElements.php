@@ -105,6 +105,9 @@ class MediaElements {
 				'name' => 'deleted',
 			]
 		)->create();
+
+		/** @noinspection SqlDialectInspection, SqlNoDataSourceInspection */
+		$this->migration->execute('ALTER TABLE `media_elements` AUTO_INCREMENT=10');
 	}
 
 

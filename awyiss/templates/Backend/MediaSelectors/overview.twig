@@ -19,7 +19,7 @@
 	{% endblock %}
 
 	{% block paginatedOverview %}
-		{% include '@Backend/element/overview/overview_paginated_list.twig' with _context|merge({records: mediaSelectors.items().toArray()}) %}
+		{% include '@Backend/MediaSelectors/overview_paginated_list.twig' with _context|merge({records: mediaSelectors.items().toArray()}) %}
 	{% endblock %}
 
 	{% block buttonAreaBottom %}
