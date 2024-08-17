@@ -37,9 +37,10 @@ class MediaFoldersListener implements EventListenerInterface {
 	public function implementedEvents(): array {
 		return [
 			'Model.MediaFolders.beforeCopy' => 'beforeCopy',
-			'Model.MediaFolders.afterCopy' => 'afterCopy',
+			'Model.MediaFolders.afterCopyCommit' => 'afterCopyCommit',
 			'Model.MediaFolders.beforeSave' => 'beforeSave',
 			'Model.MediaFolders.afterSave' => 'afterSave',
+			'Model.MediaFolders.afterSaveCommit' => 'afterSaveCommit',
 			'Model.MediaFolders.beforeSoftDelete' => 'beforeSoftDelete',
 		];
 	}
@@ -154,7 +155,7 @@ class MediaFoldersListener implements EventListenerInterface {
 	 * @return void
 	 * @throws \Exception
 	 */
-	public function afterCopy(Event $event, MediaFolder $entity, ArrayObject $options): void {
+	public function afterCopyCommit(Event $event, MediaFolder $entity, ArrayObject $options): void {
 		/** @var \Awyiss\Model\Table\MediaFoldersTable $lo_table */
 		$lo_table = $event->getSubject();
 
@@ -218,14 +219,17 @@ class MediaFoldersListener implements EventListenerInterface {
 				$ls_originalPath,
 			);
 		}
+	}
 
-		if (
-			!is_dir(WWW_ROOT . str_replace('/', DS, $entity->path)) &&
-			(
-				$options['isCopy'] === false ||
-				$options['_primary'] === true
-			)
-		) {
+
+	/**
+	 * @param Event $event
+	 * @param \Awyiss\Model\Entity\MediaFolder $entity
+	 * @param \ArrayObject $options
+	 * @noinspection PhpUnusedParameterInspection
+	 */
+	public function afterSaveCommit(Event $event, MediaFolder $entity, ArrayObject $options): void {
+		if (!is_dir(WWW_ROOT . str_replace('/', DS, $entity->path)) && ($options['isCopy'] ?? false) === false) {
 			mkdir(WWW_ROOT . str_replace('/', DS, $entity->path), 0750, true);
 		}
 	}
