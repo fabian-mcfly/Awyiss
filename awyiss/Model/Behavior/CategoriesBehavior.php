@@ -800,10 +800,9 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 			return array_key_exists($lx_value, $la_categories);
 		}, $ls_ruleName, [
 			'errorField' => Inflector::underscore($ls_fieldName),
-			'message' => __dfx(
+			'message' => __df(
 				$lo_table->getI18nDomain(),
 				'validation',
-				$lo_table->getI18nDomain(),
 				'error_valid_' . Inflector::underscore($ls_fieldName)
 			),
 		]);
