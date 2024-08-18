@@ -67,7 +67,7 @@ class InstallCommand extends Command {
 
 		// If the user just wants to rebuild the symlinks, do that and exit
 		if ($args->getOption('rebuild-symlinks')) {
-			$this->createDirectoriesAndSymlinks();
+			$this->createAssetSymlinks();
 
 			$this->io->success('Symlinks rebuilt.');
 
@@ -113,8 +113,8 @@ class InstallCommand extends Command {
 		// Set the Twig extension according to the customer's folder
 		$this->setTwigExtension();
 
-		// Create directories and symlinks for the assets
-		$this->createDirectoriesAndSymlinks();
+		// Create symlinks for the assets
+		$this->createAssetSymlinks();
 
 		// Remove all .gitkeep files from the customer's folder
 		$this->removeGitkeepFiles();
@@ -249,9 +249,9 @@ class InstallCommand extends Command {
 
 
 	/**
-	 * Create directories and symlinks for the assets
+	 * Create symlinks for the assets
 	 */
-	protected function createDirectoriesAndSymlinks(): void {
+	protected function createAssetSymlinks(): void {
 		if (!isset($this->customerName)) {
 			if (!defined('CUSTOM_DIR')) {
 				$this->io->abort('Invalid customer name.');

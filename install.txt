@@ -1,25 +1,49 @@
+// Cake cli ausführbar machen
 chmod +x bin/cake
 
+
+// Cronjob
 sudo crontab -e -u www-data
 */10 * * * * cd /var/www/cms && bin/cake queue run -q -g general >> /var/www/cms/logs/cron.log 2>&1
 */1 * * * * cd /var/www/cms && bin/cake media convert_files --include-webp -q
 
+
+// Annotations
 sudo runuser -u www-data -- bin/cake phpstorm generate
 sudo runuser -u www-data -- bin/cake generate phpstorm
 
-(export CONFIG_ENV=development CUSTOM_DIR=foobar-customer && bin/cake i18n extract --paths=/var/www/cms/awyiss --output=/var/www/cms/awyiss/locales/de_DE/ --extract-core=yes)
 
+// Medienzeugs
 sudo runuser -u www-data -- bin/cake media convert_files --include-webp
 sudo runuser -u www-data -- bin/cake media detect_available_commands
 sudo runuser -u www-data -- bin/cake media clear_cache
 
 
+// System installieren
+sudo runuser -u www-data -- bin/cake awyiss install
+sudo runuser -u www-data -- bin/cake awyiss install --rebuild-symlinks
 
 
+// Backup erstellen
+sudo runuser -u www-data -- bin/cake awyiss backup
+
+
+// Inhalte finden, deren Attribut "Testattribut" vor dem 31.12.2028 liegt
 $lo_contents->find('pastTestattribute', new \Cake\I18n\DateTime('2028-12-31 23:59:59'));
+// Inhalte finden, deren Attribut "Testattribut" nach dem 31.12.2028 liegt
+$lo_contents->find('futureTestattribute', new \Cake\I18n\DateTime('2028-12-31 23:59:59'));
 
 
+// Seiten finden, die zwischen dem 14.03.2024 20:15:00 und dem 15.03.2024 20:14:59 veröffentlicht sind
+// D.h. Startdatum in der DB muss vor dem 14.03.2024 20:15:00 liegen (oder leer sein)
+// und Enddatum in der DB muss nach dem 15.03.2024 20:15:00 liegen (oder leer sein)
 $lo_pages->find('published',
 	start: new \Cake\I18n\DateTime('2024-03-14 20:15:00'),
-	end: new \Cake\I18n\DateTime('2024-03-14 20:15:00'),
+	end: new \Cake\I18n\DateTime('2024-03-15 20:14:59'),
+);
+
+
+// Seiten finden, die am 14.03.2024 20:15:00 veröffentlicht sind
+$lo_pages->find('published',
+	at: new \Cake\I18n\DateTime('2024-03-14 20:15:00'),
 );
