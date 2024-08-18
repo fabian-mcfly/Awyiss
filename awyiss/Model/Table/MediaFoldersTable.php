@@ -41,13 +41,13 @@ class MediaFoldersTable extends Table {
 	 */
 	protected array $nest = [
 		'enabled' => true,
-		'relatedColumns' => ['languageShortcode'],
+		'relatedColumns' => ['languageShortcode', 'hidden'],
 	];
 	/**
 	 * @inheritDoc
 	 */
 	protected array $systemOrder = [
-		'relatedColumns' => ['languageShortcode', 'parentId'],
+		'relatedColumns' => ['languageShortcode', 'parentId', 'hidden'],
 	];
 
 
