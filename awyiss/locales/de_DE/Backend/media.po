@@ -158,6 +158,9 @@ msgstr "Zum Hochladen hier ablegen"
 msgid "media_folder_global"
 msgstr "Global"
 
+msgid "media_folder_hidden"
+msgstr "Versteckte Ordner"
+
 msgid "select_file"
 msgstr "Datei auswählen"
 
@@ -169,3 +172,6 @@ msgstr "Datei entfernen"
 
 msgid "use_files"
 msgstr "Datei(en) verwenden"
+
+msgid "error_valid_media_folder_id"
+msgstr "Ungültiger Medienordner"

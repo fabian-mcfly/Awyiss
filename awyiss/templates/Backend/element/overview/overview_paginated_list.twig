@@ -137,7 +137,14 @@
 										<div class="Actions">
 											{% block tableOverviewCellActionsGallery %}
 												{% if entity.mediaAssignments.hiddenFolder.hiddenFolder %}
-													{{ HtmlHelper.link(__('view_gallery'), {controller: 'media', action: 'overview', mediaFolderId: entity.mediaAssignments.hiddenFolder.hiddenFolder.mediaFolderId}, {class: 'Button Button-Small Button-View'}) }}
+													{{ HtmlHelper.link(__('view_gallery'), {
+														controller: 'media',
+														action: 'overview',
+														mediaFolderId: entity.mediaAssignments.hiddenFolder.hiddenFolder.mediaFolderId
+													}, {
+														class: 'Button Button-Small Button-View',
+														'data-media-folder-id': entity.mediaAssignments.hiddenFolder.hiddenFolder.mediaFolderId,
+													}) }}
 												{% endif %}
 											{% endblock %}
 

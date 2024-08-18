@@ -28,12 +28,19 @@ use Laminas\Diactoros\UploadedFile;
  */
 class MediaController extends Controller {
 	/**
+	 * Whether the view was requested for a hidden folder
+	 *
+	 * @var bool $activeHiddenFolder
+	 */
+	protected bool $activeHiddenFolder = false;
+	/**
 	 * @inheritDoc
 	 */
 	protected array $categories = [
 		'queryConditions' => [
 			'active' => true,
 			'parents_active' => true,
+			'hidden' => false,
 		],
 		'uriParam' => 'media-folder-id',
 	];
@@ -46,6 +53,39 @@ class MediaController extends Controller {
 			'name' => 'asc',
 		],
 	];
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public function initialize(): void {
+		parent::initialize();
+
+		if ($this->request->is('ajax')) {
+			$this->Categories->setConfig('verifySelection', false);
+		}
+
+		$li_mediaFolderId = $this->request->getParam('mediaFolderId') ?? $this->request->getData('media_folder_id');
+		if ($li_mediaFolderId) {
+			/** @var MediaFolder $lo_mediaFolder */
+			$lo_mediaFolder = $this->Media->MediaFolders->findById($li_mediaFolderId)->first();
+			if ($lo_mediaFolder && $lo_mediaFolder->hidden) {
+				$this->activeHiddenFolder = true;
+
+				$lo_behavior = $this->Media->getBehavior('Categories');
+				$la_queryConditions = $lo_behavior->getConfig('queryConditions');
+
+				unset($la_queryConditions['hidden']);
+
+				$la_queryConditions['OR'] = [
+					'hidden' => false,
+					'id' => $lo_mediaFolder->id,
+				];
+
+				$lo_behavior->setConfig('queryConditions', $la_queryConditions, false);
+			}
+		}
+	}
 
 
 	/**
@@ -91,14 +131,35 @@ class MediaController extends Controller {
 			$lo_media = $lo_query->all();
 		}
 
-		$lo_mediaFolders = $this->Media->MediaFolders->find('active')->find('threaded')->all();
-		$la_mediaFolders = $lo_mediaFolders->groupBy(function (MediaFolder $element) {
+		$lo_mediaFoldersQuery = $this->Media->MediaFolders->find('active')->find('threaded');
+
+		// Exclude hidden folders but include the selected one
+		$lo_mediaFoldersQuery->where([
+			'OR' => [
+				'hidden' => false,
+				'id' => $this->Categories->getSelectedCategory(),
+			],
+		]);
+
+		$la_mediaFolders = $lo_mediaFoldersQuery->all()->groupBy(function (MediaFolder $element) {
+			if ($element->hidden) {
+				return 'hidden';
+			}
+
 			return $element->languageShortcode ?? '';
 		})->toArray();
 
 		$ls_currentLanguageShortcode = $this->request->getParam('lang');
 		// Sort the grouped media folders by the global and the current language first
 		uksort($la_mediaFolders, function ($a, $b) use ($ls_currentLanguageShortcode) {
+			if ($a === 'hidden') {
+				return -1;
+			}
+
+			if ($b === 'hidden') {
+				return 1;
+			}
+
 			if ($a === '' || $a === $ls_currentLanguageShortcode) {
 				return -1;
 			}

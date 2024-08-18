@@ -16,6 +16,13 @@ export default class Overlay {
 	static cropArea = null;
 
 	/**
+	 * The id of the active folder
+	 * If the opener requests another folder than this,
+	 * a new fetch request will be made.
+	 * @type {int}
+	 */
+	activeFolderId;
+	/**
 	 * The overlay close button
 	 * @type {HTMLElement}
 	 */
@@ -86,9 +93,9 @@ export default class Overlay {
 	 * Open the media overlay.
 	 * If the overlay element doesn't exist yet, fetch it.
 	 *
-	 * @param {boolean} [show=false] - Whether to show the overlay immediately after initialization.
+	 * @param {Event} event
 	 */
-	initOverlay(show = false) {
+	initOverlay(event) {
 		// Maybe it already exists in the DOM. If not, we'll fetch it later.
 		this.element = document.querySelector('#MediaOverlay');
 
@@ -102,8 +109,13 @@ export default class Overlay {
 				overlayPlaceholder.classList.add('FetchInProgress');
 			}, 100);
 
+			let url = `/backend/${languageShortcode}/media/overview/paginate:false/`
+			if (event?.target && event.target.matches('a[href]')) {
+				url = event.target.href + 'paginate:false/';
+			}
+
 			// Fetch the overlay element
-			fetch(`/backend/${languageShortcode}/media/overview/paginate:false/`, {
+			return fetch(url, {
 				headers: {
 					'X-Requested-With': 'XMLHttpRequest',
 				},
@@ -120,9 +132,13 @@ export default class Overlay {
 
 				this.#initComponents();
 
-				if (show) {
-					this.element.classList.add('Visible');
+				// Find the active folder
+				const activeFolder = this.folderList.querySelector('.MediaFolders-ListItem.Active');
+				if (activeFolder) {
+					this.activeFolderId = parseInt(activeFolder.id.replace(/^\D+/g, ''));
 				}
+
+				return html;
 			});
 		}
 		else {
@@ -212,6 +228,7 @@ export default class Overlay {
 	/**
 	 * Open the overlay.
 	 * If the overlay element doesn't exist yet, fetch it.
+	 *
 	 * @param {Event} event
 	 */
 	openOverlay(event) {
@@ -221,7 +238,7 @@ export default class Overlay {
 		this.opener = event.detail.opener || null;
 
 		if (!this.element) {
-			this.initOverlay();
+			this.initOverlay(event);
 		}
 		else {
 			// Show the overlay
@@ -239,6 +256,10 @@ export default class Overlay {
 			}
 
 			this.sortable.toggleButtonState(this.sortable.multiSelection.getSelectedItems().length);
+
+			if (event.target.matches('a[href]')) {
+				this.ensureFolderIsVisible(event.target);
+			}
 		}
 	}
 
@@ -294,28 +315,7 @@ export default class Overlay {
 			const formParent = form.parentElement;
 
 			if (formParent.matches('.MediaFolders.Add')) {
-				// Fetch the folder list again
-				fetch(`/backend/${languageShortcode}/media/overview/paginate:false/`, {
-					headers: {
-						'X-Requested-With': 'XMLHttpRequest',
-					},
-				})
-				.then(response => response.text())
-				.then(html => {
-					// Parse the HTML string into a Document object
-					const parser = new DOMParser();
-					const doc = parser.parseFromString(html, 'text/html');
-
-					const folderList = doc.querySelector('#MediaFolders-List');
-
-					this.folderList.replaceWith(folderList);
-
-					this.folderList = folderList;
-
-					this.bindFolderListItemClick();
-
-					this.initSortableReceiver();
-				});
+				this.fetchFolderList(this.activeFolderId, languageShortcode);
 			}
 			else if (formParent.matches('.Media.Edit')) {
 				// noinspection JSUndefinedPropertyAssignment
@@ -327,7 +327,41 @@ export default class Overlay {
 	}
 
 	/**
+	 * Ensure that the folder of the clicked link is visible
+	 * in the folder list.
+	 * If it isn't, fetch the folder list again.
+	 */
+	ensureFolderIsVisible(link) {
+		// Get the folder ID from the link
+		const url = new URL(link.href);
+		const parts = url.pathname.split('/');
+		const part = parts.filter(part => part.includes('media-folder-id:'));
+
+		if (part.length === 0) {
+			return;
+		}
+
+		const folderId = parseInt(part[0].replace('media-folder-id:', ''));
+		if (folderId === this.activeFolderId) {
+			return;
+		}
+
+		const folder = this.folderList.querySelector(`#MediaFolders-ListItem${folderId}`);
+		if (folder) {
+			if (!folder.classList.contains('Active')) {
+				folder.dispatchEvent(new Event('click'));
+			}
+		}
+
+		// If the folder doesn't exist, fetch the folder list again
+		this.fetchFolderList(folderId, languageShortcode).then(html => {
+			this.replaceMediaList(html, false);
+		});
+	}
+
+	/**
 	 * Fetch the media items of a folder.
+	 *
 	 * @param {Event} event
 	 */
 	fetchFolderFiles(event) {
@@ -337,21 +371,24 @@ export default class Overlay {
 
 		event.preventDefault();
 
-		// Disable the delete buttons
-		this.sortable.deleteButtons.forEach(button => button.disabled = true);
-
-		if (this.mediaList.classList.contains('FetchInProgress')) {
-			return;
-		}
-
 		const listItem = event.currentTarget;
 		const folderId = parseInt(listItem.id.replace(/^\D+/g, ''));
 
-		this.upload.uploadData.media_folder_id = folderId;
+		this._fetchFolderFiles(folderId, listItem.dataset.languageShortcode || languageShortcode).then(() => {
+			listItem.classList.add('Active');
+			listItem.sortable.option('disabled', true);
+		})
+	}
 
-		this.mediaList.classList.add('FetchInProgress');
-
-		fetch(`/backend/${listItem.dataset.languageShortcode || languageShortcode}/media/overview/media-folder-id:${folderId}/paginate:false/`, {
+	/**
+	 * Fetch the folder list and replace the current folder list with the new one.
+	 *
+	 * @param {int} folderId
+	 * @param {string} languageShortcode
+	 * @returns {Promise<void>}
+	 */
+	fetchFolderList(folderId, languageShortcode) {
+		return fetch(`/backend/${languageShortcode}/media/overview/media-folder-id:${folderId}/paginate:false/`, {
 			headers: {
 				'X-Requested-With': 'XMLHttpRequest',
 			},
@@ -362,30 +399,87 @@ export default class Overlay {
 			const parser = new DOMParser();
 			const doc = parser.parseFromString(html, 'text/html');
 
-			const newMediaList = doc.querySelector('#Media-List')
+			const folderList = doc.querySelector('#MediaFolders-List');
 
-			// Remove all children from the media list and replace them with the children of the new media list
-			this.mediaList.innerHTML = newMediaList?.innerHTML || '';
+			this.folderList.replaceWith(folderList);
+
+			this.folderList = folderList;
+
+			this.bindFolderListItemClick();
+
+			this.initSortableReceiver();
+
+			return html;
+		});
+	}
+
+	/**
+	 * Fetch the media items of a folder.
+	 *
+	 * @param {int} folderId
+	 * @param {string} languageShortcode
+	 * @returns {Promise<void>}
+	 */
+	async _fetchFolderFiles(folderId, languageShortcode) {
+		if (this.mediaList.classList.contains('FetchInProgress')) {
+			return;
+		}
+
+		// Disable the delete buttons
+		this.sortable.deleteButtons.forEach(button => button.disabled = true);
+
+		this.upload.uploadData.media_folder_id = folderId;
+
+		this.mediaList.classList.add('FetchInProgress');
+
+		return fetch(`/backend/${languageShortcode}/media/overview/media-folder-id:${folderId}/paginate:false/`, {
+			headers: {
+				'X-Requested-With': 'XMLHttpRequest',
+			},
+		})
+		.then(response => response.text())
+		.then(html => {
+			this.replaceMediaList(html);
 
 			// Update the media folder ID in the data attribute
 			// noinspection JSValidateTypes
 			this.mediaList.dataset.mediaFolderId = folderId;
 
-			this.mediaList.classList.remove('FetchInProgress');
+			this.activeFolderId = folderId;
 
+			return html;
+		});
+	}
+
+	/**
+	 * Extract the media items from the HTML string and replace the current media list with the new one.
+	 *
+	 * @param {string} html
+	 * @param {boolean} removeActiveStatus - If true, the active status of the folder will be removed.
+	 */
+	replaceMediaList(html, removeActiveStatus = true) {
+		// Parse the HTML string into a Document object
+		const parser = new DOMParser();
+		const doc = parser.parseFromString(html, 'text/html');
+
+		const newMediaList = doc.querySelector('#Media-List')
+
+		// Remove all children from the media list and replace them with the children of the new media list
+		this.mediaList.innerHTML = newMediaList?.innerHTML || '';
+
+		this.mediaList.classList.remove('FetchInProgress');
+
+		if (removeActiveStatus) {
 			const activeFolder = this.folderList.querySelector('.Active');
 			if (activeFolder) {
 				activeFolder.classList.remove('Active');
 				activeFolder.sortable.option('disabled', false);
 			}
+		}
 
-			listItem.classList.add('Active');
-			listItem.sortable.option('disabled', true);
-
-			this.sortable.saveOrderButtons.forEach(button => {
-				button.disabled = true;
-				button.classList.toggle('Button-Success', false);
-			});
+		this.sortable.saveOrderButtons.forEach(button => {
+			button.disabled = true;
+			button.classList.toggle('Button-Success', false);
 		});
 	}
 

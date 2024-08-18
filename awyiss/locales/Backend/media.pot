@@ -158,6 +158,9 @@ msgstr "Drop here to upload"
 msgid "media_folder_global"
 msgstr "Global"
 
+msgid "media_folder_hidden"
+msgstr "Hidden folder"
+
 msgid "select_file"
 msgstr "Select file"
 
@@ -169,3 +172,6 @@ msgstr "Remove file"
 
 msgid "use_files"
 msgstr "Use file(s)"
+
+msgid "error_valid_media_folder_id"
+msgstr "Invalid folder"
