@@ -131,7 +131,7 @@ class MediaController extends Controller {
 			$lo_media = $lo_query->all();
 		}
 
-		$lo_mediaFoldersQuery = $this->Media->MediaFolders->find('active')->find('threaded');
+		$lo_mediaFoldersQuery = $this->Media->MediaFolders->find('active')->find('threaded')->find('forCurrentLanguage');
 
 		// Exclude hidden folders but include the selected one
 		$lo_mediaFoldersQuery->where([
