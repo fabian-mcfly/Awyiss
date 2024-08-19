@@ -1,0 +1,174 @@
+{#
+@var currentUser string
+@var rootPath string
+@var customPath string
+@var tempPath string
+@var cronjobRunning bool
+@var mediaWritable bool
+@var awyissCssWritable bool
+@var awyissJsWritable bool
+@var assetsCssWritable bool
+@var assetsFontWritable bool
+@var assetsJsWritable bool
+@var tmpWritable bool
+@var webrootNotInUrl bool
+@var _view \Awyiss\View\BackendView
+@var AssetHelper \Awyiss\View\Helper\AssetHelper
+@var AttributesHelper \Awyiss\View\Helper\AttributesHelper
+@var AuthorizationHelper \Awyiss\View\Helper\AuthorizationHelper
+@var CategoriesHelper \Awyiss\View\Helper\CategoriesHelper
+@var FlashHelper \Awyiss\View\Helper\FlashHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+@var HtmlHelper \Cake\View\Helper\HtmlHelper
+@var LocaleHelper \Awyiss\View\Helper\LocaleHelper
+@var MediaHelper \Awyiss\View\Helper\MediaHelper
+@var PaginatorHelper \Awyiss\View\Helper\PaginatorHelper
+@var SystemOrderHelper \Awyiss\View\Helper\SystemOrderHelper
+@var UrlHelper \Awyiss\View\Helper\UrlHelper
+#}
+
+<div class="System Analyze">
+	{% block headlineAnalyze %}
+		<h1>{{ __('headline_analyze') }}</h1>
+	{% endblock %}
+
+	{% block tableAnalyze %}
+		<table class="Overview-Table Analyze-Table">
+			{% block tableAnalyzeBody %}
+				<tbody>
+					{% block tableAnalyzeBodyRowCronjobRunning %}
+						<tr{% if cronjobRunning == false %} class="Error"{% endif %}>
+							<td>{{ cronjobRunning ? '<i class="las la-check"></i>' : '<i class="las la-times"></i>' }}</td>
+							<td>
+								<strong>{{ __('analyze_cronjob_running') }}</strong>
+								{% if cronjobRunning == false %}
+									<span class="Error">
+										<strong class="Fix">{{ __('analyze_fix') }}</strong>
+										{{ __('analyze_cronjob_running_error_message', rootPath)|raw }}</span>
+								{% endif %}
+							</td>
+						</tr>
+					{% endblock %}
+					{% block tableAnalyzeBodyRowMediaWritable %}
+						<tr{% if mediaWritable == false %} class="Error"{% endif %}>
+							<td>{{ mediaWritable ? '<i class="las la-check"></i>' : '<i class="las la-times"></i>' }}</td>
+							<td>
+								<strong>{{ __('analyze_media_writable') }}</strong>
+								{% if mediaWritable == false %}
+									<span class="Error">
+										<strong class="Fix">{{ __('analyze_fix') }}</strong>
+										{{ __('analyze_media_writable_error_message', rootPath, currentUser)|raw }}</span>
+								{% endif %}
+							</td>
+						</tr>
+					{% endblock %}
+					{% block tableAnalyzeBodyRowWebrootNotInUrl %}
+						<tr{% if webrootNotInUrl == false %} class="Error"{% endif %}>
+							<td>{{ webrootNotInUrl ? '<i class="las la-check"></i>' : '<i class="las la-times"></i>' }}</td>
+							<td>
+								<strong>{{ __('analyze_webroot_not_in_url')|raw }}</strong>
+								{% if webrootNotInUrl == false %}
+									<span class="Error">
+										<strong class="Fix">{{ __('analyze_fix') }}</strong>
+										{{ __('analyze_webroot_not_in_url_error_message')|raw }}</span>
+								{% endif %}
+							</td>
+						</tr>
+					{% endblock %}
+					{% block tableAnalyzeBodyRowAwyissHeader %}
+						<tr>
+							<td colspan="2" class="TableCell-AnalyzeHeader TableCell-AnalyzeHeader-Awyiss">
+								{{ __('analyze_awyiss_header') }}
+							</td>
+						</tr>
+					{% endblock %}
+					{% block tableAnalyzeBodyRowAwyissCssWritable %}
+						<tr{% if awyissCssWritable == false %} class="Error"{% endif %}>
+							<td>{{ awyissCssWritable ? '<i class="las la-check"></i>' : '<i class="las la-times"></i>' }}</td>
+							<td>
+								<strong>{{ __('analyze_awyiss_css_writable') }}</strong>
+								{% if awyissCssWritable == false %}
+									<span class="Error">
+										<strong class="Fix">{{ __('analyze_fix') }}</strong>
+										{{ __('analyze_awyiss_css_writable_error_message', rootPath, currentUser)|raw }}</span>
+								{% endif %}
+							</td>
+						</tr>
+					{% endblock %}
+					{% block tableAnalyzeBodyRowAwyissJsWritable %}
+						<tr{% if awyissJsWritable == false %} class="Error"{% endif %}>
+							<td>{{ awyissJsWritable ? '<i class="las la-check"></i>' : '<i class="las la-times"></i>' }}</td>
+							<td>
+								<strong>{{ __('analyze_awyiss_js_writable') }}</strong>
+								{% if awyissJsWritable == false %}
+									<span class="Error">
+										<strong class="Fix">{{ __('analyze_fix') }}</strong>
+										{{ __('analyze_awyiss_js_writable_error_message', rootPath, currentUser)|raw }}</span>
+								{% endif %}
+							</td>
+						</tr>
+					{% endblock %}
+					{% block tableAnalyzeBodyRowAwyissTmpWritable %}
+						<tr{% if tmpWritable == false %} class="Error"{% endif %}>
+							<td>{{ tmpWritable ? '<i class="las la-check"></i>' : '<i class="las la-times"></i>' }}</td>
+							<td>
+								<strong>{{ __('analyze_tmp_writable') }}</strong>
+								{% if tmpWritable == false %}
+									<span class="Error">
+										<strong class="Fix">{{ __('analyze_fix') }}</strong>
+										{{ __('analyze_tmp_writable_error_message', tempPath, currentUser)|raw }}</span>
+								{% endif %}
+							</td>
+						</tr>
+					{% endblock %}
+					{% block tableAnalyzeBodyRowFrontendHeader %}
+						<tr>
+							<td colspan="2" class="TableCell-AnalyzeHeader TableCell-AnalyzeHeader-Frontend">
+								{{ __('analyze_frontend_header') }}
+							</td>
+						</tr>
+					{% endblock %}
+					{% block tableAnalyzeBodyRowFrontendCssWritable %}
+						<tr{% if assetsCssWritable == false %} class="Error"{% endif %}>
+							<td>{{ assetsCssWritable ? '<i class="las la-check"></i>' : '<i class="las la-times"></i>' }}</td>
+							<td>
+								<strong>{{ __('analyze_assets_css_writable') }}</strong>
+								{% if assetsCssWritable == false %}
+									<span class="Error">
+										<strong class="Fix">{{ __('analyze_fix') }}</strong>
+										{{ __('analyze_assets_css_writable_error_message', customPath, currentUser)|raw }}</span>
+								{% endif %}
+							</td>
+						</tr>
+					{% endblock %}
+					{% block tableAnalyzeBodyRowFrontendJsWritable %}
+						<tr{% if assetsJsWritable == false %} class="Error"{% endif %}>
+							<td>{{ assetsJsWritable ? '<i class="las la-check"></i>' : '<i class="las la-times"></i>' }}</td>
+							<td>
+								<strong>{{ __('analyze_assets_js_writable') }}</strong>
+								{% if assetsJsWritable == false %}
+									<span class="Error">
+										<strong class="Fix">{{ __('analyze_fix') }}</strong>
+										{{ __('analyze_assets_js_writable_error_message', customPath, currentUser)|raw }}</span>
+								{% endif %}
+							</td>
+						</tr>
+					{% endblock %}
+					{% block tableAnalyzeBodyRowFrontendFontWritable %}
+						<tr{% if assetsFontWritable == false %} class="Error"{% endif %}>
+							<td>{{ assetsFontWritable ? '<i class="las la-check"></i>' : '<i class="las la-times"></i>' }}</td>
+							<td>
+								<strong>{{ __('analyze_assets_font_writable') }}</strong>
+								{% if assetsFontWritable == false %}
+									<span class="Error">
+										<strong class="Fix">{{ __('analyze_fix') }}</strong>
+										{{ __('analyze_assets_font_writable_error_message', customPath, currentUser)|raw }}</span>
+								{% endif %}
+							</td>
+						</tr>
+					{% endblock %}
+				</tbody>
+			{% endblock %}
+		</table>
+	{% endblock %}
+</div>

@@ -1,0 +1,86 @@
+.SystemController.AnalyzeAction {
+	.Overview-Table {
+		margin-top:calc(var(--lineHeightMain) * 2);
+
+		tr {
+			&.Error {
+				td {
+					&:first-child {
+						border-bottom:3px solid oklch(from var(--colorError) calc(l - 0.0683) calc(c + 0.001) calc(h - 1.9));
+						background-color:var(--colorError);
+						color:var(--colorBright);
+					}
+				}
+
+				.la-times {
+					color:inherit;
+				}
+			}
+
+			&:first-child {
+				td {
+					&:first-child {
+						border-top-left-radius:5px;
+					}
+
+					&:last-child {
+						border-top-right-radius:5px;
+					}
+				}
+			}
+		}
+
+		td {
+			&.TableCell-AnalyzeHeader.TableCell-AnalyzeHeader {
+				border-bottom:3px solid oklch(from var(--colorMedium) calc(l - 0.0683) calc(c + 0.001) calc(h - 1.9));
+				background-color:var(--colorMedium);
+				color:var(--colorBright);
+				font-weight:700;
+				text-align:inherit;
+				pointer-events:none;
+
+				.🌚 & {
+					background-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l - 0.0473) calc(c - 0.005) calc(h + 1.12))
+				}
+
+				&::before {
+					display:none;
+				}
+
+			}
+
+			&:first-child {
+				width:100px;
+				text-align:center;
+				vertical-align:middle;
+			}
+		}
+
+		span {
+			&.Error {
+				display:block;
+				margin-top:var(--lineHeightMain);
+			}
+		}
+
+		.Fix {
+			display:block;
+			color:var(--colorError);
+		}
+
+		code {
+			margin-block:calc(var(--lineHeightMain) * .5) 0;
+		}
+
+		pre {
+			display:inline;
+			padding:0 5px;
+			border-radius:5px;
+			background-color:var(--colorMedium);
+			color:var(--colorBright);
+			font-size:.75rem;
+			line-height:1rem;
+			vertical-align:.05rem;
+		}
+	}
+}

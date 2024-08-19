@@ -20,6 +20,9 @@ msgstr "Templates"
 msgid "menu_configure"
 msgstr "Konfiguration"
 
+msgid "headline_overview"
+msgstr "System"
+
 msgid "id"
 msgstr "ID"
 
@@ -283,3 +286,85 @@ msgstr "Moderat"
 
 msgid "html_cleaning_strict"
 msgstr "Strikt"
+
+msgid "headline_analyze"
+msgstr "System-Analyse"
+
+msgid "meta_title_analyze"
+msgstr "System-Analyse"
+
+msgid "analyze_fix"
+msgstr "Beheben"
+
+msgid "analyze_cronjob_running"
+msgstr "Cronjob läuft"
+
+msgid "analyze_cronjob_running_error_message"
+msgstr "Erstellen Sie folgende Cronjobs:<br>"
+"<code>*/10 * * * * cd {0} &amp;&amp; bin/cake queue run -q -g general &gt;&gt; {0}logs/cron.log 2&gt;&amp;1"
+"<br>"
+"*/1 * * * * cd {0} &amp;&amp; bin/cake media convert_files --include-webp -q</code>"
+
+msgid "analyze_media_writable"
+msgstr "Medien-Verzeichnis schreibbar"
+
+msgid "analyze_media_writable_error_message"
+msgstr "Stellen Sie sicher, dass das Medien-Verzeichnis (<pre>{0}webroot/media</pre>) für den Benutzer &bdquo;{1}&ldquo; schreibbar ist."
+"<code>chmod -R 775 {0}webroot/media</code>"
+
+msgid "analyze_awyiss_css_writable"
+msgstr "CSS-Verzeichnis schreibbar"
+
+msgid "analyze_awyiss_css_writable_error_message"
+msgstr "Stellen Sie sicher, dass das CSS-Verzeichnis (<pre>{0}awyiss/assets/css</pre>) für den Benutzer &bdquo;{1}&ldquo; schreibbar ist."
+"<code>chmod -R 750 {0}awyiss/assets/css</code>"
+
+msgid "analyze_awyiss_js_writable"
+msgstr "Javascript-Verzeichnis schreibbar"
+
+msgid "analyze_awyiss_js_writable_error_message"
+msgstr "Stellen Sie sicher, dass das Javascript-Verzeichnis (<pre>{0}awyiss/assets/js</pre>) für den Benutzer &bdquo;{1}&ldquo; schreibbar ist."
+"<code>chmod -R 750 {0}awyiss/assets/js</code>"
+
+msgid "analyze_assets_css_writable"
+msgstr "CSS-Verzeichnis schreibbar"
+
+msgid "analyze_assets_css_writable_error_message"
+msgstr "Stellen Sie sicher, dass das CSS-Verzeichnis (<pre>{0}assets/css</pre>) für den Benutzer &bdquo;{1}&ldquo; schreibbar ist."
+"<code>chmod -R 750 {0}assets/css</code>"
+
+msgid "analyze_assets_font_writable"
+msgstr "Webfont-Verzeichnis schreibbar"
+
+msgid "analyze_assets_font_writable_error_message"
+msgstr "Stellen Sie sicher, dass das Webfont-Verzeichnis (<pre>{0}assets/font</pre>) für den Benutzer &bdquo;{1}&ldquo; schreibbar ist."
+"<code>chmod -R 750 {0}assets/font</code>"
+
+msgid "analyze_assets_js_writable"
+msgstr "Javascript-Verzeichnis schreibbar"
+
+msgid "analyze_assets_js_writable_error_message"
+msgstr "Stellen Sie sicher, dass das Javascript-Verzeichnis (<pre>{0}assets/js</pre>) für den Benutzer &bdquo;{1}&ldquo; schreibbar ist."
+"<code>chmod -R 750 {0}assets/js</code>"
+
+msgid "analyze_tmp_writable"
+msgstr "Temp-Verzeichnis schreibbar"
+
+msgid "analyze_tmp_writable_error_message"
+msgstr "Stellen Sie sicher, dass das Verzeichnis für temporäre Daten (<pre>{0}</pre>) für den Benutzer &bdquo;{1}&ldquo; schreibbar ist."
+"<code>chmod -R 775 {0}</code>"
+
+msgid "analyze_webroot_not_in_url"
+msgstr "&bdquo;webroot&ldquo;-Verzeichnis nicht in der URL"
+
+msgid "analyze_webroot_not_in_url_error_message"
+msgstr "Stellen Sie sicher, dass der Webserver so konfiguriert ist, dass die URL auf das &bdquo;webroot&ldquo;-Verzeichnis zeigt."
+
+msgid "analyze_awyiss_header"
+msgstr "Awyiss"
+
+msgid "analyze_frontend_header"
+msgstr "Frontend"
+
+msgid "permission_analyze"
+msgstr "Analyse"

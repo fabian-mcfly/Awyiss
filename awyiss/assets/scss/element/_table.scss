@@ -191,14 +191,13 @@
 
 		&::before {
 			content:'';
-			height:100%;
 			width:2px;
 			background-color:var(--colorBright);
 			position:absolute;
 			top:0;
 			left:-1px;
 			z-index:1;
-			bottom:-3px;
+			bottom:-2px;
 			transition:background-color .3s ease-in-out;
 
 			.🌚 & {

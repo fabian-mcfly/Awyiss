@@ -20,6 +20,9 @@ msgstr "Templates"
 msgid "menu_configure"
 msgstr "Configure"
 
+msgid "headline_overview"
+msgstr "System"
+
 msgid "id"
 msgstr "ID"
 
@@ -283,3 +286,85 @@ msgstr "Moderate"
 
 msgid "html_cleaning_strict"
 msgstr "Strict"
+
+msgid "headline_analyze"
+msgstr "System Analysis"
+
+msgid "meta_title_analyze"
+msgstr "System Analysis"
+
+msgid "analyze_fix"
+msgstr "Fix"
+
+msgid "analyze_cronjob_running"
+msgstr "Cronjob running"
+
+msgid "analyze_cronjob_running_error_message"
+msgstr "The following cronjobs should be created:<br>"
+"<code>*/10 * * * * cd {0} &amp;&amp; bin/cake queue run -q -g general &gt;&gt; {0}logs/cron.log 2&gt;&amp;1"
+"<br>"
+"*/1 * * * * cd {0} &amp;&amp; bin/cake media convert_files --include-webp -q</code>"
+
+msgid "analyze_media_writable"
+msgstr "Media directory writable"
+
+msgid "analyze_media_writable_error_message"
+msgstr "Make sure the media directory (<pre>{0}webroot/media</pre>) is writable for the user &ldquo;{1}&ldquo;."
+"<code>chmod -R 775 {0}webroot/media</code>"
+
+msgid "analyze_awyiss_css_writable"
+msgstr "CSS directory writable"
+
+msgid "analyze_awyiss_css_writable_error_message"
+msgstr "Make sure the CSS directory (<pre>{0}awyiss/assets/css</pre>) is writable for the user &ldquo;{1}&ldquo;."
+"<code>chmod -R 750 {0}awyiss/assets/css</code>"
+
+msgid "analyze_awyiss_js_writable"
+msgstr "Javascript directory writable"
+
+msgid "analyze_awyiss_js_writable_error_message"
+msgstr "Make sure the Javascript directory (<pre>{0}awyiss/assets/js</pre>) is writable for the user &ldquo;{1}&ldquo;."
+"<code>chmod -R 750 {0}awyiss/assets/js</code>"
+
+msgid "analyze_assets_css_writable"
+msgstr "CSS directory writable"
+
+msgid "analyze_assets_css_writable_error_message"
+msgstr "Make sure the CSS directory (<pre>{0}assets/css</pre>) is writable for the user &ldquo;{1}&ldquo;."
+"<code>chmod -R 750 {0}assets/css</code>"
+
+msgid "analyze_assets_font_writable"
+msgstr "Webfont directory writable"
+
+msgid "analyze_assets_font_writable_error_message"
+msgstr "Make sure the webfont directory (<pre>{0}assets/font</pre>) is writable for the user &ldquo;{1}&ldquo;."
+"<code>chmod -R 750 {0}assets/font</code>"
+
+msgid "analyze_assets_js_writable"
+msgstr "Javascript directory writable"
+
+msgid "analyze_assets_js_writable_error_message"
+msgstr "Make sure the Javascript directory (<pre>{0}assets/js</pre>) is writable for the user &ldquo;{1}&ldquo;."
+"<code>chmod -R 750 {0}assets/js</code>"
+
+msgid "analyze_tmp_writable"
+msgstr "Temp directory writable"
+
+msgid "analyze_tmp_writable_error_message"
+msgstr "Make sure the temporary data directory (<pre>{0}</pre>) is writable for the user &ldquo;{1}&ldquo;."
+"<code>chmod -R 775 {0}</code>"
+
+msgid "analyze_webroot_not_in_url"
+msgstr "&ldquo;webroot&ldquo;-directory not in URL"
+
+msgid "analyze_webroot_not_in_url_error_message"
+msgstr "Make sure the webserver is configured to point the URL to the &ldquo;webroot&ldquo; directory."
+
+msgid "analyze_awyiss_header"
+msgstr "Awyiss"
+
+msgid "analyze_frontend_header"
+msgstr "Frontend"
+
+msgid "permission_analyze"
+msgstr "Analysis"

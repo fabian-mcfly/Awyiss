@@ -442,8 +442,16 @@
 		"title": {
 			"translate": ["system", "menu_title"]
 		},
-		"link": null,
-		"access": null,
+		"link": {
+			"url": {
+				"controller": "System",
+				"action": "analyze"
+			}
+		},
+		"access": {
+			"scope": "system",
+			"identifier": "analyze"
+		},
 		"children": {
 			"widgets": {
 				"title": {
