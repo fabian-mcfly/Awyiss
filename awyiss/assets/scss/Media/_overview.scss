@@ -101,6 +101,10 @@
 			&.TableHeader-Preview {
 				width:160px;
 			}
+
+			&.TableHeader-UsageCount {
+				width:210px;
+			}
 		}
 
 		td {
@@ -248,10 +252,38 @@ ul#Media-List {
 		opacity:0;
 		transition:opacity .3s ease-in-out;
 
+		/*.UsageCount {
+			display:inline-block;
+			width:28px;
+			aspect-ratio:1;
+			border-radius:50%;
+			background-color:var(--colorInfo);
+			color:var(--colorBright);
+			font-size:16px;
+			line-height:28px;
+			text-align:center;
+			vertical-align:top;
+		}*/
+
 		.Button {
 			padding-inline:5px;
 			font-size:0;
 			line-height:0;
+
+			&.UsageCount {
+				width:28px;
+				aspect-ratio:1;
+				padding:0;
+				border-radius:50%;
+				background-color:var(--colorInfo);
+				font-size:16px;
+				line-height:28px;
+				cursor:default;
+
+				.Hover {
+					display:none;
+				}
+			}
 
 			&::after {
 				margin-left:0;

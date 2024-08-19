@@ -62,7 +62,7 @@ class MediaConfigOptions extends AbstractConfigOptions {
 			'overview' => [
 				new ConfigOption(
 					defaultValue: [
-						'path',
+						'usageCount',
 					],
 					identifier: 'displayedFields',
 					localizable: false,
@@ -72,6 +72,8 @@ class MediaConfigOptions extends AbstractConfigOptions {
 						$la_fields = $this->getTableFields();
 
 						unset($la_fields['id'], $la_fields['title']);
+
+						$la_fields['usageCount'] = __d('media', 'usage_count');
 
 						return $la_fields;
 					},

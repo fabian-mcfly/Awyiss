@@ -22,6 +22,9 @@
 
 					{% block listOverviewMediaItemActions %}
 						<span class="Actions">
+							{% block listOverviewMediaItemActionsUsageCount %}
+								<span class="Button UsageCount" title="{{ mediaItem.usageCount }} {{ __d('media', 'usage_count') }}">{{ mediaItem.usageCount }}</span>
+							{% endblock %}
 							{% block listOverviewMediaItemActionsUpdate %}
 								{% if AuthorizationHelper.isAccessible('create') %}
 									{{ HtmlHelper.link(__('edit'), {action: 'edit', id: mediaItem.id}, {class: 'Button Button-Small Button-Edit'}) }}

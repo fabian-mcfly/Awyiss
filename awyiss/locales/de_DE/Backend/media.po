@@ -175,3 +175,6 @@ msgstr "Datei(en) verwenden"
 
 msgid "error_valid_media_folder_id"
 msgstr "Ungültiger Medienordner"
+
+msgid "usage_count"
+msgstr "Verwendungen"

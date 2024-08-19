@@ -54,6 +54,7 @@ use Cake\Utility\Text;
  * @property string|null $originalWebpPath
  * @property string|null $webpPathAbsolute
  * @property string|null $originalWebpPathAbsolute
+ * @property int|null $usageCount
  */
 class Media extends Entity {
 	/**
@@ -91,6 +92,8 @@ class Media extends Entity {
 		'deleted_by' => 'deletedBy',
 		'deleted_on' => 'deletedOn',
 		'media_resized_images' => 'mediaResizedImages',
+		'media_assignments' => 'mediaAssignments',
+		'usage_count' => 'usageCount',
 	];
 
 

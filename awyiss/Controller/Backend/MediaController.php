@@ -48,6 +48,7 @@ class MediaController extends Controller {
 	 * @inheritDoc
 	 */
 	protected array $paginate = [
+		'defaultSortableFields' => ['usage_count'],
 		'enabled' => false,
 		'order' => [
 			'name' => 'asc',
@@ -123,6 +124,10 @@ class MediaController extends Controller {
 		else {
 			$lb_paginated = $this->paginate['enabled'];
 		}
+
+		$lo_query->enableAutoFields()->select([
+			'usage_count' => $lo_query->func()->count('MediaAssignments.id'),
+		])->leftJoinWith('MediaAssignments')->groupBy('Media.id');
 
 		if ($lb_paginated) {
 			$lo_media = $this->paginate($lo_query);
@@ -273,6 +278,8 @@ class MediaController extends Controller {
 
 				return $this->redirect(['action' => 'overview']);
 			}
+
+			$lo_media->usageCount = $this->Media->MediaAssignments->find()->where(['media_id' => $lo_media->id, 'deleted' => 0])->count();
 
 			if ($this->request->is(['patch', 'post', 'put'])) {
 				$this->save($lo_media, 'edit', $this->request->is('ajax'));

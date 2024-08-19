@@ -68,5 +68,10 @@
 	</tr>
 {% endblock %}
 
+{% block tableOverviewCellActionsUpdate %}
+	{% if AuthorizationHelper.isAccessible('create') %}
+		{{ HtmlHelper.link(i18nDomain ? __df(i18nDomain, 'system', 'edit') : __('edit'), {action: 'edit', id: entity.id}, {class: 'Button Button-Small Button-Edit'}) }}
+	{% endif %}
+{% endblock %}
 
 {% block tableOverviewFootColSpan %}{{ localConfig.overview.displayedFields|length + 5 }}{% endblock %}

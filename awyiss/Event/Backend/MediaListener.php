@@ -110,7 +110,7 @@ class MediaListener implements EventListenerInterface {
 			$entity->webp = in_array($entity->mimeType, ['image/webp', 'image/svg+xml']) ? ProcessStatus::NotRequired : ProcessStatus::Undefined;
 
 			if ($lb_isNew && LocalConfig::read('upload.autoOverwrite', false, 'Media') === true) {
-				$this->useExistingsFileData($entity);
+				$this->useExistingsFileData($lo_table, $entity);
 			}
 			else {
 				$this->ensureUniqueFileName($lo_table, $entity);
@@ -337,10 +337,11 @@ class MediaListener implements EventListenerInterface {
 
 
 	/**
+	 * @param \Awyiss\Model\Table\MediaTable $table
 	 * @param \Awyiss\Model\Entity\Media $entity
 	 * @return void
 	 */
-	protected function useExistingsFileData(Media $entity): void {
+	protected function useExistingsFileData(MediaTable $table, Media $entity): void {
 		$lo_currentMedia = static::$media[ $entity->mediaFolderId ][ $entity->name ] ?? null;
 		if ($lo_currentMedia) {
 			$entity->setNew(false);
@@ -353,6 +354,8 @@ class MediaListener implements EventListenerInterface {
 			], [
 				'guard' => false,
 			]);
+
+			$entity->usageCount = $table->MediaAssignments->find()->where(['media_id' => $lo_currentMedia->id, 'deleted' => 0])->count();
 
 			$entity->setDirty('systemOrder', false);
 
