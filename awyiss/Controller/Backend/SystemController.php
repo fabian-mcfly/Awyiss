@@ -31,20 +31,11 @@ class SystemController extends Controller {
 	/**
 	 * Analyze method checks if the system is set up correctly
 	 *
-	 * - Is the cronjob running and not older than 15 minutes?
-	 * - Is webroot/media writable for get_current_user() (alternatively, a note about the cronjob user)?
-	 * - Is webroots/awyiss/assets/css writable for get_current_user()?
-	 * - Is webroots/awyiss/assets/js writable for get_current_user()?
-	 * - Is webroots/assets/css writable for get_current_user()?
-	 * - Is webroots/assets/font writable for get_current_user()?
-	 * - Is webroots/assets/js writable for get_current_user()?
-	 * - Is tmp writable for get_current_user()?
-	 * - Is webroot not part of the URL?
-	 *
 	 * @return void
+	 * @throws \Exception
 	 */
 	public function analyze(): void {
-		//$this->Authorization->ensure('analyze');
+		$this->Authorization->ensure('analyze');
 
 		// Check if the cronjob is running
 		$lo_table = $this->fetchTable('Queue.QueueProcesses');
@@ -78,14 +69,19 @@ class SystemController extends Controller {
 		$ls_tmpPath = TMP;
 		$lb_tmpWritable = is_writable($ls_tmpPath);
 
+		// Check if the log path is writable
+		$ls_logPath = LOGS;
+		$lb_logWritable = is_writable($ls_logPath);
+
 		// Check if webroot is part of the URL
 		$ls_url = Router::url('/', true);
-		$lb_webrootNotInUrl = strpos($ls_url, '/webroot/') === false;
+		$lb_webrootNotInUrl = !str_contains($ls_url, '/webroot/');
 
 		$this->set([
 			'currentUser' => get_current_user(),
 			'rootPath' => ROOT . DS,
 			'customPath' => ROOT . DS . CUSTOM_DIR . DS,
+			'logPath' => LOGS,
 			'tempPath' => TMP,
 			'cronjobRunning' => $lb_cronjobRunning,
 			'mediaWritable' => $lb_mediaWritable,
@@ -94,6 +90,7 @@ class SystemController extends Controller {
 			'assetsCssWritable' => $lb_assetsCssWritable,
 			'assetsFontWritable' => $lb_assetsFontWritable,
 			'assetsJsWritable' => $lb_assetsJsWritable,
+			'logWritable' => $lb_logWritable,
 			'tmpWritable' => $lb_tmpWritable,
 			'webrootNotInUrl' => $lb_webrootNotInUrl,
 		]);

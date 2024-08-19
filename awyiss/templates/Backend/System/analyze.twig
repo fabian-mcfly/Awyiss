@@ -2,6 +2,7 @@
 @var currentUser string
 @var rootPath string
 @var customPath string
+@var logPath string
 @var tempPath string
 @var cronjobRunning bool
 @var mediaWritable bool
@@ -10,6 +11,7 @@
 @var assetsCssWritable bool
 @var assetsFontWritable bool
 @var assetsJsWritable bool
+@var logWritable bool
 @var tmpWritable bool
 @var webrootNotInUrl bool
 @var _view \Awyiss\View\BackendView
@@ -104,6 +106,19 @@
 									<span class="Error">
 										<strong class="Fix">{{ __('analyze_fix') }}</strong>
 										{{ __('analyze_awyiss_js_writable_error_message', rootPath, currentUser)|raw }}</span>
+								{% endif %}
+							</td>
+						</tr>
+					{% endblock %}
+					{% block tableAnalyzeBodyRowAwyissLogsWritable %}
+						<tr{% if logWritable == false %} class="Error"{% endif %}>
+							<td>{{ logWritable ? '<i class="las la-check"></i>' : '<i class="las la-times"></i>' }}</td>
+							<td>
+								<strong>{{ __('analyze_log_writable') }}</strong>
+								{% if logWritable == false %}
+									<span class="Error">
+										<strong class="Fix">{{ __('analyze_fix') }}</strong>
+										{{ __('analyze_log_writable_error_message', logPath, currentUser)|raw }}</span>
 								{% endif %}
 							</td>
 						</tr>

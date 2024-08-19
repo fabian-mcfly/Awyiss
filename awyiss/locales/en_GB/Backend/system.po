@@ -347,6 +347,13 @@ msgid "analyze_assets_js_writable_error_message"
 msgstr "Make sure the Javascript directory (<pre>{0}assets/js</pre>) is writable for the user &ldquo;{1}&ldquo;."
 "<code>chmod -R 750 {0}assets/js</code>"
 
+msgid "analyze_log_writable"
+msgstr "Log directory writable"
+
+msgid "analyze_log_writable_error_message"
+msgstr "Make sure the log directory (<pre>{0}</pre>) is writable for the user &ldquo;{1}&ldquo;."
+"<code>chmod -R 750 {0}</code>"
+
 msgid "analyze_tmp_writable"
 msgstr "Temp directory writable"
 
