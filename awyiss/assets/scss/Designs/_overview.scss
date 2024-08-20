@@ -3,11 +3,11 @@
 		> form {
 			grid-column:1 / -1;
 
-			/*@media screen AND (min-width:1441px) {
+			@media screen AND (min-width:1441px) {
 				display:grid;
-				gap:40px;
-				grid-template-columns:1fr 1fr;
-			}*/
+				gap:0 40px;
+				grid-template-columns:400px 1fr;
+			}
 		}
 
 		iframe {
@@ -18,12 +18,67 @@
 			border:0 none;
 			border-radius:5px;
 			background-color:var(--colorBright);
+
+			@media screen AND (min-width:1441px) {
+				height:calc(100dvh - 150px);
+			}
 		}
 	}
 
 	.ButtonArea {
-		&:not(.ButtonArea-Bottom) {
+		grid-column:1 / -1;
+
+		/*&:not(.ButtonArea-Bottom) {
 			margin-bottom:10px;
+		}*/
+	}
+
+	.Fieldsets,
+	#Preview {
+		container-type:inline-size;
+
+		@media screen AND (min-width:1441px) {
+			margin-bottom:calc(52px + var(--lineHeightMain) * 3);
+			position:sticky;
+			top:100px;
+		}
+	}
+
+	.Overview-Fieldset {
+		@container (max-width:1200px) {
+			grid-template-columns:repeat(8, 1fr);
+		}
+		
+		@container (max-width:860px) {
+			grid-template-columns:repeat(4, 1fr);
+		}
+
+		@container (max-width:480px) {
+			grid-template-columns:1fr;
+		}
+
+		&.Fieldset-Fonts {
+			@container (max-width:1200px) {
+				grid-column:auto / span 4;
+			}
+
+			@container (max-width:860px) {
+				grid-column:auto / span 2;
+			}
+
+			@container (max-width:480px) {
+				grid-column:1 / -1;
+			}
+
+			> .FormInput {
+				grid-column:1 / -1;
+			}
+		}
+
+		&:last-child {
+			@media screen AND (min-width:1441px) {
+				margin-bottom:0;
+			}
 		}
 	}
 
@@ -31,6 +86,10 @@
 		margin-bottom:40px;
 		padding-bottom:20px;
 		border-bottom:1px solid rgba(0, 0, 0, .1);
+
+		@container (max-width:900px) {
+			grid-template-columns:1fr;
+		}
 
 		&:last-child {
 			margin-bottom:0;
@@ -41,11 +100,19 @@
 
 	.FormInputType-Color {
 		grid-column:auto / span 2;
+
+		@container (max-width:480px) {
+			grid-column:auto / -1;
+		}
 	}
 
 	.FormInputType-Number,
 	.FormInputType-Range {
 		grid-column:auto / span 4;
+
+		@container (max-width:480px) {
+			grid-column:auto / -1;
+		}
 
 		.ForcedUnit,
 		.FormInputType-Select {
@@ -106,14 +173,37 @@
 		}
 	}
 
-	.FormInputName-FontStyleMain,
-	.FormInputName-FontWeightMain,
-	.FormInputName-FontSizeMain,
-	.FormInputName-LineHeightMain,
-	.FormInputName-FontStyleAlternative,
-	.FormInputName-FontWeightAlternative,
-	.FormInputName-FontSizeAlternative,
-	.FormInputName-LineHeightAlternative {
-		grid-column:auto / span 6;
+	.FormInputType-AdditionalVariables {
+		@container (max-width:1200px) {
+			grid-template-columns:repeat(8, 1fr);
+		}
+
+		@container (max-width:860px) {
+			grid-template-columns:repeat(4, 1fr);
+		}
+
+		@container (max-width:480px) {
+			grid-template-columns:1fr;
+		}
+
+		> .FormInput {
+			grid-column:auto / span 6;
+
+			@container (max-width:1200px) {
+				grid-column:auto / span 4;
+			}
+
+			@container (max-width:860px) {
+				grid-column:auto / span 2;
+			}
+
+			@container (max-width:480px) {
+				grid-column:1 / -1;
+			}
+
+			&[class*="FormInputName-FontStack"] {
+				grid-column:1 / -1
+			}
+		}
 	}
 }
