@@ -39,7 +39,8 @@
 				text-align:inherit;
 				pointer-events:none;
 
-				.🌚 & {
+				.🌚& {
+					border-bottom-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l - 0.0216) calc(c - 0.002) calc(h - 1.95));
 					background-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l - 0.0473) calc(c - 0.005) calc(h + 1.12))
 				}
 
