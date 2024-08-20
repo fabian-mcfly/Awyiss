@@ -176,5 +176,8 @@ msgstr "Use file(s)"
 msgid "error_valid_media_folder_id"
 msgstr "Invalid folder"
 
+msgid "error_mimetype_not_modified"
+msgstr "The type of the file cannot be modified"
+
 msgid "usage_count"
 msgstr "Usages"

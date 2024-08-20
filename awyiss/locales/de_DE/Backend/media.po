@@ -176,5 +176,8 @@ msgstr "Datei(en) verwenden"
 msgid "error_valid_media_folder_id"
 msgstr "Ungültiger Medienordner"
 
+msgid "error_mimetype_not_modified"
+msgstr "Der Dateityp kann nicht geändert werden"
+
 msgid "usage_count"
 msgstr "Verwendungen"

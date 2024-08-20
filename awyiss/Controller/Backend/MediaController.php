@@ -213,6 +213,10 @@ class MediaController extends Controller {
 				}
 			}
 
+			/**
+			 * If the request is an AJAX request, the type is a form submit (not a reload)
+			 * set the view class to JSON, disable the auto layout and render the response
+			 */
 			if ($this->request->is('ajax') && !$this->request->getData('reload_form')) {
 				$ls_errorMessage = null;
 				if ($lo_media->hasErrors()) {
@@ -269,6 +273,15 @@ class MediaController extends Controller {
 	public function edit(int $id) {
 		$this->Authorization->ensure('create');
 
+		/**
+		 * Fetch, patch and save the media entity
+		 *
+		 * If the request is an AJAX request, catch the RedirectException so the
+		 * rest of the method can handle the AJAX response
+		 *
+		 * If the request is not an AJAX request or another type of exception is thrown,
+		 * the exception is rethrown so the exception handler can handle it
+		 */
 		try {
 			/** @var \Awyiss\Model\Entity\Media $lo_media */
 			$lo_media = $this->Media->findById($id)->find('translations')->first();
@@ -291,6 +304,10 @@ class MediaController extends Controller {
 			}
 		}
 
+		/**
+		 * If the request is an AJAX request, the type is a form submit (type patch, post or put and not a reload)
+		 * set the view class to JSON, disable the auto layout and render the response
+		 */
 		if ($this->request->is(['patch', 'post', 'put']) && $this->request->is('ajax') && !$this->request->getData('reload_form')) {
 			$ls_errorMessage = null;
 			if ($lo_media->hasErrors()) {
@@ -540,7 +557,7 @@ class MediaController extends Controller {
 	 * Show a form to select a folder
 	 *
 	 * @return void
-	 * @throws \ReflectionException|\Exception
+	 * @throws \Exception
 	 */
 	#[NoDirectAccess]
 	public function folderSelect(): void {

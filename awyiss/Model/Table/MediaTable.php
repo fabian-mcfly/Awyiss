@@ -211,6 +211,18 @@ class MediaTable extends Table {
 		);
 
 
+		$rules->addUpdate(
+			function (Media $entity) {
+				return !$entity->isDirty('mimeType') || $entity->getOriginal('mimeType') === $entity->mimeType;
+			},
+			'mimetypeNotModified',
+			[
+				'errorField' => 'file',
+				'message' => __df($this->getI18nDomain(), 'validation', 'error_mimetype_not_modified'),
+			]
+		);
+
+
 		return $rules;
 	}
 
