@@ -51,5 +51,22 @@ class ContentsAttributeOptionsCollection extends AttributeOptionsCollection {
 				'value' => '',*/
 			],
 		]);
+
+		/**
+		 * Attribute options can also be added by passing an instance of `AttributeOptions` to the `add` method.
+		 * This allows using named parameters for the constructor of `AttributeOptions`.
+		 *
+		 *	$this->add(new \Awyiss\Attribute\AttributeOptions(
+		 *		identifier: 'backgroundColor',
+		 *		options: [
+		 *			'text' => 'Text',
+		 *			'dark' => 'Dunkel',
+		 *			'medium' => 'Mittel',
+		 *			'light' => 'Hell',
+		 *			'main' => 'Hauptfarbe',
+		 *			'contrast' => 'Kontrastfarbe',
+		 *		],
+		 *	));
+		 */
 	}
 }

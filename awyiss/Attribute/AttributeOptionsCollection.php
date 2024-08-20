@@ -74,7 +74,7 @@ abstract class AttributeOptionsCollection extends ArrayIterator implements Attri
 					$lx_attributeOption += ['identifier' => $lx_key];
 				}
 
-				$this->add(new AttributeOptions($lx_attributeOption));
+				$this->add(new AttributeOptions(...$lx_attributeOption));
 			}
 		}
 

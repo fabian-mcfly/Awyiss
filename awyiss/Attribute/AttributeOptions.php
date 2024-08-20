@@ -5,8 +5,6 @@ namespace Awyiss\Attribute;
 
 
 use Awyiss\Model\Entity;
-use Cake\Utility\Inflector;
-use JetBrains\PhpStorm\ArrayShape;
 use RuntimeException;
 
 
@@ -23,18 +21,6 @@ use RuntimeException;
  * @see AttributeOptionsInterface::initializeAttributeOptions
  */
 class AttributeOptions {
-	/**
-	 * Holds the array definition for `\JetBrains\PhpStorm\ArrayShape` used in `__construct`
-	 */
-	protected const SETTINGS_SHAPE = [
-		'disabled' => 'array|bool|callable',
-		'identifier' => 'string',
-		'options' => 'array|callable',
-		'readonly' => 'bool|callable',
-		'toScalar' => 'callable|null',
-		'validate' => 'mixed|callable',
-		'value' => 'mixed|callable',
-	];
 	/**
 	 * @var callable|array|bool
 	 */
@@ -66,34 +52,49 @@ class AttributeOptions {
 
 
 	/**
-	 * @param array{disabled: array|bool|callable, identifier: string, readonly: bool|callable, options: array|callable, value: mixed|callable} $settings
+	 * @param callable|array|bool|null $disabled
+	 * @param string $identifier
+	 * @param callable|array|null $options
+	 * @param callable|bool|null $readonly
+	 * @param callable|null $toScalar
+	 * @param mixed|null $validate
+	 * @param mixed|null $value
 	 */
-	public function __construct(#[ArrayShape(self::SETTINGS_SHAPE)] array $settings = []) {
-		foreach (
-			[
-				'disabled',
-				'identifier',
-				'options',
-				'readonly',
-				'toScalar',
-				'validate',
-				'value',
-			] as $ls_key
-		) {
-			if (!isset($settings[ $ls_key ])) {
-				continue;
-			}
-
-			$ls_method = Inflector::camelize($ls_key);
-			if ($ls_method === 'ToScalar') {
-				$ls_method = 'Scalar';
-			}
-
-			$ls_method = 'set' . $ls_method;
-			if (method_exists($this, $ls_method)) {
-				$this->{$ls_method}($settings[ $ls_key ]);
-			}
+	public function __construct(
+		string $identifier,
+		array|bool|callable|null $disabled = null,
+		array|callable|null $options = null,
+		bool|callable|null $readonly = null,
+		?callable $toScalar = null,
+		mixed $validate = null,
+		mixed $value = null
+	) {
+		if ($disabled) {
+			$this->setDisabled($disabled);
 		}
+
+		$this->setIdentifier($identifier);
+
+		if ($options) {
+			$this->setOptions($options);
+		}
+
+		if ($readonly) {
+			$this->setReadonly($readonly);
+		}
+
+		if ($toScalar) {
+			$this->setScalar($toScalar);
+		}
+
+		if ($validate) {
+			$this->setValidate($validate);
+		}
+
+		if ($value) {
+			$this->setValue($value);
+		}
+
 
 		if (!isset($this->identifier)) {
 			throw new RuntimeException('The `identifier` attribute is not set.');
