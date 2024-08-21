@@ -171,8 +171,8 @@ class AwyissModule {
 					clipboardData += "\n\n";
 				}
 
-				clipboardData += '<module class="' + block.attributes.class.nodeValue + '" data-label="' + block.dataset.label + '">' +
-					block.textContent + '</module>';
+				clipboardData += '<module class="' + block.attributes.class.nodeValue + '" data-label="' + block.dataset.label + '" data-identifier="' +
+					block.dataset.identifier + '">' + block.textContent + '</module>';
 
 				foundModule = true;
 			}
