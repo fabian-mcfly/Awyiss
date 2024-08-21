@@ -93,7 +93,7 @@ class DesignMiddleware implements MiddlewareInterface {
 
 		try {
 			// Compile the SCSS files
-			$la_result = ScssCompiler::compileFolders($la_files, $this->getDesignVariables());
+			$la_result = ScssCompiler::compileFolders($la_files, $this->getDesignVariables($realm ?? Awyiss::getRealm()));
 		}
 		catch (Exception $ex) {
 			$this->resetFileTimes($la_files);
@@ -107,14 +107,21 @@ class DesignMiddleware implements MiddlewareInterface {
 		}
 	}
 
+
 	/**
 	 * Returns an array of variables, set via DesignController, that can be used in the SCSS files.
 	 *
+	 * @param string $realm
 	 * @return array
 	 */
-	public function getDesignVariables(): array {
+	public function getDesignVariables(string $realm = Awyiss::REALM_FRONTEND): array {
 		if (isset($this->designVariables)) {
 			return $this->designVariables;
+		}
+
+		// Do not load design variables for the backend
+		if ($realm === Awyiss::REALM_BACKEND) {
+			return [];
 		}
 
 		$lo_designTable = FactoryLocator::get('Table')->get('Designs');
