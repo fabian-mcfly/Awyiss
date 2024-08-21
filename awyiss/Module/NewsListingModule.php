@@ -152,7 +152,7 @@ class NewsListingModule implements ModuleInterface {
 
 		$lo_query->orderBy(['date' => 'DESC']);
 
-		if (isset($lo_newsTable->getAttributes()['inTeaser'])) {
+		if (!$lb_paginate && isset($lo_newsTable->getAttributes()['inTeaser'])) {
 			$lo_query->where(['in_teaser' => true]);
 		}
 
