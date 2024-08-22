@@ -19,6 +19,15 @@ use Symfony\Component\Process\Process;
 class ClearCacheCommand extends Command {
 	/**
 	 * @inheritDoc
+	 */
+	public static function getDescription(): string {
+		return 'Removes files (resized, previews, effects, webp), deleted folders, and resets the database status (preview, webp) of media records';
+	}
+
+
+
+	/**
+	 * @inheritDoc
 	 * @param \Cake\Console\ConsoleOptionParser $parser
 	 * @return \Cake\Console\ConsoleOptionParser
 	 */
@@ -37,7 +46,7 @@ class ClearCacheCommand extends Command {
 				'deleted',
 				'effects',
 				'previews',
-				'thumbnails',
+				'resized',
 				'webp',
 			],
 			'default' => 'all',
@@ -97,10 +106,26 @@ class ClearCacheCommand extends Command {
 
 		$li_updatedRows = $this->resetMediaRecords($ls_type);
 		if ($li_updatedRows) {
-			$io->success(sprintf('Updated %d rows', $li_updatedRows));
+			$io->success(sprintf('Updated %d media rows', $li_updatedRows));
 		}
 		else {
-			$io->out('Updated 0 rows');
+			$io->out('Updated 0 media rows');
+		}
+
+
+		if (in_array($ls_type, ['all', 'resized'])) {
+			$io->out('Deleting resized database records... ', 0);
+
+			/** @var \Awyiss\Model\Table\MediaResizedImagesTable $lo_table */
+			$lo_table = $this->fetchTable('MediaResizedImages');
+
+			$li_resizedRows = $lo_table->deleteAll([]);
+			if ($li_resizedRows) {
+				$io->success(sprintf('Deleted %d resized media rows', $li_resizedRows));
+			}
+			else {
+				$io->out('Updated 0 resized media rows');
+			}
 		}
 
 
@@ -149,8 +174,8 @@ class ClearCacheCommand extends Command {
 					$la_folders = array_merge($la_folders, glob(WWW_ROOT . $lo_folder->path . '/_*_preview', GLOB_ONLYDIR) ?: []);
 				}
 
-				if (in_array($type, ['all', 'thumbnails'])) {
-					$ls_folder = WWW_ROOT . $lo_folder->path . '/_thumbnails';
+				if (in_array($type, ['all', 'resized'])) {
+					$ls_folder = WWW_ROOT . $lo_folder->path . '/_resized';
 					if (file_exists($ls_folder)) {
 						$la_folders[] = $ls_folder;
 					}
@@ -189,6 +214,8 @@ class ClearCacheCommand extends Command {
 
 
 	/**
+	 * Resets the status of the `preview` and `webp` fields of the media records
+	 *
 	 * @param string $type
 	 * @return int
 	 */
