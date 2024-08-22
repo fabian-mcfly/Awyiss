@@ -375,3 +375,18 @@ msgstr "Frontend"
 
 msgid "permission_analyze"
 msgstr "Analyse"
+
+msgid "meta_title_clear_cache"
+msgstr "Cache leeren"
+
+msgid "headline_clear_cache"
+msgstr "Cache leeren"
+
+msgid "clear_cache"
+msgstr "Cache leeren"
+
+msgid "clear_cache_running"
+msgstr "Cache wird geleert."
+
+msgid "clear_cache_completed"
+msgstr "Der Cache wurde erfolgreich geleert."

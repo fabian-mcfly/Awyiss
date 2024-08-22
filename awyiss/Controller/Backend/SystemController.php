@@ -95,4 +95,57 @@ class SystemController extends Controller {
 			'webrootNotInUrl' => $lb_webrootNotInUrl,
 		]);
 	}
+
+
+	/**
+	 * @return void
+	 * @throws \Exception
+	 */
+	public function clearCache(): void {
+		$this->Authorization->ensure('analyze');
+
+		/** @var \Queue\Model\Table\QueuedJobsTable $lo_queue */
+		$lo_queue = $this->fetchTable('Queue.QueuedJobs');
+
+		$lo_session = $this->request->getSession();
+		$li_runningJobId = $lo_session->read('Backend.System.clearCache.jobId');
+
+		if ($li_runningJobId) {
+			$lo_runningJob = $lo_queue->get($li_runningJobId);
+
+			if (!$lo_runningJob || $lo_runningJob->completed) {
+				$lo_session->delete('Backend.System.clearCache.jobId');
+			}
+		}
+		else {
+			$ls_reference = 'system::clear_cache';
+
+			$lo_runningJob = $lo_queue->find()->where([
+				'reference' => $ls_reference,
+				'completed IS' => null,
+			])->first();
+
+			if (!$lo_runningJob) {
+				$lo_runningJob = $lo_queue->createJob('Queue.Execute', [
+					'command' => 'bin/cake cache clear_all',
+					'escape' => false,
+					'log' => true,
+				], [
+					'group' => 'general',
+					'priority' => 1,
+					'reference' => $ls_reference,
+				]);
+			}
+
+			$lo_session->write('Backend.System.clearCache.jobId', $lo_runningJob->id);
+		}
+
+		if ($this->request->is('ajax')) {
+			$this->viewBuilder()->setOption('serialize', ['runningJob'])->setClassName('Json');
+		}
+
+		$this->set([
+			'runningJob' => $lo_runningJob,
+		]);
+	}
 }

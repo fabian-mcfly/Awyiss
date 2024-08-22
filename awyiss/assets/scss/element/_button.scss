@@ -34,7 +34,8 @@ button,
 		background-image:none;
 	}
 
-	&[disabled] {
+	&[disabled],
+	&.Disabled {
 		pointer-events:none;
 		opacity:.1;
 	}
@@ -281,7 +282,8 @@ button,
 	&-SaveSystemOrder {
 		transition:outline-color 0.1s ease-in-out;
 
-		&[disabled] {
+		&[disabled],
+		&.Disabled {
 			&::after {
 				//display:none;
 			}

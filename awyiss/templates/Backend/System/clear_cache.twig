@@ -1,0 +1,32 @@
+{#
+@var runningJob \Queue\Model\Entity\QueuedJob
+@var _view \Awyiss\View\BackendView
+@var AssetHelper \Awyiss\View\Helper\AssetHelper
+@var AttributesHelper \Awyiss\View\Helper\AttributesHelper
+@var AuthorizationHelper \Awyiss\View\Helper\AuthorizationHelper
+@var CategoriesHelper \Awyiss\View\Helper\CategoriesHelper
+@var FlashHelper \Awyiss\View\Helper\FlashHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+@var HtmlHelper \Cake\View\Helper\HtmlHelper
+@var LocaleHelper \Awyiss\View\Helper\LocaleHelper
+@var MediaHelper \Awyiss\View\Helper\MediaHelper
+@var PaginatorHelper \Awyiss\View\Helper\PaginatorHelper
+@var SystemOrderHelper \Awyiss\View\Helper\SystemOrderHelper
+@var UrlHelper \Awyiss\View\Helper\UrlHelper
+#}
+
+<div class="System ClearCache">
+	{% block headlineClearCache %}
+		{{ HtmlHelper.link(__('back_to_overview'), {controller: 'System', action: 'analyze'}, {class: 'BackToOverview'}) }}
+
+		<h1>{{ __('headline_clear_cache') }}</h1>
+	{% endblock %}
+
+	{% if runningJob.completed is empty	%}
+		<p class="FlashMessage FlashMessage-">{{ __('clear_cache_running') }}</p>
+
+		<meta http-equiv="refresh" content="1">
+	{% else %}
+		<p class="FlashMessage Success">{{ __('clear_cache_completed') }}</p>
+	{% endif %}
+</div>
