@@ -7,6 +7,7 @@ namespace Awyiss\Middleware;
 use Awyiss\Awyiss;
 use Awyiss\Utility\Design\ScssCompiler;
 use Awyiss\Utility\Design\ScssFilesCollection;
+use Cake\Core\Configure;
 use Cake\Datasource\FactoryLocator;
 use Exception;
 use Psr\Http\Message\ResponseInterface;
@@ -38,13 +39,23 @@ class DesignMiddleware implements MiddlewareInterface {
 		// Determine the environment the application is running in
 		$ls_configEnv = defined('CONFIG_ENV') ? CONFIG_ENV : 'production';
 
+		// Is autoCompile set to true in the configuration?
+		$lb_shouldCompile = Configure::read('Design.autoCompile');
 		// Determine if the environment resembles a production environment
-		$lb_shouldCompile = $lb_showExceptions = !in_array($ls_configEnv, ['production', 'prod', 'live']);
+		$lb_shouldCompile = $lb_showExceptions = $lb_shouldCompile && !in_array($ls_configEnv, ['production', 'prod', 'live']);
+
+		// Check if the SCSS files must be compiled
+		$lb_mustCompile = false;
+
+		// Check if the request is allowed to compile SCSS files
+		$lb_allowCompile = Configure::read('Design.allowCompile');
+		if (is_callable($lb_allowCompile)) {
+			$lb_allowCompile = $lb_allowCompile($request);
+		}
 
 		// Check if the request has a query parameter to compile SCSS files
-		$lb_mustCompile = false;
 		$la_queryParams = $request->getQueryParams();
-		if (($la_queryParams['compileScss'] ?? false) === 'true') {
+		if ($lb_allowCompile && ($la_queryParams['compileScss'] ?? false) === 'true') {
 			$lb_mustCompile = true;
 		}
 

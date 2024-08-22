@@ -133,6 +133,19 @@ return [
 
 	'Design' => [
 		/**
+		 * If set to true, the SCSS files will be compiled in 'production' environments
+		 * if the url contains `/compile-scss:true/`.
+		 *
+		 * Can also be set to a callable that returns a boolean, in case you want to
+		 * check for an IP address or something else.
+		 */
+		'allowCompile' => true,
+		/**
+		 * If set to true, the SCSS files will be compiled automatically
+		 * if the environment is neither 'production', 'prod' nor 'live'.
+		 */
+		'autoCompile' => true,
+		/**
 		 * Blocklisted variables that should not be shown in the designer.
 		 * If a variable name contains a regex pattern but the exact variable name
 		 * is set in the variableMapping, the variable will still be shown.
