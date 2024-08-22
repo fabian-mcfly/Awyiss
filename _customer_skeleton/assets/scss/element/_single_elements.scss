@@ -30,3 +30,11 @@
 		border-top:1px solid rgba(255 255 255 / .25);
 	}
 }
+
+.Widget-Breadcrumbs {
+	position:absolute;
+	top:calc(var(--lineHeightMain) * 1 + var(--headerHeight) + 25px);
+	right:0;
+	left:0;
+	z-index:10;
+}

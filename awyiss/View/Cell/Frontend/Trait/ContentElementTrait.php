@@ -405,6 +405,10 @@ trait ContentElementTrait {
 		$entity->cssClass .= 'Element Template-' . Inflector::ucparts($entity->$ls_template->fileName);
 		$entity->cssClass .= ' ' . $entity->column['width']->getCssClass();
 
+		if ($entity instanceof Widget) {
+			$entity->cssClass .= ' Widget-' . Inflector::ucparts($entity->identifier, false);
+		}
+
 		if ($entity->column['indent']) {
 			$entity->cssClass .= ' ' . $entity->column['indent']?->getCssClass();
 		}

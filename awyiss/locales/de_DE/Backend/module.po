@@ -22,3 +22,15 @@ msgstr "Anzahl der Einträge"
 
 msgid "offset"
 msgstr "Offset"
+
+msgid "breadcrumbs_include_homepage"
+msgstr "Startseite anzeigen"
+
+msgid "breadcrumbs_include_current_page"
+msgstr "Aktuelle Seite anzeigen"
+
+msgid "breadcrumbs_show_on_homepage"
+msgstr "Auf Startseite anzeigen"
+
+msgid "breadcrumbs_homepage_id"
+msgstr "Startseite"

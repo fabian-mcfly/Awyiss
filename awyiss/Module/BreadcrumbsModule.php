@@ -1,0 +1,202 @@
+<?php declare(strict_types=1);
+
+
+namespace Awyiss\Module;
+
+
+use Awyiss\Model\Entity;
+use Awyiss\Model\Entity\Language;
+use Awyiss\Routing\Router;
+use Awyiss\Utility\Media\MediaRenderOptions;
+use Awyiss\View\BackendView;
+use Awyiss\View\FrontendView;
+use Cake\Datasource\FactoryLocator;
+
+
+/**
+ * Class NewsListingModule
+ * Show a list of news, either paginated or limited to a certain number of items
+ */
+class BreadcrumbsModule implements ModuleInterface {
+	/**
+	 * The identifier of the module
+	 *
+	 * @var string
+	 */
+	protected static string $identifier = 'breadcrumbs';
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public static function getIdentifier(): string {
+		return static::$identifier;
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public static function getTitle(): string {
+		// Translate using __d() if needed
+		return 'Breadcrumbs';
+	}
+
+
+	/**
+	 * @inheritDoc
+	 * @throws \Exception
+	 */
+	public static function renderForm(BackendView $view, ?Language $frontendLanguage = null, ?Language $userLanguage = null, array $settings = []): string {
+		$ls_return = '';
+
+		/**
+		 * Get the form helper
+		 *
+		 * @var \Awyiss\View\Helper\FormHelper $lo_formHelper
+		 */
+		$lo_formHelper = $view->helpers()->get('Form');
+
+		// Checkbox if the homepage should be included in the breadcrumbs (default: true)
+		$ls_return .= $lo_formHelper->control('settings.includeHomepage', [
+			'checked' => $settings['includeHomepage'] ?? true,
+			'columnSpan' => 4,
+			'label' => __d('module', 'breadcrumbs_include_homepage'),
+			'type' => 'checkbox',
+		]);
+
+		// Checkbox if the current page should be included in the breadcrumbs (default: true)
+		$ls_return .= $lo_formHelper->control('settings.includeCurrentPage', [
+			'checked' => $settings['includeCurrentPage'] ?? true,
+			'columnSpan' => 4,
+			'label' => __d('module', 'breadcrumbs_include_current_page'),
+			'type' => 'checkbox',
+		]);
+
+		// Checkbox if the breadcrumb should be shown on the homepage (default: false)
+		$ls_return .= $lo_formHelper->control('settings.showOnHomepage', [
+			'checked' => $settings['showOnHomepage'] ?? false,
+			'columnSpan' => 4,
+			'label' => __d('module', 'breadcrumbs_show_on_homepage'),
+			'type' => 'checkbox',
+		]);
+
+		// A dropdown to select the homepage (for the current language)
+		$ls_return .= $lo_formHelper->control('settings.homepageId', [
+			'columnSpan' => 12,
+			'empty' => true,
+			'label' => __d('module', 'breadcrumbs_homepage_id'),
+			'options' => static::getHomepageOptions(),
+			'type' => 'select',
+			'value' => $settings['homepageId'] ?? null,
+		]);
+
+		return $ls_return;
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public static function render(array $settings, FrontendView $view, ?MediaRenderOptions $mediaRenderOptions, ?Entity $entity = null, ?Language $frontendLanguage = null): string {
+		$lb_includeHomepage = $settings['includeHomepage'] ?? true;
+		$lb_includeCurrentPage = $settings['includeCurrentPage'] ?? true;
+		$lb_showOnHomepage = $settings['showOnHomepage'] ?? false;
+		$li_homepageId = $settings['homepageId'] ?? null;
+
+		/** @var \Awyiss\Model\Table\PagesTable $lo_pageTable */
+		$lo_pagesTable = FactoryLocator::get('Table')->get('Pages');
+
+		if ($li_homepageId) {
+			$lo_homepage = $lo_pagesTable->get($li_homepageId);
+		}
+		else {
+			// Get the homepage entity (first active and published page for the current language with parent_id = null)
+			$lo_query = $lo_pagesTable->find('published', skipPageRoleCheck: true);
+
+			$lo_query->orderBy([
+				'Pages.deleted' => 'ASC',
+				'Pages.parents_active' => 'DESC',
+				'Pages.active' => 'DESC',
+				'Pages.parent_id' => 'ASC',
+			]);
+
+			$lo_homepage = $lo_query->first();
+		}
+
+		$li_homepageId = $lo_homepage->id;
+
+		// Get the current path
+		$ls_path = trim(Router::getRequest()->getPath(), '/');
+		$la_pathParts = explode('/', $ls_path);
+		array_shift($la_pathParts);
+
+		// Get all pages in the current path
+		$lo_query = $lo_pagesTable->find('forCurrentLanguage');
+
+		$ls_currentPath = '';
+		$la_paths = [];
+		foreach ($la_pathParts as $ls_pathPart) {
+			$ls_currentPath .= ($ls_currentPath ? '/' : '') . $ls_pathPart;
+			$la_paths[] = $ls_currentPath;
+		}
+
+		if (!$lb_includeCurrentPage) {
+			array_pop($la_paths);
+		}
+
+		if ($la_paths) {
+			$lo_query->where(['Pages.slug IN' => $la_paths])
+				// Order by the length of the slug
+				->orderBy(['LENGTH(Pages.slug)' => 'ASC']);
+			$la_pages = $lo_query->all()->indexBy('id')->toArray();
+		}
+		else {
+			$la_pages = [];
+		}
+
+		if ($lb_includeHomepage) {
+			$la_pages = [$li_homepageId => $lo_homepage] + $la_pages;
+		}
+
+		return $view->element('module/breadcrumbs', [
+			'entity' => $entity,
+			'frontendLanguage' => $frontendLanguage,
+			'mediaRenderOptions' => $mediaRenderOptions,
+			'includeHomepage' => $lb_includeHomepage,
+			'includeCurrentPage' => $lb_includeCurrentPage,
+			'showOnHomepage' => $lb_showOnHomepage,
+			'homepageId' => $li_homepageId,
+			'homepage' => $lo_homepage,
+			'pages' => $la_pages,
+			'settings' => $settings,
+		]);
+	}
+
+
+	/**
+	 * @return array
+	 */
+	protected static function getHomepageOptions(): array {
+		$la_options = [];
+
+		/** @var \Awyiss\Model\Table\PagesTable $lo_pageTable */
+		$lo_pageTable = FactoryLocator::get('Table')->get('Pages');
+
+		$lo_query = $lo_pageTable->find('active')->find('threaded')->find('forCurrentLanguage');
+
+		$lo_pages = $lo_query->all()->listNested();
+
+		/** @var \Awyiss\Model\Entity\Page $lo_page */
+		foreach ($lo_pages as $lo_page) {
+			$lo_page->setVirtual(['level']);
+			//Add the current depth as a level-property to the entity
+			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+			$lo_page->level = $lo_pages->getDepth();
+
+			$la_options[ $lo_page->id ] = str_repeat('- ', $lo_page->level) . ' ' . $lo_page->title;
+		}
+
+		return $la_options;
+	}
+}

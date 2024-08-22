@@ -53,6 +53,7 @@ class NewsListingModule implements ModuleInterface {
 
 	/**
 	 * @inheritDoc
+	 * @throws \Exception
 	 */
 	public static function renderForm(BackendView $view, ?Language $frontendLanguage = null, ?Language $userLanguage = null, array $settings = []): string {
 		$ls_return = '';

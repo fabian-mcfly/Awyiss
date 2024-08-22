@@ -1,4 +1,5 @@
 {#
+@var isErrorPage bool
 @var page \Awyiss\Model\Entity\Page
 @var pageRoleEnum \Awyiss\Model\Enum\PageRoleEnumInterface
 @var baseUrl string
@@ -120,6 +121,12 @@
 			{% block bodyInner %}
 				{% block bodyHeader %}
 					{% include '@Frontend/element/header.twig' %}
+				{% endblock %}
+
+				{% block bodyBreadcrumbs %}
+					{% if isErrorPage == false %}
+						{{ widget('breadcrumbs') }}
+					{% endif %}
 				{% endblock %}
 
 				{% block bodyContent %}

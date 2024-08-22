@@ -22,3 +22,15 @@ msgstr "Number of items"
 
 msgid "offset"
 msgstr "Offset"
+
+msgid "breadcrumbs_include_homepage"
+msgstr "Include homepage"
+
+msgid "breadcrumbs_include_current_page"
+msgstr "Include current page"
+
+msgid "breadcrumbs_show_on_homepage"
+msgstr "Show on homepage"
+
+msgid "breadcrumbs_homepage_id"
+msgstr "Homepage"

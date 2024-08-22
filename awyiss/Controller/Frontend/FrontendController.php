@@ -290,6 +290,7 @@ class FrontendController extends AppController {
 		);
 
 		$this->set([
+			'isErrorPage' => $lb_isErrorPage,
 			'page' => $lo_page,
 			'pageRoleEnum' => $ls_pageRoleEnum,
 			'mediaRenderOptions' => $lo_mediaRenderOptions,
