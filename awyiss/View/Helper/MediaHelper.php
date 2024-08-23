@@ -650,11 +650,11 @@ class MediaHelper extends Helper {
 	/**
 	 * @param string $path
 	 * @param array $attributes
-	 * @param string $averageColor
+	 * @param string|null $averageColor
 	 * @param \Awyiss\Utility\Media\MediaRenderOptions $mediaRenderOptions
 	 * @return string
 	 */
-	protected function simpleImageTag(string $path, array $attributes, string $averageColor, MediaRenderOptions $mediaRenderOptions): string {
+	protected function simpleImageTag(string $path, array $attributes, ?string $averageColor, MediaRenderOptions $mediaRenderOptions): string {
 		$la_attributes = $attributes;
 		$la_attributes['class'] = trim($this->lazyLoadClass . ' ' . ($la_attributes['class'] ?? ''));
 		$ls_attributes = $this->Html->templater()->formatAttributes($la_attributes);
