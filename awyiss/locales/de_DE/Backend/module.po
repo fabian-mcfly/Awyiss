@@ -34,3 +34,12 @@ msgstr "Auf Startseite anzeigen"
 
 msgid "breadcrumbs_homepage_id"
 msgstr "Startseite"
+
+msgid "instagram_items"
+msgstr "Anzahl der Einträge"
+
+msgid "instagram_profile_name"
+msgstr "Profilname"
+
+msgid "instagram_credentials_missing"
+msgstr "Instagram Zugangsdaten fehlen"

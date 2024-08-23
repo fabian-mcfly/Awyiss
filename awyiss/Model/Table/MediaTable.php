@@ -104,7 +104,6 @@ class MediaTable extends Table {
 		$validator->requirePresence([
 			'mediaFolderId',
 			'name',
-			'file',
 		], 'create');
 
 

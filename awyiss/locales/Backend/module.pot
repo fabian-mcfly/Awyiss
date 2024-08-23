@@ -34,3 +34,12 @@ msgstr "Show on homepage"
 
 msgid "breadcrumbs_homepage_id"
 msgstr "Homepage"
+
+msgid "instagram_items"
+msgstr "Number of items"
+
+msgid "instagram_profile_name"
+msgstr "Profile name"
+
+msgid "instagram_credentials_missing"
+msgstr "Instagram credentials missing"

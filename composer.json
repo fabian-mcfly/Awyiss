@@ -25,6 +25,7 @@
 		"josegonzalez/dotenv": "^4.0",
 		"matthiasmullie/minify": "^1.3",
 		"paragonie/csp-builder": "^3.0",
+		"pgrimaud/instagram-user-feed": "^7.0",
 		"scssphp/scssphp": "^1.12",
 		"tinymce/tinymce": "^7.1"
 	},

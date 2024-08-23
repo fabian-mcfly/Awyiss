@@ -78,6 +78,13 @@ return [
 			'path' => CACHE,
 		],
 
+		'instagram' => [
+			'className' => FileEngine::class,
+			'duration' => 43200,
+			'path' => CACHE . 'instagram' . DS,
+			'prefix' => 'instagram_',
+		],
+
 		'persistent' => [
 			'className' => FileEngine::class,
 			'duration' => '+1 years',
@@ -88,7 +95,7 @@ return [
 		'_cake_core_' => [
 			'className' => FileEngine::class,
 			'duration' => '+1 years',
-			'path' => CACHE . 'persistent' . DS,
+			'path' => CACHE . 'core' . DS,
 			'prefix' => 'awyiss_core_',
 			'serialize' => true,
 		],

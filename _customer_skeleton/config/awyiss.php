@@ -249,6 +249,12 @@ return [
 		],
 	],
 
+	'Instagram' => [
+		'userName' => null,
+		'password' => null,
+		'mediaFolderId' => 1,
+	],
+
 	'MimeTypes' => [
 		//Example to add a valid file extension to a mimetype
 		'application/zip' => ['sh3d'],
