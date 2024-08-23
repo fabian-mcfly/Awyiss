@@ -101,7 +101,12 @@ class MediaListener implements EventListenerInterface {
 				return;
 			}
 
-			$entity->name .= '.' . current($la_knownExtensions);
+			$ls_realExtension = current($la_knownExtensions);
+			if ($ls_realExtension === 'jpeg') {
+				$ls_realExtension = 'jpg';
+			}
+
+			$entity->name .= '.' . $ls_realExtension;
 		}
 
 		if ($entity->file && !$entity->file->getError()) {
