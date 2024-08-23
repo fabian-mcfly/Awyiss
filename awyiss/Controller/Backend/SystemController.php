@@ -7,6 +7,7 @@ namespace Awyiss\Controller\Backend;
 use Awyiss\Annotation\NoDirectAccess;
 use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Routing\Router;
+use Cake\Core\Configure;
 use Cake\ORM\Query\SelectQuery;
 
 
@@ -39,7 +40,8 @@ class SystemController extends Controller {
 
 		// Check if the cronjob is running
 		$lo_table = $this->fetchTable('Queue.QueueProcesses');
-		$lb_cronjobRunning = $lo_table->find('all')->where(['QueueProcesses.modified >' => date('Y-m-d H:i:s', strtotime('-15 minutes'))])->count() > 0;
+		$li_timeOffset = time() - Configure::read('Queue.workermaxruntime');
+		$lb_cronjobRunning = $lo_table->find('all')->where(['QueueProcesses.modified >' => date('Y-m-d H:i:s', $li_timeOffset)])->count() > 0;
 
 		// Check if webroot/media is writable
 		$ls_mediaPath = WWW_ROOT . 'media';
