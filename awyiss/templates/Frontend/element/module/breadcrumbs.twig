@@ -20,15 +20,21 @@
 @var TimeHelper \Cake\View\Helper\TimeHelper
 #}
 
-{% set currentPage = page %}
-{% if homepageId != page.id or showOnHomepage %}
-	<div class="Module-Breadcrumbs">
-		<ol class="Breadcrumbs">
-			{% for page in pages %}
-				<li class="Breadcrumb">
-					<a href="{{ UrlHelper.build({lang: page.languageShortcode, slug: page.slug}) }}">{{ page.title }}</a>
-				</li>
-			{% endfor %}
-		</ol>
-	</div>
-{% endif %}
+{% block moduleBreadcrumbs %}
+	{% set currentPage = page %}
+	{% if homepageId != page.id or showOnHomepage %}
+		<div class="Module-Breadcrumbs">
+			{% block breadcrumbsList %}
+				<ol class="Breadcrumbs">
+					{% for page in pages %}
+						{% block breadcrumbsItem %}
+							<li class="Breadcrumb">
+								<a href="{{ UrlHelper.build({lang: page.languageShortcode, slug: page.slug}) }}">{{ page.title }}</a>
+							</li>
+						{% endblock %}
+					{% endfor %}
+				</ol>
+			{% endblock %}
+		</div>
+	{% endif %}
+{% endblock %}

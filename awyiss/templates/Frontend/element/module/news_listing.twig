@@ -19,52 +19,71 @@
 @var TimeHelper \Cake\View\Helper\TimeHelper
 #}
 
-<div class="Module-NewsListing">
-	{% if news.count %}
-		<ul class="List">
-			{# @var newsItem \Awyiss\Model\Entity\Page #}
-			{% for newsItem in news %}
-				{% set link = UrlHelper.build({lang: newsItem.languageShortcode, slug: newsItem.slug}) %}
-				<li class="Item NewsItem" id="NewsItem{{ newsItem.id }}">
-					{% if newsItem.mediaAssignments.titleAndTeaserImage.teaserMedia %}
-						<div class="Image">
-							{{ MediaHelper.htmlTag(
-								newsItem.mediaAssignments.titleAndTeaserImage.teaserMedia,
-								mediaRenderOptions.withColumnWidth(25).withHeight(200).withResizeStrategy('cover')
-							) }}
-						</div>
-					{% endif %}
+{% block moduleNewsListing %}
+	<div class="Module-NewsListing">
+		{% if news.count %}
+			{% block newsListingList %}
+				<ul class="List">
+					{# @var newsItem \Awyiss\Model\Entity\Page #}
+					{% for newsItem in news %}
+						{% block newsListingItem %}
+							{% set link = UrlHelper.build({lang: newsItem.languageShortcode, slug: newsItem.slug}) %}
+							<li class="Item NewsItem" id="NewsItem{{ newsItem.id }}">
+								{% block newsListingItemImage %}
+									{% if newsItem.mediaAssignments.titleAndTeaserImage.teaserMedia %}
+										<div class="Image">
+											{{ MediaHelper.htmlTag(
+												newsItem.mediaAssignments.titleAndTeaserImage.teaserMedia,
+												mediaRenderOptions.withColumnWidth(25).withHeight(200).withResizeStrategy('cover')
+											) }}
+										</div>
+									{% endif %}
+								{% endblock %}
 
-					{% if settings.titleTag and settings.titleTag != 'h3' %}
-						<{{ settings.titleTag }} class="Title">{{ newsItem.title }}</{{ settings.titleTag }}>
-					{% else %}
-						<h3 class="Title">{{ newsItem.title }}</h3>
-					{% endif %}
+								{% block newsListingItemTitle %}
+									{% if settings.titleTag and settings.titleTag != 'h3' %}
+										<{{ settings.titleTag }} class="Title">{{ newsItem.title }}</{{ settings.titleTag }}>
+									{% else %}
+										<h3 class="Title">{{ newsItem.title }}</h3>
+									{% endif %}
+								{% endblock %}
 
-					<p class="Date">{{ newsItem.date.i18nFormat(0) }}</p>
+								{% block newsListingItemDate %}
+									<p class="Date">{{ newsItem.date.i18nFormat(0) }}</p>
+								{% endblock %}
 
-					{% if newsItem.teaser %}
-						{% if '<' in newsItem.teaser %}
-							<div class="Teaser">{{ newsItem.teaser|raw }}</div>
-						{% else %}
-							<p class="Teaser">{{ newsItem.teaser|nl2br }}</p>
-						{% endif %}
-					{% endif %}
+								{% block newsListingItemTeaser %}
+									{% if newsItem.teaser %}
+										{% if '<' in newsItem.teaser %}
+											<div class="Teaser">{{ newsItem.teaser|raw }}</div>
+										{% else %}
+											<p class="Teaser">{{ newsItem.teaser|nl2br }}</p>
+										{% endif %}
+									{% endif %}
+								{% endblock %}
 
-					<p class="Link">
-						<a href="{{ link }}" class="Button">
-							{{ __d('module', 'read_more') }}
-						</a>
-					</p>
-				</li>
-			{% endfor %}
-		</ul>
-
-		{% if paginate %}
-			{% do PaginatorHelper.setPaginated(news) %}
-			{{ PaginatorHelper.render()|raw }}
+								{% block newsListingItemLink %}
+									<p class="Link">
+										<a href="{{ link }}" class="Button">
+											{{ __d('module', 'read_more') }}
+										</a>
+									</p>
+								{% endblock %}
+							</li>
+						{% endblock %}
+					{% endfor %}
+				</ul>
+			{% endblock %}
+			{% block newsListingPagination %}
+				{% if paginate %}
+					{% do PaginatorHelper.setPaginated(news) %}
+					{{ PaginatorHelper.render()|raw }}
+				{% endif %}
+			{% endblock %}
+		{% else %}
+			{% block newsListingEmpty %}
+				{{ __d('module', 'no_news') }}
+			{% endblock %}
 		{% endif %}
-	{% else %}
-		{{ __d('module', 'no_news') }}
-	{% endif %}
-</div>
+	</div>
+{% endblock %}
