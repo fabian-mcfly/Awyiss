@@ -65,12 +65,12 @@ return [
 				'Brush Script MT, cursive',
 			],
 		],
-		'previewScssFiles' => [
+		'previewScssFiles' => defined('CUSTOM_DIR') ? [
 			ROOT . DS . CUSTOM_DIR . '/assets/scss/full.scss',
-		],
-		'scssFiles' => [
+		] : null,
+		'scssFiles' => defined('CUSTOM_DIR') ? [
 			ROOT . DS . CUSTOM_DIR . '/assets/scss/helper/_variables.scss',
-		],
+		] : null,
 		'units' => [
 			'px' => [
 				'range' => [
