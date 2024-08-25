@@ -270,7 +270,14 @@
 		font-size:.8rem;
 		line-height:1.5;
 
-		&.Active,
+		&.Active {
+			color:var(--colorSuccess);
+			outline:0 none;
+		}
+	}
+
+	a.Level3,
+	a.Level4 {
 		&:hover {
 			color:var(--colorSuccess);
 			outline:0 none;

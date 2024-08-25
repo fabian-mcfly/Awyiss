@@ -12,6 +12,7 @@
 
 			&:nth-child(2 of .Overview-List) {
 				grid-column-start:2;
+				align-self:flex-start;
 			}
 		}
 
@@ -80,6 +81,15 @@
 						font-size:.9rem;
 						flex-basis:100%;
 					}
+				}
+			}
+		}
+
+		.MenuEntries-List {
+			&.Level1 {
+				&:not(:has(.ListItem)) {
+					height:40px;
+
 				}
 			}
 		}
