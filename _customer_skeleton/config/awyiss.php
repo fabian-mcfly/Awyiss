@@ -253,6 +253,9 @@ return [
 		'userName' => null,
 		'password' => null,
 		'mediaFolderId' => 1,
+		'imapUserName' => null,
+		'imapPassword' => null,
+		'imapServer' => null,
 	],
 
 	'MimeTypes' => [

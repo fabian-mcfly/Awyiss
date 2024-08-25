@@ -16,6 +16,7 @@ use Cake\Cache\Cache;
 use Cake\Core\Configure;
 use Cake\Datasource\FactoryLocator;
 use Instagram\Api;
+use Instagram\Auth\Checkpoint\ImapClient;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Throwable;
 
@@ -174,7 +175,15 @@ class InstagramFeedModule implements ModuleInterface {
 		$lo_cachePool = new FilesystemAdapter('Instagram', $cacheLifetime, TMP . 'instagram_profile');
 
 		$lo_api = new Api($lo_cachePool);
-		$lo_api->login($userName, Configure::read('Instagram.password'));
+
+		$ls_imapUserName = Configure::read('Instagram.imapUserName');
+		$ls_imapPassword = Configure::read('Instagram.imapPassword');
+		$ls_imapServer = Configure::read('Instagram.imapServer');
+		if ($ls_imapServer && $ls_imapUserName && $ls_imapPassword) {
+			$lo_imapClient = new ImapClient($ls_imapServer, $ls_imapUserName, $ls_imapPassword);
+		}
+
+		$lo_api->login($userName, Configure::read('Instagram.password'), $lo_imapClient ?? null);
 		$lo_profile = $lo_api->getProfile($profileName);
 
 		$la_media = $lo_profile->getMedias();
