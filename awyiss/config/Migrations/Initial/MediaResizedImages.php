@@ -68,7 +68,7 @@ class MediaResizedImages {
 			'null' => true,
 			'signed' => true,
 		])->addColumn('strategy', 'boolean', [
-			'default' => false,
+			'default' => 1,
 			'limit' => null,
 			'null' => false,
 		])->addColumn('status', 'boolean', [
