@@ -1,62 +1,94 @@
-.UsersController {
-	.Form {
-		.Fieldset-Usergroups {
-			padding:0;
+.Users.Form {
+	.Fieldset-Usergroups {
+		padding:0;
 
-			.Overview-Table {
-				margin:0;
-			}
+		.Overview-Table {
+			margin:0;
+		}
 
-			tr {
-				position:relative;
-			}
+		tr {
+			position:relative;
+		}
 
-			th {
-				padding-top:20px;
-			}
+		th {
+			padding-top:20px;
+		}
 
-			.TableHeader-UsergroupCheckbox {
-				width:60px;
-			}
+		.TableHeader-UsergroupCheckbox {
+			width:60px;
+		}
 
-			.TableCell-UsergroupCheckbox {
-				position:static;
+		.TableCell-UsergroupCheckbox {
+			position:static;
 
-				&:has(input:checked) {
-					background-color:var(--colorSuccess);
+			&:has(input:checked) {
+				background-color:var(--colorSuccess);
+
+				&::before {
+					display:none;
+				}
+
+				~ td {
+					background-color:color-mix(in srgb, var(--colorSuccess), transparent 90%);
 
 					&::before {
-						display:none;
-					}
-
-					~ td {
-						background-color:color-mix(in srgb, var(--colorSuccess), transparent 90%);
-
-						&::before {
-							background-color:oklch(from var(--colorSuccess) calc(l - .0368) calc(c + .018) calc(h - 2.03) / .25);
-						}
+						background-color:oklch(from var(--colorSuccess) calc(l - .0368) calc(c + .018) calc(h - 2.03) / .25);
 					}
 				}
 			}
+		}
 
-			.FormInput {
-				margin-bottom:0;
-				position:static;
+		.FormInput {
+			margin-bottom:0;
+			position:static;
 
-				.Label {
-					position:absolute;
-					inset:0;
-					z-index:2;
+			.Label {
+				position:absolute;
+				inset:0;
+				z-index:2;
 
-					&::before {
-						top:20px;
-						left:28px;
+				&::before {
+					top:20px;
+					left:28px;
 
-						.Scale-Small& {
-							top:10px;
-						}
+					.Scale-Small& {
+						top:10px;
 					}
 				}
+			}
+		}
+	}
+
+	.CatchAutofill {
+		display:none;
+	}
+
+	.FormInputType-Password {
+		input {
+			padding-right:110px;
+
+			.Scale-Small & {
+				padding-right:90px;
+			}
+		}
+	}
+
+	.PasswordGenerator {
+		@extend %InFieldButton;
+
+		position:absolute;
+		right:52px;
+
+		.Scale-Small & {
+			right:42px;
+		}
+
+		&::after {
+			@include la('\f084', 24px);
+			line-height:50px;
+
+			.Scale-Small & {
+				line-height:40px;
 			}
 		}
 	}

@@ -11,6 +11,9 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
+msgid "error_required"
+msgstr "Dieses Feld ist erforderlich"
+
 msgid "error_not_empty"
 msgstr "Dieses Feld darf nicht leer sein"
 

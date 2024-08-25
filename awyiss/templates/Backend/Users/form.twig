@@ -4,6 +4,11 @@
 @var _view \Awyiss\View\BackendView
 #}
 
+<div class="CatchAutofill">
+	<input type="text" name="username" value="">
+	<input type="password" name="password" value="">
+</div>
+
 {% block fieldsets %}
 	<div class="Fieldsets">
 		{% block fieldsetPresentation %}
@@ -40,7 +45,7 @@
 
 				{% block fieldsetGeneralInner %}
 					{% block formControlUsername %}
-						{{ FormHelper.control('username', {columnSpan: 6}) }}
+						{{ FormHelper.control('username', {autocomplete: 'off', columnSpan: 6}) }}
 					{% endblock %}
 
 					{% block formControlEmail %}

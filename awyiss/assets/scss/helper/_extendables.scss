@@ -24,8 +24,8 @@
 	line-height:0;
 	background-color:var(--colorMedium);
 	position:absolute;
+	top:calc(1.05rem + 1px);
 	right:1px;
-	bottom:1px;
 
 	.Scale-Small & {
 		width:40px;

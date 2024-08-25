@@ -28,7 +28,7 @@
 	}
 
 	&.Error {
-		background-color:color-mix(in srgb, var(--colorError), transparent 75%);
+		--boxShadowColor:color-mix(in srgb, var(--colorError), transparent 75%);
 		--colorText:var(--colorError);
 
 		&::before {
