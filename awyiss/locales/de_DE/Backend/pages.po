@@ -17,6 +17,9 @@ msgstr "Seiten"
 msgid "meta_title_add"
 msgstr "Seite hinzufügen"
 
+msgid "meta_title_add_batch"
+msgstr "Mehrere Seiten hinzufügen"
+
 msgid "meta_title_edit"
 msgstr "Seite bearbeiten"
 
@@ -82,6 +85,9 @@ msgstr "Die Seite konnte nicht gelöscht werden"
 
 msgid "view_contents"
 msgstr "Inhalte anzeigen"
+
+msgid "pages"
+msgstr "Seiten"
 
 msgid "page_role_id"
 msgstr "Seitenrolle"

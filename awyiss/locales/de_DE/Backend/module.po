@@ -23,6 +23,9 @@ msgstr "Anzahl der Einträge"
 msgid "offset"
 msgstr "Offset"
 
+msgid "no_news"
+msgstr "Keine Neuigkeiten"
+
 msgid "breadcrumbs_include_homepage"
 msgstr "Startseite anzeigen"
 

@@ -17,6 +17,9 @@ msgstr "Pages"
 msgid "meta_title_add"
 msgstr "Add page"
 
+msgid "meta_title_add_batch"
+msgstr "Add multiple Pages"
+
 msgid "meta_title_edit"
 msgstr "Edit page"
 
@@ -82,6 +85,9 @@ msgstr "The page could not be deleted"
 
 msgid "view_contents"
 msgstr "View contents"
+
+msgid "pages"
+msgstr "Pages"
 
 msgid "page_role_id"
 msgstr "Page role"
