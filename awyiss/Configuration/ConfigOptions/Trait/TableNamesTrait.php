@@ -44,7 +44,7 @@ trait TableNamesTrait {
 					continue;
 				}
 
-				static::$tableNames[ $ls_tableName ] = __d(Inflector::underscore($ls_tableName), 'menu_overview');
+				static::$tableNames[ $ls_tableName ] = $ls_tableName;
 			}
 		}
 
@@ -59,7 +59,7 @@ trait TableNamesTrait {
 				continue;
 			}
 
-			static::$tableNames[ $ls_identifier ] = __d(Inflector::underscore($ls_identifier), 'menu_overview');
+			static::$tableNames[ $ls_identifier ] = $ls_identifier;
 		}
 
 		ksort(static::$tableNames);
