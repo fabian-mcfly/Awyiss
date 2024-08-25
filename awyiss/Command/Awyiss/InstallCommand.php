@@ -29,11 +29,11 @@ class InstallCommand extends Command {
 
 
 	/**
-	 * @var Filesystem The filesystem
+	 * @var \Symfony\Component\Filesystem\Filesystem The filesystem
 	 */
 	protected Filesystem $filesystem;
 	/**
-	 * @var ConsoleIo The console I/O
+	 * @var \Cake\Console\ConsoleIo The console I/O
 	 * @noinspection PhpPropertyNamingConventionInspection
 	 */
 	protected ConsoleIo $io;
@@ -54,8 +54,8 @@ class InstallCommand extends Command {
 	/**
 	 * Main execution method
 	 *
-	 * @param Arguments $args
-	 * @param ConsoleIo $io
+	 * @param \Cake\Console\Arguments $args
+	 * @param \Cake\Console\ConsoleIo $io
 	 * @return int
 	 * @throws \Brick\VarExporter\ExportException
 	 * @throws \Random\RandomException
@@ -121,6 +121,10 @@ class InstallCommand extends Command {
 
 		// Remove all .gitkeep files from the customer's folder
 		$this->removeGitkeepFiles();
+
+		// Remove the dummy folder
+		$this->filesystem->remove(ROOT . DS . '_customer_skeleton');
+		$this->io->success('Skeleton folder removed successfully.');
 
 		// Done
 		$this->io->success('Installation completed.');
