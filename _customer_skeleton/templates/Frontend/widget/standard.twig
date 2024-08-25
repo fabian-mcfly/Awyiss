@@ -24,7 +24,7 @@
 #}
 
 <div class="{{ widget.cssClass }}" {{ widget.data|data_attr|raw }} id="Widget{{ widget.id }}">
-	{{ MediaHelper.element('standard', widget.mediaAssignments, mediaRenderOptions) }}
+	{{ MediaHelper.element('standard', widget.mediaAssignments, mediaRenderOptions, {link: widget.link}) }}
 
 	{% if widget.title %}
 		{% set tag = widget.titleTag ?? 'div' %}

@@ -28,7 +28,7 @@
 {% endif %}
 
 <div class="{{ cssClass }}" {{ content.data|data_attr|raw }} id="Content{{ content.id }}">
-	{{ MediaHelper.element('standard', content.mediaAssignments, mediaRenderOptions) }}
+	{{ MediaHelper.element('standard', content.mediaAssignments, mediaRenderOptions, {link: content.link}) }}
 
 	{% if content.title %}
 		{% set tag = content.titleTag ?? 'div' %}

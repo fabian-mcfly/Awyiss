@@ -305,10 +305,14 @@ class MediaHelper extends Helper {
 
 
 	/**
-	 * @param string $link
+	 * @param string|null $link
 	 * @return bool
 	 */
-	public function isVideoLink(string $link): bool {
+	public function isVideoLink(?string $link): bool {
+		if (!$link) {
+			return false;
+		}
+
 		$ls_youtubePattern = '/(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/';
 
 		return match (true) {
