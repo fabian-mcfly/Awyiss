@@ -33,7 +33,10 @@
 
 				{% block fieldsetConditionsInner %}
 					{% block formControlMenuId %}
-						{{ CategoriesHelper.control('menu', {'data-form-updater': true}) }}
+						{{ CategoriesHelper.control('menu', {
+							options: naturalSort(CategoriesHelper.getCategories('menu')),
+							'data-form-updater': true,
+						}) }}
 					{% endblock %}
 
 					{% block formControlLanguageShortcode %}

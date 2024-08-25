@@ -21,7 +21,7 @@
 	{% block buttonArea %}
 		<div class="ButtonArea">
 			{% block categoriesFilterOverview %}
-				{{ CategoriesHelper.filter('menu') }}
+				{{ CategoriesHelper.filter('menu', naturalSort(CategoriesHelper.getCategories('menu'))) }}
 			{% endblock %}
 
 			{% block buttonsOverview %}
