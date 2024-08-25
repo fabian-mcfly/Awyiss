@@ -7,9 +7,12 @@ namespace Awyiss\Command\Awyiss;
 use Cake\Command\Command;
 use Cake\Console\Arguments;
 use Cake\Console\ConsoleIo;
+use Cake\Core\Configure;
 use RecursiveCallbackFilterIterator;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
+use Symfony\Component\Process\Exception\ProcessFailedException;
+use Symfony\Component\Process\Process;
 use ZipArchive;
 
 
@@ -75,56 +78,106 @@ class BackupCommand extends Command {
 		}
 
 		$lo_zip = new ZipArchive();
-		if ($lo_zip->open($destination, ZipArchive::CREATE)) {
-			$ls_source = realpath($source);
-			if (is_dir($ls_source)) {
-				/** @noinspection PhpClassConstantAccessedViaChildClassInspection */
-				$lo_directory = new RecursiveDirectoryIterator($ls_source, RecursiveDirectoryIterator::SKIP_DOTS);
-				$lo_filter = new RecursiveCallbackFilterIterator($lo_directory, function ($current, $key, $iterator) {
-					// Skip directories starting with a dot
-					if ($current->isDir() && $current->getFilename()[0] === '.') {
+
+		if (!$lo_zip->open($destination, ZipArchive::CREATE)) {
+			$this->io->error('Could not create backup file `' . $destination . '`.');
+			return false;
+		}
+
+		$this->addDatabaseBackup($lo_zip);
+
+		$ls_source = realpath($source);
+		if (is_dir($ls_source)) {
+			/** @noinspection PhpClassConstantAccessedViaChildClassInspection */
+			$lo_directory = new RecursiveDirectoryIterator($ls_source, RecursiveDirectoryIterator::SKIP_DOTS);
+			$lo_filter = new RecursiveCallbackFilterIterator($lo_directory, function ($current, $key, $iterator) {
+				// Skip directories starting with a dot
+				if ($current->isDir() && $current->getFilename()[0] === '.') {
+					return false;
+				}
+
+				if ($iterator->hasChildren()) {
+					// Exclude directories with names starting with '_deleted_' or matching '_*_preview'
+					if (
+						fnmatch('_deleted_*', $current->getFilename()) ||
+						fnmatch('_*_preview', $current->getFilename())
+					) {
 						return false;
 					}
 
-					if ($iterator->hasChildren()) {
-						// Exclude directories with names starting with '_deleted_' or matching '_*_preview'
-						if (
-							fnmatch('_deleted_*', $current->getFilename()) ||
-							fnmatch('_*_preview', $current->getFilename())
-						) {
-							return false;
-						}
+					// Exclude directories with certain names
+					return !in_array($current->getFilename(), ['_resized', '_webp', 'backup', 'vendor']);
+				}
 
-						// Exclude directories with certain names
-						return !in_array($current->getFilename(), ['_resized', '_webp', 'backup', 'vendor']);
+				return true;
+			});
+
+			$lo_iterator = new RecursiveIteratorIterator($lo_filter);
+			foreach ($lo_iterator as $lo_file) {
+				$ls_filePath = $lo_file->getPathname();
+
+				if (is_dir($ls_filePath)) {
+					$this->io->verbose('Adding `' . $ls_filePath . '` to the backup.');
+					$lo_zip->addEmptyDir(str_replace($ls_source . '/', '', $ls_filePath . '/'));
+				}
+				elseif (is_file($ls_filePath)) {
+					// If the file is inside the 'tmp' directory, skip it
+					if (str_starts_with($ls_filePath, ROOT . DS . 'tmp' . DS)) {
+						continue;
 					}
 
-					return true;
-				});
-
-				$lo_iterator = new RecursiveIteratorIterator($lo_filter);
-				foreach ($lo_iterator as $lo_file) {
-					$ls_filePath = $lo_file->getPathname();
-
-					if (is_dir($ls_filePath)) {
-						$this->io->verbose('Adding `' . $ls_filePath . '` to the backup.');
-						$lo_zip->addEmptyDir(str_replace($ls_source . '/', '', $ls_filePath . '/'));
-					}
-					elseif (is_file($ls_filePath)) {
-						// If the file is inside the 'tmp' directory, skip it
-						if (str_starts_with($ls_filePath, ROOT . DS . 'tmp' . DS)) {
-							continue;
-						}
-
-						$lo_zip->addFromString(str_replace($ls_source . '/', '', $ls_filePath), file_get_contents($ls_filePath));
-					}
+					$this->io->verbose('Adding `' . $ls_filePath . '` to the backup.');
+					$lo_zip->addFromString(str_replace($ls_source . '/', '', $ls_filePath), file_get_contents($ls_filePath));
 				}
 			}
-			elseif (is_file($ls_source)) {
-				$lo_zip->addFromString(basename($ls_source), file_get_contents($ls_source));
-			}
+		}
+		elseif (is_file($ls_source)) {
+			$this->io->verbose('Adding `' . $ls_source . '` to the backup.');
+			$lo_zip->addFromString(basename($ls_source), file_get_contents($ls_source));
 		}
 
 		return $lo_zip->close();
+	}
+
+
+	/**
+	 * @param \ZipArchive $zip
+	 */
+	protected function addDatabaseBackup(ZipArchive $zip): void {
+		$la_config = Configure::read('Datasources.default');
+		$ls_database = $la_config['database'] ?? false;
+		$ls_host = $la_config['host'] ?? false;
+		$ls_username = $la_config['username'] ?? false;
+		$ls_password = $la_config['password'] ?? false;
+
+		$this->io->out('Backing up database... ', 0);
+
+		if (!$ls_database || !$ls_host || !$ls_username || !$ls_password) {
+			$this->io->warning('Database configuration not found. Skipping database backup.');
+			return;
+		}
+
+		$la_command = [
+			'mysqldump',
+			'-h' . $ls_host,
+			'-u' . $ls_username,
+			'-p' . $ls_password,
+			$ls_database,
+		];
+
+		$lo_process = new Process($la_command);
+		try {
+			$lo_process->mustRun();
+			$ls_backup = $lo_process->getOutput();
+		}
+		catch (ProcessFailedException $ex) {
+			$this->io->error('Database backup failed.');
+			$this->io->error($ex->getMessage());
+			return;
+		}
+
+		$zip->addFromString('database.sql', $ls_backup);
+
+		$this->io->out('Database backup created successfully.');
 	}
 }

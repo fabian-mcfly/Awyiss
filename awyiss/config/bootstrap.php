@@ -171,7 +171,7 @@ if ($ls_fullBaseUrl) {
 unset($ls_fullBaseUrl);
 
 Cache::setConfig(Configure::consume('Cache'));
-ConnectionManager::setConfig(Configure::consume('Datasources'));
+ConnectionManager::setConfig(PHP_SAPI === 'cli' ? Configure::read('Datasources') : Configure::consume('Datasources'));
 Mailer::setConfig(Configure::consume('Email'));
 Log::setConfig(Configure::consume('Log'));
 Security::setSalt(Configure::consume('Security.salt'));
