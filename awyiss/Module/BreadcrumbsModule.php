@@ -132,7 +132,7 @@ class BreadcrumbsModule implements ModuleInterface {
 		array_shift($la_pathParts);
 
 		// Get all pages in the current path
-		$lo_query = $lo_pagesTable->find('forCurrentLanguage');
+		$lo_query = $lo_pagesTable->find('forCurrentLanguage', skipPageRoleCheck: true);
 
 		$ls_currentPath = '';
 		$la_paths = [];
