@@ -4,6 +4,7 @@ import Audit from 'Audit/Audit';
 import ButtonArea from 'ButtonArea';
 import ButtonHandler from 'ButtonHandler';
 import ColorPicker from 'ColorPicker';
+import DatePicker from 'DatePicker';
 import EventHandler from 'EventHandler';
 import FieldsetManager from 'FieldsetManager';
 import FooterReveal from 'FooterReveal';
@@ -292,6 +293,12 @@ export async function initMainOnReady() {
 	 * @type {ColorPicker}
 	 */
 	window.colorPicker = new ColorPicker();
+
+	/**
+	 * @global
+	 * @type {DatePicker}
+	 */
+	window.datePicker = new DatePicker();
 
 	/**
 	 * @global

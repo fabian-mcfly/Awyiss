@@ -10,6 +10,7 @@
 		const language = {{ currentLanguage|json_encode|raw }};
 		const languageShortcode = '{{ languageShortcode }}';
 		const userLanguage = {{ userLanguage|json_encode|raw }};
+		window.exports = {};
 	</script>
 {% endblock %}
 
@@ -24,6 +25,7 @@
 		'modules/ButtonHandler.js',
 		'modules/ColorPicker.js',
 		'modules/CustomMouseEvent.js',
+		'modules/DatePicker.js',
 		'modules/EventHandler.js',
 		'modules/FieldsetManager.js',
 		'modules/FooterReveal.js',
@@ -74,6 +76,16 @@
 			'Controller/Pages.js',
 		]) %}
 	{% endif %}
+
+	<link nonce="{{ AssetHelper.getStyleNonce() }}" href="{{ baseUrl }}awyiss/assets/js/AirDatepicker/air-datepicker.css" rel="stylesheet" type="text/css">
+	<script nonce="{{ AssetHelper.getScriptNonce() }}" src="{{ baseUrl }}awyiss/assets/js/AirDatepicker/locale/{{ userLanguage.shortcode }}.js"></script>
+	<script nonce="{{ AssetHelper.getScriptNonce() }}">
+		const airDatepickerLocale = window.exports.default;
+		// Unset the global variable
+		window.exports = undefined;
+	</script>
+	<script nonce="{{ AssetHelper.getScriptNonce() }}" src="{{ baseUrl }}awyiss/assets/js/AirDatepicker/air-datepicker.js"></script>
+
 
 	{% do AssetHelper.add('main.js', {type: 'module'}) %}
 {% endblock %}

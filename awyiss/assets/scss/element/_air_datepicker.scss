@@ -1,0 +1,24 @@
+.air-datepicker {
+	--adp-accent-color:var(--colorSuccess);
+	--adp-cell-background-color-hover:oklch(from var(--colorSuccess) calc(l + .0368) calc(c - .018) calc(h + 2.03) / .25);
+	--adp-cell-background-color-selected:var(--colorSuccess);
+	--adp-cell-background-color-selected-hover:oklch(from var(--colorSuccess) calc(l - .0368) calc(c + .018) calc(h - 2.03));
+	--adp-day-name-color:var(--colorSuccess);
+	--adp-font-family:inherit;
+
+	.🌚 & {
+		--adp-background-color:var(--colorDark);
+		--adp-border-color:var(--colorSemiDark);
+		--adp-border-color-inline:var(--colorSemiDark);
+		--adp-color:var(--colorBright);
+		--adp-color-other-month:var(--colorSemiDark);
+	}
+
+	.air-datepicker--pointer {
+		&::after {
+			.🌚 & {
+				background-color:var(--colorDark);
+			}
+		}
+	}
+}
