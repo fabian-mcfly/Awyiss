@@ -494,7 +494,7 @@ class MenuItem implements ArrayAccess {
 	 */
 	public function isVisible(): ?bool {
 		// If the item is a menu entry, it is always visible
-		if ($this->entity ?? null instanceof MenuEntry) {
+		if (($this->entity ?? null) instanceof MenuEntry) {
 			return true;
 		}
 
