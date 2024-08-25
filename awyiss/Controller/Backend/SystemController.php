@@ -111,15 +111,17 @@ class SystemController extends Controller {
 
 		$lo_session = $this->request->getSession();
 		$li_runningJobId = $lo_session->read('Backend.System.clearCache.jobId');
+		$lo_runningJob = null;
 
 		if ($li_runningJobId) {
-			$lo_runningJob = $lo_queue->get($li_runningJobId);
+			$lo_runningJob = $lo_queue->findById($li_runningJobId);
 
 			if (!$lo_runningJob || $lo_runningJob->completed) {
 				$lo_session->delete('Backend.System.clearCache.jobId');
 			}
 		}
-		else {
+
+		if (!$lo_runningJob) {
 			$ls_reference = 'system::clear_cache';
 
 			$lo_runningJob = $lo_queue->find()->where([
