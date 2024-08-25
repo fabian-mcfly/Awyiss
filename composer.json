@@ -56,7 +56,7 @@
 		}
 	},
 	"scripts": {
-		"post-install-cmd": "bin/cake awyiss install",
+		"post-install-cmd": "chmod +x bin/cake && bin/cake awyiss install && bin/cake media detect_available_commands",
 		"post-update-cmd": "bin/cake integrity_check check -mi",
 		"check": [
 			"@test",
