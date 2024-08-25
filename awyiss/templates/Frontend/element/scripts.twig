@@ -58,7 +58,7 @@
 				window.WebFontConfig = {
 					custom: {
 						families: {{ webfontFamilies|json_encode|raw }},
-						urls: [baseUrl + 'assets/css/webfonts.css']
+						urls: [baseUrl + 'assets/css/webfonts{{ webfontTimestamp ? '.' ~ webfontTimestamp : '' }}.css']
 					},
 				};
 
