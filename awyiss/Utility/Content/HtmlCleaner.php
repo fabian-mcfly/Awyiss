@@ -241,7 +241,7 @@ class HtmlCleaner {
 			}
 
 			// Check if the content of the tag is empty or only contains whitespaces, `<br>`-tags or non-breaking spaces
-			if (preg_match('/^[\s\n\r\t\xC2\xA0]*$/', $ls_content)) {
+			if (preg_match('/^([\s\n\r\t]|\xC2\xA0)*$/', $ls_content)) {
 				if (in_array($lo_tag->nodeName, ['ul', 'ol', 'dl'])) {
 					if ($lo_tag->nextSibling && $lo_tag->nextSibling->nodeName === '#text') {
 						$lo_tag->parentNode->removeChild($lo_tag->nextSibling);
@@ -317,7 +317,7 @@ class HtmlCleaner {
 				continue;
 			}
 
-			if (!preg_match('/^[\s\n\r\t\xC2\xA0]*$/', $lo_pTag->textContent)) {
+			if (!preg_match('/^([\s\n\r\t]|\xC2\xA0)*$/', $lo_pTag->textContent)) {
 				continue;
 			}
 
@@ -337,7 +337,7 @@ class HtmlCleaner {
 
 			// Check if the next sibling is a <p>-tag and empty
 			if (
-				preg_match('/^[\s\n\r\t\xC2\xA0]*$/', $lo_nextSibling->textContent)
+				preg_match('/^([\s\n\r\t]|\xC2\xA0)*$/', $lo_nextSibling->textContent)
 			) {
 				if ($lo_pTag->nextSibling->nodeName === '#text') {
 					$lo_pTag->parentNode->removeChild($lo_pTag->nextSibling);
@@ -375,7 +375,7 @@ class HtmlCleaner {
 				$ls_replacement = "\u{A0}";
 			}
 
-			$ls_content = preg_replace('/[\s\n\r\t\xC2\xA0]+/', $ls_replacement, $ls_content);
+			$ls_content = preg_replace('/([\s\n\r\t]|\xC2\xA0)+/', $ls_replacement, $ls_content);
 
 			$lo_textNode->nodeValue = $ls_content;
 		}
@@ -466,7 +466,7 @@ class HtmlCleaner {
 		$lo_body = $dom->getElementsByTagName('body')->item(0);
 
 		while ($lo_body->firstChild) {
-			if (!preg_match('/^[\s\n\r\t\xC2\xA0]*$/', $lo_body->firstChild->textContent)) {
+			if (!preg_match('/^([\s\n\r\t]|\xC2\xA0)*$/', $lo_body->firstChild->textContent)) {
 				break;
 			}
 
@@ -474,7 +474,7 @@ class HtmlCleaner {
 		}
 
 		while ($lo_body->lastChild) {
-			if (!preg_match('/^[\s\n\r\t\xC2\xA0]*$/', $lo_body->lastChild->textContent)) {
+			if (!preg_match('/^([\s\n\r\t]|\xC2\xA0)*$/', $lo_body->lastChild->textContent)) {
 				break;
 			}
 
