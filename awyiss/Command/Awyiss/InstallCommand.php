@@ -107,6 +107,9 @@ class InstallCommand extends Command {
 		// Set up the demo attribute collection
 		$this->setupDemoAttributeCollection();
 
+		// Set up the demo menu cell
+		$this->setupDemoMenuCell();
+
 		// Set the Twig namespace in the ide-twig.json
 		$this->setTwigNamespace();
 

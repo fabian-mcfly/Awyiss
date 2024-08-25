@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 
-namespace FoobarCustomer\View\Cell\Frontend;
+namespace Customer\View\Cell\Frontend;
 
 
 use Awyiss\View\Cell\Frontend\MenuCell as AwyissMenuCell;

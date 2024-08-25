@@ -197,6 +197,29 @@ trait ConfigTrait {
 
 
 	/**
+	 * Sets up a demo menu cell
+	 *
+	 * @return void
+	 */
+	protected function setupDemoMenuCell(): void {
+		// Define the path to the MenuCell.php file
+		$ls_filePath = ROOT . DS . $this->customerName . DS . 'View' . DS . 'Cell' . DS . 'Frontend' . DS . 'MenuCell.php';
+
+		// Load the contents of the MenuCell.php file
+		$ls_fileContents = file_get_contents($ls_filePath);
+
+		// Replace the namespace with the camelized version of the given customer name
+		$ls_newNamespace = 'namespace ' . Inflector::camelize($this->customerName) . '\\View\\Cell\\Frontend;';
+		$ls_fileContents = str_replace('namespace Customer\\View\\Cell\\Frontend;', $ls_newNamespace, $ls_fileContents);
+
+		// Write the updated contents back to the MenuCell.php file
+		file_put_contents($ls_filePath, $ls_fileContents);
+
+		$this->io->success('\Customer\View\Cell\Frontend\MenuCell file updated.');
+	}
+
+
+	/**
 	 * Updates the namespace in the ide-twig.json file.
 	 *
 	 * @return void
