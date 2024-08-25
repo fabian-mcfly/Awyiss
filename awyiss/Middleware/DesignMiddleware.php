@@ -144,7 +144,7 @@ class DesignMiddleware implements MiddlewareInterface {
 			return [];
 		}
 
-		$this->designVariables = $lo_design->settings;
+		$this->designVariables = $lo_design->settings ?? [];
 
 		return $this->designVariables;
 	}
