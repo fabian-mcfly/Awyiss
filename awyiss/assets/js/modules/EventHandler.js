@@ -25,6 +25,11 @@ export default class EventHandler {
 	 */
 	listeners = new Map();
 
+	constructor() {
+		const observer = window.observer;
+		observer.addObserver(this.observeMutations.bind(this));
+	}
+
 	/**
 	 * Creates an event listener for a given event name and element.
 	 * @param {string} eventName - The name of the event.
@@ -179,5 +184,40 @@ export default class EventHandler {
 	 */
 	has(eventName, element = window) {
 		return this.events.has(element) && this.events.get(element)[eventName];
+	}
+
+
+	/**
+	 * Remove all event listeners for an element
+	 * @param {HTMLElement} element - The element to remove event listeners from
+	 */
+	removeNodeEvents(element) {
+		if (this.events.has(element)) {
+			this.events.delete(element);
+		}
+
+		if (this.elementIds.has(element)) {
+			this.elementIds.delete(element);
+		}
+	}
+
+
+	/**
+	 * Observe the DOM for new elements
+	 * @param mutation
+	 */
+	 observeMutations(mutation) {
+		mutation.removedNodes.forEach((node) => {
+			if (node.nodeType === Node.ELEMENT_NODE) {
+				this.removeNodeEvents(node);
+			}
+
+			// Check all keys in this.events and whether they are either the removed node or a child of the removed node
+			for (const element of this.events.keys()) {
+				if (element.nodeType === 1 && (element === node || node.contains(element))) {
+					this.removeNodeEvents(element);
+				}
+			}
+		});
 	}
 }
