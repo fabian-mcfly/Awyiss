@@ -26,9 +26,6 @@ msgstr "Edit Page"
 msgid "menu_title"
 msgstr "Pages"
 
-msgid "menu_overview"
-msgstr "Overview"
-
 msgid "menu_add"
 msgstr "New Page"
 

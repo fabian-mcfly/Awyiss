@@ -23,9 +23,6 @@ msgstr "Weiterleitung bearbeiten"
 msgid "menu_title"
 msgstr "Weiterleitungen"
 
-msgid "menu_overview"
-msgstr "Übersicht"
-
 msgid "menu_add"
 msgstr "Neue Weiterleitung"
 

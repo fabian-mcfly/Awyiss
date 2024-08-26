@@ -23,9 +23,6 @@ msgstr "Edit media Folder"
 msgid "menu_title"
 msgstr "Media Folders"
 
-msgid "menu_overview"
-msgstr "Overview"
-
 msgid "menu_add"
 msgstr "New media Folder"
 

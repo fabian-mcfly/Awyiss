@@ -23,9 +23,6 @@ msgstr "Menü bearbeiten"
 msgid "menu_title"
 msgstr "Menüs"
 
-msgid "menu_overview"
-msgstr "Übersicht"
-
 msgid "menu_add"
 msgstr "Neues Menü"
 

@@ -23,9 +23,6 @@ msgstr "Edit Redirect"
 msgid "menu_title"
 msgstr "Redirects"
 
-msgid "menu_overview"
-msgstr "Overview"
-
 msgid "menu_add"
 msgstr "New Redirect"
 

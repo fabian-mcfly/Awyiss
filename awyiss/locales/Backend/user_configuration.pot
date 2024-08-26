@@ -14,9 +14,6 @@ msgstr ""
 msgid "menu_title"
 msgstr "User Configuration"
 
-msgid "menu_title_overview"
-msgstr "User Configuration"
-
 msgid "menu_add"
 msgstr "New Configuration Entry"
 

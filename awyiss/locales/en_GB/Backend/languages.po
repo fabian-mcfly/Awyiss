@@ -20,8 +20,8 @@ msgstr "Add Language"
 msgid "meta_title_edit"
 msgstr "Edit Language"
 
-msgid "menu_overview"
-msgstr "Overview"
+msgid "menu_title"
+msgstr "Languages"
 
 msgid "menu_add"
 msgstr "New Language"

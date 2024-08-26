@@ -23,9 +23,6 @@ msgstr "Edit Media Selector"
 msgid "menu_title"
 msgstr "Media Selectors"
 
-msgid "menu_overview"
-msgstr "Overview"
-
 msgid "menu_add"
 msgstr "New Media Selector"
 

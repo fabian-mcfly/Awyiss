@@ -11,10 +11,16 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
-msgid "menu_title"
+msgid "meta_title_overview"
 msgstr "Configuration"
 
-msgid "menu_title_overview"
+msgid "meta_title_add"
+msgstr "Add Configuration Entry"
+
+msgid "meta_title_edit"
+msgstr "Edit Configuration Entry"
+
+msgid "menu_title"
 msgstr "Configuration"
 
 msgid "menu_add"

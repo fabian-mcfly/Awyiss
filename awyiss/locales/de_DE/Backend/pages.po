@@ -26,9 +26,6 @@ msgstr "Seite bearbeiten"
 msgid "menu_title"
 msgstr "Seiten"
 
-msgid "menu_overview"
-msgstr "Übersicht"
-
 msgid "menu_add"
 msgstr "Neue Seite"
 

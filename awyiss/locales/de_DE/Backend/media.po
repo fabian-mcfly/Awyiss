@@ -23,9 +23,6 @@ msgstr "Datei bearbeiten"
 msgid "menu_title"
 msgstr "Media"
 
-msgid "menu_overview"
-msgstr "Übersicht"
-
 msgid "menu_add"
 msgstr "Neue Datei"
 

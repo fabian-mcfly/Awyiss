@@ -14,6 +14,12 @@ msgstr ""
 msgid "menu_title"
 msgstr "System"
 
+msgid "menu_overview"
+msgstr "Übersicht"
+
+msgid "menu_add"
+msgstr "Neuer Eintrag"
+
 msgid "menu_title_templates"
 msgstr "Templates"
 
@@ -55,12 +61,6 @@ msgstr "Übersicht"
 
 msgid "view_gallery"
 msgstr "Galerie anzeigen"
-
-msgid "menu_overview"
-msgstr "Übersicht"
-
-msgid "menu_add"
-msgstr "Neuer Eintrag"
 
 msgid "create"
 msgstr "Neuer Eintrag"

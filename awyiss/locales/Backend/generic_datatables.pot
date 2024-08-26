@@ -20,9 +20,6 @@ msgstr "Add Entry"
 msgid "meta_title_edit"
 msgstr "Edit Entry"
 
-msgid "menu_overview"
-msgstr "Overview"
-
 msgid "menu_add"
 msgstr "New Entry"
 

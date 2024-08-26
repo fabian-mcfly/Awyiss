@@ -26,9 +26,6 @@ msgstr "Edit user"
 msgid "menu_title"
 msgstr "Users"
 
-msgid "menu_overview"
-msgstr "Overview"
-
 msgid "menu_add"
 msgstr "New user"
 

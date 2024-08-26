@@ -23,9 +23,6 @@ msgstr "Edit page template"
 msgid "menu_title"
 msgstr "Page templates"
 
-msgid "menu_overview"
-msgstr "Overview"
-
 msgid "menu_add"
 msgstr "New page template"
 

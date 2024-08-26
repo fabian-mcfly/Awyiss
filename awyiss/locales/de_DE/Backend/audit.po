@@ -11,6 +11,9 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
+msgid "menu_title"
+msgstr "Audit"
+
 msgid "headline_history"
 msgstr "Audit-Historie"
 

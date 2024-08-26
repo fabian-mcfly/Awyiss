@@ -17,9 +17,6 @@ msgstr "Dashboard"
 msgid "menu_title"
 msgstr "Dashboard"
 
-msgid "menu_overview"
-msgstr "Übersicht"
-
 msgid "headline_overview"
 msgstr "Dashboard"
 

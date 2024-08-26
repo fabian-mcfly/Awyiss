@@ -23,9 +23,6 @@ msgstr "Medienselektor bearbeiten"
 msgid "menu_title"
 msgstr "Medienselektoren"
 
-msgid "menu_overview"
-msgstr "Übersicht"
-
 msgid "menu_add"
 msgstr "Neuer Medienselektor"
 

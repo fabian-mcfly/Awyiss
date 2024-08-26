@@ -23,9 +23,6 @@ msgstr "Edit Menu Entry"
 msgid "menu_title"
 msgstr "Menu Entries"
 
-msgid "menu_overview"
-msgstr "Overview"
-
 msgid "menu_add"
 msgstr "New Menu Entry"
 

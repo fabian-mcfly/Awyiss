@@ -4041,7 +4041,6 @@ namespace PHPSTORM_META {
 		'menu_id',
 		'menu_overview',
 		'menu_title',
-		'menu_title_overview',
 		'menu_title_templates',
 		'menu_trigger_open',
 		'menus_overview',

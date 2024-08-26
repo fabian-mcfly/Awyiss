@@ -23,9 +23,6 @@ msgstr "Edit Usergroup"
 msgid "menu_title"
 msgstr "Usergroups"
 
-msgid "menu_overview"
-msgstr "Overview"
-
 msgid "menu_add"
 msgstr "New Usergroup"
 

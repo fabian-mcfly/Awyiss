@@ -23,9 +23,6 @@ msgstr "Edit file"
 msgid "menu_title"
 msgstr "Media"
 
-msgid "menu_overview"
-msgstr "Overview"
-
 msgid "menu_add"
 msgstr "New file"
 

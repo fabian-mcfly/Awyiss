@@ -20,12 +20,6 @@ msgstr "Add {0}"
 msgid "meta_title_edit"
 msgstr "Edit {0}"
 
-msgid "menu_title"
-msgstr "Overview"
-
-msgid "menu_overview"
-msgstr "Overview"
-
 msgid "menu_add"
 msgstr "New record"
 

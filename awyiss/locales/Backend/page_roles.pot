@@ -12,7 +12,7 @@ msgstr ""
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
 msgid "meta_title_overview"
-msgstr "Page role"
+msgstr "Page roles"
 
 msgid "meta_title_add"
 msgstr "Add page role"
@@ -21,10 +21,7 @@ msgid "meta_title_edit"
 msgstr "Edit page role"
 
 msgid "menu_title"
-msgstr "Page role"
-
-msgid "menu_overview"
-msgstr "Overview"
+msgstr "Page roles"
 
 msgid "menu_add"
 msgstr "New page role"
