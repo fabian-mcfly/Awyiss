@@ -62,5 +62,9 @@
 	+ .Form,
 	+ .Overview {
 		margin-top:var(--lineHeightMain);
+
+		&:has(.BackToOverview) {
+			margin-top:calc(var(--lineHeightMain) * 1.5);
+		}
 	}
 }
