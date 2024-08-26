@@ -216,10 +216,10 @@ abstract class BackendController extends AppController {
 	 * When $key is set, the corresponding value is returned if set, otherwise null.
 	 *
 	 * @param string|null $key
-	 * @param null $default
+	 * @param string|null $default
 	 * @return mixed
 	 */
-	public function getOverviewWhere(?string $key = null, null $default = null): mixed {
+	public function getOverviewWhere(?string $key = null, ?string $default = null): mixed {
 		if (!isset($this->overviewWhere)) {
 			$this->overviewWhere = [];
 			$this->initializeOverviewWhere();
