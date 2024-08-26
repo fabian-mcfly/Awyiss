@@ -52,7 +52,9 @@ export default class DatePicker {
 		};
 
 		const datePicker = new AirDatepicker(datePickerInput, settings);
-		datePicker.selectDate(datePickerInput.value);
+		if (datePickerInput.value) {
+			datePicker.selectDate(datePickerInput.value);
+		}
 	}
 
 	/*
