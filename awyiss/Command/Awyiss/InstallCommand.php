@@ -268,9 +268,18 @@ class InstallCommand extends Command {
 			}
 		}
 
-		$this->filesystem->symlink(ROOT . DS . 'awyiss' . DS . 'assets', WWW_ROOT . 'awyiss' . DS . 'assets');
-		$this->filesystem->symlink(ROOT . DS . 'vendor' . DS . 'tinymce' . DS . 'tinymce', WWW_ROOT . 'awyiss' . DS . 'assets' . DS . 'js' . DS . 'TinyMCE' . DS . 'tinymce');
-		$this->filesystem->symlink(ROOT . DS . $this->customerName . DS . 'assets', WWW_ROOT . 'assets');
+		try {
+			$this->filesystem->symlink(ROOT . DS . 'awyiss' . DS . 'assets', WWW_ROOT . 'awyiss' . DS . 'assets');
+			$this->filesystem->symlink(ROOT . DS . 'vendor' . DS . 'tinymce' . DS . 'tinymce', WWW_ROOT . 'awyiss' . DS . 'assets' . DS . 'js' . DS . 'TinyMCE' . DS . 'tinymce');
+			$this->filesystem->symlink(ROOT . DS . $this->customerName . DS . 'assets', WWW_ROOT . 'assets');
+		}
+		catch (IOExceptionInterface) {
+			$this->io->warning('Failed to create symlinks.');
+			$this->io->info('Please create the symlinks manually. On Windows, you can use the mklink command:');
+			$this->io->comment('mklink /D ' . WWW_ROOT . 'awyiss\assets ' . ROOT . DS . 'awyiss\assets');
+			$this->io->comment('mklink /D ' . WWW_ROOT . 'awyiss\assets\js\TinyMCE\tinymce ' . ROOT . DS . 'vendor\tinymce\tinymce');
+			$this->io->comment('mklink /D ' . WWW_ROOT . 'assets ' . ROOT . DS . $this->customerName . DS . 'assets');
+		}
 	}
 
 
