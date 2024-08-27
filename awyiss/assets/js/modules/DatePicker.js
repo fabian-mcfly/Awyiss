@@ -55,6 +55,12 @@ export default class DatePicker {
 		if (datePickerInput.value) {
 			datePicker.selectDate(datePickerInput.value);
 		}
+
+		window.eventHandler.add('change', () => {
+			if (!datePickerInput.value) {
+				input.value = '';
+			}
+		}, datePickerInput);
 	}
 
 	/*
