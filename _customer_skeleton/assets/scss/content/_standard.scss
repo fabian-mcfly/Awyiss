@@ -16,15 +16,11 @@
 				border-radius:5px;
 			}
 		}
-	}
 
-	> .Title,
-	> .Subtitle,
-	> .Text {
-		margin-top:calc(var(--contentRowGap) * .5);
-
-		&:first-child {
-			margin-top:0;
+		+ .Title,
+		+ .Subtitle,
+		+ .Text {
+			margin-top:calc(var(--contentRowGap) * .5);
 		}
 	}
 

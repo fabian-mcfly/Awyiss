@@ -1,4 +1,8 @@
 html.NewsTemplate-News {
+	.Module-Breadcrumbs {
+		color:var(--colorBright);
+	}
+
 	.Template-Section {
 		&:first-child {
 			padding-top:0;
