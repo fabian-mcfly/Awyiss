@@ -114,7 +114,7 @@ class SystemController extends Controller {
 		$lo_runningJob = null;
 
 		if ($li_runningJobId) {
-			$lo_runningJob = $lo_queue->findById($li_runningJobId);
+			$lo_runningJob = $lo_queue->findById($li_runningJobId)->first();
 
 			if (!$lo_runningJob || $lo_runningJob->completed) {
 				$lo_session->delete('Backend.System.clearCache.jobId');
