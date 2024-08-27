@@ -2,6 +2,7 @@
 @var records Cake\Datasource\EntityInterface[]
 @var _view \Awyiss\View\BackendView
 @var PaginatorHelper \Awyiss\View\Helper\PaginatorHelper
+@var TimeHelper \Cake\View\Helper\TimeHelper
 #}
 
 {% block tableOverview %}
@@ -85,7 +86,15 @@
 												{% if field starts with 'attributes.' %}
 													{% set field = field|slice(11)|underscore %}
 													{% block tableOverviewCellDisplayedFieldAttributeValue %}
-														{{ entity.attributes.get(field) ?: '-' }}
+														{% if attributes[field].inputType in ['date', 'datetime', 'time'] and entity.has('attributes') and entity.attributes.has(field) %}
+															{% if attributes[field].inputType == 'datetime' %}
+																{{ TimeHelper.nice(entity.attributes.get(field)) }}
+															{% else %}
+																{{ TimeHelper.i18nFormat(entity.attributes.get(field), attributes[field].inputType == 'date' ? dateFormat : timeFormat) }}
+															{% endif %}
+														{% else %}
+															{{ entity.attributes.get(field) ?: '-' }}
+														{% endif %}
 													{% endblock %}
 												{% else %}
 													{% set field = field|underscore %}

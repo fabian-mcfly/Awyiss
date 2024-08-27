@@ -50,6 +50,14 @@ class Languages {
 			'default' => null,
 			'limit' => 5,
 			'null' => false,
+		])->addColumn('date_format', 'string', [
+			'default' => null,
+			'limit' => 30,
+			'null' => true,
+		])->addColumn('time_format', 'string', [
+			'default' => null,
+			'limit' => 30,
+			'null' => true,
 		])->addColumn('title', 'string', [
 			'default' => null,
 			'limit' => 50,

@@ -74,6 +74,12 @@ msgstr "Timezone"
 msgid "locale"
 msgstr "Language region"
 
+msgid "date_format"
+msgstr "Date format"
+
+msgid "time_format"
+msgstr "Time format"
+
 msgid "realm"
 msgstr "Realm"
 

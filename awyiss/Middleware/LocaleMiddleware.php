@@ -10,6 +10,7 @@ use Awyiss\Routing\Router;
 use Cake\Core\Configure;
 use Cake\Database\TypeFactory;
 use Cake\Datasource\FactoryLocator;
+use Cake\I18n\DateTime;
 use Cake\I18n\I18n;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Psr\Http\Message\ResponseInterface;
@@ -94,6 +95,10 @@ class LocaleMiddleware implements MiddlewareInterface {
 		if ($lo_language) {
 			ini_set('intl.default_locale', $lo_language->locale);
 			I18n::setLocale($lo_language->locale);
+
+			if ($lo_language->dateFormat && $lo_language->timeFormat) {
+				DateTime::$niceFormat = $lo_language->dateFormat . ' ' . $lo_language->timeFormat;
+			}
 
 			$ls_timezone = Configure::read('Awyiss.System.' . static::getRealm() . '.timezone');
 			if ($ls_timezone !== 'auto') {

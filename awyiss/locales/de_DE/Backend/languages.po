@@ -74,6 +74,12 @@ msgstr "Zeitzone"
 msgid "locale"
 msgstr "Sprachregion"
 
+msgid "date_format"
+msgstr "Datumsformat"
+
+msgid "time_format"
+msgstr "Zeitformat"
+
 msgid "realm"
 msgstr "Domäne"
 

@@ -67,6 +67,15 @@
 						{{ FormHelper.control('locale', {columnSpan: 4}) }}
 					{% endblock %}
 
+					{% block formControlDateFormat %}
+						{{ FormHelper.control('date_format', {columnSpan: 4}) }}
+					{% endblock %}
+
+
+					{% block formControlTimeFormat %}
+						{{ FormHelper.control('time_format', {columnSpan: 4}) }}
+					{% endblock %}
+
 					{% block fieldsetGeneralAttributes %}
 						{{ AttributesHelper.allControls('general') }}
 					{% endblock %}

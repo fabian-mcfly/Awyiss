@@ -107,6 +107,14 @@ class LanguagesTable extends Table {
 		]);
 
 
+		$validator->notEmptyString('realm');
+		$validator->add('realm', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'inList' => ['rule' => ['inList', Awyiss::getRealms()]],
+			'maxLength' => ['rule' => ['maxLength', 20]],
+		]);
+
+
 		$validator->notEmptyString('shortcode');
 		$validator->add('shortcode', [
 			'isScalar' => ['rule' => 'isScalar'],
@@ -117,14 +125,6 @@ class LanguagesTable extends Table {
 					return strlen($shortcode) == 2;
 				},
 			],
-		]);
-
-
-		$validator->notEmptyString('title');
-		$validator->add('title', [
-			'isScalar' => ['rule' => 'isScalar'],
-			'maxLength' => ['rule' => ['maxLength', 50]],
-			'notBlank' => ['rule' => 'notBlank'],
 		]);
 
 
@@ -144,10 +144,25 @@ class LanguagesTable extends Table {
 		]);
 
 
-		$validator->add('realm', [
+		$validator->allowEmptyString('dateFormat');
+		$validator->add('dateFormat', [
 			'isScalar' => ['rule' => 'isScalar'],
-			'inList' => ['rule' => ['inList', Awyiss::getRealms()]],
-			'maxLength' => ['rule' => ['maxLength', 20]],
+			'maxLength' => ['rule' => ['maxLength', 30]],
+		]);
+
+
+		$validator->allowEmptyString('timeFormat');
+		$validator->add('timeFormat', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'maxLength' => ['rule' => ['maxLength', 30]],
+		]);
+
+
+		$validator->notEmptyString('title');
+		$validator->add('title', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'maxLength' => ['rule' => ['maxLength', 50]],
+			'notBlank' => ['rule' => 'notBlank'],
 		]);
 
 

@@ -61,6 +61,9 @@ class BackendView extends AppView {
 
 		$this->addHelper('Url');
 
+
+		$lo_twig = $this->getTwig();
+
 		// Set login logo path
 		$ls_logoPath = null;
 		$ls_extensions = ['png', 'jpg', 'svg'];
@@ -76,7 +79,7 @@ class BackendView extends AppView {
 
 		if ($ls_logoPath) {
 			// If the logo path is set, remove the root path and custom directory from the path
-			$this->set('loginLogoPath', substr_replace($ls_logoPath, '', 0, strlen(ROOT . DS . CUSTOM_DIR) + 1));
+			$lo_twig->addGlobal('loginLogoPath', substr_replace($ls_logoPath, '', 0, strlen(ROOT . DS . CUSTOM_DIR) + 1));
 		}
 
 		$lo_blocklistedProperties = ['realm', 'systemOrder', 'active', 'deleted', 'createdBy', 'createdOn', 'changedBy', 'changedOn', 'deletedBy', 'deletedOn', 'label'];
@@ -104,9 +107,16 @@ class BackendView extends AppView {
 			foreach ($lo_blocklistedProperties as $ls_property) {
 				unset($lo_backendLanguage->{$ls_property});
 			}
+
+			if ($lo_backendLanguage->dateFormat) {
+				$lo_twig->addGlobal('dateFormat', $lo_backendLanguage->dateFormat);
+			}
+			if ($lo_backendLanguage->timeFormat) {
+				$lo_twig->addGlobal('timeFormat', $lo_backendLanguage->timeFormat);
+			}
 		}
 
-		$lo_twig = $this->getTwig();
+
 		$lo_twig->addGlobal('baseUrl', Router::url('/', true));
 		$lo_twig->addGlobal('currentLanguage', $lo_frontendLanguage);
 		$lo_twig->addGlobal('currentPath', $this->getRequest()->getUri()->getPath());

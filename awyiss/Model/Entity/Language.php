@@ -12,11 +12,13 @@ use Awyiss\Model\Entity;
  * Language Entity
  *
  * @property int $id
+ * @property string|null $realm
  * @property string|null $shortcode
- * @property string|null $title
  * @property string|null $timezone
  * @property string|null $locale
- * @property string|null $realm
+ * @property string|null $dateFormat
+ * @property string|null $timeFormat
+ * @property string|null $title
  * @property int $systemOrder
  * @property bool $active
  * @property bool $deleted
@@ -32,12 +34,30 @@ class Language extends Entity {
 	/**
 	 * @inheritDoc
 	 */
+	protected static array $fieldMap = [
+		'date_format' => 'dateFormat',
+		'time_format' => 'timeFormat',
+		'system_order' => 'systemOrder',
+		'created_by' => 'createdBy',
+		'created_on' => 'createdOn',
+		'changed_by' => 'changedBy',
+		'changed_on' => 'changedOn',
+		'deleted_by' => 'deletedBy',
+		'deleted_on' => 'deletedOn',
+	];
+
+
+	/**
+	 * @inheritDoc
+	 */
 	protected array $_accessible = [
+		'realm' => true,
 		'shortcode' => true,
-		'title' => true,
 		'timezone' => true,
 		'locale' => true,
-		'realm' => true,
+		'dateFormat' => true,
+		'timeFormat' => true,
+		'title' => true,
 		'systemOrder' => true,
 		'active' => true,
 	];
@@ -46,17 +66,5 @@ class Language extends Entity {
 	 */
 	protected array $defaultValues = [
 		'realm' => Awyiss::REALM_FRONTEND,
-	];
-	/**
-	 * @inheritDoc
-	 */
-	protected static array $fieldMap = [
-		'system_order' => 'systemOrder',
-		'created_by' => 'createdBy',
-		'created_on' => 'createdOn',
-		'changed_by' => 'changedBy',
-		'changed_on' => 'changedOn',
-		'deleted_by' => 'deletedBy',
-		'deleted_on' => 'deletedOn',
 	];
 }
