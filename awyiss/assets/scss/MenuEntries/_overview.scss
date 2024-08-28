@@ -10,7 +10,7 @@
 				top:100px;
 			}
 
-			&:nth-child(2 of .Overview-List) {
+			&:not(.Pages-List) {
 				grid-column-start:2;
 				align-self:flex-start;
 			}
