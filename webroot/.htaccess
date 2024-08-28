@@ -78,3 +78,19 @@
     AddOutputFilterByType DEFLATE text/plain
     AddOutputFilterByType DEFLATE text/xml
 </IfModule>
+
+<ifmodule mod_headers.c>
+	<filesmatch "\\.(ico|jpe?g|png|gif|webp|svg|ttf|woff|woff2)$">
+		Header set Cache-Control "max-age=31536000, public"
+	</filesmatch>
+	<filesmatch "\\.(css)$">
+		Header set Cache-Control "max-age=31536000, public"
+		Header unset ETag
+		FileETag None
+	</filesmatch>
+	<filesmatch "\\.(js)$">
+		Header set Cache-Control "max-age=31536000, private"
+		Header unset ETag
+		FileETag None
+	</filesmatch>
+</ifmodule>
