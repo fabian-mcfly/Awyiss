@@ -1,0 +1,286 @@
+#Lightbox {
+	background-color:rgba(0, 0, 0, .8);
+	backdrop-filter:blur(5px);
+	position:fixed;
+	inset:0;
+	z-index:999999;
+	opacity:0;
+	visibility:hidden;
+	transition:opacity .3s ease-in-out, visibility 0s linear .3s;
+
+	&.Visible {
+		opacity:inherit;
+		visibility:inherit;
+		transition-delay:0s;
+
+		.Lightbox-Stage {
+			&.Loaded {
+				opacity:inherit;
+				visibility:inherit;
+				scale:1;
+				transition-delay:0s;
+			}
+		}
+	}
+
+	.Lightbox-Counter,
+	.Lightbox-Loader,
+	.Lightbox-Stage {
+		opacity:0;
+		visibility:hidden;
+		transition:opacity .3s ease-in-out, visibility 0s linear .3s, scale .3s ease-in-out;
+
+		&.Visible {
+			opacity:inherit;
+			visibility:inherit;
+			transition-delay:0s;
+		}
+	}
+
+	.Lightbox-Buttons {
+		display:flex;
+		position:absolute;
+		top:20px;
+		right:20px;
+		left:20px;
+		z-index:2;
+		justify-content:center;
+	}
+
+	.Lightbox-Close,
+	.Lightbox-Zoom {
+		width:40px;
+		aspect-ratio:1;
+		border-radius:5px;
+		border:0 none;
+		background-color:transparent;
+		color:#FFFFFF;
+		text-align:center;
+		cursor:pointer;
+		opacity:.5;
+		transition:opacity .3s ease-in-out;
+
+		&::before {
+			@include fa('\f00d', 24px);
+			line-height:40px;
+		}
+
+		&:hover {
+			opacity:1;
+		}
+	}
+
+	.Lightbox-Close {
+		position:absolute;
+		top:0;
+		right:0;
+	}
+
+	.Lightbox-Zoom {
+		margin-inline:5px;
+		opacity:0;
+		visibility:hidden;
+		transition:opacity .3s ease-in-out, visibility 0s linear .3s;
+
+		&.Lightbox-Zoom-In {
+			&::before {
+				content:'\f00e';
+			}
+		}
+
+		&.Lightbox-Zoom-Out {
+			&::before {
+				content:'\f010';
+			}
+		}
+
+		&.Visible {
+			opacity:inherit;
+			visibility:inherit;
+			transition-delay:0s;
+
+			&.Disabled {
+				opacity:.1;
+				pointer-events:none;
+			}
+		}
+	}
+
+	.Lightbox-Counter {
+		width:fit-content;
+		margin:auto;
+		padding:10px;
+		border-radius:5px;
+		background-color:#FFFFFF;
+		font-size:14px;
+		font-weight:bold;
+		line-height:1;
+		text-align:center;
+		position:absolute;
+		right:20px;
+		bottom:20px;
+		left:20px;
+		z-index:2;
+	}
+
+	.Lightbox-Loader {
+		width:140px;
+		aspect-ratio:1;
+		margin:auto;
+		position:fixed;
+		inset:0;
+
+		svg {
+			width:100%;
+			height:100%;
+		}
+	}
+
+	.Lightbox-Stage {
+		display:flex;
+		margin:auto;
+		position:absolute;
+		inset:80px;
+		align-items:center;
+		justify-content:center;
+		scale:.5;
+
+		&.Inline,
+		&.Ajax,
+		iframe {
+			max-width:1280px;
+			max-height:calc(100% - 40px);
+			aspect-ratio:16 / 9;
+			background-color:#FFFFFF;
+		}
+
+		&.Inline,
+		&.Ajax {
+			scrollbar-width:thin;
+			overflow-x:hidden;
+			overflow-y:auto;
+
+			@media screen AND (max-aspect-ratio:1) {
+				aspect-ratio:.5;
+			}
+		}
+
+		> iframe,
+		> video {
+			width:calc(100% - 40px);
+			margin:auto;
+			border:0 none;
+			position:absolute;
+			inset:0;
+			transition:scale .3s ease-in-out;
+		}
+
+		> iframe {
+			&:not(.Video) {
+				@media screen AND (max-aspect-ratio:1) {
+					aspect-ratio:.5;
+				}
+			}
+		}
+
+		> img {
+			width:auto;
+			max-height:100%;
+		}
+
+		> video {
+			width:auto;
+			max-width:100%;
+			height:auto;
+			max-height:100%;
+		}
+	}
+
+	.Lightbox-Arrow {
+		width:40px;
+		aspect-ratio:1;
+		margin:auto;
+		border-radius:5px;
+		border:0 none;
+		background-color:#FFFFFF;
+		color:#333333;
+		text-align:center;
+		position:absolute;
+		top:0;
+		bottom:0;
+		left:20px;
+		cursor:pointer;
+		opacity:.5;
+		transition:opacity .3s ease-in-out;
+
+		&.Lightbox-Arrow-Right {
+			right:20px;
+			left:auto;
+
+			&::before {
+				content:'\f105';
+			}
+		}
+
+		&.Disabled {
+			opacity:.1;
+			pointer-events:none;
+		}
+
+		&:hover {
+			opacity:1;
+		}
+
+		&::before {
+			@include fa('\f104', 24px);
+			line-height:40px;
+		}
+	}
+
+	.Lightbox-Pagination {
+		display:flex;
+		margin:auto;
+		position:absolute;
+		font-size:0;
+		line-height:0;
+		right:20px;
+		bottom:30px;
+		left:20px;
+		justify-content:center;
+		z-index:1;
+
+		li {
+			height:20px;
+			margin:0 10px;
+			list-style-type:none;
+
+			&.Active {
+				button {
+					background-color:var(--colorMain, #63d1a5);
+					opacity:1;
+				}
+			}
+		}
+
+		button {
+			width:20px;
+			height:20px;
+			border-radius:50%;
+			border:0 none;
+			background-color:#FFFFFF;
+			cursor:pointer;
+			opacity:.5;
+			transition:background-color .3s ease-in-out, opacity .3s ease-in-out;
+
+			&:focus-visible {
+				outline:2px solid var(--colorMain, #63d1a5);
+				outline-offset:2px;
+				opacity:1;
+			}
+
+			&:hover {
+				opacity:1;
+			}
+		}
+	}
+}

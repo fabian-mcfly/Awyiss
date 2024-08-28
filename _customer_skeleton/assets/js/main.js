@@ -1,5 +1,6 @@
 import Headroom from 'Headroom/headroom';
 import LazyLoad from 'LazyLoad/lazyload';
+import Lightbox from 'Lightbox/Lightbox';
 
 
 /**
@@ -48,6 +49,11 @@ function initMainOnReady() {
 		});
 		headroom.init();
 	}
+
+	window.lightbox = new Lightbox({
+		baseUrl: baseUrl,
+		currentUrl: currentUrl,
+	});
 
 	// Remove the "ready" event listener
 	document.removeEventListener('DOMContentLoaded', initMainOnReady);

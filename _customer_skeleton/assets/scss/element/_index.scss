@@ -1,7 +1,14 @@
 @import 'extendables';
 @import 'general';
+
+// Page layout
 @import 'header';
 @import 'menu';
 @import 'footer';
+
+// Additional elements
+@import 'lightbox';
 @import 'pagination';
+
+// Single elements, like contents or form elements selected by ID
 @import 'single_elements';
