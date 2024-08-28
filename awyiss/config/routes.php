@@ -20,6 +20,10 @@ $routes->registerMiddleware(
 	'csp',
 	new CspMiddleware(
 		[
+			'base-uri' => [
+				'allow' => Configure::read('Csp.baseUri.allow'),
+				'self' => true,
+			],
 			'connect-src' => [
 				'allow' => Configure::read('Csp.connectSrc.allow'),
 				'self' => true,
