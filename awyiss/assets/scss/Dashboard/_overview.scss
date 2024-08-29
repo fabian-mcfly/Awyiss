@@ -35,6 +35,21 @@
 		&.Fieldset-PagesNotFoundStatus {
 			padding:0;
 
+			.Table-Overflow {
+				border-radius:5px;
+
+				&:has(tr:nth-child(5)) {
+					height:300px;
+					overflow:hidden auto;
+					scrollbar-color:var(--scrollbarColor);
+					scrollbar-width:thin;
+
+					.TableHeader-Actions {
+						border-top-right-radius:0;
+					}
+				}
+			}
+
 			.Overview-Table {
 				margin-bottom:0;
 			}

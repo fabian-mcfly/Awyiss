@@ -13,40 +13,42 @@
 			<legend>{{ __d('pages_not_found', 'headline_status_cell') }}</legend>
 
 			{% block fieldsetOverviewInner %}
-				{% block tableOverview %}
-					<table class="Overview-Table">
-						{% block tableOverviewHead %}
-							<thead>
-								<tr>
-									<th class="TableHeader-Slug">
-										{{ __d('pages_not_found', 'slug') }}
-									</th>
-									{% if canCreateSlugHistory %}
-										<th class="TableHeader-Actions"></th>
-									{% endif %}
-								</tr>
-							</thead>
-						{% endblock %}
-						{% block tableOverviewBody %}
-							<tbody>
-								{% for pageNotFound in pagesNotFound %}
+				<div class="Table-Overflow">
+					{% block tableOverview %}
+						<table class="Overview-Table">
+							{% block tableOverviewHead %}
+								<thead>
 									<tr>
-										<td class="TableCell-Slug" title="{{ pageNotFound.slug }}">{{ pageNotFound.slug }}</td>
+										<th class="TableHeader-Slug">
+											{{ __d('pages_not_found', 'slug') }}
+										</th>
 										{% if canCreateSlugHistory %}
-											<td class="TableCell-Actions">
-												<form class="Actions" method="post" action="{{ UrlHelper.build({controller: 'SlugHistory', action: 'add'}) }}">
-													{{ FormHelper.button(__d('pages_not_found', 'create_redirect'), {class: 'Button Button-Small Button-Add', name: 'submit', value: 'submit'}) }}
-													{{ FormHelper.hidden('reload_form', {val: 1}) }}
-													{{ FormHelper.hidden('slug', {val: entity.slug|trim('/')}) }}
-												</form>
-											</td>
+											<th class="TableHeader-Actions"></th>
 										{% endif %}
 									</tr>
-								{% endfor %}
-							</tbody>
-						{% endblock %}
-					</table>
-				{% endblock %}
+								</thead>
+							{% endblock %}
+							{% block tableOverviewBody %}
+								<tbody>
+									{% for pageNotFound in pagesNotFound %}
+										<tr>
+											<td class="TableCell-Slug" title="{{ pageNotFound.slug }}">{{ pageNotFound.slug }}</td>
+											{% if canCreateSlugHistory %}
+												<td class="TableCell-Actions">
+													<form class="Actions" method="post" action="{{ UrlHelper.build({controller: 'SlugHistory', action: 'add'}) }}">
+														{{ FormHelper.button(__d('pages_not_found', 'create_redirect'), {class: 'Button Button-Small Button-Add', name: 'submit', value: 'submit'}) }}
+														{{ FormHelper.hidden('reload_form', {val: 1}) }}
+														{{ FormHelper.hidden('slug', {val: entity.slug|trim('/')}) }}
+													</form>
+												</td>
+											{% endif %}
+										</tr>
+									{% endfor %}
+								</tbody>
+							{% endblock %}
+						</table>
+					{% endblock %}
+				</div>
 			{% endblock %}
 		</fieldset>
 	{% endif %}
