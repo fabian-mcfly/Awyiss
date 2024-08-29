@@ -227,6 +227,10 @@
 			pointer-events:none;
 		}
 
+		&.Hidden {
+			display:none;
+		}
+
 		&:hover {
 			opacity:1;
 		}
