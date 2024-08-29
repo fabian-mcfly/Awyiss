@@ -564,11 +564,16 @@ class CategoriesBehavior extends Behavior implements PropertyMarshalInterface {
 	 */
 	public function verifySelection(mixed $categoryId = null, ?array $validSelectionValues = null): mixed {
 		$lx_categoryId = $categoryId ?: $this->getConfig('selectedCategory');
-
-		if (in_array($lx_categoryId, $validSelectionValues ?? $this->getValidSelectionValues())) {
-			return $lx_categoryId;
+		if (is_string($lx_categoryId)) {
+			$lx_categoryId = Inflector::underscore($lx_categoryId);
 		}
 
+		$la_validSelectionValues = $validSelectionValues ?? $this->getValidSelectionValues();
+		$la_validSelectionValues = array_map(fn ($value) => is_string($value) ? Inflector::underscore($value) : $value, $la_validSelectionValues);
+
+		if (in_array($lx_categoryId, $la_validSelectionValues)) {
+			return $lx_categoryId;
+		}
 
 		return false;
 	}
