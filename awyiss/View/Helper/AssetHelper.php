@@ -353,8 +353,12 @@ class AssetHelper extends Helper {
 
 				$ls_minifiedPath = ROOT . $ls_fileName . $ls_extension;
 
-				// If the minified file does not exist, create it
-				if (!file_exists($ls_minifiedPath)) {
+				/*
+				 * If the minified file does not exist,
+				 * or if the modification time of the minified file is older than the modification time of the asset file,
+				 * minify the asset file.
+				 */
+				if (!file_exists($ls_minifiedPath) || filemtime($ls_minifiedPath) < filemtime($ls_assetPath)) {
 					$this->minifyAsset($ls_assetPath, $ls_minifiedPath, $ls_extension);
 				}
 
