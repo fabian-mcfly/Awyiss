@@ -94,3 +94,15 @@ msgstr "Global"
 
 msgid "global_value"
 msgstr "Global"
+
+msgid "identifier_interface_dark_mode"
+msgstr "Dark Mode"
+
+msgid "identifier_interface_editor"
+msgstr "Rich Text Editor"
+
+msgid "identifier_interface_scale"
+msgstr "Scaling"
+
+msgid "identifier_timezone"
+msgstr "Timezone"

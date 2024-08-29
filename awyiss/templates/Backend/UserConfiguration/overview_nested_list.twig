@@ -42,7 +42,13 @@
 									<li class="DataItem Identifier">
 										{% if key == 0 %}
 											<span class="Label">{{ __('identifier') }}:</span>
-											{{ identifier|split('.')|slice(-1)|join()|variable }}
+											{% set output = identifier|split('.')|slice(-1)|join()|variable %}
+											{% set translatedIdentifier = __df('user_configuration', 'configuration', 'identifier_' ~ (parents ? parents|join('_') ~ '_' : '') ~ output|underscore) %}
+											{% if '::' in translatedIdentifier  %}
+												{{ output }}
+											{% else %}
+												{{ translatedIdentifier }} <span class="UntranslatedIdentifier">({{ output }})</span>
+											{% endif %}
 										{% endif %}
 									</li>
 								{% endblock %}
