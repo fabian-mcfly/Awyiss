@@ -83,6 +83,9 @@ msgstr "The Page could not be deleted"
 msgid "view_contents"
 msgstr "View contents"
 
+msgid "edit"
+msgstr "Settings"
+
 msgid "pages"
 msgstr "Pages"
 

@@ -83,6 +83,9 @@ msgstr "Die Seite konnte nicht gelöscht werden"
 msgid "view_contents"
 msgstr "Inhalte anzeigen"
 
+msgid "edit"
+msgstr "Einstellungen"
+
 msgid "pages"
 msgstr "Seiten"
 
