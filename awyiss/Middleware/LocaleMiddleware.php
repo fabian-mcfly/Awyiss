@@ -95,6 +95,7 @@ class LocaleMiddleware implements MiddlewareInterface {
 		if ($lo_language) {
 			ini_set('intl.default_locale', $lo_language->locale);
 			I18n::setLocale($lo_language->locale);
+			setlocale(LC_ALL, $lo_language->locale . '.utf8');
 
 			if ($lo_language->dateFormat && $lo_language->timeFormat) {
 				DateTime::$niceFormat = $lo_language->dateFormat . ' ' . $lo_language->timeFormat;

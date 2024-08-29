@@ -234,7 +234,7 @@
 			padding:0;
 			border-left-width:0;
 			border-bottom-width:0;
-			grid-template-columns:9rem auto;
+			grid-template-columns:10rem auto;
 
 			.Scale-Small& {
 				padding-bottom:0;
@@ -251,7 +251,7 @@
 				border-radius:5px 0 0 5px;
 				background-color:var(--colorMedium);
 				color:var(--colorBright);
-				font-size:1rem;
+				font-size:18px;
 				//noinspection CssNoGenericFontName
 				font-family:var(--fontStackHeading);
 				line-height:1.2;

@@ -14,6 +14,7 @@ use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Model\Entity\Configuration;
 use Awyiss\Model\Entity\UserConfiguration;
 use Awyiss\Routing\Router;
+use Awyiss\Utility\Inflector;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
 use Cake\ORM\Query\SelectQuery;
@@ -105,6 +106,21 @@ class UserConfigurationController extends Controller {
 		 */
 		foreach ($la_configOptions as $ls_realm => $lo_configOptions) {
 			$la_configOptions[ $ls_realm ] = Hash::merge([], $lo_configOptions->toArray(), $la_globalConfiguration, $la_configuration);
+
+			uksort($la_configOptions[ $ls_realm ], function ($a, $b) {
+				$ls_titleA = __df('user_configuration', 'configuration', 'category_' . Inflector::underscore($a));
+				$ls_titleB = __df('user_configuration', 'configuration', 'category_' . Inflector::underscore($b));
+
+				if (str_contains($ls_titleA, '::')) {
+					$ls_titleA = $a;
+				}
+
+				if (str_contains($ls_titleB, '::')) {
+					$ls_titleB = $b;
+				}
+
+				return strcoll(mb_strtolower($ls_titleA), mb_strtolower($ls_titleB));
+			});
 		}
 		unset($la_configOptions[ Awyiss::REALM_FRONTEND ]);
 

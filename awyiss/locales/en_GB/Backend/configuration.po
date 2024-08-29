@@ -100,3 +100,45 @@ msgstr "Default"
 
 msgid "global_language"
 msgstr "Global"
+
+msgid "category_overview"
+msgstr "Overview"
+
+msgid "category_paginate"
+msgstr "Pagination"
+
+msgid "category_column_system"
+msgstr "Column System"
+
+msgid "category_column_view"
+msgstr "Column View"
+
+msgid "category_interface"
+msgstr "Interface"
+
+msgid "category_publication_data"
+msgstr "Publication Data"
+
+msgid "category_categories"
+msgstr "Categories"
+
+msgid "category_contents"
+msgstr "Contents"
+
+msgid "category_media"
+msgstr "Media"
+
+msgid "category_upload"
+msgstr "Upload"
+
+msgid "category_media_folders"
+msgstr "Media Folders"
+
+msgid "category_meta"
+msgstr "Meta"
+
+msgid "category_nest"
+msgstr "Nesting"
+
+msgid "category_system_order"
+msgstr "System Order"

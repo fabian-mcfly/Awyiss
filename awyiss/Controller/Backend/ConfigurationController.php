@@ -86,7 +86,7 @@ class ConfigurationController extends Controller {
 		$lo_query = $this->getOverviewQuery();
 
 		$la_configuration = $lo_query->all()->groupBy('realm')->map(function ($data) use ($lo_configOptions) {
-			return Hash::expand(collection($data)->groupBy(function (Configuration $entity) use ($lo_configOptions) {
+			$la_collection = Hash::expand(collection($data)->groupBy(function (Configuration $entity) use ($lo_configOptions) {
 				$la_identifier = array_map(function (string $identifier) {
 					return ConfigOptionsProvider::sanitizeIdentifier($identifier);
 				}, explode('.', $entity->identifier));
@@ -95,6 +95,8 @@ class ConfigurationController extends Controller {
 
 				return implode('.', $la_identifier);
 			})->toArray());
+
+			return $la_collection;
 		})->toArray();
 
 		/**
@@ -103,6 +105,21 @@ class ConfigurationController extends Controller {
 		 */
 		foreach ($la_configOptions as $ls_realm => $lo_configOptions) {
 			$la_configOptions[ $ls_realm ] = Hash::merge([], $lo_configOptions->toArray(), $la_configuration[ $ls_realm ] ?? []);
+
+			uksort($la_configOptions[ $ls_realm ], function ($a, $b) {
+				$ls_titleA = __('category_' . Inflector::underscore($a));
+				$ls_titleB = __('category_' . Inflector::underscore($b));
+
+				if (str_contains($ls_titleA, '::')) {
+					$ls_titleA = $a;
+				}
+
+				if (str_contains($ls_titleB, '::')) {
+					$ls_titleB = $b;
+				}
+
+				return strcoll(mb_strtolower($ls_titleA), mb_strtolower($ls_titleB));
+			});
 		}
 
 		$this->set([
