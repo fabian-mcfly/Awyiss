@@ -17,6 +17,12 @@ return [
 				'https://fonts.gstatic.com',
 			],
 		],
+		'frameSrc' => [
+			'allow' => [
+				'https://player.vimeo.com',
+				'https://www.youtube-nocookie.com',
+			],
+		],
 		'styleSrcElem' => [
 			'allow' => [
 				'https://fonts.googleapis.com',
