@@ -5,6 +5,12 @@
  *
  * Usage:
  *
+ * Import the script
+ *
+ * ```js
+ * 	import Lightbox from 'Lightbox/Lightbox';
+ * ```
+ *
  * Create a new instance, passing the settings you want to use globally
  *
  * ```js
@@ -71,11 +77,9 @@ export default class Lightbox {
 			panOnlyWhenZoomed: false,
 			transition: false,
 		},
-		previewImageSrcAttribute: 'lightbox-preview',
 		showArrows: true,
 		showCounter: false,
 		showPagination: true,
-		showPreviews: true,
 	};
 	/**
 	 * The DOM nodes for the lightbox.
@@ -191,7 +195,6 @@ export default class Lightbox {
 		if (sourceElement instanceof HTMLElement) {
 			element.href = this.settings.hrefAttribute ? sourceElement.getAttribute(this.settings.hrefAttribute) : sourceElement.href;
 			element.caption = this.settings.captionAttribute ? sourceElement.getAttribute(this.settings.captionAttribute) : null;
-			element.previewImageSrc = this.settings.previewImageSrcAttribute ? sourceElement.getAttribute(this.settings.previewImageSrcAttribute) : null;
 			element.sourceElement = sourceElement;
 		}
 		// If the source element is an object, use the data as is
@@ -199,7 +202,6 @@ export default class Lightbox {
 			element = sourceElement;
 
 			element.caption ??= null;
-			element.previewImageSrc ??= null;
 		}
 
 		// If the element is missing a href, it cannot be displayed
