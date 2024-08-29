@@ -1,4 +1,4 @@
-{% macro recursiveConfigurationListing(configItems, level = 0) %}
+{% macro recursiveConfigurationListing(configItems, level = 0, realm, selectedScope, addUrl, parents) %}
 	<ol class="Configuration-List List Level{{ level + 1 }}">
 		{% for identifier, configItem in configItems %}
 			{% if (configItem is array and configItem[0] is not defined) %}
@@ -7,7 +7,7 @@
 						<span class="Title">
 							{{ identifier|variable }}
 						</span>
-						{{ _self.recursiveConfigurationListing(configItem, level + 1) }}
+						{{ _self.recursiveConfigurationListing(configItem, level + 1, realm, selectedScope, addUrl, parents|merge([identifier])) }}
 					</li>
 				{% endblock %}
 			{% else %}
@@ -59,13 +59,17 @@
 										{% endif %}
 
 										{{ value ?? '<em>null</em>' }}
+
+										{% if isDefault -%}
+											<span class="DefaultValue">({{ __('default_value') }})</span>
+										{% endif %}
 									</li>
 								{% endblock %}
 
 								{% block listOverviewLanguageShortcode %}
 									<li class="DataItem LanguageShortcode">
 										{% if key == 0 %}<span class="Label">{{ __('language_shortcode') }}:</span>{% endif %}
-										{{ configuration.language_shortcode is defined ? LocaleHelper.languageTitle(configuration.language_shortcode) : '' }}
+										{{ configuration.language_shortcode is defined ? LocaleHelper.languageTitle(configuration.language_shortcode) : ('<span class="GlobalLanguage">' ~ __('global_language') ~ '</span>')|raw }}
 									</li>
 								{% endblock %}
 							</ul>
@@ -87,8 +91,18 @@
 							{% endif %}
 
 							{% block listOverviewActions %}
-								{% if isDefault == false %}
-									<span class="Actions">
+								<span class="Actions">
+									{% if isDefault  %}
+										{% if AuthorizationHelper.isAccessible('create') %}
+											{{ FormHelper.create(null, {action: addUrl, method: 'post', idPrefix: 'Configuration'}) }}
+												{{ FormHelper.hidden('scope', {val: selectedScope}) }}
+												{{ FormHelper.hidden('realm', {val: realm}) }}
+												{{ FormHelper.hidden('identifier', {val: (parents ? parents|join('.') ~ '.' : '') ~ configuration.identifier}) }}
+												{{ FormHelper.hidden('reload_form', {val: 1}) }}
+												{{ FormHelper.button(__('add'), {class: 'Button Button-Small Button-Add'}) }}
+											{{ FormHelper.end() }}
+										{% endif %}
+									{% else %}
 										{% if AuthorizationHelper.isAccessible('update') %}
 											{{ HtmlHelper.link(__('edit'), {action: 'edit', id: configuration.id}, {class: 'Button Button-Small Button-Edit'}) }}
 										{% endif %}
@@ -103,8 +117,8 @@
 												'data-confirm': __('confirm_delete', configuration.id),
 											}) }}
 										{% endif %}
-									</span>
-								{% endif %}
+									{% endif %}
+								</span>
 							{% endblock %}
 						</li>
 					{% endfor %}

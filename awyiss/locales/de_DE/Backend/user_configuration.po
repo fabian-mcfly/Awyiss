@@ -35,6 +35,9 @@ msgstr "Benutzerkonfiguration"
 msgid "create"
 msgstr "Neuer Konfigurationseintrag"
 
+msgid "add"
+msgstr "Erstellen"
+
 msgid "headline_add"
 msgstr "Konfigurationseintrag hinzufügen"
 
@@ -91,3 +94,12 @@ msgstr "Die Option ist nicht lokalisierbar"
 
 msgid "error_option_not_nullable"
 msgstr "Die Option darf nicht leer sein"
+
+msgid "default_value"
+msgstr "Standardwert"
+
+msgid "global_language"
+msgstr "Global"
+
+msgid "global_value"
+msgstr "Global"

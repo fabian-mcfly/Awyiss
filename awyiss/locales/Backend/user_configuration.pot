@@ -24,6 +24,9 @@ msgid "headline_overview"
 msgstr "User Configuration"
 
 msgid "create"
+msgstr "New Configuration Entry"
+
+msgid "add"
 msgstr "Create"
 
 msgid "headline_add"
@@ -82,3 +85,12 @@ msgstr "The option is not localizable"
 
 msgid "error_option_not_nullable"
 msgstr "The option cannot be null"
+
+msgid "default_value"
+msgstr "Default"
+
+msgid "global_language"
+msgstr "Global"
+
+msgid "global_value"
+msgstr "Global"

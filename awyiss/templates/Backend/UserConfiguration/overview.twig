@@ -33,7 +33,8 @@
 			{% block fieldsetOverviewInner %}
 				{% block listOverview %}
 					{% from '@Backend/UserConfiguration/overview_nested_list.twig' import recursiveConfigurationListing %}
-					{{ recursiveConfigurationListing(mergedConfiguration['Backend'], 0, _context) }}
+					{% set addUrl = UrlHelper.build({action: 'add'}) %}
+					{{ recursiveConfigurationListing(mergedConfiguration['Backend'], 0, selectedScope, addUrl, []) }}
 				{% endblock %}
 			{% endblock %}
 		</fieldset>
