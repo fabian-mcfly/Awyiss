@@ -5,6 +5,14 @@
 
 {% extends '@Backend/element/overview/nested_list_item.twig' %}
 
+{% block nestedListItemAuditInfo %}
+	<div class="Audit-Preview">
+		{{ parent() }}
+
+		{{ HtmlHelper.link(__('preview'), {action: 'preview', id: entity.id}, {class: 'Button Button-Small Button-Subtle Button-Preview'}) }}
+	</div>
+{% endblock %}
+
 {% block nestedListItemDataDefaultFields %}
 	<li class="DataItem DataItem-Slug">
 		<span class="Label">{{ __df(pageRoleName, 'generic_pages', 'slug') }}:</span>

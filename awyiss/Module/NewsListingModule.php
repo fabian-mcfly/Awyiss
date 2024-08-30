@@ -26,6 +26,9 @@ use Cake\ORM\Query\SelectQuery;
  * Show a list of news, either paginated or limited to a certain number of items
  */
 class NewsListingModule implements ModuleInterface {
+	use Trait\PreviewTrait;
+
+
 	/**
 	 * The identifier of the module
 	 *
@@ -146,10 +149,14 @@ class NewsListingModule implements ModuleInterface {
 			return '';
 		}
 
-		$lo_query = $lo_newsTable->find('active')
-		->find('published')
-		->find('forCurrentLanguage')
-		->find('mediaAssignments', includeElementSelector: true, useMediaEntity: true);
+		if (static::isPreview()) {
+			$lo_query = $lo_newsTable->find('all');
+		}
+		else {
+			$lo_query = $lo_newsTable->find('active')->find('published');
+		}
+
+		$lo_query->find('forCurrentLanguage')->find('mediaAssignments', includeElementSelector: true, useMediaEntity: true);
 
 		$lo_query->orderBy(['date' => 'DESC']);
 

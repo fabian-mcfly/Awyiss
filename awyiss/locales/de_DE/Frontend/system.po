@@ -26,5 +26,11 @@ msgstr "Buhuhu! Da ist wohl etwas schief gelaufen. Bitte versuche es später noc
 msgid "read_more"
 msgstr "Mehr erfahren"
 
-msgid "preview_mode"
+msgid "preview_mode_label"
 msgstr "Vorschau-Modus"
+
+msgid "preview_mode_mark_inactive_elements"
+msgstr "Inaktive Elemente markieren"
+
+msgid "preview_mode_disable"
+msgstr "Deaktivieren"

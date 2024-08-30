@@ -36,6 +36,16 @@ class FrontendController extends AppController {
 
 
 	/**
+	 * Whether the current request is in preview mode
+	 * If true, the page will be rendered, even if it's not published or inactive,
+	 * and the same goes for the page's contents.
+	 *
+	 * @var bool $previewMode
+	 */
+	protected bool $previewMode = false;
+
+
+	/**
 	 * @throws \Exception
 	 */
 	public function initialize(): void {
@@ -45,6 +55,8 @@ class FrontendController extends AppController {
 		EventListenersProvider::loadListener($this->getName(), Awyiss::REALM_FRONTEND);
 
 		$this->viewBuilder()->setClassName('Frontend');
+
+		$this->previewMode = !!$this->request->getSession()->read('previewMode.enabled', false);
 	}
 
 
@@ -59,11 +71,11 @@ class FrontendController extends AppController {
 		/** @var \Awyiss\Model\Table\PagesTable $lo_newsTable */
 		$lo_newsTable = $this->fetchTable('News');
 
-		$lo_query = $lo_newsTable->find('active')->find('published', skipPageRoleCheck: true);
+		$lo_query = $lo_newsTable->find($this->previewMode ? 'all' : 'active')->find(!$this->previewMode ? 'published' : 'all', skipPageRoleCheck: true);
 		$lo_query->where(['id' => $page->parentId]);
 		$lo_newsCategory = $lo_query->first();
 
-		$lo_newer = $lo_newsTable->find('active')->find('published')->find('mediaAssignments', useMediaEntity: true)
+		$lo_newer = $lo_newsTable->find($this->previewMode ? 'all' : 'active')->find(!$this->previewMode ? 'published' : 'all')->find('mediaAssignments', useMediaEntity: true)
 		->where([
 			'parent_id' => $page->parentId,
 			'system_order <' => $page->systemOrder,
@@ -71,7 +83,7 @@ class FrontendController extends AppController {
 		->orderBy(['system_order' => 'DESC'])
 		->limit(1)->first();
 
-		$lo_older = $lo_newsTable->find('active')->find('published')->find('mediaAssignments', useMediaEntity: true)
+		$lo_older = $lo_newsTable->find($this->previewMode ? 'all' : 'active')->find(!$this->previewMode ? 'published' : 'all')->find('mediaAssignments', useMediaEntity: true)
 		->where([
 			'parent_id' => $page->parentId,
 			'system_order >' => $page->systemOrder,
@@ -157,7 +169,7 @@ class FrontendController extends AppController {
 		/** @var \Awyiss\Model\Table\PagesTable $lo_pagesTable */
 		$lo_pagesTable = $this->fetchTable('Pages');
 
-		$lo_query = $lo_pagesTable->find('published', softDelete: ['includeDeleted' => !!$slug], skipPageRoleCheck: true);
+		$lo_query = $lo_pagesTable->find(!$this->previewMode ? 'published' : 'all', softDelete: ['includeDeleted' => !!$slug], skipPageRoleCheck: true);
 
 		// Add additional where conditions
 		if ($where) {
@@ -173,12 +185,20 @@ class FrontendController extends AppController {
 			'PageTemplates',
 		]);
 
-		// Order all by deleted, active, parents_active, system_order
-		$lo_query->orderBy([
-			'Pages.deleted' => 'ASC',
-			'Pages.parents_active' => 'DESC',
-			'Pages.active' => 'DESC',
-		]);
+		if ($this->previewMode) {
+			// Order all by deleted, system_order
+			$lo_query->orderBy([
+				'Pages.deleted' => 'ASC',
+			]);
+		}
+		else {
+			// Order all by deleted, parents_active, active, system_order
+			$lo_query->orderBy([
+				'Pages.deleted' => 'ASC',
+				'Pages.parents_active' => 'DESC',
+				'Pages.active' => 'DESC',
+			]);
+		}
 
 		if ($slug) {
 			$lo_query->where(['slug' => $slug]);
@@ -189,8 +209,13 @@ class FrontendController extends AppController {
 			else {
 				$lo_query->orderBy([
 					'Languages.deleted' => 'ASC',
-					'Languages.active' => 'DESC',
 				]);
+
+				if (!$this->previewMode) {
+					$lo_query->orderBy([
+						'Languages.active' => 'DESC',
+					]);
+				}
 			}
 		}
 		else {
@@ -224,7 +249,10 @@ class FrontendController extends AppController {
 
 		/*
 		 * If the page or the language of the page is deleted,
-		 * It must be active, not deleted and in the same language as the current.
+		 * check if there's a history entry for the current slug.
+		 *
+		 * If there is, redirect to the correct page.
+		 * If there isn't, find the 410 page for the current language.
 		 */
 		if ($lo_page && ($lo_page->deleted || $lo_page->language->deleted)) {
 			// Try to find an entry in the slug history
@@ -240,11 +268,12 @@ class FrontendController extends AppController {
 				throw new NotFoundException();
 			}
 		}
+
 		/*
-		 * If no page was found, check if a 404 page exists.
-		 * It must be active, not deleted and in the same language as the current.
+		 * If no page was found or the page is not active or the parents are not active,
+		 * find the 404 page for the current language.
 		 */
-		if (!$lo_page || !$lo_page->active || !$lo_page->parentsActive || !$lo_page->language->active) {
+		if (!$lo_page || ((!$lo_page->active || !$lo_page->parentsActive || !$lo_page->language->active) && !$this->previewMode)) {
 			$this->track404();
 
 			// Find the 404 page for the current language
@@ -296,13 +325,15 @@ class FrontendController extends AppController {
 			'mediaRenderOptions' => $lo_mediaRenderOptions,
 		]);
 
+		if ($this->request->getSession()->read('designPreviewIdentifier')) {
+			$this->loadDesignPreview();
+		}
+
 		if ($this->request->getSession()->read('Auth')) {
 			$this->loadFrontendEditor($lo_page);
 		}
 
-		if ($this->request->getSession()->read('designPreviewIdentifier')) {
-			$this->loadDesignPreview();
-		}
+		$this->loadFrontendPreview($lo_page);
 
 		$this->viewBuilder()
 		->setTemplate($lo_page->pageTemplate->fileName)
@@ -475,7 +506,7 @@ class FrontendController extends AppController {
 				'slug' => $lo_record->page->slug,
 			]);
 
-			throw new RedirectException($ls_realUrl, $lo_record->status);
+			throw new RedirectException($ls_realUrl, $lo_record->status ?? 307);
 		}
 	}
 
@@ -496,7 +527,7 @@ class FrontendController extends AppController {
 		$ls_pageRole = Inflector::pluralize($page->pageRoleId->name);
 		$lo_table = $this->fetchTable($ls_pageRole);
 
-		$lo_query = $lo_table->find('published')->find('mediaAssignments', useMediaEntity: true)->where(['id' => $page->id])->limit(1);
+		$lo_query = $lo_table->find(!$this->previewMode ? 'published' : 'all')->find('mediaAssignments', useMediaEntity: true)->where(['id' => $page->id])->limit(1);
 
 		// Include the languages in the query, including deleted languages
 		$lo_query->contain([
@@ -521,23 +552,25 @@ class FrontendController extends AppController {
 			'is_preview' => true,
 		])->first();
 
-		if ($lo_design) {
-			$this->set('designPreview', $lo_design);
+		if (!$lo_design) {
+			return;
+		}
 
-			$la_webfontData = [];
-			foreach ($lo_design->settings as $ls_variable => $lx_value) {
-				if (!is_array($lx_value) || !isset($lx_value['font']['name'])) {
-					continue;
-				}
+		$this->set('designPreview', $lo_design);
 
-				$la_webfontData[ $ls_variable ] = [
-					'name' => $lx_value['font']['name'],
-					'variants' => $lx_value['variants'] ?? [],
-				];
+		$la_webfontData = [];
+		foreach ($lo_design->settings as $ls_variable => $lx_value) {
+			if (!is_array($lx_value) || !isset($lx_value['font']['name'])) {
+				continue;
 			}
 
-			$this->set('designPreviewWebfonts', $la_webfontData);
+			$la_webfontData[ $ls_variable ] = [
+				'name' => $lx_value['font']['name'],
+				'variants' => $lx_value['variants'] ?? [],
+			];
 		}
+
+		$this->set('designPreviewWebfonts', $la_webfontData);
 	}
 
 
@@ -569,6 +602,32 @@ class FrontendController extends AppController {
 				'contents' => ['enabled' => $lb_contentsEditable],
 				'widgets' => ['enabled' => $lb_widgetsEditable],
 				'menuEntries' => ['enabled' => $lb_menuEntriesEditable],
+			],
+		]);
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Entity\Page $page
+	 * @return void
+	 */
+	protected function loadFrontendPreview(Page $page): void {
+		$lo_session = $this->request->getSession();
+		$this->set([
+			'frontendPreviewConfig' => [
+				'enabled' => $lo_session->read('previewMode.enabled', false),
+				'i18n' => [
+					'disable' => __d('system', 'preview_mode_disable'),
+					'label' => __d('system', 'preview_mode_label'),
+					'markInactiveElements' => __d('system', 'preview_mode_mark_inactive_elements'),
+				],
+				'markInactiveElements' => $lo_session->read('previewMode.markInactiveElements', false),
+				'settingsUrl' => Router::url([
+					'lang' => $page->languageShortcode,
+					'controller' => 'Pages',
+					'action' => 'preview-settings',
+					'_name' => 'Backend',
+				], true),
 			],
 		]);
 	}

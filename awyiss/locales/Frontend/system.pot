@@ -26,5 +26,11 @@ msgstr "Boh! Something seems to have gone wrong. Please try again later."
 msgid "read_more"
 msgstr "Read more"
 
-msgid "preview_mode"
+msgid "preview_mode_label"
 msgstr "Preview mode"
+
+msgid "preview_mode_mark_inactive_elements"
+msgstr "Mark inactive elements"
+
+msgid "preview_mode_disable"
+msgstr "Disable"

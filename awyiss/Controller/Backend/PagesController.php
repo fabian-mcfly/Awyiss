@@ -258,7 +258,7 @@ class PagesController extends Controller {
 	/**
 	 * Edit method
 	 *
-	 * @return \Cake\Http\Response|void
+	 * @return Response|void
 	 * @throws \Exception
 	 */
 	public function edit(int $id) {
@@ -295,7 +295,7 @@ class PagesController extends Controller {
 	 * Delete method
 	 *
 	 * @param int $id
-	 * @return \Cake\Http\Response
+	 * @return Response
 	 * @throws \Exception
 	 */
 	public function delete(int $id): Response {
@@ -327,6 +327,74 @@ class PagesController extends Controller {
 
 
 		return $this->redirect(['action' => 'overview']);
+	}
+
+
+	/**
+	 * When called, the page for the page id will be loaded,
+	 * a session setting for `preview` will be set,
+	 * and the user will be redirected to the page in the frontend.
+	 * The frontend is expected to check for the `preview` session setting
+	 * and display the page and its contents, ignoring publication and
+	 * active settings.
+	 *
+	 * @return Response
+	 */
+	#[NoDirectAccess]
+	public function preview(): Response {
+		/** @var \Awyiss\Model\Entity\Page|null $lo_page */
+		$lo_page = $this->Pages->findById($this->request->getParam('id'))->first();
+
+		if (!$lo_page) {
+			$this->Flash->error(__df($this->pageRoleName, 'pages', 'record_not_found'));
+
+			return $this->redirect(['action' => 'overview']);
+		}
+
+		$lo_session = $this->request->getSession();
+		$lo_session->write('previewMode', [
+			'enabled' => true,
+			'markInactiveElements' => $lo_session->read('previewMode.markElements', true),
+			'inactiveElementClass' => Awyiss::PREVIEW_MODE_ELEMENT_CLASSNAME,
+		]);
+
+		return $this->redirect([
+			'lang' => $lo_page->languageShortcode,
+			'slug' => $lo_page->slug,
+			'_name' => 'Frontend',
+		]);
+	}
+
+
+	/**
+	 * When called, the session setting provided in the request
+	 * will be updated with the new value.
+	 *
+	 * @return void
+	 */
+	#[NoDirectAccess]
+	public function previewSettings(): void {
+		$lo_session = $this->request->getSession();
+		$la_previewSettings = $lo_session->read('previewMode');
+
+		if ($this->request->is('post')) {
+			if ($this->request->getData('identifier')) {
+				$la_previewSettings[ $this->request->getData('identifier') ] = (bool)$this->request->getData('value');
+			}
+
+			$lo_session->write('previewMode', $la_previewSettings);
+		}
+
+		if ($this->request->accepts('application/json')) {
+			$this->viewBuilder()->setOption('serialize', ['previewMode']);
+
+			// Set the view class to JSON
+			$this->viewBuilder()->setClassName('Json');
+		}
+
+		$this->set([
+			'previewMode' => $la_previewSettings,
+		]);
 	}
 
 

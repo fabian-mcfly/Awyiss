@@ -390,3 +390,6 @@ msgstr "Clearing cache..."
 
 msgid "clear_cache_completed"
 msgstr "Cache cleared"
+
+msgid "preview"
+msgstr "Preview"

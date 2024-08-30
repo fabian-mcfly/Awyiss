@@ -1,0 +1,102 @@
+$relativePath:'../';
+
+@import 'general/fonts';
+
+@layer awyissFrontendPreview {
+	.AwyissFrontendPreview-Info {
+		display:flex;
+		width:fit-content;
+		background-color:var(--colorFrontendPreviewColor, #63d1a5);
+		color:var(--colorFrontendPreviewTextColor, #fff);
+		margin:auto;
+		padding:10px 20px;
+		font-family:Lato, Helvetica Neue, Helvetica, Arial, sans-serif;
+		font-size:16px;
+		line-height:20px;
+		border-radius:5px;
+		text-align:center;
+		position:fixed;
+		right:20px;
+		bottom:20px;
+		left:20px;
+		z-index:987654;
+		align-items:center;
+
+		&-Title {
+			display:inline-block;
+			margin-right:20px;
+			font-family:'2F media', Bebas Neue, Impact, Arial Display, sans-serif;
+			font-size:22px;
+			font-weight:400;
+		}
+
+		&-Option {
+			display:inline-block;
+			margin-top:-3px;
+			margin-right:20px;
+			padding-left:26px;
+			font-weight:400;
+			position:relative;
+
+			&:has(input:checked) {
+				&::before {
+					content:'✓';
+					background-color:var(--colorFrontendPreviewTextColor, #fff);
+				}
+			}
+
+			&::before {
+				content:'';
+				width:20px;
+				height:20px;
+				border-radius:5px;
+				border:2px solid var(--colorFrontendPreviewTextColor, #fff);
+				color:#000;
+				font-weight:700;
+				font-size:14px;
+				line-height:16px;
+				text-indent:-2px;
+				position:absolute;
+				top:1px;
+				left:0;
+			}
+
+			input {
+				display:none;
+			}
+		}
+
+		&-CloseButton {
+			padding:5px 15px;
+			border:0 none;
+			border-radius:5px;
+			box-shadow:0 0 10px rgba(0, 0, 0, .25);
+			background-color:#131a21;
+			color:#FFFFFF;
+			font-family:'2F media', Bebas Neue, Impact, Arial Display, sans-serif;
+			font-size:20px;
+			font-weight:400;
+			line-height:30px;
+			text-decoration:none;
+			cursor:pointer;
+			transition:background-color .3s ease-in-out;
+
+			&:hover {
+				background-color:#3b4651;
+			}
+		}
+	}
+
+	html.AwyissFrontendPreview-MarkInactiveElements {
+		.AwyissFrontendPreview-InactiveElement {
+			outline:3px dashed transparent;
+			outline-offset:5px;
+			transition:all .3s ease-in-out;
+
+			&:not(:hover) {
+				outline-color:var(--colorFrontendPreviewColor, #63d1a5);
+				background-color:color-mix(in srgb, var(--colorFrontendPreviewColor, #63d1a5), transparent 75%);
+			}
+		}
+	}
+}

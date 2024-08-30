@@ -390,3 +390,6 @@ msgstr "Cache wird geleert."
 
 msgid "clear_cache_completed"
 msgstr "Der Cache wurde erfolgreich geleert."
+
+msgid "preview"
+msgstr "Vorschau"

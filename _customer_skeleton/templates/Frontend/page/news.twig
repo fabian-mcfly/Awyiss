@@ -28,7 +28,7 @@ of a regular page with contents.
 
 {% macro newsItem(newsItem) %}
 	<div class="ContentRow">
-		<div class="ContentElement Column-100 Template-Standard BackgroundColor BackgroundColor-Bright NewsItem" id="NewsItem{{ newsItem.id }}">
+		<div class="ContentElement Column-100 Template-Standard BackgroundColor BackgroundColor-Bright NewsItem{{ newsItem.active == false and previewMode.enabled == true ? ' ' ~ previewMode.inactiveElementClass : '' }}" id="NewsItem{{ newsItem.id }}">
 			{% if newsItem.mediaAssignments.titleAndTeaserImage.teaserMedia %}
 				<div class="Image">
 					{{ MediaHelper.htmlTag(

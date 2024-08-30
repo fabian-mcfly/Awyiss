@@ -7,6 +7,7 @@ namespace Awyiss\View\Cell\Frontend;
 use Awyiss\Model\Entity;
 use Awyiss\Model\Entity\Widget;
 use Awyiss\View\Cell\Frontend\Trait\ContentElementTrait;
+use Awyiss\View\Cell\Frontend\Trait\PreviewTrait;
 use Cake\Core\Configure;
 use Cake\View\Cell;
 use RuntimeException;
@@ -19,6 +20,7 @@ use RuntimeException;
  */
 class WidgetsCell extends Cell {
 	use ContentElementTrait;
+	use PreviewTrait;
 
 
 	/**
@@ -58,9 +60,17 @@ class WidgetsCell extends Cell {
 			...$la_options['viewVars'],
 		]);
 
+		/** @var \Awyiss\Model\Table\WidgetsTable $lo_widgetsTable */
 		$lo_widgetsTable = $this->fetchTable('Widgets');
 
-		$lo_query = $lo_widgetsTable->find('active')->find('published')->find('threaded')->find('mediaAssignments', includeElementSelector: true, useMediaEntity: true);
+		if ($this->isPreview()) {
+			$lo_query = $lo_widgetsTable->find('all');
+		}
+		else {
+			$lo_query = $lo_widgetsTable->find('active')->find('published');
+		}
+
+		$lo_query->find('threaded')->find('mediaAssignments', includeElementSelector: true, useMediaEntity: true);
 		$lo_query->where([
 			'Widgets.identifier' => $identifier,
 		]);

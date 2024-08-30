@@ -19,9 +19,15 @@
 
 	{% block buttonArea %}
 		<div class="ButtonArea">
-			{% if AuthorizationHelper.isAccessible('update') %}
-				{{ HtmlHelper.link(__('edit'), {controller: page.pageRoleId.name|pluralize, action: 'edit', id: page.id}, {class: 'Button Button-Edit Button-Small Button-Subtle '}) }}
-			{% endif %}
+			{% block buttonPreview %}
+				{{ HtmlHelper.link(__('preview'), {controller: page.pageRoleId.name|pluralize, action: 'preview', id: page.id}, {class: 'Button Button-Preview Button-Small Button-Subtle'}) }}
+			{% endblock %}
+
+			{% block buttonEdit %}
+				{% if AuthorizationHelper.isAccessible('update') %}
+					{{ HtmlHelper.link(__('edit'), {controller: page.pageRoleId.name|pluralize, action: 'edit', id: page.id}, {class: 'Button Button-Edit Button-Small Button-Subtle'}) }}
+				{% endif %}
+			{% endblock %}
 
 			{% block categoriesFilterOverview %}
 				{{ CategoriesHelper.filter('page') }}
@@ -88,9 +94,9 @@
 
 	{% block buttonAreaBottom %}
 		<div class="ButtonArea ButtonArea-Bottom">
-			{% if AuthorizationHelper.isAccessible('update') %}
-				{{ HtmlHelper.link(__('edit'), {controller: page.pageRoleId.name|pluralize, action: 'edit', id: page.id}, {class: 'Button Button-Edit Button-Small Button-Subtle '}) }}
-			{% endif %}
+			{{ block('buttonPreview') }}
+
+			{{ block('buttonEdit') }}
 
 			{{ block('categoriesFilterOverview') }}
 

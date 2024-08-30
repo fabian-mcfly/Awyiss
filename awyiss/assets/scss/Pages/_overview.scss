@@ -1,0 +1,65 @@
+.PagesController,
+.IsGenericPage {
+	&.OverviewAction {
+		.ListItem-Inner {
+			&:hover {
+				.Audit-Preview {
+					.Button-Preview {
+						opacity:1;
+					}
+				}
+			}
+		}
+
+		tr {
+			&:hover {
+				.TableCell-AuditInfo {
+					.Button-Preview {
+						opacity:1;
+					}
+				}
+			}
+		}
+
+		.Audit-Preview,
+		.TableCell-AuditInfo {
+			position:relative;
+
+			.Button-Preview {
+				width:36px;
+				margin-top:5px;
+				padding:0 6px;
+				box-shadow:none;
+				background-image:none;
+				background-color:transparent;
+				color:var(--colorSemiDark);
+				font-size:0;
+				line-height:0;
+				opacity:.25;
+				transition:opacity .2s;
+
+				.Scale-Small& {
+					width:30px;
+					margin-top:-2px;
+					margin-left:3px;
+					padding:0 4px;
+				}
+
+				&:hover {
+					color:var(--colorBright);
+				}
+
+				&::after {
+					margin-left:0;
+					font-size:24px;
+					line-height:36px;
+
+					.Scale-Small& {
+						font-size:20px;
+						line-height:26px;
+					}
+				}
+			}
+		}
+	}
+}

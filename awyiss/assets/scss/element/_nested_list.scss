@@ -166,7 +166,8 @@
 				}
 
 				.Scale-Small & {
-					padding-bottom:.5rem;
+					padding-top:.25rem;
+					padding-bottom:.25rem;
 				}
 
 				&:hover {
@@ -407,13 +408,14 @@
 
 	.ListItem-Inner {
 		--listItemAuditInfoColumnWidth:36px;
-		--listItemLastColumnWidth:10rem;
+		--listItemLastColumnWidth:9rem;
 
 		display:grid;
 		padding:1rem 20px;
 		border-radius:5px;
 		background-color:var(--backgroundColorOdd);
 		position:relative;
+		gap:0 10px;
 		grid-template-columns:auto var(--listItemAuditInfoColumnWidth) var(--listItemLastColumnWidth);
 		transition:border-radius .3s ease-in-out, background-color .3s ease-in-out;
 

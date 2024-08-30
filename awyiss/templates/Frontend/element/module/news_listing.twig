@@ -19,6 +19,8 @@
 @var TimeHelper \Cake\View\Helper\TimeHelper
 #}
 
+{{ previewMode.inactiveElementClass }}
+
 {% block moduleNewsListing %}
 	<div class="Module-NewsListing">
 		{% if news.count %}
@@ -28,7 +30,7 @@
 					{% for newsItem in news %}
 						{% block newsListingItem %}
 							{% set link = UrlHelper.build({lang: newsItem.languageShortcode, slug: newsItem.slug}) %}
-							<li class="Item NewsItem" id="NewsItem{{ newsItem.id }}">
+							<li class="Item NewsItem{{ newsItem.active == false and previewMode.enabled == true ? ' ' ~ previewMode.inactiveElementClass : ''}}" id="NewsItem{{ newsItem.id }}">
 								{% block newsListingItemImage %}
 									{% if newsItem.mediaAssignments.titleAndTeaserImage.teaserMedia %}
 										<div class="Image">

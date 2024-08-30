@@ -18,6 +18,9 @@ use Cake\Datasource\FactoryLocator;
  * Show a list of news, either paginated or limited to a certain number of items
  */
 class BreadcrumbsModule implements ModuleInterface {
+	use Trait\PreviewTrait;
+
+
 	/**
 	 * The identifier of the module
 	 *
@@ -111,15 +114,26 @@ class BreadcrumbsModule implements ModuleInterface {
 			$lo_homepage = $lo_pagesTable->get($li_homepageId);
 		}
 		else {
-			// Get the homepage entity (first active and published page for the current language with parent_id = null)
-			$lo_query = $lo_pagesTable->find('published', skipPageRoleCheck: true);
+			if (static::isPreview()) {
+				// Get the homepage entity (first active and published page for the current language with parent_id = null)
+				$lo_query = $lo_pagesTable->find('all', skipPageRoleCheck: true);
 
-			$lo_query->orderBy([
-				'Pages.deleted' => 'ASC',
-				'Pages.parents_active' => 'DESC',
-				'Pages.active' => 'DESC',
-				'Pages.parent_id' => 'ASC',
-			]);
+				$lo_query->orderBy([
+					'Pages.deleted' => 'ASC',
+					'Pages.parent_id' => 'ASC',
+				]);
+			}
+			else {
+				// Get the homepage entity (first active and published page for the current language with parent_id = null)
+				$lo_query = $lo_pagesTable->find('published', skipPageRoleCheck: true);
+
+				$lo_query->orderBy([
+					'Pages.deleted' => 'ASC',
+					'Pages.parents_active' => 'DESC',
+					'Pages.active' => 'DESC',
+					'Pages.parent_id' => 'ASC',
+				]);
+			}
 
 			$lo_homepage = $lo_query->first();
 		}

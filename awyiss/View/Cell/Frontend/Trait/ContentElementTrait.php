@@ -4,6 +4,7 @@
 namespace Awyiss\View\Cell\Frontend\Trait;
 
 
+use Awyiss\Awyiss;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity;
 use Awyiss\Model\Entity\Content;
@@ -419,6 +420,10 @@ trait ContentElementTrait {
 
 		if ($ls_cssClass) {
 			$entity->cssClass .= ' ' . $ls_cssClass;
+		}
+
+		if ($this->isPreview() && !$entity->active) {
+			$entity->cssClass .= ' ' . Awyiss::PREVIEW_MODE_ELEMENT_CLASSNAME;
 		}
 	}
 

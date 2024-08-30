@@ -40,6 +40,9 @@
 			{% if frontendEditorConfig %}
 				const frontendEditorConfig = {{ frontendEditorConfig|json_encode|raw }};
 			{% endif %}
+			{% if frontendPreviewConfig %}
+				const frontendPreviewConfig = {{ frontendPreviewConfig|json_encode|raw }};
+			{% endif %}
 		{% endblock %}
 
 		document.documentElement.classList.remove('NoJS');

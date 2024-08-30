@@ -25,6 +25,7 @@ class MenuRenderer {
 	protected array $_defaultConfig = [
 		'activeOnly' => true,
 		'formatters' => [
+			'menu' => null,
 			'list' => null,
 			'item' => null,
 			'link' => null,
@@ -139,6 +140,7 @@ class MenuRenderer {
 			'items' => $lo_items,
 			'level' => $level,
 			'menuConfig' => $this->menu->getConfig(),
+			'menu' => $this->menu,
 		];
 
 		if ($level === 1) {

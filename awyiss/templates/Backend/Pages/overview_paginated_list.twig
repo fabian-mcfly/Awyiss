@@ -11,6 +11,18 @@
 
 {% extends '@Backend/element/overview/overview_paginated_list.twig' %}
 
+{% block tableOverviewCellAuditInfo %}
+	<td class="TableCell-AuditInfo">
+		<div class="AuditInfo" data-id="{{ entity.id }}" title="">
+			<ul class="AuditInfoList">
+				<li><strong>ID:</strong> {{ entity.id }}</li>
+			</ul>
+		</div>
+
+		{{ HtmlHelper.link(__('preview'), {action: 'preview', id: entity.id}, {class: 'Button Button-Small Button-Subtle Button-Preview'}) }}
+	</td>
+{% endblock %}
+
 {% block tableOverviewCellDisplayedFieldDefaultValue %}
 	{% if field == 'slug' and entity.slug %}
 		{{ HtmlHelper.link(entity.languageShortcode ~ '/' ~ entity.slug, {

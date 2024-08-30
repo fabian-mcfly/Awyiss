@@ -8,6 +8,7 @@ use Awyiss\Model\Entity;
 use Awyiss\Model\Entity\Content;
 use Awyiss\Model\Entity\Page;
 use Awyiss\View\Cell\Frontend\Trait\ContentElementTrait;
+use Awyiss\View\Cell\Frontend\Trait\PreviewTrait;
 use Cake\Collection\CollectionInterface;
 use Cake\Core\Configure;
 use Cake\ORM\Query\SelectQuery;
@@ -22,6 +23,7 @@ use RuntimeException;
  */
 class ContentsCell extends Cell {
 	use ContentElementTrait;
+	use PreviewTrait;
 
 
 	/**
@@ -184,19 +186,25 @@ class ContentsCell extends Cell {
 				continue;
 			}
 
+			$la_finders = [];
+
+			if (!$this->isPreview()) {
+				$la_finders = ['active', 'published'];
+			}
+
+			$la_finders = array_merge($la_finders, [
+				'mediaAssignments' => [
+					'includeElementSelector' => true,
+					'useMediaEntity' => true,
+				],
+			]);
+
 			$lo_children = $lo_duplicatedEntity->getNestedChildren([
 				'contain' => [
 					'ContentAreas',
 					'ContentTemplates',
 				],
-				'finders' => [
-					'active',
-					'published',
-					'mediaAssignments' => [
-						'includeElementSelector' => true,
-						'useMediaEntity' => true,
-					],
-				],
+				'finders' => $la_finders,
 			]);
 
 			if ($lo_children->count()) {
@@ -215,8 +223,17 @@ class ContentsCell extends Cell {
 	 * @return \Cake\ORM\Query\SelectQuery
 	 */
 	protected function getContentsQuery(): SelectQuery {
+		/** @var \Awyiss\Model\Table\ContentsTable $lo_contentsTable */
 		$lo_contentsTable = $this->fetchTable('Contents');
-		$lo_query = $lo_contentsTable->find('active')->find('published')->find('threaded')->find('mediaAssignments', includeElementSelector: true, useMediaEntity: true);
+
+		if ($this->isPreview()) {
+			$lo_query = $lo_contentsTable->find('all');
+		}
+		else {
+			$lo_query = $lo_contentsTable->find('active')->find('published');
+		}
+
+		$lo_query->find('threaded')->find('mediaAssignments', includeElementSelector: true, useMediaEntity: true);
 
 		// Contain ContentAreas and ContentTemplates
 		$lo_query->contain([

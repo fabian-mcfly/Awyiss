@@ -4,10 +4,13 @@
 namespace Awyiss\View\Cell\Frontend;
 
 
+use Awyiss\Awyiss;
+use Awyiss\Model\Entity\Menu as MenuEntity;
 use Awyiss\Model\Entity\MenuEntry;
 use Awyiss\Utility\Inflector;
 use Awyiss\Utility\Menu\Menu;
 use Awyiss\Utility\Menu\MenuRenderer;
+use Awyiss\View\Cell\Frontend\Trait\PreviewTrait;
 use Cake\Collection\Collection;
 use Cake\Collection\CollectionInterface;
 use Cake\Datasource\FactoryLocator;
@@ -20,6 +23,9 @@ use Cake\View\StringTemplate;
  * Menu cell
  */
 class MenuCell extends Cell {
+	use PreviewTrait;
+
+
 	/**
 	 * Options for the menu renderer
 	 *
@@ -28,7 +34,8 @@ class MenuCell extends Cell {
 	protected array $rendererOptions = [
 		'formatters' => [],
 		'templates' => [
-			'item' => '<li class="Level{{level}}{{active}}{{hasSubmenu}} {{identifier}}" id="MenuItem{{id}}">' . PHP_EOL . '{{submenuTrigger}}{{link}}{{children}}</li>' . PHP_EOL,
+			'list' => '<ul class="Level{{level}}{{identifier}}{{isPreview}}">' . PHP_EOL . '{{content}}</ul>' . PHP_EOL,
+			'item' => '<li class="Level{{level}}{{active}}{{hasSubmenu}}{{isPreview}} {{identifier}}" id="MenuItem{{id}}">' . PHP_EOL . '{{submenuTrigger}}{{link}}{{children}}</li>' . PHP_EOL,
 			'link' => '<a href="{{url}}" class="Level{{level}}{{active}} {{identifier}}"{{attributes}}>{{title}}</a>' . PHP_EOL,
 			'noLink' => '<span class="Level{{level}}{{active}} {{identifier}}">{{title}}</span>' . PHP_EOL,
 		],
@@ -41,9 +48,15 @@ class MenuCell extends Cell {
 	 * @return void
 	 */
 	public function initialize(): void {
+		//$this->rendererOptions['formatters']['menu'] ??= $this->renderMenu(...);
+		$this->rendererOptions['formatters']['list'] ??= $this->renderList(...);
 		$this->rendererOptions['formatters']['item'] ??= $this->renderItem(...);
 		$this->rendererOptions['formatters']['link'] ??= $this->renderContent(...);
 		$this->rendererOptions['formatters']['noLink'] ??= $this->renderContent(...);
+
+		if ($this->isPreview()) {
+			$this->rendererOptions['activeOnly'] = false;
+		}
 	}
 
 
@@ -65,9 +78,12 @@ class MenuCell extends Cell {
 		// Set the template for the view
 		$this->viewBuilder()->setTemplatePath('Frontend/cell/Menu');
 
-		$lo_menuEntries = $this->getMenuEntries($identifier, $languageShortcode);
+		$lo_menuRecord = $this->getMenu($identifier);
+		$lo_menuEntries = $lo_menuRecord ? $this->getMenuEntries($lo_menuRecord, $languageShortcode) : new Collection([]);
 
-		$lo_menu = new Menu($lo_menuEntries->toArray());
+		$lo_menu = new Menu($lo_menuEntries->toArray(), [
+			'active' => $lo_menuRecord?->active ?? false,
+		]);
 		$lo_renderer = new MenuRenderer($lo_menu, $this->rendererOptions);
 
 		$lo_renderer->setCurrentRoute($la_options['currentRoute']);
@@ -77,6 +93,7 @@ class MenuCell extends Cell {
 			'identifier' => $identifier,
 			'menuEntries' => $lo_menuEntries,
 			'menu' => $lo_menu,
+			'menuRecord' => $lo_menuRecord,
 			'renderer' => $lo_renderer,
 			'currentRoute' => $la_options['currentRoute'],
 			'includeWrapper' => !!$la_options['includeWrapper'],
@@ -87,11 +104,18 @@ class MenuCell extends Cell {
 
 	/**
 	 * @param string $identifier
-	 * @param string $languageShortcode
-	 * @return \Cake\Collection\CollectionInterface
+	 * @return MenuEntity
 	 */
-	protected function getMenuEntries(string $identifier, string $languageShortcode): CollectionInterface {
+	protected function getMenu(string $identifier): ?MenuEntity {
+		/** @var \Awyiss\Model\Table\MenusTable $lo_menusTable */
 		$lo_menusTable = FactoryLocator::get('Table')->get('Menus');
+
+		if ($this->isPreview()) {
+			$lo_query = $lo_menusTable->find('all');
+		}
+		else {
+			$lo_query = $lo_menusTable->find('active')->find('published');
+		}
 
 		/**
 		 * Load the menu
@@ -99,25 +123,56 @@ class MenuCell extends Cell {
 		 * as the menu entries are loaded with translations and publication data,
 		 * requiring a more complex query.
 		 *
-		 * @var \Awyiss\Model\Entity\Menu $lo_menu
+		 * @var MenuEntity $lo_menu
 		 */
-		$lo_menu = $lo_menusTable->find('active')->find('published')->where([
+		$lo_menu = $lo_query->where([
 			'identifier' => $identifier,
 		])->first();
 
-		if (!$lo_menu) {
-			return new Collection([]);
+		return $lo_menu;
+	}
+
+
+	/**
+	 * @param MenuEntity $menu
+	 * @param string $languageShortcode
+	 * @return \Cake\Collection\CollectionInterface
+	 */
+	protected function getMenuEntries(MenuEntity $menu, string $languageShortcode): CollectionInterface {
+		/** @var \Awyiss\Model\Table\MenuEntriesTable $lo_menuEntriesTable */
+		$lo_menuEntriesTable = FactoryLocator::get('Table')->get('MenuEntries');
+
+		if ($this->isPreview()) {
+			$lo_query = $lo_menuEntriesTable->find('all');
+		}
+		else {
+			$lo_query = $lo_menuEntriesTable->find('active')->find('published');
 		}
 
-		$lo_menuEntriesTable = FactoryLocator::get('Table')->get('MenuEntries');
-		$lo_menuEntries = $lo_menuEntriesTable->find('active')->find('published')->find('threaded')->where([
-			'menu_id' => $lo_menu->id,
+		$lo_menuEntries = $lo_query->find('threaded')->where([
+			'menu_id' => $menu->id,
 			'language_shortcode' => $languageShortcode,
 		])->all();
 
 		return $lo_menuEntries->filter(function (MenuEntry $content) {
 			return $content->parentId === null;
 		})->compile();
+	}
+
+
+	/**
+	 * @param array $data
+	 * @param \Cake\View\StringTemplate $template
+	 * @return string
+	 */
+	public function renderList(array $data, StringTemplate $template): string {
+		$la_data = $data;
+
+		/** @noinspection PhpUnnecessaryLocalVariableInspection */
+		$lb_isPreview = $data['level'] === 1 && $this->isPreview() && ($la_data['menuConfig']['active'] ?? true) === false;
+		$la_data['isPreview'] = $lb_isPreview ? ' ' . Awyiss::PREVIEW_MODE_ELEMENT_CLASSNAME : '';
+
+		return $template->format('list', $la_data);
 	}
 
 
@@ -136,6 +191,10 @@ class MenuCell extends Cell {
 			$la_data['submenuTrigger'] = '<input type="checkbox" id="SubmenuTrigger-' . $la_data['id'] .  '" class="SubmenuTrigger" />' . PHP_EOL .
 				'<label for="SubmenuTrigger-' . $la_data['id'] .  '" class="SubmenuTrigger-Label"></label>';
 		}
+
+		/** @noinspection PhpUnnecessaryLocalVariableInspection */
+		$lb_isPreview = $this->isPreview() && ($la_data['item']?->active ?? true) === false;
+		$la_data['isPreview'] = $lb_isPreview ? ' ' . Awyiss::PREVIEW_MODE_ELEMENT_CLASSNAME : '';
 
 		return $template->format('item', $la_data);
 	}

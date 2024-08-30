@@ -5,6 +5,14 @@
 
 {% extends '@Backend/element/overview/nested_list_item.twig' %}
 
+{% block nestedListItemAuditInfo %}
+	<div class="Audit-Preview">
+		{{ parent() }}
+
+		{{ HtmlHelper.link(__('preview'), {action: 'preview', id: entity.id}, {class: 'Button Button-Small Button-Subtle Button-Preview'}) }}
+	</div>
+{% endblock %}
+
 {% block nestedListItemDataDefaultFields %}
 	<li class="DataItem DataItem-Slug">
 		<span class="Label">{{ __('slug') }}:</span>
@@ -31,6 +39,10 @@
 
 {% block nestedListActions %}
 	<span class="Actions">
+		{% block nestedListActionsPreview %}
+
+		{% endblock %}
+
 		{% block nestedListActionsViewContents %}
 			{% if entity.hasContentTemplate() and entity.duplicate_of is empty and AuthorizationHelper.isAccessible('contents') and settings.contentsEnabled == true %}
 				{{ HtmlHelper.link(__('view_contents'), {controller: 'contents', action: 'overview', pageId: entity.id}, {class: 'Button Button-Small Button-View Button-ViewContents'}) }}

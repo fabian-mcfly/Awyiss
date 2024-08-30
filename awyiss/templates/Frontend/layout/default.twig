@@ -109,6 +109,12 @@
 					{% endif %}
 				{%- endblock -%}
 
+				{%- block frontendPreviewConfig -%}
+					{% if frontendPreviewConfig %}
+						{% do AssetHelper.add(['frontend_preview.css', 'frontend_preview.js'], {realm: 'Backend'}) %}
+					{% endif %}
+				{%- endblock -%}
+
 				{%- block headAssetTags -%}
 					{{- AssetHelper.createImportMap() -}}
 					{{- AssetHelper.getTags('all', true) -}}
