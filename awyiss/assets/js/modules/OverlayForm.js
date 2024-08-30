@@ -41,9 +41,7 @@ export default class OverlayForm {
 		this.overlayElement = document.getElementById('OverlayForm');
 
 		if (this.overlayElement) {
-			// Bind a click event to the close button
-			this.eventHandler.add('click', this.handleCloseButton.bind(this), this.overlayElement.querySelector('.Button-Close'));
-
+			this.eventHandler.add('click', this.handleClick.bind(this), this.overlayElement);
 			// Add a submit event to the overlay
 			this.eventHandler.add('submit', this.handleFormSubmit.bind(this), this.overlayElement, true);
 		}
@@ -90,6 +88,16 @@ export default class OverlayForm {
 
 		// Reset the form changed flag
 		window.formLeaveConfirmation.isFormChanged = this.savedIsFormChanged;
+	}
+
+	/**
+	 * Handle the click event on the overlay.
+	 * @param {Event} event
+	 */
+	handleClick(event) {
+		if (event.target.classList.contains('Button-Close')) {
+			this.handleCloseButton(event);
+		}
 	}
 
 	/**
@@ -170,8 +178,6 @@ export default class OverlayForm {
 
 			// Get the close button
 			const closeButton = this.overlayElement.querySelector('.Button-Close').cloneNode(true);
-			// Bind a click event to the close button
-			this.eventHandler.add('click', this.handleCloseButton.bind(this), closeButton);
 			// Append a clone of the close button to the form
 			form.querySelector('.ButtonArea.Bottom').append(closeButton.cloneNode(true));
 		})
@@ -210,9 +216,6 @@ export default class OverlayForm {
 			closeButton.classList.add('Button', 'Button-Close');
 			closeButton.innerHTML = 'Close';
 			this.overlayElement.append(closeButton);
-
-			// Bind a click event to the close button
-			this.eventHandler.add('click', this.handleCloseButton.bind(this), closeButton);
 
 			// Add a submit event to the overlay
 			this.eventHandler.add('submit', this.handleFormSubmit.bind(this), this.overlayElement, true);
@@ -296,8 +299,6 @@ export default class OverlayForm {
 			// Add a clone of the close button to the form
 			const closeButtonClone = closeButton.cloneNode(true);
 			closeButtonClone.type = 'button';
-			// Bind a click event to the close button
-			this.eventHandler.add('click', this.handleCloseButton.bind(this), closeButtonClone);
 			saveButton.parentElement.append(closeButtonClone);
 
 			// Show the overlay
