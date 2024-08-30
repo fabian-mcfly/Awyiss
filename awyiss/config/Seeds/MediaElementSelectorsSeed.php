@@ -75,5 +75,82 @@ class MediaElementSelectorsSeed extends AbstractSeed {
 
 		$lo_table = $this->table('media_element_selectors');
 		$lo_table->insert($la_data)->save();
+
+
+		$la_data = [
+			[
+				'locale' => 'de',
+				'model' => 'media_element_selectors',
+				'foreign_key' => 2,
+				'field' => 'title',
+				'content' => 'Titelbild',
+			],
+			[
+				'locale' => 'en',
+				'model' => 'media_element_selectors',
+				'foreign_key' => 2,
+				'field' => 'title',
+				'content' => 'Title image',
+			],
+			[
+				'locale' => 'de',
+				'model' => 'media_element_selectors',
+				'foreign_key' => 3,
+				'field' => 'title',
+				'content' => 'Alternatives Teaserbild',
+			],
+			[
+				'locale' => 'en',
+				'model' => 'media_element_selectors',
+				'foreign_key' => 3,
+				'field' => 'title',
+				'content' => 'Alternative Teaser image',
+			],
+			[
+				'locale' => 'de',
+				'model' => 'media_element_selectors',
+				'foreign_key' => 4,
+				'field' => 'title',
+				'content' => 'Datei',
+			],
+			[
+				'locale' => 'en',
+				'model' => 'media_element_selectors',
+				'foreign_key' => 4,
+				'field' => 'title',
+				'content' => 'File',
+			],
+			[
+				'locale' => 'de',
+				'model' => 'media_element_selectors',
+				'foreign_key' => 5,
+				'field' => 'title',
+				'content' => 'Lightbox-Datei',
+			],
+			[
+				'locale' => 'en',
+				'model' => 'media_element_selectors',
+				'foreign_key' => 5,
+				'field' => 'title',
+				'content' => 'Lightbox file',
+			],
+			[
+				'locale' => 'de',
+				'model' => 'media_element_selectors',
+				'foreign_key' => 6,
+				'field' => 'title',
+				'content' => 'Galerie',
+			],
+			[
+				'locale' => 'en',
+				'model' => 'media_element_selectors',
+				'foreign_key' => 6,
+				'field' => 'title',
+				'content' => 'Gallery',
+			],
+		];
+
+		$lo_table = $this->table('i18n');
+		$lo_table->insert($la_data)->save();
 	}
 }

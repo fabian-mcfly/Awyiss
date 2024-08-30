@@ -32,5 +32,25 @@ class WidgetTemplatesSeed extends AbstractSeed {
 
 		$lo_table = $this->table('widget_templates');
 		$lo_table->insert($la_data)->save();
+
+		$la_data = [
+			[
+				'locale' => 'de',
+				'model' => 'widget_templates',
+				'foreign_key' => 1,
+				'field' => 'title',
+				'content' => 'Standard',
+			],
+			[
+				'locale' => 'en',
+				'model' => 'widget_templates',
+				'foreign_key' => 1,
+				'field' => 'title',
+				'content' => 'Standard',
+			],
+		];
+
+		$lo_table = $this->table('i18n');
+		$lo_table->insert($la_data)->save();
 	}
 }

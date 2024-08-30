@@ -54,5 +54,53 @@ class MediaSelectorsSeed extends AbstractSeed {
 
 		$lo_table = $this->table('media_selectors');
 		$lo_table->insert($la_data)->save();
+
+		$la_data = [
+			[
+				'locale' => 'de',
+				'model' => 'media_selectors',
+				'foreign_key' => 1,
+				'field' => 'title',
+				'content' => 'Einzeldatei',
+			],
+			[
+				'locale' => 'en',
+				'model' => 'media_selectors',
+				'foreign_key' => 1,
+				'field' => 'title',
+				'content' => 'Single file',
+			],
+			[
+				'locale' => 'de',
+				'model' => 'media_selectors',
+				'foreign_key' => 2,
+				'field' => 'title',
+				'content' => 'Mehrfachauswahl',
+			],
+			[
+				'locale' => 'en',
+				'model' => 'media_selectors',
+				'foreign_key' => 2,
+				'field' => 'title',
+				'content' => 'Multi file',
+			],
+			[
+				'locale' => 'de',
+				'model' => 'media_selectors',
+				'foreign_key' => 3,
+				'field' => 'title',
+				'content' => 'Ordnerauswahl',
+			],
+			[
+				'locale' => 'en',
+				'model' => 'media_selectors',
+				'foreign_key' => 3,
+				'field' => 'title',
+				'content' => 'Folder selection',
+			],
+		];
+
+		$lo_table = $this->table('i18n');
+		$lo_table->insert($la_data)->save();
 	}
 }

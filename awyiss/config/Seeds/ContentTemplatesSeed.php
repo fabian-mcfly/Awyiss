@@ -47,5 +47,39 @@ class ContentTemplatesSeed extends AbstractSeed {
 
 		$lo_table = $this->table('content_templates');
 		$lo_table->insert($la_data)->save();
+
+		$la_data = [
+			[
+				'locale' => 'de',
+				'model' => 'content_templates',
+				'foreign_key' => 1,
+				'field' => 'title',
+				'content' => 'Standard',
+			],
+			[
+				'locale' => 'en',
+				'model' => 'content_templates',
+				'foreign_key' => 1,
+				'field' => 'title',
+				'content' => 'Standard',
+			],
+			[
+				'locale' => 'de',
+				'model' => 'content_templates',
+				'foreign_key' => 2,
+				'field' => 'title',
+				'content' => 'Inhaltsblock',
+			],
+			[
+				'locale' => 'en',
+				'model' => 'content_templates',
+				'foreign_key' => 2,
+				'field' => 'title',
+				'content' => 'Section',
+			],
+		];
+
+		$lo_table = $this->table('i18n');
+		$lo_table->insert($la_data)->save();
 	}
 }

@@ -78,5 +78,53 @@ class MediaElementsSeed extends AbstractSeed {
 
 		/** @noinspection PhpArgumentWithoutNamedIdentifierInspection,SqlDialectInspection,SqlNoDataSourceInspection */
 		$this->execute('UPDATE media_elements SET id = 0 WHERE id = ?', [-1]);
+
+		$la_data = [
+			[
+				'locale' => 'de',
+				'model' => 'media_elements',
+				'foreign_key' => 1,
+				'field' => 'title',
+				'content' => 'Standard',
+			],
+			[
+				'locale' => 'en',
+				'model' => 'media_elements',
+				'foreign_key' => 1,
+				'field' => 'title',
+				'content' => 'Standard',
+			],
+			[
+				'locale' => 'de',
+				'model' => 'media_elements',
+				'foreign_key' => 2,
+				'field' => 'title',
+				'content' => 'Titel- & Teaserbild',
+			],
+			[
+				'locale' => 'en',
+				'model' => 'media_elements',
+				'foreign_key' => 2,
+				'field' => 'title',
+				'content' => 'Title- & Teaser image',
+			],
+			[
+				'locale' => 'de',
+				'model' => 'media_elements',
+				'foreign_key' => 3,
+				'field' => 'title',
+				'content' => 'Galerie',
+			],
+			[
+				'locale' => 'en',
+				'model' => 'media_elements',
+				'foreign_key' => 3,
+				'field' => 'title',
+				'content' => 'Gallery',
+			],
+		];
+
+		$lo_table = $this->table('i18n');
+		$lo_table->insert($la_data)->save();
 	}
 }
