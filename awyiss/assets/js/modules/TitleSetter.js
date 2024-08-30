@@ -10,10 +10,6 @@ export default class TitleAttributeSetter {
 	 * @param {string} className - The class name of the elements to set the title for.
 	 */
 	constructor(className) {
-		if (className) {
-			return;
-		}
-
 		const elements = document.getElementsByClassName(className);
 		const elementsLength = elements.length;
 		for (let i = 0; i < elementsLength; i++) {
