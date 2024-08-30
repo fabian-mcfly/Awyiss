@@ -21,6 +21,9 @@
 				{%- if entity.isPublished() is same as false %} NotPublished{% endif %}
 			"
 		{%- endblock %}
+		{% block nestedListItemTitle -%}
+			title="{{ entity.title }}"
+		{%- endblock %}
 		>
 		{% block nestedListItemInner %}
 			<div {% block nestedListItemInnerClass %}class="{{ settings.identifier }}-ListItem-Inner ListItem-Inner"{% endblock %}>
