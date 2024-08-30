@@ -324,8 +324,18 @@ class FrontendEditor {
 }
 
 if (document.readyState === 'loading') {
-	document.addEventListener('DOMContentLoaded', () => new FrontendEditor(frontendEditorConfig));
+	document.addEventListener('DOMContentLoaded', () => {
+		window.frontendEditor = new FrontendEditor(frontendEditorConfig)
+	});
 }
 else {
-	new FrontendEditor(frontendEditorConfig);
+	window.frontendEditor = new FrontendEditor(frontendEditorConfig);
 }
+
+
+/**
+ * Expose the class globally
+ * @global
+ * @type {FrontendEditor}
+ */
+window.FrontendEditor = FrontendEditor;
