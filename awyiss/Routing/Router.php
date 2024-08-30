@@ -21,6 +21,10 @@ class Router extends BaseRouter {
 		if (is_array($lx_url)) {
 			if (!array_key_exists('_name', $lx_url) && empty($lx_url['plugin'])) {
 				$lx_url['_name'] = Awyiss::getRealm();
+
+				if ($lx_url['_name'] === Awyiss::REALM_FRONTEND && empty($lx_url['slug']) && empty($lx_url['lang'])) {
+					$lx_url['_name'] .= 'Root';
+				}
 			}
 		}
 
