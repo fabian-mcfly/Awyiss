@@ -1,5 +1,6 @@
 {#
 @var menuEntries \Awyiss\Model\Entity\MenuEntry[]|Cake\Datasource\Paging\PaginatedResultSet
+@var menu \Awyiss\Model\Entity\Menu
 @var paginated bool
 @var pages \Cake\Collection\CollectionInterface
 @var _view \Awyiss\View\BackendView
@@ -20,6 +21,14 @@
 
 	{% block buttonArea %}
 		<div class="ButtonArea">
+			{% block buttonEdit %}
+				{% do AuthorizationHelper.setScope('menus') %}
+				{% if AuthorizationHelper.isAccessible('update') %}
+					{{ HtmlHelper.link(__('edit'), {controller: 'menus', action: 'edit', id: menu.id}, {class: 'Button Button-Edit Button-Small Button-Subtle'}) }}
+				{% endif %}
+				{% do AuthorizationHelper.resetScope() %}
+			{% endblock %}
+
 			{% block categoriesFilterOverview %}
 				{{ CategoriesHelper.filter('menu', naturalSort(CategoriesHelper.getCategories('menu'))) }}
 			{% endblock %}

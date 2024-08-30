@@ -91,8 +91,11 @@ class MenuEntriesController extends Controller {
 			$lo_menuEntries = $lo_query->find('threaded')->all();
 		}
 
+		$lo_menu = $this->fetchTable('Menus')->findById($this->Categories->getSelectedCategory())->first();
+
 		$this->set([
 			'menuEntries' => $lo_menuEntries,
+			'menu' => $lo_menu,
 			'paginated' => $lb_paginated,
 			'attributes' => $this->MenuEntries->getAttributes(),
 			'pages' => $this->findLinkablePages(),
