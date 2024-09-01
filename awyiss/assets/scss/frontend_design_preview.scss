@@ -1,0 +1,28 @@
+$relativePath:'../';
+
+@import 'general/fonts';
+
+@layer awyissFrontendDesignPreview {
+	#AwyissDesignPreview {
+		width:fit-content;
+		margin:auto;
+		padding:10px 20px;
+		border-radius:5px;
+		background-color:#63d1a5;
+		color:#FFFFFF;
+		font-family:'2f media', Bebas Neue, Impact, Arial Display, monospace;
+		font-size:24px;
+		line-height:22px;
+		text-align:center;
+		position:fixed;
+		right:20px;
+		bottom:20px;
+		left:20px;
+		z-index:987654;
+		cursor:default;
+
+		html:has(#AwyissFrontendPreview-Info) & {
+			bottom:100px;
+		}
+	}
+}

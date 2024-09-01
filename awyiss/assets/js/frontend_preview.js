@@ -36,7 +36,7 @@ class FrontendPreview {
 	 */
 	createPreviewInfo() {
 		const previewInfo = document.createElement('div');
-		previewInfo.classList.add('AwyissFrontendPreview-Info');
+		previewInfo.id = 'AwyissFrontendPreview-Info';
 		previewInfo.innerHTML = `
 			<span class="AwyissFrontendPreview-Info-Title">${this.previewConfig.i18n.label}</span>
 			<label class="AwyissFrontendPreview-Info-Option">

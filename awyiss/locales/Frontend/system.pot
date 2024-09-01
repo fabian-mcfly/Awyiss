@@ -26,6 +26,9 @@ msgstr "Boh! Something seems to have gone wrong. Please try again later."
 msgid "read_more"
 msgstr "Read more"
 
+msgid "design_preview_mode_label"
+msgstr "Design Preview"
+
 msgid "preview_mode_label"
 msgstr "Preview mode"
 

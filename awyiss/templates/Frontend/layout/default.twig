@@ -115,6 +115,12 @@
 					{% endif %}
 				{%- endblock -%}
 
+				{%- block designPreviewStylesheet -%}
+					{% if designPreview %}
+						{% do AssetHelper.add('frontend_design_preview.css', {realm: 'Backend'}) %}
+					{% endif %}
+				{%- endblock -%}
+
 				{%- block headAssetTags -%}
 					{{- AssetHelper.createImportMap() -}}
 					{{- AssetHelper.getTags('all', true) -}}

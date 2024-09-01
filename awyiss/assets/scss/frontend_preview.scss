@@ -3,7 +3,7 @@ $relativePath:'../';
 @import 'general/fonts';
 
 @layer awyissFrontendPreview {
-	.AwyissFrontendPreview-Info {
+	#AwyissFrontendPreview-Info {
 		display:flex;
 		width:fit-content;
 		background-color:var(--colorFrontendPreviewColor, #63d1a5);
@@ -22,7 +22,7 @@ $relativePath:'../';
 		z-index:987654;
 		align-items:center;
 
-		&-Title {
+		.AwyissFrontendPreview-Info-Title {
 			display:inline-block;
 			margin-right:20px;
 			font-family:'2F media', Bebas Neue, Impact, Arial Display, sans-serif;
@@ -30,7 +30,7 @@ $relativePath:'../';
 			font-weight:400;
 		}
 
-		&-Option {
+		.AwyissFrontendPreview-Info-Option {
 			display:inline-block;
 			margin-top:-3px;
 			margin-right:20px;
@@ -66,7 +66,7 @@ $relativePath:'../';
 			}
 		}
 
-		&-CloseButton {
+		.AwyissFrontendPreview-Info-CloseButton {
 			padding:5px 15px;
 			border:0 none;
 			border-radius:5px;

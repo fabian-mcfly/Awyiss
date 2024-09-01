@@ -26,6 +26,9 @@ msgstr "Buhuhu! Da ist wohl etwas schief gelaufen. Bitte versuche es später noc
 msgid "read_more"
 msgstr "Mehr erfahren"
 
+msgid "design_preview_mode_label"
+msgstr "Designvorschau"
+
 msgid "preview_mode_label"
 msgstr "Vorschau-Modus"
 
