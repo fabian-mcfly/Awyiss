@@ -5,8 +5,6 @@ namespace Awyiss\Utility\Media;
 
 
 use Awyiss\Model\Enum\ResizeStrategy;
-use Awyiss\Utility\Inflector;
-use InvalidArgumentException;
 
 
 /**
@@ -16,6 +14,7 @@ use InvalidArgumentException;
 class MediaRenderOptions {
 	/**
 	 * @param bool $allowUpscale
+	 * @param float|int|null $aspectRatio
 	 * @param array $attributes
 	 * @param string|false|null $backgroundColor
 	 * @param float|int $baseWidth
@@ -32,6 +31,7 @@ class MediaRenderOptions {
 	 */
 	public function __construct(
 		protected bool $allowUpscale = false,
+		protected float|int|null $aspectRatio = null,
 		protected array $attributes = [],
 		protected string|false|null $backgroundColor = null,
 		protected float|int $baseWidth = 3840,
@@ -46,6 +46,10 @@ class MediaRenderOptions {
 		protected bool $strictSize = false,
 		protected float|int|null $width = null,
 	) {
+		if (is_int($this->aspectRatio)) {
+			$this->aspectRatio = (float)$this->aspectRatio;
+		}
+
 		if (is_int($this->baseWidth)) {
 			$this->baseWidth = (float)$this->baseWidth;
 		}
@@ -60,19 +64,8 @@ class MediaRenderOptions {
 			$this->height = (float)$this->height;
 		}
 
-		// If the resize strategy is a string, check if it is a valid enum case (name, not value)
-		if (is_string($this->resizeStrategy)) {
-			$ls_resizeStrategy = ResizeStrategy::class . '::' . Inflector::camelize($this->resizeStrategy);
-
-			if (!defined($ls_resizeStrategy)) {
-				throw new InvalidArgumentException('Invalid resize strategy: ' . $this->resizeStrategy);
-			}
-
-			$this->resizeStrategy = constant($ls_resizeStrategy);
-		}
-		elseif (is_int($this->resizeStrategy)) {
-			$this->resizeStrategy = ResizeStrategy::from($this->resizeStrategy);
-		}
+		// Normalize the resize strategy
+		$this->resizeStrategy = ResizeStrategy::normalize($this->resizeStrategy);
 
 		if (is_int($this->singleColumnBreakpoint)) {
 			$this->singleColumnBreakpoint = (float)$this->singleColumnBreakpoint;
@@ -89,6 +82,14 @@ class MediaRenderOptions {
 	 */
 	public function getAllowUpscale(): bool {
 		return $this->allowUpscale;
+	}
+
+
+	/**
+	 * @return float|null
+	 */
+	public function getAspectRatio(): ?float {
+		return $this->aspectRatio;
 	}
 
 
@@ -202,6 +203,15 @@ class MediaRenderOptions {
 	 */
 	public function withAllowUpscale(bool $allowUpscale = true): static {
 		return $this->with(['allowUpscale' => $allowUpscale]);
+	}
+
+
+	/**
+	 * @param float|int|null $aspectRatio
+	 * @return $this
+	 */
+	public function withAspectRatio(float|int|null $aspectRatio): static {
+		return $this->with(['aspectRatio' => $aspectRatio]);
 	}
 
 
@@ -358,18 +368,23 @@ class MediaRenderOptions {
 	 */
 	public static function normalizeBreakpoint(string|float|int $key, array|float|int $value): array {
 		$la_options = [
+			'aspectRatio' => null,
 			'baseWidth' => null,
 			'breakpoint' => (float)$key,
 			'columnWidth' => null,
-			'width' => null,
 			'height' => null,
 			'resizeStrategy' => null,
+			'width' => null,
 		];
 
 		if (is_numeric($value)) {
 			$la_options['breakpoint'] = (float)$value;
 
 			return $la_options;
+		}
+
+		if (isset($value['aspectRatio'])) {
+			$la_options['aspectRatio'] = (float)$value['aspectRatio'];
 		}
 
 		if (isset($value['baseWidth'])) {
@@ -384,16 +399,16 @@ class MediaRenderOptions {
 			$la_options['columnWidth'] = (float)$value['columnWidth'];
 		}
 
-		if (isset($value['width'])) {
-			$la_options['width'] = (float)$value['width'];
-		}
-
 		if (isset($value['height'])) {
 			$la_options['height'] = (float)$value['height'];
 		}
 
 		if (isset($value['resizeStrategy'])) {
 			$la_options['resizeStrategy'] = $value['resizeStrategy'];
+		}
+
+		if (isset($value['width'])) {
+			$la_options['width'] = (float)$value['width'];
 		}
 
 		return $la_options;
@@ -410,7 +425,9 @@ class MediaRenderOptions {
 		$la_breakpoints = [];
 
 		foreach ($breakpoints as $lx_key => $lx_value) {
-			$la_breakpoints[] = static::normalizeBreakpoint($lx_key, $lx_value);
+			$la_breakpoint = static::normalizeBreakpoint($lx_key, $lx_value);
+			$li_breakpoint = (int)$la_breakpoint['breakpoint'];
+			$la_breakpoints[ $li_breakpoint ] = $la_breakpoint;
 		}
 
 		// Sort breakpoints by breakpoint value

@@ -73,7 +73,7 @@
 
 		{% block fieldsetCrop %}
 			{% if (media.previewPath and media.preview == enum(ProcessStatus).Success) or media.preview == enum(ProcessStatus).NotRequired %}
-				{% set resizedMediaItem = MediaHelper.resize(media, null, 2560, 2560, enum(ResizeStrategy).Contain) %}
+				{% set resizedMediaItem = MediaHelper.resize(media, null, 2560, 2560, null, enum(ResizeStrategy).Contain) %}
 
 				{% set imagePath = resizedMediaItem and resizedMediaItem.status == enum(ProcessStatus).Success ? resizedMediaItem.path : (media.previewPath ?? media.path) %}
 

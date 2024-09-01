@@ -19,8 +19,6 @@
 @var TimeHelper \Cake\View\Helper\TimeHelper
 #}
 
-{{ previewMode.inactiveElementClass }}
-
 {% block moduleNewsListing %}
 	<div class="Module-NewsListing">
 		{% if news.count %}
@@ -36,7 +34,13 @@
 										<div class="Image">
 											{{ MediaHelper.htmlTag(
 												newsItem.mediaAssignments.titleAndTeaserImage.teaserMedia,
-												mediaRenderOptions.withColumnWidth(25).withHeight(200).withResizeStrategy('cover')
+												mediaRenderOptions
+													.withColumnWidth(25)
+													.withAspectRatio(1)
+													.withResizeStrategy('crop')
+													.withBreakpoint(mediaRenderOptions.singleColumnBreakpoint, {
+														aspectRatio: 2,
+													})
 											) }}
 										</div>
 									{% endif %}

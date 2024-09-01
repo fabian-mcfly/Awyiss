@@ -9,7 +9,7 @@
 			<span class="FileType-Icon FileType-Icon-{{ mediaItem.extension|camelize('/') }}" data-extension="{{ mediaItem.extension }}"></span>
 		{% else %}
 			{% if resize.width is defined or resize.height is defined %}
-				{% set resizedMediaItem = MediaHelper.resize(mediaItem, null, resize.width, resize.height, resize.strategy) %}
+				{% set resizedMediaItem = MediaHelper.resize(mediaItem, null, resize.width, resize.height, null, resize.strategy) %}
 			{% endif %}
 
 			{% if resizedMediaItem %}

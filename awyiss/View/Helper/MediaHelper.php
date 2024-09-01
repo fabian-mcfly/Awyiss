@@ -119,8 +119,11 @@ class MediaHelper extends Helper {
 		}
 
 		$lf_aspectRatio = 1;
-		if (($lo_file?->realWidth ?? $media->width) && ($lo_file?->realHeight ?? $media->height)) {
-			$lf_aspectRatio = round(($lo_file?->realWidth ?? $media->width) / ($lo_file?->realHeight ?? $media->height), 2);
+		$lf_width = $lo_file?->realWidth ?? $lo_file?->width ?? $media->width;
+		$lf_height = $lo_file?->realHeight ?? $lo_file?->height ?? $media->height;
+
+		if ($lf_width && $lf_height) {
+			$lf_aspectRatio = round($lf_width / $lf_height, 2);
 		}
 
 		return $this->getBackgroundStyleTag($lo_file, $media, $lo_mediaRenderOptions, $ls_path, $lf_aspectRatio, $ls_backgroundColorStyle);
@@ -237,8 +240,8 @@ class MediaHelper extends Helper {
 			$ls_path = $media->isImage() ? ($media->webpPath ?? $media->path) : $media->previewPath;
 		}
 
-		$la_attributes['width'] = $lo_file?->realWidth ?? $media->width;
-		$la_attributes['height'] = $lo_file?->realHeight ?? $media->height;
+		$la_attributes['width'] = $lo_file?->realWidth ?? $lo_file?->width ?? $media->width;
+		$la_attributes['height'] = $lo_file?->realHeight ?? $lo_file?->height ?? $media->height;
 
 		return $this->simpleImageTag($ls_path, $la_attributes, $media->averageColor, $lo_mediaRenderOptions);
 	}
@@ -351,6 +354,7 @@ class MediaHelper extends Helper {
 	 * Return the media render options.
 	 *
 	 * @param bool $allowUpscale
+	 * @param float|int|null $aspectRatio
 	 * @param array $attributes
 	 * @param string|false|null $backgroundColor
 	 * @param float|int $baseWidth
@@ -369,6 +373,7 @@ class MediaHelper extends Helper {
 	 */
 	public function mediaRenderOptions(
 		bool $allowUpscale = false,
+		float|int|null $aspectRatio = null,
 		array $attributes = [],
 		string|false|null $backgroundColor = null,
 		float|int $baseWidth = 3840,
@@ -435,7 +440,8 @@ class MediaHelper extends Helper {
 	 * @param \Awyiss\Model\Entity\Media $media
 	 * @param float|int|null $width
 	 * @param float|int|null $height
-	 * @param \Awyiss\Model\Enum\ResizeStrategy $strategy
+	 * @param float|int|null $aspectRatio
+	 * @param \Awyiss\Model\Enum\ResizeStrategy|string|int $strategy
 	 * @param string $format
 	 * @param bool $strictSize
 	 * @param bool $allowUpscale
@@ -448,7 +454,8 @@ class MediaHelper extends Helper {
 		?MediaRenderOptions $renderOptions = null,
 		float|int|null $width = null,
 		float|int|null $height = null,
-		ResizeStrategy $strategy = ResizeStrategy::Contain,
+		float|int|null $aspectRatio = null,
+		ResizeStrategy|string|int $strategy = ResizeStrategy::Contain,
 		string $format = 'webp',
 		bool $strictSize = false,
 		bool $allowUpscale = false,
@@ -464,6 +471,7 @@ class MediaHelper extends Helper {
 			$media,
 			$renderOptions->getWidth(),
 			$renderOptions->getHeight(),
+			$renderOptions->getAspectRatio(),
 			$renderOptions->getResizeStrategy(),
 			$format,
 			$renderOptions->getStrictSize(),
@@ -499,21 +507,31 @@ class MediaHelper extends Helper {
 	 * @return array<int, \Awyiss\Model\Entity\MediaResizedImage|\Awyiss\Model\Entity\Media>
 	 */
 	public function getResponsiveImages(Media $media, MediaRenderOptions $mediaRenderOptions, bool $removeDuplicates = false): array {
-		$la_breakpointFiles = [];
-
 		if (
 			// If the media item is an SVG,
 			$media->mimeType === 'image/svg+xml' ||
 			// or if it requires a preview (since it's not an image) but the preview is not yet created, return an empty array
 			($media->preview !== ProcessStatus::NotRequired && $media->preview !== ProcessStatus::Success)
 		) {
-			return $la_breakpointFiles;
+			return [];
 		}
 
 		$la_breakpoints = array_reverse($mediaRenderOptions->getBreakpoints());
+		$la_breakpoints = $this->addSingleColumnBreakpoint($la_breakpoints, $mediaRenderOptions);
 
-		$lf_lastColumnWidth = $mediaRenderOptions->getColumnWidth();
-		$lf_newColumnWidth = null;
+		return $this->getBreakpointFiles($media, $mediaRenderOptions, $la_breakpoints, $removeDuplicates);
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Entity\Media $media
+	 * @param \Awyiss\Utility\Media\MediaRenderOptions $mediaRenderOptions
+	 * @param array $breakpoints
+	 * @param bool $removeDuplicates
+	 * @return array
+	 */
+	protected function getBreakpointFiles(Media $media, MediaRenderOptions $mediaRenderOptions, array $breakpoints, bool $removeDuplicates): array {
+		$la_breakpointFiles = [];
 
 		$lo_file = $this->getMediaResizedImage($media, $mediaRenderOptions);
 
@@ -522,28 +540,16 @@ class MediaHelper extends Helper {
 			$ls_lastPath = $media->isImage() ? ($media->webpPath ?? $media->path) : $media->previewPath;
 		}
 
-		if ($mediaRenderOptions->getSingleColumnBreakpoint()) {
-			$lf_singleColumnBreakpoint = $mediaRenderOptions->getSingleColumnBreakpoint();
-
-			// Remove a possible breakpoint with the same value
-			$la_breakpoints = array_filter($la_breakpoints, fn($la_breakpoint) => $la_breakpoint['breakpoint'] !== $lf_singleColumnBreakpoint);
-
-			$la_breakpoints[] = $this->mediaRenderOptions::normalizeBreakpoint($lf_singleColumnBreakpoint, [
-				'columnWidth' => 100,
-			]);
-
-			// Reorder the breakpoints by breakpoint value
-			usort($la_breakpoints, function (array $a, array $b): int {
-				return $b['breakpoint'] <=> $a['breakpoint'];
-			});
-		}
-
-		foreach ($la_breakpoints as $la_breakpoint) {
+		$la_overrideOptions = [
+			'aspectRatio' => null,
+			'columnWidth' => null,
+		];
+		foreach ($breakpoints as $la_breakpoint) {
 			if ($la_breakpoint['breakpoint'] >= $mediaRenderOptions->getBaseWidth()) {
 				continue;
 			}
 
-			$lo_mediaRenderOptions = $this->getBreakpointRenderOptions($la_breakpoint, $mediaRenderOptions, $lf_newColumnWidth);
+			$lo_mediaRenderOptions = $this->getBreakpointRenderOptions($la_breakpoint, $mediaRenderOptions, $la_overrideOptions);
 
 			$lo_resizedImage = $this->resize(
 				$media,
@@ -561,10 +567,13 @@ class MediaHelper extends Helper {
 				$la_breakpointFiles[ $la_breakpoint['breakpoint'] ] = $lo_resizedImage ?? $media;
 			}
 
-			if ($la_breakpoint['columnWidth'] > $lf_lastColumnWidth) {
-				$lf_newColumnWidth = $la_breakpoint['columnWidth'];
+			if (($la_breakpoint['aspectRatio'] ?? null) !== $la_overrideOptions['aspectRatio']) {
+				$la_overrideOptions['aspectRatio'] = $la_breakpoint['aspectRatio'];
 			}
-			$lf_lastColumnWidth = $la_breakpoint['columnWidth'];
+			if (($la_breakpoint['columnWidth'] ?? null) !== $la_overrideOptions['columnWidth']) {
+				$la_overrideOptions['columnWidth'] = $la_breakpoint['columnWidth'];
+			}
+
 			$ls_lastPath = $ls_path;
 		}
 
@@ -598,31 +607,40 @@ class MediaHelper extends Helper {
 	/**
 	 * @param array $breakpointOptions
 	 * @param \Awyiss\Utility\Media\MediaRenderOptions $mediaRenderOptions
-	 * @param float|null $newColumnWidth
+	 * @param array $overrideOptions
 	 * @return \Awyiss\Utility\Media\MediaRenderOptions
 	 */
-	protected function getBreakpointRenderOptions(array $breakpointOptions, MediaRenderOptions $mediaRenderOptions, ?float $newColumnWidth = null): MediaRenderOptions {
-		$li_width = $breakpointOptions['width'];
-		$li_height = $breakpointOptions['height'];
+	protected function getBreakpointRenderOptions(array $breakpointOptions, MediaRenderOptions $mediaRenderOptions, array $overrideOptions): MediaRenderOptions {
+		$la_optionKeys = [
+			'aspectRatio',
+			'baseWidth',
+			'columnWidth',
+			'height',
+			'resizeStrategy',
+			'width',
+		];
 
-		$lo_mediaRenderOptions = $mediaRenderOptions;
+		$la_options = array_intersect_key($breakpointOptions, array_flip($la_optionKeys));
+		$la_options = array_filter($la_options, fn($value) => $value !== null);
 
-		if (empty($breakpointOptions['baseWidth'])) {
-			$lo_mediaRenderOptions = $lo_mediaRenderOptions->withBaseWidth($breakpointOptions['breakpoint']);
+		foreach ($la_optionKeys as $ls_optionKey) {
+			if (!empty($overrideOptions[ $ls_optionKey ])) {
+				$la_options[ $ls_optionKey ] = $overrideOptions[ $ls_optionKey ];
+			}
 		}
 
-		if ($breakpointOptions['columnWidth']) {
-			$lo_mediaRenderOptions = $lo_mediaRenderOptions->withColumnWidth($breakpointOptions['columnWidth']);
-		}
-		elseif ($newColumnWidth) {
-			$lo_mediaRenderOptions = $lo_mediaRenderOptions->withColumnWidth($newColumnWidth);
+		if (empty($la_options['baseWidth'])) {
+			$la_options['baseWidth'] = $breakpointOptions['breakpoint'];
 		}
 
-		if (!$li_width && !$li_height) {
-			$li_width = $this->getPixelColumnWidth($lo_mediaRenderOptions);
+		$lo_mediaRenderOptions = $mediaRenderOptions->with($la_options);
+
+		if (empty($la_options['width']) && empty($la_options['height'])) {
+			$la_options['width'] = $this->getPixelColumnWidth($lo_mediaRenderOptions);
+			$lo_mediaRenderOptions = $lo_mediaRenderOptions->withWidth($la_options['width']);
 		}
 
-		return $lo_mediaRenderOptions->withWidth($li_width)->withHeight($li_height);
+		return $lo_mediaRenderOptions;
 	}
 
 
@@ -721,7 +739,7 @@ class MediaHelper extends Helper {
 		/** @noinspection CssUnknownTarget */
 		$ls_output = '<style>';
 		$ls_output .= $mediaRenderOptions->getSelector() . ' { --backgroundAspectRatio:' . $aspectRatio . ';';
-		$ls_output .= ' --backgroundImageHeight:' . ($resizedFile?->realHeight ?? $media->height) . 'px;';
+		$ls_output .= ' --backgroundImageHeight:' . ($resizedFile?->realHeight ?? $resizedFile?->height ?? $media->height) . 'px;';
 		$ls_output .= ' background-image:url(\'' . $filePath . '\');';
 		$ls_output .= $backgroundColorStyle . ' }';
 
@@ -748,5 +766,51 @@ class MediaHelper extends Helper {
 		$ls_output .= '</style>';
 
 		return $ls_output;
+	}
+
+
+	/**
+	 * Check if there is a breakpoint with the same value as the single column breakpoint
+	 * If there is, use it's current values and set the column width to 100 (if not set),
+	 * otherwise add a new breakpoint with the single column breakpoint value and a column width of 100
+	 *
+	 * @param array $breakpoints
+	 * @param \Awyiss\Utility\Media\MediaRenderOptions $mediaRenderOptions
+	 * @return array
+	 */
+	protected function addSingleColumnBreakpoint(array $breakpoints, MediaRenderOptions $mediaRenderOptions): array {
+		if (!$mediaRenderOptions->getSingleColumnBreakpoint()) {
+			return $breakpoints;
+		}
+
+		$lf_singleColumnBreakpoint = $mediaRenderOptions->getSingleColumnBreakpoint();
+
+		$la_breakpoints = $breakpoints;
+
+		$lb_hasSingleColumnBreakpoint = false;
+		foreach ($la_breakpoints as &$la_breakpoint) {
+			if ($la_breakpoint['breakpoint'] !== $lf_singleColumnBreakpoint) {
+				continue;
+			}
+
+			$lb_hasSingleColumnBreakpoint = true;
+			$la_breakpoint['columnWidth'] ??= 100;
+
+			break;
+		}
+		unset($la_breakpoint);
+
+		if (!$lb_hasSingleColumnBreakpoint) {
+			$la_breakpoints[] = $mediaRenderOptions::normalizeBreakpoint($lf_singleColumnBreakpoint, [
+				'columnWidth' => 100,
+			]);
+		}
+
+		// Reorder the breakpoints by breakpoint value
+		usort($la_breakpoints, function (array $a, array $b): int {
+			return $b['breakpoint'] <=> $a['breakpoint'];
+		});
+
+		return $la_breakpoints;
 	}
 }
