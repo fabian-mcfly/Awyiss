@@ -567,10 +567,10 @@ class MediaHelper extends Helper {
 				$la_breakpointFiles[ $la_breakpoint['breakpoint'] ] = $lo_resizedImage ?? $media;
 			}
 
-			if (($la_breakpoint['aspectRatio'] ?? null) !== $la_overrideOptions['aspectRatio']) {
+			if ($la_breakpoint['aspectRatio'] && $la_breakpoint['aspectRatio'] !== $la_overrideOptions['aspectRatio']) {
 				$la_overrideOptions['aspectRatio'] = $la_breakpoint['aspectRatio'];
 			}
-			if (($la_breakpoint['columnWidth'] ?? null) !== $la_overrideOptions['columnWidth']) {
+			if ($la_breakpoint['columnWidth'] && $la_breakpoint['columnWidth'] !== $la_overrideOptions['columnWidth']) {
 				$la_overrideOptions['columnWidth'] = $la_breakpoint['columnWidth'];
 			}
 
@@ -624,7 +624,7 @@ class MediaHelper extends Helper {
 		$la_options = array_filter($la_options, fn($value) => $value !== null);
 
 		foreach ($la_optionKeys as $ls_optionKey) {
-			if (!empty($overrideOptions[ $ls_optionKey ])) {
+			if (!empty($overrideOptions[ $ls_optionKey ]) && empty($la_options[ $ls_optionKey ])) {
 				$la_options[ $ls_optionKey ] = $overrideOptions[ $ls_optionKey ];
 			}
 		}
