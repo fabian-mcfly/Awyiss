@@ -25,6 +25,7 @@ use Cake\Utility\Text;
  * @property \Awyiss\Model\Enum\ProcessStatus|null $preview
  * @property \Awyiss\Model\Enum\ProcessStatus|null $webp
  * @property array|null $crop
+ * @property string|null $focusPoint
  * @property int $systemOrder
  * @property int|null $createdBy
  * @property \Cake\I18n\DateTime|null $createdOn
@@ -73,6 +74,7 @@ class Media extends Entity {
 		'preview' => true,
 		'webp' => true,
 		'crop' => true,
+		'focusPoint' => true,
 		'systemOrder' => true,
 		'file' => true,
 	];
@@ -84,6 +86,7 @@ class Media extends Entity {
 		'mime_type' => 'mimeType',
 		'meta_data' => 'metaData',
 		'average_color' => 'averageColor',
+		'focus_point' => 'focusPoint',
 		'system_order' => 'systemOrder',
 		'created_by' => 'createdBy',
 		'created_on' => 'createdOn',

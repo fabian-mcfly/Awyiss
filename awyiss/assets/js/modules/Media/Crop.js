@@ -22,6 +22,11 @@ export default class ImageCropper {
 	 */
 	cropFrame;
 	/**
+	 * The context of the canvas.
+	 * @type {CanvasRenderingContext2D}
+	 */
+	ctx = this.canvas.getContext('2d');
+	/**
 	 * The edge of the crop frame that is currently being dragged.
 	 * @type {string|null}
 	 */
@@ -32,10 +37,15 @@ export default class ImageCropper {
 	 */
 	dragging = false;
 	/**
-	 * The context of the canvas.
-	 * @type {CanvasRenderingContext2D}
+	 * The focus point of the crop frame.
+	 * @type {string}
 	 */
-	ctx = this.canvas.getContext('2d');
+	focusPoint = [1, 1];
+	/**
+	 * The section of the crop frame the cursor is in.
+	 * @type {null}
+	 */
+	highlightedSection = null;
 	/**
 	 * The image element.
 	 * @type {HTMLImageElement}
@@ -61,6 +71,11 @@ export default class ImageCropper {
 	 * @type {HTMLElement}
 	 */
 	measurementsContainer;
+	/**
+	 * The time when the mouse was pressed down.
+	 * @type {number}
+	 */
+	mouseDownTime = 0;
 	/**
 	 * The observer for the crop frame.
 	 * @type {Observer}
@@ -91,6 +106,19 @@ export default class ImageCropper {
 		this.canvas.addEventListener('mousemove', this.onMouseMove.bind(this));
 		this.canvas.addEventListener('mouseleave', this.onMouseLeave.bind(this));
 
+		this.canvas.addEventListener('click', () => {
+			// Make sure the click event is not triggered by a drag operation
+			if (Date.now() - this.mouseDownTime > 200 || !this.highlightedSection) {
+				return;
+			}
+
+			this.focusPoint = this.highlightedSection;
+			this.inputs.focusPoint.value = this.focusPoint.join(',');
+
+			this.clearFrame();
+			this.drawCropFrame();
+		});
+
 		window.eventHandler.add('resize', this.handleResize.bind(this));
 
 		this.observer.addObserver(this.observeCropArea.bind(this));
@@ -113,7 +141,10 @@ export default class ImageCropper {
 			height: parent.querySelector('input[name="crop[height]"]'),
 			resizeWidth: parent.querySelector('input[name="crop[resize_width]"]'),
 			resizeHeight: parent.querySelector('input[name="crop[resize_height]"]'),
+			focusPoint: parent.querySelector('input[name="focus_point"]')
 		}
+
+		this.focusPoint = this.inputs.focusPoint.value.split(',').map(Number);
 
 		this.container.appendChild(this.canvas);
 
@@ -324,6 +355,16 @@ export default class ImageCropper {
 	}
 
 	/**
+	 * Clears the canvas and redraws the image
+	 */
+	clearFrame() {
+		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+		// Redraw the image using the stored dimensions and position
+		this.ctx.drawImage(this.image, this.imageOnCanvas.x, this.imageOnCanvas.y, this.imageOnCanvas.width, this.imageOnCanvas.height);
+	}
+
+	/**
 	 * Draws the crop frame.
 	 */
 	drawCropFrame() {
@@ -395,10 +436,86 @@ export default class ImageCropper {
 		this.ctx.lineTo(this.cropFrame.x + this.cropFrame.width / 2, this.cropFrame.y + this.cropFrame.height / 2 + 5);
 		this.ctx.stroke();
 
+		let drawActiveHeart = false;
+		// Draw the highlighted section with 2px distance from its edges
+		if (this.highlightedSection) {
+			const xSegment = this.highlightedSection[1];
+			const ySegment = this.highlightedSection[0];
+
+			const selected = this.highlightedSection[0] === this.focusPoint[0] && this.highlightedSection[1] === this.focusPoint[1];
+
+			const width = this.cropFrame.width / 3 - 4;
+			const height = this.cropFrame.height / 3 - 4;
+
+			const x = this.cropFrame.x + xSegment * this.cropFrame.width / 3 + 2;
+			const y = this.cropFrame.y + ySegment * this.cropFrame.height / 3 + 2;
+
+			this.ctx.fillStyle = 'rgba(255, 255, 255, .2)';
+			this.ctx.fillRect(x, y, width, height);
+
+			// Draw a heart shape in the center of the highlighted section
+			this.drawHeart(x + width / 2, y + height / 2, selected);
+
+			if (!selected && this.focusPoint.length === 2) {
+				drawActiveHeart = true;
+			}
+		}
+		else if (this.focusPoint.length === 2) {
+			drawActiveHeart = true;
+		}
+
+		if (drawActiveHeart) {
+			const xSegment = this.focusPoint[1];
+			const ySegment = this.focusPoint[0];
+
+			const width = this.cropFrame.width / 3 - 4;
+			const height = this.cropFrame.height / 3 - 4;
+
+			const x = this.cropFrame.x + xSegment * this.cropFrame.width / 3 + 2;
+			const y = this.cropFrame.y + ySegment * this.cropFrame.height / 3 + 2;
+
+			this.drawHeart(x + width / 2, y + height / 2, true);
+		}
+
 		// Adjust the position of the measurements container
 		const translateX = this.cropFrame.x + this.cropFrame.width / 2 - this.canvas.width / 2;
 		const translateY = this.cropFrame.y + this.cropFrame.height - this.container.offsetHeight + 40;
 		this.measurementsContainer.style.transform = `translate(${translateX}px, ${translateY}px)`;
+	}
+
+	/**
+	 * Draws a heart shape on the canvas.
+	 *
+	 * @param {number} x - The x-coordinate of the heart.
+	 * @param {number} y - The y-coordinate of the heart.
+	 * @param {boolean} selected - Whether the heart is selected.
+	 */
+	drawHeart(x, y, selected) {
+		const realX = x;
+		const realY = y;
+
+		// Draw a heart shape in the center of the highlighted section
+		this.ctx.fillStyle = selected ? 'rgba(255, 0, 0, .5)' : 'rgba(255, 255, 255, .5)';
+
+		// Begin drawing the heart shape
+		this.ctx.beginPath();
+
+		// Draw the left lobe of the heart
+		this.ctx.arc(realX - 10, realY - 8, 10, Math.PI, 0, false);
+
+		// Draw the right lobe of the heart
+		this.ctx.arc(realX + 10, realY - 8, 10, Math.PI, 0, false);
+
+		// Draw the right side of the heart
+		this.ctx.quadraticCurveTo(realX + 20, realY + 5, realX, realY + 16);
+
+		// Draw the left side of the heart
+		this.ctx.quadraticCurveTo(realX - 20, realY + 5, realX - 20, realY - 8);
+
+		// Close the path and fill the heart
+		this.ctx.closePath();
+		this.ctx.fill();
+
 	}
 
 	/**
@@ -410,11 +527,8 @@ export default class ImageCropper {
 	 */
 	setCropFrame(x, y, width, height) {
 		this.cropFrame = {x, y, width, height};
-		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-		// Redraw the image using the stored dimensions and position
-		this.ctx.drawImage(this.image, this.imageOnCanvas.x, this.imageOnCanvas.y, this.imageOnCanvas.width, this.imageOnCanvas.height);
-
+		this.clearFrame();
 		this.drawCropFrame();
 
 		const realSize = this.getCropFrameRealSize();
@@ -483,6 +597,8 @@ export default class ImageCropper {
 		else if (this.isPointInCropFrame(event.clientX, event.clientY)) {
 			this.dragging = true;
 		}
+
+		this.mouseDownTime = Date.now();
 	}
 
 	/**
@@ -522,11 +638,17 @@ export default class ImageCropper {
 				}
 			}
 
+			this.highlightSection(event.clientX, event.clientY);
+
 			if (this.resizing) {
 				return this.resizeCropFrame(event);
 			}
 			else if (this.dragging) {
 				return this.dragCropFrame(event);
+			}
+			else {
+				this.clearFrame();
+				return this.drawCropFrame();
 			}
 		});
 	}
@@ -637,6 +759,49 @@ export default class ImageCropper {
 		}
 
 		return true;
+	}
+
+	/**
+	 * Detect the section of the crop frame the cursor is in.
+	 *
+	 * @param {number} x - The x-coordinate of the cursor.
+	 * @param {number} y - The y-coordinate of the cursor.
+	 */
+	highlightSection(x, y) {
+		const thirdWidth = this.cropFrame.width / 3;
+		const thirdHeight = this.cropFrame.height / 3;
+
+		// Get the bounding rectangle of the canvas
+		const rect = this.canvas.getBoundingClientRect();
+
+		const cropFrameX = this.cropFrame.x + rect.left;
+		const cropFrameY = this.cropFrame.y + rect.top;
+
+		this.highlightedSection = [];
+
+		if (y >= cropFrameY && y <= cropFrameY + thirdHeight) {
+			this.highlightedSection.push(0);
+		}
+		else if (y >= cropFrameY + 2 * thirdHeight && y <= cropFrameY + this.cropFrame.height) {
+			this.highlightedSection.push(2);
+		}
+		else if (y > cropFrameY + thirdHeight && y < cropFrameY + 2 * thirdHeight) {
+			this.highlightedSection.push(1);
+		}
+
+		if (x >= cropFrameX && x <= cropFrameX + thirdWidth) {
+			this.highlightedSection.push(0);
+		}
+		else if (x >= cropFrameX + 2 * thirdWidth && x <= cropFrameX + this.cropFrame.width) {
+			this.highlightedSection.push(2);
+		}
+		else if (x > cropFrameX + thirdWidth && x < cropFrameX + 2 * thirdWidth) {
+			this.highlightedSection.push(1);
+		}
+
+		if (this.highlightedSection.length !== 2) {
+			this.highlightedSection = null;
+		}
 	}
 
 	/**

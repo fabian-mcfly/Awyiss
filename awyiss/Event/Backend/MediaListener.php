@@ -168,6 +168,10 @@ class MediaListener implements EventListenerInterface {
 				WWW_ROOT . str_replace('/', DS, $entity->get('path'))
 			);
 		}
+
+		if ($entity->hasOriginal('focusPoint') && $entity->getOriginal('focusPoint') !== $entity->get('focusPoint')) {
+			$entity->deleteResizedFiles();
+		}
 	}
 
 

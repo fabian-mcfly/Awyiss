@@ -88,6 +88,10 @@ class Media {
 			'default' => null,
 			'limit' => 16777215,
 			'null' => true,
+		])->addColumn('focus_point', 'char', [
+			'default' => null,
+			'limit' => 3,
+			'null' => true,
 		])->addColumn('system_order', 'integer', [
 			'default' => '0',
 			'limit' => null,

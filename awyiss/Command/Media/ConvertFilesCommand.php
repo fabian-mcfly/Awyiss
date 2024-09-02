@@ -1022,6 +1022,32 @@ class ConvertFilesCommand extends Command {
 			$ls_inputPath = $file->media->previewPathAbsolute;
 		}
 
+		$ls_gravity = 'center';
+		if ($file->media->focusPoint) {
+			// Focus point is in the format "[0|1|2],[0|1|2]"
+			$la_focusPoint = explode(',', $file->media->focusPoint);
+
+			if (count($la_focusPoint) !== 2) {
+				$la_focusPoint = [1, 1];
+			}
+
+			// Convert the focus point to a gravity value
+			// Possible values should be "NorthWest", "North", "NorthEast", "West", "Center", "East", "SouthWest", "South", "SouthEast"
+			$la_gravityValues = [
+				'NorthWest',
+				'North',
+				'NorthEast',
+				'West',
+				'Center',
+				'East',
+				'SouthWest',
+				'South',
+				'SouthEast',
+			];
+
+			$ls_gravity = $la_gravityValues[ (int)$la_focusPoint[0] * 3 + (int)$la_focusPoint[1]];
+		}
+
 		return match ($file->strategy) {
 			ResizeStrategy::Contain => [
 				'convert',
@@ -1043,7 +1069,7 @@ class ConvertFilesCommand extends Command {
 				'-resize',
 				$file->width . 'x' . $file->height . '^',
 				'-gravity',
-				'center',
+				$ls_gravity,
 				'-extent',
 				$file->width . 'x' . $file->height,
 				$file->pathAbsolute,
