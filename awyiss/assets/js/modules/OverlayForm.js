@@ -235,7 +235,7 @@ export default class OverlayForm {
 		if (!target.endsWith('/')) {
 			target += '/';
 		}
-		target += 'ajax-form:1';
+		target += 'ajax-form:1/';
 
 		// Fetch the target URL
 		fetch(target, {
