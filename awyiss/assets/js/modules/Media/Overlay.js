@@ -370,6 +370,7 @@ export default class Overlay {
 		}
 
 		event.preventDefault();
+		event.stopPropagation();
 
 		const listItem = event.currentTarget;
 		const folderId = parseInt(listItem.id.replace(/^\D+/g, ''));
@@ -377,7 +378,7 @@ export default class Overlay {
 		this._fetchFolderFiles(folderId, listItem.dataset.languageShortcode || languageShortcode).then(() => {
 			listItem.classList.add('Active');
 			listItem.sortable.option('disabled', true);
-		})
+		});
 	}
 
 	/**
