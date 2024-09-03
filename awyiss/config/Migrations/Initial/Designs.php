@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 /**
- * Class Datatables
+ * Class Designs
  */
 class Designs {
 	/**
@@ -126,6 +126,6 @@ class Designs {
 	 * @return void
 	 */
 	public function down(): void {
-		$this->migration->table('datatables')->drop()->save();
+		$this->migration->table('designs')->drop()->save();
 	}
 }
