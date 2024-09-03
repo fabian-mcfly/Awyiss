@@ -541,9 +541,14 @@ class MediaHelper extends Helper {
 		}
 
 		$la_overrideOptions = [
-			'aspectRatio' => null,
-			'columnWidth' => null,
+			'aspectRatio' => MediaRenderOptions::PRESERVE_VALUE,
+			'baseWidth' => MediaRenderOptions::PRESERVE_VALUE,
+			'columnWidth' => MediaRenderOptions::PRESERVE_VALUE,
+			'height' => MediaRenderOptions::PRESERVE_VALUE,
+			'resizeStrategy' => MediaRenderOptions::PRESERVE_VALUE,
+			'width' => MediaRenderOptions::PRESERVE_VALUE,
 		];
+
 		foreach ($breakpoints as $la_breakpoint) {
 			if ($la_breakpoint['breakpoint'] >= $mediaRenderOptions->getBaseWidth()) {
 				continue;
@@ -567,11 +572,10 @@ class MediaHelper extends Helper {
 				$la_breakpointFiles[ $la_breakpoint['breakpoint'] ] = $lo_resizedImage ?? $media;
 			}
 
-			if ($la_breakpoint['aspectRatio'] && $la_breakpoint['aspectRatio'] !== $la_overrideOptions['aspectRatio']) {
-				$la_overrideOptions['aspectRatio'] = $la_breakpoint['aspectRatio'];
-			}
-			if ($la_breakpoint['columnWidth'] && $la_breakpoint['columnWidth'] !== $la_overrideOptions['columnWidth']) {
-				$la_overrideOptions['columnWidth'] = $la_breakpoint['columnWidth'];
+			foreach ($la_overrideOptions as $lx_key => $lx_value) {
+				if (!in_array($la_breakpoint[ $lx_key ], [$lx_value, MediaRenderOptions::PRESERVE_VALUE], true)) {
+					$la_overrideOptions[ $lx_key ] = $la_breakpoint[ $lx_key ];
+				}
 			}
 
 			$ls_lastPath = $ls_path;
@@ -621,21 +625,34 @@ class MediaHelper extends Helper {
 		];
 
 		$la_options = array_intersect_key($breakpointOptions, array_flip($la_optionKeys));
-		$la_options = array_filter($la_options, fn($value) => $value !== null);
 
-		foreach ($la_optionKeys as $ls_optionKey) {
-			if (!empty($overrideOptions[ $ls_optionKey ]) && empty($la_options[ $ls_optionKey ])) {
-				$la_options[ $ls_optionKey ] = $overrideOptions[ $ls_optionKey ];
+		foreach ($overrideOptions as $ls_key => $lx_value) {
+			if (
+				$lx_value === MediaRenderOptions::PRESERVE_VALUE ||
+				!in_array($ls_key, $la_optionKeys, true)
+			) {
+				continue;
 			}
+
+			if (array_key_exists($ls_key, $la_options) && $la_options[ $ls_key ] !== MediaRenderOptions::PRESERVE_VALUE) {
+				continue;
+			}
+
+			$la_options[ $ls_key ] = $lx_value;
 		}
 
 		if (empty($la_options['baseWidth'])) {
 			$la_options['baseWidth'] = $breakpointOptions['breakpoint'];
 		}
 
+		$la_options = array_filter($la_options, fn($value) => $value !== MediaRenderOptions::PRESERVE_VALUE);
+
 		$lo_mediaRenderOptions = $mediaRenderOptions->with($la_options);
 
-		if (empty($la_options['width']) && empty($la_options['height'])) {
+		if (
+			($breakpointOptions['width'] ?? MediaRenderOptions::PRESERVE_VALUE) === MediaRenderOptions::PRESERVE_VALUE &&
+			($breakpointOptions['height'] ?? MediaRenderOptions::PRESERVE_VALUE) === MediaRenderOptions::PRESERVE_VALUE
+		) {
 			$la_options['width'] = $this->getPixelColumnWidth($lo_mediaRenderOptions);
 			$lo_mediaRenderOptions = $lo_mediaRenderOptions->withWidth($la_options['width']);
 		}
@@ -794,7 +811,10 @@ class MediaHelper extends Helper {
 			}
 
 			$lb_hasSingleColumnBreakpoint = true;
-			$la_breakpoint['columnWidth'] ??= 100;
+
+			if (($la_breakpoint['columnWidth'] ?? MediaRenderOptions::PRESERVE_VALUE) === MediaRenderOptions::PRESERVE_VALUE) {
+				$la_breakpoint['columnWidth'] = 100;
+			}
 
 			break;
 		}

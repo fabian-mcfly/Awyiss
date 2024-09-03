@@ -41,6 +41,10 @@
 													.withBreakpoint(mediaRenderOptions.singleColumnBreakpoint, {
 														aspectRatio: 2,
 													})
+													.withBreakpoint(480, {
+														aspectRatio: null,
+														resizeStrategy: 'contain'
+													})
 											) }}
 										</div>
 									{% endif %}

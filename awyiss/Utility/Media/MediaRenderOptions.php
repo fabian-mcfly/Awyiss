@@ -13,6 +13,13 @@ use Awyiss\Model\Enum\ResizeStrategy;
  */
 class MediaRenderOptions {
 	/**
+	 * When any key in the array provided to the `with` method
+	 * uses this value, the value will be preserved.
+	 */
+	final public const PRESERVE_VALUE = 'PRESERVE_VALUE';
+
+
+	/**
 	 * @param bool $allowUpscale
 	 * @param float|int|null $aspectRatio
 	 * @param array $attributes
@@ -352,7 +359,11 @@ class MediaRenderOptions {
 	public function with(array $changes): static {
 		$la_properties = get_object_vars($this);
 		foreach ($la_properties as $ls_name => $lx_value) {
-			$la_properties[ $ls_name ] = $changes[ $ls_name ] ?? $lx_value;
+			$la_properties[ $ls_name ] = $lx_value;
+
+			if (array_key_exists($ls_name, $changes) && $changes[ $ls_name ] !== self::PRESERVE_VALUE) {
+				$la_properties[ $ls_name ] = $changes[ $ls_name ];
+			}
 		}
 
 		return new self(...$la_properties);
@@ -368,13 +379,13 @@ class MediaRenderOptions {
 	 */
 	public static function normalizeBreakpoint(string|float|int $key, array|float|int $value): array {
 		$la_options = [
-			'aspectRatio' => null,
+			'aspectRatio' => self::PRESERVE_VALUE,
 			'baseWidth' => null,
 			'breakpoint' => (float)$key,
-			'columnWidth' => null,
-			'height' => null,
-			'resizeStrategy' => null,
-			'width' => null,
+			'columnWidth' => self::PRESERVE_VALUE,
+			'height' => self::PRESERVE_VALUE,
+			'resizeStrategy' => self::PRESERVE_VALUE,
+			'width' => self::PRESERVE_VALUE,
 		];
 
 		if (is_numeric($value)) {
@@ -383,32 +394,14 @@ class MediaRenderOptions {
 			return $la_options;
 		}
 
-		if (isset($value['aspectRatio'])) {
-			$la_options['aspectRatio'] = (float)$value['aspectRatio'];
-		}
+		foreach ($la_options as $ls_key => $lx_value) {
+			if (array_key_exists($ls_key, $value)) {
+				$la_options[ $ls_key ] = $value[ $ls_key ];
+			}
 
-		if (isset($value['baseWidth'])) {
-			$la_options['baseWidth'] = (float)$value['baseWidth'];
-		}
-
-		if (isset($value['breakpoint'])) {
-			$la_options['breakpoint'] = (float)$value['breakpoint'];
-		}
-
-		if (isset($value['columnWidth'])) {
-			$la_options['columnWidth'] = (float)$value['columnWidth'];
-		}
-
-		if (isset($value['height'])) {
-			$la_options['height'] = (float)$value['height'];
-		}
-
-		if (isset($value['resizeStrategy'])) {
-			$la_options['resizeStrategy'] = $value['resizeStrategy'];
-		}
-
-		if (isset($value['width'])) {
-			$la_options['width'] = (float)$value['width'];
+			if ($ls_key !== 'resizeStrategy' && !empty($la_options[ $ls_key ]) && $la_options[ $ls_key ] !== self::PRESERVE_VALUE) {
+				$la_options[ $ls_key ] = (float)$la_options[ $ls_key ];
+			}
 		}
 
 		return $la_options;
