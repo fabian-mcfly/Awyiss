@@ -5,6 +5,7 @@ namespace Awyiss\Model\Table;
 
 
 use Awyiss\Awyiss;
+use Awyiss\Core\LocalConfig;
 use Awyiss\Model\Entity\Widget;
 use Awyiss\Model\Entity\WidgetTemplate;
 use Awyiss\Model\Table;
@@ -139,6 +140,9 @@ class WidgetsTable extends Table {
 	 * @return void
 	 */
 	protected function initializeColumnSystem(): void {
+		// Use the column system of contents
+		$this->columnSystem = array_merge($this->columnSystem, LocalConfig::read('columnSystem', [], 'Contents'));
+
 		/** @var class-string<\Awyiss\Utility\Content\ColumnSystemInterface> $ls_className */
 		$ls_className = $this->columnSystem['className'];
 		$ls_className::setMaxDenominator($this->columnSystem['maxColumns']);
