@@ -22,6 +22,14 @@ class DatatablesController extends Controller {
 	/**
 	 * @inheritDoc
 	 */
+	protected array $paginate = [
+		'enabled' => true,
+	];
+
+
+	/**
+	 * @inheritDoc
+	 */
 	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
 		return $this->Datatables->find()->where($this->getOverviewWhere());
