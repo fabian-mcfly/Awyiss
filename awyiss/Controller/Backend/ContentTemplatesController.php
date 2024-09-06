@@ -184,6 +184,9 @@ class ContentTemplatesController extends Controller {
 				return $element;
 			}, $la_requestData['content_template_elements']);
 
+			$lo_request = $this->request->withData('content_template_elements', $la_requestData['content_template_elements']);
+			$this->setRequest($lo_request);
+
 			$la_associated[] = 'ContentTemplateElements';
 		}
 

@@ -1089,6 +1089,10 @@ class ContentsController extends Controller {
 
 		$la_data['data'] = $la_dataSet;
 
+		// Update the request data
+		$lo_request = $this->request->withData('data', $la_dataSet);
+		$this->setRequest($lo_request);
+
 		return $la_data;
 	}
 }

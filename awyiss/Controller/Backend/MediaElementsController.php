@@ -194,6 +194,10 @@ class MediaElementsController extends Controller {
 			}, $la_requestData['media_element_selectors']);
 			$la_requestData['media_element_selectors'] = array_filter($la_requestData['media_element_selectors']);
 
+			// Update the request data
+			$lo_request = $this->request->withData('media_element_selectors', $la_requestData['media_element_selectors']);
+			$this->setRequest($lo_request);
+
 			$la_associated[] = 'MediaElementSelectors';
 		}
 
@@ -205,6 +209,8 @@ class MediaElementsController extends Controller {
 
 				return true;
 			});
+
+			$this->request->withData('media_element_assignments', $la_requestData['media_element_assignments']);
 
 			$la_associated[] = 'MediaElementAssignments';
 		}

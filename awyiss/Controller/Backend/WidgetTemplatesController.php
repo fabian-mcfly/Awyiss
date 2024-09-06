@@ -183,6 +183,9 @@ class WidgetTemplatesController extends Controller {
 				return $element;
 			}, $la_requestData['widget_template_elements']);
 
+			$lo_request = $this->request->withData('widget_template_elements', $la_requestData['widget_template_elements']);
+			$this->setRequest($lo_request);
+
 			$la_associated[] = 'WidgetTemplateElements';
 		}
 

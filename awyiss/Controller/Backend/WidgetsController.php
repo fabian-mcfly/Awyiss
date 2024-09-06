@@ -678,6 +678,9 @@ class WidgetsController extends Controller {
 
 		$la_data['data'] = $la_dataSet;
 
+		$lo_request = $this->request->withData('data', $la_dataSet);
+		$this->setRequest($lo_request);
+
 		return $la_data;
 	}
 }
