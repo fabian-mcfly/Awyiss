@@ -4,6 +4,7 @@
 namespace Awyiss\Event\Backend;
 
 
+use ArrayObject;
 use Awyiss\Event\EventListenerTrait;
 use Awyiss\Model\Entity\PageTemplate;
 use Cake\Core\Configure;
@@ -66,15 +67,14 @@ class PageTemplatesListener implements EventListenerInterface {
 
 	/**
 	 * After saving a page template entity
-	 *
 	 * - create a template if it's new
 	 * - rename the template if it already exists
 	 *
-	 * @param Event $event
-	 * @param PageTemplate $entity
-	 * @noinspection PhpUnusedParameterInspection
+	 * @param \Cake\Event\Event $event
+	 * @param \Awyiss\Model\Entity\PageTemplate $entity
+	 * @param \ArrayObject $options
 	 */
-	public function afterSaveCommit(Event $event, PageTemplate $entity): void {
+	public function afterSaveCommit(Event $event, PageTemplate $entity, ArrayObject $options): void {
 		$ls_fileName = Text::slug($entity->fileName, ['replacement' => '_']);
 		$ls_fileName = trim($ls_fileName, '_');
 		$ls_extension = '.twig';
@@ -90,7 +90,7 @@ class PageTemplatesListener implements EventListenerInterface {
 
 		$ls_filePath = $ls_folderPath . $ls_fileName . $ls_extension;
 
-		if ($entity->hasOriginal('fileName') && $entity->fileName != $entity->getOriginal('fileName')) {
+		if (!$options['isCopy'] && $entity->hasOriginal('fileName') && $entity->fileName != $entity->getOriginal('fileName')) {
 			//After changing the filename in the database, we also need to move (read: rename) the existing file
 			$ls_currentFileName = Text::slug($entity->getOriginal('fileName'), ['replacement' => '_']);
 			$ls_currentFilePath = $ls_folderPath . $ls_currentFileName . $ls_extension;
