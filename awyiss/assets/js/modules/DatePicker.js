@@ -60,6 +60,11 @@ export default class DatePicker {
 			if (!datePickerInput.value) {
 				input.value = '';
 			}
+			else {
+				input.value = datePicker.formatDate(datePickerInput.value, altFieldDateFormat);
+				datePicker.selectDate(datePicker.formatDate(datePickerInput.value, datePicker.locale.dateFormat), {updateTime: true});
+				datePicker.setViewDate(datePicker.formatDate(datePickerInput.value, datePicker.locale.dateFormat));
+			}
 		}, datePickerInput);
 	}
 
