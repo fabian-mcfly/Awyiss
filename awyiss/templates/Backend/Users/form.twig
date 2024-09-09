@@ -45,7 +45,7 @@
 
 				{% block fieldsetGeneralInner %}
 					{% block formControlUsername %}
-						{{ FormHelper.control('username', {autocomplete: 'off', columnSpan: 6}) }}
+						{{ FormHelper.control('username', {autocapitalize: 'off', autocomplete: 'off', columnSpan: 6}) }}
 					{% endblock %}
 
 					{% block formControlEmail %}
@@ -54,6 +54,7 @@
 
 					{% block formControlPassword %}
 						{{ FormHelper.control('password', {
+							autocapitalize: 'off',
 							columnSpan: 6,
 							type: 'password',
 							value: '',
@@ -63,6 +64,7 @@
 
 					{% block formControlPasswordConfirm %}
 						{{ FormHelper.control('password_confirm', {
+							autocapitalize: 'off',
 							columnSpan: 6,
 							type: 'password',
 							value: '',
