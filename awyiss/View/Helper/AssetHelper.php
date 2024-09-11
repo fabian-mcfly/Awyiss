@@ -75,6 +75,25 @@ class AssetHelper extends Helper {
 
 
 	/**
+	 * @return string
+	 */
+	public function getRealm(): string {
+		return $this->realm;
+	}
+
+
+	/**
+	 * @param string $realm
+	 * @return $this
+	 */
+	public function setRealm(string $realm): static {
+		$this->realm = $realm;
+
+		return $this;
+	}
+
+
+	/**
 	 * Adds an asset to the assets array.
 	 * This method allows you to add an asset to the assets array. Each asset can have several properties:
 	 * - minified: A boolean indicating whether the asset is minified.
@@ -399,6 +418,11 @@ class AssetHelper extends Helper {
 	public function getTags(string $type = 'all', ?bool $critical = null, bool $includeNoScript = true): string {
 		$la_assets = $this->assets[ $type ] ?? [];
 
+		if ($type !== 'all') {
+			// Assets of the specified type are split into critical and non-critical assets. Merge them, but keep the keys
+			$la_assets = array_merge($la_assets['critical'], $la_assets['nonCritical']);
+		}
+
 		// If the assets array is empty, return an empty string
 		if (empty($la_assets)) {
 			return '';
@@ -408,10 +432,11 @@ class AssetHelper extends Helper {
 		$la_assets = $this->sortAssetsByPriority($la_assets);
 
 		$ls_assetTags = '';
-		$lb_hasCss = false;
-		foreach ($la_assets as $ls_asset => $la_options) {// Check if the asset is a CSS file
-			if (pathinfo($ls_asset, PATHINFO_EXTENSION) === 'css') {
-				$lb_hasCss = true;
+		$lb_hasLazyloadCss = false;
+		foreach ($la_assets as $ls_asset => $la_options) {
+			// Check if the asset is a CSS file
+			if (!$la_options['critical'] && pathinfo($ls_asset, PATHINFO_EXTENSION) === 'css') {
+				$lb_hasLazyloadCss = true;
 			}
 
 			// Skip the asset if the criticality does not match the specified criticality
@@ -443,7 +468,7 @@ class AssetHelper extends Helper {
 		}
 
 		// If there is at least one CSS tag, append the JavaScript code
-		if ($lb_hasCss && $ls_assetTags) {
+		if ($lb_hasLazyloadCss && $ls_assetTags) {
 			$ls_assetTags .= '<script' . $ls_nonce . '>
 				[...document.querySelectorAll(\'link[data-lazyload]\')].map(e=>{!performance.getEntriesByType("resource").some(r=>r.name.includes(e.href))?e.addEventListener("load",e=>{e.target.rel="stylesheet"}):e.rel="stylesheet"});
 			</script>';
@@ -466,6 +491,11 @@ class AssetHelper extends Helper {
 	 */
 	public function getNoScriptTags(string $type = 'all', ?bool $critical = null): string {
 		$la_assets = array_merge($this->assets[ $type ] ?? [], $this->noScriptAssets);
+
+		if ($type !== 'all') {
+			// Assets of the specified type are split into critical and non-critical assets. Merge them, but keep the keys
+			$la_assets = array_merge($la_assets['critical'], $la_assets['nonCritical']);
+		}
 
 		if (empty($la_assets)) {
 			return '';
