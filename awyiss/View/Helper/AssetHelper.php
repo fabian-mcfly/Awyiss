@@ -324,7 +324,7 @@ class AssetHelper extends Helper {
 	 * @return void
 	 * @throws \Exception
 	 */
-	public function getAssetPath(string $asset, array $options): ?string {
+	public function getAssetPath(string $asset, array $options = []): ?string {
 		// If the asset has already been checked, return the asset path
 		if (isset($this->checkedAssets[ $asset ])) {
 			return $this->checkedAssets[ $asset ];
@@ -532,6 +532,39 @@ class AssetHelper extends Helper {
 		if ($ls_assetTags) {
 			// Return the asset tags string, wrapped in a <noscript> tag
 			return '<noscript>' . $ls_assetTags . '</noscript>';
+		}
+
+		return '';
+	}
+
+
+	/**
+	 * Returns a string containing a style tag with the contents of the provided CSS file(s).
+	 *
+	 * @param array|string $asset
+	 * @return string
+	 */
+	public function inlineStyles(array|string $asset): string {
+		// If the provided asset is an array, use it as is. Otherwise, create an array with the asset as the key and an array of options as the value.
+		$la_assets = is_array($asset) ? $asset : [$asset];
+		$ls_output = '';
+
+		foreach ($la_assets as $ls_fileName) {
+			$ls_extension = pathinfo($ls_fileName, PATHINFO_EXTENSION);
+
+			if ($ls_extension !== 'css') {
+				continue;
+			}
+
+			$ls_assetPath = WWW_ROOT . 'assets/css/' . $ls_fileName;
+			if (file_exists($ls_assetPath)) {
+				$ls_output .= file_get_contents($ls_assetPath);
+			}
+		}
+
+		if ($ls_output) {
+			$ls_nonce = $this->getView()->getRequest()->getAttribute('cspStyleNonce');
+			return '<style' . ($ls_nonce ? ' nonce="' . $ls_nonce . '"' : '') . '>' . $ls_output . '</style>';
 		}
 
 		return '';
