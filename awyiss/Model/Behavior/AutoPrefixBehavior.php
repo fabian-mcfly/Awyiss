@@ -112,6 +112,10 @@ class AutoPrefixBehavior extends Behavior {
 				}
 
 				foreach ($la_field as $ls_field) {
+					if (!is_string($ls_field)) {
+						continue;
+					}
+
 					if (!str_contains($ls_field, '.')) {
 						$expression->setField($this->alias . '.' . $ls_field);
 					}
