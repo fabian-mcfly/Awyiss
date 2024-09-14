@@ -328,9 +328,8 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 				if (
 					$lo_query->isAutoFieldsEnabled() !== false || in_array($ls_field, $la_select, true) || in_array($this->_table->aliasField($ls_field), $la_select, true)
 				) {
-					$q->select(['id', 'foreign_key', 'type', 'date_time']);
+					$q->select(['id', 'scope', 'foreign_key', 'type', 'date_time']);
 				}
-
 
 				return $q;
 			};
@@ -375,6 +374,11 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 			if (!$lo_publicationData->dateTime) {
 				$la_data[ $ls_key ] = false;
 			}
+
+			if (($options['isCopy'] ?? false) === true) {
+				$lo_publicationData->unset(['id', 'foreignKey']);
+				$lo_publicationData->setNew(true);
+			}
 		}
 
 		$entity->set('_publicationData', array_values(array_filter($la_data)));
@@ -413,6 +417,10 @@ class PublicationDataBehavior extends Behavior implements PropertyMarshalInterfa
 					$la_data['type'] = $ls_type;
 					$la_data['date_time'] = $la_data['date_time'] ? TypeFactory::build('datetime')->marshal($la_data['date_time']) : null;
 					$la_data['scope'] = $this->getConfig('referenceName');
+
+					if (empty($la_data['scope'])) {
+						dd($la_data, $this);
+					}
 
 					$lo_marshaller->merge($la_publicationData[ $ls_type ], $la_data, $la_options);
 
