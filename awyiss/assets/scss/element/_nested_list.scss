@@ -266,9 +266,13 @@
 			box-shadow:0 0 10px 0 rgba(0, 0, 0, 0.2);
 			background-color:var(--colorMedium);
 			position:absolute;
-			top:11px;
+			top:6px;
 			right:11px;
 			z-index:25;
+
+			.Scale-Small & {
+				top:0;
+			}
 
 			.AuditInfo {
 				opacity:inherit;
