@@ -36,11 +36,19 @@
 											</th>
 										{% else %}
 											{% set field = field|underscore %}
-											<th class="TableHeader-{{ field|camelize }}{% if PaginatorHelper.isCurrentSortKey(field) %} Active{% endif %}">
-												{{ PaginatorHelper.sort(field,
-													i18nDomain ? __df(i18nDomain, 'system', field) : __(field)
-												) }}
-											</th>
+
+											{% if field ends with '_id' and field != 'parent_id' %}
+												{% set associationName = field|slice(0, -3) %}
+												<th class="TableHeader-{{ field|camelize }}{% if PaginatorHelper.isCurrentSortKey(associationName|variable ~ '.title') %} Active{% endif %}">
+													{{ PaginatorHelper.sort(associationName|variable ~ '.title', i18nDomain ? __df(i18nDomain, 'system', field) : __(field)) }}
+												</th>
+											{% else %}
+												<th class="TableHeader-{{ field|camelize }}{% if PaginatorHelper.isCurrentSortKey(field) %} Active{% endif %}">
+													{{ PaginatorHelper.sort(field,
+														i18nDomain ? __df(i18nDomain, 'system', field) : __(field)
+													) }}
+												</th>
+											{% endif %}
 										{% endif %}
 									{% endblock %}
 								{% endfor %}
@@ -101,11 +109,35 @@
 													{% block tableOverviewCellDisplayedFieldDefaultValue %}
 														{% if field == 'language_shortcode' %}
 															{{ entity.get(field) ? languages.Frontend[ entity.get(field) ].title : '-' }}
+														{% elseif field == 'content_template_id' %}
+															{% if entity.contentTemplate is defined %}
+																{{ entity.contentTemplate.label }}
+															{% elseif contentTemplates[ entity.get(field) ] is defined %}
+																{{ contentTemplates[ entity.get(field) ].label }}
+															{% else %}
+																-
+															{% endif %}
+														{% elseif field == 'email_template_id' %}
+															{% if entity.emailTemplate is defined %}
+																{{ entity.emailTemplate.label }}
+															{% elseif emailTemplates[ entity.get(field) ] is defined %}
+																{{ emailTemplates[ entity.get(field) ].label }}
+															{% else %}
+																-
+															{% endif %}
 														{% elseif field == 'page_template_id' %}
 															{% if entity.pageTemplate is defined %}
 																{{ entity.pageTemplate.label }}
 															{% elseif pageTemplates[ entity.get(field) ] is defined %}
 																{{ pageTemplates[ entity.get(field) ].label }}
+															{% else %}
+																-
+															{% endif %}
+														{% elseif field == 'widget_template_id' %}
+															{% if entity.widgetTemplate is defined %}
+																{{ entity.widgetTemplate.label }}
+															{% elseif widgetTemplates[ entity.get(field) ] is defined %}
+																{{ widgetTemplates[ entity.get(field) ].label }}
 															{% else %}
 																-
 															{% endif %}
