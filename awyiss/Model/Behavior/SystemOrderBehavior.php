@@ -54,7 +54,9 @@ class SystemOrderBehavior extends Behavior {
 			'beforeSave',
 			'afterSave',
 			'beforeDelete',
+			'beforeSoftDelete',
 			'afterDelete',
+			'afterSoftDelete',
 			'afterDeleteCommit',
 		],
 		'implementedMethods' => [
@@ -392,6 +394,17 @@ class SystemOrderBehavior extends Behavior {
 
 
 	/**
+	 * Before a delete, set the systemOrder to 999999, so it'll no longer be part of the group.
+	 *
+	 * @noinspection PhpUnused
+	 * @noinspection PhpUnusedParameterInspection
+	 */
+	public function beforeSoftDelete(EventInterface $event, EntityInterface $entity, ArrayObject $options): void {
+		$this->beforeDelete($event, $entity, $options);
+	}
+
+
+	/**
 	 * After a delete, call the `updateAfterRemove`-method since deleting an item means it's no longer part of the scope.
 	 *
 	 * @throws \Exception
@@ -427,6 +440,18 @@ class SystemOrderBehavior extends Behavior {
 		}
 
 		$this->updateAfterRemove($event, $entity);
+	}
+
+
+	/**
+	 * After a delete, call the `updateAfterRemove`-method since deleting an item means it's no longer part of the scope.
+	 *
+	 * @throws \Exception
+	 * @noinspection PhpUnused
+	 * @noinspection PhpUnusedParameterInspection
+	 */
+	public function afterSoftDelete(EventInterface $event, EntityInterface $entity, ArrayObject $options): void {
+		$this->afterDelete($event, $entity, $options);
 	}
 
 
