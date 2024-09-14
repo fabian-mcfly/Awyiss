@@ -5,6 +5,8 @@
 @var _view \Awyiss\View\BackendView
 #}
 
+{% do AuthorizationHelper.setScope('menus') %}
+
 <div class="MenuEntries Form Edit">
 	{% if AuthorizationHelper.isAccessible('read') %}
 		{{ HtmlHelper.link(__('back_to_overview'), {action: 'overview'}, {class: 'BackToOverview'}) }}

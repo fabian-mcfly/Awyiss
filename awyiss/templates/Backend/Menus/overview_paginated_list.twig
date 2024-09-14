@@ -11,11 +11,9 @@
 	<td class="TableCell-Actions">
 		<div class="Actions">
 			{% block tableOverviewCellActionsViewFiles %}
-				{% do AuthorizationHelper.setScope('menu_entries') %}
 				{% if AuthorizationHelper.isAccessible('read') %}
 					{{ HtmlHelper.link(__('view_entries'), {controller: 'menuEntries', action: 'overview', menuId: entity.id}, {class: 'Button Button-Small Button-View Button-ViewMenuEntries'}) }}
 				{% endif %}
-				{% do AuthorizationHelper.resetScope() %}
 			{% endblock %}
 
 			{{ block('tableOverviewCellActionsGallery') }}

@@ -46,6 +46,9 @@ class MenuEntriesController extends Controller {
 	public function initialize(): void {
 		parent::initialize();
 
+
+		$this->Authorization->setScope('menus');
+
 		$this->selectedParentIdSessionIdentifier = 'menu_entries.' . ($this->request->getParam('lang') ?? 'global') . '.parent_id';
 	}
 
