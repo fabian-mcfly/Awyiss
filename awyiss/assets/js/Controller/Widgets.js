@@ -94,7 +94,7 @@ export default class WidgetsController {
 			const auditInfo = listItem.querySelector('.AuditInfo').cloneNode(true);
 			contextMenu.appendChild(auditInfo);
 
-			window.auditInfo.bindEvents(auditInfo);
+			window.audit.auditInfo.bindEvents(auditInfo);
 
 			const actions = listItem.querySelector('.Actions').cloneNode(true);
 			contextMenu.appendChild(actions);
