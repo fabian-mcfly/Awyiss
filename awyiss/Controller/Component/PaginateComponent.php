@@ -31,6 +31,10 @@ class PaginateComponent extends Component {
 	 */
 	protected array $aliasedFields = [];
 	/**
+	 * @var array
+	 */
+	protected array $baseFields = [];
+	/**
 	 * @var bool
 	 */
 	protected bool $enabled = true;
@@ -111,8 +115,9 @@ class PaginateComponent extends Component {
 		/** @var \Awyiss\Model\Table $lo_table */
 		$lo_table = $object->getRepository();
 
-		$this->checkCategoriesParam($object, $la_params, $lo_table);
+		$this->baseFields = $lo_table->getSchema()->columns();
 
+		$this->checkCategoriesParam($object, $la_params, $lo_table);
 		$this->modifyPaginateParams($la_params, $la_settings, $lo_table, $lo_object);
 		unset($la_settings['className'], $la_settings['defaultSortableFields']);
 
@@ -296,6 +301,7 @@ class PaginateComponent extends Component {
 			$this->modifyTranslatedPaginateParams($params, $settings, $table->getBehavior('Translate'), $ls_tableAlias);
 		}
 
+
 		if ($table->hasAttributes() && $table->getAttributesTable()->hasBehavior('Translate')) {
 			/**
 			 * @noinspection PhpParamsInspection
@@ -334,9 +340,9 @@ class PaginateComponent extends Component {
 
 		// Modify the sort field if it is set so that it matches the translated field name
 		if (isset($params['sort']) && !is_array($params['sort'])) {
-			if ($tableAlias && str_starts_with($params['sort'], $tableAlias . '.')) {
+			if ($tableAlias && str_starts_with($params['sort'], Inflector::variable(Inflector::singularize($tableAlias)) . '.')) {
 				// Strip the alias from the sort field
-				$ls_field = substr($params['sort'], strlen($tableAlias) + 1);
+				$ls_field = substr($params['sort'], strlen(Inflector::singularize($tableAlias)) + 1);
 				if (in_array($ls_field, $la_translatableFields)) {
 					$ls_translationField = $behavior->translationField($ls_field);
 
@@ -344,7 +350,7 @@ class PaginateComponent extends Component {
 					$this->aliasedFields[ $ls_translationField ] = $params['sort'];
 
 					/** @noinspection PhpVariableNamingConventionInspection */
-					$params['sort'] = [$ls_translationField, $params['sort']];
+					$params['sort'] = [$ls_translationField, $tableAlias . '.' . $ls_field];
 					/** @noinspection PhpVariableNamingConventionInspection */
 					$settings['sortableFields'][] = $ls_translationField;
 				}
@@ -352,18 +358,19 @@ class PaginateComponent extends Component {
 
 			if (in_array($params['sort'], $la_translatableFields)) {
 				$ls_field = $params['sort'];
-				$ls_translationField = $behavior->translationField($ls_field);
 
-				// Add the translated field to the aliasedFields
-				$this->aliasedFields[ $ls_translationField ] = $ls_field;
+				if (!$tableAlias || !in_array($ls_field, $this->baseFields)) {
+					$ls_translationField = $behavior->translationField($ls_field);
+					// Add the translated field to the aliasedFields
+					$this->aliasedFields[ $ls_translationField ] = $ls_field;
 
-				/** @noinspection PhpVariableNamingConventionInspection */
-				$params['sort'] = [$ls_translationField, $ls_field];
-				/** @noinspection PhpVariableNamingConventionInspection */
-				$settings['sortableFields'][] = $ls_translationField;
+					/** @noinspection PhpVariableNamingConventionInspection */
+					$params['sort'] = [$ls_translationField, $ls_field];
+					/** @noinspection PhpVariableNamingConventionInspection */
+					$settings['sortableFields'][] = $ls_translationField;
+				}
 			}
 		}
-
 
 		// Modify the default order fields if it is set so that it matches the translated field names
 		if (!$tableAlias && !empty($settings['order'])) {
