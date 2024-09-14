@@ -117,7 +117,9 @@ class PagesListener implements EventListenerInterface {
 			$lo_children = $lo_table->getNestedPages($lo_originalEntity);
 		}
 		else {
-			$lo_children = $lo_table->getNestedChildren($lo_originalEntity);
+			$lo_children = $lo_table->getNestedChildren($lo_originalEntity, [
+				'finder' => 'translations',
+			]);
 		}
 
 		if (!$lo_children?->count()) {
@@ -266,7 +268,10 @@ class PagesListener implements EventListenerInterface {
 		/** @var \Awyiss\Model\Entity\Page $lo_originalEntity */
 		$lo_originalEntity = $entity->originalEntity;
 
-		$lo_entries = $lo_table->Contents->find('threaded', nestingKey: 'childContents')->where(['page_id' => $lo_originalEntity->id])->all();
+		$lo_entries = $lo_table->Contents->find('threaded', nestingKey: 'childContents')
+		->find('translations')
+		->where(['page_id' => $lo_originalEntity->id])
+		->all();
 
 		$lo_listedEntries = $lo_entries->listNested('desc', 'childContents');
 		/** @var \Awyiss\Model\Entity\Content $lo_content */
@@ -280,6 +285,7 @@ class PagesListener implements EventListenerInterface {
 
 		$lo_table->Contents->saveMany($lo_entries->toList(), [
 			'checkRules' => false,
+			'isCopy' => true,
 		]);
 	}
 

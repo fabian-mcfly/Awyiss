@@ -50,7 +50,9 @@ class MenuEntriesListener implements EventListenerInterface {
 
 		/** @var \Awyiss\Model\Entity\MenuEntry $lo_originalEntity */
 		$lo_originalEntity = $entity->originalEntity;
-		$lo_children = $lo_originalEntity->getNestedChildren();
+		$lo_children = $lo_originalEntity->getNestedChildren([
+			'finder' => 'translations',
+		]);
 
 		if (!$lo_children?->count()) {
 			return;

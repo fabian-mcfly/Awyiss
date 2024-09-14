@@ -75,7 +75,9 @@ class ContentsListener implements EventListenerInterface {
 
 		/** @var \Awyiss\Model\Entity\Content $lo_originalEntity */
 		$lo_originalEntity = $entity->originalEntity;
-		$lo_children = $lo_originalEntity->getNestedChildren();
+		$lo_children = $lo_originalEntity->getNestedChildren([
+			'finder' => 'translations',
+		]);
 
 		if (!$lo_children?->count()) {
 			return;

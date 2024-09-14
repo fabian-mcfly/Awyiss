@@ -62,7 +62,9 @@ class MediaFoldersListener implements EventListenerInterface {
 
 		/** @var \Awyiss\Model\Entity\MediaFolder $lo_originalEntity */
 		$lo_originalEntity = $entity->originalEntity;
-		$lo_children = $lo_originalEntity->getNestedChildren();
+		$lo_children = $lo_originalEntity->getNestedChildren([
+			'finder' => 'translations',
+		]);
 
 		if (!$lo_children?->count()) {
 			return;
@@ -374,7 +376,7 @@ class MediaFoldersListener implements EventListenerInterface {
 	 * @throws \Exception
 	 */
 	protected function copyMediaEntities(MediaFolder $entity, MediaFolder $originalEntity, MediaFoldersTable $table): void {
-		$lo_files = $table->Media->find()->where(['media_folder_id' => $originalEntity->id])->all();
+		$lo_files = $table->Media->find('translations')->where(['media_folder_id' => $originalEntity->id])->all();
 		/** @var \Awyiss\Model\Entity\Media $lo_file */
 		foreach ($lo_files as $lo_file) {
 			$lo_file->unset((array)$table->getPrimaryKey());
@@ -386,6 +388,7 @@ class MediaFoldersListener implements EventListenerInterface {
 
 		$table->Media->saveMany($lo_files->toList(), [
 			'checkRules' => false,
+			'isCopy' => true,
 		]);
 	}
 

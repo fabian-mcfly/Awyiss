@@ -9,6 +9,7 @@ use Awyiss\Event\EventListenerTrait;
 use Awyiss\Model\Entity\FormElement;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
+use Cake\Utility\Security;
 
 
 /**
@@ -50,7 +51,9 @@ class FormElementsListener implements EventListenerInterface {
 
 		/** @var \Awyiss\Model\Entity\FormElement $lo_originalEntity */
 		$lo_originalEntity = $entity->originalEntity;
-		$lo_children = $lo_originalEntity->getNestedChildren();
+		$lo_children = $lo_originalEntity->getNestedChildren([
+			'finder' => 'translations',
+		]);
 
 		if (!$lo_children?->count()) {
 			return;
@@ -69,7 +72,9 @@ class FormElementsListener implements EventListenerInterface {
 			$lo_childFormElement->setNew(true);
 
 			$lo_childFormElement->set($entity->extract($la_relatedColumns));
-			$lo_childFormElement->identifier .= '-copy-' . time();
+			if (!in_array($lo_childFormElement->type, ['free_text', 'submit'])) {
+				$lo_childFormElement->identifier .= '-copy-' . Security::randomString(8);
+			}
 		}
 
 		$entity->childFormElements = $lo_nestedChildren;

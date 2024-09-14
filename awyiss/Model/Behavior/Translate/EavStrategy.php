@@ -58,6 +58,19 @@ class EavStrategy extends BaseEavStrategy {
 			$this->unsetEmptyFields($entity);
 		}
 
+		/**
+		 * If the entity is a copy, we need to mark all translations as new
+		 * to ensure they are saved as well.
+		 *
+		 * @var array<string, \Cake\Datasource\EntityInterface> $la_translations
+		 */
+		$la_translations = (array)$entity->get('_translations');
+		if ($la_translations && ($options['isCopy'] ?? false) === true) {
+			foreach ($la_translations as $lo_translation) {
+				$lo_translation->setNew(true);
+			}
+		}
+
 		$this->bundleTranslatedFields($entity);
 		$la_bundled = $entity->get('_i18n') ?: [];
 		$lb_noBundled = count($la_bundled) === 0;
@@ -75,7 +88,7 @@ class EavStrategy extends BaseEavStrategy {
 		// If there are no fields and no bundled translations, or both fields
 		// in the default locale and bundled translations we can
 		// skip the remaining logic as it's not necessary.
-		if ($lb_noFields && $lb_noBundled || ($la_fields && $la_bundled)) {
+		if ($lb_noFields || ($la_fields && $la_bundled)) {
 			return;
 		}
 
@@ -84,16 +97,11 @@ class EavStrategy extends BaseEavStrategy {
 		// When we have no key and bundled translations, we
 		// need to mark the entity dirty so the root
 		// entity persists.
-		if ($lb_noFields && $la_bundled && !$li_key) {
+		if ($la_bundled && !$li_key) {
 			foreach ($this->_config['fields'] as $ls_field) {
 				$entity->setDirty($ls_field);
 			}
 
-
-			return;
-		}
-
-		if ($lb_noFields) {
 			return;
 		}
 
@@ -106,36 +114,19 @@ class EavStrategy extends BaseEavStrategy {
 				'locale' => $ls_locale,
 				'foreign_key' => $li_key,
 				'model' => $ls_modelName,
-			])->all()->indexBy('field');
+			])->all()->indexBy('field')->toArray();
 		}
 
 
-		$la_modifiedValues = [];
-		foreach ($la_preexistentValues as $ls_field => $lo_translation) {
-			//$lo_translation->set('content', $la_values[ $ls_field ]);
-			$la_modifiedValues[ $ls_field ] = $lo_translation;
-		}
-		$la_newValues = array_diff_key($la_values, $la_modifiedValues);
-		foreach ($la_newValues as $ls_field => $ls_content) {
-			$la_newValues[ $ls_field ] = new Entity([
-				'locale' => $ls_locale,
-				'field' => $ls_field,
-				'content' => $ls_content,
-				'model' => $ls_modelName,
-			], [
-				'useSetters' => false,
-				'markNew' => true,
-			]);
-		}
+		$la_newValues = $this->prepareTranslationEntities($la_preexistentValues, $la_values, $ls_locale, $ls_modelName);
 
-		$entity->set('_i18n', array_merge($la_bundled, array_values($la_modifiedValues + $la_newValues)));
+		$entity->set('_i18n', array_merge($la_bundled, $la_newValues));
 		$entity->set('_locale', $ls_locale, ['setter' => false]);
 		$entity->setDirty('_locale', false);
 		/* With those lines, the main language would not find its way in the db
 		foreach ($la_fields as $ls_field) {
 			$entity->setDirty($ls_field, false);
-		}
-		*/
+		}*/
 	}
 
 
@@ -269,5 +260,40 @@ class EavStrategy extends BaseEavStrategy {
 			$entity->unset('_translations');
 			$entity->unset('_i18n');
 		}
+	}
+
+
+	/**
+	 * Extracts and prepares translation values for an entity.
+	 * This method processes pre-existing translation values and new values,
+	 * creating or updating translation entities as necessary.
+	 *
+	 * @param array $preExistentValues An array of pre-existing translation entities, indexed by field name.
+	 * @param array $values An array of new translation values, indexed by field name.
+	 * @param string $locale The locale for the translations.
+	 * @param string $modelName The name of the model to which the translations belong.
+	 * @return array An array of translation entities, ready to be saved.
+	 */
+	protected function prepareTranslationEntities(array $preExistentValues, array $values, string $locale, string $modelName): array {
+		$la_modifiedValues = [];
+		foreach ($preExistentValues as $ls_field => $lo_translation) {
+			//$lo_translation->set('content', $values[ $ls_field ]);
+			$la_modifiedValues[ $ls_field ] = $lo_translation;
+		}
+
+		$la_newValues = array_diff_key($values, $la_modifiedValues);
+		foreach ($la_newValues as $ls_field => $ls_content) {
+			$la_newValues[ $ls_field ] = new Entity([
+				'locale' => $locale,
+				'field' => $ls_field,
+				'content' => $ls_content,
+				'model' => $modelName,
+			], [
+				'useSetters' => false,
+				'markNew' => true,
+			]);
+		}
+
+		return array_values($la_modifiedValues + $la_newValues);
 	}
 }

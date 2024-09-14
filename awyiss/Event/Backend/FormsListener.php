@@ -59,11 +59,14 @@ class FormsListener implements EventListenerInterface {
 		/** @var \Awyiss\Model\Entity\Form $lo_originalEntity */
 		$lo_originalEntity = $entity->originalEntity;
 
-		$lo_entries = $lo_table->FormElements->find('threaded', nestingKey: 'childFormElements')->where(['form_id' => $lo_originalEntity->id])->all();
+		$lo_elements = $lo_table->FormElements->find('threaded', nestingKey: 'childFormElements')
+		->find('translations')
+		->where(['form_id' => $lo_originalEntity->id])
+		->all();
 
-		$lo_listedEntries = $lo_entries->listNested('desc', 'childFormElements');
+		$lo_listedElements = $lo_elements->listNested('desc', 'childFormElements');
 		/** @var \Awyiss\Model\Entity\FormElement $lo_formElement */
-		foreach ($lo_listedEntries as $lo_formElement) {
+		foreach ($lo_listedElements as $lo_formElement) {
 			$lo_formElement->unset((array)$lo_table->getPrimaryKey());
 			$lo_formElement->unset(['formId']);
 			$lo_formElement->setNew(true);
@@ -71,8 +74,9 @@ class FormsListener implements EventListenerInterface {
 			$lo_formElement->formId = $entity->id;
 		}
 
-		$lo_table->FormElements->saveMany($lo_entries->toList(), [
+		$lo_table->FormElements->saveMany($lo_elements->toList(), [
 			'checkRules' => false,
+			'isCopy' => true,
 		]);
 	}
 

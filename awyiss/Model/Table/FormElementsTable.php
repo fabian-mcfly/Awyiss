@@ -373,9 +373,9 @@ class FormElementsTable extends Table {
 		$rules->add(function (FormElement $entity/*, array $options*/): bool {
 			$la_availableInputTypes = $this->getAvailableTypes();
 
-			return isset($la_availableInputTypes[ $entity->inputType ]);
+			return in_array($entity->type, $la_availableInputTypes);
 		}, 'validInputType', [
-			'errorField' => 'inputType',
+			'errorField' => 'type',
 			'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_input_type'),
 		]);
 

@@ -59,7 +59,10 @@ class MenusListener implements EventListenerInterface {
 		/** @var \Awyiss\Model\Entity\Menu $lo_originalEntity */
 		$lo_originalEntity = $entity->originalEntity;
 
-		$lo_entries = $lo_table->AllMenuEntries->find('threaded', nestingKey: 'childMenuEntries')->where(['menu_id' => $lo_originalEntity->id])->all();
+		$lo_entries = $lo_table->AllMenuEntries->find('threaded', nestingKey: 'childMenuEntries')
+		->find('translations')
+		->where(['menu_id' => $lo_originalEntity->id])
+		->all();
 
 		$lo_listedEntries = $lo_entries->listNested('desc', 'childMenuEntries');
 		/** @var \Awyiss\Model\Entity\MenuEntry $lo_menuEntry */
@@ -73,6 +76,7 @@ class MenusListener implements EventListenerInterface {
 
 		$lo_table->MenuEntries->saveMany($lo_entries->toList(), [
 			'checkRules' => false,
+			'isCopy' => true,
 		]);
 	}
 
