@@ -5,6 +5,7 @@ namespace Awyiss\Utility\Form;
 
 
 use Awyiss\Core\App;
+use Awyiss\Event\EventManager;
 use Awyiss\Model\Entity\EmailTemplate;
 use Awyiss\Model\Entity\Form;
 use Awyiss\Model\Table\FormEntriesTable;
@@ -13,6 +14,7 @@ use Awyiss\Utility\Inflector;
 use Awyiss\View\FrontendView;
 use Cake\Core\Configure;
 use Cake\Datasource\FactoryLocator;
+use Cake\Event\Event;
 use Cake\I18n\DateTime;
 use Cake\Mailer\Mailer;
 use Cake\Utility\Security;
@@ -133,6 +135,16 @@ class FormSender {
 
 		$this->replacePlaceholdersInForm();
 
+		$lo_eventManager = EventManager::instance();
+
+		// Dispatch a new event for the form beforeSend
+		$lo_event = new Event('FormSender.beforeSend', $this->form);
+		$lo_eventManager->dispatch($lo_event);
+
+		if ($lo_event->isStopped()) {
+			return false;
+		}
+
 		$lb_sentEmail = null;
 		if ($this->form->sendEmail) {
 			$lb_sentEmail = $this->sendEmail();
@@ -194,6 +206,19 @@ class FormSender {
 	public function canSendDuplicate(): bool {
 		$ls_postHash = Security::hash(serialize($this->formData));
 
+		$lo_eventManager = EventManager::instance();
+
+		// Dispatch a new event for the form submission
+		$lo_event = new Event('FormSender.beforeCanSendDuplicate', $this->form, [
+			'formData' => $this->formData,
+			'postHash' => $ls_postHash,
+		]);
+		$lo_eventManager->dispatch($lo_event);
+
+		if ($lo_event->isStopped()) {
+			return !!$lo_event->getResult();
+		}
+
 		$lo_formEntry = $this->formEntriesTable->find()
 		->where([
 			'form_id' => $this->form->id,
@@ -201,6 +226,18 @@ class FormSender {
 			'created_on >' => time() - $this->duplicateCheckTimeout,
 		])
 		->first();
+
+		// Dispatch a new event for the form afterCanSendDuplicate
+		$lo_event = new Event('FormSender.afterCanSendDuplicate', $this->form, [
+			'formData' => $this->formData,
+			'postHash' => $ls_postHash,
+			'formEntry' => $lo_formEntry,
+		]);
+		$lo_eventManager->dispatch($lo_event);
+
+		if ($lo_event->isStopped()) {
+			return !!$lo_event->getResult();
+		}
 
 		return !$lo_formEntry;
 	}
@@ -214,6 +251,18 @@ class FormSender {
 	public function canSendIp(): bool {
 		$ls_ipHash = $this->createIpHash();
 
+		$lo_eventManager = EventManager::instance();
+
+		// Dispatch a new event for the beforeCanSendIp
+		$lo_event = new Event('FormSender.beforeCanSendIp', $this->form, [
+			'ipHash' => $ls_ipHash,
+		]);
+		$lo_eventManager->dispatch($lo_event);
+
+		if ($lo_event->isStopped()) {
+			return !!$lo_event->getResult();
+		}
+
 		$lo_formEntry = $this->formEntriesTable->find()
 		->where([
 			'form_id' => $this->form->id,
@@ -221,6 +270,17 @@ class FormSender {
 			'created_on >' => time() - $this->ipTimeout,
 		])
 		->first();
+
+		// Dispatch a new event for the form afterCanSendIp
+		$lo_event = new Event('FormSender.afterCanSendIp', $this->form, [
+			'ipHash' => $ls_ipHash,
+			'formEntry' => $lo_formEntry,
+		]);
+		$lo_eventManager->dispatch($lo_event);
+
+		if ($lo_event->isStopped()) {
+			return !!$lo_event->getResult();
+		}
 
 		return !$lo_formEntry;
 	}
@@ -248,6 +308,19 @@ class FormSender {
 		$ls_bodyPlain = $this->createBody($this->form->emailTemplate, 'text');
 
 		if (empty($ls_bodyPlain) && empty($ls_bodyHtml)) {
+			return false;
+		}
+
+		$lo_eventManager = EventManager::instance();
+
+		// Dispatch a new event for the form beforeSendEmail
+		$lo_event = new Event('FormSender.beforeSendEmail', $this->form, [
+			'bodyHtml' => &$ls_bodyHtml,
+			'bodyPlain' => &$ls_bodyPlain,
+		]);
+		$lo_eventManager->dispatch($lo_event);
+
+		if ($lo_event->isStopped()) {
 			return false;
 		}
 
@@ -288,7 +361,30 @@ class FormSender {
 
 		$this->addFormAttachments($lo_mailer);
 
-		return $this->_send($lo_mailer, $ls_bodyHtml, $ls_bodyPlain);
+		// Dispatch a new event for the form beforeEmailDeliver
+		$lo_event = new Event('FormSender.beforeEmailDeliver', $this->form, [
+			'bodyHtml' => &$ls_bodyHtml,
+			'bodyPlain' => &$ls_bodyPlain,
+			'mailer' => $lo_mailer,
+		]);
+		$lo_eventManager->dispatch($lo_event);
+
+		if ($lo_event->isStopped()) {
+			return false;
+		}
+
+		$lb_sent = $this->_send($lo_mailer, $ls_bodyHtml, $ls_bodyPlain);
+
+		// Dispatch a new event for the form afterEmailDeliver
+		$lo_event = new Event('FormSender.afterEmailDeliver', $this->form, [
+			'bodyHtml' => $ls_bodyHtml,
+			'bodyPlain' => $ls_bodyPlain,
+			'mailer' => $lo_mailer,
+			'sent' => $lb_sent,
+		]);
+		$lo_eventManager->dispatch($lo_event);
+
+		return $lb_sent;
 	}
 
 
@@ -303,6 +399,19 @@ class FormSender {
 		$ls_bodyPlain = $this->createBody($this->form->confirmationEmailTemplate, 'text', 'confirmation');
 
 		if (empty($ls_bodyPlain) && empty($ls_bodyHtml)) {
+			return false;
+		}
+
+		$lo_eventManager = EventManager::instance();
+
+		// Dispatch a new event for the form beforeSendConfirmationEmail
+		$lo_event = new Event('FormSender.beforeSendConfirmationEmail', $this->form, [
+			'bodyHtml' => &$ls_bodyHtml,
+			'bodyPlain' => &$ls_bodyPlain,
+		]);
+		$lo_eventManager->dispatch($lo_event);
+
+		if ($lo_event->isStopped()) {
 			return false;
 		}
 
@@ -329,7 +438,30 @@ class FormSender {
 			$lo_mailer->setEmailFormat(empty($ls_bodyHtml) ? 'text' : 'html');
 		}
 
-		return $this->_send($lo_mailer, $ls_bodyHtml, $ls_bodyPlain, 'confirmation');
+		// Dispatch a new event for the form beforeConfirmationEmailDeliver
+		$lo_event = new Event('FormSender.beforeConfirmationEmailDeliver', $this->form, [
+			'bodyHtml' => &$ls_bodyHtml,
+			'bodyPlain' => &$ls_bodyPlain,
+			'mailer' => $lo_mailer,
+		]);
+		$lo_eventManager->dispatch($lo_event);
+
+		if ($lo_event->isStopped()) {
+			return false;
+		}
+
+		$lb_sent = $this->_send($lo_mailer, $ls_bodyHtml, $ls_bodyPlain, 'confirmation');
+
+		// Dispatch a new event for the form afterConfirmationEmailDeliver
+		$lo_event = new Event('FormSender.afterConfirmationEmailDeliver', $this->form, [
+			'bodyHtml' => $ls_bodyHtml,
+			'bodyPlain' => $ls_bodyPlain,
+			'mailer' => $lo_mailer,
+			'sent' => $lb_sent,
+		]);
+		$lo_eventManager->dispatch($lo_event);
+
+		return $lb_sent;
 	}
 
 
