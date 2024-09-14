@@ -98,6 +98,7 @@ class WidgetsController extends Controller {
 		})->find('threaded')->all();
 
 		$la_widgets = $lo_widgets->groupBy('identifier')->toArray();
+		ksort($la_widgets);
 
 		/** @var class-string<\Awyiss\Utility\Content\ColumnSystemInterface> $ls_columnSystemClass */
 		$ls_columnSystemClass = $this->Widgets->getColumnSystemClass();
