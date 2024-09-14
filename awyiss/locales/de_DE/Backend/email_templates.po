@@ -1,0 +1,99 @@
+# EmailTemplates translations of Awyiss CMS
+# Copyright 2024 Awyiss <EMAIL@ADDRESS>
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 0.1.0\n"
+"POT-Creation-Date: 2024-09-06 19:28+0000\n"
+"PO-Revision-Date: 2024-09-06 19:28+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+msgid "meta_title_overview"
+msgstr "E-Mail-Templates"
+
+msgid "meta_title_add"
+msgstr "E-Mail-Template hinzufügen"
+
+msgid "meta_title_edit"
+msgstr "E-Mail-Template bearbeiten"
+
+msgid "meta_title_preview"
+msgstr "E-Mail-Template Vorschau"
+
+msgid "menu_title"
+msgstr "E-Mail-Templates"
+
+msgid "menu_add"
+msgstr "Neues E-Mail-Template"
+
+msgid "headline_overview"
+msgstr "E-Mail-Templates"
+
+msgid "headline_preview"
+msgstr "E-Mail-Template Vorschau"
+
+msgid "create"
+msgstr "Neues E-Mail-Template"
+
+msgid "headline_add"
+msgstr "E-Mail-Template hinzufügen"
+
+msgid "add_succeeded"
+msgstr "Das E-Mail-Template wurde erfolgreich hinzugefügt"
+
+msgid "add_failed"
+msgstr "Das E-Mail-Template konnte nicht hinzugefügt werden"
+
+msgid "headline_edit"
+msgstr "E-Mail-Template bearbeiten"
+
+msgid "edit_succeeded"
+msgstr "Das E-Mail-Template wurde erfolgreich aktualisiert"
+
+msgid "edit_failed"
+msgstr "Das E-Mail-Template konnte nicht aktualisiert werden"
+
+msgid "record_not_found"
+msgstr "Das E-Mail-Template wurde nicht gefunden"
+
+msgid "confirm_delete"
+msgstr "Sind Sie sicher, dass Sie diesen E-Mail-Template (ID: {0}) löschen möchten?"
+
+msgid "delete_succeeded"
+msgstr "Das E-Mail-Template wurde erfolgreich gelöscht"
+
+msgid "delete_failed"
+msgstr "Das E-Mail-Template konnte nicht gelöscht werden"
+
+msgid "file_changes_in_progress"
+msgstr "Es ist aktuell eine Dateiänderung in Bearbeitung. Bitte warten Sie, bis dieese abgeschlossen ist."
+
+msgid "layout"
+msgstr "Layout"
+
+msgid "text_html"
+msgstr "HTML"
+
+msgid "text_plain"
+msgstr "Text"
+
+msgid "file_name"
+msgstr "Dateiname"
+
+msgid "used_for_emails"
+msgstr "Verwendungen (E-Mail)"
+
+msgid "used_for_confirmation_emails"
+msgstr "Verwendungen (Bestätigung)"
+
+msgid "error_linked_form_emails"
+msgstr "Dieses E-Mail-Template kann nicht gelöscht werden, da es noch in Verwendung ist."
+
+msgid "error_linked_form_confirmation_emails"
+msgstr "Dieses E-Mail-Template kann nicht gelöscht werden, da es noch in Verwendung ist."
+
+msgid "error_valid_layout"
+msgstr "Ungültiges layout"

@@ -48,6 +48,10 @@
 		</div>
 	{% endif %}
 
+	{% if widget.formId %}
+		{{ form(widget.formId) }}
+	{% endif %}
+
 	{% if children %}
 	<div class="Children">
 		{{ children|raw }}

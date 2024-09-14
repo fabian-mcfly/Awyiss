@@ -29,6 +29,7 @@ use Cake\Validation\Validator as BaseValidator;
  * @property \Awyiss\Model\Table\WidgetTemplatesTable&\Awyiss\ORM\Association\BelongsTo $WidgetTemplates
  * @property \Awyiss\Model\Table\WidgetsTable&\Awyiss\ORM\Association\BelongsTo $ParentWidgets
  * @property \Awyiss\Model\Table\WidgetsTable&\Awyiss\ORM\Association\HasMany $ChildWidgets
+ * @property \Awyiss\Model\Table\FormsTable&\Awyiss\ORM\Association\BelongsTo $Forms
  * @method \Awyiss\Model\Entity\Widget newDefaultEntity(array $additionalData = [], array $options = [])
  * @method \Cake\Collection\CollectionInterface|null getNestedChildren(\Cake\Datasource\EntityInterface $entity, array $options = [], int $currentLevel = 0)
  * @method \Cake\Collection\CollectionInterface|null getChildren(\Cake\Datasource\EntityInterface $entity, array $options = [])
@@ -108,6 +109,8 @@ class WidgetsTable extends Table {
 	 * @inheritDoc
 	 */
 	public function initializeAssociations(): void {
+		$this->belongsTo('Forms');
+
 		$this->belongsTo('WidgetTemplates');
 	}
 
@@ -256,6 +259,12 @@ class WidgetsTable extends Table {
 		]);
 
 
+		$validator->add('formId', [
+			'isInteger' => ['rule' => 'isInteger'],
+			'maxLength' => ['rule' => ['maxLength', 11]],
+		]);
+
+
 		$validator->add('systemOrder', [
 			'isInteger' => ['rule' => 'isInteger'],
 		]);
@@ -334,6 +343,9 @@ class WidgetsTable extends Table {
 
 			return empty($la_errors);
 		}, 'validInputFields');
+
+
+		$rules->add($rules->existsIn(['formId'], 'Forms'), 'validFormId', ['errorField' => 'formId']);
 
 
 		$rules->add(function (Widget $entity): bool {

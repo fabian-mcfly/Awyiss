@@ -13,6 +13,7 @@ use Cake\Collection\CollectionInterface;
 use Cake\Core\Configure;
 use Cake\Utility\Hash;
 use InvalidArgumentException;
+use TijsVerkoyen\CssToInlineStyles\CssToInlineStyles;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
@@ -30,6 +31,8 @@ class AwyissExtension extends AbstractExtension {
 	 */
 	public function getFilters(): array {
 		return [
+			new TwigFilter('inline_css', $this->inlineCss(...), ['is_safe' => ['all']]),
+
 			new TwigFilter('data_attr', $this->htmlDataAttributes(...)),
 
 			new TwigFilter('json_decode', function (string $json): ?array {
@@ -40,16 +43,20 @@ class AwyissExtension extends AbstractExtension {
 				return !is_array($la_return) ? null : $la_return;
 			}),
 
-			new TwigFilter('ucparts', function (string $string, string|bool $delimiter = true): string {
-				return Inflector::ucparts($string, $delimiter);
-			}),
-
 			new TwigFilter('prefixNumericClass', function (string $string): string {
 				if (preg_match('/^\d/', $string)) {
 					return 'Page' . $string;
 				}
 
 				return $string;
+			}),
+
+			new TwigFilter('repeat', function (string $string, int $times): string {
+				return str_repeat($string, $times);
+			}),
+
+			new TwigFilter('ucparts', function (string $string, string|bool $delimiter = true): string {
+				return Inflector::ucparts($string, $delimiter);
 			}),
 		];
 	}
@@ -84,6 +91,21 @@ class AwyissExtension extends AbstractExtension {
 			new TwigFunction('dump', function (): void {
 				dump(...func_get_args());
 			}),
+
+			new TwigFunction(
+				'form',
+				function (array $context, string|int $identifier, array $options = []) {
+					if (empty($context['languageShortcode']) || strlen($context['languageShortcode']) !== 2) {
+						throw new InvalidArgumentException('The "form" function requires languageShortcode string in the context.');
+					}
+
+					$la_options = ['viewVars' => $context];
+					$la_options = Hash::merge($la_options, $options);
+
+					return $context['_view']->cell('Frontend/Form', [$identifier, $context['languageShortcode'], $la_options]);
+				},
+				['needs_context' => true, 'is_safe' => ['all']]
+			),
 
 			new TwigFunction('getClass', function (object $class): string {
 				return get_class($class);
@@ -199,6 +221,22 @@ class AwyissExtension extends AbstractExtension {
 				return is_string($value);
 			}),
 		];
+	}
+
+
+	/**
+	 * @param string $body
+	 * @param string ...$cssFiles
+	 * @return string
+	 */
+	public static function inlineCss(string $body, string ...$cssFiles): string {
+		static $lo_inliner;
+
+		if (!isset($lo_inliner)) {
+			$lo_inliner = new CssToInlineStyles();
+		}
+
+		return $lo_inliner->convert($body, implode("\n", $cssFiles));
 	}
 
 

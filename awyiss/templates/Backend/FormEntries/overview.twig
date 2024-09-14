@@ -1,0 +1,43 @@
+{#
+@var formEntries \Cake\Datasource\Paging\PaginatedResultSet
+@var _view \Awyiss\View\BackendView
+@var AssetHelper \Awyiss\View\Helper\AssetHelper
+@var AttributesHelper \Awyiss\View\Helper\AttributesHelper
+@var AuthorizationHelper \Awyiss\View\Helper\AuthorizationHelper
+@var CategoriesHelper \Awyiss\View\Helper\CategoriesHelper
+@var FlashHelper \Awyiss\View\Helper\FlashHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+@var HtmlHelper \Cake\View\Helper\HtmlHelper
+@var LocaleHelper \Awyiss\View\Helper\LocaleHelper
+@var MediaHelper \Awyiss\View\Helper\MediaHelper
+@var PaginatorHelper \Awyiss\View\Helper\PaginatorHelper
+@var SystemOrderHelper \Awyiss\View\Helper\SystemOrderHelper
+@var UrlHelper \Awyiss\View\Helper\UrlHelper
+#}
+
+<div class="FormEntry Overview">
+	{% block headlineOverview %}
+		<h1>{{ __('headline_overview') }}</h1>
+		{% if CategoriesHelper.selectedCategory('form') != 'all' %}
+			<h2>{{ form.label }}</h2>
+		{% endif %}
+	{% endblock %}
+
+	{% block buttonArea %}
+		<div class="ButtonArea">
+			{% block categoriesFilterOverview %}
+				{{ CategoriesHelper.filter('form', naturalSort(CategoriesHelper.getCategories('form'))) }}
+			{% endblock %}
+		</div>
+	{% endblock %}
+
+	{% block paginatedOverview %}
+		{% include '@Backend/FormEntries/overview_paginated_list.twig' with _context|merge({records: formEntries.items().toArray()}) %}
+	{% endblock %}
+
+	{% block buttonAreaBottom %}
+		<div class="ButtonArea ButtonArea-Bottom">
+			{{ block('categoriesFilterOverview') }}
+		</div>
+	{% endblock %}
+</div>

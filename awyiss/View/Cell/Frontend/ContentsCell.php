@@ -117,7 +117,7 @@ class ContentsCell extends Cell {
 	 * @return string
 	 * @throws \ReflectionException
 	 */
-	protected function renderContentElement(Entity $entity, string $children): string {
+	protected function renderElement(Entity $entity, string $children): string {
 		/**
 		 * @var \Awyiss\Utility\Media\MediaRenderOptions $lo_mediaRenderOptions
 		 * @noinspection PhpPossiblePolymorphicInvocationInspection

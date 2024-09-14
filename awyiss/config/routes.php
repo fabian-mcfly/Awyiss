@@ -106,6 +106,14 @@ $routes->scope('/', function (RouteBuilder $routeBuilder): void {
 	)->setExtensions(['xml']);
 
 	$routeBuilder->connect(
+		'/{lang}/_form/*',
+		['prefix' => 'Frontend', 'controller' => 'Form', 'action' => 'antiSpam'],
+		['_name' => Awyiss::REALM_FRONTEND . 'FormAntiSpam']
+	)->setPatterns([
+		'lang' => '[a-z]{2}',
+	])->setPersist(['lang']);
+
+	$routeBuilder->connect(
 		'/{lang}/{slug}/*',
 		['prefix' => 'Frontend', 'controller' => 'Frontend', 'action' => 'index'],
 		['_name' => Awyiss::REALM_FRONTEND]

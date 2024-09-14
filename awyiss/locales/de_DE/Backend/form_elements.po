@@ -1,0 +1,168 @@
+# FormElements translations of Awyiss CMS
+# Copyright 2024 Awyiss <EMAIL@ADDRESS>
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 0.1.0\n"
+"POT-Creation-Date: 2024-09-04 20:23+0000\n"
+"PO-Revision-Date: 2024-09-04 20:23+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+msgid "meta_title_overview"
+msgstr "Formularelemente"
+
+msgid "meta_title_add"
+msgstr "Formularelement hinzufügen"
+
+msgid "meta_title_edit"
+msgstr "Formularelement bearbeiten"
+
+msgid "menu_title"
+msgstr "Formularelemente"
+
+msgid "menu_add"
+msgstr "Neues Formularelement"
+
+msgid "headline_overview"
+msgstr "Formularelemente"
+
+msgid "create"
+msgstr "Neues Element"
+
+msgid "headline_add"
+msgstr "Formularelement hinzufügen"
+
+msgid "add_succeeded"
+msgstr "Das Formularelement wurde erfolgreich hinzugefügt"
+
+msgid "add_failed"
+msgstr "Das Formularelement konnte nicht hinzugefügt werden"
+
+msgid "headline_edit"
+msgstr "Formularelement bearbeiten"
+
+msgid "edit_succeeded"
+msgstr "Das Formularelement wurde erfolgreich aktualisiert"
+
+msgid "edit_failed"
+msgstr "Das Formularelement konnte nicht aktualisiert werden"
+
+msgid "record_not_found"
+msgstr "Das Formularelement wurde nicht gefunden"
+
+msgid "confirm_delete"
+msgstr "Sind Sie sicher, dass Sie dieses Formularelement (ID: {0}) löschen möchten?"
+
+msgid "delete_succeeded"
+msgstr "Das Formularelement wurde erfolgreich gelöscht"
+
+msgid "delete_failed"
+msgstr "Das Formularelement konnte nicht gelöscht werden"
+
+msgid "forms_overview"
+msgstr "Zurück zur Formularübersicht"
+
+msgid "form_filter_label"
+msgstr "Formular"
+
+msgid "overview_list_linear"
+msgstr "Listen-Darstellung"
+
+msgid "overview_list_with_columns"
+msgstr "Spalten-Darstellung"
+
+msgid "fieldset_options"
+msgstr "Auswahloptionen"
+
+msgid "type"
+msgstr "Eingabefeld-Typ"
+
+msgid "type_text"
+msgstr "Standard"
+
+msgid "type_textarea"
+msgstr "Mehrzeiliges Textfeld"
+
+msgid "type_select"
+msgstr "Auswahl"
+
+msgid "type_select_multiple"
+msgstr "Auswahl (Mehrfachauswahl)"
+
+msgid "type_checkbox"
+msgstr "Checkbox"
+
+msgid "type_fieldset"
+msgstr "Fieldset"
+
+msgid "type_radio"
+msgstr "Radiobutton"
+
+msgid "type_email"
+msgstr "E-Mail-Adresse"
+
+msgid "type_date"
+msgstr "Datum"
+
+msgid "type_time"
+msgstr "Uhrzeit"
+
+msgid "type_datetime"
+msgstr "Datum und Uhrzeit"
+
+msgid "type_file"
+msgstr "Datei-Upload"
+
+msgid "type_hidden"
+msgstr "Versteckt"
+
+msgid "type_submit"
+msgstr "Absenden-Button"
+
+msgid "type_free_text"
+msgstr "Freitext"
+
+msgid "form_id"
+msgstr "Formular"
+
+msgid "title_email"
+msgstr "Titel (in E-Mail)"
+
+msgid "placeholder"
+msgstr "Platzhalter"
+
+msgid "text"
+msgstr "Text"
+
+msgid "options"
+msgstr "Auswahloptionen"
+
+msgid "option_key"
+msgstr "Schlüssel"
+
+msgid "option_value"
+msgstr "Wert"
+
+msgid "parent_id"
+msgstr "Unterpunkt von"
+
+msgid "column_width"
+msgstr "Spaltenbreite"
+
+msgid "column_indent"
+msgstr "Spalten-Einrückung"
+
+msgid "column_last"
+msgstr "Letztes Element in der Zeile"
+
+msgid "column_rtl"
+msgstr "Rechts-nach-links"
+
+msgid "css_class"
+msgstr "CSS-Klasse"
+
+msgid "error_valid_form_id"
+msgstr "Das Formular existiert nicht"

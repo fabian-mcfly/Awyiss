@@ -8,6 +8,7 @@ use Awyiss\Awyiss;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity;
 use Awyiss\Model\Entity\Content;
+use Awyiss\Model\Entity\FormElement;
 use Awyiss\Model\Entity\Widget;
 use Awyiss\Module\ModulesProvider;
 use Awyiss\Utility\Inflector;
@@ -25,7 +26,7 @@ use DOMXPath;
 
 /**
  * ContentElementTrait to be used in Cells
- * for Frontend content elements (content and widgets)
+ * for Frontend content elements (content, form elements and widgets)
  */
 trait ContentElementTrait {
 	/**
@@ -140,7 +141,7 @@ trait ContentElementTrait {
 		]);
 
 		/**
-		 * @var \Awyiss\Model\Entity\Content|\Awyiss\Model\Entity\Widget $lo_entity
+		 * @var \Awyiss\Model\Entity\Content|\Awyiss\Model\Entity\FormElement|\Awyiss\Model\Entity\Widget $lo_entity
 		 */
 		foreach ($lo_entities as $lo_entity) {
 			// If the content has a duplicated one, use some data from the duplicated content
@@ -169,6 +170,9 @@ trait ContentElementTrait {
 
 			if ($lo_entity instanceof Content) {
 				$lo_entity->parentContents = $la_parentEntities;
+			}
+			elseif ($lo_entity instanceof FormElement) {
+				$lo_entity->parentFormElements = $la_parentEntities;
 			}
 			else {
 				$lo_entity->parentWidgets = $la_parentEntities;
@@ -208,7 +212,7 @@ trait ContentElementTrait {
 		$ls_rowContent = '';
 
 		/**
-		 * @var \Awyiss\Model\Entity\Content|\Awyiss\Model\Entity\Widget $lo_entity
+		 * @var \Awyiss\Model\Entity\Content|\Awyiss\Model\Entity\FormElement|\Awyiss\Model\Entity\Widget $lo_entity
 		 */
 		foreach ($entities as $lo_entity) {
 			$ls_children = '';
@@ -218,9 +222,13 @@ trait ContentElementTrait {
 			}
 
 			$lb_noContentRow = $noContentRow;
-			if (!$lb_noContentRow) {
+			if (!$lb_noContentRow && !$lo_entity instanceof FormElement) {
 				$ls_template = $lo_entity instanceof Widget ? 'widgetTemplate' : 'contentTemplate';
+
 				$lb_noContentRow = !$lo_entity->$ls_template->inContentRow;
+			}
+			elseif ($lo_entity instanceof FormElement && in_array($lo_entity->type, ['fieldset', 'hidden'])) {
+				$lb_noContentRow = true;
 			}
 
 			/*
@@ -229,7 +237,7 @@ trait ContentElementTrait {
 			 */
 			if ($lb_noContentRow) {
 				if ($ls_rowContent) {
-					$ls_contentElements .= $this->renderContentRow($ls_rowContent);
+					$ls_contentElements .= $this->renderContentRow($ls_rowContent, $lo_entity instanceof FormElement);
 
 					// Reset the row contents
 					$lf_currentWidth = 0;
@@ -237,7 +245,7 @@ trait ContentElementTrait {
 				}
 
 				// Render the content. Adding the width is not necessary, as the content is rendered directly.
-				$ls_contentElements .= $this->renderContentElement($lo_entity, $ls_children);
+				$ls_contentElements .= $this->renderElement($lo_entity, $ls_children);
 
 				continue;
 			}
@@ -257,7 +265,7 @@ trait ContentElementTrait {
 			 */
 			if ($lf_currentWidth > 100 || $lf_currentWidth + $lf_columnWidth > 100) {
 				if ($ls_rowContent) {
-					$ls_contentElements .= $this->renderContentRow($ls_rowContent);
+					$ls_contentElements .= $this->renderContentRow($ls_rowContent, $lo_entity instanceof FormElement);
 				}
 
 				$lf_currentWidth = 0;
@@ -265,11 +273,11 @@ trait ContentElementTrait {
 			}
 
 			// Add the content to the row contents
-			$ls_rowContent .= $this->renderContentElement($lo_entity, $ls_children);
+			$ls_rowContent .= $this->renderElement($lo_entity, $ls_children);
 
 			// If the content is a finisher, render the row and reset the row contents
 			if ($lo_entity->columnLast) {
-				$ls_contentElements .= $this->renderContentRow($ls_rowContent);
+				$ls_contentElements .= $this->renderContentRow($ls_rowContent, $lo_entity instanceof FormElement);
 
 				$lf_currentWidth = 0;
 				$ls_rowContent = '';
@@ -282,7 +290,7 @@ trait ContentElementTrait {
 
 		// Render the last row
 		if ($ls_rowContent) {
-			$ls_contentElements .= $this->renderContentRow($ls_rowContent);
+			$ls_contentElements .= $this->renderContentRow($ls_rowContent, $lo_entity instanceof FormElement);
 		}
 
 
@@ -358,22 +366,23 @@ trait ContentElementTrait {
 
 
 	/**
-	 * Render an entity as content element using the provided template.
+	 * Render an entity as element using the provided template.
 	 *
 	 * @param \Awyiss\Model\Entity $entity
 	 * @param string $children
 	 * @return string
 	 */
-	abstract protected function renderContentElement(Entity $entity, string $children): string;
+	abstract protected function renderElement(Entity $entity, string $children): string;
 
 
 	/**
 	 * @param string $contents
+	 * @param bool $isFormRow
 	 * @return string
 	 */
-	protected function renderContentRow(string $contents): string {
+	protected function renderContentRow(string $contents, bool $isFormRow = false): string {
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		$ls_contentRow = $this->View->element('content_row', [
+		$ls_contentRow = $this->View->element($isFormRow ? 'form_row' : 'content_row', [
 			'contents' => $contents,
 			'class' => $this->View::$rowClass,
 		]);
@@ -390,23 +399,36 @@ trait ContentElementTrait {
 	 * Each element gets a css class based on its template, column width and indent,
 	 * as well as the cssClass property set in the database.
 	 *
-	 * @param \Awyiss\Model\Entity\Content|\Awyiss\Model\Entity\Widget $entity
+	 * @param \Awyiss\Model\Entity\Content|\Awyiss\Model\Entity\FormElement|\Awyiss\Model\Entity\Widget $entity
 	 * @return void
 	 */
-	protected function setCssClasses(Content|Widget $entity): void {
+	protected function setCssClasses(Content|FormElement|Widget $entity): void {
 		if (empty($entity->cssClass)) {
 			$entity->cssClass = '';
 		}
 
 		$ls_cssClass = trim($entity->cssClass);
 
-		$ls_template = $entity instanceof Widget ? 'widgetTemplate' : 'contentTemplate';
+		$ls_template = match (true) {
+			$entity instanceof Content => 'contentTemplate',
+			$entity instanceof FormElement => null,
+			$entity instanceof Widget => 'widgetTemplate',
+		};
 
-		$entity->cssClass = $entity instanceof Widget ? 'Widget' : 'Content';
-		$entity->cssClass .= 'Element Template-' . Inflector::ucparts($entity->$ls_template->fileName);
+		$entity->cssClass = match (true) {
+			$entity instanceof Content => 'Content',
+			$entity instanceof FormElement => 'Form',
+			$entity instanceof Widget => 'Widget',
+		};
+		$entity->cssClass .= 'Element';
+		$entity->cssClass .= ($ls_template ? ' Template-' . Inflector::ucparts($entity->$ls_template->fileName) : '');
 		$entity->cssClass .= ' ' . $entity->column['width']->getCssClass();
 
-		if ($entity instanceof Widget) {
+		if ($entity instanceof FormElement) {
+			$entity->cssClass .= ' FormElementType-' . Inflector::ucparts($entity->type, false);
+			$entity->cssClass .= ' FormElement-' . Inflector::ucparts($entity->identifier ?? (string)$entity->id, false);
+		}
+		elseif ($entity instanceof Widget) {
 			$entity->cssClass .= ' Widget-' . Inflector::ucparts($entity->identifier, false);
 		}
 
@@ -432,14 +454,18 @@ trait ContentElementTrait {
 	 * Set the real column width of an entity,
 	 * based on the width of its parent entities.
 	 *
-	 * @param \Awyiss\Model\Entity\Content|\Awyiss\Model\Entity\Widget $entity
+	 * @param \Awyiss\Model\Entity\Content|\Awyiss\Model\Entity\FormElement|\Awyiss\Model\Entity\Widget $entity
 	 * @param float $columnWidth
 	 * @return void
 	 */
-	protected function setRealColumnWidth(Content|Widget $entity, float $columnWidth): void {
+	protected function setRealColumnWidth(Content|FormElement|Widget $entity, float $columnWidth): void {
 		$entity->setVirtual(['realColumnWidth']);
 
-		$ls_property = $entity instanceof Widget ? 'parentWidgets' : 'parentContents';
+		$ls_property = match (true) {
+			$entity instanceof Content => 'parentContents',
+			$entity instanceof FormElement => 'parentFormElements',
+			$entity instanceof Widget => 'parentWidgets',
+		};
 
 		if (!$entity->$ls_property) {
 			$entity->realColumnWidth = $columnWidth * $entity->column['width']->getFactor();
@@ -447,7 +473,7 @@ trait ContentElementTrait {
 			return;
 		}
 
-		/** @var \Awyiss\Model\Entity\Content|\Awyiss\Model\Entity\Widget $lo_parent */
+		/** @var \Awyiss\Model\Entity\Content|\Awyiss\Model\Entity\FormElement|\Awyiss\Model\Entity\Widget $lo_parent */
 		$lo_parent = end($entity->$ls_property);
 
 		$entity->realColumnWidth = $lo_parent->realColumnWidth * $entity->column['width']->getFactor();
@@ -458,11 +484,16 @@ trait ContentElementTrait {
 	 * Check if a custom template exists for a content element,
 	 * based on the id.
 	 *
-	 * @param \Awyiss\Model\Entity\Content|\Awyiss\Model\Entity\Widget $entity
+	 * @param \Awyiss\Model\Entity\Content|\Awyiss\Model\Entity\FormElement|\Awyiss\Model\Entity\Widget $entity
 	 * @return void
 	 */
-	protected function setTemplate(Content|Widget $entity): void {
+	protected function setTemplate(Content|FormElement|Widget $entity): void {
 		static $ls_templatePath;
+
+		// Skip form elements as they have no template
+		if ($entity instanceof FormElement) {
+			return;
+		}
 
 		if (!isset($ls_templatePath)) {
 			$ls_templatePath = rtrim(Configure::read('App.paths.templates.customer'), DS);

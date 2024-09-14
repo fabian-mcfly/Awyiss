@@ -1,0 +1,30 @@
+.EmailTemplatesController {
+	.Preview {
+		h1 {
+			font-size:1.25rem;
+			line-height:1;
+		}
+
+		h2 {
+			margin-top:0;
+			color:var(--colorMedium);
+		}
+
+		iframe {
+			display:block;
+			width:100%;
+			max-width:1024px;
+			max-height:80dvh;
+			aspect-ratio:16 / 9;
+			border-radius:5px;
+			margin:calc(var(--lineHeightMain) * 2) auto 0;
+			border:0 none;
+			scrollbar-width:thin;
+		}
+	}
+
+	.EmailTemplateBodyText {
+		padding:20px;
+		background-color:var(--colorBright);
+	}
+}

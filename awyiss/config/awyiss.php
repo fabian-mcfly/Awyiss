@@ -164,12 +164,13 @@ return [
 	],
 
 	/*
-	 * See `Cake\Mailer\Email` for more information.
+	 * See `\Cake\Mailer\Email` for more information.
 	 */
 	'Email' => [
 		'default' => [
+			'emailFormat' => 'both',
 			'emailPattern' => null,
-			'from' => 'awyiss@localhost',
+			'priority' => 3,
 			'transport' => 'default',
 		],
 	],
@@ -180,14 +181,6 @@ return [
 	'EmailTransport' => [
 		'default' => [
 			'className' => MailTransport::class,
-			'client' => null,
-			'host' => 'localhost',
-			'password' => null,
-			'port' => 25,
-			'timeout' => 30,
-			'tls' => false,
-			'url' => env('EMAIL_TRANSPORT_DEFAULT_URL'),
-			'username' => null,
 		],
 	],
 

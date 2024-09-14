@@ -289,6 +289,9 @@ class UserConfigurationTable extends Table {
 				// For now, contents are always accessible since accessing them depends on page roles
 				$this->configScopes[ $ls_scope ] = $ls_className;
 			}
+			elseif ($ls_scope === 'FormElements' && $lo_identity?->scopeIsAccessible('Forms', [], ['read', 'create', 'update', 'configure'])) {
+				$this->configScopes[ $ls_scope ] = $ls_className;
+			}
 			elseif ($lo_identity?->scopeIsAccessible($ls_scope, [], ['read', 'create', 'update', 'configure'])) {
 				$this->configScopes[ $ls_scope ] = $ls_className;
 			}

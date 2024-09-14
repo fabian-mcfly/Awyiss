@@ -187,3 +187,13 @@
 		required: widgetTemplateElement.required,
 	}) }}
 {% endblock %}
+
+
+{% block formControlFormId %}
+	{{ FormHelper.control('form_id', {
+		columnSpan: widgetTemplateElement.column.span.numerator,
+		label: widgetTemplateElement.title,
+		options: hashPrinter(settings.forms, 'label', 'id', '- '),
+		required: widgetTemplateElement.required,
+	}) }}
+{% endblock %}

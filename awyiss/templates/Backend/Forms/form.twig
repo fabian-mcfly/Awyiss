@@ -1,0 +1,259 @@
+{#
+@var form Awyiss\Model\Entity\Form
+@var emailTemplates \Awyiss\Model\Entity\EmailTemplate[]
+@var _view \Awyiss\View\BackendView
+@var AssetHelper \Awyiss\View\Helper\AssetHelper
+@var AttributesHelper \Awyiss\View\Helper\AttributesHelper
+@var AuthorizationHelper \Awyiss\View\Helper\AuthorizationHelper
+@var CategoriesHelper \Awyiss\View\Helper\CategoriesHelper
+@var FlashHelper \Awyiss\View\Helper\FlashHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+@var HtmlHelper \Cake\View\Helper\HtmlHelper
+@var LocaleHelper \Awyiss\View\Helper\LocaleHelper
+@var MediaHelper \Awyiss\View\Helper\MediaHelper
+@var PaginatorHelper \Awyiss\View\Helper\PaginatorHelper
+@var SystemOrderHelper \Awyiss\View\Helper\SystemOrderHelper
+@var UrlHelper \Awyiss\View\Helper\UrlHelper
+#}
+
+{% block fieldsets %}
+	<div class="Fieldsets">
+		{% block fieldsetPresentation %}
+			<fieldset class="Fieldset-Presentation">
+				<legend>{{ __('fieldset_presentation') }}</legend>
+
+				{% block fieldsetPresentationInner %}
+					{% block formControl_Active %}
+						{{ FormHelper.control('active', {columnSpan: 6}) }}
+					{% endblock %}
+
+					{#% block formControlMultistep %}
+						{{ FormHelper.control('multistep', {columnSpan: 6}) }}
+					{% endblock %#}
+
+					{% block fieldsetPresentationAttributes %}
+						{{ AttributesHelper.allControls('presentation') }}
+					{% endblock %}
+				{% endblock %}
+			</fieldset>
+		{% endblock %}
+
+		{% block fieldsetConditions %}
+			<fieldset class="Fieldset-Conditions">
+				<legend>{{ __('fieldset_conditions') }}</legend>
+
+				{% block fieldsetConditionsInner %}
+					{% block fieldsetConditionsAttributes %}
+						{{ AttributesHelper.allControls('conditions') }}
+					{% endblock %}
+				{% endblock %}
+			</fieldset>
+		{% endblock %}
+
+		{% block fieldsetGeneral %}
+			<fieldset class="Fieldset-General">
+				<legend>{{ __('fieldset_general') }}</legend>
+
+				{% block fieldsetGeneralInner %}
+					{% block formControl_Title %}
+						{{ FormHelper.control('title', {columnSpan: 6}) }}
+					{% endblock %}
+
+					{% block formControl_Identifier %}
+						{{ FormHelper.control('identifier', {columnSpan: 6, 'data-autofill-from-title': 'true'}) }}
+					{% endblock %}
+
+					{% block formControlSuccessMessage %}
+						{{ FormHelper.control('success_message', {'data-editor': true}) }}
+					{% endblock %}
+
+					{% block fieldsetGeneralAttributes %}
+						{{ AttributesHelper.allControls('general') }}
+					{% endblock %}
+				{% endblock %}
+			</fieldset>
+		{% endblock %}
+
+		{% block fieldsetEmail %}
+			<fieldset class="Fieldset-Email">
+				<legend>{{ __('fieldset_email') }}</legend>
+
+				{% block fieldsetEmailInner %}
+					{% block formControlOwnerEmail %}
+						{{ FormHelper.control('owner_email', {columnSpan: 6}) }}
+					{% endblock %}
+
+					{% block formControlOwnerName %}
+						{{ FormHelper.control('owner_name', {
+							columnSpan: 6,
+							placeholder: config.Awyiss.System.Frontend.meta.titleAppendix,
+						}) }}
+					{% endblock %}
+
+					{% block formControlSendEmail %}
+						{{ FormHelper.control('send_email') }}
+					{% endblock %}
+
+					{% block formControlSubject %}
+						{{ FormHelper.control('subject', {columnSpan: 6}) }}
+					{% endblock %}
+
+					{% block formControlEmailTemplateId %}
+						{{ FormHelper.control('email_template_id', {columnSpan: 6, options: hashPrinter(emailTemplates.toArray(), 'label', 'id')}) }}
+					{% endblock %}
+
+					{% block formControlCc %}
+						<div class="FormInput FormInputType-List FormInputName-Cc ColumnSpan-6" data-list-item-add="{{ __('list_item_add') }}" data-list-item-remove="{{ __('list_item_remove') }}">
+							<label class="Label">{{ __('cc') }}</label>
+
+							{% set counter = 0 %}
+							{% for cc in form.cc %}
+								<div class="FormInputType-ListItem">
+									{{ FormHelper.control('cc.' ~ counter ~ '.email', {
+										label: __('cc_email'),
+									}) }}
+
+									{{ FormHelper.control('cc.' ~ counter ~ '.name', {
+										label: __('cc_name'),
+									}) }}
+
+									{% set counter = counter + 1 %}
+								</div>
+							{% endfor %}
+
+							<div class="FormInputType-ListItem FormInputType-ListItem-Default">
+								{{ FormHelper.control('cc.' ~ counter ~ '.email', {
+									label: __('cc_email'),
+								}) }}
+
+								{{ FormHelper.control('cc.' ~ counter ~ '.name', {
+									label: __('cc_name'),
+								}) }}
+							</div>
+						</div>
+					{% endblock %}
+
+					{% block formControlBcc %}
+						<div class="FormInput FormInputType-List FormInputName-Bcc ColumnSpan-6" data-list-item-add="{{ __('list_item_add') }}" data-list-item-remove="{{ __('list_item_remove') }}">
+							<label class="Label">{{ __('bcc') }}</label>
+
+							{% set counter = 0 %}
+							{% set translatable = languages.Frontend|filter(language => language.active)|length > 1 %}
+							{% for bcc in form.bcc %}
+								<div class="FormInputType-ListItem">
+									{{ FormHelper.control('bcc.' ~ counter ~ '.email', {
+										label: __('bcc_email'),
+									}) }}
+
+									{{ FormHelper.control('bcc.' ~ counter ~ '.name', {
+										label: __('bcc_name'),
+									}) }}
+
+									{% set counter = counter + 1 %}
+								</div>
+							{% endfor %}
+
+							<div class="FormInputType-ListItem FormInputType-ListItem-Default">
+								{{ FormHelper.control('bcc.' ~ counter ~ '.email', {
+									label: __('bcc_email'),
+								}) }}
+
+								{{ FormHelper.control('bcc.' ~ counter ~ '.name', {
+									label: __('bcc_name'),
+								}) }}
+							</div>
+						</div>
+					{% endblock %}
+				{% endblock %}
+			</fieldset>
+		{% endblock %}
+
+		{% block fieldsetConfirmationEmail %}
+			<fieldset class="Fieldset-ConfirmationEmail">
+				<legend>{{ __('fieldset_confirmation_email') }}</legend>
+
+				{% block fieldsetConfirmationEmailInner %}
+					{% block formControlUserEmail %}
+						{{ FormHelper.control('user_email', {columnSpan: 6, placeholder: __('user_email_placeholder')}) }}
+					{% endblock %}
+
+					{% block formControlUserName %}
+						{{ FormHelper.control('user_name', {columnSpan: 6, placeholder: __('user_name_placeholder')}) }}
+					{% endblock %}
+
+					{% block formControlSendConfirmationEmail %}
+						{{ FormHelper.control('send_confirmation_email') }}
+					{% endblock %}
+
+					{% block formControlSubjectConfirmation %}
+						{{ FormHelper.control('subject_confirmation', {
+							columnSpan: 5,
+							placeholder: __('subject_confirmation_placeholder'),
+						}) }}
+					{% endblock %}
+
+					{% block formControlSalutationConfirmation %}
+						{{ FormHelper.control('salutation_confirmation', {
+							columnSpan: 5,
+							placeholder: __('salutation_confirmation_placeholder'),
+						}) }}
+					{% endblock %}
+
+					{% block formControlConfirmationEmailTemplateId %}
+						{{ FormHelper.control('confirmation_email_template_id', {columnSpan: 2, options: hashPrinter(emailTemplates.toArray(), 'label', 'id')}) }}
+					{% endblock %}
+				{% endblock %}
+			</fieldset>
+		{% endblock %}
+
+		{% block fieldsetContent %}
+			<fieldset class="Fieldset-Content">
+				<legend>{{ __('fieldset_content') }}</legend>
+
+				{% block fieldsetContentInner %}
+					{% block fieldsetContentAttributes %}
+						{{ AttributesHelper.allControls('content') }}
+					{% endblock %}
+				{% endblock %}
+			</fieldset>
+		{% endblock %}
+
+		{% block fieldsetMedia %}
+			<fieldset class="Fieldset-Media">
+				<legend>{{ __('fieldset_media') }}</legend>
+
+				{% block fieldsetMediaInner %}
+					{{ cell('Backend/MediaElements', [form]) }}
+
+					{% block fieldsetMediaAttributes %}
+						{{ AttributesHelper.allControls('media') }}
+					{% endblock %}
+				{% endblock %}
+			</fieldset>
+		{% endblock %}
+
+		{% block fieldsetMediaElementAssignments %}
+			{{ cell('Backend/MediaElements::elementAssignments', [form]) }}
+		{% endblock %}
+
+		{% block fieldsetAttributes %}
+			<fieldset class="Fieldset-Attributes">
+				<legend>{{ __('fieldset_attributes') }}</legend>
+
+				{% block fieldsetAttributesInner %}
+					{% block fieldsetAttributesAttributes %}
+						{{ AttributesHelper.allControls('attributes') }}
+					{% endblock %}
+				{% endblock %}
+			</fieldset>
+		{% endblock %}
+
+		{% block elementPublicationData %}
+			{{ element('publication_data/fieldset', {fields: AttributesHelper.allControls('publication')}) }}
+		{% endblock %}
+
+		{% block formInputReloadForm %}
+			{{ FormHelper.hidden('reload_form', {val: 0}) }}
+		{% endblock %}
+	</div>
+{% endblock %}

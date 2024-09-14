@@ -1,0 +1,74 @@
+//noinspection SassScssUnresolvedVariable
+@import '../helper/reset';
+@import '../helper/variables';
+@import '../webfonts';
+
+html {
+	background-color:$colorBright;
+}
+
+.Wrapper {
+	max-width:860px;
+	margin:40px auto;
+	padding:$pagePadding;
+	background-color:$colorLight;
+	color:$colorText;
+	//noinspection CssNoGenericFontName
+	font-family:var(--fontStackMain);
+	font-size:var(--fontSizeMain);
+	@if ($fontStyleMain != 'normal') {
+		font-style:var(--fontStyleMain);
+	}
+	@if ($fontWeightMain != '400') {
+		font-weight:var(--fontWeightMain);
+	}
+	letter-spacing:-.5px;
+
+	a {
+		color:$colorMain;
+		text-decoration:underline solid transparent .05em;
+		text-underline-offset:2px;
+		transition:color .3s ease-in-out, text-decoration .3s ease-in-out;
+
+		&:hover {
+			text-decoration-color:currentColor;
+		}
+	}
+
+	.Logo {
+		width:auto;
+		max-width:200px;
+		height:auto;
+		margin-bottom:$lineHeightMain;
+	}
+
+	table {
+		table-layout:fixed;
+	}
+
+	tr {
+		&.DataRowType-Fieldset {
+			td {
+				font-weight:700;
+			}
+		}
+
+		&:last-child {
+			td {
+				border-bottom:rgba(0, 0, 0, .1) 1px solid;
+			}
+		}
+	}
+
+	td {
+		vertical-align:top;
+		padding:10px;
+		border-top:rgba(0, 0, 0, .1) 1px solid;
+		font-size:14px;
+		line-height:1.2;
+
+		ul, ol {
+			margin-top:0;
+		}
+	}
+}

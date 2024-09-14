@@ -1,0 +1,106 @@
+{#
+@var formElements \Awyiss\Model\Entity\FormElement[]|Cake\Datasource\Paging\PaginatedResultSet
+@var form \Awyiss\Model\Entity\Form
+@var _view \Awyiss\View\BackendView
+@var AssetHelper \Awyiss\View\Helper\AssetHelper
+@var AttributesHelper \Awyiss\View\Helper\AttributesHelper
+@var AuthorizationHelper \Awyiss\View\Helper\AuthorizationHelper
+@var CategoriesHelper \Awyiss\View\Helper\CategoriesHelper
+@var FlashHelper \Awyiss\View\Helper\FlashHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+@var HtmlHelper \Cake\View\Helper\HtmlHelper
+@var LocaleHelper \Awyiss\View\Helper\LocaleHelper
+@var MediaHelper \Awyiss\View\Helper\MediaHelper
+@var PaginatorHelper \Awyiss\View\Helper\PaginatorHelper
+@var SystemOrderHelper \Awyiss\View\Helper\SystemOrderHelper
+@var UrlHelper \Awyiss\View\Helper\UrlHelper
+#}
+
+{% set selectedFormId = CategoriesHelper.getSelectedCategory('form') %}
+{% do AuthorizationHelper.setScope('forms') %}
+
+<div class="FormElements Overview">
+	{% if AuthorizationHelper.isAccessible('read') %}
+		{{ HtmlHelper.link(__('forms_overview'), {controller: 'forms', action: 'overview'}, {class: 'BackToOverview'}) }}
+	{% endif %}
+
+	{% block headlineOverview %}
+		<h1>{{ __('headline_overview') }}</h1>
+		<h2>{{ form.title }}</h2>
+	{% endblock %}
+
+	{% block buttonArea %}
+		<div class="ButtonArea">
+			{% block buttonEdit %}
+				{% if AuthorizationHelper.isAccessible('update') %}
+					{{ HtmlHelper.link(__('edit'), {controller: 'forms', action: 'edit', id: form.id}, {class: 'Button Button-Edit Button-Small Button-Subtle'}) }}
+				{% endif %}
+			{% endblock %}
+
+			{% block categoriesFilterOverview %}
+				{{ CategoriesHelper.filter('form', naturalSort(CategoriesHelper.getCategories('form'))) }}
+			{% endblock %}
+
+			{% block buttonsOverview %}
+				{% if paginated == false %}
+					<button class="Button Button-SaveSystemOrder" disabled>{{ __d('system', 'save_system_order') }}</button>
+				{% endif %}
+
+				{% if AuthorizationHelper.isAccessible('create') %}
+					{{ HtmlHelper.link(__('create'), {action: 'add', formId: selectedFormId}, {class : 'Button Button-Add'}) }}
+				{% endif %}
+
+				{{ HtmlHelper.link(__('overview_list_with_columns'), {
+					action: 'userConfiguration',
+					identifier: 'overview.columnView.enabled',
+					value: 'true'
+				}, {
+					class: 'Button Button-Small Button-ColumnView Button-ColumnView-Enable',
+					disabled: localConfig.overview.columnView.enabled == true,
+				}) }}
+
+				{{ HtmlHelper.link(__('overview_list_linear'), {
+					action: 'userConfiguration',
+					identifier: 'overview.columnView.enabled',
+					value: 'false'
+				}, {
+					class: 'Button Button-Small Button-ColumnView Button-ColumnView-Disable',
+					disabled: localConfig.overview.columnView.enabled == false,
+				}) }}
+			{% endblock %}
+		</div>
+	{% endblock %}
+
+	{% block listOverview %}
+		<div class="Overview-List">
+			{% from '@Backend/macro/nested_list.twig' import nestedList %}
+			{{ nestedList(formElements, _context|merge({
+				class: localConfig.overview.columnView.enabled == true ? 'NestedList-Compact ColumnSystem-' ~ columnSystemName : null,
+				data: {
+					'form-id': selectedFormId,
+				},
+				displayedFields: localConfig.overview.displayedFields,
+				identifier: 'FormElement',
+				template: '@Backend/FormElements/overview_nested_list_item.twig',
+			})) }}
+		</div>
+	{% endblock %}
+
+	{% block buttonAreaBottom %}
+		<div class="ButtonArea ButtonArea-Bottom">
+			{{ block('buttonEdit') }}
+
+			{{ block('categoriesFilterOverview') }}
+
+			{{ block('buttonsOverview') }}
+		</div>
+	{% endblock %}
+</div>
+
+{% block scriptColumnSystemVars %}
+	<script nonce="{{ AssetHelper.getScriptNonce() }}">
+		const columnWidths = {{ columnWidths|values|json_encode|raw }};
+		const columnIndents = {{ columnIndents|values|json_encode|raw }};
+		const columnSystemName = '{{ columnSystemName }}';
+	</script>
+{% endblock %}

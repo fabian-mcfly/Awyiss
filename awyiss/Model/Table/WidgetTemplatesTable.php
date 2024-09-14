@@ -32,7 +32,11 @@ class WidgetTemplatesTable extends Table {
 
 
 	/**
-	 * @var array<int, string>
+	 * Available widget elements.
+	 * The key is the identifier of the element,
+	 * the value is a boolean, indicating whether the element is optional.
+	 *
+	 * @var array<string, bool>
 	 */
 	protected array $availableWidgetElements = [
 		'active' => false,
@@ -51,6 +55,7 @@ class WidgetTemplatesTable extends Table {
 		'subtitle_tag' => true,
 		'text' => true,
 		'link' => true,
+		'form_id' => true,
 	];
 	/**
 	 * @var array<int, string>

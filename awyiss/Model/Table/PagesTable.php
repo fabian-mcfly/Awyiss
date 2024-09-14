@@ -31,6 +31,7 @@ use Cake\Validation\Validator;
  * @property \Awyiss\Model\Table\PagesTable&\Awyiss\ORM\Association\BelongsTo $ParentPages
  * @property \Awyiss\Model\Table\PagesTable&\Awyiss\ORM\Association\HasMany $ChildPages
  * @property \Awyiss\Model\Table\ContentsTable&\Awyiss\ORM\Association\HasMany $Contents
+ * @property \Awyiss\Model\Table\FormsTable&\Awyiss\ORM\Association\BelongsTo $Forms
  * @property \Awyiss\Model\Table\PagesTable&\Awyiss\ORM\Association\HasMany $SlugHistory
  * @method \Awyiss\Model\Entity\Page newDefaultEntity(array $additionalData = [], array $options = [])
  * @method \Cake\Collection\CollectionInterface|null getNestedChildren(\Awyiss\Model\Entity\Page $entity, array $options = [], int $currentLevel = 0)
@@ -100,6 +101,8 @@ class PagesTable extends Table {
 			'dependent' => true,
 			'foreignKey' => 'page_id',
 		]);
+
+		$this->belongsTo('Forms');
 
 		$this->belongsTo('Languages', [
 			'bindingKey' => 'shortcode',
@@ -249,6 +252,12 @@ class PagesTable extends Table {
 		]);
 
 
+		$validator->add('formId', [
+			'isInteger' => ['rule' => 'isInteger'],
+			'maxLength' => ['rule' => ['maxLength', 11]],
+		]);
+
+
 		$validator->add('systemOrder', [
 			'isInteger' => ['rule' => 'isInteger'],
 		]);
@@ -311,6 +320,10 @@ class PagesTable extends Table {
 				'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_page_template'),
 			]
 		);
+
+
+		$rules->add($rules->existsIn(['formId'], 'Forms'), 'validFormId', ['errorField' => 'formId']);
+
 
 		$rules->add(function (Page $entity): bool|string {
 			if (empty($entity->duplicateOf)) {

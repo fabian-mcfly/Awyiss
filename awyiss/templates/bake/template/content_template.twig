@@ -47,6 +47,10 @@
 		</div>
 	{% endif %}
 
+	{% if content.formId %}
+		{{ form(content.formId) }}
+	{% endif %}
+
 	{% if children %}
 		<div class="Children">
 			{{ children|raw }}

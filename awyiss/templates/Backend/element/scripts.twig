@@ -10,7 +10,7 @@
 		const language = {{ currentLanguage|json_encode|raw }};
 		const languageShortcode = '{{ languageShortcode }}';
 		const userLanguage = {{ userLanguage|json_encode|raw }};
-		window.exports = {};
+		window.exports = window.exports || {};
 	</script>
 {% endblock %}
 
@@ -56,13 +56,13 @@
 	]) %}
 
 	{% if config.Awyiss.System.Backend.interface.editor == 'jodit' %}
+		<link nonce="{{ AssetHelper.getStyleNonce() }}" href="{{ baseUrl }}awyiss/assets/js/Jodit/jodit/jodit.min.css" rel="stylesheet" type="text/css">
+		<script nonce="{{ AssetHelper.getScriptNonce() }}" src="{{ baseUrl }}awyiss/assets/js/Jodit/jodit/jodit.min.js"></script>
 		{% do AssetHelper.addJsModule([
 			'Jodit/awyiss_module.js',
 			'Jodit/CustomSettings.js',
 			'Jodit/Loader.js',
 		]) %}
-		<link nonce="{{ AssetHelper.getStyleNonce() }}" href="{{ baseUrl }}awyiss/assets/js/Jodit/jodit/jodit.min.css" rel="stylesheet" type="text/css">
-		<script nonce="{{ AssetHelper.getScriptNonce() }}" src="{{ baseUrl }}awyiss/assets/js/Jodit/jodit/jodit.min.js"></script>
 	{% elseif config.Awyiss.System.Backend.interface.editor == 'tinymce' %}
 		{% do AssetHelper.addJsModule([
 			'TinyMCE/CustomSettings.js',
@@ -81,8 +81,6 @@
 	<script nonce="{{ AssetHelper.getScriptNonce() }}" src="{{ baseUrl }}awyiss/assets/js/AirDatepicker/locale/{{ userLanguage.shortcode }}.js"></script>
 	<script nonce="{{ AssetHelper.getScriptNonce() }}">
 		const airDatepickerLocale = window.exports.default;
-		// Unset the global variable
-		window.exports = undefined;
 	</script>
 	<script nonce="{{ AssetHelper.getScriptNonce() }}" src="{{ baseUrl }}awyiss/assets/js/AirDatepicker/air-datepicker.js"></script>
 

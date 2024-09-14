@@ -1,0 +1,58 @@
+{#
+@var entity \Awyiss\Model\Entity\Attribute
+@var attributes \Awyiss\Model\Entity\Attribute[]
+@var attributesGroupedByFieldset array
+@var attributeScopes array
+@var _view \Awyiss\View\BackendView
+@var AssetHelper \Awyiss\View\Helper\AssetHelper
+@var AttributesHelper \Awyiss\View\Helper\AttributesHelper
+@var AuthorizationHelper \Awyiss\View\Helper\AuthorizationHelper
+@var CategoriesHelper \Awyiss\View\Helper\CategoriesHelper
+@var FlashHelper \Awyiss\View\Helper\FlashHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+@var HtmlHelper \Cake\View\Helper\HtmlHelper
+@var LocaleHelper \Awyiss\View\Helper\LocaleHelper
+@var MediaHelper \Awyiss\View\Helper\MediaHelper
+@var PaginatorHelper \Awyiss\View\Helper\PaginatorHelper
+@var SystemOrderHelper \Awyiss\View\Helper\SystemOrderHelper
+@var UrlHelper \Awyiss\View\Helper\UrlHelper
+#}
+
+{% extends '@Backend/element/overview/overview_paginated_list.twig' %}
+
+{% block tableOverviewHeaderDefaultFields %}
+	<th class="TableHeader-UsedForEmails{% if PaginatorHelper.isCurrentSortKey('usedForEmails') %} Active{% endif %}">{{ PaginatorHelper.sort('usedForEmails') }}</th>
+	<th class="TableHeader-UsedForConfirmationEmails{% if PaginatorHelper.isCurrentSortKey('usedForConfirmationEmails') %} Active{% endif %}">{{ PaginatorHelper.sort('usedForConfirmationEmails') }}</th>
+{% endblock %}
+
+{% block tableOverviewCellDefaultFields %}
+	<td class="TableCell-UsedForEmails">{{ entity.usedForEmails }}</td>
+	<td class="TableCell-UsedForConfirmationEmails">{{ entity.usedForConfirmationEmails }}</td>
+{% endblock %}
+
+{% block tableOverviewCellActions %}
+	<td class="TableCell-Actions">
+		<div class="Actions">
+			{% block tableOverviewCellActionsPreview %}
+				{{ HtmlHelper.link(__('preview'), {action: 'preview', id: entity.id}, {class: 'Button Button-Small Button-Preview'}) }}
+			{% endblock %}
+
+			{{ block('tableOverviewCellActionsUpdate') }}
+
+			{% block tableOverviewCellActionsDelete %}
+				{% if entity.usedForEmails == 0 and entity.usedForConfirmationEmails == 0 %}
+					{{ parent() }}
+				{% else %}
+					{% if AuthorizationHelper.isAccessible('delete') %}
+						<!--suppress HtmlUnknownAttribute -->
+						<a class="Button Button-Small Button-Delete" disabled>{{ __('delete') }}</a>
+					{% endif %}
+				{% endif %}
+			{% endblock %}
+		</div>
+	</td>
+{% endblock %}
+
+
+
+{% block tableOverviewFootColSpan %}{{ localConfig.overview.displayedFields|length + 6 }}{% endblock %}

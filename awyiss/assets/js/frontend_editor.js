@@ -31,7 +31,7 @@ class FrontendEditor {
 	overlay;
 	/**
 	 * Selector config vor editor-aware elements
-	 * @type {{contents: {selector: string, uri: string, enabled: boolean}, menuEntries: {selector: string, uri: string, enabled: boolean}, widgets: {selector: string, uri: string, enabled: boolean}}}
+	 * @type {{contents: {selector: string, uri: string, enabled: boolean}, formElements: {selector: string, uri: string, enabled: boolean}, menuEntries: {selector: string, uri: string, enabled: boolean}, widgets: {selector: string, uri: string, enabled: boolean}}}
 	 */
 	selectorConfig = {
 		contents: {
@@ -40,17 +40,23 @@ class FrontendEditor {
 			selector: '.ContentElement[id^="Content"]',
 			uri: 'contents/edit/id:'
 		},
-		widgets: {
+		formElements: {
 			enabled: false,
 			overlayForm: true,
-			selector: '.WidgetElement[id^="Widget"]',
-			uri: 'widgets/edit/id:'
+			selector: '.FormElement[id^="Form"]',
+			uri: 'form-elements/edit/id:'
 		},
 		menuEntries: {
 			enabled: false,
 			overlayForm: false,
 			selector: 'ul.Level1[class*="Menu-"]',
 			uri: 'menu-entries/overview/menu-identifier:'
+		},
+		widgets: {
+			enabled: false,
+			overlayForm: true,
+			selector: '.WidgetElement[id^="Widget"]',
+			uri: 'widgets/edit/id:'
 		},
 	};
 
@@ -305,6 +311,7 @@ class FrontendEditor {
 			const parser = new DOMParser();
 			const doc = parser.parseFromString(html, 'text/html');
 			const newElement = doc.querySelector(`#${this.activeElementId}`);
+
 			if (newElement) {
 				const oldElement = document.querySelector(`#${this.activeElementId}`);
 				if (oldElement) {

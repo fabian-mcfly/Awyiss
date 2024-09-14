@@ -99,9 +99,7 @@
 												{% else %}
 													{% set field = field|underscore %}
 													{% block tableOverviewCellDisplayedFieldDefaultValue %}
-														{% if field in ['active'] %}
-															{{ entity.get(field) ? '<i class="las la-check"></i>' : '<i class="las la-times"></i>' }}
-														{% elseif field == 'language_shortcode' %}
+														{% if field == 'language_shortcode' %}
 															{{ entity.get(field) ? languages.Frontend[ entity.get(field) ].title : '-' }}
 														{% elseif field == 'page_template_id' %}
 															{% if entity.pageTemplate is defined %}
@@ -118,11 +116,12 @@
 														{% else %}
 															{% set value = entity.has(field) ? entity.get(field) : '-' %}
 															{% if value is same as true or value is same as 'true' %}
-																<i class="las la-check"></i>
+																<i class="las la-check">{{ __('true') }}</i>
 															{% elseif value is same as false or value is same as 'false' %}
-																<i class="las la-times"></i>
+																<i class="las la-times">{{ __('false') }}</i>
+															{% else %}
+																{{ value }}
 															{% endif %}
-															{{ value }}
 														{% endif %}
 													{% endblock %}
 												{% endif %}

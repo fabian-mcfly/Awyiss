@@ -63,9 +63,9 @@
 		</td>
 		<td class="TableCell-IsRobot">
 			{% if entity.isRobot %}
-				<i class="las la-check"></i>
+				<i class="las la-check">{{ __('true') }}</i>
 			{% else %}
-				<i class="las la-times"></i>
+				<i class="las la-times">{{ __('false') }}</i>
 			{% endif %}
 		</td>
 		<td class="TableCell-CreatedOn">{{ TimeHelper.nice(entity.createdOn) }}</td>

@@ -1,0 +1,75 @@
+.FormsController {
+	.Forms.Form {
+		&:has(input[type="checkbox"][name="send_email"]:checked) {
+			.FormInputName-Subject,
+			.FormInputName-EmailTemplateId,
+			.FormInputName-Cc,
+			.FormInputName-Bcc {
+				display:block;
+			}
+		}
+
+		&:has(input[type="checkbox"][name="send_confirmation_email"]:checked) {
+			.FormInputName-SubjectConfirmation,
+			.FormInputName-ConfirmationEmailTemplateId,
+			.FormInputName-SalutationConfirmation {
+				display:block;
+			}
+		}
+
+		.FormInputName-Subject,
+		.FormInputName-SubjectConfirmation,
+		.FormInputName-SalutationConfirmation,
+		.FormInputName-EmailTemplateId,
+		.FormInputName-ConfirmationEmailTemplateId,
+		.FormInputName-Cc,
+		.FormInputName-Bcc {
+			display:none;
+		}
+
+		.FormInputName-Cc,
+		.FormInputName-Bcc {
+			> .Label {
+				display:none;
+			}
+
+			.FormInputType-ListItem {
+				display:grid;
+				padding-right:57px;
+				gap:0 5px;
+				grid-template-columns:1fr 2fr;
+
+				.Scale-Small& {
+					padding-right:47px;
+				}
+			}
+
+			.FormInput {
+				grid-column:auto / auto;
+			}
+
+			.SortableHandle {
+				top:calc(1rem + 7px);
+				bottom:auto;
+			}
+
+			.Button-Remove {
+				width:52px;
+				height:52px;
+				top:calc(1rem + 1px);
+				right:0;
+
+				.Scale-Small& {
+					width:42px;
+					height:42px;
+				}
+
+				&.Disabled {
+					opacity:.25;
+					visibility:visible;
+					pointer-events:none;
+				}
+			}
+		}
+	}
+}

@@ -11,10 +11,16 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
+msgid "error_max_length"
+msgstr "This value is too long. Max. {0} characters are allowed"
+
 msgid "error_required"
 msgstr "This field is required"
 
 msgid "error_not_empty"
+msgstr "This field cannot be empty"
+
+msgid "error_not_blank"
 msgstr "This field cannot be empty"
 
 msgid "error_reserved_identifier"

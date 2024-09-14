@@ -1,0 +1,235 @@
+# Validation translations of Awyiss CMS
+# Copyright 2024 Awyiss <EMAIL@ADDRESS>
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 0.1.0\n"
+"POT-Creation-Date: 2024-05-11 19:35+0000\n"
+"PO-Revision-Date: 2024-05-11 19:35+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+msgid "form_has_errors"
+msgstr "<strong>Das Formular enthält Fehler</strong><br>"
+"Bitte korrigieren Sie diese und versuchen Sie es erneut."
+
+msgid "error_max_length"
+msgstr "Dieser Wert ist zu lang. Es sind maximal {0} Zeichen erlaubt"
+
+msgid "error_required"
+msgstr "Dieses Feld ist erforderlich"
+
+msgid "error_not_empty"
+msgstr "Dieses Feld darf nicht leer sein"
+
+msgid "error_not_blank"
+msgstr "Dieses Feld darf nicht leer sein"
+
+msgid "error_reserved_identifier"
+msgstr "Dieser Identifikator ist reserviert"
+
+msgid "error_identifier_unique"
+msgstr "Dieser Identifikator wird bereits verwendet"
+
+msgid "error_identifier_unique_for_scope"
+msgstr "Dieser Identifikator wird bereits in diesem Bereich verwendet"
+
+msgid "error_valid_fieldset"
+msgstr "Ungültiger Formularbereich"
+
+msgid "error_valid_input_type"
+msgstr "Ungültiger Eingabetyp"
+
+msgid "error_valid_parent_id"
+msgstr "Ungültiges Element"
+
+msgid "error_valid_realm"
+msgstr "Ungültige Domäne"
+
+msgid "error_valid_value"
+msgstr "Ungültiger Wert"
+
+msgid "error_language_exists"
+msgstr "Diese Sprache existiert bereits"
+
+msgid "error_valid_page_id"
+msgstr "Ungültige Seite"
+
+msgid "error_valid_content_template_id"
+msgstr "Ungültiges Inhaltstemplate"
+
+msgid "error_valid_content_area_id"
+msgstr "Ungültiger Inhaltbereich"
+
+msgid "error_valid_content_area_id_for_children"
+msgstr "Ungültiger Inhaltbereich für Kinder"
+
+msgid "error_valid_width_indent_combination"
+msgstr "Ungültige Kombination von Spaltenbreite und -Einrückung"
+
+msgid "error_valid_duplicate_of"
+msgstr "Ungültige Duplikation von"
+
+msgid "error_no_duplicating_contents"
+msgstr "Dieser Inhalt wird von einem anderen Inhalt dupliziert"
+
+msgid "error_content_template_exists"
+msgstr "Dieses Inhaltstemplate existiert nicht"
+
+msgid "error_content_area_exists"
+msgstr "Dieser Inhaltbereich existiert nicht"
+
+msgid "error_page_template_exists"
+msgstr "Dieses Seitentemplate existiert nicht"
+
+msgid "error_page_template_content_area_exists"
+msgstr "Dieser Inhaltbereich existiert nicht"
+
+msgid "error_file_name_unique"
+msgstr "Dieser Dateiname wird bereits verwendet"
+
+msgid "error_valid_content_elements"
+msgstr "Ungültige Inhaltselemente"
+
+msgid "error_linked_contents"
+msgstr "Es existieren noch Inhalte, die dieses Template verwenden"
+
+msgid "error_linked_widgets"
+msgstr "Es existieren noch Widgets, die dieses Template verwenden"
+
+msgid "error_identifier_unchanged"
+msgstr "Der Identifikator darf nicht geändert werden"
+
+msgid "error_identifier_allowed"
+msgstr "Der Identifikator darf nicht verwendet werden"
+
+msgid "error_shortcode_unique_for_realm"
+msgstr "Dieses Kürzel wird bereits in dieser Domäne verwendet"
+
+msgid "error_valid_timezone"
+msgstr "Ungültige Zeitzone"
+
+msgid "error_valid_locale"
+msgstr "Ungültige Sprachregion"
+
+msgid "error_not_last_language_in_realm"
+msgstr "Diese Sprache kann nicht gelöscht werden, da sie die letzte in dieser Domäne ist"
+
+msgid "error_root_language_shortcode_unchanged"
+msgstr "Die Sprachkürzel des Hauptordners darf nicht geändert werden"
+
+msgid "error_root_title_unchanged"
+msgstr "Der Titel des Hauptordners darf nicht geändert werden"
+
+msgid "error_root_parent_id_unchanged"
+msgstr "Der Hauptordner darf nicht verschoben werden"
+
+msgid "error_root_path_unchanged"
+msgstr "Der Pfad des Hauptordners darf nicht geändert werden"
+
+msgid "error_not_nested_under_root"
+msgstr "Ein Ordner darf nicht unter den Hauptordner verschoben werden"
+
+msgid "error_not_root_deletion"
+msgstr "Der Hauptordner kann nicht gelöscht werden"
+
+msgid "error_media_has_file_extension"
+msgstr "Die Datei hat keine Endung"
+
+msgid "error_media_mime_type_matches_extension"
+msgstr "Die Dateiendung stimmt nicht mit dem MIME-Typ überein"
+
+msgid "error_not_page_role_page_deletion"
+msgstr "Die Seitenrolle &quot;Seite&quot; kann nicht gelöscht werden"
+
+msgid "error_no_linked_page_templates"
+msgstr "Es existieren noch Seitentemplates, die diese Seitenrollen verwenden"
+
+msgid "error_valid_page_role"
+msgstr "Ungültige Seitenrolle"
+
+msgid "error_valid_page_template"
+msgstr "Ungültiges Seitentemplate"
+
+msgid "error_no_duplicating_pages"
+msgstr "Diese Seite wird von einer anderen Seite dupliziert"
+
+msgid "error_no_nested_children_with_different_page_role"
+msgstr "Diese Seite kann nicht gelöscht werden, da untergeordnete Seiten mit einer anderen Seitenrolle existieren"
+
+msgid "error_valid_content_areas"
+msgstr "Ungültige Inhaltbereiche"
+
+msgid "error_no_linked_pages"
+msgstr "Es existieren noch Seiten, die dieses Template verwenden"
+
+msgid "error_user_id_unchanged"
+msgstr "Der Benutzer darf nicht geändert werden"
+
+msgid "error_config_option_is_personalizable"
+msgstr "Diese Option kann nicht personalisiert werden"
+
+msgid "error_config_owned_by_user"
+msgstr "Diese Option gehört einem Benutzer und kann nicht geändert werden"
+
+msgid "error_usergroup_exists"
+msgstr "Diese Benutzergruppe existiert nicht"
+
+msgid "error_title_unique"
+msgstr "Dieser Titel wird bereits verwendet"
+
+msgid "error_user_exists"
+msgstr "Dieser Benutzer existiert nicht"
+
+msgid "error_username_unique"
+msgstr "Dieser Benutzername wird bereits verwendet"
+
+msgid "error_email_unique"
+msgstr "Diese E-Mail-Adresse wird bereits verwendet"
+
+msgid "error_exists_in"
+msgstr "Dieser Wert existiert nicht"
+
+msgid "error_unique"
+msgstr "Dieser Wert wird bereits verwendet"
+
+msgid "error_valid_count"
+msgstr "Die Anzahl stimmt nicht überein {0}{1}"
+
+msgid "error_link_constraint_rule"
+msgstr "Zeile kann nicht geändert werden: Eine Beschränkung für die `{0}`-Verknüpfung ist fehlgeschlagen."
+
+msgid "error_not_self_duplicating"
+msgstr "Ein Element darf sich nicht selbst duplizieren"
+
+msgid "error_not_duplicating_duplicated"
+msgstr "Ein Element darf kein Element duplizieren wenn es selbst dupliziert wird"
+
+msgid "error_not_duplicating_duplicating"
+msgstr "Ein Element darf kein duplizierendes Element duplizieren"
+
+msgid "error_duplicate_not_on_same_page"
+msgstr "Der Inhalt darf keinen Inhalt auf derselben Seite duplizieren"
+
+msgid "error_circular_duplicating"
+msgstr "Ein Element darf kein anderes Element duplizieren, das es selbst dupliziert"
+
+msgid "error_children_not_duplicating_contents_on_same_page"
+msgstr "Untergeordnete Inhalte duplizieren Inhalte der Zielseite"
+
+msgid "error_no_duplicated_children"
+msgstr "Untergeordnete Inhalte werden als Duplikate verwendet"
+
+msgid "error_no_duplicated_contents"
+msgstr "Untergeordnete Inhalte werden als Duplikate verwendet"
+
+msgid "error_exact_length"
+msgstr "Die Länge dieses Werts muss genau {0} sein"
+
+msgid "error_is_integer"
+msgstr "Dieser Wert muss eine Nummer sein"
+
+msgid "error_media_exists"
+msgstr "Diese Datei existiert nicht"

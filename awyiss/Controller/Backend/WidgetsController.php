@@ -640,6 +640,7 @@ class WidgetsController extends Controller {
 			'widgetElementsByFieldset' => $la_widgetElementsByFieldset,
 			'columnWidths' => $la_columnWidths,
 			'columnIndents' => $la_columnIndents,
+			'forms' => $this->Widgets->Forms->find('active')->orderByAsc('title')->all(),
 		]);
 	}
 

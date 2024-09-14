@@ -542,9 +542,10 @@ class AssetHelper extends Helper {
 	 * Returns a string containing a style tag with the contents of the provided CSS file(s).
 	 *
 	 * @param array|string $asset
+	 * @param array $options
 	 * @return string
 	 */
-	public function inlineStyles(array|string $asset): string {
+	public function inlineStyles(array|string $asset, array $options = []): string {
 		// If the provided asset is an array, use it as is. Otherwise, create an array with the asset as the key and an array of options as the value.
 		$la_assets = is_array($asset) ? $asset : [$asset];
 		$ls_output = '';
@@ -563,6 +564,12 @@ class AssetHelper extends Helper {
 		}
 
 		if ($ls_output) {
+			if (!empty($options['strReplace'])) {
+				foreach ($options['strReplace'] as $ls_search => $ls_replace) {
+					$ls_output = str_replace($ls_search, $ls_replace, $ls_output);
+				}
+			}
+
 			$ls_nonce = $this->getView()->getRequest()->getAttribute('cspStyleNonce');
 			return '<style' . ($ls_nonce ? ' nonce="' . $ls_nonce . '"' : '') . '>' . $ls_output . '</style>';
 		}

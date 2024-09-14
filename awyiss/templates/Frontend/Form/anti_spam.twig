@@ -1,0 +1,74 @@
+{#
+@var captcha string
+@var form \Awyiss\Model\Entity\Form
+@var formElements \Awyiss\Model\Entity\FormElement[]|\Cake\Collection\CollectionInterface
+@var formElementsChecksum string
+@var formData array
+@var formErrors array
+@var sent bool
+@var submitted bool
+@var _view \Awyiss\View\FrontendView
+@var AssetHelper \Awyiss\View\Helper\AssetHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+@var HtmlHelper \Cake\View\Helper\HtmlHelper
+@var LocaleHelper \Awyiss\View\Helper\LocaleHelper
+@var MediaHelper \Awyiss\View\Helper\MediaHelper
+@var UrlHelper \Awyiss\View\Helper\UrlHelper
+@var TimeHelper \Cake\View\Helper\TimeHelper
+#}
+
+{% block assignHtmlClass %}
+	{% do _view.assign('htmlClass', 'FormController AntiSpamAction') %}
+{% endblock %}
+
+{% block assignMetaTitle %}
+	{% do _view.assign('metaTitle', 'Form Protection' ~ config('Awyiss.System.Frontend.meta.titleSeparator') ~ config('Awyiss.System.Frontend.meta.titleAppendix')) %}
+{% endblock %}
+
+{% block contentArea %}
+	<main id="ContentArea">
+		<div class="ContentElement Template-Section">
+			<div class="ContentRow">
+				<div class="ContentElement Template-Standard Column-60 ColumnIndent-20">
+					<div class="Form">
+						{% block contentAreaInner %}
+							{% if form %}
+								{% if sent %}
+									<div class="Form Form-SuccessMessage" id="Form-{{ form.identifier|ucparts(false) }}">
+										{{ form.successMessage|raw }}
+									</div>
+								{% else %}
+									<div class="Form Form-{{ form.identifier|ucparts(false) }}">
+										{% if formErrors %}
+											<div class="Form-ErrorMessage">
+												{% if formErrors._general %}
+													{% for message in formErrors._general %}
+														{{ message|raw }}
+													{% endfor %}
+												{% else %}
+													{{ __d('validation', 'form_has_errors')|raw }}
+												{% endif %}
+											</div>
+										{% endif %}
+
+										<form
+											{% if form.enctype %}enctype="{{ form.enctype }}"{% endif %}
+											method="post"
+											id="Form-{{ form.identifier|ucparts(false) }}"
+										>
+
+											{{ captcha|raw }}
+											{{ contents|raw }}
+
+											<input type="hidden" name="form_identifier" value="{{ form.identifier }}">
+										</form>
+									</div>
+								{% endif %}
+							{% endif %}
+						{% endblock %}
+					</div>
+				</div>
+			</div>
+		</div>
+	</main>
+{% endblock %}

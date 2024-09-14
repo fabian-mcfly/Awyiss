@@ -228,6 +228,7 @@ export async function loadTextEditor(editor) {
 	if (editor === 'jodit') {
 		// Load the Loader class
 		const {default: JoditLoader} = await import('Jodit/Loader');
+		window.Jodit = window.exports.Jodit;
 
 		// Create a new instance of the Loader class
 		new JoditLoader();

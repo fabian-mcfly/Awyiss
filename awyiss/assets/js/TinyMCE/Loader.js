@@ -26,7 +26,7 @@ export default class Loader {
 	settings = {
 		anchor_bottom: false,
 		anchor_top: false,
-		autoresize_bottom_margin: 0,
+		autoresize_bottom_margin: 5,
 		charmap_append: [
 			[173, 'soft hyphen']
 		],
@@ -239,6 +239,13 @@ export default class Loader {
 		}
 		finally {
 			this.isModuleLoading = false;
+		}
+
+		if (document.documentElement.classList.contains('EmailTemplatesController')) {
+			// Remove the style formats and awyissModule for email templates
+			this.settings.style_formats = [];
+			this.settings.toolbar1 = this.settings.toolbar1.replace('awyissModule', '');
+			this.settings.toolbar1 = this.settings.toolbar1.replace(' styles ', '');
 		}
 
 		this.settingsSet = true;

@@ -1,0 +1,40 @@
+# Forms translations of Awyiss CMS
+# Copyright 2024 Awyiss <EMAIL@ADDRESS>
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 0.1.0\n"
+"POT-Creation-Date: 2024-09-12 15:38+0000\n"
+"PO-Revision-Date: 2024-09-12 15:38+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+msgid "error_email_send"
+msgstr "<strong>The email could not be sent.</strong><br>"
+	"Error message: &quot;{0}&quot;"
+
+msgid "error_ip_timeout"
+msgstr "<strong>Too many requests from your IP address.</strong><br>"
+	"Please wait a few minutes before trying again."
+
+msgid "error_duplicate_timeout"
+msgstr "<strong>Too many requests with the same data.</strong><br>"
+	"Please wait a few minutes before trying again."
+
+msgid "captcha_legend"
+msgstr "Security check"
+
+msgid "captcha_label"
+msgstr "{0}. Term"
+
+msgid "captcha_word_number"
+msgstr "{0}. Term"
+
+msgid "captcha_info"
+msgstr "Please enter the <strong>{0}. term</strong> from the following list."
+
+msgid "error_valid_captcha"
+msgstr "<strong>The security check is not correct.</strong><br>"
+	"Please try again."

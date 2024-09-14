@@ -438,6 +438,69 @@
 			}
 		}
 	},
+	"forms": {
+		"title": {
+			"translate": ["forms", "menu_title"]
+		},
+		"link": {
+			"url": {
+				"controller": "Forms",
+				"action": "overview"
+			}
+		},
+		"access": {
+			"scope": "forms",
+			"identifier": "read"
+		},
+		"children": {
+			"forms_overview": {
+				"title": {
+					"translate": ["forms", "menu_overview"]
+				},
+				"link": {
+					"url": {
+						"controller": "Forms",
+						"action": "overview"
+					}
+				},
+				"access": {
+					"scope": "forms",
+					"identifier": "read"
+				}
+			},
+			"forms_add": {
+				"title": {
+					"translate": ["forms", "menu_add"]
+				},
+				"link": {
+					"url": {
+						"controller": "Forms",
+						"action": "add"
+					}
+				},
+				"access": {
+					"scope": "forms",
+					"identifier": "create"
+				}
+			},
+			"form_entries": {
+				"title": {
+					"translate": ["form_entries", "menu_title"]
+				},
+				"link": {
+					"url": {
+						"controller": "FormEntries",
+						"action": "overview"
+					}
+				},
+				"access": {
+					"scope": "form_entries",
+					"identifier": "read"
+				},
+				"children": null
+			}
+		}
+	},
 	"system": {
 		"title": {
 			"translate": ["system", "menu_title"]
@@ -737,6 +800,69 @@
 								},
 								"access": {
 									"scope": "content_templates",
+									"identifier": "configure"
+								}
+							}
+						}
+					},
+					"email_templates": {
+						"title": {
+							"translate": ["email_templates", "menu_title"]
+						},
+						"link": {
+							"url": {
+								"controller": "EmailTemplates",
+								"action": "overview"
+							}
+						},
+						"access": {
+							"scope": "email_templates",
+							"identifier": "read"
+						},
+						"children": {
+							"email_templates_overview": {
+								"title": {
+									"translate": ["email_templates", "menu_overview"]
+								},
+								"link": {
+									"url": {
+										"controller": "EmailTemplates",
+										"action": "overview"
+									}
+								},
+								"access": {
+									"scope": "EmailTemplates",
+									"identifier": "read"
+								}
+							},
+							"email_templates_add": {
+								"title": {
+									"translate": ["email_templates", "menu_add"]
+								},
+								"link": {
+									"url": {
+										"controller": "EmailTemplates",
+										"action": "add"
+									}
+								},
+								"access": {
+									"scope": "email_templates",
+									"identifier": "create"
+								}
+							},
+							"email_templates_configure": {
+								"title": {
+									"translate": ["email_templates", "menu_configure"]
+								},
+								"link": {
+									"url": {
+										"controller": "Configuration",
+										"action": "overview",
+										"scope": "email-templates"
+									}
+								},
+								"access": {
+									"scope": "email_templates",
 									"identifier": "configure"
 								}
 							}

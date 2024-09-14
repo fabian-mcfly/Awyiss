@@ -26,9 +26,6 @@ msgstr "Templates"
 msgid "menu_configure"
 msgstr "Configure"
 
-msgid "headline_overview"
-msgstr "System"
-
 msgid "id"
 msgstr "ID"
 
@@ -393,3 +390,12 @@ msgstr "Cache cleared"
 
 msgid "preview"
 msgstr "Preview"
+
+msgid "form_id"
+msgstr "Form"
+
+msgid "true"
+msgstr "Yes"
+
+msgid "false"
+msgstr "No"

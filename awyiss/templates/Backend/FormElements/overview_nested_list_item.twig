@@ -1,0 +1,64 @@
+{#
+@var entity \Awyiss\Model\Entity\Content
+@var settings array
+@var _view \Awyiss\View\BackendView
+@var AssetHelper \Awyiss\View\Helper\AssetHelper
+@var AttributesHelper \Awyiss\View\Helper\AttributesHelper
+@var AuthorizationHelper \Awyiss\View\Helper\AuthorizationHelper
+@var CategoriesHelper \Awyiss\View\Helper\CategoriesHelper
+@var FlashHelper \Awyiss\View\Helper\FlashHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+@var HtmlHelper \Cake\View\Helper\HtmlHelper
+@var LocaleHelper \Awyiss\View\Helper\LocaleHelper
+@var MediaHelper \Awyiss\View\Helper\MediaHelper
+@var PaginatorHelper \Awyiss\View\Helper\PaginatorHelper
+@var SystemOrderHelper \Awyiss\View\Helper\SystemOrderHelper
+@var UrlHelper \Awyiss\View\Helper\UrlHelper
+#}
+
+{% extends '@Backend/element/overview/nested_list_item.twig' %}
+
+{% block nestedListItemDataTitle %}
+	<li class="Title">{{ entity.type == 'free_text' ? entity.label|raw : entity.title }}</li>
+{% endblock %}
+
+{% block nestedListItemDataDisplayedFieldDefaultValue %}
+	{% if field == 'column_width' %}
+		{{ entity.column.width.label }}
+	{% elseif field == 'column_indent' %}
+		{{ entity.column.indent.label }}
+	{% else %}
+		{{ parent() }}
+	{% endif %}
+{% endblock %}
+
+{% block nestedListItem %}
+	<li
+		{{ block('nestedListItemId') }}
+		{{ block('nestedListItemClass') }}
+		{%- if entity.type == 'hidden' %}
+			data-resizable="false"
+		{%- endif %}
+		data-column-width-class="{{ entity.column.width.cssClass }}"
+		data-max-column-width="{{ 1 - entity.column.indent.percentage }}"
+		>
+		{% block nestedListItemInner %}
+			<div
+				{{ block('nestedListItemInnerClass') }}
+				title="{{ entity.title }} ({{ entity.column.width.label -}}
+				{%- if entity.column.indent.label %} / {{ entity.column.indent.label }}{% endif %})"
+				>
+
+				{{ block('nestedListItemData') }}
+
+				{{ block('nestedListItemAuditInfo') }}
+
+				{{ block('nestedListActions') }}
+			</div>
+		{% endblock %}
+
+		{% block nestedListChildren %}
+			{{ parent() }}
+		{% endblock %}
+	</li>
+{% endblock %}

@@ -131,6 +131,7 @@ class FrontendView extends AppView {
 
 
 		$lo_twig->addGlobal('baseUrl', Router::url('/', true));
+		$lo_twig->addGlobal('config', Configure::read());
 		$lo_twig->addGlobal('currentLanguage', $lo_frontendLanguage);
 		$lo_twig->addGlobal('currentPath', $this->getRequest()->getUri()->getPath());
 		$lo_twig->addGlobal('currentUrl', $this->request->getUri()->__toString());

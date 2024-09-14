@@ -30,6 +30,7 @@ use Cake\Datasource\FactoryLocator;
  * @property string|null $cssClass
  * @property int|null $duplicateOf
  * @property string|null $data
+ * @property int|null $formId
  * @property int $systemOrder
  * @property bool $active
  * @property bool $deleted
@@ -46,6 +47,7 @@ use Cake\Datasource\FactoryLocator;
  * @property \Awyiss\Model\Entity\Content $duplicateOfContent
  * @property \Awyiss\Model\Entity\Content $parentContent
  * @property \Awyiss\Model\Entity\Content[] $childContents
+ * @property \Awyiss\Model\Entity\Form|null $form
  * @property array{width: \Awyiss\Utility\Content\ColumnInterface, indent: ?\Awyiss\Utility\Content\ColumnInterface} $column
  * @property array|null $parentContents
  * @property float|null $realColumnWidth
@@ -55,6 +57,10 @@ class Content extends Entity {
 	 * @var array $contentTemplates All content templates
 	 */
 	protected static array $contentTemplates;
+	/**
+	 * @var array The column indents
+	 */
+	protected static array $columnIndents;
 	/**
 	 * @var array The column widths
 	 */
@@ -75,6 +81,7 @@ class Content extends Entity {
 		'column_last' => 'columnLast',
 		'column_rtl' => 'columnRtl',
 		'duplicate_of' => 'duplicateOf',
+		'form_id' => 'formId',
 		'system_order' => 'systemOrder',
 		'created_by' => 'createdBy',
 		'created_on' => 'createdOn',
@@ -114,6 +121,7 @@ class Content extends Entity {
 		'cssClass' => true,
 		'duplicateOf' => true,
 		'data' => true,
+		'formId' => true,
 		'systemOrder' => true,
 		'active' => true,
 	];

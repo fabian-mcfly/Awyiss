@@ -1,0 +1,100 @@
+// noinspection JSUnusedGlobalSymbols,NpmUsedModulesInstalled
+
+import ResizableContents from 'ResizableContents';
+
+export default class FormElementsController {
+	/**
+	 * The event handler instance.
+	 * @type {EventHandler}
+	 */
+	eventHandler = window.eventHandler;
+	/**
+	 * The form element.
+	 * @type {HTMLElement}
+	 */
+	form = null;
+
+	constructor() {
+		if (document.documentElement.classList.contains('OverviewAction')) {
+			this.initOverview();
+		}
+
+		if (document.querySelector('.Form.EditFrontendEditor')) {
+			// Find the close button and send an event to the parent window
+			const closeButton = document.querySelector('.Button-Close');
+			closeButton.addEventListener('click', () => {
+				window.parent.postMessage('closeFrontendEditor', '*');
+			});
+		}
+	}
+
+	/**
+	 * Initialize the logic for the overview.
+	 *
+	 * Enable resizing of the elements,
+	 * and add a context menu to the list items when they are narrow.
+	 *
+	 * @returns {void}
+	 */
+	initOverview() {
+		const nestedList = document.querySelector('.NestedList');
+		if (typeof columnWidths !== 'undefined' && nestedList.classList.contains('NestedList-Compact')) {
+			this.resizeableElements = new ResizableContents('form-elements', columnWidths);
+
+			nestedListHandler.onEndDefault = nestedListHandler.onEnd;
+			nestedListHandler.onEnd = event => {
+				// noinspection JSUnresolvedReference
+				nestedListHandler.onEndDefault(event);
+
+				// Trigger the recalculation of element widths
+				// noinspection JSUnresolvedReference
+				this.resizeableElements.setNarrowClass(event.item);
+			}
+		}
+
+		this.eventHandler.add('click', event => {
+			if (this.contextMenu) {
+				this.contextMenu.remove();
+				this.contextMenu = null;
+			}
+
+			const listItem = event.target.closest('.ListItem');
+			if (!listItem || !listItem.classList.contains('Narrow')) {
+				return;
+			}
+
+			// Check if the click event happend in the right area of the list item
+			if (
+				event.clientX > listItem.getBoundingClientRect().left + listItem.offsetWidth - 6 ||
+				event.clientX < listItem.getBoundingClientRect().left + listItem.offsetWidth - 36
+			) {
+				return;
+			}
+
+			// Prevent the default context menu from showing up
+			event.preventDefault();
+
+			// Create a custom context menu
+			const contextMenu = this.contextMenu = document.createElement('ul');
+			contextMenu.classList.add('ListItem-ContextMenu');
+
+			const auditInfo = listItem.querySelector('.AuditInfo').cloneNode(true);
+			contextMenu.appendChild(auditInfo);
+
+			window.auditInfo.bindEvents(auditInfo);
+
+			const actions = listItem.querySelector('.Actions').cloneNode(true);
+			contextMenu.appendChild(actions);
+
+			// Append the context menu to the body
+			listItem.appendChild(contextMenu);
+		});
+	}
+}
+
+/**
+ * Expose the class globally
+ * @global
+ * @type {FormElementsController}
+ */
+window.FormElementsController = FormElementsController;

@@ -1,0 +1,31 @@
+{#
+@var emailTemplate \Awyiss\Model\Entity\EmailTemplate
+@var body string
+@var subject string
+@var _view \Awyiss\View\BackendView
+@var AssetHelper \Awyiss\View\Helper\AssetHelper
+@var AttributesHelper \Awyiss\View\Helper\AttributesHelper
+@var AuthorizationHelper \Awyiss\View\Helper\AuthorizationHelper
+@var CategoriesHelper \Awyiss\View\Helper\CategoriesHelper
+@var FlashHelper \Awyiss\View\Helper\FlashHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+@var HtmlHelper \Cake\View\Helper\HtmlHelper
+@var LocaleHelper \Awyiss\View\Helper\LocaleHelper
+@var MediaHelper \Awyiss\View\Helper\MediaHelper
+@var PaginatorHelper \Awyiss\View\Helper\PaginatorHelper
+@var SystemOrderHelper \Awyiss\View\Helper\SystemOrderHelper
+@var UrlHelper \Awyiss\View\Helper\UrlHelper
+#}
+
+<div class="EmailTemplates Preview">
+	{{ HtmlHelper.link(__('back_to_overview'), {action: 'overview'}, {class: 'BackToOverview'}) }}
+
+	{% block headlineView %}
+		<h1>{{ __('headline_preview') }}</h1>
+		<h2>{{ emailTemplate.title }}</h2>
+	{% endblock %}
+
+	<iframe srcdoc="{{ bodyHtml|e('html') }}" class="EmailTemplateBodyHtml"></iframe>
+
+	<iframe srcdoc="{{ bodyText|e('html') }}" class="EmailTemplateBodyText"></iframe>
+</div>

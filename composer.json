@@ -14,6 +14,7 @@
 		"ext-libxml": "*",
 		"ext-posix": "*",
 		"ext-zip": "*",
+		"ext-zlib": "*",
 		"cakephp/authentication": "^3.0.2",
 		"cakephp/bake": "^3.0.0",
 		"cakephp/cakephp": "^5.0.1",
@@ -27,6 +28,7 @@
 		"paragonie/csp-builder": "^3.0",
 		"pgrimaud/instagram-user-feed": "^7.0",
 		"scssphp/scssphp": "^1.12",
+		"tijsverkoyen/css-to-inline-styles": "^2.2",
 		"tinymce/tinymce": "^7.1"
 	},
 	"require-dev": {

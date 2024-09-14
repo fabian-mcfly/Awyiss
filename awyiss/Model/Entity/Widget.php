@@ -28,6 +28,7 @@ use Cake\Datasource\FactoryLocator;
  * @property bool $columnRtl
  * @property string|null $cssClass
  * @property string|null $data
+ * @property int|null $formId
  * @property int $systemOrder
  * @property bool $active
  * @property bool $deleted
@@ -40,6 +41,7 @@ use Cake\Datasource\FactoryLocator;
  * @property \Awyiss\Model\Entity\WidgetTemplate $widgetTemplate
  * @property \Awyiss\Model\Entity\Widget $parentWidget
  * @property \Awyiss\Model\Entity\Widget[] $childWidgets
+ * @property \Awyiss\Model\Entity\Form|null $form
  * @property array{width: \Awyiss\Utility\Content\ColumnInterface, indent: ?\Awyiss\Utility\Content\ColumnInterface} $column
  * @property array|null $parentWidgets
  * @property float|null $realColumnWidth
@@ -49,6 +51,10 @@ class Widget extends Entity {
 	 * @var array $widgetTemplates All widget templates
 	 */
 	protected static array $widgetTemplates;
+	/**
+	 * @var array The column indents
+	 */
+	protected static array $columnIndents;
 	/**
 	 * @var array The column widths
 	 */
@@ -66,6 +72,7 @@ class Widget extends Entity {
 		'column_indent' => 'columnIndent',
 		'column_last' => 'columnLast',
 		'column_rtl' => 'columnRtl',
+		'form_id' => 'formId',
 		'system_order' => 'systemOrder',
 		'created_by' => 'createdBy',
 		'created_on' => 'createdOn',
@@ -75,10 +82,8 @@ class Widget extends Entity {
 		'deleted_on' => 'deletedOn',
 		'widget_template' => 'widgetTemplate',
 	];
-	/**
-	 * @var array The column indents
-	 */
-	protected static array $columnIndents;
+
+
 	/**
 	 * @inheritDoc
 	 */
@@ -98,6 +103,7 @@ class Widget extends Entity {
 		'columnRtl' => true,
 		'cssClass' => true,
 		'data' => true,
+		'formId' => true,
 		'systemOrder' => true,
 		'active' => true,
 	];

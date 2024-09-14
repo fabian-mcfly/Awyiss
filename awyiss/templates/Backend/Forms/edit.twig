@@ -1,0 +1,64 @@
+{#
+@var form Awyiss\Model\Entity\Form
+@var emailTemplates \Awyiss\Model\Entity\EmailTemplate[]
+
+@var _view \Awyiss\View\BackendView
+@var AssetHelper \Awyiss\View\Helper\AssetHelper
+@var AttributesHelper \Awyiss\View\Helper\AttributesHelper
+@var AuthorizationHelper \Awyiss\View\Helper\AuthorizationHelper
+@var CategoriesHelper \Awyiss\View\Helper\CategoriesHelper
+@var FlashHelper \Awyiss\View\Helper\FlashHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+@var HtmlHelper \Cake\View\Helper\HtmlHelper
+@var LocaleHelper \Awyiss\View\Helper\LocaleHelper
+@var MediaHelper \Awyiss\View\Helper\MediaHelper
+@var PaginatorHelper \Awyiss\View\Helper\PaginatorHelper
+@var SystemOrderHelper \Awyiss\View\Helper\SystemOrderHelper
+@var UrlHelper \Awyiss\View\Helper\UrlHelper
+#}
+
+<div class="Forms Form Edit">
+	{% if AuthorizationHelper.isAccessible('read') %}
+		{{ HtmlHelper.link(__('back_to_overview'), {action: 'overview'}, {class: 'BackToOverview'}) }}
+	{% endif %}
+
+	{% block headlineEdit %}
+		<h1>{{ __('headline_edit') }}</h1>
+	{% endblock %}
+
+	{{ FormHelper.create(form, {method: 'post', idPrefix: 'form'}) }}
+
+	{{ FormHelper.checkbox('save_as_copy', {id: 'SaveAsCopy', value: true}) }}
+
+	{% block buttonArea %}
+		<div class="ButtonArea">
+			{% block formEditButtons %}
+				{% block tableOverviewCellActionsViewContents %}
+					{% if AuthorizationHelper.isAccessible('read') %}
+						{{ HtmlHelper.link(__('view_elements'), {controller: 'formElements', action: 'overview', formId: form.id}, {class: 'Button Button-Small Button-Subtle Button-View Button-ViewElements'}) }}
+					{% endif %}
+				{% endblock %}
+
+				<label for="SaveAsCopy" class="Button Button-SaveAsCopy Label-SaveAsCopy">{{ __('as_copy') }}</label>
+
+				{{ FormHelper.button(__('save'), {class: 'Button Button-Success Button-Save'}) }}
+
+				{% if AuthorizationHelper.isAccessible('read') %}
+					{{ FormHelper.button(__('save_close'), {class: 'Button Button-SaveClose', name: 'submit', value: 'submit_close'}) }}
+				{% endif %}
+			{% endblock %}
+		</div>
+	{% endblock %}
+
+	{% block formEdit %}
+		{% include('@Backend/Forms/form.twig') %}
+	{% endblock %}
+
+	{% block buttonAreaBottom %}
+		<div class="ButtonArea ButtonArea-Bottom">
+			{{ block('formEditButtons') }}
+		</div>
+	{% endblock %}
+
+	{{ FormHelper.end() }}
+</div>

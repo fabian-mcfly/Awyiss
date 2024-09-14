@@ -33,7 +33,11 @@ class ContentTemplatesTable extends Table {
 
 
 	/**
-	 * @var array<int, string>
+	 * Available content elements.
+	 * The key is the identifier of the element,
+	 * the value is a boolean, indicating whether the element is optional.
+	 *
+	 * @var array<string, bool>
 	 */
 	protected array $availableContentElements = [
 		'active' => false,
@@ -55,6 +59,7 @@ class ContentTemplatesTable extends Table {
 		'text' => true,
 		'link' => true,
 		'duplicate_of' => true,
+		'form_id' => true,
 	];
 	/**
 	 * @var array<int, string>

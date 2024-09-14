@@ -229,9 +229,7 @@ return [
 	],
 
 	'Email' => [
-		'default' => [
-			'from' => null,
-		],
+		'default' => [],
 	],
 
 	/*
@@ -250,7 +248,7 @@ return [
 			'host' => 'localhost',
 			'password' => null,
 			'port' => 25,
-			'url' => env('EMAIL_TRANSPORT_DEFAULT_URL'),
+			'tls' => true,
 			'username' => null,
 		],
 	],

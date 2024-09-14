@@ -98,7 +98,6 @@
 {% endblock %}
 
 
-
 {% block formControlParentId %}
 	{{ FormHelper.control('parent_id', {
 		columnSpan: contentTemplateElement.column.span.numerator,
@@ -223,6 +222,16 @@
 	{{ FormHelper.control('css_class', {
 		columnSpan: contentTemplateElement.column.span.numerator,
 		label: contentTemplateElement.title,
+		required: contentTemplateElement.required,
+	}) }}
+{% endblock %}
+
+
+{% block formControlFormId %}
+	{{ FormHelper.control('form_id', {
+		columnSpan: contentTemplateElement.column.span.numerator,
+		label: contentTemplateElement.title,
+		options: hashPrinter(settings.forms, 'label', 'id', '- '),
 		required: contentTemplateElement.required,
 	}) }}
 {% endblock %}

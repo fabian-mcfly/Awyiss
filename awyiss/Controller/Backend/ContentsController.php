@@ -1050,6 +1050,7 @@ class ContentsController extends Controller {
 			'languageShortcode' => $ls_languageShortcode,
 			'columnWidths' => $la_columnWidths,
 			'columnIndents' => $la_columnIndents,
+			'forms' => $this->Contents->Forms->find('active')->orderByAsc('title')->all(),
 			'allowedKeys' => $la_allowedKeys,
 		]);
 	}

@@ -1,0 +1,144 @@
+.FormRow {
+	margin-top:var(--formRowGap);
+	margin-left:0;
+	flex-basis:100%;
+
+	&:first-child {
+		margin-top:0;
+	}
+}
+
+.FormCaptcha {
+	display:block;
+
+	.FormRow {
+		margin-top:0;
+	}
+}
+
+.FormCaptcha-Words {
+	display:flex;
+	margin-top:calc(var(--lineHeightMain) * -1);
+	flex-wrap:wrap;
+	gap:10px;
+
+	@for $i from 1 through 6 {
+		&[data-active-word="#{$i}"] {
+			.FormCaptcha-Word:nth-child(#{$i}) {
+				background-color:var(--colorBright);
+				color:var(--colorMain);
+			}
+		}
+	}
+
+	.FormCaptcha-Word {
+		margin:0;
+		padding:5px 10px;
+		border-radius:5px;
+		border:1px solid;
+		list-style-type:none;
+	}
+}
+
+
+.FormCaptcha-Word-Spacer {
+	width:0;
+	display:inline-block;
+}
+
+.FormElement {
+	@media screen AND (max-width:#{$singleColumnBreakpoint}) {
+		margin-top:var(--formRowGap);
+	}
+}
+
+.Form-ErrorMessage {
+	margin-block:var(--lineHeightMain);
+	padding:var(--lineHeightMain) var(--elementPadding);
+	border:2px solid;
+	border-radius:5px;
+	color:var(--colorContrast);
+
+	&:first-child {
+		margin-top:0;
+	}
+}
+
+.FormElementType-Checkbox {
+	&:has(> .FormInputType-Checkbox-Item) {
+		> .FormElement-Label {
+			display:none;
+		}
+	}
+}
+
+.FormElement-Label,
+.FormInputType-Input,
+.FormInputType-Select,
+.FormInputType-Textarea {
+	display:block;
+	width:100%;
+}
+
+.FormInputType-Input,
+.FormInputType-Select,
+.FormInputType-Textarea {
+	padding:.5rem 1rem;
+	border:1px solid;
+	border-radius:5px;
+	outline:0 none;
+	accent-color:var(--colorMain);
+	caret-color:var(--colorMain);
+	background-color:transparent;
+	color:inherit;
+	font-size:1rem;
+	line-height:1;
+
+	&:user-invalid,
+	.FormElement-IsInvalid > & {
+		border-color:var(--colorContrast);
+	}
+
+	&:focus-visible {
+		border-color:var(--colorMain);
+	}
+}
+
+.FormInputType-Checkbox,
+.FormInputType-Radio {
+	accent-color:var(--colorMain);
+	caret-color:var(--colorMain);
+}
+
+.FormElement-Checkboxes,
+.FormElement-Radios {
+	display:grid;
+	gap:10px;
+	grid-template-columns:repeat(2, 1fr);
+}
+
+.FormInputType-Select {
+	&:focus {
+		border-color:var(--colorMain);
+	}
+
+	option {
+		background-color:var(--colorBright);
+		color:var(--colorText);
+
+		&:checked,
+		&:hover {
+			background-color:var(--colorMain);
+			color:var(--colorBright);
+		}
+	}
+}
+
+.FormInputType-Textarea {
+	padding-block:1rem;
+	line-height:1.4;
+}
+
+.FormElement-Error {
+	color:var(--colorContrast);
+}

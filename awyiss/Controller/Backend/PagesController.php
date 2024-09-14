@@ -770,6 +770,7 @@ class PagesController extends Controller {
 			//'localConfig' => LocalConfig::read(),
 			'nestable' => $this->nestable,
 			'sortable' => $this->sortable,
+			'forms' => $this->Pages->Forms->find('active')->orderByAsc('title')->all(),
 			'menus' => $lo_menus,
 			'isGenericPage' => $this->pageRole->value !== 1,
 			'parentRecord' => $lo_parentRecord ?? null,

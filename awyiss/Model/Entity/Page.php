@@ -28,6 +28,7 @@ use Cake\Utility\Text;
  * @property bool $robotsIndex
  * @property bool $robotsFollow
  * @property int|null $duplicateOf
+ * @property int|null $formId
  * @property int $systemOrder
  * @property bool $active
  * @property bool $parentsActive
@@ -45,10 +46,41 @@ use Cake\Utility\Text;
  * @property \Awyiss\Model\Entity\Page $parentPage
  * @property \Awyiss\Model\Entity\Page[] $childPages
  * @property \Awyiss\Model\Entity\Content[] $contents
+ * @property \Awyiss\Model\Entity\Form|null $form
  * @property \Awyiss\Model\Entity\Language $language
  * @property array<int, int> $addMenuEntry
  */
 class Page extends Entity {
+	/**
+	 * @inheritDoc
+	 */
+	protected static array $fieldMap = [
+		'parent_id' => 'parentId',
+		'language_shortcode' => 'languageShortcode',
+		'redirect_link' => 'redirectLink',
+		'meta_title' => 'metaTitle',
+		'meta_description' => 'metaDescription',
+		'robots_index' => 'robotsIndex',
+		'robots_follow' => 'robotsFollow',
+		'page_role_id' => 'pageRoleId',
+		'page_template_id' => 'pageTemplateId',
+		'duplicate_of' => 'duplicateOf',
+		'form_id' => 'formId',
+		'system_order' => 'systemOrder',
+		'parents_active' => 'parentsActive',
+		'created_by' => 'createdBy',
+		'created_on' => 'createdOn',
+		'changed_by' => 'changedBy',
+		'changed_on' => 'changedOn',
+		'deleted_by' => 'deletedBy',
+		'deleted_on' => 'deletedOn',
+		'duplicated_by' => 'duplicatedBy',
+		'page_role' => 'pageRole',
+		'page_template' => 'pageTemplate',
+		'add_menu_entry' => 'addMenuEntry',
+	];
+
+
 	/**
 	 * @inheritDoc
 	 */
@@ -65,36 +97,10 @@ class Page extends Entity {
 		'pageRoleId' => true,
 		'pageTemplateId' => true,
 		'duplicateOf' => true,
+		'formId' => true,
 		'systemOrder' => true,
 		'active' => true,
 		'addMenuEntry' => true,
-	];
-	/**
-	 * @inheritDoc
-	 */
-	protected static array $fieldMap = [
-		'parent_id' => 'parentId',
-		'language_shortcode' => 'languageShortcode',
-		'redirect_link' => 'redirectLink',
-		'meta_title' => 'metaTitle',
-		'meta_description' => 'metaDescription',
-		'robots_index' => 'robotsIndex',
-		'robots_follow' => 'robotsFollow',
-		'page_role_id' => 'pageRoleId',
-		'page_template_id' => 'pageTemplateId',
-		'duplicate_of' => 'duplicateOf',
-		'system_order' => 'systemOrder',
-		'parents_active' => 'parentsActive',
-		'created_by' => 'createdBy',
-		'created_on' => 'createdOn',
-		'changed_by' => 'changedBy',
-		'changed_on' => 'changedOn',
-		'deleted_by' => 'deletedBy',
-		'deleted_on' => 'deletedOn',
-		'duplicated_by' => 'duplicatedBy',
-		'page_role' => 'pageRole',
-		'page_template' => 'pageTemplate',
-		'add_menu_entry' => 'addMenuEntry',
 	];
 
 

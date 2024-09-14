@@ -22,16 +22,10 @@ return [
 	'debug' => true,
 
 	'DebugKit' => [
-		'forceEnable' => true,
+		'forceEnable' => false,
 		'ignoreAuthentication' => true,
 		'panels' => [
 			'DebugKit.Mail' => false,
-		],
-	],
-
-	'EmailTransport' => [
-		'default' => [
-			'className' => 'Cake\\Mailer\\Transport\\DebugTransport',
 		],
 	],
 

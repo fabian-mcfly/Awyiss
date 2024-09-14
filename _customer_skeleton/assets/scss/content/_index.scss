@@ -11,7 +11,11 @@
 	@media screen AND (max-width:#{$singleColumnBreakpoint}) {
 		margin-top:var(--contentRowGap);
 	}
+}
 
+.ContentElement,
+.FormElement,
+.WidgetElement {
 	&.BackgroundColor {
 		padding:var(--elementPadding);
 		background-color:var(--backgroundColor, transparent);

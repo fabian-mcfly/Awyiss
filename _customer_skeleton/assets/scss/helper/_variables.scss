@@ -68,6 +68,7 @@ $singleColumnBreakpoint:860px !default;
 	--singleColumnBreakpoint:#{$singleColumnBreakpoint};
 	--columnMargin:#{$columnMargin};
 	--contentRowGap:calc(var(--lineHeightMain) * 2);
+	--formRowGap:calc(var(--lineHeightMain) * .5);
 
 	@media (max-width:$pageWidth) {
 		--pagePadding:#{$pagePadding};

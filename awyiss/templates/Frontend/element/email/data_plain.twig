@@ -1,0 +1,81 @@
+{#
+@var form \Awyiss\Model\Entity\Form
+@var formData array
+@var formElements \Awyiss\Model\Entity\FormElement[]
+#}
+{%- block data %}
+	{%- for formElement in formElements %}
+		{%- block formElement %}
+			{%~ if formElement.type in ['hidden', 'submit'] %}
+			{%~ elseif formElement.type == 'fieldset' %}
+				{%~ block formElementRowFieldset %}
+					{{- '-'|repeat(formElement.label|length) }}
+					{{~ formElement.label }}
+					{{~ '-'|repeat(formElement.label|length) }}
+				{%~ endblock %}
+
+			{%~ elseif formElement.type == 'free_text' %}
+				{%~ block formElementRowFreeText %}
+					{%~ if formElement.showInEmail %}
+						{{- formElement.text|raw }}
+
+					{%~ endif %}
+				{%~ endblock %}
+			{%~ else %}
+				{{- formElement.label }}:
+				{%~ if formElement.type == 'file' %}
+					{%~ block formElementValueFile %}
+						{#~ @var file \Laminas\Diactoros\UploadedFile #}
+						{%~ set file = formData[ formElement.identifier ] ?? null %}
+						{{~ file.getClientFilename() ?: '–' }}
+					{%~ endblock %}
+
+				{%~ else %}
+					{%~ set value = formData[ formElement.identifier ] %}
+					{%~ if value is array %}
+						{%~ block formElementValueArray %}
+							{%~ for singleValue in value %}
+								{%~ block formElementValueArrayRow %}
+									{{~ '– ' ~ (formElement.showValueInEmail ? formElement.options[ singleValue ] : singleValue) }}
+								{%~ endblock %}
+							{%~ endfor %}
+						{%~ endblock %}
+
+					{%~ elseif value %}
+						{%~ if formElement.type == 'checkbox' %}
+							{%~ block formElementValueCheckbox %}
+								{{~ formElement.showValueInEmail ? formElement.options[ value ] : value }}
+							{%~ endblock %}
+
+						{%~ elseif formElement.type == 'date' %}
+							{%~ block formElementValueDate %}
+								{{~ TimeHelper.i18nFormat(value, dateFormat) }}
+							{%~ endblock %}
+
+						{%~ elseif formElement.type == 'time' %}
+							{%~ block formElementValueTime %}
+								{{~ TimeHelper.i18nFormat(value, timeFormat) }}
+							{%~ endblock %}
+
+						{%~ elseif formElement.type == 'datetime' %}
+							{%~ block formElementValueDateTime %}
+								{{~ TimeHelper.nice(value) }}
+							{%~ endblock %}
+
+						{%~ else %}
+							{%~ block formElementValueOther %}
+								{{~ value }}
+							{%~ endblock %}
+
+						{%~ endif %}
+					{%~ else %}
+						{%~ block formElementEmptyValue %}
+							{{~ '–'}}
+						{%~ endblock %}
+
+					{%~ endif %}
+				{%~ endif %}
+			{%~ endif %}
+		{%- endblock %}
+	{%- endfor %}
+{%- endblock %}

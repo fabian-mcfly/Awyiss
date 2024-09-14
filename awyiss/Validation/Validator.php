@@ -189,12 +189,12 @@ class Validator extends BaseValidator {
 					throw new RuntimeException(sprintf('Missing translation informations for `%s`, passed arguments: `%s`', $ls_name, print_r($lx_pass, true)));
 				}
 				else {
-					dd($ls_name, $lx_pass, $lo_rule->get('pass'), __FILE__, __LINE__);
+					//dd($ls_name, $lx_pass, $lo_rule->get('pass'), __FILE__, __LINE__);
 				}
 				$la_pass[ $ls_name ] = $lx_pass;
 			}
 
-			$la_errors[ $ls_name ] = __df($this->i18nDomain, 'validation', 'error_' . Inflector::underscore($ls_name), $la_pass);
+			$la_errors[ $ls_name ] = __df($this->i18nDomain, 'validation', 'error_' . Inflector::underscore($ls_name), $la_pass[ $ls_name ]);
 
 			if ($lo_rule->isLast()) {
 				break;

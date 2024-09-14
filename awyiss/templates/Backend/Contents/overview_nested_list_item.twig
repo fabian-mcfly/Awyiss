@@ -16,14 +16,12 @@
 		{{ entity.column.width.label }}
 	{% elseif field == 'column_indent' %}
 		{{ entity.column.indent.label }}
-	{% elseif field in ['column_rtl', 'column_last', 'active'] %}
-		{{ entity.get(field) ? '<i class="las la-check"></i>' : '<i class="las la-times"></i>' }}
 	{% elseif field == 'data' %}
 		{%- for key, value in entity.get(field) %}
 			{{- key }}: {{ value }}{% if loop.last == false %}, {% endif %}
 		{% endfor %}
 	{% else %}
-		{{ entity.get(field) ?: '-' }}
+		{{ parent() }}
 	{% endif %}
 {% endblock %}
 

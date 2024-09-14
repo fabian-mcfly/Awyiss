@@ -238,6 +238,11 @@ export default class Loader {
 		// noinspection NpmUsedModulesInstalled
 		await import('Jodit/awyiss_module');
 
+		if (document.documentElement.classList.contains('EmailTemplatesController')) {
+			// Remove the awyissModule for email templates
+			this.settings.buttons = this.settings.buttons.filter(button => button !== 'awyissModuleConfig');
+		}
+
 		this.settingsSet = true;
 	}
 

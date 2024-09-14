@@ -34,7 +34,7 @@
 
 	{% if paginated %}
 		{% block paginatedOverview %}
-			{% include '@Backend/PageRoles/overview_paginated_list.twig' with _context|merge({records: pageRoles.items().toArray()}) %}
+			{% include '@Backend/element/overview/overview_paginated_list.twig' with _context|merge({records: pageRoles.items().toArray()}) %}
 		{% endblock %}
 	{% else %}
 		{% block listOverview %}
@@ -43,7 +43,6 @@
 				{{ nestedList(pageRoles, _context|merge({
 					displayedFields: localConfig.overview.displayedFields,
 					identifier: 'MenuEntry',
-					template: '@Backend/PageRoles/overview_nested_list_item.twig',
 				})) }}
 			</div>
 		{% endblock %}

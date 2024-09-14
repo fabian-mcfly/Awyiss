@@ -1,0 +1,88 @@
+{#
+@var records Awyiss\Model\Entity\FormEntry[]
+@var _view \Awyiss\View\BackendView
+@var AssetHelper \Awyiss\View\Helper\AssetHelper
+@var AttributesHelper \Awyiss\View\Helper\AttributesHelper
+@var AuthorizationHelper \Awyiss\View\Helper\AuthorizationHelper
+@var CategoriesHelper \Awyiss\View\Helper\CategoriesHelper
+@var FlashHelper \Awyiss\View\Helper\FlashHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+@var HtmlHelper \Cake\View\Helper\HtmlHelper
+@var LocaleHelper \Awyiss\View\Helper\LocaleHelper
+@var MediaHelper \Awyiss\View\Helper\MediaHelper
+@var PaginatorHelper \Awyiss\View\Helper\PaginatorHelper
+@var SystemOrderHelper \Awyiss\View\Helper\SystemOrderHelper
+@var UrlHelper \Awyiss\View\Helper\UrlHelper
+#}
+
+{% extends '@Backend/element/overview/overview_paginated_list.twig' %}
+
+{% block tableOverviewHeaderTitle %}{% endblock %}
+{% block tableOverviewHeaderAuditInfo %}{% endblock %}
+{% block tableOverviewCellTitle %}{% endblock %}
+{% block tableOverviewCellAuditInfo %}{% endblock %}
+
+{% block tableOverviewHeaderDisplayedFields %}
+	{{ parent() }}
+
+	{% if CategoriesHelper.selectedCategory('form') == 'all' %}
+		<th class="TableHeader-FormId{% if PaginatorHelper.isCurrentSortKey('form.title') %} Active{% endif %}">
+			{{ PaginatorHelper.sort('form.title', i18nDomain ? __df(i18nDomain, 'system', 'form_id') : __('form_id')) }}
+		</th>
+	{% endif %}
+
+	<th class="TableHeader-Subject{% if PaginatorHelper.isCurrentSortKey('subject') %} Active{% endif %}">
+		{{ PaginatorHelper.sort('subject', i18nDomain ? __df(i18nDomain, 'system', 'subject') : __('subject')) }}
+	</th>
+
+	<th class="TableHeader-SubjectConfirmation{% if PaginatorHelper.isCurrentSortKey('subjectConfirmation') %} Active{% endif %}">
+		{{ PaginatorHelper.sort('subjectConfirmation', i18nDomain ? __df(i18nDomain, 'system', 'subject_confirmation') : __('subject_confirmation')) }}
+	</th>
+
+	<th class="TableHeader-CreatedOn{% if PaginatorHelper.isCurrentSortKey('createdOn') %} Active{% endif %}">
+		{{ PaginatorHelper.sort('createdOn', i18nDomain ? __df(i18nDomain, 'system', 'created_on') : __('created_on')) }}
+	</th>
+{% endblock %}
+
+{% block tableOverviewCellDisplayedFields %}
+	{{ parent() }}
+
+	{% if CategoriesHelper.selectedCategory('form') == 'all' %}
+		<td class="TableCell-FormId">{{ entity.form.label }}</td>
+	{% endif %}
+
+	<td class="TableCell-Subject">{{ entity.subject ?: '&ndash;' }}</td>
+
+	<td class="TableCell-SubjectConfirmation">{{ entity.subjectConfirmation ?: '&ndash;' }}</td>
+
+	<td class="TableCell-CreatedOn">{{ TimeHelper.nice(entity.createdOn) }}</td>
+{% endblock %}
+
+{% block tableOverviewCellActions %}
+	<td class="TableCell-Actions">
+		<div class="Actions">
+			{% block tableOverviewCellActionsViewEmail %}
+				{% if entity.body %}
+					{{ HtmlHelper.link(__('view_email'), {action: 'view', id: entity.id}, {class: 'Button Button-Small Button-Preview'}) }}
+				{% else %}
+					<!--suppress HtmlUnknownAttribute -->
+					<a class="Button Button-Small Button-Preview" disabled>{{ __('view_email') }}</a>
+				{% endif %}
+			{% endblock %}
+
+			{% block tableOverviewCellActionsViewConfirmationEmail %}
+				{% if entity.bodyConfirmation %}
+					{{ HtmlHelper.link(__('view_confirmation_email'), {action: 'viewConfirmation', id: entity.id}, {class: 'Button Button-Small Button-Preview'}) }}
+				{% else %}
+					<!--suppress HtmlUnknownAttribute -->
+					<a class="Button Button-Small Button-Preview" disabled>{{ __('view_confirmation_email') }}</a>
+				{% endif %}
+			{% endblock %}
+
+			{{ block('tableOverviewCellActionsDelete') }}
+		</div>
+	</td>
+{% endblock %}
+
+{% block tableOverviewFootColSpan %}{{ localConfig.overview.displayedFields|length + (CategoriesHelper.selectedCategory('form') == 'all' ? 6 : 5) }}{% endblock %}
+

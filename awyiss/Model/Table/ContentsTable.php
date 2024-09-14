@@ -30,6 +30,7 @@ use RuntimeException;
  *
  * @property \Awyiss\Model\Table\ContentAreasTable&\Awyiss\ORM\Association\BelongsTo $ContentAreas
  * @property \Awyiss\Model\Table\ContentTemplatesTable&\Awyiss\ORM\Association\BelongsTo $ContentTemplates
+ * @property \Awyiss\Model\Table\FormsTable&\Awyiss\ORM\Association\BelongsTo $Forms
  * @property \Awyiss\Model\Table\PagesTable&\Awyiss\ORM\Association\BelongsTo $Pages
  * @property \Awyiss\Model\Table\ContentsTable&\Awyiss\ORM\Association\BelongsTo $ParentContents
  * @property \Awyiss\Model\Table\ContentsTable&\Awyiss\ORM\Association\HasMany $ChildContents
@@ -129,6 +130,8 @@ class ContentsTable extends Table {
 			'className' => 'Contents',
 			'foreignKey' => 'duplicate_of',
 		]);
+
+		$this->belongsTo('Forms');
 	}
 
 
@@ -323,6 +326,12 @@ class ContentsTable extends Table {
 		]);
 
 
+		$validator->add('formId', [
+			'isInteger' => ['rule' => 'isInteger'],
+			'maxLength' => ['rule' => ['maxLength', 11]],
+		]);
+
+
 		$validator->add('systemOrder', [
 			'isInteger' => ['rule' => 'isInteger'],
 		]);
@@ -443,6 +452,9 @@ class ContentsTable extends Table {
 
 			return empty($la_errors);
 		}, 'validContentArea');
+
+
+		$rules->add($rules->existsIn(['formId'], 'Forms'), 'validFormId', ['errorField' => 'formId']);
 
 
 		$rules->add(function (Content $entity): bool {
