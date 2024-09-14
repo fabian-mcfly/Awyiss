@@ -661,6 +661,8 @@ export default class NestedListHandler {
 				button.querySelector('.Hover').style.width = '';
 				button.querySelector('.Hover').style.height = '';
 			});
+
+			this.defaultOrder = this.getOrderWithLevels();
 		})
 		.catch(error => {
 			console.error('There has been a problem with the fetch operation:', error);
