@@ -144,7 +144,7 @@ class MenuEntriesController extends Controller {
 	public function edit(int $id) {
 		$this->Authorization->ensure('update');
 
-		/** @var MenuEntry $lo_menuEntry */
+		/** @var \Awyiss\Model\Entity\MenuEntry $lo_menuEntry */
 		$lo_menuEntry = $this->MenuEntries->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
 		if (!$lo_menuEntry) {
 			$this->Flash->error(__('record_not_found'));
@@ -212,7 +212,7 @@ class MenuEntriesController extends Controller {
 	 * Returns a collection of possible parent menu entries for the given menu entry
 	 * to prevent circular references
 	 *
-	 * @param MenuEntry $menuEntry
+	 * @param \Awyiss\Model\Entity\MenuEntry $menuEntry
 	 * @return CollectionInterface
 	 */
 	protected function getPossibleParentMenuEntries(MenuEntry $menuEntry): CollectionInterface {

@@ -369,7 +369,7 @@ abstract class BackendController extends AppController {
 		];
 
 		//Get the UserConfiguration table and fetch a matching config
-		/** @var \Awyiss\Model\Table $lo_table */
+		/** @var \Awyiss\Model\Table\UserConfigurationTable $lo_table */
 		$lo_table = $this->fetchTable('UserConfiguration');
 		$lo_config = $lo_table->find()->where($la_config)->first();
 

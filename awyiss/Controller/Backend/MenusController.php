@@ -86,6 +86,7 @@ class MenusController extends Controller {
 	/**
 	 * Edit method
 	 *
+	 * @param int $id
 	 * @return \Cake\Http\Response|void
 	 * @throws \Exception
 	 */

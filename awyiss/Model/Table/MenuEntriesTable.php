@@ -14,7 +14,7 @@ use Cake\Validation\Validator;
 /**
  * MenuEntries Model
  *
- * @property \Awyiss\Model\Table\ContentsTable&\Awyiss\ORM\Association\BelongsTo $ParentMenuEntries
+ * @property \Awyiss\Model\Table\MenuEntriesTable&\Awyiss\ORM\Association\BelongsTo $ParentMenuEntries
  * @property \Awyiss\Model\Table\MenuEntriesTable&\Awyiss\ORM\Association\HasMany $ChildMenuEntries
  * @property \Awyiss\Model\Table\MenusTable&\Awyiss\ORM\Association\BelongsTo $Menus
  * @method \Awyiss\Model\Entity\MenuEntry newDefaultEntity(array $additionalData = [], array $options = [])
@@ -77,9 +77,9 @@ class MenuEntriesTable extends Table {
 	/**
 	 * Returns the default validator object.
 	 *
-	 * @param Validator $validator The validator that can be modified to
+	 * @param \Awyiss\Validation\Validator $validator The validator that can be modified to
 	 * add some rules to it.
-	 * @return Validator
+	 * @return \Awyiss\Validation\Validator
 	 * @noinspection DuplicatedCode
 	 */
 	public function validationDefault(Validator $validator): Validator {

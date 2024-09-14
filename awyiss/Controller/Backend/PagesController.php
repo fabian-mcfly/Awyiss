@@ -403,6 +403,7 @@ class PagesController extends Controller {
 	 *
 	 * @return void
 	 */
+	#[NoDirectAccess]
 	public function linkList(): void {
 		// Get all page roles that can be included in the link list
 		$la_pageRoles = $this->fetchTable('PageRoles')->find('active')->where(['include_in_linklist' => true])->all()->indexBy('id')->toArray();
@@ -663,6 +664,7 @@ class PagesController extends Controller {
 	 * If this fails because the view template could not be found, try again with a view-template
 	 * in templates/Backend/GenericPages
 	 */
+	#[NoDirectAccess]
 	public function render(?string $template = null, ?string $layout = null): Response {
 		$lo_viewBuilder = $this->viewBuilder();
 

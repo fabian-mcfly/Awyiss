@@ -94,10 +94,6 @@ class Content extends Entity {
 		'duplicating_contents' => 'duplicatingContents',
 		'duplicate_of_content' => 'duplicateOfContent',
 	];
-	/**
-	 * @var array The column indents
-	 */
-	protected static array $columnIndents;
 
 
 	/**

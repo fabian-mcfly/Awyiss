@@ -160,6 +160,9 @@ class ContentsTable extends Table {
 
 
 	/**
+	 * Finds the most recent content for each page.
+	 * Used to determine the last change of a pagef or the sitemap
+	 *
 	 * @param \Cake\ORM\Query\SelectQuery $query
 	 * @param array $options
 	 * @return \Cake\ORM\Query\SelectQuery
@@ -301,6 +304,16 @@ class ContentsTable extends Table {
 					array_keys($this->getColumnIndents()),
 				],
 			],
+		]);
+
+
+		$validator->add('columnLast', [
+			'boolean' => ['rule' => 'boolean'],
+		]);
+
+
+		$validator->add('columnRtl', [
+			'boolean' => ['rule' => 'boolean'],
 		]);
 
 
