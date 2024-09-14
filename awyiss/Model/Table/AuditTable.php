@@ -100,23 +100,15 @@ class AuditTable extends Table {
 		]);
 
 
-		$validator->add('dataOld', [
-			'isArray' => ['rule' => 'isArray'],
-			'maxLengthBytes' => [
-				'rule' => function ($value) {
-					return strlen(json_encode($value)) <= 16777215;
-				},
-			],
+		$validator->add('data_old', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'maxLengthBytes' => ['rule' => ['maxLengthBytes', 65535]],
 		]);
 
 
-		$validator->add('dataNew', [
-			'isArray' => ['rule' => 'isArray'],
-			'maxLengthBytes' => [
-				'rule' => function ($value) {
-					return strlen(json_encode($value)) <= 16777215;
-				},
-			],
+		$validator->add('data_new', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'maxLengthBytes' => ['rule' => ['maxLengthBytes', 65535]],
 		]);
 
 
@@ -152,8 +144,6 @@ class AuditTable extends Table {
 	protected function initializeSchema(TableSchemaInterface $schema): void {
 		parent::initializeSchema($schema);
 
-		$schema->setColumnType('data_old', 'json');
-		$schema->setColumnType('data_new', 'json');
 		$schema->setColumnType('diff', 'json');
 	}
 }

@@ -15,8 +15,8 @@ use Awyiss\Model\Entity;
  * @property int|null $foreignKey
  * @property string|null $transactionId
  * @property string|null $type
- * @property array|null $dataOld
- * @property array|null $dataNew
+ * @property string|null $dataOld
+ * @property string|null $dataNew
  * @property array|null $diff
  * @property int|null $createdBy
  * @property \Cake\I18n\DateTime|null $createdOn

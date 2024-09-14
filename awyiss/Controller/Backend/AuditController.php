@@ -46,7 +46,7 @@ class AuditController extends Controller {
 
 
 	/**
-	 * Sh
+	 * Show the history of a record
 	 *
 	 * @throws \Exception
 	 */
@@ -107,7 +107,17 @@ class AuditController extends Controller {
 		$lo_audits = $this->Audit->find()->where([
 			'foreign_key' => $li_id,
 			'scope' => $ls_scope,
-		])->contain(['Users'])->orderBy(['Audit.created_on' => 'desc'])->all();
+		])->contain(['Users'])->orderBy(['Audit.created_on' => 'desc'])
+		->formatResults(function (ResultSetInterface $results): CollectionInterface {
+			return $results->map(function (Audit $audit) {
+				$audit->dataOld = json_decode(gzuncompress(base64_decode($audit->dataOld)), true);
+				$audit->dataNew = json_decode(gzuncompress(base64_decode($audit->dataNew)), true);
+
+				return $audit;
+			});
+		})
+		->all()
+		->compile();
 
 		// Check audits for changes in the associations and load the associated entities
 		$this->loadOldAssociationEntities($lo_entity, $lo_audits, $la_associations);
@@ -373,11 +383,11 @@ class AuditController extends Controller {
 
 	/**
 	 * @param \Awyiss\Model\Entity $entity
-	 * @param \Cake\Datasource\ResultSetInterface $audits
+	 * @param \Cake\Collection\CollectionInterface $audits
 	 * @param array $associations
 	 * @return void
 	 */
-	protected function loadOldAssociationEntities(Entity $entity, ResultSetInterface $audits, array $associations): void {
+	protected function loadOldAssociationEntities(Entity $entity, CollectionInterface $audits, array $associations): void {
 		/** @var class-string<\Awyiss\Model\Entity> $ls_entityClass */
 		$ls_entityClass = get_class($entity);
 
@@ -435,10 +445,10 @@ class AuditController extends Controller {
 
 	/**
 	 * @param \Awyiss\Model\Table $table
-	 * @param \Cake\Datasource\ResultSetInterface $audits
+	 * @param \Cake\Collection\CollectionInterface $audits
 	 * @return \Cake\Collection\CollectionInterface
 	 */
-	protected function setColumnData(Table $table, ResultSetInterface $audits): CollectionInterface {
+	protected function setColumnData(Table $table, CollectionInterface $audits): CollectionInterface {
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 		$la_columnWidths = $table->getColumnWidths();
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
