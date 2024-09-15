@@ -545,15 +545,19 @@ class FormRenderer {
 			}
 			else {
 				$ls_languageShortcode = $lo_request->getParam('lang');
-				if (!empty($ls_languageShortcode)) {
-					$la_url['lang'] = $ls_languageShortcode;
-					$la_url['_name'] = Awyiss::REALM_FRONTEND . 'LanguageRoot';
-				}
-
-				$ls_slug = $lo_request->getParam('slug');
-				if (!empty($ls_slug)) {
-					$la_url['slug'] = $ls_slug;
+				if (empty($ls_languageShortcode)) {
 					$la_url['_name'] = Awyiss::REALM_FRONTEND . 'Root';
+				}
+				else {
+					$la_url['lang'] = trim($ls_languageShortcode, '/');
+
+					$ls_slug = $lo_request->getParam('slug');
+					if (empty($ls_slug)) {
+						$la_url['_name'] = Awyiss::REALM_FRONTEND . 'LanguageRoot';
+					}
+					else {
+						$la_url['slug'] = trim($ls_slug, '/');
+					}
 				}
 			}
 
