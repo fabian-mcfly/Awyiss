@@ -216,7 +216,7 @@ class Menu {
 			$li_count++;
 		}
 
-		$this->items = array_slice($la_items, 0, $li_count + 1, true) + $lo_newMenu->getItems() + array_slice($la_items, $li_count);
+		$this->items = array_slice($la_items, 0, $li_count + 1, true) + $lo_newMenu->getItems() + array_slice($la_items, $li_count, null, true);
 
 		if ($determineVisibility) {
 			//Only after all elements are updated, the visibility can be calculated
