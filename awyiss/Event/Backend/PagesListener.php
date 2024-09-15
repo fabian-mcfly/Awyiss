@@ -118,7 +118,10 @@ class PagesListener implements EventListenerInterface {
 		}
 		else {
 			$lo_children = $lo_table->getNestedChildren($lo_originalEntity, [
-				'finder' => 'translations',
+				'finders' => [
+					'mediaAssignments' => ['formatResult' => false],
+					'translations',
+				],
 			]);
 		}
 
@@ -269,6 +272,7 @@ class PagesListener implements EventListenerInterface {
 		$lo_originalEntity = $entity->originalEntity;
 
 		$lo_entries = $lo_table->Contents->find('threaded', nestingKey: 'childContents')
+		->find('mediaAssignments', formatResult: false)
 		->find('translations')
 		->where(['page_id' => $lo_originalEntity->id])
 		->all();

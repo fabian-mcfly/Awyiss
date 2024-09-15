@@ -60,6 +60,7 @@ class FormsListener implements EventListenerInterface {
 		$lo_originalEntity = $entity->originalEntity;
 
 		$lo_elements = $lo_table->FormElements->find('threaded', nestingKey: 'childFormElements')
+		->find('mediaAssignments', formatResult: false)
 		->find('translations')
 		->where(['form_id' => $lo_originalEntity->id])
 		->all();

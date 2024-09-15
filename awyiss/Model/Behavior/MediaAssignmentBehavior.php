@@ -8,6 +8,7 @@ use ArrayObject;
 use Awyiss\Authentication\IdentityAwareTrait;
 use Awyiss\Core\LocalConfig;
 use Awyiss\Middleware\LocaleMiddleware;
+use Awyiss\Model\Entity\MediaAssignment;
 use Awyiss\Model\Entity\MediaElement;
 use Awyiss\Model\Entity\MediaElementSelector;
 use Awyiss\Model\Entity\MediaSelector;
@@ -121,10 +122,14 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 	 *
 	 * @param \Cake\ORM\Query\SelectQuery $query
 	 * @param bool $includeElementSelector
+	 * Whether to include the media selectors in the result
 	 * @param bool $useMediaEntity
+	 * Whether to use the media entity instead of the media assignment entity as the value of the media assignment identifier
+	 * @param bool $formatResult
+	 * Whether to format the result so that the media assignments are nested under the media element identifier
 	 * @return \Cake\ORM\Query\SelectQuery
 	 */
-	public function findMediaAssignments(SelectQuery $query, bool $includeElementSelector = false, bool $useMediaEntity = false): SelectQuery {
+	public function findMediaAssignments(SelectQuery $query, bool $includeElementSelector = false, bool $useMediaEntity = false, bool $formatResult = true): SelectQuery {
 		if (!$this->getConfig('enabled')) {
 			return $query;
 		}
@@ -139,7 +144,7 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 			]);
 		}
 
-		return $query->contain([
+		$query->contain([
 			'MediaAssignments' => function (SelectQuery $query) {
 				/** @noinspection PhpUndefinedMethodInspection */
 				$query->orderByAsc($query->newExpr($query->func()->FIND_IN_SET([
@@ -157,7 +162,13 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 
 				return $query->contain(['Media', 'MediaFolders']);
 			},
-		])->formatResults(fn (CollectionInterface $results) => $this->rowMapper($results, $useMediaEntity), $query::PREPEND);
+		]);
+
+		if ($formatResult) {
+			$query->formatResults(fn (CollectionInterface $results) => $this->rowMapper($results, $useMediaEntity), $query::PREPEND);
+		}
+
+		return $query;
 	}
 
 
@@ -390,11 +401,20 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 	 * @noinspection PhpUnusedParameterInspection
 	 * @throws \ReflectionException
 	 */
-	public function beforeSave(EventInterface $event, EntityInterface $entity/*, ArrayObject $options*/): void {
+	public function beforeSave(EventInterface $event, EntityInterface $entity, ArrayObject $options): void {
 		$lo_identity = $this->getIdentity();
 		// If the user doesn't have access to the media scope, remove the media assignments from the entity
 		if (!$lo_identity || !$lo_identity->scopeIsAccessible('Media', [], 'read')) {
 			unset($entity->mediaAssignments);
+		}
+
+		foreach (($entity->get('mediaAssignments') ?? []) as $lo_mediaAssignment) {
+			if (!$lo_mediaAssignment instanceof MediaAssignment) {
+				continue;
+			}
+
+			$lo_mediaAssignment->unset('id');
+			$lo_mediaAssignment->setNew(true);
 		}
 	}
 

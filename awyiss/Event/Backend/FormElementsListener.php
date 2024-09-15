@@ -52,7 +52,10 @@ class FormElementsListener implements EventListenerInterface {
 		/** @var \Awyiss\Model\Entity\FormElement $lo_originalEntity */
 		$lo_originalEntity = $entity->originalEntity;
 		$lo_children = $lo_originalEntity->getNestedChildren([
-			'finder' => 'translations',
+			'finders' => [
+				'mediaAssignments' => ['formatResult' => false],
+				'translations',
+			],
 		]);
 
 		if (!$lo_children?->count()) {

@@ -60,6 +60,7 @@ class MenusListener implements EventListenerInterface {
 		$lo_originalEntity = $entity->originalEntity;
 
 		$lo_entries = $lo_table->AllMenuEntries->find('threaded', nestingKey: 'childMenuEntries')
+		->find('mediaAssignments', formatResult: false)
 		->find('translations')
 		->where(['menu_id' => $lo_originalEntity->id])
 		->all();
