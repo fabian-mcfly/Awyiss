@@ -202,11 +202,20 @@ class SystemOrderComponent extends Component {
 
 		$li_highestSystemOrder = $lo_records->max('systemOrder')?->systemOrder ?? 0;
 
+		$la_requestData = $this->getController()->getRequest()->getData();
+		$li_systemOrder = $entity->get('systemOrder');
+		if (isset($la_requestData['system_order'])) {
+			$li_systemOrder = $la_requestData['system_order'];
+		}
+		elseif (!$entity->systemOrder || $entity->isNew()) {
+			$li_systemOrder = $li_highestSystemOrder + 1;
+		}
+
 		if (!$entity->systemOrder || $entity->isNew()) {
-			$entity->set('systemOrder', min($entity->get('systemOrder') + 1, $li_highestSystemOrder + 1));
+			$entity->set('systemOrder', min($li_systemOrder, $li_highestSystemOrder + 1));
 		}
 		elseif ($entity->systemOrder > $li_highestSystemOrder) {
-			$entity->set('systemOrder', min($entity->get('systemOrder'), $li_highestSystemOrder));
+			$entity->set('systemOrder', min($li_systemOrder, $li_highestSystemOrder));
 		}
 	}
 }
