@@ -203,10 +203,10 @@ class SystemOrderComponent extends Component {
 		$li_highestSystemOrder = $lo_records->max('systemOrder')?->systemOrder ?? 0;
 
 		if (!$entity->systemOrder || $entity->isNew()) {
-			$entity->set('systemOrder', $li_highestSystemOrder + 1);
+			$entity->set('systemOrder', min($entity->get('systemOrder') + 1, $li_highestSystemOrder + 1));
 		}
 		elseif ($entity->systemOrder > $li_highestSystemOrder) {
-			$entity->set('systemOrder', $li_highestSystemOrder);
+			$entity->set('systemOrder', min($entity->get('systemOrder'), $li_highestSystemOrder));
 		}
 	}
 }
