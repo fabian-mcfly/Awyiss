@@ -542,9 +542,11 @@ class ContentsController extends Controller {
 
 			$this->unsetUnassignedElements($content);
 
-			if ($this->Contents->save($content, ['asCopy' => (bool)$this->request->getData('save_as_copy')])) {
+			$lb_saveAsCopy = (bool)$this->request->getData('save_as_copy');
+
+			if ($this->Contents->save($content, ['asCopy' => $lb_saveAsCopy])) {
 				if (!$this->request->is('ajax')) {
-					$this->Flash->success(__($method . '_succeeded'));
+					$this->Flash->success(__(($lb_saveAsCopy ? 'add' : $method) . '_succeeded'));
 				}
 
 				// Remember the parent id for the next entry
@@ -559,7 +561,7 @@ class ContentsController extends Controller {
 				throw new RedirectException(Router::url(['action' => 'edit', 'lang' => $this->page->languageShortcode, 'id' => $content->id], true), 302);
 			}
 
-			$this->Flash->error(__($method . '_failed'));
+			$this->Flash->error(__(($lb_saveAsCopy ? 'add' : $method) . '_failed'));
 			foreach ($content->getError('_general') as $ls_error) {
 				$this->Flash->error($ls_error);
 			}

@@ -316,9 +316,11 @@ class UsersController extends Controller {
 		]);
 
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-			if ($this->Users->save($user, ['asCopy' => (bool)$this->request->getData('save_as_copy')])) {
+			$lb_saveAsCopy = (bool)$this->request->getData('save_as_copy');
+
+			if ($this->Users->save($user, ['asCopy' => $lb_saveAsCopy])) {
 				if (!$this->request->is('ajax')) {
-					$this->Flash->success(__($method . '_succeeded'));
+					$this->Flash->success(__(($lb_saveAsCopy ? 'add' : $method) . '_succeeded'));
 				}
 
 				if ($this->request->getData('submit') == 'submit_close') {
@@ -352,7 +354,7 @@ class UsersController extends Controller {
 				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $user->id], true), 302);
 			}
 
-			$this->Flash->error(__($method . '_failed'));
+			$this->Flash->error(__(($lb_saveAsCopy ? 'add' : $method) . '_failed'));
 			foreach ($user->getError('_general') as $ls_error) {
 				$this->Flash->error($ls_error);
 			}

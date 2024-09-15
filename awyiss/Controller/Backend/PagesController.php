@@ -505,7 +505,7 @@ class PagesController extends Controller {
 				])
 			) {
 				if (!$this->request->is('ajax')) {
-					$this->Flash->success(__df($this->pageRoleName, 'pages', $method . '_succeeded'));
+					$this->Flash->success(__df($this->pageRoleName, 'pages', ($lb_saveAsCopy ? 'add' : $method) . '_succeeded'));
 				}
 
 				// Remember the parent id for the next entry
@@ -530,7 +530,7 @@ class PagesController extends Controller {
 				throw new RedirectException(Router::url(['action' => 'edit', 'lang' => $page->languageShortcode, 'id' => $page->id], true), 302);
 			}
 
-			$this->Flash->error(__df($this->pageRoleName, 'pages', $method . '_failed'));
+			$this->Flash->error(__df($this->pageRoleName, 'pages', ($lb_saveAsCopy ? 'add' : $method) . '_failed'));
 			foreach ($page->getError('_general') as $ls_error) {
 				$this->Flash->error($ls_error);
 			}

@@ -237,7 +237,9 @@ abstract class GenericDatatablesController extends Controller {
 		]);
 
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-			if ($this->Datatable->save($entity, ['asCopy' => (bool)$this->request->getData('save_as_copy')])) {
+			$lb_saveAsCopy = (bool)$this->request->getData('save_as_copy');
+
+			if ($this->Datatable->save($entity, ['asCopy' => $lb_saveAsCopy])) {
 				if (!$this->request->is('ajax')) {
 					$this->Flash->success(__df($this->datatable->identifier, 'generic_datatables', $method . '_succeeded'));
 				}
@@ -262,7 +264,7 @@ abstract class GenericDatatablesController extends Controller {
 				throw new RedirectException(Router::url(['action' => 'edit', 'lang' => $entity->languageShortcode, 'id' => $entity->id], true), 302);
 			}
 
-			$this->Flash->error(__df($this->datatable->identifier, 'generic_datatables', $method . '_failed'));
+			$this->Flash->error(__df($this->datatable->identifier, 'generic_datatables', ($lb_saveAsCopy ? 'add' : $method) . '_failed'));
 			foreach ($entity->getError('_general') as $ls_error) {
 				$this->Flash->error($ls_error);
 			}

@@ -146,7 +146,9 @@ class DesignsController extends Controller {
 		$design->isPreview = false;
 
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-			if ($this->Designs->save($design, ['asCopy' => (bool)$this->request->getData('save_as_copy')])) {
+			$lb_saveAsCopy = (bool)$this->request->getData('save_as_copy');
+
+			if ($this->Designs->save($design, ['asCopy' => $lb_saveAsCopy])) {
 				if (!$this->request->is('ajax')) {
 					$this->Flash->success(__('save_succeeded'));
 				}

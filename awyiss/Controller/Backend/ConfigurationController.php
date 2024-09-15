@@ -86,7 +86,7 @@ class ConfigurationController extends Controller {
 		$lo_query = $this->getOverviewQuery();
 
 		$la_configuration = $lo_query->all()->groupBy('realm')->map(function ($data) use ($lo_configOptions) {
-			$la_collection = Hash::expand(collection($data)->groupBy(function (Configuration $entity) use ($lo_configOptions) {
+			return Hash::expand(collection($data)->groupBy(function (Configuration $entity) use ($lo_configOptions) {
 				$la_identifier = array_map(function (string $identifier) {
 					return ConfigOptionsProvider::sanitizeIdentifier($identifier);
 				}, explode('.', $entity->identifier));
@@ -95,8 +95,6 @@ class ConfigurationController extends Controller {
 
 				return implode('.', $la_identifier);
 			})->toArray());
-
-			return $la_collection;
 		})->toArray();
 
 		/**
@@ -292,9 +290,11 @@ class ConfigurationController extends Controller {
 		$lo_session->write($this->selectedRealmSessionIdentifier, $configuration->realm);
 
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-			if ($this->Configuration->save($configuration, ['asCopy' => (bool)$this->request->getData('save_as_copy')])) {
+			$lb_saveAsCopy = (bool)$this->request->getData('save_as_copy');
+
+			if ($this->Configuration->save($configuration, ['asCopy' => $lb_saveAsCopy])) {
 				if (!$this->request->is('ajax')) {
-					$this->Flash->success(__($method . '_succeeded'));
+					$this->Flash->success(__(($lb_saveAsCopy ? 'add' : $method) . '_succeeded'));
 				}
 
 				if ($this->request->getData('submit') == 'submit_close') {
@@ -304,7 +304,7 @@ class ConfigurationController extends Controller {
 				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $configuration->id], true), 302);
 			}
 
-			$this->Flash->error(__($method . '_failed'));
+			$this->Flash->error(__(($lb_saveAsCopy ? 'add' : $method) . '_failed'));
 			foreach ($configuration->getError('_general') as $ls_error) {
 				$this->Flash->error($ls_error);
 			}

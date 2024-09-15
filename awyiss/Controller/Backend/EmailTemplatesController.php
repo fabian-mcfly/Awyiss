@@ -173,6 +173,7 @@ class EmailTemplatesController extends Controller {
 
 		/** @var \Cake\View\HelperRegistry $lo_helpersRegistry */
 		$lo_helperRegistry = $lo_view->helpers();
+		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 		$lo_helperRegistry->get('Asset')->setRealm(Awyiss::REALM_FRONTEND);
 
 		$lo_view->set([
@@ -183,6 +184,7 @@ class EmailTemplatesController extends Controller {
 
 		$ls_body = $lo_view->render($lo_emailTemplate->fileName);
 
+		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 		$lo_helperRegistry->get('Asset')->setRealm(Awyiss::REALM_BACKEND);
 
 		$this->set([
@@ -212,8 +214,10 @@ class EmailTemplatesController extends Controller {
 		]);
 
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-			if ($this->EmailTemplates->save($emailTemplate, ['asCopy' => (bool)$this->request->getData('save_as_copy')])) {
-				$this->Flash->success(__($method . '_succeeded'));
+			$lb_saveAsCopy = (bool)$this->request->getData('save_as_copy');
+
+			if ($this->EmailTemplates->save($emailTemplate, ['asCopy' => $lb_saveAsCopy])) {
+				$this->Flash->success(__(($lb_saveAsCopy ? 'add' : $method) . '_succeeded'));
 
 				if ($this->request->getData('submit') == 'submit_close') {
 					throw new RedirectException(Router::url(['action' => 'overview'], true), 302);
@@ -222,7 +226,7 @@ class EmailTemplatesController extends Controller {
 				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $emailTemplate->id], true), 302);
 			}
 
-			$this->Flash->error(__($method . '_failed'));
+			$this->Flash->error(__(($lb_saveAsCopy ? 'add' : $method) . '_failed'));
 			foreach ($emailTemplate->getError('_general') as $ls_error) {
 				$this->Flash->error($ls_error);
 			}

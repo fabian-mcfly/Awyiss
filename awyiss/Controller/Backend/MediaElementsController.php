@@ -221,8 +221,10 @@ class MediaElementsController extends Controller {
 		]);
 
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
-			if ($this->MediaElements->save($mediaElement, ['asCopy' => (bool)$this->request->getData('save_as_copy')])) {
-				$this->Flash->success(__($method . '_succeeded'));
+			$lb_saveAsCopy = (bool)$this->request->getData('save_as_copy');
+
+			if ($this->MediaElements->save($mediaElement, ['asCopy' => $lb_saveAsCopy])) {
+				$this->Flash->success(__(($lb_saveAsCopy ? 'add' : $method) . '_succeeded'));
 
 				if ($this->request->getData('submit') == 'submit_close') {
 					throw new RedirectException(Router::url(['action' => 'overview'], true), 302);
@@ -231,7 +233,7 @@ class MediaElementsController extends Controller {
 				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $mediaElement->id], true), 302);
 			}
 
-			$this->Flash->error(__($method . '_failed'));
+			$this->Flash->error(__(($lb_saveAsCopy ? 'add' : $method) . '_failed'));
 			foreach ($mediaElement->getError('_general') as $ls_error) {
 				$this->Flash->error($ls_error);
 			}
