@@ -21,6 +21,21 @@ use Cake\Utility\Hash;
 class EavStrategy extends BaseEavStrategy {
 	/**
 	 * @inheritDoc
+	 */
+	protected function setupAssociations(): void {
+		parent::setupAssociations();
+
+		$ls_targetAlias = $this->translationTable->getAlias();
+		$lo_association = $this->table->getAssociation($ls_targetAlias);
+
+		// Remove the "not empty" condition for the content field since null fields are allowed
+		$la_conditions = $lo_association->getConditions();
+		unset($la_conditions['I18n.content !=']);
+		$lo_association->setConditions($la_conditions);
+	}
+
+	/**
+	 * @inheritDoc
 	 * @param \Cake\Event\EventInterface $event
 	 * @param \Cake\ORM\Query\SelectQuery $query
 	 * @param \ArrayObject $options
@@ -234,19 +249,31 @@ class EavStrategy extends BaseEavStrategy {
 	protected function unsetEmptyFields(EntityInterface $entity): void {
 		/** @var array<Entity> $la_translations */
 		$la_translations = (array)$entity->get('_translations');
+
+		if (!$entity->has('_translations')) {
+			$entity->unset('_i18n');
+
+			return;
+		}
+
 		foreach ($la_translations as $ls_locale => $lo_translation) {
 			$la_fields = $lo_translation->extract($this->getConfig('fields'));
+
 			foreach ($la_fields as $ls_field => $lx_value) {
 				if ($lx_value === null || $lx_value === '') {
 					$lo_translation->unset($ls_field);
+
+					if ($lo_translation->hasOriginal($ls_field)) {
+						$lo_translation->setDirty($ls_field);
+					}
 				}
 			}
 
-			$lo_translation = $lo_translation->extract($this->getConfig('fields'));
+			$la_translatedFields = $lo_translation->extract($this->getConfig('fields'));
 
 			// If now, the current locale property is empty,
 			// unset it completely.
-			if (empty(array_filter($lo_translation))) {
+			if (empty(array_filter($la_translatedFields))) {
 				unset($la_translations[ $ls_locale ]);
 			}
 		}
@@ -256,9 +283,8 @@ class EavStrategy extends BaseEavStrategy {
 
 		// If now, the whole _translations property is empty,
 		// unset it completely and return
-		if (empty($entity->get('_translations'))) {
+		if (empty($la_translations)) {
 			$entity->unset('_translations');
-			$entity->unset('_i18n');
 		}
 	}
 
