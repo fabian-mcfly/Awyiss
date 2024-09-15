@@ -58,7 +58,7 @@ class ContentTemplateElementsSeed extends AbstractSeed {
 				'content_template_id' => 1,
 				'identifier' => 'parent_id',
 				'fieldset' => 'conditions',
-				'required' => 0,
+				'required' => 1,
 				'system_order' => 6,
 			],
 			[
