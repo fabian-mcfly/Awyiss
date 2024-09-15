@@ -212,24 +212,7 @@ class NestBehavior extends Behavior {
 			$lo_query = $lo_association->find($lx_finder, entity: $entity, relatedColumns: $this->getConfig('relatedColumns'));
 		}
 
-		if (!empty($options['finders']) && is_array($options['finders'])) {
-			foreach ($options['finders'] as $lx_finder => $lx_options) {
-				if (is_int($lx_finder)) {
-					$lo_query->find($lx_options);
-				}
-				else {
-					$lo_query->find($lx_finder, ...$lx_options);
-				}
-			}
-		}
-
-		if (!empty($options['where'])) {
-			$lo_query->where($options['where']);
-		}
-
-		if (!empty($options['contain'])) {
-			$lo_query->contain($options['contain']);
-		}
+		$this->addQueryOptions($lo_query, $options);
 
 		$this->addQueryConditions($lo_query, $lo_association, $entity, 'children');
 
@@ -304,23 +287,7 @@ class NestBehavior extends Behavior {
 			$lo_query = $lo_association->find($lx_finder, entity: $entity, relatedColumns: $this->getConfig('relatedColumns'));
 		}
 
-		if (!empty($options['finders']) && is_array($options['finders'])) {
-			foreach ($options['finders'] as $lx_finder => $lx_options) {
-				if (is_int($lx_finder)) {
-					$lo_query->find($lx_options);
-				}
-				else {
-					$lo_query->find($lx_finder, $lx_options);
-				}
-			}
-		}
-		if (!empty($options['where'])) {
-			$lo_query->where($options['where']);
-		}
-
-		if (!empty($options['contain'])) {
-			$lo_query->contain($options['contain']);
-		}
+		$this->addQueryOptions($lo_query, $options);
 
 		$this->addQueryConditions($lo_query, $lo_association, $entity, 'parent');
 
@@ -755,6 +722,8 @@ class NestBehavior extends Behavior {
 			$lo_query = $lo_association->find($lx_finder, entity: $entity, relatedColumns: $this->getConfig('relatedColumns'));
 		}
 
+		$this->addQueryOptions($lo_query, $options);
+
 		$ls_nestingKey = Inflector::variable($this->getConfig('children.associationName'));
 		$lo_records = $this->listNested($lo_query, $ls_nestingKey);
 
@@ -800,6 +769,8 @@ class NestBehavior extends Behavior {
 			$lo_query = $lo_association->find($lx_finder, entity: $entity, relatedColumns: $this->getConfig('relatedColumns'));
 		}
 
+		$this->addQueryOptions($lo_query, $options);
+
 		$ls_nestingKey = Inflector::variable($this->getConfig('parent.associationName'));
 		$lo_records = $this->listNested($lo_query, $ls_nestingKey);
 
@@ -825,5 +796,32 @@ class NestBehavior extends Behavior {
 
 
 		return $lo_records->compile(false);
+	}
+
+
+	/**
+	 * @param mixed $query
+	 * @param array $options
+	 * @return void
+	 */
+	protected function addQueryOptions(SelectQuery $query, array $options): void {
+		if (!empty($options['finders']) && is_array($options['finders'])) {
+			foreach ($options['finders'] as $lx_finder => $lx_options) {
+				if (is_int($lx_finder)) {
+					$query->find($lx_options);
+				}
+				else {
+					$query->find($lx_finder, ...$lx_options);
+				}
+			}
+		}
+
+		if (!empty($options['where'])) {
+			$query->where($options['where']);
+		}
+
+		if (!empty($options['contain'])) {
+			$query->contain($options['contain']);
+		}
 	}
 }
