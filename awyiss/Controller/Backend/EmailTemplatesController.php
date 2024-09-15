@@ -161,10 +161,12 @@ class EmailTemplatesController extends Controller {
 			throw new RedirectException(Router::url(['action' => 'overview'], true), 302);
 		}
 
-		$lo_view = $this->createView('Frontend');
+		$lo_view = $this->createView();
 		// The view uses the prefix (Backend, in this case) to determine the correct view path
 		// We need to set the correct view path manually
 		$lo_view->setRequest($this->getRequest()->withParam('prefix', 'Frontend'));
+
+		$this->viewBuilder()->setClassName('Frontend');
 
 		$lo_view
 		->setTemplatePath('Frontend/email')
@@ -186,6 +188,8 @@ class EmailTemplatesController extends Controller {
 
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 		$lo_helperRegistry->get('Asset')->setRealm(Awyiss::REALM_BACKEND);
+
+		$this->viewBuilder()->setClassName('Backend');
 
 		$this->set([
 			'emailTemplate' => $lo_emailTemplate,
