@@ -4,6 +4,7 @@
 namespace Awyiss\Model\Table;
 
 
+use Awyiss\Awyiss;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
 use Cake\Database\Schema\TableSchemaInterface;
@@ -43,6 +44,7 @@ class FormsTable extends Table {
 			'salutation_confirmation',
 			'success_message',
 		],
+		'realm' => Awyiss::REALM_FRONTEND,
 	];
 
 

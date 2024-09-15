@@ -4,6 +4,7 @@
 namespace Awyiss\Model\Table;
 
 
+use Awyiss\Awyiss;
 use Awyiss\Model\Entity\EmailTemplate;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
@@ -40,6 +41,7 @@ class EmailTemplatesTable extends Table {
 			'text_html',
 			'text_plain',
 		],
+		'realm' => Awyiss::REALM_FRONTEND,
 	];
 
 
