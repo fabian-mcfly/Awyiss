@@ -699,10 +699,35 @@ class Table extends BaseTable {
 			$entity->setNew(true);
 
 			$la_options['isCopy'] = true;
+
+			/**
+			 * Traverse all associations of type HasMany and HasOne,
+			 * unset the primary key of the associated entities,
+			 * and mark them as new.
+			 */
+			foreach ($this->associations() as $lo_association) {
+				$ls_property = $lo_association->getProperty();
+
+				if (!$entity->has($ls_property) || !$entity->get($ls_property)) {
+					continue;
+				}
+
+				if ($lo_association instanceof HasMany) {
+					foreach (($entity->get($ls_property) ?? []) as $lo_associated) {
+						$lo_associated->unset((array)$lo_association->getPrimaryKey());
+						$lo_associated->setNew(true);
+					}
+				}
+
+				if ($lo_association instanceof HasOne) {
+					$lo_associated = $entity->get($ls_property);
+					$lo_associated->unset((array)$lo_association->getPrimaryKey());
+					$lo_associated->setNew(true);
+				}
+			}
 		}
 
 		unset($la_options['asCopy']);
-
 
 		return parent::save($entity, $la_options);
 	}
