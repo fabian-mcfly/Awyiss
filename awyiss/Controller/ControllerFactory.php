@@ -5,8 +5,10 @@ namespace Awyiss\Controller;
 
 
 use Awyiss\Core\App;
+use Awyiss\Event\EventManager;
 use Awyiss\Model\Entity\Datatable;
 use Awyiss\Model\Enum\PageRoleEnumInterface;
+use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
 use Cake\Controller\ControllerFactory as BaseControllerFactory;
 use Cake\Datasource\FactoryLocator;
@@ -55,15 +57,45 @@ class ControllerFactory extends BaseControllerFactory {
 			throw $this->missingController($request);
 		}
 
+		$this->container->addShared(
+			ComponentRegistry::class,
+			new ComponentRegistry(container: $this->container)
+		);
+
 		//If the controller has a container definition add the request as a service.
 		if ($this->container->has($ls_className)) {
 			$this->container->add(ServerRequest::class, $request);
 			$lo_controller = $this->container->get($ls_className);
 		}
 		else {
-			$lo_controller = $lo_reflection->newInstance($request);
-		}
+			/** @var \Cake\Controller\ComponentRegistry $lo_components */
+			$lo_components = $this->container->get(ComponentRegistry::class);
+			$lo_constructor = $lo_reflection->getConstructor();
 
+			assert($lo_constructor !== null);
+
+			$lb_hasComponents = false;
+
+			foreach ($lo_constructor->getParameters() as $lo_parameter) {
+				$lo_paramType = $lo_parameter->getType();
+				// TODO: In a future minor release it would be good to start requiring the components parameter
+				if (
+					$lo_parameter->getName() === 'components' && $lo_paramType !== null && $lo_paramType->getName() == ComponentRegistry::class
+				) {
+					$lb_hasComponents = true;
+					break;
+				}
+			}
+
+			$lo_eventManager = new EventManager();
+
+			if ($lb_hasComponents) {
+				$lo_controller = $lo_reflection->newInstance(request: $request, components: $lo_components, eventManager: $lo_eventManager);
+			}
+			else {
+				$lo_controller = $lo_reflection->newInstance($request, eventManager: $lo_eventManager);
+			}
+		}
 
 		return $lo_controller;
 	}

@@ -227,6 +227,6 @@ class PageTemplatesTable extends Table {
 		/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $ls_pageRoleEnum */
 		$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
 
-		$this->getSchema()->setColumnType('page_role_id', EnumType::from($ls_pageRoleEnum));
+		$schema->setColumnType('page_role_id', EnumType::from($ls_pageRoleEnum));
 	}
 }

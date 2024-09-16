@@ -40,7 +40,8 @@ class ExistsIn extends BaseExistsIn {
 		$this->setRepository($options['repository']);
 
 		$la_fields = $this->_fields;
-		$lo_source = $lo_target = $this->_repository;
+		$lo_source = $this->_repository;
+		$lo_target = $this->_repository;
 		if ($lo_target instanceof Association) {
 			$la_bindingKey = (array)$lo_target->getBindingKey();
 			$lo_realTarget = $lo_target->getTarget();
@@ -131,7 +132,7 @@ class ExistsIn extends BaseExistsIn {
 						"ExistsIn rule for '%s' is invalid. '%s' is not associated with '%s'.",
 						implode(', ', $this->_fields),
 						$this->_repository,
-						get_class($repository)
+						$repository::class
 					)
 				);
 			}

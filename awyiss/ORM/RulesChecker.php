@@ -118,7 +118,7 @@ class RulesChecker extends BaseRulesChecker {
 
 	/**
 	 * @inheritDoc
-	 * @param array|string $fields
+	 * @param list<string>|string $fields
 	 * @param BaseTable|Association|string $table
 	 * @param array|string|null $options
 	 * @return RuleInvoker

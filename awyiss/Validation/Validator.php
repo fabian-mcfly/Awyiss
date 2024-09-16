@@ -98,10 +98,11 @@ class Validator extends BaseValidator {
 			return null;
 		}
 
-		$ls_defaultMessage = __df($this->i18nDomain, 'validation', 'error_required');
+		if (isset($this->_presenceMessages[ $ls_field ])) {
+			return $this->_presenceMessages[ $ls_field ];
+		}
 
-
-		return $this->_presenceMessages[ $ls_field ] ?? $ls_defaultMessage;
+		return __df($this->i18nDomain, 'validation', 'error_required');
 	}
 
 
@@ -117,16 +118,17 @@ class Validator extends BaseValidator {
 			return null;
 		}
 
-		$ls_defaultMessage = __df($this->i18nDomain, 'validation', 'error_not_empty');
-
 		foreach ($this->_fields[ $ls_field ] as $lo_rule) {
 			if ($lo_rule->get('rule') === 'notBlank' && $lo_rule->get('message')) {
 				return $lo_rule->get('message');
 			}
 		}
 
+		if (isset($this->_allowEmptyMessages[ $ls_field ])) {
+			return $this->_allowEmptyMessages[ $ls_field ];
+		}
 
-		return $this->_allowEmptyMessages[ $ls_field ] ?? $ls_defaultMessage;
+		return __df($this->i18nDomain, 'validation', 'error_not_empty');
 	}
 
 

@@ -47,7 +47,7 @@ class CategoriesComponent extends Component {
 	 * @param array $config
 	 * @return void
 	 */
-	public function __construct(ComponentRegistry $registry, array $config) {
+	public function __construct(ComponentRegistry $registry, array $config = []) {
 		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
 		$this->table = $registry->getController()->fetchTable();
 

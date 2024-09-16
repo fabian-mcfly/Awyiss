@@ -8,7 +8,6 @@ use Awyiss\Awyiss;
 use Awyiss\Model\Entity\MediaFolder;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
-use Cake\Database\Schema\TableSchemaInterface;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Validation\Validator;
@@ -232,16 +231,6 @@ class MediaFoldersTable extends Table {
 
 
 		return $rules;
-	}
-
-
-	/**
-	 * @inheritDoc
-	 */
-	protected function initializeSchema(TableSchemaInterface $schema): void {
-		parent::initializeSchema($schema);
-
-		$schema->setColumnType('meta_data', 'json');
 	}
 
 

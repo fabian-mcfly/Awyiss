@@ -79,6 +79,6 @@ class PublicationDataTable extends Table {
 	protected function initializeSchema(TableSchemaInterface $schema): void {
 		parent::initializeSchema($schema);
 
-		$this->getSchema()->setColumnType('type', EnumType::from(PublicationDataType::class));
+		$schema->setColumnType('type', EnumType::from(PublicationDataType::class));
 	}
 }

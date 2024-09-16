@@ -150,7 +150,7 @@ class MediaResizedImagesTable extends Table {
 	protected function initializeSchema(TableSchemaInterface $schema): void {
 		parent::initializeSchema($schema);
 
-		$this->getSchema()->setColumnType('strategy', EnumType::from(ResizeStrategy::class));
-		$this->getSchema()->setColumnType('status', EnumType::from(ProcessStatus::class));
+		$schema->setColumnType('strategy', EnumType::from(ResizeStrategy::class));
+		$schema->setColumnType('status', EnumType::from(ProcessStatus::class));
 	}
 }

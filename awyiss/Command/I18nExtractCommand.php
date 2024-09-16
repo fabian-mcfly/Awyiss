@@ -88,7 +88,7 @@ class I18nExtractCommand extends BaseI18nExtractCommand {
 		if (!empty($this->_exclude)) {
 			$la_exclude = [];
 			foreach ($this->_exclude as $ls_exclude) {
-				if (DIRECTORY_SEPARATOR !== '\\' && $ls_exclude[0] !== DIRECTORY_SEPARATOR) {
+				if (DIRECTORY_SEPARATOR !== '\\' && !str_starts_with($ls_exclude, DIRECTORY_SEPARATOR)) {
 					$ls_exclude = DIRECTORY_SEPARATOR . $ls_exclude;
 				}
 				$la_exclude[] = preg_quote($ls_exclude, '/');

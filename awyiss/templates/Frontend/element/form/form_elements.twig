@@ -46,7 +46,7 @@
 							value="{{ submitted ? formData[ formElement.identifier ] : formElement.get('value') }}"
 							{% if formElement.disabled %} disabled aria-disabled="true" {% endif %}
 							{% if formElement.readonly %} readonly aria-readonly="true" {% endif %}
-							{% if formElement.required %} required aria-required="true"{% endif %}
+							{% if formElement.required %} required{% endif %}
 							{% if formElement.placeholder %}placeholder="{{ formElement.placeholder }}"{% endif %}
 							class="FormInputType-Input">
 					{% endblock %}
@@ -58,7 +58,7 @@
 						<textarea id="FormInput-{{ formElement.identifier|ucparts(false) }}" name="{{ formElement.identifier }}"
 							{% if formElement.disabled %} disabled aria-disabled="true" {% endif %}
 							{% if formElement.readonly %} readonly aria-readonly="true" {% endif %}
-							{% if formElement.required %} required aria-required="true"{% endif %}
+							{% if formElement.required %} required{% endif %}
 							{% if formElement.placeholder %}placeholder="{{ formElement.placeholder }}"{% endif %}
 							class="FormInputType-Textarea">{{ submitted ? formData[ formElement.identifier ] : formElement.get('value') }}</textarea>
 					{% endblock %}
@@ -71,7 +71,7 @@
 							value="{{ submitted ? formData[ formElement.identifier ] : formElement.get('value') }}"
 							{% if formElement.disabled %} disabled aria-disabled="true" {% endif %}
 							{% if formElement.readonly %} readonly aria-readonly="true" {% endif %}
-							{% if formElement.required %} required aria-required="true"{% endif %}
+							{% if formElement.required %} required{% endif %}
 							{% if formElement.placeholder %}placeholder="{{ formElement.placeholder }}"{% endif %}
 							class="FormInputType-Input">
 					{% endblock %}
@@ -84,7 +84,7 @@
 							value="{{ submitted ? formData[ formElement.identifier ] : formElement.get('value') }}"
 							{% if formElement.disabled %} disabled aria-disabled="true" {% endif %}
 							{% if formElement.readonly %} readonly aria-readonly="true" {% endif %}
-							{% if formElement.required %} required aria-required="true"{% endif %}
+							{% if formElement.required %} required{% endif %}
 							{% if formElement.placeholder %}placeholder="{{ formElement.placeholder }}"{% endif %}
 							class="FormInputType-Input">
 					{% endblock %}
@@ -97,7 +97,7 @@
 							value="{{ submitted ? formData[ formElement.identifier ] : formElement.get('value') }}"
 							{% if formElement.disabled %} disabled aria-disabled="true" {% endif %}
 							{% if formElement.readonly %} readonly aria-readonly="true" {% endif %}
-							{% if formElement.required %} required aria-required="true"{% endif %}
+							{% if formElement.required %} required{% endif %}
 							{% if formElement.placeholder %}placeholder="{{ formElement.placeholder }}"{% endif %}
 							class="FormInputType-Input">
 					{% endblock %}
@@ -110,7 +110,7 @@
 							value="{{ submitted ? formData[ formElement.identifier ] : formElement.get('value') }}"
 							{% if formElement.disabled %} disabled aria-disabled="true" {% endif %}
 							{% if formElement.readonly %} readonly aria-readonly="true" {% endif %}
-							{% if formElement.required %} required aria-required="true"{% endif %}
+							{% if formElement.required %} required{% endif %}
 							{% if formElement.placeholder %}placeholder="{{ formElement.placeholder }}"{% endif %}
 							class="FormInputType-Input">
 					{% endblock %}
@@ -121,7 +121,7 @@
 						<label for="FormInput-{{ formElement.identifier|ucparts(false) }}" class="FormElement-Label">{{ formElement.title }}</label>
 						<select id="FormInput-{{ formElement.identifier|ucparts(false) }}" name="{{ formElement.identifier }}{% if formElement.type == 'select_multiple' %}[]{% endif %}" class="FormInputType-Select"
 							{% if formElement.disabled and formElement.disabled is not iterable %} disabled aria-disabled="true" {% endif %}
-							{% if formElement.required %} required aria-required="true"{% endif %}
+							{% if formElement.required %} required{% endif %}
 							{% if formElement.type == 'select_multiple' %} multiple{% endif %}>
 							{% for key, value in formElement.options %}
 								<option value="{{ key }}"
@@ -152,7 +152,7 @@
 									{% else %}
 										{% if formData[ formElement.identifier ] == key %}checked{% endif %}
 									{% endif %}
-									{% if formElement.options|length == 1 and formElement.required %} required aria-required="true"{% endif %}
+									{% if formElement.options|length == 1 and formElement.required %} required{% endif %}
 									class="FormInputType-Checkbox">
 								<label for="FormInput-{{ formElement.identifier|ucparts(false) }}-{{ key|ucparts(false) }}" class="FormInputType-Checkbox-Label">{{ value }}</label>
 							</span>
@@ -171,7 +171,7 @@
 								<input id="FormInput-{{ formElement.identifier|ucparts(false) }}-{{ key|ucparts(false) }}" type="Radio" name="{{ formElement.identifier }}"
 									value="{{ key }}"
 									{% if (formElement.disabled and formElement.disabled is not iterable) or (formElement.disabled is iterable and key in formElement.disabled) %} disabled aria-disabled="true" {% endif %}
-									{% if formElement.required %} required aria-required="true"{% endif %}
+									{% if formElement.required %} required{% endif %}
 									{% if formData[ formElement.identifier ] == key %}checked{% endif %}
 									class="FormInputType-Radio">
 								<label for="FormInput-{{ formElement.identifier|ucparts(false) }}-{{ key|ucparts(false) }}" class="FormInputType-Radio-Label">{{ value }}</label>
@@ -187,7 +187,7 @@
 						<input id="FormInput-{{ formElement.identifier|ucparts(false) }}" type="file" name="{{ formElement.identifier }}"
 							{% if formElement.disabled %} disabled aria-disabled="true" {% endif %}
 							{% if formElement.readonly %} readonly aria-readonly="true" {% endif %}
-							{% if formElement.required %} required aria-required="true"{% endif %}
+							{% if formElement.required %} required{% endif %}
 							class="FormInputType-File">
 					{% endblock %}
 

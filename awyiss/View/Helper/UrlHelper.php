@@ -53,9 +53,8 @@ class UrlHelper extends BaseUrlHelper {
 		$ls_url = Router::url($lx_url, $la_options['fullBase']);
 
 		if ($la_options['escape']) {
-			$ls_url = h($ls_url);
+			return h($ls_url);
 		}
-
 
 		return $ls_url;
 	}

@@ -259,9 +259,10 @@ class MediaTable extends Table {
 	protected function initializeSchema(TableSchemaInterface $schema): void {
 		parent::initializeSchema($schema);
 
-		$this->getSchema()->setColumnType('preview', EnumType::from(ProcessStatus::class));
-		$this->getSchema()->setColumnType('webp', EnumType::from(ProcessStatus::class));
-		$this->getSchema()->setColumnType('crop', 'json');
+		$schema->setColumnType('meta_data', 'json');
+		$schema->setColumnType('preview', EnumType::from(ProcessStatus::class));
+		$schema->setColumnType('webp', EnumType::from(ProcessStatus::class));
+		$schema->setColumnType('crop', 'json');
 	}
 
 

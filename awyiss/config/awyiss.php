@@ -92,7 +92,7 @@ return [
 			'prefix' => 'persistent_',
 		],
 
-		'_cake_core_' => [
+		'_cake_translations_' => [
 			'className' => FileEngine::class,
 			'duration' => '+1 years',
 			'path' => CACHE . 'core' . DS,

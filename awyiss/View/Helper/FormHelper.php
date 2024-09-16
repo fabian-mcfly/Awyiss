@@ -221,7 +221,6 @@ class FormHelper extends BaseFormHelper {
 			$la_options['aria-required'] = $la_options['required'] = false;
 			$la_options['input'] = $this->widget($ls_realType, $la_options + ['readonly' => true]);
 
-
 			return $this->widget('translatableText', $la_options);
 		}
 
@@ -239,7 +238,6 @@ class FormHelper extends BaseFormHelper {
 
 		foreach ($this->languages as $ls_shortcode => $lo_language) {
 			$la_translatableOptions = [
-				'aria-required' => $la_options['aria-required'] && !count($la_options['controls']),
 				'id' => $this->_domId($fieldName . '-Translations[' . $ls_shortcode . ']'),
 				'label' => $lo_language->label,
 				'placeholder' => $la_options['placeholder'] ?? $la_options['val'] ?? null,

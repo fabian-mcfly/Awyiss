@@ -4807,7 +4807,7 @@ namespace PHPSTORM_META {
 
 	registerArgumentsSet(
 		'cacheEngines',
-		'_cake_core_',
+		'_cake_translations_',
 		'_cake_model_',
 		'default',
 		'instagram',

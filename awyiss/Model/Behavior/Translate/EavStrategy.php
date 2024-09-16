@@ -98,7 +98,7 @@ class EavStrategy extends BaseEavStrategy {
 
 		$la_values = $entity->extract($this->_config['fields'], true);
 		$la_fields = array_keys($la_values);
-		$lb_noFields = empty($la_fields);
+		$lb_noFields = $la_fields === [];
 
 		// If there are no fields and no bundled translations, or both fields
 		// in the default locale and bundled translations we can
@@ -149,7 +149,7 @@ class EavStrategy extends BaseEavStrategy {
 	 * Deletes translations not being present in the entity`s `_translation`-property but in its original state
 	 * unsets the temporary `_i18n` property after the entity has been saved
 	 *
-	 * @param EventInterface $event The beforeSave event that was fired
+	 * @param EventInterface $event The afterSave event that was fired
 	 * @param EntityInterface $entity The entity that is going to be saved
 	 * @return void
 	 */
