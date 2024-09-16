@@ -116,7 +116,6 @@ class BackendView extends AppView {
 			}
 		}
 
-
 		$lo_twig->addGlobal('baseUrl', Router::url('/', true));
 		$lo_twig->addGlobal('currentLanguage', $lo_frontendLanguage);
 		$lo_twig->addGlobal('currentPath', $this->getRequest()->getUri()->getPath());

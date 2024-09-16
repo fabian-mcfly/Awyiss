@@ -54,7 +54,6 @@ class FormEntriesController extends Controller {
 		$this->Authorization->ensure('read');
 
 		if (is_numeric($this->Categories->getSelectedCategory())) {
-			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 			$lo_form = $this->fetchTable('Forms')->findById($this->Categories->getSelectedCategory())->first();
 		}
 
