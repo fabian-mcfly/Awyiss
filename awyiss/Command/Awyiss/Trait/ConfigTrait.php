@@ -90,6 +90,27 @@ trait ConfigTrait {
 		$ls_contents .= ';';
 		$ls_contents = str_replace('    ', "\t", $ls_contents);
 
+		/**
+		 * Replace
+		 *
+		 *- `'previewScssFiles' => null,`
+		 * - `'scssFiles' => null,`
+		 *
+		 * with
+		 *
+		 * - 'previewScssFiles' => defined('CUSTOM_DIR') ? [ROOT . DS . CUSTOM_DIR . '/assets/scss/full.scss'] : null,
+		 * - 'scssFiles' => defined('CUSTOM_DIR') ? [ROOT . DS . CUSTOM_DIR . '/assets/scss/helper/_variables.scss'] : null,
+		 *
+		 * since including the config file evaluates the statement
+		 */
+		$ls_contents = str_replace([
+			'\'previewScssFiles\' => null,',
+			'\'scssFiles\' => null',
+		], [
+			'\'previewScssFiles\' => defined(\'CUSTOM_DIR\') ? [ROOT . DS . CUSTOM_DIR . \'/assets/scss/full.scss\'] : null,',
+			'\'scssFiles\' => defined(\'CUSTOM_DIR\') ? [ROOT . DS . CUSTOM_DIR . \'/assets/scss/helper/_variables.scss\'] : null,',
+		], $ls_contents);
+
 		// Write the updated contents back to the base config file
 		file_put_contents($ls_baseConfigFilePath, $ls_contents);
 
