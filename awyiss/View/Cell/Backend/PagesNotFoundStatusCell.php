@@ -49,7 +49,7 @@ class PagesNotFoundStatusCell extends Cell {
 		])
 		->enableAutoFields()
 		->where([
-			'created_on >' => $lo_lastLogin,
+			'created_on >' => $lo_lastLogin ?? $lo_identity->createdOn,
 		])
 		->groupBy('slug')
 		->orderBy([
