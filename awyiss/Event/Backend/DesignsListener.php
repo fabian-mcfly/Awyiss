@@ -79,10 +79,9 @@ class DesignsListener implements EventListenerInterface {
 			return;
 		}
 
-		$la_settings = $entity->settings;
 		$la_fonts = [];
 
-		foreach ($la_settings as $lx_value) {
+		foreach (($entity->settings ?? []) as $lx_value) {
 			if (!is_array($lx_value) || !isset($lx_value['font']['id'])) {
 				continue;
 			}
