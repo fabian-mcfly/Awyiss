@@ -655,8 +655,7 @@ class FrontendController extends AppController {
 
 		$ls_languageShortcode = $this->request->getParam('lang');
 		$ls_slug = $ls_languageShortcode . '/' . $this->request->getParam('slug');
-		$ls_slug = trim($ls_slug, '/');
-		$ls_slug = '/' . $ls_slug . '/';
+		$ls_slug = '/' . trim($ls_slug, '/');
 
 		// Don't track resized or preview images
 		if (str_contains($ls_slug, '/_resized') || str_contains($ls_slug, '_preview/')) {
@@ -673,7 +672,6 @@ class FrontendController extends AppController {
 		if ($lo_pagesNotFoundTable->exists(['slug' => $ls_slug, 'created_on >' => new DateTime('-5 minutes')])) {
 			return;
 		}
-
 
 		$lb_isRobot = $this->isRobot();
 
