@@ -186,7 +186,7 @@ class AwyissExtension extends AbstractExtension {
 
 			new TwigFunction(
 				'widget',
-				function (array $context, string $name, array $data = [], array $options = []) {
+				function (array $context, string $name, array $options = []) {
 					$la_options = ['viewVars' => $context];
 					$la_options = Hash::merge($la_options, $options);
 
