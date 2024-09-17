@@ -238,6 +238,12 @@ body {
 			}
 		}
 
+		.tox-edit-area {
+			&::before {
+				display:none;
+			}
+		}
+
 		.tox-promotion {
 			display:none;
 		}
