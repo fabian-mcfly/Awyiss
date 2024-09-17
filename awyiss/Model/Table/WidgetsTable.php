@@ -345,7 +345,7 @@ class WidgetsTable extends Table {
 		}, 'validInputFields');
 
 
-		$rules->add($rules->existsIn(['formId'], 'Forms'), 'validFormId', ['errorField' => 'formId']);
+		$rules->add($rules->existsIn(['formId'], 'Forms', ['allowNullableNulls' => true]), 'validFormId', ['errorField' => 'formId']);
 
 
 		$rules->add(function (Widget $entity): bool {

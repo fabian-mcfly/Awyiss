@@ -322,7 +322,7 @@ class PagesTable extends Table {
 		);
 
 
-		$rules->add($rules->existsIn(['formId'], 'Forms'), 'validFormId', ['errorField' => 'formId']);
+		$rules->add($rules->existsIn(['formId'], 'Forms', ['allowNullableNulls' => true]), 'validFormId', ['errorField' => 'formId']);
 
 
 		$rules->add(function (Page $entity): bool|string {
