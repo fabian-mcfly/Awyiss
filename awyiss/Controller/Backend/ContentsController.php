@@ -175,13 +175,17 @@ class ContentsController extends Controller {
 	 */
 	public function add(): void {
 		$li_pageId = (int)$this->request->getParam('pageId');
-		$this->forPage($li_pageId);
+		$this->forPage($li_pageId, true);
+
+		if (!$li_pageId) {
+			throw new RedirectException(Router::url(['action' => 'add', 'pageId' => $this->page->id], true), 302);
+		}
 
 		$this->Authorization->ensure('create');
 
 		$lo_session = $this->request->getSession();
 		$lo_content = $this->Contents->newDefaultEntity([
-			'pageId' => $li_pageId,
+			'pageId' => $this->page->id,
 			'contentAreaId' => $lo_session->read($this->selectedContentAreaIdSessionIdentifier),
 			'parentId' => $lo_session->read($this->selectedParentIdSessionIdentifier),
 		]);
@@ -744,12 +748,28 @@ class ContentsController extends Controller {
 	 * a redirect exception is thrown.
 	 *
 	 * @param int $pageId
+	 * @param bool $allowFallback
 	 * @return Page
 	 * @throws \Exception
 	 */
-	protected function forPage(int $pageId): Page {
+	protected function forPage(int $pageId, bool $allowFallback = false): Page {
+		if (!$pageId && $allowFallback) {
+			// Find the first page of pagerole `page`
+			$lo_pageTable = $this->fetchTable('Pages');
+			/** @var \Awyiss\Model\Entity\Page $lo_page */
+			$lo_page = $lo_pageTable->find()->select('id')->where([
+				'page_role_id' => 1,
+				'language_shortcode' => LocaleMiddleware::getLanguage()->shortcode,
+			])->orderBy([
+				'Pages.deleted' => 'ASC',
+				'Pages.parents_active' => 'DESC',
+				'Pages.active' => 'DESC',
+				'Pages.parent_id' => 'ASC',
+			])->first();
+		}
+
 		try {
-			$lo_page = $this->getPage($pageId);
+			$lo_page = $this->getPage($lo_page?->id ?? $pageId);
 		}
 		catch (RecordNotFoundException | InvalidPrimaryKeyException) {
 			$this->Flash->error(__('record_not_found'));
@@ -769,7 +789,7 @@ class ContentsController extends Controller {
 					'languageShortcode' => $ls_languageShortcode,
 				],
 			],
-			'selectedCategory' => $pageId,
+			'selectedCategory' => $lo_page->id,
 		]);
 
 		$this->Contents->forPageRole($lo_page->pageRoleId);
@@ -778,7 +798,7 @@ class ContentsController extends Controller {
 			if ($lo_page->language_shortcode != LocaleMiddleware::getLanguage()->shortcode) {
 				throw new RedirectException(Router::url([
 					'lang' => $lo_page->languageShortcode,
-					'pageId' => $pageId,
+					'pageId' => $lo_page->id,
 				], true), 302);
 			}
 		}

@@ -72,6 +72,22 @@
 					}
 				}
 			},
+			"contents_add": {
+				"title": {
+					"translate": ["contents", "menu_add"]
+				},
+				"link": {
+					"url": {
+						"controller": "Contents",
+						"action": "add"
+					}
+				},
+				"access": {
+					"scope": "pages",
+					"identifier": "contents"
+				},
+				"children": null
+			},
 			"slug_history": {
 				"title": {
 					"translate": ["slug_history", "menu_title"]
