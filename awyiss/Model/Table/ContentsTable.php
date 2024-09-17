@@ -696,12 +696,14 @@ class ContentsTable extends Table {
 	 */
 	public function forPageRole(PageRoleEnumInterface $pageRole, bool $initializePages = true): void {
 		if ($initializePages) {
-			$this->belongsTo($pageRole->tableAlias(), [
-				'bindingKey' => 'id',
-				'finder' => 'forCurrentLanguage',
-				'foreignKey' => 'page_id',
-				'propertyName' => 'page',
-			]);
+			if (!$this->hasAssociation($pageRole->tableAlias())) {
+				$this->belongsTo($pageRole->tableAlias(), [
+					'bindingKey' => 'id',
+					'finder' => 'forCurrentLanguage',
+					'foreignKey' => 'page_id',
+					'propertyName' => 'page',
+				]);
+			}
 
 			/** @var \Awyiss\Model\Behavior\CategoriesBehavior $lo_behavior */
 			$lo_behavior = $this->getBehavior('Categories');
