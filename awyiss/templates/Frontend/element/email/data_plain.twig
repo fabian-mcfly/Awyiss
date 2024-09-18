@@ -9,9 +9,9 @@
 			{%~ if formElement.type in ['hidden', 'submit'] %}
 			{%~ elseif formElement.type == 'fieldset' %}
 				{%~ block formElementRowFieldset %}
-					{{- '-'|repeat(formElement.label|length) }}
-					{{~ formElement.label }}
-					{{~ '-'|repeat(formElement.label|length) }}
+					{{- '-'|repeat((formElement.titleEmail ?: formElement.title)|length) }}
+					{{~ formElement.titleEmail ?: formElement.title }}
+					{{~ '-'|repeat((formElement.titleEmail ?: formElement.title)|length) }}
 				{%~ endblock %}
 
 			{%~ elseif formElement.type == 'free_text' %}
@@ -22,7 +22,7 @@
 					{%~ endif %}
 				{%~ endblock %}
 			{%~ else %}
-				{{- formElement.label }}:
+				{{- formElement.titleEmail ?: formElement.title }}:
 				{%~ if formElement.type == 'file' %}
 					{%~ block formElementValueFile %}
 						{#~ @var file \Laminas\Diactoros\UploadedFile #}

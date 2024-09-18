@@ -24,7 +24,7 @@
 				{% elseif formElement.type == 'fieldset' %}
 					{% block formElementRowFieldset %}
 						<tr class="DataRowType-Fieldset DataRowIdentifier-{{ formElement.identifier|ucparts(false) }}">
-							<td colspan="2" >{{ formElement.label }}</td>
+							<td colspan="2" >{{ formElement.titleEmail ?: formElement.title }}</td>
 						</tr>
 					{% endblock %}
 				{% elseif formElement.type == 'free_text' %}
@@ -40,7 +40,7 @@
 						<tr class="DataRowType-{{ formElement.type|ucparts(false) }} DataRowIdentifier-{{ formElement.identifier|ucparts(false) }}">
 							<td>
 								{% block formElementLabel %}
-									{{ formElement.label }}
+									{{ formElement.titleEmail ?: formElement.title }}
 								{% endblock %}
 							</td>
 							<td>
