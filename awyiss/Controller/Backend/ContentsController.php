@@ -58,6 +58,10 @@ class ContentsController extends Controller {
 	 */
 	protected ?string $selectedContentAreaIdSessionIdentifier = null;
 	/**
+	 * @var string|null Session identifier for the selected page_id
+	 */
+	protected ?string $selectedPageIdSessionIdentifier = null;
+	/**
 	 * @var string|null Session identifier for the selected parent_id
 	 */
 	protected ?string $selectedParentIdSessionIdentifier = null;
@@ -74,6 +78,7 @@ class ContentsController extends Controller {
 		parent::initialize();
 
 		$this->selectedContentAreaIdSessionIdentifier = Inflector::underscore($this->getName()) . '.' . ($this->request->getParam('lang') ?? 'global') . '.content_area_id';
+		$this->selectedPageIdSessionIdentifier = Inflector::underscore($this->getName()) . '.' . ($this->request->getParam('lang') ?? 'global') . '.page_id';
 		$this->selectedParentIdSessionIdentifier = Inflector::underscore($this->getName()) . '.' . ($this->request->getParam('lang') ?? 'global') . '.parent_id';
 	}
 
@@ -556,6 +561,7 @@ class ContentsController extends Controller {
 				// Remember the parent id for the next entry
 				$lo_session = $this->request->getSession();
 				$lo_session->write($this->selectedContentAreaIdSessionIdentifier, $content->contentAreaId);
+				$lo_session->write($this->selectedPageIdSessionIdentifier, $content->pageId);
 				$lo_session->write($this->selectedParentIdSessionIdentifier, $content->parentId);
 
 				if ($this->request->getData('submit') == 'submit_close') {
@@ -753,23 +759,32 @@ class ContentsController extends Controller {
 	 * @throws \Exception
 	 */
 	protected function forPage(int $pageId, bool $allowFallback = false): Page {
-		if (!$pageId && $allowFallback) {
-			// Find the first page of pagerole `page`
-			$lo_pageTable = $this->fetchTable('Pages');
-			/** @var \Awyiss\Model\Entity\Page $lo_page */
-			$lo_page = $lo_pageTable->find()->select('id')->where([
-				'page_role_id' => 1,
-				'language_shortcode' => LocaleMiddleware::getLanguage()->shortcode,
-			])->orderBy([
-				'Pages.deleted' => 'ASC',
-				'Pages.parents_active' => 'DESC',
-				'Pages.active' => 'DESC',
-				'Pages.parent_id' => 'ASC',
-			])->first();
+		$li_pageId = $pageId;
+
+		if (!$li_pageId && $allowFallback) {
+			$lo_session = $this->request->getSession();
+			$li_pageId = $lo_session->read($this->selectedPageIdSessionIdentifier);
+
+			if (!$li_pageId) {
+				// Find the first page of pagerole `page`
+				$lo_pageTable = $this->fetchTable('Pages');
+				/** @var \Awyiss\Model\Entity\Page $lo_page */
+				$lo_page = $lo_pageTable->find()->select('id')->where([
+					'page_role_id' => 1,
+					'language_shortcode' => LocaleMiddleware::getLanguage()->shortcode,
+				])->orderBy([
+					'Pages.deleted' => 'ASC',
+					'Pages.parents_active' => 'DESC',
+					'Pages.active' => 'DESC',
+					'Pages.parent_id' => 'ASC',
+				])->first();
+
+				$li_pageId = $lo_page?->id;
+			}
 		}
 
 		try {
-			$lo_page = $this->getPage($lo_page?->id ?? $pageId);
+			$lo_page = $this->getPage($li_pageId);
 		}
 		catch (RecordNotFoundException | InvalidPrimaryKeyException) {
 			$this->Flash->error(__('record_not_found'));
