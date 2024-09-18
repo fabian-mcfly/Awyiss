@@ -198,6 +198,46 @@ export function addTabAutocompleteEvent() {
 }
 
 /**
+ * Add a click event listener to the help text elements
+ * This event listener toggles the class "Visible" on the help text element when the h3 element is clicked
+ */
+export function handleHelpText() {
+	const helpTexts = document.querySelectorAll('.HelpText');
+
+	const bindEvents = (element) => {
+		element.addEventListener('click', (event) => {
+			if (event.target.matches('h3')) {
+				event.target.closest('.HelpText').classList.toggle('Visible');
+			}
+		});
+	}
+
+	helpTexts.forEach((helpText) => {
+		bindEvents(helpText);
+	});
+
+	window.observer.addObserver((mutation) => {
+		if (!mutation.addedNodes.length > 0) {
+			return;
+		}
+
+		mutation.addedNodes.forEach((node) => {
+			const selector = '.HelpText';
+			if (node.nodeType === Node.ELEMENT_NODE) {
+				if (node.matches(selector)) {
+					bindEvents(node);
+				}
+
+				const elements = node.querySelectorAll(selector);
+				elements.forEach((element) => {
+					bindEvents(node);
+				});
+			}
+		});
+	});
+}
+
+/**
  * Add a change event listener to the pagination form
  * This event listener submits the form when the value of the select element for items per page changes
  */
@@ -384,6 +424,9 @@ export async function initMainOnReady() {
 
 	// Tab autocomplete for placeholders
 	addTabAutocompleteEvent();
+
+	// Handle help text
+	handleHelpText();
 
 	// Handle pagination form
 	handlePaginationForm();

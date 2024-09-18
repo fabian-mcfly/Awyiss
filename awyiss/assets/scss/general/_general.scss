@@ -173,6 +173,82 @@ code {
 	}
 }
 
+.HelpText {
+	margin:0 0 calc(var(--lineHeightMain) * 2) 0;
+	padding:20px;
+	border:1px solid var(--colorInfo);
+	border-radius:5px;
+	background-color:color-mix(in srgb, var(--colorInfo), transparent 85%);
+	grid-column:1 / -1;
+
+	fieldset > & {
+		margin-bottom:var(--lineHeightMain);
+
+		&:last-child {
+			margin-bottom:20px;
+		}
+	}
+
+	&.Visible {
+		h3 {
+			&::after {
+				content:'\f106';
+			}
+		}
+
+		> *:not(h3) {
+			display:block;
+		}
+	}
+
+	> *:not(h3) {
+		display:none;
+	}
+
+	h3 {
+		padding-right:50px;
+		padding-left:40px;
+		font-size:1.5rem;
+		line-height:1;
+		position:relative;
+		cursor:pointer;
+
+		&::before {
+			@include la('\f05a', 30px);
+
+			color:var(--colorInfo);
+			line-height:1.5rem;
+			position:absolute;
+			left:0;
+			top:0;
+		}
+
+		&::after {
+			@include la('\f107', 30px);
+			line-height:1.5rem;
+			position:absolute;
+			right:0;
+			top:0;
+		}
+	}
+
+	p, ul {
+		margin-top:var(--lineHeightMain);
+
+		&:first-child {
+			margin-top:0;
+		}
+	}
+
+	li {
+		margin-top:calc(var(--lineHeightMain) / 2);
+
+		&:first-child {
+			margin-top:0;
+		}
+	}
+}
+
 .las {
 	&.la-check,
 	&.la-times {

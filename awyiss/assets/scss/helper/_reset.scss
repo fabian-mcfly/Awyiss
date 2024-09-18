@@ -102,8 +102,9 @@ option {
 }
 
 textarea {
-	min-height:3rem;
+	min-height:5rem;
 	resize:vertical;
+	scrollbar-width:thin;
 }
 
 em,
