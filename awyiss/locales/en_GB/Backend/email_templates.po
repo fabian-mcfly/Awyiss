@@ -97,3 +97,10 @@ msgstr "This email template cannot be deleted because it is still in use."
 
 msgid "error_valid_layout"
 msgstr "Invalid layout"
+
+msgid "placeholder_help_text"
+msgstr "<p>Additonal placeholders are:</p>"
+"<ul>"
+"<li><pre>$data</pre>This placeholder will be replaced by a complete list of all form fields with their respective entered values.</li>"
+"<li><pre>$salutation</pre>This placeholder will be replaced by the salutation specified in the form.</li>"
+"</ul>"

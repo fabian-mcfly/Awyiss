@@ -84,6 +84,11 @@
 					{{ FormHelper.control('text_plain') }}
 				{% endblock %}
 
+				<div class="HelpText Form-PlaceholderHelp">
+					{{ __d('forms', 'placeholder_help_text')|raw }}
+					{{ __('placeholder_help_text')|raw }}
+				</div>
+
 				{% block fieldsetContentInner %}
 					{% block fieldsetContentAttributes %}
 						{{ AttributesHelper.allControls('content') }}

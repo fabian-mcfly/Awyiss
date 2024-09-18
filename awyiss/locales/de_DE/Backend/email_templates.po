@@ -97,3 +97,12 @@ msgstr "Dieses E-Mail-Template kann nicht gelöscht werden, da es noch in Verwen
 
 msgid "error_valid_layout"
 msgstr "Ungültiges layout"
+
+msgid "placeholder_help_text"
+msgstr "<p>Weitere Platzhalter sind:</p>"
+"<ul>"
+"<li><pre>$data</pre>Dieser Platzhalter wird durch eine vollständige Liste aller "
+"Formularfelder mit den jeweils eingegebenen Werten ersetzt.</li>"
+"<li><pre>$salutation</pre>Dieser Platzhalter wird durch die Anrede ersetzt, die "
+"im Formular festgelegt wurde.</li>"
+"</ul>"
