@@ -90,19 +90,19 @@ class PageRoles {
 			[
 				'identifier',
 			], [
-				'name' => 'identifier',
+				'name' => 'PAGE_ROLES_IDENTIFIER',
 			]
 		)->addIndex(
 			[
 				'active',
 			], [
-				'name' => 'active',
+				'name' => 'PAGE_ROLES_ACTIVE',
 			]
 		)->addIndex(
 			[
 				'deleted',
 			], [
-				'name' => 'deleted',
+				'name' => 'PAGE_ROLES_DELETED',
 			]
 		)->create();
 	}

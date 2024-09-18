@@ -81,24 +81,28 @@ class MediaSelectors {
 			[
 				'identifier',
 			], [
-				'name' => 'identifier',
+				'name' => 'MEDIA_SELECTORS_IDENTIFIER',
 			]
 		)->addIndex(
 			[
 				'active',
 			], [
-				'name' => 'active',
+				'name' => 'MEDIA_SELECTORS_ACTIVE',
 			]
 		)->addIndex(
 			[
 				'deleted',
 			], [
-				'name' => 'deleted',
+				'name' => 'MEDIA_SELECTORS_DELETED',
 			]
 		)->create();
 
-		/** @noinspection SqlDialectInspection, SqlNoDataSourceInspection */
-		$this->migration->execute('ALTER TABLE `media_selectors` AUTO_INCREMENT=10');
+		// Insert a dummy record with id 10 and then delete it
+		$this->migration->execute(
+			'INSERT INTO `media_selectors` (`id`, `title`, `identifier`, `active`, `deleted`) 
+            VALUES (10, "dummy_title", "dummy_identifier", 1, 0)'
+		);
+		$this->migration->execute('DELETE FROM `media_selectors` WHERE `id` = 10');
 	}
 
 

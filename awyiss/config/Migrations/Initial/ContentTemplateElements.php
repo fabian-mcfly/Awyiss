@@ -68,13 +68,13 @@ class ContentTemplateElements {
 			[
 				'content_template_id',
 			], [
-				'name' => 'content_template_id',
+				'name' => 'CONTENT_TEMPLATE_ELEMENTS_CONTENT_TEMPLATE_ID',
 			]
 		)->addIndex(
 			[
 				'identifier',
 			], [
-				'name' => 'identifier',
+				'name' => 'CONTENT_TEMPLATE_ELEMENTS_IDENTIFIER',
 			]
 		)->create();
 	}

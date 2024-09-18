@@ -81,19 +81,19 @@ class ContentAreas {
 			[
 				'identifier',
 			], [
-				'name' => 'identifier',
+				'name' => 'CONTENT_AREAS_IDENTIFIER',
 			]
 		)->addIndex(
 			[
 				'active',
 			], [
-				'name' => 'active',
+				'name' => 'CONTENT_AREAS_ACTIVE',
 			]
 		)->addIndex(
 			[
 				'deleted',
 			], [
-				'name' => 'deleted',
+				'name' => 'CONTENT_AREAS_DELETED',
 			]
 		)->create();
 	}

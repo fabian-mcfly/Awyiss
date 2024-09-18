@@ -9,7 +9,6 @@ use Awyiss\Core\App;
 use Cake\Event\Event;
 use Cake\Event\EventInterface;
 use Cake\Event\EventManager as BaseEventManager;
-use Cake\Log\Log;
 
 
 /**
@@ -110,25 +109,25 @@ class EventManager extends BaseEventManager {
 			static::$lazyLoadAttempts['global'][] = $ls_scope;
 
 			//Try loading the scope from for the global realm
-			Log::debug(sprintf('Trying to lazyload global event listeners for: `%s` (`%s` fired)', $ls_scope, $name));
-			$lb_loaded = EventListenersProvider::loadListener($ls_scope, 'Global');
-			Log::debug(sprintf('Loaded: %s', $lb_loaded ? 'true' : 'false'));
+			//\Cake\Log\Log::debug(sprintf('Trying to lazyload global event listeners for: `%s` (`%s` fired)', $ls_scope, $name));
+			$lb_loaded = EventListenersProvider::loadListener($ls_scope, 'Global'); // phpcs:ignore
+			//\Cake\Log\Log::debug(sprintf('Loaded: %s', $lb_loaded ? 'true' : 'false'));
 		}
 
 		if (Awyiss::getRealm() && !in_array($ls_scope, static::$lazyLoadAttempts['current'])) {
 			static::$lazyLoadAttempts['current'][] = $ls_scope;
 
 			//Try loading the scope from for the current realm
-			Log::debug(sprintf('Trying to lazyload `%s` event listeners for: `%s` (`%s` fired)', Awyiss::getRealm(), $ls_scope, $name));
-			$lb_loaded = EventListenersProvider::loadListener($ls_scope, Awyiss::getRealm());
-			Log::debug(sprintf('Loaded: %s', $lb_loaded ? 'true' : 'false'));
+			//\Cake\Log\Log::debug(sprintf('Trying to lazyload `%s` event listeners for: `%s` (`%s` fired)', Awyiss::getRealm(), $ls_scope, $name));
+			$lb_loaded = EventListenersProvider::loadListener($ls_scope, Awyiss::getRealm()); // phpcs:ignore
+			//\Cake\Log\Log::debug(sprintf('Loaded: %s', $lb_loaded ? 'true' : 'false'));
 
 			if (!$lb_loaded && static::$pageRoleEnum::tryFromName($ls_scope)) {
-				Log::debug(sprintf('Found a page role for scope `%s`', $ls_scope));
+				//\Cake\Log\Log::debug(sprintf('Found a page role for scope `%s`', $ls_scope));
 				//Try loading the pages listener from for the current realm
-				Log::debug('Trying to lazyload fallback event listeners for pages');
-				$lb_loaded = EventListenersProvider::loadListener('Pages', Awyiss::getRealm());
-				Log::debug(sprintf('Loaded: %s', $lb_loaded ? 'true' : 'false'));
+				//\Cake\Log\Log::debug('Trying to lazyload fallback event listeners for pages');
+				$lb_loaded = EventListenersProvider::loadListener('Pages', Awyiss::getRealm()); // phpcs:ignore
+				//\Cake\Log\Log::debug(sprintf('Loaded: %s', $lb_loaded ? 'true' : 'false'));
 			}
 		}
 	}

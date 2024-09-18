@@ -103,37 +103,37 @@ class MediaFolders {
 			[
 				'parent_id',
 			], [
-				'name' => 'parent_id',
+				'name' => 'MEDIA_FOLDERS_PARENT_ID',
 			]
 		)->addIndex(
 			[
 				'language_shortcode',
 			], [
-				'name' => 'language_shortcode',
+				'name' => 'MEDIA_FOLDERS_LANGUAGE_SHORTCODE',
 			]
 		)->addIndex(
 			[
 				'path',
 			], [
-				'name' => 'path',
+				'name' => 'MEDIA_FOLDERS_PATH',
 			]
 		)->addIndex(
 			[
 				'active',
 			], [
-				'name' => 'active',
+				'name' => 'MEDIA_FOLDERS_ACTIVE',
 			]
 		)->addIndex(
 			[
 				'parents_active',
 			], [
-				'name' => 'parents_active',
+				'name' => 'MEDIA_FOLDERS_PARENTS_ACTIVE',
 			]
 		)->addIndex(
 			[
 				'deleted',
 			], [
-				'name' => 'deleted',
+				'name' => 'MEDIA_FOLDERS_DELETED',
 			]
 		)->create();
 	}

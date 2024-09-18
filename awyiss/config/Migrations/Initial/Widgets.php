@@ -87,7 +87,7 @@ class Widgets {
 			'default' => null,
 			'limit' => null,
 			'null' => true,
-		])->addColumn('parent_id', 'integer', [
+		])->addColumn('form_id', 'integer', [
 			'default' => null,
 			'limit' => null,
 			'null' => true,
@@ -135,31 +135,31 @@ class Widgets {
 			[
 				'identifier',
 			], [
-				'name' => 'identifier',
+				'name' => 'WIDGETS_IDENTIFIER',
 			]
 		)->addIndex(
 			[
 				'widget_template_id',
 			], [
-				'name' => 'widget_template_id',
+				'name' => 'WIDGETS_WIDGET_TEMPLATE_ID',
 			]
 		)->addIndex(
 			[
 				'parent_id',
 			], [
-				'name' => 'parent_id',
+				'name' => 'WIDGETS_PARENT_ID',
 			]
 		)->addIndex(
 			[
 				'active',
 			], [
-				'name' => 'active',
+				'name' => 'WIDGETS_ACTIVE',
 			]
 		)->addIndex(
 			[
 				'deleted',
 			], [
-				'name' => 'deleted',
+				'name' => 'WIDGETS_DELETED',
 			]
 		)->create();
 	}

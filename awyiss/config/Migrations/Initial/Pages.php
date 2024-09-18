@@ -86,7 +86,7 @@ class Pages {
 			'limit' => null,
 			'null' => true,
 			'signed' => true,
-		])->addColumn('parent_id', 'integer', [
+		])->addColumn('form_id', 'integer', [
 			'default' => null,
 			'limit' => null,
 			'null' => true,
@@ -138,49 +138,49 @@ class Pages {
 			[
 				'page_role_id',
 			], [
-				'name' => 'page_role_id',
+				'name' => 'PAGES_PAGE_ROLE_ID',
 			]
 		)->addIndex(
 			[
 				'page_template_id',
 			], [
-				'name' => 'page_template_id',
+				'name' => 'PAGES_PAGE_TEMPLATE_ID',
 			]
 		)->addIndex(
 			[
 				'parent_id',
 			], [
-				'name' => 'parent_id',
+				'name' => 'PAGES_PARENT_ID',
 			]
 		)->addIndex(
 			[
 				'language_shortcode',
 			], [
-				'name' => 'language_shortcode',
+				'name' => 'PAGES_LANGUAGE_SHORTCODE',
 			]
 		)->addIndex(
 			[
 				'slug',
 			], [
-				'name' => 'slug',
+				'name' => 'PAGES_SLUG',
 			]
 		)->addIndex(
 			[
 				'active',
 			], [
-				'name' => 'active',
+				'name' => 'PAGES_ACTIVE',
 			]
 		)->addIndex(
 			[
 				'parents_active',
 			], [
-				'name' => 'parents_active',
+				'name' => 'PAGES_PARENTS_ACTIVE',
 			]
 		)->addIndex(
 			[
 				'deleted',
 			], [
-				'name' => 'deleted',
+				'name' => 'PAGES_DELETED',
 			]
 		)->create();
 	}

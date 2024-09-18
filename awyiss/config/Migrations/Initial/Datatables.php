@@ -81,19 +81,19 @@ class Datatables {
 			[
 				'identifier',
 			], [
-				'name' => 'identifier',
+				'name' => 'DATATABLES_IDENTIFIER',
 			]
 		)->addIndex(
 			[
 				'active',
 			], [
-				'name' => 'active',
+				'name' => 'DATATABLES_ACTIVE',
 			]
 		)->addIndex(
 			[
 				'deleted',
 			], [
-				'name' => 'deleted',
+				'name' => 'DATATABLES_DELETED',
 			]
 		)->create();
 	}

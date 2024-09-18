@@ -68,13 +68,13 @@ class WidgetTemplateElements {
 			[
 				'widget_template_id',
 			], [
-				'name' => 'widget_template_id',
+				'name' => 'WIDGET_TEMPLATE_ELEMENTS_WIDGET_TEMPLATE_ID',
 			]
 		)->addIndex(
 			[
 				'identifier',
 			], [
-				'name' => 'identifier',
+				'name' => 'WIDGET_TEMPLATE_ELEMENTS_IDENTIFIER',
 			]
 		)->create();
 	}

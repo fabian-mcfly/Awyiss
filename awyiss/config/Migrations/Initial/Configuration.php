@@ -89,31 +89,33 @@ class Configuration {
 			[
 				'realm',
 			], [
-				'name' => 'realm',
+				'name' => 'CONFIGURATION_REALM',
 			]
 		)->addIndex(
 			[
 				'scope',
 			], [
-				'name' => 'scope',
+				'name' => 'CONFIGURATION_SCOPE',
 			]
 		)->addIndex(
 			[
 				'identifier',
 			], [
-				'name' => 'identifier',
+				'name' => 'CONFIGURATION_IDENTIFIER',
 			]
 		)->addIndex(
 			[
 				'language_shortcode',
 			], [
-				'name' => 'language_shortcode',
+				'name' => 'CONFIGURATION_LANGUAGE_SHORTCODE',
 			]
 		)->create();
 
-		$this->migration->table('configuration')
-		->changeComment('Do not alter values in scope, identifier, type and/or required')
-		->save();
+		if ($this->migration->getAdapter()->getAdapterType() !== 'sqlite') {
+			$this->migration->table('configuration')
+			->changeComment('Do not alter values in scope, identifier, type and/or required')
+			->save();
+		}
 	}
 
 

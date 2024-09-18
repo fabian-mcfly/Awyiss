@@ -128,31 +128,31 @@ class Media {
 			[
 				'name',
 			], [
-				'name' => 'file_name',
+				'name' => 'MEDIA_FILE_NAME',
 			]
 		)->addIndex(
 			[
 				'path',
 			], [
-				'name' => 'file_path',
+				'name' => 'MEDIA_FILE_PATH',
 			]
 		)->addIndex(
 			[
 				'media_folder_id',
 			], [
-				'name' => 'media_folders_id',
+				'name' => 'MEDIA_MEDIA_FOLDERS_ID',
 			]
 		)->addIndex(
 			[
 				'preview',
 			], [
-				'name' => 'preview',
+				'name' => 'MEDIA_PREVIEW',
 			]
 		)->addIndex(
 			[
 				'webp',
 			], [
-				'name' => 'webp',
+				'name' => 'MEDIA_WEBP',
 			]
 		)->create();
 	}

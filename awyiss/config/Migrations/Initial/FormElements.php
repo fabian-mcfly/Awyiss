@@ -140,31 +140,31 @@ class FormElements {
 			[
 				'parent_id',
 			], [
-				'name' => 'parent_id',
+				'name' => 'FORM_ELEMENTS_PARENT_ID',
 			]
 		)->addIndex(
 			[
 				'active',
 			], [
-				'name' => 'active',
+				'name' => 'FORM_ELEMENTS_ACTIVE',
 			]
 		)->addIndex(
 			[
 				'deleted',
 			], [
-				'name' => 'deleted',
+				'name' => 'FORM_ELEMENTS_DELETED',
 			]
 		)->addIndex(
 			[
 				'system_order',
 			], [
-				'name' => 'system_order',
+				'name' => 'FORM_ELEMENTS_SYSTEM_ORDER',
 			]
 		)->addIndex(
 			[
 				'form_id',
 			], [
-				'name' => 'form_id',
+				'name' => 'FORM_ELEMENTS_FORM_ID',
 			]
 		)->create();
 	}

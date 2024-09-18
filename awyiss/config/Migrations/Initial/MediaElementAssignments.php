@@ -48,14 +48,14 @@ class MediaElementAssignments {
 			[
 				'media_element_id',
 			], [
-				'name' => 'media_element_id',
+				'name' => 'MEDIA_ELEMENT_ASSIGNMENTS_MEDIA_ELEMENT_ID',
 			]
 		)->addIndex(
 			[
 				'scope',
 				'foreign_key',
 			], [
-				'name' => 'scope_foreign_key',
+				'name' => 'MEDIA_ELEMENT_ASSIGNMENTS_SCOPE_FOREIGN_KEY',
 			]
 		)->create();
 	}

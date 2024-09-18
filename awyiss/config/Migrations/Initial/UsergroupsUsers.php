@@ -48,13 +48,13 @@ class UsergroupsUsers {
 			[
 				'usergroup_id',
 			], [
-				'name' => 'usergroup_id',
+				'name' => 'USERGROUPS_USERS_USERGROUP_ID',
 			]
 		)->addIndex(
 			[
 				'user_id',
 			], [
-				'name' => 'user_id',
+				'name' => 'USERGROUPS_USERS_USER_ID',
 			]
 		)->create();
 	}

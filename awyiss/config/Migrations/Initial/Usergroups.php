@@ -77,13 +77,13 @@ class Usergroups {
 			[
 				'active',
 			], [
-				'name' => 'active',
+				'name' => 'USERGROUPS_ACTIVE',
 			]
 		)->addIndex(
 			[
 				'deleted',
 			], [
-				'name' => 'deleted',
+				'name' => 'USERGROUPS_DELETED',
 			]
 		)->create();
 	}

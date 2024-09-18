@@ -102,19 +102,19 @@ class Users {
 			[
 				'active',
 			], [
-				'name' => 'active',
+				'name' => 'USERS_ACTIVE',
 			]
 		)->addIndex(
 			[
 				'deleted',
 			], [
-				'name' => 'deleted',
+				'name' => 'USERS_DELETED',
 			]
 		)->addIndex(
 			[
 				'username',
 			], [
-				'name' => 'username',
+				'name' => 'USERS_USERNAME',
 			]
 		)->create();
 	}

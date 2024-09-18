@@ -53,19 +53,19 @@ class ContentTemplateContentAreas {
 			[
 				'content_template_id',
 			], [
-				'name' => 'content_template_id',
+				'name' => 'CONTENT_TEMPLATE_CONTENT_AREAS_CONTENT_TEMPLATE_ID',
 			]
 		)->addIndex(
 			[
 				'content_area_id',
 			], [
-				'name' => 'content_area_id',
+				'name' => 'CONTENT_TEMPLATE_CONTENT_AREAS_CONTENT_AREA_ID',
 			]
 		)->addIndex(
 			[
 				'page_template_id',
 			], [
-				'name' => 'page_template_id',
+				'name' => 'CONTENT_TEMPLATE_CONTENT_AREAS_PAGE_TEMPLATE_ID',
 			]
 		)->create();
 	}

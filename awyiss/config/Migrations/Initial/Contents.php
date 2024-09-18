@@ -155,37 +155,37 @@ class Contents {
 			[
 				'page_id',
 			], [
-				'name' => 'page_id',
+				'name' => 'CONTENTS_PAGE_ID',
 			]
 		)->addIndex(
 			[
 				'content_area_id',
 			], [
-				'name' => 'content_area_id',
+				'name' => 'CONTENTS_CONTENT_AREA_ID',
 			]
 		)->addIndex(
 			[
 				'content_template_id',
 			], [
-				'name' => 'content_template_id',
+				'name' => 'CONTENTS_CONTENT_TEMPLATE_ID',
 			]
 		)->addIndex(
 			[
 				'parent_id',
 			], [
-				'name' => 'parent_id',
+				'name' => 'CONTENTS_PARENT_ID',
 			]
 		)->addIndex(
 			[
 				'active',
 			], [
-				'name' => 'active',
+				'name' => 'CONTENTS_ACTIVE',
 			]
 		)->addIndex(
 			[
 				'deleted',
 			], [
-				'name' => 'deleted',
+				'name' => 'CONTENTS_DELETED',
 			]
 		)->create();
 	}

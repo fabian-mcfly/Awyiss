@@ -87,25 +87,25 @@ class FormEntries {
 			[
 				'form_id',
 			], [
-				'name' => 'form_id',
+				'name' => 'FORM_ENTRIES_FORM_ID',
 			]
 		)->addIndex(
 			[
 				'ip_hash',
 			], [
-				'name' => 'ip_hash',
+				'name' => 'FORM_ENTRIES_IP_HASH',
 			]
 		)->addIndex(
 			[
 				'deleted',
 			], [
-				'name' => 'deleted',
+				'name' => 'FORM_ENTRIES_DELETED',
 			]
 		)->addIndex(
 			[
 				'created_on',
 			], [
-				'name' => 'created_on',
+				'name' => 'FORM_ENTRIES_CREATED_ON',
 			]
 		)->create();
 	}

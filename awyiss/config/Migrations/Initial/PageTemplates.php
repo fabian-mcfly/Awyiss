@@ -91,20 +91,30 @@ class PageTemplates {
 			[
 				'page_role_id',
 			], [
-				'name' => 'page_role_id',
+				'name' => 'PAGE_TEMPLATES_PAGE_ROLE_ID',
 			]
 		)->addIndex(
 			[
 				'active',
 			], [
-				'name' => 'active',
+				'name' => 'PAGE_TEMPLATES_ACTIVE',
 			]
 		)->addIndex(
 			[
 				'deleted',
 			], [
-				'name' => 'deleted',
+				'name' => 'PAGE_TEMPLATES_DELETED',
 			]
 		)->create();
+	}
+
+
+	/**
+	 * Migrate Down.
+	 *
+	 * @return void
+	 */
+	public function down(): void {
+		$this->migration->table('page_templates')->drop()->save();
 	}
 }

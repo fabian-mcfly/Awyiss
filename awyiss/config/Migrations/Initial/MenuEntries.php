@@ -104,31 +104,31 @@ class MenuEntries {
 			[
 				'menu_id',
 			], [
-				'name' => 'menu_id',
+				'name' => 'MENU_ENTRIES_MENU_ID',
 			]
 		)->addIndex(
 			[
 				'parent_id',
 			], [
-				'name' => 'parent_id',
+				'name' => 'MENU_ENTRIES_PARENT_ID',
 			]
 		)->addIndex(
 			[
 				'language_shortcode',
 			], [
-				'name' => 'language_shortcode',
+				'name' => 'MENU_ENTRIES_LANGUAGE_SHORTCODE',
 			]
 		)->addIndex(
 			[
 				'active',
 			], [
-				'name' => 'active',
+				'name' => 'MENU_ENTRIES_ACTIVE',
 			]
 		)->addIndex(
 			[
 				'deleted',
 			], [
-				'name' => 'deleted',
+				'name' => 'MENU_ENTRIES_DELETED',
 			]
 		)->create();
 	}

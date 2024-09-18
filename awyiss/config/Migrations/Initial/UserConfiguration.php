@@ -55,19 +55,19 @@ class UserConfiguration {
 			[
 				'user_id',
 			], [
-				'name' => 'user_id',
+				'name' => 'USER_CONFIGURATION_USER_ID',
 			]
 		)->addIndex(
 			[
 				'scope',
 			], [
-				'name' => 'scope',
+				'name' => 'USER_CONFIGURATION_SCOPE',
 			]
 		)->addIndex(
 			[
 				'identifier',
 			], [
-				'name' => 'identifier',
+				'name' => 'USER_CONFIGURATION_IDENTIFIER',
 			]
 		)->create();
 	}

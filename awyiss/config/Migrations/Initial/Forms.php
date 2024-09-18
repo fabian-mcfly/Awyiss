@@ -146,19 +146,19 @@ class Forms {
 			[
 				'identifier',
 			], [
-				'name' => 'identifier',
+				'name' => 'FORMS_IDENTIFIER',
 			]
 		)->addIndex(
 			[
 				'active',
 			], [
-				'name' => 'active',
+				'name' => 'FORMS_ACTIVE',
 			]
 		)->addIndex(
 			[
 				'deleted',
 			], [
-				'name' => 'deleted',
+				'name' => 'FORMS_DELETED',
 			]
 		)->create();
 	}

@@ -67,39 +67,39 @@ class MediaAssignments {
 			[
 				'media_element_id',
 			], [
-				'name' => 'media_element_id',
+				'name' => 'MEDIA_ASSIGNMENTS_MEDIA_ELEMENT_ID',
 			]
 		)->addIndex(
 			[
 				'media_element_selector_identifier',
 			], [
-				'name' => 'media_element_selector_identifier',
+				'name' => 'MEDIA_ASSIGNMENTS_MEDIA_ELEMENT_SELECTOR_IDENTIFIER',
 			]
 		)->addIndex(
 			[
 				'media_element_id',
 				'media_element_selector_identifier',
 			], [
-				'name' => 'media_element_media_element_selector',
+				'name' => 'MEDIA_ASSIGNMENTS_MEDIA_ELEMENT_MEDIA_ELEMENT_SELECTOR',
 			]
 		)->addIndex(
 			[
 				'scope',
 				'foreign_key',
 			], [
-				'name' => 'scope_foreign_key',
+				'name' => 'MEDIA_ASSIGNMENTS_SCOPE_FOREIGN_KEY',
 			]
 		)->addIndex(
 			[
 				'media_id',
 			], [
-				'name' => 'media_id',
+				'name' => 'MEDIA_ASSIGNMENTS_MEDIA_ID',
 			]
 		)->addIndex(
 			[
 				'media_folder_id',
 			], [
-				'name' => 'media_folder_id',
+				'name' => 'MEDIA_ASSIGNMENTS_MEDIA_FOLDER_ID',
 			]
 		)->create();
 	}

@@ -81,19 +81,19 @@ class Menus {
 			[
 				'identifier',
 			], [
-				'name' => 'identifier',
+				'name' => 'MENUS_IDENTIFIER',
 			]
 		)->addIndex(
 			[
 				'active',
 			], [
-				'name' => 'active',
+				'name' => 'MENUS_ACTIVE',
 			]
 		)->addIndex(
 			[
 				'deleted',
 			], [
-				'name' => 'deleted',
+				'name' => 'MENUS_DELETED',
 			]
 		)->create();
 	}

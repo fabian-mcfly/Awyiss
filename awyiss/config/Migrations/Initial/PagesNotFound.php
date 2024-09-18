@@ -44,18 +44,18 @@ class PagesNotFound {
 			'limit' => 2048,
 			'null' => true,
 		])->addColumn('is_robot', 'boolean', [
+			'default' => 0,
+			'limit' => null,
+			'null' => false,
+		])->addColumn('created_on', 'datetime', [
 			'default' => false,
 			'limit' => null,
-			'null' => true,
-		])->addColumn('created_on', 'datetime', [
-			'default' => 'current_timestamp()',
-			'limit' => null,
-			'null' => true,
+			'null' => false,
 		])->addIndex(
 			[
 				'slug',
 			], [
-				'name' => 'slug',
+				'name' => 'PAGES_NOT_FOUND_SLUG',
 			]
 		)->create();
 	}

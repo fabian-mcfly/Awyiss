@@ -102,13 +102,13 @@ class BackendMenuEntries {
 			[
 				'active',
 			], [
-				'name' => 'active',
+				'name' => 'BACKEND_MENU_ENTRIES_ACTIVE',
 			]
 		)->addIndex(
 			[
 				'deleted',
 			], [
-				'name' => 'deleted',
+				'name' => 'BACKEND_MENU_ENTRIES_DELETED',
 			]
 		)->create();
 	}

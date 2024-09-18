@@ -106,25 +106,25 @@ class Languages {
 			[
 				'realm',
 			], [
-				'name' => 'realm',
+				'name' => 'LANGUAGES_REALM',
 			]
 		)->addIndex(
 			[
 				'shortcode',
 			], [
-				'name' => 'shortcode',
+				'name' => 'LANGUAGES_SHORTCODE',
 			]
 		)->addIndex(
 			[
 				'active',
 			], [
-				'name' => 'active',
+				'name' => 'LANGUAGES_ACTIVE',
 			]
 		)->addIndex(
 			[
 				'deleted',
 			], [
-				'name' => 'deleted',
+				'name' => 'LANGUAGES_DELETED',
 			]
 		)->create();
 	}

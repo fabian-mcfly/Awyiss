@@ -127,31 +127,33 @@ class Attributes  {
 			[
 				'identifier',
 			], [
-				'name' => 'identifier',
+				'name' => 'ATTRIBUTES_IDENTIFIER',
 			]
 		)->addIndex(
 			[
 				'active',
 			], [
-				'name' => 'active',
+				'name' => 'ATTRIBUTES_ACTIVE',
 			]
 		)->addIndex(
 			[
 				'deleted',
 			], [
-				'name' => 'deleted',
+				'name' => 'ATTRIBUTES_DELETED',
 			]
 		)->addIndex(
 			[
 				'scope',
 			], [
-				'name' => 'scope',
+				'name' => 'ATTRIBUTES_SCOPE',
 			]
 		)->create();
 
-		$this->migration->table('attributes')
-		->changeComment('Do not alter values in scope, identifier, type and/or required')
-		->save();
+		if ($this->migration->getAdapter()->getAdapterType() !== 'sqlite') {
+			$this->migration->table('attributes')
+			->changeComment('Do not alter values in scope, identifier, type and/or required')
+			->save();
+		}
 	}
 
 

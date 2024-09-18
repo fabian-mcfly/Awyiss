@@ -53,14 +53,24 @@ class PageTemplateContentAreas {
 			[
 				'page_template_id',
 			], [
-				'name' => 'page_template_id',
+				'name' => 'PAGE_TEMPLATE_CONTENT_AREAS_PAGE_TEMPLATE_ID',
 			]
 		)->addIndex(
 			[
 				'content_area_id',
 			], [
-				'name' => 'content_area_id',
+				'name' => 'PAGE_TEMPLATE_CONTENT_AREAS_CONTENT_AREA_ID',
 			]
 		)->create();
+	}
+
+
+	/**
+	 * Migrate Down.
+	 *
+	 * @return void
+	 */
+	public function down(): void {
+		$this->migration->table('page_template_content_areas')->drop()->save();
 	}
 }

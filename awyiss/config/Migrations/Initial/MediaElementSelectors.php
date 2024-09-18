@@ -65,19 +65,19 @@ class MediaElementSelectors {
 			[
 				'identifier',
 			], [
-				'name' => 'identifier',
+				'name' => 'MEDIA_ELEMENT_SELECTORS_IDENTIFIER',
 			]
 		)->addIndex(
 			[
 				'media_element_id',
 			], [
-				'name' => 'media_element_id',
+				'name' => 'MEDIA_ELEMENT_SELECTORS_MEDIA_ELEMENT_ID',
 			]
 		)->addIndex(
 			[
 				'media_selector_id',
 			], [
-				'name' => 'media_selector_id',
+				'name' => 'MEDIA_ELEMENT_SELECTORS_MEDIA_SELECTOR_ID',
 			]
 		)->create();
 	}

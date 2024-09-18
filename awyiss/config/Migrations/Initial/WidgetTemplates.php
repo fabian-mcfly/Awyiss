@@ -89,13 +89,13 @@ class WidgetTemplates {
 			[
 				'active',
 			], [
-				'name' => 'active',
+				'name' => 'WIDGET_TEMPLATES_ACTIVE',
 			]
 		)->addIndex(
 			[
 				'deleted',
 			], [
-				'name' => 'deleted',
+				'name' => 'WIDGET_TEMPLATES_DELETED',
 			]
 		)->create();
 	}

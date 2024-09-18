@@ -77,13 +77,13 @@ class Audit {
 				'scope',
 				'foreign_key',
 			], [
-				'name' => 'scope',
+				'name' => 'AUDIT_SCOPE',
 			]
 		)->addIndex(
 			[
 				'transaction_id',
 			], [
-				'name' => 'transaction_id',
+				'name' => 'AUDIT_TRANSACTION_ID',
 			]
 		)->create();
 	}

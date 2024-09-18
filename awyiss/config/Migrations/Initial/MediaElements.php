@@ -90,24 +90,28 @@ class MediaElements {
 			[
 				'identifier',
 			], [
-				'name' => 'identifier',
+				'name' => 'MEDIA_ELEMENTS_IDENTIFIER',
 			]
 		)->addIndex(
 			[
 				'active',
 			], [
-				'name' => 'active',
+				'name' => 'MEDIA_ELEMENTS_ACTIVE',
 			]
 		)->addIndex(
 			[
 				'deleted',
 			], [
-				'name' => 'deleted',
+				'name' => 'MEDIA_ELEMENTS_DELETED',
 			]
 		)->create();
 
-		/** @noinspection SqlDialectInspection, SqlNoDataSourceInspection */
-		$this->migration->execute('ALTER TABLE `media_elements` AUTO_INCREMENT=10');
+		// Insert a dummy record with id 10 and then delete it
+		$this->migration->execute(
+			'INSERT INTO `media_elements` (`id`, `title`, `identifier`, `column_span`, `system_order`, `active`, `deleted`)
+			VALUES (10, "dummy_title", "dummy_identifier", "12/12", 0, 1, 0)'
+		);
+		$this->migration->execute('DELETE FROM `media_elements` WHERE `id` = 10');
 	}
 
 

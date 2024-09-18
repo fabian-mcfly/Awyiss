@@ -79,13 +79,13 @@ class SlugHistory {
 			[
 				'slug',
 			], [
-				'name' => 'slug',
+				'name' => 'SLUG_HISTORY_SLUG',
 			]
 		)->addIndex(
 			[
 				'page_id',
 			], [
-				'name' => 'page_id',
+				'name' => 'SLUG_HISTORY_PAGE_ID',
 			]
 		)->create();
 	}

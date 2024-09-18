@@ -59,19 +59,19 @@ class UsergroupPermissions {
 			[
 				'usergroup_id',
 			], [
-				'name' => 'usergroup_id',
+				'name' => 'USERGROUP_PERMISSIONS_USERGROUP_ID',
 			]
 		)->addIndex(
 			[
 				'scope',
 			], [
-				'name' => 'scope',
+				'name' => 'USERGROUP_PERMISSIONS_SCOPE',
 			]
 		)->addIndex(
 			[
 				'identifier',
 			], [
-				'name' => 'identifier',
+				'name' => 'USERGROUP_PERMISSIONS_IDENTIFIER',
 			]
 		)->create();
 	}

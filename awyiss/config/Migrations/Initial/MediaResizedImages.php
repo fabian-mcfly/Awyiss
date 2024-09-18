@@ -79,25 +79,25 @@ class MediaResizedImages {
 			[
 				'media_id',
 			], [
-				'name' => 'media_id',
+				'name' => 'MEDIA_RESIZED_IMAGES_MEDIA_ID',
 			]
 		)->addIndex(
 			[
 				'name',
 			], [
-				'name' => 'name',
+				'name' => 'MEDIA_RESIZED_IMAGES_NAME',
 			]
 		)->addIndex(
 			[
 				'path',
 			], [
-				'name' => 'path',
+				'name' => 'MEDIA_RESIZED_IMAGES_PATH',
 			]
 		)->addIndex(
 			[
 				'status',
 			], [
-				'name' => 'status',
+				'name' => 'MEDIA_RESIZED_IMAGES_STATUS',
 			]
 		)->create();
 	}

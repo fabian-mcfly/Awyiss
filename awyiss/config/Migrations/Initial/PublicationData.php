@@ -56,13 +56,13 @@ class PublicationData {
 				'foreign_key',
 				'scope',
 			], [
-				'name' => 'foreign_key_scope',
+				'name' => 'PUBLICATION_DATA_FOREIGN_KEY_SCOPE',
 			]
 		)->addIndex(
 			[
 				'type',
 			], [
-				'name' => 'type',
+				'name' => 'PUBLICATION_DATA_TYPE',
 			]
 		)->create();
 	}

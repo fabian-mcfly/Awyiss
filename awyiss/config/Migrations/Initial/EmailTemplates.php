@@ -92,13 +92,13 @@ class EmailTemplates {
 				[
 					'active',
 				], [
-					'name' => 'active',
+					'name' => 'EMAIL_TEMPLATES_ACTIVE',
 				]
 			)->addIndex(
 				[
 					'deleted',
 				], [
-					'name' => 'deleted',
+					'name' => 'EMAIL_TEMPLATES_DELETED',
 				]
 			)->create();
 	}

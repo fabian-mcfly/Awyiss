@@ -96,25 +96,25 @@ class Designs {
 			[
 				'identifier',
 			], [
-				'name' => 'identifier',
+				'name' => 'DESIGNS_IDENTIFIER',
 			]
 		)->addIndex(
 			[
 				'in_use',
 			], [
-				'name' => 'in_use',
+				'name' => 'DESIGNS_IN_USE',
 			]
 		)->addIndex(
 			[
 				'is_preview',
 			], [
-				'name' => 'is_preview',
+				'name' => 'DESIGNS_IS_PREVIEW',
 			]
 		)->addIndex(
 			[
 				'deleted',
 			], [
-				'name' => 'deleted',
+				'name' => 'DESIGNS_DELETED',
 			]
 		)->create();
 	}

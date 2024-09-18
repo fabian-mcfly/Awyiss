@@ -90,13 +90,13 @@ class ContentTemplates {
 			[
 				'active',
 			], [
-				'name' => 'active',
+				'name' => 'CONTENT_TEMPLATES_ACTIVE',
 			]
 		)->addIndex(
 			[
 				'deleted',
 			], [
-				'name' => 'deleted',
+				'name' => 'CONTENT_TEMPLATES_DELETED',
 			]
 		)->create();
 	}
