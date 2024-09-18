@@ -11,7 +11,8 @@
 	&.CannotMoveUpwards {
 		margin-top:var(--lineHeightMain);
 
-		&:has(.Button-ListView) {
+		&:has(.Button-ListView),
+		&:has(.Button-ColumnView-Enable) {
 			+ .Overview-List,
 			+ .Overview-Table {
 				margin-top:0;
