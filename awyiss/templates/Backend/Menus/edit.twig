@@ -19,11 +19,9 @@
 	{% block buttonArea %}
 		<div class="ButtonArea">
 			{% block formEditButtons %}
-				{% do AuthorizationHelper.setScope('menu_entries') %}
 				{% if AuthorizationHelper.isAccessible('read') %}
 					{{ HtmlHelper.link(__('view_entries'), {controller: 'menuEntries', action: 'overview', menuId: entity.id}, {class: 'Button Button-Small Button-Subtle Button-View Button-ViewMenuEntries'}) }}
 				{% endif %}
-				{% do AuthorizationHelper.resetScope() %}
 
 				<label for="SaveAsCopy" class="Button Button-SaveAsCopy Label-SaveAsCopy">{{ __('as_copy') }}</label>
 				{{ FormHelper.button(__('save'), {class: 'Button Button-Success Button-Save'}) }}
