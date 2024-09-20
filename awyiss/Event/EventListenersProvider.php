@@ -123,6 +123,15 @@ class EventListenersProvider {
 
 
 	/**
+	 * @return void
+	 */
+	public static function reset(): void {
+		static::$eventListeners = [];
+		static::$loadedListeners = [];
+	}
+
+
+	/**
 	 * @param string $scope
 	 * @param string $realm
 	 * @return array

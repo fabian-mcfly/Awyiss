@@ -28,6 +28,18 @@ class EventManager extends BaseEventManager {
 	 */
 	protected static string $pageRoleEnum;
 
+
+	/**
+	 * Initialize the EventManager
+	 */
+	public function __construct(bool $resetStatic = false) {
+		if ($resetStatic) {
+			$this->reset();
+			EventListenersProvider::reset();
+		}
+	}
+
+
 	/**
 	 * @inheritDoc
 	 * @throws \ReflectionException
@@ -144,5 +156,16 @@ class EventManager extends BaseEventManager {
 				preg_grep($eventKeyPattern, array_keys($this->_listeners)) ?: []
 			)
 		);
+	}
+
+
+	/**
+	 * @return void
+	 */
+	public function reset(): void {
+		static::$lazyLoadAttempts = [
+			'global' => [],
+			'current' => [],
+		];
 	}
 }
