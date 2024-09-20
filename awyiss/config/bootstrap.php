@@ -80,7 +80,14 @@ if (defined('CUSTOM_DIR')) {
 	/**
 	 * Custom namespace
 	 */
-	define('CUSTOM_NAMESPACE', Inflector::camelize(str_replace('_', '-', CUSTOM_DIR), '-'));
+	if (!defined('CUSTOM_NAMESPACE')) {
+		$la_parts = explode(DS, CUSTOM_DIR);
+		array_walk($la_parts, function (&$part) {
+			/** @noinspection PhpVariableNamingConventionInspection */
+			$part = Inflector::camelize($part, '-');
+		});
+		define('CUSTOM_NAMESPACE', implode('/', $la_parts));
+	}
 
 	if (defined('CONFIG_ENV')) {
 		/**
