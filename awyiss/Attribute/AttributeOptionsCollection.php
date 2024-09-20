@@ -24,8 +24,12 @@ abstract class AttributeOptionsCollection extends ArrayIterator implements Attri
 		$ls_scope = static::getScope();
 		$ls_testScope = AttributeOptionsProvider::sanitizeScope($ls_scope);
 
+		if (empty($ls_testScope)) {
+			throw new RuntimeException('The scope cannot be empty.');
+		}
+
 		if ($ls_testScope !== $ls_scope) {
-			throw new RuntimeException(sprintf('The provided scope should be written CamelCased (`%s`). `%s` given.', $ls_testScope, $ls_scope));
+			static::$scope = $ls_testScope;
 		}
 
 		$this->initializeAttributeOptions();
