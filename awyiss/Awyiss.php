@@ -74,18 +74,23 @@ class Awyiss extends BaseApplication {
 
 	/**
 	 * @inheritDoc
-	 * @param ClassLoader $loader
+	 * @param string $configDir The directory the bootstrap configuration is held in.
 	 * @param EventManagerInterface|null $eventManager Application event manager instance.
 	 * @param ControllerFactoryInterface|null $controllerFactory Controller factory.
+	 * @param \Composer\Autoload\ClassLoader|null $loader
 	 * @noinspection PhpMissingParentConstructorInspection
 	 */
-	public function __construct(?ClassLoader $loader = null, ?EventManagerInterface $eventManager = null, ?ControllerFactoryInterface $controllerFactory = null) {
+	public function __construct(
+		string $configDir,
+		?EventManagerInterface $eventManager = null,
+		?ControllerFactoryInterface $controllerFactory = null,
+		?ClassLoader $loader = null,
+	) {
+		$this->configDir = rtrim($configDir, DS) . DS;
 		$this->classLoader = $loader;
 		$this->plugins = Plugin::getCollection();
 		$this->_eventManager = $eventManager ?: EventManager::instance();
 		$this->controllerFactory = $controllerFactory;
-
-		$this->configDir = dirname(__DIR__) . DS . 'awyiss' . DS . 'config' . DS;
 	}
 
 

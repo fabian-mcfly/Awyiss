@@ -39,7 +39,7 @@ use Awyiss\Awyiss;
 use Cake\Http\Server;
 
 // Bind your application to the server.
-$lo_server = new Server(new Awyiss($lo_loader));
+$lo_server = new Server(new Awyiss(dirname(__DIR__) . DS . 'awyiss' . DS . 'config', null, null, $lo_loader));
 
 // Run the request/response through the application and emit the response.
 $lo_server->emit($lo_server->run());
