@@ -84,7 +84,7 @@ class AttributeOptions {
 		}
 
 		if ($toScalar) {
-			$this->setScalar($toScalar);
+			$this->setToScalar($toScalar);
 		}
 
 		if ($validate) {
@@ -128,7 +128,7 @@ class AttributeOptions {
 	 * @param \Awyiss\Model\Entity|null $entity
 	 * @return array
 	 */
-	public function buildOptions(array $currentOptions, ?Entity $entity): array {
+	public function buildOptions(array $currentOptions, ?Entity $entity = null): array {
 		$la_currentOptions = $currentOptions;
 
 		$lx_disabled = $this->getDisabled(true, $entity, $la_currentOptions);
@@ -246,7 +246,7 @@ class AttributeOptions {
 	 * @param array $currentOptions
 	 * @return mixed
 	 */
-	public function getScalar(bool $evaluate = false, mixed $value = null, ?Entity $entity = null, array &$currentOptions = []): mixed {
+	public function getToScalar(bool $evaluate = false, mixed $value = null, ?Entity $entity = null, array &$currentOptions = []): mixed {
 		if ($evaluate && is_callable($this->toScalar)) {
 			return call_user_func_array($this->toScalar, [$value, $entity, &$currentOptions]);
 		}
@@ -261,11 +261,26 @@ class AttributeOptions {
 	 * @return $this
 	 * @noinspection PhpUnused
 	 */
-	public function setScalar(?callable $toScalar = null): static {
+	public function setToScalar(?callable $toScalar = null): static {
 		$this->toScalar = $toScalar;
 
 
 		return $this;
+	}
+
+
+	/**
+	 * @param mixed $value
+	 * @param \Awyiss\Model\Entity|null $entity
+	 * @param array $currentOptions
+	 * @return mixed
+	 */
+	public function toScalar(mixed $value, ?Entity $entity = null, array &$currentOptions = []): mixed {
+		if (!$this->toScalar) {
+			return $value;
+		}
+
+		return call_user_func_array($this->toScalar, [$value, $entity, &$currentOptions]);
 	}
 
 
@@ -300,7 +315,7 @@ class AttributeOptions {
 	 * @param Entity|null $entity
 	 * @return string|bool
 	 */
-	public function validateValue(mixed $value, ?Entity $entity): bool|string {
+	public function validateValue(mixed $value, ?Entity $entity = null): bool|string {
 		$lx_validate = $this->getValidate();
 
 		//No validation? Every value is valid.
@@ -333,7 +348,7 @@ class AttributeOptions {
 			}
 
 			if (!is_scalar($lx_value)) {
-				$lx_value = $this->getScalar(true, $lx_value, $entity);
+				$lx_value = $this->toScalar($lx_value, $entity);
 			}
 
 			$lb_inOptions = array_key_exists($lx_value, $la_options);
