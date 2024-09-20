@@ -50,6 +50,13 @@ class AttributeOptionsProvider {
 		}
 
 		if ($returnLoaded) {
+			if (empty(static::$loadedAttributeOptions)) {
+				/** @var class-string<\Awyiss\Attribute\AttributeOptionsInterface> $ls_attributeOptionsClass */
+				foreach (static::$attributeOptions as $ls_attributeOptionsClass) {
+					static::loadAttributeOptions($ls_attributeOptionsClass);
+				}
+			}
+
 			return static::$loadedAttributeOptions;
 		}
 
@@ -61,7 +68,7 @@ class AttributeOptionsProvider {
 	/**
 	 * Returns an instance of a AttributeOptionsCollection class with the provided scope or null
 	 *
-	 * @param class-string<AttributeOptionsInterface>|string $scope
+	 * @param class-string<\Awyiss\Attribute\AttributeOptionsInterface>|string $scope
 	 * @return AttributeOptionsInterface|null
 	 * @throws \ReflectionException
 	 * @noinspection PhpUnused
@@ -210,6 +217,10 @@ class AttributeOptionsProvider {
 							AttributeOptionsInterface::class
 						)
 					);
+				}
+
+				if ($lo_reflection->isAbstract()) {
+					continue;
 				}
 
 				/**
