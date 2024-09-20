@@ -67,9 +67,9 @@ class Awyiss extends BaseApplication {
 
 
 	/**
-	 * @var \Composer\Autoload\ClassLoader
+	 * @var \Composer\Autoload\ClassLoader|null
 	 */
-	protected ClassLoader $classLoader;
+	protected ?ClassLoader $classLoader;
 
 
 	/**
@@ -79,7 +79,7 @@ class Awyiss extends BaseApplication {
 	 * @param ControllerFactoryInterface|null $controllerFactory Controller factory.
 	 * @noinspection PhpMissingParentConstructorInspection
 	 */
-	public function __construct(ClassLoader $loader, ?EventManagerInterface $eventManager = null, ?ControllerFactoryInterface $controllerFactory = null) {
+	public function __construct(?ClassLoader $loader = null, ?EventManagerInterface $eventManager = null, ?ControllerFactoryInterface $controllerFactory = null) {
 		$this->classLoader = $loader;
 		$this->plugins = Plugin::getCollection();
 		$this->_eventManager = $eventManager ?: EventManager::instance();
@@ -114,7 +114,7 @@ class Awyiss extends BaseApplication {
 		 * so we add the path to the autoloader for the customer-specific namespace
 		 */
 		if (defined('CUSTOM_NAMESPACE')) {
-			$this->classLoader->addPsr4(CUSTOM_NAMESPACE . '\\', [ROOT . DS . CUSTOM_DIR], true);
+			$this->classLoader?->addPsr4(CUSTOM_NAMESPACE . '\\', [ROOT . DS . CUSTOM_DIR], true);
 		}
 
 
