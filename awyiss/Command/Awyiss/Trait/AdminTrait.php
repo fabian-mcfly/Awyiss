@@ -79,6 +79,16 @@ trait AdminTrait {
 			return;
 		}
 
+		if ($this->dryRun) {
+			$this->io->success('Admin usergroup created successfully.');
+			$this->io->success('Admin user created successfully.', $this->adminPassword ? 1 : 0);
+			if (!$this->adminPassword) {
+				$this->io->info(' The password for the admin user is: ' . Security::randomString(16));
+			}
+
+			return;
+		}
+
 		$lo_usergroup = $this->createAdminUsergroup();
 
 		/** @var \Awyiss\Model\Table\UsergroupsTable $lo_usersTable */
@@ -106,7 +116,7 @@ trait AdminTrait {
 		if ($lo_usersTable->save($lo_user)) {
 			$this->io->success('Admin user created successfully.', $this->adminPassword ? 1 : 0);
 			if (!$this->adminPassword) {
-				$this->io->warning(' The password for the admin user is: ' . $ls_password);
+				$this->io->info(' The password for the admin user is: ' . $ls_password);
 			}
 		}
 		else {

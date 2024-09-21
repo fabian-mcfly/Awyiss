@@ -42,6 +42,12 @@ trait ConfigTrait {
 	 * @return void
 	 */
 	protected function createEnv(): void {
+		if ($this->dryRun) {
+			$this->io->success('.env file created.');
+
+			return;
+		}
+
 		$ls_envExampleFilePath = ROOT . DS . $this->customerName . DS . '.env.example';
 		$ls_envFilePath = ROOT . DS . '.env';
 
@@ -69,6 +75,12 @@ trait ConfigTrait {
 	 * @throws \Random\RandomException
 	 */
 	protected function setBaseConfigFile(): void {
+		if ($this->dryRun) {
+			$this->io->success('Base config file set.');
+
+			return;
+		}
+
 		// Define the path to the base configuration file
 		$ls_baseConfigFilePath = ROOT . DS . $this->customerName . DS . 'config/awyiss.php';
 
@@ -130,6 +142,11 @@ trait ConfigTrait {
 		if (!$this->dbUsername) {
 			$this->io->out('No database credentials provided. Skipping environment config file.');
 
+			return;
+		}
+
+		if ($this->dryRun) {
+			$this->io->success('Environment config file set.');
 
 			return;
 		}
@@ -200,6 +217,12 @@ trait ConfigTrait {
 	 * @return void
 	 */
 	protected function setupDemoAttributeCollection(): void {
+		if ($this->dryRun) {
+			$this->io->success('\Customer\Attribute\AttributeOptionsCollection file updated.');
+
+			return;
+		}
+
 		// Define the path to the ContentsAttributeOptionsCollection.php file
 		$ls_filePath = ROOT . DS . $this->customerName . DS . 'Attribute' . DS . 'AttributeOptionsCollection' . DS . 'ContentsAttributeOptionsCollection.php';
 
@@ -223,6 +246,12 @@ trait ConfigTrait {
 	 * @return void
 	 */
 	protected function setupDemoMenuCell(): void {
+		if ($this->dryRun) {
+			$this->io->success('\Customer\View\Cell\Frontend\MenuCell file updated.');
+
+			return;
+		}
+
 		// Define the path to the MenuCell.php file
 		$ls_filePath = ROOT . DS . $this->customerName . DS . 'View' . DS . 'Cell' . DS . 'Frontend' . DS . 'MenuCell.php';
 
@@ -246,6 +275,12 @@ trait ConfigTrait {
 	 * @return void
 	 */
 	protected function setTwigNamespace(): void {
+		if ($this->dryRun) {
+			$this->io->success('ide-twig.json file updated.');
+
+			return;
+		}
+
 		// Define the path to the ide-twig.json file
 		$ls_filePath = ROOT . DS . $this->customerName . DS . 'templates' . DS . 'ide-twig.json';
 
@@ -274,6 +309,12 @@ trait ConfigTrait {
 	 * @return void
 	 */
 	protected function setTwigExtension(): void {
+		if ($this->dryRun) {
+			$this->io->success('\Twig\Extension\CustomerExtension file updated and renamed.');
+
+			return;
+		}
+
 		// Define the path to the CustomerExtension.php file
 		$ls_filePath = ROOT . DS . $this->customerName . DS . 'Twig' . DS . 'Extension' . DS . 'CustomerExtension.php';
 

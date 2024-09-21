@@ -29,6 +29,10 @@ class InstallCommand extends Command {
 
 
 	/**
+	 * @var bool Whether the installation is a dry run
+	 */
+	protected bool $dryRun = false;
+	/**
 	 * @var \Symfony\Component\Filesystem\Filesystem The filesystem
 	 */
 	protected Filesystem $filesystem;
@@ -64,6 +68,9 @@ class InstallCommand extends Command {
 	public function execute(Arguments $args, ConsoleIo $io): int {
 		$this->filesystem = new Filesystem();
 		$this->io = $io;
+
+		// Check if the installation is a dry run
+		$this->dryRun = $args->getOption('dry-run');
 
 		// If the user just wants to rebuild the symlinks, do that and exit
 		if ($args->getOption('rebuild-symlinks')) {
@@ -122,8 +129,10 @@ class InstallCommand extends Command {
 		// Remove all .gitkeep files from the customer's folder
 		$this->removeGitkeepFiles();
 
-		// Remove the dummy folder
-		$this->filesystem->remove(ROOT . DS . '_customer_skeleton');
+		if (!$this->dryRun) {
+			// Remove the dummy folder
+			$this->filesystem->remove(ROOT . DS . '_customer_skeleton');
+		}
 		$this->io->success('Skeleton folder removed successfully.');
 
 		// Done
@@ -145,6 +154,12 @@ class InstallCommand extends Command {
 			'boolean' => true,
 		]);
 
+		$lo_parser->addOption('dry-run', [
+			'help' => 'Perform a dry run of the installation process. This will output the commands that would be executed without actually running them.',
+			'boolean' => true,
+			'short' => 'x',
+		]);
+
 		return $lo_parser;
 	}
 
@@ -155,6 +170,10 @@ class InstallCommand extends Command {
 	 * @return bool
 	 */
 	protected function checkDummyFolder(): void {
+		if ($this->dryRun) {
+			return;
+		}
+
 		if (!$this->filesystem->exists(ROOT . DS . '_customer_skeleton')) {
 			$this->io->abort('Skeleton folder does not exist. Installation aborted.');
 		}
@@ -197,6 +216,10 @@ class InstallCommand extends Command {
 	 * Move the dummy folder to the customer's folder
 	 */
 	protected function copyDummyFolder(): void {
+		if ($this->dryRun) {
+			return;
+		}
+
 		try {
 			$this->filesystem->mirror(ROOT . DS . '_customer_skeleton', ROOT . DS . $this->customerName);
 		}
@@ -217,6 +240,13 @@ class InstallCommand extends Command {
 	 * @throws \Cake\Database\Exception\MissingConnectionException if the connection fails.
 	 */
 	protected function checkConnection(): void {
+		if ($this->dryRun) {
+			$this->connectionValid = true;
+			$this->io->success('Connected to the database successfully.');
+
+			return;
+		}
+
 		try {
 			// Get the "default" connection
 			/** @var \Cake\Database\Connection $lo_connection */
@@ -244,13 +274,21 @@ class InstallCommand extends Command {
 	 */
 	protected function migrateDatabase(): void {
 		// Run the migrations
-		$this->runCommand(['bin/cake', 'migrations', 'migrate', '-q', '--no-lock']);
+		if (!$this->dryRun) {
+			$this->runCommand(['bin/cake', 'migrations', 'migrate', '-q', '--no-lock']);
+		}
 		$this->io->success('Migrations completed.');
 
-		$this->runCommand(['bin/cake', 'migrations', 'migrate', '-q', '-p', 'Queue']);
+		// Run the Queue plugin migrations
+		if (!$this->dryRun) {
+			$this->runCommand(['bin/cake', 'migrations', 'migrate', '-q', '-p', 'Queue']);
+		}
 		$this->io->success('Queue migrations completed.');
 
-		$this->runCommand(['bin/cake', 'migrations', 'seed', '-q']);
+		// Seed the database
+		if (!$this->dryRun) {
+			$this->runCommand(['bin/cake', 'migrations', 'seed', '-q']);
+		}
 		$this->io->success('Seeding completed.');
 	}
 
@@ -259,6 +297,10 @@ class InstallCommand extends Command {
 	 * Create symlinks for the assets
 	 */
 	protected function createAssetSymlinks(): void {
+		if ($this->dryRun) {
+			return;
+		}
+
 		if (!isset($this->customerName)) {
 			if (!defined('CUSTOM_DIR')) {
 				$this->io->abort('Invalid customer name.');
@@ -332,6 +374,12 @@ class InstallCommand extends Command {
 	 * Find and remove all .gitkeep files from the customer's folder
 	 */
 	protected function removeGitkeepFiles(): void {
+		if ($this->dryRun) {
+			$this->io->success('.gitkeep files removed successfully.');
+
+			return;
+		}
+
 		$lo_finder = new Finder();
 		$lo_finder->files()->in(ROOT . DS . $this->customerName)->name('.gitkeep')->ignoreDotFiles(false);
 
