@@ -58,6 +58,7 @@ return [
 		'vendor/cakephp/bake/templates/bake/Model/enum.twig' => '38e2d8b0ba3be65c23f7d3227578d82e',
 		'vendor/cakephp/bake/templates/bake/Model/table.twig' => '224b6c3e4d94c1063efa19528488e5cd',
 		'vendor/cakephp/cakephp/src/Core/Configure/Engine/PhpConfig.php' => 'feeb5265a4c3a34276f42a549d549ae8',
+		'vendor/cakephp/cakephp/src/Http/BaseApplication.php' => '20c82f985ca0e02a47f6b0ce1c1fc0ee',
 		'vendor/cakephp/cakephp/src/ORM/Entity.php' => 'c4a6bc71ba23739cc4b06e10ebc151d3',
 		'vendor/cakephp/cakephp/src/ORM/RulesChecker.php' => 'bd6f79853ab2139a3ffda73cc345e2fd',
 		'vendor/cakephp/cakephp/src/ORM/Table.php' => '076fcb16a5f11f53bb788634846ac10b',

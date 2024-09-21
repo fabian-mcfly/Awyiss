@@ -17,6 +17,7 @@ use Cake\Console\CommandCollection;
 use Cake\Core\Configure;
 use Cake\Core\ContainerInterface;
 use Cake\Core\Plugin;
+use Cake\Core\PluginCollection;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Datasource\FactoryLocator;
 use Cake\Error\Middleware\ErrorHandlerMiddleware;
@@ -26,6 +27,7 @@ use Cake\Http\BaseApplication;
 use Cake\Http\ControllerFactoryInterface;
 use Cake\Http\Middleware\BodyParserMiddleware;
 use Cake\Http\MiddlewareQueue;
+use Cake\Http\ServerRequest;
 use Cake\Routing\Middleware\AssetMiddleware;
 use Cake\Routing\RouteBuilder;
 use Cake\Utility\Hash;
@@ -88,9 +90,10 @@ class Awyiss extends BaseApplication {
 	) {
 		$this->configDir = rtrim($configDir, DS) . DS;
 		$this->classLoader = $loader;
-		$this->plugins = Plugin::getCollection();
+		$this->plugins = new PluginCollection();
 		$this->_eventManager = $eventManager ?: EventManager::instance();
 		$this->controllerFactory = $controllerFactory;
+		Plugin::setCollection($this->plugins);
 	}
 
 
@@ -311,9 +314,14 @@ class Awyiss extends BaseApplication {
 	 * @throws \ReflectionException
 	 */
 	public function handle(ServerRequestInterface $request): ResponseInterface {
-		if ($this->controllerFactory === null) {
-			$this->controllerFactory = new ControllerFactory($this->getContainer());
-		}
+		$lo_container = $this->getContainer();
+		$lo_container->add(ServerRequest::class, $request);
+		$lo_container->add(ContainerInterface::class, $lo_container);
+
+		$lo_eventManager = $this->pluginEvents($this->getEventManager());
+		$this->setEventManager($this->events($lo_eventManager));
+
+		$this->controllerFactory ??= new ControllerFactory($lo_container);
 
 		if (Router::getRequest() !== $request) {
 			/** @noinspection PhpParamsInspection */
