@@ -4,9 +4,9 @@
 namespace Awyiss\Queue\Task;
 
 
+use Awyiss\Utility\Inflector;
 use Cake\Datasource\FactoryLocator;
 use Cake\I18n\DateTime;
-use Cake\Utility\Inflector;
 use Queue\Queue\Task;
 
 

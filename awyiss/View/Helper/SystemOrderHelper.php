@@ -6,9 +6,9 @@ namespace Awyiss\View\Helper;
 
 use Awyiss\Model\Behavior\SystemOrderBehavior;
 use Awyiss\Model\Entity;
+use Awyiss\Utility\Inflector;
 use Cake\Core\Exception\CakeException;
 use Cake\Utility\Hash;
-use Cake\Utility\Inflector;
 use Cake\View\Helper;
 use Cake\View\StringTemplate;
 use Cake\View\StringTemplateTrait;

@@ -6,10 +6,10 @@ namespace Awyiss\Model\Behavior;
 
 use ArrayObject;
 use Awyiss\Middleware\LocaleMiddleware;
+use Awyiss\Utility\Inflector;
 use Cake\Event\EventInterface;
 use Cake\ORM\Behavior\TranslateBehavior as BaseTranslateBehavior;
 use Cake\ORM\Table;
-use Cake\Utility\Inflector;
 
 
 /**

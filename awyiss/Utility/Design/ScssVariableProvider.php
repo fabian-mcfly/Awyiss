@@ -4,9 +4,9 @@
 namespace Awyiss\Utility\Design;
 
 
+use Awyiss\Utility\Inflector;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Utility\Hash;
-use Cake\Utility\Inflector;
 use InvalidArgumentException;
 use ScssPhp\ScssPhp\Compiler;
 use ScssPhp\ScssPhp\Compiler\Environment;

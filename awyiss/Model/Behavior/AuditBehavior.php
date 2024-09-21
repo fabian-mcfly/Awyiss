@@ -12,6 +12,7 @@ use Awyiss\ORM\Association\BelongsToMany;
 use Awyiss\ORM\Association\HasMany;
 use Awyiss\ORM\Association\HasOne;
 use Awyiss\ORM\Behavior;
+use Awyiss\Utility\Inflector;
 use Cake\Collection\CollectionInterface;
 use Cake\Database\Schema\TableSchemaInterface;
 use Cake\Datasource\EntityInterface;
@@ -22,7 +23,6 @@ use Cake\ORM\Association;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\ORM\Query\SelectQuery;
 use Cake\Utility\Hash;
-use Cake\Utility\Inflector;
 use Cake\Validation\Validator;
 use RuntimeException;
 

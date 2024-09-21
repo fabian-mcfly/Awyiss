@@ -7,6 +7,7 @@ namespace Awyiss\Controller\Component;
 use Awyiss\Model\Behavior\CategoriesBehavior;
 use Awyiss\Model\Table;
 use Awyiss\Routing\Router;
+use Awyiss\Utility\Inflector;
 use BackedEnum;
 use Cake\Collection\Iterator\TreeIterator;
 use Cake\Controller\Component;
@@ -17,7 +18,6 @@ use Cake\Http\Exception\RedirectException;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\ResultSet;
 use Cake\Utility\Hash;
-use Cake\Utility\Inflector;
 
 
 /**

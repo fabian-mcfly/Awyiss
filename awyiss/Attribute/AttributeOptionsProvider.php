@@ -4,7 +4,7 @@
 namespace Awyiss\Attribute;
 
 
-use Cake\Utility\Inflector;
+use Awyiss\Utility\Inflector;
 use Cake\Utility\Text;
 use ReflectionClass;
 use RuntimeException;

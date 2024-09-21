@@ -7,7 +7,7 @@ namespace Awyiss\View\Helper;
 use Awyiss\Authorization\IdentityPermissionsInterface;
 use Awyiss\Authorization\PermissionOption\PermissionOptionInterface;
 use Awyiss\Model\Entity;
-use Cake\Utility\Inflector;
+use Awyiss\Utility\Inflector;
 use Cake\View\Helper;
 use RuntimeException;
 

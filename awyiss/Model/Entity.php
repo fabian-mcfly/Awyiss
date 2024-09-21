@@ -6,12 +6,12 @@ namespace Awyiss\Model;
 
 use Awyiss\Model\Trait\EntityAttributesTrait;
 use Awyiss\Model\Trait\EntityFieldMapTrait;
+use Awyiss\Utility\Inflector;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\FactoryLocator;
 use Cake\I18n\DateTime;
 use Cake\ORM\Behavior\Translate\TranslateTrait;
 use Cake\ORM\Entity as BaseEntity;
-use Cake\Utility\Inflector;
 
 
 /**

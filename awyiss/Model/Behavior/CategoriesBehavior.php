@@ -8,6 +8,7 @@ use Awyiss\ORM\Association\BelongsToMany;
 use Awyiss\ORM\Association\HasMany;
 use Awyiss\ORM\Behavior;
 use Awyiss\ORM\RulesChecker;
+use Awyiss\Utility\Inflector;
 use BackedEnum;
 use Cake\Collection\CollectionInterface;
 use Cake\Collection\Iterator\TreeIterator;
@@ -20,7 +21,6 @@ use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\ResultSet;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Utility\Hash;
-use Cake\Utility\Inflector;
 use RuntimeException;
 
 

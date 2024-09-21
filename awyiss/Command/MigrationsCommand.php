@@ -5,8 +5,8 @@ namespace Awyiss\Command;
 
 
 use Awyiss\Migration\MigrationsDispatcher;
+use Awyiss\Utility\Inflector;
 use Cake\Console\ConsoleOptionParser;
-use Cake\Utility\Inflector;
 use Migrations\Command\MigrationsCommand as BaseMigrationsCommand;
 
 

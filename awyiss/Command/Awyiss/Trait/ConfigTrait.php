@@ -4,10 +4,10 @@
 namespace Awyiss\Command\Awyiss\Trait;
 
 
+use Awyiss\Utility\Inflector;
 use Brick\VarExporter\VarExporter;
 use Cake\Database\Connection;
 use Cake\Datasource\ConnectionManager;
-use Cake\Utility\Inflector;
 
 
 /**

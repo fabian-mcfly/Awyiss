@@ -10,11 +10,11 @@ use Awyiss\Model\Entity\PageRole;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
 use Awyiss\Utility\Content\BootstrapColumnSystem;
+use Awyiss\Utility\Inflector;
 use Cake\Database\Driver\Mysql;
 use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\FactoryLocator;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
-use Cake\Utility\Inflector;
 use Cake\Validation\Validator;
 use ReflectionClass;
 

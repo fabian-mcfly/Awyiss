@@ -3,8 +3,8 @@
 
 use Awyiss\Awyiss;
 use Awyiss\Routing\Router;
+use Awyiss\Utility\Inflector;
 use Cake\I18n\I18n;
-use Cake\Utility\Inflector;
 
 
 if (!function_exists('__')) {

@@ -10,8 +10,8 @@ use Awyiss\Model\Entity;
 use Awyiss\Model\Entity\BackendMenuEntry;
 use Awyiss\Model\Entity\MenuEntry;
 use Awyiss\Routing\Router;
+use Awyiss\Utility\Inflector;
 use Cake\Core\InstanceConfigTrait;
-use Cake\Utility\Inflector;
 use Generator;
 use RuntimeException;
 

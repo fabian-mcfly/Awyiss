@@ -5,9 +5,9 @@ namespace Awyiss\Utility\Design;
 
 
 use Awyiss\Awyiss;
+use Awyiss\Utility\Inflector;
 use Cake\Core\Configure;
 use Cake\Log\Log;
-use Cake\Utility\Inflector;
 use Exception;
 use InvalidArgumentException;
 use RecursiveDirectoryIterator;

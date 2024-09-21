@@ -7,6 +7,7 @@ namespace Awyiss\Model\Behavior;
 use ArrayObject;
 use Awyiss\Model\Table;
 use Awyiss\ORM\Behavior;
+use Awyiss\Utility\Inflector;
 use BackedEnum;
 use Cake\Collection\CollectionInterface;
 use Cake\Datasource\EntityInterface;
@@ -14,7 +15,6 @@ use Cake\Event\EventInterface;
 use Cake\ORM\Exception\PersistenceFailedException;
 use Cake\ORM\Query\SelectQuery;
 use Cake\Utility\Hash;
-use Cake\Utility\Inflector;
 
 
 /**

@@ -11,6 +11,7 @@ use Awyiss\Event\EventListenersProvider;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Table;
 use Awyiss\Routing\Router;
+use Awyiss\Utility\Inflector;
 use Awyiss\View\BackendView;
 use Cake\Core\Configure;
 use Cake\Database\Expression\QueryExpression;
@@ -23,7 +24,6 @@ use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
 use Cake\ORM\Query\SelectQuery;
 use Cake\Utility\Hash;
-use Cake\Utility\Inflector;
 use Psr\Http\Message\UriInterface;
 
 

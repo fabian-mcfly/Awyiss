@@ -6,10 +6,10 @@ namespace Awyiss\Queue\Task;
 
 use Awyiss\Core\App;
 use Awyiss\Model\Table\AttributesTable;
+use Awyiss\Utility\Inflector;
 use Cake\Collection\Collection;
 use Cake\Datasource\ConnectionManager;
 use Cake\Utility\Hash;
-use Cake\Utility\Inflector;
 use Phinx\Db\Adapter\AdapterInterface;
 use Queue\Model\QueueException;
 use Queue\Queue\Task;

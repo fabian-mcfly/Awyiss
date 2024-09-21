@@ -9,9 +9,9 @@ use Awyiss\Model\Entity\MediaElement;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
 use Awyiss\Utility\Content\BootstrapColumnSystem;
+use Awyiss\Utility\Inflector;
 use Cake\Datasource\FactoryLocator;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
-use Cake\Utility\Inflector;
 use Cake\Validation\Validator;
 use ReflectionClass;
 

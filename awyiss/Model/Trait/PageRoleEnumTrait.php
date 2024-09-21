@@ -5,7 +5,7 @@ namespace Awyiss\Model\Trait;
 
 
 use Awyiss\Model\Enum\PageRoleEnumInterface;
-use Cake\Utility\Inflector;
+use Awyiss\Utility\Inflector;
 
 
 /**

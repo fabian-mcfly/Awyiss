@@ -6,6 +6,7 @@ namespace Awyiss\Command\Bake;
 
 use Awyiss\Command\Util\UtilTrait;
 use Awyiss\Core\App;
+use Awyiss\Utility\Inflector;
 use Bake\CodeGen\FileBuilder;
 use Bake\Command\ModelCommand as BaseModelCommand;
 use Cake\Console\Arguments;
@@ -14,7 +15,6 @@ use Cake\Console\ConsoleOptionParser;
 use Cake\Core\Configure;
 use Cake\Database\Schema\TableSchemaInterface;
 use Cake\ORM\Table;
-use Cake\Utility\Inflector;
 
 
 /**

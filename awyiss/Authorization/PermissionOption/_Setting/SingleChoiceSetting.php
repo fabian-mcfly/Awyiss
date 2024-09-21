@@ -4,8 +4,8 @@
 namespace Awyiss\Authorization\PermissionOption\Setting;
 
 
+use Awyiss\Utility\Inflector;
 use Cake\Core\InstanceConfigTrait;
-use Cake\Utility\Inflector;
 
 
 /**

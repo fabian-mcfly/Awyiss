@@ -4,9 +4,9 @@
 namespace Awyiss\View\Helper;
 
 
+use Awyiss\Utility\Inflector;
 use Awyiss\View\StringTemplate;
 use Cake\Utility\Hash;
-use Cake\Utility\Inflector;
 use Cake\View\Helper\PaginatorHelper as BasePaginatorHelper;
 use Cake\View\StringTemplate as BaseStringTemplate;
 use Cake\View\View;

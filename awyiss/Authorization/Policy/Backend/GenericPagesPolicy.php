@@ -7,8 +7,8 @@ namespace Awyiss\Authorization\Policy\Backend;
 use Awyiss\Authorization\PermissionOption\PermissionOptionCollection;
 use Awyiss\Authorization\PermissionOption\SimplePermissionOption;
 use Awyiss\Authorization\Policy\AbstractGenericPolicy;
+use Awyiss\Utility\Inflector;
 use Cake\Core\Configure;
-use Cake\Utility\Inflector;
 
 
 /**

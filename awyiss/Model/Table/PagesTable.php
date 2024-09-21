@@ -10,13 +10,13 @@ use Awyiss\Model\Entity\Page;
 use Awyiss\Model\Enum\PageRoleEnumInterface;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
+use Awyiss\Utility\Inflector;
 use Cake\Collection\CollectionInterface;
 use Cake\Database\Schema\TableSchemaInterface;
 use Cake\Database\Type\EnumType;
 use Cake\Datasource\FactoryLocator;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
-use Cake\Utility\Inflector;
 use Cake\Validation\Validator;
 
 

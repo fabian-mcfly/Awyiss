@@ -8,6 +8,7 @@ use Awyiss\Core\App;
 use Awyiss\Datasource\Paging\NumericPaginator;
 use Awyiss\Model\Behavior\TranslateBehavior;
 use Awyiss\Model\Table;
+use Awyiss\Utility\Inflector;
 use BadMethodCallException;
 use Cake\Controller\Component;
 use Cake\Datasource\EntityInterface;
@@ -16,7 +17,6 @@ use Cake\Datasource\Paging\PaginatedInterface;
 use Cake\Datasource\QueryInterface;
 use Cake\Datasource\RepositoryInterface;
 use Cake\Http\Exception\NotFoundException;
-use Cake\Utility\Inflector;
 
 
 /**

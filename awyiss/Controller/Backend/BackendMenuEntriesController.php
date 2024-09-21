@@ -11,6 +11,7 @@ use Awyiss\Model\Entity\BackendMenuEntry;
 use Awyiss\Model\Entity\Datatable;
 use Awyiss\Model\Table;
 use Awyiss\Routing\Router;
+use Awyiss\Utility\Inflector;
 use Awyiss\Utility\Menu\BackendMenu;
 use Awyiss\Utility\Menu\Menu;
 use Awyiss\Utility\Menu\MenuItem;
@@ -21,7 +22,6 @@ use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
 use Cake\I18n\DateTime;
 use Cake\ORM\Query\SelectQuery;
-use Cake\Utility\Inflector;
 use ReflectionClass;
 use ReflectionMethod;
 

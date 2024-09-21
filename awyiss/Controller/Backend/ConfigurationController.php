@@ -10,11 +10,11 @@ use Awyiss\Configuration\ConfigOptionsProvider;
 use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Model\Entity\Configuration;
 use Awyiss\Routing\Router;
+use Awyiss\Utility\Inflector;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
 use Cake\ORM\Query\SelectQuery;
 use Cake\Utility\Hash;
-use Cake\Utility\Inflector;
 
 
 /**

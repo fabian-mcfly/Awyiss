@@ -35,7 +35,7 @@ use Cake\I18n\Package;
 use Cake\Log\Log;
 use Cake\Mailer\Mailer;
 use Cake\Mailer\TransportFactory;
-use Cake\Utility\Inflector;
+use Awyiss\Utility\Inflector;
 use Cake\Utility\Security;
 use josegonzalez\Dotenv\Loader;
 

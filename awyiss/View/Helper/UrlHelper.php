@@ -5,8 +5,8 @@ namespace Awyiss\View\Helper;
 
 
 use Awyiss\Routing\Router;
+use Awyiss\Utility\Inflector;
 use Cake\Utility\Hash;
-use Cake\Utility\Inflector;
 use Cake\View\Helper\UrlHelper as BaseUrlHelper;
 
 

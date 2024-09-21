@@ -9,10 +9,10 @@ use Awyiss\Model\Entity\MediaResizedImage;
 use Awyiss\Model\Enum\ProcessStatus;
 use Awyiss\Model\Enum\ResizeStrategy;
 use Awyiss\Model\Table;
+use Awyiss\Utility\Inflector;
 use Cake\Database\Schema\TableSchemaInterface;
 use Cake\Database\Type\EnumType;
 use Cake\ORM\RulesChecker;
-use Cake\Utility\Inflector;
 use Cake\Validation\Validator;
 use InvalidArgumentException;
 

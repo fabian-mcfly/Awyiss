@@ -4,7 +4,7 @@
 namespace Awyiss\View\Widget;
 
 
-use Cake\Utility\Inflector;
+use Awyiss\Utility\Inflector;
 use Cake\Utility\Text;
 use Cake\View\Form\ContextInterface;
 use Cake\View\Widget\BasicWidget;

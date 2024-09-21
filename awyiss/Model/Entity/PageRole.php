@@ -5,7 +5,7 @@ namespace Awyiss\Model\Entity;
 
 
 use Awyiss\Model\Entity;
-use Cake\Utility\Inflector;
+use Awyiss\Utility\Inflector;
 use Cake\Utility\Text;
 
 

@@ -6,10 +6,10 @@ namespace Awyiss\View\Helper;
 
 use Awyiss\Awyiss;
 use Awyiss\Middleware\LocaleMiddleware;
+use Awyiss\Utility\Inflector;
 use Awyiss\View\StringTemplate;
 use Cake\Core\Configure;
 use Cake\Datasource\EntityInterface;
-use Cake\Utility\Inflector;
 use Cake\View\Form\EntityContext;
 use Cake\View\Form\NullContext;
 use Cake\View\Helper\FormHelper as BaseFormHelper;

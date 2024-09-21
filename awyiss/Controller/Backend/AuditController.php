@@ -15,6 +15,7 @@ use Awyiss\Model\Entity\Content;
 use Awyiss\Model\Entity\MediaElement;
 use Awyiss\Model\Table;
 use Awyiss\Routing\Router;
+use Awyiss\Utility\Inflector;
 use Cake\Collection\Collection;
 use Cake\Collection\CollectionInterface;
 use Cake\Core\Configure;
@@ -25,7 +26,6 @@ use Cake\Http\Exception\RedirectException;
 use Cake\ORM\Association;
 use Cake\ORM\Query\SelectQuery;
 use Cake\Utility\Hash;
-use Cake\Utility\Inflector;
 use InvalidArgumentException;
 use RuntimeException;
 

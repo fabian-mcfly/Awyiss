@@ -4,8 +4,8 @@
 namespace Awyiss\Utility\Menu;
 
 
+use Awyiss\Utility\Inflector;
 use Cake\Core\InstanceConfigTrait;
-use Cake\Utility\Inflector;
 use Cake\Utility\Text;
 use Cake\View\StringTemplate;
 

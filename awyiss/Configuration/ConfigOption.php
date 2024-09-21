@@ -4,7 +4,7 @@
 namespace Awyiss\Configuration;
 
 
-use Cake\Utility\Inflector;
+use Awyiss\Utility\Inflector;
 use RuntimeException;
 
 

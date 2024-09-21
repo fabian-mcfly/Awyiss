@@ -6,13 +6,13 @@ namespace Awyiss\Event\Backend;
 
 use Awyiss\Event\EventListenerTrait;
 use Awyiss\Model\Entity\PageRole;
+use Awyiss\Utility\Inflector;
 use Cake\Core\Configure;
 use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\FactoryLocator;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
 use Cake\ORM\Locator\LocatorAwareTrait;
-use Cake\Utility\Inflector;
 
 
 /**

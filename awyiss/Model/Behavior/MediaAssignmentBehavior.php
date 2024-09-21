@@ -14,6 +14,7 @@ use Awyiss\Model\Entity\MediaElementSelector;
 use Awyiss\Model\Entity\MediaSelector;
 use Awyiss\Model\Table;
 use Awyiss\ORM\Behavior;
+use Awyiss\Utility\Inflector;
 use Cake\Collection\CollectionInterface;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
@@ -22,7 +23,6 @@ use Cake\ORM\Marshaller;
 use Cake\ORM\PropertyMarshalInterface;
 use Cake\ORM\Query\SelectQuery;
 use Cake\Utility\Hash;
-use Cake\Utility\Inflector;
 
 
 /**

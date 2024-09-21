@@ -4,8 +4,8 @@
 namespace Awyiss\Authorization\PermissionOption;
 
 
+use Awyiss\Utility\Inflector;
 use Cake\Core\InstanceConfigTrait;
-use Cake\Utility\Inflector;
 use Cake\Utility\Text;
 use RuntimeException;
 

@@ -12,11 +12,11 @@ use Awyiss\Model\Entity\MediaFolder;
 use Awyiss\Model\Enum\ProcessStatus;
 use Awyiss\Model\Table;
 use Awyiss\Routing\Router;
+use Awyiss\Utility\Inflector;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
 use Cake\ORM\Query\SelectQuery;
-use Cake\Utility\Inflector;
 use InvalidArgumentException;
 use Laminas\Diactoros\UploadedFile;
 

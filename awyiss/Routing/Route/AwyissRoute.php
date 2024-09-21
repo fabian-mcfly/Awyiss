@@ -4,9 +4,9 @@
 namespace Awyiss\Routing\Route;
 
 
+use Awyiss\Utility\Inflector;
 use BackedEnum;
 use Cake\Routing\Route\DashedRoute;
-use Cake\Utility\Inflector;
 use InvalidArgumentException;
 
 

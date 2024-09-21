@@ -8,12 +8,12 @@ use ArrayObject;
 use Awyiss\Event\EventListenerTrait;
 use Awyiss\Model\Entity\MediaFolder;
 use Awyiss\Model\Table\MediaFoldersTable;
+use Awyiss\Utility\Inflector;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Datasource\FactoryLocator;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
 use Cake\ORM\Locator\LocatorAwareTrait;
-use Cake\Utility\Inflector;
 use Exception;
 
 

@@ -5,7 +5,7 @@ namespace Awyiss\Configuration\ConfigOptions\Trait;
 
 
 use Awyiss\Core\App;
-use Cake\Utility\Inflector;
+use Awyiss\Utility\Inflector;
 
 
 /**

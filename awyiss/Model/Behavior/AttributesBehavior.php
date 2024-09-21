@@ -11,6 +11,7 @@ use Awyiss\Model\Entity;
 use Awyiss\Model\Table;
 use Awyiss\ORM\Behavior;
 use Awyiss\ORM\RulesChecker;
+use Awyiss\Utility\Inflector;
 use BadMethodCallException;
 use Cake\Collection\Iterator\MapReduce;
 use Cake\Datasource\FactoryLocator;
@@ -22,7 +23,6 @@ use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Utility\Hash;
-use Cake\Utility\Inflector;
 
 
 /**

@@ -10,10 +10,10 @@ use Awyiss\Awyiss;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity\Attribute;
 use Awyiss\Model\Entity\Language;
+use Awyiss\Utility\Inflector;
 use Cake\Collection\Collection;
 use Cake\Core\Configure;
 use Cake\Utility\Hash;
-use Cake\Utility\Inflector;
 use Cake\View\Helper;
 use RuntimeException;
 

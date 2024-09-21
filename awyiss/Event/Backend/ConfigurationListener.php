@@ -10,11 +10,11 @@ use Awyiss\Core\LocalConfig;
 use Awyiss\Event\EventListenerTrait;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity\Configuration;
+use Awyiss\Utility\Inflector;
 use Cake\Core\Configure;
 use Cake\Datasource\FactoryLocator;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
-use Cake\Utility\Inflector;
 
 
 /**

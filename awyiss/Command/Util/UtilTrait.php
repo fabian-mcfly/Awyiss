@@ -4,8 +4,8 @@
 namespace Awyiss\Command\Util;
 
 
+use Awyiss\Utility\Inflector;
 use Cake\Console\Arguments;
-use Cake\Utility\Inflector;
 
 
 /**

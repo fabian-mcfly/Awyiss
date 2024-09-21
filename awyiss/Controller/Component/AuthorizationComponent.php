@@ -5,9 +5,9 @@ namespace Awyiss\Controller\Component;
 
 
 use Awyiss\Authorization\IdentityPermissionsInterface;
+use Awyiss\Utility\Inflector;
 use Cake\Controller\Component;
 use Cake\Http\Exception\ForbiddenException;
-use Cake\Utility\Inflector;
 use RuntimeException;
 
 

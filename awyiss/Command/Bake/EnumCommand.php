@@ -5,12 +5,12 @@ namespace Awyiss\Command\Bake;
 
 
 use Awyiss\Command\Util\UtilTrait;
+use Awyiss\Utility\Inflector;
 use Bake\Command\EnumCommand as BaseBakeEnumCommand;
 use Cake\Console\Arguments;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Core\Configure;
-use Cake\Utility\Inflector;
 
 
 /**

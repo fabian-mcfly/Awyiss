@@ -5,11 +5,11 @@ namespace Awyiss\Controller\Component;
 
 
 use Awyiss\Controller\AppController;
+use Awyiss\Utility\Inflector;
 use Cake\Controller\Component;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\ResultSetInterface;
 use Cake\ORM\ResultSet;
-use Cake\Utility\Inflector;
 use Cake\View\ViewBuilder;
 
 

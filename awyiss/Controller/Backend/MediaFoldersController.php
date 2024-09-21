@@ -11,12 +11,12 @@ use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity\MediaFolder;
 use Awyiss\Model\Table;
 use Awyiss\Routing\Router;
+use Awyiss\Utility\Inflector;
 use Cake\Collection\CollectionInterface;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
 use Cake\ORM\Query\SelectQuery;
-use Cake\Utility\Inflector;
 
 
 /**

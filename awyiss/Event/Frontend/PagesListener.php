@@ -9,11 +9,11 @@ use Awyiss\Authentication\IdentityAwareTrait;
 use Awyiss\Core\App;
 use Awyiss\Event\EventListenerTrait;
 use Awyiss\Model\Enum\PageRoleEnumInterface;
+use Awyiss\Utility\Inflector;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\ORM\Query\SelectQuery;
-use Cake\Utility\Inflector;
 
 
 /**

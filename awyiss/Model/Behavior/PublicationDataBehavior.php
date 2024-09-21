@@ -9,6 +9,7 @@ use Awyiss\Model\Entity\PublicationData;
 use Awyiss\Model\Enum\PublicationDataType;
 use Awyiss\Model\Table;
 use Awyiss\ORM\Behavior;
+use Awyiss\Utility\Inflector;
 use Cake\Collection\CollectionInterface;
 use Cake\Database\TypeFactory;
 use Cake\Datasource\EntityInterface;
@@ -18,7 +19,6 @@ use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\ORM\Marshaller;
 use Cake\ORM\PropertyMarshalInterface;
 use Cake\ORM\Query\SelectQuery;
-use Cake\Utility\Inflector;
 
 
 /**

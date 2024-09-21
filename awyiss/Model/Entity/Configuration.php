@@ -8,7 +8,7 @@ use Awyiss\Awyiss;
 use Awyiss\Configuration\ConfigOptionsProvider;
 use Awyiss\Configuration\ConfigOptionType;
 use Awyiss\Model\Entity;
-use Cake\Utility\Inflector;
+use Awyiss\Utility\Inflector;
 
 
 /**

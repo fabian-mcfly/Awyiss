@@ -6,6 +6,7 @@ namespace Awyiss\Command\Bake;
 
 use Awyiss\Command\Util\UtilTrait;
 use Awyiss\Migration\ColumnParser;
+use Awyiss\Utility\Inflector;
 use Bake\Utility\TemplateRenderer;
 use Cake\Console\Arguments;
 use Cake\Console\ConsoleIo;
@@ -13,7 +14,6 @@ use Cake\Console\ConsoleOptionParser;
 use Cake\Core\Configure;
 use Cake\Event\Event;
 use Cake\Event\EventManager;
-use Cake\Utility\Inflector;
 use Migrations\Command\BakeMigrationCommand as BaseBakeMigrationCommand;
 
 

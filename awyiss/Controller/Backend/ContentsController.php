@@ -16,6 +16,7 @@ use Awyiss\Model\Table;
 use Awyiss\Module\ModulesProvider;
 use Awyiss\Routing\Router;
 use Awyiss\Utility\Content\ColumnInterface;
+use Awyiss\Utility\Inflector;
 use Cake\Collection\Collection;
 use Cake\Collection\CollectionInterface;
 use Cake\Core\Configure;
@@ -25,7 +26,6 @@ use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
 use Cake\ORM\Query\SelectQuery;
-use Cake\Utility\Inflector;
 
 
 /**

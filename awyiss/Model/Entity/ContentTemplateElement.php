@@ -5,8 +5,8 @@ namespace Awyiss\Model\Entity;
 
 
 use Awyiss\Model\Entity;
+use Awyiss\Utility\Inflector;
 use Cake\Datasource\FactoryLocator;
-use Cake\Utility\Inflector;
 
 
 /**

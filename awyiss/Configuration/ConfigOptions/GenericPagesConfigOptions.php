@@ -10,7 +10,7 @@ use Awyiss\Configuration\ConfigOption;
 use Awyiss\Configuration\ConfigOptions\Trait\TableFieldsTrait;
 use Awyiss\Configuration\ConfigOptions\Trait\TableNamesTrait;
 use Awyiss\Configuration\ConfigOptionType;
-use Cake\Utility\Inflector;
+use Awyiss\Utility\Inflector;
 
 
 /**

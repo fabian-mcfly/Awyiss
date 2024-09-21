@@ -7,8 +7,8 @@ namespace Awyiss\Command\Awyiss\Trait;
 use Awyiss\Authorization\AuthorizationService;
 use Awyiss\Awyiss;
 use Awyiss\Model\Entity\Usergroup;
+use Awyiss\Utility\Inflector;
 use Cake\ORM\TableRegistry;
-use Cake\Utility\Inflector;
 use Cake\Utility\Security;
 
 

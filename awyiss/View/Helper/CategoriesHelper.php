@@ -4,12 +4,12 @@
 namespace Awyiss\View\Helper;
 
 
+use Awyiss\Utility\Inflector;
 use Awyiss\View\StringTemplate;
 use Cake\Collection\CollectionInterface;
 use Cake\Collection\Iterator\TreeIterator;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\Paging\PaginatedResultSet;
-use Cake\Utility\Inflector;
 use Cake\View\Helper;
 use Cake\View\Helper\IdGeneratorTrait;
 use Cake\View\StringTemplateTrait;

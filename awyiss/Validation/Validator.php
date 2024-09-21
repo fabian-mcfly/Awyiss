@@ -4,7 +4,7 @@
 namespace Awyiss\Validation;
 
 
-use Cake\Utility\Inflector;
+use Awyiss\Utility\Inflector;
 use Cake\Validation\ValidationSet;
 use Cake\Validation\Validator as BaseValidator;
 use RuntimeException;

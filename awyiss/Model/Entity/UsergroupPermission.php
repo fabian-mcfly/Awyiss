@@ -7,7 +7,7 @@ namespace Awyiss\Model\Entity;
 use Awyiss\Authorization\Permission\PermissionAccess;
 use Awyiss\Authorization\Permission\PermissionInterface;
 use Awyiss\Model\Entity;
-use Cake\Utility\Inflector;
+use Awyiss\Utility\Inflector;
 
 
 /**

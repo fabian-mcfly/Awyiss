@@ -5,8 +5,8 @@ namespace Awyiss\Configuration\ConfigOptions\Trait;
 
 
 use Awyiss\Model\Table\PagesTable;
+use Awyiss\Utility\Inflector;
 use Cake\Datasource\FactoryLocator;
-use Cake\Utility\Inflector;
 
 
 /**

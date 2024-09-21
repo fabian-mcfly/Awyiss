@@ -8,6 +8,7 @@ use ArrayObject;
 use Awyiss\Model\Entity;
 use Awyiss\ORM\Behavior;
 use Awyiss\ORM\RulesChecker;
+use Awyiss\Utility\Inflector;
 use Cake\Collection\Collection;
 use Cake\Collection\CollectionInterface;
 use Cake\Datasource\EntityInterface;
@@ -16,7 +17,6 @@ use Cake\ORM\Association;
 use Cake\ORM\Exception\PersistenceFailedException;
 use Cake\ORM\Query\SelectQuery;
 use Cake\Utility\Hash;
-use Cake\Utility\Inflector;
 use RuntimeException;
 
 

@@ -5,7 +5,7 @@ namespace Awyiss\Configuration;
 
 
 use ArrayIterator;
-use Cake\Utility\Inflector;
+use Awyiss\Utility\Inflector;
 use RuntimeException;
 
 

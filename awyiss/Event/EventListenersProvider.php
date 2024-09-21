@@ -4,9 +4,9 @@
 namespace Awyiss\Event;
 
 
+use Awyiss\Utility\Inflector;
 use Cake\Event\EventListenerInterface;
 use Cake\Event\EventManager;
-use Cake\Utility\Inflector;
 use Cake\Utility\Text;
 use ReflectionClass;
 use RuntimeException;

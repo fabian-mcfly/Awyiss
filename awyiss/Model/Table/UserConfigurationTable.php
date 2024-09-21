@@ -11,10 +11,10 @@ use Awyiss\Model\Entity\PageRole;
 use Awyiss\Model\Entity\UserConfiguration;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
+use Awyiss\Utility\Inflector;
 use Cake\Datasource\FactoryLocator;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
-use Cake\Utility\Inflector;
 use Cake\Validation\Validator;
 
 

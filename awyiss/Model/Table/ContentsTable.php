@@ -11,6 +11,7 @@ use Awyiss\Model\Enum\PageRoleEnumInterface;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
 use Awyiss\Utility\Content\AwyissColumnSystem;
+use Awyiss\Utility\Inflector;
 use Awyiss\Validation\Validator;
 use Cake\Collection\Collection;
 use Cake\Collection\CollectionInterface;
@@ -20,7 +21,6 @@ use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Datasource\FactoryLocator;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
-use Cake\Utility\Inflector;
 use Cake\Validation\Validator as BaseValidator;
 use RuntimeException;
 

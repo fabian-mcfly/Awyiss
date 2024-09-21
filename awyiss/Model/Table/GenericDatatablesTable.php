@@ -9,8 +9,8 @@ use Awyiss\Awyiss;
 use Awyiss\Core\LocalConfig;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
+use Awyiss\Utility\Inflector;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
-use Cake\Utility\Inflector;
 use Cake\Validation\Validator;
 
 
