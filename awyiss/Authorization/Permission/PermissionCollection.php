@@ -50,7 +50,7 @@ class PermissionCollection {
 			}
 			elseif (is_array($lx_permission)) {
 				//$this->add(...$lx_permission);
-				$this->add(Permission::createFromArray(...$lx_permission));
+				$this->add(Permission::createFromArray($lx_permission));
 			}
 			else {
 				throw new RuntimeException(
@@ -77,8 +77,10 @@ class PermissionCollection {
 	public function add(Permission $permission): static {
 		$permission->setAuthorizationService($this->authorizationService);
 
-		$this->permissions[ $permission->getScope() ][ $permission->getIdentifier() ][] = $permission;
+		$ls_scope = AuthorizationService::sanitizeScope($permission->getScope());
+		$ls_identifier = AuthorizationService::sanitizeIdentifier($permission->getIdentifier());
 
+		$this->permissions[ $ls_scope ][ $ls_identifier ][] = $permission;
 
 		return $this;
 	}
@@ -120,10 +122,8 @@ class PermissionCollection {
 		if ($identifier) {
 			$ls_identifier = AuthorizationService::sanitizeIdentifier($identifier);
 
-
 			return $this->permissions[ $ls_scope ][ $ls_identifier ] ?? null;
 		}
-
 
 		return $this->permissions[ $ls_scope ] ?? null;
 	}
@@ -202,6 +202,7 @@ class PermissionCollection {
 			}
 
 			$la_permissions = $this->getPermissions($scope, $ls_identifier);
+
 			if (!$la_permissions) {
 				continue;
 			}
