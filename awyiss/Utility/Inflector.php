@@ -61,4 +61,19 @@ class Inflector extends CakeInflector {
 
 		return $ls_string;
 	}
+
+
+	/**
+	 * Prevents double underscores
+	 *
+	 * @inheritDoc
+	 */
+	public static function underscore(string $string): string {
+		$ls_string =  parent::underscore($string);
+
+		// Prevent double underscores
+		$ls_string = preg_replace('/_+/', '_', $ls_string);
+
+		return $ls_string;
+	}
 }
