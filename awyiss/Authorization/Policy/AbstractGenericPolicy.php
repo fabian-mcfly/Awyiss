@@ -92,26 +92,16 @@ abstract class AbstractGenericPolicy {
 	protected function loadPermissionOptions(): PermissionOptionCollection {
 		$lo_permissions = new PermissionOptionCollection($this->getScope());
 
-		$lo_permissions->load('read', [
-			'className' => SimplePermissionOption::class,
-		]);
+		$lo_permissions->add('read', SimplePermissionOption::class);
 
-		$lo_permissions->load('create', [
-			'className' => SimplePermissionOption::class,
-		]);
+		$lo_permissions->add('create', SimplePermissionOption::class);
 
-		$lo_permissions->load('update', [
-			'className' => SimplePermissionOption::class,
-		]);
+		$lo_permissions->add('update', SimplePermissionOption::class);
 
-		$lo_permissions->load('delete', [
-			'className' => SimplePermissionOption::class,
-		]);
+		$lo_permissions->add('delete', SimplePermissionOption::class);
 
 		if (ConfigOptionsProvider::getConfigOptionsFile($this->getScope()) || ConfigOptionsProvider::getConfigOptionsFile('GenericDatatables')) {
-			$lo_permissions->load('configure', [
-				'className' => SimplePermissionOption::class,
-			]);
+			$lo_permissions->add('configure', SimplePermissionOption::class);
 		}
 
 

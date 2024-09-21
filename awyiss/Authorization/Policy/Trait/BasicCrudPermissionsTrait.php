@@ -25,28 +25,17 @@ trait BasicCrudPermissionsTrait {
 	protected static function loadPermissionOptions(): PermissionOptionCollection {
 		$lo_permissionOptions = new PermissionOptionCollection(static::getScope());
 
-		$lo_permissionOptions->load('read', [
-			'className' => SimplePermissionOption::class,
-		]);
+		$lo_permissionOptions->add('read', SimplePermissionOption::class);
 
-		$lo_permissionOptions->load('create', [
-			'className' => SimplePermissionOption::class,
-		]);
+		$lo_permissionOptions->add('create', SimplePermissionOption::class);
 
-		$lo_permissionOptions->load('update', [
-			'className' => SimplePermissionOption::class,
-		]);
+		$lo_permissionOptions->add('update', SimplePermissionOption::class);
 
-		$lo_permissionOptions->load('delete', [
-			'className' => SimplePermissionOption::class,
-		]);
+		$lo_permissionOptions->add('delete', SimplePermissionOption::class);
 
 		if (ConfigOptionsProvider::getConfigOptionsFile(static::getScope())) {
-			$lo_permissionOptions->load('configure', [
-				'className' => SimplePermissionOption::class,
-			]);
+			$lo_permissionOptions->add('configure', SimplePermissionOption::class);
 		}
-
 
 		return $lo_permissionOptions;
 	}

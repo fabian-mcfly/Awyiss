@@ -32,10 +32,11 @@ class PermissionOptionCollection extends ObjectRegistry {
 
 		foreach ($config as $lx_key => $lx_value) {
 			if (is_int($lx_key)) {
-				$this->load($lx_value);
+				$this->add($lx_value);
 				continue;
 			}
-			$this->load($lx_key, $lx_value);
+
+			$this->add($lx_key, $lx_value);
 		}
 	}
 
@@ -52,13 +53,22 @@ class PermissionOptionCollection extends ObjectRegistry {
 
 	/**
 	 * Adds a permission to the collection.
-	 *
 	 * This is a convenient proxy method for `static::load` that returns `$this` instead of the permission instance
 	 *
-	 * @throws Exception
+	 * If `$config` is a string, it will be used as the `className` key in the config array.
+	 *
+	 * @param string $identifier
+	 * @param array|string $config
+	 * @return \Awyiss\Authorization\PermissionOption\PermissionOptionCollection
+	 * @throws \Exception
 	 * @see load()
 	 */
-	public function add(string $identifier, array $config = []): static {
+	public function add(string $identifier, array|string $config = []): static {
+		if (is_string($config)) {
+			/** @noinspection PhpVariableNamingConventionInspection */
+			$config = ['className' => $config];
+		}
+
 		$this->load($identifier, $config);
 
 
@@ -84,18 +94,8 @@ class PermissionOptionCollection extends ObjectRegistry {
 		}
 
 		$ls_identifier = AuthorizationService::sanitizeIdentifier($identifier);
-		if ($ls_identifier !== $identifier) {
-			throw new RuntimeException(sprintf('The provided identifier should be written camelBacked (`%s`). `%s` given.', $ls_identifier, $identifier));
-		}
 
-		$la_config = $config;
-		//if ( ! isset($la_config['identifier'])) {
-		//	$la_config['identifier'] = $identifier;
-		//}
-		$la_config['identifier'] = $ls_identifier;
-
-
-		return parent::load($ls_identifier, $la_config);
+		return parent::load($ls_identifier, ['identifier' => $ls_identifier] + $config);
 	}
 
 
