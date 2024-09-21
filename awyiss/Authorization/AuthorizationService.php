@@ -143,7 +143,13 @@ class AuthorizationService implements AuthorizationServiceInterface {
 		foreach ($la_paths as $ls_namespace => $ls_path) {
 			foreach (glob($ls_path) as $ls_filePath) {
 				$ls_policyName = substr($ls_filePath, strrpos($ls_filePath, DS) + 1, -4);
-				if ($ls_className === '*' && in_array($ls_policyName, ['GenericDatatablesPolicy', 'GenericPagesPolicy'])) {
+				if (
+					(
+						$ls_className === '*' &&
+						in_array($ls_policyName, ['GenericDatatablesPolicy', 'GenericPagesPolicy'])
+					) ||
+					str_starts_with($ls_policyName, '_')
+				) {
 					continue;
 				}
 
@@ -159,6 +165,10 @@ class AuthorizationService implements AuthorizationServiceInterface {
 
 				if (!$lo_reflection->implementsInterface(PolicyInterface::class)) {
 					throw new RuntimeException(sprintf('The provided Policy class `%s` does not implement the `%s` interface.', $ls_policyClass, PolicyInterface::class));
+				}
+
+				if ($lo_reflection->isAbstract()) {
+					continue;
 				}
 
 				$this->policies[ $realm ][ $ls_policyScope ] = $ls_policyClass;
@@ -188,12 +198,6 @@ class AuthorizationService implements AuthorizationServiceInterface {
 			$lo_table = FactoryLocator::get('Table')->get('Datatables');
 			$this->datatables = $lo_table->findAllAndCache()->indexBy(function (Datatable $datatable) {
 				return static::sanitizeScope($datatable->identifier);
-			})->filter(function (Datatable $datatable) {
-				/** @var \Awyiss\Model\Table $lo_datatableTable */
-				$lo_datatableTable = FactoryLocator::get('Table')->get(Inflector::camelize($datatable->identifier));
-
-
-				return $lo_datatableTable::ATTRIBUTABLE;
 			})->map(function (Datatable $datatable) {
 				return new GenericDatatablesPolicy($datatable->identifier);
 			})->toArray();
