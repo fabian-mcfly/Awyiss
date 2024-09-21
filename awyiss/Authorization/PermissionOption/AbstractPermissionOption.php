@@ -50,13 +50,7 @@ abstract class AbstractPermissionOption implements PermissionOptionInterface {
 		$ls_testType = strtolower(Text::slug($ls_type, '_'));
 
 		if ($ls_testType !== $ls_type) {
-			throw new RuntimeException(
-				sprintf(
-					'The provided type should be written underscored (`%s`). `%s` given.',
-					$ls_testType,
-					$ls_type
-				)
-			);
+			$this->type = $ls_testType;
 		}
 
 		$this->permissionOptionCollection = $permissionOptionCollection;
