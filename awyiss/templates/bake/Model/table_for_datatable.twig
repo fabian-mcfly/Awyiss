@@ -2,9 +2,8 @@
 {{ element('file_header', {
 	namespace: fileBuilder.namespace,
 	classImports: fileBuilder.classImports([
-		'Awyiss\\Annotation\\MediaElementAssignable;',
+		'Awyiss\\Annotation\\MediaElementAssignable',
 		'Awyiss\\Model\\Table\\GenericDatatablesTable',
-		'Cake\\Datasource\\EntityInterface',
 	]),
 }) }}
 
@@ -12,10 +11,10 @@
  * {{ name }} Model
  *
  * @method \{{ namespace }}\Model\Entity\{{ name|singularize }} newDefaultEntity(array $additionalData = [], array $options = [])
- * @method \Cake\Collection\CollectionInterface|null getNestedChildren(EntityInterface $entity, array $options = [], int $currentLevel = 0)
- * @method \Cake\Collection\CollectionInterface|null getChildren(EntityInterface $entity, array $options = [])
- * @method \{{ namespace }}\Model\Entity\{{ name|singularize }} getParent(EntityInterface $entity, array $options = [])
- * @method \Cake\Collection\CollectionInterface|null getParents(EntityInterface $entity, array $options = [], int $currentLevel = 0)
+ * @method \Cake\Collection\CollectionInterface|null getNestedChildren(\Cake\Datasource\EntityInterface $entity, array $options = [], int $currentLevel = 0)
+ * @method \Cake\Collection\CollectionInterface|null getChildren(\Cake\Datasource\EntityInterface $entity, array $options = [])
+ * @method \{{ namespace }}\Model\Entity\{{ name|singularize }} getParent(\Cake\Datasource\EntityInterface $entity, array $options = [])
+ * @method \Cake\Collection\CollectionInterface|null getParents(\Cake\Datasource\EntityInterface $entity, array $options = [], int $currentLevel = 0)
  * @method \Cake\Collection\CollectionInterface getPossibleParents(\Awyiss\Model\Entity $entity, \Cake\Collection\CollectionInterface $threadedEntities)
  */
 #[MediaElementAssignable(MediaElementAssignable::MODEL_LEVEL)]
@@ -23,8 +22,8 @@ class {{ name }}Table extends GenericDatatablesTable {
 {% set userConstants = fileBuilder.classBuilder.userConstants([]) %}
 {% if userConstants.TABLE is not defined %}
 	/**
-	* @inheritDoc
-	*/
+	 * @inheritDoc
+	 */
 	public const TABLE = '{{ table }}';
 {% endif %}
 {% if userConstants %}

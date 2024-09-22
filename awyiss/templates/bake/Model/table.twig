@@ -12,7 +12,12 @@
 {% set generatedFunctions = ['initialize'] %}
 {{ element('file_header', {
 	namespace: fileBuilder.namespace,
-	classImports: fileBuilder.classImports(['Awyiss\\Model\\Table', 'Awyiss\\ORM\\RulesChecker', 'Cake\\Validation\\Validator']),
+	classImports: fileBuilder.classImports({
+		0: 'Awyiss\\Model\\Table',
+		1: 'Awyiss\\ORM\\RulesChecker',
+		BaseRulesChecker: 'Cake\\ORM\\RulesChecker',
+		2: 'Cake\\Validation\\Validator',
+	}),
 }) }}
 
 /**
@@ -43,6 +48,7 @@ class {{ name }}Table extends Table{{ fileBuilder.classBuilder.implements ? ' im
 
 {% endif %}
 
+
 	/**
 	 * @inheritDoc
 	 */
@@ -57,10 +63,6 @@ class {{ name }}Table extends Table{{ fileBuilder.classBuilder.implements ? ' im
 		$this->setPrimaryKey('{{ primaryKey|as_array|first }}');
 		{{- "\n" }}
 	{%- endif %}
-{% endif %}
-
-{%- if behaviors %}
-
 {% endif %}
 
 {%- for behavior, behaviorData in behaviors %}
@@ -80,6 +82,7 @@ class {{ name }}Table extends Table{{ fileBuilder.classBuilder.implements ? ' im
 {%- set assocData = assocData|merge({(key): val}) %}
 {%- endif %}
 {%- endfor %}
+
 		$this->{{ type }}('{{ assoc.alias }}', {{ Bake.exportArray(assocData, 2)|raw }});
 {{- "\n" }}
 {%- endif %}
@@ -98,7 +101,6 @@ class {{ name }}Table extends Table{{ fileBuilder.classBuilder.implements ? ' im
 	 * @param \Cake\Validation\Validator $validator The validator that can be modified to
 	 * add some rules to it.
 	 * @return \Cake\Validation\Validator
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function validationDefault(Validator $validator): Validator {
 		parent::validationDefault($validator);
@@ -129,9 +131,8 @@ class {{ name }}Table extends Table{{ fileBuilder.classBuilder.implements ? ' im
 	 *
 	 * @param \Cake\ORM\RulesChecker $rules The rules object to be modified.
 	 * @param \Awyiss\ORM\RulesChecker|\Cake\ORM\RulesChecker $rules The rules object to be modified.
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
-	public function buildRules(RulesChecker|\Cake\ORM\RulesChecker $rules): RulesChecker {
+	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
 {% for field, rule in rulesChecker %}
 {% set fields = rule.fields is defined ? Bake.exportArray(rule.fields) : Bake.exportVar(field) %}
 {% set options = '' %}

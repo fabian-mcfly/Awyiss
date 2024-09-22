@@ -20,8 +20,8 @@ class {{ name }} extends Page{{ fileBuilder.classBuilder.implements ? ' implemen
 {%- if hidden %}
 {%- set generatedProperties = generatedProperties|merge(['_hidden']) %}
 	/**
-	* @inheritDoc
-	*/
+	 * @inheritDoc
+	 */
 	protected array $_hidden = {{ Bake.exportVar(hidden, 1)|raw }};
 {% endif %}
 {% set userProperties = fileBuilder.classBuilder.userProperties(generatedProperties) %}

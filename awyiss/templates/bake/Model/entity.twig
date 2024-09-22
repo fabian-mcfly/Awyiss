@@ -36,7 +36,7 @@
 {{ DocBlock.classDescription(name, 'Entity', annotations)|raw }}
 class {{ name }} extends Entity{{ fileBuilder.classBuilder.implements ? ' implements ' ~ fileBuilder.classBuilder.implements|join(', ') : '' }} {
 {% if fieldMap %}
-	{% set generatedProperties = generatedProperties|merge(['fieldMap']) %}
+	{% set generatedProperties = generatedProperties|merge(['fieldMap']) -%}
 	/**
 	 * @inheritDoc
 	 */
@@ -61,8 +61,8 @@ class {{ name }} extends Entity{{ fileBuilder.classBuilder.implements ? ' implem
 {%- if hidden %}
 {%- set generatedProperties = generatedProperties|merge(['_hidden']) %}
 	/**
-	* @inheritDoc
-	*/
+	 * @inheritDoc
+	 */
 	protected array $_hidden = {{ Bake.exportVar(hidden, 1)|raw }};
 {% endif %}
 {% if name|underscore[:11] == 'attributes_' %}
@@ -72,9 +72,9 @@ class {{ name }} extends Entity{{ fileBuilder.classBuilder.implements ? ' implem
 	protected ?Entity $entity = null;
 {% endif %}
 {%- set generatedProperties = generatedProperties|merge(['entity']) %}
-
 {% set userProperties = fileBuilder.classBuilder.userProperties(generatedProperties) %}
 {% if userProperties %}
+
 
 	{{~ Bake.concat('\n\n', userProperties) }}
 {% endif %}
@@ -82,16 +82,20 @@ class {{ name }} extends Entity{{ fileBuilder.classBuilder.implements ? ' implem
 {% if name|underscore[:11] == 'attributes_' %}
 {% set generatedMethods = generatedMethods|merge(['getEntity']) %}
 
-
-	public function getEntity (): ?Entity {
+	/**
+	 * @return \Awyiss\Model\Entity|null $entity Entity to be passed to the validation of attributes
+	 */
+	public function getEntity(): ?Entity {
 		return $this->entity;
 	}
 {% set generatedMethods = generatedMethods|merge(['setEntity']) %}
 
-
-	public function setEntity (?Entity $entity = null): static {
+	/**
+	 * @param \Awyiss\Model\Entity|null $entity Entity to be passed to the validation of attributes
+	 * @return $this
+	 */
+	public function setEntity(?Entity $entity = null): static {
 		$this->entity = $entity;
-
 
 		return $this;
 	}

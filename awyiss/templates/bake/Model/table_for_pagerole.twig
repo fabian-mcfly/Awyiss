@@ -2,10 +2,7 @@
 {{ element('file_header', {
 	namespace: fileBuilder.namespace,
 	classImports: fileBuilder.classImports([
-		'Awyiss\\Model\\Enum\\PageRoleEnumInterface',
 		'Awyiss\\Model\\Table\\PagesTable',
-		namespace ~ '\\Model\\Enum\\PageRole',
-		'Cake\\Datasource\\EntityInterface',
 	]),
 }) }}
 
@@ -21,10 +18,10 @@
  * @property \{{ namespace }}\Model\Table\{{ name }}Table&\Awyiss\ORM\Association\HasMany $Child{{ name }}
  * @property \Awyiss\Model\Table\ContentsTable&\Awyiss\ORM\Association\HasMany $Contents
  * @method \{{ namespace }}\Model\Entity\{{ name|singularize }} newDefaultEntity(array $additionalData = [], array $options = [])
- * @method \Cake\Collection\CollectionInterface|null getNestedChildren(EntityInterface $entity, array $options = [], int $currentLevel = 0)
- * @method \Cake\Collection\CollectionInterface|null getChildren(EntityInterface $entity, array $options = [])
- * @method \{{ namespace }}\Model\Entity\{{ name|singularize }} getParent(EntityInterface $entity, array $options = [])
- * @method \Cake\Collection\CollectionInterface|null getParents(EntityInterface $entity, array $options = [], int $currentLevel = 0)
+ * @method \Cake\Collection\CollectionInterface|null getNestedChildren(\Cake\Datasource\EntityInterface $entity, array $options = [], int $currentLevel = 0)
+ * @method \Cake\Collection\CollectionInterface|null getChildren(\Cake\Datasource\EntityInterface $entity, array $options = [])
+ * @method \{{ namespace }}\Model\Entity\{{ name|singularize }} getParent(\Cake\Datasource\EntityInterface $entity, array $options = [])
+ * @method \Cake\Collection\CollectionInterface|null getParents(\Cake\Datasource\EntityInterface $entity, array $options = [], int $currentLevel = 0)
  * @method \Cake\Collection\CollectionInterface getPossibleParents(\Awyiss\Model\Entity $entity, \Cake\Collection\CollectionInterface $threadedEntities)
  */
 class {{ name }}Table extends PagesTable {
