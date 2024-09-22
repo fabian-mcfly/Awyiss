@@ -1,10 +1,10 @@
 
 	/**
-	* @param {{ entityClassName }} ${{ singularName }}
-	* @param string $method
-	* @return void
-	* @throws \Cake\Http\Exception\RedirectException
-	*/
+	 * @param {{ entityClassName }} ${{ singularName }}
+	 * @param string $method
+	 * @return void
+	 * @throws \Cake\Http\Exception\RedirectException
+	 */
 	protected function save({{ entityClassName }} ${{ singularName }}, string $method = 'add'): void {
 		$la_associated = [];
 		if ($this->{{ currentModelName }}->hasAttributes()) {

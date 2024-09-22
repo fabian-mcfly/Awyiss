@@ -10,6 +10,7 @@
 #}
 {% set belongsTo = Bake.aliasExtractor(modelObj, 'BelongsTo') %}
 {% set belongsToMany = Bake.aliasExtractor(modelObj, 'belongsToMany') %}
+
 	/**
 	 * Edit method
 	 *
@@ -22,7 +23,7 @@
 
 		/** @var {{ entityClassName }} $lo_{{ singularName }} */
 		$lo_{{ singularName }} = $this->{{ currentModelName }}->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
-		if (! $lo_{{ singularName }}) {
+		if (!$lo_{{ singularName }}) {
 			$this->Flash->error(__('record_not_found'));
 
 			return $this->redirect(['action' => 'overview']);
@@ -34,11 +35,5 @@
 
 		$this->set([
 			'{{ singularName }}' => $lo_{{ singularName }},
-{% for assoc in belongsTo|merge(belongsToMany) %}
-{%- set otherName = Bake.getAssociatedTableAlias(modelObj, assoc) %}
-{%- set otherPlural = otherName|variable %}
-			'{{ otherPlural }}' => $this->{{ currentModelName }}->{{ otherName }}->find('list', ['limit' => 200]),
-
-{% endfor %}
 		]);
 	}

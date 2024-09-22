@@ -8,6 +8,7 @@
  * Redistributions of files must retain the above copyright notice.
  */
 #}
+
 	/**
 	 * Delete method
 	 *
@@ -22,7 +23,7 @@
 
 		/** @var {{ entityClassName }} $lo_{{ singularName }} */
 		$lo_{{ singularName }} = $this->{{ currentModelName }}->findById($id)->first();
-		if (! $lo_{{ singularName }}) {
+		if (!$lo_{{ singularName }}) {
 			$this->Flash->error(__('record_not_found'));
 
 			return $this->redirect(['action' => 'overview']);

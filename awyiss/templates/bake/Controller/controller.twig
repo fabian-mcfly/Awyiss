@@ -71,10 +71,9 @@ class {{ name }}Controller extends Controller {
 	public function getOverviewQuery(): ?SelectQuery {
 		return $this->{{ name }}->find()->where($this->getOverviewWhere());
 	}
-{% if actions|length %}{{ "\n\n" }}{% endif %}
+{% if actions|length %}{{ "\n" }}{% endif %}
 {%- for action in actions %}
-	{% if loop.index > 1 %}{{ "\n\n" }}{% endif %}
-	{{- element('Controller/' ~ action) -}}
+{% if loop.index > 1 %}{{ "\n" }}{% endif %}
+{{- element('Controller/' ~ action) -}}
 {% endfor %}
 }
-
