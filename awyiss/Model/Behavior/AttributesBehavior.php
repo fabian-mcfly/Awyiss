@@ -14,6 +14,8 @@ use Awyiss\ORM\RulesChecker;
 use Awyiss\Utility\Inflector;
 use BadMethodCallException;
 use Cake\Collection\Iterator\MapReduce;
+use Cake\Database\Expression\QueryExpression;
+use Cake\Database\Schema\SqliteSchemaDialect;
 use Cake\Datasource\FactoryLocator;
 use Cake\Event\Event;
 use Cake\Event\EventInterface;
@@ -260,13 +262,7 @@ class AttributesBehavior extends Behavior {
 		$lo_attributesTable = FactoryLocator::get('Table')->get('Attributes');
 		$lo_attributesQuery = $lo_attributesTable->find('all');
 
-		/**
-		 * @noinspection PhpUndefinedMethodInspection
-		 */
-		$lo_attributesQuery = $lo_attributesQuery->orderByAsc($lo_attributesQuery->newExpr($lo_attributesQuery->func()->FIELD([
-			'fieldset' => 'identifier',
-			...$lo_attributesTable->getAvailableFieldsets(),
-		])));
+		$lo_attributesQuery = $this->addOrderByFieldset($lo_attributesQuery, $lo_attributesTable);
 
 		static::$attributes = $lo_attributesQuery->all()->groupBy('scope')->map(function ($attributes) {
 			return collection($attributes)->indexBy('identifier')->toArray();
@@ -537,5 +533,48 @@ class AttributesBehavior extends Behavior {
 		throw new BadMethodCallException(
 			sprintf('Unknown method `%s` called on `%s`', $method, static::class)
 		);
+	}
+
+
+	/**
+	 * @param \Cake\ORM\Query\SelectQuery|\Cake\ORM\Query $attributesQuery
+	 * @param \Awyiss\Model\Table\AttributesTable $attributesTable
+	 * @return \Cake\ORM\Query\SelectQuery
+	 */
+	protected function addOrderByFieldset(SelectQuery $attributesQuery, Table\AttributesTable $attributesTable): SelectQuery {
+		$lo_dialect = $attributesQuery->getConnection()->getDriver()->schemaDialect();
+
+		/**
+		 * SQLite does not support FIELD(),
+		 * so ordering using CASE WHEN is used instead
+		 */
+		if ($lo_dialect instanceof SqliteSchemaDialect) {
+			$la_fieldsets = $attributesTable->getAvailableFieldsets();
+
+			$attributesQuery->orderBy(function (QueryExpression $exp) use ($la_fieldsets) {
+				$li_index = 0;
+
+				$lo_case = $exp->case();
+				foreach ($la_fieldsets as $ls_fieldset) {
+					$lo_case->when(['fieldset' => $ls_fieldset])->then($li_index, 'integer');
+
+					$li_index++;
+				}
+
+				$lo_case->else(999, 'integer');
+
+				return $lo_case;
+			});
+
+			return $attributesQuery;
+		}
+
+		/** @noinspection PhpUndefinedMethodInspection */
+		$attributesQuery->orderByAsc($attributesQuery->newExpr($attributesQuery->func()->FIELD([
+			'fieldset' => 'identifier',
+			...$attributesTable->getAvailableFieldsets(),
+		])));
+
+		return $attributesQuery;
 	}
 }
