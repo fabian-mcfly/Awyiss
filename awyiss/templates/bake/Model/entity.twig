@@ -82,6 +82,7 @@ class {{ name }} extends Entity{{ fileBuilder.classBuilder.implements ? ' implem
 {% if name|underscore[:11] == 'attributes_' %}
 {% set generatedMethods = generatedMethods|merge(['getEntity']) %}
 
+
 	/**
 	 * @return \Awyiss\Model\Entity|null $entity Entity to be passed to the validation of attributes
 	 */
@@ -89,6 +90,7 @@ class {{ name }} extends Entity{{ fileBuilder.classBuilder.implements ? ' implem
 		return $this->entity;
 	}
 {% set generatedMethods = generatedMethods|merge(['setEntity']) %}
+
 
 	/**
 	 * @param \Awyiss\Model\Entity|null $entity Entity to be passed to the validation of attributes

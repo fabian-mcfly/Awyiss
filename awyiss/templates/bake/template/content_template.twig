@@ -25,9 +25,7 @@
 #}{% endverbatim %}
 
 <div class="{% verbatim %}{{ content.cssClass }}{% endverbatim %}"{% verbatim %} {{ content.data|data_attr|raw }}{% endverbatim %} id="Content{% verbatim %}{{ content.id }}{% endverbatim %}">
-	<!-- Here be dragons -->
-	{% verbatim %}
-	{% if content.title %}
+	{% verbatim %}{% if content.title %}
 		{% set tag = content.titleTag ?? 'div' %}
 		<{{ tag }} class="Title" id={{ content.title|ucparts(false) }}>
 			{{ content.title|raw }}
@@ -55,6 +53,5 @@
 		<div class="Children">
 			{{ children|raw }}
 		</div>
-	{% endif %}
-	{% endverbatim %}
+	{% endif %}{% endverbatim %}
 </div>
