@@ -29,14 +29,13 @@ trait UtilTrait {
 			$ls_path = $this->_pluginPath($this->plugin) . $ls_pathFragment;
 		}
 		elseif ($args->getOption('namespace')) {
-			$ls_namespace = Inflector::dasherize($args->getOption('namespace'));
-			$la_namespaceFolders = $this->getAutoloadPathsForNamespace($ls_namespace);
+			$la_namespaceFolders = $this->getAutoloadPathsForNamespace($args->getOption('namespace'));
 
 			if (isset($la_namespaceFolders[0])) {
-				$ls_path = $la_namespaceFolders[0];
+				$ls_path = rtrim($la_namespaceFolders[0], DS) . DS;
 			}
 			else {
-				$ls_path = ROOT . DS . 'src' . DS . $ls_namespace . DS;
+				$ls_path = ROOT . DS . Inflector::underscore($args->getOption('namespace')) . DS;
 			}
 
 			$ls_path .= $ls_pathFragment;
@@ -80,7 +79,7 @@ trait UtilTrait {
 
 				$la_prefixDirsPsr4 = $lo_property->getValue($lo_classLoader);
 
-				$ls_namespace = Inflector::camelize(rtrim($namespace, '\\')) . '\\';
+				$ls_namespace = rtrim($namespace, '\\') . '\\';
 
 				if (isset($la_prefixDirsPsr4[ $ls_namespace ])) {
 					return $la_prefixDirsPsr4[ $ls_namespace ];
