@@ -10,19 +10,34 @@
 #}
 {{ element('file_header', {
 	namespace: "#{namespace}\\Model\\Enum",
-	classImports: [
+	classImports: isPageRole ? [
 		'Awyiss\\Model\\Enum\\PageRoleEnumInterface',
 		'Awyiss\\Model\\Trait\\PageRoleEnumTrait',
+		'Cake\\Database\\Type\\EnumLabelInterface',
+	] : [
+		'Awyiss\\Utility\\Inflector',
 		'Cake\\Database\\Type\\EnumLabelInterface',
 	],
 }) }}
 
 {{ DocBlock.classDescription(name, 'Enum', [])|raw }}
 enum {{ name }}: {{ backingType }} implements EnumLabelInterface{% if isPageRole %}, PageRoleEnumInterface{% endif %} {
+{% if isPageRole %}
 	use PageRoleEnumTrait;
 
 
+{% endif %}
 {% if cases %}
 	{{ Bake.concat('\n	', cases) }}
+{% endif %}
+{% if isPageRole == false %}
+
+
+	/**
+	 * @return string
+	 */
+	public function label(): string {
+		return Inflector::humanize(Inflector::underscore($this->name));
+	}
 {% endif %}
 }

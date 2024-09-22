@@ -88,7 +88,7 @@ class EnumCommand extends BaseBakeEnumCommand {
 			'help' => 'The namespace for the model.',
 		])->addOption('is-pagerole', [
 			'boolean' => true,
-			'help' => 'Does the enum reflect pagerole values?fo',
+			'help' => 'Does the enum reflect pagerole values?',
 		]);
 
 
