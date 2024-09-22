@@ -66,67 +66,22 @@ class ConvertFilesCommand extends Command {
 		while (time() - $li_startTime < 60) {
 			$li_totalFiles = 0;
 
-			$lo_files = $this->fetchCropFiles((int)$args->getOption('limit'));
+			$la_processMethods = [
+				'processCropFiles',
+				'processNonImageFiles',
+				'processWebpConversion',
+				'processResizing',
+				'processAverageColorCalculation',
+			];
 
-			if ($lo_files->count()) {
-				$li_totalFiles += $lo_files->count();
-
-				$li_result = $this->cropImages($lo_files, $io);
-				if ($li_result !== static::CODE_SUCCESS) {
+			foreach ($la_processMethods as $ls_method) {
+				$li_files = $this->$ls_method($args, $io);
+				if ($li_files === false) {
 					$lb_errorOccurred = true;
-					break;
+					break 2;
 				}
-			}
-
-			$lo_files = $this->fetchNonImageFiles(
-				(int)$args->getOption('limit'),
-				$args->getOption('retry-failed'),
-				$args->getOption('include-webp')
-			);
-
-			if ($lo_files->count()) {
-				$li_totalFiles += $lo_files->count();
-
-				$li_result = $this->convertNonImages($lo_files, $io, $args->getOption('include-webp'));
-				if ($li_result !== static::CODE_SUCCESS) {
-					$lb_errorOccurred = true;
-					break;
-				}
-			}
-
-			$lo_files = $this->fetchFilesForWebpConversion((int)$args->getOption('limit'), $args->getOption('retry-failed'));
-
-			if ($lo_files->count()) {
-				$li_totalFiles += $lo_files->count();
-
-				$li_result = $this->convertImages($lo_files, $io);
-				if ($li_result !== static::CODE_SUCCESS) {
-					$lb_errorOccurred = true;
-					break;
-				}
-			}
-
-			$lo_files = $this->fetchFilesForResizing((int)$args->getOption('limit'), $args->getOption('retry-failed'));
-
-			if ($lo_files->count()) {
-				$li_totalFiles += $lo_files->count();
-
-				$li_result = $this->resizeImages($lo_files, $io);
-				if ($li_result !== static::CODE_SUCCESS) {
-					$lb_errorOccurred = true;
-					break;
-				}
-			}
-
-			$lo_files = $this->fetchFilesForAverageColorCalculation((int)$args->getOption('limit'));
-
-			if ($lo_files->count()) {
-				$li_totalFiles += $lo_files->count();
-
-				$li_result = $this->calculateAverageColors($lo_files, $io);
-				if ($li_result !== static::CODE_SUCCESS) {
-					$lb_errorOccurred = true;
-					break;
+				else {
+					$li_totalFiles += $li_files;
 				}
 			}
 
@@ -147,6 +102,126 @@ class ConvertFilesCommand extends Command {
 
 
 	/**
+	 * @param array $command
+	 * @param mixed $args
+	 * @return \Symfony\Component\Process\Process
+	 */
+	public function getProcess(array $command, mixed ...$args): Process {
+		return new Process($command, ...$args);
+	}
+
+
+	/**
+	 * @param \Cake\Console\Arguments $args
+	 * @param \Cake\Console\ConsoleIo $io
+	 * @return int|false
+	 */
+	public function processCropFiles(Arguments $args, ConsoleIo $io): int|false {
+		$lo_files = $this->fetchCropFiles((int)$args->getOption('limit'));
+
+		if ($lo_files->count()) {
+			$li_result = $this->cropImages($lo_files, $io);
+
+			if ($li_result !== static::CODE_SUCCESS) {
+				return false;
+			}
+
+			return $lo_files->count();
+		}
+
+		return 0;
+	}
+
+
+	/**
+	 * @param \Cake\Console\Arguments $args
+	 * @param \Cake\Console\ConsoleIo $io
+	 * @return int|false
+	 */
+	public function processNonImageFiles(Arguments $args, ConsoleIo $io): int|false {
+		$lo_files = $this->fetchNonImageFiles(
+			(int)$args->getOption('limit'),
+			$args->getOption('retry-failed'),
+			$args->getOption('include-webp')
+		);
+
+		if ($lo_files->count()) {
+			$li_result = $this->convertNonImages($lo_files, $io, $args->getOption('include-webp'));
+			if ($li_result !== static::CODE_SUCCESS) {
+				return false;
+			}
+
+			return $lo_files->count();
+		}
+
+		return 0;
+	}
+
+
+	/**
+	 * @param \Cake\Console\Arguments $args
+	 * @param \Cake\Console\ConsoleIo $io
+	 * @return int|false
+	 */
+	public function processWebpConversion(Arguments $args, ConsoleIo $io): int|false {
+		$lo_files = $this->fetchFilesForWebpConversion((int)$args->getOption('limit'), $args->getOption('retry-failed'));
+
+		if ($lo_files->count()) {
+			$li_result = $this->convertImages($lo_files, $io);
+			if ($li_result !== static::CODE_SUCCESS) {
+				return false;
+			}
+
+			return $lo_files->count();
+		}
+
+		return 0;
+	}
+
+
+	/**
+	 * @param \Cake\Console\Arguments $args
+	 * @param \Cake\Console\ConsoleIo $io
+	 * @return int|false
+	 */
+	public function processResizing(Arguments $args, ConsoleIo $io): int|false {
+		$lo_files = $this->fetchFilesForResizing((int)$args->getOption('limit'), $args->getOption('retry-failed'));
+
+		if ($lo_files->count()) {
+			$li_result = $this->resizeImages($lo_files, $io);
+			if ($li_result !== static::CODE_SUCCESS) {
+				return false;
+			}
+
+			return $lo_files->count();
+		}
+
+		return 0;
+	}
+
+
+	/**
+	 * @param \Cake\Console\Arguments $args
+	 * @param \Cake\Console\ConsoleIo $io
+	 * @return int|false
+	 */
+	public function processAverageColorCalculation(Arguments $args, ConsoleIo $io): int|false {
+		$lo_files = $this->fetchFilesForAverageColorCalculation((int)$args->getOption('limit'));
+
+		if ($lo_files->count()) {
+			$li_result = $this->calculateAverageColors($lo_files, $io);
+			if ($li_result !== static::CODE_SUCCESS) {
+				return false;
+			}
+
+			return $lo_files->count();
+		}
+
+		return 0;
+	}
+
+
+	/**
 	 * Calculate the average color of the images
 	 *
 	 * @param \Cake\Datasource\ResultSetInterface $files
@@ -154,14 +229,17 @@ class ConvertFilesCommand extends Command {
 	 * @return int
 	 */
 	protected function calculateAverageColors(ResultSetInterface $files, ConsoleIo $io): int {
+		$lo_files = $files;
+
 		/** @var \Awyiss\Model\Entity\Media $lo_file */
-		foreach ($files as $lo_file) {
+		foreach ($lo_files as $lo_file) {
 			$ls_path = $lo_file->isImage() ? $lo_file->pathAbsolute : $lo_file->previewPathAbsolute;
 
 			$io->out(sprintf('Calculating average color for file `%s`', $lo_file->path));
 
 			if (!file_exists($ls_path)) {
 				$io->error('Status: File does not exist');
+				$io->hr();
 
 				// If the file does not exist or is a png, set the average color to a fully transparent black
 				$lo_file->averageColor = '00000000';
@@ -170,6 +248,7 @@ class ConvertFilesCommand extends Command {
 
 			if ($lo_file->mimeType === 'image/png') {
 				$io->info('Status: Cannot calculate average color for png files');
+				$io->hr();
 
 				// If the file does not exist or is a png, set the average color to a fully transparent black
 				$lo_file->averageColor = '00000000';
@@ -192,17 +271,12 @@ class ConvertFilesCommand extends Command {
 			$lo_file->averageColor = sprintf('%02X%02X%02X%02X', $la_colors['red'], $la_colors['green'], $la_colors['blue'], $la_colors['alpha']);
 
 			$io->success('Status: Average color calculated successfully (#' . $lo_file->averageColor . ')');
-
 			$io->hr();
 		}
 
 		/** @var \Awyiss\Model\Table\MediaTable $lo_table */
 		$lo_table = $this->fetchTable('Media');
-
-		$lo_files = $files;
-		/**
-		 * If all files have the same webp status, use a simple updateAll command
-		 */
+		// Update all files with the average color
 		$lo_table->updateAll(function (QueryExpression $expression) use ($lo_files) {
 			$lo_averageColorCases = $expression->case();
 
@@ -242,7 +316,7 @@ class ConvertFilesCommand extends Command {
 	 * @return array|false
 	 */
 	protected function calculateAverageColorIM(string $path): array|false {
-		$lo_process = new Process([
+		$lo_process = $this->getProcess([
 			'convert',
 			$path,
 			'-resize',
@@ -401,8 +475,9 @@ class ConvertFilesCommand extends Command {
 				continue;
 			}
 
-			$lo_process = new Process($la_command);
+			$lo_process = $this->getProcess($la_command);
 			$lo_process->run();
+
 			if ($lo_process->isSuccessful()) {
 				$io->success('Status: ' . $lo_process->getExitCodeText());
 
@@ -518,7 +593,7 @@ class ConvertFilesCommand extends Command {
 			mkdir(dirname($ls_webpPathAbsolute));
 		}
 
-		$lo_process = new Process($this->getCommand($file, 'webp'));
+		$lo_process = $this->getProcess($this->getCommand($file, 'webp'));
 		$lo_process->run();
 
 		return $lo_process;
@@ -537,7 +612,7 @@ class ConvertFilesCommand extends Command {
 
 			$la_commands = $this->getCommand($lo_file, 'crop');
 
-			$lo_process = new Process($la_commands['original']);
+			$lo_process = $this->getProcess($la_commands['original']);
 			$lo_process->run();
 
 			if ($lo_process->isSuccessful()) {
@@ -545,7 +620,7 @@ class ConvertFilesCommand extends Command {
 
 				// If there's a webp command, run it and crop the webp file as well
 				if ($la_commands['webp']) {
-					$lo_process = new Process($la_commands['webp']);
+					$lo_process = $this->getProcess($la_commands['webp']);
 					$lo_process->run();
 				}
 
@@ -625,7 +700,7 @@ class ConvertFilesCommand extends Command {
 				mkdir(dirname($lo_file->pathAbsolute));
 			}
 
-			$lo_process = new Process($this->getCommand($lo_file, 'resize'));
+			$lo_process = $this->getProcess($this->getCommand($lo_file, 'resize'));
 			$lo_process->run();
 
 			if ($lo_process->isSuccessful()) {
@@ -694,7 +769,7 @@ class ConvertFilesCommand extends Command {
 	 * @param int $limit
 	 * @return \Cake\Datasource\ResultSetInterface
 	 */
-	public function fetchCropFiles(int $limit): ResultSetInterface {
+	protected function fetchCropFiles(int $limit): ResultSetInterface {
 		/** @var \Awyiss\Model\Table\MediaTable $lo_table */
 		$lo_table = $this->fetchTable('Media');
 
@@ -1012,7 +1087,7 @@ class ConvertFilesCommand extends Command {
 
 
 	/**
-	 * @param \Awyiss\Model\Entity\MediaResizedImage|\Awyiss\Model\Entity\Media $file
+	 * @param \Awyiss\Model\Entity\MediaResizedImage $file
 	 * @return array
 	 */
 	protected function getResizeCommand(MediaResizedImage|Media $file): array {
@@ -1097,7 +1172,7 @@ class ConvertFilesCommand extends Command {
 			return getimagesize($imagePath);
 		}
 
-		$lo_process = new Process([
+		$lo_process = $this->getProcess([
 			'identify',
 			'-format',
 			'%wx%h',
