@@ -75,7 +75,7 @@ if (defined('CUSTOM_DIR')) {
 	/**
 	 * Custom config folder
 	 */
-	define('CUSTOM_CONFIG', ROOT . DS . CUSTOM_DIR . DS . 'config' . DS);
+	define('CUSTOM_CONFIG', ROOT . DS . rtrim(CUSTOM_DIR, DS) . DS . 'config' . DS);
 
 	/**
 	 * Custom namespace
