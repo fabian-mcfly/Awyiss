@@ -45,6 +45,9 @@ class FormHelper extends BaseFormHelper {
 
 
 	/**
+	 * Use the StringTemplate class from the Awyiss namespace
+	 * and add the 'translatableText' widget.
+	 *
 	 * @inheritDoc
 	 */
 	public function __construct(View $view, array $config = []) {

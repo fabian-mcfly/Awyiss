@@ -11,9 +11,10 @@ use Migrations\Command\MigrationsCommand as BaseMigrationsCommand;
 
 
 /**
- * @inheritDoc
+ * Everything's here only to use \Awyiss\Migration\MigrationsDispatcher
  *
- * Everything's here only to use \AwyissBake\MigrationsDispatcher
+ * @inheritDoc
+ * @see \Awyiss\Migration\MigrationsDispatcher
  */
 class MigrationsCommand extends BaseMigrationsCommand {
 	/**
