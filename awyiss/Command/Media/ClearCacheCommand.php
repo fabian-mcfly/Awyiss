@@ -25,7 +25,6 @@ class ClearCacheCommand extends Command {
 	}
 
 
-
 	/**
 	 * @inheritDoc
 	 * @param \Cake\Console\ConsoleOptionParser $parser
@@ -35,7 +34,7 @@ class ClearCacheCommand extends Command {
 		$lo_parser = parent::buildOptionParser($parser);
 
 		$lo_parser->addOption('only-database', [
-			'bool' => true,
+			'boolean' => true,
 			'help' => 'Reset only the database status',
 		]);
 
@@ -73,63 +72,133 @@ class ClearCacheCommand extends Command {
 
 		$io->out(sprintf('%d folders found.', count($la_folders)));
 
-		if ($la_folders) {
-			foreach ($la_folders as $ls_folderPath) {
-				$io->out(sprintf('Processing folder `%s`... ', substr($ls_folderPath, strlen(WWW_ROOT))), 0);
-				$lb_deleted = $this->deleteFolder($ls_folderPath);
-				if ($lb_deleted) {
-					$io->success('Success');
-				}
-				else {
-					$io->error('failed');
-				}
-			}
+		$this->deleteFolders($la_folders, $io);
+
+		$this->removeDeletedFoldersFromDatabase($ls_type, $io);
+
+		$this->resetDatabaseRecords($ls_type, $io);
+
+		$this->deleteResizedDatabaseRecords($ls_type, $io);
+
+
+		return static::CODE_SUCCESS;
+	}
+
+
+	/**
+	 * @param array $folders
+	 * @param \Cake\Console\ConsoleIo $io
+	 * @return void
+	 */
+	protected function deleteFolders(array $folders, ConsoleIo $io): void {
+		if (!$folders) {
+			return;
 		}
 
+		foreach ($folders as $ls_folderPath) {
+			$io->out(sprintf('Processing folder `%s`... ', substr($ls_folderPath, strlen(WWW_ROOT))), 0);
 
-		if (in_array($ls_type, ['deleted', 'all'])) {
-			$io->out('Removing deleted folders from the database... ', 0);
-			/** @var \Awyiss\Model\Table\MediaFoldersTable $lo_table */
-			$lo_table = $this->fetchTable('MediaFolders');
-			$li_deletedRows = $lo_table->deleteAll(['deleted' => true]);
+			$lb_deleted = $this->deleteFolder($ls_folderPath);
 
-			if ($li_deletedRows) {
-				$io->success(sprintf('Deleted %d rows', $li_deletedRows));
+			if ($lb_deleted) {
+				$io->success('Succeeded');
 			}
 			else {
-				$io->out('Deleted 0 rows');
+				$io->error('Failed');
 			}
 		}
+	}
 
 
+	/**
+	 * @param string $type
+	 * @param \Cake\Console\ConsoleIo $io
+	 * @return void
+	 */
+	protected function removeDeletedFoldersFromDatabase(string $type, ConsoleIo $io): void {
+		if (!in_array($type, ['deleted', 'all'])) {
+			return;
+		}
+
+		$io->out('Removing deleted folders from the database... ', 0);
+
+		/** @var \Awyiss\Model\Table\MediaFoldersTable $lo_table */
+		$lo_table = $this->fetchTable('MediaFolders');
+		$li_deletedRows = $lo_table->deleteAll(['deleted' => true]);
+
+		if ($li_deletedRows) {
+			$io->success(sprintf('Deleted %d rows', $li_deletedRows));
+		}
+		else {
+			$io->out('Deleted 0 rows');
+		}
+	}
+
+
+	/**
+	 * @param string $type
+	 * @param \Cake\Console\ConsoleIo $io
+	 * @return void
+	 */
+	protected function resetDatabaseRecords(string $type, ConsoleIo $io): void {
 		$io->out('Resetting database records... ', 0);
 
-		$li_updatedRows = $this->resetMediaRecords($ls_type);
+		/** @var \Awyiss\Model\Table\MediaTable $lo_table */
+		$lo_table = $this->fetchTable('Media');
+
+		$ls_type = $type;
+		$li_updatedRows = $lo_table->updateAll(function (QueryExpression $expression) use ($ls_type) {
+			$la_cases = [];
+
+			if (in_array($ls_type, ['all', 'previews'])) {
+				$lo_previewCases = $expression->case()->when([
+					'preview !=' => ProcessStatus::NotRequired->value,
+				])->then(ProcessStatus::Undefined->value, 'integer')->else(ProcessStatus::NotRequired->value, 'integer');
+				$la_cases['preview'] = $lo_previewCases;
+			}
+
+			if (in_array($ls_type, ['all', 'webp'])) {
+				$lo_webpCases = $expression->case()->when([
+					'webp !=' => ProcessStatus::NotRequired->value,
+				])->then(ProcessStatus::Undefined->value, 'integer')->else(ProcessStatus::NotRequired->value, 'integer');
+				$la_cases['webp'] = $lo_webpCases;
+			}
+
+			return $la_cases;
+		}, []);
+
 		if ($li_updatedRows) {
 			$io->success(sprintf('Updated %d media rows', $li_updatedRows));
 		}
 		else {
 			$io->out('Updated 0 media rows');
 		}
+	}
 
 
-		if (in_array($ls_type, ['all', 'resized'])) {
-			$io->out('Deleting resized database records... ', 0);
-
-			/** @var \Awyiss\Model\Table\MediaResizedImagesTable $lo_table */
-			$lo_table = $this->fetchTable('MediaResizedImages');
-
-			$li_resizedRows = $lo_table->deleteAll([]);
-			if ($li_resizedRows) {
-				$io->success(sprintf('Deleted %d resized media rows', $li_resizedRows));
-			}
-			else {
-				$io->out('Updated 0 resized media rows');
-			}
+	/**
+	 * @param string $type
+	 * @param \Cake\Console\ConsoleIo $io
+	 * @return void
+	 */
+	protected function deleteResizedDatabaseRecords(string $type, ConsoleIo $io): void {
+		if (!in_array($type, ['all', 'resized'])) {
+			return;
 		}
 
+		$io->out('Deleting resized database records... ', 0);
 
-		return static::CODE_SUCCESS;
+		/** @var \Awyiss\Model\Table\MediaResizedImagesTable $lo_table */
+		$lo_table = $this->fetchTable('MediaResizedImages');
+
+		$li_resizedRows = $lo_table->deleteAll([]);
+
+		if ($li_resizedRows) {
+			$io->success(sprintf('Deleted %d resized media rows', $li_resizedRows));
+		}
+		else {
+			$io->out('Updated 0 resized media rows');
+		}
 	}
 
 
@@ -163,7 +232,7 @@ class ClearCacheCommand extends Command {
 			}
 			else {
 				if (in_array($type, ['all', 'effects'])) {
-					$ls_folder = WWW_ROOT . $lo_folder->path . '/_effects';
+					$ls_folder = WWW_ROOT . $lo_folder->path . DS . '_effects';
 
 					if (file_exists($ls_folder)) {
 						$la_folders[] = $ls_folder;
@@ -171,18 +240,18 @@ class ClearCacheCommand extends Command {
 				}
 
 				if (in_array($type, ['all', 'previews'])) {
-					$la_folders = array_merge($la_folders, glob(WWW_ROOT . $lo_folder->path . '/_*_preview', GLOB_ONLYDIR) ?: []);
+					$la_folders = array_merge($la_folders, glob(WWW_ROOT . $lo_folder->path . DS . '_*_preview', GLOB_ONLYDIR) ?: []);
 				}
 
 				if (in_array($type, ['all', 'resized'])) {
-					$ls_folder = WWW_ROOT . $lo_folder->path . '/_resized';
+					$ls_folder = WWW_ROOT . $lo_folder->path . DS . '_resized';
 					if (file_exists($ls_folder)) {
 						$la_folders[] = $ls_folder;
 					}
 				}
 
 				if (in_array($type, ['all', 'webp'])) {
-					$ls_folder = WWW_ROOT . $lo_folder->path . '/_webp';
+					$ls_folder = WWW_ROOT . $lo_folder->path . DS . '_webp';
 
 					if (file_exists($ls_folder)) {
 						$la_folders[] = $ls_folder;
@@ -197,52 +266,18 @@ class ClearCacheCommand extends Command {
 
 
 	/**
-	 * @param mixed $ls_folderPath
+	 * @param mixed $folderPath
 	 * @return bool
 	 */
-	protected function deleteFolder(mixed $ls_folderPath): bool {
+	protected function deleteFolder(mixed $folderPath): bool {
 		$lo_process = new Process([
 			'rm',
 			'-r',
-			$ls_folderPath,
+			$folderPath,
 		]);
 		$lo_process->run();
 
 
 		return $lo_process->isSuccessful();
-	}
-
-
-	/**
-	 * Resets the status of the `preview` and `webp` fields of the media records
-	 *
-	 * @param string $type
-	 * @return int
-	 */
-	protected function resetMediaRecords(string $type): int {
-		/** @var \Awyiss\Model\Table\MediaTable $lo_table */
-		$lo_table = $this->fetchTable('Media');
-
-		$ls_type = $type;
-
-		return $lo_table->updateAll(function (QueryExpression $expression) use ($ls_type) {
-			$la_cases = [];
-
-			if (in_array($ls_type, ['all', 'previews'])) {
-				$lo_previewCases = $expression->case()->when([
-					'preview !=' => ProcessStatus::NotRequired->value,
-				])->then(ProcessStatus::Undefined->value, 'integer')->else(ProcessStatus::NotRequired->value, 'integer');
-				$la_cases['preview'] = $lo_previewCases;
-			}
-
-			if (in_array($ls_type, ['all', 'webp'])) {
-				$lo_webpCases = $expression->case()->when([
-					'webp !=' => ProcessStatus::NotRequired->value,
-				])->then(ProcessStatus::Undefined->value, 'integer')->else(ProcessStatus::NotRequired->value, 'integer');
-				$la_cases['webp'] = $lo_webpCases;
-			}
-
-			return $la_cases;
-		}, []);
 	}
 }
