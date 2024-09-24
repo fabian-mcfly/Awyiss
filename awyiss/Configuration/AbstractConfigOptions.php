@@ -7,7 +7,6 @@ namespace Awyiss\Configuration;
 use Awyiss\Awyiss;
 use Cake\Utility\Hash;
 use InvalidArgumentException;
-use RuntimeException;
 
 
 /**
@@ -28,14 +27,9 @@ abstract class AbstractConfigOptions implements ConfigOptionsInterface {
 	public function __construct() {
 		$ls_scope = static::getScope();
 		$ls_testScope = ConfigOptionsProvider::sanitizeScope($ls_scope);
+
 		if ($ls_testScope !== $ls_scope) {
-			throw new RuntimeException(
-				sprintf(
-					'The provided scope must be written `%s`, `%s` given.',
-					$ls_testScope,
-					$ls_scope
-				)
-			);
+			static::$scope = $ls_testScope;
 		}
 
 		foreach (Awyiss::getRealms() as $ls_realm) {
