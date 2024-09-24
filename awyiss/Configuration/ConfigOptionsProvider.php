@@ -285,7 +285,12 @@ class ConfigOptionsProvider {
 		foreach ($la_paths as $ls_namespace => $ls_path) {
 			foreach (glob($ls_path) as $ls_filePath) {
 				$ls_configurationName = substr($ls_filePath, strrpos($ls_filePath, DS) + 1, -4);
-				if ($ls_className === '*' && in_array($ls_configurationName, ['GenericDatatablesConfigOptions', 'GenericPagesConfigOptions'])) {
+
+				if (
+					str_starts_with($ls_configurationName, '_') ||
+					str_starts_with($ls_configurationName, 'Abstract') ||
+					in_array($ls_configurationName, ['GenericDatatablesConfigOptions', 'GenericPagesConfigOptions'])
+				) {
 					continue;
 				}
 
@@ -297,6 +302,10 @@ class ConfigOptionsProvider {
 					throw new RuntimeException(
 						sprintf('The provided Configuration class `%s` does not implement `%s`.', $ls_configurationClass, ConfigOptionsInterface::class)
 					);
+				}
+
+				if ($lo_reflection->isAbstract()) {
+					continue;
 				}
 
 				/**
