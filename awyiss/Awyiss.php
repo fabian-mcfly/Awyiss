@@ -165,6 +165,12 @@ class Awyiss extends BaseApplication {
 
 
 	/**
+	 * Finds all commands inside subfolders of
+	 * - the custom namespace
+	 * - the Awyiss namespace
+	 *
+	 * The commands are added to the command collection
+	 *
 	 * @param \Cake\Console\CommandCollection $commands
 	 * @return \Cake\Console\CommandCollection
 	 */
@@ -306,6 +312,8 @@ class Awyiss extends BaseApplication {
 
 
 	/**
+	 * Use the Awyiss controller factory
+	 *
 	 * @inheritDoc
 	 * @param ServerRequestInterface $request The request
 	 * @return ResponseInterface
@@ -331,130 +339,6 @@ class Awyiss extends BaseApplication {
 		$lo_controller = $this->controllerFactory->create($request);
 
 		return $this->controllerFactory->invoke($lo_controller);
-	}
-
-
-	/**
-	 * Loads the Awyiss configuration from either the database or a config file inside the custom namespace.
-	 * When loaded from the database, the configuration is dumped into a php config file.
-	 *
-	 * The filename is the underscored name of the custom namespace,
-	 * followed by the frontend language and the backend language, both in square brackets.
-	 *
-	 * @param string $frontendLanguage
-	 * @param string $backendLanguage
-	 * @param bool $forceReload
-	 * @throws \ReflectionException
-	 */
-	public static function loadConfiguration(string $frontendLanguage, string $backendLanguage, bool $forceReload = false): void {
-		/** @var \Awyiss\Model\Table\ConfigurationTable $lo_configurationTable */
-		$lo_configurationTable = FactoryLocator::get('Table')->get('Configuration');
-
-		$ls_fileName = Inflector::underscore(CUSTOM_NAMESPACE);
-		$ls_fileName .= '[' . $frontendLanguage . ']';
-		$ls_fileName .= '[' . $backendLanguage . ']';
-
-		if (!$forceReload) {
-			/*
-			 * If the config path `Awyiss` is not empty, we do have a config file
-			 * Therefore loading the database config is skipped
-			 */
-			Configure::load($ls_fileName, 'default', false);
-			if (Configure::read('Awyiss')) {
-				static::addUserConfiguration();
-
-				return;
-			}
-
-			/**
-			 * Trigger the creation of the custom configuriation
-			 *
-			 * @see \Awyiss\Event\Backend\ConfigurationListener::createCustomConfiguration()
-			 */
-			$lo_eventManager = EventManager::instance();
-			$lo_eventManager->dispatch('Configuration.createCustomConfiguration');
-
-			Configure::load($ls_fileName, 'default', false);
-			if (Configure::read('Awyiss')) {
-				static::addUserConfiguration();
-
-				return;
-			}
-		}
-
-		Configure::delete('Awyiss');
-
-		$lo_query = $lo_configurationTable->find()->enableHydration(false);
-		$lo_query->where(function (QueryExpression $exp) use ($frontendLanguage, $backendLanguage) {
-			return $exp->or([
-				['language_shortcode IS' => null],
-				$exp->and([['realm' => Awyiss::REALM_BACKEND], ['language_shortcode' => $backendLanguage]]),
-				$exp->and([['realm' => Awyiss::REALM_FRONTEND], ['language_shortcode' => $frontendLanguage]]),
-			]);
-		});
-
-		$lo_query->orderBy([
-			'scope' => 'ASC',
-			'realm' => 'ASC',
-			'identifier' => 'ASC',
-			'language_shortcode IS null' => 'ASC',
-			'language_shortcode' => 'ASC',
-		]);
-
-		$la_config = [];
-		foreach ($lo_query->all() as $la_item) {
-			$la_item['identifier'] = array_map(function (string $identifier) {
-				return ConfigOptionsProvider::sanitizeIdentifier($identifier);
-			}, explode('.', $la_item['identifier']));
-
-			$ls_path = implode('.', [
-				'Awyiss',
-				ConfigOptionsProvider::sanitizeScope($la_item['scope']),
-				Inflector::camelize($la_item['realm']),
-				...$la_item['identifier'],
-			]);
-
-			$la_item['value'] = ConfigOptionsProvider::typecastConfigValue(
-				$la_item['scope'],
-				$la_item['realm'],
-				implode('.', $la_item['identifier']),
-				$la_item['value'],
-				$la_item['language_shortcode']
-			);
-
-			if (!isset($la_config[ $ls_path ])) {
-				$la_config[ $ls_path ] = $la_item['value'];
-			}
-		}
-
-		/** @var \Awyiss\Configuration\AbstractConfigOptions $lo_configOptions */
-		foreach (ConfigOptionsProvider::getConfigOptionsFiles(true) as $ls_scope => $lo_configOptionsFile) {
-			if (!$lo_configOptionsFile) {
-				continue;
-			}
-
-			/**
-			 * @var string $ls_realm
-			 * @var \Awyiss\Configuration\ConfigOptionCollection $lo_realmConfigOptionCollection
-			 */
-			foreach ($lo_configOptionsFile->getConfigOptions() as $ls_realm => $lo_realmConfigOptionCollection) {
-				/** @var \Awyiss\Configuration\ConfigOption $lo_configOption */
-				foreach ($lo_realmConfigOptionCollection->getConfigOptions() as $ls_key => $lo_configOption) {
-					$ls_key = 'Awyiss.' . $ls_scope . '.' . $ls_realm . '.' . $ls_key;
-					if (!array_key_exists($ls_key, $la_config)) {
-						$la_config[ $ls_key ] = $lo_configOption->getDefaultValue();
-					}
-				}
-			}
-		}
-
-		ksort($la_config);
-
-		Configure::write($la_config);
-
-		if (!$forceReload) {
-			static::addUserConfiguration();
-		}
 	}
 
 
@@ -493,6 +377,66 @@ class Awyiss extends BaseApplication {
 
 
 	/**
+	 * Loads the Awyiss configuration from either the database or a config file inside the custom namespace.
+	 * When loaded from the database, the configuration is dumped into a php config file.
+	 *
+	 * The filename is the underscored name of the custom namespace,
+	 * followed by the frontend language and the backend language, both in square brackets.
+	 *
+	 * @param string $frontendLanguage
+	 * @param string $backendLanguage
+	 * @param bool $forceReload
+	 * @throws \ReflectionException
+	 */
+	public static function loadConfiguration(string $frontendLanguage, string $backendLanguage, bool $forceReload = false): void {
+		$ls_fileName = Inflector::underscore(CUSTOM_NAMESPACE);
+		$ls_fileName .= '[' . $frontendLanguage . ']';
+		$ls_fileName .= '[' . $backendLanguage . ']';
+
+		if (!$forceReload) {
+			/*
+			 * If the config path `Awyiss` is not empty, we do have a config file
+			 * Therefore loading the database config is skipped
+			 */
+			Configure::load($ls_fileName, 'default', false);
+			if (Configure::read('Awyiss')) {
+				static::addUserConfiguration();
+
+				return;
+			}
+
+			/**
+			 * Trigger the creation of the custom configuriation
+			 *
+			 * @see \Awyiss\Event\Backend\ConfigurationListener::createCustomConfiguration()
+			 */
+			$lo_eventManager = EventManager::instance();
+			$lo_eventManager->dispatch('Configuration.createCustomConfiguration');
+
+			Configure::load($ls_fileName, 'default', false);
+			if (Configure::read('Awyiss')) {
+				static::addUserConfiguration();
+
+				return;
+			}
+		}
+
+		Configure::delete('Awyiss');
+
+		$la_config = static::getDatabaseConfiguration($frontendLanguage, $backendLanguage);
+		$la_config = static::getFileConfiguration($la_config);
+
+		if (!$forceReload) {
+			static::addUserConfiguration();
+		}
+
+		ksort($la_config);
+
+		Configure::write($la_config);
+	}
+
+
+	/**
 	 * Adds the user configuration to the Awyiss configuration
 	 *
 	 * @return void
@@ -511,9 +455,99 @@ class Awyiss extends BaseApplication {
 			return ['Backend' => $config];
 		}, $la_userConfig);
 
-		$la_config = Configure::read('Awyiss');
+		$la_config = Configure::read('Awyiss', []);
 		$la_config = Hash::merge($la_config, $la_userConfig);
 
 		Configure::write('Awyiss', $la_config);
+	}
+
+
+	/**
+	 * @param string $frontendLanguage
+	 * @param string $backendLanguage
+	 * @return array
+	 * @throws \ReflectionException
+	 */
+	public static function getDatabaseConfiguration(string $frontendLanguage, string $backendLanguage): array {
+		/** @var \Awyiss\Model\Table\ConfigurationTable $lo_configurationTable */
+		$lo_configurationTable = FactoryLocator::get('Table')->get('Configuration');
+
+		$lo_query = $lo_configurationTable->find()->enableHydration(false);
+		$lo_query->where(function (QueryExpression $exp) use ($frontendLanguage, $backendLanguage) {
+			return $exp->or([
+				['language_shortcode IS' => null],
+				$exp->and([['realm' => Awyiss::REALM_BACKEND], ['language_shortcode' => $backendLanguage]]),
+				$exp->and([['realm' => Awyiss::REALM_FRONTEND], ['language_shortcode' => $frontendLanguage]]),
+			]);
+		});
+
+		$lo_query->orderBy([
+			'scope' => 'ASC',
+			'realm' => 'ASC',
+			'identifier' => 'ASC',
+			'language_shortcode IS null' => 'ASC',
+			'language_shortcode' => 'ASC',
+		]);
+
+		$la_config = [];
+
+		foreach ($lo_query->all() as $la_item) {
+			$la_item['identifier'] = array_map(function (string $identifier) {
+				return ConfigOptionsProvider::sanitizeIdentifier($identifier);
+			}, explode('.', $la_item['identifier']));
+
+			$ls_path = implode('.', [
+				'Awyiss',
+				ConfigOptionsProvider::sanitizeScope($la_item['scope']),
+				Inflector::camelize($la_item['realm']),
+				...$la_item['identifier'],
+			]);
+
+			$la_item['value'] = ConfigOptionsProvider::typecastConfigValue(
+				$la_item['scope'],
+				$la_item['realm'],
+				implode('.', $la_item['identifier']),
+				$la_item['value'],
+				$la_item['language_shortcode']
+			);
+
+			if (!isset($la_config[ $ls_path ])) {
+				$la_config[ $ls_path ] = $la_item['value'];
+			}
+		}
+
+		return $la_config;
+	}
+
+
+	/**
+	 * @param array $config
+	 * @return array
+	 * @throws \ReflectionException
+	 */
+	public static function getFileConfiguration(array $config): array {
+		/** @var \Awyiss\Configuration\AbstractConfigOptions $lo_configOptions */
+		foreach (ConfigOptionsProvider::getConfigOptionsFiles(true) as $ls_scope => $lo_configOptionsFile) {
+			if (!$lo_configOptionsFile) {
+				continue;
+			}
+
+			/**
+			 * @var string $ls_realm
+			 * @var \Awyiss\Configuration\ConfigOptionCollection $lo_realmConfigOptionCollection
+			 */
+			foreach ($lo_configOptionsFile->getConfigOptions() as $ls_realm => $lo_realmConfigOptionCollection) {
+				/** @var \Awyiss\Configuration\ConfigOption $lo_configOption */
+				foreach ($lo_realmConfigOptionCollection->getConfigOptions() as $ls_key => $lo_configOption) {
+					$ls_key = 'Awyiss.' . $ls_scope . '.' . $ls_realm . '.' . $ls_key;
+					if (!array_key_exists($ls_key, $config)) {
+						/** @noinspection PhpVariableNamingConventionInspection */
+						$config[ $ls_key ] = $lo_configOption->getDefaultValue();
+					}
+				}
+			}
+		}
+
+		return $config;
 	}
 }
