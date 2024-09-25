@@ -50,7 +50,7 @@ abstract class AbstractGenericConfigOptions extends AbstractConfigOptions {
 	 * @return $this
 	 */
 	public function setDynamicScope(?string $pageRole): static {
-		$this->dynamicScope = $pageRole;
+		$this->dynamicScope = ConfigOptionsProvider::sanitizeScope($pageRole);
 
 
 		return $this;
