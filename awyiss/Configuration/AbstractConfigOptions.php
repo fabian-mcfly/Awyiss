@@ -83,7 +83,7 @@ abstract class AbstractConfigOptions implements ConfigOptionsInterface {
 	 * @inheritDoc
 	 */
 	public function getConfigOption(string $realm, string|array $path): ?ConfigOption {
-		$la_configOptions = $this->realms[ $realm ] ?? [];
+		$la_configOptions = $this->getConfigOptions($realm);
 
 		if (empty($la_configOptions)) {
 			return null;
