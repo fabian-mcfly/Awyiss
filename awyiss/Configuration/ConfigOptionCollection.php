@@ -82,7 +82,7 @@ class ConfigOptionCollection extends ArrayIterator {
 			 * and then add that instance to the collection.
 			 * */
 			else {
-				$this->add(new ConfigOption($lx_configOption));
+				$this->add(new ConfigOption(...$lx_configOption));
 			}
 		}
 
@@ -137,6 +137,10 @@ class ConfigOptionCollection extends ArrayIterator {
 
 
 	/**
+	 * Get all ConfigOptions from this collection and all nested collections
+	 *
+	 * All provided path parts will be concatenated with a dot to form the final key
+	 *
 	 * @param string ...$pathParts
 	 * @return array
 	 */
