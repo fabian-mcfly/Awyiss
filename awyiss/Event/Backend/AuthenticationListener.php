@@ -82,9 +82,6 @@ class AuthenticationListener implements EventListenerInterface {
 				$lo_model->getBehavior('Audit')->setIdentity($this->identity);
 			}
 		}
-
-		// Add user configuration to the configuration now that the user is authenticated
-		Awyiss::addUserConfiguration();
 	}
 
 
