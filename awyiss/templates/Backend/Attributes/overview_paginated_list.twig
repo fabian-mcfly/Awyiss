@@ -9,14 +9,6 @@
 
 {% extends '@Backend/element/overview/overview_paginated_list.twig' %}
 
-{% block tableOverviewHeaderDefaultFields %}
-	<th class="TableHeader-Fieldset{% if PaginatorHelper.isCurrentSortKey('fieldset') %} Active{% endif %}">{{ PaginatorHelper.sort('fieldset') }}</th>
-{% endblock %}
-
-{% block tableOverviewCellDefaultFields %}
-	<td class="TableCell-Fieldset">{{ __('fieldset_' ~ entity.fieldset) }}</td>
-{% endblock %}
-
 {% block tableOverviewCellDisplayedFieldDefaultValue %}
 	{% if field == 'default_value' %}
 		{{ entity.defaultValue ?? '<em>null</em>' }}
@@ -24,5 +16,3 @@
 		{{ parent() }}
 	{% endif %}
 {% endblock %}
-
-{% block tableOverviewFootColSpan %}{{ localConfig.overview.displayedFields|length + 5 }}{% endblock %}
