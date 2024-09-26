@@ -129,18 +129,17 @@ class FrontendView extends AppView {
 			}
 		}
 
-
 		$lo_twig->addGlobal('baseUrl', Router::url('/', true));
 		$lo_twig->addGlobal('config', Configure::read());
 		$lo_twig->addGlobal('currentLanguage', $lo_frontendLanguage);
 		$lo_twig->addGlobal('currentPath', $this->getRequest()->getUri()->getPath());
-		$lo_twig->addGlobal('currentUrl', $this->request->getUri()->__toString());
-		$lo_twig->addGlobal('designSettings', $this->getRequest()->getAttribute('design')->getDesignVariables());
+		$lo_twig->addGlobal('currentUrl', $this->getRequest()->getUri()->__toString());
+		$lo_twig->addGlobal('designSettings', $this->getRequest()->getAttribute('design')?->getDesignVariables() ?? []);
 		$lo_twig->addGlobal('environment', Configure::read('debug') ? 'Env-' . Inflector::ucparts(CONFIG_ENV) : 'l');
-		$lo_twig->addGlobal('folder', '/' . ltrim($this->request->getAttribute('base'), '/'));
+		$lo_twig->addGlobal('folder', '/' . ltrim($this->getRequest()->getAttribute('base'), '/') ?? '');
 		$lo_twig->addGlobal('languages', LocaleMiddleware::getLanguages());
 		$lo_twig->addGlobal('languageShortcode', $lo_frontendLanguage?->shortcode);
-		$lo_twig->addGlobal('previewMode', $this->request->getSession()->read('previewMode', []));
+		$lo_twig->addGlobal('previewMode', $this->getRequest()->getSession()->read('previewMode', []));
 		$lo_twig->addGlobal('webfont', $this->getWebfontData());
 
 		// Add the webfont timestamp to the global variables
@@ -511,7 +510,7 @@ class FrontendView extends AppView {
 	protected function getWebfontData(): array {
 		/** @var \Awyiss\Middleware\DesignMiddleware $lo_designMiddleware */
 		$lo_designMiddleware = $this->getRequest()->getAttribute('design');
-		$la_variables = $lo_designMiddleware->getDesignVariables();
+		$la_variables = $lo_designMiddleware?->getDesignVariables() ?? [];
 
 		$la_webfontData = [];
 
