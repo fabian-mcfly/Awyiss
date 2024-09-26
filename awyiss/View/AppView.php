@@ -14,6 +14,7 @@ use Cake\TwigView\View\TwigView;
 use Cake\View\Cell;
 use Cake\View\Exception\MissingCellException;
 use Cake\View\Helper;
+use Twig\Environment;
 use Twig\Loader\LoaderInterface;
 use Twig\Markup;
 
@@ -35,9 +36,9 @@ use Twig\Markup;
  */
 class AppView extends TwigView {
 	/**
-	 * @var bool $initialized A flag to check if the view has been initialized.
+	 * @var bool $twigInitialized A flag to check if the view has been initialized.
 	 */
-	protected static bool $initialized = false;
+	protected static bool $twigInitialized = false;
 	/**
 	 * @var array $helperCache An associative array to cache the helper instances.
 	 */
@@ -61,43 +62,8 @@ class AppView extends TwigView {
 
 		$lo_twig = $this->getTwig();
 
-		if (!static::$initialized) {
-			/** @var FileLoader $lo_loader */
-			$lo_loader = $lo_twig->getLoader();
-
-			$lo_loader->addPath(ROOT . DS . APP_DIR . DS . 'templates' . DS, Configure::read('App.namespace'));
-
-			if (defined('CUSTOM_DIR')) {
-				$lo_loader->addPath(ROOT . DS . CUSTOM_DIR . DS . 'templates' . DS, CUSTOM_NAMESPACE);
-
-				$lo_loader->setPaths([
-					ROOT . DS . CUSTOM_DIR . DS . 'templates' . DS . 'Frontend' . DS,
-					ROOT . DS . APP_DIR . DS . 'templates' . DS . 'Frontend' . DS,
-				], 'Frontend');
-
-				$lo_loader->setPaths([
-					ROOT . DS . CUSTOM_DIR . DS . 'templates' . DS . 'Backend' . DS,
-					ROOT . DS . APP_DIR . DS . 'templates' . DS . 'Backend' . DS,
-				], 'Backend');
-			}
-			else {
-				$lo_loader->addPath(ROOT . DS . APP_DIR . DS . 'templates' . DS . 'Frontend' . DS, 'Frontend');
-
-				$lo_loader->addPath(ROOT . DS . APP_DIR . DS . 'templates' . DS . 'Backend' . DS, 'Backend');
-			}
-
-			$lo_twig->addExtension(new AwyissExtension());
-			$lo_twig->addExtension(new EnumExtension());
-
-			if (defined('CUSTOM_NAMESPACE')) {
-				//This looks for a custom Twig Extension class in \<custom namespace>\Twig\Extension\<CustomNamespace>Extension.php and adds it
-				$ls_customExtensionClass = '\\' . CUSTOM_NAMESPACE . '\Twig\Extension\\' . CUSTOM_NAMESPACE . 'Extension';
-				if (class_exists($ls_customExtensionClass)) {
-					$lo_twig->addExtension(new $ls_customExtensionClass());
-				}
-			}
-
-			static::$initialized = true;
+		if (!static::$twigInitialized) {
+			$this->initTwig($lo_twig);
 		}
 
 		$this->set('Awyiss', [
@@ -139,6 +105,19 @@ class AppView extends TwigView {
 
 
 	/**
+	 * Uses the Awyiss HelperRegistry
+	 *
+	 * @inheritDoc
+	 */
+	public function helpers(): HelperRegistry {
+		return $this->_helpers ??= new HelperRegistry($this);
+	}
+
+
+
+	/**
+	 * Creates a magic helper class instance for each loaded helper
+	 *
 	 * @inheritDoc
 	 * @return void
 	 */
@@ -176,6 +155,11 @@ class AppView extends TwigView {
 
 	/**
 	 * Magic method to handle dynamic property access on the view.
+	 *
+	 * It allows to access methods of the helper instances directly.
+	 *
+	 * If the return value of the method is a string containing HTML tags,
+	 * it will be wrapped in a Twig Markup object to prevent auto-escaping.
 	 *
 	 * @param string $name
 	 * @return object
@@ -223,5 +207,50 @@ class AppView extends TwigView {
 				return $lx_result;
 			}
 		};
+	}
+
+
+	/**
+	 * @param \Twig\Environment $twig
+	 * @return void
+	 * @throws \Twig\Error\LoaderError
+	 */
+	protected function initTwig(Environment $twig): void {
+		/** @var \Awyiss\Twig\FileLoader $lo_loader */
+		$lo_loader = $twig->getLoader();
+
+		$lo_loader->addPath(ROOT . DS . APP_DIR . DS . 'templates' . DS, Configure::read('App.namespace'));
+
+		if (defined('CUSTOM_DIR')) {
+			$lo_loader->addPath(ROOT . DS . CUSTOM_DIR . DS . 'templates' . DS, CUSTOM_NAMESPACE);
+
+			$lo_loader->setPaths([
+				ROOT . DS . CUSTOM_DIR . DS . 'templates' . DS . 'Frontend' . DS,
+				ROOT . DS . APP_DIR . DS . 'templates' . DS . 'Frontend' . DS,
+			], 'Frontend');
+
+			$lo_loader->setPaths([
+				ROOT . DS . CUSTOM_DIR . DS . 'templates' . DS . 'Backend' . DS,
+				ROOT . DS . APP_DIR . DS . 'templates' . DS . 'Backend' . DS,
+			], 'Backend');
+		}
+		else {
+			$lo_loader->addPath(ROOT . DS . APP_DIR . DS . 'templates' . DS . 'Frontend' . DS, 'Frontend');
+
+			$lo_loader->addPath(ROOT . DS . APP_DIR . DS . 'templates' . DS . 'Backend' . DS, 'Backend');
+		}
+
+		$twig->addExtension(new AwyissExtension());
+		$twig->addExtension(new EnumExtension());
+
+		if (defined('CUSTOM_NAMESPACE')) {
+			//This looks for a custom Twig Extension class in \<custom namespace>\Twig\Extension\<CustomNamespace>Extension.php and adds it
+			$ls_customExtensionClass = '\\' . CUSTOM_NAMESPACE . '\Twig\Extension\\' . CUSTOM_NAMESPACE . 'Extension';
+			if (class_exists($ls_customExtensionClass)) {
+				$twig->addExtension(new $ls_customExtensionClass());
+			}
+		}
+
+		static::$twigInitialized = true;
 	}
 }
