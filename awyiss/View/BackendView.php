@@ -6,8 +6,10 @@ namespace Awyiss\View;
 
 use Awyiss\Awyiss;
 use Awyiss\Middleware\LocaleMiddleware;
+use Awyiss\Model\Entity\Language;
 use Awyiss\Routing\Router;
 use Cake\Core\Configure;
+use Twig\Environment;
 
 
 /**
@@ -24,24 +26,47 @@ class BackendView extends AppView {
 	public function initialize(): void {
 		parent::initialize();
 
+		$this->addHelpers();
+
+		$this->addTwigGlobals();
+	}
+
+
+	/**
+	 * Add helpers
+	 *
+	 * @return void
+	 */
+	protected function addHelpers(): void {
 		$this->addHelper('Asset');
+
 		$this->addHelper('Attributes');
+
 		$this->addHelper('Authentication.Identity');
+
 		$this->addHelper('Authorization');
+
 		$this->addHelper('Categories');
+
 		$this->addHelper('Flash');
+
 		$this->addHelper('Form', [
 			'autoSetCustomValidity' => false,
 			'errorClass' => 'Error',
 			'templates' => 'form_templates_backend',
 		]);
+
 		$this->addHelper('Html');
+
 		$this->addHelper('Locale');
+
 		$this->addHelper('Media');
+
 		$this->addHelper('Paginator', [
 			'aliasedFields' => $this->viewVars['paginate']['aliasedFields'] ?? [],
 			'templates' => 'paginator_templates',
 		]);
+
 		$this->addHelper('SystemOrder', [
 			'field' => $this->viewVars['systemOrderField'] ?? null,
 			'relatedColumns' => $this->viewVars['systemOrderRelatedColumns'] ?? null,
@@ -60,14 +85,43 @@ class BackendView extends AppView {
 		]);
 
 		$this->addHelper('Url');
+	}
 
 
+	/**
+	 * @return void
+	 * @throws \Exception
+	 */
+	protected function addTwigGlobals(): void {
 		$lo_twig = $this->getTwig();
+		$ls_logoPath = $this->getLoginLogoPath();
 
+		if ($ls_logoPath) {
+			// If the logo path is set, remove the root path and custom directory from the path
+			$lo_twig->addGlobal('loginLogoPath', $ls_logoPath);
+		}
+
+		$this->addFrontendLanguage($lo_twig);
+
+		$this->addUserLanguage($lo_twig);
+
+		$lo_twig->addGlobal('baseUrl', Router::url('/', true));
+		$lo_twig->addGlobal('currentPath', $this->getRequest()->getUri()->getPath());
+		$lo_twig->addGlobal('currentUrl', $this->getRequest()->getUri()->__toString());
+		$lo_twig->addGlobal('folder', '/' . ltrim($this->getRequest()->getAttribute('base'), '/'));
+		$lo_twig->addGlobal('languages', LocaleMiddleware::getLanguages());
+	}
+
+
+	/**
+	 * @return string|null
+	 */
+	protected function getLoginLogoPath(): ?string {
 		// Set login logo path
 		$ls_logoPath = null;
 		$ls_extensions = ['png', 'jpg', 'svg'];
 		$ls_basePath = ROOT . DS . CUSTOM_DIR . DS . 'assets' . DS . 'img' . DS . 'login-logo.';
+
 		// For each extension, check if the file exists
 		foreach ($ls_extensions as $ls_extension) {
 			$ls_tempPath = $ls_basePath . $ls_extension;
@@ -77,22 +131,59 @@ class BackendView extends AppView {
 			}
 		}
 
-		if ($ls_logoPath) {
-			// If the logo path is set, remove the root path and custom directory from the path
-			$lo_twig->addGlobal('loginLogoPath', substr_replace($ls_logoPath, '', 0, strlen(ROOT . DS . CUSTOM_DIR) + 1));
+		if (!$ls_logoPath) {
+			return null;
 		}
 
-		$lo_blocklistedProperties = ['realm', 'systemOrder', 'active', 'deleted', 'createdBy', 'createdOn', 'changedBy', 'changedOn', 'deletedBy', 'deletedOn', 'label'];
-		// Unset language properties
+		return substr_replace($ls_logoPath, '', 0, strlen(ROOT . DS . CUSTOM_DIR) + 1);
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Entity\Language $language
+	 * @return \Awyiss\Model\Entity\Language
+	 */
+	protected function cleanLanguage(Language $language): Language {
+		$la_blocklistedProperties = ['realm', 'systemOrder', 'active', 'deleted', 'createdBy', 'createdOn', 'changedBy', 'changedOn', 'deletedBy', 'deletedOn'];
+
+		$lo_language = clone $language;
+
+		foreach ($la_blocklistedProperties as $ls_property) {
+			unset($lo_language->{$ls_property});
+		}
+
+		$la_virtualFields = $lo_language->getVirtual();
+		$la_virtualFields = array_filter($la_virtualFields, function (string $key): bool {
+			return $key !== 'label';
+		});
+
+		$lo_language->setVirtual($la_virtualFields);
+
+		return $lo_language;
+	}
+
+
+	/**
+	 * @param \Twig\Environment $lo_twig
+	 * @return void
+	 * @throws \Exception
+	 */
+	protected function addFrontendLanguage(Environment $lo_twig): void {
 		$lo_frontendLanguage = LocaleMiddleware::getLanguage();
 		if ($lo_frontendLanguage) {
-			$lo_frontendLanguage = clone $lo_frontendLanguage;
-
-			foreach ($lo_blocklistedProperties as $ls_property) {
-				unset($lo_frontendLanguage->{$ls_property});
-			}
+			$lo_frontendLanguage = $this->cleanLanguage($lo_frontendLanguage);
 		}
+		$lo_twig->addGlobal('currentLanguage', $lo_frontendLanguage);
+		$lo_twig->addGlobal('languageShortcode', $lo_frontendLanguage?->shortcode);
+	}
 
+
+	/**
+	 * @param \Twig\Environment $lo_twig
+	 * @return void
+	 * @throws \Exception
+	 */
+	protected function addUserLanguage(Environment $lo_twig): void {
 		$lo_backendLanguage = LocaleMiddleware::getLanguage(Awyiss::REALM_BACKEND);
 		if ($lo_backendLanguage) {
 			$ls_timezone = Configure::read('Awyiss.System.' . Awyiss::getRealm() . '.timezone');
@@ -102,27 +193,15 @@ class BackendView extends AppView {
 
 			$this->addHelper('Time', ['outputTimezone' => $ls_timezone]);
 
-			$lo_backendLanguage = clone $lo_backendLanguage;
-
-			foreach ($lo_blocklistedProperties as $ls_property) {
-				unset($lo_backendLanguage->{$ls_property});
-			}
-
 			if ($lo_backendLanguage->dateFormat) {
 				$lo_twig->addGlobal('dateFormat', $lo_backendLanguage->dateFormat);
 			}
 			if ($lo_backendLanguage->timeFormat) {
 				$lo_twig->addGlobal('timeFormat', $lo_backendLanguage->timeFormat);
 			}
-		}
 
-		$lo_twig->addGlobal('baseUrl', Router::url('/', true));
-		$lo_twig->addGlobal('currentLanguage', $lo_frontendLanguage);
-		$lo_twig->addGlobal('currentPath', $this->getRequest()->getUri()->getPath());
-		$lo_twig->addGlobal('currentUrl', $this->request->getUri()->__toString());
-		$lo_twig->addGlobal('folder', '/' . ltrim($this->request->getAttribute('base'), '/'));
-		$lo_twig->addGlobal('languages', LocaleMiddleware::getLanguages());
-		$lo_twig->addGlobal('languageShortcode', $lo_frontendLanguage?->shortcode);
+			$lo_backendLanguage = $this->cleanLanguage($lo_backendLanguage);
+		}
 		$lo_twig->addGlobal('userLanguage', $lo_backendLanguage);
 	}
 }
