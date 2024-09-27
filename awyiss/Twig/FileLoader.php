@@ -200,9 +200,9 @@ class FileLoader extends BaseFileLoader {
 	 */
 	private function parseName(string $name): array {
 		if (isset($name[0]) && $name[0] == '@') {
-			$li_pos = strpos($name, '/');
+			$li_pos = strpos($name, DS);
 			if ($li_pos === false) {
-				throw new LoaderError(sprintf('Malformed namespaced template name "%s" (expecting "@namespace/template_name").', $name));
+				throw new LoaderError(sprintf('Malformed namespaced template name "%s" (expecting "@namespace%stemplate_name").', $name, DS));
 			}
 
 			$ls_namespace = substr($name, 1, $li_pos - 1);
