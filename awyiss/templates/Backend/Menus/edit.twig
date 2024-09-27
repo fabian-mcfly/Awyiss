@@ -20,7 +20,7 @@
 		<div class="ButtonArea">
 			{% block formEditButtons %}
 				{% if AuthorizationHelper.isAccessible('read') %}
-					{{ HtmlHelper.link(__('view_entries'), {controller: 'menuEntries', action: 'overview', menuId: entity.id}, {class: 'Button Button-Small Button-Subtle Button-View Button-ViewMenuEntries'}) }}
+					{{ HtmlHelper.link(__('view_entries'), {controller: 'menuEntries', action: 'overview', menuId: menu.id}, {class: 'Button Button-Small Button-Subtle Button-View Button-ViewMenuEntries'}) }}
 				{% endif %}
 
 				<label for="SaveAsCopy" class="Button Button-SaveAsCopy Label-SaveAsCopy">{{ __('as_copy') }}</label>
