@@ -270,7 +270,8 @@ class ScssCompiler {
 		$la_columnSystemFilePaths = $ls_columnSystemClassName::getScssFilePaths();
 		if ($includeColumnSystem && !empty($la_columnSystemFilePaths['pre'])) {
 			foreach ($la_columnSystemFilePaths['pre'] as $ls_columnSystemFilePath) {
-				$ls_fileContents .= sprintf('@import \'%s\';' . PHP_EOL, $ls_columnSystemFilePath);
+				$lo_scssCompiler->addImportPath(dirname($ls_columnSystemFilePath));
+				$ls_fileContents .= sprintf('@import \'%s\';' . PHP_EOL, basename($ls_columnSystemFilePath));
 			}
 		}
 
@@ -279,7 +280,8 @@ class ScssCompiler {
 
 			if ($includeColumnSystem && !empty($la_columnSystemFilePaths['pre'])) {
 				foreach ($la_columnSystemFilePaths['post'] as $ls_columnSystemFilePath) {
-					$ls_fileContents .= sprintf('@import \'%s\';' . PHP_EOL, $ls_columnSystemFilePath);
+					$lo_scssCompiler->addImportPath(dirname($ls_columnSystemFilePath));
+					$ls_fileContents .= sprintf('@import \'%s\';' . PHP_EOL, basename($ls_columnSystemFilePath));
 				}
 			}
 
