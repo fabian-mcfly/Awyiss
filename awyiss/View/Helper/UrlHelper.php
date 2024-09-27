@@ -45,7 +45,13 @@ class UrlHelper extends BaseUrlHelper {
 		if (is_array($lx_url)) {
 			$lx_url += $la_params;
 
-			if (empty($lx_url['_name'])) {
+			if (
+				(
+					!array_key_exists('_name', $lx_url) ||
+					$lx_url['_name'] === null
+				) &&
+				empty($lx_url['plugin'])
+			) {
 				unset($lx_url['_name']);
 			}
 		}
@@ -122,10 +128,12 @@ class UrlHelper extends BaseUrlHelper {
 
 		if (empty($la_params) && !empty($la_withoutParams)) {
 			/**
-			 * This is a workaround for how Router::url() builds a URL
+			 * This is a workaround for how Router::url() builds a URL:
+			 *
 			 * If the first paramter is empty, it'll use all existing values.
+			 *
 			 * This results in parameters in the URL even though we explicitely
-			 * that said we didn't want them.
+			 * said we didn't want them.
 			 */
 			$la_params[ reset($la_withoutParams) ] = false;
 		}

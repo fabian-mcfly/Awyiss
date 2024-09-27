@@ -26,6 +26,10 @@ class Router extends BaseRouter {
 					$lx_url['_name'] .= 'Root';
 				}
 			}
+
+			if (empty($lx_url['_name'])) {
+				unset($lx_url['_name']);
+			}
 		}
 
 
