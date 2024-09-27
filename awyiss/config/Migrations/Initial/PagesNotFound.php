@@ -48,7 +48,7 @@ class PagesNotFound {
 			'limit' => null,
 			'null' => false,
 		])->addColumn('created_on', 'datetime', [
-			'default' => false,
+			'default' => null,
 			'limit' => null,
 			'null' => false,
 		])->addIndex(
