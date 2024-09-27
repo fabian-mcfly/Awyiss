@@ -28,6 +28,10 @@ class UsergroupsUsers {
 	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function up(): void {
+		if ($this->migration->hasTable('usergroups_users')) {
+			$this->migration->table('usergroups_users')->drop()->save();
+		}
+
 		$this->migration->table('usergroups_users')->addColumn('id', 'integer', [
 			'autoIncrement' => true,
 			'default' => null,

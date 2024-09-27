@@ -28,6 +28,10 @@ class SlugHistory {
 	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function up(): void {
+		if ($this->migration->hasTable('slug_history')) {
+			$this->migration->table('slug_history')->drop()->save();
+		}
+
 		$this->migration->table('slug_history')->addColumn('id', 'integer', [
 			'autoIncrement' => true,
 			'default' => null,

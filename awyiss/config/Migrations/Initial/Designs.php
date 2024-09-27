@@ -27,6 +27,10 @@ class Designs {
 	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function up(): void {
+		if ($this->migration->hasTable('designs')) {
+			$this->migration->table('designs')->drop()->save();
+		}
+
 		$this->migration->table('designs')->addColumn('id', 'integer', [
 				'autoIncrement' => true,
 				'default' => null,

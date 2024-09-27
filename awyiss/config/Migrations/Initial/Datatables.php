@@ -28,6 +28,10 @@ class Datatables {
 	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function up(): void {
+		if ($this->migration->hasTable('datatables')) {
+			$this->migration->table('datatables')->drop()->save();
+		}
+
 		$this->migration->table('datatables')->addColumn('id', 'integer', [
 			'autoIncrement' => true,
 			'default' => null,

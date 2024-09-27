@@ -28,6 +28,10 @@ class MediaElementSelectors {
 	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function up(): void {
+		if ($this->migration->hasTable('media_element_selectors')) {
+			$this->migration->table('media_element_selectors')->drop()->save();
+		}
+
 		$this->migration->table('media_element_selectors')->addColumn('id', 'integer', [
 			'autoIncrement' => true,
 			'default' => null,

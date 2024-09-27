@@ -28,6 +28,10 @@ class PublicationData {
 	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function up(): void {
+		if ($this->migration->hasTable('publication_data')) {
+			$this->migration->table('publication_data')->drop()->save();
+		}
+
 		$this->migration->table('publication_data')->addColumn('id', 'integer', [
 			'autoIncrement' => true,
 			'default' => null,

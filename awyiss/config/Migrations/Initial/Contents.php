@@ -28,6 +28,10 @@ class Contents {
 	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function up(): void {
+		if ($this->migration->hasTable('contents')) {
+			$this->migration->table('contents')->drop()->save();
+		}
+
 		$this->migration->table('contents')->addColumn('id', 'integer', [
 			'autoIncrement' => true,
 			'default' => null,

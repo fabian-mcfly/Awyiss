@@ -33,6 +33,10 @@ class Attributes  {
 	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function up(): void {
+		if ($this->migration->hasTable('attributes')) {
+			$this->migration->table('attributes')->drop()->save();
+		}
+
 		$this->migration->table('attributes')->addColumn('id', 'integer', [
 			'autoIncrement' => true,
 			'default' => null,

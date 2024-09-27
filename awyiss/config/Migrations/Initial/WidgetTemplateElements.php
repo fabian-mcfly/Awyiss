@@ -28,6 +28,10 @@ class WidgetTemplateElements {
 	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function up(): void {
+		if ($this->migration->hasTable('widget_template_elements')) {
+			$this->migration->table('widget_template_elements')->drop()->save();
+		}
+
 		$this->migration->table('widget_template_elements')->addColumn('id', 'integer', [
 			'autoIncrement' => true,
 			'default' => null,

@@ -28,6 +28,10 @@ class Pages {
 	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function up(): void {
+		if ($this->migration->hasTable('pages')) {
+			$this->migration->table('pages')->drop()->save();
+		}
+
 		$this->migration->table('pages')->addColumn('id', 'integer', [
 			'autoIncrement' => true,
 			'default' => null,

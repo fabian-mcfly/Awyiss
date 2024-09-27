@@ -28,6 +28,10 @@ class I18n {
 	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function up(): void {
+		if ($this->migration->hasTable('i18n')) {
+			$this->migration->table('i18n')->drop()->save();
+		}
+
 		$this->migration->table('i18n')->addColumn('id', 'integer', [
 			'autoIncrement' => true,
 			'default' => null,

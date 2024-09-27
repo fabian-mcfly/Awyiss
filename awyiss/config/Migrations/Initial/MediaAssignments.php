@@ -27,6 +27,10 @@ class MediaAssignments {
 	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function up(): void {
+		if ($this->migration->hasTable('media_assignments')) {
+			$this->migration->table('media_assignments')->drop()->save();
+		}
+
 		$this->migration->table('media_assignments')->addColumn('id', 'integer', [
 			'autoIncrement' => true,
 			'default' => null,

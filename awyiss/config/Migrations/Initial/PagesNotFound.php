@@ -28,6 +28,10 @@ class PagesNotFound {
 	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function up(): void {
+		if ($this->migration->hasTable('pages_not_found')) {
+			$this->migration->table('pages_not_found')->drop()->save();
+		}
+
 		$this->migration->table('pages_not_found')
 		->addColumn('id', 'integer', [
 			'autoIncrement' => true,

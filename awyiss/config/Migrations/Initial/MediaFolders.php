@@ -28,6 +28,10 @@ class MediaFolders {
 	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function up(): void {
+		if ($this->migration->hasTable('media_folders')) {
+			$this->migration->table('media_folders')->drop()->save();
+		}
+
 		$this->migration->table('media_folders')->addColumn('id', 'integer', [
 			'autoIncrement' => true,
 			'default' => null,

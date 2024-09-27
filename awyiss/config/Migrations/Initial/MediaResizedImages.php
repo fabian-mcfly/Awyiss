@@ -28,6 +28,10 @@ class MediaResizedImages {
 	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function up(): void {
+		if ($this->migration->hasTable('media_resized_images')) {
+			$this->migration->table('media_resized_images')->drop()->save();
+		}
+
 		$this->migration->table('media_resized_images')->addColumn('id', 'integer', [
 			'autoIncrement' => true,
 			'default' => null,

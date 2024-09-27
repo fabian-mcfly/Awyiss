@@ -28,6 +28,10 @@ class Configuration {
 	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function up(): void {
+		if ($this->migration->hasTable('configuration')) {
+			$this->migration->table('configuration')->drop()->save();
+		}
+
 		$this->migration->table('configuration')->addColumn('id', 'integer', [
 			'autoIncrement' => true,
 			'default' => null,

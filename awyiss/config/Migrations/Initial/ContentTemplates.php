@@ -28,6 +28,10 @@ class ContentTemplates {
 	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function up(): void {
+		if ($this->migration->hasTable('content_templates')) {
+			$this->migration->table('content_templates')->drop()->save();
+		}
+
 		$this->migration->table('content_templates')->addColumn('id', 'integer', [
 			'autoIncrement' => true,
 			'default' => null,

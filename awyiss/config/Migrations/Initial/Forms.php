@@ -27,6 +27,10 @@ class Forms {
 	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function up(): void {
+		if ($this->migration->hasTable('forms')) {
+			$this->migration->table('forms')->drop()->save();
+		}
+
 		$this->migration->table('forms')->addColumn('id', 'integer', [
 			'autoIncrement' => true,
 			'default' => null,

@@ -28,6 +28,10 @@ class PageTemplates {
 	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function up(): void {
+		if ($this->migration->hasTable('page_templates')) {
+			$this->migration->table('page_templates')->drop()->save();
+		}
+
 		$this->migration->table('page_templates')->addColumn('id', 'integer', [
 			'autoIncrement' => true,
 			'default' => null,

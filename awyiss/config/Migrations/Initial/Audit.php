@@ -28,6 +28,10 @@ class Audit {
 	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function up(): void {
+		if ($this->migration->hasTable('audit')) {
+			$this->migration->table('audit')->drop()->save();
+		}
+
 		$this->migration->table('audit')->addColumn('id', 'integer', [
 			'autoIncrement' => true,
 			'default' => null,

@@ -28,6 +28,10 @@ class PageRoles {
 	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function up(): void {
+		if ($this->migration->hasTable('page_roles')) {
+			$this->migration->table('page_roles')->drop()->save();
+		}
+
 		$this->migration->table('page_roles')->addColumn('id', 'integer', [
 			'autoIncrement' => true,
 			'default' => null,

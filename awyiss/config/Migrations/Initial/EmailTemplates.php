@@ -27,6 +27,10 @@ class EmailTemplates {
 	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function up(): void {
+		if ($this->migration->hasTable('email_templates')) {
+			$this->migration->table('email_templates')->drop()->save();
+		}
+
 		$this->migration->table('email_templates')->addColumn('id', 'integer', [
 				'autoIncrement' => true,
 				'default' => null,

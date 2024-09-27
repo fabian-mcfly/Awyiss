@@ -28,6 +28,10 @@ class FormElements {
 	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function up(): void {
+		if ($this->migration->hasTable('form_elements')) {
+			$this->migration->table('form_elements')->drop()->save();
+		}
+
 		$this->migration->table('form_elements')->addColumn('id', 'integer', [
 			'autoIncrement' => true,
 			'default' => null,

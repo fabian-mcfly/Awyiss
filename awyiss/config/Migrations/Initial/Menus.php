@@ -28,6 +28,10 @@ class Menus {
 	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function up(): void {
+		if ($this->migration->hasTable('menus')) {
+			$this->migration->table('menus')->drop()->save();
+		}
+
 		$this->migration->table('menus')->addColumn('id', 'integer', [
 			'autoIncrement' => true,
 			'default' => null,

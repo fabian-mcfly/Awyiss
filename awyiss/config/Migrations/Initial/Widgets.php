@@ -27,6 +27,10 @@ class Widgets {
 	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function up(): void {
+		if ($this->migration->hasTable('widgets')) {
+			$this->migration->table('widgets')->drop()->save();
+		}
+
 		$this->migration->table('widgets')->addColumn('id', 'integer', [
 			'autoIncrement' => true,
 			'default' => null,

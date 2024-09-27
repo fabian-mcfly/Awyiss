@@ -28,6 +28,10 @@ class Languages {
 	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function up(): void {
+		if ($this->migration->hasTable('languages')) {
+			$this->migration->table('languages')->drop()->save();
+		}
+
 		$this->migration->table('languages')->addColumn('id', 'integer', [
 			'autoIncrement' => true,
 			'default' => null,
