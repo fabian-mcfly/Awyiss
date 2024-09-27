@@ -70,12 +70,12 @@ class BackendMenu {
 		$la_config = [
 			'identity' => $this->identity,
 			'validate' => [
-				'schemaPath' => CONFIG . DS . 'menu.schema.json',
+				'schemaPath' => CONFIG . 'menu.schema.json',
 				'uniqueIdentifiers' => true,
 			],
 		];
 
-		$ls_filePath = realpath(CONFIG . DS . 'menu.json');
+		$ls_filePath = realpath(CONFIG . 'menu.json');
 		$this->menu = MenuLoader::fromJsonFile($ls_filePath, $la_config);
 	}
 
@@ -85,14 +85,14 @@ class BackendMenu {
 	 * @throws \ReflectionException
 	 */
 	protected function createCustomMenu(): void {
-		$ls_filePath = realpath(CUSTOM_CONFIG . DS . 'menu.json');
+		$ls_filePath = realpath(CUSTOM_CONFIG . 'menu.json');
 		if (!$ls_filePath) {
 			return;
 		}
 
 		$lo_customMenuData = MenuLoader::loadJsonFile($ls_filePath);
 		$lb_valid = MenuLoader::validateData($lo_customMenuData, [
-			'schemaPath' => CONFIG . DS . 'menu-extension.schema.json',
+			'schemaPath' => CONFIG . 'menu-extension.schema.json',
 			'uniqueIdentifiers' => true,
 		]);
 
