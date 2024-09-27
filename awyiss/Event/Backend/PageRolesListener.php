@@ -171,7 +171,7 @@ class PageRolesListener implements EventListenerInterface {
 
 		$la_commands = [];
 
-		$la_commands[] = 'bin/cake bake seed --data PageRoles --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Seeds --force --truncate';
+		$la_commands[] = 'bin' . DS . 'cake bake seed --data PageRoles --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Seeds --force --truncate';
 
 		//Queue the job.
 		$lo_queue->createJob('Queue.Execute', [
@@ -204,7 +204,7 @@ class PageRolesListener implements EventListenerInterface {
 			$la_pageRoles[] = $lo_pageRole->identifier . ':' . $lo_pageRole->id;
 		}
 
-		$la_commands[] = 'bin/cake bake enum PageRole ' . implode(',', $la_pageRoles) . ' -i --namespace ' . CUSTOM_NAMESPACE . ' --is-pagerole --force';
+		$la_commands[] = 'bin' . DS . 'cake bake enum PageRole ' . implode(',', $la_pageRoles) . ' -i --namespace ' . CUSTOM_NAMESPACE . ' --is-pagerole --force';
 
 		if (!empty($la_commands)) {
 			$la_data = [
@@ -242,7 +242,7 @@ class PageRolesListener implements EventListenerInterface {
 
 		$la_commands = [];
 
-		$ls_command = 'bin/cake bake model ' . Inflector::camelize(Inflector::pluralize($entity->identifier));
+		$ls_command = 'bin' . DS . 'cake bake model ' . Inflector::camelize(Inflector::pluralize($entity->identifier));
 		$ls_command .= ' --namespace ' . CUSTOM_NAMESPACE;
 
 		$ls_command .= ' --force';
@@ -259,7 +259,7 @@ class PageRolesListener implements EventListenerInterface {
 
 		$la_commands[] = $ls_command;
 
-		$la_commands[] = 'bin/cake bake seed --data PageRoles --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Seeds --force --truncate';
+		$la_commands[] = 'bin' . DS . 'cake bake seed --data PageRoles --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Seeds --force --truncate';
 
 		//Queue the job.
 		$lo_queue->createJob('Queue.Execute', [

@@ -104,7 +104,7 @@ class EmailTemplatesListener implements EventListenerInterface {
 
 		//If the file does not exist, we create one based on a twig-template for frontent email templates
 		if (!$lb_fileExists) {
-			$la_commands[] = 'bin/cake bake template email_templates email_template ' . $ls_fileName . ' --prefix Frontend --controller email';
+			$la_commands[] = 'bin' . DS . 'cake bake template email_templates email_template ' . $ls_fileName . ' --prefix Frontend --controller email';
 			$la_commands[] = 'chmod 0750 ' . $ls_filePath;
 		}
 

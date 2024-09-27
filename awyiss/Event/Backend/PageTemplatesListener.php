@@ -105,7 +105,7 @@ class PageTemplatesListener implements EventListenerInterface {
 
 		//If the file does not exist, we create one based on a twig-template for frontent page templates
 		if (!$lb_fileExists) {
-			$la_commands[] = 'bin/cake bake template page_templates page_template ' . $ls_fileName . ' --prefix Frontend --controller page';
+			$la_commands[] = 'bin' . DS . 'cake bake template page_templates page_template ' . $ls_fileName . ' --prefix Frontend --controller page';
 			$la_commands[] = 'chmod 0750 ' . $ls_filePath;
 		}
 

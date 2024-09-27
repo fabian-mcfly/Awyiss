@@ -107,7 +107,7 @@ class AttributesTask extends Task/* implements AddInterface*/ {
 			//The target attributes-table does not exist
 			if (!$lb_tableExists) {
 				//Bake a `create`-migration that also adds the parent id-column and the column for the attribute-entity
-				$la_commands[] = 'bin/cake bake migration create_' . $ls_attributesTable . ' ' . $ls_foreignKey . ':integer[11]:index ' . $ls_column . $ls_migrationsPath;
+				$la_commands[] = 'bin' . DS . 'cake bake migration create_' . $ls_attributesTable . ' ' . $ls_foreignKey . ':integer[11]:index ' . $ls_column . $ls_migrationsPath;
 			}
 			else {
 				$this->buildAlterTableCommands($la_commands, $data, $la_diff, $lb_changedScope, $ls_column, $ls_migrationsPath);
@@ -187,7 +187,7 @@ class AttributesTask extends Task/* implements AddInterface*/ {
 		if (count($lo_schema->columns()) <= 3) {
 			//Bake a `drop`-migration
 			/** @noinspection PhpVariableNamingConventionInspection */
-				$commands[] = 'bin/cake bake migration drop_' . $ls_oldAttributesTable . $migrationsPath;
+				$commands[] = 'bin' . DS . 'cake bake migration drop_' . $ls_oldAttributesTable . $migrationsPath;
 
 			//Remove both the table and the entity files from the custom directory.
 			if (file_exists($ls_oldTableFile)) {
@@ -228,7 +228,7 @@ class AttributesTask extends Task/* implements AddInterface*/ {
 
 			//Bake a `remove`-migration
 			/** @noinspection PhpVariableNamingConventionInspection */
-			$commands[] = 'bin/cake bake migration remove_' . $data['new']['identifier'] . '_from_' . $ls_oldAttributesTable . ' ' . $data['old']['identifier'] . $migrationsPath;
+			$commands[] = 'bin' . DS . 'cake bake migration remove_' . $data['new']['identifier'] . '_from_' . $ls_oldAttributesTable . ' ' . $data['old']['identifier'] . $migrationsPath;
 		}
 
 		/*
@@ -260,17 +260,17 @@ class AttributesTask extends Task/* implements AddInterface*/ {
 
 		//Migrate all the newly baked migrations
 		/** @noinspection PhpVariableNamingConventionInspection */
-		$commands[] = 'bin/cake migrations migrate --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations --no-lock';
+		$commands[] = 'bin' . DS . 'cake migrations migrate --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations --no-lock';
 		//Clear the database schema
 		/** @noinspection PhpVariableNamingConventionInspection */
-		$commands[] = 'bin/cake schema_cache clear';
+		$commands[] = 'bin' . DS . 'cake schema_cache clear';
 
 		//And bake the model
 		$ls_forPageRole = $scopeIsPageRole ? ' --for-pagerole ' . $data['new']['scope'] : null;
 
 		if (empty($data['new']['deleted'])) {
 			/** @noinspection PhpVariableNamingConventionInspection */
-			$commands[] = 'bin/cake bake model ' . $ls_attributesTable . ' --namespace ' . CUSTOM_NAMESPACE . ' --no-fixture --no-test --update --force' . $ls_forPageRole;
+			$commands[] = 'bin' . DS . 'cake bake model ' . $ls_attributesTable . ' --namespace ' . CUSTOM_NAMESPACE . ' --no-fixture --no-test --update --force' . $ls_forPageRole;
 		}
 
 		if ($bakeOldModel) {
@@ -287,11 +287,11 @@ class AttributesTask extends Task/* implements AddInterface*/ {
 			$ls_oldAttributesTable = 'attributes_' . $data['old']['scope'];
 
 			/** @noinspection PhpVariableNamingConventionInspection */
-			$commands[] = 'bin/cake bake model ' . $ls_oldAttributesTable . ' --namespace ' . CUSTOM_NAMESPACE . ' --no-fixture --no-test --update --force' . $ls_forPageRole;
+			$commands[] = 'bin' . DS . 'cake bake model ' . $ls_oldAttributesTable . ' --namespace ' . CUSTOM_NAMESPACE . ' --no-fixture --no-test --update --force' . $ls_forPageRole;
 		}
 
 		/** @noinspection PhpVariableNamingConventionInspection */
-		$commands[] = 'bin/cake bake seed --data Attributes --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Seeds --force --truncate';
+		$commands[] = 'bin' . DS . 'cake bake seed --data Attributes --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Seeds --force --truncate';
 
 		//Queue the job.
 		$this->QueuedJobs->createJob('Queue.Execute', [
@@ -349,7 +349,7 @@ class AttributesTask extends Task/* implements AddInterface*/ {
 		if (!$changedScope && isset($diff['identifier'])) {
 			//The scope has not changed, but the identifier has: alter the column
 			/** @noinspection PhpVariableNamingConventionInspection */
-			$commands[] = 'bin/cake bake migration alter_' . $data['old']['identifier'] . '_on_' . $ls_attributesTable . ' ' . $column . $migrationsPath;
+			$commands[] = 'bin' . DS . 'cake bake migration alter_' . $data['old']['identifier'] . '_on_' . $ls_attributesTable . ' ' . $column . $migrationsPath;
 		}
 		else {
 			$lo_schema = ConnectionManager::get('default')->getSchemaCollection()->describe($ls_attributesTable);
@@ -358,12 +358,12 @@ class AttributesTask extends Task/* implements AddInterface*/ {
 			if (!$lb_columnExists) {
 				//The column does not exist in the target table? Add it.
 				/** @noinspection PhpVariableNamingConventionInspection */
-				$commands[] = 'bin/cake bake migration add_' . $data['new']['identifier'] . '_to_' . $ls_attributesTable . ' ' . $column . $migrationsPath;
+				$commands[] = 'bin' . DS . 'cake bake migration add_' . $data['new']['identifier'] . '_to_' . $ls_attributesTable . ' ' . $column . $migrationsPath;
 			}
 			else {
 				//The column does exist in the target table? Alter it.
 				/** @noinspection PhpVariableNamingConventionInspection */
-				$commands[] = 'bin/cake bake migration alter_' . $data['new']['identifier'] . '_on_' . $ls_attributesTable . ' ' . $column . $migrationsPath;
+				$commands[] = 'bin' . DS . 'cake bake migration alter_' . $data['new']['identifier'] . '_on_' . $ls_attributesTable . ' ' . $column . $migrationsPath;
 			}
 		}
 	}

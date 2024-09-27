@@ -182,16 +182,16 @@ class DatatablesListener implements EventListenerInterface {
 		$ls_folder = ' --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations';
 
 		//Bake a `drop`-migration
-		$la_commands[] = 'bin/cake bake migration drop_' . $entity->identifier . $ls_folder;
+		$la_commands[] = 'bin' . DS . 'cake bake migration drop_' . $entity->identifier . $ls_folder;
 
 		//Migrate all the newly baked migrations
-		$la_commands[] = 'bin/cake migrations migrate' . $ls_folder . ' --no-lock';
+		$la_commands[] = 'bin' . DS . 'cake migrations migrate' . $ls_folder . ' --no-lock';
 
 		//Clear the database schema
-		$la_commands[] = 'bin/cake schema_cache clear';
+		$la_commands[] = 'bin' . DS . 'cake schema_cache clear';
 
 		//Bake the seed of the datatables table
-		$la_commands[] = 'bin/cake bake seed --data Datatables --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Seeds --force --truncate';
+		$la_commands[] = 'bin' . DS . 'cake bake seed --data Datatables --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Seeds --force --truncate';
 
 		//Queue the job.
 		$lo_queue->createJob('Queue.Execute', [
@@ -236,19 +236,19 @@ class DatatablesListener implements EventListenerInterface {
 		];
 
 		//Bake a `create`-migration that also adds the parent id-column and the column for the attribute-entity
-		$la_commands[] = 'bin/cake bake migration create_' . $entity->identifier . ' ' . implode(' ', $la_columns) . $ls_migrationsPath;
+		$la_commands[] = 'bin' . DS . 'cake bake migration create_' . $entity->identifier . ' ' . implode(' ', $la_columns) . $ls_migrationsPath;
 
 		//Migrate all the newly baked migrations
-		$la_commands[] = 'bin/cake migrations migrate --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations --no-lock';
+		$la_commands[] = 'bin' . DS . 'cake migrations migrate --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations --no-lock';
 
 		//Clear the database schema
-		$la_commands[] = 'bin/cake schema_cache clear';
+		$la_commands[] = 'bin' . DS . 'cake schema_cache clear';
 
 		//Bake the model
-		$la_commands[] = 'bin/cake bake model ' . $entity->identifier . ' --namespace ' . CUSTOM_NAMESPACE . ' --no-fixture --no-test --update --force --is-datatable';
+		$la_commands[] = 'bin' . DS . 'cake bake model ' . $entity->identifier . ' --namespace ' . CUSTOM_NAMESPACE . ' --no-fixture --no-test --update --force --is-datatable';
 
 		//Bake the seed of the datatables table
-		$la_commands[] = 'bin/cake bake seed --data Datatables --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Seeds --force --truncate';
+		$la_commands[] = 'bin' . DS . 'cake bake seed --data Datatables --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Seeds --force --truncate';
 
 		$lo_tableLocator = FactoryLocator::get('Table');
 		/** @var \Queue\Model\Table\QueuedJobsTable $lo_queue */

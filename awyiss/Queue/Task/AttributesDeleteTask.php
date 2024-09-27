@@ -77,15 +77,15 @@ class AttributesDeleteTask extends Task/* implements AddInterface*/ {
 		$la_commands = [];
 
 		//Bake a `drop`-migration
-		$la_commands[] = 'bin/cake bake migration drop_' . $ls_attributesTable . $ls_folder;
+		$la_commands[] = 'bin' . DS . 'cake bake migration drop_' . $ls_attributesTable . $ls_folder;
 
 		//Migrate all the newly baked migrations
-		$la_commands[] = 'bin/cake migrations migrate' . $ls_folder . ' --no-lock';
+		$la_commands[] = 'bin' . DS . 'cake migrations migrate' . $ls_folder . ' --no-lock';
 
 		//Clear the database schema
-		$la_commands[] = 'bin/cake schema_cache clear';
+		$la_commands[] = 'bin' . DS . 'cake schema_cache clear';
 
-		$la_commands[] = 'bin/cake bake seed --data Attributes --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Seeds --force --truncate';
+		$la_commands[] = 'bin' . DS . 'cake bake seed --data Attributes --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Seeds --force --truncate';
 
 		//Queue the job.
 		$this->QueuedJobs->createJob('Queue.Execute', [

@@ -172,7 +172,7 @@ abstract class BackendController extends AppController {
 			/** @var \Queue\Model\Table\QueuedJobsTable $lo_queue */
 			$lo_queue = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
 			$lo_queue->createJob('Queue.Execute', [
-				'command' => 'bin/cake media detect_available_commands',
+				'command' => 'bin' . DS . 'cake media detect_available_commands',
 				'log' => true,
 			], [
 				'group' => 'general',

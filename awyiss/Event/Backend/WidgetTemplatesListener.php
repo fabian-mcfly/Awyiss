@@ -105,7 +105,7 @@ class WidgetTemplatesListener implements EventListenerInterface {
 
 		//If the file does not exist, we create one based on a twig-template for frontent widget templates
 		if (!$lb_fileExists) {
-			$la_commands[] = 'bin/cake bake template widget_templates widget_template ' . $ls_fileName . ' --prefix Frontend --controller widget';
+			$la_commands[] = 'bin' . DS . 'cake bake template widget_templates widget_template ' . $ls_fileName . ' --prefix Frontend --controller widget';
 			$la_commands[] = 'chmod 0750 ' . $ls_filePath;
 		}
 
