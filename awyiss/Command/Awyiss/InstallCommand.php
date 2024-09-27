@@ -74,7 +74,7 @@ class InstallCommand extends Command {
 
 		// If the user just wants to rebuild the symlinks, do that and exit
 		if ($args->getOption('rebuild-symlinks')) {
-			if ($this->createAssetSymlinks()) {
+			if ($this->createAssetSymlinks() !== false) {
 				$this->io->success('Symlinks rebuilt.');
 			}
 
@@ -189,17 +189,17 @@ class InstallCommand extends Command {
 	 * @return void
 	 */
 	protected function getInputs(): void {
+		// Ask for the customer name and validate it.
+		$this->customerName = $this->io->ask('Customer name?');
+		$this->validateCustomerName();
+
 		// Ask for the database username. If provided, also ask for the database password, name, and host.
 		$this->dbUsername = $this->io->ask('Database username?');
 		if ($this->dbUsername) {
 			$this->dbPassword = $this->io->ask('Database password?');
-			$this->dbName = $this->io->ask('Database name?');
+			$this->dbName = $this->io->ask('Database name?', $this->dbUsername);
 			$this->dbHost = $this->io->ask('Database host?', 'localhost');
 		}
-
-		// Ask for the customer name and validate it.
-		$this->customerName = $this->io->ask('Customer name?');
-		$this->validateCustomerName();
 
 		// Ask for the admin username. If provided, also ask for the admin password.
 		$this->adminUsername = $this->io->ask('Admin username?');
@@ -275,19 +275,19 @@ class InstallCommand extends Command {
 	protected function migrateDatabase(): void {
 		// Run the migrations
 		if (!$this->dryRun) {
-			$this->runCommand(['bin/cake', 'migrations', 'migrate', '-q', '--no-lock']);
+			$this->runCommand(['bin' . DS . 'cake', 'migrations', 'migrate', '-q', '--no-lock']);
 		}
 		$this->io->success('Migrations completed.');
 
 		// Run the Queue plugin migrations
 		if (!$this->dryRun) {
-			$this->runCommand(['bin/cake', 'migrations', 'migrate', '-q', '-p', 'Queue']);
+			$this->runCommand(['bin' . DS . 'cake', 'migrations', 'migrate', '-q', '-p', 'Queue']);
 		}
 		$this->io->success('Queue migrations completed.');
 
 		// Seed the database
 		if (!$this->dryRun) {
-			$this->runCommand(['bin/cake', 'migrations', 'seed', '-q']);
+			$this->runCommand(['bin' . DS . 'cake', 'migrations', 'seed', '-q']);
 		}
 		$this->io->success('Seeding completed.');
 	}
@@ -400,7 +400,14 @@ class InstallCommand extends Command {
 		}
 
 		if (preg_match('/[^a-z0-9_-]/', $this->customerName)) {
-			$this->io->abort('Invalid customer name.');
+			$ls_cleanedName = preg_replace('/[^a-z0-9_-]/', '', $this->customerName);
+
+			if ($this->io->askChoice('Invalid customer name. Do you want to use "' . $ls_cleanedName . '" instead?', ['y', 'n'], 'y') === 'y') {
+				$this->customerName = $ls_cleanedName;
+			}
+			else {
+				$this->io->abort('Invalid customer name.');
+			}
 		}
 	}
 
@@ -423,7 +430,11 @@ class InstallCommand extends Command {
 			$lo_process->mustRun();
 		}
 		catch (ProcessFailedException $ex) {
-			$this->io->abort('The command failed. Error: ' . $ex->getMessage());
+			$this->io->error('The command failed. Error: ' . $ex->getMessage());
+
+			if ($this->io->askChoice('Do you want to continue?', ['y', 'n'], 'n') === 'n') {
+				$this->io->abort('Installation aborted.');
+			}
 		}
 	}
 
