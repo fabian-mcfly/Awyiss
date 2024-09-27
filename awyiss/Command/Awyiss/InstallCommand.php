@@ -74,9 +74,9 @@ class InstallCommand extends Command {
 
 		// If the user just wants to rebuild the symlinks, do that and exit
 		if ($args->getOption('rebuild-symlinks')) {
-			$this->createAssetSymlinks();
-
-			$this->io->success('Symlinks rebuilt.');
+			if ($this->createAssetSymlinks()) {
+				$this->io->success('Symlinks rebuilt.');
+			}
 
 			return static::CODE_SUCCESS;
 		}
@@ -295,10 +295,12 @@ class InstallCommand extends Command {
 
 	/**
 	 * Create symlinks for the assets
+	 *
+	 * @return bool|null
 	 */
-	protected function createAssetSymlinks(): void {
+	protected function createAssetSymlinks(): ?bool {
 		if ($this->dryRun) {
-			return;
+			return null;
 		}
 
 		if (!isset($this->customerName)) {
@@ -310,18 +312,74 @@ class InstallCommand extends Command {
 			}
 		}
 
-		try {
-			$this->filesystem->symlink(ROOT . DS . 'awyiss' . DS . 'assets', WWW_ROOT . 'awyiss' . DS . 'assets');
-			$this->filesystem->symlink(ROOT . DS . 'vendor' . DS . 'tinymce' . DS . 'tinymce', WWW_ROOT . 'awyiss' . DS . 'assets' . DS . 'js' . DS . 'TinyMCE' . DS . 'tinymce');
-			$this->filesystem->symlink(ROOT . DS . $this->customerName . DS . 'assets', WWW_ROOT . 'assets');
+		if (strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN') {
+			try {
+				$this->filesystem->symlink(ROOT . DS . 'awyiss' . DS . 'assets', WWW_ROOT . 'awyiss' . DS . 'assets');
+				$this->filesystem->symlink(ROOT . DS . 'vendor' . DS . 'tinymce' . DS . 'tinymce', WWW_ROOT . 'awyiss' . DS . 'assets' . DS . 'js' . DS . 'TinyMCE' . DS . 'tinymce');
+				$this->filesystem->symlink(ROOT . DS . $this->customerName . DS . 'assets', WWW_ROOT . 'assets');
+			}
+			catch (IOExceptionInterface) {
+				$this->io->error('Failed to create symlinks.', 0);
+
+				$this->io->out('Please create the symlinks manually:');
+
+				$this->io->comment('ln -s ' . ROOT . DS . 'awyiss' . DS . 'assets ' . WWW_ROOT . 'awyiss' . DS . 'assets');
+				$this->io->comment('ln -s ' . ROOT . DS . 'vendor' . DS . 'tinymce' . DS . 'tinymce ' . WWW_ROOT . 'awyiss' . DS . 'assets' . DS . 'js' . DS . 'TinyMCE' . DS . 'tinymce');
+				$this->io->comment('ln -s ' . ROOT . DS . $this->customerName . DS . 'assets ' . WWW_ROOT . 'assets');
+
+				return false;
+			}
+
+			return true;
 		}
-		catch (IOExceptionInterface) {
-			$this->io->warning('Failed to create symlinks.');
-			$this->io->info('Please create the symlinks manually. On Windows, you can use the mklink command:');
+
+		$this->io->info('Trying to create symlinks using the mklink command...');
+
+		$la_commands = [
+			[
+				'cmd',
+				'/c',
+				'mklink',
+				'/D',
+				WWW_ROOT . 'awyiss' . DS . 'assets',
+				ROOT . DS . 'awyiss' . DS . 'assets',
+			],
+			[
+				'cmd',
+				'/c',
+				'mklink',
+				'/D',
+				WWW_ROOT . 'awyiss' . DS . 'assets' . DS . 'js' . DS . 'TinyMCE' . DS . 'tinymce',
+				ROOT . DS . 'vendor' . DS . 'tinymce' . DS . 'tinymce',
+			],
+			[
+				'cmd',
+				'/c',
+				'mklink',
+				'/D',
+				WWW_ROOT . 'assets',
+				ROOT . DS . $this->customerName . DS . 'assets',
+			],
+		];
+
+		try {
+			foreach ($la_commands as $la_command) {
+				$this->runCommand($la_command);
+			}
+		}
+		catch (ProcessFailedException) {
+			$this->io->error('Failed to create symlinks.', 0);
+
+			$this->io->out('Please create the symlinks manually:');
+
 			$this->io->comment('mklink /D ' . WWW_ROOT . 'awyiss\assets ' . ROOT . DS . 'awyiss\assets');
 			$this->io->comment('mklink /D ' . WWW_ROOT . 'awyiss\assets\js\TinyMCE\tinymce ' . ROOT . DS . 'vendor\tinymce\tinymce');
 			$this->io->comment('mklink /D ' . WWW_ROOT . 'assets ' . ROOT . DS . $this->customerName . DS . 'assets');
+
+			return false;
 		}
+
+		return true;
 	}
 
 
