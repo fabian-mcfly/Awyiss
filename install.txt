@@ -23,6 +23,9 @@ sudo runuser -u www-data -- bin/cake media clear_cache
 sudo runuser -u www-data -- bin/cake awyiss install
 sudo runuser -u www-data -- bin/cake awyiss install --rebuild-symlinks
 
+// AiO Install:
+chmod +x bin/cake && bin/cake awyiss install && bin/cake media detect_available_commands
+
 
 // Backup erstellen
 sudo runuser -u www-data -- bin/cake awyiss backup
