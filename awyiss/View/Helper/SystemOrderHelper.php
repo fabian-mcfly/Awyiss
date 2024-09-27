@@ -81,7 +81,7 @@ class SystemOrderHelper extends Helper {
 		}
 
 		//Add the provided attributes to the config, so both will be merged
-		$la_attributes = Hash::merge($attributes, $this->getConfig());
+		$la_attributes = Hash::merge($this->getConfig(), $attributes);
 
 		//No entity? That's a big problem.
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
