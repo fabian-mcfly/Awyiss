@@ -29,7 +29,7 @@ class MenuLoader {
 			$lx_schema = static::loadJsonFile($ls_schemaPath);
 
 			$lo_schemaStorage = new SchemaStorage();
-			$lo_schemaStorage->addSchema('file://' . $ls_schemaPath, $lx_schema);
+			$lo_schemaStorage->addSchema('file://' . str_replace(DS, '/', $ls_schemaPath), $lx_schema);
 			$lo_factory = new Factory($lo_schemaStorage);
 		}
 
