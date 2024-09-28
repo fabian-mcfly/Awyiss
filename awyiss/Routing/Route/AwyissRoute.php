@@ -30,14 +30,7 @@ use InvalidArgumentException;
  */
 class AwyissRoute extends DashedRoute {
 	/**
-	 * Parses the given URL and method into an array of route parameters.
-	 * This function first saves the default route parameters, then compiles the route and parses the URL extension.
-	 * It then checks if the URL matches the compiled route and if the method matches the default method.
-	 * If either check fails, it returns null.
-	 * It then processes the route parameters, dropping any with numeric keys and setting any empty values to their defaults.
-	 * It also initializes the 'pass', 'parts', 'slug', and 'fullSlug' keys of the route array.
-	 * Finally, it assigns any remaining default values to the route array and sets the '_ext' key if an extension was found in the URL.
-	 * The route array is then passed to the setRouteArguments function and the result is returned.
+	 * Parses the given URL and method into an array of route parameters
 	 *
 	 * @param string $url The URL to parse.
 	 * @param string $method The method to parse. Defaults to an empty string.
@@ -107,22 +100,24 @@ class AwyissRoute extends DashedRoute {
 
 	/**
 	 * Matches the given URL and context to a route.
-	 * This function first checks if the route has been compiled, and if not, compiles it.
-	 * It then dasherizes the URL and the defaults (if they haven't been dasherized already).
-	 * The context is then prepared by merging it with a default context array.
-	 * If the 'persist' option is set and is an array, the function persists the parameters from the context into the URL.
-	 * The function then unsets the 'params' key from the context, as routes with parameters are not matched.
-	 * The function then intersects the keys of the URL and the context to get the host options.
-	 * Finally, it calls the _match function with the URL, host options, and context, and returns the result.
+	 * It compiles the route if not already compiled, dasherizes the URL and defaults,
+	 * prepares the context, persists parameters if needed, and calls the _match function.
 	 *
 	 * @param array $url The URL to match.
 	 * @param array $context The context to match. Defaults to an empty array.
 	 * @return string|null The matched route, or null if no route was matched.
 	 */
 	public function match(array $url, array $context = []): ?string {
+		//Stupid workaround since `_writeRoute()` inside `compile();` unsets defaults;
+		$la_defaults = $this->defaults;
+
 		// If the route has not been compiled, compile it.
 		if (empty($this->_compiledRoute)) {
 			$this->compile();
+		}
+
+		if ($la_defaults !== $this->defaults) {
+			$this->defaults = $la_defaults;
 		}
 
 		// Dasherize the URL.
@@ -146,7 +141,6 @@ class AwyissRoute extends DashedRoute {
 
 		// Intersect the keys of the URL and the context to get the host options.
 		$la_hostOptions = array_intersect_key($la_url, $la_context);
-
 
 		// Call the _match function with the URL, host options, and context, and return the result.
 		return $this->_match($la_url, $la_hostOptions, $la_context);

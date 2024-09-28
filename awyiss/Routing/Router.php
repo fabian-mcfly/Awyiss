@@ -32,6 +32,23 @@ class Router extends BaseRouter {
 			}
 		}
 
+		/**
+		 * If the route name is given and the realm is the backend,
+		 * but the action is missing, try to get it from the request.
+		 *
+		 * This fixes what I deem to be a bug in CakePHP,
+		 * where the action is automatically set to 'index'
+		 * (or the default value defined in the route) if it is missing.
+		 *
+		 * It's honestly not really a bug, but having to set the action manually
+		 * everywhere a URL is generated is a bit annoying.
+		 * Especially in the PaginatorHelper.
+		 *
+		 * @see \Cake\Routing\RouteBuilder::_makeRoute()
+		 */
+		if (($lx_url['_name'] ?? null) === Awyiss::REALM_BACKEND && empty($lx_url['action'])) {
+			$lx_url['action'] = static::getRequest()->getParam('action');
+		}
 
 		return parent::url($lx_url, $full);
 	}
