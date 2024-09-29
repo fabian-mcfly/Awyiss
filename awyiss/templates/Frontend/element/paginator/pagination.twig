@@ -21,11 +21,11 @@
 {% block paginator %}
 	{% block pagination %}
 		<ul class="Pagination-List">
-			{{ PaginatorHelper.first(__d('pagination', 'first')) }}
-			{{ PaginatorHelper.prev(__d('pagination', 'previous')) }}
-			{{ PaginatorHelper.numbers() }}
-			{{ PaginatorHelper.next(__d('pagination', 'next')) }}
-			{{ PaginatorHelper.last(__d('pagination', 'last')) }}
+			{{ PaginatorHelper.first(__d('pagination', 'first'))|raw }}
+			{{ PaginatorHelper.prev(__d('pagination', 'previous'))|raw }}
+			{{ PaginatorHelper.numbers()|raw }}
+			{{ PaginatorHelper.next(__d('pagination', 'next'))|raw }}
+			{{ PaginatorHelper.last(__d('pagination', 'last'))|raw }}
 		</ul>
 	{% endblock %}
 {% endblock %}
