@@ -596,7 +596,10 @@ class MediaHelper extends Helper {
 		$ls_backgroundColor = null;
 		if ($mediaRenderOptions->getBackgroundColor() !== false) {
 			$ls_backgroundColor = $mediaRenderOptions->getBackgroundColor();
-			$ls_backgroundColor ??= '#' . $averageColor;
+
+			if (!$ls_backgroundColor && $averageColor) {
+				$ls_backgroundColor = '#' . $averageColor;
+			}
 		}
 
 		$ls_backgroundColorStyle = '';
