@@ -242,12 +242,17 @@ class PaginatorHelper extends BasePaginatorHelper {
 	 * @return string
 	 */
 	public function render(): string {
+		if (!isset($this->paginated)) {
+			return '';
+		}
+
 		if (empty($this->param('pageCount')) || $this->param('pageCount') == 1) {
 			return '';
 		}
 
-
-		return $this->_View->element('paginator/pagination');
+		return $this->_View->element('paginator/pagination', [
+			'PaginatorHelper' => $this,
+		]);
 	}
 
 
