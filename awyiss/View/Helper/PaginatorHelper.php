@@ -96,6 +96,10 @@ class PaginatorHelper extends BasePaginatorHelper {
 			$ls_template = $ls_dir === 'asc' ? 'sortDesc' : 'sortAsc';
 		}
 
+		if (is_array($title) && array_key_exists($ls_dir, $title)) {
+			$ls_title = $title[ $ls_dir ];
+		}
+
 		$la_paging = [
 			'sort' => $ls_key,
 			'direction' => $ls_dir,
