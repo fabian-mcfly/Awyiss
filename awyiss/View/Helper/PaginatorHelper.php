@@ -25,19 +25,22 @@ class PaginatorHelper extends BasePaginatorHelper {
 	public function __construct(View $view, array $config = []) {
 		parent::__construct($view, $config + ['templateClass' => StringTemplate::class,]);
 
-		$la_query = $this->_View->getRequest()->getParam('parts', []);
+		$la_params = $this->_View->getRequest()->getParam('parts', []);
 
-		if (!empty($la_query['sort']) && !$this->getConfig('params.sort')) {
-			$this->setConfig('params.sort', $la_query['sort']);
+		if (!empty($la_params['sort']) && !$this->getConfig('params.sort')) {
+			$this->setConfig('params.sort', $la_params['sort']);
 		}
 
-		$la_query['page'] = $la_query['limit'] = $la_query['sort'] = $la_query['direction'] = false;
+		$la_params['page'] = $la_params['limit'] = $la_params['sort'] = $la_params['direction'] = false;
 
-		$this->setConfig('options.url', array_merge($this->_View->getRequest()->getParam('pass', []), $la_query));
+		$this->setConfig('options.url', array_merge($this->_View->getRequest()->getParam('pass', []), $la_params));
 	}
 
 
 	/**
+	 * Overridden to not throw an exception
+	 * if the paginator is not set
+	 *
 	 * @inheritDoc
 	 * @param array $options
 	 * @return string|null
@@ -52,6 +55,13 @@ class PaginatorHelper extends BasePaginatorHelper {
 
 
 	/**
+	 * Overridden to
+	 * - use the key as-is for the translation
+	 * - use the underscored sort parameter as the sort key
+	 * - use `static::isCurrentSortKey()` to determine if the key is the current sort key
+	 * If the key is the current sort key, the default direction is set to desc
+	 * - pass the camelized sort key as identifier to the templater
+	 *
 	 * @inheritDoc
 	 * @param string $key
 	 * @param array|string|null $title
@@ -64,34 +74,34 @@ class PaginatorHelper extends BasePaginatorHelper {
 
 		$ls_key = Inflector::underscore($key);
 
-		$ls_title = $title;
-		if (empty($ls_title)) {
-			$ls_title = __($ls_key);
-		}
+		$ls_title = $title ?: __($ls_key);
 
-		// If the key is the current sort key, set the default direction to desc
-		if ($this->isCurrentSortKey($ls_key)) {
-			$la_options['direction'] = 'desc';
-		}
-
-		$ls_url = $la_options['url'];
+		$la_url = $la_options['url'];
 		unset($la_options['url']);
-
-		$ls_defaultDir = isset($la_options['direction']) ? strtolower($la_options['direction']) : 'asc';
-		unset($la_options['direction']);
 
 		$ls_sortKey = Inflector::underscore((string)$this->param('sort'));
 		$ls_alias = $this->param('alias');
 		[$ls_table, $ls_field] = explode('.', $ls_key . '.');
+
 		if (!$ls_field) {
 			$ls_field = $ls_table;
 			$ls_table = $ls_alias;
 		}
-		$lb_isSorted = ($ls_sortKey === $ls_table . '.' . $ls_field || $ls_sortKey === $ls_alias . '.' . $ls_key || $ls_table . '.' . $ls_field === $ls_alias . '.' . $ls_sortKey);
+
+		$ls_dir = isset($la_options['direction']) ? strtolower($la_options['direction']) : 'asc';
+		unset($la_options['direction']);
+		// If the key is the current sort key, set the default direction to desc
+		if ($this->isCurrentSortKey($ls_key)) {
+			$ls_dir = 'desc';
+		}
 
 		$ls_template = 'sort';
-		$ls_dir = $ls_defaultDir;
-		if ($lb_isSorted) {
+
+		if (
+			$ls_sortKey === ($ls_table . '.' . $ls_field) ||
+			$ls_sortKey === ($ls_alias . '.' . $ls_key) ||
+			($ls_table . '.' . $ls_field) === ($ls_alias . '.' . $ls_sortKey)
+		) {
 			$ls_dir = $this->sortDir() === 'asc' ? 'desc' : 'asc';
 			$ls_template = $ls_dir === 'asc' ? 'sortDesc' : 'sortAsc';
 		}
@@ -109,7 +119,7 @@ class PaginatorHelper extends BasePaginatorHelper {
 		$la_vars = [
 			'text' => $la_options['escape'] ? h($ls_title) : $ls_title,
 			'identifier' => Inflector::camelize($ls_key),
-			'url' => $this->generateUrl($la_paging, $ls_url),
+			'url' => $this->generateUrl($la_paging, $la_url),
 		];
 
 		return $this->templater()->format($ls_template, $la_vars);
@@ -159,6 +169,14 @@ class PaginatorHelper extends BasePaginatorHelper {
 
 
 	/**
+	 * Overridden to
+	 * - use the params present in the request (as set by the routing)
+	 * - replace underscores with dashes in the key
+	 * - replace underscores with dashes in the value
+	 * - filters out null values
+	 * - sets page to false (not null) if it's the first page
+	 * - sorts the parameters so that sort, order, limit & page are at the end (and in that order)
+	 *
 	 * @inheritDoc
 	 * @param array $options
 	 * @param array $url
@@ -168,9 +186,14 @@ class PaginatorHelper extends BasePaginatorHelper {
 		$la_params = $this->_View->getRequest()->getParam('parts');
 
 		foreach ($options as $lx_key => $lx_value) {
-			$lx_key = str_replace('_', '-', $lx_key);
-			if (gettype($lx_value) === 'string') {
+			if (is_string($lx_key)) {
+				$lx_key = str_replace('_', '-', $lx_key);
+				$lx_key = trim($lx_key, '-');
+			}
+
+			if (is_string($lx_value)) {
 				$lx_value = str_replace('_', '-', $lx_value);
+				$lx_value = trim($lx_value, '-');
 			}
 
 			$la_params[ $lx_key ] = $lx_value;
@@ -181,6 +204,16 @@ class PaginatorHelper extends BasePaginatorHelper {
 			return $value !== null;
 		});
 
+		if (isset($la_params['sortDefault']) && is_string($la_params['sortDefault'])) {
+			$la_params['sortDefault'] = str_replace('_', '-', $la_params['sortDefault']);
+			$la_params['sortDefault'] = trim($la_params['sortDefault'], '-');
+		}
+
+		if (isset($la_params['directionDefault']) && is_string($la_params['directionDefault'])) {
+			$la_params['directionDefault'] = str_replace('_', '-', $la_params['directionDefault']);
+			$la_params['directionDefault'] = trim($la_params['directionDefault'], '-');
+		}
+
 		//If the sorting-column and -direction equal their default value, set both to false, so they won't be part of the generated URI
 		if (
 			isset($la_params['sortDefault'], $la_params['directionDefault'], $la_params['sort'], $la_params['direction']) &&
@@ -190,17 +223,61 @@ class PaginatorHelper extends BasePaginatorHelper {
 			$la_params['sort'] = $la_params['direction'] = false;
 		}
 
+		unset($la_params['sortDefault'], $la_params['directionDefault']);
+
 		//If the page parameter is empty or if it's page one, set it to false, so it won't be part of the generated URI
 		if (!empty($options['page']) && $options['page'] === 1) {
 			$la_params['page'] = false;
 		}
 
+		// Sort the parameters so that `sort`, `order`, `limit` & `page` are at the end (and in that order)
+		uksort($la_params, $this->sortUrlParams(...));
 
 		return $la_params;
 	}
 
 
 	/**
+	 * Sorts the parameters so that sort, order, limit & page are at the end (and in that order)
+	 *
+	 * @param string $a
+	 * @param string $b
+	 * @return int
+	 */
+	protected function sortUrlParams(string $a, string $b): int {
+		// Define the order of the special keys we want to move to the end
+		$la_specialKeys = ['sort', 'direction', 'limit', 'page'];
+
+		// Check if $a or $b are in the special keys
+		$lb_aInSpecial = array_search($a, $la_specialKeys);
+		$lb_bInSpecial = array_search($b, $la_specialKeys);
+
+		// If both are not in special keys, return 0 (keep original order)
+		if ($lb_aInSpecial === false && $lb_bInSpecial === false) {
+			return 0;
+		}
+
+		// If $a is in the special keys but $b is not, $a should go after $b
+		if ($lb_aInSpecial !== false && $lb_bInSpecial === false) {
+			return 1;
+		}
+
+		// If $b is in the special keys but $a is not, $b should go after $a
+		if ($lb_aInSpecial === false && $lb_bInSpecial !== false) {
+			return -1;
+		}
+
+		// If both $a and $b are in the special keys, sort them by their predefined order
+		return $lb_aInSpecial - $lb_bInSpecial;
+	}
+
+
+	/**
+	 * Overridden to
+	 * - allow setting the perPage value via the user configuration
+	 * - sort the limits array naturally
+	 * - set the form action to the userConfiguration action
+	 *
 	 * @param array $limits
 	 * @param int|null $default
 	 * @param array $options
