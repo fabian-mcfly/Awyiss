@@ -766,7 +766,6 @@ class MediaHelper extends Helper {
 		$la_breakpointFiles = [];
 		if ($mediaRenderOptions->getResponsive()) {
 			$la_breakpointFiles = $this->getResponsiveImages($media, $mediaRenderOptions, true);
-			$la_breakpointFiles = array_reverse($la_breakpointFiles, true);
 		}
 
 		foreach ($la_breakpointFiles as $li_breakpoint => $lo_file) {
