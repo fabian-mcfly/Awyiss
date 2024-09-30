@@ -306,6 +306,8 @@ class FormHelper extends BaseFormHelper {
 			if ($ls_key !== false) {
 				unset($la_options[ $key ][ $ls_key ]);
 			}
+
+			$la_options[ $key ] = array_values($la_options[ $key ]);
 		}
 		elseif (isset($la_options[ $key ]) && trim($la_options[ $key ])) {
 			$la_parts = explode(' ', $la_options[ $key ]);
