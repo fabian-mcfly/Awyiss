@@ -761,13 +761,22 @@ class MediaHelper extends Helper {
 		// If responsive is set, use the column width
 		if ($mediaRenderOptions->getResponsive()) {
 			$li_width = $this->getPixelColumnWidth($mediaRenderOptions);
-			$lo_file = $this->resize($media, renderOptions: $mediaRenderOptions->withWidth($li_width));
-		}
-		else {
-			$lo_file = $this->resize($media, renderOptions: $mediaRenderOptions);
+
+			return $this->resize($media, renderOptions: $mediaRenderOptions->withWidth($li_width));
 		}
 
-		return $lo_file;
+		// If the width and height are not set, use the column width
+		if (!$mediaRenderOptions->getWidth() && !$mediaRenderOptions->getHeight()) {
+			if (!$mediaRenderOptions->getColumnWidth()) {
+				return null;
+			}
+
+			$li_width = $this->getPixelColumnWidth($mediaRenderOptions);
+
+			return $this->resize($media, renderOptions: $mediaRenderOptions->withWidth($li_width));
+		}
+
+		return $this->resize($media, renderOptions: $mediaRenderOptions);
 	}
 
 
