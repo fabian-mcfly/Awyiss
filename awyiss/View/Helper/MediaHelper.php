@@ -74,6 +74,7 @@ class MediaHelper extends Helper {
 			'mediaAssignments' => $mediaAssignments[ $name ],
 			'mediaRenderOptions' => $mediaRenderOptions ?? $this->getMediaRenderOptions(),
 			'options' => $options,
+			'MediaHelper' => $this,
 		]);
 	}
 
@@ -424,6 +425,7 @@ class MediaHelper extends Helper {
 
 		$la_viewData = array_merge($la_defaults, $viewData, [
 			'mediaItem' => $media,
+			'MediaHelper' => $this,
 		]);
 
 		return $this->getView()->element('media/preview', $la_viewData);
