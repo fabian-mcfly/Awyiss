@@ -168,8 +168,12 @@ class FormHelper extends BaseFormHelper {
 			}
 		}
 
-		if (!isset($la_options['timezone']) && $this->_inputType($fieldName, $la_options) === 'datetime') {
-			$ls_timezone = Configure::read('Awyiss.System.' . Awyiss::getRealm() . '.timezone');
+		if (
+			($la_options['type'] ?? null) === 'datetime' ||
+			$this->_inputType($fieldName, $la_options) === 'datetime'
+		) {
+			$ls_timezone = $la_options['timezone'] ?? null ?: Configure::read('Awyiss.System.' . Awyiss::getRealm() . '.timezone') ?: date_default_timezone_get();
+
 			if ($ls_timezone === 'auto') {
 				$lo_language = $la_options['language'] ?? LocaleMiddleware::getLanguage(null);
 				$ls_timezone = $lo_language->timezone;
@@ -180,7 +184,6 @@ class FormHelper extends BaseFormHelper {
 			$la_options['templateVars']['additionalContent'] ??= '';
 			$la_options['templateVars']['additionalContent'] .= '<span class="Timezone">' . $ls_timezone . '</span>';
 		}
-
 
 		return parent::control($fieldName, $la_options);
 	}
