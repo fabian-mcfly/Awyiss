@@ -208,7 +208,7 @@ class MediaHelper extends Helper {
 
 		$ls_attributes = $this->Html->templater()->formatAttributes($la_attributes);
 
-		return '<audio ' . $ls_attributes . '><source src="' . $media->path . '" type="' . $media->mimeType . '"></audio>';
+		return '<audio' . $ls_attributes . '><source src="' . $media->path . '" type="' . $media->mimeType . '"></audio>';
 	}
 
 
@@ -639,7 +639,7 @@ class MediaHelper extends Helper {
 			$ls_backgroundColorStyle = ' background-color:' . $ls_backgroundColor . ';';
 		}
 
-		return $ls_backgroundColorStyle;
+		return trim($ls_backgroundColorStyle);
 	}
 
 
