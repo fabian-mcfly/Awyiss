@@ -739,10 +739,12 @@ class MediaHelper extends Helper {
 		}
 		$ls_noScriptAttributes = $this->Html->templater()->formatAttributes($la_noScriptAttributes);
 
+		$lf_width = $attributes['width'] ?? $this->getPixelColumnWidth($mediaRenderOptions);
+
 		$ls_placeholderStyleTag = $this->getPlaceholderStyleTag(
 			$attributes['id'],
-			$attributes['width'],
-			$attributes['height'],
+			$lf_width,
+			$attributes['height'] ?? $lf_width,
 			$averageColor,
 			$mediaRenderOptions,
 		);
