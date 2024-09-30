@@ -331,7 +331,7 @@ class PaginatorHelper extends BasePaginatorHelper {
 			return '';
 		}
 
-		return $this->_View->element('paginator/pagination', [
+		return $this->getView()->element('paginator/pagination', [
 			'PaginatorHelper' => $this,
 		]);
 	}
