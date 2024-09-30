@@ -108,7 +108,11 @@ class MediaHelper extends Helper {
 
 		// If the media item is not an image and the preview is not yet created,
 		// return a background color style if the background color is set
-		if (!$media->isImage() && $media->preview !== ProcessStatus::Success && $ls_backgroundColorStyle) {
+		if (!$media->isImage() && $media->preview !== ProcessStatus::Success) {
+			if (!$ls_backgroundColorStyle) {
+				return '';
+			}
+
 			return '<style>' . $lo_mediaRenderOptions->getSelector() . ' { ' . $ls_backgroundColorStyle . ' }</style>';
 		}
 
