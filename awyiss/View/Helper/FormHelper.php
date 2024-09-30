@@ -337,17 +337,14 @@ class FormHelper extends BaseFormHelper {
 		if (!$merge) {
 			$this->translatableFields = (array)$fields;
 
-
 			return $this;
 		}
-
 
 		foreach ((array)$fields as $ls_field) {
 			if (!in_array($ls_field, $this->translatableFields)) {
 				$this->translatableFields[] = $ls_field;
 			}
 		}
-
 
 		return $this;
 	}
@@ -384,8 +381,11 @@ class FormHelper extends BaseFormHelper {
 
 
 	/**
-	 * @param string $field
-	 * @return bool
+	 * Overrides the original method to check if the field
+	 * is one of an association and if the associated entity
+	 * has an error for the field.
+	 *
+	 * @inheritDoc
 	 */
 	public function isFieldError(string $field): bool {
 		if (!str_contains($field, '.')) {
@@ -413,6 +413,10 @@ class FormHelper extends BaseFormHelper {
 
 
 	/**
+	 * Overrides the original method to check if the field
+	 * is one of an association and if the associated entity
+	 * has an error for the field.
+	 *
 	 * @param string $field
 	 * @param array|string|null $text
 	 * @param array $options
