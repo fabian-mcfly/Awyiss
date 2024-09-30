@@ -351,11 +351,11 @@ class FormHelper extends BaseFormHelper {
 
 
 	/**
-	 * {@inheritDoc}
-	 *
 	 * Re-implemented 1:1 but
 	 * - uses 'Required' instead of 'required' as a class name for required elements. We like our classes uppercase.
-	 * - uses `ucfirst` for the `type`-option
+	 * - uses `ucparts` for the `type`-option
+	 *
+	 * @inheritDoc
 	 */
 	protected function _inputContainerTemplate(array $options): string {
 		$ls_inputContainerTemplate = $options['options']['type'] . 'Container' . $options['errorSuffix'];
@@ -365,6 +365,7 @@ class FormHelper extends BaseFormHelper {
 
 		$ls_name = $options['options']['id'];
 		$li_dashPos = strpos($ls_name, '-');
+		// When the id contains a dash, we want to remove the prefix (association name) from the id.
 		if ($li_dashPos !== false) {
 			$ls_name = substr($ls_name, $li_dashPos + 1);
 		}
@@ -374,7 +375,7 @@ class FormHelper extends BaseFormHelper {
 			'content' => $options['content'],
 			'error' => $options['error'],
 			'required' => $options['options']['required'] ? ' Required' : '',
-			'type' => ucfirst($options['options']['type']),
+			'type' => Inflector::ucparts($options['options']['type'], false),
 			'templateVars' => ($options['options']['templateVars'] ?? []) + ['identifier' => $ls_name],
 		]);
 	}
