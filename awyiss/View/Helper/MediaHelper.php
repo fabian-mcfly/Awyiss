@@ -734,7 +734,9 @@ class MediaHelper extends Helper {
 		$ls_attributes = $this->Html->templater()->formatAttributes($la_attributes);
 
 		$la_noScriptAttributes = $attributes;
-		unset($la_noScriptAttributes['id']);
+		if (isset($la_noScriptAttributes['id'])) {
+			$la_noScriptAttributes['id'] .= '-NoScript';
+		}
 		$ls_noScriptAttributes = $this->Html->templater()->formatAttributes($la_noScriptAttributes);
 
 		$ls_placeholderStyleTag = $this->getPlaceholderStyleTag(
