@@ -196,7 +196,7 @@ class Validator extends BaseValidator {
 				$la_pass[ $ls_name ] = $lx_pass;
 			}
 
-			$la_errors[ $ls_name ] = __df($this->i18nDomain, 'validation', 'error_' . Inflector::underscore($ls_name), $la_pass[ $ls_name ]);
+			$la_errors[ $ls_name ] = __df($this->i18nDomain, 'validation', 'error_' . Inflector::underscore($ls_name), $la_pass[ $ls_name ] ?? '');
 
 			if ($lo_rule->isLast()) {
 				break;
