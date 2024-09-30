@@ -194,6 +194,10 @@ class MediaHelper extends Helper {
 	 * @return string
 	 */
 	public function audioTag(Media $media, ?MediaRenderOptions $mediaRenderOptions): string {
+		if (!in_array($media->mimeType, ['audio/mpeg', 'audio/ogg', 'audio/wav', 'audio/webm'], true)) {
+			return '';
+		}
+
 		$lo_mediaRenderOptions = $mediaRenderOptions ?? $this->getMediaRenderOptions();
 
 		$la_attributes = $lo_mediaRenderOptions->getAttributes();
@@ -216,9 +220,18 @@ class MediaHelper extends Helper {
 	 *
 	 * @param \Awyiss\Model\Entity\Media $media
 	 * @param \Awyiss\Utility\Media\MediaRenderOptions|null $mediaRenderOptions
+	 * @param bool $allowPreview
 	 * @return string
 	 */
-	public function imageTag(Media $media, ?MediaRenderOptions $mediaRenderOptions = null): string {
+	public function imageTag(Media $media, ?MediaRenderOptions $mediaRenderOptions = null, bool $allowPreview = true): string {
+		if (
+			!$media->isImage() &&
+			$media->mimeType !== 'image/svg+xml' &&
+			!($allowPreview && $media->preview === ProcessStatus::Success)
+		) {
+			return '';
+		}
+
 		$lo_mediaRenderOptions = $mediaRenderOptions ?? $this->getMediaRenderOptions();
 
 		$la_attributes = $lo_mediaRenderOptions->getAttributes();
@@ -255,9 +268,18 @@ class MediaHelper extends Helper {
 	/**
 	 * @param \Awyiss\Model\Entity\Media $media
 	 * @param \Awyiss\Utility\Media\MediaRenderOptions|null $mediaRenderOptions
+	 * @param bool $allowPreview
 	 * @return string
 	 */
-	public function pictureTag(Media $media, ?MediaRenderOptions $mediaRenderOptions): string {
+	public function pictureTag(Media $media, ?MediaRenderOptions $mediaRenderOptions, bool $allowPreview = true): string {
+		if (
+			!$media->isImage() &&
+			$media->mimeType !== 'image/svg+xml' &&
+			!($allowPreview && $media->preview === ProcessStatus::Success)
+		) {
+			return '';
+		}
+
 		$lo_mediaRenderOptions = $mediaRenderOptions ?? $this->getMediaRenderOptions();
 
 		$ls_imageTag = $this->imageTag($media, $lo_mediaRenderOptions);
@@ -287,6 +309,10 @@ class MediaHelper extends Helper {
 	 * @return string
 	 */
 	public function videoTag(Media $media, ?MediaRenderOptions $mediaRenderOptions): string {
+		if (!in_array($media->mimeType, ['video/mp4', 'video/webm', 'video/ogg'], true)) {
+			return '';
+		}
+
 		$lo_mediaRenderOptions = $mediaRenderOptions ?? $this->getMediaRenderOptions();
 
 		$la_attributes = $lo_mediaRenderOptions->getAttributes();
