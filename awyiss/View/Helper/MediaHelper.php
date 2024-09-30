@@ -179,7 +179,7 @@ class MediaHelper extends Helper {
 
 		if (
 			$media->mimeType === 'image/svg+xml' ||
-			($media->isImage() && !$lo_mediaRenderOptions->getResponsive())
+			!$lo_mediaRenderOptions->getResponsive()
 		) {
 			return $this->imageTag($media, $lo_mediaRenderOptions);
 		}
