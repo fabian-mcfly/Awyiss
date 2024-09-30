@@ -103,8 +103,13 @@ class FormHelper extends BaseFormHelper {
 			$ls_text = $this->labelTextFromFieldname($fieldName);
 		}
 
+		$la_options = $options;
+		if (isset($la_options['class'])) {
+			$la_options['templateVars']['labelClass'] = ' ' . trim($la_options['class']);
+			unset($la_options['class']);
+		}
 
-		return parent::label($fieldName, $ls_text, $options);
+		return parent::label($fieldName, $ls_text, $la_options);
 	}
 
 

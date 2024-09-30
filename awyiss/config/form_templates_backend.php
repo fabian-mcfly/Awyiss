@@ -24,7 +24,7 @@ return [
 	// Container element used by control() when a field has an error.
 	'inputContainerError' => '<div class="FormInput FormInputType-{{type}} FormInputName-{{identifier}}{{required}}{{columnSpan}} {{containerClass}} Error">{{content}}{{error}}{{additionalContent}}</div>',
 	// Label element when inputs are not nested inside the label.
-	'label' => '<label class="Label"{{attrs}}>{{text}}</label>',
+	'label' => '<label class="Label{{labelClass}}"{{attrs}}>{{text}}</label>',
 	// Legends created by allControls()
 	'legend' => '<legend class="Legend">{{text}}</legend>',
 	// Multi-Checkbox input set title element.
