@@ -14,6 +14,7 @@ use Cake\View\Form\EntityContext;
 use Cake\View\Form\NullContext;
 use Cake\View\Helper\FormHelper as BaseFormHelper;
 use Cake\View\View;
+use RuntimeException;
 
 
 /**
@@ -209,6 +210,14 @@ class FormHelper extends BaseFormHelper {
 	 * @noinspection PhpUnused
 	 */
 	public function translatableText(string $fieldName, array $options = []): string {
+		if (!isset($this->languageRealm)) {
+			throw new RuntimeException('The language realm is not set. Make sure to call FormHelper::create() before using translatable fields.');
+		}
+
+		if ((!in_array($fieldName, $this->translatableFields) || count($this->languages) < 2) && !str_contains($fieldName, '.')) {
+			return $this->control($fieldName, $options);
+		}
+
 		$la_options = $options;
 
 		$ls_realType = $la_options['realType'] ?? $la_options['type'];
