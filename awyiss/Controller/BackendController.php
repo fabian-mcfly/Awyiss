@@ -156,7 +156,7 @@ abstract class BackendController extends AppController {
 
 			$this->loadComponent('EventTrigger', $this->eventTrigger);
 
-			$this->loadComponent('Flash', ['key' => Inflector::underscore($this->getName())]);
+			$this->loadComponent('Flash', ['key' => '*']);
 
 			if ($this->defaultTable) {
 				$this->loadComponent('Categories', $this->categories);

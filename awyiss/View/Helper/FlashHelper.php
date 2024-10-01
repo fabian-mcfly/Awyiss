@@ -9,17 +9,19 @@ use Cake\View\Helper;
 
 /**
  * FlashHelper class to render flash messages.
- * After setting messages in your controllers with FlashComponent, you can use
- * this class to output your flash messages in your views.
  *
  * @see \Cake\View\Helper\FlashHelper
  */
 class FlashHelper extends Helper {
 	/**
-	 * When calling this method with '*' as `$key`, it will return all flash messages, no matter they key they
-	 * have been set with.
+	 * With the default key being set to '*',
+	 * and the backend controller having '*' as the default key,
+	 * this will render all flash messages, no matter
+	 * where they came from.
 	 *
-	 * This allows the backend to display messages after redirecting to a different controller.
+	 * If you want to render only a specific key,
+	 * you can pass that key as the first argument and
+	 * pass the `key` option to the Flash component.
 	 *
 	 * @param string $key
 	 * @param array $options
@@ -29,18 +31,7 @@ class FlashHelper extends Helper {
 	public function render(string $key = '*', array $options = []): ?string {
 		$lo_flash = $this->_View->getRequest()->getFlash();
 
-		if ($key === '*') {
-			$la_controllerMessage = [];
-			foreach (($this->_View->getRequest()->getSession()->read('Flash') ?? []) as $ls_key => $la_messages) {
-				$la_controllerMessage += $lo_flash->consume($ls_key);
-			}
-
-			$la_globalMessages = $lo_flash->consume($key) ?? [];
-			$la_messages = array_filter(array_merge($la_controllerMessage, $la_globalMessages));
-		}
-		else {
-			$la_messages = $lo_flash->consume($key);
-		}
+		$la_messages = $lo_flash->consume($key);
 
 		if (!$la_messages) {
 			return null;
@@ -54,6 +45,15 @@ class FlashHelper extends Helper {
 				$la_message['message'] = h($la_message['message']);
 			}
 
+			/**
+			 * This is a bit of a hack to make the classes work.
+			 *
+			 * CakePHP does not pass the options set via the Flash component
+			 * to the FlashHelper, so the only way to pass the class is
+			 * to set it in the params array.
+			 *
+			 * @see \Cake\Http\FlashMessage::set()
+			 */
 			$la_message['class'] = '';
 			if (!empty($la_message['params']['class'])) {
 				$la_message['class'] .= ' ' . $la_message['params']['class'];
