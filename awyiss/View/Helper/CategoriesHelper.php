@@ -215,9 +215,7 @@ class CategoriesHelper extends Helper {
 				$la_attributes['options'] = [];
 				foreach ($la_groupedOptions as $lx_key => $lx_options) {
 					$ls_groupLabel = $lx_key ?: 'general';
-					if (isset($la_attributes['groupLabels'][ $ls_groupLabel ])) {
-						$ls_groupLabel = $la_attributes['groupLabels'][ $ls_groupLabel ];
-					}
+					$ls_groupLabel = $la_attributes['groupLabels'][ $ls_groupLabel ] ?? __($ls_fieldName . '_grouplabel_' . $ls_groupLabel);
 
 					$la_attributes['options'][ $ls_groupLabel ] = $this->formatOptions($lx_options, $la_attributes + ['buildNested' => true]);
 				}
