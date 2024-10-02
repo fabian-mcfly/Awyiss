@@ -147,21 +147,9 @@ class CategoriesHelper extends Helper {
 	 * $attributes or $options for the different **type** methods can be included in `$options` for control().
 	 * Additionally, any unknown keys that are not in the list below, or part of the selected type's options
 	 * will be treated as a regular HTML attribute for the generated input.
-	 * - `type` - Force the type of widget you want. e.g. `type => 'select'`
-	 * - `label` - Either a string label, or an array of options for the label. See FormHelper::label().
-	 * - `options` - For widgets that take options e.g. radio, select.
-	 * - `error` - Control the error message that is produced. Set to `false` to disable any kind of error reporting
-	 *   (field error and error messages).
-	 * - `empty` - String or boolean to enable empty select box options.
-	 * - `nestedInput` - Used with checkbox and radio inputs. Set false to render inputs outside of label
-	 *   elements. Can be set to true on any input to force the input inside the label. If you
-	 *   enable this option for radio buttons you will also need to modify the default `radioWrapper` template.
-	 * - `templates` - The templates you want to use for this input. Any templates will be merged on top of
-	 *   the already loaded templates. This option can either be a filename in /config that contains
-	 *   the templates you want to load, or an array of templates to use.
-	 * - `labelOptions` - Either `false` to disable label around nestedWidgets e.g. radio, multicheckbox or an array
-	 *   of attributes for the label tag. `selected` will be added to any classes e.g. `class => 'myclass'` where
-	 *   widget is checked
+	 * - `groupBy` - If set to a field name, the options will be grouped by the value of that field.
+	 * Provide the `groupLabels` option to customize the labels of the groups.
+	 * - `groupLabels` - An array of group labels. The keys are the group values, the values are the labels.
 	 *
 	 * @param string|null $identifier
 	 * @param array $attributes
@@ -190,13 +178,14 @@ class CategoriesHelper extends Helper {
 		$la_config = ['field' => $ls_fieldName] + $la_config;
 		$la_attributes = $attributes + [
 			'isCategory' => true,
+			'disabled' => false,
 			'empty' => false,
-			'groupBy' => false,
+			'groupBy' => null,
 			'groupLabels' => [],
 			'label' => $this->Form->labelTextFromFieldname($ls_fieldName),
 			'type' => 'select',
+			'val' => $this->getSelectedCategory($ls_identifier),
 		];
-
 
 		if (!isset($la_attributes['val'])) {
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
@@ -238,8 +227,8 @@ class CategoriesHelper extends Helper {
 			}
 		}
 
+		unset($la_attributes['groupBy']);
 		unset($la_attributes['groupLabels']);
-
 
 		return $this->Form->control($ls_fieldName, $la_attributes);
 	}
@@ -306,6 +295,9 @@ class CategoriesHelper extends Helper {
 
 
 	/**
+	 * Creates a link select element using the `linkSelect`-template
+	 * with only the provided options and attributes
+	 *
 	 * @param string $identifier
 	 * @param iterable|null $options
 	 * @param array $attributes
@@ -317,6 +309,7 @@ class CategoriesHelper extends Helper {
 			'disabled' => false,
 			'escape' => true,
 			'id' => true,
+			'identifier' => $identifier,
 			'label' => __($identifier . '_filter_label'),
 			'levelPrefix' => '- ',
 			'uriParam' => Inflector::variable($identifier),
@@ -403,7 +396,7 @@ class CategoriesHelper extends Helper {
 		];
 
 		$lx_options = $la_attributes['options'];
-		unset($la_attributes['options']);
+		$la_attributes['options'] = [];
 
 		if ($lx_options) {
 			$ls_groupBy = $la_attributes['groupBy'] ?? null;
