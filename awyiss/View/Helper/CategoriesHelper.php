@@ -55,7 +55,7 @@ class CategoriesHelper extends Helper {
 	/**
 	 * @inheritDoc
 	 */
-	protected array $helpers = ['Form', 'Paginator', 'Url'];
+	protected array $helpers = ['Form', 'Url'];
 	/**
 	 * Locator for input widgets.
 	 *
