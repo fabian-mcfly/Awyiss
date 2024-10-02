@@ -6,6 +6,11 @@
 @var TimeHelper \Cake\View\Helper\TimeHelper
 #}
 
+{% set categories = [] %}
+{% if _categoriesIdentifier is defined and _context['_categories.' ~ (_categoriesIdentifier|pluralize|variable)] is defined %}
+	{% set categories = _context['_categories.' ~ (_categoriesIdentifier|pluralize|variable)] %}
+{% endif %}
+
 {% block nestedListItem %}
 	<li
 		{% block nestedListItemId -%}

@@ -59,8 +59,8 @@
 					{% endblock %}
 
 					{% block formControlParentId %}
-						{% if (categoriesIdentifier is defined) %}
-							{{ CategoriesHelper.control(categoriesIdentifier, {'data-form-updater': true}) }}
+						{% if (_categoriesIdentifier is defined) %}
+							{{ CategoriesHelper.control(_categoriesIdentifier, {'data-form-updater': true}) }}
 						{% endif %}
 
 						{% if nestable and possibleParentPages is not null %}

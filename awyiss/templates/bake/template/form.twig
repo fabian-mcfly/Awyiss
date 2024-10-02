@@ -60,8 +60,8 @@
 		{{- "\n" }}
 		{%- endif %}
 		{%- elseif field == 'parent_id' %}
-					{% verbatim %}{% if (categoriesIdentifier is defined) %}
-						{{ CategoriesHelper.control(categoriesIdentifier) }}
+					{% verbatim %}{% if (_categoriesIdentifier is defined) %}
+						{{ CategoriesHelper.control(_categoriesIdentifier) }}
 					{% endif %}
 
 					{% if (parent{% endverbatim %}{{ pluralVar|camelize }}{% verbatim %} is not null) %}

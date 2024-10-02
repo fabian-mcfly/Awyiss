@@ -41,8 +41,8 @@
 					{% endblock %}
 
 					{% block formControlParentId %}
-						{% if (categoriesIdentifier is defined) %}
-							{{ CategoriesHelper.control(categoriesIdentifier) }}
+						{% if (_categoriesIdentifier is defined) %}
+							{{ CategoriesHelper.control(_categoriesIdentifier) }}
 						{% endif %}
 
 						{% if (nestable and possibleParentRecords is not null) %}

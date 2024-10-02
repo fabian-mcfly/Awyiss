@@ -267,8 +267,6 @@ class CategoriesComponent extends Component {
 
 		$ls_identifier = Inflector::underscore($this->getConfig('identifier'));
 
-		$ls_variableNamePlural = Inflector::variable(Inflector::pluralize($ls_identifier));
-
 		$la_config = $this->getConfig();
 		ksort($la_config);
 		unset($la_config['implementedEvents'], $la_config['implementedMethods']);
@@ -290,11 +288,10 @@ class CategoriesComponent extends Component {
 			'simple' => $this->getCategories(),
 		];
 
-		if (!$lo_view->getVar($ls_variableNamePlural)) {
-			$lo_view->setVar($ls_variableNamePlural, $la_categories);
-		}
+		$ls_variableNamePlural = Inflector::variable(Inflector::pluralize($ls_identifier));
 
-		$lo_view->setVar('categoriesIdentifier', $la_config['identifier']);
+		$lo_view->setVar('_categories.' . $ls_variableNamePlural, $la_categories);
+		$lo_view->setVar('_categoriesIdentifier', $la_config['identifier']);
 	}
 
 
