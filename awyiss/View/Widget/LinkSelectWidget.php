@@ -127,12 +127,16 @@ class LinkSelectWidget extends BasicWidget {
 	 * Helper method for deciding what options are disabled.
 	 *
 	 * @param string $key The key to test.
-	 * @param array<string>|null $disabled The disabled values.
+	 * @param array|bool|null $disabled The disabled values.
 	 * @return bool
 	 */
-	protected function isDisabled(string $key, ?array $disabled): bool {
-		if ($disabled === null) {
+	protected function isDisabled(string $key, array|bool|null $disabled): bool {
+		if (!$disabled) {
 			return false;
+		}
+
+		if ($disabled === true) {
+			return true;
 		}
 
 		$lb_strict = !is_numeric($key);
@@ -162,7 +166,13 @@ class LinkSelectWidget extends BasicWidget {
 		}
 
 		$lx_disabled = null;
-		if (isset($la_data['disabled']) && is_array($la_data['disabled'])) {
+		if (
+			isset($la_data['disabled']) &&
+			(
+				is_array($la_data['disabled']) ||
+				is_bool($la_data['disabled'])
+			)
+		) {
 			$lx_disabled = $la_data['disabled'];
 		}
 
@@ -215,11 +225,11 @@ class LinkSelectWidget extends BasicWidget {
 	 *
 	 * @param array $data
 	 * @param mixed $selected
-	 * @param mixed $disabled
+	 * @param array|bool|null $disabled
 	 * @param bool $escape
 	 * @return array
 	 */
-	protected function buildOptions(array $data, mixed $selected, mixed $disabled, bool $escape): array {
+	protected function buildOptions(array $data, mixed $selected, array|bool|null $disabled, bool $escape): array {
 		$la_options = [];
 		foreach ($data['options'] as $lx_key => $lx_value) {
 			$la_optionAttributes = $this->createOptionAttributes($lx_key, $lx_value, $data);
@@ -278,11 +288,11 @@ class LinkSelectWidget extends BasicWidget {
 	 * @param array $optionAttributes
 	 * @param mixed $key
 	 * @param mixed $selected
-	 * @param mixed $disabled
+	 * @param array|bool|null $disabled
 	 * @param array $data
 	 * @return array
 	 */
-	protected function addClassesToOption(array $optionAttributes, mixed $key, mixed $selected, mixed $disabled, array $data): array {
+	protected function addClassesToOption(array $optionAttributes, mixed $key, mixed $selected, array|bool|null $disabled, array $data): array {
 		$la_optionAttributes = $this->_templates->addClass($optionAttributes, 'Item');
 		$ls_classText = 'Item-' . Text::slug(Inflector::camelize($la_optionAttributes['title']), ['replacement' => '']);
 		$la_optionAttributes = $this->_templates->addClass($la_optionAttributes, $ls_classText);
@@ -324,10 +334,10 @@ class LinkSelectWidget extends BasicWidget {
 	 * @param array $optionAttributes
 	 * @param bool $escape
 	 * @param mixed $key
-	 * @param mixed $disabled
+	 * @param array|bool|null $disabled
 	 * @return string
 	 */
-	protected function formatOption(array $optionAttributes, bool $escape, mixed $key, mixed $disabled): string {
+	protected function formatOption(array $optionAttributes, bool $escape, mixed $key, array|bool|null $disabled): string {
 		$ls_template = 'option';
 		if ($this->isDisabled((string)$key, $disabled)) {
 			$ls_template = 'optionDisabled';
