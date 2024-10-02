@@ -181,6 +181,10 @@ class CategoriesHelper extends Helper {
 			throw new RuntimeException('Cannot build categories control without field.');
 		}
 
+		if (empty($la_config['identifier'])) {
+			$la_config['identifier'] = $ls_identifier;
+		}
+
 		$ls_fieldName = Inflector::underscore($la_config['field']);
 
 		$la_config = ['field' => $ls_fieldName] + $la_config;
