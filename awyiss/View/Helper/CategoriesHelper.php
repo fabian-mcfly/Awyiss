@@ -201,7 +201,7 @@ class CategoriesHelper extends Helper {
 		if ($lx_options) {
 			$ls_groupBy = $la_attributes['groupBy'] ?? null;
 
-			if (!$ls_groupBy && !empty($la_config['includeParentCategories'])) {
+			if ($ls_groupBy === null && ($la_config['includeParentCategories'] ?? false) === true) {
 				$ls_groupBy = '_parents';
 			}
 
@@ -401,7 +401,7 @@ class CategoriesHelper extends Helper {
 		if ($lx_options) {
 			$ls_groupBy = $la_attributes['groupBy'] ?? null;
 
-			if (!$ls_groupBy && !empty($config['includeParentCategories'])) {
+			if ($ls_groupBy === null && ($config['includeParentCategories'] ?? false) === true) {
 				$ls_groupBy = '_parents';
 			}
 
