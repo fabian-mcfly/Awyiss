@@ -113,7 +113,7 @@ msgstr "Category"
 msgid "parent_id"
 msgstr "Subitem of"
 
-msgid "parent_id_filter_all"
+msgid "category_filter_all"
 msgstr "All"
 
 msgid "category_filter_unassigned"

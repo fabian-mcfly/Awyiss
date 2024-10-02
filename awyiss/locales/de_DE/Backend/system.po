@@ -113,7 +113,7 @@ msgstr "Kategorie"
 msgid "parent_id"
 msgstr "Unterpunkt von"
 
-msgid "parent_id_filter_all"
+msgid "category_filter_all"
 msgstr "Alle"
 
 msgid "category_filter_unassigned"

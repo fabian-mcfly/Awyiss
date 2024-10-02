@@ -38,7 +38,7 @@ msgstr "The form entry could not be deleted"
 msgid "form_filter_label"
 msgstr "Form"
 
-msgid "form_id_filter_all"
+msgid "form_filter_all"
 msgstr "All"
 
 msgid "subject"

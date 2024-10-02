@@ -35,7 +35,7 @@ msgstr "Configuration"
 msgid "page_role_filter_label"
 msgstr "Page role"
 
-msgid "page_role_id_filter_all"
+msgid "page_role_filter_all"
 msgstr "All"
 
 msgid "create"

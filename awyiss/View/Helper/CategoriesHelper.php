@@ -243,7 +243,8 @@ class CategoriesHelper extends Helper {
 
 
 	/**
-	 * Returns a filter element, using the `linkSelect`-template.
+	 * Returns a filter element, using the `linkSelect`-template with the
+	 * category config set as view vars
 	 *
 	 * ### Options:
 	 * - `aggregationLabel` The label of an additional option that's displayed when the `allowAggregation`-option is true.
@@ -272,17 +273,17 @@ class CategoriesHelper extends Helper {
 			return '';
 		}
 
-		$ls_fieldName = Inflector::underscore($la_config['field']);
-
 		$la_attributes = $attributes + $la_config;
 		$la_attributes += [
-			'aggregationLabel' => __($ls_fieldName . '_filter_all'),
+			'aggregationLabel' => __($ls_identifier . '_filter_all'),
 			'disabled' => false,
 			'escape' => true,
 			'id' => true,
+			'identifier' => $ls_identifier,
 			'label' => __($ls_identifier . '_filter_label'),
 			'levelPrefix' => '- ',
 			'unassignedLabel' => __($ls_identifier . '_filter_unassigned'),
+			'uriParam' => $ls_identifier,
 			'val' => $this->getSelectedCategory($ls_identifier),
 		];
 
@@ -296,7 +297,6 @@ class CategoriesHelper extends Helper {
 		}
 
 		$la_attributes = $this->buildOptions($la_attributes, $la_config);
-
 
 		return $this->widget('linkSelect', $la_attributes);
 	}

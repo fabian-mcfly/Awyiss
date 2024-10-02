@@ -38,7 +38,7 @@ msgstr "Konfiguration"
 msgid "usergroup_filter_label"
 msgstr "Benutzergruppe"
 
-msgid "user_id_filter_all"
+msgid "usergroup_filter_all"
 msgstr "Alle"
 
 msgid "usergroup_filter_unassigned"

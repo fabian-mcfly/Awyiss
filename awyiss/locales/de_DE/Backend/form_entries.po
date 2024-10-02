@@ -38,7 +38,7 @@ msgstr "Der Eintrag konnte nicht gelöscht werden"
 msgid "form_filter_label"
 msgstr "Formular"
 
-msgid "form_id_filter_all"
+msgid "form_filter_all"
 msgstr "Alle"
 
 msgid "subject"
