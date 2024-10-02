@@ -205,7 +205,7 @@ class AuthorizationService implements AuthorizationServiceInterface {
 
 
 		if ($ls_scope) {
-			if (isset($this->datatables[ $ls_scope ])) {
+			if (!isset($this->policies[ $realm ][ $ls_scope ]) && isset($this->datatables[ $ls_scope ])) {
 				$this->policies[ $realm ][ $ls_scope ] = $this->datatables[ $ls_scope ];
 			}
 		}
