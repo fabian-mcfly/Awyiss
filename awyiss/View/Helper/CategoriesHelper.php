@@ -221,31 +221,16 @@ class CategoriesHelper extends Helper {
 					$lx_options = collection($lx_options);
 				}
 
-				$lx_options = $lx_options->groupBy(function (mixed $element) use ($ls_groupBy) {
-					if ($element instanceof EntityInterface) {
-						if (is_array($element->$ls_groupBy)) {
-							return implode(' - ', array_map(function (EntityInterface $entity) {
-								/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-								return $entity->label;
-							}, $element->$ls_groupBy));
-						}
-
-
-						return $element->$ls_groupBy ?? '';
-					}
-
-
-					return $element[ $ls_groupBy ] ?? '';
-				});
+				$la_groupedOptions = $this->groupOptions($lx_options, $ls_groupBy, $la_attributes);
 
 				$la_attributes['options'] = [];
-				foreach ($lx_options as $lx_key => $la_options) {
+				foreach ($la_groupedOptions as $lx_key => $lx_options) {
 					$ls_groupLabel = $lx_key ?: 'general';
 					if (isset($la_attributes['groupLabels'][ $ls_groupLabel ])) {
 						$ls_groupLabel = $la_attributes['groupLabels'][ $ls_groupLabel ];
 					}
 
-					$la_attributes['options'][ $ls_groupLabel ] = $this->formatOptions($la_options, $la_attributes + ['buildNested' => true]);
+					$la_attributes['options'][ $ls_groupLabel ] = $this->formatOptions($lx_options, $la_attributes + ['buildNested' => true]);
 				}
 			}
 			else {
@@ -432,30 +417,9 @@ class CategoriesHelper extends Helper {
 					$lx_options = collection($lx_options);
 				}
 
-				$la_options = $lx_options->groupBy(function (mixed $element) use ($ls_groupBy, &$la_attributes) {
-					if ($element instanceof EntityInterface) {
-						if (is_array($element->$ls_groupBy)) {
-							$ls_path = implode(' - ', array_map(function (EntityInterface $entity) {
-								/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-								return $entity->label;
-							}, $element->$ls_groupBy));
+				$la_groupedOptions = $this->groupOptions($lx_options, $ls_groupBy, $la_attributes);
 
-							$la_attributes['groupLabels'][ $ls_path ] ??= $ls_path;
-
-
-							return $ls_path;
-						}
-
-
-						return $element->$ls_groupBy ?? '';
-					}
-
-
-					return $element[ $ls_groupBy ] ?? '';
-				})->toArray();
-
-				$la_attributes['options'] = [];
-				foreach ($la_options as $lx_key => $lx_options) {
+				foreach ($la_groupedOptions as $lx_key => $lx_options) {
 					$la_attributes['options'][] = [
 						'id' => null,
 						'title' => $lx_key,
@@ -501,7 +465,6 @@ class CategoriesHelper extends Helper {
 			] + $la_attributes['options'];
 		}
 
-
 		return $la_attributes;
 	}
 
@@ -514,44 +477,13 @@ class CategoriesHelper extends Helper {
 	 */
 	protected function formatOptions(iterable $options, array $attributes, bool $forLinkSelect = false): array {
 		if ($options instanceof TreeIterator) {
-			if ($forLinkSelect) {
-				$la_options = $options->toList();
-				$la_options = array_combine(array_column($la_options, 'id'), $la_options);
-			}
-			else {
-				$la_options = $options->printer(
-					...($attributes['printer'] ?? [
-						'label',
-						'id',
-						$attributes['levelPrefix'] ?? '- ',
-					])
-				)->toArray();
-			}
+			$la_options = $this->formatTreeOptions($options, $attributes, $forLinkSelect);
 		}
 		elseif ($options instanceof CollectionInterface) {
-			$la_combinator = array_values($attributes['combinator'] ?? [
-				'id',
-				'label',
-				null,
-			]);
-
-			$la_options = [];
-			foreach ($options as $lx_option) {
-				$ls_title = $lx_option->{$la_combinator[1]};
-
-				if ($lx_option->level ?? null) {
-					$ls_title = str_repeat($attributes['levelPrefix'] ?? '- ', $lx_option->level) . $ls_title;
-				}
-
-				$la_options[ $lx_option->{$la_combinator[0]} ] = $ls_title;
-			}
+			$la_options = $this->formatCollectionOptions($options, $attributes);
 		}
 		elseif (is_array($options)) {
-			$la_options = $options;
-
-			if ($attributes['buildNested'] ?? null === true) {
-				$la_options = $this->formatOptions(collection($options), $attributes, $forLinkSelect);
-			}
+			$la_options = $this->formatArrayOptions($options, $attributes, $forLinkSelect);
 		}
 		else {
 			throw new RuntimeException(sprintf('Cannot build options for type `%s`.', gettype($options)));
@@ -562,6 +494,78 @@ class CategoriesHelper extends Helper {
 		}
 
 		return $this->formatOptionAttributes($la_options, $attributes);
+	}
+
+
+	/**
+	 * @param array $options
+	 * @param array $attributes
+	 * @param bool $forLinkSelect
+	 * @return array
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	protected function formatArrayOptions(array $options, array $attributes, bool $forLinkSelect): array {
+		$la_options = $options;
+
+		if (($attributes['buildNested'] ?? null) === true) {
+			$la_options = $this->formatOptions(collection($options), $attributes, $forLinkSelect);
+		}
+
+		if (!in_array($attributes['groupBy'] ?? null, ['label', 'title', 'value', 'id'])) {
+			array_walk($la_options, function (mixed &$option) use ($attributes): void {
+				if (is_array($option)) {
+					unset($option[ $attributes['groupBy'] ]);
+				}
+			});
+		}
+
+		return $la_options;
+	}
+
+
+	/**
+	 * @param \Cake\Collection\CollectionInterface $options
+	 * @param array $attributes
+	 * @return array
+	 */
+	protected function formatCollectionOptions(CollectionInterface $options, array $attributes): array {
+		$la_combinator = array_values($attributes['combinator'] ?? ['id', 'label', null]);
+
+		$la_options = [];
+		foreach ($options as $lx_option) {
+			if ($lx_option instanceof EntityInterface) {
+				$lx_option = $lx_option->extract([], false, false);
+			}
+
+			$ls_title = $lx_option[ $la_combinator[1] ] ?? $lx_option['label'] ?? $lx_option['title'] ?? $lx_option['value'] ?? $lx_option['id'];
+
+			if ($lx_option['level'] ?? null) {
+				$ls_title = str_repeat($attributes['levelPrefix'] ?? '- ', $lx_option['level']) . $ls_title;
+			}
+
+			$la_options[ $lx_option[ $la_combinator[0] ] ] = $ls_title;
+		}
+
+		return $la_options;
+	}
+
+
+	/**
+	 * @param \Cake\Collection\Iterator\TreeIterator $options
+	 * @param array $attributes
+	 * @param bool $forLinkSelect
+	 * @return array
+	 */
+	protected function formatTreeOptions(TreeIterator $options, array $attributes, bool $forLinkSelect): array {
+		if ($forLinkSelect) {
+			$la_options = $options->toList();
+			$la_options = array_combine(array_column($la_options, 'id'), $la_options);
+		}
+		else {
+			$la_options = $options->printer(...($attributes['printer'] ?? ['label', 'id', $attributes['levelPrefix'] ?? '- ']))->toArray();
+		}
+
+		return $la_options;
 	}
 
 
@@ -608,5 +612,41 @@ class CategoriesHelper extends Helper {
 
 
 		return $la_formattedOptions;
+	}
+
+
+	/**
+	 * @param mixed $options
+	 * @param mixed $groupBy
+	 * @param array $attributes
+	 * @return array
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	protected function groupOptions(CollectionInterface $options, string $groupBy, array &$attributes): array {
+		return $options->groupBy(function (mixed $element) use ($groupBy, &$attributes) {
+			$lx_group = $element->$groupBy ?? $element[ $groupBy ] ?? null;
+
+			if (is_array($lx_group)) {
+				$ls_path = implode(' - ', array_map(function (mixed $parent) {
+					if (is_scalar($parent)) {
+						return $parent;
+					}
+
+					if (!$parent instanceof EntityInterface) {
+						throw new RuntimeException('Cannot group by non-scalars or non-entities.');
+					}
+
+					/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+					return $parent->label ?? $parent->title;
+				}, $lx_group));
+
+				/** @noinspection PhpVariableNamingConventionInspection */
+				$attributes['groupLabels'][ $ls_path ] ??= $ls_path;
+
+				return $ls_path;
+			}
+
+			return $element[ $groupBy ] ?? '';
+		})->toArray();
 	}
 }
