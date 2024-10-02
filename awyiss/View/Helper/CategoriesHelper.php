@@ -89,6 +89,16 @@ class CategoriesHelper extends Helper {
 
 
 	/**
+	 * Get the widget locator.
+	 *
+	 * @return \Cake\View\Widget\WidgetLocator
+	 */
+	public function getWidgetLocator(): WidgetLocator {
+		return $this->widgetLocator;
+	}
+
+
+	/**
 	 * Set the widget locator the helper will use.
 	 *
 	 * @param WidgetLocator $widgetLocator The locator instance to set.
@@ -115,7 +125,7 @@ class CategoriesHelper extends Helper {
 	public function widget(string $name, array $data = []): string {
 		$la_data = $data;
 
-		$lo_widget = $this->widgetLocator->get($name);
+		$lo_widget = $this->getWidgetLocator()->get($name);
 
 
 		/**
