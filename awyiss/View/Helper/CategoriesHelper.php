@@ -177,6 +177,10 @@ class CategoriesHelper extends Helper {
 			return '';
 		}
 
+		if (empty($la_config['field'])) {
+			throw new RuntimeException('Cannot build categories control without field.');
+		}
+
 		$ls_fieldName = Inflector::underscore($la_config['field']);
 
 		$la_config = ['field' => $ls_fieldName] + $la_config;
