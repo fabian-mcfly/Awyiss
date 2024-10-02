@@ -355,7 +355,7 @@ class ConfigOptionsProvider {
 		}
 
 		if ($ls_scope) {
-			if (isset(static::$datatables[ $ls_scope ])) {
+			if (!isset(static::$configOptions[ $ls_scope ]) && isset(static::$datatables[ $ls_scope ])) {
 				static::$configOptions[ $ls_scope ] = static::$datatables[ $ls_scope ];
 			}
 		}
