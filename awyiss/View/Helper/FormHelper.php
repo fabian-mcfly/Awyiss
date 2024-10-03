@@ -371,12 +371,11 @@ class FormHelper extends BaseFormHelper {
 			$ls_name = substr($ls_name, $li_dashPos + 1);
 		}
 
-
 		return $this->formatTemplate($ls_inputContainerTemplate, [
 			'content' => $options['content'],
 			'error' => $options['error'],
 			'required' => $options['options']['required'] ? ' Required' : '',
-			'type' => Inflector::ucparts($options['options']['type'], false),
+			'type' => Inflector::ucparts(Inflector::underscore($options['options']['type']), false),
 			'templateVars' => ($options['options']['templateVars'] ?? []) + ['identifier' => $ls_name],
 		]);
 	}
