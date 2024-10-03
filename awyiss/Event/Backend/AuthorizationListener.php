@@ -6,6 +6,7 @@ namespace Awyiss\Event\Backend;
 
 use Awyiss\Authorization\AuthorizationServiceInterface;
 use Awyiss\Event\EventListenerTrait;
+use Awyiss\Routing\Router;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
 
@@ -62,6 +63,20 @@ class AuthorizationListener implements EventListenerInterface {
 	public function requestAuthorizationService(Event $event): void {
 		if (isset($this->authorizationService)) {
 			$event->setResult($this->authorizationService);
+			return;
+		}
+
+		// Check if the request contains the authorization service as an attribute
+		$lo_request = Router::getRequest();
+
+		if (!$lo_request) {
+			return;
+		}
+
+		$lo_authorizationService = $lo_request->getAttribute('authorization');
+
+		if ($lo_authorizationService) {
+			$event->setResult($lo_authorizationService);
 		}
 	}
 }
