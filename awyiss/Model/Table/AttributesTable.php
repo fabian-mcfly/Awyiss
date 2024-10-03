@@ -85,7 +85,7 @@ class AttributesTable extends Table {
 		'date',
 		'datetime',
 		'time',
-		'media',
+		//'media',
 		'checkbox',
 		'multicheckbox',
 		'select',
