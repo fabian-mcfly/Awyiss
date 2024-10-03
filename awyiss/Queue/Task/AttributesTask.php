@@ -145,15 +145,11 @@ class AttributesTask extends Task/* implements AddInterface*/ {
 		})->toArray();
 
 		if (empty($la_typeMatches[1]) || !in_array($la_typeMatches[1], $la_validTypes)) {
-			if ($la_typeMatches[1] == 'int') {
-				$la_typeMatches[1] = 'integer';
-			}
-			elseif ($la_typeMatches[1] == 'tinyint') {
-				$la_typeMatches[1] = 'tinyinteger';
-			}
-			else {
-				$la_typeMatches[1] = 'string';
-			}
+			$la_typeMatches[1] = match ($la_typeMatches[1]) {
+				'int' => 'integer',
+				'tinyint' => 'tinyinteger',
+				default => 'string',
+			};
 		}
 
 
