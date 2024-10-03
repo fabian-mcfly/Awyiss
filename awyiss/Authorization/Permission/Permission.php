@@ -7,7 +7,7 @@ namespace Awyiss\Authorization\Permission;
 use Awyiss\Authorization\AuthorizationService;
 use Awyiss\Authorization\Policy\AbstractGenericPolicy;
 use Awyiss\Authorization\Policy\PolicyInterface;
-use Cake\Event\EventDispatcherTrait;
+use Awyiss\Event\EventDispatcherTrait;
 use ReflectionClass;
 use RuntimeException;
 

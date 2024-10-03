@@ -6,8 +6,8 @@ namespace Awyiss\Authentication;
 
 use Authentication\IdentityInterface;
 use Awyiss\Annotation\NoDirectAccess;
+use Awyiss\Event\EventDispatcherTrait;
 use Awyiss\Event\EventManager;
-use Cake\Event\EventDispatcherTrait;
 use Cake\Event\EventManagerInterface;
 
 

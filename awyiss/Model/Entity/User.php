@@ -12,9 +12,9 @@ use Awyiss\Authorization\Permission\PermissionAccess;
 use Awyiss\Authorization\Permission\PermissionCollection;
 use Awyiss\Awyiss;
 use Awyiss\Configuration\ConfigOptionsProvider;
+use Awyiss\Event\EventDispatcherTrait;
 use Awyiss\Model\Entity;
 use Cake\Datasource\FactoryLocator;
-use Cake\Event\EventDispatcherTrait;
 use Cake\Utility\Hash;
 use RuntimeException;
 

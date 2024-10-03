@@ -8,7 +8,7 @@ use Authentication\AuthenticationService as BaseAuthenticationService;
 use Authentication\Authenticator\ResultInterface;
 use Authentication\Authenticator\StatelessInterface;
 use Awyiss\Authentication\Identifier\IdentifierCollection;
-use Cake\Event\EventDispatcherTrait;
+use Awyiss\Event\EventDispatcherTrait;
 use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
 

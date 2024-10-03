@@ -5,7 +5,7 @@ namespace Awyiss\Authorization\Permission;
 
 
 use Awyiss\Authorization\AuthorizationService;
-use Cake\Event\EventDispatcherTrait;
+use Awyiss\Event\EventDispatcherTrait;
 use RuntimeException;
 
 
