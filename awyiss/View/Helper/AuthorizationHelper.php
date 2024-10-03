@@ -228,6 +228,7 @@ class AuthorizationHelper extends Helper {
 			'entity' => $entity,
 			'scope' => Inflector::underscore($permission->getPermissionOptionCollection()->getScope()),
 			'identifier' => Inflector::underscore($permission->getConfig('identifier')),
+			'AuthorizationHelper' => $this,
 		];
 
 
