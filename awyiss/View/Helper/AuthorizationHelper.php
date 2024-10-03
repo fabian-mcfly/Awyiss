@@ -172,7 +172,7 @@ class AuthorizationHelper extends Helper {
 	 * @noinspection PhpUnused
 	 */
 	public function isAccessible(string|array ...$identifier): bool {
-		return $this->scopeIsAccessible($this->getScope(), [], ...$identifier);
+		return $this->scopeIsAccessible($this->getScope(), $this->getConfig('additionalData'), ...$identifier);
 	}
 
 
@@ -189,10 +189,7 @@ class AuthorizationHelper extends Helper {
 		//Get the currently assigned permissions from the identity object, resp. their permission collection
 		$lo_identity = $this->getIdentity();
 
-		$la_additionalData = $additionalData ?: $this->getConfig('additionalData');
-
-
-		return $lo_identity->scopeIsAccessible($scope, $la_additionalData, ...$identifier);
+		return $lo_identity->scopeIsAccessible($scope, $additionalData, ...$identifier);
 	}
 
 
