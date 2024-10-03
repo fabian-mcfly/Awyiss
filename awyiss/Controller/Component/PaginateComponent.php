@@ -336,7 +336,7 @@ class PaginateComponent extends Component {
 		TranslateBehavior $behavior,
 		?string $tableAlias = null,
 	): void {
-		$la_translatableFields = $behavior->getConfig('fields');
+		$la_translatableFields = $behavior->getConfig('fields', []);
 
 		// Modify the sort field if it is set so that it matches the translated field name
 		if (isset($params['sort']) && !is_array($params['sort'])) {
