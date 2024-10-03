@@ -54,40 +54,35 @@ class {{ name }}Table extends Table{{ fileBuilder.classBuilder.implements ? ' im
 	 */
 	public function initialize(array $config): void {
 		parent::initialize($config);
-
-{%- if primaryKey %}
-	{%- if primaryKey is iterable and primaryKey|length > 1 %}
+{%~ if primaryKey %}
+	{%~ if primaryKey is iterable and primaryKey|length > 1 %}
 		$this->setPrimaryKey({{ Bake.exportArray(primaryKey)|raw }});
 		{{- "\n" }}
-	{%- elseif primaryKey|as_array|first != 'id' %}
+	{%~ elseif primaryKey|as_array|first != 'id' %}
 		$this->setPrimaryKey('{{ primaryKey|as_array|first }}');
 		{{- "\n" }}
-	{%- endif %}
+	{%~ endif %}
 {% endif %}
-
-{%- for behavior, behaviorData in behaviors %}
+{%~ for behavior, behaviorData in behaviors %}
 		$this->addBehavior('{{ behavior }}'{{ (behaviorData ? (", " ~ Bake.exportArray(behaviorData, 2)|raw ~ '') : '')|raw }});
+		{{- "\n" }}
 {% endfor %}
-
-{%- if associations.belongsTo or associations.hasMany or associations.belongsToMany %}
-
+{%~ if associations.belongsTo or associations.hasMany or associations.belongsToMany %}
 {% endif %}
+{%~ for type, assocs in associations %}
+{%~ for assoc in assocs %}
 
-{%- for type, assocs in associations %}
-{%- for assoc in assocs %}
 {% if assoc.foreignKey != 'parentId' %}
-{%- set assocData = [] %}
-{%- for key, val in assoc %}
-{%- if key is not same as('alias') %}
-{%- set assocData = assocData|merge({(key): val}) %}
-{%- endif %}
-{%- endfor %}
-
+{%~ set assocData = [] %}
+{%~ for key, val in assoc %}
+{%~ if key is not same as('alias') %}
+{%~ set assocData = assocData|merge({(key): val}) %}
+{%~ endif %}
+{%~ endfor %}
 		$this->{{ type }}('{{ assoc.alias }}', {{ Bake.exportArray(assocData, 2)|raw }});
-{{- "\n" }}
-{%- endif %}
-{%- endfor %}
-{% endfor %}
+{%~ endif %}
+{%~ endfor %}
+{%~ endfor %}
 	}
 {{- "\n" }}
 
