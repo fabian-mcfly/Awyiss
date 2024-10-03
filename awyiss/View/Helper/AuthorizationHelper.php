@@ -242,6 +242,11 @@ class AuthorizationHelper extends Helper {
 	protected function _getIdentity(): IdentityPermissionsInterface {
 		/** @var IdentityPermissionsInterface|\Awyiss\Model\Entity\User $lo_identity */
 		$lo_identity = $this->getView()->getRequest()->getAttribute('identity');
+
+		if (!$lo_identity) {
+			throw new RuntimeException('No identity found in the request.');
+		}
+
 		if (!($lo_identity instanceof IdentityPermissionsInterface)) {
 			throw new RuntimeException(sprintf('Object `%s` does not implement `%s`', get_class($lo_identity), IdentityPermissionsInterface::class));
 		}
