@@ -48,7 +48,7 @@ $routes->prefix('Backend', function (RouteBuilder $routeBuilder): void {
 
 	$routeBuilder->connect(
 		'/{lang}/{controller}/{action}/*',
-		['action' => ''],
+		['action' => 'overview'],
 		['_name' => Awyiss::REALM_BACKEND]
 	)->setPatterns([
 		'lang' => '[a-zA-Z]{2}',
