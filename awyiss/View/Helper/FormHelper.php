@@ -191,13 +191,14 @@ class FormHelper extends BaseFormHelper {
 
 
 	/**
-	 * @inheritDoc
-	 *
-	 * Use "empty => true" as default value for selects. This negates CakePHP's questionable decision to remove
+	 * Use "empty => true" as default value for selects (if not multiple).
+	 * This negates CakePHP's questionable decision to remove
 	 * the empty option if a select is required. Usability-wise it's not very clever to show required fields prepopulated.
+	 *
+	 * @inheritDoc
 	 */
 	public function select(string $fieldName, iterable $options = [], array $attributes = []): string {
-		return parent::select($fieldName, $options, $attributes + ['empty' => true]);
+		return parent::select($fieldName, $options, $attributes + ['empty' => !($attributes['multiple'] ?? false)]);
 	}
 
 
