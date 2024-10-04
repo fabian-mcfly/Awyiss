@@ -312,11 +312,14 @@ class AttributesHelper extends Helper {
 	 * @return void
 	 */
 	protected function harmonizeValue(mixed &$value, string $type): void {
-		if (is_array($value)) {
-			if (!in_array($type, ['multicheckbox', 'select_multiple', 'custom_select_multiple'])) {
-				/** @noinspection PhpVariableNamingConventionInspection */
-				$value = json_encode($value);
-			}
+		if (!is_array($value)) {
+			return;
+		}
+
+		// If the value is an array, but the type is not a multiple-select, convert the value to a JSON-string
+		if (!in_array($type, ['multicheckbox', 'select_multiple', 'custom_select_multiple'])) {
+			/** @noinspection PhpVariableNamingConventionInspection */
+			$value = json_encode($value);
 		}
 	}
 
@@ -417,14 +420,16 @@ class AttributesHelper extends Helper {
 				throw new RuntimeException(sprintf('Missing language for translation of `%s`', $ls_field));
 			}
 
-			if ($options['type'] == 'datetime') {
-				$ls_timezone = Configure::read('Awyiss.System.' . Awyiss::getRealm() . '.timezone');
+			if (in_array($options['type'], ['datetime', 'datetime-local'])) {
+				$ls_timezone = ($options['timezone'] ?? null) ?: Configure::read('Awyiss.System.' . Awyiss::getRealm() . '.timezone') ?: date_default_timezone_get(); // phpcs:ignore
+
 				if ($ls_timezone === 'auto') {
 					$ls_timezone = $lo_language->timezone;
 				}
 
 				/** @noinspection PhpVariableNamingConventionInspection */
 				$options['timezone'] = $ls_timezone;
+
 				/** @noinspection PhpVariableNamingConventionInspection */
 				$options['templateVars']['additionalContent'] ??= '';
 				/** @noinspection PhpVariableNamingConventionInspection */
@@ -450,13 +455,46 @@ class AttributesHelper extends Helper {
 	 */
 	protected function buildOptions(array $options, array $attributeFields, string $fieldName): array {
 		$la_options = $options;
-		$lo_language = $la_options['language'] ?? LocaleMiddleware::getLanguage(null);
 
 		if (!isset($la_options['type'])) {
 			$la_options['type'] = $attributeFields[ $fieldName ]->inputType;
 		}
 
-		switch ($attributeFields[ $fieldName ]->inputType) {
+		$la_options = $this->normalizeOptionsByType($la_options);
+
+		if (!isset($la_options['label']) && isset($attributeFields[ $fieldName ])) {
+			$la_options['label'] = $attributeFields[ $fieldName ]->label;
+		}
+
+		$la_options = $this->setTimezoneOptions($la_options);
+
+		if (!isset($la_options['required']) || $la_options['required'] !== false) {
+			if ($attributeFields[ $fieldName ]->required) {
+				$la_options['required'] = true;
+			}
+		}
+
+		/** @var \Awyiss\Utility\Content\AbstractColumn $lo_columnSpan */
+		$lo_columnSpan = $attributeFields[ $fieldName ]->column['span'];
+		if ($lo_columnSpan->getNumerator() !== 12) {
+			$la_options['columnSpan'] = $lo_columnSpan->getNumerator();
+		}
+
+		return $la_options;
+	}
+
+
+	/**
+	 * @param array $options
+	 * @return array
+	 */
+	protected function normalizeOptionsByType(array $options): array {
+		$la_options = $options;
+
+		switch ($la_options['type']) {
+			case 'datetime':
+				$la_options['type'] = 'datetime-local';
+				break;
 			case 'select':
 				$la_options['empty'] ??= true;
 				break;
@@ -472,38 +510,36 @@ class AttributesHelper extends Helper {
 				$la_options['placeholder'] = '******';
 				$la_options['val'] = '';
 				break;
-			/*case 'time':
-			case 'datetime':
-				break;*/
 		}
 
-		if (!isset($la_options['label']) && isset($attributeFields[ $fieldName ])) {
-			$la_options['label'] = $attributeFields[ $fieldName ]->label;
+		return $la_options;
+	}
+
+
+	/**
+	 * @param array $options
+	 * @return array
+	 * @throws \Exception
+	 * @noinspection DuplicatedCode
+	 */
+	protected function setTimezoneOptions(array $options): array {
+		$la_options = $options;
+
+		if ($la_options['type'] !== 'datetime') {
+			return $la_options;
 		}
 
-		if (!isset($la_options['timezone']) && $la_options['type'] == 'datetime') {
-			$ls_timezone = Configure::read('Awyiss.System.' . Awyiss::getRealm() . '.timezone');
-			if ($ls_timezone === 'auto') {
-				$ls_timezone = $lo_language->timezone;
-			}
+		$ls_timezone = ($la_options['timezone'] ?? null) ?: Configure::read('Awyiss.System.' . Awyiss::getRealm() . '.timezone') ?: date_default_timezone_get(); // phpcs:ignore
 
-			$la_options['timezone'] = $ls_timezone;
-
-			$la_options['templateVars']['additionalContent'] ??= '';
-			$la_options['templateVars']['additionalContent'] .= '<span class="Timezone">' . $ls_timezone . '</span>';
+		if ($ls_timezone === 'auto') {
+			$lo_language = $la_options['language'] ?? LocaleMiddleware::getLanguage(null);
+			$ls_timezone = $lo_language->timezone;
 		}
 
-		if (!isset($la_options['required']) || $la_options['required'] !== false) {
-			if ($attributeFields[ $fieldName ]->required) {
-				$la_options['required'] = true;
-			}
-		}
+		$la_options['timezone'] = $ls_timezone;
 
-		/** @var \Awyiss\Utility\Content\AbstractColumn $lo_columnSpan */
-		$lo_columnSpan = $attributeFields[ $fieldName ]->column['span'];
-		if ($lo_columnSpan->getNumerator() !== 12) {
-			$la_options['columnSpan'] = $lo_columnSpan->getNumerator();
-		}
+		$la_options['templateVars']['additionalContent'] ??= '';
+		$la_options['templateVars']['additionalContent'] .= '<span class="Timezone">' . $ls_timezone . '</span>';
 
 		return $la_options;
 	}
