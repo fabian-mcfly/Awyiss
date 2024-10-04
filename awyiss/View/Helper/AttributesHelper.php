@@ -125,14 +125,18 @@ class AttributesHelper extends Helper {
 			return $ls_emptyField;
 		}
 
-		$la_fields = $this->prepareFields(
-			$la_fields,
-			static::$attributesByFieldset[ $fieldset ],
-			static::$attributeOptions[ $ls_source ]
-		);
+		$ls_fields = '';
+		foreach (
+			$this->prepareFields(
+				$la_fields,
+				static::$attributesByFieldset[ $fieldset ],
+				static::$attributeOptions[ $ls_source ]
+			) as $ls_field => $la_options
+		) {
+			$ls_fields .= $this->Form->control($ls_field, $la_options);
+		}
 
-
-		return $ls_emptyField . $this->Form->controls($la_fields, $options + ['fieldset' => false]);
+		return $ls_emptyField . $ls_fields;
 	}
 
 
@@ -155,15 +159,18 @@ class AttributesHelper extends Helper {
 			return $ls_emptyField;
 		}
 
-		[$ls_fieldName, $la_options] = $this->prepareField(
+		$la_field = $this->prepareField(
 			$fieldName,
 			$options,
 			static::$attributes,
 			static::$attributeOptions[ $ls_source ]
 		);
 
-		$la_options['templateVars']['identifier'] = 'Attributes' . Inflector::camelize($fieldName);
+		$ls_fieldName = key($la_field);
+		$la_options = current($la_field);
 
+		/** @noinspection PhpAutovivificationOnFalseValuesInspection */
+		$la_options['templateVars']['identifier'] = 'Attributes-' . Inflector::camelize($fieldName);
 
 		return $ls_emptyField . $this->Form->control($ls_fieldName, $la_options);
 	}
@@ -197,7 +204,7 @@ class AttributesHelper extends Helper {
 	 * @param array $options
 	 * @param array $attributeFields
 	 * @param AttributeOptionsInterface|null $attributeOptions
-	 * @return array
+	 * @return array<string, array>
 	 * @throws \Exception
 	 */
 	protected function prepareField(string $fieldName, array $options, array $attributeFields, ?AttributeOptionsInterface $attributeOptions): array {
@@ -232,10 +239,7 @@ class AttributesHelper extends Helper {
 		unset($la_options['realType']);
 
 
-		return [
-			$ls_field,
-			$la_options,
-		];
+		return [$ls_field => $la_options];
 	}
 
 
@@ -243,7 +247,7 @@ class AttributesHelper extends Helper {
 	 * @param array $fields
 	 * @param array $attributeFields
 	 * @param AttributeOptionsInterface|null $attributeOptions
-	 * @return array
+	 * @return array<string, array>
 	 * @throws \Exception
 	 */
 	protected function prepareFields(array $fields, array $attributeFields, ?AttributeOptionsInterface $attributeOptions): array {
@@ -267,8 +271,7 @@ class AttributesHelper extends Helper {
 				continue;
 			}
 
-			[$ls_fieldName, $la_options] = $this->prepareField($ls_fieldName, $la_options ?? [], $attributeFields, $attributeOptions);
-			$la_fields[ $ls_fieldName ] = $la_options;
+			$la_fields += $this->prepareField($ls_fieldName, $la_options ?? [], $attributeFields, $attributeOptions);
 		}
 		unset($la_options);
 
