@@ -71,6 +71,10 @@ abstract class GenericDatatablesTable extends Table {
 	public function initialize(array $config): void {
 		parent::initialize($config);
 
+		/**
+		 * If the records are not translatable,
+		 * unset possible translatable attribute fields.
+		 */
 		if (!$this->translatable && $this->hasAttributes()) {
 			$lo_attributesTable = $this->getAttributesTable();
 			if ($lo_attributesTable->hasBehavior('Translate')) {
