@@ -225,8 +225,12 @@ class AttributesHelper extends Helper {
 
 		$this->prepareValue($fieldName, $la_options);
 
-		if ($attributeOptions) {
-			$la_options = $attributeOptions->getAttributeOptionsAttributes($fieldName, $la_options, $this->Form->context());
+		if (
+			$attributeOptions &&
+			empty($la_options['options']) &&
+			in_array($la_options['type'], ['checkbox', 'multicheckbox', 'select', 'select_multiple'])
+		) {
+			$la_options = $attributeOptions->getAttributeOptionsAttributes($fieldName, $la_options, $this->getContext());
 		}
 
 		$ls_field = $fieldName;
