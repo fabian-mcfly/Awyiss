@@ -169,22 +169,7 @@ class FormHelper extends BaseFormHelper {
 			}
 		}
 
-		if (
-			($la_options['type'] ?? null) === 'datetime' ||
-			$this->_inputType($fieldName, $la_options) === 'datetime'
-		) {
-			$ls_timezone = $la_options['timezone'] ?? null ?: Configure::read('Awyiss.System.' . Awyiss::getRealm() . '.timezone') ?: date_default_timezone_get();
-
-			if ($ls_timezone === 'auto') {
-				$lo_language = $la_options['language'] ?? LocaleMiddleware::getLanguage(null);
-				$ls_timezone = $lo_language->timezone;
-			}
-
-			$la_options['timezone'] = $ls_timezone;
-
-			$la_options['templateVars']['additionalContent'] ??= '';
-			$la_options['templateVars']['additionalContent'] .= '<span class="Timezone">' . $ls_timezone . '</span>';
-		}
+		$la_options = $this->setTimezoneOptions($fieldName, $la_options);
 
 		return parent::control($fieldName, $la_options);
 	}
@@ -538,5 +523,38 @@ class FormHelper extends BaseFormHelper {
 
 
 		return $ls_domId;
+	}
+
+
+	/**
+	 * @param string $fieldName
+	 * @param array $options
+	 * @return array
+	 * @throws \Exception
+	 * @noinspection DuplicatedCode
+	 */
+	protected function setTimezoneOptions(string $fieldName, array $options): array {
+		$la_options = $options;
+
+		if (
+			($la_options['type'] ?? null) !== 'datetime' &&
+			$this->_inputType($fieldName, $la_options) !== 'datetime'
+		) {
+			return $la_options;
+		}
+
+		$ls_timezone = ($la_options['timezone'] ?? null) ?: Configure::read('Awyiss.System.' . Awyiss::getRealm() . '.timezone') ?: date_default_timezone_get(); // phpcs:ignore
+
+		if ($ls_timezone === 'auto') {
+			$lo_language = $la_options['language'] ?? LocaleMiddleware::getLanguage(null);
+			$ls_timezone = $lo_language->timezone;
+		}
+
+		$la_options['timezone'] = $ls_timezone;
+
+		$la_options['templateVars']['additionalContent'] ??= '';
+		$la_options['templateVars']['additionalContent'] .= '<span class="Timezone">' . $ls_timezone . '</span>';
+
+		return $la_options;
 	}
 }
