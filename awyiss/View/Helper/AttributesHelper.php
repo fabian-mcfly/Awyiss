@@ -14,6 +14,8 @@ use Awyiss\Utility\Inflector;
 use Cake\Collection\Collection;
 use Cake\Core\Configure;
 use Cake\Utility\Hash;
+use Cake\View\Form\ContextInterface;
+use Cake\View\Form\NullContext;
 use Cake\View\Helper;
 use RuntimeException;
 
@@ -38,6 +40,10 @@ class AttributesHelper extends Helper {
 	protected array $helpers = ['Form'];
 	protected static array $attributes;
 	protected static array $attributesByFieldset;
+	/**
+	 * @var \Cake\View\Form\ContextInterface|null
+	 */
+	protected ?ContextInterface $context = null;
 	protected static array $initiatedSources = [];
 	protected static array $attributeOptions = [];
 
@@ -78,26 +84,11 @@ class AttributesHelper extends Helper {
 	 * @noinspection PhpUnused
 	 */
 	public function allControls(string $fieldset, array $fields = [], array $options = []): string {
-		/** @var \Cake\View\Form\EntityContext $lo_context */
-		$lo_context = $this->Form->context();
-		$ls_source = $options['source'] ?? $lo_context->entity()?->getSource();
+		$ls_source = $this->getSource();
+		$ls_emptyField = $this->initializeSource($ls_source);
 
 		if (!isset(static::$attributesByFieldset)) {
 			$this->buildAttributesGroupedByFieldset($ls_source);
-		}
-
-		$ls_emptyField = '';
-		if (!isset(static::$initiatedSources[ $ls_source ])) {
-			static::$initiatedSources[ $ls_source ] = true;
-			$ls_emptyField = $this->Form->hidden('attributes', [
-				'val' => [],
-			]);
-
-			/** @var AttributeOptionsProvider $ls_attributeOptionsProvider */
-			$ls_attributeOptionsProvider = $this->getConfig('attributeOptionsProviderClass');
-			static::$attributeOptions[ $ls_source ] = $ls_attributeOptionsProvider::getAttributeOptionsFile($ls_source, true);
-
-			$this->initializeTranslate();
 		}
 
 		if (empty(static::$attributesByFieldset[ $fieldset ])) {
@@ -138,25 +129,11 @@ class AttributesHelper extends Helper {
 	 * @throws \Exception
 	 */
 	public function control(string $fieldName, array $options = []): string {
-		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		$ls_source = $options['source'] ?? $this->Form->context()->entity()->getSource();
+		$ls_source = $this->getSource();
+		$ls_emptyField = $this->initializeSource($ls_source);
 
 		if (!isset(static::$attributes)) {
 			$this->buildAttributes($ls_source);
-		}
-
-		$ls_emptyField = '';
-		if (!isset(static::$initiatedSources[ $ls_source ])) {
-			static::$initiatedSources[ $ls_source ] = true;
-			$ls_emptyField = $this->Form->hidden('attributes', [
-				'val' => [],
-			]);
-
-			/** @var AttributeOptionsProvider $ls_attributeOptionsProvider */
-			$ls_attributeOptionsProvider = $this->getConfig('attributeOptionsProviderClass');
-			static::$attributeOptions[ $ls_source ] = $ls_attributeOptionsProvider::getAttributeOptionsFile($ls_source, true);
-
-			$this->initializeTranslate();
 		}
 
 		if (empty(static::$attributes[ $fieldName ])) {
@@ -174,6 +151,29 @@ class AttributesHelper extends Helper {
 
 
 		return $ls_emptyField . $this->Form->control($ls_fieldName, $la_options);
+	}
+
+
+	/**
+	 * @return \Cake\View\Form\ContextInterface|null
+	 */
+	public function getContext(): ?ContextInterface {
+		if ($this->context instanceof NullContext) {
+			return null;
+		}
+
+		return $this->context;
+	}
+
+
+	/**
+	 * @param \Cake\View\Form\ContextInterface|null $context
+	 * @return $this
+	 */
+	public function setContext(?ContextInterface $context = null): static {
+		$this->context = $context;
+
+		return $this;
 	}
 
 
@@ -196,7 +196,7 @@ class AttributesHelper extends Helper {
 		 * @var \Awyiss\Model\Entity $lo_entity
 		 * @noinspection PhpPossiblePolymorphicInvocationInspection
 		 */
-		$lo_entity = $this->Form->context()->entity();
+		$lo_entity = $this->getContext()->entity();
 		if (!isset($la_options['error']) && $lo_entity->hasErrors() && ($lo_entity->getError('attributes')[ $fieldName ] ?? false)) {
 			$la_options['error'] = $lo_entity->getError('attributes')[ $fieldName ];
 		}
@@ -302,10 +302,11 @@ class AttributesHelper extends Helper {
 	 * @return array
 	 */
 	protected function buildAttributes(string $source): array {
-		/** @var \Cake\View\Form\EntityContext $lo_context */
-		$lo_context = $this->Form->context();
-		/** @var \Awyiss\Model\Table $lo_table */
-		$lo_table = $lo_context->fetchTable($source);
+		/**
+		 * @var \Awyiss\Model\Table $lo_table
+		 * @noinspection PhpPossiblePolymorphicInvocationInspection
+		 */
+		$lo_table = $this->getContext()->fetchTable($source);
 
 		static::$attributes = array_filter($lo_table->getAttributes(), function (Attribute $attribute) {
 			return $attribute->active;
@@ -347,18 +348,19 @@ class AttributesHelper extends Helper {
 	 * @return void
 	 */
 	protected function initializeTranslate(): void {
-		/** @var \Cake\View\Form\EntityContext $lo_context */
-		$lo_context = $this->Form->context();
-		/** @var \Awyiss\Model\Table $lo_table */
-		$lo_table = $lo_context->fetchTable($lo_context->entity()->getSource());
+		/**
+		 * @var \Awyiss\Model\Table $lo_table
+		 * @noinspection PhpPossiblePolymorphicInvocationInspection
+		 */
+		$lo_table = $this->getContext()->fetchTable($this->getContext()->entity()->getSource());
 
 		$ls_associationAlias = $lo_table->getAttributesTableName(true);
 		if (!$lo_table->hasAssociation($ls_associationAlias)) {
 			return;
 		}
 
-		$lo_attributesTable = $lo_context->fetchTable($ls_associationAlias);
-
+		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+		$lo_attributesTable = $this->getContext()->fetchTable($ls_associationAlias);
 		if (!$lo_attributesTable->hasBehavior('Translate')) {
 			return;
 		}
@@ -480,5 +482,51 @@ class AttributesHelper extends Helper {
 		}
 
 		return $la_options;
+	}
+
+
+	/**
+	 * Initialize the source and return
+	 * an empty field to be added to the form,
+	 * if the source has not been initialized yet.
+	 *
+	 * @param string $source
+	 * @return string
+	 * @throws \ReflectionException
+	 */
+	protected function initializeSource(string $source): string {
+		$ls_emptyField = '';
+
+		if (!isset(static::$initiatedSources[ $source ])) {
+			static::$initiatedSources[ $source ] = true;
+
+			$ls_emptyField = $this->Form->hidden('attributes', [
+				'val' => [],
+			]);
+
+			/** @var AttributeOptionsProvider $ls_attributeOptionsProvider */
+			$ls_attributeOptionsProvider = $this->getConfig('attributeOptionsProviderClass');
+			static::$attributeOptions[ $source ] = $ls_attributeOptionsProvider::getAttributeOptionsFile($source, true);
+
+			$this->initializeTranslate();
+		}
+
+		return $ls_emptyField;
+	}
+
+
+	/**
+	 * @return string
+	 */
+	protected function getSource(): string {
+		$this->context ??= $this->Form->context();
+		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+		$ls_source = $this->getContext()?->entity()->getSource();
+
+		if (!$ls_source) {
+			throw new RuntimeException('No form context set.');
+		}
+
+		return $ls_source;
 	}
 }
