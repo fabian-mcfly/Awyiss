@@ -38,13 +38,25 @@ class AttributesHelper extends Helper {
 	 * @inheritDoc
 	 */
 	protected array $helpers = ['Form'];
-	protected static array $attributes;
-	protected static array $attributesByFieldset;
 	/**
 	 * @var \Cake\View\Form\ContextInterface|null
 	 */
 	protected ?ContextInterface $context = null;
+	/**
+	 * @var array|null
+	 */
+	protected static ?array $attributes = null;
+	/**
+	 * @var ?array
+	 */
+	protected static ?array $attributesByFieldset = null;
+	/**
+	 * @var array
+	 */
 	protected static array $initiatedSources = [];
+	/**
+	 * @var array
+	 */
 	protected static array $attributeOptions = [];
 
 
@@ -97,11 +109,14 @@ class AttributesHelper extends Helper {
 
 		$la_attributeFields = static::$attributesByFieldset[ $fieldset ];
 
+		// Merge the provided fields with the fields from the attribute table
 		$la_fields = array_merge(Hash::normalize(array_keys($la_attributeFields)), Hash::normalize($fields));
+		// Remove fields that are set to false
 		$la_fields = array_filter($la_fields, function ($value) {
 			return $value !== false;
 		});
 
+		// If onlyProvided is set to true, only output fields that are present in the $fields-parameter
 		if (!empty($options['onlyProvided'])) {
 			$la_fields = array_intersect_key($la_fields, Hash::normalize($fields));
 		}
@@ -234,6 +249,7 @@ class AttributesHelper extends Helper {
 	protected function prepareFields(array $fields, array $attributeFields, ?AttributeOptionsInterface $attributeOptions): array {
 		static $ls_categoryFieldName;
 
+		// Get the category field name
 		if (!isset($ls_categoryFieldName)) {
 			$ls_categoryIdentifier = $this->getView()->get('_categoriesIdentifier');
 
@@ -246,6 +262,7 @@ class AttributesHelper extends Helper {
 
 		$la_fields = [];
 		foreach ($fields as $ls_fieldName => $la_options) {
+			// If the field is the category field, skip it
 			if (Inflector::underscore($ls_fieldName) === $ls_categoryFieldName) {
 				continue;
 			}
