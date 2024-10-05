@@ -123,7 +123,7 @@ class AssetHelper extends Helper {
 	 * @param array $attributes
 	 * @param bool $critical (optional) Whether the asset is critical. Defaults to false.
 	 * @param bool|null $minified (optional) Whether the asset is minified. Defaults to false.
-	 * @param int $priority (optional) The priority of the asset. Defaults to 1.
+	 * @param int $priority (optional) The priority of the asset. Defaults to 10.
 	 * @return void
 	 */
 	public function add(array|string $asset, array $attributes = [], bool $critical = false, ?bool $minified = null, int $priority = 10): void {
@@ -177,7 +177,7 @@ class AssetHelper extends Helper {
 
 	/**
 	 * Simplified add method for adding assets that will only be included in the <noscript> tag.
-	 * NoScript assets are never critical.
+	 * Manually added NoScript assets are never critical.
 	 *
 	 * @param array|string $asset
 	 * @param array $attributes
@@ -345,18 +345,17 @@ class AssetHelper extends Helper {
 
 
 	/**
-	 * Adds an asset to the assets array.
-	 * This method allows you to add an asset to the assets array. Each asset can have several properties:
-	 * - minified: A boolean indicating whether the asset is minified.
-	 * - critical: A boolean indicating whether the asset is critical.
-	 * - priority: An integer indicating the priority of the asset. Higher numbers indicate higher priority.
-	 * If the asset is already in the array, it will not be added again.
+	 * Retrieves the path to an asset, optionally minifying it if required.
+	 * If the asset is a full URL, it returns the URL directly.
+	 * Otherwise, it constructs the asset path based on the provided options and the application's configuration.
+	 * If the asset should be minified, it minifies the asset and returns the path to the minified version.
 	 *
-	 * @param array|string $asset The asset to add. This can be either a string representing the asset, or an array with the asset as the key and an array of options as the value.
-	 * @param bool $critical (optional) Whether the asset is critical. Defaults to false.
-	 * @param bool|null $minified (optional) Whether the asset is minified. Defaults to false.
-	 * @param int $priority (optional) The priority of the asset. Defaults to 1.
-	 * @return void
+	 * @param string $asset The name of the asset.
+	 * @param array $options An array of options for retrieving the asset path. Possible keys:
+	 *  - `realm`: The realm to use for the asset path. Defaults to the current realm.
+	 *  - `minified`: Whether to return the path to the minified version of the asset. Defaults to false.
+	 *  - `includeTimestamp`: Whether to include the modification timestamp of the asset in the path. Defaults to true.
+	 * @return string|null The path to the asset, or null if the asset is not found.
 	 * @throws \Exception
 	 */
 	public function getAssetPath(string $asset, array $options = []): ?string {
@@ -368,7 +367,6 @@ class AssetHelper extends Helper {
 		// If the asset is a full URL, return it
 		if (preg_match('/^((http|https|ftp):\\/\\/|\\/\\/)/', $asset)) {
 			$this->checkedAssets[ $asset ] = $asset;
-
 
 			return $asset;
 		}
@@ -520,8 +518,6 @@ class AssetHelper extends Helper {
 
 	/**
 	 * Generates a string of HTML tags for non-JavaScript assets, wrapped in a <noscript> tag.
-	 * All assets are included by default, but you can specify the type of assets to include by passing a type parameter.
-	 * You can also specify the criticality of the assets to include by passing a critical parameter.
 	 *
 	 * @return string A string of HTML tags for non-JavaScript assets, wrapped in a <noscript> tag.
 	 * @throws \Exception
@@ -576,6 +572,7 @@ class AssetHelper extends Helper {
 	 * @param array|string $asset
 	 * @param array $options
 	 * @return string
+	 * @throws \Exception
 	 */
 	public function inlineStyles(array|string $asset, array $options = []): string {
 		// If the provided asset is an array, use it as is. Otherwise, create an array with the asset as the key and an array of options as the value.
@@ -597,18 +594,19 @@ class AssetHelper extends Helper {
 			$ls_output .= file_get_contents($ls_assetPath);
 		}
 
-		if ($ls_output) {
-			if (!empty($options['strReplace'])) {
-				foreach ($options['strReplace'] as $ls_search => $ls_replace) {
-					$ls_output = str_replace($ls_search, $ls_replace, $ls_output);
-				}
-			}
-
-			$ls_nonce = $this->getView()->getRequest()->getAttribute('cspStyleNonce');
-			return '<style' . ($ls_nonce ? ' nonce="' . $ls_nonce . '"' : '') . '>' . $ls_output . '</style>';
+		if (!$ls_output) {
+			return '';
 		}
 
-		return '';
+		if (is_array($options['strReplace'] ?? null)) {
+			foreach ($options['strReplace'] as $ls_search => $ls_replace) {
+				$ls_output = str_replace($ls_search, $ls_replace, $ls_output);
+			}
+		}
+
+		$ls_nonce = $this->getView()->getRequest()->getAttribute('cspStyleNonce');
+
+		return '<style' . ($ls_nonce ? ' nonce="' . $ls_nonce . '"' : '') . '>' . $ls_output . '</style>';
 	}
 
 
@@ -639,16 +637,18 @@ class AssetHelper extends Helper {
 			}
 
 			// If the module is not already in the jsModules array, add it
-			if (!array_key_exists($ls_moduleName, $this->jsModules)) {
-				// If module options is an array and contains a 'minified' key, use the provided options
-				if (is_array($la_moduleOptions) && array_key_exists('minified', $la_moduleOptions)) {
-					$this->jsModules[ $ls_moduleName ] = $la_moduleOptions;
-				}
-				// Otherwise, use the default minified value
-				else {
-					$this->jsModules[ $ls_moduleName ] = ['minified' => $lb_minified];
-				}
+			if (array_key_exists($ls_moduleName, $this->jsModules)) {
+				continue;
 			}
+
+			// If module options is an array and contains a 'minified' key, use the provided options
+			if (is_array($la_moduleOptions) && array_key_exists('minified', $la_moduleOptions)) {
+				$this->jsModules[ $ls_moduleName ] = $la_moduleOptions;
+				continue;
+			}
+
+			// Otherwise, use the default minified value
+			$this->jsModules[ $ls_moduleName ] = ['minified' => $lb_minified];
 		}
 	}
 
@@ -877,6 +877,10 @@ class AssetHelper extends Helper {
 			$la_header[] = 'Link: <' . $la_options['path'] . '>; rel=preload; as=' . $ls_asType . '; nopush';
 		}
 
+		if (!$la_header) {
+			return;
+		}
+
 		// Add the Link header to the response
 		$lo_response = $lo_response->withHeader('Link', implode(', ', $la_header));
 
@@ -887,10 +891,8 @@ class AssetHelper extends Helper {
 
 	/**
 	 * Sorts the given assets array by priority.
-	 * This method sorts the given assets array in descending order of priority. The priority of an asset is determined by the 'priority' key in the array of options for each
-	 * asset. Higher numbers indicate higher priority. The method uses the uasort function to sort the array. The comparison function passed to uasort compares the 'priority'
-	 * values of two assets and returns a negative number, zero, or a positive number depending on whether the first asset's priority is less than, equal to, or greater than the
-	 * second asset's priority.
+	 *
+	 * The higher the priority, the earlier the asset will be loaded.
 	 *
 	 * @param array $assets The assets array to sort. This is an associative array where the keys are asset names and the values are arrays of options for each asset.
 	 * @return array The sorted assets array.
