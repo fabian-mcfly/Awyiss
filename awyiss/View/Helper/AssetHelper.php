@@ -10,6 +10,7 @@ use Cake\Log\Log;
 use Cake\Routing\Router;
 use Cake\View\Helper;
 use Exception;
+use InvalidArgumentException;
 use MatthiasMullie\Minify;
 
 
@@ -137,36 +138,39 @@ class AssetHelper extends Helper {
 			// If the key is a string, use it as the filename. Otherwise, use the value as the filename.
 			$ls_fileName = is_string($lx_key) ? $lx_key : $lx_value;
 
-			// If the filename is already in the 'all' assets array, skip this iteration
-			if (in_array($ls_fileName, $this->assets['all'])) {
-				continue;
-			}
-
-			// If the value is an array, use it as the options. Otherwise, create an array of options with the provided values.
-			$la_options = is_array($lx_value) ? $lx_value : [];
-
-			// Merge the options with a default options array to ensure all keys are present
-			$la_options = array_merge(['minified' => $lb_minified, 'critical' => $critical, 'attributes' => $attributes, 'priority' => $priority], $la_options);
-
-			// If the asset is critical, set the key to 'critical'. Otherwise, set it to 'nonCritical'.
-			$lx_key = $la_options['critical'] ? 'critical' : 'nonCritical';
-
 			// Get the extension of the filename. If the filename is a Google Fonts URL, set the extension to 'css'.
 			$ls_extension = pathinfo($ls_fileName, PATHINFO_EXTENSION) ?: (str_contains($ls_fileName, '//fonts.googleapis.com') ? 'css' : '');
 
 			// If the extension is a font type, set the extension to 'font'.
 			$ls_extension = in_array($ls_extension, ['woff', 'woff2', 'ttf']) ? 'font' : $ls_extension;
 
-			if (is_array($la_options['attributes']) && isset($la_options['attributes']['realm'])) {
-				$la_options['realm'] = $la_options['attributes']['realm'];
-				unset($la_options['attributes']['realm']);
+			if (!in_array($ls_extension, ['css', 'js', 'font'])) {
+				Log::warning('Unknown asset type: ' . $ls_extension);
+
+				// If debug is enabled, throw the exception.
+				if (Configure::read('debug')) {
+					throw new InvalidArgumentException(sprintf('Unknown asset type: `%s`', $ls_extension));
+				}
+
+				continue;
 			}
+
+			// If the filename is already in the 'all' assets array, skip this iteration
+			if (array_key_exists($ls_fileName, $this->assets['all'])) {
+				continue;
+			}
+
+			// If the value is an array, use it as the options. Otherwise, create an array of options with the provided values.
+			$la_options = $this->buildOptions(is_array($lx_value) ? $lx_value : [], $attributes, $lb_minified, $critical, $priority);
 
 			// Add the asset to the 'all' assets array
 			$this->assets['all'][ $ls_fileName ] = $la_options;
 
+			// If the asset is critical, set the key to 'critical'. Otherwise, set it to 'nonCritical'.
+			$ls_key = $la_options['critical'] ? 'critical' : 'nonCritical';
+
 			// Add the asset to the appropriate assets array based on its extension and criticality
-			$this->assets[ $ls_extension ][ $lx_key ][ $ls_fileName ] = $la_options;
+			$this->assets[ $ls_extension ][ $ls_key ][ $ls_fileName ] = $la_options;
 		}
 	}
 
@@ -186,22 +190,42 @@ class AssetHelper extends Helper {
 		$lb_minified = $minified ?? $this->getAutoMinify();
 
 		// If the provided asset is an array, use it as is. Otherwise, create an array with the asset as the key and an array of options as the value.
-		$la_assets = is_array($asset) ? $asset : [$asset => ['minified' => $lb_minified, 'attributes' => $attributes, 'priority' => $priority]];
+		$la_assets = is_array($asset) ? $asset : [$asset];
 
 		foreach ($la_assets as $lx_key => $lx_value) {
 			// If the key is a string, use it as the filename. Otherwise, use the value as the filename.
 			$ls_fileName = is_string($lx_key) ? $lx_key : $lx_value;
 
+			// Get the extension of the filename. If the filename is a Google Fonts URL, set the extension to 'css'.
+			$ls_extension = pathinfo($ls_fileName, PATHINFO_EXTENSION) ?: (str_contains($ls_fileName, '//fonts.googleapis.com') ? 'css' : '');
+
+			// If the extension is a font type, set the extension to 'font'.
+			$ls_extension = in_array($ls_extension, ['woff', 'woff2', 'ttf']) ? 'font' : $ls_extension;
+
+			if (!in_array($ls_extension, ['css', 'js', 'font'])) {
+				Log::warning('Unknown asset type: ' . $ls_extension);
+
+				// If debug is enabled, throw the exception.
+				if (Configure::read('debug')) {
+					throw new InvalidArgumentException(sprintf('Unknown asset type: `%s`', $ls_extension));
+				}
+
+				continue;
+			}
+
+			if ($ls_extension !== 'css') {
+				Log::warning('NoScript assets must be CSS files.');
+
+				continue;
+			}
+
 			// If the filename is already in the 'all' assets array, skip this iteration
-			if (in_array($ls_fileName, $this->noScriptAssets)) {
+			if (array_key_exists($ls_fileName, $this->noScriptAssets)) {
 				continue;
 			}
 
 			// If the value is an array, use it as the options. Otherwise, create an array of options with the provided values.
-			$la_options = is_array($lx_value) ? $lx_value : ['minified' => $lb_minified, 'priority' => $priority];
-
-			// Merge the options with a default options array to ensure all keys are present
-			$la_options = array_merge(['minified' => false, 'critical' => false, 'attributes' => [], 'priority' => 10], $la_options);
+			$la_options = $this->buildOptions(is_array($lx_value) ? $lx_value : [], $attributes, $lb_minified, false, $priority);
 
 			$this->noScriptAssets[ $ls_fileName ] = $la_options;
 		}
@@ -921,5 +945,45 @@ class AssetHelper extends Helper {
 				exit;
 			}
 		}
+	}
+
+
+	/**
+	 * @param array $options
+	 * @param array $attributes
+	 * @param bool $minified
+	 * @param bool $critical
+	 * @param int $priority
+	 * @return array<string, {attributes: array, minified: bool, critical: bool, priority: int, realm: string}>
+	 */
+	protected function buildOptions(array $options, array $attributes, bool $minified, bool $critical, int $priority): array {
+		// Merge the options with a default options array to ensure all keys are present
+		$la_options = array_merge(['minified' => $minified, 'critical' => $critical, 'attributes' => $attributes, 'priority' => $priority], $options);
+
+		if (!is_array($la_options['attributes'])) {
+			$la_options['attributes'] = [];
+		}
+
+		if (isset($la_options['attributes']['includeTimestamp'])) {
+			$la_options['includeTimestamp'] = $la_options['attributes']['includeTimestamp'];
+			unset($la_options['attributes']['includeTimestamp']);
+		}
+
+		if (isset($la_options['attributes']['realm'])) {
+			$la_options['realm'] = $la_options['attributes']['realm'];
+			unset($la_options['attributes']['realm']);
+		}
+
+		// Put all options that are attributes into the attributes array
+		foreach ($la_options as $ls_option => $lx_value) {
+			if (in_array($ls_option, ['attributes', 'minified', 'critical', 'priority', 'includeTimestamp', 'realm'])) {
+				continue;
+			}
+
+			$la_options['attributes'][ $ls_option ] = $lx_value;
+			unset($la_options[ $ls_option ]);
+		}
+
+		return $la_options;
 	}
 }
