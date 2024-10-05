@@ -29,19 +29,7 @@ class AssetHelper extends Helper {
 	/**
 	 * @var array $assets An associative array of assets. The keys are the asset names, and the values are arrays of options for each asset.
 	 */
-	protected array $assets = [
-		'all' => [],
-		'css' => [
-			'critical' => [],
-			'nonCritical' => [],
-		],
-		'font' => [],
-		'js' => [
-			'critical' => [],
-			'nonCritical' => [],
-		],
-		'unknown' => [],
-	];
+	protected array $assets = [];
 	/**
 	 * @var array $checkedAssets An associative array of checked assets. The keys are the asset names, and the values are the asset paths.
 	 */
@@ -71,6 +59,9 @@ class AssetHelper extends Helper {
 		$this->realm = Awyiss::getRealm();
 
 		$this->realmFolders = Configure::read('App.paths.assets');
+
+		// Set the default structure for the assets array
+		$this->clearAssets();
 	}
 
 
@@ -754,6 +745,54 @@ class AssetHelper extends Helper {
 	 */
 	public function getStyleNonce(): ?string {
 		return $this->getView()->getRequest()->getAttribute('cspStyleNonce');
+	}
+
+
+	/**
+	 * Returns all remembered assets.
+	 *
+	 * @return bool
+	 */
+	public function getAssets(): array {
+		return $this->assets;
+	}
+
+
+	/**
+	 * Returns all remembered assets for the noscript tag.
+	 *
+	 * @return array
+	 */
+	public function getNoScriptAssets(): array {
+		return $this->noScriptAssets;
+	}
+
+
+	/**
+	 * Clears all remembered assets.
+	 * Useful if you want to reset for a new batch of assets,
+	 * noscript tags or import maps.
+	 *
+	 * @return bool
+	 */
+	public function clearAssets(): void {
+		$this->assets = [
+			'all' => [],
+			'css' => [
+				'critical' => [],
+				'nonCritical' => [],
+			],
+			'js' => [
+				'critical' => [],
+				'nonCritical' => [],
+			],
+			'font' => [
+				'critical' => [],
+				'nonCritical' => [],
+			],
+		];
+
+		$this->noScriptAssets = [];
 	}
 
 
