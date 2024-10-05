@@ -13,7 +13,6 @@ use Cake\Collection\CollectionInterface;
 use Cake\Core\Configure;
 use Cake\ORM\Query\SelectQuery;
 use Cake\View\Cell;
-use RuntimeException;
 
 
 /**
@@ -34,29 +33,7 @@ class ContentsCell extends Cell {
 	 * @throws \ReflectionException
 	 */
 	public function display(string $contentArea, Page $page, array $options = []): void {
-		$la_options = $options + [
-			'columnWidth' => 100.00,
-			'includeWrapper' => true,
-			'viewVars' => [],
-		];
-
-		if (!isset($la_options['fullWidth'])) {
-			$la_options['fullWidth'] = $this->findFullWidth($la_options);
-
-			if ($la_options['fullWidth'] === null) {
-				throw new RuntimeException('Cannot determine page width. Please provide a page width when rendering contents');
-			}
-		}
-		else {
-			$la_options['fullWidth'] = (float)$la_options['fullWidth'];
-		}
-
-		if (!array_key_exists('singleColumnBreakpoint', $la_options)) {
-			$la_options['singleColumnBreakpoint'] = $this->findSingleColumnBreakpoint($la_options);
-		}
-		elseif ($la_options['singleColumnBreakpoint'] !== null) {
-			$la_options['singleColumnBreakpoint'] = (float)$la_options['singleColumnBreakpoint'];
-		}
+		$la_options = $this->initCellOptions($options);
 
 		$this->View->set([
 			'fullWidth' => $la_options['fullWidth'],

@@ -35,7 +35,40 @@ trait ContentElementTrait {
 	public function __construct(ServerRequest $request, Response $response, ?EventManagerInterface $eventManager = null, array $cellOptions = []) {
 		parent::__construct($request, $response, $eventManager, $cellOptions);
 
+		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
 		$this->View = $this->createView('Frontend');
+	}
+
+
+	/**
+	 * @param array $options
+	 * @param string $languageShortcode
+	 * @return array
+	 * @noinspection DuplicatedCode
+	 */
+	public function initCellOptions(array $options): array {
+		$la_options = $options + [
+				'columnWidth' => 100.00,
+				'includeWrapper' => true,
+				'viewVars' => [],
+			];
+
+		/** @noinspection DuplicatedCode */
+		if (!isset($la_options['fullWidth'])) {
+			$la_options['fullWidth'] = $this->findFullWidth($la_options);
+		}
+		else {
+			$la_options['fullWidth'] = (float)$la_options['fullWidth'];
+		}
+
+		if (!array_key_exists('singleColumnBreakpoint', $la_options)) {
+			$la_options['singleColumnBreakpoint'] = $this->findSingleColumnBreakpoint($la_options);
+		}
+		elseif ($la_options['singleColumnBreakpoint'] !== null) {
+			$la_options['singleColumnBreakpoint'] = (float)$la_options['singleColumnBreakpoint'];
+		}
+
+		return $la_options;
 	}
 
 
@@ -350,7 +383,6 @@ trait ContentElementTrait {
 			/** @var class-string<\Awyiss\Module\ModuleInterface> $ls_moduleClass */
 			$ls_moduleClass = $la_modules[ $ls_identifier ];
 
-			/** @noinspection PhpParamsInspection */
 			$ls_moduleOutput = $ls_moduleClass::render($la_settings, $this->View, $mediaRenderOptions, $entity, LocaleMiddleware::getLanguage());
 
 			if ($ls_moduleOutput) {
