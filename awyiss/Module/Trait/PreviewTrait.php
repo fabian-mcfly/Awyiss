@@ -24,8 +24,7 @@ trait PreviewTrait {
 			return $lb_isPreview;
 		}
 
-		$lo_request = Router::getRequest();
-		$lb_isPreview = !!$lo_request->getSession()->read('previewMode.enabled', false);
+		$lb_isPreview = !!(Router::getRequest()?->getSession()->read('previewMode.enabled', false));
 
 		return $lb_isPreview;
 	}
