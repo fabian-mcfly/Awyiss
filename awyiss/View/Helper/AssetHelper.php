@@ -295,12 +295,7 @@ class AssetHelper extends Helper {
 		$ls_extension = pathinfo($assetPath, PATHINFO_EXTENSION);
 
 		// Generate the additional attributes string
-		$ls_additionalAttributes = '';
-		if (!empty($options['attributes']) && is_array($options['attributes'])) {
-			foreach ($options['attributes'] as $ls_attributeName => $lx_attributeValue) {
-				$ls_additionalAttributes .= ' ' . $ls_attributeName . '="' . htmlspecialchars($lx_attributeValue, ENT_QUOTES, 'UTF-8') . '"';
-			}
-		}
+		$ls_additionalAttributes = $this->generateAttributesString($options);
 
 		// Get the nonce from the request attributes
 		$ls_nonce = '';
@@ -312,40 +307,40 @@ class AssetHelper extends Helper {
 		}
 
 		if ($ls_nonce) {
-			$ls_nonce = 'nonce="' . $ls_nonce . '"';
+			$ls_nonce = ' nonce="' . $ls_nonce . '"';
 		}
 
 		// If the extension is a font type, generate a <link> tag with rel="preload" for the font
 		if ($ls_extension === 'woff' || $ls_extension === 'woff2' || $ls_extension === 'ttf') {
 			// Generate a <link> tag with rel="preload" for the font
-			return '<link ' . $ls_nonce . ' rel="preload" href="' . $assetPath . '" as="font" type="font/' . $ls_extension . '" crossorigin' . $ls_additionalAttributes . '>' . PHP_EOL;
+			return '<link' . $ls_nonce . ' rel="preload" href="' . $assetPath . '" as="font" type="font/' . $ls_extension . '" crossorigin' . $ls_additionalAttributes . '>' . PHP_EOL;
 		}
 
 		// If the asset is critical, generate a <script> tag for JavaScript files and a <link> tag with rel="stylesheet" for CSS files
 		if ($options['critical']) {
 			if ($ls_extension === 'js') {
-				return '<script ' . $ls_nonce . ' src="' . $assetPath . '"' . $ls_additionalAttributes . '></script>' . PHP_EOL;
+				return '<script' . $ls_nonce . ' src="' . $assetPath . '"' . $ls_additionalAttributes . '></script>' . PHP_EOL;
 			}
 
-			return '<link ' . $ls_nonce . ' rel="stylesheet" type="text/css" href="' . $assetPath . '"' . $ls_additionalAttributes . '/>' . PHP_EOL;
+			return '<link' . $ls_nonce . ' rel="stylesheet" type="text/css" href="' . $assetPath . '"' . $ls_additionalAttributes . '>' . PHP_EOL;
 		}
 
 		// If the asset is a JavaScript file, generate a <script> tag
 		if ($ls_extension === 'js') {
 			if ($lazyLoad) {
-				return '<script ' . $ls_nonce . ' async src="' . $assetPath . '"' . $ls_additionalAttributes . '></script>' . PHP_EOL;
+				return '<script' . $ls_nonce . ' async src="' . $assetPath . '"' . $ls_additionalAttributes . '></script>' . PHP_EOL;
 			}
 
-			return '<script ' . $ls_nonce . ' src="' . $assetPath . '"' . $ls_additionalAttributes . '></script>' . PHP_EOL;
+			return '<script' . $ls_nonce . ' src="' . $assetPath . '"' . $ls_additionalAttributes . '></script>' . PHP_EOL;
 		}
 
 		// If the asset is a CSS file and lazy loading is enabled, generate a <link> tag with rel="preload"
 		if ($lazyLoad) {
-			return '<link ' . $ls_nonce . ' rel="preload" href="' . $assetPath . '" as="style"' . $ls_additionalAttributes . ' data-lazyload="true">' . PHP_EOL;
+			return '<link' . $ls_nonce . ' rel="preload" href="' . $assetPath . '" as="style"' . $ls_additionalAttributes . ' data-lazyload="true">' . PHP_EOL;
 		}
 
 		// If none of the above conditions are met, generate a <link> tag with rel="stylesheet" for the asset
-		return '<link ' . $ls_nonce . ' rel="stylesheet" type="text/css" href="' . $assetPath . '"' . $ls_additionalAttributes . '/>' . PHP_EOL;
+		return '<link' . $ls_nonce . ' rel="stylesheet" type="text/css" href="' . $assetPath . '"' . $ls_additionalAttributes . '>' . PHP_EOL;
 	}
 
 
@@ -985,5 +980,36 @@ class AssetHelper extends Helper {
 		}
 
 		return $la_options;
+	}
+
+
+	/**
+	 * @param array $options
+	 * @return string
+	 */
+	protected function generateAttributesString(array $options): string {
+		$ls_additionalAttributes = '';
+
+		if (empty($options['attributes']) || !is_array($options['attributes'])) {
+			return '';
+		}
+
+		foreach ($options['attributes'] as $ls_attributeName => $lx_attributeValue) {
+			if (!is_string($lx_attributeValue)) {
+				$lx_attributeValue = match (true) {
+					is_bool($lx_attributeValue) => $lx_attributeValue ? 'true' : 'false',
+					is_int($lx_attributeValue) => (string)$lx_attributeValue,
+					default => '',
+				};
+			}
+
+			if ($lx_attributeValue === '') {
+				continue;
+			}
+
+			$ls_additionalAttributes .= ' ' . $ls_attributeName . '="' . htmlspecialchars($lx_attributeValue, ENT_QUOTES, 'UTF-8') . '"';
+		}
+
+		return $ls_additionalAttributes;
 	}
 }
