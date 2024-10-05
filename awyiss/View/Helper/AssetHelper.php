@@ -779,12 +779,12 @@ class AssetHelper extends Helper {
 
 			// If the asset path is not null, add it to the final assets array
 			if ($ls_assetPath !== null) {
-				$la_finalAssets[ $ls_fileName ] = $ls_assetPath;
+				$la_finalAssets[ $ls_fileName ] = ['path' => $ls_assetPath] + $la_options;
+				ksort($la_finalAssets[ $ls_fileName ]);
 			}
 		}
 
-
-		return $la_finalAssets;
+		return $this->sortAssetsByPriority($la_finalAssets);
 	}
 
 
@@ -869,7 +869,7 @@ class AssetHelper extends Helper {
 		$la_header = [];
 
 		// Get all assets and add them to the HTTP2 header
-		foreach ($this->getFinalAssets() as $ls_fileName => $ls_assetPath) {
+		foreach ($this->getFinalAssets() as $ls_fileName => $la_options) {
 			$ls_extension = pathinfo($ls_fileName, PATHINFO_EXTENSION);
 
 			// Set the asType based on the extension
@@ -881,7 +881,7 @@ class AssetHelper extends Helper {
 			};
 
 			// Add the asset path to the Link header
-			$la_header[] = 'Link: <' . $ls_assetPath . '>; rel=preload; as=' . $ls_asType . '; nopush';
+			$la_header[] = 'Link: <' . $la_options['path'] . '>; rel=preload; as=' . $ls_asType . '; nopush';
 		}
 
 		// Add the Link header to the response
