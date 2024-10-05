@@ -8,6 +8,7 @@ use Awyiss\Model\Entity;
 use Awyiss\Model\Entity\Widget;
 use Awyiss\View\Cell\Frontend\Trait\ContentElementTrait;
 use Awyiss\View\Cell\Frontend\Trait\PreviewTrait;
+use Cake\Collection\CollectionInterface;
 use Cake\Core\Configure;
 use Cake\View\Cell;
 
@@ -30,58 +31,21 @@ class WidgetsCell extends Cell {
 	 */
 	public function display(string $identifier, array $options = []): void {
 		$la_options = $this->initCellOptions($options);
+		$la_options['viewVars']['identifier'] = $identifier;
 
-		$this->View->set([
-			'fullWidth' => $la_options['fullWidth'],
-			'identifier' => $identifier,
-			'singleColumnBreakpoint' => $la_options['singleColumnBreakpoint'],
-			...$la_options['viewVars'],
-		]);
-
-		/** @var \Awyiss\Model\Table\WidgetsTable $lo_widgetsTable */
-		$lo_widgetsTable = $this->fetchTable('Widgets');
-
-		if ($this->isPreview()) {
-			$lo_query = $lo_widgetsTable->find('all');
-		}
-		else {
-			$lo_query = $lo_widgetsTable->find('active')->find('published');
-		}
-
-		$lo_query->find('threaded')->find('mediaAssignments', includeElementSelector: true, useMediaEntity: true);
-		$lo_query->where([
-			'Widgets.identifier' => $identifier,
-		]);
-
-		// Contain WidgetTemplates and MediaAssignments
-		$lo_query->contain([
-			'WidgetTemplates',
-		]);
-
-		$lo_widgets = $lo_query->all();
-
-		/*
-		 * Filter out all first level widgets with a parent_id
-		 * This is done to prevent the display of nested widgets whose parent isn't
-		 * part of the result set.
-		 *
-		 * Either because it's not active (allowed to happen)
-		 * or because it's not part of the same page. (shouldn't happen)
-		 */
-		$lo_widgets = $lo_widgets->filter(function (Widget $widget) {
-			return $widget->parentId === null;
-		})->compile();
+		$lo_widgets = $this->getThreadedWidgets($identifier);
 
 		$this->addMediaItems($lo_widgets, 'widgets');
 
 		$this->prepareEntities($lo_widgets, (float)$la_options['columnWidth']);
+
+		$this->setViewVars($la_options);
 
 		$ls_widgets = $this->buildContents($lo_widgets->toArray());
 
 		// Set the view variables
 		$this->set([
 			'fullWidth' => $la_options['fullWidth'],
-			'identifier' => $identifier,
 			'singleColumnBreakpoint' => $la_options['singleColumnBreakpoint'],
 			'widgets' => $ls_widgets,
 			...$la_options['viewVars'],
@@ -126,5 +90,46 @@ class WidgetsCell extends Cell {
 			'children' => $children,
 			'mediaRenderOptions' => $lo_mediaRenderOptions,
 		]);
+	}
+
+
+	/**
+	 * @param string $identifier
+	 * @return \Cake\Collection\CollectionInterface
+	 */
+	protected function getThreadedWidgets(string $identifier): CollectionInterface {
+		/** @var \Awyiss\Model\Table\WidgetsTable $lo_widgetsTable */
+		$lo_widgetsTable = $this->fetchTable('Widgets');
+
+		if ($this->isPreview()) {
+			$lo_query = $lo_widgetsTable->find('all');
+		}
+		else {
+			$lo_query = $lo_widgetsTable->find('active')->find('published');
+		}
+
+		$lo_query->find('threaded')->find('mediaAssignments', includeElementSelector: true, useMediaEntity: true);
+		$lo_query->where([
+			'Widgets.identifier' => $identifier,
+		]);
+
+		// Contain WidgetTemplates and MediaAssignments
+		$lo_query->contain([
+			'WidgetTemplates',
+		]);
+
+		$lo_widgets = $lo_query->all();
+
+		/*
+		 * Filter out all first level widgets with a parent_id
+		 * This is done to prevent the display of nested widgets whose parent isn't
+		 * part of the result set.
+		 *
+		 * Either because it's not active (allowed to happen)
+		 * or because it's not part of the same page. (shouldn't happen)
+		 */
+		return $lo_widgets->filter(function (Widget $widget) {
+			return $widget->parentId === null;
+		})->compile();
 	}
 }

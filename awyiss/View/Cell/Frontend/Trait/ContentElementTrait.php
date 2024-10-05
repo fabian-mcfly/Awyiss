@@ -48,10 +48,10 @@ trait ContentElementTrait {
 	 */
 	public function initCellOptions(array $options): array {
 		$la_options = $options + [
-				'columnWidth' => 100.00,
-				'includeWrapper' => true,
-				'viewVars' => [],
-			];
+			'columnWidth' => 100.00,
+			'includeWrapper' => true,
+			'viewVars' => [],
+		];
 
 		/** @noinspection DuplicatedCode */
 		if (!isset($la_options['fullWidth'])) {
@@ -544,5 +544,19 @@ trait ContentElementTrait {
 			$ls_template = $entity instanceof Widget ? 'widgetTemplate' : 'contentTemplate';
 			$entity->$ls_template->fileName = $ls_fileName;
 		}
+	}
+
+
+	/**
+	 * @param string $identifier
+	 * @param array $options
+	 * @return void
+	 */
+	protected function setViewVars(array $options): void {
+		$this->View->set([
+			...$options['viewVars'],
+			'fullWidth' => $options['fullWidth'],
+			'singleColumnBreakpoint' => $options['singleColumnBreakpoint'],
+		]);
 	}
 }

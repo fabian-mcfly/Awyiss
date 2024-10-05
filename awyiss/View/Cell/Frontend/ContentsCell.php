@@ -35,39 +35,15 @@ class ContentsCell extends Cell {
 	public function display(string $contentArea, Page $page, array $options = []): void {
 		$la_options = $this->initCellOptions($options);
 
-		$this->View->set([
-			'fullWidth' => $la_options['fullWidth'],
-			'page' => $page,
-			'singleColumnBreakpoint' => $la_options['singleColumnBreakpoint'],
-			...$la_options['viewVars'],
-		]);
-
-		$lo_query = $this->getContentsQuery();
-
-		$lo_query->where([
-			'Contents.page_id' => $page->duplicateOf ?? $page->id,
-			'ContentAreas.identifier' => $contentArea,
-		]);
-
-		$lo_contents = $lo_query->all();
-
-		/*
-		 * Filter out all first level contents with a parent_id
-		 * This is done to prevent the display of nested contents whose parent isn't
-		 * part of the result set.
-		 *
-		 * Either because it's not active (allowed to happen)
-		 * or because it's not part of the same page. (shouldn't happen)
-		 */
-		$lo_contents = $lo_contents->filter(function (Content $content) {
-			return $content->parentId === null;
-		})->compile();
+		$lo_contents = $this->getThreadedContents($page, $contentArea);
 
 		$this->addMediaItems($lo_contents, 'contents');
 
 		$this->addDuplicates($lo_contents);
 
 		$this->prepareEntities($lo_contents, (float)$la_options['columnWidth']);
+
+		$this->setViewVars($la_options);
 
 		$ls_contents = $this->buildContents($lo_contents->toArray());
 
@@ -198,6 +174,35 @@ class ContentsCell extends Cell {
 
 			$lo_entity->set('children', $lo_children->toList());
 		}
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Entity\Page $page
+	 * @param string $contentArea
+	 * @return \Cake\Collection\CollectionInterface
+	 */
+	protected function getThreadedContents(Page $page, string $contentArea): CollectionInterface {
+		$lo_query = $this->getContentsQuery();
+
+		$lo_query->where([
+			'Contents.page_id' => $page->duplicateOf ?? $page->id,
+			'ContentAreas.identifier' => $contentArea,
+		]);
+
+		$lo_contents = $lo_query->all();
+
+		/*
+		 * Filter out all first level contents with a parent_id
+		 * This is done to prevent the display of nested contents whose parent isn't
+		 * part of the result set.
+		 *
+		 * Either because it's not active (allowed to happen)
+		 * or because it's not part of the same page. (shouldn't happen)
+		 */
+		return $lo_contents->filter(function (Content $content) {
+			return $content->parentId === null;
+		})->compile();
 	}
 
 
