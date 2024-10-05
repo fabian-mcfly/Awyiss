@@ -405,16 +405,7 @@ class AssetHelper extends Helper {
 			if ($lb_minified) {
 				$ls_fileName .= 'min.';
 
-				$ls_minifiedPath = ROOT . $ls_fileName . $ls_extension;
-
-				/*
-				 * If the minified file does not exist,
-				 * or if the modification time of the minified file is older than the modification time of the asset file,
-				 * minify the asset file.
-				 */
-				if (!file_exists($ls_minifiedPath) || filemtime($ls_minifiedPath) < filemtime($ls_assetPath)) {
-					$this->minifyAsset($ls_assetPath, $ls_minifiedPath, $ls_extension);
-				}
+				$ls_minifiedPath = $this->getMinifiedPath($ls_fileName, $ls_extension, $ls_assetPath);
 
 				// Get the file modification time
 				$li_modTime = filemtime($ls_minifiedPath);
@@ -1011,5 +1002,28 @@ class AssetHelper extends Helper {
 		}
 
 		return $ls_additionalAttributes;
+	}
+
+
+	/**
+	 * @param string $fileName
+	 * @param mixed $extension
+	 * @param string $assetPath
+	 * @return string
+	 * @throws \Exception
+	 */
+	protected function getMinifiedPath(string $fileName, mixed $extension, string $assetPath): string {
+		$ls_minifiedPath = ROOT . $fileName . $extension;
+
+		/*
+		 * If the minified file does not exist,
+		 * or if the modification time of the minified file is older than the modification time of the asset file,
+		 * minify the asset file.
+		 */
+		if (!file_exists($ls_minifiedPath) || filemtime($ls_minifiedPath) < filemtime($assetPath)) {
+			$this->minifyAsset($assetPath, $ls_minifiedPath, $extension);
+		}
+
+		return $ls_minifiedPath;
 	}
 }
