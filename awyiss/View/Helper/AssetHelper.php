@@ -547,12 +547,12 @@ class AssetHelper extends Helper {
 		// Iterate over each asset
 		foreach ($la_assets as $ls_asset => $la_options) {
 			// Skip JavaScript assets
-			if (pathinfo($ls_asset, PATHINFO_EXTENSION) === 'js') {
+			if (in_array(pathinfo($ls_asset, PATHINFO_EXTENSION), ['woff', 'woff2', 'ttf', 'js'])) {
 				continue;
 			}
 
-			// Skip the asset if the criticality does not match the specified criticality
-			if ($critical !== null && $la_options['critical'] !== $critical) {
+			// Skip critical assets since they will not be lazy loaded
+			if ($la_options['critical'] !== false) {
 				continue;
 			}
 
