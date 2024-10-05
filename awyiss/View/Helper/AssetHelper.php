@@ -523,18 +523,11 @@ class AssetHelper extends Helper {
 	 * All assets are included by default, but you can specify the type of assets to include by passing a type parameter.
 	 * You can also specify the criticality of the assets to include by passing a critical parameter.
 	 *
-	 * @param string $type The type of assets to generate tags for. Defaults to 'all'.
-	 * @param bool|null $critical
 	 * @return string A string of HTML tags for non-JavaScript assets, wrapped in a <noscript> tag.
 	 * @throws \Exception
 	 */
-	public function getNoScriptTags(string $type = 'all', ?bool $critical = null): string {
-		$la_assets = array_merge($this->assets[ $type ] ?? [], $this->noScriptAssets);
-
-		if ($type !== 'all') {
-			// Assets of the specified type are split into critical and non-critical assets. Merge them, but keep the keys
-			$la_assets = array_merge($la_assets['critical'], $la_assets['nonCritical']);
-		}
+	public function getNoScriptTags(): string {
+		$la_assets = array_merge($this->assets['all'], $this->noScriptAssets);
 
 		if (empty($la_assets)) {
 			return '';
