@@ -16,6 +16,8 @@ use Awyiss\Model\Table;
 use Awyiss\ORM\Behavior;
 use Awyiss\Utility\Inflector;
 use Cake\Collection\CollectionInterface;
+use Cake\Database\Expression\QueryExpression;
+use Cake\Database\Schema\SqliteSchemaDialect;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
 use Cake\ORM\Locator\LocatorAwareTrait;
@@ -145,23 +147,7 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 		}
 
 		$query->contain([
-			'MediaAssignments' => function (SelectQuery $query) {
-				/** @noinspection PhpUndefinedMethodInspection */
-				$query->orderByAsc($query->newExpr($query->func()->FIND_IN_SET([
-					'media_element_id' => 'identifier',
-					implode(',', array_reverse(static::$mediaElements)),
-				])), true);
-
-				$la_identifiers = array_unique(Hash::extract(static::$mediaElements, '{n}.mediaElementSelectors.{n}.identifier'));
-
-				/** @noinspection PhpUndefinedMethodInspection */
-				$query->orderByAsc($query->newExpr($query->func()->FIND_IN_SET([
-					'media_element_selector_identifier' => 'identifier',
-					implode(',', $la_identifiers),
-				])), true);
-
-				return $query->contain(['Media', 'MediaFolders']);
-			},
+			'MediaAssignments' => $this->getContainConditions(...),
 		]);
 
 		if ($formatResult) {
@@ -397,9 +383,10 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 	/**
 	 * @param EventInterface $event
 	 * @param \Cake\Datasource\EntityInterface $entity
+	 * @param \ArrayObject $options
 	 * @return void
-	 * @noinspection PhpUnusedParameterInspection
 	 * @throws \ReflectionException
+	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function beforeSave(EventInterface $event, EntityInterface $entity, ArrayObject $options): void {
 		$lo_identity = $this->getIdentity();
@@ -468,5 +455,74 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 		]);
 
 		$lo_mediaAssignmentsTable->save($lo_assignment);
+	}
+
+
+	/**
+	 * @param \Cake\ORM\Query\SelectQuery $query
+	 * @return \Cake\ORM\Query\SelectQuery
+	 */
+	protected function getContainConditions(SelectQuery $query): SelectQuery {
+		$la_identifiers = array_unique(Hash::extract(static::$mediaElements, '{n}.mediaElementSelectors.{n}.identifier'));
+
+		$lo_dialect = $query->getConnection()->getDriver()->schemaDialect();
+
+		$la_aliasedField = $query->aliasField('media_element_id');
+		$ls_elementField = key($la_aliasedField);
+
+		$la_aliasedField = $query->aliasField('media_element_selector_identifier');
+		$ls_selectorField = key($la_aliasedField);
+
+		/**
+		 * SQLite does not support FIND_IN_SET(),
+		 * so ordering using CASE WHEN is used instead
+		 */
+		if ($lo_dialect instanceof SqliteSchemaDialect) {
+			$query->orderBy(function (QueryExpression $exp) use ($ls_elementField) {
+				$li_index = 0;
+
+				$lo_case = $exp->case();
+				foreach (static::$mediaElements as $lo_mediaElement) {
+					$lo_case->when([$ls_elementField => $lo_mediaElement->id])->then($li_index, 'integer');
+
+					$li_index++;
+				}
+
+				$lo_case->else(999, 'integer');
+
+				return $lo_case;
+			}, true);
+
+			$query->orderBy(function (QueryExpression $exp) use ($ls_selectorField, $la_identifiers) {
+				$li_index = 0;
+
+				$lo_case = $exp->case();
+				foreach ($la_identifiers as $ls_identifier) {
+					$lo_case->when([$ls_selectorField => $ls_identifier])->then($li_index, 'integer');
+
+					$li_index++;
+				}
+
+				$lo_case->else(999, 'integer');
+
+				return $lo_case;
+			});
+
+			return $query->contain(['Media', 'MediaFolders']);
+		}
+
+		/** @noinspection PhpUndefinedMethodInspection */
+		$query->orderByAsc($query->newExpr($query->func()->FIND_IN_SET([
+			$ls_elementField => 'identifier',
+			implode(',', array_column(static::$mediaElements, 'id')),
+		])), true);
+
+		/** @noinspection PhpUndefinedMethodInspection */
+		$query->orderByAsc($query->newExpr($query->func()->FIND_IN_SET([
+			$ls_selectorField => 'identifier',
+			implode(',', $la_identifiers),
+		])));
+
+		return $query->contain(['Media', 'MediaFolders']);
 	}
 }
