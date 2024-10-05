@@ -676,6 +676,16 @@ class AssetHelper extends Helper {
 
 
 	/**
+	 * Get all JavaScript modules.
+	 *
+	 * @return array
+	 */
+	public function getJsModules(): array {
+		return $this->jsModules;
+	}
+
+
+	/**
 	 * Creates an import map for JavaScript modules and returns it as a string.
 	 *
 	 * This method initializes an import map with an empty 'imports' array. It then iterates over each JavaScript module
