@@ -37,7 +37,7 @@ via the `$options['lightboxMedia']` setting.
 		<div class="Image">
 			{% if options.link is defined and options.link is not empty %}
 				<a href="{{ options.link }}"{{ '://' in options.link ? ' target="_blank"' : '' }}{% if (MediaHelper.isVideoLink(options.link)) %} rel="lightbox" {% endif %}>
-					{{ tag }}
+					{{ tag|raw }}
 				</a>
 			{% elseif mediaAssignments.lightboxMedia %}
 				{% set media = mediaAssignments.lightboxMedia %}
@@ -52,10 +52,10 @@ via the `$options['lightboxMedia']` setting.
 				{% endif %}
 
 				<a href="{{ link }}"{% if media.isImage() or media.isVideo()or media.isAudio() %} rel="lightbox"{% else %} target="_blank" {% endif %}>
-					{{ tag }}
+					{{ tag|raw }}
 				</a>
 			{% else %}
-				{{ tag }}
+				{{ tag|raw }}
 			{% endif %}
 		</div>
 	{% endif %}

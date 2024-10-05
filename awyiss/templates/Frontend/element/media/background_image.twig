@@ -29,6 +29,6 @@
 		{% set mediaRenderOptions = mediaRenderOptions.with(options.media) %}
 	{% endif %}
 
-	{{ MediaHelper.background(mediaAssignments.media, mediaRenderOptions) }}
+	{{ MediaHelper.background(mediaAssignments.media, mediaRenderOptions)|raw }}
 {% endif %}
 
