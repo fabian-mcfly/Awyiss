@@ -409,18 +409,31 @@ class AssetHelper extends Helper {
 
 				// Get the file modification time
 				$li_modTime = filemtime($ls_minifiedPath);
+
+				if ($options['localPath'] ?? false) {
+					return $ls_minifiedPath;
+				}
 			}
 			else {
 				// Get the file modification time
 				$li_modTime = filemtime($ls_assetPath);
+
+				if ($options['localPath'] ?? false) {
+					return $ls_assetPath;
+				}
 			}
 
 			if ($ls_key === 'customer' && str_starts_with($ls_fileName, DS . CUSTOM_DIR . DS)) {
 				$ls_fileName = substr($ls_fileName, strlen(DS . CUSTOM_DIR));
 			}
 
+			if ($options['includeTimestamp'] ?? true) {
+				// Append the modification time to the filename
+				$ls_fileName .= $li_modTime . '.';
+			}
+
 			// Generate a URL for the asset using CakePHP's Router and ppend the modification time to the filename
-			return $this->checkedAssets[ $asset ] = Router::url($ls_fileName . $li_modTime . '.' . $ls_extension, true);
+			return $this->checkedAssets[ $asset ] = Router::url($ls_fileName . $ls_extension, true);
 		}
 
 		// If the asset is not found, return null
@@ -583,10 +596,12 @@ class AssetHelper extends Helper {
 				continue;
 			}
 
-			$ls_assetPath = WWW_ROOT . 'assets/css/' . $ls_fileName;
-			if (file_exists($ls_assetPath)) {
-				$ls_output .= file_get_contents($ls_assetPath);
+			$ls_assetPath = $this->getAssetPath($ls_fileName, ['localPath' => true] + $options);
+			if (!$ls_assetPath) {
+				continue;
 			}
+
+			$ls_output .= file_get_contents($ls_assetPath);
 		}
 
 		if ($ls_output) {
