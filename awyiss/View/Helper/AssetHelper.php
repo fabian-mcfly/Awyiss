@@ -35,6 +35,10 @@ class AssetHelper extends Helper {
 	 */
 	protected array $checkedAssets = [];
 	/**
+	 * @var bool $autoMinify A boolean indicating whether assets should be minified automatically. Defaults to true.
+	 */
+	protected bool $autoMinify = true;
+	/**
 	 * @var array $jsModules An array of JavaScript modules included in an import map.
 	 */
 	protected array $jsModules = [];
@@ -60,8 +64,29 @@ class AssetHelper extends Helper {
 
 		$this->realmFolders = Configure::read('App.paths.assets');
 
+		$this->autoMinify = !Configure::read('debug', false);
+
 		// Set the default structure for the assets array
 		$this->clearAssets();
+	}
+
+
+	/**
+	 * @return bool
+	 */
+	public function getAutoMinify(): bool {
+		return $this->autoMinify;
+	}
+
+
+	/**
+	 * @param bool $autoMinify
+	 * @return $this
+	 */
+	public function setAutoMinify(bool $autoMinify = true): static {
+		$this->autoMinify = $autoMinify;
+
+		return $this;
 	}
 
 
@@ -102,7 +127,7 @@ class AssetHelper extends Helper {
 	 */
 	public function add(array|string $asset, array $attributes = [], bool $critical = false, ?bool $minified = null, int $priority = 10): void {
 		// Determines if the asset is minified based on the provided value or the application's debug configuration
-		$lb_minified = $minified ?? !Configure::read('debug', false);
+		$lb_minified = $minified ?? $this->getAutoMinify();
 
 		// If the provided asset is an array, use it as is. Otherwise, create an array with the asset as the key and an array of options as the value.
 		$la_assets = is_array($asset) ? $asset : [$asset];
@@ -158,7 +183,7 @@ class AssetHelper extends Helper {
 	 */
 	public function addNoScriptAsset(array|string $asset, array $attributes = [], ?bool $minified = null, int $priority = 10): void {
 		// Determines if the asset is minified based on the provided value or the application's debug configuration
-		$lb_minified = $minified ?? !Configure::read('debug', false);
+		$lb_minified = $minified ?? $this->getAutoMinify();
 
 		// If the provided asset is an array, use it as is. Otherwise, create an array with the asset as the key and an array of options as the value.
 		$la_assets = is_array($asset) ? $asset : [$asset => ['minified' => $lb_minified, 'attributes' => $attributes, 'priority' => $priority]];
@@ -582,7 +607,7 @@ class AssetHelper extends Helper {
 	 */
 	public function addJsModule(array|string $module, ?bool $minified = null): void {
 		// If minified is not set, default to the opposite of the debug configuration
-		$lb_minified = $minified ?? !Configure::read('debug', false);
+		$lb_minified = $minified ?? $this->getAutoMinify();
 
 		// If module is not an array, convert it to an array
 		$la_modules = is_array($module) ? $module : [$module => ['minified' => $lb_minified]];
