@@ -367,8 +367,10 @@ class FormRenderer {
 		/** @var \Awyiss\Model\Table\FormEntriesTable $lo_formEntriesTable */
 		$lo_formEntriesTable = $this->fetchTable('FormEntries');
 
+		$ls_formEntryHash = $formEntryHash;
+
 		/** @var \Awyiss\Model\Entity\FormEntry|null $lo_entry */
-		$lo_entry = $lo_formEntriesTable->find('all')->where(function (QueryExpression $exp, SelectQuery $query) use ($formEntryHash) {
+		$lo_entry = $lo_formEntriesTable->find('all')->where(function (QueryExpression $exp, SelectQuery $query) use ($ls_formEntryHash) {
 			// The concat of the id and the post_hash must equal the form entry identifier
 			/** @noinspection PhpUndefinedMethodInspection */
 			return $exp->eq($query->func()->md5([
@@ -377,7 +379,7 @@ class FormRenderer {
 					' | ',
 					'FormEntries.post_hash' => 'identifier',
 				]),
-			]), $formEntryHash);
+			]), $ls_formEntryHash);
 		})->first();
 
 		return $lo_entry;
@@ -480,8 +482,8 @@ class FormRenderer {
 		 * @noinspection PhpPossiblePolymorphicInvocationInspection
 		 */
 		$lo_mediaRenderOptions = $this->View->helpers()->get('Media')->mediaRenderOptions(
-			baseWidth: $this->View->get('fullWidth'),
-			breakpoints: Configure::read('Awyiss.Media.Frontend.defaultBreakpoints'),
+			baseWidth: $this->View->get('fullWidth', 1920),
+			breakpoints: Configure::read('Awyiss.Media.Frontend.defaultBreakpoints', []),
 			columnWidth: $entity->realColumnWidth,
 			selector: '#FormElement' . $entity->id,
 			singleColumnBreakpoint: $this->View->get('singleColumnBreakpoint'),
@@ -492,8 +494,13 @@ class FormRenderer {
 			$this->parseModule($entity, $lo_mediaRenderOptions);
 		}
 
+		$ls_fullWidthMissingWarning = '';
+		if (!$this->View->get('fullWidth')) {
+			$ls_fullWidthMissingWarning = '<!-- Full width is missing. Please add the `fullWidth`-option to the form cell. -->';
+		}
+
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		return $this->View->element('form/form_elements', [
+		return $ls_fullWidthMissingWarning . $this->View->element('form/form_elements', [
 			'formElement' => $entity,
 			'children' => $children,
 			'mediaRenderOptions' => $lo_mediaRenderOptions,

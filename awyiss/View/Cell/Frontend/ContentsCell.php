@@ -100,8 +100,8 @@ class ContentsCell extends Cell {
 		 * @noinspection PhpPossiblePolymorphicInvocationInspection
 		 */
 		$lo_mediaRenderOptions = $this->View->helpers()->get('Media')->mediaRenderOptions(
-			baseWidth: $this->View->get('fullWidth'),
-			breakpoints: Configure::read('Awyiss.Media.Frontend.defaultBreakpoints'),
+			baseWidth: $this->View->get('fullWidth', 1920),
+			breakpoints: Configure::read('Awyiss.Media.Frontend.defaultBreakpoints', []),
 			columnWidth: $entity->realColumnWidth,
 			selector: '#Content' . $entity->id,
 			singleColumnBreakpoint: $this->View->get('singleColumnBreakpoint'),
@@ -110,8 +110,13 @@ class ContentsCell extends Cell {
 		// Parse the module
 		$this->parseModule($entity, $lo_mediaRenderOptions);
 
+		$ls_fullWidthMissingWarning = '';
+		if (!$this->View->get('fullWidth')) {
+			$ls_fullWidthMissingWarning = '<!-- Full width is missing. Please add the `fullWidth`-option to the content cell. -->';
+		}
+
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		return $this->View->content($entity->contentTemplate->fileName, [
+		return $ls_fullWidthMissingWarning . $this->View->content($entity->contentTemplate->fileName, [
 			'content' => $entity,
 			'children' => $children,
 			'mediaRenderOptions' => $lo_mediaRenderOptions,

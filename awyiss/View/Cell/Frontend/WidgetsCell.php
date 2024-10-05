@@ -105,8 +105,8 @@ class WidgetsCell extends Cell {
 		 * @noinspection PhpPossiblePolymorphicInvocationInspection
 		 */
 		$lo_mediaRenderOptions = $this->View->helpers()->get('Media')->mediaRenderOptions(
-			baseWidth: $this->View->get('fullWidth'),
-			breakpoints: Configure::read('Awyiss.Media.Frontend.defaultBreakpoints'),
+			baseWidth: $this->View->get('fullWidth', 1920),
+			breakpoints: Configure::read('Awyiss.Media.Frontend.defaultBreakpoints', []),
 			columnWidth: $entity->realColumnWidth,
 			selector: '#Widget' . $entity->id,
 			singleColumnBreakpoint: $this->View->get('singleColumnBreakpoint'),
@@ -115,8 +115,13 @@ class WidgetsCell extends Cell {
 		// Parse the module
 		$this->parseModule($entity, $lo_mediaRenderOptions);
 
+		$ls_fullWidthMissingWarning = '';
+		if (!$this->View->get('fullWidth')) {
+			$ls_fullWidthMissingWarning = '<!-- Full width is missing. Please add the `fullWidth`-option to the widget cell. -->';
+		}
+
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		return $this->View->widget($entity->widgetTemplate->fileName, [
+		return $ls_fullWidthMissingWarning . $this->View->widget($entity->widgetTemplate->fileName, [
 			'widget' => $entity,
 			'children' => $children,
 			'mediaRenderOptions' => $lo_mediaRenderOptions,
