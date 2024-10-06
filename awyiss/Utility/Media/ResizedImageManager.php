@@ -166,22 +166,17 @@ class ResizedImageManager {
 
 
 	/**
-	 * Returns all resized images for the given media id
-	 *
-	 * @param int $mediaId
-	 * @return array<\Awyiss\Model\Entity\MediaResizedImage>|null
-	 */
-	public static function getResizedItem(int $mediaId): ?array {
-		return static::$resizedRecords[ $mediaId ] ?? null;
-	}
-
-
-	/**
 	 * Returns all resized images, indexed by the media id
 	 *
-	 * @return array<int, array<\Awyiss\Model\Entity\MediaResizedImage>>
+	 * If a media id is provided, only the resized images for that media item are returned
+	 *
+	 * @return array<int, array<\Awyiss\Model\Entity\MediaResizedImage>>|null
 	 */
-	public static function getResizedItems(): array {
+	public static function getResizedItems(?int $mediaId = null): ?array {
+		if ($mediaId) {
+			return static::$resizedRecords[ $mediaId ] ?? null;
+		}
+
 		return static::$resizedRecords;
 	}
 
@@ -331,6 +326,15 @@ class ResizedImageManager {
 		}
 
 		return null;
+	}
+
+
+	/**
+	 * Clears all static storage
+	 */
+	public static function clear(): void {
+		static::$mediaItems = [];
+		static::$resizedRecords = [];
 	}
 
 
