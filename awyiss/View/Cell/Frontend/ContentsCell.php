@@ -178,6 +178,46 @@ class ContentsCell extends Cell {
 
 
 	/**
+	 * @param \Awyiss\Model\Entity\Content $entity
+	 * @param array $blocklistedKeys
+	 * @return void
+	 */
+	protected function applyDuplicateData(Entity $entity): void {
+		static $la_blocklistedKeys;
+
+		if (!isset($la_blocklistedKeys)) {
+			/** @var \Awyiss\Model\Table\ContentsTable $lo_table */
+			$lo_table = $this->fetchTable('Contents');
+
+			$la_blocklistedKeys = array_merge($lo_table->getAllowedKeyForDuplicating(), [
+				'id',
+				'contentTemplateId',
+				'createdBy',
+				'createdOn',
+				'changedBy',
+				'changedOn',
+				'deletedBy',
+				'deletedOn',
+				'contentTemplate',
+				'contentArea',
+				'children',
+				'level',
+			]);
+		}
+
+		// If the content has a duplicated one, use some data from the duplicated content
+		if (!$entity->duplicateOfContent) {
+			return;
+		}
+
+		$la_data = $entity->duplicateOfContent->extract(null, false, false);
+		$la_data = array_diff_key($la_data, array_flip($la_blocklistedKeys));
+
+		$entity->set($la_data);
+	}
+
+
+	/**
 	 * @param \Awyiss\Model\Entity\Page $page
 	 * @param string $contentArea
 	 * @return \Cake\Collection\CollectionInterface

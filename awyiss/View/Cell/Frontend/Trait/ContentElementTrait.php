@@ -159,36 +159,11 @@ trait ContentElementTrait {
 		$lo_lastEntity = null;
 		$la_parentEntities = [];
 
-		/** @var \Awyiss\Model\Table\ContentsTable $lo_table */
-		$lo_table = $this->fetchTable('Contents');
-
-		$la_blocklistedKeys = array_merge($lo_table->getAllowedKeyForDuplicating(), [
-			'id',
-			'contentTemplateId',
-			'createdBy',
-			'createdOn',
-			'changedBy',
-			'changedOn',
-			'deletedBy',
-			'deletedOn',
-			'contentTemplate',
-			'contentArea',
-			'children',
-			'level',
-		]);
-
 		/**
 		 * @var \Awyiss\Model\Entity\Content|\Awyiss\Model\Entity\FormElement|\Awyiss\Model\Entity\Widget $lo_entity
 		 */
 		foreach ($lo_entities as $lo_entity) {
-			// If the content has a duplicated one, use some data from the duplicated content
-			if ($lo_entity->duplicateOfContent) {
-				$la_data = $lo_entity->duplicateOfContent->extract(null, false, false);
-				$la_data = array_diff_key($la_data, array_flip($la_blocklistedKeys));
-
-				$lo_entity->set($la_data);
-			}
-
+			$this->applyDuplicateData($lo_entity);
 
 			$lo_entity->setVirtual(['level']);
 			//Add the current depth as a level-property to the entity
@@ -562,5 +537,15 @@ trait ContentElementTrait {
 			'fullWidth' => $options['fullWidth'],
 			'singleColumnBreakpoint' => $options['singleColumnBreakpoint'],
 		]);
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Entity $entity
+	 * @param array $blocklistedKeys
+	 * @return void
+	 */
+	protected function applyDuplicateData(Entity $entity): void {
+		// Do nothing per default
 	}
 }
