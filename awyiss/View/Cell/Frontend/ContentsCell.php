@@ -37,7 +37,7 @@ class ContentsCell extends Cell {
 
 		$lo_contents = $this->getThreadedContents($page, $contentArea);
 
-		$this->addMediaItems($lo_contents, 'contents');
+		$this->cacheAssignedMediaItems($lo_contents, 'contents');
 
 		$this->addDuplicates($lo_contents);
 

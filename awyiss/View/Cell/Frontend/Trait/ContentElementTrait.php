@@ -77,14 +77,14 @@ trait ContentElementTrait {
 	 *
 	 * @param \Cake\Collection\CollectionInterface $entities
 	 * @param string $scope
-	 * @return void
+	 * @return array<\Awyiss\Model\Entity\Media>
 	 */
-	protected function addMediaItems(CollectionInterface $entities, string $scope): void {
+	protected function cacheAssignedMediaItems(CollectionInterface $entities, string $scope): array {
 		$lo_entities = $entities->listNested()->compile(false);
 		$la_entityIds = $lo_entities->extract('id')->toArray();
 
 		if (!$la_entityIds) {
-			return;
+			return [];
 		}
 
 		$lo_mediaTable = $this->fetchTable('Media');
@@ -98,7 +98,11 @@ trait ContentElementTrait {
 		->contain(['MediaResizedImages'])
 		->distinct('Media.id');
 
-		ResizedImageManager::setMediaItems($lo_query->all()->toArray());
+		$la_media = $lo_query->all()->toList();
+
+		ResizedImageManager::setMediaItems($la_media);
+
+		return $la_media;
 	}
 
 
