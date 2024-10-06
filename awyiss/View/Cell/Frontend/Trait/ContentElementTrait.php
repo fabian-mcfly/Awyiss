@@ -114,11 +114,11 @@ trait ContentElementTrait {
 	 * @return float|null
 	 */
 	protected function findFullWidth(array $options): ?float {
-		if (isset($options['viewVars']['fullWidth'])) {
+		if (!empty($options['viewVars']['fullWidth'])) {
 			return (float)$options['viewVars']['fullWidth'];
 		}
 
-		if (isset($options['viewVars']['designSettings']['pageWidth'])) {
+		if (!empty($options['viewVars']['designSettings']['pageWidth'])) {
 			return (float)$options['viewVars']['designSettings']['pageWidth'];
 		}
 
