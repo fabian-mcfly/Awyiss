@@ -488,7 +488,7 @@ trait ContentElementTrait {
 		/** @var \Awyiss\Model\Entity\Content|\Awyiss\Model\Entity\FormElement|\Awyiss\Model\Entity\Widget $lo_parent */
 		$lo_parent = end($entity->$ls_property);
 
-		$entity->realColumnWidth = $lo_parent->realColumnWidth * $entity->column['width']->getFactor();
+		$entity->realColumnWidth = round($lo_parent->realColumnWidth * $entity->column['width']->getFactor(), 4);
 	}
 
 
