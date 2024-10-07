@@ -149,8 +149,9 @@ trait ContentElementTrait {
 	/**
 	 * @param \Cake\Collection\CollectionInterface $entities
 	 * @param float $columnWidth
+	 * @param bool $isPreview
 	 */
-	protected function prepareEntities(CollectionInterface $entities, float $columnWidth = 100.00): void {
+	protected function prepareEntities(CollectionInterface $entities, float $columnWidth = 100.00, bool $isPreview = false): void {
 		if (!$entities->count()) {
 			return;
 		}
@@ -191,7 +192,7 @@ trait ContentElementTrait {
 			}
 
 			// Set the cssClass property
-			$this->setCssClasses($lo_entity);
+			$this->setCssClasses($lo_entity, $isPreview);
 
 			// Seat the real column width
 			$this->setRealColumnWidth($lo_entity, $columnWidth);
@@ -413,7 +414,7 @@ trait ContentElementTrait {
 	 * @param \Awyiss\Model\Entity\Content|\Awyiss\Model\Entity\FormElement|\Awyiss\Model\Entity\Widget $entity
 	 * @return void
 	 */
-	protected function setCssClasses(Content|FormElement|Widget $entity): void {
+	protected function setCssClasses(Content|FormElement|Widget $entity, bool $isPreview = false): void {
 		if (empty($entity->cssClass)) {
 			$entity->cssClass = '';
 		}
@@ -455,7 +456,7 @@ trait ContentElementTrait {
 			$entity->cssClass .= ' ' . $ls_cssClass;
 		}
 
-		if ($this->isPreview() && !$entity->active) {
+		if ($isPreview && !$entity->active) {
 			$entity->cssClass .= ' ' . Awyiss::PREVIEW_MODE_ELEMENT_CLASSNAME;
 		}
 	}

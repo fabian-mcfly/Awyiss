@@ -186,7 +186,7 @@ class FormRenderer {
 
 		$lo_formElements = $this->form->formElements;
 
-		$this->prepareEntities($lo_formElements, (float)$options['columnWidth']);
+		$this->prepareEntities($lo_formElements, (float)$options['columnWidth'], $this->isPreview());
 
 		$la_formElements = $lo_formElements->listNested()->toList();
 		foreach ($la_formElements as $lo_formElement) {

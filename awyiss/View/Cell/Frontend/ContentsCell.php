@@ -35,13 +35,13 @@ class ContentsCell extends Cell {
 	public function display(string $contentArea, Page $page, array $options = []): void {
 		$la_options = $this->initCellOptions($options);
 
-		$lo_contents = $this->getThreadedContents($page, $contentArea);
+		$lo_contents = $this->getThreadedContents($page, $contentArea, $this->isPreview());
 
 		$this->cacheAssignedMediaItems($lo_contents, 'contents');
 
-		$this->addDuplicates($lo_contents);
+		$this->addDuplicates($lo_contents, $this->isPreview());
 
-		$this->prepareEntities($lo_contents, (float)$la_options['columnWidth']);
+		$this->prepareEntities($lo_contents, (float)$la_options['columnWidth'], $this->isPreview());
 
 		$this->setViewVars($la_options);
 
@@ -104,9 +104,10 @@ class ContentsCell extends Cell {
 	 * Add duplicated contents and their children to the entities.
 	 *
 	 * @param \Cake\Collection\CollectionInterface $contents
+	 * @param bool $isPreview
 	 * @return void
 	 */
-	protected function addDuplicates(CollectionInterface $contents): void {
+	protected function addDuplicates(CollectionInterface $contents, bool $isPreview): void {
 		$lo_contents = $contents->listNested();
 
 		$la_duplicatingEntities = [];
@@ -146,7 +147,7 @@ class ContentsCell extends Cell {
 
 			$la_finders = [];
 
-			if (!$this->isPreview()) {
+			if (!$isPreview) {
 				$la_finders = ['active', 'published'];
 			}
 
@@ -220,10 +221,11 @@ class ContentsCell extends Cell {
 	/**
 	 * @param \Awyiss\Model\Entity\Page $page
 	 * @param string $contentArea
+	 * @param bool $isPreview
 	 * @return \Cake\Collection\CollectionInterface
 	 */
-	protected function getThreadedContents(Page $page, string $contentArea): CollectionInterface {
-		$lo_query = $this->getContentsQuery();
+	protected function getThreadedContents(Page $page, string $contentArea, bool $isPreview = false): CollectionInterface {
+		$lo_query = $this->getContentsQuery($isPreview);
 
 		$lo_query->where([
 			'Contents.page_id' => $page->duplicateOf ?? $page->id,
@@ -247,13 +249,14 @@ class ContentsCell extends Cell {
 
 
 	/**
+	 * @param bool $isPreview
 	 * @return \Cake\ORM\Query\SelectQuery
 	 */
-	protected function getContentsQuery(): SelectQuery {
+	protected function getContentsQuery(bool $isPreview = false): SelectQuery {
 		/** @var \Awyiss\Model\Table\ContentsTable $lo_contentsTable */
 		$lo_contentsTable = $this->fetchTable('Contents');
 
-		if ($this->isPreview()) {
+		if ($isPreview) {
 			$lo_query = $lo_contentsTable->find('all');
 		}
 		else {

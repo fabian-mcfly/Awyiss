@@ -33,11 +33,11 @@ class WidgetsCell extends Cell {
 		$la_options = $this->initCellOptions($options);
 		$la_options['viewVars']['identifier'] = $identifier;
 
-		$lo_widgets = $this->getThreadedWidgets($identifier);
+		$lo_widgets = $this->getThreadedWidgets($identifier, $this->isPreview());
 
 		$this->cacheAssignedMediaItems($lo_widgets, 'widgets');
 
-		$this->prepareEntities($lo_widgets, (float)$la_options['columnWidth']);
+		$this->prepareEntities($lo_widgets, (float)$la_options['columnWidth'], $this->isPreview());
 
 		$this->setViewVars($la_options);
 
@@ -95,13 +95,14 @@ class WidgetsCell extends Cell {
 
 	/**
 	 * @param string $identifier
+	 * @param bool $isPreview
 	 * @return \Cake\Collection\CollectionInterface
 	 */
-	protected function getThreadedWidgets(string $identifier): CollectionInterface {
+	protected function getThreadedWidgets(string $identifier, bool $isPreview = false): CollectionInterface {
 		/** @var \Awyiss\Model\Table\WidgetsTable $lo_widgetsTable */
 		$lo_widgetsTable = $this->fetchTable('Widgets');
 
-		if ($this->isPreview()) {
+		if ($isPreview) {
 			$lo_query = $lo_widgetsTable->find('all');
 		}
 		else {
