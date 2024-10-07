@@ -20,6 +20,7 @@ use Cake\Event\EventManagerInterface;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\ORM\Query\SelectQuery;
+use Cake\View\View;
 use DOMDocument;
 use DOMXPath;
 
@@ -198,7 +199,7 @@ trait ContentElementTrait {
 			$this->setRealColumnWidth($lo_entity, $columnWidth);
 
 			// Set the template for the entity
-			// Will use a custom template named "Content<id>.twig", if it exists.
+			// Will use a custom template named "Content/Widget<id>.twig", if it exists.
 			$this->setTemplate($lo_entity);
 
 			$lo_lastEntity = $lo_entity;
@@ -363,7 +364,8 @@ trait ContentElementTrait {
 			/** @var class-string<\Awyiss\Module\ModuleInterface> $ls_moduleClass */
 			$ls_moduleClass = $la_modules[ $ls_identifier ];
 
-			$ls_moduleOutput = $ls_moduleClass::render($la_settings, $this->View, $mediaRenderOptions, $entity, LocaleMiddleware::getLanguage());
+			/** @noinspection PhpParamsInspection */
+			$ls_moduleOutput = $ls_moduleClass::render($la_settings, $this->getView(), $mediaRenderOptions, $entity, LocaleMiddleware::getLanguage());
 
 			if ($ls_moduleOutput) {
 				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
@@ -394,13 +396,13 @@ trait ContentElementTrait {
 	 */
 	protected function renderContentRow(string $contents, bool $isFormRow = false): string {
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		$ls_contentRow = $this->View->element($isFormRow ? 'form_row' : 'content_row', [
+		$ls_contentRow = $this->getView()->element($isFormRow ? 'form_row' : 'content_row', [
 			'contents' => $contents,
-			'class' => $this->View::$rowClass,
+			'class' => $this->getView()::$rowClass,
 		]);
 
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		$this->View::$rowClass = '';
+		$this->getView()::$rowClass = '';
 
 		return $ls_contentRow;
 	}
@@ -411,10 +413,10 @@ trait ContentElementTrait {
 	 * Each element gets a css class based on its template, column width and indent,
 	 * as well as the cssClass property set in the database.
 	 *
-	 * @param \Awyiss\Model\Entity\Content|\Awyiss\Model\Entity\FormElement|\Awyiss\Model\Entity\Widget $entity
+	 * @param \Awyiss\Model\Entity $entity
 	 * @return void
 	 */
-	protected function setCssClasses(Content|FormElement|Widget $entity, bool $isPreview = false): void {
+	protected function setCssClasses(Entity $entity, bool $isPreview = false): void {
 		if (empty($entity->cssClass)) {
 			$entity->cssClass = '';
 		}
@@ -470,7 +472,7 @@ trait ContentElementTrait {
 	 * @param float $columnWidth
 	 * @return void
 	 */
-	protected function setRealColumnWidth(Content|FormElement|Widget $entity, float $columnWidth): void {
+	protected function setRealColumnWidth(Entity $entity, float $columnWidth): void {
 		$entity->setVirtual(['realColumnWidth']);
 
 		$ls_property = match (true) {
@@ -499,7 +501,7 @@ trait ContentElementTrait {
 	 * @param \Awyiss\Model\Entity\Content|\Awyiss\Model\Entity\FormElement|\Awyiss\Model\Entity\Widget $entity
 	 * @return void
 	 */
-	protected function setTemplate(Content|FormElement|Widget $entity): void {
+	protected function setTemplate(Entity $entity): void {
 		static $ls_templatePath;
 
 		// Skip form elements as they have no template
@@ -533,7 +535,7 @@ trait ContentElementTrait {
 	 * @return void
 	 */
 	protected function setViewVars(array $options): void {
-		$this->View->set([
+		$this->getView()->set([
 			...$options['viewVars'],
 			'fullWidth' => $options['fullWidth'],
 			'singleColumnBreakpoint' => $options['singleColumnBreakpoint'],
@@ -548,5 +550,14 @@ trait ContentElementTrait {
 	 */
 	protected function applyDuplicateData(Entity $entity): void {
 		// Do nothing per default
+	}
+
+
+	/**
+	 * @param string $tableName
+	 * @return \Cake\ORM\Table
+	 */
+	protected function getView(): View {
+		return $this->View;
 	}
 }
