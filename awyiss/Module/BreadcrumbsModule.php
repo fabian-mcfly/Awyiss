@@ -141,7 +141,7 @@ class BreadcrumbsModule implements ModuleInterface {
 		$li_homepageId = $lo_homepage->id;
 
 		// Get the current path
-		$ls_path = trim(Router::getRequest()->getPath(), '/');
+		$ls_path = trim(Router::getRequest()?->getPath() ?? '', '/');
 		$la_pathParts = explode('/', $ls_path);
 		array_shift($la_pathParts);
 
