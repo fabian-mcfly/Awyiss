@@ -522,7 +522,7 @@ trait ContentElementTrait {
 
 		if (file_exists($ls_filePath)) {
 			$ls_template = $entity instanceof Widget ? 'widgetTemplate' : 'contentTemplate';
-			$entity->$ls_template->fileName = $ls_fileName;
+			$entity->$ls_template->set('fileName', $ls_fileName, ['setter' => false]);
 		}
 	}
 
