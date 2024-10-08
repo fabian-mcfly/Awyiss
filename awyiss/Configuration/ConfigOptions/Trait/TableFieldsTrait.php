@@ -6,6 +6,7 @@ namespace Awyiss\Configuration\ConfigOptions\Trait;
 
 use Awyiss\Model\Table\PagesTable;
 use Awyiss\Utility\Inflector;
+use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\FactoryLocator;
 
 
@@ -28,6 +29,12 @@ trait TableFieldsTrait {
 	 * @return array
 	 */
 	public function getTableFields(): array {
+		static $la_tables;
+
+		if (!isset($la_tables)) {
+			$la_tables = ConnectionManager::get('test')->getSchemaCollection()->listTables();
+		}
+
 		$ls_scope = $this->getScope();
 
 		if (method_exists($this, 'getDynamicScope')) {
@@ -37,6 +44,10 @@ trait TableFieldsTrait {
 		/** @var \Awyiss\Model\Table $lo_table */
 		$lo_table = FactoryLocator::get('Table')->get($ls_scope);
 		$la_columns = [];
+
+		if (!in_array($lo_table->getTable(), $la_tables)) {
+			return [];
+		}
 
 		foreach ($lo_table->getSchema()->columns() as $ls_column) {
 			if (in_array($ls_column, $this->blocklistedTableFields, true)) {
