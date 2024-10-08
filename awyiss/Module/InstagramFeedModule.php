@@ -22,8 +22,9 @@ use Throwable;
 
 
 /**
- * Class NewsListingModule
- * Show a list of news, either paginated or limited to a certain number of items
+ * Class InstagramFeedModule
+ * Show a list of Instagram posts from a profile
+ * Also downloads the images and creates media entities for them
  */
 class InstagramFeedModule implements ModuleInterface {
 	/**

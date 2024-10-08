@@ -14,8 +14,8 @@ use Cake\Datasource\FactoryLocator;
 
 
 /**
- * Class NewsListingModule
- * Show a list of news, either paginated or limited to a certain number of items
+ * Class BreadcrumbsModule
+ * Show a list of breadcrumbs, optionally including the homepage and/or the current page
  */
 class BreadcrumbsModule implements ModuleInterface {
 	use Trait\PreviewTrait;
