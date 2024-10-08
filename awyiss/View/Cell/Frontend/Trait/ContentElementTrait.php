@@ -19,6 +19,7 @@ use Cake\Core\Configure;
 use Cake\Event\EventManagerInterface;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
+use Cake\I18n\DateTime;
 use Cake\ORM\Query\SelectQuery;
 use Cake\View\View;
 use DOMDocument;
@@ -150,9 +151,8 @@ trait ContentElementTrait {
 	/**
 	 * @param \Cake\Collection\CollectionInterface $entities
 	 * @param float $columnWidth
-	 * @param bool $isPreview
 	 */
-	protected function prepareEntities(CollectionInterface $entities, float $columnWidth = 100.00, bool $isPreview = false): void {
+	protected function prepareEntities(CollectionInterface $entities, float $columnWidth = 100.00): void {
 		if (!$entities->count()) {
 			return;
 		}
@@ -193,7 +193,7 @@ trait ContentElementTrait {
 			}
 
 			// Set the cssClass property
-			$this->setCssClasses($lo_entity, $isPreview);
+			$this->setCssClasses($lo_entity);
 
 			// Seat the real column width
 			$this->setRealColumnWidth($lo_entity, $columnWidth);
@@ -416,8 +416,11 @@ trait ContentElementTrait {
 	 * @param \Awyiss\Model\Entity $entity
 	 * @return void
 	 */
-	protected function setCssClasses(Entity $entity, bool $isPreview = false): void {
+	protected function setCssClasses(Entity $entity): void {
+		static $ld_now = new DateTime();
+
 		if (empty($entity->cssClass)) {
+			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 			$entity->cssClass = '';
 		}
 
@@ -458,7 +461,11 @@ trait ContentElementTrait {
 			$entity->cssClass .= ' ' . $ls_cssClass;
 		}
 
-		if ($isPreview && !$entity->active) {
+		if (
+			!$entity->active ||
+			($entity->publicationStart && $entity->publicationStart > $ld_now) ||
+			($entity->publicationEnd && $entity->publicationEnd < $ld_now)
+		) {
 			$entity->cssClass .= ' ' . Awyiss::PREVIEW_MODE_ELEMENT_CLASSNAME;
 		}
 	}

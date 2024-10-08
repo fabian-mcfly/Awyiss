@@ -41,7 +41,7 @@ class ContentsCell extends Cell {
 
 		$this->addDuplicates($lo_contents, $this->isPreview());
 
-		$this->prepareEntities($lo_contents, (float)$la_options['columnWidth'], $this->isPreview());
+		$this->prepareEntities($lo_contents, (float)$la_options['columnWidth']);
 
 		$this->setViewVars($la_options);
 

@@ -37,7 +37,7 @@ class WidgetsCell extends Cell {
 
 		$this->cacheAssignedMediaItems($lo_widgets, 'widgets');
 
-		$this->prepareEntities($lo_widgets, (float)$la_options['columnWidth'], $this->isPreview());
+		$this->prepareEntities($lo_widgets, (float)$la_options['columnWidth']);
 
 		$this->setViewVars($la_options);
 
