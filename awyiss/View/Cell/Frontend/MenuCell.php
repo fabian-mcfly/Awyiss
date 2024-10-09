@@ -14,6 +14,7 @@ use Awyiss\View\Cell\Frontend\Trait\PreviewTrait;
 use Cake\Collection\Collection;
 use Cake\Collection\CollectionInterface;
 use Cake\Datasource\FactoryLocator;
+use Cake\I18n\DateTime;
 use Cake\Utility\Text;
 use Cake\View\Cell;
 use Cake\View\StringTemplate;
@@ -30,6 +31,7 @@ class MenuCell extends Cell {
 	 * Options for the menu renderer
 	 *
 	 * @var array $rendererOptions
+	 * @noinspection HtmlUnknownAttribute
 	 */
 	protected array $rendererOptions = [
 		'formatters' => [],
@@ -81,8 +83,21 @@ class MenuCell extends Cell {
 		$lo_menuRecord = $this->getMenu($identifier);
 		$lo_menuEntries = $lo_menuRecord ? $this->getMenuEntries($lo_menuRecord, $languageShortcode) : new Collection([]);
 
+		$lb_active = false;
+		if ($lo_menuRecord) {
+			$lb_active = $lo_menuRecord->active;
+
+			$ld_now = new DateTime();
+			if (
+				($lo_menuRecord->publicationStart && $lo_menuRecord->publicationStart > $ld_now) ||
+				($lo_menuRecord->publicationEnd && $lo_menuRecord->publicationEnd < $ld_now)
+			) {
+				$lb_active = false;
+			}
+		}
+
 		$lo_menu = new Menu($lo_menuEntries->toArray(), [
-			'active' => $lo_menuRecord?->active ?? false,
+			'active' => $lb_active,
 		]);
 		$lo_renderer = new MenuRenderer($lo_menu, $this->rendererOptions);
 
@@ -168,7 +183,6 @@ class MenuCell extends Cell {
 	public function renderList(array $data, StringTemplate $template): string {
 		$la_data = $data;
 
-		/** @noinspection PhpUnnecessaryLocalVariableInspection */
 		$lb_isPreview = $data['level'] === 1 && $this->isPreview() && ($la_data['menuConfig']['active'] ?? true) === false;
 		$la_data['isPreview'] = $lb_isPreview ? ' ' . Awyiss::PREVIEW_MODE_ELEMENT_CLASSNAME : '';
 
@@ -192,9 +206,27 @@ class MenuCell extends Cell {
 				'<label for="SubmenuTrigger-' . $la_data['id'] .  '" class="SubmenuTrigger-Label"></label>';
 		}
 
-		/** @noinspection PhpUnnecessaryLocalVariableInspection */
-		$lb_isPreview = $this->isPreview() && ($la_data['item']?->active ?? true) === false;
-		$la_data['isPreview'] = $lb_isPreview ? ' ' . Awyiss::PREVIEW_MODE_ELEMENT_CLASSNAME : '';
+		$la_data['isPreview'] = '';
+		if ($this->isPreview()) {
+			$lo_entity = $data['item']->getEntity();
+			$lb_active = $lo_entity->active ?? true;
+
+			$ld_now = new DateTime();
+			// If the item is active, but not published, it is not active
+			if (
+				$lb_active &&
+				(
+					($lo_entity->publicationStart && $lo_entity->publicationStart > $ld_now) ||
+					($lo_entity->publicationEnd && $lo_entity->publicationEnd < $ld_now)
+				)
+			) {
+				$lb_active = false;
+			}
+
+			if (!$lb_active) {
+				$la_data['isPreview'] = ' ' . Awyiss::PREVIEW_MODE_ELEMENT_CLASSNAME;
+			}
+		}
 
 		return $template->format('item', $la_data);
 	}
