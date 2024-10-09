@@ -9,6 +9,8 @@ use Awyiss\Utility\Form\FormRenderer;
 use Awyiss\View\Cell\Frontend\Trait\ContentElementTrait;
 use Cake\Http\Exception\RedirectException;
 use Cake\View\Cell;
+use Error;
+use Exception;
 
 
 /**
@@ -58,28 +60,43 @@ class FormCell extends Cell {
 
 
 	/**
-	 * Catch a redirect exception and redirect the user
-	 *
-	 * @param string|null $template
-	 * @return string
+	 * @inheritDoc
 	 */
-	public function render(?string $template = null): string {
+	protected function renderElement(Entity $entity, string $children): string {
+		// Not used in here.
+		return '';
+	}
+
+
+	/**
+	 * Catch the redirect exception and redirect the user
+	 *
+	 * @inheritDoc
+	 */
+	public function __toString(): string {
 		try {
-			return parent::render($template);
+			return $this->render();
 		}
 		catch (RedirectException $ex) {
 			// Redirects are handled by the middleware
 			header('Location: ' . $ex->getMessage(), true, $ex->getCode());
 			exit;
 		}
-	}
+		catch (Exception $ex) {
+			trigger_error(
+				sprintf('Could not render cell - %s [%s, line %d]', $ex->getMessage(), $ex->getFile(), $ex->getLine()),
+				E_USER_WARNING
+			);
 
-
-	/**
-	 * @inheritDoc
-	 */
-	protected function renderElement(Entity $entity, string $children): string {
-		// Not used in here.
-		return '';
+			return '';
+			/** @phpstan-ignore-next-line */
+		}
+		catch (Error $ex) {
+			throw new Error(
+				sprintf('Could not render cell - %s [%s, line %d]', $ex->getMessage(), $ex->getFile(), $ex->getLine()),
+				0,
+				$ex
+			);
+		}
 	}
 }
