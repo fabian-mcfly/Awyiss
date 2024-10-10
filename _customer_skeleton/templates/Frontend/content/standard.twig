@@ -32,14 +32,14 @@
 
 	{% if content.title %}
 		{% set tag = content.titleTag ?? 'div' %}
-		<{{ tag }} class="Title" id={{ content.title|ucparts(false) }}>
+		<{{ tag }} class="Title" id="{{ content.title|ucparts(false) }}">
 			{{ content.title|raw }}
 		</{{ tag }}>
 	{% endif %}
 
 	{% if content.subtitle %}
 		{% set tag = content.subtitleTag ?? 'div' %}
-		<{{ tag }} class="Subtitle" id={{ content.subtitle|ucparts(false) }}>
+		<{{ tag }} class="Subtitle" id="{{ content.subtitle|ucparts(false) }}">
 			{{ content.subtitle|raw }}
 		</{{ tag }}>
 	{% endif %}

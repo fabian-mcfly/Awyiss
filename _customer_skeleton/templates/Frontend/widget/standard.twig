@@ -28,14 +28,14 @@
 
 	{% if widget.title %}
 		{% set tag = widget.titleTag ?? 'div' %}
-		<{{ tag }} class="Title" id={{ widget.title|ucparts(false) }}>
+		<{{ tag }} class="Title" id="{{ widget.title|ucparts(false) }}">
 			{{ widget.title|raw }}
 		</{{ tag }}>
 	{% endif %}
 
 	{% if widget.subtitle %}
 		{% set tag = widget.subtitleTag ?? 'div' %}
-		<{{ tag }} class="Subtitle" id={{ widget.subtitle|ucparts(false) }}>
+		<{{ tag }} class="Subtitle" id="{{ widget.subtitle|ucparts(false) }}">
 			{{ widget.subtitle|raw }}
 		</{{ tag }}>
 	{% endif %}
