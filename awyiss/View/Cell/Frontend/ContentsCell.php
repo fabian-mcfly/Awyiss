@@ -107,7 +107,7 @@ class ContentsCell extends Cell {
 	 * @param bool $isPreview
 	 * @return void
 	 */
-	protected function addDuplicates(CollectionInterface $contents, bool $isPreview): void {
+	protected function addDuplicates(CollectionInterface $contents, bool $isPreview = false): void {
 		$lo_contents = $contents->listNested();
 
 		$la_duplicatingEntities = [];
