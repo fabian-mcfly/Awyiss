@@ -42,7 +42,10 @@
 						{{ FormHelper.control('title') }}
 					{% endblock %}
 					{% block formControl_Identifier %}
-						{{ FormHelper.control('identifier', {'data-autofill-from-title': 'true'}) }}
+						{{ FormHelper.control('identifier', {
+							readonly: datatable.id is not null,
+							'data-autofill-from-title': 'true',
+						}) }}
 					{% endblock %}
 
 					{% block fieldsetGeneralAttributes %}
