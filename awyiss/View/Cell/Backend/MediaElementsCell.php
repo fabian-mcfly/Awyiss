@@ -17,7 +17,11 @@ use RuntimeException;
 
 
 /**
- * Provides the backend menu with authorization check
+ * Shows the media elements assigned to an entity or its related entities,
+ * saved in `media_element_assignments` using the `display`-method.
+ *
+ * The `elementAssignments`-method is used to allow the user to
+ * assign new media elements to the entity.
  */
 class MediaElementsCell extends Cell {
 	use LocatorAwareTrait;
@@ -30,6 +34,22 @@ class MediaElementsCell extends Cell {
 
 
 	/**
+	 * Shows all media elements that are either
+	 * - assigned to the model (modelLevel) of the provided entity
+	 * - assigned to a related entity (entityLevel)
+	 *
+	 * `modelLevel`: The media elements are assigned to the model and are available for all records.
+	 * For example: generic data tables have their media elements assigned on the model level,
+	 * since the media elements are the same for all records.
+	 * Use case: a list of employees with a profile picture.
+	 * Adding or modifying employees will always use the same media elements.
+	 *
+	 * `entityLevel`: The media elements are assigned to the entity and are only available for this record.
+	 * For example: pages and contents have their media elements assigned on the entity level
+	 * of their assigned template.
+	 * Use case: a page with template "Standard" has no need for the media elements of template "News".
+	 * Selecting a different template will change the visible media elements.
+	 *
 	 * @param \Cake\Datasource\EntityInterface $entity
 	 * @return void
 	 * @throws \ReflectionException
@@ -104,6 +124,9 @@ class MediaElementsCell extends Cell {
 
 	/**
 	 * Builds the element assignments view
+	 *
+	 * Shows all media elements that are available for assignment,
+	 * as well as all already assigned media elements.
 	 *
 	 * @param \Cake\Datasource\EntityInterface $entity
 	 * @return void

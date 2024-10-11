@@ -23,6 +23,9 @@ class MediaElementAssignable {
 	public const MODEL_LEVEL = 2;
 
 
+	/**
+	 * @var int
+	 */
 	public int $level;
 
 
