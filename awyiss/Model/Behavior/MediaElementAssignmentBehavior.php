@@ -8,6 +8,7 @@ use Awyiss\Annotation\MediaElementAssignable;
 use Awyiss\Awyiss;
 use Awyiss\Model\Entity\MediaElementAssignment;
 use Awyiss\Model\Table;
+use Awyiss\Model\Table\DatatablesTable;
 use Awyiss\ORM\Behavior;
 use Awyiss\Utility\Inflector;
 use Cake\Datasource\EntityInterface;
@@ -74,7 +75,7 @@ class MediaElementAssignmentBehavior extends Behavior implements PropertyMarshal
 	public function initialize(array $config): void {
 		parent::initialize($config);
 
-		$this->_tableLocator = $this->getConfig('tableLocator');
+		$this->setTableLocator($this->getConfig('tableLocator'));
 
 		if (in_array($this->table()->getTable(), ['media_elements', 'media_element_assignments'])) {
 			return;
@@ -87,37 +88,56 @@ class MediaElementAssignmentBehavior extends Behavior implements PropertyMarshal
 			return;
 		}
 
-		$lo_reflection = new ReflectionClass($this->table());
+		if ($this->table() instanceof DatatablesTable) {
+			$this->setConfig('assignable', [
+				'entityLevel' => true,
+				'modelLevel' => false,
+			]);
 
-		$la_attributes = $lo_reflection->getAttributes(MediaElementAssignable::class);
-
-		if (!$la_attributes) {
-			return;
+			$this->table()->hasMany('MediaElementAssignments', [
+				'bindingKey' => 'identifier',
+				'cascadeCallbacks' => true,
+				'dependent' => true,
+				'foreignKey' => 'scope',
+				'propertyName' => 'media_element_assignments',
+				'saveStrategy' => 'replace',
+				'strategy' => $this->getConfig('strategy'),
+			]);
 		}
+		else {
+			$lo_reflection = new ReflectionClass($this->table());
 
-		$lo_attributeInstance = $la_attributes[0]->newInstance();
+			$la_attributes = $lo_reflection->getAttributes(MediaElementAssignable::class);
 
-		$this->setConfig('assignable', [
-			'entityLevel' => (bool)($lo_attributeInstance->level & MediaElementAssignable::ENTITY_LEVEL),
-			'modelLevel' => (bool)($lo_attributeInstance->level & MediaElementAssignable::MODEL_LEVEL),
-		]);
+			if (!$la_attributes) {
+				return;
+			}
+
+			$lo_attributeInstance = $la_attributes[0]->newInstance();
+
+			$this->setConfig('assignable', [
+				'entityLevel' => (bool)($lo_attributeInstance->level & MediaElementAssignable::ENTITY_LEVEL),
+				'modelLevel' => (bool)($lo_attributeInstance->level & MediaElementAssignable::MODEL_LEVEL),
+			]);
+
+
+			$this->table()->hasMany('MediaElementAssignments', [
+				'conditions' => [
+					'MediaElementAssignments.scope' => $this->getScope($this->table()),
+				],
+				'cascadeCallbacks' => true,
+				'dependent' => true,
+				'foreignKey' => 'foreign_key',
+				'propertyName' => 'media_element_assignments',
+				'saveStrategy' => 'replace',
+				'strategy' => $this->getConfig('strategy'),
+			]);
+		}
 
 		$this->assignmentsTable = $this->getTableLocator()->get('MediaElementAssignments', ['allowFallbackClass' => false]);
 
 		/** @var \Awyiss\Model\Entity $ls_entityClass */
-		$ls_entityClass = $this->_table->getEntityClass();
-
-		$this->_table->hasMany('MediaElementAssignments', [
-			'conditions' => [
-				'MediaElementAssignments.scope' => $this->getScope($this->table()),
-			],
-			'cascadeCallbacks' => true,
-			'dependent' => true,
-			'foreignKey' => 'foreign_key',
-			'propertyName' => 'media_element_assignments',
-			'saveStrategy' => 'replace',
-			'strategy' => $this->getConfig('strategy'),
-		]);
+		$ls_entityClass = $this->table()->getEntityClass();
 
 		$ls_entityClass::addFieldMapping('media_element_assignments', 'mediaElementAssignments');
 	}

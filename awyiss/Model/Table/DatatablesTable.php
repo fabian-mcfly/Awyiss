@@ -171,7 +171,7 @@ class DatatablesTable extends Table {
 	 */
 	public function findAllAndCache(): ResultSetInterface {
 		if (!isset(static::$cachedDatatables)) {
-			static::$cachedDatatables = static::find('translations')->all();
+			static::$cachedDatatables = static::find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->all();
 		}
 
 
