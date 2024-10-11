@@ -21,6 +21,7 @@ class PagesNotFoundStatusCell extends Cell {
 	 * Generate the list of new entries and load templates/Backend/cell/PagesNotFound/status
 	 *
 	 * @return void
+	 * @throws \ReflectionException
 	 */
 	public function display(): void {
 		// Get the user's identity and session
@@ -70,6 +71,11 @@ class PagesNotFoundStatusCell extends Cell {
 	protected function _getIdentity(): IdentityPermissionsInterface {
 		/** @var IdentityPermissionsInterface|\Awyiss\Model\Entity\User $lo_identity */
 		$lo_identity = $this->request->getAttribute('identity');
+
+		if (!$lo_identity) {
+			throw new RuntimeException('No identity found in the request.');
+		}
+
 		if (!($lo_identity instanceof IdentityPermissionsInterface)) {
 			throw new RuntimeException(sprintf('Object `%s` does not implement `%s`', get_class($lo_identity), IdentityPermissionsInterface::class));
 		}
