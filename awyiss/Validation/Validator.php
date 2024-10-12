@@ -11,10 +11,11 @@ use RuntimeException;
 
 
 /**
- * {@inheritDoc}
+ * Extended version that makes use of the `i18nDomain`-property to make
+ * validation errors translatable per scope/domain/model.
+ * Also transforms all field names to underscored format.
  *
- * Extended version that makes use of the `i18nDomain`-property to make validation errors translatable
- * per scope/domain/model.
+ * @inheritDoc
  */
 class Validator extends BaseValidator {
 	protected string $i18nDomain = '';
@@ -31,7 +32,6 @@ class Validator extends BaseValidator {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function validate(array $data, bool $newRecord = true): array {
 		$la_data = $this->underscoreFields($data, true);
@@ -43,7 +43,6 @@ class Validator extends BaseValidator {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function allowEmptyFor(string $field, ?int $flags = null, $when = true, ?string $message = null): static {
 		$ls_field = $this->underscoreField($field);
@@ -56,14 +55,13 @@ class Validator extends BaseValidator {
 	/**
 	 * @inheritDoc
 	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
-	 * @noinspection PhpHierarchyChecksInspection <-- WHY?
+	 * @noinspection PhpHierarchyChecksInspection (CakePHP marks the `name` argument as optional` which is not the case)
 	 */
 	public function field(string $name, ?ValidationSet $validationSet = null): ValidationSet {
 		$ls_name = $this->underscoreField($name);
 
 		if (empty($this->_fields[ $ls_name ])) {
-			$lo_validationSet = $validationSet ?: new ValidationSet();
-			$this->_fields[ $ls_name ] = $lo_validationSet;
+			$this->_fields[ $ls_name ] = $validationSet ?? new ValidationSet();
 
 			//Allow an empty string per default. Makes much more sense
 			$this->allowEmptyString($name);
@@ -76,7 +74,6 @@ class Validator extends BaseValidator {
 
 	/**
 	 * @inheritDoc
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function hasField(string $name): bool {
 		$ls_name = $this->underscoreField($name);
@@ -87,9 +84,25 @@ class Validator extends BaseValidator {
 
 
 	/**
+	 * @inheritDoc
+	 */
+	public function remove(string $field, ?string $rule = null): static {
+		if ($rule === null) {
+			$ls_field = $this->underscoreField($field);
+
+			unset($this->_fields[ $ls_field ]);
+		}
+		else {
+			$this->field($field)->remove($rule);
+		}
+
+		return $this;
+	}
+
+
+	/**
 	 * @param string $field
 	 * @return string|null
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function getRequiredMessage(string $field): ?string {
 		$ls_field = $this->underscoreField($field);
@@ -109,7 +122,6 @@ class Validator extends BaseValidator {
 	/**
 	 * @param string $field
 	 * @return string|null
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	public function getNotEmptyMessage(string $field): ?string {
 		$ls_field = $this->underscoreField($field);
@@ -133,12 +145,21 @@ class Validator extends BaseValidator {
 
 
 	/**
+	 * Re-implemented translate the passed arguments for the error message.
+	 * This way, validation messages from rules like this receive the
+	 * translated arguments:
+	 * ```
+	 * $validator->add('password', [
+	 * 	'compareWith' => ['rule' => ['compareWith', 'password_confirm']],
+	 * ]);
+	 * ```
+	 * Result: `This value does not match the field "Confirm password"`
+	 *
 	 * @param string $field
 	 * @param ValidationSet $rules
 	 * @param array $data
 	 * @param bool $newRecord
 	 * @return array
-	 * @noinspection PhpParameterNameChangedDuringInheritanceInspection
 	 */
 	protected function _processRules(string $field, ValidationSet $rules, array $data, bool $newRecord): array {
 		$la_errors = [];
@@ -178,21 +199,20 @@ class Validator extends BaseValidator {
 			$lx_pass = $lo_rule->get('pass')[0] ?? [];
 			if ($lx_pass) {
 				if (in_array($ls_name, ['equalTo', 'sameAs', 'notSameAs', 'compareWith', 'compareFields'])) {
-					//No domain fallback here, since it certainly is a field inside the domain, not something generic
-					$lx_pass = __dx($this->i18nDomain, $ls_name, Inflector::underscore($lx_pass));
+					$lx_pass = __d($this->i18nDomain, Inflector::underscore($lx_pass));
 				}
 				elseif ($ls_name == 'dateTime') {
-					$lx_pass = $lx_pass[0] ?? 'Ymd';
+					$lx_pass = is_string($lx_pass) ? $lx_pass : ($lx_pass[0] ?? 'Ymd');
 				}
 				elseif ($ls_name == 'inList') {
-					$lx_pass = implode(',', $lx_pass);
+					$lx_pass = implode(', ', $lx_pass);
 				}
 				elseif (!is_scalar($lx_pass)) {
 					throw new RuntimeException(sprintf('Missing translation informations for `%s`, passed arguments: `%s`', $ls_name, print_r($lx_pass, true)));
 				}
-				else {
-					//dd($ls_name, $lx_pass, $lo_rule->get('pass'), __FILE__, __LINE__);
-				}
+				//else {
+				//	dd($ls_name, $lx_pass, $lo_rule->get('pass'), __FILE__, __LINE__);
+				//}
 				$la_pass[ $ls_name ] = $lx_pass;
 			}
 
