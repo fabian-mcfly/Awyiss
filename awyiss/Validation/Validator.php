@@ -18,15 +18,28 @@ use RuntimeException;
  * @inheritDoc
  */
 class Validator extends BaseValidator {
+	/**
+	 * @var string
+	 */
 	protected string $i18nDomain = '';
 
 
 	/**
-	 * @param string $domain
-	 * @return void
+	 * @return string
 	 */
-	public function setI18nDomain(string $domain): void {
+	public function getI18nDomain(): string {
+		return $this->i18nDomain;
+	}
+
+
+	/**
+	 * @param string $domain
+	 * @return static
+	 */
+	public function setI18nDomain(string $domain): static {
 		$this->i18nDomain = Inflector::underscore($domain);
+
+		return $this;
 	}
 
 

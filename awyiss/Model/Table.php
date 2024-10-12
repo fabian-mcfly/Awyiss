@@ -504,8 +504,7 @@ class Table extends BaseTable {
 	 */
 	public function validationDefault(BaseValidator $validator): BaseValidator {
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		$validator->setI18nDomain($this->getI18nDomain());
-		$validator->setStopOnFailure();
+		$validator->setI18nDomain($this->getI18nDomain())->setStopOnFailure();
 
 
 		return $validator;
