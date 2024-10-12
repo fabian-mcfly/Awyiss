@@ -15,6 +15,9 @@ msgid "form_has_errors"
 msgstr "<strong>Das Formular enthält Fehler</strong><br>"
 "Bitte korrigieren Sie diese und versuchen Sie es erneut."
 
+msgid "error_min_length"
+msgstr "Dieser Wert ist zu kurz. Es sind mindestens {0} Zeichen erforderlich"
+
 msgid "error_max_length"
 msgstr "Dieser Wert ist zu lang. Es sind maximal {0} Zeichen erlaubt"
 
@@ -233,3 +236,24 @@ msgstr "Dieser Wert muss eine Nummer sein"
 
 msgid "error_media_exists"
 msgstr "Diese Datei existiert nicht"
+
+msgid "error_equal_to"
+msgstr "Dieser Wert stimmt nicht mit „{0}“ überein"
+
+msgid "error_same_as"
+msgstr "Dieser Wert stimmt nicht mit „{0}“ überein"
+
+msgid "error_not_same_as"
+msgstr "Dieser Wert stimmt mit „{0}“ überein"
+
+msgid "error_compare_with"
+msgstr "Dieser Wert stimmt nicht mit Feld „{0}“ überein"
+
+msgid "error_compare_fields"
+msgstr "Dieser Wert stimmt nicht mit Feld „{0}“ überein"
+
+msgid "error_in_list"
+msgstr "Der Wert muss einer der folgenden sein: \"{0}\""
+
+msgid "error_date_time"
+msgstr "Der Wert muss ein gültiges Datum und eine gültige Uhrzeit sein (Format „{0}“)"

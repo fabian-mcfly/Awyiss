@@ -11,6 +11,9 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
+msgid "error_min_length"
+msgstr "This value is too short. Min. {0} characters are required"
+
 msgid "error_max_length"
 msgstr "This value is too long. Max. {0} characters are allowed"
 
@@ -229,3 +232,24 @@ msgstr "This value must be an number"
 
 msgid "error_media_exists"
 msgstr "This media does not exist"
+
+msgid "error_equal_to"
+msgstr "This value does not match \"{0}\""
+
+msgid "error_same_as"
+msgstr "This value matches \"{0}\""
+
+msgid "error_not_same_as"
+msgstr "This value does not match \"{0}\""
+
+msgid "error_compare_with"
+msgstr "This value does not match the field \"{0}\""
+
+msgid "error_compare_fields"
+msgstr "This value does not match the field \"{0}\""
+
+msgid "error_in_list"
+msgstr "The value must be one of the following: \"{0}\""
+
+msgid "error_date_time"
+msgstr "The value must be a valid date and time (Format \"{0}\")"
