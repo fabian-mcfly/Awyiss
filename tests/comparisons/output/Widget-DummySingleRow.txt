@@ -1,0 +1,12 @@
+<div class="ContentRow">
+<div class="WidgetElement Template-Standard Column-50 Widget-DummySingleRow" id="Widget14">
+<div class="Text">
+<p>Element 1</p>
+</div>
+</div>
+<div class="WidgetElement Template-Standard Column-50 Widget-DummySingleRow" id="Widget13">
+<div class="Text">
+<p>Element 2</p>
+</div>
+</div>
+</div>

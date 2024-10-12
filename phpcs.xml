@@ -18,8 +18,15 @@
 	<exclude-pattern>./awyiss/config/*</exclude-pattern>
 	<exclude-pattern>./awyiss/templates/*</exclude-pattern>
 	<exclude-pattern>./tmp/*</exclude-pattern>
-	<exclude-pattern>./tests/*</exclude-pattern>
+	<exclude-pattern>./tests/bootstrap.php</exclude-pattern>
 	<exclude-pattern>./vendor/*</exclude-pattern>
+
+	<rule ref="PSR1.Classes.ClassDeclaration.MissingNamespace">
+		<exclude-pattern>*/tests/comparisons/config/Migrations/*</exclude-pattern>
+		<exclude-pattern>*/tests/comparisons/config/Seeds/*</exclude-pattern>
+		<exclude-pattern>*/tests/customer/config/Migrations/*</exclude-pattern>
+		<exclude-pattern>*/tests/customer/config/Seeds/*</exclude-pattern>
+	</rule>
 
 	<rule ref="PSR12">
 		<exclude name="Generic.Files.LineLength"/>
@@ -71,10 +78,16 @@
 
 	<rule ref="Generic.PHP.DeprecatedFunctions"/>
 	<rule ref="Generic.PHP.ForbiddenFunctions"/>
+	<rule ref="Generic.PHP.LowerCaseConstant.Found">
+		<exclude-pattern>*/tests/comparisons/config/Seeds/*</exclude-pattern>
+	</rule>
 	<rule ref="Generic.PHP.NoSilencedErrors"/>
 	<rule ref="Generic.PHP.RequireStrictTypes"/>
 
-	<rule ref="Generic.WhiteSpace.DisallowSpaceIndent"/>
+	<rule ref="Generic.WhiteSpace.DisallowSpaceIndent">
+		<exclude-pattern>*/tests/comparisons/config/Migrations/*</exclude-pattern>
+		<exclude-pattern>*/tests/comparisons/config/Seeds/*</exclude-pattern>
+	</rule>
 	<rule ref="Generic.WhiteSpace.ScopeIndent">
 		<properties>
 			<property name="tabIndent" value="true"/>
@@ -88,6 +101,9 @@
 	<rule ref="Squiz.Classes.ClassFileName"/>
 	<rule ref="Squiz.Classes.ClassFileName.NoMatch">
 		<exclude-pattern>*/config/Migrations/*</exclude-pattern>
+		<exclude-pattern>*/tests/customer/Attribute/AttributeOptionsCollection/_IgnoredAttributeOptionsCollection.php</exclude-pattern>
+		<exclude-pattern>*/tests/customer/Authorization/Policy/Backend/_IgnoredTestPolicy.php</exclude-pattern>
+		<exclude-pattern>*/tests/customer/Configuration/ConfigOptions/_IgnoredConfigOptions.php</exclude-pattern>
 	</rule>
 	<rule ref="Squiz.Classes.LowercaseClassKeywords"/>
 	<rule ref="Squiz.Commenting.DocCommentAlignment"/>
@@ -142,6 +158,7 @@
 			<property name="linesCountBetweenAnnotationsGroups" value="0"/>
 			<property name="linesCountAfterLastContent" value="0"/>
 		</properties>
+		<exclude-pattern>*/tests/comparisons/config/Migrations/*</exclude-pattern>
 	</rule>
 	<rule ref="SlevomatCodingStandard.Commenting.EmptyComment"/>
 	<rule ref="SlevomatCodingStandard.Commenting.InlineDocCommentDeclaration">
@@ -165,6 +182,8 @@
 			<property name="allowFallbackGlobalFunctions" type="boolean" value="true"/>
 			<property name="allowFallbackGlobalConstants" type="boolean" value="true"/>
 		</properties>
+		<exclude-pattern>*/tests/comparisons/config/Seeds/*</exclude-pattern>
+		<exclude-pattern>*/tests/customer/config/Seeds/*</exclude-pattern>
 	</rule>
 	<rule ref="SlevomatCodingStandard.Namespaces.UnusedUses"/>
 	<rule ref="SlevomatCodingStandard.Namespaces.UseDoesNotStartWithBackslash"/>
@@ -175,6 +194,8 @@
 			<property name="linesCountAfterLastUse" value="2"/>
 		</properties>
 		<exclude-pattern>*/templates/*</exclude-pattern>
+		<exclude-pattern>*/tests/comparisons/config/Seeds/*</exclude-pattern>
+		<exclude-pattern>*/tests/customer/config/Seeds/*</exclude-pattern>
 	</rule>
 	<rule ref="SlevomatCodingStandard.PHP.ShortList"/>
 	<rule ref="SlevomatCodingStandard.PHP.TypeCast"/>

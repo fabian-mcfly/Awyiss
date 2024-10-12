@@ -1,0 +1,9 @@
+msgid "error_min_length"
+msgstr "The field must be at least {0} characters long."
+
+msgid "error_in_list"
+msgstr "The field must be one of the following: \"{0}\"."
+
+msgid "error_date_time"
+msgstr "The field must be a valid date and time ({0})."
+

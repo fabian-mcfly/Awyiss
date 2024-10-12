@@ -1,0 +1,57 @@
+{#
+@var content \Awyiss\Model\Entity\Content
+@var children string
+@var page \Awyiss\Model\Entity\Page
+@var baseUrl string
+@var currentLanguage \Awyiss\Model\Entity\Language
+@var currentPath string
+@var currentUrl string
+@var folder string
+@var languages \Awyiss\Model\Entity\Language[]
+@var languageShortcode string
+@var _view \Awyiss\View\FrontendView
+@var AssetHelper \Awyiss\View\Helper\AssetHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+@var HtmlHelper \Cake\View\Helper\HtmlHelper
+@var LocaleHelper \Awyiss\View\Helper\LocaleHelper
+@var MediaHelper \Awyiss\View\Helper\MediaHelper
+@var UrlHelper \Awyiss\View\Helper\UrlHelper
+@var TimeHelper \Cake\View\Helper\TimeHelper
+@var mediaRenderOptions \Awyiss\Utility\Media\MediaRenderOptions
+
+// In case you need to set a class for the row, you can do it like this:
+{%- do _view.setRowClass('FlexRow') -%}
+
+#}
+
+<div class="{{ content.cssClass }}" {{ content.data|data_attr|raw }} id="Content{{ content.id }}">
+	{% if content.title %}
+		{% set tag = content.titleTag ?? 'div' %}
+		<{{ tag }} class="Title" id="{{ content.title|ucparts(false) }}">
+			{{ content.title|raw }}
+		</{{ tag }}>
+	{% endif %}
+
+	{% if content.subtitle %}
+		{% set tag = content.subtitleTag ?? 'div' %}
+		<{{ tag }} class="Subtitle" id="{{ content.subtitle|ucparts(false) }}">
+			{{ content.subtitle|raw }}
+		</{{ tag }}>
+	{% endif %}
+
+	{% if content.text %}
+		<div class="Text">
+			{{ content.text|raw }}
+		</div>
+	{% endif %}
+
+	{% if content.formId %}
+		{{ form(content.formId) }}
+	{% endif %}
+
+	{% if children %}
+		<div class="Children">
+			{{ children|raw }}
+		</div>
+	{% endif %}
+</div>

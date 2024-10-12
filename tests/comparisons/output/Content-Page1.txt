@@ -1,0 +1,177 @@
+<div id="ContentArea">
+<section class="ContentElement Template-Section Column-100" id="Content1">
+<div class="ContentRow">
+<div class="ContentElement Template-Standard Column-100" id="Content9">
+<h1 class="Title" id="H1Überschrift">H1-Überschrift</h1>
+<div class="Subtitle" id="AberFarbeändernKannIchNicht.NurHintergrund">Aber Farbe ändern kann ich nicht. Nur Hintergrund</div>
+</div>
+</div>
+<div class="ContentRow">
+<div class="ContentElement Template-Standard Column-50" id="Content10">
+ColumnWidth of the content 10: 50 <div class="Text">
+<h2><a href="de/maenner/fussball/body" target="_blank" rel="noopener">Testuntertitel<sub>3</sub>
+mit Verlinkung</a></h2>
+<ol>
+<li><strong>Lorem&sup2; ipsum&sup3; dolor sit amet,</strong>
+consectetur adipisicing elit. Consequatur in quia repellat sequi tempora? Accusantium amet architecto consequuntur dicta fuga impedit in nesciunt, perspiciatis porro provident reiciendis, similique tenetur voluptatum. Beatae culpa ex molestiae nobis nulla quidem rem, voluptas. Atque doloribus enim harum incidunt laudantium quos repellat sapiente veniam. Commodi maiores, nobis! <strong><span class="Uppercase">Aperiam, atque consectetur eaque eos praesentium quam vero.</span></strong>
+Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consequatur in quia repellat sequi tempora? Accusantium amet architecto consequuntur dicta fuga impedit in nesciunt, perspiciatis porro provident reiciendis, similique tenetur voluptatum beatae cul.</li>
+<li><strong>Lorem ipsum dolor sit amet,</strong>
+consectetur adipisicing elit. Consequatur in quia repellat sequi tempora? Accusantium amet architecto consequuntur dicta fuga impedit in nesciunt, perspiciatis porro provident reiciendis, similique tenetur voluptatum. Beatae culpa ex molestiae nobis nulla quidem rem, voluptas. Atque doloribus enim harum incidunt laudantium quos repellat sapiente veniam. Commodi maiores, nobis! Aperiam, atque consectetur eaque eos praesentium quam vero.</li>
+<li><strong>Lorem ipsum dolor sit amet,</strong>
+consectetur adipisicing elit. Consequatur in quia repellat sequi tempora? Accusantium amet architecto consequuntur dicta fuga impedit in nesciunt, perspiciatis porro provident reiciendis, similique tenetur voluptatum.</li>
+</ol>
+</div>
+<div class="Children">
+<div class="ContentRow">
+<div class="ContentElement Template-Standard Column-80" id="Content12">
+ColumnWidth of the content 12: 40 </div>
+</div>
+</div>
+</div>
+<div class="ContentElement Template-Standard Column-50" id="Content11">
+<h3 class="Title" id="BeataeCulpaExMolestiaeNobisNullaQuidemRem,Voluptas">Beatae culpa ex molestiae nobis nulla quidem rem, voluptas</h3>
+<div class="Text">
+<p><strong>Atque doloribus enim harum incidunt laudantium quos repellat sapiente veniam. Commodi maiores, nobis!</strong>
+Aperiam, atque consectetur eaque eos praesentium quam vero. Atque doloribus enim harum incidunt laudantium quos repellat sapiente veniam. Commodi maiores, nobis! Aperiam, atque consectetur eaque eos praesentium quam vero.<br>Atque doloribus enim harum incidunt laudantium quos repellat sapiente veniam. Commodi maiores, nobis! Aperiam, atque consectetur eaque eos praesentium quam vero.</p>
+<hr>
+<p>Atque doloribus enim harum incidunt laudantium quos repellat sapiente veniam. <a href="https://www.youtube.com/watch?v=BoFUI1Xv4Dw" target="_blank" rel="noopener">Commodi maiores, nobis!</a>
+Aperiam, atque consectetur eaque eos praesentium quam vero. Atque doloribus enim harum incidunt laudantium quos repellat sapiente veniam. Commodi maiores, nobis! Aperiam, atque consectetur eaque eos praesentium quam vero.</p>
+</div>
+<div class="Children">
+<div class="ContentRow">
+<div class="ContentElement Template-Standard Column-100" id="Content13">
+<div class="Text">
+<table>
+<thead>
+<tr>
+<th scope="col">&nbsp;</th>
+<th style="text-align: right;" scope="col">Preisgruppe 1</th>
+<th style="text-align: right;" scope="col">Preisgruppe 2</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Montag - Freitag</td>
+<td style="text-align: right;">99,-</td>
+<td style="text-align: right;">82,-</td>
+</tr>
+<tr>
+<td>Samstag &amp; Sonntag</td>
+<td style="text-align: right;">123,-</td>
+<td style="text-align: right;">118,.</td>
+</tr>
+</tbody>
+</table>
+<p style="text-align: center;"><a class="Button" href="https://cms.de/">Jetzt buchen</a></p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="ContentRow">
+<div class="ContentElement Template-Standard Column-60 ColumnIndent-20" id="Content14">
+<div class="Text">
+<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid, animi commodi cum dolor enim et expedita impedit libero magni, modi nulla, quae quia quibusdam quis rem suscipit tempora vero voluptatem?</p>
+<blockquote>
+<p>Aliquam consectetur delectus maiores voluptates. Ad aliquid commodi ea, est impedit incidunt ipsam iusto laudantium maxime modi mollitia nostrum odio officia optio pariatur perspiciatis quo, sint tenetur ullam unde voluptatibus?</p>
+</blockquote>
+<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid, animi commodi cum dolor enim et expedita impedit libero magni, modi nulla, quae quia quibusdam quis rem suscipit tempora vero voluptatem?</p>
+<ul>
+<li>Lorem ipsum dolor sit amet</li>
+<li>consectetur adipisicing elit</li>
+<li>Aliquid, animi commodi cum dolor enim et expedita impedit libero magni</li>
+<li>modi nulla, quae quia quibusdam quis rem suscipit tempora vero voluptatem?</li>
+</ul>
+</div>
+<div class="Children">
+<div class="ContentRow">
+<div class="ContentElement Template-Standard Column-100" id="Content15">
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="ContentElement Template-Section Column-100" id="Content3">
+</section>
+<section class="ContentElement Template-Section Column-100" id="Content4">
+<div class="ContentRow">
+<div class="ContentElement Template-Standard Column-100" id="Content17">
+</div>
+</div>
+</section>
+<section class="ContentElement Template-Section Column-100" id="Content5">
+<div class="ContentRow">
+<div class="ContentElement Template-Standard Column-100" id="Content18">
+<div class="Image">
+<a href="../awyiss/Command/Media/TestFiles/logo-awyiss.pdf" target="_blank" >
+<picture>
+<source media="(max-width:320px)" data-srcset="_resized/dummypath/logo-awyiss-[w320].webp" type="image/webp">
+<source media="(max-width:480px)" data-srcset="_resized/dummypath/logo-awyiss-[w480].webp" type="image/webp">
+<source media="(max-width:640px)" data-srcset="_resized/dummypath/logo-awyiss-[w640].webp" type="image/webp">
+<source media="(max-width:768px)" data-srcset="_resized/dummypath/logo-awyiss-[w768].webp" type="image/webp">
+<source media="(max-width:1024px)" data-srcset="_resized/dummypath/logo-awyiss-[w1024].webp" type="image/webp">
+<source media="(max-width:1280px)" data-srcset="../awyiss/Command/Media/TestFiles/_resized/logo-awyiss-[w1280].webp" type="image/webp">
+<img data-src="_resized/dummypath/logo-awyiss-[w1440].webp" alt="logo-awyiss.png" id="Image-8cbb93958262e54" width="1440" height="810" class="Lazyload">
+<noscript><img src="_resized/dummypath/logo-awyiss-[w1440].webp" alt="logo-awyiss.png" id="Image-8cbb93958262e54-NoScript" width="1440" height="810"></noscript>
+<style>#Image-8cbb93958262e54::before { --imageAspectRatio: 1.78; }</style>
+</picture>
+</a>
+</div>
+<div class="Text">
+<h2>Zwischen&uuml;berschrift (h2) mit<br><span class="Textcolor-Contrast">integriertem Zeilenumbruch.</span><br><span class="Textcolor-Contrast">In Farbe.</span></h2>
+</div>
+</div>
+</div>
+<div class="ContentRow">
+<div class="ContentElement Template-Standard Column-33" id="Content20">
+</div>
+<div class="ContentElement Template-Standard Column-67" id="Content19">
+<h3 class="Title" id="Testtitel">Testtitel</h3>
+<h4 class="Subtitle" id="Testsubtitel">Testsubtitel</h4>
+<div class="Text">
+<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consequatur in quia repellat sequi tempora? Accusantium amet architecto consequuntur dicta fuga impedit in nesciunt, perspiciatis porro provident reiciendis, similique tenetur voluptatum.</p>
+<p>Beatae culpa ex molestiae nobis nulla quidem rem, voluptas. Atque doloribus enim harum incidunt laudantium quos repellat sapiente veniam. Commodi maiores, nobis! Aperiam, atque consectetur eaque eos praesentium quam vero.</p>
+</div>
+</div>
+</div>
+</section>
+<section class="ContentElement Template-Section Column-100" id="Content6">
+<div class="ContentRow">
+<div class="ContentElement Template-Standard Column-33" id="Content21">
+<h3 class="Title" id="Block#1">Block #1</h3>
+<div class="Text">
+<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid, animi commodi cum dolor enim et expedita impedit libero magni, modi nulla, quae quia quibusdam quis rem suscipit tempora vero voluptatem?</p>
+<p>Aliquam consectetur delectus maiores voluptates. Ad aliquid commodi ea, est impedit incidunt ipsam iusto laudantium maxime modi mollitia nostrum odio officia optio pariatur perspiciatis quo, sint tenetur ullam unde voluptatibus?</p>
+</div>
+</div>
+<div class="ContentElement Template-Standard Column-33" id="Content22">
+<h3 class="Title" id="Block#2">Block #2</h3>
+<div class="Text">
+<p><strong>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid, animi commodi cum dolor enim et expedita impedit libero magni, modi nulla, quae quia quibusdam quis rem suscipit tempora vero voluptatem?</strong></p>
+<p>Aliquam consectetur delectus maiores voluptates. Ad aliquid commodi ea, est impedit incidunt ipsam iusto laudantium maxime modi mollitia nostrum odio officia optio pariatur perspiciatis quo, sint tenetur ullam unde voluptatibus?</p>
+</div>
+</div>
+<div class="ContentElement Template-Standard Column-33" id="Content23">
+<h3 class="Title" id="Block#3">Block #3</h3>
+<div class="Text">
+<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid, animi commodi cum dolor enim et expedita impedit libero magni, modi nulla, quae quia quibusdam quis rem suscipit tempora vero voluptatem?</p>
+<p>Aliquam consectetur delectus maiores voluptates. Ad aliquid commodi ea, est impedit incidunt ipsam iusto laudantium maxime modi mollitia nostrum odio officia optio pariatur perspiciatis quo, sint tenetur ullam unde voluptatibus?</p>
+</div>
+</div>
+</div>
+</section>
+<section class="ContentElement Template-Section Column-100" id="Content7">
+<div class="ContentRow">
+<div class="ContentElement Template-Standard Column-60 ColumnIndent-20" id="Content24">
+<div class="Text">
+<h2 class="FontAlternative">Spezielle Headline (h2),</h2>
+<h2>direkt gefolgt von weiterer h2 (Nogo!)</h2>
+<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid, animi commodi cum dolor enim et expedita impedit libero magni, modi nulla, quae quia quibusdam quis rem suscipit tempora vero voluptatem?</p>
+<p>Aliquam consectetur delectus maiores voluptates. Ad aliquid commodi ea, est impedit incidunt ipsam iusto laudantium maxime modi mollitia nostrum odio officia optio pariatur perspiciatis quo, sint tenetur ullam unde voluptatibus?</p>
+</div>
+</div>
+</div>
+</section>
+</div>

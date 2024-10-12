@@ -5,6 +5,7 @@ use Awyiss\Awyiss;
 use Cake\Cache\Engine\FileEngine;
 use Cake\Database\Connection;
 use Cake\Database\Driver\Mysql;
+use Cake\Database\Driver\Sqlite;
 use Cake\Error\Renderer\WebExceptionRenderer;
 use Cake\Log\Engine\FileLog;
 use Cake\Mailer\Transport\MailTransport;
@@ -125,8 +126,8 @@ return [
 		'test' => [
 			'cacheMetadata' => true,
 			'className' => Connection::class,
-			'driver' => Mysql::class,
-			'flags' => [],
+			'database' => TMP . 'awyiss_test.sqlite',
+			'driver' => Sqlite::class,
 			'log' => false,
 			'persistent' => false,
 			'quoteIdentifiers' => false,
