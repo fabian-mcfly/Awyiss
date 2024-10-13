@@ -3,50 +3,142 @@
 @var _view \Awyiss\View\BackendView
 #}
 
-{% extends '@Backend/element/overview/overview_paginated_list.twig' %}
+{% block tableOverview %}
+	<table class="Overview-Table">
+		{% block tableOverviewHead %}
+			<thead>
+				{% block tableOverviewHeadRow %}
+					<tr>
+						{% block tableOverviewHeadRowInner %}
+							{% block tableOverviewHeaderUsergroupCheckbox %}
+								<th class="TableHeader-UsergroupCheckbox"></th>
+							{% endblock %}
 
-{% block tableOverviewHeaderAuditInfo %}{% endblock %}
+							{% block tableOverviewHeaderId %}
+								<th class="TableHeader-Id">
+									{{ __df('usergroups', 'system', 'id') }}
+								</th>
+							{% endblock %}
 
-{% block tableOverviewHeadRowInner %}
-	<th class="TableHeader-UsergroupCheckbox"></th>
-	{{ parent() }}
-{% endblock %}
+							{% block tableOverviewHeaderTitle %}
+								<th class="TableHeader-Title">
+									{{ __df('usergroups', 'system', 'title') }}
+								</th>
+							{% endblock %}
 
-{% block tableOverviewHeaderDisplayedFields %}
-	{% for field in config.Awyiss.Usergroups.Backend.overview.displayedFields %}
-		{% block tableOverviewHeaderDisplayedField %}
-			{{ parent() }}
+							{% block tableOverviewHeaderDefaultFields %}{% endblock %}
+
+							{% block tableOverviewHeaderDisplayedFields %}
+								{% for field in localConfig.overview.displayedFields %}
+									{% block tableOverviewHeaderDisplayedField %}
+										{% if field starts with 'attributes.' %}
+											{% set field = field|slice(11)|underscore %}
+											<th class="TableHeader-{{ field|camelize }}">
+												{{ attributes[field].label }}
+											</th>
+										{% else %}
+											{% set field = field|underscore %}
+
+											{% if field ends with '_id' and field != 'parent_id' %}
+												{% set associationName = field|slice(0, -3) %}
+												<th class="TableHeader-{{ field|camelize }}">
+													{{ __df('usergroups', 'system', field) }}
+												</th>
+											{% else %}
+												<th class="TableHeader-{{ field|camelize }}">
+													{{ __df('usergroups', 'system', field) }}
+												</th>
+											{% endif %}
+										{% endif %}
+									{% endblock %}
+								{% endfor %}
+							{% endblock %}
+						{% endblock %}
+					</tr>
+				{% endblock %}
+			</thead>
 		{% endblock %}
-	{% endfor %}
-{% endblock %}
+		{% block tableOverviewBody %}
+			<tbody>
+				{# @var usergroup \Awyiss\Model\Entity\Usergroup #}
+				{% for usergroup in usergroups %}
+					{% block tableOverviewBodyRow %}
+						<tr
+							class="
+								{%- if usergroup.active is defined and usergroup.active == false %} Inactive{% endif -%}
+								{%- if usergroup.isPublished() is same as false %} NotPublished{% endif %}
+							">
 
-{% block tableOverviewHeaderActions %}{% endblock %}
+							{% block tableOverviewBodyRowInner %}
+								{% block tableOverviewCellUsergroupCheckbox %}
+									<td class="TableCell-UsergroupCheckbox">
+										{{ FormHelper.control('usergroups._ids.' ~ usergroup.id, {
+											hiddenField: false,
+											type: 'checkbox',
+											value: usergroup.id,
+											label: '',
+											checked: usergroup.id in (user.usergroups)|column('id'),
+										}) }}
+									</td>
+								{% endblock %}
 
-{% block tableOverviewCellAuditInfo %}{% endblock %}
+								{% block tableOverviewCellId %}
+									<td class="TableCell-Id">{{ usergroup.id }}</td>
+								{% endblock %}
 
-{% block tableOverviewBodyRowInner %}
-	<td class="TableCell-UsergroupCheckbox">
-		{{ FormHelper.control('usergroups._ids.' ~ entity.id, {
-			hiddenField: false,
-			type: 'checkbox',
-			value: entity.id,
-			label: '',
-			checked: entity.id in (user.usergroups)|column('id'),
-		}) }}
-	</td>
-	{{ parent() }}
-{% endblock %}
+								{% block tableOverviewCellTitle %}
+									<td class="TableCell-Title">{{ usergroup.title }}</td>
+								{% endblock %}
 
-{% block tableOverviewCellDisplayedFields %}
-	{% for field in config.Awyiss.Usergroups.Backend.overview.displayedFields %}
-		{% block tableOverviewCellDisplayedField %}
-			{{ parent() }}
+								{% block tableOverviewCellDefaultFields %}{% endblock %}
+
+								{% block tableOverviewCellDisplayedFields %}
+									{% for field in localConfig.overview.displayedFields %}
+										{% block tableOverviewCellDisplayedField %}
+											<td class="TableCell-{{ field|camelize }}">
+												{% if field starts with 'attributes.' %}
+													{% set field = field|slice(11)|underscore %}
+													{% block tableOverviewCellDisplayedFieldAttributeValue %}
+														{% if attributes[field].inputType in ['date', 'datetime', 'time'] and usergroup.has('attributes') and usergroup.attributes.has(field) %}
+															{% if attributes[field].inputType == 'datetime' %}
+																{{ TimeHelper.nice(usergroup.attributes.get(field)) }}
+															{% else %}
+																{{ TimeHelper.i18nFormat(usergroup.attributes.get(field), attributes[field].inputType == 'date' ? dateFormat : timeFormat) }}
+															{% endif %}
+														{% else %}
+															{{ usergroup.attributes.get(field) ?: '-' }}
+														{% endif %}
+													{% endblock %}
+												{% else %}
+													{% set field = field|underscore %}
+													{% block tableOverviewCellDisplayedFieldDefaultValue %}
+														{% if field == 'language_shortcode' %}
+															{{ usergroup.get(field) ? languages.Frontend[ usergroup.get(field) ].title : '-' }}
+														{% elseif field in ['created_on', 'changed_on'] %}
+															{{ usergroup.has(field) ? TimeHelper.nice(usergroup.get(field)) ?: '-' }}
+														{% elseif categories.config.field and field == categories.config.field|underscore %}
+															{{ usergroup.has(field) ? (categories.simple[ usergroup.get(field) ] ?? '-') : '-' }}
+														{% else %}
+															{% set value = usergroup.has(field) ? usergroup.get(field) : '-' %}
+															{% if value is same as true or value is same as 'true' %}
+																<i class="las la-check">{{ __('true') }}</i>
+															{% elseif value is same as false or value is same as 'false' %}
+																<i class="las la-times">{{ __('false') }}</i>
+															{% else %}
+																{{ value }}
+															{% endif %}
+														{% endif %}
+													{% endblock %}
+												{% endif %}
+											</td>
+										{% endblock %}
+									{% endfor %}
+								{% endblock %}
+							{% endblock %}
+						</tr>
+					{% endblock %}
+				{% endfor %}
+			</tbody>
 		{% endblock %}
-	{% endfor %}
+	</table>
 {% endblock %}
-
-{% block tableOverviewCellActions %}{% endblock %}
-
-{% block listControlListLimitInner %}{% endblock %}
-
-{% block tableOverviewFootColSpan %}{{ config.Awyiss.Usergroups.Backend.overview.displayedFields|length + 3 }}{% endblock %}

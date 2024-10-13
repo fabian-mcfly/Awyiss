@@ -111,13 +111,9 @@ class UsersController extends Controller {
 			$lo_user->usergroups = [];
 		}
 
-		$lo_query = $this->Users->Usergroups->find();
-		$this->paginate = [];
-		$lo_usergroups = $this->paginate($lo_query);
-
 		$this->set([
 			'user' => $lo_user,
-			'usergroups' => $lo_usergroups,
+			'usergroups' => $this->Users->Usergroups->find()->all()->toArray(),
 		]);
 	}
 
@@ -148,13 +144,9 @@ class UsersController extends Controller {
 			$lo_user->usergroups = [];
 		}
 
-		$lo_query = $this->Users->Usergroups->find();
-		$this->paginate = [];
-		$lo_usergroups = $this->paginate($lo_query);
-
 		$this->set([
 			'user' => $lo_user,
-			'usergroups' => $lo_usergroups,
+			'usergroups' => $this->Users->Usergroups->find()->all()->toArray(),
 		]);
 	}
 

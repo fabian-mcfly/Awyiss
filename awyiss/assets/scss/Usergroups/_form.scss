@@ -17,9 +17,11 @@
 
 			.TableHeader-UserCheckbox {
 				width:60px;
+				padding:0;
 			}
 
 			.TableCell-UserCheckbox {
+				padding:0;
 				position:static;
 
 				&:has(input:checked) {
@@ -49,7 +51,7 @@
 					z-index:2;
 
 					&::before {
-						top:20px;
+						top:18px;
 						left:18px;
 
 						.Scale-Small& {

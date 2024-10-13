@@ -372,15 +372,9 @@ class UsergroupsController extends Controller {
 	 * @throws \Exception
 	 */
 	protected function setViewVars(Usergroup $usergroup, bool $usersScopeIsAccessible): void {
-		$lo_users = null;
+		$la_users = [];
 		if ($usersScopeIsAccessible) {
-			$lo_query = $this->Usergroups->Users->find();
-			$this->paginate = [
-				'order' => [
-					'username' => 'asc',
-				],
-			];
-			$lo_users = $this->paginate($lo_query);
+			$la_users = $this->Usergroups->Users->find()->all()->toArray();
 		}
 
 		/** @var \Awyiss\Model\Table\DatatablesTable $lo_datatablesTable */
@@ -424,7 +418,7 @@ class UsergroupsController extends Controller {
 
 		$this->set([
 			'usergroup' => $usergroup,
-			'users' => $lo_users,
+			'users' => $la_users,
 			'authorizationPolicies' => $la_authorizationPolicies,
 			'datatables' => $la_datatables,
 			'pageRoles' => $la_pageRoles,

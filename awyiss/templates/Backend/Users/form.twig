@@ -96,8 +96,7 @@
 
 					{% block userUsergroups %}
 						{% include '@Backend/Users/usergroups_overview_paginated_list.twig' with _context|merge({
-							i18nDomain: 'usergroups',
-							records: usergroups.items().toArray(),
+							localConfig: config.Awyiss.Usergroups.Backend,
 						}) %}
 					{% endblock %}
 				{% endblock %}
