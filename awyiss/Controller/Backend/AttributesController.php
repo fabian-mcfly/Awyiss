@@ -8,8 +8,10 @@ use Awyiss\Annotation\NoDirectAccess;
 use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Model\Entity\Attribute;
 use Awyiss\Model\Table;
+use Awyiss\Model\Table\GenericDatatablesTable;
 use Awyiss\Routing\Router;
 use Awyiss\Utility\Content\ColumnInterface;
+use Awyiss\Utility\Inflector;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
@@ -323,6 +325,14 @@ class AttributesController extends Controller {
 		$lb_translatableDisabled = in_array($attribute->scope, array_merge($la_pageRoles, ['contents', 'menu_entries', 'pages']));
 		$lb_requiredDisabled = in_array($attribute->scope, ['contents', 'widgets']);
 		$lb_columnSpanDisabled = in_array($attribute->scope, ['contents', 'widgets']);
+
+		if (!$lb_translatableDisabled) {
+			$lo_table = $this->fetchTable(Inflector::camelize($attribute->scope));
+			// If table is a generic data one and the records are not translatable, disable the translatable option
+			if ($lo_table instanceof GenericDatatablesTable && !$lo_table->hasBehavior('Translate')) {
+				$lb_translatableDisabled = true;
+			}
+		}
 
 		$la_columnSpans = $this->Attributes->getColumnSpans();
 		$la_columnSpans = array_map(function (ColumnInterface $column): string {
