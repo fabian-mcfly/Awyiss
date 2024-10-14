@@ -184,12 +184,12 @@ class CategoriesHelper extends Helper {
 			'groupLabels' => [],
 			'label' => $this->Form->labelTextFromFieldname($ls_fieldName),
 			'type' => 'select',
-			'val' => $this->getSelectedCategory($ls_identifier),
+			'val' => null,
 		];
 
 		if (!isset($la_attributes['val'])) {
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-			$la_attributes['val'] = $this->Form->context()->entity()->get($ls_fieldName);
+			$la_attributes['val'] = $this->Form->context()->entity()->get($ls_fieldName) ?? $this->getSelectedCategory($ls_identifier);
 		}
 
 		if (empty($la_attributes['options'])) {
