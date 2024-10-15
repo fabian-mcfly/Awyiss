@@ -10,6 +10,7 @@ use Awyiss\Configuration\ConfigOption;
 use Awyiss\Configuration\ConfigOptions\Trait\TableNamesTrait;
 use Awyiss\Configuration\ConfigOptionType;
 use Awyiss\Utility\Inflector;
+use Cake\Core\Configure;
 
 
 /**
@@ -132,13 +133,6 @@ class GenericDatatablesConfigOptions extends AbstractGenericConfigOptions {
 					type: ConfigOptionType::Integer,
 				),
 			],
-			new ConfigOption(
-				defaultValue: true,
-				identifier: 'splitIntoLanguages',
-				localizable: false,
-				nullable: false,
-				type: ConfigOptionType::Bool,
-			),
 			'systemOrder' => [
 				new ConfigOption(
 					defaultValue: SORT_ASC,
@@ -172,13 +166,46 @@ class GenericDatatablesConfigOptions extends AbstractGenericConfigOptions {
 					values: $this->getTableFields(...),
 				),
 			],
-			new ConfigOption(
-				defaultValue: false,
-				identifier: 'translatable',
-				localizable: false,
-				nullable: false,
-				type: ConfigOptionType::Bool,
-			),
 		]);
+
+		$lo_splitIntoLanguages = new ConfigOption(
+			defaultValue: true,
+			identifier: 'splitIntoLanguages',
+			localizable: false,
+			nullable: false,
+			type: ConfigOptionType::Bool,
+		);
+		$lo_splitIntoLanguages->setValidate(function (mixed $value, ?string $languageShortcode = null) use ($lo_splitIntoLanguages): bool|string {
+			if ($value) {
+				$ls_scope = $this->getDynamicScope();
+				if (Configure::read('Awyiss.' . $ls_scope . '.Backend.translatable')) {
+					return __d('configuration', 'error_option_when_split_into_languages_when_translatable');
+				}
+			}
+
+			return $lo_splitIntoLanguages->validate($value, $languageShortcode);
+		});
+
+		$this->add('Backend', $lo_splitIntoLanguages);
+
+		$lo_translatable = new ConfigOption(
+			defaultValue: false,
+			identifier: 'translatable',
+			localizable: false,
+			nullable: false,
+			type: ConfigOptionType::Bool,
+		);
+		$lo_translatable->setValidate(function (mixed $value, ?string $languageShortcode = null) use ($lo_translatable): bool|string {
+			if ($value) {
+				$ls_scope = $this->getDynamicScope();
+				if (Configure::read('Awyiss.' . $ls_scope . '.Backend.splitIntoLanguages')) {
+					return __d('configuration', 'error_option_not_translatable_when_split_into_languages');
+				}
+			}
+
+			return $lo_translatable->validate($value, $languageShortcode);
+		});
+
+		$this->add('Backend', $lo_translatable);
 	}
 }

@@ -95,6 +95,12 @@ msgstr "Die Option ist nicht lokalisierbar"
 msgid "error_option_not_nullable"
 msgstr "Die Option darf nicht leer sein"
 
+msgid "error_option_not_translatable_when_split_into_languages"
+msgstr "Die Einträge können nicht übersetzt werden, wenn sie in Sprachen unterteilt sind"
+
+msgid "error_option_when_split_into_languages_when_translatable"
+msgstr "Die Einträge können nicht in Sprachen unterteilt werden, wenn sie übersetzbar sind"
+
 msgid "default_value"
 msgstr "Standardwert"
 

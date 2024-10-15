@@ -95,6 +95,12 @@ msgstr "The option is not localizable"
 msgid "error_option_not_nullable"
 msgstr "The option cannot be null"
 
+msgid "error_option_not_translatable_when_split_into_languages"
+msgstr "The entries cannot be translated when split into languages"
+
+msgid "error_option_when_split_into_languages_when_translatable"
+msgstr "The entries cannot be split into languages when translatable"
+
 msgid "default_value"
 msgstr "Default"
 
