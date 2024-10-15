@@ -61,6 +61,10 @@ class ConfigOption {
 	 */
 	protected $typecast = null;
 	/**
+	 * @var callable|null Can hold a callable that validates the provided value
+	 */
+	protected $validate = null;
+	/**
 	 * @var callable|array|class-string|null Possible values for type "listvalue"
 	 */
 	protected mixed $values = null;
@@ -76,6 +80,7 @@ class ConfigOption {
 	 * @param bool $personalizable
 	 * @param string|null $title
 	 * @param callable|null $typecast
+	 * @param callable|null $validate
 	 * @param callable|array|string|null $values
 	 */
 	public function __construct(
@@ -88,6 +93,7 @@ class ConfigOption {
 		bool $personalizable = false,
 		?string $title = null,
 		?callable $typecast = null,
+		?callable $validate = null,
 		array|callable|string|null $values = null,
 	) {
 		$this->setDefaultValue($defaultValue);
@@ -121,6 +127,8 @@ class ConfigOption {
 		$this->setTitle($title);
 
 		$this->setTypecast($typecast);
+
+		$this->setValidate($validate);
 
 		$this->setValues($values);
 	}
@@ -341,6 +349,26 @@ class ConfigOption {
 
 
 	/**
+	 * @return callable|null
+	 */
+	public function getValidate(): ?callable {
+		return $this->validate;
+	}
+
+
+	/**
+	 * @param callable|null $type
+	 * @return self
+	 */
+	public function setValidate(?callable $validate): static {
+		$this->validate = $validate;
+
+
+		return $this;
+	}
+
+
+	/**
 	 * Validates the provided `$value` to match the type stored in `self::$type`.
 	 *
 	 * Returns
@@ -353,6 +381,23 @@ class ConfigOption {
 	 * @return string|bool
 	 */
 	public function validateConfigValue(mixed $value, ?string $languageShortcode = null): bool|string {
+		if ($this->getValidate()) {
+			return $this->getValidate()($value, $languageShortcode);
+		}
+
+		return $this->validate($value, $languageShortcode);
+	}
+
+
+	/**
+	 * Internal validation method that validates the provided `$value`
+	 * to match the type stored in `self::$type`.
+	 *
+	 * @param mixed $value
+	 * @param string|null $languageShortcode
+	 * @return string|bool
+	 */
+	public function validate(mixed $value, ?string $languageShortcode = null): bool|string {
 		if ($languageShortcode !== null && $languageShortcode !== '' && !$this->isLocalizable()) {
 			return __d('configuration', 'error_option_not_localizable');
 		}

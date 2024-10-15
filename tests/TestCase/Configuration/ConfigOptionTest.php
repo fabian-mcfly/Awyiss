@@ -30,6 +30,9 @@ class ConfigOptionTest extends TestCase {
 			function ($value) {
 				return (string)$value;
 			},
+			function ($value) {
+				return true;
+			},
 			['value1', 'value2']
 		);
 
@@ -43,6 +46,7 @@ class ConfigOptionTest extends TestCase {
 		$this->assertSame('title', $configOption->getTitle());
 		$this->assertSame(ConfigOptionType::String, $configOption->getType());
 		$this->assertIsCallable($configOption->getTypecast());
+		$this->assertIsCallable($configOption->getValidate());
 		$this->assertSame(['value1', 'value2'], $configOption->getValues());
 	}
 
@@ -179,6 +183,20 @@ class ConfigOptionTest extends TestCase {
 	 * @return void
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
+	public function testSetAndGetValidate(): void {
+		$configOption = new ConfigOption('test');
+		$validate = function ($value) {
+			return is_int($value);
+		};
+		$configOption->setValidate($validate);
+		$this->assertSame($validate, $configOption->getValidate());
+	}
+
+
+	/**
+	 * @return void
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
 	public function testSetAndGetValues(): void {
 		$configOption = new ConfigOption('test');
 		$values = ['value1', 'value2'];
@@ -192,6 +210,20 @@ class ConfigOptionTest extends TestCase {
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testValidateConfigValue(): void {
+		$configOption = new ConfigOption('test', ConfigOptionType::Bool);
+		$configOption->setValidate(function ($value) {
+			return is_array($value);
+		});
+		$this->assertTrue($configOption->validateConfigValue([1, 2, 3]));
+		$this->assertFalse($configOption->validateConfigValue('valid'));
+	}
+
+
+	/**
+	 * @return void
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function testValidate(): void {
 		$configOption = new ConfigOption('test', ConfigOptionType::String);
 		$this->assertTrue($configOption->validateConfigValue('valid'));
 		$this->assertFalse($configOption->validateConfigValue(123));
