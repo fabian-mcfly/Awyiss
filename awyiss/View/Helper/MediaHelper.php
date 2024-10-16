@@ -124,9 +124,18 @@ class MediaHelper extends Helper {
 		}
 
 		$lf_aspectRatio = 1;
-		$lf_width = $lo_file?->realWidth ?? $lo_file?->width ?? $media->width;
-		$lf_height = $lo_file?->realHeight ?? $lo_file?->height ?? $media->height;
-
+		if ($lo_file?->realWidth && $lo_file?->realHeight) {
+			$lf_width = $lo_file?->realWidth;
+			$lf_height = $lo_file?->realHeight;
+		}
+		elseif ($lo_file?->width && $lo_file?->height) {
+			$lf_width = $lo_file?->width;
+			$lf_height = $lo_file?->height;
+		}
+		else {
+			$lf_width = $media->width;
+			$lf_height = $media->height;
+		}
 		if ($lf_width && $lf_height) {
 			$lf_aspectRatio = round($lf_width / $lf_height, 2);
 		}
@@ -258,8 +267,18 @@ class MediaHelper extends Helper {
 			$ls_path = $media->isImage() ? ($media->webpPath ?? $media->path) : $media->previewPath;
 		}
 
-		$la_attributes['width'] = $lo_file?->realWidth ?? $lo_file?->width ?? $media->width;
-		$la_attributes['height'] = $lo_file?->realHeight ?? $lo_file?->height ?? $media->height;
+		if ($lo_file?->realWidth && $lo_file?->realHeight) {
+			$la_attributes['width'] = $lo_file?->realWidth;
+			$la_attributes['height'] = $lo_file?->realHeight;
+		}
+		elseif ($lo_file?->width && $lo_file?->height) {
+			$la_attributes['width'] = $lo_file?->width;
+			$la_attributes['height'] = $lo_file?->height;
+		}
+		else {
+			$la_attributes['width'] = $media->width;
+			$la_attributes['height'] = $media->height;
+		}
 
 		return $this->simpleImageTag($ls_path, $la_attributes, $media->averageColor, $lo_mediaRenderOptions);
 	}
@@ -820,13 +839,26 @@ class MediaHelper extends Helper {
 			$ls_filePath = $lo_file->path;
 
 			$lf_aspectRatio = 1;
-			if (($lo_file->realWidth ?? $lo_file->width) && ($lo_file->realHeight ?? $lo_file->height)) {
-				$lf_aspectRatio = round(($lo_file->realWidth ?? $lo_file->width) / ($lo_file->realHeight ?? $lo_file->height), 2);
+			$lf_width = $lf_height = null;
+			if ($lo_file->realWidth && $lo_file->realHeight) {
+				$lf_width = $lo_file?->realWidth;
+				$lf_height = $lo_file?->realHeight;
+			}
+			elseif ($lo_file->width && $lo_file->height) {
+				$lf_width = $lo_file?->width;
+				$lf_height = $lo_file?->height;
+			}
+
+			if ($lf_width && $lf_height) {
+				$lf_aspectRatio = round($lf_width / $lf_height, 2);
 			}
 
 			$ls_output .= PHP_EOL . '@media (max-width:' . $li_breakpoint . 'px) { ';
-			$ls_output .= $mediaRenderOptions->getSelector() . ' { --backgroundAspectRatio:' . $lf_aspectRatio . ';';
-			$ls_output .= ' --backgroundImageHeight:' . $lo_file->height . 'px;';
+			$ls_output .= $mediaRenderOptions->getSelector() . ' {';
+			if ($lf_width && $lf_height) {
+				$ls_output .= ' --backgroundAspectRatio:' . $lf_aspectRatio . ';';
+				$ls_output .= ' --backgroundImageHeight:' . $lo_file->height . 'px;';
+			}
 			$ls_output .= ' background-image:url(\'' . $ls_filePath . '\'); } }';
 		}
 

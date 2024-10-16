@@ -347,6 +347,53 @@ class MediaHelperTest extends TestCase {
 	/**
 	 * @return void
 	 * @noinspection PhpVariableNamingConventionInspection
+	 * @noinspection PhpMethodNamingConventionInspection
+	 */
+	public function testBackgroundCalculatesCorrectAspectRatioForUnfinishedResizeFiles(): void {
+		/** @var \Awyiss\Model\Entity\Media $media */
+		$media = $this->fetchTable('Media')->get(4);
+
+		$mediaRenderOptions = $this->mediaHelper->getMediaRenderOptions()->with([
+			'baseWidth' => 1280.00,
+			'columnWidth' => 75.00,
+			'responsive' => true,
+			'selector' => '#Foo',
+			'singleColumnBreakpoint' => 640,
+			'breakpoints' => [768, 1234, 1920, 640, 480, 320, 1440],
+		]);
+
+		$result = $this->mediaHelper->background($media, $mediaRenderOptions);
+		$this->assertStringContainsString('<style>#Foo { --backgroundAspectRatio:1.78; --backgroundImageHeight:1440px;', $result);
+	}
+
+
+	/**
+	 * @return void
+	 * @noinspection PhpVariableNamingConventionInspection
+	 * @noinspection PhpMethodNamingConventionInspection
+	 */
+	public function testGetBackgroundStyleTagCalculatesCorrectAspectRatioForUnfinishedResizeFiles(): void {
+		/** @var \Awyiss\Model\Entity\Media $media */
+		$media = $this->fetchTable('Media')->get(4);
+
+		$mediaRenderOptions = $this->mediaHelper->getMediaRenderOptions()->with([
+			'baseWidth' => 1280.00,
+			'columnWidth' => 75.00,
+			'responsive' => true,
+			'selector' => '#Foo',
+			'singleColumnBreakpoint' => 640,
+			'breakpoints' => [768, 1234, 1920, 640, 480, 320, 1440],
+		]);
+
+		$result = $this->callProtectedMethod($this->mediaHelper, 'getBackgroundStyleTag', null, $media, $mediaRenderOptions, null, 1.78, '');
+
+		$this->assertStringContainsString('@media (max-width:320px) { #Foo { background-image:', $result);
+	}
+
+
+	/**
+	 * @return void
+	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testHtmlTagForImage(): void {
 		/** @var \Awyiss\Model\Entity\Media $media */
@@ -732,6 +779,22 @@ class MediaHelperTest extends TestCase {
 		$result = $this->mediaHelper->imageTag($media, $this->mediaHelper->getMediaRenderOptions());
 
 		$this->assertSame('', $result);
+	}
+
+
+	/**
+	 * @return void
+	 * @noinspection PhpVariableNamingConventionInspection
+	 * @noinspection PhpMethodNamingConventionInspection
+	 */
+	public function testImageTagCalculatesCorrectAspectRatioForUnfinishedResizeFiles(): void {
+		/** @var \Awyiss\Model\Entity\Media $media */
+		$media = $this->fetchTable('Media')->get(4);
+
+		$result = $this->mediaHelper->imageTag($media, $this->mediaHelper->getMediaRenderOptions()->withWidth(1024)->withResponsive(false));
+
+		$this->assertStringNotContainsString('width="1024"', $result);
+		$this->assertStringContainsString('width="2560" height="1440"', $result);
 	}
 
 
