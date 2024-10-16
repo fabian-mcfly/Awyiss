@@ -426,7 +426,7 @@ class FormElementsController extends Controller {
 		$la_data = $data;
 
 		if (empty($la_data['options'])) {
-			unset($la_data['options']);
+			$la_data['options'] = null;
 
 			return $la_data;
 		}
@@ -455,6 +455,21 @@ class FormElementsController extends Controller {
 				'value' => $lx_value['value'] ?? null,
 				'_translations' => $lx_value['_translations'] ?? [],
 			];
+		}
+
+		if (count($la_options) === 1) {
+			// If key, value and all translations are empty, no options are set
+			$lb_emptyKey = empty($la_options[0]['key']) && !array_filter($la_options[0]['_translations'], function (array $translation): bool {
+				return !empty($translation['key']);
+			});
+
+			$lb_emptyValue = empty($la_options[0]['value']) && !array_filter($la_options[0]['_translations'], function (array $translation): bool {
+				return !empty($translation['value']);
+			});
+
+			if ($lb_emptyKey && $lb_emptyValue) {
+				$la_options = [];
+			}
 		}
 
 		$la_data['options'] = $la_options;
