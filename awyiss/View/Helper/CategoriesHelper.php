@@ -266,6 +266,9 @@ class CategoriesHelper extends Helper {
 		$la_attributes = $attributes + $la_config;
 		$la_attributes += [
 			'aggregationLabel' => __($ls_identifier . '_filter_all'),
+			'aggregationKey' => 'all',
+			'allowAggregation' => false,
+			'allowUnassigned' => false,
 			'disabled' => false,
 			'escape' => true,
 			'id' => true,
@@ -273,6 +276,7 @@ class CategoriesHelper extends Helper {
 			'label' => __($ls_identifier . '_filter_label'),
 			'levelPrefix' => '- ',
 			'unassignedLabel' => __($ls_identifier . '_filter_unassigned'),
+			'unassignedKey' => 'unassigned',
 			'uriParam' => $ls_identifier,
 			'val' => $this->getSelectedCategory($ls_identifier),
 		];
@@ -296,31 +300,52 @@ class CategoriesHelper extends Helper {
 	 * Creates a link select element using the `linkSelect`-template
 	 * with only the provided options and attributes
 	 *
+	 *  ### Options:
+	 *  - `aggregationLabel` The label of an additional option that's displayed when the `allowAggregation`-option is true.
+	 *  - `aggregationKey` The value of an additional option that's used for showing the aggregation of all categories.
+	 *  - `allowAggregation` Boolean value whether to include the aggregation of all categories.
+	 *  - `allowUnassigned` Boolean value whether to include an option to show items without any category.
+	 *  - `disabled` Boolean value or an array containing the values that should be disabled in the filter.
+	 *  - `escape` Boolean value whether to escape html entities.
+	 *  - `label` The label to display in the filter.
+	 *  - `name` The name to be used as a parameter in the resulting filter urls.
+	 *  - `templateVars` Additional template variables.
+	 *  - `unassignedLabel` The label of an additional option that's displayed when the `allowUnassigned`-option is true.
+	 *  - `unassignedKey` The value of an additional option that's used for showing items without any category.
+	 *  - `val` The value of the currently selected category.
+	 *
 	 * @param string $identifier
 	 * @param iterable|null $options
 	 * @param array $attributes
 	 * @return string
 	 */
 	public function linkSelect(string $identifier, ?iterable $options = null, array $attributes = []): string {
+		$ls_identifier = Inflector::underscore($identifier);
+
 		$la_attributes = $attributes;
 		$la_attributes += [
+			'aggregationLabel' => __($ls_identifier . '_filter_all'),
+			'aggregationKey' => 'all',
+			'allowAggregation' => false,
+			'allowUnassigned' => false,
 			'disabled' => false,
 			'escape' => true,
 			'id' => true,
-			'identifier' => $identifier,
-			'label' => __($identifier . '_filter_label'),
+			'identifier' => $ls_identifier,
+			'label' => __($ls_identifier . '_filter_label'),
 			'levelPrefix' => '- ',
-			'uriParam' => Inflector::variable($identifier),
+			'unassignedLabel' => __($ls_identifier . '_filter_unassigned'),
+			'unassignedKey' => 'unassigned',
+			'uriParam' => $ls_identifier,
 			'val' => null,
 		];
 
 		if (isset($la_attributes['id']) && $la_attributes['id'] === true) {
-			$la_attributes['id'] = 'LinkSelect-' . Inflector::camelize($this->_domId($identifier), '-');
+			$la_attributes['id'] = 'LinkSelect-' . Inflector::camelize($this->_domId($ls_identifier), '-');
 		}
 
 		$la_attributes['options'] = $options;
 		$la_attributes = $this->buildOptions($la_attributes);
-
 
 		return $this->widget('linkSelect', $la_attributes);
 	}
