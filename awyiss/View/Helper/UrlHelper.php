@@ -33,30 +33,40 @@ class UrlHelper extends BaseUrlHelper {
 			'escape' => true,
 		];
 
-		$la_params = [];
-		if (!is_string($lx_url) && (!empty($la_options['withParams']) || !empty($la_options['withoutParams']))) {
-			$la_params = $this->buildParameters($la_options, $la_params);
-		}
-
 		if (is_null($lx_url)) {
 			$lx_url = [];
 		}
 
 		if (is_array($lx_url)) {
-			$lx_url += $la_params;
+			$la_url = [];
+			foreach ($lx_url as $lx_key => $lx_value) {
+				if (is_numeric($lx_key) || str_starts_with($lx_key, '_')) {
+					$la_url[ $lx_key ] = $lx_value;
+					continue;
+				}
+
+				$la_url[ Inflector::dasherize($lx_key) ] = $lx_value;
+			}
+
+			if (!empty($la_options['withParams']) || !empty($la_options['withoutParams'])) {
+				$la_url += $this->buildParameters($la_options);
+			}
 
 			if (
 				(
-					!array_key_exists('_name', $lx_url) ||
-					$lx_url['_name'] === null
+					!array_key_exists('_name', $la_url) ||
+					$la_url['_name'] === null
 				) &&
-				empty($lx_url['plugin'])
+				empty($la_url['plugin'])
 			) {
-				unset($lx_url['_name']);
+				unset($la_url['_name']);
 			}
-		}
 
-		$ls_url = Router::url($lx_url, $la_options['fullBase']);
+			$ls_url = Router::url($la_url, $la_options['fullBase']);
+		}
+		else {
+			$ls_url = Router::url($lx_url, $la_options['fullBase']);
+		}
 
 		if ($la_options['escape']) {
 			return h($ls_url);
@@ -71,9 +81,9 @@ class UrlHelper extends BaseUrlHelper {
 	 * @param mixed $params
 	 * @return array
 	 */
-	protected function buildParameters(array $options, mixed $params): array {
+	protected function buildParameters(array $options): array {
 		$la_options = $options;
-		$la_params = $params;
+		$la_params = [];
 
 		$la_currentParts = [];
 		foreach (($this->_View->getRequest()->getParam('parts') ?: []) as $lx_key => $lx_value) {
