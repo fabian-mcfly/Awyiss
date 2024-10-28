@@ -12,6 +12,7 @@ use Cake\Datasource\FactoryLocator;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
 use Cake\I18n\DateTime;
+use Cake\Utility\Hash;
 use Cake\Utility\Text;
 
 
@@ -33,10 +34,43 @@ class WidgetTemplatesListener implements EventListenerInterface {
 	 */
 	public function implementedEvents(): array {
 		return [
+			'Model.WidgetTemplates.beforeMarshal' => 'beforeMarshal',
 			'Model.WidgetTemplates.beforeSave' => 'beforeSave',
 			'Model.WidgetTemplates.afterSaveCommit' => 'afterSaveCommit',
 			'Model.WidgetTemplates.afterSoftDelete' => 'afterSoftDelete',
 		];
+	}
+
+
+	/**
+	 * @param \Cake\Event\Event $event
+	 * @param \ArrayObject $data
+	 * @param \ArrayObject $options
+	 * @return void
+	 * @noinspection PhpUnusedParameterInspection
+	 */
+	public function beforeMarshal(Event $event, ArrayObject $data, ArrayObject $options): void {
+		if (empty($data['widget_template_elements'])) {
+			return;
+		}
+
+		$la_elements = $data['widget_template_elements'];
+		$lb_hasTitle = Hash::check($la_elements, '{n}[identifier=title]');
+		$lb_hasSubtitle = Hash::check($la_elements, '{n}[identifier=subtitle]');
+
+		//Filter out the title_tag and subtitle_tag elements when the title and subtitle are not present
+		/** @noinspection PhpVariableNamingConventionInspection */
+		$data['widget_template_elements'] = array_filter($la_elements, function ($element) use ($lb_hasTitle, $lb_hasSubtitle) {
+			if ($element['identifier'] == 'title_tag' && !$lb_hasTitle) {
+				return false;
+			}
+
+			if ($element['identifier'] == 'subtitle_tag' && !$lb_hasSubtitle) {
+				return false;
+			}
+
+			return true;
+		});
 	}
 
 
@@ -72,6 +106,8 @@ class WidgetTemplatesListener implements EventListenerInterface {
 	 * @param \Cake\Event\Event $event
 	 * @param \Awyiss\Model\Entity\WidgetTemplate $entity
 	 * @param \ArrayObject $options
+	 * @noinspection DuplicatedCode
+	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function afterSaveCommit(Event $event, WidgetTemplate $entity, ArrayObject $options): void {
 		$ls_fileName = Text::slug($entity->fileName, ['replacement' => '_']);
