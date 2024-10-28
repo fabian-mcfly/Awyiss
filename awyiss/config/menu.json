@@ -547,6 +547,21 @@
 					"identifier": "read"
 				}
 			},
+			"seo_analyze": {
+				"title": {
+					"translate": ["seo", "menu_analyze"]
+				},
+				"link": {
+					"url": {
+						"controller": "Seo",
+						"action": "analyze"
+					}
+				},
+				"access": {
+					"scope": "seo",
+					"identifier": "analyze"
+				}
+			},
 			"designs": {
 				"title": {
 					"translate": ["designs", "menu_title"]

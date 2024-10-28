@@ -11,6 +11,24 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
+msgid "headline_overview"
+msgstr "SEO"
+
+msgid "headline_analyze"
+msgstr "SEO-Analysis"
+
+msgid "menu_analyze"
+msgstr "SEO-Analysis"
+
+msgid "meta_title_analyze"
+msgstr "SEO-Analysis"
+
+msgid "page_role_filter_label"
+msgstr "Page role"
+
+msgid "page_role_filter_all"
+msgstr "All"
+
 msgid "fieldset_seo"
 msgstr "Search engine optimization"
 
@@ -19,6 +37,12 @@ msgstr "Example title"
 
 msgid "description_empty"
 msgstr "Here you can optionally enter text that Google will display in the search results. Try to encourage the user to click!"
+
+msgid "fieldset_summary"
+msgstr "Summary"
+
+msgid "fieldset_details"
+msgstr "Details"
 
 msgid "meta_title"
 msgstr "Meta title"
@@ -31,3 +55,27 @@ msgstr "Page might be indexed"
 
 msgid "robots_follow"
 msgstr "Links might be followed"
+
+msgid "meta_title_length_ok"
+msgstr "is optimal ({0} characters)"
+
+msgid "meta_title_length_warning"
+msgstr "might be too long ({0} characters)"
+
+msgid "meta_title_length_empty"
+msgstr "is empty"
+
+msgid "meta_title_length_error"
+msgstr "is too long ({0} characters)"
+
+msgid "meta_description_length_ok"
+msgstr "is optimal ({0} characters)"
+
+msgid "meta_description_length_empty"
+msgstr "is empty"
+
+msgid "meta_description_length_warning"
+msgstr "might be too long ({0} characters)"
+
+msgid "meta_description_length_error"
+msgstr "is too long ({0} characters)"

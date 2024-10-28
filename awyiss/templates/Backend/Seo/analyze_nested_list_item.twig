@@ -1,0 +1,165 @@
+{#
+@var entity \Awyiss\Model\Entity\Page
+@var pageRole string
+@var settings array
+@var _view \Awyiss\View\BackendView
+@var AssetHelper \Awyiss\View\Helper\AssetHelper
+@var AttributesHelper \Awyiss\View\Helper\AttributesHelper
+@var AuthorizationHelper \Awyiss\View\Helper\AuthorizationHelper
+@var CategoriesHelper \Awyiss\View\Helper\CategoriesHelper
+@var FlashHelper \Awyiss\View\Helper\FlashHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+@var HtmlHelper \Cake\View\Helper\HtmlHelper
+@var LocaleHelper \Awyiss\View\Helper\LocaleHelper
+@var MediaHelper \Awyiss\View\Helper\MediaHelper
+@var PaginatorHelper \Awyiss\View\Helper\PaginatorHelper
+@var SystemOrderHelper \Awyiss\View\Helper\SystemOrderHelper
+@var TimeHelper \Cake\View\Helper\TimeHelper
+@var UrlHelper \Awyiss\View\Helper\UrlHelper
+#}
+
+{% block nestedListItem %}
+	<li
+			{% block nestedListItemId -%}
+				id="{{ settings.identifier|pluralize }}-ListItem{{ entity.id }}"
+			{%- endblock %}
+			{% block nestedListItemClass -%}
+				class="ListItem {{ settings.identifier }}-ListItem {{ settings.identifier }}-ListItem{{ entity.id -}}
+				{%- if entity.class is defined %} {{ entity.class }}{% endif -%}
+				{%- if entity.active is defined and entity.active == false %} Inactive{% endif -%}
+
+				{%- if entity.parentsActive is defined and entity.parentsActive == false %} ParentsInactive
+				{%- elseif settings.parentsActive is defined and settings.parentsActive == false %} ParentsInactive{% endif -%}
+				{%- if entity.isPublished() is same as false %} NotPublished{% endif %}
+			"
+			{%- endblock %}
+			{% block nestedListItemTitle -%}
+				title="{{ entity.title }}"
+			{%- endblock %}
+	>
+		{% block nestedListItemInner %}
+			<div {% block nestedListItemInnerClass %}class="{{ settings.identifier }}-ListItem-Inner ListItem-Inner"{% endblock %}>
+				{% block nestedListItemData %}
+					<ul class="Data">
+						{% block nestedListItemDataTitle %}
+							<li class="Title">{{ entity.title }}</li>
+						{% endblock %}
+
+						{% block nestedListItemDataSlug %}
+							<li class="DataItem DataItem-Slug">
+								{{ HtmlHelper.link(entity.languageShortcode ~ '/' ~ entity.slug, {
+									lang: entity.languageShortcode,
+									slug: entity.slug,
+									_name: 'Frontend',
+								}, {
+									target: '_blank',
+								}) }}
+							</li>
+						{% endblock %}
+					</ul>
+				{% endblock %}
+
+				{% block nestedListMetaTitleInfo %}
+					<span class="SeoInfo SeoInfo-MetaTitle SeoInfoStatus-{{ entity.metaStatus.title.length|camelize }}" title="{{ __('meta_title') }}
+						{{- entity.metaStatus.title.set == 'auto' ? ' (' ~ __('meta_title_auto') ~ ')' : '' }}
+						{{~ entity.metaTitle ?: '-' ~}}
+						{{~ __('length') }}: {{ entity.metaTitle|length }} {{ __('characters') -}}
+					">
+						<span class="Icon">
+							{% if entity.metaStatus.title.length == 'ok' %}
+								<i class="las la-check"></i>
+							{% elseif entity.metaStatus.title.length == 'warning' %}
+								<i class="las la-exclamation"></i>
+							{% else %}
+								<i class="las la-times"></i>
+							{% endif %}
+						</span>
+
+						<span class="Title">
+							<strong>{{ __('meta_title') }}</strong><br>
+							{% if entity.metaStatus.title.length == 'ok' %}
+								{{ __('meta_title_length_ok', entity.metaTitle|length) }}
+							{% elseif entity.metaStatus.title.length == 'warning' %}
+								{{ __('meta_title_length_warning', entity.metaTitle|length) }}
+							{% elseif entity.metaStatus.title.length == 'empty' %}
+								{{ __('meta_title_length_empty') }}
+							{% else %}
+								{{ __('meta_title_length_error', entity.metaTitle|length) }}
+							{% endif %}
+						</span>
+					</span>
+				{% endblock %}
+
+				{% block nestedListMetaDescriptionInfo %}
+					<span class="SeoInfo SeoInfo-MetaDescription SeoInfoStatus-{{ entity.metaStatus.description.length|camelize }}" title="{{ __('meta_description') }}
+						{{~ entity.metaDescription ?: '-' ~}}
+						{{~ __('length') }}: {{ entity.metaDescription|length }} {{ __('characters') -}}
+					">
+						<span class="Icon">
+							{% if entity.metaStatus.description.length == 'ok' %}
+								<i class="las la-check"></i>
+							{% elseif entity.metaStatus.description.length in ['empty', 'warning'] %}
+								<i class="las la-exclamation"></i>
+							{% else %}
+								<i class="las la-times"></i>
+							{% endif %}
+						</span>
+
+						<span class="Title">
+							<strong>{{ __('meta_description') }}</strong><br>
+							{% if entity.metaStatus.description.length == 'ok' %}
+								{{ __('meta_description_length_ok', entity.metaDescription|length) }}
+							{% elseif entity.metaStatus.description.length == 'warning' %}
+								{{ __('meta_description_length_warning', entity.metaDescription|length) }}
+							{% elseif entity.metaStatus.description.length == 'empty' %}
+								{{ __('meta_description_length_empty') }}
+							{% else %}
+								{{ __('meta_description_length_error', entity.metaDescription|length) }}
+							{% endif %}
+						</span>
+					</span>
+				{% endblock %}
+
+				{% block nestedListRobotsFollowInfo %}
+					<span class="SeoInfo SeoInfo-RobotsFollow SeoInfoStatus-{{ entity.robotsFollow ? 'Ok' : 'Error' }}" title="{{ __(entity.robotsFollow ? 'robots_follow' : 'robots_no_follow') }}">
+						<span class="Icon">
+							{% if entity.robotsFollow %}
+								<i class="las la-check"></i>
+							{% else %}
+								<i class="las la-times"></i>
+							{% endif %}
+						</span>
+					</span>
+				{% endblock %}
+
+				{% block nestedListRobotsIndexInfo %}
+					<span class="SeoInfo SeoInfo-RobotsIndex SeoInfoStatus-{{ entity.robotsIndex ? 'Ok' : 'Error' }}" title="{{ __(entity.robotsIndex ? 'robots_index' : 'robots_no_index') }}">
+						<span class="Icon">
+							{% if entity.robotsIndex %}
+								<i class="las la-check"></i>
+							{% else %}
+								<i class="las la-times"></i>
+							{% endif %}
+						</span>
+					</span>
+				{% endblock %}
+
+				{% block nestedListActions %}
+					<span class="Actions">
+						{% block nestedListActionsEdit %}
+							{% do AuthorizationHelper.setScope(entity.pageRole.identifier) %}
+							{% if AuthorizationHelper.isAccessible('update') %}
+								{{ HtmlHelper.link(__('edit'), {controller: entity.pageRole.identifier|pluralize, action: 'edit', id: entity.id}, {class: 'Button Button-Small Button-Edit'}) }}
+							{% endif %}
+							{% do AuthorizationHelper.resetScope() %}
+						{% endblock %}
+					</span>
+				{% endblock %}
+			</div>
+		{% endblock %}
+
+		{% block nestedListChildren %}
+			{{ childrenList }}
+		{% endblock %}
+	</li>
+{% endblock %}

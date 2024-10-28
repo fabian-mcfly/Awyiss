@@ -11,6 +11,9 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
+msgid "headline_overview"
+msgstr "System"
+
 msgid "menu_title"
 msgstr "System"
 
@@ -369,9 +372,6 @@ msgstr "Awyiss"
 
 msgid "analyze_frontend_header"
 msgstr "Frontend"
-
-msgid "permission_analyze"
-msgstr "Analysis"
 
 msgid "meta_title_clear_cache"
 msgstr "Clear Cache"

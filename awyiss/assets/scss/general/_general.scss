@@ -251,6 +251,7 @@ code {
 
 .las {
 	&.la-check,
+	&.la-exclamation,
 	&.la-times {
 		font-size:0;
 		line-height:0;
@@ -266,6 +267,15 @@ code {
 
 		.🌚 & {
 			text-shadow:0 0 3px var(--colorSuccess);
+		}
+	}
+
+
+	&.la-exclamation {
+		color:var(--colorWarning);
+
+		.🌚 & {
+			text-shadow:0 0 3px var(--colorWarning);
 		}
 	}
 

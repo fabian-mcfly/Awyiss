@@ -1,0 +1,96 @@
+{#
+@var pages \Awyiss\Model\Entity\Page[]|\Cake\Datasource\ResultSetInterface
+@var localConfig array
+@var pageRoleName string
+@var pageRoles array
+@var _view \Awyiss\View\BackendView
+@var AssetHelper \Awyiss\View\Helper\AssetHelper
+@var AttributesHelper \Awyiss\View\Helper\AttributesHelper
+@var AuthorizationHelper \Awyiss\View\Helper\AuthorizationHelper
+@var CategoriesHelper \Awyiss\View\Helper\CategoriesHelper
+@var FlashHelper \Awyiss\View\Helper\FlashHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+@var HtmlHelper \Cake\View\Helper\HtmlHelper
+@var LocaleHelper \Awyiss\View\Helper\LocaleHelper
+@var MediaHelper \Awyiss\View\Helper\MediaHelper
+@var PaginatorHelper \Awyiss\View\Helper\PaginatorHelper
+@var SystemOrderHelper \Awyiss\View\Helper\SystemOrderHelper
+@var TimeHelper \Cake\View\Helper\TimeHelper
+@var UrlHelper \Awyiss\View\Helper\UrlHelper
+#}
+
+<div class="Pages Analyze">
+	{% block headlineAnalyze %}
+		<h1>{{ __('headline_analyze') }}</h1>
+	{% endblock %}
+
+	{% block buttonArea %}
+		<div class="ButtonArea">
+			{% block categoriesFilterAnalyze %}
+				{{ CategoriesHelper.linkSelect('page_role', pageRoles, {
+					allowAggregation: true,
+					val: pageRole,
+				}) }}
+			{% endblock %}
+		</div>
+	{% endblock %}
+
+	{% block fieldsetSummary %}
+		<fieldset class="Overview-Fieldset SeoAnalyze-Summary-Fieldset Collapsible">
+			{% block legendSummary %}
+				<legend>{{ __('fieldset_summary') }}</legend>
+			{% endblock %}
+
+			{% if summary.title.empty|length + summary.title.error|length + summary.title.warning|length + summary.description.empty|length + summary.description.error|length + summary.description.warning|length %}
+				<ul class="Summary-List">
+					{% if summary.title.empty|length + summary.title.error|length %}
+						<li class="Title-Error Error">
+							{{ __('meta_title_summary_error',summary.title.empty|length + summary.title.error|length)|raw }}
+						</li>
+					{% endif %}
+					{% if summary.description.error|length %}
+						<li class="Description-Error Error">
+							{{ __('meta_description_summary_error', summary.description.error|length)|raw }}
+						</li>
+					{% endif %}
+					{% if summary.title.warning|length %}
+						<li class="Title-Warning Warning">
+							{{ __('meta_title_summary_warning', summary.title.warning|length)|raw }}
+						</li>
+					{% endif %}
+					{% if summary.description.empty|length + summary.description.warning|length %}
+						<li class="Description-Warning Warning">
+							{{ __('meta_description_summary_warning', summary.description.empty|length + summary.description.warning|length)|raw }}
+						</li>
+					{% endif %}
+				</ul>
+			{% endif %}
+		</fieldset>
+	{% endblock %}
+
+	{% block fieldsetDetails %}
+		<fieldset class="Overview-Fieldset SeoAnalyze-Details-Fieldset Collapsible">
+			{% block legendDetails %}
+				<legend>{{ __('fieldset_details') }}</legend>
+			{% endblock %}
+			{% block listDetails %}
+				{% from '@Backend/macro/nested_list.twig' import nestedList %}
+				{{ nestedList(pages, _context|merge({
+					data: {
+						nestable: false,
+						sortable: false,
+						'movable-between-groups': false,
+					},
+					identifier: 'Pages',
+					template: '@Backend/Seo/analyze_nested_list_item.twig',
+				})) }}
+			{% endblock %}
+		</fieldset>
+	{% endblock %}
+
+	{% block buttonAreaBottom %}
+		<div class="ButtonArea ButtonArea-Bottom">
+			{{ block('categoriesFilterAnalyze') }}
+		</div>
+	{% endblock %}
+</div>

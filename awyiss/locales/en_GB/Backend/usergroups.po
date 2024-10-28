@@ -89,3 +89,5 @@ msgstr "Configure"
 msgid "permission_contents"
 msgstr "Contents"
 
+msgid "permission_analyze"
+msgstr "Analysis"

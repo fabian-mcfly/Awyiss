@@ -1,0 +1,168 @@
+.SeoController {
+	.Summary-List {
+		grid-column:1 / -1;
+
+		li {
+			margin:5px -20px 0;
+			padding:15px 20px;
+			border-radius:5px;
+			list-style:none;
+
+			&.Error {
+				background-color:var(--colorError);
+				color:var(--colorBright);
+			}
+
+			&.Warning {
+				background-color:var(--colorWarning);
+				color:var(--colorText);
+			}
+
+			&:first-child {
+				margin-top:0;
+			}
+		}
+	}
+
+	.NestedList {
+		--seoButtonWidth:28px;
+
+		.ListItem-Inner {
+			grid-template-columns:auto repeat(2, calc(var(--seoButtonWidth) + 120px)) repeat(2, var(--seoButtonWidth)) var(--seoButtonWidth);
+
+			&:has(> .NestedListToggle:not(.Hidden)) {
+				padding-left:50px;
+			}
+
+			&:hover {
+				.SeoInfo {
+					opacity:1;
+
+					.Icon {
+					}
+				}
+			}
+		}
+
+		.DataItem {
+			margin-top:0;
+
+			&-Slug {
+				width:100%;
+			}
+		}
+
+		.NestedListToggle {
+			width:30px;
+			height:30px;
+
+			&::before {
+				font-size:18px;
+				line-height:32px;
+			}
+		}
+
+		.SeoInfo {
+			display:grid;
+			gap:0 10px;
+			grid-template-columns:var(--seoButtonWidth) auto;
+			transition:opacity .3s ease-in-out;
+			opacity:.1;
+			align-self:start;
+
+			.Title {
+				font-size:11px;
+				line-height:1;
+				align-self:center;
+			}
+
+			.Icon {
+				display:inline-block;
+				width:var(--seoButtonWidth);
+				aspect-ratio:1;
+				border-radius:4px;
+				background-color:var(--colorMedium);
+				color:var(--colorBright);
+				line-height:0;
+				text-align:center;
+				cursor:help;
+			}
+
+			.la-check,
+			.la-exclamation,
+			.la-times {
+				color:inherit;
+				font-size:0;
+				line-height:0;
+
+				&::before {
+					line-height:var(--seoButtonWidth);
+				}
+			}
+		}
+
+		.SeoInfoStatus-Ok {
+			.Icon {
+				background-color:var(--colorSuccess);
+			}
+		}
+
+		.SeoInfoStatus-Warning {
+			.Icon {
+				background-color:var(--colorWarning);
+			}
+
+			&.SeoInfo-MetaTitle,
+			&.SeoInfo-MetaDescription {
+				opacity:1;
+			}
+		}
+
+		.SeoInfoStatus-Empty {
+			&.SeoInfo-MetaTitle {
+				opacity:1;
+
+				.Icon {
+					background-color:var(--colorError);
+				}
+			}
+
+			&.SeoInfo-MetaDescription {
+				opacity:1;
+
+				.Icon {
+					background-color:var(--colorWarning);
+				}
+			}
+		}
+
+		.SeoInfoStatus-Error {
+			.Icon {
+				background-color:var(--colorError);
+			}
+
+			&.SeoInfo-MetaTitle,
+			&.SeoInfo-MetaDescription {
+				opacity:1;
+			}
+		}
+
+		.Actions {
+			width:auto;
+		}
+
+		.Button-Edit {
+			width:var(--seoButtonWidth);
+			aspect-ratio:1;
+			padding:0;
+			font-size:0;
+			line-height:0;
+			text-indent:2px;
+
+			&::after {
+				margin:0;
+				line-height:var(--seoButtonWidth);
+			}
+		}
+	}
+}

@@ -1,4 +1,5 @@
 .#{$la-css-prefix}-check:before { content:la-content($la-check); }
+.#{$la-css-prefix}-exclamation:before { content: la-content($la-exclamation); }
 .#{$la-css-prefix}-times:before { content:la-content($la-times); }
 
 //.#{$la-css-prefix}-500px:before { content: la-content($la-500px); }
@@ -421,7 +422,6 @@
 //.#{$la-css-prefix}-euro-sign:before { content: la-content($la-euro-sign); }
 //.#{$la-css-prefix}-evernote:before { content: la-content($la-evernote); }
 //.#{$la-css-prefix}-exchange-alt:before { content: la-content($la-exchange-alt); }
-//.#{$la-css-prefix}-exclamation:before { content: la-content($la-exclamation); }
 //.#{$la-css-prefix}-exclamation-circle:before { content: la-content($la-exclamation-circle); }
 //.#{$la-css-prefix}-exclamation-triangle:before { content: la-content($la-exclamation-triangle); }
 //.#{$la-css-prefix}-expand:before { content: la-content($la-expand); }
