@@ -33,6 +33,7 @@ class WidgetsListener implements EventListenerInterface {
 		return [
 			'Model.Widgets.beforeRules' => 'beforeRules',
 			'Model.Widgets.beforeCopy' => 'beforeCopy',
+			'Model.Widgets.beforeSave' => 'beforeSave',
 		];
 	}
 
@@ -104,5 +105,24 @@ class WidgetsListener implements EventListenerInterface {
 		$entity->childWidgets = $lo_nestedChildren;
 
 		$lo_table->ChildWidgets->getBehavior('Nest')->setConfig('buildRules', false);
+	}
+
+
+	/**
+	 * @param \Cake\Event\Event $event
+	 * @param \Awyiss\Model\Entity\Widget $entity
+	 * @param \ArrayObject $options
+	 * @return void
+	 * @noinspection PhpUnusedParameterInspection
+	 */
+	public function beforeSave(Event $event, Widget $entity, ArrayObject $options): void {
+		// Unset titleTag and subtitleTag if title and subtitle are empty
+		if (!$entity->title && $entity->titleTag) {
+			$entity->titleTag = null;
+		}
+
+		if (!$entity->subtitle && $entity->subtitleTag) {
+			$entity->subtitleTag = null;
+		}
 	}
 }

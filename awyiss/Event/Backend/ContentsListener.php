@@ -33,6 +33,7 @@ class ContentsListener implements EventListenerInterface {
 		return [
 			'Model.Contents.beforeRules' => 'beforeRules',
 			'Model.Contents.beforeCopy' => 'beforeCopy',
+			'Model.Contents.beforeSave' => 'beforeSave',
 		];
 	}
 
@@ -104,5 +105,24 @@ class ContentsListener implements EventListenerInterface {
 		$entity->childContents = $lo_nestedChildren;
 
 		$lo_table->ChildContents->getBehavior('Nest')->setConfig('buildRules', false);
+	}
+
+
+	/**
+	 * @param \Cake\Event\Event $event
+	 * @param \Awyiss\Model\Entity\Widget $entity
+	 * @param \ArrayObject $options
+	 * @return void
+	 * @noinspection PhpUnusedParameterInspection
+	 */
+	public function beforeSave(Event $event, Content $entity, ArrayObject $options): void {
+		// Unset titleTag and subtitleTag if title and subtitle are empty
+		if (!$entity->title && $entity->titleTag) {
+			$entity->titleTag = null;
+		}
+
+		if (!$entity->subtitle && $entity->subtitleTag) {
+			$entity->subtitleTag = null;
+		}
 	}
 }
