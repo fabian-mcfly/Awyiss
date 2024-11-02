@@ -41,6 +41,24 @@ msgstr "Here you can optionally enter text that Google will display in the searc
 msgid "fieldset_summary"
 msgstr "Summary"
 
+msgid "headline_structure_summary_error"
+msgstr "<strong>{0}</strong> entries with critical headline structure"
+
+msgid "meta_title_summary_error"
+msgstr "<strong>{0}</strong> entries with critical meta title"
+
+msgid "meta_description_summary_error"
+msgstr "<strong>{0}</strong> entries with critical meta description"
+
+msgid "headline_structure_summary_warning"
+msgstr "<strong>{0}</strong> entries with problematic headline structure"
+
+msgid "meta_title_summary_warning"
+msgstr "<strong>{0}</strong> entries with problematic meta title"
+
+msgid "meta_description_summary_warning"
+msgstr "<strong>{0}</strong> entries with problematic meta description"
+
 msgid "fieldset_details"
 msgstr "Details"
 
@@ -79,3 +97,33 @@ msgstr "might be too long ({0} characters)"
 
 msgid "meta_description_length_error"
 msgstr "is too long ({0} characters)"
+
+msgid "headline_structure"
+msgstr "Headline structure"
+
+msgid "headline_structure_status_ok"
+msgstr "is optimal"
+
+msgid "headline_structure_status_warning"
+msgstr "should be improved"
+
+msgid "headline_structure_status_error"
+msgstr "is erroneous"
+
+msgid "headline_structure_error_h1_not_first"
+msgstr "The first headline should be a H1"
+
+msgid "headline_structure_error_h1_missing"
+msgstr "No H1 headline found"
+
+msgid "headline_structure_warning_h2_missing"
+msgstr "No H2 headline found"
+
+msgid "headline_structure_warning_wrong_headline_order"
+msgstr "The order does not follow the correct structure"
+
+msgid "headline_structure_warning_multiple_h1"
+msgstr "Multiple H1 headlines found"
+
+msgid "headline_structure_warning_too_many_h2"
+msgstr "Too many H2 headlines found"

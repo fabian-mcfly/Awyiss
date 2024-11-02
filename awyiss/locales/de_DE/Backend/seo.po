@@ -41,11 +41,17 @@ msgstr "Hier können Sie optional einen Text eingeben, der in den Google-Sucherg
 msgid "fieldset_summary"
 msgstr "Zusammenfassung"
 
+msgid "headline_structure_summary_error"
+msgstr "<strong>{0}</strong> Einträge mit kritischer Überschriftenstruktur"
+
 msgid "meta_title_summary_error"
 msgstr "<strong>{0}</strong> Einträge mit kritischem Meta-Titel"
 
 msgid "meta_description_summary_error"
 msgstr "<strong>{0}</strong> Einträge mit kritischer Meta-Beschreibung"
+
+msgid "headline_structure_summary_warning"
+msgstr "<strong>{0}</strong> Einträge mit problematischer Überschriftenstruktur"
 
 msgid "meta_title_summary_warning"
 msgstr "<strong>{0}</strong> Einträge mit problematischem Meta-Titel"
@@ -106,3 +112,33 @@ msgstr "ist unter Umständen zu lang ({0} Zeichen)"
 
 msgid "meta_description_length_error"
 msgstr "ist zu lang ({0} Zeichen)"
+
+msgid "headline_structure"
+msgstr "Überschriftenstruktur"
+
+msgid "headline_structure_status_ok"
+msgstr "ist optimal"
+
+msgid "headline_structure_status_warning"
+msgstr "sollte verbessert werden"
+
+msgid "headline_structure_status_error"
+msgstr "ist fehlerhaft"
+
+msgid "headline_structure_error_h1_not_first"
+msgstr "Die erste Überschrift sollte eine H1 sein"
+
+msgid "headline_structure_error_h1_missing"
+msgstr "Keine H1-Überschrift gefunden"
+
+msgid "headline_structure_warning_h2_missing"
+msgstr "Keine H2-Überschrift gefunden"
+
+msgid "headline_structure_warning_wrong_headline_order"
+msgstr "Falsche Reihenfolge der Überschriften"
+
+msgid "headline_structure_warning_multiple_h1"
+msgstr "Mehrere H1-Überschriften gefunden"
+
+msgid "headline_structure_warning_too_many_h2"
+msgstr "Zu viele H2-Überschriften gefunden"

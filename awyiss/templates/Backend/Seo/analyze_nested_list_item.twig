@@ -59,6 +59,16 @@
 					</ul>
 				{% endblock %}
 
+				{% block nestedListHeadlineStructureInfo %}
+					<span class="SeoInfo SeoInfo-HeadlineStructure" title="{{ __('headline_structure') }}">
+						<span class="Icon Loading"></span>
+
+						<span class="Title">
+							<strong>{{ __('headline_structure') }}</strong><br>
+						</span>
+					</span>
+				{% endblock %}
+
 				{% block nestedListMetaTitleInfo %}
 					<span class="SeoInfo SeoInfo-MetaTitle SeoInfoStatus-{{ entity.metaStatus.title.length|camelize }}" title="{{ __('meta_title') }}
 						{{- entity.metaStatus.title.set == 'auto' ? ' (' ~ __('meta_title_auto') ~ ')' : '' }}

@@ -28,7 +28,7 @@
 		--seoButtonWidth:28px;
 
 		.ListItem-Inner {
-			grid-template-columns:auto repeat(2, calc(var(--seoButtonWidth) + 120px)) repeat(2, var(--seoButtonWidth)) var(--seoButtonWidth);
+			grid-template-columns:auto repeat(3, calc(var(--seoButtonWidth) + 120px)) repeat(2, var(--seoButtonWidth)) var(--seoButtonWidth);
 
 			&:has(> .NestedListToggle:not(.Hidden)) {
 				padding-left:50px;
@@ -86,6 +86,28 @@
 				line-height:0;
 				text-align:center;
 				cursor:help;
+				position:relative;
+
+				&.Loading {
+					&::after {
+						content:'';
+						width:20px;
+						height:20px;
+						margin:auto;
+						border-radius:50%;
+						border:2px solid var(--colorBright);
+						border-top-color:transparent;
+						position:absolute;
+						inset:0;
+						animation:spin 1s linear infinite;
+
+						@keyframes spin {
+							to {
+								transform:rotate(360deg);
+							}
+						}
+					}
+				}
 			}
 
 			.la-check,
@@ -112,6 +134,7 @@
 				background-color:var(--colorWarning);
 			}
 
+			&.SeoInfo-HeadlineStructure,
 			&.SeoInfo-MetaTitle,
 			&.SeoInfo-MetaDescription {
 				opacity:1;
@@ -141,6 +164,7 @@
 				background-color:var(--colorError);
 			}
 
+			&.SeoInfo-HeadlineStructure,
 			&.SeoInfo-MetaTitle,
 			&.SeoInfo-MetaDescription {
 				opacity:1;

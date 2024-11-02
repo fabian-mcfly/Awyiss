@@ -41,30 +41,28 @@
 				<legend>{{ __('fieldset_summary') }}</legend>
 			{% endblock %}
 
-			{% if summary.title.empty|length + summary.title.error|length + summary.title.warning|length + summary.description.empty|length + summary.description.error|length + summary.description.warning|length %}
-				<ul class="Summary-List">
-					{% if summary.title.empty|length + summary.title.error|length %}
-						<li class="Title-Error Error">
-							{{ __('meta_title_summary_error',summary.title.empty|length + summary.title.error|length)|raw }}
-						</li>
-					{% endif %}
-					{% if summary.description.error|length %}
-						<li class="Description-Error Error">
-							{{ __('meta_description_summary_error', summary.description.error|length)|raw }}
-						</li>
-					{% endif %}
-					{% if summary.title.warning|length %}
-						<li class="Title-Warning Warning">
-							{{ __('meta_title_summary_warning', summary.title.warning|length)|raw }}
-						</li>
-					{% endif %}
-					{% if summary.description.empty|length + summary.description.warning|length %}
-						<li class="Description-Warning Warning">
-							{{ __('meta_description_summary_warning', summary.description.empty|length + summary.description.warning|length)|raw }}
-						</li>
-					{% endif %}
-				</ul>
-			{% endif %}
+			<ul class="Summary-List">
+				{% if summary.title.empty|length + summary.title.error|length %}
+					<li class="Title-Error Error">
+						{{ __('meta_title_summary_error',summary.title.empty|length + summary.title.error|length)|raw }}
+					</li>
+				{% endif %}
+				{% if summary.description.error|length %}
+					<li class="Description-Error Error">
+						{{ __('meta_description_summary_error', summary.description.error|length)|raw }}
+					</li>
+				{% endif %}
+				{% if summary.title.warning|length %}
+					<li class="Title-Warning Warning">
+						{{ __('meta_title_summary_warning', summary.title.warning|length)|raw }}
+					</li>
+				{% endif %}
+				{% if summary.description.empty|length + summary.description.warning|length %}
+					<li class="Description-Warning Warning">
+						{{ __('meta_description_summary_warning', summary.description.empty|length + summary.description.warning|length)|raw }}
+					</li>
+				{% endif %}
+			</ul>
 		</fieldset>
 	{% endblock %}
 
