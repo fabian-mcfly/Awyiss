@@ -64,6 +64,8 @@ export default class FormLeaveConfirmation {
 		this.isFormChanged = true;
 
 		this.bindEvents();
+
+		this.hideFlashMessages();
 	}
 
 	/**
@@ -76,10 +78,7 @@ export default class FormLeaveConfirmation {
 			return;
 		}
 
-		// Mark the form as changed if any input changes
-		this.isFormChanged = true;
-
-		this.bindEvents();
+		this.formChanged();
 	}
 
 	/**
@@ -132,6 +131,30 @@ export default class FormLeaveConfirmation {
 		// If a form is being submitted, set isFormSubmitting to true
 		if (event.target.tagName === 'FORM') {
 			this.isFormSubmitting = true;
+		}
+	}
+
+	/**
+	 * Hide flash messages when the form is changed.
+	 *
+	 * @returns {void}
+	 */
+	hideFlashMessages() {
+		// Check if the main area has a flas message and remove it
+		const content = document.querySelector('#Content');
+		const flashMessages = content?.querySelectorAll('.FlashMessage');
+		if (flashMessages.length) {
+			// Get the current scroll position
+			const scrollPosition = window.scrollY;
+			let messageHeight = 0;
+
+			flashMessages.forEach((element) => {
+				messageHeight += element.offsetHeight + 15;
+				element.remove();
+			})
+
+			// Set the new scroll position
+			window.scrollTo(0, scrollPosition - messageHeight);
 		}
 	}
 
