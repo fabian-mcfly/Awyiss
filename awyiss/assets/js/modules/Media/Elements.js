@@ -77,6 +77,8 @@ export default class Elements {
 			this.lists.forEach(item => {
 				item.classList.remove('SortableDragging');
 			});
+
+			window.formLeaveConfirmation.formChanged();
 		}
 
 		/**

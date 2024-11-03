@@ -375,6 +375,19 @@ export default class NestedListHandler {
 			button.disabled = isDefaultOrder;
 			button.classList.toggle('Button-Success', !isDefaultOrder);
 		});
+
+		if (window.formLeaveConfirmation) {
+			if (!isDefaultOrder) {
+				window.formLeaveConfirmation.formChanged();
+			}
+			else {
+				// If the dragged item is not part of a form, reset the form changed state
+				// Otherwise it is not possible to determine if anything else in the form has changed
+				if (!event.item.closest('form')) {
+					window.formLeaveConfirmation.isFormChanged = false;
+				}
+			}
+		}
 	}
 
 	/**

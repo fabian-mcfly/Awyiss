@@ -95,12 +95,9 @@ export default class InputListManager {
 				filter: '.Button-Add, .Label',
 				ghostClass: 'SortableGhost',
 				handle: '.SortableHandle',
-				/*onEnd: function () {
-					// Get the first input in the element
-					const firstInput = formInput.querySelector('input, select');
-					// Trigger an input event on the first input
-					firstInput.dispatchEvent(new Event('input', {bubbles: true}));
-				},*/
+				onEnd: function () {
+					window.formLeaveConfirmation.formChanged();
+				},
 			});
 		});
 	}
@@ -221,9 +218,6 @@ export default class InputListManager {
 
 		// Insert the new row before the button
 		formInput.insertBefore(newRow, button);
-
-		// Trigger an input event on the first input in the first new input
-		//inputs[0].dispatchEvent(new Event('input', {bubbles: true}));
 	}
 
 	/**
