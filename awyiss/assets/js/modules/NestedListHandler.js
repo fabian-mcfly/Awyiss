@@ -157,6 +157,7 @@ export default class NestedListHandler {
 				});
 			}
 
+			// noinspection JSUnresolvedReference
 			const groupName = element.dataset.sortableGroup ?? options.groupName;
 
 			element.sortable = Sortable.create(element, {
@@ -318,6 +319,7 @@ export default class NestedListHandler {
 	 */
 	saveOrderButtonHandler(event) {
 		event.preventDefault();
+		// noinspection JSIgnoredPromiseFromCall
 		this.saveSystemOrder();
 	}
 
@@ -459,7 +461,8 @@ export default class NestedListHandler {
 
 	/**
 	 * Event handler for the toggle button click
-	 * @param {Event} event - The event object
+	 *
+	 * @param {MouseEvent} event - The event object
 	 */
 	handleToggleButtonClick(event) {
 		// Check if the event target is a NestedListToggle button
@@ -468,8 +471,8 @@ export default class NestedListHandler {
 		}
 
 		// Get the parent list item and child list associated with the button
-		const parentListItem = event.target.closest('.ListItem');
-		const childList = parentListItem.querySelector('.NestedList');
+		const listItem = event.target.closest('.ListItem');
+		const childList = listItem.querySelector('.NestedList');
 
 		// If the childList is empty, return
 		if (!childList.children.length) {
@@ -480,12 +483,33 @@ export default class NestedListHandler {
 			return;
 		}
 
-		// Toggle the visibility of the child list
 		event.target.classList.toggle('Collapsed');
-		childList.classList.toggle('Collapsed');
+
+		this.toggleListState(listItem, childList);
+
+		// If the ctrl key is pressed, toggle the state of all child lists
+		if (event.ctrlKey) {
+			const childLists = Array.from(childList.querySelectorAll('.NestedList'));
+			childLists.forEach(childList => {
+				const listItem = childList.closest('.ListItem');
+				this.toggleListState(listItem, childList, event.target.classList.contains('Collapsed'));
+			});
+		}
+	}
+
+	/**
+	 * Toggle the state of a list
+	 *
+	 * @param {HTMLElement} listItem
+	 * @param {HTMLElement} childList
+	 * @param {string} forceState
+	 */
+	toggleListState(listItem, childList, forceState) {
+		// Toggle the visibility of the child list
+		childList.classList.toggle('Collapsed', forceState);
 
 		// Update the state in nestedListStates
-		this.nestedListStates[parentListItem.id] = event.target.classList.contains('Collapsed') ? 'Collapsed' : 'Expanded';
+		this.nestedListStates[ listItem.id ] = childList.classList.contains('Collapsed') ? 'Collapsed' : 'Expanded';
 
 		// Save the state to localStorage
 		localStorage.setItem('nestedListStates', JSON.stringify(this.nestedListStates));
