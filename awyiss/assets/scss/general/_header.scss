@@ -22,6 +22,10 @@
 		--colorMenu:var(--colorSemiDark);
 	}
 
+	.👀 & {
+		position:absolute;
+	}
+
 	&::before {
 		content:'';
 		backdrop-filter:blur(5px);
@@ -30,6 +34,10 @@
 		z-index:-1;
 		pointer-events:none;
 		mask-image:linear-gradient(to bottom, black 70%, transparent 100%);
+
+		.👀 & {
+			display:none;
+		}
 	}
 
 	.Title {
@@ -114,6 +122,12 @@
 			position:relative;
 			overflow:hidden;
 			transition:background-color .3s ease-in-out;
+
+			.👀 & {
+				&:hover {
+					transition-delay:0s;
+				}
+			}
 
 			&.Visible,
 			&:hover,

@@ -18,6 +18,10 @@
 				align-self:start;
 				position:sticky;
 				top:100px;
+
+				.👀& {
+					top:20px;
+				}
 			}
 
 			&:not(.Pages-List) {
@@ -28,7 +32,7 @@
 
 		#Pages-List {
 			display:block;
-			max-height:calc(100dvh - 300px);
+			max-height:calc(100dvh - 140px);
 			margin:0;
 			padding:0 10px 0 0;
 			border:20px solid transparent;
@@ -37,8 +41,14 @@
 			scrollbar-color:var(--scrollbarColor);
 			scrollbar-width:thin;
 
-			.🌚 & {
+			.🌚 &,
+			.🌚& {
 				--scrollbarColor:var(--backgroundColorContent) var(--colorSemiDark);
+			}
+
+			.👀 &,
+			.👀& {
+				max-height:calc(100dvh - 40px);
 			}
 
 			.NestedList {

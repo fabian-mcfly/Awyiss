@@ -7,6 +7,7 @@
 		{%- if isGenericPage %}	IsGenericPage{%- endif -%}
 		{%- if isGenericDatatable %} IsGenericDatatable{%- endif -%}
 		{%- if config.Awyiss.System.Backend.interface.darkMode == true %} 🌚{% endif -%}
+		{%- if config.Awyiss.System.Backend.interface.disctractionFreeMode == true %} 👀{% endif -%}
 		{%- if config.Awyiss.System.Backend.interface.scale and config.Awyiss.System.Backend.interface.scale != 'regular' %} Scale-{{ config.Awyiss.System.Backend.interface.scale|camelize }}{% endif -%}
 	">
 	<head>

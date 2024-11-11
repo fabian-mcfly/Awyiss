@@ -32,8 +32,11 @@ export default class SystemController {
 
 		// Reset width and height of the button since disabled buttons have no pointer events
 		// so the mouse leave event won't be triggered
-		button.querySelector('.Hover').style.width = '';
-		button.querySelector('.Hover').style.height = '';
+		const hoverElement = button.querySelector('.Hover');
+		if (hoverElement) {
+			hoverElement.style.width = '';
+			hoverElement.style.height = '';
+		}
 
 		// Send the request
 		this.sendClearCacheRequest(button);

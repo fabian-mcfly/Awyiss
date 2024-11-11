@@ -79,7 +79,7 @@ export default class Loader {
 		toolbar1: 'undo redo | copy cut paste pastetext | bold italic underline strikethrough styles removeformat | aligncenter alignright alignjustify outdent indent | awyissModule',
 		toolbar2: 'link unlink anchor | blockquote bullist numlist | hr subscript superscript nonbreaking charmap | table | visualblocks visualchars | wordcount code | fullscreen',
 		toolbar_sticky: true,
-		toolbar_sticky_offset: 100,
+		toolbar_sticky_offset: document.documentElement.classList.contains('👀') ? 0 : 100,
 		//visualchars_default_state: true,
 	}
 	/**

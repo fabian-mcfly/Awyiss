@@ -33,6 +33,10 @@ export default class FooterReveal {
 	ticking = false;
 
 	constructor() {
+		if (document.documentElement.classList.contains('👀')) {
+			return;
+		}
+
 		// Bind the requestTick method to the current instance
 		this.boundRequestTick = this.requestTick.bind(this);
 

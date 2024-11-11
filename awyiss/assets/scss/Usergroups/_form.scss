@@ -105,6 +105,10 @@
 				background-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l - 0.0473) calc(c - 0.005) calc(h + 1.12));
 			}
 
+			.👀& {
+				top:20px;
+			}
+
 			&::after {
 				content:'';
 				width:10px;

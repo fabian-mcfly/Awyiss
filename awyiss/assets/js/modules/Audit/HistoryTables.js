@@ -145,8 +145,11 @@ export default class HistoryTables {
 		if (prev.disabled && prev.querySelector('.Hover')) {
 			// Reset width and height of the button since disabled buttons have no pointer events
 			// so the mouse leave event won't be triggered
-			prev.querySelector('.Hover').style.width = '';
-			prev.querySelector('.Hover').style.height = '';
+			const hoverElement = prev.querySelector('.Hover');
+			if (hoverElement) {
+				hoverElement.style.width = '';
+				hoverElement.style.height = '';
+			}
 		}
 
 		const next = slider.parentElement.querySelector('.AuditHistory-Slider-Next');
@@ -154,8 +157,11 @@ export default class HistoryTables {
 		if (next.disabled && next.querySelector('.Hover')) {
 			// Reset width and height of the button since disabled buttons have no pointer events
 			// so the mouse leave event won't be triggered
-			next.querySelector('.Hover').style.width = '';
-			next.querySelector('.Hover').style.height = '';
+			const hoverElement = next.querySelector('.Hover');
+			if (hoverElement) {
+				hoverElement.style.width = '';
+				hoverElement.style.height = '';
+			}
 		}
 
 		if (!current.htmlInitialized) {

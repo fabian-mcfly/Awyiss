@@ -107,6 +107,9 @@ msgstr "Global"
 msgid "identifier_interface_dark_mode"
 msgstr "Dunkler Modus"
 
+msgid "identifier_interface_disctraction_free_mode"
+msgstr "Ablenkungsfreier Modus"
+
 msgid "identifier_interface_editor"
 msgstr "Texteditor"
 

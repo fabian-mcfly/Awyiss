@@ -35,24 +35,26 @@ export default class ButtonHandler {
 		// Make params an instance variable
 		this.params = params;
 
-		// Iterate over each parameter
-		params.forEach(param => {
-			// Extract the elementSelector and hoverSelector from the parameter
-			const [elementSelector, hoverSelector] = this.extractSelectors(param);
+		if (!document.documentElement.classList.contains('👀')) {
+			// Iterate over each parameter
+			params.forEach(param => {
+				// Extract the elementSelector and hoverSelector from the parameter
+				const [elementSelector, hoverSelector] = this.extractSelectors(param);
 
-			// Get all elements that match the elementSelector
-			const elements = document.querySelectorAll(elementSelector);
-			elements.forEach(element => {
-				// Add each element to the elements array and initialize its hover element
-				this.addElement(element, hoverSelector);
+				// Get all elements that match the elementSelector
+				const elements = document.querySelectorAll(elementSelector);
+				elements.forEach(element => {
+					// Add each element to the elements array and initialize its hover element
+					this.addElement(element, hoverSelector);
+				});
+
+				// Add the elements to the elements array
+				this.elements = this.elements.concat(elements);
 			});
 
-			// Add the elements to the elements array
-			this.elements = this.elements.concat(elements);
-		});
-
-		const observer = window.observer;
-		observer.addObserver(this.observeMutations.bind(this));
+			const observer = window.observer;
+			observer.addObserver(this.observeMutations.bind(this));
+		}
 
 		// Create the dialog elements
 		this.createDialog();

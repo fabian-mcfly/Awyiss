@@ -182,6 +182,8 @@ fieldset {
 	&.Collapsed {
 		height:40px;
 		padding-block:10px;
+		opacity:.5;
+		transition:opacity .3s ease-in-out;
 
 		> *:not(legend) {
 			display:none;
@@ -195,6 +197,10 @@ fieldset {
 
 		&:has(> legend:last-child) {
 			padding-bottom:0;
+		}
+
+		&:hover {
+			opacity:inherit;
 		}
 	}
 
@@ -299,6 +305,10 @@ legend {
 
 	&:hover {
 		transition-delay:.3s, 0s;
+
+		.👀 & {
+			transition-delay:0s;
+		}
 
 		&::after {
 			opacity:inherit;

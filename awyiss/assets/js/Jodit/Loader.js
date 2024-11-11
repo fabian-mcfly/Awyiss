@@ -126,7 +126,7 @@ export default class Loader {
 		],
 		toolbarButtonSize: 'large',
 		toolbarInlineForSelection: false,
-		toolbarStickyOffset: 100,
+		toolbarStickyOffset: document.documentElement.classList.contains('👀') ? 0 : 100,
 		uploader: {url: 'none'},
 	}
 	/**

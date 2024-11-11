@@ -70,6 +70,14 @@ class SystemConfigOptions extends AbstractConfigOptions {
 					type: ConfigOptionType::Bool,
 				),
 				new ConfigOption(
+					defaultValue: false,
+					identifier: 'disctractionFreeMode',
+					localizable: false,
+					nullable: false,
+					personalizable: true,
+					type: ConfigOptionType::Bool,
+				),
+				new ConfigOption(
 					defaultValue: 'plain',
 					identifier: 'editor',
 					localizable: false,

@@ -48,6 +48,10 @@
 	top:100px;
 	z-index:5;
 
+	.👀 & {
+		top:20px;
+	}
+
 	&::before {
 		content:attr(title);
 		width:fit-content;

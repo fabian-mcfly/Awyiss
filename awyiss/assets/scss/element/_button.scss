@@ -35,6 +35,12 @@ button,
 		background-image:none;
 	}
 
+	.👀 & {
+		&:hover {
+			transition-delay:0s;
+		}
+	}
+
 	&[disabled],
 	&.Disabled {
 		pointer-events:none;

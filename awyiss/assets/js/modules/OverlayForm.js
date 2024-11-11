@@ -75,9 +75,13 @@ export default class OverlayForm {
 		const form = this.overlayElement.querySelector('.Form');
 		if (form) {
 			const closeButton = this.overlayElement.querySelector('.Button-Close');
+
 			// Reset width and height of the button since the mouse leave event doesn't fire
-			closeButton.querySelector('.Hover').style.width = '';
-			closeButton.querySelector('.Hover').style.height = '';
+			const hoverElement = closeButton.querySelector('.Hover');
+			if (hoverElement) {
+				hoverElement.style.width = '';
+				hoverElement.style.height = '';
+			}
 
 			// Move the close button back to the overlay
 			this.overlayElement.append(closeButton);

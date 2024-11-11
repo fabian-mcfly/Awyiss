@@ -97,6 +97,12 @@
 	left:0;
 	z-index:-2;
 
+	.👀 & {
+		margin-top:60px;
+		position:relative;
+		z-index:2;
+	}
+
 	&.Fixed {
 		position:fixed;
 		bottom:0;

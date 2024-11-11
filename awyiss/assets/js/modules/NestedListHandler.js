@@ -695,8 +695,11 @@ export default class NestedListHandler {
 
 				// Reset width and height of the button since disabled buttons have no pointer events
 				// so the mouse leave event won't be triggered
-				button.querySelector('.Hover').style.width = '';
-				button.querySelector('.Hover').style.height = '';
+				const hoverElement = button.querySelector('.Hover');
+				if (hoverElement) {
+					hoverElement.style.width = '';
+					hoverElement.style.height = '';
+				}
 			});
 
 			this.defaultOrder = this.getOrderWithLevels();

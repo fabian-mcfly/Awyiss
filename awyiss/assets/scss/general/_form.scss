@@ -931,6 +931,10 @@ textarea {
 	position:sticky;
 	top:160px;
 
+	.👀 & {
+		top:60px;
+	}
+
 	.List {
 		max-height:calc(100dvh - 240px);
 		margin:0 -10px 0;
@@ -939,8 +943,14 @@ textarea {
 		scrollbar-color:var(--colorMedium) var(--colorLight);
 		scrollbar-width:thin;
 
+		.🌚 &,
 		.🌚& {
 			scrollbar-color:var(--colorSemiDarkDarkMode) var(--colorText);
+		}
+
+		.👀 &,
+		.👀& {
+			max-height:calc(100dvh - 140px);
 		}
 	}
 }

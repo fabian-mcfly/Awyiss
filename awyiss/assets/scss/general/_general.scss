@@ -51,6 +51,10 @@ body {
 	position:relative;
 	transition:margin-bottom .3s ease-in-out;
 
+	.👀 & {
+		padding-bottom:0;
+	}
+
 	&::before {
 		content:'';
 		background-image:url($relativePath + 'img/background-pattern-light.png');

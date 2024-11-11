@@ -22,6 +22,10 @@
 		top:160px;
 		grid-column:1 / 1;
 
+		.👀& {
+			top:40px;
+		}
+
 		.Scale-Small& {
 			&:not(.Collapsed) {
 				padding-bottom:20px;
@@ -63,6 +67,10 @@
 
 			.🌚& {
 				scrollbar-color:var(--colorSemiDark) oklch(from var(--colorBackgroundContentDarkMode) calc(l - 0.0473) calc(c - 0.005) calc(h + 1.12) / .85);
+			}
+
+			.👀& {
+				max-height:calc(100dvh - 140px);
 			}
 		}
 	}

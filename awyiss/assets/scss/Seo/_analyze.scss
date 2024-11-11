@@ -8,6 +8,11 @@
 			border-radius:5px;
 			list-style:none;
 
+			.Scale-Small& {
+				margin-inline:0;
+				padding-block:7px 9px;
+			}
+
 			&.Error {
 				background-color:var(--colorError);
 				color:var(--colorBright);
@@ -16,10 +21,20 @@
 			&.Warning {
 				background-color:var(--colorWarning);
 				color:var(--colorText);
+
+				.🌚& {
+					color:$colorText;
+				}
 			}
 
 			&:first-child {
 				margin-top:0;
+			}
+
+			&:last-child {
+				.Scale-Small& {
+					margin-bottom:20px;
+				}
 			}
 		}
 	}
