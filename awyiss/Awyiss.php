@@ -326,8 +326,8 @@ class Awyiss extends BaseApplication {
 		$lo_container->add(ServerRequest::class, $request);
 		$lo_container->add(ContainerInterface::class, $lo_container);
 
-		$lo_eventManager = $this->pluginEvents($this->getEventManager());
-		$this->setEventManager($this->events($lo_eventManager));
+		$lo_eventManager = $this->events($this->getEventManager());
+		$this->setEventManager($this->pluginEvents($lo_eventManager));
 
 		$this->controllerFactory ??= new ControllerFactory($lo_container);
 

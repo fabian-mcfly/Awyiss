@@ -10,7 +10,7 @@ return [
 	'Migrations' => [
 		'onlyCli' => true,
 	],
-	'Authentication' => null,
+	'Authentication' => [],
 	'Queue' => [
 		'routes' => false,
 	],
