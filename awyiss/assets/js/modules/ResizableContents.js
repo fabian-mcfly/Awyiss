@@ -111,6 +111,9 @@ export default class ResizableContents {
 		// Bind the resize and stop methods to this instance
 		this.boundResize = this.onResize.bind(this);
 		this.boundStop = this.onEnd.bind(this);
+
+		const observer = window.observer;
+		observer.addObserver(this.observeMutations.bind(this));
 	}
 
 	/**
@@ -350,5 +353,48 @@ export default class ResizableContents {
 				this.setNarrowClass(nestedItem);
 			});
 		}
+	}
+
+
+	/**
+	 * Find elements with the given selector in the
+	 * added nodes and bind events to them
+	 *
+	 * @param {MutationRecord} mutation - The mutation to observe.
+	 */
+	observeMutations(mutation) {
+		if (!mutation.addedNodes.length > 0) {
+			return;
+		}
+
+		// Iterate over each added node
+		mutation.addedNodes.forEach(node => {
+			if (node.nodeType !== Node.ELEMENT_NODE) {
+				return;
+			}
+
+			// If the node matches the element selector, bind the events
+			if (node.matches('.ListItem')) {
+				const resizer = node.querySelector(':scope > .Resizer');
+				if (resizer) {
+					this.eventHandler.add('mousedown', event => {
+						this.onStart(event, node);
+					}, resizer);
+				}
+			}
+
+			const elements = node.querySelectorAll('.ListItem');
+			elements.forEach(node => {
+				const resizer = node.querySelector(':scope > .Resizer');
+
+				if (!resizer) {
+					return;
+				}
+
+				this.eventHandler.add('mousedown', event => {
+					this.onStart(event, node);
+				}, resizer);
+			});
+		});
 	}
 }
