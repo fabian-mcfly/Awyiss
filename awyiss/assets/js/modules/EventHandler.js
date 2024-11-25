@@ -193,6 +193,17 @@ export default class EventHandler {
 	 */
 	removeNodeEvents(element) {
 		if (this.events.has(element)) {
+			const elementEvents = this.events.get(element);
+
+			for (const eventName in elementEvents) {
+				const event = elementEvents[eventName];
+				for (const [key, handlers] of event.entries()) {
+					for (const handler of handlers) {
+						element.removeEventListener(eventName, handler.listener, handler.options);
+					}
+				}
+			}
+
 			this.events.delete(element);
 		}
 
