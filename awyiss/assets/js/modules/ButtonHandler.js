@@ -258,7 +258,11 @@ export default class ButtonHandler {
 
 			// Add the yes class to the button, if it exists
 			if (event.target.dataset.confirmYesClass) {
-				this.dialog.confirmYes.classList.add(event.target.dataset.confirmYesClass);
+				let classes = event.target.dataset.confirmYesClass;
+				if (!Array.isArray(classes)) {
+					classes = classes.includes(' ') ? classes.split(' ') : [classes];
+				}
+				this.dialog.confirmYes.classList.add(...classes);
 			}
 		}
 
@@ -271,7 +275,11 @@ export default class ButtonHandler {
 
 			// Add the no class to the button, if it exists
 			if (event.target.dataset.confirmNoClass) {
-				this.dialog.confirmNo.classList.add(event.target.dataset.confirmNoClass);
+				let classes = event.target.dataset.confirmNoClass;
+				if (!Array.isArray(classes)) {
+					classes = classes.includes(' ') ? classes.split(' ') : [classes];
+				}
+				this.dialog.confirmNo.classList.add(...classes);
 			}
 		}
 
