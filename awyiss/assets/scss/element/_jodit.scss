@@ -344,7 +344,7 @@
 		}
 
 		&::before {
-			background-image:url($relativePath + 'img/awyiss-v1-' + $awyissVersionName + '.jpg');
+			background-image:url($relativePath + 'img/awyiss-v' + $awyissVersionMajor + '-' + $awyissVersionName + '.jpg');
 			background-color:var(--colorDark);
 			background-position:center;
 			background-size:cover;

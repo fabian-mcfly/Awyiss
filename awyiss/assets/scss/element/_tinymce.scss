@@ -538,7 +538,7 @@ body {
 				height:52px;
 				padding:0 20px;
 				border-radius:5px;
-				background-image:url($relativePath + 'img/awyiss-v1-' + $awyissVersionName + '.jpg');
+				background-image:url($relativePath + 'img/awyiss-v' + $awyissVersionMajor + '-' + $awyissVersionName + '.jpg');
 				background-color:var(--colorDark);
 				background-position:center;
 				background-size:cover;

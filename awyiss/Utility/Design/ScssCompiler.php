@@ -241,6 +241,7 @@ class ScssCompiler {
 
 		static::$compiler->addVariables([
 			'awyissVersion' => Awyiss::VERSION,
+			'awyissVersionMajor' => explode('.', Awyiss::VERSION)[0],
 			'awyissVersionName' => Inflector::dasherize(Awyiss::VERSION_NAME),
 		]);
 
