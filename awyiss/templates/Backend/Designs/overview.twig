@@ -31,7 +31,16 @@
 				{{ FormHelper.button(__('preview'), {class: 'Button Button-View', name: 'preview', value: design.isPreview ? design.identifier : ''}) }}
 
 				{% if AuthorizationHelper.isAccessible('save') %}
-					{{ FormHelper.button(__('save'), {class: 'Button Button-Success Button-Save', name: 'save', value: design.isPreview ? design.identifier : ''}) }}
+					{{ FormHelper.button(__('apply'), {
+						class: 'Button Button-Success Button-Save',
+						name: 'save',
+						value: design.isPreview ? design.identifier : '',
+						'data-confirm-title': __('confirm_apply_title'),
+						'data-confirm-yes': __('confirm_apply_yes'),
+						'data-confirm-yes-class': 'Button-Success Button-Save',
+						'data-confirm-no': __('confirm_apply_no'),
+						'data-confirm': __('confirm_apply', key),
+					}) }}
 				{% endif %}
 			{% endblock %}
 		</div>

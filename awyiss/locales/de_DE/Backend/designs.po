@@ -115,3 +115,15 @@ msgstr "Das Design wurde erfolgreich gespeichert"
 
 msgid "preview_mode"
 msgstr "Vorschau-Modus"
+
+msgid "confirm_apply_title"
+msgstr "Design-Einstellungen anwenden"
+
+msgid "confirm_apply_yes"
+msgstr "Anwenden"
+
+msgid "confirm_apply_no"
+msgstr "Abbrechen"
+
+msgid "confirm_apply"
+msgstr "Möchten Sie die Design-Einstellungen wirklich anwenden?"

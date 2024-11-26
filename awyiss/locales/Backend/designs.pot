@@ -115,3 +115,15 @@ msgstr "The design was successfully saved."
 
 msgid "preview_mode"
 msgstr "Preview mode"
+
+msgid "confirm_apply_title"
+msgstr "Apply design settings"
+
+msgid "confirm_apply_yes"
+msgstr "Apply"
+
+msgid "confirm_apply_no"
+msgstr "Cancel"
+
+msgid "confirm_apply"
+msgstr "Do you really want to apply the design settings?"

@@ -3,10 +3,10 @@
 		> form {
 			grid-column:1 / -1;
 
-			@media screen AND (min-width:1441px) {
+			@media screen AND (min-width:1921px) {
 				display:grid;
 				gap:0 40px;
-				grid-template-columns:400px 1fr;
+				grid-template-columns:1fr 1fr;
 			}
 		}
 
@@ -19,12 +19,12 @@
 			border-radius:5px;
 			background-color:var(--colorBright);
 
-			@media screen AND (min-width:1441px) {
+			@media screen AND (min-width:1921px) {
 				height:calc(100dvh - 150px);
 			}
 
 			.👀& {
-				@media screen AND (min-width:1441px) {
+				@media screen AND (min-width:1921px) {
 					height:calc(100dvh - 70px);
 				}
 			}
@@ -43,14 +43,14 @@
 	#Preview {
 		container-type:inline-size;
 
-		@media screen AND (min-width:1441px) {
+		@media screen AND (min-width:1921px) {
 			margin-bottom:calc(52px + var(--lineHeightMain) * 3);
 			position:sticky;
 			top:100px;
 		}
 
 		.👀& {
-			@media screen AND (min-width:1441px) {
+			@media screen AND (min-width:1921px) {
 				top:40px;
 			}
 		}
@@ -88,7 +88,7 @@
 		}
 
 		&:last-child {
-			@media screen AND (min-width:1441px) {
+			@media screen AND (min-width:1921px) {
 				margin-bottom:0;
 			}
 		}
