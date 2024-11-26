@@ -136,6 +136,10 @@ class AuditBehavior extends Behavior {
 			'className' => 'Users',
 			'foreignKey' => Inflector::underscore($alias),
 		]);
+
+		/** @var class-string<\Awyiss\Model\Entity> $ls_entityClass */
+		$ls_entityClass = $lo_table->getEntityClass();
+		$ls_entityClass::addFieldMapping(Inflector::underscore($alias . 'User'), Inflector::variable($alias . 'User'));
 	}
 
 
