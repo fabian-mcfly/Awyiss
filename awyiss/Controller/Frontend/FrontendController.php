@@ -311,11 +311,12 @@ class FrontendController extends AppController {
 		ResizedImageManager::addMediaItemsFromEntity($lo_page);
 
 		$la_designVariables = $this->getRequest()->getAttribute('design')->getDesignVariables();
+		$la_designPreviewVariables = $this->loadDesignPreview();
 
 		$lo_mediaRenderOptions = new MediaRenderOptions(
-			baseWidth: intval($la_designVariables['pageWidth'] ?? 1920),
+			baseWidth: intval($la_designPreviewVariables['pageWidth'] ?? $la_designVariables['pageWidth'] ?? 1920),
 			breakpoints: Configure::read('Awyiss.Media.Frontend.defaultBreakpoints'),
-			singleColumnBreakpoint: intval($la_designVariables['singleColumnBreakpoint'] ?? 768),
+			singleColumnBreakpoint: intval($la_designPreviewVariables['singleColumnBreakpoint'] ?? $la_designVariables['singleColumnBreakpoint'] ?? 768),
 		);
 
 		$this->set([
@@ -324,10 +325,6 @@ class FrontendController extends AppController {
 			'pageRoleEnum' => $ls_pageRoleEnum,
 			'mediaRenderOptions' => $lo_mediaRenderOptions,
 		]);
-
-		if ($this->request->getSession()->read('designPreviewIdentifier')) {
-			$this->loadDesignPreview();
-		}
 
 		if ($this->request->getSession()->read('Auth')) {
 			$this->loadFrontendEditor($lo_page);
@@ -541,19 +538,35 @@ class FrontendController extends AppController {
 
 
 	/**
-	 * @return void
+	 * Loads and returns the design preview data
+	 *
+	 * @return array
 	 */
-	protected function loadDesignPreview(): void {
+	protected function loadDesignPreview(): array {
+		if ($this->request->getParam('designPreview')) {
+			$this->request->getSession()->write('designPreviewIdentifier', $this->request->getParam('designPreview'));
+		}
+
 		$ls_designPreviewIdentifier = $this->request->getSession()->read('designPreviewIdentifier');
+
+		if (!$ls_designPreviewIdentifier) {
+			return [];
+		}
+
+		if ($this->request->getData('awyiss_design_preview') === 'cancel') {
+			$this->request->getSession()->delete('designPreviewIdentifier');
+
+			throw new RedirectException(Router::url(['_name' => $this->request->getParam('_name')]));
+		}
 
 		$lo_designTable = $this->fetchTable('Designs');
 		$lo_design = $lo_designTable->find('all')->where([
 			'identifier' => $ls_designPreviewIdentifier,
-			'is_preview' => true,
+			'in_use' => false,
 		])->first();
 
 		if (!$lo_design) {
-			return;
+			return [];
 		}
 
 		$this->set('designPreview', $lo_design);
@@ -571,6 +584,8 @@ class FrontendController extends AppController {
 		}
 
 		$this->set('designPreviewWebfonts', $la_webfontData);
+
+		return $lo_design->settings ?? [];
 	}
 
 

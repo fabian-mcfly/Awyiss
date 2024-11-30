@@ -1,0 +1,51 @@
+{#
+@var records \Awyiss\Model\Entity\Design[]
+@var entity \Awyiss\Model\Entity\Design
+@var _view \Awyiss\View\BackendView
+#}
+
+{% extends '@Backend/element/overview/overview_paginated_list.twig' %}
+
+{% block tableOverviewHeaderDefaultFields %}
+	<th class="TableHeader-InUse{% if PaginatorHelper.isCurrentSortKey('in_use') %} Active{% endif %}">
+		{{ PaginatorHelper.sort('in_use', __('in_use')) }}
+	</th>
+{% endblock %}
+
+{% block tableOverviewCellDefaultFields %}
+	<td class="TableCell-InUse">
+		{% if entity.inUse %}
+			<i class="las la-check">{{ __('true') }}</i>
+		{% else %}
+			<i class="las la-times">{{ __('false') }}</i>
+		{% endif %}
+	</td>
+{% endblock %}
+
+{% block tableOverviewCellActions %}
+	<td class="TableCell-Actions">
+		<div class="Actions">
+			{{ HtmlHelper.link(__('frontend_preview'), {
+				designPreview: entity.identifier,
+				_name: 'FrontendRoot',
+			}, {
+				class: 'Button Button-Small Button-View Button-ViewData',
+				target: '_blank',
+			}) }}
+
+			{% if AuthorizationHelper.isAccessible('load') %}
+				{{ HtmlHelper.link(__('load_settings'), {identifier: entity.identifier}, {
+					class: 'Button Button-Small Button-View Button-ViewData',
+				}) }}
+			{% endif %}
+
+			{% block tableOverviewCellActionsDelete %}
+				{% if entity.inUse == false %}
+					{{ parent() }}
+				{% endif %}
+			{% endblock %}
+		</div>
+	</td>
+{% endblock %}
+
+{% block tableOverviewFootColSpan %}{{ localConfig.overview.displayedFields|length + 5 }}{% endblock %}

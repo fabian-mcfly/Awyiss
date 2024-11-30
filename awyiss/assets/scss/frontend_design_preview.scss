@@ -4,15 +4,14 @@ $relativePath:'../';
 
 @layer awyissFrontendDesignPreview {
 	#AwyissDesignPreview {
+		display:flex;
 		width:fit-content;
 		margin:auto;
 		padding:10px 20px;
 		border-radius:5px;
 		background-color:#63d1a5;
 		color:#FFFFFF;
-		font-family:'2f media', Bebas Neue, Impact, Arial Display, monospace;
-		font-size:24px;
-		line-height:22px;
+		letter-spacing:0;
 		text-align:center;
 		position:fixed;
 		right:20px;
@@ -20,6 +19,47 @@ $relativePath:'../';
 		left:20px;
 		z-index:987654;
 		cursor:default;
+		align-items:center;
+
+		form {
+			font-size:0;
+			line-height:0;
+		}
+
+		.AwyissDesignPreview-Title {
+			display:block;
+			margin-right:20px;
+			font-family:'2f media', Bebas Neue, Impact, Arial Display, monospace;
+			font-size:24px;
+			line-height:22px;
+		}
+
+		.AwyissDesignPreview-Subtitle {
+			display:block;
+			margin-right:20px;
+			font-size:14px;
+			line-height:22px;
+		}
+
+		.AwyissDesignPreview-CloseButton {
+			padding:5px 15px;
+			border:0 none;
+			border-radius:5px;
+			box-shadow:0 0 10px rgba(0, 0, 0, .25);
+			background-color:#131a21;
+			color:#FFFFFF;
+			font-family:'2F media', Bebas Neue, Impact, Arial Display, sans-serif;
+			font-size:20px;
+			font-weight:400;
+			line-height:30px;
+			text-decoration:none;
+			cursor:pointer;
+			transition:background-color .3s ease-in-out;
+
+			&:hover {
+				background-color:#3b4651;
+			}
+		}
 
 		html:has(#AwyissFrontendPreview-Info) & {
 			bottom:100px;

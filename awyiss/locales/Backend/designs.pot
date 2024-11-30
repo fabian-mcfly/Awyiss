@@ -98,20 +98,32 @@ msgstr "Breakpoint single column"
 msgid "column_margin"
 msgstr "Column margin"
 
-msgid "permission_load"
-msgstr "Load data"
-
 msgid "preview"
 msgstr "Preview"
 
-msgid "save"
-msgstr "Save"
+msgid "save_settings"
+msgstr "Save settings"
+
+msgid "update_preview"
+msgstr "Update preview"
+
+msgid "cancel_preview"
+msgstr "Cancel preview"
+
+msgid "permission_load"
+msgstr "Load settings"
 
 msgid "permission_save"
-msgstr "Save"
+msgstr "Save settings"
+
+msgid "permission_use"
+msgstr "Use settings"
 
 msgid "save_succeeded"
-msgstr "The design was successfully saved."
+msgstr "The design was successfully saved"
+
+msgid "delete_failed"
+msgstr "The design could not be deleted"
 
 msgid "preview_mode"
 msgstr "Preview mode"
@@ -127,3 +139,39 @@ msgstr "Cancel"
 
 msgid "confirm_apply"
 msgstr "Do you really want to apply the design settings?"
+
+msgid "description"
+msgstr "Description"
+
+msgid "save_settings_title"
+msgstr "Save settings"
+
+msgid "save_settings_yes"
+msgstr "Save"
+
+msgid "save_settings_no"
+msgstr "Cancel"
+
+msgid "save_failed"
+msgstr "The settings could not be saved"
+
+msgid "current_settings"
+msgstr "Current settings"
+
+msgid "reset"
+msgstr "Reset"
+
+msgid "headline_saved_designs"
+msgstr "Saved design settings"
+
+msgid "load_settings"
+msgstr "Load settings"
+
+msgid "in_use"
+msgstr "In use"
+
+msgid "error_not_in_use"
+msgstr "This design is in use"
+
+msgid "frontend_preview"
+msgstr "Frontend preview"

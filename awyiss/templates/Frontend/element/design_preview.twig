@@ -21,7 +21,16 @@
 
 {% if designPreview %}
 	{% block designPreviewLabel %}
-		<div id="AwyissDesignPreview">{{ __d('system', 'design_preview_mode_label') }}</div>
+		<div id="AwyissDesignPreview">
+			<span class="AwyissDesignPreview-Title">{{ __d('system', 'design_preview_mode_label') }}</span>
+			{% if designPreview.isPreview == false %}
+				<span class="AwyissDesignPreview-Subtitle">{{ designPreview.title }}</span>
+			{% endif %}
+
+			<form method="post" action="">
+				<button class="AwyissDesignPreview-CloseButton" name="awyiss_design_preview" value="cancel">{{ __d('system', 'design_preview_mode_cancel') }}</button>
+			</form>
+		</div>
 	{% endblock %}
 
 	{% block designPreviewStyles %}

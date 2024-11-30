@@ -4,6 +4,7 @@
 namespace Awyiss\Model\Table;
 
 
+use Awyiss\Model\Entity\Design;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
 use Cake\Database\Schema\TableSchemaInterface;
@@ -50,7 +51,6 @@ class DesignsTable extends Table {
 
 		$validator->requirePresence([
 			'identifier',
-			'title',
 		], 'create');
 
 		$validator->add('id', [
@@ -64,7 +64,6 @@ class DesignsTable extends Table {
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
 
-		$validator->notEmptyString('title');
 		$validator->add('title', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'maxLength' => ['rule' => ['maxLength', 100]],
@@ -113,6 +112,17 @@ class DesignsTable extends Table {
 			'errorField' => 'identifier',
 			'message' => __df($this->getI18nDomain(), 'validation', 'error_identifier_unique'),
 		]);
+
+		$rules->addDelete(
+			function (Design $entity/*, array $options*/): bool {
+				return $entity->inUse === false;
+			},
+			'notInUse',
+			[
+				'errorField' => '_general',
+				'message' => __df($this->getI18nDomain(), 'validation', 'error_not_in_use'),
+			]
+		);
 
 		return $rules;
 	}

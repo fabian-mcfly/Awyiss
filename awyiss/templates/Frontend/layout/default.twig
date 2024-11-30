@@ -61,7 +61,13 @@
 						{%- endif -%}
 					{% endblock %}
 
-					<meta name="robots" content="{{ page.robotsIndex ? 'index' : 'noindex' }},{{ page.robotsFollow ? 'follow' : 'nofollow' }}">
+					{% block metaRobots %}
+						{% if designPreview %}
+							<meta name="robots" content="noindex,nofollow">
+						{% else %}
+							<meta name="robots" content="{{ page.robotsIndex ? 'index' : 'noindex' }},{{ page.robotsFollow ? 'follow' : 'nofollow' }}">
+						{% endif %}
+					{% endblock %}
 
 					{%- if config('Awyiss.System.Frontend.meta.googleSiteVerification') %}
 						<meta name="google-site-verification" content="{{ config('Awyiss.System.Frontend.meta.googleSiteVerification') }}">

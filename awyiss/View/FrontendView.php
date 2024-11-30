@@ -11,6 +11,7 @@ use Awyiss\Utility\Inflector;
 use Awyiss\View\Exception\MissingContentException;
 use Awyiss\View\Exception\MissingWidgetException;
 use Cake\Core\Configure;
+use Cake\Datasource\FactoryLocator;
 use Generator;
 
 
@@ -134,7 +135,7 @@ class FrontendView extends AppView {
 		$lo_twig->addGlobal('currentLanguage', $lo_frontendLanguage);
 		$lo_twig->addGlobal('currentPath', $this->getRequest()->getUri()->getPath());
 		$lo_twig->addGlobal('currentUrl', $this->getRequest()->getUri()->__toString());
-		$lo_twig->addGlobal('designSettings', $this->getRequest()->getAttribute('design')?->getDesignVariables() ?? []);
+		$lo_twig->addGlobal('designSettings', $this->getDesignVariables(true));
 		$lo_twig->addGlobal('environment', Configure::read('debug') ? 'Env-' . Inflector::ucparts(CONFIG_ENV) : 'l');
 		$lo_twig->addGlobal('folder', '/' . ltrim($this->getRequest()->getAttribute('base'), '/') ?? '');
 		$lo_twig->addGlobal('languages', LocaleMiddleware::getLanguages());
@@ -486,6 +487,36 @@ class FrontendView extends AppView {
 
 
 	/**
+	 * @param bool $allowDesignPreview
+	 * @return array
+	 */
+	protected function getDesignVariables(bool $allowDesignPreview = false): array {
+		if ($allowDesignPreview) {
+			$ls_designPreviewIdentifier = $this->request->getSession()->read('designPreviewIdentifier');
+
+			$lo_design = null;
+			if ($ls_designPreviewIdentifier) {
+				$lo_designTable = FactoryLocator::get('Table')->get('Designs');
+				/** @var \Awyiss\Model\Entity\Design $lo_design */
+				$lo_design = $lo_designTable->find('all')->where([
+					'identifier' => $ls_designPreviewIdentifier,
+					'in_use' => false,
+				])->first();
+			}
+
+			if ($lo_design) {
+				return $lo_design->settings ?? [];
+			}
+		}
+
+		/** @var \Awyiss\Middleware\DesignMiddleware $lo_designMiddleware */
+		$lo_designMiddleware = $this->getRequest()->getAttribute('design');
+
+		return $lo_designMiddleware?->getDesignVariables() ?? [];
+	}
+
+
+	/**
 	 * @return string
 	 */
 	public static function getRowClass(): string {
@@ -508,15 +539,13 @@ class FrontendView extends AppView {
 	 * @return array
 	 */
 	protected function getWebfontData(): array {
-		/** @var \Awyiss\Middleware\DesignMiddleware $lo_designMiddleware */
-		$lo_designMiddleware = $this->getRequest()->getAttribute('design');
-		$la_variables = $lo_designMiddleware?->getDesignVariables() ?? [];
-
-		$la_webfontData = [];
+		$la_variables = $this->getDesignVariables();
 
 		if (!$la_variables) {
-			return $la_webfontData;
+			return [];
 		}
+
+		$la_webfontData = [];
 
 		foreach ($la_variables as $ls_variable => $lx_value) {
 			if (!is_array($lx_value) || !isset($lx_value['font']['name'])) {

@@ -1,5 +1,6 @@
 {#
 @var design \Awyiss\Model\Entity\Design
+@var designs \Cake\Datasource\Paging\PaginatedResultSet
 @var fontStacks array
 @var fontWeights array
 @var preview \Awyiss\Model\Entity\Design|null
@@ -8,6 +9,13 @@
 @var variables array
 @var webfonts array
 @var _view \Awyiss\View\BackendView
+@var AssetHelper \Awyiss\View\Helper\AssetHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+@var HtmlHelper \Cake\View\Helper\HtmlHelper
+@var LocaleHelper \Awyiss\View\Helper\LocaleHelper
+@var MediaHelper \Awyiss\View\Helper\MediaHelper
+@var UrlHelper \Awyiss\View\Helper\UrlHelper
+@var TimeHelper \Cake\View\Helper\TimeHelper
 #}
 
 {% use '@Backend/Designs/blocks.twig' %}
@@ -15,6 +23,12 @@
 <div class="Design Overview">
 	{% block headlineOverview %}
 		<h1>{{ __('headline_overview') }}</h1>
+
+		{% if design.inUse == false %}
+			<p class="Title">{{ design.isPreview == false ? design.title : __('preview') }} ({{ design.createdByUser.username }}, {{ TimeHelper.nice(design.createdOn) }})</p>
+		{% else %}
+			<p class="Title">{{ __('current_settings') }}</p>
+		{% endif %}
 	{% endblock %}
 
 	{{ FormHelper.create(preview ?? design, {method: 'post', idPrefix: 'design'}) }}
@@ -24,17 +38,22 @@
 	{% block buttonArea %}
 		<div class="ButtonArea">
 			{% block buttonsOverview %}
-				{% if design.isPreview %}
-					{{ FormHelper.button(__('cancel'), {class: 'Button Button-Cancel', name: 'cancel'}) }}
+				{% if design.isPreview == false and design.inUse == false %}
+					{{ FormHelper.button(__('reset'), {class: 'Button Button-Error Button-Close', name: 'reset', value: design.identifier}) }}
 				{% endif %}
 
-				{{ FormHelper.button(__('preview'), {class: 'Button Button-View', name: 'preview', value: design.isPreview ? design.identifier : ''}) }}
+				{% if design.isPreview %}
+					{{ FormHelper.button(__('update_preview'), {class: 'Button Button-View', name: 'preview', value: design.identifier}) }}
+					{{ FormHelper.button(__('cancel_preview'), {class: 'Button Button-Error Button-Close', name: 'cancel_preview', value: design.identifier}) }}
+				{% else %}
+					{{ FormHelper.button(__('preview'), {class: 'Button Button-View', name: 'preview', value: design.identifier}) }}
+				{% endif %}
 
-				{% if AuthorizationHelper.isAccessible('save') %}
-					{{ FormHelper.button(__('apply'), {
+				{% if AuthorizationHelper.isAccessible('use') %}
+					{{ FormHelper.button(__('confirm_apply_yes'), {
 						class: 'Button Button-Success Button-Save',
-						name: 'save',
-						value: design.isPreview ? design.identifier : '',
+						name: 'use',
+						value: design.identifier,
 						'data-confirm-title': __('confirm_apply_title'),
 						'data-confirm-yes': __('confirm_apply_yes'),
 						'data-confirm-yes-class': 'Button-Success Button-Save',
@@ -70,6 +89,10 @@
 
 	{% block buttonAreaBottom %}
 		<div class="ButtonArea ButtonArea-Bottom">
+			{% if AuthorizationHelper.isAccessible('save') %}
+				{{ FormHelper.button(__('save_settings'), {class: 'Button Button-Success Button-Save Button-SaveSettings', name: 'save', type: 'button'}) }}
+			{% endif %}
+
 			{{ block('buttonsOverview') }}
 		</div>
 	{% endblock %}
@@ -78,7 +101,36 @@
 		{{ FormHelper.hidden('reload_form', {val: 0}) }}
 	{% endblock %}
 
+	{% block formSaveDialog %}
+		<dialog id="SaveDialog" data-title="{{ __('save_settings_title') }}">
+			{% block formSaveDialogInner %}
+				{% block formControlTitle %}
+					{{ FormHelper.control('title', {required: false}) }}
+				{% endblock %}
+
+				{% block formControlDescription %}
+					{{ FormHelper.control('description') }}
+				{% endblock %}
+
+				{% block formSaveDialogConfirm %}
+					<button id="SaveDialog-Button-Yes" class="Button Button-Success Button-Save" type="submit" name="save" value="{{ design.identifier }}">{{ __('save_settings_yes') }}</button>
+				{% endblock %}
+
+				{% block formSaveDialogCancel %}
+					<button id="SaveDialog-Button-No" class="Button Button-Close" style="">{{ __('save_settings_no') }}</button>
+				{% endblock %}
+			{% endblock %}
+		</dialog>
+	{% endblock %}
+
 	{{ FormHelper.end() }}
+
+	{% block paginatedOverview %}
+		{% if designs.count > 1 %}
+			<h2>{{ __('headline_saved_designs') }}</h2>
+			{% include '@Backend/Designs/overview_paginated_list.twig' with _context|merge({records: designs.items().toArray()}) %}
+		{% endif %}
+	{% endblock %}
 </div>
 
 <script nonce="{{ AssetHelper.getScriptNonce() }}">

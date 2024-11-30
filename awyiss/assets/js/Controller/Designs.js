@@ -17,6 +17,11 @@ export default class DesignsController {
 		fontInputs.forEach((fontInput) => {
 			this.initFontInput(fontInput);
 		});
+
+		const saveDialog = document.querySelector('#SaveDialog');
+		if (saveDialog) {
+			this.initSaveDialog(saveDialog);
+		}
 	}
 
 	/**
@@ -99,6 +104,22 @@ export default class DesignsController {
 			// Trigger update
 			this.updateRangeInput(unitSelect, rangeInput);
 		}
+	}
+
+	/**
+	 * Init the save dialog
+	 */
+	initSaveDialog(saveDialog) {
+		const saveSettingsButton = document.querySelector('.Button-SaveSettings');
+		this.eventHandler.add('click', () => {
+			saveDialog.showModal();
+		}, saveSettingsButton);
+
+		const closeButton = saveDialog.querySelector('#SaveDialog-Button-No');
+		this.eventHandler.add('click', event => {
+			event.preventDefault();
+			saveDialog.close();
+		}, closeButton);
 	}
 
 	/**

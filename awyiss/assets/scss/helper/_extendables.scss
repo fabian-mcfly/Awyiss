@@ -40,9 +40,14 @@
 
 %Actions {
 	width:9rem;
+	min-height:36px;
 	position:relative;
 	opacity:.1;
 	transition:opacity .3s ease-in-out;
+
+	.Scale-Small & {
+		min-height:30px;
+	}
 
 	&:focus-within {
 		opacity:1;

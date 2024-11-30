@@ -39,6 +39,10 @@
 		}*/
 	}
 
+	.Title {
+		grid-column:1 / -1;
+	}
+
 	.Fieldsets,
 	#Preview {
 		container-type:inline-size;
@@ -217,5 +221,19 @@
 				grid-column:1 / -1
 			}
 		}
+	}
+
+	#SaveDialog {
+		.FormInput {
+			flex:0 0 100%;
+		}
+	}
+
+	.Overview-Table {
+		margin-top:calc(var(--lineHeightMain) * 2);
+	}
+
+	.TableHeader-InUse {
+		width:150px;
 	}
 }

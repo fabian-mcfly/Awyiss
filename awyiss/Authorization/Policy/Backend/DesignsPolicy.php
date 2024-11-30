@@ -40,6 +40,10 @@ class DesignsPolicy extends AbstractPolicy {
 			'className' => SimplePermissionOption::class,
 		]);
 
+		$lo_permissionOptions->load('use', [
+			'className' => SimplePermissionOption::class,
+		]);
+
 		$lo_permissionOptions->load('delete', [
 			'className' => SimplePermissionOption::class,
 		]);

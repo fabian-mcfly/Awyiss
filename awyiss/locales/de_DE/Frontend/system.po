@@ -29,6 +29,9 @@ msgstr "Mehr erfahren"
 msgid "design_preview_mode_label"
 msgstr "Designvorschau"
 
+msgid "design_preview_mode_cancel"
+msgstr "Deaktivieren"
+
 msgid "preview_mode_label"
 msgstr "Vorschau-Modus"
 
