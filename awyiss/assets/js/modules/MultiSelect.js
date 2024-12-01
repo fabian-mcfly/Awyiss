@@ -42,6 +42,11 @@ export default class MultiSelect {
 	 */
 	itemSelector = '.ListItem';
 	/**
+	 * The last selected item
+	 * @type {HTMLElement}
+	 */
+	lastSelected = null;
+	/**
 	 * The selection rectangle element
 	 * @type {HTMLElement}
 	 */
@@ -111,11 +116,36 @@ export default class MultiSelect {
 				item.classList.toggle('Selected');
 			}
 			else if (!this.isDragging) {
+				// Remove the selected class from all items if the ctrl key is not pressed
 				selectedItems.forEach(item => {
 					item.classList.remove('Selected');
 				});
 
 				item.classList.add('Selected');
+			}
+
+			/**
+			 * If the item is now selected and the shift key is not pressed,
+			 * set it as the last selected item
+			 */
+			if (item.classList.contains('Selected') && !event.shiftKey) {
+				this.lastSelected = item;
+			}
+
+			/**
+			 * If the shift key is pressed, select all items between
+			 * the last selected item and the current item.
+			 */
+			if (event.shiftKey) {
+				const items = this.element.querySelectorAll(this.itemSelector);
+				const start = this.lastSelected ? Array.from(items).indexOf(this.lastSelected) : 0;
+				const end = Array.from(items).indexOf(item);
+
+				const selected = Array.from(items).slice(Math.min(start, end), Math.max(start, end) + 1);
+
+				selected.forEach(item => {
+					item.classList.add('Selected');
+				});
 			}
 		}
 		else if (!this.isDragging) {
@@ -123,6 +153,8 @@ export default class MultiSelect {
 			selectedItems.forEach(item => {
 				item.classList.remove('Selected');
 			});
+
+			this.lastSelected = null;
 		}
 
 		const selectedItemsAfter = this.getSelectedItems();
