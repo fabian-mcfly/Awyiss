@@ -392,6 +392,16 @@
 			}
 		}
 
+		&.Selected {
+			> .ListItem-Inner {
+				&,
+				&:hover {
+					border-color:var(--colorSuccess);
+					background-color:color-mix(in srgb, var(--colorSuccess), var(--backgroundColorContent) 75%);
+				}
+			}
+		}
+
 		&:has(.ListItem) {
 			--dottedLineColor:oklch(from var(--colorLight) calc(l - 0.0588) calc(c + 0.009) calc(h + 1.05));
 

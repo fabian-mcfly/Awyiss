@@ -13,40 +13,56 @@ export default class NestedListHandler {
 	 * @type {boolean}
 	 */
 	static handleToggleButtonClickBound = false;
-
+	/**
+	 * The detached items when dragging multiple selected items
+	 * @type {HTMLElement[]}
+	 */
+	detachedItems = [];
 	/**
 	 * The event handler instance.
 	 * @type {EventHandler}
 	 */
 	eventHandler = window.eventHandler;
 	/**
-	 * @property {string|Function|null} groupIdentifierAttribute - The attribute used to identify the grouping of lists
-	 *  or a function that returns the group identifier.
+	 * The attribute used to identify the grouping of lists
+	 * or a function that returns the group identifier.
+	 * @property {string|Function|null} groupIdentifierAttribute -
 	 */
 	groupIdentifierAttribute = null; // Default value
 	/**
-	 * @property {string} parentIdentifierAttribute - The attribute used to identify the parent.
+	 * The attribute used to identify the parent.
+	 * @property {string} parentIdentifierAttribute
 	 */
 	parentIdentifierAttribute = 'id'; // Default value
 	/**
 	 * States of the nested lists (Expanded or Collapsed).
+	 * @property {Object} nestedListStates
 	 */
 	nestedListStates = {};
 	/**
-	 * @property {string} selector - The selector for the nested list.
+	 * A list selected items, used for multi-select.
+	 * @property {HTMLElement[]} selectedItems
+	 */
+	selectedItems = [];
+	/**
+	 * The selector for the nested list.
+	 * @property {string} selector
 	 */
 	selector;
 	/**
-	 * @property {Sortable} sortable - The SortableJS instance for the nested list.
+	 * The SortableJS instance for the nested list.
+	 * @property {Sortable} sortable
 	 */
 	sortable;
 	/**
-	 * @property {NodeListOf<Element>} saveOrderButtons - A NodeList of all the save order buttons in the document.
+	 * A NodeList of all the save order buttons in the document.
+	 * @property {NodeListOf<Element>} saveOrderButtons
 	 */
 	saveOrderButtons;
 	/**
-	 * @property {Array} defaultOrder - An array to store the default order of the list items.
+	 * An array to store the default order of the list items.
 	 * It will be populated with the ids of the list items when the SortableJS instance is created.
+	 * @property {Array} defaultOrder
 	 */
 	defaultOrder;
 	/**
@@ -121,6 +137,8 @@ export default class NestedListHandler {
 				groupName: element.id,
 				handle: element.classList.contains('NestedList-Compact') ? '.ListItem-Inner' : '.SortableHandle',
 			});
+
+			this.eventHandler.add('click', (event) => this.handleListItemClick(event), element);
 		}
 	}
 
@@ -348,6 +366,16 @@ export default class NestedListHandler {
 	 * @param {Event} event - The event object
 	 */
 	onEnd(event) {
+		// If there are multiple items selected, reinsert the detached items back into the dom after the sorted item
+		if (this.detachedItems.length > 0) {
+			// noinspection JSUnresolvedReference
+			const nextSibling = event.item.nextSibling;
+			this.detachedItems.forEach(item => {
+				// noinspection JSUnresolvedReference
+				event.item.parentNode.insertBefore(item, nextSibling);
+			});
+		}
+
 		// Remove the class from the first level nested list when dragging ends
 		const firstLevelLists = Array.from(document.querySelectorAll(`${this.selector}.Level1`));
 		firstLevelLists.forEach(item => {
@@ -445,6 +473,22 @@ export default class NestedListHandler {
 	 * @param {Event} event - The event object
 	 */
 	onStart(event) {
+		// If there are multiple items selected, remove every item but the one with the SortableChosen class from the dom
+		this.detachedItems = [];
+		if (!event.item.classList.contains('Selected')) {
+			this.selectedItems.forEach(item => {
+				item.classList.remove('Selected');
+			});
+			this.selectedItems = [];
+		}
+		if (this.selectedItems.length > 1) {
+			this.selectedItems.forEach((item, index) => {
+				if (!item.classList.contains('SortableChosen')) {
+					this.detachedItems.push(this.selectedItems[index].parentNode.removeChild(this.selectedItems[index]));
+				}
+			});
+		}
+
 		// Add a class to the first level nested list when dragging starts
 		const firstLevelLists = Array.from(document.querySelectorAll(`${this.selector}.Level1`));
 		firstLevelLists.forEach(item => {
@@ -470,6 +514,65 @@ export default class NestedListHandler {
 		// Start adjusting the scroll position
 		// noinspection JSUnresolvedReference
 		this.adjustScrollPosition(event.item, true);
+	}
+
+
+	/**
+	 * Event handler for the list item click
+	 * @param {MouseEvent} event - The event object
+	 */
+	handleListItemClick(event) {
+		if (
+			event.target.closest('a') ||
+			event.target.closest('.Actions') ||
+			event.target.closest('.FormInput') ||
+			event.target.closest('.SortableHandle') ||
+			event.target.closest('.NestedListToggle') ||
+			event.target.closest('.Resizer')
+		) {
+			return;
+		}
+
+		// Check if the event target is a list item
+		const listItem = event.target.closest('.ListItem');
+		if (listItem && event.ctrlKey) {
+			if (listItem.classList.contains('Selected')) {
+				listItem.classList.remove('Selected');
+				this.selectedItems = this.selectedItems.filter(item => item !== listItem);
+
+				return;
+			}
+
+			if (this.selectedItems.length) {
+				// Get the first element in the selected items array
+				const firstItem = this.selectedItems[0];
+
+				/**
+				 * Check if the parent of the current list item is the same
+				 * as the parent of the first selected item.
+				 * If it isn't, return since selecting items from different lists is not allowed.
+				 */
+				if (firstItem.parentElement !== listItem.parentElement) {
+					return;
+				}
+			}
+
+			listItem.classList.add('Selected');
+			this.selectedItems.push(listItem);
+
+			return;
+		}
+
+		if (listItem && listItem.classList.contains('Selected')) {
+			return;
+		}
+
+		if (this.selectedItems.length) {
+			this.selectedItems.forEach(item => {
+				item.classList.remove('Selected');
+			});
+			this.selectedItems = [];
+		}
 	}
 
 	/**
