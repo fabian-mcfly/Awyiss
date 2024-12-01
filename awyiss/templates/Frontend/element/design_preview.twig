@@ -35,7 +35,11 @@
 
 	{% block designPreviewStyles %}
 		<style nonce="{{ AssetHelper.getStyleNonce() }}">
-			{{ designPreview.css|raw }}
+			{{ designPreview.css|replace({
+				'url("../': 'url("' ~ folder ~'assets/',
+				'url(\'../': 'url(\'' ~ folder ~'assets/',
+				'url(../': 'url(' ~ folder ~'assets/',
+			})|raw }}
 		</style>
 	{% endblock %}
 
