@@ -10,6 +10,10 @@
 		<fieldset class="Fieldset-Login">
 			<h1>{{ __('legend_login') }}</h1>
 
+			{% block flashMessages %}
+				{{ FlashHelper.render() }}
+			{% endblock %}
+
 			{% block fieldsetLoginInner %}
 				{% block formControlUsername %}
 					{{ FormHelper.control('username', {autocapitalize: 'off'}) }}
