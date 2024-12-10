@@ -13,6 +13,7 @@ use Awyiss\Model\Enum\PageRoleEnumInterface;
 use Awyiss\Model\Table\PagesTable;
 use Awyiss\Utility\Inflector;
 use Cake\Database\Expression\QueryExpression;
+use Cake\Database\Schema\SqliteSchemaDialect;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
 use Cake\I18n\DateTime;
@@ -81,6 +82,30 @@ class PagesListener implements EventListenerInterface {
 			$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
 
 			$ls_prefixedColumn = $query->getRepository()->getAlias() . '.page_role_id';
+
+			$lo_dialect = $query->getConnection()->getDriver()->schemaDialect();
+			/**
+			 * SQLite does not support FIND_IN_SET(),
+			 * so ordering using CASE WHEN is used instead
+			 */
+			if ($lo_dialect instanceof SqliteSchemaDialect) {
+				$query->orderBy(function (QueryExpression $exp) use ($ls_pageRoleEnum, $ls_prefixedColumn) {
+					$li_index = 0;
+
+					$lo_case = $exp->case();
+					foreach ($ls_pageRoleEnum::cases() as $le_pageRole) {
+						$lo_case->when([$ls_prefixedColumn => $le_pageRole->value])->then($li_index, 'integer');
+
+						$li_index++;
+					}
+
+					$lo_case->else(999, 'integer');
+
+					return $lo_case;
+				});
+
+				return;
+			}
 
 			/** @noinspection PhpUndefinedMethodInspection */
 			$query->orderByAsc($query->newExpr($query->func()->FIND_IN_SET([
