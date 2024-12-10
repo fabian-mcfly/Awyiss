@@ -32,7 +32,7 @@ use Cake\Validation\Validator;
  * @property \Awyiss\Model\Table\PagesTable&\Awyiss\ORM\Association\HasMany $ChildPages
  * @property \Awyiss\Model\Table\ContentsTable&\Awyiss\ORM\Association\HasMany $Contents
  * @property \Awyiss\Model\Table\FormsTable&\Awyiss\ORM\Association\BelongsTo $Forms
- * @property \Awyiss\Model\Table\PagesTable&\Awyiss\ORM\Association\HasMany $SlugHistory
+ * @property \Awyiss\Model\Table\PagesTable&\Awyiss\ORM\Association\HasMany $UrlHistory
  * @method \Awyiss\Model\Entity\Page newDefaultEntity(array $additionalData = [], array $options = [])
  * @method \Cake\Collection\CollectionInterface|null getNestedChildren(\Awyiss\Model\Entity\Page $entity, array $options = [], int $currentLevel = 0)
  * @method \Cake\Collection\CollectionInterface|null getChildren(\Awyiss\Model\Entity\Page $entity, array $options = [])
@@ -123,7 +123,7 @@ class PagesTable extends Table {
 			],
 		]);
 
-		$this->hasMany('SlugHistory', [
+		$this->hasMany('UrlHistory', [
 			'cascadeCallbacks' => true,
 			'dependent' => true,
 			'foreignKey' => 'page_id',

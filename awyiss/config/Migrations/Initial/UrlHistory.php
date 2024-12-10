@@ -2,9 +2,9 @@
 
 
 /**
- * Class SlugHistory
+ * Class UrlHistory
  */
-class SlugHistory {
+class UrlHistory {
 	/**
 	 * @var \Initial $migration The migration that is being migrated
 	 */
@@ -28,17 +28,17 @@ class SlugHistory {
 	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function up(): void {
-		if ($this->migration->hasTable('slug_history')) {
-			$this->migration->table('slug_history')->drop()->save();
+		if ($this->migration->hasTable('url_history')) {
+			$this->migration->table('url_history')->drop()->save();
 		}
 
-		$this->migration->table('slug_history')->addColumn('id', 'integer', [
+		$this->migration->table('url_history')->addColumn('id', 'integer', [
 			'autoIncrement' => true,
 			'default' => null,
 			'limit' => null,
 			'null' => false,
 			'signed' => true,
-		])->addPrimaryKey(['id'])->addColumn('slug', 'string', [
+		])->addPrimaryKey(['id'])->addColumn('url', 'string', [
 			'default' => null,
 			'limit' => 1024,
 			'null' => false,
@@ -81,15 +81,15 @@ class SlugHistory {
 			'null' => true,
 		])->addIndex(
 			[
-				'slug',
+				'url',
 			], [
-				'name' => 'SLUG_HISTORY_SLUG',
+				'name' => 'URL_HISTORY_URL',
 			]
 		)->addIndex(
 			[
 				'page_id',
 			], [
-				'name' => 'SLUG_HISTORY_PAGE_ID',
+				'name' => 'URL_HISTORY_PAGE_ID',
 			]
 		)->create();
 	}
@@ -101,6 +101,6 @@ class SlugHistory {
 	 * @return void
 	 */
 	public function down(): void {
-		$this->migration->table('slug_history')->drop()->save();
+		$this->migration->table('url_history')->drop()->save();
 	}
 }

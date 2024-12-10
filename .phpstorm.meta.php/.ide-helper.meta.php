@@ -1983,63 +1983,63 @@ namespace PHPSTORM_META {
 	);
 
 	expectedArguments(
-		\Awyiss\Model\Entity\SlugHistory::get(),
+		\Awyiss\Model\Entity\UrlHistory::get(),
 		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\SlugHistory'),
+		argumentsSet('entityFields:Awyiss\Model\Entity\UrlHistory'),
 	);
 
 	expectedArguments(
-		\Awyiss\Model\Entity\SlugHistory::getError(),
+		\Awyiss\Model\Entity\UrlHistory::getError(),
 		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\SlugHistory'),
+		argumentsSet('entityFields:Awyiss\Model\Entity\UrlHistory'),
 	);
 
 	expectedArguments(
-		\Awyiss\Model\Entity\SlugHistory::getInvalidField(),
+		\Awyiss\Model\Entity\UrlHistory::getInvalidField(),
 		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\SlugHistory'),
+		argumentsSet('entityFields:Awyiss\Model\Entity\UrlHistory'),
 	);
 
 	expectedArguments(
-		\Awyiss\Model\Entity\SlugHistory::getOriginal(),
+		\Awyiss\Model\Entity\UrlHistory::getOriginal(),
 		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\SlugHistory'),
+		argumentsSet('entityFields:Awyiss\Model\Entity\UrlHistory'),
 	);
 
 	expectedArguments(
-		\Awyiss\Model\Entity\SlugHistory::has(),
+		\Awyiss\Model\Entity\UrlHistory::has(),
 		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\SlugHistory'),
+		argumentsSet('entityFields:Awyiss\Model\Entity\UrlHistory'),
 	);
 
 	expectedArguments(
-		\Awyiss\Model\Entity\SlugHistory::hasValue(),
+		\Awyiss\Model\Entity\UrlHistory::hasValue(),
 		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\SlugHistory'),
+		argumentsSet('entityFields:Awyiss\Model\Entity\UrlHistory'),
 	);
 
 	expectedArguments(
-		\Awyiss\Model\Entity\SlugHistory::isDirty(),
+		\Awyiss\Model\Entity\UrlHistory::isDirty(),
 		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\SlugHistory'),
+		argumentsSet('entityFields:Awyiss\Model\Entity\UrlHistory'),
 	);
 
 	expectedArguments(
-		\Awyiss\Model\Entity\SlugHistory::isEmpty(),
+		\Awyiss\Model\Entity\UrlHistory::isEmpty(),
 		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\SlugHistory'),
+		argumentsSet('entityFields:Awyiss\Model\Entity\UrlHistory'),
 	);
 
 	expectedArguments(
-		\Awyiss\Model\Entity\SlugHistory::setDirty(),
+		\Awyiss\Model\Entity\UrlHistory::setDirty(),
 		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\SlugHistory'),
+		argumentsSet('entityFields:Awyiss\Model\Entity\UrlHistory'),
 	);
 
 	expectedArguments(
-		\Awyiss\Model\Entity\SlugHistory::setError(),
+		\Awyiss\Model\Entity\UrlHistory::setError(),
 		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\SlugHistory'),
+		argumentsSet('entityFields:Awyiss\Model\Entity\UrlHistory'),
 	);
 
 	expectedArguments(
@@ -2783,7 +2783,7 @@ namespace PHPSTORM_META {
 			'PublicationData' => \Awyiss\Model\Table\PublicationDataTable::class,
 			'Queue.QueueProcesses' => \Queue\Model\Table\QueueProcessesTable::class,
 			'Queue.QueuedJobs' => \Queue\Model\Table\QueuedJobsTable::class,
-			'SlugHistory' => \Awyiss\Model\Table\SlugHistoryTable::class,
+			'UrlHistory' => \Awyiss\Model\Table\UrlHistoryTable::class,
 			'UserConfiguration' => \Awyiss\Model\Table\UserConfigurationTable::class,
 			'UsergroupPermissions' => \Awyiss\Model\Table\UsergroupPermissionsTable::class,
 			'Usergroups' => \Awyiss\Model\Table\UsergroupsTable::class,
@@ -2893,7 +2893,7 @@ namespace PHPSTORM_META {
 			'PublicationData' => \Awyiss\Model\Table\PublicationDataTable::class,
 			'Queue.QueueProcesses' => \Queue\Model\Table\QueueProcessesTable::class,
 			'Queue.QueuedJobs' => \Queue\Model\Table\QueuedJobsTable::class,
-			'SlugHistory' => \Awyiss\Model\Table\SlugHistoryTable::class,
+			'UrlHistory' => \Awyiss\Model\Table\UrlHistoryTable::class,
 			'UserConfiguration' => \Awyiss\Model\Table\UserConfigurationTable::class,
 			'UsergroupPermissions' => \Awyiss\Model\Table\UsergroupPermissionsTable::class,
 			'Usergroups' => \Awyiss\Model\Table\UsergroupsTable::class,
@@ -2945,7 +2945,7 @@ namespace PHPSTORM_META {
 			'PublicationData' => \Awyiss\Model\Table\PublicationDataTable::class,
 			'Queue.QueueProcesses' => \Queue\Model\Table\QueueProcessesTable::class,
 			'Queue.QueuedJobs' => \Queue\Model\Table\QueuedJobsTable::class,
-			'SlugHistory' => \Awyiss\Model\Table\SlugHistoryTable::class,
+			'UrlHistory' => \Awyiss\Model\Table\UrlHistoryTable::class,
 			'UserConfiguration' => \Awyiss\Model\Table\UserConfigurationTable::class,
 			'UsergroupPermissions' => \Awyiss\Model\Table\UsergroupPermissionsTable::class,
 			'Usergroups' => \Awyiss\Model\Table\UsergroupsTable::class,
@@ -3019,7 +3019,7 @@ namespace PHPSTORM_META {
 			'PublicationData' => \Cake\ORM\Association\BelongsToMany::class,
 			'Queue.QueueProcesses' => \Cake\ORM\Association\BelongsToMany::class,
 			'Queue.QueuedJobs' => \Cake\ORM\Association\BelongsToMany::class,
-			'SlugHistory' => \Cake\ORM\Association\BelongsToMany::class,
+			'UrlHistory' => \Cake\ORM\Association\BelongsToMany::class,
 			'UserConfiguration' => \Cake\ORM\Association\BelongsToMany::class,
 			'UsergroupPermissions' => \Cake\ORM\Association\BelongsToMany::class,
 			'Usergroups' => \Cake\ORM\Association\BelongsToMany::class,
@@ -3071,7 +3071,7 @@ namespace PHPSTORM_META {
 			'PublicationData' => \Cake\ORM\Association\BelongsTo::class,
 			'Queue.QueueProcesses' => \Cake\ORM\Association\BelongsTo::class,
 			'Queue.QueuedJobs' => \Cake\ORM\Association\BelongsTo::class,
-			'SlugHistory' => \Cake\ORM\Association\BelongsTo::class,
+			'UrlHistory' => \Cake\ORM\Association\BelongsTo::class,
 			'UserConfiguration' => \Cake\ORM\Association\BelongsTo::class,
 			'UsergroupPermissions' => \Cake\ORM\Association\BelongsTo::class,
 			'Usergroups' => \Cake\ORM\Association\BelongsTo::class,
@@ -3146,7 +3146,7 @@ namespace PHPSTORM_META {
 			'PublicationData' => \Cake\ORM\Association\HasMany::class,
 			'Queue.QueueProcesses' => \Cake\ORM\Association\HasMany::class,
 			'Queue.QueuedJobs' => \Cake\ORM\Association\HasMany::class,
-			'SlugHistory' => \Cake\ORM\Association\HasMany::class,
+			'UrlHistory' => \Cake\ORM\Association\HasMany::class,
 			'UserConfiguration' => \Cake\ORM\Association\HasMany::class,
 			'UsergroupPermissions' => \Cake\ORM\Association\HasMany::class,
 			'Usergroups' => \Cake\ORM\Association\HasMany::class,
@@ -3198,7 +3198,7 @@ namespace PHPSTORM_META {
 			'PublicationData' => \Cake\ORM\Association\HasOne::class,
 			'Queue.QueueProcesses' => \Cake\ORM\Association\HasOne::class,
 			'Queue.QueuedJobs' => \Cake\ORM\Association\HasOne::class,
-			'SlugHistory' => \Cake\ORM\Association\HasOne::class,
+			'UrlHistory' => \Cake\ORM\Association\HasOne::class,
 			'UserConfiguration' => \Cake\ORM\Association\HasOne::class,
 			'UsergroupPermissions' => \Cake\ORM\Association\HasOne::class,
 			'Usergroups' => \Cake\ORM\Association\HasOne::class,
@@ -4124,8 +4124,8 @@ namespace PHPSTORM_META {
 		'publication_data',
 		'queue',
 		'seo',
-		'slug_history',
 		'system',
+		'url_history',
 		'user_configuration',
 		'usergroups',
 		'users',
@@ -6044,9 +6044,9 @@ namespace PHPSTORM_META {
 		'robots_follow',
 		'robots_index',
 		'slug',
-		'slug_history',
 		'system_order',
 		'title',
+		'url_history',
 	);
 
 	registerArgumentsSet(
@@ -6132,7 +6132,7 @@ namespace PHPSTORM_META {
 	);
 
 	registerArgumentsSet(
-		'entityFields:Awyiss\Model\Entity\SlugHistory',
+		'entityFields:Awyiss\Model\Entity\UrlHistory',
 		'changed_by',
 		'changed_by_user',
 		'changed_on',
@@ -6419,7 +6419,7 @@ namespace PHPSTORM_META {
 		'publication_data',
 		'queue_processes',
 		'queued_jobs',
-		'slug_history',
+		'url_history',
 		'user_configuration',
 		'usergroup_permissions',
 		'usergroups',

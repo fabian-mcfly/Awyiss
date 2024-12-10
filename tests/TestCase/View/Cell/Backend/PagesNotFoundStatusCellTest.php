@@ -150,8 +150,8 @@ class PagesNotFoundStatusCellTest extends TestCase {
 
 		$this->assertStringContainsString('<fieldset class="Overview-Fieldset Fieldset-PagesNotFoundStatus StatusCell Collapsible">', $output);
 		$this->assertStringContainsString('<td class="TableCell-Slug" title="test">test</td>', $output);
-		$this->assertStringContainsString('<form class="Actions" method="post" action="/backend/xy/slug-history/add/', $output);
-		$this->assertStringContainsString('<input type="hidden" name="slug"  value="test">', $output);
+		$this->assertStringContainsString('<form class="Actions" method="post" action="/backend/xy/url-history/add/', $output);
+		$this->assertStringContainsString('<input type="hidden" name="url"  value="test">', $output);
 	}
 
 

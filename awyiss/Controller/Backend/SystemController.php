@@ -14,7 +14,7 @@ use Cake\ORM\Query\SelectQuery;
 /**
  * System Controller
  *
- * @property \Awyiss\Model\Table\SlugHistoryTable $SlugHistory
+ * @property \Awyiss\Model\Table\UrlHistoryTable $UrlHistory
  */
 class SystemController extends Controller {
 	protected ?string $defaultTable = '';

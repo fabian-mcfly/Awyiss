@@ -1,4 +1,4 @@
-# SlugHistory translations of Awyiss CMS
+# UrlHistory translations of Awyiss CMS
 # Copyright 2024 Awyiss <EMAIL@ADDRESS>
 #
 msgid ""
@@ -65,8 +65,8 @@ msgstr "Die Weiterleitung wurde erfolgreich gelöscht"
 msgid "delete_failed"
 msgstr "Die Weiterleitung konnte nicht gelöscht werden"
 
-msgid "slug"
-msgstr "Slug"
+msgid "url"
+msgstr "Url"
 
 msgid "page_id"
 msgstr "Seite"

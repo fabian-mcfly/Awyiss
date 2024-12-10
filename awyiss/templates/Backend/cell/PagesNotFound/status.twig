@@ -7,7 +7,7 @@
 
 {% block fieldsetOverview %}
 	{% if accessible %}
-		{% set canCreateSlugHistory = AuthorizationHelper.scopeIsAccessible('slugHistory', [], 'create') %}
+		{% set canCreateUrlHistory = AuthorizationHelper.scopeIsAccessible('urlHistory', [], 'create') %}
 
 		<fieldset class="Overview-Fieldset Fieldset-PagesNotFoundStatus StatusCell Collapsible">
 			<legend>{{ __d('pages_not_found', 'headline_status_cell') }}</legend>
@@ -22,7 +22,7 @@
 										<th class="TableHeader-Slug">
 											{{ __d('pages_not_found', 'slug') }}
 										</th>
-										{% if canCreateSlugHistory %}
+										{% if canCreateUrlHistory %}
 											<th class="TableHeader-Actions"></th>
 										{% endif %}
 									</tr>
@@ -33,12 +33,12 @@
 									{% for pageNotFound in pagesNotFound %}
 										<tr>
 											<td class="TableCell-Slug" title="{{ pageNotFound.slug }}">{{ pageNotFound.slug }}</td>
-											{% if canCreateSlugHistory %}
+											{% if canCreateUrlHistory %}
 												<td class="TableCell-Actions">
-													<form class="Actions" method="post" action="{{ UrlHelper.build({controller: 'SlugHistory', action: 'add'}) }}">
+													<form class="Actions" method="post" action="{{ UrlHelper.build({controller: 'UrlHistory', action: 'add'}) }}">
 														{{ FormHelper.button(__d('pages_not_found', 'create_redirect'), {class: 'Button Button-Small Button-Add', name: 'submit', value: 'submit'}) }}
 														{{ FormHelper.hidden('reload_form', {val: 1}) }}
-														{{ FormHelper.hidden('slug', {val: pageNotFound.slug|trim('/')}) }}
+														{{ FormHelper.hidden('url', {val: pageNotFound.slug|trim('/')}) }}
 													</form>
 												</td>
 											{% endif %}

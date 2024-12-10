@@ -464,7 +464,7 @@ class FrontendController extends AppController {
 	 * @return void
 	 */
 	protected function historyRedirect(string $url): void {
-		$lo_historyTable = $this->fetchTable('SlugHistory');
+		$lo_historyTable = $this->fetchTable('UrlHistory');
 
 		$ls_url = preg_replace('/[^a-zA-Z0-9\/:\-]/', '', $url);
 
@@ -484,17 +484,17 @@ class FrontendController extends AppController {
 		}
 
 		$lo_query = $lo_historyTable->find('all')
-			->where(['slug IN' => $la_urls])
+			->where(['url IN' => $la_urls])
 			->contain(['Pages'])
 			->limit(1);
 
 		/** @noinspection PhpUndefinedMethodInspection */
 		$lo_query->orderByAsc($lo_query->newExpr($lo_query->func()->FIND_IN_SET([
-			'SlugHistory.slug' => 'identifier',
+			'UrlHistory.url' => 'identifier',
 			implode(',', $la_urls),
 		])), true);
 
-		/** @var \Awyiss\Model\Entity\SlugHistory $lo_record */
+		/** @var \Awyiss\Model\Entity\UrlHistory $lo_record */
 		$lo_record = $lo_query->first();
 
 		if ($lo_record?->page) {

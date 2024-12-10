@@ -175,8 +175,8 @@ class AwyissTest extends TestCase {
 
 		$expectedConfig = [
 			'Attributes.Backend.paginate.limit' => 1,
-			'SlugHistory.Backend.paginate.limit' => 50,
 			'System.Backend.interface.darkMode' => true,
+			'UrlHistory.Backend.paginate.limit' => 50,
 		];
 
 		foreach ($expectedConfig as $key => $value) {

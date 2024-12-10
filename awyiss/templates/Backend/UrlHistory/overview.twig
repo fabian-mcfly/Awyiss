@@ -1,10 +1,10 @@
 {#
-@var slugHistory Awyiss\Model\Entity\SlugHistory[]
+@var urlHistory Awyiss\Model\Entity\UrlHistory[]
 @var paginated bool
 @var _view \Awyiss\View\BackendView
 #}
 
-<div class="SlugHistory Overview">
+<div class="UrlHistory Overview">
 	{% block headlineOverview %}
 		<h1>{{ __('headline_overview') }}</h1>
 	{% endblock %}
@@ -20,7 +20,7 @@
 	{% endblock %}
 
 	{% block paginatedOverview %}
-		{% include '@Backend/SlugHistory/overview_paginated_list.twig' with _context|merge({records: slugHistory.items().toArray()}) %}
+		{% include '@Backend/UrlHistory/overview_paginated_list.twig' with _context|merge({records: urlHistory.items().toArray()}) %}
 	{% endblock %}
 
 	{% block buttonAreaBottom %}

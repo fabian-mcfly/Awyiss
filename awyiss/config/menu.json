@@ -88,18 +88,18 @@
 				},
 				"children": null
 			},
-			"slug_history": {
+			"url_history": {
 				"title": {
-					"translate": ["slug_history", "menu_title"]
+					"translate": ["url_history", "menu_title"]
 				},
 				"link": {
 					"url": {
-						"controller": "SlugHistory",
+						"controller": "UrlHistory",
 						"action": "overview"
 					}
 				},
 				"access": {
-					"scope": "slug_history",
+					"scope": "url_history",
 					"identifier": "read"
 				},
 				"children": {

@@ -9,9 +9,9 @@ use Awyiss\Authorization\Policy\AbstractPolicy;
 
 
 /**
- * Permission for the SlugHistory scope
+ * Permission for the UrlHistory scope
  */
-class SlugHistoryPolicy extends AbstractPolicy {
+class UrlHistoryPolicy extends AbstractPolicy {
 	protected static PermissionOptionCollection $permissionOptionCollection;
 	protected static string $scope;
 }

@@ -7,20 +7,21 @@ namespace Awyiss\Controller\Backend;
 use Awyiss\Annotation\NoDirectAccess;
 use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Model\Entity\Page;
-use Awyiss\Model\Entity\SlugHistory;
+use Awyiss\Model\Entity\UrlHistory;
 use Awyiss\Routing\Router;
 use Cake\Collection\CollectionInterface;
+use Cake\Database\Expression\QueryExpression;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
 use Cake\ORM\Query\SelectQuery;
 
 
 /**
- * SlugHistory Controller
+ * UrlHistory Controller
  *
- * @property \Awyiss\Model\Table\SlugHistoryTable $SlugHistory
+ * @property \Awyiss\Model\Table\UrlHistoryTable $UrlHistory
  */
-class SlugHistoryController extends Controller {
+class UrlHistoryController extends Controller {
 	/**
 	 * @inheritDoc
 	 */
@@ -42,7 +43,7 @@ class SlugHistoryController extends Controller {
 	 */
 	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
-		return $this->SlugHistory->find()->contain('Pages');
+		return $this->UrlHistory->find()->contain('Pages');
 	}
 
 
@@ -58,14 +59,14 @@ class SlugHistoryController extends Controller {
 
 		$lb_paginated = $this->paginate['enabled'];
 		if ($lb_paginated) {
-			$lo_slugHistory = $this->paginate($lo_query);
+			$lo_urlHistory = $this->paginate($lo_query);
 		}
 		else {
-			$lo_slugHistory = $lo_query->all();
+			$lo_urlHistory = $lo_query->all();
 		}
 
 		$this->set([
-			'slugHistory' => $lo_slugHistory,
+			'urlHistory' => $lo_urlHistory,
 			'paginated' => $lb_paginated,
 		]);
 	}
@@ -80,10 +81,10 @@ class SlugHistoryController extends Controller {
 	public function add(): void {
 		$this->Authorization->ensure('create');
 
-		$lo_slugHistory = $this->SlugHistory->newDefaultEntity();
+		$lo_urlHistory = $this->UrlHistory->newDefaultEntity();
 
 		if ($this->request->is('post')) {
-			$this->save($lo_slugHistory);
+			$this->save($lo_urlHistory);
 		}
 
 		$lo_deletedPages = $this->getDeletedPages();
@@ -91,7 +92,7 @@ class SlugHistoryController extends Controller {
 		$lo_threadedPages = $this->getThreadedPages();
 
 		$this->set([
-			'slugHistory' => $lo_slugHistory,
+			'urlHistory' => $lo_urlHistory,
 			'deletedPages' => $lo_deletedPages,
 			'threadedPages' => $lo_threadedPages->toList(),
 		]);
@@ -108,16 +109,16 @@ class SlugHistoryController extends Controller {
 	public function edit(int $id) {
 		$this->Authorization->ensure('update');
 
-		/** @var \Awyiss\Model\Entity\SlugHistory $lo_slugHistory */
-		$lo_slugHistory = $this->SlugHistory->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
-		if (! $lo_slugHistory) {
+		/** @var \Awyiss\Model\Entity\UrlHistory $lo_urlHistory */
+		$lo_urlHistory = $this->UrlHistory->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
+		if (! $lo_urlHistory) {
 			$this->Flash->error(__('record_not_found'));
 
 			return $this->redirect(['action' => 'overview']);
 		}
 
 		if ($this->request->is(['patch', 'post', 'put'])) {
-			$this->save($lo_slugHistory, 'edit');
+			$this->save($lo_urlHistory, 'edit');
 		}
 
 		$lo_deletedPages = $this->getDeletedPages();
@@ -125,7 +126,7 @@ class SlugHistoryController extends Controller {
 		$lo_threadedPages = $this->getThreadedPages();
 
 		$this->set([
-			'slugHistory' => $lo_slugHistory,
+			'urlHistory' => $lo_urlHistory,
 			'deletedPages' => $lo_deletedPages,
 			'threadedPages' => $lo_threadedPages->toList(),
 		]);
@@ -144,15 +145,15 @@ class SlugHistoryController extends Controller {
 
 		$this->request->allowMethod(['get', 'delete']);
 
-		/** @var \Awyiss\Model\Entity\SlugHistory $lo_slugHistory */
-		$lo_slugHistory = $this->SlugHistory->findById($id)->first();
-		if (! $lo_slugHistory) {
+		/** @var \Awyiss\Model\Entity\UrlHistory $lo_urlHistory */
+		$lo_urlHistory = $this->UrlHistory->findById($id)->first();
+		if (! $lo_urlHistory) {
 			$this->Flash->error(__('record_not_found'));
 
 			return $this->redirect(['action' => 'overview']);
 		}
 
-		if ($this->SlugHistory->delete($lo_slugHistory)) {
+		if ($this->UrlHistory->delete($lo_urlHistory)) {
 			if (!$this->request->is('ajax')) {
 				$this->Flash->success(__('delete_succeeded'));
 			}
@@ -160,7 +161,7 @@ class SlugHistoryController extends Controller {
 		else {
 			$this->Flash->error(__('delete_failed'));
 
-			foreach ($lo_slugHistory->getError('_general') as $ls_error) {
+			foreach ($lo_urlHistory->getError('_general') as $ls_error) {
 				$this->Flash->error($ls_error);
 			}
 		}
@@ -171,19 +172,19 @@ class SlugHistoryController extends Controller {
 
 
 	/**
-	 * @param \Awyiss\Model\Entity\SlugHistory $slugHistory
+	 * @param \Awyiss\Model\Entity\UrlHistory $urlHistory
 	 * @param string $method
 	 * @return void
 	 * @throws \Cake\Http\Exception\RedirectException
 	 */
-	protected function save(SlugHistory $slugHistory, string $method = 'add'): void {
+	protected function save(UrlHistory $urlHistory, string $method = 'add'): void {
 		$la_associated = [];
-		if ($this->SlugHistory->hasAttributes()) {
-			$la_associated[] = $this->SlugHistory->getAttributesTableName(true);
-			$slugHistory->setAccess('attributes', true);
+		if ($this->UrlHistory->hasAttributes()) {
+			$la_associated[] = $this->UrlHistory->getAttributesTableName(true);
+			$urlHistory->setAccess('attributes', true);
 		}
 
-		$this->SlugHistory->patchEntity($slugHistory, $this->request->getData(), [
+		$this->UrlHistory->patchEntity($urlHistory, $this->request->getData(), [
 			'associated' => $la_associated,
 			'validate' => !$this->request->getData('reload_form'),
 		]);
@@ -191,7 +192,7 @@ class SlugHistoryController extends Controller {
 		if (!$this->request->getData('reload_form')) { //reload_form is set when we need to reload options based on current values
 			$lb_saveAsCopy = (bool)$this->request->getData('save_as_copy');
 
-			if ($this->SlugHistory->save($slugHistory, ['asCopy' => $lb_saveAsCopy])) {
+			if ($this->UrlHistory->save($urlHistory, ['asCopy' => $lb_saveAsCopy])) {
 				if (!$this->request->is('ajax')) {
 					$this->Flash->success(__(($lb_saveAsCopy ? 'add' : $method) . '_succeeded'));
 				}
@@ -199,15 +200,15 @@ class SlugHistoryController extends Controller {
 				if ($this->request->getData('submit') == 'submit_close') {
 					throw new RedirectException(Router::url([
 						'action' => 'overview',
-						'page' => $this->Paginate->calculateEntityPagePosition($slugHistory),
+						'page' => $this->Paginate->calculateEntityPagePosition($urlHistory),
 					], true), 302);
 				}
 
-				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $slugHistory->id], true), 302);
+				throw new RedirectException(Router::url(['action' => 'edit', 'id' => $urlHistory->id], true), 302);
 			}
 
 			$this->Flash->error(__(($lb_saveAsCopy ? 'add' : $method) . '_failed'));
-			foreach ($slugHistory->getError('_general') as $ls_error) {
+			foreach ($urlHistory->getError('_general') as $ls_error) {
 				$this->Flash->error($ls_error);
 			}
 		}
@@ -223,9 +224,9 @@ class SlugHistoryController extends Controller {
 	 */
 	protected function getThreadedPages(): CollectionInterface {
 		if (!isset($this->threadedPages)) {
-			$lo_query = $this->SlugHistory->Pages->find('forCurrentLanguage', skipPageRoleCheck: true);
+			$lo_query = $this->UrlHistory->Pages->find('forCurrentLanguage', skipPageRoleCheck: true);
 
-			$this->threadedPages = $this->SlugHistory->Pages->listNested($lo_query);
+			$this->threadedPages = $this->UrlHistory->Pages->listNested($lo_query);
 		}
 
 
@@ -234,18 +235,23 @@ class SlugHistoryController extends Controller {
 
 
 	/**
-	 * Get a collection of pages that have been deleted but are not in the slug history
+	 * Get a collection of pages that have been deleted but are not in the url history
 	 *
 	 * @return \Cake\Collection\CollectionInterface
 	 */
 	protected function getDeletedPages(): CollectionInterface {
-		$lo_historyPageIdQuery = $this->SlugHistory->find()->select('page_id');
-		$lo_pagesSlugQuery = $this->SlugHistory->Pages->find('all', skipPageRoleCheck: true)->disableAutoFields()->select('slug');
+		$lo_historyPageIdQuery = $this->UrlHistory->find()->select('page_id');
+		$lo_pagesSlugQuery = $this->UrlHistory->find('all')->disableAutoFields()->select('url');
 
-		$lo_pages = $this->SlugHistory->Pages->find('deleted', skipPageRoleCheck: true)->select(function ($query) {
-			return ['slug' => $query->func()->concat(['language_shortcode' => 'identifier', '/', 'slug' => 'identifier'])];
-		})->enableAutoFields()->where(function ($exp) use ($lo_historyPageIdQuery, $lo_pagesSlugQuery) {
-			return $exp->notIn('id', $lo_historyPageIdQuery)->notIn('slug', $lo_pagesSlugQuery);
+		$lo_query = $this->UrlHistory->Pages->find('deleted', skipPageRoleCheck: true);
+
+		$lo_pages = $lo_query->where(function (QueryExpression $exp) use ($lo_historyPageIdQuery, $lo_pagesSlugQuery, $lo_query) {
+			return $exp->notIn('id', $lo_historyPageIdQuery)
+			->notIn(
+				$lo_query->func()->concat(['language_shortcode' => 'identifier', '/', 'slug' => 'identifier']),
+				$lo_pagesSlugQuery,
+				'string'
+			);
 		})->orderBy('title')->all();
 
 		return $lo_pages->each(function (Page $page) {

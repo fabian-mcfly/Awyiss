@@ -149,7 +149,7 @@ class UserConfigurationCustomSeed extends AbstractSeed {
 			[
 				'id' => 31,
 				'user_id' => 1,
-				'scope' => 'slug_history',
+				'scope' => 'url_history',
 				'identifier' => 'paginate.limit',
 				'value' => '50',
 			],

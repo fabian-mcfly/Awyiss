@@ -4,7 +4,7 @@
 namespace Awyiss\Model\Table;
 
 
-use Awyiss\Model\Entity\SlugHistory;
+use Awyiss\Model\Entity\UrlHistory;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
@@ -12,12 +12,12 @@ use Cake\Validation\Validator;
 
 
 /**
- * SlugHistory Model
+ * UrlHistory Model
  *
  * @property \Awyiss\Model\Table\PagesTable&\Awyiss\ORM\Association\BelongsTo $Pages
- * @method \Awyiss\Model\Entity\SlugHistory newDefaultEntity(array $additionalData = [], array $options = [])
+ * @method \Awyiss\Model\Entity\UrlHistory newDefaultEntity(array $additionalData = [], array $options = [])
  */
-class SlugHistoryTable extends Table {
+class UrlHistoryTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
@@ -25,7 +25,7 @@ class SlugHistoryTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public const TABLE = 'slug_history';
+	public const TABLE = 'url_history';
 
 
 	/**
@@ -53,8 +53,8 @@ class SlugHistoryTable extends Table {
 	public function validationDefault(Validator $validator): Validator {
 		parent::validationDefault($validator);
 
-		$validator->notEmptyString('slug');
-		$validator->add('slug', [
+		$validator->notEmptyString('url');
+		$validator->add('url', [
 			'isScalar' => ['rule' => 'isScalar'],
 			'maxLength' => ['rule' => ['maxLength', 1024]],
 			'notBlank' => ['rule' => 'notBlank'],
@@ -93,7 +93,7 @@ class SlugHistoryTable extends Table {
 			'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_page_id'),
 		]);
 
-		$rules->add(function (SlugHistory $entity) {
+		$rules->add(function (UrlHistory $entity) {
 			return in_array($entity->status, [301, 302, 307, 308], true);
 		}, 'validStatus', [
 			'errorField' => 'status',

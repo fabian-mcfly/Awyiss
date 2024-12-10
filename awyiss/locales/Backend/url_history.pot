@@ -1,4 +1,4 @@
-# SlugHistory translations of Awyiss CMS
+# UrlHistory translations of Awyiss CMS
 # Copyright 2024 Awyiss <EMAIL@ADDRESS>
 #
 msgid ""
@@ -65,8 +65,8 @@ msgstr "The redirect was successfully deleted"
 msgid "delete_failed"
 msgstr "The redirect could not be deleted"
 
-msgid "slug"
-msgstr "Slug"
+msgid "url"
+msgstr "Url"
 
 msgid "page_id"
 msgstr "Page"

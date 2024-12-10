@@ -8,10 +8,10 @@ use Awyiss\Model\Entity;
 
 
 /**
- * SlugHistory Entity
+ * UrlHistory Entity
  *
  * @property int $id
- * @property string $slug
+ * @property string $url
  * @property int $pageId
  * @property int|null $status
  * @property int|null $createdBy
@@ -21,7 +21,7 @@ use Awyiss\Model\Entity;
  * @property int|null $deletedBy
  * @property \Cake\I18n\DateTime|null $deletedOn
  */
-class SlugHistory extends Entity {
+class UrlHistory extends Entity {
 	/**
 	 * @inheritDoc
 	 */
@@ -40,7 +40,7 @@ class SlugHistory extends Entity {
 	 * @inheritDoc
 	 */
 	protected array $_accessible = [
-		'slug' => true,
+		'url' => true,
 		'pageId' => true,
 		'status' => true,
 	];

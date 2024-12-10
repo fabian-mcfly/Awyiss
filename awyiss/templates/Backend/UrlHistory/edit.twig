@@ -1,9 +1,9 @@
 {#
-@var slugHistory Awyiss\Model\Entity\SlugHistory
+@var urlHistory Awyiss\Model\Entity\UrlHistory
 @var _view \Awyiss\View\BackendView
 #}
 
-<div class="SlugHistory Form Edit">
+<div class="UrlHistory Form Edit">
 	{% if AuthorizationHelper.isAccessible('read') %}
 		{{ HtmlHelper.link(__('back_to_overview'), {action: 'overview'}, {class: 'BackToOverview'}) }}
 	{% endif %}
@@ -12,7 +12,7 @@
 		<h1>{{ __('headline_edit') }}</h1>
 	{% endblock %}
 
-	{{ FormHelper.create(slugHistory, {method: 'post', idPrefix: 'slugHistory'}) }}
+	{{ FormHelper.create(urlHistory, {method: 'post', idPrefix: 'urlHistory'}) }}
 
 	{{ FormHelper.checkbox('save_as_copy', {id: 'SaveAsCopy', value: true}) }}
 
@@ -29,7 +29,7 @@
 	{% endblock %}
 
 	{% block formEdit %}
-		{% include('@Backend/SlugHistory/form.twig') %}
+		{% include('@Backend/UrlHistory/form.twig') %}
 	{% endblock %}
 
 	{% block buttonAreaBottom %}

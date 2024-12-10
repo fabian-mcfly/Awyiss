@@ -11,7 +11,7 @@
 
 {% extends '@Backend/element/overview/overview_paginated_list.twig' %}
 
-{% set canCreateSlugHistory = AuthorizationHelper.scopeIsAccessible('slugHistory', [], 'create') %}
+{% set canCreateUrlHistory = AuthorizationHelper.scopeIsAccessible('urlHistory', [], 'create') %}
 
 {% block tableOverviewHeaderTitle %}{% endblock %}
 {% block tableOverviewHeaderDefaultFields %}
@@ -42,7 +42,7 @@
 {% endblock %}
 {% block tableOverviewHeaderAuditInfo %}{% endblock %}
 {% block tableOverviewHeaderActions %}
-	{% if canCreateSlugHistory %}
+	{% if canCreateUrlHistory %}
 		<th class="TableHeader-Actions"></th>
 	{% endif %}
 {% endblock %}
@@ -77,14 +77,14 @@
 {% endblock %}
 {% block tableOverviewCellAuditInfo %}{% endblock %}
 {% block tableOverviewCellActions %}
-	{% if canCreateSlugHistory or grouped == false %}
+	{% if canCreateUrlHistory or grouped == false %}
 		<td class="TableCell-Actions">
 			<div class="Actions">
-				{% if canCreateSlugHistory %}
-					<form method="post" action="{{ UrlHelper.build({controller: 'SlugHistory', action: 'add'}) }}">
+				{% if canCreateUrlHistory %}
+					<form method="post" action="{{ UrlHelper.build({controller: 'UrlHistory', action: 'add'}) }}">
 						{{ FormHelper.button(__('create_redirect'), {class: 'Button Button-Small Button-Add', name: 'submit', value: 'submit'}) }}
 						{{ FormHelper.hidden('reload_form', {val: 1}) }}
-						{{ FormHelper.hidden('slug', {val: entity.slug|trim('/')}) }}
+						{{ FormHelper.hidden('url', {val: entity.slug|trim('/')}) }}
 					</form>
 				{% endif %}
 				{% if grouped == false %}
@@ -97,4 +97,4 @@
 	{% endif %}
 {% endblock %}
 
-{% block tableOverviewFootColSpan %}{{ localConfig.overview.displayedFields|length + 5 + (canCreateSlugHistory ? 1 : 0) }}{% endblock %}
+{% block tableOverviewFootColSpan %}{{ localConfig.overview.displayedFields|length + 5 + (canCreateUrlHistory ? 1 : 0) }}{% endblock %}

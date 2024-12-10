@@ -13,7 +13,7 @@
 {% block tableOverviewCellTitle %}{% endblock %}
 
 {% block tableOverviewHeaderDefaultFields %}
-	<th class="TableHeader-Slug{% if PaginatorHelper.isCurrentSortKey('slug') %} Active{% endif %}">{{ PaginatorHelper.sort('slug') }}</th>
+	<th class="TableHeader-Url{% if PaginatorHelper.isCurrentSortKey('url') %} Active{% endif %}">{{ PaginatorHelper.sort('url') }}</th>
 	<th class="TableHeader-Page{% if PaginatorHelper.isCurrentSortKey('pageTitle') %} Active{% endif %}">{{ PaginatorHelper.sort('pageTitle') }}</th>
 {% endblock %}
 
@@ -23,8 +23,7 @@
 		{{ block('tableOverviewCellId') }}
 
 		{% block tableOverviewCellDefaultFields %}
-			<td class="TableCell-Slug">{{ entity.slug }}</td>
-
+			<td class="TableCell-Url">{{ entity.url }}</td>
 			<td class="TableCell-Page">
 				{% if entity.page %}
 					{{ entity.page.title }}<br>

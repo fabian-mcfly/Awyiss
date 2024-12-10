@@ -14,14 +14,14 @@ use Awyiss\Configuration\ConfigOptionType;
 /**
  * Provides all configuration options for the datatables scope
  */
-class SlugHistoryConfigOptions extends AbstractConfigOptions {
+class UrlHistoryConfigOptions extends AbstractConfigOptions {
 	use TableFieldsTrait;
 
 
 	/**
 	 * @var string Scope of these options
 	 */
-	protected static string $scope = 'SlugHistory';
+	protected static string $scope = 'UrlHistory';
 
 
 	/**

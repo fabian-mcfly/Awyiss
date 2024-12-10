@@ -1,5 +1,5 @@
 {#
-@var slugHistory Awyiss\Model\Entity\SlugHistory
+@var urlHistory Awyiss\Model\Entity\UrlHistory
 @var languageRealm string
 @var deletedPages \Cake\Collection\CollectionInterface
 @var threadedPages \Cake\Collection\CollectionInterface
@@ -36,14 +36,14 @@
 			<fieldset class="Fieldset-General">
 				<legend>{{ __('fieldset_general') }}</legend>
 
-				{% block formControlSlug %}
+				{% block formControlUrl %}
 					{% set deletedPages %}
-						{{ FormHelper.select('slug_options', hashPrinter(deletedPages, 'title', 'link'), {
-							'data-options-for': 'SlugHistory-Slug',
+						{{ FormHelper.select('url_options', hashPrinter(deletedPages, 'title', 'link'), {
+							'data-options-for': 'UrlHistory-Url',
 						}) }}
 					{% endset %}
 
-					{{ FormHelper.control('slug', {
+					{{ FormHelper.control('url', {
 						templateVars: {
 							additionalContent: deletedPages,
 						},
@@ -94,7 +94,7 @@
 				<legend>{{ __('fieldset_media') }}</legend>
 
 				{% block fieldsetMediaInner %}
-					{{ cell('Backend/MediaElements', [slugHistory]) }}
+					{{ cell('Backend/MediaElements', [urlHistory]) }}
 
 					{% block fieldsetMediaAttributes %}
 						{{ AttributesHelper.allControls('media') }}
@@ -104,7 +104,7 @@
 		{% endblock %}
 
 		{% block fieldsetMediaElementAssignments %}
-			{{ cell('Backend/MediaElements::elementAssignments', [slugHistory]) }}
+			{{ cell('Backend/MediaElements::elementAssignments', [urlHistory]) }}
 		{% endblock %}
 
 		{% block fieldsetAttributes %}

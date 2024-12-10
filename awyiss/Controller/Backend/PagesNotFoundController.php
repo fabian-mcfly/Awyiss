@@ -53,16 +53,16 @@ class PagesNotFoundController extends Controller {
 			return ['slug' => $query->func()->concat(['/', 'language_shortcode' => 'identifier', '/', 'slug' => 'identifier', '/'])];
 		});
 
-		$lo_slugHistoryTable = $this->fetchTable('SlugHistory');
-		$lo_slugHistoryQuery = $lo_slugHistoryTable->find()
+		$lo_urlHistoryTable = $this->fetchTable('UrlHistory');
+		$lo_urlHistoryQuery = $lo_urlHistoryTable->find()
 		->disableAutoFields()
 		->select(function ($query) {
 			return ['slug' => $query->func()->concat(['/', 'slug' => 'identifier', '/'])];
 		});
 
 		$lo_query = $this->PagesNotFound->find()
-		->where(function ($exp) use ($lo_pagesQuery, $lo_slugHistoryQuery) {
-			return $exp->notIn('slug', $lo_pagesQuery)->notIn('slug', $lo_slugHistoryQuery);
+		->where(function ($exp) use ($lo_pagesQuery, $lo_urlHistoryQuery) {
+			return $exp->notIn('slug', $lo_pagesQuery)->notIn('slug', $lo_urlHistoryQuery);
 		});
 
 		$lb_grouped = $this->request->getParam('grouped', false) === 'true';
