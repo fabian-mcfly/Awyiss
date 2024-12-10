@@ -1247,6 +1247,56 @@
 							"identifier": "create",
 							"additionalData": {"scope": ""}
 						}
+					},
+					"user_configuration": {
+						"title": {
+							"translate": ["user_configuration", "menu_title"]
+						},
+						"link": {
+							"url": {
+								"controller": "UserConfiguration",
+								"action": "overview"
+							}
+						},
+						"access": {
+							"scope": "user_configuration",
+							"identifier": "read",
+							"additionalData": {"scope": ""}
+						},
+						"children": {
+							"user_configuration_overview": {
+								"title": {
+									"translate": ["user_configuration", "menu_overview"]
+								},
+								"link": {
+									"url": {
+										"controller": "UserConfiguration",
+										"action": "overview"
+									}
+								},
+								"access": {
+									"scope": "UserConfiguration",
+									"identifier": "read",
+									"additionalData": {"scope": ""}
+								}
+							},
+							"user_configuration_add": {
+								"title": {
+									"translate": ["user_configuration", "menu_add"]
+								},
+								"link": {
+									"url": {
+										"controller": "UserConfiguration",
+										"action": "add"
+									}
+								},
+								"access": {
+									"scope": "user_configuration",
+									"identifier": "create",
+									"additionalData": {"scope": ""}
+								}
+							}
+						}
 					}
 				}
 			}
