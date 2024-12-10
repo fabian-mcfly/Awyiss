@@ -9,12 +9,12 @@ use Cake\Validation\Validator;
 
 
 /**
- * PagesNotFound Model
+ * UrlsNotFound Model
  *
- * @method \Awyiss\Model\Entity\PagesNotFound newDefaultEntity(array $additionalData = [], array $options = [])
+ * @method \Awyiss\Model\Entity\UrlsNotFound newDefaultEntity(array $additionalData = [], array $options = [])
  * @noinspection PhpFullyQualifiedNameUsageInspection
  */
-class PagesNotFoundTable extends Table {
+class UrlsNotFoundTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
@@ -22,7 +22,7 @@ class PagesNotFoundTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
-	public const TABLE = 'pages_not_found';
+	public const TABLE = 'urls_not_found';
 
 
 	/**
@@ -36,10 +36,10 @@ class PagesNotFoundTable extends Table {
 		parent::validationDefault($validator);
 
 		$validator
-			->scalar('slug')
-			->maxLength('slug', 2048)
-			->requirePresence('slug', 'create')
-			->notEmptyString('slug');
+			->scalar('url')
+			->maxLength('url', 2048)
+			->requirePresence('url', 'create')
+			->notEmptyString('url');
 
 		$validator
 			->scalar('referrer')

@@ -1,4 +1,4 @@
-# PagesNotFound translations of Awyiss CMS
+# UrlsNotFound translations of Awyiss CMS
 # Copyright 2024 Awyiss <EMAIL@ADDRESS>
 #
 msgid ""
@@ -21,7 +21,7 @@ msgid "headline_overview"
 msgstr "404 Tracking"
 
 msgid "headline_status_cell"
-msgstr "Neue 404 Fehler"
+msgstr "New 404 Errors"
 
 msgid "slug"
 msgstr "Url"
@@ -33,19 +33,19 @@ msgid "is_robot"
 msgstr "Robot/Crawler"
 
 msgid "occurrences"
-msgstr "Einträge"
+msgstr "Occurrences"
 
 msgid "first_occurrence"
-msgstr "Erstes Vorkommen"
+msgstr "First Occurrence"
 
 msgid "last_occurrence"
-msgstr "Letztes Vorkommen"
+msgstr "Last occurrence"
 
 msgid "group_entries"
-msgstr "Einträge gruppieren"
+msgstr "Group entries"
 
 msgid "create_redirect"
-msgstr "Weiterleitung erstellen"
+msgstr "Create redirect"
 
 msgid "delete_succeeded"
-msgstr "Der Eintrag wurde erfolgreich gelöscht"
+msgstr "The entry was successfully deleted"

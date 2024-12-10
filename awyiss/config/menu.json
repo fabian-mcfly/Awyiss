@@ -88,38 +88,6 @@
 				},
 				"children": null
 			},
-			"url_history": {
-				"title": {
-					"translate": ["url_history", "menu_title"]
-				},
-				"link": {
-					"url": {
-						"controller": "UrlHistory",
-						"action": "overview"
-					}
-				},
-				"access": {
-					"scope": "url_history",
-					"identifier": "read"
-				},
-				"children": {
-					"pages_not_found": {
-						"title": {
-							"translate": ["pages_not_found", "menu_title"]
-						},
-						"link": {
-							"url": {
-								"controller": "PagesNotFound",
-								"action": "overview"
-							}
-						},
-						"access": {
-							"scope": "pages_not_found",
-							"identifier": "read"
-						}
-					}
-				}
-			},
 			"pages_configure": {
 				"title": {
 					"translate": ["pages", "menu_configure"]
@@ -560,6 +528,38 @@
 				"access": {
 					"scope": "seo",
 					"identifier": "analyze"
+				}
+			},
+			"url_history": {
+				"title": {
+					"translate": ["url_history", "menu_title"]
+				},
+				"link": {
+					"url": {
+						"controller": "UrlHistory",
+						"action": "overview"
+					}
+				},
+				"access": {
+					"scope": "url_history",
+					"identifier": "read"
+				},
+				"children": {
+					"urls_not_found": {
+						"title": {
+							"translate": ["urls_not_found", "menu_title"]
+						},
+						"link": {
+							"url": {
+								"controller": "UrlsNotFound",
+								"action": "overview"
+							}
+						},
+						"access": {
+							"scope": "urls_not_found",
+							"identifier": "read"
+						}
+					}
 				}
 			},
 			"designs": {

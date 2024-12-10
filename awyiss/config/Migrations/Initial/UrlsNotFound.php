@@ -2,9 +2,9 @@
 
 
 /**
- * Class PagesNotFound
+ * Class UrlsNotFound
  */
-class PagesNotFound {
+class UrlsNotFound {
 	/**
 	 * @var \Initial $migration The migration that is being migrated
 	 */
@@ -28,18 +28,18 @@ class PagesNotFound {
 	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function up(): void {
-		if ($this->migration->hasTable('pages_not_found')) {
-			$this->migration->table('pages_not_found')->drop()->save();
+		if ($this->migration->hasTable('urls_not_found')) {
+			$this->migration->table('urls_not_found')->drop()->save();
 		}
 
-		$this->migration->table('pages_not_found')
+		$this->migration->table('urls_not_found')
 		->addColumn('id', 'integer', [
 			'autoIncrement' => true,
 			'default' => null,
 			'limit' => null,
 			'null' => false,
 			'signed' => true,
-		])->addPrimaryKey(['id'])->addColumn('slug', 'string', [
+		])->addPrimaryKey(['id'])->addColumn('url', 'string', [
 			'default' => null,
 			'limit' => 2048,
 			'null' => false,
@@ -57,9 +57,9 @@ class PagesNotFound {
 			'null' => false,
 		])->addIndex(
 			[
-				'slug',
+				'url',
 			], [
-				'name' => 'PAGES_NOT_FOUND_SLUG',
+				'name' => 'URLS_NOT_FOUND_URL',
 			]
 		)->create();
 	}
@@ -71,6 +71,6 @@ class PagesNotFound {
 	 * @return void
 	 */
 	public function down(): void {
-		$this->migration->table('pages_not_found')->drop()->save();
+		$this->migration->table('urls_not_found')->drop()->save();
 	}
 }

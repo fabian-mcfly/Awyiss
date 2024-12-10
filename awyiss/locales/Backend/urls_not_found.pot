@@ -1,4 +1,4 @@
-# PagesNotFound translations of Awyiss CMS
+# UrlsNotFound translations of Awyiss CMS
 # Copyright 2024 Awyiss <EMAIL@ADDRESS>
 #
 msgid ""
@@ -23,7 +23,7 @@ msgstr "404 Tracking"
 msgid "headline_status_cell"
 msgstr "New 404 Errors"
 
-msgid "slug"
+msgid "url"
 msgstr "Url"
 
 msgid "referrer"

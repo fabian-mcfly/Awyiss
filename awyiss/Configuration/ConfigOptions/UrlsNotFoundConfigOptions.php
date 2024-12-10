@@ -14,14 +14,14 @@ use Awyiss\Configuration\ConfigOptionType;
 /**
  * Provides all configuration options for the Users scope
  */
-class PagesNotFoundConfigOptions extends AbstractConfigOptions {
+class UrlsNotFoundConfigOptions extends AbstractConfigOptions {
 	use TableFieldsTrait;
 
 
 	/**
 	 * @var string Scope of these options
 	 */
-	protected static string $scope = 'PagesNotFound';
+	protected static string $scope = 'UrlsNotFound';
 
 
 	/**

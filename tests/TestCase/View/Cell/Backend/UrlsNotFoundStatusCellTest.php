@@ -6,7 +6,7 @@ namespace Awyiss\Test\TestCase\View\Cell\Backend;
 
 use Awyiss\Authorization\AuthorizationService;
 use Awyiss\Awyiss;
-use Awyiss\Model\Entity\PagesNotFound;
+use Awyiss\Model\Entity\UrlsNotFound;
 use Awyiss\Routing\Router;
 use Awyiss\Test\TestSuite\TestCase;
 use Awyiss\View\BackendView;
@@ -18,9 +18,9 @@ use ReflectionClass;
 
 
 /**
- * PagesNotFoundStatusCellTest class
+ * UrlsNotFoundStatusCellTest class
  */
-class PagesNotFoundStatusCellTest extends TestCase {
+class UrlsNotFoundStatusCellTest extends TestCase {
 	use IntegrationTestTrait;
 
 
@@ -96,7 +96,7 @@ class PagesNotFoundStatusCellTest extends TestCase {
 		$property->setAccessible(true);
 		$property->setValue(false);
 
-		$this->fetchTable('PagesNotFound')->deleteAll([]);
+		$this->fetchTable('UrlsNotFound')->deleteAll([]);
 	}
 
 
@@ -107,7 +107,7 @@ class PagesNotFoundStatusCellTest extends TestCase {
 	public function testDisplayWithoutUser(): void {
 		$this->view = new BackendView($this->request, $this->response);
 
-		$output = (string)$this->view->cell('Backend/PagesNotFoundStatus');
+		$output = (string)$this->view->cell('Backend/UrlsNotFoundStatus');
 
 		$this->assertSame('', $output);
 	}
@@ -123,9 +123,9 @@ class PagesNotFoundStatusCellTest extends TestCase {
 		Router::setRequest($this->request);
 		$this->view = new BackendView($this->request, $this->response);
 
-		$output = (string)$this->view->cell('Backend/PagesNotFoundStatus');
+		$output = (string)$this->view->cell('Backend/UrlsNotFoundStatus');
 
-		$this->assertStringContainsString('<fieldset class="Overview-Fieldset Fieldset-PagesNotFoundStatus StatusCell Collapsible">', $output);
+		$this->assertStringContainsString('<fieldset class="Overview-Fieldset Fieldset-UrlsNotFoundStatus StatusCell Collapsible">', $output);
 		$this->assertStringNotContainsString('<td', $output);
 	}
 
@@ -140,16 +140,16 @@ class PagesNotFoundStatusCellTest extends TestCase {
 		Router::setRequest($this->request);
 		$this->view = new BackendView($this->request, $this->response);
 
-		$pagesNotFoundTable = $this->fetchTable('PagesNotFound');
-		$pagesNotFoundTable->save(new PagesNotFound([
-			'slug' => 'test',
+		$urlsNotFoundTable = $this->fetchTable('UrlsNotFound');
+		$urlsNotFoundTable->save(new UrlsNotFound([
+			'url' => 'test',
 			'created_on' => (new DateTime())->subMinutes(5),
 		]));
 
-		$output = (string)$this->view->cell('Backend/PagesNotFoundStatus');
+		$output = (string)$this->view->cell('Backend/UrlsNotFoundStatus');
 
-		$this->assertStringContainsString('<fieldset class="Overview-Fieldset Fieldset-PagesNotFoundStatus StatusCell Collapsible">', $output);
-		$this->assertStringContainsString('<td class="TableCell-Slug" title="test">test</td>', $output);
+		$this->assertStringContainsString('<fieldset class="Overview-Fieldset Fieldset-UrlsNotFoundStatus StatusCell Collapsible">', $output);
+		$this->assertStringContainsString('<td class="TableCell-Url" title="test">test</td>', $output);
 		$this->assertStringContainsString('<form class="Actions" method="post" action="/backend/xy/url-history/add/', $output);
 		$this->assertStringContainsString('<input type="hidden" name="url"  value="test">', $output);
 	}
@@ -166,7 +166,7 @@ class PagesNotFoundStatusCellTest extends TestCase {
 		Router::setRequest($this->request);
 		$this->view = new BackendView($this->request, $this->response);
 
-		$output = (string)$this->view->cell('Backend/PagesNotFoundStatus');
+		$output = (string)$this->view->cell('Backend/UrlsNotFoundStatus');
 
 		$this->assertEmpty('', $output);
 	}
@@ -182,13 +182,13 @@ class PagesNotFoundStatusCellTest extends TestCase {
 		Router::setRequest($this->request);
 		$this->view = new BackendView($this->request, $this->response);
 
-		$pagesNotFoundTable = $this->fetchTable('PagesNotFound');
-		$pagesNotFoundTable->save(new PagesNotFound([
-			'slug' => 'test',
+		$urlsNotFoundTable = $this->fetchTable('UrlsNotFound');
+		$urlsNotFoundTable->save(new UrlsNotFound([
+			'url' => 'test',
 			'created_on' => (new DateTime())->subMinutes(5),
 		]));
 
-		$output = (string)$this->view->cell('Backend/PagesNotFoundStatus');
+		$output = (string)$this->view->cell('Backend/UrlsNotFoundStatus');
 
 		$this->assertStringNotContainsString('<', $output);
 	}
@@ -205,7 +205,7 @@ class PagesNotFoundStatusCellTest extends TestCase {
 		Router::setRequest($this->request);
 		$this->view = new BackendView($this->request, $this->response);
 
-		$output = (string)$this->view->cell('Backend/PagesNotFoundStatus');
+		$output = (string)$this->view->cell('Backend/UrlsNotFoundStatus');
 
 		$this->assertEmpty('', $output);
 	}
@@ -221,13 +221,13 @@ class PagesNotFoundStatusCellTest extends TestCase {
 		Router::setRequest($this->request);
 		$this->view = new BackendView($this->request, $this->response);
 
-		$pagesNotFoundTable = $this->fetchTable('PagesNotFound');
-		$pagesNotFoundTable->save(new PagesNotFound([
-			'slug' => 'test',
+		$urlsNotFoundTable = $this->fetchTable('UrlsNotFound');
+		$urlsNotFoundTable->save(new UrlsNotFound([
+			'url' => 'test',
 			'created_on' => (new DateTime())->subMinutes(5),
 		]));
 
-		$output = (string)$this->view->cell('Backend/PagesNotFoundStatus');
+		$output = (string)$this->view->cell('Backend/UrlsNotFoundStatus');
 
 		$this->assertStringNotContainsString('<', $output);
 	}

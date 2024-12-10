@@ -1,6 +1,6 @@
 {#
-@var pagesNotFound \Awyiss\Model\Entity\PagesNotFound[]|\Cake\Datasource\Paging\PaginatedResultSet
-@var entity \Awyiss\Model\Entity\PagesNotFound
+@var urlsNotFound \Awyiss\Model\Entity\UrlsNotFound[]|\Cake\Datasource\Paging\PaginatedResultSet
+@var entity \Awyiss\Model\Entity\UrlsNotFound
 @var _view \Awyiss\View\BackendView
 @var AuthorizationHelper \Awyiss\View\Helper\AuthorizationHelper
 @var FormHelper \Awyiss\View\Helper\FormHelper
@@ -15,8 +15,8 @@
 
 {% block tableOverviewHeaderTitle %}{% endblock %}
 {% block tableOverviewHeaderDefaultFields %}
-	<th class="TableHeader-Slug{% if PaginatorHelper.isCurrentSortKey('slug') %} Active{% endif %}">
-		{{ PaginatorHelper.sort('slug', i18nDomain ? __df(i18nDomain, 'system', 'slug') : __('slug')) }}
+	<th class="TableHeader-Url{% if PaginatorHelper.isCurrentSortKey('url') %} Active{% endif %}">
+		{{ PaginatorHelper.sort('url', i18nDomain ? __df(i18nDomain, 'system', 'url') : __('url')) }}
 	</th>
 	{% if grouped == false %}
 		<th class="TableHeader-Referrer{% if PaginatorHelper.isCurrentSortKey('referrer') %} Active{% endif %}">
@@ -49,7 +49,7 @@
 
 {% block tableOverviewCellTitle %}{% endblock %}
 {% block tableOverviewCellDefaultFields %}
-	<td class="TableCell-Slug" title="{{ entity.slug }}">{{ entity.slug }}</td>
+	<td class="TableCell-Url" title="{{ entity.url }}">{{ entity.url }}</td>
 	{% if grouped == false %}
 		<td class="TableCell-Referrer">
 			{% if entity.referrer %}
@@ -84,7 +84,7 @@
 					<form method="post" action="{{ UrlHelper.build({controller: 'UrlHistory', action: 'add'}) }}">
 						{{ FormHelper.button(__('create_redirect'), {class: 'Button Button-Small Button-Add', name: 'submit', value: 'submit'}) }}
 						{{ FormHelper.hidden('reload_form', {val: 1}) }}
-						{{ FormHelper.hidden('url', {val: entity.slug|trim('/')}) }}
+						{{ FormHelper.hidden('url', {val: entity.url|trim('/')}) }}
 					</form>
 				{% endif %}
 				{% if grouped == false %}

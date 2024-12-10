@@ -681,22 +681,22 @@ class FrontendController extends AppController {
 		 * Check if an entry for the current slug already exists within the last 5 minutes
 		 * If it does, don't track it again
 		 *
-		 * @var \Awyiss\Model\Table\PagesNotFoundTable $lo_pagesNotFoundTable
+		 * @var \Awyiss\Model\Table\UrlsNotFoundTable $lo_urlsNotFoundTable
 		 */
-		$lo_pagesNotFoundTable = $this->fetchTable('PagesNotFound');
-		if ($lo_pagesNotFoundTable->exists(['slug' => $ls_slug, 'created_on >' => new DateTime('-5 minutes')])) {
+		$lo_urlsNotFoundTable = $this->fetchTable('UrlsNotFound');
+		if ($lo_urlsNotFoundTable->exists(['url' => $ls_slug, 'created_on >' => new DateTime('-5 minutes')])) {
 			return;
 		}
 
 		$lb_isRobot = $this->isRobot();
 
-		$lo_notFound = $lo_pagesNotFoundTable->newDefaultEntity([
-			'slug' => $ls_slug,
+		$lo_notFound = $lo_urlsNotFoundTable->newDefaultEntity([
+			'url' => $ls_slug,
 			'referrer' => $this->request->referer(),
 			'isRobot' => $lb_isRobot,
 		]);
 
-		$lo_pagesNotFoundTable->save($lo_notFound, ['allowFrontendSave' => true]);
+		$lo_urlsNotFoundTable->save($lo_notFound, ['allowFrontendSave' => true]);
 	}
 
 

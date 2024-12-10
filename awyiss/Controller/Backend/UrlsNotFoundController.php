@@ -11,11 +11,11 @@ use Cake\ORM\Query\SelectQuery;
 
 
 /**
- * PagesNotFound Controller
+ * UrlsNotFound Controller
  *
- * @property \Awyiss\Model\Table\PagesNotFoundTable $PagesNotFound
+ * @property \Awyiss\Model\Table\UrlsNotFoundTable $UrlsNotFound
  */
-class PagesNotFoundController extends Controller {
+class UrlsNotFoundController extends Controller {
 	/**
 	 * @inheritDoc
 	 */
@@ -33,7 +33,7 @@ class PagesNotFoundController extends Controller {
 	 */
 	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
-		return $this->PagesNotFound->find()->where($this->getOverviewWhere());
+		return $this->UrlsNotFound->find()->where($this->getOverviewWhere());
 	}
 
 
@@ -50,19 +50,19 @@ class PagesNotFoundController extends Controller {
 		->disableAutoFields()
 		->find('published')
 		->select(function ($query) {
-			return ['slug' => $query->func()->concat(['/', 'language_shortcode' => 'identifier', '/', 'slug' => 'identifier', '/'])];
+			return ['slug' => $query->func()->concat(['/', 'language_shortcode' => 'identifier', '/', 'slug' => 'identifier'])];
 		});
 
 		$lo_urlHistoryTable = $this->fetchTable('UrlHistory');
 		$lo_urlHistoryQuery = $lo_urlHistoryTable->find()
 		->disableAutoFields()
 		->select(function ($query) {
-			return ['slug' => $query->func()->concat(['/', 'slug' => 'identifier', '/'])];
+			return ['url' => $query->func()->concat(['/', 'url' => 'identifier'])];
 		});
 
-		$lo_query = $this->PagesNotFound->find()
+		$lo_query = $this->UrlsNotFound->find()
 		->where(function ($exp) use ($lo_pagesQuery, $lo_urlHistoryQuery) {
-			return $exp->notIn('slug', $lo_pagesQuery)->notIn('slug', $lo_urlHistoryQuery);
+			return $exp->notIn('url', $lo_pagesQuery)->notIn('url', $lo_urlHistoryQuery);
 		});
 
 		$lb_grouped = $this->request->getParam('grouped', false) === 'true';
@@ -73,15 +73,15 @@ class PagesNotFoundController extends Controller {
 				'last_occurrence' => $lo_query->func()->max('created_on', ['datetime']),
 			])
 			->enableAutoFields()
-			->groupBy('slug');
+			->groupBy('url');
 
 			array_unshift($this->paginate['order'], 'occurrences');
 
-			/** @var \Awyiss\Model\Entity\PagesNotFound $ls_entityClass */
-			$ls_entityClass = $this->PagesNotFound->getEntityClass();
+			/** @var \Awyiss\Model\Entity\UrlsNotFound $ls_entityClass */
+			$ls_entityClass = $this->UrlsNotFound->getEntityClass();
 			$ls_entityClass::addFieldMapping('first_occurrence', 'firstOccurrence');
 			$ls_entityClass::addFieldMapping('last_occurrence', 'lastOccurrence');
-			$lo_pagesNotFound = $this->paginate($lo_query, [
+			$lo_urlsNotFound = $this->paginate($lo_query, [
 				'order' => [
 					'occurrences' => 'desc',
 				],
@@ -93,12 +93,12 @@ class PagesNotFoundController extends Controller {
 			]);
 		}
 		else {
-			$lo_pagesNotFound = $this->paginate($lo_query);
+			$lo_urlsNotFound = $this->paginate($lo_query);
 		}
 
 		$this->set([
-			'pagesNotFound' => $lo_pagesNotFound,
-			'attributes' => $this->PagesNotFound->getAttributes(),
+			'urlsNotFound' => $lo_urlsNotFound,
+			'attributes' => $this->UrlsNotFound->getAttributes(),
 			'grouped' => $lb_grouped,
 		]);
 	}
@@ -116,21 +116,21 @@ class PagesNotFoundController extends Controller {
 
 		$this->request->allowMethod(['get', 'delete']);
 
-		/** @var \Awyiss\Model\Entity\PagesNotFound $lo_pagesNotFound */
-		$lo_pagesNotFound = $this->PagesNotFound->findById($id)->first();
-		if (!$lo_pagesNotFound) {
+		/** @var \Awyiss\Model\Entity\UrlsNotFound $lo_urlsNotFound */
+		$lo_urlsNotFound = $this->UrlsNotFound->findById($id)->first();
+		if (!$lo_urlsNotFound) {
 			$this->Flash->error(__('record_not_found'));
 
 			return $this->redirect(['action' => 'overview']);
 		}
 
-		if ($this->PagesNotFound->delete($lo_pagesNotFound)) {
+		if ($this->UrlsNotFound->delete($lo_urlsNotFound)) {
 			$this->Flash->success(__('delete_succeeded'));
 		}
 		else {
 			$this->Flash->error(__('delete_failed'));
 
-			foreach ($lo_pagesNotFound->getError('_general') as $ls_error) {
+			foreach ($lo_urlsNotFound->getError('_general') as $ls_error) {
 				$this->Flash->error($ls_error);
 			}
 		}

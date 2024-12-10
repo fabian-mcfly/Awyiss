@@ -11,9 +11,9 @@ use Awyiss\Configuration\ConfigOptionsProvider;
 
 
 /**
- * Permission for the PagesNotFound scope
+ * Permission for the UrlsNotFound scope
  */
-class PagesNotFoundPolicy extends AbstractPolicy {
+class UrlsNotFoundPolicy extends AbstractPolicy {
 	/**
 	 * @var PermissionOptionCollection
 	 */

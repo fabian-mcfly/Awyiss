@@ -212,7 +212,7 @@ class UserConfigurationCustomSeed extends AbstractSeed {
 			[
 				'id' => 52,
 				'user_id' => 1,
-				'scope' => 'pages_not_found',
+				'scope' => 'urls_not_found',
 				'identifier' => 'paginate.limit',
 				'value' => '20',
 			],

@@ -1863,63 +1863,63 @@ namespace PHPSTORM_META {
 	);
 
 	expectedArguments(
-		\Awyiss\Model\Entity\PagesNotFound::get(),
+		\Awyiss\Model\Entity\UrlsNotFound::get(),
 		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\PagesNotFound'),
+		argumentsSet('entityFields:Awyiss\Model\Entity\UrlsNotFound'),
 	);
 
 	expectedArguments(
-		\Awyiss\Model\Entity\PagesNotFound::getError(),
+		\Awyiss\Model\Entity\UrlsNotFound::getError(),
 		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\PagesNotFound'),
+		argumentsSet('entityFields:Awyiss\Model\Entity\UrlsNotFound'),
 	);
 
 	expectedArguments(
-		\Awyiss\Model\Entity\PagesNotFound::getInvalidField(),
+		\Awyiss\Model\Entity\UrlsNotFound::getInvalidField(),
 		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\PagesNotFound'),
+		argumentsSet('entityFields:Awyiss\Model\Entity\UrlsNotFound'),
 	);
 
 	expectedArguments(
-		\Awyiss\Model\Entity\PagesNotFound::getOriginal(),
+		\Awyiss\Model\Entity\UrlsNotFound::getOriginal(),
 		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\PagesNotFound'),
+		argumentsSet('entityFields:Awyiss\Model\Entity\UrlsNotFound'),
 	);
 
 	expectedArguments(
-		\Awyiss\Model\Entity\PagesNotFound::has(),
+		\Awyiss\Model\Entity\UrlsNotFound::has(),
 		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\PagesNotFound'),
+		argumentsSet('entityFields:Awyiss\Model\Entity\UrlsNotFound'),
 	);
 
 	expectedArguments(
-		\Awyiss\Model\Entity\PagesNotFound::hasValue(),
+		\Awyiss\Model\Entity\UrlsNotFound::hasValue(),
 		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\PagesNotFound'),
+		argumentsSet('entityFields:Awyiss\Model\Entity\UrlsNotFound'),
 	);
 
 	expectedArguments(
-		\Awyiss\Model\Entity\PagesNotFound::isDirty(),
+		\Awyiss\Model\Entity\UrlsNotFound::isDirty(),
 		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\PagesNotFound'),
+		argumentsSet('entityFields:Awyiss\Model\Entity\UrlsNotFound'),
 	);
 
 	expectedArguments(
-		\Awyiss\Model\Entity\PagesNotFound::isEmpty(),
+		\Awyiss\Model\Entity\UrlsNotFound::isEmpty(),
 		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\PagesNotFound'),
+		argumentsSet('entityFields:Awyiss\Model\Entity\UrlsNotFound'),
 	);
 
 	expectedArguments(
-		\Awyiss\Model\Entity\PagesNotFound::setDirty(),
+		\Awyiss\Model\Entity\UrlsNotFound::setDirty(),
 		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\PagesNotFound'),
+		argumentsSet('entityFields:Awyiss\Model\Entity\UrlsNotFound'),
 	);
 
 	expectedArguments(
-		\Awyiss\Model\Entity\PagesNotFound::setError(),
+		\Awyiss\Model\Entity\UrlsNotFound::setError(),
 		0,
-		argumentsSet('entityFields:Awyiss\Model\Entity\PagesNotFound'),
+		argumentsSet('entityFields:Awyiss\Model\Entity\UrlsNotFound'),
 	);
 
 	expectedArguments(
@@ -2779,7 +2779,7 @@ namespace PHPSTORM_META {
 			'PageTemplateContentAreas' => \Awyiss\Model\Table\PageTemplateContentAreasTable::class,
 			'PageTemplates' => \Awyiss\Model\Table\PageTemplatesTable::class,
 			'Pages' => \Awyiss\Model\Table\PagesTable::class,
-			'PagesNotFound' => \Awyiss\Model\Table\PagesNotFoundTable::class,
+			'UrlsNotFound' => \Awyiss\Model\Table\UrlsNotFoundTable::class,
 			'PublicationData' => \Awyiss\Model\Table\PublicationDataTable::class,
 			'Queue.QueueProcesses' => \Queue\Model\Table\QueueProcessesTable::class,
 			'Queue.QueuedJobs' => \Queue\Model\Table\QueuedJobsTable::class,
@@ -2889,7 +2889,7 @@ namespace PHPSTORM_META {
 			'PageTemplateContentAreas' => \Awyiss\Model\Table\PageTemplateContentAreasTable::class,
 			'PageTemplates' => \Awyiss\Model\Table\PageTemplatesTable::class,
 			'Pages' => \Awyiss\Model\Table\PagesTable::class,
-			'PagesNotFound' => \Awyiss\Model\Table\PagesNotFoundTable::class,
+			'UrlsNotFound' => \Awyiss\Model\Table\UrlsNotFoundTable::class,
 			'PublicationData' => \Awyiss\Model\Table\PublicationDataTable::class,
 			'Queue.QueueProcesses' => \Queue\Model\Table\QueueProcessesTable::class,
 			'Queue.QueuedJobs' => \Queue\Model\Table\QueuedJobsTable::class,
@@ -2941,7 +2941,7 @@ namespace PHPSTORM_META {
 			'PageTemplateContentAreas' => \Awyiss\Model\Table\PageTemplateContentAreasTable::class,
 			'PageTemplates' => \Awyiss\Model\Table\PageTemplatesTable::class,
 			'Pages' => \Awyiss\Model\Table\PagesTable::class,
-			'PagesNotFound' => \Awyiss\Model\Table\PagesNotFoundTable::class,
+			'UrlsNotFound' => \Awyiss\Model\Table\UrlsNotFoundTable::class,
 			'PublicationData' => \Awyiss\Model\Table\PublicationDataTable::class,
 			'Queue.QueueProcesses' => \Queue\Model\Table\QueueProcessesTable::class,
 			'Queue.QueuedJobs' => \Queue\Model\Table\QueuedJobsTable::class,
@@ -3015,7 +3015,7 @@ namespace PHPSTORM_META {
 			'PageTemplateContentAreas' => \Cake\ORM\Association\BelongsToMany::class,
 			'PageTemplates' => \Cake\ORM\Association\BelongsToMany::class,
 			'Pages' => \Cake\ORM\Association\BelongsToMany::class,
-			'PagesNotFound' => \Cake\ORM\Association\BelongsToMany::class,
+			'UrlsNotFound' => \Cake\ORM\Association\BelongsToMany::class,
 			'PublicationData' => \Cake\ORM\Association\BelongsToMany::class,
 			'Queue.QueueProcesses' => \Cake\ORM\Association\BelongsToMany::class,
 			'Queue.QueuedJobs' => \Cake\ORM\Association\BelongsToMany::class,
@@ -3067,7 +3067,7 @@ namespace PHPSTORM_META {
 			'PageTemplateContentAreas' => \Cake\ORM\Association\BelongsTo::class,
 			'PageTemplates' => \Cake\ORM\Association\BelongsTo::class,
 			'Pages' => \Cake\ORM\Association\BelongsTo::class,
-			'PagesNotFound' => \Cake\ORM\Association\BelongsTo::class,
+			'UrlsNotFound' => \Cake\ORM\Association\BelongsTo::class,
 			'PublicationData' => \Cake\ORM\Association\BelongsTo::class,
 			'Queue.QueueProcesses' => \Cake\ORM\Association\BelongsTo::class,
 			'Queue.QueuedJobs' => \Cake\ORM\Association\BelongsTo::class,
@@ -3142,7 +3142,7 @@ namespace PHPSTORM_META {
 			'PageTemplateContentAreas' => \Cake\ORM\Association\HasMany::class,
 			'PageTemplates' => \Cake\ORM\Association\HasMany::class,
 			'Pages' => \Cake\ORM\Association\HasMany::class,
-			'PagesNotFound' => \Cake\ORM\Association\HasMany::class,
+			'UrlsNotFound' => \Cake\ORM\Association\HasMany::class,
 			'PublicationData' => \Cake\ORM\Association\HasMany::class,
 			'Queue.QueueProcesses' => \Cake\ORM\Association\HasMany::class,
 			'Queue.QueuedJobs' => \Cake\ORM\Association\HasMany::class,
@@ -3194,7 +3194,7 @@ namespace PHPSTORM_META {
 			'PageTemplateContentAreas' => \Cake\ORM\Association\HasOne::class,
 			'PageTemplates' => \Cake\ORM\Association\HasOne::class,
 			'Pages' => \Cake\ORM\Association\HasOne::class,
-			'PagesNotFound' => \Cake\ORM\Association\HasOne::class,
+			'UrlsNotFound' => \Cake\ORM\Association\HasOne::class,
 			'PublicationData' => \Cake\ORM\Association\HasOne::class,
 			'Queue.QueueProcesses' => \Cake\ORM\Association\HasOne::class,
 			'Queue.QueuedJobs' => \Cake\ORM\Association\HasOne::class,
@@ -4119,12 +4119,12 @@ namespace PHPSTORM_META {
 		'page_roles',
 		'page_templates',
 		'pages',
-		'pages_not_found',
 		'pagination',
 		'publication_data',
 		'queue',
 		'seo',
 		'system',
+		'urls_not_found',
 		'url_history',
 		'user_configuration',
 		'usergroups',
@@ -6110,7 +6110,7 @@ namespace PHPSTORM_META {
 	);
 
 	registerArgumentsSet(
-		'entityFields:Awyiss\Model\Entity\PagesNotFound',
+		'entityFields:Awyiss\Model\Entity\UrlsNotFound',
 		'created_on',
 		'id',
 		'is_robot',
@@ -6415,11 +6415,11 @@ namespace PHPSTORM_META {
 		'page_template_content_areas',
 		'page_templates',
 		'pages',
-		'pages_not_found',
 		'publication_data',
 		'queue_processes',
 		'queued_jobs',
 		'url_history',
+		'urls_not_found',
 		'user_configuration',
 		'usergroup_permissions',
 		'usergroups',

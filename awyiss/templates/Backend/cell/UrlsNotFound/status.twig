@@ -1,5 +1,5 @@
 {#
-@var pagesNotFound \Cake\Collection\Collection
+@var urlsNotFound \Cake\Collection\Collection
 @var lastLogin \Cake\I18n\DateTime
 @var accessible bool
 @var _view \Awyiss\View\BackendView
@@ -9,8 +9,8 @@
 	{% if accessible %}
 		{% set canCreateUrlHistory = AuthorizationHelper.scopeIsAccessible('urlHistory', [], 'create') %}
 
-		<fieldset class="Overview-Fieldset Fieldset-PagesNotFoundStatus StatusCell Collapsible">
-			<legend>{{ __d('pages_not_found', 'headline_status_cell') }}</legend>
+		<fieldset class="Overview-Fieldset Fieldset-UrlsNotFoundStatus StatusCell Collapsible">
+			<legend>{{ __d('urls_not_found', 'headline_status_cell') }}</legend>
 
 			{% block fieldsetOverviewInner %}
 				<div class="Table-Overflow">
@@ -19,8 +19,8 @@
 							{% block tableOverviewHead %}
 								<thead>
 									<tr>
-										<th class="TableHeader-Slug">
-											{{ __d('pages_not_found', 'slug') }}
+										<th class="TableHeader-Url">
+											{{ __d('urls_not_found', 'url') }}
 										</th>
 										{% if canCreateUrlHistory %}
 											<th class="TableHeader-Actions"></th>
@@ -30,15 +30,15 @@
 							{% endblock %}
 							{% block tableOverviewBody %}
 								<tbody>
-									{% for pageNotFound in pagesNotFound %}
+									{% for urlNotFound in urlsNotFound %}
 										<tr>
-											<td class="TableCell-Slug" title="{{ pageNotFound.slug }}">{{ pageNotFound.slug }}</td>
+											<td class="TableCell-Url" title="{{ urlNotFound.url }}">{{ urlNotFound.url }}</td>
 											{% if canCreateUrlHistory %}
 												<td class="TableCell-Actions">
 													<form class="Actions" method="post" action="{{ UrlHelper.build({controller: 'UrlHistory', action: 'add'}) }}">
-														{{ FormHelper.button(__d('pages_not_found', 'create_redirect'), {class: 'Button Button-Small Button-Add', name: 'submit', value: 'submit'}) }}
+														{{ FormHelper.button(__d('urls_not_found', 'create_redirect'), {class: 'Button Button-Small Button-Add', name: 'submit', value: 'submit'}) }}
 														{{ FormHelper.hidden('reload_form', {val: 1}) }}
-														{{ FormHelper.hidden('url', {val: pageNotFound.slug|trim('/')}) }}
+														{{ FormHelper.hidden('url', {val: urlNotFound.url|trim('/')}) }}
 													</form>
 												</td>
 											{% endif %}

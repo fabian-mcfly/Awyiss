@@ -5,20 +5,21 @@ namespace Awyiss\View\Cell\Backend;
 
 
 use Awyiss\Authorization\IdentityPermissionsInterface;
+use Cake\Database\Expression\QueryExpression;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\View\Cell;
 use RuntimeException;
 
 
 /**
- * Provides an overview of the pages that were not found since the last login
+ * Provides an overview of the urls that were not found since the last login
  */
-class PagesNotFoundStatusCell extends Cell {
+class UrlsNotFoundStatusCell extends Cell {
 	use LocatorAwareTrait;
 
 
 	/**
-	 * Generate the list of new entries and load templates/Backend/cell/PagesNotFound/status
+	 * Generate the list of new entries and load templates/Backend/cell/UrlsNotFound/status
 	 *
 	 * @return void
 	 * @throws \ReflectionException
@@ -28,9 +29,9 @@ class PagesNotFoundStatusCell extends Cell {
 		$lo_identity = $this->_getIdentity();
 
 		// Set the template for the view
-		$this->viewBuilder()->setTemplatePath('Backend/cell/PagesNotFound')->setTemplate('status');
+		$this->viewBuilder()->setTemplatePath('Backend/cell/UrlsNotFound')->setTemplate('status');
 
-		$lb_accessible = $lo_identity->scopeIsAccessible('pages_not_found', [], 'read');
+		$lb_accessible = $lo_identity->scopeIsAccessible('urls_not_found', [], 'read');
 
 		$this->set([
 			'accessible' => $lb_accessible,
@@ -43,23 +44,41 @@ class PagesNotFoundStatusCell extends Cell {
 		$lo_session = $this->request->getSession();
 		$lo_lastLogin = $lo_session->read('Backend.lastLogin');
 
-		$lo_pagesNotFoundTable = $this->fetchTable('PagesNotFound');
-		$lo_pagesNotFoundQuery = $lo_pagesNotFoundTable->find();
-		$lo_pagesNotFoundQuery->select([
-			'occurrences' => $lo_pagesNotFoundQuery->func()->count('*'),
+		$lo_pagesTable = $this->fetchTable('Pages');
+		$lo_pagesQuery = $lo_pagesTable->find('active', skipPageRoleCheck: true)
+		->disableAutoFields()
+		->find('published')
+		->select(function ($query) {
+			return ['slug' => $query->func()->concat(['/', 'language_shortcode' => 'identifier', '/', 'slug' => 'identifier'])];
+		});
+
+		$lo_urlHistoryTable = $this->fetchTable('UrlHistory');
+		$lo_urlHistoryQuery = $lo_urlHistoryTable->find()
+		->disableAutoFields()
+		->select(function ($query) {
+			return ['url' => $query->func()->concat(['/', 'url' => 'identifier'])];
+		});
+
+		$lo_urlsNotFoundTable = $this->fetchTable('UrlsNotFound');
+		$lo_urlsNotFoundQuery = $lo_urlsNotFoundTable->find();
+		$lo_urlsNotFoundQuery->select([
+			'occurrences' => $lo_urlsNotFoundQuery->func()->count('*'),
 		])
 		->enableAutoFields()
 		->where([
 			'created_on >' => $lo_lastLogin ?? $lo_identity->createdOn,
 		])
-		->groupBy('slug')
+		->where(function (QueryExpression $exp) use ($lo_pagesQuery, $lo_urlHistoryQuery) {
+			return $exp->notIn('url', $lo_pagesQuery)->notIn('url', $lo_urlHistoryQuery);
+		})
+		->groupBy('url')
 		->orderBy([
 			'created_on' => 'desc',
 			'id' => 'desc',
 		]);
 
 		$this->set([
-			'pagesNotFound' => $lo_pagesNotFoundQuery->all(),
+			'urlsNotFound' => $lo_urlsNotFoundQuery->all(),
 			'lastLogin' => $lo_lastLogin,
 		]);
 	}

@@ -8,15 +8,15 @@ use Awyiss\Model\Entity;
 
 
 /**
- * PagesNotFound Entity
+ * UrlsNotFound Entity
  *
  * @property int $id
- * @property string $slug
+ * @property string $url
  * @property string|null $referrer
  * @property bool|null $isRobot
  * @property \Cake\I18n\DateTime|null $createdOn
  */
-class PagesNotFound extends Entity {
+class UrlsNotFound extends Entity {
 	/**
 	 * @inheritDoc
 	 */
@@ -28,7 +28,7 @@ class PagesNotFound extends Entity {
 	 * @inheritDoc
 	 */
 	protected array $_accessible = [
-		'slug' => true,
+		'url' => true,
 		'referrer' => true,
 		'isRobot' => true,
 	];
