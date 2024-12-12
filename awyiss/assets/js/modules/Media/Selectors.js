@@ -77,7 +77,17 @@ export default class Selectors {
 
 		if (element.matches(this.singleFileSelector)) {
 			element.useMedia = this.useMedia.bind(this, element);
-			element.mediaIdInput = element.querySelector('input[name^="media_assignments"][name$="[media_id]"]');
+
+			if (element.dataset.mediaIdInputSelector) {
+				element.mediaIdInput = element.querySelector(element.dataset.mediaIdInputSelector);
+			}
+			else {
+				element.mediaIdInput = element.querySelector('input[name^="media_assignments"][name$="[media_id]"]');
+			}
+
+			if (!element.mediaIdInput) {
+				element.mediaIdInput = element.querySelector('.MediaSelector-MediaId') || element.querySelector('input[type="text"]');
+			}
 		}
 		else {
 			element.useMedia = this.addMedia.bind(this, element);
