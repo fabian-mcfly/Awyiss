@@ -68,11 +68,17 @@ msgstr "The redirect could not be deleted"
 msgid "url"
 msgstr "Url"
 
-msgid "page_id"
+msgid "target"
+msgstr "Target"
+
+msgid "scope"
+msgstr "Scope"
+
+msgid "scope_pages"
 msgstr "Page"
 
-msgid "page_title"
-msgstr "Page"
+msgid "scope_media"
+msgstr "Media"
 
 msgid "status"
 msgstr "Status-Code"
@@ -91,3 +97,6 @@ msgstr "308 Permanent Redirect (preserving request method)"
 
 msgid "error_valid_status"
 msgstr "The status code is not valid"
+
+msgid "error_valid_foreign_key"
+msgstr "The target is not valid"

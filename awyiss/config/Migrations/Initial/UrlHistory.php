@@ -42,11 +42,19 @@ class UrlHistory {
 			'default' => null,
 			'limit' => 1024,
 			'null' => false,
-		])->addColumn('page_id', 'integer', [
+		])->addColumn('scope', 'string', [
+			'default' => null,
+			'limit' => 50,
+			'null' => true,
+		])->addColumn('foreign_key', 'integer', [
 			'default' => null,
 			'limit' => 11,
-			'null' => false,
+			'null' => true,
 			'signed' => true,
+		])->addColumn('target', 'string', [
+			'default' => null,
+			'limit' => 1024,
+			'null' => false,
 		])->addColumn('status', 'integer', [
 			'default' => null,
 			'limit' => 3,
@@ -87,9 +95,22 @@ class UrlHistory {
 			]
 		)->addIndex(
 			[
-				'page_id',
+				'scope',
 			], [
-				'name' => 'URL_HISTORY_PAGE_ID',
+				'name' => 'URL_HISTORY_SCOPE',
+			]
+		)->addIndex(
+			[
+				'foreign_key',
+			], [
+				'name' => 'URL_HISTORY_FOREIGN_KEY',
+			]
+		)->addIndex(
+			[
+				'scope',
+				'foreign_key',
+			], [
+				'name' => 'URL_HISTORY_SCOPE_FOREIGN_KEY',
 			]
 		)->create();
 	}

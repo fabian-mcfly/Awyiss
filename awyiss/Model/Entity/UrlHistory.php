@@ -12,7 +12,9 @@ use Awyiss\Model\Entity;
  *
  * @property int $id
  * @property string $url
- * @property int $pageId
+ * @property string $scope
+ * @property int|null $foreignKey
+ * @property string|null $target
  * @property int|null $status
  * @property int|null $createdBy
  * @property \Cake\I18n\DateTime|null $createdOn
@@ -20,13 +22,15 @@ use Awyiss\Model\Entity;
  * @property \Cake\I18n\DateTime|null $changedOn
  * @property int|null $deletedBy
  * @property \Cake\I18n\DateTime|null $deletedOn
+ * @property \Awyiss\Model\Entity\Media|null $media
+ * @property \Awyiss\Model\Entity\Page|null $page
  */
 class UrlHistory extends Entity {
 	/**
 	 * @inheritDoc
 	 */
 	protected static array $fieldMap = [
-		'page_id' => 'pageId',
+		'foreign_key' => 'foreignKey',
 		'created_by' => 'createdBy',
 		'created_on' => 'createdOn',
 		'changed_by' => 'changedBy',
@@ -41,7 +45,9 @@ class UrlHistory extends Entity {
 	 */
 	protected array $_accessible = [
 		'url' => true,
-		'pageId' => true,
+		'scope' => true,
+		'foreignKey' => true,
+		'target' => true,
 		'status' => true,
 	];
 }

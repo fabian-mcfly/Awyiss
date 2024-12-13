@@ -471,10 +471,11 @@ class PagesListener implements EventListenerInterface {
 		$ld_now = new DateTime('now');
 
 		// Create a new historical slug entry for the original slug of the provided page
-		$lo_query = $table->UrlHistory->insertQuery()->insert(['url', 'page_id', 'status', 'created_by', 'created_on']);
+		$lo_query = $table->UrlHistory->insertQuery()->insert(['url', 'scope', 'foreign_key', 'status', 'created_by', 'created_on']);
 		$lo_query->values([
 			'url' => ($originalLanguage ?? $entity->languageShortcode) . '/' . $originalSlug,
-			'page_id' => $entity->id,
+			'scope' => 'pages',
+			'foreign_key' => $entity->id,
 			'status' => 308,
 			'created_by' => $li_userId,
 			'created_on' => $ld_now,
@@ -499,8 +500,9 @@ class PagesListener implements EventListenerInterface {
 		 */
 		foreach ($lo_records as $lo_page) {
 			$lo_query->values([
-				'slug' => $lo_page->languageShortcode . '/' . $lo_page->slug,
-				'page_id' => $lo_page->id,
+				'url' => $lo_page->languageShortcode . '/' . $lo_page->slug,
+				'scope' => 'pages',
+				'foreign_key' => $lo_page->id,
 				'status' => 308,
 				'created_by' => $li_userId,
 				'created_on' => $ld_now,

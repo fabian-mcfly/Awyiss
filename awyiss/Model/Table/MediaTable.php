@@ -87,6 +87,15 @@ class MediaTable extends Table {
 			'dependent' => true,
 			'saveStrategy' => 'replace',
 		]);
+
+		$this->hasMany('UrlHistory', [
+			'cascadeCallbacks' => true,
+			'conditions' => [
+				'scope' => 'media',
+			],
+			'dependent' => true,
+			'foreignKey' => 'foreign_key',
+		]);
 	}
 
 

@@ -4,7 +4,18 @@
 @var attributesGroupedByFieldset array
 @var attributeScopes array
 @var _view \Awyiss\View\BackendView
+@var AssetHelper \Awyiss\View\Helper\AssetHelper
+@var AttributesHelper \Awyiss\View\Helper\AttributesHelper
+@var AuthorizationHelper \Awyiss\View\Helper\AuthorizationHelper
 @var CategoriesHelper \Awyiss\View\Helper\CategoriesHelper
+@var FlashHelper \Awyiss\View\Helper\FlashHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+@var HtmlHelper \Cake\View\Helper\HtmlHelper
+@var LocaleHelper \Awyiss\View\Helper\LocaleHelper
+@var MediaHelper \Awyiss\View\Helper\MediaHelper
+@var PaginatorHelper \Awyiss\View\Helper\PaginatorHelper
+@var SystemOrderHelper \Awyiss\View\Helper\SystemOrderHelper
+@var UrlHelper \Awyiss\View\Helper\UrlHelper
 #}
 
 {% extends '@Backend/element/overview/overview_paginated_list.twig' %}
@@ -14,7 +25,7 @@
 
 {% block tableOverviewHeaderDefaultFields %}
 	<th class="TableHeader-Url{% if PaginatorHelper.isCurrentSortKey('url') %} Active{% endif %}">{{ PaginatorHelper.sort('url') }}</th>
-	<th class="TableHeader-Page{% if PaginatorHelper.isCurrentSortKey('pageTitle') %} Active{% endif %}">{{ PaginatorHelper.sort('pageTitle') }}</th>
+	<th class="TableHeader-ForeignKey">{{ __('target') }}</th>
 {% endblock %}
 
 
@@ -24,7 +35,7 @@
 
 		{% block tableOverviewCellDefaultFields %}
 			<td class="TableCell-Url">{{ entity.url }}</td>
-			<td class="TableCell-Page">
+			<td class="TableCell-ForeignKey">
 				{% if entity.page %}
 					{{ entity.page.title }}<br>
 					{{ HtmlHelper.link(entity.page.languageShortcode ~ '/' ~ entity.page.slug, {
@@ -32,6 +43,15 @@
 						slug: entity.page.slug,
 						_name: 'Frontend',
 					}, {
+						target: '_blank',
+					}) }}
+				{% elseif entity.media %}
+					{{ entity.media.name }}<br>
+					{{ HtmlHelper.link(entity.media.path, entity.media.path, {
+						target: '_blank',
+					}) }}
+				{% elseif entity.target is not empty %}
+					{{ HtmlHelper.link(entity.target, entity.target, {
 						target: '_blank',
 					}) }}
 				{% endif %}

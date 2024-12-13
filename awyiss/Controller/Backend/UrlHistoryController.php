@@ -43,7 +43,10 @@ class UrlHistoryController extends Controller {
 	 */
 	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
-		return $this->UrlHistory->find()->contain('Pages');
+		return $this->UrlHistory->find()->contain([
+			'Media',
+			'Pages',
+		]);
 	}
 
 
@@ -87,15 +90,7 @@ class UrlHistoryController extends Controller {
 			$this->save($lo_urlHistory);
 		}
 
-		$lo_deletedPages = $this->getDeletedPages();
-
-		$lo_threadedPages = $this->getThreadedPages();
-
-		$this->set([
-			'urlHistory' => $lo_urlHistory,
-			'deletedPages' => $lo_deletedPages,
-			'threadedPages' => $lo_threadedPages->toList(),
-		]);
+		$this->setViewVars($lo_urlHistory);
 	}
 
 
@@ -121,15 +116,7 @@ class UrlHistoryController extends Controller {
 			$this->save($lo_urlHistory, 'edit');
 		}
 
-		$lo_deletedPages = $this->getDeletedPages();
-
-		$lo_threadedPages = $this->getThreadedPages();
-
-		$this->set([
-			'urlHistory' => $lo_urlHistory,
-			'deletedPages' => $lo_deletedPages,
-			'threadedPages' => $lo_threadedPages->toList(),
-		]);
+		$this->setViewVars($lo_urlHistory);
 	}
 
 
@@ -224,9 +211,12 @@ class UrlHistoryController extends Controller {
 	 */
 	protected function getThreadedPages(): CollectionInterface {
 		if (!isset($this->threadedPages)) {
-			$lo_query = $this->UrlHistory->Pages->find('forCurrentLanguage', skipPageRoleCheck: true);
+			/** @var \Awyiss\Model\Table\PagesTable $lo_pagesTable */
+			$lo_pagesTable = $this->fetchTable('Pages');
 
-			$this->threadedPages = $this->UrlHistory->Pages->listNested($lo_query);
+			$lo_query = $lo_pagesTable->find('forCurrentLanguage', skipPageRoleCheck: true);
+
+			$this->threadedPages = $lo_pagesTable->listNested($lo_query);
 		}
 
 
@@ -240,10 +230,13 @@ class UrlHistoryController extends Controller {
 	 * @return \Cake\Collection\CollectionInterface
 	 */
 	protected function getDeletedPages(): CollectionInterface {
-		$lo_historyPageIdQuery = $this->UrlHistory->find()->select('page_id');
+		$lo_historyPageIdQuery = $this->UrlHistory->find()->select('foreign_key')->where(['scope' => 'pages']);
 		$lo_pagesSlugQuery = $this->UrlHistory->find('all')->disableAutoFields()->select('url');
 
-		$lo_query = $this->UrlHistory->Pages->find('deleted', skipPageRoleCheck: true);
+		/** @var \Awyiss\Model\Table\PagesTable $lo_pagesTable */
+		$lo_pagesTable = $this->fetchTable('Pages');
+
+		$lo_query = $lo_pagesTable->find('deleted', skipPageRoleCheck: true);
 
 		$lo_pages = $lo_query->where(function (QueryExpression $exp) use ($lo_historyPageIdQuery, $lo_pagesSlugQuery, $lo_query) {
 			return $exp->notIn('id', $lo_historyPageIdQuery)
@@ -257,5 +250,32 @@ class UrlHistoryController extends Controller {
 		return $lo_pages->each(function (Page $page) {
 			$page->set('title', $page->label . ' (' . $page->languageShortcode . '/' . $page->slug . ')');
 		});
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Entity\UrlHistory $urlHistory
+	 * @return void
+	 */
+	protected function setViewVars(UrlHistory $urlHistory): void {
+		$lo_deletedPages = $this->getDeletedPages();
+
+		$lo_threadedPages = $this->getThreadedPages();
+
+		$la_scopes = [];
+		foreach ($this->UrlHistory->getAvailableScopes() as $ls_scope) {
+			$la_scopes[ $ls_scope ] = __('scope_' . $ls_scope);
+		}
+
+		if ($urlHistory->scope === 'media' && !$this->request->getData('foreign_key')) {
+			$this->UrlHistory->loadInto($urlHistory, ['Media']);
+		}
+
+		$this->set([
+			'urlHistory' => $urlHistory,
+			'deletedPages' => $lo_deletedPages,
+			'scopes' => $la_scopes,
+			'threadedPages' => $lo_threadedPages->toList(),
+		]);
 	}
 }

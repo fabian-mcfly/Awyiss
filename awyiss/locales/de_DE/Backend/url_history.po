@@ -68,12 +68,17 @@ msgstr "Die Weiterleitung konnte nicht gelöscht werden"
 msgid "url"
 msgstr "Url"
 
-msgid "page_id"
+msgid "target"
+msgstr "Ziel"
+
+msgid "scope"
+msgstr "Bereich"
+
+msgid "scope_pages"
 msgstr "Seite"
 
-msgid "page_title"
-msgstr "Seite"
-
+msgid "scope_media"
+msgstr "Media"
 
 msgid "status"
 msgstr "Status-Code"
@@ -92,3 +97,6 @@ msgstr "308 Dauerhafte Weiterleitung (beibehalten der Anfragemethode)"
 
 msgid "error_valid_status"
 msgstr "Der Status-Code ist ungültig"
+
+msgid "error_valid_foreign_key"
+msgstr "Das Ziel ist ungültig"

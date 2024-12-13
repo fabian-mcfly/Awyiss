@@ -466,7 +466,7 @@ class FrontendController extends AppController {
 	protected function historyRedirect(string $url): void {
 		$lo_historyTable = $this->fetchTable('UrlHistory');
 
-		$ls_url = preg_replace('/[^a-zA-Z0-9\/:\-]/', '', $url);
+		$ls_url = preg_replace('/[^a-zA-Z0-9\/:\-.]/', '', $url);
 
 		$la_urls = [$ls_url];
 
@@ -485,7 +485,7 @@ class FrontendController extends AppController {
 
 		$lo_query = $lo_historyTable->find('all')
 			->where(['url IN' => $la_urls])
-			->contain(['Pages'])
+			->contain(['Media', 'Pages'])
 			->limit(1);
 
 		/** @noinspection PhpUndefinedMethodInspection */
@@ -497,11 +497,27 @@ class FrontendController extends AppController {
 		/** @var \Awyiss\Model\Entity\UrlHistory $lo_record */
 		$lo_record = $lo_query->first();
 
-		if ($lo_record?->page) {
+		if (!$lo_record) {
+			return;
+		}
+
+		if ($lo_record->page) {
 			$ls_realUrl = Router::url([
 				'lang' => $lo_record->page->languageShortcode,
 				'slug' => $lo_record->page->slug,
 			]);
+
+			throw new RedirectException($ls_realUrl, $lo_record->status ?? 307);
+		}
+
+		if ($lo_record->media) {
+			$ls_realUrl = Router::url($lo_record->media->path);
+
+			throw new RedirectException($ls_realUrl, $lo_record->status ?? 307);
+		}
+
+		if ($lo_record->target) {
+			$ls_realUrl = str_contains($lo_record->target, '//') ? $lo_record->target : Router::url($lo_record->target);
 
 			throw new RedirectException($ls_realUrl, $lo_record->status ?? 307);
 		}

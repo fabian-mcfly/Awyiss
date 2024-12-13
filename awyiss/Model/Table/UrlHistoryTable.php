@@ -7,6 +7,7 @@ namespace Awyiss\Model\Table;
 use Awyiss\Model\Entity\UrlHistory;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
+use Cake\Datasource\FactoryLocator;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Validation\Validator;
 
@@ -29,17 +30,44 @@ class UrlHistoryTable extends Table {
 
 
 	/**
+	 * @var array
+	 */
+	protected array $availableScopes = [
+		'pages',
+		'media',
+	];
+
+
+	/**
 	 * @inheritDoc
 	 */
 	public function initializeAssociations(): void {
 		$this->belongsTo('Pages', [
+			'conditions' => [
+				'UrlHistory.scope' => 'pages',
+			],
 			'finder' => [
 				'all' => [
 					'skipPageRoleCheck' => true,
 				],
 			],
-			'foreignKey' => 'page_id',
+			'foreignKey' => 'foreign_key',
 		]);
+
+		$this->belongsTo('Media', [
+			'conditions' => [
+				'UrlHistory.scope' => 'media',
+			],
+			'foreignKey' => 'foreign_key',
+		]);
+	}
+
+
+	/**
+	 * @return array<string>
+	 */
+	public function getAvailableScopes(): array {
+		return $this->availableScopes;
 	}
 
 
@@ -60,8 +88,15 @@ class UrlHistoryTable extends Table {
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
 
-		$validator->notEmptyString('pageId');
-		$validator->add('pageId', [
+		$validator->notEmptyString('target', null, fn ($context) => empty($context['data']['scope']));
+		$validator->add('target', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'maxLength' => ['rule' => ['maxLength', 1024]],
+			'notBlank' => ['rule' => 'notBlank'],
+		]);
+
+		$validator->notEmptyString('foreignKey', null, fn ($context) => !empty($context['data']['scope']));
+		$validator->add('foreignKey', [
 			'isInteger' => ['rule' => 'isInteger'],
 			'maxLength' => ['rule' => ['maxLength', 11]],
 		]);
@@ -88,10 +123,46 @@ class UrlHistoryTable extends Table {
 	 * @param \Awyiss\ORM\RulesChecker|BaseRulesChecker $rules The rules object to be modified.
 	 */
 	public function buildRules(RulesChecker|BaseRulesChecker $rules): RulesChecker {
-		$rules->add($rules->existsIn(['pageId'], 'Pages'), 'validPageId', [
-			'errorField' => 'pageId',
-			'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_page_id'),
-		]);
+		$lo_rules = $rules;
+		$rules->add(function (UrlHistory $entity, array $options) use ($lo_rules) {
+			$lo_tableLocator = FactoryLocator::get('Table');
+			if ($entity->scope === 'pages') {
+				/** @var \Awyiss\Model\Table\PagesTable $lo_table */
+				$lo_table = $lo_tableLocator->get('Pages');
+				$lo_existsIn = $lo_rules->existsIn(['foreignKey'], $lo_table, [
+					'errorField' => 'foreignKey',
+					'finder' => [
+						'all' => [
+							'skipPageRoleCheck' => true,
+						],
+					],
+					'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_foreign_key'),
+				]);
+
+				return $lo_existsIn($entity, $options);
+			}
+
+			if ($entity->scope === 'media') {
+				/** @var \Awyiss\Model\Table\MediaTable $lo_table */
+				$lo_table = $lo_tableLocator->get('Media');
+				$lo_existsIn = $lo_rules->existsIn(['foreignKey'], $lo_table, [
+					'errorField' => 'foreignKey',
+					'message' => __df($this->getI18nDomain(), 'validation', 'error_valid_foreign_key'),
+				]);
+
+				return $lo_existsIn($entity, $options);
+			}
+
+			return empty($entity->foreignKey);
+		}, 'validForeignKey');
+
+		$rules->add(function (UrlHistory $entity, array $options) use ($lo_rules) {
+			if (empty($entity->scope)) {
+				return true;
+			}
+
+			return !empty($entity->target);
+		}, 'validTarget');
 
 		$rules->add(function (UrlHistory $entity) {
 			return in_array($entity->status, [301, 302, 307, 308], true);

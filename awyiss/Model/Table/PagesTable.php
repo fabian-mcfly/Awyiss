@@ -125,8 +125,11 @@ class PagesTable extends Table {
 
 		$this->hasMany('UrlHistory', [
 			'cascadeCallbacks' => true,
+			'conditions' => [
+				'scope' => 'pages',
+			],
 			'dependent' => true,
-			'foreignKey' => 'page_id',
+			'foreignKey' => 'foreign_key',
 		]);
 	}
 
