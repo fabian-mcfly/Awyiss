@@ -89,8 +89,10 @@ class ExistsIn extends BaseExistsIn {
 		$la_conditions = array_combine($la_primary, $entity->extract($la_fields));
 
 		$la_options = array_diff_key($this->_options, ['allowNullableNulls' => null]);
-		$la_options['finder'] ??= $lo_target->getFinder();
 
+		if ($lo_target instanceof Association) {
+			$la_options['finder'] ??= $lo_target->getFinder();
+		}
 
 		return $lo_target->exists($la_conditions, $la_options);
 	}
