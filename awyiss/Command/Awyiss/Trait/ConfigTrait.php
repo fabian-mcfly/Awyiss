@@ -117,7 +117,7 @@ trait ConfigTrait {
 		 */
 		$ls_contents = str_replace([
 			'\'previewScssFiles\' => null,',
-			'\'scssFiles\' => null',
+			'\'scssFiles\' => null,',
 		], [
 			'\'previewScssFiles\' => defined(\'CUSTOM_DIR\') ? [ROOT . DS . CUSTOM_DIR . \'/assets/scss/full.scss\'] : null,',
 			'\'scssFiles\' => defined(\'CUSTOM_DIR\') ? [ROOT . DS . CUSTOM_DIR . \'/assets/scss/helper/_variables.scss\'] : null,',
