@@ -88,7 +88,7 @@ class MediaFoldersController extends Controller {
 	 */
 	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
-		$lo_query = $this->MediaFolders->find('forCurrentLanguage');
+		$lo_query = $this->MediaFolders->find('forCurrentLanguage')->where(['hidden' => false]);
 
 		if ($this->getOverviewWhere('language_shortcode') !== 'all') {
 			$la_overviewWhere = $this->getOverviewWhere();
