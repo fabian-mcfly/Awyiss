@@ -85,7 +85,7 @@ class ConvertFilesCommand extends Command {
 				}
 			}
 
-			// If the script is running in quiet mode, break the loop if no files were found
+			// If the script is not running in quiet mode, break the loop if no files were found
 			// This is just an assumption that the script was called manually and should not run indefinitely
 			if (!$args->getOption('quiet')) {
 				break;
