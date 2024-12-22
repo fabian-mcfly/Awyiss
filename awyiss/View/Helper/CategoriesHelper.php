@@ -357,7 +357,7 @@ class CategoriesHelper extends Helper {
 	 */
 	public function getConfiguration(string $identifier): array {
 		$ls_name = Inflector::variable(Inflector::pluralize($identifier));
-		$la_categories = $this->getView()->get('_categories.' . $ls_name);
+		$la_categories = $this->getView()->get('_categories', [])[ $ls_name ] ?? [];
 
 		if ($la_categories instanceof PaginatedResultSet) {
 			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
@@ -377,7 +377,7 @@ class CategoriesHelper extends Helper {
 	 */
 	public function getCategories(string $identifier, bool $preferRaw = false): ?iterable {
 		$ls_name = Inflector::variable(Inflector::pluralize($identifier));
-		$la_categories = $this->getView()->get('_categories.' . $ls_name);
+		$la_categories = $this->getView()->get('_categories', [])[ $ls_name ] ?? [];
 
 		if ($preferRaw) {
 			$lx_return = $la_categories['raw'];
@@ -400,7 +400,7 @@ class CategoriesHelper extends Helper {
 	 */
 	public function getSelectedCategory(string $identifier): mixed {
 		$ls_name = Inflector::variable(Inflector::pluralize($identifier));
-		$la_categories = $this->getView()->get('_categories.' . $ls_name);
+		$la_categories = $this->getView()->get('_categories', [])[ $ls_name ] ?? [];
 
 		return $la_categories['selected'] ?? null;
 	}

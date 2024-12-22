@@ -196,7 +196,7 @@ class CategoriesHelperTest extends TestCase {
 	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testControlThrowsExceptionWithoutField(): void {
-		$this->view->set('_categories.mediaFolders', ['config' => ['enabled' => true]]);
+		$this->view->set('_categories', ['mediaFolders' => ['config' => ['enabled' => true]]]);
 
 		$this->expectException(RuntimeException::class);
 		$this->expectExceptionMessage('Cannot build categories control without field.');
@@ -211,7 +211,7 @@ class CategoriesHelperTest extends TestCase {
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testControlWithEnabledConfig(): void {
-		$this->view->set('_categories.mediaFolders', ['config' => ['enabled' => true, 'field' => 'media_folder_id']]);
+		$this->view->set('_categories', ['mediaFolders' => ['config' => ['enabled' => true, 'field' => 'media_folder_id']]]);
 
 		$result = $this->helper->control('media_folders');
 
@@ -226,7 +226,7 @@ class CategoriesHelperTest extends TestCase {
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testControlWithDisabledConfig(): void {
-		$this->view->set('_categories.mediaFolders', ['config' => ['enabled' => false]]);
+		$this->view->set('_categories', ['mediaFolders' => ['config' => ['enabled' => false]]]);
 
 		$result = $this->helper->control('media_folders');
 
@@ -240,7 +240,7 @@ class CategoriesHelperTest extends TestCase {
 	 * @throws \Exception
 	 */
 	public function testControlWithProvidedOptions(): void {
-		$this->view->set('_categories.mediaFolders', ['config' => ['enabled' => true, 'field' => 'media_folder']]);
+		$this->view->set('_categories', ['mediaFolders' => ['config' => ['enabled' => true, 'field' => 'media_folder']]]);
 
 		$result = $this->helper->control('media_folders', ['options' => ['val1' => 'option1', 'val2' => 'option2']]);
 
@@ -255,7 +255,7 @@ class CategoriesHelperTest extends TestCase {
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testControlWithEmptyOptions(): void {
-		$this->view->set('_categories.mediaFolders', ['config' => ['enabled' => true, 'field' => 'media_folder']]);
+		$this->view->set('_categories', ['mediaFolders' => ['config' => ['enabled' => true, 'field' => 'media_folder']]]);
 
 		$result = $this->helper->control('media_folders', ['options' => []]);
 
@@ -271,10 +271,12 @@ class CategoriesHelperTest extends TestCase {
 	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testControlWithCollectionAsOptions(): void {
-		$this->view->set('_categories.mediaFolders', [
-			'config' => [
-				'enabled' => true,
-				'field' => 'media_folder',
+		$this->view->set('_categories', [
+			'mediaFolders' => [
+				'config' => [
+					'enabled' => true,
+					'field' => 'media_folder',
+				],
 			],
 		]);
 
@@ -300,10 +302,12 @@ class CategoriesHelperTest extends TestCase {
 	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testControlWithCollectionAsOptionsAndCombinatorSet(): void {
-		$this->view->set('_categories.mediaFolders', [
-			'config' => [
-				'enabled' => true,
-				'field' => 'media_folder',
+		$this->view->set('_categories', [
+			'mediaFolders' => [
+				'config' => [
+					'enabled' => true,
+					'field' => 'media_folder',
+				],
 			],
 		]);
 
@@ -335,10 +339,14 @@ class CategoriesHelperTest extends TestCase {
 	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testControlWithGroupingEnabled(): void {
-		$this->view->set('_categories.mediaFolders', ['config' => [
-			'enabled' => true,
-			'field' => 'media_folder',
-		]]);
+		$this->view->set('_categories', [
+			'mediaFolders' => [
+				'config' => [
+					'enabled' => true,
+					'field' => 'media_folder',
+				],
+			],
+		]);
 
 		$options = new Collection([
 			['id' => 2, 'title' => 'Child 1', '_group' => 1],
@@ -380,11 +388,15 @@ class CategoriesHelperTest extends TestCase {
 	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testControlWithGroupingDisabledOverridesIncludeParentCategories(): void {
-		$this->view->set('_categories.mediaFolders', ['config' => [
-			'enabled' => true,
-			'field' => 'media_folder',
-			'includeParentCategories' => true,
-		]]);
+		$this->view->set('_categories', [
+			'mediaFolders' => [
+				'config' => [
+					'enabled' => true,
+					'field' => 'media_folder',
+					'includeParentCategories' => true,
+				],
+			],
+		]);
 
 		$options = new Collection([
 			['id' => 2, 'title' => 'Child 1', '_group' => 1],
@@ -412,10 +424,14 @@ class CategoriesHelperTest extends TestCase {
 	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testControlWithGroupingEnabledWithoutGroupLabels(): void {
-		$this->view->set('_categories.mediaFolders', ['config' => [
-			'enabled' => true,
-			'field' => 'media_folder',
-		]]);
+		$this->view->set('_categories', [
+			'mediaFolders' => [
+				'config' => [
+					'enabled' => true,
+					'field' => 'media_folder',
+				],
+			],
+		]);
 
 		$options = new Collection([
 			['id' => 2, 'title' => 'Child 1', '_group' => 1],
@@ -445,7 +461,7 @@ class CategoriesHelperTest extends TestCase {
 	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testControlWithGroupingEnabledAndGroupingValueIsArray(): void {
-		$this->view->set('_categories.mediaFolders', ['config' => ['enabled' => true, 'field' => 'media_folder', 'includeParentCategories' => true]]);
+		$this->view->set('_categories', ['mediaFolders' => ['config' => ['enabled' => true, 'field' => 'media_folder', 'includeParentCategories' => true]]]);
 
 		$options = new Collection([
 			['id' => 1, 'title' => 'Parent 1', '_group' => []],
@@ -490,7 +506,7 @@ class CategoriesHelperTest extends TestCase {
 	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testControlWithGroupingEnabledAndGroupingValueIsArrayThrowsExceptionWhenGroupingValueNotScalarAndNotObject(): void {
-		$this->view->set('_categories.mediaFolders', ['config' => ['enabled' => true, 'field' => 'media_folder', 'includeParentCategories' => true]]);
+		$this->view->set('_categories', ['mediaFolders' => ['config' => ['enabled' => true, 'field' => 'media_folder', 'includeParentCategories' => true]]]);
 
 		$options = new Collection([
 			new MediaFolder(['id' => 1, 'title' => 'Parent 1', '_parents' => null]),
@@ -514,7 +530,7 @@ class CategoriesHelperTest extends TestCase {
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testControlWithGroupingDisabled(): void {
-		$this->view->set('_categories.mediaFolders', ['config' => ['enabled' => true, 'field' => 'media_folder']]);
+		$this->view->set('_categories', ['mediaFolders' => ['config' => ['enabled' => true, 'field' => 'media_folder']]]);
 
 		$options = new Collection([
 			['id' => 1, 'title' => 'Parent 1', '_group' => []],
@@ -542,7 +558,7 @@ class CategoriesHelperTest extends TestCase {
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testControlWithValueSet(): void {
-		$this->view->set('_categories.mediaFolders', ['config' => ['enabled' => true, 'field' => 'media_folder']]);
+		$this->view->set('_categories', ['mediaFolders' => ['config' => ['enabled' => true, 'field' => 'media_folder']]]);
 
 		$result = $this->helper->control('media_folders', [
 			'options' => [
@@ -563,7 +579,7 @@ class CategoriesHelperTest extends TestCase {
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testControlWithValueSetInViewVars(): void {
-		$this->view->set('_categories.mediaFolders', ['config' => ['enabled' => true, 'field' => 'media_folder'], 'selected' => 'value2']);
+		$this->view->set('_categories', ['mediaFolders' => ['config' => ['enabled' => true, 'field' => 'media_folder'], 'selected' => 'value2']]);
 
 		$result = $this->helper->control('media_folders', [
 			'options' => [
@@ -583,7 +599,7 @@ class CategoriesHelperTest extends TestCase {
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testControlWithValueNotSet(): void {
-		$this->view->set('_categories.mediaFolders', ['config' => ['enabled' => true, 'field' => 'media_folder']]);
+		$this->view->set('_categories', ['mediaFolders' => ['config' => ['enabled' => true, 'field' => 'media_folder']]]);
 
 		$result = $this->helper->control('media_folders', [
 			'options' => [
@@ -603,7 +619,7 @@ class CategoriesHelperTest extends TestCase {
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testControlWithDifferentFieldName(): void {
-		$this->view->set('_categories.mediaFolders', ['config' => ['enabled' => true, 'field' => 'different_field']]);
+		$this->view->set('_categories', ['mediaFolders' => ['config' => ['enabled' => true, 'field' => 'different_field']]]);
 
 		$result = $this->helper->control('different_field');
 
@@ -621,7 +637,7 @@ class CategoriesHelperTest extends TestCase {
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testControlWithEmptyOption(): void {
-		$this->view->set('_categories.mediaFolders', ['config' => ['enabled' => true, 'field' => 'media_folder']]);
+		$this->view->set('_categories', ['mediaFolders' => ['config' => ['enabled' => true, 'field' => 'media_folder']]]);
 
 		$result = $this->helper->control('media_folders', [
 			'options' => [
@@ -643,7 +659,7 @@ class CategoriesHelperTest extends TestCase {
 	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testControlWithProvidedOptionsWithDisabledConfigTrue(): void {
-		$this->view->set('_categories.mediaFolders', ['config' => ['enabled' => true, 'field' => 'media_folder']]);
+		$this->view->set('_categories', ['mediaFolders' => ['config' => ['enabled' => true, 'field' => 'media_folder']]]);
 
 		$result = $this->helper->control('media_folders', ['options' => ['val1' => 'option1', 'val2' => 'option2'], 'disabled' => true]);
 
@@ -658,7 +674,7 @@ class CategoriesHelperTest extends TestCase {
 	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testControlWithProvidedOptionsWithDisabledConfigArray(): void {
-		$this->view->set('_categories.mediaFolders', ['config' => ['enabled' => true, 'field' => 'media_folder']]);
+		$this->view->set('_categories', ['mediaFolders' => ['config' => ['enabled' => true, 'field' => 'media_folder']]]);
 
 		$result = $this->helper->control('media_folders', ['options' => ['val1' => 'option1', 'val2' => 'option2'], 'disabled' => ['val2']]);
 
@@ -672,7 +688,7 @@ class CategoriesHelperTest extends TestCase {
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFilter(): void {
-		$this->view->set('_categories.mediaFolders', ['config' => ['field' => 'media_folder']]);
+		$this->view->set('_categories', ['mediaFolders' => ['config' => ['field' => 'media_folder']]]);
 
 		$result = $this->helper->filter('media_folders');
 
@@ -685,7 +701,7 @@ class CategoriesHelperTest extends TestCase {
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFilterWithEnabledConfig(): void {
-		$this->view->set('_categories.mediaFolders', ['config' => ['enabled' => true]]);
+		$this->view->set('_categories', ['mediaFolders' => ['config' => ['enabled' => true]]]);
 
 		$result = $this->helper->filter('media_folders');
 
@@ -698,7 +714,7 @@ class CategoriesHelperTest extends TestCase {
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFilterWithDisabledConfig(): void {
-		$this->view->set('_categories.mediaFolders', ['config' => ['enabled' => false]]);
+		$this->view->set('_categories', ['mediaFolders' => ['config' => ['enabled' => false]]]);
 
 		$result = $this->helper->filter('media_folders');
 
@@ -711,7 +727,7 @@ class CategoriesHelperTest extends TestCase {
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFilterWithProvidedOptions(): void {
-		$this->view->set('_categories.mediaFolders', ['config' => ['enabled' => true]]);
+		$this->view->set('_categories', ['mediaFolders' => ['config' => ['enabled' => true]]]);
 
 		$result = $this->helper->filter('media_folders', [5 => 'option1', 11 => 'option2']);
 
@@ -725,7 +741,7 @@ class CategoriesHelperTest extends TestCase {
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFilterWithUriParam(): void {
-		$this->view->set('_categories.mediaFolders', ['config' => ['enabled' => true, 'uriParam' => 'mediaFolderId']]);
+		$this->view->set('_categories', ['mediaFolders' => ['config' => ['enabled' => true, 'uriParam' => 'mediaFolderId']]]);
 
 		$result = $this->helper->filter('media_folders', [5 => 'option1', 11 => 'option2']);
 
@@ -740,7 +756,7 @@ class CategoriesHelperTest extends TestCase {
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFilterWithCollectionAsOptions(): void {
-		$this->view->set('_categories.mediaFolders', ['config' => ['enabled' => true]]);
+		$this->view->set('_categories', ['mediaFolders' => ['config' => ['enabled' => true]]]);
 
 		$options = new Collection([
 			['id' => 1, 'title' => 'Option 1'],
@@ -761,10 +777,12 @@ class CategoriesHelperTest extends TestCase {
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFilterWithGroupingEnabled(): void {
-		$this->view->set('_categories.mediaFolders', [
-			'config' => [
-				'enabled' => true,
-				'field' => 'media_folder',
+		$this->view->set('_categories', [
+			'mediaFolders' => [
+				'config' => [
+					'enabled' => true,
+					'field' => 'media_folder',
+				],
 			],
 		]);
 
@@ -805,11 +823,13 @@ class CategoriesHelperTest extends TestCase {
 	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testFilterWithGroupingDisabledOverridesIncludeParentCategories(): void {
-		$this->view->set('_categories.mediaFolders', [
-			'config' => [
-				'enabled' => true,
-				'field' => 'media_folder',
-				'includeParentCategories' => true,
+		$this->view->set('_categories', [
+			'mediaFolders' => [
+				'config' => [
+					'enabled' => true,
+					'field' => 'media_folder',
+					'includeParentCategories' => true,
+				],
 			],
 		]);
 
@@ -833,10 +853,12 @@ class CategoriesHelperTest extends TestCase {
 	 * @noinspection PhpMethodNamingConventionInspection
 	 */
 	public function testFilterWithGroupingEnabledWithoutGroupLabels(): void {
-		$this->view->set('_categories.mediaFolders', [
-			'config' => [
-				'enabled' => true,
-				'field' => 'media_folder',
+		$this->view->set('_categories', [
+			'mediaFolders' => [
+				'config' => [
+					'enabled' => true,
+					'field' => 'media_folder',
+				],
 			],
 		]);
 
@@ -861,7 +883,7 @@ class CategoriesHelperTest extends TestCase {
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFilterWithAggregationEnabled(): void {
-		$this->view->set('_categories.mediaFolders', ['config' => ['enabled' => true]]);
+		$this->view->set('_categories', ['mediaFolders' => ['config' => ['enabled' => true]]]);
 
 		$result = $this->helper->filter('media_folders', [], [
 			'allowAggregation' => true,
@@ -878,7 +900,7 @@ class CategoriesHelperTest extends TestCase {
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testFilterWithUnassignedEnabled(): void {
-		$this->view->set('_categories.mediaFolders', ['config' => ['enabled' => true]]);
+		$this->view->set('_categories', ['mediaFolders' => ['config' => ['enabled' => true]]]);
 
 		$result = $this->helper->filter('media_folders', [], [
 			'allowUnassigned' => true,
@@ -1048,7 +1070,7 @@ class CategoriesHelperTest extends TestCase {
 			'groupBy' => 'group',
 		];
 
-		$this->view->set('_categories.mediaFolders', ['config' => $config]);
+		$this->view->set('_categories', ['mediaFolders' => ['config' => $config]]);
 
 		$result = $this->helper->getConfiguration('mediaFolders');
 
@@ -1061,7 +1083,7 @@ class CategoriesHelperTest extends TestCase {
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetConfigurationWithEmptyConfig(): void {
-		$this->view->set('_categories.mediaFolders', []);
+		$this->view->set('_categories', ['mediaFolders' => []]);
 
 		$result = $this->helper->getConfiguration('mediaFolders');
 
@@ -1074,7 +1096,7 @@ class CategoriesHelperTest extends TestCase {
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetCategories(): void {
-		$this->view->set('_categories.mediaFolders', ['raw' => ['category1', 'category2'], 'simple' => ['category3']]);
+		$this->view->set('_categories', ['mediaFolders' => ['raw' => ['category1', 'category2'], 'simple' => ['category3']]]);
 
 		$result = $this->helper->getCategories('mediaFolders', true);
 
@@ -1087,7 +1109,7 @@ class CategoriesHelperTest extends TestCase {
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetCategoriesWithSimple(): void {
-		$this->view->set('_categories.mediaFolders', ['simple' => ['category3']]);
+		$this->view->set('_categories', ['mediaFolders' => ['simple' => ['category3']]]);
 
 		/** @noinspection PhpRedundantOptionalArgumentInspection */
 		$result = $this->helper->getCategories('mediaFolders', false);
@@ -1101,7 +1123,7 @@ class CategoriesHelperTest extends TestCase {
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetSelectedCategory(): void {
-		$this->view->set('_categories.mediaFolders', ['selected' => 'category1']);
+		$this->view->set('_categories', ['mediaFolders' => ['selected' => 'category1']]);
 
 		$result = $this->helper->getSelectedCategory('mediaFolders');
 
@@ -1114,7 +1136,7 @@ class CategoriesHelperTest extends TestCase {
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testGetSelectedCategoryWithNull(): void {
-		$this->view->set('_categories.mediaFolders', []);
+		$this->view->set('_categories', ['mediaFolders' => []]);
 
 		$result = $this->helper->getSelectedCategory('mediaFolders');
 

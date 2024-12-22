@@ -290,7 +290,7 @@ class CategoriesComponent extends Component {
 
 		$ls_variableNamePlural = Inflector::variable(Inflector::pluralize($ls_identifier));
 
-		$lo_view->setVar('_categories.' . $ls_variableNamePlural, $la_categories);
+		$lo_view->setVar('_categories', [$ls_variableNamePlural => $la_categories]);
 		$lo_view->setVar('_categoriesIdentifier', $la_config['identifier']);
 	}
 

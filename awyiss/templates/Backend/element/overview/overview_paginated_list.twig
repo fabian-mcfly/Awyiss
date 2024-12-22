@@ -6,8 +6,8 @@
 #}
 
 {% set categories = [] %}
-{% if _categoriesIdentifier is defined and _context['_categories.' ~ (_categoriesIdentifier|pluralize|variable)] is defined %}
-	{% set categories = _context['_categories.' ~ (_categoriesIdentifier|pluralize|variable)] %}
+{% if _categoriesIdentifier is defined and _categories[ _categoriesIdentifier|pluralize|variable ] is defined %}
+	{% set categories = _categories[ _categoriesIdentifier|pluralize|variable ] %}
 {% endif %}
 
 {% block tableOverview %}

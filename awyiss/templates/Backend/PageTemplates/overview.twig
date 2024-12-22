@@ -49,7 +49,7 @@
 			{% include '@Backend/PageTemplates/overview_paginated_list.twig' with _context|merge({records: pageTemplates.items().toArray()}) %}
 		{% endblock %}
 	{% else %}
-		{% for pageRoleId, pageRole in pageRoles.simple %}
+		{% for pageRoleId, pageRole in _categories.pageRoles.simple %}
 			{% block fieldsetOverview %}
 				{% if pageTemplatesGroupdByPageRole[ pageRoleId ] is defined or selectedPageRoleId == 'all' or selectedPageRoleId == pageRoleId %}
 					<fieldset class="Overview-Fieldset">
