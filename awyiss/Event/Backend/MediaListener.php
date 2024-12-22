@@ -5,6 +5,8 @@ namespace Awyiss\Event\Backend;
 
 
 use ArrayObject;
+use Awyiss\Authentication\IdentityAwareTrait;
+use Awyiss\Configuration\ConfigOptions\MediaConfigOptions;
 use Awyiss\Core\LocalConfig;
 use Awyiss\Event\EventListenerTrait;
 use Awyiss\Model\Entity\Media;
@@ -13,6 +15,8 @@ use Awyiss\Model\Table\MediaTable;
 use Cake\Core\Configure;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
+use Cake\I18n\DateTime;
+use Cake\ORM\Locator\LocatorAwareTrait;
 use Imagick;
 
 
@@ -21,6 +25,8 @@ use Imagick;
  */
 class MediaListener implements EventListenerInterface {
 	use EventListenerTrait;
+	use IdentityAwareTrait;
+	use LocatorAwareTrait;
 
 
 	/**
@@ -156,10 +162,28 @@ class MediaListener implements EventListenerInterface {
 			$entity->file->moveTo(WWW_ROOT . str_replace('/', DS, $entity->path));
 
 			if ($entity->hasOriginal('path') && $entity->getOriginal('path') !== $entity->get('path')) {
+				if (
+					in_array(LocalConfig::read('createHistoricalPaths', false, 'Media'), [
+						MediaConfigOptions::CREATE_HISTORICAL_PATHS_FILE_NAME_CHANGE,
+						MediaConfigOptions::CREATE_HISTORICAL_PATHS_ALWAYS,
+					])
+				) {
+					$this->createHistoricalPaths($entity, $entity->getOriginal('path'));
+				}
+
 				unlink(WWW_ROOT . str_replace('/', DS, $entity->getOriginal('path')));
 			}
 		}
 		elseif ($entity->hasOriginal('path') && $entity->getOriginal('path') !== $entity->get('path')) {
+			if (
+				in_array(LocalConfig::read('createHistoricalPaths', false, 'Media'), [
+					MediaConfigOptions::CREATE_HISTORICAL_PATHS_FILE_NAME_CHANGE,
+					MediaConfigOptions::CREATE_HISTORICAL_PATHS_ALWAYS,
+				])
+			) {
+				$this->createHistoricalPaths($entity, $entity->getOriginal('path'));
+			}
+
 			$entity->moveConvertedFiles();
 			$entity->moveResizedFiles();
 
@@ -190,6 +214,34 @@ class MediaListener implements EventListenerInterface {
 
 		$entity->deleteResizedFiles();
 		$entity->deleteConvertedFiles();
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Entity\Media $entity
+	 * @param string $originalPath
+	 * @return void
+	 */
+	protected function createHistoricalPaths(Media $entity, string $originalPath): void {
+		$ls_originalPath = $originalPath;
+		$lo_urlHistoryTable = $this->fetchTable('UrlHistory');
+
+		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+		$li_userId = $this->getIdentity()?->id;
+		$ld_now = new DateTime('now');
+
+		$lo_query = $lo_urlHistoryTable->insertQuery()->insert(['url', 'scope', 'foreign_key', 'status', 'created_by', 'created_on']);
+
+		$lo_query->values([
+			'url' => $ls_originalPath,
+			'scope' => 'media',
+			'foreign_key' => $entity->id,
+			'status' => 308,
+			'created_by' => $li_userId,
+			'created_on' => $ld_now,
+		]);
+
+		$lo_query->execute();
 	}
 
 

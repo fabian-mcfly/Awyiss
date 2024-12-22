@@ -9,6 +9,7 @@ use Awyiss\Configuration\AbstractConfigOptions;
 use Awyiss\Configuration\ConfigOption;
 use Awyiss\Configuration\ConfigOptions\Trait\TableFieldsTrait;
 use Awyiss\Configuration\ConfigOptionType;
+use Awyiss\Utility\Inflector;
 
 
 /**
@@ -21,6 +22,24 @@ class MediaConfigOptions extends AbstractConfigOptions {
 	 * @var string Scope of these options
 	 */
 	protected static string $scope = 'Media';
+
+	/**
+	 * @var string Create historical paths disabled
+	 */
+	final public const CREATE_HISTORICAL_PATHS_DISABLED = 'disabled';
+	/**
+	 * @var string Create historical paths on file name change
+	 */
+	final public const CREATE_HISTORICAL_PATHS_FILE_NAME_CHANGE = 'file_name_change';
+	/**
+	 * @var string Create historical paths on folder name change
+	 * @noinspection PhpConstantNamingConventionInspection
+	 */
+	final public const CREATE_HISTORICAL_PATHS_FOLDER_NAME_CHANGE = 'folder_name_change';
+	/**
+	 * @var string Create historical paths when file or folder name changes
+	 */
+	final public const CREATE_HISTORICAL_PATHS_ALWAYS = 'always';
 
 
 	/**
@@ -59,6 +78,19 @@ class MediaConfigOptions extends AbstractConfigOptions {
 		]);
 
 		$this->add(Awyiss::REALM_BACKEND, [
+			new ConfigOption(
+				defaultValue: 'disabled',
+				identifier: 'createHistoricalPaths',
+				localizable: false,
+				nullable: false,
+				type: ConfigOptionType::ListKey,
+				values: [
+					static::CREATE_HISTORICAL_PATHS_DISABLED => __d(Inflector::underscore(static::getScope()), 'create_historical_paths_disabled'),
+					static::CREATE_HISTORICAL_PATHS_FILE_NAME_CHANGE => __d(Inflector::underscore(static::getScope()), 'create_historical_paths_file_name_change'),
+					static::CREATE_HISTORICAL_PATHS_FOLDER_NAME_CHANGE => __d(Inflector::underscore(static::getScope()), 'create_historical_paths_folder_name_change'),
+					static::CREATE_HISTORICAL_PATHS_ALWAYS => __d(Inflector::underscore(static::getScope()), 'create_historical_paths_always'),
+				],
+			),
 			'overview' => [
 				new ConfigOption(
 					defaultValue: [

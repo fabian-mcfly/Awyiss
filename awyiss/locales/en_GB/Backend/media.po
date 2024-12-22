@@ -178,3 +178,15 @@ msgstr "The type of the file cannot be modified"
 
 msgid "usage_count"
 msgstr "Usages"
+
+msgid "create_historical_paths_disabled"
+msgstr "Never"
+
+msgid "create_historical_paths_file_name_change"
+msgstr "When file name changes"
+
+msgid "create_historical_paths_folder_name_change"
+msgstr "When folder name changes"
+
+msgid "create_historical_paths_always"
+msgstr "Always"

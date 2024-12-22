@@ -5,6 +5,9 @@ namespace Awyiss\Event\Backend;
 
 
 use ArrayObject;
+use Awyiss\Authentication\IdentityAwareTrait;
+use Awyiss\Configuration\ConfigOptions\MediaConfigOptions;
+use Awyiss\Core\LocalConfig;
 use Awyiss\Event\EventListenerTrait;
 use Awyiss\Model\Entity\MediaFolder;
 use Awyiss\Model\Table\MediaFoldersTable;
@@ -13,6 +16,7 @@ use Cake\Database\Expression\QueryExpression;
 use Cake\Datasource\FactoryLocator;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
+use Cake\I18n\DateTime;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Exception;
 
@@ -21,8 +25,9 @@ use Exception;
  * Event listeners for the MediaFolders scope of the backend
  */
 class MediaFoldersListener implements EventListenerInterface {
-	use LocatorAwareTrait;
 	use EventListenerTrait;
+	use IdentityAwareTrait;
+	use LocatorAwareTrait;
 
 
 	/**
@@ -192,6 +197,10 @@ class MediaFoldersListener implements EventListenerInterface {
 	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function afterSave(Event $event, MediaFolder $entity, ArrayObject $options): void {
+		if ($entity->isNew()) {
+			return;
+		}
+
 		/** @var \Awyiss\Model\Table\MediaFoldersTable $lo_table */
 		$lo_table = $event->getSubject();
 
@@ -204,7 +213,16 @@ class MediaFoldersListener implements EventListenerInterface {
 		$lb_originalParentsActive = $entity->hasOriginal('parentsActive') ? $entity->getOriginal('parentsActive') : null;
 		$lb_parentsActiveChanged = $lb_originalParentsActive !== null && $entity->parentsActive !== $lb_originalParentsActive;
 
-		if (!$entity->isNew() && $lb_pathChanged) {
+		if ($lb_pathChanged) {
+			if (
+				in_array(LocalConfig::read('createHistoricalPaths', false, 'Media'), [
+					MediaConfigOptions::CREATE_HISTORICAL_PATHS_FOLDER_NAME_CHANGE,
+					MediaConfigOptions::CREATE_HISTORICAL_PATHS_ALWAYS,
+				])
+			) {
+				$this->createHistoricalPaths($ls_originalPath);
+			}
+
 			foreach ([$lo_table->getTable(), 'media', 'media_resized_images'] as $ls_table) {
 				$this->rebuildDatabasePath($ls_table, $entity, $ls_originalPath);
 			}
@@ -251,6 +269,51 @@ class MediaFoldersListener implements EventListenerInterface {
 		if ($options['_primary'] ?? null === true) {
 			$entity->path = substr_replace($entity->path, '/_deleted_', strrpos($entity->path, '/'), 1) . '_' . time();
 		}
+	}
+
+
+	/**
+	 * @param string $originalPath
+	 * @return void
+	 */
+	protected function createHistoricalPaths(string $originalPath): void {
+		$ls_originalPath = $originalPath;
+		$lo_mediaTable = $this->fetchTable('Media');
+		$lo_urlHistoryTable = $this->fetchTable('UrlHistory');
+
+		// Find all media whose path starts with the original path of the provided folder
+		$lo_records = $lo_mediaTable->find()->where(function (QueryExpression $expression) use ($ls_originalPath) {
+			return $expression->like('path', $ls_originalPath . '/%');
+		})->all();
+
+		if (!$lo_records->count()) {
+			return;
+		}
+
+		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+		$li_userId = $this->getIdentity()?->id;
+		$ld_now = new DateTime('now');
+
+		$lo_query = $lo_urlHistoryTable->insertQuery()->insert(['url', 'scope', 'foreign_key', 'status', 'created_by', 'created_on']);
+
+		/**
+		 * For each media that has a path that starts with the original path of the provided folder,
+		 * create a new historical entry.
+		 *
+		 * @var \Awyiss\Model\Entity\Media $lo_media
+		 */
+		foreach ($lo_records as $lo_media) {
+			$lo_query->values([
+				'url' => $lo_media->path,
+				'scope' => 'media',
+				'foreign_key' => $lo_media->id,
+				'status' => 308,
+				'created_by' => $li_userId,
+				'created_on' => $ld_now,
+			]);
+		}
+
+		$lo_query->execute();
 	}
 
 
