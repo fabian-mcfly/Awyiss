@@ -171,14 +171,16 @@ abstract class BackendController extends AppController {
 		if (!Configure::read('AvailableCommands')) {
 			/** @var \Queue\Model\Table\QueuedJobsTable $lo_queue */
 			$lo_queue = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
-			$lo_queue->createJob('Queue.Execute', [
-				'command' => 'bin' . DS . 'cake media detect_available_commands',
-				'log' => true,
-			], [
-				'group' => 'general',
-				'priority' => 1,
-				'reference' => 'system::detect_available_commands',
-			]);
+			if (!$lo_queue->isQueued('system::detect_available_commands')) {
+				$lo_queue->createJob('Queue.Execute', [
+					'command' => 'bin' . DS . 'cake media detect_available_commands',
+					'log' => true,
+				], [
+					'group' => 'general',
+					'priority' => 1,
+					'reference' => 'system::detect_available_commands',
+				]);
+			}
 		}
 
 		//Sets the name of the viewClass to be used by the viewBuilder
