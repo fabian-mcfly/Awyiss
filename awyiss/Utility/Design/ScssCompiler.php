@@ -415,11 +415,22 @@ class ScssCompiler {
 				continue;
 			}
 
-			$la_variables[ $ls_key ] = $lx_value;
+			if (!is_array($lx_value)) {
+				$la_variables[ $ls_key ] = $lx_value;
 
-			if (!empty($lx_value) && isset($variables[ $ls_key . 'Unit' ])) {
-				$la_variables[ $ls_key ] .= $variables[ $ls_key . 'Unit' ];
+				if (!empty($lx_value) && isset($variables[ $ls_key . 'Unit' ])) {
+					$la_variables[ $ls_key ] .= $variables[ $ls_key . 'Unit' ];
+				}
+
+				continue;
 			}
+
+			if (!isset($lx_value['font'])) {
+				$la_variables[ $ls_key ] = implode(' ', $lx_value);
+				continue;
+			}
+
+			$la_variables[ $ls_key ] = !empty($lx_value['font']['name']) ? 'inspect(' . $lx_value['font']['name'] . ')' : '';
 		}
 
 		return $la_variables;

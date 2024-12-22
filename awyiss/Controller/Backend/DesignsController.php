@@ -482,31 +482,6 @@ class DesignsController extends Controller {
 
 
 	/**
-	 * @param array $vars
-	 * @return array
-	 */
-	protected function normaleizeVariables(array $vars): array {
-		$la_variables = $vars;
-		$la_variables = ScssCompiler::normalizeVariables($la_variables);
-
-		foreach ($la_variables as $ls_key => $lx_value) {
-			if (is_array($lx_value)) {
-				if (isset($lx_value['font'])) {
-					$lx_value = 'inspect(' . $lx_value['font']['name'] . ')';
-				}
-				else {
-					$lx_value = implode(' ', $lx_value);
-				}
-			}
-
-			$la_variables[ $ls_key ] = $lx_value;
-		}
-
-		return $la_variables;
-	}
-
-
-	/**
 	 * Delete method
 	 *
 	 * @param int $id
@@ -584,7 +559,7 @@ class DesignsController extends Controller {
 	protected function generateCss(array $data, bool $includeColumnSystem): string {
 		$ls_css = '';
 		$la_realmFolders = Configure::read('App.paths.assets.Frontend');
-		$la_variables = $this->normaleizeVariables($data['settings']);
+		$la_variables = ScssCompiler::normalizeVariables($data['settings']);
 
 		foreach (Configure::read('Design.previewScssFiles', []) as $ls_scssFile) {
 			foreach ($la_realmFolders as $ls_basePath) {
