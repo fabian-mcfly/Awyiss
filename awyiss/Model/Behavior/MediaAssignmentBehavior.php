@@ -421,6 +421,7 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 
 		/** @var \Awyiss\Model\Table\MediaAssignmentsTable $lo_mediaAssignmentsTable */
 		$lo_mediaAssignmentsTable = $this->fetchTable('MediaAssignments');
+		/** @var \Awyiss\Model\Entity\MediaAssignment $lo_existingAssignment */
 		$lo_existingAssignment = $lo_mediaAssignmentsTable->find()->where([
 			'media_element_id' => 0,
 			'media_element_selector_identifier' => 'hidden_folder',
@@ -429,6 +430,24 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 		])->contain(['MediaFolders'])->first();
 
 		if ($lo_existingAssignment) {
+			$lo_folder = $lo_existingAssignment->mediaFolder;
+			$lb_changed = false;
+
+			if (!empty($entity->title)) {
+				$lo_folder->title = $entity->title;
+				$lb_changed = true;
+			}
+
+			if (!empty($entity->slug)) {
+				$lo_folder->path = $entity->slug;
+				$lb_changed = true;
+			}
+
+			if ($lb_changed) {
+				$lo_mediaFoldersTable = $this->fetchTable('MediaFolders');
+				$lo_mediaFoldersTable->save($lo_folder);
+			}
+
 			return;
 		}
 
@@ -439,6 +458,10 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 			'languageShortcode' => $entity->languageShortcode ?? LocaleMiddleware::getLanguage()->shortcode,
 			'title' => $entity->title ?? 'HiddenFolder' . $entity->id,
 		]);
+
+		if (!empty($entity->slug)) {
+			$lo_folder->path = $entity->slug;
+		}
 
 		if (!$lo_mediaFoldersTable->save($lo_folder)) {
 			return;
