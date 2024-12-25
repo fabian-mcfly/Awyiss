@@ -1,10 +1,10 @@
 <?php declare(strict_types=1);
 
 
-use Migrations\AbstractMigration;
+use Migrations\BaseMigration;
 
 
-class AlterBackgroundColorOnDummyMigrationV2 extends AbstractMigration {
+class AlterBackgroundColorOnDummyMigrationV2 extends BaseMigration {
 	/**
 	 * Change Method.
 	 *

@@ -74,6 +74,7 @@ class MigrationCommand extends BaseBakeMigrationCommand {
 				'tables' => [],
 				'action' => null,
 				'name' => $ls_className,
+				'backend' => Configure::read('Migrations.backend', 'builtin'),
 			];
 		}
 
@@ -121,6 +122,7 @@ class MigrationCommand extends BaseBakeMigrationCommand {
 				'primaryKey' => $la_primaryKeys,
 			],
 			'name' => $ls_className,
+			'backend' => Configure::read('Migrations.backend', 'builtin'),
 		];
 	}
 

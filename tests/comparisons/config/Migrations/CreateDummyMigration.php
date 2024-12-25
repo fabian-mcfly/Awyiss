@@ -1,10 +1,10 @@
 <?php declare(strict_types=1);
 
 
-use Migrations\AbstractMigration;
+use Migrations\BaseMigration;
 
 
-class CreateDummyMigration extends AbstractMigration {
+class CreateDummyMigration extends BaseMigration {
 	/**
 	 * Change Method.
 	 *

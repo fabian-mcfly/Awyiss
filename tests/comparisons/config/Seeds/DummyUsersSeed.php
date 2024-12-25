@@ -1,11 +1,11 @@
 <?php declare(strict_types=1);
 
-use Migrations\AbstractSeed;
+use Migrations\BaseSeed;
 
 /**
  * DummyUsers seed.
  */
-class DummyUsersSeed extends AbstractSeed {
+class DummyUsersSeed extends BaseSeed {
 	/**
 	 * {@inheritDoc}
 	 */
