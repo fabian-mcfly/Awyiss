@@ -15,6 +15,7 @@ use Cake\Console\Arguments;
 use Cake\Console\CommandInterface;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
+use Cake\Core\Configure;
 use Cake\Datasource\ResultSetInterface;
 use Symfony\Component\Process\Process;
 
@@ -50,6 +51,23 @@ class ConvertFilesCommandTest extends TestCase {
 		]);
 
 		$this->io = $this->createMock(ConsoleIo::class);
+	}
+
+
+	/**
+	 * @return void
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	public function tearDown(): void {
+		parent::tearDown();
+
+		if (file_exists(ROOT . DS . 'awyiss' . DS . 'Command' . DS . 'Media' . DS . 'TestFiles' . DS . '_webp')) {
+			(new Process(['rm', '-r', ROOT . DS . 'awyiss' . DS . 'Command' . DS . 'Media' . DS . 'TestFiles' . DS . '_webp']))->run();
+		}
+
+		if (file_exists(ROOT . DS . 'awyiss' . DS . 'Command' . DS . 'Media' . DS . 'TestFiles' . DS . '_pdf_preview')) {
+			(new Process(['rm', '-r', ROOT . DS . 'awyiss' . DS . 'Command' . DS . 'Media' . DS . 'TestFiles' . DS . '_pdf_preview']))->run();
+		}
 	}
 
 
@@ -291,11 +309,11 @@ class ConvertFilesCommandTest extends TestCase {
 
 		$command = $this->getMockBuilder(ConvertFilesCommand::class)->onlyMethods([
 			'fetchFilesForWebpConversion',
-			'convertImages',
+			'convertImagesToWebp',
 		])->getMock();
 
 		$command->method('fetchFilesForWebpConversion')->with(20)->willReturn($files);
-		$command->method('convertImages')->with($files)->willReturn(CommandInterface::CODE_SUCCESS);
+		$command->method('convertImagesToWebp')->with($files)->willReturn(CommandInterface::CODE_SUCCESS);
 
 		$result = $command->processWebpConversion($this->args, $this->io);
 
@@ -315,7 +333,7 @@ class ConvertFilesCommandTest extends TestCase {
 
 		$command = $this->getMockBuilder(ConvertFilesCommand::class)->onlyMethods([
 			'fetchFilesForWebpConversion',
-			'convertImages',
+			'convertImagesToWebp',
 		])->getMock();
 
 		$command->method('fetchFilesForWebpConversion')->with(20)->willReturn($files);
@@ -338,11 +356,11 @@ class ConvertFilesCommandTest extends TestCase {
 
 		$command = $this->getMockBuilder(ConvertFilesCommand::class)->onlyMethods([
 			'fetchFilesForWebpConversion',
-			'convertImages',
+			'convertImagesToWebp',
 		])->getMock();
 
 		$command->method('fetchFilesForWebpConversion')->with(20)->willReturn($files);
-		$command->method('convertImages')->with($files)->willReturn(CommandInterface::CODE_ERROR);
+		$command->method('convertImagesToWebp')->with($files)->willReturn(CommandInterface::CODE_ERROR);
 
 		$result = $command->processWebpConversion($this->args, $this->io);
 
@@ -621,7 +639,7 @@ class ConvertFilesCommandTest extends TestCase {
 	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpMethodNamingConventionInspection
 	 */
-	public function testConvertImages(): void {
+	public function testConvertImagesToWebp(): void {
 		/** @var \Awyiss\Model\Table\MediaTable $lo_table */
 		$lo_table = $this->fetchTable('Media');
 		$resultSet = $lo_table->find()->where(['id' => 2])->all();
@@ -633,26 +651,38 @@ class ConvertFilesCommandTest extends TestCase {
 			$this->equalTo(['id IN' => [2]])
 		);
 
-		// Mock the Process
-		$process = $this->createMock(Process::class);
-		$process->method('isSuccessful')->willReturn(true);
-		$process->method('getExitCodeText')->willReturn('');
-
 		// Mock the ConsoleIo
-		$this->io->expects($this->once())->method('out')->with('Creating webp image for file `../awyiss/Command/Media/TestFiles/logo-awyiss.jpg`');
-		$this->io->expects($this->once())->method('success')->with('Status: ');
+		$invokedCount = $this->exactly(2);
+		$this->io->expects($invokedCount)->method('out')->willReturnCallback(function ($parameters) use ($invokedCount) {
+			if ($invokedCount->numberOfInvocations() === 1) {
+				$this->assertSame('Creating webp image for file `../awyiss/Command/Media/TestFiles/logo-awyiss.jpg`', $parameters);
+			}
+			elseif ($invokedCount->numberOfInvocations() === 2) {
+				$this->assertSame('Creating directory (../awyiss/Command/Media/TestFiles/_webp) for webp file', $parameters);
+			}
+		});
+
+		$invokedCount = $this->exactly(2);
+		$this->io->expects($invokedCount)->method('success')->willReturnCallback(function ($parameters) use ($invokedCount) {
+			if ($invokedCount->numberOfInvocations() === 1) {
+				$this->assertSame('Status: Directory created', $parameters);
+			}
+			elseif ($invokedCount->numberOfInvocations() === 2) {
+				$this->assertSame('Status: OK', $parameters);
+			}
+		});
 
 		// Mock the ConvertFilesCommand
-		$command = $this->getMockBuilder(ConvertFilesCommand::class)->onlyMethods(['fetchTable', 'convertToWebp'])->getMock();
+		$command = $this->getMockBuilder(ConvertFilesCommand::class)->onlyMethods(['fetchTable'])->getMock();
 
 		$command->method('fetchTable')->willReturn($table);
-		$command->method('convertToWebp')->willReturn($process);
 
 		// Call the method
-		$result = $this->callProtectedMethod($command, 'convertImages', $resultSet, $this->io);
+		$result = $this->callProtectedMethod($command, 'convertImagesToWebp', $resultSet, $this->io);
 
 		// Assert the result
 		$this->assertEquals(CommandInterface::CODE_SUCCESS, $result);
+		$this->assertFileExists(ROOT . DS . 'awyiss' . DS . 'Command' . DS . 'Media' . DS . 'TestFiles' . DS . '_webp' . DS . 'logo-awyiss.jpg.webp');
 	}
 
 
@@ -663,37 +693,46 @@ class ConvertFilesCommandTest extends TestCase {
 	 * @noinspection PhpVariableNamingConventionInspection
 	 * @noinspection PhpMethodNamingConventionInspection
 	 */
-	public function testConvertImagesFailed(): void {
+	public function testConvertImagesToWebpFailed(): void {
 		/** @var \Awyiss\Model\Table\MediaTable $lo_table */
 		$lo_table = $this->fetchTable('Media');
-		$resultSet = $lo_table->find()->where(['id' => 2])->all();
+		$resultSet = $lo_table->find()->where(['id' => 10])->all();
 
 		// Mock the MediaTable
 		$table = $this->createMock(MediaTable::class);
 		$table->expects($this->once())->method('updateAll')->with(
 			$this->equalTo(['webp' => ProcessStatus::Fail]),
-			$this->equalTo(['id IN' => [2]])
+			$this->equalTo(['id IN' => [10]])
 		);
 
-		// Mock the Process
-		$process = $this->createMock(Process::class);
-		$process->method('isSuccessful')->willReturn(false);
-		$process->method('getExitCodeText')->willReturn('DummyError');
-
 		// Mock the ConsoleIo
-		$this->io->expects($this->once())->method('error')->with('Status: DummyError');
+		$invokedCount = $this->exactly(4);
+		$this->io->expects($invokedCount)->method('out')->willReturnCallback(function ($parameters) use ($invokedCount) {
+			if ($invokedCount->numberOfInvocations() === 1) {
+				$this->assertSame('Creating webp image for file `../awyiss/Command/Media/TestFiles/logo-awyiss2.jpg`', $parameters);
+			}
+			elseif ($invokedCount->numberOfInvocations() === 2) {
+				$this->assertSame('Creating directory (../awyiss/Command/Media/TestFiles/_webp) for webp file', $parameters);
+			}
+			else {
+				if ($invokedCount->numberOfInvocations() === 4) {
+					$this->assertStringContainsString('unable to open image', $parameters);
+				}
+			}
+		});
+		$this->io->expects($this->once())->method('error')->with('Status: General error');
 
 		// Mock the ConvertFilesCommand
-		$command = $this->getMockBuilder(ConvertFilesCommand::class)->onlyMethods(['fetchTable', 'convertToWebp'])->getMock();
+		$command = $this->getMockBuilder(ConvertFilesCommand::class)->onlyMethods(['fetchTable'])->getMock();
 
 		$command->method('fetchTable')->willReturn($table);
-		$command->method('convertToWebp')->willReturn($process);
 
 		// Call the method
-		$result = $this->callProtectedMethod($command, 'convertImages', $resultSet, $this->io);
+		$result = $this->callProtectedMethod($command, 'convertImagesToWebp', $resultSet, $this->io);
 
 		// Assert the result
 		$this->assertEquals(CommandInterface::CODE_SUCCESS, $result);
+		$this->assertFileDoesNotExist(ROOT . DS . 'awyiss' . DS . 'Command' . DS . 'Media' . DS . 'TestFiles' . DS . '_webp' . DS . 'logo-awyiss2.jpg.webp');
 	}
 
 
@@ -710,6 +749,8 @@ class ConvertFilesCommandTest extends TestCase {
 		$lo_table = $this->fetchTable('Media');
 		$resultSet = $lo_table->find()->where(['id' => 3])->all();
 
+		Configure::write('AvailableCommands.imageMagick.pdf', true);
+
 		// Mock the MediaTable
 		$table = $this->createMock(MediaTable::class);
 		$table->expects($this->once())->method('updateAll')->with(
@@ -719,28 +760,34 @@ class ConvertFilesCommandTest extends TestCase {
 			$this->equalTo(['id IN' => [3]])
 		);
 
-		// Mock the Process
-		$process = $this->createMock(Process::class);
-		$process->method('isSuccessful')->willReturn(true);
-		$process->method('getExitCodeText')->willReturn('');
-
 		// Mock the ConsoleIo
-		$this->io->expects($this->once())->method('out')->with('Creating preview for file `../awyiss/Command/Media/TestFiles/logo-awyiss.pdf`');
-		$this->io->expects($this->once())->method('success')->with('Status: ');
+		$invokedCount = $this->exactly(2);
+		$this->io->expects($invokedCount)->method('out')->willReturnCallback(function ($parameters) use ($invokedCount) {
+			if ($invokedCount->numberOfInvocations() === 1) {
+				$this->assertSame('Creating preview for file `../awyiss/Command/Media/TestFiles/logo-awyiss.pdf`', $parameters);
+			}
+			elseif ($invokedCount->numberOfInvocations() === 2) {
+				$this->assertSame('Creating directory (../awyiss/Command/Media/TestFiles/_pdf_preview) for file preview', $parameters);
+			}
+		});
+
+		$invokedCount = $this->exactly(2);
+		$this->io->expects($invokedCount)->method('success')->willReturnCallback(function ($parameters) use ($invokedCount) {
+			if ($invokedCount->numberOfInvocations() === 1) {
+				$this->assertSame('Status: Directory created', $parameters);
+			}
+			elseif ($invokedCount->numberOfInvocations() === 2) {
+				$this->assertSame('Status: OK', $parameters);
+			}
+		});
 
 		// Mock the ConvertFilesCommand
 		$command = $this->getMockBuilder(ConvertFilesCommand::class)->onlyMethods([
-			'convertToWebp',
 			'fetchTable',
-			'getCommand',
-			'getProcess',
 			'getRealImageSize',
 		])->getMock();
 
-		$command->method('convertToWebp')->willReturn($process);
 		$command->method('fetchTable')->willReturn($table);
-		$command->method('getCommand')->willReturn(['dummy']);
-		$command->method('getProcess')->willReturn($process);
 		$command->method('getRealImageSize')->willReturn([100, 100]);
 
 		// Call the method
@@ -748,12 +795,9 @@ class ConvertFilesCommandTest extends TestCase {
 
 		// Assert the result
 		$this->assertEquals(CommandInterface::CODE_SUCCESS, $result);
+		$this->assertFileExists(ROOT . DS . 'awyiss' . DS . 'Command' . DS . 'Media' . DS . 'TestFiles' . DS . '_pdf_preview' . DS . 'logo-awyiss.jpg');
 
-		// Remove the preview folder created by the command
-		$ls_dummyFolder = ROOT . DS . 'awyiss' . DS . 'Command' . DS . 'Media' . DS . 'TestFiles' . DS . '_pdf_preview';
-		if (is_dir($ls_dummyFolder)) {
-			rmdir($ls_dummyFolder);
-		}
+		Configure::delete('AvailableCommands.imageMagick.pdf');
 	}
 
 
@@ -782,20 +826,26 @@ class ConvertFilesCommandTest extends TestCase {
 		$process->method('getExitCodeText')->willReturn('');
 
 		// Mock the ConsoleIo
-		$this->io->expects($this->once())->method('out')->with('Creating preview for file `../awyiss/Command/Media/TestFiles/logo-awyiss.pdf`');
+		$invokedCount = $this->exactly(2);
+		$this->io->expects($invokedCount)->method('out')->willReturnCallback(function ($parameters) use ($invokedCount) {
+			if ($invokedCount->numberOfInvocations() === 1) {
+				$this->assertSame('Creating preview for file `../awyiss/Command/Media/TestFiles/logo-awyiss.pdf`', $parameters);
+			}
+			elseif ($invokedCount->numberOfInvocations() === 2) {
+				$this->assertSame('Creating directory (../awyiss/Command/Media/TestFiles/_pdf_preview) for file preview', $parameters);
+			}
+		});
 		$this->io->expects($this->once())->method('warning')->with('Status: Cannot convert filetype `pdf`');
 
 		// Mock the ConvertFilesCommand
 		$command = $this->getMockBuilder(ConvertFilesCommand::class)->onlyMethods([
-			'convertToWebp',
 			'fetchTable',
-			'getCommand',
+			'getPreviewCommand',
 			'getProcess',
 		])->getMock();
 
-		$command->method('convertToWebp')->willReturn($process);
 		$command->method('fetchTable')->willReturn($table);
-		$command->method('getCommand')->willReturn(false);
+		$command->method('getPreviewCommand')->willReturn(false);
 		$command->method('getProcess')->willReturn($process);
 
 		// Call the method
@@ -803,12 +853,6 @@ class ConvertFilesCommandTest extends TestCase {
 
 		// Assert the result
 		$this->assertEquals(CommandInterface::CODE_SUCCESS, $result);
-
-		// Remove the preview folder created by the command
-		$ls_dummyFolder = ROOT . DS . 'awyiss' . DS . 'Command' . DS . 'Media' . DS . 'TestFiles' . DS . '_pdf_preview';
-		if (is_dir($ls_dummyFolder)) {
-			rmdir($ls_dummyFolder);
-		}
 	}
 
 
@@ -858,7 +902,7 @@ class ConvertFilesCommandTest extends TestCase {
 			}
 
 			// Call the method
-			$result = $this->callProtectedMethod($command, 'getCommand', $file, 'crop');
+			$result = $this->callProtectedMethod($command, 'getCropCommand', $file);
 
 			if ($file->id === 1) {
 				$this->assertSame([
@@ -948,7 +992,7 @@ class ConvertFilesCommandTest extends TestCase {
 			}
 
 			// Call the method
-			$result = $this->callProtectedMethod($command, 'getCommand', $resizedFile, 'resize');
+			$result = $this->callProtectedMethod($command, 'getResizeCommand', $resizedFile);
 
 			if ($file->id === 1) {
 				$this->assertSame([
