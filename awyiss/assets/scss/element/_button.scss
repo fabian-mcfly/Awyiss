@@ -78,39 +78,39 @@ button,
 }
 
 .Button {
-	&&-Delete,
-	&&-Error {
+	&#{&}-Delete,
+	&#{&}-Error {
 		background-color:var(--colorError);
 	}
 
-	&&-History,
-	&&-Medium {
+		&#{&}-History,
+	&#{&}-Medium {
 		background-color:var(--colorMedium);
 	}
 
-	&&-History {
+	&#{&}-History {
 		.Hover {
 			background-color:var(--colorInfo);
 		}
 	}
 
-	&&-Info {
+	&#{&}-Info {
 		background-color:var(--colorInfo);
 	}
 
-	&&-Light {
+	&#{&}-Light {
 		background-color:var(--colorLight);
 	}
 
-	&&-Neutral {
+	&#{&}-Neutral {
 		background-color:var(--colorNeutralLight);
 	}
 
-	&&-Success {
+	&#{&}-Success {
 		background-color:var(--colorSuccess);
 	}
 
-	&&-Warning {
+	&#{&}-Warning {
 		background-color:var(--colorWarning);
 	}
 
@@ -133,7 +133,7 @@ button,
 		}
 	}
 
-	&&-Subtle {
+	&#{&}-Subtle {
 		--backgroundColor:var(--colorMedium);
 		--colorButtonText:var(--colorLight);
 
@@ -159,7 +159,7 @@ button,
 		}
 	}
 
-	@at-root #TranslationDialog-Apply,
+	#TranslationDialog-Apply &,
 	&-Add,
 	&-Close,
 	&-Configure,
@@ -269,7 +269,7 @@ button,
 		}
 	}
 
-	@at-root #TranslationDialog-Apply,
+	#TranslationDialog-Apply &,
 	&-Save,
 	&-SaveClose,
 	&-SaveSystemOrder {
@@ -335,7 +335,6 @@ button,
 			}
 		}
 	}
-
 
 	&-View {
 		&::after {

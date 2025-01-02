@@ -819,19 +819,21 @@ textarea {
 		transition:background-color .3s ease-in-out;
 		cursor:move;
 
-		.🌚& {
+		.🌚 & {
 			background-color:var(--colorSemiDark);
 		}
 
 		&.SortableGhost {
+			background-color:var(--colorSuccess);
 			outline:2px solid var(--colorSuccess);
 			outline-offset:-2px;
 
-			&,
-			.🌚&,
-			.🌚&[data-assignable="false"],
-			.🌚&:hover {
-				background-color:var(--colorSuccess);
+			.🌚 & {
+				&,
+				&[data-assignable="false"],
+				&:hover {
+					background-color:var(--colorSuccess);
+				}
 			}
 
 			&:hover {
@@ -842,14 +844,14 @@ textarea {
 		&[data-assignable="false"] {
 			background-color:color-mix(in srgb, var(--colorNeutralLight), transparent 50%);
 
-			.🌚& {
+			.🌚 & {
 				background-color:color-mix(in srgb, var(--colorNeutralLight), transparent 90%);
 			}
 
 			.Title {
 				color:var(--colorMedium);
 
-				.🌚& {
+				.🌚 & {
 					color:oklch(from var(--colorSemiDarkDarkMode) calc(l + 0.0196) calc(c + 0.002) calc(h - 0.3));
 				}
 			}
@@ -862,7 +864,7 @@ textarea {
 		&:hover {
 			background-color:var(--colorLight);
 
-			.🌚& {
+			.🌚 & {
 				background-color:oklch(from var(--colorSemiDarkDarkMode) calc(l + 0.0389) calc(c + 0.004) calc(h - 0.55));
 			}
 		}
@@ -943,13 +945,11 @@ textarea {
 		scrollbar-color:var(--colorMedium) var(--colorLight);
 		scrollbar-width:thin;
 
-		.🌚 &,
-		.🌚& {
+		.🌚 & {
 			scrollbar-color:var(--colorSemiDarkDarkMode) var(--colorText);
 		}
 
-		.👀 &,
-		.👀& {
+		.👀 & {
 			max-height:calc(100dvh - 140px);
 		}
 	}

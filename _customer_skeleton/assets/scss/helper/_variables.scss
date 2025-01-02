@@ -9,7 +9,7 @@ $fontStyleMain:'normal' !default;
 $fontSizeMain:18px !default;
 $lineHeightMain:1.625rem !default;
 
-//$fontSizeClampMain:clamp(16px, $fontSizeMain, 20px) !default;
+//$fontSizeClampMain:clamp(2vw, 18px, 4vw) !default;
 
 $fontNameAlternative:'' !default;
 $fontStackFallbackAlternative:Georgia, Times, serif !default;
@@ -48,8 +48,12 @@ $singleColumnBreakpoint:860px !default;
 		--fontStackAlternative:#{inspect($fontStackAlternative)};
 		--fontWeightAlternative:#{$fontWeightAlternative};
 		--fontStyleAlternative:#{$fontStyleAlternative};
-		--fontSizeAlternative:#{$fontSizeAlternative};
-		--lineHeightAlternative:#{$lineHeightAlternative};
+		@if variable-exists(fontSizeAlternative) and $fontSizeAlternative != '' {
+			--fontSizeAlternative:#{$fontSizeAlternative};
+		}
+		@if variable-exists(lineHeightAlternative) and $lineHeightAlternative != '' {
+			--lineHeightAlternative:#{$lineHeightAlternative};
+		}
 	}
 
 	--colorText:#{$colorText};

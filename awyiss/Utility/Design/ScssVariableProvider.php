@@ -8,11 +8,16 @@ use Awyiss\Utility\Inflector;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Utility\Hash;
 use InvalidArgumentException;
-use ScssPhp\ScssPhp\Compiler;
-use ScssPhp\ScssPhp\Compiler\Environment;
-use ScssPhp\ScssPhp\Formatter\OutputBlock;
-use ScssPhp\ScssPhp\Node\Number;
-use ScssPhp\ScssPhp\Type;
+use ScssPhp\ScssPhp\Ast\Sass\Expression;
+use ScssPhp\ScssPhp\Ast\Sass\Expression\ColorExpression;
+use ScssPhp\ScssPhp\Ast\Sass\Expression\FunctionExpression;
+use ScssPhp\ScssPhp\Ast\Sass\Expression\ListExpression;
+use ScssPhp\ScssPhp\Ast\Sass\Expression\NumberExpression;
+use ScssPhp\ScssPhp\Ast\Sass\Expression\StringExpression;
+use ScssPhp\ScssPhp\Ast\Sass\Expression\VariableExpression;
+use ScssPhp\ScssPhp\Ast\Sass\Statement\Stylesheet;
+use ScssPhp\ScssPhp\Ast\Sass\Statement\VariableDeclaration;
+use ScssPhp\ScssPhp\Parser\ScssParser;
 
 
 /**
@@ -87,82 +92,10 @@ class ScssVariableProvider {
 
 
 	/**
-	 * @return \ScssPhp\ScssPhp\Compiler
-	 * @noinspection PhpDocFinalChecksInspection
-	 */
-	protected function getCompiler(): Compiler {
-		return new class extends Compiler {
-			/**
-			 * @var array $internalVars The internal variables
-			 */
-			protected array $internalVars = [];
-			/**
-			 * @var array $defaultVarNames The names of variables that are marked as default
-			 */
-			protected array $defaultVarNames = [];
-
-
-			/**
-			 * @inheritDoc
-			 */
-			protected function compileChild($child, OutputBlock $out) {
-				if ($child[0] === Type::T_ASSIGN) {
-					[, $la_name] = $child;
-					if ($la_name[0] === Type::T_VARIABLE) {
-						$la_flags = $child[3] ?? [];
-						$lb_isDefault = in_array('!default', $la_flags);
-
-						if ($lb_isDefault) {
-							// Remember the name of the variable in case it is marked as default
-							$this->defaultVarNames[] = $la_name[1];
-						}
-					}
-				}
-
-				return parent::compileChild($child, $out);
-			}
-
-
-			/**
-			 * @inheritDoc
-			 */
-			protected function set($name, $value, $shadow = false, ?Environment $env = null, $valueUnreduced = null): void {
-				$lo_env = $env;
-
-				if (!isset($lo_env)) {
-					$lo_env = $this->getStoreEnv();
-				}
-
-				parent::set($name, $value, $shadow, $lo_env, $valueUnreduced);
-
-				/*
-				 * Store the internal variables but only if they are marked as default
-				 * Non-default variables cannot be overridden by the user
-				 */
-				if (in_array($name, $this->defaultVarNames)) {
-					$this->internalVars[ $name ] = $lo_env->storeUnreduced[ str_replace('-', '_', $name) ];
-				}
-			}
-
-
-			/**
-			 * Returns all internal variables.
-			 *
-			 * @return array
-			 */
-			public function getInternalVariables(): array {
-				return $this->internalVars;
-			}
-		};
-	}
-
-
-	/**
 	 * @return array
-	 * @throws \ScssPhp\ScssPhp\Exception\SassException
 	 */
 	public function getInternalVariables(): array {
-		$lo_compiler = $this->getCompiler();
+		$la_vars = [];
 
 		foreach ($this->scssFiles as $ls_scssFile) {
 			if (
@@ -173,19 +106,27 @@ class ScssVariableProvider {
 				throw new InvalidArgumentException(sprintf('The SCSS file `%s` does not exist.', $ls_scssFile));
 			}
 
-			$lo_compiler->addImportPath(dirname($ls_scssFile));
-			// Suppressing the error isn't ideal, but the library has a flaw with attribute selectors.
-			@$lo_compiler->compileFile($ls_scssFile); // phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged
+			$lo_stylesheet = Stylesheet::parseScss(file_get_contents($ls_scssFile));
+
+			foreach ($lo_stylesheet->getChildren() as $lo_var) {
+				if (!is_a($lo_var, VariableDeclaration::class)) {
+					continue;
+				}
+
+				if (!$lo_var->isGuarded()) {
+					continue;
+				}
+
+				$la_vars[ $lo_var->getName() ] = $lo_var->getExpression();
+			}
 		}
 
-		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		return $lo_compiler->getInternalVariables();
+		return $la_vars;
 	}
 
 
 	/**
 	 * @return array
-	 * @throws \ScssPhp\ScssPhp\Exception\SassException
 	 */
 	public function getNormalizedInternalVariables(): array {
 		$la_internalVariables = $this->getInternalVariables();
@@ -215,30 +156,30 @@ class ScssVariableProvider {
 
 
 	/**
-	 * @param array $value
+	 * @param FunctionExpression $function
 	 * @return string
 	 */
-	protected function normalizeFunctionCall(array $value): string {
-		$ls_functionName = $value[1];
-		$la_arguments = $value[2] ?? [];
+	protected function normalizeFunctionCall(FunctionExpression $function): string {
+		$ls_functionName = $function->getName();
+		$la_arguments = $function->getArguments()->getPositional();
 
-		$la_arguments = array_map(function (array $argument): string {
-			$la_options = $this->normalizeValue($argument[1]);
+		$la_arguments = array_map(function (Expression $argument) {
+			$la_options = $this->normalizeValue($argument);
 
 			if ($la_options === null) {
 				return '';
 			}
 
-			$ls_value = $la_options['value'];
+			$lx_value = $la_options['value'];
 			if ($la_options['unit']) {
-				$ls_value .= $la_options['unit'];
+				$lx_value .= $la_options['unit'];
 			}
 
 			if ($la_options['quotes']) {
-				$ls_value = $la_options['quotes'] . $ls_value . $la_options['quotes'];
+				$lx_value = $la_options['quotes'] . $lx_value . $la_options['quotes'];
 			}
 
-			return $ls_value;
+			return $lx_value;
 		}, $la_arguments);
 
 		return sprintf('%s(%s)', $ls_functionName, implode(', ', $la_arguments));
@@ -258,46 +199,46 @@ class ScssVariableProvider {
 			'value' => null,
 		];
 
-		if (is_a($value, Number::class)) {
-			$la_options['value'] = $value->getDimension();
-			$la_options['unit'] = $value->getNumeratorUnits()[0] ?? null;
+		if (is_a($value, ColorExpression::class)) {
+			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+			$la_options['value'] = $value->getValue()->getFormat()->getOriginal();
 		}
-		elseif (is_array($value)) {
-			switch ($value[0]) {
-				case 'color':
-					$la_options['value'] = $value;
-					// Remove the first element as it is the type
-					array_shift($la_options['value']);
+		elseif (is_a($value, NumberExpression::class)) {
+			$la_options['value'] = $value->getValue();
+			$la_options['unit'] = $value->getUnit();
+		}
+		elseif (is_a($value, StringExpression::class)) {
+			$la_options['value'] = implode('', $value->getText()->getContents() ?? []);
+			$la_options['quotes'] = $value->hasQuotes() ? '\'' : null;
+		}
+		elseif (is_a($value, ListExpression::class)) {
+			$la_options['value'] = implode($value->getSeparator()->getSeparator(), array_map(function (Expression $item) {
+				$la_options = $this->normalizeValue($item);
 
-					if (count($la_options['value']) === 4) {
-						$la_options['value'] = sprintf('rgb(%s, %s, %s, %s)', ...$la_options['value']);
-					}
-					else {
-						$la_options['value'] = sprintf('rgb(%s, %s, %s)', ...$la_options['value']);
-					}
+				if ($la_options['quotes']) {
+					$la_options['value'] = $la_options['quotes'] . $la_options['value'] . $la_options['quotes'];
+				}
 
-					break;
-				case 'fncall':
-					$la_options['value'] = $this->normalizeFunctionCall($value);
-					break;
-				case 'keyword':
-					$la_options['value'] = $value[1] ?? null;
-					break;
-				case 'list':
-					$la_options['value'] = implode($value[1] ?: ' ', array_map(function ($item) {
-						return $item[0] === 'keyword' ? $item[1] : '';
-					}, $value[2] ?? []));
-					break;
-				case 'string':
-					$la_options['value'] = implode('', $value[2] ?? []);
-					$la_options['quotes'] = $value[1] ?? '\'';
-					break;
-				case 'var':
-					$la_options['value'] = '$' . $value[1];
-					break;
-				default:
-					$la_options['value'] = $value;
-			}
+				return $la_options['value'];
+			}, $value->getContents()));
+		}
+		elseif (is_a($value, FunctionExpression::class)) {
+			$la_options['value'] = $this->normalizeFunctionCall($value);
+		}
+		elseif (is_a($value, VariableExpression::class)) {
+			$la_options['value'] = '$' . $value->getName();
+		}
+		elseif (is_object($value) && method_exists($value, 'getValue')) {
+			$la_options['value'] = $value->getValue();
+		}
+		elseif (is_object($value) && method_exists($value, '__toString')) {
+			$la_options['value'] = (string)$value;
+		}
+		elseif (is_scalar($value)) {
+			$la_options['value'] = $value;
+		}
+		else {
+			throw new InvalidArgumentException(sprintf('Unsupported value type: %s', gettype($value)));
 		}
 
 		return $la_options;

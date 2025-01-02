@@ -11,7 +11,7 @@
 		display:block;
 		padding-inline:20px;
 
-		.Scale-Small& {
+		@at-root #{selector-append('.Scale-Small', &)} {
 			padding-bottom:20px;
 		}
 	}
@@ -22,11 +22,11 @@
 		top:160px;
 		grid-column:1 / 1;
 
-		.👀& {
+		@at-root #{selector-append('.👀', &)} {
 			top:40px;
 		}
 
-		.Scale-Small& {
+		@at-root #{selector-append('.Scale-Small', &)} {
 			&:not(.Collapsed) {
 				padding-bottom:20px;
 			}
@@ -38,7 +38,7 @@
 			&:has(.SortableDragging) {
 				background-color:#D5F1E5;
 
-				.🌚& {
+				@at-root #{selector-append('.🌚', &)} {
 					background-color:var(--colorSemiDark)
 				}
 			}
@@ -46,7 +46,7 @@
 			&::after {
 				@extend %EmptyList;
 
-				.🌚& {
+				@at-root #{selector-append('.🌚', &)} {
 					@extend %EmptyListDarkMode;
 
 				}
@@ -65,11 +65,11 @@
 			scrollbar-color:var(--colorMedium) var(--colorLight);
 			scrollbar-width:thin;
 
-			.🌚& {
+			@at-root #{selector-append('.🌚', &)} {
 				scrollbar-color:var(--colorSemiDark) oklch(from var(--colorBackgroundContentDarkMode) calc(l - 0.0473) calc(c - 0.005) calc(h + 1.12) / .85);
 			}
 
-			.👀& {
+			@at-root #{selector-append('.👀', &)} {
 				max-height:calc(100dvh - 140px);
 			}
 		}
@@ -89,23 +89,25 @@
 			margin-top:0;
 		}
 
-		.🌚& {
+		@at-root #{selector-append('.🌚', &)} {
 			background-color:var(--colorSemiDark);
 		}
 
-		.Scale-Small& {
+		@at-root #{selector-append('.Scale-Small', &)} {
 			padding-bottom:3px;
 		}
 
 		&.SortableGhost {
+			background-color:var(--colorSuccess);
 			outline:2px solid var(--colorSuccess);
 			outline-offset:-2px;
 
-			&,
-			.🌚&,
-			.🌚&[data-assignable="false"],
-			.🌚&:hover {
-				background-color:var(--colorSuccess);
+			@at-root #{selector-append('.🌚', &)} {
+				&,
+				&[data-assignable="false"],
+				&:hover {
+					background-color:var(--colorSuccess);
+				}
 			}
 
 			&:hover {
@@ -116,7 +118,7 @@
 		&[data-assignable="false"] {
 			background-color:color-mix(in srgb, var(--colorNeutralLight), transparent 50%);
 
-			.🌚& {
+			@at-root #{selector-append('.🌚', &)} {
 				background-color:oklch(from var(--colorSemiDarkDarkMode) calc(l - 0.0403) calc(c - 0.004) calc(h + 0.88));
 			}
 
@@ -132,7 +134,7 @@
 		&:hover {
 			background-color:var(--colorLight);
 
-			.🌚& {
+			@at-root #{selector-append('.🌚', &)} {
 				background-color:oklch(from var(--colorSemiDarkDarkMode) calc(l + 0.0389) calc(c + 0.004) calc(h - 0.55));
 			}
 		}
@@ -169,7 +171,7 @@
 				&:has(.SortableDragging) {
 					background-color:#D5F1E5;
 
-					.🌚& {
+					@at-root #{selector-append('.🌚', &)} {
 						background-color:var(--colorSemiDark)
 					}
 				}
@@ -177,7 +179,7 @@
 				&::after {
 					@extend %EmptyList;
 
-					.🌚& {
+					@at-root #{selector-append('.🌚', &)} {
 						@extend %EmptyListDarkMode;
 
 					}

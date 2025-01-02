@@ -47,7 +47,7 @@
 			opacity:.25;
 			transition:opacity .3s ease-in-out;
 
-			.🌚& {
+			@at-root #{selector-append('.🌚', &)} {
 				background-color:var(--backgroundColorContent);
 			}
 
@@ -56,7 +56,7 @@
 				color:var(--colorText);
 				opacity:1;
 
-				.🌚& {
+				@at-root #{selector-append('.🌚', &)} {
 					background-color:var(--backgroundColorContent);
 					color:var(--colorBright);
 				}
@@ -111,7 +111,7 @@
 				&:has(.SortableDragging) {
 					background-color:var(--backgroundColorContent);
 
-					.🌚& {
+					@at-root #{selector-append('.🌚', &)} {
 						background-color:var(--backgroundColorContent);
 					}
 				}
@@ -166,7 +166,7 @@
 				&:has(.SortableDragging) {
 					background-color:#D5F1E5;
 
-					.🌚& {
+					@at-root #{selector-append('.🌚', &)} {
 						background-color:var(--colorSemiDark)
 					}
 				}
@@ -174,7 +174,7 @@
 				&::after {
 					@extend %EmptyList;
 
-					.🌚& {
+					@at-root #{selector-append('.🌚', &)} {
 						@extend %EmptyListDarkMode;
 
 					}

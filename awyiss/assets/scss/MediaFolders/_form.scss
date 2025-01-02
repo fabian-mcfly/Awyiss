@@ -75,7 +75,7 @@
 					height:42px;
 				}
 
-				.🌚& {
+				@at-root #{selector-append('.🌚', &)} {
 					border-color:rgba(255, 255, 255, .1);
 					background-blend-mode:multiply;
 					background-image:url($relativePath + 'img/background-pattern-dark.png');

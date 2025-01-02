@@ -14,7 +14,7 @@
 					&:not(:has(.ListItem)) {
 						background-color:#D5F1E5;
 
-						.🌚& {
+						@at-root #{selector-append('.🌚', &)} {
 							background-color:var(--colorSemiDark)
 						}
 					}
@@ -44,9 +44,8 @@
 					&::after {
 						@extend %EmptyList;
 
-						.🌚& {
+						@at-root #{selector-append('.🌚', &)} {
 							@extend %EmptyListDarkMode;
-
 						}
 					}
 

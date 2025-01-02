@@ -8,7 +8,7 @@
 			border-radius:5px;
 			list-style:none;
 
-			.Scale-Small& {
+			@at-root #{selector-append('.Scale-Small', &)} {
 				margin-inline:0;
 				padding-block:7px 9px;
 			}
@@ -22,7 +22,7 @@
 				background-color:var(--colorWarning);
 				color:var(--colorText);
 
-				.🌚& {
+				@at-root #{selector-append('.🌚', &)} {
 					color:$colorText;
 				}
 			}
@@ -32,7 +32,7 @@
 			}
 
 			&:last-child {
-				.Scale-Small& {
+				@at-root #{selector-append('.Scale-Small', &)} {
 					margin-bottom:20px;
 				}
 			}

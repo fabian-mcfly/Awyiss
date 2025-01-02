@@ -15,6 +15,8 @@ use RecursiveIteratorIterator;
 use ScssPhp\ScssPhp\CompilationResult;
 use ScssPhp\ScssPhp\Compiler;
 use ScssPhp\ScssPhp\OutputStyle;
+use ScssPhp\ScssPhp\Value\SassString;
+use ScssPhp\ScssPhp\ValueConverter;
 use SplFileInfo;
 
 
@@ -153,19 +155,6 @@ class ScssCompiler {
 			$la_variables = static::normalizeVariables($la_variables);
 		}
 
-		foreach ($la_variables as $ls_key => $lx_value) {
-			if (is_array($lx_value)) {
-				if (isset($lx_value['font'])) {
-					$lx_value = 'inspect(' . $lx_value['font']['name'] . ')';
-				}
-				else {
-					$lx_value = implode(' ', $lx_value);
-				}
-			}
-
-			$la_variables[ $ls_key ] = $lx_value;
-		}
-
 		foreach ($folders as $ls_folderPath => $lo_files) {
 			// If the value is not an instance of ScssFilesCollection, skip it.
 			if (!$lo_files instanceof ScssFilesCollection) {
@@ -231,7 +220,17 @@ class ScssCompiler {
 
 		// Set import paths and variables for the compilation process.
 		$lo_scssCompiler->setImportPaths(dirname($file->getPathname()));
-		$lo_scssCompiler->replaceVariables($vars);
+		$lo_scssCompiler->replaceVariables(array_map(function ($value) {
+			if ($value === '') {
+				return new SassString('');
+			}
+
+			if (str_starts_with($value, 'clamp(')) {
+				return new SassString($value);
+			}
+
+			return ValueConverter::parseValue($value);
+		}, $vars));
 
 		// Set the css file path based on the scss file
 		$ls_cssFilename = substr($file->getFilename(), 0, -4) . 'css';
@@ -240,11 +239,12 @@ class ScssCompiler {
 		$ls_cssFolderPath = rtrim(str_replace($basePath . 'scss', $basePath . 'css', $file->getPath()), DS) . DS;
 
 		static::$compiler->addVariables([
-			'awyissVersion' => Awyiss::VERSION,
-			'awyissVersionMajor' => explode('.', Awyiss::VERSION)[0],
-			'awyissVersionName' => Inflector::dasherize(Awyiss::VERSION_NAME),
+			'awyissVersion' => ValueConverter::fromPhp(Awyiss::VERSION),
+			'awyissVersionMajor' => ValueConverter::fromPhp(explode('.', Awyiss::VERSION)[0]),
+			'awyissVersionName' => ValueConverter::fromPhp(Inflector::dasherize(Awyiss::VERSION_NAME)),
 		]);
 
+		/** @noinspection PhpParamsInspection */
 		static::$compiler->addVariables(static::getColumnSystemVariables());
 
 		// Set the source map options if the CSS content is not returned.
@@ -252,7 +252,6 @@ class ScssCompiler {
 			static::$compiler->setSourceMap(Compiler::SOURCE_MAP_FILE);
 
 			static::$compiler->setSourceMapOptions([
-				'sourceMapWriteTo' => $ls_cssFilename . '.map',
 				'sourceMapURL' => $ls_cssFilename . '.map',
 				'sourceMapFilename' => $ls_cssFilename, // Relative url path of .css file
 				'sourceMapBasepath' => $basePath, // Difference between file & url locations, removed from ALL source files in .map
@@ -286,8 +285,7 @@ class ScssCompiler {
 				}
 			}
 
-			// Suppressing the error isn't ideal, but the library has a flaw with attribute selectors.
-			$lo_compilationResult = @$lo_scssCompiler->compileString($ls_fileContents, $file->getPathname()); // phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged
+			$lo_compilationResult = $lo_scssCompiler->compileString($ls_fileContents, $file->getPathname());
 
 			if ($returnCss) {
 				// If caller requests the CSS content, return it directly.
@@ -367,10 +365,10 @@ class ScssCompiler {
 		}
 
 		return [
-			'columnSystem' => $ls_columnSystemClassName::getName(),
-			'columnWidths' => static::arrayToScssMap($la_widths),
-			'columnIndents' => static::arrayToScssMap($la_indents),
-			'maxColumns' => $ls_columnSystemClassName::getMaxDenominator(),
+			'columnSystem' => ValueConverter::fromPhp($ls_columnSystemClassName::getName()),
+			'columnWidths' => ValueConverter::parseValue(static::arrayToScssMap($la_widths)),
+			'columnIndents' => ValueConverter::parseValue(static::arrayToScssMap($la_indents)),
+			'maxColumns' => ValueConverter::fromPhp($ls_columnSystemClassName::getMaxDenominator()),
 		];
 	}
 

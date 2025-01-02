@@ -120,7 +120,7 @@
 				gap:0 5px;
 				grid-template-columns:1fr 2fr;
 
-				.Scale-Small& {
+				@at-root #{selector-append('.Scale-Small', &)} {
 					padding-right:47px;
 				}
 			}
@@ -140,7 +140,7 @@
 				top:calc(1rem + 1px);
 				right:0;
 
-				.Scale-Small& {
+				@at-root #{selector-append('.Scale-Small', &)} {
 					width:42px;
 					height:42px;
 				}

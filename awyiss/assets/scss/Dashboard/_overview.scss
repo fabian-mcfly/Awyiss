@@ -27,7 +27,7 @@
 		&.Fieldset-LoggedInAs {
 			padding-block:40px;
 
-			.Scale-Small& {
+			@at-root #{selector-append('.Scale-Small', &)} {
 				padding-block:20px;
 			}
 		}

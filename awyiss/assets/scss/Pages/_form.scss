@@ -7,7 +7,7 @@
 
 		.Label {
 			&:first-child {
-				.Scale-Small& {
+				@at-root #{selector-append('.Scale-Small', &)} {
 					line-height:1.5;
 				}
 			}
@@ -23,7 +23,7 @@
 			&:not(:has(> legend:last-child)) {
 				padding-bottom:10px;
 
-				.Scale-Small& {
+				@at-root #{selector-append('.Scale-Small', &)} {
 					padding-bottom:0;
 				}
 			}

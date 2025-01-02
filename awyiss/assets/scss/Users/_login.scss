@@ -98,7 +98,7 @@
 			position:relative;
 			z-index:1;
 
-			.🌚& {
+			@at-root #{selector-append('.🌚', &)} {
 				background-color:var(--colorDark);
 			}
 		}

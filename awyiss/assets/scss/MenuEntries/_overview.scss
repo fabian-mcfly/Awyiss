@@ -19,7 +19,7 @@
 				position:sticky;
 				top:100px;
 
-				.👀& {
+				@at-root #{selector-append('.👀', &)} {
 					top:20px;
 				}
 			}
@@ -41,13 +41,11 @@
 			scrollbar-color:var(--scrollbarColor);
 			scrollbar-width:thin;
 
-			.🌚 &,
-			.🌚& {
+			@at-root #{selector-append('.🌚', &)} {
 				--scrollbarColor:var(--backgroundColorContent) var(--colorSemiDark);
 			}
 
-			.👀 &,
-			.👀& {
+			@at-root #{selector-append('.👀', &)} {
 				max-height:calc(100dvh - 40px);
 			}
 

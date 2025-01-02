@@ -69,7 +69,7 @@
 		}
 	}
 
-	&&-Compact {
+	&#{&}-Compact {
 		--emptyListHeight:70px;
 
 		margin-inline:25px -5px;
@@ -445,16 +445,6 @@
 			padding-left:60px;
 		}
 
-		/*&:has(> .NestedListToggle:not(.Hidden)) {
-			&:hover {
-				border-top-left-radius:0;
-			}
-		}
-
-		&:has(~ .NestedList.Collapsed) {
-			border-top-left-radius:0;
-		}*/
-
 		&:hover {
 			background-color:oklch(from var(--colorLight) calc(l - 0.0588) calc(c + 0.009) calc(h + 1.05));
 
@@ -466,14 +456,6 @@
 			.SortableHandle {
 				opacity:1;
 			}
-
-			/*.NestedListToggle {
-				&.Collapsed {
-					&:nth-child(2) {
-						border-radius:5px 0 0 0;
-					}
-				}
-			}*/
 
 			.AuditInfo {
 				&:not(.Hidden) {
@@ -526,7 +508,7 @@
 		transition:border-radius .3s ease-in-out, background-color .3s ease-in-out, opacity .3s ease-in-out;
 
 		.🌚 & {
-			background-color:oklch(from var(--colorSemiDarkDarkMode) calc(l + 0.0389) calc(c + 0.004) calc(h - 0.55));
+			background-color:var(--colorSemiDark);
 
 			&:hover {
 				background-color:var(--colorSuccess);
@@ -543,20 +525,11 @@
 		}
 
 		&.Collapsed {
-			//border-radius:5px 0 0 5px;
 			opacity:1;
-
-			&:nth-child(2) {
-				//border-radius:5px 0 0 5px;
-			}
 
 			&::before {
 				content:'\f107';
 			}
-		}
-
-		&:nth-child(2) {
-			//border-radius:5px 0 0 0;
 		}
 
 		&:hover {
@@ -594,7 +567,7 @@
 		transition:background-color .3s ease-in-out, opacity .3s ease-in-out;
 
 		.🌚 & {
-			background-color:oklch(from var(--colorSemiDarkDarkMode) calc(l + 0.0389) calc(c + 0.004) calc(h - 0.55));
+			background-color:var(--colorSemiDark);
 
 			&:hover {
 				background-color:var(--colorSuccess);
@@ -606,10 +579,6 @@
 			height:30px;
 			left:-30px;
 		}
-
-		/*&:has(+ .NestedListToggle:not(.Hidden)) {
-			border-radius:0 0 0 5px;
-		}*/
 
 		&:hover {
 			background-color:var(--colorDark);
