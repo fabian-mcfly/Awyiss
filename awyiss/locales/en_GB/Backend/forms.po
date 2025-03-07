@@ -153,7 +153,7 @@ msgid "error_confirmation_email_template_exists"
 msgstr "The email template does not exist"
 
 msgid "placeholder_help_text"
-msgstr "<h3>Placeholders</h3>"
+msgstr "<summary>Placeholders</summary>"
 "<p>You can use the field names (&quot;Identifier&quot;) of form elements as placeholders in texts.<br>"
 "Placeholders dynamically show the content of the fields filled in by users:<br>"
 "<ul>"

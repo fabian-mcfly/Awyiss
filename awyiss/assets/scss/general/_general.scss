@@ -72,7 +72,7 @@ body {
 	}
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1, h2, h3, h4, h5, h6, summary {
 	margin-top:2rem;
 	//noinspection CssNoGenericFontName
 	font-family:var(--fontStackHeading);
@@ -84,7 +84,7 @@ h1, h2, h3, h4, h5, h6 {
 	}
 }
 
-h3 {
+h3, summary {
 	font-size:calc(var(--fontSizeHeading) * .8);
 }
 
@@ -193,29 +193,17 @@ code {
 		}
 	}
 
-	&.Visible {
-		h3 {
-			&::after {
-				content:'\f106';
-			}
-		}
-
-		> *:not(h3) {
-			display:block;
-		}
-	}
-
-	> *:not(h3) {
-		display:none;
-	}
-
-	h3 {
+	summary {
 		padding-right:50px;
 		padding-left:40px;
 		font-size:1.5rem;
 		line-height:1;
 		position:relative;
 		cursor:pointer;
+
+		&:first-child {
+			list-style-type:none;
+		}
 
 		&::before {
 			@include la('\f05a', 30px);
