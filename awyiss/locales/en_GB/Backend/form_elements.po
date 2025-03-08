@@ -101,6 +101,18 @@ msgstr "Fieldset"
 msgid "type_radio"
 msgstr "Radio Button"
 
+msgid "type_number"
+msgstr "Number"
+
+msgid "type_tel"
+msgstr "Phone"
+
+msgid "type_range"
+msgstr "Range"
+
+msgid "type_url"
+msgstr "URL"
+
 msgid "type_email"
 msgstr "Email Address"
 

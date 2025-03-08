@@ -47,16 +47,20 @@ class FormElementsTable extends Table {
 		'text',
 		'textarea',
 		'email',
+		'url',
+		'number',
+		'tel',
 		'date',
 		'time',
 		'datetime',
-		'fieldset',
+		'range',
 		'checkbox',
 		'radio',
 		'select',
 		'select_multiple',
 		'file',
 		'hidden',
+		'fieldset',
 		'free_text',
 		'submit',
 	];
@@ -135,6 +139,7 @@ class FormElementsTable extends Table {
 
 
 	/**
+	 * @param bool $translated
 	 * @return array
 	 */
 	public function getAvailableTypes(bool $translated = false): array {
