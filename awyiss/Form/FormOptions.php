@@ -79,7 +79,7 @@ class FormOptions implements FormOptionsInterface {
 			}
 			elseif (in_array($lo_formElement->type, ['checkbox', 'radio', 'select'])) {
 				$validator->add($lo_formElement->identifier, [
-					'inList' => ['rule' => ['inList', array_keys($lo_formElement->options)]],
+					'inList' => ['rule' => ['inList', array_keys($lo_formElement->options ?? [])]],
 				]);
 			}
 			elseif ($lo_formElement->type === 'email') {
