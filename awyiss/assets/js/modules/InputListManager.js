@@ -157,6 +157,9 @@ export default class InputListManager {
 		// Clone the last row
 		const newRow = lastRow.cloneNode(true);
 
+		// Insert the new row before the button
+		formInput.insertBefore(newRow, button);
+
 		// Get all inputs in the new row
 		const inputs = newRow.querySelectorAll('input, select, textarea');
 
@@ -166,13 +169,34 @@ export default class InputListManager {
 			const name = input.name;
 
 			// If the input is not hidden, clear the value
-			if (input.type !== 'hidden') {
+			if (input.type === 'select-one') {
+				// Check if an empty option exists
+				if (input.querySelector('option[value=""]')) {
+					input.value = '';
+				}
+				else {
+					input.selectedIndex = 0;
+				}
+
+				// Trigger a change event
+				const event = new InputEvent('change', {bubbles: true, target: input});
+				input.dispatchEvent(event);
+			}
+			else if (input.type !== 'hidden') {
 				input.value = '';
+
+				// Trigger a change event
+				const event = new InputEvent('change', {bubbles: true, target: input});
+				input.dispatchEvent(event);
 			}
 			else {
 				// If the name ends in "][id]", remove the value as well as it's the id of an assigned entity
 				if (name.endsWith('][id]')) {
 					input.value = '';
+
+					// Trigger a change event
+					const event = new InputEvent('change', {bubbles: true, target: input});
+					input.dispatchEvent(event);
 				}
 			}
 
@@ -185,6 +209,8 @@ export default class InputListManager {
 			newIndex = parseInt(name.match(/\[(\d+)\]/)[1], 10) + 1;
 			//noinspection RegExpRedundantEscape
 			input.name = name.replace(/\[\d+\]/, `[${newIndex}]`);
+
+			input.classList.remove('Error');
 		});
 
 		const formElements = newRow.querySelectorAll('.FormInput');
@@ -214,10 +240,14 @@ export default class InputListManager {
 				// Replace the number with the new index
 				forElement.htmlFor = forElement.htmlFor.replace(/-\d+-/, `-${newIndex}-`);
 			});
-		});
 
-		// Insert the new row before the button
-		formInput.insertBefore(newRow, button);
+			// Remove all errors
+			const errors = formElement.querySelectorAll(':scope > .Error');
+			errors.forEach((error) => {
+				error.remove();
+			});
+			formElement.classList.remove('Error');
+		});
 	}
 
 	/**
