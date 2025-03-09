@@ -748,6 +748,10 @@ class FormSender {
 
 		$lx_value = $values[ $ls_identifier ] ?? $match[0];
 
+		if ($lx_value === '') {
+			return $match[0];
+		}
+
 		if (!in_array($ls_identifier, $safeList)) {
 			$lx_value = htmlentities($lx_value, ENT_QUOTES, 'UTF-8', false);
 		}
