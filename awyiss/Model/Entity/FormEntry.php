@@ -11,7 +11,8 @@ use Awyiss\Model\Entity;
  * FormEntry Entity
  *
  * @property int $id
- * @property int|null $formId
+ * @property int $formId
+ * @property int $pageId
  * @property string|null $subject
  * @property string|null $subjectConfirmation
  * @property string|null $body
@@ -31,6 +32,7 @@ class FormEntry extends Entity {
 	 */
 	protected static array $fieldMap = [
 		'form_id' => 'formId',
+		'page_id' => 'pageId',
 		'subject_confirmation' => 'subjectConfirmation',
 		'body_confirmation' => 'bodyConfirmation',
 		'ip_hash' => 'ipHash',
@@ -46,6 +48,7 @@ class FormEntry extends Entity {
 	 */
 	protected array $_accessible = [
 		'formId' => true,
+		'pageId' => true,
 		'subject' => true,
 		'subjectConfirmation' => true,
 		'body' => true,

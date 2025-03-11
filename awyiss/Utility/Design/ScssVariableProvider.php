@@ -17,7 +17,6 @@ use ScssPhp\ScssPhp\Ast\Sass\Expression\StringExpression;
 use ScssPhp\ScssPhp\Ast\Sass\Expression\VariableExpression;
 use ScssPhp\ScssPhp\Ast\Sass\Statement\Stylesheet;
 use ScssPhp\ScssPhp\Ast\Sass\Statement\VariableDeclaration;
-use ScssPhp\ScssPhp\Parser\ScssParser;
 
 
 /**

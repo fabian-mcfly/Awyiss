@@ -7,6 +7,7 @@ namespace FoobarCustomer\Form;
 use Awyiss\Form\FormOptions;
 use Awyiss\Model\Entity\Form;
 use Awyiss\Model\Entity\FormElement;
+use Awyiss\Model\Entity\Page;
 use Awyiss\Validation\Validator;
 
 
@@ -33,7 +34,7 @@ class KontaktformularFormOptions extends FormOptions {
 	/**
 	 * @inheritDoc
 	 */
-	public function modifyForm(Form $form, array $requestData, bool $submitted): void {
+	public function modifyForm(Form $form, array $requestData, bool $submitted, Page $page): void {
 		// Do nothing
 	}
 
@@ -41,7 +42,7 @@ class KontaktformularFormOptions extends FormOptions {
 	/**
 	 * @inheritDoc
 	 */
-	public function modifyFormElement(FormElement $formElement, Form $form, array $requestData, bool $submitted): void {
+	public function modifyFormElement(FormElement $formElement, Form $form, array $requestData, bool $submitted, Page $page): void {
 		if (!$submitted && $formElement->identifier === 'email') {
 			$formElement->value = 'foo@bar.com';
 		}

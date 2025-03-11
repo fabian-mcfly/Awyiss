@@ -5,6 +5,7 @@ namespace Awyiss\View\Cell\Frontend;
 
 
 use Awyiss\Model\Entity;
+use Awyiss\Model\Entity\Page;
 use Awyiss\Utility\Form\FormRenderer;
 use Awyiss\View\Cell\Frontend\Trait\ContentElementTrait;
 use Cake\Http\Exception\RedirectException;
@@ -19,20 +20,34 @@ use Exception;
 class FormCell extends Cell {
 	use ContentElementTrait;
 
+
+	/**
+	 * @var \Awyiss\Model\Entity\Page
+	 */
+	protected Page $page;
+
+
 	/**
 	 * @param string|int $identifier
-	 * @param string $languageShortcode
+	 * @param \Awyiss\Model\Entity\Page $page
 	 * @param array $options
 	 * @return void
 	 * @throws \ReflectionException
 	 */
-	public function display(string|int $identifier, string $languageShortcode, array $options = []): void {
+	public function display(string|int $identifier, Page $page, array $options = []): void {
 		$la_options = $this->initCellOptions($options);
+
+		$this->page = $page;
 
 		/** @noinspection PhpParamsInspection */
 		$lo_formRenderer = new FormRenderer($this->createView('Frontend'));
 
-		$lo_formRenderer->initForm($identifier, $this->request->getData(), $languageShortcode)
+		$lo_formRenderer
+		->initForm(
+			$identifier,
+			$this->request->getData(),
+			$this->page
+		)
 		->process();
 
 		if (!$lo_formRenderer->isFormSubmitted() && !$lo_formRenderer->isFormSent() && $this->request->getParam('formEntry')) {
@@ -47,6 +62,7 @@ class FormCell extends Cell {
 			'formElementsChecksum' => $lo_formRenderer->getFormElementsChecksum(),
 			'formData' => $lo_formRenderer->getFormData(),
 			'formErrors' => $lo_formRenderer->getFormErrors(),
+			'page' => $this->page,
 			'sent' => $lo_formRenderer->isFormSent(),
 			'submitted' => $lo_formRenderer->isFormSubmitted(),
 			'fullWidth' => $la_options['fullWidth'],

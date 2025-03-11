@@ -1,19 +1,41 @@
 .FormsController {
 	.Forms.Form {
 		&:has(input[type="checkbox"][name="send_email"]:checked) {
-			.FormInputName-Subject,
-			.FormInputName-EmailTemplateId,
-			.FormInputName-Cc,
-			.FormInputName-Bcc {
-				display:block;
+			.Fieldset-Email:not(.Collapsed) {
+				.FormInputName-Subject,
+				.FormInputName-EmailTemplateId,
+				.FormInputName-Cc,
+				.FormInputName-Bcc {
+					display:block;
+				}
+
+				details {
+					display:initial;
+				}
 			}
 		}
 
 		&:has(input[type="checkbox"][name="send_confirmation_email"]:checked) {
-			.FormInputName-SubjectConfirmation,
-			.FormInputName-ConfirmationEmailTemplateId,
-			.FormInputName-SalutationConfirmation {
-				display:block;
+			.Fieldset-ConfirmationEmail:not(.Collapsed) {
+				.FormInputName-SubjectConfirmation,
+				.FormInputName-ConfirmationEmailTemplateId,
+				.FormInputName-SalutationConfirmation {
+					display:block;
+				}
+			}
+		}
+
+		.EmailDetails {
+			margin:var(--lineHeightMain) 0 0 0;
+			padding:0;
+			box-shadow:none;
+			background-color:transparent;
+			box-sizing:border-box;
+		}
+
+		.Fieldset-Email {
+			details {
+				display:none;
 			}
 		}
 
@@ -70,6 +92,69 @@
 					pointer-events:none;
 				}
 			}
+		}
+
+		.FormInputName-FormConditionalRecipients {
+			> .Label {
+				margin:calc(var(--lineHeightMain) * .5) 0;
+				padding:0;
+				//noinspection CssNoGenericFontName
+				font-family:var(--fontStackHeading);
+				font-size:calc(var(--fontSizeHeading) * .4);
+				line-height:var(--lineHeightHeading);
+			}
+
+			.FormInputType-ListItem {
+				display:grid;
+				margin-bottom:20px;
+				padding-right:57px;
+				gap:5px;
+				//grid-template-columns:repeat(3, 1fr) 200px 200px;
+				grid-template-columns:1fr 2fr 100px repeat(2, 2fr);
+
+				@at-root #{selector-append('.Scale-Small', &)} {
+					padding-right:47px;
+				}
+
+				.FormInput {
+					grid-column:auto / auto;
+					margin-bottom:0;
+				}
+
+				.SortableHandle {
+					top:calc(1rem + 7px);
+					bottom:auto;
+				}
+
+				.Button-Remove {
+					width:52px;
+					height:52px;
+					top:calc(1rem + 1px);
+					right:0;
+					bottom:auto;
+
+					@at-root #{selector-append('.Scale-Small', &)} {
+						width:42px;
+						height:42px;
+					}
+
+					&.Disabled {
+						opacity:.25;
+						visibility:visible;
+						pointer-events:none;
+					}
+				}
+			}
+		}
+
+		.FormInputName-ConditionalRecipientsStrategy {
+			display:grid;
+			position:absolute;
+			top:0;
+			right:0;
+			align-items:center;
+			grid-template-columns:1fr 200px;
+			gap:20px;
 		}
 	}
 }

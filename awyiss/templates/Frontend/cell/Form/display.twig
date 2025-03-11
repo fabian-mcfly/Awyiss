@@ -4,6 +4,7 @@
 @var formElementsChecksum string
 @var formData array
 @var formErrors array
+@var page \Awyiss\Model\Entity\Page
 @var sent bool
 @var submitted bool
 @var includeWrapper bool
@@ -56,7 +57,7 @@ after a short delay to prevent spam bots from submitting the form directly.
 						{% endblock %}
 
 						<form
-							action="{{ UrlHelper.build({lang: languageShortcode, _name: 'FrontendFormAntiSpam'}) }}"
+							action="{{ UrlHelper.build({lang: languageShortcode, _name: 'FrontendFormAntiSpamPost'}) }}"
 							data-{{ now }}{{ formElementsChecksum }}="{{ form.action ?? currentUrl }}#Form-{{ form.identifier|ucparts(false) }}"
 							{% if form.enctype %}enctype="{{ form.enctype }}"{% endif %}
 							method="post"
@@ -68,6 +69,7 @@ after a short delay to prevent spam bots from submitting the form directly.
 							{% endblock %}
 
 							<input type="hidden" name="form_identifier" value="{{ form.identifier }}">
+							<input type="hidden" name="page_id" value="{{ page.id }}">
 						</form>
 					</div>
 				{% endblock %}
@@ -82,7 +84,7 @@ after a short delay to prevent spam bots from submitting the form directly.
 					{% endblock %}
 
 					<form class="Form Form-{{ form.identifier|ucparts(false) }}"
-						action="{{ UrlHelper.build({lang: languageShortcode, _name: 'FrontendFormAntiSpam'}) }}"
+						action="{{ UrlHelper.build({lang: languageShortcode, _name: 'FrontendFormAntiSpamPost'}) }}"
 						data-{{ now }}{{ formElementsChecksum }}="{{ form.action ?? currentUrl }}#Form-{{ form.identifier|ucparts(false) }}"
 						{% if form.enctype %}enctype="{{ form.enctype }}"{% endif %}
 						method="post"
@@ -94,6 +96,7 @@ after a short delay to prevent spam bots from submitting the form directly.
 						{% endblock %}
 
 						<input type="hidden" name="form_identifier" value="{{ form.identifier }}">
+						<input type="hidden" name="page_id" value="{{ page.id }}">
 					</form>
 				{% endblock %}
 			{% endif %}

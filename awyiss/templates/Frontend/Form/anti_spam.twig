@@ -5,6 +5,7 @@
 @var formElementsChecksum string
 @var formData array
 @var formErrors array
+@var page \Awyiss\Model\Entity\Page
 @var sent bool
 @var submitted bool
 @var _view \Awyiss\View\FrontendView
@@ -61,6 +62,7 @@
 											{{ contents|raw }}
 
 											<input type="hidden" name="form_identifier" value="{{ form.identifier }}">
+											<input type="hidden" name="page_id" value="{{ page.id }}">
 										</form>
 									</div>
 								{% endif %}

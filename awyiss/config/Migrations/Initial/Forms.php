@@ -111,6 +111,10 @@ class Forms {
 			'default' => false,
 			'limit' => null,
 			'null' => false,
+		])->addColumn('conditional_recipients_strategy', 'string', [
+			'default' => 'match_first',
+			'limit' => 20,
+			'null' => false,
 		])->addColumn('active', 'boolean', [
 			'default' => true,
 			'limit' => null,

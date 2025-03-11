@@ -6,8 +6,10 @@ namespace Awyiss\Utility\Form;
 
 use Awyiss\Core\App;
 use Awyiss\Event\EventManager;
+use Awyiss\Form\FormOptionsInterface;
 use Awyiss\Model\Entity\EmailTemplate;
 use Awyiss\Model\Entity\Form;
+use Awyiss\Model\Entity\Page;
 use Awyiss\Model\Table\FormEntriesTable;
 use Awyiss\Routing\Router;
 use Awyiss\Utility\Inflector;
@@ -63,6 +65,10 @@ class FormSender {
 	 */
 	protected readonly array $formData;
 	/**
+	 * @var \Awyiss\Form\FormOptionsInterface $formOptions
+	 */
+	protected FormOptionsInterface $formOptions;
+	/**
 	 * @var \Awyiss\Model\Table\FormEntriesTable $formEntriesTable
 	 */
 	protected FormEntriesTable $formEntriesTable;
@@ -70,19 +76,13 @@ class FormSender {
 	 * The timeout in seconds for checking if the user
 	 * can send another form with the same ip.
 	 *
-	 * @var int $ipTimeout
+	 * @var int $ipCheckTimeout
 	 */
-	protected int $ipTimeout = 300;
+	protected int $ipCheckTimeout = 300;
 	/**
-	 * Indicates whether the real sender should be used as the sender (= empty value),
-	 * or if the site owner's email should be used as the sender (= safe email address).
-	 *
-	 * This should ensure that no mailserver denies the email
-	 * due to the sender not having the same origin as the site.
-	 *
-	 * @var string $safeRealSender
+	 * @var \Awyiss\Model\Entity\Page
 	 */
-	protected string $safeRealSender;
+	protected readonly Page $page;
 	/**
 	 * @var \Awyiss\View\FrontendView $view
 	 */
@@ -92,10 +92,14 @@ class FormSender {
 	/**
 	 * @param \Awyiss\Model\Entity\Form $form
 	 * @param array $formData
+	 * @param \Awyiss\Form\FormOptionsInterface $formOptions
+	 * @param \Awyiss\Model\Entity\Page $page
 	 */
-	public function __construct(Form $form, array $formData) {
+	public function __construct(Form $form, array $formData, FormOptionsInterface $formOptions, Page $page) {
 		$lo_form = $form;
 		$this->formData = $formData;
+		$this->formOptions = $formOptions;
+		$this->page = $page;
 
 		/** @var \Awyiss\Model\Table\FormsTable $lo_formsTable */
 		$lo_formsTable = FactoryLocator::get('Table')->get('Forms');
@@ -110,9 +114,6 @@ class FormSender {
 
 		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
 		$this->formEntriesTable = FactoryLocator::get('Table')->get('FormEntries');
-
-		$lo_mailer = new Mailer('default');
-		$this->safeRealSender = 'noreply@' . $lo_mailer->getMessage()->getDomain();
 	}
 
 
@@ -178,7 +179,7 @@ class FormSender {
 	public function canSend(): bool {
 		// Check if the user can send the form (ip timeout).
 		if (!$this->canSendIp()) {
-			$ls_message = __d('form', 'error_ip_timeout', $this->ipTimeout);
+			$ls_message = __d('form', 'error_ip_timeout', $this->getIpCheckTimeout());
 			$this->form->setError('_general', $ls_message);
 			$this->errors[] = $ls_message;
 
@@ -187,7 +188,7 @@ class FormSender {
 
 		// Check if the user can send the form (duplicate check timeout).
 		if (!$this->canSendDuplicate()) {
-			$ls_message = __d('form', 'error_duplicate_timeout', $this->duplicateCheckTimeout);
+			$ls_message = __d('form', 'error_duplicate_timeout', $this->getDuplicateCheckTimeout());
 			$this->form->setError('_general', $ls_message);
 			$this->errors[] = $ls_message;
 
@@ -223,7 +224,7 @@ class FormSender {
 		->where([
 			'form_id' => $this->form->id,
 			'post_hash' => $ls_postHash,
-			'created_on >' => time() - $this->duplicateCheckTimeout,
+			'created_on >' => time() - $this->getDuplicateCheckTimeout(),
 		])
 		->first();
 
@@ -267,7 +268,7 @@ class FormSender {
 		->where([
 			'form_id' => $this->form->id,
 			'ip_hash' => $ls_ipHash,
-			'created_on >' => time() - $this->ipTimeout,
+			'created_on >' => time() - $this->getIpCheckTimeout(),
 		])
 		->first();
 
@@ -349,8 +350,8 @@ class FormSender {
 		 * And to make sure the recipient can reply to the email,
 		 * the real sender should be set as the reply-to address.
 		 */
-		if ($this->safeRealSender) {
-			$lo_mailer->setSender($this->safeRealSender, $this->form->userName)
+		if ($this->formOptions->getSafeRealSender()) {
+			$lo_mailer->setSender($this->formOptions->getSafeRealSender(), $this->form->userName)
 			->setReplyTo($this->form->userEmail, $this->form->userName);
 		}
 
@@ -428,8 +429,8 @@ class FormSender {
 		 * And to make sure the recipient can reply to the email,
 		 * the real sender should be set as the reply-to address.
 		 */
-		if ($this->safeRealSender) {
-			$lo_mailer->setSender($this->safeRealSender, $this->form->userName)
+		if ($this->formOptions->getSafeRealSender()) {
+			$lo_mailer->setSender($this->formOptions->getSafeRealSender(), $this->form->userName)
 			->setReplyTo($this->form->ownerEmail, $this->form->ownerName ?: Configure::read('Awyiss.System.Frontend.meta.titleAppendix'));
 		}
 
@@ -478,6 +479,7 @@ class FormSender {
 
 		$la_data = [
 			'form_id' => $this->form->id,
+			'page_id' => $this->page->id,
 			'subject' => $this->form->subject,
 			'subject_confirmation' => $this->form->subjectConfirmation,
 			'body' => $this->emailBody['email'] ? base64_encode(gzcompress($this->emailBody['email'])) : null,
@@ -499,18 +501,7 @@ class FormSender {
 	 * @return int
 	 */
 	public function getDuplicateCheckTimeout(): int {
-		return $this->duplicateCheckTimeout;
-	}
-
-
-	/**
-	 * @param int $duplicateCheckTimeout
-	 * @return $this
-	 */
-	public function setDuplicateCheckTimeout(int $duplicateCheckTimeout): static {
-		$this->duplicateCheckTimeout = $duplicateCheckTimeout;
-
-		return $this;
+		return $this->formOptions->getDuplicateCheckTimeout() ?? $this->duplicateCheckTimeout;
 	}
 
 
@@ -525,38 +516,8 @@ class FormSender {
 	/**
 	 * @return int
 	 */
-	public function getIpTimeout(): int {
-		return $this->ipTimeout;
-	}
-
-
-	/**
-	 * @param int $ipTimeout
-	 * @return $this
-	 */
-	public function setIpTimeout(int $ipTimeout): static {
-		$this->ipTimeout = $ipTimeout;
-
-		return $this;
-	}
-
-
-	/**
-	 * @return string
-	 */
-	public function getSafeRealSender(): string {
-		return $this->safeRealSender;
-	}
-
-
-	/**
-	 * @param string $safeRealSender
-	 * @return $this
-	 */
-	public function setSafeRealSender(string $safeRealSender): static {
-		$this->safeRealSender = $safeRealSender;
-
-		return $this;
+	public function getIpCheckTimeout(): int {
+		return $this->formOptions->getIpCheckTimeout() ?? $this->ipCheckTimeout;
 	}
 
 
@@ -676,13 +637,13 @@ class FormSender {
 		foreach ($la_formFields as $ls_field) {
 			if (
 				in_array($ls_field, $la_blocklistedFields) ||
-				!$this->form->get($ls_field) ||
-				!is_string($this->form->get($ls_field))
+				!$this->form->has($ls_field) ||
+				!is_scalar($this->form->get($ls_field))
 			) {
 				continue;
 			}
 
-			$ls_value = $this->replacePlaceholders($this->form->get($ls_field), $la_formData);
+			$ls_value = $this->replacePlaceholders((string)$this->form->get($ls_field), $la_formData);
 
 			$this->form->set($ls_field, $ls_value);
 		}

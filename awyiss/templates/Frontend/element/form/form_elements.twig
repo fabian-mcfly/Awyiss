@@ -119,6 +119,7 @@
 
 					{% block formElementSelect %}
 						<label for="FormInput-{{ formElement.identifier|ucparts(false) }}" class="FormElement-Label">{{ formElement.title }}</label>
+						{% if formElement.options|length == 0 %}<input type="hidden" name="{{ formElement.identifier }}" value="">{% endif %}
 						<select id="FormInput-{{ formElement.identifier|ucparts(false) }}" name="{{ formElement.identifier }}{% if formElement.type == 'select_multiple' %}[]{% endif %}" class="FormInputType-Select"
 							{% if formElement.disabled and formElement.disabled is not iterable %} disabled aria-disabled="true" {% endif %}
 							{% if formElement.required %} required{% endif %}
@@ -143,6 +144,7 @@
 						{% if formElement.options|length > 1 %}<span class="FormElement-Checkboxes">{% endif %}
 						{% for key, value in formElement.options %}
 							<span class="FormInputType-Checkbox-Item">
+								{% if loop.index0 == 0 %}<input type="hidden" name="{{ formElement.identifier }}" value="{% if formElement.options|length == 1 %}0{% endif %}">{% endif %}
 								{# Multiple checkboxes will not be marked as required if #}
 								<input id="FormInput-{{ formElement.identifier|ucparts(false) }}-{{ key|ucparts(false) }}" type="checkbox" name="{{ formElement.identifier }}{% if formElement.options|length > 1 %}[]{% endif %}"
 									value="{{ key }}"
@@ -168,6 +170,7 @@
 						{% if formElement.options|length > 1 %}<span class="FormElement-Radios">{% endif %}
 						{% for key, value in formElement.options %}
 							<span class="FormInputType-Radio-Item">
+								{% if loop.index0 == 0 %}<input type="hidden" name="{{ formElement.identifier }}" value="{% if formElement.options|length == 1 %}0{% endif %}">{% endif %}
 								<input id="FormInput-{{ formElement.identifier|ucparts(false) }}-{{ key|ucparts(false) }}" type="Radio" name="{{ formElement.identifier }}"
 									value="{{ key }}"
 									{% if (formElement.disabled and formElement.disabled is not iterable) or (formElement.disabled is iterable and key in formElement.disabled) %} disabled aria-disabled="true" {% endif %}

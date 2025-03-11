@@ -11,6 +11,7 @@ use Awyiss\Model\Entity;
 use Awyiss\Model\Entity\Form;
 use Awyiss\Model\Entity\FormElement;
 use Awyiss\Model\Entity\FormEntry;
+use Awyiss\Model\Entity\Page;
 use Awyiss\Routing\Router;
 use Awyiss\Utility\Inflector;
 use Awyiss\Validation\Validator;
@@ -66,9 +67,9 @@ class FormRenderer {
 	 */
 	protected bool $formSubmitted = false;
 	/**
-	 * @var string $languageShortcode
+	 * @var \Awyiss\Model\Entity\Page $page
 	 */
-	protected string $languageShortcode;
+	protected Page $page;
 	/**
 	 * @var \Awyiss\View\FrontendView
 	 * @noinspection PhpPropertyNamingConventionInspection
@@ -113,12 +114,12 @@ class FormRenderer {
 	/**
 	 * @param string|int $identifier
 	 * @param array $requestData
-	 * @param string $languageShortcode
+	 * @param \Awyiss\Model\Entity\Page $page
 	 * @return $this
 	 */
-	public function initForm(string|int $identifier, array $requestData, string $languageShortcode): static {
+	public function initForm(string|int $identifier, array $requestData, Page $page): static {
 		$this->form = $this->getFormByIdentifier($identifier);
-		$this->languageShortcode = $languageShortcode;
+		$this->page = $page;
 
 		if (!$this->form) {
 			return $this;
@@ -134,7 +135,11 @@ class FormRenderer {
 		// Load the form elements into the form
 		$this->form->formElements = $this->getFormElements();
 
-		$this->formOptions->modifyForm($this->form, $this->formData, $this->formSubmitted);
+		$this->formOptions->modifyForm($this->form, $this->formData, $this->formSubmitted, $this->page);
+
+		if ($this->formSubmitted) {
+			$this->formOptions->setConditionalRecipient($this->form, $this->formData, $this->page);
+		}
 
 		return $this;
 	}
@@ -279,7 +284,7 @@ class FormRenderer {
 				$lo_formElement->options = $this->parseOptions($lo_formElement->options, $lo_formElement->type);
 			}
 
-			$this->formOptions->modifyFormElement($lo_formElement, $this->form, $this->formData, $this->formSubmitted);
+			$this->formOptions->modifyFormElement($lo_formElement, $this->form, $this->formData, $this->formSubmitted, $this->page);
 		}
 
 		$this->formElementsChecksum = md5(serialize($la_formElements));
@@ -397,7 +402,7 @@ class FormRenderer {
 			return $this;
 		}
 
-		$lo_formHandler = new FormSender($this->form, $la_formData);
+		$lo_formHandler = new FormSender($this->form, $la_formData, $this->formOptions, $this->page);
 		$lo_formHandler->replacePlaceholdersInForm();
 
 		$this->formSent = $this->formSubmitted = true;
@@ -441,9 +446,9 @@ class FormRenderer {
 
 		$la_options = [];
 		foreach ($options as $li_key => $la_option) {
-			if (isset($la_option['_translations'][ $this->languageShortcode ])) {
-				$ls_value = $la_option['_translations'][ $this->languageShortcode ]['value'];
-				$ls_key = $la_option['_translations'][ $this->languageShortcode ]['key'];
+			if (isset($la_option['_translations'][ $this->page->languageShortcode ])) {
+				$ls_value = $la_option['_translations'][ $this->page->languageShortcode ]['value'];
+				$ls_key = $la_option['_translations'][ $this->page->languageShortcode ]['key'];
 			}
 			else {
 				$ls_key = $la_option['key'];
@@ -513,7 +518,10 @@ class FormRenderer {
 	 * @return string|false
 	 */
 	protected function sendForm(Form $form): string|false {
-		$lo_formSender = new FormSender($form, $this->formData);
+		/** @var \Awyiss\Utility\Form\FormSender $ls_formSenderClass */
+		$ls_formSenderClass = App::className('FormSender', 'Utility/Form');
+
+		$lo_formSender = new $ls_formSenderClass($form, $this->formData, $this->formOptions, $this->page);
 		$this->formSent = $lo_formSender->handle();
 
 		if (!$this->formSent) {
@@ -547,8 +555,8 @@ class FormRenderer {
 
 			$lo_request = Router::getRequest();
 
-			if ($lo_request->getParam('_name') === 'FrontendFormAntiSpam') {
-				$la_url['_name'] = 'FrontendFormAntiSpam';
+			if ($lo_request->getParam('_name') === 'FrontendFormAntiSpamPost') {
+				$la_url['_name'] = 'FrontendFormAntiSpamGet';
 			}
 			else {
 				$ls_languageShortcode = $lo_request->getParam('lang');

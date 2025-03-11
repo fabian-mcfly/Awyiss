@@ -86,11 +86,10 @@ class FormController extends AppController {
 	/**
 	 * @param string $formEntryHash
 	 * @return void
+	 * @throws \ReflectionException
 	 */
 	protected function handleFormEntry(string $formEntryHash): void {
 		$la_options = $this->getOptions();
-
-		$ls_languageShortcode = $this->request->getParam('lang');
 
 		/** @noinspection PhpParamsInspection */
 		$lo_formRenderer = new FormRenderer($this->createView('Frontend'));
@@ -100,7 +99,21 @@ class FormController extends AppController {
 			throw new NotFoundException('Form entry not found');
 		}
 
-		$lo_formRenderer->initForm($lo_formEntry->formId, $this->request->getData(), $ls_languageShortcode)
+		/** @var \Awyiss\Model\Entity\Page $lo_page */
+		$lo_page = $this->getTableLocator()->get('Pages')->find('withDeleted', ['skipPageRoleCheck' => true])
+		->where(['id' => $lo_formEntry->pageId])->first();
+
+		if (!$lo_page) {
+			$ls_languageShortcode = $this->request->getParam('lang');
+
+			/** @var \Awyiss\Model\Entity\Page $lo_page */
+			$lo_page = $this->getTableLocator()->get('Pages')->find('active', ['skipPageRoleCheck' => true])->where([
+				'parent_id IS' => null,
+				'language_shortcode' => $ls_languageShortcode,
+			])->first();
+		}
+
+		$lo_formRenderer->initForm($lo_formEntry->formId, $this->request->getData(), $lo_page)
 		->processFormEntry($lo_formEntry);
 
 		// Set the view variables
@@ -126,11 +139,23 @@ class FormController extends AppController {
 	protected function handleFormSubmission(string $identifier): void {
 		$la_options = $this->getOptions();
 
-		$ls_languageShortcode = $this->request->getParam('lang');
+		$li_pageId = $this->request->getData('page_id');
+		/** @var \Awyiss\Model\Entity\Page $lo_page */
+		$lo_page = $this->getTableLocator()->get('Pages')->find('all', ['skipPageRoleCheck' => true])->where(['id' => $li_pageId])->first();
+
+		if (!$lo_page) {
+			$ls_languageShortcode = $this->request->getParam('lang');
+
+			/** @var \Awyiss\Model\Entity\Page $lo_page */
+			$lo_page = $this->getTableLocator()->get('Pages')->find('active', ['skipPageRoleCheck' => true])->where([
+				'parent_id IS' => null,
+				'language_shortcode' => $ls_languageShortcode,
+			])->first();
+		}
 
 		/** @noinspection PhpParamsInspection */
 		$lo_formRenderer = new FormRenderer($this->createView('Frontend'));
-		$lo_formRenderer->initForm($identifier, $this->request->getData(), $ls_languageShortcode);
+		$lo_formRenderer->initForm($identifier, $this->request->getData(), $lo_page);
 
 		if ($lo_formRenderer->isValid()) {
 			$lx_validateCaptcha = $this->validateCaptcha($identifier, $this->request->getData());
@@ -140,7 +165,7 @@ class FormController extends AppController {
 				$la_formErrors = $lo_formRenderer->getFormErrors();
 			}
 			else {
-				$ls_captcha = $this->buildCaptcha($identifier, $ls_languageShortcode);
+				$ls_captcha = $this->buildCaptcha($identifier, $lo_page->languageShortcode);
 
 				if (is_string($lx_validateCaptcha)) {
 					$la_formErrors = [
@@ -164,6 +189,7 @@ class FormController extends AppController {
 			'formElementsChecksum' => $lo_formRenderer->getFormElementsChecksum(),
 			'formData' => $lo_formRenderer->getFormData(),
 			'formErrors' => $la_formErrors ?? [],
+			'page' => $lo_page,
 			'sent' => $lo_formRenderer->isFormSent(),
 			'submitted' => $lo_formRenderer->isFormSubmitted(),
 		]);

@@ -58,6 +58,7 @@
 <label for="FormInput-MultiCheckbox" class="FormElement-Label">Multi Checkbox</label>
 <span class="FormElement-Checkboxes">
 <span class="FormInputType-Checkbox-Item">
+<input type="hidden" name="multi_checkbox" value="">
 <input id="FormInput-MultiCheckbox-A" type="checkbox" name="multi_checkbox[]" value="a" class="FormInputType-Checkbox">
 <label for="FormInput-MultiCheckbox-A" class="FormInputType-Checkbox-Label">Label A</label>
 </span>
@@ -81,6 +82,7 @@
 <label for="FormInput-MultiRadio" class="FormElement-Label">Multi Radio</label>
 <span class="FormElement-Radios">
 <span class="FormInputType-Radio-Item">
+<input type="hidden" name="multi_radio" value="">
 <input id="FormInput-MultiRadio-A" type="Radio" name="multi_radio" value="a" required class="FormInputType-Radio">
 <label for="FormInput-MultiRadio-A" class="FormInputType-Radio-Label">Label A</label>
 </span>
@@ -140,6 +142,7 @@
 <div class="FormElement Column-100 FormElementType-Checkbox FormElement-DatenschutzAkzeptiert" id="FormElement9">
 <label for="FormInput-DatenschutzAkzeptiert" class="FormElement-Label">Datenschutz akzeptiert</label>
 <span class="FormInputType-Checkbox-Item">
+<input type="hidden" name="datenschutz_akzeptiert" value="0">
 <input id="FormInput-DatenschutzAkzeptiert-Ja" type="checkbox" name="datenschutz_akzeptiert" value="Ja" required class="FormInputType-Checkbox">
 <label for="FormInput-DatenschutzAkzeptiert-Ja" class="FormInputType-Checkbox-Label">Ich habe die Datenschutzerklärung gelesen und akzeptiert</label>
 </span>
@@ -151,6 +154,7 @@
 </div>
 </div>
 <input type="hidden" name="form_identifier" value="contact">
+<input type="hidden" name="page_id" value="1">
 </form>
 </div>
 <script nonce="">

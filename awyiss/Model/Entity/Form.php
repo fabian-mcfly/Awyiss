@@ -30,6 +30,7 @@ use Cake\Utility\Text;
  * @property string|null $salutationConfirmation
  * @property string|null $successMessage
  * @property bool $multistep
+ * @property string $conditionalRecipientsStrategy
  * @property bool $active
  * @property bool $deleted
  * @property int|null $createdBy
@@ -42,6 +43,7 @@ use Cake\Utility\Text;
  * @property \Awyiss\Model\Entity\EmailTemplate $confirmationEmailTemplate
  * @property \Awyiss\Model\Entity\FormElement[]|\Cake\Collection\CollectionInterface $formElements
  * @property \Awyiss\Model\Entity\FormEntry[]|\Cake\Collection\CollectionInterface $formEntries
+ * @property \Awyiss\Model\Entity\FormConditionalRecipient[]|\Cake\Collection\CollectionInterface $formConditionalRecipients
  */
 class Form extends Entity {
 	/**
@@ -59,6 +61,7 @@ class Form extends Entity {
 		'subject_confirmation' => 'subjectConfirmation',
 		'salutation_confirmation' => 'salutationConfirmation',
 		'success_message' => 'successMessage',
+		'conditional_recipients_strategy' => 'conditionalRecipientsStrategy',
 		'created_by' => 'createdBy',
 		'created_on' => 'createdOn',
 		'changed_by' => 'changedBy',
@@ -69,6 +72,7 @@ class Form extends Entity {
 		'confirmation_email_template' => 'confirmationEmailTemplate',
 		'form_elements' => 'formElements',
 		'form_entries' => 'formEntries',
+		'form_conditional_recipients' => 'formConditionalRecipients',
 	];
 
 
@@ -94,7 +98,9 @@ class Form extends Entity {
 		'salutationConfirmation' => true,
 		'successMessage' => true,
 		'multistep' => true,
+		'conditionalRecipientsStrategy' => true,
 		'active' => true,
+		'formConditionalRecipients' => true,
 	];
 
 

@@ -5,6 +5,7 @@ namespace Awyiss\Model\Table;
 
 
 use Awyiss\Awyiss;
+use Awyiss\Form\FormConditionalRecipients;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
 use Cake\Database\Schema\TableSchemaInterface;
@@ -60,6 +61,12 @@ class FormsTable extends Table {
 		$this->belongsTo('ConfirmationEmailTemplates', [
 			'className' => 'EmailTemplates',
 			'foreignKey' => 'confirmation_email_template_id',
+		]);
+
+		$this->hasMany('FormConditionalRecipients', [
+			'cascadeCallbacks' => true,
+			'dependent' => true,
+			'foreignKey' => 'form_id',
 		]);
 
 		$this->hasMany('FormElements', [
@@ -233,6 +240,18 @@ class FormsTable extends Table {
 
 		$validator->add('multistep', [
 			'boolean' => ['rule' => 'boolean'],
+		]);
+
+
+		$validator->notEmptyString('conditional_recipients_strategy');
+		$validator->add('conditional_recipients_strategy', [
+			'isScalar' => ['rule' => 'isScalar'],
+			'maxLength' => ['rule' => ['maxLength', 20]],
+			'inList' => ['rule' => ['inList', [
+				FormConditionalRecipients::PROCESS_STRATEGY_MATCH_FIRST,
+				FormConditionalRecipients::PROCESS_STRATEGY_MATCH_ALL,
+				FormConditionalRecipients::PROCESS_STRATEGY_MATCH_LAST,
+			]]],
 		]);
 
 

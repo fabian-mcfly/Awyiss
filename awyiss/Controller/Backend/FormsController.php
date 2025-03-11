@@ -6,8 +6,12 @@ namespace Awyiss\Controller\Backend;
 
 use Awyiss\Annotation\NoDirectAccess;
 use Awyiss\Controller\BackendController as Controller;
+use Awyiss\Form\FormConditionalRecipients;
 use Awyiss\Model\Entity\Form;
+use Awyiss\Model\Entity\PageRole;
+use Awyiss\Model\Enum\ComparisonOperator;
 use Awyiss\Routing\Router;
+use Awyiss\Utility\Inflector;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
 use Cake\ORM\Query\SelectQuery;
@@ -69,12 +73,7 @@ class FormsController extends Controller {
 			$this->save($lo_form);
 		}
 
-		$lo_emailTemplates = $this->fetchTable('EmailTemplates')->find('active');
-
-		$this->set([
-			'form' => $lo_form,
-			'emailTemplates' => $lo_emailTemplates,
-		]);
+		$this->setViewVars($lo_form);
 	}
 
 
@@ -89,7 +88,12 @@ class FormsController extends Controller {
 		$this->Authorization->ensure('update');
 
 		/** @var Form $lo_form */
-		$lo_form = $this->Forms->findById($id)->find('translations')->find('mediaAssignments')->find('mediaElementAssignments')->first();
+		$lo_form = $this->Forms->findById($id)
+			->find('translations')
+			->find('mediaAssignments')
+			->find('mediaElementAssignments')
+			->contain(['FormConditionalRecipients'])
+			->first();
 		if (!$lo_form) {
 			$this->Flash->error(__('record_not_found'));
 
@@ -100,12 +104,7 @@ class FormsController extends Controller {
 			$this->save($lo_form, 'edit');
 		}
 
-		$lo_emailTemplates = $this->fetchTable('EmailTemplates')->find('active')->orderByAsc('title');
-
-		$this->set([
-			'form' => $lo_form,
-			'emailTemplates' => $lo_emailTemplates,
-		]);
+		$this->setViewVars($lo_form);
 	}
 
 
@@ -151,7 +150,9 @@ class FormsController extends Controller {
 	 * @throws \Cake\Http\Exception\RedirectException
 	 */
 	protected function save(Form $form, string $method = 'add'): void {
-		$la_associated = [];
+		$la_associated = [
+			'FormConditionalRecipients',
+		];
 		if ($this->Forms->hasAttributes()) {
 			$la_associated[] = $this->Forms->getAttributesTableName(true);
 			$form->setAccess('attributes', true);
@@ -208,6 +209,7 @@ class FormsController extends Controller {
 
 		$la_options = [];
 
+		/** @noinspection PhpRedundantArrayCallInForeachIteratedValueInspection */
 		foreach (array_values((array)$la_data[ $key ]) as $lx_value) {
 			if (empty($lx_value['email'])) {
 				continue;
@@ -226,5 +228,65 @@ class FormsController extends Controller {
 		$this->setRequest($lo_request);
 
 		return $la_data;
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Entity\Form $form
+	 * @return void
+	 */
+	protected function setViewVars(Form $form): void {
+		$lo_emailTemplates = $this->fetchTable('EmailTemplates')->find('active')->orderByAsc('title');
+
+		$la_formConditionalRecipientTypes = [
+			'element_identifier',
+			'current_page',
+		];
+		$la_formConditionalRecipientOperators = ComparisonOperator::cases();
+
+		$this->Forms->loadInto($form, ['FormElements' => ['finder' => 'threaded']]);
+		if ($form->formElements) {
+			$la_formElements = collection($form->formElements)->listNested()->toList();
+			$form->formElements = [];
+
+			foreach ($la_formElements as $lo_formElement) {
+				if (!in_array($lo_formElement->type, ['fieldset', 'hidden', 'free_text', 'submit'])) {
+					$form->formElements[] = $lo_formElement;
+				}
+			}
+		}
+
+		$la_pageProperties = $this->fetchTable('Pages')->getSchema()->columns();
+		$la_pageProperties = array_combine($la_pageProperties, $la_pageProperties);
+		$la_pageProperties = array_diff($la_pageProperties, ['meta_title', 'meta_description', 'robots_follow', 'robots_index', 'deleted', 'created_by', 'created_on', 'changed_by', 'changed_on', 'deleted_by', 'deleted_on']);
+		foreach ($la_pageProperties as $ls_value) {
+			$la_pageProperties[ $ls_value ] = __d('pages', $ls_value) . ' (' . $ls_value . ')';
+		}
+
+		/** @var array<\Awyiss\Model\Entity\PageRole> $la_pageRoles */
+		$la_pageRoles = $this->fetchTable('PageRoles')->find()->all()->indexBy(function (PageRole $pageRole) {
+			return Inflector::pluralize($pageRole->identifier);
+		})->toArray();
+
+		$la_attributes = $this->fetchTable('Attributes')->find()->where(['scope IN' => array_keys($la_pageRoles)])->toArray();
+		/** @var \Awyiss\Model\Entity\Attribute $lo_attribute */
+		foreach ($la_attributes as $lo_attribute) {
+			$la_pageProperties[$la_pageRoles[ $lo_attribute->scope ]->title ][ $lo_attribute->identifier ] = $lo_attribute->label . ' (' . $lo_attribute->identifier . ')';
+		}
+
+		$la_conditionalRecipientsStrategies = [
+			FormConditionalRecipients::PROCESS_STRATEGY_MATCH_FIRST,
+			FormConditionalRecipients::PROCESS_STRATEGY_MATCH_LAST,
+			FormConditionalRecipients::PROCESS_STRATEGY_MATCH_ALL,
+		];
+
+		$this->set([
+			'form' => $form,
+			'emailTemplates' => $lo_emailTemplates,
+			'formConditionalRecipientTypes' => $la_formConditionalRecipientTypes,
+			'formConditionalRecipientOperators' => $la_formConditionalRecipientOperators,
+			'pageProperties' => $la_pageProperties,
+			'conditionalRecipientsStrategies' => $la_conditionalRecipientsStrategies,
+		]);
 	}
 }

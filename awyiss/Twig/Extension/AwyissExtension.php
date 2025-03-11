@@ -95,14 +95,14 @@ class AwyissExtension extends AbstractExtension {
 			new TwigFunction(
 				'form',
 				function (array $context, string|int $identifier, array $options = []) {
-					if (empty($context['languageShortcode']) || strlen($context['languageShortcode']) !== 2) {
-						throw new InvalidArgumentException('The "form" function requires languageShortcode string in the context.');
+					if (empty($context['page']) || !$context['page'] instanceof Page) {
+						throw new InvalidArgumentException('The "form" function requires a Page entity in the context.');
 					}
 
 					$la_options = ['viewVars' => $context];
 					$la_options = Hash::merge($la_options, $options);
 
-					return $context['_view']->cell('Frontend/Form', [$identifier, $context['languageShortcode'], $la_options]);
+					return $context['_view']->cell('Frontend/Form', [$identifier, $context['page'], $la_options]);
 				},
 				['needs_context' => true, 'is_safe' => ['all']]
 			),

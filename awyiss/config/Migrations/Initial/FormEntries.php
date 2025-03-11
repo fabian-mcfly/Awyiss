@@ -40,8 +40,11 @@ class FormEntries {
 		])->addPrimaryKey(['id'])->addColumn('form_id', 'integer', [
 			'default' => null,
 			'limit' => null,
-			'null' => true,
-			'signed' => true,
+			'null' => false,
+		])->addColumn('page_id', 'integer', [
+			'default' => null,
+			'limit' => null,
+			'null' => false,
 		])->addColumn('subject', 'string', [
 			'default' => null,
 			'limit' => 255,

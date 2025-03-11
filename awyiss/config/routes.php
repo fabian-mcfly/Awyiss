@@ -108,9 +108,22 @@ $routes->scope('/', function (RouteBuilder $routeBuilder): void {
 	$routeBuilder->connect(
 		'/{lang}/_form/*',
 		['prefix' => 'Frontend', 'controller' => 'Form', 'action' => 'antiSpam'],
-		['_name' => Awyiss::REALM_FRONTEND . 'FormAntiSpam']
-	)->setPatterns([
+		['_name' => Awyiss::REALM_FRONTEND . 'FormAntiSpamPost']
+	)->setMethods([
+		'POST',
+	])->setPatterns([
 		'lang' => '[a-z]{2}',
+	])->setPersist(['lang']);
+
+	$routeBuilder->connect(
+		'/{lang}/_form/{formEntry}',
+		['prefix' => 'Frontend', 'controller' => 'Form', 'action' => 'antiSpam'],
+		['_name' => Awyiss::REALM_FRONTEND . 'FormAntiSpamGet']
+	)->setMethods([
+		'GET',
+	])->setPatterns([
+		'lang' => '[a-z]{2}',
+		'formEntry' => '[a-z0-9]{32}',
 	])->setPersist(['lang']);
 
 	$routeBuilder->connect(

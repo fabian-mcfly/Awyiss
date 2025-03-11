@@ -43,6 +43,13 @@ class FormEntriesTable extends Table {
 	 */
 	public function initializeAssociations(): void {
 		$this->belongsTo('Forms');
+		$this->belongsTo('Pages', [
+			'finder' => [
+				'all' => [
+					'skipPageRoleCheck' => true,
+				],
+			],
+		]);
 	}
 
 
@@ -58,6 +65,7 @@ class FormEntriesTable extends Table {
 
 		$validator->requirePresence([
 			'formId',
+			'pageId',
 			'ipHash',
 			'postHash',
 		], 'create');
@@ -65,6 +73,13 @@ class FormEntriesTable extends Table {
 
 		$validator->notEmptyString('formId');
 		$validator->add('formId', [
+			'isInteger' => ['rule' => 'isInteger'],
+			'maxLength' => ['rule' => ['maxLength', 11]],
+		]);
+
+
+		$validator->notEmptyString('pageId');
+		$validator->add('pageId', [
 			'isInteger' => ['rule' => 'isInteger'],
 			'maxLength' => ['rule' => ['maxLength', 11]],
 		]);
@@ -137,6 +152,15 @@ class FormEntriesTable extends Table {
 			[
 				'errorField' => 'formId',
 				'message' => __df($this->getI18nDomain(), 'validation', 'error_form_exists'),
+			]
+		);
+
+		$rules->add(
+			$rules->existsIn('pageId', 'Pages'),
+			'pageExists',
+			[
+				'errorField' => 'pageId',
+				'message' => __df($this->getI18nDomain(), 'validation', 'error_page_exists'),
 			]
 		);
 

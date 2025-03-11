@@ -1,6 +1,9 @@
 {#
 @var form Awyiss\Model\Entity\Form
 @var emailTemplates \Awyiss\Model\Entity\EmailTemplate[]
+@var formConditionalRecipientTypes array
+@var formConditionalRecipientOperators array
+@var pageProperties array
 @var _view \Awyiss\View\BackendView
 @var AssetHelper \Awyiss\View\Helper\AssetHelper
 @var AttributesHelper \Awyiss\View\Helper\AttributesHelper
@@ -102,67 +105,202 @@
 						{{ FormHelper.control('email_template_id', {columnSpan: 6, options: hashPrinter(emailTemplates.toArray(), 'label', 'id')}) }}
 					{% endblock %}
 
-					{% block formControlCc %}
-						<div class="FormInput FormInputType-List FormInputName-Cc ColumnSpan-6" data-list-item-add="{{ __('list_item_add') }}" data-list-item-remove="{{ __('list_item_remove') }}">
-							<label class="Label">{{ __('cc') }}</label>
+					{% block formAdditionalEmailSettings %}
+						<details>
+							{% block formAdditionalEmailSettingsSummary %}
+								<summary>{{ __('additional_email_settings') }}</summary>
+							{% endblock %}
 
-							{% set counter = 0 %}
-							{% for cc in form.cc %}
-								<div class="FormInputType-ListItem">
-									{{ FormHelper.control('cc.' ~ counter ~ '.email', {
-										label: __('cc_email'),
-									}) }}
+							{% block formAdditionalEmailSettingsInner %}
+								<fieldset class="EmailDetails Grid-12">
+									{% block formControlCc %}
+										<div class="FormInput FormInputType-List FormInputName-Cc ColumnSpan-6" data-list-item-add="{{ __('list_item_add') }}" data-list-item-remove="{{ __('list_item_remove') }}">
+											<label class="Label">{{ __('cc') }}</label>
 
-									{{ FormHelper.control('cc.' ~ counter ~ '.name', {
-										label: __('cc_name'),
-									}) }}
+											{% set counter = 0 %}
+											{% for cc in form.cc %}
+												<div class="FormInputType-ListItem">
+													{{ FormHelper.control('cc.' ~ counter ~ '.email', {
+														label: __('cc_email'),
+													}) }}
 
-									{% set counter = counter + 1 %}
-								</div>
-							{% endfor %}
+													{{ FormHelper.control('cc.' ~ counter ~ '.name', {
+														label: __('cc_name'),
+													}) }}
 
-							<div class="FormInputType-ListItem FormInputType-ListItem-Default">
-								{{ FormHelper.control('cc.' ~ counter ~ '.email', {
-									label: __('cc_email'),
-								}) }}
+													{% set counter = counter + 1 %}
+												</div>
+											{% endfor %}
 
-								{{ FormHelper.control('cc.' ~ counter ~ '.name', {
-									label: __('cc_name'),
-								}) }}
-							</div>
-						</div>
-					{% endblock %}
+											<div class="FormInputType-ListItem FormInputType-ListItem-Default">
+												{{ FormHelper.control('cc.' ~ counter ~ '.email', {
+													label: __('cc_email'),
+												}) }}
 
-					{% block formControlBcc %}
-						<div class="FormInput FormInputType-List FormInputName-Bcc ColumnSpan-6" data-list-item-add="{{ __('list_item_add') }}" data-list-item-remove="{{ __('list_item_remove') }}">
-							<label class="Label">{{ __('bcc') }}</label>
+												{{ FormHelper.control('cc.' ~ counter ~ '.name', {
+													label: __('cc_name'),
+												}) }}
+											</div>
+										</div>
+									{% endblock %}
 
-							{% set counter = 0 %}
-							{% set translatable = languages.Frontend|filter(language => language.active)|length > 1 %}
-							{% for bcc in form.bcc %}
-								<div class="FormInputType-ListItem">
-									{{ FormHelper.control('bcc.' ~ counter ~ '.email', {
-										label: __('bcc_email'),
-									}) }}
+									{% block formControlBcc %}
+										<div class="FormInput FormInputType-List FormInputName-Bcc ColumnSpan-6" data-list-item-add="{{ __('list_item_add') }}" data-list-item-remove="{{ __('list_item_remove') }}">
+											<label class="Label">{{ __('bcc') }}</label>
 
-									{{ FormHelper.control('bcc.' ~ counter ~ '.name', {
-										label: __('bcc_name'),
-									}) }}
+											{% set counter = 0 %}
+											{% set translatable = languages.Frontend|filter(language => language.active)|length > 1 %}
+											{% for bcc in form.bcc %}
+												<div class="FormInputType-ListItem">
+													{{ FormHelper.control('bcc.' ~ counter ~ '.email', {
+														label: __('bcc_email'),
+													}) }}
 
-									{% set counter = counter + 1 %}
-								</div>
-							{% endfor %}
+													{{ FormHelper.control('bcc.' ~ counter ~ '.name', {
+														label: __('bcc_name'),
+													}) }}
 
-							<div class="FormInputType-ListItem FormInputType-ListItem-Default">
-								{{ FormHelper.control('bcc.' ~ counter ~ '.email', {
-									label: __('bcc_email'),
-								}) }}
+													{% set counter = counter + 1 %}
+												</div>
+											{% endfor %}
 
-								{{ FormHelper.control('bcc.' ~ counter ~ '.name', {
-									label: __('bcc_name'),
-								}) }}
-							</div>
-						</div>
+											<div class="FormInputType-ListItem FormInputType-ListItem-Default">
+												{{ FormHelper.control('bcc.' ~ counter ~ '.email', {
+													label: __('bcc_email'),
+												}) }}
+
+												{{ FormHelper.control('bcc.' ~ counter ~ '.name', {
+													label: __('bcc_name'),
+												}) }}
+											</div>
+										</div>
+									{% endblock %}
+
+									{% block formControlFormConditionalRecipients %}
+										<div
+											class="FormInput FormInputType-List FormInputName-FormConditionalRecipients" data-list-item-add="{{ __('list_item_add') }}"
+											data-list-item-remove="{{ __('list_item_remove') }}">
+
+											<label class="Label">{{ __('form_conditional_recipients') }}</label>
+
+											{% block formControlFormConditionalRecipientsStrategy %}
+												{% set conditionalRecipientsStrategies = combine(
+													conditionalRecipientsStrategies,
+													conditionalRecipientsStrategies|map(conditionalRecipientsStrategy => __('conditional_recipients_strategy_' ~ conditionalRecipientsStrategy))
+												) %}
+												{{ FormHelper.control('conditional_recipients_strategy', {
+													empty: false,
+													options: conditionalRecipientsStrategies,
+												}) }}
+											{% endblock %}
+
+											{% set counter = 0 %}
+											{% set formConditionalRecipientTypes = combine(
+												formConditionalRecipientTypes,
+												formConditionalRecipientTypes|map(formConditionalRecipientType => __d('form_conditional_recipients', 'type_' ~ formConditionalRecipientType))
+											) %}
+
+											{% set formConditionalRecipientOperators = combine(
+												formConditionalRecipientOperators|column('value'),
+												formConditionalRecipientOperators|map(formConditionalRecipientOperator => __d('form_conditional_recipients', 'operator_' ~ formConditionalRecipientOperator.name|underscore))
+											) %}
+
+											{% set formElements = combine(
+												form.formElements|column('identifier'),
+												form.formElements|map(formElement => formElement.label ~ ' (' ~ formElement.identifier ~ ')')
+											) %}
+
+											{% for key, conditionalRecipient in form.formConditionalRecipients %}
+												<div class="FormInputType-ListItem">
+													{{ FormHelper.hidden('form_conditional_recipients.' ~ counter ~ '.id', {
+														val: conditionalRecipient.id,
+													}) }}
+
+													{{ FormHelper.control('form_conditional_recipients.' ~ counter ~ '.type', {
+														empty: false,
+														label: __d('form_conditional_recipients', 'type'),
+														options: formConditionalRecipientTypes,
+													}) }}
+
+													{% set fields = formElements %}
+													{% if conditionalRecipient.type == 'current_page' %}
+														{% set fields = pageProperties %}
+													{% endif %}
+
+													{{ FormHelper.control('form_conditional_recipients.' ~ counter ~ '.field', {
+														label: __d('form_conditional_recipients', 'field'),
+														options: fields,
+														required: conditionalRecipient.type == 'element_identifier',
+													}) }}
+
+													{{ FormHelper.control('form_conditional_recipients.' ~ counter ~ '.operator', {
+														label: __d('form_conditional_recipients', 'operator'),
+														options: formConditionalRecipientOperators,
+														required: false,
+													}) }}
+
+													{{ FormHelper.control('form_conditional_recipients.' ~ counter ~ '.value', {
+														label: __d('form_conditional_recipients', 'value'),
+														required: false,
+													}) }}
+
+													{{ FormHelper.control('form_conditional_recipients.' ~ counter ~ '.recipient', {
+														label: __d('form_conditional_recipients', 'recipient'),
+														required: false,
+													}) }}
+
+													{% set counter = counter + 1 %}
+												</div>
+											{% endfor %}
+
+											<div class="FormInputType-ListItem FormInputType-ListItem-Default">
+												{{ FormHelper.hidden('form_conditional_recipients.' ~ counter ~ '.id', {
+													val: '',
+												}) }}
+
+												{{ FormHelper.control('form_conditional_recipients.' ~ counter ~ '.type', {
+													empty: false,
+													label: __d('form_conditional_recipients', 'type'),
+													options: formConditionalRecipientTypes,
+													required: false,
+													val: 'element_identifier',
+												}) }}
+
+												{{ FormHelper.control('form_conditional_recipients.' ~ counter ~ '.field', {
+													label: __d('form_conditional_recipients', 'field'),
+													options: formElements,
+													required: false,
+												}) }}
+
+												{{ FormHelper.control('form_conditional_recipients.' ~ counter ~ '.operator', {
+													label: __d('form_conditional_recipients', 'operator'),
+													options: formConditionalRecipientOperators,
+													required: false,
+												}) }}
+
+												{{ FormHelper.control('form_conditional_recipients.' ~ counter ~ '.value', {
+													label: __d('form_conditional_recipients', 'value'),
+													required: false,
+												}) }}
+
+												{{ FormHelper.control('form_conditional_recipients.' ~ counter ~ '.recipient', {
+													label: __d('form_conditional_recipients', 'recipient'),
+													required: false,
+												}) }}
+											</div>
+
+											<template id="FormElementOptions">
+												{{ FormHelper.select('_form_element_options', formElements) }}
+											</template>
+
+											<template id="CurrentPageOptions">
+												{{ FormHelper.select('_current_page_options', pageProperties) }}
+											</template>
+										</div>
+									{% endblock %}
+								</fieldset>
+							{% endblock %}
+						</details>
 					{% endblock %}
 				{% endblock %}
 			</fieldset>

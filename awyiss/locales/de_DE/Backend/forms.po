@@ -113,6 +113,12 @@ msgstr "BCC Email"
 msgid "bcc_name"
 msgstr "BCC Name"
 
+msgid "additional_email_settings"
+msgstr "Erweiterte E-Mail-Einstellungen"
+
+msgid "form_conditional_recipients"
+msgstr "Empfänger-Regeln"
+
 msgid "fieldset_confirmation_email"
 msgstr "Bestätigungs-E-Mail"
 
@@ -166,4 +172,14 @@ msgstr "<summary>Platzhalter</summary>"
 "Wenn mind. eines der Felder leer ist, wird der Alternativtext 'Sehr geehrte Damen und Herren' angezeigt.</li>"
 "</ul>"
 
+msgid "conditional_recipients_strategy"
+msgstr "Strategie"
 
+msgid "conditional_recipients_strategy_match_first"
+msgstr "Erster Treffer (Standard)"
+
+msgid "conditional_recipients_strategy_match_all"
+msgstr "Alle Regeln müssen zutreffen"
+
+msgid "conditional_recipients_strategy_match_last"
+msgstr "Letzter Treffer"

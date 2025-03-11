@@ -113,6 +113,12 @@ msgstr "BCC Email"
 msgid "bcc_name"
 msgstr "BCC Name"
 
+msgid "additional_email_settings"
+msgstr "Additional Email Settings"
+
+msgid "form_conditional_recipients"
+msgstr "Recipients rules"
+
 msgid "fieldset_confirmation_email"
 msgstr "Confirmation Email"
 
@@ -165,3 +171,15 @@ msgstr "<summary>Placeholders</summary>"
 "If both `firstname` and `lastname` are filled in, 'Hello Jane Doe' will be displayed.<br>"
 "If at least one of the fields is empty, the alternative text 'Dear Sir or Madam' will be displayed.</li>"
 "</ul>"
+
+msgid "conditional_recipients_strategy"
+msgstr "Strategy"
+
+msgid "conditional_recipients_strategy_match_first"
+msgstr "First match (default)"
+
+msgid "conditional_recipients_strategy_match_all"
+msgstr "All rules must match"
+
+msgid "conditional_recipients_strategy_match_last"
+msgstr "Last match"

@@ -155,6 +155,7 @@ fieldset {
 	grid-auto-rows:min-content;
 	grid-template-columns:repeat(12, 1fr);
 
+	> details,
 	> .sf-dump {
 		grid-column:1 / -1;
 	}

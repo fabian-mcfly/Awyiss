@@ -1,0 +1,102 @@
+# FormConditionalRecipients translations of Awyiss CMS
+# Copyright 2024 Awyiss <EMAIL@ADDRESS>
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 0.1.0\n"
+"POT-Creation-Date: 2025-03-07 12:35+0000\n"
+"PO-Revision-Date: 2025-03-07 12:35+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+msgid "type"
+msgstr "Type"
+
+msgid "field"
+msgstr "Field"
+
+msgid "operator"
+msgstr "Operator"
+
+msgid "value"
+msgstr "Value"
+
+msgid "recipient"
+msgstr "Recipient"
+
+msgid "type_current_page"
+msgstr "Current page"
+
+msgid "type_element_identifier"
+msgstr "Form element"
+
+msgid "operator_equal"
+msgstr "equal"
+
+msgid "operator_not_equal"
+msgstr "not equal"
+
+msgid "operator_greater_than"
+msgstr "greater than"
+
+msgid "operator_greater_than_or_equal"
+msgstr "greater than or equal"
+
+msgid "operator_less_than"
+msgstr "less than"
+
+msgid "operator_less_than_or_equal"
+msgstr "less than or equal"
+
+msgid "operator_between"
+msgstr "between"
+
+msgid "operator_not_between"
+msgstr "not between"
+
+msgid "operator_length_equal"
+msgstr "length equal"
+
+msgid "operator_length_not_equal"
+msgstr "length not equal"
+
+msgid "operator_shorter_than"
+msgstr "length shorter than"
+
+msgid "operator_shorter_than_or_equal"
+msgstr "length shorter than or equal"
+
+msgid "operator_longer_than"
+msgstr "length longer than"
+
+msgid "operator_longer_than_or_equal"
+msgstr "length longer than or equal"
+
+msgid "operator_in"
+msgstr "in"
+
+msgid "operator_not_in"
+msgstr "not in"
+
+msgid "operator_contains"
+msgstr "contains"
+
+msgid "operator_not_contains"
+msgstr "not contains"
+
+msgid "operator_starts_with"
+msgstr "starts with"
+
+msgid "operator_not_starts_with"
+msgstr "not starts with"
+
+msgid "operator_ends_with"
+msgstr "ends with"
+
+msgid "operator_not_ends_with"
+msgstr "not ends with"
+
+msgid "operator_regexp"
+msgstr "Regular expression"

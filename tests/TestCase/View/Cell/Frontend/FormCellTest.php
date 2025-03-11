@@ -57,10 +57,11 @@ class FormCellTest extends TestCase {
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDisplay(): void {
+		$page = $this->fetchTable('Pages')->find()->first();
 
 		$output = (string)$this->cell('Frontend/Form', [
 			'contact',
-			'de',
+			$page,
 			[
 				'fullWidth' => 1440.00,
 				'singleColumnBreakpoint' => 768.00,
@@ -83,9 +84,11 @@ class FormCellTest extends TestCase {
 	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function testDisplayForUnknownForm(): void {
+		$page = $this->fetchTable('Pages')->find()->first();
+
 		$output = (string)$this->cell('Frontend/Form', [
 			'unknown',
-			'de',
+			$page,
 		]);
 
 		$this->assertSame('', $output);
