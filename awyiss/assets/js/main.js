@@ -5,6 +5,7 @@ import ButtonArea from 'ButtonArea';
 import ButtonHandler from 'ButtonHandler';
 import ColorPicker from 'ColorPicker';
 import DatePicker from 'DatePicker';
+import DetailsHandler from 'DetailsHandler';
 import EventHandler from 'EventHandler';
 import FieldsetManager from 'FieldsetManager';
 import FooterReveal from 'FooterReveal';
@@ -301,6 +302,12 @@ export async function initMainOnReady() {
 	 * @type {DatePicker}
 	 */
 	window.datePicker = new DatePicker();
+
+	/**
+	 * @global
+	 * @type {DetailsHandler}
+	 */
+	window.detailsHandler = new DetailsHandler();
 
 	/**
 	 * @global
