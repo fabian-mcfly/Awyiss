@@ -12,7 +12,7 @@ msgstr ""
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
 msgid "meta_title_overview"
-msgstr "Frei definierbare Datentabellen"
+msgstr "Eigene Datentabellen"
 
 msgid "meta_title_add"
 msgstr "Tabelle hinzufügen"
@@ -21,7 +21,7 @@ msgid "meta_title_edit"
 msgstr "Tabelle bearbeiten"
 
 msgid "menu_title"
-msgstr "Frei definierbare Datentabellen"
+msgstr "Eigene Datentabellen"
 
 msgid "menu_add"
 msgstr "Neue Tabelle"
@@ -30,7 +30,7 @@ msgid "page_filter_label"
 msgstr "Seite"
 
 msgid "headline_overview"
-msgstr "Frei definierbare Datentabellen"
+msgstr "Eigene Datentabellen"
 
 msgid "create"
 msgstr "Neue Tabelle"
