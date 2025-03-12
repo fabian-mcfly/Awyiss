@@ -35,7 +35,7 @@ export default class ButtonHandler {
 		// Make params an instance variable
 		this.params = params;
 
-		if (!document.documentElement.classList.contains('👀')) {
+		if (!document.documentElement.classList.contains('👀') && !(window.matchMedia('(prefers-reduced-motion: reduce)')).matches) {
 			// Iterate over each parameter
 			params.forEach(param => {
 				// Extract the elementSelector and hoverSelector from the parameter
