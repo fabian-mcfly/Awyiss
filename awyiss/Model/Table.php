@@ -933,6 +933,11 @@ class Table extends BaseTable {
 		if (str_starts_with($this->getTable(), 'attributes_')) {
 			foreach ($this->getAttributes() as $lo_attribute) {
 				$la_column = $schema->getColumn($lo_attribute->identifier);
+
+				if (!$la_column) {
+					continue;
+				}
+
 				if ($lo_attribute->type === 'json') {
 					$schema->setColumnType($lo_attribute->identifier, 'json');
 				}
