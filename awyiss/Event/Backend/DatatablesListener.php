@@ -179,13 +179,11 @@ class DatatablesListener implements EventListenerInterface {
 
 		$la_commands = [];
 
-		$ls_folder = ' --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations';
-
 		//Bake a `drop`-migration
-		$la_commands[] = 'bin' . DS . 'cake bake migration drop_' . $entity->identifier . $ls_folder;
+		$la_commands[] = 'bin' . DS . 'cake bake migration drop_' . $entity->identifier . ' --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations';
 
 		//Migrate all the newly baked migrations
-		$la_commands[] = 'bin' . DS . 'cake migrations migrate' . $ls_folder . ' --no-lock';
+		$la_commands[] = 'bin' . DS . 'cake migrations migrate --source ../../' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations --no-lock';
 
 		//Clear the database schema
 		$la_commands[] = 'bin' . DS . 'cake schema_cache clear';
@@ -239,7 +237,7 @@ class DatatablesListener implements EventListenerInterface {
 		$la_commands[] = 'bin' . DS . 'cake bake migration create_' . $entity->identifier . ' ' . implode(' ', $la_columns) . $ls_migrationsPath;
 
 		//Migrate all the newly baked migrations
-		$la_commands[] = 'bin' . DS . 'cake migrations migrate --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations --no-lock';
+		$la_commands[] = 'bin' . DS . 'cake migrations migrate --source ../../' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations --no-lock';
 
 		//Clear the database schema
 		$la_commands[] = 'bin' . DS . 'cake schema_cache clear';

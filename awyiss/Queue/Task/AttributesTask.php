@@ -256,7 +256,7 @@ class AttributesTask extends Task/* implements AddInterface*/ {
 
 		//Migrate all the newly baked migrations
 		/** @noinspection PhpVariableNamingConventionInspection */
-		$commands[] = 'bin' . DS . 'cake migrations migrate --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations --no-lock';
+		$commands[] = 'bin' . DS . 'cake migrations migrate --source ../../' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations --no-lock';
 		//Clear the database schema
 		/** @noinspection PhpVariableNamingConventionInspection */
 		$commands[] = 'bin' . DS . 'cake schema_cache clear';
