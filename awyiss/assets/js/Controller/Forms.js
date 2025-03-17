@@ -40,8 +40,6 @@ export default class FormsController {
 		// Remove all options
 		fieldSelect.innerHTML = '';
 
-		console.log(event.target.value);
-
 		if (event.target.value === 'element_identifier') {
 			const template = document.getElementById('FormElementOptions');
 			const options = template.content.querySelectorAll('select > *');
@@ -56,6 +54,9 @@ export default class FormsController {
 				fieldSelect.appendChild(option.cloneNode(true));
 			});
 		}
+
+		fieldSelect.disabled = event.target.value === '';
+		fieldSelect.required = event.target.value !== '';
 	}
 }
 

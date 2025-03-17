@@ -205,7 +205,7 @@
 												formConditionalRecipientOperators|map(formConditionalRecipientOperator => __d('form_conditional_recipients', 'operator_' ~ formConditionalRecipientOperator.name|underscore))
 											) %}
 
-											{% set formElements = formElements ? combine(
+											{% set formElements = form.formElements ? combine(
 												form.formElements|column('identifier'),
 												form.formElements|map(formElement => formElement.label ~ ' (' ~ formElement.identifier ~ ')')
 											) : [] %}
