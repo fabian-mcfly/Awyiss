@@ -50,3 +50,9 @@ $lo_pages->find('published',
 $lo_pages->find('published',
 	at: new \Cake\I18n\DateTime('2024-03-14 20:15:00'),
 );
+
+
+// JS served by nginx?
+location ~* /ProgressCheckerWorker\.js$ {
+    add_header Service-Worker-Allowed "/";
+}
