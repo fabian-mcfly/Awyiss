@@ -353,7 +353,7 @@ abstract class GenericDatatablesController extends Controller {
 
 		$this->Datatable = $this->{$identifier} = $this->fetchTable($identifier);
 
-		$this->nestable = LocalConfig::read('nest.enabled');
+		$this->nestable = LocalConfig::read('nest.enabled', false);
 		if ($this->nestable) {
 			$this->isNestableWithCategoriesEnabled();
 		}

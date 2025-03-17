@@ -619,7 +619,7 @@ class PagesController extends Controller {
 
 		$this->Pages = $this->{$identifier} = $this->fetchTable($identifier);
 
-		$this->nestable = LocalConfig::read('nest.enabled');
+		$this->nestable = LocalConfig::read('nest.enabled', false);
 		if ($this->nestable) {
 			$this->isNestableWithCategoriesEnabled();
 		}
