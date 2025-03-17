@@ -193,12 +193,8 @@ class BackendView extends AppView {
 
 			$this->addHelper('Time', ['outputTimezone' => $ls_timezone]);
 
-			if ($lo_backendLanguage->dateFormat) {
-				$lo_twig->addGlobal('dateFormat', $lo_backendLanguage->dateFormat);
-			}
-			if ($lo_backendLanguage->timeFormat) {
-				$lo_twig->addGlobal('timeFormat', $lo_backendLanguage->timeFormat);
-			}
+			$lo_twig->addGlobal('dateFormat', $lo_backendLanguage->dateFormat ?? 'yyyy-MM-dd');
+			$lo_twig->addGlobal('timeFormat', $lo_backendLanguage->timeFormat ?? 'HH:mm');
 
 			$lo_backendLanguage = $this->cleanLanguage($lo_backendLanguage);
 		}
