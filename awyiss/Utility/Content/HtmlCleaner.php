@@ -204,7 +204,7 @@ class HtmlCleaner {
 		//);
 
 		// Load the HTML string into the DOMDocument
-		$lo_dom->loadHTML('<!DOCTYPE html>' . $value);
+		$lo_dom->loadHTML('<!DOCTYPE html>' . mb_encode_numericentity($value, [0x80, 0x10FFFF, 0, ~0], 'UTF-8'));
 
 		// Clear any errors collected during loadHTML
 		libxml_clear_errors();
