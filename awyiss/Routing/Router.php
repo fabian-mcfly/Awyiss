@@ -23,7 +23,7 @@ class Router extends BaseRouter {
 				$lx_url['_name'] = Awyiss::getRealm();
 
 				if ($lx_url['_name'] === Awyiss::REALM_FRONTEND && empty($lx_url['slug']) && empty($lx_url['lang'])) {
-					$lx_url['_name'] .= 'Root';
+					$lx_url['_name'] = Router::getRequest()->getParam('_name');
 				}
 			}
 
