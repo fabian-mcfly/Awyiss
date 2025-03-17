@@ -161,6 +161,7 @@ class FormsController extends Controller {
 		$la_data = $this->request->getData();
 		$la_data = $this->formatCcBcc($la_data, 'cc');
 		$la_data = $this->formatCcBcc($la_data, 'bcc');
+		$la_data = $this->formatConditionalRecipients($la_data);
 
 		$this->Forms->patchEntity($form, $la_data, [
 			'associated' => $la_associated,
@@ -225,6 +226,30 @@ class FormsController extends Controller {
 
 		// Update the request data
 		$lo_request = $this->request->withData($key, $la_options);
+		$this->setRequest($lo_request);
+
+		return $la_data;
+	}
+
+
+	/**
+	 * @param array $data
+	 * @return array|null
+	 */
+	protected function formatConditionalRecipients(array $data): ?array {
+		if (!isset($data['form_conditional_recipients']) || !is_array($data['form_conditional_recipients'])) {
+			return $data;
+		}
+
+		$la_data = $data;
+		foreach ($la_data['form_conditional_recipients'] as $ls_key => $la_conditionalRecipient) {
+			if (empty($la_conditionalRecipient['type'])) {
+				unset($la_data['form_conditional_recipients'][ $ls_key ]);
+			}
+		}
+
+		// Update the request data
+		$lo_request = $this->request->withData('form_conditional_recipients', $la_data['form_conditional_recipients']);
 		$this->setRequest($lo_request);
 
 		return $la_data;

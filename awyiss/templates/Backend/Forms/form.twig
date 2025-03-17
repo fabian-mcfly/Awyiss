@@ -217,9 +217,9 @@
 													}) }}
 
 													{{ FormHelper.control('form_conditional_recipients.' ~ counter ~ '.type', {
-														empty: false,
 														label: __d('form_conditional_recipients', 'type'),
 														options: formConditionalRecipientTypes,
+														required: false,
 													}) }}
 
 													{% set fields = formElements %}
@@ -230,7 +230,7 @@
 													{{ FormHelper.control('form_conditional_recipients.' ~ counter ~ '.field', {
 														label: __d('form_conditional_recipients', 'field'),
 														options: fields,
-														required: conditionalRecipient.type == 'element_identifier',
+														required: conditionalRecipient.type ? true : false,
 													}) }}
 
 													{{ FormHelper.control('form_conditional_recipients.' ~ counter ~ '.operator', {
@@ -259,11 +259,9 @@
 												}) }}
 
 												{{ FormHelper.control('form_conditional_recipients.' ~ counter ~ '.type', {
-													empty: false,
 													label: __d('form_conditional_recipients', 'type'),
 													options: formConditionalRecipientTypes,
 													required: false,
-													val: 'element_identifier',
 												}) }}
 
 												{{ FormHelper.control('form_conditional_recipients.' ~ counter ~ '.field', {
