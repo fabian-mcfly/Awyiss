@@ -67,8 +67,6 @@ class WebfontProvider {
 			return strnatcasecmp($a['name'], $b['name']);
 		});
 
-		Cache::write('webfonts', $la_webfonts);
-
 		return $la_webfonts;
 	}
 
