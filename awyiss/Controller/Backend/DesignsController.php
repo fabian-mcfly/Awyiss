@@ -131,7 +131,7 @@ class DesignsController extends Controller {
 		}
 
 		$lo_webfonts = new Collection($la_webfonts);
-		$la_webfonts = $lo_webfonts->filter(fn ($font) => $font['popularity'] < 1000)->groupBy('category')->toArray();
+		$la_webfonts = $lo_webfonts->groupBy('category')->toArray();
 		foreach ($la_webfonts as $ls_category => $la_fonts) {
 			$lo_fonts = new Collection($la_fonts);
 			$la_webfonts[ $ls_category ] = $lo_fonts->indexBy('id')->toArray();

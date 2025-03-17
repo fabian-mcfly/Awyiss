@@ -5,6 +5,7 @@ namespace Awyiss\Utility\Design;
 
 
 use Cake\Cache\Cache;
+use Cake\Collection\Collection;
 use RuntimeException;
 
 
@@ -76,6 +77,8 @@ class WebfontProvider {
 	 * @return array
 	 */
 	public function getWebfonts(): array {
-		return $this->webfonts;
+		$lo_webfonts = new Collection($this->webfonts);
+
+		return $lo_webfonts->filter(fn ($font) => $font['popularity'] < 1000)->toArray();
 	}
 }
