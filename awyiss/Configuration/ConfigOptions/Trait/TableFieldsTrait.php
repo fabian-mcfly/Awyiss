@@ -32,7 +32,7 @@ trait TableFieldsTrait {
 		static $la_tables;
 
 		if (!isset($la_tables)) {
-			$la_tables = ConnectionManager::get('test')->getSchemaCollection()->listTables();
+			$la_tables = ConnectionManager::get('default')->getSchemaCollection()->listTables();
 		}
 
 		$ls_scope = $this->getScope();
