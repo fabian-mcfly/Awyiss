@@ -63,7 +63,7 @@ msgid "delete_failed"
 msgstr "Das Inhaltstemplate konnte nicht gelöscht werden"
 
 msgid "file_changes_in_progress"
-msgstr "Es ist aktuell eine Dateiänderung in Bearbeitung. Bitte warten Sie, bis dieese abgeschlossen ist."
+msgstr "Es ist aktuell eine Dateiänderung in Bearbeitung. Bitte warten Sie, bis diese abgeschlossen ist."
 
 msgid "file_name"
 msgstr "Dateiname"

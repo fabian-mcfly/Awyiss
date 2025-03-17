@@ -93,4 +93,4 @@ msgid "content_areas[new][identifier][0]"
 msgstr "Identifikator"
 
 msgid "file_changes_in_progress"
-msgstr "Es ist aktuell eine Dateiänderung in Bearbeitung. Bitte warten Sie, bis dieese abgeschlossen ist."
+msgstr "Es ist aktuell eine Dateiänderung in Bearbeitung. Bitte warten Sie, bis diese abgeschlossen ist."
