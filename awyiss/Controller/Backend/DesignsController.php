@@ -6,12 +6,12 @@ namespace Awyiss\Controller\Backend;
 
 use Awyiss\Annotation\NoDirectAccess;
 use Awyiss\Controller\BackendController as Controller;
+use Awyiss\Core\App;
 use Awyiss\Model\Entity\Design;
 use Awyiss\Routing\Router;
 use Awyiss\Utility\Design\ScssCompiler;
 use Awyiss\Utility\Design\ScssVariableProvider;
 use Awyiss\Utility\Design\ScssVariableType;
-use Awyiss\Utility\Design\WebfontProvider;
 use Awyiss\Utility\Inflector;
 use Cake\Collection\Collection;
 use Cake\Core\Configure;
@@ -75,7 +75,8 @@ class DesignsController extends Controller {
 		$lo_scssVariableProvider = new ScssVariableProvider($la_designerConfig);
 		$la_internalVariables = $lo_scssVariableProvider->getNormalizedInternalVariables();
 
-		$lo_webfontProvider = new WebfontProvider();
+		$ls_webfontProviderClass = App::className('WebfontProvider', 'Utility/Design');
+		$lo_webfontProvider = new $ls_webfontProviderClass();
 		$la_webfonts = $lo_webfontProvider->getWebfonts();
 
 		$lo_preview = null;
