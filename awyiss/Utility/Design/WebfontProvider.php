@@ -21,7 +21,7 @@ class WebfontProvider {
 	 */
 	protected string $fontApiUrl = 'https://gwfh.mranftl.com/api/fonts';
 	/**
-	 * @var array $webfonts
+	 * @var array<string, array{category: string, id: string, name: string, popularity: int, variants: array, version: string}> $webfonts
 	 */
 	protected array $webfonts = [];
 
