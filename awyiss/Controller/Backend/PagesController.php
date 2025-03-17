@@ -16,6 +16,7 @@ use Awyiss\Model\Enum\PageRoleEnumInterface;
 use Awyiss\Routing\Router;
 use Awyiss\Utility\Inflector;
 use Cake\Collection\CollectionInterface;
+use Cake\Core\Configure;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\Response;
 use Cake\ORM\Query\SelectQuery;
@@ -47,6 +48,10 @@ class PagesController extends Controller {
 	 */
 	protected CollectionInterface $pageTemplates;
 	/**
+	 * @var int|null Forced root page id when categories are disabled
+	 */
+	protected ?int $rootPageId = null;
+	/**
 	 * @var string|null Session identifier for the selected parent_id
 	 */
 	protected ?string $selectedParentIdSessionIdentifier = null;
@@ -73,6 +78,10 @@ class PagesController extends Controller {
 		parent::initialize();
 
 		$this->selectedParentIdSessionIdentifier = Inflector::underscore($this->getName()) . '.' . ($this->request->getParam('lang') ?? 'global') . '.parent_id';
+
+		if (!($this->categories['enabled'] ?? false)) {
+			$this->rootPageId = Configure::read('Awyiss.' . $this->getName() . '.Frontend.categories.rootPageId');
+		}
 	}
 
 
@@ -152,7 +161,7 @@ class PagesController extends Controller {
 		$lo_page = $this->Pages->newDefaultEntity([
 			'languageShortcode' => LocaleMiddleware::getLanguage()->shortcode,
 			'pageRoleId' => $this->getPageRole(),
-			'parentId' => $lo_session->read($this->selectedParentIdSessionIdentifier),
+			'parentId' => $this->rootPageId ?? $lo_session->read($this->selectedParentIdSessionIdentifier),
 		]);
 
 		if ($this->request->is('post')) {
@@ -477,6 +486,10 @@ class PagesController extends Controller {
 
 		if (empty($la_data['slug'])) {
 			$la_data['slug'] = $la_data['title'] ?? null;
+		}
+
+		if ($this->rootPageId) {
+			unset($la_data['parent_id']);
 		}
 
 		$this->Pages->patchEntity($page, ['page_role_id' => $this->getPageRole()->value] + $la_data, [

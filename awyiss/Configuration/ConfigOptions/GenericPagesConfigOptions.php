@@ -203,5 +203,17 @@ class GenericPagesConfigOptions extends AbstractGenericConfigOptions {
 				),
 			],
 		]);
+
+		$this->add(Awyiss::REALM_FRONTEND, [
+			'categories' => [
+				new ConfigOption(
+					defaultValue: null,
+					identifier: 'rootPageId',
+					localizable: true,
+					nullable: true,
+					type: ConfigOptionType::Integer
+				),
+			],
+		]);
 	}
 }
