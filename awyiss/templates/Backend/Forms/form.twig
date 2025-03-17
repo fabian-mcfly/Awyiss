@@ -205,10 +205,10 @@
 												formConditionalRecipientOperators|map(formConditionalRecipientOperator => __d('form_conditional_recipients', 'operator_' ~ formConditionalRecipientOperator.name|underscore))
 											) %}
 
-											{% set formElements = combine(
+											{% set formElements = formElements ? combine(
 												form.formElements|column('identifier'),
 												form.formElements|map(formElement => formElement.label ~ ' (' ~ formElement.identifier ~ ')')
-											) %}
+											) : [] %}
 
 											{% for key, conditionalRecipient in form.formConditionalRecipients %}
 												<div class="FormInputType-ListItem">
