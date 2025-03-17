@@ -326,6 +326,9 @@ class FrontendController extends AppController {
 			'mediaRenderOptions' => $lo_mediaRenderOptions,
 		]);
 
+		$lo_request = $this->request->withAttribute('currentPage', $lo_page);
+		$this->setRequest($lo_request);
+
 		if ($this->request->getSession()->read('Auth')) {
 			$this->loadFrontendEditor($lo_page);
 		}

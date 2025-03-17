@@ -77,6 +77,14 @@ class MenuCell extends Cell {
 			'viewVars' => [],
 		];
 
+		if ($la_options['currentRoute'] === '/') {
+			/** @var \Awyiss\Model\Entity\Page $lo_currentPage */
+			$lo_currentPage = $this->request->getAttribute('currentPage');
+			if ($lo_currentPage) {
+				$la_options['currentRoute'] = '/' . $lo_currentPage->languageShortcode . '/' . $lo_currentPage->slug . '/';
+			}
+		}
+
 		// Set the template for the view
 		$this->viewBuilder()->setTemplatePath('Frontend/cell/Menu');
 

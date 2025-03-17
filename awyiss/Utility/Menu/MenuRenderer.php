@@ -208,7 +208,7 @@ class MenuRenderer {
 			'item' => $item,
 		];
 
-		$lo_link = $item->getLink();
+		$lo_link = $item->getLink($this->currentRoute);
 		if ($lo_link && $item->isAccessible()) {
 			$la_data += [
 				'attributes' => $this->templates->formatAttributes($lo_link->attributes),

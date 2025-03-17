@@ -397,9 +397,10 @@ class MenuItem implements ArrayAccess {
 	/**
 	 * Gets the link of the menu item.
 	 *
+	 * @param string|null $currentRoute
 	 * @return object|null The link of the menu item.
 	 */
-	public function getLink(): ?object {
+	public function getLink(?string $currentRoute = null): ?object {
 		if ($this->link === null) {
 			return null;
 		}
@@ -419,6 +420,25 @@ class MenuItem implements ArrayAccess {
 		}
 		else {
 			$this->link->attributes = (array)$this->link->attributes;
+		}
+
+		if ($currentRoute) {
+			$ls_requestTarget = Router::getRequest()?->getRequestTarget();
+
+			// If the request is the homepage and the link is as well, set the link '/'
+			if ($ls_requestTarget === '/' && $this->link->url === $currentRoute) {
+				$this->link->url = Router::url('/', true);
+			}
+
+			// If the link is the current route and contains a '#', set the link to '#'
+			if (str_contains($this->link->url, '#')) {
+				$la_parts = explode('#', $this->link->url);
+				$la_parts[0] = '/' . trim($la_parts[0], '/');
+
+				if ($la_parts[0] === $currentRoute) {
+					$this->link->url = '#' . $la_parts[1];
+				}
+			}
 		}
 
 		return $this->link;
