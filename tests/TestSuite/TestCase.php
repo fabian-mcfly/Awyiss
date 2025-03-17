@@ -12,6 +12,7 @@ use Awyiss\Routing\Router;
 use Cake\Core\Configure;
 use Cake\Datasource\FactoryLocator;
 use Cake\Event\EventDispatcherTrait;
+use Cake\Http\ServerRequest;
 use Cake\Routing\RoutingApplicationInterface;
 use Cake\TestSuite\TestCase as BaseTestCase;
 use LogicException;
@@ -33,6 +34,10 @@ class TestCase extends BaseTestCase {
 
 		EventManager::instance(new EventManager(true));
 		$this->_eventManager = new EventManager(true);
+
+		/** @noinspection PhpVariableNamingConventionInspection */
+		$request = new ServerRequest();
+		Router::setRequest($request);
 	}
 
 
