@@ -89,8 +89,17 @@ class FormOptions implements FormOptionsInterface {
 				]);
 			}
 			elseif (in_array($lo_formElement->type, ['checkbox', 'radio', 'select'])) {
+				$la_keys = array_keys($lo_formElement->options ?? []);
+
+				if (
+					in_array($lo_formElement->type, ['checkbox', 'radio']) &&
+					!$lo_formElement->required
+				) {
+					$la_keys[] = '';
+				}
+
 				$validator->add($lo_formElement->identifier, [
-					'inList' => ['rule' => ['inList', array_keys($lo_formElement->options ?? [])]],
+					'inList' => ['rule' => ['inList', $la_keys]],
 				]);
 			}
 			elseif ($lo_formElement->type === 'email') {

@@ -142,7 +142,7 @@
 <div class="FormElement Column-100 FormElementType-Checkbox FormElement-DatenschutzAkzeptiert" id="FormElement9">
 <label for="FormInput-DatenschutzAkzeptiert" class="FormElement-Label">Datenschutz akzeptiert</label>
 <span class="FormInputType-Checkbox-Item">
-<input type="hidden" name="datenschutz_akzeptiert" value="0">
+<input type="hidden" name="datenschutz_akzeptiert" value="">
 <input id="FormInput-DatenschutzAkzeptiert-Ja" type="checkbox" name="datenschutz_akzeptiert" value="Ja" required class="FormInputType-Checkbox">
 <label for="FormInput-DatenschutzAkzeptiert-Ja" class="FormInputType-Checkbox-Label">Ich habe die Datenschutzerklärung gelesen und akzeptiert</label>
 </span>
