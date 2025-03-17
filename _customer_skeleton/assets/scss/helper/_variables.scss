@@ -3,7 +3,7 @@ $includeColumnSystem:true !default;
 
 $fontNameMain:Helvetica !default;
 $fontStackFallbackMain:Arial, Geneva, sans-serif !default;
-$fontStackMain:quote($fontNameMain), $fontStackFallbackMain;
+$fontStackMain:quote($fontNameMain), inspect($fontStackFallbackMain);
 $fontWeightMain:400 !default;
 $fontStyleMain:'normal' !default;
 $fontSizeMain:18px !default;
@@ -13,7 +13,7 @@ $lineHeightMain:1.625rem !default;
 
 $fontNameAlternative:'' !default;
 $fontStackFallbackAlternative:Georgia, Times, serif !default;
-$fontStackAlternative:quote($fontNameAlternative), $fontStackFallbackAlternative;
+$fontStackAlternative:quote($fontNameAlternative), inspect($fontStackFallbackAlternative);
 $fontWeightAlternative:400 !default;
 $fontStyleAlternative:'normal' !default;
 $fontSizeAlternative:1em !default;
