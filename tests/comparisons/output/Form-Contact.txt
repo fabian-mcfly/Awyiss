@@ -154,7 +154,7 @@
 </div>
 </div>
 <input type="hidden" name="form_identifier" value="contact">
-<input type="hidden" name="page_id" value="1">
+<input type="hidden" name="_page_id" value="1">
 </form>
 </div>
 <script nonce="">

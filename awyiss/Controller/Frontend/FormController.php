@@ -139,7 +139,7 @@ class FormController extends AppController {
 	protected function handleFormSubmission(string $identifier): void {
 		$la_options = $this->getOptions();
 
-		$li_pageId = $this->request->getData('page_id');
+		$li_pageId = $this->request->getData('_page_id');
 		/** @var \Awyiss\Model\Entity\Page $lo_page */
 		$lo_page = $this->getTableLocator()->get('Pages')->find('all', ['skipPageRoleCheck' => true])->where(['id' => $li_pageId])->first();
 
