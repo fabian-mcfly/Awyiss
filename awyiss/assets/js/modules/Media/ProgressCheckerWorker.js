@@ -93,6 +93,8 @@ self.addEventListener('message', function (event) {
 				function read() {
 					reader.read().then(({value, done}) => {
 						if (done) {
+							isFetching[event.data.type] = false;
+
 							return;
 						}
 
@@ -101,7 +103,24 @@ self.addEventListener('message', function (event) {
 						 * @type {string}
 						 */
 						let message = decoder.decode(value, {stream: !done});
-						let data = JSON.parse(message);
+						message = message.trim();
+
+						// If there's a newline in the message, it's likely that the message contains multiple JSON objects.
+						if (message && message.indexOf('\n') !== -1) {
+							// Split the message by newline and use the last row as the data.
+							const messages = message.split('\n');
+							message = messages[messages.length - 1].trim();
+						}
+
+						let data;
+
+						try {
+							data = JSON.parse(message);
+						}
+						catch (e) {
+							console.error('Error parsing JSON:', e);
+							return;
+						}
 
 						// Post the data to the main JavaScript context
 						self.clients.matchAll().then(function (clients) {

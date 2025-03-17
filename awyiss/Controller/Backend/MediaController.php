@@ -473,6 +473,7 @@ class MediaController extends Controller {
 				// Send an "aborted" event
 				$la_data = ['message' => 'aborted'];
 				echo json_encode($la_data);
+				echo "\n";
 
 				// Flush the output buffer one last time
 				ob_flush();
@@ -533,6 +534,7 @@ class MediaController extends Controller {
 
 			// Echo the JSON encoded data
 			echo json_encode($la_data);
+			echo "\n";
 
 			// Flush the output buffer
 			ob_flush();
