@@ -34,6 +34,14 @@ class FormConditionalRecipientsTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
+	protected array $systemOrder = [
+		'relatedColumns' => ['form_id'],
+	];
+
+
+	/**
+	 * @inheritDoc
+	 */
 	public function initializeAssociations(): void {
 		$this->belongsTo('Forms', [
 			'foreignKey' => 'form_id',
@@ -98,6 +106,11 @@ class FormConditionalRecipientsTable extends Table {
 		$validator->notEmptyString('recipient');
 		$validator->add('recipient', [
 			'maxLength' => ['rule' => ['maxLength', 255]],
+		]);
+
+
+		$validator->add('systemOrder', [
+			'isInteger' => ['rule' => 'isInteger'],
 		]);
 
 

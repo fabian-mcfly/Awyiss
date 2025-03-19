@@ -691,8 +691,12 @@ class FrontendController extends AppController {
 		$ls_slug = $ls_languageShortcode . '/' . $this->request->getParam('slug');
 		$ls_slug = '/' . trim($ls_slug, '/');
 
-		// Don't track resized or preview images
-		if (str_contains($ls_slug, '/_resized') || str_contains($ls_slug, '_preview/')) {
+		// Don't track resized and preview images and assets
+		if (
+			str_contains($ls_slug, '/_resized') ||
+			str_contains($ls_slug, '_preview/') ||
+			str_starts_with($ls_slug, '/assets/')
+		) {
 			return;
 		}
 

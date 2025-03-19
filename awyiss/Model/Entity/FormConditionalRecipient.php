@@ -17,6 +17,7 @@ use Awyiss\Model\Entity;
  * @property \Awyiss\Model\Enum\ComparisonOperator $operator
  * @property string|null $value
  * @property string $recipient
+ * @property int $systemOrder
  * @property int|null $createdBy
  * @property \Cake\I18n\DateTime|null $createdOn
  * @property int|null $changedBy
@@ -28,6 +29,7 @@ class FormConditionalRecipient extends Entity {
 	 */
 	protected static array $fieldMap = [
 		'form_id' => 'formId',
+		'system_order' => 'systemOrder',
 	];
 
 
@@ -41,5 +43,6 @@ class FormConditionalRecipient extends Entity {
 		'operator' => true,
 		'value' => true,
 		'recipient' => true,
+		'systemOrder' => true,
 	];
 }

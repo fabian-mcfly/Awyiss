@@ -63,6 +63,11 @@ class FormConditionalRecipients {
 			'default' => null,
 			'limit' => 255,
 			'null' => false,
+		])->addColumn('system_order', 'integer', [
+			'default' => '0',
+			'limit' => null,
+			'null' => false,
+			'signed' => true,
 		])->addColumn('created_by', 'integer', [
 			'default' => null,
 			'limit' => null,
@@ -82,6 +87,12 @@ class FormConditionalRecipients {
 			'limit' => null,
 			'null' => true,
 		])->addIndex(
+			[
+				'system_order',
+			], [
+				'name' => 'FORM_CONDITIONAL_RECIPIENTS_SYSTEM_ORDER',
+			]
+		)->addIndex(
 			[
 				'form_id',
 			], [
