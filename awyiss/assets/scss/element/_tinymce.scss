@@ -233,7 +233,7 @@ body {
 				background-color:oklch(from var(--colorMedium) calc(l - 0.1400) calc(c - 0.002) calc(h + 0.39));
 			}
 
-			.tox-collection__item--active {
+			.tox-collection__item--active:not(.tox-collection__item--state-disabled) {
 				background-color:var(--colorSuccess);
 			}
 		}
