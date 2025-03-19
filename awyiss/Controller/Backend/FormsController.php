@@ -242,11 +242,17 @@ class FormsController extends Controller {
 		}
 
 		$la_data = $data;
-		foreach ($la_data['form_conditional_recipients'] as $ls_key => $la_conditionalRecipient) {
+		$li_systemOrder = 1;
+		foreach ($la_data['form_conditional_recipients'] as $ls_key => &$la_conditionalRecipient) {
 			if (empty($la_conditionalRecipient['type'])) {
 				unset($la_data['form_conditional_recipients'][ $ls_key ]);
+				continue;
 			}
+
+			$la_conditionalRecipient['system_order'] = $li_systemOrder;
+			$li_systemOrder++;
 		}
+		unset($la_conditionalRecipient);
 
 		// Update the request data
 		$lo_request = $this->request->withData('form_conditional_recipients', $la_data['form_conditional_recipients']);
