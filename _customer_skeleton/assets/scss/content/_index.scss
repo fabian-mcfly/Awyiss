@@ -1,9 +1,9 @@
 .ContentRow {
 	margin-top:var(--contentRowGap);
+}
 
-	&:first-of-type {
-		margin-top:0;
-	}
+:nth-child(1 of .ContentRow) {
+	margin-top:0;
 }
 
 .ContentElement,
@@ -56,11 +56,13 @@
 		--backgroundColor:var(--colorContrast);
 		--textColor:var(--colorBright);
 	}
+}
 
-	&:first-of-type {
-		@media screen AND (max-width:#{$singleColumnBreakpoint}) {
-			margin-top:0;
-		}
+:nth-child(1 of .ContentElement),
+:nth-child(1 of .FormElement),
+:nth-child(1 of .WidgetElement) {
+	@media screen AND (max-width:#{$singleColumnBreakpoint}) {
+		margin-top:0;
 	}
 }
 

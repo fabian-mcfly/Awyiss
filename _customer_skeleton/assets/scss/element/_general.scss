@@ -10,6 +10,11 @@
 	text-shadow:1px 1px 0 rgba(0, 0, 0, .1);
 }
 
+:focus-visible {
+	outline:2px solid var(--colorMain);
+	outline-offset:2px;
+}
+
 html {
 	background-blend-mode:color-burn;
 	background-color:var(--colorLight);
@@ -27,6 +32,11 @@ html {
 	}
 	letter-spacing:-.5px;
 	scrollbar-width:thin;
+	scroll-behavior:smooth;
+
+	@media screen and (prefers-reduced-motion:reduce) {
+		scroll-behavior:auto;
+	}
 
 	&.NoJS,
 	&.wf-active {
@@ -228,8 +238,6 @@ a {
 }
 
 h1, h2, h3, h4, h5, h6 {
-	font:inherit;
-
 	a {
 		color:inherit;
 	}

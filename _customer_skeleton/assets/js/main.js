@@ -23,9 +23,11 @@ function initMainOnReady() {
 		elements_selector: '.Lazyload',
 	});
 
-	const header = document.getElementById('HeaderArea');
-	if (header) {
-		var headroom = new Headroom(header, {
+	(function(header) {
+		if (!header) {
+			return;
+		}
+		const headroom = new Headroom(header, {
 			offset: header.offsetHeight + 40,
 			tolerance: 5,
 			classes: {
@@ -48,7 +50,51 @@ function initMainOnReady() {
 			}
 		});
 		headroom.init();
-	}
+	})(document.getElementById('HeaderArea'));
+
+	(function(menu) {
+		if (!menu) {
+			return;
+		}
+
+		const menuToggle = document.getElementById('MainMenuTrigger');
+
+		menu.addEventListener('click', function(event) {
+			if (event.target.closest('a')) {
+				menuToggle.checked = false;
+			}
+		});
+	})(document.getElementById('Menu-Main'));
+
+	(function (labels) {
+		if (!labels.length) {
+			return;
+		}
+
+		labels.forEach(function (label) {
+			// Get the value of the for attribute
+			const forValue = label.getAttribute('for');
+
+			if (!forValue) {
+				return;
+			}
+
+			const input = document.getElementById(forValue);
+
+			if (!input) {
+				return;
+			}
+
+			label.addEventListener('keydown', function (event) {
+				if (event.code === 'Enter' || event.code === 'Space') {
+					// Toggle the input's checked state
+					input.checked = !input.checked;
+
+					event.preventDefault();
+				}
+			});
+		});
+	})(document.querySelectorAll('label[for]'));
 
 	window.lightbox = new Lightbox({
 		baseUrl: baseUrl,
