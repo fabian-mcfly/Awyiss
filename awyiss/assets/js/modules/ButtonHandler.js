@@ -6,7 +6,6 @@ import CustomMouseEvent from 'CustomMouseEvent';
  * ButtonHandler class
  * This class is used to handle mouseenter and mouseleave events on a set of elements.
  * It also creates and manages a hover element for each of these elements.
- * It now also watches the DOM for changes and handles every item ever added to it.
  */
 export default class ButtonHandler {
 	/**
@@ -235,10 +234,17 @@ export default class ButtonHandler {
 	 * @param {Event} event - The click event.
 	 */
 	handleClick(event) {
-		// Check if the clicked element has the 'data-confirm' attribute
 		// noinspection JSUnresolvedReference
-		if (!event.target.hasAttribute('data-confirm') || event.sentFromConfirmDialog) {
-			return; // If not, exit the function
+		if (
+			// If the clicked element doesn't have the 'data-confirm' attribute
+			!event.target.hasAttribute('data-confirm') ||
+			// or if the event was sent from the confirm dialog
+			event.sentFromConfirmDialog ||
+			// or if the event was sent from the form leave confirm dialog
+			event.sentFromFormLeaveConfirmDialog
+		) {
+			// do nothing here
+			return;
 		}
 
 		event.preventDefault();
@@ -310,23 +316,6 @@ export default class ButtonHandler {
 
 		// Dispatch the event on the same target as the original event
 		originalEvent.target.dispatchEvent(newEvent);
-
-		/*// Check if the target element is a link
-		if (this.target.tagName.toLowerCase() === 'a') {
-			// If it is a link, navigate to its href
-			window.location.href = this.target.href;
-		}
-		else {
-			// If it is not a link, check if it is part of a form
-			const form = this.target.closest('form');
-			if (form) {
-				// If it is part of a form, submit the form
-				form.submit();
-			}
-			else {
-
-			}
-		}*/
 
 		// Close the dialog
 		this.dialog.close();
