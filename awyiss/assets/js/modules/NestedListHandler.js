@@ -806,6 +806,8 @@ export default class NestedListHandler {
 			});
 
 			this.defaultOrder = this.getOrderWithLevels();
+
+			window.formLeaveConfirmation.isFormChanged = false;
 		})
 		.catch(error => {
 			console.error('There has been a problem with the fetch operation:', error);
