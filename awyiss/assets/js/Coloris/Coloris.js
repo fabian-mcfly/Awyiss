@@ -96,11 +96,6 @@ export default class Coloris {
 	currentFormat = null;
 
 	/**
-	 * @type {string}
-	 */
-	oldColor;
-
-	/**
 	 * @type {boolean|null}
 	 */
 	keyboardNav = null;
@@ -188,18 +183,20 @@ export default class Coloris {
 	 * Init the color picker.
 	 */
 	init() {
+		if (!Coloris.picker) {
+			// Bind the picker to the default selector
+			this.bindFields(this.settings.element);
+
+			if (this.settings.wrap) {
+				this.wrapFields(this.settings.element);
+			}
+
+			if (this.settings.inline) {
+				this.updatePickerPosition();
+			}
+		}
+
 		this.#buildPicker();
-
-		// Bind the picker to the default selector
-		this.bindFields(this.settings.element);
-
-		if (this.settings.wrap) {
-			this.wrapFields(this.settings.element);
-		}
-
-		if (this.settings.inline) {
-			this.updatePickerPosition();
-		}
 	}
 
 	/**
@@ -537,12 +534,12 @@ export default class Coloris {
 		this.attachVirtualInstance(event.target);
 
 		Coloris.currentEl = event.target;
-		this.oldColor = Coloris.currentEl.value;
-		this.currentFormat = this.getColorFormatFromStr(this.oldColor);
+		Coloris.currentEl.oldColor = Coloris.currentEl.value;
+		this.currentFormat = this.getColorFormatFromStr(Coloris.currentEl.oldColor);
 		Coloris.picker.classList.add('clr-open');
 
 		this.updatePickerPosition();
-		this.setColorFromStr(this.oldColor);
+		this.setColorFromStr(Coloris.currentEl.oldColor);
 
 		if (this.settings.focusInput || this.settings.selectInput) {
 			Coloris.colorValue.focus({preventScroll: true});
@@ -708,8 +705,8 @@ export default class Coloris {
 			// This will prevent the "change" event on the colorValue input to execute its handler
 			Coloris.currentEl = undefined;
 
-			if (this.oldColor !== prevEl.value) {
-				prevEl.value = this.oldColor;
+			if (prevEl.oldColor !== prevEl.value) {
+				prevEl.value = prevEl.oldColor;
 
 				// Trigger an "input" event to force update the thumbnail next to the input field
 				prevEl.dispatchEvent(new Event('input', {bubbles: true}));
@@ -719,7 +716,7 @@ export default class Coloris {
 		// Trigger a "change" event if needed
 		setTimeout(() => {
 			// Add this to the end of the event loop
-			if (this.oldColor !== prevEl.value) {
+			if (prevEl.oldColor !== prevEl.value) {
 				prevEl.dispatchEvent(new Event('change', {bubbles: true}));
 			}
 		});
@@ -1341,9 +1338,8 @@ export default class Coloris {
 
 			if (key === 'Escape') {
 				this.closePicker(true);
-
-				// Display focus rings when using the keyboard
 			}
+			// Display focus rings when using the keyboard
 			else if (navKeys.includes(key)) {
 				this.keyboardNav = true;
 				Coloris.picker.classList.add('clr-keyboard-nav');
