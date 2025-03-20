@@ -40,7 +40,15 @@
 	<div class="LiveData">
 		<output class="SnippetSearchTerm"></output>
 		<div class="SnippetFavicon">
-			<img src="/awyiss/assets/favicon/favicon-32x32.png" alt="Favicon">
+			{% set favicon = baseUrl ~ '/awyiss/assets/favicon/favicon-32x32.png' %}
+			{% if 'assets/favicon/favicon-96x96.png' is file %}
+				{% set favicon = baseUrl ~ '/assets/favicon/favicon-96x96.png' %}
+			{% elseif 'assets/favicon/apple-touch-icon.png' is file %}
+				{% set favicon = baseUrl ~ '/assets/favicon/apple-touch-icon.png' %}
+			{% elseif 'assets/favicon/favicon.svg' is file %}
+				{% set favicon = baseUrl ~ '/assets/favicon/favicon.svg' %}
+			{% endif %}
+			<img src="{{ favicon }}" alt="Favicon">
 		</div>
 		<span class="SnippetTitle">{{ config.Awyiss.System.Frontend.meta.titleAppendix }}</span>
 		<span class="SnippetUrl" data-base-url="{{ baseUrl }}">{{ baseUrl }} ›

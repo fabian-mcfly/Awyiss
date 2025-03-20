@@ -209,6 +209,14 @@ class AwyissExtension extends AbstractExtension {
 				return is_array($value);
 			}),
 
+			new TwigTest('file', function (string $value): bool {
+				if (str_contains($value, '..')) {
+					return false;
+				}
+
+				return file_exists(WWW_ROOT . $value) && is_file(WWW_ROOT . $value);
+			}),
+
 			new TwigTest('instanceOf', function ($object, $class): bool {
 				return $object instanceof $class;
 			}),
