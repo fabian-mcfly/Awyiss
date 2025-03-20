@@ -97,7 +97,7 @@
 								additionalContent: parentRecord.slug ? '<span class="PreSlug">' ~ (parentRecord.slug ~ '/') ~ '</span>' : '',
 							},
 							val: page.slug|split('/')|last,
-							'data-autofill-from-title': 'true',
+							'data-autofill-from': 'title',
 							'data-replacement-char': '-',
 						}) }}
 					{% endblock %}

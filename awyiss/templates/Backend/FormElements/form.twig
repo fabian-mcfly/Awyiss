@@ -139,7 +139,7 @@
 						{% if 'identifier' not in blocklistedElements %}
 							{{ FormHelper.control('identifier', {
 								columnSpan: 6,
-								'data-autofill-from-title': 'true',
+								'data-autofill-from': 'title',
 							}) }}
 						{% endif %}
 					{% endblock %}

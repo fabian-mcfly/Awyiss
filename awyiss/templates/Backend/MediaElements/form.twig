@@ -60,7 +60,7 @@
 					{% endblock %}
 
 					{% block formControlIdentifier %}
-						{{ FormHelper.control('identifier', {'data-autofill-from-title': 'true'}) }}
+						{{ FormHelper.control('identifier', {'data-autofill-from': 'title'}) }}
 					{% endblock %}
 
 					{% block fieldsetGeneralAttributes %}
@@ -102,7 +102,7 @@
 
 									{{ FormHelper.control('media_element_selectors.' ~ counter ~ '.identifier', {
 										required: true,
-										'data-autofill-from-title': 'true',
+										'data-autofill-from': 'title',
 									}) }}
 
 									{{ FormHelper.control('media_element_selectors.' ~ counter ~ '.column_span', {
@@ -137,7 +137,7 @@
 
 								{{ FormHelper.control('media_element_selectors.' ~ counter ~ '.identifier', {
 									required: false,
-									'data-autofill-from-title': 'true',
+									'data-autofill-from': 'title',
 								}) }}
 
 								{{ FormHelper.control('media_element_selectors.' ~ counter ~ '.column_span', {

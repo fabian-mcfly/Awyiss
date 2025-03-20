@@ -44,7 +44,7 @@
 					{% block formControl_Identifier %}
 						{{ FormHelper.control('identifier', {
 							readonly: datatable.id is not null,
-							'data-autofill-from-title': 'true',
+							'data-autofill-from': 'title',
 						}) }}
 					{% endblock %}
 

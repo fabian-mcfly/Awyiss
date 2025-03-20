@@ -76,18 +76,13 @@ export default class IdentifierAutofill {
 	 * @param {HTMLElement} form - The form element
 	 */
 	initInputs(form) {
-		const elements = Array.from(form.getElementsByTagName('input')).filter(
-			element => Array.from(element.attributes).some(attr => attr.name.startsWith('data-autofill-from-') && attr.value === 'true')
-		);
+		const elements = form.querySelectorAll('input[data-autofill-from], output[data-autofill-from]');
 
 		elements.forEach(element => {
-			// Find the exact attribute name
-			const attributeName = Array.from(element.attributes).find(attr => attr.name.startsWith('data-autofill-from-')).name;
-
 			// Extract the title from the attribute name
-			const title = attributeName.substring(19);
+			const fieldName = element.dataset.autofillFrom;
 
-			let input = form.querySelector(`input[name="${title}"]`);
+			let input = form.querySelector(`input[name="${fieldName}"]`);
 
 			// If no input was found, the name of the element ends with `]` and the input is inside a list item, try to find the input in the list item
 			if (!input && element.name.endsWith(']')) {
@@ -97,7 +92,7 @@ export default class IdentifierAutofill {
 				const lastOpeningBracket = element.name.lastIndexOf('[');
 
 				// Extract the name of the input
-				const inputName = element.name.substring(0, lastOpeningBracket + 1) + title + ']';
+				const inputName = element.name.substring(0, lastOpeningBracket + 1) + fieldName + ']';
 				const possibleInput = listItem.querySelector(`input[name^="${inputName}"]`);
 
 				if (possibleInput) {
@@ -118,13 +113,13 @@ export default class IdentifierAutofill {
 				const translatableTexts = parent.querySelectorAll('.FormInputType-TranslatableText');
 
 				translatableTexts.forEach(translatableText => {
-					let possibleInput = translatableText.querySelector(`input[name^="_translations"][name$="[${title}]"]`);
+					let possibleInput = translatableText.querySelector(`input[name^="_translations"][name$="[${fieldName}]"]`);
 
 					if (!possibleInput) {
 						// Find the last opening bracket in the name
 						const lastOpeningBracket = element.name.lastIndexOf('[');
 						const inputName = element.name.substring(0, lastOpeningBracket + 1) + '_translations]';
-						possibleInput = translatableText.querySelector(`input[name^="${inputName}"][name$="[${title}]"]`);
+						possibleInput = translatableText.querySelector(`input[name^="${inputName}"][name$="[${fieldName}]"]`);
 					}
 
 					if (possibleInput) {

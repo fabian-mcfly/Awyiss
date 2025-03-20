@@ -65,7 +65,7 @@
 								additionalContent: mediaFolder.id == 1 ? '' : '<span class="PrePath">' ~ (parentFolder.path ? parentFolder.path ~ '/' : 'media/') ~ '</span>',
 							},
 							val: mediaFolder.path|split('/')|last,
-							'data-autofill-from-title': 'true',
+							'data-autofill-from': 'title',
 							'data-replacement-char': '-'
 						}) }}
 					{% endblock %}
