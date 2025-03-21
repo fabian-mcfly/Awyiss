@@ -7,6 +7,7 @@ namespace Awyiss\Twig\Extension;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity\Page;
 use Awyiss\Module\ModulesProvider;
+use Awyiss\Twig\Extension\NodeVisitor\ExtendsNodeVisitor;
 use Awyiss\Utility\Inflector;
 use Awyiss\Utility\Media\MediaRenderOptions;
 use Cake\Collection\CollectionInterface;
@@ -194,6 +195,16 @@ class AwyissExtension extends AbstractExtension {
 				},
 				['needs_context' => true, 'is_safe' => ['all']]
 			),
+		];
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getNodeVisitors(): array {
+		return [
+			new ExtendsNodeVisitor(),
 		];
 	}
 
