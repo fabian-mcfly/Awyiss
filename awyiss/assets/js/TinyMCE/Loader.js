@@ -166,7 +166,7 @@ export default class Loader {
 			return;
 		}
 
-		await this.initSettings();
+		await this.initSettings(element);
 
 		const settings = {...this.settings};
 
@@ -210,7 +210,7 @@ export default class Loader {
 	 *
 	 * @returns {Promise<void>}
 	 */
-	async initSettings() {
+	async initSettings(element) {
 		if (this.isModuleLoading || this.settingsSet) {
 			return;
 		}
@@ -242,10 +242,9 @@ export default class Loader {
 		}
 
 		if (document.documentElement.classList.contains('EmailTemplatesController')) {
-			// Remove the style formats and awyissModule for email templates
-			this.settings.style_formats = [];
 			this.settings.toolbar1 = this.settings.toolbar1.replace('awyissModule', '');
 			this.settings.toolbar1 = this.settings.toolbar1.replace(' styles ', '');
+			this.settings.toolbar1 += 'formPlaceholders';
 		}
 
 		this.settingsSet = true;
@@ -281,6 +280,10 @@ export default class Loader {
 				}
 			}
 		});
+
+		if (document.documentElement.classList.contains('EmailTemplatesController')) {
+			this.addEmailTemplatesPlaceholderOptions(editor);
+		}
 	}
 
 	/**
@@ -445,5 +448,50 @@ export default class Loader {
 
 			return links;
 		}
+	}
+
+	addEmailTemplatesPlaceholderOptions(editor) {
+		if (!availablePlaceholders) {
+			return;
+		}
+
+		/* example, adding a toolbar menu button */
+		editor.ui.registry.addMenuButton('formPlaceholders', {
+			text: 'Placeholders',
+			fetch: (callback) => {
+				const placeholders = [];
+
+				// Traverse availablePlaceholders
+				for (const [key, value] of Object.entries(availablePlaceholders)) {
+					if (typeof(value) === 'object') {
+						// Traverse the subelements
+						const submenu = [];
+						for (const [subKey, subValue] of Object.entries(value)) {
+							submenu.push({
+								type: 'menuitem',
+								text: subValue,
+								onAction: () => editor.insertContent('{{$' + subKey + '}}')
+							});
+						}
+
+						placeholders.push({
+							type: 'nestedmenuitem',
+							text: key,
+							getSubmenuItems: () => submenu,
+						});
+
+						continue;
+					}
+
+					placeholders.push({
+						type: 'menuitem',
+						text: value,
+						onAction: () => editor.insertContent('{{$' + key + '}}'),
+					});
+				}
+
+				callback(placeholders);
+			}
+		});
 	}
 }

@@ -106,3 +106,6 @@ msgstr "<p>Weitere Platzhalter sind:</p>"
 "<li><pre>$salutation</pre>Dieser Platzhalter wird durch die Anrede ersetzt, die "
 "im Formular festgelegt wurde.</li>"
 "</ul>"
+
+msgid "placeholder_data"
+msgstr "Vollständige Daten"

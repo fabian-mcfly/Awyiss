@@ -1,6 +1,7 @@
 {#
 @var emailTemplate \Awyiss\Model\Entity\EmailTemplate
 @var availableLayouts array
+@var availablePlaceholders array
 @var _view \Awyiss\View\BackendView
 @var AssetHelper \Awyiss\View\Helper\AssetHelper
 @var AttributesHelper \Awyiss\View\Helper\AttributesHelper
@@ -131,4 +132,10 @@
 			{{ FormHelper.hidden('reload_form', {val: 0}) }}
 		{% endblock %}
 	</div>
+{% endblock %}
+
+{% block scriptPlaceholderVars %}
+	<script nonce="{{ AssetHelper.getScriptNonce() }}">
+		const availablePlaceholders = {{ availablePlaceholders|json_encode|raw }};
+	</script>
 {% endblock %}

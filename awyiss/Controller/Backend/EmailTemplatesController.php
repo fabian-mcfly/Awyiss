@@ -71,10 +71,7 @@ class EmailTemplatesController extends Controller {
 			$this->save($lo_emailTemplate);
 		}
 
-		$this->set([
-			'emailTemplate' => $lo_emailTemplate,
-			'availableLayouts' => $this->EmailTemplates->getAvailableLayouts(),
-		]);
+		$this->setViewVars($lo_emailTemplate);
 	}
 
 
@@ -100,10 +97,7 @@ class EmailTemplatesController extends Controller {
 			$this->save($lo_emailTemplate, 'edit');
 		}
 
-		$this->set([
-			'emailTemplate' => $lo_emailTemplate,
-			'availableLayouts' => $this->EmailTemplates->getAvailableLayouts(),
-		]);
+		$this->setViewVars($lo_emailTemplate);
 	}
 
 
@@ -235,5 +229,34 @@ class EmailTemplatesController extends Controller {
 				$this->Flash->error($ls_error);
 			}
 		}
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Entity\EmailTemplate $emailTemplate
+	 * @return void
+	 */
+	protected function setViewVars(EmailTemplate $emailTemplate): void {
+		$la_placeholders = [];
+
+		$la_forms = $this->fetchTable('Forms')->find()->contain(['FormElements'])->toArray();
+		foreach ($la_forms as $lo_form) {
+			/** @var \Awyiss\Model\Entity\Form $lo_form */
+			foreach ($lo_form->formElements as $lo_formElement) {
+				if (in_array($lo_formElement->type, ['fieldset', 'hidden', 'submit'])) {
+					continue;
+				}
+				$la_placeholders[ $lo_form->label ][ $lo_formElement->identifier ] = $lo_formElement->label . ' ($' . $lo_formElement->identifier . ')';
+			}
+		}
+
+		$la_placeholders['data'] = __('placeholder_data') . ' ($data)';
+		$la_placeholders['salutation'] = __d('forms', 'salutation') . ' ($salutation)';
+
+		$this->set([
+			'emailTemplate' => $emailTemplate,
+			'availableLayouts' => $this->EmailTemplates->getAvailableLayouts(),
+			'availablePlaceholders' => $la_placeholders,
+		]);
 	}
 }

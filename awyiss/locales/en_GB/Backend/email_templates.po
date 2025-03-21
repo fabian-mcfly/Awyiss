@@ -104,3 +104,6 @@ msgstr "<p>Additonal placeholders are:</p>"
 "<li><pre>$data</pre>This placeholder will be replaced by a complete list of all form fields with their respective entered values.</li>"
 "<li><pre>$salutation</pre>This placeholder will be replaced by the salutation specified in the form.</li>"
 "</ul>"
+
+msgid "placeholder_data"
+msgstr "Full data"
