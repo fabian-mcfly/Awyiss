@@ -263,7 +263,7 @@ class MenuCellTest extends TestCase {
 	public function testDisplayWithActiveItem(): void {
 		$user = $this->login();
 
-		$this->request = (new ServerRequest([
+		$this->request = new ServerRequest([
 			'url' => '/backend/xy/dashboard/overview',
 			'params' => [
 				'lang' => 'xy',
@@ -274,7 +274,7 @@ class MenuCellTest extends TestCase {
 				'parts' => [],
 				'pass' => [],
 			],
-		]));
+		]);
 
 		$this->request = $this->request->withAttribute('authorization', new AuthorizationService('Backend'));
 		$this->request = $this->request->withAttribute('identity', $user);

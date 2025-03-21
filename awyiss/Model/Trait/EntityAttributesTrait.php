@@ -182,4 +182,15 @@ trait EntityAttributesTrait {
 		/** @noinspection PhpIncompatibleReturnTypeInspection */
 		return parent::set($lx_field, $value, $options);
 	}
+
+
+	/**
+	 * Don't use the `has`-call that CakePHP introduced
+	 *
+	 * @param string $field
+	 * @return bool
+	 */
+	public function __isset(string $field): bool {
+		return $this->get($field) !== null;
+	}
 }

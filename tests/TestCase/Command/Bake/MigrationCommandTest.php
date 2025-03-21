@@ -111,16 +111,20 @@ class MigrationCommandTest extends TestCase {
 
 		$this->assertSameAsFile($comparisonFile, $result);
 
-		$this->generatedFiles[1] = ROOT . DS . CUSTOM_DIR . DS . 'config' . DS . 'Migrations' . DS . Util::getCurrentTimestamp() . '_AlterBackgroundColorOnDummyMigrationV2.php';
 		$comparisonFile = ROOT . DS . 'tests' . DS . 'comparisons' . DS . 'config' . DS . 'Migrations' . DS . 'AlterBackgroundColorOnDummyMigrationV2.php';
 
 		$this->exec('bake migration alter_background_color_on_dummy_migration background_color:string[10] --folder ' . CUSTOM_DIR . DS . 'config' . DS . 'Migrations');
 
 		$this->assertExitSuccess();
 
-		$result = file_get_contents($this->generatedFiles[1]);
+		for ($i = 0; $i < 2; $i++) {
+			$this->generatedFiles[1] = ROOT . DS . CUSTOM_DIR . DS . 'config' . DS . 'Migrations' . DS . Util::getCurrentTimestamp($i) . '_AlterBackgroundColorOnDummyMigrationV2.php';
+			if (file_exists($this->generatedFiles[1])) {
+				$result = file_get_contents($this->generatedFiles[1]);
+			}
+		}
 
-		$this->assertSameAsFile($comparisonFile, $result);
+		$this->assertSameAsFile($comparisonFile, $result ?? '');
 	}
 
 

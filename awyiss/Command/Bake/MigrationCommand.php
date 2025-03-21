@@ -143,20 +143,25 @@ class MigrationCommand extends BaseBakeMigrationCommand {
 		EventManager::instance()->on('Bake.initialize', function (Event $event): void {
 			$event->getSubject()->loadHelper('Migrations.Migration');
 		});
-
-		$this->pathFragment .= DS . $arguments->getOption('source');
-
 		$this->_name = $name;
-		$ls_path = $this->getPath($arguments);
 
 		//Remember the name of the table
 		[, $ls_table] = $this->detectAction($this->_name);
 
 		$this->io = $io;
+		$this->args = $arguments;
+		if ($this->isReservedKeyword($name)) {
+			$ls_prefix = $io->ask('Reserved keywords cannot be used for class names. What prefix would you like to use? Defaults to `Migration`.', 'Migration');
+			$this->_name = $ls_prefix . ucfirst($name);
+		}
+
+		$this->pathFragment .= DS . $arguments->getOption('source');
+
+		$ls_path = $this->getPath($arguments);
 
 		//If migration(s) with the same name already exist(s)
 		$la_migrationWithSameName = glob($ls_path . '*_' . $this->_name . '.php');
-		if (!empty($la_migrationWithSameName)) {
+		if ($la_migrationWithSameName) {
 			//Shell the migration be overwritten?
 			if ($arguments->getOption('force')) {
 				//If so, delete all existing migrations

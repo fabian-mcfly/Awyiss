@@ -10,7 +10,6 @@ use Cake\Collection\CollectionInterface;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
 use Cake\ORM\Behavior\Translate\EavStrategy as BaseEavStrategy;
-use Cake\ORM\Entity;
 use Cake\ORM\Query\SelectQuery;
 use Cake\Utility\Hash;
 
@@ -62,7 +61,7 @@ class EavStrategy extends BaseEavStrategy {
 	 * @param ArrayObject $options the options passed to the save method
 	 */
 	public function beforeSave(EventInterface $event, EntityInterface $entity, ArrayObject $options): void {
-		$ls_locale = $entity->get('_locale') ?: $this->getLocale();
+		$ls_locale = $entity->has('_locale') ? $entity->get('_locale') : $this->getLocale();
 		/** @noinspection PhpVariableNamingConventionInspection */
 		$options['associated'] = [$this->translationTable->getAlias() => ['validate' => false]] + $options['associated'];
 
@@ -87,7 +86,7 @@ class EavStrategy extends BaseEavStrategy {
 		}
 
 		$this->bundleTranslatedFields($entity);
-		$la_bundled = $entity->get('_i18n') ?: [];
+		$la_bundled = $entity->has('_i18n') ? $entity->get('_i18n') : [];
 		$lb_noBundled = count($la_bundled) === 0;
 
 		// No additional translation records need to be saved,
@@ -205,7 +204,7 @@ class EavStrategy extends BaseEavStrategy {
 				return $row;
 			}
 
-			$la_translations = (array)$row->get('_i18n');
+			$la_translations = $row->has('_i18n') ? $row->get('_i18n') : null;
 			if (!$la_translations && $row->get('_translations')) {
 				return $row;
 			}
@@ -213,8 +212,8 @@ class EavStrategy extends BaseEavStrategy {
 			$lo_grouped = new Collection($la_translations);
 
 			$la_result = [];
+			$ls_entityClass = $this->table->getEntityClass();
 			foreach ($lo_grouped->combine('field', 'content', 'locale') as $ls_locale => $la_keys) {
-				$ls_entityClass = $this->table->getEntityClass();
 				$lo_translation = new $ls_entityClass($la_keys + ['locale' => $ls_locale], [
 					'markNew' => false,
 					'useSetters' => false,
@@ -247,7 +246,7 @@ class EavStrategy extends BaseEavStrategy {
 	 * @return void
 	 */
 	protected function unsetEmptyFields(EntityInterface $entity): void {
-		/** @var array<Entity> $la_translations */
+		/** @var array<\Awyiss\Model\Entity> $la_translations */
 		$la_translations = (array)$entity->get('_translations');
 
 		if (!$entity->has('_translations')) {
@@ -308,8 +307,9 @@ class EavStrategy extends BaseEavStrategy {
 		}
 
 		$la_newValues = array_diff_key($values, $la_modifiedValues);
+		$ls_entityClass = $this->table->getEntityClass();
 		foreach ($la_newValues as $ls_field => $ls_content) {
-			$la_newValues[ $ls_field ] = new Entity([
+			$la_newValues[ $ls_field ] = new $ls_entityClass([
 				'locale' => $locale,
 				'field' => $ls_field,
 				'content' => $ls_content,
