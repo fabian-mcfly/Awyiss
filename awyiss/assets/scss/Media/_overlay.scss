@@ -63,21 +63,30 @@
 
 		.Button {
 			margin-bottom:0;
-		}
 
-		.Button-Add {
-			position:relative;
+			&-Add {
+				position:relative;
 
-			form {
-				position:absolute;
-				inset:0;
-				z-index:1;
-				opacity:0;
-				cursor:inherit;
+				form {
+					position:absolute;
+					inset:0;
+					z-index:1;
+					opacity:0;
+					cursor:inherit;
+				}
+
+				input {
+					cursor:inherit;
+				}
 			}
 
-			input {
-				cursor:inherit;
+			&-UseFiles {
+				max-width:fit-content;
+				margin:auto;
+				position:fixed;
+				right:0;
+				bottom:40px;
+				left:320px;
 			}
 		}
 	}
