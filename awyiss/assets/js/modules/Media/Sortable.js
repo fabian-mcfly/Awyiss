@@ -349,7 +349,12 @@ export default class Sortable {
 	 */
 	toggleButtonState(selectedItemsLength) {
 		this.useFilesButtons.forEach(button => {
-			button.disabled = selectedItemsLength === 0 || !this.overlay.opener;
+			let noOpener = !this.overlay.opener;
+			if (this.overlay.opener && this.overlay.opener.matches('.MediaSelector-SingleFile') && selectedItemsLength > 1) {
+				noOpener = !noOpener;
+			}
+
+			button.disabled = selectedItemsLength === 0 || noOpener;
 		});
 
 		this.deleteButtons.forEach(button => {
