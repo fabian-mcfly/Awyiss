@@ -87,7 +87,7 @@
 												<div class="Permission">
 													{# @var permission \Awyiss\Authorization\Permission\PermissionInterface #}
 													{% block usergroupPermission %}
-														<span class="Label">{{ __df(policy.scope, 'usergroups', 'permission_' ~ identifier) }}</span>
+														<span class="Label">{{ __df(policy.scope, 'usergroups', 'permission_' ~ identifier|underscore) }}</span>
 														{{ AuthorizationHelper.permissionOptions(permission, usergroup, null, 'Usergroups') }}
 													{% endblock %}
 												</div>
