@@ -173,6 +173,8 @@ msgstr "Aktiv"
 msgid "error_not_in_use"
 msgstr "Das Design wird aktuell verwendet"
 
-
 msgid "frontend_preview"
 msgstr "Frontend Vorschau"
+
+msgid "webfont_download"
+msgstr "Webfont herunterladen"

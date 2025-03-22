@@ -399,3 +399,15 @@ msgstr "Yes"
 
 msgid "false"
 msgstr "No"
+
+msgid "table_changes"
+msgstr "Database table changes"
+
+msgid "file_changes"
+msgstr "File changes"
+
+msgid "create_enum"
+msgstr "Create Enum"
+
+msgid "detect_available_commands"
+msgstr "Detect available commands"

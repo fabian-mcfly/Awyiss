@@ -175,3 +175,6 @@ msgstr "This design is in use"
 
 msgid "frontend_preview"
 msgstr "Frontend preview"
+
+msgid "webfont_download"
+msgstr "Webfont Download"

@@ -1,0 +1,75 @@
+{#
+@var queuedJobs \Queue\Model\Entity\QueuedJob[]|\Cake\Datasource\Paging\PaginatedResultSet
+@var entity \Queue\Model\Entity\QueuedJob
+@var localConfig array
+@var _view \Awyiss\View\BackendView
+@var AssetHelper \Awyiss\View\Helper\AssetHelper
+@var AttributesHelper \Awyiss\View\Helper\AttributesHelper
+@var AuthorizationHelper \Awyiss\View\Helper\AuthorizationHelper
+@var CategoriesHelper \Awyiss\View\Helper\CategoriesHelper
+@var FlashHelper \Awyiss\View\Helper\FlashHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+@var HtmlHelper \Cake\View\Helper\HtmlHelper
+@var LocaleHelper \Awyiss\View\Helper\LocaleHelper
+@var MediaHelper \Awyiss\View\Helper\MediaHelper
+@var PaginatorHelper \Awyiss\View\Helper\PaginatorHelper
+@var SystemOrderHelper \Awyiss\View\Helper\SystemOrderHelper
+@var UrlHelper \Awyiss\View\Helper\UrlHelper
+#}
+
+{% extends '@Backend/element/overview/overview_paginated_list.twig' %}
+
+{% block tableOverviewHeaderTitle %}{% endblock %}
+{% block tableOverviewCellTitle %}{% endblock %}
+{% block tableOverviewHeaderAuditInfo %}{% endblock %}
+
+{% block tableOverviewHeaderDefaultFields %}
+	<th class="TableHeader-Scope{% if PaginatorHelper.isCurrentSortKey('scope') %} Active{% endif %}">
+		{{ __('scope') }}
+	</th>
+	<th class="TableHeader-Reference{% if PaginatorHelper.isCurrentSortKey('reference') %} Active{% endif %}">
+		{{ __('reference') }}
+	</th>
+	<th class="TableHeader-Created{% if PaginatorHelper.isCurrentSortKey('created') %} Active{% endif %}">
+		{{ PaginatorHelper.sort('created', i18nDomain ? __df(i18nDomain, 'system', 'created') : __('created')) }}
+	</th>
+	<th class="TableHeader-Completed{% if PaginatorHelper.isCurrentSortKey('completed') %} Active{% endif %}">
+		{{ PaginatorHelper.sort('completed', i18nDomain ? __df(i18nDomain, 'system', 'completed') : __('completed')) }}
+	</th>
+{% endblock %}
+
+{% block tableOverviewCellDefaultFields %}
+	<td class="TableCell-Scope">{{ entity.scope }}</td>
+	<td class="TableCell-Reference">
+		{{ entity.reference }}
+		<div class="Command">
+			{% if entity.job_task == 'Queue.Execute' %}
+				{{ dump(entity.data|unserialize.command) }}
+			{% else %}
+				{{ dump(entity.data|unserialize) }}
+			{% endif %}
+		</div>
+	</td>
+	<td class="TableCell-Created">{{ TimeHelper.nice(entity.created) }}</td>
+	<td class="TableCell-Completed">
+		{% if entity.completed %}
+			<i class="las la-check">{{ __('true') }}</i>
+			{{ TimeHelper.nice(entity.completed) }}
+		{% elseif entity.failed %}
+			<i class="las la-times">{{ __('false') }}</i>
+			{{ __('task_failed') }}
+		{% endif %}
+	</td>
+{% endblock %}
+
+{% block tableOverviewCellAuditInfo %}{% endblock %}
+
+{% block tableOverviewCellActionsUpdate %}
+	{% if AuthorizationHelper.isAccessible('restartFailed') and entity.failed %}
+		{{ HtmlHelper.link(__('restart_failed_task'), {action: 'restart', id: entity.id}, {class: 'Button Button-Small Button-Edit'}) }}
+	{% endif %}
+{% endblock %}
+
+{% set tableFootColSpan -%}
+	{% block tableOverviewFootColSpan %}{{ localConfig.overview.displayedFields|length + 6 }}{% endblock %}
+{%- endset %}

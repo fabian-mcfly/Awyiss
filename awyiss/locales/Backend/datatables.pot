@@ -67,3 +67,6 @@ msgstr "The table could not be deleted"
 
 msgid "view_data"
 msgstr "View Data"
+
+msgid "drop_table"
+msgstr "Remove Table"

@@ -399,3 +399,15 @@ msgstr "Ja"
 
 msgid "false"
 msgstr "Nein"
+
+msgid "table_changes"
+msgstr "Änderungen an der Datenbank­tabelle"
+
+msgid "file_changes"
+msgstr "Änderungen an Dateien"
+
+msgid "create_enum"
+msgstr "Enum erstellen"
+
+msgid "detect_available_commands"
+msgstr "Verfügbare Befehle erkennen"

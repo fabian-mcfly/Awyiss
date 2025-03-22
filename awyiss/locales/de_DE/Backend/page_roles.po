@@ -67,3 +67,12 @@ msgstr "Die Seitenrolle konnte nicht gelöscht werden"
 
 msgid "include_in_linklist"
 msgstr "In Linkliste anzeigen"
+
+msgid "create_enum"
+msgstr "Seitenrollen-Enum erstellen"
+
+msgid "bake_page_roles_seed"
+msgstr "Datenbank­abbild der Seitenrollen erstellen"
+
+msgid "create_page_role_model"
+msgstr "Model-Klasse einer Seitenrollen ({0}) erstellen"

@@ -1200,6 +1200,21 @@
 					}
 				}
 			},
+			"queued_jobs": {
+				"title": {
+					"translate": ["queued_jobs", "menu_title"]
+				},
+				"link": {
+					"url": {
+						"controller": "QueuedJobs",
+						"action": "overview"
+					}
+				},
+				"access": {
+					"scope": "queued_jobs",
+					"identifier": "read"
+				}
+			},
 			"configuration": {
 				"title": {
 					"translate": ["configuration", "menu_title"]

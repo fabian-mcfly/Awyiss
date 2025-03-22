@@ -1,0 +1,41 @@
+.QueuedJobsController {
+	&.OverviewAction {
+		.Overview-Table {
+			margin-top:calc(var(--lineHeightMain) * 2);
+
+			.TableHeader-Scope {
+				width:200px;
+			}
+
+			.TableHeader-Created,
+			.TableHeader-Completed {
+				width:260px;
+			}
+
+			.TableCell-Reference {
+				&:hover {
+					.Command {
+						opacity:inherit;
+						visibility:inherit;
+						transition-delay:0s;
+					}
+				}
+
+				&::after {
+					@include la('\f05a');
+				}
+			}
+
+			.Command {
+				min-width:300px;
+				position:absolute;
+				top:0;
+				left:100%;
+				z-index:20;
+				opacity:0;
+				visibility:hidden;
+				transition:opacity .3s ease-in-out, visibility 0s linear .3s;
+			}
+		}
+	}
+}

@@ -67,3 +67,12 @@ msgstr "The Page Role could not be deleted"
 
 msgid "include_in_linklist"
 msgstr "Show in link list"
+
+msgid "create_enum"
+msgstr "Create Page Role Enum"
+
+msgid "bake_page_roles_seed"
+msgstr "Create database dump of page roles"
+
+msgid "create_page_role_model"
+msgstr "Create Page Role ({0}) model class"

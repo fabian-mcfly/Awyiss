@@ -67,3 +67,6 @@ msgstr "Die Tabelle konnte nicht gelöscht werden"
 
 msgid "view_data"
 msgstr "Daten anzeigen"
+
+msgid "drop_table"
+msgstr "Datenbank­tabelle löschen"

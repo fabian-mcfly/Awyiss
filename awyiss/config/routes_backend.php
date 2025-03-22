@@ -42,7 +42,7 @@ $routes->prefix('Backend', function (RouteBuilder $routeBuilder): void {
 	->setPatterns([
 		'lang' => '[a-zA-Z]{2}',
 		'controller' => '[a-zA-Z0-9-_]+',
-		'action' => '(edit|delete)',
+		'action' => '(edit|restart|delete)',
 		'id' => '[0-9]+',
 	])->setPass(['id'])->setPersist(['lang', 'controller']);
 

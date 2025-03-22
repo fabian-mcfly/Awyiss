@@ -1,0 +1,66 @@
+# QueueJobs translations of Awyiss CMS
+# Copyright 2024 Awyiss <EMAIL@ADDRESS>
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 0.1.0\n"
+"POT-Creation-Date: 2025-03-21 19:20+0000\n"
+"PO-Revision-Date: 2025-03-21 19:20+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+msgid "meta_title_overview"
+msgstr "Aufgaben in der Warteschlange"
+
+msgid "menu_title"
+msgstr "Aufgaben in der Warteschlange"
+
+msgid "headline_overview"
+msgstr "Aufgaben in der Warteschlange"
+
+msgid "scope"
+msgstr "Bereich"
+
+msgid "reference"
+msgstr "Aufgabe"
+
+msgid "created"
+msgstr "Erstellt"
+
+msgid "completed"
+msgstr "Abgeschlossen"
+
+msgid "task_failed"
+msgstr "Aufgabe fehlgeschlagen"
+
+msgid "record_not_found"
+msgstr "Die Aufgabe wurde nicht gefunden"
+
+msgid "confirm_delete"
+msgstr "Sind Sie sicher, dass Sie diese Aufgabe (ID: {0}) löschen möchten?"
+
+msgid "delete_succeeded"
+msgstr "Die Aufgabe wurde erfolgreich gelöscht"
+
+msgid "delete_failed"
+msgstr "Die Aufgabe konnte nicht gelöscht werden"
+
+msgid "delete_failed_in_progress"
+msgstr "Die Aufgabe konnte nicht gelöscht werden, da sie aktuell in Bearbeitung ist"
+
+msgid "permission_restart_failed"
+msgstr "Neustart fehlgeschlagener Aufgaben"
+
+msgid "restart_failed_task"
+msgstr "Aufgabe neustarten"
+
+msgid "restart_failed_not_failed"
+msgstr "Neustart fehlgeschlagen. Eine Aufgabe, die nicht fehlgeschlagen ist, kann nicht neugestartet werden"
+
+msgid "restart_succeeded"
+msgstr "Die Aufgabe wurde erfolgreich neugestartet"
+
+msgid "restart_failed"
+msgstr "Die Aufgabe konnte nicht neugestartet werden"
