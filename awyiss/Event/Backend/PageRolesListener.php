@@ -236,7 +236,7 @@ class PageRolesListener implements EventListenerInterface {
 		/** @var \Queue\Model\Table\QueuedJobsTable $lo_queue */
 		$lo_queue = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
 
-		if ($lo_queue->isQueued('system::create_page_role_model_' . $entity->identifier)) {
+		if ($lo_queue->isQueued('system::create_page_role_model::' . $entity->identifier)) {
 			return;
 		}
 
@@ -269,7 +269,7 @@ class PageRolesListener implements EventListenerInterface {
 		], [
 			'group' => 'general',
 			'priority' => 1,
-			'reference' => 'system::create_page_role_model_' . $entity->identifier,
+			'reference' => 'system::create_page_role_model::' . $entity->identifier,
 		]);
 	}
 
