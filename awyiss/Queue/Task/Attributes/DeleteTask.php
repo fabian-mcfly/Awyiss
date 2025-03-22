@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 
-namespace Awyiss\Queue\Task;
+namespace Awyiss\Queue\Task\Attributes;
 
 
 use Awyiss\Utility\Inflector;
@@ -22,7 +22,7 @@ use Queue\Queue\Task;
  * If an attribute-entity is moved to a different scope, it will check the table of the old scope.
  * If there are no other attributes left, it will bake a `drop`-migration.
  */
-class AttributesDeleteTask extends Task/* implements AddInterface*/ {
+class DeleteTask extends Task/* implements AddInterface*/ {
 	/**
 	 * @inheritDoc
 	 */

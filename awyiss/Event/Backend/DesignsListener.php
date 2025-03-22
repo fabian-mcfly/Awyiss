@@ -96,7 +96,7 @@ class DesignsListener implements EventListenerInterface {
 
 		/** @var \Queue\Model\Table\QueuedJobsTable $lo_queue */
 		$lo_queue = $this->fetchTable('Queue.QueuedJobs');
-		$lo_queue->createJob('WebfontDownload', [
+		$lo_queue->createJob('Designs/WebfontDownload', [
 			'fonts' => $la_fonts,
 		], [
 			'group' => 'general',

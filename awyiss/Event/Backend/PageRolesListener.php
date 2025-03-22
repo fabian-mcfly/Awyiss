@@ -155,18 +155,14 @@ class PageRolesListener implements EventListenerInterface {
 			/** @noinspection PhpUndefinedMethodInspection */
 			$li_identityId = $lo_attributesTable->getBehavior('Audit')->getIdentity()?->id;
 
-			$lo_queue->createJob(
-				'AttributesDelete',
-				[
-					'identifier' => Inflector::tableize($entity->identifier),
-					'identityId' => $li_identityId,
-				],
-				[
-					'group' => 'general',
-					'priority' => 1,
-					'reference' => 'attributes::table_changes',
-				]
-			);
+			$lo_queue->createJob('Attributes/Delete', [
+				'identifier' => Inflector::tableize($entity->identifier),
+				'identityId' => $li_identityId,
+			], [
+				'group' => 'general',
+				'priority' => 1,
+				'reference' => 'attributes::table_changes',
+			]);
 		}
 
 		$la_commands = [];

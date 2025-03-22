@@ -98,7 +98,7 @@ class AttributesListener implements EventListenerInterface {
 
 		/** @var \Queue\Model\Table\QueuedJobsTable $lo_queue */
 		$lo_queue = FactoryLocator::get('Table')->get('Queue.QueuedJobs');
-		$lo_queue->createJob('Attributes', [
+		$lo_queue->createJob('Attributes/Upsert', [
 			'id' => $entity->id,
 			'old' => $la_oldData,
 			'new' => $la_newData,
