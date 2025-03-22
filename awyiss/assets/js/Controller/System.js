@@ -2,16 +2,21 @@
 
 export default class SystemController {
 	/**
+	 * The clear cache buttons.
+	 * @type {NodeList}
+	 */
+	clearCacheButtons;
+	/**
 	 * The event handler instance.
 	 * @type {EventHandler}
 	 */
 	eventHandler = window.eventHandler;
 
 	constructor() {
-		const clearCacheButton = document.querySelector('.Button-ClearCache');
-		if (clearCacheButton) {
+		this.clearCacheButtons = document.querySelectorAll('.Button-ClearCache');
+		this.clearCacheButtons.forEach(clearCacheButton => {
 			this.eventHandler.add('click', this.clearCache.bind(this, clearCacheButton), clearCacheButton);
-		}
+		});
 	}
 
 	/**
@@ -26,17 +31,19 @@ export default class SystemController {
 			return;
 		}
 
-		// Disable the button
-		button.appendChild(document.createElement('div')).className = 'Loading';
-		button.classList.add('FetchInProgress');
+		this.clearCacheButtons.forEach(function (clearCacheButton) {
+			// Disable the button
+			clearCacheButton.appendChild(document.createElement('div')).className = 'Loading';
+			clearCacheButton.classList.add('FetchInProgress');
 
-		// Reset width and height of the button since disabled buttons have no pointer events
-		// so the mouse leave event won't be triggered
-		const hoverElement = button.querySelector('.Hover');
-		if (hoverElement) {
-			hoverElement.style.width = '';
-			hoverElement.style.height = '';
-		}
+			// Reset width and height of the button since disabled buttons have no pointer events
+			// so the mouse leave event won't be triggered
+			const hoverElement = clearCacheButton.querySelector('.Hover');
+			if (hoverElement) {
+				hoverElement.style.width = '';
+				hoverElement.style.height = '';
+			}
+		});
 
 		// Send the request
 		this.sendClearCacheRequest(button);
@@ -56,7 +63,9 @@ export default class SystemController {
 			},
 		}).then(response => {
 			if (!response.ok) {
-				button.classList.remove('FetchInProgress');
+				this.clearCacheButtons.forEach(function (clearCacheButton) {
+					clearCacheButton.classList.remove('FetchInProgress');
+				});
 
 				throw new Error('Failed to clear the cache.');
 			}
@@ -64,10 +73,12 @@ export default class SystemController {
 			return response.json();
 		}).then(data => {
 			if (data.runningJob.completed) {
-				button.classList.remove('FetchInProgress');
+				this.clearCacheButtons.forEach(function (clearCacheButton) {
+					clearCacheButton.classList.remove('FetchInProgress');
+				});
 			}
 			else {
-				setTimeout(() => this.sendClearCacheRequest(button), 500);
+				setTimeout(() => this.sendClearCacheRequest(button), 2000);
 			}
 		});
 	}
