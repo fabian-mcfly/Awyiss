@@ -9,7 +9,7 @@ use Awyiss\Authorization\Policy\AbstractPolicy;
 
 
 /**
- * Permission for the Media Folders scope of the backend
+ * Permission for the Media scope of the backend
  */
 class MediaPolicy extends AbstractPolicy {
 	/**

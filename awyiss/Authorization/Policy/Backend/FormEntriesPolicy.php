@@ -10,7 +10,7 @@ use Awyiss\Authorization\Policy\AbstractPolicy;
 
 
 /**
- * Permission for the Datatables scope
+ * Permission for the Form Entries scope
  */
 class FormEntriesPolicy extends AbstractPolicy {
 	protected static PermissionOptionCollection $permissionOptionCollection;

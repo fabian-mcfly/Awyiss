@@ -12,7 +12,7 @@ use RuntimeException;
 
 
 /**
- * Permission for the Configuration scope of the backend
+ * Permission for the User Configuration scope of the backend
  */
 class UserConfigurationPolicy extends AbstractPolicy {
 	/**

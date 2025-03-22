@@ -9,7 +9,7 @@ use Awyiss\Authorization\Policy\AbstractPolicy;
 
 
 /**
- * Permission for the Emailemplates scope of the backend
+ * Permission for the Email Templates scope of the backend
  */
 class EmailTemplatesPolicy extends AbstractPolicy {
 	/**

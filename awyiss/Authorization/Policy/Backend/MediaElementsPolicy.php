@@ -9,7 +9,7 @@ use Awyiss\Authorization\Policy\AbstractPolicy;
 
 
 /**
- * Permission for the Menus scope
+ * Permission for the Media Elemenets scope
  */
 class MediaElementsPolicy extends AbstractPolicy {
 	/**

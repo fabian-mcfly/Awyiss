@@ -9,7 +9,7 @@ use Awyiss\Authorization\Policy\AbstractPolicy;
 
 
 /**
- * Permission for the MenuEntries scope
+ * Permission for the Backend Menu Entries scope
  */
 class BackendMenuEntriesPolicy extends AbstractPolicy {
 	/**
