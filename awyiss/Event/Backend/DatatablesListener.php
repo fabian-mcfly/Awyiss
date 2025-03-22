@@ -199,7 +199,7 @@ class DatatablesListener implements EventListenerInterface {
 		], [
 			'group' => 'general',
 			'priority' => 1,
-			'reference' => 'system::drop_datatables_table',
+			'reference' => 'datatables::drop_table',
 		]);
 	}
 
