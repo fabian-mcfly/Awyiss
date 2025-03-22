@@ -7,7 +7,6 @@ namespace Awyiss\Controller\Component;
 use Awyiss\Core\App;
 use Awyiss\Datasource\Paging\NumericPaginator;
 use Awyiss\Model\Behavior\TranslateBehavior;
-use Awyiss\Model\Table;
 use Awyiss\Utility\Inflector;
 use BadMethodCallException;
 use Cake\Controller\Component;
@@ -17,6 +16,7 @@ use Cake\Datasource\Paging\PaginatedInterface;
 use Cake\Datasource\QueryInterface;
 use Cake\Datasource\RepositoryInterface;
 use Cake\Http\Exception\NotFoundException;
+use Cake\Orm\Table;
 
 
 /**
@@ -112,7 +112,7 @@ class PaginateComponent extends Component {
 
 		$la_params = $this->getController()->getRequest()->getQueryParams();
 
-		/** @var \Awyiss\Model\Table $lo_table */
+		/** @var \Cake\Orm\Table $lo_table */
 		$lo_table = $object->getRepository();
 
 		$this->baseFields = $lo_table->getSchema()->columns();
@@ -208,7 +208,7 @@ class PaginateComponent extends Component {
 	 *
 	 * @param \Cake\Datasource\RepositoryInterface|\Cake\Datasource\QueryInterface $object
 	 * @param array $params
-	 * @param \Awyiss\Model\Table $table
+	 * @param \Cake\Orm\Table $table
 	 * @return void
 	 */
 	protected function checkCategoriesParam(RepositoryInterface|QueryInterface $object, array &$params, Table $table): void {
@@ -238,7 +238,7 @@ class PaginateComponent extends Component {
 	 *
 	 * @param array $params
 	 * @param array $settings
-	 * @param \Awyiss\Model\Table $table
+	 * @param \Cake\Orm\Table $table
 	 * @param \Cake\Datasource\RepositoryInterface|\Cake\Datasource\QueryInterface|string|null $object
 	 * @param bool $isContain
 	 * @return void
@@ -282,14 +282,16 @@ class PaginateComponent extends Component {
 			}
 		}
 
-		// Add the attributes of the table to the sortableFields
-		foreach ($table->getAttributes() as $ls_attribute => $lo_attribute) {
-			if ($ls_tableAlias) {
-				$ls_attribute = $ls_tableAlias . 'Attributes.' . $ls_attribute;
-			}
+		if ($table->hasBehavior('Attributes')) {
+			// Add the attributes of the table to the sortableFields
+			foreach ($table->getAttributes() as $ls_attribute => $lo_attribute) {
+				if ($ls_tableAlias) {
+					$ls_attribute = $ls_tableAlias . 'Attributes.' . $ls_attribute;
+				}
 
-			/** @noinspection PhpVariableNamingConventionInspection */
-			$settings['sortableFields'][] = $ls_attribute;
+				/** @noinspection PhpVariableNamingConventionInspection */
+				$settings['sortableFields'][] = $ls_attribute;
+			}
 		}
 
 		// If the table has a behavior for translating, modify the params and/or settings to match the translated field names
@@ -302,7 +304,11 @@ class PaginateComponent extends Component {
 		}
 
 
-		if ($table->hasAttributes() && $table->getAttributesTable()->hasBehavior('Translate')) {
+		if (
+			$table->hasBehavior('Attributes') &&
+			$table->hasAttributes() &&
+			$table->getAttributesTable()->hasBehavior('Translate')
+		) {
 			/**
 			 * @noinspection PhpParamsInspection
 			 * @noinspection PhpArgumentWithoutNamedIdentifierInspection
@@ -314,7 +320,6 @@ class PaginateComponent extends Component {
 		// Traverse the contain array and modify the params and settings for each table
 		if (!$isContain && $object instanceof QueryInterface) {
 			foreach ($object->getContain() as $ls_tableName => $la_containOptions) {
-				/** @var \Awyiss\Model\Table $lo_table */
 				$lo_table = $table->getAssociation($ls_tableName)->getTarget();
 				/** @noinspection PhpVariableNamingConventionInspection */
 				$this->modifyPaginateParams($params, $settings, $lo_table, null, true);

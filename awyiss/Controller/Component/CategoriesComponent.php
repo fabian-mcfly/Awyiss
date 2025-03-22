@@ -5,7 +5,6 @@ namespace Awyiss\Controller\Component;
 
 
 use Awyiss\Model\Behavior\CategoriesBehavior;
-use Awyiss\Model\Table;
 use Awyiss\Routing\Router;
 use Awyiss\Utility\Inflector;
 use BackedEnum;
@@ -17,6 +16,7 @@ use Cake\Datasource\ResultSetInterface;
 use Cake\Http\Exception\RedirectException;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\ResultSet;
+use Cake\ORM\Table;
 use Cake\Utility\Hash;
 
 
@@ -37,7 +37,7 @@ class CategoriesComponent extends Component {
 		'verifySelection' => true,
 	];
 	/**
-	 * @var \Awyiss\Model\Table
+	 * @var \Cake\ORM\Table
 	 */
 	protected Table $table;
 
@@ -48,7 +48,6 @@ class CategoriesComponent extends Component {
 	 * @return void
 	 */
 	public function __construct(ComponentRegistry $registry, array $config = []) {
-		/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
 		$this->table = $registry->getController()->fetchTable();
 
 		parent::__construct($registry, $config);
@@ -64,7 +63,7 @@ class CategoriesComponent extends Component {
 
 		if (!$this->getConfig('uriParam')) {
 			$ls_identifier = $this->getConfig('identifier');
-			$this->setConfig('uriParam', Inflector::dasherize($ls_identifier));
+			$this->setConfig('uriParam', Inflector::dasherize($ls_identifier ?? 'category'));
 		}
 	}
 
@@ -101,7 +100,11 @@ class CategoriesComponent extends Component {
 			return parent::getConfig($key, $default);
 		}
 
-		return $this->table->getBehavior('Categories')->getConfig($key, $default);
+		if ($this->table->hasBehavior('Categories')) {
+			return $this->table->getBehavior('Categories')->getConfig($key, $default);
+		}
+
+		return $default;
 	}
 
 
@@ -132,9 +135,9 @@ class CategoriesComponent extends Component {
 			}
 		}
 
-
-		$this->table->getBehavior('Categories')->setConfig($lx_key, $value, $merge);
-
+		if ($this->table->hasBehavior('Categories')) {
+			$this->table->getBehavior('Categories')->setConfig($lx_key, $value, $merge);
+		}
 
 		return $this;
 	}
