@@ -1,6 +1,7 @@
 {#
 @var formElement \Awyiss\Model\Entity\FormElement
 @var possibleParentFormElements \Cake\Collection\Iterator\TreeIterator
+@var expertMode bool
 @var _view \Awyiss\View\BackendView
 @var AssetHelper \Awyiss\View\Helper\AssetHelper
 @var AttributesHelper \Awyiss\View\Helper\AttributesHelper
@@ -18,7 +19,7 @@
 
 {% do AuthorizationHelper.setScope('forms') %}
 
-<div class="FormElements Form Edit EditFrontendEditor" data-title="{{ __('headline_edit') }}">
+<div class="FormElements Form Edit EditFrontendEditor{% if expertMode %} ExpertMode{% endif %}" data-title="{{ __('headline_edit') }}">
 	{% block buttonArea %}
 		<div class="ButtonArea">
 			{% block formEditButtons %}

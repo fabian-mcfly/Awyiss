@@ -644,6 +644,7 @@ class WidgetsController extends Controller {
 			'columnWidths' => $la_columnWidths,
 			'columnIndents' => $la_columnIndents,
 			'forms' => $this->Widgets->Forms->find('active')->orderByAsc('title')->all(),
+			'expertMode' => $this->request->getParam('expertMode'),
 		]);
 	}
 

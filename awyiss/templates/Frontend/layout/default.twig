@@ -111,13 +111,13 @@
 
 				{%- block frontendEditorConfig -%}
 					{% if frontendEditorConfig %}
-						{% do AssetHelper.add(['frontend_editor.css', 'frontend_editor.js'], {realm: 'Backend'}) %}
+						{% do AssetHelper.add(['frontend_editor.css', 'Frontend/Editor.js'], {realm: 'Backend'}) %}
 					{% endif %}
 				{%- endblock -%}
 
 				{%- block frontendPreviewConfig -%}
 					{% if frontendPreviewConfig %}
-						{% do AssetHelper.add(['frontend_preview.css', 'frontend_preview.js'], {realm: 'Backend'}) %}
+						{% do AssetHelper.add(['frontend_preview.css', 'Frontend/Preview.js'], {realm: 'Backend'}) %}
 					{% endif %}
 				{%- endblock -%}
 

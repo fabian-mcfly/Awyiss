@@ -1,104 +1,20 @@
 .WidgetsController {
-	&:has(.EditFrontendEditor) {
-		body {
-			padding-block:0;
-		}
+	@extend %FrontendEditorForm;
 
-		#Content {
-			height:100dvh;
-			padding:0;
-
-			.FlashMessage {
-				+ .Fieldsets {
-					margin-top:60px;
-				}
+	.EditFrontendEditor {
+		&:not(.ExpertMode) {
+			.FormInputName-Active,
+			.FormInputName-Identifier,
+			.FormInputName-WidgetTemplateId,
+			.FormInputName-ColumnWidth,
+			.FormInputName-ColumnIndent,
+			.FormInputName-ColumnRtl,
+			.FormInputName-ColumnLast,
+			.FormInputName-ParentId,
+			.FormInputName-SystemOrder,
+			.Fieldset-PublicationData {
+				display:none;
 			}
-
-			.Fieldsets {
-				grid-template-columns:1fr;
-
-				> fieldset {
-					grid-column:auto / span 1;
-				}
-			}
-		}
-
-		.EditFrontendEditor {
-			height:100%;
-			margin-bottom:0;
-			padding:72px 20px 20px 20px;
-			overflow:hidden;
-
-			&::before,
-			&::after {
-				content:attr(data-title, 'Form');
-				width:100%;
-				height:52px;
-				padding:0 20px;
-				border-radius:0 0 5px 5px;
-				background-color:color-mix(in srgb, var(--colorDark), transparent 50%);
-				color:var(--colorBright);
-				//noinspection CssNoGenericFontName
-				font-family:var(--fontStackHeading);
-				font-size:1rem;
-				line-height:52px;
-				position:absolute;
-				top:0;
-				left:0;
-			}
-
-			&::before {
-				content:'';
-				background-image:url($relativePath + 'img/awyiss-v' + $awyissVersionMajor + '-' + $awyissVersionName + '.jpg');
-				background-color:var(--colorDark);
-				background-position:center;
-				background-size:cover;
-			}
-
-			> .ButtonArea {
-				margin:0;
-				padding:2px;
-				position:absolute;
-				top:0;
-				right:0;
-
-				.Button {
-					height:48px;
-					margin-right:20px;
-					line-height:26px;
-					background-color:transparent;
-
-					&:last-child {
-						margin-right:0;
-					}
-				}
-			}
-		}
-
-		form {
-			display:block;
-			height:100%;
-			padding:40px 20px 20px 20px;
-			overflow-y:auto;
-			scrollbar-color:var(--scrollbarColor);
-			scrollbar-width:thin;
-		}
-
-
-		.FormInputName-Active,
-		.FormInputName-Identifier,
-		.FormInputName-WidgetTemplateId,
-		.FormInputName-ColumnWidth,
-		.FormInputName-ColumnIndent,
-		.FormInputName-ColumnRtl,
-		.FormInputName-ColumnLast,
-		.FormInputName-ParentId,
-		.FormInputName-SystemOrder {
-			display:none;
-		}
-
-		.Fieldset-PublicationData {
-			display:none;
 		}
 	}
 

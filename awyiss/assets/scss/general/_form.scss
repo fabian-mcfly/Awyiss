@@ -1038,3 +1038,12 @@ textarea {
 		z-index:1;
 	}
 }
+
+#EditFrontendEditor {
+	display:block;
+	height:100%;
+	padding:40px 20px 20px 20px;
+	overflow-y:auto;
+	scrollbar-color:var(--scrollbarColor);
+	scrollbar-width:thin;
+}

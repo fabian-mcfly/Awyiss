@@ -413,6 +413,7 @@ class FormElementsController extends Controller {
 			'columnWidths' => $la_columnWidths,
 			'columnIndents' => $la_columnIndents,
 			'possibleParentFormElements' => $lo_possibleParentFormElements,
+			'expertMode' => $this->request->getParam('expertMode'),
 		]);
 	}
 

@@ -1,4 +1,4 @@
-class FrontendEditor {
+class Editor {
 	/**
 	 * The active element ID
 	 * @type {string}
@@ -31,7 +31,32 @@ class FrontendEditor {
 	overlay;
 	/**
 	 * Selector config vor editor-aware elements
-	 * @type {{contents: {selector: string, uri: string, enabled: boolean}, formElements: {selector: string, uri: string, enabled: boolean}, menuEntries: {selector: string, uri: string, enabled: boolean}, widgets: {selector: string, uri: string, enabled: boolean}}}
+	 * @type {{
+	 * 	contents: {
+	 * 		enabled: boolean,
+	 * 		overlayForm: boolean,
+	 * 		selector: string,
+	 * 		uri: string,
+	 * 	},
+	 * 	formElements: {
+	 * 		enabled: boolean,
+	 * 		overlayForm: boolean,
+	 * 		selector: string,
+	 * 		uri: string,
+	 * 	},
+	 * 	menuEntries: {
+	 * 		enabled: boolean,
+	 * 		overlayForm: boolean,
+	 * 		selector: string,
+	 * 		uri: string,
+	 * 	},
+	 * 	widgets: {
+	 * 		enabled: boolean,
+	 * 		overlayForm: boolean,
+	 * 		selector: string,
+	 * 		uri: string,
+	 * 	}
+	 * }}
 	 */
 	selectorConfig = {
 		contents: {
@@ -102,7 +127,7 @@ class FrontendEditor {
 
 			event.preventDefault();
 
-			this.showOverlay(this.editLink.href);
+			this.showOverlay(this.editLink.href, event.ctrlKey || event.metaKey);
 		});
 
 		this.editLink.addEventListener('mouseenter', () => {
@@ -174,9 +199,10 @@ class FrontendEditor {
 				if (!element.eventsAdded) {
 					element.addEventListener('mouseenter', (event) => this.onMouseEnter(event, key));
 					element.addEventListener('mouseleave', (event) => this.onMouseLeave(event));
-					element.addEventListener('dblclick', () => this.editLink.dispatchEvent(new MouseEvent('click', {
+					element.addEventListener('dblclick', (event) => this.editLink.dispatchEvent(new MouseEvent('click', {
 						bubbles: true,
 						cancelable: true,
+						ctrlKey: event.ctrlKey,
 					})));
 
 					// Mark the element as having the events set
@@ -273,14 +299,15 @@ class FrontendEditor {
 	 * Show the frontend editor overlay for a given backend url
 	 *
 	 * @param {string} url
+	 * @param {boolean} expertMode
 	 * @returns {void}
 	 */
-	showOverlay(url) {
+	showOverlay(url, expertMode = false) {
 		// Hide the edit link and highlight element
 		this.editLink.classList.remove('Visible');
 		this.highlightElement.classList.remove('Visible');
 
-		this.iframe.contentWindow.location.replace(url + 'mode:frontend-editor/');
+		this.iframe.contentWindow.location.replace(url + 'mode:frontend-editor/expert-mode:' + (expertMode ? '1' : '0'));
 		this.overlay.classList.add('Visible');
 	}
 
@@ -332,17 +359,17 @@ class FrontendEditor {
 
 if (document.readyState === 'loading') {
 	document.addEventListener('DOMContentLoaded', () => {
-		window.frontendEditor = new FrontendEditor(frontendEditorConfig)
+		window.frontendEditor = new Editor(frontendEditorConfig)
 	});
 }
 else {
-	window.frontendEditor = new FrontendEditor(frontendEditorConfig);
+	window.frontendEditor = new Editor(frontendEditorConfig);
 }
 
 
 /**
  * Expose the class globally
  * @global
- * @type {FrontendEditor}
+ * @type {Editor}
  */
-window.FrontendEditor = FrontendEditor;
+window.Editor = Editor;

@@ -1,4 +1,4 @@
-class FrontendPreview {
+class Preview {
 	previewConfig = {
 		enabled: false,
 		i18n: {
@@ -90,17 +90,17 @@ class FrontendPreview {
 
 if (document.readyState === 'loading') {
 	document.addEventListener('DOMContentLoaded', () => {
-		window.frontendPreview = new FrontendPreview(frontendPreviewConfig)
+		window.frontendPreview = new Preview(frontendPreviewConfig)
 	});
 }
 else {
-	window.frontendPreview = new FrontendPreview(frontendPreviewConfig);
+	window.frontendPreview = new Preview(frontendPreviewConfig);
 }
 
 
 /**
  * Expose the class globally
  * @global
- * @type {FrontendPreview}
+ * @type {Preview}
  */
-window.FrontendPreview = FrontendPreview;
+window.Preview = Preview;
