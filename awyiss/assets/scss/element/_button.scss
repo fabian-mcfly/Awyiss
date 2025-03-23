@@ -171,7 +171,11 @@ button,
 	&-Save,
 	&-SaveClose,
 	&-SaveSystemOrder,
-	&-View {
+	&-View,
+	&-ViewContents,
+	&-ViewElements,
+	&-ViewEntries,
+	&-ViewMenuEntries {
 		&.Button-Small {
 			&::after {
 				width:auto;
@@ -339,6 +343,20 @@ button,
 	&-View {
 		&::after {
 			content:'\f06e';
+		}
+	}
+
+	&-ViewContents,
+	&-ViewElements,
+	&-ViewMenuEntries {
+		&::after {
+			content:'\f550';
+		}
+	}
+
+	&-ViewEntries {
+		&::after {
+			content:'\f15c';
 		}
 	}
 }

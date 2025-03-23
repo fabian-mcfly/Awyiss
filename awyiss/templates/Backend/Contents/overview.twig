@@ -14,11 +14,9 @@
 		{{ HtmlHelper.link(__('back_to_overview'), {controller: page.pageRoleId.name|pluralize, action: 'overview'}, {class: 'BackToOverview'}) }}
 
 		<h1>{{ __('headline_overview') }}</h1>
-		<h2>{{ page.title }}</h2>
-	{% endblock %}
+		<h2>
+			{{ page.title }}
 
-	{% block buttonArea %}
-		<div class="ButtonArea">
 			{% block buttonPreview %}
 				{{ HtmlHelper.link(__('preview'), {controller: page.pageRoleId.name|pluralize, action: 'preview', id: page.id}, {class: 'Button Button-Preview Button-Small Button-Subtle'}) }}
 			{% endblock %}
@@ -28,6 +26,11 @@
 					{{ HtmlHelper.link(__('edit'), {controller: page.pageRoleId.name|pluralize, action: 'edit', id: page.id}, {class: 'Button Button-Edit Button-Small Button-Subtle'}) }}
 				{% endif %}
 			{% endblock %}
+		</h2>
+	{% endblock %}
+
+	{% block buttonArea %}
+		<div class="ButtonArea">
 
 			{% block categoriesFilterOverview %}
 				{{ CategoriesHelper.filter('page') }}

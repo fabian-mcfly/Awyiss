@@ -19,7 +19,19 @@
 	{% endif %}
 
 	{% block headlineEdit %}
-		<h1>{{ __df(pageRoleName, 'generic_pages', 'headline_edit', pageRole.title) }}</h1>
+		<h1>
+			{{ __df(pageRoleName, 'generic_pages', 'headline_edit', pageRole.title) }}
+
+			{% block buttonPreview %}
+				{{ HtmlHelper.link(__('preview'), {controller: page.pageRoleId.name|pluralize, action: 'preview', id: page.id}, {class: 'Button Button-Small Button-Subtle Button-Preview'}) }}
+			{% endblock %}
+
+			{% block buttonEdit %}
+				{% if page.duplicate_of is empty and AuthorizationHelper.isAccessible('contents') and contentsEnabled == true %}
+					{{ HtmlHelper.link(__df(pageRoleName, 'generic_pages', 'view_contents'), {controller: 'contents', action: 'overview', pageId: page.id}, {class: 'Button Button-Small Button-Subtle Button-View Button-ViewContents'}) }}
+				{% endif %}
+			{% endblock %}
+		</h1>
 	{% endblock %}
 
 	{{ FormHelper.create(page, {method: 'post', idPrefix: pageRoleName}) }}
@@ -29,10 +41,6 @@
 	{% block buttonArea %}
 		<div class="ButtonArea">
 			{% block formEditButtons %}
-				{% if page.duplicate_of is empty and AuthorizationHelper.isAccessible('contents') and contentsEnabled == true %}
-					{{ HtmlHelper.link(__df(pageRoleName, 'generic_pages', 'view_contents'), {controller: 'contents', action: 'overview', pageId: page.id}, {class: 'Button Button-Small Button-Subtle Button-View Button-ViewContents'}) }}
-				{% endif %}
-
 				{% block formEditButtonSaveAsCopy %}
 					<label for="SaveAsCopy" class="Button Button-SaveAsCopy Label-SaveAsCopy">{{ __('as_copy') }}</label>
 				{% endblock %}

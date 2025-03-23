@@ -9,7 +9,13 @@
 	{% endif %}
 
 	{% block headlineEdit %}
-		<h1>{{ __('headline_edit') }}</h1>
+		<h1>
+			{{ __('headline_edit') }}
+
+			{% if AuthorizationHelper.isAccessible('read') %}
+				{{ HtmlHelper.link(__('view_entries'), {controller: 'menuEntries', action: 'overview', menuId: menu.id}, {class: 'Button Button-Small Button-Subtle Button-View Button-ViewMenuEntries'}) }}
+			{% endif %}
+		</h1>
 	{% endblock %}
 
 	{{ FormHelper.create(menu, {method: 'post', idPrefix: 'menu'}) }}
@@ -19,10 +25,6 @@
 	{% block buttonArea %}
 		<div class="ButtonArea">
 			{% block formEditButtons %}
-				{% if AuthorizationHelper.isAccessible('read') %}
-					{{ HtmlHelper.link(__('view_entries'), {controller: 'menuEntries', action: 'overview', menuId: menu.id}, {class: 'Button Button-Small Button-Subtle Button-View Button-ViewMenuEntries'}) }}
-				{% endif %}
-
 				{% block formEditButtonSaveAsCopy %}
 					<label for="SaveAsCopy" class="Button Button-SaveAsCopy Label-SaveAsCopy">{{ __('as_copy') }}</label>
 				{% endblock %}

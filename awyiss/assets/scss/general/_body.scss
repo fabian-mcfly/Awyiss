@@ -29,6 +29,30 @@
 	h2 {
 		width:fit-content;
 		grid-column:1 / -1;
+
+		.Button-Subtle {
+			margin:0 0 0 -4px;
+			padding:5px;
+			box-shadow:none;
+			background-image:none;
+			background-color:transparent;
+			color:var(--colorMedium);
+			font-size:0;
+			line-height:0;
+			vertical-align:middle;
+
+			&:hover {
+				color:var(--colorBright);
+			}
+
+			&:first-of-type {
+				margin-left:5px;
+			}
+
+			&::after {
+				margin-left:0;
+			}
+		}
 	}
 
 	a {

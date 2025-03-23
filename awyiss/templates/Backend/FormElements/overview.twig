@@ -26,17 +26,19 @@
 
 	{% block headlineOverview %}
 		<h1>{{ __('headline_overview') }}</h1>
-		<h2>{{ form.title }}</h2>
-	{% endblock %}
+		<h2>
+			{{ form.title }}
 
-	{% block buttonArea %}
-		<div class="ButtonArea">
 			{% block buttonEdit %}
 				{% if AuthorizationHelper.isAccessible('update') %}
 					{{ HtmlHelper.link(__('edit'), {controller: 'forms', action: 'edit', id: form.id}, {class: 'Button Button-Edit Button-Small Button-Subtle'}) }}
 				{% endif %}
 			{% endblock %}
+		</h2>
+	{% endblock %}
 
+	{% block buttonArea %}
+		<div class="ButtonArea">
 			{% block categoriesFilterOverview %}
 				{{ CategoriesHelper.filter('form', naturalSort(CategoriesHelper.getCategories('form'))) }}
 			{% endblock %}
