@@ -10,24 +10,26 @@
 
 	{% block buttonArea %}
 		<div class="ButtonArea">
-			{% block buttonsOverview %}
-				{% if AuthorizationHelper.isAccessible('create') %}
-					{{ HtmlHelper.link(__('create'), {action: 'add'}, {class : 'Button Button-Add'}) }}
+			{% block overviewButtons %}
+				{% block overviewButtonAdd %}
+					{% if AuthorizationHelper.isAccessible('create') %}
+						{{ HtmlHelper.link(__('create'), {action: 'add'}, {class : 'Button Button-Add'}) }}
+					{% endif %}
+				{% endblock %}
 
-					{% block listControlOverviewListPaginated %}
-						{{ HtmlHelper.link(__('list_paginated'), {action: 'userConfiguration', identifier: 'paginate.enabled', value: 'true'}, {
-							class: 'Button Button-Small Button-ListView Button-ListView-PaginatedList',
-							disabled: localConfig.paginate.enabled == true
-						}) }}
-					{% endblock %}
+				{% block listControlOverviewListPaginated %}
+					{{ HtmlHelper.link(__('list_paginated'), {action: 'userConfiguration', identifier: 'paginate.enabled', value: 'true'}, {
+						class: 'Button Button-Small Button-ListView Button-ListView-PaginatedList',
+						disabled: localConfig.paginate.enabled == true
+					}) }}
+				{% endblock %}
 
-					{% block listControlOverviewListNested %}
-						{{ HtmlHelper.link(__('list_nested'), {action: 'userConfiguration', identifier: 'paginate.enabled', value: 'false'}, {
-							class: 'Button Button-Small Button-ListView Button-ListView-NestedList',
-							disabled: localConfig.paginate.enabled == false
-						}) }}
-					{% endblock %}
-				{% endif %}
+				{% block listControlOverviewListNested %}
+					{{ HtmlHelper.link(__('list_nested'), {action: 'userConfiguration', identifier: 'paginate.enabled', value: 'false'}, {
+						class: 'Button Button-Small Button-ListView Button-ListView-NestedList',
+						disabled: localConfig.paginate.enabled == false
+					}) }}
+				{% endblock %}
 			{% endblock %}
 		</div>
 	{% endblock %}
@@ -50,7 +52,7 @@
 
 	{% block buttonAreaBottom %}
 		<div class="ButtonArea ButtonArea-Bottom">
-			{{ block('buttonsOverview') }}
+			{{ block('overviewButtons') }}
 		</div>
 	{% endblock %}
 </div>

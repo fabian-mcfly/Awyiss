@@ -34,9 +34,11 @@
 	{% block buttonArea %}
 		<div class="ButtonArea">
 			{% block formAddButtons %}
-				{% if AuthorizationHelper.isAccessible('read') %}
-					{{ FormHelper.button(__('save_close'), {class: 'Button Button-SaveClose', name: 'submit', value: 'submit_close'}) }}
-				{% endif %}
+				{% block formAddButtonSaveClose %}
+					{% if AuthorizationHelper.isAccessible('read') %}
+						{{ FormHelper.button(__('save_close'), {class: 'Button Button-SaveClose', name: 'submit', value: 'submit_close'}) }}
+					{% endif %}
+				{% endblock %}
 			{% endblock %}
 		</div>
 	{% endblock %}

@@ -32,10 +32,14 @@
 	{% block buttonArea %}
 		<div class="ButtonArea">
 			{% block formEditButtons %}
-				{{ FormHelper.button(__('save'), {class: 'Button Button-Success Button-Save', form: 'EditFrontendEditor'}) }}
+				{% block formEditButtonSave %}
+					{{ FormHelper.button(__('save'), {class: 'Button Button-Success Button-Save', form: 'EditFrontendEditor'}) }}
+				{% endblock %}
 			{% endblock %}
 
-			{{ FormHelper.button(__('close'), {class: 'Button Button-Close'}) }}
+			{% block formEditButtonClose %}
+				{{ FormHelper.button(__('close'), {class: 'Button Button-Close'}) }}
+			{% endblock %}
 		</div>
 	{% endblock %}
 

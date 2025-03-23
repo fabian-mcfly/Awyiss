@@ -11,14 +11,18 @@
 
 	{% block buttonArea %}
 		<div class="ButtonArea">
-			{% block buttonsOverview %}
-				{% if paginated == false %}
-					<button class="Button Button-SaveSystemOrder" disabled>{{ __d('system', 'save_system_order') }}</button>
-				{% endif %}
+			{% block overviewButtons %}
+				{% block overviewButtonSaveSystemOrder %}
+					{% if paginated == false %}
+						<button class="Button Button-SaveSystemOrder" disabled>{{ __d('system', 'save_system_order') }}</button>
+					{% endif %}
+				{% endblock %}
 
-				{% if AuthorizationHelper.isAccessible('create') %}
-					{{ HtmlHelper.link(__('create'), {action: 'add'}, {class : 'Button Button-Add'}) }}
-				{% endif %}
+				{% block overviewButtonAdd %}
+					{% if AuthorizationHelper.isAccessible('create') %}
+						{{ HtmlHelper.link(__('create'), {action: 'add'}, {class : 'Button Button-Add'}) }}
+					{% endif %}
+				{% endblock %}
 
 				{% block listControlOverviewListPaginated %}
 					{{ HtmlHelper.link(__('list_paginated'), {action: 'userConfiguration', identifier: 'paginate.enabled', value: 'true'}, {
@@ -66,7 +70,7 @@
 
 	{% block buttonAreaBottom %}
 		<div class="ButtonArea ButtonArea-Bottom">
-			{{ block('buttonsOverview') }}
+			{{ block('overviewButtons') }}
 		</div>
 	{% endblock %}
 </div>

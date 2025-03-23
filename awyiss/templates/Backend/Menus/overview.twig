@@ -10,10 +10,12 @@
 
 	{% block buttonArea %}
 		<div class="ButtonArea">
-			{% block buttonsOverview %}
-				{% if AuthorizationHelper.isAccessible('create') %}
-					{{ HtmlHelper.link(__('create'), {action: 'add'}, {class : 'Button Button-Add'}) }}
-				{% endif %}
+			{% block overviewButtons %}
+				{% block overviewButtonAdd %}
+					{% if AuthorizationHelper.isAccessible('create') %}
+						{{ HtmlHelper.link(__('create'), {action: 'add'}, {class : 'Button Button-Add'}) }}
+					{% endif %}
+				{% endblock %}
 			{% endblock %}
 		</div>
 	{% endblock %}
@@ -24,7 +26,7 @@
 
 	{% block buttonAreaBottom %}
 		<div class="ButtonArea ButtonArea-Bottom">
-			{{ block('buttonsOverview') }}
+			{{ block('overviewButtons') }}
 		</div>
 	{% endblock %}
 </div>

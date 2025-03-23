@@ -31,10 +31,12 @@
 				{{ CategoriesHelper.filter('scope') }}
 			{% endblock %}
 
-			{% block buttonsOverview %}
-				{% if AuthorizationHelper.isAccessible('create') %}
-					{{ HtmlHelper.link(__('create'), {action: 'add'}, {class: 'Button Button-Add'}) }}
-				{% endif %}
+			{% block overviewButtons %}
+				{% block overviewButtonAdd %}
+					{% if AuthorizationHelper.isAccessible('create') %}
+						{{ HtmlHelper.link(__('create'), {action: 'add'}, {class: 'Button Button-Add'}) }}
+					{% endif %}
+				{% endblock %}
 			{% endblock %}
 		</div>
 	{% endblock %}
@@ -61,7 +63,7 @@
 		<div class="ButtonArea ButtonArea-Bottom">
 			{{ block('categoriesFilterOverview') }}
 
-			{{ block('buttonsOverview') }}
+			{{ block('overviewButtons') }}
 		</div>
 	{% endblock %}
 </div>

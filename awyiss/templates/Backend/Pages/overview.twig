@@ -21,14 +21,18 @@
 				{{ CategoriesHelper.filter('category') }}
 			{% endblock %}
 
-			{% block buttonsOverview %}
-				{% if sortable and paginated == false %}
-					<button class="Button Button-SaveSystemOrder" disabled>{{ __d('system', 'save_system_order') }}</button>
-				{% endif %}
+			{% block overviewButtons %}
+				{% block overviewButtonSaveSystemOrder %}
+					{% if sortable and paginated == false %}
+						<button class="Button Button-SaveSystemOrder" disabled>{{ __d('system', 'save_system_order') }}</button>
+					{% endif %}
+				{% endblock %}
 
-				{% if AuthorizationHelper.isAccessible('create') %}
-					{{ HtmlHelper.link(__('create'), {action: 'add'}, {class: 'Button Button-Add' }) }}
-				{% endif %}
+				{% block overviewButtonAdd %}
+					{% if AuthorizationHelper.isAccessible('create') %}
+						{{ HtmlHelper.link(__('create'), {action: 'add'}, {class: 'Button Button-Add' }) }}
+					{% endif %}
+				{% endblock %}
 
 				{% block listControlOverviewListPaginated %}
 					{{ HtmlHelper.link(__('list_paginated'), {action: 'userConfiguration', identifier: 'paginate.enabled', value: 'true'}, {
@@ -73,7 +77,7 @@
 		<div class="ButtonArea ButtonArea-Bottom">
 			{{ block('categoriesFilterOverview') }}
 
-			{{ block('buttonsOverview') }}
+			{{ block('overviewButtons') }}
 		</div>
 	{% endblock %}
 </div>

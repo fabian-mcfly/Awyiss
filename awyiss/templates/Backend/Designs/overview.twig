@@ -37,30 +37,43 @@
 
 	{% block buttonArea %}
 		<div class="ButtonArea">
-			{% block buttonsOverview %}
-				{% if design.isPreview == false and design.inUse == false %}
-					{{ FormHelper.button(__('reset'), {class: 'Button Button-Error Button-Close', name: 'reset', value: design.identifier}) }}
-				{% endif %}
+			{% block overviewButtons %}
+				{% block overviewButtonReset %}
+					{% if design.isPreview == false and design.inUse == false %}
+						{{ FormHelper.button(__('reset'), {class: 'Button Button-Error Button-Close', name: 'reset', value: design.identifier}) }}
+					{% endif %}
+				{% endblock %}
 
-				{% if design.isPreview %}
-					{{ FormHelper.button(__('update_preview'), {class: 'Button Button-View', name: 'preview', value: design.identifier}) }}
-					{{ FormHelper.button(__('cancel_preview'), {class: 'Button Button-Error Button-Close', name: 'cancel_preview', value: design.identifier}) }}
-				{% else %}
-					{{ FormHelper.button(__('preview'), {class: 'Button Button-View', name: 'preview', value: design.identifier}) }}
-				{% endif %}
+				{% block overviewButtonPreview %}
+					{% if design.isPreview %}
+						{% block overviewButtonPreviewUpdate %}
+							{{ FormHelper.button(__('update_preview'), {class: 'Button Button-View', name: 'preview', value: design.identifier}) }}
+						{% endblock %}
 
-				{% if AuthorizationHelper.isAccessible('use') %}
-					{{ FormHelper.button(__('confirm_apply_yes'), {
-						class: 'Button Button-Success Button-Save',
-						name: 'use',
-						value: design.identifier,
-						'data-confirm-title': __('confirm_apply_title'),
-						'data-confirm-yes': __('confirm_apply_yes'),
-						'data-confirm-yes-class': 'Button-Success Button-Save',
-						'data-confirm-no': __('confirm_apply_no'),
-						'data-confirm': __('confirm_apply', key),
-					}) }}
-				{% endif %}
+						{% block overviewButtonPreviewClose %}
+							{{ FormHelper.button(__('cancel_preview'), {class: 'Button Button-Error Button-Close', name: 'cancel_preview', value: design.identifier}) }}
+						{% endblock %}
+					{% else %}
+						{% block overviewButtonPreviewPreview %}
+							{{ FormHelper.button(__('preview'), {class: 'Button Button-View', name: 'preview', value: design.identifier}) }}
+						{% endblock %}
+					{% endif %}
+				{% endblock %}
+
+				{% block overviewButtonUse %}
+					{% if AuthorizationHelper.isAccessible('use') %}
+						{{ FormHelper.button(__('confirm_apply_yes'), {
+							class: 'Button Button-Success Button-Save',
+							name: 'use',
+							value: design.identifier,
+							'data-confirm-title': __('confirm_apply_title'),
+							'data-confirm-yes': __('confirm_apply_yes'),
+							'data-confirm-yes-class': 'Button-Success Button-Save',
+							'data-confirm-no': __('confirm_apply_no'),
+							'data-confirm': __('confirm_apply', key),
+						}) }}
+					{% endif %}
+				{% endblock %}
 			{% endblock %}
 		</div>
 	{% endblock %}
@@ -93,7 +106,7 @@
 				{{ FormHelper.button(__('save_settings'), {class: 'Button Button-Success Button-Save Button-SaveSettings', name: 'save', type: 'button'}) }}
 			{% endif %}
 
-			{{ block('buttonsOverview') }}
+			{{ block('overviewButtons') }}
 		</div>
 	{% endblock %}
 

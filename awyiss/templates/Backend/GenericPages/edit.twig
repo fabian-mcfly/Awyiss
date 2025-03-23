@@ -29,17 +29,23 @@
 	{% block buttonArea %}
 		<div class="ButtonArea">
 			{% block formEditButtons %}
-				{% block tableOverviewCellActionsViewContents %}
-					{% if page.duplicate_of is empty and AuthorizationHelper.isAccessible('contents') and contentsEnabled == true %}
-						{{ HtmlHelper.link(__df(pageRoleName, 'generic_pages', 'view_contents'), {controller: 'contents', action: 'overview', pageId: page.id}, {class: 'Button Button-Small Button-Subtle Button-View Button-ViewContents'}) }}
-					{% endif %}
+				{% if page.duplicate_of is empty and AuthorizationHelper.isAccessible('contents') and contentsEnabled == true %}
+					{{ HtmlHelper.link(__df(pageRoleName, 'generic_pages', 'view_contents'), {controller: 'contents', action: 'overview', pageId: page.id}, {class: 'Button Button-Small Button-Subtle Button-View Button-ViewContents'}) }}
+				{% endif %}
+
+				{% block formEditButtonSaveAsCopy %}
+					<label for="SaveAsCopy" class="Button Button-SaveAsCopy Label-SaveAsCopy">{{ __('as_copy') }}</label>
 				{% endblock %}
 
-				<label for="SaveAsCopy" class="Button Button-SaveAsCopy Label-SaveAsCopy">{{ __('as_copy') }}</label>
-				{{ FormHelper.button(__('save'), {class: 'Button Button-Success Button-Save'}) }}
-				{% if AuthorizationHelper.isAccessible('read') %}
-					{{ FormHelper.button(__('save_close'), {class: 'Button Button-SaveClose', name: 'submit', value: 'submit_close'}) }}
-				{% endif %}
+				{% block formEditButtonSave %}
+					{{ FormHelper.button(__('save'), {class: 'Button Button-Success Button-Save'}) }}
+				{% endblock %}
+
+				{% block formEditButtonSaveClose %}
+					{% if AuthorizationHelper.isAccessible('read') %}
+						{{ FormHelper.button(__('save_close'), {class: 'Button Button-SaveClose', name: 'submit', value: 'submit_close'}) }}
+					{% endif %}
+				{% endblock %}
 			{% endblock %}
 		</div>
 	{% endblock %}

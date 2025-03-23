@@ -17,25 +17,31 @@
 				{{ CategoriesHelper.filter('mediaFolder', null, {groupBy: 'languageShortcode', groupLabels: LocaleHelper.languagesForRealm(languageRealm)|merge({general: 'Global'})}) }}
 			{% endblock %}
 
-			{% block buttonsOverview %}
+			{% block overviewButtons %}
 				{% if paginated == false %}
-					<button class="Button Button-SaveSystemOrder" disabled>{{ __d('system', 'save_system_order') }}</button>
+					{% block overviewButtonSaveSystemOrder %}
+						<button class="Button Button-SaveSystemOrder" disabled>{{ __d('system', 'save_system_order') }}</button>
+					{% endblock %}
 
-					{% if AuthorizationHelper.isAccessible('delete') %}
-						<button
-							class="Button Button-Delete"
-							disabled
-							data-confirm-title="{{ __('confirm_delete_selected_title') }}"
-							data-confirm-yes="{{ __('confirm_delete_yes') }}"
-							data-confirm-yes-class="Button-Delete"
-							data-confirm-no="{{ __('confirm_delete_no') }}"
-							data-confirm="{{ __('confirm_delete_selected', mediaItem.id) }}">{{ __('delete') }}</button>
+					{% block overviewButtonDelete %}
+						{% if AuthorizationHelper.isAccessible('delete') %}
+							<button
+								class="Button Button-Delete"
+								disabled
+								data-confirm-title="{{ __('confirm_delete_selected_title') }}"
+								data-confirm-yes="{{ __('confirm_delete_yes') }}"
+								data-confirm-yes-class="Button-Delete"
+								data-confirm-no="{{ __('confirm_delete_no') }}"
+								data-confirm="{{ __('confirm_delete_selected', mediaItem.id) }}">{{ __('delete') }}</button>
+						{% endif %}
+					{% endblock %}
+				{% endif %}
+
+				{% block overviewButtonAdd %}
+					{% if AuthorizationHelper.isAccessible('create') %}
+						{{ HtmlHelper.link(__('create'), {action: 'add'}, {class : 'Button Button-Add'}) }}
 					{% endif %}
-				{% endif %}
-
-				{% if AuthorizationHelper.isAccessible('create') %}
-					{{ HtmlHelper.link(__('create'), {action: 'add'}, {class : 'Button Button-Add'}) }}
-				{% endif %}
+				{% endblock %}
 
 				{% block listControlOverviewListPaginated %}
 					{{ HtmlHelper.link(__('list_paginated'), {action: 'userConfiguration', identifier: 'paginate.enabled', value: 'true'}, {
@@ -193,7 +199,7 @@
 		<div class="ButtonArea ButtonArea-Bottom">
 			{{ block('categoriesFilterOverview') }}
 
-			{{ block('buttonsOverview') }}
+			{{ block('overviewButtons') }}
 		</div>
 	{% endblock %}
 </div>

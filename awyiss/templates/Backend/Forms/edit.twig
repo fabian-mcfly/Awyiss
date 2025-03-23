@@ -37,13 +37,19 @@
 					{{ HtmlHelper.link(__('view_elements'), {controller: 'formElements', action: 'overview', formId: form.id}, {class: 'Button Button-Small Button-Subtle Button-View Button-ViewElements'}) }}
 				{% endif %}
 
-				<label for="SaveAsCopy" class="Button Button-SaveAsCopy Label-SaveAsCopy">{{ __('as_copy') }}</label>
+				{% block formEditButtonSaveAsCopy %}
+					<label for="SaveAsCopy" class="Button Button-SaveAsCopy Label-SaveAsCopy">{{ __('as_copy') }}</label>
+				{% endblock %}
 
-				{{ FormHelper.button(__('save'), {class: 'Button Button-Success Button-Save'}) }}
+				{% block formEditButtonSave %}
+					{{ FormHelper.button(__('save'), {class: 'Button Button-Success Button-Save'}) }}
+				{% endblock %}
 
-				{% if AuthorizationHelper.isAccessible('read') %}
-					{{ FormHelper.button(__('save_close'), {class: 'Button Button-SaveClose', name: 'submit', value: 'submit_close'}) }}
-				{% endif %}
+				{% block formEditButtonSaveClose %}
+					{% if AuthorizationHelper.isAccessible('read') %}
+						{{ FormHelper.button(__('save_close'), {class: 'Button Button-SaveClose', name: 'submit', value: 'submit_close'}) }}
+					{% endif %}
+				{% endblock %}
 			{% endblock %}
 		</div>
 	{% endblock %}

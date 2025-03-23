@@ -28,11 +28,9 @@
 	{% block buttonArea %}
 		<div class="ButtonArea">
 			{% block formEditButtons %}
-				{% block tableOverviewCellActionsViewContents %}
-					{% if page.duplicate_of is empty and AuthorizationHelper.isAccessible('contents') and contentsEnabled == true %}
-						{{ HtmlHelper.link(__('view_contents'), {controller: 'contents', action: 'overview', pageId: page.id}, {class: 'Button Button-Small Button-Subtle Button-View Button-ViewContents'}) }}
-					{% endif %}
-				{% endblock %}
+				{% if page.duplicate_of is empty and AuthorizationHelper.isAccessible('contents') and contentsEnabled == true %}
+					{{ HtmlHelper.link(__('view_contents'), {controller: 'contents', action: 'overview', pageId: page.id}, {class: 'Button Button-Small Button-Subtle Button-View Button-ViewContents'}) }}
+				{% endif %}
 
 				<label for="SaveAsCopy" class="Button Button-SaveAsCopy Label-SaveAsCopy">{{ __('as_copy') }}</label>
 				{{ FormHelper.button(__('save'), {class: 'Button Button-Success Button-Save'}) }}

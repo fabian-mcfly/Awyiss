@@ -20,11 +20,19 @@
 	{% block buttonArea %}
 		<div class="ButtonArea">
 			{% block formEditButtons %}
-				<label for="SaveAsCopy" class="Button Button-SaveAsCopy Label-SaveAsCopy">{{ __('as_copy') }}</label>
-				{{ FormHelper.button(__('save'), {class: 'Button Button-Success Button-Save'}) }}
-				{% if AuthorizationHelper.isAccessible('read') %}
-					{{ FormHelper.button(__('save_close'), {class: 'Button Button-SaveClose', name: 'submit', value: 'submit_close'}) }}
-				{% endif %}
+				{% block formEditButtonSaveAsCopy %}
+					<label for="SaveAsCopy" class="Button Button-SaveAsCopy Label-SaveAsCopy">{{ __('as_copy') }}</label>
+				{% endblock %}
+
+				{% block formEditButtonSave %}
+					{{ FormHelper.button(__('save'), {class: 'Button Button-Success Button-Save'}) }}
+				{% endblock %}
+
+				{% block formEditButtonSaveClose %}
+					{% if AuthorizationHelper.isAccessible('read') %}
+						{{ FormHelper.button(__('save_close'), {class: 'Button Button-SaveClose', name: 'submit', value: 'submit_close'}) }}
+					{% endif %}
+				{% endblock %}
 			{% endblock %}
 		</div>
 	{% endblock %}

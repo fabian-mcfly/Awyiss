@@ -11,8 +11,10 @@
 
 	{% block buttonArea %}
 		<div class="ButtonArea">
-			{% block buttonsOverview %}
-				{{ HtmlHelper.link(__('group_entries'), {grouped: grouped ? false : 'true'}, {class: 'Button Button-Toggle' ~ (grouped ? ' Button-Toggle-Active' : '')}) }}
+			{% block overviewButtons %}
+				{% block overviewButtonGroupEntries %}
+					{{ HtmlHelper.link(__('group_entries'), {grouped: grouped ? false : 'true'}, {class: 'Button Button-Toggle' ~ (grouped ? ' Button-Toggle-Active' : '')}) }}
+				{% endblock %}
 			{% endblock %}
 		</div>
 	{% endblock %}
@@ -23,7 +25,7 @@
 
 	{% block buttonAreaBottom %}
 		<div class="ButtonArea ButtonArea-Bottom">
-			{{ block('buttonsOverview') }}
+			{{ block('overviewButtons') }}
 		</div>
 	{% endblock %}
 </div>

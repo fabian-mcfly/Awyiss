@@ -11,30 +11,38 @@
 
 	{% block buttonArea %}
 		<div class="ButtonArea">
-			{% block buttonsOverview %}
-				<button class="Button Button-SaveSystemOrder" disabled>{{ __d('system', 'save_system_order') }}</button>
+			{% block overviewButtons %}
+				{% block overviewButtonSaveSystemOrder %}
+					<button class="Button Button-SaveSystemOrder" disabled>{{ __d('system', 'save_system_order') }}</button>
+				{% endblock %}
 
-				{% if AuthorizationHelper.isAccessible('create') %}
-					{{ HtmlHelper.link(__('create'), {action: 'add'}, {class : 'Button Button-Add'}) }}
-				{% endif %}
+				{% block overviewButtonAdd %}
+					{% if AuthorizationHelper.isAccessible('create') %}
+						{{ HtmlHelper.link(__('create'), {action: 'add'}, {class : 'Button Button-Add'}) }}
+					{% endif %}
+				{% endblock %}
 
-				{{ HtmlHelper.link(__('overview_list_with_columns'), {
-					action: 'userConfiguration',
-					identifier: 'overview.columnView.enabled',
-					value: 'true'
-				}, {
-					class: 'Button Button-Small Button-ColumnView Button-ColumnView-Enable',
-					disabled: localConfig.overview.columnView.enabled == true,
-				}) }}
+				{% block listControlOverviewListWithColumns %}
+					{{ HtmlHelper.link(__('overview_list_with_columns'), {
+						action: 'userConfiguration',
+						identifier: 'overview.columnView.enabled',
+						value: 'true'
+					}, {
+						class: 'Button Button-Small Button-ColumnView Button-ColumnView-Enable',
+						disabled: localConfig.overview.columnView.enabled == true,
+					}) }}
+				{% endblock %}
 
-				{{ HtmlHelper.link(__('overview_list_linear'), {
-					action: 'userConfiguration',
-					identifier: 'overview.columnView.enabled',
-					value: 'false'
-				}, {
-					class: 'Button Button-Small Button-ColumnView Button-ColumnView-Disable',
-					disabled: localConfig.overview.columnView.enabled == false,
-				}) }}
+				{% block listControlOverviewListLinear %}
+					{{ HtmlHelper.link(__('overview_list_linear'), {
+						action: 'userConfiguration',
+						identifier: 'overview.columnView.enabled',
+						value: 'false'
+					}, {
+						class: 'Button Button-Small Button-ColumnView Button-ColumnView-Disable',
+						disabled: localConfig.overview.columnView.enabled == false,
+					}) }}
+				{% endblock %}
 			{% endblock %}
 		</div>
 	{% endblock %}
@@ -74,7 +82,7 @@
 
 	{% block buttonAreaBottom %}
 		<div class="ButtonArea ButtonArea-Bottom">
-			{{ block('buttonsOverview') }}
+			{{ block('overviewButtons') }}
 		</div>
 	{% endblock %}
 </div>
