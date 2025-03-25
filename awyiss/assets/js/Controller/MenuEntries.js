@@ -30,15 +30,27 @@ export default class MenuEntriesController {
 				pull: 'clone',
 				put: false,
 			},
-			onEnd: (event) => {
+			onEnd: function (event) {
+				if (event.to.matches('.Pages-List')) {
+					this.onEnd(event);
+
+					// Disable the save buttons as the order is the default order
+					this.saveOrderButtons.forEach(button => {
+						button.disabled = true;
+						button.classList.toggle('Button-Success', false);
+					});
+
+					return false;
+				}
+
 				if (event.to.matches('.MenuEntries-List')) {
 					const selector = '.MenuEntries-List.Level1';
 
-					window.nestedListHandler.initSortable(event.item.querySelectorAll('.NestedList'), {
+					this.initSortable(event.item.querySelectorAll('.NestedList'), {
 						groupName: 'MenuEntries-List',
 					});
 
-					window.nestedListHandler.saveSystemOrder(document.querySelector(selector)).then(() => {
+					this.saveSystemOrder(document.querySelector(selector)).then(() => {
 						const list = document.querySelector(selector);
 						const menuId = list.dataset.menuId;
 						const url = `${baseUrl}backend/${languageShortcode}/menu-entries/overview/menu-id:${menuId}`;
@@ -70,7 +82,7 @@ export default class MenuEntriesController {
 							oldMenuEntries.replaceWith(newMenuEntries);
 
 							// Initialize the nested list for the replaced menu entries
-							window.nestedListHandler.initList(document.querySelector(selector));
+							this.initList(document.querySelector(selector));
 						})
 						.catch(error => {
 							console.error('There has been a problem with the fetch operation:', error);
@@ -85,7 +97,7 @@ export default class MenuEntriesController {
 					});
 				}
 
-				window.nestedListHandler.onEnd(event);
+				this.onEnd(event);
 			},
 			sort: false,
 		});
