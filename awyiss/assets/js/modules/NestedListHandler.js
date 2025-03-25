@@ -191,19 +191,19 @@ export default class NestedListHandler {
 				sort: options.sort ?? true,
 				swapThreshold: .9,
 				onAdd: (event) => {
-					return options.onAdd ? options.onAdd(event) : this.onAdd(event);
+					return options.onAdd ? options.onAdd.call(this, event) : this.onAdd.call(this, event);
 				},
 				onEnd: (event) => {
-					return options.onEnd ? options.onEnd(event) : this.onEnd(event);
+					return options.onEnd ? options.onEnd.call(this, event) : this.onEnd.call(this, event);
 				},
 				onMove: (event) => {
-					return options.onMove ? options.onMove(event) : this.onMove(event);
+					return options.onMove ? options.onMove.call(this, event) : this.onMove.call(this, event);
 				},
 				onRemove: (event) => {
-					return options.onRemove ? options.onRemove(event) : this.onRemove(event);
+					return options.onRemove ? options.onRemove.call(this, event) : this.onRemove.call(this, event);
 				},
 				onStart: (event) => {
-					return options.onStart ? options.onStart(event) : this.onStart(event);
+					return options.onStart ? options.onStart.call(this, event) : this.onStart.call(this, event);
 				},
 			});
 		});
