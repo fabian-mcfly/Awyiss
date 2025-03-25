@@ -156,7 +156,7 @@
 									{% endif %}
 									{% if formElement.options|length == 1 and formElement.required %} required{% endif %}
 									class="FormInputType-Checkbox">
-								<label for="FormInput-{{ formElement.identifier|ucparts(false) }}-{{ key|ucparts(false) }}" class="FormInputType-Checkbox-Label">{{ value }}</label>
+								<label for="FormInput-{{ formElement.identifier|ucparts(false) }}-{{ key|ucparts(false) }}" class="FormInputType-Checkbox-Label">{{ value|raw }}</label>
 							</span>
 						{% endfor %}
 						{% if formElement.options|length > 1 %}</span>{% endif %}
