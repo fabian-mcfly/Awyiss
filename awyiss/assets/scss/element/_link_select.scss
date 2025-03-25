@@ -79,6 +79,7 @@
 
 	.Label {
 		display:block;
+		max-width:300px;
 		padding:10px 60px 12px 20px;
 		border-radius:5px;
 		background-image:linear-gradient(45deg, oklch(from var(--colorMedium) calc(l - 0.0683) calc(c + 0.001) calc(h - 1.9)) 0%, transparent 100%);
@@ -89,7 +90,9 @@
 		cursor:default;
 		position:relative;
 		z-index:2;
+		text-overflow:ellipsis;
 		overflow:hidden;
+		white-space:nowrap;
 		transition:box-shadow .3s ease-in-out, border-color .3s ease-in-out, background-color .3s ease-in-out, color .3s ease-in-out;
 
 		.🌚 & {
