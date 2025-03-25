@@ -5,6 +5,7 @@ namespace Awyiss\View\Helper;
 
 
 use Awyiss\Awyiss;
+use Awyiss\Utility\Minify\Css;
 use Cake\Core\Configure;
 use Cake\Log\Log;
 use Cake\Routing\Router;
@@ -926,7 +927,7 @@ class AssetHelper extends Helper {
 	protected function minifyAsset(string $sourcePath, string $targetPath, string $type): void {
 		// Create a new minifier instance based on the asset type
 		$lo_minifier = match ($type) {
-			'css' => new Minify\CSS($sourcePath),
+			'css' => new Css($sourcePath),
 			'js' => new Minify\JS($sourcePath),
 			default => null,
 		};

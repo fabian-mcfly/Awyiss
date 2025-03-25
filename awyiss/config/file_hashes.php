@@ -41,6 +41,7 @@ return [
 		'\\Cake\\View\\Helper\\FormHelper::isFieldError' => '1296a13ea4790f3fec29b0908a8ece3f',
 		'\\Cake\\View\\Helper\\UrlHelper::build' => '2dad8d82746701e2324918a5f90b34c4',
 		'\\Cake\\View\\StringTemplate::load' => '5972bc1feb58a9b0d2f1e169b5a398b8',
+		'\\MatthiasMullie\\Minify\\CSS::stripWhitespace' => '1980a59c0892b2da37dce9597fe3365c',
 		'\\Migrations\\Command\\BakeSimpleMigrationCommand::bake' => 'b18a43e5d7fd6e9c8b5f4dbfdad08e0e',
 		'\\Migrations\\Util\\ColumnParser::parseFields' => '33558275c6f2a796177e3c20f71d7c9d',
 		'vendor/cakephp/bake/src/Command/AllCommand.php' => '7036af2b8d03daaedacd8599b649f4d5',
