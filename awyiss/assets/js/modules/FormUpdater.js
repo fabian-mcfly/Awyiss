@@ -54,7 +54,13 @@ export default class FormUpdater {
 			const targetInput = document.getElementById(targetInputId);
 
 			if (targetInput) {
-				targetInput.value = event.target.value;
+				// If the target input allows multiple values, concat the new value
+				if (targetInput.dataset.allowMultipleValues === 'true') {
+					targetInput.value += (targetInput.value ? ', ' : '') + event.target.value;
+				}
+				else {
+					targetInput.value = event.target.value;
+				}
 				event.target.value = ''; // reset the select dropdown
 
 				targetInput.instantUpdate = true;
