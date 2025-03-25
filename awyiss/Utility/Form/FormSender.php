@@ -327,9 +327,9 @@ class FormSender {
 
 		$lo_mailer = new Mailer('default');
 
-		$lo_mailer->setSubject($this->form->subject)
-		->setFrom($this->form->userEmail, $this->form->userName)
-		->setTo($this->form->ownerEmail, $this->form->ownerName ?: Configure::read('Awyiss.System.Frontend.meta.titleAppendix'));
+		$lo_mailer->setSubject(html_entity_decode($this->form->subject))
+		->setFrom(html_entity_decode($this->form->userEmail), html_entity_decode($this->form->userName))
+		->setTo(html_entity_decode($this->form->ownerEmail), html_entity_decode($this->form->ownerName ?: Configure::read('Awyiss.System.Frontend.meta.titleAppendix')));
 
 		if ($this->form->cc) {
 			foreach ($this->form->cc as $la_cc) {
@@ -351,8 +351,8 @@ class FormSender {
 		 * the real sender should be set as the reply-to address.
 		 */
 		if ($this->formOptions->getSafeRealSender()) {
-			$lo_mailer->setSender($this->formOptions->getSafeRealSender(), $this->form->userName)
-			->setReplyTo($this->form->userEmail, $this->form->userName);
+			$lo_mailer->setSender($this->formOptions->getSafeRealSender(), html_entity_decode($this->form->userName))
+			->setReplyTo(html_entity_decode($this->form->userEmail), html_entity_decode($this->form->userName));
 		}
 
 		// `both` should be default, so only set the format if it differs from the default.
@@ -418,9 +418,9 @@ class FormSender {
 
 		$lo_mailer = new Mailer('default');
 
-		$lo_mailer->setSubject($this->form->subjectConfirmation)
-		->setFrom($this->form->ownerEmail, $this->form->ownerName ?: Configure::read('Awyiss.System.Frontend.meta.titleAppendix'))
-		->setTo($this->form->userEmail, $this->form->userName);
+		$lo_mailer->setSubject(html_entity_decode($this->form->subjectConfirmation))
+		->setFrom(html_entity_decode($this->form->ownerEmail), html_entity_decode($this->form->ownerName ?: Configure::read('Awyiss.System.Frontend.meta.titleAppendix')))
+		->setTo(html_entity_decode($this->form->userEmail), html_entity_decode($this->form->userName));
 
 		/*
 		 * It's usually not permitted to send emails from a different domain than the site's domain.
@@ -430,8 +430,8 @@ class FormSender {
 		 * the real sender should be set as the reply-to address.
 		 */
 		if ($this->formOptions->getSafeRealSender()) {
-			$lo_mailer->setSender($this->formOptions->getSafeRealSender(), $this->form->userName)
-			->setReplyTo($this->form->ownerEmail, $this->form->ownerName ?: Configure::read('Awyiss.System.Frontend.meta.titleAppendix'));
+			$lo_mailer->setSender($this->formOptions->getSafeRealSender(), html_entity_decode($this->form->userName))
+			->setReplyTo(html_entity_decode($this->form->ownerEmail), $this->form->ownerName ?: Configure::read('Awyiss.System.Frontend.meta.titleAppendix'));
 		}
 
 		// `both` should be default, so only set the format if it differs from the default.
@@ -480,8 +480,8 @@ class FormSender {
 		$la_data = [
 			'form_id' => $this->form->id,
 			'page_id' => $this->page->id,
-			'subject' => $this->form->subject,
-			'subject_confirmation' => $this->form->subjectConfirmation,
+			'subject' => html_entity_decode($this->form->subject),
+			'subject_confirmation' => html_entity_decode($this->form->subjectConfirmation),
 			'body' => $this->emailBody['email'] ? base64_encode(gzcompress($this->emailBody['email'])) : null,
 			'body_confirmation' => $this->emailBody['confirmation'] ? base64_encode(gzcompress($this->emailBody['confirmation'])) : null,
 			'data' => base64_encode(gzcompress(json_encode($this->formData))),
