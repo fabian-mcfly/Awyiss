@@ -246,6 +246,24 @@ class User extends Entity implements IdentityPermissionsInterface, IdentityInter
 
 
 	/**
+	 * Returns the username of the user,
+	 * prefixed with 'inactive' if the user is not active
+	 *
+	 * @return string
+	 */
+	protected function _getLabel(): string {
+		$ls_inactive = '';
+
+		if (key_exists('active', $this->_fields) && empty($this->active)) {
+			$ls_inactive = __d('users', 'inactive') . ' ';
+		}
+
+
+		return $ls_inactive . $this->username;
+	}
+
+
+	/**
 	 * Reset the permission collection when usergroups change
 	 *
 	 * @param array|null $usergroups
