@@ -48,6 +48,7 @@
 		'modules/OverlayForm.js',
 		'modules/PasswordReveal.js',
 		'modules/ResizableContents.js',
+		'modules/Search.js',
 		'modules/SeoSnippet.js',
 		'modules/TitleSetter.js',
 		'modules/TranslatableTexts.js',
@@ -80,10 +81,11 @@
 
 	<link nonce="{{ AssetHelper.getStyleNonce() }}" href="{{ baseUrl }}awyiss/assets/js/AirDatepicker/air-datepicker.css" rel="stylesheet" type="text/css">
 	<script nonce="{{ AssetHelper.getScriptNonce() }}" src="{{ baseUrl }}awyiss/assets/js/AirDatepicker/locale/{{ userLanguage.shortcode }}.js"></script>
+	<script nonce="{{ AssetHelper.getScriptNonce() }}" src="{{ baseUrl }}awyiss/assets/js/AirDatepicker/air-datepicker.js"></script>
 	<script nonce="{{ AssetHelper.getScriptNonce() }}">
+		const AirDatepicker = window.exports.AirDatepicker;
 		const airDatepickerLocale = window.exports.default;
 	</script>
-	<script nonce="{{ AssetHelper.getScriptNonce() }}" src="{{ baseUrl }}awyiss/assets/js/AirDatepicker/air-datepicker.js"></script>
 
 
 	{% do AssetHelper.add('main.js', {type: 'module'}) %}

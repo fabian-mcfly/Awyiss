@@ -51,7 +51,7 @@ export default class DatePicker {
 			timepicker: type === 'time' || type === 'datetime-local',
 		};
 
-		const datePicker = new window.exports.AirDatepicker(datePickerInput, settings);
+		const datePicker = new AirDatepicker(datePickerInput, settings);
 		if (datePickerInput.value) {
 			datePicker.selectDate(datePickerInput.value);
 		}
