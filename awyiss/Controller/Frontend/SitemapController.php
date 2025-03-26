@@ -6,6 +6,7 @@ namespace Awyiss\Controller\Frontend;
 
 use Awyiss\Controller\AppController;
 use Awyiss\Routing\Router;
+use Cake\Http\Response;
 use Cake\ORM\Query\SelectQuery;
 use Cake\View\XmlView;
 
@@ -61,6 +62,26 @@ class SitemapController extends AppController {
 			'@xmlns' => 'https://www.sitemaps.org/schemas/sitemap/0.9/',
 			'url' => $la_urls,
 		]);
+	}
+
+
+	/**
+	 * Create the robots.txt
+	 *
+	 * @return \Cake\Http\Response
+	 */
+	public function robots(): Response {
+		// Generate absolute sitemap URL based on routing
+		$ls_sitemapUrl = $this->request->getAttribute('webroot') . 'sitemap.xml';
+		$ls_sitemapUrl = $this->request->getUri()->withPath($ls_sitemapUrl)->__toString();
+
+		$ls_content = "User-agent: *\n";
+		$ls_content .= "Disallow:\n";
+		$ls_content .= "Sitemap: $ls_sitemapUrl\n";
+
+		$this->response = $this->response->withType('text/plain')->withStringBody($ls_content);
+
+		return $this->response;
 	}
 
 

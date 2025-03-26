@@ -101,6 +101,11 @@ $routes->scope('/', function (RouteBuilder $routeBuilder): void {
 	$routeBuilder->applyMiddleware('requestLocale');
 
 	$routeBuilder->connect(
+		'/robots',
+		['prefix' => 'Frontend', 'controller' => 'Sitemap', 'action' => 'robots'],
+	)->setExtensions(['txt']);
+
+	$routeBuilder->connect(
 		'/sitemap',
 		['prefix' => 'Frontend', 'controller' => 'Sitemap', 'action' => 'index'],
 	)->setExtensions(['xml']);
