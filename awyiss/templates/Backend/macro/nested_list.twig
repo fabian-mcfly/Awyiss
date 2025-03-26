@@ -14,7 +14,7 @@ so they can be passed to the template
 
 #}
 
-{% macro nestedList(entities, settings, childrenMethod = 'children', itemsMethod = '') %}
+{% macro nestedList(entities, settings, childrenMethod = 'children', itemsMethod = null) %}
 	{% if settings.level is not defined %}
 		{% set settings = settings|merge({level: 1}) %}
 	{% endif -%}
@@ -41,7 +41,7 @@ so they can be passed to the template
 			{% set childrenList = '' %}
 
 			{% if children is not empty %}
-				{% if itemsMethod != '' %}
+				{% if itemsMethod != null %}
 					{% set children = attribute(children, itemsMethod) %}
 				{% endif %}
 

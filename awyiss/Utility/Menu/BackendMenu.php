@@ -7,6 +7,7 @@ namespace Awyiss\Utility\Menu;
 use Awyiss\Authorization\IdentityPermissionsInterface;
 use Awyiss\Model\Entity\BackendMenuEntry;
 use Cake\ORM\Locator\LocatorAwareTrait;
+use Cake\ORM\Query\SelectQuery;
 use RuntimeException;
 
 
@@ -25,16 +26,17 @@ class BackendMenu {
 
 	/**
 	 * @param \Awyiss\Authorization\IdentityPermissionsInterface|null $identity
+	 * @param \Cake\ORM\Query\SelectQuery|null $dynamicMenuQuery
 	 * @throws \ReflectionException
 	 */
-	public function __construct(?IdentityPermissionsInterface $identity = null) {
+	public function __construct(?IdentityPermissionsInterface $identity = null, ?SelectQuery $dynamicMenuQuery = null) {
 		$this->identity = $identity;
 
 		$this->createMenu();
 
 		$this->createCustomMenu();
 
-		$this->createDynamicMenu();
+		$this->createDynamicMenu($dynamicMenuQuery);
 	}
 
 
@@ -106,14 +108,14 @@ class BackendMenu {
 
 
 	/**
+	 * @param \Cake\ORM\Query\SelectQuery|null $query
 	 * @return void
 	 * @throws \ReflectionException
 	 */
-	protected function createDynamicMenu(): void {
-		/** @var \Awyiss\Model\Table\BackendMenuEntriesTable $lo_table */
-		$lo_table = $this->fetchTable('BackendMenuEntries');
+	protected function createDynamicMenu(?SelectQuery $query = null): void {
+		$lo_query = $query ?? $this->fetchTable('BackendMenuEntries');
 
-		$la_menuEntries = $lo_table->find('threaded')->all()->groupBy(function (BackendMenuEntry $entity) {
+		$la_menuEntries = $lo_query->find('threaded')->all()->groupBy(function (BackendMenuEntry $entity) {
 			return $entity->parentId ? 'appendTo' : 'insertAfter';
 		})->map(function (array $menuEntries) {
 			return collection($menuEntries)->groupBy(function (BackendMenuEntry $entity) {

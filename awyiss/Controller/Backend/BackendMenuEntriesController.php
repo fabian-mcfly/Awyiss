@@ -58,7 +58,10 @@ class BackendMenuEntriesController extends Controller {
 	 */
 	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
-		return $this->BackendMenuEntries->find()->where($this->getOverviewWhere());
+		$lo_query = $this->BackendMenuEntries->find()->where($this->getOverviewWhere());
+		$this->Search->filterQuery($lo_query);
+
+		return $lo_query;
 	}
 
 
@@ -70,10 +73,16 @@ class BackendMenuEntriesController extends Controller {
 	public function overview(): void {
 		$this->Authorization->ensure('read');
 
-		$lo_menu = new BackendMenu();
+		if ($this->BackendMenuEntries->searchIsActive()) {
+			$lo_menuEntries = $this->getOverviewQuery()->find('threaded')->all();
+		}
+		else {
+			$lo_menu = new BackendMenu(null, $this->getOverviewQuery());
+		}
 
 		$this->set([
-			'menu' => $lo_menu,
+			'menu' => $lo_menu ?? null,
+			'menuEntries' => $lo_menuEntries ?? null,
 		]);
 	}
 
