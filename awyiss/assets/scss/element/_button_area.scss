@@ -12,6 +12,7 @@
 		margin-top:var(--lineHeightMain);
 
 		&:has(.Button-ListView),
+		&:has(.Button-Filter),
 		&:has(.Button-ColumnView-Enable) {
 			+ .Overview-List,
 			+ .Overview-Table {
@@ -19,6 +20,7 @@
 			}
 		}
 
+		.Button-Filter,
 		.Button-ListView {
 			bottom:calc(var(--lineHeightMain) * -1);
 		}
@@ -33,6 +35,8 @@
 		margin-top:0;
 		margin-bottom:calc(var(--lineHeightMain) * -1);
 
+		.Button-Filter,
+		.Button-ResetFilter,
 		.Button-ListView {
 			border-radius:0 0 5px 5px;
 			top:calc(var(--lineHeightMain) * -2);
@@ -42,16 +46,24 @@
 				margin-top:0;
 			}
 		}
+
+		.Button-ResetFilter {
+			border-bottom-left-radius:0;
+		}
 	}
 
 	&:has(+ .Overview-Fieldset) {
+		.Button-Filter,
+		.Button-ResetFilter,
 		.Button-ListView {
 			bottom:calc(var(--lineHeightMain) * -1);
 		}
 	}
 
+	&:has(.Button-Filter),
+	&:has(.Button-ResetFilter),
 	&:has(.Button-ListView) {
-		+ .Overview-Table {
+		~ .Overview-Table {
 			border-bottom-right-radius:0;
 
 			th {
@@ -87,19 +99,24 @@
 			}
 		}
 
-		+ .Overview-Fieldset {
-			&:first-of-type {
+		~ .Overview-Fieldset {
+			&:nth-child(1 of .Overview-Fieldset) {
 				border-top-right-radius:0;
 			}
 
-			&:last-of-type {
+			&:nth-last-child(1 of .Overview-Fieldset) {
 				border-bottom-right-radius:0;
 			}
 		}
 
-		+ .Overview-List {
-			border-top-right-radius:0;
-			border-bottom-right-radius:0;
+		~ .Overview-List {
+			&:nth-child(1 of .Overview-List) {
+				border-top-right-radius:0;
+			}
+
+			&:nth-last-child(1 of .Overview-List) {
+				border-bottom-right-radius:0;
+			}
 		}
 	}
 

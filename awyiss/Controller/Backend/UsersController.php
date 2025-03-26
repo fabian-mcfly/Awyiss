@@ -60,6 +60,7 @@ class UsersController extends Controller {
 	public function getOverviewQuery(): ?SelectQuery {
 		$lo_query = $this->Users->find()->where($this->getOverviewWhere());
 		$this->Categories->filterQuery($lo_query, null, false);
+		$this->Search->filterQuery($lo_query);
 
 		return $lo_query;
 	}

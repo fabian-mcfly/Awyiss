@@ -36,6 +36,12 @@ class FormEntriesTable extends Table {
 		'enabled' => true,
 		'identifier' => 'form',
 	];
+	/**
+	 * @inheritDoc
+	 */
+	protected array $search = [
+		'blocklistedColumns' => ['form_id', 'page_id'],
+	];
 
 
 	/**

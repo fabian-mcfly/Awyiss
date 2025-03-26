@@ -1,13 +1,5 @@
 .WidgetsController {
-	#Content {
-		.Button-ColumnView {
-			margin:0;
-		}
-	}
-
 	.ButtonArea {
-		position:relative;
-
 		&.CannotMoveUpwards {
 			.Button-ColumnView {
 				bottom:calc(var(--lineHeightMain) * -1);

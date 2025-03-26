@@ -98,6 +98,12 @@ class FormElementsTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
+	protected array $search = [
+		'blocklistedColumns' => ['form_id'],
+	];
+	/**
+	 * @inheritDoc
+	 */
 	protected array $systemOrder = [
 		'relatedColumns' => ['formId', 'parentId'],
 	];

@@ -32,7 +32,10 @@ class MenusController extends Controller {
 	 */
 	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
-		return $this->Menus->find();
+		$lo_query = $this->Menus->find();
+		$this->Search->filterQuery($lo_query);
+
+		return $lo_query;
 	}
 
 

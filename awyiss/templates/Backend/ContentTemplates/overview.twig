@@ -23,6 +23,10 @@
 					{% endif %}
 				{% endblock %}
 
+				{% block overviewButtonFilter %}
+					{{ element('search/filter_button', {scope: 'content_templates'}) }}
+				{% endblock %}
+
 				{% block listControlOverviewListPaginated %}
 					{{ HtmlHelper.link(__('list_paginated'), {action: 'userConfiguration', identifier: 'paginate.enabled', value: 'true'}, {
 						class: 'Button Button-Small Button-ListView Button-ListView-PaginatedList',
@@ -54,6 +58,7 @@
 							{{ nestedList(contentTemplates, _context|merge({
 								data: {
 									nestable: false,
+									sortable: _filter['content_templates']['active'] == false,
 								},
 								displayedFields: localConfig.overview.displayedFields,
 								identifier: 'ContentTemplates',
@@ -70,5 +75,9 @@
 		<div class="ButtonArea ButtonArea-Bottom">
 			{{ block('overviewButtons') }}
 		</div>
+	{% endblock %}
+
+	{% block listFilter %}
+		{{ element('search/filter', {scope: 'content_templates'}) }}
 	{% endblock %}
 </div>

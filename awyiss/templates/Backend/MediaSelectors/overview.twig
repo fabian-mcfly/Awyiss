@@ -16,6 +16,10 @@
 						{{ HtmlHelper.link(__('create'), {action: 'add'}, {class : 'Button Button-Add'}) }}
 					{% endif %}
 				{% endblock %}
+
+				{% block overviewButtonFilter %}
+					{{ element('search/filter_button', {scope: 'media_selectors'}) }}
+				{% endblock %}
 			{% endblock %}
 		</div>
 	{% endblock %}
@@ -29,5 +33,8 @@
 			{{ block('overviewButtons') }}
 		</div>
 	{% endblock %}
-	
+
+	{% block listFilter %}
+		{{ element('search/filter', {scope: 'media_selectors'}) }}
+	{% endblock %}
 </div>

@@ -55,6 +55,7 @@ class UserConfigurationController extends Controller {
 		]);
 
 		$this->Categories->filterQuery($lo_query, null, !$this->paginate['enabled']);
+		$this->Search->filterQuery($lo_query);
 
 		return $lo_query;
 	}
@@ -100,49 +101,58 @@ class UserConfigurationController extends Controller {
 			})->toArray()
 		);
 
-		/**
-		 * @var string $ls_realm
-		 * @var \Awyiss\Configuration\ConfigOptionCollection $lo_configOptions
-		 */
-		foreach ($la_configOptions as $ls_realm => $lo_configOptions) {
-			$la_configOptions[ $ls_realm ] = Hash::merge([], $lo_configOptions->toArray(), $la_globalConfiguration, $la_configuration);
-
-			uksort($la_configOptions[ $ls_realm ], function ($a, $b) {
-				$ls_titleA = __df('user_configuration', 'configuration', 'category_' . Inflector::underscore($a));
-				$ls_titleB = __df('user_configuration', 'configuration', 'category_' . Inflector::underscore($b));
-
-				if (str_contains($ls_titleA, '::')) {
-					$ls_titleA = $a;
-				}
-
-				if (str_contains($ls_titleB, '::')) {
-					$ls_titleB = $b;
-				}
-
-				return strcoll(mb_strtolower($ls_titleA), mb_strtolower($ls_titleB));
-			});
+		if ($this->UserConfiguration->searchIsActive()) {
+			$la_configOptions[ Awyiss::REALM_BACKEND ] = $la_configuration;
 		}
-		unset($la_configOptions[ Awyiss::REALM_FRONTEND ]);
+		else {
+			/**
+			 * @var string $ls_realm
+			 * @var \Awyiss\Configuration\ConfigOptionCollection $lo_configOptions
+			 */
+			foreach ($la_configOptions as $ls_realm => $lo_configOptions) {
+				$la_configOptions[ $ls_realm ] = Hash::merge([], $lo_configOptions->toArray(), $la_globalConfiguration, $la_configuration);
 
-		$la_configOptions[ Awyiss::REALM_BACKEND ] = Hash::filter($la_configOptions[ Awyiss::REALM_BACKEND ], function (array|ConfigOption|Configuration|UserConfiguration $configOptions) {
-			if (is_array($configOptions)) {
-				return !empty($configOptions);
+				uksort($la_configOptions[ $ls_realm ], function ($a, $b) {
+					$ls_titleA = __df('user_configuration', 'configuration', 'category_' . Inflector::underscore($a));
+					$ls_titleB = __df('user_configuration', 'configuration', 'category_' . Inflector::underscore($b));
+
+					if (str_contains($ls_titleA, '::')) {
+						$ls_titleA = $a;
+					}
+
+					if (str_contains($ls_titleB, '::')) {
+						$ls_titleB = $b;
+					}
+
+					return strcoll(mb_strtolower($ls_titleA), mb_strtolower($ls_titleB));
+				});
 			}
+			unset($la_configOptions[ Awyiss::REALM_FRONTEND ]);
 
-			if ($configOptions instanceof UserConfiguration) {
-				return true;
-			}
+			$la_configOptions[ Awyiss::REALM_BACKEND ] = Hash::filter(
+				$la_configOptions[ Awyiss::REALM_BACKEND ],
+				function (array|ConfigOption|Configuration|UserConfiguration $configOptions) {
+					if (is_array($configOptions)) {
+						return !empty($configOptions);
+					}
 
-			if ($configOptions instanceof Configuration) {
-				$configOptions->isGlobal = true;
-				return $configOptions->configOption?->isPersonalizable() ?? false;
-			}
+					if ($configOptions instanceof UserConfiguration) {
+						return true;
+					}
 
-			return $configOptions->isPersonalizable();
-		});
+					if ($configOptions instanceof Configuration) {
+						$configOptions->isGlobal = true;
 
-		// Deeply clean the array and remove Configuration objects if a UserConfiguration object exists in the same array
-		$la_configOptions[ Awyiss::REALM_BACKEND ] = $this->cleanConfigurationArray($la_configOptions[ Awyiss::REALM_BACKEND ]);
+						return $configOptions->configOption?->isPersonalizable() ?? false;
+					}
+
+					return $configOptions->isPersonalizable();
+				}
+			);
+
+			// Deeply clean the array and remove Configuration objects if a UserConfiguration object exists in the same array
+			$la_configOptions[ Awyiss::REALM_BACKEND ] = $this->cleanConfigurationArray($la_configOptions[ Awyiss::REALM_BACKEND ]);
+		}
 
 
 		$this->set([

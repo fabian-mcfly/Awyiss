@@ -33,6 +33,10 @@
 					{% endif %}
 				{% endblock %}
 
+				{% block overviewButtonFilter %}
+					{{ element('search/filter_button', {scope: datatable.identifier}) }}
+				{% endblock %}
+
 				{% block listControlOverviewListPaginated %}
 					{{ HtmlHelper.link(__d('generic_datatables', 'list_paginated'), {action: 'userConfiguration', identifier: 'paginate.enabled', value: 'true'}, {
 						class: 'Button Button-Small Button-ListView Button-ListView-PaginatedList',
@@ -61,7 +65,7 @@
 				{{ nestedList(records, _context|merge({
 					data: {
 						nestable: nestable,
-						sortable: sortable,
+						sortable: sortable and _filter[ datatable.identifier ]['active'] == false,
 					},
 					displayedFields: localConfig.overview.displayedFields,
 					identifier: datatable.identifier|camelize,
@@ -76,5 +80,9 @@
 
 			{{ block('overviewButtons') }}
 		</div>
+	{% endblock %}
+
+	{% block listFilter %}
+		{{ element('search/filter', {scope: datatable.identifier}) }}
 	{% endblock %}
 </div>

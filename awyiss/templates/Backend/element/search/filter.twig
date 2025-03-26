@@ -1,0 +1,116 @@
+{#
+@var string scope
+@var array _filter
+@var _view \Awyiss\View\BackendView
+@var AssetHelper \Awyiss\View\Helper\AssetHelper
+@var AttributesHelper \Awyiss\View\Helper\AttributesHelper
+@var AuthorizationHelper \Awyiss\View\Helper\AuthorizationHelper
+@var CategoriesHelper \Awyiss\View\Helper\CategoriesHelper
+@var FlashHelper \Awyiss\View\Helper\FlashHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+@var HtmlHelper \Cake\View\Helper\HtmlHelper
+@var LocaleHelper \Awyiss\View\Helper\LocaleHelper
+@var MediaHelper \Awyiss\View\Helper\MediaHelper
+@var PaginatorHelper \Awyiss\View\Helper\PaginatorHelper
+@var SystemOrderHelper \Awyiss\View\Helper\SystemOrderHelper
+@var TimeHelper \Cake\View\Helper\TimeHelper
+@var UrlHelper \Awyiss\View\Helper\UrlHelper
+#}
+
+{% if _filter[ scope ]['columns'] is not empty %}
+	{% set operators = combine(
+		_filter.operators|column('value'),
+		_filter.operators|map(operator => __d('search', 'operator_' ~ operator.name|underscore))
+	) %}
+
+	<dialog class="SearchFilter-Form" data-title="{{ __d('search', 'filter_headline') }}">
+		<form class="Columns" method="post" id="FilterForm-{{ scope|camelize }}">
+			{% for column, settings in _filter[ scope ]['columns'] %}
+				<div class="Column Column-{{ column|camelize }}{% if column in _filter[ scope ]['selectedColumns'] %} Active{% endif %}" data-column="{{ column }}"
+					data-list-item-remove="{{ __d('search', 'filter_remove_column') }}">
+					{{ FormHelper.label(
+						'filter[' ~ scope ~ '][' ~ column ~ '][value]',
+						settings.title ?? (column in ['meta_title', 'meta_description', 'robots_index', 'robots_follow'] ? __d('seo', column) : __d(i18nDomain ?? scope, column)),
+					) }}
+
+					{{ FormHelper.hidden('filter[' ~ scope ~ '][' ~ column ~ '][order]') }}
+
+					{{ FormHelper.hidden('filter[' ~ scope ~ '][' ~ column ~ '][active]', {
+						val: column in _filter[ scope ]['selectedColumns'] ? 1 : 0,
+					}) }}
+
+					<div class="Operator">
+						{{ FormHelper.control('filter[' ~ scope ~ '][' ~ column ~ '][operator]', {
+							disabled: settings.type == 'boolean' ? true : settings.disabledOperators,
+							label: __d('search', 'filter_operator'),
+							options: operators,
+							required: false,
+							val: settings.operator,
+						}) }}
+					</div>
+
+					{% if settings.type == 'boolean' %}
+						<div class="Input InputType-Boolean">
+							{{ FormHelper.control('filter[' ~ scope ~ '][' ~ column ~ '][value]', {
+								hiddenField: false,
+								label: false,
+								options: {
+									'': __d('search', 'label_boolean_all'),
+									'1': __d('search', 'label_boolean_true'),
+									'0': __d('search', 'label_boolean_false'),
+								},
+								type: 'radio',
+								val: settings.value ?? '',
+							}) }}
+						</div>
+					{% else %}
+						<div class="Input InputType-{{ settings.type|ucparts }}">
+							{% set helperFormControl %}
+								{% if settings.values %}
+									{{ FormHelper.select('value_helper_options', settings.values, {
+										'data-options-for': 'Filter[' ~ scope|variable ~ '][' ~ column|variable ~ '][value]',
+									}) }}
+								{% endif %}
+							{% endset %}
+
+							{{ FormHelper.control('filter[' ~ scope ~ '][' ~ column ~ '][value]', {
+								label: false,
+								templateVars: {
+									additionalContent: helperFormControl
+								},
+								val: settings.value,
+								'data-type': settings.type,
+								'data-allow-multiple-values': settings.operator in ['in', 'not_in', 'between', 'not_between'] ? 'true' : 'false',
+							}) }}
+						</div>
+					{% endif %}
+				</div>
+			{% endfor %}
+
+			{% set fields = (_filter[ scope ]['columns'] ?? [])|keys %}
+			{% set fields = combine(
+				fields,
+				fields|map(field => field in ['meta_title', 'meta_description', 'robots_index', 'robots_follow'] ? __d('seo', field) : __d(i18nDomain ?? scope, field))
+			) %}
+
+			<div class="Actions">
+				{{ FormHelper.control('filter_add_column', {
+					disabled: _filter[ scope ]['selectedColumns'],
+					label: __d('search', 'filter_add_column'),
+					options: fields,
+				}) }}
+			</div>
+
+			<div class="ButtonArea">
+				{{ FormHelper.button(__d('search', 'filter_submit'), {class: 'Button Button-Success Button-Save', name: 'submit', value: 'submit' }) }}
+				{{ FormHelper.button(__d('search', 'filter_reset'), {class: 'Button Button-Error Button-Close Button-Reset', name: 'submit', value: 'reset'}) }}
+				{{ FormHelper.button(__d('search', 'filter_close'), {class: 'Button Button-Close', name: 'close', value: 'close' }) }}
+			</div>
+		</form>
+
+		<div class="ButtonArea">
+			{{ FormHelper.button(__d('search', 'filter_submit'), {class: 'Button Button-Success Button-Save', form: 'FilterForm-' ~ scope|camelize, name: 'submit', value: 'submit' }) }}
+			{{ FormHelper.button(__d('search', 'filter_close'), {class: 'Button Button-Close', name: 'close', value: 'close' }) }}
+		</div>
+	</dialog>
+{% endif %}

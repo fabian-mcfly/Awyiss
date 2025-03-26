@@ -47,6 +47,10 @@
 					{% endif %}
 				{% endblock %}
 
+				{% block overviewButtonFilter %}
+					{{ element('search/filter_button', {scope: 'contents'}) }}
+				{% endblock %}
+
 				{% block listControlOverviewListWithColumns %}
 					{{ HtmlHelper.link(__('overview_list_with_columns'), {
 						action: 'userConfiguration',
@@ -91,6 +95,7 @@
 								data: {
 									'content-area': contentAreaId,
 									receivable: contentArea is null ? false : true,
+									sortable: _filter['contents']['active'] == false,
 								},
 								displayedFields: localConfig.overview.displayedFields,
 								identifier: 'Contents',
@@ -105,14 +110,14 @@
 
 	{% block buttonAreaBottom %}
 		<div class="ButtonArea ButtonArea-Bottom">
-			{{ block('buttonPreview') }}
-
-			{{ block('buttonEdit') }}
-
 			{{ block('categoriesFilterOverview') }}
 
 			{{ block('overviewButtons') }}
 		</div>
+	{% endblock %}
+
+	{% block listFilter %}
+		{{ element('search/filter', {scope: 'contents'}) }}
 	{% endblock %}
 </div>
 

@@ -15,6 +15,10 @@
 				{% block overviewButtonGroupEntries %}
 					{{ HtmlHelper.link(__('group_entries'), {grouped: grouped ? false : 'true'}, {class: 'Button Button-Toggle' ~ (grouped ? ' Button-Toggle-Active' : '')}) }}
 				{% endblock %}
+
+				{% block overviewButtonFilter %}
+					{{ element('search/filter_button', {scope: 'urls_not_found'}) }}
+				{% endblock %}
 			{% endblock %}
 		</div>
 	{% endblock %}
@@ -27,5 +31,9 @@
 		<div class="ButtonArea ButtonArea-Bottom">
 			{{ block('overviewButtons') }}
 		</div>
+	{% endblock %}
+
+	{% block listFilter %}
+		{{ element('search/filter', {scope: 'urls_not_found'}) }}
 	{% endblock %}
 </div>

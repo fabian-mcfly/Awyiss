@@ -43,10 +43,14 @@ class UrlHistoryController extends Controller {
 	 */
 	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
-		return $this->UrlHistory->find()->contain([
+		$lo_query = $this->UrlHistory->find()->contain([
 			'Media',
 			'Pages',
 		]);
+
+		$this->Search->filterQuery($lo_query);
+
+		return $lo_query;
 	}
 
 

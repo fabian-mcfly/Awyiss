@@ -33,7 +33,10 @@ class UrlsNotFoundController extends Controller {
 	 */
 	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
-		return $this->UrlsNotFound->find()->where($this->getOverviewWhere());
+		$lo_query = $this->UrlsNotFound->find()->where($this->getOverviewWhere());
+		$this->Search->filterQuery($lo_query);
+
+		return $lo_query;
 	}
 
 
@@ -60,7 +63,7 @@ class UrlsNotFoundController extends Controller {
 			return ['url' => $query->func()->concat(['/', 'url' => 'identifier'])];
 		});
 
-		$lo_query = $this->UrlsNotFound->find()
+		$lo_query = $this->getOverviewQuery()
 		->where(function ($exp) use ($lo_pagesQuery, $lo_urlHistoryQuery) {
 			return $exp->notIn('url', $lo_pagesQuery)->notIn('url', $lo_urlHistoryQuery);
 		});

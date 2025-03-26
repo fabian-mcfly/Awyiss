@@ -29,6 +29,10 @@
 						{{ HtmlHelper.link(__('create'), {action: 'add'}, {class : 'Button Button-Add'}) }}
 					{% endif %}
 				{% endblock %}
+
+				{% block overviewButtonFilter %}
+					{{ element('search/filter_button', {scope: 'url_history'}) }}
+				{% endblock %}
 			{% endblock %}
 		</div>
 	{% endblock %}
@@ -41,5 +45,9 @@
 		<div class="ButtonArea ButtonArea-Bottom">
 			{{ block('overviewButtons') }}
 		</div>
+	{% endblock %}
+
+	{% block listFilter %}
+		{{ element('search/filter', {scope: 'url_history'}) }}
 	{% endblock %}
 </div>

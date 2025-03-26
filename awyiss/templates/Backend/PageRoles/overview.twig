@@ -17,6 +17,10 @@
 					{% endif %}
 				{% endblock %}
 
+				{% block overviewButtonFilter %}
+					{{ element('search/filter_button', {scope: 'page_roles'}) }}
+				{% endblock %}
+
 				{% block listControlOverviewListPaginated %}
 					{{ HtmlHelper.link(__('list_paginated'), {action: 'userConfiguration', identifier: 'paginate.enabled', value: 'true'}, {
 						class: 'Button Button-Small Button-ListView Button-ListView-PaginatedList',
@@ -43,6 +47,9 @@
 			<div class="Overview-List">
 				{% from '@Backend/macro/nested_list.twig' import nestedList %}
 				{{ nestedList(pageRoles, _context|merge({
+					data: {
+						sortable: _filter['page_roles']['active'] == false,
+					},
 					displayedFields: localConfig.overview.displayedFields,
 					identifier: 'MenuEntry',
 				})) }}
@@ -54,5 +61,9 @@
 		<div class="ButtonArea ButtonArea-Bottom">
 			{{ block('overviewButtons') }}
 		</div>
+	{% endblock %}
+
+	{% block listFilter %}
+		{{ element('search/filter', {scope: 'page_roles'}) }}
 	{% endblock %}
 </div>

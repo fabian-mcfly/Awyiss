@@ -25,7 +25,10 @@ class UsersController extends Controller {
 	 */
 	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
-		return $this->Users->find()->where($this->getOverviewWhere());
+		$lo_query = $this->Users->find()->where($this->getOverviewWhere());
+		$this->Search->filterQuery($lo_query);
+
+		return $lo_query;
 	}
 
 

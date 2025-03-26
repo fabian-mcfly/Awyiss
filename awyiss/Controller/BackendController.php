@@ -32,6 +32,7 @@ use Psr\Http\Message\UriInterface;
  * @property \Awyiss\Controller\Component\AuthorizationComponent $Authorization
  * @property \Awyiss\Controller\Component\CategoriesComponent $Categories
  * @property \Awyiss\Controller\Component\PaginateComponent $Paginate
+ * @property \Awyiss\Controller\Component\SearchComponent $Search
  * @property \Awyiss\Controller\Component\SystemOrderComponent $SystemOrder
  */
 abstract class BackendController extends AppController {
@@ -79,6 +80,11 @@ abstract class BackendController extends AppController {
 	 * @var array Settings for the PublicationDataBehavior
 	 */
 	protected array $publicationData = [];
+	/**
+	 * @see SearchComponent
+	 * @var array Settings for the SearchComponent
+	 */
+	protected array $search = [];
 	/**
 	 * @see SystemOrderComponent
 	 * @var array Settings for the SystemOrderComponent
@@ -160,6 +166,8 @@ abstract class BackendController extends AppController {
 
 			if ($this->defaultTable) {
 				$this->loadComponent('Categories', $this->categories);
+
+				$this->loadComponent('Search', $this->search);
 
 				$this->loadComponent('SystemOrder', $this->systemOrder);
 			}

@@ -575,4 +575,25 @@ class WidgetsTable extends Table {
 			}
 		}
 	}
+
+
+	/**
+	 * Get possible field values for the search form.
+	 *
+	 * @param string $column
+	 * @param string|null $type
+	 * @return array|null
+	 */
+	public function getPossibleFieldValues(string $column, ?string $type = null): ?array {
+		if ($column === 'form_id') {
+			return $this->getAssociation('Forms')->find('list', valueField: 'label')->toArray();
+		}
+
+		if ($column === 'widget_template_id') {
+			return $this->getAssociation('WidgetTemplates')->find('list', valueField: 'label')->toArray();
+		}
+
+
+		return $this->getBehavior('Search')->getPossibleFieldValues($column, $type);
+	}
 }

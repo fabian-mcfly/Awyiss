@@ -36,7 +36,10 @@ class FormsController extends Controller {
 	 */
 	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
-		return $this->Forms->find()->where($this->getOverviewWhere());
+		$lo_query = $this->Forms->find()->where($this->getOverviewWhere());
+		$this->Search->filterQuery($lo_query);
+
+		return $lo_query;
 	}
 
 

@@ -100,6 +100,12 @@ class AttributesTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
+	protected array $search = [
+		'blocklistedColumns' => ['scope'],
+	];
+	/**
+	 * @inheritDoc
+	 */
 	protected array $systemOrder = [
 		'relatedColumns' => ['scope', 'fieldset'],
 	];

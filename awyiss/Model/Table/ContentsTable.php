@@ -92,6 +92,12 @@ class ContentsTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
+	protected array $search = [
+		'blocklistedColumns' => ['page_id'],
+	];
+	/**
+	 * @inheritDoc
+	 */
 	protected array $systemOrder = [
 		'relatedColumns' => ['pageId', 'contentAreaId', 'parentId'],
 	];
@@ -1041,5 +1047,30 @@ class ContentsTable extends Table {
 		}
 
 		return true;
+	}
+
+
+	/**
+	 * Get possible field values for the search form.
+	 *
+	 * @param string $column
+	 * @param string|null $type
+	 * @return array|null
+	 */
+	public function getPossibleFieldValues(string $column, ?string $type = null): ?array {
+		if ($column === 'form_id') {
+			return $this->getAssociation('Forms')->find('list', valueField: 'label')->toArray();
+		}
+
+		if ($column === 'duplicate_of') {
+			return $this->find('threaded')->all()->listNested()->printer('label', 'id', '- ')->toArray();
+		}
+
+		if ($column === 'content_template_id') {
+			return $this->getAssociation('ContentTemplates')->find('list', valueField: 'label')->toArray();
+		}
+
+
+		return $this->getBehavior('Search')->getPossibleFieldValues($column, $type);
 	}
 }

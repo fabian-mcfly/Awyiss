@@ -68,6 +68,12 @@ class PagesTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
+	protected array $search = [
+		'blocklistedColumns' => ['language_shortcode', 'page_role_id'],
+	];
+	/**
+	 * @inheritDoc
+	 */
 	protected array $systemOrder = [
 		'relatedColumns' => ['languageShortcode', 'pageRoleId', 'parentId'],
 	];
@@ -523,5 +529,32 @@ class PagesTable extends Table {
 		$la_pageRoles = array_filter($la_pageRoles, fn (PageRoleEnumInterface $pageRole) => $pageRole != $page->pageRoleId);
 
 		return (bool)$la_pageRoles;
+	}
+
+
+	/**
+	 * Get possible field values for the search form.
+	 *
+	 * @param string $column
+	 * @param string|null $type
+	 * @return array|null
+	 */
+	public function getPossibleFieldValues(string $column, ?string $type = null): ?array {
+		if ($column === 'form_id') {
+			return $this->getAssociation('Forms')->find('list', valueField: 'label')->toArray();
+		}
+
+		if ($column === 'duplicate_of') {
+			return $this->find('forCurrentLanguage')->find('threaded')->all()->listNested()->printer('label', 'id', '- ')->toArray();
+		}
+
+		if ($column === 'page_template_id') {
+			return $this->getAssociation('PageTemplates')->find('list', valueField: 'label')->where([
+				'page_role_id' => $this->getPageRole()->value,
+			])->toArray();
+		}
+
+
+		return $this->getBehavior('Search')->getPossibleFieldValues($column, $type);
 	}
 }

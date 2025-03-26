@@ -45,6 +45,12 @@ class MediaFoldersTable extends Table {
 	/**
 	 * @inheritDoc
 	 */
+	protected array $search = [
+		'blocklistedColumns' => ['language_shortcode'],
+	];
+	/**
+	 * @inheritDoc
+	 */
 	protected array $systemOrder = [
 		'relatedColumns' => ['languageShortcode', 'parentId', 'hidden'],
 	];

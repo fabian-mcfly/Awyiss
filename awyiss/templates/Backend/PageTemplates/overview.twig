@@ -31,6 +31,10 @@
 					{% endif %}
 				{% endblock %}
 
+				{% block overviewButtonFilter %}
+					{{ element('search/filter_button', {scope: 'page_templates'}) }}
+				{% endblock %}
+
 				{% block listControlOverviewListPaginated %}
 					{{ HtmlHelper.link(__('list_paginated'), {action: 'userConfiguration', identifier: 'paginate.enabled', value: 'true'}, {
 						class: 'Button Button-Small Button-ListView Button-ListView-PaginatedList',
@@ -72,6 +76,7 @@
 									data: {
 										nestable: false,
 										'page-role-id': pageRoleId,
+										sortable: _filter['page_templates']['active'] == false,
 										'sortable-group': pageRoleId,
 									},
 									displayedFields: localConfig.overview.displayedFields,
@@ -92,5 +97,9 @@
 
 			{{ block('overviewButtons') }}
 		</div>
+	{% endblock %}
+
+	{% block listFilter %}
+		{{ element('search/filter', {scope: 'page_templates'}) }}
 	{% endblock %}
 </div>

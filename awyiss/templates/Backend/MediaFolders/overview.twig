@@ -30,6 +30,10 @@
 					{% endif %}
 				{% endblock %}
 
+				{% block overviewButtonFilter %}
+					{{ element('search/filter_button', {scope: 'media_folders'}) }}
+				{% endblock %}
+
 				{% block listControlOverviewListPaginated %}
 					{{ HtmlHelper.link(__('list_paginated'), {action: 'userConfiguration', identifier: 'paginate.enabled', value: 'true'}, {
 						class: 'Button Button-Small Button-ListView Button-ListView-PaginatedList',
@@ -66,6 +70,7 @@
 								nestable: false,
 								'language-shortcode': languageShortcode,
 								'movable-between-groups': false,
+								sortable: _filter['media_folders']['active'] == false,
 							},
 							displayedFields: localConfig.overview.displayedFields,
 							identifier: 'MediaFolders',
@@ -75,6 +80,9 @@
 				{% endblock %}
 			</fieldset>
 			{% endblock %}
+		{% else %}
+			<fieldset class="Overview-Fieldset">
+			</fieldset>
 		{% endfor %}
 	{% endif %}
 
@@ -84,5 +92,9 @@
 
 			{{ block('overviewButtons') }}
 		</div>
+	{% endblock %}
+
+	{% block listFilter %}
+		{{ element('search/filter', {scope: 'media_folders'}) }}
 	{% endblock %}
 </div>

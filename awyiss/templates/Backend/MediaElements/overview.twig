@@ -23,6 +23,10 @@
 					{% endif %}
 				{% endblock %}
 
+				{% block overviewButtonFilter %}
+					{{ element('search/filter_button', {scope: 'media_elements'}) }}
+				{% endblock %}
+
 				{% block listControlOverviewListPaginated %}
 					{{ HtmlHelper.link(__('list_paginated'), {action: 'userConfiguration', identifier: 'paginate.enabled', value: 'true'}, {
 						class: 'Button Button-Small Button-ListView Button-ListView-PaginatedList',
@@ -52,6 +56,7 @@
 					{{ nestedList(mediaElements, _context|merge({
 						data: {
 							nestable: false,
+							sortable: _filter['media_elements']['active'] == false,
 						},
 						displayedFields: localConfig.overview.displayedFields,
 						identifier: 'MediaElements',
@@ -67,5 +72,8 @@
 			{{ block('overviewButtons') }}
 		</div>
 	{% endblock %}
-	
+
+	{% block listFilter %}
+		{{ element('search/filter', {scope: 'media_elements'}) }}
+	{% endblock %}
 </div>

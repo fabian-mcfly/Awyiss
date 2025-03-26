@@ -10,6 +10,14 @@ namespace Awyiss\Model\Enum;
 enum ComparisonOperator: string {
 	case Equal = '=';
 	case NotEqual = '!=';
+	case Contains = 'contains';
+	case NotContains = 'not_contains';
+	case StartsWith = 'starts_with';
+	case NotStartsWith = 'not_starts_with';
+	case EndsWith = 'ends_with';
+	case NotEndsWith = 'not_ends_with';
+	case In = 'in';
+	case NotIn = 'not_in';
 	case LessThan = '<';
 	case LessThanOrEqual = '<=';
 	case GreaterThan = '>';
@@ -22,13 +30,5 @@ enum ComparisonOperator: string {
 	case ShorterThanOrEqual = 'shorter_than_or_equal';
 	case LongerThan = 'longer_than';
 	case LongerThanOrEqual = 'longer_than_or_equal';
-	case In = 'in';
-	case NotIn = 'not_in';
-	case Contains = 'contains';
-	case NotContains = 'not_contains';
-	case StartsWith = 'starts_with';
-	case NotStartsWith = 'not_starts_with';
-	case EndsWith = 'ends_with';
-	case NotEndsWith = 'not_ends_with';
 	case Regexp = 'regexp';
 }

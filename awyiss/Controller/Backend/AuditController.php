@@ -5,6 +5,7 @@ namespace Awyiss\Controller\Backend;
 
 
 use Awyiss\Annotation\NoDirectAccess;
+use Awyiss\Attribute\AttributeOptionsProvider;
 use Awyiss\Awyiss;
 use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Core\LocalConfig;
@@ -41,7 +42,10 @@ class AuditController extends Controller {
 	 */
 	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
-		return $this->Audit->find()->where($this->getOverviewWhere());
+		$lo_query = $this->Audit->find()->where($this->getOverviewWhere());
+		$this->Search->filterQuery($lo_query);
+
+		return $lo_query;
 	}
 
 
@@ -128,10 +132,8 @@ class AuditController extends Controller {
 		/** @var array<\Awyiss\Model\Entity\Attribute> $la_attributes */
 		$la_attributes = $lo_table->hasAttributes() ? $lo_table->getAttributes() : [];
 		if ($la_attributes) {
-			/** @var \Awyiss\Attribute\AttributeOptionsProvider $ls_attributeOptionsProvider */
-			$ls_attributeOptionsProvider = '\Awyiss\Attribute\AttributeOptionsProvider';
 			/** @var \Awyiss\Attribute\AttributeOptionsCollection $lo_attributeOptionsCollection */
-			$lo_attributeOptionsCollection = $ls_attributeOptionsProvider::getAttributeOptionsFile($ls_scope, true);
+			$lo_attributeOptionsCollection = AttributeOptionsProvider::getAttributeOptionsFile($ls_scope, true);
 		}
 
 		if (in_array($ls_scope, ['contents', 'widgets'], true)) {

@@ -1,0 +1,223 @@
+.SearchFilter-Form {
+	width:calc(100% - 40px);
+	max-width:860px;
+	height:fit-content;
+	min-height:80px;
+	max-height:80dvh;
+	padding:52px 0 0 0;
+	overflow:hidden;
+	z-index:9999;
+
+	.Columns {
+		max-height:calc(80dvh - 52px);
+		border:10px solid transparent;
+		overflow-y:auto;
+		flex:0 0 100%;
+		scrollbar-color:var(--scrollbarColor);
+		scrollbar-width:thin;
+
+		.Scale-Small & {
+			max-height:calc(80dvh - 42px);
+		}
+
+		.🌚 & {
+			background-color:var(--colorDark);
+		}
+	}
+
+	.Column {
+		//display:none;
+		display:grid;
+		margin:0;
+		padding:5px 20px;
+		align-items:center;
+		gap:0 20px;
+		grid-template-columns:1fr 200px 1fr 52px;
+
+		&.Active {
+			//display:grid;
+
+			.Button-Remove {
+				opacity:inherit;
+				pointer-events:initial;
+			}
+		}
+
+		&:nth-child(even of .Active) {
+			background-color:var(--colorLight);
+
+			.🌚 & {
+				background-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l + 0.0448) calc(c + 0.005) calc(h - 0.4))
+			}
+
+			&:nth-last-child(1 of .Active) {
+				~ .Actions {
+					background-color:transparent;
+				}
+			}
+		}
+
+		.Label {
+			line-height:1.1;
+		}
+
+		.Button-Remove {
+			opacity:0;
+			pointer-events:none;
+		}
+	}
+
+	.Actions,
+	.Columns .ButtonArea {
+		display:flex;
+		padding:0 20px;
+		justify-content:space-between;
+
+		.FormInput {
+			grid-column:auto / auto;
+		}
+
+		.Buttons {
+			margin-left:auto;
+			align-self:flex-end;
+
+			.Button-Reset {
+				margin-left:20px;
+			}
+		}
+
+		option {
+			&[disabled] {
+				display:none;
+			}
+		}
+	}
+
+	.Actions {
+		display:grid;
+		display:none;
+		padding-block:10px;
+		background-color:var(--colorLight);
+		align-items:center;
+		gap:0 20px;
+		grid-template-columns: 1fr 200px 1fr 52px;
+
+		.🌚 & {
+			background-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l + 0.0448) calc(c + 0.005) calc(h - 0.4))
+		}
+
+		.FormInput {
+
+		}
+	}
+
+	.Columns .ButtonArea {
+		width:100%;
+		margin:var(--lineHeightMain) 0 0 0;
+		padding-block:0;
+
+		.Button {
+			margin-inline:0;
+		}
+	}
+
+	.FormInput {
+		margin-bottom:0;
+	}
+
+	.Operator {
+		.Label {
+			display:none;
+		}
+	}
+
+	.Input {
+		&.InputType-Boolean {
+			.Label {
+				display:inline-block;
+				margin-left:20px;
+
+				&:first-of-type {
+					margin-left:0;
+				}
+			}
+		}
+
+		&.InputType-Date,
+		&.InputType-Time,
+		&.InputType-Datetime {
+			.FormInput {
+				display:grid;
+				grid-template-columns:1fr;
+
+				input {
+					grid-row-start:1;
+					grid-column-start:1;
+
+					&[name=""] {
+						z-index:1;
+					}
+				}
+			}
+		}
+	}
+
+	.Button-Remove {
+		@extend %InFieldButton;
+
+		width:52px;
+		height:52px;
+		position:relative;
+		top:0;
+		right:0;
+
+		.Scale-Small & {
+			width:42px;
+			height:42px;
+		}
+
+		&.Disabled {
+			opacity:.25;
+			visibility:visible;
+			pointer-events:none;
+		}
+
+		&::after {
+			@include la('\f00d', 24px);
+			line-height:50px;
+
+			.Scale-Small & {
+				line-height:40px;
+			}
+		}
+
+		.Hover {
+			background-color:var(--colorError);
+		}
+	}
+
+	> .ButtonArea {
+		margin:0;
+		padding:2px;
+		position:absolute;
+		top:0;
+		right:0;
+
+		.Button {
+			width:auto;
+			height:48px;
+			margin-right:20px;
+			margin-bottom:0;
+			line-height:26px;
+			background-color:transparent;
+
+			.Scale-Small & {
+				height:38px;
+			}
+
+			&:last-child {
+				margin-right:0;
+			}
+		}
+	}
+}

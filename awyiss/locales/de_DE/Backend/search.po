@@ -1,0 +1,114 @@
+# Search translations of Awyiss CMS
+# Copyright 2024 Awyiss <EMAIL@ADDRESS>
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 0.1.0\n"
+"POT-Creation-Date: 2025-03-23 16:07+0000\n"
+"PO-Revision-Date: 2025-03-23 16:07+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+msgid "filter_headline"
+msgstr "Filter"
+
+msgid "filter_operator"
+msgstr "Operator"
+
+msgid "label_boolean_all"
+msgstr "Alle"
+
+msgid "label_boolean_true"
+msgstr "Ja"
+
+msgid "label_boolean_false"
+msgstr "Nein"
+
+msgid "operator_equal"
+msgstr "gleich"
+
+msgid "operator_not_equal"
+msgstr "ungleich"
+
+msgid "operator_greater_than"
+msgstr "größer als"
+
+msgid "operator_greater_than_or_equal"
+msgstr "größer gleich"
+
+msgid "operator_less_than"
+msgstr "kleiner als"
+
+msgid "operator_less_than_or_equal"
+msgstr "kleiner gleich"
+
+msgid "operator_between"
+msgstr "zwischen"
+
+msgid "operator_not_between"
+msgstr "nicht zwischen"
+
+msgid "operator_length_equal"
+msgstr "Länge gleich"
+
+msgid "operator_length_not_equal"
+msgstr "Länge ungleich"
+
+msgid "operator_shorter_than"
+msgstr "kürzer als"
+
+msgid "operator_shorter_than_or_equal"
+msgstr "kürzer als oder gleich"
+
+msgid "operator_longer_than"
+msgstr "länger als"
+
+msgid "operator_longer_than_or_equal"
+msgstr "länger als oder gleich"
+
+msgid "operator_in"
+msgstr "in"
+
+msgid "operator_not_in"
+msgstr "nicht in"
+
+msgid "operator_contains"
+msgstr "enthält"
+
+msgid "operator_not_contains"
+msgstr "enthält nicht"
+
+msgid "operator_starts_with"
+msgstr "beginnt mit"
+
+msgid "operator_not_starts_with"
+msgstr "beginnt nicht mit"
+
+msgid "operator_ends_with"
+msgstr "endet mit"
+
+msgid "operator_not_ends_with"
+msgstr "endet nicht mit"
+
+msgid "filter_show"
+msgstr "Filter anzeigen"
+
+msgid "filter_close"
+msgstr "Schließen"
+
+msgid "filter_add_column"
+msgstr "Feld hinzufügen"
+
+msgid "filter_active"
+msgstr "Filter aktiv"
+
+msgid "filter_remove_column"
+msgstr "Feld entfernen"
+
+msgid "filter_submit"
+msgstr "Filter anwenden"
+
+msgid "filter_reset"
+msgstr "Filter zurücksetzen"

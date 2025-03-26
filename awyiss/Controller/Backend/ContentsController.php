@@ -96,6 +96,7 @@ class ContentsController extends Controller {
 		 */
 		$lo_query = $this->Contents->find()->where($this->getOverviewWhere())->contain(['ContentTemplates']);
 		$this->Categories->filterQuery($lo_query, null, !$this->paginate['enabled']);
+		$this->Search->filterQuery($lo_query);
 
 		return $lo_query;
 	}

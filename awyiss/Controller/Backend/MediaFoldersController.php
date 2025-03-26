@@ -100,6 +100,8 @@ class MediaFoldersController extends Controller {
 			$lo_query->where($la_overviewWhere);
 		}
 
+		$this->Search->filterQuery($lo_query);
+
 		return $lo_query;
 	}
 

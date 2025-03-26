@@ -51,13 +51,17 @@ use RuntimeException;
  * @method string|\Awyiss\Authorization\Policy\AbstractGenericPolicy|null getPolicyClass()
  * @method array getSystemOrderRelatedColumns(?\Cake\Datasource\EntityInterface $entity = null)
  * @method array extractAttributeFields(array $fields, bool $inlcudeBaseFields = false)
- * @method array getAttributes()
+ * @method \Awyiss\Model\Entity\Attribute[] getAttributes()
  * @method \Awyiss\Model\Table getAttributesTable()
  * @method string getAttributesTableName(bool $camelized = false)
  * @method bool hasAttributes()
  * @method \Cake\Datasource\ResultSetInterface|array|null getCategories(bool $returnRaw = false)
  * @method \Awyiss\Model\Entity newDefaultEntity(array $additionalData = [])
  * @method \Cake\Collection\CollectionInterface listNested(\Cake\ORM\Query\SelectQuery $query)
+ * @method array getPossibleFieldValues(string $column, ?String $type = null)
+ * @method array getFilterColumns(array $blocklistedColumns = [])
+ * @method string normalizeColumnType(string $type)
+ * @method bool searchIsActive()
  * @noinspection PhpFullyQualifiedNameUsageInspection
  */
 class Table extends BaseTable {
@@ -169,6 +173,10 @@ class Table extends BaseTable {
 	 */
 	protected array $nest = [];
 	/**
+	 * @var array Settings for the SearchBehavior
+	 */
+	protected array $search = [];
+	/**
 	 * @var array Settings for the SoftDeleteBehavior
 	 */
 	protected array $softDelete = [];
@@ -276,6 +284,8 @@ class Table extends BaseTable {
 		if ($this->getTable() !== 'publication_data') {
 			$this->addBehavior('PublicationData', $this->publicationData);
 		}
+
+		$this->addBehavior('Search', $this->search);
 
 		if (!empty($config['translateLanguage']) && !empty($this->translate['fields'])) {
 			$this->addTranslateBehavior($config['translateLanguage']);
@@ -963,10 +973,12 @@ class Table extends BaseTable {
 			];
 		}
 		else {
-			$la_options = ['isAttributesTable' => true] + $this->attributes;
+			$ls_sourceTable = substr($this->getTable(), 11);
+			$la_options = ['isAttributesTable' => true, 'sourceTable' => $ls_sourceTable] + $this->attributes;
 		}
 
 		$this->addBehavior('Attributes', $la_options);
+		$this->addBehavior('Search', $this->search);
 
 		if ($sourceTable) {
 			return;

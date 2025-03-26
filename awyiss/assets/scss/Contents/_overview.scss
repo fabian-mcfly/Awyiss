@@ -1,21 +1,5 @@
 .ContentsController {
-	#Content {
-		.Button-ColumnView {
-			margin:0;
-		}
-	}
-
-	&:has(.FlashMessage) {
-		.Overview {
-			.BackToOverview {
-				margin-top:0;
-			}
-		}
-	}
-
 	.ButtonArea {
-		position:relative;
-
 		&.CannotMoveUpwards {
 			.Button-ColumnView {
 				bottom:calc(var(--lineHeightMain) * -1);
@@ -82,12 +66,7 @@
 	}
 
 	.Overview {
-		.BackToOverview {
-			margin-top:calc(var(--lineHeightMain) * -1);
-		}
-
 		h1 {
-
 			font-size:1.25rem;
 			line-height:1;
 		}

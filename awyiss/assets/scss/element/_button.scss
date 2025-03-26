@@ -165,6 +165,7 @@ button,
 	&-Configure,
 	&-Delete,
 	&-Edit,
+	&-Filter,
 	&-History,
 	&-Leave,
 	&-Preview,
@@ -243,6 +244,12 @@ button,
 	&-Edit {
 		&::after {
 			content:'\f304';
+		}
+	}
+
+	&-Filter {
+		&::after {
+			content:'\f0b0';
 		}
 	}
 

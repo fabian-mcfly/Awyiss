@@ -61,7 +61,10 @@ class WidgetsController extends Controller {
 	 */
 	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
-		return $this->Widgets->find()->where($this->getOverviewWhere())->contain(['WidgetTemplates']);
+		$lo_query = $this->Widgets->find()->where($this->getOverviewWhere())->contain(['WidgetTemplates']);
+		$this->Search->filterQuery($lo_query);
+
+		return $lo_query;
 	}
 
 

@@ -40,6 +40,7 @@ class FormEntriesController extends Controller {
 	public function getOverviewQuery(): ?SelectQuery {
 		$lo_query = $this->FormEntries->find()->where($this->getOverviewWhere());
 		$this->Categories->filterQuery($lo_query, null, !$this->paginate['enabled']);
+		$this->Search->filterQuery($lo_query);
 
 		return $lo_query;
 	}

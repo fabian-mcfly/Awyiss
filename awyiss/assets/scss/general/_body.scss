@@ -108,6 +108,7 @@ fieldset {
 	background-color:var(--backgroundColorContent);
 	border:0 none;
 	position:relative;
+	z-index:5;
 
 	.Scale-Small & {
 		padding:30px 20px 0 20px;
@@ -277,7 +278,7 @@ legend {
 	position:absolute;
 	top:-20px;
 	left:20px;
-	z-index:2;
+	z-index:6;
 	cursor:default;
 	transition:background-color .3s ease-in-out, color .3s ease-in-out, box-shadow .3s ease-in-out;
 

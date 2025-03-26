@@ -28,6 +28,12 @@
 			{% block categoriesFilterOverview %}
 				{{ CategoriesHelper.filter('form', naturalSort(CategoriesHelper.getCategories('form'))) }}
 			{% endblock %}
+
+			{% block overviewButtons %}
+				{% block overviewButtonFilter %}
+					{{ element('search/filter_button', {scope: 'form_entries'}) }}
+				{% endblock %}
+			{% endblock %}
 		</div>
 	{% endblock %}
 
@@ -38,6 +44,12 @@
 	{% block buttonAreaBottom %}
 		<div class="ButtonArea ButtonArea-Bottom">
 			{{ block('categoriesFilterOverview') }}
+
+			{{ block('overviewButtons') }}
 		</div>
+	{% endblock %}
+
+	{% block listFilter %}
+		{{ element('search/filter', {scope: 'form_entries'}) }}
 	{% endblock %}
 </div>

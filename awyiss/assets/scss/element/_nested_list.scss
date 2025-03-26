@@ -57,9 +57,11 @@
 				}
 			}
 
-			.NestedList {
-				&:not(:has(.ListItem)) {
-					height:var(--emptyListHeight);
+			&:not([data-sortable="false"]) {
+				.NestedList {
+					&:not(:has(.ListItem)) {
+						height:var(--emptyListHeight);
+					}
 				}
 			}
 		}
@@ -82,6 +84,12 @@
 
 			.Scale-Small & {
 				margin-inline:-5px;
+			}
+		}
+
+		&[data-sortable="false"] {
+			.ListItem-Inner {
+				cursor:default;
 			}
 		}
 

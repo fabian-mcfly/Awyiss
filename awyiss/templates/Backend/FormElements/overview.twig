@@ -56,6 +56,10 @@
 					{% endif %}
 				{% endblock %}
 
+				{% block overviewButtonFilter %}
+					{{ element('search/filter_button', {scope: 'form_elements'}) }}
+				{% endblock %}
+
 				{% block listControlOverviewListWithColumns %}
 					{{ HtmlHelper.link(__('overview_list_with_columns'), {
 						action: 'userConfiguration',
@@ -88,6 +92,7 @@
 				class: localConfig.overview.columnView.enabled == true ? 'NestedList-Compact ColumnSystem-' ~ columnSystemName : null,
 				data: {
 					'form-id': selectedFormId,
+					sortable: _filter['form_elements']['active'] == false,
 				},
 				displayedFields: localConfig.overview.displayedFields,
 				identifier: 'FormElement',
@@ -98,12 +103,14 @@
 
 	{% block buttonAreaBottom %}
 		<div class="ButtonArea ButtonArea-Bottom">
-			{{ block('buttonEdit') }}
-
 			{{ block('categoriesFilterOverview') }}
 
 			{{ block('overviewButtons') }}
 		</div>
+	{% endblock %}
+
+	{% block listFilter %}
+		{{ element('search/filter', {scope: 'form_elements'}) }}
 	{% endblock %}
 </div>
 

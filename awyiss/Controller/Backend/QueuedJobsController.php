@@ -35,6 +35,12 @@ class QueuedJobsController extends BackendController {
 		],
 	];
 	/**
+	 * @inheritDoc
+	 */
+	protected array $search = [
+		'autoload' => false,
+	];
+	/**
 	 * A list of task configurations
 	 *
 	 * @var array
@@ -223,6 +229,9 @@ class QueuedJobsController extends BackendController {
 
 		$la_referenceParts = explode('::', $queuedJob->reference);
 		$queuedJob->scope = __d($la_referenceParts[0], 'headline_overview');
+		if ($la_referenceParts[0] === 'system') {
+			$queuedJob->scope = 'System';
+		}
 
 		$la_arguments = [];
 		if (count($la_referenceParts) > 2) {

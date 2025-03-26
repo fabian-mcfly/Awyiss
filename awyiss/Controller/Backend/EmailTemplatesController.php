@@ -34,7 +34,10 @@ class EmailTemplatesController extends Controller {
 	 */
 	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
-		return $this->EmailTemplates->find('withUsages')->where($this->getOverviewWhere());
+		$lo_query = $this->EmailTemplates->find('withUsages')->where($this->getOverviewWhere());
+		$this->Search->filterQuery($lo_query);
+
+		return $lo_query;
 	}
 
 

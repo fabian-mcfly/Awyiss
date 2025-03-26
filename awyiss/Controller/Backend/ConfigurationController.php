@@ -56,6 +56,7 @@ class ConfigurationController extends Controller {
 			'language_shortcode' => 'ASC',
 		]);
 		$this->Categories->filterQuery($lo_query, null, !$this->paginate['enabled']);
+		$this->Search->filterQuery($lo_query);
 
 		return $lo_query;
 	}
@@ -97,27 +98,33 @@ class ConfigurationController extends Controller {
 			})->toArray());
 		})->toArray();
 
-		/**
-		 * @var string $ls_realm
-		 * @var \Awyiss\Configuration\ConfigOptionCollection $lo_configOptions
-		 */
-		foreach ($la_configOptions as $ls_realm => $lo_configOptions) {
-			$la_configOptions[ $ls_realm ] = Hash::merge([], $lo_configOptions->toArray(), $la_configuration[ $ls_realm ] ?? []);
 
-			uksort($la_configOptions[ $ls_realm ], function ($a, $b) {
-				$ls_titleA = __('category_' . Inflector::underscore($a));
-				$ls_titleB = __('category_' . Inflector::underscore($b));
+		if ($this->Configuration->searchIsActive()) {
+			$la_configOptions = $la_configuration;
+		}
+		else {
+			/**
+			 * @var string $ls_realm
+			 * @var \Awyiss\Configuration\ConfigOptionCollection $lo_configOptions
+			 */
+			foreach ($la_configOptions as $ls_realm => $lo_configOptions) {
+				$la_configOptions[ $ls_realm ] = Hash::merge([], $lo_configOptions->toArray(), $la_configuration[ $ls_realm ] ?? []);
 
-				if (str_contains($ls_titleA, '::')) {
-					$ls_titleA = $a;
-				}
+				uksort($la_configOptions[ $ls_realm ], function ($a, $b) {
+					$ls_titleA = __('category_' . Inflector::underscore($a));
+					$ls_titleB = __('category_' . Inflector::underscore($b));
 
-				if (str_contains($ls_titleB, '::')) {
-					$ls_titleB = $b;
-				}
+					if (str_contains($ls_titleA, '::')) {
+						$ls_titleA = $a;
+					}
 
-				return strcoll(mb_strtolower($ls_titleA), mb_strtolower($ls_titleB));
-			});
+					if (str_contains($ls_titleB, '::')) {
+						$ls_titleB = $b;
+					}
+
+					return strcoll(mb_strtolower($ls_titleA), mb_strtolower($ls_titleB));
+				});
+			}
 		}
 
 		$this->set([

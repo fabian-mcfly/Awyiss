@@ -80,6 +80,9 @@ msgstr "Seite"
 msgid "scope_media"
 msgstr "Media"
 
+msgid "foreign_key"
+msgstr "Ziel-ID"
+
 msgid "status"
 msgstr "Status-Code"
 

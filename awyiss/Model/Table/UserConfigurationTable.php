@@ -52,6 +52,12 @@ class UserConfigurationTable extends Table {
 		'identifier' => 'scope',
 		'useDatasource' => false,
 	];
+	/**
+	 * @inheritDoc
+	 */
+	protected array $search = [
+		'blocklistedColumns' => ['user_id'],
+	];
 
 
 	/**

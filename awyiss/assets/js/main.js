@@ -21,6 +21,7 @@ import Observer from 'Observer';
 import OverflowMenu from 'OverflowMenu';
 import OverlayForm from 'OverlayForm';
 import PasswordReveal from 'PasswordReveal';
+import Search from 'Search';
 import TitleSetter from 'TitleSetter';
 import TranslatableTexts from 'TranslatableTexts';
 
@@ -368,6 +369,12 @@ export async function initMainOnReady() {
 	 * @type {PasswordReveal}
 	 */
 	window.passwordReveal = new PasswordReveal();
+
+	/**
+	 * @global
+	 * @type {Search}
+	 */
+	window.search = new Search();
 
 	/**
 	 * @global

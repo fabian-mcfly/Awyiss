@@ -35,6 +35,7 @@ class PageTemplatesController extends Controller {
 	public function getOverviewQuery(): ?SelectQuery {
 		$lo_query = $this->PageTemplates->find('withUsages')->where($this->getOverviewWhere())->contain(['ContentAreas', 'PageRoles']);
 		$this->Categories->filterQuery($lo_query, null, false);
+		$this->Search->filterQuery($lo_query);
 
 		return $lo_query;
 	}
