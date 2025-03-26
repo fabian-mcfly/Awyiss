@@ -963,8 +963,8 @@ class CategoriesHelperTest extends TestCase {
 	public function testLinkSelectWithProvidedOptionsWithDisabledConfigTrue(): void {
 		$result = $this->helper->linkSelect('media_folders', ['option1', 'option2'], ['disabled' => true]);
 
-		$this->assertStringContainsString('<li class="Item Item-Option1 Disabled">option1</li>', $result);
-		$this->assertStringContainsString('<li class="Item Item-Option2 Disabled">option2</li>', $result);
+		$this->assertStringContainsString('<li class="Item Item-Option1 Disabled" title="option1">option1</li>', $result);
+		$this->assertStringContainsString('<li class="Item Item-Option2 Disabled" title="option2">option2</li>', $result);
 	}
 
 
@@ -980,7 +980,7 @@ class CategoriesHelperTest extends TestCase {
 			'<li class="Item Item-Option1"><a href="/backend/xy/the-controller/the-action/media-folders:0/" title="option1">option1</a></li>',
 			$result
 		);
-		$this->assertStringContainsString('<li class="Item Item-Option2 Disabled">option2</li>', $result);
+		$this->assertStringContainsString('<li class="Item Item-Option2 Disabled" title="option2">option2</li>', $result);
 	}
 
 
