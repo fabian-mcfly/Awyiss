@@ -5,7 +5,7 @@
 				{% block listOverviewItemCategory %}
 					<li class="ListItem ListItem-Category">
 						<span class="Title">
-							{{ __('category_' ~ identifier|underscore) }}
+							{{ __df(selectedScope, 'configuration', 'configuration_category_' ~ identifier|underscore) }}
 						</span>
 						{{ _self.recursiveConfigurationListing(configItem, level + 1, realm, selectedScope, addUrl, parents|merge([identifier])) }}
 					</li>

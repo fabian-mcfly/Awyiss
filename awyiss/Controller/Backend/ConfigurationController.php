@@ -110,9 +110,9 @@ class ConfigurationController extends Controller {
 			foreach ($la_configOptions as $ls_realm => $lo_configOptions) {
 				$la_configOptions[ $ls_realm ] = Hash::merge([], $lo_configOptions->toArray(), $la_configuration[ $ls_realm ] ?? []);
 
-				uksort($la_configOptions[ $ls_realm ], function ($a, $b) {
-					$ls_titleA = __('category_' . Inflector::underscore($a));
-					$ls_titleB = __('category_' . Inflector::underscore($b));
+				uksort($la_configOptions[ $ls_realm ], function ($a, $b) use ($ls_selectedScope) {
+					$ls_titleA = __df($ls_selectedScope, 'configuration', 'configuration_category_' . Inflector::underscore($a));
+					$ls_titleB = __df($ls_selectedScope, 'configuration', 'configuration_category_' . Inflector::underscore($b));
 
 					if (str_contains($ls_titleA, '::')) {
 						$ls_titleA = $a;

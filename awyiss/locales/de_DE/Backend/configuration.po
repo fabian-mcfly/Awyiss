@@ -107,44 +107,44 @@ msgstr "Standardwert"
 msgid "global_language"
 msgstr "Global"
 
-msgid "category_overview"
+msgid "configuration_category_overview"
 msgstr "Übersicht"
 
-msgid "category_paginate"
+msgid "configuration_category_paginate"
 msgstr "Paginierung"
 
-msgid "category_column_system"
+msgid "configuration_category_column_system"
 msgstr "Spaltigkeit"
 
-msgid "category_column_view"
+msgid "configuration_category_column_view"
 msgstr "Spaltenansicht"
 
-msgid "category_interface"
+msgid "configuration_category_interface"
 msgstr "Oberfläche"
 
-msgid "category_publication_data"
+msgid "configuration_category_publication_data"
 msgstr "Veröffentlichungsdaten"
 
-msgid "category_categories"
+msgid "configuration_category_categories"
 msgstr "Kategorien"
 
-msgid "category_contents"
+msgid "configuration_category_contents"
 msgstr "Inhalte"
 
-msgid "category_media"
+msgid "configuration_category_media"
 msgstr "Media"
 
-msgid "category_upload"
+msgid "configuration_category_upload"
 msgstr "Upload"
 
-msgid "category_media_folders"
+msgid "configuration_category_media_folders"
 msgstr "Medienordner"
 
-msgid "category_meta"
+msgid "configuration_category_meta"
 msgstr "Meta"
 
-msgid "category_nest"
+msgid "configuration_category_nest"
 msgstr "Verschachtelung"
 
-msgid "category_system_order"
+msgid "configuration_category_system_order"
 msgstr "Sortierung"
