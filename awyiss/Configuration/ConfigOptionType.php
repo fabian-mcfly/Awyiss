@@ -21,7 +21,6 @@ enum ConfigOptionType {
 	case JsonObject;
 	case List;
 	case ListKey;
-	case ListValue;
 	case String;
 	case ValueCollection;
 
@@ -66,7 +65,6 @@ enum ConfigOptionType {
 				return is_array($la_value);
 
 			case self::Enum:
-			case self::ListValue:
 			case self::ValueCollection:
 				throw new RuntimeException(sprintf('Cannot validate case `%s` in `%s` in the enum directly. Use `\Awyiss\Configuration\ConfigOption::validateConfigValue` instead.', $this->name, self::class));
 

@@ -415,12 +415,11 @@ class ConfigOption {
 		if (
 			$this->getType() === ConfigOptionType::Enum ||
 			$this->getType() === ConfigOptionType::ListKey ||
-			$this->getType() === ConfigOptionType::ListValue ||
 			$this->getType() === ConfigOptionType::ValueCollection
 		) {
 			$lx_values = $this->getValues(true, $languageShortcode);
 			if (!$lx_values) {
-				throw new RuntimeException(sprintf('Cannot validate option `%s` with type `%s` without a list of values', $this->identifier, ConfigOptionType::ListValue->name));
+				throw new RuntimeException(sprintf('Cannot validate option `%s` with type `%s` without a list of values', $this->identifier, $this->name));
 			}
 		}
 
@@ -438,11 +437,6 @@ class ConfigOption {
 		if ($this->getType() === ConfigOptionType::ListKey) {
 			/** @noinspection PhpUndefinedVariableInspection */
 			return array_key_exists($value, $lx_values);
-		}
-
-		if ($this->getType() === ConfigOptionType::ListValue) {
-			/** @noinspection PhpUndefinedVariableInspection */
-			return in_array($value, $lx_values, true);
 		}
 
 		if ($this->getType() === ConfigOptionType::ValueCollection) {
@@ -477,7 +471,6 @@ class ConfigOption {
 		if (
 			$this->getType() === ConfigOptionType::Enum ||
 			$this->getType() === ConfigOptionType::ListKey ||
-			$this->getType() === ConfigOptionType::ListValue ||
 			$this->getType() === ConfigOptionType::ValueCollection
 		) {
 			$lx_values = $this->getValues(true, $languageShortcode);
@@ -494,11 +487,6 @@ class ConfigOption {
 		if ($this->getType() === ConfigOptionType::ListKey) {
 			/** @noinspection PhpUndefinedVariableInspection */
 			return $this->typecastListKey($value, $lx_values);
-		}
-
-		if ($this->getType() === ConfigOptionType::ListValue) {
-			/** @noinspection PhpUndefinedVariableInspection */
-			return $this->typecastListValue($value, $lx_values);
 		}
 
 		if ($this->getType() === ConfigOptionType::ValueCollection) {

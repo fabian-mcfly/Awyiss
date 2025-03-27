@@ -51,11 +51,12 @@
 {% endblock %}
 
 {% block formControlTypeListKey %}
-	{{ FormHelper.control('value', {options: configuration.configOption.values(true), type: 'select'}) }}
-{% endblock %}
-
-{% block formControlTypeListValue %}
-	{{ FormHelper.control('value', {options: configuration.configOption.values(true), type: 'select'}) }}
+	{% set options = configuration.configOption.values(true) %}
+	{{ FormHelper.control('value', {
+		options: options,
+		empty: '' not in options|keys,
+		type: 'select',
+	}) }}
 {% endblock %}
 
 {% block formControlTypeJsonArray %}

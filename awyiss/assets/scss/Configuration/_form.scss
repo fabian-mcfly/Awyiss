@@ -6,6 +6,12 @@
 			grid-column:auto / span 2;
 		}
 
+		.FormInputType-ListItem {
+			.Button-Remove {
+				top:0;
+			}
+		}
+
 		.FormInputName-LanguageShortcode {
 			display:block;
 		}
