@@ -6,6 +6,7 @@ namespace Awyiss\View\Helper;
 
 use Awyiss\Awyiss;
 use Awyiss\Middleware\LocaleMiddleware;
+use Awyiss\Model\Entity\Form;
 use Awyiss\Utility\Inflector;
 use Awyiss\View\StringTemplate;
 use Cake\Core\Configure;
@@ -494,6 +495,22 @@ class FormHelper extends BaseFormHelper {
 			'content' => $ls_error ?? '',
 			'id' => $this->_domId($ls_field) . '-error',
 		]);
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Entity\Form $form
+	 * @param string $position
+	 * @return string|null
+	 */
+	public function renderFormProtection(Form $form, string $position): ?string {
+		$ls_return = '';
+
+		foreach ($form->getProtectionMethods() as $lo_protectionMethod) {
+			$ls_return .= $lo_protectionMethod->getHtml($position) . PHP_EOL;
+		}
+
+		return $ls_return;
 	}
 
 

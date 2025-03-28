@@ -59,8 +59,16 @@ after a short delay to prevent spam bots from submitting the form directly.
 						method="post"
 						id="Form-{{ form.identifier|ucparts(false) }}"
 				>
+					{% block formProtectionBefore %}
+						{{ FormHelper.renderFormProtection(form, 'before') }}
+					{% endblock %}
+
 					{% block formBody %}
 						{{ contents|raw }}
+					{% endblock %}
+
+					{% block formProtectionAfter %}
+						{{ FormHelper.renderFormProtection(form, 'after') }}
 					{% endblock %}
 
 					<input type="hidden" name="form_identifier" value="{{ form.identifier }}">

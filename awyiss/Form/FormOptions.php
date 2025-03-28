@@ -197,6 +197,20 @@ class FormOptions implements FormOptionsInterface {
 	/**
 	 * @inheritDoc
 	 */
+	public function getProtectionOptions(string $identifier): ?array {
+		if ($identifier === 'hidden_input') {
+			return [
+				'elementName' => 'email_confirmation',
+			];
+		}
+
+		return null;
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
 	public function getSafeRealSender(): ?string {
 		return $this->safeRealSender;
 	}

@@ -9,6 +9,8 @@ use Awyiss\Configuration\AbstractConfigOptions;
 use Awyiss\Configuration\ConfigOption;
 use Awyiss\Configuration\ConfigOptions\Trait\TableFieldsTrait;
 use Awyiss\Configuration\ConfigOptionType;
+use Awyiss\Form\Protection\FormProtectionProvider;
+use Awyiss\Utility\Inflector;
 
 
 /**
@@ -64,6 +66,29 @@ class FormsConfigOptions extends AbstractConfigOptions {
 					nullable: false,
 					localizable: false,
 					type: ConfigOptionType::Bool,
+				),
+			],
+		]);
+
+		$this->add(Awyiss::REALM_FRONTEND, [
+			'protection' => [
+				new ConfigOption(
+					defaultValue: ['hidden_input'],
+					identifier: 'methods',
+					localizable: false,
+					nullable: true,
+					type: ConfigOptionType::ValueCollection,
+					values: function () {
+						$la_protectionMethod = FormProtectionProvider::getFormProtectionFiles();
+
+						foreach ($la_protectionMethod as $ls_identifier => $ls_class) {
+							$la_protectionMethods[ $ls_identifier ] = __d('forms', 'protection_method_' . Inflector::underscore($ls_class::getIdentifier()));
+						}
+
+						asort($la_protectionMethods);
+
+						return $la_protectionMethods;
+					},
 				),
 			],
 		]);

@@ -6,10 +6,12 @@ namespace Awyiss\Model\Entity;
 
 use Awyiss\Core\App;
 use Awyiss\Form\FormOptionsInterface;
+use Awyiss\Form\Protection\FormProtectionProvider;
 use Awyiss\Model\Entity;
 use Awyiss\Utility\Inflector;
 use Awyiss\Validation\Validator;
 use Cake\Collection\CollectionInterface;
+use Cake\Core\Configure;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Utility\Text;
 use Cake\View\View;
@@ -133,6 +135,10 @@ class Form extends Entity {
 	 */
 	protected bool $formSubmitted = false;
 	/**
+	 * @var array<string, \Awyiss\Form\Protection\FormProtectionInterface>
+	 */
+	protected array $protectionMethods;
+	/**
 	 * @var \Awyiss\Model\Entity\Page|null
 	 */
 	protected ?Page $sourcePage;
@@ -151,6 +157,7 @@ class Form extends Entity {
 	 * @param \Awyiss\Model\Entity\Page|null $page
 	 * @param bool $isPreview
 	 * @return $this
+	 * @throws \ReflectionException
 	 */
 	public function initialize(View $view, array $requestData = [], ?Page $page = null, bool $isPreview = false): static {
 		$this->view = $view;
@@ -165,7 +172,8 @@ class Form extends Entity {
 		$this
 			->loadFormOptions()
 			->loadFormElements()
-			->setFormData($requestData);
+			->setFormData($requestData)
+			->initProtectionMethods();
 
 		$this->getFormOptions()->modifyForm($this, $this->sourcePage);
 
@@ -317,12 +325,30 @@ class Form extends Entity {
 	/**
 	 * @param array $formData
 	 * @param \Awyiss\Validation\Validator|null $validator
+	 * @param bool|null $validateProtection
 	 * @return \Awyiss\Model\Entity\Form
 	 */
-	public function validate(?array $formData = null, ?Validator $validator = null): static {
+	public function validate(?array $formData = null, ?Validator $validator = null, ?bool $validateProtection = null): static {
 		$lo_validator = $validator ?? $this->getFormOptions()->getValidator($this->getValidator(), $this);
 
 		$this->setErrors($lo_validator->validate($formData ?? $this->getFormData()));
+
+		// Validate the protection methods if forced (true)
+		// or if no other validation errors are present (null)
+		if (
+			$validateProtection === true ||
+			(
+				$validateProtection === null &&
+				!$this->getErrors()
+			)
+		) {
+			$this->validateProtection($formData ?? $this->getFormData());
+		}
+
+		// Modify the form using the protection methods
+		foreach ($this->getProtectionMethods() as $lo_protectionMethod) {
+			$lo_protectionMethod->modifyForm($this);
+		}
 
 		return $this;
 	}
@@ -333,6 +359,77 @@ class Form extends Entity {
 	 */
 	public function isValid(): bool {
 		return !$this->getErrors();
+	}
+
+
+	/**
+	 * @return static
+	 * @throws \ReflectionException
+	 */
+	protected function initProtectionMethods(): static {
+		$la_protectionMethods = Configure::read('Awyiss.Forms.Frontend.protection.methods');
+
+		if (!$la_protectionMethods) {
+			$this->protectionMethods = [];
+			return $this;
+		}
+
+		$la_formElements = $this->formElements ?? [];
+		if (!is_array($la_formElements)) {
+			$lo_formElements = $la_formElements->filter(fn (FormElement $element) => $element->identifier !== null);
+			$la_formElements = $lo_formElements->listNested()->indexBy('identifier')->toArray();
+		}
+
+		$this->protectionMethods = [];
+		foreach ($la_protectionMethods as $ls_identifier) {
+			$ls_class = FormProtectionProvider::getFormProtectionFile($ls_identifier);
+
+			if ($ls_class === null) {
+				continue;
+			}
+
+			$lo_protection = new $ls_class();
+
+			$lo_protection->initialize($this, $la_formElements, $this->formOptions, $this->view);
+
+			$this->protectionMethods[ $ls_class::getIdentifier() ] = $lo_protection;
+		}
+
+		return $this;
+	}
+
+	/**
+	 * @return array<\Awyiss\Form\Protection\FormProtectionInterface>
+	 */
+	public function getProtectionMethods(): array {
+		if (!isset($this->protectionMethods)) {
+			$this->protectionMethods = [];
+		}
+
+		return $this->protectionMethods;
+	}
+
+
+	/**
+	 * @param array $formData
+	 * @return void
+	 */
+	public function validateProtection(array $formData): static {
+		if (!$this->getProtectionMethods()) {
+			return $this;
+		}
+
+		foreach ($this->getProtectionMethods() as $ls_identifier => $lo_protection) {
+			$ls_error = $lo_protection->validateData($formData);
+
+			if ($ls_error !== true) {
+				$la_errors = $this->getError('_general') ?? [];
+				$la_errors[ $ls_identifier ] = $ls_error;
+				$this->setError('_general', $la_errors);
+			}
+		}
+
+		return $this;
 	}
 
 

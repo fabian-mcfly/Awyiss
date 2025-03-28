@@ -184,3 +184,17 @@ msgstr "All rules must match"
 msgid "conditional_recipients_strategy_match_last"
 msgstr "Last match"
 
+msgid "configuration_category_protection"
+msgstr "Protection"
+
+msgid "protection"
+msgstr "Protection"
+
+msgid "protection_method_none"
+msgstr "None"
+
+msgid "protection_method_altcha"
+msgstr "ALTCHA"
+
+msgid "protection_method_hidden_input"
+msgstr "Hidden Input"

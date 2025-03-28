@@ -203,6 +203,10 @@
 				{% elseif formElement.type == 'submit' %}
 
 					{% block formElementSubmit %}
+						{% block formProtectionBeforeSubmit %}
+							{{ FormHelper.renderFormProtection(form, 'before_submit') }}
+						{% endblock %}
+
 						<button type="submit" name="{{ formElement.identifier }}" class="FormInputType-Button Button">{{ formElement.title }}</button>
 					{% endblock %}
 

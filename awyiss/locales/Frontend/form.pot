@@ -38,3 +38,6 @@ msgstr "Please enter the <strong>{0}. term</strong> from the following list."
 msgid "error_valid_captcha"
 msgstr "<strong>The security check is not correct.</strong><br>"
 	"Please try again."
+
+msgid "protection_method_hidden_input_error_field_empty"
+msgstr "The hidden input field must not empty"

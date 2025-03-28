@@ -183,3 +183,18 @@ msgstr "Alle Regeln müssen zutreffen"
 
 msgid "conditional_recipients_strategy_match_last"
 msgstr "Letzter Treffer"
+
+msgid "configuration_category_protection"
+msgstr "Schutz"
+
+msgid "protection"
+msgstr "Schutz"
+
+msgid "protection_method_none"
+msgstr "Ohne"
+
+msgid "protection_method_altcha"
+msgstr "ALTCHA"
+
+msgid "protection_method_hidden_input"
+msgstr "Verstecktes Eingabefeld"

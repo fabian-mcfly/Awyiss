@@ -115,6 +115,21 @@ interface FormOptionsInterface {
 
 
 	/**
+	 * Returns the protection options for the provided identifier.
+	 *
+	 * The returned array should contain all non-default options
+	 * for the given protection method.
+	 *
+	 * The structure itself isn't defined and can be freely chosen.
+	 * Each protection method uses different keys, or none at all.
+	 *
+	 * @param string $identifier
+	 * @return array|null
+	 */
+	public function getProtectionOptions(string $identifier): ?array;
+
+
+	/**
 	 * Indicates whether the real sender should be used as the sender (= empty value),
 	 * or if the site owner's email should be used as the sender (= safe email address).
 	 * This should ensure that no mailserver denies the email

@@ -483,6 +483,16 @@ class FormSender {
 
 		$this->formEntriesTable->patchEntity($lo_formEntry, $la_data);
 
+		foreach ($this->form->getProtectionMethods() as $lo_protectionMethod) {
+			$lo_formEntry = $lo_protectionMethod->modifyFormEntry($lo_formEntry);
+
+			// If the modify methods decides to intervene, return the desired status.
+			if (is_bool($lo_formEntry)) {
+				return $lo_formEntry;
+			}
+		}
+
+		// Save the form entry
 		if ($this->formEntriesTable->save($lo_formEntry, ['allowFrontendSave' => true])) {
 			$this->formEntryIdentifier = md5($lo_formEntry->id . ' | ' . $lo_formEntry->postHash);
 

@@ -38,3 +38,6 @@ msgstr "Bitte geben Sie den <strong>{0}. Begriff</strong> aus der folgenden List
 msgid "error_valid_captcha"
 msgstr "<strong>Die Sicherheitsabfrage ist nicht korrekt.</strong><br>"
 	"Bitte versuchen Sie es erneut."
+
+msgid "protection_method_hidden_input_error_field_empty"
+msgstr "Das versteckte Eingabefeld muss leer sein"
