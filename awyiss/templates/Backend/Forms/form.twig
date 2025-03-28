@@ -230,7 +230,7 @@
 													{{ FormHelper.control('form_conditional_recipients.' ~ counter ~ '.field', {
 														label: __d('form_conditional_recipients', 'field'),
 														options: fields,
-														required: conditionalRecipient.type ? true : false,
+														required: false,
 													}) }}
 
 													{{ FormHelper.control('form_conditional_recipients.' ~ counter ~ '.operator', {

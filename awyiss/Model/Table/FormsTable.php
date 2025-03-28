@@ -67,6 +67,7 @@ class FormsTable extends Table {
 			'cascadeCallbacks' => true,
 			'dependent' => true,
 			'foreignKey' => 'form_id',
+			'saveStrategy' => 'replace',
 		]);
 
 		$this->hasMany('FormElements', [
