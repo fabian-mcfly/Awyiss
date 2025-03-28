@@ -164,6 +164,47 @@ class FormElement extends Entity {
 
 
 	/**
+	 * @param array|null $options
+	 * @param string $type
+	 * @param string|null $languageShortcode
+	 * @return array
+	 */
+	public function parseOptions(?array $options, string $type, ?string $languageShortcode = null): array {
+		if (!$options) {
+			return [];
+		}
+
+		$la_options = [];
+		foreach ($options as $li_key => $la_option) {
+			if ($languageShortcode && isset($la_option['_translations'][ $languageShortcode ])) {
+				$ls_value = $la_option['_translations'][ $languageShortcode ]['value'];
+				$ls_key = $la_option['_translations'][ $languageShortcode ]['key'];
+			}
+			else {
+				$ls_key = $la_option['key'];
+				$ls_value = $la_option['value'];
+			}
+
+			if (empty($ls_key)) {
+				$ls_key = $ls_value;
+			}
+			elseif (empty($ls_value)) {
+				$ls_value = $ls_key;
+			}
+
+			// If both, key and value are empty, skip this option if the element is not the first one
+			if (($li_key !== 0 || in_array($type, ['checkbox', 'radio'])) && empty($ls_key) && empty($ls_value)) {
+				continue;
+			}
+
+			$la_options[ $ls_key ] = $ls_value;
+		}
+
+		return $la_options;
+	}
+
+
+	/**
 	 * @return array<string, ?\Awyiss\Utility\Content\ColumnInterface>
 	 */
 	protected function _getColumn(): array {

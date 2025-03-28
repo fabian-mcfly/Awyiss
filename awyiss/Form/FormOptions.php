@@ -55,7 +55,7 @@ class FormOptions implements FormOptionsInterface {
 	 * @inheritDoc
 	 */
 	public function getValidator(Validator $validator, Form $form): Validator {
-		if (!$form->formElements) {
+		if (!$form->formElements->count()) {
 			return $validator;
 		}
 
@@ -116,23 +116,25 @@ class FormOptions implements FormOptionsInterface {
 	/**
 	 * @inheritDoc
 	 */
-	public function modifyForm(Form $form, array $requestData, bool $submitted, Page $page): void {
+	public function modifyForm(Form $form, ?Page $page = null): static {
 		// Do nothing
+		return $this;
 	}
 
 
 	/**
 	 * @inheritDoc
 	 */
-	public function modifyFormElement(FormElement $formElement, Form $form, array $requestData, bool $submitted, Page $page): void {
+	public function modifyFormElement(FormElement $formElement, Form $form, ?Page $page = null): static {
 		// Do nothing
+		return $this;
 	}
 
 
 	/**
 	 * @inheritDoc
 	 */
-	public function setConditionalRecipient(Form $form, array $requestData, Page $page): static {
+	public function setConditionalRecipient(Form $form, ?Page $page = null): static {
 		/** @var \Awyiss\Model\Table\FormsTable $lo_formsTable */
 		$lo_formsTable = FactoryLocator::get('Table')->get('Forms');
 		$lo_formsTable->loadInto($form, ['FormConditionalRecipients']);
@@ -147,7 +149,7 @@ class FormOptions implements FormOptionsInterface {
 
 		$lo_conditionalRecipients->setProcessStrategy($form->conditionalRecipientsStrategy);
 
-		$ls_recipient = $lo_conditionalRecipients->getMatchingRecipient($form->formConditionalRecipients, $requestData);
+		$ls_recipient = $lo_conditionalRecipients->getMatchingRecipient($form->formConditionalRecipients, $form->getFormData());
 		if ($ls_recipient) {
 			$form->ownerEmail = $ls_recipient;
 		}

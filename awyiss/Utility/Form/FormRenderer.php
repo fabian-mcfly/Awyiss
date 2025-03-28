@@ -6,7 +6,6 @@ namespace Awyiss\Utility\Form;
 
 use Awyiss\Awyiss;
 use Awyiss\Core\App;
-use Awyiss\Form\FormOptionsInterface;
 use Awyiss\Model\Entity;
 use Awyiss\Model\Entity\Form;
 use Awyiss\Model\Entity\FormElement;
@@ -14,12 +13,9 @@ use Awyiss\Model\Entity\FormEntry;
 use Awyiss\Model\Entity\Page;
 use Awyiss\Routing\Router;
 use Awyiss\Utility\Inflector;
-use Awyiss\Validation\Validator;
 use Awyiss\View\Cell\Frontend\Trait\ContentElementTrait;
 use Awyiss\View\Cell\Frontend\Trait\PreviewTrait;
 use Awyiss\View\FrontendView;
-use Cake\Collection\Collection;
-use Cake\Collection\CollectionInterface;
 use Cake\Core\Configure;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Http\Exception\RedirectException;
@@ -43,33 +39,13 @@ class FormRenderer {
 	 */
 	protected ?Form $form = null;
 	/**
-	 * @var array $formData
-	 */
-	protected array $formData = [];
-	/**
-	 * @var string|null $formElementsChecksum
-	 */
-	protected ?string $formElementsChecksum = null;
-	/**
-	 * @var array $formErrors
-	 */
-	protected array $formErrors = [];
-	/**
-	 * @var \Awyiss\Form\FormOptionsInterface $formOptions
-	 */
-	protected FormOptionsInterface $formOptions;
-	/**
 	 * @var bool|null $formSent
 	 */
 	protected ?bool $formSent = null;
 	/**
-	 * @var bool $formSubmitted
+	 * @var \Awyiss\Model\Entity\Page|null $page
 	 */
-	protected bool $formSubmitted = false;
-	/**
-	 * @var \Awyiss\Model\Entity\Page $page
-	 */
-	protected Page $page;
+	protected ?Page $page = null;
 	/**
 	 * @var \Awyiss\View\FrontendView
 	 * @noinspection PhpPropertyNamingConventionInspection
@@ -114,10 +90,10 @@ class FormRenderer {
 	/**
 	 * @param string|int $identifier
 	 * @param array $requestData
-	 * @param \Awyiss\Model\Entity\Page $page
+	 * @param \Awyiss\Model\Entity\Page|null $page
 	 * @return $this
 	 */
-	public function initForm(string|int $identifier, array $requestData, Page $page): static {
+	public function initForm(string|int $identifier, array $requestData, ?Page $page = null): static {
 		$this->form = $this->getFormByIdentifier($identifier);
 		$this->page = $page;
 
@@ -125,21 +101,12 @@ class FormRenderer {
 			return $this;
 		}
 
-		if ($this->form->identifier === ($requestData['form_identifier'] ?? null)) {
-			$this->formSubmitted = true;
-			$this->formData = $requestData;
-		}
-
-		$this->formOptions = $this->getFormOptions($this->form);
-
-		// Load the form elements into the form
-		$this->form->formElements = $this->getFormElements();
-
-		$this->formOptions->modifyForm($this->form, $this->formData, $this->formSubmitted, $this->page);
-
-		if ($this->formSubmitted) {
-			$this->formOptions->setConditionalRecipient($this->form, $this->formData, $this->page);
-		}
+		$this->form->initialize(
+			$this->View,
+			$requestData,
+			$this->page,
+			$this->isPreview(),
+		);
 
 		return $this;
 	}
@@ -155,60 +122,19 @@ class FormRenderer {
 		if (!$this->form) {
 			throw new RuntimeException('No form was initialized.');
 		}
-
 		// Validate the form
-		if (!$this->formSubmitted) {
+		if (!$this->form->isSubmitted()) {
 			return null;
 		}
 
-		if ($this->isValid()) {
+		// Validate the form using the form's and form options' validator
+		$this->form->validate();
+
+		if ($this->form->isValid()) {
 			$this->sendAndRedirect();
 		}
 
 		return $this->formSent;
-	}
-
-
-	/**
-	 * @param array $options
-	 * @return string
-	 * @throws \ReflectionException
-	 */
-	public function buildFormBody(array $options): string {
-		if (!$this->form) {
-			throw new RuntimeException('No form was initialized.');
-		}
-
-		$this->View->set([
-			'formData' => $this->formData,
-			'formErrors' => $this->formErrors,
-			'sent' => $this->formSent,
-			'submitted' => $this->formSubmitted,
-			'fullWidth' => $options['fullWidth'],
-			'singleColumnBreakpoint' => $options['singleColumnBreakpoint'],
-			...$options['viewVars'],
-		]);
-
-		$lo_formElements = $this->form->formElements;
-
-		$this->prepareEntities($lo_formElements, (float)$options['columnWidth']);
-
-		$la_formElements = $lo_formElements->listNested()->toList();
-		foreach ($la_formElements as $lo_formElement) {
-			if (!empty($this->formErrors[ $lo_formElement->identifier ])) {
-				$lo_formElement->cssClass .= ' FormElement-IsInvalid';
-			}
-		}
-
-		// If there's at least one input of type file, set the form enctype to multipart/form-data
-		$this->form->set(
-			'enctype',
-			array_reduce($la_formElements, function ($carry, FormElement $element) {
-				return $carry || $element->type === 'file';
-			}, false) ? 'multipart/form-data' : null
-		);
-
-		return $this->buildContents($lo_formElements->toArray());
 	}
 
 
@@ -230,149 +156,64 @@ class FormRenderer {
 			return '';
 		}
 
-		return $this->buildFormBody($options);
-	}
+		$this->View->set([
+			'formData' => $this->form->getFormData(),
+			'formErrors' => $this->form->getErrors(),
+			'sent' => $this->formSent,
+			'submitted' => $this->form->isSubmitted(),
+			'fullWidth' => $options['fullWidth'],
+			'singleColumnBreakpoint' => $options['singleColumnBreakpoint'],
+			...$options['viewVars'],
+		]);
 
+		$lo_formElements = $this->form->getFormElements();
 
-	/**
-	 * @return array
-	 */
-	public function getFormData(): array {
-		return $this->formData;
-	}
-
-
-	/**
-	 * @return array
-	 */
-	public function getFormErrors(): array {
-		return $this->formErrors;
-	}
-
-
-	/**
-	 * @return CollectionInterface
-	 */
-	public function getFormElements(): CollectionInterface {
-		if (!$this->form) {
-			return new Collection([]);
+		if (!$lo_formElements) {
+			return '';
 		}
 
-		if ($this->form->formElements) {
-			return $this->form->formElements;
-		}
-
-		/** @var \Awyiss\Model\Table\FormElementsTable $lo_formElementsTable */
-		$lo_formElementsTable = $this->fetchTable('FormElements');
-
-		if ($this->isPreview()) {
-			$lo_query = $lo_formElementsTable->find('all');
-		}
-		else {
-			$lo_query = $lo_formElementsTable->find('active')->find('published');
-		}
-
-		$lo_formElements = $lo_query->find('threaded')->where([
-			'form_id' => $this->form->id,
-		])->all()->filter(function (FormElement $content) {
-			return $content->parentId === null;
-		})->compile();
+		$this->prepareEntities($lo_formElements, (float)$options['columnWidth']);
 
 		$la_formElements = $lo_formElements->listNested()->toList();
 		foreach ($la_formElements as $lo_formElement) {
-			if (in_array($lo_formElement->type, ['checkbox', 'radio', 'select', 'select_multiple'])) {
-				$lo_formElement->options = $this->parseOptions($lo_formElement->options, $lo_formElement->type);
+			if (!$lo_formElement->identifier) {
+				continue;
 			}
 
-			$this->formOptions->modifyFormElement($lo_formElement, $this->form, $this->formData, $this->formSubmitted, $this->page);
+			if ($this->form->getError($lo_formElement->identifier)) {
+				$lo_formElement->cssClass .= ' FormElement-IsInvalid';
+			}
 		}
 
-		$this->formElementsChecksum = md5(serialize($la_formElements));
+		// If there's at least one input of type file, set the form enctype to multipart/form-data
+		$this->form->set(
+			'enctype',
+			array_reduce($la_formElements, function ($carry, FormElement $element) {
+				return $carry || $element->type === 'file';
+			}, false) ? 'multipart/form-data' : null
+		);
 
-		return $lo_formElements;
-	}
-
-
-	/**
-	 * Finds the option file for the form.
-	 * If none was found, the default file will be used.
-	 *
-	 * @param \Awyiss\Model\Entity\Form $form
-	 * @return \Awyiss\Form\FormOptionsInterface
-	 */
-	public function getFormOptions(Form $form): FormOptionsInterface {
-		if (isset($this->formOptions)) {
-			return $this->formOptions;
-		}
-
-		$ls_className = App::className(Inflector::ucparts($form->identifier, false) . 'FormOptions', 'Form');
-
-		if (!$ls_className) {
-			$ls_className = App::className('FormOptions', 'Form');
-		}
-
-		return $this->formOptions = new $ls_className();
-	}
-
-
-	/**
-	 * @return \Awyiss\Validation\Validator
-	 */
-	public function getValidator(): Validator {
-		$lo_validator = new Validator();
-		$lo_validator->setI18nDomain('form');
-
-		//$lo_validator->setStopOnFailure();
-
-		return $lo_validator;
+		return $this->buildContents($lo_formElements->toArray());
 	}
 
 
 	/**
 	 * @return bool|null
 	 */
-	public function isFormSubmitted(): ?bool {
-		return $this->formSubmitted;
-	}
-
-
-	/**
-	 * @return bool|null
-	 */
-	public function isFormSent(): ?bool {
+	public function isSent(): ?bool {
 		return $this->formSent;
 	}
 
 
 	/**
-	 * @return bool
-	 */
-	public function isValid(): bool {
-		if (!$this->form) {
-			throw new RuntimeException('No form was initialized.');
-		}
-
-		if (empty($this->formData)) {
-			throw new RuntimeException('No form data was provided.');
-		}
-
-		$lo_validator = $this->formOptions->getValidator($this->getValidator(), $this->form);
-
-		$this->formErrors = $lo_validator->validate($this->formData);
-
-		return !$this->formErrors;
-	}
-
-
-	/**
-	 * @param string $formEntryHash
+	 * @param string $entryHash
 	 * @return \Awyiss\Model\Entity\FormEntry|null
 	 */
-	public function loadFormDataForEntryHash(string $formEntryHash): ?Entity {
+	public function loadFormEntryFromHash(string $entryHash): ?Entity {
 		/** @var \Awyiss\Model\Table\FormEntriesTable $lo_formEntriesTable */
 		$lo_formEntriesTable = $this->fetchTable('FormEntries');
 
-		$ls_formEntryHash = $formEntryHash;
+		$ls_formEntryHash = $entryHash;
 
 		/** @var \Awyiss\Model\Entity\FormEntry|null $lo_entry */
 		$lo_entry = $lo_formEntriesTable->find('all')->where(function (QueryExpression $exp, SelectQuery $query) use ($ls_formEntryHash) {
@@ -402,75 +243,32 @@ class FormRenderer {
 			return $this;
 		}
 
-		$lo_formHandler = new FormSender($this->form, $la_formData, $this->formOptions, $this->page);
-		$lo_formHandler->replacePlaceholdersInForm();
+		$this->form?->setFormData($la_formData);
 
-		$this->formSent = $this->formSubmitted = true;
+		/** @var \Awyiss\Utility\Form\FormSender $ls_formSenderClass */
+		$ls_formSenderClass = App::className('FormSender', 'Utility/Form');
+
+		$lo_formSender = new $ls_formSenderClass($this->form, $this->page);
+		$lo_formSender->replacePlaceholdersInForm();
+
+		$this->formSent = true;
 
 		return $this;
 	}
 
 
 	/**
-	 * @param string $formEntryHash
+	 * @param string $entryHash
 	 * @return $this
 	 */
-	public function processFormDataForEntryHash(string $formEntryHash): static {
-		$lo_entry = $this->loadFormDataForEntryHash($formEntryHash);
+	public function processFormEntryFromHash(string $entryHash): static {
+		$lo_entry = $this->loadFormEntryFromHash($entryHash);
 
 		if (!$lo_entry || $lo_entry->formId !== $this->form?->id) {
 			return $this;
 		}
 
 		return $this->processFormEntry($lo_entry);
-	}
-
-
-	/**
-	 * @return string|null
-	 */
-	public function getFormElementsChecksum(): ?string {
-		return $this->formElementsChecksum;
-	}
-
-
-	/**
-	 * @param array|null $options
-	 * @param string $type
-	 * @return array
-	 */
-	protected function parseOptions(?array $options, string $type): array {
-		if (!$options) {
-			return [];
-		}
-
-		$la_options = [];
-		foreach ($options as $li_key => $la_option) {
-			if (isset($la_option['_translations'][ $this->page->languageShortcode ])) {
-				$ls_value = $la_option['_translations'][ $this->page->languageShortcode ]['value'];
-				$ls_key = $la_option['_translations'][ $this->page->languageShortcode ]['key'];
-			}
-			else {
-				$ls_key = $la_option['key'];
-				$ls_value = $la_option['value'];
-			}
-
-			if (empty($ls_key)) {
-				$ls_key = $ls_value;
-			}
-			elseif (empty($ls_value)) {
-				$ls_value = $ls_key;
-			}
-
-			// If both, key and value are empty, skip this option if the element is not the first one
-			if (($li_key !== 0 || in_array($type, ['checkbox', 'radio'])) && empty($ls_key) && empty($ls_value)) {
-				continue;
-			}
-
-			$la_options[ $ls_key ] = $ls_value;
-		}
-
-		return $la_options;
 	}
 
 
@@ -506,7 +304,10 @@ class FormRenderer {
 
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 		return $ls_fullWidthMissingWarning . $this->View->element('form/form_elements', [
+			'form' => $this->form,
+			'formData' => $this->form->getFormData(),
 			'formElement' => $entity,
+			'formErrors' => $this->form->getErrors(),
 			'children' => $children,
 			'mediaRenderOptions' => $lo_mediaRenderOptions,
 		]);
@@ -521,12 +322,10 @@ class FormRenderer {
 		/** @var \Awyiss\Utility\Form\FormSender $ls_formSenderClass */
 		$ls_formSenderClass = App::className('FormSender', 'Utility/Form');
 
-		$lo_formSender = new $ls_formSenderClass($form, $this->formData, $this->formOptions, $this->page);
+		$lo_formSender = new $ls_formSenderClass($form, $this->page);
 		$this->formSent = $lo_formSender->handle();
 
 		if (!$this->formSent) {
-			$this->formErrors['_general'] = $lo_formSender->getErrors();
-
 			return false;
 		}
 

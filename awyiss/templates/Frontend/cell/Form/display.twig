@@ -1,12 +1,9 @@
 {#
+@var contents string
 @var form \Awyiss\Model\Entity\Form
-@var formElements \Awyiss\Model\Entity\FormElement[]|\Cake\Collection\CollectionInterface
 @var formElementsChecksum string
-@var formData array
-@var formErrors array
 @var page \Awyiss\Model\Entity\Page
 @var sent bool
-@var submitted bool
 @var includeWrapper bool
 @var _view \Awyiss\View\FrontendView
 @var AssetHelper \Awyiss\View\Helper\AssetHelper
@@ -28,8 +25,7 @@ will be set as the action attribute of the form element via JavaScript
 after a short delay to prevent spam bots from submitting the form directly.
 
 #}
-
-{% if form %}
+{%- if form %}
 	{% if sent %}
 		{% block formSuccessMessage %}
 			<div class="Form Form-SuccessMessage" id="Form-{{ form.identifier|ucparts(false) }}">
@@ -39,10 +35,10 @@ after a short delay to prevent spam bots from submitting the form directly.
 	{% else %}
 		{% set errorMessages %}
 			{% block formErrorMessage %}
-				{% if formErrors %}
+				{% if form.errors or sendErrors %}
 					<div class="Form-ErrorMessage">
-						{% if formErrors._general %}
-							{% for message in formErrors._general %}
+						{% if form.errors['_general'] %}
+							{% for message in form.errors['_general'] %}
 								{{ message|raw }}
 							{% endfor %}
 						{% else %}
@@ -100,7 +96,7 @@ after a short delay to prevent spam bots from submitting the form directly.
 								form.setAttribute('action', action);
 							}
 						}
-					}, {{ formElements.listNested().count() * 500 }});
+					}, {{ form.formElements.listNested().count() * 500 }});
 				</script>
 			{% endblock %}
 		{% endblock %}

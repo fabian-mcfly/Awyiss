@@ -61,10 +61,6 @@ class FormSender {
 	 */
 	protected readonly Form $form;
 	/**
-	 * @var array $formData
-	 */
-	protected readonly array $formData;
-	/**
 	 * @var \Awyiss\Form\FormOptionsInterface $formOptions
 	 */
 	protected FormOptionsInterface $formOptions;
@@ -80,9 +76,9 @@ class FormSender {
 	 */
 	protected int $ipCheckTimeout = 300;
 	/**
-	 * @var \Awyiss\Model\Entity\Page
+	 * @var \Awyiss\Model\Entity\Page|null
 	 */
-	protected readonly Page $page;
+	protected readonly ?Page $page;
 	/**
 	 * @var \Awyiss\View\FrontendView $view
 	 */
@@ -95,10 +91,8 @@ class FormSender {
 	 * @param \Awyiss\Form\FormOptionsInterface $formOptions
 	 * @param \Awyiss\Model\Entity\Page $page
 	 */
-	public function __construct(Form $form, array $formData, FormOptionsInterface $formOptions, Page $page) {
+	public function __construct(Form $form, ?Page $page = null) {
 		$lo_form = $form;
-		$this->formData = $formData;
-		$this->formOptions = $formOptions;
 		$this->page = $page;
 
 		/** @var \Awyiss\Model\Table\FormsTable $lo_formsTable */
@@ -161,9 +155,7 @@ class FormSender {
 			(!$this->form->sendEmail || $lb_sentEmail) &&
 			(!$this->form->sendConfirmationEmail || $lb_sentConfirmationEmail)
 		) {
-			$this->saveFormEntry();
-
-			return true;
+			return $this->saveFormEntry();
 		}
 
 		return false;
@@ -205,13 +197,13 @@ class FormSender {
 	 * @return bool
 	 */
 	public function canSendDuplicate(): bool {
-		$ls_postHash = Security::hash(serialize($this->formData));
+		$ls_postHash = Security::hash(serialize($this->getFormData()));
 
 		$lo_eventManager = EventManager::instance();
 
 		// Dispatch a new event for the form submission
 		$lo_event = new Event('FormSender.beforeCanSendDuplicate', $this->form, [
-			'formData' => $this->formData,
+			'formData' => $this->getFormData(),
 			'postHash' => $ls_postHash,
 		]);
 		$lo_eventManager->dispatch($lo_event);
@@ -230,7 +222,7 @@ class FormSender {
 
 		// Dispatch a new event for the form afterCanSendDuplicate
 		$lo_event = new Event('FormSender.afterCanSendDuplicate', $this->form, [
-			'formData' => $this->formData,
+			'formData' => $this->getFormData(),
 			'postHash' => $ls_postHash,
 			'formEntry' => $lo_formEntry,
 		]);
@@ -350,8 +342,8 @@ class FormSender {
 		 * And to make sure the recipient can reply to the email,
 		 * the real sender should be set as the reply-to address.
 		 */
-		if ($this->formOptions->getSafeRealSender()) {
-			$lo_mailer->setSender($this->formOptions->getSafeRealSender(), html_entity_decode($this->form->userName))
+		if ($this->getFormOptions()->getSafeRealSender()) {
+			$lo_mailer->setSender($this->getFormOptions()->getSafeRealSender(), html_entity_decode($this->form->userName))
 			->setReplyTo(html_entity_decode($this->form->userEmail), html_entity_decode($this->form->userName));
 		}
 
@@ -429,8 +421,8 @@ class FormSender {
 		 * And to make sure the recipient can reply to the email,
 		 * the real sender should be set as the reply-to address.
 		 */
-		if ($this->formOptions->getSafeRealSender()) {
-			$lo_mailer->setSender($this->formOptions->getSafeRealSender(), html_entity_decode($this->form->userName))
+		if ($this->getFormOptions()->getSafeRealSender()) {
+			$lo_mailer->setSender($this->getFormOptions()->getSafeRealSender(), html_entity_decode($this->form->userName))
 			->setReplyTo(html_entity_decode($this->form->ownerEmail), $this->form->ownerName ?: Configure::read('Awyiss.System.Frontend.meta.titleAppendix'));
 		}
 
@@ -471,20 +463,20 @@ class FormSender {
 	 *
 	 * @return void
 	 */
-	protected function saveFormEntry(): void {
+	protected function saveFormEntry(): bool {
 		$ls_ipHash = $this->createIpHash();
-		$ls_postHash = Security::hash(serialize($this->formData));
+		$ls_postHash = Security::hash(serialize($this->getFormData()));
 
 		$lo_formEntry = $this->formEntriesTable->newDefaultEntity();
 
 		$la_data = [
 			'form_id' => $this->form->id,
-			'page_id' => $this->page->id,
+			'page_id' => $this->page?->id ?? null,
 			'subject' => html_entity_decode($this->form->subject),
 			'subject_confirmation' => html_entity_decode($this->form->subjectConfirmation),
 			'body' => $this->emailBody['email'] ? base64_encode(gzcompress($this->emailBody['email'])) : null,
 			'body_confirmation' => $this->emailBody['confirmation'] ? base64_encode(gzcompress($this->emailBody['confirmation'])) : null,
-			'data' => base64_encode(gzcompress(json_encode($this->formData))),
+			'data' => base64_encode(gzcompress(json_encode($this->getFormData()))),
 			'ip_hash' => $ls_ipHash,
 			'post_hash' => $ls_postHash,
 		];
@@ -493,7 +485,11 @@ class FormSender {
 
 		if ($this->formEntriesTable->save($lo_formEntry, ['allowFrontendSave' => true])) {
 			$this->formEntryIdentifier = md5($lo_formEntry->id . ' | ' . $lo_formEntry->postHash);
+
+			return true;
 		}
+
+		return false;
 	}
 
 
@@ -501,7 +497,7 @@ class FormSender {
 	 * @return int
 	 */
 	public function getDuplicateCheckTimeout(): int {
-		return $this->formOptions->getDuplicateCheckTimeout() ?? $this->duplicateCheckTimeout;
+		return $this->getFormOptions()->getDuplicateCheckTimeout() ?? $this->duplicateCheckTimeout;
 	}
 
 
@@ -517,7 +513,7 @@ class FormSender {
 	 * @return int
 	 */
 	public function getIpCheckTimeout(): int {
-		return $this->formOptions->getIpCheckTimeout() ?? $this->ipCheckTimeout;
+		return $this->getFormOptions()->getIpCheckTimeout() ?? $this->ipCheckTimeout;
 	}
 
 
@@ -546,7 +542,7 @@ class FormSender {
 		$la_formData['base_url'] = Router::url('/', true);
 
 		$la_data = array_merge(
-			$this->formData,
+			$this->getFormData(),
 			$la_formData,
 		);
 
@@ -566,7 +562,7 @@ class FormSender {
 			$ls_fileName .= '_plain';
 		}
 
-		$la_formData = $this->formData;
+		$la_formData = $this->getFormData();
 		$la_formElements = $this->form->formElements->listNested()->toList();
 		foreach ($la_formElements as $lo_formElement) {
 			if (
@@ -631,14 +627,14 @@ class FormSender {
 		$la_blocklistedFields = ['active', '_translations', '_publicationData', 'mediaAssignments', 'mediaElementAssignments'];
 		$la_formFields = array_keys(array_filter($this->form->getAccessible()));
 
-		$la_formData = $this->formData;
+		$la_formData = $this->getFormData();
 		$la_formData['base_url'] = Router::url('/', true);
 
 		foreach ($la_formFields as $ls_field) {
 			if (
 				in_array($ls_field, $la_blocklistedFields) ||
 				!$this->form->has($ls_field) ||
-				!is_scalar($this->form->get($ls_field))
+				!is_string($this->form->get($ls_field))
 			) {
 				continue;
 			}
@@ -760,11 +756,11 @@ class FormSender {
 	protected function addFormAttachments(Mailer $mailer): void {
 		$la_formElements = $this->form->formElements->listNested()->toList();
 		foreach ($la_formElements as $lo_formElement) {
-			if ($lo_formElement->type !== 'file' || empty($this->formData[ $lo_formElement->identifier ])) {
+			if ($lo_formElement->type !== 'file' || empty($this->getFormData($lo_formElement->identifier))) {
 				continue;
 			}
 
-			$lo_file = $this->formData[ $lo_formElement->identifier ];
+			$lo_file = $this->getFormData($lo_formElement->identifier);
 			if ($lo_file instanceof UploadedFile && !$lo_file->getError()) {
 				$mailer->addAttachments([
 					$lo_file->getClientFilename() => [
@@ -811,5 +807,22 @@ class FormSender {
 		$this->emailBody[ $type ] = $mailer->getBodyHtml();
 
 		return !!$la_sendData;
+	}
+
+
+	/**
+	 * @param string|null $identifier
+	 * @return mixed
+	 */
+	protected function getFormData(?string $identifier = null): mixed {
+		return $this->form->getFormData($identifier);
+	}
+
+
+	/**
+	 * @return \Awyiss\Form\FormOptionsInterface
+	 */
+	protected function getFormOptions(): FormOptionsInterface {
+		return $this->form->getFormOptions();
 	}
 }

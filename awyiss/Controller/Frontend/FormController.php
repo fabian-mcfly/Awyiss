@@ -93,7 +93,7 @@ class FormController extends AppController {
 
 		/** @noinspection PhpParamsInspection */
 		$lo_formRenderer = new FormRenderer($this->createView('Frontend'));
-		$lo_formEntry = $lo_formRenderer->loadFormDataForEntryHash($formEntryHash);
+		$lo_formEntry = $lo_formRenderer->loadFormEntryFromHash($formEntryHash);
 
 		if (!$lo_formEntry) {
 			throw new NotFoundException('Form entry not found');
@@ -113,20 +113,27 @@ class FormController extends AppController {
 			])->first();
 		}
 
-		$lo_formRenderer->initForm($lo_formEntry->formId, $this->request->getData(), $lo_page)
-		->processFormEntry($lo_formEntry);
+		$lo_formRenderer->initForm($lo_formEntry->formId, $this->request->getData(), $lo_page);
+
+		$lo_form = $lo_formRenderer->getForm();
+
+		if (!$lo_form) {
+			return;
+		}
+
+		$lo_formRenderer->processFormEntry($lo_formEntry);
 
 		// Set the view variables
 		$this->set([
 			'captcha' => '',
 			'contents' => $lo_formRenderer->getFormBody($la_options),
-			'form' => $lo_formRenderer->getForm(),
-			'formElements' => $lo_formRenderer->getFormElements(),
-			'formElementsChecksum' => $lo_formRenderer->getFormElementsChecksum(),
-			'formData' => $lo_formRenderer->getFormData(),
+			'form' => $lo_form,
+			'formElements' => $lo_form->getFormElements(),
+			'formElementsChecksum' => $lo_form->getFormElementsChecksum(),
+			'formData' => $lo_form->getFormData(),
 			'formErrors' => [],
-			'sent' => $lo_formRenderer->isFormSent(),
-			'submitted' => $lo_formRenderer->isFormSubmitted(),
+			'sent' => $lo_formRenderer->isSent(),
+			'submitted' => $lo_form->isSubmitted(),
 		]);
 	}
 
@@ -157,12 +164,20 @@ class FormController extends AppController {
 		$lo_formRenderer = new FormRenderer($this->createView('Frontend'));
 		$lo_formRenderer->initForm($identifier, $this->request->getData(), $lo_page);
 
-		if ($lo_formRenderer->isValid()) {
+		$lo_form = $lo_formRenderer->getForm();
+		if (!$lo_form) {
+			return;
+		}
+
+		// Validate the form using the form's and form options' validator
+		$lo_form->validate();
+
+		if ($lo_form->isValid()) {
 			$lx_validateCaptcha = $this->validateCaptcha($identifier, $this->request->getData());
 
 			if ($lx_validateCaptcha === true) {
 				$lo_formRenderer->sendAndRedirect();
-				$la_formErrors = $lo_formRenderer->getFormErrors();
+				$la_formErrors = $lo_form->getErrors();
 			}
 			else {
 				$ls_captcha = $this->buildCaptcha($identifier, $lo_page->languageShortcode);
@@ -177,7 +192,7 @@ class FormController extends AppController {
 			}
 		}
 		else {
-			$la_formErrors = $lo_formRenderer->getFormErrors();
+			$la_formErrors = $lo_form->getErrors();
 		}
 
 		// Set the view variables
@@ -185,13 +200,13 @@ class FormController extends AppController {
 			'captcha' => $ls_captcha ?? '',
 			'contents' => $lo_formRenderer->getFormBody($la_options),
 			'form' => $lo_formRenderer->getForm(),
-			'formElements' => $lo_formRenderer->getFormElements(),
-			'formElementsChecksum' => $lo_formRenderer->getFormElementsChecksum(),
-			'formData' => $lo_formRenderer->getFormData(),
+			'formElements' => $lo_formRenderer->getForm()->getFormElements(),
+			'formElementsChecksum' => $lo_formRenderer->getForm()->getFormElementsChecksum(),
+			'formData' => $lo_form->getFormData(),
 			'formErrors' => $la_formErrors ?? [],
 			'page' => $lo_page,
-			'sent' => $lo_formRenderer->isFormSent(),
-			'submitted' => $lo_formRenderer->isFormSubmitted(),
+			'sent' => $lo_formRenderer->isSent(),
+			'submitted' => $lo_form->isSubmitted(),
 		]);
 	}
 
@@ -214,15 +229,31 @@ class FormController extends AppController {
 		curl_setopt($lo_curlHandle, CURLOPT_HTTPHEADER, ['Accept: application/json']);
 		curl_setopt($lo_curlHandle, CURLOPT_URL, 'https://random-word-api.herokuapp.com/word?' . http_build_query($la_params));
 		curl_setopt($lo_curlHandle, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($lo_curlHandle, CURLOPT_CONNECTTIMEOUT, 10);
+		curl_setopt($lo_curlHandle, CURLOPT_TIMEOUT, 10);
 		$lx_result = curl_exec($lo_curlHandle);
 		curl_close($lo_curlHandle);
 
+		$lb_error = false;
 		if (!$lx_result) {
-			throw new NotFoundException('Could not fetch captcha words');
+			$lb_error = true;
+		}
+		else {
+			$la_words = json_decode($lx_result, true);
+
+			if (!$la_words) {
+				$lb_error = true;
+			}
 		}
 
+		if ($lb_error) {
+			// Generate 6 random words
+			$la_words = $this->generateRandomWords(6);
+		}
+
+
 		$lo_session = $this->getRequest()->getSession();
-		$lo_session->write('awyiss_captcha.' . $identifier . '.words', json_decode($lx_result, true));
+		$lo_session->write('awyiss_captcha.' . $identifier . '.words', $la_words);
 
 		$ls_ipAddress = $this->getRequest()->clientIp();
 		$li_crossSum = array_sum(array_map('intval', str_split($ls_ipAddress)));
@@ -234,7 +265,7 @@ class FormController extends AppController {
 		$lo_session->write('awyiss_captcha.' . $identifier . '.fieldName', $ls_fieldName);
 
 		return $this->view->element('form/form_captcha', [
-			'words' => json_decode($lx_result, true),
+			'words' => $la_words,
 			'word' => $li_randomWord,
 			'fieldName' => $ls_fieldName,
 		]);
@@ -323,5 +354,43 @@ class FormController extends AppController {
 		$la_options['singleColumnBreakpoint'] = $this->findSingleColumnBreakpoint($la_options);
 
 		return $la_options;
+	}
+
+
+	/**
+	 * @param int $amount
+	 * @return array
+	 */
+	protected function generateRandomWords(int $amount): array {
+		$la_words = [];
+
+		for ($li_i = 0; $li_i < $amount; $li_i++) {
+			$la_words[] = $this->readableRandomString(rand(6, 10));
+		}
+
+		return $la_words;
+	}
+
+
+	/**
+	 * @param int $length
+	 * @return string
+	 */
+	public function readableRandomString(int $length = 6): string {
+		static $la_vowels = ['a', 'e', 'i', 'o', 'u'];
+		static $la_consonants = [
+			'b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm',
+			'n', 'p', 'r', 's', 't', 'v', 'w', 'x', 'y', 'z',
+		];
+
+		$ls_string = '';
+
+		$la_max = $length / 2;
+		for ($li_i = 1; $li_i <= $la_max; $li_i++) {
+			$ls_string .= $la_consonants[ rand(0, 19) ];
+			$ls_string .= $la_vowels[ rand(0, 4) ];
+		}
+
+		return $ls_string;
 	}
 }

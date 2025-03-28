@@ -44,7 +44,7 @@ class FormEntries {
 		])->addColumn('page_id', 'integer', [
 			'default' => null,
 			'limit' => null,
-			'null' => false,
+			'null' => true,
 		])->addColumn('subject', 'string', [
 			'default' => null,
 			'limit' => 255,

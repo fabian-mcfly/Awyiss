@@ -31,12 +31,10 @@ interface FormOptionsInterface {
 	 * before or after the form has been submitted (but not yet sent).
 	 *
 	 * @param \Awyiss\Model\Entity\Form $form
-	 * @param array $requestData
-	 * @param bool $submitted
-	 * @param \Awyiss\Model\Entity\Page $page
-	 * @return void
+	 * @param \Awyiss\Model\Entity\Page|null $page
+	 * @return static
 	 */
-	public function modifyForm(Form $form, array $requestData, bool $submitted, Page $page): void;
+	public function modifyForm(Form $form, ?Page $page = null): static;
 
 
 	/**
@@ -63,12 +61,10 @@ interface FormOptionsInterface {
 	 *
 	 * @param \Awyiss\Model\Entity\FormElement $formElement
 	 * @param \Awyiss\Model\Entity\Form $form
-	 * @param array $requestData
-	 * @param bool $submitted
-	 * @param \Awyiss\Model\Entity\Page $page
-	 * @return void
+	 * @param \Awyiss\Model\Entity\Page|null $page
+	 * @return static
 	 */
-	public function modifyFormElement(FormElement $formElement, Form $form, array $requestData, bool $submitted, Page $page): void;
+	public function modifyFormElement(FormElement $formElement, Form $form, ?Page $page = null): static;
 
 
 	/**
@@ -76,11 +72,10 @@ interface FormOptionsInterface {
 	 * This method should modify the form's `ownerEmail`-property.
 	 *
 	 * @param \Awyiss\Model\Entity\Form $form
-	 * @param array $requestData
-	 * @param \Awyiss\Model\Entity\Page $page
+	 * @param \Awyiss\Model\Entity\Page|null $page
 	 * @return string|null
 	 */
-	public function setConditionalRecipient(Form $form, array $requestData, Page $page): static;
+	public function setConditionalRecipient(Form $form, ?Page $page = null): static;
 
 
 	/**

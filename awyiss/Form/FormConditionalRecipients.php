@@ -38,9 +38,9 @@ class FormConditionalRecipients {
 	/**
 	 * The current page the form was submitted on.
 	 *
-	 * @var \Awyiss\Model\Entity\Page
+	 * @var \Awyiss\Model\Entity\Page|null
 	 */
-	protected Page $currentPage;
+	protected ?Page $currentPage;
 	/**
 	 * The form the conditional recipients are for.
 	 *
@@ -57,9 +57,9 @@ class FormConditionalRecipients {
 
 	/**
 	 * @param \Awyiss\Model\Entity\Form $form
-	 * @param \Awyiss\Model\Entity\Page $currentPage
+	 * @param \Awyiss\Model\Entity\Page|null $currentPage
 	 */
-	public function __construct(Form $form, Page $currentPage) {
+	public function __construct(Form $form, ?Page $currentPage = null) {
 		$this->currentPage = $currentPage;
 		$this->form = $form;
 	}
@@ -219,6 +219,10 @@ class FormConditionalRecipients {
 		}
 
 		if ($type === 'current_page') {
+			if (!$this->currentPage) {
+				return null;
+			}
+
 			if ($this->currentPage->has($field)) {
 				return $this->currentPage->get($field);
 			}

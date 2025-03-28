@@ -34,17 +34,19 @@ class KontaktformularFormOptions extends FormOptions {
 	/**
 	 * @inheritDoc
 	 */
-	public function modifyForm(Form $form, array $requestData, bool $submitted, Page $page): void {
-		// Do nothing
+	public function modifyForm(Form $form, ?Page $page = null): static {
+		return parent::modifyForm($form, $page);
 	}
 
 
 	/**
 	 * @inheritDoc
 	 */
-	public function modifyFormElement(FormElement $formElement, Form $form, array $requestData, bool $submitted, Page $page): void {
-		if (!$submitted && $formElement->identifier === 'email') {
+	public function modifyFormElement(FormElement $formElement, Form $form, ?Page $page = null): static {
+		if (!$form->isSubmitted() && $formElement->identifier === 'email') {
 			$formElement->value = 'foo@bar.com';
 		}
+
+		return $this;
 	}
 }

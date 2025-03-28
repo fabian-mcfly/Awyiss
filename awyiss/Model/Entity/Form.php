@@ -4,8 +4,15 @@
 namespace Awyiss\Model\Entity;
 
 
+use Awyiss\Core\App;
+use Awyiss\Form\FormOptionsInterface;
 use Awyiss\Model\Entity;
+use Awyiss\Utility\Inflector;
+use Awyiss\Validation\Validator;
+use Cake\Collection\CollectionInterface;
+use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\Utility\Text;
+use Cake\View\View;
 
 
 /**
@@ -46,6 +53,9 @@ use Cake\Utility\Text;
  * @property \Awyiss\Model\Entity\FormConditionalRecipient[]|\Cake\Collection\CollectionInterface $formConditionalRecipients
  */
 class Form extends Entity {
+	use LocatorAwareTrait;
+
+
 	/**
 	 * @inheritDoc
 	 */
@@ -102,6 +112,228 @@ class Form extends Entity {
 		'active' => true,
 		'formConditionalRecipients' => true,
 	];
+	/**
+	 * @var bool
+	 */
+	protected bool $isPreview = false;
+	/**
+	 * @var array
+	 */
+	protected array $formData = [];
+	/**
+	 * @var string|null
+	 */
+	protected ?string $formElementsChecksum = null;
+	/**
+	 * @var \Awyiss\Form\FormOptionsInterface|null
+	 */
+	protected ?FormOptionsInterface $formOptions = null;
+	/**
+	 * @var bool
+	 */
+	protected bool $formSubmitted = false;
+	/**
+	 * @var \Awyiss\Model\Entity\Page|null
+	 */
+	protected ?Page $sourcePage;
+	/**
+	 * @var \Cake\View\View
+	 */
+	protected View $view;
+
+
+	/**
+	 * Initialize the form to be processed
+	 * and used to send emails and/or save data
+	 *
+	 * @param \Cake\View\View $view
+	 * @param array $requestData
+	 * @param \Awyiss\Model\Entity\Page|null $page
+	 * @param bool $isPreview
+	 * @return $this
+	 */
+	public function initialize(View $view, array $requestData = [], ?Page $page = null, bool $isPreview = false): static {
+		$this->view = $view;
+		$this->isPreview = $isPreview;
+		$this->sourcePage = $page;
+
+		if ($this->identifier === ($requestData['form_identifier'] ?? null)) {
+			$this->formSubmitted = true;
+			$this->setFormData($requestData);
+		}
+
+		$this
+			->loadFormOptions()
+			->loadFormElements()
+			->setFormData($requestData);
+
+		$this->getFormOptions()->modifyForm($this, $this->sourcePage);
+
+		if ($this->isSubmitted()) {
+			$this->getFormOptions()->setConditionalRecipient($this, $this->sourcePage);
+		}
+
+		return $this;
+	}
+
+
+	/**
+	 * @param string|null $identifier
+	 * @return array
+	 */
+	public function getFormData(?string $identifier = null): mixed {
+		if ($identifier) {
+			return $this->formData[ $identifier ] ?? null;
+		}
+
+		return $this->formData;
+	}
+
+
+	/**
+	 * @param array $formData
+	 * @return static
+	 */
+	public function setFormData(array $formData): static {
+		$this->formData = $formData;
+
+		return $this;
+	}
+
+
+	/**
+	 * @return \Cake\Collection\CollectionInterface|null
+	 */
+	public function getFormElements(): ?CollectionInterface {
+		if (isset($this->formElements)) {
+			return $this->formElements;
+		}
+
+		return null;
+	}
+
+
+	/**
+	 * @return $this
+	 */
+	public function loadFormElements(): static {
+		/** @var \Awyiss\Model\Table\FormElementsTable $lo_formElementsTable */
+		$lo_formElementsTable = $this->fetchTable('FormElements');
+
+		if ($this->isPreview) {
+			$lo_query = $lo_formElementsTable->find('all');
+		}
+		else {
+			$lo_query = $lo_formElementsTable->find('active')->find('published');
+		}
+
+		$lo_formElements = $lo_query->find('threaded')->where([
+			'form_id' => $this->id,
+		])->all()->filter(function (FormElement $content) {
+			return $content->parentId === null;
+		})->compile();
+
+		if (!$lo_formElements->count()) {
+			return $this;
+		}
+
+		/** @var array<\Awyiss\Model\Entity\FormElement> $la_formElements */
+		$la_formElements = $lo_formElements->listNested()->toList();
+		foreach ($la_formElements as $lo_formElement) {
+			if (in_array($lo_formElement->type, ['checkbox', 'radio', 'select', 'select_multiple'])) {
+				$lo_formElement->options = $lo_formElement->parseOptions(
+					$lo_formElement->options,
+					$lo_formElement->type,
+					$this->sourcePage?->languageShortcode ?? null
+				);
+			}
+
+			$this->getFormOptions()->modifyFormElement($lo_formElement, $this, $this->sourcePage);
+		}
+
+		$this->formElementsChecksum = md5(serialize($la_formElements));
+
+		$this->formElements = $lo_formElements;
+
+		return $this;
+	}
+
+
+	/**
+	 * @return string|null
+	 */
+	public function getFormElementsChecksum(): ?string {
+		return $this->formElementsChecksum;
+	}
+
+
+	/**
+	 * @return \Awyiss\Form\FormOptionsInterface|null
+	 */
+	public function getFormOptions(): ?FormOptionsInterface {
+		return $this->formOptions;
+	}
+
+
+	/**
+	 * @return static
+	 */
+	public function loadFormOptions(): static {
+		if (!isset($this->formOptions)) {
+			$ls_className = App::className(Inflector::ucparts($this->identifier, false) . 'FormOptions', 'Form');
+
+			if (!$ls_className) {
+				$ls_className = App::className('FormOptions', 'Form');
+			}
+
+			$this->formOptions = new $ls_className();
+		}
+
+		return $this;
+	}
+
+
+	/**
+	 * @return bool
+	 */
+	public function isSubmitted(): bool {
+		return $this->formSubmitted;
+	}
+
+
+	/**
+	 * @return \Awyiss\Validation\Validator
+	 */
+	public function getValidator(): Validator {
+		$lo_validator = new Validator();
+		$lo_validator->setI18nDomain('form');
+
+		//$lo_validator->setStopOnFailure();
+
+		return $lo_validator;
+	}
+
+
+	/**
+	 * @param array $formData
+	 * @param \Awyiss\Validation\Validator|null $validator
+	 * @return \Awyiss\Model\Entity\Form
+	 */
+	public function validate(?array $formData = null, ?Validator $validator = null): static {
+		$lo_validator = $validator ?? $this->getFormOptions()->getValidator($this->getValidator(), $this);
+
+		$this->setErrors($lo_validator->validate($formData ?? $this->getFormData()));
+
+		return $this;
+	}
+
+
+	/**
+	 * @return bool
+	 */
+	public function isValid(): bool {
+		return !$this->getErrors();
+	}
 
 
 	/**

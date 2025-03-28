@@ -35,6 +35,9 @@ class FormCell extends Cell {
 	 * @throws \ReflectionException
 	 */
 	public function display(string|int $identifier, Page $page, array $options = []): void {
+		// Set the template for the view
+		$this->viewBuilder()->setTemplatePath('Frontend/cell/Form');
+
 		$la_options = $this->initCellOptions($options);
 
 		$this->page = $page;
@@ -47,31 +50,30 @@ class FormCell extends Cell {
 			$identifier,
 			$this->request->getData(),
 			$this->page
-		)
-		->process();
+		);
 
-		if (!$lo_formRenderer->isFormSubmitted() && !$lo_formRenderer->isFormSent() && $this->request->getParam('formEntry')) {
-			$lo_formRenderer->processFormDataForEntryHash($this->request->getParam('formEntry'));
+		$lo_form = $lo_formRenderer->getForm();
+		if (!$lo_form) {
+			return;
+		}
+
+		$lo_formRenderer->process();
+
+		if (!$lo_form->isSubmitted() && !$lo_formRenderer->isSent() && $this->request->getParam('formEntry')) {
+			$lo_formRenderer->processFormEntryFromHash($this->request->getParam('formEntry'));
 		}
 
 		// Set the view variables
 		$this->set([
 			'contents' => $lo_formRenderer->getFormBody($la_options),
-			'form' => $lo_formRenderer->getForm(),
-			'formElements' => $lo_formRenderer->getFormElements(),
-			'formElementsChecksum' => $lo_formRenderer->getFormElementsChecksum(),
-			'formData' => $lo_formRenderer->getFormData(),
-			'formErrors' => $lo_formRenderer->getFormErrors(),
+			'form' => $lo_form,
+			'formElementsChecksum' => $lo_form->getFormElementsChecksum(),
 			'page' => $this->page,
-			'sent' => $lo_formRenderer->isFormSent(),
-			'submitted' => $lo_formRenderer->isFormSubmitted(),
+			'sent' => $lo_formRenderer->isSent(),
 			'fullWidth' => $la_options['fullWidth'],
 			'includeWrapper' => $la_options['includeWrapper'],
 			'singleColumnBreakpoint' => $la_options['singleColumnBreakpoint'],
 		]);
-
-		// Set the template for the view
-		$this->viewBuilder()->setTemplatePath('Frontend/cell/Form');
 	}
 
 

@@ -75,7 +75,7 @@
 	<div class="FormInput FormInputType-ValueCollection FormInputName-Value">
 		<label class="Label">{{ __('value') }}</label>
 		{% set currentValue = configuration.hasValue('value') ? configuration.get('value')|json_decode : configuration.configOption.defaultValue %}
-		{% set currentValue = currentValue|map(value => value|underscore) %}
+		{% set currentValue = (currentValue ?? [])|map(value => value|underscore) %}
 		<input type="hidden" name="value" value="">
 
 		{% for key, value in configuration.configOption.values(true) %}
