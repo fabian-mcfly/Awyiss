@@ -52,13 +52,13 @@ class ModulesProvider {
 
 
 	/**
-	 * Returns the found ConfigOptions class for the provided identifier or null
+	 * Returns the found Module class for the provided identifier or null
 	 *
 	 * @param string $identifier
 	 * @return class-string<\Awyiss\Module\ModuleInterface>|null
 	 * @throws \ReflectionException
 	 */
-	public static function getConfigOptionsFile(string $identifier): ?string {
+	public static function getModuleFile(string $identifier): ?string {
 		$ls_identifier = static::sanitizeIdentifier($identifier);
 
 		if (!isset(static::$modules[ $ls_identifier ])) {
@@ -82,11 +82,11 @@ class ModulesProvider {
 
 
 	/**
-	 * Finds all ConfigOptions classes in both, the Awyiss and the custom namespace, for a given identifier.
+	 * Finds all Module classes in both, the Awyiss and the custom namespace, for a given identifier.
 	 * `$scope` can be "*" to return all files.
-	 * If a ConfigOptions class exists in both namespaces, the one from the custom namespace is returned,
+	 * If a Module class exists in both namespaces, the one from the custom namespace is returned,
 	 * the Awyiss one is ignored.
-	 * For page roles, no ConfigOptionsInterface is returned but the \Awyiss\Model\Enum\PageRole case
+	 * Abstract classes and those starting with "_" are ignored.
 	 *
 	 * @param string $identifier
 	 * @return void
@@ -111,7 +111,6 @@ class ModulesProvider {
 			foreach (glob($ls_path) as $ls_filePath) {
 				$ls_moduleName = substr($ls_filePath, strrpos($ls_filePath, DS) + 1, -4);
 				if (
-					in_array($ls_moduleName, ['ModuleInterface', 'ModulesProvider']) ||
 					str_starts_with($ls_moduleName, '_') ||
 					str_starts_with($ls_moduleName, 'Abstract')
 				) {
