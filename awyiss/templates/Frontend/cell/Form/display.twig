@@ -37,68 +37,53 @@ after a short delay to prevent spam bots from submitting the form directly.
 			</div>
 		{% endblock %}
 	{% else %}
+		{% set errorMessages %}
+			{% block formErrorMessage %}
+				{% if formErrors %}
+					<div class="Form-ErrorMessage">
+						{% if formErrors._general %}
+							{% for message in formErrors._general %}
+								{{ message|raw }}
+							{% endfor %}
+						{% else %}
+							{{ __d('validation', 'form_has_errors')|raw }}
+						{% endif %}
+					</div>
+				{% endif %}
+			{% endblock %}
+		{% endset %}
+
 		{% set now = date().timestamp %}
 		{% block form %}
-			{% if includeWrapper %}
-				{% block formInnerIncludeWrapper %}
-					<div class="Form Form-{{ form.identifier|ucparts(false) }}">
-						{% block formErrorMessageIncludeWrapper %}
-							{% if formErrors %}
-								<div class="Form-ErrorMessage">
-									{% if formErrors._general %}
-										{% for message in formErrors._general %}
-											{{ message|raw }}
-										{% endfor %}
-									{% else %}
-										{{ __d('validation', 'form_has_errors')|raw }}
-									{% endif %}
-								</div>
-							{% endif %}
-						{% endblock %}
-
-						<form
-							action="{{ UrlHelper.build({lang: languageShortcode, _name: 'FrontendFormAntiSpamPost'}) }}"
-							data-{{ now }}{{ formElementsChecksum }}="{{ form.action ?? currentUrl }}#Form-{{ form.identifier|ucparts(false) }}"
-							{% if form.enctype %}enctype="{{ form.enctype }}"{% endif %}
-							method="post"
-							id="Form-{{ form.identifier|ucparts(false) }}"
-						>
-
-							{% block formBodyIncludeWrapper %}
-								{{ contents|raw }}
-							{% endblock %}
-
-							<input type="hidden" name="form_identifier" value="{{ form.identifier }}">
-							<input type="hidden" name="_page_id" value="{{ page.id }}">
-						</form>
-					</div>
-				{% endblock %}
-			{% else %}
-				{% block formInnerNoWrapper %}
-					{% block formErrorMessageNoWrapper %}
-						{% if formErrors %}
-							<div class="Form-ErrorMessage">
-								{{ __d('validation', 'form_has_errors')|raw }}
-							</div>
-						{% endif %}
-					{% endblock %}
-
-					<form class="Form Form-{{ form.identifier|ucparts(false) }}"
+			{% set renderedForm %}
+				<form
 						action="{{ UrlHelper.build({lang: languageShortcode, _name: 'FrontendFormAntiSpamPost'}) }}"
 						data-{{ now }}{{ formElementsChecksum }}="{{ form.action ?? currentUrl }}#Form-{{ form.identifier|ucparts(false) }}"
 						{% if form.enctype %}enctype="{{ form.enctype }}"{% endif %}
 						method="post"
 						id="Form-{{ form.identifier|ucparts(false) }}"
-					>
+				>
+					{% block formBody %}
+						{{ contents|raw }}
+					{% endblock %}
 
-						{% block formBodyNoWrapper %}
-							{{ contents|raw }}
+					<input type="hidden" name="form_identifier" value="{{ form.identifier }}">
+					<input type="hidden" name="_page_id" value="{{ page.id }}">
+				</form>
+			{% endset %}
+
+			{% if includeWrapper %}
+				{% block formWrapper %}
+					<div class="Form Form-{{ form.identifier|ucparts(false) }}">
+						{% block formWrapperInner %}
+							{{ errorMessages }}
+							{{ renderedForm }}
 						{% endblock %}
-
-						<input type="hidden" name="form_identifier" value="{{ form.identifier }}">
-						<input type="hidden" name="_page_id" value="{{ page.id }}">
-					</form>
+					</div>
 				{% endblock %}
+			{% else %}
+				{{ errorMessages }}
+				{{ renderedForm }}
 			{% endif %}
 
 			{% block formActionJs %}
