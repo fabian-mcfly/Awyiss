@@ -111,7 +111,7 @@
 
 				{%- block headAssetTags -%}
 					{{- AssetHelper.createImportMap() -}}
-					{{- AssetHelper.getTags('all', true) -}}
+					{{- AssetHelper.getTags('all') -}}
 				{%- endblock -%}
 			{%- endblock -%}
 		</head>
@@ -138,7 +138,7 @@
 				{% endblock %}
 
 				{%- block bodyAssetTags -%}
-					{{- AssetHelper.getTags('all', false) -}}
+					{# {{- AssetHelper.getTags('all', false) -}} #}
 				{%- endblock %}
 			{% endblock %}
 
