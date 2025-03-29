@@ -32,13 +32,6 @@ use Laminas\Diactoros\UploadedFile;
  */
 class FormSender {
 	/**
-	 * The timeout in seconds for checking if the user
-	 * can send the same form with the same data.
-	 *
-	 * @var int $duplicateCheckTimeout
-	 */
-	protected int $duplicateCheckTimeout = 86400;
-	/**
 	 * Save both the email body and the confirmation email body
 	 * to save the data in the database.
 	 *
@@ -68,13 +61,6 @@ class FormSender {
 	 * @var \Awyiss\Model\Table\FormEntriesTable $formEntriesTable
 	 */
 	protected FormEntriesTable $formEntriesTable;
-	/**
-	 * The timeout in seconds for checking if the user
-	 * can send another form with the same ip.
-	 *
-	 * @var int $ipCheckTimeout
-	 */
-	protected int $ipCheckTimeout = 300;
 	/**
 	 * @var \Awyiss\Model\Entity\Page|null
 	 */
@@ -113,8 +99,10 @@ class FormSender {
 
 	/**
 	 * Handle the form.
-	 * Check if the user can send the form (ip timeout, duplicate check timeout).
-	 * If the check fails, set the error message and return false.
+	 *
+	 * Replaces all placeholders in the form fields with
+	 * the actual form data.
+
 	 * If neither `sendEmail`, nor `sendConfirmationEmail` are enabled
 	 * just save the form data in the database and return true,
 	 * otherwise save the form data in the database and send the email(s).
@@ -124,10 +112,6 @@ class FormSender {
 	 * @return bool
 	 */
 	public function handle(): bool {
-		if (!$this->canSend()) {
-			return false;
-		}
-
 		$this->replacePlaceholdersInForm();
 
 		$lo_eventManager = EventManager::instance();
@@ -159,123 +143,6 @@ class FormSender {
 		}
 
 		return false;
-	}
-
-
-	/**
-	 * Check if the user can send the form (ip timeout, duplicate check timeout).
-	 * If the check fails, set the error message and return false.
-	 *
-	 * @return bool
-	 */
-	public function canSend(): bool {
-		// Check if the user can send the form (ip timeout).
-		if (!$this->canSendIp()) {
-			$ls_message = __d('form', 'error_ip_timeout', $this->getIpCheckTimeout());
-			$this->form->setError('_general', $ls_message);
-			$this->errors[] = $ls_message;
-
-			return false;
-		}
-
-		// Check if the user can send the form (duplicate check timeout).
-		if (!$this->canSendDuplicate()) {
-			$ls_message = __d('form', 'error_duplicate_timeout', $this->getDuplicateCheckTimeout());
-			$this->form->setError('_general', $ls_message);
-			$this->errors[] = $ls_message;
-
-			return false;
-		}
-
-		return true;
-	}
-
-
-	/**
-	 * Check if the user can send the form (duplicate check timeout).
-	 *
-	 * @return bool
-	 */
-	public function canSendDuplicate(): bool {
-		$ls_postHash = Security::hash(serialize($this->getFormData()));
-
-		$lo_eventManager = EventManager::instance();
-
-		// Dispatch a new event for the form submission
-		$lo_event = new Event('FormSender.beforeCanSendDuplicate', $this->form, [
-			'formData' => $this->getFormData(),
-			'postHash' => $ls_postHash,
-		]);
-		$lo_eventManager->dispatch($lo_event);
-
-		if ($lo_event->isStopped()) {
-			return !!$lo_event->getResult();
-		}
-
-		$lo_formEntry = $this->formEntriesTable->find()
-		->where([
-			'form_id' => $this->form->id,
-			'post_hash' => $ls_postHash,
-			'created_on >' => time() - $this->getDuplicateCheckTimeout(),
-		])
-		->first();
-
-		// Dispatch a new event for the form afterCanSendDuplicate
-		$lo_event = new Event('FormSender.afterCanSendDuplicate', $this->form, [
-			'formData' => $this->getFormData(),
-			'postHash' => $ls_postHash,
-			'formEntry' => $lo_formEntry,
-		]);
-		$lo_eventManager->dispatch($lo_event);
-
-		if ($lo_event->isStopped()) {
-			return !!$lo_event->getResult();
-		}
-
-		return !$lo_formEntry;
-	}
-
-
-	/**
-	 * Check if the user can send the form (ip timeout).
-	 *
-	 * @return bool
-	 */
-	public function canSendIp(): bool {
-		$ls_ipHash = $this->createIpHash();
-
-		$lo_eventManager = EventManager::instance();
-
-		// Dispatch a new event for the beforeCanSendIp
-		$lo_event = new Event('FormSender.beforeCanSendIp', $this->form, [
-			'ipHash' => $ls_ipHash,
-		]);
-		$lo_eventManager->dispatch($lo_event);
-
-		if ($lo_event->isStopped()) {
-			return !!$lo_event->getResult();
-		}
-
-		$lo_formEntry = $this->formEntriesTable->find()
-		->where([
-			'form_id' => $this->form->id,
-			'ip_hash' => $ls_ipHash,
-			'created_on >' => time() - $this->getIpCheckTimeout(),
-		])
-		->first();
-
-		// Dispatch a new event for the form afterCanSendIp
-		$lo_event = new Event('FormSender.afterCanSendIp', $this->form, [
-			'ipHash' => $ls_ipHash,
-			'formEntry' => $lo_formEntry,
-		]);
-		$lo_eventManager->dispatch($lo_event);
-
-		if ($lo_event->isStopped()) {
-			return !!$lo_event->getResult();
-		}
-
-		return !$lo_formEntry;
 	}
 
 
@@ -504,26 +371,10 @@ class FormSender {
 
 
 	/**
-	 * @return int
-	 */
-	public function getDuplicateCheckTimeout(): int {
-		return $this->getFormOptions()->getDuplicateCheckTimeout() ?? $this->duplicateCheckTimeout;
-	}
-
-
-	/**
 	 * @return array
 	 */
 	public function getErrors(): array {
 		return $this->errors;
-	}
-
-
-	/**
-	 * @return int
-	 */
-	public function getIpCheckTimeout(): int {
-		return $this->getFormOptions()->getIpCheckTimeout() ?? $this->ipCheckTimeout;
 	}
 
 

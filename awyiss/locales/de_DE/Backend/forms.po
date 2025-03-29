@@ -198,3 +198,9 @@ msgstr "ALTCHA"
 
 msgid "protection_method_hidden_input"
 msgstr "Verstecktes Eingabefeld"
+
+msgid "protection_method_duplicate_check"
+msgstr "Duplikatprüfung"
+
+msgid "protection_method_ip_check"
+msgstr "IP Check"

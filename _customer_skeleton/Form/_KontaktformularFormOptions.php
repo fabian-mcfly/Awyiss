@@ -43,10 +43,25 @@ class KontaktformularFormOptions extends FormOptions {
 	 * @inheritDoc
 	 */
 	public function modifyFormElement(FormElement $formElement, Form $form, ?Page $page = null): static {
-		if (!$form->isSubmitted() && $formElement->identifier === 'email') {
-			$formElement->value = 'foo@bar.com';
-		}
+		//if (!$form->isSubmitted() && $formElement->identifier === 'email') {
+		//	$formElement->value = 'foo@bar.com';
+		//}
 
 		return $this;
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getProtectionOptions(string $identifier): ?array {
+		// Different timeout for ip checks?
+		//if ($identifier === 'ipCheck') {
+		//	return [
+		//		'checkTimeout' => 120,
+		//	];
+		//}
+
+		return null;
 	}
 }

@@ -6,6 +6,7 @@ namespace Awyiss\Test\TestCase\View\Cell\Frontend;
 
 use Awyiss\Awyiss;
 use Awyiss\Test\TestSuite\TestCase;
+use Cake\Core\Configure;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\IntegrationTestTrait;
@@ -58,6 +59,9 @@ class FormCellTest extends TestCase {
 	 */
 	public function testDisplay(): void {
 		$page = $this->fetchTable('Pages')->find()->first();
+
+		// Without any form protection
+		Configure::write('Awyiss.Forms.Frontend.protection.methods', []);
 
 		$output = (string)$this->cell('Frontend/Form', [
 			'contact',

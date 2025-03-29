@@ -79,42 +79,6 @@ interface FormOptionsInterface {
 
 
 	/**
-	 * Returns the timeout for the duplicate check in seconds.
-	 * A form can only be sent every x seconds with the same values.
-	 *
-	 * @return int|null
-	 */
-	public function getDuplicateCheckTimeout(): ?int;
-
-
-	/**
-	 * Sets the timeout for the duplicate check in seconds.
-	 *
-	 * @param int|null $duplicateCheckTimeout
-	 * @return $this
-	 */
-	public function setDuplicateCheckTimeout(?int $duplicateCheckTimeout): static;
-
-
-	/**
-	 * Returns the timeout for the IP check in seconds.
-	 * The same IP address can only send a form every x seconds.
-	 *
-	 * @return int|null
-	 */
-	public function getIpCheckTimeout(): ?int;
-
-
-	/**
-	 * Sets the timeout for the IP check in seconds.
-	 *
-	 * @param int|null $ipCheckTimeout
-	 * @return $this
-	 */
-	public function setIpCheckTimeout(?int $ipCheckTimeout): static;
-
-
-	/**
 	 * Returns the protection options for the provided identifier.
 	 *
 	 * The returned array should contain all non-default options

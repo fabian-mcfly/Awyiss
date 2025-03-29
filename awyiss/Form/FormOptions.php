@@ -26,20 +26,6 @@ class FormOptions implements FormOptionsInterface {
 	 * @var string|null $safeRealSender
 	 */
 	protected ?string $safeRealSender;
-	/**
-	 * The timeout in seconds for checking if the user
-	 * can send the same form with the same data.
-	 *
-	 * @var int|null $duplicateCheckTimeout
-	 */
-	protected ?int $duplicateCheckTimeout = 86400;
-	/**
-	 * The timeout in seconds for checking if the user
-	 * can send another form with the same ip.
-	 *
-	 * @var int|null $ipCheckTimeout
-	 */
-	protected ?int $ipCheckTimeout = 300;
 
 
 	/**
@@ -161,49 +147,7 @@ class FormOptions implements FormOptionsInterface {
 	/**
 	 * @inheritDoc
 	 */
-	public function getDuplicateCheckTimeout(): ?int {
-		return $this->duplicateCheckTimeout;
-	}
-
-
-	/**
-	 * @inheritDoc
-	 */
-	public function setDuplicateCheckTimeout(?int $duplicateCheckTimeout): static {
-		$this->duplicateCheckTimeout = $duplicateCheckTimeout;
-
-		return $this;
-	}
-
-
-	/**
-	 * @inheritDoc
-	 */
-	public function getIpCheckTimeout(): ?int {
-		return $this->ipCheckTimeout;
-	}
-
-
-	/**
-	 * @inheritDoc
-	 */
-	public function setIpCheckTimeout(?int $ipCheckTimeout): static {
-		$this->ipCheckTimeout = $ipCheckTimeout;
-
-		return $this;
-	}
-
-
-	/**
-	 * @inheritDoc
-	 */
 	public function getProtectionOptions(string $identifier): ?array {
-		if ($identifier === 'hidden_input') {
-			return [
-				'elementName' => 'email_confirmation',
-			];
-		}
-
 		return null;
 	}
 

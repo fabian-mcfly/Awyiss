@@ -15,14 +15,6 @@ msgid "error_email_send"
 msgstr "<strong>The email could not be sent.</strong><br>"
 	"Error message: &quot;{0}&quot;"
 
-msgid "error_ip_timeout"
-msgstr "<strong>Too many requests from your IP address.</strong><br>"
-	"Please wait a few minutes before trying again."
-
-msgid "error_duplicate_timeout"
-msgstr "<strong>Too many requests with the same data.</strong><br>"
-	"Please wait a few minutes before trying again."
-
 msgid "captcha_legend"
 msgstr "Security check"
 
@@ -41,3 +33,11 @@ msgstr "<strong>The security check is not correct.</strong><br>"
 
 msgid "protection_method_hidden_input_error_field_empty"
 msgstr "The hidden input field must not empty"
+
+msgid "protection_method_duplicate_check_error_duplicate_found"
+msgstr "<strong>Too many requests with the same data.</strong><br>"
+	"Please wait a few minutes before trying again."
+
+msgid "protection_method_ip_check_error_duplicate_found"
+msgstr "<strong>Too many requests from your IP address.</strong><br>"
+	"Please wait a few minutes before trying again."
