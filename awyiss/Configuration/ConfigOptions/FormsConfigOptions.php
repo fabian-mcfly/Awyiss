@@ -73,7 +73,7 @@ class FormsConfigOptions extends AbstractConfigOptions {
 		$this->add(Awyiss::REALM_FRONTEND, [
 			'protection' => [
 				new ConfigOption(
-					defaultValue: ['hidden_input'],
+					defaultValue: ['duplicate_check', 'ip_check', 'hidden_input'],
 					identifier: 'methods',
 					localizable: false,
 					nullable: true,

@@ -207,6 +207,14 @@ a {
 					vertical-align:middle;
 				}
 			}
+
+			&.altcha-logo {
+				margin-right:0;
+
+				&::after {
+					display:none;
+				}
+			}
 		}
 	}
 }

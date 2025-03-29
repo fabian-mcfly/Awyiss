@@ -71,6 +71,13 @@ $routes->registerMiddleware(
 				'unsafe-inline' => true,
 				'unsafe-eval' => false,
 			],
+			'worker-src' => [
+				'allow' => Configure::read('Csp.workerSrcElem.allow'),
+				'blob' => true,
+				'self' => true,
+				'unsafe-inline' => true,
+				'unsafe-eval' => false,
+			],
 		], [
 			'scriptNonce' => true,
 			'styleNonce' => true,

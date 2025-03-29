@@ -142,3 +142,13 @@
 .FormElement-Error {
 	color:var(--colorContrast);
 }
+
+//noinspection CssInvalidHtmlTagReference
+altcha-widget {
+	display:block;
+	margin-top:calc(var(--lineHeightMain) * .5);
+
+	+ .FormInputType-Button {
+		margin-top:var(--lineHeightMain);
+	}
+}

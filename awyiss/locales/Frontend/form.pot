@@ -41,3 +41,27 @@ msgstr "<strong>Too many requests with the same data.</strong><br>"
 msgid "protection_method_ip_check_error_duplicate_found"
 msgstr "<strong>Too many requests from your IP address.</strong><br>"
 	"Please wait a few minutes before trying again."
+
+msgid "altcha_aria_link_label"
+msgstr "Visit Altcha.org"
+
+msgid "altcha_error"
+msgstr "Verification failed. Please try again later."
+
+msgid "altcha_expired"
+msgstr "Verification expired. Please try again."
+
+msgid "altcha_footer"
+msgstr "Protected by <a href=\"https://altcha.org/\" target=\"_blank\" aria-label=\"Visit Altcha.org\">ALTCHA</a>"
+
+msgid "altcha_label"
+msgstr "I am not a bot"
+
+msgid "altcha_verified"
+msgstr "Verified"
+
+msgid "altcha_verifying"
+msgstr "Verifying..."
+
+msgid "altcha_wait_alert"
+msgstr "Verifying... please wait"
