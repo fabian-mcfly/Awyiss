@@ -52,12 +52,13 @@ class AssetHelperTest extends TestCase {
 
 		Awyiss::setRealm(Awyiss::REALM_BACKEND);
 
+		Configure::write('debug', false);
+
 		$view = new BackendView();
 
 		$this->helper = new AssetHelper($view);
+		$this->helper->clearAssets();
 		$this->helper->setAutoMinify(false);
-
-		Configure::write('debug', false);
 	}
 
 

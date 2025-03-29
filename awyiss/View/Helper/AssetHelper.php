@@ -31,45 +31,74 @@ class AssetHelper extends Helper {
 	/**
 	 * @var array $assets An associative array of assets. The keys are the asset names, and the values are arrays of options for each asset.
 	 */
-	protected array $assets = [];
+	protected static array $assets = [
+		'all' => [],
+		'css' => [
+			'critical' => [],
+			'nonCritical' => [],
+		],
+		'js' => [
+			'critical' => [],
+			'nonCritical' => [],
+		],
+		'font' => [
+			'critical' => [],
+			'nonCritical' => [],
+		],
+	];
 	/**
 	 * @var array $checkedAssets An associative array of checked assets. The keys are the asset names, and the values are the asset paths.
 	 */
-	protected array $checkedAssets = [];
+	protected static array $checkedAssets = [];
 	/**
 	 * @var bool $autoMinify A boolean indicating whether assets should be minified automatically. Defaults to true.
 	 */
-	protected bool $autoMinify = true;
+	protected static bool $autoMinify = true;
 	/**
 	 * @var array $jsModules An array of JavaScript modules included in an import map.
 	 */
-	protected array $jsModules = [];
+	protected static array $jsModules = [];
 	/**
 	 * @var array $noScriptAssets An array of assets to include in a <noscript> tag.
 	 */
-	protected array $noScriptAssets = [];
+	protected static array $noScriptAssets = [];
 	/**
 	 * @var string $realm The realm of the application. This is used to determine the base path for assets.
 	 */
-	protected string $realm;
+	protected static string $realm;
 	/**
 	 * @var array $realmFolders An associative array of realm folders. The keys are the realm names, and the values are arrays of folder paths for each realm.
 	 */
-	protected array $realmFolders;
+	protected static array $realmFolders;
+	/**
+	 * @var \Cake\View\Helper|null
+	 */
+	protected static array $assetDefaults = [
+		'all' => [],
+		'css' => [
+			'critical' => [],
+			'nonCritical' => [],
+		],
+		'js' => [
+			'critical' => [],
+			'nonCritical' => [],
+		],
+		'font' => [
+			'critical' => [],
+			'nonCritical' => [],
+		],
+	];
 
 
 	/**
 	 * @inheritDoc
 	 */
 	public function initialize(array $config): void {
-		$this->realm = Awyiss::getRealm();
+		static::$realm = Awyiss::getRealm();
 
-		$this->realmFolders = Configure::read('App.paths.assets');
+		static::$realmFolders = Configure::read('App.paths.assets');
 
-		$this->autoMinify = !Configure::read('debug', false);
-
-		// Set the default structure for the assets array
-		$this->clearAssets();
+		static::$autoMinify = !Configure::read('debug', false);
 	}
 
 
@@ -77,7 +106,7 @@ class AssetHelper extends Helper {
 	 * @return bool
 	 */
 	public function getAutoMinify(): bool {
-		return $this->autoMinify;
+		return static::$autoMinify;
 	}
 
 
@@ -86,7 +115,7 @@ class AssetHelper extends Helper {
 	 * @return $this
 	 */
 	public function setAutoMinify(bool $autoMinify = true): static {
-		$this->autoMinify = $autoMinify;
+		static::$autoMinify = $autoMinify;
 
 		return $this;
 	}
@@ -96,7 +125,7 @@ class AssetHelper extends Helper {
 	 * @return string
 	 */
 	public function getRealm(): string {
-		return $this->realm;
+		return static::$realm;
 	}
 
 
@@ -105,7 +134,7 @@ class AssetHelper extends Helper {
 	 * @return $this
 	 */
 	public function setRealm(string $realm): static {
-		$this->realm = $realm;
+		static::$realm = $realm;
 
 		return $this;
 	}
@@ -157,7 +186,7 @@ class AssetHelper extends Helper {
 			}
 
 			// If the filename is already in the 'all' assets array, skip this iteration
-			if (array_key_exists($ls_fileName, $this->assets['all'])) {
+			if (array_key_exists($ls_fileName, static::$assets['all'])) {
 				continue;
 			}
 
@@ -165,13 +194,13 @@ class AssetHelper extends Helper {
 			$la_options = $this->buildOptions(is_array($lx_value) ? $lx_value : [], $attributes, $lb_minified, $critical, $priority);
 
 			// Add the asset to the 'all' assets array
-			$this->assets['all'][ $ls_fileName ] = $la_options;
+			static::$assets['all'][ $ls_fileName ] = $la_options;
 
 			// If the asset is critical, set the key to 'critical'. Otherwise, set it to 'nonCritical'.
 			$ls_key = $la_options['critical'] ? 'critical' : 'nonCritical';
 
 			// Add the asset to the appropriate assets array based on its extension and criticality
-			$this->assets[ $ls_extension ][ $ls_key ][ $ls_fileName ] = $la_options;
+			static::$assets[ $ls_extension ][ $ls_key ][ $ls_fileName ] = $la_options;
 		}
 	}
 
@@ -221,14 +250,14 @@ class AssetHelper extends Helper {
 			}
 
 			// If the filename is already in the 'all' assets array, skip this iteration
-			if (array_key_exists($ls_fileName, $this->noScriptAssets)) {
+			if (array_key_exists($ls_fileName, static::$noScriptAssets)) {
 				continue;
 			}
 
 			// If the value is an array, use it as the options. Otherwise, create an array of options with the provided values.
 			$la_options = $this->buildOptions(is_array($lx_value) ? $lx_value : [], $attributes, $lb_minified, false, $priority);
 
-			$this->noScriptAssets[ $ls_fileName ] = $la_options;
+			static::$noScriptAssets[ $ls_fileName ] = $la_options;
 		}
 	}
 
@@ -267,10 +296,10 @@ class AssetHelper extends Helper {
 			}
 
 			// Remove the asset from the assets array
-			unset($this->assets['all'][ $ls_asset ]);
-			unset($this->assets[ $ls_extension ]['critical'][ $ls_asset ]);
-			unset($this->assets[ $ls_extension ]['nonCritical'][ $ls_asset ]);
-			unset($this->noScriptAssets[ $ls_asset ]);
+			unset(static::$assets['all'][ $ls_asset ]);
+			unset(static::$assets[ $ls_extension ]['critical'][ $ls_asset ]);
+			unset(static::$assets[ $ls_extension ]['nonCritical'][ $ls_asset ]);
+			unset(static::$noScriptAssets[ $ls_asset ]);
 		}
 	}
 
@@ -361,13 +390,13 @@ class AssetHelper extends Helper {
 	 */
 	public function getAssetPath(string $asset, array $options = []): ?string {
 		// If the asset has already been checked, return the asset path
-		if (isset($this->checkedAssets[ $asset ])) {
-			return $this->checkedAssets[ $asset ];
+		if (isset(static::$checkedAssets[ $asset ])) {
+			return static::$checkedAssets[ $asset ];
 		}
 
 		// If the asset is a full URL, return it
 		if (preg_match('/^((http|https|ftp):\\/\\/|\\/\\/)/', $asset)) {
-			$this->checkedAssets[ $asset ] = $asset;
+			static::$checkedAssets[ $asset ] = $asset;
 
 			return $asset;
 		}
@@ -380,9 +409,9 @@ class AssetHelper extends Helper {
 			$ls_subPath = 'font';
 		}
 
-		$ls_realm = $options['realm'] ?? $this->realm;
+		$ls_realm = $options['realm'] ?? static::$realm;
 
-		foreach ($this->realmFolders[ $ls_realm ] as $ls_key => $ls_folder) {
+		foreach (static::$realmFolders[ $ls_realm ] as $ls_key => $ls_folder) {
 			$lb_minified = $options['minified'] ?? false;
 
 			$ls_assetPath = $ls_folder . $ls_subPath . '/' . $asset;
@@ -432,11 +461,11 @@ class AssetHelper extends Helper {
 			}
 
 			// Generate a URL for the asset using CakePHP's Router and ppend the modification time to the filename
-			return $this->checkedAssets[ $asset ] = Router::url($ls_fileName . $ls_extension, true);
+			return static::$checkedAssets[ $asset ] = Router::url($ls_fileName . $ls_extension, true);
 		}
 
 		// If the asset is not found, return null
-		$this->checkedAssets[ $asset ] = null;
+		static::$checkedAssets[ $asset ] = null;
 
 
 		return null;
@@ -454,7 +483,7 @@ class AssetHelper extends Helper {
 	 * @throws \Exception
 	 */
 	public function getTags(string $type = 'all', ?bool $critical = null, bool $includeNoScript = true): string {
-		$la_assets = $this->assets[ $type ] ?? [];
+		$la_assets = static::$assets[ $type ] ?? [];
 
 		if ($type !== 'all') {
 			// Assets of the specified type are split into critical and non-critical assets. Merge them, but keep the keys
@@ -524,7 +553,7 @@ class AssetHelper extends Helper {
 	 * @throws \Exception
 	 */
 	public function getNoScriptTags(): string {
-		$la_assets = array_merge($this->assets['all'], $this->noScriptAssets);
+		$la_assets = array_merge(static::$assets['all'], static::$noScriptAssets);
 
 		if (empty($la_assets)) {
 			return '';
@@ -638,18 +667,18 @@ class AssetHelper extends Helper {
 			}
 
 			// If the module is not already in the jsModules array, add it
-			if (array_key_exists($ls_moduleName, $this->jsModules)) {
+			if (array_key_exists($ls_moduleName, static::$jsModules)) {
 				continue;
 			}
 
 			// If module options is an array and contains a 'minified' key, use the provided options
 			if (is_array($la_moduleOptions) && array_key_exists('minified', $la_moduleOptions)) {
-				$this->jsModules[ $ls_moduleName ] = $la_moduleOptions;
+				static::$jsModules[ $ls_moduleName ] = $la_moduleOptions;
 				continue;
 			}
 
 			// Otherwise, use the default minified value
-			$this->jsModules[ $ls_moduleName ] = ['minified' => $lb_minified];
+			static::$jsModules[ $ls_moduleName ] = ['minified' => $lb_minified];
 		}
 	}
 
@@ -663,8 +692,8 @@ class AssetHelper extends Helper {
 	 */
 	public function removeJsModule(string $module): void {
 		// If the module is in the jsModules array, remove it
-		if (array_key_exists($module, $this->jsModules)) {
-			unset($this->jsModules[ $module ]);
+		if (array_key_exists($module, static::$jsModules)) {
+			unset(static::$jsModules[ $module ]);
 		}
 	}
 
@@ -675,7 +704,7 @@ class AssetHelper extends Helper {
 	 * @return array
 	 */
 	public function getJsModules(): array {
-		return $this->jsModules;
+		return static::$jsModules;
 	}
 
 
@@ -702,7 +731,7 @@ class AssetHelper extends Helper {
 		$la_importMap = ['imports' => []];
 
 		// Iterate over each JavaScript module
-		foreach ($this->jsModules as $ls_moduleName => $la_options) {
+		foreach (static::$jsModules as $ls_moduleName => $la_options) {
 			// Remove the .js extension from the module name
 			$ls_cleanModuleName = pathinfo($ls_moduleName, PATHINFO_FILENAME);
 
@@ -767,7 +796,7 @@ class AssetHelper extends Helper {
 		$la_finalAssets = [];
 
 		// Iterate over each asset in 'all'
-		foreach ($this->assets['all'] as $ls_fileName => $la_options) {
+		foreach (static::$assets['all'] as $ls_fileName => $la_options) {
 			// Retrieve the full path of the asset
 			$ls_assetPath = $this->getAssetPath($ls_fileName, $la_options);
 
@@ -808,7 +837,7 @@ class AssetHelper extends Helper {
 	 * @return bool
 	 */
 	public function getAssets(): array {
-		return $this->assets;
+		return static::$assets;
 	}
 
 
@@ -818,7 +847,7 @@ class AssetHelper extends Helper {
 	 * @return array
 	 */
 	public function getNoScriptAssets(): array {
-		return $this->noScriptAssets;
+		return static::$noScriptAssets;
 	}
 
 
@@ -830,23 +859,10 @@ class AssetHelper extends Helper {
 	 * @return bool
 	 */
 	public function clearAssets(): void {
-		$this->assets = [
-			'all' => [],
-			'css' => [
-				'critical' => [],
-				'nonCritical' => [],
-			],
-			'js' => [
-				'critical' => [],
-				'nonCritical' => [],
-			],
-			'font' => [
-				'critical' => [],
-				'nonCritical' => [],
-			],
-		];
-
-		$this->noScriptAssets = [];
+		static::$assets = static::$assetDefaults;
+		static::$checkedAssets =[];
+		static::$jsModules = [];
+		static::$noScriptAssets = [];
 	}
 
 
