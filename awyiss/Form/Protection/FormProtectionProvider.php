@@ -109,16 +109,17 @@ class FormProtectionProvider {
 
 		foreach ($la_paths as $ls_namespace => $ls_path) {
 			foreach (glob($ls_path) as $ls_filePath) {
-				$ls_moduleName = substr($ls_filePath, strrpos($ls_filePath, DS) + 1, -4);
+				$ls_protectionName = substr($ls_filePath, strrpos($ls_filePath, DS) + 1, -4);
+
 				if (
-					str_starts_with($ls_moduleName, '_') ||
-					str_starts_with($ls_moduleName, 'Abstract')
+					str_starts_with($ls_protectionName, '_') ||
+					str_starts_with($ls_protectionName, 'Abstract')
 				) {
 					continue;
 				}
 
 				/** @var class-string<\Awyiss\Form\Protection\FormProtectionInterface> $ls_formProtectionClass */
-				$ls_formProtectionClass = $ls_namespace . $ls_moduleName;
+				$ls_formProtectionClass = $ls_namespace . $ls_protectionName;
 
 				$lo_reflection = new ReflectionClass($ls_formProtectionClass);
 
@@ -128,7 +129,7 @@ class FormProtectionProvider {
 					);
 				}
 
-				$ls_identifier = static::sanitizeIdentifier($ls_formProtectionClass::getIdentifier());
+				$ls_identifier = static::sanitizeIdentifier(substr($ls_protectionName, 0, -14));
 
 				static::$classes[ $ls_identifier ] = $ls_formProtectionClass;
 			}

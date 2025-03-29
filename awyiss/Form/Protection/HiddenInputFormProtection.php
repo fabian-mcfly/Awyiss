@@ -21,7 +21,7 @@ class HiddenInputFormProtection implements FormProtectionInterface {
 	 * @var array
 	 */
 	protected array $defaultOptions = [
-
+		'elementName' => 'email_confirmation',
 	];
 	/**
 	 * @var \Awyiss\Model\Entity\Form
@@ -51,25 +51,17 @@ class HiddenInputFormProtection implements FormProtectionInterface {
 	 * @return array
 	 */
 	protected function getFieldName(): string {
-		$ls_elementName = $this->options['elementName'] ?? 'email_confirmation';
+		$ls_elementName = $this->options['elementName'];
 
 		// 'emailConfirmation' is the last resort since form elements are all underscored
-		$la_alternatives = ['mail_confirmation', 'e_mail_confirmation', 'mail', 'e_mail', 'emailConfirmation'];
+		$la_alternatives = ['email_confirmation', 'mail_confirmation', 'e_mail_confirmation', 'mail', 'e_mail', 'emailConfirmation'];
 
 		// Check if the name is already used by form elements and try alternatives until a free name is found
-		while (array_key_exists($ls_elementName, $this->formElements)) {
+		while (!$ls_elementName || array_key_exists($ls_elementName, $this->formElements)) {
 			$ls_elementName = array_shift($la_alternatives);
 		}
 
 		return $ls_elementName;
-	}
-
-
-	/**
-	 * @inheritDoc
-	 */
-	public static function getIdentifier(): string {
-		return 'hidden_input';
 	}
 
 
@@ -83,7 +75,7 @@ class HiddenInputFormProtection implements FormProtectionInterface {
 		$this->view = $view;
 
 		$this->options = Hash::merge(
-			$this->formOptions->getProtectionOptions(static::getIdentifier()) ?? [],
+			$this->formOptions->getProtectionOptions('hiddenInput') ?? [],
 			$this->defaultOptions,
 		);
 

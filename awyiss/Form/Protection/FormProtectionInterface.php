@@ -32,12 +32,6 @@ interface FormProtectionInterface {
 
 
 	/**
-	 * @return string
-	 */
-	public static function getIdentifier(): string;
-
-
-	/**
 	 * This method is called once when the form is initialized,
 	 * the elements are fetched and the options loaded
 	 *

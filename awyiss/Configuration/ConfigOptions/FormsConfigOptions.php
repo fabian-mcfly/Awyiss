@@ -82,7 +82,7 @@ class FormsConfigOptions extends AbstractConfigOptions {
 						$la_protectionMethod = FormProtectionProvider::getFormProtectionFiles();
 
 						foreach ($la_protectionMethod as $ls_identifier => $ls_class) {
-							$la_protectionMethods[ $ls_identifier ] = __d('forms', 'protection_method_' . Inflector::underscore($ls_class::getIdentifier()));
+							$la_protectionMethods[ $ls_identifier ] = __d('forms', 'protection_method_' . Inflector::underscore($ls_identifier));
 						}
 
 						asort($la_protectionMethods);

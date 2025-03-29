@@ -381,6 +381,7 @@ class Form extends Entity {
 		}
 
 		$this->protectionMethods = [];
+
 		foreach ($la_protectionMethods as $ls_identifier) {
 			$ls_class = FormProtectionProvider::getFormProtectionFile($ls_identifier);
 
@@ -392,7 +393,11 @@ class Form extends Entity {
 
 			$lo_protection->initialize($this, $la_formElements, $this->formOptions, $this->view);
 
-			$this->protectionMethods[ $ls_class::getIdentifier() ] = $lo_protection;
+			$la_parts = explode('\\', $lo_protection::class);
+			$ls_identifier = array_pop($la_parts);
+			$ls_identifier = FormProtectionProvider::sanitizeIdentifier(substr($ls_identifier, 0, -14));
+
+			$this->protectionMethods[ $ls_identifier ] = $lo_protection;
 		}
 
 		return $this;
