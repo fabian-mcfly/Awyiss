@@ -27,28 +27,13 @@ if (defined('CUSTOM_DIR')) {
 }
 
 return [
-	'Asset' => [
-		'timestamp' => true, //Set to 'force' to always enable timestamping regardless of debug value.
-		'cacheTime' => '+1 year',
-	],
-
-	/*
-	 * Configure basic information about the application.
-	 *
-	 * - imageBaseUrl - Web path to the public images directory under webroot.
-	 * - cssBaseUrl - Web path to the public css directory under webroot.
-	 * - jsBaseUrl - Web path to the public js directory under webroot.
-	 */
 	'App' => [
 		'base' => false,
-		'cssBaseUrl' => 'css/',
 		'defaultLocale' => env('APP_DEFAULT_LOCALE', ''),
 		'defaultTimezone' => env('APP_DEFAULT_TIMEZONE', 'UTC'),
 		'dir' => 'awyiss',
 		'encoding' => env('APP_ENCODING', 'UTF-8'),
 		'fullBaseUrl' => false,
-		'imageBaseUrl' => 'img/',
-		'jsBaseUrl' => 'js/',
 		'namespace' => 'Awyiss',
 		'paths' => [
 			'assets' => $la_assetPaths,
