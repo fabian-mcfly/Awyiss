@@ -111,7 +111,6 @@ class EmailTemplatesController extends Controller {
 	 * @return \Cake\Http\Response
 	 * @throws \Exception
 	 */
-	#[NoDirectAccess]
 	public function delete(int $id): Response {
 		$this->Authorization->ensure('delete');
 

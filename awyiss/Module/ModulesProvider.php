@@ -6,7 +6,6 @@ namespace Awyiss\Module;
 
 use Awyiss\Utility\Inflector;
 use Cake\Utility\Text;
-use ReflectionClass;
 use RuntimeException;
 
 
@@ -37,7 +36,6 @@ class ModulesProvider {
 	 * Returns all found Module classes in both the Awyiss and the custom namespace
 	 *
 	 * @return array<string, class-string<\Awyiss\Module\ModuleInterface>>
-	 * @throws \ReflectionException
 	 * @noinspection PhpUnused
 	 */
 	public static function getModuleFiles(): array {
@@ -56,7 +54,6 @@ class ModulesProvider {
 	 *
 	 * @param string $identifier
 	 * @return class-string<\Awyiss\Module\ModuleInterface>|null
-	 * @throws \ReflectionException
 	 */
 	public static function getModuleFile(string $identifier): ?string {
 		$ls_identifier = static::sanitizeIdentifier($identifier);
@@ -90,7 +87,6 @@ class ModulesProvider {
 	 *
 	 * @param string $identifier
 	 * @return void
-	 * @throws \ReflectionException
 	 */
 	protected static function findModuleFile(string $identifier): void {
 		$ls_className = $identifier;
@@ -117,19 +113,15 @@ class ModulesProvider {
 					continue;
 				}
 
+				/** @var class-string<\Awyiss\Module\ModuleInterface> $ls_moduleClass */
 				$ls_moduleClass = $ls_namespace . $ls_moduleName;
 
-				$lo_reflection = new ReflectionClass($ls_moduleClass);
-
-				if (!$lo_reflection->implementsInterface(ModuleInterface::class)) {
+				if (!in_array(ModuleInterface::class, class_implements($ls_moduleClass))) {
 					throw new RuntimeException(
 						sprintf('The provided Module class `%s` does not implement `%s`.', $ls_moduleClass, ModuleInterface::class)
 					);
 				}
 
-				/**
-				 * @var \Awyiss\Module\ModuleInterface $ls_moduleClass
-				 */
 				$ls_identifier = static::sanitizeIdentifier($ls_moduleClass::getIdentifier());
 
 				if (isset(static::$modules[ $ls_identifier ])) {

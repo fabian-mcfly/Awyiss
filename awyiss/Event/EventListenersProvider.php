@@ -8,7 +8,6 @@ use Awyiss\Utility\Inflector;
 use Cake\Event\EventListenerInterface;
 use Cake\Event\EventManager;
 use Cake\Utility\Text;
-use ReflectionClass;
 use RuntimeException;
 
 
@@ -42,7 +41,6 @@ class EventListenersProvider {
 	/**
 	 * @param string $realm
 	 * @return array
-	 * @throws \ReflectionException
 	 * @noinspection PhpUnused
 	 */
 	public static function getListeners(string $realm): array {
@@ -57,7 +55,6 @@ class EventListenersProvider {
 	 * @param string $scope
 	 * @param string $realm
 	 * @return string|null
-	 * @throws \ReflectionException
 	 */
 	public static function getListener(string $scope, string $realm): ?string {
 		$ls_scope = static::sanitizeScope($scope);
@@ -79,7 +76,6 @@ class EventListenersProvider {
 	 * @param string $scope
 	 * @param string $realm
 	 * @return bool
-	 * @throws \ReflectionException
 	 */
 	public static function loadListener(string $scope, string $realm): bool {
 		$ls_scope = static::sanitizeScope($scope);
@@ -135,7 +131,6 @@ class EventListenersProvider {
 	 * @param string $scope
 	 * @param string $realm
 	 * @return array
-	 * @throws \ReflectionException
 	 */
 	protected static function findListener(string $scope, string $realm): array {
 		$la_paths = [];
@@ -151,26 +146,23 @@ class EventListenersProvider {
 			foreach (glob($ls_path) as $ls_filePath) {
 				$ls_listenerName = substr($ls_filePath, strrpos($ls_filePath, DS) + 1, -4);
 
-				if (str_starts_with($ls_listenerName, '_')) {
+				if (
+					str_starts_with($ls_listenerName, '_') ||
+					str_starts_with($ls_listenerName, 'Abstract')
+				) {
 					continue;
 				}
 
+				/** @var class-string<\Cake\Event\EventListenerInterface> $ls_listenerClass */
 				$ls_listenerClass = $ls_namespace . $ls_listenerName;
 
-				$lo_reflection = new ReflectionClass($ls_listenerClass);
-
-				if (!$lo_reflection->implementsInterface(EventListenerInterface::class)) {
+				if (!in_array(EventListenerInterface::class, class_implements($ls_listenerClass))) {
 					throw new RuntimeException(sprintf('The provided Listener class `%s` does not extend the `%s` class.', $ls_listenerClass, EventListenerInterface::class));
 				}
 
-				/** @var EventListenerTrait $ls_listenerClass */
 				$ls_scope = $ls_listenerClass::getScope();
 
-				if (isset($la_listeners[ $ls_scope ])) {
-					continue;
-				}
-
-				$la_listeners[ $ls_scope ] = $ls_listenerClass;
+				$la_listeners[ $ls_scope ] ??= $ls_listenerClass;
 			}
 		}
 

@@ -6,7 +6,6 @@ namespace Awyiss\Attribute;
 
 use Awyiss\Utility\Inflector;
 use Cake\Utility\Text;
-use ReflectionClass;
 use RuntimeException;
 
 
@@ -201,26 +200,21 @@ class AttributeOptionsProvider {
 		foreach ($la_paths as $ls_namespace => $ls_path) {
 			foreach (glob($ls_path) as $ls_filePath) {
 				$ls_attributeOptionsName = substr($ls_filePath, strrpos($ls_filePath, DS) + 1, -4);
-				if (str_starts_with($ls_attributeOptionsName, '_')) {
+
+				if (
+					str_starts_with($ls_attributeOptionsName, '_') ||
+					str_starts_with($ls_attributeOptionsName, 'Abstract')
+				) {
 					continue;
 				}
 
+				/** @var class-string<\Awyiss\Attribute\AttributeOptionsInterface> $ls_attributeOptionsClass */
 				$ls_attributeOptionsClass = $ls_namespace . $ls_attributeOptionsName;
 
-				$lo_reflection = new ReflectionClass($ls_attributeOptionsClass);
-
-				if (!$lo_reflection->implementsInterface(AttributeOptionsInterface::class)) {
+				if (!in_array(AttributeOptionsInterface::class, class_implements($ls_attributeOptionsClass))) {
 					throw new RuntimeException(
-						sprintf(
-							'The provided Attributes class `%s` does not extend the `%s` class.',
-							$ls_attributeOptionsClass,
-							AttributeOptionsInterface::class
-						)
+						sprintf('The provided Attributes class `%s` does not extend the `%s` class.', $ls_attributeOptionsClass, AttributeOptionsInterface::class)
 					);
-				}
-
-				if ($lo_reflection->isAbstract()) {
-					continue;
 				}
 
 				/**

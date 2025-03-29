@@ -14,7 +14,6 @@ use Awyiss\Model\Entity\Datatable;
 use Awyiss\Utility\Inflector;
 use Cake\Datasource\FactoryLocator;
 use Cake\Utility\Text;
-use ReflectionClass;
 use RuntimeException;
 
 
@@ -79,7 +78,6 @@ class AuthorizationService implements AuthorizationServiceInterface {
 
 	/**
 	 * @inheritDoc
-	 * @throws \ReflectionException
 	 */
 	public function getPolicies(?string $realm = null): array {
 		$ls_realm = $realm ?: $this->realm;
@@ -93,7 +91,6 @@ class AuthorizationService implements AuthorizationServiceInterface {
 
 	/**
 	 * @inheritDoc
-	 * @throws \ReflectionException
 	 */
 	public function getPolicy(string $scope, ?string $realm = null): AbstractGenericPolicy|string|null {
 		$ls_realm = $realm ?: $this->realm;
@@ -115,7 +112,6 @@ class AuthorizationService implements AuthorizationServiceInterface {
 	 * @param string $scope
 	 * @param string $realm
 	 * @return array<string, \Awyiss\Authorization\Policy\AbstractGenericPolicy|class-string<\Awyiss\Authorization\Policy\PolicyInterface>>
-	 * @throws \ReflectionException
 	 */
 	protected function findPolicy(string $scope, string $realm): void {
 		$ls_scope = null;
@@ -143,35 +139,28 @@ class AuthorizationService implements AuthorizationServiceInterface {
 		foreach ($la_paths as $ls_namespace => $ls_path) {
 			foreach (glob($ls_path) as $ls_filePath) {
 				$ls_policyName = substr($ls_filePath, strrpos($ls_filePath, DS) + 1, -4);
+
 				if (
 					(
 						$ls_className === '*' &&
 						in_array($ls_policyName, ['GenericDatatablesPolicy', 'GenericPagesPolicy'])
 					) ||
-					str_starts_with($ls_policyName, '_')
+					str_starts_with($ls_policyName, '_') ||
+					str_starts_with($ls_policyName, 'Abstract')
 				) {
 					continue;
 				}
 
+				/** @var class-string<\Awyiss\Authorization\Policy\PolicyInterface> $ls_policyClass */
 				$ls_policyClass = $ls_namespace . $ls_policyName;
-				/** @var PolicyInterface $ls_policyClass */
-				$ls_policyScope = $ls_policyClass::getScope();
 
-				if (isset($this->policies[ $realm ][ $ls_policyScope ])) {
-					continue;
-				}
-
-				$lo_reflection = new ReflectionClass($ls_policyClass);
-
-				if (!$lo_reflection->implementsInterface(PolicyInterface::class)) {
+				if (!in_array(PolicyInterface::class, class_implements($ls_policyClass))) {
 					throw new RuntimeException(sprintf('The provided Policy class `%s` does not implement the `%s` interface.', $ls_policyClass, PolicyInterface::class));
 				}
 
-				if ($lo_reflection->isAbstract()) {
-					continue;
-				}
+				$ls_policyScope = $ls_policyClass::getScope();
 
-				$this->policies[ $realm ][ $ls_policyScope ] = $ls_policyClass;
+				$this->policies[ $realm ][ $ls_policyScope ] ??= $ls_policyClass;
 			}
 		}
 

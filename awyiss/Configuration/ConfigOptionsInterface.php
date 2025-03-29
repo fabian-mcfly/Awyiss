@@ -69,7 +69,6 @@ interface ConfigOptionsInterface {
 	 * @param mixed $value
 	 * @param string|null $languageShortcode
 	 * @return mixed
-	 * @throws \ReflectionException
 	 */
 	public function typecastConfigValue(
 		string $realm,

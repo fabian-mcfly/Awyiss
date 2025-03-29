@@ -16,7 +16,6 @@ use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\FactoryLocator;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Validation\Validator;
-use ReflectionClass;
 
 
 /**
@@ -407,8 +406,6 @@ class AttributesTable extends Table {
 
 	/**
 	 * Returns all available scopes that can have attributes.
-	 *
-	 * @throws \ReflectionException
 	 */
 	public function getAvailableScopes(): array {
 		if (isset($this->attributeScopes)) {
@@ -417,10 +414,13 @@ class AttributesTable extends Table {
 
 		$this->attributeScopes = [];
 
-		$la_paths = [
-			'\\' . CUSTOM_NAMESPACE . '\Model\Table\\' => implode(DS, [ROOT, CUSTOM_DIR, 'Model', 'Table', '*Table.php',]),
-			'\Awyiss\Model\Table\\' => implode(DS, [ROOT, APP_DIR, 'Model', 'Table', '*Table.php']),
-		];
+		$la_paths = [];
+
+		if (defined('CUSTOM_NAMESPACE')) {
+			$la_paths['\\' . CUSTOM_NAMESPACE . '\Model\Table\\'] = implode(DS, [ROOT, CUSTOM_DIR, 'Model', 'Table', '*Table.php']);
+		}
+
+		$la_paths['\Awyiss\Model\Table\\'] = implode(DS, [ROOT, APP_DIR, 'Model', 'Table', '*Table.php']);
 
 		//Traverse both namespaces
 		foreach ($la_paths as $ls_namespace => $ls_path) {
@@ -432,20 +432,24 @@ class AttributesTable extends Table {
 					continue;
 				}
 
-				/** @var Table::class $ls_tableClass */
+				/** @var class-string<\Awyiss\Model\Table> $ls_tableClass */
 				$ls_tableClass = $ls_namespace . $ls_tableName;
 
-				//If an entry exists or if the table does not allow attributes, skip it
+				/**
+				 * If an entry exists or if the table does not allow attributes, skip it
+				 *
+				 * @noinspection PhpIllegalArrayKeyTypeInspection
+				 */
 				if (isset($this->attributeScopes[ $ls_tableClass::TABLE ]) || !$ls_tableClass::ATTRIBUTABLE) {
 					continue;
 				}
 
 				//If the given table is not a subclass of \Awyiss\Model\Table, skip it
-				$lo_reflection = new ReflectionClass($ls_tableClass);
-				if (!$lo_reflection->isSubclassOf(Table::class)) {
+				if (!is_subclass_of($ls_tableClass, Table::class)) {
 					continue;
 				}
 
+				/** @noinspection PhpIllegalArrayKeyTypeInspection */
 				$this->attributeScopes[ $ls_tableClass::TABLE ] = $ls_tableClass;
 			}
 		}

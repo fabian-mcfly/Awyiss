@@ -6,7 +6,6 @@ namespace Awyiss\Form\Protection;
 
 use Awyiss\Utility\Inflector;
 use Cake\Utility\Text;
-use ReflectionClass;
 use RuntimeException;
 
 
@@ -20,7 +19,7 @@ class FormProtectionProvider {
 	 */
 	protected static bool $foundAll = false;
 	/**
-	 * @var \class-string
+	 * @var array<string, class-string<\Awyiss\Form\Protection\FormProtectionInterface>>
 	 */
 	protected static array $classes = [];
 
@@ -37,7 +36,6 @@ class FormProtectionProvider {
 	 * Returns all found Form Protection classes in both the Awyiss and the custom namespace
 	 *
 	 * @return array<string, class-string<\Awyiss\Form\Protection\FormProtectionInterface>>
-	 * @throws \ReflectionException
 	 * @noinspection PhpUnused
 	 */
 	public static function getFormProtectionFiles(): array {
@@ -56,7 +54,6 @@ class FormProtectionProvider {
 	 *
 	 * @param string $identifier
 	 * @return class-string<\Awyiss\Form\Protection\FormProtectionInterface>|null
-	 * @throws \ReflectionException
 	 */
 	public static function getFormProtectionFile(string $identifier): ?string {
 		$ls_identifier = static::sanitizeIdentifier($identifier);
@@ -90,7 +87,6 @@ class FormProtectionProvider {
 	 *
 	 * @param string $identifier
 	 * @return void
-	 * @throws \ReflectionException
 	 */
 	protected static function findFormProtectionFile(string $identifier): void {
 		$ls_className = $identifier;
@@ -121,9 +117,7 @@ class FormProtectionProvider {
 				/** @var class-string<\Awyiss\Form\Protection\FormProtectionInterface> $ls_formProtectionClass */
 				$ls_formProtectionClass = $ls_namespace . $ls_protectionName;
 
-				$lo_reflection = new ReflectionClass($ls_formProtectionClass);
-
-				if (!$lo_reflection->implementsInterface(FormProtectionInterface::class)) {
+				if (!in_array(FormProtectionInterface::class, class_implements($ls_formProtectionClass))) {
 					throw new RuntimeException(
 						sprintf('The provided FormProtection class `%s` does not implement `%s`.', $ls_formProtectionClass, FormProtectionInterface::class)
 					);

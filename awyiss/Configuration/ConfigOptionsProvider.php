@@ -11,7 +11,6 @@ use Awyiss\Model\Enum\PageRoleEnumInterface;
 use Awyiss\Utility\Inflector;
 use Cake\Datasource\ConnectionManager;
 use Cake\Utility\Text;
-use ReflectionClass;
 use RuntimeException;
 
 
@@ -53,7 +52,6 @@ class ConfigOptionsProvider {
 	 * Returns all found ConfigOptions classes in both the Awyiss and the custom namespace
 	 *
 	 * @return array<string, class-string<\Awyiss\Configuration\ConfigOptionsInterface>>
-	 * @throws \ReflectionException
 	 * @noinspection PhpUnused
 	 */
 	public static function getConfigOptionsFiles(bool $returnLoaded = false): array {
@@ -86,7 +84,6 @@ class ConfigOptionsProvider {
 	 * @param string $scope
 	 * @param bool $returnLoaded
 	 * @return \Awyiss\Configuration\ConfigOptionsInterface|\Awyiss\Model\Enum\PageRoleEnumInterface|string|null
-	 * @throws \ReflectionException
 	 */
 	public static function getConfigOptionsFile(string $scope, bool $returnLoaded = false): ConfigOptionsInterface|PageRoleEnumInterface|string|null {
 		$ls_scope = static::sanitizeScope($scope);
@@ -112,7 +109,6 @@ class ConfigOptionsProvider {
 	 *
 	 * @param class-string<ConfigOptionsInterface>|string $configOptionScope
 	 * @return ConfigOptionsInterface|null
-	 * @throws \ReflectionException
 	 */
 	public static function loadConfigOptions(string $configOptionScope): ?ConfigOptionsInterface {
 		if (str_contains($configOptionScope, '\\')) {
@@ -172,7 +168,6 @@ class ConfigOptionsProvider {
 	 * @param mixed $value
 	 * @param string|null $languageShortcode
 	 * @return string|bool
-	 * @throws \ReflectionException
 	 * @noinspection PhpUnused
 	 */
 	public static function validateConfigValue(string $scope, string $realm, string $identifier, mixed $value, ?string $languageShortcode = null): bool|string {
@@ -196,7 +191,6 @@ class ConfigOptionsProvider {
 	 * @param mixed $value
 	 * @param string|null $languageShortcode
 	 * @return mixed
-	 * @throws \ReflectionException
 	 */
 	public static function typecastConfigValue(
 		string $scope,
@@ -261,7 +255,6 @@ class ConfigOptionsProvider {
 	 *
 	 * @param string $scope
 	 * @return void
-	 * @throws \ReflectionException
 	 */
 	protected static function findConfigOptionsFile(string $scope): void {
 		$ls_scope = null;
@@ -294,30 +287,18 @@ class ConfigOptionsProvider {
 					continue;
 				}
 
+				/** @var class-string<\Awyiss\Configuration\ConfigOptionsInterface> $ls_configurationClass */
 				$ls_configurationClass = $ls_namespace . $ls_configurationName;
 
-				$lo_reflection = new ReflectionClass($ls_configurationClass);
-
-				if (!$lo_reflection->implementsInterface(ConfigOptionsInterface::class)) {
+				if (!in_array(ConfigOptionsInterface::class, class_implements($ls_configurationClass))) {
 					throw new RuntimeException(
 						sprintf('The provided Configuration class `%s` does not implement `%s`.', $ls_configurationClass, ConfigOptionsInterface::class)
 					);
 				}
 
-				if ($lo_reflection->isAbstract()) {
-					continue;
-				}
-
-				/**
-				 * @var ConfigOptionsInterface $ls_configurationClass
-				 */
 				$ls_configScope = static::sanitizeScope($ls_configurationClass::getScope());
 
-				if (isset(static::$configOptions[ $ls_configScope ])) {
-					continue;
-				}
-
-				static::$configOptions[ $ls_configScope ] = $ls_configurationClass;
+				static::$configOptions[ $ls_configScope ] ??= $ls_configurationClass;
 			}
 		}
 

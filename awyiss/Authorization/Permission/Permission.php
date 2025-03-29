@@ -8,7 +8,6 @@ use Awyiss\Authorization\AuthorizationService;
 use Awyiss\Authorization\Policy\AbstractGenericPolicy;
 use Awyiss\Authorization\Policy\PolicyInterface;
 use Awyiss\Event\EventDispatcherTrait;
-use ReflectionClass;
 use RuntimeException;
 
 
@@ -110,7 +109,6 @@ class Permission {
 	 * or tries loading one from the authorization service.
 	 *
 	 * @return \Awyiss\Authorization\Policy\AbstractGenericPolicy|class-string<\Awyiss\Authorization\Policy\PolicyInterface>|null
-	 * @throws \ReflectionException
 	 */
 	public function getPolicyClass(): AbstractGenericPolicy|string|null {
 		if (!$this->policyClass) {
@@ -126,14 +124,11 @@ class Permission {
 	 *
 	 * @param \Awyiss\Authorization\Policy\PolicyInterface|\Awyiss\Authorization\Policy\AbstractGenericPolicy|string|null $policyClass
 	 * @return $this
-	 * @throws \ReflectionException
 	 * @noinspection PhpUnused
 	 */
 	public function setPolicyClass(string|PolicyInterface|AbstractGenericPolicy|null $policyClass = null): static {
 		if (is_string($policyClass)) {
-			$lo_reflection = new ReflectionClass($policyClass);
-
-			if (!$lo_reflection->implementsInterface(PolicyInterface::class)) {
+			if (!in_array(PolicyInterface::class, class_implements($policyClass))) {
 				throw new RuntimeException(sprintf('The provided Policy class `%s` does not implement the `%s` interface.', $policyClass, PolicyInterface::class));
 			}
 		}
@@ -172,7 +167,6 @@ class Permission {
 	 * @param array $additionalData
 	 * @param PermissionCollection $permissionCollection
 	 * @return bool|null
-	 * @throws \ReflectionException
 	 * @throws \Exception
 	 */
 	public function isAccessible(array $additionalData, PermissionCollection $permissionCollection): ?bool {
