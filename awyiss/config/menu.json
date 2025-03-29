@@ -482,6 +482,22 @@
 					"identifier": "read"
 				},
 				"children": null
+			},
+			"forms_configure": {
+				"title": {
+					"translate": ["forms", "menu_configure"]
+				},
+				"link": {
+					"url": {
+						"controller": "Configuration",
+						"action": "overview",
+						"scope": "forms"
+					}
+				},
+				"access": {
+					"scope": "forms",
+					"identifier": "configure"
+				}
 			}
 		}
 	},
