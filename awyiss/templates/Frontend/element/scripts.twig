@@ -25,6 +25,18 @@
 	]) %}
 	{% do AssetHelper.add('WebfontLoader/webfontloader.js') %}
 	{% do AssetHelper.add('main.js', {type: 'module'}) %}
+
+	{%- block frontendEditorConfig -%}
+		{% if frontendEditorConfig %}
+			{% do AssetHelper.add(['frontend_editor.css', 'Frontend/Editor.js'], {realm: 'Backend'}) %}
+		{% endif %}
+	{%- endblock -%}
+
+	{%- block frontendPreviewConfig -%}
+		{% if frontendPreviewConfig %}
+			{% do AssetHelper.add(['frontend_preview.css', 'Frontend/Preview.js'], {realm: 'Backend'}) %}
+		{% endif %}
+	{%- endblock -%}
 {% endblock %}
 
 {% block script %}
@@ -71,5 +83,11 @@
 				{% do AssetHelper.addNoScriptAsset('webfonts.css') %}
 			{% endif %}
 		{% endblock %}
+
+		{%- block designPreviewStylesheet -%}
+			{% if designPreview %}
+				{% do AssetHelper.add('frontend_design_preview.css', {realm: 'Backend'}) %}
+			{% endif %}
+		{%- endblock -%}
 	</script>
 {% endblock %}

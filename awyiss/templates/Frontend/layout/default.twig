@@ -109,24 +109,6 @@
 					{{- element('scripts', {page: page}) -}}
 				{%- endblock -%}
 
-				{%- block frontendEditorConfig -%}
-					{% if frontendEditorConfig %}
-						{% do AssetHelper.add(['frontend_editor.css', 'Frontend/Editor.js'], {realm: 'Backend'}) %}
-					{% endif %}
-				{%- endblock -%}
-
-				{%- block frontendPreviewConfig -%}
-					{% if frontendPreviewConfig %}
-						{% do AssetHelper.add(['frontend_preview.css', 'Frontend/Preview.js'], {realm: 'Backend'}) %}
-					{% endif %}
-				{%- endblock -%}
-
-				{%- block designPreviewStylesheet -%}
-					{% if designPreview %}
-						{% do AssetHelper.add('frontend_design_preview.css', {realm: 'Backend'}) %}
-					{% endif %}
-				{%- endblock -%}
-
 				{%- block headAssetTags -%}
 					{{- AssetHelper.createImportMap() -}}
 					{{- AssetHelper.getTags('all', true) -}}
