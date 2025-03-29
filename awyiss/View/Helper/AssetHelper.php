@@ -310,7 +310,8 @@ class AssetHelper extends Helper {
 	 * If the asset is a font (woff, woff2, ttf), a `<link>`-tag with `rel="preload"` is generated.
 	 *
 	 * If the asset is a JavaScript file, a `<script>`-tag is generated.
-	 * If the 'critical' option of the asset is true, the tag is generated without the `async`-attribute.
+	 * If the 'critical' option of the asset is true, the tag is generated without the `async`-attribute
+	 * but with the `defer`-attribute.
 	 *
 	 * If the asset is a CSS file, a `<link>`-tag with `rel="stylesheet"` is generated.
 	 * If the 'critical'-option of the asset is true, the tag is generated without the `onload`-attribute.
@@ -361,7 +362,7 @@ class AssetHelper extends Helper {
 				return '<script' . $ls_nonce . ' async src="' . $assetPath . '"' . $ls_additionalAttributes . '></script>' . PHP_EOL;
 			}
 
-			return '<script' . $ls_nonce . ' src="' . $assetPath . '"' . $ls_additionalAttributes . '></script>' . PHP_EOL;
+			return '<script' . $ls_nonce . ' defer src="' . $assetPath . '"' . $ls_additionalAttributes . '></script>' . PHP_EOL;
 		}
 
 		// If the asset is a CSS file and lazy loading is enabled, generate a <link> tag with rel="preload"
@@ -860,7 +861,7 @@ class AssetHelper extends Helper {
 	 */
 	public function clearAssets(): void {
 		static::$assets = static::$assetDefaults;
-		static::$checkedAssets =[];
+		static::$checkedAssets = [];
 		static::$jsModules = [];
 		static::$noScriptAssets = [];
 	}
