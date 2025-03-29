@@ -63,7 +63,10 @@ class SessionAuthenticator extends BaseSessionAuthenticator {
 			$lo_reidentifiedUser = $this->_identifier->reidentify($la_credentials);
 
 			if (empty($lo_reidentifiedUser)) {
-				return new Result(null, ResultInterface::FAILURE_CREDENTIALS_INVALID);
+				// If the user is not found, redirect to the login
+				$lo_session->delete($ls_sessionKey);
+
+				return new Result(null, ResultInterface::FAILURE_IDENTITY_NOT_FOUND);
 			}
 
 			//If the db entry of the user changed,
