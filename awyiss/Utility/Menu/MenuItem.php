@@ -6,6 +6,7 @@ namespace Awyiss\Utility\Menu;
 
 use ArrayAccess;
 use Awyiss\Authorization\IdentityPermissionsInterface;
+use Awyiss\Core\App;
 use Awyiss\Model\Entity;
 use Awyiss\Model\Entity\BackendMenuEntry;
 use Awyiss\Model\Entity\MenuEntry;
@@ -297,7 +298,10 @@ class MenuItem implements ArrayAccess {
 			$la_config['identity'] = $this->identity;
 		}
 
-		$this->children = new Menu($children, $la_config, $this->level + 1);
+		/** @var class-string<\Awyiss\Utility\Menu\Menu> $ls_className */
+		$ls_className = App::className('Menu', 'Utility/Menu');
+
+		$this->children = new $ls_className($children, $la_config, $this->level + 1);
 	}
 
 

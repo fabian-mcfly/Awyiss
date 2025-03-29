@@ -5,7 +5,7 @@ namespace Awyiss\Controller\Frontend;
 
 
 use Awyiss\Controller\AppController;
-use Awyiss\Utility\Form\FormRenderer;
+use Awyiss\Core\App;
 use Awyiss\View\Cell\Frontend\FormCell;
 use Awyiss\View\FrontendView;
 use Cake\Http\Exception\NotFoundException;
@@ -91,8 +91,10 @@ class FormController extends AppController {
 	protected function handleFormEntry(string $formEntryHash): void {
 		$la_options = $this->getOptions();
 
-		/** @noinspection PhpParamsInspection */
-		$lo_formRenderer = new FormRenderer($this->createView('Frontend'));
+		/** @var class-string<\Awyiss\Utility\Form\FormRenderer> $ls_className */
+		$ls_className = App::className('FormRenderer', 'Utility/Form');
+		$lo_formRenderer = new $ls_className($this->createView('Frontend'));
+
 		$lo_formEntry = $lo_formRenderer->loadFormEntryFromHash($formEntryHash);
 
 		if (!$lo_formEntry) {
@@ -160,8 +162,9 @@ class FormController extends AppController {
 			])->first();
 		}
 
-		/** @noinspection PhpParamsInspection */
-		$lo_formRenderer = new FormRenderer($this->createView('Frontend'));
+		/** @var class-string<\Awyiss\Utility\Form\FormRenderer> $ls_className */
+		$ls_className = App::className('FormRenderer', 'Utility/Form');
+		$lo_formRenderer = new $ls_className($this->createView('Frontend'));
 		$lo_formRenderer->initForm($identifier, $this->request->getData(), $lo_page);
 
 		$lo_form = $lo_formRenderer->getForm();
@@ -253,6 +256,7 @@ class FormController extends AppController {
 
 
 		$lo_session = $this->getRequest()->getSession();
+		/** @noinspection PhpUndefinedVariableInspection */
 		$lo_session->write('awyiss_captcha.' . $identifier . '.words', $la_words);
 
 		$ls_ipAddress = $this->getRequest()->clientIp();

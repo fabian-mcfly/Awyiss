@@ -5,11 +5,10 @@ namespace Awyiss\View\Cell\Frontend;
 
 
 use Awyiss\Awyiss;
+use Awyiss\Core\App;
 use Awyiss\Model\Entity\Menu as MenuEntity;
 use Awyiss\Model\Entity\MenuEntry;
 use Awyiss\Utility\Inflector;
-use Awyiss\Utility\Menu\Menu;
-use Awyiss\Utility\Menu\MenuRenderer;
 use Awyiss\View\Cell\Frontend\Trait\PreviewTrait;
 use Cake\Collection\Collection;
 use Cake\Collection\CollectionInterface;
@@ -104,10 +103,17 @@ class MenuCell extends Cell {
 			}
 		}
 
-		$lo_menu = new Menu($lo_menuEntries->toArray(), [
+		/** @var class-string<\Awyiss\Utility\Menu\Menu> $ls_className */
+		$ls_className = App::className('Menu', 'Utility/Menu');
+
+		$lo_menu = new $ls_className($lo_menuEntries->toArray(), [
 			'active' => $lb_active,
 		]);
-		$lo_renderer = new MenuRenderer($lo_menu, $this->rendererOptions);
+
+		/** @var class-string<\Awyiss\Utility\Menu\MenuRenderer> $ls_className */
+		$ls_className = App::className('MenuRenderer', 'Utility/Menu');
+
+		$lo_renderer = new $ls_className($lo_menu, $this->rendererOptions);
 
 		$lo_renderer->setCurrentRoute($la_options['currentRoute']);
 		$lo_renderer->setConfig('identifier', Inflector::ucparts($identifier, false));

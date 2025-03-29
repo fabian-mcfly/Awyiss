@@ -4,11 +4,11 @@
 namespace Awyiss\Model\Table;
 
 
+use Awyiss\Core\App;
 use Awyiss\Model\Entity;
 use Awyiss\Model\Entity\BackendMenuEntry;
 use Awyiss\Model\Table;
 use Awyiss\ORM\RulesChecker;
-use Awyiss\Utility\Menu\BackendMenu;
 use Cake\Database\Schema\TableSchemaInterface;
 use Cake\ORM\RulesChecker as BaseRulesChecker;
 use Cake\Validation\Validator;
@@ -155,7 +155,9 @@ class BackendMenuEntriesTable extends Table {
 
 			if (!is_numeric($lx_parentId)) {
 				if (!isset($lo_menu)) {
-					$lo_menu = new BackendMenu();
+					/** @var class-string<\Awyiss\Utility\Menu\BackendMenu> $ls_className */
+					$ls_className = App::className('BackendMenu', 'Utility/Menu');
+					$lo_menu = new $ls_className();
 				}
 
 

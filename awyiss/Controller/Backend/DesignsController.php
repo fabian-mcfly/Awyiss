@@ -9,8 +9,6 @@ use Awyiss\Controller\BackendController as Controller;
 use Awyiss\Core\App;
 use Awyiss\Model\Entity\Design;
 use Awyiss\Routing\Router;
-use Awyiss\Utility\Design\ScssCompiler;
-use Awyiss\Utility\Design\ScssVariableProvider;
 use Awyiss\Utility\Design\ScssVariableType;
 use Awyiss\Utility\Inflector;
 use Cake\Collection\Collection;
@@ -72,9 +70,12 @@ class DesignsController extends Controller {
 
 		$la_designerConfig = Configure::read('Design');
 
-		$lo_scssVariableProvider = new ScssVariableProvider($la_designerConfig);
+		/** @var class-string<\Awyiss\Utility\Design\ScssVariableProvider> $ls_className */
+		$ls_scssVariableProviderClass = App::className('ScssVariableProvider', 'Utility/Design');
+		$lo_scssVariableProvider = new $ls_scssVariableProviderClass($la_designerConfig);
 		$la_internalVariables = $lo_scssVariableProvider->getNormalizedInternalVariables();
 
+		/** @var class-string<\Awyiss\Utility\Design\WebfontProvider> $ls_webfontProviderClass */
 		$ls_webfontProviderClass = App::className('WebfontProvider', 'Utility/Design');
 		$lo_webfontProvider = new $ls_webfontProviderClass();
 		$la_webfonts = $lo_webfontProvider->getWebfonts();
@@ -560,7 +561,11 @@ class DesignsController extends Controller {
 	protected function generateCss(array $data, bool $includeColumnSystem): string {
 		$ls_css = '';
 		$la_realmFolders = Configure::read('App.paths.assets.Frontend');
-		$la_variables = ScssCompiler::normalizeVariables($data['settings']);
+
+		/** @var class-string<\Awyiss\Utility\Design\ScssCompiler> $ls_className */
+		$ls_className = App::className('ScssCompiler', 'Utility/Design');
+
+		$la_variables = $ls_className::normalizeVariables($data['settings']);
 
 		foreach (Configure::read('Design.previewScssFiles', []) as $ls_scssFile) {
 			foreach ($la_realmFolders as $ls_basePath) {
@@ -571,7 +576,7 @@ class DesignsController extends Controller {
 				// compileScss expects SplFileInfo, not a string, so convert it
 				$ls_scssFile = new SplFileInfo($ls_scssFile);
 
-				$ls_css .= ScssCompiler::compileScss($ls_scssFile, $ls_basePath, $la_variables, true, $includeColumnSystem) . PHP_EOL;
+				$ls_css .= $ls_className::compileScss($ls_scssFile, $ls_basePath, $la_variables, true, $includeColumnSystem) . PHP_EOL;
 			}
 		}
 

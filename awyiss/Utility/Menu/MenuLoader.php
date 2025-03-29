@@ -4,6 +4,7 @@
 namespace Awyiss\Utility\Menu;
 
 
+use Awyiss\Core\App;
 use JsonSchema\Constraints\Factory;
 use JsonSchema\SchemaStorage;
 use JsonSchema\Validator;
@@ -71,7 +72,10 @@ class MenuLoader {
 		//Validate-config is not needed inside the menu
 		unset($la_config['validate']);
 
-		$lo_menu = new Menu((array)$data, $la_config, 1);
+		/** @var class-string<\Awyiss\Utility\Menu\Menu> $ls_className */
+		$ls_className = App::className('Menu', 'Utility/Menu');
+
+		$lo_menu = new $ls_className((array)$data, $la_config, 1);
 
 		if ($lb_validateUniqueIdentifiers) {
 			$la_knownIdentifiers = [];

@@ -4,9 +4,9 @@
 namespace Awyiss\View\Cell\Frontend;
 
 
+use Awyiss\Core\App;
 use Awyiss\Model\Entity;
 use Awyiss\Model\Entity\Page;
-use Awyiss\Utility\Form\FormRenderer;
 use Awyiss\View\Cell\Frontend\Trait\ContentElementTrait;
 use Cake\Http\Exception\RedirectException;
 use Cake\View\Cell;
@@ -42,8 +42,10 @@ class FormCell extends Cell {
 
 		$this->page = $page;
 
-		/** @noinspection PhpParamsInspection */
-		$lo_formRenderer = new FormRenderer($this->createView('Frontend'));
+		/** @var class-string<\Awyiss\Utility\Form\FormRenderer> $ls_className */
+		$ls_className = App::className('FormRenderer', 'Utility/Form');
+
+		$lo_formRenderer = new $ls_className($this->createView('Frontend'));
 
 		$lo_formRenderer
 		->initForm(

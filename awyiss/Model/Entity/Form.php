@@ -157,7 +157,6 @@ class Form extends Entity {
 	 * @param \Awyiss\Model\Entity\Page|null $page
 	 * @param bool $isPreview
 	 * @return $this
-	 * @throws \ReflectionException
 	 */
 	public function initialize(View $view, array $requestData = [], ?Page $page = null, bool $isPreview = false): static {
 		$this->view = $view;
@@ -364,7 +363,6 @@ class Form extends Entity {
 
 	/**
 	 * @return static
-	 * @throws \ReflectionException
 	 */
 	protected function initProtectionMethods(): static {
 		$la_protectionMethods = Configure::read('Awyiss.Forms.Frontend.protection.methods');

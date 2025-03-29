@@ -12,7 +12,6 @@ use Awyiss\Model\Entity\Datatable;
 use Awyiss\Model\Table;
 use Awyiss\Routing\Router;
 use Awyiss\Utility\Inflector;
-use Awyiss\Utility\Menu\BackendMenu;
 use Awyiss\Utility\Menu\Menu;
 use Awyiss\Utility\Menu\MenuItem;
 use Cake\Collection\CollectionInterface;
@@ -77,7 +76,9 @@ class BackendMenuEntriesController extends Controller {
 			$lo_menuEntries = $this->getOverviewQuery()->find('threaded')->all();
 		}
 		else {
-			$lo_menu = new BackendMenu(null, $this->getOverviewQuery());
+			/** @var class-string<\Awyiss\Utility\Menu\BackendMenu> $ls_className */
+			$ls_className = App::className('BackendMenu', 'Utility/Menu');
+			$lo_menu = new $ls_className(null, $this->getOverviewQuery());
 		}
 
 		$this->set([
@@ -344,7 +345,10 @@ class BackendMenuEntriesController extends Controller {
 	protected function generateMenuSelectOptions(Menu $menu): array {
 		$la_options = [];
 
-		/** @var MenuItem $lo_item */
+		/**
+		 * @var MenuItem $lo_item
+		 * @noinspection PhpLoopCanBeConvertedToArrayMapInspection
+		 */
 		foreach ($menu->items() as $ls_identifier => $lo_item) {
 			$la_options[ $ls_identifier ] = str_repeat('- ', $lo_item->getLevel() - 1) . $lo_item->getLabel();
 		}
@@ -360,7 +364,10 @@ class BackendMenuEntriesController extends Controller {
 	 * @throws \ReflectionException
 	 */
 	protected function setViewVars(BackendMenuEntry $menuEntry): void {
-		$lo_menu = new BackendMenu();
+		/** @var class-string<\Awyiss\Utility\Menu\BackendMenu> $ls_className */
+		$ls_className = App::className('BackendMenu', 'Utility/Menu');
+
+		$lo_menu = new $ls_className();
 
 		$la_insertAfterOptions = $this->generateMenuSelectOptions($lo_menu->getCustomMenu() ?? $lo_menu->getMenu());
 

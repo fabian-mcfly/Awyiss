@@ -10,7 +10,6 @@ use Awyiss\Model\Entity\FormElement;
 use Awyiss\Model\Entity\Page;
 use Awyiss\Validation\Validator;
 use Cake\Datasource\FactoryLocator;
-use Cake\Mailer\Mailer;
 
 
 /**
@@ -32,7 +31,10 @@ class FormOptions implements FormOptionsInterface {
 	 * Constructor
 	 */
 	public function __construct() {
-		$lo_mailer = new Mailer('default');
+		/** @var class-string<\Cake\Mailer\Mailer> $ls_className */
+		$ls_className = App::className('Mailer', 'Mailer');
+		$lo_mailer = new $ls_className('default');
+
 		$this->safeRealSender = 'noreply@' . $lo_mailer->getMessage()->getDomain();
 	}
 

@@ -5,7 +5,7 @@ namespace Awyiss\Middleware;
 
 
 use Awyiss\Awyiss;
-use Awyiss\Utility\Design\ScssCompiler;
+use Awyiss\Core\App;
 use Awyiss\Utility\Design\ScssFilesCollection;
 use Cake\Core\Configure;
 use Cake\Datasource\FactoryLocator;
@@ -21,6 +21,13 @@ use Psr\Http\Server\RequestHandlerInterface;
  * It implements the MiddlewareInterface and is responsible for handling the design-related aspects of the application.
  */
 class DesignMiddleware implements MiddlewareInterface {
+	/**
+	 * @var string|null
+	 */
+	protected static ?string $compilerClass;
+	/**
+	 * @var array
+	 */
 	protected array $designVariables;
 
 
@@ -84,11 +91,14 @@ class DesignMiddleware implements MiddlewareInterface {
 	 * @throws \Exception
 	 */
 	public function compileScss(bool $mustCompile = false, ?string $realm = null, bool $showExceptions = false): void {
+		/** @var class-string<\Awyiss\Utility\Design\ScssCompiler> $ls_compilerClass */
+		$ls_compilerClass = static::getCompilerClass();
+
 		// Set the exception handling for the ScssCompiler
-		ScssCompiler::showExceptions($showExceptions);
+		$ls_compilerClass::showExceptions($showExceptions);
 
 		// Discover the SCSS files in the realm
-		$la_files = ScssCompiler::discoverRealmFiles($realm ?? Awyiss::getRealm());
+		$la_files = $ls_compilerClass::discoverRealmFiles($realm ?? Awyiss::getRealm());
 
 		/*
 		 * If the SCSS should be compiled, but must not be compiled,
@@ -104,7 +114,7 @@ class DesignMiddleware implements MiddlewareInterface {
 
 		try {
 			// Compile the SCSS files
-			$la_result = ScssCompiler::compileFolders($la_files, $this->getDesignVariables($realm ?? Awyiss::getRealm()));
+			$la_result = $ls_compilerClass::compileFolders($la_files, $this->getDesignVariables($realm ?? Awyiss::getRealm()));
 		}
 		catch (Exception $ex) {
 			$this->resetFileTimes($la_files);
@@ -170,10 +180,13 @@ class DesignMiddleware implements MiddlewareInterface {
 	protected function filterOldFiles(array $files): array {
 		$la_files = [];
 
+		/** @var class-string<\Awyiss\Utility\Design\ScssCompiler> $ls_compilerClass */
+		$ls_compilerClass = static::getCompilerClass();
+
 		/** @var \Awyiss\Utility\Design\ScssFilesCollection$lo_files */
 		foreach ($files as $ls_path => $lo_files) {
 			// Get a collection of css files in the sibling directory of ScssFilesCollection::$folderPath
-			$lo_cssFiles = ScssCompiler::discoverFiles(dirname($lo_files->getFolderPath()) . DS . 'css');
+			$lo_cssFiles = $ls_compilerClass::discoverFiles(dirname($lo_files->getFolderPath()) . DS . 'css');
 
 			// If the css files are newer than the scss files, return null.
 			if ($lo_cssFiles->getLastModified() && $lo_cssFiles->getLastModified()->greaterThan($lo_files->getLastModified())) {
@@ -216,5 +229,20 @@ class DesignMiddleware implements MiddlewareInterface {
 				}
 			}
 		}
+	}
+
+
+	/**
+	 * @return class-string<\Awyiss\Utility\Design\ScssCompiler>
+	 */
+	protected static function getCompilerClass(): ?string {
+		if (isset(static::$compilerClass)) {
+			return static::$compilerClass;
+		}
+
+		/** @var class-string<\Awyiss\Utility\Design\ScssCompiler> $ls_className */
+		static::$compilerClass = App::className('ScssCompiler', 'Utility/Design');
+
+		return static::$compilerClass;
 	}
 }

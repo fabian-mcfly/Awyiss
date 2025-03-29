@@ -5,6 +5,7 @@ namespace Awyiss\Utility\Menu;
 
 
 use Awyiss\Authorization\IdentityPermissionsInterface;
+use Awyiss\Core\App;
 use Cake\Core\InstanceConfigTrait;
 use Generator;
 use RuntimeException;
@@ -45,6 +46,9 @@ class Menu {
 
 		$this->level = $level;
 
+		/** @var class-string<\Awyiss\Utility\Menu\MenuItem> $ls_className */
+		$ls_className = App::className('MenuItem', 'Utility/Menu');
+
 		foreach ($la_items as $lx_identifier => $lo_item) {
 			if (!is_string($lx_identifier) && isset($lo_item->id)) {
 				$lx_identifier = $lo_item->id;
@@ -54,7 +58,7 @@ class Menu {
 				$lo_item->identifier = $lx_identifier;
 			}
 
-			$this->items[ $lx_identifier ] = new MenuItem($lo_item, $la_config, $level);
+			$this->items[ $lx_identifier ] = new $ls_className($lo_item, $la_config, $level);
 		}
 
 		if (isset($la_config['identity'])) {

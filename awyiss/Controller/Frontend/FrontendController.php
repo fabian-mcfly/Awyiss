@@ -13,7 +13,6 @@ use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity\Page;
 use Awyiss\Routing\Router;
 use Awyiss\Utility\Inflector;
-use Awyiss\Utility\Media\MediaRenderOptions;
 use Awyiss\Utility\Media\ResizedImageManager;
 use Cake\Core\Configure;
 use Cake\Http\Exception\NotFoundException;
@@ -313,7 +312,10 @@ class FrontendController extends AppController {
 		$la_designVariables = $this->getRequest()->getAttribute('design')->getDesignVariables();
 		$la_designPreviewVariables = $this->loadDesignPreview();
 
-		$lo_mediaRenderOptions = new MediaRenderOptions(
+		/** @var class-string<\Awyiss\Utility\Media\MediaRenderOptions> $ls_className */
+		$ls_className = App::className('MediaRenderOptions', 'Utility/Media');
+
+		$lo_mediaRenderOptions = new $ls_className(
 			baseWidth: intval($la_designPreviewVariables['pageWidth'] ?? $la_designVariables['pageWidth'] ?? 1920),
 			breakpoints: Configure::read('Awyiss.Media.Frontend.defaultBreakpoints'),
 			singleColumnBreakpoint: intval($la_designPreviewVariables['singleColumnBreakpoint'] ?? $la_designVariables['singleColumnBreakpoint'] ?? 768),

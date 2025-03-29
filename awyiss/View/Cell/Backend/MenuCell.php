@@ -5,9 +5,8 @@ namespace Awyiss\View\Cell\Backend;
 
 
 use Awyiss\Authorization\IdentityPermissionsInterface;
+use Awyiss\Core\App;
 use Awyiss\Middleware\LocaleMiddleware;
-use Awyiss\Utility\Menu\BackendMenu;
-use Awyiss\Utility\Menu\MenuRenderer;
 use Cake\I18n\DateTime;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\View\Cell;
@@ -66,7 +65,10 @@ class MenuCell extends Cell {
 		// If the menu data is not in the session or is outdated, regenerate the menu data
 		/** @noinspection PhpUndefinedVariableInspection */
 		if (!$la_menuData || $lo_time < $lo_identity->changedOn) {
-			$lo_menu = new BackendMenu($lo_identity);
+			/** @var class-string<\Awyiss\Utility\Menu\BackendMenu> $ls_className */
+			$ls_className = App::className('BackendMenu', 'Utility/Menu');
+
+			$lo_menu = new $ls_className($lo_identity);
 			$la_menuData = $lo_menu->getDynamicMenu();
 
 			// Cache the menu data and the time it was cached
@@ -80,8 +82,11 @@ class MenuCell extends Cell {
 			$la_menuData = unserialize($la_menuData['menuData']);
 		}
 
+		/** @var class-string<\Awyiss\Utility\Menu\MenuRenderer> $ls_className */
+		$ls_className = App::className('MenuRenderer', 'Utility/Menu');
+
 		// Create a new menu renderer with the menu data
-		$lo_renderer = new MenuRenderer($la_menuData);
+		$lo_renderer = new $ls_className($la_menuData);
 
 		// Set the current route in the menu renderer
 		$lo_renderer->setCurrentRoute($this->request->getRequestTarget());

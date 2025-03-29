@@ -184,7 +184,9 @@ class FormSender {
 			return false;
 		}
 
-		$lo_mailer = new Mailer('default');
+		/** @var class-string<\Cake\Mailer\Mailer> $ls_className */
+		$ls_className = App::className('Mailer', 'Mailer');
+		$lo_mailer = new $ls_className('default');
 
 		$lo_mailer->setSubject(html_entity_decode($this->form->subject))
 		->setFrom(html_entity_decode($this->form->userEmail), html_entity_decode($this->form->userName))
@@ -275,7 +277,9 @@ class FormSender {
 			return false;
 		}
 
-		$lo_mailer = new Mailer('default');
+		/** @var class-string<\Cake\Mailer\Mailer> $ls_className */
+		$ls_className = App::className('Mailer', 'Mailer');
+		$lo_mailer = new $ls_className('default');
 
 		$lo_mailer->setSubject(html_entity_decode($this->form->subjectConfirmation))
 		->setFrom(html_entity_decode($this->form->ownerEmail), html_entity_decode($this->form->ownerName ?: Configure::read('Awyiss.System.Frontend.meta.titleAppendix')))
