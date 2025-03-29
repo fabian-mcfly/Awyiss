@@ -223,6 +223,8 @@ class Awyiss extends BaseApplication {
 		$middlewareQueue->add(new ErrorHandlerMiddleware(Configure::read('Error'), $this));
 
 		if (Configure::read('debug')) {
+			// CakePHP's AssetMiddleware is not used in Awyiss directly,
+			// only by DebugKit
 			$middlewareQueue->add(new AssetMiddleware([
 				'cacheTime' => Configure::read('Asset.cacheTime'),
 			]));
