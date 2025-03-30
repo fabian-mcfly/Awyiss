@@ -718,6 +718,30 @@ class AuditBehavior extends Behavior {
 
 
 	/**
+	 * @param Entity $entity
+	 * @param array $entityData
+	 * @return void
+	 */
+	protected function auditAssociationTranslations(Entity $entity, array &$entityData): void {
+		$la_translations = [];
+
+		foreach ($entity->get('_translations') as $ls_shortcode => $lo_entity) {
+			$la_translations[ $ls_shortcode ] = array_diff_key($lo_entity->toArray(), array_flip($lo_entity->getVirtual()));
+
+			// If the translations only contain null values, remove them
+			if (array_filter($la_translations[ $ls_shortcode ], fn ($value) => $value !== null) === []) {
+				unset($la_translations[ $ls_shortcode ]);
+			}
+		}
+
+		if ($la_translations) {
+			/** @noinspection PhpVariableNamingConventionInspection */
+			$entityData['_translations'] = $la_translations;
+		}
+	}
+
+
+	/**
 	 * Return the ID of the currently set identity
 	 *
 	 * @return ?int
@@ -818,6 +842,8 @@ class AuditBehavior extends Behavior {
 		$la_foreignKeys = $ls_entityClass::mapFields($la_foreignKeys);
 
 		$la_keys = array_flip(array_merge($la_keys, $la_foreignKeys));
+		$la_keys['_locale'] = true;
+		$la_keys['_translations'] = true;
 
 		//$lo_entity->extract($la_keys, false, false)
 		$lo_associatedEntity = $entity->get($field);
@@ -869,7 +895,7 @@ class AuditBehavior extends Behavior {
 			if (isset($la_oldData['_translations'])) {
 				/** @var \Awyiss\Model\Entity $lo_translation */
 				foreach ($la_oldData['_translations'] as $ls_languageShortcode => $lo_translation) {
-					$la_oldData['_translations'][ $ls_languageShortcode ] = array_diff_key($lo_translation->extractOriginal(null, false, false), $la_keys);
+					$la_oldData['_translations'][ $ls_languageShortcode ] = array_diff_key($lo_translation->extractOriginal(null, false), $la_keys);
 					unset($la_oldData['_translations'][ $ls_languageShortcode ]['locale']);
 				}
 			}
@@ -915,6 +941,8 @@ class AuditBehavior extends Behavior {
 		$la_foreignKeys = $ls_entityClass::mapFields($la_foreignKeys);
 
 		$la_keys = array_flip(array_merge($la_keys, $la_foreignKeys));
+		$la_keys['_locale'] = true;
+		$la_keys['_translations'] = true;
 
 		$la_oldData = $entityData['old'][ $field ] ?? null;
 		$la_newData = $entityData['new'][ $field ] ?? null;
@@ -923,6 +951,10 @@ class AuditBehavior extends Behavior {
 			/** @var Entity $lo_entity */
 			foreach ($la_newData as $li_key => $lo_entity) {
 				$la_newData[ $li_key ] = array_diff_key($lo_entity->toArray(), $la_keys + array_flip($lo_entity->getVirtual()));
+
+				if ($lo_entity->has('_translations')) {
+					$this->auditAssociationTranslations($lo_entity, $la_newData[ $li_key ]);
+				}
 			}
 		}
 
@@ -942,6 +974,10 @@ class AuditBehavior extends Behavior {
 			/** @var Entity $lo_entity */
 			foreach ($la_oldData as $li_key => $lo_entity) {
 				$la_oldData[ $li_key ] = array_diff_key($lo_entity->toArray(), $la_keys + array_flip($lo_entity->getVirtual()));
+
+				if ($lo_entity->has('_translations')) {
+					$this->auditAssociationTranslations($lo_entity, $la_oldData[ $li_key ]);
+				}
 			}
 		}
 
