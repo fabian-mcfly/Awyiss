@@ -99,7 +99,7 @@ class AltchaFormProtection implements FormProtectionInterface {
 		if ($templatePosition === static::POSITION_BEFORE) {
 			/** @var \Awyiss\View\Helper\AssetHelper $lo_assetHelper */
 			$lo_assetHelper = $this->view->helpers()->get('Asset');
-			$lo_assetHelper->add('Frontend/altcha.js', ['realm' => 'Backend', 'type' => 'module']);
+			$lo_assetHelper->add('Frontend/Captcha/altcha.js', ['realm' => 'Backend', 'type' => 'module']);
 		}
 
 		if ($templatePosition === static::POSITION_BEFORE_SUBMIT) {
