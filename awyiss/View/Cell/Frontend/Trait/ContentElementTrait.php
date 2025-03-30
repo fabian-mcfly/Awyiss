@@ -235,11 +235,18 @@ trait ContentElementTrait {
 				$ls_children = $this->buildContents($lo_entity->children, $noContentRow);
 			}
 
+			// Render the content before determining if it should be rendered in a content row
+			// This allows the template to modify the content row setting
+			$ls_renderedContent = $this->renderElement($lo_entity, $ls_children);
+
 			$lb_noContentRow = $noContentRow;
 			if (!$lb_noContentRow && !$lo_entity instanceof FormElement) {
 				$ls_template = $lo_entity instanceof Widget ? 'widgetTemplate' : 'contentTemplate';
 
 				$lb_noContentRow = !$lo_entity->$ls_template->inContentRow;
+				if ($lo_entity->has('inContentRow')) {
+					$lb_noContentRow = !$lo_entity->inContentRow;
+				}
 			}
 			elseif ($lo_entity instanceof FormElement && in_array($lo_entity->type, ['fieldset', 'hidden'])) {
 				$lb_noContentRow = true;
@@ -259,7 +266,7 @@ trait ContentElementTrait {
 				}
 
 				// Render the content. Adding the width is not necessary, as the content is rendered directly.
-				$ls_contentElements .= $this->renderElement($lo_entity, $ls_children);
+				$ls_contentElements .= $ls_renderedContent;
 
 				continue;
 			}
@@ -287,7 +294,7 @@ trait ContentElementTrait {
 			}
 
 			// Add the content to the row contents
-			$ls_rowContent .= $this->renderElement($lo_entity, $ls_children);
+			$ls_rowContent .= $ls_renderedContent;
 
 			// If the content is a finisher, render the row and reset the row contents
 			if ($lo_entity->columnLast) {
