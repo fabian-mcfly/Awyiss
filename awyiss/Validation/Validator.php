@@ -176,8 +176,6 @@ class Validator extends BaseValidator {
 	 */
 	protected function _processRules(string $field, ValidationSet $rules, array $data, bool $newRecord): array {
 		$la_errors = [];
-		// Loading default provider in case there is none
-		$this->getProvider('default');
 
 		foreach ($rules as $ls_name => $lo_rule) {
 			$lx_result = $lo_rule->process($data[ $field ], $this->_providers, [

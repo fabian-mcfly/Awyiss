@@ -320,14 +320,6 @@ class IntegrityCheckCommand extends Command {
 	 * @throws \ReflectionException
 	 */
 	protected function getMethodHash(string $className, string $method): string {
-		if (!class_exists($className)) {
-			if (file_exists($className)) {
-				require_once $className;
-			}
-
-			throw new ReflectionException(sprintf('Class `%s` not found', $className));
-		}
-
 		$lo_reflection = new ReflectionClass($className);
 		if (!$lo_reflection->hasMethod($method)) {
 			throw new ReflectionException(sprintf('Method `%s` not found in `%s`', $method, $className));

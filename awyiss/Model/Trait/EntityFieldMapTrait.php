@@ -73,6 +73,18 @@ trait EntityFieldMapTrait {
 	/**
 	 * @inheritDoc
 	 */
+	public function patch(array $values, array $options = []): EntityInterface {
+		$la_values = static::mapFields($values, true);
+
+
+		/** @noinspection PhpIncompatibleReturnTypeInspection */
+		return parent::patch($la_values, $options);
+	}
+
+
+	/**
+	 * @inheritDoc
+	 */
 	public function unset(array|string $field): EntityInterface {
 		/** @noinspection PhpIncompatibleReturnTypeInspection */
 		return parent::unset(static::mapFields((array)$field));

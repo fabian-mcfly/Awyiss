@@ -50,7 +50,6 @@ class RoutingMiddleware extends BaseRoutingMiddleware {
 				$la_queryParams = $la_params['parts'] ?? [];
 				$lo_request = $lo_request->withQueryParams($la_queryParams);
 
-				assert($lo_request instanceof ServerRequest);
 				Router::setRequest($lo_request);
 			}
 		}

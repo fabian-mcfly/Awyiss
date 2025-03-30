@@ -63,25 +63,20 @@ class NumericPaginator extends BaseNumericPaginator {
 			['order' => null, 'page' => null, 'limit' => null],
 		);
 
-		$lo_query = $query;
 
-		if ($lo_query === null) {
-			$la_args = [];
-			$lx_finder = !empty($la_options['finder']) ? $la_options['finder'] : 'all';
-			if (is_array($lx_finder)) {
-				$la_args = (array)current($lx_finder);
-				$lx_finder = key($lx_finder);
-			}
-
-			$lo_query = $object->find($lx_finder, ...$la_args);
+		$la_args = [];
+		$lx_type = $la_options['finder'] ?? null;
+		if (is_array($lx_type)) {
+			$la_args = (array)current($lx_type);
+			$lx_type = key($lx_type);
 		}
-		elseif ($la_options['finder'] !== 'all') {
-			triggerWarning(
-				sprintf(
-					'Finder option (`%s`) from pagination config is not applied when a `SelectQuery` instance is passed to `paginate()`',
-					$la_options['finder'],
-				)
-			);
+
+		$lo_query = $query;
+		if ($lo_query === null) {
+			$lo_query = $object->find($lx_type ?? 'all', ...$la_args);
+		}
+		elseif ($lx_type !== null) {
+			$lo_query->find($lx_type, ...$la_args);
 		}
 
 		foreach ($la_queryOptions['order'] as $ls_field => $lx_directionOrCoalesce) {

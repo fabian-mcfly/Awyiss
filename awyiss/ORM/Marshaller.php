@@ -56,7 +56,12 @@ class Marshaller extends BaseMarshaller {
 		$entity->setErrors($la_errors);
 
 		if (!isset($la_options['fields'])) {
-			$entity->set($la_properties);
+			if (method_exists($entity, 'patch')) {
+				$entity->patch($la_properties);
+			}
+			else {
+				$entity->set($la_properties);
+			}
 
 			foreach ($la_properties as $ls_field => $lx_value) {
 				if ($lx_value instanceof EntityInterface) {
@@ -111,33 +116,6 @@ class Marshaller extends BaseMarshaller {
 
 			if (isset($propertyMap[ $ls_key ])) {
 				$lx_value = $propertyMap[ $ls_key ]($lx_value, $entity);
-
-				$lx_original = $entity->get($ls_key);
-
-				// Don't dirty scalar values and objects that didn't
-				// change. Arrays will always be marked as dirty because
-				// the original/updated list could contain references to the
-				// same objects, even though those objects may have changed internally.
-				if (
-					$entity->has($ls_key) &&
-					(
-						(
-							is_scalar($lx_value) &&
-							$lx_original === $lx_value
-						) ||
-						(
-							$lx_value === null &&
-							$lx_original === $lx_value
-						) ||
-						(
-							is_object($lx_value) &&
-							!($lx_value instanceof EntityInterface) &&
-							$lx_original == $lx_value
-						)
-					)
-				) {
-					continue;
-				}
 			}
 
 			$la_properties[ $ls_key ] = $lx_value;

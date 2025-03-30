@@ -185,6 +185,39 @@ trait EntityAttributesTrait {
 
 
 	/**
+	 * @inheritDoc
+	 * @param array|string $values
+	 * @param array $options
+	 * @return \Cake\Datasource\EntityInterface
+	 */
+	public function patch(array $values, array $options = []): EntityInterface {
+		if (($this->_fields['attributes'] ?? null) instanceof Entity) {
+			/** @var \Awyiss\Model\Entity $lo_attributes */
+			$lo_attributes = $this->_fields['attributes'];
+
+			$la_attributeFields = [];
+			foreach ($values as $ls_field => $lx_value) {
+				if (in_array($ls_field, ['_locale', '_translations'])) {
+					continue;
+				}
+
+				if ($lo_attributes->has($ls_field)) {
+					$la_attributeFields[ $ls_field ] = $lx_value;
+					/** @noinspection PhpVariableNamingConventionInspection */
+					unset($values[ $ls_field ]);
+				}
+			}
+
+			$lo_attributes->patch($la_attributeFields, $options);
+		}
+
+
+		/** @noinspection PhpIncompatibleReturnTypeInspection */
+		return parent::patch($values, $options);
+	}
+
+
+	/**
 	 * Don't use the `has`-call that CakePHP introduced
 	 *
 	 * @param string $field

@@ -25,6 +25,7 @@ class Entity extends BaseEntity {
 	use EntityAttributesTrait {
 		EntityAttributesTrait::get as getOrGetFromAttribute;
 		EntityAttributesTrait::set as setOrSetAttribute;
+		EntityAttributesTrait::patch as patchOrPatchAttribute;
 	}
 	use EntityFieldMapTrait;
 	use TranslateTrait;
@@ -119,6 +120,20 @@ class Entity extends BaseEntity {
 
 
 		return $this->setOrSetAttribute($lx_field, $value, $options);
+	}
+
+
+	/**
+	 * @inheritDoc
+	 * @param array|string $value
+	 * @param mixed|null $value
+	 * @param array $options
+	 */
+	public function patch(array $values, array $options = []): EntityInterface {
+		$la_values = static::mapFields($values, true);
+
+
+		return $this->patchOrPatchAttribute($la_values, $options);
 	}
 
 
