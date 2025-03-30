@@ -1,12 +1,12 @@
-@import 'line-awesome/mixins';
+@import '../line-awesome/mixins';
 
-@import 'helper/reset';
-@import 'helper/variables';
-@import 'helper/extendables';
+@import '../helper/reset';
+@import '../helper/variables';
+@import '../helper/extendables';
 
-@import 'general/fonts';
-@import 'general/general';
-@import 'general/body';
+@import '../general/fonts';
+@import '../general/general';
+@import '../general/body';
 
 body {
 	padding:0;
