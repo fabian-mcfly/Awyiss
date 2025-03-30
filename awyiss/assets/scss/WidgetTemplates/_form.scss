@@ -221,7 +221,7 @@
 				display:block;
 				grid-column:4 / span 1;
 
-				&:has(input[value]) {
+				&:has(input:not([value=""])) {
 					.ShowTranslationDialog {
 						background-color:var(--colorSuccess);
 					}
