@@ -218,7 +218,19 @@ class FormHelper extends BaseFormHelper {
 			$ls_realType = $la_options['type'];
 		}
 
+
+		$la_values = $la_options['values'] ?? null;
+		unset($la_options['values']);
+
+		$lb_noValue = false;
+		if ($la_values && !($la_options['val'] ?? null)) {
+			$lb_noValue = true;
+		}
+
 		$la_options = $this->_initInputField($fieldName, $la_options) + ['controls' => []];
+		if ($lb_noValue) {
+			unset($la_options['val']);
+		}
 
 		if ($this->error($fieldName)) {
 			$la_options = $this->removeClass($la_options, $this->_config['errorClass']);
@@ -243,16 +255,26 @@ class FormHelper extends BaseFormHelper {
 
 		$lo_userLanguage = LocaleMiddleware::getLanguage($this->languageRealm);
 
+
 		foreach ($this->languages as $ls_shortcode => $lo_language) {
+			$lx_value = false;
+			if (isset($la_values)) {
+				$lx_value = $la_values[ $ls_shortcode ] ?? null;
+				if ($lx_value instanceof EntityInterface) {
+					$lx_value = $lx_value->get($ls_fieldName);
+				}
+			}
+
 			$la_translatableOptions = [
 				'id' => $this->_domId($fieldName . '-Translations[' . $ls_shortcode . ']'),
 				'label' => $lo_language->label,
 				'placeholder' => $la_options['placeholder'] ?? $la_options['val'] ?? null,
 				'required' => $la_options['required'] && !count($la_options['controls']),
 				'type' => $ls_realType,
-				'val' => $this->getSourceValue($ls_association . '_translations.' . $ls_shortcode . '.' . $ls_fieldName),
+				'val' => ($lx_value !== false ? $lx_value : $this->getSourceValue($ls_association . '_translations.' . $ls_shortcode . '.' . $ls_fieldName)) ?? '',
 			];
 			$la_translatableOptions += $options;
+			unset($la_translatableOptions['values']);
 
 			if ($lo_userLanguage->shortcode === $ls_shortcode) {
 				// If the user's language is the same as the current language, add a class to highlight it.
