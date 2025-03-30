@@ -206,7 +206,7 @@ class AuditBehavior extends Behavior {
 	 * @return int
 	 */
 	public function countAuditData(EntityInterface $entity): int {
-		return $this->_auditDataQuery($entity)->count();
+		return $this->auditDataQuery($entity)->count();
 	}
 
 
@@ -217,7 +217,7 @@ class AuditBehavior extends Behavior {
 	 * @return array
 	 */
 	public function getAuditData(EntityInterface $entity): array {
-		return $this->_auditDataQuery($entity)->toArray();
+		return $this->auditDataQuery($entity)->toArray();
 	}
 
 
@@ -235,7 +235,7 @@ class AuditBehavior extends Behavior {
 	 * @param \Cake\Datasource\EntityInterface $entity
 	 * @return \Cake\ORM\Query\SelectQuery
 	 */
-	protected function _auditDataQuery(EntityInterface $entity): SelectQuery {
+	protected function auditDataQuery(EntityInterface $entity): SelectQuery {
 		$lo_auditModel = $this->getTableLocator()->get('Audit');
 
 		return $lo_auditModel->find('all')->where([
@@ -469,7 +469,14 @@ class AuditBehavior extends Behavior {
 	protected function auditAssociation(Entity $entity, string $field, Association|false $association, array $entityData): array {
 		$la_entityData = $entityData;
 
-		if (!$association || ($association->getCascadeCallbacks() && $association->hasBehavior('Audit') && $association->getBehavior('Audit')->getConfig('enabled'))) {
+		if (
+			!$association ||
+			(
+				$association->getCascadeCallbacks() &&
+				$association->hasBehavior('Audit') &&
+				$association->getBehavior('Audit')->getConfig('enabled')
+			)
+		) {
 			/**
 			 * No association (set to false in getAssociations) or one with cascadeCallbacks = true
 			 * means that property must not be part of the audit data.
@@ -1131,9 +1138,15 @@ class AuditBehavior extends Behavior {
 
 		// Sort all arrays
 		$lc_sort = function ($a, $b) {
+			// If both start with an underscore, sort by the field name
+			if (str_starts_with($a, '_') && str_starts_with($b, '_')) {
+				return $a <=> $b;
+			}
+
 			if (str_starts_with($a, '_')) {
 				return 1;
 			}
+
 			if (str_starts_with($b, '_')) {
 				return -1;
 			}
