@@ -106,7 +106,8 @@
 				{%- endblock -%}
 
 				{%- block headScripts -%}
-					{{- element('scripts', {page: page}) -}}
+					{{- element('scripts') -}}
+					{{- element('scripts_third_party') -}}
 				{%- endblock -%}
 
 				{%- block headAssetTags -%}

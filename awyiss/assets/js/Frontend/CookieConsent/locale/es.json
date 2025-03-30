@@ -1,0 +1,68 @@
+{
+	"consentModal": {
+		"label": "Consentimiento",
+		"title": "Sus ajustes de privacidad",
+		"description": "Nuestro sitio web utiliza varios servicios de terceros para mejorar su experiencia de navegación. Algunos son esenciales para el funcionamiento del sitio web, mientras que otros nos ayudan a analizar el uso, mostrar contenido integrado y proporcionar funciones personalizadas. Puede elegir qué servicios desea permitir.",
+		"acceptAllBtn": "Aceptar todo",
+		"acceptNecessaryBtn": "Rechazar todo",
+		"showPreferencesBtn": "Administrar ajustes",
+		"footer": "<a href=\"es/politica-de-privacidad\">Política de privacidad</a>\n<a href=\"es/aviso-legal\">Aviso legal</a>"
+	},
+	"preferencesModal": {
+		"title": "Ajustes",
+		"acceptAllBtn": "Aceptar todo",
+		"acceptNecessaryBtn": "Rechazar todo",
+		"savePreferencesBtn": "Guardar ajustes",
+		"closeIconLabel": "Cerrar ventana",
+		"serviceCounterLabel": "Servicios",
+		"sections": [
+			{
+				"title": "Uso de servicios de terceros",
+				"description": "Nuestro sitio web utiliza varios servicios de terceros para mejorar su experiencia de navegación. Algunos son esenciales para el funcionamiento del sitio web, mientras que otros nos ayudan a analizar el uso, mostrar contenido integrado y proporcionar funciones personalizadas. Puede elegir qué servicios desea permitir."
+			},
+			{
+				"title": "Necesarios <span class=\"pm__badge\">Siempre activos</span>",
+				"description": "Estos servicios de terceros son esenciales para el funcionamiento básico y la seguridad de nuestro sitio web. El procesamiento se basa en nuestro interés legítimo de proporcionarle un sitio web funcional y seguro. Estos servicios necesarios no pueden desactivarse, ya que el sitio web no funcionaría correctamente sin ellos.",
+				"linkedCategory": "necessary"
+			},
+			{
+				"title": "Interés legítimo",
+				"description": "El procesamiento se basa en nuestro interés legítimo de proporcionarle un sitio web funcional y seguro.",
+				"linkedCategory": "legitimate-interest"
+			},
+			{
+				"title": "Funcionalidad",
+				"description": "Estos servicios de terceros permiten la comodidad y personalización. Pueden ser establecidos por nosotros o por terceros cuyos servicios hemos añadido a nuestras páginas. Si no permite estos servicios, es posible que algunos o todos estos servicios no funcionen correctamente.",
+				"linkedCategory": "functionality"
+			},
+			{
+				"title": "Servicios de análisis",
+				"description": "Estos servicios de terceros nos permiten contar visitantes y analizar el uso del sitio web. Esto nos ayuda a medir y mejorar el rendimiento de nuestro sitio web. Toda la información que recopilan estos servicios es agregada y, por lo tanto, anónima.",
+				"linkedCategory": "analytics",
+				"cookieTable": {
+					"headers": {
+						"name": "Nombre",
+						"description": "Descripción",
+						"Service": "Servicio"
+					},
+					"body": [
+						{
+							"name": "_ga_*, _gid",
+							"description": "Recopila datos anonimizados sobre el uso del sitio web para estadísticas de visitantes y análisis de uso.",
+							"Service": "Google Analytics"
+						}
+					]
+				}
+			},
+			{
+				"title": "Publicidad",
+				"description": "Estos servicios nos permiten mostrarle publicidad personalizada adaptada a sus intereses. Esto nos permite medir y mejorar la eficacia de nuestras campañas publicitarias.",
+				"linkedCategory": "marketing"
+			},
+			{
+				"title": "Más información",
+				"description": "Para preguntas sobre el uso de servicios de terceros y cookies y sus opciones, <a class=\"cc__link\" href=\"es/aviso-legal\">póngase en contacto con nosotros</a>."
+			}
+		]
+	}
+}

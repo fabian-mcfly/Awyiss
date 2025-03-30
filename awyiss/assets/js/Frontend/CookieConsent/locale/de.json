@@ -1,0 +1,68 @@
+{
+	"consentModal": {
+		"label": "Zustimmung",
+		"title": "Ihre Privatsphäre-Einstellungen",
+		"description": "Unsere Website nutzt verschiedene Drittanbieterdienste, um Ihr Surferlebnis zu verbessern. Einige sind für die Funktionalität der Website unerlässlich, während andere uns helfen, die Nutzung zu analysieren, eingebettete Inhalte anzuzeigen und personalisierte Funktionen bereitzustellen. Sie können wählen, welche Dienste Sie zulassen möchten.",
+		"acceptAllBtn": "Alle akzeptieren",
+		"acceptNecessaryBtn": "Alle ablehnen",
+		"showPreferencesBtn": "Einstellungen verwalten",
+		"footer": "<a href=\"de/datenschutz\">Datenschutz</a>\n<a href=\"de/impressum\">Impressum</a>"
+	},
+	"preferencesModal": {
+		"title": "Einstellungen",
+		"acceptAllBtn": "Alle akzeptieren",
+		"acceptNecessaryBtn": "Alle ablehnen",
+		"savePreferencesBtn": "Einstellungen speichern",
+		"closeIconLabel": "Modal schließen",
+		"serviceCounterLabel": "Dienstleistungen",
+		"sections": [
+			{
+				"title": "Verwendung von Drittanbieterdiensten",
+				"description": "Unsere Website nutzt verschiedene Drittanbieterdienste, um Ihr Surferlebnis zu verbessern. Einige sind für die Funktionalität der Website unerlässlich, während andere uns helfen, die Nutzung zu analysieren, eingebettete Inhalte anzuzeigen und personalisierte Funktionen bereitzustellen. Sie können wählen, welche Dienste Sie zulassen möchten."
+			},
+			{
+				"title": "Notwendig <span class=\"pm__badge\">Immer aktiv</span>",
+				"description": "Diese Drittanbieterdienste sind für die grundlegende Funktionalität und Sicherheit unserer Website unerlässlich. Die Verarbeitung erfolgt auf Grundlage unseres berechtigten Interesses, Ihnen eine funktionsfähige und sichere Website anzubieten. Diese notwendigen Dienste können nicht deaktiviert werden, da die Website ohne sie nicht ordnungsgemäß funktionieren würde.",
+				"linkedCategory": "necessary"
+			},
+			{
+				"title": "Berechtigtes Interesse",
+				"description": "Die Verarbeitung erfolgt auf Grundlage unseres berechtigten Interesses, Ihnen eine funktionsfähige und sichere Website anzubieten.",
+				"linkedCategory": "legitimate-interest"
+			},
+			{
+				"title": "Funktionalität",
+				"description": "Diese Drittanbieterdienste ermöglichen es, Komfort und Personalisierung zu bieten. Sie können von uns oder von Drittanbietern festgelegt werden, deren Dienste wir auf unseren Seiten hinzugefügt haben. Wenn Sie diese Dienste nicht zulassen, funktionieren einige oder alle dieser Dienste möglicherweise nicht einwandfrei.",
+				"linkedCategory": "functionality"
+			},
+			{
+				"title": "Analyse-Dienste",
+				"description": "Diese Drittanbieterdienste ermöglichen es, Besucher zu zählen und die Nutzung der Website zu analysieren. Dies hilft uns, die Leistung unserer Website zu messen und zu verbessern. Alle Informationen, die diese Dienste sammeln, sind aggregiert und daher anonym.",
+				"linkedCategory": "analytics",
+				"cookieTable": {
+					"headers": {
+						"name": "Name",
+						"description": "Beschreibung",
+						"Service": "Dienst"
+					},
+					"body": [
+						{
+							"name": "_ga_*, _gid",
+							"description": "Sammelt anonymisierte Daten zur Websitenutzung für Besucherstatistiken und Nutzungsanalysen.",
+							"Service": "Google Analytics"
+						}
+					]
+				}
+			},
+			{
+				"title": "Werbung",
+				"description": "Diese Dienste ermöglichen es uns, Ihnen personalisierte Werbung zu zeigen, die auf Ihre Interessen zugeschnitten ist. Dies ermöglicht es uns, die Effektivität unserer Werbekampagnen zu messen und zu verbessern.",
+				"linkedCategory": "marketing"
+			},
+			{
+				"title": "Weitere Informationen",
+				"description": "Bei Fragen zur Verwendung von Drittanbieterdiensten und Cookies und Ihren Auswahlmöglichkeiten <a class=\"cc__link\" href=\"de/impressum\">wenden Sie sich bitte an uns</a>."
+			}
+		]
+	}
+}

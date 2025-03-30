@@ -1,0 +1,52 @@
+{#
+
+This file is supposed to be used for including third party scripts.
+
+All scripts must not have the type set to `text/javascript` but
+have the attributes
+ - type set "text/plain"
+ - data-category set to a category name, present in the translation
+ 	("your-category-name")
+
+The included cookie consent tool will then automatically detect the
+category and ask the user for consent.
+
+As soon as the user has given consent, the script will be loaded
+with the correct type `text/javascript`.
+
+You are to set the nonce for each script tag to the value of
+`{{ AssetHelper.getScriptNonce() }}`.
+
+#}
+
+{% block scriptTags %}
+	{# Put your third party script tags in here #}
+{% endblock %}
+
+{% block scriptTagsExample %}
+	{# Never used #}
+	<script nonce="{{ AssetHelper.getScriptNonce() }}" type="text/plain" data-category="analytics">
+		console.log('script enabled');
+	</script>
+{% endblock %}
+
+{% block cookieBannerConfigAutoDetectCategories %}
+	<script nonce="{{ AssetHelper.getScriptNonce() }}">
+		const cookieBannerConfig = {
+			autoDetectCategories: true,
+			darkMode: false,
+			disablePageInteraction: false,
+		};
+	</script>
+{% endblock %}
+
+{% block cookieBanner %}
+	{% set scriptTags = block('scriptTags') %}
+	{% if scriptTags|trim %}
+		{% do AssetHelper.add('Frontend/CookieConsent/cookieconsent.css', {realm: 'Backend'}) %}
+		{% do AssetHelper.add([
+			'Frontend/CookieConsent/cookieconsent.js',
+			'Frontend/CookieConsent/cookieconsent-config.js'
+		], {realm: 'Backend'}, true) %}
+	{% endif %}
+{% endblock %}

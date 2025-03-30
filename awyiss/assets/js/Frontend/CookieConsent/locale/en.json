@@ -1,0 +1,68 @@
+{
+	"consentModal": {
+		"label": "Consent",
+		"title": "Your Privacy Settings",
+		"description": "Our website uses various third-party services to enhance your browsing experience. Some are essential for the functionality of the website, while others help us analyze usage, display embedded content, and provide personalized features. You can choose which services you would like to allow.",
+		"acceptAllBtn": "Accept all",
+		"acceptNecessaryBtn": "Reject all",
+		"showPreferencesBtn": "Manage settings",
+		"footer": "<a href=\"en/privacy-policy\">Privacy Policy</a>\n<a href=\"en/imprint\">Imprint</a>"
+	},
+	"preferencesModal": {
+		"title": "Settings",
+		"acceptAllBtn": "Accept all",
+		"acceptNecessaryBtn": "Reject all",
+		"savePreferencesBtn": "Save settings",
+		"closeIconLabel": "Close modal",
+		"serviceCounterLabel": "Services",
+		"sections": [
+			{
+				"title": "Use of third-party services",
+				"description": "Our website uses various third-party services to enhance your browsing experience. Some are essential for the functionality of the website, while others help us analyze usage, display embedded content, and provide personalized features. You can choose which services you would like to allow."
+			},
+			{
+				"title": "Necessary <span class=\"pm__badge\">Always active</span>",
+				"description": "These third-party services are essential for the basic functionality and security of our website. Processing is based on our legitimate interest to provide you with a functional and secure website. These necessary services cannot be disabled, as the website would not function properly without them.",
+				"linkedCategory": "necessary"
+			},
+			{
+				"title": "Legitimate Interest",
+				"description": "Processing is based on our legitimate interest to provide you with a functional and secure website.",
+				"linkedCategory": "legitimate-interest"
+			},
+			{
+				"title": "Functionality",
+				"description": "These third-party services enable comfort and personalization. They may be set by us or by third parties whose services we have added to our pages. If you do not allow these services, some or all of these services may not function properly.",
+				"linkedCategory": "functionality"
+			},
+			{
+				"title": "Analytics Services",
+				"description": "These third-party services allow us to count visitors and analyze the use of the website. This helps us measure and improve the performance of our website. All information these services collect is aggregated and therefore anonymous.",
+				"linkedCategory": "analytics",
+				"cookieTable": {
+					"headers": {
+						"name": "Name",
+						"description": "Description",
+						"Service": "Service"
+					},
+					"body": [
+						{
+							"name": "_ga_*, _gid",
+							"description": "Collects anonymized data about website usage for visitor statistics and usage analysis.",
+							"Service": "Google Analytics"
+						}
+					]
+				}
+			},
+			{
+				"title": "Advertising",
+				"description": "These services allow us to show you personalized advertising tailored to your interests. This enables us to measure and improve the effectiveness of our advertising campaigns.",
+				"linkedCategory": "marketing"
+			},
+			{
+				"title": "More Information",
+				"description": "For questions about the use of third-party services and cookies and your choices, <a class=\"cc__link\" href=\"en/imprint\">please contact us</a>."
+			}
+		]
+	}
+}

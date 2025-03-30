@@ -1,0 +1,68 @@
+{
+	"consentModal": {
+		"label": "Consenso",
+		"title": "Impostazioni della privacy",
+		"description": "Il nostro sito web utilizza vari servizi di terze parti per migliorare la tua esperienza di navigazione. Alcuni sono essenziali per il funzionamento del sito, mentre altri ci aiutano ad analizzare l'utilizzo, visualizzare contenuti incorporati e fornire funzionalità personalizzate. Puoi scegliere quali servizi desideri consentire.",
+		"acceptAllBtn": "Accetta tutti",
+		"acceptNecessaryBtn": "Rifiuta tutti",
+		"showPreferencesBtn": "Gestisci impostazioni",
+		"footer": "<a href=\"it/informativa-sulla-privacy\">Informativa sulla privacy</a>\n<a href=\"it/note-legali\">Impressum</a>"
+	},
+	"preferencesModal": {
+		"title": "Impostazioni",
+		"acceptAllBtn": "Accetta tutti",
+		"acceptNecessaryBtn": "Rifiuta tutti",
+		"savePreferencesBtn": "Salva impostazioni",
+		"closeIconLabel": "Chiudi finestra",
+		"serviceCounterLabel": "Servizi",
+		"sections": [
+			{
+				"title": "Utilizzo di servizi di terze parti",
+				"description": "Il nostro sito web utilizza vari servizi di terze parti per migliorare la tua esperienza di navigazione. Alcuni sono essenziali per il funzionamento del sito, mentre altri ci aiutano ad analizzare l'utilizzo, visualizzare contenuti incorporati e fornire funzionalità personalizzate. Puoi scegliere quali servizi desideri consentire."
+			},
+			{
+				"title": "Necessari <span class=\"pm__badge\">Sempre attivi</span>",
+				"description": "Questi servizi di terze parti sono essenziali per il funzionamento di base e la sicurezza del nostro sito web. Il trattamento si basa sul nostro legittimo interesse a fornirti un sito web funzionale e sicuro. Questi servizi necessari non possono essere disattivati, poiché il sito web non funzionerebbe correttamente senza di essi.",
+				"linkedCategory": "necessary"
+			},
+			{
+				"title": "Interesse legittimo",
+				"description": "Il trattamento si basa sul nostro legittimo interesse a fornirti un sito web funzionale e sicuro.",
+				"linkedCategory": "legitimate-interest"
+			},
+			{
+				"title": "Funzionalità",
+				"description": "Questi servizi di terze parti consentono comfort e personalizzazione. Possono essere impostati da noi o da terze parti i cui servizi abbiamo aggiunto alle nostre pagine. Se non consenti questi servizi, alcuni o tutti questi servizi potrebbero non funzionare correttamente.",
+				"linkedCategory": "functionality"
+			},
+			{
+				"title": "Servizi di analisi",
+				"description": "Questi servizi di terze parti ci consentono di contare i visitatori e analizzare l'utilizzo del sito web. Questo ci aiuta a misurare e migliorare le prestazioni del nostro sito web. Tutte le informazioni raccolte da questi servizi sono aggregate e quindi anonime.",
+				"linkedCategory": "analytics",
+				"cookieTable": {
+					"headers": {
+						"name": "Nome",
+						"description": "Descrizione",
+						"Service": "Servizio"
+					},
+					"body": [
+						{
+							"name": "_ga_*, _gid",
+							"description": "Raccoglie dati anonimizzati sull'utilizzo del sito web per statistiche sui visitatori e analisi dell'utilizzo.",
+							"Service": "Google Analytics"
+						}
+					]
+				}
+			},
+			{
+				"title": "Pubblicità",
+				"description": "Questi servizi ci permettono di mostrarti pubblicità personalizzata in base ai tuoi interessi. Questo ci consente di misurare e migliorare l'efficacia delle nostre campagne pubblicitarie.",
+				"linkedCategory": "marketing"
+			},
+			{
+				"title": "Ulteriori informazioni",
+				"description": "Per domande sull'utilizzo di servizi di terze parti e cookie e sulle tue scelte, <a class=\"cc__link\" href=\"it/imprint\">contattaci</a>."
+			}
+		]
+	}
+}

@@ -24,7 +24,7 @@
 		'Lightbox/Lightbox.js'
 	]) %}
 	{% do AssetHelper.add('WebfontLoader/webfontloader.js') %}
-	{% do AssetHelper.add('main.js', {type: 'module'}) %}
+	{% do AssetHelper.add('main.js', {type: 'module'}, true) %}
 
 	{%- block frontendEditorConfig -%}
 		{% if frontendEditorConfig %}

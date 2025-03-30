@@ -1,0 +1,68 @@
+{
+	"consentModal": {
+		"label": "Consentement",
+		"title": "Vos paramètres de confidentialité",
+		"description": "Notre site web utilise divers services tiers pour améliorer votre expérience de navigation. Certains sont essentiels au fonctionnement du site, tandis que d'autres nous aident à analyser l'utilisation, afficher du contenu intégré et fournir des fonctionnalités personnalisées. Vous pouvez choisir quels services vous souhaitez autoriser.",
+		"acceptAllBtn": "Tout accepter",
+		"acceptNecessaryBtn": "Tout refuser",
+		"showPreferencesBtn": "Gérer les paramètres",
+		"footer": "<a href=\"fr/politique-de-confidentialite\">Politique de confidentialité</a>\n<a href=\"fr/mentions-legales\">Mentions légales</a>"
+	},
+	"preferencesModal": {
+		"title": "Paramètres",
+		"acceptAllBtn": "Tout accepter",
+		"acceptNecessaryBtn": "Tout refuser",
+		"savePreferencesBtn": "Enregistrer les paramètres",
+		"closeIconLabel": "Fermer la fenêtre",
+		"serviceCounterLabel": "Services",
+		"sections": [
+			{
+				"title": "Utilisation des services tiers",
+				"description": "Notre site web utilise divers services tiers pour améliorer votre expérience de navigation. Certains sont essentiels au fonctionnement du site, tandis que d'autres nous aident à analyser l'utilisation, afficher du contenu intégré et fournir des fonctionnalités personnalisées. Vous pouvez choisir quels services vous souhaitez autoriser."
+			},
+			{
+				"title": "Nécessaires <span class=\"pm__badge\">Toujours actifs</span>",
+				"description": "Ces services tiers sont essentiels au fonctionnement de base et à la sécurité de notre site web. Le traitement est basé sur notre intérêt légitime à vous fournir un site web fonctionnel et sécurisé. Ces services nécessaires ne peuvent pas être désactivés, car le site web ne fonctionnerait pas correctement sans eux.",
+				"linkedCategory": "necessary"
+			},
+			{
+				"title": "Intérêt légitime",
+				"description": "Le traitement est basé sur notre intérêt légitime à vous fournir un site web fonctionnel et sécurisé.",
+				"linkedCategory": "legitimate-interest"
+			},
+			{
+				"title": "Fonctionnalité",
+				"description": "Ces services tiers permettent le confort et la personnalisation. Ils peuvent être définis par nous ou par des tiers dont nous avons ajouté les services à nos pages. Si vous n'autorisez pas ces services, certains ou tous ces services pourraient ne pas fonctionner correctement.",
+				"linkedCategory": "functionality"
+			},
+			{
+				"title": "Services d'analyse",
+				"description": "Ces services tiers nous permettent de compter les visiteurs et d'analyser l'utilisation du site web. Cela nous aide à mesurer et à améliorer les performances de notre site web. Toutes les informations que ces services collectent sont agrégées et donc anonymes.",
+				"linkedCategory": "analytics",
+				"cookieTable": {
+					"headers": {
+						"name": "Nom",
+						"description": "Description",
+						"Service": "Service"
+					},
+					"body": [
+						{
+							"name": "_ga_*, _gid",
+							"description": "Collecte des données anonymisées sur l'utilisation du site web pour les statistiques des visiteurs et l'analyse de l'utilisation.",
+							"Service": "Google Analytics"
+						}
+					]
+				}
+			},
+			{
+				"title": "Publicité",
+				"description": "Ces services nous permettent de vous montrer des publicités personnalisées adaptées à vos intérêts. Cela nous permet de mesurer et d'améliorer l'efficacité de nos campagnes publicitaires.",
+				"linkedCategory": "marketing"
+			},
+			{
+				"title": "Plus d'informations",
+				"description": "Pour toute question concernant l'utilisation des services tiers et des cookies et vos choix, <a class=\"cc__link\" href=\"fr/mentions-legales\">veuillez nous contacter</a>."
+			}
+		]
+	}
+}
