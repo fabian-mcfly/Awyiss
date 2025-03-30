@@ -220,6 +220,12 @@
 								{% endif %}
 							</label>
 
+							{% if (contentTemplateElement) %}
+								{{ FormHelper.hidden('content_template_elements.' ~ (loop.index0 + availableContentElements|length) ~ '.id', {
+									val: contentTemplateElement.id,
+								}) }}
+							{% endif %}
+
 							{{ FormHelper.control('content_template_elements.' ~ (loop.index0 + availableContentElements|length) ~ '.required', {
 								checked: contentTemplateElement ? contentTemplateElement.required : false,
 								label: __('required'),
