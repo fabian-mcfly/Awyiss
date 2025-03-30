@@ -28,13 +28,18 @@ use ReflectionClass;
 class ControllerFactory extends BaseControllerFactory {
 	/**
 	 * Create a controller for a given request.
+	 * Tries to create a GenericController before throwing
+	 * an exception
 	 *
-	 * @param ServerRequestInterface $request The request to build a controller for.
-	 * @return Controller
+	 * Also creates a new event manager instance
+	 * and passes it to the controller constructor
+	 *
+	 * @param \Psr\Http\Message\ServerRequestInterface $request
+	 * @return \Cake\Controller\Controller
 	 * @throws \Psr\Container\ContainerExceptionInterface
 	 * @throws \Psr\Container\NotFoundExceptionInterface
 	 * @throws \ReflectionException
-	 * @noinspection PhpParamsInspection //somehow PhpStorm does not realize that ServerRequest extends ServerRequestInterface
+	 * @noinspection PhpParamsInspection
 	 */
 	public function create(ServerRequestInterface $request): Controller {
 		$ls_className = $this->getControllerClass($request);
@@ -65,10 +70,14 @@ class ControllerFactory extends BaseControllerFactory {
 		//If the controller has a container definition add the request as a service.
 		if ($this->container->has($ls_className)) {
 			$this->container->add(ServerRequest::class, $request);
+			/** @noinspection PhpUnhandledExceptionInspection */
 			$lo_controller = $this->container->get($ls_className);
 		}
 		else {
-			/** @var \Cake\Controller\ComponentRegistry $lo_components */
+			/**
+			 * @var \Cake\Controller\ComponentRegistry $lo_components
+			 * @noinspection PhpUnhandledExceptionInspection
+			 */
 			$lo_components = $this->container->get(ComponentRegistry::class);
 			$lo_constructor = $lo_reflection->getConstructor();
 
@@ -87,6 +96,8 @@ class ControllerFactory extends BaseControllerFactory {
 				}
 			}
 
+			// Create a new event manager instance
+			// Otherwise the controllers would create a new \Cake\Event\EventManager instance
 			$lo_eventManager = new EventManager();
 
 			if ($lb_hasComponents) {
@@ -102,10 +113,10 @@ class ControllerFactory extends BaseControllerFactory {
 
 
 	/**
-	 * {@inheritDoc}
-	 *
 	 * Reimplemented this method 1:1 from \Cake\Controller\ControllerFactory::getControllerClass,
 	 * so it'll use \Awyiss\Core\App::className in the return-statement
+	 *
+	 * @inheritDoc
 	 */
 	public function getControllerClass(ServerRequest $request): ?string {
 		$ls_pluginPath = '';
@@ -163,7 +174,6 @@ class ControllerFactory extends BaseControllerFactory {
 			return $this->buildGenericPageController($ls_controller, $ls_namespace, $request, $le_pageRole);
 		}
 
-
 		//Get all datatables from the database because we want them to have a generic policy too
 		/** @var \Awyiss\Model\Table\DatatablesTable $lo_table */
 		$lo_table = FactoryLocator::get('Table')->get('Datatables');
@@ -209,7 +219,7 @@ class ControllerFactory extends BaseControllerFactory {
 		 * Set a class alias, so it's available in the root namespace, allowing the extension of "\GenericDatatablesBase"
 		 *
 		 * This is required because it's not possible to extend a dynamic class. And since $ls_baseController might
-		 * return a controller inside the custom namespace, line 157 would extend the wrong class,
+		 * return a controller inside the custom namespace, line 235 would extend the wrong class,
 		 * if "GenericDatatables" would be hard coded
 		 */
 		if (!class_exists('GenericDatatablesBase')) {
@@ -258,7 +268,7 @@ class ControllerFactory extends BaseControllerFactory {
 		 * Set a class alias, so it's available in the root namespace, allowing the extension of "\GenericPagesBase"
 		 *
 		 * This is required because it's not possible to extend a dynamic class. And since $ls_baseController might
-		 * return a controller inside the custom namespace, line 157 would extend the wrong class,
+		 * return a controller inside the custom namespace, line 284 would extend the wrong class,
 		 * if "Pages" would be hard coded
 		 */
 		if (!class_exists('GenericPagesBase')) {
