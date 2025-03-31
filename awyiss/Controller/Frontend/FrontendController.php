@@ -697,7 +697,8 @@ class FrontendController extends AppController {
 		if (
 			str_contains($ls_slug, '/_resized') ||
 			str_contains($ls_slug, '_preview/') ||
-			str_starts_with($ls_slug, '/assets/')
+			str_starts_with($ls_slug, '/assets/') ||
+			str_starts_with($ls_slug, '/awyiss/assets/')
 		) {
 			return;
 		}
