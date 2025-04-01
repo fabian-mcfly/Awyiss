@@ -952,6 +952,10 @@ class AssetHelper extends Helper {
 		// If the minifier instance is not null, minify the asset and save the minified content to the target path
 		if ($lo_minifier !== null) {
 			try {
+				if ($type === 'css') {
+					$lo_minifier->setMaxImportSize(0);
+				}
+
 				$lo_minifier->minify($targetPath);
 				chmod($targetPath, 0764);
 			}
