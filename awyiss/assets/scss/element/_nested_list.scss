@@ -5,6 +5,7 @@
 
 	margin-top:2px;
 	margin-left:40px;
+	border-radius:5px;
 
 	.🌚 & {
 		--backgroundColorOdd:oklch(from var(--colorBackgroundContentDarkMode) calc(l + 0.0448) calc(c + 0.005) calc(h - 0.4));
@@ -51,16 +52,18 @@
 		&.SortableDragging {
 			&:has(.SortableChosen[data-nestable="false"]) {
 				.NestedList {
-					&:not(:has(.ListItem)) {
+					&:not(:has(.ListItem)):not(.SortableChosen .NestedList) {
 						height:0;
+						background-color:transparent;
 					}
 				}
 			}
 
 			&:not([data-sortable="false"]) {
 				.NestedList {
-					&:not(:has(.ListItem)) {
+					&:not(:has(.ListItem)):not(.SortableChosen .NestedList) {
 						height:var(--emptyListHeight);
+						background-color:color-mix(in srgb, var(--colorSuccess), transparent 75%);
 					}
 				}
 			}
@@ -72,8 +75,7 @@
 	}
 
 	&#{&}-Compact {
-		--emptyListHeight:70px;
-
+		--emptyListHeight:20px;
 		margin-inline:25px -5px;
 		padding-top:.25rem;
 
@@ -81,6 +83,60 @@
 			padding-bottom:20px;
 			margin-inline:-25px;
 			padding-block:0;
+
+			&.SortableDragging {
+				&:has(.SortableChosen[data-nestable="false"]) {
+					.NestedList {
+						box-shadow:none;
+						outline:0 none;
+					}
+
+					.NestedList {
+						&:has(.ListItem):not(.SortableChosen .NestedList) {
+							padding-bottom:0;
+							box-shadow:none;
+							outline:0 none;
+						}
+					}
+				}
+
+				&:not([data-sortable="false"]) {
+					&,
+					.NestedList {
+						outline:1px solid color-mix(in srgb, var(--colorText), transparent 90%);
+						box-shadow:0 0 15px 0 color-mix(in srgb, var(--colorText), transparent 90%) inset;
+					}
+
+					.NestedList {
+						&:not(:has(.ListItem)):not(.SortableChosen .NestedList) {
+							background-color:transparent;
+						}
+
+						&:has(.ListItem):not(.SortableChosen .NestedList) {
+							padding-bottom:var(--emptyListHeight);
+						}
+					}
+				}
+
+				&,
+				.NestedList {
+					&:has(> .SortableChosen) {
+						outline-color:var(--colorSuccess);
+
+						.NestedList {
+							//box-shadow:none;
+							//outline:0 none;
+						}
+					}
+				}
+
+				.SortableChosen {
+					.NestedList {
+						box-shadow:none;
+						outline:0 none;
+					}
+				}
+			}
 
 			.Scale-Small & {
 				margin-inline:-5px;
@@ -304,8 +360,11 @@
 	&:not(:has(.ListItem)) {
 		height:0;
 		border-radius:5px;
-		background-color:color-mix(in srgb, var(--colorSuccess), transparent 75%);
-		transition:height .3s ease-in-out;
+		transition:height .3s ease-in-out, background-color .3s ease-in-out;
+	}
+
+	&:has(.ListItem) {
+		transition:padding-bottom .3s ease-in-out;
 	}
 
 	.ListItem {
