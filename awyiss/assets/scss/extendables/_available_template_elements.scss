@@ -1,0 +1,258 @@
+%AvailableTemplateElementsFieldset {
+	grid-column:2 / -1;
+
+	&:not(.Collapsed) {
+		&:not(:has(.Item)) {
+			padding-bottom:40px;
+
+			&:has(.SortableDragging) {
+				background-color:#D5F1E5;
+
+				html.🌚 & {
+					background-color:var(--colorSemiDark)
+				}
+			}
+
+			&::after {
+				@extend %EmptyList;
+
+				html.🌚 & {
+					@extend %EmptyListDarkMode;
+
+				}
+			}
+
+			.List {
+				height:40px;
+			}
+		}
+	}
+
+	&:last-child {
+		margin-bottom:0;
+	}
+}
+
+%AvailableTemplateElementsList {
+	margin-bottom:0;
+	position:sticky;
+	top:160px;
+	grid-column:1 / 1;
+
+	html.👀 & {
+		top:40px;
+	}
+
+	html.Scale-Small & {
+		&:not(.Collapsed) {
+			padding-bottom:20px;
+		}
+	}
+
+	&:not(:has(.Item)) {
+		padding-bottom:40px;
+
+		&:has(.SortableDragging) {
+			background-color:#D5F1E5;
+
+			html.🌚 & {
+				background-color:var(--colorSemiDark)
+			}
+		}
+
+		&::after {
+			@extend %EmptyList;
+
+			html.🌚 & {
+				@extend %EmptyListDarkMode;
+
+			}
+		}
+
+		.List {
+			height:40px;
+		}
+	}
+
+	.List {
+		max-height:calc(100dvh - 240px);
+		margin:0 -10px 0;
+		padding-inline:10px;
+		overflow-y:auto;
+		scrollbar-color:var(--colorMedium) var(--colorLight);
+		scrollbar-width:thin;
+
+		html.🌚 & {
+			scrollbar-color:var(--colorSemiDark) oklch(from var(--colorBackgroundContentDarkMode) calc(l - 0.0473) calc(c - 0.005) calc(h + 1.12) / .85);
+		}
+
+		html.👀 & {
+			max-height:calc(100dvh - 140px);
+		}
+	}
+}
+
+%AvailableTemplateElementsListItem {
+	min-height:50px;
+	margin:5px 0 0 0;
+	padding:5px 20px;
+	border-radius:5px;
+	background-color:var(--colorNeutralLight);
+	list-style-type:none;
+	transition:background-color .3s ease-in-out;
+	cursor:move;
+
+	html.🌚 & {
+		background-color:var(--colorSemiDark);
+	}
+
+	html.Scale-Small & {
+		padding-bottom:3px;
+	}
+
+	&.SortableGhost {
+		background-color:var(--colorSuccess);
+		outline:2px solid var(--colorSuccess);
+		outline-offset:-2px;
+
+		html.🌚 & {
+			&,
+			&[data-assignable="false"],
+			&:hover {
+				background-color:var(--colorSuccess);
+			}
+		}
+
+		&:hover {
+			background-color:var(--colorSuccess);
+		}
+	}
+
+	&[data-assignable="false"] {
+		background-color:color-mix(in srgb, var(--colorNeutralLight), transparent 50%);
+
+		html.🌚 & {
+			background-color:oklch(from var(--colorSemiDarkDarkMode) calc(l - 0.0403) calc(c - 0.004) calc(h + 0.88));
+		}
+
+		.Title {
+			color:var(--colorMedium);
+		}
+	}
+
+	.List:not([data-fieldset="unused"]) > & {
+		display:grid;
+		gap:0 40px;
+		grid-template-columns:2fr 1fr 2fr 52px;
+
+		&[class*="-TitleTag"],
+		&[class*="-SubtitleTag"] {
+			.FormInput {
+				display:none;
+			}
+		}
+
+		&[data-assignable="false"] {
+			.FormInputType-Checkbox {
+				color:var(--colorText);
+			}
+		}
+
+		.Title {
+			grid-column:1 / span 1;
+		}
+
+		.FormInputType-TranslatableText {
+			display:block;
+			grid-column:4 / span 1;
+
+			&:has(input:not([value=""])) {
+				.ShowTranslationDialog {
+					background-color:var(--colorSuccess);
+				}
+			}
+
+			> .Label {
+				display:none;
+			}
+
+			.FormInputType-Text {
+				&.IsCurrentLanguage {
+					> input {
+						display:none;
+					}
+				}
+			}
+
+			.ShowTranslationDialog {
+				width:52px;
+				height:52px;
+				margin-top:0;
+				top:0;
+				right:0;
+			}
+		}
+
+		.FormInputType-Select {
+			display:flex;
+			margin-bottom:0;
+			grid-column:3 / span 1;
+
+			.Label {
+				display:inline-block;
+				width:200px;
+				margin-bottom:0;
+				line-height:52px;
+			}
+		}
+
+		.FormInputType-Checkbox {
+			display:block;
+			margin-top:.3rem;
+			margin-bottom:0;
+			white-space:nowrap;
+			grid-column:2 / span 1;
+
+			label {
+				line-height:40px;
+
+				&::before {
+					top:10px;
+				}
+			}
+		}
+	}
+
+	&:first-child {
+		margin-top:0;
+	}
+
+	&:hover {
+		background-color:var(--colorLight);
+
+		html.🌚 & {
+			background-color:oklch(from var(--colorSemiDarkDarkMode) calc(l + 0.0389) calc(c + 0.004) calc(h - 0.55));
+		}
+	}
+
+	.Title {
+		display:block;
+		line-height:52px;
+
+		label,
+		input {
+			pointer-events:none;
+		}
+
+		input {
+			display:none;
+		}
+	}
+
+	> label,
+	.FormInputType-TranslatableText,
+	.FormInputType-Select,
+	.FormInputType-Checkbox {
+		display:none;
+	}
+}

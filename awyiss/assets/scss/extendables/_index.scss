@@ -1,0 +1,109 @@
+%Actions {
+	width:9rem;
+	min-height:36px;
+	position:relative;
+	opacity:.1;
+	transition:opacity .3s ease-in-out;
+
+	html.Scale-Small & {
+		min-height:30px;
+	}
+
+	&:focus-within {
+		opacity:1;
+	}
+
+	.Button {
+		width:100%;
+		margin-top:.25rem;
+
+		&-Delete {
+			width:36px;
+			height:36px;
+			margin-top:0;
+			margin-left:10px;
+			padding:0;
+			font-size:0;
+			line-height:0;
+			position:absolute;
+			bottom:0;
+			left:100%;
+			opacity:0;
+			visibility:hidden;
+			transition:background-color 0s linear, outline-color .1s ease-in-out, opacity .3s ease-in-out, visibility 0s linear .3s;
+
+			html.Scale-Small & {
+				width:30px;
+				height:30px;
+				text-indent:-1px;
+			}
+
+			&:hover {
+				&::after {
+					margin-left:0;
+				}
+			}
+
+			&::after {
+				margin-left:0;
+				line-height:36px;
+
+				html.Scale-Small & {
+					line-height:30px;
+					transform:none;
+				}
+			}
+		}
+
+		&:first-child {
+			margin-top:0;
+		}
+	}
+}
+
+%ActionsHover {
+	opacity:1;
+
+	.Button {
+		html.🌚 & {
+			--backgroundColor:oklch(from var(--colorSemiDarkDarkMode) calc(l - 0.0833) calc(c - 0.007) calc(h - 3.11));
+		}
+
+		&[disabled] {
+			opacity:.25;
+		}
+	}
+
+	.Button-Delete {
+		opacity:1;
+		visibility:visible;
+		transition-delay:0s;
+
+		&:hover {
+			transition-delay:.3s, 0s, 0s, 0s;
+		}
+	}
+}
+
+%LineAwesomeIcon {
+	@include la('');
+}
+
+%LoaderIcon {
+	background-image:url($relativePath + 'img/preloader-dots.gif');
+	background-position:center;
+	background-repeat:no-repeat;
+
+	html.🌚 & {
+		background-image:url($relativePath + 'img/preloader-dots-bright.gif');
+	}
+}
+
+// Other imports so they can extend the one's above
+// and appear after them in the compiled CSS
+@import 'available_template_elements';
+@import 'button';
+@import 'content_areas';
+@import 'dialog';
+@import 'form';
+@import 'list';

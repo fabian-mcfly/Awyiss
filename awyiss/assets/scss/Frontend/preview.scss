@@ -1,6 +1,12 @@
-$relativePath:'../../';
+$relativePath:'../../' !default;
 
 @import '../general/fonts';
+
+/**
+ * Frontend Preview
+ * This file is only used in the frontend,
+ * but compiled only in the backend.
+ */
 
 @layer awyissFrontendPreview {
 	#AwyissFrontendPreview-Info {

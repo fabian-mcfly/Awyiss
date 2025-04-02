@@ -1,93 +1,21 @@
 #MediaFolderSelectOverlay {
-	height:fit-content;
-	min-height:80px;
-	max-height:80dvh;
-	padding:0;
-	overflow:hidden;
+	@extend %DialogNoTitle;
 
 	&:not(:has(.Form)) {
-		background-image:url($relativePath + 'img/preloader-dots.gif');
-		background-position:center;
-		background-repeat:no-repeat;
-
-		.🌚 & {
-			background-image:url($relativePath + 'img/preloader-dots-bright.gif');
-		}
-	}
-
-	&:focus-visible {
-		outline:0 none;
-	}
-
-	&::before,
-	&::after {
-		display:none;
+		@extend %LoaderIcon;
 	}
 
 	.Form.MediaFolderSelect {
-		width:100%;
-		height:100%;
-		margin-bottom:0;
-		padding:92px 20px 40px 20px;
-		overflow:hidden;
+		@extend %OverlayForm;
 
-		.Scale-Small & {
+		padding:92px 20px 40px 20px;
+
+		html.Scale-Small & {
 			padding:52px 10px 10px 10px;
 		}
 
-		&::before,
 		&::after {
-			content:attr(data-title, 'Form');
-			width:100%;
-			height:52px;
-			padding:0 20px;
-			border-radius:0 0 5px 5px;
-			background-color:color-mix(in srgb, var(--colorDark), transparent 50%);
-			color:var(--colorBright);
-			//noinspection CssNoGenericFontName
-			font-family:var(--fontStackHeading);
-			font-size:1rem;
-			line-height:52px;
-			position:absolute;
-			top:0;
-			left:0;
-
-			.Scale-Small & {
-				height:42px;
-				line-height:42px;
-			}
-		}
-
-		&::before {
-			content:'';
-			background-image:url($relativePath + 'img/awyiss-v' + $awyissVersionMajor + '-' + $awyissVersionName + '.jpg');
-			background-color:var(--colorDark);
-			background-position:center;
-			background-size:cover;
-		}
-
-		> .ButtonArea {
-			margin:0;
-			padding:2px;
-			position:absolute;
-			top:0;
-			right:0;
-
-			.Button {
-				width:auto;
-				height:48px;
-				margin-right:20px;
-				line-height:26px;
-				background-color:transparent;
-
-				.Scale-Small & {
-					height:38px;
-				}
-
-				&:last-child {
-					margin-right:0;
-				}
-			}
+			content:attr(data-title, 'Select Media Folder');
 		}
 
 		> #MediaFolders-List {
@@ -100,8 +28,14 @@
 			scrollbar-color:var(--scrollbarColor);
 			scrollbar-width:thin;
 
-			.Scale-Small & {
+			html.Scale-Small & {
 				padding:10px;
+			}
+
+			.Overview-Fieldset {
+				&:last-of-type {
+					margin-bottom:40px;
+				}
 			}
 		}
 
@@ -125,24 +59,6 @@
 
 			.Data {
 				pointer-events:none;
-			}
-		}
-
-		.ButtonArea {
-			&.ButtonArea-Bottom {
-				display:flex;
-				width:100%;
-				margin-right:0;
-				margin-bottom:0;
-
-				.Button {
-					margin-right:0;
-					margin-bottom:0;
-
-					&:first-child {
-						margin-right:auto;
-					}
-				}
 			}
 		}
 	}

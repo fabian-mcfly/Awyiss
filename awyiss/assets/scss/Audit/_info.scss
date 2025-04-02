@@ -60,7 +60,9 @@ div.AuditInfo {
 	}
 
 	&::after {
-		@include la('\f05a', 24px);
+		@extend %LineAwesomeIcon;
+		content:'\f05a';
+		font-size:24px;
 
 		display:block;
 		width:36px;
@@ -138,7 +140,7 @@ div.AuditInfo {
 		opacity:0;
 		transition:background-color .3s ease-in-out, color .3s ease-in-out, opacity .3s ease-in-out;
 
-		.Scale-Small & {
+		html.Scale-Small & {
 			top:7px;
 		}
 	}

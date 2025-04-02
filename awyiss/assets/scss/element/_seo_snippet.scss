@@ -30,7 +30,7 @@
 	background-color:#FFFFFF;
 	position:relative;
 
-	.🌚 & {
+	html.🌚 & {
 		background-image:url($relativePath + 'img/background-seo-snippet-dark.jpg');
 		background-color:#1f1f1f;
 		border-color:var(--colorDark);
@@ -72,7 +72,7 @@
 		line-height:20px;
 		white-space:nowrap;
 
-		.🌚 & {
+		html.🌚 & {
 			color:#dadce0;
 		}
 	}
@@ -83,7 +83,7 @@
 		font-size:12px;
 		line-height:18px;
 
-		.🌚 & {
+		html.🌚 & {
 			color:#dadce0;
 		}
 	}
@@ -97,7 +97,7 @@
 		font-size:20px;
 		line-height:1.3;
 
-		.🌚 & {
+		html.🌚 & {
 			color:#99c3ff;
 		}
 	}
@@ -107,7 +107,7 @@
 		font-size:14px;
 		line-height:1.58;
 
-		.🌚 & {
+		html.🌚 & {
 			color:#bdc1c6;
 		}
 	}

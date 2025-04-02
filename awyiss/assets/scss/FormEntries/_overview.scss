@@ -1,17 +1,5 @@
 .FormEntriesController {
 	.Overview {
-		&:has(h2) {
-			h1 {
-				font-size:1.25rem;
-				line-height:1;
-			}
-
-			h2 {
-				margin-top:0;
-				color:var(--colorMedium);
-			}
-		}
-
 		#LinkSelect-Form {
 			.List {
 				right:0;

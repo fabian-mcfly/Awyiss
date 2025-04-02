@@ -98,7 +98,7 @@
 			position:relative;
 			z-index:1;
 
-			@at-root #{selector-append('.🌚', &)} {
+			html.🌚 & {
 				background-color:var(--colorDark);
 			}
 		}
@@ -147,8 +147,10 @@
 			}
 
 			&::after {
-				@include la('\f2f6', 36px);
+				@extend %LineAwesomeIcon;
+				content:'\f2f6';
 				margin-left:10px;
+				font-size:36px;
 				line-height:28px;
 				vertical-align:-5px;
 				transition:margin-left .3s ease-in-out;

@@ -38,7 +38,7 @@
 				opacity:.25;
 				transition:opacity .2s;
 
-				@at-root #{selector-append('.Scale-Small', &)} {
+				html.Scale-Small & {
 					width:30px;
 					margin-top:-2px;
 					margin-left:3px;
@@ -54,7 +54,7 @@
 					font-size:24px;
 					line-height:36px;
 
-					@at-root #{selector-append('.Scale-Small', &)} {
+					html.Scale-Small & {
 						font-size:20px;
 						line-height:26px;
 					}

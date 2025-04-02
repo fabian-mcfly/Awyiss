@@ -35,7 +35,6 @@ html {
 		background-blend-mode:color-burn;
 		background-color:var(--backgroundColor);
 		background-image:url($relativePath + 'img/background-pattern-dark.png');
-
 	}
 }
 
@@ -51,7 +50,7 @@ body {
 	position:relative;
 	transition:margin-bottom .3s ease-in-out;
 
-	.👀 & {
+	html.👀 & {
 		padding-bottom:0;
 	}
 
@@ -65,7 +64,7 @@ body {
 		z-index:-1;
 		transition:bottom .3s ease-in-out;
 
-		.🌚 & {
+		html.🌚 & {
 			background-image:url($relativePath + 'img/background-pattern-dark.png');
 			background-blend-mode:color-burn;
 		}
@@ -127,12 +126,6 @@ code {
 	line-height:1.2;
 }
 
-::-moz-selection {
-	background-color:var(--colorSuccess);
-	color:var(--colorBright);
-	text-shadow:1px 1px 0 rgba(0, 0, 0, .1);
-}
-
 ::selection {
 	background-color:var(--colorSuccess);
 	color:var(--colorBright);
@@ -184,7 +177,7 @@ details {
 	border-radius:5px;
 	grid-column:1 / -1;
 
-	.🌚 & {
+	html.🌚 & {
 		border-color:rgba(255, 255, 255, .1);
 	}
 
@@ -210,9 +203,10 @@ details {
 			line-height:1;
 
 			&::before {
-				@include la('\f05a', 30px);
-
+				@extend %LineAwesomeIcon;
+				content:'\f05a';
 				color:var(--colorInfo);
+				font-size:30px;
 				line-height:1.5rem;
 				position:absolute;
 				top:0;
@@ -258,8 +252,9 @@ details {
 		cursor:pointer;
 
 		&::after {
-			@include la('\f107', inherit);
-
+			@extend %LineAwesomeIcon;
+			content:'\f107';
+			font-size:inherit;
 			line-height:inherit;
 			position:absolute;
 			top:0;
@@ -279,7 +274,6 @@ summary {
 	line-height:var(--lineHeightHeading);
 }
 
-
 .las {
 	&.la-check,
 	&.la-exclamation,
@@ -296,7 +290,7 @@ summary {
 	&.la-check {
 		color:var(--colorSuccess);
 
-		.🌚 & {
+		html.🌚 & {
 			text-shadow:0 0 3px var(--colorSuccess);
 		}
 	}
@@ -305,7 +299,7 @@ summary {
 	&.la-exclamation {
 		color:var(--colorWarning);
 
-		.🌚 & {
+		html.🌚 & {
 			text-shadow:0 0 3px var(--colorWarning);
 		}
 	}
@@ -313,7 +307,7 @@ summary {
 	&.la-times {
 		color:var(--colorError);
 
-		.🌚 & {
+		html.🌚 & {
 			text-shadow:0 0 3px var(--colorError);
 		}
 	}

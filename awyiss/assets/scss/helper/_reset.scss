@@ -4,7 +4,6 @@ html {
 	text-size-adjust:none;
 }
 
-
 * {
 	margin:0;
 	padding:0;
@@ -32,7 +31,6 @@ cite,
 code,
 dfn,
 em,
-strong,
 th,
 var,
 optgroup {
@@ -43,10 +41,6 @@ optgroup {
 del,
 ins {
 	text-decoration:none;
-}
-
-li {
-	list-style:none;
 }
 
 caption,
@@ -62,11 +56,6 @@ h5,
 h6 {
 	font-size:100%;
 	font-weight:normal;
-}
-
-q:before,
-q:after {
-	content:'';
 }
 
 abbr,
@@ -107,6 +96,10 @@ textarea {
 	scrollbar-width:thin;
 }
 
+strong, b {
+	font-weight:700;
+}
+
 em,
 i {
 	font-style:italic;
@@ -126,20 +119,6 @@ ol {
 	> li {
 		list-style-type:decimal;
 	}
-}
-
-strong, b {
-	font-weight:700;
-}
-
-header,
-nav,
-main,
-section,
-article,
-aside,
-footer {
-	display:block;
 }
 
 :target {

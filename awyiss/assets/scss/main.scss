@@ -2,7 +2,8 @@
 
 @import 'helper/reset';
 @import 'helper/variables';
-@import 'helper/extendables';
+
+@import 'extendables';
 
 @import 'general/fonts';
 @import 'general/general';
@@ -18,7 +19,6 @@
 @import 'element/air_datepicker';
 @import 'element/button';
 @import 'element/button_area';
-@import 'element/coloris';
 @import 'element/confirm_dialog';
 @import 'element/form_leave_confirm_dialog';
 @import 'element/flash_message';
@@ -27,11 +27,9 @@
 @import 'element/media_selector';
 @import 'element/nested_list';
 @import 'element/overlay_form';
-@import 'element/jodit';
 @import 'element/search_filter';
 @import 'element/seo_snippet';
 @import 'element/table';
-@import 'element/tinymce';
 @import 'element/translation_dialog';
 
 @import 'Attributes';

@@ -144,7 +144,7 @@ export default class SeoSnippet {
 		this.metaTitle = document.querySelector('input[name="meta_title"]');
 		this.metaDescription = document.querySelector('textarea[name="meta_description"]');
 		this.slug = document.querySelector('input[name="slug"]');
-		this.preSlug = document.querySelector('.PreSlug');
+		this.preSlug = document.querySelector('.PrePath');
 
 		// Assign the output elements
 		this.seoSnippetSearchTerm = this.element.querySelector('input.SearchTerm');

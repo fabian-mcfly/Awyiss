@@ -22,7 +22,8 @@
 				}
 
 				&::after {
-					@include la('\f05a');
+					@extend %LineAwesomeIcon;
+					content:'\f05a';
 				}
 			}
 

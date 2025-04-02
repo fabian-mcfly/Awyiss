@@ -1,32 +1,20 @@
 #AuditHistoryDialog {
+	@extend %DialogNoTitle;
+
 	width:calc(100% - 40px);
 	max-width:1280px;
-	height:fit-content;
-	min-height:80px;
-	max-height:80dvh;
-	padding:0;
-	overflow:hidden;
 
 	&:not(:has(.AuditHistory-Tables)) {
-		background-image:url($relativePath + 'img/preloader-dots.gif');
-		background-position:center;
-		background-repeat:no-repeat;
-
-		.🌚 & {
-			background-image:url($relativePath + 'img/preloader-dots-bright.gif');
-		}
+		@extend %LoaderIcon;
 
 		&::before {
 			display:none;
 		}
 	}
 
-	&:focus-visible {
-		outline:0 none;
-	}
-
 	&::before {
 		content:'';
+		display:block;
 		width:auto;
 		height:120px;
 		backdrop-filter:blur(5px);
@@ -34,13 +22,9 @@
 		background-image:none;
 		position:absolute;
 		inset:52px 40px auto 40px;
-		z-index:1;
+		z-index:7;
 		pointer-events:none;
 		mask-image:linear-gradient(to bottom, black 70%, transparent 100%);
-	}
-
-	&::after {
-		display:none;
 	}
 
 	.Inner {
@@ -50,32 +34,7 @@
 		padding:72px 20px 20px 20px;
 		overflow:hidden;
 
-		&::before,
-		&::after {
-			content:attr(data-title, 'Form');
-			width:100%;
-			height:52px;
-			padding:0 20px;
-			border-radius:0 0 5px 5px;
-			background-color:color-mix(in srgb, var(--colorDark), transparent 50%);
-			color:var(--colorBright);
-			//noinspection CssNoGenericFontName
-			font-family:var(--fontStackHeading);
-			font-size:1rem;
-			line-height:52px;
-			position:absolute;
-			top:0;
-			left:0;
-			z-index:5;
-		}
-
-		&::before {
-			content:'';
-			background-image:url($relativePath + 'img/awyiss-v' + $awyissVersionMajor + '-' + $awyissVersionName + '.jpg');
-			background-color:var(--colorDark);
-			background-position:center;
-			background-size:cover;
-		}
+		@extend %DialogTitle;
 
 		> .ButtonArea {
 			margin:0;
@@ -145,7 +104,9 @@
 		transition:background-color .3s linear, outline-color .1s ease-in-out, opacity .3s linear;
 
 		&::after {
-			@include la('\f2ea', 24px);
+			@extend %LineAwesomeIcon;
+			content:'\f2ea';
+			font-size:24px;
 			line-height:36px;
 		}
 	}

@@ -6,7 +6,7 @@
 	--adp-day-name-color:var(--colorSuccess);
 	--adp-font-family:inherit;
 
-	.🌚 & {
+	html.🌚 & {
 		--adp-background-color:var(--colorDark);
 		--adp-border-color:var(--colorSemiDark);
 		--adp-border-color-inline:var(--colorSemiDark);
@@ -16,7 +16,7 @@
 
 	.air-datepicker--pointer {
 		&::after {
-			.🌚 & {
+			html.🌚 & {
 				background-color:var(--colorDark);
 			}
 		}

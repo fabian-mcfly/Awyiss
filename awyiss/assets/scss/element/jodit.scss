@@ -1,3 +1,9 @@
+@import '../line-awesome/mixins';
+
+@import '../helper/variables';
+
+@import '../extendables';
+
 :root {
 	--jd-border-radius-default:5px;
 	--jd-color-border:transparent;
@@ -23,7 +29,7 @@
 	&:not(.jodit_inline) {
 		border-color:rgba(0, 0, 0, .1);
 
-		.🌚 & {
+		html.🌚 & {
 			background-color:var(--colorSemiDark);
 			border-color:rgba(255, 255, 255, 0.1);
 		}
@@ -40,11 +46,11 @@
 	color:var(--colorBright);
 	font-size:1.1rem;
 
-	.Scale-Small & {
+	html.Scale-Small & {
 		padding-block:6px 6px;
 	}
 
-	.🌚 & {
+	html.🌚 & {
 		--backgroundColor:oklch(from var(--colorSemiDarkDarkMode) calc(l + 0.0389) calc(c + 0.004) calc(h - 0.55));
 	}
 
@@ -118,7 +124,7 @@
 		opacity:inherit;
 		fill:currentColor;
 
-		.🌚 & {
+		html.🌚 & {
 			background-color:var(--colorDark);
 		}
 	}
@@ -144,7 +150,7 @@
 			}
 		}
 
-		.🌚 & {
+		html.🌚 & {
 			background-color:var(--colorMedium);
 		}
 
@@ -309,7 +315,7 @@
 		backdrop-filter:blur(5px);
 		pointer-events:none;
 
-		.🌚 & {
+		html.🌚 & {
 			background-color:rgba(0, 0, 0, .5);
 		}
 	}
@@ -355,7 +361,7 @@
 		border-radius:5px;
 		box-shadow:0 0 10px rgba(0, 0, 0, .25);
 
-		.🌚 & {
+		html.🌚 & {
 			background-color:var(--colorDark);
 		}
 	}
@@ -367,7 +373,7 @@
 		scrollbar-color:var(--scrollbarColor);
 		scrollbar-width:thin;
 
-		.Scale-Small & {
+		html.Scale-Small & {
 			padding:20px;
 		}
 	}
@@ -375,7 +381,7 @@
 	&__footer {
 		padding:0 40px 40px 40px;
 
-		.Scale-Small & {
+		html.Scale-Small & {
 			padding:0 20px 20px 20px;
 		}
 	}

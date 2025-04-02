@@ -65,12 +65,14 @@
 			'Jodit/CustomSettings.js',
 			'Jodit/Loader.js',
 		]) %}
+		{% do AssetHelper.add('element/jodit.css') %}
 	{% elseif config.Awyiss.System.Backend.interface.editor == 'tinymce' %}
 		{% do AssetHelper.addJsModule([
 			'TinyMCE/CustomSettings.js',
 			'TinyMCE/Loader.js',
 		]) %}
 		<script nonce="{{ AssetHelper.getScriptNonce() }}" src="{{ baseUrl }}awyiss/assets/js/TinyMCE/tinymce/tinymce.min.js"></script>
+		{% do AssetHelper.add('element/tinymce.css') %}
 	{% endif %}
 
 	{% if isGenericPage and controller != 'Pages' %}

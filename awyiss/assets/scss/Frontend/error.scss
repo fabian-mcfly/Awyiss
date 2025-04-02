@@ -2,11 +2,18 @@
 
 @import '../helper/reset';
 @import '../helper/variables';
-@import '../helper/extendables';
+
+@import '../extendables';
 
 @import '../general/fonts';
 @import '../general/general';
 @import '../general/body';
+
+/**
+ * Frontend Error message styles
+ * This file is only used in the frontend,
+ * but compiled only in the backend.
+ */
 
 body {
 	padding:0;

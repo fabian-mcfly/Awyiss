@@ -26,16 +26,16 @@ button,
 	cursor:pointer;
 	transition:background-color .3s linear, outline-color .1s ease-in-out;
 
-	.Scale-Small & {
+	html.Scale-Small & {
 		padding-block:6px 6px;
 	}
 
-	.🌚 & {
+	html.🌚 & {
 		--backgroundColor:oklch(from var(--colorSemiDarkDarkMode) calc(l + 0.0389) calc(c + 0.004) calc(h - 0.55));
 		background-image:none;
 	}
 
-	.👀 & {
+	html.👀 & {
 		&:hover {
 			transition-delay:0s;
 		}
@@ -126,7 +126,7 @@ button,
 			}
 		}
 
-		.Scale-Small & {
+		html.Scale-Small & {
 			min-height:30px;
 			padding:2px 5px 4px;
 			font-size:1rem;
@@ -140,16 +140,16 @@ button,
 		padding-block:4px 5px;
 		font-size:.8rem;
 
-		.Scale-Small & {
+		html.Scale-Small & {
 			padding-block:4px 0;
 			font-size:1rem;
 		}
 
-		.🌚 & {
+		html.🌚 & {
 			--colorButtonText:var(--colorBright);
 		}
 
-		.Scale-Small & {
+		html.Scale-Small & {
 			font-size:.9rem;
 			padding-inline:10px;
 		}
@@ -188,7 +188,7 @@ button,
 				position:relative;
 				top:-1px;
 
-				.Scale-Small & {
+				html.Scale-Small & {
 					margin-block:0;
 					top:0;
 					vertical-align:-1px;
@@ -197,7 +197,8 @@ button,
 		}
 
 		&::after {
-			@include la('\f067', 22px);
+			@extend %LineAwesomeIcon;
+			content:'\f067';
 			display:inline-block;
 			width:28px;
 			height:28px;
@@ -205,12 +206,13 @@ button,
 			margin-left:10px;
 			border-radius:50%;
 			border:2px solid;
+			font-size:22px;
 			line-height:24px;
 			vertical-align:0;
 
 			transform:translateY(0);
 
-			.Scale-Small & {
+			html.Scale-Small & {
 				margin-block:-1px !important;
 				transform:translateY(1px);
 			}
@@ -235,7 +237,7 @@ button,
 			content:'\f2ed';
 			text-indent:-1px;
 
-			.Scale-Small & {
+			html.Scale-Small & {
 				text-indent:-1px;
 			}
 		}
@@ -268,7 +270,7 @@ button,
 			rotate:180deg;
 			transform:translateY(2px);
 
-			.Scale-Small & {
+			html.Scale-Small & {
 				vertical-align:-2px;
 			}
 		}
@@ -289,7 +291,7 @@ button,
 			font-size:18px;
 			transform:translateY(-1px);
 
-			.Scale-Small & {
+			html.Scale-Small & {
 				transform:translateY(0);
 			}
 		}
@@ -302,7 +304,7 @@ button,
 			line-height:22px;
 			transform:translateY(-2px) rotateX(180deg);
 
-			.Scale-Small & {
+			html.Scale-Small & {
 				transform:translateY(-1px) rotateX(180deg);
 			}
 		}
@@ -311,13 +313,6 @@ button,
 	&-Delete,
 	&-SaveSystemOrder {
 		transition:outline-color 0.1s ease-in-out;
-
-		&[disabled],
-		&.Disabled {
-			&::after {
-				//display:none;
-			}
-		}
 	}
 
 	&-Toggle {
@@ -340,8 +335,10 @@ button,
 			background-color:var(--colorSuccess);
 
 			&::after {
-				@include la('\f00d', 16px);
+				@extend %LineAwesomeIcon;
 
+				content:'\f00d';
+				font-size:16px;
 				line-height:16px;
 			}
 		}

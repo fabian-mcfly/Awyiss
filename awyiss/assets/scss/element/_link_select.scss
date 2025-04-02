@@ -35,7 +35,7 @@
 			color:var(--colorBright);
 			transition-delay:0s;
 
-			.🌚 & {
+			html.🌚 & {
 				background-color:var(--colorSuccess);
 			}
 
@@ -72,7 +72,7 @@
 		visibility:hidden;
 		transition:opacity .3s ease-in-out, visibility 0s linear .3s;
 
-		.🌚 & {
+		html.🌚 & {
 			background-color:rgba(0, 0, 0, .5);
 		}
 	}
@@ -95,13 +95,13 @@
 		white-space:nowrap;
 		transition:box-shadow .3s ease-in-out, border-color .3s ease-in-out, background-color .3s ease-in-out, color .3s ease-in-out;
 
-		.🌚 & {
+		html.🌚 & {
 			background-image:none;
 			background-color:var(--backgroundColorContent);
 			color:var(--colorBright);
 		}
 
-		.Scale-Small & {
+		html.Scale-Small & {
 			padding-block:6px 8px;
 		}
 
@@ -125,13 +125,14 @@
 		}
 
 		&::after {
-			@include la('\f107', 20px);
-
+			@extend %LineAwesomeIcon;
+			content:'\f107';
+			font-size:20px;
 			position:absolute;
 			top:16px;
 			right:20px;
 
-			.Scale-Small & {
+			html.Scale-Small & {
 				top:12px;
 			}
 		}
@@ -159,7 +160,7 @@
 		scrollbar-color:var(--colorText) var(--colorMedium);
 		scrollbar-width:thin;
 
-		.🌚 & {
+		html.🌚 & {
 			box-shadow:0 0 10px 0 rgba(0, 0, 0, .4);
 			background-color:var(--backgroundColor);
 			scrollbar-color:var(--colorDark) oklch(from var(--colorBackgroundContentDarkMode) calc(l + 0.1041) calc(c + 0.011) calc(h + 2.24));

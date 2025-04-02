@@ -1,0 +1,71 @@
+%ContentAreasFieldsets {
+	.Overview {
+		&:has(.SortableChosen[data-nestable="false"]) {
+			ul.NestedList {
+				&:not(:has(.ListItem)) {
+					background-color:transparent;
+				}
+
+				.NestedList {
+					padding-bottom:0;
+					outline:0 none;
+					box-shadow:none;
+				}
+			}
+		}
+	}
+
+	.Overview-Fieldset {
+		grid-column:1 / span 4;
+
+		&.Collapsed {
+			.NestedList-Compact {
+				display:none;
+			}
+		}
+
+		&:first-of-type {
+			border-top-right-radius:0;
+		}
+
+		&:last-of-type {
+			border-bottom-right-radius:0;
+		}
+
+		&:not(.Collapsed) {
+			&:not(:has(.ListItem)) {
+				padding-bottom:40px;
+
+				&:has(.SortableDragging) {
+					background-color:#D5F1E5;
+
+					html.🌚 & {
+						background-color:var(--colorSemiDark)
+					}
+				}
+
+				&::after {
+					@extend %EmptyList;
+
+					html.🌚 & {
+						@extend %EmptyListDarkMode;
+
+					}
+				}
+
+				.NestedList {
+					margin-left:-52px;
+					height:40px;
+
+					&.NestedList-Compact {
+						margin-left:0;
+					}
+				}
+			}
+		}
+	}
+
+	.NestedList-Compact {
+		@extend %ColumnList;
+	}
+}

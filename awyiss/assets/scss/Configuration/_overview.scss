@@ -12,7 +12,7 @@
 					&::after {
 						@extend %EmptyList;
 
-						@at-root #{selector-append('.🌚', &)} {
+						html.🌚 & {
 							@extend %EmptyListDarkMode;
 
 						}
@@ -33,7 +33,7 @@
 		&.Level1 {
 			margin:0 -20px 20px;
 
-			@at-root #{selector-append('.Scale-Small', &)} {
+			html.Scale-Small & {
 				margin-inline:0;
 			}
 
@@ -47,7 +47,7 @@
 			border-radius:5px;
 			border-left:2px solid var(--colorMedium);
 
-			@at-root #{selector-append('.🌚', &)} {
+			html.🌚 & {
 				border-left-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l - 0.0473) calc(c - 0.005) calc(h + 1.12));
 			}
 
@@ -73,7 +73,7 @@
 			grid-template-columns:auto var(--listItemAuditInfoColumnWidth) var(--listItemLastColumnWidth);
 			transition:background-color .3s ease-in-out;
 
-			@at-root #{selector-append('.Scale-Small', &)} {
+			html.Scale-Small & {
 				padding-bottom:.75rem;
 			}
 
@@ -105,14 +105,14 @@
 			&:not(.ListItem-Category) {
 				background-color:var(--colorLight);
 
-				@at-root #{selector-append('.🌚', &)} {
+				html.🌚 & {
 					background-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l + 0.0448) calc(c + 0.005) calc(h - 0.4));
 				}
 
 				&:hover {
 					background-color:oklch(from var(--colorLight) calc(l - 0.0588) calc(c + 0.009) calc(h + 1.05));
 
-					@at-root #{selector-append('.🌚', &)} {
+					html.🌚 & {
 						background-color:var(--colorSemiDarkDarkMode);
 					}
 
@@ -124,7 +124,7 @@
 						@extend %ActionsHover;
 
 						.Button {
-							@at-root #{selector-append('.🌚', &)} {
+							html.🌚 & {
 								--backgroundColor:oklch(from var(--colorSemiDarkDarkMode) calc(l - 0.0833) calc(c - 0.007) calc(h - 3.11));
 							}
 						}
@@ -154,7 +154,7 @@
 				margin-top:.1rem;
 				z-index:3;
 
-				@at-root #{selector-append('.Scale-Small', &)} {
+				html.Scale-Small & {
 					margin-top:0;
 					top:-2px;
 				}
@@ -209,13 +209,13 @@
 
 				align-self:center;
 
-				@at-root #{selector-append('.Scale-Small', &)} {
+				html.Scale-Small & {
 					top:-2px;
 				}
 
 				.Button {
 					&-Delete {
-						@at-root #{selector-append('.Scale-Small', &)} {
+						html.Scale-Small & {
 							width:30px;
 							height:30px;
 							text-indent:-1px;
@@ -237,7 +237,7 @@
 			border-bottom-width:0;
 			grid-template-columns:10rem auto;
 
-			@at-root #{selector-append('.Scale-Small', &)} {
+			html.Scale-Small & {
 				padding-bottom:0;
 			}
 
@@ -246,39 +246,7 @@
 			}
 
 			.Title {
-				display:block;
-				margin-block:8px;
-				padding:10px 20px;
-				border-radius:5px 0 0 5px;
-				background-color:var(--colorMedium);
-				color:var(--colorBright);
-				font-size:18px;
-				//noinspection CssNoGenericFontName
-				font-family:var(--fontStackHeading);
-				line-height:1.2;
-				position:sticky;
-				top:100px;
-				align-self:start;
-				overflow:hidden;
-
-				@at-root #{selector-append('.🌚', &)} {
-					background-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l - 0.0473) calc(c - 0.005) calc(h + 1.12));
-				}
-
-				@at-root #{selector-append('.👀', &)} {
-					top:20px;
-				}
-
-				&::after {
-					content:'';
-					width:10px;
-					height:100%;
-					border-radius:50%;
-					box-shadow:0 0 10px rgba(0, 0, 0, .25);
-					position:absolute;
-					top:0;
-					right:-10px;
-				}
+				@extend %CategoryListTitle;
 			}
 
 			.List {

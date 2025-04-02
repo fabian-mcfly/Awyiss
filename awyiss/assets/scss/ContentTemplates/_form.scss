@@ -11,268 +11,21 @@
 		display:block;
 		padding-inline:20px;
 
-		@at-root #{selector-append('.Scale-Small', &)} {
+		html.Scale-Small & {
 			padding-bottom:20px;
 		}
 	}
 
 	.Fieldset-ContentElements-Available {
-		margin-bottom:0;
-		position:sticky;
-		top:160px;
-		grid-column:1 / 1;
-
-		@at-root #{selector-append('.👀', &)} {
-			top:40px;
-		}
-
-		@at-root #{selector-append('.Scale-Small', &)} {
-			&:not(.Collapsed) {
-				padding-bottom:20px;
-			}
-		}
-
-		&:not(:has(.Item)) {
-			padding-bottom:40px;
-
-			&:has(.SortableDragging) {
-				background-color:#D5F1E5;
-
-				@at-root #{selector-append('.🌚', &)} {
-					background-color:var(--colorSemiDark)
-				}
-			}
-
-			&::after {
-				@extend %EmptyList;
-
-				@at-root #{selector-append('.🌚', &)} {
-					@extend %EmptyListDarkMode;
-
-				}
-			}
-
-			.List {
-				height:40px;
-			}
-		}
-
-		.List {
-			max-height:calc(100dvh - 240px);
-			margin:0 -10px 0;
-			padding-inline:10px;
-			overflow-y:auto;
-			scrollbar-color:var(--colorMedium) var(--colorLight);
-			scrollbar-width:thin;
-
-			@at-root #{selector-append('.🌚', &)} {
-				scrollbar-color:var(--colorSemiDark) oklch(from var(--colorBackgroundContentDarkMode) calc(l - 0.0473) calc(c - 0.005) calc(h + 1.12) / .85);
-			}
-
-			@at-root #{selector-append('.👀', &)} {
-				max-height:calc(100dvh - 140px);
-			}
-		}
+		@extend %AvailableTemplateElementsList;
 	}
 
-	.Item {
-		min-height:50px;
-		margin:5px 0 0 0;
-		padding:5px 20px;
-		border-radius:5px;
-		background-color:var(--colorNeutralLight);
-		list-style-type:none;
-		transition:background-color .3s ease-in-out;
-		cursor:move;
-
-		@at-root #{selector-append('.🌚', &)} {
-			background-color:var(--colorSemiDark);
-		}
-
-		@at-root #{selector-append('.Scale-Small', &)} {
-			padding-bottom:3px;
-		}
-
-		&.SortableGhost {
-			background-color:var(--colorSuccess);
-			outline:2px solid var(--colorSuccess);
-			outline-offset:-2px;
-
-			@at-root #{selector-append('.🌚', &)} {
-				&,
-				&[data-assignable="false"],
-				&:hover {
-					background-color:var(--colorSuccess);
-				}
-			}
-
-			&:hover {
-				background-color:var(--colorSuccess);
-			}
-		}
-
-		&[data-assignable="false"] {
-			background-color:color-mix(in srgb, var(--colorNeutralLight), transparent 50%);
-
-			@at-root #{selector-append('.🌚', &)} {
-				background-color:oklch(from var(--colorSemiDarkDarkMode) calc(l - 0.0403) calc(c - 0.004) calc(h + 0.88));
-			}
-
-			.Title {
-				color:var(--colorMedium);
-			}
-		}
-
-		&:first-child {
-			margin-top:0;
-		}
-
-		&:hover {
-			background-color:var(--colorLight);
-
-			@at-root #{selector-append('.🌚', &)} {
-				background-color:oklch(from var(--colorSemiDarkDarkMode) calc(l + 0.0389) calc(c + 0.004) calc(h - 0.55));
-			}
-		}
-
-		.Title {
-			display:block;
-			line-height:52px;
-
-			label,
-			input {
-				pointer-events:none;
-			}
-
-			input {
-				display:none;
-			}
-		}
-
-		> label,
-		.FormInputType-TranslatableText,
-		.FormInputType-Select,
-		.FormInputType-Checkbox {
-			display:none;
-		}
+	.ContentElement {
+		@extend %AvailableTemplateElementsListItem;
 	}
 
 	.Fieldset-Fieldset {
-		grid-column:2 / -1;
-
-		&:not(.Collapsed) {
-			&:not(:has(.Item)) {
-				padding-bottom:40px;
-
-				&:has(.SortableDragging) {
-					background-color:#D5F1E5;
-
-					@at-root #{selector-append('.🌚', &)} {
-						background-color:var(--colorSemiDark)
-					}
-				}
-
-				&::after {
-					@extend %EmptyList;
-
-					@at-root #{selector-append('.🌚', &)} {
-						@extend %EmptyListDarkMode;
-
-					}
-				}
-
-				.List {
-					height:40px;
-				}
-			}
-		}
-
-		&:last-child {
-			margin-bottom:0;
-		}
-
-		.ContentElement {
-			display:grid;
-			gap:0 40px;
-			grid-template-columns:2fr 1fr 2fr 52px;
-
-			&.ContentElement-TitleTag,
-			&.ContentElement-SubtitleTag {
-				.FormInput {
-					display:none;
-				}
-			}
-
-			&[data-assignable="false"] {
-				.FormInputType-Checkbox {
-					color:var(--colorText);
-				}
-			}
-
-			.Title {
-				grid-column:1 / span 1;
-			}
-
-			.FormInputType-TranslatableText {
-				display:block;
-				grid-column:4 / span 1;
-
-				&:has(input:not([value=""])) {
-					.ShowTranslationDialog {
-						background-color:var(--colorSuccess);
-					}
-				}
-
-				> .Label {
-					display:none;
-				}
-
-				.FormInputType-Text {
-					&.IsCurrentLanguage {
-						> input {
-							display:none;
-						}
-					}
-				}
-
-				.ShowTranslationDialog {
-					width:52px;
-					height:52px;
-					margin-top:0;
-					top:0;
-					right:0;
-				}
-			}
-
-			.FormInputType-Select {
-				display:flex;
-				margin-bottom:0;
-				grid-column:3 / span 1;
-
-				.Label {
-					display:inline-block;
-					width:200px;
-					margin-bottom:0;
-					line-height:52px;
-				}
-			}
-
-			.FormInputType-Checkbox {
-				display:block;
-				margin-top:.3rem;
-				margin-bottom:0;
-				white-space:nowrap;
-				grid-column:2 / span 1;
-
-				label {
-					line-height:40px;
-
-					&::before {
-						top:10px;
-					}
-				}
-			}
-		}
+		@extend %AvailableTemplateElementsFieldset;
 	}
 
 	.PageTemplates-List {
@@ -293,7 +46,7 @@
 			border-left:2px solid var(--colorMedium);
 			align-content:center;
 
-			@at-root #{selector-append('.🌚', &)} {
+			html.🌚 & {
 				border-left-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l - 0.0473) calc(c - 0.005) calc(h + 1.12));
 			}
 
@@ -316,39 +69,7 @@
 			}
 
 			.Title {
-				display:block;
-				margin-block:13px;
-				padding:1rem 20px;
-				border-radius:5px 0 0 5px;
-				background-color:var(--colorMedium);
-				color:var(--colorBright);
-				font-size:1rem;
-				//noinspection CssNoGenericFontName
-				font-family:var(--fontStackHeading);
-				line-height:1.2;
-				position:sticky;
-				top:100px;
-				align-self:start;
-				overflow:hidden;
-
-				@at-root #{selector-append('.🌚', &)} {
-					background-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l - 0.0473) calc(c - 0.005) calc(h + 1.12));
-				}
-
-				@at-root #{selector-append('.👀', &)} {
-					top:20px;
-				}
-
-				&::after {
-					content:'';
-					width:10px;
-					height:100%;
-					border-radius:50%;
-					box-shadow:0 0 10px rgba(0, 0, 0, .25);
-					position:absolute;
-					top:0;
-					right:-10px;
-				}
+				@extend %CategoryListTitle;
 			}
 
 			.PageTemplates-List {
@@ -360,7 +81,7 @@
 			margin-inline:-20px;
 			margin-bottom:20px;
 
-			@at-root #{selector-append('.Scale-Small', &)} {
+			html.Scale-Small & {
 				margin-inline:0;
 			}
 		}
@@ -374,11 +95,11 @@
 			list-style-type:none;
 			transition:background-color .3s ease-in-out;
 
-			@at-root #{selector-append('.Scale-Small', &)} {
+			html.Scale-Small & {
 				padding-block:.75rem;
 			}
 
-			@at-root #{selector-append('.🌚', &)} {
+			html.🌚 & {
 				background-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l + 0.0448) calc(c + 0.005) calc(h - 0.4));
 			}
 
@@ -389,7 +110,7 @@
 			&:hover {
 				background-color:oklch(from var(--colorLight) calc(l - 0.0588) calc(c + 0.009) calc(h + 1.05));
 
-				@at-root #{selector-append('.🌚', &)} {
+				html.🌚 & {
 					background-color:var(--colorSemiDarkDarkMode);
 				}
 			}
@@ -401,7 +122,7 @@
 				.Label {
 					padding:1rem 20px 1rem 60px;
 
-					@at-root #{selector-append('.Scale-Small', &)} {
+					html.Scale-Small & {
 						padding-block:.5rem;
 					}
 
@@ -409,7 +130,7 @@
 						top:.9rem;
 						left:20px;
 
-						@at-root #{selector-append('.Scale-Small', &)} {
+						html.Scale-Small & {
 							top:.2rem;
 						}
 					}

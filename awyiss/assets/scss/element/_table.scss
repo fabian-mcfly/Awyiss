@@ -7,12 +7,11 @@
 	border-collapse:separate;
 	table-layout:fixed;
 
-	.Scale-Small & {
+	html.Scale-Small & {
 		padding:0;
 	}
 
-	.🌚 & {
-		//--backgroundColorOdd:var(--backgroundColorContent);
+	html.🌚 & {
 		--backgroundColorEven:oklch(from var(--colorBackgroundContentDarkMode) calc(l + 0.0448) calc(c + 0.005) calc(h - 0.4));
 	}
 
@@ -28,18 +27,13 @@
 			}
 
 			&::after {
+				@extend %LoaderIcon;
+
 				content:'';
 				background-color:var(--backgroundColorContent);
-				background-image:url($relativePath + 'img/preloader-dots.gif');
-				background-position:center;
-				background-repeat:no-repeat;
 				position:absolute;
 				inset:0;
 				z-index:1860;
-
-				.🌚 & {
-					background-image:url($relativePath + 'img/preloader-dots-bright.gif');
-				}
 			}
 		}
 	}
@@ -53,7 +47,7 @@
 				@extend %EmptyList;
 				border-radius:0;
 
-				.🌚 & {
+				html.🌚 & {
 					@extend %EmptyListDarkMode;
 				}
 			}
@@ -86,7 +80,7 @@
 				&:hover {
 					td {
 						&,
-						.🌚 & {
+						html.🌚 & {
 							opacity:1;
 						}
 					}
@@ -97,7 +91,7 @@
 					opacity:.5;
 					transition:opacity .3s ease-in-out;
 
-					.🌚 & {
+					html.🌚 & {
 						opacity:.1;
 					}
 				}
@@ -124,7 +118,7 @@
 					td {
 						background-color:oklch(from var(--colorLight) calc(l - 0.0588) calc(c + 0.009) calc(h + 1.05));
 
-						.🌚 & {
+						html.🌚 & {
 							background-color:oklch(from var(--colorSemiDarkDarkMode) calc(l + 0.0389) calc(c + 0.004) calc(h - 0.55));
 						}
 					}
@@ -135,7 +129,7 @@
 				td {
 					border-top:2px solid var(--colorBright);
 
-					.🌚 & {
+					html.🌚 & {
 						border-top-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l - 0.0216) calc(c - 0.002) calc(h - 1.95));
 					}
 				}
@@ -145,14 +139,14 @@
 				td {
 					background-color:oklch(from var(--colorLight) calc(l - 0.0588) calc(c + 0.009) calc(h + 1.05));
 
-					.🌚 & {
+					html.🌚 & {
 						background-color:oklch(from var(--colorSemiDarkDarkMode) calc(l + 0.0389) calc(c + 0.004) calc(h - 0.55));
 					}
 
 					&::before {
 						background-color:var(--colorLight);
 
-						.🌚 & {
+						html.🌚 & {
 							background-color:var(--colorSemiDark);
 						}
 					}
@@ -179,13 +173,11 @@
 	tbody td {
 		padding:10px 20px;
 		border-bottom:2px solid var(--colorBright);
-		//border-inline:1px solid var(--colorNeutralLight);
 		position:relative;
 		vertical-align:top;
 		transition:background-color .3s ease-in-out;
-		//bottom:-3px;
 
-		.🌚 & {
+		html.🌚 & {
 			border-bottom-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l - 0.0216) calc(c - 0.002) calc(h - 1.95));
 		}
 
@@ -200,7 +192,7 @@
 			bottom:-2px;
 			transition:background-color .3s ease-in-out;
 
-			.🌚 & {
+			html.🌚 & {
 				background-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l - 0.0216) calc(c - 0.002) calc(h - 1.95));
 			}
 		}
@@ -226,7 +218,7 @@
 		color:var(--colorBright);
 		transition:border-color .3s ease-in-out, background-color .3s ease-in-out, color .3s ease-in-out;
 
-		.🌚 & {
+		html.🌚 & {
 			background-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l - 0.0473) calc(c - 0.005) calc(h + 1.12));
 		}
 
@@ -234,7 +226,7 @@
 			border-bottom-color:oklch(from var(--colorSuccess) calc(l - .0368) calc(c + .018) calc(h - 2.03));
 			background-color:oklch(from var(--colorMedium) calc(l - 0.0683) calc(c + 0.001) calc(h - 1.9));
 
-			.🌚 & {
+			html.🌚 & {
 				background-color:var(--colorBackgroundContentDarkMode);
 			}
 
@@ -274,7 +266,7 @@
 			background-color:oklch(from var(--colorMedium) calc(l - 0.1400) calc(c - 0.002) calc(h + 0.39));
 			color:var(--colorSuccess);
 
-			.🌚 & {
+			html.🌚 & {
 				background-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l + 0.0448) calc(c + 0.005) calc(h - 0.4));
 				color:var(--colorBright);
 			}
@@ -297,7 +289,7 @@
 			background-color:oklch(from var(--colorMedium) calc(l - 0.0683) calc(c + 0.001) calc(h - 1.9));
 			bottom:-3px;
 
-			.🌚 & {
+			html.🌚 & {
 				background-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l - 0.0704) calc(c - 0.007) calc(h - 3.42));
 			}
 		}
@@ -314,12 +306,11 @@
 			position:relative;
 			transition:background-color .3s ease-in-out;
 
-			.🌚 & {
+			html.🌚 & {
 				color:var(--colorMedium) SemiDark;
 			}
 
 			&:hover {
-				//background-color:var(--colorSuccess);
 				outline:0 none;
 
 				&::before,
@@ -338,10 +329,11 @@
 
 			&::before,
 			&::after {
-				@include la('\f0de', 20px);
-
+				@extend %LineAwesomeIcon;
+				content:'\f0de';
 				padding-block:0 10px;
 				color:var(--colorBright);
+				font-size:20px;
 				position:absolute;
 				top:10px;
 				right:20px;
@@ -349,7 +341,7 @@
 				opacity:.25;
 				transition:color .3s ease-in-out, opacity .3s ease-in-out;
 
-				.Scale-Small & {
+				html.Scale-Small & {
 					top:6px;
 				}
 			}
@@ -366,7 +358,7 @@
 			padding-block:15px;
 			line-height:26px;
 
-			.Scale-Small & {
+			html.Scale-Small & {
 				padding-block:8px;
 				line-height:1.25;
 			}
@@ -381,7 +373,7 @@
 			background-color:var(--colorMedium);
 			color:var(--colorBright);
 
-			.🌚 & {
+			html.🌚 & {
 				border-top-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l - 0.0216) calc(c - 0.002) calc(h - 1.95));
 				background-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l - 0.0473) calc(c - 0.005) calc(h + 1.12));
 			}
@@ -395,7 +387,7 @@
 	}
 
 	.TableCell-AuditInfo {
-		.Scale-Small & {
+		html.Scale-Small & {
 			padding-block:0;
 		}
 	}
@@ -418,13 +410,13 @@
 		padding-right:20px;
 		overflow:visible;
 
-		.Scale-Small & {
+		html.Scale-Small & {
 			width:calc(9rem + 40px);
 		}
 	}
 
 	.TableCell-Actions {
-		.Scale-Small & {
+		html.Scale-Small & {
 			padding-block:4px;
 		}
 	}
@@ -436,7 +428,7 @@
 	.Actions {
 		@extend %Actions;
 
-		.Scale-Small & {
+		html.Scale-Small & {
 			width:9rem;
 		}
 	}

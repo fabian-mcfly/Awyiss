@@ -1,27 +1,15 @@
 .ContentsController {
 	@extend %FrontendEditorForm;
+	@extend %ContentFormElements;
 
 	.EditFrontendEditor {
 		&:not(.ExpertMode) {
-			.FormInputName-Active,
 			.FormInputName-ContentTemplateId,
-			.FormInputName-ColumnWidth,
-			.FormInputName-ColumnIndent,
-			.FormInputName-ColumnRtl,
-			.FormInputName-ColumnLast,
 			.FormInputName-PageId,
-			.FormInputName-ContentAreaId,
-			.FormInputName-ParentId,
-			.FormInputName-SystemOrder,
-			.Fieldset-PublicationData {
+			.FormInputName-ContentAreaId {
 				display:none;
 			}
 		}
-	}
-
-	.Fieldset-Data,
-	.Fieldset-PublicationData {
-		grid-column:auto / span 2;
 	}
 
 	.FormInputName-DuplicateOf {
@@ -55,57 +43,6 @@
 				font-size:30px;
 				border:0 none;
 				line-height:50px;
-			}
-		}
-	}
-
-	.FormInputName-Title {
-		&:has(.FormInputName-TitleTag) {
-			padding-right:140px;
-		}
-	}
-
-	.FormInputName-Subtitle {
-		&:has(.FormInputName-SubtitleTag) {
-			padding-right:140px;
-		}
-	}
-
-	.FormInputName-TitleTag,
-	.FormInputName-SubtitleTag {
-		width:120px;
-		position:absolute;
-		top:0;
-		right:0;
-	}
-
-	.FormInputName-Data {
-		.FormInputType-ListItem {
-			display:grid;
-			padding-right:57px;
-			gap:0 5px;
-			grid-template-columns:repeat(2, 1fr);
-
-			@at-root #{selector-append('.Scale-Small', &)} {
-				padding-right:47px;
-			}
-		}
-
-		.Button-Remove {
-			width:52px;
-			height:52px;
-			top:0;
-			right:0;
-
-			@at-root #{selector-append('.Scale-Small', &)} {
-				width:42px;
-				height:42px;
-			}
-
-			&.Disabled {
-				opacity:.25;
-				visibility:visible;
-				pointer-events:none;
 			}
 		}
 	}

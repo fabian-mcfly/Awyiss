@@ -53,7 +53,7 @@
 					top:18px;
 					left:18px;
 
-					@at-root #{selector-append('.Scale-Small', &)} {
+					html.Scale-Small & {
 						top:10px;
 					}
 				}
@@ -69,7 +69,7 @@
 		input {
 			padding-right:110px;
 
-			.Scale-Small & {
+			html.Scale-Small & {
 				padding-right:90px;
 			}
 		}
@@ -81,15 +81,17 @@
 		position:absolute;
 		right:52px;
 
-		.Scale-Small & {
+		html.Scale-Small & {
 			right:42px;
 		}
 
 		&::after {
-			@include la('\f084', 24px);
+			@extend %LineAwesomeIcon;
+			content:'\f084';
+			font-size:24px;
 			line-height:50px;
 
-			.Scale-Small & {
+			html.Scale-Small & {
 				line-height:40px;
 			}
 		}

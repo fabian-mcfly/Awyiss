@@ -14,7 +14,7 @@
 	position:relative;
 	overflow:hidden;
 
-	.🌚 & {
+	html.🌚 & {
 		--backgroundColor:var(--colorSemiDark);
 	}
 
@@ -37,7 +37,8 @@
 	}
 
 	&::before {
-		@include la('\f05a', 30px);
+		@extend %LineAwesomeIcon;
+		content:'\f05a';
 
 		display:flex;
 		width:calc(var(--lineHeightMain) + 20px);

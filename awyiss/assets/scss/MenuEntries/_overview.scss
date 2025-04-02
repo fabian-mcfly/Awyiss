@@ -1,15 +1,5 @@
 .MenuEntriesController {
 	&.OverviewAction {
-		h1 {
-			font-size:1.25rem;
-			line-height:1;
-		}
-
-		h2 {
-			margin-top:0;
-			color:var(--colorMedium);
-		}
-
 		.Overview-List {
 			&.Pages-List {
 				padding:0;
@@ -19,7 +9,7 @@
 				position:sticky;
 				top:100px;
 
-				@at-root #{selector-append('.👀', &)} {
+				html.👀 & {
 					top:20px;
 				}
 			}
@@ -41,11 +31,11 @@
 			scrollbar-color:var(--scrollbarColor);
 			scrollbar-width:thin;
 
-			@at-root #{selector-append('.🌚', &)} {
+			html.🌚 & {
 				--scrollbarColor:var(--backgroundColorContent) var(--colorSemiDark);
 			}
 
-			@at-root #{selector-append('.👀', &)} {
+			html.👀 & {
 				max-height:calc(100dvh - 40px);
 			}
 

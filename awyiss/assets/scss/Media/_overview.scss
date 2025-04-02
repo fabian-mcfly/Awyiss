@@ -149,7 +149,7 @@
 	align-items:center;
 	justify-content:center;
 
-	.🌚 & {
+	html.🌚 & {
 		background-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l - 0.0473) calc(c - 0.005) calc(h + 1.12) / .85);
 	}
 
@@ -172,7 +172,7 @@ ul#Media-List {
 	grid-template-columns:repeat(auto-fill, minmax(8rem, 1fr));
 	grid-column:1 / -1;
 
-	.Scale-Small & {
+	html.Scale-Small & {
 		padding:20px;
 	}
 
@@ -184,23 +184,18 @@ ul#Media-List {
 		}
 
 		&::before {
+			@extend %LoaderIcon;
+
 			content:'';
 			display:block;
 			width:220px;
 			height:20px;
 			margin:auto;
-			background-image:url($relativePath + 'img/preloader-dots.gif');
-			background-position:center;
-			background-repeat:no-repeat;
 			position:sticky;
 			top:100px;
 			grid-column:1 / -1;
 
-			.🌚 & {
-				background-image:url($relativePath + 'img/preloader-dots-bright.gif');
-			}
-
-			.👀 & {
+			html.👀 & {
 				top:20px;
 			}
 		}
@@ -219,7 +214,7 @@ ul#Media-List {
 	list-style-type:none;
 	position:relative;
 
-	.🌚 & {
+	html.🌚 & {
 		--colorLight:oklch(from var(--colorBackgroundContentDarkMode) calc(l + 0.1041) calc(c + 0.011) calc(h + 2.24));
 
 		border-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l + 0.0448) calc(c + 0.005) calc(h - 0.4));
@@ -255,19 +250,6 @@ ul#Media-List {
 		right:10px;
 		opacity:0;
 		transition:opacity .3s ease-in-out;
-
-		/*.UsageCount {
-			display:inline-block;
-			width:28px;
-			aspect-ratio:1;
-			border-radius:50%;
-			background-color:var(--colorInfo);
-			color:var(--colorBright);
-			font-size:16px;
-			line-height:28px;
-			text-align:center;
-			vertical-align:top;
-		}*/
 
 		.Button {
 			padding-inline:5px;
@@ -309,7 +291,9 @@ ul#Media-List {
 		transition:opacity .3s ease-in-out;
 
 		&::after {
-			@include la('\f00d', 24px);
+			@extend %LineAwesomeIcon;
+			content:'\f00d';
+			font-size:24px;
 			line-height:36px;
 		}
 	}
@@ -398,15 +382,14 @@ ul#Media-List {
 .AwaitingPreview,
 .AwaitingResize {
 	&::before {
+		@extend %LoaderIcon;
+
 		content:'';
 		display:block;
 		width:160px;
 		height:160px;
 		margin:auto;
 		background-color:var(--colorBright);
-		background-image:url($relativePath + 'img/preloader-dots.gif');
-		background-position:center;
-		background-repeat:no-repeat;
 		position:absolute;
 		inset:-999px;
 		z-index:1;

@@ -1,0 +1,49 @@
+%DialogTitle {
+	&::before,
+	&::after {
+		content:attr(data-title, 'Question:');
+		width:100%;
+		height:52px;
+		padding:0 20px;
+		border-radius:0 0 5px 5px;
+		background-color:color-mix(in srgb, var(--colorDark), transparent 50%);
+		color:var(--colorBright);
+		//noinspection CssNoGenericFontName
+		font-family:var(--fontStackHeading);
+		font-size:1rem;
+		line-height:52px;
+		position:absolute;
+		top:0;
+		left:0;
+
+		html.Scale-Small & {
+			height:42px;
+			line-height:42px;
+		}
+	}
+
+	&::before {
+		content:'';
+		background-image:url($relativePath + 'img/awyiss-v' + $awyissVersionMajor + '-' + $awyissVersionName + '.jpg');
+		background-color:var(--colorDark);
+		background-position:center;
+		background-size:cover;
+	}
+}
+
+%DialogNoTitle {
+	height:fit-content;
+	min-height:80px;
+	max-height:80dvh;
+	padding:0;
+	overflow:hidden;
+
+	&:focus-visible {
+		outline:0 none;
+	}
+
+	&::before,
+	&::after {
+		display:none;
+	}
+}

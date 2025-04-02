@@ -61,36 +61,13 @@
 				gap:0 5px;
 				grid-template-columns:1fr 2fr;
 
-				@at-root #{selector-append('.Scale-Small', &)} {
+				html.Scale-Small & {
 					padding-right:47px;
 				}
 			}
 
 			.FormInput {
 				grid-column:auto / auto;
-			}
-
-			.SortableHandle {
-				top:calc(1rem + 7px);
-				bottom:auto;
-			}
-
-			.Button-Remove {
-				width:52px;
-				height:52px;
-				top:calc(1rem + 1px);
-				right:0;
-
-				@at-root #{selector-append('.Scale-Small', &)} {
-					width:42px;
-					height:42px;
-				}
-
-				&.Disabled {
-					opacity:.25;
-					visibility:visible;
-					pointer-events:none;
-				}
 			}
 		}
 
@@ -106,43 +83,18 @@
 
 			.FormInputType-ListItem {
 				display:grid;
-				margin-bottom:20px;
 				padding-right:57px;
 				gap:5px;
 				//grid-template-columns:repeat(3, 1fr) 200px 200px;
 				grid-template-columns:1fr 2fr 100px repeat(2, 2fr);
 
-				@at-root #{selector-append('.Scale-Small', &)} {
+				html.Scale-Small & {
 					padding-right:47px;
 				}
 
 				.FormInput {
 					grid-column:auto / auto;
 					margin-bottom:0;
-				}
-
-				.SortableHandle {
-					top:calc(1rem + 7px);
-					bottom:auto;
-				}
-
-				.Button-Remove {
-					width:52px;
-					height:52px;
-					top:calc(1rem + 1px);
-					right:0;
-					bottom:auto;
-
-					@at-root #{selector-append('.Scale-Small', &)} {
-						width:42px;
-						height:42px;
-					}
-
-					&.Disabled {
-						opacity:.25;
-						visibility:visible;
-						pointer-events:none;
-					}
 				}
 			}
 		}

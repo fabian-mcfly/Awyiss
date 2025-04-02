@@ -1,0 +1,253 @@
+%ContentFormElements {
+	.Fieldset-Data,
+	.Fieldset-PublicationData {
+		grid-column:auto / span 2;
+	}
+
+	.FormInputName-Title {
+		&:has(.FormInputName-TitleTag) {
+			padding-right:140px;
+		}
+	}
+
+	.FormInputName-Subtitle {
+		&:has(.FormInputName-SubtitleTag) {
+			padding-right:140px;
+		}
+	}
+
+	.FormInputName-TitleTag,
+	.FormInputName-SubtitleTag {
+		width:120px;
+		position:absolute;
+		top:0;
+		right:0;
+	}
+
+	.FormInputName-Data {
+		.FormInputType-ListItem {
+			display:grid;
+			padding-right:57px;
+			gap:0 5px;
+			grid-template-columns:repeat(2, 1fr);
+
+			html.Scale-Small & {
+				padding-right:47px;
+			}
+		}
+
+		.SortableHandle {
+			top:6px;
+
+			html.Scale-Small & {
+				top:1px;
+			}
+		}
+
+		.Button-Remove {
+			width:52px;
+			height:52px;
+			top:0;
+			right:0;
+
+			html.Scale-Small & {
+				width:42px;
+				height:42px;
+			}
+		}
+	}
+}
+
+%FrontendEditorForm {
+	&:has(.EditFrontendEditor) {
+		body {
+			padding-block:0;
+		}
+
+		#Content {
+			height:100dvh;
+			padding:0;
+
+			.FlashMessage {
+				+ .Fieldsets {
+					margin-top:60px;
+				}
+			}
+
+			.Fieldsets {
+				grid-template-columns:1fr;
+
+				> fieldset {
+					grid-column:auto / span 1;
+				}
+			}
+		}
+	}
+
+	.EditFrontendEditor {
+		height:100%;
+		margin-bottom:0;
+		padding:72px 20px 20px 20px;
+		overflow:hidden;
+
+		@extend %DialogTitle;
+
+		&:not(.ExpertMode) {
+			.FormInputName-Active,
+			.FormInputName-ColumnWidth,
+			.FormInputName-ColumnIndent,
+			.FormInputName-ColumnRtl,
+			.FormInputName-ColumnLast,
+			.FormInputName-ParentId,
+			.FormInputName-SystemOrder,
+			.Fieldset-PublicationData {
+				display:none;
+			}
+		}
+
+		&::after {
+			content:attr(data-title, 'Form');
+		}
+
+		> .ButtonArea {
+			margin:0;
+			padding:2px;
+			position:absolute;
+			top:0;
+			right:0;
+
+			.Button {
+				height:48px;
+				margin-right:20px;
+				line-height:26px;
+				background-color:transparent;
+
+				&:last-child {
+					margin-right:0;
+				}
+			}
+		}
+	}
+}
+
+%Input {
+	--backgroundColor:#f2f6f8;
+
+	display:block;
+	width:100%;
+	padding:10px;
+	border:1px solid rgba(0, 0, 0, .1);
+	border-radius:5px;
+	outline:0 none;
+	background-image:url($relativePath + 'img/background-pattern-light.png');
+	background-color:var(--backgroundColor);
+	accent-color:var(--colorSuccess);
+	color:var(--colorText);
+	caret-color:var(--colorSuccess);
+	font-family:inherit;
+	font-size:1rem;
+	line-height:30px;
+
+	html.Scale-Small & {
+		padding-block:5px;
+	}
+
+	html.🌚 & {
+		--backgroundColor:var(--colorSemiDark);
+
+		background-blend-mode:multiply;
+		background-image:url($relativePath + 'img/background-pattern-dark.png');
+		border-color:rgba(255, 255, 255, .1);
+	}
+
+	&[disabled] {
+		opacity:.5;
+		cursor:not-allowed;
+	}
+}
+
+%OverlayForm {
+	width:100%;
+	height:100%;
+	margin-bottom:0;
+	padding:72px 20px 20px 20px;
+	overflow:hidden;
+
+	html.Scale-Small & {
+		padding:52px 10px 10px 10px;
+	}
+
+	@extend %DialogTitle;
+
+	> .ButtonArea {
+		margin:0;
+		padding:2px;
+		position:absolute;
+		top:0;
+		right:0;
+
+		.Button {
+			width:auto;
+			height:48px;
+			margin-right:20px;
+			line-height:26px;
+			background-color:transparent;
+
+			html.Scale-Small & {
+				height:38px;
+			}
+
+			&:last-child {
+				margin-right:0;
+			}
+		}
+	}
+
+	> form {
+		display:block;
+		height:100%;
+		max-height:calc(80dvh - 112px);
+		padding:20px;
+		overflow-y:auto;
+		scrollbar-color:var(--scrollbarColor);
+		scrollbar-width:thin;
+
+		html.Scale-Small & {
+			padding:10px;
+		}
+	}
+
+	.Fieldsets {
+		display:grid;
+		margin:0 0 20px 0;
+		padding:0;
+		box-shadow:none;
+		background-color:transparent;
+		align-items:start;
+		gap:0 40px;
+		grid-auto-rows:min-content;
+		grid-template-columns: repeat(12, 1fr);
+
+		html.Scale-Small & {
+			margin-bottom:0;
+		}
+	}
+
+	.ButtonArea {
+		&.ButtonArea-Bottom {
+			display:flex;
+			width:100%;
+			margin-right:0;
+			margin-bottom:0;
+
+			.Button {
+				margin-right:0;
+				margin-bottom:0;
+
+				&:first-child {
+					margin-right:auto;
+				}
+			}
+		}
+	}
+}

@@ -2,7 +2,7 @@
 	padding:52px 0 0;
 	overflow:hidden;
 
-	.Scale-Small & {
+	html.Scale-Small & {
 		padding-top:42px;
 	}
 
@@ -32,7 +32,7 @@
 		scrollbar-color:var(--scrollbarColor);
 		scrollbar-width:thin;
 
-		.Scale-Small & {
+		html.Scale-Small & {
 			padding:10px;
 		}
 	}
@@ -40,5 +40,9 @@
 	.FormInput {
 		width:100%;
 		flex:0 0 100%;
+
+		&:nth-last-child(1 of .FormInput) {
+			margin-bottom:40px;
+		}
 	}
 }

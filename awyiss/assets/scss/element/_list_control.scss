@@ -24,7 +24,7 @@
 			line-height:50px;
 			order:2;
 
-			.Scale-Small & {
+			html.Scale-Small & {
 				line-height:40px;
 			}
 		}
@@ -33,7 +33,7 @@
 			width:72px;
 			text-align:center;
 
-			.Scale-Small & {
+			html.Scale-Small & {
 				width:57px;
 				padding-inline:5px;
 			}
@@ -80,7 +80,7 @@
 	color:var(--colorText);
 	position:relative;
 
-	.🌚 & {
+	html.🌚 & {
 		--backgroundColor:oklch(from var(--colorBackgroundContentDarkMode) calc(l - 0.0216) calc(c - 0.002) calc(h - 1.95));
 		--colorButtons:var(--backgroundColorContent);
 	}
@@ -192,7 +192,9 @@
 		line-height:inherit;
 
 		&::before {
-			@include la('\f104', .9rem);
+			@extend %LineAwesomeIcon;
+			content:'\f104';
+			font-size:.9rem;
 			line-height:42px;
 		}
 	}

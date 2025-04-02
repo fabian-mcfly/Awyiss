@@ -12,7 +12,7 @@
 	grid-template-columns:320px auto;
 	grid-template-rows:80px auto 80px;
 
-	.Scale-Small & {
+	html.Scale-Small & {
 		grid-template-rows:72px auto 80px;
 	}
 
@@ -29,23 +29,18 @@
 
 	&.FetchInProgress {
 		&::before {
+			@extend %LoaderIcon;
+
 			content:'';
 			display:block;
 			margin:auto;
-			background-image:url($relativePath + 'img/preloader-dots.gif');
-			background-position:center;
-			background-repeat:no-repeat;
 			position:fixed;
 			inset:0;
 			grid-column:1 / -1;
-
-			.🌚 & {
-				background-image:url($relativePath + 'img/preloader-dots-bright.gif');
-			}
 		}
 	}
 
-	.🌚 & {
+	html.🌚 & {
 		background-image:url($relativePath + 'img/background-pattern-dark.png');
 		background-blend-mode:color-burn;
 	}
@@ -114,7 +109,7 @@
 		scrollbar-color:var(--colorMedium) var(--colorLight);
 		scrollbar-width:thin;
 
-		@at-root #{selector-append('.🌚', &)} {
+		html.🌚 & {
 			scrollbar-color:var(--colorSemiDark) oklch(from var(--colorBackgroundContentDarkMode) calc(l - 0.0473) calc(c - 0.005) calc(h + 1.12) / .85);
 		}
 
@@ -137,7 +132,7 @@ div#MediaFolders-List {
 	scrollbar-color:var(--scrollbarColor);
 	scrollbar-width:thin;
 
-	.🌚 & {
+	html.🌚 & {
 		--scrollbarColor:var(--backgroundColorContent) var(--colorSemiDark);
 	}
 
@@ -176,7 +171,7 @@ div#MediaFolders-List {
 		margin-inline:0;
 		padding-inline:0;
 
-		.🌚 & {
+		html.🌚 & {
 			--dottedLineColor:oklch(from var(--colorBackgroundContentDarkMode) calc(l + 0.0847) calc(c + 0.009) calc(h + 1.53));
 			--backgroundColorOdd:var(--colorBackgroundContentDarkMode);
 		}

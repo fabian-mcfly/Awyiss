@@ -18,11 +18,11 @@
 		pointer-events:none;
 	}
 
-	.🌚 & {
+	html.🌚 & {
 		--colorMenu:var(--colorSemiDark);
 	}
 
-	.👀 & {
+	html.👀 & {
 		position:absolute;
 	}
 
@@ -35,7 +35,7 @@
 		pointer-events:none;
 		mask-image:linear-gradient(to bottom, black 70%, transparent 100%);
 
-		.👀 & {
+		html.👀 & {
 			display:none;
 		}
 	}
@@ -123,7 +123,7 @@
 			overflow:hidden;
 			transition:background-color .3s ease-in-out;
 
-			.👀 & {
+			html.👀 & {
 				&:hover {
 					transition-delay:0s;
 				}
@@ -241,7 +241,6 @@
 
 		img {
 			width:20px;
-			//outline:2px solid rgba(255, 255, 255, .1);
 			outline-offset:2px;
 			aspect-ratio:1;
 			box-shadow:0 0 10px rgba(0, 0, 0, .25);
@@ -260,7 +259,7 @@
 			opacity:.15;
 			transition:opacity .3s ease-in-out;
 
-			.🌚 & {
+			html.🌚 & {
 				opacity:.1;
 			}
 		}
@@ -282,7 +281,9 @@
 		}
 
 		&::after {
-			@include la('\f2f5', 32px);
+			@extend %LineAwesomeIcon;
+			content:'\f2f5';
+			font-size:32px;
 			line-height:56px;
 		}
 	}
@@ -299,7 +300,7 @@
 		margin-left:auto;
 		align-self:center;
 
-		.🌚 & {
+		html.🌚 & {
 			filter:saturate(0%) brightness(10);
 		}
 	}

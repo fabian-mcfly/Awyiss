@@ -11,7 +11,7 @@
 			margin:calc(var(--lineHeightMain) * 2) auto;
 			filter:drop-shadow(0 0 50px rgba(31, 44, 57, .2));
 
-			.🌚 & {
+			html.🌚 & {
 				filter:drop-shadow(0 0 50px rgba(255, 255, 255, .2))
 			}
 		}

@@ -11,20 +11,15 @@
 			}
 
 			&::after {
+				@extend %LoaderIcon;
+
 				content:'';
 				width:220px;
 				height:20px;
 				margin:auto;
-				background-image:url($relativePath + 'img/preloader-dots.gif');
-				background-position:center;
-				background-repeat:no-repeat;
 				position:fixed;
 				inset:0;
 				z-index:1860;
-
-				.🌚 & {
-					background-image:url($relativePath + 'img/preloader-dots-bright.gif');
-				}
 			}
 		}
 
@@ -75,7 +70,7 @@ textarea {
 		border-color:var(--colorSuccess);
 		box-shadow:0 0 10px 5px color-mix(in srgb, var(--colorSuccess), transparent 90%);
 
-		.🌚 & {
+		html.🌚 & {
 			--backgroundColor:oklch(from var(--colorSemiDarkDarkMode) calc(l + 0.0196) calc(c + 0.002) calc(h - 0.3));
 		}
 	}
@@ -99,7 +94,7 @@ select {
 		border-color:var(--colorSuccess);
 		box-shadow:0 0 10px 5px color-mix(in srgb, var(--colorSuccess), transparent 90%);
 
-		.🌚 & {
+		html.🌚 & {
 			--backgroundColor:oklch(from var(--colorSemiDarkDarkMode) calc(l + 0.0196) calc(c + 0.002) calc(h - 0.3));
 		}
 	}
@@ -132,7 +127,7 @@ input {
 				box-shadow:0 0 10px 5px color-mix(in srgb, var(--colorSuccess), transparent 90%);
 				background-color:var(--backgroundColor);
 
-				.🌚 & {
+				html.🌚 & {
 					--backgroundColor:oklch(from var(--colorSemiDarkDarkMode) calc(l + 0.0196) calc(c + 0.002) calc(h - 0.3));
 				}
 			}
@@ -147,7 +142,7 @@ input {
 			border-color:var(--colorSuccess);
 			background-color:var(--backgroundColor);
 
-			.🌚 & {
+			html.🌚 & {
 				--backgroundColor:oklch(from var(--colorSemiDarkDarkMode) calc(l + 0.0196) calc(c + 0.002) calc(h - 0.3));
 			}
 		}
@@ -160,14 +155,14 @@ select {
 	scrollbar-color:var(--scrollbarColor);
 	scrollbar-width:thin;
 
-	.Scale-Small & {
+	html.Scale-Small & {
 		height:42px;
 	}
 
 	&[data-options-for] {
 		margin-top:-52px;
 
-		.Scale-Small & {
+		html.Scale-Small & {
 			margin-top:-42px;
 		}
 	}
@@ -215,7 +210,7 @@ textarea {
 			right:0;
 			cursor:default;
 
-			.🌚 & {
+			html.🌚 & {
 				background-color:var(--colorBackgroundContentDarkMode);
 			}
 		}
@@ -282,7 +277,9 @@ textarea {
 			}
 
 			&::after {
-				@include la('\f070', 24px);
+				@extend %LineAwesomeIcon;
+				content:'\f070';
+				font-size:24px;
 			}
 		}
 	}
@@ -303,10 +300,35 @@ textarea {
 				}
 			}
 
+			&:nth-child(n+2 of .FormInputType-ListItem) {
+				> .FormInput {
+					> .Label {
+						display:none;
+					}
+				}
+
+				.SortableHandle {
+					top:6px;
+
+					html.Scale-Small & {
+						top:1px;
+					}
+				}
+
+				.Button-Remove,
+				.ShowTranslationDialog {
+					top:0;
+				}
+			}
+
 			&:hover {
 				.SortableHandle {
 					opacity:1;
 				}
+			}
+
+			> .FormInput {
+				margin-bottom:0;
 			}
 		}
 
@@ -319,12 +341,16 @@ textarea {
 			line-height:0;
 			text-align:center;
 			position:absolute;
-			top:6px;
+			top:calc(1rem + 7px);
 			left:0;
 			z-index:2;
 			opacity:0;
 			cursor:move;
 			transition:background-color .3s ease-in-out, opacity .3s ease-in-out;
+
+			html.Scale-Small & {
+				top:calc(1rem + 2px);
+			}
 
 			&:has(+ .NestedListToggle:not(.Hidden)) {
 				border-radius:0 0 0 5px;
@@ -335,8 +361,10 @@ textarea {
 			}
 
 			&::before {
-				@include la('\f0b2', 24px);
+				@extend %LineAwesomeIcon;
+				content:'\f0b2';
 				color:var(--colorBright);
+				font-size:24px;
 				line-height:40px;
 			}
 		}
@@ -354,10 +382,12 @@ textarea {
 			}
 
 			&::after {
-				@include la('\f00d', 24px);
+				@extend %LineAwesomeIcon;
+				content:'\f00d';
+				font-size:24px;
 				line-height:50px;
 
-				.Scale-Small & {
+				html.Scale-Small & {
 					line-height:40px;
 				}
 			}
@@ -373,7 +403,7 @@ textarea {
 			font-size:0;
 			line-height:0;
 
-			.Scale-Small & {
+			html.Scale-Small & {
 				width:100%;
 			}
 
@@ -393,7 +423,7 @@ textarea {
 		&:last-of-type {
 			margin-bottom:10px;
 
-			.Scale-Small & {
+			html.Scale-Small & {
 				margin-bottom:20px;
 			}
 		}
@@ -424,7 +454,7 @@ textarea {
 						border-color:rgba(0, 0, 0, .2);
 						color:var(--colorText);
 
-						.🌚 & {
+						html.🌚 & {
 							background-color:var(--colorSemiDark);
 							border-color:var(--colorLight);
 							opacity:.25;
@@ -440,7 +470,7 @@ textarea {
 						background-color:var(--colorDark);
 						border-color:var(--colorDark);
 
-						.🌚 & {
+						html.🌚 & {
 							background-color:var(--colorSuccess);
 							border-color:var(--colorSuccess);
 						}
@@ -461,16 +491,12 @@ textarea {
 			&:focus-visible {
 				+ .Label {
 					&::before {
-						//border-color:var(--colorSuccess);
 						box-shadow:0 0 10px 5px color-mix(in srgb, var(--colorSuccess), transparent 90%);
 						outline:2px solid var(--colorInfo);
 						outline-offset:2px;
-						//background-color:var(--colorBright);
 
-						.🌚 & {
+						html.🌚 & {
 							outline:2px solid var(--colorSuccess);
-							//background-color:var(--colorMedium);
-							//border-color:var(--colorMedium);
 						}
 					}
 				}
@@ -491,24 +517,25 @@ textarea {
 				}
 
 				&::before {
-					@include la('', 16px);
+					@extend %LineAwesomeIcon;
 
 					width:22px;
 					height:22px;
 					border:1px solid rgba(0, 0, 0, .2);
 					border-radius:5px;
 					color:var(--colorBright);
+					font-size:16px;
 					line-height:20px;
 					text-align:center;
 					position:absolute;
 					top:-3px;
 					left:0;
 
-					.Scale-Small & {
+					html.Scale-Small & {
 						top:-4.5px
 					}
 
-					.🌚 & {
+					html.🌚 & {
 						background-color:var(--colorSemiDark);
 						border-color:rgba(255, 255, 255, .1);
 					}
@@ -541,7 +568,7 @@ textarea {
 			&.Label {
 				margin-bottom:.5em;
 
-				.Scale-Small & {
+				html.Scale-Small & {
 					margin-bottom:1em;
 				}
 			}
@@ -630,21 +657,23 @@ textarea {
 			top:1.05rem;
 			right:1px;
 
-			.🌚 & {
+			html.🌚 & {
 				background-color:var(--backgroundColor);
 			}
 
-			.Scale-Small & {
+			html.Scale-Small & {
 				padding-block:0;
 				width:40px;
 				height:40px;
 			}
 
 			&::after {
-				@include la('\f0ac', 30px);
+				@extend %LineAwesomeIcon;
+				content:'\f0ac';
+				font-size:30px;
 				line-height:50px;
 
-				.Scale-Small & {
+				html.Scale-Small & {
 					line-height:40px;
 				}
 			}
@@ -684,7 +713,7 @@ textarea {
 					box-shadow:0 0 10px 5px color-mix(in srgb, var(--colorSuccess), transparent 90%);
 					background-color:var(--colorBright);
 
-					.🌚 & {
+					html.🌚 & {
 						background-color:oklch(from var(--colorSemiDarkDarkMode) calc(l + 0.0196) calc(c + 0.002) calc(h - 0.3));
 					}
 				}
@@ -702,7 +731,7 @@ textarea {
 				left:0;
 				pointer-events:none;
 
-				.Scale-Small & {
+				html.Scale-Small & {
 					height:42px;
 				}
 			}
@@ -713,7 +742,7 @@ textarea {
 				margin-bottom:-52px;
 				flex:0 0 100%;
 
-				.Scale-Small & {
+				html.Scale-Small & {
 					padding-bottom:calc(42px + .25rem);
 					margin-bottom:-42px;
 				}
@@ -731,7 +760,7 @@ textarea {
 				order:3;
 			}
 
-			.PreSlug {
+			.PrePath {
 				margin:0 0 1px 1px;
 				padding:0 10px;
 				border-radius:5px 0 0 5px;
@@ -745,11 +774,11 @@ textarea {
 				cursor:default;
 				pointer-events:none;
 
-				.🌚 & {
+				html.🌚 & {
 					background-color:var(--colorBackgroundContentDarkMode);
 				}
 
-				.Scale-Small & {
+				html.Scale-Small & {
 					line-height:42px;
 				}
 			}
@@ -798,7 +827,7 @@ textarea {
 	background-color:transparent;
 	grid-template-columns:repeat(2, 1fr);
 
-	.Scale-Small & {
+	html.Scale-Small & {
 		padding:0;
 	}
 
@@ -819,7 +848,7 @@ textarea {
 		transition:background-color .3s ease-in-out;
 		cursor:move;
 
-		.🌚 & {
+		html.🌚 & {
 			background-color:var(--colorSemiDark);
 		}
 
@@ -828,7 +857,7 @@ textarea {
 			outline:2px solid var(--colorSuccess);
 			outline-offset:-2px;
 
-			.🌚 & {
+			html.🌚 & {
 				&,
 				&[data-assignable="false"],
 				&:hover {
@@ -844,14 +873,14 @@ textarea {
 		&[data-assignable="false"] {
 			background-color:color-mix(in srgb, var(--colorNeutralLight), transparent 50%);
 
-			.🌚 & {
+			html.🌚 & {
 				background-color:color-mix(in srgb, var(--colorNeutralLight), transparent 90%);
 			}
 
 			.Title {
 				color:var(--colorMedium);
 
-				.🌚 & {
+				html.🌚 & {
 					color:oklch(from var(--colorSemiDarkDarkMode) calc(l + 0.0196) calc(c + 0.002) calc(h - 0.3));
 				}
 			}
@@ -864,7 +893,7 @@ textarea {
 		&:hover {
 			background-color:var(--colorLight);
 
-			.🌚 & {
+			html.🌚 & {
 				background-color:oklch(from var(--colorSemiDarkDarkMode) calc(l + 0.0389) calc(c + 0.004) calc(h - 0.55));
 			}
 		}
@@ -896,7 +925,7 @@ textarea {
 	display:block;
 	padding-inline:20px;
 
-	.Scale-Small & {
+	html.Scale-Small & {
 		padding-bottom:20px;
 	}
 
@@ -906,7 +935,7 @@ textarea {
 		&:has(.SortableDragging) {
 			background-color:#D5F1E5;
 
-			.🌚 & {
+			html.🌚 & {
 				background-color:var(--colorSemiDark)
 			}
 		}
@@ -915,7 +944,7 @@ textarea {
 			&::after {
 				@extend %EmptyList;
 
-				.🌚 & {
+				html.🌚 & {
 					@extend %EmptyListDarkMode;
 
 				}
@@ -933,7 +962,7 @@ textarea {
 	position:sticky;
 	top:160px;
 
-	.👀 & {
+	html.👀 & {
 		top:60px;
 	}
 
@@ -945,11 +974,11 @@ textarea {
 		scrollbar-color:var(--colorMedium) var(--colorLight);
 		scrollbar-width:thin;
 
-		.🌚 & {
+		html.🌚 & {
 			scrollbar-color:var(--colorSemiDarkDarkMode) var(--colorText);
 		}
 
-		.👀 & {
+		html.👀 & {
 			max-height:calc(100dvh - 140px);
 		}
 	}
@@ -997,16 +1026,18 @@ textarea {
 	~ .ButtonArea {
 		.Label-SaveAsCopy {
 			&::after {
-				@include la('\f059', 36px);
+				@extend %LineAwesomeIcon;
+				content:'\f059';
 				width:28px;
 				height:28px;
 				margin-left:10px;
+				font-size:36px;
 				line-height:28px;
 				text-indent:-5px;
 				vertical-align:-6px;
 				transform:translateY(-1px);
 
-				.Scale-Small & {
+				html.Scale-Small & {
 					vertical-align:-7px;
 				}
 			}

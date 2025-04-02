@@ -10,10 +10,12 @@
 			@extend %InFieldButton;
 
 			&::after {
-				@include la('\f023', 24px);
+				@extend %LineAwesomeIcon;
+				content:'\f023';
+				font-size:24px;
 				line-height:50px;
 
-				.Scale-Small & {
+				html.Scale-Small & {
 					line-height:40px;
 				}
 			}
@@ -35,7 +37,7 @@
 			gap:0 5px;
 			grid-template-columns:repeat(2, 1fr);
 
-			.Scale-Small & {
+			html.Scale-Small & {
 				padding-right:47px;
 			}
 		}
@@ -46,7 +48,7 @@
 			top:0;
 			right:0;
 
-			.Scale-Small & {
+			html.Scale-Small & {
 				width:42px;
 				height:42px;
 			}

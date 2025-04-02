@@ -14,12 +14,12 @@ dialog {
 	scrollbar-color:var(--scrollbarColor);
 	scrollbar-width:thin;
 
-	.Scale-Small & {
+	html.Scale-Small & {
 		width:480px;
 		padding:62px 20px 20px 20px;
 	}
 
-	.🌚 & {
+	html.🌚 & {
 		background-color:var(--colorDark);
 	}
 
@@ -36,42 +36,13 @@ dialog {
 		backdrop-filter:blur(5px);
 	}
 
-	&::before,
-	&::after {
-		content:attr(data-title, 'Question:');
-		width:100%;
-		height:52px;
-		padding:0 20px;
-		border-radius:0 0 5px 5px;
-		background-color:color-mix(in srgb, var(--colorDark), transparent 50%);
-		color:var(--colorBright);
-		//noinspection CssNoGenericFontName
-		font-family:var(--fontStackHeading);
-		font-size:1rem;
-		line-height:52px;
-		position:absolute;
-		top:0;
-		left:0;
-
-		.Scale-Small & {
-			height:42px;
-			line-height:42px;
-		}
-	}
-
-	&::before {
-		content:'';
-		background-image:url($relativePath + 'img/awyiss-v' + $awyissVersionMajor + '-' + $awyissVersionName + '.jpg');
-		background-color:var(--colorDark);
-		background-position:center;
-		background-size:cover;
-	}
+	@extend %DialogTitle;
 
 	.Button {
 		width:11rem;
 		padding-inline:10px;
 
-		.Scale-Small & {
+		html.Scale-Small & {
 			width:12rem;
 		}
 	}

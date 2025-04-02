@@ -1,12 +1,4 @@
 .AttributesController {
-	&.Scale-Small {
-		.ListItem-Inner {
-			.SortableHandle {
-				top:18px;
-			}
-		}
-	}
-
 	&.OverviewAction {
 		.Overview {
 			&:has(.SortableChosen) {
@@ -14,7 +6,7 @@
 					&:not(:has(.ListItem)) {
 						background-color:#D5F1E5;
 
-						@at-root #{selector-append('.🌚', &)} {
+						html.🌚 & {
 							background-color:var(--colorSemiDark)
 						}
 					}
@@ -44,7 +36,7 @@
 					&::after {
 						@extend %EmptyList;
 
-						@at-root #{selector-append('.🌚', &)} {
+						html.🌚 & {
 							@extend %EmptyListDarkMode;
 						}
 					}

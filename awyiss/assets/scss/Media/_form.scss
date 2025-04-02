@@ -15,10 +15,9 @@
 			text-align:center;
 
 			&::after {
+				@extend %LoaderIcon;
+
 				content:'';
-				background-image:url($relativePath + 'img/preloader-dots.gif');
-				background-position:center;
-				background-repeat:no-repeat;
 				position:absolute;
 				inset:0 0 40px 0;
 				opacity:1;
@@ -38,7 +37,9 @@
 			right:20px;
 
 			&::after {
-				@include la('\f065', 24px);
+				@extend %LineAwesomeIcon;
+				content:'\f065';
+				font-size:24px;
 			}
 		}
 	}
@@ -53,7 +54,7 @@
 		grid-column:1 / -1;
 		position:relative;
 
-		.🌚 & {
+		html.🌚 & {
 			--colorLight:oklch(from var(--colorBackgroundContentDarkMode) calc(l + 0.1041) calc(c + 0.011) calc(h + 2.24));
 		}
 
@@ -85,7 +86,9 @@
 			flex-wrap:wrap;
 
 			&::before {
-				@include la('\f565', 16px);
+				@extend %LineAwesomeIcon;
+				content:'\f565';
+				font-size:16px;
 				line-height:26px;
 				position:absolute;
 				top:0;
@@ -95,7 +98,9 @@
 			}
 
 			&::after {
-				@include la('\f31e', 16px);
+				@extend %LineAwesomeIcon;
+				content:'\f31e';
+				font-size:16px;
 				line-height:26px;
 				position:absolute;
 				top:0;

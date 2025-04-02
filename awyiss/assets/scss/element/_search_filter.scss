@@ -16,17 +16,16 @@
 		scrollbar-color:var(--scrollbarColor);
 		scrollbar-width:thin;
 
-		.Scale-Small & {
+		html.Scale-Small & {
 			max-height:calc(80dvh - 42px);
 		}
 
-		.🌚 & {
+		html.🌚 & {
 			background-color:var(--colorDark);
 		}
 	}
 
 	.Column {
-		//display:none;
 		display:grid;
 		margin:0;
 		padding:5px 20px;
@@ -35,8 +34,6 @@
 		grid-template-columns:1fr 200px 1fr 52px;
 
 		&.Active {
-			//display:grid;
-
 			.Button-Remove {
 				opacity:inherit;
 				pointer-events:initial;
@@ -46,7 +43,7 @@
 		&:nth-child(even of .Active) {
 			background-color:var(--colorLight);
 
-			.🌚 & {
+			html.🌚 & {
 				background-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l + 0.0448) calc(c + 0.005) calc(h - 0.4))
 			}
 
@@ -94,7 +91,6 @@
 	}
 
 	.Actions {
-		display:grid;
 		display:none;
 		padding-block:10px;
 		background-color:var(--colorLight);
@@ -102,7 +98,7 @@
 		gap:0 20px;
 		grid-template-columns: 1fr 200px 1fr 52px;
 
-		.🌚 & {
+		html.🌚 & {
 			background-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l + 0.0448) calc(c + 0.005) calc(h - 0.4))
 		}
 
@@ -171,7 +167,7 @@
 		top:0;
 		right:0;
 
-		.Scale-Small & {
+		html.Scale-Small & {
 			width:42px;
 			height:42px;
 		}
@@ -183,10 +179,12 @@
 		}
 
 		&::after {
-			@include la('\f00d', 24px);
+			@extend %LineAwesomeIcon;
+			content:'\f00d';
+			font-size:24px;
 			line-height:50px;
 
-			.Scale-Small & {
+			html.Scale-Small & {
 				line-height:40px;
 			}
 		}
@@ -211,7 +209,7 @@
 			line-height:26px;
 			background-color:transparent;
 
-			.Scale-Small & {
+			html.Scale-Small & {
 				height:38px;
 			}
 

@@ -80,7 +80,7 @@
 						{% for policy in authorizationPolicies %}
 							{% block usergroupPolicy %}
 								<fieldset class="Fieldset-Permission">
-									<span class="Title" title="{{ policy.title }}">{{ policy.title }}</span>
+									<span class="Title" title="{{ policy.scope == 'system' ? 'System' : policy.title }}">{{ policy.scope == 'system' ? 'System' : policy.title }}</span>
 									<div class="Permissions">
 										{% block usergroupPermissions %}
 											{% for identifier,permission in policy.permissions %}
