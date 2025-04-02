@@ -241,7 +241,7 @@ export default class Loader {
 			this.isModuleLoading = false;
 		}
 
-		if (document.documentElement.classList.contains('EmailTemplatesController')) {
+		if (document.body.classList.contains('EmailTemplatesController')) {
 			this.settings.toolbar1 = this.settings.toolbar1.replace('awyissModule', '');
 			this.settings.toolbar1 = this.settings.toolbar1.replace(' styles ', '');
 			this.settings.toolbar1 += 'formPlaceholders';
@@ -281,7 +281,7 @@ export default class Loader {
 			}
 		});
 
-		if (document.documentElement.classList.contains('EmailTemplatesController')) {
+		if (document.body.classList.contains('EmailTemplatesController')) {
 			this.addEmailTemplatesPlaceholderOptions(editor);
 		}
 	}

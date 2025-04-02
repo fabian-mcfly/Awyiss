@@ -20,7 +20,7 @@ export default class Elements {
 		sortableListSelector = '.MediaElements-List';
 
 		constructor() {
-			if (document.documentElement.classList.contains('MediaElementsController')) {
+			if (document.body.classList.contains('MediaElementsController')) {
 				return;
 			}
 

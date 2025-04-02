@@ -60,7 +60,7 @@ export default class Overlay {
 	 */
 	constructor() {
 		// If the current controller is Media, we don't need to initialize the overlay.
-		if (document.documentElement.classList.contains('MediaController')) {
+		if (document.body.classList.contains('MediaController')) {
 			return;
 		}
 

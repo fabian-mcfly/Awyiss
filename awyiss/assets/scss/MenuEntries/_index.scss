@@ -1,9 +1,10 @@
 @import 'overview';
 
 .MenuEntriesController {
-	&[lang="de"] {
+	html[lang="de"] & {
 		a {
 			&.BackToOverview {
+				// Prevents the link overlapping the german umlaut "Ü"
 				margin-bottom:5px;
 			}
 		}

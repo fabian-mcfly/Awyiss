@@ -9,7 +9,7 @@ export default class MediaElementsController {
 
 
 	constructor() {
-		if (document.documentElement.classList.contains('AddAction') || document.documentElement.classList.contains('EditAction')) {
+		if (document.body.classList.contains('AddAction') || document.body.classList.contains('EditAction')) {
 			this.initForm();
 		}
 	}

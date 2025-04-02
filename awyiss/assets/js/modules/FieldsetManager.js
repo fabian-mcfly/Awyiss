@@ -8,7 +8,7 @@ export default class FieldsetManager {
 	 * The controller class of the current page.
 	 * @type {string}
 	 */
-	controllerClass = document.documentElement.className.split(' ').find(name => name.endsWith('Controller'));
+	controllerClass = document.body.className.split(' ').find(name => name.endsWith('Controller'));
 	/**
 	 * The event handler instance.
 	 * @type {EventHandler}

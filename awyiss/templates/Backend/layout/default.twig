@@ -3,9 +3,6 @@
 <html
 	lang="{{ currentLanguage.shortcode }}"
 	class="
-		{{- controller }}Controller {{ _view.getRequest().getParam('action')|camelize }}Action
-		{%- if isGenericPage %}	IsGenericPage{%- endif -%}
-		{%- if isGenericDatatable %} IsGenericDatatable{%- endif -%}
 		{%- if config.Awyiss.System.Backend.interface.darkMode == true %} 🌚{% endif -%}
 		{%- if config.Awyiss.System.Backend.interface.disctractionFreeMode == true %} 👀{% endif -%}
 		{%- if config.Awyiss.System.Backend.interface.scale and config.Awyiss.System.Backend.interface.scale != 'regular' %} Scale-{{ config.Awyiss.System.Backend.interface.scale|camelize }}{% endif -%}
@@ -60,7 +57,11 @@
 			{% endblock %}
 		{% endblock %}
 	</head>
-	<body>
+	<body class="
+		{{- controller }}Controller {{ _view.getRequest().getParam('action')|camelize }}Action
+		{%- if isGenericPage %}	IsGenericPage{%- endif -%}
+		{%- if isGenericDatatable %} IsGenericDatatable{%- endif -%}
+	">
 		{% block body %}
 			{% block header %}
 				<header id="Header">

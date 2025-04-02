@@ -29,11 +29,11 @@ export default class MediaController {
 	sortable;
 
 	constructor() {
-		if (document.documentElement.classList.contains('OverviewAction')) {
+		if (document.body.classList.contains('OverviewAction')) {
 			this.initOverview();
 		}
 
-		if (document.documentElement.classList.contains('AddAction') || document.documentElement.classList.contains('EditAction')) {
+		if (document.body.classList.contains('AddAction') || document.body.classList.contains('EditAction')) {
 			this.initForm();
 		}
 	}

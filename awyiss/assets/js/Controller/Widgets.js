@@ -20,7 +20,7 @@ export default class WidgetsController {
 	resizeableContent;
 
 	constructor() {
-		if (document.documentElement.classList.contains('OverviewAction')) {
+		if (document.body.classList.contains('OverviewAction')) {
 			this.initOverview();
 		}
 

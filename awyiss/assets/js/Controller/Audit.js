@@ -10,7 +10,7 @@ export default class AuditController {
 	eventHandler = window.eventHandler;
 
 	constructor() {
-		if (document.documentElement.classList.contains('HistoryAction')) {
+		if (document.body.classList.contains('HistoryAction')) {
 			const historyTables = new HistoryTables();
 			// Enable the url-change feature
 			historyTables.enableUrlChange();

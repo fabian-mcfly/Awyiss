@@ -8,7 +8,7 @@ export default class MenuEntriesController {
 	eventHandler = window.eventHandler;
 
 	constructor() {
-		if (document.documentElement.classList.contains('OverviewAction')) {
+		if (document.body.classList.contains('OverviewAction')) {
 			this.initOverview();
 		}
 	}

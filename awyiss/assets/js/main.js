@@ -32,7 +32,7 @@ import TranslatableTexts from 'TranslatableTexts';
  * @returns {Promise<void>}
  */
 export async function loadControllerClass(controllerClass) {
-	const isGenericPage = document.documentElement.classList.contains('IsGenericPage');
+	const isGenericPage = document.body.classList.contains('IsGenericPage');
 
 	try {
 		// Dynamically import the controller class
@@ -408,7 +408,7 @@ export async function initMainOnReady() {
 	loadTextEditor(editor);
 
 	// Check if the controller class exists
-	const controllerClass = Array.from(document.documentElement.classList).find(cls => cls.endsWith('Controller'));
+	const controllerClass = Array.from(document.body.classList).find(cls => cls.endsWith('Controller'));
 	if (controllerClass) {
 		await loadControllerClass(controllerClass);
 	}
@@ -452,7 +452,7 @@ export function initMainOnLoad() {
 	window.mediaProgressChecker = new MediaProgressChecker();
 
 	// Check if the controller class exists
-	const controllerClass = Array.from(document.documentElement.classList).find(cls => cls.endsWith('Controller'));
+	const controllerClass = Array.from(document.body.classList).find(cls => cls.endsWith('Controller'));
 	const controllerClassVariable = controllerClass.charAt(0).toLowerCase() + controllerClass.slice(1);
 	// Call the initOnLoad method of the controller class, if it exists
 	// noinspection JSUnresolvedReference
@@ -461,7 +461,7 @@ export function initMainOnLoad() {
 		window[controllerClassVariable].initOnLoad();
 	}
 	else {
-		const isGenericPage = document.documentElement.classList.contains('IsGenericPage');
+		const isGenericPage = document.body.classList.contains('IsGenericPage');
 		if (isGenericPage) {
 			const controllerClassVariable = 'pagesController';
 			// Call the initOnLoad method of the controller class, if it exists
