@@ -1,5 +1,5 @@
 # PageRoles translations of Awyiss CMS
-# Copyright 2024 Awyiss <EMAIL@ADDRESS>
+# Copyright 2025 Awyiss / 2F Media <awyiss@2f.media>
 #
 msgid ""
 msgstr ""
