@@ -320,6 +320,7 @@ return [
 			'session.gc_divisor' => 1000,
 			'session.gc_maxlifetime' => 86400, //Time in seconds!
 			'session.gc_probability' => 1,
+			'session.save_path' => (defined('TMP') ? TMP : sys_get_temp_dir() . DIRECTORY_SEPARATOR) . 'sessions',
 		],
 		'timeout' => 1440, //Time in minutes!
 	],
