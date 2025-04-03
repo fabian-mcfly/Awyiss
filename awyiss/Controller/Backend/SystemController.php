@@ -131,7 +131,7 @@ class SystemController extends Controller {
 
 			if (!$lo_runningJob) {
 				$lo_runningJob = $lo_queue->createJob('Queue.Execute', [
-					'command' => 'bin' . DS . 'cake cache clear_all && bin' . DS . 'cake media clear_cache',
+					'command' => 'bin' . DS . 'cake cache clear_all && bin' . DS . 'cake media clear_cache && bin' . DS . 'cake twig clear_cache',
 					'escape' => false,
 					'log' => true,
 				], [
