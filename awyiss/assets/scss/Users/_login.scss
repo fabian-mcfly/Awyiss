@@ -1,13 +1,13 @@
 .UsersController {
 	&.LoginAction {
-		height:100%;
-
-		body {
-			display:flex;
-			min-height:100%;
-			padding-top:0;
-			align-content:center;
+		html:has(&) {
+			height:100dvh;
 		}
+
+		display:flex;
+		min-height:100%;
+		padding-top:0;
+		align-content:center;
 
 		#LoginMask {
 			display:flex;
