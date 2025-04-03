@@ -46,5 +46,9 @@
 		</div>
 	{% endblock %}
 
+	{% block lockDialog %}
+		{{ element('lock_dialog', {entity: datatable}) }}
+	{% endblock %}
+
 	{{ FormHelper.end() }}
 </div>

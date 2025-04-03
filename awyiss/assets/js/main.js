@@ -10,6 +10,7 @@ import EventHandler from 'EventHandler';
 import FieldsetManager from 'FieldsetManager';
 import FooterReveal from 'FooterReveal';
 import FormLeaveConfirmation from 'FormLeaveConfirmation';
+import FormLock from 'FormLock';
 import FormUpdater from 'FormUpdater';
 import IdentifierAutofill from 'IdentifierAutofill';
 import InputListManager from 'InputListManager';
@@ -321,6 +322,12 @@ export async function initMainOnReady() {
 	 * @type {FormLeaveConfirmation}
 	 */
 	window.formLeaveConfirmation = new FormLeaveConfirmation();
+
+	/**
+	 * @global
+	 * @type {FormLock}
+	 */
+	window.formLock = new FormLock();
 
 	/**
 	 * @global

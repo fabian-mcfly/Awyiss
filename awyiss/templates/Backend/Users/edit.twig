@@ -47,5 +47,9 @@
 		</div>
 	{% endblock %}
 
+	{% block lockDialog %}
+		{{ element('lock_dialog', {entity: user}) }}
+	{% endblock %}
+
 	{{ FormHelper.end() }}
 </div>

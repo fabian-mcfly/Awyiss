@@ -31,6 +31,7 @@ use Psr\Http\Message\UriInterface;
  * @property \Authentication\Controller\Component\AuthenticationComponent $Authentication
  * @property \Awyiss\Controller\Component\AuthorizationComponent $Authorization
  * @property \Awyiss\Controller\Component\CategoriesComponent $Categories
+ * @property \Awyiss\Controller\Component\LockComponent $Lock
  * @property \Awyiss\Controller\Component\PaginateComponent $Paginate
  * @property \Awyiss\Controller\Component\SearchComponent $Search
  * @property \Awyiss\Controller\Component\SystemOrderComponent $SystemOrder
@@ -64,6 +65,11 @@ abstract class BackendController extends AppController {
 	 * @var array Settings for the EventTriggerComponent
 	 */
 	protected array $eventTrigger = [];
+	/**
+	 * @see \Awyiss\Controller\Component\LockComponent
+	 * @var array Settings for the LockComponent
+	 */
+	protected array $lock = [];
 	/**
 	 * @see initializeOverviewWhere()
 	 * @var array Settings used in initializeOverviewWhere()
@@ -166,6 +172,8 @@ abstract class BackendController extends AppController {
 
 			if ($this->defaultTable) {
 				$this->loadComponent('Categories', $this->categories);
+
+				$this->loadComponent('Lock', $this->lock);
 
 				$this->loadComponent('Search', $this->search);
 
@@ -270,6 +278,80 @@ abstract class BackendController extends AppController {
 	 * @return void
 	 */
 	protected function initializeOverviewWhere(): void {
+	}
+
+
+	/**
+	 * @return void
+	 * @throws \Exception
+	 */
+	public function requestLock(): void {
+		$this->Authorization->ensure('update');
+
+		$lo_lock = false;
+		if ($this->request->is('post')) {
+			$lo_lock = $this->Lock->createLock((int)$this->request->getData('id'));
+		}
+
+		$this->viewBuilder()
+			->setClassName('Json')
+			->setOption('serialize', ['data', 'status']);
+
+		$la_data = [];
+		if ($lo_lock) {
+			$ls_controller = Inflector::underscore($this->getName());
+
+			$lo_lockedUntil = $lo_lock->createdOn->modify('+' . $this->Lock->getConfig('timeout') . ' seconds');
+
+			$ls_timezone = LocaleMiddleware::getLanguage(Awyiss::REALM_BACKEND)->timezone;
+
+			$lo_entity = $this->fetchTable($this->defaultTable)->get($lo_lock->foreignKey);
+
+			$la_data = [
+				'referenceDate' => ($lo_entity->changedOn ?? $lo_entity->createdOn)->format('Y-m-d H:i:s'),
+				'createdOn' => $lo_lock->createdOn->format('Y-m-d H:i:s'),
+				'lockedUntil' => $lo_lockedUntil,
+				'isOwnLock' => $this->Lock->isOwnLock($lo_lock),
+				'lockWarningMessage' => __df($ls_controller, 'locks', 'lock_warning', $lo_lockedUntil->nice($ls_timezone)),
+				'lockTimedOutMessage' => __df($ls_controller, 'locks', 'lock_warning_timed_out'),
+				'lockedMessage' => __df($ls_controller, 'locks', 'locked_message', $lo_lockedUntil->nice($ls_timezone), $lo_lock->createdByUser?->username ?? __d('audit', 'user_system')),
+			];
+
+			$this->response = $this->response->withStatus(200);
+		}
+		else {
+			$this->response = $this->response->withStatus(500);
+		}
+
+		// Set the response data
+		$this->set([
+			'data' => $la_data,
+			'status' => $lo_lock ? 'success' : 'error',
+		]);
+	}
+
+
+	/**
+	 * @return void
+	 * @throws \Exception
+	 */
+	public function releaseLock(): void {
+		$this->Authorization->ensure('update');
+
+		$lo_lock = false;
+		if ($this->request->is('post')) {
+			$lo_lock = $this->Lock->releaseLock((int)$this->request->getData('id'), $this->request->getData('created_on'));
+		}
+
+		$this->viewBuilder()
+			->setClassName('Json')
+			->setOption('serialize', ['data', 'status']);
+
+		// Set the response data
+		$this->set([
+			'data' => [],
+			'status' => $lo_lock === true ? 'success' : 'error',
+		]);
 	}
 
 

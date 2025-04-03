@@ -1,0 +1,48 @@
+{#
+@var _lock array|null
+@var _view \Awyiss\View\BackendView
+@var AssetHelper \Awyiss\View\Helper\AssetHelper
+@var AttributesHelper \Awyiss\View\Helper\AttributesHelper
+@var AuthorizationHelper \Awyiss\View\Helper\AuthorizationHelper
+@var CategoriesHelper \Awyiss\View\Helper\CategoriesHelper
+@var FlashHelper \Awyiss\View\Helper\FlashHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+@var HtmlHelper \Cake\View\Helper\HtmlHelper
+@var LocaleHelper \Awyiss\View\Helper\LocaleHelper
+@var MediaHelper \Awyiss\View\Helper\MediaHelper
+@var PaginatorHelper \Awyiss\View\Helper\PaginatorHelper
+@var SystemOrderHelper \Awyiss\View\Helper\SystemOrderHelper
+@var TimeHelper \Cake\View\Helper\TimeHelper
+@var UrlHelper \Awyiss\View\Helper\UrlHelper
+#}
+
+{% set controller = (fetch('controllerName') ?: _view.getRequest().getParam('controller'))|underscore -%}
+
+{% if _lock %}
+	<div class="LockDialog"
+		data-entity-id="{{ entity.id ?? _lock.entityId }}"
+		data-reference-date="{{ (entity.changedOn ?? entity.createdOn).format('Y-m-d H:i:s') }}"
+		data-created-on="{{ _lock.lock.createdOn|date('Y-m-d H:i:s') }}"
+		data-controller="{{ (controller ?? _lock.controller)|slug }}"
+		data-minutes-singular="{{ __d('locks', 'lock_warning_minutes_singular')|escape }}"
+		data-minutes-plural="{{ __d('locks', 'lock_warning_minutes_plural')|escape }}"
+		>
+		<div class="LockWarningMessage">
+			<div class="Message">{{ __df(controller|underscore, 'locks', 'lock_warning', TimeHelper.nice(_lock.lockedUntil))|raw }}</div>
+
+			<p><button class="Button Button-RequestLock">{{ __df(controller, 'locks', 'button_request_extension') }}</button></p>
+		</div>
+
+		<div class="LockTimedOutMessage">
+			<div class="Message">{{ __df(controller|underscore, 'locks', 'lock_warning_timed_out')|raw }}</div>
+
+			<p><button class="Button Button-RequestLock">{{ __df(controller, 'locks', 'button_request_renewal') }}</button></p>
+		</div>
+
+		<div class="LockedMessage">
+			<div class="Message">{{ __df(controller|underscore, 'locks', 'locked_message', TimeHelper.nice(_lock.lockedUntil), _lock.lock.createdByUser.username ?? __d('audit', 'user_system'))|raw }}</div>
+
+			<p><button class="Button Button-RequestLock">{{ __df(controller, 'locks', 'button_request_lock') }}</button></p>
+		</div>
+	</div>
+{% endif %}

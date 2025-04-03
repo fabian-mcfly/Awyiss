@@ -40,5 +40,9 @@
 		</div>
 	{% endblock %}
 
+	{% block lockDialog %}
+		{{ element('lock_dialog', {entity: media}) }}
+	{% endblock %}
+
 	{{ FormHelper.end() }}
 </div>

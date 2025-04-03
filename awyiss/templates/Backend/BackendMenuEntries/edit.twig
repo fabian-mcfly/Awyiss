@@ -49,5 +49,9 @@
 		</div>
 	{% endblock %}
 
+	{% block lockDialog %}
+		{{ element('lock_dialog', {entity: backendMenuEntry}) }}
+	{% endblock %}
+
 	{{ FormHelper.end() }}
 </div>

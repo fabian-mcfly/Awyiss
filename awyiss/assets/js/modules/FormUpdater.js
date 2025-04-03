@@ -141,6 +141,10 @@ export default class FormUpdater {
 	 * @param {HTMLFormElement} form - The form to send the request from.
 	 */
 	sendRequest(form) {
+		if (form.dataset.locked === 'true') {
+			return false;
+		}
+
 		const formData = new FormData(form);
 		// append "reload_form" key with value "1"
 		formData.append('reload_form', '1');

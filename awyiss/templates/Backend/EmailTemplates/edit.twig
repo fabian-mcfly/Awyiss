@@ -60,5 +60,9 @@
 		</div>
 	{% endblock %}
 
+	{% block lockDialog %}
+		{{ element('lock_dialog', {entity: emailTemplate}) }}
+	{% endblock %}
+
 	{{ FormHelper.end() }}
 </div>

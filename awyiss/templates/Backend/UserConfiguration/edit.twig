@@ -49,6 +49,10 @@
 		</div>
 	{% endblock %}
 
+	{% block lockDialog %}
+		{{ element('lock_dialog', {entity: configuration}) }}
+	{% endblock %}
+
 	{{ FormHelper.end() -}}
 </div>
 

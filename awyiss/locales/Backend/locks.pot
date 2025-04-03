@@ -1,0 +1,42 @@
+# Locks translations of Awyiss CMS
+# Copyright 2024 Awyiss <EMAIL@ADDRESS>
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 0.1.0\n"
+"POT-Creation-Date: 2025-04-03 14:01+0000\n"
+"PO-Revision-Date: 2025-04-03 14:01+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+msgid "locked_message"
+msgstr "<h4>Attention!</h4>"
+ "<p>Editing this entry is currently locked by another user ({1}).<br>"
+ "This lock will be automatically removed in <strong class=\"Minutes\"></strong> ({0}).</p>"
+
+msgid "lock_warning"
+msgstr "<h4>Attention!</h4>"
+ "<p>Editing this entry is currently locked for other users.<br>"
+ "This lock will be automatically removed in <strong class=\"Minutes\"></strong> ({0}).</p>"
+
+msgid "lock_warning_minutes_singular"
+msgstr "less than a minute"
+
+msgid "lock_warning_minutes_plural"
+msgstr "{0} minutes"
+
+msgid "lock_warning_timed_out"
+msgstr "<h4>Editing aborted!</h4>"
+ "<p>The maximum editing time has expired.<br>"
+ "Saving your changes is no longer possible.</p>"
+
+msgid "button_request_lock"
+msgstr "Request release"
+
+msgid "button_request_extension"
+msgstr "Extend lock"
+
+msgid "button_request_renewal"
+msgstr "Renew lock"

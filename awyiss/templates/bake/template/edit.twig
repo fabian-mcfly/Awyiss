@@ -47,5 +47,9 @@
 		</div>
 	{% endblock %}
 
+	{% block lockDialog %}
+		{{ element('lock_dialog', {entity: {% endverbatim %}{{ singularVar }}{% verbatim %}}) }}
+	{% endblock %}
+
 	{{ FormHelper.end() }}{% endverbatim %}
 </div>

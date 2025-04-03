@@ -60,9 +60,7 @@
 
 %FrontendEditorForm {
 	&:has(.EditFrontendEditor) {
-		body {
-			padding-block:0;
-		}
+		padding-block:0;
 
 		#Content {
 			height:100dvh;

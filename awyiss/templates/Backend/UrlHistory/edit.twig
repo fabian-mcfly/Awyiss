@@ -58,5 +58,9 @@
 		</div>
 	{% endblock %}
 
+	{% block lockDialog %}
+		{{ element('lock_dialog', {entity: urlHistory}) }}
+	{% endblock %}
+
 	{{ FormHelper.end() }}
 </div>

@@ -67,8 +67,18 @@ class FormHelper extends BaseFormHelper {
 
 	/**
 	 * @inheritDoc
+	 * @noinspection PhpVariableNamingConventionInspection
 	 */
 	public function create(mixed $context = null, array $options = []): string {
+		// Check if the form is locked
+		$la_lockData = $options['lock'] ?? $this->getView()->get('_lock');
+
+		unset($options['lock']);
+		if ($la_lockData) {
+			$options['data-locked-until'] = $la_lockData['lockedUntil']->format('c');
+			$options['data-locked'] = $la_lockData['isOwnLock'] ? 'false' : 'true';
+		}
+
 		$ls_form = parent::create($context, $options);
 
 		$lo_context = $this->context();
@@ -88,6 +98,11 @@ class FormHelper extends BaseFormHelper {
 			}
 
 			$this->languages[ $lo_language->shortcode ] = $lo_language;
+		}
+
+		// Check if the form is locked
+		if ($la_lockData && !$la_lockData['isOwnLock']) {
+			return str_replace(' action="', ' data-action="', $ls_form);
 		}
 
 		return $ls_form;

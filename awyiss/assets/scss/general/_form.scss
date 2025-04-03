@@ -2,6 +2,15 @@
 	margin-bottom:var(--lineHeightMain);
 
 	form {
+		&[data-locked="true"] {
+			pointer-events:none;
+
+			.ButtonArea,
+			.FormInput {
+				opacity:.25;
+			}
+		}
+
 		&.FetchInProgress {
 			pointer-events:none;
 

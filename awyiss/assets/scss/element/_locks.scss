@@ -1,0 +1,134 @@
+.LockDialog {
+	width:fit-content;
+	max-width:860px;
+	margin:auto;
+	border:1px solid var(--colorWarning);
+	border-radius:5px;
+	backdrop-filter:blur(20px);
+	background-color:color-mix(in srgb, var(--colorWarning), transparent 75%);
+	box-shadow:0 0 20px color-mix(in srgb, var(--colorWarning), transparent 75%);
+	padding:20px;
+	position:fixed;
+	right:40px;
+	bottom:40px;
+	left:40px;
+	z-index:1235;
+	pointer-events:initial;
+	opacity:0;
+	visibility:hidden;
+	transition:opacity .3s ease-in-out, visibility 0s linear .3s;
+
+	&.Visible {
+		opacity:inherit;
+		visibility:inherit;
+		transition-delay:0s;
+	}
+
+	&[data-status="owned"] {
+		.LockWarningMessage {
+			display:grid;
+		}
+	}
+
+	&[data-status="lockTimedOut"] {
+		.LockTimedOutMessage {
+			display:grid;
+		}
+	}
+
+	&[data-status="locked"] {
+		.LockedMessage {
+			display:grid;
+		}
+	}
+
+	.LockWarningMessage,
+	.LockTimedOutMessage,
+	.LockedMessage {
+		display:none;
+		font-size:16px;
+		line-height:1.4;
+		gap:40px;
+		grid-template-columns:auto 220px;
+		align-items:end;
+	}
+
+	.LockedMessage {
+		.Message {
+			max-width:500px;
+		}
+	}
+
+	h4 {
+		margin-bottom:calc(var(--lineHeightMain) * .5);
+		grid-column:1 / -1;
+	}
+
+	p {
+		text-wrap:balance;
+	}
+
+	.Button-RequestLock {
+		width:100%;
+		padding-inline:0;
+
+		&.FetchInProgress {
+			pointer-events:none;
+
+			.Loading {
+				opacity:1;
+			}
+		}
+
+		&::after {
+			@extend %LineAwesomeIcon;
+			content:'\f3c1';
+			display:inline-block;
+			width:28px;
+			height:28px;
+			aspect-ratio:1;
+			margin-left:10px;
+			border-radius:50%;
+			border:2px solid;
+			font-size:18px;
+			line-height:24px;
+			vertical-align:0;
+
+			transform:translateY(0);
+
+			html.Scale-Small & {
+				margin-block:-1px !important;
+				transform:translateY(1px);
+			}
+		}
+
+		.Loading {
+			background-color:var(--colorMedium);
+			position:absolute;
+			inset:0;
+			z-index:2;
+			opacity:0;
+			transition:opacity .3s ease-in-out;
+			pointer-events:none;
+
+			&::after {
+				content:'';
+				width:30px;
+				height:30px;
+				margin:auto;
+				border-radius:50%;
+				border:3px solid var(--colorBright);
+				border-top-color:transparent;
+				position:absolute;
+				inset:0;
+				animation:spin 1s linear infinite;
+
+				@keyframes spin {
+					to {
+						transform:rotate(360deg);
+					}
+				}
+			}
+		}
+	}
+}

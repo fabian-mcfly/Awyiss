@@ -1,0 +1,42 @@
+# Locks translations of Awyiss CMS
+# Copyright 2024 Awyiss <EMAIL@ADDRESS>
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 0.1.0\n"
+"POT-Creation-Date: 2025-04-03 14:01+0000\n"
+"PO-Revision-Date: 2025-04-03 14:01+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+msgid "locked_message"
+msgstr "<h4>Achtung!</h4>"
+	"<p>Die Bearbeitung dieses Eintrags ist zur Zeit durch einen anderen Benutzer ({1}) für Sie gesperrt.<br>"
+	"Diese Sperre wird in <strong class=\"Minutes\"></strong> automatisch entfernt ({0}).</p>"
+
+msgid "lock_warning"
+msgstr "<h4>Achtung!</h4>"
+	"<p>Die Bearbeitung dieses Eintrags ist zur Zeit für andere Benutzer gesperrt.<br>"
+	"Diese Sperre wird in <strong class=\"Minutes\"></strong> automatisch entfernt ({0}).</p>"
+
+msgid "lock_warning_minutes_singular"
+msgstr "weniger als einer Minute"
+
+msgid "lock_warning_minutes_plural"
+msgstr "{0} Minuten"
+
+msgid "lock_warning_timed_out"
+msgstr "<h4>Bearbeitung abgebrochen!</h4>"
+	"<p>Die maximale Bearbeitungszeit ist abgelaufen.<br>"
+	"Das Speichern der vorgenommen Änderungen ist nicht mehr möglich.</p>"
+
+msgid "button_request_lock"
+msgstr "Freigabe anfordern"
+
+msgid "button_request_extension"
+msgstr "Sperre verlängern"
+
+msgid "button_request_renewal"
+msgstr "Sperre erneuern"
