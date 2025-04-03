@@ -33,7 +33,9 @@ export default class SystemController {
 
 		this.clearCacheButtons.forEach(function (clearCacheButton) {
 			// Disable the button
-			clearCacheButton.appendChild(document.createElement('div')).className = 'Loading';
+			if (!clearCacheButton.querySelector('.Loading')) {
+				clearCacheButton.appendChild(document.createElement('div')).className = 'Loading';
+			}
 			clearCacheButton.classList.add('FetchInProgress');
 
 			// Reset width and height of the button since disabled buttons have no pointer events
