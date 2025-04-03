@@ -118,6 +118,13 @@ $routes->scope('/', function (RouteBuilder $routeBuilder): void {
 	)->setExtensions(['xml']);
 
 	$routeBuilder->connect(
+		'/_third-party-consent',
+		['prefix' => 'Frontend', 'controller' => 'ThirdPartyConsents', 'action' => 'track'],
+	)->setMethods([
+		'POST',
+	]);
+
+	$routeBuilder->connect(
 		'/{lang}/_form/*',
 		['prefix' => 'Frontend', 'controller' => 'Form', 'action' => 'antiSpam'],
 		['_name' => Awyiss::REALM_FRONTEND . 'FormAntiSpamPost']

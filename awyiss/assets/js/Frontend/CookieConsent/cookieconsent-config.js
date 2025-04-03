@@ -22,6 +22,26 @@
 		return json;
 	}
 
+	const logConsent = () => {
+		// Retrieve all the fields
+		const cookie = CookieConsent.getCookie();
+		const preferences = CookieConsent.getUserPreferences();
+		const userConsent = {
+			consentId: cookie.consentId,
+			acceptType: preferences.acceptType,
+			acceptedCategories: preferences.acceptedCategories,
+			rejectedCategories: preferences.rejectedCategories
+		};
+
+		fetch(`${baseUrl}_third-party-consent`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(userConsent)
+		});
+	}
+
 	const defaultConfig = {
 		guiOptions: {
 			consentModal: {
@@ -47,6 +67,13 @@
 				'fr': async() => { return languageResolver('fr') },
 				'it': async() => { return languageResolver('it') },
 			}
+		},
+		onFirstConsent: () => {
+			logConsent();
+		},
+
+		onChange: () => {
+			logConsent();
 		}
 	};
 
