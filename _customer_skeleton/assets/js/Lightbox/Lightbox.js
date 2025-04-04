@@ -96,6 +96,11 @@ export default class Lightbox {
 	 * @type {object}
 	 */
 	settings = {};
+	/**
+	 * The element that opened the lightbox.
+	 * @type {HTMLElement}
+	 */
+	sourceElement = null;
 
 	/**
 	 * @param {object} settings
@@ -143,6 +148,7 @@ export default class Lightbox {
 					});
 				}
 
+				this.sourceElement = element;
 				this.init(element, settings, group);
 			});
 		});
@@ -180,6 +186,10 @@ export default class Lightbox {
 		this.open();
 
 		this.showItem(this.settings.index);
+
+		setTimeout(function() {
+			this.domNodes.buttons.close.focus();
+		}.bind(this), 500);
 	}
 
 	/**
@@ -325,12 +335,12 @@ export default class Lightbox {
 
 		this.domNodes.buttons = this.createElement('div', {class: 'Lightbox-Buttons'}, this.domNodes.lightbox);
 		// Create the buttons to close and zoom in/out
-		this.domNodes.buttons.close = this.createElement('div', {class: 'Lightbox-Close'}, this.domNodes.buttons);
+		this.domNodes.buttons.close = this.createElement('button', {class: 'Lightbox-Close'}, this.domNodes.buttons);
 
-		this.domNodes.buttons.zoomIn = this.createElement('div', {class: 'Lightbox-Zoom Lightbox-Zoom-In Disabled'}, this.domNodes.buttons);
+		this.domNodes.buttons.zoomIn = this.createElement('button', {class: 'Lightbox-Zoom Lightbox-Zoom-In Disabled'}, this.domNodes.buttons);
 		this.domNodes.buttons.zoomIn.addEventListener('click', () => this.panzoom?.zoomIn());
 
-		this.domNodes.buttons.zoomOut = this.createElement('div', {class: 'Lightbox-Zoom Lightbox-Zoom-Out Disabled'}, this.domNodes.buttons);
+		this.domNodes.buttons.zoomOut = this.createElement('button', {class: 'Lightbox-Zoom Lightbox-Zoom-Out Disabled'}, this.domNodes.buttons);
 		this.domNodes.buttons.zoomOut.addEventListener('click', () => this.panzoom?.zoomOut());
 
 		this.domNodes.loader = this.createElement('div', {class: 'Lightbox-Loader'}, this.domNodes.lightbox);
@@ -433,6 +443,8 @@ export default class Lightbox {
 
 		this.panzoom?.destroy();
 		this.panzoom = null;
+
+		this.sourceElement.focus();
 
 		// Dispatch a custom event to allow for customizing the lightbox
 		const afterEvent = new CustomEvent('afterLightboxClose', {detail: this});
