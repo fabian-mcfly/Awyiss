@@ -408,3 +408,6 @@ msgstr "Enum erstellen"
 
 msgid "detect_available_commands"
 msgstr "Verfügbare Befehle erkennen"
+
+msgid "jump_to_content"
+msgstr "Zum Inhalt springen"

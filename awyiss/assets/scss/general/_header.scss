@@ -1,3 +1,23 @@
+#JumpToContent {
+	padding:10px;
+	border-radius:5px;
+	background-color:var(--colorDark);
+	color:var(--colorBright);
+	font-weight:700;
+	position:absolute;
+	top:-999px;
+	left:-999px;
+	z-index:12345;
+
+	&:focus-visible {
+		box-shadow:0 0 10px var(--colorSuccess);
+		outline:2px solid var(--colorSuccess);
+		outline-offset:2px;
+		top:10px;
+		left:10px;
+	}
+}
+
 #Header {
 	--backgroundColorMenu:var(--colorDark);
 	--colorBorder:transparent;

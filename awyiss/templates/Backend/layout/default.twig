@@ -71,6 +71,12 @@
 		{%- if isGenericDatatable %} IsGenericDatatable{%- endif -%}
 	">
 		{% block body %}
+			{% block jumpToContent %}
+				<a href="{{ UrlHelper.build({controller: 'dashboard', action: 'overview'}) }}#Content" id="JumpToContent">
+					{{ __d('system', 'jump_to_content') }}
+				</a>
+			{% endblock %}
+
 			{% block header %}
 				<header id="Header">
 					{% block title %}

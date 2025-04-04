@@ -1,3 +1,20 @@
+#JumpToContent {
+	padding:10px;
+	border-radius:5px;
+	background-color:var(--colorText);
+	color:var(--colorBright);
+	font-weight:700;
+	position:absolute;
+	top:-999px;
+	left:-999px;
+	z-index:12345;
+
+	&:focus-visible {
+		top:20px;
+		left:20px;
+	}
+}
+
 #HeaderArea {
 	--borderRadius:5px;
 

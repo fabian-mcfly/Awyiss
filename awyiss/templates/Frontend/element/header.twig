@@ -24,6 +24,11 @@
 {% endif %}
 
 {% block header %}
+	{% block jumpToContent %}
+		<a href="#ContentArea" id="JumpToContent">
+			{{ __('jump_to_content') }}
+		</a>
+	{% endblock %}
 	{% block mainMenuTrigger %}
 		<input type="checkbox" id="MainMenuTrigger">
 	{% endblock %}

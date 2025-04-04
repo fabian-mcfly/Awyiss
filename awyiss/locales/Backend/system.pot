@@ -408,3 +408,6 @@ msgstr "Create Enum"
 
 msgid "detect_available_commands"
 msgstr "Detect available commands"
+
+msgid "jump_to_content"
+msgstr "Jump to content"

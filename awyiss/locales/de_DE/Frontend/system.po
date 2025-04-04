@@ -40,3 +40,6 @@ msgstr "Inaktive Elemente markieren"
 
 msgid "preview_mode_disable"
 msgstr "Deaktivieren"
+
+msgid "jump_to_content"
+msgstr "Zum Inhalt springen"
