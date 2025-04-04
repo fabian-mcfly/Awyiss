@@ -323,14 +323,6 @@ export default class Overlay {
 			const form = event.detail.form.parentElement;
 
 			if (form.classList.contains('Media')) {
-				// After loading the media form, initialize the color picker
-				// noinspection JSUnusedLocalSymbols
-				const coloris = new Coloris({
-					element: form.querySelector('input[name="average_color"]'),
-					theme: 'large',
-					themeMode: document.documentElement.classList.contains('🌚') ? 'dark' : 'light',
-				});
-
 				const cropAreaElement = document.querySelector('.CropArea');
 				if (cropAreaElement) {
 					if (!Overlay.cropArea) {

@@ -43,13 +43,6 @@ export default class MediaController {
 	 * @returns {void}
 	 */
 	initForm() {
-		new Coloris({
-			defaultColor: '#00000000',
-			element: document.querySelector('input[name="average_color"]'),
-			theme: 'large',
-			themeMode: document.documentElement.classList.contains('🌚') ? 'dark' : 'light',
-		});
-
 		const cropArea = document.querySelector('.CropArea');
 		if (cropArea) {
 			new Crop(cropArea);

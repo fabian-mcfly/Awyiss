@@ -60,6 +60,7 @@
 
 					{% block formControlAverageColor %}
 						{{ FormHelper.control('average_color', {
+							type: 'color',
 							val: (media.averageColor and media.averageColor[:1] != '#' ? '#' : '') ~ media.averageColor,
 						}) }}
 					{% endblock %}
