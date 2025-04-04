@@ -78,6 +78,14 @@ class SystemConfigOptions extends AbstractConfigOptions {
 					type: ConfigOptionType::Bool,
 				),
 				new ConfigOption(
+					defaultValue: null,
+					identifier: 'highlightColor',
+					localizable: false,
+					nullable: null,
+					personalizable: true,
+					type: ConfigOptionType::Color,
+				),
+				new ConfigOption(
 					defaultValue: 'plain',
 					identifier: 'editor',
 					localizable: false,

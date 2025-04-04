@@ -101,6 +101,9 @@ msgstr "Dark Mode"
 msgid "identifier_interface_disctraction_free_mode"
 msgstr "Distraction Free Mode"
 
+msgid "identifier_interface_highlight_color"
+msgstr "Highlight Color"
+
 msgid "identifier_interface_editor"
 msgstr "Rich Text Editor"
 

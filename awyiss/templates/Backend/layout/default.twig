@@ -56,6 +56,13 @@
 				{{ AssetHelper.createImportMap() }}
 				{{ AssetHelper.getTags() }}
 			{% endblock %}
+			{% if config.Awyiss.System.Backend.interface.highlightColor %}
+				<style nonce="{{ AssetHelper.getStyleNonce() }}">
+					:root {
+						--colorSuccess:{{ config.Awyiss.System.Backend.interface.highlightColor }};
+					}
+				</style>
+			{% endif %}
 		{% endblock %}
 	</head>
 	<body class="
