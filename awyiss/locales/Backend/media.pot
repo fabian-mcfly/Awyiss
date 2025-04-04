@@ -190,3 +190,12 @@ msgstr "When folder name changes"
 
 msgid "create_historical_paths_always"
 msgstr "Always"
+
+msgid "upload_overwrite_existing_files"
+msgstr "Overwrite existing files"
+
+msgid "upload_overwrite_existing_files_active"
+msgstr "Existing files will be overwritten"
+
+msgid "upload_overwrite_existing_files_inactive"
+msgstr "Existing files will not be overwritten. A new file name will be created instead."

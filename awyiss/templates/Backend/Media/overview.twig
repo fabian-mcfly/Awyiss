@@ -1,6 +1,7 @@
 {#
 @var media \Awyiss\Model\Entity\Media[]
 @var mediaFolders array<string, \Awyiss\Model\Entity\MediaFolder[]>
+@var isAjax bool
 @var _view \Awyiss\View\BackendView
 #}
 
@@ -14,48 +15,69 @@
 	{% block buttonArea %}
 		<div class="ButtonArea">
 			{% block categoriesFilterOverview %}
-				{{ CategoriesHelper.filter('mediaFolder', null, {groupBy: 'languageShortcode', groupLabels: LocaleHelper.languagesForRealm(languageRealm)|merge({general: 'Global'})}) }}
+				{% if isAjax == false %}
+					{{ CategoriesHelper.filter('mediaFolder', null, {groupBy: 'languageShortcode', groupLabels: LocaleHelper.languagesForRealm(languageRealm)|merge({general: 'Global'})}) }}
+				{% endif %}
+			{% endblock %}
+
+			{% block overviewButtonAutoOverwritePreferenceInput %}
+				<input id="UploadAutoOverwrite" type="checkbox" name="upload_auto_overwrite" value="1" {% if localConfig.upload.autoOverwrite %}checked{% endif %}>
 			{% endblock %}
 
 			{% block overviewButtons %}
-				{% if paginated == false %}
-					{% block overviewButtonSaveSystemOrder %}
-						<button class="Button Button-SaveSystemOrder" disabled>{{ __d('system', 'save_system_order') }}</button>
-					{% endblock %}
+				{% if isAjax == false %}
+					{% if paginated == false %}
+						{% block overviewButtonSaveSystemOrder %}
+							<button class="Button Button-SaveSystemOrder" disabled>{{ __d('system', 'save_system_order') }}</button>
+						{% endblock %}
 
-					{% block overviewButtonDelete %}
-						{% if AuthorizationHelper.isAccessible('delete') %}
-							<button
-								class="Button Button-Delete"
-								disabled
-								data-confirm-title="{{ __('confirm_delete_selected_title') }}"
-								data-confirm-yes="{{ __('confirm_delete_yes') }}"
-								data-confirm-yes-class="Button-Delete"
-								data-confirm-no="{{ __('confirm_delete_no') }}"
-								data-confirm="{{ __('confirm_delete_selected', mediaItem.id) }}">{{ __('delete') }}</button>
+						{% block overviewButtonDelete %}
+							{% if AuthorizationHelper.isAccessible('delete') %}
+								<button
+									class="Button Button-Delete"
+									disabled
+									data-confirm-title="{{ __('confirm_delete_selected_title') }}"
+									data-confirm-yes="{{ __('confirm_delete_yes') }}"
+									data-confirm-yes-class="Button-Delete"
+									data-confirm-no="{{ __('confirm_delete_no') }}"
+									data-confirm="{{ __('confirm_delete_selected', mediaItem.id) }}">{{ __('delete') }}</button>
+							{% endif %}
+						{% endblock %}
+					{% endif %}
+
+					{% block overviewButtonAdd %}
+						{% set autoOverwritePreferenceLabel %}
+							<label for="UploadAutoOverwrite"
+								data-title-active="{{ __d('media', 'upload_overwrite_existing_files_active') }}"
+								data-title-inactive="{{ __d('media', 'upload_overwrite_existing_files_inactive') }}"
+								title="{{ __d('media', 'upload_overwrite_existing_files_' ~ (localConfig.upload.autoOverwrite ? 'active' : 'inactive')) }}">
+								{{ __d('media', 'upload_overwrite_existing_files') }}
+							</label>
+						{% endset %}
+
+						{% if AuthorizationHelper.isAccessible('create') %}
+							{{ HtmlHelper.link(__('create') ~ autoOverwritePreferenceLabel, {action: 'add'}, {
+								class : 'Button Button-Add',
+								escape: false,
+								title: __('create'),
+							}) }}
 						{% endif %}
 					{% endblock %}
+
+					{% block listControlOverviewListPaginated %}
+						{{ HtmlHelper.link(__('list_paginated'), {action: 'userConfiguration', identifier: 'paginate.enabled', value: 'true'}, {
+							class: 'Button Button-Small Button-ListView Button-ListView-PaginatedList',
+							disabled: localConfig.paginate.enabled == true
+						}) }}
+					{% endblock %}
+
+					{% block listControlOverviewListNested %}
+						{{ HtmlHelper.link(__('list_nested'), {action: 'userConfiguration', identifier: 'paginate.enabled', value: 'false'}, {
+							class: 'Button Button-Small Button-ListView Button-ListView-NestedList',
+							disabled: localConfig.paginate.enabled == false
+						}) }}
+					{% endblock %}
 				{% endif %}
-
-				{% block overviewButtonAdd %}
-					{% if AuthorizationHelper.isAccessible('create') %}
-						{{ HtmlHelper.link(__('create'), {action: 'add'}, {class : 'Button Button-Add'}) }}
-					{% endif %}
-				{% endblock %}
-
-				{% block listControlOverviewListPaginated %}
-					{{ HtmlHelper.link(__('list_paginated'), {action: 'userConfiguration', identifier: 'paginate.enabled', value: 'true'}, {
-						class: 'Button Button-Small Button-ListView Button-ListView-PaginatedList',
-						disabled: localConfig.paginate.enabled == true
-					}) }}
-				{% endblock %}
-
-				{% block listControlOverviewListNested %}
-					{{ HtmlHelper.link(__('list_nested'), {action: 'userConfiguration', identifier: 'paginate.enabled', value: 'false'}, {
-						class: 'Button Button-Small Button-ListView Button-ListView-NestedList',
-						disabled: localConfig.paginate.enabled == false
-					}) }}
-				{% endblock %}
 			{% endblock %}
 		</div>
 	{% endblock %}
@@ -99,16 +121,26 @@
 		{% if isAjax %}
 			<div id="MediaOverlay" class="Visible">
 				<div class="ButtonArea">
+					{{ block('overviewButtonAutoOverwritePreferenceInput') }}
+
 					<button class="Button Button-Success Button-UseFiles" disabled>{{ __d('media', 'use_files') }}</button>
 
-					<button class="Button Button-SaveSystemOrder" disabled>{{ __d('system', 'save_system_order') }}</button>
+					{{ block('overviewButtonSaveSystemOrder') }}
 
 					{% if AuthorizationHelper.isAccessible('create') %}
 						<div class="Button Button-Add">
 							{{ __('create') }}
+
 							<form action="{{ _view.url({action: 'add'}) }}" method="post" enctype="multipart/form-data" class="Form Form-Upload">
 								<input type="file" name="files[]" multiple>
 							</form>
+
+							<label for="UploadAutoOverwrite"
+								data-title-active="{{ __d('media', 'upload_overwrite_existing_files_active') }}"
+								data-title-inactive="{{ __d('media', 'upload_overwrite_existing_files_inactive') }}"
+								title="{{ __d('media', 'upload_overwrite_existing_files_' ~ (localConfig.upload.autoOverwrite ? 'active' : 'inactive')) }}">
+								{{ __d('media', 'upload_overwrite_existing_files') }}
+							</label>
 						</div>
 					{% endif %}
 
@@ -202,4 +234,8 @@
 			{{ block('overviewButtons') }}
 		</div>
 	{% endblock %}
+
+	{% if isAjax == false %}
+		<div id="UploadQueue-DropZone">{{ __('dropzone_drop_to_upload') }}</div>
+	{% endif %}
 </div>

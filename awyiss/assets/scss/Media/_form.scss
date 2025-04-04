@@ -6,6 +6,58 @@
 	}
 }
 
+.Media.Overview,
+#MediaOverlay {
+	#UploadAutoOverwrite {
+		display:none;
+
+		html:has(&:checked) {
+			label[for="UploadAutoOverwrite"] {
+				background-color:var(--colorWarning);
+				color:var(--colorDark);
+			}
+		}
+	}
+
+	.Button-Add {
+		&:has(label[for="UploadAutoOverwrite"]) {
+			padding-right:60px;
+		}
+
+		label[for="UploadAutoOverwrite"] {
+			aspect-ratio:auto;
+			position:absolute;
+			top:5px;
+			right:5px;
+			bottom:5px;
+			z-index:2;
+		}
+	}
+
+	label[for="UploadAutoOverwrite"] {
+		display:inline-flex;
+		width:40px;
+		aspect-ratio:1;
+		border-radius:5px;
+		background-color:var(--colorSuccess);
+		color:var(--colorBright);
+		font-size:0;
+		line-height:0;
+		order:1;
+		float:left;
+		align-items:center;
+		justify-content:center;
+		cursor:pointer;
+
+		&::before {
+			@extend %LineAwesomeIcon;
+
+			content:'\f477';
+			font-size:24px;
+		}
+	}
+}
+
 .Media.Form {
 	.Fieldset-Crop {
 		display:block;

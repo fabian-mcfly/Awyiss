@@ -76,6 +76,43 @@ export default class Overlay {
 		this.selectors.overlay = this;
 	}
 
+	bindAutoOverwriteChangeLabel() {
+		const autoOverwrite = this.element.querySelector('input[name="upload_auto_overwrite"]');
+		const label = this.element.querySelector('label[for="UploadAutoOverwrite"]');
+
+		if (!autoOverwrite || !label) {
+			return;
+		}
+
+		// If the autoOverwrite input is checked, set the label title to the active title
+		autoOverwrite.addEventListener('change', event => {
+			event.preventDefault();
+			event.stopPropagation();
+
+			const newValue = event.target.checked ? 'true' : 'false';
+
+			// Revert the checkbox state to the opposite of the new value
+			event.target.checked = newValue !== 'true';
+
+			// Send a fetch request to save the new value
+			fetch(`${baseUrl}backend/${languageShortcode}/media/user-configuration/identifier:upload.auto-overwrite/value:${newValue}/`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded',
+					'X-Requested-With': 'XMLHttpRequest',
+				},
+			})
+			.then(response => response.json())
+			.then(response => {
+				if (response.success) {
+					// Only now we can set the checkbox state to the new value
+					event.target.checked = newValue === 'true';
+					label.title = event.target.checked ? label.dataset.titleActive : label.dataset.titleInactive;
+				}
+			});
+		});
+	}
+
 	/**
 	 * Bind a click event to the close button.
 	 * When the close button is clicked, the overlay will be hidden.
@@ -156,6 +193,8 @@ export default class Overlay {
 		this.mediaList = this.element.querySelector('#Media-List');
 
 		this.bindCloseButton();
+
+		this.bindAutoOverwriteChangeLabel();
 
 		// Bind the click event to the folder list items
 		this.bindFolderListItemClick();

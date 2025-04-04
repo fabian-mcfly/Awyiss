@@ -331,6 +331,7 @@ button,
 			left:20px;
 		}
 
+		&:has(input:checked),
 		&-Active {
 			background-color:var(--colorSuccess);
 
@@ -341,6 +342,10 @@ button,
 				font-size:16px;
 				line-height:16px;
 			}
+		}
+
+		input {
+			display:none;
 		}
 	}
 

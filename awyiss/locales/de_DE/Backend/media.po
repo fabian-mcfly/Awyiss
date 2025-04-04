@@ -190,3 +190,12 @@ msgstr "Wenn Ordnername geändert wird"
 
 msgid "create_historical_paths_always"
 msgstr "Immer"
+
+msgid "upload_overwrite_existing_files"
+msgstr "Vorhandene Dateien überschreiben"
+
+msgid "upload_overwrite_existing_files_active"
+msgstr "Vorhandene Dateien werden überschrieben"
+
+msgid "upload_overwrite_existing_files_inactive"
+msgstr "Vorhandene Dateien werden nicht überschrieben. Stattdessen wird ein neuer Dateiname generiert"
