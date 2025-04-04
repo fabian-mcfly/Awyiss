@@ -9,6 +9,10 @@
 	{{ FormHelper.control('value', {label: __('input_type_bool_label'), type: 'checkbox'}) }}
 {% endblock %}
 
+{% block formControlTypeColor %}
+	{{ FormHelper.control('value', {type: 'color'}) }}
+{% endblock %}
+
 {% block formControlTypeEnum %}
 	{{ FormHelper.control('value', {options: configuration.configOption.values(true), type: 'select'}) }}
 {% endblock %}

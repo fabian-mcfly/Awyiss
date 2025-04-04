@@ -14,6 +14,7 @@ use TypeError;
  */
 enum ConfigOptionType {
 	case Bool;
+	case Color;
 	case Enum;
 	case Float;
 	case Integer;
@@ -46,6 +47,9 @@ enum ConfigOptionType {
 				 * and does not differentiate between the type here.
 				 */
 				return is_bool($value) || in_array($value, [1, 0, '1', '0'], true);
+
+			case self::Color:
+				return empty($value) || (is_string($value) && preg_match('/^#[0-9A-F]{6,8}$/i', $value) === 1);
 
 			case self::Float:
 				return is_float($value) || ($value === (float)$value);
@@ -95,6 +99,7 @@ enum ConfigOptionType {
 		 */
 		return match ($this) {
 			self::Bool => $value === 'false' ? false : boolval($value),
+			self::Color => !empty($value) ? preg_replace('/[^#0-9A-F]/i', '', $value) : null,
 			self::Float => floatval($value),
 			self::Integer => intval($value),
 			self::List, self::JsonArray, self::ValueCollection => json_decode($value ?? '', true),
