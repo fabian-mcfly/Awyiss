@@ -236,6 +236,13 @@ class AwyissExtension extends AbstractExtension {
 				return is_numeric($value);
 			}),
 
+			new TwigTest('pageRole', function ($value): bool {
+				/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $ls_pageRoleEnum */
+				$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
+
+				return $ls_pageRoleEnum::tryFromName($value) !== null;
+			}),
+
 			new TwigTest('string', function ($value): bool {
 				return is_string($value);
 			}),
