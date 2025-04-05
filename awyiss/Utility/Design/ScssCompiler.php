@@ -247,6 +247,15 @@ class ScssCompiler {
 		/** @noinspection PhpParamsInspection */
 		static::$compiler->addVariables(static::getColumnSystemVariables());
 
+		$ls_sourceRoot = '../';
+		$ls_subDir = trim(substr($ls_cssFolderPath, strlen($basePath)), DS);
+		if (str_contains($ls_subDir, DS)) {
+			$li_directories = substr_count($ls_subDir, DS);
+			for ($li_i = 0; $li_i < $li_directories; $li_i++) {
+				$ls_sourceRoot .= '../';
+			}
+		}
+
 		// Set the source map options if the CSS content is not returned.
 		if (!$returnCss) {
 			static::$compiler->setSourceMap(Compiler::SOURCE_MAP_FILE);
@@ -255,7 +264,7 @@ class ScssCompiler {
 				'sourceMapURL' => $ls_cssFilename . '.map',
 				'sourceMapFilename' => $ls_cssFilename, // Relative url path of .css file
 				'sourceMapBasepath' => $basePath, // Difference between file & url locations, removed from ALL source files in .map
-				'sourceRoot' => '../',
+				'sourceRoot' => $ls_sourceRoot,
 			]);
 		}
 
