@@ -59,12 +59,6 @@ class UsersConfigOptions extends AbstractConfigOptions {
 					type: ConfigOptionType::Integer,
 				),
 			],
-			new ConfigOption(
-				defaultValue: true,
-				identifier: 'search',
-				localizable: false,
-				type: ConfigOptionType::Bool,
-			),
 		]);
 	}
 }
