@@ -11,12 +11,14 @@ use Awyiss\Configuration\ConfigOptions\Trait\TableFieldsTrait;
 use Awyiss\Configuration\ConfigOptions\Trait\TableNamesTrait;
 use Awyiss\Configuration\ConfigOptionType;
 use Awyiss\Utility\Inflector;
+use Cake\ORM\Locator\LocatorAwareTrait;
 
 
 /**
  * Provides all configuration options for generic pages
  */
 class GenericPagesConfigOptions extends AbstractGenericConfigOptions {
+	use LocatorAwareTrait;
 	use TableFieldsTrait;
 	use TableNamesTrait;
 
@@ -216,9 +218,30 @@ class GenericPagesConfigOptions extends AbstractGenericConfigOptions {
 					identifier: 'forcedRootPageId',
 					localizable: true,
 					nullable: true,
-					type: ConfigOptionType::Integer
+					type: ConfigOptionType::ListKey,
+					values: $this->getPages(...),
 				),
 			],
 		]);
+	}
+
+
+	/**
+	 * Returns a list of all pages
+	 */
+	protected function getPages(?string $languageShortcode): array {
+		$lo_pagesTable = $this->fetchTable('Pages');
+		$lo_pages = $lo_pagesTable->find('forCurrentLanguage', languageShortcode: $languageShortcode)->find('threaded')->all();
+		$lo_pages = $lo_pages->listNested();
+
+		/** @var \Awyiss\Model\Entity\Page $lo_page */
+		foreach ($lo_pages as $lo_page) {
+			$lo_page->setVirtual(['level']);
+			//Add the current depth as a level-property to the entity
+			/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+			$lo_page->level = $lo_pages->getDepth();
+		}
+
+		return $lo_pages->printer('label', 'id', '- ')->toArray();
 	}
 }
