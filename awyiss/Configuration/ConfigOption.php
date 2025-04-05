@@ -5,6 +5,7 @@ namespace Awyiss\Configuration;
 
 
 use Awyiss\Utility\Inflector;
+use BackedEnum;
 use RuntimeException;
 
 
@@ -474,7 +475,7 @@ class ConfigOption {
 			$this->getType() === ConfigOptionType::ValueCollection
 		) {
 			$lx_values = $this->getValues(true, $languageShortcode);
-			if (!$lx_values) {
+			if (!is_array($lx_values) && $lx_values instanceof BackedEnum) {
 				throw new RuntimeException(sprintf('Cannot typecast option `%s` with type `%s` without a list of values', $this->identifier, $this->getType()->name));
 			}
 		}
