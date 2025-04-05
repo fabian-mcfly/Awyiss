@@ -142,3 +142,18 @@ msgstr "Titel-Tag"
 
 msgid "subtitle_tag"
 msgstr "Untertitel-Tag"
+
+msgid "configuration_category_backend_column_system"
+msgstr "Spalten-System"
+
+msgid "configuration_identifier_backend_column_system_class_name"
+msgstr "Klassenname"
+
+msgid "configuration_identifier_backend_column_system_max_columns"
+msgstr "Maximale Spaltenanzahl"
+
+msgid "configuration_category_backend_overview_column_view"
+msgstr "Spaltenansicht"
+
+msgid "configuration_identifier_backend_overview_column_view_enabled"
+msgstr "Aktiviert"

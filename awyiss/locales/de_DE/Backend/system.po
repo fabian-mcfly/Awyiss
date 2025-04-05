@@ -411,3 +411,51 @@ msgstr "Verfügbare Befehle erkennen"
 
 msgid "jump_to_content"
 msgstr "Zum Inhalt springen"
+
+msgid "configuration_category_backend_interface"
+msgstr "Oberfläche"
+
+msgid "configuration_identifier_backend_interface_dark_mode"
+msgstr "Nachtmodus"
+
+msgid "configuration_identifier_backend_interface_disctraction_free_mode"
+msgstr "Ablenkungsfreier Modus"
+
+msgid "configuration_identifier_backend_interface_highlight_color"
+msgstr "Akzentfarbe"
+
+msgid "configuration_identifier_backend_interface_editor"
+msgstr "Texteditor"
+
+msgid "configuration_identifier_backend_interface_scale"
+msgstr "Skalierung"
+
+msgid "configuration_identifier_backend_html_cleaning"
+msgstr "HTML-Säuberung"
+
+msgid "configuration_identifier_backend_lock_timeout"
+msgstr "Bearbeitungs-Sperrzeit"
+
+msgid "configuration_identifier_backend_timezone"
+msgstr "Zeitzone"
+
+msgid "configuration_category_backend_meta"
+msgstr "Meta"
+
+msgid "configuration_identifier_backend_meta_title_appendix"
+msgstr "Appendix"
+
+msgid "configuration_identifier_backend_meta_title_separator"
+msgstr "Separator"
+
+msgid "configuration_identifier_frontend_editor"
+msgstr "Frontend-Editor"
+
+msgid "configuration_category_frontend_meta"
+msgstr "Meta"
+
+msgid "configuration_identifier_frontend_meta_title_appendix"
+msgstr "Appendix"
+
+msgid "configuration_identifier_frontend_meta_title_separator"
+msgstr "Separator"

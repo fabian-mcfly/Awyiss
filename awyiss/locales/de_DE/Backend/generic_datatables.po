@@ -58,4 +58,3 @@ msgstr "Der Eintrag wurde erfolgreich gelöscht"
 
 msgid "delete_failed"
 msgstr "Der Eintrag konnte nicht gelöscht werden"
-

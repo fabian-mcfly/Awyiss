@@ -184,8 +184,11 @@ msgstr "Alle Regeln müssen zutreffen"
 msgid "conditional_recipients_strategy_match_last"
 msgstr "Letzter Treffer"
 
-msgid "configuration_category_protection"
+msgid "configuration_category_frontend_protection"
 msgstr "Schutz"
+
+msgid "configuration_identifier_frontend_protection_methods"
+msgstr "Methoden"
 
 msgid "protection"
 msgstr "Schutz"

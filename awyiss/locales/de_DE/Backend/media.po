@@ -199,3 +199,15 @@ msgstr "Vorhandene Dateien werden überschrieben"
 
 msgid "upload_overwrite_existing_files_inactive"
 msgstr "Vorhandene Dateien werden nicht überschrieben. Stattdessen wird ein neuer Dateiname generiert"
+
+msgid "configuration_category_backend_upload"
+msgstr "Upload"
+
+msgid "configuration_identifier_frontend_default_breakpoints"
+msgstr "Standard Media-Breakpoints"
+
+msgid "configuration_identifier_backend_create_historical_paths"
+msgstr "Weiterleitung erstellen"
+
+msgid "configuration_identifier_backend_upload_auto_overwrite"
+msgstr "Existierende Dateien überschreiben"

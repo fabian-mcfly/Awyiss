@@ -142,3 +142,18 @@ msgstr "Title-Tag"
 
 msgid "subtitle_tag"
 msgstr "Subtitle-Tag"
+
+msgid "configuration_category_backend_column_system"
+msgstr "Column System"
+
+msgid "configuration_identifier_backend_column_system_class_name"
+msgstr "Class Name"
+
+msgid "configuration_identifier_backend_column_system_max_columns"
+msgstr "Maximum Columns"
+
+msgid "configuration_category_backend_overview_column_view"
+msgstr "Column View"
+
+msgid "configuration_identifier_backend_overview_column_view_enabled"
+msgstr "Enabled"

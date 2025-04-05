@@ -76,3 +76,6 @@ msgstr "Datenbank­abbild der Seitenrollen erstellen"
 
 msgid "create_page_role_model"
 msgstr "Model-Klasse einer Seitenrollen ({0}) erstellen"
+
+msgid "configuration_identifier_backend_auto_create_menu_entries"
+msgstr "Automatisch Menüeinträge erstellen"

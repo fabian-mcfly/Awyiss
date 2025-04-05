@@ -5,7 +5,14 @@
 				{% block listOverviewItemCategory %}
 					<li class="ListItem ListItem-Category">
 						<span class="Title">
-							{{ __df('user_configuration', 'configuration', 'category_' ~ identifier|underscore) }}
+							{% set i18nKey = 'configuration_category_backend_' ~ (parents ? parents|join('_') ~ '_' : '')|underscore ~ identifier|underscore %}
+							{% set title = __df(selectedScope, 'configuration', i18nKey) %}
+
+							{% if '::' in title and selectedScope is pageRole %}
+								{% set title = __d('generic_pages', i18nKey) %}
+							{% endif %}
+
+							{{ '::' in title ? identifier : title }}
 						</span>
 						{{ _self.recursiveConfigurationListing(configItem, level + 1, selectedScope, addUrl, parents|merge([identifier])) }}
 					</li>
@@ -43,8 +50,14 @@
 										{% if key == 0 %}
 											<span class="Label">{{ __('identifier') }}:</span>
 											{% set output = identifier|split('.')|slice(-1)|join()|variable %}
-											{% set translatedIdentifier = __df('user_configuration', 'configuration', 'identifier_' ~ (parents ? parents|join('_') ~ '_' : '') ~ output|underscore) %}
-											{% if '::' in translatedIdentifier  %}
+											{% set i18nKey = 'configuration_identifier_backend_' ~ (parents ? parents|join('_') ~ '_' : '')|underscore ~ output|underscore %}
+											{% set translatedIdentifier = __df(selectedScope, 'configuration', i18nKey) %}
+
+											{% if '::' in translatedIdentifier and selectedScope is pageRole %}
+												{% set translatedIdentifier = __d('generic_pages', i18nKey) %}
+											{% endif %}
+
+											{% if '::' in translatedIdentifier %}
 												{{ output }}
 											{% else %}
 												{{ translatedIdentifier }} <span class="UntranslatedIdentifier">({{ output }})</span>

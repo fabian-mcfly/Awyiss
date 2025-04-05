@@ -94,21 +94,3 @@ msgstr "Global"
 
 msgid "global_value"
 msgstr "Global"
-
-msgid "identifier_interface_dark_mode"
-msgstr "Dark Mode"
-
-msgid "identifier_interface_disctraction_free_mode"
-msgstr "Distraction Free Mode"
-
-msgid "identifier_interface_highlight_color"
-msgstr "Highlight Color"
-
-msgid "identifier_interface_editor"
-msgstr "Rich Text Editor"
-
-msgid "identifier_interface_scale"
-msgstr "Scaling"
-
-msgid "identifier_timezone"
-msgstr "Timezone"

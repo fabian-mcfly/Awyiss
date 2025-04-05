@@ -107,44 +107,86 @@ msgstr "Default"
 msgid "global_language"
 msgstr "Global"
 
-msgid "configuration_category_overview"
+msgid "configuration_category_backend_overview"
 msgstr "Overview"
 
-msgid "configuration_category_paginate"
+msgid "configuration_category_backend_paginate"
 msgstr "Pagination"
 
-msgid "configuration_category_column_system"
-msgstr "Column System"
-
-msgid "configuration_category_column_view"
-msgstr "Column View"
-
-msgid "configuration_category_interface"
-msgstr "Interface"
-
-msgid "configuration_category_publication_data"
+msgid "configuration_category_backend_publication_data"
 msgstr "Publication Data"
 
-msgid "configuration_category_categories"
+msgid "configuration_identifier_backend_publication_data_enabled"
+msgstr "Enabled"
+
+msgid "configuration_category_backend_categories"
 msgstr "Categories"
 
-msgid "configuration_category_contents"
+msgid "configuration_identifier_backend_categories_allow_aggregation"
+msgstr "Allow viewing aggregated categories"
+
+msgid "configuration_identifier_backend_categories_allow_unassigned"
+msgstr "Allow viewing unassigned categories"
+
+msgid "configuration_identifier_backend_categories_association_name"
+msgstr "Association Name"
+
+msgid "configuration_identifier_backend_categories_categories"
+msgstr "Categories"
+
+msgid "configuration_identifier_backend_categories_identifier"
+msgstr "Identifier"
+
+msgid "configuration_identifier_backend_categories_enabled"
+msgstr "Enabled"
+
+msgid "configuration_identifier_backend_categories_include_parent_categories"
+msgstr "Include Parent Categories"
+
+msgid "configuration_identifier_backend_categories_threaded"
+msgstr "Threaded"
+
+msgid "configuration_identifier_backend_categories_use_datasource"
+msgstr "Use datasource"
+
+msgid "configuration_category_backend_contents"
 msgstr "Contents"
 
-msgid "configuration_category_media"
-msgstr "Media"
+msgid "configuration_identifier_backend_contents_enabled"
+msgstr "Enabled"
 
-msgid "configuration_category_upload"
-msgstr "Upload"
-
-msgid "configuration_category_media_folders"
+msgid "configuration_category_backend_media_folders"
 msgstr "Media Folders"
 
-msgid "configuration_category_meta"
-msgstr "Meta"
+msgid "configuration_identifier_backend_media_folders_auto_create"
+msgstr "Create automatically"
 
-msgid "configuration_category_nest"
+msgid "configuration_category_backend_nest"
 msgstr "Nesting"
 
-msgid "configuration_category_system_order"
+msgid "configuration_identifier_backend_nest_enabled"
+msgstr "Enabled"
+
+msgid "configuration_category_backend_system_order"
 msgstr "System Order"
+
+msgid "configuration_identifier_backend_system_order_direction"
+msgstr "Direction"
+
+msgid "configuration_identifier_backend_system_order_field"
+msgstr "Field"
+
+msgid "configuration_identifier_backend_overview_displayed_fields"
+msgstr "Displayed Fields"
+
+msgid "configuration_identifier_backend_paginate_enabled"
+msgstr "Enabled"
+
+msgid "configuration_identifier_backend_paginate_limit"
+msgstr "Items per page"
+
+msgid "configuration_identifier_backend_split_into_languages"
+msgstr "Split into languages"
+
+msgid "configuration_identifier_backend_translatable"
+msgstr "Translatable"

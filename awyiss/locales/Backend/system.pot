@@ -411,3 +411,51 @@ msgstr "Detect available commands"
 
 msgid "jump_to_content"
 msgstr "Jump to content"
+
+msgid "configuration_category_backend_interface"
+msgstr "Interface"
+
+msgid "configuration_identifier_backend_interface_dark_mode"
+msgstr "Dark Mode"
+
+msgid "configuration_identifier_backend_interface_disctraction_free_mode"
+msgstr "Distraction Free Mode"
+
+msgid "configuration_identifier_backend_interface_highlight_color"
+msgstr "Highlight Color"
+
+msgid "configuration_identifier_backend_interface_editor"
+msgstr "Rich Text Editor"
+
+msgid "configuration_identifier_backend_interface_scale"
+msgstr "Scaling"
+
+msgid "configuration_identifier_backend_html_cleaning"
+msgstr "HTML Cleaning"
+
+msgid "configuration_identifier_backend_lock_timeout"
+msgstr "Edit Lock Timeout"
+
+msgid "configuration_identifier_backend_timezone"
+msgstr "Timezone"
+
+msgid "configuration_category_backend_meta"
+msgstr "Meta"
+
+msgid "configuration_identifier_backend_meta_title_appendix"
+msgstr "Appendix"
+
+msgid "configuration_identifier_backend_meta_title_separator"
+msgstr "Separator"
+
+msgid "configuration_identifier_frontend_editor"
+msgstr "Frontend-Editor"
+
+msgid "configuration_category_frontend_meta"
+msgstr "Meta"
+
+msgid "configuration_identifier_frontend_meta_title_appendix"
+msgstr "Appendix"
+
+msgid "configuration_identifier_frontend_meta_title_separator"
+msgstr "Separator"

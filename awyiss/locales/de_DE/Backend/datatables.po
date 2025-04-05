@@ -70,3 +70,6 @@ msgstr "Daten anzeigen"
 
 msgid "drop_table"
 msgstr "Datenbank­tabelle löschen"
+
+msgid "configuration_identifier_backend_auto_create_menu_entries"
+msgstr "Automatisch Menüeinträge erstellen"

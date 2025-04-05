@@ -109,3 +109,9 @@ msgstr "Title-Tag"
 
 msgid "subtitle_tag"
 msgstr "Subtitle-Tag"
+
+msgid "configuration_category_backend_overview_column_view"
+msgstr "Column View"
+
+msgid "configuration_identifier_backend_overview_column_view_enabled"
+msgstr "Enabled"

@@ -6,8 +6,10 @@ namespace Awyiss\Controller\Backend;
 
 use Awyiss\Annotation\NoDirectAccess;
 use Awyiss\Awyiss;
+use Awyiss\Configuration\ConfigOption;
 use Awyiss\Configuration\ConfigOptionsProvider;
 use Awyiss\Controller\BackendController as Controller;
+use Awyiss\Core\App;
 use Awyiss\Model\Entity\Configuration;
 use Awyiss\Routing\Router;
 use Awyiss\Utility\Inflector;
@@ -109,21 +111,7 @@ class ConfigurationController extends Controller {
 			 */
 			foreach ($la_configOptions as $ls_realm => $lo_configOptions) {
 				$la_configOptions[ $ls_realm ] = Hash::merge([], $lo_configOptions->toArray(), $la_configuration[ $ls_realm ] ?? []);
-
-				uksort($la_configOptions[ $ls_realm ], function ($a, $b) use ($ls_selectedScope) {
-					$ls_titleA = __df($ls_selectedScope, 'configuration', 'configuration_category_' . Inflector::underscore($a));
-					$ls_titleB = __df($ls_selectedScope, 'configuration', 'configuration_category_' . Inflector::underscore($b));
-
-					if (str_contains($ls_titleA, '::')) {
-						$ls_titleA = $a;
-					}
-
-					if (str_contains($ls_titleB, '::')) {
-						$ls_titleB = $b;
-					}
-
-					return strcoll(mb_strtolower($ls_titleA), mb_strtolower($ls_titleB));
-				});
+				$la_configOptions[ $ls_realm ] = $this->sortConfigOptions($la_configOptions[ $ls_realm ], $ls_realm, $ls_selectedScope);
 			}
 		}
 
@@ -141,7 +129,6 @@ class ConfigurationController extends Controller {
 	 * Add method
 	 *
 	 * @return void
-	 * @throws \ReflectionException
 	 * @throws \Exception
 	 */
 	public function add(): void {
@@ -318,5 +305,109 @@ class ConfigurationController extends Controller {
 		}
 
 		$this->Categories->ensurePossibleCategory($configuration);
+	}
+
+
+	/**
+	 * @param array $configOptions
+	 * @param string $realm
+	 * @param string $selectedScope
+	 * @param string|null $parentCategories
+	 * @return array
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	protected function sortConfigOptions(
+		array $configOptions,
+		string $realm,
+		string $selectedScope,
+		?string $parentCategories = null
+	): array {
+		$ls_realm = Inflector::underscore($realm);
+
+		uksort($configOptions, function ($a, $b) use ($configOptions, $parentCategories, $ls_realm, $selectedScope) {
+			$ls_i18nKeyA = 'configuration_' . ($this->isCategory($configOptions[ $a ]) ? 'category' : 'identifier') . '_' . $ls_realm;
+			$ls_i18nKeyB = 'configuration_' . ($this->isCategory($configOptions[ $b ]) ? 'category' : 'identifier') . '_' . $ls_realm;
+
+			if ($parentCategories) {
+				$ls_i18nKeyA .= '_' . $parentCategories;
+				$ls_i18nKeyB .= '_' . $parentCategories;
+			}
+
+			$ls_i18nKeyA .= '_' . Inflector::underscore($a);
+			$ls_i18nKeyB .= '_' . Inflector::underscore($b);
+
+			$ls_titleA = __df($selectedScope, 'configuration', $ls_i18nKeyA);
+			$ls_titleB = __df($selectedScope, 'configuration', $ls_i18nKeyB);
+
+			if (str_contains($ls_titleA, '::')) {
+				if ($this->isPageRole($selectedScope)) {
+					$ls_titleA = __d('generic_pages', $ls_i18nKeyA);
+				}
+				else {
+					$ls_titleA = $a;
+				}
+			}
+
+			if (str_contains($ls_titleB, '::')) {
+				if ($this->isPageRole($selectedScope)) {
+					$ls_titleB = __d('generic_pages', $ls_i18nKeyB);
+				}
+				else {
+					$ls_titleB = $b;
+				}
+			}
+
+			return strcoll(mb_strtolower($ls_titleA), mb_strtolower($ls_titleB));
+		});
+
+		foreach ($configOptions as $key => $value) {
+			if (is_array($value) && $this->isCategory($value)) {
+				$ls_parentCategory = Inflector::underscore($key);
+				if ($parentCategories) {
+					$ls_parentCategory = $parentCategories . '_' . $ls_parentCategory;
+				}
+
+				$configOptions[ $key ] = $this->sortConfigOptions($value, $realm, $selectedScope, $ls_parentCategory);
+			}
+		}
+
+		return $configOptions;
+	}
+
+
+	/**
+	 * @param mixed $value
+	 * @return bool
+	 */
+	protected function isCategory(mixed $value): bool {
+		if ($value instanceof ConfigOption) {
+			return false;
+		}
+
+		if (is_array($value)) {
+			// If the array contains only instances of \Awyiss\Model\Entity\Configuration,
+			// then it is not a category
+			foreach ($value as $lx_configItem) {
+				if (!$lx_configItem instanceof Configuration) {
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		return false;
+	}
+
+
+	/**
+	 * @param string $selectedScope
+	 * @return bool
+	 */
+	protected function isPageRole(string $selectedScope): bool {
+		/** @var class-string<\Awyiss\Model\Enum\PageRoleEnumInterface> $ls_pageRoleEnum */
+		$ls_pageRoleEnum = App::className('PageRole', 'Model/Enum');
+
+		return $ls_pageRoleEnum::tryFromName($selectedScope) !== null;
 	}
 }

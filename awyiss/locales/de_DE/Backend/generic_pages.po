@@ -110,3 +110,9 @@ msgstr "Nur Seiten mit derselben Seitenrolle kopieren"
 
 msgid "copy_descendants_with_different_page_role_yes"
 msgstr "Seiten mit anderen Rollen ebenfalls kopieren"
+
+msgid "configuration_category_frontend_categories"
+msgstr "Kategorien"
+
+msgid "configuration_identifier_frontend_categories_root_page_id"
+msgstr "ID der forcierten Eltern-Seite"
