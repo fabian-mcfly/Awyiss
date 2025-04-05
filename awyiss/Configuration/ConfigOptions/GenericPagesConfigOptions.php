@@ -213,7 +213,7 @@ class GenericPagesConfigOptions extends AbstractGenericConfigOptions {
 				 */
 				new ConfigOption(
 					defaultValue: null,
-					identifier: 'rootPageId',
+					identifier: 'forcedRootPageId',
 					localizable: true,
 					nullable: true,
 					type: ConfigOptionType::Integer

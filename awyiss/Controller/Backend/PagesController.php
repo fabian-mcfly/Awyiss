@@ -50,7 +50,7 @@ class PagesController extends Controller {
 	/**
 	 * @var int|null Forced root page id when categories are disabled
 	 */
-	protected ?int $rootPageId = null;
+	protected ?int $forcedRootPageId = null;
 	/**
 	 * @var string|null Session identifier for the selected parent_id
 	 */
@@ -80,7 +80,7 @@ class PagesController extends Controller {
 		$this->selectedParentIdSessionIdentifier = Inflector::underscore($this->getName()) . '.' . ($this->request->getParam('lang') ?? 'global') . '.parent_id';
 
 		if (!($this->categories['enabled'] ?? false)) {
-			$this->rootPageId = Configure::read('Awyiss.' . $this->getName() . '.Frontend.categories.rootPageId');
+			$this->forcedRootPageId = Configure::read('Awyiss.' . $this->getName() . '.Frontend.categories.forcedRootPageId');
 		}
 	}
 
@@ -162,7 +162,7 @@ class PagesController extends Controller {
 		$lo_page = $this->Pages->newDefaultEntity([
 			'languageShortcode' => LocaleMiddleware::getLanguage()->shortcode,
 			'pageRoleId' => $this->getPageRole(),
-			'parentId' => $this->rootPageId ?? $lo_session->read($this->selectedParentIdSessionIdentifier),
+			'parentId' => $this->forcedRootPageId ?? $lo_session->read($this->selectedParentIdSessionIdentifier),
 		]);
 
 		if ($this->request->is('post')) {
@@ -489,7 +489,7 @@ class PagesController extends Controller {
 			$la_data['slug'] = $la_data['title'] ?? null;
 		}
 
-		if ($this->rootPageId) {
+		if ($this->forcedRootPageId) {
 			unset($la_data['parent_id']);
 		}
 
