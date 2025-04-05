@@ -14,7 +14,7 @@
 {% endblock %}
 
 {% block formControlTypeEnum %}
-	{{ FormHelper.control('value', {options: configuration.configOption.values(true), type: 'select'}) }}
+	{{ FormHelper.control('value', {options: configuration.configOption.values(true, configuration.languageShortcode), type: 'select'}) }}
 {% endblock %}
 
 {% block formControlTypeFloat %}
@@ -55,7 +55,7 @@
 {% endblock %}
 
 {% block formControlTypeListKey %}
-	{% set options = configuration.configOption.values(true) %}
+	{% set options = configuration.configOption.values(true, configuration.languageShortcode) %}
 	{{ FormHelper.control('value', {
 		options: options,
 		empty: '' not in options|keys,
@@ -82,7 +82,7 @@
 		{% set currentValue = (currentValue ?? [])|map(value => value|underscore) %}
 		<input type="hidden" name="value" value="">
 
-		{% for key, value in configuration.configOption.values(true) %}
+		{% for key, value in configuration.configOption.values(true, configuration.languageShortcode) %}
 			{{ FormHelper.control('value[]', {
 				checked: key in currentValue,
 				hiddenField: false,
