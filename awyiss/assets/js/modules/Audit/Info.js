@@ -113,8 +113,7 @@ export default class AuditInfo {
 
 		let scope = element.dataset.scope;
 		if (!scope) {
-			const baseHtmlTag = document.querySelector('html');
-			const controllerClass = Array.from(baseHtmlTag.classList).find(cls => cls.endsWith('Controller'));
+			const controllerClass = Array.from(document.body.classList).find(cls => cls.endsWith('Controller'));
 
 			scope = controllerClass.replace('Controller', '');
 			// Convert the scope to kebap-case
