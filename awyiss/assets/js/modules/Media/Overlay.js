@@ -632,7 +632,7 @@ export default class Overlay {
 			uploadData: {
 				media_folder_id: this.mediaList.dataset.mediaFolderId,
 			},
-			uploadPath: `/backend/${languageShortcode}/media/add/`
+			uploadPath: `${baseUrl}backend/${languageShortcode}/media/add/`
 		});
 	}
 

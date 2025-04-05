@@ -81,7 +81,7 @@ export default class MediaController {
 					uploadData: {
 						media_folder_id: mediaList.dataset.mediaFolderId,
 					},
-					uploadPath: `/backend/${languageShortcode}/media/add/paginate:false/`
+					uploadPath: `${baseUrl}backend/${languageShortcode}/media/add/paginate:false/`
 				});
 			}
 		}
@@ -101,7 +101,7 @@ export default class MediaController {
 				uploadData: {
 					media_folder_id: overviewTable.dataset.mediaFolderId,
 				},
-				uploadPath: `/backend/${languageShortcode}/media/add/paginate:true/`
+				uploadPath: `${baseUrl}backend/${languageShortcode}/media/add/paginate:true/`
 			});
 
 			window.eventHandler.add('uploadQueueProcessingStarted', () => {
