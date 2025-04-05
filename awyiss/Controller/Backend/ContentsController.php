@@ -598,6 +598,62 @@ class ContentsController extends Controller {
 
 
 	/**
+	 * @return void
+	 * @throws \Exception
+	 */
+	public function requestLock(): void {
+		$li_contentId = (int)$this->request->getData('id');
+
+		/** @var Content $lo_content */
+		$lo_content = $this->Contents->findById($li_contentId)->first();
+		if (!$lo_content) {
+			$this->viewBuilder()->setClassName('Json')->setOption('serialize', ['data', 'status']);
+
+			// Set the response data
+			$this->set([
+				'data' => [],
+				'status' => 'error',
+			]);
+
+			return;
+		}
+
+		$this->forPage($lo_content->pageId);
+
+		parent::requestLock();
+	}
+
+
+	/**
+	 * @return void
+	 * @throws \Exception
+	 */
+	public function releaseLock(): void {
+		$li_contentId = (int)$this->request->getData('id');
+
+		/** @var Content $lo_content */
+		$lo_content = $this->Contents->findById($li_contentId)->first();
+		if (!$lo_content) {
+			$this->viewBuilder()
+				->setClassName('Json')
+				->setOption('serialize', ['data', 'status']);
+
+			// Set the response data
+			$this->set([
+				'data' => [],
+				'status' => 'error',
+			]);
+
+			return;
+		}
+
+		$this->forPage($lo_content->pageId);
+
+		parent::releaseLock();
+	}
+
+
+	/**
 	 * @param array $requestData
 	 * @param \Awyiss\Model\Table $table
 	 * @return int
