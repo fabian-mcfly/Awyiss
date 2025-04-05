@@ -137,7 +137,7 @@ class HtmlCleaner {
 		static::combineConsecutiveWhitespace($lo_dom);
 
 		// Set the cleaned value back to the entity
-		$entity->set($field, static::getBody($lo_dom));
+		$entity->set($field, trim(static::getBody($lo_dom)) ?: null);
 	}
 
 
@@ -181,7 +181,7 @@ class HtmlCleaner {
 		static::removeLeadingAndTrailingEmptyTags($lo_dom);
 
 		// Set the cleaned value back to the entity
-		$entity->set($field, static::getBody($lo_dom));
+		$entity->set($field, trim(static::getBody($lo_dom)) ?: null);
 	}
 
 
@@ -240,8 +240,8 @@ class HtmlCleaner {
 				continue;
 			}
 
-			// Check if the content of the tag is empty or only contains whitespaces, `<br>`-tags or non-breaking spaces
-			if (preg_match('/^([\s\n\r\t]|\xC2\xA0)*$/', $ls_content)) {
+			// Check if the content of the tag is empty or only contains whitespaces or non-breaking spaces
+			if (preg_match('/^([\s\n\r\t]|\xC2\xA0|<img)*$/', $ls_content)) {
 				if (in_array($lo_tag->nodeName, ['ul', 'ol', 'dl'])) {
 					if ($lo_tag->nextSibling && $lo_tag->nextSibling->nodeName === '#text') {
 						$lo_tag->parentNode->removeChild($lo_tag->nextSibling);
@@ -470,11 +470,31 @@ class HtmlCleaner {
 				break;
 			}
 
+			// If the first tag is a hr, break
+			if ($lo_body->firstChild->nodeName === 'hr') {
+				break;
+			}
+
+			// If the first child has an img tag inside
+			if ($lo_body->firstChild->firstChild?->nodeName === 'img') {
+				break;
+			}
+
 			$lo_body->removeChild($lo_body->firstChild);
 		}
 
 		while ($lo_body->lastChild) {
 			if (!preg_match('/^([\s\n\r\t]|\xC2\xA0)*$/', $lo_body->lastChild->textContent)) {
+				break;
+			}
+
+			// If the last tag is a hr, break
+			if ($lo_body->lastChild->nodeName === 'hr') {
+				break;
+			}
+
+			// If the last child has an img tag inside
+			if ($lo_body->lastChild->lastChild?->nodeName === 'img') {
 				break;
 			}
 
