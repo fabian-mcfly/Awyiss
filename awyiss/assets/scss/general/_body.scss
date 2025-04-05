@@ -120,6 +120,10 @@ fieldset {
 	position:relative;
 	z-index:5;
 
+	&:has(.tox-tbtn--active) {
+		z-index:6;
+	}
+
 	html.Scale-Small & {
 		padding:30px 20px 0 20px;
 	}
