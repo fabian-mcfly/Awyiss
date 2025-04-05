@@ -206,6 +206,11 @@ class GenericPagesConfigOptions extends AbstractGenericConfigOptions {
 
 		$this->add(Awyiss::REALM_FRONTEND, [
 			'categories' => [
+				/**
+				 * This option should normally be in the backend realm,
+				 * but it is needed in the frontend realm to
+				 * use the correct languages
+				 */
 				new ConfigOption(
 					defaultValue: null,
 					identifier: 'rootPageId',
