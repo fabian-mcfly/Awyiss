@@ -1063,7 +1063,7 @@ class ContentsTable extends Table {
 		}
 
 		if ($column === 'duplicate_of') {
-			return $this->find('threaded')->all()->listNested()->printer('label', 'id', '- ')->toArray();
+			return $this->find('threaded')->find('mediaAssignments', useMediaEntity: true)->all()->listNested()->printer('label', 'id', '- ')->toArray();
 		}
 
 		if ($column === 'content_template_id') {

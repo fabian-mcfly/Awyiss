@@ -184,8 +184,14 @@ class SearchBehavior extends Behavior {
 				$lo_nestBehavior->getConfig('enabled') &&
 				$lo_nestBehavior->getConfig('parent.foreignKey') === $column
 			) {
+				$lo_query = $lo_table->find('all');
+
+				if ($lo_table->hasAssociation('MediaAssignments')) {
+					$lo_query->find('mediaAssignments', useMediaEntity: true);
+				}
+
 				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-				return $lo_nestBehavior->listNested($lo_table->find('all'))->printer('label', 'id', '- ')->toArray();
+				return $lo_nestBehavior->listNested($lo_query)->printer('label', 'id', '- ')->toArray();
 			}
 		}
 

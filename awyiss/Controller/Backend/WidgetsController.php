@@ -61,7 +61,7 @@ class WidgetsController extends Controller {
 	 */
 	#[NoDirectAccess]
 	public function getOverviewQuery(): ?SelectQuery {
-		$lo_query = $this->Widgets->find()->where($this->getOverviewWhere())->contain(['WidgetTemplates']);
+		$lo_query = $this->Widgets->find('mediaAssignments', useMediaEntity: true)->where($this->getOverviewWhere())->contain(['WidgetTemplates']);
 		$this->Search->filterQuery($lo_query);
 
 		return $lo_query;
@@ -79,7 +79,7 @@ class WidgetsController extends Controller {
 
 		$lo_query = $this->getOverviewQuery();
 
-		$lo_widgets = $lo_query->find('mediaAssignments', useMediaEntity: true)->formatResults(function (Collection $result): Collection {
+		$lo_widgets = $lo_query->formatResults(function (Collection $result): Collection {
 			/** @var \Awyiss\Model\Entity\Widget $lo_widget */
 			foreach ($result as $lo_widget) {
 				$lo_widget->class = $lo_widget->column['width']->getCssClass();

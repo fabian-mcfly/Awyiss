@@ -94,7 +94,7 @@ class ContentsController extends Controller {
 		 * because `nestedByContentArea()` works with a Query, not an array.
 		 * This could be changed, but I fail to see any benefits
 		 */
-		$lo_query = $this->Contents->find()->where($this->getOverviewWhere())->contain(['ContentTemplates']);
+		$lo_query = $this->Contents->find('mediaAssignments', useMediaEntity: true)->where($this->getOverviewWhere())->contain(['ContentTemplates']);
 		$this->Categories->filterQuery($lo_query, null, !$this->paginate['enabled']);
 		$this->Search->filterQuery($lo_query);
 
@@ -115,7 +115,7 @@ class ContentsController extends Controller {
 
 		$lo_query = $this->getOverviewQuery();
 
-		$lo_contents = $lo_query->find('mediaAssignments', useMediaEntity: true)->formatResults(function (Collection $result): Collection {
+		$lo_contents = $lo_query->formatResults(function (Collection $result): Collection {
 			/** @var \Awyiss\Model\Entity\Content $lo_content */
 			foreach ($result as $lo_content) {
 				$lo_content->class = $lo_content->column['width']->getCssClass();
