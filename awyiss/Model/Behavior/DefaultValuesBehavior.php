@@ -179,6 +179,7 @@ class DefaultValuesBehavior extends Behavior {
 			'fields' => array_keys($la_defaults),
 			'setter' => false,
 			'validate' => false,
+			'events' => false,
 		];
 
 		/** @var \Awyiss\Model\Table $lo_table */

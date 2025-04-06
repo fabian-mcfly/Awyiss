@@ -4,6 +4,7 @@
 namespace Awyiss\ORM;
 
 
+use ArrayObject;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\InvalidPropertyInterface;
 use Cake\ORM\Marshaller as BaseMarshaller;
@@ -27,6 +28,7 @@ class Marshaller extends BaseMarshaller {
 	 */
 	public function merge(EntityInterface $entity, array $data, array $options = []): EntityInterface {
 		[$la_data, $la_options] = $this->_prepareDataAndOptions($data, $options);
+		unset($la_options['events']);
 
 		$lb_isNew = $entity->isNew();
 		$la_keys = [];
@@ -69,7 +71,9 @@ class Marshaller extends BaseMarshaller {
 				}
 			}
 
-			$this->dispatchAfterMarshal($entity, $la_data, $la_options);
+			if (($options['events'] ?? true) === true) {
+				$this->dispatchAfterMarshal($entity, $la_data, $la_options);
+			}
 
 
 			return $entity;
@@ -86,7 +90,9 @@ class Marshaller extends BaseMarshaller {
 			}
 		}
 
-		$this->dispatchAfterMarshal($entity, $la_data, $la_options);
+		if (($options['events'] ?? true) === true) {
+			$this->dispatchAfterMarshal($entity, $la_data, $la_options);
+		}
 
 
 		return $entity;
@@ -123,5 +129,31 @@ class Marshaller extends BaseMarshaller {
 
 
 		return $la_properties;
+	}
+
+
+	/**
+	 * Re-implemented to skip the event,
+	 * if `$options['events']` is set to `false`.
+	 *
+	 * @inheritDoc
+	 * @noinspection PhpVariableNamingConventionInspection
+	 */
+	protected function _prepareDataAndOptions(array $data, array $options): array {
+		$options += ['validate' => true];
+
+		$tableName = $this->_table->getAlias();
+		if (isset($data[ $tableName ]) && is_array($data[ $tableName ])) {
+			$data += $data[ $tableName ];
+			unset($data[ $tableName ]);
+		}
+
+		if (($options['events'] ?? true) === true) {
+			$data = new ArrayObject($data);
+			$options = new ArrayObject($options);
+			$this->_table->dispatchEvent('Model.beforeMarshal', compact('data', 'options'));
+		}
+
+		return [(array)$data, (array)$options];
 	}
 }

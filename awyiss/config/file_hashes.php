@@ -27,6 +27,7 @@ return [
 		'\\Cake\\ORM\\Behavior\\Translate\\EavStrategy::unsetEmptyFields' => 'e691d16e9cd135d812323191876ffc12',
 		'\\Cake\\ORM\\Behavior\\Translate\\TranslateStrategyTrait::afterSave' => 'e11ec21099f5acabdb34957dadf1f020',
 		'\\Cake\\ORM\\Locator\\TableLocator::_getClassName' => '9528b583e6de7a781d58fb1600f49caa',
+		'\\Cake\\ORM\\Marshaller::_prepareDataAndOptions' => '6b1fd24201269a60e796a0c61bca4327',
 		'\\Cake\\ORM\\Marshaller::merge' => 'eab8b10f7ba9d9b54f67f770cce3dc81',
 		'\\Cake\\ORM\\Rule\\ExistsIn::__invoke' => '0cf78a1be72902fed7b127962404ef68',
 		'\\Cake\\ORM\\RulesChecker::isUnique' => 'fbe472a58e08e9b7d9a025bad0667b1b',
