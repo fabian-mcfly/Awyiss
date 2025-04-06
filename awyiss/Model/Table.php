@@ -1083,7 +1083,7 @@ class Table extends BaseTable {
 			return;
 		}
 
-		if (Configure::read('Awyiss.System.Backend.htmlCleaning') !== 'none') {
+		if (Configure::read('Awyiss.System.Backend.htmlCleaning', 'none') !== 'none') {
 			/** @var \Awyiss\Utility\Content\HtmlCleaner $ls_className */
 			$ls_className = App::className('HtmlCleaner', 'Utility/Content');
 			$ls_className::clean($entity, Configure::read('Awyiss.System.Backend.htmlCleaning'));
