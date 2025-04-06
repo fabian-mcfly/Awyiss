@@ -41,7 +41,7 @@ class MediaElementsController extends Controller {
 	 */
 	protected function initializeOverviewWhere(): void {
 		$this->overviewWhere = [
-			'id >' => 0,
+			'internal' => 0,
 		];
 
 		parent::initializeOverviewWhere();

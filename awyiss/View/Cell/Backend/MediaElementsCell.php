@@ -165,7 +165,7 @@ class MediaElementsCell extends Cell {
 	protected function getElements(): Collection {
 		if (!isset(static::$elements)) {
 			static::$elements = $this->fetchTable('MediaElements')->find('active')
-			->where(['id >' => 0])
+			->where(['internal' => 0])
 			->contain([
 				'MediaElementSelectors' => [
 					'MediaSelectors',

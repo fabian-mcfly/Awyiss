@@ -15,7 +15,7 @@ class MediaAssignmentsCustomSeed extends AbstractSeed {
 		$la_data = [
 			[
 				'id' => 1,
-				'media_element_id' => 1,
+				'media_element_id' => 2,
 				'media_element_selector_identifier' => 'media',
 				'media_id' => 4,
 				'media_folder_id' => null,
@@ -26,7 +26,7 @@ class MediaAssignmentsCustomSeed extends AbstractSeed {
 			],
 			[
 				'id' => 2,
-				'media_element_id' => 1,
+				'media_element_id' => 2,
 				'media_element_selector_identifier' => 'lightbox_media',
 				'media_id' => 3,
 				'media_folder_id' => null,
@@ -37,7 +37,7 @@ class MediaAssignmentsCustomSeed extends AbstractSeed {
 			],
 			[
 				'id' => 3,
-				'media_element_id' => 1,
+				'media_element_id' => 2,
 				'media_element_selector_identifier' => 'media',
 				'media_id' => 2,
 				'media_folder_id' => null,
@@ -48,7 +48,7 @@ class MediaAssignmentsCustomSeed extends AbstractSeed {
 			],
 			[
 				'id' => 4,
-				'media_element_id' => 1,
+				'media_element_id' => 2,
 				'media_element_selector_identifier' => 'media',
 				'media_id' => 2,
 				'media_folder_id' => null,
@@ -59,7 +59,7 @@ class MediaAssignmentsCustomSeed extends AbstractSeed {
 			],
 			[
 				'id' => 5,
-				'media_element_id' => 1,
+				'media_element_id' => 2,
 				'media_element_selector_identifier' => 'media',
 				'media_id' => 2,
 				'media_folder_id' => null,
@@ -70,7 +70,7 @@ class MediaAssignmentsCustomSeed extends AbstractSeed {
 			],
 			[
 				'id' => 6,
-				'media_element_id' => 1,
+				'media_element_id' => 2,
 				'media_element_selector_identifier' => 'media',
 				'media_id' => 4,
 				'media_folder_id' => null,
@@ -81,7 +81,7 @@ class MediaAssignmentsCustomSeed extends AbstractSeed {
 			],
 			[
 				'id' => 7,
-				'media_element_id' => 1,
+				'media_element_id' => 2,
 				'media_element_selector_identifier' => 'lightbox_media',
 				'media_id' => 3,
 				'media_folder_id' => null,
@@ -92,7 +92,7 @@ class MediaAssignmentsCustomSeed extends AbstractSeed {
 			],
 			[
 				'id' => 8,
-				'media_element_id' => 1,
+				'media_element_id' => 2,
 				'media_element_selector_identifier' => 'media',
 				'media_id' => 2,
 				'media_folder_id' => null,
@@ -103,7 +103,7 @@ class MediaAssignmentsCustomSeed extends AbstractSeed {
 			],
 			[
 				'id' => 9,
-				'media_element_id' => 1,
+				'media_element_id' => 2,
 				'media_element_selector_identifier' => 'media',
 				'media_id' => 2,
 				'media_folder_id' => null,
@@ -114,7 +114,7 @@ class MediaAssignmentsCustomSeed extends AbstractSeed {
 			],
 			[
 				'id' => 10,
-				'media_element_id' => 1,
+				'media_element_id' => 2,
 				'media_element_selector_identifier' => 'media',
 				'media_id' => 2,
 				'media_folder_id' => null,
@@ -125,7 +125,7 @@ class MediaAssignmentsCustomSeed extends AbstractSeed {
 			],
 			[
 				'id' => 11,
-				'media_element_id' => 0,
+				'media_element_id' => 1,
 				'media_element_selector_identifier' => 'hidden_folder',
 				'media_id' => null,
 				'media_folder_id' => 1,

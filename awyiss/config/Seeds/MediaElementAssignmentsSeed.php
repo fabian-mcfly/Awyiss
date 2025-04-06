@@ -13,7 +13,7 @@ class MediaElementAssignmentsSeed extends AbstractSeed {
 		$la_data = [
             [
                 'id' => 1,
-                'media_element_id' => 1,
+                'media_element_id' => 2,
                 'scope' => 'content_templates',
                 'foreign_key' => 1,
             ],

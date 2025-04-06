@@ -50,6 +50,10 @@ class MediaElements {
 			'default' => '12/12',
 			'limit' => 5,
 			'null' => false,
+		])->addColumn('internal', 'boolean', [
+			'default' => false,
+			'limit' => null,
+			'null' => false,
 		])->addColumn('system_order', 'integer', [
 			'default' => '0',
 			'limit' => null,

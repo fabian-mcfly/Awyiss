@@ -197,7 +197,7 @@ class MediaElementsCellTest extends TestCase {
 		$entity->mediaAssignments = [
 			$this->fetchTable('MediaAssignments')->newDefaultEntity([
 				'id' => 9,
-				'media_element_id' => 1,
+				'media_element_id' => 2,
 				'media_element_selector_identifier' => 'media',
 				'media_id' => 2,
 				'media_folder_id' => null,

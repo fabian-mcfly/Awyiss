@@ -423,7 +423,7 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 		$lo_mediaAssignmentsTable = $this->fetchTable('MediaAssignments');
 		/** @var \Awyiss\Model\Entity\MediaAssignment $lo_existingAssignment */
 		$lo_existingAssignment = $lo_mediaAssignmentsTable->find()->where([
-			'media_element_id' => 0,
+			'media_element_id' => 1,
 			'media_element_selector_identifier' => 'hidden_folder',
 			'foreign_key' => $entity->id,
 			'scope' => $this->getConfig('referenceName'),
@@ -470,7 +470,7 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 		$lo_mediaFoldersTable->dispatchEvent('Model.MediaFolders.afterSaveCommit', ['entity' => $lo_folder, 'options' => $options]);
 
 		$lo_assignment = $lo_mediaAssignmentsTable->newDefaultEntity([
-			'media_element_id' => 0,
+			'media_element_id' => 1,
 			'media_element_selector_identifier' => 'hidden_folder',
 			'media_folder_id' => $lo_folder->id,
 			'foreign_key' => $entity->id,

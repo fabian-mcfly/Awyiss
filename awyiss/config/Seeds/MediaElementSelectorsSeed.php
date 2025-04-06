@@ -13,7 +13,7 @@ class MediaElementSelectorsSeed extends AbstractSeed {
 		$la_data = [
             [
                 'id' => 1,
-                'media_element_id' => 0,
+                'media_element_id' => 1,
                 'media_selector_id' => 3,
                 'title' => 'Hidden Folder',
                 'identifier' => 'hidden_folder',
@@ -23,7 +23,7 @@ class MediaElementSelectorsSeed extends AbstractSeed {
             ],
             [
                 'id' => 2,
-                'media_element_id' => 2,
+                'media_element_id' => 3,
                 'media_selector_id' => 1,
                 'title' => 'Titelbild',
                 'identifier' => 'title_media',
@@ -33,7 +33,7 @@ class MediaElementSelectorsSeed extends AbstractSeed {
             ],
             [
                 'id' => 3,
-                'media_element_id' => 2,
+                'media_element_id' => 3,
                 'media_selector_id' => 1,
                 'title' => 'Alternatives Teaserbild',
                 'identifier' => 'teaser_media',
@@ -43,7 +43,7 @@ class MediaElementSelectorsSeed extends AbstractSeed {
             ],
             [
                 'id' => 4,
-                'media_element_id' => 1,
+                'media_element_id' => 2,
                 'media_selector_id' => 1,
                 'title' => 'Datei',
                 'identifier' => 'media',
@@ -53,7 +53,7 @@ class MediaElementSelectorsSeed extends AbstractSeed {
             ],
             [
                 'id' => 5,
-                'media_element_id' => 1,
+                'media_element_id' => 2,
                 'media_selector_id' => 1,
                 'title' => 'Lightbox-Datei',
                 'identifier' => 'lightbox_media',
@@ -63,7 +63,7 @@ class MediaElementSelectorsSeed extends AbstractSeed {
             ],
             [
                 'id' => 6,
-                'media_element_id' => 3,
+                'media_element_id' => 4,
                 'media_selector_id' => 2,
                 'title' => 'Galerie',
                 'identifier' => 'media',
