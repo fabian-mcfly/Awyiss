@@ -26,6 +26,7 @@ use Cake\Core\InstanceConfigTrait;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Schema\TableSchemaInterface;
 use Cake\Datasource\EntityInterface;
+use Cake\Event\Event;
 use Cake\ORM\Exception\MissingEntityException;
 use Cake\ORM\Exception\PersistenceFailedException;
 use Cake\ORM\Exception\RolledbackTransactionException;
@@ -1065,5 +1066,27 @@ class Table extends BaseTable {
 				'strategyClass' => EavStrategy::class,
 			]
 		);
+	}
+
+
+	/**
+	 * @param \Cake\Event\Event $event
+	 * @param \Awyiss\Model\Entity $entity
+	 * @param \ArrayObject $options
+	 * @return void
+	 * @throws \DOMException
+	 * @noinspection PhpUnusedParameterInspection
+	 */
+	public function beforeRules(Event $event, Entity $entity, ArrayObject $options): void {
+		// Do not clean HTML if this is not the primary entity
+		if ($options['_primary'] === false) {
+			return;
+		}
+
+		if (Configure::read('Awyiss.System.Backend.htmlCleaning') !== 'none') {
+			/** @var \Awyiss\Utility\Content\HtmlCleaner $ls_className */
+			$ls_className = App::className('HtmlCleaner', 'Utility/Content');
+			$ls_className::clean($entity, Configure::read('Awyiss.System.Backend.htmlCleaning'));
+		}
 	}
 }

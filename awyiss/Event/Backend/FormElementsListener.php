@@ -5,10 +5,8 @@ namespace Awyiss\Event\Backend;
 
 
 use ArrayObject;
-use Awyiss\Core\App;
 use Awyiss\Event\EventListenerTrait;
 use Awyiss\Model\Entity\FormElement;
-use Cake\Core\Configure;
 use Cake\Event\Event;
 use Cake\Event\EventListenerInterface;
 use Cake\Utility\Security;
@@ -32,31 +30,8 @@ class FormElementsListener implements EventListenerInterface {
 	 */
 	public function implementedEvents(): array {
 		return [
-			'Model.FormElements.beforeRules' => 'beforeRules',
 			'Model.FormElements.beforeCopy' => 'beforeCopy',
 		];
-	}
-
-
-	/**
-	 * @param \Cake\Event\Event $event
-	 * @param \Awyiss\Model\Entity\FormElement $entity
-	 * @param \ArrayObject $options
-	 * @return void
-	 * @throws \DOMException
-	 * @noinspection PhpUnusedParameterInspection
-	 */
-	public function beforeRules(Event $event, FormElement $entity, ArrayObject $options): void {
-		// Do not clean HTML if this is not the primary entity
-		if ($options['_primary'] === false) {
-			return;
-		}
-
-		if (Configure::read('Awyiss.System.Backend.htmlCleaning') !== 'none') {
-			/** @var \Awyiss\Utility\Content\HtmlCleaner $ls_className */
-			$ls_className = App::className('HtmlCleaner', 'Utility/Content');
-			$ls_className::clean($entity, Configure::read('Awyiss.System.Backend.htmlCleaning'));
-		}
 	}
 
 
