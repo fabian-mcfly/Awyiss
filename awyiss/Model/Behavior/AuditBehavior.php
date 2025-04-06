@@ -516,6 +516,20 @@ class AuditBehavior extends Behavior {
 
 		$la_newData = [];
 
+		$la_blocklistedFields = [
+			'id',
+			'foreignKey',
+			'deleted',
+			'createdBy',
+			'createdOn',
+			'changedBy',
+			'changedOn',
+			'deletedBy',
+			'deletedOn',
+			'media',
+			'mediaFolder',
+		];
+
 		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 		if ($entity->mediaAssignments) {
 			$lo_sourceTable = $this->fetchTable($entity->getSource());
@@ -528,29 +542,34 @@ class AuditBehavior extends Behavior {
 			foreach ($lo_clonedEntity->mediaAssignments as $ls_elementIdentifier => $la_elementAssignments) {
 				foreach ($la_elementAssignments as $ls_selectorIdentifier => $lx_selectorAssignments) {
 					if ($lx_selectorAssignments instanceof Entity) {
-						$la_newData[ $ls_elementIdentifier ][ $ls_selectorIdentifier ] = $lx_selectorAssignments->extract(null, false, false);
+						$la_values = $lx_selectorAssignments->extract(null, false, false);
+
+						$la_values = array_diff_key($la_values, array_flip($la_blocklistedFields));
+
+						ksort($la_values);
+
+						$la_newData[ $ls_elementIdentifier ][ $ls_selectorIdentifier ] = $la_values;
+
 						continue;
 					}
 
 					foreach ($lx_selectorAssignments as $li_key => $lo_mediaAssignment) {
-						$la_newData[ $ls_elementIdentifier ][ $ls_selectorIdentifier ][ $li_key ] = $lo_mediaAssignment->extract(null, false, false);
+						$la_values = $lo_mediaAssignment->extract(null, false, false);
+
+						$la_values = array_diff_key($la_values, array_flip($la_blocklistedFields));
+
+						ksort($la_values);
+
+						$la_newData[ $ls_elementIdentifier ][ $ls_selectorIdentifier ][ $li_key ] = $la_values;
 					}
 				}
+
+				ksort($la_newData[ $ls_elementIdentifier ]);
 			}
 		}
 
-		$la_blocklistedFields = [
-			'id',
-			'foreignKey',
-			'deleted',
-			'createdBy',
-			'createdOn',
-			'changedBy',
-			'changedOn',
-			'deletedBy',
-			'deletedOn',
-			'media',
-		];
+		ksort($la_newData);
+
 
 		$la_oldData = [];
 		if ($entity->hasOriginal('mediaAssignments')) {
@@ -562,7 +581,10 @@ class AuditBehavior extends Behavior {
 
 						$la_values = array_diff_key($la_values, array_flip($la_blocklistedFields));
 
+						ksort($la_values);
+
 						$la_oldData[ $ls_elementIdentifier ][ $ls_selectorIdentifier ] = $la_values;
+
 						continue;
 					}
 
@@ -571,11 +593,17 @@ class AuditBehavior extends Behavior {
 
 						$la_values = array_diff_key($la_values, array_flip($la_blocklistedFields));
 
+						ksort($la_values);
+
 						$la_oldData[ $ls_elementIdentifier ][ $ls_selectorIdentifier ][ $li_key ] = $la_values;
 					}
 				}
+
+				ksort($la_oldData[ $ls_elementIdentifier ]);
 			}
 		}
+
+		ksort($la_oldData);
 
 		//Even if the translations are the same, they have to make their way into the db as plain arrays, not entities
 		$la_entityData['old']['mediaAssignments'] = $la_oldData;
