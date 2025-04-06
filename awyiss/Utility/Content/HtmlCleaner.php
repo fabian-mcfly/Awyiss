@@ -44,7 +44,7 @@ class HtmlCleaner {
 	 *
 	 * @var array<int, string>
 	 */
-	protected static array $defaultFields = ['text'];
+	protected static array $defaultFields = ['text', 'textHtml', 'successMessage'];
 
 
 	/**
@@ -62,7 +62,7 @@ class HtmlCleaner {
 		}
 
 		foreach ($la_fields as $ls_field) {
-			if (!$entity->get($ls_field) || !is_string($entity->get($ls_field)) || !$entity->isDirty($ls_field)) {
+			if (!$entity->has($ls_field) || !is_string($entity->get($ls_field)) || !$entity->isDirty($ls_field)) {
 				continue;
 			}
 
@@ -77,6 +77,12 @@ class HtmlCleaner {
 			}
 
 			throw new InvalidArgumentException(sprintf('Invalid clean method. Expected one of `none`, `moderate`, `strict`. Got `%s`.', $method));
+		}
+
+		if ($entity->has('_translations')) {
+			foreach ($entity->get('_translations') as $lo_translation) {
+				static::clean($lo_translation, $method, $fields);
+			}
 		}
 	}
 
@@ -98,7 +104,6 @@ class HtmlCleaner {
 
 		$la_fields = static::$defaultFields;
 
-		/** @var \Awyiss\Model\Entity\Attribute $lo_attribute */
 		foreach ($lo_table->getAttributes() as $lo_attribute) {
 			if ($lo_attribute->inputType === 'texteditor') {
 				$la_fields[] = $lo_attribute->identifier;
@@ -225,7 +230,6 @@ class HtmlCleaner {
 	protected static function cleanEmptyTags(DOMDocument $dom): void {
 		// Get all tags inside the `<body>`-tag
 		$lo_body = $dom->getElementsByTagName('body')->item(0);
-		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
 		$lo_tags = $lo_body->getElementsByTagName('*');
 
 		foreach ($lo_tags as $lo_tag) {
@@ -236,7 +240,7 @@ class HtmlCleaner {
 			$ls_content = $lo_tag->textContent;
 
 			// If the text content is a non-breaking space, do nothing
-			if ($ls_content === '' || $ls_content === '&nbsp;' || $ls_content === "\u{A0}") {
+			if (in_array($ls_content, ['', '&nbsp;', "\u{A0}"], true)) {
 				continue;
 			}
 
@@ -383,7 +387,7 @@ class HtmlCleaner {
 
 
 	/**
-	 * Converts all leading and trailing `<br>`-tags inside of `<p>`-tags to `<p>`-tags
+	 * Converts all leading and trailing `<br>`-tags inside `<p>`-tags to `<p>`-tags
 	 *
 	 * @param \DOMDocument $dom
 	 * @return void
