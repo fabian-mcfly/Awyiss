@@ -177,7 +177,19 @@ class ImageHandler {
 				continue;
 			}
 
-			$ls_htmlTag = $lo_mediaHelper->htmlTag($lo_media, $mediaRenderOptions->withAttributes($la_attributes));
+			$lo_mediaRenderOptions = $mediaRenderOptions->withAttributes($la_attributes);
+			if ($la_attributes['width'] ?? null) {
+				$lo_mediaRenderOptions = $lo_mediaRenderOptions
+					->withWidth((int)$la_attributes['width'])
+					->withResponsive(false);
+			}
+			if ($la_attributes['height'] ?? null) {
+				$lo_mediaRenderOptions = $lo_mediaRenderOptions
+					->withHeight((int)$la_attributes['height'])
+					->withResponsive(false);
+			}
+
+			$ls_htmlTag = $lo_mediaHelper->htmlTag($lo_media, $lo_mediaRenderOptions);
 
 			$ls_value = str_replace($lo_tag->ownerDocument->saveHTML($lo_tag), $ls_htmlTag, $ls_value);
 		}
