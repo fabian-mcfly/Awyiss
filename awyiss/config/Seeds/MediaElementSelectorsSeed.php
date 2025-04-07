@@ -71,6 +71,16 @@ class MediaElementSelectorsSeed extends AbstractSeed {
                 'required' => 0,
 				'system_order' => 1,
             ],
+            [
+                'id' => 7,
+                'media_element_id' => 5,
+                'media_selector_id' => 1,
+                'title' => 'Inline Image Tag',
+                'identifier' => 'inline_img_tag',
+                'column_span' => '12/12',
+                'required' => 0,
+				'system_order' => 0,
+            ],
         ];
 
 		$lo_table = $this->table('media_element_selectors');
