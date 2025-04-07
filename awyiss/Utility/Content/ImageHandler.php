@@ -124,7 +124,7 @@ class ImageHandler {
 		/** @var \Awyiss\Model\Table $lo_table */
 		$lo_table = FactoryLocator::get('Table')->get($entity->getSource());
 
-		if (!$lo_table->hasAttributes()) {
+		if (!$lo_table->hasBehavior('Attributes') || !$lo_table->hasAttributes()) {
 			return static::$defaultFields;
 		}
 
