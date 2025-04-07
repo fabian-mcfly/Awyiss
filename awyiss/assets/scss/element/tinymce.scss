@@ -487,10 +487,10 @@ body {
 					padding:0;
 					border-radius:4px;
 					border:0 none;
+					background-color:var(--colorMedium);
 					font-size:0;
 					line-height:0;
 					text-align:center;
-					background-color:var(--colorMedium);
 					position:absolute;
 					right:1px;
 					bottom:1px;
@@ -517,6 +517,17 @@ body {
 						background-color:var(--colorMedium);
 					}
 
+					&:focus-visible {
+						box-shadow:0 0 10px var(--colorInfo);
+						outline:2px solid var(--colorInfo);
+						outline-offset:2px;
+
+						&:hover {
+							box-shadow:0 0 10px var(--colorSuccess);
+							outline-color:transparent;
+						}
+					}
+
 					.tox-icon {
 						display:block;
 						width:24px;
@@ -527,13 +538,87 @@ body {
 
 			&--image {
 				.tox-form {
-					> div {
+					> .tox-form__group {
 						&:nth-child(2),
-						&:nth-child(4) {
+						&:last-child {
 							.tox-label {
 								display:none;
 							}
 						}
+					}
+				}
+
+				button[data-mce-name="Constrain proportions"] {
+					width:52px;
+					height:52px;
+					padding:0;
+					border-radius:5px;
+					border:0 none;
+					background-color:var(--colorMedium);
+					font-size:0;
+					line-height:0;
+					text-align:center;
+
+					&.tox-locked {
+						background-color:var(--colorSuccess);
+
+						html.🌚 & {
+							background-color:var(--colorSuccess);
+						}
+
+						&:focus {
+							background-color:var(--colorSuccess);
+						}
+
+						.tox-lock-icon__lock {
+							display:block;
+						}
+
+						.tox-lock-icon__unlock {
+							display:none;
+						}
+					}
+
+					html.🌚 & {
+						background-color:var(--backgroundColor);
+
+						&:focus {
+							background-color:var(--backgroundColor);
+						}
+					}
+
+					html.Scale-Small & {
+						width:42px;
+						height:42px;
+						padding-block:0;
+					}
+
+					&:focus {
+						background-color:var(--colorMedium);
+					}
+
+					&:focus-visible {
+						box-shadow:0 0 10px var(--colorInfo);
+						outline:2px solid var(--colorInfo);
+						outline-offset:2px;
+
+						&:hover {
+							box-shadow:0 0 10px var(--colorSuccess);
+							outline-color:transparent;
+						}
+					}
+
+					.tox-icon {
+						width:24px;
+						margin-inline:auto;
+					}
+
+					.tox-lock-icon__lock {
+						display:none;
+					}
+
+					.tox-lock-icon__unlock {
+						display:block;
 					}
 				}
 			}
@@ -708,6 +793,17 @@ body {
 						}
 					}
 
+					&:focus-visible {
+						box-shadow:0 0 10px var(--colorInfo);
+						outline:2px solid var(--colorInfo);
+						outline-offset:2px;
+
+						&:hover {
+							box-shadow:0 0 10px var(--colorSuccess);
+							outline-color:transparent;
+						}
+					}
+
 					&:last-child {
 						order:2;
 						margin-left:auto;
@@ -862,6 +958,14 @@ body {
 				position:relative;
 
 				&:has(input:checked) {
+					&:focus-within {
+						&::before {
+							box-shadow:0 0 10px var(--colorInfo);
+							border-color:var(--colorSuccess);
+							background-color:var(--colorSuccess);
+						}
+					}
+
 					&::before {
 						content:'\f00c';
 						background-color:var(--colorDark);
@@ -872,13 +976,13 @@ body {
 							border-color:var(--colorSuccess);
 						}
 					}
+				}
 
-					&:focus-within {
-						&::before {
-							box-shadow:0 0 10px var(--colorInfo);
-							border-color:var(--colorSuccess);
-							background-color:var(--colorSuccess);
-						}
+				&:focus-within {
+					&::before {
+						box-shadow:0 0 10px 5px color-mix(in srgb, var(--colorSuccess), transparent 90%);
+						outline:2px solid var(--colorSuccess);
+						outline-offset:2px;
 					}
 				}
 

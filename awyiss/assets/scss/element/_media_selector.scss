@@ -259,6 +259,10 @@
 			text-overflow:ellipsis;
 			white-space:nowrap;
 			pointer-events:none;
+
+			html.🌚 & {
+				background-color:var(--backgroundColor);
+			}
 		}
 
 		.Button {
