@@ -1083,16 +1083,41 @@ class Table extends BaseTable {
 			return;
 		}
 
-		if (Configure::read('Awyiss.Media.Backend.handleImagesInHtml')) {
-			/** @var \Awyiss\Utility\Content\ImageHandler $ls_className */
-			$ls_className = App::className('ImageHandler', 'Utility/Content');
-			$ls_className::replaceImageTags($entity);
-		}
-
+		/**
+		 * The html cleaning happens here and not in the `beforeSave`-event
+		 * since it could result in empty fields in case the html contained
+		 * only empty tags.
+		 *
+		 * Rules, that check for empty fields, would not fail if the html
+		 * cleaning would be done later on.
+		 */
 		if (Configure::read('Awyiss.System.Backend.htmlCleaning', 'none') !== 'none') {
 			/** @var \Awyiss\Utility\Content\HtmlCleaner $ls_className */
 			$ls_className = App::className('HtmlCleaner', 'Utility/Content');
 			$ls_className::clean($entity, Configure::read('Awyiss.System.Backend.htmlCleaning'));
+		}
+	}
+
+
+	/**
+	 * @param \Cake\Event\Event $event
+	 * @param \Awyiss\Model\Entity $entity
+	 * @param \ArrayObject $options
+	 * @return void
+	 * @noinspection PhpUnusedParameterInspection
+	 * @throws \DOMException
+	 */
+	public function beforeSave(Event $event, Entity $entity, ArrayObject $options): void {
+		// Do not clean HTML if this is not the primary entity
+		if ($options['_primary'] === false) {
+			return;
+		}
+
+		// Convert image tags to the custom format
+		if (Configure::read('Awyiss.Media.Backend.handleImagesInHtml')) {
+			/** @var \Awyiss\Utility\Content\ImageHandler $ls_className */
+			$ls_className = App::className('ImageHandler', 'Utility/Content');
+			$ls_className::replaceImageTags($entity);
 		}
 	}
 }
