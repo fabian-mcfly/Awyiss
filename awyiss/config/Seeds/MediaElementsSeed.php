@@ -75,6 +75,22 @@ class MediaElementsSeed extends AbstractSeed {
                 'deleted_by' => NULL,
                 'deleted_on' => NULL,
             ],
+            [
+                'id' => 5,
+                'title' => 'Inline Image Tag',
+                'identifier' => 'inline_img_tag',
+                'column_span' => '12/12',
+				'internal' => 1,
+                'system_order' => 1,
+                'active' => 1,
+                'deleted' => 0,
+                'created_by' => 1,
+                'created_on' => (new \Cake\I18n\DateTime('now'))->format('Y-m-d H:i:s'),
+                'changed_by' => NULL,
+                'changed_on' => NULL,
+                'deleted_by' => NULL,
+                'deleted_on' => NULL,
+            ],
         ];
 
 		$lo_table = $this->table('media_elements');

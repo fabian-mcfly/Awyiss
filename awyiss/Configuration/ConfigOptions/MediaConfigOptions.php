@@ -91,6 +91,13 @@ class MediaConfigOptions extends AbstractConfigOptions {
 					static::CREATE_HISTORICAL_PATHS_ALWAYS => __d(Inflector::underscore(static::getScope()), 'create_historical_paths_always'),
 				],
 			),
+			new ConfigOption(
+				defaultValue: true,
+				identifier: 'handleImagesInHtml',
+				localizable: false,
+				nullable: false,
+				type: ConfigOptionType::Bool,
+			),
 			'overview' => [
 				new ConfigOption(
 					defaultValue: [

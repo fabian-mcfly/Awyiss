@@ -4,6 +4,8 @@
 namespace Awyiss\View\Helper;
 
 
+use Awyiss\Core\App;
+use Awyiss\Model\Entity;
 use Awyiss\Model\Entity\Media;
 use Awyiss\Model\Entity\MediaResizedImage;
 use Awyiss\Model\Enum\ProcessStatus;
@@ -35,6 +37,7 @@ class MediaHelper extends Helper {
 	 * @var \Awyiss\Utility\Media\MediaRenderOptions $mediaRenderOptions
 	 */
 	protected MediaRenderOptions $mediaRenderOptions;
+
 
 	/**
 	 * @param array $config
@@ -275,9 +278,25 @@ class MediaHelper extends Helper {
 			$la_attributes['width'] = $lo_file?->width;
 			$la_attributes['height'] = $lo_file?->height;
 		}
-		else {
-			$la_attributes['width'] = $media->width;
-			$la_attributes['height'] = $media->height;
+		elseif ($media->width && $media->height) {
+			if (
+				!empty($la_attributes['width']) &&
+				empty($la_attributes['height'])
+			) {
+				// Use the media's original aspect ratio
+				$la_attributes['height'] = round($media->height * $la_attributes['width'] / $media->width);
+			}
+			elseif (
+				empty($la_attributes['width']) &&
+				!empty($la_attributes['height'])
+			) {
+				// Use the aspect ratio
+				$la_attributes['width'] = round($media->width * $la_attributes['height'] / $media->height);
+			}
+			else {
+				$la_attributes['width'] = $media->width;
+				$la_attributes['height'] = $media->height;
+			}
 		}
 
 		return $this->simpleImageTag($ls_path, $la_attributes, $media->averageColor, $lo_mediaRenderOptions);
@@ -575,6 +594,80 @@ class MediaHelper extends Helper {
 
 
 	/**
+	 * @param \Awyiss\Model\Entity $entity
+	 * @param array $fields
+	 * @return void
+	 * @throws \DOMException
+	 */
+	public function rebuildSimpleImageTags(Entity $entity, array $fields = []): void {
+		/** @var class-string<\Awyiss\Utility\Content\ImageHandler> $ls_imageHandlerClass */
+		static $ls_imageHandlerClass;
+
+		if (!$ls_imageHandlerClass) {
+			$ls_imageHandlerClass = App::className('ImageHandler', 'Utility/Content');
+		}
+
+		$ls_imageHandlerClass::rebuildSimpleImageTags($entity, $fields);
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Entity $entity
+	 * @param string $field
+	 * @param string|null $value
+	 * @return void
+	 * @throws \DOMException
+	 */
+	public function rebuildSimpleImageTagsInField(Entity $entity, string $field, ?string $value): ?string {
+		/** @var class-string<\Awyiss\Utility\Content\ImageHandler> $ls_imageHandlerClass */
+		static $ls_imageHandlerClass;
+
+		if (!$ls_imageHandlerClass) {
+			$ls_imageHandlerClass = App::className('ImageHandler', 'Utility/Content');
+		}
+
+		return $ls_imageHandlerClass::rebuildSimpleImageTagsInField($entity, $field, $value);
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Entity $entity
+	 * @param \Awyiss\Utility\Media\MediaRenderOptions $mediaRenderOptions
+	 * @param array $fields
+	 * @return void
+	 */
+	public function replaceCustomImageTags(Entity $entity, MediaRenderOptions $mediaRenderOptions, array $fields = []): void {
+		/** @var class-string<\Awyiss\Utility\Content\ImageHandler> $ls_imageHandlerClass */
+		static $ls_imageHandlerClass;
+
+		if (!$ls_imageHandlerClass) {
+			$ls_imageHandlerClass = App::className('ImageHandler', 'Utility/Content');
+		}
+
+		$ls_imageHandlerClass::replaceCustomImageTags($entity, $this->getView(), $mediaRenderOptions, $fields);
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Entity $entity
+	 * @param \Awyiss\Utility\Media\MediaRenderOptions $mediaRenderOptions
+	 * @param string $field
+	 * @param string|null $value
+	 * @return void
+	 */
+	public function replaceCustomImageTagsInField(Entity $entity, MediaRenderOptions $mediaRenderOptions, string $field, ?string $value): ?string {
+		/** @var class-string<\Awyiss\Utility\Content\ImageHandler> $ls_imageHandlerClass */
+		static $ls_imageHandlerClass;
+
+		if (!$ls_imageHandlerClass) {
+			$ls_imageHandlerClass = App::className('ImageHandler', 'Utility/Content');
+		}
+
+		return $ls_imageHandlerClass::replaceCustomImageTagsInField($entity, $this->getView(), $mediaRenderOptions, $field, $value);
+	}
+
+
+	/**
 	 * @param \Awyiss\Model\Entity\Media $media
 	 * @param \Awyiss\Utility\Media\MediaRenderOptions $mediaRenderOptions
 	 * @param array $breakpoints
@@ -762,11 +855,19 @@ class MediaHelper extends Helper {
 		$ls_noScriptAttributes = $this->Html->templater()->formatAttributes($la_noScriptAttributes);
 
 		$lf_width = $attributes['width'] ?? $this->getPixelColumnWidth($mediaRenderOptions);
+		if (is_string($lf_width)) {
+			$lf_width = (float)$lf_width;
+		}
+
+		$lf_height = $attributes['height'] ?? $lf_width;
+		if (is_string($lf_height)) {
+			$lf_height = (float)$lf_height;
+		}
 
 		$ls_placeholderStyleTag = $this->getPlaceholderStyleTag(
 			$attributes['id'],
 			$lf_width,
-			$attributes['height'] ?? $lf_width,
+			$lf_height,
 			$averageColor,
 			$mediaRenderOptions,
 		);

@@ -56,7 +56,7 @@ export default class Loader {
 				}
 			},
 			'center', 'right', 'justify', 'outdent', 'indent', '|', 'awyissModuleConfig', '\n',
-			'link', 'unlink', '|', 'ul', 'ol', '|', 'hr', 'superscript', 'subscript',
+			'link', 'unlink', '|', 'image', '|', 'ul', 'ol', '|', 'hr', 'superscript', 'subscript',
 			{
 				icon: 'insertNbsp',
 				name: 'insertNbsp',
@@ -98,7 +98,7 @@ export default class Loader {
 		disablePlugins: [
 			'about', 'add-new-line', 'ai-assistant', 'drag-and-drop', 'drag-and-drop-element', 'file', 'font',
 			'speech-recognize', 'spellcheck', 'video', 'resize-cells', 'print', 'preview', 'powered-by-jodit', 'paste-storage',
-			'placeholder', 'mobile', 'media', 'line-height', 'limit', 'image-properties', 'image-processor', 'image', 'color'
+			'placeholder', 'mobile', 'media', 'line-height', 'limit', 'image-properties', 'image-processor', 'color'
 		],
 		i18n: {
 			de: {

@@ -1083,6 +1083,12 @@ class Table extends BaseTable {
 			return;
 		}
 
+		if (Configure::read('Awyiss.Media.Backend.handleImagesInHtml')) {
+			/** @var \Awyiss\Utility\Content\ImageHandler $ls_className */
+			$ls_className = App::className('ImageHandler', 'Utility/Content');
+			$ls_className::replaceImageTags($entity);
+		}
+
 		if (Configure::read('Awyiss.System.Backend.htmlCleaning', 'none') !== 'none') {
 			/** @var \Awyiss\Utility\Content\HtmlCleaner $ls_className */
 			$ls_className = App::className('HtmlCleaner', 'Utility/Content');

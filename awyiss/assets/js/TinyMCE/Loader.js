@@ -24,6 +24,7 @@ export default class Loader {
 	 * @type {object}
 	 */
 	settings = {
+		a11y_advanced_options: true,
 		anchor_bottom: false,
 		anchor_top: false,
 		autoresize_bottom_margin: 5,
@@ -40,6 +41,8 @@ export default class Loader {
 		branding: false,
 		file_picker_callback: callback => this.filePickerCallback(callback),
 		init_instance_callback: editor => this.initInstanceCallback(editor),
+		image_caption: true,
+		image_dimensions: false,
 		license_key: 'gpl',
 		link_context_toolbar: true,
 		link_list: async(success) => { // called on link dialog open
@@ -58,7 +61,7 @@ export default class Loader {
 		paste_as_text: true,
 		paste_block_drop: false,
 		paste_data_images: false,
-		plugins: 'anchor autolink autoresize awyissModule charmap code fullscreen link lists nonbreaking table visualblocks visualchars wordcount',
+		plugins: 'anchor autolink autoresize awyissModule charmap code fullscreen image link lists nonbreaking table visualblocks visualchars wordcount',
 		relative_urls: true,
 		setup: (editor) => this.setup(editor),
 		shortcuts: [],
@@ -77,7 +80,7 @@ export default class Loader {
 		table_sizing_mode: 'responsive',
 		table_use_colgroups: false,
 		toolbar1: 'undo redo | copy cut paste pastetext | bold italic underline strikethrough styles removeformat | aligncenter alignright alignjustify outdent indent | awyissModule',
-		toolbar2: 'link unlink anchor | blockquote bullist numlist | hr subscript superscript nonbreaking charmap | table | visualblocks visualchars | wordcount code | fullscreen',
+		toolbar2: 'link unlink anchor | image | blockquote bullist numlist | hr subscript superscript nonbreaking charmap | table | visualblocks visualchars | wordcount code | fullscreen',
 		toolbar_sticky: true,
 		toolbar_sticky_offset: document.documentElement.classList.contains('👀') ? 0 : 100,
 		//visualchars_default_state: true,
@@ -340,6 +343,7 @@ export default class Loader {
 			const knownOpeners = {
 				'Anchor': 'anchor',
 				'Cell Properties': 'tablecellprops',
+				'Insert/Edit Image': 'image',
 				'Insert/Edit Link': 'link',
 				'Row Properties': 'tablerowprops',
 				'Source Code': 'sourcecode',
@@ -347,6 +351,31 @@ export default class Loader {
 				'Table Properties': 'tableprops',
 				'Word Count': 'wordcount',
 			};
+
+			// The a11y adds the caption checkbox inside a panel. Free it
+			if (config.title === 'Insert/Edit Image') {
+				let captionKey = config.body.items.findIndex(item => {
+					return item.type === 'panel' &&
+					item.items[0].label === 'Caption';
+				});
+
+				/**
+				 * Set the image dimensions here instead of using the
+				 * config settings.
+				 * This way, TinyMCE will not force both values to be set
+				 * but allows one of them, or even both, to be empty.
+				 */
+				if (captionKey > -1) {
+					config.body.items[ captionKey + 1 ] = config.body.items[ captionKey ].items[0];
+					// Add a custom image dimensions object
+					config.body.items[ captionKey ] = {name: 'dimensions', type: 'sizeinput'};
+				}
+				else {
+					// The caption checkbox is not inside a panel
+					// Add a custom image dimensions object
+					config.body.items.push({name: 'dimensions', type: 'sizeinput'});
+				}
+			}
 
 			const instance = editor.windowManager._originalOpen(config, params);
 
@@ -363,6 +392,8 @@ export default class Loader {
 				if (container) {
 					container.appendChild(dialog.closest('.tox-tinymce-aux'));
 				}
+
+				dialog.focus();
 			}
 
 			return instance;
@@ -374,9 +405,20 @@ export default class Loader {
 	 * @param {function} callback
 	 */
 	filePickerCallback(callback) {
+		const fileSelection = filepath => {
+			const dialog = document.querySelector('.tox-dialog');
+			const urlInput = dialog?.querySelector('input[type="url"]');
+			if (urlInput) {
+				urlInput.value = filepath;
+			}
+			else {
+				callback(filepath);
+			}
+		}
+
 		const openEvent = new CustomEvent('overlay.open', {
 			detail: {
-				opener: callback,
+				opener: fileSelection,
 			},
 		});
 

@@ -152,6 +152,20 @@ $relativePath:'../../';
 			}
 		}
 
+		&:has(input[type="file"]) {
+			.jodit-tabs__buttons {
+				display:none;
+			}
+
+			.jodit-tab {
+				display:block;
+
+				&:first-of-type {
+					display:none;
+				}
+			}
+		}
+
 		html.🌚 & {
 			background-color:var(--colorMedium);
 		}

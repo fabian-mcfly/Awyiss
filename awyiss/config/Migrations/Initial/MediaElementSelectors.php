@@ -84,6 +84,13 @@ class MediaElementSelectors {
 				'name' => 'MEDIA_ELEMENT_SELECTORS_MEDIA_SELECTOR_ID',
 			]
 		)->create();
+
+		// Insert a dummy record with id 10 and then delete it
+		$this->migration->execute(
+			'INSERT INTO `media_element_selectors` (`id`, `media_element_id`, `media_selector_id`, `title`, `identifier`)
+			VALUES (10, "1", "1", "dummy_title", "dummy_identifier")'
+		);
+		$this->migration->execute('DELETE FROM `media_element_selectors` WHERE `id` = 10');
 	}
 
 

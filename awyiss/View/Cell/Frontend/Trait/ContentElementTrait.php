@@ -5,6 +5,7 @@ namespace Awyiss\View\Cell\Frontend\Trait;
 
 
 use Awyiss\Awyiss;
+use Awyiss\Core\App;
 use Awyiss\Middleware\LocaleMiddleware;
 use Awyiss\Model\Entity;
 use Awyiss\Model\Entity\Content;
@@ -323,6 +324,24 @@ trait ContentElementTrait {
 	 * @param \Awyiss\Model\Entity $entity
 	 * @param \Awyiss\Utility\Media\MediaRenderOptions $mediaRenderOptions
 	 * @return void
+	 * @throws \Exception
+	 */
+	public function parseResponsiveImageTags(Entity $entity, MediaRenderOptions $mediaRenderOptions): void {
+		/** @var class-string<\Awyiss\Utility\Content\ImageHandler> $ls_imageHandlerClass */
+		static $ls_imageHandlerClass;
+
+		if (!$ls_imageHandlerClass) {
+			$ls_imageHandlerClass = App::className('ImageHandler', 'Utility/Content');
+		}
+
+		$ls_imageHandlerClass::replaceCustomImageTags($entity, $this->View, $mediaRenderOptions);
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Entity $entity
+	 * @param \Awyiss\Utility\Media\MediaRenderOptions $mediaRenderOptions
+	 * @return void
 	 * @throws \ReflectionException
 	 * @throws \Exception
 	 */
@@ -337,18 +356,7 @@ trait ContentElementTrait {
 			$la_modules = ModulesProvider::getModuleFiles();
 		}
 
-		// Create a new DOMDocument instance
-		$lo_dom = new DOMDocument('1.0', 'UTF-8');
-
-		// Suppress errors due to malformed HTML
-		libxml_use_internal_errors(true);
-
-		// Load the HTML string into the DOMDocument
-		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
-		$lo_dom->loadHTML('<!DOCTYPE html>' . $entity->text);
-
-		// Clear any errors collected during loadHTML
-		libxml_clear_errors();
+		$lo_dom = $this->getDom($entity->text);
 
 		// Create an XPath instance
 		$lo_xpath = new DOMXPath($lo_dom);
@@ -573,5 +581,27 @@ trait ContentElementTrait {
 	 */
 	protected function getView(): View {
 		return $this->View;
+	}
+
+
+	/**
+	 * @param string|null $text
+	 * @return \DOMDocument
+	 */
+	protected function getDom(?string $text): DOMDocument {
+		// Create a new DOMDocument instance
+		$lo_dom = new DOMDocument('1.0', 'UTF-8');
+
+		// Suppress errors due to malformed HTML
+		libxml_use_internal_errors(true);
+
+		// Load the HTML string into the DOMDocument
+		/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+		$lo_dom->loadHTML('<!DOCTYPE html>' . $text);
+
+		// Clear any errors collected during loadHTML
+		libxml_clear_errors();
+
+		return $lo_dom;
 	}
 }
