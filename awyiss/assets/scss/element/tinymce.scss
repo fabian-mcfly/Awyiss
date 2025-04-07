@@ -435,6 +435,7 @@ body {
 				}
 			}
 
+			&--image,
 			&--link {
 				max-width:680px;
 
@@ -520,6 +521,19 @@ body {
 						display:block;
 						width:24px;
 						margin-inline:auto;
+					}
+				}
+			}
+
+			&--image {
+				.tox-form {
+					> div {
+						&:nth-child(2),
+						&:nth-child(4) {
+							.tox-label {
+								display:none;
+							}
+						}
 					}
 				}
 			}
@@ -779,6 +793,7 @@ body {
 				&[disabled],
 				&[readonly] {
 					opacity:.5;
+					background-color:var(--backgroundColor);
 
 					&:focus-visible {
 						border-color:rgba(0, 0, 0, .1);
@@ -840,6 +855,57 @@ body {
 				border-width:0;
 				background-color:transparent;
 				overflow:visible;
+			}
+
+			.tox-checkbox {
+				padding-left:34px;
+				position:relative;
+
+				&:has(input:checked) {
+					&::before {
+						content:'\f00c';
+						background-color:var(--colorDark);
+						border-color:var(--colorDark);
+
+						html.🌚 & {
+							background-color:var(--colorSuccess);
+							border-color:var(--colorSuccess);
+						}
+					}
+
+					&:focus-within {
+						&::before {
+							box-shadow:0 0 10px var(--colorInfo);
+							border-color:var(--colorSuccess);
+							background-color:var(--colorSuccess);
+						}
+					}
+				}
+
+				&::before {
+					@extend %LineAwesomeIcon;
+
+					width:22px;
+					height:22px;
+					border:1px solid rgba(0, 0, 0, .2);
+					border-radius:5px;
+					color:var(--colorBright);
+					font-size:16px;
+					line-height:20px;
+					text-align:center;
+					position:absolute;
+					top:7px;
+					left:0;
+
+					html.🌚 & {
+						background-color:var(--colorSemiDark);
+						border-color:rgba(255, 255, 255, .1);
+					}
+				}
+
+				.tox-checkbox__icons {
+					display:none;
+				}
 			}
 		}
 	}
