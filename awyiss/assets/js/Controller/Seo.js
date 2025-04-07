@@ -18,7 +18,7 @@ export default class SeoController {
 	 */
 	initAnalyze() {
 		// Fetch the headline status for all pages
-		fetch(`/backend/${languageShortcode}/seo/analyze-headline-structures/`, {
+		fetch(`${baseUrl}backend/${languageShortcode}/seo/analyze-headline-structures/`, {
 			method: 'GET',
 			headers: {
 				'Accept': 'application/json',

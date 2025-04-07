@@ -146,7 +146,7 @@ export default class Overlay {
 				overlayPlaceholder.classList.add('FetchInProgress');
 			}, 100);
 
-			let url = `/backend/${languageShortcode}/media/overview/paginate:false/`
+			let url = `${baseUrl}backend/${languageShortcode}/media/overview/paginate:false/`
 			if (event?.target && event.target.matches('a[href]')) {
 				url = event.target.href + 'paginate:false/';
 			}
@@ -420,7 +420,7 @@ export default class Overlay {
 	 * @returns {Promise<void>}
 	 */
 	fetchFolderList(folderId, languageShortcode) {
-		return fetch(`/backend/${languageShortcode}/media/overview/media-folder-id:${folderId}/paginate:false/`, {
+		return fetch(`${baseUrl}backend/${languageShortcode}/media/overview/media-folder-id:${folderId}/paginate:false/`, {
 			headers: {
 				'X-Requested-With': 'XMLHttpRequest',
 			},
@@ -464,7 +464,7 @@ export default class Overlay {
 
 		this.mediaList.classList.add('FetchInProgress');
 
-		return fetch(`/backend/${languageShortcode}/media/overview/media-folder-id:${folderId}/paginate:false/`, {
+		return fetch(`${baseUrl}backend/${languageShortcode}/media/overview/media-folder-id:${folderId}/paginate:false/`, {
 			headers: {
 				'X-Requested-With': 'XMLHttpRequest',
 			},
@@ -656,7 +656,7 @@ export default class Overlay {
 			const mediaId = item.id.replace(/^\D+/g, '');
 
 			try {
-				const response = await fetch(`/backend/${languageShortcode}/media/edit/id:${mediaId}`, {
+				const response = await fetch(`${baseUrl}backend/${languageShortcode}/media/edit/id:${mediaId}`, {
 					method: 'PATCH',
 					headers: {
 						'Accept': 'application/json',

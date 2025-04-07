@@ -775,7 +775,7 @@ export default class NestedListHandler {
 		document.body.classList.add('FetchInProgress');
 
 		// Make a POST request to the '/save-order' URL with the current order and the controller name
-		return fetch(`/backend/${languageShortcode}/${controller}/save-system-order/`, {
+		return fetch(`${baseUrl}backend/${languageShortcode}/${controller}/save-system-order/`, {
 			method: 'POST',
 			headers: {
 				'Accept': 'application/json',

@@ -236,7 +236,7 @@ export default class Sortable {
 
 		deleteIds = deleteIds.filter(id => !isNaN(id) && id > 0);
 
-		fetch(`/backend/${languageShortcode}/media/delete/`, {
+		fetch(`${baseUrl}backend/${languageShortcode}/media/delete/`, {
 			method: 'DELETE',
 			headers: {
 				'Accept': 'application/json',
@@ -286,7 +286,7 @@ export default class Sortable {
 		document.body.classList.add('FetchInProgress');
 
 		// Make a POST request to the '/save-order' URL with the current order and the controller name
-		fetch(`/backend/${languageShortcode}/media/save-system-order/`, {
+		fetch(`${baseUrl}backend/${languageShortcode}/media/save-system-order/`, {
 			method: 'POST',
 			headers: {
 				'Accept': 'application/json',
