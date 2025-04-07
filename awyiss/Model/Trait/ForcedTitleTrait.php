@@ -7,6 +7,7 @@ namespace Awyiss\Model\Trait;
 use Awyiss\Model\Entity\Content;
 use Awyiss\Model\Entity\ContentTemplate;
 use Awyiss\Model\Entity\Form;
+use Awyiss\Model\Entity\Media;
 use Awyiss\Model\Entity\WidgetTemplate;
 use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Datasource\FactoryLocator;
@@ -179,6 +180,21 @@ trait ForcedTitleTrait {
 	protected function cleanTitle(string $title): string {
 		$ls_title = $title;
 
+		// If there's a <awyiss-responsive-image> tag in the title
+		if (str_contains($ls_title, '<awyiss-responsive-image')) {
+			$ls_testTitle = trim(strip_tags(preg_replace('/<awyiss-responsive-image>.*?<\/awyiss-responsive-image>/', '', $ls_title)));
+			if (empty($ls_testTitle)) {
+				// If the title is empty after removing the <awyiss-responsive-image> tag, set the title to the image's alt attribute
+				preg_match('/<awyiss-responsive-image>(.*?)<\/awyiss-responsive-image>/', $ls_title, $la_matches);
+				$la_attributes = json_decode($la_matches[1], true) ?: [];
+				$lo_media = $this->mediaAssignments['inlineImgTag'][ $la_attributes['mediaId'] ]?->media ?? null;
+				$ls_title = $lo_media?->name ?? $la_matches[1];
+			}
+			else {
+				$ls_title = preg_replace('/<awyiss-responsive-image>.*?<\/awyiss-responsive-image>/', '', $ls_title);
+			}
+		}
+
 		// If there is a <module> tag in the title, replace it with the module identifier (data-identifier attribute)
 		if (str_contains($ls_title, '<module')) {
 			$ls_title = preg_replace('/<module[^>]*data-identifier="([^"]*)"[^>]*>.*?<\/module>/', 'Module: <em>$1</em>', $ls_title);
@@ -260,7 +276,7 @@ trait ForcedTitleTrait {
 		}
 
 		/** @var \Awyiss\Model\Entity\Media $lo_media */
-		return $lo_media->name;
+		return $lo_media instanceof Media ? $lo_media->name : (string)$lo_media;
 	}
 
 
