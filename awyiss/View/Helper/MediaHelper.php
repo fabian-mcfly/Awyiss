@@ -4,6 +4,8 @@
 namespace Awyiss\View\Helper;
 
 
+use Awyiss\Core\App;
+use Awyiss\Model\Entity;
 use Awyiss\Model\Entity\Media;
 use Awyiss\Model\Entity\MediaResizedImage;
 use Awyiss\Model\Enum\ProcessStatus;
@@ -571,6 +573,43 @@ class MediaHelper extends Helper {
 		$la_breakpoints = $this->addSingleColumnBreakpoint($la_breakpoints, $mediaRenderOptions);
 
 		return $this->getBreakpointFiles($media, $mediaRenderOptions, $la_breakpoints, $removeDuplicates);
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Entity $entity
+	 * @param \Awyiss\Utility\Media\MediaRenderOptions $mediaRenderOptions
+	 * @param array $fields
+	 * @return void
+	 */
+	public function replaceCustomImageTags(Entity $entity, MediaRenderOptions $mediaRenderOptions, array $fields = []): void {
+		/** @var class-string<\Awyiss\Utility\Content\ImageHandler> $ls_imageHandlerClass */
+		static $ls_imageHandlerClass;
+
+		if (!$ls_imageHandlerClass) {
+			$ls_imageHandlerClass = App::className('ImageHandler', 'Utility/Content');
+		}
+
+		$ls_imageHandlerClass::replaceCustomImageTags($entity, $this->getView(), $mediaRenderOptions, $fields);
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Entity $entity
+	 * @param \Awyiss\Utility\Media\MediaRenderOptions $mediaRenderOptions
+	 * @param string $field
+	 * @param string|null $value
+	 * @return void
+	 */
+	public function replaceCustomImageTagsInField(Entity $entity, MediaRenderOptions $mediaRenderOptions, string $field, ?string $value): ?string {
+		/** @var class-string<\Awyiss\Utility\Content\ImageHandler> $ls_imageHandlerClass */
+		static $ls_imageHandlerClass;
+
+		if (!$ls_imageHandlerClass) {
+			$ls_imageHandlerClass = App::className('ImageHandler', 'Utility/Content');
+		}
+
+		return $ls_imageHandlerClass::replaceCustomImageTagsInField($entity, $this->getView(), $mediaRenderOptions, $field, $value);
 	}
 
 
