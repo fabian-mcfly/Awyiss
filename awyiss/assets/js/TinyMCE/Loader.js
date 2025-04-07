@@ -352,6 +352,31 @@ export default class Loader {
 				'Word Count': 'wordcount',
 			};
 
+			// The a11y adds the caption checkbox inside a panel. Free it
+			if (config.title === 'Insert/Edit Image') {
+				let captionKey = config.body.items.findIndex(item => {
+					return item.type === 'panel' &&
+					item.items[0].label === 'Caption';
+				});
+
+				/**
+				 * Set the image dimensions here instead of using the
+				 * config settings.
+				 * This way, TinyMCE will not force both values to be set
+				 * but allows one of them, or even both, to be empty.
+				 */
+				if (captionKey > -1) {
+					config.body.items[ captionKey + 1 ] = config.body.items[ captionKey ].items[0];
+					// Add a custom image dimensions object
+					config.body.items[ captionKey ] = {name: 'dimensions', type: 'sizeinput'};
+				}
+				else {
+					// The caption checkbox is not inside a panel
+					// Add a custom image dimensions object
+					config.body.items.push({name: 'dimensions', type: 'sizeinput'});
+				}
+			}
+
 			const instance = editor.windowManager._originalOpen(config, params);
 
 			const dialog = document.querySelector('.tox-dialog');
@@ -367,6 +392,8 @@ export default class Loader {
 				if (container) {
 					container.appendChild(dialog.closest('.tox-tinymce-aux'));
 				}
+
+				dialog.focus();
 			}
 
 			return instance;
@@ -378,9 +405,20 @@ export default class Loader {
 	 * @param {function} callback
 	 */
 	filePickerCallback(callback) {
+		const fileSelection = filepath => {
+			const dialog = document.querySelector('.tox-dialog');
+			const urlInput = dialog?.querySelector('input[type="url"]');
+			if (urlInput) {
+				urlInput.value = filepath;
+			}
+			else {
+				callback(filepath);
+			}
+		}
+
 		const openEvent = new CustomEvent('overlay.open', {
 			detail: {
-				opener: callback,
+				opener: fileSelection,
 			},
 		});
 
