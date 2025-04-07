@@ -278,9 +278,25 @@ class MediaHelper extends Helper {
 			$la_attributes['width'] = $lo_file?->width;
 			$la_attributes['height'] = $lo_file?->height;
 		}
-		else {
-			$la_attributes['width'] = $media->width;
-			$la_attributes['height'] = $media->height;
+		elseif ($media->width && $media->height) {
+			if (
+				!empty($la_attributes['width']) &&
+				empty($la_attributes['height'])
+			) {
+				// Use the media's original aspect ratio
+				$la_attributes['height'] = round($media->height * $la_attributes['width'] / $media->width);
+			}
+			elseif (
+				empty($la_attributes['width']) &&
+				!empty($la_attributes['height'])
+			) {
+				// Use the aspect ratio
+				$la_attributes['width'] = round($media->width * $la_attributes['height'] / $media->height);
+			}
+			else {
+				$la_attributes['width'] = $media->width;
+				$la_attributes['height'] = $media->height;
+			}
 		}
 
 		return $this->simpleImageTag($ls_path, $la_attributes, $media->averageColor, $lo_mediaRenderOptions);
@@ -839,11 +855,19 @@ class MediaHelper extends Helper {
 		$ls_noScriptAttributes = $this->Html->templater()->formatAttributes($la_noScriptAttributes);
 
 		$lf_width = $attributes['width'] ?? $this->getPixelColumnWidth($mediaRenderOptions);
+		if (is_string($lf_width)) {
+			$lf_width = (float)$lf_width;
+		}
+
+		$lf_height = $attributes['height'] ?? $lf_width;
+		if (is_string($lf_height)) {
+			$lf_height = (float)$lf_height;
+		}
 
 		$ls_placeholderStyleTag = $this->getPlaceholderStyleTag(
 			$attributes['id'],
 			$lf_width,
-			$attributes['height'] ?? $lf_width,
+			$lf_height,
 			$averageColor,
 			$mediaRenderOptions,
 		);
