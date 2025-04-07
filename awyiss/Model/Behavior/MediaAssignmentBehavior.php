@@ -176,8 +176,18 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 			$lo_element = static::$mediaElements[ $lo_mediaAssignment->mediaElementId ];
 			$ls_elementIdentifier = Inflector::variable($lo_element->identifier);
 
-			$lo_selector = $lo_element->mediaSelectors[ $lo_mediaAssignment->mediaElementSelectorIdentifier ];
+			$lo_selector = $lo_element->mediaSelectors[ $lo_mediaAssignment->mediaElementSelectorIdentifier ] ?? null;
 			$ls_identifier = Inflector::variable($lo_mediaAssignment->mediaElementSelectorIdentifier);
+
+			// Treat inlineImgTag as a special case
+			if (!$lo_selector || $ls_elementIdentifier === 'inlineImgTag') {
+				if ($ls_elementIdentifier === 'inlineImgTag') {
+					$la_mediaAssignments[ $ls_elementIdentifier ] ??= [];
+					$la_mediaAssignments[ $ls_elementIdentifier ][ $lo_mediaAssignment->mediaId ] = $lo_mediaAssignment;
+				}
+
+				continue;
+			}
 
 			if ($lo_selector->identifier === 'multi_file') {
 				if ($useMediaEntity) {
@@ -395,13 +405,16 @@ class MediaAssignmentBehavior extends Behavior implements PropertyMarshalInterfa
 			unset($entity->mediaAssignments);
 		}
 
-		foreach (($entity->get('mediaAssignments') ?? []) as $lo_mediaAssignment) {
-			if (!$lo_mediaAssignment instanceof MediaAssignment) {
-				continue;
-			}
+		if (($options['isCopy'] ?? false) === true) {
+			// If the entity is a copy, we need to set the media assignments as new
+			foreach (($entity->get('mediaAssignments') ?? []) as $lo_mediaAssignment) {
+				if (!$lo_mediaAssignment instanceof MediaAssignment) {
+					continue;
+				}
 
-			$lo_mediaAssignment->unset('id');
-			$lo_mediaAssignment->setNew(true);
+				$lo_mediaAssignment->unset('id');
+				$lo_mediaAssignment->setNew(true);
+			}
 		}
 	}
 
