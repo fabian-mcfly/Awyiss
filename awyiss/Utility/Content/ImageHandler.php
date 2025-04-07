@@ -171,12 +171,13 @@ class ImageHandler {
 
 		foreach ($lo_tags as $lo_tag) {
 			[$la_attributes, $lo_media] = self::extractMediaAttributes($lo_dom, $lo_tag, $entity);
+			unset($la_attributes['mediaId']);
 
 			if (!$lo_media) {
 				continue;
 			}
 
-			$ls_htmlTag = $lo_mediaHelper->htmlTag($lo_media, $mediaRenderOptions);
+			$ls_htmlTag = $lo_mediaHelper->htmlTag($lo_media, $mediaRenderOptions->withAttributes($la_attributes));
 
 			$ls_value = str_replace($lo_tag->ownerDocument->saveHTML($lo_tag), $ls_htmlTag, $ls_value);
 		}
