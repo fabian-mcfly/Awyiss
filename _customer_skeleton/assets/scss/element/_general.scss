@@ -290,3 +290,19 @@ h4, p.Textsize-LikeH4 {
 	--textcolor:var(--colorContrast);
 	color:var(--textcolor);
 }
+
+img {
+	&.ImageAlign-Left {
+		max-width:50%;
+		margin-right:var(--columnMargin);
+		margin-bottom:var(--lineHeightMain);
+		float:left;
+	}
+
+	&.ImageAlign-Right {
+		max-width:50%;
+		margin-left:var(--columnMargin);
+		margin-bottom:var(--lineHeightMain);
+		float:right;
+	}
+}

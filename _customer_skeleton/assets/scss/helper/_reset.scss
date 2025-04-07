@@ -187,9 +187,16 @@
 	}
 
 	img, picture, video, canvas, svg {
-		display:block;
+		display:inline-block;
 		max-width:100%;
-		height:auto;
+
+		.JS &[data-ll-status] {
+			height:auto;
+		}
+
+		&:not([height]) {
+			height:auto;
+		}
 	}
 
 	:target {

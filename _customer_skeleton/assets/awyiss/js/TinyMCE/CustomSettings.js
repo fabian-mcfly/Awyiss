@@ -40,6 +40,13 @@ export default class CustomSettings {
 			]
 		},
 		{
+			title: 'Bilder',
+			items: [
+				{title: 'Links vom Text', selector: 'img', classes: 'ImageAlign-Left'},
+				{title: 'Rechts vom Text', selector: 'img', classes: 'ImageAlign-Right'},
+			]
+		},
+		{
 			title: 'Links',
 			items: [
 				{title: 'Externer Link ohne Icon', selector: 'a[target]', classes: 'NoExternalLinkIcon'},
