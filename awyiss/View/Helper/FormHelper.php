@@ -20,8 +20,9 @@ use RuntimeException;
 
 /**
  * @inheritDoc
- * @property AttributesHelper $Attributes
+ * @property \Awyiss\View\Helper\AttributesHelper $Attributes
  * @property \Cake\View\Helper\HtmlHelper $Html
+ * @property \Awyiss\View\Helper\MediaHelper $Media
  * @property LocaleHelper $Locale
  * @property UrlHelper $Url
  */
@@ -31,7 +32,7 @@ class FormHelper extends BaseFormHelper {
 	 *
 	 * @var array
 	 */
-	protected array $helpers = ['Attributes', 'Html', 'Locale', 'Url'];
+	protected array $helpers = ['Attributes', 'Html', 'Locale', 'Media', 'Url'];
 	/**
 	 * @var array<string, \Awyiss\Model\Entity\Language> List of languages by realm
 	 */
@@ -164,6 +165,17 @@ class FormHelper extends BaseFormHelper {
 		if (isset($la_options['columnSpan'])) {
 			$la_options['templateVars']['columnSpan'] = ' ColumnSpan-' . $la_options['columnSpan'];
 			unset($la_options['columnSpan']);
+		}
+
+		if (
+			($la_options['data-editor'] ?? null) === true &&
+			$this->_getContext() instanceof EntityContext
+		) {
+			$la_options['val'] ??= $this->getSourceValue($fieldName);
+			if (is_string($la_options['val'])) {
+				/** @noinspection PhpPossiblePolymorphicInvocationInspection */
+				$la_options['val'] = $this->Media->rebuildSimpleImageTagsInField($this->_getContext()->entity(), $fieldName, $la_options['val']);
+			}
 		}
 
 		if (in_array($fieldName, $this->translatableFields) && count($this->languages) > 1) {

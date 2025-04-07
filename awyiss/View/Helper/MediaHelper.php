@@ -38,6 +38,7 @@ class MediaHelper extends Helper {
 	 */
 	protected MediaRenderOptions $mediaRenderOptions;
 
+
 	/**
 	 * @param array $config
 	 * @return void
@@ -573,6 +574,43 @@ class MediaHelper extends Helper {
 		$la_breakpoints = $this->addSingleColumnBreakpoint($la_breakpoints, $mediaRenderOptions);
 
 		return $this->getBreakpointFiles($media, $mediaRenderOptions, $la_breakpoints, $removeDuplicates);
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Entity $entity
+	 * @param array $fields
+	 * @return void
+	 * @throws \DOMException
+	 */
+	public function rebuildSimpleImageTags(Entity $entity, array $fields = []): void {
+		/** @var class-string<\Awyiss\Utility\Content\ImageHandler> $ls_imageHandlerClass */
+		static $ls_imageHandlerClass;
+
+		if (!$ls_imageHandlerClass) {
+			$ls_imageHandlerClass = App::className('ImageHandler', 'Utility/Content');
+		}
+
+		$ls_imageHandlerClass::rebuildSimpleImageTags($entity, $fields);
+	}
+
+
+	/**
+	 * @param \Awyiss\Model\Entity $entity
+	 * @param string $field
+	 * @param string|null $value
+	 * @return void
+	 * @throws \DOMException
+	 */
+	public function rebuildSimpleImageTagsInField(Entity $entity, string $field, ?string $value): ?string {
+		/** @var class-string<\Awyiss\Utility\Content\ImageHandler> $ls_imageHandlerClass */
+		static $ls_imageHandlerClass;
+
+		if (!$ls_imageHandlerClass) {
+			$ls_imageHandlerClass = App::className('ImageHandler', 'Utility/Content');
+		}
+
+		return $ls_imageHandlerClass::rebuildSimpleImageTagsInField($entity, $field, $value);
 	}
 
 
