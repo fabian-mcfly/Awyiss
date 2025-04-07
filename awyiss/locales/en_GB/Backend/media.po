@@ -209,5 +209,8 @@ msgstr "Default media breakpoints"
 msgid "configuration_identifier_backend_create_historical_paths"
 msgstr "Create redirects"
 
-msgid "configuration_identifier_backend_identifier_upload_auto_overwrite"
+msgid "configuration_identifier_backend_upload_auto_overwrite"
 msgstr "Overwrite existing files"
+
+msgid "configuration_identifier_backend_handle_images_in_html"
+msgstr "Replace images in HTML with responsive images"
