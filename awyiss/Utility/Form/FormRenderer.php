@@ -294,6 +294,9 @@ class FormRenderer {
 
 		if ($entity->type === 'free_text') {
 			// Parse the module
+			$this->parseResponsiveImageTags($entity, $lo_mediaRenderOptions);
+
+			// Parse the module
 			$this->parseModule($entity, $lo_mediaRenderOptions);
 		}
 
