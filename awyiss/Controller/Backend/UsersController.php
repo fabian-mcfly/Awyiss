@@ -226,6 +226,7 @@ class UsersController extends Controller {
 				'_name' => Awyiss::REALM_BACKEND,
 				'controller' => 'Dashboard',
 				'action' => 'overview',
+				'_base' => false,
 			]);
 
 
@@ -279,6 +280,7 @@ class UsersController extends Controller {
 			'_name' => Awyiss::REALM_BACKEND,
 			'controller' => 'Users',
 			'action' => 'login',
+			'_base' => false,
 		]));
 	}
 
