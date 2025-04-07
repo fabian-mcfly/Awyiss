@@ -245,7 +245,7 @@ class HtmlCleaner {
 			}
 
 			// Check if the content of the tag is empty or only contains whitespaces or non-breaking spaces
-			if (preg_match('/^([\s\n\r\t]|\xC2\xA0|<img)*$/', $ls_content)) {
+			if (preg_match('/^([\s\n\r\t]|\xC2\xA0)*$/', $ls_content)) {
 				if (in_array($lo_tag->nodeName, ['ul', 'ol', 'dl'])) {
 					if ($lo_tag->nextSibling && $lo_tag->nextSibling->nodeName === '#text') {
 						$lo_tag->parentNode->removeChild($lo_tag->nextSibling);
@@ -325,6 +325,15 @@ class HtmlCleaner {
 				continue;
 			}
 
+			// If the current node has any non-textnode children, skip it
+			if ($lo_pTag->hasChildNodes()) {
+				foreach ($lo_pTag->childNodes as $lo_childNode) {
+					if ($lo_childNode->nodeName !== '#text') {
+						continue 2;
+					}
+				}
+			}
+
 			$lo_nextSibling = $lo_pTag->nextSibling;
 
 			if (!$lo_nextSibling) {
@@ -343,6 +352,15 @@ class HtmlCleaner {
 			if (
 				preg_match('/^([\s\n\r\t]|\xC2\xA0)*$/', $lo_nextSibling->textContent)
 			) {
+				if ($lo_nextSibling->hasChildNodes()) {
+					// If the current node has any non-textnode children, skip it
+					foreach ($lo_nextSibling->childNodes as $lo_childNode) {
+						if ($lo_childNode->nodeName !== '#text') {
+							continue 2;
+						}
+					}
+				}
+
 				if ($lo_pTag->nextSibling->nodeName === '#text') {
 					$lo_pTag->parentNode->removeChild($lo_pTag->nextSibling);
 				}
@@ -480,7 +498,7 @@ class HtmlCleaner {
 			}
 
 			// If the first child has an img tag inside
-			if ($lo_body->firstChild->firstChild?->nodeName === 'img') {
+			if (in_array($lo_body->firstChild->firstChild?->nodeName, ['awyiss-responsive-image', 'img', 'module'])) {
 				break;
 			}
 
@@ -498,7 +516,7 @@ class HtmlCleaner {
 			}
 
 			// If the last child has an img tag inside
-			if ($lo_body->lastChild->lastChild?->nodeName === 'img') {
+			if (in_array($lo_body->lastChild->lastChild?->nodeName, ['awyiss-responsive-image', 'img', 'module'])) {
 				break;
 			}
 
