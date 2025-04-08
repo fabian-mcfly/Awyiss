@@ -505,6 +505,10 @@ class SystemOrderBehavior extends Behavior {
 		if (!$lo_query) {
 			//If no query was provided, create one
 			$lo_query = $this->table()->find();
+
+			if (in_array($ls_tableAlias, ['Contents', 'Widgets'])) {
+				$lo_query->find('mediaAssignments', useMediaEntity: true);
+			}
 		}
 
 		/** @var \Awyiss\Model\Entity $lo_attributes */

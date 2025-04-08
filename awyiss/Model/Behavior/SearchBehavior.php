@@ -186,7 +186,11 @@ class SearchBehavior extends Behavior {
 			) {
 				$lo_query = $lo_table->find('all');
 
-				if ($lo_table->hasAssociation('MediaAssignments')) {
+
+				if (
+					in_array($lo_table->getAlias(), ['Contents', 'Widgets']) &&
+					$lo_table->hasAssociation('MediaAssignments')
+				) {
 					$lo_query->find('mediaAssignments', useMediaEntity: true);
 				}
 
