@@ -4,6 +4,7 @@
 namespace Awyiss\Utility\Content;
 
 
+use Awyiss\Routing\Router;
 use Awyiss\Utility\Inflector;
 use Awyiss\Utility\Media\MediaRenderOptions;
 use Cake\Datasource\EntityInterface;
@@ -258,6 +259,61 @@ class ImageHandler {
 
 
 	/**
+	 * @param string|null $value
+	 * @param array $media
+	 * @param bool $absolutePath
+	 * @return string|null
+	 * @throws \DOMException
+	 */
+	public static function rebuildSimpleImageTagsInText(?string $value, array $media, bool $absolutePath = false): ?string {
+		if (!is_string($value) || !str_contains($value, '<awyiss-responsive-image')) {
+			return $value;
+		}
+
+
+		$lo_dom = static::getDomDocument($value);
+
+		// Create an XPath instance
+		$lo_xpath = new DOMXPath($lo_dom);
+
+		// Find all <awyiss-responsive-image> tags
+		$lo_tags = $lo_xpath->query('//awyiss-responsive-image');
+
+		$ls_baseUrl = $absolutePath ? Router::url('/', true) : '';
+
+		foreach ($lo_tags as $lo_tag) {
+			$la_attributes = json_decode($lo_tag->textContent, true);
+
+			if (
+				!is_array($la_attributes) ||
+				!isset($la_attributes['mediaId']) ||
+				!isset($media[ $la_attributes['mediaId'] ])
+			) {
+				continue;
+			}
+
+			// Create a new <img> tag
+			$lo_imgTag = $lo_dom->createElement('img');
+			$lo_imgTag->setAttribute('src', $ls_baseUrl . $media[ $la_attributes['mediaId'] ]->path);
+
+			// Set the other attributes
+			foreach ($la_attributes as $ls_key => $ls_value) {
+				if ($ls_key === 'mediaId') {
+					continue;
+				}
+
+				$lo_imgTag->setAttribute($ls_key, (string)$ls_value);
+			}
+
+			// Replace the custom tag with the <img> tag
+			$lo_tag->parentNode->replaceChild($lo_imgTag, $lo_tag);
+		}
+
+		return trim(static::getBody($lo_dom)) ?: null;
+	}
+
+
+	/**
 	 * @param \Cake\Datasource\EntityInterface $entity
 	 * @param string $field
 	 * @param string|null $value
@@ -372,8 +428,10 @@ class ImageHandler {
 	 * @return string|false
 	 */
 	protected static function getBody(DOMDocument $dom): string|false {
-		// Remove the doctype
-		$dom->removeChild($dom->doctype);
+		if ($dom->doctype) {
+			// Remove the doctype
+			$dom->removeChild($dom->doctype);
+		}
 
 		// Remove the opening and closing `<html>`-tags
 		$dom->replaceChild($dom->firstChild->firstChild, $dom->firstChild);
@@ -458,7 +516,9 @@ class ImageHandler {
 		$la_attributes = json_decode($tag->textContent, true);
 
 		if (
-			!is_array($la_attributes) || !isset($la_attributes['mediaId']) || !isset($entity->mediaAssignments['inlineImgTag'][ $la_attributes['mediaId'] ])
+			!is_array($la_attributes) ||
+			!isset($la_attributes['mediaId']) ||
+			!isset($entity->mediaAssignments['inlineImgTag'][ $la_attributes['mediaId'] ])
 		) {
 			// Replace the node with an empty string
 			$tag->parentNode->replaceChild($dom->createTextNode(''), $tag);

@@ -618,7 +618,7 @@ class MediaHelper extends Helper {
 	 * @return void
 	 * @throws \DOMException
 	 */
-	public function rebuildSimpleImageTagsInField(Entity $entity, string $field, ?string $value): ?string {
+	public function rebuildSimpleImageTagsInField(Entity $entity, string $field, ?string $value = null): ?string {
 		/** @var class-string<\Awyiss\Utility\Content\ImageHandler> $ls_imageHandlerClass */
 		static $ls_imageHandlerClass;
 
@@ -627,6 +627,29 @@ class MediaHelper extends Helper {
 		}
 
 		return $ls_imageHandlerClass::rebuildSimpleImageTagsInField($entity, $field, $value);
+	}
+
+
+	/**
+	 * @param string|null $value
+	 * @param array $media
+	 * @param bool $absolutePath
+	 * @return string|null
+	 * @throws \DOMException
+	 */
+	public function rebuildSimpleImageTagsInText(?string $value, array $media, bool $absolutePath = false): ?string {
+		/** @var class-string<\Awyiss\Utility\Content\ImageHandler> $ls_imageHandlerClass */
+		static $ls_imageHandlerClass;
+
+		if (!$value) {
+			return $value;
+		}
+
+		if (!$ls_imageHandlerClass) {
+			$ls_imageHandlerClass = App::className('ImageHandler', 'Utility/Content');
+		}
+
+		return $ls_imageHandlerClass::rebuildSimpleImageTagsInText($value, $media, $absolutePath);
 	}
 
 
@@ -655,7 +678,7 @@ class MediaHelper extends Helper {
 	 * @param string|null $value
 	 * @return void
 	 */
-	public function replaceCustomImageTagsInField(Entity $entity, MediaRenderOptions $mediaRenderOptions, string $field, ?string $value): ?string {
+	public function replaceCustomImageTagsInField(Entity $entity, MediaRenderOptions $mediaRenderOptions, string $field, ?string $value = null): ?string {
 		/** @var class-string<\Awyiss\Utility\Content\ImageHandler> $ls_imageHandlerClass */
 		static $ls_imageHandlerClass;
 

@@ -203,8 +203,8 @@
 			{{- oldData['column'].width.label }}
 		{%- elseif field == 'columnIndent' %}
 			{{- oldData['column'].indent.label }}
-		{% elseif (scope in ['contents', 'widgets'] and field == 'text') or (isAttribute and attribute.inputType == 'texteditor') %}
-			<code>{{- oldData[ field ] }}</code>
+		{% elseif (field in ['text', 'textHtml', 'successMessage']) or (isAttribute and attribute.inputType == 'texteditor') %}
+			<code>{{- MediaHelper.rebuildSimpleImageTagsInText(oldData[ field ], settings.media)|escape }}</code>
 			{% set isHtml = true %}
 		{% elseif isAttribute and settings.attributeOptionsCollection %}
 			{{- options[ oldData[ field ] ] ?? '' }}
@@ -231,7 +231,8 @@
 			{{- entity.column.width.label }}
 		{%- elseif field == 'columnIndent' %}
 			{{- entity.column.indent.label }}
-		{% elseif (scope in ['contents', 'widgets'] and field == 'text') or (isAttribute and attribute.inputType == 'texteditor') %}
+		{% elseif (field in ['text', 'textHtml', 'successMessage']) or (isAttribute and attribute.inputType == 'texteditor') %}
+			{% do MediaHelper.rebuildSimpleImageTagsInField(entity, field, currentValue) %}
 			<code>{{- entity.get(field) }}</code>
 		{% elseif isAttribute and settings.attributeOptionsCollection %}
 			{{- options[ entity.get(field) ] ?? '' }}
@@ -395,7 +396,9 @@
 									{% endif %}
 
 									{% for mediaElement in mediaElements %}
-										{{ _self.tableHistoryBodyMediaRow(entity, audit, mediaElement, _context) }}
+										{% if mediaElement.identifier != 'inline_img_tag' %}
+											{{ _self.tableHistoryBodyMediaRow(entity, audit, mediaElement, _context) }}
+										{% endif %}
 									{% endfor %}
 								{% endblock %}
 

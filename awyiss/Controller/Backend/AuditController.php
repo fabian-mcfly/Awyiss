@@ -349,7 +349,7 @@ class AuditController extends Controller {
 		$la_mediaIds = array_merge(Hash::extract($entity->mediaAssignments, '{s}.{s}.mediaId'), Hash::extract($entity->mediaAssignments, '{s}.{s}.{n}.mediaId'));
 
 		$la_mediaAssignments = Hash::extract($audits->toList(), '{n}.dataOld.mediaAssignments');
-		$la_mediaIds = array_merge($la_mediaIds, Hash::extract($la_mediaAssignments, '{n}.{s}.{s}.mediaId'), Hash::extract($la_mediaAssignments, '{n}.{s}.{s}.{n}.mediaId'));
+		$la_mediaIds = array_merge($la_mediaIds, Hash::extract($la_mediaAssignments, '{n}.{s}.{*}.mediaId'), Hash::extract($la_mediaAssignments, '{n}.{s}.{s}.{n}.mediaId'));
 		$la_mediaIds = array_unique($la_mediaIds);
 
 		if (!$la_mediaIds) {
