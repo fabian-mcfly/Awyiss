@@ -40,48 +40,31 @@ class FormElementsListener implements EventListenerInterface {
 	 * @param \Awyiss\Model\Entity\FormElement $entity
 	 * @param \ArrayObject $options
 	 * @return void
+	 * @noinspection PhpUnusedParameterInspection
 	 */
 	public function beforeCopy(Event $event, FormElement $entity, ArrayObject $options): void {
-		if ($options['_primary'] !== true) {
+		if ($options['_primary'] !== true || !$entity->childFormElements) {
 			return;
 		}
 
-		/** @var \Awyiss\Model\Table\FormElementsTable $lo_table */
-		$lo_table = $event->getSubject();
-
-		/** @var \Awyiss\Model\Entity\FormElement $lo_originalEntity */
-		$lo_originalEntity = $entity->originalEntity;
-		$lo_children = $lo_originalEntity->getNestedChildren([
-			'finders' => [
-				'mediaAssignments' => ['formatResult' => false],
-				'translations',
-			],
-		]);
-
-		if (!$lo_children?->count()) {
-			return;
-		}
-
-		$lo_nestedChildren = $lo_children->nest('id', 'parentId', 'childFormElements')->toList();
-
-		$la_relatedColumns = $lo_table->getBehavior('Nest')->getConfig('relatedColumns');
+		// Transform the children into a flat list
+		$lo_children = collection($entity->childFormElements)->listNested('desc', 'childFormElements');
 
 		/** @var \Awyiss\Model\Entity\FormElement $lo_childFormElement */
 		foreach ($lo_children as $lo_childFormElement) {
-			$la_primaryKeys = $lo_childFormElement->extract((array)$lo_table->getPrimaryKey());
-			$lo_childFormElement->originalPrimaryKeys = $la_primaryKeys;
-
-			$lo_childFormElement->unset((array)$lo_table->getPrimaryKey());
-			$lo_childFormElement->setNew(true);
-
-			$lo_childFormElement->set($entity->extract($la_relatedColumns));
-			if (!in_array($lo_childFormElement->type, ['free_text', 'submit'])) {
-				$lo_childFormElement->identifier .= '-copy-' . Security::randomString(8);
+			if (in_array($lo_childFormElement->type, ['free_text', 'submit'])) {
+				continue;
 			}
+
+			// Copied form elements must have a unique identifier
+			// Otherwise the validation will fail
+			if (strlen($lo_childFormElement->identifier) > 36) {
+				// If the identifier is longer than 36 characters, we need to truncate it
+				// to 36 characters, otherwise the validation will fail (50 characters max)
+				$lo_childFormElement->identifier = substr($lo_childFormElement->identifier, 0, 36);
+			}
+
+			$lo_childFormElement->identifier .= '-copy-' . Security::randomString(8);
 		}
-
-		$entity->childFormElements = $lo_nestedChildren;
-
-		$lo_table->ChildFormElements->getBehavior('Nest')->setConfig('buildRules', false);
 	}
 }

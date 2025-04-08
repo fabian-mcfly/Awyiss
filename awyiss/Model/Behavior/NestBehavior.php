@@ -62,6 +62,7 @@ class NestBehavior extends Behavior {
 		'enabled' => false,
 		'implementedEvents' => [
 			'buildRules',
+			'beforeCopy',
 			'beforeSave',
 			'afterSave',
 		],
@@ -223,14 +224,16 @@ class NestBehavior extends Behavior {
 
 	/**
 	 * Returns a collection containing all nested children of the given entity.
-	 *
 	 * The depth can be limited using the `maxLevel` option in either the `children`-config array or
 	 * as an array key in the second parameter of the method call.
 	 *
 	 * Calling `$Comments->getNestedChildren($comment, ['maxLevel' => 2]);` returns all direct children of $comment as well as
 	 * all direct children of those.
 	 *
-	 * @noinspection PhpUnused
+	 * @param \Cake\Datasource\EntityInterface $entity
+	 * @param array $options
+	 * @param int $currentLevel
+	 * @return \Cake\Collection\CollectionInterface|null
 	 */
 	public function getNestedChildren(EntityInterface $entity, array $options = [], int $currentLevel = 0): ?CollectionInterface {
 		if (($options['forceEnable'] ?? false) === false && (!$this->getConfig('enabled') || !$this->getConfig('children'))) {
@@ -477,6 +480,74 @@ class NestBehavior extends Behavior {
 
 
 		return $rules;
+	}
+
+
+	/**
+	 * @param \Cake\Event\EventInterface $event
+	 * @param \Cake\Datasource\EntityInterface $entity
+	 * @param \ArrayObject $options
+	 * @return void
+	 * @noinspection PhpUnusedParameterInspection
+	 */
+	public function beforeCopy(EventInterface $event, EntityInterface $entity, ArrayObject $options): void {
+		if (!$this->getConfig('enabled') || $options['_primary'] !== true) {
+			return;
+		}
+
+		/** @var \Awyiss\Model\Table $lo_table */
+		$lo_table = $event->getSubject();
+
+		$la_finders = [];
+		if ($lo_table->hasBehavior('MediaAssignment')) {
+			$la_finders['mediaAssignments'] = ['formatResult' => false];
+		}
+		$la_finders[] = 'translations';
+
+		/**
+		 * @var \Awyiss\Model\Entity $lo_originalEntity
+		 * @noinspection PhpUndefinedFieldInspection
+		 */
+		$lo_originalEntity = $entity->originalEntity;
+		$lo_children = $this->getNestedChildren($lo_originalEntity, ['finders' => $la_finders]);
+
+
+		if (!$lo_children?->count()) {
+			return;
+		}
+
+		$ls_alias = $this->getConfig('alias');
+		$ls_associationName = $this->getConfig('children.associationName') ?: 'Child' . Inflector::camelize($ls_alias);
+		$ls_propertyName = Inflector::variable($lo_table->$ls_associationName->getProperty());
+
+		// Create a nested list of all items
+		$lo_nestedChildren = $lo_children->nest('id', 'parentId', $ls_propertyName)->toList();
+
+		$la_relatedColumns = $lo_table->getBehavior('Nest')->getConfig('relatedColumns');
+
+		/** @var \Awyiss\Model\Entity $lo_child */
+		foreach ($lo_children as $lo_child) {
+			$la_primaryKeys = $lo_child->extract((array)$lo_table->getPrimaryKey());
+			$lo_child->originalPrimaryKeys = $la_primaryKeys;
+
+			$lo_child->unset((array)$lo_table->getPrimaryKey());
+			$lo_child->setNew(true);
+
+			/**
+			 * If the nesting has related columns, need to set them on the child entity with the
+			 * same values as the copied entity.
+			 *
+			 * Copying a widget to another identifier, ort form elements lto another page:
+			 * the new values of the entity have to be used for the copied children as well.
+			 */
+			if ($la_relatedColumns) {
+				$lo_child->set($entity->extract($la_relatedColumns));
+			}
+		}
+
+		$entity->{$ls_propertyName} = $lo_nestedChildren;
+
+		$lo_table->{$ls_associationName}->getBehavior('Nest')->setConfig('buildRules', false);
 	}
 
 

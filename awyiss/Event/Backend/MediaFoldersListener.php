@@ -41,59 +41,12 @@ class MediaFoldersListener implements EventListenerInterface {
 	 */
 	public function implementedEvents(): array {
 		return [
-			'Model.MediaFolders.beforeCopy' => 'beforeCopy',
 			'Model.MediaFolders.afterCopyCommit' => 'afterCopyCommit',
 			'Model.MediaFolders.beforeSave' => 'beforeSave',
 			'Model.MediaFolders.afterSave' => 'afterSave',
 			'Model.MediaFolders.afterSaveCommit' => 'afterSaveCommit',
 			'Model.MediaFolders.beforeSoftDelete' => 'beforeSoftDelete',
 		];
-	}
-
-
-	/**
-	 * @param \Cake\Event\Event $event
-	 * @param \Awyiss\Model\Entity\MediaFolder $entity
-	 * @param \ArrayObject $options
-	 * @return void
-	 */
-	public function beforeCopy(Event $event, MediaFolder $entity, ArrayObject $options): void {
-		if ($options['_primary'] !== true) {
-			return;
-		}
-
-		/** @var \Awyiss\Model\Table\MediaFoldersTable $lo_table */
-		$lo_table = $event->getSubject();
-
-		/** @var \Awyiss\Model\Entity\MediaFolder $lo_originalEntity */
-		$lo_originalEntity = $entity->originalEntity;
-		$lo_children = $lo_originalEntity->getNestedChildren([
-			'finders' => [
-				'mediaAssignments' => ['formatResult' => false],
-				'translations',
-			],
-		]);
-
-		if (!$lo_children?->count()) {
-			return;
-		}
-
-		$lo_nestedChildren = $lo_children->nest('id', 'parentId', 'childMediaFolders')->toList();
-
-		$la_relatedColumns = $lo_table->getBehavior('Nest')->getConfig('relatedColumns');
-
-		/** @var \Awyiss\Model\Entity\MediaFolder $lo_childMediaFolder */
-		foreach ($lo_children as $lo_childMediaFolder) {
-			$la_primaryKeys = $lo_childMediaFolder->extract((array)$lo_table->getPrimaryKey());
-			$lo_childMediaFolder->originalPrimaryKeys = $la_primaryKeys;
-
-			$lo_childMediaFolder->unset((array)$lo_table->getPrimaryKey());
-			$lo_childMediaFolder->setNew(true);
-
-			$lo_childMediaFolder->set($entity->extract($la_relatedColumns));
-		}
-
-		$entity->childMediaFolders = $lo_nestedChildren;
 	}
 
 
