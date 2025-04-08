@@ -148,8 +148,11 @@
 			padding:0 5px;
 
 			html.Scale-Small & {
-				margin-inline:0;
 				padding:0 5px;
+
+				&:not([class*="ColumnIndent-"]) {
+					margin-inline:0;
+				}
 			}
 
 			&.Narrow {
@@ -224,9 +227,12 @@
 					border-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l + 0.0448) calc(c + 0.005) calc(h - 0.4));
 				}
 
+				html.Scale-Medium & {
+					padding-block:.35rem;
+				}
+
 				html.Scale-Small & {
-					padding-top:.25rem;
-					padding-bottom:.25rem;
+					padding-block:.25rem;
 				}
 
 				&:hover {
@@ -253,6 +259,7 @@
 
 				html.Scale-Small & {
 					width:100%;
+					line-height:30px;
 					flex-basis:100%;
 				}
 			}
@@ -274,6 +281,10 @@
 				padding:0;
 				font-size:0;
 				line-height:0;
+
+				html.Scale-Small & {
+					height:30px;
+				}
 
 				&.Button-Edit {
 					&::after {
@@ -313,8 +324,12 @@
 			right:5px;
 			top:38px;
 
+			html.Scale-Medium & {
+				top:31px;
+			}
+
 			html.Scale-Small & {
-				top:34px;
+				top:20px;
 			}
 		}
 		
@@ -496,7 +511,7 @@
 		transition:border-radius .3s ease-in-out, background-color .3s ease-in-out;
 
 		html.Scale-Small & {
-			padding-bottom:.75rem;
+			padding-block:.5rem;
 		}
 
 		&:has(> .NestedListToggle:not(.Hidden)) {
@@ -663,6 +678,7 @@
 
 		html.Scale-Small & {
 			top:-2px;
+			margin-bottom:-6px;
 		}
 	}
 

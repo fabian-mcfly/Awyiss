@@ -127,9 +127,11 @@
 		flex:0 0 100%;
 
 		html.Scale-Small & {
+			display:flex;
 			width:23.5%;
 			margin-right:2%;
 			flex-basis:23.5%;
+			align-items:center;
 		}
 	}
 

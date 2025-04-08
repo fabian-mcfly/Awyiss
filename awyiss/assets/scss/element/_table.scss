@@ -411,7 +411,7 @@
 		overflow:visible;
 
 		html.Scale-Small & {
-			width:calc(9rem + 40px);
+			width:calc(10rem + 40px);
 		}
 	}
 
@@ -427,9 +427,5 @@
 
 	.Actions {
 		@extend %Actions;
-
-		html.Scale-Small & {
-			width:9rem;
-		}
 	}
 }

@@ -49,6 +49,11 @@
 			margin:0;
 		}
 
+		html.Scale-Medium & {
+			font-size:0;
+			line-height:0;
+		}
+
 		html.Scale-Small & {
 			padding:0;
 			font-size:0;

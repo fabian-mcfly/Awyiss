@@ -1,4 +1,3 @@
-
 button,
 .Button {
 	--backgroundColor:var(--colorDark);
@@ -124,6 +123,10 @@ button,
 			&::after {
 				content:'\f044';
 			}
+		}
+
+		html.Scale-Medium & {
+			font-size:1rem;
 		}
 
 		html.Scale-Small & {

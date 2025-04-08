@@ -6,6 +6,7 @@
 	transition:opacity .3s ease-in-out;
 
 	html.Scale-Small & {
+		width:100%;
 		min-height:30px;
 	}
 
