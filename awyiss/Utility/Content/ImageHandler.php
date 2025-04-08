@@ -430,7 +430,9 @@ class ImageHandler {
 				'scope' => Inflector::underscore($entity->getSource()),
 			]);
 
-			if (isset($la_originalInlineAssignments[ $lo_media->id ])) {
+			// Copy the original assignment ID if it exists, but only if the entity is not new
+			// If it is new, it's a copy, and we don't want to steal the assignment from the original content
+			if (!$entity->isNew() && isset($la_originalInlineAssignments[ $lo_media->id ])) {
 				$lo_assignment->set('id', $la_originalInlineAssignments[ $lo_media->id ]->id);
 				$lo_assignment->setNew(false);
 			}
