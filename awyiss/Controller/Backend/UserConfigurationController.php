@@ -32,6 +32,12 @@ class UserConfigurationController extends Controller {
 
 
 	/**
+	 * @inheritDoc
+	 */
+	protected array $lock = ['autoload' => false];
+
+
+	/**
 	 * Called after the `__construct()` method
 	 *
 	 * @throws \ReflectionException
