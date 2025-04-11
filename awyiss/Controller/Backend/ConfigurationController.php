@@ -309,6 +309,60 @@ class ConfigurationController extends Controller {
 
 
 	/**
+	 * @return void
+	 * @throws \Exception
+	 */
+	public function requestLock(): void {
+		$li_configId = (int)$this->request->getData('id');
+
+		/** @var \Awyiss\Model\Entity\Configuration $lo_configuration */
+		$lo_configuration = $this->Configuration->findById($li_configId)->first();
+		if (!$lo_configuration) {
+			$this->viewBuilder()->setClassName('Json')->setOption('serialize', ['data', 'status']);
+
+			// Set the response data
+			$this->set([
+				'data' => [],
+				'status' => 'error',
+			]);
+
+			return;
+		}
+
+		$this->Authorization->setAdditionalData(['scope' => $lo_configuration->scope]);
+
+		parent::requestLock();
+	}
+
+
+	/**
+	 * @return void
+	 * @throws \Exception
+	 */
+	public function releaseLock(): void {
+		$li_configId = (int)$this->request->getData('id');
+
+		/** @var \Awyiss\Model\Entity\Configuration $lo_configuration */
+		$lo_configuration = $this->Configuration->findById($li_configId)->first();
+		if (!$lo_configuration) {
+			$this->viewBuilder()->setClassName('Json')->setOption('serialize', ['data', 'status']);
+
+			// Set the response data
+			$this->set([
+				'data' => [],
+				'status' => 'error',
+			]);
+
+			return;
+		}
+
+		$this->Authorization->setAdditionalData(['scope' => $lo_configuration->scope]);
+
+		parent::releaseLock();
+	}
+
+
+	/**
 	 * @param array $configOptions
 	 * @param string $realm
 	 * @param string $selectedScope
