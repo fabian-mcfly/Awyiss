@@ -48,6 +48,33 @@ export default class OverflowMenu {
 		this.items = Array.from(this.menu.querySelectorAll(itemSelector));
 		this.overflowItems = [];
 
+		this.menu.querySelectorAll('li').forEach(function (item) {
+			// If the item has a sublist, add a toggle button
+			const sublist = item.querySelector(':scope > ul');
+			if (!sublist) {
+				return;
+			}
+
+			const isActive = item.classList.contains('Active');
+
+			const toggleButton = document.createElement('button');
+			toggleButton.classList.add('Submenu-Toggle');
+			toggleButton.setAttribute('aria-expanded', isActive);
+			toggleButton.setAttribute('aria-controls', sublist.id);
+			toggleButton.setAttribute('aria-label', 'Toggle Submenu');
+
+			toggleButton.addEventListener('click', function (event) {
+				event.stopPropagation();
+				const expanded = toggleButton.getAttribute('aria-expanded') === 'true';
+				toggleButton.setAttribute('aria-expanded', !expanded);
+				sublist.classList.toggle('Visible');
+			});
+
+			sublist.classList.toggle('Visible', isActive);
+
+			item.insertBefore(toggleButton, sublist);
+		});
+
 		// Create the overflow container and append it to the menu
 		this.overflowContainer = document.createElement('ul');
 		this.overflowContainer.classList.add(this.overflowContainerClass);
@@ -88,21 +115,17 @@ export default class OverflowMenu {
 		const parentWidth = parentElement.offsetWidth;
 
 		// Calculate the total width of all sibling elements of the menu
-		const siblingsWidth = Array.from(parentElement.children)
+		let siblingsWidth = Array.from(parentElement.children)
 		.filter(child => child !== this.menu)
-		// Start with 40 to account for the margin to the logo
-		// Add 2 for each child to account for the margin between each child
-		// And subtract 2 for the last child to account for the last margin being 0
-		.reduce((total, child) => total + child.offsetWidth + 2, 40) - 2;
+		// Add each child and subtract 6 for the negative margin of the logout.
+		.reduce((total, child) => {
+			return total + child.offsetWidth;
+		}, 0) - 6;
 
-		// Calculate the available width for the menu
-		// Subtract the width of the siblings and the "Show more" button
-		// and 2 for the left margin of the show more button
-		// and 4 for the border of the menu
-		const menuWidth = parentWidth - siblingsWidth - showMoreButton.offsetWidth - 2 - 4;
-
-		// Calculate the total width of the items
-		let itemsWidth = this.items.reduce((total, item) => total + item.offsetWidth, 0);
+		// If the parent element has a LanguageSwitcher, subtract 6 for its negative margin
+		if (parentElement.querySelector('.LanguageSwitcher')) {
+			siblingsWidth -= 6;
+		}
 
 		// Add the overflow items back to the main menu
 		this.overflowItems.forEach(item => {
@@ -112,10 +135,30 @@ export default class OverflowMenu {
 		});
 		this.overflowItems = [];
 
+		// Calculate the available width for the menu
+		// Subtract the width of the siblings, the inline padding of the header
+		// and the inline border of the menu
+		let availableWidth = parentWidth - siblingsWidth - 4;
+		availableWidth -= document.body.clientWidth > 540 ? 40 : 20;
+
+		// Calculate the total width of the items
+		let itemsWidth = this.items.reduce((total, item) => {
+			// Hidden elements should not be counted
+			if (item.offsetWidth === 0) {
+				return 0;
+			}
+
+			return total + item.offsetWidth + 2; // Add 2 to account for the right margin of the item
+		}, 0) - 2; // Subtract 2 to account for the right margin of the last item
+
 		// If the total width of the items is greater than the available width, move items to the overflow
-		if (itemsWidth > menuWidth) {
+		if (itemsWidth > availableWidth) {
+			// Now that the overflow container must be visible,
+			// the available width must be reduced by the width of the overflow container. Oh no.
+			availableWidth -= showMoreButton.offsetWidth + 2; // Add 2 to account for the right margin of the button
+
 			this.items.reverse().forEach((item) => {
-				if (itemsWidth > menuWidth) {
+				if (itemsWidth > availableWidth) {
 					itemsWidth -= item.offsetWidth;
 					item.classList.add(this.visibleClass);
 					//noinspection JSCheckFunctionSignatures
@@ -124,6 +167,8 @@ export default class OverflowMenu {
 				}
 			});
 			this.items.reverse();
+
+			this.checkConstraints();
 		}
 
 		// If the overflow menu has no items, remove the Visible class
@@ -147,11 +192,33 @@ export default class OverflowMenu {
 			event.target.parentElement !== this.menu
 		) {
 			//If not, hide the overflow container
+			this.overflowContainer.classList.remove('Narrow');
 			this.overflowContainer.classList.remove(this.visibleClass);
 
 			return;
 		}
 
 		this.overflowContainer.classList.toggle(this.visibleClass);
+
+		this.checkConstraints();
+	}
+
+	/**
+	 * If the overflow container is visible, check if it fits inside the viewport
+	 */
+	checkConstraints() {
+		if (!this.overflowContainer.classList.contains(this.visibleClass)) {
+			return;
+		}
+
+		this.overflowContainer.classList.remove('Narrow')
+
+		// Get the right position of the overflow container
+		const rightPosition = this.overflowContainer.getBoundingClientRect().right;
+
+		// If the overflow container is wider than the available space to the left, add the "Narrow" class
+		if (rightPosition <= (this.overflowContainer.clientWidth + 40)) {
+			this.overflowContainer.classList.add('Narrow');
+		}
 	}
 }
