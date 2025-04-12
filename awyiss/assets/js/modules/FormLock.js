@@ -49,6 +49,10 @@ export default class FormLock {
 				form.lockDialog.classList.remove('Visible');
 			}
 
+			if (form.lockTimeout) {
+				clearTimeout(form.lockTimeout);
+			}
+
 			form.lockTimeout = setTimeout(() => {
 				this.showUnlockWarning(form);
 			}, timeoutTime);
