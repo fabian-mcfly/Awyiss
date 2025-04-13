@@ -204,7 +204,7 @@ class PagesTable extends Table {
 		$validator->notEmptyString('title');
 		$validator->add('title', [
 			'isScalar' => ['rule' => 'isScalar'],
-			'maxLength' => ['rule' => ['maxLength', 100]],
+			'maxLength' => ['rule' => ['maxLength', 255]],
 			'notBlank' => ['rule' => 'notBlank'],
 		]);
 

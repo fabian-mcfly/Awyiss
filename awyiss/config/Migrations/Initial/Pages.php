@@ -63,7 +63,7 @@ class Pages {
 			'null' => false,
 		])->addColumn('title', 'string', [
 			'default' => null,
-			'limit' => 100,
+			'limit' => 255,
 			'null' => false,
 		])->addColumn('redirect_link', 'string', [
 			'default' => null,
