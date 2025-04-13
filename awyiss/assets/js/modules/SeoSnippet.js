@@ -125,7 +125,7 @@ export default class SeoSnippet {
 		observer.addObserver(this.observeForNewInputs.bind(this));
 
 		// Add event listener for input events
-		this.eventHandler.add('input', this.update.bind(this), window);
+		this.eventHandler.add('input', this.update.bind(this), document.body);
 	}
 
 	/**
@@ -154,6 +154,14 @@ export default class SeoSnippet {
 
 		// Initialize the character counter
 		this.charCounter = new CharCounter('input[data-charcounter-name], textarea[data-charcounter-name]');
+
+		// Send an input event to update the SEO snippet
+		const event = new InputEvent('input', {bubbles: true, cancelable: true});
+
+		setTimeout(function () {
+			this.seoSnippetSearchTerm.dispatchEvent(event);
+			window.formLeaveConfirmation.unlock();
+		}.bind(this), 100);
 	}
 
 	/**
