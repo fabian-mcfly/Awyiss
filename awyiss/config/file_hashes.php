@@ -42,6 +42,7 @@ return [
 		'\\Cake\\View\\Helper\\IdGeneratorTrait::_domId' => '14ab14025c4190e5761a9f31cfc2f2ad',
 		'\\Cake\\View\\Helper\\UrlHelper::build' => '2dad8d82746701e2324918a5f90b34c4',
 		'\\Cake\\View\\StringTemplate::load' => '5972bc1feb58a9b0d2f1e169b5a398b8',
+		'\\Cake\\View\\Widget\\SelectBoxWidget::_renderOptions' => '5841bc004762fce45a4ba045d159404c',
 		'\\MatthiasMullie\\Minify\\CSS::stripWhitespace' => '1980a59c0892b2da37dce9597fe3365c',
 		'\\Migrations\\Command\\BakeSimpleMigrationCommand::bake' => '518d85e11ba4fb6d17d1bcfcba35d981',
 		'\\Migrations\\Util\\ColumnParser::parseFields' => '33558275c6f2a796177e3c20f71d7c9d',
