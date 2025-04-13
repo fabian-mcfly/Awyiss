@@ -48,7 +48,7 @@ class LinkSelectWidget extends BasicWidget {
 
 		//If the provided value is a key of the provided options, it's the currently selected option
 		if (array_key_exists($la_data['val'], $la_data['options'])) {
-			$ls_selectedOption = $this->renderSelectedOption($la_data);
+			$ls_selectedOption = $this->renderSelectedOption($la_data, $la_data['escape']);
 		}
 
 		//Add the label to the templateVars, if it does not already exist
@@ -185,13 +185,16 @@ class LinkSelectWidget extends BasicWidget {
 	 * Returns the rendered selected option
 	 *
 	 * @param array $data
+	 * @param bool $escape
 	 * @return string
 	 */
-	protected function renderSelectedOption(array $data): string {
+	protected function renderSelectedOption(array $data, bool $escape = true): string {
 		$la_data = $data;
 
 		$la_selectedOption = (array)$la_data['options'][ $la_data['val'] ];
-
+		if ($escape) {
+			$la_selectedOption['title'] = h($la_selectedOption['title']);
+		}
 
 		//Append the formatted template for this option
 		return $this->_templates->format('selectedOption', $la_selectedOption);
