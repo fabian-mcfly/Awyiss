@@ -75,7 +75,7 @@ export default class TranslatableTexts {
 			// Confirm button
 			this.dialog.confirmApply = document.createElement('button');
 			this.dialog.confirmApply.id = 'TranslationDialog-Apply';
-			this.dialog.confirmApply.classList.add('Button', 'Button-Success');
+			this.dialog.confirmApply.classList.add('Button', 'Button-Save', 'Button-Success');
 			this.dialog.confirmApply.textContent = 'Apply';
 			this.dialog.form.appendChild(this.dialog.confirmApply);
 
