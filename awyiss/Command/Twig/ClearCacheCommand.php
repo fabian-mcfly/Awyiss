@@ -33,6 +33,12 @@ class ClearCacheCommand extends Command {
 
 		$io->out('Emptying twig cache... ', 0);
 
+		if (!is_dir($ls_folderPath)) {
+			$io->success('No cache folder found');
+
+			return static::CODE_SUCCESS;
+		}
+
 		$lo_process = new Process([
 			'rm',
 			'-r',
