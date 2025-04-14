@@ -79,8 +79,9 @@ export default class Loader {
 		table_row_advtab: false,
 		table_sizing_mode: 'responsive',
 		table_use_colgroups: false,
-		toolbar1: 'undo redo | copy cut paste pastetext | bold italic underline strikethrough styles removeformat | aligncenter alignright alignjustify outdent indent | awyissModule',
-		toolbar2: 'link unlink anchor | image | blockquote bullist numlist | hr subscript superscript nonbreaking charmap | table | visualblocks visualchars | wordcount code | fullscreen',
+		toolbar: 'undo redo | bold italic underline strikethrough styles removeformat | link unlink anchor | blockquote bullist numlist'
+		+ ' | image | hr subscript superscript nonbreaking charmap | table | awyissModule | aligncenter alignright alignjustify outdent indent'
+		+ ' | copy cut paste pastetext | visualblocks visualchars | wordcount code | fullscreen',
 		toolbar_sticky: true,
 		toolbar_sticky_offset: document.documentElement.classList.contains('👀') ? 0 : 100,
 		//visualchars_default_state: true,
@@ -245,9 +246,9 @@ export default class Loader {
 		}
 
 		if (document.body.classList.contains('EmailTemplatesController')) {
-			this.settings.toolbar1 = this.settings.toolbar1.replace('awyissModule', '');
-			this.settings.toolbar1 = this.settings.toolbar1.replace(' styles ', '');
-			this.settings.toolbar1 += 'formPlaceholders';
+			this.settings.toolbar = this.settings.toolbar.replace('awyissModule', '');
+			this.settings.toolbar = this.settings.toolbar.replace(' styles ', '');
+			this.settings.toolbar += 'formPlaceholders';
 		}
 
 		this.settingsSet = true;
