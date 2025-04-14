@@ -357,7 +357,23 @@ export class SearchFilter {
 				multipleDates: valueInput.dataset.allowMultipleValues === 'true' && (operator === 'in' || operator === 'not_in'),
 				multipleDatesSeparator: ', ',
 				onlyTimepicker: timePicker,
-				position:'left bottom',
+				position: function ({$datepicker, $target, $pointer}) {
+					// We are extremely lazy here and just use the internal function to set the position
+					// There is no need to reinvent the wheel and practically copy the code
+					$datepicker.classList.remove('-custom-position-', '-left-bottom-', '-top-center-');
+
+					if (document.body.clientWidth <= 768) {
+						$datepicker.classList.remove('-from-left-');
+						this.datepicker._setPositionClasses('top center');
+						this.datepicker.setPosition('top center');
+
+						return;
+					}
+
+					$datepicker.classList.remove('-from-top-');
+					this.datepicker._setPositionClasses('left bottom');
+					this.datepicker.setPosition('left bottom');
+				}.bind(valueInput),
 				range: valueInput.dataset.allowMultipleValues === 'true' && operator !== 'in' && operator !== 'not_in',
 				timepicker: dateTimePicker || timePicker,
 				onSelect: function (data) {
