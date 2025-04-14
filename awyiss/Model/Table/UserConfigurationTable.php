@@ -291,14 +291,22 @@ class UserConfigurationTable extends Table {
 		$lo_identity = $this->getIdentity();
 
 		foreach (ConfigOptionsProvider::getConfigOptionsFiles() as $ls_scope => $ls_className) {
-			if (in_array($ls_scope, ['Contents', 'System'], true)) {
+			if (
 				// For now, contents are always accessible since accessing them depends on page roles
-				$this->configScopes[ $ls_scope ] = $ls_className;
-			}
-			elseif ($ls_scope === 'FormElements' && $lo_identity?->scopeIsAccessible('Forms', [], ['read', 'create', 'update', 'configure'])) {
-				$this->configScopes[ $ls_scope ] = $ls_className;
-			}
-			elseif ($lo_identity?->scopeIsAccessible($ls_scope, [], ['read', 'create', 'update', 'configure'])) {
+				in_array($ls_scope, ['Contents', 'System'], true) ||
+				// Form elements are accessible if the user has access to the Forms scope
+				(
+					$ls_scope === 'FormElements' &&
+					$lo_identity?->scopeIsAccessible('Forms', [], ['read', 'create', 'update', 'configure'])
+				) ||
+				// Menu entries are accessible if the user has access to the Menus scope
+				(
+					$ls_scope === 'MenuEntries' &&
+					$lo_identity?->scopeIsAccessible('Menus', [], ['read', 'create', 'update', 'configure'])
+				) ||
+				// The user has access to the scope if any access is granted
+				$lo_identity?->scopeIsAccessible($ls_scope, [], ['read', 'create', 'update', 'configure'])
+			) {
 				$this->configScopes[ $ls_scope ] = $ls_className;
 			}
 		}
