@@ -113,7 +113,7 @@ class SystemConfigOptions extends AbstractConfigOptions {
 				),
 			],
 			new ConfigOption(
-				defaultValue: 600,
+				defaultValue: 1200,
 				identifier: 'lockTimeout',
 				localizable: false,
 				nullable: false,
