@@ -20,13 +20,11 @@
 								</th>
 							{% endblock %}
 
-							{% block tableOverviewHeaderTitle %}
-								<th class="TableHeader-Title">
-									{{ __df('users', 'system', 'title') }}
+							{% block tableOverviewHeaderDefaultFields %}
+								<th class="TableHeader-Username">
+									{{ __df('users', 'system', 'username') }}
 								</th>
 							{% endblock %}
-
-							{% block tableOverviewHeaderDefaultFields %}{% endblock %}
 
 							{% block tableOverviewHeaderDisplayedFields %}
 								{% for field in localConfig.overview.displayedFields %}
@@ -64,11 +62,10 @@
 				{% for user in users %}
 					{% block tableOverviewBodyRow %}
 						<tr
-								class="
-								{%- if user.active is defined and user.active == false %} Inactive{% endif -%}
-								{%- if user.isPublished() is same as false %} NotPublished{% endif %}
-							">
-
+							class="
+							{%- if user.active is defined and user.active == false %} Inactive{% endif -%}
+							{%- if user.isPublished() is same as false %} NotPublished{% endif %}
+						">
 							{% block tableOverviewBodyRowInner %}
 								{% block tableOverviewCellUserCheckbox %}
 									<td class="TableCell-UserCheckbox">
@@ -86,11 +83,9 @@
 									<td class="TableCell-Id">{{ user.id }}</td>
 								{% endblock %}
 
-								{% block tableOverviewCellTitle %}
-									<td class="TableCell-Title">{{ user.title }}</td>
+								{% block tableOverviewCellDefaultFields %}
+									<td class="TableCell-Username">{{ user.username }}</td>
 								{% endblock %}
-
-								{% block tableOverviewCellDefaultFields %}{% endblock %}
 
 								{% block tableOverviewCellDisplayedFields %}
 									{% for field in localConfig.overview.displayedFields %}
