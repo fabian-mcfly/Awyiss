@@ -32,7 +32,6 @@ class UsersConfigOptions extends AbstractConfigOptions {
 			'overview' => [
 				new ConfigOption(
 					defaultValue: [
-						'username',
 						'email',
 						'last_login',
 					],
@@ -43,7 +42,7 @@ class UsersConfigOptions extends AbstractConfigOptions {
 					values: function () {
 						$la_fields = $this->getTableFields();
 
-						unset($la_fields['id']);
+						unset($la_fields['id'], $la_fields['username'], $la_fields['password']);
 
 						return $la_fields;
 					},
