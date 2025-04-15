@@ -119,7 +119,6 @@ class GenericPagesConfigOptions extends AbstractGenericConfigOptions {
 			'overview' => [
 				new ConfigOption(
 					defaultValue: [
-						'slug',
 						'page_template_id',
 					],
 					identifier: 'displayedFields',
@@ -129,7 +128,7 @@ class GenericPagesConfigOptions extends AbstractGenericConfigOptions {
 					values: function () {
 						$la_fields = $this->getTableFields();
 
-						unset($la_fields['id'], $la_fields['title']);
+						unset($la_fields['id'], $la_fields['title'], $la_fields['slug']);
 
 						return $la_fields;
 					},

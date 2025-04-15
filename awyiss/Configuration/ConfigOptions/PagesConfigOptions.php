@@ -41,7 +41,6 @@ class PagesConfigOptions extends AbstractConfigOptions {
 			'overview' => [
 				new ConfigOption(
 					defaultValue: [
-						'slug',
 						'page_template_id',
 					],
 					identifier: 'displayedFields',
@@ -51,7 +50,7 @@ class PagesConfigOptions extends AbstractConfigOptions {
 					values: function () {
 						$la_fields = $this->getTableFields();
 
-						unset($la_fields['id'], $la_fields['title']);
+						unset($la_fields['id'], $la_fields['title'], $la_fields['slug']);
 
 						return $la_fields;
 					},
