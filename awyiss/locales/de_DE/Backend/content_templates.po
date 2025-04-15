@@ -77,6 +77,9 @@ msgstr "Spaltenbreite"
 msgid "content_elements_available"
 msgstr "Verfügbare Inhaltselemente"
 
+msgid "content_elements_assigned"
+msgstr "Zugewiesene Inhaltselemente"
+
 msgid "assigned_page_templates"
 msgstr "Verfügbar für Seitentemplates"
 

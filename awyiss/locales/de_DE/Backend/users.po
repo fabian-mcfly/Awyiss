@@ -115,3 +115,6 @@ msgstr "Letzte Anmeldung"
 
 msgid "fieldset_usergroups"
 msgstr "Benutzergruppen"
+
+msgid "failed_attempts"
+msgstr "Anmeldeversuche"

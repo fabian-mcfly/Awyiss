@@ -115,3 +115,6 @@ msgstr "Last login"
 
 msgid "fieldset_usergroups"
 msgstr "User groups"
+
+msgid "failed_attempts"
+msgstr "Login attempts"

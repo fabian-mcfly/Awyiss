@@ -81,7 +81,7 @@ msgid "type"
 msgstr "Database type"
 
 msgid "has_index"
-msgstr "Has Index"
+msgstr "Create index in database"
 
 msgid "column_span"
 msgstr "Column Span"

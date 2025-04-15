@@ -214,3 +214,6 @@ msgstr "Overwrite existing files"
 
 msgid "configuration_identifier_backend_handle_images_in_html"
 msgstr "Replace images in HTML with responsive images"
+
+msgid "focus_point"
+msgstr "Focus point"

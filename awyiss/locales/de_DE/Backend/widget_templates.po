@@ -77,6 +77,9 @@ msgstr "Spaltenbreite"
 msgid "widget_elements_available"
 msgstr "Verfügbare Widgetelemente"
 
+msgid "widget_elements_assigned"
+msgstr "Zugewiesene Widgetelemente"
+
 msgid "used_for_widgets"
 msgstr "Verwendungen"
 

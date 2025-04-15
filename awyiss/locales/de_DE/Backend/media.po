@@ -214,3 +214,6 @@ msgstr "Existierende Dateien überschreiben"
 
 msgid "configuration_identifier_backend_handle_images_in_html"
 msgstr "Ersetze Bilder in HTML durch responsive Bilder"
+
+msgid "focus_point"
+msgstr "Fokuspunkt"

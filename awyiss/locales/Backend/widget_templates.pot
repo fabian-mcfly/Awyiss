@@ -77,5 +77,8 @@ msgstr "Column Width"
 msgid "widget_elements_available"
 msgstr "Available Widget Elements"
 
+msgid "widget_elements_assigned"
+msgstr "Assigned Widget Elements"
+
 msgid "used_for_widgets"
 msgstr "Usages"
