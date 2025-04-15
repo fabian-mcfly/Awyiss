@@ -68,7 +68,11 @@
 												{% set field = field|underscore %}
 												{% block nestedListItemDataDisplayedFieldDefault %}
 													{% block nestedListItemDataDisplayedFieldDefaultLabel %}
-														<span class="Label">{{ i18nDomain ? __df(i18nDomain, 'system', field) :	__(field) }}:</span>
+														<span class="Label">{{
+															field in ['meta_title', 'meta_description', 'robots_index', 'robots_follow']
+															? __d('seo', field)
+															: (i18nDomain ? __df(i18nDomain, 'system', field) : __(field))
+														}}:</span>
 													{% endblock %}
 													{% block nestedListItemDataDisplayedFieldDefaultValue %}
 														{% if field == 'language_shortcode' %}

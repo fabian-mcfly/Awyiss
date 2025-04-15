@@ -50,7 +50,9 @@
 											{% else %}
 												<th class="TableHeader-{{ field|camelize }}{% if PaginatorHelper.isCurrentSortKey(field) %} Active{% endif %}">
 													{{ PaginatorHelper.sort(field,
-														i18nDomain ? __df(i18nDomain, 'system', field) : __(field)
+														field in ['meta_title', 'meta_description', 'robots_index', 'robots_follow']
+														? __d('seo', field)
+														: (i18nDomain ? __df(i18nDomain, 'system', field) : __(field))
 													) }}
 												</th>
 											{% endif %}
