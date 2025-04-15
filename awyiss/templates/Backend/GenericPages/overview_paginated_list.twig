@@ -23,18 +23,18 @@
 	</td>
 {% endblock %}
 
-{% block tableOverviewCellDisplayedFieldDefaultValue %}
-	{% if field == 'slug' and entity.slug %}
-		{{ HtmlHelper.link(entity.languageShortcode ~ '/' ~ entity.slug, {
+{% block tableOverviewCellTitle %}
+	<td class="TableCell-Title">
+		{{ entity.title }}
+		<br>
+		<span class="Slug">{{ HtmlHelper.link(entity.languageShortcode ~ '/' ~ entity.slug, {
 			lang: entity.languageShortcode,
 			slug: entity.slug,
 			_name: 'Frontend',
 		}, {
 			target: '_blank',
-		}) }}
-	{% else %}
-		{{ parent() }}
-	{% endif %}
+		}) }}</span>
+	</td>
 {% endblock %}
 
 {% block tableOverviewCellActions %}
