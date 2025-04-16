@@ -123,10 +123,10 @@ msgid "fieldset"
 msgstr "Formularbereich"
 
 msgid "fieldset_presentation"
-msgstr "Darstellung"
+msgstr "Präsentation"
 
 msgid "fieldset_conditions"
-msgstr "Positionierung"
+msgstr "Eigenschaften"
 
 msgid "fieldset_general"
 msgstr "Allgemein"
@@ -433,8 +433,14 @@ msgstr "Skalierung"
 msgid "configuration_identifier_backend_html_cleaning"
 msgstr "HTML-Säuberung"
 
+msgid "configuration_category_backend_lock"
+msgstr "Sperre"
+
 msgid "configuration_identifier_backend_lock_timeout"
 msgstr "Bearbeitungs-Sperrzeit"
+
+msgid "configuration_identifier_backend_lock_enabled"
+msgstr "Aktiviert"
 
 msgid "configuration_identifier_backend_timezone"
 msgstr "Zeitzone"

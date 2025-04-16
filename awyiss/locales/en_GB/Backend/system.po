@@ -126,7 +126,7 @@ msgid "fieldset_presentation"
 msgstr "Presentation"
 
 msgid "fieldset_conditions"
-msgstr "Conditions"
+msgstr "Properties"
 
 msgid "fieldset_general"
 msgstr "General"
@@ -433,8 +433,14 @@ msgstr "Scaling"
 msgid "configuration_identifier_backend_html_cleaning"
 msgstr "HTML Cleaning"
 
+msgid "configuration_category_backend_lock"
+msgstr "Lock"
+
 msgid "configuration_identifier_backend_lock_timeout"
-msgstr "Edit Lock Timeout"
+msgstr "Edit Timeout"
+
+msgid "configuration_identifier_backend_lock_enabled"
+msgstr "Enabled"
 
 msgid "configuration_identifier_backend_timezone"
 msgstr "Timezone"

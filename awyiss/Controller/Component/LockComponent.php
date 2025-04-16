@@ -12,6 +12,7 @@ use Cake\Controller\ComponentRegistry;
 use Cake\Core\Configure;
 use Cake\I18n\DateTime;
 use Cake\ORM\Locator\LocatorAwareTrait;
+use Cake\Utility\Hash;
 use Cake\Utility\Text;
 
 
@@ -34,6 +35,7 @@ class LockComponent extends Component {
 	 */
 	protected array $_defaultConfig = [
 		'autoload' => ['edit'], //can be a boolean value or an array containing all action names for which the locks should get set automatically
+		'enabled' => true,
 		'urlParam' => 'id', //the url parameter that contains the id of the entity
 		'tableName' => null,
 		'timeout' => 120, //timeout in seconds
@@ -48,7 +50,8 @@ class LockComponent extends Component {
 	 * @inheritDoc
 	 */
 	public function __construct(ComponentRegistry $registry, array $config = []) {
-		$this->_defaultConfig['timeout'] = Configure::read('Awyiss.System.Backend.lockTimeout');
+		// Merge the default config with the config from the system
+		$this->_defaultConfig = Hash::merge($this->_defaultConfig, Configure::read('Awyiss.System.Backend.lock', []));
 
 		parent::__construct($registry, $config);
 	}
@@ -78,6 +81,10 @@ class LockComponent extends Component {
 	 * @return void
 	 */
 	public function beforeRender(): void {
+		if (!$this->getConfig('enabled')) {
+			return;
+		}
+
 		$lo_controller = $this->getController();
 		$ls_action = $lo_controller->getRequest()->getParam('action');
 		$lx_autoload = $this->getConfig('autoload');
@@ -137,6 +144,10 @@ class LockComponent extends Component {
 	 * @return \Awyiss\Model\Entity\Lock|false
 	 */
 	public function createLock(int $id): Lock|false {
+		if (!$this->getConfig('enabled')) {
+			return false;
+		}
+
 		$lo_lock = $this->findLock($id);
 
 		if (!$lo_lock) {
@@ -174,6 +185,10 @@ class LockComponent extends Component {
 	 * @return \Awyiss\Model\Entity\Lock|bool
 	 */
 	public function releaseLock(int $id, ?string $lockedUntil): Lock|bool {
+		if (!$this->getConfig('enabled')) {
+			return false;
+		}
+
 		$lo_lock = $this->findLock($id, true, $lockedUntil);
 
 		if (!$lo_lock) {

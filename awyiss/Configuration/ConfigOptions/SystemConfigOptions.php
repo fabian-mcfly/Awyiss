@@ -112,13 +112,22 @@ class SystemConfigOptions extends AbstractConfigOptions {
 					],
 				),
 			],
-			new ConfigOption(
-				defaultValue: 1200,
-				identifier: 'lockTimeout',
-				localizable: false,
-				nullable: false,
-				type: ConfigOptionType::Integer,
-			),
+			'lock' => [
+				new ConfigOption(
+					defaultValue: true,
+					identifier: 'enabled',
+					localizable: false,
+					nullable: false,
+					type: ConfigOptionType::Bool,
+				),
+				new ConfigOption(
+					defaultValue: 1200,
+					identifier: 'timeout',
+					localizable: false,
+					nullable: false,
+					type: ConfigOptionType::Integer,
+				),
+			],
 			'meta' => [
 				new ConfigOption(
 					defaultValue: 'Awyiss Backend',
