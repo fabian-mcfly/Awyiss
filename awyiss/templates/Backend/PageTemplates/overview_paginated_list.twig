@@ -11,16 +11,20 @@
 {% extends '@Backend/element/overview/overview_paginated_list.twig' %}
 
 {% block tableOverviewHeaderDefaultFields %}
-	<th class="TableHeader-PageRole{% if PaginatorHelper.isCurrentSortKey('pageRole.title') %} Active{% endif %}">
-		{{ PaginatorHelper.sort('pageRole.title', __('page_role_title')) }}
-	</th>
+	{% if categories.selected is not numeric %}
+		<th class="TableHeader-PageRole{% if PaginatorHelper.isCurrentSortKey('pageRole.title') %} Active{% endif %}">
+			{{ PaginatorHelper.sort('pageRole.title', __('page_role_title')) }}
+		</th>
+	{% endif %}
 	<th class="TableHeader-UsedForPages{% if PaginatorHelper.isCurrentSortKey('usedForPages') %} Active{% endif %}">
 		{{ PaginatorHelper.sort('usedForPages') }}
 	</th>
 {% endblock %}
 
 {% block tableOverviewCellDefaultFields %}
-	<td class="TableCell-PageRole">{{ pageRoles.simple[ entity.pageRoleId.value ] }}</td>
+	{% if categories.selected is not numeric %}
+		<td class="TableCell-PageRole">{{ categories.simple[ entity.pageRoleId.value ] }}</td>
+	{% endif %}
 	<td class="TableCell-UsedForPages">{{ entity.usedForPages }}</td>
 {% endblock %}
 
@@ -35,4 +39,4 @@
 	{% endif %}
 {% endblock %}
 
-{% block tableOverviewFootColSpan %}{{ localConfig.overview.displayedFields|length + 6 }}{% endblock %}
+{% block tableOverviewFootColSpan %}{{ localConfig.overview.displayedFields|length + (categories.selected is numeric ? 5 : 6) }}{% endblock %}
