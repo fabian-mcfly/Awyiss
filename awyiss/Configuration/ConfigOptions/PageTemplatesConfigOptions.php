@@ -41,7 +41,7 @@ class PageTemplatesConfigOptions extends AbstractConfigOptions {
 					values: function () {
 						$la_fields = $this->getTableFields();
 
-						unset($la_fields['id'], $la_fields['title']);
+						unset($la_fields['id'], $la_fields['title'], $la_fields['page_role_id']);
 
 						return $la_fields;
 					},
