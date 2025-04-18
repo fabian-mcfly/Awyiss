@@ -24,9 +24,6 @@
 {% block tableOverviewHeaderAuditInfo %}{% endblock %}
 
 {% block tableOverviewHeaderDefaultFields %}
-	<th class="TableHeader-Scope{% if PaginatorHelper.isCurrentSortKey('scope') %} Active{% endif %}">
-		{{ __('scope') }}
-	</th>
 	<th class="TableHeader-Reference{% if PaginatorHelper.isCurrentSortKey('reference') %} Active{% endif %}">
 		{{ __('reference') }}
 	</th>
@@ -39,8 +36,8 @@
 {% endblock %}
 
 {% block tableOverviewCellDefaultFields %}
-	<td class="TableCell-Scope">{{ entity.scope }}</td>
 	<td class="TableCell-Reference">
+		{{ entity.scope }}<br>
 		{{ entity.reference }}
 		<div class="Command">
 			{% if entity.job_task == 'Queue.Execute' %}
@@ -66,10 +63,8 @@
 
 {% block tableOverviewCellActionsUpdate %}
 	{% if AuthorizationHelper.isAccessible('restartFailed') and entity.failed %}
-		{{ HtmlHelper.link(__('restart_failed_task'), {action: 'restart', id: entity.id}, {class: 'Button Button-Small Button-Edit'}) }}
+		{{ HtmlHelper.link(__('restart_failed_task'), {action: 'restart', id: entity.id}, {class: 'Button Button-Small Button-Reload'}) }}
 	{% endif %}
 {% endblock %}
 
-{% set tableFootColSpan -%}
-	{% block tableOverviewFootColSpan %}{{ localConfig.overview.displayedFields|length + 6 }}{% endblock %}
-{%- endset %}
+{% block tableOverviewFootColSpan %}{{ localConfig.overview.displayedFields|length + 5 }}{% endblock %}
