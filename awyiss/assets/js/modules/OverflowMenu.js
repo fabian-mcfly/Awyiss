@@ -75,17 +75,18 @@ export default class OverflowMenu {
 			item.insertBefore(toggleButton, sublist);
 		});
 
-		// Create the overflow container and append it to the menu
-		this.overflowContainer = document.createElement('ul');
-		this.overflowContainer.classList.add(this.overflowContainerClass);
-		this.menu.appendChild(this.overflowContainer);
-
 		// Create the "Show more" button and append it to the menu
 		const button = document.createElement('button');
 		button.classList.add(this.buttonClass);
 		button.textContent = 'Show more';
 		this.eventHandler.add('click', this.handleOverflowButtonClick.bind(this));
 		this.menu.appendChild(button);
+
+		// Create the overflow container and append it to the menu
+		this.overflowContainer = document.createElement('ul');
+		this.overflowContainer.classList.add(this.overflowContainerClass);
+		this.menu.appendChild(this.overflowContainer);
+
 
 		// Debounce the resize event using requestAnimationFrame
 		this.eventHandler.add('resize', function () {
