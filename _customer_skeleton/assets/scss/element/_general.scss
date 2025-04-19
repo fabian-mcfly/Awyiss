@@ -118,12 +118,14 @@ a {
 			&:not(.NoExternalLinkIcon) {
 				margin-right:.25em;
 
-				&[href$="gif"],
-				&[href$="jpg"],
-				&[href$="jpeg"],
-				&[href$="png"],
-				&[href$="svg"],
-				&[href$="webp"] {
+				&:is(
+					[href$="gif"],
+					[href$="jpg"],
+					[href$="jpeg"],
+					[href$="png"],
+					[href$="svg"],
+					[href$="webp"]
+				) {
 					&::after {
 						content:'\f03e';
 					}
@@ -135,26 +137,30 @@ a {
 					}
 				}
 
-				&[href$=".mp4"],
-				&[href*="vimeo.com"],
-				&[href*="youtu.be"],
-				&[href*="youtube.com"],
-				&[href*="youtube-nocookie.com"] {
+				&:is(
+					[href$=".mp4"],
+					[href*="vimeo.com"],
+					[href*="youtu.be"],
+					[href*="youtube.com"],
+					[href*="youtube-nocookie.com"]
+				) {
 					&::after {
 						content:'\f04b';
 					}
 				}
 
-				&[href*="facebook."],
-				&[href*="instagram."],
-				&[href*="plus.google."],
-				&[href*="twitter."],
-				&[href*="xing."],
-				&[href*="linkedin."],
-				&[href*="vimeo.com"],
-				&[href*="youtu.be"],
-				&[href*="youtube.com"],
-				&[href*="youtube-nocookie.com"] {
+				&:is(
+					[href*="facebook."],
+					[href*="instagram."],
+					[href*="plus.google."],
+					[href*="twitter."],
+					[href*="xing."],
+					[href*="linkedin."],
+					[href*="vimeo.com"],
+					[href*="youtu.be"],
+					[href*="youtube.com"],
+					[href*="youtube-nocookie.com"]
+				) {
 					margin-left:.25em;
 
 					&::before {
@@ -189,9 +195,11 @@ a {
 					--icon:'\f40a';
 				}
 
-				&[href*="youtu.be"],
-				&[href*="youtube.com"],
-				&[href*="youtube-nocookie.com"] {
+				&:is(
+					[href*="youtu.be"],
+					[href*="youtube.com"],
+					[href*="youtube-nocookie.com"]
+				) {
 					--icon:'\f167';
 				}
 
@@ -239,7 +247,7 @@ a {
 	}
 }
 
-h1, h2, h3, h4, h5, h6 {
+:is(h1, h2, h3, h4, h5, h6) {
 	a {
 		color:inherit;
 	}

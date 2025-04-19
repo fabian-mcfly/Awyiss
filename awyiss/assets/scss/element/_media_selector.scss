@@ -83,8 +83,10 @@
 			}
 		}
 
-		input[name^="media_assignments"],
-		.MediaSelector-MediaId {
+		:is(
+			input[name^="media_assignments"],
+			.MediaSelector-MediaId
+		) {
 			width:50px;
 			padding:0 5px;
 			border-radius:5px 5px 0 0;

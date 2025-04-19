@@ -69,9 +69,11 @@
 	}
 }
 
-.Menu-Footer,
-.Menu-SocialMedia,
-.Menu-Legal {
+:is(
+	.Menu-Footer,
+	.Menu-SocialMedia,
+	.Menu-Legal
+) {
 	margin-top:0;
 	font-size:0;
 	line-height:0;
@@ -87,14 +89,12 @@
 	}
 }
 
-
 .Menu-Footer {
 	display:grid;
 	gap:var(--elementPadding);
 	grid-template-columns:1fr 1fr;
 
-	a.Level1,
-	span.Level1 {
+	.Level1:is(a, span) {
 		font-size:1.25rem;
 		font-weight:700;
 		letter-spacing:-1px;
@@ -106,8 +106,7 @@
 		margin-top:1.5rem;
 	}
 
-	a.Level2,
-	span.Level2 {
+	.Level2:is(a, span) {
 		font-size:1rem;
 		font-weight:400;
 		line-height:var(--lineHeightMain);
@@ -119,8 +118,7 @@
 		opacity:.75;
 	}
 
-	a.Level3,
-	span.Level3 {
+	.Level3:is(a, span) {
 		font-size:1rem;
 		line-height:var(--lineHeightMain);
 	}

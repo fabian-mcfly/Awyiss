@@ -21,8 +21,10 @@
 		}
 	}
 
-	h1,
-	h2 {
+	:is(
+		h1,
+		h2
+	) {
 		width:fit-content;
 		hyphens:auto;
 		text-wrap:balance;
@@ -132,14 +134,18 @@
 	}
 }
 
-.Overview,
-.Form {
+:is(
+	.Overview,
+	.Form
+) {
 	@extend %ContentGrid;
 }
 
-.Overview-Table,
-.Overview-List,
-fieldset {
+:is(
+	.Overview-Table,
+	.Overview-List,
+	fieldset
+) {
 	min-width:0;
 	padding:40px;
 	border-radius:5px;
@@ -172,10 +178,12 @@ fieldset {
 	}
 }
 
-.Table-Overflow,
-.Overview-Fieldset,
-.Overview-List,
-.Overview-Table {
+:is(
+	.Table-Overflow,
+	.Overview-Fieldset,
+	.Overview-List,
+	.Overview-Table
+) {
 	grid-column:1 / -1;
 }
 
@@ -232,8 +240,10 @@ fieldset {
 	}
 }
 
-.Grid-12,
-fieldset {
+:is(
+	.Grid-12,
+	fieldset
+) {
 	--columns:12;
 
 	display:grid;
@@ -254,8 +264,10 @@ fieldset {
 		--columns:1;
 	}
 
-	> details,
-	> .sf-dump {
+	> :is(
+		details,
+		.sf-dump
+	) {
 		grid-column:1 / -1;
 	}
 
@@ -306,10 +318,12 @@ fieldset {
 		display:none;
 	}
 
-	.Overview > &,
-	.Form .Main-Fieldsets > &,
-	.Form .Sidebar-Fieldsets > &,
-	&.Collapsible {
+	:is(
+		.Overview > &,
+		.Form .Main-Fieldsets > &,
+		.Form .Sidebar-Fieldsets > &,
+		&.Collapsible
+	) {
 		&.Collapsed {
 			legend {
 				&::before {
@@ -406,11 +420,13 @@ legend {
 		}
 	}
 
-	.Overview > fieldset > &,
-	.Form .Fieldsets > fieldset > &,
-	.Form .Main-Fieldsets > fieldset > &,
-	.Form .Sidebar-Fieldsets > fieldset > &,
-	fieldset.Collapsible > & {
+	:is(
+		.Overview > fieldset > &,
+		.Form .Fieldsets > fieldset > &,
+		.Form .Main-Fieldsets > fieldset > &,
+		.Form .Sidebar-Fieldsets > fieldset > &,
+		fieldset.Collapsible > &
+	) {
 		padding-right:60px;
 		cursor:pointer;
 

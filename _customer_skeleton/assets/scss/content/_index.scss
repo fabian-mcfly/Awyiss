@@ -6,16 +6,20 @@
 	margin-top:0;
 }
 
-.ContentElement,
-.WidgetElement {
+:is(
+	.ContentElement,
+	.WidgetElement
+) {
 	@media screen AND (max-width:#{$singleColumnBreakpoint}) {
 		margin-top:var(--contentRowGap);
 	}
 }
 
-.ContentElement,
-.FormElement,
-.WidgetElement {
+:is(
+	.ContentElement,
+	.FormElement,
+	.WidgetElement
+) {
 	&.BackgroundColor {
 		padding:var(--elementPadding);
 		background-color:var(--backgroundColor, transparent);
@@ -56,13 +60,15 @@
 		--backgroundColor:var(--colorContrast);
 		--textColor:var(--colorBright);
 	}
-}
 
-:nth-child(1 of .ContentElement),
-:nth-child(1 of .FormElement),
-:nth-child(1 of .WidgetElement) {
-	@media screen AND (max-width:#{$singleColumnBreakpoint}) {
-		margin-top:0;
+	&:is(
+		:nth-child(1 of .ContentElement),
+		:nth-child(1 of .FormElement),
+		:nth-child(1 of .WidgetElement)
+	) {
+		@media screen AND (max-width:#{$singleColumnBreakpoint}) {
+			margin-top:0;
+		}
 	}
 }
 

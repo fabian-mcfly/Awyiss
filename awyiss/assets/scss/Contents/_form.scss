@@ -4,9 +4,11 @@
 
 	.EditFrontendEditor {
 		&:not(.ExpertMode) {
-			.FormInputName-ContentTemplateId,
-			.FormInputName-PageId,
-			.FormInputName-ContentAreaId {
+			:is(
+				.FormInputName-ContentTemplateId,
+				.FormInputName-PageId,
+				.FormInputName-ContentAreaId
+			) {
 				display:none;
 			}
 		}

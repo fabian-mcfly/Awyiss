@@ -34,7 +34,7 @@
 		}
 	}
 
-	p, h1, h2, h3, h4, h5, h6, hr, ul, ol, blockquote, table, pre {
+	:is(p, h1, h2, h3, h4, h5, h6, hr, ul, ol, blockquote, table, pre) {
 		margin-bottom:1.5rem;
 
 		&:last-child {
@@ -47,7 +47,7 @@
 		hyphens:auto;
 	}
 
-	h1, h2, h3, h4, h5, h6 {
+	:is(h1, h2, h3, h4, h5, h6) {
 		//max-inline-size:80%;
 		font:inherit;
 		text-wrap:balance;
@@ -85,8 +85,6 @@
 		}
 	}
 
-
-
 	.Env-Development {
 		h2:before { content:'H2'; }
 		h3:before { content:'H3'; }
@@ -101,10 +99,13 @@
 		$combinedSelector:join($combinedSelector, unquote('h#{$i} + h#{$i}'), comma);
 
 		@if $i < 6 {
+			$isSelector:null;
+
 			@for $j from $i + 1 through 6 {
-				$combinedSelectorNoMargin:join($combinedSelectorNoMargin, unquote('h#{$i} + h#{$j}'), comma);
+				$isSelector:join($isSelector, unquote('h#{$j}'), comma);
 			}
 
+			$combinedSelectorNoMargin:join($combinedSelectorNoMargin, unquote('h#{$i} + :is(#{$isSelector})'), comma);
 		}
 	}
 
@@ -186,7 +187,7 @@
 		color:inherit;
 	}
 
-	img, picture, video, canvas, svg {
+	:is(img, picture, video, canvas, svg) {
 		display:inline-block;
 		max-width:100%;
 
@@ -201,5 +202,21 @@
 
 	:target {
 		scroll-margin-top:9rem;
+	}
+
+	#cc-main {
+		.cm {
+			> div {
+				&:first-of-type {
+					&:focus-visible {
+						outline:3px solid #63d1a5;
+					}
+				}
+			}
+
+			&__title {
+				margin-bottom:0;
+			}
+		}
 	}
 }

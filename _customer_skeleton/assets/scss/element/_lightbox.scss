@@ -23,9 +23,11 @@
 		}
 	}
 
-	.Lightbox-Counter,
-	.Lightbox-Loader,
-	.Lightbox-Stage {
+	:is(
+		.Lightbox-Counter,
+		.Lightbox-Loader,
+		.Lightbox-Stage
+	) {
 		opacity:0;
 		visibility:hidden;
 		transition:opacity .3s ease-in-out, visibility 0s linear .3s, scale .3s ease-in-out;
@@ -47,8 +49,10 @@
 		justify-content:center;
 	}
 
-	.Lightbox-Close,
-	.Lightbox-Zoom {
+	:is(
+		.Lightbox-Close,
+		.Lightbox-Zoom
+	) {
 		width:40px;
 		aspect-ratio:1;
 		border-radius:5px;
@@ -145,8 +149,7 @@
 		justify-content:center;
 		scale:.5;
 
-		&.Inline,
-		&.Ajax,
+		&:is(.Inline, .Ajax),
 		iframe {
 			max-width:1280px;
 			max-height:calc(100% - 40px);
@@ -154,8 +157,7 @@
 			background-color:#FFFFFF;
 		}
 
-		&.Inline,
-		&.Ajax {
+		&:is(.Inline,.Ajax) {
 			scrollbar-width:thin;
 			overflow-x:hidden;
 			overflow-y:auto;

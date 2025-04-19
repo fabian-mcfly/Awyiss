@@ -108,8 +108,10 @@
 		}
 	}
 
-	&.FetchInProgress,
-	&.Visible {
+	&:is(
+		.FetchInProgress,
+		.Visible
+	) {
 		opacity:1;
 		visibility:visible;
 		transition-delay:0s;

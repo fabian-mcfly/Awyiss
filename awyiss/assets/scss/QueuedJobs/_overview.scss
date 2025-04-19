@@ -1,8 +1,10 @@
 .QueuedJobsController {
 	&.OverviewAction {
 		.Overview-Table {
-			.TableHeader-Created,
-			.TableHeader-Completed {
+			:is(
+				.TableHeader-Created,
+				.TableHeader-Completed
+			) {
 				width:260px;
 
 				@media screen and (width <= 1280px) {
@@ -29,18 +31,14 @@
 				}
 			}
 
-			.TableCell-Created,
-			.TableCell-Completed {
+			:is(
+				.TableCell-Created,
+				.TableCell-Completed
+			) {
 				@media screen and (width > 640px) {
 					text-align:right;
 				}
 			}
-
-			/*.Actions {
-				@media screen and (width <= 768px) {
-					width:100%;
-				}
-			}*/
 
 			.Command {
 				min-width:300px;

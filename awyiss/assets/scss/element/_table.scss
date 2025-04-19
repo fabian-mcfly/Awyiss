@@ -2,8 +2,10 @@
 	margin-bottom:var(--rowGap);
 	border-radius:5px;
 
-	.Table,
-	.Overview-Table {
+	:is(
+		.Table,
+		.Overview-Table
+	) {
 		margin-top:0;
 		margin-bottom:0;
 	}
@@ -21,8 +23,7 @@
 	grid-template-columns:var(--idColumnWidth) repeat(var(--dynamicColumns), var(--columnWidth));
 	overflow-x:auto;
 
-	&:has(.TableHeader-AuditInfo),
-	&:has(.TableHeader-Actions) {
+	&:has(.TableHeader-AuditInfo, .TableHeader-Actions) {
 		--dynamicColumns:calc(var(--columns) - 2);
 	}
 
@@ -42,8 +43,10 @@
 		}
 	}
 
-	&:has(th:nth-last-child(5)):not(:has(.TableHeader-Actions)),
-	&:has(th:nth-last-child(6)):has(.TableHeader-Actions) {
+	&:is(
+		:has(th:nth-last-child(5)):not(:has(.TableHeader-Actions)),
+		:has(th:nth-last-child(6)):has(.TableHeader-Actions)
+	) {
 		&:has(tfoot) {
 			border-bottom:10px solid transparent;
 		}
@@ -53,8 +56,10 @@
 				display:grid;
 				writing-mode:sideways-lr;
 
-				&.TableHeader-AuditInfo,
-				&.TableHeader-Actions {
+				&:is(
+					.TableHeader-AuditInfo,
+					.TableHeader-Actions
+				) {
 					display:none;
 				}
 
@@ -90,9 +95,11 @@
 		}
 	}
 
-	thead,
-	tbody,
-	tr {
+	:is(
+		thead,
+		tbody,
+		tr
+	) {
 		grid-template-columns:subgrid;
 		display:grid;
 		grid-column:1 / -1;
@@ -145,8 +152,10 @@
 		left:0;
 	}
 
-	.TableHeader-AuditInfo,
-	.TableHeader-Actions {
+	:is(
+		.TableHeader-AuditInfo,
+		.TableHeader-Actions
+	) {
 		display:none;
 	}
 
@@ -154,8 +163,10 @@
 		min-width:0;
 	}
 
-	.TableCell-AuditInfo,
-	.TableCell-Actions {
+	:is(
+		.TableCell-AuditInfo,
+		.TableCell-Actions
+	) {
 		min-width:0;
 		max-width:none;
 		position:sticky;
@@ -231,8 +242,10 @@
 	}
 }
 
-.Table,
-.Overview-Table {
+:is(
+	.Table,
+	.Overview-Table
+) {
 	--backgroundColorOdd:transparent;
 	--backgroundColorEven:var(--colorLight);
 
@@ -309,8 +322,10 @@
 		}
 
 		tr {
-			&.Inactive,
-			&.NotPublished {
+			&:is(
+				.Inactive,
+				.NotPublished
+			) {
 				&:hover {
 					td {
 						&,
@@ -332,8 +347,10 @@
 				}
 			}
 
-			&.ParentsInactive,
-			&.NotPublished {
+			&:is(
+				.ParentsInactive,
+				.NotPublished
+			) {
 				&:hover {
 					td {
 						opacity:1;
@@ -396,8 +413,10 @@
 				}
 			}
 
-			&:hover,
-			&:focus-within {
+			&:is(
+				:hover,
+				:focus-within
+			) {
 				.Actions {
 					@extend %ActionsHover;
 				}
@@ -406,8 +425,10 @@
 		}
 	}
 
-	th,
-	tbody td {
+	:where(
+		th,
+		tbody td
+	) {
 		padding:10px 20px;
 		border-bottom:2px solid var(--colorBright);
 		background-color:var(--backgroundColorOdd);
@@ -529,8 +550,10 @@
 			padding:0;
 		}
 
-		&:focus-within,
-		&:has(> .Sort:hover) {
+		&:is(
+			:focus-within,
+			:has(> .Sort:hover)
+		) {
 			border-bottom-color:oklch(from var(--colorSuccess) calc(l - .0368) calc(c + .018) calc(h - 2.03));
 			background-color:oklch(from var(--colorMedium) calc(l - 0.1400) calc(c - 0.002) calc(h + 0.39));
 			color:var(--colorSuccess);
@@ -854,16 +877,21 @@
 				}
 			}
 
-			thead,
-			tbody,
-			tr {
+			:is(
+				thead,
+				tbody,
+				tr
+			) {
 				display:grid;
 				grid-template-columns: subgrid;
 				grid-template-rows: subgrid;
 				grid-row:1 / -1;
 			}
 
-			th, td {
+			:is(
+				th,
+				td
+			) {
 				max-width:100%;
 				min-width:100%;
 				align-content:start;
@@ -950,8 +978,10 @@
 				}
 			}
 
-			.TableHeader-Actions,
-			.TableCell-Actions {
+			:is(
+				.TableHeader-Actions,
+				.TableCell-Actions
+			) {
 				padding-inline:10px;
 			}
 

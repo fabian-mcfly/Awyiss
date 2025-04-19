@@ -30,8 +30,10 @@
 		row-gap:var(--lineHeightMain);
 		grid-column:auto / auto;
 
-		&.Fieldset-LoggedInAs,
-		&.Fieldset-QuickActions {
+		&:is(
+			.Fieldset-LoggedInAs,
+			.Fieldset-QuickActions
+		) {
 			align-self:start;
 		}
 

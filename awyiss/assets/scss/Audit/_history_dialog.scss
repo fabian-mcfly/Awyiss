@@ -75,9 +75,11 @@
 		top:0;
 	}
 
-	.TableHeader-CurrentValue,
-	.TableCell-CurrentValue,
-	.TableFooter-CurrentValue {
+	&:is(
+		.TableHeader-CurrentValue,
+		.TableCell-CurrentValue,
+		.TableFooter-CurrentValue
+	) {
 		display:none;
 	}
 

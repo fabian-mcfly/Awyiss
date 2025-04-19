@@ -7,8 +7,10 @@
 	display:none;
 }
 
-.SubmenuTrigger,
-.SubmenuTrigger-Label {
+:is(
+	.SubmenuTrigger,
+	.SubmenuTrigger-Label
+) {
 	display:none;
 }
 
@@ -28,19 +30,13 @@
 		position:relative;
 
 		&.Active {
-			a.Level1,
-			span.Level1 {
+			.Level1:is(a, span) {
 				color:var(--colorMain);
 			}
 		}
 
 		&.Kontakt {
 			padding-inline:0;
-
-			a.Level1,
-			span.Level1 {
-
-			}
 		}
 
 		&:first-child {
@@ -55,8 +51,7 @@
 		}
 	}
 
-	a.Level1,
-	span.Level1 {
+	.Level1:is(a, span) {
 		display:block;
 		color:var(--colorMedium);
 		padding-top:1px;
@@ -112,8 +107,7 @@
 		list-style-type:none;
 	}
 
-	a.Level2,
-	span.Level2 {
+	.Level2:is(a, span) {
 		display:block;
 		padding:5px 0;
 		color:var(--colorBright);

@@ -72,17 +72,21 @@
 	}
 }
 
-.FormElement-Label,
-.FormInputType-Input,
-.FormInputType-Select,
-.FormInputType-Textarea {
+:is(
+	.FormElement-Label,
+	.FormInputType-Input,
+	.FormInputType-Select,
+	.FormInputType-Textarea
+) {
 	display:block;
 	width:100%;
 }
 
-.FormInputType-Input,
-.FormInputType-Select,
-.FormInputType-Textarea {
+:is(
+	.FormInputType-Input,
+	.FormInputType-Select,
+	.FormInputType-Textarea
+) {
 	padding:.5rem 1rem;
 	border:1px solid;
 	border-radius:5px;
@@ -94,8 +98,10 @@
 	font-size:1rem;
 	line-height:1;
 
-	&:user-invalid,
-	.FormElement-IsInvalid > & {
+	&:is(
+		:user-invalid,
+		.FormElement-IsInvalid > *
+	) {
 		border-color:var(--colorContrast);
 	}
 
@@ -104,14 +110,18 @@
 	}
 }
 
-.FormInputType-Checkbox,
-.FormInputType-Radio {
+:is(
+	.FormInputType-Checkbox,
+	.FormInputType-Radio
+) {
 	accent-color:var(--colorMain);
 	caret-color:var(--colorMain);
 }
 
-.FormElement-Checkboxes,
-.FormElement-Radios {
+:is(
+	.FormElement-Checkboxes,
+	.FormElement-Radios
+) {
 	display:grid;
 	gap:10px;
 	grid-template-columns:repeat(2, 1fr);

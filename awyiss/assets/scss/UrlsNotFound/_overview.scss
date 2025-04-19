@@ -1,9 +1,11 @@
 .UrlsNotFoundController {
-	.TableHeader-IsRobot,
-	.TableHeader-CreatedOn,
-	.TableHeader-FirstOccurrence,
-	.TableHeader-LastOccurrence,
-	.TableHeader-Occurrences {
+	:is(
+		.TableHeader-IsRobot,
+		.TableHeader-CreatedOn,
+		.TableHeader-FirstOccurrence,
+		.TableHeader-LastOccurrence,
+		.TableHeader-Occurrences
+	) {
 		width:min-content;
 	}
 
@@ -15,27 +17,35 @@
 		width:240px;
 	}
 
-	.TableHeader-CreatedOn,
-	.TableHeader-FirstOccurrence,
-	.TableHeader-LastOccurrence {
+	:is(
+		.TableHeader-CreatedOn,
+		.TableHeader-FirstOccurrence,
+		.TableHeader-LastOccurrence
+	) {
 		min-width:205px;
 	}
 
-	.TableCell-Url,
-	.TableCell-Referrer {
+	:is(
+		.TableCell-Url,
+		.TableCell-Referrer
+	) {
 		word-break:break-word;
 	}
 
-	.TableCell-IsRobot,
-	.TableCell-IsRobot,
-	.TableCell-Occurrences {
+	:is(
+		.TableCell-IsRobot,
+		.TableCell-IsRobot,
+		.TableCell-Occurrences
+	) {
 		text-align:center;
 	}
 
-	.TableCell-CreatedOn,
-	.TableCell-CreatedOn,
-	.TableCell-FirstOccurrence,
-	.TableCell-LastOccurrence {
+	:is(
+		.TableCell-CreatedOn,
+		.TableCell-CreatedOn,
+		.TableCell-FirstOccurrence,
+		.TableCell-LastOccurrence
+	) {
 		text-align:right;
 	}
 

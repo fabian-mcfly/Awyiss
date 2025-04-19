@@ -212,7 +212,7 @@
 		max-width:300px;
 		max-height:min(400px, calc(100dvh - 220px));
 		border-radius:5px;
-		margin-top:4px;
+		margin:4px auto 0;
 		padding:0 10px;
 		border:10px solid transparent;
 		box-shadow:0 0 10px 0 rgba(0, 0, 0, .2);
@@ -220,7 +220,8 @@
 		text-align:left;
 		position:absolute;
 		top:100%;
-		left:0;
+		right:-200px;
+		left:-200px;
 		z-index:1005;
 		opacity:0;
 		visibility:hidden;
@@ -277,8 +278,10 @@
 			padding-left:30px;
 		}
 
-		&:focus-within,
-		&:hover {
+		&:is(
+			:focus-within,
+			:hover
+		) {
 			a {
 				color:var(--colorSuccess);
 				outline:0 none;

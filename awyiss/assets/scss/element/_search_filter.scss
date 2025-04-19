@@ -231,9 +231,11 @@
 			}
 		}
 
-		&.InputType-Date,
-		&.InputType-Time,
-		&.InputType-Datetime {
+		&:is(
+			.InputType-Date,
+			.InputType-Time,
+			.InputType-Datetime
+		) {
 			.FormInput {
 				display:grid;
 				grid-template-columns:1fr;

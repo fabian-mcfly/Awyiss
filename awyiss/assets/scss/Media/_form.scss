@@ -157,8 +157,10 @@
 		.FormInput {
 			margin-bottom:0;
 
-			&.FormInputName-Crop\[width\],
-			&.FormInputName-Crop\[resizeWidth\] {
+			&:is(
+				.FormInputName-Crop\[width\],
+				.FormInputName-Crop\[resizeWidth\]
+			) {
 				position:relative;
 
 				&::after {
@@ -198,8 +200,10 @@
 				-moz-appearance:textfield;
 				appearance:textfield;
 
-				&::-webkit-outer-spin-button,
-				&::-webkit-inner-spin-button {
+				&:is(
+					::-webkit-outer-spin-button,
+					::-webkit-inner-spin-button
+				) {
 					-webkit-appearance:none;
 					margin:0;
 				}
@@ -211,9 +215,11 @@
 		}
 	}
 
-	.FormInputName-MediaFolderId,
-	.FormInputName-SystemOrder,
-	.FormInputName-File {
+	:is(
+		.FormInputName-MediaFolderId,
+		.FormInputName-SystemOrder,
+		.FormInputName-File
+	) {
 		#OverlayForm & {
 			display:none;
 		}

@@ -1,5 +1,7 @@
-button,
-.Button {
+:is(
+	button,
+	.Button
+) {
 	--backgroundColor:var(--colorDark);
 	--colorButtonText:var(--colorBright);
 
@@ -46,8 +48,10 @@ button,
 		}
 	}
 
-	&[disabled],
-	&.Disabled {
+	&:is(
+		[disabled],
+		.Disabled
+	) {
 		pointer-events:none;
 		opacity:.1;
 	}
@@ -187,26 +191,28 @@ button,
 	}
 
 	#TranslationDialog-Apply &,
-	&-Add,
-	&-Close,
-	&-Configure,
-	&-Delete,
-	&-Edit,
-	&-Folder,
-	&-Filter,
-	&-History,
-	&-Leave,
-	&-Menu,
-	&-Preview,
-	&-Reload,
-	&-Save,
-	&-SaveClose,
-	&-SaveSystemOrder,
-	&-View,
-	&-ViewContents,
-	&-ViewElements,
-	&-ViewEntries,
-	&-ViewMenuEntries {
+	:is(
+		&-Add,
+		&-Close,
+		&-Configure,
+		&-Delete,
+		&-Edit,
+		&-Folder,
+		&-Filter,
+		&-History,
+		&-Leave,
+		&-Menu,
+		&-Preview,
+		&-Reload,
+		&-Save,
+		&-SaveClose,
+		&-SaveSystemOrder,
+		&-View,
+		&-ViewContents,
+		&-ViewElements,
+		&-ViewEntries,
+		&-ViewMenuEntries
+	) {
 		&.Button-Small {
 			&::after {
 				width:auto;
@@ -360,9 +366,11 @@ button,
 	}
 
 	#TranslationDialog-Apply &,
-	&-Save,
-	&-SaveClose,
-	&-SaveSystemOrder {
+	:is(
+		&-Save,
+		&-SaveClose,
+		&-SaveSystemOrder
+	) {
 		&::after {
 			content:'\f00c';
 			font-size:18px;
@@ -444,9 +452,11 @@ button,
 		}
 	}
 
-	&-ViewContents,
-	&-ViewElements,
-	&-ViewMenuEntries {
+	:is(
+		&-ViewContents,
+		&-ViewElements,
+		&-ViewMenuEntries
+	) {
 		&::after {
 			content:'\f550';
 		}

@@ -10,8 +10,10 @@
 	scrollbar-color:var(--scrollbarColor);
 	scrollbar-width:thin;
 
-	&.FetchInProgress,
-	&.Visible {
+	&:is(
+		.FetchInProgress,
+		.Visible
+	) {
 		opacity:1;
 		visibility:visible;
 		transition-delay:0s;
@@ -115,8 +117,11 @@
 			}
 		}
 
-		> .Button-SaveClose,
-		> .Button-Close {
+
+		> :is(
+			.Button-SaveClose,
+			.Button-Close
+		) {
 			height:48px;
 			background-color:transparent;
 			line-height:26px;

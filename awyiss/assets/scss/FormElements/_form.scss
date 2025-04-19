@@ -3,22 +3,26 @@
 
 	.EditFrontendEditor {
 		&:not(.ExpertMode) {
-			.FormInputName-Active,
-			.FormInputName-ColumnWidth,
-			.FormInputName-ColumnIndent,
-			.FormInputName-ColumnRtl,
-			.FormInputName-ColumnLast,
-			.FormInputName-FormId,
-			.FormInputName-ParentId,
-			.FormInputName-SystemOrder,
-			.Fieldset-PublicationData {
+			:is(
+				.FormInputName-Active,
+				.FormInputName-ColumnWidth,
+				.FormInputName-ColumnIndent,
+				.FormInputName-ColumnRtl,
+				.FormInputName-ColumnLast,
+				.FormInputName-FormId,
+				.FormInputName-ParentId,
+				.FormInputName-SystemOrder,
+				.Fieldset-PublicationData
+			) {
 				display:none;
 			}
 		}
 	}
 
-	&.AddAction,
-	&.EditAction {
+	&:is(
+		.AddAction,
+		.EditAction
+	) {
 		.FormInput {
 			&.Hidden {
 				display:none;

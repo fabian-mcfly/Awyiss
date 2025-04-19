@@ -8,9 +8,11 @@
 		overflow:hidden;
 	}
 
-	#AwyissEditLink,
-	#AwyissFrontendEditorHighlight,
-	#AwyissFrontendEditor {
+	:is(
+		#AwyissEditLink,
+		#AwyissFrontendEditorHighlight,
+		#AwyissFrontendEditor
+	) {
 		position:absolute;
 		top:0;
 		z-index:247365;

@@ -12,8 +12,10 @@
 		}
 	}
 
-	&:has(.jodit-container),
-	&:has(.tox-tinymce) {
+	&:has(
+		.jodit-container,
+		.tox-tinymce
+	) {
 		max-width:1024px;
 	}
 

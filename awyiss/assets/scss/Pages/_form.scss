@@ -1,5 +1,7 @@
-.PagesController,
-.IsGenericPage {
+:is(
+	.PagesController,
+	.IsGenericPage
+) {
 	.FormInputName-CopyDescendantsWithDifferentPageRole {
 		grid-column:auto / span 2;
 
@@ -24,8 +26,10 @@
 		}
 	}
 
-	.FormInputName-RobotsIndex,
-	.FormInputName-RobotsFollow {
+	:is(
+		.FormInputName-RobotsIndex,
+		.FormInputName-RobotsFollow
+	) {
 		@media screen and (width <= 900px) {
 			grid-column:1 / -1;
 		}

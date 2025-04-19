@@ -17,8 +17,10 @@
 		width:100%;
 	}
 
-	th,
-	td {
+	:is(
+		th,
+		td
+	) {
 		padding:.5em calc(var(--elementPadding) * .5);
 
 		&:nth-child(2) {

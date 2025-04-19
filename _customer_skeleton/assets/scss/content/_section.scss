@@ -4,14 +4,15 @@
 	margin-block:var(--sectionMarginBlock);
 	padding-block:var(--sectionPaddingBlock);
 
-	&.BackgroundColor,
-	&.BackgroundImage {
+	&:is(
+		.BackgroundColor,
+		.BackgroundImage
+	) {
 		--sectionPaddingBlock:calc(var(--lineHeightMain) * 4);
 
 		padding:var(--sectionPaddingBlock) 0;
 
-		&:has(+ .BackgroundColor),
-		&:has(+ .BackgroundImage),
+		&:has(+ .BackgroundColor, + .BackgroundImage),
 		&:last-child {
 			margin-bottom:0;
 		}

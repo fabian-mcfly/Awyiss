@@ -1,7 +1,11 @@
-.ConfigurationController,
-.UserConfigurationController {
-	&.AddAction,
-	&.EditAction {
+:is(
+	.ConfigurationController,
+	.UserConfigurationController
+) {
+	&:is(
+		.AddAction,
+		.EditAction
+	) {
 		.FormInputType-ListItem {
 			padding-right:57px;
 
@@ -13,18 +17,6 @@
 				@media screen and (width > 768px) {
 					padding-right:47px;
 				}
-			}
-
-			&:first-of-type {
-				/*.SortableHandle {
-					top:6px;
-
-					html.Scale-Small & {
-						@media screen and (width > 768px) {
-							top:1px;
-						}
-					}
-				}*/
 			}
 
 			.Button-Remove {

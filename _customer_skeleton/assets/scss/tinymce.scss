@@ -32,19 +32,15 @@ body {
  * Content styles
  */
 .mce-content-body {
-	audio,
-	details,
-	embed,
-	img,
-	object,
-	table,
-	video {
-		&[data-mce-selected] {
-
-		}
-	}
-
-	[contentEditable="false"] {
+	:is(
+		audio,
+		details,
+		embed,
+		img,
+		object,
+		table,
+		video
+	) {
 		&[data-mce-selected] {
 			outline-color:#63D1A5;
 		}

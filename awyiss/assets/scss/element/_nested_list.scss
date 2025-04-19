@@ -203,8 +203,10 @@
 						display:block;
 					}
 
-					.AuditInfo,
-					.Actions {
+					:is(
+						.AuditInfo,
+						.Actions
+					) {
 						display:none;
 					}
 				}
@@ -540,8 +542,10 @@
 			}
 		}
 
-		&.Inactive,
-		&.NotPublished {
+		&:is(
+			.Inactive,
+			.NotPublished
+		) {
 			> .ListItem-Inner {
 				--gradientColor:oklch(from var(--colorLight) calc(l - 0.1514) calc(c + 0.021) calc(h + 0.85) / .2);
 				background-image:repeating-linear-gradient(-45deg, transparent, transparent 10px, var(--gradientColor) 10px, var(--gradientColor) 20px);
@@ -563,8 +567,10 @@
 			}
 		}
 
-		&.ParentsInactive,
-		&.NotPublished {
+		&:is(
+			.ParentsInactive,
+			.NotPublished
+		) {
 			&:not(.Resizing) {
 				&:hover {
 					> .ListItem-Inner {
@@ -586,9 +592,11 @@
 
 		&.Resizing {
 			> .ListItem-Inner {
-				.AuditInfo,
-				.Data,
-				.Actions {
+				:is(
+					.AuditInfo,
+					.Data,
+					.Actions
+				) {
 					visibility:hidden;
 					transition-delay:0s;
 				}
@@ -693,8 +701,10 @@
 					background-color:oklch(from var(--colorSemiDarkDarkMode) calc(l + 0.0389) calc(c + 0.004) calc(h - 0.55));
 				}
 
-				.NestedListToggle,
-				.SortableHandle {
+				:is(
+					.NestedListToggle,
+					.SortableHandle
+				) {
 					opacity:1;
 				}
 
@@ -721,9 +731,11 @@
 		}
 	}
 
-	.AuditInfo,
-	.Data,
-	.Actions {
+	:is(
+		.AuditInfo,
+		.Data,
+		.Actions
+	) {
 		transition:opacity .3s ease-in-out, visibility 0s ease-in-out;
 	}
 

@@ -23,10 +23,12 @@
 		list-style-type:none;
 		vertical-align:top;
 
-		&.Sort-First,
-		&.Sort-Prev,
-		&.Sort-Next,
-		&.Sort-Last {
+		&:is(
+			.Sort-First,
+			.Sort-Prev,
+			.Sort-Next,
+			.Sort-Last
+		) {
 			font-size:0;
 			line-height:0;
 		}
@@ -86,8 +88,10 @@
 		text-decoration:none;
 	}
 
-	.Arrow,
-	.Number {
+	:is(
+		.Arrow,
+		.Number
+	) {
 		display:block;
 		width:42px;
 		border-bottom-width:0;

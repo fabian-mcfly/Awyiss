@@ -127,9 +127,11 @@
 		outline-offset:-2px;
 
 		html.🌚 & {
-			&,
-			&[data-assignable="false"],
-			&:hover {
+			&:is(
+				*,
+				[data-assignable="false"],
+				:hover
+			) {
 				background-color:var(--colorSuccess);
 			}
 		}
@@ -173,8 +175,10 @@
 			gap:10px;
 		}
 
-		&[class*="-TitleTag"],
-		&[class*="-SubtitleTag"] {
+		&:is(
+			[class*="-TitleTag"],
+			[class*="-SubtitleTag"]
+		) {
 			.FormInput {
 				display:none;
 			}
@@ -322,8 +326,10 @@
 		display:block;
 		line-height:1;
 
-		label,
-		input {
+		:is(
+			label,
+			input
+		) {
 			pointer-events:none;
 		}
 
@@ -332,10 +338,12 @@
 		}
 	}
 
-	> label,
-	.FormInputType-TranslatableText,
-	.FormInputType-Select,
-	.FormInputType-Checkbox {
+	:is(
+		> label,
+		.FormInputType-TranslatableText,
+		.FormInputType-Select,
+		.FormInputType-Checkbox
+	) {
 		display:none;
 	}
 }

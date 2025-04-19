@@ -256,8 +256,10 @@ ul#Media-List {
 		background-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l + 0.0448) calc(c + 0.005) calc(h - 0.4));
 	}
 
-	&.Selected,
-	&.SortableGhost {
+	&:is(
+		.Selected,
+		.SortableGhost
+	) {
 		--colorLight:color-mix(in srgb, var(--colorSuccess), #FFFFFF 25%);
 
 		outline:2px solid var(--colorSuccess);
@@ -273,8 +275,10 @@ ul#Media-List {
 	}
 
 	&:hover {
-		.Actions,
-		.Button-Cancel {
+		:is(
+			.Actions,
+			.Button-Cancel
+		) {
 			opacity:1;
 		}
 	}
@@ -376,8 +380,10 @@ ul#Media-List {
 			object-fit:cover;
 		}
 
-		.AwaitingPreview,
-		.AwaitingResize {
+		:is(
+			.AwaitingPreview,
+			.AwaitingResize
+		) {
 			&::before {
 				border-radius:5px;
 			}
@@ -403,8 +409,10 @@ ul#Media-List {
 
 .Preview {
 	.FileType-Icon {
-		&.AwaitingPreview,
-		&.AwaitingResize {
+		&:is(
+			.AwaitingPreview,
+			.AwaitingResize
+		) {
 			background-color:transparent;
 			border:0 none;
 
@@ -419,8 +427,10 @@ ul#Media-List {
 	}
 }
 
-.AwaitingPreview,
-.AwaitingResize {
+:is(
+	.AwaitingPreview,
+	.AwaitingResize
+) {
 	&::before {
 		@extend %LoaderIcon;
 

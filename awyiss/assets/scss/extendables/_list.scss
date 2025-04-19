@@ -53,8 +53,10 @@
 				flex:0 0 #{percentage($width)};
 
 				@if $width < .5 {
-					.Title,
-					.ListItem-Inner .Title {
+					:is(
+						.Title,
+						.ListItem-Inner .Title
+					) {
 						font-size:.6rem;
 					}
 				} @else if $width < 1 {
@@ -120,8 +122,10 @@
 		margin-bottom:0;
 	}
 
-	&:has(> .Title:first-child:last-child),
-	&:has(> .DataItem:nth-child(2):last-child) {
+	&:has(
+		> .Title:first-child:last-child,
+		> .DataItem:nth-child(2):last-child
+	) {
 		grid-template-columns:auto;
 	}
 

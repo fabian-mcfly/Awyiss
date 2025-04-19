@@ -146,8 +146,10 @@
 				}
 			}
 
-			&:nth-child(4 of .SeoInfo),
-			&:nth-child(5 of .SeoInfo) {
+			&:is(
+				:nth-child(4 of .SeoInfo),
+				:nth-child(5 of .SeoInfo)
+			) {
 				@container listItem (width <= 680px) {
 					grid-column-start:2;
 				}
@@ -201,9 +203,11 @@
 				}
 			}
 
-			.la-check,
-			.la-exclamation,
-			.la-times {
+			:is(
+				.la-check,
+				.la-exclamation,
+				.la-times
+			) {
 				color:inherit;
 				font-size:0;
 				line-height:0;
@@ -225,9 +229,11 @@
 				background-color:var(--colorWarning);
 			}
 
-			&.SeoInfo-HeadlineStructure,
-			&.SeoInfo-MetaTitle,
-			&.SeoInfo-MetaDescription {
+			&:is(
+				.SeoInfo-HeadlineStructure,
+				.SeoInfo-MetaTitle,
+				.SeoInfo-MetaDescription
+			) {
 				opacity:1;
 			}
 		}
@@ -255,9 +261,11 @@
 				background-color:var(--colorError);
 			}
 
-			&.SeoInfo-HeadlineStructure,
-			&.SeoInfo-MetaTitle,
-			&.SeoInfo-MetaDescription {
+			&:is(
+				.SeoInfo-HeadlineStructure,
+				.SeoInfo-MetaTitle,
+				.SeoInfo-MetaDescription
+			) {
 				opacity:1;
 			}
 		}

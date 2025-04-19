@@ -417,8 +417,10 @@ body {
 						border-radius:5px;
 						color:inherit;
 
-						&[data-mce-tooltip="bedingter Trennstrich"],
-						&[data-mce-tooltip="soft hyphen"] {
+						&:is(
+							[data-mce-tooltip="bedingter Trennstrich"],
+							[data-mce-tooltip="soft hyphen"]
+						) {
 							.tox-collection__item-icon {
 								&::before {
 									content:'-';
@@ -446,8 +448,10 @@ body {
 				}
 			}
 
-			&--image,
-			&--link {
+			:is(
+				&--image,
+				&--link
+			) {
 				max-width:680px;
 
 				@media screen and (width <= 768px) {
@@ -570,8 +574,10 @@ body {
 			&--image {
 				.tox-form {
 					> .tox-form__group {
-						&:nth-child(2),
-						&:last-child {
+						&:is(
+							:nth-child(2),
+							:last-child
+						) {
 							.tox-label {
 								display:none;
 							}
@@ -919,9 +925,11 @@ body {
 
 			&--width-lg {
 				.tox-textarea.tox-textarea {
-					&,
-					&:focus,
-					&:focus-visible {
+					&:is(
+						*,
+						:focus,
+						:focus-visible
+					) {
 						padding:10px;
 						font-family:ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, 'DejaVu Sans Mono', monospace;
 						font-size:12px;
@@ -956,14 +964,18 @@ body {
 				margin-bottom:0;
 			}
 
-			input,
-			select,
-			.tox-listbox--select,
-			.tox-textarea {
+			:is(
+				input,
+				select,
+				.tox-listbox--select,
+				.tox-textarea
+			) {
 				@extend %Input;
 
-				&[disabled],
-				&[readonly] {
+				&:is(
+					[disabled],
+					[readonly]
+				) {
 					opacity:.5;
 					background-color:var(--backgroundColor);
 
@@ -974,8 +986,10 @@ body {
 					}
 				}
 
-				&:focus,
-				&:focus-visible {
+				&:is(
+					:focus,
+					:focus-visible
+				) {
 					--backgroundColor:var(--colorBright);
 
 					outline:0 none;

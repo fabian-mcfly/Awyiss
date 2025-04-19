@@ -32,8 +32,10 @@
 }
 
 .Form {
-	&.Add,
-	&.Edit {
+	&:is(
+		.Add,
+		.Edit
+	) {
 		@media screen and (width > 1024px) {
 			grid-template-columns:1fr auto;
 		}
@@ -55,8 +57,10 @@
 		}
 	}
 
-	.Main-Fieldsets,
-	.Sidebar-Fieldsets {
+	:is(
+		.Main-Fieldsets,
+		.Sidebar-Fieldsets
+	) {
 		display:grid;
 		gap:var(--rowGap) 0;
 
@@ -124,8 +128,10 @@
 		&[data-locked="true"] {
 			pointer-events:none;
 
-			.ButtonArea,
-			.FormInput {
+			:is(
+				.ButtonArea,
+				.FormInput
+			) {
 				opacity:.25;
 			}
 		}
@@ -133,8 +139,10 @@
 		&.FetchInProgress {
 			pointer-events:none;
 
-			.ButtonArea,
-			.Fieldsets {
+			:is(
+				.ButtonArea,
+				.Fieldsets
+			) {
 				opacity:.1;
 			}
 
@@ -161,19 +169,25 @@
 	}
 }
 
-input,
-output,
-select,
-textarea,
-button,
-.Button {
+:where(
+	input,
+	output,
+	select,
+	textarea,
+	button,
+	.Button
+) {
 	@extend %Input;
 }
 
-input,
-textarea {
-	&[disabled],
-	&[readonly] {
+:is(
+	input,
+	textarea
+) {
+	&:is(
+		[disabled],
+		[readonly]
+	) {
 		opacity:.5;
 
 		&:focus-visible {
@@ -196,8 +210,10 @@ textarea {
 }
 
 select {
-	&[disabled],
-	&[readonly] {
+	&:is(
+		[disabled],
+		[readonly]
+	) {
 		opacity:.5;
 
 		&:focus {
@@ -314,9 +330,11 @@ textarea {
 	grid-column:auto / span var(--columns);
 
 	&.Error {
-		> input,
-		> select,
-		> textarea {
+		> :is(
+			input,
+			select,
+			textarea
+		) {
 			border-color:var(--colorError);
 			box-shadow:0 0 10px 5px color-mix(in srgb, var(--colorError), transparent 90%);
 		}
@@ -436,8 +454,10 @@ textarea {
 			}
 
 			&.SortableGhost {
-				input,
-				select {
+				:is(
+					input,
+					select
+				) {
 					background-color:color-mix(in srgb, var(--colorSuccess), transparent 75%);
 					outline:2px solid var(--colorSuccess);
 					outline-offset:-2px;
@@ -636,8 +656,10 @@ textarea {
 		}
 	}
 
-	&Type-Checkbox,
-	&Type-Radio {
+	:is(
+		&Type-Checkbox,
+		&Type-Radio
+	) {
 		> input {
 			width:0;
 			height:0;
@@ -795,14 +817,18 @@ textarea {
 		}
 	}
 
-	&Type-ValueCollection,
-	&Type-Multicheckbox {
+	:is(
+		&Type-ValueCollection,
+		&Type-Multicheckbox
+	) {
 		display:grid;
 		gap:20px;
 		grid-template-columns:repeat(auto-fill, minmax(200px, 1fr));
 
-		> .Label,
-		> .Error {
+		> :is(
+			.Label,
+			.Error
+		) {
 			grid-column:1 / -1;
 		}
 
@@ -840,9 +866,11 @@ textarea {
 		&.Error {
 			.FormInput {
 				&.IsCurrentLanguage {
-					> input,
-					> select,
-					> textarea {
+					> :is(
+						input,
+						select,
+						textarea
+					) {
 						border-color:var(--colorError);
 						box-shadow:0 0 10px 5px color-mix(in srgb, var(--colorError), transparent 90%);
 					}
@@ -850,8 +878,10 @@ textarea {
 			}
 		}
 
-		&:has(.FormInputName-TitleTag),
-		&:has(.FormInputName-SubtitleTag) {
+		&:has(
+			.FormInputName-TitleTag,
+			.FormInputName-SubtitleTag
+		) {
 			.ShowTranslationDialog {
 				right:141px;
 			}
@@ -872,9 +902,11 @@ textarea {
 			}
 		}
 
-		> input,
-		> select,
-		> textarea {
+		> :is(
+			input,
+			select,
+			textarea
+		) {
 			display:none;
 		}
 
@@ -964,8 +996,10 @@ textarea {
 			}
 
 			&.Error {
-				&,
-				&:focus-within {
+				&:is(
+					*,
+					:focus-within
+				) {
 					&::before {
 						border-color:var(--colorError);
 						box-shadow:0 0 10px 5px rgba(202, 46, 85, 0.1);
@@ -1000,10 +1034,6 @@ textarea {
 				bottom:0;
 				left:0;
 				pointer-events:none;
-
-				@media screen and (width <= 768px) {
-					//height:42px;
-				}
 
 				html.Scale-Small & {
 					@media screen and (width > 768px) {
@@ -1177,9 +1207,11 @@ textarea {
 			outline-offset:-2px;
 
 			html.🌚 & {
-				&,
-				&[data-assignable="false"],
-				&:hover {
+				&:is(
+					*,
+					[data-assignable="false"],
+					:hover
+				) {
 					background-color:var(--colorSuccess);
 				}
 			}
@@ -1221,8 +1253,10 @@ textarea {
 			display:block;
 			line-height:1;
 
-			label,
-			input {
+			:is(
+				label,
+				input
+			) {
 				pointer-events:none;
 			}
 
@@ -1231,16 +1265,20 @@ textarea {
 			}
 		}
 
-		> label,
-		.FormInputType-Select,
-		.FormInputType-Checkbox {
+		:is(
+			> label,
+			.FormInputType-Select,
+			.FormInputType-Checkbox
+		) {
 			display:none;
 		}
 	}
 }
 
-.Fieldset-MediaElements-Available,
-.Fieldset-MediaElements-Assigned {
+:is(
+	.Fieldset-MediaElements-Available,
+	.Fieldset-MediaElements-Assigned
+) {
 	display:block;
 	padding-inline:20px;
 

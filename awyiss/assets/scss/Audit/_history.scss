@@ -55,8 +55,10 @@
 	}
 }
 
-.AuditHistory-Slider-Prev,
-.AuditHistory-Slider-Next {
+:is(
+	.AuditHistory-Slider-Prev,
+	.AuditHistory-Slider-Next
+) {
 	background-color:oklch(from var(--colorMedium) calc(l - 0.0683) calc(c + 0.001) calc(h - 1.9));
 
 	height:40px;
@@ -125,8 +127,9 @@
 		padding:0;
 		border-radius:5px;
 		background-color:oklch(from var(--colorSuccess) calc(l - .0368) calc(c + .018) calc(h - 2.03));
-		background-image:repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(0, 0, 0, .1) 10px, rgba(0, 0, 0, .1) 20px),
-		repeating-linear-gradient(-45deg, transparent 0, transparent 10px, rgba(0, 0, 0, .11) 10px, rgba(0, 0, 0, .11) 20px);
+		background-image:
+			repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(0, 0, 0, .1) 10px, rgba(0, 0, 0, .1) 20px),
+			repeating-linear-gradient(-45deg, transparent 0, transparent 10px, rgba(0, 0, 0, .11) 10px, rgba(0, 0, 0, .11) 20px);
 		background-repeat:repeat-x;
 		background-position:0 0, 0 5px;
 		background-size:38px 5px;
@@ -146,8 +149,9 @@
 		padding:0;
 		border-radius:5px;
 		background-color:oklch(from var(--colorSuccess) calc(l - .0368) calc(c + .018) calc(h - 2.03));
-		background-image:repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(0, 0, 0, .1) 10px, rgba(0, 0, 0, .1) 20px),
-		repeating-linear-gradient(-45deg, transparent 0, transparent 10px, rgba(0, 0, 0, .11) 10px, rgba(0, 0, 0, .11) 20px);
+		background-image:
+			repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(0, 0, 0, .1) 10px, rgba(0, 0, 0, .1) 20px),
+			repeating-linear-gradient(-45deg, transparent 0, transparent 10px, rgba(0, 0, 0, .11) 10px, rgba(0, 0, 0, .11) 20px);
 		background-repeat:repeat-x;
 		background-position:0 0, 0 5px;
 		background-size:38px 5px;
@@ -190,8 +194,7 @@
 
 	tr {
 		&.ValueChanged {
-			&,
-			&:nth-child(2n) {
+			&:is(*, :nth-child(2n)) {
 				&:hover {
 					td {
 						background-color:color-mix(in srgb, var(--colorWarning), #FFFFFF 25%);
@@ -213,8 +216,10 @@
 		}
 
 		&.ViewCode {
-			.TableCell-OldValue,
-			.TableCell-CurrentValue {
+			:is(
+				.TableCell-OldValue,
+				.TableCell-CurrentValue
+			) {
 				code {
 					display:block;
 				}
@@ -235,9 +240,11 @@
 		width:300px;
 	}
 
-	.TableCell-MediaElement-Label,
-	.TableCell-PublicationData-Label,
-	.TableCell-Translation-Label {
+	:is(
+		.TableCell-MediaElement-Label,
+		.TableCell-PublicationData-Label,
+		.TableCell-Translation-Label
+	) {
 		padding-block:5px;
 		border-bottom:3px solid oklch(from var(--colorMedium) calc(l - 0.0683) calc(c + 0.001) calc(h - 1.9));
 		background-color:var(--colorMedium);
@@ -262,8 +269,10 @@
 		}
 	}
 
-	.TableCell-OldValue,
-	.TableCell-CurrentValue {
+	:is(
+		.TableCell-OldValue,
+		.TableCell-CurrentValue
+	) {
 		&:has(code) {
 			padding:0;
 		}

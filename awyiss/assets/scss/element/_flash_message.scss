@@ -64,8 +64,10 @@
 		margin-top:var(--lineHeightMain);
 	}
 
-	+ .Form,
-	+ .Overview {
+	+ :is(
+		.Form,
+		.Overview
+	) {
 		margin-top:var(--lineHeightMain);
 
 		&:has(.BackToOverview) {

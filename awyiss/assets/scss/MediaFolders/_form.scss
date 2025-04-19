@@ -2,8 +2,10 @@
 	&.Form {
 		fieldset {
 			&.Collapsed {
-				.FormInputName-Path,
-				.FormInputName-LanguageShortcode {
+				:is(
+					.FormInputName-Path,
+					.FormInputName-LanguageShortcode
+				) {
 					display:none;
 				}
 			}

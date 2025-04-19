@@ -1,6 +1,8 @@
 @layer columnSystem {
-	.ContentRow,
-	.FormRow {
+	:is(
+		.ContentRow,
+		.FormRow
+	) {
 		--elementMargin:var(--columnMargin, 0);
 
 		display:flex;
@@ -11,9 +13,11 @@
 		}
 	}
 
-	.ContentElement,
-	.FormElement,
-	.WidgetElement {
+	:is(
+		.ContentElement,
+		.FormElement,
+		.WidgetElement
+	) {
 		width:var(--elementWidth, 100%);
 		margin-left:var(--elementMargin);
 		position:relative;

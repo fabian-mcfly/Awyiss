@@ -40,10 +40,11 @@
 		z-index:1;
 
 		html.👀 & {
-			&:focus-within,
-			&:hover {
-				a.Level1,
-				span.Level1 {
+			&:is(
+				:focus-within,
+				:hover
+			) {
+				.Level1:is(a, span) {
 					transition-delay:0s;
 				}
 			}
@@ -58,8 +59,10 @@
 			border-right-width:0;
 		}
 
-		&:focus-within,
-		&:hover {
+		&:is(
+			:focus-within,
+			:hover
+		) {
 			z-index:10;
 
 			&::after {
@@ -71,8 +74,7 @@
 				left:0;
 			}
 
-			a.Level1,
-			span.Level1 {
+			.Level1:is(a, span) {
 				background-color:var(--colorSuccess);
 				transition-delay:.3s;
 
@@ -91,16 +93,13 @@
 		}
 
 		&:focus-within {
-			a.Level1,
-			span.Level1 {
+			.Level1:is(a, span) {
 				background-color:var(--colorSuccess);
 			}
 		}
 	}
 
-
-	a.Level1,
-	span.Level1 {
+	.Level1:is(a, span) {
 		display:block;
 		height:56px;
 		padding:0 20px;
@@ -139,10 +138,12 @@
 		}
 	}
 
-	span.Level1,
-	span.Level2,
-	span.Level3,
-	span.Level4 {
+	span:is(
+		.Level1,
+		.Level2,
+		.Level3,
+		.Level4
+	) {
 		cursor:default;
 	}
 
@@ -169,7 +170,10 @@
 	li.Level2 {
 		border-bottom:1px solid rgba(255, 255, 255, .1);
 
-		&:hover {
+		&:is(
+			:hover,
+			:focus-within
+		) {
 			ul.Level3 {
 				opacity:inherit;
 				visibility:inherit;
@@ -182,12 +186,7 @@
 		}
 	}
 
-	a.Level2,
-	span.Level2,
-	a.Level3,
-	span.Level3,
-	a.Level4,
-	span.Level4 {
+	:is(a, span):is(.Level2, .Level3, .Level4) {
 		position:relative;
 
 		&:focus-visible {
@@ -204,8 +203,7 @@
 		}
 	}
 
-	a.Level2,
-	span.Level2 {
+	.Level2:is(a, span) {
 		display:block;
 		padding:10px 0;
 		line-height:1.5;
@@ -238,8 +236,7 @@
 		}
 	}
 
-	ul.Level3,
-	ul.Level4 {
+	ul:is(.Level3, .Level4) {
 		margin-bottom:1.25em;
 		margin-left:10px;
 		padding:7px 20px 10px;
@@ -292,7 +289,10 @@
 			}
 		}
 
-		&:hover {
+		&:is(
+			:hover,
+			:focus-within
+		) {
 			ul.Level4 {
 				opacity:inherit;
 				visibility:inherit;
@@ -301,8 +301,10 @@
 		}
 	}
 
-	li.Level3,
-	li.Level4 {
+	li:is(
+		.Level3,
+		.Level4
+	) {
 		border-bottom:1px solid rgba(255, 255, 255, .1);
 
 		&:last-child {
@@ -310,10 +312,7 @@
 		}
 	}
 
-	a.Level3,
-	span.Level3,
-	a.Level4,
-	span.Level4 {
+	:is(a, span):is(.Level3, .Level4) {
 		display:block;
 		width:max-content;
 		padding:5px 0;
@@ -326,8 +325,7 @@
 		}
 	}
 
-	a.Level3,
-	a.Level4 {
+	a:is(.Level3, .Level4) {
 		&:hover {
 			color:var(--colorSuccess);
 			outline:0 none;
@@ -476,9 +474,11 @@
 			}
 		}
 
-		ul.Level2,
-		ul.Level3,
-		ul.Level4 {
+		ul:is(
+			.Level2,
+			.Level3,
+			.Level4
+		) {
 			@media screen and (width > 768px) and (height <= 660px),
 				screen and (width <= 768px) {
 				display:none;
@@ -508,6 +508,14 @@
 			}
 		}
 
+		li.Level1 {
+			@media screen and (width > 768px) and (height <= 660px),
+			screen and (width <= 768px) {
+				margin-top:2px;
+				margin-right:0;
+			}
+		}
+
 		ul.Level2 {
 			@media screen and (width > 768px) and (height > 660px) {
 				scrollbar-color:var(--scrollbarColor);
@@ -515,16 +523,7 @@
 			}
 		}
 
-		li.Level1 {
-			@media screen and (width > 768px) and (height <= 660px),
-				screen and (width <= 768px) {
-				margin-top:2px;
-				margin-right:0;
-			}
-		}
-
-		a.Level1,
-		span.Level1 {
+		.Level1:is(a, span) {
 			@media screen and (width > 768px) and (height <= 660px),
 				screen and (width <= 768px) {
 				height:40px;
@@ -532,8 +531,7 @@
 			}
 		}
 
-		a.Level2,
-		span.Level2 {
+		.Level2:is(a, span) {
 			@media screen and (width > 768px) and (height <= 800px) {
 				padding-block:5px;
 			}
@@ -548,6 +546,13 @@
 					font-size:20px;
 					line-height:30px;
 				}
+			}
+		}
+
+		a:is(.Level3, .Level4) {
+			@media screen and (width > 768px) and (height <= 660px),
+				screen and (width <= 768px) {
+				width:auto;
 			}
 		}
 

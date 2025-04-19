@@ -19,8 +19,10 @@
 		}
 	}
 
-	.Fieldset-WidgetElements-Available,
-	.Fieldset-Fieldset {
+	:is(
+		.Fieldset-WidgetElements-Available,
+		.Fieldset-Fieldset
+	) {
 		display:block;
 		padding-inline:20px;
 

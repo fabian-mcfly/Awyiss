@@ -5,8 +5,10 @@
 			display:none;
 		}
 
-		.Button-AccessHelper,
-		.Button-LinkHelper {
+		:is(
+			.Button-AccessHelper,
+			.Button-LinkHelper
+		) {
 			@extend %InFieldButton;
 
 			&::after {

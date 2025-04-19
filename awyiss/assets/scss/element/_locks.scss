@@ -42,9 +42,11 @@
 		}
 	}
 
-	.LockWarningMessage,
-	.LockTimedOutMessage,
-	.LockedMessage {
+	:is(
+		.LockWarningMessage,
+		.LockTimedOutMessage,
+		.LockedMessage
+	) {
 		display:none;
 		font-size:16px;
 		line-height:1.4;

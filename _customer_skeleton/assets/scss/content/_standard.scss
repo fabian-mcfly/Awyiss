@@ -4,7 +4,11 @@
 	}
 
 	> .Image {
+		font-size:0;
+		line-height:0;
+
 		a {
+			display:inline-block;
 			text-decoration:none;
 		}
 
@@ -17,9 +21,11 @@
 			}
 		}
 
-		+ .Title,
-		+ .Subtitle,
-		+ .Text {
+		+ :is(
+			.Title,
+			.Subtitle,
+			.Text
+		) {
 			margin-top:calc(var(--contentRowGap) * .5);
 		}
 	}

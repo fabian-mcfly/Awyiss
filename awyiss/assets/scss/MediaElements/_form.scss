@@ -1,6 +1,8 @@
 .MediaElementsController {
-	.FormInputName-MediaElementSelectors,
-	.FormInputName-MediaCompAssignableModels {
+	:is(
+		.FormInputName-MediaElementSelectors,
+		.FormInputName-MediaCompAssignableModels
+	) {
 		container-type:inline-size;
 
 		.FormInputType-ListItem {
@@ -46,8 +48,10 @@
 				}
 			}
 
-			.ShowTranslationDialog,
-			.Button-Remove {
+			:is(
+				.ShowTranslationDialog,
+				.Button-Remove
+			) {
 				@container (width <= 640px) {
 					top:1.05rem;
 				}

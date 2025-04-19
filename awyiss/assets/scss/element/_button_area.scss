@@ -79,14 +79,14 @@
 		}
 	}
 
-	.Overview & {
-		//margin-top:calc(var(--lineHeightMain) * -2 - 53px);
-	}
-
-	&:has(.Button-ColumnView:nth-last-child(2)),
-	&:has(.Button-ListView:nth-last-child(2)) {
-		.Button-Filter,
-		.Button-ResetFilter {
+	&:has(
+		.Button-ColumnView:nth-last-child(2),
+		.Button-ListView:nth-last-child(2)
+	) {
+		:is(
+			.Button-Filter,
+			.Button-ResetFilter
+		) {
 			right:200px;
 
 			@media screen and (width <= 768px) {
@@ -141,6 +141,11 @@
 
 			.LinkSelect {
 				flex:0 0 100%;
+
+				.List {
+					right:0;
+					left:0;
+				}
 			}
 
 			.Button {
@@ -190,12 +195,6 @@
 					opacity:.1;
 				}
 			}
-
-			/*+ .Overview-Table,
-			+ .Overview-Fieldset,
-			+ form {
-				margin-top:calc(var(--lineHeightMain) * -1);
-			}*/
 		}
 
 		&:has(.Button-Small) {
@@ -308,8 +307,10 @@
 		}
 	}
 
-	.Button,
-	.LinkSelect {
+	:is(
+		.Button,
+		.LinkSelect
+	) {
 		--buttonWidth:auto;
 		width:var(--buttonWidth);
 		margin:0;

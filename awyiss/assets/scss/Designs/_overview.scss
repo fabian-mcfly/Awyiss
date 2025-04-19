@@ -21,8 +21,10 @@
 		grid-column:1 / -1;
 	}
 
-	.Fieldsets,
-	#Preview {
+	:is(
+		.Fieldsets,
+		#Preview
+	) {
 		container-type:inline-size;
 
 		@media screen and (width > 1920px) {
@@ -119,16 +121,20 @@
 		}
 	}
 
-	.FormInputType-Number,
-	.FormInputType-Range {
+	:is(
+		.FormInputType-Number,
+		.FormInputType-Range
+	) {
 		grid-column:auto / span 4;
 
 		@container (max-width:480px) {
 			grid-column:auto / -1;
 		}
 
-		.ForcedUnit,
-		.FormInputType-Select {
+		:is(
+			.ForcedUnit,
+			.FormInputType-Select
+		) {
 			position:absolute;
 			bottom:0;
 			right:0;

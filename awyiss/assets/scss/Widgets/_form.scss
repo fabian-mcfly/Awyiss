@@ -4,8 +4,10 @@
 
 	.EditFrontendEditor {
 		&:not(.ExpertMode) {
-			.FormInputName-Identifier,
-			.FormInputName-WidgetTemplateId {
+			:is(
+				.FormInputName-Identifier,
+				.FormInputName-WidgetTemplateId
+			) {
 				display:none;
 			}
 		}

@@ -7,8 +7,11 @@
 		padding-right:50px;
 	}
 }
-.FormInputName-MetaTitle,
-.FormInputName-MetaDescription {
+
+:is(
+	.FormInputName-MetaTitle,
+	.FormInputName-MetaDescription
+) {
 	.SeoLengthWarning {
 		border-color:var(--colorWarning);
 		box-shadow:0 0 10px 5px color-mix(in srgb, var(--colorWarning), transparent 90%);

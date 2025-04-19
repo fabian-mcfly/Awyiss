@@ -62,8 +62,10 @@ $relativePath:'../../';
 		}
 	}
 
-	&:hover,
-	&:focus {
+	&:is(
+		:hover,
+		:focus
+	) {
 		&:not([disabled]) {
 			background-color:var(--colorSuccess);
 			color:var(--colorBright);
@@ -82,8 +84,10 @@ $relativePath:'../../';
 	&_variant_primary {
 		background-color:var(--colorSuccess);
 
-		&:hover,
-		&:focus {
+		&:is(
+			:hover,
+			:focus
+		) {
 			&:not([disabled]) {
 				background-color:var(--colorSuccess);
 				outline:0 none;
@@ -125,8 +129,10 @@ $relativePath:'../../';
 		line-height:inherit;
 	}
 
-	&__trigger,
-	&__button {
+	:is(
+		&__trigger,
+		&__button
+	) {
 		background-color:oklch(from var(--colorMedium) calc(l - 0.0683) calc(c + 0.001) calc(h - 1.9));
 		color:var(--jd-color-icon);
 		opacity:inherit;
@@ -181,15 +187,17 @@ $relativePath:'../../';
 		}
 
 		.jodit-toolbar-button {
-			&[ref="h1"],
-			&[ref="h2"],
-			&[ref="h3"],
-			&[ref="h4"],
-			&[ref="h5"],
-			&[ref="h6"],
-			&[ref="p"],
-			&[ref="blockquote"],
-			&[ref="pre"] {
+			&:is(
+				[ref="h1"],
+				[ref="h2"],
+				[ref="h3"],
+				[ref="h4"],
+				[ref="h5"],
+				[ref="h6"],
+				[ref="p"],
+				[ref="blockquote"],
+				[ref="pre"]
+			) {
 				width:100%;
 				margin-inline:0;
 
@@ -284,8 +292,10 @@ $relativePath:'../../';
 	line-height:0;
 }
 
-.jodit-source,
-.jodit-source__mirror {
+:is(
+	.jodit-source,
+	.jodit-source__mirror
+) {
 	scrollbar-color:var(--scrollbarColor);
 	scrollbar-width:thin;
 }
@@ -345,8 +355,10 @@ $relativePath:'../../';
 	&__header {
 		min-height:52px;
 
-		&-title,
-		&-toolbar {
+		:is(
+			&-title,
+			&-toolbar
+		) {
 			padding-inline:20px;
 			color:var(--colorBright);
 			//noinspection CssNoGenericFontName
@@ -421,8 +433,10 @@ $relativePath:'../../';
 	}
 }
 
-.jodit-toolbar-collection_mode_horizontal,
-.jodit-toolbar-editor-collection_mode_horizontal {
+:is(
+	.jodit-toolbar-collection_mode_horizontal,
+	.jodit-toolbar-editor-collection_mode_horizontal
+) {
 	&::after {
 		display:none;
 	}

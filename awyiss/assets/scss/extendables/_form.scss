@@ -11,8 +11,10 @@
 		}
 	}
 
-	.FormInputName-TitleTag,
-	.FormInputName-SubtitleTag {
+	:is(
+		.FormInputName-TitleTag,
+		.FormInputName-SubtitleTag
+	) {
 		width:120px;
 		position:absolute;
 		top:0;
@@ -99,14 +101,16 @@
 		@extend %DialogTitle;
 
 		&:not(.ExpertMode) {
-			.FormInputName-Active,
-			.FormInputName-ColumnWidth,
-			.FormInputName-ColumnIndent,
-			.FormInputName-ColumnRtl,
-			.FormInputName-ColumnLast,
-			.FormInputName-ParentId,
-			.FormInputName-SystemOrder,
-			.Fieldset-PublicationData {
+			:is(
+				.FormInputName-Active,
+				.FormInputName-ColumnWidth,
+				.FormInputName-ColumnIndent,
+				.FormInputName-ColumnRtl,
+				.FormInputName-ColumnLast,
+				.FormInputName-ParentId,
+				.FormInputName-SystemOrder,
+				.Fieldset-PublicationData
+			) {
 				display:none;
 			}
 		}

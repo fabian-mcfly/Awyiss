@@ -141,8 +141,10 @@
 		}
 	}
 
-	.LanguageSwitcher,
-	.Logout {
+	:is(
+		.LanguageSwitcher,
+		.Logout
+	) {
 		margin-left:-6px;
 		box-shadow:0 0 10px rgba(0, 0, 0, .25);
 		border-radius:0 5px 5px 0;
@@ -179,9 +181,11 @@
 				}
 			}
 
-			&.Visible,
-			&:hover,
-			&:focus-visible {
+			&:is(
+				.Visible,
+				:hover,
+				:focus-visible
+			) {
 				.BackgroundImage {
 					opacity:0;
 				}
@@ -200,11 +204,6 @@
 				outline:2px solid var(--colorSuccess);
 				outline-offset:2px;
 				z-index:100;
-
-				&::before {
-					opacity:inherit;
-					transition-delay:.1s, 0s;
-				}
 			}
 
 			.Hover {
@@ -281,8 +280,10 @@
 					}
 				}
 
-				&.Active,
-				&:hover {
+				&:is(
+					.Active,
+					:hover
+				) {
 					color:var(--colorSuccess);
 					outline:0 none;
 				}

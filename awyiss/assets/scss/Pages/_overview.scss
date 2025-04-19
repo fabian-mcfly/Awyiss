@@ -1,5 +1,7 @@
-.PagesController,
-.IsGenericPage {
+:is(
+	.PagesController,
+	.IsGenericPage
+) {
 	&.OverviewAction {
 		.ListItem-Inner {
 			&:hover {
@@ -21,8 +23,10 @@
 			}
 		}
 
-		.Audit-Preview,
-		.TableCell-AuditInfo {
+		:is(
+			.Audit-Preview,
+			.TableCell-AuditInfo
+		) {
 			position:relative;
 
 			.Button-Preview {

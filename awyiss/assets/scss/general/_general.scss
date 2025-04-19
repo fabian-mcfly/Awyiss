@@ -351,9 +351,11 @@ summary {
 }
 
 .las {
-	&.la-check,
-	&.la-exclamation,
-	&.la-times {
+	&:is(
+		.la-check,
+		.la-exclamation,
+		.la-times
+	) {
 		font-size:0;
 		line-height:0;
 
