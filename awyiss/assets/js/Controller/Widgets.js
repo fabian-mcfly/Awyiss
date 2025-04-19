@@ -53,16 +53,6 @@ export default class WidgetsController {
 		const nestedList = document.querySelector('.NestedList');
 		if (typeof columnWidths !== 'undefined' && nestedList.classList.contains('NestedList-Compact')) {
 			this.resizeableContent = new ResizableContents('widgets', columnWidths);
-
-			nestedListHandler.onEndDefault = nestedListHandler.onEnd;
-			nestedListHandler.onEnd = event => {
-				// noinspection JSUnresolvedReference
-				nestedListHandler.onEndDefault(event);
-
-				// Trigger the recalculation of element widths
-				// noinspection JSUnresolvedReference
-				this.resizeableContent.setNarrowClass(event.item);
-			}
 		}
 
 		this.eventHandler.add('click', event => {
@@ -112,14 +102,6 @@ export default class WidgetsController {
 
 			// Append the context menu to the body
 			listItem.appendChild(contextMenu);
-		});
-
-		this.eventHandler.add('fieldsetCollapse', event => {
-			const fieldset = event.target;
-			const nestedList = fieldset.querySelector('.NestedList');
-			if (nestedList && this.resizeableContent && !event.detail.isCollapsed) {
-				this.resizeableContent.resetListItemWidths();
-			}
 		});
 	}
 }

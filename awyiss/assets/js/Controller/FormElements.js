@@ -40,16 +40,6 @@ export default class FormElementsController {
 		const nestedList = document.querySelector('.NestedList');
 		if (typeof columnWidths !== 'undefined' && nestedList.classList.contains('NestedList-Compact')) {
 			this.resizeableElements = new ResizableContents('form-elements', columnWidths);
-
-			nestedListHandler.onEndDefault = nestedListHandler.onEnd;
-			nestedListHandler.onEnd = event => {
-				// noinspection JSUnresolvedReference
-				nestedListHandler.onEndDefault(event);
-
-				// Trigger the recalculation of element widths
-				// noinspection JSUnresolvedReference
-				this.resizeableElements.setNarrowClass(event.item);
-			}
 		}
 
 		this.eventHandler.add('click', event => {
