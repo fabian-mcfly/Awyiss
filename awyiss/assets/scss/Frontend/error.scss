@@ -27,6 +27,7 @@ body {
 	align-content:center;
 	flex-wrap:wrap;
 	justify-content:center;
+	overscroll-behavior:contain;
 	overflow-y:auto;
 
 	> * {

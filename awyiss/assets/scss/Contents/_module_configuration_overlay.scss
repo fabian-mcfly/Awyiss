@@ -1,8 +1,11 @@
 #ModuleConfigurationOverlay {
 	@extend %DialogNoTitle;
 
-	width:calc(100% - 40px);
 	max-width:860px;
+
+	&[open] {
+		display:block;
+	}
 
 	&:not(:has(.Form)) {
 		@extend %LoaderIcon;
@@ -13,6 +16,14 @@
 
 		&::after {
 			content:attr(data-title, 'Module Configuration');
+		}
+
+		.FormInput {
+			&:nth-last-child(1 of .FormInput) {
+				@media screen and (width <= 768px) {
+					margin-bottom:20px;
+				}
+			}
 		}
 	}
 }

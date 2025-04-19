@@ -10,8 +10,14 @@
 
 		padding:92px 20px 40px 20px;
 
-		html.Scale-Small & {
+		@media screen and (width <= 768px) {
 			padding:52px 10px 10px 10px;
+		}
+
+		html.Scale-Small & {
+			@media screen and (width > 768px) {
+				padding:52px 10px 10px 10px;
+			}
 		}
 
 		&::after {
@@ -24,12 +30,19 @@
 			max-height:calc(80dvh - 132px);
 			padding:0 20px;
 			border-inline-width:0;
+			overscroll-behavior:contain;
 			overflow-y:auto;
 			scrollbar-color:var(--scrollbarColor);
 			scrollbar-width:thin;
 
-			html.Scale-Small & {
+			@media screen and (width <= 768px) {
 				padding:10px;
+			}
+
+			html.Scale-Small & {
+				@media screen and (width > 768px) {
+					padding:10px;
+				}
 			}
 
 			.Overview-Fieldset {

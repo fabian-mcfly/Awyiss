@@ -32,10 +32,15 @@
 	top:0;
 	right:0;
 	left:0;
-	z-index:1000;
+	z-index:1860;
 
-	html:has(.SortableChosen) & {
-		pointer-events:none;
+	@media screen and (width <= 768px) {
+		position:absolute;
+	}
+
+	@media screen and (width <= 540px) {
+		height:80px;
+		padding:10px;
 	}
 
 	html.🌚 & {
@@ -46,14 +51,36 @@
 		position:absolute;
 	}
 
+	html:has(.SortableChosen) & {
+		pointer-events:none;
+	}
+
+	&:has(#Menu-System .Overflow.Visible) {
+		@media screen and (width <= 768px) {
+			position:fixed;
+		}
+	}
+
 	&::before {
 		content:'';
+		background-attachment:fixed;
+		background-image:url('../img/background-pattern-light.png');
 		backdrop-filter:blur(5px);
 		position:absolute;
 		inset:0 0 -20px 0;
 		z-index:-1;
 		pointer-events:none;
 		mask-image:linear-gradient(to bottom, black 70%, transparent 100%);
+
+		@media screen and (width <= 768px) {
+			bottom:0;
+		}
+
+		html.Scale-Small & {
+			@media screen and (width > 768px) {
+				bottom:-10px;
+			}
+		}
 
 		html.👀 & {
 			display:none;
@@ -116,7 +143,6 @@
 
 	.LanguageSwitcher,
 	.Logout {
-		padding:0 20px 0 25px;
 		margin-left:-6px;
 		box-shadow:0 0 10px rgba(0, 0, 0, .25);
 		border-radius:0 5px 5px 0;
@@ -133,7 +159,7 @@
 
 		.LanguageSwitcherLabel {
 			display:block;
-			padding:18px 24px;
+			padding:18px 20px 18px 20px;
 			border-radius:5px;
 			background-image:none;
 			background-color:var(--colorMenu);
@@ -142,6 +168,10 @@
 			position:relative;
 			overflow:hidden;
 			transition:background-color .3s ease-in-out;
+
+			@media screen and (width <= 860px) {
+				padding-inline:15px;
+			}
 
 			html.👀 & {
 				&:hover {
@@ -199,6 +229,11 @@
 			visibility:hidden;
 			overflow:hidden;
 			transition:opacity .3s ease-in-out, visibility 0s linear .3s;
+
+			@media screen and (width <= 580px) {
+				right:5px;
+				left:auto;
+			}
 
 			&.Visible {
 				opacity:inherit;
@@ -286,10 +321,14 @@
 	}
 
 	.Logout {
-		margin-right:40px;
+		padding:0 20px 0 25px;
 		font-size:0;
 		line-height:0;
 		z-index:-1;
+
+		@media screen and (width <= 860px) {
+			padding-inline:13px 10px;
+		}
 
 		&:focus-visible {
 			box-shadow:0 0 10px var(--colorSuccess);
@@ -314,11 +353,20 @@
 
 	.LoginLogo {
 		width:auto;
-		max-width:200px;
+		max-width:240px;
 		height:auto;
 		max-height:80px;
 		margin-left:auto;
+		padding-left:40px;
 		align-self:center;
+
+		@media screen and (width <= 860px) {
+			max-width:140px;
+		}
+
+		@media screen and (width <= 580px) {
+			display:none;
+		}
 
 		html.🌚 & {
 			filter:saturate(0%) brightness(10);

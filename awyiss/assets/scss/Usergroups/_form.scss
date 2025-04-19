@@ -5,47 +5,96 @@
 
 			.Overview-Table {
 				margin:0;
-			}
 
-			tr {
-				position:relative;
-			}
+				&:has(th:nth-last-child(4)) {
+					@media screen and (width <= 768px) {
+						--idColumnWidth:60px;
 
-			th {
-				padding-top:20px;
-			}
+						th {
+							@media screen and (width <= 640px) {
+								padding-top:10px;
+							}
 
-			.TableHeader-UserCheckbox {
-				width:60px;
-				padding:0;
-			}
+							&.TableHeader-UserCheckbox {
+								width:100%;
+							}
+						}
 
-			.TableCell-UserCheckbox {
-				padding:0;
-				position:static;
-
-				&:has(input:checked) {
-					background-color:var(--colorSuccess);
-
-					&::before {
-						display:none;
+						td {
+							&.TableHeader-UserCheckbox {
+								width:100%;
+							}
+						}
 					}
 
-					~ td {
-						background-color:color-mix(in srgb, var(--colorSuccess), transparent 90%);
+					td {
+						&.TableCell-UserCheckbox {
+							@media screen and (width <= 640px) {
+								height:42px;
+							}
+						}
+					}
 
-						&::before {
-							background-color:oklch(from var(--colorSuccess) calc(l - .0368) calc(c + .018) calc(h - 2.03) / .25);
+					.FormInputType-Checkbox {
+						.Label {
+							&::before {
+								@media screen and (width <= 640px) {
+									top:10px;
+									left:10px;
+								}
+							}
+						}
+					}
+				}
+
+				tr {
+					position:relative;
+
+					&:has(input:checked) {
+						--backgroundColor:color-mix(in srgb, var(--colorSuccess), transparent 90%);
+					}
+				}
+
+				th {
+					padding-top:20px;
+
+					&.TableHeader-UserCheckbox {
+						width:60px;
+						min-width:0;
+						padding:0;
+					}
+				}
+
+				td {
+					&.TableCell-UserCheckbox {
+						min-width:0;
+						padding:0;
+						position:static;
+
+						&:has(input:checked) {
+							background-color:var(--backgroundColor);
+
+							&::before {
+								display:none;
+							}
+
+							~ td {
+								background-color:var(--backgroundColor);
+
+								&::before {
+									background-color:oklch(from var(--colorSuccess) calc(l - .0368) calc(c + .018) calc(h - 2.03) / .25);
+								}
+							}
 						}
 					}
 				}
 			}
 
-			.FormInput {
-				margin-bottom:0;
+			.FormInputType-Checkbox {
 				position:static;
 
 				.Label {
+					padding:0;
 					position:absolute;
 					inset:0;
 					z-index:2;
@@ -54,8 +103,33 @@
 						top:18px;
 						left:18px;
 
-						html.Scale-Small & {
+						@media screen and (width <= 1024px) {
 							top:10px;
+						}
+
+						@media screen and (width <= 768px) {
+							top:8px;
+						}
+
+						@media screen and (width <= 640px) {
+							top:7px;
+						}
+
+						html.Scale-Small & {
+							@media screen and (width > 768px) {
+								top:5px;
+							}
+						}
+					}
+				}
+
+				input {
+					&:checked {
+						+ Label {
+							&::before {
+								border-color:transparent;
+								background-color:var(--colorSuccess);
+							}
 						}
 					}
 				}
@@ -66,6 +140,10 @@
 	.Fieldset-Permissions {
 		padding-inline:20px;
 		row-gap:2rem;
+
+		@media screen and (width <= 540px) {
+			padding-inline:10px;
+		}
 
 		&:not(.Collapsed) {
 			padding-bottom:40px;
@@ -81,12 +159,21 @@
 		grid-template-columns:9rem auto;
 		align-items:stretch;
 
+		@media screen and (width <= 1180px) {
+			grid-template-columns:1fr;
+		}
+
 		&:first-child {
 			margin-top:0;
 		}
 
 		.Title {
 			@extend %CategoryListTitle;
+
+			@media screen and (width <= 1180px) {
+				margin-block:0;
+				border-radius:5px 5px 0 0;
+			}
 		}
 
 		.Permissions {
@@ -95,6 +182,10 @@
 			border-radius:5px;
 			border-left:2px solid var(--colorMedium);
 			align-content:center;
+
+			@media screen and (width <= 1180px) {
+				border-top-left-radius:0;
+			}
 
 			html.🌚 & {
 				border-left-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l - 0.0473) calc(c - 0.005) calc(h + 1.12));
@@ -106,8 +197,14 @@
 			padding:10px 15px;
 			border-radius:5px;
 
-			html.Scale-Small & {
+			@media screen and (width <= 768px) {
 				padding-block:8px;
+			}
+
+			html.Scale-Small & {
+				@media screen and (width > 768px) {
+					padding-block:8px;
+				}
 			}
 
 			&:nth-child(2n) {
@@ -141,8 +238,14 @@
 								background-color:var(--colorSuccess);
 								transform:translate(33px, 0);
 
-								html.Scale-Small & {
+								@media screen and (width <= 768px) {
 									transform:translate(26px, 0);
+								}
+
+								html.Scale-Small & {
+									@media screen and (width > 768px) {
+										transform:translate(26px, 0);
+									}
 								}
 							}
 						}
@@ -156,8 +259,14 @@
 								background-color:var(--colorError);
 								transform:translate(-33px, 0);
 
-								html.Scale-Small & {
+								@media screen and (width <= 768px) {
 									transform:translate(-26px, 0);
+								}
+
+								html.Scale-Small & {
+									@media screen and (width > 768px) {
+										transform:translate(-26px, 0);
+									}
 								}
 							}
 						}
@@ -188,7 +297,7 @@
 				position:relative;
 				vertical-align:top;
 
-				html.Scale-Small & {
+				@media screen and (width <= 768px) {
 					width:87px;
 					margin-top:4px;
 				}
@@ -196,6 +305,13 @@
 				html.🌚 & {
 					outline-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l - 0.0216) calc(c - 0.002) calc(h - 1.95));
 					background-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l - 0.0473) calc(c - 0.005) calc(h + 1.12));
+				}
+
+				html.Scale-Small & {
+					@media screen and (width > 768px) {
+						width:87px;
+						margin-top:4px;
+					}
 				}
 
 				&.Animate {
@@ -220,9 +336,16 @@
 					transition:background-color .3s ease-in-out .1s, transform .3s ease-in-out .1s;
 					transform:translate(0, 0);
 
-					html.Scale-Small & {
+					@media screen and (width <= 768px) {
 						width:20px;
 						height:20px;
+					}
+
+					html.Scale-Small & {
+						@media screen and (width > 768px) {
+							width:20px;
+							height:20px;
+						}
 					}
 
 					@keyframes blop {
@@ -248,9 +371,16 @@
 					z-index:1;
 					transform:translateY(-12px);
 
-					html.Scale-Small & {
+					@media screen and (width <= 768px) {
 						width:29px;
 						transform:translateY(-7px);
+					}
+
+					html.Scale-Small & {
+						@media screen and (width > 768px) {
+							width:29px;
+							transform:translateY(-7px);
+						}
 					}
 				}
 			}

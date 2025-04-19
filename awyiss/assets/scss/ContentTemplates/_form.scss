@@ -1,9 +1,22 @@
 .ContentTemplatesController {
 	.Fieldset-ContentElements {
-		padding:0;
-		box-shadow:none;
-		background-color:transparent;
-		grid-template-columns:repeat(3, 1fr);
+		padding-inline:20px;
+		//box-shadow:none;
+		//background-color:transparent;
+		row-gap:var(--rowGap);
+		grid-template-columns:1fr;
+
+		@media screen and (width <= 768px) {
+			padding-top:40px;
+		}
+
+		@media screen and (width <= 640px) {
+			row-gap:var(--lineHeightMain);
+		}
+
+		@media screen and (width <= 540px) {
+			padding-inline:10px;
+		}
 	}
 
 	.Fieldset-ContentElements-Available,
@@ -11,8 +24,21 @@
 		display:block;
 		padding-inline:20px;
 
-		html.Scale-Small & {
+		@media screen and (width <= 768px) {
+			padding-top:40px;
 			padding-bottom:20px;
+		}
+
+		@media screen and (width <= 540px) {
+			padding-top:30px;
+			padding-inline:10px;
+			padding-bottom:10px;
+		}
+
+		html.Scale-Small & {
+			@media screen and (width > 768px) {
+				padding-bottom:20px;
+			}
 		}
 	}
 
@@ -26,6 +52,10 @@
 
 	.Fieldset-Fieldset {
 		@extend %AvailableTemplateElementsFieldset;
+
+		legend {
+			top:-10px;
+		}
 	}
 
 	.PageTemplates-List {
@@ -41,10 +71,14 @@
 
 		.PageTemplates-List {
 			display:grid;
-			padding:5px;
+			padding:5px 0 5px 5px;
 			border-radius:5px;
 			border-left:2px solid var(--colorMedium);
 			align-content:center;
+
+			@media screen and (width <= 640px) {
+				border-top-left-radius:0;
+			}
 
 			html.🌚 & {
 				border-left-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l - 0.0473) calc(c - 0.005) calc(h + 1.12));
@@ -58,11 +92,15 @@
 		.ListItem-PageRole,
 		.ListItem-PageTemplate {
 			display:grid;
-			margin:10px 0 0 0;
+			margin:20px 0 0 0;
 			padding:0;
 			border-left-width:0;
 			border-bottom-width:0;
 			grid-template-columns:9rem auto;
+
+			@media screen and (width <= 640px) {
+				grid-template-columns:1fr;
+			}
 
 			&:first-child {
 				margin-top:0;
@@ -70,6 +108,12 @@
 
 			.Title {
 				@extend %CategoryListTitle;
+
+				@media screen and (width <= 640px) {
+					margin-block:0;
+					border-radius:5px 5px 0 0;
+					z-index:1;
+				}
 			}
 
 			.PageTemplates-List {
@@ -79,10 +123,23 @@
 
 		.ListItem-PageRole {
 			margin-inline:-20px;
-			margin-bottom:20px;
+
+			@media screen and (width <= 1280px) {
+				margin-inline:0;
+			}
 
 			html.Scale-Small & {
-				margin-inline:0;
+				@media screen and (width > 768px) {
+					margin-inline:0;
+				}
+			}
+		}
+
+		.ListItem-PageTemplate {
+			&:first-child {
+				@media screen and (width <= 640px) {
+					margin-top:10px;
+				}
 			}
 		}
 
@@ -95,12 +152,18 @@
 			list-style-type:none;
 			transition:background-color .3s ease-in-out;
 
-			html.Scale-Small & {
+			@media screen and (width <= 768px) {
 				padding-block:.75rem;
 			}
 
 			html.🌚 & {
 				background-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l + 0.0448) calc(c + 0.005) calc(h - 0.4));
+			}
+
+			html.Scale-Small & {
+				@media screen and (width > 768px) {
+					padding-block:.75rem;
+				}
 			}
 
 			&:first-child {
@@ -122,16 +185,28 @@
 				.Label {
 					padding:1rem 20px 1rem 60px;
 
-					html.Scale-Small & {
+					@media screen and (width <= 768px) {
 						padding-block:.5rem;
+					}
+
+					html.Scale-Small & {
+						@media screen and (width > 768px) {
+							padding-block:.5rem;
+						}
 					}
 
 					&::before {
 						top:.9rem;
 						left:20px;
 
-						html.Scale-Small & {
+						@media screen and (width <= 768px) {
 							top:.2rem;
+						}
+
+						html.Scale-Small & {
+							@media screen and (width > 768px) {
+								top:.2rem;
+							}
 						}
 					}
 				}

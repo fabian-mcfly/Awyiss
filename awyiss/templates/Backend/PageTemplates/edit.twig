@@ -4,32 +4,38 @@
 #}
 
 <div class="PageTemplates Form Edit">
-	{% if AuthorizationHelper.isAccessible('read') %}
-		{{ HtmlHelper.link(__('back_to_overview'), {action: 'overview'}, {class: 'BackToOverview'}) }}
-	{% endif %}
+	{% block headlinesEdit %}
+		<div class="Headlines">
+			{% if AuthorizationHelper.isAccessible('read') %}
+				{{ HtmlHelper.link(__('back_to_overview'), {action: 'overview'}, {class: 'BackToOverview'}) }}
+			{% endif %}
 
-	{% block headlineEdit %}
-		<h1>{{ __('headline_edit') }}</h1>
+			{% block headlineEdit %}
+				<h1>{{ __('headline_edit') }}</h1>
+			{% endblock %}
+		</div>
 	{% endblock %}
 
-	{{ FormHelper.create(pageTemplate, {method: 'post', idPrefix: 'PageTemplate'}) }}
+	{{ FormHelper.checkbox('save_as_copy', {form: 'PageTemplateForm', id: 'SaveAsCopy', value: true}) }}
 
-	{{ FormHelper.checkbox('save_as_copy', {id: 'SaveAsCopy', value: true}) }}
+	{% block buttonAreaToggle %}
+		{{ FormHelper.button(__('button_area_toggle'), {class: 'Button Button-Menu', id: 'ButtonArea-Toggle', name: 'button', type: 'button'}) }}
+	{% endblock %}
 
 	{% block buttonArea %}
 		<div class="ButtonArea">
 			{% block formEditButtons %}
 				{% block formEditButtonSaveAsCopy %}
-					<label for="SaveAsCopy" class="Button Button-SaveAsCopy Label-SaveAsCopy">{{ __('as_copy') }}</label>
+					<label for="SaveAsCopy" tabindex="0" class="Button Button-SaveAsCopy Label-SaveAsCopy">{{ __('as_copy') }}</label>
 				{% endblock %}
 
 				{% block formEditButtonSave %}
-					{{ FormHelper.button(__('save'), {class: 'Button Button-Success Button-Save'}) }}
+					{{ FormHelper.button(__('save'), {class: 'Button Button-Success Button-Save', form: 'PageTemplateForm'}) }}
 				{% endblock %}
 
 				{% block formEditButtonSaveClose %}
 					{% if AuthorizationHelper.isAccessible('read') %}
-						{{ FormHelper.button(__('save_close'), {class: 'Button Button-SaveClose', name: 'submit', value: 'submit_close'}) }}
+						{{ FormHelper.button(__('save_close'), {class: 'Button Button-SaveClose', form: 'PageTemplateForm', name: 'submit', value: 'submit_close'}) }}
 					{% endif %}
 				{% endblock %}
 			{% endblock %}
@@ -45,10 +51,4 @@
 			{{ block('formEditButtons') }}
 		</div>
 	{% endblock %}
-
-	{% block lockDialog %}
-		{{ element('lock_dialog', {entity: pageTemplate}) }}
-	{% endblock %}
-
-	{{ FormHelper.end() }}
 </div>

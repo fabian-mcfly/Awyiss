@@ -1,4 +1,8 @@
 .SeoController {
+	.Analyze {
+		@extend %ContentGrid;
+	}
+
 	.Summary-List {
 		grid-column:1 / -1;
 
@@ -8,9 +12,19 @@
 			border-radius:5px;
 			list-style:none;
 
-			html.Scale-Small & {
+			@media screen and (width <= 1280px) {
 				margin-inline:0;
+			}
+
+			@media screen and (width <= 768px) {
 				padding-block:7px 9px;
+			}
+
+			html.Scale-Small & {
+				@media screen and (width > 768px) {
+					margin-inline:0;
+					padding-block:7px 9px;
+				}
 			}
 
 			&.Error {
@@ -32,39 +46,68 @@
 			}
 
 			&:last-child {
-				html.Scale-Small & {
-					margin-bottom:20px;
-				}
+
 			}
 		}
 	}
 
 	.NestedList {
-		--seoButtonWidth:28px;
 
-		.ListItem-Inner {
-			grid-template-columns:auto repeat(3, calc(var(--seoButtonWidth) + 120px)) repeat(2, var(--seoButtonWidth)) var(--seoButtonWidth);
 
-			&:has(> .NestedListToggle:not(.Hidden)) {
-				padding-left:50px;
-			}
+		.ListItem {
+			--seoButtonWidth:28px;
+			--seoTextWidth:180px;
 
-			&:hover {
-				.SeoInfo {
-					opacity:1;
+			container:listItem / inline-size;
 
-					.Icon {
+			&-Inner {
+				container-name:none;
+				grid-template-columns:auto repeat(3, calc(var(--seoButtonWidth) + var(--seoTextWidth))) repeat(2, var(--seoButtonWidth)) var(--seoButtonWidth);
+				row-gap:10px;
+
+				@container listItem (width <= 1024px) {
+					--seoTextWidth:130px;
+				}
+
+				@container listItem (width <= 680px) {
+					grid-template-columns:auto var(--seoButtonWidth);
+					grid-auto-flow:dense;
+				}
+
+				@media screen and (width <= 420px) {
+					grid-template-columns:repeat(3, 1fr);
+				}
+
+				&:has(> .NestedListToggle:not(.Hidden)) {
+					padding-left:50px;
+				}
+
+				&:hover {
+					.SeoInfo {
+						opacity:1;
+
+						.Icon {
+						}
 					}
 				}
 			}
 		}
 
-		.DataItem {
-			margin-top:0;
+		.Data {
+			align-content:start;
+			gap:0;
 
-			&-Slug {
-				width:100%;
+			@container listItem (width <= 1024px) {
+				font-size:.8rem;
+				grid-column:1 / -1;
 			}
+
+			.Title {
+				font-size:inherit;
+			}
+		}
+
+		.DataItem {
 		}
 
 		.NestedListToggle {
@@ -85,10 +128,43 @@
 			opacity:.1;
 			align-self:start;
 
+			@container listItem (width <= 680px) {
+				grid-column-start:1;
+			}
+
+			@media screen and (width <= 420px) {
+				grid-column:1 / -1;
+			}
+
+			&:nth-child(1 of .SeoInfo) {
+				@container listItem (680px < width <= 1024px) {
+					grid-column-start:2;
+				}
+
+				@media screen and (width <= 420px) {
+					grid-column:1 / -1;
+				}
+			}
+
+			&:nth-child(4 of .SeoInfo),
+			&:nth-child(5 of .SeoInfo) {
+				@container listItem (width <= 680px) {
+					grid-column-start:2;
+				}
+
+				@media screen and (width <= 420px) {
+					grid-column:auto / span 1;
+				}
+			}
+
 			.Title {
-				font-size:11px;
-				line-height:1;
+				font-size:14px;
+				line-height:1.1;
 				align-self:center;
+
+				@container listItem (width <= 1024px) {
+					font-size:12px;
+				}
 			}
 
 			.Icon {
@@ -188,6 +264,19 @@
 
 		.Actions {
 			width:auto;
+			margin-top:0;
+			align-self:start;
+
+			@container listItem (width <= 680px) {
+				width:auto;
+				grid-template-columns:auto;
+				grid-column-start:2;
+			}
+
+			@media screen and (width <= 420px) {
+				width:100%;
+				grid-column:auto / span 1;
+			}
 		}
 
 		.Button-Edit {

@@ -3,7 +3,7 @@
 
 	display:flex;
 	height:var(--slideHeight, 'auto');
-	margin-top:calc(var(--lineHeightMain) * 2);
+	margin-top:var(--rowGap);
 	border-radius:5px;
 	overflow:hidden;
 	flex-direction:row-reverse;
@@ -23,12 +23,16 @@
 	display:grid;
 	border-radius:5px;
 	background-color:var(--colorMedium);
-	margin-top:calc(var(--lineHeightMain) * 2);
+	margin-top:var(--rowGap);
 	gap:20px;
 	grid-template-columns:40px auto 40px;
 	position:sticky;
 	top:120px;
 	z-index:10;
+
+	html.🌚 & {
+		background-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l - 0.0473) calc(c - 0.005) calc(h + 1.12));
+	}
 
 	html.👀 & {
 		top:20px;
@@ -48,10 +52,6 @@
 		right:0;
 		bottom:100%;
 		left:0;
-	}
-
-	html.🌚 & {
-		background-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l - 0.0473) calc(c - 0.005) calc(h + 1.12));
 	}
 }
 
@@ -76,8 +76,14 @@
 		font-size:1.5rem;
 		line-height:40px;
 
-		html.Scale-Small & {
+		@media screen and (width <= 768px) {
 			line-height:28px;
+		}
+
+		html.Scale-Small & {
+			@media screen and (width > 768px) {
+				line-height:28px;
+			}
 		}
 	}
 }
@@ -180,7 +186,7 @@
 }
 
 .AuditHistory-Table {
-	margin-top:calc(var(--lineHeightMain) * 2);
+	margin-top:var(--rowGap);
 
 	tr {
 		&.ValueChanged {

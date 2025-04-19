@@ -273,9 +273,16 @@
 {% endmacro %}
 
 <div class="Contents History">
-	{% block headlineHistory %}
-		<h1>{{ __('headline_history') }}</h1>
-		<h2>{{ entity.label }}</h2>
+	{% block headlinesHistory %}
+		<div class="Headlines">
+			{% block headlineHistory %}
+				<h1>{{ __('headline_history') }}</h1>
+			{% endblock %}
+
+			{% block subheadlineHistory %}
+				<h2>{{ entity.label }}</h2>
+			{% endblock %}
+		</div>
 	{% endblock %}
 
 	{% if isAjax %}

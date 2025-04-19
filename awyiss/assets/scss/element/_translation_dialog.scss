@@ -2,13 +2,18 @@
 	padding:52px 0 0;
 	overflow:hidden;
 
-	html.Scale-Small & {
+	@media screen and (width <= 768px) {
 		padding-top:42px;
+	}
+
+	html.Scale-Small & {
+		@media screen and (width > 768px) {
+			padding-top:42px;
+		}
 	}
 
 	&:has(.jodit-container),
 	&:has(.tox-tinymce) {
-		width:100%;
 		max-width:1024px;
 	}
 
@@ -21,28 +26,51 @@
 	}
 
 	.TranslationDialog-Form {
-		display:flex;
+		display:grid;
 		height:100%;
 		max-height:calc(80vh - 52px);
 		padding:30px;
 		border:10px solid transparent;
-		flex-wrap:wrap;
-		justify-content:space-between;
 		overflow:auto;
+		gap:20px;
+		grid-template-columns:repeat(2, 1fr);
 		scrollbar-color:var(--scrollbarColor);
 		scrollbar-width:thin;
 
-		html.Scale-Small & {
+		@media screen and (width <= 768px) {
 			padding:10px;
+		}
+
+		@media screen and (width <= 540px) {
+			padding:5px;
+			border-width:5px;
+			gap:10px;
+		}
+
+		@media screen and (width <= 480px) {
+			grid-template-columns:auto;
+		}
+
+		html.Scale-Small & {
+			@media screen and (width > 768px) {
+				padding:10px;
+			}
+		}
+	}
+
+	#TranslationDialog-Message {
+		&:not(:has(*)) {
+			display:none;
 		}
 	}
 
 	.FormInput {
-		width:100%;
-		flex:0 0 100%;
+		grid-column:1 / -1;
 
 		&:nth-last-child(1 of .FormInput) {
-			margin-bottom:40px;
+			@media screen and (width <= 540px) {
+				margin-bottom:10px;
+			}
 		}
 	}
 }

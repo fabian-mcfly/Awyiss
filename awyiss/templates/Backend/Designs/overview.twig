@@ -21,41 +21,49 @@
 {% use '@Backend/Designs/blocks.twig' %}
 
 <div class="Design Overview">
-	{% block headlineOverview %}
-		<h1>{{ __('headline_overview') }}</h1>
+	{% block headlinesOverview %}
+		<div class="Headlines">
+			{% block headlineOverview %}
+				<h1>{{ __('headline_overview') }}</h1>
+			{% endblock %}
 
-		{% if design.inUse == false %}
-			<p class="Title">{{ design.isPreview == false ? design.title : __('preview') }} ({{ design.createdByUser.username }}, {{ TimeHelper.nice(design.createdOn) }})</p>
-		{% else %}
-			<p class="Title">{{ __('current_settings') }}</p>
-		{% endif %}
+			{% block subheadlineOverview %}
+				{% if design.inUse == false %}
+					<p class="Title">{{ design.isPreview == false ? design.title : __('preview') }} ({{ design.createdByUser.username }}, {{ TimeHelper.nice(design.createdOn) }})</p>
+				{% else %}
+					<p class="Title">{{ __('current_settings') }}</p>
+				{% endif %}
+			{% endblock %}
+		</div>
 	{% endblock %}
 
-	{{ FormHelper.create(preview ?? design, {method: 'post', idPrefix: 'design'}) }}
+	{{ FormHelper.checkbox('save_as_copy', {form: 'DesignForm', id: 'SaveAsCopy', value: true}) }}
 
-	{{ FormHelper.checkbox('save_as_copy', {id: 'SaveAsCopy', value: true}) }}
+	{% block buttonAreaToggle %}
+		{{ FormHelper.button(__('button_area_toggle'), {class: 'Button Button-Menu', id: 'ButtonArea-Toggle', name: 'button', type: 'button'}) }}
+	{% endblock %}
 
 	{% block buttonArea %}
 		<div class="ButtonArea">
 			{% block overviewButtons %}
 				{% block overviewButtonReset %}
 					{% if design.isPreview == false and design.inUse == false %}
-						{{ FormHelper.button(__('reset'), {class: 'Button Button-Error Button-Close', name: 'reset', value: design.identifier}) }}
+						{{ FormHelper.button(__('reset'), {class: 'Button Button-Error Button-Close', form: 'DesignForm', name: 'reset', value: design.identifier}) }}
 					{% endif %}
 				{% endblock %}
 
 				{% block overviewButtonPreview %}
 					{% if design.isPreview %}
 						{% block overviewButtonPreviewUpdate %}
-							{{ FormHelper.button(__('update_preview'), {class: 'Button Button-View', name: 'preview', value: design.identifier}) }}
+							{{ FormHelper.button(__('update_preview'), {class: 'Button Button-View', form: 'DesignForm', name: 'preview', value: design.identifier}) }}
 						{% endblock %}
 
 						{% block overviewButtonPreviewClose %}
-							{{ FormHelper.button(__('cancel_preview'), {class: 'Button Button-Error Button-Close', name: 'cancel_preview', value: design.identifier}) }}
+							{{ FormHelper.button(__('cancel_preview'), {class: 'Button Button-Error Button-Close', form: 'DesignForm', name: 'cancel_preview', value: design.identifier}) }}
 						{% endblock %}
 					{% else %}
 						{% block overviewButtonPreviewPreview %}
-							{{ FormHelper.button(__('preview'), {class: 'Button Button-View', name: 'preview', value: design.identifier}) }}
+							{{ FormHelper.button(__('preview'), {class: 'Button Button-View', form: 'DesignForm', name: 'preview', value: design.identifier}) }}
 						{% endblock %}
 					{% endif %}
 				{% endblock %}
@@ -64,6 +72,7 @@
 					{% if AuthorizationHelper.isAccessible('use') %}
 						{{ FormHelper.button(__('confirm_apply_yes'), {
 							class: 'Button Button-Success Button-Save',
+							form: 'DesignForm',
 							name: 'use',
 							value: design.identifier,
 							'data-confirm-title': __('confirm_apply_title'),
@@ -77,6 +86,8 @@
 			{% endblock %}
 		</div>
 	{% endblock %}
+
+	{{ FormHelper.create(preview ?? design, {method: 'post', id: 'DesignForm', idPrefix: 'design'}) }}
 
 	{% block fieldsetsOverview %}
 		<div class="Fieldsets">
@@ -100,18 +111,20 @@
 		<iframe src="{{ baseUrl }}" id="Preview"></iframe>
 	{% endblock %}
 
+	{% block formInputReloadForm %}
+		{{ FormHelper.hidden('reload_form', {val: 0}) }}
+	{% endblock %}
+
+	{{ FormHelper.end() }}
+
 	{% block buttonAreaBottom %}
 		<div class="ButtonArea ButtonArea-Bottom">
 			{% if AuthorizationHelper.isAccessible('save') %}
-				{{ FormHelper.button(__('save_settings'), {class: 'Button Button-Success Button-Save Button-SaveSettings', name: 'save', type: 'button'}) }}
+				{{ FormHelper.button(__('save_settings'), {class: 'Button Button-Success Button-Save Button-SaveSettings', form: 'DesignForm', name: 'save', type: 'button'}) }}
 			{% endif %}
 
 			{{ block('overviewButtons') }}
 		</div>
-	{% endblock %}
-
-	{% block formInputReloadForm %}
-		{{ FormHelper.hidden('reload_form', {val: 0}) }}
 	{% endblock %}
 
 	{% block formSaveDialog %}
@@ -135,8 +148,6 @@
 			{% endblock %}
 		</dialog>
 	{% endblock %}
-
-	{{ FormHelper.end() }}
 
 	{% block paginatedOverview %}
 		{% if designs.count > 1 %}

@@ -29,6 +29,12 @@ body {
 		}
 	}
 
+	fieldset {
+		&:has(.tox-fullscreen) {
+			z-index:3000;
+		}
+	}
+
 	.tox {
 		--scrollbarColor:oklch(from var(--colorMedium) calc(l - 0.1400) calc(c - 0.002) calc(h + 0.39)) var(--colorSemiDarkDarkMode);
 
@@ -48,7 +54,6 @@ body {
 
 				.tox-editor-header {
 					padding-block:0;
-					transform:translateY(-100px);
 				}
 
 				.tox-editor-container {
@@ -75,7 +80,7 @@ body {
 		}
 
 		.tox-toolbar {
-			padding:5px;
+			padding:0 5px;
 			background-image:none;
 			background-color:transparent;
 
@@ -95,7 +100,7 @@ body {
 			}
 
 			&__group {
-				padding-inline:5px;
+				padding:5px;
 			}
 		}
 
@@ -182,7 +187,7 @@ body {
 		}
 
 		.tox-icon {
-			margin-inline:10px;
+			margin-inline:6px;
 		}
 
 		.tox-menu {
@@ -368,12 +373,18 @@ body {
 			background-color:var(--colorBright);
 			color:var(--colorText);
 
-			html.Scale-Small & {
+			@media screen and (width <= 768px) {
 				padding:42px 20px 20px 20px;
 			}
 
 			html.🌚 & {
 				background-color:var(--colorDark);
+			}
+
+			html.Scale-Small & {
+				@media screen and (width > 768px) {
+					padding:42px 20px 20px 20px;
+				}
 			}
 
 			&--charmap {
@@ -439,8 +450,14 @@ body {
 			&--link {
 				max-width:680px;
 
-				html.Scale-Small & {
+				@media screen and (width <= 768px) {
 					max-width:480px;
+				}
+
+				html.Scale-Small & {
+					@media screen and (width > 768px) {
+						max-width:480px;
+					}
 				}
 
 				.tox-form {
@@ -448,8 +465,14 @@ body {
 					gap:20px;
 					grid-template-columns:1fr 1fr;
 
-					html.Scale-Small & {
+					@media screen and (width <= 768px) {
 						row-gap:10px;
+					}
+
+					html.Scale-Small & {
+						@media screen and (width > 768px) {
+							row-gap:10px;
+						}
 					}
 				}
 
@@ -499,6 +522,12 @@ body {
 						margin-left:0;
 					}
 
+					@media screen and (width <= 768px) {
+						width:40px;
+						height:40px;
+						padding-block:0;
+					}
+
 					html.🌚 & {
 						background-color:var(--backgroundColor);
 
@@ -508,9 +537,11 @@ body {
 					}
 
 					html.Scale-Small & {
-						width:40px;
-						height:40px;
-						padding-block:0;
+						@media screen and (width > 768px) {
+							width:40px;
+							height:40px;
+							padding-block:0;
+						}
 					}
 
 					&:focus {
@@ -559,6 +590,12 @@ body {
 					line-height:0;
 					text-align:center;
 
+					@media screen and (width <= 768px) {
+						width:42px;
+						height:42px;
+						padding-block:0;
+					}
+
 					&.tox-locked {
 						background-color:var(--colorSuccess);
 
@@ -588,9 +625,11 @@ body {
 					}
 
 					html.Scale-Small & {
-						width:42px;
-						height:42px;
-						padding-block:0;
+						@media screen and (width > 768px) {
+							width:42px;
+							height:42px;
+							padding-block:0;
+						}
 					}
 
 					&:focus {
@@ -669,8 +708,14 @@ body {
 				top:0;
 				left:0;
 
-				html.Scale-Small & {
+				@media screen and (width <= 768px) {
 					height:42px;
+				}
+
+				html.Scale-Small & {
+					@media screen and (width > 768px) {
+						height:42px;
+					}
 				}
 
 				&::after {
@@ -689,8 +734,14 @@ body {
 					line-height:52px;
 					z-index:1;
 
-					html.Scale-Small & {
+					@media screen and (width <= 768px) {
 						line-height:42px;
+					}
+
+					html.Scale-Small & {
+						@media screen and (width > 768px) {
+							line-height:42px;
+						}
 					}
 				}
 
@@ -712,13 +763,20 @@ body {
 					scrollbar-color:var(--scrollbarColor);
 					scrollbar-width:thin;
 
+					@media screen and (width <= 768px) {
+						margin-inline:-20px;
+						padding:10px 10px 0 10px;
+					}
+
 					html.🌚 {
 						--scrollbarColor:var(--backgroundColorContent) var(--colorSemiDark);
 					}
 
 					html.Scale-Small & {
-						margin-inline:-20px;
-						padding:10px 10px 0 10px;
+						@media screen and (width > 768px) {
+							margin-inline:-20px;
+							padding:10px 10px 0 10px;
+						}
 					}
 				}
 			}
@@ -740,8 +798,14 @@ body {
 				background-color:transparent;
 				flex-wrap:wrap;
 
-				html.Scale-Small & {
+				@media screen and (width <= 768px) {
 					padding-top:20px;
+				}
+
+				html.Scale-Small & {
+					@media screen and (width > 768px) {
+						padding-top:20px;
+					}
 				}
 
 				&-end {
@@ -760,8 +824,14 @@ body {
 					font-weight:400;
 					line-height:30px;
 
-					html.Scale-Small & {
+					@media screen and (width <= 768px) {
 						padding-block:6px;
+					}
+
+					html.Scale-Small & {
+						@media screen and (width > 768px) {
+							padding-block:6px;
+						}
 					}
 
 					&[data-mce-name="Save"] {
@@ -787,8 +857,14 @@ body {
 							vertical-align:0;
 							transform:translateY(-1px);
 
-							html.Scale-Small & {
+							@media screen and (width <= 768px) {
 								transform:translateY(0);
+							}
+
+							html.Scale-Small & {
+								@media screen and (width > 768px) {
+									transform:translateY(0);
+								}
 							}
 						}
 					}
@@ -921,8 +997,14 @@ body {
 				max-width:100%;
 				min-height:52px;
 
-				html.Scale-Small & {
+				@media screen and (width <= 768px) {
 					min-height:42px;
+				}
+
+				html.Scale-Small & {
+					@media screen and (width > 768px) {
+						min-height:42px;
+					}
 				}
 			}
 

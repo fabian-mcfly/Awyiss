@@ -465,3 +465,9 @@ msgstr "Appendix"
 
 msgid "configuration_identifier_frontend_meta_title_separator"
 msgstr "Separator"
+
+msgid "button_area_toggle"
+msgstr "Toggle Button Area"
+
+msgid "sidebar_toggle"
+msgstr "Additional Settings"

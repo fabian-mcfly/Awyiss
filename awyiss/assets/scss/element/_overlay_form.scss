@@ -62,13 +62,19 @@
 		inset:0;
 		overflow:hidden;
 
-		html.Scale-Small & {
+		@media screen and (width <= 768px) {
 			padding-top:42px;
 		}
 
 		html.🌚 & {
 			background-image:url($relativePath + 'img/background-pattern-dark.png');
 			background-blend-mode:color-burn;
+		}
+
+		html.Scale-Small & {
+			@media screen and (width > 768px) {
+				padding-top:42px;
+			}
 		}
 
 		&::after {
@@ -90,8 +96,14 @@
 			scrollbar-color:var(--scrollbarColor);
 			scrollbar-width:thin;
 
-			html.Scale-Small & {
+			@media screen and (width <= 768px) {
 				padding:0 10px 10px 10px;
+			}
+
+			html.Scale-Small & {
+				@media screen and (width > 768px) {
+					padding:0 10px 10px 10px;
+				}
 			}
 
 			> .Fieldsets {
@@ -111,9 +123,16 @@
 			position:absolute;
 			top:2px;
 
-			html.Scale-Small & {
+			@media screen and (width <= 768px) {
 				height:38px;
 				padding-block:0;
+			}
+
+			html.Scale-Small & {
+				@media screen and (width > 768px) {
+					height:38px;
+					padding-block:0;
+				}
 			}
 		}
 

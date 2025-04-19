@@ -23,106 +23,120 @@
 	{% endfor %}
 {% endmacro %}
 
+{{ FormHelper.create(widget, {method: 'post', id: 'WidgetForm', idPrefix: 'widget'}) }}
+
+{% block sidebarToggle %}
+	{{ FormHelper.button(__('sidebar_toggle'), {class: 'Button Button-Configure', id: 'Sidebar-Toggle', name: 'button', type: 'button'}) }}
+{% endblock %}
+
 {% block fieldsets %}
 	<div class="Fieldsets">
-		{% block fieldsetPresentation %}
-			<fieldset class="Fieldset-Presentation">
-				<legend>{{ __('fieldset_presentation') }}</legend>
+		{% block mainFieldsets %}
+			<div class="Main-Fieldsets">
+				{% block fieldsetGeneral %}
+					<fieldset class="Fieldset-General">
+						<legend>{{ __('fieldset_general') }}</legend>
 
-				{% block fieldsetPresentationInner %}
-					{{ _self.renderFormControls(widgetElementsByFieldset.presentation ?? [], macroSettings) }}
+						{% block fieldsetGeneralInner %}
+							{{ _self.renderFormControls(widgetElementsByFieldset.general ?? [], macroSettings) }}
+						{% endblock %}
+					</fieldset>
 				{% endblock %}
-			</fieldset>
-		{% endblock %}
 
-		{% block fieldsetConditions %}
-			<fieldset class="Fieldset-Conditions">
-				<legend>{{ __('fieldset_conditions') }}</legend>
+				{% block fieldsetContent %}
+					<fieldset class="Fieldset-Content">
+						<legend>{{ __('fieldset_content') }}</legend>
 
-				{% block fieldsetConditionsInner %}
-					{{ _self.renderFormControls(widgetElementsByFieldset.conditions ?? [], macroSettings) }}
+						{% block fieldsetContentInner %}
+							{{ _self.renderFormControls(widgetElementsByFieldset.content ?? [], macroSettings) }}
+						{% endblock %}
+					</fieldset>
 				{% endblock %}
-			</fieldset>
-		{% endblock %}
 
-		{% block fieldsetGeneral %}
-			<fieldset class="Fieldset-General">
-				<legend>{{ __('fieldset_general') }}</legend>
+				{% block fieldsetMedia %}
+					<fieldset class="Fieldset-Media">
+						<legend>{{ __('fieldset_media') }}</legend>
 
-				{% block fieldsetGeneralInner %}
-					{{ _self.renderFormControls(widgetElementsByFieldset.general ?? [], macroSettings) }}
+						{% block fieldsetMediaInner %}
+							{{ cell('Backend/MediaElements', [widget]) }}
+
+							{{ _self.renderFormControls(widgetElementsByFieldset.media ?? [], macroSettings) }}
+						{% endblock %}
+					</fieldset>
 				{% endblock %}
-			</fieldset>
-		{% endblock %}
 
-		{% block fieldsetContent %}
-			<fieldset class="Fieldset-Content">
-				<legend>{{ __('fieldset_content') }}</legend>
-
-				{% block fieldsetContentInner %}
-					{{ _self.renderFormControls(widgetElementsByFieldset.content ?? [], macroSettings) }}
+				{% block fieldsetMediaElementAssignments %}
+					{{ cell('Backend/MediaElements::elementAssignments', [widget]) }}
 				{% endblock %}
-			</fieldset>
+			</div>
 		{% endblock %}
 
-		{% block fieldsetMedia %}
-			<fieldset class="Fieldset-Media">
-				<legend>{{ __('fieldset_media') }}</legend>
+		{% block sidebarFieldsets %}
+			<div class="Sidebar-Fieldsets">
+				{% block fieldsetPresentation %}
+					<fieldset class="Fieldset-Presentation">
+						<legend>{{ __('fieldset_presentation') }}</legend>
 
-				{% block fieldsetMediaInner %}
-					{{ cell('Backend/MediaElements', [widget]) }}
-
-					{{ _self.renderFormControls(widgetElementsByFieldset.media ?? [], macroSettings) }}
+						{% block fieldsetPresentationInner %}
+							{{ _self.renderFormControls(widgetElementsByFieldset.presentation ?? [], macroSettings) }}
+						{% endblock %}
+					</fieldset>
 				{% endblock %}
-			</fieldset>
-		{% endblock %}
 
-		{% block fieldsetMediaElementAssignments %}
-			{{ cell('Backend/MediaElements::elementAssignments', [widget]) }}
-		{% endblock %}
+				{% block fieldsetConditions %}
+					<fieldset class="Fieldset-Conditions">
+						<legend>{{ __('fieldset_conditions') }}</legend>
 
-		{% block fieldsetAttributes %}
-			<fieldset class="Fieldset-Attributes">
-				<legend>{{ __('fieldset_attributes') }}</legend>
-
-				{% block fieldsetAttributesInner %}
-					{{ _self.renderFormControls(widgetElementsByFieldset.attributes ?? [], macroSettings) }}
+						{% block fieldsetConditionsInner %}
+							{{ _self.renderFormControls(widgetElementsByFieldset.conditions ?? [], macroSettings) }}
+						{% endblock %}
+					</fieldset>
 				{% endblock %}
-			</fieldset>
-		{% endblock %}
 
-		{% block fieldsetData %}
-			<fieldset class="Fieldset-Data">
-				<legend>{{ __('fieldset_data') }}</legend>
+				{% block fieldsetAttributes %}
+					<fieldset class="Fieldset-Attributes">
+						<legend>{{ __('fieldset_attributes') }}</legend>
 
-				{% block fieldsetDataInner %}
-					{% block formControlData %}
-						<div class="FormInput FormInputType-List FormInputName-Data" data-list-item-add="{{ __('list_item_add') }}" data-list-item-remove="{{ __('list_item_remove') }}">
-							<label class="Label">{{ __('data') }}</label>
+						{% block fieldsetAttributesInner %}
+							{{ _self.renderFormControls(widgetElementsByFieldset.attributes ?? [], macroSettings) }}
+						{% endblock %}
+					</fieldset>
+				{% endblock %}
 
-							{% set counter = 0 %}
-							{% for key, value in widget.data %}
-								<div class="FormInputType-ListItem">
-									{{ FormHelper.input('data.' ~ counter ~ '.key', {val: key}) }}
-									{{ FormHelper.input('data.' ~ counter ~ '.value', {val: value}) }}
-									{% set counter = counter + 1 %}
+				{% block fieldsetData %}
+					<fieldset class="Fieldset-Data">
+						<legend>{{ __('fieldset_data') }}</legend>
+
+						{% block fieldsetDataInner %}
+							{% block formControlData %}
+								<div class="FormInput FormInputType-List FormInputName-Data" data-list-item-add="{{ __('list_item_add') }}" data-list-item-remove="{{ __('list_item_remove') }}">
+									<label class="Label">{{ __('data') }}</label>
+
+									{% set counter = 0 %}
+									{% for key, value in widget.data %}
+										<div class="FormInputType-ListItem">
+											{{ FormHelper.input('data.' ~ counter ~ '.key', {val: key}) }}
+											{{ FormHelper.input('data.' ~ counter ~ '.value', {val: value}) }}
+											{% set counter = counter + 1 %}
+										</div>
+									{% endfor %}
+
+									<div class="FormInputType-ListItem FormInputType-ListItem-Default">
+										{{ FormHelper.input('data.' ~ counter ~ '.key') }}
+										{{ FormHelper.input('data.' ~ counter ~ '.value') }}
+									</div>
 								</div>
-							{% endfor %}
+							{% endblock %}
 
-							<div class="FormInputType-ListItem FormInputType-ListItem-Default">
-								{{ FormHelper.input('data.' ~ counter ~ '.key') }}
-								{{ FormHelper.input('data.' ~ counter ~ '.value') }}
-							</div>
-						</div>
-					{% endblock %}
-
-					{{ _self.renderFormControls(widgetElementsByFieldset.data ?? [], macroSettings) }}
+							{{ _self.renderFormControls(widgetElementsByFieldset.data ?? [], macroSettings) }}
+						{% endblock %}
+					</fieldset>
 				{% endblock %}
-			</fieldset>
-		{% endblock %}
 
-		{% block elementPublicationData %}
-			{{ element('publication_data/fieldset', {fields: AttributesHelper.allControls('publication')}) }}
+				{% block elementPublicationData %}
+					{{ element('publication_data/fieldset', {fields: AttributesHelper.allControls('publication')}) }}
+				{% endblock %}
+			</div>
 		{% endblock %}
 
 		{% block formInputReloadForm %}
@@ -142,3 +156,9 @@
 		}
 	</script>
 {% endblock %}
+
+{% block lockDialog %}
+	{{ element('lock_dialog', {entity: widget}) }}
+{% endblock %}
+
+{{ FormHelper.end() }}

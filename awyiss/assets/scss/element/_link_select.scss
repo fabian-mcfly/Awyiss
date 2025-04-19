@@ -5,6 +5,7 @@
 	vertical-align:top;
 	align-self:flex-start;
 	transition:z-index 0s linear .3s;
+	white-space:normal;
 
 	.ButtonArea-Bottom & {
 		&::before {
@@ -13,13 +14,18 @@
 		}
 	}
 
-	&:focus-within,
-	&:hover {
+	&:focus-within {
 		z-index:1100;
 		transition-delay:0s;
 
 		&::before {
 			display:block;
+
+			@media screen and (width <= 1024px) {
+				height:100%;
+				bottom:0;
+				cursor:pointer;
+			}
 		}
 
 		&::after {
@@ -35,6 +41,10 @@
 			color:var(--colorBright);
 			transition-delay:0s;
 
+			@media screen and (width <= 1024px) {
+				pointer-events:none;
+			}
+
 			html.🌚 & {
 				background-color:var(--colorSuccess);
 			}
@@ -48,6 +58,45 @@
 			opacity:1;
 			visibility:visible;
 			transition-delay:0s;
+		}
+	}
+
+	&:hover {
+		@media screen and (width > 1024px) {
+			z-index:1100;
+			transition-delay:0s;
+
+			&::before {
+				display:block;
+			}
+
+			&::after {
+				opacity:1;
+				visibility:visible;
+				transition-delay:0s;
+			}
+
+			.Label {
+				box-shadow:0 0 10px rgba(0, 0, 0, .25);
+				border-color:transparent;
+				background-color:var(--colorSemiDark);
+				color:var(--colorBright);
+				transition-delay:0s;
+
+				html.🌚 & {
+					background-color:var(--colorSuccess);
+				}
+
+				&::before {
+					opacity:inherit;
+				}
+			}
+
+			.List {
+				opacity:1;
+				visibility:visible;
+				transition-delay:0s;
+			}
 		}
 	}
 
@@ -95,6 +144,18 @@
 		white-space:nowrap;
 		transition:box-shadow .3s ease-in-out, border-color .3s ease-in-out, background-color .3s ease-in-out, color .3s ease-in-out;
 
+		@media screen and (width <= 1024px) {
+			cursor:pointer;
+		}
+
+		@media screen and (width <= 768px) {
+			padding-block:5px 7px;
+		}
+
+		@media screen and (width <= 640px) {
+			max-width:none;
+		}
+
 		html.🌚 & {
 			background-image:none;
 			background-color:var(--backgroundColorContent);
@@ -102,7 +163,9 @@
 		}
 
 		html.Scale-Small & {
-			padding-block:6px 8px;
+			@media screen and (width > 768px) {
+				padding-block:5px 7px;
+			}
 		}
 
 		&:focus-visible {
@@ -132,8 +195,14 @@
 			top:16px;
 			right:20px;
 
+			@media screen and (width <= 768px) {
+				top:10px;
+			}
+
 			html.Scale-Small & {
-				top:12px;
+				@media screen and (width > 768px) {
+					top:10px;
+				}
 			}
 		}
 	}
@@ -141,7 +210,7 @@
 	.List {
 		min-width:100%;
 		max-width:300px;
-		max-height:400px;
+		max-height:min(400px, calc(100dvh - 220px));
 		border-radius:5px;
 		margin-top:4px;
 		padding:0 10px;
@@ -155,6 +224,7 @@
 		z-index:1005;
 		opacity:0;
 		visibility:hidden;
+		overscroll-behavior:contain;
 		overflow-y:auto;
 		transition:opacity .3s ease-in-out, visibility 0s linear .3s;
 		scrollbar-color:var(--colorText) var(--colorMedium);
@@ -232,6 +302,16 @@
 			text-overflow:ellipsis;
 			white-space:nowrap;
 			overflow:hidden;
+
+			@media screen and (width <= 768px) {
+				padding-block:5px;
+			}
+
+			html.Scale-Small & {
+				@media screen and (width > 768px) {
+					padding-block:5px;
+				}
+			}
 
 			&:focus-visible {
 				outline:2px solid var(--colorSuccess);

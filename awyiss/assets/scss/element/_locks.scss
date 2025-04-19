@@ -12,7 +12,7 @@
 	right:40px;
 	bottom:40px;
 	left:40px;
-	z-index:1235;
+	z-index:4567;
 	pointer-events:initial;
 	opacity:0;
 	visibility:hidden;
@@ -96,9 +96,16 @@
 
 			transform:translateY(0);
 
-			html.Scale-Small & {
+			@media screen and (width <= 768px) {
 				margin-block:-1px !important;
 				transform:translateY(1px);
+			}
+
+			html.Scale-Small & {
+				@media screen and (width > 768px) {
+					margin-block:-1px !important;
+					transform:translateY(1px);
+				}
 			}
 		}
 

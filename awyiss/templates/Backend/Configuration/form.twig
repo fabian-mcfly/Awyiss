@@ -7,6 +7,8 @@
 
 {% use '@Backend/Configuration/blocks.twig' %}
 
+{{ FormHelper.create(configuration, {method: 'post', id: 'ConfigurationForm', idPrefix: 'Configuration'}) }}
+
 {% macro recursiveConfigOptions(items, level = 0, parent = []) %}
 	{% for key, configuration in items %}
 		{% if configuration is iterable %}
@@ -26,137 +28,150 @@
 	{% endfor %}
 {% endmacro %}
 
+{% block sidebarToggle %}
+	{{ FormHelper.button(__('sidebar_toggle'), {class: 'Button Button-Configure', id: 'Sidebar-Toggle', name: 'button', type: 'button'}) }}
+{% endblock %}
+
 {% block fieldsets %}
 	<div class="Fieldsets">
-		{% block fieldsetPresentation %}
-			<fieldset class="Fieldset-Presentation">
-				<legend>{{ __('fieldset_presentation') }}</legend>
+		{% block mainFieldsets %}
+			<div class="Main-Fieldsets">
+				{% block fieldsetGeneral %}
+					<fieldset class="Fieldset-General">
+						<legend>{{ __('fieldset_general') }}</legend>
 
-				{% block fieldsetPresentationInner %}
-					{% block fieldsetPresentationAttributes %}
-						{{ AttributesHelper.allControls('presentation') }}
-					{% endblock %}
-				{% endblock %}
-			</fieldset>
-		{% endblock %}
-
-		{% block fieldsetConditions %}
-			<fieldset class="Fieldset-Conditions">
-				<legend>{{ __('fieldset_conditions') }}</legend>
-
-				{% block fieldsetConditionsInner %}
-					{% block formControlScope %}
-						{{ CategoriesHelper.control('scope', {'data-form-updater': true}) }}
-					{% endblock %}
-
-					{% block formControlRealm %}
-						{{ FormHelper.control('realm', {empty: false, options: combine(realms, realms), 'data-form-updater': true}) }}
-					{% endblock %}
-
-					{% block formControlLanguageShortcode %}
-						{{ LocaleHelper.control('language_shortcode', {
-							disabled: configuration.configOption is defined and configuration.configOption.isLocalizable() == false,
-							languageRealm: configuration.realm,
-							'data-form-updater': true,
-						}) }}
-					{% endblock %}
-
-					{% block fieldsetConditionsAttributes %}
-						{{ AttributesHelper.allControls('conditions') }}
-					{% endblock %}
-				{% endblock %}
-			</fieldset>
-		{% endblock %}
-
-		{% block fieldsetGeneral %}
-			<fieldset class="Fieldset-General">
-				<legend>{{ __('fieldset_general') }}</legend>
-
-				{% block fieldsetGeneralInner %}
-					{% block formControlIdentifier %}
-						<div class="FormInput FormInputType-Text FormInputName-Identifier{% if FormHelper.isFieldError('identifier') %} Error{% endif %}">
-							<label class="Label" for="Configuration-Identifier">{{ __('identifier') }}</label>
-
-							{{ FormHelper.text('identifier', {
-								id: 'Configuration-Identifier',
-								val: configuration.identifier ? configuration.identifier|variable : '',
-								'data-allowed-characters': '.',
-								'data-camelize': true,
-								'data-form-updater': true
-							}) }}
-
-							{% block formControlIdentifierSelect %}
-								<select id="Configuration-Identifier-Options" name="" data-options-for="Configuration-Identifier">
-									<option value=""></option>
-									{{ _self.recursiveConfigOptions(configOptions) }}
-								</select>
+						{% block fieldsetGeneralInner %}
+							{% block formControlScope %}
+								{{ CategoriesHelper.control('scope', {columnSpan: 6, 'data-form-updater': true}) }}
 							{% endblock %}
 
-							{% if FormHelper.isFieldError('identifier') %}
-								{{ FormHelper.error('identifier') }}
-							{% endif %}
-						</div>
-					{% endblock %}
+							{% block formControlRealm %}
+								{{ FormHelper.control('realm', {columnSpan: 6, empty: false, options: combine(realms, realms), 'data-form-updater': true}) }}
+							{% endblock %}
 
-					{% block formControlValue %}
-						{% if configuration.configOption %}
-							{{ block('formControlType' ~ configuration.configOption.type.name) }}
-						{% else %}
-							{{ FormHelper.control('value') }}
-						{% endif %}
-					{% endblock %}
+							{% block formControlIdentifier %}
+								<div class="FormInput FormInputType-Text FormInputName-Identifier ColumnSpan-6{% if FormHelper.isFieldError('identifier') %} Error{% endif %}">
+									<label class="Label" for="Configuration-Identifier">{{ __('identifier') }}</label>
 
-					{% block formControlDescription %}
-						{{ FormHelper.control('description', {placeholder: configuration.configOption.description}) }}
-					{% endblock %}
+									{{ FormHelper.text('identifier', {
+										id: 'Configuration-Identifier',
+										val: configuration.identifier ? configuration.identifier|variable : '',
+										'data-allowed-characters': '.',
+										'data-camelize': true,
+										'data-form-updater': true
+									}) }}
 
-					{% block fieldsetGeneralAttributes %}
-						{{ AttributesHelper.allControls('general') }}
-					{% endblock %}
+									{% block formControlIdentifierSelect %}
+										<select id="Configuration-Identifier-Options" name="" data-options-for="Configuration-Identifier">
+											<option value=""></option>
+											{{ _self.recursiveConfigOptions(configOptions) }}
+										</select>
+									{% endblock %}
+
+									{% if FormHelper.isFieldError('identifier') %}
+										{{ FormHelper.error('identifier') }}
+									{% endif %}
+								</div>
+							{% endblock %}
+
+							{% block formControlLanguageShortcode %}
+								{{ LocaleHelper.control('language_shortcode', {
+									disabled: configuration.configOption is defined and configuration.configOption.isLocalizable() == false,
+									columnSpan: 6,
+									languageRealm: configuration.realm,
+									'data-form-updater': true,
+								}) }}
+							{% endblock %}
+
+							{% block formControlValue %}
+								{% if configuration.configOption %}
+									{{ block('formControlType' ~ configuration.configOption.type.name) }}
+								{% else %}
+									{{ FormHelper.control('value') }}
+								{% endif %}
+							{% endblock %}
+
+							{% block formControlDescription %}
+								{{ FormHelper.control('description', {placeholder: configuration.configOption.description}) }}
+							{% endblock %}
+
+							{% block fieldsetGeneralAttributes %}
+								{{ AttributesHelper.allControls('general') }}
+							{% endblock %}
+						{% endblock %}
+					</fieldset>
 				{% endblock %}
-			</fieldset>
+
+				{% block fieldsetContent %}
+					<fieldset class="Fieldset-Content">
+						<legend>{{ __('fieldset_content') }}</legend>
+
+						{% block fieldsetContentInner %}
+							{% block fieldsetContentAttributes %}
+								{{ AttributesHelper.allControls('content') }}
+							{% endblock %}
+						{% endblock %}
+					</fieldset>
+				{% endblock %}
+
+				{% block fieldsetMedia %}
+					<fieldset class="Fieldset-Media">
+						<legend>{{ __('fieldset_media') }}</legend>
+
+						{% block fieldsetMediaInner %}
+							{{ cell('Backend/MediaElements', [configuration]) }}
+
+							{% block fieldsetMediaAttributes %}
+								{{ AttributesHelper.allControls('media') }}
+							{% endblock %}
+						{% endblock %}
+					</fieldset>
+				{% endblock %}
+
+				{% block fieldsetMediaElementAssignments %}
+					{{ cell('Backend/MediaElements::elementAssignments', [configuration]) }}
+				{% endblock %}
+			</div>
 		{% endblock %}
 
-		{% block fieldsetContent %}
-			<fieldset class="Fieldset-Content">
-				<legend>{{ __('fieldset_content') }}</legend>
+		{% block sidebarFieldsets %}
+			<div class="Sidebar-Fieldsets">
+				{% block fieldsetPresentation %}
+					<fieldset class="Fieldset-Presentation">
+						<legend>{{ __('fieldset_presentation') }}</legend>
 
-				{% block fieldsetContentInner %}
-					{% block fieldsetContentAttributes %}
-						{{ AttributesHelper.allControls('content') }}
-					{% endblock %}
+						{% block fieldsetPresentationInner %}
+							{% block fieldsetPresentationAttributes %}
+								{{ AttributesHelper.allControls('presentation') }}
+							{% endblock %}
+						{% endblock %}
+					</fieldset>
 				{% endblock %}
-			</fieldset>
-		{% endblock %}
 
-		{% block fieldsetMedia %}
-			<fieldset class="Fieldset-Media">
-				<legend>{{ __('fieldset_media') }}</legend>
+				{% block fieldsetConditions %}
+					<fieldset class="Fieldset-Conditions">
+						<legend>{{ __('fieldset_conditions') }}</legend>
 
-				{% block fieldsetMediaInner %}
-					{{ cell('Backend/MediaElements', [configuration]) }}
-
-					{% block fieldsetMediaAttributes %}
-						{{ AttributesHelper.allControls('media') }}
-					{% endblock %}
+						{% block fieldsetConditionsInner %}
+							{% block fieldsetConditionsAttributes %}
+								{{ AttributesHelper.allControls('conditions') }}
+							{% endblock %}
+						{% endblock %}
+					</fieldset>
 				{% endblock %}
-			</fieldset>
-		{% endblock %}
 
-		{% block fieldsetMediaElementAssignments %}
-			{{ cell('Backend/MediaElements::elementAssignments', [configuration]) }}
-		{% endblock %}
+				{% block fieldsetAttributes %}
+					<fieldset class="Fieldset-Attributes">
+						<legend>{{ __('fieldset_attributes') }}</legend>
 
-		{% block fieldsetAttributes %}
-			<fieldset class="Fieldset-Attributes">
-				<legend>{{ __('fieldset_attributes') }}</legend>
-
-				{% block fieldsetAttributesInner %}
-					{% block fieldsetAttributesAttributes %}
-						{{ AttributesHelper.allControls('attributes') }}
-					{% endblock %}
+						{% block fieldsetAttributesInner %}
+							{% block fieldsetAttributesAttributes %}
+								{{ AttributesHelper.allControls('attributes') }}
+							{% endblock %}
+						{% endblock %}
+					</fieldset>
 				{% endblock %}
-			</fieldset>
+			</div>
 		{% endblock %}
 
 		{% block formInputReloadForm %}
@@ -164,3 +179,9 @@
 		{% endblock %}
 	</div>
 {% endblock %}
+
+{% block lockDialog %}
+	{{ element('lock_dialog', {entity: configuration}) }}
+{% endblock %}
+
+{{ FormHelper.end() }}

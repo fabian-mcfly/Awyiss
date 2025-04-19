@@ -202,6 +202,43 @@ export function addTabAutocompleteEvent() {
 
 
 /**
+ * Handle keypresses on labels
+ */
+export function handleLabelKeypress() {
+	const event = function (event) {
+		if (event.code === 'Enter' || event.code === 'Space') {
+			const input = document.getElementById(event.target.htmlFor);
+			input.checked = !input.checked;
+			event.preventDefault();
+		}
+	};
+
+	const labels = document.querySelectorAll('label[for]');
+	labels.forEach(label => {
+		window.eventHandler.add('keydown', event, label);
+	});
+
+	const observer = window.observer;
+	observer.addObserver(function (mutation) {
+		mutation.addedNodes.forEach(node => {
+			if (node.nodeType !== Node.ELEMENT_NODE) {
+				return;
+			}
+
+			if (node.matches('label[for]')) {
+				window.eventHandler.add('keydown', event, node);
+			}
+
+			const labels = node.querySelectorAll('label[for]');
+			labels.forEach(label => {
+				window.eventHandler.add('keydown', event, label);
+			});
+		});
+	});
+}
+
+
+/**
  * Add a change event listener to the pagination form
  * This event listener submits the form when the value of the select element for items per page changes
  */
@@ -275,6 +312,12 @@ export async function initMainOnReady() {
 	 * @type {Audit}
 	 */
 	window.audit = new Audit();
+
+	/**
+	 * @global
+	 * @type {ButtonArea}
+	 */
+	window.buttonArea = new ButtonArea();
 
 	/**
 	 * @global
@@ -407,6 +450,9 @@ export async function initMainOnReady() {
 	// Tab autocomplete for placeholders
 	addTabAutocompleteEvent();
 
+	// Handle label keypresses
+	handleLabelKeypress();
+
 	// Handle pagination form
 	handlePaginationForm();
 
@@ -439,12 +485,6 @@ export function initMainOnLoad() {
 		 */
 		window.overflowMenu = new OverflowMenu('#Menu-System', 'li.Level1');
 	}
-
-	/**
-	 * @global
-	 * @type {ButtonArea}
-	 */
-	window.buttonArea = new ButtonArea();
 
 	/**
 	 * @global

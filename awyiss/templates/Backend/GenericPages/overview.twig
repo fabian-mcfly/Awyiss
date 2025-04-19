@@ -12,8 +12,16 @@
 #}
 
 <div class="Pages Overview">
-	{% block headlineOverview %}
-		<h1>{{ __df(pageRoleName, 'generic_pages', 'headline_overview', pageRole.title) }}</h1>
+	{% block headlinesOverview %}
+		<div class="Headlines">
+			{% block headlineOverview %}
+				<h1>{{ __df(pageRoleName, 'generic_pages', 'headline_overview', pageRole.title) }}</h1>
+			{% endblock %}
+		</div>
+	{% endblock %}
+
+	{% block buttonAreaToggle %}
+		{{ FormHelper.button(__('button_area_toggle'), {class: 'Button Button-Menu', id: 'ButtonArea-Toggle', name: 'button', type: 'button'}) }}
 	{% endblock %}
 
 	{% block buttonArea %}

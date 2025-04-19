@@ -23,6 +23,10 @@
 		text-decoration:none;
 	}
 
+	.Submenu-Toggle {
+		display:none;
+	}
+
 	ul.Level1 {
 		display:flex;
 		height:100%;
@@ -106,6 +110,10 @@
 		position:relative;
 		overflow:hidden;
 		transition:background-color .3s ease-in-out;
+
+		@media screen and (width <= 860px) {
+			padding-inline:15px;
+		}
 
 		&.Active {
 			background-color:var(--colorSuccess);
@@ -202,8 +210,19 @@
 		padding:10px 0;
 		line-height:1.5;
 
-		html.Scale-Small & {
+		@media screen and (width > 768px) and (height <= 800px) {
 			padding-block:5px;
+		}
+
+		@media screen and (width > 768px) and (height <= 660px),
+			screen and (width <= 768px) {
+			padding-block:5px;
+		}
+
+		html.Scale-Small & {
+			@media screen and (width > 768px) and (height > 800px) {
+				padding-block:5px;
+			}
 		}
 
 		&.Active {
@@ -224,14 +243,28 @@
 		margin-bottom:1.25em;
 		margin-left:10px;
 		padding:7px 20px 10px;
+		box-shadow:0 0 10px rgba(0, 0, 0, 0.25);
 		border-radius:5px;
 		background-color:var(--colorMenu);
 		position:absolute;
 		top:-1px;
 		left:100%;
+		z-index:2;
 		opacity:0;
 		visibility:hidden;
 		transition:opacity .3s ease-in-out, visibility 0s linear .3s;
+
+		@media screen and (width > 768px) and (height <= 800px) {
+			margin-top:1.25em;
+			margin-bottom:0;
+			top:auto;
+			bottom:-1px;
+		}
+
+		@media screen and (width <= 580px) {
+			right:100%;
+			left:auto;
+		}
 
 		&::before {
 			content:'';
@@ -240,6 +273,11 @@
 			position:absolute;
 			top:0;
 			left:-10px;
+
+			@media screen and (width <= 580px) {
+				right:-10px;
+				left:auto;
+			}
 		}
 
 		html.🌚 & {
@@ -297,10 +335,28 @@
 	}
 
 	ul.Level4 {
+		margin-inline:0 10px;
 		background-color:var(--backgroundColorMenu);
+		right:100%;
+		left:auto;
+
+		@media screen and (width <= 580px) {
+			right:auto;
+			left:100%;
+		}
 
 		html.🌚 & {
 			background-color:var(--colorMenu);
+		}
+
+		&::before {
+			right:-10px;
+			left:auto;
+
+			@media screen and (width <= 580px) {
+				right:auto;
+				left:-10px;
+			}
 		}
 	}
 
@@ -309,7 +365,9 @@
 	}
 
 	.Overflow {
-		display:flex;
+		--scrollbarColor:var(--colorMedium) var(--colorMenu);
+
+		display:none;
 		padding:2px;
 		box-shadow:0 0 10px rgba(0, 0, 0, .25);
 		background-color:var(--backgroundColorMenu);
@@ -322,19 +380,186 @@
 		visibility:hidden;
 		transition:opacity .3s ease-in-out, visibility 0s linear .3s;
 
+		@media screen and (width > 768px) and (height <= 660px),
+			screen and (width <= 768px) {
+			max-height:calc(100vh - 100px);
+			padding-top:0;
+			position:fixed;
+			inset:80px 20px 20px;
+			overscroll-behavior:contain;
+			overflow-y:auto;
+		}
+
+		@media screen and (width <= 540px) {
+			max-height:calc(100vh - 85px);
+			inset:70px 10px 10px;
+		}
+
 		&.Visible {
+			display:flex;
 			opacity:inherit;
 			visibility:inherit;
 
 			transition-delay:0s;
+
+			@media screen and (width > 768px) and (height <= 660px),
+				screen and (width <= 768px) {
+				display:block;
+				height:fit-content;
+			}
 
 			~ .ShowMore {
 				background-color:var(--colorSuccess);
 			}
 		}
 
+		&.Narrow {
+			@media screen and (width > 768px) and (height > 660px) {
+				display:block;
+				max-height:calc(100vh - 100px);
+				padding-top:0;
+				overscroll-behavior:contain;
+				overflow-y:clip;
+				scrollbar-color:var(--scrollbarColor);
+				scrollbar-width:thin;
+
+				li.Level1 {
+					margin:2px 0 0 0;
+
+					&:nth-child(n+3) {
+						ul.Level2 {
+							top:auto;
+							bottom:0;
+						}
+					}
+				}
+
+				ul.Level2 {
+					height:fit-content;
+					margin:auto;
+					top:-999px;
+					left:100%;
+					bottom:-999px;
+				}
+			}
+		}
+
+		.Submenu-Toggle {
+			height:30px;
+			aspect-ratio:1;
+			padding:0;
+			font-size:0;
+			line-height:0;
+			position:absolute;
+			top:5px;
+			right:15px;
+
+			@media screen and (width > 768px) and (height <= 660px),
+				screen and (width <= 768px) {
+				display:block;
+			}
+
+			&[aria-expanded="true"] {
+				background-color:var(--colorSuccess);
+				color:var(--colorBright);
+
+				&::after {
+					content:'\f106';
+				}
+			}
+
+			&::after {
+				@extend %LineAwesomeIcon;
+				content:'\f107';
+				font-size:24px;
+				line-height:30px;
+			}
+		}
+
+		ul.Level2,
+		ul.Level3,
+		ul.Level4 {
+			@media screen and (width > 768px) and (height <= 660px),
+				screen and (width <= 768px) {
+				display:none;
+				width:auto;
+				max-height:none;
+				margin-left:20px;
+				margin-bottom:10px;
+				opacity:inherit;
+				visibility:inherit;
+				position:relative;
+				top:0;
+				left:0;
+			}
+
+			&.Visible {
+				@media screen and (width > 768px) and (height <= 660px),
+					screen and (width <= 768px) {
+					display:block;
+				}
+			}
+		}
+
+		li {
+			@media screen and (width > 768px) and (height <= 660px),
+				screen and (width <= 768px) {
+				overflow:hidden;
+			}
+		}
+
 		ul.Level2 {
-			max-height:calc(100vh - 200px);
+			@media screen and (width > 768px) and (height > 660px) {
+				scrollbar-color:var(--scrollbarColor);
+				scrollbar-width:thin;
+			}
+		}
+
+		li.Level1 {
+			@media screen and (width > 768px) and (height <= 660px),
+				screen and (width <= 768px) {
+				margin-top:2px;
+				margin-right:0;
+			}
+		}
+
+		a.Level1,
+		span.Level1 {
+			@media screen and (width > 768px) and (height <= 660px),
+				screen and (width <= 768px) {
+				height:40px;
+				line-height:40px;
+			}
+		}
+
+		a.Level2,
+		span.Level2 {
+			@media screen and (width > 768px) and (height <= 800px) {
+				padding-block:5px;
+			}
+		}
+
+		li.Level2 {
+			.Submenu-Toggle {
+				height:30px;
+				top:2px;
+
+				&::after {
+					font-size:20px;
+					line-height:30px;
+				}
+			}
+		}
+
+		li.Level3 {
+			.Submenu-Toggle {
+				height:24px;
+
+				&::after {
+					font-size:16px;
+					line-height:24px;
+				}
+			}
 		}
 	}
 

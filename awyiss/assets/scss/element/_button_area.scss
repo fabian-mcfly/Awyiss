@@ -1,80 +1,264 @@
-.ButtonArea {
-	@extend %ButtonsListview;
+#ButtonArea-Toggle {
+	display:none;
+	padding:10px;
+	border-top-right-radius:0;
+	border-bottom-right-radius:0;
+	font-size:0;
+	line-height:0;
+	position:fixed;
+	top:100px;
+	right:0;
+	z-index:1820;
+	transition:background-color .3s linear, outline-color .1s ease-in-out, transform .3s ease-in-out;
 
+	@media screen and (width <= 640px) {
+		display:block;
+	}
+
+	@media screen and (width <= 540px){
+		top:90px;
+	}
+
+	@media screen and (width <= 480px){
+		top:85px;
+	}
+
+	&:has(~ .ButtonArea.Visible) {
+		transform:translateX(-300px);
+		z-index:2020;
+
+		@media screen and (width <= 540px) {
+			transform:translateX(-290px);
+		}
+
+		@media screen and (width <= 420px) {
+			transform:translateX(-240px);
+		}
+	}
+
+	&:focus-visible {
+		box-shadow:0 0 10px var(--colorInfo);
+		outline:2px solid var(--colorInfo);
+	}
+
+	&::after {
+		margin:0;
+		vertical-align:0;
+		transform:none;
+	}
+}
+
+.ButtonArea {
+	display:flex;
 	width:fit-content;
-	margin:-52px -20px var(--lineHeightMain) auto;
+	margin-left:auto;
 	font-size:0;
 	line-height:0;
 	text-align:right;
-	grid-column:1 / span 4;
+	gap:20px;
+	grid-column:2 / -1;
+	align-content:flex-start;
+	flex-wrap:wrap;
+	justify-content:flex-end;
+	position:relative;
 
-	&.CannotMoveUpwards {
-		margin-top:var(--lineHeightMain);
+	@media screen and (width <= 640px) {
+		display:grid;
+		width:100%;
+		margin:0;
+		text-align:initial;
+		gap:10px;
+		align-content:start;
+		justify-content:stretch;
+		grid-auto-rows:min-content;
+	}
 
-		&:has(.Button-ListView),
-		&:has(.Button-Filter),
-		&:has(.Button-ColumnView-Enable) {
-			+ .Overview-List,
-			+ .Overview-Table {
-				margin-top:0;
+	html.Scale-Small & {
+		@media screen and (width > 768px) {
+			margin-top:-44px;
+		}
+	}
+
+	.Overview & {
+		//margin-top:calc(var(--lineHeightMain) * -2 - 53px);
+	}
+
+	&:has(.Button-ColumnView:nth-last-child(2)),
+	&:has(.Button-ListView:nth-last-child(2)) {
+		.Button-Filter,
+		.Button-ResetFilter {
+			right:200px;
+
+			@media screen and (width <= 768px) {
+				right:140px;
 			}
 		}
+	}
 
-		.Button-Filter,
-		.Button-ListView {
-			bottom:calc(var(--lineHeightMain) * -1);
+	&:not(.ButtonArea-Bottom):not(dialog &) {
+		@media screen and (width <= 1024px) {
+			width:100%;
+			max-width:none;
+			margin-top:calc(var(--lineHeightMain) * -1);
+			grid-column:1 / -1;
 		}
 
-		+ .Overview-List,
-		+ .Overview-Table {
-			margin-top:calc(var(--lineHeightMain) * -1);
+		@media screen and (width <= 640px) {
+			width:280px;
+			margin:0;
+			border:10px solid transparent;
+			padding:10px;
+			border-radius:5px;
+			box-shadow:0 0 10px rgba(0, 0, 0, .25);
+			background-color:var(--backgroundColorContent);
+			position:fixed;
+			top:20px;
+			right:20px;
+			bottom:20px;
+			z-index:2030;
+			grid-template-columns:100%;
+			overscroll-behavior:contain;
+			overflow-y:auto;
+			transform:translateX(320px);
+			transition:transform .3s ease-in-out;
+
+			@media screen and (width <= 540px) {
+				max-height:calc(100dvh - 20px);
+				padding:5px;
+				border-width:5px;
+				top:10px;
+				right:10px;
+				bottom:10px;
+			}
+
+			@media screen and (width <= 420px) {
+				width:230px;
+			}
+
+			&.Visible {
+				transform:none;
+			}
+
+			.LinkSelect {
+				flex:0 0 100%;
+			}
+
+			.Button {
+				padding-inline:10px;
+				flex:0 0 100%;
+
+				&.Button-Small {
+					width:100%;
+					height:auto;
+					padding-block:6px;
+					border-radius:5px;
+					font-size:1.1rem;
+					line-height:30px;
+					position:relative;
+					inset:0;
+
+					&::after {
+						width:28px;
+						height:28px;
+						aspect-ratio:1;
+						margin-left:10px;
+						border-radius:50%;
+						border:2px solid;
+						font-size:22px;
+						line-height:24px;
+						text-indent:0;
+						vertical-align:-1px;
+					}
+				}
+
+				&.Button-ListView-NestedList {
+					--backgroundColor:var(--colorMedium);
+					color:var(--colorBright);
+
+					html.🌚 & {
+						--backgroundColor:var(--backgroundColorContent);
+					}
+				}
+
+				&.Button-Filter {
+					.Label {
+						display:none;
+					}
+				}
+
+				&[disabled] {
+					opacity:.1;
+				}
+			}
+
+			/*+ .Overview-Table,
+			+ .Overview-Fieldset,
+			+ form {
+				margin-top:calc(var(--lineHeightMain) * -1);
+			}*/
+		}
+
+		&:has(.Button-Small) {
+			@media screen and (640px < width <= 1024px) {
+				margin-bottom:var(--negativeRowGap);
+			}
 		}
 	}
 
 	&.ButtonArea-Bottom {
-		margin-top:0;
-		margin-bottom:calc(var(--lineHeightMain) * -1);
+		width:100%;
+		grid-column-start:1;
 
-		.Button-Filter,
-		.Button-ResetFilter,
-		.Button-ListView {
-			border-radius:0 0 5px 5px;
-			top:calc(var(--lineHeightMain) * -2);
-			bottom:auto;
+		&:has(.Button-Small) {
+			margin-top:var(--negativeRowGap);
+			margin-bottom:0;
+			padding-block:var(--rowGap) 0;
+		}
 
-			html.Scale-Small & {
-				margin-top:0;
+		.Button {
+			&.Button-Small {
+				border-radius:0 0 5px 5px;
+				top:0;
+				bottom:auto;
+
+				@media screen and (width <= 768px) {
+					margin-top:0;
+				}
+
+				html.Scale-Small & {
+					@media screen and (width > 768px) {
+						margin-top:0;
+					}
+				}
+			}
+
+			&.Button-ResetFilter {
+				border-bottom-left-radius:0;
+			}
+
+			&.Button-ColumnView {
+				border-radius:0 0 5px 5px;
 			}
 		}
-
-		.Button-ResetFilter {
-			border-bottom-left-radius:0;
-		}
-
-		.Button-ColumnView {
-			border-radius:0 0 5px 5px;
-			top:calc(var(--lineHeightMain) * -2);
-			bottom:auto;
-		}
 	}
 
-	&:has(+ .Overview-Fieldset) {
-		.Button-Filter,
-		.Button-ResetFilter,
-		.Button-ListView {
-			bottom:calc(var(--lineHeightMain) * -1);
-		}
-	}
+	&:has(.Button-Small) {
+		margin-bottom:var(--negativeRowGap);
+		padding-bottom:var(--rowGap);
 
-	&:has(.Button-Filter),
-	&:has(.Button-ResetFilter),
-	&:has(.Button-ListView) {
 		~ .Overview-Table {
+			border-top-right-radius:0;
 			border-bottom-right-radius:0;
+
+			@media screen and (width <= 640px) {
+				border-top-right-radius:5px;
+			}
 
 			th {
 				&:last-child {
-					border-top-right-radius:0;
+					@media screen and (width > 640px) {
+						border-top-right-radius:0;
+					}
 				}
 			}
 
@@ -101,7 +285,9 @@
 
 		~ .Overview-Fieldset {
 			&:nth-child(1 of .Overview-Fieldset) {
-				border-top-right-radius:0;
+				@media screen and (width > 640px) {
+					border-top-right-radius:0;
+				}
 			}
 
 			&:nth-last-child(1 of .Overview-Fieldset) {
@@ -111,7 +297,9 @@
 
 		~ .Overview-List {
 			&:nth-child(1 of .Overview-List) {
-				border-top-right-radius:0;
+				@media screen and (width > 640px) {
+					border-top-right-radius:0;
+				}
 			}
 
 			&:nth-last-child(1 of .Overview-List) {
@@ -122,83 +310,236 @@
 
 	.Button,
 	.LinkSelect {
-		margin-right:20px;
-		margin-bottom:var(--lineHeightMain);
+		--buttonWidth:auto;
+		width:var(--buttonWidth);
+		margin:0;
+
+		@media screen and (width <= 640px) {
+			--buttonWidth:100%;
+		}
 	}
 
-	.Button-Small {
-		margin-top:11px;
-		opacity:.25;
+	.Button {
+		&.Button-Small {
+			--backgroundColor:var(--colorMedium);
 
-		&.Button-ListView-NestedList {
-			opacity:.5;
+			width:80px;
+			height:40px;
+			padding:0;
+			box-shadow:none;
+			border-radius:5px 5px 0 0;
+			background-image:none;
+			color:var(--colorBright);
+			font-size:0;
+			line-height:0;
+			text-align:center;
+			position:absolute;
+			bottom:0;
+			right:0;
+			transition:background-color 0s linear, outline-color 0.1s ease-in-out, opacity .3s ease-in-out;
 
-			&[disabled],
-			&:hover {
-				opacity:1;
+			@media screen and (width <= 1024px) {
+				font-size:0;
+				line-height:0;
 			}
-		}
 
-		html.Scale-Small & {
-			margin-top:7px;
-		}
-
-		&[disabled],
-		&:hover {
-			opacity:1;
-		}
-	}
-
-	.Button-ColumnView {
-		width:80px;
-		height:40px;
-		padding:0;
-		box-shadow:none;
-		border-radius:5px 5px 0 0;
-		background-color:var(--colorMedium);
-		background-image:none;
-		font-size:0;
-		line-height:0;
-		text-align:center;
-		position:absolute;
-		bottom:calc(var(--lineHeightMain) * -1);
-		right:20px;
-		opacity:.25;
-		transition:background-color .3s ease-in-out, opacity .3s ease-in-out;
-
-		html.🌚 & {
-			background-color:var(--backgroundColorContent);
-		}
-
-		&[disabled] {
-			background-color:var(--colorBright);
-			color:var(--colorText);
-			opacity:1;
+			@media screen and (width <= 768px) {
+				width:60px;
+				height:30px;
+				padding:0;
+			}
 
 			html.🌚 & {
-				background-color:var(--backgroundColorContent);
+				--backgroundColor:var(--backgroundColorContent);
+			}
+
+			html.Scale-Medium & {
+				@media screen and (width > 1024px) {
+					font-size:0;
+					line-height:0;
+				}
+			}
+
+			html.Scale-Small & {
+				@media screen and (width > 768px) {
+					padding:0;
+					font-size:0;
+					line-height:0;
+				}
+			}
+
+			&[disabled] {
+				opacity:initial;
+			}
+
+			&:hover {
 				color:var(--colorBright);
+				opacity:1;
+				transition-delay:.3s, 0s, 0s;
 			}
 		}
 
-		&:hover {
-			opacity:1;
-			transition-delay:.3s, .0s;
+		&.Button-Filter {
+			display:flex;
+			width:auto;
+			padding-inline:20px;
+			min-width:80px;
+			align-content:center;
+			justify-content:center;
+			opacity:inherit;
+
+			@media screen and (width <= 768px) {
+				min-width:60px;
+			}
+
+			@media screen and (width <= 640px) {
+				width:auto;
+				right:0;
+			}
+
+			@media screen and (width <= 400px) {
+				padding-inline:10px;
+			}
+
+			&.Button-Info {
+				padding-right:60px;
+				border-top-right-radius:6px;
+				animation:glow 5s infinite alternate;
+
+				@media screen and (width <= 400px) {
+					padding-right:50px;
+				}
+
+				@keyframes glow {
+					0%, 50% {
+						box-shadow:0 0 0 transparent;
+					}
+					100% {
+						box-shadow:0 0 30px var(--colorInfo);
+					}
+				}
+			}
+
+			&::after {
+				width:24px;
+				margin-left:0;
+				font-size:30px;
+				text-indent:-3px;
+				top:0;
+				align-self:center;
+
+				@media screen and (width <= 768px) {
+					font-size:24px;
+				}
+			}
+
+			.Label {
+				margin-left:10px;
+				font-size:1rem;
+				line-height:42px;
+				white-space:nowrap;
+				order:2;
+
+				@media screen and (width <= 768px) {
+					line-height:30px;
+				}
+
+				@media screen and (width <= 400px) {
+					margin-left:0;
+				}
+			}
 		}
 
-		&::after {
-			@extend %LineAwesomeIcon;
-			content:'\f0c9';
-			font-size:30px;
-			line-height:40px;
+		&.Button-ResetFilter {
+			width:40px;
+			padding:0;
+			border-top-left-radius:0;
+			font-size:0;
+			line-height:0;
+			opacity:inherit;
+
+			&::after {
+				margin:0;
+
+				@media screen and (width <= 768px) {
+					top:-2px;
+				}
+			}
 		}
-	}
 
-	.Button-ColumnView-Enable {
-		right:105px;
+		&.Button-ListView {
+			&[disabled] {
+				z-index:6;
+			}
 
-		&::after {
-			content:'\f58d';
+			&::after {
+				@extend %LineAwesomeIcon;
+				content:'\f0ce';
+				font-size:30px;
+				line-height:40px;
+
+				@media screen and (width <= 768px) {
+					font-size:24px;
+					line-height:30px;
+				}
+			}
+		}
+
+		&.Button-ListView-PaginatedList {
+			html.🌚 & {
+				--backgroundColor:oklch(from var(--colorBackgroundContentDarkMode) calc(l - 0.0473) calc(c - 0.005) calc(h + 1.12));
+			}
+		}
+
+		&.Button-ListView-NestedList {
+			--backgroundColor:var(--colorBright);
+			color:var(--colorText);
+			right:85px;
+
+			@media screen and (width <= 768px) {
+				right:65px;
+			}
+
+			&::after {
+				content:'\f0c9';
+			}
+		}
+
+		&.Button-ColumnView {
+			&[disabled] {
+				background-color:var(--colorBright);
+				color:var(--colorText);
+				opacity:1;
+
+				html.🌚 & {
+					background-color:var(--backgroundColorContent);
+					color:var(--colorBright);
+				}
+			}
+
+			&::after {
+				@extend %LineAwesomeIcon;
+				content:'\f0c9';
+				font-size:30px;
+				line-height:40px;
+
+				@media screen and (width <= 768px) {
+					font-size:24px;
+					line-height:30px;
+				}
+			}
+		}
+
+		&.Button-ColumnView-Enable {
+			right:85px;
+
+			@media screen and (width <= 768px) {
+				right:65px;
+			}
+
+			&::after {
+				content:'\f58d';
+			}
 		}
 	}
 }

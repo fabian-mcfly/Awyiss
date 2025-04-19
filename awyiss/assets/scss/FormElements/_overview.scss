@@ -4,13 +4,24 @@
 	.NestedList-Compact {
 		.ListItem {
 			.Data {
+				grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)) 110px;
+
+				@container (width <= 500px) {
+					grid-template-columns:auto 30px;
+				}
+
 				.Title {
 					width:auto;
-					flex:1 1 auto;
+					grid-column:1 / -2;
+
+					@media screen and (width <= 768px) {
+						width:auto;
+					}
 
 					html.Scale-Small & {
-						width:auto;
-						flex:1 1 auto;
+						@media screen and (width > 768px) {
+							width:auto;
+						}
 					}
 
 					.Identifier {
@@ -31,11 +42,18 @@
 					flex:0 0 fit-content;
 
 					.Label {
+						font-size:.8rem;
 						font-weight:inherit;
 						line-height:36px;
 
+						@container (width <= 500px) {
+							display:none;
+						}
+
 						html.Scale-Small & {
-							line-height:30px;
+							@media screen and (width > 768px) {
+								line-height:30px;
+							}
 						}
 					}
 
@@ -46,7 +64,9 @@
 							line-height:36px;
 
 							html.Scale-Small & {
-								line-height:30px;
+								@media screen and (width > 768px) {
+									line-height:30px;
+								}
 							}
 						}
 					}

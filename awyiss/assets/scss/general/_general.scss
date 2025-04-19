@@ -1,8 +1,42 @@
-html {
+:root {
+	--colorBright:#{$colorBright};
+	--colorNeutralLight:#{$colorNeutralLight};
+	--colorLight:#{$colorLight};
+	--colorMedium:#{$colorMedium};
+	--colorSemiDark:#{$colorSemiDark};
+	--colorSemiDarkDarkMode:#{$colorSemiDarkDarkMode};
+	--colorDark:#{$colorDark};
+	--colorText:#{$colorText};
+	--colorSuccess:#{$colorSuccess};
+	--colorInfo:#{$colorInfo};
+	--colorWarning:#{$colorWarning};
+	--colorError:#{$colorError};
+	--colorBackgroundContentDarkMode:#{$colorBackgroundContentDarkMode};
+
+	--fontStackMain:#{inspect($fontStackMain)};
+	--fontSizeMain:#{$fontSizeMain};
+	--lineHeightMain:#{$lineHeightMain};
+
+	--fontStackHeading:#{inspect($fontStackHeading)};
+	--fontSizeHeading:#{$fontSizeHeading};
+	--lineHeightHeading:#{$lineHeightHeading};
+
+	@media screen and (width <= 1024px) {
+		--fontSizeMain:#{$fontSizeMainMedium};
+	}
+
+	@media screen and (width <= 768px) {
+		--fontSizeMain:#{$fontSizeMainSmall};
+	}
+
 	--backgroundColor:var(--colorLight);
 	--backgroundColorContent:var(--colorBright);
+	--rowGap:calc(var(--lineHeightMain) * 2);
+	--negativeRowGap:calc(var(--rowGap) * -1);
 	--scrollbarColor:var(--colorMedium) var(--colorBright);
+}
 
+html {
 	background-color:var(--backgroundColor);
 	color:var(--colorText);
 	//noinspection CssNoGenericFontName
@@ -14,11 +48,15 @@ html {
 	scrollbar-width:thin;
 
 	&.Scale-Medium {
-		--fontSizeMain:#{$fontSizeMainMedium};
+		@media screen and (width > 1024px) {
+			--fontSizeMain:#{$fontSizeMainMedium};
+		}
 	}
 
 	&.Scale-Small {
-		--fontSizeMain:#{$fontSizeMainSmall};
+		@media screen and (width > 768px) {
+			--fontSizeMain:#{$fontSizeMainSmall};
+		}
 	}
 
 	&.🌚,
@@ -41,7 +79,7 @@ html {
 body {
 	min-height:100dvh;
 	padding-top:80px;
-	padding-bottom:60px;
+	padding-bottom:var(--rowGap);
 	font-family:inherit;
 	font-size:inherit;
 	font-weight:400;
@@ -54,10 +92,31 @@ body {
 		padding-bottom:0;
 	}
 
+	&:has(#Content .ButtonArea.Visible) {
+		&::after {
+			@media screen and (width <= 640px) {
+				opacity:inherit;
+				visibility:inherit;
+				transition-delay:0s;
+			}
+		}
+	}
+
+	&:has(.Sidebar-Fieldsets.Visible) {
+		&::after {
+			@media screen and (width <= 1024px) {
+				opacity:inherit;
+				visibility:inherit;
+				transition-delay:0s;
+			}
+		}
+	}
+
 	&::before {
 		content:'';
-		background-image:url($relativePath + 'img/background-pattern-light.png');
+		background-attachment:fixed;
 		background-color:var(--backgroundColor);
+		background-image:url($relativePath + 'img/background-pattern-light.png');
 		position:fixed;
 		inset:0;
 		bottom:var(--bottomOffset, 0);
@@ -69,6 +128,18 @@ body {
 			background-blend-mode:color-burn;
 		}
 	}
+
+	&::after {
+		content:'';
+		backdrop-filter:blur(5px);
+		background-color:rgba(0, 0, 0, .75);
+		position:fixed;
+		inset:0;
+		z-index:2010;
+		opacity:0;
+		visibility:hidden;
+		transition:opacity .3s ease-in-out, visibility 0s ease-in-out .3s;
+	}
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -77,6 +148,10 @@ h1, h2, h3, h4, h5, h6 {
 	font-family:var(--fontStackHeading);
 	font-size:var(--fontSizeHeading);
 	line-height:var(--lineHeightHeading);
+
+	@media screen and (width <= 768px) {
+		font-size:3rem;
+	}
 
 	&:first-child {
 		margin-top:0;
@@ -116,7 +191,7 @@ table {
 
 code {
 	display:block;
-	margin-block:calc(var(--lineHeightMain) * 2);
+	margin-block:var(--rowGap);
 	padding:20px;
 	border-radius:5px;
 	background-color:var(--colorDark);
@@ -152,7 +227,7 @@ code {
 	aspect-ratio:.75;
 	border-radius:5px;
 	border:2px solid var(--colorSuccess);
-	background-color:#D5F1E5;
+	background-color:color-mix(in srgb, var(--colorSuccess) 20%, #FFFFFF);
 	position:relative;
 
 	&::after {
@@ -172,21 +247,17 @@ code {
 
 details {
 	border:1px solid rgba(0, 0, 0, .1);
-	margin:0 0 calc(var(--lineHeightMain) * 2) 0;
 	padding:20px;
 	border-radius:5px;
+	container-type:inline-size;
 	grid-column:1 / -1;
+
+	@media screen and (width <= 540px) {
+		padding:10px;
+	}
 
 	html.🌚 & {
 		border-color:rgba(255, 255, 255, .1);
-	}
-
-	fieldset > & {
-		margin-bottom:var(--lineHeightMain);
-
-		&:last-child {
-			margin-bottom:20px;
-		}
 	}
 
 	&.HelpText {
@@ -274,6 +345,11 @@ summary {
 	line-height:var(--lineHeightHeading);
 }
 
+.sf-dump {
+	grid-column:1 / -1;
+	margin-block:var(--lineHeightMain);
+}
+
 .las {
 	&.la-check,
 	&.la-exclamation,
@@ -306,6 +382,7 @@ summary {
 
 	&.la-times {
 		color:var(--colorError);
+		vertical-align:-1px;
 
 		html.🌚 & {
 			text-shadow:0 0 3px var(--colorError);

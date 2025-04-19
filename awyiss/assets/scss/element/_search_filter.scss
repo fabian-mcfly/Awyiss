@@ -7,31 +7,128 @@
 	padding:52px 0 0 0;
 	overflow:hidden;
 	z-index:9999;
+	grid-template-columns:auto;
+	grid-auto-rows:max-content;
+
+	@media screen and (width <= 768px) {
+		padding:42px 0 0 0;
+	}
+
+	html.Scale-Small & {
+		@media screen and (width > 768px) {
+			width:calc(100% - 40px);
+			padding:42px 0 0 0;
+		}
+	}
 
 	.Columns {
 		max-height:calc(80dvh - 52px);
 		border:10px solid transparent;
+		overscroll-behavior:contain;
 		overflow-y:auto;
-		flex:0 0 100%;
 		scrollbar-color:var(--scrollbarColor);
 		scrollbar-width:thin;
 
-		html.Scale-Small & {
-			max-height:calc(80dvh - 42px);
+		@media screen and (width <= 768px) {
+			max-height:calc(80dvh - 52px);
+		}
+
+		@media screen and (width <= 540px) {
+			border-width:5px;
 		}
 
 		html.🌚 & {
 			background-color:var(--colorDark);
 		}
+
+		html.Scale-Small & {
+			@media screen and (width > 768px) {
+				max-height:calc(80dvh - 52px);
+			}
+		}
+
+		//margin-left:auto;
+		//align-self:flex-end;
+		//.Button-Reset {
+		//	margin-left:20px;
+		//}
+
+		.ButtonArea {
+			display:flex;
+			width:100%;
+			margin:40px 0 30px 0;
+			padding:0 30px;
+			justify-content:space-between;
+
+			@media screen and (width <= 768px) {
+				margin-block:20px 10px;
+				padding-inline:10px;
+			}
+
+			@media screen and (width <= 640px) {
+				display:grid;
+				justify-content:stretch;
+			}
+
+			@media screen and (width <= 540px) {
+				margin-block:10px 5px;
+				padding-inline:5px;
+			}
+
+			html.Scale-Small & {
+				@media screen and (width > 768px) {
+					margin-bottom:10px;
+				}
+			}
+
+			.Button {
+				margin:0;
+
+				@media screen and (width <= 800px) {
+					//width:100%;
+					//padding-inline:10px;
+				}
+			}
+		}
 	}
 
 	.Column {
+		--labelWidth:1fr;
+		--selectWidth:200px;
+		--inputWidth:1fr;
+		--buttonWidth:52px;
+
 		display:grid;
 		margin:0;
-		padding:5px 20px;
+		padding:5px 30px;
 		align-items:center;
-		gap:0 20px;
-		grid-template-columns:1fr 200px 1fr 52px;
+		gap:0 5px;
+		grid-template-columns:var(--labelWidth) var(--selectWidth) var(--inputWidth) var(--buttonWidth);
+
+		@media screen and (width <= 768px) {
+			--labelWidth:0;
+			--buttonWidth:42px;
+
+			padding-inline:10px;
+		}
+
+		@media screen and (width <= 540px) {
+			padding-inline:5px;
+		}
+
+		@media screen and (width <= 520px) {
+			--selectWidth:80px;
+			--inputWidth:1fr;
+		}
+
+		html.Scale-Small & {
+			@media screen and (width > 768px) {
+				--labelWidth:0;
+				--buttonWidth:42px;
+
+				padding-inline:10px;
+			}
+		}
 
 		&.Active {
 			.Button-Remove {
@@ -54,74 +151,51 @@
 			}
 		}
 
-		.Label {
+		> .Label {
 			line-height:1.1;
+
+			@media screen and (width <= 768px) {
+				grid-column:1 / -1;
+			}
+
+			html.Scale-Small & {
+				@media screen and (width > 768px) {
+					grid-column:1 / -1;
+				}
+			}
+		}
+
+		.FormInput {
+			margin-bottom:0;
 		}
 
 		.Button-Remove {
-			opacity:0;
+			opacity:.1;
 			pointer-events:none;
-		}
-	}
-
-	.Actions,
-	.Columns .ButtonArea {
-		display:flex;
-		padding:0 20px;
-		justify-content:space-between;
-
-		.FormInput {
-			grid-column:auto / auto;
-		}
-
-		.Buttons {
-			margin-left:auto;
-			align-self:flex-end;
-
-			.Button-Reset {
-				margin-left:20px;
-			}
-		}
-
-		option {
-			&[disabled] {
-				display:none;
-			}
 		}
 	}
 
 	.Actions {
 		display:none;
-		padding-block:10px;
-		background-color:var(--colorLight);
-		align-items:center;
-		gap:0 20px;
-		grid-template-columns: 1fr 200px 1fr 52px;
-
-		html.🌚 & {
-			background-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l + 0.0448) calc(c + 0.005) calc(h - 0.4))
-		}
-
-		.FormInput {
-
-		}
-	}
-
-	.Columns .ButtonArea {
-		width:100%;
-		margin:var(--lineHeightMain) 0 0 0;
-		padding-block:0;
-
-		.Button {
-			margin-inline:0;
-		}
 	}
 
 	.FormInput {
-		margin-bottom:0;
+		&:nth-last-child(1 of .FormInput) {
+			margin-bottom:0;
+		}
 	}
 
 	.Operator {
+		@media screen and (width <= 768px) {
+			grid-column:1 / span 2;
+		}
+
+		html.Scale-Small & {
+			@media screen and (width > 768px) {
+				grid-column:1 / span 2;
+			}
+		}
+
 		.Label {
 			display:none;
 		}
@@ -129,12 +203,30 @@
 
 	.Input {
 		&.InputType-Boolean {
+			margin-left:5px;
+			container-type:inline-size;
+
 			.Label {
 				display:inline-block;
 				margin-left:20px;
 
+				@container (width < 175px) {
+					width:100%;
+					margin-left:0;
+				}
+
 				&:first-of-type {
 					margin-left:0;
+
+					@container (width < 240px) {
+						width:100%;
+					}
+				}
+
+				&:nth-of-type(2) {
+					@container (width < 240px) {
+						margin-left:0;
+					}
 				}
 			}
 		}
@@ -167,9 +259,16 @@
 		top:0;
 		right:0;
 
-		html.Scale-Small & {
+		@media screen and (width <= 768px) {
 			width:42px;
 			height:42px;
+		}
+
+		html.Scale-Small & {
+			@media screen and (width > 768px) {
+				width:42px;
+				height:42px;
+			}
 		}
 
 		&.Disabled {
@@ -184,8 +283,14 @@
 			font-size:24px;
 			line-height:50px;
 
-			html.Scale-Small & {
+			@media screen and (width <= 768px) {
 				line-height:40px;
+			}
+
+			html.Scale-Small & {
+				@media screen and (width > 768px) {
+					line-height:40px;
+				}
 			}
 		}
 
@@ -195,26 +300,52 @@
 	}
 
 	> .ButtonArea {
+		width:max-content;
 		margin:0;
 		padding:2px;
 		position:absolute;
 		top:0;
 		right:0;
 
+		@media screen and (width <= 640px) {
+			display:flex;
+		}
+
+		html.Scale-Small & {
+			@media screen and (width > 768px) {
+				margin-top:0;
+			}
+		}
+
 		.Button {
 			width:auto;
 			height:48px;
-			margin-right:20px;
-			margin-bottom:0;
-			line-height:26px;
 			background-color:transparent;
+			line-height:26px;
 
-			html.Scale-Small & {
+			@media screen and (width <= 768px) {
 				height:38px;
 			}
 
-			&:last-child {
-				margin-right:0;
+			@media screen and (width <= 540px) {
+				padding-inline:10px;
+			}
+
+			@media screen and (width <= 480px) {
+				font-size:0;
+				line-height:0;
+			}
+
+			html.Scale-Small & {
+				@media screen and (width > 768px) {
+					height:38px;
+				}
+			}
+
+			&::after {
+				@media screen and (width <= 480px) {
+					margin-left:0;
+				}
 			}
 		}
 	}

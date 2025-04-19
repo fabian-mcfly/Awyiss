@@ -42,23 +42,6 @@ export default class ResizableContents {
 	 */
 	maxWidth = null;
 	/**
-	 * The list items min width threshold to be considered narrow.
-	 * Narrow items will have a class "Narrow" added and be styled accordingly.
-	 * This class restores a minimum width to the item, removes the indent.
-	 *
-	 * Narrow items will also have only narrow children.
-	 *
-	 * @type {number}
-	 */
-	narrowWidthThreshold = 250;
-	/**
-	 * The list items min width threshold to be considered risky narrow.
-	 * Risky narrow items will only have narrow children.
-	 *
-	 * @type {number}
-	 */
-	narrowWidthRiskyThreshold = 350;
-	/**
 	 * @property {string} selector - The selector for the nested list.
 	 */
 	selector = '.NestedList'
@@ -105,8 +88,6 @@ export default class ResizableContents {
 
 			this.initListItem(item);
 		});
-
-		this.resetListItemWidths();
 
 		// Bind the resize and stop methods to this instance
 		this.boundResize = this.onResize.bind(this);
@@ -266,9 +247,6 @@ export default class ResizableContents {
 		this.element.classList.remove('Resizing');
 		this.element.classList.add(this.element.dataset.columnWidthClass);
 
-		// Toggle a class "Narrow" if the element is narrower than this.narrowWidthThreshold
-		this.setNarrowClass(this.element);
-
 		// Add a class to the element(s) to show that a reload operation is in progress
 		const elements = Array.from(document.querySelectorAll(`${this.selector}.Level1`));
 		elements.forEach(element => {
@@ -308,53 +286,6 @@ export default class ResizableContents {
 		// Add the 'NoTextSelect' class to the body
 		document.body.classList.remove('NoTextSelect');
 	}
-
-	/**
-	 * Reset the list item widths.
-	 * @returns {void}
-	 */
-	resetListItemWidths() {
-		// Get all level 1 list items from this.listItems
-		const level1Items = Array.from(this.listItems).filter(item => item.parentElement.classList.contains('Level1'));
-		// Trigger the narrow class on all level 1 items (handles children as well)
-		level1Items.forEach(listItem => {
-			this.setNarrowClass(listItem);
-		});
-	}
-
-	/**
-	 * Set the "Narrow" class on the element if it is narrower than this.narrowWidthThreshold.
-	 * @param {HTMLElement} element
-	 */
-	setNarrowClass(element) {
-		// Remove the class "Narrow" from the element, so the calculation is correct
-		element.classList.remove('Narrow');
-
-		// Check if the element is narrow
-		const isNarrow = element.offsetWidth < this.narrowWidthThreshold;
-		const isRiskyNarrow = element.offsetWidth < this.narrowWidthRiskyThreshold;
-
-		// Add the class "Narrow" to the element if it is narrow
-		if (isNarrow || isRiskyNarrow) {
-			if (isNarrow) {
-				element.classList.add('Narrow');
-			}
-
-			// Force the narrow class on all nested children
-			const nestedItems = element.querySelectorAll(`:scope ${this.selector} > .ListItem`);
-			nestedItems.forEach(nestedItem => {
-				nestedItem.classList.add('Narrow');
-			});
-		}
-		else {
-			// Calculate the narrow class on all nested children
-			const nestedItems = element.querySelectorAll(`:scope > ${this.selector} > .ListItem`);
-			nestedItems.forEach(nestedItem => {
-				this.setNarrowClass(nestedItem);
-			});
-		}
-	}
-
 
 	/**
 	 * Find elements with the given selector in the

@@ -10,23 +10,34 @@
 
 {% do AuthorizationHelper.setScope(forScope) %}
 <div class="Contents Overview">
-	{% block headlineOverview %}
-		{{ HtmlHelper.link(__('back_to_overview'), {controller: page.pageRoleId.name|pluralize, action: 'overview'}, {class: 'BackToOverview'}) }}
+	{% block headlinesOverview %}
+		<div class="Headlines">
+			{{ HtmlHelper.link(__('back_to_overview'), {controller: page.pageRoleId.name|pluralize, action: 'overview'}, {class: 'BackToOverview'}) }}
 
-		<h1>{{ __('headline_overview') }}</h1>
-		<h2>
-			{{ page.title }}
-
-			{% block buttonPreview %}
-				{{ HtmlHelper.link(__('preview'), {controller: page.pageRoleId.name|pluralize, action: 'preview', id: page.id}, {class: 'Button Button-Preview Button-Small Button-Subtle'}) }}
+			{% block headlineOverview %}
+				<h1>{{ __('headline_overview') }}</h1>
 			{% endblock %}
 
-			{% block buttonEdit %}
-				{% if AuthorizationHelper.isAccessible('update') %}
-					{{ HtmlHelper.link(__('edit'), {controller: page.pageRoleId.name|pluralize, action: 'edit', id: page.id}, {class: 'Button Button-Edit Button-Small Button-Subtle'}) }}
-				{% endif %}
+			{% block subheadlineOverview %}
+				<h2>
+					{{ page.title }}
+
+					{% block buttonPreview %}
+						{{ HtmlHelper.link(__('preview'), {controller: page.pageRoleId.name|pluralize, action: 'preview', id: page.id}, {class: 'Button Button-Preview Button-Small Button-Subtle'}) }}
+					{% endblock %}
+
+					{% block buttonEdit %}
+						{% if AuthorizationHelper.isAccessible('update') %}
+							{{ HtmlHelper.link(__('edit'), {controller: page.pageRoleId.name|pluralize, action: 'edit', id: page.id}, {class: 'Button Button-Edit Button-Small Button-Subtle'}) }}
+						{% endif %}
+					{% endblock %}
+				</h2>
 			{% endblock %}
-		</h2>
+		</div>
+	{% endblock %}
+
+	{% block buttonAreaToggle %}
+		{{ FormHelper.button(__('button_area_toggle'), {class: 'Button Button-Menu', id: 'ButtonArea-Toggle', name: 'button', type: 'button'}) }}
 	{% endblock %}
 
 	{% block buttonArea %}

@@ -47,6 +47,7 @@ export default class DatePicker {
 			altField: input,
 			altFieldDateFormat: altFieldDateFormat,
 			locale: airDatepickerLocale,
+			position: 'top center',
 			onlyTimepicker: type === 'time',
 			timepicker: type === 'time' || type === 'datetime-local',
 		};

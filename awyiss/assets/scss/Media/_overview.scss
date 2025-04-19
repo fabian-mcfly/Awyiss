@@ -6,7 +6,6 @@
 	#UploadQueue {
 		display:none;
 		width:100%;
-		margin-bottom:calc(var(--lineHeightMain) * 2);
 		border-radius:5px;
 		box-shadow:0 0 10px rgba(0, 0, 0, .05);
 		background-color:var(--backgroundColorContent);
@@ -54,6 +53,16 @@
 		th {
 			&.TableHeader-Status {
 				width:220px;
+
+				@media screen and (width <= 768px) {
+					width:100px;
+				}
+			}
+
+			&.TableHeader-Actions {
+				@media screen and (width <= 540px) {
+					width:136px;
+				}
 			}
 
 			&:last-child {
@@ -100,10 +109,18 @@
 		th {
 			&.TableHeader-Preview {
 				width:160px;
+
+				@media screen and (width <= 1280px) {
+					width:100px;
+				}
 			}
 
 			&.TableHeader-UsageCount {
-				width:210px;
+				width:220px;
+
+				@media screen and (width <= 1024px) {
+					width:160px;
+				}
 			}
 		}
 
@@ -133,13 +150,17 @@
 
 #UploadQueue-DropZone {
 	display:flex;
+	padding:20px;
 	border-radius:5px;
-	outline:5px solid var(--colorSuccess);
-	background-color:color-mix(in srgb, var(--colorBright), transparent 85%);
-	backdrop-filter:blur(5px);
+	outline:2px solid var(--colorSuccess);
+	outline-offset:3px;
+	background-color:color-mix(in srgb, var(--colorSuccess), transparent 85%);
+	backdrop-filter:blur(10px);
 	//noinspection CssNoGenericFontName
 	font-family:var(--fontStackHeading);
 	font-size:3rem;
+	line-height:.9;
+	text-align:center;
 	position:fixed;
 	inset:20px;
 	z-index:18785;
@@ -148,6 +169,11 @@
 	transition:opacity .3s ease-in-out, visibility 0s linear .3s;
 	align-items:center;
 	justify-content:center;
+
+	@media screen and (width <= 540px) {
+		font-size:2rem;
+		inset:10px;
+	}
 
 	html.🌚 & {
 		background-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l - 0.0473) calc(c - 0.005) calc(h + 1.12) / .85);
@@ -162,8 +188,6 @@
 
 ul#Media-List {
 	display:grid;
-	//margin-top:calc(var(--lineHeightMain) * -1);
-	margin-bottom:calc(var(--lineHeightMain) * 2);
 	padding:40px;
 	border-radius:5px 0 0 5px;
 	background-color:var(--backgroundColorContent);
@@ -172,8 +196,19 @@ ul#Media-List {
 	grid-template-columns:repeat(auto-fill, minmax(8rem, 1fr));
 	grid-column:1 / -1;
 
-	html.Scale-Small & {
+	@media screen and (width <= 768px) {
 		padding:20px;
+	}
+
+	@media screen and (width <= 540px) {
+		padding:10px;
+		gap:10px;
+	}
+
+	html.Scale-Small & {
+		@media screen and (width > 768px) {
+			padding:20px;
+		}
 	}
 
 	&.FetchInProgress {
@@ -192,7 +227,7 @@ ul#Media-List {
 			height:20px;
 			margin:auto;
 			position:sticky;
-			top:100px;
+			top:110px;
 			grid-column:1 / -1;
 
 			html.👀 & {
@@ -252,18 +287,23 @@ ul#Media-List {
 		transition:opacity .3s ease-in-out;
 
 		.Button {
-			padding-inline:5px;
+			min-height:0;
+			padding:5px;
 			font-size:0;
 			line-height:0;
 
+			@media screen and (width <= 768px) {
+				padding-block:6px;
+			}
+
 			&.UsageCount {
-				width:28px;
+				width:30px;
 				aspect-ratio:1;
 				padding:0;
 				border-radius:50%;
 				background-color:var(--colorInfo);
 				font-size:16px;
-				line-height:28px;
+				line-height:30px;
 				cursor:default;
 
 				.Hover {

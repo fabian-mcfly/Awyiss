@@ -3,8 +3,12 @@
 #}
 
 <div class="Dashboard Overview">
-	{% block headlineOverview %}
-		<h1>{{ __('headline_overview') }}</h1>
+	{% block headlinesOverview %}
+		<div class="Headlines">
+			{% block headlineOverview %}
+				<h1>{{ __('headline_overview') }}</h1>
+			{% endblock %}
+		</div>
 	{% endblock %}
 
 	<div class="StatusCells">

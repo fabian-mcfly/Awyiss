@@ -1,5 +1,4 @@
-.ConfigurationController,
-.UserConfigurationController {
+.ConfigurationController {
 	&.OverviewAction {
 		.Fieldset-RealmFrontend,
 		.Fieldset-RealmBackend {
@@ -14,7 +13,6 @@
 
 						html.🌚 & {
 							@extend %EmptyListDarkMode;
-
 						}
 					}
 
@@ -27,14 +25,26 @@
 		}
 	}
 
+	.Overview-Fieldset {
+		@media screen and (width > 768px) {
+			padding-inline:20px;
+		}
+	}
+
 	.Configuration-List {
 		grid-column:1 / -1;
 
 		&.Level1 {
-			margin:0 -20px 20px;
+			margin:0;
+
+			@media screen and (width <= 768px) {
+				margin-inline:0;
+			}
 
 			html.Scale-Small & {
-				margin-inline:0;
+				@media screen and (width > 768px) {
+					margin-inline:0;
+				}
 			}
 
 			> .ListItem {
@@ -46,6 +56,10 @@
 			padding:5px 0 5px 5px;
 			border-radius:5px;
 			border-left:2px solid var(--colorMedium);
+
+			@media screen and (width <= 1220px) {
+				border-top-left-radius:0;
+			}
 
 			html.🌚 & {
 				border-left-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l - 0.0473) calc(c - 0.005) calc(h + 1.12));
@@ -70,11 +84,20 @@
 			border-radius:5px;
 			position:relative;
 			list-style-type:none;
+			container:listItem / inline-size;
 			grid-template-columns:auto var(--listItemAuditInfoColumnWidth) var(--listItemLastColumnWidth);
 			transition:background-color .3s ease-in-out;
 
-			html.Scale-Small & {
-				padding-bottom:.75rem;
+			@media screen and (width <= 768px) {
+				padding-block:.5rem;
+			}
+
+			@media screen and (width <= 540px) {
+				padding-inline:10px;
+			}
+
+			@media screen and (width <= 500px) {
+				grid-template-columns:auto var(--listItemAuditInfoColumnWidth);
 			}
 
 			&.RepeatedIdentifier {
@@ -154,38 +177,48 @@
 				margin-top:.1rem;
 				z-index:3;
 
-				html.Scale-Small & {
+				@media screen and (width <= 768px) {
 					margin-top:0;
-					top:-2px;
+				}
+
+				@media screen and (width <= 500px) {
+					align-self:start;
+				}
+
+				html.Scale-Small & {
+					@media screen and (width > 768px) {
+						margin-top:0;
+						top:-2px;
+					}
 				}
 			}
 
 			.Data {
 				@extend %ListData;
 
+				&:has(> .DataItem:nth-child(2):last-child),
+				&:has(> .DataItem:nth-child(3):last-child) {
+					grid-template-columns:1fr 1fr 70px;
+
+					@media screen and (width <= 860px) {
+						grid-template-columns:1fr;
+					}
+
+					@media screen and (420px < width <= 500px) {
+						grid-template-columns:auto 70px;
+					}
+				}
+
 				.DataItem {
 					color:var(--colorText);
 					font-weight:700;
 					margin-top:0;
 
-					&.Identifier {
-						width:300px;
-					}
-
 					&.Value {
-						flex:1 1 auto;
-					}
-
-					&.LanguageShortcode {
-						width:120px;
-					}
-
-					&:nth-child(3n) {
-						margin-right:0;
-					}
-
-					&:nth-child(4n+1) {
-						margin-right:2%;
+						@media screen and (420px < width <= 500px) {
+							order:2;
+							grid-column:1 / -1;
+						}
 					}
 
 					.UntranslatedIdentifier,
@@ -201,29 +234,31 @@
 				.Label {
 					color:var(--colorMedium);
 					font-weight:400;
+
+					@media screen and (560px < width <= 860px) {
+						display:inline-block;
+						min-width:95px;
+					}
+
+					@media screen and (width <= 540px) {
+						display:block;
+					}
 				}
 			}
 
 			.Actions {
 				@extend %ListActions;
 
-				align-self:center;
-
-				html.Scale-Small & {
-					top:-2px;
+				form {
+					@media screen and (width <= 500px) {
+						grid-column:1 / -1;
+					}
 				}
 
 				.Button {
-					&-Delete {
-						html.Scale-Small & {
-							width:30px;
-							height:30px;
-							text-indent:-1px;
-
-							&::after {
-								line-height:30px;
-								transform:none;
-							}
+					&-Add {
+						@media screen and (width <= 500px) {
+							grid-column:1 / -1;
 						}
 					}
 				}
@@ -237,8 +272,18 @@
 			border-bottom-width:0;
 			grid-template-columns:10rem auto;
 
-			html.Scale-Small & {
+			@media screen and (width <= 1220px) {
+				grid-template-columns:1fr;
+			}
+
+			@media screen and (width <= 768px) {
 				padding-bottom:0;
+			}
+
+			html.Scale-Small & {
+				@media screen and (width > 768px) {
+					padding-bottom:0;
+				}
 			}
 
 			&:first-child {
@@ -247,6 +292,12 @@
 
 			.Title {
 				@extend %CategoryListTitle;
+
+				@media screen and (width <= 1220px) {
+					margin-block:0;
+					border-radius:5px 5px 0 0;
+					z-index:1;
+				}
 			}
 
 			.List {

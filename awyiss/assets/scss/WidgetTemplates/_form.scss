@@ -1,9 +1,22 @@
 .WidgetTemplatesController {
 	.Fieldset-WidgetElements {
-		padding:0;
-		box-shadow:none;
-		background-color:transparent;
-		grid-template-columns:repeat(3, 1fr);
+		padding-inline:20px;
+		//box-shadow:none;
+		//background-color:transparent;
+		row-gap:var(--rowGap);
+		grid-template-columns:1fr;
+
+		@media screen and (width <= 768px) {
+			padding-top:40px;
+		}
+
+		@media screen and (width <= 640px) {
+			row-gap:var(--lineHeightMain);
+		}
+
+		@media screen and (width <= 540px) {
+			padding-inline:10px;
+		}
 	}
 
 	.Fieldset-WidgetElements-Available,
@@ -11,8 +24,21 @@
 		display:block;
 		padding-inline:20px;
 
-		html.Scale-Small & {
+		@media screen and (width <= 768px) {
+			padding-top:40px;
 			padding-bottom:20px;
+		}
+
+		@media screen and (width <= 540px) {
+			padding-top:30px;
+			padding-inline:10px;
+			padding-bottom:10px;
+		}
+
+		html.Scale-Small & {
+			@media screen and (width > 768px) {
+				padding-bottom:20px;
+			}
 		}
 	}
 
@@ -26,5 +52,9 @@
 
 	.Fieldset-Fieldset {
 		@extend %AvailableTemplateElementsFieldset;
+
+		legend {
+			top:-10px;
+		}
 	}
 }

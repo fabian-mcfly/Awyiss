@@ -15,8 +15,14 @@
 				font-size:24px;
 				line-height:50px;
 
-				html.Scale-Small & {
+				@media screen and (width <= 768px) {
 					line-height:40px;
+				}
+
+				html.Scale-Small & {
+					@media screen and (width > 768px) {
+						line-height:40px;
+					}
 				}
 			}
 		}
@@ -37,8 +43,28 @@
 			gap:0 5px;
 			grid-template-columns:repeat(2, 1fr);
 
-			html.Scale-Small & {
+			@media screen and (width <= 768px) {
 				padding-right:47px;
+			}
+
+			html.Scale-Small & {
+				@media screen and (width > 768px) {
+					padding-right:47px;
+				}
+			}
+		}
+
+		.SortableHandle {
+			top:6px;
+
+			@media screen and (width <= 540px) {
+				top:11px;
+			}
+
+			html.Scale-Small & {
+				@media screen and (width > 768px) {
+					top:1px;
+				}
 			}
 		}
 
@@ -48,9 +74,16 @@
 			top:0;
 			right:0;
 
-			html.Scale-Small & {
+			@media screen and (width <= 768px) {
 				width:42px;
 				height:42px;
+			}
+
+			html.Scale-Small & {
+				@media screen and (width > 768px) {
+					width:42px;
+					height:42px;
+				}
 			}
 
 			&.Disabled {
@@ -64,6 +97,16 @@
 
 #LinkHelperDialog,
 #AccessHelperDialog {
+	.FormInput {
+		grid-column:1 / -1;
+
+		&:nth-last-child(1 of .FormInput) {
+			@media screen and (width <= 540px) {
+				margin-bottom:10px;
+			}
+		}
+	}
+
 	.FormInputType-Select {
 		width:100%;
 		flex:0 0 100%;

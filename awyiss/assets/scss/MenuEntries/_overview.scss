@@ -1,104 +1,120 @@
 .MenuEntriesController {
-	&.OverviewAction {
-		.Overview-List {
-			&.Pages-List {
-				padding:0;
-				border-radius:5px;
-				grid-column-end:1;
-				align-self:start;
-				position:sticky;
-				top:100px;
+	#Lists {
+		display:grid;
+		align-items:start;
+		gap:var(--lineHeightMain);
+		grid-column:1 / -1;
+		grid-template-columns:400px auto;
 
-				html.👀 & {
-					top:20px;
-				}
-			}
-
-			&:not(.Pages-List) {
-				grid-column-start:2;
-				align-self:flex-start;
-			}
+		@media screen and (width <= 1280px) {
+			grid-template-columns:300px auto;
 		}
 
-		#Pages-List {
-			display:block;
-			max-height:calc(100dvh - 140px);
+		@media screen and (width <= 1024px) {
+			grid-template-columns:auto;
+		}
+	}
+
+	div.Pages-List {
+		max-height:calc(100dvh - 140px);
+		margin-left:0;
+		padding:10px;
+		border:10px solid transparent;
+		grid-column:1 / 2;
+		overscroll-behavior:contain;
+		overflow-y:auto;
+		scrollbar-color:var(--scrollbarColor);
+		scrollbar-width:thin;
+		position:sticky;
+		top:110px;
+
+		@media screen and (width <= 1024px) {
+			display:none;
+		}
+
+		html.🌚 & {
+			--scrollbarColor:var(--backgroundColorContent) var(--colorSemiDark);
+		}
+
+		html.👀 & {
+			max-height:calc(100dvh - 40px);
+		}
+	}
+
+	div.Entries-List {
+		grid-column:2 / -1;
+		border-top-right-radius:0;
+		border-bottom-right-radius:0;
+
+		@media screen and (width <= 1024px) {
+			grid-column-start:1;
+		}
+	}
+
+	.Pages-List {
+		margin-left:20px;
+
+		&.Level1 {
 			margin:0;
-			padding:0 10px 0 0;
-			border:20px solid transparent;
-			border-right-width:10px;
-			overflow-y:auto;
-			scrollbar-color:var(--scrollbarColor);
-			scrollbar-width:thin;
+			padding:0;
+		}
 
-			html.🌚 & {
-				--scrollbarColor:var(--backgroundColorContent) var(--colorSemiDark);
+		.Page-ListItem {
+			margin-inline:0;
+			padding-inline:0;
+
+			&:has(.ListItem) {
+				background-position:10px 16px;
 			}
 
-			html.👀 & {
-				max-height:calc(100dvh - 40px);
-			}
+			&-Inner {
+				display:block;
+				padding-block:12px 13px;
+				cursor:move;
 
-			.NestedList {
-				&.Level1 {
-					margin:0;
-				}
-			}
-
-			.Page-ListItem {
-				margin-inline:0;
-				padding-inline:0;
-
-
-				&-Inner {
-					display:block;
-					padding-block:12px 13px;
-					cursor:move;
-
-					&:not(:hover) {
-						.NestedListToggle {
-							opacity:.5;
-						}
-					}
-
-					&:has(.NestedListToggle) {
-						padding-left:50px;
-						border-top-left-radius:5px;
-					}
-
+				&:not(:hover) {
 					.NestedListToggle {
-						width:24px;
-						height:24px;
-						margin:auto;
-						border-radius:5px;
-						aspect-ratio:1;
-						top:0;
-						bottom:0;
-						left:9px;
-
-						&::before {
-							font-size:18px;
-							line-height:24px;
-						}
+						opacity:.5;
 					}
+				}
 
-					.Title {
-						width:100%;
-						margin-block:0;
-						font-weight:400;
-						font-size:.9rem;
-						flex-basis:100%;
+				&:has(.NestedListToggle) {
+					padding-left:50px;
+					border-top-left-radius:5px;
+				}
+
+				.NestedListToggle {
+					width:24px;
+					height:24px;
+					margin:auto;
+					border-radius:5px;
+					aspect-ratio:1;
+					top:0;
+					bottom:0;
+					left:9px;
+
+					&::before {
+						font-size:18px;
+						line-height:24px;
 					}
+				}
+
+				.Title {
+					width:100%;
+					margin-block:0;
+					font-weight:400;
+					font-size:.9rem;
+					flex-basis:100%;
 				}
 			}
 		}
+	}
 
-		.MenuEntries-List {
-			&.Level1 {
-				&:not(:has(.ListItem)) {
-					height:40px;
+	.MenuEntries-List {
+		&.Level1 {
+			&:not(:has(.ListItem)) {
+				height:40px;
 
-				}
 			}
 		}
 	}

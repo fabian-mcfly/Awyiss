@@ -1,8 +1,11 @@
 #DuplicateConfigurationOverlay {
 	@extend %DialogNoTitle;
 
-	width:calc(100% - 40px);
 	max-width:1280px;
+
+	&[open] {
+		display:block;
+	}
 
 	&:not(:has(.Form)) {
 		@extend %LoaderIcon;
@@ -17,12 +20,14 @@
 
 		.Fieldsets {
 			margin-bottom:40px;
+
+			@media screen and (width <= 768px) {
+				margin-bottom:20px;
+			}
 		}
 
 		.FormInputName-DuplicateOfPageId {
-			&:last-child {
-				margin-bottom:0;
-			}
+			margin-bottom:0;
 		}
 
 		.Overview-Fieldset {
@@ -54,14 +59,18 @@
 			&.NestedList-Compact {
 				.ListItem {
 					padding-right:5px;
-				}
 
-				.ListItem-Inner {
-					display:block;
+					&-Inner {
+						display:block;
 
-					&:has(input:checked) {
-						border-color:var(--colorSuccess);
-						background-color:color-mix(in srgb, var(--colorSuccess), transparent 75%);
+						&:has(input:checked) {
+							border-color:var(--colorSuccess);
+							background-color:color-mix(in srgb, var(--colorSuccess), transparent 75%);
+						}
+
+						&::after {
+							display:none;
+						}
 					}
 				}
 			}

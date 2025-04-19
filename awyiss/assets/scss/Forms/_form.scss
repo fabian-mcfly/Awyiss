@@ -1,11 +1,22 @@
 .FormsController {
+	details {
+		font-size:16px;
+		line-height:1.4;
+
+		pre {
+			white-space:break-spaces;
+		}
+	}
+
 	.Forms.Form {
 		&:has(input[type="checkbox"][name="send_email"]:checked) {
 			.Fieldset-Email:not(.Collapsed) {
-				.FormInputName-Subject,
-				.FormInputName-EmailTemplateId,
-				.FormInputName-Cc,
-				.FormInputName-Bcc {
+				:is(
+					.FormInputName-Subject,
+					.FormInputName-EmailTemplateId,
+					.FormInputName-Cc,
+					.FormInputName-Bcc
+				) {
 					display:block;
 				}
 
@@ -17,9 +28,11 @@
 
 		&:has(input[type="checkbox"][name="send_confirmation_email"]:checked) {
 			.Fieldset-ConfirmationEmail:not(.Collapsed) {
-				.FormInputName-SubjectConfirmation,
-				.FormInputName-ConfirmationEmailTemplateId,
-				.FormInputName-SalutationConfirmation {
+				:is(
+					.FormInputName-SubjectConfirmation,
+					.FormInputName-ConfirmationEmailTemplateId,
+					.FormInputName-SalutationConfirmation
+				) {
 					display:block;
 				}
 			}
@@ -31,6 +44,14 @@
 			box-shadow:none;
 			background-color:transparent;
 			box-sizing:border-box;
+
+			@container (width <= 640px) {
+				grid-template-columns:1fr;
+
+				> .FormInput {
+					grid-column:1 / -1;
+				}
+			}
 		}
 
 		.Fieldset-Email {
@@ -39,18 +60,22 @@
 			}
 		}
 
-		.FormInputName-Subject,
-		.FormInputName-SubjectConfirmation,
-		.FormInputName-SalutationConfirmation,
-		.FormInputName-EmailTemplateId,
-		.FormInputName-ConfirmationEmailTemplateId,
-		.FormInputName-Cc,
-		.FormInputName-Bcc {
+		:is(
+			.FormInputName-Subject,
+			.FormInputName-SubjectConfirmation,
+			.FormInputName-SalutationConfirmation,
+			.FormInputName-EmailTemplateId,
+			.FormInputName-ConfirmationEmailTemplateId,
+			.FormInputName-Cc,
+			.FormInputName-Bcc
+		) {
 			display:none;
 		}
 
-		.FormInputName-Cc,
-		.FormInputName-Bcc {
+		:is(
+			.FormInputName-Cc,
+			.FormInputName-Bcc
+		) {
 			> .Label {
 				display:none;
 			}
@@ -61,8 +86,14 @@
 				gap:0 5px;
 				grid-template-columns:1fr 2fr;
 
-				html.Scale-Small & {
+				@media screen and (width <= 768px) {
 					padding-right:47px;
+				}
+
+				html.Scale-Small & {
+					@media screen and (width > 768px) {
+						padding-right:47px;
+					}
 				}
 			}
 
@@ -88,13 +119,52 @@
 				//grid-template-columns:repeat(3, 1fr) 200px 200px;
 				grid-template-columns:1fr 2fr 100px repeat(2, 2fr);
 
-				html.Scale-Small & {
+				@container (width <= 640px) {
+					margin-bottom:30px;
+					grid-template-columns:1fr 1fr;
+				}
+
+				@media screen and (width <= 768px) {
 					padding-right:47px;
+				}
+
+				html.Scale-Small & {
+					@media screen and (width > 768px) {
+						padding-right:47px;
+					}
 				}
 
 				.FormInput {
 					grid-column:auto / auto;
 					margin-bottom:0;
+
+					&:nth-last-child(1 of .FormInput) {
+						@container (width <= 640px) {
+							grid-column:1 / -1;
+						}
+					}
+
+					> .Label {
+						@container (width <= 640px) {
+							display:block;
+						}
+					}
+				}
+
+				.SortableHandle {
+					@container (width <= 640px) {
+						top:calc(1rem + 7px);
+
+						@media screen and (width <= 540px) {
+							top:calc(1rem + 10px);
+						}
+					}
+				}
+
+				.Button-Remove {
+					@container (width <= 640px) {
+						top:1.05rem;
+					}
 				}
 			}
 		}
@@ -107,6 +177,21 @@
 			align-items:center;
 			grid-template-columns:1fr 200px;
 			gap:20px;
+
+			@media screen and (width <= 540px) {
+				display:flex;
+				margin-bottom:20px;
+				position:relative;
+			}
+
+			label {
+				margin-bottom:0;
+			}
+
+			select {
+				height:30px;
+				line-height:30px;
+			}
 		}
 	}
 }

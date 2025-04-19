@@ -8,8 +8,10 @@
 
 {% extends '@Backend/element/overview/overview_paginated_list.twig' %}
 
+{% block tableOverviewFootColSpan %}{{ localConfig.overview.displayedFields|length + 5 }}{% endblock %}
+
 {% block tableOverview %}
-	<table class="Overview-Table" data-media-folder-id="{{ selectedMediaFolderId }}">
+	<table class="Overview-Table Responsive-Table Responsive-TableGrid" style="--columns:{{ tableFootColSpan }}; --rows:{{ min(records|length, paginate.limit) }};" data-media-folder-id="{{ selectedMediaFolderId }}">
 		{{ block('tableOverviewHead') }}
 
 		{% block tableOverviewBody %}
@@ -73,5 +75,3 @@
 		{{ HtmlHelper.link(i18nDomain ? __df(i18nDomain, 'system', 'edit') : __('edit'), {action: 'edit', id: entity.id}, {class: 'Button Button-Small Button-Edit'}) }}
 	{% endif %}
 {% endblock %}
-
-{% block tableOverviewFootColSpan %}{{ localConfig.overview.displayedFields|length + 5 }}{% endblock %}

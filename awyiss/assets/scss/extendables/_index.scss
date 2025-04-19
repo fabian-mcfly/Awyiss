@@ -5,9 +5,16 @@
 	opacity:.1;
 	transition:opacity .3s ease-in-out;
 
-	html.Scale-Small & {
+	@media screen and (width <= 768px) {
 		width:100%;
 		min-height:30px;
+	}
+
+	html.Scale-Small & {
+		@media screen and (width > 768px) {
+			width:100%;
+			min-height:30px;
+		}
 	}
 
 	&:focus-within {
@@ -17,11 +24,15 @@
 	.Button {
 		width:100%;
 		margin-top:.25rem;
+		grid-column-start:1;
+
+		@media screen and (width <= 500px) {
+			margin-top:0;
+		}
 
 		&-Delete {
 			width:36px;
 			height:36px;
-			margin-top:0;
 			margin-left:10px;
 			padding:0;
 			font-size:0;
@@ -33,10 +44,38 @@
 			visibility:hidden;
 			transition:background-color 0s linear, outline-color .1s ease-in-out, opacity .3s ease-in-out, visibility 0s linear .3s;
 
-			html.Scale-Small & {
+			@media screen and (width <= 768px) {
 				width:30px;
 				height:30px;
 				text-indent:-1px;
+				opacity:revert;
+				visibility:revert;
+			}
+
+			@media screen and (width <= 540px) {
+				display:block;
+				width:auto;
+				position:relative;
+				left:auto;
+				margin-left:0;
+			}
+
+			@media screen and (width <= 500px) {
+				margin-top:0;
+				grid-column-start:2;
+			}
+
+			html.Scale-Small & {
+				@media screen and (width > 768px) {
+					width:30px;
+					height:30px;
+					text-indent:-1px;
+
+					&::after {
+						line-height:30px;
+						transform:none;
+					}
+				}
 			}
 
 			&:hover {
@@ -49,9 +88,16 @@
 				margin-left:0;
 				line-height:36px;
 
-				html.Scale-Small & {
+				@media screen and (width <= 768px) {
 					line-height:30px;
 					transform:none;
+				}
+
+				html.Scale-Small & {
+					@media screen and (width > 768px) {
+						line-height:30px;
+						transform:none;
+					}
 				}
 			}
 		}
@@ -82,6 +128,46 @@
 
 		&:hover {
 			transition-delay:.3s, 0s, 0s, 0s;
+		}
+	}
+}
+
+%ContentGrid {
+	display:grid;
+	width:100%;
+	container:gridParent / inline-size;
+	gap:var(--rowGap) var(--lineHeightMain);
+	grid-template-columns:repeat(2, auto);
+
+	@media screen and (width <= 1024px) {
+		grid-template-columns:1fr;
+	}
+
+	&:has(.ButtonArea) {
+		.Headlines {
+			@media screen and (width > 1024px) {
+				grid-column-end:2;
+			}
+		}
+	}
+
+	.Headlines {
+		width:fit-content;
+		min-width:380px;
+		align-self:start;
+		grid-column:1 / -1;
+		overflow:hidden;
+
+		@media screen and (width <= 1024px) {
+			min-width:0;
+		}
+
+		&:has(.BackToOverview) {
+			margin-top:-1rem;
+
+			@media screen and (width <= 768px) {
+				margin-top:0;
+			}
 		}
 	}
 }

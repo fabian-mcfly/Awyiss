@@ -5,80 +5,94 @@
 @var _view \Awyiss\View\BackendView
 #}
 
+{{ FormHelper.create(mediaSelector, {method: 'post', id: 'MediaSelectorForm', idPrefix: 'mediaSelector'}) }}
+
+{% block sidebarToggle %}
+	{{ FormHelper.button(__('sidebar_toggle'), {class: 'Button Button-Configure', id: 'Sidebar-Toggle', name: 'button', type: 'button'}) }}
+{% endblock %}
+
 {% block fieldsets %}
 	<div class="Fieldsets">
-		{% block fieldsetPresentation %}
-			<fieldset class="Fieldset-Presentation">
-				<legend>{{ __('fieldset_presentation') }}</legend>
+		{% block mainFieldsets %}
+			<div class="Main-Fieldsets">
+				{% block fieldsetGeneral %}
+					<fieldset class="Fieldset-General">
+						<legend>{{ __('fieldset_general') }}</legend>
 
-				{% block fieldsetPresentationInner %}
-					{% block formControlActive %}
-						{{ FormHelper.control('active') }}
-					{% endblock %}
+						{% block fieldsetGeneralInner %}
+							{% block formControlTitle %}
+								{{ FormHelper.control('title') }}
+							{% endblock %}
 
-					{% block fieldsetPresentationAttributes %}
-						{{ AttributesHelper.allControls('presentation') }}
-					{% endblock %}
+							{% block formControlIdentifier %}
+								{{ FormHelper.control('identifier', {
+									'data-autofill-from': 'title',
+								}) }}
+							{% endblock %}
+
+							{% block fieldsetGeneralAttributes %}
+								{{ AttributesHelper.allControls('general') }}
+							{% endblock %}
+						{% endblock %}
+					</fieldset>
 				{% endblock %}
-			</fieldset>
+
+				{% block fieldsetContent %}
+					<fieldset class="Fieldset-Content">
+						<legend>{{ __('fieldset_content') }}</legend>
+
+						{% block fieldsetContentInner %}
+							{% block fieldsetContentAttributes %}
+								{{ AttributesHelper.allControls('content') }}
+							{% endblock %}
+						{% endblock %}
+					</fieldset>
+				{% endblock %}
+			</div>
 		{% endblock %}
 
-		{% block fieldsetConditions %}
-			<fieldset class="Fieldset-Conditions">
-				<legend>{{ __('fieldset_conditions') }}</legend>
+		{% block sidebarFieldsets %}
+			<div class="Sidebar-Fieldsets">
+				{% block fieldsetPresentation %}
+					<fieldset class="Fieldset-Presentation">
+						<legend>{{ __('fieldset_presentation') }}</legend>
 
-				{% block fieldsetConditionsInner %}
-					{% block fieldsetConditionsAttributes %}
-						{{ AttributesHelper.allControls('conditions') }}
-					{% endblock %}
+						{% block fieldsetPresentationInner %}
+							{% block formControlActive %}
+								{{ FormHelper.control('active') }}
+							{% endblock %}
+
+							{% block fieldsetPresentationAttributes %}
+								{{ AttributesHelper.allControls('presentation') }}
+							{% endblock %}
+						{% endblock %}
+					</fieldset>
 				{% endblock %}
-			</fieldset>
-		{% endblock %}
 
-		{% block fieldsetGeneral %}
-			<fieldset class="Fieldset-General">
-				<legend>{{ __('fieldset_general') }}</legend>
-		
-				{% block fieldsetGeneralInner %}
-					{% block formControlTitle %}
-						{{ FormHelper.control('title') }}
-					{% endblock %}
+				{% block fieldsetConditions %}
+					<fieldset class="Fieldset-Conditions">
+						<legend>{{ __('fieldset_conditions') }}</legend>
 
-					{% block formControlIdentifier %}
-						{{ FormHelper.control('identifier', {
-							'data-autofill-from': 'title',
-						}) }}
-					{% endblock %}
-
-					{% block fieldsetGeneralAttributes %}
-						{{ AttributesHelper.allControls('general') }}
-					{% endblock %}
+						{% block fieldsetConditionsInner %}
+							{% block fieldsetConditionsAttributes %}
+								{{ AttributesHelper.allControls('conditions') }}
+							{% endblock %}
+						{% endblock %}
+					</fieldset>
 				{% endblock %}
-			</fieldset>
-		{% endblock %}
 
-		{% block fieldsetContent %}
-			<fieldset class="Fieldset-Content">
-				<legend>{{ __('fieldset_content') }}</legend>
+				{% block fieldsetAttributes %}
+					<fieldset class="Fieldset-Attributes">
+						<legend>{{ __('fieldset_attributes') }}</legend>
 
-				{% block fieldsetContentInner %}
-					{% block fieldsetContentAttributes %}
-						{{ AttributesHelper.allControls('content') }}
-					{% endblock %}
+						{% block fieldsetAttributesInner %}
+							{% block fieldsetAttributesAttributes %}
+								{{ AttributesHelper.allControls('attributes') }}
+							{% endblock %}
+						{% endblock %}
+					</fieldset>
 				{% endblock %}
-			</fieldset>
-		{% endblock %}
-
-		{% block fieldsetAttributes %}
-			<fieldset class="Fieldset-Attributes">
-				<legend>{{ __('fieldset_attributes') }}</legend>
-
-				{% block fieldsetAttributesInner %}
-					{% block fieldsetAttributesAttributes %}
-						{{ AttributesHelper.allControls('attributes') }}
-					{% endblock %}
-				{% endblock %}
-			</fieldset>
+			</div>
 		{% endblock %}
 
 		{% block formInputReloadForm %}
@@ -86,3 +100,9 @@
 		{% endblock %}
 	</div>
 {% endblock %}
+
+{% block lockDialog %}
+	{{ element('lock_dialog', {entity: mediaSelector}) }}
+{% endblock %}
+
+{{ FormHelper.end() }}

@@ -28,7 +28,7 @@ export default class FieldsetManager {
 	 * The selector for the fieldsets.
 	 * @type {string}
 	 */
-	selector = '.Overview > fieldset, .Form .Fieldsets > fieldset, fieldset.Collapsible';
+	selector = '.Overview > fieldset, .Form .Fieldsets > fieldset, .Form .Main-Fieldsets > fieldset, .Form .Sidebar-Fieldsets > fieldset, fieldset.Collapsible';
 
 	/**
 	 * Constructor for FieldsetManager class.
@@ -46,9 +46,12 @@ export default class FieldsetManager {
 
 		this.fieldsets = Array.from(document.querySelectorAll(this.selector));
 
-		// If the html tag has the class OverviewAction, don't hide the fieldsets
-		if (!document.querySelector('html.OverviewAction')) {
+		// If the body tag has the class OverviewAction, don't hide the fieldsets
+		if (!document.body.classList.contains('OverviewAction')) {
 			this.fieldsets.forEach(fieldset => this.checkVisibleChildren(fieldset));
+
+			// Check if the sidebar is visible
+			this.checkSidebarVisibility();
 		}
 
 		// Set the initial collapse state of the fieldsets
@@ -58,11 +61,17 @@ export default class FieldsetManager {
 		const observer = window.observer;
 		observer.addObserver(this.observeFieldsets.bind(this));
 
-		this.eventHandler.add('click', this.handleLegendClick.bind(this), window);
+		this.eventHandler.add('click', this.handleClick.bind(this), document.body);
+		this.eventHandler.add('click', this.handleLegendClick.bind(this), document.body);
+
+		// Listen for hash changes
+		this.eventHandler.add('hashchange', this.handleHashChange.bind(this), window);
+		// Check hash on initial page load
+		this.handleHashChange();
 	}
 
 	/**
-	 * Checks if each fieldset has visible children and, if not, adds the class 'Hidden' to them.
+	 * Checks if a fieldset has visible children and, if not, adds the class 'Hidden' to them.
 	 */
 	checkVisibleChildren(fieldset) {
 		// If the fieldset is not hideable, bail early
@@ -70,10 +79,59 @@ export default class FieldsetManager {
 			return;
 		}
 
+		fieldset.classList.remove('Hidden');
+
 		const visibleChildren = Array.from(fieldset.children).some(child => child.offsetParent !== null && child.tagName.toLowerCase() !== 'legend');
 		if (!visibleChildren) {
 			fieldset.classList.add('Hidden');
 		}
+	}
+
+
+	/**
+	 * Handles the click event on the legend element.
+	 * @param event
+	 */
+	handleClick(event) {
+		const sidebar = document.querySelector('.Sidebar-Fieldsets');
+
+		if (!sidebar) {
+			return;
+		}
+
+		const wasVisible = sidebar.classList.contains('Visible');
+
+		if (event.target.closest('.Sidebar-Fieldsets')) {
+			return;
+		}
+
+		if (!event.target.matches('#Sidebar-Toggle')) {
+			sidebar.classList.remove('Visible');
+			sidebar.inert = !!document.getElementById('Sidebar-Toggle')?.offsetParent;
+
+			if (wasVisible) {
+				// Go back one step in the history
+				window.history.back();
+			}
+
+			return;
+		}
+
+		sidebar.classList.toggle('Visible');
+
+		const isVisible = sidebar.classList.contains('Visible');
+
+		// Create a new history entry if the button area is visible
+		if (isVisible) {
+			window.history.pushState({}, '', `${currentUrl}#Sidebar`);
+			sidebar.focus();
+		}
+		// Otherwise go back one step in the history
+		else if (wasVisible) {
+			window.history.back();
+		}
+
+		sidebar.inert = !isVisible && document.getElementById('Sidebar-Toggle')?.offsetParent;
 	}
 
 
@@ -103,14 +161,13 @@ export default class FieldsetManager {
 	 */
 	observeFieldsets(mutation) {
 		// If the addedNodes property has no nodes, bail early
-		if (!mutation.addedNodes.length) {
+		if (!mutation.addedNodes.length && !mutation.removedNodes.length) {
 			return;
 		}
 
-		// Reset the fieldsets array
-		this.fieldsets = Array.from(document.querySelectorAll(this.selector));
+		let fieldsetsChanged = false;
 
-		mutation.addedNodes.forEach(node => {
+		mutation.addedNodes?.forEach(node => {
 			// Check if the node is an element node
 			if (node.nodeType !== Node.ELEMENT_NODE) {
 				return;
@@ -119,16 +176,38 @@ export default class FieldsetManager {
 			// Check if the node is a fieldset
 			if (node.tagName.toLowerCase() === 'fieldset') {
 				this.checkVisibleChildren(node);
+				fieldsetsChanged = true;
 			}
 
 			// Select all fieldsets within the node
 			node.querySelectorAll('fieldset').forEach(fieldset => {
 				// Check if the new fieldset has visible children
 				this.checkVisibleChildren(fieldset);
+				fieldsetsChanged = true;
 			});
 		});
 
-		this.setInitialCollapseState();
+		mutation.removedNodes?.forEach(node => {
+			// Check if the node is an element node
+			if (node.nodeType !== Node.ELEMENT_NODE) {
+				return;
+			}
+
+			// Check if the node is or contains a fieldset
+			if (node.tagName.toLowerCase() === 'fieldset' || node.querySelector('fieldset')) {
+				fieldsetsChanged = true;
+			}
+		});
+
+		if (fieldsetsChanged) {
+			// Reset the fieldsets array
+			this.fieldsets = Array.from(document.querySelectorAll(this.selector));
+
+			// Set the initial collapse state of the fieldsets
+			this.setInitialCollapseState();
+
+			this.checkSidebarVisibility();
+		}
 	}
 
 	/**
@@ -248,5 +327,63 @@ export default class FieldsetManager {
 				fieldset.classList.add('Collapsed');
 			}
 		});
+	}
+
+	/**
+	 * Checks if the sidebar has any visible
+	 * fieldsets and if not, hides the sidebar toggle button.
+	 */
+	checkSidebarVisibility() {
+		const sidebar = document.querySelector('.Sidebar-Fieldsets');
+		const sidebarToggle = document.getElementById('Sidebar-Toggle');
+
+		if (!sidebarToggle) {
+			return;
+		}
+
+		if (!sidebar) {
+			sidebarToggle.classList.remove('Visible');
+			sidebar.inert = true;
+
+			return;
+		}
+
+		const wasVisible = window.location.hash === '#Sidebar';
+
+		const fieldsets = sidebar.querySelectorAll('fieldset:not(.Hidden)');
+
+		sidebarToggle.classList.toggle('Visible', fieldsets.length > 0);
+
+		if (wasVisible) {
+			if (fieldsets.length > 0) {
+				sidebar.classList.add('Visible', 'NoTransition');
+				setTimeout(() => {
+					sidebar.classList.remove('NoTransition');
+				}, 300);
+			}
+			else {
+				window.history.back();
+			}
+		}
+
+		const isVisible = sidebar.classList.contains('Visible');
+		sidebar.inert = !isVisible && document.getElementById('Sidebar-Toggle')?.offsetParent;
+	}
+
+	/**
+	 * Handle URL hash changes
+	 * @returns {void}
+	 */
+	handleHashChange() {
+		const hasSidebarHash = window.location.hash === '#Sidebar';
+
+		const sidebar = document.querySelector('.Sidebar-Fieldsets');
+
+		if (!sidebar) {
+			return;
+		}
+
+		sidebar.classList.toggle('Visible', hasSidebarHash);
+		sidebar.inert = !hasSidebarHash && document.getElementById('Sidebar-Toggle')?.offsetParent;
 	}
 }

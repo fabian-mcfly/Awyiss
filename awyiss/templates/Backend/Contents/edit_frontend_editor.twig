@@ -33,7 +33,7 @@
 		<div class="ButtonArea">
 			{% block formEditButtons %}
 				{% block formEditButtonSave %}
-					{{ FormHelper.button(__('save'), {class: 'Button Button-Success Button-Save', form: 'EditFrontendEditor'}) }}
+					{{ FormHelper.button(__('save'), {class: 'Button Button-Success Button-Save', form: 'ContentForm'}) }}
 				{% endblock %}
 			{% endblock %}
 
@@ -42,8 +42,6 @@
 			{% endblock %}
 		</div>
 	{% endblock %}
-
-	{{ FormHelper.create(content, {method: 'post', id: 'EditFrontendEditor', idPrefix: 'content'}) }}
 
 	{% block flashMessages %}
 		{{ FlashHelper.render() }}
@@ -58,10 +56,4 @@
 			{{ block('formEditButtons') }}
 		</div>
 	{% endblock %}
-
-	{% block lockDialog %}
-		{{ element('lock_dialog', {entity: content}) }}
-	{% endblock %}
-
-	{{ FormHelper.end() }}
 </div>

@@ -20,21 +20,32 @@
 {% do AuthorizationHelper.setScope('forms') %}
 
 <div class="FormElements Overview">
-	{% if AuthorizationHelper.isAccessible('read') %}
-		{{ HtmlHelper.link(__('forms_overview'), {controller: 'forms', action: 'overview'}, {class: 'BackToOverview'}) }}
-	{% endif %}
+	{% block headlinesOverview %}
+		<div class="Headlines">
+			{% if AuthorizationHelper.isAccessible('read') %}
+				{{ HtmlHelper.link(__('forms_overview'), {controller: 'forms', action: 'overview'}, {class: 'BackToOverview'}) }}
+			{% endif %}
 
-	{% block headlineOverview %}
-		<h1>{{ __('headline_overview') }}</h1>
-		<h2>
-			{{ form.title }}
-
-			{% block buttonEdit %}
-				{% if AuthorizationHelper.isAccessible('update') %}
-					{{ HtmlHelper.link(__('edit'), {controller: 'forms', action: 'edit', id: form.id}, {class: 'Button Button-Edit Button-Small Button-Subtle'}) }}
-				{% endif %}
+			{% block headlineOverview %}
+				<h1>{{ __('headline_overview') }}</h1>
 			{% endblock %}
-		</h2>
+
+			{% block subheadlineOverview %}
+				<h2>
+					{{ form.title }}
+
+					{% block buttonEdit %}
+						{% if AuthorizationHelper.isAccessible('update') %}
+							{{ HtmlHelper.link(__('edit'), {controller: 'forms', action: 'edit', id: form.id}, {class: 'Button Button-Edit Button-Small Button-Subtle'}) }}
+						{% endif %}
+					{% endblock %}
+				</h2>
+			{% endblock %}
+		</div>
+	{% endblock %}
+
+	{% block buttonAreaToggle %}
+		{{ FormHelper.button(__('button_area_toggle'), {class: 'Button Button-Menu', id: 'ButtonArea-Toggle', name: 'button', type: 'button'}) }}
 	{% endblock %}
 
 	{% block buttonArea %}

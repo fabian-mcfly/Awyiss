@@ -121,22 +121,33 @@ export default class ContentsController {
 		}
 
 		this.eventHandler.add('click', event => {
-			if (this.contextMenu) {
-				this.contextMenu.remove();
-				this.contextMenu = null;
-			}
-
 			const listItem = event.target.closest('.ListItem');
-			if (!listItem || !listItem.classList.contains('Narrow')) {
+			if (!listItem || listItem.getBoundingClientRect().width > 310) {
+				if (this.contextMenu) {
+					this.contextMenu.remove();
+					this.contextMenu = null;
+				}
+
 				return;
 			}
 
-			// Check if the click event happend in the right area of the list item
+			// Check if the click event happened in the right area of the list item
 			if (
 				event.clientX > listItem.getBoundingClientRect().left + listItem.offsetWidth - 6 ||
 				event.clientX < listItem.getBoundingClientRect().left + listItem.offsetWidth - 36
 			) {
 				return;
+			}
+
+			if (listItem.querySelector(':scope > .ListItem-ContextMenu')) {
+				this.contextMenu.remove();
+				this.contextMenu = null;
+				return;
+			}
+
+			if (this.contextMenu) {
+				this.contextMenu.remove();
+				this.contextMenu = null;
 			}
 
 			// Prevent the default context menu from showing up

@@ -25,13 +25,19 @@ button,
 	cursor:pointer;
 	transition:background-color .3s linear, outline-color .1s ease-in-out;
 
-	html.Scale-Small & {
-		padding-block:6px 6px;
+	@media screen and (width <= 768px) {
+		padding-block:6px;
 	}
 
 	html.🌚 & {
 		--backgroundColor:oklch(from var(--colorSemiDarkDarkMode) calc(l + 0.0389) calc(c + 0.004) calc(h - 0.55));
 		background-image:none;
+	}
+
+	html.Scale-Small & {
+		@media screen and (width > 768px) {
+			padding-block:6px;
+		}
 	}
 
 	html.👀 & {
@@ -82,7 +88,7 @@ button,
 		background-color:var(--colorError);
 	}
 
-		&#{&}-History,
+	&#{&}-History,
 	&#{&}-Medium {
 		background-color:var(--colorMedium);
 	}
@@ -119,6 +125,18 @@ button,
 		font-size:.9rem;
 		line-height:1.5;
 
+		@media screen and (width <= 1024px) {
+			//font-size:1rem;
+			line-height:27px;
+		}
+
+		@media screen and (width <= 768px) {
+			min-height:30px;
+			padding:2px 5px 4px;
+			font-size:1rem;
+			line-height:24px;
+		}
+
 		&.Button-Edit {
 			&::after {
 				content:'\f044';
@@ -126,13 +144,17 @@ button,
 		}
 
 		html.Scale-Medium & {
-			font-size:1rem;
+			@media screen and (width > 1024px) {
+				font-size:1rem;
+			}
 		}
 
 		html.Scale-Small & {
-			min-height:30px;
-			padding:2px 5px 4px;
-			font-size:1rem;
+			@media screen and (width > 768px) {
+				min-height:30px;
+				padding:2px 5px 4px;
+				font-size:1rem;
+			}
 		}
 	}
 
@@ -143,9 +165,9 @@ button,
 		padding-block:4px 5px;
 		font-size:.8rem;
 
-		html.Scale-Small & {
-			padding-block:4px 0;
-			font-size:1rem;
+		@media screen and (width <= 768px) {
+			padding:4px 10px 0;
+			font-size:.9rem;
 		}
 
 		html.🌚 & {
@@ -153,8 +175,10 @@ button,
 		}
 
 		html.Scale-Small & {
-			font-size:.9rem;
-			padding-inline:10px;
+			@media screen and (width > 768px) {
+				padding:4px 10px 0;
+				font-size:.9rem;
+			}
 		}
 
 		&::after {
@@ -168,10 +192,13 @@ button,
 	&-Configure,
 	&-Delete,
 	&-Edit,
+	&-Folder,
 	&-Filter,
 	&-History,
 	&-Leave,
+	&-Menu,
 	&-Preview,
+	&-Reload,
 	&-Save,
 	&-SaveClose,
 	&-SaveSystemOrder,
@@ -191,10 +218,18 @@ button,
 				position:relative;
 				top:-1px;
 
-				html.Scale-Small & {
+				@media screen and (width <= 768px) {
 					margin-block:0;
 					top:0;
 					vertical-align:-1px;
+				}
+
+				html.Scale-Small & {
+					@media screen and (width > 768px) {
+						margin-block:0;
+						top:0;
+						vertical-align:-1px;
+					}
 				}
 			}
 		}
@@ -215,9 +250,18 @@ button,
 
 			transform:translateY(0);
 
-			html.Scale-Small & {
+			@media screen and (width <= 768px) {
 				margin-block:-1px !important;
 				transform:translateY(1px);
+				vertical-align:-1px;
+			}
+
+			html.Scale-Small & {
+				@media screen and (width > 768px) {
+					margin-block:-1px !important;
+					transform:translateY(1px);
+					vertical-align:-1px;
+				}
 			}
 		}
 	}
@@ -240,8 +284,14 @@ button,
 			content:'\f2ed';
 			text-indent:-1px;
 
-			html.Scale-Small & {
+			@media screen and (width <= 768px) {
 				text-indent:-1px;
+			}
+
+			html.Scale-Small & {
+				@media screen and (width > 768px) {
+					text-indent:-1px;
+				}
 			}
 		}
 	}
@@ -249,6 +299,12 @@ button,
 	&-Edit {
 		&::after {
 			content:'\f304';
+		}
+	}
+
+	&-Folder {
+		&::after {
+			content:'\f07c';
 		}
 	}
 
@@ -273,15 +329,33 @@ button,
 			rotate:180deg;
 			transform:translateY(2px);
 
-			html.Scale-Small & {
+			@media screen and (width <= 768px) {
 				vertical-align:-2px;
 			}
+
+			html.Scale-Small & {
+				@media screen and (width > 768px) {
+					vertical-align:-2px;
+				}
+			}
+		}
+	}
+
+	&-Menu {
+		&::after {
+			content:'\f142';
 		}
 	}
 
 	&-Preview {
 		&::after {
 			content:'\f06e';
+		}
+	}
+
+	&-Reload {
+		&::after {
+			content:'\f021';
 		}
 	}
 
@@ -294,8 +368,14 @@ button,
 			font-size:18px;
 			transform:translateY(-1px);
 
-			html.Scale-Small & {
+			@media screen and (width <= 768px) {
 				transform:translateY(0);
+			}
+
+			html.Scale-Small & {
+				@media screen and (width > 768px) {
+					transform:translateY(0);
+				}
 			}
 		}
 	}
@@ -307,8 +387,14 @@ button,
 			line-height:22px;
 			transform:translateY(-2px) rotateX(180deg);
 
-			html.Scale-Small & {
+			@media screen and (width <= 768px) {
 				transform:translateY(-1px) rotateX(180deg);
+			}
+
+			html.Scale-Small & {
+				@media screen and (width > 768px) {
+					transform:translateY(-1px) rotateX(180deg);
+				}
 			}
 		}
 	}

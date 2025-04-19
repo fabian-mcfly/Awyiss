@@ -151,8 +151,14 @@
 			gap:10px;
 			grid-template-columns:repeat(auto-fill, minmax(100px, 1fr));
 
-			html.Scale-Small & {
+			@media screen and (width <= 768px) {
 				padding-inline:5px;
+			}
+
+			html.Scale-Small & {
+				@media screen and (width > 768px) {
+					padding-inline:5px;
+				}
 			}
 		}
 

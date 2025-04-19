@@ -18,9 +18,14 @@
 #}
 
 <div class="FormEntry View">
-	{{ HtmlHelper.link(__('back_to_overview'), {action: 'overview'}, {class: 'BackToOverview'}) }}
-	{% block headlineView %}
-		<h1>{{ subject }}</h1>
+	{% block headlinesView %}
+		<div class="Headlines">
+			{{ HtmlHelper.link(__('back_to_overview'), {action: 'overview'}, {class: 'BackToOverview'}) }}
+
+			{% block headlineView %}
+				<h1>{{ subject }}</h1>
+			{% endblock %}
+		</div>
 	{% endblock %}
 
 	<iframe srcdoc="{{ body|e('html') }}" class="FormEntryBody"></iframe>

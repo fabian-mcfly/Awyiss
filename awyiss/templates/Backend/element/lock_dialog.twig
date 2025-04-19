@@ -18,7 +18,7 @@
 
 {% set controller = (fetch('controllerName') ?: _view.getRequest().getParam('controller'))|underscore -%}
 
-{% if _lock %}
+{% if _lock and entity.isNew() == false %}
 	<div class="LockDialog"
 		data-entity-id="{{ entity.id ?? _lock.entityId }}"
 		data-reference-date="{{ (entity.changedOn ?? entity.createdOn).format('Y-m-d H:i:s') }}"

@@ -8,8 +8,16 @@
 {% set selectedMediaFolderId = CategoriesHelper.getSelectedCategory('mediaFolder') %}
 
 <div class="Media Overview">
-	{% block headlineOverview %}
-		<h1>{{ __('headline_overview') }}</h1>
+	{% block headlinesOverview %}
+		<div class="Headlines">
+			{% block headlineOverview %}
+			<h1>{{ __('headline_overview') }}</h1>
+		{% endblock %}
+		</div>
+	{% endblock %}
+
+	{% block buttonAreaToggle %}
+		{{ FormHelper.button(__('button_area_toggle'), {class: 'Button Button-Menu', id: 'ButtonArea-Toggle', name: 'button', type: 'button'}) }}
 	{% endblock %}
 
 	{% block buttonArea %}
@@ -119,7 +127,7 @@
 		{% endblock %}
 	{% else %}
 		{% if isAjax %}
-			<div id="MediaOverlay" class="Visible">
+			<div id="MediaOverlay" class="Visible" tabindex="-1">
 				<div class="ButtonArea">
 					{{ block('overviewButtonAutoOverwritePreferenceInput') }}
 
@@ -135,7 +143,7 @@
 								<input type="file" name="files[]" multiple>
 							</form>
 
-							<label for="UploadAutoOverwrite"
+							<label for="UploadAutoOverwrite" tabindex="0"
 								data-title-active="{{ __d('media', 'upload_overwrite_existing_files_active') }}"
 								data-title-inactive="{{ __d('media', 'upload_overwrite_existing_files_inactive') }}"
 								title="{{ __d('media', 'upload_overwrite_existing_files_' ~ (localConfig.upload.autoOverwrite ? 'active' : 'inactive')) }}">
@@ -159,6 +167,14 @@
 						{{ __('close') }}
 					</button>
 				</div>
+
+				{% block mediaButtonAreaToggle %}
+					{{ FormHelper.button(__('button_area_toggle'), {class: 'Button Button-Menu', id: 'MediaButtonArea-Toggle', name: 'button', type: 'button'}) }}
+				{% endblock %}
+
+				{% block mediaFoldersToggle %}
+					{{ FormHelper.button(__('media_folders_toggle'), {class: 'Button Button-Folder', id: 'MediaFolders-Toggle', name: 'button', type: 'button'}) }}
+				{% endblock %}
 		{% endif %}
 
 		{% block listOverview %}

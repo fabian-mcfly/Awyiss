@@ -1,4 +1,8 @@
 .SystemController.AnalyzeAction {
+	.Analyze {
+		@extend %ContentGrid;
+	}
+
 	.Button-ClearCache {
 		&.FetchInProgress {
 			pointer-events:none;

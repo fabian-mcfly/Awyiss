@@ -414,8 +414,14 @@ input.clr-color {
 			cursor:pointer;
 			pointer-events:initial;
 
-			html.Scale-Small & {
+			@media screen and (width <= 768px) {
 				height:40px;
+			}
+
+			html.Scale-Small & {
+				@media screen and (width > 768px) {
+					height:40px;
+				}
 			}
 
 			&::before,

@@ -1,24 +1,37 @@
 .PageTemplatesController {
 	.ContentAreas {
+		@media screen and (width < 640px) {
+			grid-column:1 / -1;
+		}
+
 		li {
+			margin-top:10px;
 			position:relative;
 			cursor:move;
 
 			&.SortableGhost {
 				&::before {
 					content:'';
+					border-radius:5px;
 					background-color:color-mix(in srgb, var(--colorSuccess), transparent 90%);
 					position:absolute;
-					inset:-10px -10px -5px -10px;
+					inset:-9px -10px -10px -10px;
 					outline:2px solid var(--colorSuccess);
 					outline-offset:-2px;
 				}
 			}
-		}
 
+			&:first-child {
+				margin-top:0;
+			}
+		}
 	}
 
 	.FormInputName-ContentAreasNew {
+		@media screen and (width < 640px) {
+			grid-column:1 / -1;
+		}
+
 		.FormInputType-ListItem {
 			display:grid;
 			padding-right:57px;
@@ -26,15 +39,17 @@
 			gap:0 5px;
 			grid-template-columns:repeat(2, 1fr);
 
-			html.Scale-Small & {
+			@media screen and (width <= 768px) {
 				padding-right:47px;
 			}
 
-			&:nth-child(1) {
-				.SortableHandle {
-					transform:translateY(1rem);
+			html.Scale-Small & {
+				@media screen and (width > 768px) {
+					padding-right:47px;
 				}
+			}
 
+			&:nth-child(1) {
 				.Button-Remove {
 					transform:translateY(1.05rem);
 				}
@@ -66,9 +81,16 @@
 			top:0;
 			right:0;
 
-			html.Scale-Small & {
+			@media screen and (width <= 768px) {
 				width:42px;
 				height:42px;
+			}
+
+			html.Scale-Small & {
+				@media screen and (width > 768px) {
+					width:42px;
+					height:42px;
+				}
 			}
 
 			&.Disabled {

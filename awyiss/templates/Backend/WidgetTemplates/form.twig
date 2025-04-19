@@ -7,315 +7,335 @@
 @var _view \Awyiss\View\BackendView
 #}
 
+{{ FormHelper.create(widgetTemplate, {method: 'post', id: 'WidgetTemplateForm', idPrefix: 'widget_template'}) }}
+
 {% set originalAvailableFieldsets = availableFieldsets %}
 {% set availableFieldsets = [] %}
 {% for fieldset in originalAvailableFieldsets %}
 	{% set availableFieldsets = availableFieldsets|merge({(fieldset): __d(fieldset == 'publication' ? 'publication_data' : 'widgets', 'fieldset_' ~ fieldset)}) %}
 {% endfor %}
 
-{% block fieldsets %}
-	<div class="Fieldsets">
-		{% block fieldsetPresentation %}
-			<fieldset class="Fieldset-Presentation">
-				<legend>{{ __('fieldset_presentation') }}</legend>
+{% set assignedWidgetElements = [] %}
+{% if widgetTemplate.widgetTemplateElements %}
+	{% set assignedWidgetElements = combine(widgetTemplate.widgetTemplateElements|column('identifier'), widgetTemplate.widgetTemplateElements) %}
+{% endif %}
 
-				{% block fieldsetPresentationInner %}
-					{% block formControlActive %}
-						{{ FormHelper.control('active') }}
-					{% endblock %}
+{% set elementCounter = 0 %}
+{% set fieldsetElements = {} %}
 
-					{% block formControlInContentRow %}
-						{{ FormHelper.control('in_content_row') }}
-					{% endblock %}
+{% for availableElement, assignable in availableWidgetElements %}
+	{% set widgetTemplateElement = assignedWidgetElements[ availableElement ] %}
+	{% set key = widgetTemplateElement ? widgetTemplateElement.fieldset : 'unused' %}
 
-					{% block fieldsetPresentationAttributes %}
-						{{ AttributesHelper.allControls('presentation') }}
-					{% endblock %}
-				{% endblock %}
-			</fieldset>
-		{% endblock %}
+	{% if assignable == false and key == 'unused' %}
+		{% set key = availableFieldsets|keys|first %}
+	{% endif %}
 
-		{% block fieldsetConditions %}
-			<fieldset class="Fieldset-Conditions">
-				<legend>{{ __('fieldset_conditions') }}</legend>
-
-				{% block fieldsetConditionsInner %}
-					{% block formControlSystemOrder %}
-						{{ SystemOrderHelper.control('system_order', {entity: widgetTemplate}) }}
-					{% endblock %}
-
-					{% block fieldsetConditionsAttributes %}
-						{{ AttributesHelper.allControls('conditions') }}
-					{% endblock %}
-				{% endblock %}
-			</fieldset>
-		{% endblock %}
-
-		{% block fieldsetGeneral %}
-			<fieldset class="Fieldset-General">
-				<legend>{{ __('fieldset_general') }}</legend>
-
-				{% block fieldsetGeneralInner %}
-					{% block formControlTitle %}
-						{{ FormHelper.control('title') }}
-					{% endblock %}
-
-					{% block formControlFileName %}
-						{{ FormHelper.control('file_name', {'data-autofill-from': 'title'}) }}
-					{% endblock %}
-
-					{% block fieldsetGeneralAttributes %}
-						{{ AttributesHelper.allControls('general') }}
-					{% endblock %}
-				{% endblock %}
-			</fieldset>
-		{% endblock %}
-
-		{% block fieldsetWidgetElements %}
-			{% set assignedWidgetElements = [] %}
-			{% if widgetTemplate.widgetTemplateElements %}
-				{% set assignedWidgetElements = combine(widgetTemplate.widgetTemplateElements|column('identifier'), widgetTemplate.widgetTemplateElements) %}
-			{% endif %}
-
-			{% set elementCounter = 0 %}
-			{% set fieldsetElements = {} %}
-
-			{% for availableElement, assignable in availableWidgetElements %}
-				{% set widgetTemplateElement = assignedWidgetElements[ availableElement ] %}
-				{% set key = widgetTemplateElement ? widgetTemplateElement.fieldset : 'unused' %}
-
-				{% if assignable == false and key == 'unused' %}
-					{% set key = availableFieldsets|keys|first %}
-				{% endif %}
-
-				{% set widget %}
-					{% block formControlWidgetElement %}
-						<li class="Item WidgetElement WidgetElement-{{ availableElement|camelize }} WidgetElement-Default" data-assignable="{{ assignable == false ? 'false' : 'true' }}">
-							<span class="Title Title-Default">
-								{% if assignable == false %}
-									{{ FormHelper.hidden('widget_template_elements.' ~ loop.index0 ~ '.identifier', {
-										value: availableElement,
-									}) }}
-								{% endif %}
-								{{ FormHelper.checkbox('widget_template_elements.' ~ loop.index0 ~ '.identifier', {
-									checked: assignable == false or assignedWidgetElements[ availableElement ],
-									disabled: assignable == false,
-									hiddenField: false,
-									id: 'WidgetTemplate-WidgetElements-' ~ availableElement|camelize,
-									readonly: true,
-									value: availableElement,
-								}) }}
-
-								{{ __d('widgets', availableElement) }}
-							</span>
-
-							<label for="WidgetTemplate-WidgetElements-{{ availableElement|camelize }}-Fieldset">
-								{{ FormHelper.select('widget_template_elements.' ~ loop.index0 ~ '.fieldset', availableFieldsets, {
-									id: 'WidgetTemplate-WidgetElements-' ~ availableElement|camelize ~ '-Fieldset',
-									required: false,
-									val: widgetTemplateElement ? widgetTemplateElement.fieldset : (assignable == false ? availableFieldsets|keys|first : null),
-								}) }}
-
-								{% if (widgetTemplateElement) %}
-									{% block widgetElementFieldsetError %}
-										{{ FormHelper.error('widget_template_elements.' ~ elementCounter ~ '.fieldset') }}
-									{% endblock %}
-								{% endif %}
-							</label>
-
-							{% if (widgetTemplateElement) %}
-								{{ FormHelper.hidden('widget_template_elements.' ~ loop.index0 ~ '.id', {
-									val: widgetTemplateElement.id,
-								}) }}
-							{% endif %}
-
-							{% if availableElement != 'duplicate_of' %}
-								{% set hidden %}
-									{% if availableElement == 'widget_template_id' %}
-										{{ FormHelper.hidden('widget_template_elements.' ~ loop.index0 ~ '.required', {
-											value: true,
-										}) }}
-									{% endif %}
-								{% endset %}
-								{{ FormHelper.control('widget_template_elements.' ~ loop.index0 ~ '.required', {
-									checked: availableElement == 'widget_template_id' ? true : (widgetTemplateElement ? widgetTemplateElement.required : false),
-									disabled: availableElement == 'widget_template_id',
-									label: __('required'),
-									hiddenField: availableElement != 'widget_template_id',
-									id: 'WidgetTemplate-WidgetElements-' ~ availableElement|camelize ~ '-Required',
-									templateVars: {
-										additionalContent: hidden,
-									},
-									value: true,
-								}) }}
-							{% endif %}
-
-							{{ FormHelper.control('widget_template_elements.' ~ loop.index0 ~ '.column_span', {
-								empty: false,
-								label: __('column_span'),
-								options: columnSpans,
-								id: 'WidgetTemplate-WidgetElements-' ~ availableElement|camelize ~ '-ColumnSpan',
-								type: 'select',
-								val: widgetTemplateElement ? widgetTemplateElement.columnSpan : false,
-							}) }}
-
-							{{ FormHelper.control('widget_template_elements.' ~ loop.index0 ~ '.title', {
-								label: __('title'),
-								id: 'WidgetTemplate-WidgetElements-' ~ availableElement|camelize ~ '-Title',
-								type: 'translatableText',
-								templateVars: {
-									dialogTitle: __d('system', 'translations_dialog_title', __('title')),
-								},
-								values: widgetTemplateElement['_translations'] ?? [],
-							}) }}
-						</li>
-					{% endblock %}
-
-					{% if assignedWidgetElements[ availableElement ] %}
-						{% set elementCounter = elementCounter + 1 %}
+	{% set widget %}
+		{% block formControlWidgetElement %}
+			<li
+				class="Item WidgetElement WidgetElement-{{ availableElement|camelize }} WidgetElement-Default"
+				data-assignable="{{ assignable == false ? 'false' : 'true' }}">
+				<span class="Title Title-Default">
+					{% if assignable == false %}
+						{{ FormHelper.hidden('widget_template_elements.' ~ loop.index0 ~ '.identifier', {
+							value: availableElement,
+						}) }}
 					{% endif %}
-				{% endset %}
+					{{ FormHelper.checkbox('widget_template_elements.' ~ loop.index0 ~ '.identifier', {
+						checked: assignable == false or assignedWidgetElements[ availableElement ],
+						disabled: assignable == false,
+						hiddenField: false,
+						id: 'WidgetTemplate-WidgetElements-' ~ availableElement|camelize,
+						readonly: true,
+						value: availableElement,
+					}) }}
 
-				{% if fieldsetElements[key] is not defined %}
-					{% set fieldsetElements = fieldsetElements|merge({(key): {(availableElement): widget}}) %}
-				{% else %}
-					{% set fieldsetElements = fieldsetElements|merge({(key): fieldsetElements[key]|merge({(availableElement): widget})}) %}
+					{{ __d('widgets', availableElement) }}
+				</span>
+
+				<label for="WidgetTemplate-WidgetElements-{{ availableElement|camelize }}-Fieldset">
+					{{ FormHelper.select('widget_template_elements.' ~ loop.index0 ~ '.fieldset', availableFieldsets, {
+						id: 'WidgetTemplate-WidgetElements-' ~ availableElement|camelize ~ '-Fieldset',
+						required: false,
+						val: widgetTemplateElement ? widgetTemplateElement.fieldset : (assignable == false ? availableFieldsets|keys|first : null),
+					}) }}
+
+					{% if (widgetTemplateElement) %}
+						{% block widgetElementFieldsetError %}
+							{{ FormHelper.error('widget_template_elements.' ~ elementCounter ~ '.fieldset') }}
+						{% endblock %}
+					{% endif %}
+				</label>
+
+				{% if (widgetTemplateElement) %}
+					{{ FormHelper.hidden('widget_template_elements.' ~ loop.index0 ~ '.id', {
+						val: widgetTemplateElement.id,
+					}) }}
 				{% endif %}
-			{% endfor %}
 
-			{% for widgetAttribute in availableWidgetAttributes %}
-				{% set widgetTemplateElement = assignedWidgetElements[ 'attributes.' ~ widgetAttribute.identifier ] %}
-				{% set key = widgetTemplateElement ? widgetTemplateElement.fieldset : 'unused' %}
-				{% set widget %}
-					{% block formControlWidgetAttribute %}
-						<li class="Item WidgetElement WidgetElement-Attribute">
-							<span class="Title Title-Attribute">
-								{{ FormHelper.checkbox('widget_template_elements.' ~ (loop.index0 + availableWidgetElements|length) ~ '.identifier', {
-									checked: assignedWidgetElements[ 'attributes.' ~ widgetAttribute.identifier ] ? true : false,
-									hiddenField: false,
-									id: 'WidgetTemplate-WidgetAttribute-' ~ widgetAttribute.identifier|camelize,
-									readonly: true,
-									value: 'attributes.' ~ widgetAttribute.identifier,
-								}) }}
-
-								{{ widgetAttribute.label }}
-							</span>
-
-							<label for="WidgetTemplate-WidgetAttribute-{{ widgetAttribute.identifier|camelize }}-Fieldset">
-								{{ FormHelper.select('widget_template_elements.' ~ (loop.index0 + availableWidgetElements|length) ~ '.fieldset', availableFieldsets, {
-									id: 'WidgetTemplate-WidgetAttribute-' ~ widgetAttribute.identifier|camelize ~ '-Fieldset',
-									required: false,
-									val: widgetTemplateElement ? widgetTemplateElement.fieldset : null,
-								}) }}
-
-								{% if widgetTemplateElement %}
-									{% block widgetAttributeFieldsetError %}
-										{{ FormHelper.error('widget_template_elements.' ~ elementCounter ~ '.fieldset') }}
-									{% endblock %}
-								{% endif %}
-							</label>
-
-							{{ FormHelper.control('widget_template_elements.' ~ (loop.index0 + availableWidgetElements|length) ~ '.required', {
-								checked: widgetTemplateElement ? widgetTemplateElement.required : false,
-								label: __('required'),
-								hiddenField: true,
-								id: 'WidgetTemplate-WidgetAttribute-' ~ widgetAttribute.identifier|camelize ~ '-Required',
+				{% if availableElement != 'duplicate_of' %}
+					{% set hidden %}
+						{% if availableElement == 'widget_template_id' %}
+							{{ FormHelper.hidden('widget_template_elements.' ~ loop.index0 ~ '.required', {
 								value: true,
 							}) }}
-
-							{{ FormHelper.control('widget_template_elements.' ~ (loop.index0 + availableWidgetElements|length) ~ '.column_span', {
-								empty: false,
-								label: __('column_span'),
-								options: columnSpans,
-								id: 'WidgetTemplate-WidgetAttribute-' ~ widgetAttribute.identifier|camelize ~ '-ColumnSpan',
-								type: 'select',
-								val: widgetTemplateElement ? widgetTemplateElement.columnSpan : false,
-							}) }}
-						</li>
-					{% endblock %}
-
-					{% if 'attributes.' ~ assignedWidgetElements[ widgetAttribute.identifier ] %}
-						{% set elementCounter = elementCounter + 1 %}
-					{% endif %}
-				{% endset %}
-
-				{% if fieldsetElements[key] is not defined %}
-					{% set fieldsetElements = fieldsetElements|merge({(key): {('attributes.' ~ widgetAttribute.identifier): widget}}) %}
-				{% else %}
-					{% set fieldsetElements = fieldsetElements|merge({(key): fieldsetElements[key]|merge({('attributes.' ~ widgetAttribute.identifier): widget})}) %}
+						{% endif %}
+					{% endset %}
+					{{ FormHelper.control('widget_template_elements.' ~ loop.index0 ~ '.required', {
+						checked: availableElement == 'widget_template_id' ? true : (widgetTemplateElement ? widgetTemplateElement.required : false),
+						disabled: availableElement == 'widget_template_id',
+						label: __('required'),
+						hiddenField: availableElement != 'widget_template_id',
+						id: 'WidgetTemplate-WidgetElements-' ~ availableElement|camelize ~ '-Required',
+						templateVars: {
+							additionalContent: hidden,
+						},
+						value: true,
+					}) }}
 				{% endif %}
-			{% endfor %}
 
-			<fieldset class="Fieldset-WidgetElements">
-				{% block fieldsetWidgetElementsInner %}
-					{% block formControlWidgetElements %}
-						<fieldset class="Fieldset-WidgetElements-Available RowSpan-{{ availableFieldsets|length }} Collapsible">
-							<legend>{{ __('widget_elements_available') }}</legend>
-							<ul class="List WidgetElements-List SortableList" data-fieldset="unused">
-								{{ fieldsetElements.unused|join('')|raw }}
-							</ul>
-						</fieldset>
+				{{ FormHelper.control('widget_template_elements.' ~ loop.index0 ~ '.column_span', {
+					empty: false,
+					label: __('column_span'),
+					options: columnSpans,
+					id: 'WidgetTemplate-WidgetElements-' ~ availableElement|camelize ~ '-ColumnSpan',
+					type: 'select',
+					val: widgetTemplateElement ? widgetTemplateElement.columnSpan : false,
+				}) }}
 
-						{% for key, fieldset in availableFieldsets %}
-							<fieldset class="Fieldset-Fieldset Fieldset-Fieldset-{{ key|camelize }} Collapsible">
-								<legend>{{ fieldset }}</legend>
+				{{ FormHelper.control('widget_template_elements.' ~ loop.index0 ~ '.title', {
+					label: __('title'),
+					id: 'WidgetTemplate-WidgetElements-' ~ availableElement|camelize ~ '-Title',
+					type: 'translatableText',
+					templateVars: {
+						dialogTitle: __d('system', 'translations_dialog_title', __('title')),
+					},
+					values: widgetTemplateElement['_translations'] ?? [],
+				}) }}
+			</li>
+		{% endblock %}
 
-								<ul class="List WidgetElements-List SortableList" data-fieldset="{{ key }}">
-									{% if fieldsetElements[key] is defined %}
-										{% for identifier, assignedWidgetElement in assignedWidgetElements %}
-											{% if fieldsetElements[ key ][ identifier ] is defined %}
-												{{ fieldsetElements[ key ][ identifier ]|raw }}
+		{% if assignedWidgetElements[ availableElement ] %}
+			{% set elementCounter = elementCounter + 1 %}
+		{% endif %}
+	{% endset %}
+
+	{% if fieldsetElements[key] is not defined %}
+		{% set fieldsetElements = fieldsetElements|merge({(key): {(availableElement): widget}}) %}
+	{% else %}
+		{% set fieldsetElements = fieldsetElements|merge({(key): fieldsetElements[key]|merge({(availableElement): widget})}) %}
+	{% endif %}
+{% endfor %}
+
+{% for widgetAttribute in availableWidgetAttributes %}
+	{% set widgetTemplateElement = assignedWidgetElements[ 'attributes.' ~ widgetAttribute.identifier ] %}
+	{% set key = widgetTemplateElement ? widgetTemplateElement.fieldset : 'unused' %}
+	{% set widget %}
+		{% block formControlWidgetAttribute %}
+			<li class="Item WidgetElement WidgetElement-Attribute">
+				<span class="Title Title-Attribute">
+					{{ FormHelper.checkbox('widget_template_elements.' ~ (loop.index0 + availableWidgetElements|length) ~ '.identifier', {
+						checked: assignedWidgetElements[ 'attributes.' ~ widgetAttribute.identifier ] ? true : false,
+						hiddenField: false,
+						id: 'WidgetTemplate-WidgetAttribute-' ~ widgetAttribute.identifier|camelize,
+						readonly: true,
+						value: 'attributes.' ~ widgetAttribute.identifier,
+					}) }}
+
+					{{ widgetAttribute.label }}
+				</span>
+
+				<label for="WidgetTemplate-WidgetAttribute-{{ widgetAttribute.identifier|camelize }}-Fieldset">
+					{{ FormHelper.select('widget_template_elements.' ~ (loop.index0 + availableWidgetElements|length) ~ '.fieldset', availableFieldsets, {
+						id: 'WidgetTemplate-WidgetAttribute-' ~ widgetAttribute.identifier|camelize ~ '-Fieldset',
+						required: false,
+						val: widgetTemplateElement ? widgetTemplateElement.fieldset : null,
+					}) }}
+
+					{% if widgetTemplateElement %}
+						{% block widgetAttributeFieldsetError %}
+							{{ FormHelper.error('widget_template_elements.' ~ elementCounter ~ '.fieldset') }}
+						{% endblock %}
+					{% endif %}
+				</label>
+
+				{{ FormHelper.control('widget_template_elements.' ~ (loop.index0 + availableWidgetElements|length) ~ '.required', {
+					checked: widgetTemplateElement ? widgetTemplateElement.required : false,
+					label: __('required'),
+					hiddenField: true,
+					id: 'WidgetTemplate-WidgetAttribute-' ~ widgetAttribute.identifier|camelize ~ '-Required',
+					value: true,
+				}) }}
+
+				{{ FormHelper.control('widget_template_elements.' ~ (loop.index0 + availableWidgetElements|length) ~ '.column_span', {
+					empty: false,
+					label: __('column_span'),
+					options: columnSpans,
+					id: 'WidgetTemplate-WidgetAttribute-' ~ widgetAttribute.identifier|camelize ~ '-ColumnSpan',
+					type: 'select',
+					val: widgetTemplateElement ? widgetTemplateElement.columnSpan : false,
+				}) }}
+			</li>
+		{% endblock %}
+
+		{% if 'attributes.' ~ assignedWidgetElements[ widgetAttribute.identifier ] %}
+			{% set elementCounter = elementCounter + 1 %}
+		{% endif %}
+	{% endset %}
+
+	{% if fieldsetElements[key] is not defined %}
+		{% set fieldsetElements = fieldsetElements|merge({(key): {('attributes.' ~ widgetAttribute.identifier): widget}}) %}
+	{% else %}
+		{% set fieldsetElements = fieldsetElements|merge({(key): fieldsetElements[key]|merge({('attributes.' ~ widgetAttribute.identifier): widget})}) %}
+	{% endif %}
+{% endfor %}
+
+{% block sidebarToggle %}
+	{{ FormHelper.button(__('sidebar_toggle'), {class: 'Button Button-Configure', id: 'Sidebar-Toggle', name: 'button', type: 'button'}) }}
+{% endblock %}
+
+{% block fieldsets %}
+	<div class="Fieldsets">
+		{% block mainFieldsets %}
+			<div class="Main-Fieldsets">
+				{% block fieldsetGeneral %}
+					<fieldset class="Fieldset-General">
+						<legend>{{ __('fieldset_general') }}</legend>
+						{% block fieldsetGeneralInner %}
+							{% block formControlTitle %}
+								{{ FormHelper.control('title') }}
+							{% endblock %}
+
+							{% block formControlFileName %}
+								{{ FormHelper.control('file_name', {'data-autofill-from': 'title'}) }}
+							{% endblock %}
+
+							{% block fieldsetGeneralAttributes %}
+								{{ AttributesHelper.allControls('general') }}
+							{% endblock %}
+						{% endblock %}
+					</fieldset>
+				{% endblock %}
+
+				{% block fieldsetWidgetElements %}
+					<fieldset class="Fieldset-WidgetElements">
+						<legend>{{ __('widget_elements_assigned') }}</legend>
+
+						{% block fieldsetWidgetElementsInner %}
+							{% block fieldsetWidgetElementsAssigned %}
+								{% for key, fieldset in availableFieldsets %}
+									<fieldset class="Fieldset-Fieldset Fieldset-Fieldset-{{ key|camelize }} Collapsible">
+										<legend>{{ fieldset }}</legend>
+
+										<ul class="List WidgetElements-List SortableList" data-fieldset="{{ key }}">
+											{% if fieldsetElements[key] is defined %}
+												{% for identifier, assignedWidgetElement in assignedWidgetElements %}
+													{% if fieldsetElements[ key ][ identifier ] is defined %}
+														{{ fieldsetElements[ key ][ identifier ]|raw }}
+													{% endif %}
+												{% endfor %}
 											{% endif %}
-										{% endfor %}
-									{% endif %}
-								</ul>
-							</fieldset>
-						{% endfor %}
-					{% endblock %}
+										</ul>
+									</fieldset>
+								{% endfor %}
+							{% endblock %}
+						{% endblock %}
+					</fieldset>
 				{% endblock %}
-			</fieldset>
+
+				{% block fieldsetContent %}
+					<fieldset class="Fieldset-Content">
+						<legend>{{ __('fieldset_content') }}</legend>
+
+						{% block fieldsetContentInner %}
+							{% block fieldsetContentAttributes %}
+								{{ AttributesHelper.allControls('content') }}
+							{% endblock %}
+						{% endblock %}
+					</fieldset>
+				{% endblock %}
+
+				{% block fieldsetMedia %}
+					<fieldset class="Fieldset-Media">
+						<legend>{{ __('fieldset_media') }}</legend>
+
+						{% block fieldsetMediaInner %}
+							{{ cell('Backend/MediaElements', [widgetTemplate]) }}
+
+							{% block fieldsetMediaAttributes %}
+								{{ AttributesHelper.allControls('media') }}
+							{% endblock %}
+						{% endblock %}
+					</fieldset>
+				{% endblock %}
+
+				{% block fieldsetMediaElementAssignments %}
+					{{ cell('Backend/MediaElements::elementAssignments', [widgetTemplate]) }}
+				{% endblock %}
+			</div>
 		{% endblock %}
 
-		{% block fieldsetContent %}
-			<fieldset class="Fieldset-Content">
-				<legend>{{ __('fieldset_content') }}</legend>
+		{% block sidebarFieldsets %}
+			<div class="Sidebar-Fieldsets">
+				{% block fieldsetPresentation %}
+					<fieldset class="Fieldset-Presentation">
+						<legend>{{ __('fieldset_presentation') }}</legend>
 
-				{% block fieldsetContentInner %}
-					{% block fieldsetContentAttributes %}
-						{{ AttributesHelper.allControls('content') }}
-					{% endblock %}
+						{% block fieldsetPresentationInner %}
+							{% block formControlActive %}
+								{{ FormHelper.control('active', {columnSpan: 6}) }}
+							{% endblock %}
+
+							{% block formControlInContentRow %}
+								{{ FormHelper.control('in_content_row', {columnSpan: 6}) }}
+							{% endblock %}
+
+							{% block fieldsetPresentationAttributes %}
+								{{ AttributesHelper.allControls('presentation') }}
+							{% endblock %}
+						{% endblock %}
+					</fieldset>
 				{% endblock %}
-			</fieldset>
-		{% endblock %}
 
-		{% block fieldsetMedia %}
-			<fieldset class="Fieldset-Media">
-				<legend>{{ __('fieldset_media') }}</legend>
+				{% block fieldsetConditions %}
+					<fieldset class="Fieldset-Conditions">
+						<legend>{{ __('fieldset_conditions') }}</legend>
 
-				{% block fieldsetMediaInner %}
-					{{ cell('Backend/MediaElements', [widgetTemplate]) }}
+						{% block fieldsetConditionsInner %}
+							{% block formControlSystemOrder %}
+								{{ SystemOrderHelper.control('system_order', {entity: widgetTemplate}) }}
+							{% endblock %}
 
-					{% block fieldsetMediaAttributes %}
-						{{ AttributesHelper.allControls('media') }}
-					{% endblock %}
+							{% block fieldsetConditionsAttributes %}
+								{{ AttributesHelper.allControls('conditions') }}
+							{% endblock %}
+						{% endblock %}
+					</fieldset>
 				{% endblock %}
-			</fieldset>
-		{% endblock %}
 
-		{% block fieldsetMediaElementAssignments %}
-			{{ cell('Backend/MediaElements::elementAssignments', [widgetTemplate]) }}
-		{% endblock %}
+				{% block fieldsetAttributes %}
+					<fieldset class="Fieldset-Attributes">
+						<legend>{{ __('fieldset_attributes') }}</legend>
 
-		{% block fieldsetAttributes %}
-			<fieldset class="Fieldset-Attributes">
-				<legend>{{ __('fieldset_attributes') }}</legend>
-
-				{% block fieldsetAttributesInner %}
-					{% block fieldsetAttributesAttributes %}
-						{{ AttributesHelper.allControls('attributes') }}
-					{% endblock %}
+						{% block fieldsetAttributesInner %}
+							{% block fieldsetAttributesAttributes %}
+								{{ AttributesHelper.allControls('attributes') }}
+							{% endblock %}
+						{% endblock %}
+					</fieldset>
 				{% endblock %}
-			</fieldset>
+
+				{% block fieldsetWidgetElementsAvailable %}
+					<fieldset class="Fieldset-WidgetElements-Available RowSpan-{{ availableFieldsets|length }} Collapsible">
+						<legend>{{ __('widget_elements_available') }}</legend>
+
+						<ul class="List WidgetElements-List SortableList" data-fieldset="unused">
+							{{ fieldsetElements.unused|join('')|raw }}
+						</ul>
+					</fieldset>
+				{% endblock %}
+			</div>
 		{% endblock %}
 
 		{% block formInputReloadForm %}
@@ -323,3 +343,9 @@
 		{% endblock %}
 	</div>
 {% endblock %}
+
+{% block lockDialog %}
+	{{ element('lock_dialog', {entity: widgetTemplate}) }}
+{% endblock %}
+
+{{ FormHelper.end() }}

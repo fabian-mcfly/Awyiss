@@ -30,8 +30,16 @@
 #}
 
 <div class="System Analyze">
-	{% block headlineAnalyze %}
-		<h1>{{ __('headline_analyze') }}</h1>
+	{% block headlinesAnalyze %}
+		<div class="Headlines">
+			{% block headlineAnalyze %}
+			<h1>{{ __('headline_analyze') }}</h1>
+		{% endblock %}
+		</div>
+	{% endblock %}
+
+	{% block buttonAreaToggle %}
+		{{ FormHelper.button(__('button_area_toggle'), {class: 'Button Button-Menu', id: 'ButtonArea-Toggle', name: 'button', type: 'button'}) }}
 	{% endblock %}
 
 	{% block buttonArea %}

@@ -1,15 +1,17 @@
 .QueuedJobsController {
 	&.OverviewAction {
 		.Overview-Table {
-			margin-top:calc(var(--lineHeightMain) * 2);
-
-			.TableHeader-Scope {
-				width:200px;
-			}
-
 			.TableHeader-Created,
 			.TableHeader-Completed {
 				width:260px;
+
+				@media screen and (width <= 1280px) {
+					width:220px;
+				}
+
+				@media screen and (width <= 1024px) {
+					width:170px;
+				}
 			}
 
 			.TableCell-Reference {
@@ -27,15 +29,46 @@
 				}
 			}
 
+			.TableCell-Created,
+			.TableCell-Completed {
+				@media screen and (width > 640px) {
+					text-align:right;
+				}
+			}
+
+			/*.Actions {
+				@media screen and (width <= 768px) {
+					width:100%;
+				}
+			}*/
+
 			.Command {
 				min-width:300px;
-				position:absolute;
+					position:absolute;
 				top:0;
 				left:100%;
 				z-index:20;
 				opacity:0;
 				visibility:hidden;
 				transition:opacity .3s ease-in-out, visibility 0s linear .3s;
+
+				@media screen and (width <= 768px) {
+					width:100%;
+					min-width:0;
+					max-height:200px;
+					font-size:10px;
+					top:100%;
+					left:0;
+					overflow:auto;
+				}
+
+				pre.sf-dump {
+					margin-block:0;
+
+					@media screen and (width <= 768px) {
+						font-size:10px;
+					}
+				}
 			}
 		}
 	}

@@ -5,33 +5,39 @@
 
 {% set fields = Bake.filterFields(fields, schema, modelObject) %}
 <div class="{{ pluralVar[:1]|upper ~ pluralVar[1:] }} Form {{ action|capitalize }}">
-	{% verbatim %}{% if AuthorizationHelper.isAccessible('read') %}
-		{{ HtmlHelper.link(__('back_to_overview'), {action: 'overview'}, {class: 'BackToOverview'}) }}
-	{% endif %}
+	{% verbatim %}{% block headlinesAdd %}
+		<div class="Headlines">
+			{% if AuthorizationHelper.isAccessible('read') %}
+				{{ HtmlHelper.link(__('back_to_overview'), {action: 'overview'}, {class: 'BackToOverview'}) }}
+			{% endif %}
 
-	{% block headlineAdd %}
-		<h1>{{ __('headline_{% endverbatim %}{{ action }}{% verbatim %}') }}</h1>
-	{% endblock %}{% endverbatim %}
+			{% block headlineAdd %}
+				<h1>{{ __('headline_{% endverbatim %}{{ action }}{% verbatim %}') }}</h1>
+			{% endblock %}
+		</div>
+	{% endblock %}
 
-	{% verbatim %}{{{% endverbatim %} FormHelper.create({{ singularVar }}, {method: 'post', idPrefix: '{{ singularVar }}'}) {% verbatim %}}}{% endverbatim %}
+	{% block buttonAreaToggle %}
+		{{ FormHelper.button(__('button_area_toggle'), {class: 'Button Button-Menu', id: 'ButtonArea-Toggle', name: 'button', type: 'button'}) }}
+	{% endblock %}
 
-	{% verbatim %}{% block buttonArea %}
+	{% block buttonArea %}
 		<div class="ButtonArea">
 			{% block formAddButtons %}
 				{% block formAddButtonSave %}
-					{{ FormHelper.button(__('save'), {class: 'Button Button-Success Button-Save'}) }}
+					{{ FormHelper.button(__('save'), {class: 'Button Button-Success Button-Save', form: '{% endverbatim %}{{ singularVar|camelize }}{% verbatim %}Form' }) }}
 				{% endblock %}
 
 				{% block formAddButtonSaveClose %}
 					{% if AuthorizationHelper.isAccessible('read') %}
-						{{ FormHelper.button(__('save_close'), {class: 'Button Button-SaveClose', name: 'submit', value: 'submit_close'}) }}
+						{{ FormHelper.button(__('save_close'), {class: 'Button Button-SaveClose', form: '{% endverbatim %}{{ singularVar|camelize }}{% verbatim %}Form', name: 'submit', value: 'submit_close'}) }}
 					{% endif %}
 				{% endblock %}
 			{% endblock %}
 		</div>
-	{% endblock %}{% endverbatim %}
+	{% endblock %}
 
-	{% verbatim %}{% block formAdd %}
+	{% block formAdd %}
 		{% include('@Backend/{% endverbatim %}{{ modelClass }}{% verbatim %}/form.twig') %}
 	{% endblock %}
 
@@ -39,7 +45,5 @@
 		<div class="ButtonArea ButtonArea-Bottom">
 			{{ block('formAddButtons') }}
 		</div>
-	{% endblock %}
-
-	{{ FormHelper.end() }}{% endverbatim %}
+	{% endblock %}{% endverbatim %}
 </div>

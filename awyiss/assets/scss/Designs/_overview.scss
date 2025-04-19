@@ -3,36 +3,18 @@
 		> form {
 			grid-column:1 / -1;
 
-			@media screen AND (min-width:1921px) {
+			@media screen and (width > 1920px) {
 				display:grid;
-				gap:0 40px;
+				gap:0 var(--lineHeightMain);
 				grid-template-columns:1fr 1fr;
-			}
-		}
-
-		iframe {
-			width:100%;
-			height:80dvh;
-			margin-bottom:40px;
-			box-shadow:0 0 10px rgba(0, 0, 0, 0.05);
-			border:0 none;
-			border-radius:5px;
-			background-color:var(--colorBright);
-
-			@media screen AND (min-width:1921px) {
-				height:calc(100dvh - 150px);
-			}
-
-			html.👀 & {
-				@media screen AND (min-width:1921px) {
-					height:calc(100dvh - 70px);
-				}
 			}
 		}
 	}
 
 	.ButtonArea {
-		grid-column:1 / -1;
+		&.ButtonArea-Bottom {
+			margin-top:0;
+		}
 	}
 
 	.Title {
@@ -43,16 +25,47 @@
 	#Preview {
 		container-type:inline-size;
 
-		@media screen AND (min-width:1921px) {
-			margin-bottom:calc(52px + var(--lineHeightMain) * 3);
+		@media screen and (width > 1920px) {
 			position:sticky;
-			top:100px;
+			top:120px;
 		}
 
 		html.👀 & {
-			@media screen AND (min-width:1921px) {
+			@media screen and (width > 1920px) {
 				top:40px;
 			}
+		}
+	}
+
+	#Preview {
+		width:100%;
+		height:80dvh;
+		box-shadow:0 0 10px rgba(0, 0, 0, 0.05);
+		border:0 none;
+		border-radius:5px;
+		background-color:var(--colorBright);
+		align-self:start;
+
+		@media screen and (width > 1920px) {
+			height:calc(100dvh - 150px);
+		}
+
+		html.👀 & {
+			@media screen and (width > 1920px) {
+				height:calc(100dvh - 70px);
+			}
+		}
+	}
+
+	.Fieldsets {
+		display:grid;
+		margin-bottom:var(--rowGap);
+		gap:var(--rowGap) var(--lineHeightMain);
+		grid-template-columns:1fr;
+		align-self:start;
+
+		@media screen and (width > 1920px) {
+			margin-bottom:0;
 		}
 	}
 
@@ -70,33 +83,21 @@
 		}
 
 		&.Fieldset-Fonts {
-			@container (max-width:1200px) {
-				grid-column:auto / span 4;
-			}
-
-			@container (max-width:860px) {
-				grid-column:auto / span 2;
-			}
-
-			@container (max-width:480px) {
-				grid-column:1 / -1;
-			}
-
 			> .FormInput {
 				grid-column:1 / -1;
 			}
 		}
 
 		&:last-child {
-			@media screen AND (min-width:1921px) {
+			@media screen and (width > 1920px) {
 				margin-bottom:0;
 			}
 		}
 	}
 
 	.FormInputType-Font {
-		margin-bottom:40px;
-		padding-bottom:20px;
+		margin-bottom:20px;
+		padding-bottom:40px;
 		border-bottom:1px solid rgba(0, 0, 0, .1);
 
 		@container (max-width:900px) {
@@ -226,7 +227,7 @@
 	}
 
 	.Overview-Table {
-		margin-top:calc(var(--lineHeightMain) * 2);
+		margin-top:var(--rowGap);
 	}
 
 	.TableHeader-InUse {

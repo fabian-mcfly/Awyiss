@@ -2,6 +2,23 @@
 	display:flex;
 	grid-column:1 / -1;
 	align-items:center;
+	flex-wrap:wrap;
+
+	&:has(.Sort-Number:nth-child(6)) {
+		.ListControl-Item {
+			@media screen and (960px < width <= 1180px) {
+				flex-basis:50%;
+			}
+		}
+
+		.ListControl-Item-Pagination {
+			@media screen and (960px < width <= 1180px) {
+				margin-bottom:20px;
+				flex-basis:100%;
+				order:-1;
+			}
+		}
+	}
 }
 
 .ListControl-Item {
@@ -10,6 +27,18 @@
 	list-style-type:none;
 	vertical-align:middle;
 	flex-basis:25%;
+
+	@media screen and (width <= 960px) {
+		flex-basis:50%;
+	}
+
+	@media screen and (width <= 480px) {
+		flex-basis:auto;
+	}
+
+	@media screen and (width <= 360px) {
+		flex-basis:100%;
+	}
 }
 
 .ListControl-Item-ListLimit {
@@ -24,8 +53,18 @@
 			line-height:50px;
 			order:2;
 
-			html.Scale-Small & {
+			@media screen and (width <= 768px) {
 				line-height:40px;
+			}
+
+			@media screen and (width <= 480px) {
+				line-height:30px;
+			}
+
+			html.Scale-Small & {
+				@media screen and (width > 768px) {
+					line-height:40px;
+				}
 			}
 		}
 
@@ -33,9 +72,23 @@
 			width:72px;
 			text-align:center;
 
-			html.Scale-Small & {
+			@media screen and (width <= 768px) {
 				width:57px;
 				padding-inline:5px;
+			}
+
+			@media screen and (width <= 480px) {
+				width:52px;
+				height:30px;
+				padding-inline:0;
+				line-height:30px;
+			}
+
+			html.Scale-Small & {
+				@media screen and (width > 768px) {
+					width:57px;
+					padding-inline:5px;
+				}
 			}
 		}
 	}
@@ -43,6 +96,22 @@
 
 .ListControl-Item-Pagination {
 	flex-basis:50%;
+
+	@media screen and (width <= 960px) {
+		margin-bottom:20px;
+		flex-basis:100%;
+		order:-1;
+	}
+
+	@media screen and (width <= 480px) {
+		width:100%;
+	}
+
+	&:not(:has(ul)) {
+		@media screen and (width <= 960px) {
+			display:none;
+		}
+	}
 
 	.Pagination-List {
 		margin:0 auto;
@@ -54,6 +123,15 @@
 	line-height:1;
 	text-align:right;
 
+	@media screen and (width <= 480px) {
+		margin-left:auto;
+	}
+
+	@media screen and (width <= 360px) {
+		margin-top:20px;
+		text-align:inherit;
+	}
+
 	hr {
 		display:block;
 		width:100px;
@@ -63,6 +141,12 @@
 		background-color:currentColor;
 		color:inherit;
 		opacity:.1;
+
+		@media screen and (width <= 360px) {
+			width:auto;
+			margin-inline:10px;
+			flex:1 1 auto;
+		}
 	}
 }
 
@@ -79,6 +163,14 @@
 	background-color:var(--backgroundColor);
 	color:var(--colorText);
 	position:relative;
+
+	&:has(.Sort-Number:nth-child(6)) {
+		@media screen and (width <= 480px) {
+			max-width:100%;
+			padding:5px;
+			overflow-x:auto;
+		}
+	}
 
 	html.🌚 & {
 		--backgroundColor:oklch(from var(--colorBackgroundContentDarkMode) calc(l - 0.0216) calc(c - 0.002) calc(h - 1.95));
@@ -164,6 +256,11 @@
 		z-index:1;
 		overflow:hidden;
 
+		@media screen and (width <= 680px) {
+			width:30px;
+			line-height:30px;
+		}
+
 		&:hover {
 			&::after {
 				opacity:inherit;
@@ -196,6 +293,18 @@
 			content:'\f104';
 			font-size:.9rem;
 			line-height:42px;
+
+			@media screen and (width <= 680px) {
+				line-height:30px;
+			}
 		}
+	}
+}
+
+.Pagination-Counter {
+	@media screen and (width <= 360px) {
+		display:flex;
+		width:100%;
+		align-items:center;
 	}
 }

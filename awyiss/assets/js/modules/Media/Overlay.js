@@ -6,7 +6,6 @@ import Selectors from 'Media/Selectors';
 import Sortable from 'Media/Sortable';
 import Upload from 'Media/Upload';
 import {Sortable as SortableJS} from 'SortableJS/sortable';
-import Coloris from 'Coloris/Coloris';
 
 export default class Overlay {
 	/**
@@ -54,6 +53,17 @@ export default class Overlay {
 	 * @type {HTMLElement|function|null}
 	 */
 	opener = null;
+	/**
+	 * The selector for elements that open the overlay.
+	 *
+	 * @type {string}
+	 */
+	selector = 'a[href$="/media/overview/"], a[href*="/media/overview/media-folder-id:"]';
+	/**
+	 * The selectors instance.
+	 * @type {Selectors}
+	 */
+	selectors = null;
 
 	/**
 	 * Initialize the media overlay.
@@ -66,14 +76,22 @@ export default class Overlay {
 
 		// Bind a click event to all links which href ends with '/media/overview/',
 		// or contain '/media/overview/media-folder-id:'.
-		const links = document.querySelectorAll('a[href$="/media/overview/"], a[href*="/media/overview/media-folder-id:"]');
-		for (const link of links) {
+		const links = document.querySelectorAll(this.selector);
+		links.forEach(link => {
 			this.eventHandler.add('click', this.openOverlay.bind(this), link);
-		}
+		});
 
 		// Initialize the selectors
 		this.selectors = new Selectors();
 		this.selectors.overlay = this;
+
+		const observer = window.observer;
+		observer.addObserver(this.observeMutations.bind(this));
+
+		// Listen for hash changes
+		this.eventHandler.add('hashchange', this.handleHashChange.bind(this), window);
+		// Check hash on initial page load
+		this.handleHashChange();
 	}
 
 	bindAutoOverwriteChangeLabel() {
@@ -123,6 +141,11 @@ export default class Overlay {
 		// Bind a click event to the close button
 		window.eventHandler.add('click', () => {
 			this.element.classList.remove('Visible');
+
+			// If the url contains the media hash, remove it by going back to the previous state
+			if (window.location.hash === '#Media') {
+				window.history.back();
+			}
 		}, this.closeButton);
 	}
 
@@ -174,6 +197,9 @@ export default class Overlay {
 				if (activeFolder) {
 					this.activeFolderId = parseInt(activeFolder.id.replace(/^\D+/g, ''));
 				}
+
+				// Focus the overlay
+				this.element.focus();
 
 				return html;
 			});
@@ -262,6 +288,42 @@ export default class Overlay {
 				this.closeButton.dispatchEvent(new MouseEvent('click'));
 			}, button);
 		});
+
+		const buttonAreaToggle = this.element.querySelector('#MediaButtonArea-Toggle');
+		if (buttonAreaToggle) {
+			this.eventHandler.add('click', () => {
+				this.element.querySelector('.ButtonArea')?.classList.toggle('Visible');
+			}, buttonAreaToggle);
+
+			this.eventHandler.add('click', event => {
+				if (
+					event.target.closest('.ButtonArea') ||
+					event.target.matches('#MediaButtonArea-Toggle')
+				) {
+					return;
+				}
+
+				this.element.querySelector('.ButtonArea')?.classList.remove('Visible');
+			}, this.element);
+		}
+
+		const mediaFoldersToggle = this.element.querySelector('#MediaFolders-Toggle');
+		if (mediaFoldersToggle) {
+			this.eventHandler.add('click', () => {
+				this.element.querySelector('#MediaFolders-List').classList.toggle('Visible');
+			}, mediaFoldersToggle);
+
+			this.eventHandler.add('click', event => {
+				if (
+					event.target.closest('#MediaFolders-List') ||
+					event.target.matches('#MediaFolders-Toggle')
+				) {
+					return;
+				}
+
+				this.element.querySelector('#MediaFolders-List').classList.remove('Visible');
+			}, this.element);
+		}
 	}
 
 	/**
@@ -299,6 +361,17 @@ export default class Overlay {
 			if (event.target?.matches('a[href]')) {
 				this.ensureFolderIsVisible(event.target);
 			}
+
+			// Focus the overlay
+			this.element.focus();
+		}
+
+		// If the url doesn't contain the media hash, add it
+		if (!window.location.hash) {
+			// Add the media hash to the URL
+			window.history.pushState({
+				url: event.target?.matches('a[href]') ? event.target.href : null,
+			}, '', `${currentUrl}#Media`);
 		}
 	}
 
@@ -316,7 +389,7 @@ export default class Overlay {
 	}
 
 	/**
-	 * Bind the event to the overlay form loaded event.
+	 * Bind the event to the `overlayFormLoaded`-event.
 	 */
 	bindOverlayFormLoadedEvent() {
 		window.eventHandler.add('overlayFormLoaded', (event) => {
@@ -690,6 +763,67 @@ export default class Overlay {
 		// If there are items in the media list, we need to update the system order
 		if (this.mediaList.children.length > 0) {
 			this.sortable.saveSystemOrder();
+		}
+	}
+
+	/**
+	 * Handle URL hash changes
+	 * @returns {void}
+	 */
+	handleHashChange() {
+		const hasMediaHash = window.location.hash === '#Media';
+
+		if (hasMediaHash) {
+			let url = `${baseUrl}backend/${languageShortcode}/media/overview/`;
+
+			if (window.history.state?.url) {
+				url = window.history.state.url;
+			}
+
+			// Check if an element with the url as href exists
+			const element = document.querySelector(`a[href="${url}"]`);
+
+			if (element) {
+				// Open the overlay
+				this.openOverlay({
+					detail: {},
+					preventDefault: () => {},
+					stopPropagation: () => {},
+					target: element,
+				});
+			}
+		}
+		else {
+			// If the media overlay is open, close it
+			if (this.element && this.element.classList.contains('Visible')) {
+				this.element.classList.remove('Visible');
+				this.closeButton.dispatchEvent(new MouseEvent('click'));
+			}
+		}
+	}
+
+	/**
+	 * Observe mutations in the DOM.
+	 * @param mutation
+	 */
+	observeMutations(mutation) {
+		// If nodes were added
+		if (mutation.addedNodes.length > 0) {
+			// Iterate over each added node
+			mutation.addedNodes.forEach(node => {
+				if (node.nodeType !== Node.ELEMENT_NODE) {
+					return;
+				}
+
+				if (node.matches(this.selector)) {
+					this.eventHandler.add('click', this.openOverlay.bind(this), node);
+				}
+
+				const links = node.querySelectorAll(this.selector);
+				links.forEach(link => {
+					this.eventHandler.add('click', this.openOverlay.bind(this), link);
+				});
+			})
 		}
 	}
 }

@@ -40,8 +40,14 @@
 				gap:0 5px;
 				grid-template-columns:1fr 2fr;
 
-				html.Scale-Small & {
+				@media screen and (width <= 768px) {
 					padding-right:47px;
+				}
+
+				html.Scale-Small & {
+					@media screen and (width > 768px) {
+						padding-right:47px;
+					}
 				}
 			}
 

@@ -5,11 +5,19 @@
 
 <div class="{{ pluralVar[:1]|upper ~ pluralVar[1:] }} Overview">
 {% set fields = Bake.filterFields(fields, schema, modelObject, indexColumns, ['binary', 'text']) %}
-	{% verbatim %}{% block headlineOverview %}
-		<h1>{{ __('headline_overview') }}</h1>
-	{% endblock %}{% endverbatim %}
+	{% verbatim %}{% block headlinesOverview %}
+		<div class="Headlines">
+			{% block headlineOverview %}
+				<h1>{{ __('headline_overview') }}</h1>
+			{% endblock %}
+		</div>
+	{% endblock %}
 
-	{% verbatim %}{% block buttonArea %}
+	{% block buttonAreaToggle %}
+		{{ FormHelper.button(__('button_area_toggle'), {class: 'Button Button-Menu', id: 'ButtonArea-Toggle', name: 'button', type: 'button'}) }}
+	{% endblock %}
+
+	{% block buttonArea %}
 		<div class="ButtonArea">
 			{% block buttonsOverview %}
 				{% block overviewButtonAdd %}
@@ -33,10 +41,5 @@
 		<div class="ButtonArea ButtonArea-Bottom">
 			{{ block('buttonsOverview') }}
 		</div>
-	{% endblock %}
-
-	{% block overviewButtonFilter %}
-		{{ element('search/filter_button', {scope: '{% endverbatim %}{{ pluralVar }}{% verbatim %}'}) }}
-	{% endblock %}
-	{% endverbatim %}
+	{% endblock %}{% endverbatim %}
 </div>

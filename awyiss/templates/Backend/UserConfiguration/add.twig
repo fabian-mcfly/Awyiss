@@ -7,26 +7,32 @@
 {% do AuthorizationHelper.setAdditionalData({scope: configuration.scope}) %}
 
 <div class="Configuration Form Add">
-	{% if AuthorizationHelper.isAccessible('read') %}
-		{{ HtmlHelper.link(__('back_to_overview'), {action: 'overview'}, {class: 'BackToOverview'}) }}
-	{% endif %}
+	{% block headlinesAdd %}
+		<div class="Headlines">
+			{% if AuthorizationHelper.isAccessible('read') %}
+				{{ HtmlHelper.link(__('back_to_overview'), {action: 'overview'}, {class: 'BackToOverview'}) }}
+			{% endif %}
 
-	{% block headlineAdd %}
-		<h1>{{ __('headline_add') }}</h1>
+			{% block headlineAdd %}
+				<h1>{{ __('headline_add') }}</h1>
+			{% endblock %}
+		</div>
 	{% endblock %}
 
-	{{ FormHelper.create(configuration, {method: 'post', idPrefix: 'Configuration'}) }}
+	{% block buttonAreaToggle %}
+		{{ FormHelper.button(__('button_area_toggle'), {class: 'Button Button-Menu', id: 'ButtonArea-Toggle', name: 'button', type: 'button'}) }}
+	{% endblock %}
 
 	{% block buttonArea %}
 		<div class="ButtonArea">
 			{% block formAddButtons %}
 				{% block formAddButtonSave %}
-					{{ FormHelper.button(__('save'), {class: 'Button Button-Success Button-Save'}) }}
+					{{ FormHelper.button(__('save'), {class: 'Button Button-Success Button-Save', form: 'ConfigurationForm'}) }}
 				{% endblock %}
 
 				{% block formAddButtonSaveClose %}
 					{% if AuthorizationHelper.isAccessible('read') %}
-						{{ FormHelper.button(__('save_close'), {class: 'Button Button-SaveClose', name: 'submit', value: 'submit_close'}) }}
+						{{ FormHelper.button(__('save_close'), {class: 'Button Button-SaveClose', form: 'ConfigurationForm', name: 'submit', value: 'submit_close'}) }}
 					{% endif %}
 				{% endblock %}
 			{% endblock %}
@@ -42,8 +48,6 @@
 			{{ block('formAddButtons') }}
 		</div>
 	{% endblock %}
-
-	{{ FormHelper.end() }}
 </div>
 
 {% do AuthorizationHelper.resetAdditionalData() %}

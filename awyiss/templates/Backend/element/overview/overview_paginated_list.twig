@@ -10,8 +10,12 @@
 	{% set categories = _categories[ _categoriesIdentifier|pluralize|variable ] %}
 {% endif %}
 
+{% set tableFootColSpan -%}
+	{% block tableOverviewFootColSpan %}{{ localConfig.overview.displayedFields|length + 4 }}{% endblock %}
+{%- endset %}
+
 {% block tableOverview %}
-	<table class="Overview-Table">
+	<table class="Overview-Table Responsive-Table Responsive-TableGrid" style="--columns:{{ tableFootColSpan }}; --rows:{{ min(records|length, paginate.limit) }};">
 		{% block tableOverviewHead %}
 			<thead>
 				{% block tableOverviewHeadRow %}
@@ -222,9 +226,6 @@
 			</tbody>
 		{% endblock %}
 		{% block tableOverviewFoot %}
-			{% set tableFootColSpan -%}
-				{% block tableOverviewFootColSpan %}{{ localConfig.overview.displayedFields|length + 4 }}{% endblock %}
-			{%- endset %}
 			<tfoot>
 				<tr>
 					<td colspan="{{ tableFootColSpan }}">

@@ -4,7 +4,7 @@
 			&:has(.SortableChosen) {
 				.Overview-Fieldset {
 					&:not(:has(.ListItem)) {
-						background-color:#D5F1E5;
+						background-color:color-mix(in srgb, var(--colorSuccess) 20%, #FFFFFF);
 
 						html.🌚 & {
 							background-color:var(--colorSemiDark)
@@ -16,14 +16,6 @@
 
 		.Overview-Fieldset {
 			grid-column:1 / -1;
-
-			&:first-of-type {
-				border-top-right-radius:0;
-			}
-
-			&:last-of-type {
-				border-bottom-right-radius:0;
-			}
 
 			&:not(.Collapsed) {
 				&:not(:has(legend)) {

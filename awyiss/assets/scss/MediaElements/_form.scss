@@ -1,6 +1,8 @@
 .MediaElementsController {
 	.FormInputName-MediaElementSelectors,
 	.FormInputName-MediaCompAssignableModels {
+		container-type:inline-size;
+
 		.FormInputType-ListItem {
 			display:grid;
 			padding-right:57px;
@@ -8,13 +10,47 @@
 			//grid-template-columns:repeat(3, 1fr) 200px 200px;
 			grid-template-columns:repeat(4, 1fr);
 
-			html.Scale-Small & {
+			@container (width <= 640px) {
+				margin-bottom:30px;
+				grid-template-columns:repeat(2, 1fr);
+			}
+
+			@media screen and (width <= 768px) {
 				padding-right:47px;
 			}
 
-			.FormInput {
+			html.Scale-Small & {
+				@media screen and (width > 768px) {
+					padding-right:47px;
+				}
+			}
+
+			> .FormInput {
 				grid-column:auto / auto;
 				margin-bottom:0;
+
+				> .Label {
+					@container (width <= 640px) {
+						display:block;
+					}
+				}
+			}
+
+			.SortableHandle, {
+				@container (width <= 640px) {
+					top:calc(1rem + 7px);
+
+					@media screen and (width <= 540px) {
+						top:calc(1rem + 10px);
+					}
+				}
+			}
+
+			.ShowTranslationDialog,
+			.Button-Remove {
+				@container (width <= 640px) {
+					top:1.05rem;
+				}
 			}
 		}
 
@@ -26,6 +62,10 @@
 	.FormInputName-MediaCompAssignableModels {
 		.FormInputType-ListItem {
 			grid-template-columns:repeat(2, 1fr);
+
+			@container (width <= 640px) {
+				grid-template-columns:auto;
+			}
 		}
 	}
 }

@@ -1,33 +1,52 @@
-#Content,
-#OverlayForm {
-	.Overview,
-	.Form .Fieldsets {
-		display:grid;
-		width:100%;
-		gap:0 20px;
-		grid-template-columns:repeat(4, 1fr);
+#Content {
+	min-height:calc(100dvh - 80px - 54px - 60px);
+	padding:var(--rowGap) 40px;
 
-		> .sf-dump {
-			grid-column:1 / -1;
-			margin-bottom:calc(var(--lineHeightMain) * 2);
-		}
+	@media screen and (width <= 1024px) {
 	}
 
-	.Overview {
-		.ButtonArea {
-			&-Bottom {
-				margin-bottom:0;
-			}
+	@media screen and (width <= 768px) {
+		padding-top:var(--lineHeightMain);
+		padding-inline:20px;
+	}
+
+	@media screen and (width <= 540px) {
+		padding-top:calc(var(--lineHeightMain) * .5);
+		padding-inline:10px;
+	}
+
+	html.Scale-Small & {
+		@media screen and (width > 768px) {
+			padding:var(--lineHeightMain) 20px;
 		}
 	}
 
 	h1,
 	h2 {
 		width:fit-content;
-		grid-column:1 / -1;
+		hyphens:auto;
+		text-wrap:balance;
+
+		@media screen and (width <= 768px) {
+			font-size:clamp(2rem, 10vw, 3rem);
+		}
+
+		@media screen and (width <= 640px) {
+			padding-right:60px;
+		}
+
+		&:has(.Button-Subtle) {
+			padding-right:40px;
+			position:relative;
+		}
+
+		&:has(.Button-Subtle:nth-last-child(2)) {
+			padding-right:75px;
+		}
 
 		.Button-Subtle {
-			margin:0 0 0 -4px;
+			height:30px;
+			margin:auto 0;
 			padding:5px;
 			box-shadow:none;
 			background-image:none;
@@ -36,13 +55,16 @@
 			font-size:0;
 			line-height:0;
 			vertical-align:middle;
+			position:absolute;
+			top:calc((var(--fontSizeHeading) - 30px) / 2 - 2px);
+			right:0;
 
 			&:hover {
 				color:var(--colorBright);
 			}
 
-			&:first-of-type {
-				margin-left:5px;
+			&:nth-child(2) {
+				right:35px;
 			}
 
 			&::after {
@@ -63,17 +85,25 @@
 		}
 	}
 
+	h2 {
+		display:-webkit-box;
+		-webkit-box-orient:vertical;
+		-webkit-line-clamp:3;
+	}
+
 	a {
 		&.BackToOverview {
 			display:block;
 			width:fit-content;
-			margin-top:-1.25em;
 			border-bottom-width:0;
 			color:var(--colorMedium);
 			font-size:.8rem;
 			line-height:1;
 			position:relative;
 			z-index:1;
+			white-space:nowrap;
+			grid-column-start:1;
+			grid-row-start:1;
 
 			&::before {
 				@extend %LineAwesomeIcon;
@@ -102,17 +132,16 @@
 	}
 }
 
-#Content {
-	min-height:calc(100dvh - 80px - 54px - 60px);
-	padding:calc(var(--lineHeightMain) * 2) 40px var(--lineHeightMain);
+.Overview,
+.Form {
+	@extend %ContentGrid;
 }
 
 .Overview-Table,
 .Overview-List,
 fieldset {
 	min-width:0;
-	margin:0 0 calc(var(--lineHeightMain) * 2) 0;
-	padding:40px 40px 20px 40px;
+	padding:40px;
 	border-radius:5px;
 	box-shadow:0 0 10px rgba(0, 0, 0, .05);
 	background-color:var(--backgroundColorContent);
@@ -120,28 +149,42 @@ fieldset {
 	position:relative;
 	z-index:5;
 
+	@media screen and (width <= 1280px) {
+		padding-inline:20px;
+	}
+
+	@media screen and (width <= 768px) {
+		padding-block:30px 20px;
+	}
+
+	@media screen and (width <= 540px) {
+		padding:20px 10px 10px 10px;
+	}
+
 	&:has(.tox-tbtn--active) {
 		z-index:6;
 	}
 
 	html.Scale-Small & {
-		padding:30px 20px 0 20px;
+		@media screen and (width > 768px) {
+			padding:30px 20px 20px 20px;
+		}
 	}
 }
 
+.Table-Overflow,
+.Overview-Fieldset,
 .Overview-List,
 .Overview-Table {
 	grid-column:1 / -1;
 }
 
 .Overview-Fieldset {
-	grid-column:1 / -1;
-
 	&:not(:has(> legend)) {
-		padding-top:20px;
+		padding-block:20px;
 
-		h1 + & {
-			margin-top:var(--lineHeightMain);
+		@media screen and (width <= 540px) {
+			padding-block:10px;
 		}
 	}
 
@@ -159,15 +202,21 @@ fieldset {
 	}
 
 	h1 + & {
-		margin-top:calc(var(--lineHeightMain) * 2);
+		margin-top:var(--rowGap);
 	}
 }
 
 .Overview-List {
 	padding-top:20px;
 
-	html.Scale-Small & {
+	@media screen and (width <= 768px) {
 		padding-top:20px;
+	}
+
+	html.Scale-Small & {
+		@media screen and (width > 768px) {
+			padding-top:20px;
+		}
 	}
 
 	&:not(:has(.ListItem)) {
@@ -178,7 +227,6 @@ fieldset {
 
 			html.🌚 & {
 				@extend %EmptyListDarkMode;
-
 			}
 		}
 	}
@@ -186,27 +234,81 @@ fieldset {
 
 .Grid-12,
 fieldset {
+	--columns:12;
+
 	display:grid;
 	align-items:start;
-	gap:0 40px;
+	gap:20px;
 	grid-auto-rows:min-content;
-	grid-template-columns:repeat(12, 1fr);
+	grid-template-columns:repeat(var(--columns), 1fr);
+
+	@media screen and (width <= 540px) {
+		gap:10px;
+	}
+
+	@container (width <= 680px) {
+		--columns:6;
+	}
+
+	@container (width <= 460px) {
+		--columns:1;
+	}
 
 	> details,
 	> .sf-dump {
 		grid-column:1 / -1;
+	}
+
+	@for $i from 2 through 12 {
+		.ColumnSpan-#{$i} {
+			@container (width > 680px) {
+				grid-column-end:span #{$i};
+			}
+
+			@container (460px < width <= 680px) {
+				@if $i < 6 {
+					grid-column-end:span ceil($i / 2);
+				}
+				@else {
+					grid-column-end:span floor($i / 2);
+				}
+			}
+		}
+	}
+
+	@for $i from 1 through 12 {
+		.RowSpan-#{$i} {
+			grid-row-end:span #{$i};
+		}
 	}
 }
 
 fieldset {
 	transition:box-shadow .3s ease-in-out;
 
+	@media screen and (width <= 768px) {
+		// max-width ensures that the fieldset won't be wider than the viewport
+		// since they grow to fit the content (https://bugzilla.mozilla.org/show_bug.cgi?id=504622)
+		max-width:calc(100dvw - 40px);
+	}
+
+	@media screen and (width <= 540px) {
+		max-width:calc(100dvw - 20px);
+	}
+
+	html.Scale-Small & {
+		@media screen and (width > 768px) {
+			max-width:calc(100dvw - 40px);
+		}
+	}
+
 	&.Hidden {
 		display:none;
 	}
 
 	.Overview > &,
-	.Form .Fieldsets > &,
+	.Form .Main-Fieldsets > &,
+	.Form .Sidebar-Fieldsets > &,
 	&.Collapsible {
 		&.Collapsed {
 			legend {
@@ -261,18 +363,6 @@ fieldset {
 			box-shadow:0 0 10px rgba(0, 0, 0, .25);
 		}
 	}
-
-	@for $i from 1 through 12 {
-		.ColumnSpan-#{$i} {
-			grid-column-end:span #{$i};
-		}
-	}
-
-	@for $i from 1 through 12 {
-		.RowSpan-#{$i} {
-			grid-row-end:span #{$i};
-		}
-	}
 }
 
 legend {
@@ -294,8 +384,15 @@ legend {
 	cursor:default;
 	transition:background-color .3s ease-in-out, color .3s ease-in-out, box-shadow .3s ease-in-out;
 
-	html.Scale-Small & {
+	@media screen and (width <= 768px) {
 		margin-left:0;
+	}
+
+	@media screen and (width <= 540px) {
+		padding-inline:10px;
+		line-height:20px;
+		top:-15px;
+		left:10px;
 	}
 
 	html.🌚 & {
@@ -303,8 +400,16 @@ legend {
 		color:var(--colorLight);
 	}
 
+	html.Scale-Small & {
+		@media screen and (width > 768px) {
+			margin-left:0;
+		}
+	}
+
 	.Overview > fieldset > &,
 	.Form .Fieldsets > fieldset > &,
+	.Form .Main-Fieldsets > fieldset > &,
+	.Form .Sidebar-Fieldsets > fieldset > &,
 	fieldset.Collapsible > & {
 		padding-right:60px;
 		cursor:pointer;

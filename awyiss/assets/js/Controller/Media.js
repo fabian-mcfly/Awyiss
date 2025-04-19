@@ -3,7 +3,6 @@
 import Crop from 'Media/Crop';
 import Sortable from 'Media/Sortable';
 import Upload from 'Media/Upload';
-import Coloris from 'Coloris/Coloris';
 
 export default class MediaController {
 	/**
@@ -74,76 +73,79 @@ export default class MediaController {
 			});
 
 			// No add button? Most likely not authorized to add media items
-			if (document.querySelector('.Button-Add')) {
-				this.upload = new Upload(mediaList, {
-					dropZone: document.querySelector('#UploadQueue-DropZone'),
-					maxFileSize: document.querySelector('#uploadQueueItemTemplate').dataset.maxFileSize,
-					uploadData: {
-						media_folder_id: mediaList.dataset.mediaFolderId,
-					},
-					uploadPath: `${baseUrl}backend/${languageShortcode}/media/add/paginate:false/`
-				});
-			}
-		}
-		else {
-			// No add button? Most likely not authorized to add media items
 			if (!document.querySelector('.Button-Add')) {
 				return;
 			}
 
-			const overviewTable = document.querySelector('.Overview-Table');
-			const uploadQueue = document.querySelector('#UploadQueue');
-
-			this.upload = new Upload(overviewTable.querySelector('tbody'), {
+			this.upload = new Upload(mediaList, {
 				dropZone: document.querySelector('#UploadQueue-DropZone'),
 				maxFileSize: document.querySelector('#uploadQueueItemTemplate').dataset.maxFileSize,
-				queueElement: uploadQueue.querySelector('tbody'),
 				uploadData: {
-					media_folder_id: overviewTable.dataset.mediaFolderId,
+					media_folder_id: mediaList.dataset.mediaFolderId,
 				},
-				uploadPath: `${baseUrl}backend/${languageShortcode}/media/add/paginate:true/`
+				uploadPath: `${baseUrl}backend/${languageShortcode}/media/add/paginate:false/`
 			});
 
-			window.eventHandler.add('uploadQueueProcessingStarted', () => {
-				uploadQueue.classList.add('Visible');
-				overviewTable.classList.add('FetchInProgress');
-			});
+			return;
+		}
 
-			this.eventHandler.add('uploadQueueUploadComplete', () => {
-				// Clear the fetch timeout to prevent multiple requests
-				clearTimeout(this.afterUploadFetchTimeout);
+		// No add button? Most likely not authorized to add media items
+		if (!document.querySelector('.Button-Add')) {
+			return;
+		}
 
-				// Start a timer to fetch the media items after a file has been uploaded
-				this.afterUploadFetchTimeout = setTimeout(() => {
-					// noinspection JSIgnoredPromiseFromCall
-					this.fetchPaginatedOverview();
-				}, 1000);
-			}, uploadQueue);
+		const overviewTable = document.querySelector('.Overview-Table');
+		const uploadQueue = document.querySelector('#UploadQueue');
 
-			this.eventHandler.add('uploadQueueProcessingFinished', () => {
-				if (!uploadQueue.querySelector('.UploadQueue-Item-Error')) {
-					uploadQueue.classList.remove('Visible');
-				}
+		this.upload = new Upload(overviewTable.querySelector('tbody'), {
+			dropZone: document.querySelector('#UploadQueue-DropZone'),
+			maxFileSize: document.querySelector('#uploadQueueItemTemplate').dataset.maxFileSize,
+			queueElement: uploadQueue.querySelector('tbody'),
+			uploadData: {
+				media_folder_id: overviewTable.dataset.mediaFolderId,
+			},
+			uploadPath: `${baseUrl}backend/${languageShortcode}/media/add/paginate:true/`
+		});
 
-				// Initialize the rebuilding of the system order
-				// Make a POST request to the '/save-order' URL with the current order and the controller name
-				// noinspection JSIgnoredPromiseFromCall
-				fetch(`${baseUrl}backend/${languageShortcode}/media/rebuild-system-order/media-folder-id:${overviewTable.dataset.mediaFolderId}`, {
-					method: 'POST',
-					headers: {
-						'Accept': 'application/json',
-						'Content-Type': 'application/json',
-						'X-Requested-With': 'XMLHttpRequest',
-					},
-				});
+		window.eventHandler.add('uploadQueueProcessingStarted', () => {
+			uploadQueue.classList.add('Visible');
+			overviewTable.classList.add('FetchInProgress');
+		});
 
-				// Clear the fetch timeout to prevent multiple requests
-				clearTimeout(this.afterUploadFetchTimeout);
+		this.eventHandler.add('uploadQueueUploadComplete', () => {
+			// Clear the fetch timeout to prevent multiple requests
+			clearTimeout(this.afterUploadFetchTimeout);
 
+			// Start a timer to fetch the media items after a file has been uploaded
+			this.afterUploadFetchTimeout = setTimeout(() => {
 				// noinspection JSIgnoredPromiseFromCall
 				this.fetchPaginatedOverview();
-			}, uploadQueue);
-		}
+			}, 1000);
+		}, uploadQueue);
+
+		this.eventHandler.add('uploadQueueProcessingFinished', () => {
+			if (!uploadQueue.querySelector('.UploadQueue-Item-Error')) {
+				uploadQueue.classList.remove('Visible');
+			}
+
+			// Initialize the rebuilding of the system order
+			// Make a POST request to the '/save-order' URL with the current order and the controller name
+			// noinspection JSIgnoredPromiseFromCall
+			fetch(`${baseUrl}backend/${languageShortcode}/media/rebuild-system-order/media-folder-id:${overviewTable.dataset.mediaFolderId}`, {
+				method: 'POST',
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'application/json',
+					'X-Requested-With': 'XMLHttpRequest',
+				},
+			});
+
+			// Clear the fetch timeout to prevent multiple requests
+			clearTimeout(this.afterUploadFetchTimeout);
+
+			// noinspection JSIgnoredPromiseFromCall
+			this.fetchPaginatedOverview();
+		}, uploadQueue);
 	}
 
 	bindAutoOverwriteChangeLabel() {

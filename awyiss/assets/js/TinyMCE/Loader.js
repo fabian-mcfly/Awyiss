@@ -79,11 +79,13 @@ export default class Loader {
 		table_row_advtab: false,
 		table_sizing_mode: 'responsive',
 		table_use_colgroups: false,
-		toolbar: 'undo redo | bold italic underline strikethrough styles removeformat | link unlink anchor | blockquote bullist numlist'
+		toolbar: 'bold italic underline strikethrough styles removeformat | undo redo | link unlink anchor | blockquote bullist numlist'
 		+ ' | image | hr subscript superscript nonbreaking charmap | table | awyissModule | aligncenter alignright alignjustify outdent indent'
 		+ ' | copy cut paste pastetext | visualblocks visualchars | wordcount code | fullscreen',
 		toolbar_sticky: true,
-		toolbar_sticky_offset: document.documentElement.classList.contains('👀') ? 0 : 100,
+		toolbar_sticky_offset: document.documentElement.classList.contains('👀')
+			|| document.body.clientWidth <= 768
+			? 0 : 105,
 		//visualchars_default_state: true,
 	}
 	/**

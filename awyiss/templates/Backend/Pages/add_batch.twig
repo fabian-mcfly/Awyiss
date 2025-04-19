@@ -21,27 +21,35 @@
 {% block formControlRedirectLink %}{% endblock %}
 
 <div class="Pages Form AddBatch">
-	{% if AuthorizationHelper.isAccessible('read') %}
-		{{ HtmlHelper.link(__('back_to_overview'), {action: 'overview', pageId: page.id}, {class: 'BackToOverview'}) }}
-	{% endif %}
+	{% block headlinesAddBatch %}
+		<div class="Headlines">
+			{% if AuthorizationHelper.isAccessible('read') %}
+				{{ HtmlHelper.link(__('back_to_overview'), {action: 'overview', pageId: page.id}, {class: 'BackToOverview'}) }}
+			{% endif %}
 
-	{% block headlineAddBatch %}
-		<h1>{{ __('headline_add_batch') }}</h1>
+			{% block headlineAddBatch %}
+				<h1>{{ __('headline_add_batch') }}</h1>
+			{% endblock %}
+		</div>
 	{% endblock %}
 
-	{{ FormHelper.create(page, {method: 'post', idPrefix: 'page'}) }}
+	{% block buttonAreaToggle %}
+		{{ FormHelper.button(__('button_area_toggle'), {class: 'Button Button-Menu', id: 'ButtonArea-Toggle', name: 'button', type: 'button'}) }}
+	{% endblock %}
 
 	{% block buttonArea %}
 		<div class="ButtonArea">
 			{% block formAddButtons %}
 				{% block formAddButtonSaveClose %}
 					{% if AuthorizationHelper.isAccessible('read') %}
-						{{ FormHelper.button(__('save_close'), {class: 'Button Button-SaveClose', name: 'submit', value: 'submit_close'}) }}
+						{{ FormHelper.button(__('save_close'), {class: 'Button Button-SaveClose', form: 'PageForm', name: 'submit', value: 'submit_close'}) }}
 					{% endif %}
 				{% endblock %}
 			{% endblock %}
 		</div>
 	{% endblock %}
+
+	{{ FormHelper.create(page, {method: 'post', id: 'PageForm', idPrefix: 'page'}) }}
 
 	{% block fieldsets %}
 		<div class="Fieldsets">
@@ -73,11 +81,11 @@
 		</div>
 	{% endblock %}
 
+	{{ FormHelper.end() }}
+
 	{% block buttonAreaBottom %}
 		<div class="ButtonArea ButtonArea-Bottom">
 			{{ block('formAddButtons') }}
 		</div>
 	{% endblock %}
-
-	{{ FormHelper.end() }}
 </div>

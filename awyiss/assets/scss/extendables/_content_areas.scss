@@ -16,7 +16,7 @@
 	}
 
 	.Overview-Fieldset {
-		grid-column:1 / span 4;
+		grid-column:1 / -1;
 
 		&.Collapsed {
 			.NestedList-Compact {
@@ -24,20 +24,12 @@
 			}
 		}
 
-		&:first-of-type {
-			border-top-right-radius:0;
-		}
-
-		&:last-of-type {
-			border-bottom-right-radius:0;
-		}
-
 		&:not(.Collapsed) {
 			&:not(:has(.ListItem)) {
 				padding-bottom:40px;
 
 				&:has(.SortableDragging) {
-					background-color:#D5F1E5;
+					background-color:color-mix(in srgb, var(--colorSuccess) 20%, #FFFFFF);
 
 					html.🌚 & {
 						background-color:var(--colorSemiDark)
@@ -49,7 +41,6 @@
 
 					html.🌚 & {
 						@extend %EmptyListDarkMode;
-
 					}
 				}
 

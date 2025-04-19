@@ -10,15 +10,26 @@
 		color:var(--colorBright);
 		//noinspection CssNoGenericFontName
 		font-family:var(--fontStackHeading);
-		font-size:1rem;
+		font-size:1.1rem;
 		line-height:52px;
 		position:absolute;
 		top:0;
 		left:0;
 
-		html.Scale-Small & {
+		@media screen and (width <= 768px) {
 			height:42px;
 			line-height:42px;
+		}
+
+		@media screen and (width <= 540px) {
+			padding-inline:10px;
+		}
+
+		html.Scale-Small & {
+			@media screen and (width > 768px) {
+				height:42px;
+				line-height:42px;
+			}
 		}
 	}
 

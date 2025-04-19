@@ -48,12 +48,18 @@ $relativePath:'../../';
 	color:var(--colorBright);
 	font-size:1.1rem;
 
-	html.Scale-Small & {
+	@media screen and (width <= 768px) {
 		padding-block:6px 6px;
 	}
 
 	html.🌚 & {
 		--backgroundColor:oklch(from var(--colorSemiDarkDarkMode) calc(l + 0.0389) calc(c + 0.004) calc(h - 0.55));
+	}
+
+	html.Scale-Small & {
+		@media screen and (width > 768px) {
+			padding-block:6px 6px;
+		}
 	}
 
 	&:hover,
@@ -389,16 +395,28 @@ $relativePath:'../../';
 		scrollbar-color:var(--scrollbarColor);
 		scrollbar-width:thin;
 
-		html.Scale-Small & {
+		@media screen and (width <= 768px) {
 			padding:20px;
+		}
+
+		html.Scale-Small & {
+			@media screen and (width > 768px) {
+				padding:20px;
+			}
 		}
 	}
 
 	&__footer {
 		padding:0 40px 40px 40px;
 
-		html.Scale-Small & {
+		@media screen and (width <= 768px) {
 			padding:0 20px 20px 20px;
+		}
+
+		html.Scale-Small & {
+			@media screen and (width > 768px) {
+				padding:0 20px 20px 20px;
+			}
 		}
 	}
 }

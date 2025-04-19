@@ -10,21 +10,32 @@
 {% set selectedMenuId = CategoriesHelper.getSelectedCategory('menu') %}
 
 <div class="MenuEntries Overview">
-	{% if AuthorizationHelper.isAccessible('read') %}
-		{{ HtmlHelper.link(__('menus_overview'), {controller: 'menus', action: 'overview'}, {class: 'BackToOverview'}) }}
-	{% endif %}
+	{% block headlinesOverview %}
+		<div class="Headlines">
+			{% if AuthorizationHelper.isAccessible('read') %}
+				{{ HtmlHelper.link(__('menus_overview'), {controller: 'menus', action: 'overview'}, {class: 'BackToOverview'}) }}
+			{% endif %}
 
-	{% block headlineOverview %}
-		<h1>{{ __('headline_overview') }}</h1>
-		<h2>
-			{{ menu.title }}
-
-			{% block buttonEdit %}
-				{% if AuthorizationHelper.isAccessible('update') %}
-					{{ HtmlHelper.link(__('edit'), {controller: 'menus', action: 'edit', id: menu.id}, {class: 'Button Button-Edit Button-Small Button-Subtle'}) }}
-				{% endif %}
+			{% block headlineOverview %}
+				<h1>{{ __('headline_overview') }}</h1>
 			{% endblock %}
-		</h2>
+
+			{% block subheadlineOverview %}
+				<h2>
+					{{ menu.title }}
+
+					{% block buttonEdit %}
+						{% if AuthorizationHelper.isAccessible('update') %}
+							{{ HtmlHelper.link(__('edit'), {controller: 'menus', action: 'edit', id: menu.id}, {class: 'Button Button-Edit Button-Small Button-Subtle'}) }}
+						{% endif %}
+					{% endblock %}
+				</h2>
+			{% endblock %}
+		</div>
+	{% endblock %}
+
+	{% block buttonAreaToggle %}
+		{{ FormHelper.button(__('button_area_toggle'), {class: 'Button Button-Menu', id: 'ButtonArea-Toggle', name: 'button', type: 'button'}) }}
 	{% endblock %}
 
 	{% block buttonArea %}
@@ -72,32 +83,34 @@
 			{% include '@Backend/element/overview/overview_paginated_list.twig' with _context|merge({records: menuEntries.items().toArray()}) %}
 		{% endblock %}
 	{% else %}
-		{% block listPages %}
-			<div class="Overview-List Pages-List">
-				{% from '@Backend/macro/nested_list.twig' import nestedList %}
-				{{ nestedList(pages, _context|merge({
-					identifier: 'Page',
-					template: '@Backend/MenuEntries/overview_nested_list_page_item.twig',
-					data: {
-						nestable: false,
-						sortable: false,
-					},
-				})) }}
-			</div>
-		{% endblock %}
-		{% block listOverview %}
-			<div class="Overview-List">
-				{% from '@Backend/macro/nested_list.twig' import nestedList %}
-				{{ nestedList(menuEntries, _context|merge({
-					data: {
-						'menu-id': selectedMenuId,
-						sortable: _filter['menu_entries']['active'] == false,
-					},
-					displayedFields: localConfig.overview.displayedFields,
-					identifier: 'MenuEntry',
-				})) }}
-			</div>
-		{% endblock %}
+		<div id="Lists">
+			{% block listPages %}
+				<div class="Overview-List Pages-List">
+					{% from '@Backend/macro/nested_list.twig' import nestedList %}
+					{{ nestedList(pages, _context|merge({
+						identifier: 'Page',
+						template: '@Backend/MenuEntries/overview_nested_list_page_item.twig',
+						data: {
+							nestable: false,
+							sortable: false,
+						},
+					})) }}
+				</div>
+			{% endblock %}
+			{% block listOverview %}
+				<div class="Overview-List Entries-List">
+					{% from '@Backend/macro/nested_list.twig' import nestedList %}
+					{{ nestedList(menuEntries, _context|merge({
+						data: {
+							'menu-id': selectedMenuId,
+							sortable: _filter['menu_entries']['active'] == false,
+						},
+						displayedFields: localConfig.overview.displayedFields,
+						identifier: 'MenuEntry',
+					})) }}
+				</div>
+			{% endblock %}
+		</div>
 	{% endif %}
 
 	{% block buttonAreaBottom %}

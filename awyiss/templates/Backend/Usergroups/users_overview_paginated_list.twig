@@ -3,8 +3,10 @@
 @var _view \Awyiss\View\BackendView
 #}
 
+{% set tableFootColSpan = localConfig.overview.displayedFields|length + 3 %}
+
 {% block tableOverview %}
-	<table class="Overview-Table">
+	<table class="Overview-Table Responsive-Table" style="--columns:{{ tableFootColSpan }}; --rows:{{ users|length }};">
 		{% block tableOverviewHead %}
 			<thead>
 				{% block tableOverviewHeadRow %}

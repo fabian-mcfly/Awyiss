@@ -1,5 +1,5 @@
 .SystemController.ClearCacheAction {
 	.FlashMessage {
-		margin-top:calc(var(--lineHeightMain) * 2);
+		margin-top:var(--rowGap);
 	}
 }

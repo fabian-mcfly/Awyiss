@@ -16,10 +16,14 @@
 #}
 
 <div class="System ClearCache">
-	{% block headlineClearCache %}
-		{{ HtmlHelper.link(__('back_to_overview'), {controller: 'System', action: 'analyze'}, {class: 'BackToOverview'}) }}
+	{% block headlinesClearCache %}
+		<div class="Headlines">
+			{{ HtmlHelper.link(__('back_to_overview'), {controller: 'System', action: 'analyze'}, {class: 'BackToOverview'}) }}
 
-		<h1>{{ __('headline_clear_cache') }}</h1>
+			{% block headlineClearCache %}
+				<h1>{{ __('headline_clear_cache') }}</h1>
+			{% endblock %}
+		</div>
 	{% endblock %}
 
 	{% if runningJob.completed is empty	%}

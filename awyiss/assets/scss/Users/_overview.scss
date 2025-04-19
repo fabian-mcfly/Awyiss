@@ -1,0 +1,11 @@
+.UsersController {
+	.Overview-Table {
+		td {
+			&.TableCell-Username {
+				font-size:1rem;
+				font-weight:700;
+				line-height:1.2;
+			}
+		}
+	}
+}

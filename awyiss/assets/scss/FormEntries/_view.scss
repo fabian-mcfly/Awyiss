@@ -7,7 +7,7 @@
 			max-height:80dvh;
 			aspect-ratio:16 / 9;
 			border-radius:5px;
-			margin:calc(var(--lineHeightMain) * 2) auto 0;
+			margin:var(--rowGap) auto 0;
 			border:0 none;
 			scrollbar-width:thin;
 		}

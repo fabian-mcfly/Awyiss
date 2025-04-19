@@ -7,138 +7,157 @@
 
 {%- if associations.BelongsToMany is defined %}
 {%- for assocName, assocData in associations.BelongsToMany %}
-		{% verbatim %}{{ CategoriesHelper.control('{% endverbatim %}{{ assocData.property }}{% verbatim %}._ids', {options: {% endverbatim %}{{ assocData.variable }}{% verbatim %}}) }}{% endverbatim %}
+
+{% verbatim %}{{ CategoriesHelper.control('{% endverbatim %}{{ assocData.property }}{% verbatim %}._ids', {options: {% endverbatim %}{{ assocData.variable }}{% verbatim %}}) }}{% endverbatim %}
 
 {%- endfor %}
 {% endif %}
 {% verbatim %}
 
+{{ FormHelper.create({% endverbatim %}{{ singularVar }}{% verbatim %}, {
+	id: '{% endverbatim %}{{ singularVar|camelize }}{% verbatim %}Form',
+	idPrefix: '{% endverbatim %}{{ singularVar }}{% verbatim %}',
+	method: 'post',
+}) }}
+
+{% block sidebarToggle %}
+	{{ FormHelper.button(__('sidebar_toggle'), {class: 'Button Button-Configure', id: 'Sidebar-Toggle', name: 'button', type: 'button'}) }}
+{% endblock %}
+
 {% block fieldsets %}
 	<div class="Fieldsets">
-		{% block fieldsetPresentation %}
-			<fieldset class="Fieldset-Presentation">
-				<legend>{{ __('fieldset_presentation') }}</legend>
+		{% block mainFieldsets %}
+			<div class="Main-Fieldsets">
+				{% block fieldsetGeneral %}
+					<fieldset class="Fieldset-General">
+						<legend>{{ __('fieldset_general') }}</legend>
 
-				{% block fieldsetPresentationInner %}
-					{% block fieldsetPresentationAttributes %}
-						{{ AttributesHelper.allControls('presentation') }}
-					{% endblock %}
+						{% block fieldsetGeneralInner %}
+				{% endverbatim %}
+				{% for field in fields %}
+				{%- if field not in ['deleted', 'created_on', 'created_by', 'changed_on', 'changed_by', 'deleted_on', 'deleted_by']|merge(primaryKey) %}
+						{% verbatim %}{% block formControl{% endverbatim %}{{ field|camelize }}{% verbatim %} %}
+				{% endverbatim %}
+
+				{%- if keyFields[field] is defined %}
+				{%- set fieldData = Bake.columnData(field, schema) %}
+				{%- if fieldData.null %}
+							{% verbatim %}{{ FormHelper.control('{% endverbatim %}{{ field }}{% verbatim %}', {options: {% endverbatim %}{{ keyFields[field] }}{% verbatim %}, empty: true}) }}{% endverbatim %}
+				{{- "\n" }}
+				{%- else %}
+							{% verbatim %}{{ FormHelper.control('{% endverbatim %}{{ field }}{% verbatim %}', {options: {% endverbatim %}{{ keyFields[field] }}{% verbatim %}}) }}{% endverbatim %}
+				{{- "\n" }}
+				{%- endif %}
+				{%- elseif field == 'parent_id' %}
+							{% verbatim %}{% if (_categoriesIdentifier is defined) %}
+								{{ CategoriesHelper.control(_categoriesIdentifier) }}
+							{% endif %}
+
+							{% if (parent{% endverbatim %}{{ pluralVar|camelize }}{% verbatim %} is not null) %}
+								{{ FormHelper.control('parent_id', {options: hashPrinter(parent{% endverbatim %}{{ pluralVar|camelize }}{% verbatim %}, 'label', 'id', '- ')}) }}
+							{% endif %}{% endverbatim %}
+				{{- "\n" }}
+				{%- elseif field == 'system_order' %}
+							{% verbatim %}{% if systemOrderField|variable == 'systemOrder' %}
+								{{ SystemOrderHelper.control('system_order') }}
+							{% endif %}{% endverbatim %}
+				{{- "\n" }}
+				{%- elseif field == 'languages_shortcode' %}
+							{% verbatim %}{{ LocaleHelper.control('language_shortcode', {languageRealm: languageRealm}) }}{% endverbatim %}
+				{{- "\n" }}
+				{%- elseif field not in ['deleted', 'created_on', 'created_by', 'changed_on', 'changed_by', 'deleted_on', 'deleted_by'] %}
+				{%- set fieldData = Bake.columnData(field, schema) %}
+				{%- if fieldData.type in ['date', 'datetime', 'time'] and fieldData.null %}
+							{% verbatim %}{{ FormHelper.control('{% endverbatim %}{{ field }}{% verbatim %}', {empty: true}) }}{% endverbatim %}
+				{{- "\n" }}
+				{%- else %}
+							{% verbatim %}{{ FormHelper.control('{% endverbatim %}{{ field }}{% verbatim %}') }}{% endverbatim %}
+				{{- "\n" }}
+				{%- endif %}
+				{%- endif %}
+						{% verbatim %}{% endblock %}
+
+				{% endverbatim -%}
+				{%- endif %}
+				{%- endfor %}
+				{% verbatim %}
+							{% block fieldsetGeneralAttributes %}
+								{{ AttributesHelper.allControls('general') }}
+							{% endblock %}
+						{% endblock %}
+					</fieldset>
 				{% endblock %}
-			</fieldset>
+
+				{% block fieldsetContent %}
+					<fieldset class="Fieldset-Content">
+						<legend>{{ __('fieldset_content') }}</legend>
+
+						{% block fieldsetContentInner %}
+							{% block fieldsetContentAttributes %}
+								{{ AttributesHelper.allControls('content') }}
+							{% endblock %}
+						{% endblock %}
+					</fieldset>
+				{% endblock %}
+
+				{% block fieldsetMedia %}
+					<fieldset class="Fieldset-Media">
+						<legend>{{ __('fieldset_media') }}</legend>
+
+						{% block fieldsetMediaInner %}
+							{{ cell('Backend/MediaElements', [{% endverbatim %}{{ singularVar }}{% verbatim %}]) }}
+
+							{% block fieldsetMediaAttributes %}
+								{{ AttributesHelper.allControls('media') }}
+							{% endblock %}
+						{% endblock %}
+					</fieldset>
+				{% endblock %}
+
+				{% block fieldsetMediaElementAssignments %}
+					{{ cell('Backend/MediaElements::elementAssignments', [{% endverbatim %}{{ singularVar }}{% verbatim %}]) }}
+				{% endblock %}
+			</div>
 		{% endblock %}
 
-		{% block fieldsetConditions %}
-			<fieldset class="Fieldset-Conditions">
-				<legend>{{ __('fieldset_conditions') }}</legend>
+		{% block sidebarFieldsets %}
+			<div class="Sidebar-Fieldsets">
+				{% block fieldsetPresentation %}
+					<fieldset class="Fieldset-Presentation">
+						<legend>{{ __('fieldset_presentation') }}</legend>
 
-				{% block fieldsetConditionsInner %}
-					{% block fieldsetConditionsAttributes %}
-						{{ AttributesHelper.allControls('conditions') }}
-					{% endblock %}
+						{% block fieldsetPresentationInner %}
+							{% block fieldsetPresentationAttributes %}
+								{{ AttributesHelper.allControls('presentation') }}
+							{% endblock %}
+						{% endblock %}
+					</fieldset>
 				{% endblock %}
-			</fieldset>
-		{% endblock %}
 
-		{% block fieldsetGeneral %}
-			<fieldset class="Fieldset-General">
-				<legend>{{ __('fieldset_general') }}</legend>
+				{% block fieldsetConditions %}
+					<fieldset class="Fieldset-Conditions">
+						<legend>{{ __('fieldset_conditions') }}</legend>
 
-				{% block fieldsetGeneralInner %}
-		{% endverbatim %}
-		{% for field in fields %}
-		{%- if field not in ['deleted', 'created_on', 'created_by', 'changed_on', 'changed_by', 'deleted_on', 'deleted_by']|merge(primaryKey) %}
-				{% verbatim %}{% block formControl{% endverbatim %}{{ field|camelize }}{% verbatim %} %}
-		{% endverbatim %}
-
-		{%- if keyFields[field] is defined %}
-		{%- set fieldData = Bake.columnData(field, schema) %}
-		{%- if fieldData.null %}
-					{% verbatim %}{{ FormHelper.control('{% endverbatim %}{{ field }}{% verbatim %}', {options: {% endverbatim %}{{ keyFields[field] }}{% verbatim %}, empty: true}) }}{% endverbatim %}
-		{{- "\n" }}
-		{%- else %}
-					{% verbatim %}{{ FormHelper.control('{% endverbatim %}{{ field }}{% verbatim %}', {options: {% endverbatim %}{{ keyFields[field] }}{% verbatim %}}) }}{% endverbatim %}
-		{{- "\n" }}
-		{%- endif %}
-		{%- elseif field == 'parent_id' %}
-					{% verbatim %}{% if (_categoriesIdentifier is defined) %}
-						{{ CategoriesHelper.control(_categoriesIdentifier) }}
-					{% endif %}
-
-					{% if (parent{% endverbatim %}{{ pluralVar|camelize }}{% verbatim %} is not null) %}
-						{{ FormHelper.control('parent_id', {options: hashPrinter(parent{% endverbatim %}{{ pluralVar|camelize }}{% verbatim %}, 'label', 'id', '- ')}) }}
-					{% endif %}{% endverbatim %}
-		{{- "\n" }}
-		{%- elseif field == 'system_order' %}
-					{% verbatim %}{% if systemOrderField|variable == 'systemOrder' %}
-						{{ SystemOrderHelper.control('system_order') }}
-					{% endif %}{% endverbatim %}
-		{{- "\n" }}
-		{%- elseif field == 'languages_shortcode' %}
-					{% verbatim %}{{ LocaleHelper.control('language_shortcode', {languageRealm: languageRealm}) }}{% endverbatim %}
-		{{- "\n" }}
-		{%- elseif field not in ['deleted', 'created_on', 'created_by', 'changed_on', 'changed_by', 'deleted_on', 'deleted_by'] %}
-		{%- set fieldData = Bake.columnData(field, schema) %}
-		{%- if fieldData.type in ['date', 'datetime', 'time'] and fieldData.null %}
-					{% verbatim %}{{ FormHelper.control('{% endverbatim %}{{ field }}{% verbatim %}', {empty: true}) }}{% endverbatim %}
-		{{- "\n" }}
-		{%- else %}
-					{% verbatim %}{{ FormHelper.control('{% endverbatim %}{{ field }}{% verbatim %}') }}{% endverbatim %}
-		{{- "\n" }}
-		{%- endif %}
-		{%- endif %}
-				{% verbatim %}{% endblock %}
-
-		{% endverbatim -%}
-		{%- endif %}
-		{%- endfor %}
-		{% verbatim %}
-					{% block fieldsetGeneralAttributes %}
-						{{ AttributesHelper.allControls('general') }}
-					{% endblock %}
+						{% block fieldsetConditionsInner %}
+							{% block fieldsetConditionsAttributes %}
+								{{ AttributesHelper.allControls('conditions') }}
+							{% endblock %}
+						{% endblock %}
+					</fieldset>
 				{% endblock %}
-			</fieldset>
-		{% endblock %}
 
-		{% block fieldsetContent %}
-			<fieldset class="Fieldset-Content">
-				<legend>{{ __('fieldset_content') }}</legend>
+				{% block fieldsetAttributes %}
+					<fieldset class="Fieldset-Attributes">
+						<legend>{{ __('fieldset_attributes') }}</legend>
 
-				{% block fieldsetContentInner %}
-					{% block fieldsetContentAttributes %}
-						{{ AttributesHelper.allControls('content') }}
-					{% endblock %}
+						{% block fieldsetAttributesInner %}
+							{% block fieldsetAttributesAttributes %}
+								{{ AttributesHelper.allControls('attributes') }}
+							{% endblock %}
+						{% endblock %}
+					</fieldset>
 				{% endblock %}
-			</fieldset>
-		{% endblock %}
-
-		{% block fieldsetMedia %}
-			<fieldset class="Fieldset-Media">
-				<legend>{{ __('fieldset_media') }}</legend>
-
-				{% block fieldsetMediaInner %}
-					{{ cell('Backend/MediaElements', [{% endverbatim %}{{ singularVar }}{% verbatim %}]) }}
-
-					{% block fieldsetMediaAttributes %}
-						{{ AttributesHelper.allControls('media') }}
-					{% endblock %}
-				{% endblock %}
-			</fieldset>
-		{% endblock %}
-
-		{% block fieldsetMediaElementAssignments %}
-			{{ cell('Backend/MediaElements::elementAssignments', [{% endverbatim %}{{ singularVar }}{% verbatim %}]) }}
-		{% endblock %}
-
-		{% block fieldsetAttributes %}
-			<fieldset class="Fieldset-Attributes">
-				<legend>{{ __('fieldset_attributes') }}</legend>
-
-				{% block fieldsetAttributesInner %}
-					{% block fieldsetAttributesAttributes %}
-						{{ AttributesHelper.allControls('attributes') }}
-					{% endblock %}
-				{% endblock %}
-			</fieldset>
+			</div>
 		{% endblock %}
 
 		{% block formInputReloadForm %}
@@ -146,4 +165,10 @@
 		{% endblock %}
 	</div>
 {% endblock %}
+
+{% block lockDialog %}
+	{{ element('lock_dialog', {entity: {% endverbatim %}{{ singularVar }}{% verbatim %}}) }}
+{% endblock %}
+
+{{ FormHelper.end() }}
 {% endverbatim %}

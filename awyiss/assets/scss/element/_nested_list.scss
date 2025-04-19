@@ -7,6 +7,10 @@
 	margin-left:40px;
 	border-radius:5px;
 
+	@media screen and (width <= 768px) {
+		margin-left:20px;
+	}
+
 	html.🌚 & {
 		--backgroundColorOdd:oklch(from var(--colorBackgroundContentDarkMode) calc(l + 0.0448) calc(c + 0.005) calc(h - 0.4));
 		--backgroundColorEven:oklch(from var(--colorBackgroundContentDarkMode) calc(l + 0.0448) calc(c + 0.005) calc(h - 0.4));
@@ -28,7 +32,7 @@
 			height:20px;
 			margin:auto;
 			position:sticky;
-			top:100px;
+			top:110px;
 
 			html.👀 & {
 				top:20px;
@@ -40,8 +44,8 @@
 		margin:0 -20px;
 		grid-column:1 / span 12;
 
-		html.Scale-Small & {
-			margin:0 0 20px 0;
+		@media screen and (width <= 1280px) {
+			margin-inline:0;
 		}
 
 		&.SortableDragging {
@@ -76,7 +80,11 @@
 
 		&.Level1 {
 			padding-block:.5rem .25rem;
-			margin:-.5rem -25px;
+			margin:-.5rem -25px calc(-.5rem - 2px);
+
+			@media screen and (width <= 1280px) {
+				margin-inline:-5px;
+			}
 
 			&.SortableDragging {
 				&:has(.SortableChosen[data-nestable="false"]) {
@@ -128,7 +136,9 @@
 			}
 
 			html.Scale-Small & {
-				margin-inline:-5px;
+				@media screen and (width > 768px) {
+					margin-inline:-5px;
+				}
 			}
 		}
 
@@ -146,8 +156,9 @@
 		.ListItem {
 			margin:0 0 .25rem 0;
 			padding:0 5px;
+			container:listItem / inline-size;
 
-			html.Scale-Small & {
+			@media screen and (width <= 768px) {
 				padding:0 5px;
 
 				&:not([class*="ColumnIndent-"]) {
@@ -155,7 +166,25 @@
 				}
 			}
 
-			&.Narrow {
+			html.Scale-Small & {
+				@media screen and (width > 768px) {
+					padding:0 5px;
+
+					&:not([class*="ColumnIndent-"]) {
+						margin-inline:0;
+					}
+				}
+			}
+
+			@container listItem (width < 300px) {
+				&:has(> .ListItem-ContextMenu) {
+					> .ListItem-Inner {
+						&::after {
+							opacity:1;
+						}
+					}
+				}
+
 				> .ListItem-Inner {
 					padding-right:30px;
 					grid-template-columns:1fr;
@@ -171,32 +200,12 @@
 					}
 
 					&::after {
-						@extend %LineAwesomeIcon;
-						content:'\f141';
-						width:30px;
-						height:100%;
-						line-height:58px;
-						border-radius:0 5px 5px 0;
-						background-color:var(--colorMedium);
-						color:var(--colorBright);
-						font-size:20px;
-						text-align:center;
-						position:absolute;
-						top:0;
-						right:0;
-						z-index:20;
-						opacity:.1;
-						transition:opacity .3s ease-in-out;
-						cursor:default;
+						display:block;
 					}
 
 					.AuditInfo,
 					.Actions {
 						display:none;
-					}
-
-					.Data {
-						padding-inline:10px;
 					}
 				}
 
@@ -215,29 +224,73 @@
 
 			&-Inner {
 				--listItemAuditInfoColumnWidth:36px;
-				--listItemLastColumnWidth:120px;
+				--listItemLastColumnWidth:110px;
 
 				padding:.5rem 10px;
 				border-radius:5px;
 				background-color:transparent;
 				border:1px solid oklch(from var(--colorLight) calc(l - 0.0454) calc(c + 0.006) calc(h + 0.07));
 				cursor:move;
+				container-name:none;
+
+				@media screen and (width <= 1024px) {
+					padding-block:.35rem;
+				}
+
+				@media screen and (width <= 768px) {
+					padding-block:.25rem;
+				}
+
+				@media screen and (width <= 500px) {
+					grid-template-columns:auto var(--listItemAuditInfoColumnWidth) var(--listItemLastColumnWidth);
+					grid-column:auto;
+				}
 
 				html.🌚 & {
 					border-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l + 0.0448) calc(c + 0.005) calc(h - 0.4));
 				}
 
 				html.Scale-Medium & {
-					padding-block:.35rem;
+					@media screen and (width > 1024px) {
+						padding-block:.35rem;
+					}
 				}
 
 				html.Scale-Small & {
-					padding-block:.25rem;
+					@media screen and (width > 768px) {
+						padding-block:.25rem;
+					}
 				}
 
 				&:hover {
 					~ .Resizer {
 						opacity:.5;
+					}
+				}
+
+				&::after {
+					@extend %LineAwesomeIcon;
+
+					display:none;
+					content:'\f141';
+					width:30px;
+					height:100%;
+					border-radius:0 5px 5px 0;
+					background-color:var(--colorMedium);
+					color:var(--colorBright);
+					font-size:20px;
+					line-height:48px;
+					text-align:center;
+					position:absolute;
+					top:0;
+					right:0;
+					z-index:20;
+					opacity:.1;
+					transition:opacity .3s ease-in-out;
+					cursor:pointer;
+
+					@media screen and (width <= 768px) {
+						line-height:44px;
 					}
 				}
 			}
@@ -246,9 +299,16 @@
 		.AuditInfo {
 			margin-block:0;
 			cursor:default;
+
+			@media screen and (width <= 768px) {
+				margin-top:2px;
+				margin-bottom:-2px;
+			}
 		}
 
 		.Data {
+			padding-inline:0;
+
 			.Title {
 				width:100%;
 				margin:0;
@@ -257,10 +317,18 @@
 				line-height:36px;
 				flex-basis:100%;
 
-				html.Scale-Small & {
+				@media screen and (width <= 768px) {
 					width:100%;
-					line-height:30px;
+					line-height:36px;
 					flex-basis:100%;
+				}
+
+				html.Scale-Small & {
+					@media screen and (width > 768px) {
+						width:100%;
+						line-height:30px;
+						flex-basis:100%;
+					}
 				}
 			}
 		}
@@ -270,10 +338,16 @@
 		}
 
 		.Actions {
-			width:120px;
+			width:100%;
 			font-size:0;
 			line-height:0;
 			text-align:right;
+
+			@media screen and (width <= 500px) {
+				display:block;
+				margin-top:0;
+				grid-column:auto;
+			}
 
 			.Button {
 				width:56px;
@@ -282,70 +356,121 @@
 				font-size:0;
 				line-height:0;
 
-				html.Scale-Small & {
+				@media screen and (width <= 768px) {
 					height:30px;
+				}
+
+				html.Scale-Small & {
+					@media screen and (width > 768px) {
+						height:30px;
+					}
 				}
 
 				&.Button-Edit {
 					&::after {
-						html.Scale-Small & {
+						@media screen and (width <= 768px) {
 							line-height:30px;
 						}
+
+						html.Scale-Small & {
+							@media screen and (width > 768px) {
+								line-height:30px;
+							}
+						}
+					}
+				}
+
+				&.Button-Delete {
+					width:36px;
+					margin-top:0;
+					position:relative;
+					left:auto;
+					bottom:auto;
+					opacity:initial;
+					visibility:initial;
+
+					@media screen and (width <= 540px) {
+						display:inline-block;
+						margin-top:0;
+						margin-left:10px;
 					}
 				}
 
 				&::after {
 					line-height:36px;
 					margin-left:0;
+
+					@media screen and (width <= 768px) {
+						line-height:30px;
+					}
 				}
 			}
 
-			.Button-Delete {
-				width:36px;
-				position:relative;
-				left:auto;
-				bottom:auto;
-				opacity:initial;
-				visibility:initial;
-			}
 		}
 
 		.ResizeInfo {
 			padding-inline:10px;
 			font-size:.8rem;
 			font-style:italic;
-			line-height:48px;
+			line-height:42px;
 			text-overflow:ellipsis;
 			white-space:nowrap;
 			overflow:hidden;
+
+			@media screen and (width <= 1024px) {
+				line-height:38px;
+			}
+
+			@media screen and (width <= 768px) {
+				line-height:36px;
+			}
 		}
 
 		.Resizer {
 			right:5px;
 			top:38px;
 
+			@media screen and (width <= 1024px) {
+				top:30.5px;
+			}
+
+			@media screen and (width <= 768px) {
+				top:26px;
+			}
+
 			html.Scale-Medium & {
-				top:31px;
+				@media screen and (width > 1024px) {
+					top:31px;
+				}
 			}
 
 			html.Scale-Small & {
-				top:20px;
+				@media screen and (width > 768px) {
+					top:20px;
+				}
 			}
 		}
 		
 		.ListItem-ContextMenu {
 			display:none;
-			padding:5px 10px;
-			border-radius:5px;
+			padding:5px 10px 4px;
+			border-radius:5px 0 0 5px;
 			box-shadow:0 0 10px 0 rgba(0, 0, 0, 0.2);
 			background-color:var(--colorMedium);
 			position:absolute;
-			top:6px;
-			right:11px;
+			top:3px;
+			right:36px;
 			z-index:25;
 
+			@media screen and (width <= 768px) {
+				padding-top:4px;
+				top:1px;
+			}
+
 			html.Scale-Small & {
-				top:0;
+				@media screen and (width > 768px) {
+					top:0;
+				}
 			}
 
 			.AuditInfo {
@@ -379,9 +504,20 @@
 		list-style-type:none;
 		position:relative;
 
+		@media screen and (width <= 540px) {
+			margin-inline:-10px;
+			padding-inline:10px;
+		}
+
+		@media screen and (width <= 500px) {
+			grid-template-columns:auto var(--listItemAuditInfoColumnWidth);
+		}
+
 		html.Scale-Small & {
-			margin-left:-32px;
-			padding-left:32px;
+			@media screen and (width > 768px) {
+				margin-left:-32px;
+				padding-left:32px;
+			}
 		}
 
 		&.SortableChosen {
@@ -483,71 +619,104 @@
 			background-repeat:repeat-y;
 			background-size:2px 20px;
 
+			@media screen and (width <= 768px) {
+				background-position:60px 16px;
+			}
+
+			@media screen and (width <= 540px) {
+				background-position:20px 16px;
+			}
+
 			html.🌚 & {
 				--dottedLineColor:var(--colorSemiDark);
 			}
 
 			html.Scale-Small & {
-				background-position:52px 16px;
+				@media screen and (width > 768px) {
+					background-position:52px 16px;
+				}
 			}
 		}
 
 		&:first-child {
 			margin-top:0;
 		}
-	}
 
-	.ListItem-Inner {
-		--listItemAuditInfoColumnWidth:36px;
-		--listItemLastColumnWidth:9rem;
+		&-Inner {
+			--listItemAuditInfoColumnWidth:36px;
+			--listItemLastColumnWidth:9rem;
 
-		display:grid;
-		padding:1rem 20px;
-		border-radius:5px;
-		background-color:var(--backgroundColorOdd);
-		position:relative;
-		gap:0 10px;
-		grid-template-columns:auto var(--listItemAuditInfoColumnWidth) var(--listItemLastColumnWidth);
-		transition:border-radius .3s ease-in-out, background-color .3s ease-in-out;
+			display:grid;
+			padding:1rem 20px;
+			border-radius:5px;
+			background-color:var(--backgroundColorOdd);
+			position:relative;
+			container:listItem / inline-size;
+			gap:0 10px;
+			grid-template-columns:auto var(--listItemAuditInfoColumnWidth) var(--listItemLastColumnWidth);
+			transition:border-radius .3s ease-in-out, background-color .3s ease-in-out;
 
-		html.Scale-Small & {
-			padding-block:.5rem;
-		}
-
-		&:has(> .NestedListToggle:not(.Hidden)) {
-			padding-left:60px;
-		}
-
-		&:hover {
-			background-color:oklch(from var(--colorLight) calc(l - 0.0588) calc(c + 0.009) calc(h + 1.05));
-
-			html.🌚 & {
-				background-color:oklch(from var(--colorSemiDarkDarkMode) calc(l + 0.0389) calc(c + 0.004) calc(h - 0.55));
+			@media screen and (width <= 768px) {
+				padding-block:.5rem;
 			}
 
-			.NestedListToggle,
-			.SortableHandle {
-				opacity:1;
+			@media screen and (width <= 540px) {
+				padding-inline:10px;
 			}
 
-			.AuditInfo {
-				&:not(.Hidden) {
+			@media screen and (width <= 500px) {
+				grid-template-columns:auto var(--listItemAuditInfoColumnWidth);
+			}
+
+			html.Scale-Small & {
+				@media screen and (width > 768px) {
+					padding-block:.5rem;
+				}
+			}
+
+			&:has(> .NestedListToggle:not(.Hidden)) {
+				padding-left:60px;
+
+				@media screen and (width <= 768px) {
+					padding-left:40px;
+				}
+
+				@media screen and (width <= 540px) {
+					padding-left:25px;
+				}
+			}
+
+			&:hover {
+				background-color:oklch(from var(--colorLight) calc(l - 0.0588) calc(c + 0.009) calc(h + 1.05));
+
+				html.🌚 & {
+					background-color:oklch(from var(--colorSemiDarkDarkMode) calc(l + 0.0389) calc(c + 0.004) calc(h - 0.55));
+				}
+
+				.NestedListToggle,
+				.SortableHandle {
+					opacity:1;
+				}
+
+				.AuditInfo {
+					&:not(.Hidden) {
+						opacity:1;
+					}
+				}
+
+				.Actions {
+					@extend %ActionsHover;
+				}
+
+				.Resizer {
 					opacity:1;
 				}
 			}
 
-			.Actions {
-				@extend %ActionsHover;
-			}
-
-			.Resizer {
-				opacity:1;
-			}
-		}
-
-		&:focus-within {
-			.Actions {
-				@extend %ActionsHover;
+			&:focus-within {
+				.Actions {
+					@extend %ActionsHover;
+				}
 			}
 		}
 	}
@@ -588,9 +757,23 @@
 			}
 		}
 
-		html.Scale-Small & {
+		@media screen and (width <= 768px) {
 			width:30px;
 			height:30px;
+		}
+
+		@media screen and (width <= 540px) {
+			width:20px;
+			height:20px;
+			top:5px;
+			bottom:auto;
+		}
+
+		html.Scale-Small & {
+			@media screen and (width > 768px) {
+				width:30px;
+				height:30px;
+			}
 		}
 
 		&.Hidden {
@@ -616,9 +799,21 @@
 			font-size:24px;
 			line-height:40px;
 
-			html.Scale-Small & {
+			@media screen and (width <= 768px) {
 				font-size:18px;
 				line-height:30px;
+			}
+
+			@media screen and (width <= 540px) {
+				font-size:16px;
+				line-height:20px;
+			}
+
+			html.Scale-Small & {
+				@media screen and (width > 768px) {
+					font-size:18px;
+					line-height:30px;
+				}
 			}
 		}
 	}
@@ -641,6 +836,21 @@
 		cursor:move;
 		transition:background-color .3s ease-in-out, opacity .3s ease-in-out;
 
+		@media screen and (width <= 768px) {
+			width:30px;
+			height:30px;
+			left:-30px;
+		}
+
+		@media screen and (width <= 540px) {
+			width:20px;
+			height:20px;
+			top:5px;
+			bottom:auto;
+			left:-20px;
+			opacity:unset;
+		}
+
 		html.🌚 & {
 			background-color:var(--colorSemiDark);
 
@@ -650,9 +860,11 @@
 		}
 
 		html.Scale-Small & {
-			width:30px;
-			height:30px;
-			left:-30px;
+			@media screen and (width > 768px) {
+				width:30px;
+				height:30px;
+				left:-30px;
+			}
 		}
 
 		&:hover {
@@ -666,9 +878,21 @@
 			font-size:24px;
 			line-height:40px;
 
-			html.Scale-Small & {
+			@media screen and (width <= 768px) {
 				font-size:18px;
 				line-height:30px;
+			}
+
+			@media screen and (width <= 540px) {
+				font-size:16px;
+				line-height:20px;
+			}
+
+			html.Scale-Small & {
+				@media screen and (width > 768px) {
+					font-size:18px;
+					line-height:30px;
+				}
 			}
 		}
 	}
@@ -676,9 +900,21 @@
 	.AuditInfo {
 		z-index:2;
 
-		html.Scale-Small & {
+		@media screen and (width <= 768px) {
 			top:-2px;
 			margin-bottom:-6px;
+		}
+
+		@media screen and (width <= 500px) {
+			margin:0;
+			align-self:start;
+		}
+
+		html.Scale-Small & {
+			@media screen and (width > 768px) {
+				top:-2px;
+				margin-bottom:-6px;
+			}
 		}
 	}
 

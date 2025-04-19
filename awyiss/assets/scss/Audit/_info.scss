@@ -6,6 +6,7 @@ div.AuditInfo {
 	z-index:1;
 	opacity:.25;
 	transition:opacity .3s ease-in-out;
+	align-self:center;
 
 	&.Hidden {
 		opacity:.05;
@@ -140,8 +141,14 @@ div.AuditInfo {
 		opacity:0;
 		transition:background-color .3s ease-in-out, color .3s ease-in-out, opacity .3s ease-in-out;
 
-		html.Scale-Small & {
+		@media screen and (width <= 768px) {
 			top:7px;
+		}
+
+		html.Scale-Small & {
+			@media screen and (width > 768px) {
+				top:7px;
+			}
 		}
 	}
 }

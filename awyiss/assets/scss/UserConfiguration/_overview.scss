@@ -1,0 +1,18 @@
+.UserConfigurationController {
+	@extend .ConfigurationController;
+
+	.Configuration-List {
+		.ListItem {
+			.Data {
+				&:has(> .DataItem:nth-child(2):last-child),
+				&:has(> .DataItem:nth-child(3):last-child) {
+					grid-template-columns:1fr 1fr;
+
+					@media screen and (width <= 860px) {
+						grid-template-columns:1fr;
+					}
+				}
+			}
+		}
+	}
+}

@@ -1,12 +1,9 @@
 //noinspection JSUnusedGlobalSymbols
 
 /**
- * ButtonArea class is used to check if the width of the first h1 and the first element of class .ButtonArea
- * fit together into the width of the parent of the h1.
- * If they do, it adds a class to the .ButtonArea that indicates that it can be moved upwards.
+ * ButtonArea class
  *
- * It also attaches an event listener to the window.eventHandler instance that rechecks
- * the widths on the resize event.
+ * Handles the button area toggle functionality.
  */
 export default class ButtonArea {
 	/**
@@ -19,66 +16,81 @@ export default class ButtonArea {
 	 * @type {EventHandler}
 	 */
 	eventHandler = window.eventHandler;
-	/**
-	 * The first h1 element.
-	 * @type {HTMLHeadingElement}
-	 */
-	h1;
-	/**
-	 * The first h2 element.
-	 * @type {HTMLHeadingElement}
-	 */
-	h2;
-	/**
-	 * The parent of the h1 and button area elements.
-	 * @type {HTMLElement}
-	 */
-	parent;
 
 	/**
-	 * The constructor initializes the h1, buttonArea, and parent elements, attaches the event listener to the
-	 * window.eventHandler instance, and performs the initial check.
 	 * @returns {void}
 	 */
 	constructor() {
-		// The first h1 element
-		this.h1 = document.querySelector('h1');
-		this.h2 = document.querySelector('h2');
-
 		// The first .ButtonArea element
 		this.buttonArea = document.querySelector('.ButtonArea');
 
-		if (!this.h1 || !this.buttonArea) {
+		if (!this.buttonArea) {
 			return;
 		}
 
-		// The parent of the h1 element
-		this.parent = this.h1.parentElement;
+		this.eventHandler.add('click', this.handleClick.bind(this), document.body);
 
-		// Attach the event listener to the window.eventHandler instance
-		this.eventHandler.add('resize', this.checkWidths.bind(this));
+		// Listen for hash changes
+		this.eventHandler.add('hashchange', this.handleHashChange.bind(this), window);
+		// Check hash on initial page load
+		this.handleHashChange();
+	}
 
-		// Perform the initial check
-		this.checkWidths();
+
+	/**
+	 * Handle the click event.
+	 * @param {Event} event
+	 * @returns {void}
+	 */
+	handleClick(event) {
+		if (!this.buttonArea) {
+			return;
+		}
+
+		if (event.target.closest('.ButtonArea')) {
+			return;
+		}
+
+		const wasVisible = this.buttonArea.classList.contains('Visible');
+
+		if (!event.target.matches('#ButtonArea-Toggle')) {
+			this.buttonArea.classList.remove('Visible');
+			this.buttonArea.inert = !!document.getElementById('ButtonArea-Toggle').offsetParent;
+
+			if (wasVisible) {
+				// Go back one step in the history
+				window.history.back();
+			}
+
+			return;
+		}
+
+		// Toggle the button area
+		this.buttonArea.classList.toggle('Visible');
+
+		const isVisible = this.buttonArea.classList.contains('Visible');
+
+		// Create a new history entry if the button area is visible
+		if (isVisible) {
+			window.history.pushState({}, '', `${currentUrl}#ButtonArea`);
+		}
+		// Otherwise go back one step in the history
+		else if (wasVisible) {
+			window.history.back();
+		}
+
+		// Set the inert attribute to true if the button area is not visible
+		this.buttonArea.inert = !isVisible && document.getElementById('ButtonArea-Toggle').offsetParent;
 	}
 
 	/**
-	 * The checkWidths method checks if the widths of the h1 and .ButtonArea elements fit into the width of the parent
-	 * of the h1 element. If they do, it adds a class 'CannotMoveUpwards' to the .ButtonArea element. If they don't, it
-	 * removes the class from the .ButtonArea element.
+	 * Handle URL hash changes
 	 * @returns {void}
 	 */
-	checkWidths() {
-		// Widest element is either h1 or h2
-		const widestElement = this.h1.offsetWidth > (this.h2?.offsetWidth ?? 0) ? this.h1 : this.h2;
+	handleHashChange() {
+		const hasButtonAreaHash = window.location.hash === '#ButtonArea';
 
-		if (widestElement.offsetWidth + this.buttonArea.offsetWidth + 40 <= this.parent.offsetWidth) {
-			// If the widths fit, add the class 'CannotMoveUpwards' to the .ButtonArea element
-			this.buttonArea.classList.remove('CannotMoveUpwards');
-		}
-		else {
-			// If the widths don't fit, remove the class 'CannotMoveUpwards' from the .ButtonArea element
-			this.buttonArea.classList.add('CannotMoveUpwards');
-		}
+		this.buttonArea.classList.toggle('Visible', hasButtonAreaHash);
+		this.buttonArea.inert = !hasButtonAreaHash && document.getElementById('ButtonArea-Toggle').offsetParent;
 	}
 }

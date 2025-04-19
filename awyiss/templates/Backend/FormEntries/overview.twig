@@ -16,11 +16,22 @@
 #}
 
 <div class="FormEntry Overview">
-	{% block headlineOverview %}
-		<h1>{{ __('headline_overview') }}</h1>
-		{% if CategoriesHelper.selectedCategory('form') != 'all' %}
-			<h2>{{ form.label }}</h2>
-		{% endif %}
+	{% block headlinesOverview %}
+		<div class="Headlines">
+			{% block headlineOverview %}
+				<h1>{{ __('headline_overview') }}</h1>
+			{% endblock %}
+
+			{% block subheadlineOverview %}
+				{% if CategoriesHelper.selectedCategory('form') != 'all' %}
+					<h2>{{ form.label }}</h2>
+				{% endif %}
+			{% endblock %}
+		</div>
+	{% endblock %}
+
+	{% block buttonAreaToggle %}
+		{{ FormHelper.button(__('button_area_toggle'), {class: 'Button Button-Menu', id: 'ButtonArea-Toggle', name: 'button', type: 'button'}) }}
 	{% endblock %}
 
 	{% block buttonArea %}
