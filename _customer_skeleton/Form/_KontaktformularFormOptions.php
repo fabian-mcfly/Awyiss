@@ -25,7 +25,8 @@ class KontaktformularFormOptions extends FormOptions {
 		/** @noinspection PhpVariableNamingConventionInspection */
 		$validator = parent::getValidator($validator, $form);
 
-		$validator->email('email');
+		// Add custom validation rules
+		//$validator->email('email');
 
 		return $validator;
 	}
