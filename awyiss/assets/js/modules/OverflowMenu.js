@@ -186,11 +186,8 @@ export default class OverflowMenu {
 	 * @param {Event} event - The click event.
 	 */
 	handleOverflowButtonClick(event) {
-		// Make sure the click target is the "Show more" button and its parent is the menu
-		if (
-			!event.target.classList.contains(this.buttonClass) ||
-			event.target.parentElement !== this.menu
-		) {
+		// If the target is not the button, close the overflow menu
+		if (!event.target.closest('#Menu-System')) {
 			//If not, hide the overflow container
 			this.overflowContainer.classList.remove('Narrow');
 			this.overflowContainer.classList.remove(this.visibleClass);
@@ -198,9 +195,11 @@ export default class OverflowMenu {
 			return;
 		}
 
-		this.overflowContainer.classList.toggle(this.visibleClass);
+		if (event.target.classList.contains(this.buttonClass)) {
+			this.overflowContainer.classList.toggle(this.visibleClass);
 
-		this.checkConstraints();
+			this.checkConstraints();
+		}
 	}
 
 	/**
