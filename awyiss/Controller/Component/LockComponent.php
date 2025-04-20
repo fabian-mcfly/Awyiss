@@ -71,8 +71,8 @@ class LockComponent extends Component {
 		$this->locksTable = $this->fetchTable('Locks');
 
 		$lo_session = $this->getController()->getRequest()->getSession();
-		if (!$lo_session->read('lockIdentifier')) {
-			$lo_session->write('lockIdentifier', Text::uuid());
+		if (!$lo_session->read('Backend.lockIdentifier')) {
+			$lo_session->write('Backend.lockIdentifier', Text::uuid());
 		}
 	}
 
@@ -156,7 +156,7 @@ class LockComponent extends Component {
 			$this->locksTable->patchEntity($lo_lock, [
 				'scope' => $this->getConfig('tableName'),
 				'foreign_key' => $id,
-				'unique_id' => $this->getController()->getRequest()->getSession()->read('lockIdentifier'),
+				'unique_id' => $this->getController()->getRequest()->getSession()->read('Backend.lockIdentifier'),
 			]);
 
 			if ($this->locksTable->save($lo_lock)) {
@@ -237,7 +237,7 @@ class LockComponent extends Component {
 		];
 
 		if ($ownLock !== null) {
-			$la_where['unique_id' . ($ownLock ? '' : ' !=') ] = $lo_session->read('lockIdentifier');
+			$la_where['unique_id' . ($ownLock ? '' : ' !=') ] = $lo_session->read('Backend.lockIdentifier');
 			$la_where['created_by' . ($ownLock ? '' : ' !=') ] = $this->getIdentityId();
 		}
 

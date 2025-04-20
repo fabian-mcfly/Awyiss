@@ -269,12 +269,23 @@ class UsersController extends Controller {
 	 * @noinspection PhpUnused
 	 */
 	public function logout(): ?Response {
-		$this->Authentication->logout();
-
 		/** @var \Cake\Http\Session $lo_session */
 		$lo_session = $this->getRequest()->getAttribute('session');
+		$ls_lockIdentifier = $lo_session->read('Backend.lockIdentifier');
 		$lo_session->destroy();
 
+		$lo_identity = $this->Authentication->getIdentity();
+
+		$this->Authentication->logout();
+
+		if ($lo_identity && $ls_lockIdentifier) {
+			// Remove all locks
+			$lo_lockTable = $this->fetchTable('Locks');
+			$lo_lockTable->deleteAll([
+				'unique_id' => $ls_lockIdentifier,
+				'created_by' => $lo_identity->getIdentifier(),
+			]);
+		}
 
 		return $this->redirect(Router::url([
 			'_name' => Awyiss::REALM_BACKEND,

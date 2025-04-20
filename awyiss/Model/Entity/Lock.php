@@ -57,7 +57,7 @@ class Lock extends Entity {
 		}
 
 		return $this->createdBy === $lo_identity->getIdentifier() &&
-			$this->uniqueId === $lo_session->read('lockIdentifier');
+			$this->uniqueId === $lo_session->read('Backend.lockIdentifier');
 	}
 
 
