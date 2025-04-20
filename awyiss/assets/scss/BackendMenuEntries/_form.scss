@@ -97,8 +97,10 @@
 	}
 }
 
-#LinkHelperDialog,
-#AccessHelperDialog {
+:is(
+	#LinkHelperDialog,
+	#AccessHelperDialog
+) {
 	.FormInput {
 		grid-column:1 / -1;
 

@@ -1,5 +1,7 @@
-.Media.Overview,
-#MediaOverlay {
+:is(
+	.Media.Overview,
+	#MediaOverlay
+) {
 	#UploadAutoOverwrite {
 		display:none;
 

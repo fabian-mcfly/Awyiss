@@ -17,6 +17,10 @@
 	background-color:var(--backgroundColor);
 	overflow:hidden;
 
+	&:focus-within {
+		box-shadow:0 0 10px var(--colorSuccess);
+	}
+
 	.DarkModeSwitch-Item {
 		width:calc(50% - 1px);
 		margin:0;
@@ -28,6 +32,20 @@
 		&.Active {
 			opacity:1;
 			pointer-events:none;
+		}
+
+		&:first-child {
+			border-radius:27px 0 0 27px;
+		}
+
+		&:last-child {
+			border-radius:0 27px 27px 0;
+		}
+
+		&:focus-within {
+			opacity:1;
+			outline:2px solid var(--colorSuccess);
+			outline-offset:-4px;
 		}
 
 		&:hover {
@@ -49,6 +67,7 @@
 		height:40px;
 		border-bottom-width:0;
 		background-color:var(--colorItems);
+		outline:0 none;
 		color:var(--colorText);
 		text-align:center;
 		font-size:0;

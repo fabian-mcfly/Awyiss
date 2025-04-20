@@ -574,8 +574,8 @@ body {
 					}
 
 					&:focus-visible {
-						box-shadow:0 0 10px var(--colorInfo);
-						outline:2px solid var(--colorInfo);
+						box-shadow:0 0 10px var(--colorSuccess);
+						outline:2px solid var(--colorSuccess);
 						outline-offset:2px;
 
 						&:hover {
@@ -664,8 +664,8 @@ body {
 					}
 
 					&:focus-visible {
-						box-shadow:0 0 10px var(--colorInfo);
-						outline:2px solid var(--colorInfo);
+						box-shadow:0 0 10px var(--colorSuccess);
+						outline:2px solid var(--colorSuccess);
 						outline-offset:2px;
 
 						&:hover {
@@ -906,8 +906,8 @@ body {
 					}
 
 					&:focus-visible {
-						box-shadow:0 0 10px var(--colorInfo);
-						outline:2px solid var(--colorInfo);
+						box-shadow:0 0 10px var(--colorSuccess);
+						outline:2px solid var(--colorSuccess);
 						outline-offset:2px;
 
 						&:hover {
@@ -1090,29 +1090,40 @@ body {
 				&:has(input:checked) {
 					&:focus-within {
 						&::before {
-							box-shadow:0 0 10px var(--colorInfo);
+							box-shadow:0 0 10px var(--colorSuccess);
 							border-color:var(--colorSuccess);
 							background-color:var(--colorSuccess);
+							color:var(--colorBright);
+						}
+					}
+
+					&:hover {
+						&::before {
+							color:var(--colorBright);
 						}
 					}
 
 					&::before {
 						content:'\f00c';
-						background-color:var(--colorDark);
-						border-color:var(--colorDark);
-
-						html.🌚 & {
-							background-color:var(--colorSuccess);
-							border-color:var(--colorSuccess);
-						}
+						background-color:var(--colorSuccess);
+						border-color:var(--colorSuccess);
 					}
 				}
 
 				&:focus-within {
 					&::before {
+						content:'\f00c';
 						box-shadow:0 0 10px 5px color-mix(in srgb, var(--colorSuccess), transparent 90%);
+						color:color-mix(in srgb, var(--colorSuccess), transparent 50%);
 						outline:2px solid var(--colorSuccess);
 						outline-offset:2px;
+					}
+				}
+
+				&:hover {
+					&::before {
+						content:'\f00c';
+						color:color-mix(in srgb, var(--colorSuccess), transparent 50%);
 					}
 				}
 

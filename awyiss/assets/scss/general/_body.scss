@@ -108,15 +108,11 @@
 			grid-column-start:1;
 			grid-row-start:1;
 
-			&::before {
-				@extend %LineAwesomeIcon;
-				content:'\f060';
-				margin-right:5px;
-				font-size:20px;
-				vertical-align:-1px;
-				transform:translateX(0);
-				transition:margin-right .3s ease-in-out, transform .3s ease-in-out;
-				position:relative;
+			&:focus-visible {
+				border-radius:5px;
+				box-shadow:0 0 10px var(--colorSuccess);
+				outline:2px solid var(--colorSuccess);
+				outline-offset:2px;
 			}
 
 			&:hover {
@@ -126,6 +122,17 @@
 					margin-right:10px;
 					transform:translateX(-5px);
 				}
+			}
+
+			&::before {
+				@extend %LineAwesomeIcon;
+				content:'\f060';
+				margin-right:5px;
+				font-size:20px;
+				vertical-align:-1px;
+				transform:translateX(0);
+				transition:margin-right .3s ease-in-out, transform .3s ease-in-out;
+				position:relative;
 			}
 
 			+ h1 {

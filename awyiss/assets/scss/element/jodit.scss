@@ -75,8 +75,8 @@ $relativePath:'../../';
 
 	&:focus-visible {
 		&:not([disabled]) {
-			box-shadow:0 0 10px var(--colorInfo);
-			outline:2px solid var(--colorInfo);
+			box-shadow:0 0 10px var(--colorSuccess);
+			outline:2px solid var(--colorSuccess);
 			outline-offset:2px;
 		}
 	}
@@ -96,8 +96,8 @@ $relativePath:'../../';
 
 		&:focus-visible {
 			&:not([disabled]) {
-				box-shadow:0 0 10px var(--colorInfo);
-				outline:2px solid var(--colorInfo);
+				box-shadow:0 0 10px var(--colorSuccess);
+				outline:2px solid var(--colorSuccess);
 				outline-offset:2px;
 			}
 		}
