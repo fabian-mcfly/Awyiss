@@ -6,7 +6,7 @@
 
 		display:flex;
 		min-height:100%;
-		padding-top:0;
+		padding-block:40px;
 		align-content:center;
 
 		#LoginMask {
@@ -15,6 +15,12 @@
 			border-radius:10px;
 			box-shadow:0 0 10px rgba(0, 0, 0, .25);
 			overflow:hidden;
+
+			@media screen and (width <= 800px) {
+				display:grid;
+				max-width:calc(100dvw - 40px);
+				grid-template-columns:auto;
+			}
 		}
 
 		#Header {
@@ -33,6 +39,11 @@
 			align-items:center;
 			flex-wrap:wrap;
 
+			@media screen and (width <= 800px) {
+				width:100%;
+				aspect-ratio:16 / 9;
+			}
+
 			&::before {
 				display:none;
 			}
@@ -43,7 +54,17 @@
 				height:auto;
 				max-height:220px;
 				margin:0 auto;
+				padding-left:0;
 				filter:saturate(0%) brightness(10);
+
+				@media screen and (width <= 800px) {
+					margin-bottom:60px;
+				}
+
+				@media screen and (width <= 580px) {
+					display:block;
+					max-height:80px;
+				}
 			}
 
 			.Title {
@@ -98,9 +119,17 @@
 			position:relative;
 			z-index:1;
 
+			@media screen and (width <= 540px) {
+				padding:20px;
+			}
+
 			html.🌚 & {
 				background-color:var(--colorDark);
 			}
+		}
+
+		.Form {
+			container-type:normal;
 		}
 
 		.FlashMessage {
@@ -114,31 +143,54 @@
 		}
 
 		.Fieldset-Login {
-			display:block;
 			margin-bottom:0;
 			padding:0;
 			border:0 none;
 			box-shadow:none;
 			background-color:transparent;
 			position:static;
+			grid-template-columns:120px 200px;
 
-			h1 {
-				margin-bottom:var(--lineHeightMain);
+			@media screen and (width <= 480px) {
+				grid-template-columns:auto;
 			}
 		}
 
-		.FormInputName-LanguageShortcode {
-			display:inline-block;
-			width:120px;
-			margin-bottom:0;
-			vertical-align:bottom;
+		h1 {
+			padding-right:0;
+			grid-column:1 / -1;
+
+			@media screen and (width <= 480px) {
+				margin-bottom:10px;
+			}
+		}
+
+		.FormInput {
+			grid-column:1 / -1;
+
+			&Name-LanguageShortcode {
+				display:block;
+				width:120px;
+				grid-column-end:2;
+
+				@media screen and (width <= 480px) {
+					width:100%;
+					grid-column-end:1;
+				}
+			}
 		}
 
 		.Submit {
-			display:inline-block;
 			width:200px;
-			margin-left:50px;
-			vertical-align:bottom;
+			margin-left:auto;
+			align-self:end;
+			grid-column-start:2;
+
+			@media screen and (width <= 480px) {
+				width:100%;
+				margin-top:10px;
+				grid-column-start:1;
+			}
 
 			&:hover {
 				&::after {
