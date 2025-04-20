@@ -18,28 +18,30 @@
 	visibility:hidden;
 	transition:opacity .3s ease-in-out, visibility 0s linear .3s;
 
+	@media screen and (width <= 640px) {
+		right:20px;
+		bottom:20px;
+		left:20px;
+	}
+
+	@media screen and (width <= 540px) {
+		right:10px;
+		bottom:10px;
+		left:10px;
+	}
+
 	&.Visible {
 		opacity:inherit;
 		visibility:inherit;
 		transition-delay:0s;
 	}
 
-	&[data-status="owned"] {
-		.LockWarningMessage {
-			display:grid;
-		}
-	}
-
-	&[data-status="lockTimedOut"] {
-		.LockTimedOutMessage {
-			display:grid;
-		}
-	}
-
-	&[data-status="locked"] {
-		.LockedMessage {
-			display:grid;
-		}
+	:is(
+		&[data-status="owned"] > .LockWarningMessage,
+		&[data-status="lockTimedOut"] > .LockTimedOutMessage,
+		&[data-status="locked"] > .LockedMessage
+	) {
+		display:grid;
 	}
 
 	:is(
@@ -53,6 +55,11 @@
 		gap:40px;
 		grid-template-columns:auto 220px;
 		align-items:end;
+
+		@media screen and (width <= 640px) {
+			gap:20px;
+			grid-template-columns:auto;
+		}
 	}
 
 	.LockedMessage {
