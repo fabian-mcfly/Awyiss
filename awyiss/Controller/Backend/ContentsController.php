@@ -604,6 +604,8 @@ class ContentsController extends Controller {
 	public function requestLock(): void {
 		$li_contentId = (int)$this->request->getData('id');
 
+		$this->Categories->disable();
+
 		/** @var Content $lo_content */
 		$lo_content = $this->Contents->findById($li_contentId)->first();
 		if (!$lo_content) {
@@ -630,6 +632,8 @@ class ContentsController extends Controller {
 	 */
 	public function releaseLock(): void {
 		$li_contentId = (int)$this->request->getData('id');
+
+		$this->Categories->disable();
 
 		/** @var Content $lo_content */
 		$lo_content = $this->Contents->findById($li_contentId)->first();
