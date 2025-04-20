@@ -1,3 +1,19 @@
+{#
+@var _view \Awyiss\View\BackendView
+@var AssetHelper \Awyiss\View\Helper\AssetHelper
+@var AttributesHelper \Awyiss\View\Helper\AttributesHelper
+@var AuthorizationHelper \Awyiss\View\Helper\AuthorizationHelper
+@var CategoriesHelper \Awyiss\View\Helper\CategoriesHelper
+@var FlashHelper \Awyiss\View\Helper\FlashHelper
+@var FormHelper \Awyiss\View\Helper\FormHelper
+@var HtmlHelper \Cake\View\Helper\HtmlHelper
+@var LocaleHelper \Awyiss\View\Helper\LocaleHelper
+@var MediaHelper \Awyiss\View\Helper\MediaHelper
+@var PaginatorHelper \Awyiss\View\Helper\PaginatorHelper
+@var SystemOrderHelper \Awyiss\View\Helper\SystemOrderHelper
+@var TimeHelper \Cake\View\Helper\TimeHelper
+@var UrlHelper \Awyiss\View\Helper\UrlHelper
+#}
 {% block listOverview %}
 	<ul id="Media-List" data-media-folder-id="{{ selectedMediaFolderId }}"
 		data-can-create="{{ AuthorizationHelper.isAccessible('create') ? 1 : 0 }}"
