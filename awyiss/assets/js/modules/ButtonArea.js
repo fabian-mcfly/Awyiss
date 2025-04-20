@@ -55,7 +55,7 @@ export default class ButtonArea {
 
 		if (!event.target.matches('#ButtonArea-Toggle')) {
 			this.buttonArea.classList.remove('Visible');
-			this.buttonArea.inert = !!document.getElementById('ButtonArea-Toggle').offsetParent;
+			this.buttonArea.inert = !!document.getElementById('ButtonArea-Toggle')?.offsetParent;
 
 			if (wasVisible) {
 				// Go back one step in the history
@@ -80,7 +80,7 @@ export default class ButtonArea {
 		}
 
 		// Set the inert attribute to true if the button area is not visible
-		this.buttonArea.inert = !isVisible && document.getElementById('ButtonArea-Toggle').offsetParent;
+		this.buttonArea.inert = !isVisible && document.getElementById('ButtonArea-Toggle')?.offsetParent;
 	}
 
 	/**
@@ -91,6 +91,6 @@ export default class ButtonArea {
 		const hasButtonAreaHash = window.location.hash === '#ButtonArea';
 
 		this.buttonArea.classList.toggle('Visible', hasButtonAreaHash);
-		this.buttonArea.inert = !hasButtonAreaHash && document.getElementById('ButtonArea-Toggle').offsetParent;
+		this.buttonArea.inert = !hasButtonAreaHash && document.getElementById('ButtonArea-Toggle')?.offsetParent;
 	}
 }

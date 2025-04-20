@@ -51,6 +51,11 @@ export default class FooterReveal {
 	 */
 	handleScroll(event) {
 		const footer = document.getElementById('HiddenFooter');
+
+		if (!footer) {
+			return;
+		}
+
 		const body = document.body;
 		const currentScrollPosition = window.scrollY || document.documentElement.scrollTop;
 		const bodyHeight = document.body.offsetHeight + parseInt(document.body.style.marginBottom.replace('px', '') || 0);
