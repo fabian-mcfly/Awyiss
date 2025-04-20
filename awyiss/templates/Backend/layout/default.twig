@@ -90,7 +90,7 @@
 					{% endblock %}
 
 					{% block systemMenu %}
-						{{ cell('Backend/Menu') }}
+						{{ cell('Backend/Menu', [currentPageRole]) }}
 					{% endblock %}
 
 					{% block languageSwitcher %}

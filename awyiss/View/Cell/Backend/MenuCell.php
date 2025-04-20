@@ -53,7 +53,7 @@ class MenuCell extends Cell {
 	 * @throws \ReflectionException
 	 * @throws \Exception
 	 */
-	public function display(): void {
+	public function display(?string $currentPageRole = null): void {
 		// Get the user's identity and session
 		$lo_identity = $this->_getIdentity();
 		$lo_session = $this->request->getSession();
@@ -115,8 +115,9 @@ class MenuCell extends Cell {
 		$lo_renderer = new $ls_className($la_menuData, $this->rendererOptions);
 
 		// Set the current route in the menu renderer
-		$ls_url = '/backend/' . $this->request->getParam('lang') . '/' . Inflector::dasherize($this->request->getParam('controller')) . '/';
-		$ls_url .= $this->request->getParam('action') . '/';
+		$ls_url = '/backend/' . $this->request->getParam('lang') . '/';
+		$ls_url .= $currentPageRole ?? Inflector::dasherize($this->request->getParam('controller'));
+		$ls_url .= '/' . $this->request->getParam('action') . '/';
 		$lo_renderer->setCurrentRoute($ls_url);
 
 		// Render the menu
