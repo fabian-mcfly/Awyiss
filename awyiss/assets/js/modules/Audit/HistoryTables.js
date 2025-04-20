@@ -51,16 +51,16 @@ export default class HistoryTables {
 		const hash = window.location.hash;
 
 		if (hash) {
-			const timestamp = hash.substr(1);
+			const timestamp = hash.substring(1);
 			const table = document.querySelector(`[data-timestamp="${timestamp}"]`);
 
 			if (table) {
 				const slider = table.closest('.AuditHistory-Slider');
-				const index = Array.from(slider.children).indexOf(table);
-				this.updateSlider(slider, index);
-
 				const range = slider.parentElement.querySelector('.AuditHistory-Slider-Range');
-				range.value = slider.children.length - 1 - index;
+				const index = Array.from(slider.children).indexOf(table);
+
+				this.updateSlider(slider, range.max - index);
+				range.value = range.max - index;
 			}
 		}
 	}
@@ -77,16 +77,17 @@ export default class HistoryTables {
 		const range = wrapper.querySelector('.AuditHistory-Slider-Range');
 
 		prev.addEventListener('click', () => {
-			range.value = Math.max(Number(range.value) - 1, 0);
+			range.stepDown();
 			this.updateSlider(slider, range.value * 1);
 		});
 
 		next.addEventListener('click', () => {
-			range.value = Math.min(Number(range.value) + 1, range.max);
+			range.stepUp();
 			this.updateSlider(slider, range.value * 1);
 		});
 
 		range.addEventListener('input', () => {
+			console.log(range.value);
 			this.updateSlider(slider, range.value * 1);
 		});
 	}

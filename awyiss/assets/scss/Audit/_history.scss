@@ -218,13 +218,13 @@
 						}
 					}
 				}
-			}
 
-			td {
-				background-color:color-mix(in srgb, var(--colorWarning), #FFFFFF 75%);
+				td {
+					background-color:color-mix(in srgb, var(--colorWarning), #FFFFFF 75%);
 
-				html.🌚 & {
-					background-color:color-mix(in srgb, var(--colorWarning), var(--colorBackgroundContentDarkMode) 75%);
+					html.🌚 & {
+						background-color:color-mix(in srgb, var(--colorWarning), var(--colorBackgroundContentDarkMode) 75%);
+					}
 				}
 			}
 		}
