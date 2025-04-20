@@ -180,6 +180,16 @@ export default class Loader {
 			settings.ui_mode = 'split';
 		}
 
+		let contentStyle = settings.content_style || '';
+		// Get the success color from the root element
+		const successColor = getComputedStyle(document.documentElement).getPropertyValue('--colorSuccess');
+		if (successColor && successColor !== '#63D1A5') {
+			// Add the success color to the content style
+			// to style elements in the editor with that color
+			contentStyle = `:root { --customColor:${successColor}; }` + contentStyle;
+			settings.content_style = contentStyle;
+		}
+
 		settings.target = element;
 
 		element.placeholder = '';
