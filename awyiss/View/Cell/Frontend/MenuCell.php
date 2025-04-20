@@ -38,7 +38,7 @@ class MenuCell extends Cell {
 			'list' => '<ul class="Level{{level}}{{identifier}}{{isPreview}}">' . PHP_EOL . '{{content}}</ul>' . PHP_EOL,
 			'item' => '<li class="Level{{level}}{{active}}{{hasSubmenu}}{{isPreview}} {{identifier}}" id="MenuItem{{id}}">' . PHP_EOL . '{{submenuTrigger}}{{link}}{{children}}</li>' . PHP_EOL,
 			'link' => '<a href="{{url}}" class="Level{{level}}{{active}} {{identifier}}"{{attributes}}>{{title}}</a>' . PHP_EOL,
-			'noLink' => '<span class="Level{{level}}{{active}} {{identifier}}">{{title}}</span>' . PHP_EOL,
+			'noLink' => '<span class="Level{{level}}{{active}} {{identifier}}"{{tabindex}}>{{title}}</span>' . PHP_EOL,
 		],
 	];
 
@@ -254,11 +254,15 @@ class MenuCell extends Cell {
 	public function renderContent(array $data, StringTemplate $template): string {
 		$la_data = $data;
 
+		$la_data['tabindex'] = '';
 		if (isset($data['url'])) {
 			$ls_template = 'link';
 		}
 		else {
 			$ls_template = 'noLink';
+			if (!empty($la_data['children'])) {
+				$la_data['tabindex'] = ' tabindex="0"';
+			}
 		}
 
 		$la_data['identifier'] = Inflector::ucparts(Text::slug($data['title']), false);

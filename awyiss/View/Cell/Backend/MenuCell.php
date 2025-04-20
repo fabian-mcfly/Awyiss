@@ -10,6 +10,7 @@ use Awyiss\Middleware\LocaleMiddleware;
 use Cake\I18n\DateTime;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\View\Cell;
+use Cake\View\StringTemplate;
 use RuntimeException;
 
 
@@ -18,6 +19,30 @@ use RuntimeException;
  */
 class MenuCell extends Cell {
 	use LocatorAwareTrait;
+
+
+	/**
+	 * Options for the menu renderer
+	 *
+	 * @var array $rendererOptions
+	 * @noinspection HtmlUnknownAttribute
+	 */
+	protected array $rendererOptions = [
+		'formatters' => [],
+		'templates' => [
+			'noLink' => '<span class="Level{{level}}{{active}} {{identifier}}"{{tabindex}}>{{title}}</span>' . PHP_EOL,
+		],
+	];
+
+
+	/**
+	 * Set the formatters if they are not set
+	 *
+	 * @return void
+	 */
+	public function initialize(): void {
+		$this->rendererOptions['formatters']['noLink'] ??= $this->renderNoLink(...);
+	}
 
 
 	/**
@@ -86,7 +111,7 @@ class MenuCell extends Cell {
 		$ls_className = App::className('MenuRenderer', 'Utility/Menu');
 
 		// Create a new menu renderer with the menu data
-		$lo_renderer = new $ls_className($la_menuData);
+		$lo_renderer = new $ls_className($la_menuData, $this->rendererOptions);
 
 		// Set the current route in the menu renderer
 		$lo_renderer->setCurrentRoute($this->request->getRequestTarget());
@@ -121,5 +146,22 @@ class MenuCell extends Cell {
 
 
 		return $lo_identity;
+	}
+
+
+	/**
+	 * @param array $data
+	 * @param \Cake\View\StringTemplate $template
+	 * @return string
+	 */
+	public function renderNoLink(array $data, StringTemplate $template): string {
+		$la_data = $data;
+
+		$la_data['tabindex'] = '';
+		if (!empty($la_data['children'])) {
+			$la_data['tabindex'] = ' tabindex="0"';
+		}
+
+		return $template->format('noLink', $la_data);
 	}
 }
