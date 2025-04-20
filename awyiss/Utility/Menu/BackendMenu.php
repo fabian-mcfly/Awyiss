@@ -5,6 +5,7 @@ namespace Awyiss\Utility\Menu;
 
 
 use Awyiss\Authorization\IdentityPermissionsInterface;
+use Awyiss\Core\App;
 use Awyiss\Model\Entity\BackendMenuEntry;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\ORM\Query\SelectQuery;
@@ -12,7 +13,8 @@ use RuntimeException;
 
 
 /**
- * Build a menu based cn config/menu.json and customer/config/menu-extension.json
+ * Build a menu, based on config/menu.json
+ * and customer/config/menu-extension.json
  */
 class BackendMenu {
 	use LocatorAwareTrait;
@@ -70,6 +72,7 @@ class BackendMenu {
 	 */
 	protected function createMenu(): void {
 		$la_config = [
+			'menuItemClass' => App::className('BackendMenuItem', 'Utility/Menu'),
 			'identity' => $this->identity,
 			'validate' => [
 				'schemaPath' => CONFIG . 'menu.schema.json',
