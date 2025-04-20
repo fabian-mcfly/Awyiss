@@ -244,7 +244,7 @@ class MenuRenderer {
 	 * @param array $data The data to use in the formatter or template.
 	 * @return string The formatted content.
 	 */
-	protected function format(string $type, array $data): string {
+	protected function format(string $type, array &$data): string {
 		$lc_formatter = $this->getConfig('formatters.' . $type);
 
 		if (is_callable($lc_formatter)) {
