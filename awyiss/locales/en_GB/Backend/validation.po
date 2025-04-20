@@ -251,5 +251,14 @@ msgstr "This value does not match the field \"{0}\""
 msgid "error_in_list"
 msgstr "The value must be one of the following: \"{0}\""
 
-msgid "error_date_time"
-msgstr "The value must be a valid date and time (Format \"{0}\")"
+msgid "error_datetime"
+msgstr "The value must be a valid date and time"
+
+msgid "error_date"
+msgstr "The value must be a valid date"
+
+msgid "error_time"
+msgstr "The value must be a valid time"
+
+msgid "error_email"
+msgstr "The value must be a valid email address"

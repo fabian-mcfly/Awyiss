@@ -255,5 +255,14 @@ msgstr "Dieser Wert stimmt nicht mit Feld „{0}“ überein"
 msgid "error_in_list"
 msgstr "Der Wert muss einer der folgenden sein: \"{0}\""
 
-msgid "error_date_time"
-msgstr "Der Wert muss ein gültiges Datum und eine gültige Uhrzeit sein (Format „{0}“)"
+msgid "error_datetime"
+msgstr "Der Wert muss ein gültiges Datum und eine gültige Uhrzeit sein"
+
+msgid "error_date"
+msgstr "Der Wert muss ein gültiges Datum sein"
+
+msgid "error_time"
+msgstr "Der Wert muss eine gültige Uhrzeit sein "
+
+msgid "error_email"
+msgstr "Der Wert muss eine gültige E-Mail-Adresse sein"
