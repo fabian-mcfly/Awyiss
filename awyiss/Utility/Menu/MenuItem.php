@@ -313,10 +313,12 @@ class MenuItem implements ArrayAccess {
 			$la_config['identity'] = $this->identity;
 		}
 
-		/** @var class-string<\Awyiss\Utility\Menu\Menu> $ls_className */
-		$ls_className = App::className('Menu', 'Utility/Menu');
+		$la_config['menuItemClass'] ??= static::class;
 
-		$this->children = new $ls_className($children, $la_config, $this->level + 1);
+		/** @var class-string<\Awyiss\Utility\Menu\Menu> $ls_menuClass */
+		$ls_menuClass = App::className('Menu', 'Utility/Menu');
+
+		$this->children = new $ls_menuClass($children, $la_config, $this->level + 1);
 	}
 
 

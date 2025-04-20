@@ -18,7 +18,17 @@ class Menu {
 	use InstanceConfigTrait;
 
 
+	/**
+	 * Default configuration values
+	 *
+	 * @var array
+	 */
 	protected array $_defaultConfig = [];
+	/**
+	 * The identity of the user
+	 *
+	 * @var \Awyiss\Authorization\IdentityPermissionsInterface|null
+	 */
 	protected ?IdentityPermissionsInterface $identity = null;
 	/**
 	 * @var array<string|int, MenuItem>
@@ -46,8 +56,9 @@ class Menu {
 
 		$this->level = $level;
 
-		/** @var class-string<\Awyiss\Utility\Menu\MenuItem> $ls_className */
-		$ls_className = App::className('MenuItem', 'Utility/Menu');
+		$la_config['menuItemClass'] ??= App::className('MenuItem', 'Utility/Menu');
+		/** @var class-string<\Awyiss\Utility\Menu\MenuItem> $ls_menuItemClass */
+		$ls_menuItemClass = $la_config['menuItemClass'];
 
 		foreach ($la_items as $lx_identifier => $lo_item) {
 			if (!is_string($lx_identifier) && isset($lo_item->id)) {
@@ -58,7 +69,7 @@ class Menu {
 				$lo_item->identifier = $lx_identifier;
 			}
 
-			$this->items[ $lx_identifier ] = new $ls_className($lo_item, $la_config, $level);
+			$this->items[ $lx_identifier ] = new $ls_menuItemClass($lo_item, $la_config, $level);
 		}
 
 		if (isset($la_config['identity'])) {
