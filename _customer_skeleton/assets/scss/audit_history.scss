@@ -29,3 +29,26 @@ body {
 	background-color:transparent;
 	font-family:inherit;
 }
+
+//noinspection CssInvalidHtmlTagReference
+module {
+	@extend p;
+
+	display:flex;
+	width:100%;
+	padding:20px;
+	border-radius:5px;
+	background-image:linear-gradient(90deg, color-mix(in srgb, var(--customColor, #63D1A5), #000000 10%), var(--customColor, #63D1A5));
+	color:#FFFFFF;
+	font-size:0;
+	line-height:0;
+	overflow:hidden;
+	cursor:default;
+
+	&::before {
+		content:attr(data-label);
+		font-size:20px;
+		font-weight:700;
+		line-height:1;
+	}
+}

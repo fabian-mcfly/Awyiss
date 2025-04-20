@@ -28,7 +28,7 @@ export default class HistoryTables {
 			slider.appendChild(table);
 		});
 
-		// Append the slider to the tables wrapper
+		// Append the slider to the table's wrapper
 		wrapper.appendChild(slider);
 
 		// Create the slider controls
@@ -130,7 +130,7 @@ export default class HistoryTables {
 	 * @param {number} index
 	 */
 	updateSlider(slider, index) {
-		// Set the css property
+		// Set the CSS property
 		slider.style.setProperty('--slideOffset', index - slider.children.length + 1);
 
 		// Get the current table
@@ -144,7 +144,7 @@ export default class HistoryTables {
 		const prev = slider.parentElement.querySelector('.AuditHistory-Slider-Prev');
 		prev.disabled = index === 0;
 		if (prev.disabled && prev.querySelector('.Hover')) {
-			// Reset width and height of the button since disabled buttons have no pointer events
+			// Reset width and height of the button since disabled buttons have no pointer events,
 			// so the mouse leave event won't be triggered
 			const hoverElement = prev.querySelector('.Hover');
 			if (hoverElement) {
@@ -156,7 +156,7 @@ export default class HistoryTables {
 		const next = slider.parentElement.querySelector('.AuditHistory-Slider-Next');
 		next.disabled = index === slider.children.length - 1;
 		if (next.disabled && next.querySelector('.Hover')) {
-			// Reset width and height of the button since disabled buttons have no pointer events
+			// Reset width and height of the button since disabled buttons have no pointer events,
 			// so the mouse leave event won't be triggered
 			const hoverElement = next.querySelector('.Hover');
 			if (hoverElement) {
@@ -171,7 +171,7 @@ export default class HistoryTables {
 
 			slider.htmlInitialized = setTimeout(() => {
 				/**
-				 * For each tr.ValueIsHtml, create an iframe and set the content inside
+				 * For each `tr.ValueIsHtml`, create an iframe and set the content inside
 				 * the `TableCell-OldValue`- and `TableCell-CurrentValue`-cells
 				 */
 				current.querySelectorAll('.ValueIsHtml').forEach(row => {
@@ -191,7 +191,16 @@ export default class HistoryTables {
 						});
 
 						iframe.contentWindow.document.open();
-						iframe.contentWindow.document.write(`<html lang="${languageShortcode}">`);
+
+						// Get the success color from the root element
+						const successColor = getComputedStyle(document.documentElement).getPropertyValue('--colorSuccess');
+						if (successColor && successColor !== '#63D1A5') {
+							iframe.contentWindow.document.write(`<html lang="${languageShortcode}" style="--customColor:${successColor};">`);
+						}
+						else {
+							iframe.contentWindow.document.write(`<html lang="${languageShortcode}">`);
+						}
+
 						// noinspection HtmlRequiredTitleElement
 						iframe.contentWindow.document.write('<head>');
 						iframe.contentWindow.document.write(`<link rel="stylesheet" href="${baseUrl}assets/css/audit_history.css">`);
@@ -221,6 +230,7 @@ export default class HistoryTables {
 		}
 
 		if (this.urlChange) {
+			// noinspection JSUnresolvedReference
 			clearTimeout(slider.urlChange);
 
 			slider.urlChange = setTimeout(() => {
