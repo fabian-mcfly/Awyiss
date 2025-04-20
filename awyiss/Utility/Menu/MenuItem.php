@@ -57,6 +57,10 @@ class MenuItem implements ArrayAccess {
 	 */
 	protected ?IdentityPermissionsInterface $identity = null;
 	/**
+	 * @var bool|null
+	 */
+	protected ?bool $isCurrentRoute = null;
+	/**
 	 * @var int
 	 */
 	protected int $level = 0;
@@ -194,12 +198,18 @@ class MenuItem implements ArrayAccess {
 	public function isCurrentRoute(string $currentRoute): bool {
 		static $ls_fullBaseUrl;
 
+		if ($this->isCurrentRoute !== null) {
+			return $this->isCurrentRoute;
+		}
+
 		if (empty($currentRoute)) {
+			$this->isCurrentRoute = false;
 			return false;
 		}
 
 		$ls_testUrl = $this->getLink()?->url;
 		if (!$ls_testUrl) {
+			$this->isCurrentRoute = false;
 			return false;
 		}
 
@@ -214,6 +224,7 @@ class MenuItem implements ArrayAccess {
 		}
 
 		if ($ls_testUrl === $currentRoute) {
+			$this->isCurrentRoute = true;
 			return true;
 		}
 
@@ -221,14 +232,18 @@ class MenuItem implements ArrayAccess {
 		if (str_contains($currentRoute, ':')) {
 			$la_segments = explode('/', trim($currentRoute, '/'));
 			$la_segments = array_filter($la_segments, function (string $segment) {
-				return !str_contains($segment, ':');
+				$this->isCurrentRoute = !str_contains($segment, ':');
+				return $this->isCurrentRoute;
 			});
 
 			$ls_cleanRoute = '/' . implode('/', $la_segments);
 
+			$this->isCurrentRoute = $ls_testUrl === $ls_cleanRoute;
 
-			return $ls_testUrl === $ls_cleanRoute;
+			return $this->isCurrentRoute;
 		}
+
+		$this->isCurrentRoute = false;
 
 		return false;
 	}
