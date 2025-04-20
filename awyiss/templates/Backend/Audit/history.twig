@@ -231,8 +231,7 @@
 		{%- elseif field == 'columnIndent' %}
 			{{- entity.column.indent.label }}
 		{% elseif (field in ['text', 'textHtml', 'successMessage']) or (isAttribute and attribute.inputType == 'texteditor') %}
-			{% do MediaHelper.rebuildSimpleImageTagsInField(entity, field, currentValue) %}
-			<code>{{- entity.get(field) }}</code>
+			<code>{{- MediaHelper.rebuildSimpleImageTagsInText(entity.get(field), settings.media)|escape }}</code>
 		{% elseif isAttribute and settings.attributeOptionsCollection %}
 			{{- options[ entity.get(field) ] ?? '' }}
 		{%- else %}
