@@ -16,7 +16,7 @@ $includeColumnSystem:true !default;
 @import 'webfonts';
 
 html {
-	padding:var(--lineHeightMain) calc(var(--pagePadding) * .5);
+	padding:20px;
 	background-image:none;
 	background-color:transparent;
 	//noinspection CssNoGenericFontName

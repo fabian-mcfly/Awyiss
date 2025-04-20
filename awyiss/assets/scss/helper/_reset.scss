@@ -77,12 +77,14 @@ legend {
 	color:inherit;
 }
 
-input,
-button,
-textarea,
-select,
-optgroup,
-option {
+:where(
+	input,
+	button,
+	textarea,
+	select,
+	optgroup,
+	option
+) {
 	font-family:inherit;
 	font-size:inherit;
 	font-style:inherit;

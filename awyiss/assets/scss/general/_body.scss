@@ -89,6 +89,7 @@
 
 	h2 {
 		display:-webkit-box;
+		overflow:hidden;
 		-webkit-box-orient:vertical;
 		-webkit-line-clamp:3;
 	}
@@ -168,7 +169,7 @@
 	}
 
 	&:has(.tox-tbtn--active) {
-		z-index:6;
+		z-index:4000;
 	}
 
 	html.Scale-Small & {
@@ -319,9 +320,11 @@ fieldset {
 	}
 
 	:is(
-		.Overview > &,
-		.Form .Main-Fieldsets > &,
-		.Form .Sidebar-Fieldsets > &,
+		:is(
+			.Overview,
+			.Form .Main-Fieldsets,
+			.Form .Sidebar-Fieldsets
+		) > &,
 		&.Collapsible
 	) {
 		&.Collapsed {
@@ -421,12 +424,14 @@ legend {
 	}
 
 	:is(
-		.Overview > fieldset > &,
-		.Form .Fieldsets > fieldset > &,
-		.Form .Main-Fieldsets > fieldset > &,
-		.Form .Sidebar-Fieldsets > fieldset > &,
-		fieldset.Collapsible > &
-	) {
+		:is(
+			.Overview,
+			.Form .Fieldsets,
+			.Form .Main-Fieldsets,
+			.Form .Sidebar-Fieldsets
+		) > fieldset,
+		fieldset.Collapsible
+	) > & {
 		padding-right:60px;
 		cursor:pointer;
 

@@ -1,5 +1,5 @@
 dialog {
-	width:calc(100% - 40px);
+	width:calc(100% - 80px);
 	max-width:540px;
 	max-height:80vh;
 	margin:auto;
@@ -15,12 +15,13 @@ dialog {
 	scrollbar-width:thin;
 
 	@media screen and (width <= 768px) {
+		width:calc(100dvw - 40px);
 		max-width:480px;
 		padding:62px 20px 20px 20px;
 	}
 
 	@media screen and (width <= 540px) {
-		max-width:calc(100dvw - 20px);
+		width:calc(100dvw - 20px);
 		padding:52px 10px 10px 10px;
 	}
 

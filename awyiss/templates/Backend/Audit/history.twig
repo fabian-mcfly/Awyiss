@@ -44,10 +44,9 @@
 	{% set identifier = mediaElement.identifier|variable %}
 
 	<tr>
-		<td colspan="2" class="TableCell-MediaElement-Label">
+		<td colspan="3" class="TableCell-MediaElement-Label">
 			{{ mediaElement.label }}
 		</td>
-		<td class="TableCell-MediaElement-Label TableCell-CurrentValue TableCell-MediaElement-CurrentValue"></td>
 	</tr>
 	{% for mediaSelector in mediaElement.mediaElementSelectors  %}
 		{% set currentValue = entity.mediaAssignments[ identifier ][ mediaSelector.identifier|variable ].mediaId %}
@@ -297,8 +296,99 @@
 	{% block tablesHistory %}
 		<div class="AuditHistory-Tables">
 			{% for audit in audits %}
+
+				{% set tableBodyRows = 0 %}
+				{% set tableBody %}
+					{% block tableHistoryBodyRow %}
+						{% for field in historyFields %}
+							{% if field in translatableFields %}
+								<tr>
+									<td colspan="3" class="TableCell-Translation-Label">
+										{{ __d(scope, field|underscore) }}
+									</td>
+								</tr>
+								{% for language in languages %}
+									{{ _self.tableHistoryBodyRow(entity, schema, scope, field, audit, associations, null, language, _context) }}
+								{% endfor %}
+							{% else %}
+								{{ _self.tableHistoryBodyRow(entity, schema, scope, field, audit, associations, null, null, _context) }}
+							{% endif %}
+						{% endfor %}
+
+						{% for field, attribute in attributes %}
+							{% if field in translatableAttributes %}
+								<tr>
+									<td colspan="3" class="TableCell-Translation-Label">
+										{{ attribute.label }}
+									</td>
+								</tr>
+								{% for language in languages %}
+									{{ _self.tableHistoryBodyRow(entity, attributesSchema, scope, field|variable, audit, associations, attribute, language, _context) }}
+								{% endfor %}
+							{% else %}
+								{{ _self.tableHistoryBodyRow(entity, attributesSchema, scope, field|variable, audit, associations, attribute, null, _context) }}
+							{% endif %}
+						{% endfor %}
+
+						{% if publicationDataEnabled %}
+							<tr>
+								<td colspan="3" class="TableCell-PublicationData-Label">
+									{{ __d('publication_data', 'fieldset_publication') }}
+								</td>
+							</tr>
+
+							{% set oldData = audit.dataOld %}
+							{% set oldValue = oldData._publicationData.start.dateTime %}
+							{% set changed = oldValue != (entity.publicationStart ? entity.publicationStart.format('Y-m-d H:i:s') : null) %}
+							<tr{% if changed %} class="ValueChanged"{% endif %} data-field="_publication_data[start][date_time]">
+								<td class="TableCell-Field">{{ __d('publication_data', 'date_time_start') }}</td>
+								<td class="TableCell-OldValue">
+									{{ oldValue ? TimeHelper.nice(oldValue) : '' }}
+
+									<input type="text" value="{{ oldValue }}" name="_publication_data[start][date_time]">
+
+									{% if changed and isAjax %}
+										<button type="button" class="Button Button-Revert">{{ __('revert_value') }}</button>
+									{% endif %}
+								</td>
+								<td class="TableCell-CurrentValue">
+									{{ entity.publicationStart ? TimeHelper.nice(entity.publicationStart) : '' }}
+								</td>
+							</tr>
+
+							{% set oldValue = oldData._publicationData.end.dateTime %}
+							{% set changed = oldValue != (entity.publicationEnd ? entity.publicationEnd.format('Y-m-d H:i:s') : null) %}
+							<tr{% if changed %} class="ValueChanged"{% endif %} data-field="_publication_data[end][date_time]">
+								<td class="TableCell-Field">{{ __d('publication_data', 'date_time_end') }}</td>
+								<td class="TableCell-OldValue">
+									{{ oldValue ? TimeHelper.nice(oldValue) : '' }}
+
+									<input type="text" value="{{ oldValue }}" name="_publication_data[end][date_time]">
+
+									{% if changed and isAjax %}
+										<button type="button" class="Button Button-Revert">{{ __('revert_value') }}</button>
+									{% endif %}
+								</td>
+								<td class="TableCell-CurrentValue">
+									{{ entity.publicationEnd ? TimeHelper.nice(entity.publicationEnd) : '' }}
+								</td>
+							</tr>
+						{% endif %}
+
+						{% for mediaElement in mediaElements %}
+							{% if mediaElement.identifier != 'inline_img_tag' %}
+								{{ _self.tableHistoryBodyMediaRow(entity, audit, mediaElement, _context) }}
+							{% endif %}
+						{% endfor %}
+					{% endblock %}
+				{% endset %}
+
+				{% set tableBodyRows = tableBody|split('</tr>')|length - 1 %}
+
 				{% block tableHistory %}
-					<table class="Overview-Table AuditHistory-Table" data-date-time="{{ TimeHelper.nice(audit.createdOn) }}" data-timestamp="{{ audit.createdOn.timestamp }}">
+					<table class="Overview-Table AuditHistory-Table"
+						style="--rows:{{ tableBodyRows }}; --columns: 3;"
+						data-date-time="{{ TimeHelper.nice(audit.createdOn) }}" data-timestamp="{{ audit.createdOn.timestamp }}">
 						{% block tableHistoryHead %}
 							<thead>
 								{% block tableHistoryHeadRow %}
@@ -323,92 +413,7 @@
 						{% endblock %}
 						{% block tableHistoryBody %}
 							<tbody>
-								{% block tableHistoryBodyRow %}
-									{% for field in historyFields %}
-										{% if field in translatableFields %}
-											<tr>
-												<td colspan="2" class="TableCell-Translation-Label">
-													{{ __d(scope, field|underscore) }}
-												</td>
-												<td class="TableCell-Translation-Label TableCell-CurrentValue TableCell-Translation-CurrentValue"></td>
-											</tr>
-											{% for language in languages %}
-												{{ _self.tableHistoryBodyRow(entity, schema, scope, field, audit, associations, null, language, _context) }}
-											{% endfor %}
-										{% else %}
-											{{ _self.tableHistoryBodyRow(entity, schema, scope, field, audit, associations, null, null, _context) }}
-										{% endif %}
-									{% endfor %}
-
-									{% for field, attribute in attributes %}
-										{% if field in translatableAttributes %}
-											<tr>
-												<td colspan="2" class="TableCell-Translation-Label">
-													{{ attribute.label }}
-												</td>
-												<td class="TableCell-Translation-Label TableCell-CurrentValue TableCell-Translation-CurrentValue"></td>
-											</tr>
-											{% for language in languages %}
-												{{ _self.tableHistoryBodyRow(entity, attributesSchema, scope, field|variable, audit, associations, attribute, language, _context) }}
-											{% endfor %}
-										{% else %}
-											{{ _self.tableHistoryBodyRow(entity, attributesSchema, scope, field|variable, audit, associations, attribute, null, _context) }}
-										{% endif %}
-									{% endfor %}
-
-									{% if publicationDataEnabled %}
-										<tr>
-											<td colspan="2" class="TableCell-PublicationData-Label">
-												{{ __d('publication_data', 'fieldset_publication') }}
-											</td>
-											<td class="TableCell-PublicationData-Label TableCell-CurrentValue TableCell-PublicationData-CurrentValue"></td>
-										</tr>
-
-										{% set oldData = audit.dataOld %}
-										{% set oldValue = oldData._publicationData.start.dateTime %}
-										{% set changed = oldValue != (entity.publicationStart ? entity.publicationStart.format('Y-m-d H:i:s') : null) %}
-										<tr{% if changed %} class="ValueChanged"{% endif %} data-field="_publication_data[start][date_time]">
-											<td class="TableCell-Field">{{ __d('publication_data', 'date_time_start') }}</td>
-											<td class="TableCell-OldValue">
-												{{ oldValue ? TimeHelper.nice(oldValue) : '' }}
-
-												<input type="text" value="{{ oldValue }}" name="_publication_data[start][date_time]">
-
-												{% if changed and isAjax %}
-													<button type="button" class="Button Button-Revert">{{ __('revert_value') }}</button>
-												{% endif %}
-											</td>
-											<td class="TableCell-CurrentValue">
-												{{ entity.publicationStart ? TimeHelper.nice(entity.publicationStart) : '' }}
-											</td>
-										</tr>
-
-										{% set oldValue = oldData._publicationData.end.dateTime %}
-										{% set changed = oldValue != (entity.publicationEnd ? entity.publicationEnd.format('Y-m-d H:i:s') : null) %}
-										<tr{% if changed %} class="ValueChanged"{% endif %} data-field="_publication_data[end][date_time]">
-											<td class="TableCell-Field">{{ __d('publication_data', 'date_time_end') }}</td>
-											<td class="TableCell-OldValue">
-												{{ oldValue ? TimeHelper.nice(oldValue) : '' }}
-
-												<input type="text" value="{{ oldValue }}" name="_publication_data[end][date_time]">
-
-												{% if changed and isAjax %}
-													<button type="button" class="Button Button-Revert">{{ __('revert_value') }}</button>
-												{% endif %}
-											</td>
-											<td class="TableCell-CurrentValue">
-												{{ entity.publicationEnd ? TimeHelper.nice(entity.publicationEnd) : '' }}
-											</td>
-										</tr>
-									{% endif %}
-
-									{% for mediaElement in mediaElements %}
-										{% if mediaElement.identifier != 'inline_img_tag' %}
-											{{ _self.tableHistoryBodyMediaRow(entity, audit, mediaElement, _context) }}
-										{% endif %}
-									{% endfor %}
-								{% endblock %}
-
+								{{ tableBody }}
 							</tbody>
 						{% endblock %}
 						{% block tableHistoryFoot %}
@@ -416,10 +421,9 @@
 								{% block tableHistoryFootRow %}
 									<tr>
 										{% block tableHistoryFooterInfo %}
-											<td colspan="2" class="TableFooter-Info">
+											<td colspan="3" class="TableFooter-Info">
 												{{ __('history_entry_info', TimeHelper.nice(audit.createdOn), audit.user ? audit.user.username : (audit.createdBy ? __('user_unknown') : __('user_system'))) }}
 											</td>
-											<td class="TableFooter-CurrentValue"></td>
 										{% endblock %}
 									</tr>
 								{% endblock %}

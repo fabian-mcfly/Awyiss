@@ -39,7 +39,8 @@ body {
 		img,
 		object,
 		table,
-		video
+		video,
+		[contentEditable="false"]
 	) {
 		&[data-mce-selected] {
 			outline-color:#63D1A5;

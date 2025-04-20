@@ -95,7 +95,7 @@
 		}
 	}
 
-	&:not(.ButtonArea-Bottom):not(dialog &) {
+	#Content &:not(.ButtonArea-Bottom, .EditFrontendEditor &) {
 		@media screen and (width <= 1024px) {
 			width:100%;
 			max-width:none;

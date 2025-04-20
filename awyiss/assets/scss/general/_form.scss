@@ -44,7 +44,6 @@
 	.Fieldsets {
 		display:grid;
 		gap:var(--rowGap) var(--lineHeightMain);
-		grid-auto-flow:dense;
 		grid-column:1 / -1;
 		grid-template-columns:[main] auto [sidebar] calc((100% - var(--lineHeightMain)) / 3);
 
@@ -1441,12 +1440,141 @@ textarea {
 	}
 }
 
-#EditFrontendEditor {
-	display:block;
-	height:100%;
-	padding:40px 20px 20px 20px;
-	overscroll-behavior:contain;
-	overflow-y:auto;
-	scrollbar-color:var(--scrollbarColor);
-	scrollbar-width:thin;
+:is(
+	.ContentsController,
+	.FormElementsController,
+	.WidgetsController
+) {
+	&:has(.EditFrontendEditor) {
+		padding-block:0;
+
+		#Content {
+			height:100dvh;
+			margin-bottom:0;
+			padding:52px 0 0 0;
+			overflow:hidden;
+
+			@extend %DialogTitle;
+
+			@media screen and (width <= 768px) {
+				padding-top:42px;
+			}
+
+			&::after {
+				content:attr(data-title, 'Form');
+			}
+
+			.Fieldsets {
+				grid-template-columns:auto;
+
+				> :is(
+					.Main-Fieldsets,
+					.Sidebar-Fieldsets,
+					fieldset
+				) {
+					grid-column:1 / -1;
+				}
+			}
+		}
+
+		#JumpToContent,
+		#Sidebar-Toggle {
+			display:none;
+		}
+
+		.Sidebar-Fieldsets {
+			display:grid;
+			padding:0;
+			box-shadow:none;
+			background-color:transparent;
+			position:relative;
+			inset:unset;
+			overflow:visible;
+			transform:none;
+		}
+	}
+
+	.EditFrontendEditor {
+		height:100%;
+		border:10px solid transparent;
+		padding:30px;
+		overflow:auto;
+		grid-template-columns:auto;
+		scrollbar-color:var(--scrollbarColor);
+		scrollbar-width:thin;
+
+		@media screen and (width <= 768px) {
+			padding-inline:10px;
+			padding-bottom:10px;
+		}
+
+		@media screen and (width <= 540px) {
+			padding-inline:5px;
+			padding-bottom:5px;
+			border-width:5px;
+		}
+
+		&:not(.ExpertMode) {
+			:is(
+				.FormInputName-Active,
+				.FormInputName-ColumnWidth,
+				.FormInputName-ColumnIndent,
+				.FormInputName-ColumnRtl,
+				.FormInputName-ColumnLast,
+				.FormInputName-ParentId,
+				.FormInputName-SystemOrder,
+				.Fieldset-PublicationData
+			) {
+				display:none;
+			}
+		}
+
+		> .ButtonArea {
+			&:nth-child(1 of .ButtonArea) {
+				display:flex;
+				width:fit-content;
+				margin:0;
+				padding:2px;
+				position:absolute;
+				top:0;
+				right:0;
+
+				.Button {
+					width:auto;
+					height:48px;
+					line-height:26px;
+					background-color:transparent;
+
+					@media screen and (width <= 768px) {
+						height:38px;
+					}
+
+					@media screen and (width <= 540px) {
+						padding-inline:10px;
+					}
+
+					@media screen and (width <= 480px) {
+						font-size:0;
+						line-height:0;
+					}
+
+					html.Scale-Small & {
+						@media screen and (width > 768px) {
+							height:38px;
+						}
+					}
+
+					&::after {
+						@media screen and (width <= 480px) {
+							margin-left:0;
+						}
+					}
+				}
+			}
+
+			&:nth-child(2 of .ButtonArea) {
+				justify-content:space-between;
+			}
+		}
+	}
 }

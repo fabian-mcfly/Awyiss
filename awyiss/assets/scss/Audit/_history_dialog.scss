@@ -1,8 +1,16 @@
 #AuditHistoryDialog {
 	@extend %DialogNoTitle;
 
-	width:calc(100% - 40px);
+	width:calc(100% - 80px);
 	max-width:1280px;
+
+	@media screen and (width <= 768px) {
+		width:calc(100dvw - 40px);
+	}
+
+	@media screen and (width <= 540px) {
+		width:calc(100dvw - 20px);
+	}
 
 	&:not(:has(.AuditHistory-Tables)) {
 		@extend %LoaderIcon;
@@ -25,6 +33,15 @@
 		z-index:7;
 		pointer-events:none;
 		mask-image:linear-gradient(to bottom, black 70%, transparent 100%);
+
+		@media screen and (width <= 768px) {
+			inset:42px 20px auto 20px;
+		}
+
+		@media screen and (width <= 540px) {
+			height:100px;
+			inset:42px 10px auto 10px;
+		}
 	}
 
 	.Inner {
@@ -37,6 +54,22 @@
 
 		@extend %DialogTitle;
 
+		@media screen and (width <= 768px) {
+			padding-top:52px;
+		}
+
+		@media screen and (width <= 540px) {
+			padding:47px 5px 5px;
+		}
+
+		&::after {
+			padding-right:140px;
+
+			@media screen and (width <= 480px) {
+				padding-right:60px;
+			}
+		}
+
 		> .ButtonArea {
 			margin:0;
 			padding:2px;
@@ -48,12 +81,32 @@
 			.Button {
 				width:auto;
 				height:48px;
-				margin-right:20px;
 				line-height:26px;
 				background-color:transparent;
 
-				&:last-child {
-					margin-right:0;
+				@media screen and (width <= 768px) {
+					height:38px;
+				}
+
+				@media screen and (width <= 540px) {
+					padding-inline:10px;
+				}
+
+				@media screen and (width <= 480px) {
+					font-size:0;
+					line-height:0;
+				}
+
+				html.Scale-Small & {
+					@media screen and (width > 768px) {
+						height:38px;
+					}
+				}
+
+				&::after {
+					@media screen and (width <= 480px) {
+						margin-left:0;
+					}
 				}
 			}
 		}
@@ -67,6 +120,18 @@
 			overflow-y:auto;
 			scrollbar-color:var(--scrollbarColor);
 			scrollbar-width:thin;
+
+			@media screen and (width <= 768px) {
+				max-height:calc(80dvh - 62px);
+				padding-inline:10px;
+				padding-bottom:10px;
+			}
+
+			@media screen and (width <= 540px) {
+				max-height:calc(80dvh - 57px);
+				padding-inline:5px;
+				padding-bottom:5px;
+			}
 		}
 	}
 

@@ -11,7 +11,6 @@
 	}
 }
 
-
 @mixin ResponsiveTableGrid {
 	--idColumnWidth:100px;
 	--columnWidth:minmax(min-content, max(calc((100% - var(--idColumnWidth)) / var(--dynamicColumns)), 200px));
@@ -238,6 +237,190 @@
 
 		.AuditInfoList {
 			padding-inline:40px 10px;
+		}
+	}
+}
+
+@mixin ResponsiveVerticalTable {
+	--columns:1;
+	--rows:20;
+	--headerWidth:200px;
+
+	display:grid;
+	padding:20px;
+	gap:1px 5px;
+	grid-template-columns:var(--headerWidth) repeat(var(--rows), min(200px, calc(100% - var(--headerWidth))));
+	grid-template-rows:repeat(var(--columns), max-content);
+	container:table / inline-size;
+
+	@media screen and (width <= 540px) {
+		padding:10px;
+	}
+
+	@media screen and (width <= 480px) {
+		--headerWidth:140px;
+	}
+
+	@media screen and (width <= 400px) {
+		--headerWidth:120px;
+	}
+
+	&:has(tbody tr:first-child:last-child) {
+		grid-template-columns:var(--headerWidth) auto;
+
+		@media screen and (width <= 400px) {
+			grid-template-columns:var(--headerWidth) calc(100% - var(--headerWidth) - 5px);
+		}
+
+		tbody {
+			padding-bottom:0;
+			border-bottom-width:0;
+		}
+	}
+
+	:is(
+		thead,
+		tbody,
+		tr
+	) {
+		display:grid;
+		grid-template-columns: subgrid;
+		grid-template-rows: subgrid;
+		grid-row:1 / -1;
+	}
+
+	:is(
+		th,
+		td
+	) {
+		max-width:100%;
+		min-width:100%;
+		align-content:start;
+
+		&::before {
+			display:none;
+		}
+	}
+
+	thead {
+		position:sticky;
+		left:0;
+		z-index:2;
+
+		th {
+			&:first-child {
+				border-top-left-radius:5px;
+			}
+		}
+	}
+
+	th {
+		padding-right:10px;
+		border-bottom-width:0;
+		border-right-width:5px;
+		border-right-style:solid;
+
+		&:has(> .Sort) {
+			padding-right:0;
+		}
+
+		&:last-child {
+			border-right-width:5px;
+			border-top-right-radius:0;
+			border-bottom-left-radius:5px;
+		}
+
+		.Sort {
+			display:flex;
+			height:100%;
+			align-items:center;
+		}
+	}
+
+	tbody {
+		width:calc(100cqw - var(--headerWidth));
+		padding-bottom:10px;
+		border-bottom:5px solid transparent;
+		grid-column:2 / -1;
+		overflow-x:auto;
+
+		tr {
+			&:first-child {
+				td {
+					border-top-width:0;
+				}
+			}
+
+			&:last-child {
+				td {
+					&:first-child:first-child {
+						border-top-right-radius:5px;
+						border-bottom-left-radius:0;
+					}
+				}
+			}
+		}
+
+		td {
+			border-width:0;
+		}
+	}
+
+	tfoot {
+		width:100cqw;
+		border-radius:5px;
+		margin-top:10px;
+		grid-column:1 / -1;
+		overflow:hidden;
+
+		td {
+			padding:10px;
+			border-top-width:0;
+		}
+	}
+
+	:is(
+		.TableHeader-Actions,
+		.TableCell-Actions
+	) {
+		padding-inline:10px;
+	}
+
+	.TableCell-Actions {
+		@media screen and (width <= 640px) {
+			align-content:end;
+		}
+	}
+
+	.AuditInfo {
+		margin:0 0 0 -5px;
+
+		&::before,
+		.AuditInfoList {
+			right:auto;
+			left:0;
+		}
+
+		.AuditInfoList {
+			padding-inline:40px 10px;
+		}
+	}
+
+	.Actions {
+		.Button {
+			margin-top:5px;
+
+			&.Button-Delete {
+				width:100%;
+				margin-left:0;
+				position:relative;
+				top:auto;
+				left:auto;
+			}
+
+			&:first-child {
+				margin-top:0;
+			}
 		}
 	}
 }
@@ -815,10 +998,6 @@
 }
 
 .Responsive-Table {
-	--columns:1;
-	--rows:20;
-	--headerWidth:200px;
-
 	&.Responsive-TableGrid {
 		&:has(th:nth-last-child(8)) {
 			@media screen and (1280px < width <= 1440px) {
@@ -845,183 +1024,7 @@
 		}
 
 		@media screen and (width <= 640px) {
-			display:grid;
-			padding:20px;
-			gap:1px 5px;
-			grid-template-columns:var(--headerWidth) repeat(var(--rows), min(200px, calc(100% - var(--headerWidth))));
-			grid-template-rows:repeat(var(--columns), max-content);
-			container:table / inline-size;
-
-			@media screen and (width <= 540px) {
-				padding:10px;
-			}
-
-			@media screen and (width <= 480px) {
-				--headerWidth:140px;
-			}
-
-			@media screen and (width <= 400px) {
-				--headerWidth:120px;
-			}
-
-			&:has(tbody tr:first-child:last-child) {
-				grid-template-columns:var(--headerWidth) auto;
-
-				@media screen and (width <= 400px) {
-					grid-template-columns:var(--headerWidth) calc(100% - var(--headerWidth) - 5px);
-				}
-
-				tbody {
-					padding-bottom:0;
-					border-bottom-width:0;
-				}
-			}
-
-			:is(
-				thead,
-				tbody,
-				tr
-			) {
-				display:grid;
-				grid-template-columns: subgrid;
-				grid-template-rows: subgrid;
-				grid-row:1 / -1;
-			}
-
-			:is(
-				th,
-				td
-			) {
-				max-width:100%;
-				min-width:100%;
-				align-content:start;
-
-				&::before {
-					display:none;
-				}
-			}
-
-			thead {
-				position:sticky;
-				left:0;
-				z-index:2;
-
-				th {
-					&:first-child {
-						border-top-left-radius:5px;
-					}
-				}
-			}
-
-			th {
-				padding-right:10px;
-				border-bottom-width:0;
-				border-right-width:5px;
-				border-right-style:solid;
-
-				&:has(> .Sort) {
-					padding-right:0;
-				}
-
-				&:last-child {
-					border-right-width:5px;
-					border-top-right-radius:0;
-					border-bottom-left-radius:5px;
-				}
-
-				.Sort {
-					display:flex;
-					height:100%;
-					align-items:center;
-				}
-			}
-
-			tbody {
-				width:calc(100cqw - var(--headerWidth));
-				padding-bottom:10px;
-				border-bottom:5px solid transparent;
-				grid-column:2 / -1;
-				overflow-x:auto;
-
-				tr {
-					&:first-child {
-						td {
-							border-top-width:0;
-						}
-					}
-
-					&:last-child {
-						td {
-							&:first-child:first-child {
-								border-top-right-radius:5px;
-								border-bottom-left-radius:0;
-							}
-						}
-					}
-				}
-
-				td {
-					border-width:0;
-				}
-			}
-
-			tfoot {
-				width:100cqw;
-				border-radius:5px;
-				margin-top:10px;
-				grid-column:1 / -1;
-				overflow:hidden;
-
-				td {
-					padding:10px;
-					border-top-width:0;
-				}
-			}
-
-			:is(
-				.TableHeader-Actions,
-				.TableCell-Actions
-			) {
-				padding-inline:10px;
-			}
-
-			.TableCell-Actions {
-				@media screen and (width <= 640px) {
-					align-content:end;
-				}
-			}
-
-			.AuditInfo {
-				margin:0 0 0 -5px;
-
-				&::before,
-				.AuditInfoList {
-					right:auto;
-					left:0;
-				}
-
-				.AuditInfoList {
-					padding-inline:40px 10px;
-				}
-			}
-
-			.Actions {
-				.Button {
-					margin-top:5px;
-
-					&.Button-Delete {
-						width:100%;
-						margin-left:0;
-						position:relative;
-						top:auto;
-						left:auto;
-					}
-
-					&:first-child {
-						margin-top:0;
-					}
-				}
-			}
+			@include ResponsiveVerticalTable;
 		}
 	}
 }

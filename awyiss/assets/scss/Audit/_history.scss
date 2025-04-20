@@ -8,6 +8,10 @@
 	overflow:hidden;
 	flex-direction:row-reverse;
 
+	@media screen and (width <= 540px) {
+		margin-top:var(--lineHeightMain);
+	}
+
 	.AuditHistory-Table {
 		width:100%;
 		margin-top:0;
@@ -29,6 +33,10 @@
 	position:sticky;
 	top:120px;
 	z-index:10;
+
+	@media screen and (width <= 768px) {
+		top:20px;
+	}
 
 	html.🌚 & {
 		background-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l - 0.0473) calc(c - 0.005) calc(h + 1.12));
@@ -192,6 +200,12 @@
 .AuditHistory-Table {
 	margin-top:var(--rowGap);
 
+	@media screen and (width <= 640px) {
+		overflow:auto;
+
+		@include ResponsiveVerticalTable;
+	}
+
 	tr {
 		&.ValueChanged {
 			&:is(*, :nth-child(2n)) {
@@ -229,69 +243,125 @@
 				}
 			}
 		}
-	}
 
-	.TableHeader-Info {
-		background-color:oklch(from var(--colorMedium) calc(l - 0.0683) calc(c + 0.001) calc(h - 1.9));
-		border-bottom-width:0;
-	}
-
-	.TableHeader-Field {
-		width:300px;
-	}
-
-	:is(
-		.TableCell-MediaElement-Label,
-		.TableCell-PublicationData-Label,
-		.TableCell-Translation-Label
-	) {
-		padding-block:5px;
-		border-bottom:3px solid oklch(from var(--colorMedium) calc(l - 0.0683) calc(c + 0.001) calc(h - 1.9));
-		background-color:var(--colorMedium);
-		color:var(--colorBright);
-		pointer-events:none;
-
-		html.🌚 & {
-			border-bottom-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l - 0.0216) calc(c - 0.002) calc(h - 1.95));
-			background-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l - 0.0473) calc(c - 0.005) calc(h + 1.12))
-		}
-
-		&::before {
-			display:none;
+		&:has(
+			.TableCell-MediaElement-Label,
+			.TableCell-PublicationData-Label,
+			.TableCell-Translation-Label
+		) {
+			pointer-events:none;
 		}
 	}
 
-	.TableCell-OldValue {
-		width:calc((100% - 300px) * .5);
+	th {
+		&.TableHeader-Info {
+			background-color:oklch(from var(--colorMedium) calc(l - 0.0683) calc(c + 0.001) calc(h - 1.9));
+			border-bottom-width:0;
+		}
 
-		input {
-			display:none;
+		&.TableHeader-Field {
+			width:300px;
+
+			@media screen and (width <= 1024px) {
+				width:200px;
+			}
 		}
 	}
 
-	:is(
-		.TableCell-OldValue,
-		.TableCell-CurrentValue
-	) {
-		&:has(code) {
-			padding:0;
+	td {
+		&:is(
+			.TableCell-MediaElement-Label,
+			.TableCell-PublicationData-Label,
+			.TableCell-Translation-Label
+		) {
+			padding-block:5px;
+			border-bottom:3px solid oklch(from var(--colorMedium) calc(l - 0.0683) calc(c + 0.001) calc(h - 1.9));
+			color:var(--colorBright);
+			pointer-events:none;
+
+			&:is(*, :nth-child(2n)) {
+				background-color:var(--colorMedium);
+			}
+
+			@media screen and (width <= 640px) {
+				grid-row:1 / -1;
+				pointer-events:none;
+				border-bottom-width:0;
+			}
+
+			html.🌚 & {
+				border-bottom-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l - 0.0216) calc(c - 0.002) calc(h - 1.95));
+
+				&:is(*, :nth-child(2n)) {
+					background-color:oklch(from var(--colorBackgroundContentDarkMode) calc(l - 0.0473) calc(c - 0.005) calc(h + 1.12))
+				}
+			}
+
+			&::before {
+				display:none;
+			}
 		}
-	}
 
-	.TableFooter-Info {
-		border-bottom-right-radius:0;
-	}
+		&.TableCell-Field {
+			&:has(.AuditHistory-Table-ToggleButton) {
+				padding-right:80px;
 
-	.TableFooter-CurrentValue {
-		border-bottom-left-radius:0;
+				@media screen and (width <= 1024px) {
+					padding-right:60px;
+				}
+
+				@media screen and (width <= 768px) {
+					padding-right:50px;
+				}
+			}
+		}
+
+		&.TableCell-OldValue {
+			width:calc((100% - 300px) * .5);
+
+			input {
+				display:none;
+			}
+		}
+
+		&:is(
+			.TableCell-OldValue,
+			.TableCell-CurrentValue
+		) {
+			&:has(code) {
+				min-height:58px;
+				padding:0;
+
+				@media screen and (width <= 1024px) {
+					min-height:42px;
+				}
+			}
+		}
+
+		&.TableFooter-Info {
+			border-bottom-right-radius:0;
+		}
+
+		&.TableFooter-CurrentValue {
+			border-bottom-left-radius:0;
+		}
 	}
 
 	.AuditHistory-Table-ToggleButton {
 		font-size:0;
 		line-height:0;
 		position:absolute;
-		top:15px;
+		top:14px;
 		right:20px;
+
+		@media screen and (width <= 1024px) {
+			top:6px;
+			right:10px;
+		}
+
+		@media screen and (width <= 768px) {
+			top:5px;
+		}
 
 		&::after {
 			content:'\f121';
@@ -310,5 +380,9 @@
 		width:100%;
 		border-radius:5px;
 		border:0 none;
+
+		@media screen and (width <= 640px) {
+			max-height:300px;
+		}
 	}
 }

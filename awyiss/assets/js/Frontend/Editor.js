@@ -177,7 +177,7 @@ class Editor {
 
 			if (event.data === 'closeFrontendEditorAndFetch') {
 				this.hideOverlay();
-				this.handleSuccessMessage();
+				this.updateEditedElement();
 			}
 		});
 
@@ -331,7 +331,7 @@ class Editor {
 	 *
 	 * @returns {void}
 	 */
-	handleSuccessMessage() {
+	updateEditedElement() {
 		fetch(window.location.href)
 		.then(response => response.text())
 		.then(html => {

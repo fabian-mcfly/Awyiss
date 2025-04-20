@@ -34,12 +34,25 @@ export default class ContentsController {
 			this.initForm();
 		}
 
-		if (document.querySelector('.Form.EditFrontendEditor')) {
-			// Find the close button and send an event to the parent window
-			const closeButton = document.querySelector('.Button-Close');
-			closeButton.addEventListener('click', () => {
-				window.parent.postMessage('closeFrontendEditor', '*');
+		const frontendEditor = document.querySelector('.Form.EditFrontendEditor');
+		if (frontendEditor) {
+			// Find the close buttons and send an event to the parent window
+			const closeButtons = frontendEditor.querySelectorAll('.Button-Close');
+			closeButtons.forEach(closeButton => {
+				closeButton.addEventListener('click', () => {
+					window.parent.postMessage('closeFrontendEditor', '*');
+				});
 			});
+
+			document.getElementById('Content').dataset.title = frontendEditor.dataset.title;
+		}
+
+		// If the document contains a flash message, send an event to the parent window
+		if (document.querySelector('.FlashMessage.Success') && window.parent !== window) {
+			window.parent.postMessage('closeFrontendEditorAndFetch', '*');
+
+			// Empty the dom so the user can't interact with the page
+			document.body.innerHTML = '';
 		}
 	}
 

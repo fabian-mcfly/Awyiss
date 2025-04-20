@@ -228,11 +228,18 @@ export default class OverlayForm {
 			document.body.append(this.overlayElement);
 		}
 
+		let inner = this.overlayElement.querySelector('.Inner');
+		if (!inner) {
+			inner = document.createElement('div');
+			inner.classList.add('Inner');
+			this.overlayElement.append(inner);
+		}
+
 		let form = this.overlayElement.querySelector('.Form');
 		if (!form) {
 			form = document.createElement('div');
 			form.classList.add('Form');
-			this.overlayElement.append(form);
+			inner.append(form);
 		}
 
 		let target = element.getAttribute('href');
@@ -272,7 +279,7 @@ export default class OverlayForm {
 			// Give the form the data-title attribute containing the h1 and remove the h1
 			const title = form.querySelector('h1');
 			if (title) {
-				form.setAttribute('data-title', title.textContent);
+				inner.setAttribute('data-title', title.textContent);
 				title.remove();
 			}
 
@@ -297,7 +304,7 @@ export default class OverlayForm {
 			saveButton.setAttribute('form', formId);
 
 			// Get the second save button
-			saveButton = realForm.querySelector('.Button-SaveClose');
+			saveButton = form.querySelector('.ButtonArea-Bottom .Button-SaveClose');
 			saveButton.classList.add('Button-Success');
 
 			// Add a clone of the close button to the form

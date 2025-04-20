@@ -1,6 +1,4 @@
 .FormElementsController {
-	@extend %FrontendEditorForm;
-
 	.EditFrontendEditor {
 		&:not(.ExpertMode) {
 			:is(

@@ -15,19 +15,19 @@
 			line-height:var(--lineHeightAlternative);
 		}
 
-		.wf-active &,
-		.NoJS & {
+		:where(
+			.wf-active,
+			#tinymce,
+			.AuditHistory-Table-Content
+		) & {
 			//noinspection CssNoGenericFontName
 			font-family:var(--fontStackAlternative);
 		}
 
-		// In TinyMCE instances and the audit history, the webfont is loaded via import, so we need to set the font-family here
-		#tinymce &,
-		.AuditHistory-Table-Content & {
+		@media (scripting:none) {
 			//noinspection CssNoGenericFontName
 			font-family:var(--fontStackAlternative);
 		}
-
 	}
 }
 

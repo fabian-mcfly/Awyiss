@@ -191,11 +191,14 @@
 		display:inline-block;
 		max-width:100%;
 
-		.JS &[data-ll-status] {
+		&:is(
+			[data-ll-status],
+			:not([height], .Lazyload)
+		) {
 			height:auto;
 		}
 
-		&:not([height]) {
+		@media (scripting:none) {
 			height:auto;
 		}
 	}
