@@ -140,8 +140,8 @@ class SystemOrderHelperTest extends TestCase {
 
 		$result = $this->helper->control(null, ['entity' => $entity, 'options' => $options]);
 
-		$this->assertStringContainsString('<option value="1">', $result);
-		$this->assertStringContainsString('<option value="2" selected="selected">', $result);
+		$this->assertStringContainsString('<option value="1" title="Option 2">', $result);
+		$this->assertStringContainsString('<option value="2" title="Option 3" selected="selected">', $result);
 	}
 
 

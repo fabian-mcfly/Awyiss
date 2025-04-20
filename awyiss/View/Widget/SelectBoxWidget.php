@@ -4,6 +4,7 @@
 namespace Awyiss\View\Widget;
 
 
+use Awyiss\Model\Entity;
 use Cake\View\Widget\SelectBoxWidget as BaseSelectBoxWidget;
 
 
@@ -73,6 +74,16 @@ class SelectBoxWidget extends BaseSelectBoxWidget {
 				$optAttrs['templateVars'] = array_merge($templateVars, $optAttrs['templateVars']);
 			}
 			$optAttrs['escape'] = $escape;
+
+			// Convert entities to a string
+			if ($optAttrs['text'] instanceof Entity) {
+				$optAttrs['text'] = $optAttrs['text']->label;
+			}
+
+			// If the title is not a string, use the text as the title
+			if (!is_string($optAttrs['title'] ?? null)) {
+				$optAttrs['title'] = $optAttrs['text'];
+			}
 
 			$out[] = $this->_templates->format('option', [
 				'value' => $escape ? h($optAttrs['value']) : $optAttrs['value'],
