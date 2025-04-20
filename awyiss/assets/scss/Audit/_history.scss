@@ -372,6 +372,9 @@
 	code {
 		display:none;
 		margin:15px 20px;
+		overflow:auto;
+		scrollbar-color:var(--scrollbarColor);
+		scrollbar-width:thin;
 		white-space:pre-wrap;
 	}
 
