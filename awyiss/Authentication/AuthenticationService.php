@@ -89,10 +89,14 @@ class AuthenticationService extends BaseAuthenticationService {
 		$lo_uri = $request->getUri();
 		$ls_redirectUri = $lo_uri->getPath();
 
-		/** @var \Cake\Http\Session $lo_session */
-		$lo_session = $request->getAttribute('session');
-		$lo_session->write('unauthenticatedRedirectUrl', $ls_redirectUri);
-
+		if (
+			!str_ends_with($ls_redirectUri, '/request-lock/') &&
+			!str_ends_with($ls_redirectUri, '/release-lock/')
+		) {
+			/** @var \Cake\Http\Session $lo_session */
+			$lo_session = $request->getAttribute('session');
+			$lo_session->write('unauthenticatedRedirectUrl', $ls_redirectUri);
+		}
 
 		return parent::getUnauthenticatedRedirectUrl($request);
 	}
