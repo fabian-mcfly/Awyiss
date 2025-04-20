@@ -203,7 +203,7 @@ class MenuItem implements ArrayAccess {
 			return false;
 		}
 
-		$ls_testUrl = rtrim($ls_testUrl, '/');
+		$ls_testUrl = rtrim($ls_testUrl, '/') . '/';
 
 		if (!isset($ls_fullBaseUrl)) {
 			$ls_fullBaseUrl = Router::fullBaseUrl();
