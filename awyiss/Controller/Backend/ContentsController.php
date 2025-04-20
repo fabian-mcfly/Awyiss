@@ -163,7 +163,7 @@ class ContentsController extends Controller {
 			'contentAreas' => $la_contentAreas,
 			'unknownContentAreas' => $la_unknownContentAreas,
 			'page' => $this->page,
-			'forScope' => $this->Contents->getForScope(),
+			'currentPageRole' => $this->Contents->getForScope(),
 			'contentTemplates' => $la_contentTemplates,
 			'columnWidths' => $this->Contents->getColumnWidths(),
 			'columnIndents' => $this->Contents->getColumnIndents(),
@@ -459,7 +459,7 @@ class ContentsController extends Controller {
 
 		$this->set([
 			'page' => $this->page,
-			'forScope' => $this->Contents->getForScope(),
+			'currentPageRole' => $this->Contents->getForScope(),
 			'duplicateOfPage' => $lo_duplicateOfPage,
 			'duplicateOf' => $this->request->getData('duplicate_of'),
 			'contentTemplateId' => $this->request->getData('content_template_id'),
@@ -1143,7 +1143,7 @@ class ContentsController extends Controller {
 			'assignedAttributes' => $la_assignedAttributes,
 			'contentAreas' => $la_contentAreas,
 			'contentElementsByFieldset' => $la_contentElementsByFieldset,
-			'forScope' => $this->Contents->getForScope(),
+			'currentPageRole' => $this->Contents->getForScope(),
 			'languageRealm' => Awyiss::REALM_FRONTEND,
 			'languageShortcode' => $ls_languageShortcode,
 			'columnWidths' => $la_columnWidths,

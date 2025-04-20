@@ -7,7 +7,7 @@
 @var contentAreas array
 @var contentElementsByFieldset ContentTemplateElement[]
 @var allowedKeys array
-@var forScope string
+@var currentPageRole string
 @var languageRealm string
 @var languageShortcode string
 @var expertMode bool
@@ -26,7 +26,7 @@
 @var UrlHelper \Awyiss\View\Helper\UrlHelper
 #}
 
-{% do AuthorizationHelper.setScope(forScope) %}
+{% do AuthorizationHelper.setScope(currentPageRole) %}
 
 <div class="Contents Form Edit EditFrontendEditor{% if expertMode %} ExpertMode{% endif %}" data-title="{{ __('headline_edit') }}">
 	{% block buttonArea %}

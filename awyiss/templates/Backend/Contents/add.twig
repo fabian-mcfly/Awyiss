@@ -7,13 +7,13 @@
 @var contentAreas array
 @var contentElementsByFieldset ContentTemplateElement[]
 @var allowedKeys array
-@var forScope string
+@var currentPageRole string
 @var languageRealm string
 @var languageShortcode string
 @var _view \Awyiss\View\BackendView
 #}
 
-{% do AuthorizationHelper.setScope(forScope) %}
+{% do AuthorizationHelper.setScope(currentPageRole) %}
 
 <div class="Contents Form Add">
 	{% block headlinesAdd %}

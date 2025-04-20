@@ -1,7 +1,7 @@
 {#
 @var page \Awyiss\Model\Entity\Page
 @var duplicateOfPage \Awyiss\Model\Entity\Page
-@var forScope string
+@var currentPageRole string
 @var _view \Awyiss\View\BackendView
 @var AssetHelper \Awyiss\View\Helper\AssetHelper
 @var AttributesHelper \Awyiss\View\Helper\AttributesHelper
@@ -17,7 +17,7 @@
 @var UrlHelper \Awyiss\View\Helper\UrlHelper
 #}
 
-{% do AuthorizationHelper.setScope(forScope) %}
+{% do AuthorizationHelper.setScope(currentPageRole) %}
 
 <div class="Contents Form DuplicateConfiguration" data-title="{{ __('headline_duplicate_configuration') }}">
 	{% block buttonArea %}

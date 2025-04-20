@@ -4,11 +4,11 @@
 @var unknownContentAreas array
 @var page \Awyiss\Model\Entity\Page
 @var contentTemplates array
-@var forScope string
+@var currentPageRole string
 @var _view \Awyiss\View\BackendView
 #}
 
-{% do AuthorizationHelper.setScope(forScope) %}
+{% do AuthorizationHelper.setScope(currentPageRole) %}
 <div class="Contents Overview">
 	{% block headlinesOverview %}
 		<div class="Headlines">
