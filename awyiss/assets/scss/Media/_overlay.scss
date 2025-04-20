@@ -9,7 +9,7 @@
 	position:fixed;
 	top:15px;
 	right:0;
-	z-index:1820;
+	z-index:4820;
 	transition:background-color .3s linear, outline-color .1s ease-in-out, transform .3s ease-in-out;
 
 	@media screen and (width <= 768px) {
@@ -79,7 +79,7 @@
 	background-position:0 0;
 	position:fixed;
 	inset:0;
-	z-index:1860;
+	z-index:4800;
 	opacity:0;
 	visibility:hidden;
 	transition:opacity .3s ease-in-out, visibility 0s linear .3s, grid-template-columns .3s ease-in-out;
