@@ -1,3 +1,5 @@
+// noinspection DuplicatedCode
+
 /**
  * Awyiss Lightbox
  *
@@ -83,7 +85,20 @@ export default class Lightbox {
 	};
 	/**
 	 * The DOM nodes for the lightbox.
-	 * @type {{}}
+	 * @type {Object}
+	 * @property {HTMLElement} [lightbox] - The main lightbox container
+	 * @property {HTMLElement} [stage] - The area where content is displayed
+	 * @property {Object} [buttons] - Container for control buttons
+	 * @property {HTMLButtonElement} [buttons.close] - Button to close the lightbox
+	 * @property {HTMLButtonElement} [buttons.zoomIn] - Button to zoom in
+	 * @property {HTMLButtonElement} [buttons.zoomOut] - Button to zoom out
+	 * @property {HTMLElement} [loader] - Loading indicator element
+	 * @property {HTMLElement} [caption] - Caption display area
+	 * @property {HTMLElement} [arrows] - Container for navigation arrows
+	 * @property {HTMLButtonElement} [arrows.arrowLeft] - Left navigation arrow button
+	 * @property {HTMLButtonElement} [arrows.arrowRight] - Right navigation arrow button
+	 * @property {HTMLUListElement} [pagination] - List of pagination items
+	 * @property {HTMLElement} [counter] - Element showing current position
 	 */
 	domNodes = {};
 	/**
@@ -101,6 +116,11 @@ export default class Lightbox {
 	 * @type {HTMLElement}
 	 */
 	sourceElement = null;
+	/**
+	 * Whether to change the URL when the lightbox is opened.
+	 * @type {boolean}
+	 */
+	urlChange = true;
 
 	/**
 	 * @param {object} settings
@@ -119,6 +139,11 @@ export default class Lightbox {
 		if (this.bindDefaultClick) {
 			this.bindDefaultClicks();
 		}
+
+		// Observe changes to the url
+		window.addEventListener('hashchange', this.handleHashChange.bind(this));
+		// Trigger an initial hashchange event to handle the current URL
+		window.dispatchEvent(new HashChangeEvent('hashchange'));
 	}
 
 	/**
@@ -148,6 +173,24 @@ export default class Lightbox {
 					});
 				}
 
+				// Get all data attributes that start with 'data-lightbox-'
+				const dataAttributes = Array.from(element.attributes).filter(attr => attr.name.startsWith('data-lightbox-'));
+				dataAttributes.forEach(attr => {
+					const key = attr.name.replace('data-lightbox-', '');
+					const value = attr.value;
+
+					// If the value is a boolean, convert it to a boolean
+					if (value === 'true') {
+						settings[key] = true;
+					}
+					else if (value === 'false') {
+						settings[key] = false;
+					}
+					else {
+						settings[key] = value;
+					}
+				});
+
 				this.sourceElement = element;
 				this.init(element, settings, group);
 			});
@@ -170,7 +213,7 @@ export default class Lightbox {
 			this.settings.panzoom = {...this.defaultSettings.panzoom, ...this.settings.panzoom};
 		}
 
-		// If th group is empty, use the element as the group
+		// If the group is empty, use the element as the group
 		if (group.length === 0) {
 			group = [element];
 		}
@@ -414,6 +457,23 @@ export default class Lightbox {
 		// Dispatch a custom event to allow for customizing the lightbox
 		const afterEvent = new CustomEvent('afterLightboxOpen', {detail: this});
 		document.dispatchEvent(afterEvent);
+
+		// If the event wasn't canceled and the settings allow it, change the URL
+		if (!afterEvent.defaultPrevented && this.urlChange) {
+			// Use the xpath of the source element
+			const sourceElementPath = this.getXPath(this.sourceElement);
+
+			if (window.location.hash !== '#Lightbox') {
+				window.history.pushState({
+					sourceElementPath: sourceElementPath,
+				}, '', `${this.currentUrl}#Lightbox`);
+			}
+			else {
+				window.history.replaceState({
+					sourceElementPath: sourceElementPath,
+				}, '', `${this.currentUrl}#Lightbox`);
+			}
+		}
 	}
 
 	/**
@@ -449,6 +509,11 @@ export default class Lightbox {
 		// Dispatch a custom event to allow for customizing the lightbox
 		const afterEvent = new CustomEvent('afterLightboxClose', {detail: this});
 		document.dispatchEvent(afterEvent);
+
+		// If the url contains the lightbox hash, go back to the previous state
+		if (window.location.hash === '#Lightbox') {
+			window.history.back();
+		}
 	}
 
 	/**
@@ -474,9 +539,6 @@ export default class Lightbox {
 		this.currentElements.forEach((element, index) => {
 			const li = document.createElement('li');
 			const button = document.createElement('button');
-
-			// Dispatch a custom event to allow for customizing the pagination button
-			const beforeEvent = new CustomEvent('beforeLightboxPaginationButtonBuild', {detail: this, element: element, index: index, listItem: li, button: button});
 
 			button.dataset.lightboxIndex = index;
 			button.classList.add('Pagination-Button');
@@ -878,6 +940,105 @@ export default class Lightbox {
 				this.showItem('next');
 			}
 		}
+	}
+
+
+	/**
+	 * Handle the hash change event.
+	 * If the hash is empty, close the lightbox.
+	 *
+	 * If the hash is not empty, open the lightbox with the given index
+	 * if it can be found, otherwise remove the hash.
+	 *
+	 * @param {HashChangeEvent} event
+	 */
+	handleHashChange(event) {
+		if (!this.urlChange) {
+			return;
+		}
+
+		const hasLightboxHash = window.location.hash === '#Lightbox';
+
+		if (!hasLightboxHash) {
+			if (this.domNodes.lightbox) {
+				this.close();
+			}
+
+			return;
+		}
+
+		// Get the sourceElementPath from the history state if it exists
+		const sourceElementPath = window.history.state?.sourceElementPath;
+
+		// If the sourceElementPath empty, there's nothing to do
+		if (!sourceElementPath) {
+			return;
+		}
+
+		const element = document.evaluate(sourceElementPath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+		// If the element isn't found or has no "lightbox" in its rel attribute, remove the hash
+		if (
+			!element ||
+			!element.matches('[rel*="lightbox"]')
+		) {
+			return;
+		}
+
+		// Trigger a click event on the element to open the lightbox
+		const clickEvent = new MouseEvent('click', { bubbles: true, cancelable: true });
+		element.dispatchEvent(clickEvent);
+	}
+
+
+	/**
+	 * Get the XPath of the given element.
+	 *
+	 * @param {HTMLElement} element
+	 */
+	getXPath(element) {
+		if (element.id) {
+			return `//*[@id="${element.id}"]`;
+		}
+
+		const parts = [];
+		while (element && element.nodeType === Node.ELEMENT_NODE) {
+			let part = element.nodeName.toLowerCase();
+
+			if (element.id) {
+				part = `/${part}[@id="${element.id}"]`;
+
+				// If the element has an id, it's unique and we can stop here
+				parts.unshift(part);
+				break;
+			}
+			else {
+				// Check if the element has siblings of the same type
+				if (element.parentNode) {
+					const siblings = Array.from(element.parentNode.children).filter(
+						child => child.nodeName === element.nodeName
+					);
+
+					if (siblings.length > 1) {
+						// Add position index (1-based) if multiple siblings of the same type exist
+						const position = siblings.indexOf(element) + 1;
+						part += `[${position}]`;
+					}
+				}
+
+				if (
+					element.className &&
+					// No class name for html- and body-tag
+					['html', 'body'].indexOf(element.nodeName.toLowerCase()) === -1
+				) {
+					part += `[@class="${element.className}"]`;
+				}
+			}
+
+			parts.unshift(part);
+			element = element.parentNode;
+		}
+
+		return '/' + parts.join('/');
 	}
 }
 
